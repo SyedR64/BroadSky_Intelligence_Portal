@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frontline Managed Services | Law Firm Target Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; font-size: 14px; }
+
+  /* Header */
+  .page-header { background: #0f2144; color: white; padding: 20px 28px 18px; }
+  .page-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+  .page-header .subtitle { font-size: 12px; color: #94a3b8; margin-top: 3px; }
+  .header-meta { display: flex; gap: 24px; margin-top: 14px; flex-wrap: wrap; }
+  .stat-pill { background: rgba(255,255,255,0.1); border-radius: 6px; padding: 8px 14px; }
+  .stat-pill .label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-pill .value { font-size: 18px; font-weight: 700; color: white; line-height: 1.2; }
+  .stat-pill.t1 .value { color: #f97316; }
+  .stat-pill.t2 .value { color: #60a5fa; }
+  .stat-pill.t3 .value { color: #a3b4c6; }
+
+  /* Filter bar */
+  .filter-bar { background: white; border-bottom: 1px solid #e2e8f0; padding: 12px 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .filter-group { display: flex; gap: 6px; align-items: center; }
+  .filter-group label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; }
+  .chip { padding: 4px 11px; border-radius: 20px; border: 1.5px solid #cbd5e1; background: white; color: #475569; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+  .chip:hover { border-color: #0f2144; color: #0f2144; }
+  .chip.active { background: #0f2144; color: white; border-color: #0f2144; }
+  .chip.t1-active { background: #f97316; border-color: #f97316; color: white; }
+  .chip.t2-active { background: #2563eb; border-color: #2563eb; color: white; }
+  .chip.t3-active { background: #64748b; border-color: #64748b; color: white; }
+  .search-input { padding: 5px 12px; border: 1.5px solid #cbd5e1; border-radius: 20px; font-size: 12px; outline: none; min-width: 200px; color: #1e293b; }
+  .search-input:focus { border-color: #0f2144; }
+  .divider { width: 1px; height: 28px; background: #e2e8f0; }
+  .result-count { font-size: 12px; color: #94a3b8; margin-left: auto; white-space: nowrap; }
+
+  /* Table container */
+  .table-wrap { padding: 16px 28px 32px; }
+  .table-container { background: white; border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: #f8fafc; border-bottom: 2px solid #e2e8f0; }
+  th { padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.4px; cursor: pointer; white-space: nowrap; user-select: none; }
+  th:hover { color: #0f2144; }
+  th.sort-asc::after { content: " \25B2"; font-size: 9px; }
+  th.sort-desc::after { content: " \25BC"; font-size: 9px; }
+  tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.1s; }
+  tbody tr:hover { background: #f8fafc; }
+  tbody tr:last-child { border-bottom: none; }
+  td { padding: 9px 12px; vertical-align: middle; }
+
+  /* Badges */
+  .tier-badge { display: inline-block; padding: 3px 9px; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
+  .tier-badge.t1 { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+  .tier-badge.t2 { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+  .tier-badge.t3 { background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; }
+  .amlaw-badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .amlaw-badge.al100 { background: #fef3c7; color: #92400e; }
+  .amlaw-badge.al200 { background: #e0f2fe; color: #075985; }
+  .amlaw-badge.al500 { background: #f0fdf4; color: #166534; }
+  .signal-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .signal-badge.planning { background: #dcfce7; color: #15803d; }
+  .signal-badge.partial { background: #fef9c3; color: #a16207; }
+  .signal-badge.none { background: #f1f5f9; color: #94a3b8; }
+  .cyber-badge { display: inline-flex; align-items: center; gap: 2px; }
+  .cyber-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .cyber-5 { background: #dc2626; }
+  .cyber-4 { background: #ea580c; }
+  .cyber-3 { background: #d97706; }
+  .cyber-2 { background: #65a30d; }
+  .cyber-1 { background: #94a3b8; }
+  .cyber-label { font-size: 11px; font-weight: 600; }
+  .cyber-label.high { color: #dc2626; }
+  .cyber-label.med { color: #d97706; }
+  .cyber-label.low { color: #94a3b8; }
+  .pms-bar-wrap { display: flex; align-items: center; gap: 6px; }
+  .pms-bar { height: 6px; border-radius: 3px; background: #7c3aed; }
+  .pms-num { font-size: 11px; color: #64748b; }
+  .score-cell { font-size: 13px; font-weight: 700; color: #0f2144; }
+  .firm-name { font-weight: 600; color: #0f2144; font-size: 13px; }
+  .hq-cell { font-size: 12px; color: #475569; white-space: nowrap; }
+  .atty-cell { font-size: 12px; font-weight: 600; color: #334155; }
+  .rev-cell { font-size: 12px; color: #334155; }
+  .notes-cell { font-size: 11px; color: #64748b; max-width: 260px; line-height: 1.4; }
+  .offices-cell { font-size: 12px; color: #475569; }
+  .intl-badge { font-size: 10px; color: #7c3aed; font-weight: 600; background: #f3e8ff; padding: 1px 5px; border-radius: 3px; }
+
+  /* Empty state */
+  .empty-state { padding: 48px; text-align: center; color: #94a3b8; }
+  .empty-state .icon { font-size: 32px; margin-bottom: 8px; }
+
+  /* Footer */
+  .page-footer { padding: 16px 28px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; background: white; }
+  .page-footer strong { color: #64748b; }
+
+  /* Export btn */
+  .export-btn { padding: 5px 14px; background: white; border: 1.5px solid #cbd5e1; border-radius: 6px; font-size: 12px; color: #475569; cursor: pointer; font-weight: 500; }
+  .export-btn:hover { border-color: #0f2144; color: #0f2144; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Frontline Managed Services / Law Firm Target Dashboard</h1>
+  <div class="subtitle">AM Law prospect universe scored by IT/cyber managed services fit | Research vintage: April 2026</div>
+  <div class="header-meta">
+    <div class="stat-pill"><div class="label">Total Firms</div><div class="value" id="stat-total">--</div></div>
+    <div class="stat-pill t1"><div class="label">Tier 1 / Immediate</div><div class="value" id="stat-t1">--</div></div>
+    <div class="stat-pill t2"><div class="label">Tier 2 / Pipeline</div><div class="value" id="stat-t2">--</div></div>
+    <div class="stat-pill t3"><div class="label">Tier 3 / Mid-Market</div><div class="value" id="stat-t3">--</div></div>
+    <div class="stat-pill"><div class="label">AM Law 200 Coverage</div><div class="value" id="stat-al200">--</div></div>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-group">
+    <label>Priority</label>
+    <div class="chip active" id="chip-all" onclick="setTierFilter('all',this)">All</div>
+    <div class="chip" id="chip-t1" onclick="setTierFilter('Tier 1',this)">Tier 1</div>
+    <div class="chip" id="chip-t2" onclick="setTierFilter('Tier 2',this)">Tier 2</div>
+    <div class="chip" id="chip-t3" onclick="setTierFilter('Tier 3',this)">Tier 3</div>
+  </div>
+  <div class="divider"></div>
+  <div class="filter-group">
+    <label>AM Law</label>
+    <div class="chip active" id="chip-al-all" onclick="setAlFilter('all',this)">All</div>
+    <div class="chip" id="chip-al100" onclick="setAlFilter('AM Law 1-100',this)">1-100</div>
+    <div class="chip" id="chip-al200" onclick="setAlFilter('AM Law 101-200',this)">101-200</div>
+    <div class="chip" id="chip-al500" onclick="setAlFilter('AM Law 201-500',this)">201-500</div>
+  </div>
+  <div class="divider"></div>
+  <div class="filter-group">
+    <label>AI Signal</label>
+    <div class="chip active" id="chip-ai-all" onclick="setAiFilter('all',this)">All</div>
+    <div class="chip" id="chip-ai-plan" onclick="setAiFilter('planning',this)">Planning</div>
+    <div class="chip" id="chip-ai-part" onclick="setAiFilter('partial',this)">Partial</div>
+    <div class="chip" id="chip-ai-none" onclick="setAiFilter('none',this)">None</div>
+  </div>
+  <div class="divider"></div>
+  <div class="filter-group">
+    <label>Cyber Risk</label>
+    <div class="chip active" id="chip-cy-all" onclick="setCyFilter('all',this)">All</div>
+    <div class="chip" id="chip-cy-hi" onclick="setCyFilter('high',this)">High (4-5)</div>
+    <div class="chip" id="chip-cy-med" onclick="setCyFilter('medium',this)">Medium (3)</div>
+    <div class="chip" id="chip-cy-lo" onclick="setCyFilter('low',this)">Low (1-2)</div>
+  </div>
+  <div class="divider"></div>
+  <input class="search-input" id="search-box" type="text" placeholder="Search firm name or city..." oninput="renderTable()">
+  <button class="export-btn" onclick="exportCSV()">Export CSV</button>
+  <div class="result-count" id="result-count">-- firms</div>
+</div>
+
+<div class="table-wrap">
+  <div class="table-container">
+    <table id="main-table">
+      <thead>
+        <tr>
+          <th onclick="sortBy('overall_score')" id="th-score">Score</th>
+          <th onclick="sortBy('priority_tier')" id="th-tier">Priority</th>
+          <th onclick="sortBy('firm_name')" id="th-name">Firm</th>
+          <th onclick="sortBy('amlaw_rank')" id="th-rank">AM Law</th>
+          <th onclick="sortBy('attorney_count')" id="th-atty">Attorneys</th>
+          <th onclick="sortBy('revenue_m')" id="th-rev">Revenue $M</th>
+          <th onclick="sortBy('office_count')" id="th-offices">Offices</th>
+          <th onclick="sortBy('hq_city')" id="th-hq">HQ</th>
+          <th onclick="sortBy('cyber_urgency_score')" id="th-cyber">Cyber Risk</th>
+          <th onclick="sortBy('ai_opportunity_signal')" id="th-ai">AI Signal</th>
+          <th onclick="sortBy('practice_mix_score')" id="th-pms">Practice Mix</th>
+          <th id="th-notes">Notes</th>
+        </tr>
+      </thead>
+      <tbody id="table-body">
+      </tbody>
+    </table>
+    <div class="empty-state" id="empty-state" style="display:none">
+      <div class="icon">No results</div>
+      <div>Adjust filters to see firms</div>
+    </div>
+  </div>
+</div>
+
+<div class="page-footer">
+  <strong>Data sources:</strong> Am Law 100/200 rankings (2024), firm websites, Legal.io, Above the Law, Wikipedia, public press releases.
+  <strong>Scoring model:</strong> AM Law tier + attorney count + office footprint + international presence + practice complexity + AI adoption signal + cyber urgency score.
+  <strong>Assumptions:</strong> AI signals are inferred from public announcements; cyber urgency is based on practice area composition, not confirmed breach history.
+  current_frontline_client = false for all firms (no confirmed client list available). Treat as prospecting universe only.
+</div>
+
+<script>
+const FIRMS = [
+  {firm_name:"Kirkland & Ellis",amlaw_rank:1,tier_label:"AM Law 1-100",attorney_count:3500,equity_partners:539,revenue_m:7208,revenue_per_lawyer_k:2050,ppp_k:7960,office_count:22,hq_city:"Chicago",hq_state:"IL",international_offices:true,practice_mix_score:5,practice_areas:"M&A, Private Equity, Litigation, Restructuring, IP",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:145,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Largest US firm by revenue; PE-heavy data sensitivity; confirmed AI program"},
+  {firm_name:"Latham & Watkins",amlaw_rank:2,tier_label:"AM Law 1-100",attorney_count:3300,equity_partners:458,revenue_m:5688,revenue_per_lawyer_k:1725,ppp_k:4900,office_count:14,hq_city:"Los Angeles",hq_state:"CA",international_offices:true,practice_mix_score:5,practice_areas:"M&A, Capital Markets, Finance, Litigation, Real Estate",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:145,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Major cross-border M&A; highly distributed across 14 US offices; top AI adopter"},
+  {firm_name:"White & Case",amlaw_rank:12,tier_label:"AM Law 1-100",attorney_count:2600,equity_partners:null,revenue_m:2950,revenue_per_lawyer_k:1135,ppp_k:null,office_count:7,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:5,practice_areas:"M&A, Finance, Arbitration, Capital Markets, Restructuring",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:145,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Significant international arbitration data; M&A deal confidentiality top priority"},
+  {firm_name:"DLA Piper",amlaw_rank:3,tier_label:"AM Law 1-100",attorney_count:4800,equity_partners:null,revenue_m:3830,revenue_per_lawyer_k:797,ppp_k:null,office_count:27,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:5,practice_areas:"Corporate, Litigation, Real Estate, IP, Employment",ai_opportunity_signal:"planning",cyber_urgency_score:4,overall_score:140,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Largest attorney headcount; sprawling multi-office infrastructure challenge"},
+  {firm_name:"Baker McKenzie",amlaw_rank:4,tier_label:"AM Law 1-100",attorney_count:4600,equity_partners:null,revenue_m:3287,revenue_per_lawyer_k:714,ppp_k:null,office_count:12,hq_city:"Chicago",hq_state:"IL",international_offices:true,practice_mix_score:5,practice_areas:"Corporate, Tax, IP, Employment, Dispute Resolution",ai_opportunity_signal:"planning",cyber_urgency_score:4,overall_score:140,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Global platform; complex multi-jurisdiction data and compliance needs"},
+  {firm_name:"Sidley Austin",amlaw_rank:5,tier_label:"AM Law 1-100",attorney_count:1980,equity_partners:275,revenue_m:3100,revenue_per_lawyer_k:1566,ppp_k:4200,office_count:9,hq_city:"Chicago",hq_state:"IL",international_offices:true,practice_mix_score:5,practice_areas:"Litigation, Capital Markets, M&A, Regulatory, Healthcare",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:140,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Healthcare and regulatory practice drives PHI and sensitive data exposure"},
+  {firm_name:"Skadden Arps",amlaw_rank:6,tier_label:"AM Law 1-100",attorney_count:1750,equity_partners:175,revenue_m:3270,revenue_per_lawyer_k:1869,ppp_k:6050,office_count:8,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:5,practice_areas:"M&A, Litigation, Finance, Restructuring, Tax",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:140,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"M&A deal room security is a headline risk; restructuring adds sensitive creditor data"},
+  {firm_name:"Ropes & Gray",amlaw_rank:13,tier_label:"AM Law 1-100",attorney_count:1466,equity_partners:null,revenue_m:2993,revenue_per_lawyer_k:2041,ppp_k:4990,office_count:4,hq_city:"Boston",hq_state:"MA",international_offices:true,practice_mix_score:5,practice_areas:"Private Equity, M&A, Healthcare, Litigation, Asset Management",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:140,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Healthcare + PE combination creates dual-track data sensitivity"},
+  {firm_name:"Gibson Dunn",amlaw_rank:14,tier_label:"AM Law 1-100",attorney_count:1940,equity_partners:null,revenue_m:3074,revenue_per_lawyer_k:1585,ppp_k:null,office_count:6,hq_city:"Los Angeles",hq_state:"CA",international_offices:true,practice_mix_score:5,practice_areas:"Litigation, M&A, Private Equity, Real Estate, Finance",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:140,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"High-profile litigation and PE; top AmLaw profitability; strong AI interest"},
+  {firm_name:"Covington & Burling",amlaw_rank:50,tier_label:"AM Law 1-100",attorney_count:1559,equity_partners:null,revenue_m:1700,revenue_per_lawyer_k:1091,ppp_k:null,office_count:5,hq_city:"Washington",hq_state:"DC",international_offices:true,practice_mix_score:5,practice_areas:"Regulatory, Litigation, M&A, Life Sciences, IP",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:140,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Life sciences and pharma; clinical trial and drug approval data sensitivity"},
+  {firm_name:"Goodwin Procter",amlaw_rank:68,tier_label:"AM Law 1-100",attorney_count:1755,equity_partners:310,revenue_m:2244,revenue_per_lawyer_k:1279,ppp_k:null,office_count:10,hq_city:"Boston",hq_state:"MA",international_offices:true,practice_mix_score:5,practice_areas:"Private Equity, Technology, Life Sciences, Real Estate, Litigation",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:140,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"PE + life sciences + tech is the highest-sensitivity trifecta"},
+  {firm_name:"Jones Day",amlaw_rank:8,tier_label:"AM Law 1-100",attorney_count:2342,equity_partners:null,revenue_m:2666,revenue_per_lawyer_k:1138,ppp_k:null,office_count:19,hq_city:"Cleveland",hq_state:"OH",international_offices:true,practice_mix_score:4,practice_areas:"Litigation, M&A, Real Estate, Antitrust, IP",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:135,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"19 US offices with no lockstep compensation - decentralized IT governance"},
+  {firm_name:"Paul Weiss",amlaw_rank:9,tier_label:"AM Law 1-100",attorney_count:1100,equity_partners:170,revenue_m:2002,revenue_per_lawyer_k:1820,ppp_k:6570,office_count:3,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:4,practice_areas:"Litigation, M&A, Private Equity, Restructuring, Arbitration",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:135,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Highly sensitive PE and M&A work; high-profile litigation requiring secure data rooms"},
+  {firm_name:"Hogan Lovells",amlaw_rank:11,tier_label:"AM Law 1-100",attorney_count:2562,equity_partners:361,revenue_m:2682,revenue_per_lawyer_k:1047,ppp_k:null,office_count:7,hq_city:"Washington",hq_state:"DC",international_offices:true,practice_mix_score:5,practice_areas:"Litigation, Corporate, IP, Regulatory, Finance",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:135,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Regulatory and life sciences work; strong cybersecurity concern in pharma sector"},
+  {firm_name:"Weil Gotshal",amlaw_rank:18,tier_label:"AM Law 1-100",attorney_count:1100,equity_partners:null,revenue_m:1829,revenue_per_lawyer_k:1663,ppp_k:null,office_count:5,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:4,practice_areas:"M&A, Private Equity, Restructuring, Litigation, Finance",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:135,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Restructuring practice handles highly confidential creditor and debtor data"},
+  {firm_name:"Cooley",amlaw_rank:21,tier_label:"AM Law 1-100",attorney_count:1305,equity_partners:null,revenue_m:2034,revenue_per_lawyer_k:1558,ppp_k:null,office_count:7,hq_city:"San Francisco",hq_state:"CA",international_offices:true,practice_mix_score:4,practice_areas:"Venture Capital, M&A, IP, Life Sciences, Litigation",ai_opportunity_signal:"planning",cyber_urgency_score:4,overall_score:135,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Life sciences and VC clients; data room and IP portfolio security critical"},
+  {firm_name:"McDermott Will",amlaw_rank:26,tier_label:"AM Law 1-100",attorney_count:1758,equity_partners:null,revenue_m:2200,revenue_per_lawyer_k:1251,ppp_k:null,office_count:20,hq_city:"Chicago",hq_state:"IL",international_offices:true,practice_mix_score:5,practice_areas:"Healthcare, Tax, M&A, Litigation, Employment",ai_opportunity_signal:"partial",cyber_urgency_score:5,overall_score:135,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Healthcare-dominant; PHI and HIPAA compliance exposure; 20 US offices"},
+  {firm_name:"Dechert",amlaw_rank:29,tier_label:"AM Law 1-100",attorney_count:900,equity_partners:null,revenue_m:1341,revenue_per_lawyer_k:1490,ppp_k:null,office_count:9,hq_city:"Philadelphia",hq_state:"PA",international_offices:true,practice_mix_score:4,practice_areas:"Private Equity, Finance, Litigation, Antitrust, Real Estate",ai_opportunity_signal:"partial",cyber_urgency_score:5,overall_score:135,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"PE fund work; asset manager clients with highly sensitive AUM and strategy data"},
+  {firm_name:"Cleary Gottlieb",amlaw_rank:15,tier_label:"AM Law 1-100",attorney_count:1250,equity_partners:180,revenue_m:1492,revenue_per_lawyer_k:1194,ppp_k:null,office_count:2,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:4,practice_areas:"M&A, Capital Markets, Arbitration, Finance, Antitrust",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Sovereign and cross-border work; deal confidentiality is existential risk"},
+  {firm_name:"Mayer Brown",amlaw_rank:16,tier_label:"AM Law 1-100",attorney_count:1890,equity_partners:null,revenue_m:1908,revenue_per_lawyer_k:1009,ppp_k:null,office_count:7,hq_city:"Chicago",hq_state:"IL",international_offices:true,practice_mix_score:4,practice_areas:"Finance, Litigation, Real Estate, Tax, M&A",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Finance and real estate transaction volume high; multi-office US footprint"},
+  {firm_name:"Sullivan & Cromwell",amlaw_rank:17,tier_label:"AM Law 1-100",attorney_count:950,equity_partners:165,revenue_m:1864,revenue_per_lawyer_k:1961,ppp_k:null,office_count:3,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:4,practice_areas:"M&A, Finance, Litigation, Capital Markets, Tax",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Elite M&A house; breach of deal data is headline risk for the firm"},
+  {firm_name:"WilmerHale",amlaw_rank:19,tier_label:"AM Law 1-100",attorney_count:1100,equity_partners:null,revenue_m:1498,revenue_per_lawyer_k:1362,ppp_k:null,office_count:5,hq_city:"Boston",hq_state:"MA",international_offices:true,practice_mix_score:4,practice_areas:"Litigation, IP, Corporate, Regulatory, Securities",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Government investigation practice handles sensitive DOJ/SEC-adjacent data"},
+  {firm_name:"Orrick Herrington",amlaw_rank:20,tier_label:"AM Law 1-100",attorney_count:1061,equity_partners:null,revenue_m:1465,revenue_per_lawyer_k:1381,ppp_k:null,office_count:5,hq_city:"San Francisco",hq_state:"CA",international_offices:true,practice_mix_score:4,practice_areas:"Technology, M&A, IP, Employment, Finance",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Tech sector clients bring elevated IP and M&A confidentiality requirements"},
+  {firm_name:"Perkins Coie",amlaw_rank:25,tier_label:"AM Law 1-100",attorney_count:1212,equity_partners:null,revenue_m:1259,revenue_per_lawyer_k:1039,ppp_k:null,office_count:19,hq_city:"Seattle",hq_state:"WA",international_offices:true,practice_mix_score:4,practice_areas:"Technology, Litigation, Corporate, IP, Election Law",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Tech and election law; IP practice handles high-value trade secrets"},
+  {firm_name:"Winston & Strawn",amlaw_rank:27,tier_label:"AM Law 1-100",attorney_count:1000,equity_partners:null,revenue_m:1100,revenue_per_lawyer_k:1100,ppp_k:null,office_count:11,hq_city:"Chicago",hq_state:"IL",international_offices:true,practice_mix_score:4,practice_areas:"Litigation, M&A, Finance, Antitrust, IP",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"11 offices; M&A and antitrust work creates sensitive document handling needs"},
+  {firm_name:"Norton Rose Fulbright",amlaw_rank:30,tier_label:"AM Law 1-100",attorney_count:3184,equity_partners:null,revenue_m:2436,revenue_per_lawyer_k:765,ppp_k:null,office_count:9,hq_city:"Houston",hq_state:"TX",international_offices:true,practice_mix_score:5,practice_areas:"Energy, Finance, Litigation, Corporate, IP",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Energy sector clients with OT/IT convergence risk; large attorney base"},
+  {firm_name:"Shearman & Sterling",amlaw_rank:31,tier_label:"AM Law 1-100",attorney_count:1000,equity_partners:null,revenue_m:1012,revenue_per_lawyer_k:1012,ppp_k:null,office_count:4,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:4,practice_areas:"M&A, Finance, Arbitration, Antitrust, Capital Markets",ai_opportunity_signal:"partial",cyber_urgency_score:5,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Now merged with A&O; transaction data sensitivity is a top priority"},
+  {firm_name:"King & Spalding",amlaw_rank:32,tier_label:"AM Law 1-100",attorney_count:1200,equity_partners:null,revenue_m:1828,revenue_per_lawyer_k:1523,ppp_k:null,office_count:8,hq_city:"Atlanta",hq_state:"GA",international_offices:true,practice_mix_score:4,practice_areas:"Litigation, M&A, Energy, Healthcare, Finance",ai_opportunity_signal:"partial",cyber_urgency_score:5,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Healthcare and energy; both sectors in focus for managed cybersecurity"},
+  {firm_name:"Debevoise & Plimpton",amlaw_rank:34,tier_label:"AM Law 1-100",attorney_count:750,equity_partners:null,revenue_m:1175,revenue_per_lawyer_k:1567,ppp_k:null,office_count:3,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:4,practice_areas:"Private Equity, Litigation, M&A, Finance, Arbitration",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"PE-dominant; fund data and LP confidentiality are headline security concerns"},
+  {firm_name:"Simpson Thacher",amlaw_rank:35,tier_label:"AM Law 1-100",attorney_count:1369,equity_partners:198,revenue_m:2336,revenue_per_lawyer_k:1706,ppp_k:null,office_count:3,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:4,practice_areas:"Private Equity, M&A, Finance, Litigation, Real Estate",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Elite PE firm; sponsors and portfolio company data under constant threat"},
+  {firm_name:"Davis Polk",amlaw_rank:36,tier_label:"AM Law 1-100",attorney_count:1100,equity_partners:161,revenue_m:2030,revenue_per_lawyer_k:1845,ppp_k:7010,office_count:3,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:4,practice_areas:"M&A, Capital Markets, Finance, Litigation, Tax",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Top US capital markets practice; SEC deal sensitivity is extreme"},
+  {firm_name:"Paul Hastings",amlaw_rank:39,tier_label:"AM Law 1-100",attorney_count:1000,equity_partners:null,revenue_m:1815,revenue_per_lawyer_k:1815,ppp_k:null,office_count:6,hq_city:"Los Angeles",hq_state:"CA",international_offices:true,practice_mix_score:4,practice_areas:"M&A, Finance, Litigation, Employment, Real Estate",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"M&A and finance; Asia-Pacific cross-border work adds data governance complexity"},
+  {firm_name:"Reed Smith",amlaw_rank:42,tier_label:"AM Law 1-100",attorney_count:1700,equity_partners:null,revenue_m:1429,revenue_per_lawyer_k:841,ppp_k:null,office_count:15,hq_city:"Pittsburgh",hq_state:"PA",international_offices:true,practice_mix_score:4,practice_areas:"Finance, Litigation, Corporate, IP, Media",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Media and entertainment clients; IP and licensing data are high-value targets"},
+  {firm_name:"Fried Frank",amlaw_rank:43,tier_label:"AM Law 1-100",attorney_count:600,equity_partners:null,revenue_m:900,revenue_per_lawyer_k:1500,ppp_k:4355,office_count:3,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:4,practice_areas:"M&A, Private Equity, Real Estate, Finance, Litigation",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"NY real estate and PE; deal room data security is a persistent concern"},
+  {firm_name:"Vinson & Elkins",amlaw_rank:51,tier_label:"AM Law 1-100",attorney_count:701,equity_partners:124,revenue_m:1003,revenue_per_lawyer_k:1431,ppp_k:null,office_count:13,hq_city:"Houston",hq_state:"TX",international_offices:true,practice_mix_score:4,practice_areas:"Energy, M&A, Finance, Litigation, Real Estate",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Energy sector M&A; OT/IT convergence and pipeline data security"},
+  {firm_name:"Faegre Drinker",amlaw_rank:56,tier_label:"AM Law 1-100",attorney_count:1152,equity_partners:null,revenue_m:1100,revenue_per_lawyer_k:956,ppp_k:null,office_count:22,hq_city:"Minneapolis",hq_state:"MN",international_offices:false,practice_mix_score:4,practice_areas:"Litigation, Corporate, Healthcare, IP, Real Estate",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"22 offices; healthcare and IP practice drives data security need"},
+  {firm_name:"Polsinelli",amlaw_rank:57,tier_label:"AM Law 1-100",attorney_count:1000,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:22,hq_city:"Kansas City",hq_state:"MO",international_offices:false,practice_mix_score:4,practice_areas:"Healthcare, Real Estate, Corporate, Finance, Litigation",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Healthcare-dominant with 22 offices; PHI handling and HIPAA compliance"},
+  {firm_name:"Troutman Pepper Locke",amlaw_rank:75,tier_label:"AM Law 1-100",attorney_count:1200,equity_partners:null,revenue_m:1178,revenue_per_lawyer_k:982,ppp_k:null,office_count:23,hq_city:"Atlanta",hq_state:"GA",international_offices:false,practice_mix_score:4,practice_areas:"Litigation, Corporate, Finance, Real Estate, Energy",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"23 offices post-merger; integration creates IT governance complexity"},
+  {firm_name:"Bryan Cave Leighton Paisner",amlaw_rank:76,tier_label:"AM Law 1-100",attorney_count:1400,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:10,hq_city:"St. Louis",hq_state:"MO",international_offices:true,practice_mix_score:4,practice_areas:"Real Estate, Litigation, Corporate, Finance, IP",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:130,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Large RE practice; cross-border UK-US data handling requirements"},
+  {firm_name:"Greenberg Traurig",amlaw_rank:10,tier_label:"AM Law 1-100",attorney_count:2538,equity_partners:312,revenue_m:2303,revenue_per_lawyer_k:908,ppp_k:null,office_count:43,hq_city:"Miami",hq_state:"FL",international_offices:false,practice_mix_score:5,practice_areas:"Real Estate, Corporate, Litigation, IP, Tax",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:125,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"43 offices with no single dominant HQ; federated IT risk; RE transaction sensitivity"},
+  {firm_name:"K&L Gates",amlaw_rank:22,tier_label:"AM Law 1-100",attorney_count:1910,equity_partners:null,revenue_m:1300,revenue_per_lawyer_k:681,ppp_k:null,office_count:21,hq_city:"Pittsburgh",hq_state:"PA",international_offices:true,practice_mix_score:5,practice_areas:"Litigation, Corporate, Real Estate, IP, Finance",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:125,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"21 offices; broad practice mix; distributed IT infrastructure common challenge"},
+  {firm_name:"Foley & Lardner",amlaw_rank:24,tier_label:"AM Law 1-100",attorney_count:1100,equity_partners:null,revenue_m:1168,revenue_per_lawyer_k:1062,ppp_k:null,office_count:24,hq_city:"Milwaukee",hq_state:"WI",international_offices:false,practice_mix_score:5,practice_areas:"Litigation, Corporate, IP, Healthcare, Energy",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:125,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"24 US offices; healthcare and IP practices drive data sensitivity"},
+  {firm_name:"Milbank",amlaw_rank:38,tier_label:"AM Law 1-100",attorney_count:650,equity_partners:null,revenue_m:1100,revenue_per_lawyer_k:1692,ppp_k:null,office_count:3,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:4,practice_areas:"Finance, Restructuring, M&A, Capital Markets, Real Estate",ai_opportunity_signal:"partial",cyber_urgency_score:5,overall_score:125,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Leveraged finance and restructuring; lender-side data exposure"},
+  {firm_name:"Willkie Farr",amlaw_rank:44,tier_label:"AM Law 1-100",attorney_count:700,equity_partners:null,revenue_m:900,revenue_per_lawyer_k:1286,ppp_k:null,office_count:4,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:4,practice_areas:"Private Equity, M&A, Finance, Litigation, Regulatory",ai_opportunity_signal:"partial",cyber_urgency_score:5,overall_score:125,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"PE and regulatory work; FDA and FTC-adjacent data sensitivity"},
+  {firm_name:"Cadwalader Wickersham",amlaw_rank:89,tier_label:"AM Law 1-100",attorney_count:400,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:9,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:4,practice_areas:"Finance, M&A, Real Estate, Litigation, Regulatory",ai_opportunity_signal:"partial",cyber_urgency_score:5,overall_score:125,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Structured finance and capital markets; highly sensitive deal documentation"},
+  {firm_name:"Morgan Lewis",amlaw_rank:7,tier_label:"AM Law 1-100",attorney_count:2500,equity_partners:null,revenue_m:2899,revenue_per_lawyer_k:1160,ppp_k:null,office_count:13,hq_city:"Philadelphia",hq_state:"PA",international_offices:true,practice_mix_score:4,practice_areas:"Litigation, Labor/Employment, Corporate, Finance, Energy",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:120,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Labor and energy practices across 13 offices; distributed endpoint management need"},
+  {firm_name:"Squire Patton Boggs",amlaw_rank:23,tier_label:"AM Law 1-100",attorney_count:1397,equity_partners:null,revenue_m:1400,revenue_per_lawyer_k:1002,ppp_k:null,office_count:18,hq_city:"Cleveland",hq_state:"OH",international_offices:true,practice_mix_score:4,practice_areas:"Corporate, Litigation, Public Policy, IP, Real Estate",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:120,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"18 offices; public policy practice adds government-adjacent data concerns"},
+  {firm_name:"Quinn Emanuel",amlaw_rank:28,tier_label:"AM Law 1-100",attorney_count:1100,equity_partners:null,revenue_m:1655,revenue_per_lawyer_k:1504,ppp_k:7270,office_count:7,hq_city:"Los Angeles",hq_state:"CA",international_offices:true,practice_mix_score:3,practice_areas:"Litigation, Arbitration, IP, Antitrust, Securities",ai_opportunity_signal:"none",cyber_urgency_score:4,overall_score:120,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Largest pure litigation firm; handles highly sensitive adversarial discovery"},
+  {firm_name:"Proskauer Rose",amlaw_rank:37,tier_label:"AM Law 1-100",attorney_count:800,equity_partners:null,revenue_m:1100,revenue_per_lawyer_k:1375,ppp_k:null,office_count:6,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:3,practice_areas:"Private Equity, Sports, Litigation, Employment, Tax",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:120,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"PE and sports clients; sports industry data and contract sensitivity"},
+  {firm_name:"Akin Gump",amlaw_rank:40,tier_label:"AM Law 1-100",attorney_count:1100,equity_partners:null,revenue_m:1369,revenue_per_lawyer_k:1245,ppp_k:null,office_count:8,hq_city:"Washington",hq_state:"DC",international_offices:true,practice_mix_score:4,practice_areas:"Lobbying, Litigation, M&A, Energy, Finance",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:120,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Government and lobbying work; political intelligence security concern"},
+  {firm_name:"BakerHostetler",amlaw_rank:45,tier_label:"AM Law 1-100",attorney_count:1118,equity_partners:null,revenue_m:1100,revenue_per_lawyer_k:985,ppp_k:null,office_count:14,hq_city:"Columbus",hq_state:"OH",international_offices:false,practice_mix_score:4,practice_areas:"Litigation, IP, Corporate, Tax, Employment",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:120,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Known for cybersecurity incident response practice; direct fit for Frontline"},
+  {firm_name:"Holland & Knight",amlaw_rank:48,tier_label:"AM Law 1-100",attorney_count:1849,equity_partners:null,revenue_m:1849,revenue_per_lawyer_k:1000,ppp_k:null,office_count:34,hq_city:"Tampa",hq_state:"FL",international_offices:false,practice_mix_score:5,practice_areas:"Real Estate, Litigation, Corporate, Government, IP",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:120,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"34 offices; government contracts adds federal data handling requirements"},
+  {firm_name:"Dentons",amlaw_rank:65,tier_label:"AM Law 1-100",attorney_count:5931,equity_partners:null,revenue_m:2750,revenue_per_lawyer_k:464,ppp_k:null,office_count:43,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:5,practice_areas:"Corporate, Litigation, Real Estate, IP, Finance",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:120,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Largest firm by headcount globally; highly heterogeneous IT environment"},
+  {firm_name:"Wilson Sonsini",amlaw_rank:66,tier_label:"AM Law 1-100",attorney_count:1100,equity_partners:null,revenue_m:1000,revenue_per_lawyer_k:909,ppp_k:null,office_count:10,hq_city:"Palo Alto",hq_state:"CA",international_offices:true,practice_mix_score:3,practice_areas:"Venture Capital, M&A, IP, Securities, Technology",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:120,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"VC and startup M&A; IP portfolio and deal data security is priority"},
+  {firm_name:"Cozen O'Connor",amlaw_rank:71,tier_label:"AM Law 1-100",attorney_count:1027,equity_partners:null,revenue_m:708,revenue_per_lawyer_k:690,ppp_k:null,office_count:32,hq_city:"Philadelphia",hq_state:"PA",international_offices:false,practice_mix_score:4,practice_areas:"Litigation, Insurance, Real Estate, Corporate, Labor",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:120,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"32 offices; insurance defense and subrogation; claims data security"},
+  {firm_name:"Mintz Levin",amlaw_rank:73,tier_label:"AM Law 1-100",attorney_count:550,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:7,hq_city:"Boston",hq_state:"MA",international_offices:false,practice_mix_score:4,practice_areas:"Corporate, IP, Healthcare, Litigation, Real Estate",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:120,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Healthcare + IP focus; startup and biotech client data sensitivity"},
+  {firm_name:"Cravath Swaine",amlaw_rank:92,tier_label:"AM Law 1-100",attorney_count:520,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:2,hq_city:"New York",hq_state:"NY",international_offices:true,practice_mix_score:3,practice_areas:"M&A, Capital Markets, Finance, Litigation, IP",ai_opportunity_signal:"planning",cyber_urgency_score:5,overall_score:120,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"White shoe M&A firm; selective client base with extreme confidentiality demands"},
+  {firm_name:"O'Melveny",amlaw_rank:33,tier_label:"AM Law 1-100",attorney_count:800,equity_partners:null,revenue_m:911,revenue_per_lawyer_k:1139,ppp_k:null,office_count:6,hq_city:"Los Angeles",hq_state:"CA",international_offices:true,practice_mix_score:3,practice_areas:"Litigation, M&A, Finance, IP, Employment",ai_opportunity_signal:"none",cyber_urgency_score:4,overall_score:115,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"M&A and finance; strong LA base with distributed offices"},
+  {firm_name:"Katten Muchin",amlaw_rank:46,tier_label:"AM Law 1-100",attorney_count:635,equity_partners:null,revenue_m:862,revenue_per_lawyer_k:1358,ppp_k:null,office_count:10,hq_city:"Chicago",hq_state:"IL",international_offices:false,practice_mix_score:4,practice_areas:"Real Estate, Finance, Litigation, Corporate, IP",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:115,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Real estate finance specialty; 10 offices with distributed deal data"},
+  {firm_name:"Hunton Andrews Kurth",amlaw_rank:49,tier_label:"AM Law 1-100",attorney_count:900,equity_partners:null,revenue_m:900,revenue_per_lawyer_k:1000,ppp_k:null,office_count:19,hq_city:"Richmond",hq_state:"VA",international_offices:false,practice_mix_score:4,practice_areas:"Energy, Finance, Litigation, Corporate, Real Estate",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:115,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Privacy and cybersecurity practice; direct messaging opportunity"},
+  {firm_name:"Fish & Richardson",amlaw_rank:52,tier_label:"AM Law 1-100",attorney_count:500,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:12,hq_city:"Minneapolis",hq_state:"MN",international_offices:false,practice_mix_score:2,practice_areas:"IP, Patent Litigation, Trademarks, Copyrights, Trade Secrets",ai_opportunity_signal:"none",cyber_urgency_score:4,overall_score:115,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Dominant patent litigation firm; trade secret and IP data protection critical"},
+  {firm_name:"Fenwick & West",amlaw_rank:67,tier_label:"AM Law 1-100",attorney_count:700,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:5,hq_city:"Silicon Valley",hq_state:"CA",international_offices:false,practice_mix_score:3,practice_areas:"Technology, IP, Corporate, Venture Capital, Tax",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:115,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Technology and IP-centric; client roster includes major tech companies"},
+  {firm_name:"Womble Bond Dickinson",amlaw_rank:78,tier_label:"AM Law 1-100",attorney_count:1000,equity_partners:null,revenue_m:612,revenue_per_lawyer_k:612,ppp_k:null,office_count:27,hq_city:"Winston-Salem",hq_state:"NC",international_offices:true,practice_mix_score:4,practice_areas:"Litigation, Real Estate, Corporate, IP, Finance",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:115,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"27 offices; IP and real estate; cross-border UK presence adds complexity"},
+  {firm_name:"Frost Brown Todd",amlaw_rank:80,tier_label:"AM Law 1-100",attorney_count:800,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:17,hq_city:"Cincinnati",hq_state:"OH",international_offices:false,practice_mix_score:4,practice_areas:"Litigation, Corporate, Real Estate, Finance, Healthcare",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:115,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"17 offices; healthcare and finance; post-merger IT integration challenges"},
+  {firm_name:"Husch Blackwell",amlaw_rank:81,tier_label:"AM Law 1-100",attorney_count:861,equity_partners:193,revenue_m:612,revenue_per_lawyer_k:711,ppp_k:null,office_count:20,hq_city:"Kansas City",hq_state:"MO",international_offices:false,practice_mix_score:4,practice_areas:"Litigation, Corporate, Real Estate, Healthcare, Energy",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:115,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"20 offices; healthcare and energy; recent lateral hires drive IT onboarding need"},
+  {firm_name:"Barnes & Thornburg",amlaw_rank:85,tier_label:"AM Law 1-100",attorney_count:800,equity_partners:null,revenue_m:747,revenue_per_lawyer_k:934,ppp_k:null,office_count:12,hq_city:"Indianapolis",hq_state:"IN",international_offices:false,practice_mix_score:4,practice_areas:"Litigation, Corporate, Real Estate, IP, Labor",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:115,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"12 offices; IP and real estate; growing healthcare practice"},
+  {firm_name:"Dinsmore & Shohl",amlaw_rank:86,tier_label:"AM Law 1-100",attorney_count:900,equity_partners:null,revenue_m:388,revenue_per_lawyer_k:431,ppp_k:null,office_count:28,hq_city:"Cincinnati",hq_state:"OH",international_offices:false,practice_mix_score:4,practice_areas:"Litigation, Corporate, Real Estate, Finance, Healthcare",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:115,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"28 offices; healthcare and insurance defense; largest Ohio firm by headcount"},
+  {firm_name:"Akerman",amlaw_rank:87,tier_label:"AM Law 1-100",attorney_count:701,equity_partners:null,revenue_m:573,revenue_per_lawyer_k:817,ppp_k:null,office_count:26,hq_city:"Miami",hq_state:"FL",international_offices:false,practice_mix_score:4,practice_areas:"Real Estate, Litigation, Corporate, Finance, Labor",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:115,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"26 offices; Florida and Southeast RE; Latin America cross-border practice"},
+  {firm_name:"Schulte Roth & Zabel",amlaw_rank:90,tier_label:"AM Law 1-100",attorney_count:360,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:3,hq_city:"New York",hq_state:"NY",international_offices:false,practice_mix_score:3,practice_areas:"Private Equity, Finance, Litigation, Tax, Real Estate",ai_opportunity_signal:"partial",cyber_urgency_score:5,overall_score:115,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Hedge fund and PE clients; LP and fund strategy data under constant threat"},
+  {firm_name:"Sheppard Mullin",amlaw_rank:94,tier_label:"AM Law 1-100",attorney_count:1000,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:11,hq_city:"Los Angeles",hq_state:"CA",international_offices:false,practice_mix_score:4,practice_areas:"Corporate, Litigation, Real Estate, IP, Government",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:115,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"11 offices; government and tech clients; growing healthcare practice"},
+  {firm_name:"Nixon Peabody",amlaw_rank:41,tier_label:"AM Law 1-100",attorney_count:709,equity_partners:null,revenue_m:621,revenue_per_lawyer_k:875,ppp_k:null,office_count:16,hq_city:"New York",hq_state:"NY",international_offices:false,practice_mix_score:4,practice_areas:"Real Estate, Corporate, Litigation, Tax, Healthcare",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:110,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"16 offices; affordable housing and healthcare bring PHI and compliance needs"},
+  {firm_name:"Vedder Price",amlaw_rank:47,tier_label:"AM Law 1-100",attorney_count:330,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:6,hq_city:"Chicago",hq_state:"IL",international_offices:false,practice_mix_score:3,practice_areas:"Corporate, Labor/Employment, Finance, Litigation, IP",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:105,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Aviation finance specialty; contract and IP data sensitivity"},
+  {firm_name:"Lowenstein Sandler",amlaw_rank:69,tier_label:"AM Law 1-100",attorney_count:400,equity_partners:null,revenue_m:442,revenue_per_lawyer_k:1105,ppp_k:null,office_count:5,hq_city:"Roseland",hq_state:"NJ",international_offices:false,practice_mix_score:3,practice_areas:"Corporate, Litigation, Tax, Real Estate, IP",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:105,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"NJ-based with tech VC practice; IP and fund data sensitivity"},
+  {firm_name:"Cahill Gordon",amlaw_rank:91,tier_label:"AM Law 1-100",attorney_count:280,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:2,hq_city:"New York",hq_state:"NY",international_offices:false,practice_mix_score:3,practice_areas:"Finance, Litigation, Capital Markets, M&A, Tax",ai_opportunity_signal:"none",cyber_urgency_score:5,overall_score:105,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Leveraged finance leader; syndicated loan data security is core concern"},
+  {firm_name:"Bracewell",amlaw_rank:53,tier_label:"AM Law 1-100",attorney_count:500,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:9,hq_city:"Houston",hq_state:"TX",international_offices:false,practice_mix_score:3,practice_areas:"Energy, Finance, Litigation, Corporate, Environmental",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Energy and environmental compliance; regulatory data and correspondence"},
+  {firm_name:"Crowell & Moring",amlaw_rank:54,tier_label:"AM Law 1-100",attorney_count:600,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:9,hq_city:"Washington",hq_state:"DC",international_offices:true,practice_mix_score:3,practice_areas:"Litigation, Government Contracts, Corporate, IP, Environmental",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Government contracts practice; cleared counsel data handling complexity"},
+  {firm_name:"Seyfarth Shaw",amlaw_rank:55,tier_label:"AM Law 1-100",attorney_count:900,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:18,hq_city:"Chicago",hq_state:"IL",international_offices:false,practice_mix_score:3,practice_areas:"Labor/Employment, Litigation, Real Estate, Corporate, IP",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"18 offices; employment-heavy but RE and litigation add data breadth"},
+  {firm_name:"Stoel Rives",amlaw_rank:58,tier_label:"AM Law 1-100",attorney_count:390,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:11,hq_city:"Portland",hq_state:"OR",international_offices:false,practice_mix_score:3,practice_areas:"Energy, Corporate, Litigation, Real Estate, Natural Resources",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Pacific Northwest energy and natural resources; distributed 11-office footprint"},
+  {firm_name:"Dorsey & Whitney",amlaw_rank:59,tier_label:"AM Law 1-100",attorney_count:600,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:19,hq_city:"Minneapolis",hq_state:"MN",international_offices:true,practice_mix_score:3,practice_areas:"Corporate, Finance, Litigation, IP, Real Estate",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"19 offices; mining and natural resources IP adds data complexity"},
+  {firm_name:"Ballard Spahr",amlaw_rank:60,tier_label:"AM Law 1-100",attorney_count:600,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:15,hq_city:"Philadelphia",hq_state:"PA",international_offices:false,practice_mix_score:3,practice_areas:"Litigation, Finance, Real Estate, Corporate, Media",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Media law and real estate finance; digital content security concern"},
+  {firm_name:"Littler Mendelson",amlaw_rank:62,tier_label:"AM Law 1-100",attorney_count:1146,equity_partners:403,revenue_m:681,revenue_per_lawyer_k:594,ppp_k:575,office_count:60,hq_city:"San Francisco",hq_state:"CA",international_offices:false,practice_mix_score:2,practice_areas:"Labor/Employment, Immigration, Benefits, Litigation",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"60 offices; single-specialty employment but massive distributed footprint"},
+  {firm_name:"Ogletree Deakins",amlaw_rank:63,tier_label:"AM Law 1-100",attorney_count:947,equity_partners:192,revenue_m:651,revenue_per_lawyer_k:688,ppp_k:null,office_count:55,hq_city:"Greenville",hq_state:"SC",international_offices:false,practice_mix_score:2,practice_areas:"Labor/Employment, Litigation, Immigration, Benefits",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"55 offices; employment-only but scale creates major endpoint management need"},
+  {firm_name:"Jackson Lewis",amlaw_rank:64,tier_label:"AM Law 1-100",attorney_count:953,equity_partners:302,revenue_m:624,revenue_per_lawyer_k:655,ppp_k:null,office_count:60,hq_city:"White Plains",hq_state:"NY",international_offices:false,practice_mix_score:2,practice_areas:"Labor/Employment, Litigation, Benefits, Immigration",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"60 offices; single specialty but largest distributed employment firm footprint"},
+  {firm_name:"Saul Ewing",amlaw_rank:70,tier_label:"AM Law 1-100",attorney_count:490,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:18,hq_city:"Philadelphia",hq_state:"PA",international_offices:false,practice_mix_score:3,practice_areas:"Litigation, Corporate, Real Estate, Finance, Healthcare",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"18 offices in mid-Atlantic; healthcare practice adds PHI concern"},
+  {firm_name:"Blank Rome",amlaw_rank:72,tier_label:"AM Law 1-100",attorney_count:700,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:14,hq_city:"Philadelphia",hq_state:"PA",international_offices:false,practice_mix_score:3,practice_areas:"Litigation, Corporate, Finance, Real Estate, Shipping",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Maritime and shipping law adds international data and logistics complexity"},
+  {firm_name:"Steptoe & Johnson",amlaw_rank:74,tier_label:"AM Law 1-100",attorney_count:468,equity_partners:null,revenue_m:530,revenue_per_lawyer_k:1133,ppp_k:null,office_count:9,hq_city:"Washington",hq_state:"DC",international_offices:true,practice_mix_score:3,practice_areas:"Litigation, Corporate, Tax, Regulatory, IP",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Cybersecurity practice group; direct alignment with Frontline services"},
+  {firm_name:"Quarles & Brady",amlaw_rank:79,tier_label:"AM Law 1-100",attorney_count:500,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:13,hq_city:"Milwaukee",hq_state:"WI",international_offices:false,practice_mix_score:3,practice_areas:"Litigation, Corporate, Healthcare, Real Estate, IP",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Healthcare and IP in Midwest; 13 offices with distributed infrastructure"},
+  {firm_name:"Lewis Brisbois",amlaw_rank:82,tier_label:"AM Law 1-100",attorney_count:1552,equity_partners:145,revenue_m:720,revenue_per_lawyer_k:464,ppp_k:null,office_count:55,hq_city:"Los Angeles",hq_state:"CA",international_offices:false,practice_mix_score:3,practice_areas:"Insurance Defense, Litigation, Labor/Employment, Corporate",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"55 offices; insurance defense at scale; distributed endpoint risk is high"},
+  {firm_name:"Taft Stettinius",amlaw_rank:83,tier_label:"AM Law 1-100",attorney_count:782,equity_partners:253,revenue_m:598,revenue_per_lawyer_k:765,ppp_k:null,office_count:9,hq_city:"Cincinnati",hq_state:"OH",international_offices:false,practice_mix_score:3,practice_areas:"Litigation, Corporate, Real Estate, Finance, IP",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Ohio and Midwest full-service; post-merger integration still ongoing"},
+  {firm_name:"Clark Hill",amlaw_rank:84,tier_label:"AM Law 1-100",attorney_count:700,equity_partners:null,revenue_m:397,revenue_per_lawyer_k:567,ppp_k:null,office_count:20,hq_city:"Birmingham",hq_state:"MI",international_offices:false,practice_mix_score:3,practice_areas:"Litigation, Corporate, Real Estate, Finance, Labor",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"20 offices; Michigan and Southeast focus; government relations practice"},
+  {firm_name:"Benesch Friedlander",amlaw_rank:88,tier_label:"AM Law 1-100",attorney_count:511,equity_partners:null,revenue_m:348,revenue_per_lawyer_k:681,ppp_k:null,office_count:6,hq_city:"Cleveland",hq_state:"OH",international_offices:false,practice_mix_score:3,practice_areas:"Corporate, Litigation, Finance, Real Estate, IP",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Ohio-centric corporate and finance; supply chain and logistics clients"},
+  {firm_name:"Shook Hardy & Bacon",amlaw_rank:93,tier_label:"AM Law 1-100",attorney_count:480,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:8,hq_city:"Kansas City",hq_state:"MO",international_offices:false,practice_mix_score:3,practice_areas:"Products Liability, Litigation, Corporate, Food Safety, IP",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"Product liability defense; pharma and consumer goods clients"},
+  {firm_name:"Gordon Rees",amlaw_rank:95,tier_label:"AM Law 1-100",attorney_count:825,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:55,hq_city:"San Francisco",hq_state:"CA",international_offices:false,practice_mix_score:3,practice_areas:"Insurance Defense, Litigation, Corporate, Labor, Real Estate",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:100,priority_tier:"Tier 1",current_frontline_client:false,priority_notes:"55 offices; insurance defense at scale; distributed Tier 1 endpoint exposure"},
+  {firm_name:"Buchanan Ingersoll",amlaw_rank:61,tier_label:"AM Law 1-100",attorney_count:400,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:15,hq_city:"Pittsburgh",hq_state:"PA",international_offices:false,practice_mix_score:3,practice_areas:"Litigation, Corporate, Real Estate, Government, IP",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:95,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"Government and corporate; 15 offices in mid-Atlantic and Southeast"},
+  {firm_name:"Ice Miller",amlaw_rank:77,tier_label:"AM Law 1-100",attorney_count:400,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:7,hq_city:"Indianapolis",hq_state:"IN",international_offices:false,practice_mix_score:3,practice_areas:"Corporate, Litigation, Real Estate, Finance, Healthcare",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:95,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"Midwest full-service; healthcare and public finance specialties"},
+  {firm_name:"Buchalter",amlaw_rank:96,tier_label:"AM Law 1-100",attorney_count:325,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:9,hq_city:"Los Angeles",hq_state:"CA",international_offices:false,practice_mix_score:3,practice_areas:"Corporate, Finance, Litigation, Real Estate, Bankruptcy",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:95,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"California corporate and real estate finance; 9 West Coast offices"},
+  {firm_name:"Lewis Roca",amlaw_rank:97,tier_label:"AM Law 1-100",attorney_count:400,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:9,hq_city:"Phoenix",hq_state:"AZ",international_offices:false,practice_mix_score:3,practice_areas:"Litigation, Corporate, IP, Real Estate, Mining",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:95,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"Western US firm; IP and mining add data complexity; 9-office footprint"},
+  {firm_name:"Fisher & Phillips",amlaw_rank:98,tier_label:"AM Law 1-100",attorney_count:500,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:40,hq_city:"Atlanta",hq_state:"GA",international_offices:false,practice_mix_score:1,practice_areas:"Labor/Employment, Litigation, Benefits, Immigration",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:95,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"40 offices; single-specialty employment but massive scale"},
+  {firm_name:"Jackson Walker",amlaw_rank:100,tier_label:"AM Law 1-100",attorney_count:380,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:7,hq_city:"Dallas",hq_state:"TX",international_offices:false,practice_mix_score:3,practice_areas:"Litigation, Corporate, Real Estate, Energy, Finance",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:95,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"Texas full-service; energy and real estate; recent growth via lateral hires"},
+  {firm_name:"Constangy Brooks",amlaw_rank:99,tier_label:"AM Law 1-100",attorney_count:200,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:15,hq_city:"Atlanta",hq_state:"GA",international_offices:false,practice_mix_score:1,practice_areas:"Labor/Employment, Litigation, Benefits",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:90,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"Employment boutique; 15 offices; limited data sensitivity but scale matters"},
+  {firm_name:"Lathrop GPM",amlaw_rank:110,tier_label:"AM Law 101-200",attorney_count:375,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:12,hq_city:"Kansas City",hq_state:"MO",international_offices:false,practice_mix_score:3,practice_areas:"Corporate, Litigation, Healthcare, Real Estate, IP",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:83,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"12 offices; healthcare and ag law; Midwest distribution footprint"},
+  {firm_name:"Dickinson Wright",amlaw_rank:112,tier_label:"AM Law 101-200",attorney_count:465,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:15,hq_city:"Detroit",hq_state:"MI",international_offices:false,practice_mix_score:3,practice_areas:"Corporate, Litigation, IP, Real Estate, Finance",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:83,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"15 offices; Michigan and Southeast; IP and automotive sector clients"},
+  {firm_name:"Dykema Gossett",amlaw_rank:115,tier_label:"AM Law 101-200",attorney_count:470,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:12,hq_city:"Detroit",hq_state:"MI",international_offices:false,practice_mix_score:3,practice_areas:"Corporate, Litigation, Real Estate, Finance, Labor",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:80,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"12 offices; Michigan-centric with Chicago and Dallas presence"},
+  {firm_name:"Miller Canfield",amlaw_rank:118,tier_label:"AM Law 101-200",attorney_count:290,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:8,hq_city:"Detroit",hq_state:"MI",international_offices:false,practice_mix_score:3,practice_areas:"Corporate, Finance, Litigation, Real Estate, Healthcare",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:78,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"Michigan full-service; public finance and healthcare specialties"},
+  {firm_name:"Robinson & Cole",amlaw_rank:122,tier_label:"AM Law 101-200",attorney_count:240,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:9,hq_city:"Hartford",hq_state:"CT",international_offices:false,practice_mix_score:3,practice_areas:"Litigation, Corporate, Real Estate, Finance, Healthcare",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:78,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"9 offices; healthcare and real estate in New England"},
+  {firm_name:"Spencer Fane",amlaw_rank:125,tier_label:"AM Law 101-200",attorney_count:260,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:12,hq_city:"Kansas City",hq_state:"MO",international_offices:false,practice_mix_score:3,practice_areas:"Corporate, Litigation, Healthcare, Real Estate, Labor",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:78,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"12 offices; healthcare specialty growing post-COVID"},
+  {firm_name:"Cozen O'Connor Insurance",amlaw_rank:202,tier_label:"AM Law 201-500",attorney_count:1027,equity_partners:null,revenue_m:708,revenue_per_lawyer_k:690,ppp_k:null,office_count:32,hq_city:"Philadelphia",hq_state:"PA",international_offices:false,practice_mix_score:4,practice_areas:"Litigation, Insurance, Real Estate, Corporate, Labor",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:75,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"32 offices; same as parent entity; insurance defense spinoff consideration"},
+  {firm_name:"Foley Hoag",amlaw_rank:120,tier_label:"AM Law 101-200",attorney_count:280,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:4,hq_city:"Boston",hq_state:"MA",international_offices:false,practice_mix_score:3,practice_areas:"Litigation, Corporate, IP, Government, International",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:73,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"Boston-based; international arbitration and government practice"},
+  {firm_name:"Warner Norcross",amlaw_rank:128,tier_label:"AM Law 101-200",attorney_count:225,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:6,hq_city:"Grand Rapids",hq_state:"MI",international_offices:false,practice_mix_score:3,practice_areas:"Corporate, Healthcare, Litigation, Real Estate, Finance",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:73,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"West Michigan focus; healthcare and manufacturing sectors"},
+  {firm_name:"Shook Hardy",amlaw_rank:170,tier_label:"AM Law 101-200",attorney_count:480,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:8,hq_city:"Kansas City",hq_state:"MO",international_offices:false,practice_mix_score:3,practice_areas:"Products Liability, Litigation, Corporate, Food Safety, IP",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:73,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"Product liability at scale; pharma and food and beverage clients"},
+  {firm_name:"Venable",amlaw_rank:248,tier_label:"AM Law 201-500",attorney_count:900,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:18,hq_city:"Baltimore",hq_state:"MD",international_offices:false,practice_mix_score:4,practice_areas:"Corporate, Litigation, Regulatory, IP, Real Estate",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:73,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"18 offices; government and regulatory; advertising and IP specialty"},
+  {firm_name:"Fox Rothschild",amlaw_rank:255,tier_label:"AM Law 201-500",attorney_count:1000,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:27,hq_city:"Philadelphia",hq_state:"PA",international_offices:false,practice_mix_score:4,practice_areas:"Litigation, Corporate, Real Estate, Labor, Healthcare",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:73,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"27 offices; healthcare and RE; recent rapid growth via mergers"},
+  {firm_name:"Duane Morris",amlaw_rank:260,tier_label:"AM Law 201-500",attorney_count:800,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:30,hq_city:"Philadelphia",hq_state:"PA",international_offices:true,practice_mix_score:4,practice_areas:"Litigation, Corporate, Finance, IP, Real Estate",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:73,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"30 offices; international presence; IP and finance practice mix"},
+  {firm_name:"Nossaman",amlaw_rank:130,tier_label:"AM Law 101-200",attorney_count:125,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:5,hq_city:"Los Angeles",hq_state:"CA",international_offices:false,practice_mix_score:2,practice_areas:"Infrastructure, Litigation, Corporate, Real Estate, Environmental",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:68,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"Infrastructure and water law; government agency clients"},
+  {firm_name:"Goulston & Storrs",amlaw_rank:132,tier_label:"AM Law 101-200",attorney_count:190,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:3,hq_city:"Boston",hq_state:"MA",international_offices:false,practice_mix_score:2,practice_areas:"Real Estate, Corporate, Finance, Litigation, Private Client",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:68,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"Real estate finance boutique; private client and trust data sensitivity"},
+  {firm_name:"Burns & Levinson",amlaw_rank:135,tier_label:"AM Law 101-200",attorney_count:110,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:2,hq_city:"Boston",hq_state:"MA",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Healthcare, Real Estate, IP",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:68,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"Boston boutique; healthcare and IP clients in growth stage"},
+  {firm_name:"Sills Cummis",amlaw_rank:165,tier_label:"AM Law 101-200",attorney_count:175,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:3,hq_city:"Newark",hq_state:"NJ",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Real Estate, Finance, Healthcare",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:68,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"NJ-centric; healthcare and real estate finance; 3 offices"},
+  {firm_name:"Davis Wright Tremaine",amlaw_rank:290,tier_label:"AM Law 201-500",attorney_count:700,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:11,hq_city:"Seattle",hq_state:"WA",international_offices:false,practice_mix_score:3,practice_areas:"Media, Litigation, Corporate, IP, Technology",ai_opportunity_signal:"partial",cyber_urgency_score:4,overall_score:68,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"11 offices; media and tech clients; data privacy specialty"},
+  {firm_name:"Gray Plant Mooty",amlaw_rank:138,tier_label:"AM Law 101-200",attorney_count:180,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:4,hq_city:"Minneapolis",hq_state:"MN",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Healthcare, Franchise, Real Estate",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:65,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"Franchise law specialty; healthcare and corporate in Twin Cities"},
+  {firm_name:"Goldberg Segalla",amlaw_rank:150,tier_label:"AM Law 101-200",attorney_count:350,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:12,hq_city:"Buffalo",hq_state:"NY",international_offices:false,practice_mix_score:2,practice_areas:"Insurance Defense, Litigation, Corporate, Labor, Real Estate",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:65,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"12 offices; insurance defense boutique; distributed claims data"},
+  {firm_name:"Nexsen Pruet",amlaw_rank:148,tier_label:"AM Law 101-200",attorney_count:155,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:9,hq_city:"Columbia",hq_state:"SC",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Healthcare, Real Estate, Labor",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:63,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"Southeast full-service; 9 offices across Carolinas and Georgia"},
+  {firm_name:"Roetzel & Andress",amlaw_rank:158,tier_label:"AM Law 101-200",attorney_count:200,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:11,hq_city:"Akron",hq_state:"OH",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Real Estate, Finance, Healthcare",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:63,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"11 offices; Ohio-centric healthcare and real estate"},
+  {firm_name:"GrayRobinson",amlaw_rank:162,tier_label:"AM Law 101-200",attorney_count:300,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:14,hq_city:"Orlando",hq_state:"FL",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Government, Real Estate, Labor",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:63,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"14 offices; Florida government relations and real estate"},
+  {firm_name:"Butler Snow",amlaw_rank:225,tier_label:"AM Law 201-500",attorney_count:380,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:18,hq_city:"Ridgeland",hq_state:"MS",international_offices:false,practice_mix_score:3,practice_areas:"Litigation, Corporate, Healthcare, Real Estate, Finance",ai_opportunity_signal:"partial",cyber_urgency_score:3,overall_score:63,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"18 offices; healthcare-heavy Southeast firm; managed services fit"},
+  {firm_name:"Kutak Rock",amlaw_rank:250,tier_label:"AM Law 201-500",attorney_count:500,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:18,hq_city:"Omaha",hq_state:"NE",international_offices:false,practice_mix_score:3,practice_areas:"Corporate, Finance, Litigation, Real Estate, Healthcare",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:63,priority_tier:"Tier 2",current_frontline_client:false,priority_notes:"18 offices; public finance and healthcare; distributed Midwest footprint"},
+  {firm_name:"Kelley Kronenberg",amlaw_rank:155,tier_label:"AM Law 101-200",attorney_count:200,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:8,hq_city:"Fort Lauderdale",hq_state:"FL",international_offices:false,practice_mix_score:2,practice_areas:"Insurance Defense, Litigation, Corporate, Labor, Real Estate",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:60,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Florida insurance defense; 8 offices; distributed endpoint challenge"},
+  {firm_name:"Gunster",amlaw_rank:160,tier_label:"AM Law 101-200",attorney_count:175,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:13,hq_city:"West Palm Beach",hq_state:"FL",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Real Estate, Finance, Tax",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:60,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Florida wealth and real estate firm; 13 offices; private client data"},
+  {firm_name:"Stites & Harbison",amlaw_rank:175,tier_label:"AM Law 101-200",attorney_count:200,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:6,hq_city:"Louisville",hq_state:"KY",international_offices:false,practice_mix_score:2,practice_areas:"Litigation, Corporate, Real Estate, Healthcare, Finance",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:60,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Kentucky-centric; healthcare and real estate; 6 offices"},
+  {firm_name:"Shumaker Loop",amlaw_rank:188,tier_label:"AM Law 101-200",attorney_count:230,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:7,hq_city:"Toledo",hq_state:"OH",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Real Estate, Finance, Labor",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:60,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Ohio mid-market; real estate and manufacturing clients; 7 offices"},
+  {firm_name:"Burr & Forman",amlaw_rank:235,tier_label:"AM Law 201-500",attorney_count:325,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:19,hq_city:"Birmingham",hq_state:"AL",international_offices:false,practice_mix_score:3,practice_areas:"Litigation, Corporate, Healthcare, Real Estate, Finance",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:58,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"19 offices; Southeast growth firm; healthcare and financial services"},
+  {firm_name:"Waller Lansden",amlaw_rank:230,tier_label:"AM Law 201-500",attorney_count:220,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:6,hq_city:"Nashville",hq_state:"TN",international_offices:false,practice_mix_score:2,practice_areas:"Healthcare, Corporate, Litigation, Finance, Real Estate",ai_opportunity_signal:"none",cyber_urgency_score:4,overall_score:57,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Nashville healthcare law boutique; PHI and HIPAA compliance is core"},
+  {firm_name:"Wilson Elser",amlaw_rank:300,tier_label:"AM Law 201-500",attorney_count:1000,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:42,hq_city:"New York",hq_state:"NY",international_offices:false,practice_mix_score:3,practice_areas:"Insurance Defense, Litigation, Corporate, Labor, Healthcare",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:57,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"42 offices; insurance defense giant; distributed claims infrastructure"},
+  {firm_name:"Larkin Hoffman",amlaw_rank:140,tier_label:"AM Law 101-200",attorney_count:90,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:1,hq_city:"Minneapolis",hq_state:"MN",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Real Estate, Litigation, Healthcare, IP",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:55,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Single office; real estate and healthcare boutique in Minneapolis"},
+  {firm_name:"Harter Secrest",amlaw_rank:142,tier_label:"AM Law 101-200",attorney_count:130,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:5,hq_city:"Rochester",hq_state:"NY",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Healthcare, Real Estate, Labor",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:55,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Upstate NY full-service; healthcare and manufacturing clients"},
+  {firm_name:"Bernstein Shur",amlaw_rank:145,tier_label:"AM Law 101-200",attorney_count:110,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:4,hq_city:"Portland",hq_state:"ME",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Real Estate, Energy, Cannabis",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:55,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Maine-centric; energy and cannabis law emerging practice areas"},
+  {firm_name:"Wyatt Tarrant",amlaw_rank:180,tier_label:"AM Law 101-200",attorney_count:140,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:5,hq_city:"Louisville",hq_state:"KY",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Real Estate, Labor, Healthcare",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:55,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Kentucky full-service boutique; labor and healthcare specialty"},
+  {firm_name:"McNees Wallace",amlaw_rank:190,tier_label:"AM Law 101-200",attorney_count:175,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:4,hq_city:"Harrisburg",hq_state:"PA",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Real Estate, Government, Labor",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:55,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Pennsylvania government and regulatory practice; 4 offices"},
+  {firm_name:"Knobbe Martens",amlaw_rank:245,tier_label:"AM Law 201-500",attorney_count:290,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:5,hq_city:"Irvine",hq_state:"CA",international_offices:false,practice_mix_score:2,practice_areas:"IP, Patent Litigation, Trademarks, Biotech, Technology",ai_opportunity_signal:"none",cyber_urgency_score:4,overall_score:52,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Largest West Coast IP boutique; trade secrets and biotech patent data"},
+  {firm_name:"Gibbons",amlaw_rank:275,tier_label:"AM Law 201-500",attorney_count:200,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:5,hq_city:"Newark",hq_state:"NJ",international_offices:false,practice_mix_score:2,practice_areas:"Litigation, Corporate, Real Estate, Finance, Government",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:52,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"NJ-based; government investigation and real estate"},
+  {firm_name:"Kohrman Jackson",amlaw_rank:185,tier_label:"AM Law 101-200",attorney_count:85,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:2,hq_city:"Cleveland",hq_state:"OH",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Healthcare, Real Estate, IP",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:50,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Cleveland boutique; healthcare and tech startup clients"},
+  {firm_name:"Greenspoon Marder",amlaw_rank:205,tier_label:"AM Law 201-500",attorney_count:300,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:25,hq_city:"Fort Lauderdale",hq_state:"FL",international_offices:false,practice_mix_score:2,practice_areas:"Real Estate, Corporate, Litigation, Cannabis, Labor",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:47,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"25 offices; cannabis law and RE; distributed but lower IT complexity"},
+  {firm_name:"Dunlap Bennett & Ludwig",amlaw_rank:210,tier_label:"AM Law 201-500",attorney_count:100,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:5,hq_city:"Leesburg",hq_state:"VA",international_offices:false,practice_mix_score:2,practice_areas:"IP, Corporate, Litigation, Real Estate, Labor",ai_opportunity_signal:"none",cyber_urgency_score:3,overall_score:47,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Virginia boutique; IP and patent focus; startup and defense contractor clients"},
+  {firm_name:"Maynard Nexsen",amlaw_rank:220,tier_label:"AM Law 201-500",attorney_count:210,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:9,hq_city:"Birmingham",hq_state:"AL",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Healthcare, Real Estate, Finance",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:47,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Southeast full-service; 9 offices; healthcare and energy practice"},
+  {firm_name:"Fennemore Craig",amlaw_rank:240,tier_label:"AM Law 201-500",attorney_count:220,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:8,hq_city:"Phoenix",hq_state:"AZ",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Real Estate, Mining, Healthcare",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:47,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Arizona full-service; mining and real estate; 8 offices in Southwest"},
+  {firm_name:"Allen Matkins",amlaw_rank:295,tier_label:"AM Law 201-500",attorney_count:200,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:6,hq_city:"Los Angeles",hq_state:"CA",international_offices:false,practice_mix_score:2,practice_areas:"Real Estate, Corporate, Finance, Litigation, Construction",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:47,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"California RE boutique; construction and development clients"},
+  {firm_name:"Smith Anderson",amlaw_rank:215,tier_label:"AM Law 201-500",attorney_count:130,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:2,hq_city:"Raleigh",hq_state:"NC",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Healthcare, Real Estate, Finance",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:42,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Research Triangle market; life sciences and healthcare clients"},
+  {firm_name:"Jaffe Raitt",amlaw_rank:238,tier_label:"AM Law 201-500",attorney_count:100,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:2,hq_city:"Southfield",hq_state:"MI",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Litigation, Real Estate, Healthcare, Finance",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:42,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Michigan boutique; healthcare and corporate; Detroit metro market"},
+  {firm_name:"Laner Muchin",amlaw_rank:258,tier_label:"AM Law 201-500",attorney_count:85,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:2,hq_city:"Chicago",hq_state:"IL",international_offices:false,practice_mix_score:1,practice_areas:"Labor/Employment, Litigation, Benefits",ai_opportunity_signal:"none",cyber_urgency_score:1,overall_score:42,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Chicago employment boutique; limited data complexity"},
+  {firm_name:"Levenfeld Pearlstein",amlaw_rank:280,tier_label:"AM Law 201-500",attorney_count:120,equity_partners:null,revenue_m:null,revenue_per_lawyer_k:null,ppp_k:null,office_count:1,hq_city:"Chicago",hq_state:"IL",international_offices:false,practice_mix_score:2,practice_areas:"Corporate, Real Estate, Litigation, Healthcare, Tax",ai_opportunity_signal:"none",cyber_urgency_score:2,overall_score:42,priority_tier:"Tier 3",current_frontline_client:false,priority_notes:"Chicago boutique; private equity and real estate clients"}
+];
+
+// State
+let tierFilter = 'all';
+let alFilter = 'all';
+let aiFilter = 'all';
+let cyFilter = 'all';
+let sortKey = 'overall_score';
+let sortDir = -1;
+
+function setTierFilter(v, btn) {
+  tierFilter = v;
+  document.querySelectorAll('[id^="chip-t"]').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+function setAlFilter(v, btn) {
+  alFilter = v;
+  document.querySelectorAll('[id^="chip-al"]').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+function setAiFilter(v, btn) {
+  aiFilter = v;
+  document.querySelectorAll('[id^="chip-ai"]').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+function setCyFilter(v, btn) {
+  cyFilter = v;
+  document.querySelectorAll('[id^="chip-cy"]').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function sortBy(key) {
+  if (sortKey === key) sortDir = -sortDir;
+  else { sortKey = key; sortDir = -1; }
+  document.querySelectorAll('th').forEach(th => th.classList.remove('sort-asc','sort-desc'));
+  const thEl = document.getElementById('th-' + {
+    overall_score:'score', priority_tier:'tier', firm_name:'name', amlaw_rank:'rank',
+    attorney_count:'atty', revenue_m:'rev', office_count:'offices', hq_city:'hq',
+    cyber_urgency_score:'cyber', ai_opportunity_signal:'ai', practice_mix_score:'pms'
+  }[key]);
+  if (thEl) thEl.classList.add(sortDir === -1 ? 'sort-desc' : 'sort-asc');
+  renderTable();
+}
+
+function getFiltered() {
+  const q = document.getElementById('search-box').value.toLowerCase().trim();
+  return FIRMS.filter(f => {
+    if (tierFilter !== 'all' && f.priority_tier !== tierFilter) return false;
+    if (alFilter !== 'all' && f.tier_label !== alFilter) return false;
+    if (aiFilter !== 'all' && f.ai_opportunity_signal !== aiFilter) return false;
+    if (cyFilter === 'high' && f.cyber_urgency_score < 4) return false;
+    if (cyFilter === 'medium' && f.cyber_urgency_score !== 3) return false;
+    if (cyFilter === 'low' && f.cyber_urgency_score > 2) return false;
+    if (q && !f.firm_name.toLowerCase().includes(q) && !f.hq_city.toLowerCase().includes(q) && !f.hq_state.toLowerCase().includes(q)) return false;
+    return true;
+  }).sort((a, b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    if (av === null || av === undefined) av = sortDir === -1 ? -Infinity : Infinity;
+    if (bv === null || bv === undefined) bv = sortDir === -1 ? -Infinity : Infinity;
+    if (typeof av === 'string') return sortDir * av.localeCompare(bv);
+    return sortDir * (av - bv);
+  });
+}
+
+function cyberClass(s) {
+  if (s >= 4) return 'high';
+  if (s === 3) return 'med';
+  return 'low';
+}
+function cyberLabel(s) {
+  if (s >= 4) return 'High';
+  if (s === 3) return 'Medium';
+  return 'Low';
+}
+function alClass(t) {
+  if (t === 'AM Law 1-100') return 'al100';
+  if (t === 'AM Law 101-200') return 'al200';
+  return 'al500';
+}
+function tierClass(t) {
+  if (t === 'Tier 1') return 't1';
+  if (t === 'Tier 2') return 't2';
+  return 't3';
+}
+function tierLabel(t) {
+  if (t === 'Tier 1') return 'T1 Immediate';
+  if (t === 'Tier 2') return 'T2 Pipeline';
+  return 'T3 Mid-Market';
+}
+function aiClass(s) { return s; }
+function aiLabel(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+function fmt(v, suffix='') { return v !== null && v !== undefined ? v.toLocaleString() + suffix : '-'; }
+
+function renderTable() {
+  const rows = getFiltered();
+  const tbody = document.getElementById('table-body');
+  const empty = document.getElementById('empty-state');
+  document.getElementById('result-count').textContent = rows.length + ' firm' + (rows.length !== 1 ? 's' : '');
+
+  if (!rows.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    tbody.innerHTML = rows.map(f => `
+      <tr>
+        <td class="score-cell">${f.overall_score}</td>
+        <td><span class="tier-badge ${tierClass(f.priority_tier)}">${tierLabel(f.priority_tier)}</span></td>
+        <td>
+          <div class="firm-name">${f.firm_name}</div>
+        </td>
+        <td>
+          <span class="amlaw-badge ${alClass(f.tier_label)}">#${f.amlaw_rank}</span>
+        </td>
+        <td class="atty-cell">${fmt(f.attorney_count)}</td>
+        <td class="rev-cell">${f.revenue_m ? '$' + f.revenue_m.toLocaleString() : '-'}</td>
+        <td class="offices-cell">${fmt(f.office_count)}${f.international_offices ? ' <span class="intl-badge">+INTL</span>' : ''}</td>
+        <td class="hq-cell">${f.hq_city}, ${f.hq_state}</td>
+        <td>
+          <div class="cyber-badge">
+            <div class="cyber-dot cyber-${f.cyber_urgency_score}"></div>
+            <span class="cyber-label ${cyberClass(f.cyber_urgency_score)}">${cyberLabel(f.cyber_urgency_score)} (${f.cyber_urgency_score})</span>
+          </div>
+        </td>
+        <td><span class="signal-badge ${aiClass(f.ai_opportunity_signal)}">${aiLabel(f.ai_opportunity_signal)}</span></td>
+        <td>
+          <div class="pms-bar-wrap">
+            <div class="pms-bar" style="width:${f.practice_mix_score * 14}px"></div>
+            <span class="pms-num">${f.practice_mix_score}/5</span>
+          </div>
+        </td>
+        <td class="notes-cell">${f.priority_notes}</td>
+      </tr>
+    `).join('');
+  }
+
+  // Update header stats
+  const all = FIRMS;
+  document.getElementById('stat-total').textContent = all.length;
+  document.getElementById('stat-t1').textContent = all.filter(f => f.priority_tier === 'Tier 1').length;
+  document.getElementById('stat-t2').textContent = all.filter(f => f.priority_tier === 'Tier 2').length;
+  document.getElementById('stat-t3').textContent = all.filter(f => f.priority_tier === 'Tier 3').length;
+  document.getElementById('stat-al200').textContent = all.filter(f => f.amlaw_rank <= 200).length;
+}
+
+function exportCSV() {
+  const rows = getFiltered();
+  const cols = ['firm_name','amlaw_rank','tier_label','attorney_count','revenue_m','office_count','hq_city','hq_state','international_offices','practice_mix_score','practice_areas','ai_opportunity_signal','cyber_urgency_score','overall_score','priority_tier','current_frontline_client','priority_notes'];
+  const header = cols.join(',');
+  const lines = rows.map(r => cols.map(c => {
+    let v = r[c];
+    if (v === null || v === undefined) v = '';
+    if (typeof v === 'string' && (v.includes(',') || v.includes('"'))) v = '"' + v.replace(/"/g,'""') + '"';
+    return v;
+  }).join(','));
+  const csv = [header, ...lines].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'frontline_law_firm_targets_filtered.csv';
+  a.click();
+}
+
+// Initialize
+renderTable();
+sortBy('overall_score');
+</script>
+</body>
+</html>
