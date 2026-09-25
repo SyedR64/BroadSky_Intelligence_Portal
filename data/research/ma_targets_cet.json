@@ -1,0 +1,2804 @@
+{
+  "meta": {
+    "dataset": "CET add-on acquisition target screen (New England electrical, solar, controls, utility, generator, W/WW I&C)",
+    "generated": "2026-09-24",
+    "platform": {
+      "name": "Commonwealth Electrical Technologies (CET)",
+      "sponsor": "Broad Sky Partners",
+      "nodes": [
+        "Worcester MA (HQ)",
+        "Taunton MA",
+        "Norwell MA (NuWave Energy Solutions, Oct 2025)",
+        "Connecticut (Horton Electrical Services, Sept 15 2026)"
+      ],
+      "constraint": "No NYC expansion; New England footprint only"
+    },
+    "method": "Pulled the target universe from ZoomInfo search_companies for private companies with 25-400 employees headquartered in the six New England states. Keyword passes covered electrical contractors, solar, SCADA, substation, generator and building automation. We checked each candidate's ownership, founding year and capabilities against its own website and public sources (press releases, BBB/Blue Book, PrivSource, sponsor sites). Companies owned by PE firms or strategic buyers were moved to meta.pe_backed_competitors. Each target is scored 0-100: capability 30, geography 30 (distance to the nearest CET node, with credit for CT sites near Horton), scale 20, ownership readiness 20.",
+    "zoominfo_query_parameters": [
+      {
+        "tool": "lookup",
+        "fields": [
+          "industries (fuzzy: construction, electric)",
+          "states"
+        ]
+      },
+      {
+        "tool": "search_companies",
+        "state": "usa.connecticut,usa.massachusetts,usa.rhodeisland,usa.newhampshire,usa.maine,usa.vermont",
+        "employeeRangeMinimum": 25,
+        "employeeRangeMaximum": 400,
+        "companyTypeList": [
+          "private"
+        ],
+        "locationSearchType": "HQ",
+        "industryList": [
+          "construction",
+          "construction.construction"
+        ],
+        "companyDescription": "electrical contractor",
+        "pageSize": 100,
+        "userIntent": "M&A add-on target screening for a PE-backed electrical contractor platform",
+        "totalResults": 105
+      },
+      {
+        "tool": "search_companies",
+        "same_geo_size_type": true,
+        "companyDescription": "solar",
+        "totalResults": 189
+      },
+      {
+        "tool": "search_companies",
+        "same_geo_size_type": true,
+        "companyDescription": "SCADA",
+        "totalResults": 8
+      },
+      {
+        "tool": "search_companies",
+        "same_geo_size_type": true,
+        "companyDescription": "substation",
+        "totalResults": 10
+      },
+      {
+        "tool": "search_companies",
+        "same_geo_size_type": true,
+        "companyDescription": "generator sales service standby power systems",
+        "totalResults": 1
+      },
+      {
+        "tool": "search_companies",
+        "same_geo_size_type": true,
+        "companyDescription": "building automation",
+        "totalResults": 100
+      },
+      {
+        "tool": "enrich_companies",
+        "result": "Failed - subscription enrichment limit exceeded; revenue/employee figures come from search_companies results"
+      }
+    ],
+    "sources_summary": [
+      "ZoomInfo (search_companies)",
+      "Company websites (fetched 2026-09-24)",
+      "BusinessWire / company press releases",
+      "PrivSource M&A database",
+      "Pfingsten, Mason Wells, Ridgemont, MYR Group, Stark Tech, BaseRock sponsor/advisor pages",
+      "Better Business Bureau, The Blue Book ProView, Procore network profiles",
+      "Hartford Business Journal, Mainebiz, Providence Business News, Canton Citizen",
+      "Boston NECA directory, IBEW Local 103 contractor directory"
+    ],
+    "caveats": [
+      "Revenue is ZoomInfo's modeled estimate, not reported financials. Several figures look inconsistent with headcount (JM Electrical, Dinto, Rossi, Aldon) and need diligence.",
+      "ZoomInfo enrich_companies was blocked by a subscription limit. Founded year, ownership and HQ details come from websites and public sources and are null where they could not be verified.",
+      "Ownership is 'unknown' when no public source confirms founder, family or ESOP status. A quiet sale to a sponsor or strategic buyer cannot be ruled out without outreach.",
+      "Lat/lon are approximate city centroids (geo_precision 'city'). Distances are straight-line miles to Worcester, Taunton or Norwell. Horton's CT town was not geocoded, so CT sites get a qualitative geography credit.",
+      "The web-search quota ran out mid-screen. Later candidates were checked against their company websites only.",
+      "Sub-$8M revenue firms (Lighthouse, Universal, Racette, Cole, Cummings) are included as capability tuck-ins and flagged.",
+      "Smith + Howard has been exited (sold to TPG Growth) and is excluded. No targets are built for it.",
+      "Verified 2026-09-24: sampled 23, confirmed 20, removed 1 (cet-t22 SEMAC: BBB lists it as believed out of business, website unreachable, incorporated 1969 not 1946). Corrected cet-t02 (website/sources to https), cet-t16 (founded 1954; ownership downgraded to unknown - unsupported family reacquisition claim), cet-t25 (sale closed Dec 2021), cet-t38 (specialties per website)."
+    ],
+    "item_count": 48,
+    "ranked_top_10": [
+      {
+        "rank": 1,
+        "id": "cet-t01",
+        "company": "McDonald Electrical Corporation",
+        "state": "MA",
+        "fit_score": 83
+      },
+      {
+        "rank": 2,
+        "id": "cet-t02",
+        "company": "K.M. Kelly, Inc.",
+        "state": "MA",
+        "fit_score": 83
+      },
+      {
+        "rank": 3,
+        "id": "cet-t03",
+        "company": "Energy Electric",
+        "state": "MA",
+        "fit_score": 81
+      },
+      {
+        "rank": 4,
+        "id": "cet-t04",
+        "company": "Coghlin Electrical Contractors, Inc.",
+        "state": "MA",
+        "fit_score": 79
+      },
+      {
+        "rank": 5,
+        "id": "cet-t05",
+        "company": "FM Generator, Inc.",
+        "state": "MA",
+        "fit_score": 78
+      },
+      {
+        "rank": 6,
+        "id": "cet-t06",
+        "company": "Murphy Electric & Industrial Control",
+        "state": "MA",
+        "fit_score": 78
+      },
+      {
+        "rank": 7,
+        "id": "cet-t07",
+        "company": "Elm Electrical, Inc.",
+        "state": "MA",
+        "fit_score": 77
+      },
+      {
+        "rank": 8,
+        "id": "cet-t08",
+        "company": "CTEC Solar (C-TEC Solar, LLC)",
+        "state": "CT",
+        "fit_score": 75
+      },
+      {
+        "rank": 9,
+        "id": "cet-t09",
+        "company": "Averill Electric Co., Inc.",
+        "state": "MA",
+        "fit_score": 72
+      },
+      {
+        "rank": 10,
+        "id": "cet-t10",
+        "company": "Suburban Electric Contracting, Inc.",
+        "state": "MA",
+        "fit_score": 71
+      }
+    ],
+    "pe_backed_competitors": [
+      {
+        "company": "Professional Electrical Contractors of Connecticut (PEC)",
+        "hq": "Connecticut (ZoomInfo lists Canton)",
+        "owner": "Alaris Equity Partners (structured/minority equity)",
+        "year": 2025,
+        "note": "Investment Feb 28 2025; press reports cite $61.1M ($37M debt/preferred + $24.1M minority common)",
+        "sources": [
+          "https://baserockpartners.com/baserock-partners-advises-professional-electrical-contractors-of-connecticut-on-its-investment-from-alaris-equity-partners/",
+          "https://hartfordbusiness.com/article/electrical-contracting-company-gets-private-equity-investment/"
+        ]
+      },
+      {
+        "company": "New England Electrical Contracting (NEC Group)",
+        "hq": "Kingston, MA",
+        "owner": "Pfingsten Partners",
+        "year": 2021,
+        "note": "Platform closed Oct 6 2021; add-ons Atlas Innovative Services (Pembroke MA), Eastern Communications (Bloomfield CT, Oct 2022), Modern Link Communications/Molicom (Plaistow NH)",
+        "sources": [
+          "https://pfingsten.com/pfingsten-invests-in-new-england-electrical/",
+          "https://pfingsten.com/pfingsten-completes-third-acquisition-for-telecom-services-platform/",
+          "https://pfingsten.com/new-england-electrical-expands-telecom-services-platform-with-molicom-partnership/"
+        ]
+      },
+      {
+        "company": "Reilly Electrical Contractors (RELCO)",
+        "hq": "South Easton, MA",
+        "owner": "Crete Mechanical Group / Crete United (Ridgemont Equity Partners)",
+        "year": 2022,
+        "note": "Closed Sept 1 2022; ~10 miles from CET Taunton - direct competitor",
+        "sources": [
+          "https://generational.com/transactions/reilly-electrical-contractors-acquired-by-crete-mechanical-group?na-key=58w5pkb32zj0",
+          "https://www.ridgemontep.com/press-releases/ridgemont-equity-partners-provides-growth-capital-to-crete-mechanical-group/"
+        ]
+      },
+      {
+        "company": "3C Electrical Company",
+        "hq": "Westborough, MA",
+        "owner": "CE Power (Mason Wells)",
+        "year": 2016,
+        "note": "Power-systems testing/commissioning; merged into CE Power June 1 2016; ~12 miles from CET Worcester",
+        "sources": [
+          "https://www.masonwells.com/ce-power-completes-add-on-of-3c-electrical-company-inc/",
+          "https://peprofessional.com/2016/06/mason-wells-acquires-3c-electrical/"
+        ]
+      },
+      {
+        "company": "E.S. Boulos Company",
+        "hq": "Westbrook, ME",
+        "owner": "MYR Group (public, strategic)",
+        "year": 2015,
+        "note": "Acquired from Eversource subsidiary Apr 13 2015 (~$11.4M)",
+        "sources": [
+          "https://investor.myrgroup.com/news-releases/news-release-details/myr-group-inc-acquires-new-england-electrical-contractor-es",
+          "https://mainebiz.biz/article/illinois-company-acquires-westbrook-contractor/"
+        ]
+      },
+      {
+        "company": "Gaston Electrical Co.",
+        "hq": "Norwood, MA",
+        "owner": "EMCOR Group (public, strategic)",
+        "year": 2022,
+        "note": "Aug 9 2022; ~$140M revenue",
+        "sources": [
+          "https://www.privsource.com/acquisitions/construction/state/massachusetts"
+        ]
+      },
+      {
+        "company": "State Electric Corporation",
+        "hq": "Bedford, MA",
+        "owner": "E-J Group / E-J Electric Installation Co. (strategic, family-owned)",
+        "year": 2024,
+        "note": "Nov 22 2024",
+        "sources": [
+          "https://www.capstonepartners.com/transactions/capstone-partners-advised-state-electric-corporation-on-its-sale-to-e-j-group/",
+          "https://www.privsource.com/acquisitions/construction/state/massachusetts"
+        ]
+      },
+      {
+        "company": "E-J Electric T&D",
+        "hq": "Wallingford, CT",
+        "owner": "E-J Group (strategic)",
+        "year": null,
+        "note": "Utility T&D arm of E-J; appears in ZoomInfo NE screen (178 employees)",
+        "sources": [
+          "https://www.capstonepartners.com/transactions/capstone-partners-advised-state-electric-corporation-on-its-sale-to-e-j-group/"
+        ]
+      },
+      {
+        "company": "ENE Systems (incl. ENE Systems of NH, SNE Building Systems CT, ENE Security)",
+        "hq": "Canton, MA",
+        "owner": "Stark Tech (sponsor not verified)",
+        "year": 2025,
+        "note": "Announced ~Jul 23 2025 (LinkedIn post date); largest independent HVAC controls contractor in New England",
+        "sources": [
+          "https://starktech.com/news/stark-tech-expands-northeast-presence-with-acquisition-of-ene-systems-and-affiliates/",
+          "https://www.linkedin.com/posts/stark-tech-group_starktech-strategicgrowth-smartbuildings-activity-7353830088901070848-TmiJ"
+        ]
+      },
+      {
+        "company": "Environmental Systems Co. (ESC)",
+        "hq": "West Hartford, CT",
+        "owner": "Fidelity Building Services Group (sponsor not verified)",
+        "year": null,
+        "note": "BAS/security/life-safety integrator; website brands itself 'A Fidelity Building Services Group Company'",
+        "sources": [
+          "https://esccontrols.com/"
+        ]
+      },
+      {
+        "company": "Solect Energy",
+        "hq": "Hopkinton, MA",
+        "owner": "Pattern Energy Group (strategic)",
+        "year": null,
+        "note": "C&I solar EPC; Pattern's distributed-generation platform",
+        "sources": [
+          "https://patternenergy.com/projects/solect/"
+        ]
+      },
+      {
+        "company": "ComNet Communications",
+        "hq": "Connecticut",
+        "owner": "Hudson Glade (New State Capital Partners)",
+        "year": 2025,
+        "note": "Low-voltage/telecom; Sept 10 2025",
+        "sources": [
+          "https://www.privsource.com/acquisitions/electrical-services/state/connecticut"
+        ]
+      },
+      {
+        "company": "Shanix Technology",
+        "hq": "Cranston, RI",
+        "owner": "Minuteman Security & Life Safety",
+        "year": 2025,
+        "note": "Security/life-safety integrator; May 9 2025",
+        "sources": [
+          "https://www.privsource.com/acquisitions/electrical-services/2025"
+        ]
+      },
+      {
+        "company": "SunBug Solar",
+        "hq": "Westfield/Woburn, MA",
+        "owner": "ReVision Energy (employee-owned strategic)",
+        "year": null,
+        "note": "Merged into ReVision Energy; not PE but removes a solar target",
+        "sources": [
+          "https://www.bbb.org/us/ma/westfield/profile/solar-energy-contractors/sunbug-solar-a-revision-energy-company-0261-324914",
+          "https://sunbugsolar.com/"
+        ]
+      },
+      {
+        "company": "DKD Electric, LLC",
+        "hq": "ZoomInfo lists Foster, RI",
+        "owner": "RigUp, Inc. (Workrise; venture-backed)",
+        "year": 2020,
+        "note": "Company-update page says acquired 2020; excluded from targets",
+        "sources": [
+          "http://dkdelectric.com/"
+        ]
+      }
+    ],
+    "screened_and_excluded": [
+      {
+        "company": "Johnson & Jordan",
+        "reason": "Mechanical contractor, 100% employee-owned (ESOP); not an electrical fit",
+        "sources": [
+          "https://www.johnsonandjordan.com/"
+        ]
+      },
+      {
+        "company": "Wildco PES",
+        "reason": "Petroleum fueling-equipment service, acquired by OWL Services 2021",
+        "sources": [
+          "https://owlservices.com/wildco-pes"
+        ]
+      },
+      {
+        "company": "Mitchell Services, Inc.",
+        "reason": "Controls integrator headquartered in Shawnee KS (CT branch only)",
+        "sources": [
+          "https://www.mitchellservices.net/"
+        ]
+      },
+      {
+        "company": "ReVision Energy",
+        "reason": "Employee-owned solar installer, above size band (~300 employees, ~$147M ZoomInfo revenue)",
+        "sources": [
+          "https://sunbugsolar.com/"
+        ]
+      },
+      {
+        "company": "Tradesmen of New England",
+        "reason": "Mechanical/HVAC controls contractor; lower electrical fit (kept off list)",
+        "sources": [
+          "https://tradesmenofne.com/"
+        ]
+      }
+    ],
+    "scoring_rubric": {
+      "capability": "0-30: overlap/extension of CET lines (electrical, solar O&M, EV, energy efficiency) and Horton niches (W/WW, pump stations, generators, utility)",
+      "geography": "0-30: straight-line distance to nearest CET node; CT sites credited for Horton adjacency; NY exposure penalized",
+      "scale": "0-20: employees/revenue relative to 25-400 employees and $8-120M band",
+      "ownership_readiness": "0-20: founder/family ownership, generational succession signals; penalized for recent sales, WBE status or acquirer posture"
+    }
+  },
+  "items": [
+    {
+      "id": "cet-t01",
+      "company": "McDonald Electrical Corporation",
+      "website": "https://www.mcdonaldcorp.com",
+      "hq_city": "Hingham",
+      "state": "MA",
+      "lat": 42.2418,
+      "lon": -70.8898,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 7,
+      "founded_year": 1999,
+      "employees": 96,
+      "employees_note": null,
+      "revenue_est_usd": 18414000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Founded 1999; led by President Mike McDonald; acquired ANJ Electric (RI/CT union contractor) Jun 25 2025, run as a division.",
+      "specialties": [
+        "electrical construction",
+        "medium voltage",
+        "fire alarm",
+        "telecom/structured cabling",
+        "security & A/V",
+        "BMS controls wiring",
+        "prefabrication",
+        "service & preventative maintenance"
+      ],
+      "end_markets": [
+        "commercial",
+        "life sciences",
+        "healthcare",
+        "institutional"
+      ],
+      "certifications_or_licenses": "MA licensed electrical contractor; union (ANJ is union contractor)",
+      "geography_served": "Massachusetts, Rhode Island, Connecticut (via ANJ Electric)",
+      "strategic_rationale": "Adds medium-voltage, fire alarm, low-voltage and BMS-controls capability plus a union RI/CT division (ANJ) that bridges CET's MA base and the new Horton CT footprint. Hingham HQ is ~6 miles from NuWave in Norwell and ~25 miles from Taunton, enabling immediate South Shore labor and service-route density.",
+      "fit_score": 83,
+      "fit_breakdown": {
+        "capability": 26,
+        "geography": 29,
+        "scale": 16,
+        "ownership_readiness": 12
+      },
+      "risk_flags": [
+        "Target is itself an acquirer (ANJ Electric 2025) and may prefer to stay independent",
+        "Union labor model may differ from CET/Horton shops"
+      ],
+      "zoominfo_id": "363797900",
+      "sources": [
+        "https://www.mcdonaldcorp.com/about-us/",
+        "https://www.businesswire.com/news/home/20250625633803/en/McDonald-Electrical-Corporation-Announces-Acquisition-of-ANJ-Electric-Expanding-Regional-Footprint-and-Enhancing-Service-Capabilities",
+        "https://www.privsource.com/acquisitions/electrical-services/2025"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t02",
+      "company": "K.M. Kelly, Inc.",
+      "website": "https://kmkellyinc.com",
+      "hq_city": "Rochdale (Leicester)",
+      "state": "MA",
+      "lat": 42.1987,
+      "lon": -71.9048,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 7,
+      "founded_year": 2004,
+      "employees": 67,
+      "employees_note": null,
+      "revenue_est_usd": 12852000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Formed 2004; MA electrician license lists owner Kevin J. Menard.",
+      "specialties": [
+        "medium/high-voltage cabling & terminations",
+        "substations/transformers/MCCs/VFDs",
+        "process control & BAS",
+        "instrumentation",
+        "explosion-proof wiring",
+        "mechanical contracting",
+        "toxic/bulk gas systems"
+      ],
+      "end_markets": [
+        "industrial",
+        "semiconductor/advanced manufacturing",
+        "life sciences",
+        "utility systems"
+      ],
+      "certifications_or_licenses": "MA electrician license + 1 other MA license (per state license data)",
+      "geography_served": "HQ central MA; projects executed from Maine to Arizona",
+      "strategic_rationale": "Brings industrial MV/HV, substation, process-control and instrumentation depth that complements Horton's wastewater/pump-station work and CET's commercial base. Rochdale is ~7 miles from CET's Worcester HQ, so crews, prefab and supervision can be consolidated immediately.",
+      "fit_score": 83,
+      "fit_breakdown": {
+        "capability": 26,
+        "geography": 30,
+        "scale": 13,
+        "ownership_readiness": 14
+      },
+      "risk_flags": [
+        "Small scale; key-person dependence on founder",
+        "Industrial project revenue is lumpy"
+      ],
+      "zoominfo_id": "60002781",
+      "sources": [
+        "https://kmkellyinc.com/",
+        "https://kmkellyinc.com/about-us-1.html",
+        "https://www.bbb.org/us/ma/rochdale/profile/commercial-electrician/km-kelly-inc-0261-207976"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t03",
+      "company": "Energy Electric",
+      "website": "https://www.energyelectricne.com",
+      "hq_city": "Foxborough",
+      "state": "MA",
+      "lat": 42.0654,
+      "lon": -71.2478,
+      "geo_precision": "city",
+      "nearest_cet_node": "Taunton MA (CET office)",
+      "nearest_cet_node_miles": 14,
+      "founded_year": 1987,
+      "employees": 150,
+      "employees_note": "Website states 150+ directly employed; ZoomInfo shows 87",
+      "revenue_est_usd": 20928000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Ownership not disclosed on website; ZoomInfo lists HQ in Nashua NH (a branch office).",
+      "specialties": [
+        "commercial & industrial electrical",
+        "design/build & engineering",
+        "fire alarm",
+        "low voltage & security",
+        "data/phone",
+        "EV charging",
+        "preventative maintenance"
+      ],
+      "end_markets": [
+        "commercial",
+        "industrial",
+        "institutional"
+      ],
+      "certifications_or_licenses": "MA 2207 A1; RI AC004707; NH 13411; ME MS60022405",
+      "geography_served": "MA, RI, CT, NH, ME, VT; offices Foxborough MA, Nashua NH, Lincoln RI",
+      "strategic_rationale": "Adds 150+ directly employed electricians with fire-alarm, low-voltage, EV and maintenance capabilities and existing RI/NH/ME licenses. Foxborough HQ sits ~13 miles from CET's Taunton office, with Nashua and Lincoln RI branches extending CET's reach north and into Rhode Island.",
+      "fit_score": 81,
+      "fit_breakdown": {
+        "capability": 24,
+        "geography": 29,
+        "scale": 18,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Ownership/succession status unverified",
+        "ZoomInfo headcount (87) below website claim (150+)"
+      ],
+      "zoominfo_id": "347729896",
+      "sources": [
+        "https://www.energyelectricne.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t04",
+      "company": "Coghlin Electrical Contractors, Inc.",
+      "website": "https://www.coghlin.com",
+      "hq_city": "Worcester",
+      "state": "MA",
+      "lat": 42.2626,
+      "lon": -71.8023,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 0,
+      "founded_year": 1885,
+      "employees": 33,
+      "employees_note": null,
+      "revenue_est_usd": 26898000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Family owned and operated since founding in 1885 (Coghlin Companies).",
+      "specialties": [
+        "electrical construction",
+        "medium-voltage power systems",
+        "generators & switchgear",
+        "fire alarm",
+        "lighting",
+        "low voltage",
+        "engineering services"
+      ],
+      "end_markets": [
+        "higher education",
+        "healthcare",
+        "institutional",
+        "commercial"
+      ],
+      "certifications_or_licenses": "MA licensed electrical contractor",
+      "geography_served": "Central Massachusetts / New England",
+      "strategic_rationale": "Adds a 140-year-old Worcester brand with MV, generator and fire-alarm project experience at institutions such as Amherst College. Same-city tuck-in allows full back-office and fleet consolidation into CET's Worcester HQ.",
+      "fit_score": 79,
+      "fit_breakdown": {
+        "capability": 22,
+        "geography": 30,
+        "scale": 13,
+        "ownership_readiness": 14
+      },
+      "risk_flags": [
+        "Direct overlap with CET's home market (customer/channel conflict)",
+        "ZoomInfo headcount (33) looks low vs revenue ($26.9M)"
+      ],
+      "zoominfo_id": "1125104350",
+      "sources": [
+        "https://www.coghlin.com/",
+        "https://www.coghlincompanies.com/wp-content/uploads/Coghlin_History_125Years.pdf"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t05",
+      "company": "FM Generator, Inc.",
+      "website": "https://www.fmgenerator.com",
+      "hq_city": "Canton",
+      "state": "MA",
+      "lat": 42.1584,
+      "lon": -71.1448,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 18,
+      "founded_year": 1970,
+      "employees": 75,
+      "employees_note": "Website states 75 employees",
+      "revenue_est_usd": 10928000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Family-owned; founded 1970 by Francis Molway; owned by son Michael Molway.",
+      "specialties": [
+        "standby generator sales & installation",
+        "generator service & maintenance contracts",
+        "load bank testing",
+        "transfer switches"
+      ],
+      "end_markets": [
+        "municipal",
+        "commercial",
+        "industrial",
+        "residential"
+      ],
+      "certifications_or_licenses": "Generator dealer/service; MA electrical",
+      "geography_served": "7 Northeast states; 10,250+ generators supervised",
+      "strategic_rationale": "Adds a recurring-revenue generator service book (10,250+ units under supervision) that complements Horton's generator and pump-station work and CET's energy-resilience offerings. Canton is ~19 miles from Taunton and ~21 miles from Norwell, fitting CET's southeastern-MA service routes.",
+      "fit_score": 78,
+      "fit_breakdown": {
+        "capability": 25,
+        "geography": 27,
+        "scale": 11,
+        "ownership_readiness": 15
+      },
+      "risk_flags": [
+        "Second-generation owner succession timing unknown",
+        "Residential mix lowers margin quality"
+      ],
+      "zoominfo_id": "46107263",
+      "sources": [
+        "https://www.fmgenerator.com/about/",
+        "https://www.businesswire.com/news/home/20191024005723/en/Canton-based-FM-Generator-Increases-Its-Residential-Customer-Base-With-Purchase-of-Foxboro-Generator-Company",
+        "https://www.thecantoncitizen.com/2013/07/18/fm-generator-2/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t06",
+      "company": "Murphy Electric & Industrial Control",
+      "website": "https://www.murphy-electric.com",
+      "hq_city": "Pembroke",
+      "state": "MA",
+      "lat": 42.0715,
+      "lon": -70.8092,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 6,
+      "founded_year": 1997,
+      "employees": 55,
+      "employees_note": null,
+      "revenue_est_usd": 12424000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "President Daniel Murphy; operating since 1997.",
+      "specialties": [
+        "commercial electrical construction",
+        "industrial control systems",
+        "natural-gas instrumentation & controls",
+        "hazardous-location wiring",
+        "HVAC temperature-control wiring",
+        "infrared testing",
+        "renewable energy"
+      ],
+      "end_markets": [
+        "utilities/natural gas",
+        "commercial",
+        "industrial"
+      ],
+      "certifications_or_licenses": "IBEW Local 103 signatory; MA licensed",
+      "geography_served": "Greater Boston / South Shore",
+      "strategic_rationale": "Adds industrial controls and natural-gas utility I&C capability, adjacent to Horton's instrumentation/pump-station work. Pembroke is ~6 miles from NuWave's Norwell base and ~18 miles from Taunton.",
+      "fit_score": 78,
+      "fit_breakdown": {
+        "capability": 25,
+        "geography": 29,
+        "scale": 11,
+        "ownership_readiness": 13
+      },
+      "risk_flags": [
+        "Union (IBEW 103) labor model",
+        "Small management bench"
+      ],
+      "zoominfo_id": "356069453",
+      "sources": [
+        "https://www.murphy-electric.com/",
+        "https://www.linkedin.com/company/murphyelectric",
+        "https://the103advantage.com/contractors/listing/murphy-electric-industrial-control-inc"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t07",
+      "company": "Elm Electrical, Inc.",
+      "website": "https://www.elmelec.com",
+      "hq_city": "Westfield",
+      "state": "MA",
+      "lat": 42.1251,
+      "lon": -72.7495,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 49,
+      "founded_year": 1971,
+      "employees": 143,
+      "employees_note": null,
+      "revenue_est_usd": 38316000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; ownership not disclosed on website.",
+      "specialties": [
+        "water/wastewater SCADA & plant automation",
+        "UL 508A control-panel assembly",
+        "medium-voltage substations",
+        "circuit-breaker testing",
+        "renewable energy systems",
+        "robotics/industrial automation",
+        "EPC"
+      ],
+      "end_markets": [
+        "water/wastewater",
+        "municipal",
+        "industrial",
+        "commercial"
+      ],
+      "certifications_or_licenses": "Rockwell Automation Gold Solutions Partner; UL 508A panel shop",
+      "geography_served": "Western MA and Connecticut",
+      "strategic_rationale": "Adds water/wastewater SCADA, plant-automation and UL 508A panel capability that directly extends Horton's wastewater-treatment electrical franchise into controls. Westfield is ~50 miles west of Worcester and ~15 miles from the CT line, bridging CET's MA base and Horton's CT market.",
+      "fit_score": 77,
+      "fit_breakdown": {
+        "capability": 29,
+        "geography": 20,
+        "scale": 18,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Ownership/succession unknown",
+        "Automation/robotics segment outside core electrical"
+      ],
+      "zoominfo_id": "34245525",
+      "sources": [
+        "https://www.elmelec.com/",
+        "https://www.elmelec.com/services/automation",
+        "https://www.procore.com/network/p/elm-electrical-inc-westfield"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t08",
+      "company": "CTEC Solar (C-TEC Solar, LLC)",
+      "website": "https://www.ctecsolar.com",
+      "hq_city": "Bloomfield",
+      "state": "CT",
+      "lat": 41.8265,
+      "lon": -72.7301,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 56,
+      "founded_year": 2011,
+      "employees": 70,
+      "employees_note": null,
+      "revenue_est_usd": 30033000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Described as privately and locally owned; founded 2011.",
+      "specialties": [
+        "commercial & utility-scale solar EPC",
+        "solar-plus-storage",
+        "solar O&M/service division",
+        "development & permitting"
+      ],
+      "end_markets": [
+        "commercial & industrial",
+        "community solar",
+        "utility-scale"
+      ],
+      "certifications_or_licenses": "CT Major Contractor license; electrical licenses in CT, MA, NY, NH, VT, ME, RI",
+      "geography_served": "New England plus Mid-Atlantic, South, Midwest; office in Charlton MA",
+      "strategic_rationale": "Adds a 400+ MW solar EPC and service platform with electrical licenses in all six New England states, deepening CET's solar install/O&M line. Bloomfield CT complements Horton's CT base and its Charlton MA office is ~15 miles from CET's Worcester HQ.",
+      "fit_score": 75,
+      "fit_breakdown": {
+        "capability": 25,
+        "geography": 24,
+        "scale": 14,
+        "ownership_readiness": 12
+      },
+      "risk_flags": [
+        "Solar policy/ITC exposure",
+        "Developer activities carry project-finance risk",
+        "NY license irrelevant given no-NYC guidance"
+      ],
+      "zoominfo_id": "358874264",
+      "sources": [
+        "https://www.ctecsolar.com/",
+        "https://www.solarpowerworldonline.com/suppliers/c-tec-solar/",
+        "https://www.linkedin.com/company/ctecsolar"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t09",
+      "company": "Averill Electric Co., Inc.",
+      "website": "https://www.averillelectric.com",
+      "hq_city": "South Easton",
+      "state": "MA",
+      "lat": 42.0473,
+      "lon": -71.1017,
+      "geo_precision": "city",
+      "nearest_cet_node": "Taunton MA (CET office)",
+      "nearest_cet_node_miles": 10,
+      "founded_year": 1996,
+      "employees": 72,
+      "employees_note": null,
+      "revenue_est_usd": 18759000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Owner Frank Averill; operating since 1996.",
+      "specialties": [
+        "electrical construction",
+        "maintenance",
+        "UL-listed prefabrication facility"
+      ],
+      "end_markets": [
+        "commercial",
+        "multifamily/developers",
+        "property owners"
+      ],
+      "certifications_or_licenses": "IBEW Local 103 member contractor; UL-listed prefab shop",
+      "geography_served": "Eastern Massachusetts",
+      "strategic_rationale": "Adds GC-driven commercial construction capacity and a UL-listed prefabrication facility CET could leverage across all shops. South Easton is ~10 miles from CET's Taunton office.",
+      "fit_score": 72,
+      "fit_breakdown": {
+        "capability": 18,
+        "geography": 28,
+        "scale": 12,
+        "ownership_readiness": 14
+      },
+      "risk_flags": [
+        "Union labor model",
+        "Construction-heavy (less recurring service)"
+      ],
+      "zoominfo_id": "9572399",
+      "sources": [
+        "https://www.averillelectric.com/about-us/",
+        "https://www.thebluebook.com/iProView/319817/averill-electric-co-inc/subcontractors/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t10",
+      "company": "Suburban Electric Contracting, Inc.",
+      "website": "https://suburbanelec.com",
+      "hq_city": "Stoughton",
+      "state": "MA",
+      "lat": 42.1251,
+      "lon": -71.1023,
+      "geo_precision": "city",
+      "nearest_cet_node": "Taunton MA (CET office)",
+      "nearest_cet_node_miles": 16,
+      "founded_year": 1958,
+      "employees": 70,
+      "employees_note": "BBB lists 70 employees",
+      "revenue_est_usd": 17152000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Established 1958 (inc. 1977); President Richard M. Piazza, VP Jacqueline P. Gorman.",
+      "specialties": [
+        "commercial & industrial electrical",
+        "residential wiring",
+        "low-voltage integration",
+        "24-hour service"
+      ],
+      "end_markets": [
+        "commercial",
+        "industrial",
+        "residential"
+      ],
+      "certifications_or_licenses": "MA licensed electrical contractor",
+      "geography_served": "Greater Boston / South Shore",
+      "strategic_rationale": "Adds a 65-year-old service-and-construction franchise with a low-voltage division and 24/7 emergency service. Stoughton is ~16 miles from Taunton and ~16 miles from Norwell, densifying CET's southeastern-MA service routes.",
+      "fit_score": 71,
+      "fit_breakdown": {
+        "capability": 17,
+        "geography": 27,
+        "scale": 12,
+        "ownership_readiness": 15
+      },
+      "risk_flags": [
+        "Residential exposure",
+        "Long-tenured leadership - succession plan unknown"
+      ],
+      "zoominfo_id": "92160404",
+      "sources": [
+        "https://suburbanelec.com/about/",
+        "https://www.bbb.org/us/ma/stoughton/profile/electrician/suburban-electric-contracting-inc-0021-28013"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t11",
+      "company": "Aldon Electric, Inc.",
+      "website": "https://www.aldonelectric.com",
+      "hq_city": "Weymouth",
+      "state": "MA",
+      "lat": 42.218,
+      "lon": -70.941,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 9,
+      "founded_year": 1986,
+      "employees": 100,
+      "employees_note": "Website states 100 tradesmen and professionals",
+      "revenue_est_usd": 8765000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Established 1986 by brothers Allen and Donald Mullaney.",
+      "specialties": [
+        "electrical construction",
+        "fire alarm & life safety",
+        "renewable energy",
+        "tel/data & A/V"
+      ],
+      "end_markets": [
+        "commercial",
+        "industrial",
+        "residential"
+      ],
+      "certifications_or_licenses": "IBEW Locals 103, 223, 96 (Worcester) and 7 (Springfield)",
+      "geography_served": "Greater Boston and Massachusetts",
+      "strategic_rationale": "Adds fire-alarm/life-safety and renewable-energy crews with IBEW coverage including Local 96 in Worcester. Weymouth is ~8 miles from Norwell and ~27 miles from Taunton.",
+      "fit_score": 71,
+      "fit_breakdown": {
+        "capability": 20,
+        "geography": 27,
+        "scale": 10,
+        "ownership_readiness": 14
+      },
+      "risk_flags": [
+        "Founders' retirement timing unknown",
+        "Revenue per ZoomInfo ($8.8M) low vs 100 staff"
+      ],
+      "zoominfo_id": "1105774614",
+      "sources": [
+        "https://www.aldonelectric.com/about.html",
+        "https://www.aldonelectric.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t12",
+      "company": "JM Electrical Company, Inc.",
+      "website": "https://jmelectrical.com",
+      "hq_city": "Lynnfield",
+      "state": "MA",
+      "lat": 42.5387,
+      "lon": -71.0481,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 29,
+      "founded_year": null,
+      "employees": 74,
+      "employees_note": null,
+      "revenue_est_usd": 91383000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Described by clients as a family owned company.",
+      "specialties": [
+        "controls wiring",
+        "instrumentation",
+        "mechanical power",
+        "service",
+        "energy solutions"
+      ],
+      "end_markets": [
+        "higher education (e.g., MIT)",
+        "commercial",
+        "building automation"
+      ],
+      "certifications_or_licenses": "MA licensed electrical contractor",
+      "geography_served": "Greater Boston / Eastern MA",
+      "strategic_rationale": "Adds a specialized controls, instrumentation and mechanical-power electrical contractor that pairs with CET's energy-efficiency and NuWave controls work. Lynnfield (North Shore) extends CET into Boston's northern suburbs, ~45 miles from Worcester.",
+      "fit_score": 71,
+      "fit_breakdown": {
+        "capability": 24,
+        "geography": 18,
+        "scale": 16,
+        "ownership_readiness": 13
+      },
+      "risk_flags": [
+        "ZoomInfo revenue ($91M) inconsistent with 74 employees - verify",
+        "Founding year not verified"
+      ],
+      "zoominfo_id": "63343058",
+      "sources": [
+        "https://jmelectrical.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t13",
+      "company": "S&W Electrical Contractors, Inc.",
+      "website": "https://www.swelectricinc.com",
+      "hq_city": "Bridgewater",
+      "state": "MA",
+      "lat": 41.9904,
+      "lon": -70.975,
+      "geo_precision": "city",
+      "nearest_cet_node": "Taunton MA (CET office)",
+      "nearest_cet_node_miles": 9,
+      "founded_year": 2005,
+      "employees": 74,
+      "employees_note": "Bank profile cites 74 employees",
+      "revenue_est_usd": 10953000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Founded 2005 as a partnership by Brian Washburn and Matt Sylvia.",
+      "specialties": [
+        "electrical consulting",
+        "design-build",
+        "electrical installation",
+        "service"
+      ],
+      "end_markets": [
+        "commercial",
+        "industrial (e.g., Ocean Spray)",
+        "institutional"
+      ],
+      "certifications_or_licenses": "MA licensed electrical contractor",
+      "geography_served": "Southeastern Massachusetts",
+      "strategic_rationale": "Adds a founder-led design-build team with blue-chip southeastern MA customers. Bridgewater is ~9 miles from CET's Taunton office.",
+      "fit_score": 69,
+      "fit_breakdown": {
+        "capability": 18,
+        "geography": 28,
+        "scale": 11,
+        "ownership_readiness": 12
+      },
+      "risk_flags": [
+        "Two-partner ownership may complicate deal",
+        "Limited specialty capability"
+      ],
+      "zoominfo_id": "348639756",
+      "sources": [
+        "https://www.swelectricinc.com/",
+        "https://www.southshorebank.com/s-w-electric"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t14",
+      "company": "Automated Building Systems, Inc. (ABS)",
+      "website": "https://www.absddc.com",
+      "hq_city": "Glastonbury",
+      "state": "CT",
+      "lat": 41.7123,
+      "lon": -72.6082,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 56,
+      "founded_year": null,
+      "employees": 207,
+      "employees_note": null,
+      "revenue_est_usd": 42423000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; ownership not disclosed.",
+      "specialties": [
+        "building automation & integration (Alerton dealer)",
+        "EV charging",
+        "LED lighting & controls",
+        "HVAC energy improvements",
+        "solar solutions",
+        "energy procurement"
+      ],
+      "end_markets": [
+        "commercial",
+        "institutional",
+        "municipal"
+      ],
+      "certifications_or_licenses": "Authorized Alerton commercial controls dealer",
+      "geography_served": "CT, MA, NH",
+      "strategic_rationale": "Adds a BAS/controls integrator with EV, LED and energy-improvement lines that extends NuWave's energy-conservation offering into controls. Glastonbury CT complements Horton's CT footprint and ABS already serves MA and NH.",
+      "fit_score": 69,
+      "fit_breakdown": {
+        "capability": 22,
+        "geography": 22,
+        "scale": 15,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Controls-dealer margin model differs from contracting",
+        "Alerton dealer agreement change-of-control terms"
+      ],
+      "zoominfo_id": "10719811",
+      "sources": [
+        "https://www.absddc.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t15",
+      "company": "Fischbach & Moore Electric Group, LLC",
+      "website": "https://fbmpower.com",
+      "hq_city": "Boston",
+      "state": "MA",
+      "lat": 42.2946,
+      "lon": -71.0507,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 16,
+      "founded_year": null,
+      "employees": 57,
+      "employees_note": null,
+      "revenue_est_usd": 11838000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Came under new ownership in 2005; current owner not disclosed.",
+      "specialties": [
+        "substation construction",
+        "utilities & infrastructure",
+        "emergency restoration",
+        "testing division",
+        "clean energy",
+        "transportation & heavy highway"
+      ],
+      "end_markets": [
+        "electric utilities",
+        "transportation",
+        "public works",
+        "industrial"
+      ],
+      "certifications_or_licenses": "Boston NECA member",
+      "geography_served": "Massachusetts / Northeast",
+      "strategic_rationale": "Adds utility, substation and emergency-restoration capability that diversifies CET toward utility capex. Dorchester HQ is ~20 miles from Norwell and ~30 miles from Taunton.",
+      "fit_score": 68,
+      "fit_breakdown": {
+        "capability": 26,
+        "geography": 22,
+        "scale": 10,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Ownership structure opaque",
+        "Heavy-civil/public works bonding needs"
+      ],
+      "zoominfo_id": "92456407",
+      "sources": [
+        "https://fbmpower.com/",
+        "https://www.bostonneca.org/directory/listing/fischbach-moore-electric-group"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t16",
+      "company": "Arden Engineering Constructors, LLC",
+      "website": "https://www.ardeneng.com",
+      "hq_city": "Pawtucket",
+      "state": "RI",
+      "lat": 41.8787,
+      "lon": -71.3826,
+      "geo_precision": "city",
+      "nearest_cet_node": "Taunton MA (CET office)",
+      "nearest_cet_node_miles": 15,
+      "founded_year": 1954,
+      "employees": 128,
+      "employees_note": null,
+      "revenue_est_usd": 44720000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Originated 1954 (ardeneng.com). Acquired by PSEG Energy Technologies c. 2002 (PBN); current owner not confirmed by cited sources - now a subsidiary of Arden Building Companies (5-firm MEP group; president John Puniello). Acquired Nolin Electric Sept 30 2025. Verifier 2026-09-24: prior 'Bolton family reacquired 2003' claim not supported by sources; downgraded to unknown.",
+      "specialties": [
+        "mechanical/HVAC contracting",
+        "electrical contracting (Nolin Electric)",
+        "building automation",
+        "service"
+      ],
+      "end_markets": [
+        "commercial",
+        "healthcare",
+        "education",
+        "industrial"
+      ],
+      "certifications_or_licenses": "RI/MA mechanical & electrical licenses",
+      "geography_served": "Southern New England",
+      "strategic_rationale": "Adds a scaled RI mechanical-electrical contractor that recently bolted on Nolin Electric, giving CET a Rhode Island beachhead. Pawtucket is ~17 miles from CET's Taunton office.",
+      "fit_score": 67,
+      "fit_breakdown": {
+        "capability": 18,
+        "geography": 25,
+        "scale": 16,
+        "ownership_readiness": 8
+      },
+      "risk_flags": [
+        "Primarily mechanical - carve-out or merger-of-equals complexity",
+        "Active acquirer itself; 2025 Mechanical Contractor of the Year - premium valuation"
+      ],
+      "zoominfo_id": "7851287",
+      "sources": [
+        "https://www.ardeneng.com/",
+        "https://www.ardeneng.com/2025/09/30/arden-engineering-constructors-strengthens-electrical-capabilities-with-acquisition-of-nolin-electric/",
+        "https://pbn.com/nj-energy-firm-acquires-arden-engineering-inc1032/",
+        "https://www.ardeneng.com/about/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t17",
+      "company": "D/E/F Services Group, Ltd.",
+      "website": "https://defservicesgroup.com",
+      "hq_city": "Jewett City (Griswold)",
+      "state": "CT",
+      "lat": 41.6065,
+      "lon": -71.9807,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 46,
+      "founded_year": 1999,
+      "employees": 64,
+      "employees_note": null,
+      "revenue_est_usd": 16753000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Started 1999 in Griswold as a home-based low-voltage contractor (D/E/F Wiring Services).",
+      "specialties": [
+        "electrical",
+        "mechanical/HVAC",
+        "plumbing",
+        "security & CCTV",
+        "fiber optics & data",
+        "energy efficiency"
+      ],
+      "end_markets": [
+        "commercial",
+        "institutional",
+        "municipal"
+      ],
+      "certifications_or_licenses": "CT licensed MEP contractor",
+      "geography_served": "New England (eastern CT base)",
+      "strategic_rationale": "Adds a multi-trade MEP service provider with low-voltage and energy-efficiency roots in eastern Connecticut. Griswold is ~45 miles south of Worcester and fills the gap between CET's MA base and Horton's CT market.",
+      "fit_score": 65,
+      "fit_breakdown": {
+        "capability": 18,
+        "geography": 24,
+        "scale": 11,
+        "ownership_readiness": 12
+      },
+      "risk_flags": [
+        "Multi-trade mix dilutes electrical focus",
+        "Founder dependence"
+      ],
+      "zoominfo_id": "41454915",
+      "sources": [
+        "https://defservicesgroup.com/about",
+        "https://www.bbb.org/us/ct/griswold/profile/electric-equipment-repair/def-services-group-ltd-0111-87065764"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t18",
+      "company": "M.L. Schmitt Electric",
+      "website": "https://www.mlschmittelectric.com",
+      "hq_city": "Springfield",
+      "state": "MA",
+      "lat": 42.1015,
+      "lon": -72.5898,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 42,
+      "founded_year": 1923,
+      "employees": 42,
+      "employees_note": null,
+      "revenue_est_usd": 12022000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "BBB lists Peter Coppez (President/Owner) and Jean Crevier (VP/Owner); non-founder owner-operators.",
+      "specialties": [
+        "commercial & industrial construction",
+        "solar PV installation",
+        "solar operation & maintenance",
+        "fire alarm",
+        "HVAC power & control wiring"
+      ],
+      "end_markets": [
+        "healthcare",
+        "education",
+        "transportation",
+        "data centers",
+        "commercial",
+        "residential"
+      ],
+      "certifications_or_licenses": "MA licensed electrical contractor",
+      "geography_served": "Western Massachusetts",
+      "strategic_rationale": "Adds solar PV install and solar O&M plus fire alarm in the Pioneer Valley, matching CET's solar O&M line. Springfield is ~45 miles from Worcester and ~25 miles from Hartford, linking CET's MA base with Horton's CT market.",
+      "fit_score": 64,
+      "fit_breakdown": {
+        "capability": 22,
+        "geography": 20,
+        "scale": 10,
+        "ownership_readiness": 12
+      },
+      "risk_flags": [
+        "Small scale",
+        "Owner succession timing unknown"
+      ],
+      "zoominfo_id": "346400830",
+      "sources": [
+        "https://www.mlschmittelectric.com/",
+        "https://www.bbb.org/us/ma/springfield/profile/electrician/m-l-schmitt-inc-0261-242249"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t19",
+      "company": "Dinto Electrical Group (Paul Dinto Electrical Contractors, Inc.)",
+      "website": "https://www.dintoelectric.com",
+      "hq_city": "Middlebury",
+      "state": "CT",
+      "lat": 41.5279,
+      "lon": -73.1276,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 85,
+      "founded_year": 1987,
+      "employees": 141,
+      "employees_note": null,
+      "revenue_est_usd": 6781000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Paul Dinto Electrical Contractors, Inc.; established 1987.",
+      "specialties": [
+        "electrical construction",
+        "telecommunications",
+        "building & automation systems",
+        "security integration",
+        "fire alarm & life safety",
+        "emergency/backup/redundant power",
+        "service & maintenance"
+      ],
+      "end_markets": [
+        "commercial",
+        "healthcare",
+        "education",
+        "industrial"
+      ],
+      "certifications_or_licenses": "CT licensed electrical contractor",
+      "geography_served": "Connecticut and New England",
+      "strategic_rationale": "Adds BAS, security, life-safety and backup-power integration to CET's Connecticut presence alongside Horton. Middlebury (Waterbury area) extends CET coverage into west-central CT.",
+      "fit_score": 63,
+      "fit_breakdown": {
+        "capability": 20,
+        "geography": 18,
+        "scale": 13,
+        "ownership_readiness": 12
+      },
+      "risk_flags": [
+        "ZoomInfo revenue ($6.8M) inconsistent with 141 employees - verify",
+        "Founder succession unknown"
+      ],
+      "zoominfo_id": "82037229",
+      "sources": [
+        "https://www.dintoelectric.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t20",
+      "company": "Dagle Electrical Construction Corp.",
+      "website": "https://deccorp.com",
+      "hq_city": "Wilmington",
+      "state": "MA",
+      "lat": 42.5465,
+      "lon": -71.1737,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 33,
+      "founded_year": 1997,
+      "employees": 113,
+      "employees_note": null,
+      "revenue_est_usd": 17254000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; Maureen Dagle listed as principal in public profiles; ownership not confirmed.",
+      "specialties": [
+        "traffic signal maintenance",
+        "municipal electrical service",
+        "emergency standby systems",
+        "solar/wind/storage",
+        "LED & energy efficiency"
+      ],
+      "end_markets": [
+        "municipal",
+        "public works",
+        "commercial"
+      ],
+      "certifications_or_licenses": "Boston NECA member; MA licensed",
+      "geography_served": "New England",
+      "strategic_rationale": "Adds municipal traffic-signal and public-works service contracts (Salem, Chelsea) and renewables/storage installation. Wilmington is ~45 miles from Worcester, extending CET into the Merrimack Valley.",
+      "fit_score": 63,
+      "fit_breakdown": {
+        "capability": 21,
+        "geography": 18,
+        "scale": 13,
+        "ownership_readiness": 11
+      },
+      "risk_flags": [
+        "Public-bid margin pressure",
+        "Ownership details unverified"
+      ],
+      "zoominfo_id": "13944100",
+      "sources": [
+        "https://deccorp.com/",
+        "https://www.bostonneca.org/directory/listing/dagle-electrical-construction",
+        "https://www.bbb.org/us/ma/wilmington/profile/electrical-contractors/dagle-electrical-construction-corp-0021-29031"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t21",
+      "company": "D&D Electrical Contractors / DNET Cabling",
+      "website": "https://www.danddnet.com",
+      "hq_city": "Woburn",
+      "state": "MA",
+      "lat": 42.4793,
+      "lon": -71.1523,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 29,
+      "founded_year": null,
+      "employees": 95,
+      "employees_note": null,
+      "revenue_est_usd": 21116000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; ownership not disclosed.",
+      "specialties": [
+        "electrical construction",
+        "utility-scale solar",
+        "EV charging stations",
+        "voice/data cabling",
+        "design-build/value engineering",
+        "service"
+      ],
+      "end_markets": [
+        "commercial",
+        "renewables",
+        "institutional"
+      ],
+      "certifications_or_licenses": "MA licensed electrical contractor",
+      "geography_served": "Greater Boston / New England",
+      "strategic_rationale": "Adds utility-scale solar and EV-charging installation experience plus structured cabling. Woburn is ~40 miles from Worcester, filling in CET's Route 128 coverage.",
+      "fit_score": 62,
+      "fit_breakdown": {
+        "capability": 20,
+        "geography": 18,
+        "scale": 14,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Ownership unknown",
+        "Solar policy exposure"
+      ],
+      "zoominfo_id": "32968191",
+      "sources": [
+        "https://www.danddnet.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t23",
+      "company": "Coutts Brothers, Inc.",
+      "website": "https://couttsbros.com",
+      "hq_city": "Gardiner",
+      "state": "ME",
+      "lat": 44.2301,
+      "lon": -69.7755,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 152,
+      "founded_year": 1963,
+      "employees": 31,
+      "employees_note": null,
+      "revenue_est_usd": 12065000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Founded 1963 by Bill and Stanley Coutts; third generation (Dylan and Scott Coutts) plus Brad Stout since 2016.",
+      "specialties": [
+        "overhead distribution line work",
+        "transmission services",
+        "emergency storm response",
+        "asset inspection",
+        "private line work",
+        "civil construction"
+      ],
+      "end_markets": [
+        "electric utilities",
+        "private owners"
+      ],
+      "certifications_or_licenses": "High-voltage line contractor; lineworker apprenticeship program",
+      "geography_served": "Northeast",
+      "strategic_rationale": "Adds utility T&D line and storm-response capability, a new service line for CET with recurring utility MSAs. Gardiner ME is ~170 miles from Worcester, so value is capability rather than route density.",
+      "fit_score": 62,
+      "fit_breakdown": {
+        "capability": 24,
+        "geography": 12,
+        "scale": 10,
+        "ownership_readiness": 16
+      },
+      "risk_flags": [
+        "Utility customer concentration",
+        "Distance from CET core"
+      ],
+      "zoominfo_id": "346140674",
+      "sources": [
+        "https://couttsbros.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t24",
+      "company": "Nappa Electrical Contractors",
+      "website": "https://nappaelectric.com",
+      "hq_city": "Billerica",
+      "state": "MA",
+      "lat": 42.5584,
+      "lon": -71.2689,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 34,
+      "founded_year": 1971,
+      "employees": 74,
+      "employees_note": null,
+      "revenue_est_usd": 17987000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; founded 1971; ownership not disclosed.",
+      "specialties": [
+        "generator installations",
+        "HVAC controls & automation",
+        "lab renovations",
+        "fire alarm",
+        "scheduled & emergency service",
+        "engineering & construction"
+      ],
+      "end_markets": [
+        "life sciences",
+        "industrial",
+        "commercial"
+      ],
+      "certifications_or_licenses": "MA licensed electrical contractor",
+      "geography_served": "Eastern Massachusetts",
+      "strategic_rationale": "Adds lab/life-science renovation, generator and HVAC-controls service capability. Billerica is ~38 miles northeast of Worcester along the I-495 corridor.",
+      "fit_score": 61,
+      "fit_breakdown": {
+        "capability": 20,
+        "geography": 18,
+        "scale": 12,
+        "ownership_readiness": 11
+      },
+      "risk_flags": [
+        "Life-science capex cyclicality",
+        "Ownership unknown"
+      ],
+      "zoominfo_id": "348354267",
+      "sources": [
+        "https://nappaelectric.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t25",
+      "company": "C&H Electric, Inc.",
+      "website": "https://chelectric.com",
+      "hq_city": "Waterbury",
+      "state": "CT",
+      "lat": 41.5582,
+      "lon": -73.0515,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 81,
+      "founded_year": 1967,
+      "employees": 75,
+      "employees_note": null,
+      "revenue_est_usd": 12891000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Founder family (Robert Cordeau) sold majority to individual buyer Bill Concannon; deal finalized late December 2021 (Hartford Business Journal, May 6 2022). Minority owner Dan Mahieu remains president. Not sponsor-owned.",
+      "specialties": [
+        "healthcare electrical",
+        "power distribution",
+        "lighting",
+        "solar arrays",
+        "EV charging",
+        "generators",
+        "maintenance"
+      ],
+      "end_markets": [
+        "healthcare",
+        "commercial",
+        "education",
+        "industrial"
+      ],
+      "certifications_or_licenses": "CT licensed electrical contractor; EVITP-certified",
+      "geography_served": "Connecticut",
+      "strategic_rationale": "Adds healthcare-focused mission-critical electrical, solar and EV capability in Connecticut to complement Horton. Waterbury gives CET central/western CT coverage.",
+      "fit_score": 61,
+      "fit_breakdown": {
+        "capability": 21,
+        "geography": 22,
+        "scale": 11,
+        "ownership_readiness": 7
+      },
+      "risk_flags": [
+        "Recent ownership change - new owner may not sell near term",
+        "Healthcare concentration"
+      ],
+      "zoominfo_id": "23761385",
+      "sources": [
+        "https://chelectric.com/who-we-are/",
+        "https://hartfordbusiness.com/article/new-ch-electric-owner-focuses-on-energy-transition/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t26",
+      "company": "Griffin Electrical Contractors, Inc.",
+      "website": "https://www.griffinelectricalinc.com",
+      "hq_city": "Southington",
+      "state": "CT",
+      "lat": 41.5965,
+      "lon": -72.8776,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 72,
+      "founded_year": 1997,
+      "employees": 70,
+      "employees_note": "Website states a steady 60+ employees",
+      "revenue_est_usd": 13990000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Started 1997; President Sean M. Griffin, VP Kenneth J. Griffin.",
+      "specialties": [
+        "industrial electrical",
+        "commercial electrical",
+        "residential"
+      ],
+      "end_markets": [
+        "industrial",
+        "commercial",
+        "residential"
+      ],
+      "certifications_or_licenses": "CT licensed; OSHA10 field workforce",
+      "geography_served": "Greater Hartford",
+      "strategic_rationale": "Adds ~60 CT-licensed electricians in the Hartford/Southington area, adding labor capacity next to Horton. Southington is ~65 miles from Worcester.",
+      "fit_score": 61,
+      "fit_breakdown": {
+        "capability": 15,
+        "geography": 22,
+        "scale": 11,
+        "ownership_readiness": 13
+      },
+      "risk_flags": [
+        "Residential exposure",
+        "Limited specialty capability"
+      ],
+      "zoominfo_id": "355272125",
+      "sources": [
+        "https://www.griffinelectricalinc.com/",
+        "https://www.bbb.org/us/ct/southington/profile/electrician/griffin-electrical-contractors-inc-0111-47000964"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t27",
+      "company": "Longchamps Electric",
+      "website": "https://www.longchampselectric.com",
+      "hq_city": "Manchester",
+      "state": "NH",
+      "lat": 42.9956,
+      "lon": -71.4548,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 54,
+      "founded_year": null,
+      "employees": 105,
+      "employees_note": null,
+      "revenue_est_usd": 25791000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; ~50 years of electrical contracting experience; ownership not disclosed.",
+      "specialties": [
+        "commercial/educational/industrial electrical",
+        "fire alarm & security",
+        "voice/data/networking",
+        "building automation",
+        "design/build"
+      ],
+      "end_markets": [
+        "education",
+        "commercial",
+        "industrial"
+      ],
+      "certifications_or_licenses": "NH licensed electrical contractor",
+      "geography_served": "Northern New England",
+      "strategic_rationale": "Adds a scaled New Hampshire platform with low-voltage and building-automation capability. Manchester NH is ~55 miles from Worcester and would anchor CET's NH growth.",
+      "fit_score": 61,
+      "fit_breakdown": {
+        "capability": 20,
+        "geography": 16,
+        "scale": 15,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Ownership/succession unknown",
+        "Founding year inferred (~50 years)"
+      ],
+      "zoominfo_id": "30541510",
+      "sources": [
+        "https://www.longchampselectric.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t28",
+      "company": "Electrical Installations, LLC (EII)",
+      "website": "https://www.eii-hq.com",
+      "hq_city": "Moultonborough",
+      "state": "NH",
+      "lat": 43.7548,
+      "lon": -71.3968,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 105,
+      "founded_year": null,
+      "employees": 31,
+      "employees_note": null,
+      "revenue_est_usd": 8683000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; ownership not disclosed.",
+      "specialties": [
+        "water/wastewater control systems",
+        "SCADA automation",
+        "PLC programming",
+        "control panel design & manufacturing",
+        "instrumentation",
+        "electrical construction"
+      ],
+      "end_markets": [
+        "water/wastewater",
+        "municipalities/utilities"
+      ],
+      "certifications_or_licenses": "NH licensed",
+      "geography_served": "Northern New England",
+      "strategic_rationale": "Adds a water/wastewater controls and SCADA specialist that pairs directly with Horton's wastewater-treatment-plant electrical franchise. Moultonborough NH is ~100 miles from Worcester, so it would operate as a controls center of excellence rather than a route-density play.",
+      "fit_score": 61,
+      "fit_breakdown": {
+        "capability": 28,
+        "geography": 15,
+        "scale": 8,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Small scale",
+        "Remote location",
+        "Ownership unknown"
+      ],
+      "zoominfo_id": "354048044",
+      "sources": [
+        "https://www.eii-hq.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t29",
+      "company": "Lighthouse Electrical Contracting Inc.",
+      "website": "https://lighthouse-electrical.com",
+      "hq_city": "Hingham",
+      "state": "MA",
+      "lat": 42.2418,
+      "lon": -70.8898,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 7,
+      "founded_year": null,
+      "employees": 40,
+      "employees_note": null,
+      "revenue_est_usd": 7714000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; ownership not disclosed.",
+      "specialties": [
+        "electrical construction",
+        "fire alarm",
+        "renewable/solar PV",
+        "tel/data & security"
+      ],
+      "end_markets": [
+        "commercial",
+        "institutional"
+      ],
+      "certifications_or_licenses": "IBEW Local 103 signatory",
+      "geography_served": "Greater Boston and Eastern MA",
+      "strategic_rationale": "Adds solar PV and fire-alarm crews on the South Shore. Hingham is ~6 miles from NuWave in Norwell.",
+      "fit_score": 60,
+      "fit_breakdown": {
+        "capability": 16,
+        "geography": 27,
+        "scale": 7,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Below $8M revenue floor",
+        "Union labor model"
+      ],
+      "zoominfo_id": "70944773",
+      "sources": [
+        "https://lighthouse-electrical.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t30",
+      "company": "NY-Conn Corporation",
+      "website": "https://www.nyconncorp.com",
+      "hq_city": "Danbury",
+      "state": "CT",
+      "lat": 41.3948,
+      "lon": -73.454,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 104,
+      "founded_year": 1989,
+      "employees": 86,
+      "employees_note": null,
+      "revenue_est_usd": 23458000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Founded 1989 as a family business by MaryJean Rebeiro; brother Ross Rizzo joined 1995.",
+      "specialties": [
+        "traffic signalization",
+        "highway illumination",
+        "commercial & industrial electrical",
+        "design-build",
+        "data & fiber optic"
+      ],
+      "end_markets": [
+        "DOT/transportation",
+        "municipal",
+        "commercial",
+        "industrial"
+      ],
+      "certifications_or_licenses": "CT-certified WBE/SBE; licensed in CT and NY",
+      "geography_served": "Greater Danbury / Connecticut (and NY)",
+      "strategic_rationale": "Adds DOT traffic-signal and highway-lighting capability with CT DOT credentials. Danbury is western CT; NY work would be de-emphasized given CEO guidance against NYC expansion.",
+      "fit_score": 60,
+      "fit_breakdown": {
+        "capability": 18,
+        "geography": 16,
+        "scale": 13,
+        "ownership_readiness": 13
+      },
+      "risk_flags": [
+        "WBE certification would not transfer on sale",
+        "Proximity to NY market conflicts with no-NYC guidance"
+      ],
+      "zoominfo_id": "70763425",
+      "sources": [
+        "https://www.nyconncorp.com/about-overview",
+        "https://business.danburychamber.com/list/member/ny-conn-corporation-133"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t31",
+      "company": "Rivers Electrical Corporation",
+      "website": "https://www.riverselectrical.com",
+      "hq_city": "Woburn",
+      "state": "MA",
+      "lat": 42.4793,
+      "lon": -71.1523,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 29,
+      "founded_year": null,
+      "employees": 83,
+      "employees_note": null,
+      "revenue_est_usd": 18415000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; ownership not disclosed (ZoomInfo lists Needham MA).",
+      "specialties": [
+        "electrical construction",
+        "service & maintenance",
+        "electrical testing",
+        "structured cabling",
+        "audio visual",
+        "fire alarm"
+      ],
+      "end_markets": [
+        "life sciences",
+        "industrial",
+        "commercial"
+      ],
+      "certifications_or_licenses": "MA licensed electrical contractor",
+      "geography_served": "Greater Boston",
+      "strategic_rationale": "Adds electrical testing and life-science service capability plus fire alarm and A/V. Woburn/Needham is ~35-40 miles from Worcester, densifying CET's Boston-metro coverage.",
+      "fit_score": 58,
+      "fit_breakdown": {
+        "capability": 18,
+        "geography": 18,
+        "scale": 12,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Ownership unknown",
+        "Founding year unverified"
+      ],
+      "zoominfo_id": "96862644",
+      "sources": [
+        "https://www.riverselectrical.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t32",
+      "company": "Driscoll Electric",
+      "website": "https://www.driscollelectric.net",
+      "hq_city": "Medford",
+      "state": "MA",
+      "lat": 42.4184,
+      "lon": -71.1062,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 24,
+      "founded_year": null,
+      "employees": 74,
+      "employees_note": null,
+      "revenue_est_usd": 16823000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Second-generation, family-owned.",
+      "specialties": [
+        "residential & commercial electrical",
+        "service"
+      ],
+      "end_markets": [
+        "residential",
+        "commercial"
+      ],
+      "certifications_or_licenses": "MA licensed electrical contractor",
+      "geography_served": "Boston area",
+      "strategic_rationale": "Adds a second-generation family service business with residential/commercial customers inside Route 128. Medford is ~40 miles from Worcester.",
+      "fit_score": 58,
+      "fit_breakdown": {
+        "capability": 14,
+        "geography": 20,
+        "scale": 11,
+        "ownership_readiness": 13
+      },
+      "risk_flags": [
+        "Residential mix",
+        "Limited specialty capability"
+      ],
+      "zoominfo_id": "87069096",
+      "sources": [
+        "https://www.driscollelectric.net/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t33",
+      "company": "Rossi Electric",
+      "website": "https://www.rossielectric.com",
+      "hq_city": "Cranston",
+      "state": "RI",
+      "lat": 41.7798,
+      "lon": -71.4373,
+      "geo_precision": "city",
+      "nearest_cet_node": "Taunton MA (CET office)",
+      "nearest_cet_node_miles": 20,
+      "founded_year": 1993,
+      "employees": 83,
+      "employees_note": null,
+      "revenue_est_usd": 6255000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; founded 1993.",
+      "specialties": [
+        "commercial electrical construction",
+        "maintenance services"
+      ],
+      "end_markets": [
+        "commercial",
+        "institutional"
+      ],
+      "certifications_or_licenses": "RI licensed electrical contractor",
+      "geography_served": "Rhode Island / southeastern MA",
+      "strategic_rationale": "Adds Rhode Island labor and maintenance customers, building on CET's RI license. Cranston is ~25 miles from CET's Taunton office.",
+      "fit_score": 58,
+      "fit_breakdown": {
+        "capability": 14,
+        "geography": 24,
+        "scale": 10,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "ZoomInfo revenue ($6.3M) below floor vs 83 employees",
+        "Ownership unknown"
+      ],
+      "zoominfo_id": "353869893",
+      "sources": [
+        "https://www.rossielectric.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t34",
+      "company": "Dynasty Electric, LLC",
+      "website": "https://www.dynastyelectricllc.com",
+      "hq_city": "Rehoboth",
+      "state": "MA",
+      "lat": 41.8404,
+      "lon": -71.2495,
+      "geo_precision": "city",
+      "nearest_cet_node": "Taunton MA (CET office)",
+      "nearest_cet_node_miles": 9,
+      "founded_year": 2010,
+      "employees": 36,
+      "employees_note": null,
+      "revenue_est_usd": 9141000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Established 2010.",
+      "specialties": [
+        "multifamily electrical construction"
+      ],
+      "end_markets": [
+        "multifamily residential",
+        "developers"
+      ],
+      "certifications_or_licenses": "MA licensed electrical contractor",
+      "geography_served": "Southeastern MA / RI",
+      "strategic_rationale": "Adds multifamily construction capacity near the RI border. Rehoboth is ~10 miles from CET's Taunton office.",
+      "fit_score": 57,
+      "fit_breakdown": {
+        "capability": 12,
+        "geography": 27,
+        "scale": 7,
+        "ownership_readiness": 11
+      },
+      "risk_flags": [
+        "Concentrated in cyclical multifamily construction",
+        "Small scale"
+      ],
+      "zoominfo_id": "346490232",
+      "sources": [
+        "https://www.dynastyelectricllc.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t35",
+      "company": "Racette Electric Inc.",
+      "website": "https://www.racetteelectricinc.com",
+      "hq_city": "Pittsford",
+      "state": "VT",
+      "lat": 43.7062,
+      "lon": -73.0232,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 117,
+      "founded_year": 1988,
+      "employees": 25,
+      "employees_note": null,
+      "revenue_est_usd": 7771000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Founded 1988 by Ernie Racette; operated with son Shane Racette.",
+      "specialties": [
+        "substation construction",
+        "control-house wiring",
+        "pump stations",
+        "generator backup systems",
+        "battery banks & transfer switches",
+        "grounding grids",
+        "underground conduit",
+        "fire alarm"
+      ],
+      "end_markets": [
+        "electric utilities",
+        "municipal water",
+        "commercial",
+        "residential"
+      ],
+      "certifications_or_licenses": "VT licensed electrical contractor",
+      "geography_served": "Vermont",
+      "strategic_rationale": "Adds substation and pump-station electrical skills that mirror Horton's utility/wastewater niche. Pittsford VT is ~140 miles from Worcester, so it is a small capability tuck-in.",
+      "fit_score": 56,
+      "fit_breakdown": {
+        "capability": 24,
+        "geography": 10,
+        "scale": 6,
+        "ownership_readiness": 16
+      },
+      "risk_flags": [
+        "Below $8M revenue floor",
+        "Small scale"
+      ],
+      "zoominfo_id": "410636216",
+      "sources": [
+        "https://www.racetteelectricinc.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t36",
+      "company": "Delmar Electrical Contractors, LLC",
+      "website": "https://www.delmarelectrical.com",
+      "hq_city": "Oakville (Watertown)",
+      "state": "CT",
+      "lat": 41.5932,
+      "lon": -73.0851,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 81,
+      "founded_year": 1997,
+      "employees": 53,
+      "employees_note": null,
+      "revenue_est_usd": 12236000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Founded 1997; owner Kevin Dunn.",
+      "specialties": [
+        "electrical contracting",
+        "controls",
+        "fiber optic/network cabling",
+        "generator sets"
+      ],
+      "end_markets": [
+        "commercial",
+        "industrial",
+        "residential"
+      ],
+      "certifications_or_licenses": "CT licensed electrical contractor",
+      "geography_served": "Western/central Connecticut",
+      "strategic_rationale": "Adds controls, cabling and generator installs in the Waterbury area. Oakville/Watertown gives CET a western-CT service node next to Horton.",
+      "fit_score": 55,
+      "fit_breakdown": {
+        "capability": 15,
+        "geography": 20,
+        "scale": 8,
+        "ownership_readiness": 12
+      },
+      "risk_flags": [
+        "Small scale",
+        "Founder dependence"
+      ],
+      "zoominfo_id": "345877584",
+      "sources": [
+        "https://www.delmarelectrical.com/",
+        "https://www.bbb.org/us/ct/oakville/profile/electrician/delmar-electrical-contractors-llc-0111-64001901"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t37",
+      "company": "Northeast Electrical & Mechanical Services, Inc. (NEMS)",
+      "website": "https://www.nems-inc.com",
+      "hq_city": "Dedham",
+      "state": "MA",
+      "lat": 42.2418,
+      "lon": -71.1662,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 20,
+      "founded_year": 1989,
+      "employees": 31,
+      "employees_note": null,
+      "revenue_est_usd": 8096000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; established 1989.",
+      "specialties": [
+        "commercial & industrial electrical service",
+        "mechanical service",
+        "preventative maintenance",
+        "building controls/energy management",
+        "emergency response"
+      ],
+      "end_markets": [
+        "commercial",
+        "industrial"
+      ],
+      "certifications_or_licenses": "MA electrical & mechanical licenses",
+      "geography_served": "New England",
+      "strategic_rationale": "Adds a service-and-maintenance book with building-controls capability that complements NuWave energy retrofits. Dedham is ~20 miles from Norwell and Taunton.",
+      "fit_score": 54,
+      "fit_breakdown": {
+        "capability": 16,
+        "geography": 22,
+        "scale": 6,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Small scale",
+        "Mechanical mix"
+      ],
+      "zoominfo_id": "346269658",
+      "sources": [
+        "https://www.nems-inc.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t38",
+      "company": "Electrical Connection, Inc.",
+      "website": "https://electricalconnectioninc.com",
+      "hq_city": "Newington",
+      "state": "CT",
+      "lat": 41.6979,
+      "lon": -72.7237,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 61,
+      "founded_year": null,
+      "employees": 42,
+      "employees_note": null,
+      "revenue_est_usd": 11312000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; ownership not disclosed.",
+      "specialties": [
+        "multifamily & residential-development electrical",
+        "commercial new construction",
+        "recycling/material recovery facility electrical (conveyors, motor controls)",
+        "fire alarm, access control, security & networking"
+      ],
+      "end_markets": [
+        "commercial",
+        "industrial (MRFs)",
+        "residential"
+      ],
+      "certifications_or_licenses": "CT licensed electrical contractor (License E1-125346 per website)",
+      "geography_served": "Central Connecticut",
+      "strategic_rationale": "Adds industrial MRF and standby-generator work in the Hartford area. Newington is ~60 miles from Worcester and overlaps Horton's CT service area.",
+      "fit_score": 54,
+      "fit_breakdown": {
+        "capability": 14,
+        "geography": 22,
+        "scale": 8,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Small scale",
+        "Residential exposure"
+      ],
+      "zoominfo_id": "348762049",
+      "sources": [
+        "https://electricalconnectioninc.com/",
+        "https://www.thebluebook.com/iProView/239268/electrical-connection-inc/subcontractors/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t39",
+      "company": "Cruz Electric Inc.",
+      "website": "https://cruzelectric.com",
+      "hq_city": "Woburn",
+      "state": "MA",
+      "lat": 42.4793,
+      "lon": -71.1523,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 29,
+      "founded_year": 1983,
+      "employees": 72,
+      "employees_note": null,
+      "revenue_est_usd": 15678000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; operating since 1983.",
+      "specialties": [
+        "commercial electrical construction",
+        "service"
+      ],
+      "end_markets": [
+        "commercial"
+      ],
+      "certifications_or_licenses": "MA licensed electrical contractor",
+      "geography_served": "Greater Boston",
+      "strategic_rationale": "Adds commercial construction capacity in the Route 128 market. Woburn is ~40 miles from Worcester.",
+      "fit_score": 53,
+      "fit_breakdown": {
+        "capability": 14,
+        "geography": 18,
+        "scale": 11,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Limited differentiation",
+        "Ownership unknown"
+      ],
+      "zoominfo_id": "346083488",
+      "sources": [
+        "https://cruzelectric.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t40",
+      "company": "Midway Utility Contractors, LLC",
+      "website": "https://midwayutility.com",
+      "hq_city": "Seabrook",
+      "state": "NH",
+      "lat": 42.8948,
+      "lon": -70.8712,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 51,
+      "founded_year": 1975,
+      "employees": 70,
+      "employees_note": null,
+      "revenue_est_usd": 18281000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; serving New England utility construction since 1975.",
+      "specialties": [
+        "underground utility construction",
+        "natural gas main & service installation",
+        "electrical conduit installation",
+        "excavation",
+        "milling & paving"
+      ],
+      "end_markets": [
+        "gas & electric utilities"
+      ],
+      "certifications_or_licenses": "NH utility contractor",
+      "geography_served": "New England; satellite in Bow NH",
+      "strategic_rationale": "Adds utility underground/civil capability (electrical conduit, excavation) that complements Horton's civil site work. Seabrook NH is ~70 miles from Worcester.",
+      "fit_score": 52,
+      "fit_breakdown": {
+        "capability": 14,
+        "geography": 16,
+        "scale": 12,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Primarily gas-distribution work",
+        "Utility MSA concentration"
+      ],
+      "zoominfo_id": "346573868",
+      "sources": [
+        "https://midwayutility.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t41",
+      "company": "Control Technologies, Inc. (CTI)",
+      "website": "https://www.controltechinc.com",
+      "hq_city": "Williston",
+      "state": "VT",
+      "lat": 44.4378,
+      "lon": -73.0682,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 163,
+      "founded_year": null,
+      "employees": 153,
+      "employees_note": null,
+      "revenue_est_usd": 27371000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; ownership not disclosed.",
+      "specialties": [
+        "building automation & controls",
+        "HVAC controls",
+        "energy management & metering",
+        "HVAC services"
+      ],
+      "end_markets": [
+        "commercial",
+        "industrial",
+        "institutional"
+      ],
+      "certifications_or_licenses": "BAS integrator",
+      "geography_served": "Vermont / northern New England",
+      "strategic_rationale": "Adds a scaled BAS and energy-management integrator that extends NuWave's energy-conservation work into controls. Williston VT is ~190 miles from Worcester.",
+      "fit_score": 52,
+      "fit_breakdown": {
+        "capability": 20,
+        "geography": 8,
+        "scale": 14,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Controls-integrator model differs from contracting",
+        "Remote from core"
+      ],
+      "zoominfo_id": "29823046",
+      "sources": [
+        "https://www.controltechinc.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t42",
+      "company": "Universal Electric Co.",
+      "website": "https://www.uecma.com",
+      "hq_city": "West Springfield",
+      "state": "MA",
+      "lat": 42.107,
+      "lon": -72.6204,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 43,
+      "founded_year": 1992,
+      "employees": 51,
+      "employees_note": null,
+      "revenue_est_usd": 7180000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; ownership not disclosed.",
+      "specialties": [
+        "commercial electrical design & construction"
+      ],
+      "end_markets": [
+        "commercial"
+      ],
+      "certifications_or_licenses": "Licensed in MA and CT (serves VT)",
+      "geography_served": "MA, CT, VT",
+      "strategic_rationale": "Adds commercial design-build capacity in the Springfield-Hartford corridor. West Springfield is ~48 miles from Worcester and ~25 miles from Hartford, supporting the Horton CT bridge.",
+      "fit_score": 51,
+      "fit_breakdown": {
+        "capability": 14,
+        "geography": 20,
+        "scale": 7,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Below $8M revenue floor",
+        "Limited specialty capability"
+      ],
+      "zoominfo_id": "368212570",
+      "sources": [
+        "https://www.uecma.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t43",
+      "company": "DeBlois Electric",
+      "website": "https://www.debloiselectric.com",
+      "hq_city": "Lewiston",
+      "state": "ME",
+      "lat": 44.1004,
+      "lon": -70.2148,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 137,
+      "founded_year": 1967,
+      "employees": 66,
+      "employees_note": null,
+      "revenue_est_usd": 14557000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; serving Maine since 1967; ownership not disclosed.",
+      "specialties": [
+        "electrical construction",
+        "design-build",
+        "service & maintenance",
+        "generators",
+        "heat pump electrical",
+        "EV chargers"
+      ],
+      "end_markets": [
+        "commercial",
+        "residential"
+      ],
+      "certifications_or_licenses": "ME licensed electrical contractor",
+      "geography_served": "Maine",
+      "strategic_rationale": "Adds electrification (heat pumps, EV, generators) service capacity in Maine, where CET is licensed. Lewiston is ~150 miles from Worcester, so it would be a standalone Maine hub.",
+      "fit_score": 49,
+      "fit_breakdown": {
+        "capability": 16,
+        "geography": 10,
+        "scale": 11,
+        "ownership_readiness": 12
+      },
+      "risk_flags": [
+        "Distance from CET core",
+        "Residential exposure"
+      ],
+      "zoominfo_id": "354022165",
+      "sources": [
+        "https://www.debloiselectric.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t44",
+      "company": "Daniels Electric Corporation",
+      "website": "https://www.danielselectriccorp.com",
+      "hq_city": "Gilford",
+      "state": "NH",
+      "lat": 43.5476,
+      "lon": -71.4065,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 91,
+      "founded_year": 1995,
+      "employees": 38,
+      "employees_note": null,
+      "revenue_est_usd": 24188000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Incorporated 1995; affiliated with Metro North Electric (Laconia NH) per shared website content.",
+      "specialties": [
+        "commercial & residential electrical",
+        "standby power (generators, UPS)"
+      ],
+      "end_markets": [
+        "commercial",
+        "residential"
+      ],
+      "certifications_or_licenses": "NH licensed electrical contractor",
+      "geography_served": "Lakes Region, New Hampshire",
+      "strategic_rationale": "Adds standby-power and generator installs in central NH. Gilford is ~90 miles from Worcester.",
+      "fit_score": 48,
+      "fit_breakdown": {
+        "capability": 17,
+        "geography": 12,
+        "scale": 9,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Revenue estimate may include affiliate Metro North",
+        "Residential exposure"
+      ],
+      "zoominfo_id": "348528883",
+      "sources": [
+        "https://www.danielselectriccorp.com/",
+        "https://www.metronorthelectric.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t45",
+      "company": "MEI Electrical Contractors & Systems Integrators (Mike's Electric)",
+      "website": "https://www.mei-vt.com",
+      "hq_city": "Westfield",
+      "state": "VT",
+      "lat": 44.8837,
+      "lon": -72.4501,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 184,
+      "founded_year": 2000,
+      "employees": 85,
+      "employees_note": null,
+      "revenue_est_usd": 18773000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; ~25-year track record; ownership not disclosed.",
+      "specialties": [
+        "electrical contracting",
+        "fire alarm",
+        "security & access control",
+        "systems integration",
+        "lighting design/conservation",
+        "24/7 service"
+      ],
+      "end_markets": [
+        "commercial",
+        "industrial",
+        "education",
+        "government",
+        "healthcare",
+        "agricultural"
+      ],
+      "certifications_or_licenses": "VT licensed electrical contractor",
+      "geography_served": "Vermont and New Hampshire; branch in Williston VT",
+      "strategic_rationale": "Adds fire-alarm, security and systems-integration capability across northern Vermont. It would be a northern-New England hub (~200 miles from Worcester).",
+      "fit_score": 47,
+      "fit_breakdown": {
+        "capability": 19,
+        "geography": 6,
+        "scale": 12,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Remote from CET core",
+        "Ownership unknown"
+      ],
+      "zoominfo_id": "346877978",
+      "sources": [
+        "https://www.mei-vt.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t46",
+      "company": "Benoit Electric",
+      "website": "http://benoitelectric.com",
+      "hq_city": "Barre",
+      "state": "VT",
+      "lat": 44.197,
+      "lon": -72.5018,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 138,
+      "founded_year": 1986,
+      "employees": 75,
+      "employees_note": null,
+      "revenue_est_usd": 17112000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; serving Vermont since 1986.",
+      "specialties": [
+        "commercial & institutional electrical",
+        "telecommunications",
+        "emergency power upgrades",
+        "service"
+      ],
+      "end_markets": [
+        "higher education",
+        "healthcare",
+        "institutional"
+      ],
+      "certifications_or_licenses": "VT licensed electrical contractor",
+      "geography_served": "Vermont",
+      "strategic_rationale": "Adds a leading Vermont institutional contractor (UVM, Middlebury College, CVMC). Barre VT is ~150 miles from Worcester, so it would be a standalone Vermont hub.",
+      "fit_score": 46,
+      "fit_breakdown": {
+        "capability": 16,
+        "geography": 8,
+        "scale": 12,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Distance from core",
+        "Ownership unknown"
+      ],
+      "zoominfo_id": "348027824",
+      "sources": [
+        "http://benoitelectric.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t47",
+      "company": "Seabee Electric, Inc.",
+      "website": "https://www.seabeeelectric.com",
+      "hq_city": "Scarborough",
+      "state": "ME",
+      "lat": 43.5781,
+      "lon": -70.3217,
+      "geo_precision": "city",
+      "nearest_cet_node": "Norwell MA (NuWave)",
+      "nearest_cet_node_miles": 101,
+      "founded_year": 1980,
+      "employees": 40,
+      "employees_note": "Website states 40 employees",
+      "revenue_est_usd": 8763000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Founded 1980 by William Gagnon, a retired Navy Seabee.",
+      "specialties": [
+        "commercial & industrial electrical",
+        "design-build",
+        "service"
+      ],
+      "end_markets": [
+        "commercial",
+        "industrial",
+        "healthcare"
+      ],
+      "certifications_or_licenses": "ME licensed electrical contractor",
+      "geography_served": "Maine and New Hampshire",
+      "strategic_rationale": "Adds a southern-Maine commercial service platform. Scarborough is ~125 miles from Worcester, giving CET a Portland-area foothold.",
+      "fit_score": 45,
+      "fit_breakdown": {
+        "capability": 14,
+        "geography": 10,
+        "scale": 8,
+        "ownership_readiness": 13
+      },
+      "risk_flags": [
+        "Founder-era succession",
+        "Distance from core"
+      ],
+      "zoominfo_id": "354853181",
+      "sources": [
+        "https://www.seabeeelectric.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t48",
+      "company": "Cummings Electric",
+      "website": "https://www.cummingselectric.com",
+      "hq_city": "South Burlington",
+      "state": "VT",
+      "lat": 44.4669,
+      "lon": -73.1709,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 167,
+      "founded_year": null,
+      "employees": 27,
+      "employees_note": null,
+      "revenue_est_usd": 7307000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Local, family-owned (per website).",
+      "specialties": [
+        "general electrical",
+        "generators",
+        "EV charging",
+        "heat pumps",
+        "fire alarm inspections"
+      ],
+      "end_markets": [
+        "commercial",
+        "residential"
+      ],
+      "certifications_or_licenses": "VT licensed",
+      "geography_served": "Chittenden County, Vermont",
+      "strategic_rationale": "Adds electrification service (generators, EV, heat pumps) in the Burlington market. South Burlington is ~195 miles from Worcester.",
+      "fit_score": 41,
+      "fit_breakdown": {
+        "capability": 15,
+        "geography": 7,
+        "scale": 6,
+        "ownership_readiness": 13
+      },
+      "risk_flags": [
+        "Below $8M revenue floor",
+        "Remote from core"
+      ],
+      "zoominfo_id": "348815066",
+      "sources": [
+        "https://www.cummingselectric.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-t49",
+      "company": "Cole Electric, Inc.",
+      "website": "https://coleelectric.com",
+      "hq_city": "East Thetford",
+      "state": "VT",
+      "lat": 43.8187,
+      "lon": -72.1876,
+      "geo_precision": "city",
+      "nearest_cet_node": "Worcester MA (CET HQ)",
+      "nearest_cet_node_miles": 109,
+      "founded_year": null,
+      "employees": 30,
+      "employees_note": null,
+      "revenue_est_usd": 7838000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "unknown",
+      "ownership_notes": "Private; 40+ years in business.",
+      "specialties": [
+        "new construction",
+        "renovations",
+        "maintenance",
+        "emergency repairs"
+      ],
+      "end_markets": [
+        "commercial",
+        "institutional",
+        "industrial"
+      ],
+      "certifications_or_licenses": "VT and NH licensed",
+      "geography_served": "Upper Valley (VT/NH)",
+      "strategic_rationale": "Adds Upper Valley (Dartmouth/Lebanon) institutional coverage. East Thetford VT is ~120 miles from Worcester.",
+      "fit_score": 40,
+      "fit_breakdown": {
+        "capability": 13,
+        "geography": 10,
+        "scale": 7,
+        "ownership_readiness": 10
+      },
+      "risk_flags": [
+        "Below $8M revenue floor",
+        "Remote from core"
+      ],
+      "zoominfo_id": "471054037",
+      "sources": [
+        "https://coleelectric.com/"
+      ],
+      "retrieved": "2026-09-24"
+    }
+  ]
+}

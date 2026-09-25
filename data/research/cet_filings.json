@@ -1,0 +1,790 @@
+{
+  "meta": {
+    "dataset": "cet_filings",
+    "title": "Commonwealth Electrical Technologies (Broad Sky Partners) – filings & financial research track",
+    "subject": {
+      "platform": "Commonwealth Electrical Technologies (CET), Worcester & Taunton MA",
+      "sponsor": "Broad Sky Partners (majority investor since Feb 2025; announced 2025-03-19)",
+      "add_ons": [
+        "NuWave Energy Solutions (Norwell MA; announced 2025-10-07)",
+        "Horton Electrical Services (Canton/Collinsville CT; announced 2026-09-15)"
+      ]
+    },
+    "generated": "2026-09-24",
+    "method": "Queried primary public records directly: SEC EDGAR full-text search API and Form D XML; SEC IAPD Form ADV PDF; SBA PPP FOIA CSVs (downloaded and filtered by name, address and NAICS 238210 for MA/CT peers); CT business registry via Socrata API (entity, filing-history and principal tables); OSHA establishment search; CourtListener search API; USAspending API; the CET WordPress REST API for press releases; the MassCEC and NEIF sites; SEC XBRL companyfacts for public comps. Estimates use explicit proxies (PPP payroll x 2.5 rule, revenue per employee, EBITDA margin comps, LMM leverage 3.5–5.5x) and are labeled low or medium confidence.",
+    "sources_summary": [
+      {
+        "source": "SEC EDGAR full-text search + Form D XML",
+        "records": "BSP-CET Co-Invest LLC D (2025-02-18); Broad Sky Partners, LP D/D-A series 2022–2025; 0 hits for CET/Horton/NuWave/CET Acquisition Holdings"
+      },
+      {
+        "source": "SEC IAPD Form ADV (Broad Sky Partners LLC, CRD 317966)",
+        "records": "Schedule D 7.B.(1) private fund GAVs incl. BSP-CET Co-Invest $8,504,193"
+      },
+      {
+        "source": "SBA PPP FOIA CSVs (data.sba.gov, 2024-09-30 release)",
+        "records": "CET, Horton, NuWave, A. Duquette & Son + 425 MA/CT NAICS 238210 peers"
+      },
+      {
+        "source": "CT Secretary of the State Business Registry (data.ct.gov Socrata: n7gp-d28j, ah3s-bes7, ka36-64k6)",
+        "records": "CET Inc., CET LLC, Horton (old/new), Horton affiliates, NuWave"
+      },
+      {
+        "source": "U.S. DOL OSHA establishment search",
+        "records": "3 CET inspections (no violations), 1 Horton inspection (1 serious, $3,126)"
+      },
+      {
+        "source": "CourtListener RECAP",
+        "records": "SunEdison Litigation Trust v. CET (dismissed); Agera Energy docket mention"
+      },
+      {
+        "source": "Company website (comelectrical.com WP REST API)",
+        "records": "Horton (2026-09-15) and NuWave (2025-10-07) releases; leadership page; EV program posts"
+      },
+      {
+        "source": "MassCEC website",
+        "records": "On-Street Charging Solutions program page naming CET as lead vendor"
+      },
+      {
+        "source": "NEIF contractor directory",
+        "records": "CET LLC approved contractor listing"
+      },
+      {
+        "source": "USAspending API",
+        "records": "CET and Horton: PPP loans only; NuWave: PPP, a $350k SBA loan and a $4k EIDL advance; no federal contracts"
+      },
+      {
+        "source": "SEC XBRL companyfacts",
+        "records": "IES Holdings, Limbach, Ameresco benchmark financials"
+      },
+      {
+        "source": "Electrical Wholesaling (ewweb.com)",
+        "records": "NuWave deal details incl. ~140 CET employees and advisors"
+      }
+    ],
+    "caveats": [
+      "All revenue, EBITDA, leverage and valuation figures in estimate_table are analyst inferences from payroll, headcount and fund-size proxies. None is disclosed by CET, Broad Sky or any lender.",
+      "PPP-implied payroll caps compensation at $100k per employee and reflects 2019/early-2020 conditions (pre-PE, pre-add-ons).",
+      "Form ADV gross asset value for the co-invest vehicle may include cash or fee accruals and is a manager mark, not a transaction price.",
+      "The EDGAR full-text hit for 'Broad Sky' in Capital Southwest 10-Ks refers to 'Broad Sky Networks, LLC' (an unrelated telecom borrower). 'CET Acquisition CO Inc' (CIK 1416379) is an unrelated 2007 paper Reg D filer.",
+      "'Horton Electrical Services, Inc.' (Maryland; DoD 2015 award) and the Horton party in the Center City Healthcare bankruptcy are different entities from the CT Horton acquired by CET.",
+      "The OSHA records for 'Commonwealth Electrical Technologies, Inc.' show a Devens MA mailing address and NAICS 237130. The name matches exactly and the sites are in CET's service area, but entity identity was not independently confirmed.",
+      "The relayed user request asks for coverage of the entire Broad Sky portfolio and rivals. This file covers the CET platform (CET, NuWave, Horton) plus CET-relevant rivals and public comps only; other portfolio companies are handled in separate files.",
+      "Verified 2026-09-24: sampled 25, confirmed 24, removed 0"
+    ],
+    "item_count": 25,
+    "financial_picture": "1) Pre-deal scale: CET's April 2020 PPP loan ($2.062M, 121 jobs) implies about $9.9M of annual payroll. At the 30–40% labor-to-revenue ratio typical of commercial electrical contractors, 2019 revenue was roughly $25–33M. 2) By October 2025 CET reported about 140 employees (the brief's ~160 'licensed professionals' may count differently). Applying $250–375k revenue per employee, bracketed by IES Holdings' ~$328k, gives 2025 standalone revenue of about $35–55M (midpoint ~$45M). 3) At the 8–12% EBITDA margins seen at Limbach (~10%) and IES (~13%, high end), CET's standalone EBITDA at entry was probably about $3–6M, a true lower-middle-market platform. 4) The equity structure supports that scale. The only co-invest was one LP writing $7.5M (Form D, first sale 2025-02-05), from a ~$335M fund where a typical position is $25–50M. Total equity was therefore likely ~$25–45M. 5) Applying the brief's 3.5–5.5x LMM leverage to $3–6M of EBITDA implies $10–33M of senior debt at close. Entry enterprise value was likely ~$35–75M (~9–12x), but none of the debt is visible. 6) No BDC schedule, lender press release, Form D debt vehicle or credit rating names CET, 'CET Acquisition Holdings, LLC' or Horton. EDGAR full-text search found zero hits and 73 downloaded BDC/credit-fund filings were negative. So the facility most likely sits with a bank or a non-SEC-reporting private lender or SBIC. 7) Broad Sky's March 2026 Form ADV marks the CET co-invest vehicle at $8.504M against $7.5M invested (1.13x gross). That modest markup fits the NuWave tuck-in plus organic growth, not a re-rating. 8) NuWave was tiny at acquisition (PPP: 4 jobs in 2020, founded 2019) and adds engineering/design-build capability, not scale; call it $2–10M of revenue (low confidence). 9) Horton is the transformational add-on. Its 2020 PPP ($646k, 42 jobs, ~$3.1M payroll) has grown to 120+ staff, so revenue is plausibly ~$25–40M today. CET says the deal 'nearly doubles' the workforce. 10) Pro forma for both add-ons, the platform is roughly 260–290 employees, $65–100M revenue and $6–11M EBITDA (low confidence). Horton was bought by the CET LLC subsidiary with no new Broad Sky Form D, so it was likely funded with incremental or delayed-draw debt plus seller rollover, pushing leverage toward the upper half of the 3.5–5.5x band. 11) Offsetting positives: a clean OSHA history, no material litigation, full PPP forgiveness, and state-funded program work (MassCEC On-Street Charging prime vendor, CT Clean Water Fund wastewater exposure via Horton). Watch items: a likely related-party lease of Horton's Canton facility (97 River Road CBP, LLC) and a possible Duquette-affiliated mechanical firm (A. Duquette & Son) across the street from CET HQ.",
+    "estimate_table": [
+      {
+        "metric": "CET annual payroll, 2019/early 2020",
+        "estimate": "$9.9M",
+        "basis": "PPP $2,062,000 / 2.5 x 12 (per-employee $100k cap applies)",
+        "confidence": "high"
+      },
+      {
+        "metric": "CET revenue, 2019",
+        "estimate": "$25–33M",
+        "basis": "$9.9M payroll / 30–40% labor share of revenue for commercial electrical contractors",
+        "confidence": "medium"
+      },
+      {
+        "metric": "CET headcount trajectory",
+        "estimate": "121 (Apr 2020) -> ~140 (Oct 2025) -> ~260–290 pro forma with Horton (Sep 2026)",
+        "basis": "PPP jobs; CET NuWave release; Horton release ('nearly doubles', 100+ field + 20 managers)",
+        "confidence": "high"
+      },
+      {
+        "metric": "CET standalone revenue, 2025",
+        "estimate": "$35–55M (mid ~$45M)",
+        "basis": "~140 employees x $250–375k revenue/employee (IES FY25 $328k)",
+        "confidence": "low"
+      },
+      {
+        "metric": "CET standalone EBITDA at entry (Feb 2025)",
+        "estimate": "$3–6M",
+        "basis": "8–12% EBITDA margin (Limbach ~10.4%, IES ~12.8%) on $35–55M revenue",
+        "confidence": "low"
+      },
+      {
+        "metric": "Broad Sky equity in CET (fund + co-invest)",
+        "estimate": "$25–45M",
+        "basis": "$7.5M single-LP co-invest (Form D); ~$335M fund (typical 8–15% position size)",
+        "confidence": "low"
+      },
+      {
+        "metric": "Senior debt at close",
+        "estimate": "$10–33M",
+        "basis": "3.5–5.5x LMM leverage on $3–6M EBITDA; no lender disclosure found",
+        "confidence": "low"
+      },
+      {
+        "metric": "Entry enterprise value",
+        "estimate": "$35–75M (~9–12x EBITDA)",
+        "basis": "equity range plus debt range; cross-checked against LMM electrical/energy-services multiples",
+        "confidence": "low"
+      },
+      {
+        "metric": "CET co-invest mark at FYE2025",
+        "estimate": "1.13x gross ($8,504,193 GAV on $7.5M)",
+        "basis": "Broad Sky Form ADV Schedule D 7.B.(1) filed 2026-03-31",
+        "confidence": "high"
+      },
+      {
+        "metric": "Horton annual payroll, 2020",
+        "estimate": "$3.1M (42 jobs)",
+        "basis": "PPP $646,100 / 2.5 x 12",
+        "confidence": "high"
+      },
+      {
+        "metric": "Horton revenue, 2026 run-rate",
+        "estimate": "$25–40M",
+        "basis": "120+ employees x $220–330k/employee; wastewater/civil mix",
+        "confidence": "low"
+      },
+      {
+        "metric": "NuWave revenue at acquisition",
+        "estimate": "$2–10M",
+        "basis": "4 PPP jobs in 2020, founded 2019, design/build pass-through heavy; FMI-run sale",
+        "confidence": "low"
+      },
+      {
+        "metric": "Pro forma platform (CET+NuWave+Horton) revenue / EBITDA",
+        "estimate": "$65–100M revenue; $6–11M EBITDA",
+        "basis": "sum of component estimates; 8–12% margin",
+        "confidence": "low"
+      },
+      {
+        "metric": "Pro forma senior debt after Horton",
+        "estimate": "$25–55M",
+        "basis": "3.5–5.5x on $6–11M pro forma EBITDA; Horton bought by the CET LLC subsidiary with no new Form D (debt/rollover-funded)",
+        "confidence": "low"
+      }
+    ],
+    "data_gaps": [
+      "A. SEC/BDC: EDGAR full-text search (2019–2026) returned 0 hits for 'Commonwealth Electrical Technologies', 'Commonwealth Electrical', 'CET Acquisition Holdings', 'Horton Electrical' and 'NuWave Energy'. 73 locally cached BDC/credit-fund 10-K/10-Q/N-CSR filings (ARCC, GSBD, BCRED, ASIF, OHA, MFIC, etc.) also had no match. No BDC loan line, lender 8-K or lender press release found, so the debt facility, agent, pricing and maturity are unknown.",
+      "E. Credit ratings / private-credit press: no KBRA/Moody's/S&P/Fitch or 9fin/Debtwire/PE Hub debt reference found. The PE Hub NuWave article is paywalled.",
+      "C. Massachusetts Secretary of the Commonwealth corporate and UCC search (corp.sec.state.ma.us) is behind Incapsula bot protection and was not accessed. MA entity details (CET Inc. conversion/merger, CET Acquisition Holdings formation) and MA UCC-1 secured parties (agent bank) are not captured.",
+      "C. CT UCC (CONCORD) lien search not performed, so there is no secured-party data for Horton post-close. Delaware entity search not attempted (CAPTCHA).",
+      "D. DCAMM contractor certification (single-project and aggregate work limits, a proxy for bonding and financial capacity): mass.gov returned HTTP 403 to automated requests.",
+      "D. SMART program installer records and the MassCEC Production Tracking System were not retrieved (mass.gov 403). The MassCEC On-Street Charging contract value is not published on masscec.com.",
+      "D. ENR New England / NECA rankings, Inc. 5000 (inc.com 403), and PitchBook/Crunchbase snippets were not retrieved. The WebSearch budget for this session was exhausted before any queries could run.",
+      "D. Prevailing-wage and public-works award records naming CET or Horton with contract values were not found. No CT municipal WPCA bid tabulations or CT DEEP Clean Water Fund contractor awards were located.",
+      "B. ProPublica PPP pages returned a bot security check and FederalPay returned 403. PPP data was taken directly from the SBA FOIA files instead, so coverage is equivalent.",
+      "C. CourtListener: complaint amounts in the SunEdison adversary proceeding are unavailable (documents not in RECAP). State-court dockets (MA Trial Court, CT Judicial) were not searched.",
+      "NuWave's PPP record has anomalous use-of-proceeds fields (payroll blank, mortgage interest $125,680), so NuWave payroll cannot be derived.",
+      "The relationship of A. Duquette & Son, Inc. and of the Devens mailing address on CET's OSHA records to CET is unverified."
+    ],
+    "next_pulls": [
+      "MA SOC manual lookup (browser): Commonwealth Electrical Technologies, Inc. and LLC, and CET Acquisition Holdings, LLC. Pull MA UCC-1 filings from Jan–Feb 2025 to identify the secured party/agent bank and any Sept 2026 amendments tied to Horton.",
+      "CT CONCORD UCC search on 'Horton Electrical Services' and 'Commonwealth Electrical Technologies' for secured parties from Sept 2026.",
+      "Delaware Division of Corporations: formation dates for Commonwealth Electrical Technologies, LLC, CET Acquisition Holdings, LLC and Horton Electrical Services, LLC (DE).",
+      "DCAMM Certified Contractor list (xlsx on mass.gov) for CET's single-project and aggregate work limits.",
+      "CT DAS contractor prequalification (DAS-PQ) for Horton: aggregate work capacity rating and single-project limit.",
+      "CT DEEP Clean Water Fund project records and municipal WPCA bid tabulations (e.g., Newington, Canton, Hartford-area pump stations) naming Horton as electrical sub or prime with values.",
+      "MassCEC Production Tracking System and SMART qualified-units data filtered on installer 'Commonwealth Electrical' (solar capacity installed per year as a revenue proxy).",
+      "MassCEC public-records request for the On-Street Charging Solutions vendor contract (CET/Leidos) value.",
+      "Broad Sky's next Form ADV (Mar 2027) for the updated BSP-CET Co-Invest gross asset value; monitor EDGAR for any Form D/A or new co-invest tied to the Horton deal.",
+      "ENR New England 'Top Specialty Contractors' and NECA chapter listings (CET, Horton, Ostrow, Interstate, J&M Brown) for disclosed revenue bands.",
+      "Worcester and Canton CT assessor records for 125 Blackstone River Rd and 97 River Rd (ownership, assessed value; possible sale-leasebacks).",
+      "SAM.gov entity registrations (UEI, CAGE) for CET LLC and Horton LLC; MA/CT prevailing-wage certified payroll postings on major public jobs."
+    ]
+  },
+  "items": [
+    {
+      "id": "cet-001",
+      "entity": "BSP-CET Co-Invest LLC (Broad Sky co-invest vehicle for Commonwealth Electrical Technologies)",
+      "category": "sec_form_d",
+      "title": "Form D: BSP-CET Co-Invest LLC, $7.5M sold to one investor",
+      "filed_or_dated": "2025-02-18 (date of first sale 2025-02-05)",
+      "filer_or_source_agency": "SEC EDGAR (CIK 0002056574); signed by Heidi Vanhamme, Managing Director; executive officer Tyler Zachem",
+      "key_figures": {
+        "total_offering_amount_usd": 7500000,
+        "total_amount_sold_usd": 7500000,
+        "investors": 1,
+        "minimum_investment_usd": 7500000,
+        "date_of_first_sale": "2025-02-05",
+        "exemption": "Rule 506(b) / 3(c)(7)",
+        "entity_type": "Delaware LLC, pooled private equity fund, not 40-Act registered",
+        "revenue_range": "Decline to Disclose"
+      },
+      "what_it_tells_us": "This is the only SEC filing tied directly to the CET deal. It dates the closing to about February 5, 2025, about six weeks before the March 19 announcement. A single $7.5M co-investor sat alongside Broad Sky Partners, LP, so the fund wrote most of the equity check. The co-invest is small next to Broad Sky's Thomas Scientific co-invests (about $35.9M and $59.6M), which points to a much smaller deal.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2056574/000205657425000001/xslFormDX01/primary_doc.xml",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-002",
+      "entity": "Broad Sky Partners LLC / BSP-CET Co-Invest, LLC",
+      "category": "form_adv",
+      "title": "Form ADV annual amendment (filed 3/31/2026): private fund data for BSP-CET Co-Invest",
+      "filed_or_dated": "2026-03-31",
+      "filer_or_source_agency": "SEC IAPD (Broad Sky Partners LLC, CRD 317966, SEC 801-124920)",
+      "key_figures": {
+        "bsp_cet_coinvest_gross_asset_value_usd": 8504193,
+        "bsp_cet_coinvest_private_fund_id": "805-8522292532",
+        "bsp_cet_coinvest_beneficial_owners": 1,
+        "bsp_cet_coinvest_min_commitment_usd": 7500000,
+        "implied_gross_mark_vs_7.5M_invested": "1.134x (+13.4%)",
+        "broad_sky_partners_lp_gross_asset_value_usd": 414217413,
+        "broad_sky_partners_lp_beneficial_owners": 45,
+        "firm_regulatory_aum_usd": 476872842,
+        "firm_clients_private_funds": 6,
+        "firm_employees": 12,
+        "investment_professionals": 10
+      },
+      "what_it_tells_us": "At fiscal year-end 2025, Broad Sky reported the CET co-invest vehicle's gross asset value at $8.50M on $7.5M paid in. That is about a 1.13x gross mark roughly 11 months after closing, after the NuWave add-on. It suggests CET was held above cost, but gross asset value can include cash or fee accruals, so it is not a clean read on equity value.",
+      "confidence": "high",
+      "source_url": "https://reports.adviserinfo.sec.gov/reports/ADV/317966/PDF/317966.pdf",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-003",
+      "entity": "Broad Sky Partners, LP (Fund I)",
+      "category": "sec_form_d",
+      "title": "Form D and D/A series for Broad Sky's flagship fund (commitments raised over time)",
+      "filed_or_dated": "2022-03-22; D/A filed 2023-04-20 (signed 2023-04-17), 2024-04-16, 2025-04-30",
+      "filer_or_source_agency": "SEC EDGAR (CIK 0001917706)",
+      "key_figures": {
+        "amount_sold_2022_usd": 298710000,
+        "amount_sold_2023_usd": 303720000,
+        "amount_sold_2024_usd": 323760000,
+        "amount_sold_2025_usd": 335000000,
+        "investors_2022": 14,
+        "investors_2025": 46,
+        "date_of_first_sale": "2021-12-31",
+        "minimum_investment_2025_usd": 100000,
+        "minimum_investment_2022_2024_usd": 116000
+      },
+      "what_it_tells_us": "CET was bought out of a fund with about $335M of commitments. At that size, a typical position is about $25–50M of equity (8–15% of the fund), which puts an upper bound on CET's likely equity check. The fund's $414M gross asset value at FYE2025 is above commitments, so the portfolio overall was marked above cost.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1917706/000139834425008250/primary_doc.xml",
+      "retrieved": "2026-09-24",
+      "verification_note": "Verified 2026-09-24 against EDGAR: all amounts/investor counts match; 2023 D/A was signed 2023-04-17 but filed 2023-04-20 (corrected)."
+    },
+    {
+      "id": "cet-004",
+      "entity": "Commonwealth Electrical Technologies, Inc. (Worcester MA)",
+      "category": "sba_ppp",
+      "title": "PPP first-draw loan: $2,062,000, 121 jobs, fully forgiven",
+      "filed_or_dated": "Approved 2020-04-04 (SBA); forgiven 2021-06-09",
+      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus_240930.csv), loan #4644687003; corroborated by USAspending (ASST_NON_4644687003_073)",
+      "key_figures": {
+        "loan_amount_usd": 2062000,
+        "jobs_reported": 121,
+        "payroll_proceeds_usd": 2062000,
+        "implied_avg_monthly_payroll_usd": 824800,
+        "implied_annual_payroll_usd": 9897600,
+        "loan_per_job_usd": 17041,
+        "forgiveness_amount_usd": 2086056.67,
+        "forgiveness_date": "2021-06-09",
+        "lender": "Webster Five Cents Savings Bank",
+        "naics": "238210",
+        "business_type": "Subchapter S Corporation",
+        "address": "125 Blackstone River Rd, Worcester MA 01607",
+        "second_draw": "none found in 150k+ or sub-150k files"
+      },
+      "what_it_tells_us": "PPP loans were sized at 2.5x average monthly payroll, so CET's 2019–early-2020 payroll was about $9.9M a year across 121 people, or about $82k per job (the $100k-per-employee cap applies). At the 30–40% labor-to-revenue ratio typical of commercial electrical contractors, that implies roughly $25–33M of revenue before the pandemic. The S-corp status and a local savings bank lender fit a founder-owned business well before PE ownership.",
+      "confidence": "high",
+      "source_url": "https://data.sba.gov/sites/default/files/distribution/SBA-OCA-2022-07-001/public_150k_plus_240930.csv",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-005",
+      "entity": "Horton Electrical Services, LLC (Collinsville/Canton CT)",
+      "category": "sba_ppp",
+      "title": "PPP first-draw loan: $646,100, 42 jobs, fully forgiven",
+      "filed_or_dated": "Approved 2020-04-07; forgiven 2020-11-03",
+      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus_240930.csv), loan #7091657008",
+      "key_figures": {
+        "loan_amount_usd": 646100,
+        "jobs_reported": 42,
+        "implied_annual_payroll_usd": 3101280,
+        "loan_per_job_usd": 15383,
+        "forgiveness_amount_usd": 649657.98,
+        "originating_lender": "Collinsville Bank (servicing: Northwest Community Bank, Winsted CT)",
+        "naics": "238210",
+        "address": "97 River Rd, Collinsville CT 06019",
+        "second_draw": "none found"
+      },
+      "what_it_tells_us": "In 2020, Horton's payroll was about $3.1M a year across 42 people. The September 2026 acquisition release says Horton now has 100+ field staff and 20 managers, so headcount roughly tripled in six years. That points to fast recent growth, likely from wastewater and solar work, and to revenue now several times the 2020 level.",
+      "confidence": "high",
+      "source_url": "https://data.sba.gov/sites/default/files/distribution/SBA-OCA-2022-07-001/public_150k_plus_240930.csv",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-006",
+      "entity": "NuWave Energy Solutions LLC (Norwell MA)",
+      "category": "sba_ppp",
+      "title": "PPP first-draw loan: $157,100, 4 jobs",
+      "filed_or_dated": "Approved 2020-04-15; forgiven 2021-05-21",
+      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus_240930.csv), loan #9564477100",
+      "key_figures": {
+        "loan_amount_usd": 157100,
+        "jobs_reported": 4,
+        "naics": "541690 (other scientific/technical consulting)",
+        "business_age": "New business or 2 years or less",
+        "reported_use_mortgage_interest_usd": 125680,
+        "reported_use_rent_usd": 20710,
+        "reported_use_utilities_usd": 10710,
+        "payroll_proceeds_usd": "blank in record",
+        "forgiveness_amount_usd": 158791.52,
+        "lender": "Coastal Heritage Bank",
+        "second_draw": "none found"
+      },
+      "what_it_tells_us": "NuWave was a startup (founded 2019) with 4 reported jobs in April 2020, so it was a small, capability-driven tuck-in (energy-conservation design/build and engineering) rather than a scale buy. The use-of-proceeds fields look inconsistent: payroll is blank and mortgage interest is $125,680, likely a data-entry quirk. The 4-job figure should be treated as a floor.",
+      "confidence": "medium",
+      "source_url": "https://data.sba.gov/sites/default/files/distribution/SBA-OCA-2022-07-001/public_150k_plus_240930.csv",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-007",
+      "entity": "A. Duquette & Son, Inc. (104 Blackstone River Rd, Worcester MA)",
+      "category": "sba_ppp",
+      "title": "PPP loan to a Duquette-named plumbing/HVAC firm across the street from CET HQ ($441,000, 26 jobs)",
+      "filed_or_dated": "Approved 2020-04-03; forgiven 2020-11-03",
+      "filer_or_source_agency": "SBA PPP FOIA, loan #4496707004",
+      "key_figures": {
+        "loan_amount_usd": 441000,
+        "jobs_reported": 26,
+        "naics": "238220 (plumbing/HVAC)",
+        "lender": "Webster Five Cents Savings Bank (same as CET)",
+        "business_type": "Subchapter S Corporation"
+      },
+      "what_it_tells_us": "A Duquette-named mechanical contractor sits at 104 Blackstone River Rd, across from CET's 125 Blackstone River Rd, and used the same lender. It may be a family affiliate or related party, but that is unverified. If related, it matters for shared-services or real-estate arrangements and for CET's 'electrical, mechanical and energy' positioning. Whether it was part of the Broad Sky transaction is unknown.",
+      "confidence": "low",
+      "source_url": "https://data.sba.gov/sites/default/files/distribution/SBA-OCA-2022-07-001/public_150k_plus_240930.csv",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-008",
+      "entity": "Commonwealth Electrical Technologies, Limited Liability Company (Delaware) / CET Acquisition Holdings, LLC",
+      "category": "state_business_filing",
+      "title": "CT foreign registration of the new Delaware CET LLC; principal is CET Acquisition Holdings, LLC",
+      "filed_or_dated": "Registered 2025-01-22 (began transacting in CT 2025-01-17); agent resignation 2025-05-16; annual report 2026-02-27",
+      "filer_or_source_agency": "CT Secretary of the State – Business Registry (data.ct.gov n7gp-d28j / ah3s-bes7 / ka36-64k6), account 3139467",
+      "key_figures": {
+        "ct_account": "3139467",
+        "formation_state": "DE",
+        "status": "Active",
+        "principal_member_manager": "CET ACQUISITION HOLDINGS, LLC",
+        "address": "125 Blackstone River Rd, Worcester MA 01607",
+        "contact_domain": "comelectrical.com"
+      },
+      "what_it_tells_us": "The post-deal operating company is a new Delaware LLC formed about two weeks before closing, with a holdco called 'CET Acquisition Holdings, LLC' above it. That is the classic PE structure and the entity name to search in UCC, BDC and loan records. EDGAR full-text search for 'CET Acquisition Holdings' returned zero hits.",
+      "confidence": "high",
+      "source_url": "https://data.ct.gov/resource/n7gp-d28j.json?accountnumber=3139467",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-009",
+      "entity": "Commonwealth Electrical Technologies, Inc. (Massachusetts corporation)",
+      "category": "state_business_filing",
+      "title": "CT registration of the legacy MA corporation withdrawn at the transaction",
+      "filed_or_dated": "Certificate of Authority 2012-08-16; final annual report and Statement of Withdrawal 2025-01-21",
+      "filer_or_source_agency": "CT Secretary of the State – Business Registry, account 1080707",
+      "key_figures": {
+        "ct_account": "1080707",
+        "formation_state": "MA",
+        "began_transacting_ct": "2008-01-08",
+        "status": "Withdrawn",
+        "principals_listed": [
+          "John Duquette",
+          "Jason Richards",
+          "Steve Whitney",
+          "Peter DelSignore"
+        ],
+        "naics": "238210"
+      },
+      "what_it_tells_us": "The legacy S-corp withdrew from CT the day before the new Delaware LLC registered. This fits an asset or LLC-conversion carve-out into the Broad Sky structure (F-reorg/asset step-up), which is common for S-corp targets. CET has been licensed and working in CT since 2008.",
+      "confidence": "high",
+      "source_url": "https://data.ct.gov/resource/n7gp-d28j.json?accountnumber=1080707",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-010",
+      "entity": "Horton Electrical Services, LLC (new Delaware LLC) / legacy CT LLC",
+      "category": "state_business_filing",
+      "title": "Horton acquisition vehicle registered in CT with CET LLC as principal; legacy Horton LLC status 'Merged'",
+      "filed_or_dated": "New DE LLC foreign registration 2026-09-18; legacy CT LLC (formed 2013-08-19) last annual report 2026-01-22, now 'Merged'",
+      "filer_or_source_agency": "CT Secretary of the State – Business Registry, accounts 3518996 (new) and 1116502 (legacy)",
+      "key_figures": {
+        "new_ct_account": "3518996",
+        "new_formation_state": "DE",
+        "new_principal": "Commonwealth Electrical Technologies, Limited Liability Company",
+        "new_contact_email_domain": "comelectrical.com",
+        "legacy_ct_account": "1116502",
+        "legacy_status": "Merged",
+        "legacy_principal": "Warren Horton",
+        "address": "97 River Road, Canton CT 06019"
+      },
+      "what_it_tells_us": "These filings confirm the September 15, 2026 Horton deal closed into a CET-owned Delaware LLC, a wholly owned subsidiary of CET LLC, with the old Horton LLC merged in. Horton was bought by the platform subsidiary rather than a separate Broad Sky vehicle. So it was likely funded with platform debt (delayed-draw or incremental term loan) and/or seller rollover, not a new Form D co-invest. No new BSP Form D was found as of 2026-09-24.",
+      "confidence": "high",
+      "source_url": "https://data.ct.gov/resource/n7gp-d28j.json?accountnumber=3518996",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-011",
+      "entity": "Horton family entities (Arthur A. Horton, Inc.; Horton Electric Inc.; 97 River Road CBP, LLC; Squirrel Equipment, LLC)",
+      "category": "state_business_filing",
+      "title": "Horton legacy/affiliate entities, including the real-estate LLC at the Canton facility",
+      "filed_or_dated": "Arthur A. Horton, Inc. inc. 1977-10-17, dissolved 2014-05-19; Horton Electric Inc. inc. 2018-06-28 (active, AR 2026-06-02); 97 River Road CBP, LLC org. 2013-11-14 (active); Squirrel Equipment, LLC org. 2016-01-19 (active)",
+      "filer_or_source_agency": "CT Secretary of the State – Business Registry",
+      "key_figures": {
+        "arthur_a_horton_inc_account": "0072971",
+        "horton_electric_inc_account": "1278029",
+        "97_river_road_cbp_llc_account": "1123971",
+        "97_river_road_cbp_principal": "Warren A. Horton",
+        "squirrel_equipment_naics": "238910 (site preparation)"
+      },
+      "what_it_tells_us": "The Horton operating history (founded 1976, incorporated 1977) matches the press release. The Canton HQ real estate sits in a separate Warren Horton-controlled LLC (97 River Road CBP), which likely stayed outside the deal and now leases to CET/Horton, meaning a new related-party rent expense in pro forma EBITDA. The separate equipment LLC and Horton Electric Inc. may also hold assets or contracts outside the acquired entity; this is unverified.",
+      "confidence": "medium",
+      "source_url": "https://data.ct.gov/resource/n7gp-d28j.json?accountnumber=1123971",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-012",
+      "entity": "NuWave Energy Solutions, LLC",
+      "category": "state_business_filing",
+      "title": "NuWave CT foreign registration; still filing as a separate LLC after the acquisition",
+      "filed_or_dated": "Registered in CT 2020-07-10; annual reports through 2026-04-09",
+      "filer_or_source_agency": "CT Secretary of the State – Business Registry, account 1350557",
+      "key_figures": {
+        "ct_account": "1350557",
+        "formation_state": "MA",
+        "principal": "Ryan E Blair",
+        "address": "320 Washington Street Suite 12, Norwell MA 02061",
+        "naics_ct": "541330 (engineering services)"
+      },
+      "what_it_tells_us": "NuWave has not been merged away. It still files annual reports as its own LLC, likely as a subsidiary of CET LLC, and keeps engineering-services classification. It had a multi-state footprint (CT registration in 2020), consistent with CET's statement that NuWave extends reach beyond New England.",
+      "confidence": "high",
+      "source_url": "https://data.ct.gov/resource/n7gp-d28j.json?accountnumber=1350557",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-013",
+      "entity": "Commonwealth Electrical Technologies, Inc.",
+      "category": "osha_dol",
+      "title": "OSHA: 3 inspections 2019–2024, no violations recorded",
+      "filed_or_dated": "Inspections opened 2019-07-03, 2023-11-15, 2024-02-29 (all closed)",
+      "filer_or_source_agency": "U.S. DOL OSHA Establishment Search (Springfield and Boston South Area Offices)",
+      "key_figures": {
+        "inspections": 3,
+        "inspection_numbers": [
+          "1413286.015",
+          "1711005.015",
+          "1731835.015"
+        ],
+        "violations": 0,
+        "penalties_usd": 0,
+        "sites": [
+          "Sutton MA",
+          "Westborough MA",
+          "West Bridgewater MA"
+        ],
+        "naics_on_record": "237130",
+        "union_status": "NonUnion",
+        "mailing_address_on_record": "66 Saratoga Blvd, Devens MA (differs from HQ)"
+      },
+      "what_it_tells_us": "CET shows a clean federal OSHA record: two programmed construction-target inspections and one fall-hazard referral, all closed without citations. The records list CET as non-union, which matters for labor cost and for prevailing-wage bidding. The Devens mailing address and power-line NAICS are odd and should be confirmed as the same entity.",
+      "confidence": "medium",
+      "source_url": "https://www.osha.gov/ords/imis/establishment.inspection_detail?id=1731835.015",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-014",
+      "entity": "Horton Electrical Services, LLC",
+      "category": "osha_dol",
+      "title": "OSHA: 1 serious violation (29 CFR 1926.501(b)(1) fall protection), penalty $3,126 after informal settlement",
+      "filed_or_dated": "Inspection opened 2023-04-11; citation 2023-06-27; closed 2023-07-26",
+      "filer_or_source_agency": "U.S. DOL OSHA (Hartford Area Office), inspection 1662676.015",
+      "key_figures": {
+        "serious_violations": 1,
+        "initial_penalty_usd": 4465,
+        "current_penalty_usd": 3126,
+        "site": "605 Willard Avenue, Newington CT",
+        "union_status": "NonUnion",
+        "naics": "238210"
+      },
+      "what_it_tells_us": "Horton's record is minor, one fall-protection citation settled informally for $3,126, and not material. Both companies are non-union, which fits Broad Sky's merit-shop roll-up strategy.",
+      "confidence": "high",
+      "source_url": "https://www.osha.gov/ords/imis/establishment.inspection_detail?id=1662676.015",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-015",
+      "entity": "Commonwealth Electrical Technologies, Inc.",
+      "category": "litigation",
+      "title": "SunEdison Litigation Trust v. Commonwealth Electrical Technologies, Inc. (Bankr. S.D.N.Y. Adv. No. 18-01354)",
+      "filed_or_dated": "Filed 2018-04-17; notice of dismissal 2019-12-23; terminated 2021-05-05",
+      "filer_or_source_agency": "CourtListener / RECAP (PACER docket 282604)",
+      "key_figures": {
+        "court": "U.S. Bankruptcy Court S.D.N.Y.",
+        "judge": "David S. Jones",
+        "disposition": "Notice of dismissal filed 2019-12-23",
+        "amount_claimed": "not available (complaint not in RECAP)",
+        "other_mentions": "CET also appears as a party in the Agera Energy LLC bankruptcy docket (Bankr. S.D.N.Y. 19-23802)"
+      },
+      "what_it_tells_us": "This was a routine preference or avoidance clawback from the SunEdison bankruptcy, reflecting CET's past subcontract work on SunEdison solar projects, and it was dismissed. No active material litigation involving CET, Horton or NuWave turned up in CourtListener.",
+      "confidence": "medium",
+      "source_url": "https://www.courtlistener.com/docket/7155634/sunedison-litigation-trust-v-commonwealth-electrical-technologies-inc/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-016",
+      "entity": "Commonwealth Electrical Technologies / Horton Electrical Services",
+      "category": "press_financial",
+      "title": "CET acquires Horton Electrical Services; workforce 'nearly doubles'",
+      "filed_or_dated": "2026-09-15",
+      "filer_or_source_agency": "CET press release (comelectrical.com)",
+      "key_figures": {
+        "horton_founded": 1976,
+        "horton_field_staff": "100+",
+        "horton_managers": 20,
+        "cet_workforce_change": "nearly doubled",
+        "horton_segments": [
+          "wastewater treatment plant & pump station electrical",
+          "solar installation and O&M",
+          "generator services",
+          "civil site work",
+          "24/7 emergency response"
+        ],
+        "financial_terms": "not disclosed",
+        "leader_post_close": "Warren A. Horton continues to lead Horton, reporting to CET"
+      },
+      "what_it_tells_us": "This is the transformational add-on. At 120+ employees, Horton is close to CET's own size (about 140–160), so pro forma headcount is roughly 260–290. It shifts the mix toward municipal and infrastructure work (CT Clean Water Fund-backed wastewater projects), which is often prevailing-wage and bonded, adding backlog visibility but more public-bid working-capital needs.",
+      "confidence": "high",
+      "source_url": "https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-017",
+      "entity": "Commonwealth Electrical Technologies / NuWave Energy Solutions",
+      "category": "press_financial",
+      "title": "CET acquires NuWave Energy Solutions (first add-on under Broad Sky)",
+      "filed_or_dated": "2025-10-07",
+      "filer_or_source_agency": "CET press release; also Electrical Wholesaling, EC&M, PE Hub, CityBiz, WBJ, BBJ",
+      "key_figures": {
+        "cet_employees_at_announcement": "approximately 140",
+        "nuwave_founded": 2019,
+        "nuwave_ceo": "Ryan Blair",
+        "financial_terms": "not disclosed",
+        "cet_legal_advisor": "Greenberg Traurig LLP",
+        "nuwave_sell_side_advisor": "FMI Capital Advisors",
+        "nuwave_legal_advisor": "Baker, Braverman and Barbadoro"
+      },
+      "what_it_tells_us": "The only headcount disclosure since the buyout: about 140 CET employees in October 2025, up from 121 PPP jobs in 2020 (+16% in about 5.5 years). FMI running a sell-side process for a roughly 6-year-old firm suggests a competitive auction at a small but meaningful value, probably low-to-mid single-digit $M enterprise value (inference).",
+      "confidence": "high",
+      "source_url": "https://comelectrical.com/commonwealth-electrical-technologies-acquires-nuwave-energy-solutions-a-full-service-design-build-energy-conservation-firm/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-018",
+      "entity": "Commonwealth Electrical Technologies",
+      "category": "other",
+      "title": "MassCEC On-Street Charging Solutions: CET leads the consultant/vendor team (with Leidos)",
+      "filed_or_dated": "Program funded Jan 2024; fully enrolled Fall 2025; CET Holyoke install post 2026-03-16",
+      "filer_or_source_agency": "Massachusetts Clean Energy Center (masscec.com) and CET website",
+      "key_figures": {
+        "municipalities_installation": 15,
+        "municipalities_feasibility": 25,
+        "sites_per_installation_municipality": "up to 3",
+        "level2_ports_per_site": "4-10",
+        "implied_max_ports": "up to ~450 (15 x 3 x 10)",
+        "contract_value": "not disclosed on MassCEC site",
+        "funding_source": "not stated on cited MassCEC page (researcher attributes to EVICC via MassCEC; unverified)"
+      },
+      "what_it_tells_us": "CET is the prime vendor on a statewide, state-funded EV-charging program, which is recurring public revenue and a credential for further EVICC/NEVI work. The contract value was not found. Up to about 45 sites and 180–450 Level 2 ports suggests a multi-$M program (inference).",
+      "confidence": "high",
+      "source_url": "https://www.masscec.com/street-charging-solutions",
+      "retrieved": "2026-09-24",
+      "verification_note": "Verified 2026-09-24: 15 install / 25 feasibility municipalities, up to 3 sites, 4-10 L2 ports, CET-led team with Leidos, fully enrolled Fall 2025 all confirmed on masscec.com. 'Program funded Jan 2024', the Holyoke post date and EVICC funding are not on the cited page."
+    },
+    {
+      "id": "cet-019",
+      "entity": "Commonwealth Electrical Technologies LLC",
+      "category": "other",
+      "title": "NEIF (National Energy Improvement Fund) approved contractor listing",
+      "filed_or_dated": "Accessed 2026-09-24",
+      "filer_or_source_agency": "neifund.org contractor directory",
+      "key_figures": {
+        "approved_programs": [
+          "NEIF Commercial Energy Finance",
+          "Xcel Energy Colorado financing program"
+        ],
+        "service_states": [
+          "MA",
+          "CT",
+          "NH",
+          "ME",
+          "RI",
+          "VT"
+        ],
+        "loan_amounts": "none disclosed"
+      },
+      "what_it_tells_us": "CET is an approved installer for NEIF's commercial energy-finance programs, a customer-financing channel for C&I efficiency and solar projects. The page lists no loan volumes, so it adds no revenue data. It shows the LLC name is live in third-party programs.",
+      "confidence": "high",
+      "source_url": "https://www.neifund.org/commonwealth-electrical-technologies-llc/",
+      "retrieved": "2026-09-24",
+      "verification_note": "Verified 2026-09-24: NEIF is the National Energy Improvement Fund (not 'New England Innovation/Energy Investment Fund'); programs and six states confirmed."
+    },
+    {
+      "id": "cet-020",
+      "entity": "Commonwealth Electrical Technologies",
+      "category": "other",
+      "title": "Company leadership page: CFO, M&A manager, footprint and licensing",
+      "filed_or_dated": "Accessed 2026-09-24",
+      "filer_or_source_agency": "comelectrical.com/company/leadership",
+      "key_figures": {
+        "ceo": "John Duquette Jr.",
+        "president": "John Duquette Sr.",
+        "cfo": "John Skayne",
+        "m_and_a_manager": "Zachary Pierce",
+        "offices": [
+          "125 Blackstone River Road, Worcester MA",
+          "125 John Hancock Road Unit 4, Taunton MA"
+        ],
+        "licensed_states": [
+          "CT",
+          "NH",
+          "ME",
+          "MA",
+          "RI",
+          "VT"
+        ],
+        "stated_markets": "New England & New York",
+        "divisions": [
+          "Electrical",
+          "Energy Services",
+          "Solar",
+          "EV (program director + program manager)"
+        ]
+      },
+      "what_it_tells_us": "CET has hired a dedicated M&A manager and a CFO, the usual PE-platform build-out for serial acquisitions. Expect more add-ons after Horton. Family leadership (the Duquettes) remains in place post-deal.",
+      "confidence": "high",
+      "source_url": "https://comelectrical.com/company/leadership/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-021",
+      "entity": "Peer set: MA & CT electrical contractors (NAICS 238210), incl. rivals Ostrow Electrical, Young Electrical, C.A. Senecal",
+      "category": "industry_benchmark",
+      "title": "PPP-implied size ranking: CET #32 of 285 MA electrical contractors; Horton #26 of 140 in CT",
+      "filed_or_dated": "PPP approvals Apr–Aug 2020 (first draw, >=$150k)",
+      "filer_or_source_agency": "SBA PPP FOIA (analyst tabulation)",
+      "key_figures": {
+        "cet_rank_ma": "32 of 285",
+        "horton_rank_ct": "26 of 140",
+        "ma_median_loan_per_job_usd_(jobs>=20)": 15533,
+        "ct_median_loan_per_job_usd_(jobs>=20)": 14183,
+        "cet_loan_per_job_usd": 17041,
+        "horton_loan_per_job_usd": 15383,
+        "ostrow_electrical_worcester": {
+          "loan_usd": 3862000,
+          "jobs": 149
+        },
+        "young_electrical_taunton": {
+          "loan_usd": 948030,
+          "jobs": 66
+        },
+        "ca_senecal_worcester": {
+          "loan_usd": 1020000,
+          "jobs": 30
+        },
+        "ma_top_by_ppp": [
+          "J.&M. Brown ($10.0M, 445 jobs)",
+          "McDonald Electrical ($10.0M, 365)",
+          "Interstate Electrical Services ($8.57M, 500)",
+          "Edward G. Sawyer ($8.5M, 325)",
+          "State Electric ($8.11M, 397)"
+        ],
+        "ct_top_by_ppp": [
+          "E-J Electric T&D ($5.50M, 207)",
+          "Paul Dinto Electrical ($4.84M, 342)",
+          "A M Rizzo Electrical ($2.95M, 70)"
+        ]
+      },
+      "what_it_tells_us": "Before the deal, CET was an upper-mid-tier MA electrical contractor, well below the Boston-area majors (~$8–10M PPP, 300–500 jobs), and its closest Worcester rival, Ostrow, was about 1.9x larger by payroll. CET's payroll per job ran about 10% above the MA median, consistent with a skilled, technical (solar/efficiency) workforce. Combined with Horton, the platform reaches roughly the top 15–20 MA/CT independents by headcount.",
+      "confidence": "medium",
+      "source_url": "https://data.sba.gov/sites/default/files/distribution/SBA-OCA-2022-07-001/public_150k_plus_240930.csv",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-022",
+      "entity": "IES Holdings, Inc. (NASDAQ: IESC) – public electrical contractor comp",
+      "category": "industry_benchmark",
+      "title": "IES FY2025 (Sep-25) revenue, margin and revenue per employee",
+      "filed_or_dated": "10-K for FY ended 2025-09-30",
+      "filer_or_source_agency": "SEC XBRL companyfacts (CIK 1048268) and 10-K text",
+      "key_figures": {
+        "revenue_usd": 3371468000,
+        "operating_income_usd": 383529000,
+        "operating_margin_pct": 11.4,
+        "d_and_a_usd": 46941000,
+        "approx_ebitda_margin_pct": 12.8,
+        "employees": 10283,
+        "revenue_per_employee_usd": 327868,
+        "commercial_industrial_segment_revenue_usd": 427735000
+      },
+      "what_it_tells_us": "IES is the closest listed electrical-contracting benchmark: about $330k of revenue per employee and about 13% EBITDA margin in a strong data-center cycle. LMM regional contractors like CET typically run below that on both measures. We use $250–375k per employee and 8–12% EBITDA margins as bracketing assumptions.",
+      "confidence": "high",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001048268.json",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-023",
+      "entity": "Limbach Holdings, Inc. (NASDAQ: LMB) – public MEP contractor comp",
+      "category": "industry_benchmark",
+      "title": "Limbach FY2025 revenue and margins",
+      "filed_or_dated": "10-K for FY ended 2025-12-31",
+      "filer_or_source_agency": "SEC XBRL companyfacts (CIK 1606163)",
+      "key_figures": {
+        "revenue_usd": 646804000,
+        "operating_income_usd": 49454000,
+        "operating_margin_pct": 7.6,
+        "d_and_a_usd": 18133000,
+        "approx_ebitda_margin_pct": 10.4
+      },
+      "what_it_tells_us": "Limbach, a building-systems contractor focused on owner-direct service and energy work (similar to CET's efficiency/service mix), runs about 10% EBITDA margins. That supports an 8–12% range for CET.",
+      "confidence": "high",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001606163.json",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-024",
+      "entity": "Ameresco, Inc. (NYSE: AMRC) – ESCO comp for NuWave/energy-efficiency line",
+      "category": "industry_benchmark",
+      "title": "Ameresco FY2024 revenue and margins (latest full-year frame in cached XBRL)",
+      "filed_or_dated": "10-K for FY ended 2024-12-31 (filed 2025-02-28)",
+      "filer_or_source_agency": "SEC XBRL companyfacts (CIK 1488139)",
+      "key_figures": {
+        "revenue_usd": 1769928000,
+        "operating_income_usd": 108745000,
+        "operating_margin_pct": 6.1,
+        "d_and_a_usd": 89211000,
+        "approx_ebitda_margin_pct": 11.2
+      },
+      "what_it_tells_us": "Energy-services and ESCO design/build work, the NuWave model, carries about 6% operating margins before asset-ownership D&A. Design/build efficiency revenue is pass-through heavy (equipment), so revenue per employee is high but margins are thinner than service electrical work.",
+      "confidence": "medium",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001488139.json",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "cet-025",
+      "entity": "Commonwealth Electrical Technologies / Horton / NuWave",
+      "category": "other",
+      "title": "USAspending: no federal contracts for CET/Horton/NuWave; only COVID-era SBA assistance (NuWave also has a $350k SBA loan and $4k EIDL advance)",
+      "filed_or_dated": "Queried 2026-09-24 (FY2008–FY2026)",
+      "filer_or_source_agency": "USAspending.gov API",
+      "key_figures": {
+        "cet_federal_awards": "PPP loan 4644687003 only ($2,062,000)",
+        "horton_federal_awards": "PPP loan 7091657008 only ($646,100). Other 'Horton Electrical Services, Inc.' records (2015 DoD $12,100; PPP 5504017102 and 3135298400, $60,495 each, MD) are an unrelated Maryland entity.",
+        "nuwave_federal_awards": "PPP loan 9564477100 ($157,100); SBA business loan 8341708200 ($350,000, issued 2020-09-21, CFDA 59.012); EIDL advance grant EIDLGT:3300892183 ($4,000)"
+      },
+      "what_it_tells_us": "Public-sector revenue across the platform is state and municipal (MassCEC, CT wastewater), not federal: there are no federal prime contracts or program grants. Federal records are limited to COVID-era SBA assistance. NuWave's $350k SBA loan (Sept 2020) is a liability that may have been assumed or repaid at the Oct 2025 acquisition.",
+      "confidence": "high",
+      "source_url": "https://api.usaspending.gov/api/v2/search/spending_by_award/",
+      "retrieved": "2026-09-24",
+      "verification_note": "Corrected 2026-09-24: USAspending API shows Horton LLC's PPP loan and NuWave's $350k SBA loan plus $4k EIDL advance; the original file said 'none' for both."
+    }
+  ]
+}

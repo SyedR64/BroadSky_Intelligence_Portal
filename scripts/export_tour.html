@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Tour export</title></head>
+<body><pre id="out">loading</pre>
+<script type="module">
+/* Headless export of the ordered tour + route map.
+   Usage: Chrome --headless=new --dump-dom http://127.0.0.1:8765/scripts/export_tour.html
+   The JSON inside <pre id="out"> is {modules:[{id,name,views:[...]}], steps:[{order,hash,caption,narration,duration}]} */
+const out = document.getElementById('out');
+try {
+  const { Tour } = await import('../assets/core.js');
+  const { modules } = await import('../modules/registry.js');
+  for (const m of modules) if (Array.isArray(m.tour) && m.tour.length) Tour.register(m.tour.map(s => ({ ...s, module: m.id })));
+  const strip = h => String(h || '').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
+  const steps = Tour.steps.map((s, i) => ({ index: i + 1, order: s.order ?? null, module: s.module, hash: s.hash, caption: strip(s.caption), caption_html: s.caption, narration: s.narration || strip(s.caption), duration: s.duration || 9000 }));
+  const mods = modules.map(m => ({ id: m.id, name: m.name, group: m.group, views: (m.views || []).map(v => v.id), tour_steps: (m.tour || []).length }));
+  out.textContent = JSON.stringify({ modules: mods, steps });
+} catch (e) { out.textContent = 'ERROR ' + e.message; }
+</script></body></html>

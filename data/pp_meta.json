@@ -1,0 +1,27 @@
+{
+ "version": "v6",
+ "base": "punctual_pros_zip_scores_v3.csv",
+ "radius_km": 20.0,
+ "high_exec_neighbor_threshold": 67.0,
+ "weights": {
+  "executive_rank": 0.46,
+  "opportunity_score_v3": 0.2,
+  "cluster_score": 0.24,
+  "local_housing_mass": 0.1
+ },
+ "record_count": 3691,
+ "place_labels": "Primary Census place name from 2010 ZCTA to Place by largest HUPT overlap, joined to 2020 place names when available.",
+ "sales_layer": {
+  "window_days": 90,
+  "window_end": "2026-04-10",
+  "window_start": "2026-01-10",
+  "source_enriched": "punctual_pros_sales_enriched.csv",
+  "blended_weights": {
+   "practical_priority_score": 0.7,
+   "homeowner_sale_score": 0.22,
+   "builder_activity_score": 0.08
+  },
+  "blended_expansion_note": "blended_expansion_priority_score is 0 to 100 min-max of weighted blend; practical model remains primary."
+ },
+ "legacy_note": "Scoring weights: executive_rank 0.46, opportunity_v3 0.20, cluster 0.24, housing_mass 0.10"
+}

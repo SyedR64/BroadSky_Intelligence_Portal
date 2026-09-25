@@ -1,0 +1,4335 @@
+{
+  "meta": {
+    "dataset": "Punctual Pros add-on acquisition target screen (residential HVAC / plumbing / electrical; Central PA + Jersey Shore + adjacent DE/MD/South Jersey)",
+    "generated": "2026-09-24",
+    "platform": {
+      "name": "Punctual Pros",
+      "sponsor": "Broad Sky Partners (acquired Apr 2024)",
+      "nodes": [
+        "East Hempfield/Lancaster PA HQ (516-518 Running Pump Rd)",
+        "Harrisburg PA (6014 Patriot Rd)",
+        "York PA (2575 Eastern Blvd)",
+        "Beachwood/Toms River NJ (Horvath Home Services, Dec 3 2024; 1130 Ship Ave)"
+      ],
+      "brands": "One Hour Heating & Air Conditioning, Benjamin Franklin Plumbing, Mister Sparky (Authority Brands)"
+    },
+    "method": "Built the universe from ZoomInfo search_companies (private, 12-250 employees, PA/NJ/MD/DE) using radius passes around Lancaster (17601; 50 and 100 mi), Carlisle (17013), Chambersburg (17201) and Toms River (08753; 50 mi), plus the Authority Brands One Hour, Benjamin Franklin and Mister Sparky location directories, parsed for every PA/NJ/MD/DE territory. Each candidate's ownership, founding year, trades and on-site review counts were checked against its own website (fetched pages listed in sources) and, for franchisees, search-indexed BBB, LinkedIn, chamber and franchisor pages. PE- or strategic-owned operators were moved to pe_backed_competitors using PrivSource, sponsor press releases and roll-up trackers. Fit score (0-100) is five 20-point components: density_adjacency (distance to the Lancaster/Harrisburg/York or Beachwood nodes and whether the target is in a core county), trade_mix (HVAC+plumbing+electrical scores highest), scale (25-150 employees ideal), ownership_readiness (multi-decade founder/family ownership scores higher; ESOP or anti-PE messaging scores lower) and brand_alignment (Authority Brands franchisees score 20; ex-franchisees and review leaders next).",
+    "scoring_rubric": {
+      "density_adjacency": "0-20; 18-20 = inside a core county or <=30 mi from a PP node; 13-17 = 30-60 mi; 8-12 = 60-120 mi; <8 = beyond screen",
+      "trade_mix": "0-20; 20 = HVAC+plumbing+electrical; 15-16 = two trades (+IAQ/water); 11 = single trade; minus 3-5 for fuel/commercial-heavy",
+      "scale": "0-20; 17-20 = 30-150 employees; 12-16 = 15-30; <=10 = <15 or unknown",
+      "ownership_readiness": "0-20; 14-17 = founder or multi-generation family with long tenure; 10-13 = mid-tenure owners/unknown; <=7 = ESOP, recent relaunch or explicit anti-PE stance",
+      "brand_alignment": "0-20; 20 = Authority Brands franchisee; 15 = former franchisee or 1,000+ reviews and rebrand-ready; 12-14 = 500+ reviews; 8-11 = other independents"
+    },
+    "zoominfo_query_parameters": [
+      {
+        "tool": "lookup",
+        "fields": [
+          "industries (fuzzy: hvac -> 0, plumb -> 0, construction, consumer services, repair)",
+          "states (New Jersey, Pennsylvania, Maryland, Delaware)"
+        ],
+        "result": "industries used: construction, construction.construction, consumerservices.repair, consumerservices; states: usa.pennsylvania, usa.newjersey, usa.maryland, usa.delaware"
+      },
+      {
+        "tool": "search_companies",
+        "state": "usa.pennsylvania,usa.newjersey,usa.maryland,usa.delaware",
+        "employeeRangeMinimum": 12,
+        "employeeRangeMaximum": 250,
+        "companyTypeList": [
+          "private"
+        ],
+        "industryList": [
+          "construction",
+          "construction.construction",
+          "consumerservices.repair"
+        ],
+        "companyDescription": "residential heating air conditioning plumbing",
+        "zipCode": "17601",
+        "zipCodeRadiusMiles": "100",
+        "pageSize": 100,
+        "sort": "-employeeCount",
+        "userIntent": "M&A add-on screening for a PE-backed residential home services platform",
+        "totalResults": 123
+      },
+      {
+        "tool": "search_companies",
+        "same_filters_as_above": true,
+        "zipCode": "08753",
+        "zipCodeRadiusMiles": "50",
+        "totalResults": 37
+      },
+      {
+        "tool": "search_companies",
+        "state": "usa.pennsylvania,usa.newjersey,usa.maryland,usa.delaware",
+        "employeeRangeMinimum": 12,
+        "employeeRangeMaximum": 250,
+        "companyTypeList": [
+          "private"
+        ],
+        "industryKeywords": "HVAC plumbing heating air conditioning",
+        "zipCode": "17601",
+        "zipCodeRadiusMiles": "50",
+        "totalResults": 21
+      },
+      {
+        "tool": "search_companies",
+        "state": "usa.newjersey",
+        "employeeRangeMinimum": 12,
+        "employeeRangeMaximum": 250,
+        "companyTypeList": [
+          "private"
+        ],
+        "industryKeywords": "HVAC plumbing heating air conditioning electrical",
+        "zipCode": "08753",
+        "zipCodeRadiusMiles": "50",
+        "totalResults": 3
+      },
+      {
+        "tool": "search_companies",
+        "state": "usa.newjersey",
+        "employeeRangeMinimum": 12,
+        "employeeRangeMaximum": 250,
+        "companyTypeList": [
+          "private"
+        ],
+        "companyDescription": "heating cooling plumbing",
+        "zipCode": "08753",
+        "zipCodeRadiusMiles": "50",
+        "totalResults": 52
+      },
+      {
+        "tool": "search_companies",
+        "state": "usa.pennsylvania",
+        "employeeRangeMinimum": 10,
+        "employeeRangeMaximum": 250,
+        "companyTypeList": [
+          "private"
+        ],
+        "companyDescription": "heating air conditioning plumbing homeowners",
+        "zipCode": "17013",
+        "zipCodeRadiusMiles": "50",
+        "totalResults": 4
+      },
+      {
+        "tool": "search_companies",
+        "state": "usa.pennsylvania",
+        "employeeRangeMinimum": 12,
+        "employeeRangeMaximum": 250,
+        "companyTypeList": [
+          "private"
+        ],
+        "industryList": [
+          "construction",
+          "construction.construction",
+          "consumerservices.repair",
+          "consumerservices"
+        ],
+        "companyDescription": "heating",
+        "zipCode": "17201",
+        "zipCodeRadiusMiles": "50",
+        "totalResults": 72
+      },
+      {
+        "tool": "enrich_companies",
+        "note": "Attempted for 10 top candidates; failed with 'Limit exceeded for your subscription', so headcount and revenue come from search_companies records"
+      }
+    ],
+    "sources_summary": [
+      "ZoomInfo MCP (lookup, search_companies)",
+      "Authority Brands location directories: onehourheatandair.com/locations, benjaminfranklinplumbing.com/locations, mistersparky.com/locations",
+      "Target company websites (home/about pages fetched 2026-09-24)",
+      "PrivSource PA HVAC & mechanical acquisitions list",
+      "HomeX Services Group acquisitions page",
+      "DealSeam 2026 HVAC PE roll-up tracker; CT Acquisitions 2026 plumbing roll-up tracker; Profitability Partners PE acquirer list",
+      "BusinessWire / PR Newswire (Broad Sky-Punctual Pros; Horvath; Sila-Goldman)",
+      "BBB, Yelp, LinkedIn, Angi, chamber directories (via search results)",
+      "TAPinto, Contracting Business, Sun Capital press release"
+    ],
+    "caveats": [
+      "Google review counts are not directly accessible; review_count is populated only where the company's own site shows a Google or aggregate counter (source noted in review_source). Otherwise null.",
+      "ZoomInfo enrich_companies was unavailable (subscription limit), so employees and revenue_est_usd are ZoomInfo search-level modeled estimates and some are inconsistent (e.g., Warner, Timothy Off, Harris). Treat revenue as directional.",
+      "The web-search budget ran out mid-screen; ownership for several independents (Maitz, Central Penn, Good Inc, Lenegan) rests on the company's own site, with no independent PE-ownership check. Run a PitchBook/Grata check before outreach.",
+      "The PA Home Improvement Contractor registry was not queried in this run.",
+      "Distances are straight-line miles between city centroids (road miles are ~15-25% higher). Lat/lon are city centroids (geo_precision = city).",
+      "Authority Brands franchise owners are from search-indexed BBB, LinkedIn, chamber and franchisor pages; several owners are unverified (null). Harrisburg and York tri-brand locations are attributed to Punctual Pros by shared address and footprint, not by a filing.",
+      "The Pleasantville NJ tri-brand franchise trades as 'The Punctual Pros' and PitchBook conflates it with BSP's Punctual Pros. Confirm it is independent before any approach.",
+      "Oliver Heating & Cooling and Harris sit at or above the 250-employee edge and are closer to platform-scale mergers than tuck-ins.",
+      "Smith + Howard is excluded (BSP exit to TPG Growth, closed Aug 6 2026); this dataset covers Punctual Pros only.",
+      "Verified 2026-09-24: sampled 26, confirmed 26, removed 0"
+    ],
+    "excluded_pe_or_strategic_owned": [
+      "Haller Enterprises (HomeX)",
+      "Goodco Mechanical (HomeX)",
+      "Princeton Air (HomeX)",
+      "Allied Experts (Sila)",
+      "ECS Comfort (Sila)",
+      "Triangle Heating (Sila)",
+      "Essig Plumbing & Heating (P1 Service Group)",
+      "Horn Plumbing & Heating (Northwinds)",
+      "Neffsville Plumbing (Len The Plumber)",
+      "Elite Air / A.J. Perri (ARS)",
+      "Horizon Services (New Mountain)",
+      "UGI HVAC Enterprises (utility)",
+      "HomeServe USA Energy Services (strategic)"
+    ],
+    "pe_backed_competitors": [
+      {
+        "platform": "Sila Services",
+        "sponsor": "Goldman Sachs Alternatives (majority, Nov 2024; previously Morgan Stanley Capital Partners 2021-2024)",
+        "hq": "King of Prussia, PA",
+        "footprint": "Northeast, Mid-Atlantic, Midwest; 40+ brands",
+        "regional_holdings": [
+          "Adam Mechanical (Haverford PA, 2021)",
+          "Fahrenheit HVAC (Bucks Co PA, 2021)",
+          "AQM Inc (Exton PA, 2022)",
+          "Triangle Heating, Cooling, Plumbing & Electrical (Bellefonte PA, 2023)",
+          "ECS Comfort Heating & Cooling (Palmyra PA, Feb 2024; Lebanon/Dauphin/Lancaster)",
+          "Delco Storm & Sewer (Delaware Co PA, May 2025)",
+          "Oxford Plumbing & Heating (Chester Co PA, Oct 2025)",
+          "Allied Experts (Cherry Hill NJ)"
+        ],
+        "threat": "High: acquiring inside the Punctual Pros core (ECS Comfort in Palmyra)",
+        "sources": [
+          "https://www.businesswire.com/news/home/20241110227672/en/Sila-Services-Announces-Equity-Investment-From-Goldman-Sachs-Alternatives-Private-Equity-Business",
+          "https://www.privsource.com/acquisitions/hvac-mechanical/state/pennsylvania",
+          "https://ctacquisitions.com/plumbing-pe-rollup-tracker-2026/"
+        ]
+      },
+      {
+        "platform": "Horizon Services (Strikepoint Group)",
+        "sponsor": "New Mountain Capital (previously Sun Capital Partners from 2017; Alpine Investors listed as a past investor)",
+        "hq": "Wilmington/Newark, DE",
+        "footprint": "DE, PA, NJ, MD plus other metros (Philadelphia, NYC, Baltimore, DC, Hartford, Atlanta, Jacksonville)",
+        "regional_holdings": [
+          "Horizon Services (founded 1987)"
+        ],
+        "threat": "High in DE and the Philadelphia suburbs",
+        "sources": [
+          "https://suncappart.com/2017/03/07/affiliate-of-sun-capital-partners-acquires-hvac-installation-and-service-business-horizon-services-inc/",
+          "https://dealseam.com/hvac-pe-rollup-tracker-2026",
+          "https://www.horizonservices.com/locations/delaware/"
+        ]
+      },
+      {
+        "platform": "HomeX Services Group",
+        "sponsor": null,
+        "hq": null,
+        "footprint": "PA, NJ, NY, CT, DC region",
+        "regional_holdings": [
+          "Haller Enterprises (Lititz PA)",
+          "Deluxe Plumbing & Heating (Bethlehem PA, Apr 2024)",
+          "Princeton Air (Princeton Junction NJ, Aug 2024)",
+          "Goodco Mechanical & Bovard Heating and Cooling (State College PA, Jun 2025)",
+          "Magnolia Companies (DC region, Sep 2026)"
+        ],
+        "threat": "High: owns Haller, Punctual Pros' largest Lancaster County rival",
+        "sources": [
+          "https://www.homexservices.com/category/acquisitions/",
+          "https://www.contractingbusiness.com/residential-hvac/article/21279403/homex-plans-more-and-better-things-for-2024"
+        ]
+      },
+      {
+        "platform": "Len The Plumber",
+        "sponsor": "Thompson Street Capital Partners",
+        "hq": null,
+        "footprint": "Mid-Atlantic plumbing",
+        "regional_holdings": [
+          "Neffsville Plumbing, Heating & Cooling Services (Lancaster PA, Apr 2021)"
+        ],
+        "threat": "Medium: present in Lancaster",
+        "sources": [
+          "https://www.privsource.com/acquisitions/hvac-mechanical/state/pennsylvania"
+        ]
+      },
+      {
+        "platform": "P1 Service Group",
+        "sponsor": "Edgewater Growth Capital Partners",
+        "hq": null,
+        "footprint": "PA",
+        "regional_holdings": [
+          "Essig Plumbing & Heating (Reading PA, Nov 2022)",
+          "McHale's (Levittown PA, Nov 2022)"
+        ],
+        "threat": "Medium: owns the largest Reading plumbing brand",
+        "sources": [
+          "https://www.privsource.com/acquisitions/hvac-mechanical/state/pennsylvania"
+        ]
+      },
+      {
+        "platform": "Northwinds Services Group",
+        "sponsor": "TruArc Partners (+ Ares Management)",
+        "hq": "Rochester, NY",
+        "footprint": "Northeast, Mid-Atlantic, Midwest (~26 brands)",
+        "regional_holdings": [
+          "Horn Plumbing & Heating (Exton, Chester Co PA, May 2025)"
+        ],
+        "threat": "Medium in Chester County",
+        "sources": [
+          "https://www.privsource.com/acquisitions/hvac-mechanical/state/pennsylvania",
+          "https://dealseam.com/hvac-pe-rollup-tracker-2026",
+          "https://profitabilitypartners.io/home-services-private-equity-acquirers/"
+        ]
+      },
+      {
+        "platform": "ARS / Rescue Rooter",
+        "sponsor": "Charlesbank Capital Partners + GI Partners",
+        "hq": "Memphis, TN",
+        "footprint": "70+ service centers, 23 states",
+        "regional_holdings": [
+          "A.J. Perri (Monmouth/Ocean/Middlesex NJ); eliteairinc.com now redirects to ajperri.com with ARS privacy consent"
+        ],
+        "threat": "High on the Jersey Shore (direct Horvath competitor)",
+        "sources": [
+          "https://www.ajperri.com/",
+          "https://ctacquisitions.com/plumbing-pe-rollup-tracker-2026/"
+        ]
+      },
+      {
+        "platform": "Legacy Service Partners",
+        "sponsor": "Gridiron Capital",
+        "hq": "Tampa, FL",
+        "footprint": "Residential multi-service",
+        "regional_holdings": [
+          "NJ Pipe Doctor (NJ, Mar 2025)"
+        ],
+        "threat": "Medium in NJ",
+        "sources": [
+          "https://ctacquisitions.com/plumbing-pe-rollup-tracker-2026/"
+        ]
+      },
+      {
+        "platform": "Ally Services",
+        "sponsor": "Watchtower Capital",
+        "hq": "Rockville, MD",
+        "footprint": "VA, MD, PA, NJ, DE, DC",
+        "regional_holdings": [
+          "Tri-County Aire (MD, 2025)",
+          "Above & Beyond (DE, 2025)",
+          "J Hood Services (VA, 2025)"
+        ],
+        "threat": "Medium in MD/DE",
+        "sources": [
+          "https://dealseam.com/hvac-pe-rollup-tracker-2026"
+        ]
+      },
+      {
+        "platform": "Wrench Group",
+        "sponsor": "Leonard Green & Partners (majority); TSG Consumer and Oak Hill (minority)",
+        "hq": "Atlanta, GA",
+        "footprint": "26 markets, 15 states (24 brands); no PA/NJ/MD/DE brand confirmed in this run",
+        "regional_holdings": [],
+        "threat": "Low direct / high bidder competition",
+        "sources": [
+          "https://www.wrenchgroup.com/",
+          "https://profitabilitypartners.io/home-services-private-equity-acquirers/",
+          "https://ctacquisitions.com/plumbing-pe-rollup-tracker-2026/"
+        ]
+      },
+      {
+        "platform": "Apex Service Partners",
+        "sponsor": "Alpine Investors (control) with Partners Group and Apollo minority",
+        "hq": "Tampa, FL",
+        "footprint": "100+ brands nationally (~$1.3B revenue); regional brands not verified in this run",
+        "regional_holdings": [],
+        "threat": "Bidder competition",
+        "sources": [
+          "https://profitabilitypartners.io/home-services-private-equity-acquirers/",
+          "https://ctacquisitions.com/plumbing-pe-rollup-tracker-2026/"
+        ]
+      },
+      {
+        "platform": "Redwood Services",
+        "sponsor": "Altas Partners (majority, May 2025)",
+        "hq": "Memphis, TN",
+        "footprint": "Multi-state; no PA/NJ/MD/DE brand confirmed in this run",
+        "regional_holdings": [],
+        "threat": "Bidder competition",
+        "sources": [
+          "https://ctacquisitions.com/plumbing-pe-rollup-tracker-2026/"
+        ]
+      },
+      {
+        "platform": "Heartland Home Services",
+        "sponsor": "The Jordan Company + Cobepa",
+        "hq": "Grand Rapids, MI",
+        "footprint": "Midwest and East (~37 brands); no regional deals disclosed",
+        "regional_holdings": [],
+        "threat": "Bidder competition",
+        "sources": [
+          "https://dealseam.com/hvac-pe-rollup-tracker-2026"
+        ]
+      },
+      {
+        "platform": "TurnPoint Services",
+        "sponsor": "OMERS (per search-engine summary; not confirmed on TurnPoint site)",
+        "hq": null,
+        "footprint": "50+ regional service brands; regional presence not verified",
+        "regional_holdings": [],
+        "threat": "Bidder competition",
+        "sources": [
+          "https://www.turnpointservices.com/"
+        ]
+      },
+      {
+        "platform": "Any Hour Services",
+        "sponsor": null,
+        "hq": null,
+        "footprint": null,
+        "regional_holdings": [],
+        "threat": "Not verified in this run (no PA/NJ/MD/DE presence found)",
+        "sources": []
+      },
+      {
+        "platform": "Authority Brands (franchisor)",
+        "sponsor": "Apax Partners (majority) + BCI",
+        "hq": null,
+        "footprint": "One Hour, Benjamin Franklin, Mister Sparky and other franchise systems; 2,800+ territories",
+        "regional_holdings": [
+          "Franchise system of which Punctual Pros is a franchisee"
+        ],
+        "threat": "Partner; transfer approvals required",
+        "sources": [
+          "https://profitabilitypartners.io/home-services-private-equity-acquirers/",
+          "https://www.businesswire.com/news/home/20240403310089/en/Broad-Sky-Partners-Acquires-Punctual-Pros-a-Leading-Franchisee-within-Authority-Brands-in-the-Mid-Atlantic-Region"
+        ]
+      },
+      {
+        "platform": "Other excluded (non-PE strategic or utility owned)",
+        "sponsor": null,
+        "hq": null,
+        "footprint": null,
+        "regional_holdings": [
+          "UGI HVAC Enterprises (Wyomissing PA; utility affiliate)",
+          "HomeServe USA Energy Services (Hammonton NJ)",
+          "Service Experts (not screened)"
+        ],
+        "threat": "n/a",
+        "sources": []
+      }
+    ],
+    "ranked_top_10": [
+      {
+        "rank": 1,
+        "id": "pp-t11",
+        "company": "Lancaster Plumbing, Heating, Cooling & Electrical",
+        "fit_score": 84,
+        "why": "The highest-density fit in the screen: a four-trade (plumbing/HVAC/electrical/generators) home-services brand 5 miles from Punctual Pros' Running Pump Rd HQ with 3.2k+ reviews."
+      },
+      {
+        "rank": 2,
+        "id": "pp-t01",
+        "company": "Benjamin Franklin Plumbing / One Hour Heating & Air / Mister Sparky of West Chester (Ron Williams group)",
+        "fit_score": 82,
+        "why": "This is the closest tri-brand Authority territory to the Lancaster hub that Punctual Pros doesn't own."
+      },
+      {
+        "rank": 3,
+        "id": "pp-t48",
+        "company": "C&C Air Conditioning, Heating, Plumbing & Electric",
+        "fit_score": 82,
+        "why": "The strongest Jersey Shore independent in the screen: a three-trade (HVAC/plumbing/electrical) business with ~65 employees, 2,000+ Google reviews at 4.9, and coverage of Monmouth, Middlesex, Somerset, Union and Essex."
+      },
+      {
+        "rank": 4,
+        "id": "pp-t14",
+        "company": "Zimmerman Plumbing, Heating & Air Conditioning",
+        "fit_score": 80,
+        "why": "A founder-led (46 years) multi-trade residential operator in Mechanicsburg."
+      },
+      {
+        "rank": 5,
+        "id": "pp-t06",
+        "company": "PHE, Inc. d/b/a The Punctual Pros NJ (One Hour / Benjamin Franklin / Mister Sparky of South Jersey, Pleasantville)",
+        "fit_score": 80,
+        "why": "The best-fitting Jersey Shore tuck-in: an identical tri-brand model about 43 miles south of Horvath's Beachwood hub, extending coverage down the Garden State Parkway into Atlantic and Cape May counties."
+      },
+      {
+        "rank": 6,
+        "id": "pp-t43",
+        "company": "Boulden Brothers",
+        "fit_score": 79,
+        "why": "A 96-person, four-trade New Castle County operator that already ran the One Hour and Mister Sparky playbooks."
+      },
+      {
+        "rank": 7,
+        "id": "pp-t13",
+        "company": "Central Penn Plumbing Service Inc.",
+        "fit_score": 79,
+        "why": "At about 51 employees and $11.7M, it's a scale target on the West Shore (Cumberland County), next to Punctual Pros' Harrisburg (Patriot Rd) node."
+      },
+      {
+        "rank": 8,
+        "id": "pp-t12",
+        "company": "Regal Inc. (Regal Plumbing, Heating & A/C)",
+        "fit_score": 78,
+        "why": "Has the most Google reviews of any Central PA independent screened (3,481 at 4.8) and calls itself one of York County's largest home-service companies."
+      },
+      {
+        "rank": 9,
+        "id": "pp-t49",
+        "company": "Bovio Rubino Service",
+        "fit_score": 76,
+        "why": "South Jersey's review leader (5,000+ five-star reviews) with ~77 employees in Camden, Burlington and Gloucester counties."
+      },
+      {
+        "rank": 10,
+        "id": "pp-t38",
+        "company": "Oliver Heating & Cooling",
+        "fit_score": 75,
+        "why": "A transformational, platform-scale deal: 230+ employees and 160+ trucks across the Philadelphia suburbs, South Jersey and Delaware."
+      }
+    ],
+    "authority_brands_territory_map": [
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Southeast Pennsylvania",
+        "address": "516 Running Pump Road, Lancaster, PA 17601",
+        "city": "Lancaster",
+        "state": "PA",
+        "owner": "Punctual Pros (Broad Sky Partners)",
+        "owner_status": "portfolio (owned)",
+        "note": "Running Pump Rd is Punctual Pros' East Hempfield HQ",
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Lancaster",
+        "address": "518 Running Pump Road, Lancaster, PA 17601",
+        "city": "Lancaster",
+        "state": "PA",
+        "owner": "Punctual Pros (Broad Sky Partners)",
+        "owner_status": "portfolio (owned)",
+        "note": "Running Pump Rd is Punctual Pros' East Hempfield HQ",
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of Lancaster",
+        "address": "518 Running Pump Road, Lancaster, PA 17601",
+        "city": "Lancaster",
+        "state": "PA",
+        "owner": "Punctual Pros (Broad Sky Partners)",
+        "owner_status": "portfolio (owned)",
+        "note": "Running Pump Rd is Punctual Pros' East Hempfield HQ",
+        "sources": [
+          "https://www.mistersparky.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Harrisburg",
+        "address": "6014 Patriot Road, Harrisburg, PA 17111",
+        "city": "Harrisburg",
+        "state": "PA",
+        "owner": "Punctual Pros (Broad Sky Partners)",
+        "owner_status": "portfolio (inferred)",
+        "note": "Shared Harrisburg address and Central PA footprint; attributed to Punctual Pros (~240 Central PA zip codes)",
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Harrisburg",
+        "address": "6014 Patriot Road, Harrisburg, PA 17111",
+        "city": "Harrisburg",
+        "state": "PA",
+        "owner": "Punctual Pros (Broad Sky Partners)",
+        "owner_status": "portfolio (inferred)",
+        "note": "Shared Harrisburg address and Central PA footprint; attributed to Punctual Pros (~240 Central PA zip codes)",
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of Harrisburg",
+        "address": "6014 Patriot Road, Harrisburg, PA 17111",
+        "city": "Harrisburg",
+        "state": "PA",
+        "owner": "Punctual Pros (Broad Sky Partners)",
+        "owner_status": "portfolio (inferred)",
+        "note": "Shared Harrisburg address and Central PA footprint; attributed to Punctual Pros (~240 Central PA zip codes)",
+        "sources": [
+          "https://www.mistersparky.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of York",
+        "address": "2575 Eastern Blvd, York, PA 17402",
+        "city": "York",
+        "state": "PA",
+        "owner": "Punctual Pros (Broad Sky Partners)",
+        "owner_status": "portfolio (inferred)",
+        "note": "Shared York address; attributed to Punctual Pros Central PA footprint",
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of York",
+        "address": "2575 Eastern Blvd, York, PA 17402",
+        "city": "York",
+        "state": "PA",
+        "owner": "Punctual Pros (Broad Sky Partners)",
+        "owner_status": "portfolio (inferred)",
+        "note": "Shared York address; attributed to Punctual Pros Central PA footprint",
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of York",
+        "address": "2575 Eastern Blvd, York, PA 17402",
+        "city": "York",
+        "state": "PA",
+        "owner": "Punctual Pros (Broad Sky Partners)",
+        "owner_status": "portfolio (inferred)",
+        "note": "Shared York address; attributed to Punctual Pros Central PA footprint",
+        "sources": [
+          "https://www.mistersparky.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Toms River",
+        "address": "1130 Ship Avenue, Beachwood, NJ 08722",
+        "city": "Beachwood",
+        "state": "NJ",
+        "owner": "Punctual Pros (Broad Sky Partners) via Horvath Home Services (Dec 2024)",
+        "owner_status": "portfolio (owned)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/",
+          "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Ocean County",
+        "address": "1130 Ship Avenue, Beachwood, NJ 08722",
+        "city": "Beachwood",
+        "state": "NJ",
+        "owner": "Punctual Pros (Broad Sky Partners) via Horvath Home Services (Dec 2024)",
+        "owner_status": "portfolio (owned)",
+        "note": null,
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/",
+          "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of Ocean County",
+        "address": "1130 Ship Avenue, Beachwood, NJ 08722",
+        "city": "Beachwood",
+        "state": "NJ",
+        "owner": "Punctual Pros (Broad Sky Partners) via Horvath Home Services (Dec 2024)",
+        "owner_status": "portfolio (owned)",
+        "note": null,
+        "sources": [
+          "https://www.mistersparky.com/locations/",
+          "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of West Chester",
+        "address": "1313 Wilmington Pike, Unit 1A S, West Chester, PA 19382",
+        "city": "West Chester",
+        "state": "PA",
+        "owner": "Ron Williams (reported owner/founder, 2002)",
+        "owner_status": "independent franchisee (target pp-t01)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/",
+          "https://www.benjaminfranklinplumbing.com/west-chester/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of West Chester",
+        "address": "1313 Wilmington Pike, Unit 1A S, West Chester, PA 19382",
+        "city": "West Chester",
+        "state": "PA",
+        "owner": "Ron Williams (reported owner/founder, 2002)",
+        "owner_status": "independent franchisee (target pp-t01)",
+        "note": null,
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/",
+          "https://www.benjaminfranklinplumbing.com/west-chester/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of West Chester",
+        "address": "1313 Wilmington Pike, Unit 1A S, West Chester, PA 19382",
+        "city": "West Chester",
+        "state": "PA",
+        "owner": "Ron Williams (reported owner/founder, 2002)",
+        "owner_status": "independent franchisee (target pp-t01)",
+        "note": null,
+        "sources": [
+          "https://www.mistersparky.com/locations/",
+          "https://www.benjaminfranklinplumbing.com/west-chester/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Delmarva",
+        "address": "9928 Old Ocean City Blvd Suite 9, Berlin, MD 21811",
+        "city": "Berlin",
+        "state": "MD",
+        "owner": "Ron Williams (reported)",
+        "owner_status": "independent franchisee (target pp-t02)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/",
+          "https://business.worcestercountychamber.org/list/member/one-hour-heating-and-air-benjamin-franklin-plumbing-2746"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Delmarva",
+        "address": "9928 Old Ocean City Blvd #9, Berlin, MD 21811",
+        "city": "Berlin",
+        "state": "MD",
+        "owner": "Ron Williams (reported)",
+        "owner_status": "independent franchisee (target pp-t02)",
+        "note": null,
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Wilmington",
+        "address": "410 Meco Drive, Wilmington, DE 19804",
+        "city": "Wilmington",
+        "state": "DE",
+        "owner": "Chris Lenhard (President) & David Murray (VP), Calvert Heating & Cooling lineage (1991)",
+        "owner_status": "independent franchisee (target pp-t03)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/",
+          "https://www.bbb.org/us/de/wilmington/profile/heating-and-air-conditioning/one-hour-heating-air-conditioning-0251-4000775"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Wilmington DE",
+        "address": "410 Meco Drive, Wilmington, DE 19804",
+        "city": "Wilmington",
+        "state": "DE",
+        "owner": "Same group as One Hour Wilmington (shared address)",
+        "owner_status": "independent franchisee (target pp-t03)",
+        "note": null,
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Dover",
+        "address": "4282 N Dupont Highway, Dover, DE 19901",
+        "city": "Dover",
+        "state": "DE",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Dover",
+        "address": "4282 North Dupont Highway, Dover, DE 19901",
+        "city": "Dover",
+        "state": "DE",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": null,
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of New Castle County",
+        "address": "310 Ruthar Drive Unit 15, Newark, DE 19711",
+        "city": "Newark",
+        "state": "DE",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Boulden Brothers ran Mister Sparky from 2007 to its 2013 rebrand; current operator not verified",
+        "sources": [
+          "https://www.mistersparky.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Bucks County",
+        "address": "5503 Bristol Emilie Road, Levittown, PA 19057",
+        "city": "Levittown",
+        "state": "PA",
+        "owner": "Same address as BF Levittown (Michelle Glasson, President, per BBB)",
+        "owner_status": "independent franchisee (target pp-t04)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Levittown",
+        "address": "5503 Emilie Road, Levittown, PA 19057",
+        "city": "Levittown",
+        "state": "PA",
+        "owner": "Michelle Glasson (President, per BBB)",
+        "owner_status": "independent franchisee (target pp-t04)",
+        "note": null,
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/",
+          "https://www.bbb.org/us/pa/levittown/profile/plumber/benjamin-franklin-plumbing-levittown-0241-213053522"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Doylestown",
+        "address": "5503 Emilie Road, Levittown, PA 19057",
+        "city": "Levittown",
+        "state": "PA",
+        "owner": "Same address as BF Levittown",
+        "owner_status": "independent franchisee (target pp-t04)",
+        "note": null,
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Lansdale",
+        "address": "100 W Main Street, Lansdale, PA 19446",
+        "city": "Lansdale",
+        "state": "PA",
+        "owner": "Tim Bartman (Owner, per LinkedIn)",
+        "owner_status": "independent franchisee (target pp-t05)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/",
+          "https://www.linkedin.com/in/tim-bartman-91767030"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of BuxMont",
+        "address": "65 W Street Rd, Suite C-201, Warminster, PA 18974",
+        "city": "Warminster",
+        "state": "PA",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": null,
+        "sources": [
+          "https://www.mistersparky.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of Ardmore and Levittown",
+        "address": "101 Greenwood Ave, Suite 435, Jenkintown, PA 19046",
+        "city": "Jenkintown",
+        "state": "PA",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": null,
+        "sources": [
+          "https://www.mistersparky.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Bethlehem",
+        "address": "1455 Valley Center Parkway, Suite 170, Bethlehem, PA 18017",
+        "city": "Bethlehem",
+        "state": "PA",
+        "owner": null,
+        "owner_status": "independent franchisee (target pp-t10; owner unverified)",
+        "note": null,
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of South Jersey",
+        "address": "100 N Franklin Blvd, Pleasantville, NJ 08232",
+        "city": "Pleasantville",
+        "state": "NJ",
+        "owner": "David Pomales / PHE, Inc. (d/b/a 'The Punctual Pros' NJ)",
+        "owner_status": "independent franchisee (target pp-t06; name collision, verify)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/",
+          "https://thepunctualprosnj.com/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Pleasantville",
+        "address": "100 N Franklin Blvd, Pleasantville, NJ 08232",
+        "city": "Pleasantville",
+        "state": "NJ",
+        "owner": "David Pomales / PHE, Inc. (d/b/a 'The Punctual Pros' NJ)",
+        "owner_status": "independent franchisee (target pp-t06; name collision, verify)",
+        "note": null,
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/",
+          "https://thepunctualprosnj.com/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of Pleasantville",
+        "address": "100 N Franklin Blvd, Pleasantville, NJ 08232",
+        "city": "Pleasantville",
+        "state": "NJ",
+        "owner": "David Pomales / PHE, Inc. (d/b/a 'The Punctual Pros' NJ)",
+        "owner_status": "independent franchisee (target pp-t06; name collision, verify)",
+        "note": null,
+        "sources": [
+          "https://www.mistersparky.com/locations/",
+          "https://thepunctualprosnj.com/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Manalapan",
+        "address": "227 NJ-33 East, Building 1 Unit 7, Manalapan, NJ 07726",
+        "city": "Manalapan",
+        "state": "NJ",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified; target pp-t07)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of Manalapan NJ",
+        "address": "44 Church Ln, Manalapan Township, NJ 07726",
+        "city": "Manalapan",
+        "state": "NJ",
+        "owner": "Plug It In LLC (owner 'Dan' per listing)",
+        "owner_status": "independent franchisee (target pp-t07)",
+        "note": null,
+        "sources": [
+          "https://www.mistersparky.com/locations/",
+          "https://www.angi.com/companylist/us/nj/manalapan/plug-it-in-llc-reviews-1.htm"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Somerset",
+        "address": "1 Kristen Court, Somerset, NJ 08873",
+        "city": "Somerset",
+        "state": "NJ",
+        "owner": "Desyra Highsmith Holcomb & Robert Holcomb",
+        "owner_status": "independent franchisee (target pp-t09)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Clinton",
+        "address": "2005 Route 31, Clinton, NJ 08809",
+        "city": "Clinton",
+        "state": "NJ",
+        "owner": "Thomas J. Brady (LLC started 2002)",
+        "owner_status": "independent franchisee (target pp-t08)",
+        "note": null,
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/",
+          "https://www.bbb.org/us/nj/clinton/profile/plumber/benjamin-franklin-plumbing-0221-90186376"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Turnersville",
+        "address": "920 W Blenheim Ave, Blackwood, NJ 08012",
+        "city": "Blackwood",
+        "state": "NJ",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of Turnersville",
+        "address": "4501 Route 42, Ste 3, Turnersville, NJ 08012",
+        "city": "Turnersville",
+        "state": "NJ",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": null,
+        "sources": [
+          "https://www.mistersparky.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Cherry Hill",
+        "address": "8 Knoll Lane, Cherry Hill, NJ 08002",
+        "city": "Cherry Hill",
+        "state": "NJ",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Wayne",
+        "address": "1069 Ringwood Avenue Suite 315/A, Wayne, NJ 07420",
+        "city": "Wayne",
+        "state": "NJ",
+        "owner": null,
+        "owner_status": "independent franchisee (North Jersey; outside screen radius)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Midland Park",
+        "address": "194 Greenwood Avenue, Midland Park, NJ 07432",
+        "city": "Midland Park",
+        "state": "NJ",
+        "owner": null,
+        "owner_status": "independent franchisee (North Jersey; outside screen radius)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Teaneck",
+        "address": "12 Orchard St, Teaneck, NJ 07666",
+        "city": "Teaneck",
+        "state": "NJ",
+        "owner": null,
+        "owner_status": "independent franchisee (North Jersey; outside screen radius)",
+        "note": null,
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Pompton Lakes",
+        "address": "309A Hamburg Tpke, Butler, NJ 07405",
+        "city": "Butler",
+        "state": "NJ",
+        "owner": null,
+        "owner_status": "independent franchisee (North Jersey; outside screen radius)",
+        "note": null,
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of Westwood and Mahwah",
+        "address": "678 Westwood Ave, Suite 2R, River Vale, NJ 07675",
+        "city": "River Vale",
+        "state": "NJ",
+        "owner": null,
+        "owner_status": "independent franchisee (North Jersey; outside screen radius)",
+        "note": null,
+        "sources": [
+          "https://www.mistersparky.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Butler",
+        "address": "172 Unionville Rd, Butler, PA 16001",
+        "city": "Butler",
+        "state": "PA",
+        "owner": null,
+        "owner_status": "independent franchisee (Western PA; outside screen radius)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Pittsburgh",
+        "address": "5330 Progress Blvd, Bethel Park, PA 15102",
+        "city": "Bethel Park",
+        "state": "PA",
+        "owner": null,
+        "owner_status": "independent franchisee (Western PA; outside screen radius)",
+        "note": null,
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Pittsburgh",
+        "address": "451 Rochester Road, Pittsburgh, PA 15237",
+        "city": "Pittsburgh",
+        "state": "PA",
+        "owner": null,
+        "owner_status": "independent franchisee (Western PA; outside screen radius)",
+        "note": null,
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of Murrysville",
+        "address": "3795 B Old William Penn Hwy, Murrysville, PA 15668",
+        "city": "Murrysville",
+        "state": "PA",
+        "owner": null,
+        "owner_status": "independent franchisee (Western PA; outside screen radius)",
+        "note": null,
+        "sources": [
+          "https://www.mistersparky.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of Pittsburgh West",
+        "address": "5676 Steubenville Pike, Ste 3, McKees Rocks, PA 15136",
+        "city": "McKees Rocks",
+        "state": "PA",
+        "owner": null,
+        "owner_status": "independent franchisee (Western PA; outside screen radius)",
+        "note": null,
+        "sources": [
+          "https://www.mistersparky.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Annapolis",
+        "address": "1125 West Street Unit 609, Annapolis, MD 21401",
+        "city": "Annapolis",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Baltimore",
+        "address": "3702 Yosemite Avenue, Baltimore, MD 21215",
+        "city": "Baltimore",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Columbia",
+        "address": "10015 Old Columbia Rd Ste B215, Columbia, MD 21046",
+        "city": "Columbia",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Rockville",
+        "address": "1010 Rockville Pike Suite 302, Rockville, MD 20850",
+        "city": "Rockville",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Bel Air",
+        "address": "16A Bel Air South Parkway Suite 300, Bel Air, MD 21015",
+        "city": "Bel Air",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of Mount Airy",
+        "address": "2702 Back Acre Circle, Mount Airy, MD 21771",
+        "city": "Mount Airy",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "One Hour Heating & Air Conditioning",
+        "location": "One Hour of PG County",
+        "address": "3100 Ritchie Road Unit G, District Heights, MD 20747",
+        "city": "District Heights",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.onehourheatandair.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Frederick",
+        "address": "6639 Ballenger Run Blvd, Frederick, MD 21703",
+        "city": "Frederick",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Gaithersburg",
+        "address": "9815 Watkins Road, Gaithersburg, MD 20882",
+        "city": "Gaithersburg",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Mount Airy",
+        "address": "2702 Back Acre Circle Suite 110, Mount Airy, MD 21771",
+        "city": "Mount Airy",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Pasadena",
+        "address": "8010 Hog Neck Road Suite 100, Pasadena, MD 21122",
+        "city": "Pasadena",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Harford County",
+        "address": "16A Bel Air South Parkway Suite 300, Bel Air, MD 21015",
+        "city": "Bel Air",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Columbia",
+        "address": "8377 Tamar Drive Unit 634, Columbia, MD 21045",
+        "city": "Columbia",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Baltimore",
+        "address": "3702 Yosemite Avenue, Baltimore, MD 21215",
+        "city": "Baltimore",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Silver Spring",
+        "address": "2600 Forest Glen Road Suite 3, Silver Spring, MD 20910",
+        "city": "Silver Spring",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Benjamin Franklin Plumbing",
+        "location": "Benjamin Franklin Plumbing of Annapolis",
+        "address": "1125 West Street Suite 609, Annapolis, MD 21401",
+        "city": "Annapolis",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.benjaminfranklinplumbing.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      },
+      {
+        "brand": "Mister Sparky",
+        "location": "Mister Sparky of the Northeast Beltway",
+        "address": "1620 Elton Road Ste 201, Silver Spring, MD 20903",
+        "city": "Silver Spring",
+        "state": "MD",
+        "owner": null,
+        "owner_status": "independent franchisee (owner unverified)",
+        "note": "Central Maryland cluster: shared addresses and 301 call-tracking numbers suggest one or a few multi-unit operators; not verified",
+        "sources": [
+          "https://www.mistersparky.com/locations/"
+        ],
+        "retrieved": "2026-09-24"
+      }
+    ],
+    "item_count": 61
+  },
+  "items": [
+    {
+      "id": "pp-t01",
+      "company": "Benjamin Franklin Plumbing / One Hour Heating & Air / Mister Sparky of West Chester (Ron Williams group)",
+      "website": "https://www.benjaminfranklinplumbing.com/west-chester/",
+      "hq_city": "West Chester",
+      "county": "Chester",
+      "state": "PA",
+      "lat": 39.9607,
+      "lon": -75.6055,
+      "geo_precision": "city",
+      "founded_year": 2002,
+      "employees": null,
+      "revenue_est_usd": null,
+      "revenue_source": null,
+      "ownership": "franchisee_founder",
+      "ownership_notes": "Search-indexed profile names Ron Williams as owner/founder (May 2002). Same owner is reported for One Hour / Benjamin Franklin of Delmarva (Berlin MD). West Chester runs all three Authority brands from 1313 Wilmington Pike.",
+      "brands_or_franchise": "Benjamin Franklin Plumbing + One Hour Heating & Air + Mister Sparky franchisee (tri-brand)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": "Yelp listing shows 22 reviews for BF West Chester (Sep 2026 search result); Google count not retrieved",
+      "distance_mi_from_lancaster": 37,
+      "distance_mi_from_toms_river": 75,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "This is the closest tri-brand Authority territory to the Lancaster hub that Punctual Pros doesn't own. It fills Chester County (Main Line/Delaware Valley), the gap between Lancaster and Philadelphia. It uses the same brands, call-center scripts and pricebook, so it's a pure tuck-in with no rebrand. The owner also holds Delmarva (Berlin MD), so one negotiation could deliver two territories.",
+      "fit_score": 82,
+      "fit_breakdown": {
+        "density_adjacency": 17,
+        "trade_mix": 20,
+        "scale": 9,
+        "ownership_readiness": 16,
+        "brand_alignment": 20
+      },
+      "risk_flags": [
+        "Owner has held the franchise since 2002 (succession angle, but valuation expectations may be anchored)",
+        "Headcount/revenue not disclosed; ZoomInfo has no clean record",
+        "Authority Brands transfer approval required"
+      ],
+      "zoominfo_id": null,
+      "sources": [
+        "https://www.benjaminfranklinplumbing.com/locations/",
+        "https://www.onehourheatandair.com/locations/",
+        "https://www.mistersparky.com/locations/",
+        "https://www.benjaminfranklinplumbing.com/west-chester/",
+        "https://www.yelp.com/biz/benjamin-franklin-plumbing-of-west-chester-west-chester-2",
+        "https://www.bbb.org/us/pa/west-chester/profile/plumber/benjamin-franklin-plumbing-0241-236013083"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t02",
+      "company": "One Hour Heating & Air / Benjamin Franklin Plumbing of Delmarva (Ron Williams group)",
+      "website": "https://www.benjaminfranklinplumbing.com/delmarva/",
+      "hq_city": "Berlin",
+      "county": "Worcester",
+      "state": "MD",
+      "lat": 38.3226,
+      "lon": -75.2177,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": null,
+      "revenue_est_usd": null,
+      "revenue_source": null,
+      "ownership": "franchisee_founder",
+      "ownership_notes": "Search-indexed chamber listing (Worcester County Chamber) names Ron Williams as owner of One Hour + Benjamin Franklin Delmarva, 9928 Old Ocean City Blvd, Berlin MD.",
+      "brands_or_franchise": "One Hour Heating & Air + Benjamin Franklin Plumbing franchisee (Delmarva)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 132,
+      "distance_mi_from_toms_river": 125,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Comes with the West Chester deal (same owner) and adds the Ocean City/Delmarva shore market, which has seasonal second-home demand much like Horvath's Ocean County base. It's remote from Lancaster, so on its own it's an opportunistic add rather than a density play.",
+      "fit_score": 65,
+      "fit_breakdown": {
+        "density_adjacency": 6,
+        "trade_mix": 16,
+        "scale": 8,
+        "ownership_readiness": 15,
+        "brand_alignment": 20
+      },
+      "risk_flags": [
+        "~132 mi from Lancaster (125 mi from Toms River); outside the 120-mi screen radius (included only as a package with West Chester)",
+        "Seasonal resort-market demand"
+      ],
+      "zoominfo_id": null,
+      "sources": [
+        "https://www.onehourheatandair.com/locations/",
+        "https://www.benjaminfranklinplumbing.com/locations/",
+        "https://business.worcestercountychamber.org/list/member/one-hour-heating-and-air-benjamin-franklin-plumbing-2746",
+        "https://www.benjaminfranklinplumbing.com/delmarva/about-us/heros-club/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t03",
+      "company": "One Hour Heating & Air Conditioning / Benjamin Franklin Plumbing of Wilmington & Dover (Calvert's)",
+      "website": "https://www.onehourheatandair.com/wilmington/",
+      "hq_city": "Wilmington",
+      "county": "New Castle",
+      "state": "DE",
+      "lat": 39.7391,
+      "lon": -75.5398,
+      "geo_precision": "city",
+      "founded_year": 1991,
+      "employees": null,
+      "revenue_est_usd": null,
+      "revenue_source": null,
+      "ownership": "founder",
+      "ownership_notes": "Founded 1991 by Chris Lenhard as Calvert Heating & Cooling; David Murray partnered in 1995 (VP). Later adopted the One Hour mantle. Benjamin Franklin Wilmington operates from the same 410 Meco Drive address. BF/One Hour Dover (4282 N Dupont Hwy) uses a shared template; common ownership unconfirmed.",
+      "brands_or_franchise": "One Hour Heating & Air + Benjamin Franklin Plumbing franchisee",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 46,
+      "distance_mi_from_toms_river": 73,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A founder-owned dual-brand Authority franchise with 30+ years of history, covering northern Delaware (New Castle County) and possibly Dover. It's a tuck-in with no rebrand, links the West Chester corridor to Delmarva, and Mister Sparky is whitespace in the territory (Mister Sparky New Castle County is a separate franchise).",
+      "fit_score": 74,
+      "fit_breakdown": {
+        "density_adjacency": 12,
+        "trade_mix": 16,
+        "scale": 9,
+        "ownership_readiness": 17,
+        "brand_alignment": 20
+      },
+      "risk_flags": [
+        "Founder-era leadership (1991), so a succession/transition plan is needed",
+        "Dover co-ownership not verified",
+        "Headcount not disclosed"
+      ],
+      "zoominfo_id": null,
+      "sources": [
+        "https://www.onehourheatandair.com/locations/",
+        "https://www.benjaminfranklinplumbing.com/locations/",
+        "https://www.bbb.org/us/de/wilmington/profile/heating-and-air-conditioning/one-hour-heating-air-conditioning-0251-4000775",
+        "https://www.linkedin.com/in/ed-santos-aa898730a/",
+        "https://www.benjaminfranklinplumbing.com/locations/delaware/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t04",
+      "company": "One Hour Heating & Air of Bucks County / Benjamin Franklin Plumbing of Levittown & Doylestown",
+      "website": "https://www.benjaminfranklinplumbing.com/levittown/",
+      "hq_city": "Levittown",
+      "county": "Bucks",
+      "state": "PA",
+      "lat": 40.1551,
+      "lon": -74.8288,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": null,
+      "revenue_est_usd": null,
+      "revenue_source": null,
+      "ownership": "franchisee",
+      "ownership_notes": "Search-indexed BBB profile lists Michelle Glasson as President of Benjamin Franklin Plumbing - Levittown. One Hour Bucks County, BF Levittown and BF Doylestown all list 5503 (Bristol) Emilie Rd, Levittown.",
+      "brands_or_franchise": "One Hour + Benjamin Franklin Plumbing franchisee (3 territories)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": "Yelp shows 30 reviews for BF Levittown (search result, Sep 2026)",
+      "distance_mi_from_lancaster": 78,
+      "distance_mi_from_toms_river": 36,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Three Authority territories (Lower Bucks, Doylestown, Bucks HVAC) about 36 miles from Horvath's Toms River-area hub across the Delaware, bridging Horvath (Ocean/Monmouth) and Central PA. Mister Sparky BuxMont (Warminster) and Ardmore/Levittown (Jenkintown) are separate franchises nearby, so a three-way combination is possible.",
+      "fit_score": 71,
+      "fit_breakdown": {
+        "density_adjacency": 13,
+        "trade_mix": 16,
+        "scale": 9,
+        "ownership_readiness": 13,
+        "brand_alignment": 20
+      },
+      "risk_flags": [
+        "Owner tenure and appetite unknown",
+        "Philadelphia suburbs are heavily contested by Sila (King of Prussia) and Horizon Services"
+      ],
+      "zoominfo_id": "463336007",
+      "sources": [
+        "https://www.onehourheatandair.com/locations/",
+        "https://www.benjaminfranklinplumbing.com/locations/",
+        "https://www.bbb.org/us/pa/levittown/profile/plumber/benjamin-franklin-plumbing-levittown-0241-213053522",
+        "https://www.onehourheatandair.com/bucks-county/",
+        "https://www.zoominfo.com/c/one-hour-heating--air-conditioning-bucks-county/463336007",
+        "https://www.yelp.com/biz/benjamin-franklin-plumbing-of-levittown-levittown"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t05",
+      "company": "One Hour Heating & Air Conditioning of Lansdale (Bucks & Montgomery)",
+      "website": "https://www.onehourheatandair.com/lansdale/",
+      "hq_city": "Lansdale",
+      "county": "Montgomery",
+      "state": "PA",
+      "lat": 40.2415,
+      "lon": -75.2838,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": null,
+      "revenue_est_usd": null,
+      "revenue_source": null,
+      "ownership": "franchisee",
+      "ownership_notes": "LinkedIn profile (search result) identifies Tim Bartman as Owner, One Hour Heating & Air Conditioning; the Facebook page brands it 'Bucks & Montgomery County'.",
+      "brands_or_franchise": "One Hour Heating & Air franchisee",
+      "trades": [
+        "hvac"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 56,
+      "distance_mi_from_toms_river": 61,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A One Hour territory in central Montgomery County, about 55 miles east of Lancaster along the US-422/PA Turnpike corridor. Adding Benjamin Franklin and Mister Sparky cross-sell would replicate the Punctual Pros tri-brand model.",
+      "fit_score": 62,
+      "fit_breakdown": {
+        "density_adjacency": 13,
+        "trade_mix": 11,
+        "scale": 7,
+        "ownership_readiness": 11,
+        "brand_alignment": 20
+      },
+      "risk_flags": [
+        "HVAC-only territory",
+        "Scale unknown",
+        "Competes with Sila, Moyer and Good Inc in Montgomery County"
+      ],
+      "zoominfo_id": null,
+      "sources": [
+        "https://www.onehourheatandair.com/locations/",
+        "https://www.onehourheatandair.com/lansdale/about-us/",
+        "https://www.linkedin.com/in/tim-bartman-91767030",
+        "https://www.facebook.com/OneHourBucksMontgomery/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t06",
+      "company": "PHE, Inc. d/b/a The Punctual Pros NJ (One Hour / Benjamin Franklin / Mister Sparky of South Jersey, Pleasantville)",
+      "website": "https://thepunctualprosnj.com/",
+      "hq_city": "Pleasantville",
+      "county": "Atlantic",
+      "state": "NJ",
+      "lat": 39.3898,
+      "lon": -74.524,
+      "geo_precision": "city",
+      "founded_year": 2000,
+      "employees": null,
+      "revenue_est_usd": null,
+      "revenue_source": null,
+      "ownership": "franchisee_founder",
+      "ownership_notes": "Mister Sparky franchise spotlight (search result) says David Pomales has owned One Hour and Benjamin Franklin since 2000 and added Mister Sparky in 2019, which passed $1M in 2021. The LinkedIn company page is 'PHE, Inc. One Hour, Benjamin Franklin and Mister Sparky'. The site operates as 'The Punctual Pros' at 100 N Franklin Blvd.",
+      "brands_or_franchise": "One Hour + Benjamin Franklin + Mister Sparky tri-brand franchisee (South Jersey / Atlantic & Cape May)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 105,
+      "distance_mi_from_toms_river": 43,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "The best-fitting Jersey Shore tuck-in: an identical tri-brand model about 43 miles south of Horvath's Beachwood hub, extending coverage down the Garden State Parkway into Atlantic and Cape May counties. It even trades as 'The Punctual Pros', so there's no rebrand or customer confusion.",
+      "fit_score": 80,
+      "fit_breakdown": {
+        "density_adjacency": 15,
+        "trade_mix": 20,
+        "scale": 9,
+        "ownership_readiness": 16,
+        "brand_alignment": 20
+      },
+      "risk_flags": [
+        "Name collision: PitchBook conflates this entity with BSP's Punctual Pros; confirm it is NOT already affiliated before outreach",
+        "Owner since 2000; scale undisclosed"
+      ],
+      "zoominfo_id": null,
+      "sources": [
+        "https://thepunctualprosnj.com/",
+        "https://www.onehourheatandair.com/locations/",
+        "https://www.benjaminfranklinplumbing.com/locations/",
+        "https://www.mistersparky.com/locations/",
+        "https://mistersparkyfranchise.com/blog/2023/march/owner-spotlight-david-pomales/",
+        "https://www.linkedin.com/company/mccarthy%27s-one-hour-heating-&-a-c-benjamin-franklin-plumbing-mister-sparky-electric",
+        "https://pitchbook.com/profiles/company/593145-91"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t07",
+      "company": "Mister Sparky of Manalapan (Plug It In LLC) + One Hour Heating & Air of Manalapan",
+      "website": "https://www.mistersparky.com/manalapan/",
+      "hq_city": "Manalapan",
+      "county": "Monmouth",
+      "state": "NJ",
+      "lat": 40.2873,
+      "lon": -74.3435,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": null,
+      "revenue_est_usd": null,
+      "revenue_source": null,
+      "ownership": "franchisee",
+      "ownership_notes": "Angi lists Mister Sparky of Manalapan under 'Plug It In LLC'; the search-indexed profile names the owner 'Dan'. One Hour Manalapan (227 NJ-33 E) has undisclosed ownership that may differ.",
+      "brands_or_franchise": "Mister Sparky franchisee (+ adjacent One Hour Manalapan franchise)",
+      "trades": [
+        "electrical",
+        "hvac"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 105,
+      "distance_mi_from_toms_river": 24,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Western Monmouth County, directly north of Horvath's Ocean/Monmouth footprint. Combining the Manalapan Mister Sparky and One Hour territories would give Horvath contiguous coverage up the Route 9/33 corridor into Freehold and Manalapan.",
+      "fit_score": 69,
+      "fit_breakdown": {
+        "density_adjacency": 19,
+        "trade_mix": 14,
+        "scale": 6,
+        "ownership_readiness": 10,
+        "brand_alignment": 20
+      },
+      "risk_flags": [
+        "Two separate franchise owners likely; both needed",
+        "Small scale"
+      ],
+      "zoominfo_id": null,
+      "sources": [
+        "https://www.mistersparky.com/locations/",
+        "https://www.onehourheatandair.com/locations/",
+        "https://www.angi.com/companylist/us/nj/manalapan/plug-it-in-llc-reviews-1.htm",
+        "https://www.yelp.com/biz/one-hour-heating-and-air-conditioning-of-manalapan-manalapan"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t08",
+      "company": "Benjamin Franklin Plumbing of Clinton NJ",
+      "website": "https://www.benjaminfranklinplumbing.com/clinton/",
+      "hq_city": "Clinton",
+      "county": "Hunterdon",
+      "state": "NJ",
+      "lat": 40.6368,
+      "lon": -74.9099,
+      "geo_precision": "city",
+      "founded_year": 2002,
+      "employees": null,
+      "revenue_est_usd": null,
+      "revenue_source": null,
+      "ownership": "franchisee_founder",
+      "ownership_notes": "Search-indexed business profile lists Thomas J. Brady as owner/operator; LLC started 4/26/2002.",
+      "brands_or_franchise": "Benjamin Franklin Plumbing franchisee",
+      "trades": [
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 84,
+      "distance_mi_from_toms_river": 60,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A 24-year-old founder-owned Benjamin Franklin territory in Hunterdon County, off the I-78 corridor between the Lehigh Valley and Central Jersey. It would be the first Punctual Pros node in NW Jersey and could be combined with One Hour Somerset (about 22 miles east).",
+      "fit_score": 60,
+      "fit_breakdown": {
+        "density_adjacency": 8,
+        "trade_mix": 11,
+        "scale": 6,
+        "ownership_readiness": 15,
+        "brand_alignment": 20
+      },
+      "risk_flags": [
+        "Plumbing only",
+        "~60 mi from Toms River and ~84 mi from Lancaster",
+        "Scale unknown"
+      ],
+      "zoominfo_id": null,
+      "sources": [
+        "https://www.benjaminfranklinplumbing.com/locations/",
+        "https://www.bbb.org/us/nj/clinton/profile/plumber/benjamin-franklin-plumbing-0221-90186376",
+        "https://www.yelp.com/biz/benjamin-franklin-plumbing-of-clinton-clinton"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t09",
+      "company": "One Hour Heating & Air Conditioning of Somerset",
+      "website": "https://www.onehourheatandair.com/somerset/",
+      "hq_city": "Somerset",
+      "county": "Somerset",
+      "state": "NJ",
+      "lat": 40.4976,
+      "lon": -74.4885,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": null,
+      "revenue_est_usd": null,
+      "revenue_source": null,
+      "ownership": "franchisee",
+      "ownership_notes": "TAPinto Franklin Township reports that co-owners Desyra Highsmith Holcomb and Robert Holcomb (20+ yr HVAC tech) relaunched the franchise.",
+      "brands_or_franchise": "One Hour Heating & Air franchisee",
+      "trades": [
+        "hvac"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 101,
+      "distance_mi_from_toms_river": 41,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Could be an option-value tuck-in for Central Jersey (Somerset/Middlesex) between Horvath and the Clinton territory. The recent relaunch makes it a sub-scale, earn-out-style deal.",
+      "fit_score": 54,
+      "fit_breakdown": {
+        "density_adjacency": 12,
+        "trade_mix": 11,
+        "scale": 4,
+        "ownership_readiness": 7,
+        "brand_alignment": 20
+      },
+      "risk_flags": [
+        "Recently relaunched and sub-scale",
+        "Owners early in their franchise tenure, so a near-term sale is unlikely"
+      ],
+      "zoominfo_id": null,
+      "sources": [
+        "https://www.onehourheatandair.com/locations/",
+        "https://www.tapinto.net/towns/franklin-township/sections/business-and-finance/articles/somerset-couple-relaunches-one-hour-heating-air-conditioning-bringing-decades-of-expertise-and-heart-to-local-homes",
+        "https://members.scbp.org/publicmemberdirectory/Details/one-hour-heating-and-air-conditioning-4482866"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t10",
+      "company": "Benjamin Franklin Plumbing of Bethlehem",
+      "website": "https://www.benjaminfranklinplumbing.com/bethlehem/",
+      "hq_city": "Bethlehem",
+      "county": "Northampton",
+      "state": "PA",
+      "lat": 40.6259,
+      "lon": -75.3705,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": null,
+      "revenue_est_usd": null,
+      "revenue_source": null,
+      "ownership": "franchisee",
+      "ownership_notes": "Owner not disclosed in public web results; the location is independently owned (1455 Valley Center Pkwy Ste 170).",
+      "brands_or_franchise": "Benjamin Franklin Plumbing franchisee",
+      "trades": [
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 64,
+      "distance_mi_from_toms_river": 77,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "The only Authority Brands presence in the Lehigh Valley. It would be a beachhead for adding One Hour and Mister Sparky in Lehigh/Northampton, where HomeX (Deluxe Plumbing) and independents like Maitz and Curtis compete.",
+      "fit_score": 55,
+      "fit_breakdown": {
+        "density_adjacency": 10,
+        "trade_mix": 11,
+        "scale": 5,
+        "ownership_readiness": 9,
+        "brand_alignment": 20
+      },
+      "risk_flags": [
+        "Owner unknown",
+        "Plumbing only"
+      ],
+      "zoominfo_id": null,
+      "sources": [
+        "https://www.benjaminfranklinplumbing.com/locations/",
+        "https://www.benjaminfranklinplumbing.com/bethlehem/",
+        "https://www.yelp.com/biz/benjamin-franklin-plumbing-bethlehem-3"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t11",
+      "company": "Lancaster Plumbing, Heating, Cooling & Electrical",
+      "website": "https://www.lph.biz/",
+      "hq_city": "East Petersburg",
+      "county": "Lancaster",
+      "state": "PA",
+      "lat": 40.1001,
+      "lon": -76.3541,
+      "geo_precision": "city",
+      "founded_year": 1904,
+      "employees": 27,
+      "revenue_est_usd": 7026000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Site: 'Family Owned & Operated Since 1904'; 'family-owned & operated for 2 generations'. No PE affiliation found.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical",
+        "water_treatment",
+        "generators",
+        "indoor_air"
+      ],
+      "review_count": 3200,
+      "review_rating": null,
+      "review_source": "Company site header: 'Over 3.2k Reviews' (Sep 2026)",
+      "distance_mi_from_lancaster": 5,
+      "distance_mi_from_toms_river": 115,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "The highest-density fit in the screen: a four-trade (plumbing/HVAC/electrical/generators) home-services brand 5 miles from Punctual Pros' Running Pump Rd HQ with 3.2k+ reviews. Route overlap would allow immediate dispatch consolidation and tri-brand cross-sell, and the Lancaster Plumbing customer list and membership base would roll into One Hour, Benjamin Franklin and Mister Sparky.",
+      "fit_score": 84,
+      "fit_breakdown": {
+        "density_adjacency": 20,
+        "trade_mix": 20,
+        "scale": 15,
+        "ownership_readiness": 14,
+        "brand_alignment": 15
+      },
+      "risk_flags": [
+        "Heavy customer overlap with Punctual Pros; some revenue dis-synergy on rebrand",
+        "Heritage brand (1904) may be worth running dual-brand instead of converting"
+      ],
+      "zoominfo_id": "401385647",
+      "sources": [
+        "https://www.lph.biz/",
+        "https://www.lph.biz/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t12",
+      "company": "Regal Inc. (Regal Plumbing, Heating & A/C)",
+      "website": "https://www.regalplumbinginc.com/",
+      "hq_city": "Hanover",
+      "county": "York",
+      "state": "PA",
+      "lat": 39.8007,
+      "lon": -76.983,
+      "geo_precision": "city",
+      "founded_year": 1974,
+      "employees": 33,
+      "revenue_est_usd": 5945000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24) (site states 33 employees; ZoomInfo shows 20)",
+      "ownership": "family",
+      "ownership_notes": "Family-owned and operated since 1974 (50-year anniversary); Lohss family leadership. Has already rolled up competitor customer bases (e.g., 'Regal Welcomes FF Kling Clients').",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "indoor_air"
+      ],
+      "review_count": 3481,
+      "review_rating": 4.8,
+      "review_source": "Google review widget on company site: '4.8 · 3481 Reviews' (Sep 2026)",
+      "distance_mi_from_lancaster": 39,
+      "distance_mi_from_toms_river": 148,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Has the most Google reviews of any Central PA independent screened (3,481 at 4.8) and calls itself one of York County's largest home-service companies. It extends Punctual Pros' York node west into Hanover/Adams County and has shown it can absorb acquired customer lists.",
+      "fit_score": 78,
+      "fit_breakdown": {
+        "density_adjacency": 17,
+        "trade_mix": 16,
+        "scale": 17,
+        "ownership_readiness": 14,
+        "brand_alignment": 14
+      },
+      "risk_flags": [
+        "No electrical line",
+        "Hanover market also served by Aero Energy (ESOP)"
+      ],
+      "zoominfo_id": "346217196",
+      "sources": [
+        "https://www.regalplumbinginc.com/",
+        "https://www.regalplumbinginc.com/about",
+        "https://www.regalplumbinginc.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t13",
+      "company": "Central Penn Plumbing Service Inc.",
+      "website": "https://www.centralpennplumbing.com/",
+      "hq_city": "Mechanicsburg",
+      "county": "Cumberland",
+      "state": "PA",
+      "lat": 40.2143,
+      "lon": -77.0086,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 51,
+      "revenue_est_usd": 11658000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "private_independent",
+      "ownership_notes": "Independent Bryant dealer; no PE affiliation found on site. Founding year and owners not captured.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical",
+        "indoor_air"
+      ],
+      "review_count": 1363,
+      "review_rating": null,
+      "review_source": "Company site reviews page counter: '1363 Reviews' (Sep 2026)",
+      "distance_mi_from_lancaster": 39,
+      "distance_mi_from_toms_river": 150,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "At about 51 employees and $11.7M, it's a scale target on the West Shore (Cumberland County), next to Punctual Pros' Harrisburg (Patriot Rd) node. It covers four trades including sewer/drain and electrical, and its 1,363 reviews support density across Mechanicsburg, Carlisle and Dillsburg.",
+      "fit_score": 79,
+      "fit_breakdown": {
+        "density_adjacency": 17,
+        "trade_mix": 20,
+        "scale": 18,
+        "ownership_readiness": 10,
+        "brand_alignment": 14
+      },
+      "risk_flags": [
+        "Ownership/succession status unverified",
+        "Founding year not captured"
+      ],
+      "zoominfo_id": "345645300",
+      "sources": [
+        "https://www.centralpennplumbing.com/",
+        "https://www.centralpennplumbing.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t14",
+      "company": "Zimmerman Plumbing, Heating & Air Conditioning",
+      "website": "https://www.ezimmerman.com/",
+      "hq_city": "Mechanicsburg",
+      "county": "Cumberland",
+      "state": "PA",
+      "lat": 40.2143,
+      "lon": -77.0086,
+      "geo_precision": "city",
+      "founded_year": 1980,
+      "employees": 33,
+      "revenue_est_usd": 6219000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Founded 1980 by Earnie Zimmerman (President), family-owned; the owner is described as very involved in the business.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical",
+        "indoor_air"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 39,
+      "distance_mi_from_toms_river": 150,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A founder-led (46 years) multi-trade residential operator in Mechanicsburg. Founder age and tenure make it a classic succession sale, and the business would plug straight into the Harrisburg One Hour/Benjamin Franklin/Mister Sparky territories.",
+      "fit_score": 80,
+      "fit_breakdown": {
+        "density_adjacency": 17,
+        "trade_mix": 20,
+        "scale": 16,
+        "ownership_readiness": 17,
+        "brand_alignment": 10
+      },
+      "risk_flags": [
+        "Founder dependence; key-person transition"
+      ],
+      "zoominfo_id": "356603109",
+      "sources": [
+        "https://www.ezimmerman.com/",
+        "https://www.ezimmerman.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t15",
+      "company": "Brubaker Inc.",
+      "website": "https://www.brubakerinc.com/",
+      "hq_city": "Lancaster",
+      "county": "Lancaster",
+      "state": "PA",
+      "lat": 40.0379,
+      "lon": -76.3055,
+      "geo_precision": "city",
+      "founded_year": 1945,
+      "employees": 93,
+      "revenue_est_usd": 59197000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24) (likely includes appliance retail/remodeling)",
+      "ownership": "esop",
+      "ownership_notes": "Site: 'Family grown since 1945, now 100% employee-owned', with explicit anti-PE messaging ('We are not a private equity group'). Average employee tenure is 15 years.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 0,
+      "distance_mi_from_toms_river": 112,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "The largest Lancaster County residential multi-trade competitor (plumbing, HVAC, electrical, remodeling, appliances). A combination would give Punctual Pros dominant share in its home county. It's worth a relationship-level approach even though ESOP ownership makes a near-term deal unlikely.",
+      "fit_score": 71,
+      "fit_breakdown": {
+        "density_adjacency": 20,
+        "trade_mix": 20,
+        "scale": 17,
+        "ownership_readiness": 4,
+        "brand_alignment": 10
+      },
+      "risk_flags": [
+        "100% ESOP with public anti-PE positioning",
+        "Appliance retail and remodeling revenue outside the core model",
+        "ESOP trustee process and fairness-opinion requirements"
+      ],
+      "zoominfo_id": "17748744",
+      "sources": [
+        "https://www.brubakerinc.com/",
+        "https://www.brubakerinc.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t16",
+      "company": "The Witmer Company",
+      "website": "https://www.witmercompany.com/",
+      "hq_city": "New Holland",
+      "county": "Lancaster",
+      "state": "PA",
+      "lat": 40.1015,
+      "lon": -76.0852,
+      "geo_precision": "city",
+      "founded_year": 1941,
+      "employees": 25,
+      "revenue_est_usd": 6847000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Founded 1941 by Roy and Dorothy Witmer; 'a true family business'.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 12,
+      "distance_mi_from_toms_river": 100,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "An 85-year-old family plumbing/HVAC shop in eastern Lancaster County (New Holland, Garden Spot). It adds eastern-county route density, and the residential and light-commercial service base is ready for a Benjamin Franklin/One Hour conversion.",
+      "fit_score": 73,
+      "fit_breakdown": {
+        "density_adjacency": 19,
+        "trade_mix": 16,
+        "scale": 14,
+        "ownership_readiness": 15,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Some commercial mix",
+        "Review volume not captured"
+      ],
+      "zoominfo_id": "356250449",
+      "sources": [
+        "https://www.witmercompany.com/",
+        "https://www.witmercompany.com/about",
+        "https://www.witmercompany.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t17",
+      "company": "Ressler & Mateer",
+      "website": "https://www.resslermateer.com/",
+      "hq_city": "Brownstown",
+      "county": "Lancaster",
+      "state": "PA",
+      "lat": 40.124,
+      "lon": -76.2155,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 15,
+      "revenue_est_usd": 5910000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Local, family-owned and operated; serves Lancaster, Reading, West Chester and York.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": 585,
+      "review_rating": 4.9,
+      "review_source": "Company site: '4.9 average rating... 585 Reviews' (Sep 2026)",
+      "distance_mi_from_lancaster": 8,
+      "distance_mi_from_toms_river": 107,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Highly rated (4.9/585), with the same four-city service map as Punctual Pros (Lancaster, Reading, West Chester, York). It's a compact tuck-in that would lift technician count and membership base in Lancaster and Berks.",
+      "fit_score": 70,
+      "fit_breakdown": {
+        "density_adjacency": 20,
+        "trade_mix": 16,
+        "scale": 10,
+        "ownership_readiness": 12,
+        "brand_alignment": 12
+      },
+      "risk_flags": [
+        "Small headcount",
+        "Founding year not captured"
+      ],
+      "zoominfo_id": "43205757",
+      "sources": [
+        "https://www.resslermateer.com/",
+        "https://www.resslermateer.com/about",
+        "https://www.resslermateer.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t18",
+      "company": "Home Climates, Inc.",
+      "website": "https://www.homeclimates.com/",
+      "hq_city": "Elizabethtown",
+      "county": "Lancaster",
+      "state": "PA",
+      "lat": 40.1529,
+      "lon": -76.6027,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 32,
+      "revenue_est_usd": 7841000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Site signed 'Jim and Terry, Owners of Home Climates, Inc.'; ENERGY STAR new-construction verification program.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "indoor_air"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 18,
+      "distance_mi_from_toms_river": 128,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "An HVAC operator with about 32 employees in Elizabethtown, halfway between Punctual Pros' Lancaster and Harrisburg nodes. It would strengthen One Hour capacity along the Route 283 corridor and brings new-construction builder relationships.",
+      "fit_score": 67,
+      "fit_breakdown": {
+        "density_adjacency": 19,
+        "trade_mix": 11,
+        "scale": 16,
+        "ownership_readiness": 12,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "HVAC-only; part of revenue is new construction (lower margin, cyclical)"
+      ],
+      "zoominfo_id": "359068321",
+      "sources": [
+        "https://www.homeclimates.com/",
+        "https://www.homeclimates.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t19",
+      "company": "JSL Mechanical, Inc.",
+      "website": "https://www.jslmechanicalinc.com/",
+      "hq_city": "Reinholds",
+      "county": "Lancaster",
+      "state": "PA",
+      "lat": 40.2687,
+      "lon": -76.115,
+      "geo_precision": "city",
+      "founded_year": 2007,
+      "employees": 19,
+      "revenue_est_usd": 4259000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Family owned and operated since October 2007; owners Steve & Jeff Lloyd and Josh Benton.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 19,
+      "distance_mi_from_toms_river": 104,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A small northern Lancaster County (Denver/Reinholds) plumbing and HVAC shop near the Berks line. It fills the gap between Lancaster and Reading along US-222.",
+      "fit_score": 66,
+      "fit_breakdown": {
+        "density_adjacency": 19,
+        "trade_mix": 16,
+        "scale": 12,
+        "ownership_readiness": 10,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Younger founder-owners (2007) may not be sellers yet",
+        "Small scale"
+      ],
+      "zoominfo_id": "446860962",
+      "sources": [
+        "https://www.jslmechanicalinc.com/",
+        "https://www.jslmechanicalinc.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t20",
+      "company": "W.C. Eshenaur & Son, Inc.",
+      "website": "https://www.eshenaurs.com/",
+      "hq_city": "Harrisburg",
+      "county": "Dauphin",
+      "state": "PA",
+      "lat": 40.2732,
+      "lon": -76.8867,
+      "geo_precision": "city",
+      "founded_year": 1928,
+      "employees": 93,
+      "revenue_est_usd": 20577000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24) (includes heating-fuel delivery)",
+      "ownership": "family",
+      "ownership_notes": "Family owned and operated since 1928; fuel delivery, HVAC and master plumber services.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 35,
+      "distance_mi_from_toms_river": 144,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A 98-year-old Harrisburg name with about 93 employees. Its fuel-oil customer base is a captive funnel for heat-pump conversions, which One Hour could harvest, and the HVAC/plumbing service business overlaps Punctual Pros' Dauphin/Cumberland territories. The fuel division could be carved out or divested.",
+      "fit_score": 70,
+      "fit_breakdown": {
+        "density_adjacency": 18,
+        "trade_mix": 12,
+        "scale": 18,
+        "ownership_readiness": 13,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Heating-fuel distribution revenue is non-core (carve-out needed)",
+        "Declining oil-heat base"
+      ],
+      "zoominfo_id": "13303853",
+      "sources": [
+        "https://www.eshenaurs.com/",
+        "https://www.eshenaurs.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t21",
+      "company": "Pronto Plumbing Heating Air & Drains (incl. former SECCO Home Services)",
+      "website": "https://www.prontoplumbing.com/",
+      "hq_city": "Camp Hill",
+      "county": "Cumberland",
+      "state": "PA",
+      "lat": 40.2398,
+      "lon": -76.9199,
+      "geo_precision": "city",
+      "founded_year": 1969,
+      "employees": 52,
+      "revenue_est_usd": 10386000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24) (sum of Pronto Plumbing 29 emp/$6.22M and SECCO Home Services 23 emp/$4.16M records)",
+      "ownership": "private_independent",
+      "ownership_notes": "Serving Harrisburg/York/Lancaster since 1969. The site says 'The same trusted team from SECCO Home Services... now proudly serving homeowners as Pronto Plumbing Heating Air & Drains', indicating an owner-led consolidation of the two brands.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "water_treatment"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 35,
+      "distance_mi_from_toms_river": 145,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Already a two-brand consolidator on the West Shore with about 52 combined employees. It has a drains/water-quality specialty (the Benjamin Franklin upsell) and a Harrisburg/York/Lancaster service map identical to Punctual Pros' core.",
+      "fit_score": 73,
+      "fit_breakdown": {
+        "density_adjacency": 18,
+        "trade_mix": 16,
+        "scale": 18,
+        "ownership_readiness": 11,
+        "brand_alignment": 10
+      },
+      "risk_flags": [
+        "Integration of the SECCO rebrand still in progress",
+        "Ownership not named on site"
+      ],
+      "zoominfo_id": "358548937",
+      "sources": [
+        "https://www.prontoplumbing.com/",
+        "https://www.prontoplumbing.com/about",
+        "https://www.prontoplumbing.com/about-us",
+        "https://www.seccohome.com/",
+        "https://www.seccohome.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t22",
+      "company": "WM Buffington Company Heating, Cooling & Plumbing",
+      "website": "https://www.wmbuffingtoncompany.com/",
+      "hq_city": "Highspire",
+      "county": "Dauphin",
+      "state": "PA",
+      "lat": 40.2107,
+      "lon": -76.7911,
+      "geo_precision": "city",
+      "founded_year": 1952,
+      "employees": 16,
+      "revenue_est_usd": 3894000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Family-owned since 1952; David (President/Co-Owner) and Megan (VP/Co-Owner).",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 28,
+      "distance_mi_from_toms_river": 138,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A small tuck-in about 4 miles from the Punctual Pros Harrisburg office (Patriot Rd). Its customer list would convert directly into One Hour/Benjamin Franklin routes around Steelton, Middletown and Hershey.",
+      "fit_score": 68,
+      "fit_breakdown": {
+        "density_adjacency": 20,
+        "trade_mix": 16,
+        "scale": 11,
+        "ownership_readiness": 12,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Small; value is mostly the customer list"
+      ],
+      "zoominfo_id": "369154899",
+      "sources": [
+        "https://www.wmbuffingtoncompany.com/",
+        "https://www.wmbuffingtoncompany.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t23",
+      "company": "Stambaugh Plumbing & Heating, Inc.",
+      "website": "https://www.stambaughplumbingandheating.com/",
+      "hq_city": "York New Salem",
+      "county": "York",
+      "state": "PA",
+      "lat": 39.9012,
+      "lon": -76.7897,
+      "geo_precision": "city",
+      "founded_year": 1989,
+      "employees": 18,
+      "revenue_est_usd": 4127000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Founded 1989 by the Stambaughs; ownership passed to Christy & Mike Spangler in 2014. Two-time Bryant Dealer of the Year.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 27,
+      "distance_mi_from_toms_river": 137,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Adds route density to Punctual Pros' York node (Eastern Blvd) in western York County. Its Bryant-dealer HVAC install capability complements One Hour replacement sales.",
+      "fit_score": 67,
+      "fit_breakdown": {
+        "density_adjacency": 18,
+        "trade_mix": 16,
+        "scale": 13,
+        "ownership_readiness": 11,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Owners acquired in 2014, so a mid-tenure exit horizon"
+      ],
+      "zoominfo_id": "343771034",
+      "sources": [
+        "https://www.stambaughplumbingandheating.com/",
+        "https://www.stambaughplumbingandheating.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t24",
+      "company": "Hopewell Heating & Air Conditioning",
+      "website": "https://www.hopewellheating.com/",
+      "hq_city": "Red Lion",
+      "county": "York",
+      "state": "PA",
+      "lat": 39.901,
+      "lon": -76.6058,
+      "geo_precision": "city",
+      "founded_year": 1998,
+      "employees": 21,
+      "revenue_est_usd": 6959000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Small family-owned business in business since 1998; three service technicians per the About page.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 19,
+      "distance_mi_from_toms_river": 128,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Covers southeastern York County (Red Lion/Dallastown) with geothermal and mini-split capability. It's a low-complexity One Hour tuck-in near the York office.",
+      "fit_score": 65,
+      "fit_breakdown": {
+        "density_adjacency": 18,
+        "trade_mix": 15,
+        "scale": 12,
+        "ownership_readiness": 11,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Small technician bench (3 service techs cited)"
+      ],
+      "zoominfo_id": "411701143",
+      "sources": [
+        "https://www.hopewellheating.com/",
+        "https://www.hopewellheating.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t25",
+      "company": "Advance Haws",
+      "website": "https://www.advancehaws.com/",
+      "hq_city": "York",
+      "county": "York",
+      "state": "PA",
+      "lat": 39.9626,
+      "lon": -76.7277,
+      "geo_precision": "city",
+      "founded_year": 2002,
+      "employees": 41,
+      "revenue_est_usd": 7000000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Locally and family-owned, serving South Central PA since 2002.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "indoor_air"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 23,
+      "distance_mi_from_toms_river": 134,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A 41-person HVAC operator in York city. It would double One Hour York's technician capacity and adds residential plus light-commercial accounts.",
+      "fit_score": 66,
+      "fit_breakdown": {
+        "density_adjacency": 19,
+        "trade_mix": 11,
+        "scale": 17,
+        "ownership_readiness": 10,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "HVAC-only",
+        "Commercial mix unverified"
+      ],
+      "zoominfo_id": "1313625584",
+      "sources": [
+        "https://www.advancehaws.com/",
+        "https://www.advancehaws.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t26",
+      "company": "R.D. Heller Inc.",
+      "website": "https://www.rdhellerinc.com/",
+      "hq_city": "York",
+      "county": "York",
+      "state": "PA",
+      "lat": 39.9626,
+      "lon": -76.7277,
+      "geo_precision": "city",
+      "founded_year": 1958,
+      "employees": 29,
+      "revenue_est_usd": 7026000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "private_independent",
+      "ownership_notes": "Local HVAC, plumbing and electrical company since 1958; residential focus.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical",
+        "generators"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 23,
+      "distance_mi_from_toms_river": 134,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A three-trade residential shop (including whole-house generators) in York, which maps directly onto One Hour, Benjamin Franklin and Mister Sparky. It adds electrical technicians, the scarcest trade in the Punctual Pros tri-brand model.",
+      "fit_score": 74,
+      "fit_breakdown": {
+        "density_adjacency": 19,
+        "trade_mix": 20,
+        "scale": 14,
+        "ownership_readiness": 12,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Thin web presence; review volume unknown"
+      ],
+      "zoominfo_id": "100139821",
+      "sources": [
+        "https://www.rdhellerinc.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t27",
+      "company": "Rodney B. Smith Plumbing, Heating & Cooling, Inc.",
+      "website": "https://www.rodneybsmith.com/",
+      "hq_city": "Chambersburg",
+      "county": "Franklin",
+      "state": "PA",
+      "lat": 39.9376,
+      "lon": -77.6611,
+      "geo_precision": "city",
+      "founded_year": 1983,
+      "employees": 33,
+      "revenue_est_usd": 8773000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Established 1983 (40+ years).",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 72,
+      "distance_mi_from_toms_river": 183,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "The largest residential plumbing/HVAC independent screened in Franklin County (a Punctual Pros core county with no dedicated node). It could anchor a Chambersburg satellite along I-81.",
+      "fit_score": 68,
+      "fit_breakdown": {
+        "density_adjacency": 13,
+        "trade_mix": 16,
+        "scale": 16,
+        "ownership_readiness": 14,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "~72 mi from Lancaster; would need a satellite branch"
+      ],
+      "zoominfo_id": "49300023",
+      "sources": [
+        "https://www.rodneybsmith.com/",
+        "https://www.rodneybsmith.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t28",
+      "company": "McCleary Heating & Cooling",
+      "website": "https://www.mcclearyhvac.com/",
+      "hq_city": "Chambersburg",
+      "county": "Franklin",
+      "state": "PA",
+      "lat": 39.9376,
+      "lon": -77.6611,
+      "geo_precision": "city",
+      "founded_year": 2008,
+      "employees": 18,
+      "revenue_est_usd": 4458000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Since 2008; Matt McCleary, President.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 72,
+      "distance_mi_from_toms_river": 183,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A Franklin County HVAC add-on that could be paired with Rodney B. Smith to build a Chambersburg hub.",
+      "fit_score": 54,
+      "fit_breakdown": {
+        "density_adjacency": 13,
+        "trade_mix": 11,
+        "scale": 12,
+        "ownership_readiness": 9,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Younger founder",
+        "HVAC-only"
+      ],
+      "zoominfo_id": "411234187",
+      "sources": [
+        "https://www.mcclearyhvac.com/",
+        "https://www.mcclearyhvac.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t29",
+      "company": "Mann Plumbing & Heating, LLC",
+      "website": "https://www.mannplumbingandheating.com/",
+      "hq_city": "Fayetteville",
+      "county": "Franklin",
+      "state": "PA",
+      "lat": 39.9112,
+      "lon": -77.55,
+      "geo_precision": "city",
+      "founded_year": 1986,
+      "employees": 22,
+      "revenue_est_usd": 6640000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Locally owned, family-run since 1986; Brad Mann, President. Has a commercial HVAC department.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 66,
+      "distance_mi_from_toms_river": 178,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Covers Franklin and Adams counties (between Chambersburg and Gettysburg). It adds plumbing capacity for a western satellite.",
+      "fit_score": 63,
+      "fit_breakdown": {
+        "density_adjacency": 13,
+        "trade_mix": 15,
+        "scale": 13,
+        "ownership_readiness": 13,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Commercial HVAC exposure"
+      ],
+      "zoominfo_id": "358205694",
+      "sources": [
+        "https://www.mannplumbingandheating.com/",
+        "https://www.mannplumbingandheating.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t30",
+      "company": "Valley Heating & Cooling",
+      "website": "https://www.valleyhc.com/",
+      "hq_city": "Shippensburg",
+      "county": "Cumberland",
+      "state": "PA",
+      "lat": 40.0507,
+      "lon": -77.5203,
+      "geo_precision": "city",
+      "founded_year": 1976,
+      "employees": 16,
+      "revenue_est_usd": 6278000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "private_independent",
+      "ownership_notes": "Serving Shippensburg and south-central PA since 1976.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 64,
+      "distance_mi_from_toms_river": 176,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A 50-year-old western Cumberland County HVAC shop along the I-81 corridor that would bridge Harrisburg and Chambersburg.",
+      "fit_score": 58,
+      "fit_breakdown": {
+        "density_adjacency": 14,
+        "trade_mix": 11,
+        "scale": 11,
+        "ownership_readiness": 13,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "HVAC-only",
+        "Excludes mobile homes and tenant-requested service (narrower residential scope)"
+      ],
+      "zoominfo_id": "356564055",
+      "sources": [
+        "https://www.valleyhc.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t31",
+      "company": "A.C. Rimmer",
+      "website": "https://www.acrimmer.com/",
+      "hq_city": "Mechanicsburg",
+      "county": "Cumberland",
+      "state": "PA",
+      "lat": 40.2143,
+      "lon": -77.0086,
+      "geo_precision": "city",
+      "founded_year": 2000,
+      "employees": 23,
+      "revenue_est_usd": 4060000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Founded 2000 by Alan Rimmer (Owner/President); has a project superintendent, so some construction exposure.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 39,
+      "distance_mi_from_toms_river": 150,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A West Shore HVAC/plumbing tuck-in with a founder-owner. Its service department would fold into Harrisburg One Hour and Benjamin Franklin.",
+      "fit_score": 65,
+      "fit_breakdown": {
+        "density_adjacency": 17,
+        "trade_mix": 15,
+        "scale": 13,
+        "ownership_readiness": 11,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Some project/commercial construction revenue"
+      ],
+      "zoominfo_id": "772736",
+      "sources": [
+        "https://www.acrimmer.com/",
+        "https://www.acrimmer.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t32",
+      "company": "H&H Service Company",
+      "website": "https://www.hhservicecompany.com/",
+      "hq_city": "Mechanicsburg",
+      "county": "Cumberland",
+      "state": "PA",
+      "lat": 40.2143,
+      "lon": -77.0086,
+      "geo_precision": "city",
+      "founded_year": 1972,
+      "employees": 20,
+      "revenue_est_usd": 3503000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "private_independent",
+      "ownership_notes": "Working in the community since 1972; serves Camp Hill and Carlisle.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 39,
+      "distance_mi_from_toms_river": 150,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A 54-year-old Cumberland County HVAC service base that would add routes to Harrisburg One Hour.",
+      "fit_score": 62,
+      "fit_breakdown": {
+        "density_adjacency": 17,
+        "trade_mix": 11,
+        "scale": 12,
+        "ownership_readiness": 13,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "HVAC-only",
+        "Limited public data"
+      ],
+      "zoominfo_id": "363206152",
+      "sources": [
+        "https://www.hhservicecompany.com/",
+        "https://www.hhservicecompany.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t33",
+      "company": "Eberly's Plumbing & Heating Inc.",
+      "website": "https://www.eberlysplumbingandheating.com/",
+      "hq_city": "Greencastle",
+      "county": "Franklin",
+      "state": "PA",
+      "lat": 39.7904,
+      "lon": -77.7278,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 15,
+      "revenue_est_usd": 4281000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Family owned and operated for more than eight decades; residential and commercial.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 77,
+      "distance_mi_from_toms_river": 188,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A multi-generation family shop in southern Franklin County (I-81/Hagerstown corridor). It's a bolt-on to a future Chambersburg hub.",
+      "fit_score": 59,
+      "fit_breakdown": {
+        "density_adjacency": 11,
+        "trade_mix": 15,
+        "scale": 10,
+        "ownership_readiness": 14,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "~78 mi from Lancaster",
+        "Small"
+      ],
+      "zoominfo_id": "411757939",
+      "sources": [
+        "https://www.eberlysplumbingandheating.com/",
+        "https://www.eberlysplumbingandheating.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t34",
+      "company": "Countryside Fuel / Countryside Home Services",
+      "website": "https://www.countrysidefuel.com/",
+      "hq_city": "Myerstown",
+      "county": "Lebanon",
+      "state": "PA",
+      "lat": 40.3737,
+      "lon": -76.3027,
+      "geo_precision": "city",
+      "founded_year": 1992,
+      "employees": 26,
+      "revenue_est_usd": 7439000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24) (includes fuel)",
+      "ownership": "family",
+      "ownership_notes": "Family-owned and operated since 1992; fuel supplier expanded into heating, cooling, plumbing and generators; serves Berks, Lebanon and Dauphin.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "generators"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 23,
+      "distance_mi_from_toms_river": 115,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A Lebanon County foothold (a core Punctual Pros county). Its fuel customer base can be converted to heat pumps and service agreements, and a carve-out of the home-services book is possible.",
+      "fit_score": 64,
+      "fit_breakdown": {
+        "density_adjacency": 18,
+        "trade_mix": 12,
+        "scale": 13,
+        "ownership_readiness": 12,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Fuel revenue non-core"
+      ],
+      "zoominfo_id": "369039643",
+      "sources": [
+        "https://www.countrysidefuel.com/",
+        "https://www.countrysidefuel.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t35",
+      "company": "Sunrise Plumbing Heating Cooling",
+      "website": "https://www.sunriseplumbingheatingcooling.com/",
+      "hq_city": "Reading",
+      "county": "Berks",
+      "state": "PA",
+      "lat": 40.3356,
+      "lon": -75.9269,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 16,
+      "revenue_est_usd": 3973000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Local family-owned company serving Berks County.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 29,
+      "distance_mi_from_toms_river": 95,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Berks County is a Punctual Pros core county with no dedicated node. This is a small Reading plumbing/HVAC entry point, now that P1 Service Group owns Essig Plumbing.",
+      "fit_score": 62,
+      "fit_breakdown": {
+        "density_adjacency": 16,
+        "trade_mix": 15,
+        "scale": 11,
+        "ownership_readiness": 11,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Small; limited public info"
+      ],
+      "zoominfo_id": "452886303",
+      "sources": [
+        "https://www.sunriseplumbingheatingcooling.com/",
+        "https://www.sunriseplumbingheatingcooling.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t36",
+      "company": "Moyer Total Indoor Comfort",
+      "website": "https://www.moyercomfort.com/",
+      "hq_city": "Kutztown",
+      "county": "Berks",
+      "state": "PA",
+      "lat": 40.5173,
+      "lon": -75.7774,
+      "geo_precision": "city",
+      "founded_year": 1906,
+      "employees": 14,
+      "revenue_est_usd": 6842000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Fifth-generation family-owned business serving Kutztown since 1906.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "water_treatment"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 43,
+      "distance_mi_from_toms_river": 92,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A 120-year-old northern Berks brand (Kutztown/Lehigh border) with water-quality capability. It's a stepping stone toward the Lehigh Valley.",
+      "fit_score": 58,
+      "fit_breakdown": {
+        "density_adjacency": 13,
+        "trade_mix": 15,
+        "scale": 10,
+        "ownership_readiness": 11,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Fifth generation newly active (2019), so they may intend to continue"
+      ],
+      "zoominfo_id": "370608632",
+      "sources": [
+        "https://www.moyercomfort.com/",
+        "https://www.moyercomfort.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t37",
+      "company": "Aero Energy",
+      "website": "https://www.aeroenergy.com/",
+      "hq_city": "New Oxford",
+      "county": "Adams",
+      "state": "PA",
+      "lat": 39.8637,
+      "lon": -77.0561,
+      "geo_precision": "city",
+      "founded_year": 1929,
+      "employees": 100,
+      "revenue_est_usd": 74066000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24) (predominantly fuel/propane)",
+      "ownership": "esop",
+      "ownership_notes": "Employee-owned via ESOP: a large share of stock is held by 100+ full-time employee-owners across nine Aero locations; the remaining portion is owned equally by two rural electric cooperatives (Choptank Electric Cooperative, Denton MD; Adams Electric Cooperative, Gettysburg PA).",
+      "brands_or_franchise": "Independent",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 42,
+      "distance_mi_from_toms_river": 152,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Adams/York County energy company with an HVAC service arm and a 35,000+ customer base. A carve-out of the HVAC service book (not the fuel business) could seed Adams County coverage.",
+      "fit_score": 49,
+      "fit_breakdown": {
+        "density_adjacency": 15,
+        "trade_mix": 10,
+        "scale": 12,
+        "ownership_readiness": 4,
+        "brand_alignment": 8
+      },
+      "risk_flags": [
+        "ESOP plus rural electric cooperative (Choptank, Adams Electric) ownership",
+        "Mostly fuel/propane revenue",
+        "Carve-out complexity"
+      ],
+      "zoominfo_id": "1788265",
+      "sources": [
+        "https://www.aeroenergy.com/",
+        "https://www.aeroenergy.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t38",
+      "company": "Oliver Heating & Cooling",
+      "website": "https://www.oliverheatcool.com/",
+      "hq_city": "Morton",
+      "county": "Delaware",
+      "state": "PA",
+      "lat": 39.9098,
+      "lon": -75.3283,
+      "geo_precision": "city",
+      "founded_year": 1971,
+      "employees": 230,
+      "revenue_est_usd": 80151000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24) (site: 230+ employees, 145+ technicians, 160+ trucks)",
+      "ownership": "family",
+      "ownership_notes": "Founded 1971 by Joe Oliver; son David is the 2nd-generation owner (brother Bill is foreman of the sheet metal shop, John works part-time in the warehouse per the About page). Serves PA, NJ and DE.",
+      "brands_or_franchise": "Independent (rebrand candidate or run as second platform brand)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical",
+        "indoor_air"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 52,
+      "distance_mi_from_toms_river": 60,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A transformational, platform-scale deal: 230+ employees and 160+ trucks across the Philadelphia suburbs, South Jersey and Delaware. It would roughly triple Punctual Pros' headcount and connect the Central PA and Jersey Shore footprints, and its second-generation family ownership is outside PE today.",
+      "fit_score": 75,
+      "fit_breakdown": {
+        "density_adjacency": 13,
+        "trade_mix": 20,
+        "scale": 17,
+        "ownership_readiness": 14,
+        "brand_alignment": 11
+      },
+      "risk_flags": [
+        "Size near the top of the 250-employee screen; needs larger equity check",
+        "Philadelphia suburbs are Sila and Horizon home turf (competitive auction likely)",
+        "Remodeling revenue included"
+      ],
+      "zoominfo_id": "1161327366",
+      "sources": [
+        "https://www.oliverheatcool.com/",
+        "https://www.oliverheatcool.com/about",
+        "https://www.oliverheatcool.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t39",
+      "company": "Good Plumbing, Heating & Air Conditioning, Inc. (Good Inc.)",
+      "website": "https://www.good-inc.com/",
+      "hq_city": "Souderton",
+      "county": "Montgomery",
+      "state": "PA",
+      "lat": 40.3118,
+      "lon": -75.3252,
+      "geo_precision": "city",
+      "founded_year": 1949,
+      "employees": 98,
+      "revenue_est_usd": 14395000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "private_independent",
+      "ownership_notes": "Serving southeastern PA with mechanical services since 1949.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 55,
+      "distance_mi_from_toms_river": 64,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A scale plumbing/HVAC operator (~98 employees) in upper Montgomery County. Paired with One Hour Lansdale, it would build an eastern PA hub between Lancaster and Bucks.",
+      "fit_score": 68,
+      "fit_breakdown": {
+        "density_adjacency": 12,
+        "trade_mix": 16,
+        "scale": 19,
+        "ownership_readiness": 12,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Commercial mechanical exposure likely at this size",
+        "~55 mi from Lancaster"
+      ],
+      "zoominfo_id": "347463894",
+      "sources": [
+        "https://www.good-inc.com/",
+        "https://www.good-inc.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t40",
+      "company": "Maitz Home Services",
+      "website": "https://www.maitzhomeservices.com/",
+      "hq_city": "Allentown",
+      "county": "Lehigh",
+      "state": "PA",
+      "lat": 40.6084,
+      "lon": -75.4902,
+      "geo_precision": "city",
+      "founded_year": 1964,
+      "employees": 24,
+      "revenue_est_usd": 20653000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "unverified",
+      "ownership_notes": "Serving Allentown and the Lehigh Valley since 1964. The site has no PE disclosure; ownership was not verified in this run.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 58,
+      "distance_mi_from_toms_river": 82,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A three-trade Lehigh Valley brand that complements Benjamin Franklin Bethlehem. It would give Punctual Pros a Lehigh Valley node alongside HomeX (Deluxe Plumbing) and Sila-held competitors.",
+      "fit_score": 60,
+      "fit_breakdown": {
+        "density_adjacency": 9,
+        "trade_mix": 20,
+        "scale": 14,
+        "ownership_readiness": 8,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Ownership not verified (possible sponsor affiliation)",
+        "~58 mi from Lancaster"
+      ],
+      "zoominfo_id": "106939530",
+      "sources": [
+        "https://www.maitzhomeservices.com/",
+        "https://www.maitzhomeservices.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t41",
+      "company": "Curtis Total Service",
+      "website": "https://www.curtistotalservice.com/",
+      "hq_city": "Allentown",
+      "county": "Lehigh",
+      "state": "PA",
+      "lat": 40.6084,
+      "lon": -75.4902,
+      "geo_precision": "city",
+      "founded_year": 1988,
+      "employees": 21,
+      "revenue_est_usd": 4823000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Family-owned; plumbing, HVAC and electrical in the Lehigh Valley since 1988.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 58,
+      "distance_mi_from_toms_river": 82,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A three-trade Lehigh Valley tuck-in whose trade mix mirrors the tri-brand. It could be combined with Benjamin Franklin Bethlehem and Maitz.",
+      "fit_score": 63,
+      "fit_breakdown": {
+        "density_adjacency": 9,
+        "trade_mix": 20,
+        "scale": 12,
+        "ownership_readiness": 13,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "~58 mi from Lancaster"
+      ],
+      "zoominfo_id": "25857752",
+      "sources": [
+        "https://www.curtistotalservice.com/",
+        "https://www.curtistotalservice.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t42",
+      "company": "Timothy Off Plumbing, Heating & Air Conditioning",
+      "website": "https://timothyoffheating.com/",
+      "hq_city": "West Chester",
+      "county": "Chester",
+      "state": "PA",
+      "lat": 39.9607,
+      "lon": -75.6055,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": null,
+      "revenue_est_usd": 1551000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24) (ZoomInfo also shows 74 employees; the pair is internally inconsistent)",
+      "ownership": "private_independent",
+      "ownership_notes": "Locally owned and operated plumbing and HVAC company in West Chester for over 20 years.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "indoor_air"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 37,
+      "distance_mi_from_toms_river": 75,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A Chester County plumbing/HVAC tuck-in that could be combined with the West Chester Authority franchise to densify the Route 202/West Chester Pike market.",
+      "fit_score": 59,
+      "fit_breakdown": {
+        "density_adjacency": 15,
+        "trade_mix": 16,
+        "scale": 8,
+        "ownership_readiness": 11,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "ZoomInfo headcount and revenue inconsistent",
+        "Sila (AQM Exton, Oxford Plumbing) and Northwinds (Horn Plumbing) are active acquirers in Chester County"
+      ],
+      "zoominfo_id": "346604300",
+      "sources": [
+        "https://timothyoffheating.com/",
+        "https://timothyoffheating.com/about/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t43",
+      "company": "Boulden Brothers",
+      "website": "https://www.bouldenbrothers.com/",
+      "hq_city": "Newark",
+      "county": "New Castle",
+      "state": "DE",
+      "lat": 39.6837,
+      "lon": -75.7497,
+      "geo_precision": "city",
+      "founded_year": 1946,
+      "employees": 96,
+      "revenue_est_usd": 15601000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Family-owned since 1946. Joined One Hour in 2004 and started Mister Sparky in 2007 (per its company timeline); Urie Boulden Jr. sold to Tim & Michael Boulden in 2007; renamed Boulden Brothers in 2013; sold its propane division in 2019.",
+      "brands_or_franchise": "Independent (former One Hour / Mister Sparky franchisee)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical",
+        "water_treatment"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 38,
+      "distance_mi_from_toms_river": 84,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A 96-person, four-trade New Castle County operator that already ran the One Hour and Mister Sparky playbooks. Re-entry into the Authority system (or a dual-brand approach) would be culturally easy, and with Calvert's One Hour it would give Punctual Pros northern Delaware leadership.",
+      "fit_score": 79,
+      "fit_breakdown": {
+        "density_adjacency": 12,
+        "trade_mix": 20,
+        "scale": 19,
+        "ownership_readiness": 13,
+        "brand_alignment": 15
+      },
+      "risk_flags": [
+        "Left the franchise system by 2013, so re-franchising may be resisted",
+        "Horizon Services (New Mountain) is headquartered in the same market"
+      ],
+      "zoominfo_id": "358973282",
+      "sources": [
+        "https://www.bouldenbrothers.com/",
+        "https://www.bouldenbrothers.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t44",
+      "company": "Warner Service (R.W. Warner)",
+      "website": "https://www.warnerservice.com/",
+      "hq_city": "Frederick",
+      "county": "Frederick",
+      "state": "MD",
+      "lat": 39.4143,
+      "lon": -77.4105,
+      "geo_precision": "city",
+      "founded_year": 1937,
+      "employees": 108,
+      "revenue_est_usd": 4867000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24) (revenue appears understated relative to headcount)",
+      "ownership": "family",
+      "ownership_notes": "Third generation of family ownership since 1937; 4.8 stars on Google (count not shown).",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": 4.8,
+      "review_source": "Company site: '4.8 Stars on Google'",
+      "distance_mi_from_lancaster": 73,
+      "distance_mi_from_toms_river": 175,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A third-generation family business with ~108 employees in Frederick. It opens the I-270/Frederick market south of Adams/York counties, where Benjamin Franklin Frederick and the Mount Airy franchises are other Authority operators.",
+      "fit_score": 69,
+      "fit_breakdown": {
+        "density_adjacency": 10,
+        "trade_mix": 15,
+        "scale": 19,
+        "ownership_readiness": 14,
+        "brand_alignment": 11
+      },
+      "risk_flags": [
+        "Maryland licensing",
+        "ZoomInfo revenue inconsistent with headcount",
+        "Out of PA core; ~73 mi from Lancaster"
+      ],
+      "zoominfo_id": "1110556397",
+      "sources": [
+        "https://www.warnerservice.com/",
+        "https://www.warnerservice.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t45",
+      "company": "H&B Plumbing and Heating, Inc.",
+      "website": "https://www.hbplumbing.com/",
+      "hq_city": "Chesapeake City",
+      "county": "Cecil",
+      "state": "MD",
+      "lat": 39.5276,
+      "lon": -75.8105,
+      "geo_precision": "city",
+      "founded_year": 1980,
+      "employees": 22,
+      "revenue_est_usd": 5689000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Proud, family-owned local business since 1980; serves Elkton MD and Middletown DE.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "water_treatment"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 44,
+      "distance_mi_from_toms_river": 91,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Covers Cecil County MD and southern New Castle County DE, bridging Lancaster's southern edge (via US-1/Route 222) and the Delaware franchises.",
+      "fit_score": 60,
+      "fit_breakdown": {
+        "density_adjacency": 11,
+        "trade_mix": 15,
+        "scale": 12,
+        "ownership_readiness": 13,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Maryland/Delaware dual licensing"
+      ],
+      "zoominfo_id": "347733865",
+      "sources": [
+        "https://www.hbplumbing.com/",
+        "https://www.hbplumbing.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t46",
+      "company": "Maichle's Heating & Air Conditioning",
+      "website": "https://www.maichleshvac.com/",
+      "hq_city": "New Castle",
+      "county": "New Castle",
+      "state": "DE",
+      "lat": 39.6621,
+      "lon": -75.5663,
+      "geo_precision": "city",
+      "founded_year": 1984,
+      "employees": 19,
+      "revenue_est_usd": 5785000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "private_independent",
+      "ownership_notes": "Locally owned; in business since 1984; headquartered in New Castle DE.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 47,
+      "distance_mi_from_toms_river": 75,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A New Castle County HVAC tuck-in that would add technicians to a Wilmington One Hour (Calvert's) combination.",
+      "fit_score": 57,
+      "fit_breakdown": {
+        "density_adjacency": 11,
+        "trade_mix": 13,
+        "scale": 12,
+        "ownership_readiness": 12,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Depends on first securing a Delaware anchor"
+      ],
+      "zoominfo_id": "357153138",
+      "sources": [
+        "https://www.maichleshvac.com/",
+        "https://www.maichleshvac.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t47",
+      "company": "Charles A. Klein & Sons, Inc.",
+      "website": "https://caklein.com/",
+      "hq_city": "Sykesville",
+      "county": "Carroll",
+      "state": "MD",
+      "lat": 39.3737,
+      "lon": -76.9678,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 112,
+      "revenue_est_usd": 22837000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "'& Sons' family firm; site says it has served the Mid-Atlantic for over 40 years with commercial and residential HVAC and plumbing.",
+      "brands_or_franchise": "Independent",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 58,
+      "distance_mi_from_toms_river": 153,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A central Maryland scale option (112 employees) north of Baltimore and DC. It's only relevant if Punctual Pros pursues the Baltimore/Frederick corridor, where the Authority Brands Maryland franchises are clustered.",
+      "fit_score": 57,
+      "fit_breakdown": {
+        "density_adjacency": 8,
+        "trade_mix": 12,
+        "scale": 18,
+        "ownership_readiness": 11,
+        "brand_alignment": 8
+      },
+      "risk_flags": [
+        "Significant commercial/new-construction mix",
+        "~58 mi from Lancaster; Maryland licensing"
+      ],
+      "zoominfo_id": "23579529",
+      "sources": [
+        "https://caklein.com/",
+        "https://caklein.com/about/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t48",
+      "company": "C&C Air Conditioning, Heating, Plumbing & Electric",
+      "website": "https://www.candcair.com/",
+      "hq_city": "Belford",
+      "county": "Monmouth",
+      "state": "NJ",
+      "lat": 40.4262,
+      "lon": -74.0868,
+      "geo_precision": "city",
+      "founded_year": 1965,
+      "employees": 65,
+      "revenue_est_usd": 14536000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Founded 1965 by Charlie Baker; son Chris Sr. has led since 1995; third generation of Bakers now in the business; Lennox top dealer.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical"
+      ],
+      "review_count": 2000,
+      "review_rating": 4.9,
+      "review_source": "Company site: '4.9/5 Google Rating (2,000+ reviews)'; also 'over 1,200 five-star reviews'",
+      "distance_mi_from_lancaster": 120,
+      "distance_mi_from_toms_river": 33,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "The strongest Jersey Shore independent in the screen: a three-trade (HVAC/plumbing/electrical) business with ~65 employees, 2,000+ Google reviews at 4.9, and coverage of Monmouth, Middlesex, Somerset, Union and Essex. It extends Horvath north through Monmouth County along the Route 35/36 bayshore. A multi-generation family business with a third generation involved leaves an open succession question.",
+      "fit_score": 82,
+      "fit_breakdown": {
+        "density_adjacency": 17,
+        "trade_mix": 20,
+        "scale": 18,
+        "ownership_readiness": 13,
+        "brand_alignment": 14
+      },
+      "risk_flags": [
+        "Third generation active, so the family may prefer to continue",
+        "Lennox dealer loyalty programs"
+      ],
+      "zoominfo_id": "27186165",
+      "sources": [
+        "https://www.candcair.com/",
+        "https://www.candcair.com/about",
+        "https://www.candcair.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t49",
+      "company": "Bovio Rubino Service",
+      "website": "https://www.bovio-rubino.com/",
+      "hq_city": "Voorhees",
+      "county": "Camden",
+      "state": "NJ",
+      "lat": 39.8519,
+      "lon": -74.9616,
+      "geo_precision": "city",
+      "founded_year": 1974,
+      "employees": 77,
+      "revenue_est_usd": 7009000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24) (a second ZoomInfo record, Bovio & Rubino Service, Sicklerville, shows 17 emp/$3.64M)",
+      "ownership": "family",
+      "ownership_notes": "Family-owned and professionally operated since 1974; serving South Jersey for three generations; site cites 5,000+ 5-star reviews. The reported 2021 Bovio / Rubino Service combination is not confirmed on the company's About page.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical",
+        "indoor_air"
+      ],
+      "review_count": 5000,
+      "review_rating": null,
+      "review_source": "Company site: '5,000+ 5-star reviews'",
+      "distance_mi_from_lancaster": 72,
+      "distance_mi_from_toms_river": 41,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "South Jersey's review leader (5,000+ five-star reviews) with ~77 employees in Camden, Burlington and Gloucester counties. It fills the Philadelphia-to-Shore gap (One Hour Turnersville/Cherry Hill are separate franchisees) and brings insulation and energy-audit capability that fits One Hour's efficiency upsell.",
+      "fit_score": 76,
+      "fit_breakdown": {
+        "density_adjacency": 13,
+        "trade_mix": 20,
+        "scale": 17,
+        "ownership_readiness": 12,
+        "brand_alignment": 14
+      },
+      "risk_flags": [
+        "2021 merger means two founding families at the table",
+        "Sila (Allied Experts, Cherry Hill) is an active local competitor/acquirer"
+      ],
+      "zoominfo_id": "9521088",
+      "sources": [
+        "https://www.bovio-rubino.com/",
+        "https://www.bovio-rubino.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t50",
+      "company": "RA Nichols Plumbing, Heating & Cooling",
+      "website": "https://www.bestnjplumber.com/",
+      "hq_city": "Helmetta",
+      "county": "Middlesex",
+      "state": "NJ",
+      "lat": 40.3768,
+      "lon": -74.4238,
+      "geo_precision": "city",
+      "founded_year": 2007,
+      "employees": 71,
+      "revenue_est_usd": 10973000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Family-owned and proudly local since 2007 (Monroe/Helmetta).",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": 700,
+      "review_rating": 4.9,
+      "review_source": "Company site: '4.9 Stars | 700+ Reviews'",
+      "distance_mi_from_lancaster": 102,
+      "distance_mi_from_toms_river": 32,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A fast-growing ~71-employee operator in Monroe/South Middlesex, 32 miles north of Horvath's hub, that has grown to scale in under 20 years. It would give Punctual Pros Central Jersey mass between Toms River and the Somerset/Manalapan franchise territories.",
+      "fit_score": 71,
+      "fit_breakdown": {
+        "density_adjacency": 15,
+        "trade_mix": 16,
+        "scale": 18,
+        "ownership_readiness": 10,
+        "brand_alignment": 12
+      },
+      "risk_flags": [
+        "Founder-growth mode (2007) may favor staying independent or taking a rival PE bid"
+      ],
+      "zoominfo_id": "358698567",
+      "sources": [
+        "https://www.bestnjplumber.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t51",
+      "company": "Garden State Air Conditioning & Heat",
+      "website": "https://www.gsaconline.com/",
+      "hq_city": "Freehold",
+      "county": "Monmouth",
+      "state": "NJ",
+      "lat": 40.2601,
+      "lon": -74.2738,
+      "geo_precision": "city",
+      "founded_year": 1954,
+      "employees": 19,
+      "revenue_est_usd": 4610000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Family-owned since 1954; site explicitly contrasts itself with 'distant, out-of-town private equity firms'.",
+      "brands_or_franchise": "Independent",
+      "trades": [
+        "hvac"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 108,
+      "distance_mi_from_toms_river": 22,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A 72-year-old Freehold HVAC brand 21 miles from Horvath, a density add in western Monmouth. Its anti-PE positioning means only an operator-led (Horvath) approach is likely to work.",
+      "fit_score": 58,
+      "fit_breakdown": {
+        "density_adjacency": 19,
+        "trade_mix": 11,
+        "scale": 12,
+        "ownership_readiness": 6,
+        "brand_alignment": 10
+      },
+      "risk_flags": [
+        "Explicit anti-private-equity marketing",
+        "HVAC-only"
+      ],
+      "zoominfo_id": "370071415",
+      "sources": [
+        "https://www.gsaconline.com/",
+        "https://www.gsaconline.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t52",
+      "company": "AA Richards Heating & Cooling",
+      "website": "https://www.aarichardshvac.com/",
+      "hq_city": "Belmar",
+      "county": "Monmouth",
+      "state": "NJ",
+      "lat": 40.1784,
+      "lon": -74.0218,
+      "geo_precision": "city",
+      "founded_year": 1974,
+      "employees": 13,
+      "revenue_est_usd": 5273000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Family-owned residential HVAC since 1974 in Middlesex, Monmouth and Ocean counties; owner Christopher K. Madden; has a Toms River office.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 121,
+      "distance_mi_from_toms_river": 18,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Directly overlaps Horvath's Ocean/Monmouth footprint and already has a Toms River office. It's a pure route-density tuck-in for One Hour Toms River and Manalapan.",
+      "fit_score": 67,
+      "fit_breakdown": {
+        "density_adjacency": 20,
+        "trade_mix": 15,
+        "scale": 10,
+        "ownership_readiness": 13,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Small headcount"
+      ],
+      "zoominfo_id": "363625328",
+      "sources": [
+        "https://www.aarichardshvac.com/",
+        "https://www.aarichardshvac.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t53",
+      "company": "Oceanside Home Services (Oceanside Service Inc.)",
+      "website": "https://www.oceansideserviceinc.com/",
+      "hq_city": "Allenhurst",
+      "county": "Monmouth",
+      "state": "NJ",
+      "lat": 40.2368,
+      "lon": -74.0018,
+      "geo_precision": "city",
+      "founded_year": 1990,
+      "employees": 13,
+      "revenue_est_usd": 4831000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "private_independent",
+      "ownership_notes": "'The Shore Area's Finest Since 1990'; heating, cooling, plumbing and electrical.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 122,
+      "distance_mi_from_toms_river": 22,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A three-trade Monmouth shore operator (Asbury Park/Allenhurst). Its trade mix maps one-for-one onto Horvath's tri-brand along the northern Jersey Shore.",
+      "fit_score": 70,
+      "fit_breakdown": {
+        "density_adjacency": 19,
+        "trade_mix": 20,
+        "scale": 10,
+        "ownership_readiness": 12,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Small"
+      ],
+      "zoominfo_id": "206422796",
+      "sources": [
+        "https://www.oceansideserviceinc.com/",
+        "https://www.oceansideserviceinc.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t54",
+      "company": "FS Plumbing & Heating",
+      "website": "https://www.fsplumbingandheating.com/",
+      "hq_city": "Freehold",
+      "county": "Monmouth",
+      "state": "NJ",
+      "lat": 40.2601,
+      "lon": -74.2738,
+      "geo_precision": "city",
+      "founded_year": 2002,
+      "employees": 16,
+      "revenue_est_usd": 4414000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Family business founded in 2002.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "plumbing",
+        "hvac"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 108,
+      "distance_mi_from_toms_river": 22,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A Freehold plumbing tuck-in that adds Benjamin Franklin capacity in western Monmouth.",
+      "fit_score": 63,
+      "fit_breakdown": {
+        "density_adjacency": 19,
+        "trade_mix": 14,
+        "scale": 11,
+        "ownership_readiness": 10,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Small; founder mid-career"
+      ],
+      "zoominfo_id": "363719064",
+      "sources": [
+        "https://www.fsplumbingandheating.com/",
+        "https://www.fsplumbingandheating.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t55",
+      "company": "Broadley's Plumbing, Heating & Air Conditioning",
+      "website": "https://www.broadleys.net/",
+      "hq_city": "Marmora",
+      "county": "Cape May",
+      "state": "NJ",
+      "lat": 39.2548,
+      "lon": -74.649,
+      "geo_precision": "city",
+      "founded_year": 1911,
+      "employees": 17,
+      "revenue_est_usd": 4153000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Family owned and operated since 1911.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": 1838,
+      "review_rating": 4.9,
+      "review_source": "Company site Google widget: '4.9 Based on 1838 reviews'",
+      "distance_mi_from_lancaster": 103,
+      "distance_mi_from_toms_river": 54,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A heavily reviewed Cape May County brand (1,838 at 4.9). It extends the South Jersey shore footprint next to the Pleasantville tri-brand franchise and suits second-home and seasonal service programs.",
+      "fit_score": 67,
+      "fit_breakdown": {
+        "density_adjacency": 12,
+        "trade_mix": 16,
+        "scale": 11,
+        "ownership_readiness": 14,
+        "brand_alignment": 14
+      },
+      "risk_flags": [
+        "~54 mi from Toms River; seasonal market"
+      ],
+      "zoominfo_id": "343762448",
+      "sources": [
+        "https://www.broadleys.net/",
+        "https://www.broadleys.net/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t56",
+      "company": "Jenkins & Sons Plumbing & Heating",
+      "website": "https://www.jenkinsandsons.com/",
+      "hq_city": "Pleasantville",
+      "county": "Atlantic",
+      "state": "NJ",
+      "lat": 39.3898,
+      "lon": -74.524,
+      "geo_precision": "city",
+      "founded_year": 1949,
+      "employees": 17,
+      "revenue_est_usd": 4028000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Licensed, family-owned since 1949; three generations; Atlantic and Cape May counties.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 105,
+      "distance_mi_from_toms_river": 43,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "Shares a town with the Pleasantville Authority tri-brand. It would be a density add-on if Punctual Pros enters Atlantic County through that franchise.",
+      "fit_score": 63,
+      "fit_breakdown": {
+        "density_adjacency": 13,
+        "trade_mix": 16,
+        "scale": 11,
+        "ownership_readiness": 14,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Value depends on first securing a South Jersey anchor"
+      ],
+      "zoominfo_id": "354399980",
+      "sources": [
+        "https://www.jenkinsandsons.com/",
+        "https://www.jenkinsandsons.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t57",
+      "company": "Clay's Climate Control",
+      "website": "https://www.claysclimatecontrol.com/",
+      "hq_city": "Linwood",
+      "county": "Atlantic",
+      "state": "NJ",
+      "lat": 39.3398,
+      "lon": -74.5752,
+      "geo_precision": "city",
+      "founded_year": 2001,
+      "employees": 25,
+      "revenue_est_usd": 5393000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Family owned and operated since 2001; NATE and EPA-certified technicians.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 104,
+      "distance_mi_from_toms_river": 47,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "An Atlantic County HVAC add-on with ~25 employees. It would add One Hour capacity at the shore south of Toms River.",
+      "fit_score": 57,
+      "fit_breakdown": {
+        "density_adjacency": 13,
+        "trade_mix": 11,
+        "scale": 14,
+        "ownership_readiness": 10,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "HVAC-only"
+      ],
+      "zoominfo_id": "359483571",
+      "sources": [
+        "https://www.claysclimatecontrol.com/",
+        "https://www.claysclimatecontrol.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t58",
+      "company": "Lenegan Plumbing Heating & Air Conditioning",
+      "website": "https://www.ocnjplumber.com/",
+      "hq_city": "Ocean City",
+      "county": "Cape May",
+      "state": "NJ",
+      "lat": 39.2776,
+      "lon": -74.5746,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 29,
+      "revenue_est_usd": 7449000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "private_independent",
+      "ownership_notes": "Lenegan Plumbing Heating LLC, 200 West Ave, Ocean City NJ; NJ lic 9034.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "plumbing",
+        "hvac"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 106,
+      "distance_mi_from_toms_river": 51,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "An Ocean City shore plumbing/HVAC operator with ~29 employees and winterization and second-home service programs, which suit Benjamin Franklin shore routes.",
+      "fit_score": 60,
+      "fit_breakdown": {
+        "density_adjacency": 12,
+        "trade_mix": 15,
+        "scale": 15,
+        "ownership_readiness": 10,
+        "brand_alignment": 8
+      },
+      "risk_flags": [
+        "Dated web presence; limited data",
+        "Seasonal"
+      ],
+      "zoominfo_id": "399182507",
+      "sources": [
+        "https://www.ocnjplumber.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t59",
+      "company": "Laury Heating Cooling & Plumbing",
+      "website": "https://www.lauryheating.com/",
+      "hq_city": "Vineland",
+      "county": "Cumberland",
+      "state": "NJ",
+      "lat": 39.4864,
+      "lon": -75.026,
+      "geo_precision": "city",
+      "founded_year": 1945,
+      "employees": 74,
+      "revenue_est_usd": 5028000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "family",
+      "ownership_notes": "Founded 1945 by brothers Charles and Paul Laury; fourth generation of family leadership (Ted Laury; David Laury); Carrier President's Award.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "indoor_air"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 78,
+      "distance_mi_from_toms_river": 55,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A ~74-employee South Jersey anchor covering Atlantic, Camden, Cape May, Cumberland, Gloucester and Salem counties. It sits between Lancaster (across the Delaware Memorial Bridge) and the Jersey Shore franchises.",
+      "fit_score": 63,
+      "fit_breakdown": {
+        "density_adjacency": 10,
+        "trade_mix": 16,
+        "scale": 17,
+        "ownership_readiness": 11,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Fourth generation active",
+        "~55 mi from Toms River"
+      ],
+      "zoominfo_id": "69683067",
+      "sources": [
+        "https://www.lauryheating.com/",
+        "https://www.lauryheating.com/about"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t60",
+      "company": "Harris Plumbing, Heating, Air & Electric (D.E. Harris Services Inc.)",
+      "website": "https://www.callharrisnow.com/",
+      "hq_city": "Salem",
+      "county": "Salem",
+      "state": "NJ",
+      "lat": 39.5718,
+      "lon": -75.4672,
+      "geo_precision": "city",
+      "founded_year": 1986,
+      "employees": 172,
+      "revenue_est_usd": 109483000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24) (likely overstated; formerly included propane)",
+      "ownership": "founder",
+      "ownership_notes": "Started as a chimney-cleaning company in 1986; formerly 'Harris Plumbing Heating Air & Propane'; licensed in NJ, PA and DE; 4.9 Google rating.",
+      "brands_or_franchise": "Independent (rebrand candidate or second brand)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical",
+        "generators",
+        "water_treatment"
+      ],
+      "review_count": null,
+      "review_rating": 4.9,
+      "review_source": "Company site: 'Google rating 4.9'",
+      "distance_mi_from_lancaster": 55,
+      "distance_mi_from_toms_river": 72,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A founder-built, 172-employee, five-trade business licensed in NJ, DE and PA. From Salem NJ it reaches Wilmington and the Delaware Valley, making it the natural hinge between the Central PA and Jersey Shore footprints. The 1986 founding points to near-term succession.",
+      "fit_score": 74,
+      "fit_breakdown": {
+        "density_adjacency": 11,
+        "trade_mix": 20,
+        "scale": 17,
+        "ownership_readiness": 15,
+        "brand_alignment": 11
+      },
+      "risk_flags": [
+        "ZoomInfo revenue estimate likely inflated",
+        "~55 mi from Lancaster and ~72 mi from Toms River; rural Salem County"
+      ],
+      "zoominfo_id": "382471738",
+      "sources": [
+        "https://www.callharrisnow.com/",
+        "https://www.callharrisnow.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-t61",
+      "company": "Sanders Home Services",
+      "website": "https://sandershomeservices.com/",
+      "hq_city": "Voorhees",
+      "county": "Camden",
+      "state": "NJ",
+      "lat": 39.8519,
+      "lon": -74.9616,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 101,
+      "revenue_est_usd": 26717000,
+      "revenue_source": "ZoomInfo search_companies modeled estimate (retrieved 2026-09-24)",
+      "ownership": "founder",
+      "ownership_notes": "Licenses held by Peter R. Sanders (master plumber, master HVACR) with electrical licensee James J. Grasso; offices in Voorhees and Washington Twp NJ.",
+      "brands_or_franchise": "Independent (rebrand candidate)",
+      "trades": [
+        "hvac",
+        "plumbing",
+        "electrical",
+        "generators",
+        "indoor_air"
+      ],
+      "review_count": null,
+      "review_rating": null,
+      "review_source": null,
+      "distance_mi_from_lancaster": 72,
+      "distance_mi_from_toms_river": 41,
+      "distance_basis": "straight-line (great-circle) miles between city centroids",
+      "strategic_rationale": "A ~101-employee, three-trade South Jersey operator (Camden/Gloucester) that could anchor a Philadelphia-to-Shore bridge next to One Hour and Mister Sparky Turnersville.",
+      "fit_score": 72,
+      "fit_breakdown": {
+        "density_adjacency": 13,
+        "trade_mix": 20,
+        "scale": 18,
+        "ownership_readiness": 12,
+        "brand_alignment": 9
+      },
+      "risk_flags": [
+        "Remodeling revenue included",
+        "Founding year not captured"
+      ],
+      "zoominfo_id": "102957700",
+      "sources": [
+        "https://www.sandershomeservices.com/"
+      ],
+      "retrieved": "2026-09-24"
+    }
+  ]
+}

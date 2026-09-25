@@ -1,0 +1,54 @@
+/* Punctual Pros module — scoped styles (.m-pp) */
+.m-pp .pp-sec{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin:22px 0 10px;font-weight:700;display:flex;align-items:center;gap:10px}
+.m-pp .pp-sec::after{content:"";flex:1;height:1px;background:var(--border)}
+.m-pp .pp-heat{border-collapse:separate;border-spacing:2px;width:100%}
+.m-pp .pp-heat th{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:4px 3px;text-align:center;white-space:nowrap;background:transparent;border:0;position:static;cursor:default}
+.m-pp .pp-heat th.past,.m-pp .pp-heat td.past{opacity:.55}
+.m-pp .pp-heat th .obs{display:block;font-size:8.5px;color:var(--dim);letter-spacing:.08em}
+.m-pp .pp-heat td{font-family:var(--mono);font-size:11.5px;text-align:center;padding:7px 3px;border-radius:4px;cursor:pointer;border:1px solid transparent}
+.m-pp .pp-heat td:hover{border-color:var(--text-2)}
+.m-pp .pp-heat td.lbl{font-family:var(--font);text-align:left;white-space:nowrap;cursor:default;font-size:12px;padding-right:10px;color:var(--text)}
+.m-pp .pp-heat td.lbl .dim{font-size:10.5px}
+.m-pp .pp-heat td.na{color:var(--dim);cursor:default}
+.m-pp .pp-alert{border:1px solid var(--border);border-left:3px solid var(--cc,var(--amber));border-radius:8px;padding:8px 10px;cursor:pointer;background:var(--surface-2);margin-bottom:8px}
+.m-pp .pp-alert:hover{border-color:var(--border-2)}
+.m-pp .pp-alert .h{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.m-pp .pp-alert .t{font-weight:600;font-size:12.5px}
+.m-pp .pp-alert ul{margin:6px 0 0 0;padding:0;list-style:none}
+.m-pp .pp-alert li{font-size:11.5px;color:var(--text-2);padding-left:12px;position:relative;margin:2px 0}
+.m-pp .pp-alert li::before{content:"›";position:absolute;left:2px;color:var(--c-pp)}
+.m-pp .pp-lever{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--hair);text-decoration:none;color:inherit}
+.m-pp .pp-lever:last-child{border-bottom:0}
+.m-pp .pp-lever:hover{text-decoration:none;background:var(--hair)}
+.m-pp .pp-lever .n{font-family:var(--mono);font-size:17px;font-weight:600;width:100px;flex-shrink:0;color:var(--c-pp);line-height:1.2}
+.m-pp .pp-lever .n small{display:block;font-size:9.5px;color:var(--dim);font-family:var(--font);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.m-pp .pp-lever .b{flex:1;min-width:0}
+.m-pp .pp-lever .b b{font-size:12.5px}
+.m-pp .pp-lever .go{color:var(--dim);font-size:11px;white-space:nowrap}
+.m-pp .pp-camp{border:1px solid var(--border);border-left:3px solid var(--cc);border-radius:8px;padding:9px 11px;margin-bottom:8px;background:var(--surface-2)}
+.m-pp .pp-camp .top{display:flex;align-items:baseline;gap:8px}
+.m-pp .pp-camp .top b{font-size:12.5px}
+.m-pp .pp-camp .top .big{margin-left:auto;font-family:var(--mono);font-size:18px;font-weight:600;color:var(--text)}
+.m-pp .pp-camp .meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center}
+.m-pp .pp-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:8px}
+.m-pp .pp-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.m-pp .pp-mini{font-size:11px;color:var(--muted)}
+.m-pp .pp-top10{display:flex;flex-direction:column;gap:6px}
+.m-pp .pp-top10 .r{display:flex;gap:10px;align-items:flex-start;padding:6px 4px;border-bottom:1px solid var(--hair);cursor:pointer}
+.m-pp .pp-top10 .r:hover{background:var(--hair)}
+.m-pp .pp-top10 .rk{font-family:var(--mono);color:var(--c-pp);font-weight:600;min-width:22px}
+.m-pp .pp-cov td.wrap{max-width:260px}
+.m-pp .tbl td.pp-wrap{white-space:normal;min-width:240px}
+.m-pp .pp-kgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (max-width:1180px){.m-pp .pp-kgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* filings: give the shared renderFilings layout room (estimate table full-width, readable wraps) */
+.m-pp #pp-fil > .grid.grid-main{grid-template-columns:minmax(0,1fr)}
+.m-pp #pp-fil .tbl td.wrap{min-width:280px}
+.m-pp #pp-fil .pp-fp{margin:0;padding-left:18px;columns:2;column-gap:28px}
+.m-pp #pp-fil .pp-fp li{margin:0 0 8px;break-inside:avoid;color:var(--text-2);line-height:1.55}
+@media (max-width:1180px){.m-pp #pp-fil .pp-fp{columns:1}}
+/* filings record table (7 cols, shared renderFilings): let long entity/title/date/key-figure text wrap instead of clipping */
+.m-pp #pp-fil .tbl tr:has(> td:nth-child(7)) > td:nth-child(2){white-space:normal;min-width:150px;max-width:220px}
+.m-pp #pp-fil .tbl tr:has(> td:nth-child(7)) > td:nth-child(3){white-space:normal;min-width:200px;max-width:300px}
+.m-pp #pp-fil .tbl tr:has(> td:nth-child(7)) > td:nth-child(4){white-space:normal;max-width:130px}
+.m-pp #pp-fil .tbl tr:has(> td:nth-child(7)) > td:nth-child(5){white-space:normal;min-width:260px;max-width:420px}

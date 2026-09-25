@@ -1,0 +1,90 @@
+/* PE landscape module — scoped styles (.m-pe) */
+.m-pe .pe-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.m-pe .pe-card{display:flex;flex-direction:column;min-width:0;margin:0}
+.m-pe .pe-card .t{justify-content:space-between;gap:8px}
+.m-pe .pe-card .t .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.m-pe .pe-card .s{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-pe .pe-fund{display:flex;gap:6px;align-items:baseline;margin-top:6px;font-size:11px;color:var(--muted);min-width:0}
+.m-pe .pe-fund b{font-family:var(--mono);font-size:13px;color:var(--text);font-weight:600;flex-shrink:0}
+.m-pe .pe-fund span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.m-pe .pe-strat{font-size:11.5px;color:var(--text-2);margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;min-height:32px}
+.m-pe .pe-card .m{margin-top:8px}
+
+/* BSP reference card */
+.m-pe .pe-ref{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.m-pe .pe-stat{border-left:2px solid var(--c-bsp);padding:2px 0 2px 10px;min-width:0}
+.m-pe .pe-stat .v{font-family:var(--mono);font-size:19px;font-weight:600;color:var(--text);line-height:1.15}
+.m-pe .pe-stat .l{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.m-pe .pe-stat .s{font-size:11px;color:var(--muted);margin-top:2px}
+@media (max-width:1180px){.m-pe .pe-ref{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* compact tables */
+.m-pe .pe-mini{width:100%;border-collapse:collapse;font-size:11.5px}
+.m-pe .pe-mini th{font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);font-weight:600;text-align:left;padding:5px 6px;border-bottom:1px solid var(--border);white-space:nowrap}
+.m-pe .pe-mini td{padding:6px 6px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--text-2)}
+.m-pe .pe-mini td.num,.m-pe .pe-mini th.num{text-align:right;font-family:var(--mono)}
+.m-pe .pe-mini tr.click{cursor:pointer} .m-pe .pe-mini tr.click:hover td{background:var(--hair)}
+.m-pe .pe-mini td b{color:var(--text)}
+
+/* action list */
+.m-pe .pe-acts{display:flex;flex-direction:column}
+.m-pe .pe-act{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;padding:8px 0;border-bottom:1px solid var(--hair)}
+.m-pe .pe-act:last-child{border-bottom:0}
+.m-pe .pe-act .n{font-family:var(--mono);font-size:11px;color:var(--c-pe);font-weight:600;padding-top:1px}
+.m-pe .pe-act .h{font-size:12px;color:var(--text);font-weight:600}
+.m-pe .pe-act .b{font-size:11.5px;color:var(--text-2);margin-top:2px;line-height:1.45}
+.m-pe .pe-act .c{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
+.m-pe .pe-act.click{cursor:pointer} .m-pe .pe-act.click:hover .h{color:var(--c-pe)}
+
+/* stacked monthly bars (HTML, crisp text) */
+.m-pe .pe-sbar{display:flex;align-items:stretch;gap:3px;height:236px;padding-left:28px;position:relative}
+.m-pe .pe-sbar .gl{position:absolute;left:28px;right:0;border-top:1px dashed var(--border);font-size:9.5px;color:var(--dim);font-family:var(--mono)}
+.m-pe .pe-sbar .gl span{position:absolute;left:-28px;top:-7px;width:24px;text-align:right}
+.m-pe .pe-sbar .mc{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;z-index:1}
+.m-pe .pe-sbar .stk{flex:1;display:flex;flex-direction:column-reverse;justify-content:flex-start}
+.m-pe .pe-sbar .stk i{display:block;width:72%;margin:0 auto;border-radius:1px}
+.m-pe .pe-sbar .stk i:last-child{border-radius:2px 2px 1px 1px}
+.m-pe .pe-sbar .stk .tot{font-family:var(--mono);font-size:9.5px;color:var(--muted);text-align:center;order:99;margin-bottom:2px}
+.m-pe .pe-sbar .lb{height:16px;font-size:9.5px;color:var(--dim);text-align:center;white-space:nowrap;padding-top:3px}
+.m-pe .pe-sbar .mc:hover .stk i{filter:brightness(1.25)}
+.m-pe .pe-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.m-pe .pe-legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+/* sector matrix */
+.m-pe .pe-matrix{overflow:auto;max-height:640px;border:1px solid var(--border);border-radius:var(--radius-lg)}
+.m-pe .pe-matrix table{width:100%;border-collapse:separate;border-spacing:0;font-size:11.5px}
+.m-pe .pe-matrix th{position:sticky;top:0;z-index:2;background:var(--surface-2);font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:7px 6px;border-bottom:1px solid var(--border);text-align:center;white-space:nowrap;vertical-align:bottom}
+.m-pe .pe-matrix th.l{text-align:left}
+.m-pe .pe-matrix th .int{display:block;margin-top:4px;text-transform:none;letter-spacing:0;font-weight:500}
+.m-pe .pe-matrix td{padding:5px 6px;border-bottom:1px solid var(--hair);text-align:center;white-space:nowrap}
+.m-pe .pe-matrix td.l{text-align:left;max-width:240px;overflow:hidden;text-overflow:ellipsis}
+.m-pe .pe-matrix td.num{font-family:var(--mono);text-align:right;color:var(--text-2)}
+.m-pe .pe-matrix tbody tr{cursor:pointer} .m-pe .pe-matrix tbody tr:hover td{background:var(--hair)}
+.m-pe .pe-cell{display:inline-block;width:18px;height:18px;border-radius:4px;vertical-align:middle}
+.m-pe .pe-cell.on{background:var(--cc);box-shadow:0 0 0 1px color-mix(in srgb,var(--cc) 60%,transparent)}
+.m-pe .pe-cell.ov{border:2px solid color-mix(in srgb,var(--cc) 75%,transparent);background:color-mix(in srgb,var(--cc) 12%,transparent)}
+.m-pe .pe-cell.no{background:var(--surface-3);opacity:.45;width:6px;height:6px;border-radius:50%}
+.m-pe .pe-notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px;margin-top:10px}
+.m-pe .pe-notes div{font-size:11px;color:var(--text-2);line-height:1.45;border-left:2px solid var(--cc);padding-left:8px}
+.m-pe .pe-notes b{color:var(--text)}
+
+/* summary bullets */
+.m-pe .pe-bul{display:flex;flex-direction:column;gap:8px}
+.m-pe .pe-bul div{font-size:11.5px;color:var(--text-2);line-height:1.5;padding-left:10px;border-left:2px solid var(--border-2)}
+.m-pe .pe-bul div b{color:var(--text)}
+
+/* inspector blocks (wrapped in .m-pe) */
+.m-pe .pe-deal{padding:6px 0;border-bottom:1px solid var(--hair);font-size:11.5px}
+.m-pe .pe-deal:last-child{border-bottom:0}
+.m-pe .pe-deal .d{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.m-pe .pe-deal .x{color:var(--text-2);margin-top:2px}
+.m-pe .pe-txt{font-size:12px;color:var(--text-2);line-height:1.5}
+.m-pe .pe-next{font-size:12px;color:var(--text);line-height:1.5;border-left:2px solid var(--c-pe);padding:4px 0 4px 10px;background:color-mix(in srgb,var(--c-pe) 6%,transparent)}
+.m-pe .pe-seg{display:flex;justify-content:flex-end}
+
+/* matrix fit: keep Threat/Fund columns visible inside the panel */
+.m-pe .pe-matrix td.l{max-width:none}
+.m-pe .pe-matrix td.l .nm,.m-pe .pe-matrix td.l .sb{max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.m-pe .pe-matrix td.l .sb{font-size:10.5px;margin-top:1px}
+.m-pe .pe-matrix th .int .chip{white-space:normal;font-size:9.5px;line-height:1.15;padding:1px 5px;max-width:64px;justify-content:center;text-align:center}
+.m-pe .pe-matrix th,.m-pe .pe-matrix td{padding-left:4px;padding-right:4px}

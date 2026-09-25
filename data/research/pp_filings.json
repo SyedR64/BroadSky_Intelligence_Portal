@@ -1,0 +1,933 @@
+{
+  "meta": {
+    "dataset": "Punctual Pros public filings and regulatory data",
+    "subject": "Punctual Pros (f/k/a The Rohrer Company; East Hempfield Twp, Lancaster County PA); sponsor Broad Sky Partners (Fund I); add-on Horvath Home Services (Beachwood NJ)",
+    "generated": "2026-09-24",
+    "item_count": 29,
+    "method": "Pulled primary records directly: SEC EDGAR full-text search and Form D XML, SEC IAPD Form ADV PDF, USAspending.gov award API (SBA PPP/EIDL), Minnesota CARDS 2026 FDDs for One Hour, Benjamin Franklin and Mister Sparky (Items 5-7, 19, 20 and franchisee exhibits), Lancaster County and NJOGIS parcel services, OSHA IMIS, BLS QCEW, plus press releases. Sites behind bot checks or CAPTCHAs (PA DOS, PA AG HIC, FederalPay, ProPublica, Wisconsin DFI, FDD aggregators) were not bypassed and are listed as data gaps. Category note: the PGIM 10-Q loan disclosure and the UGI proxy are tagged press_financial because the category list has no SEC-credit type.",
+    "financial_picture": "1) Scale before the deal: The Rohrer Company's April 2020 PPP loan of $745,985 implies ~$3.58M of 2019 payroll costs. At Lancaster's 2019 trade wage (~$62K) that is ~50-58 employees and roughly $9-12M of 2019 revenue (payroll at 30-40% of revenue); confidence medium. 2) Growth into the deal: headcount of ~113 by 2024 roughly doubles the PPP-implied base. At 2024 Lancaster wages of ~$76K and a 40-45% total labor ratio, that supports a PA revenue run-rate of ~$18-22M at the time of the BSP purchase. 3) FDD cross-check: the 2026 FDD franchisee lists show Punctual Pros operates 25 territories (PA: 9 One Hour, 7 Ben Franklin, 3 Mister Sparky; NJ: 3/2/1). Mapping those to Item 19 quartiles gives ~$12-19M for PA and ~$3-5M for NJ in FY2025. Blending both methods, FY2025 pro forma revenue is estimated at ~$22M (range $16-28M), about $0.9M per territory, above system averages of $0.61-0.66M per territory for One Hour and Ben Franklin. 4) Franchise cost: royalty (6%) plus tiered brand fund (~1.2-1.5%) takes ~7.2-7.5% of revenue (~$1.6M a year), which caps adjusted EBITDA margins at about 8-14%. Estimated adjusted EBITDA is ~$1.8-3.1M (central ~$2.6M), confidence low. 5) Leverage: PGIM Private Credit Fund's 6/30/2026 10-Q discloses a first-lien loan to Punctual Pros Midco, LLC at 3M SOFR+5.00% (8.73%), maturing 3/26/2029: $4.83M funded, fair value ~98.6% of par, plus a $1.4M unfunded delayed-draw commitment. This confirms a senior-secured, sponsor-style unitranche with an acquisition line. Total facility size is not disclosed; assuming PGIM-managed accounts hold most or all of it, total senior debt is plausibly ~$10-18M (~4-5.5x EBITDA, ~$0.9-1.6M of annual cash interest), confidence low. 6) Entry value: the undisclosed price, a lower-middle-market sell-side advisor (Boxwood) and no dedicated co-invest SPV (unlike Thomas Scientific, Frontline and CET) all point to an enterprise value probably in the ~$18-30M range and a Fund I equity check of roughly $8-15M, about 3-4% of the $335M fund; confidence low. 7) Growth drivers: 2025 same-store sales grew +8.4% (One Hour), +8.9% (Ben Franklin) and +14.3% (Mister Sparky) system-wide after a soft 2024. Punctual's PA territory count was flat, so growth is organic within existing territories plus the Horvath tuck-in (PPP-implied ~$3-4M 2019 revenue, 6 territories). 8) Demand signal: the user's deed dataset shows ~2,100 meaningful home sales per quarter inside the 248 modeled PA territory zips (~$574M priced volume in 90 days). That is a quantifiable new-mover lead pool, where a 5% capture rate means ~425 new relationships a year. 9) Clean profile: no OSHA inspections were found for Punctual/Rohrer/Horvath. The HQ property is held by a separate, likely related-party real-estate LLC (assessed $914.5K, recorded $1.5M sale), so rent is a normalization item. 10) Overall: the public record supports a ~$20-25M-revenue, ~$2-3M-EBITDA, moderately levered (4-5x) franchise-operator platform with a funded path for tuck-ins. Revenue ranges are medium confidence; EBITDA, debt and valuation are low confidence until confirmed by PitchBook or lender data.",
+    "estimate_table": [
+      {
+        "metric": "2019 payroll costs, The Rohrer Company",
+        "estimate": "$3.58M",
+        "basis": "PPP $745,985 / 2.5 x 12",
+        "confidence": "high"
+      },
+      {
+        "metric": "2019 headcount, Rohrer",
+        "estimate": "~50-58",
+        "basis": "$3.58M / (QCEW Lancaster 23822 2019 avg pay $62,157 x 1.10-1.15 benefits load)",
+        "confidence": "medium"
+      },
+      {
+        "metric": "2019 revenue, Rohrer",
+        "estimate": "~$9-12M",
+        "basis": "payroll at 30-40% of revenue for residential service contractors",
+        "confidence": "low"
+      },
+      {
+        "metric": "2019 payroll / headcount / revenue, Horvath",
+        "estimate": "$1.21M / ~19-22 / ~$3-4M",
+        "basis": "PPP $251,894; Ocean County 2019 avg pay $55,085; same labor ratio",
+        "confidence": "medium"
+      },
+      {
+        "metric": "Franchise territories operated",
+        "estimate": "25 (19 PA + 6 NJ)",
+        "basis": "2026 FDD franchisee exhibits; matches 2024 Item 20 transfers",
+        "confidence": "high"
+      },
+      {
+        "metric": "FY2025 PA revenue",
+        "estimate": "~$18M (range $12-24M)",
+        "basis": "FDD Item 19 quartile mapping (OH ~$7.4M, BF ~$3.5M, MS ~$1.5M central) blended with 113 employees x ~$76K wages at a 40-45% labor ratio",
+        "confidence": "medium"
+      },
+      {
+        "metric": "FY2025 pro forma total revenue incl. NJ",
+        "estimate": "~$22M (range $16-28M)",
+        "basis": "PA estimate + NJ ~$3-5M",
+        "confidence": "medium"
+      },
+      {
+        "metric": "Revenue per territory",
+        "estimate": "~$0.9M",
+        "basis": "$22M / 25 territories vs. One Hour $0.61M and BF $0.66M system averages",
+        "confidence": "low"
+      },
+      {
+        "metric": "Annual franchise fees paid to Authority Brands",
+        "estimate": "~$1.5-1.7M (7.2-7.5% of revenue)",
+        "basis": "6% royalty + tiered 1.5%/1.25% brand fund per brand entity",
+        "confidence": "medium"
+      },
+      {
+        "metric": "Adjusted EBITDA FY2025",
+        "estimate": "~$2.6M (range $1.8-3.1M)",
+        "basis": "8-14% margin after royalties on ~$22M revenue",
+        "confidence": "low"
+      },
+      {
+        "metric": "PGIM Private Credit Fund exposure",
+        "estimate": "$4.83M funded + $1.4M unfunded DDTL; S+500 (8.73%); due 3/26/2029",
+        "basis": "PGIM PCF 10-Q 6/30/2026",
+        "confidence": "high"
+      },
+      {
+        "metric": "Total senior debt",
+        "estimate": "~$10-18M",
+        "basis": "PGIM PCF slice likely one of several PGIM-managed accounts; 4-5.5x of est. EBITDA",
+        "confidence": "low"
+      },
+      {
+        "metric": "Annual cash interest",
+        "estimate": "~$0.9-1.6M",
+        "basis": "8.73% x total debt range",
+        "confidence": "low"
+      },
+      {
+        "metric": "Entry enterprise value (Apr 2024)",
+        "estimate": "~$18-30M",
+        "basis": "7-10x est. EBITDA; LMM sell-side advisor; no co-invest SPV",
+        "confidence": "low"
+      },
+      {
+        "metric": "BSP Fund I equity check",
+        "estimate": "~$8-15M (≈3-4% of $335M fund)",
+        "basis": "EV minus est. debt",
+        "confidence": "low"
+      },
+      {
+        "metric": "Employees 2025 incl. NJ",
+        "estimate": "~130-150",
+        "basis": "113 (2024) + Horvath ~20-30",
+        "confidence": "low"
+      },
+      {
+        "metric": "New-mover lead pool in PA territory",
+        "estimate": "~2,100 per 90 days (~8,500/yr)",
+        "basis": "user deed dataset x 248 service-territory zips",
+        "confidence": "medium"
+      }
+    ],
+    "data_gaps": [
+      "No Form D exists for Punctual Pros, The Rohrer Company, Punctual Pros Midco or any Punctual-specific co-invest vehicle (EDGAR full-text and entity search). Punctual Pros appears to sit wholly in Broad Sky Partners, LP (Fund I).",
+      "Total size, structure (unitranche vs. first-lien plus revolver) and administrative agent of the Punctual Pros Midco credit facility are not disclosed. Only PGIM Private Credit Fund's slice is public, and it first appears at 6/30/2026 (absent at 12/31/2025), so the original 2024 holder list is unknown.",
+      "PPP jobs reported, lender name and forgiveness amount/date for Rohrer and Horvath are not in the USAspending record. FederalPay and ProPublica returned bot-protection (403) pages and were not bypassed, and the SBA FOIA CSV was not downloaded in this pass.",
+      "PA Department of State business search and UCC search (file.dos.pa.gov) returned a security-check page. Entity formation dates, officers and UCC-1 secured parties were not retrieved.",
+      "PA Attorney General Home Improvement Contractor search requires a Cloudflare Turnstile CAPTCHA (not attempted). PA L&I licensing was not retrieved, and PA has no statewide HVAC/plumbing license (municipal licensing).",
+      "NJ business entity records for Horvath Home Services Inc / Punctual Pros NJ, LLC (NJ DORES is paid) and NJ HVACR/plumbing/electrical license numbers were not retrieved. The NJ parcel composite omits owner name.",
+      "Wisconsin DFI, California DFPI DocQNet and FDD aggregator sites (franchimp, fddexchange, franchisechatter) were blocked. Minnesota CARDS 2026 FDDs were used instead. Item 19 does not identify individual franchisees' revenue, so Punctual's quartile placement is inferred.",
+      "Capital Constellation/Wafra stake size in BSP is undisclosed and below Form ADV Schedule B reporting thresholds.",
+      "Lancaster County GIS shows a 2022-03-11 sale/deed date for 516 Running Pump Rd (deed ref 6669035, $1.5M), but no mortgage or lease memorandum was retrieved. 518 Running Pump Rd (PP Electric address) did not return a separate parcel.",
+      "DOL Wage & Hour enforcement (API key required), PACER federal litigation and Lancaster County Prothonotary civil dockets were not searched. Census CBP API now requires a key (BLS QCEW used instead).",
+      "'Broad Sky Networks LLC' in Capital Southwest filings is an unrelated company (false positive).",
+      "User deed dataset: prices are 0 for Ocean, Chester, York and Monmouth; York rows lack dates; zip is blank for many non-Lancaster records, so territory counts understate true volume.",
+      "Sibling research (bsp_firm.json) notes BSP lists 2 Punctual Pros add-ons, but only Horvath is identified publicly."
+    ],
+    "next_pulls": [
+      "PitchBook / Capital IQ deal profile for Broad Sky-Punctual Pros (2024-04-03): disclosed EV, revenue/EBITDA at entry, debt amount, lender list; also the second add-on name and date.",
+      "PitchBook LCD / Debtwire / 9fin / Private Credit data (e.g., Lincoln, Houlihan valuation marks): full Punctual Pros Midco facility size, agent, revolver and DDTL sizing, pricing history and marks across all PGIM and other BDC holders.",
+      "SBA PPP FOIA CSV (public_150k_plus, free from SBA): JobsReported, lender (ServicingLenderName), ForgivenessAmount/Date for Rohrer and Horvath.",
+      "PA DOS business and UCC search (manual browser session): formation dates for Punctual Pros Midco, PP OH/Plumbing/Electric LLCs; UCC-1 secured party (agent) and filing date, likely 2024-03/04.",
+      "Lancaster County Recorder of Deeds (Landex) instrument 6669035 and any memorandum of lease or mortgage on 516/518 Running Pump Rd; Ocean County Clerk for 1130 Ship Ave ownership and liens.",
+      "Minnesota CARDS 2023-2025 FDDs for the three brands: multi-year Item 19 trend to back-test PA territory revenue, and Item 21 audited franchisor financials (royalty revenue by brand).",
+      "ZoomInfo / LinkedIn Talent Insights / Dun & Bradstreet: current headcount, technician count and revenue estimates for Punctual Pros and Horvath.",
+      "ServiceTitan / Nexstar / ACCA benchmark reports (paid or member): average ticket, close rate, membership attach and EBITDA margin for $15-30M residential HVAC/plumbing operators, to replace assumed 8-14% margin.",
+      "PACER and Lancaster/Ocean County civil dockets; DOL WHD enforcement data (enforcedata.dol.gov with API key).",
+      "Backfill price and zip on the Ocean, Chester, York and Monmouth deed records (e.g., ATTOM or county API) so the new-mover marketing layer covers the NJ Horvath territory with priced sales."
+    ],
+    "sources_used_count": 25,
+    "caveats": [
+      "Verified 2026-09-24: sampled 30, confirmed 29, removed 1"
+    ]
+  },
+  "items": [
+    {
+      "id": "pp-fil-001",
+      "category": "sec_form_d",
+      "entity": "Broad Sky Partners, LP (Fund I; CIK 0001917706)",
+      "title": "Form D (original): Broad Sky Partners, LP pooled private equity fund offering",
+      "filed_or_dated": "2022-03-22",
+      "filer_or_source_agency": "U.S. SEC (EDGAR), filed by Broad Sky Partners, LP",
+      "key_figures": {
+        "total_offering_amount": "Indefinite",
+        "total_amount_sold_usd": 298710000,
+        "investors_already_invested": 14,
+        "date_of_first_sale": "2022-03-07",
+        "minimum_investment_accepted_usd": 116000,
+        "exemptions": [
+          "Rule 506(b)",
+          "Investment Company Act 3(c)",
+          "3(c)(1)"
+        ],
+        "jurisdiction": "Delaware, organized 2021",
+        "related_person": "Tyler Zachem (Executive Officer)",
+        "sales_commissions_usd": 1275000,
+        "sales_commissions_note": "placement agent fee; finders' fees $0"
+      },
+      "what_it_tells_us": "Fund I had ~$299M of commitments from only 14 investors at first close, a concentrated LP base typical of a first-time spin-out fund anchored by a few large institutions. This is the fund that bought Punctual Pros in April 2024. At this size, a single platform equity check is usually $20-60M, which means Punctual Pros (a smaller residential-services platform) was probably one of the smaller positions.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1917706/000191770622000001/primary_doc.xml",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-002",
+      "category": "sec_form_d",
+      "entity": "Broad Sky Partners, LP (Fund I; CIK 0001917706)",
+      "title": "Form D/A (2023 annual amendment): Broad Sky Partners, LP",
+      "filed_or_dated": "2023-04-20",
+      "filer_or_source_agency": "U.S. SEC (EDGAR)",
+      "key_figures": {
+        "total_amount_sold_usd": 303720000,
+        "investors_already_invested": 15,
+        "signature_date": "2023-04-17",
+        "minimum_investment_accepted_usd": 116000,
+        "date_of_first_sale": "2021-12-31"
+      },
+      "what_it_tells_us": "Commitments grew only ~$5M in the year after first close, so Fund I was essentially fully raised by early 2023. That was before the Punctual Pros deal.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1917706/000139834423007533/primary_doc.xml",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-003",
+      "category": "sec_form_d",
+      "entity": "Broad Sky Partners, LP (Fund I; CIK 0001917706)",
+      "title": "Form D/A (2024 annual amendment), signed about two weeks after the Punctual Pros closing",
+      "filed_or_dated": "2024-04-16",
+      "filer_or_source_agency": "U.S. SEC (EDGAR)",
+      "key_figures": {
+        "total_amount_sold_usd": 323760000,
+        "investors_already_invested": 16,
+        "change_vs_2023_usd": 20040000,
+        "minimum_investment_accepted_usd": 116000,
+        "signer": "Aditya Narain (Authorized Signatory)"
+      },
+      "what_it_tells_us": "Fund I commitments rose $20.04M year over year to $323.8M. That is consistent with a late commitment or a GP top-up and does not by itself tie to the Punctual Pros check. The filing confirms the fund had capital available for the April 3, 2024 acquisition without a new vehicle.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1917706/000139834424007233/primary_doc.xml",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-004",
+      "category": "sec_form_d",
+      "entity": "Broad Sky Partners, LP (Fund I; CIK 0001917706)",
+      "title": "Form D/A (2025 annual amendment): Broad Sky Partners, LP",
+      "filed_or_dated": "2025-04-30",
+      "filer_or_source_agency": "U.S. SEC (EDGAR)",
+      "key_figures": {
+        "total_amount_sold_usd": 335000000,
+        "investors_already_invested": 46,
+        "minimum_investment_accepted_usd": 100000,
+        "offering_more_than_one_year": false
+      },
+      "what_it_tells_us": "Fund I closed its offering at $335M. The jump from 16 to 46 counted investors most likely reflects feeder or employee participants, not new large LPs. Punctual Pros sits in a sub-$350M fund, so it matters to BSP's returns and add-on M&A there will be closely watched.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1917706/000139834425008250/primary_doc.xml",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-005",
+      "category": "sec_form_d",
+      "entity": "BSP co-invest vehicles (BSP-TS LP, BSP-TS Co-Invest I/II, BSP-TS Management, BSP-FL LP, BSP-FL Co-Invest, BSP-CET Co-Invest)",
+      "title": "Form D filings for Broad Sky deal-specific co-invest SPVs; no Punctual Pros SPV exists",
+      "filed_or_dated": "2021-12-28 to 2025-04-30",
+      "filer_or_source_agency": "U.S. SEC (EDGAR) entity search 'BSP-'",
+      "key_figures": {
+        "BSP-TS_LP_amount_sold_usd": 257078866,
+        "BSP-TS_Co-Invest_I_usd": 35871936,
+        "BSP-TS_Co-Invest_II_usd": 59633599,
+        "BSP-TS_Management_LP_usd": 12422444,
+        "BSP-FL_LP_amount_sold_usd": 136952357,
+        "BSP-FL_Co-Invest_usd_sold_of_offered": "30000000 of 37500000",
+        "BSP-CET_Co-Invest_usd": 7500000,
+        "BSP-CET_Co-Invest_investors": 1,
+        "punctual_pros_or_rohrer_vehicle_found": false
+      },
+      "what_it_tells_us": "BSP raised dedicated co-invest SPVs for Thomas Scientific (~$365M across vehicles), Frontline (~$167M) and CET ($7.5M) but none for Punctual Pros. That points to Punctual Pros being funded entirely from Fund I, with an equity check small enough not to need LP co-invest. Relative to the TS and FL SPVs, the Punctual Pros equity check was probably well under $50M.",
+      "confidence": "medium",
+      "source_url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002056574&type=D",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-006",
+      "category": "form_adv",
+      "entity": "Broad Sky Partners LLC (adviser; CRD 317966; SEC 801-124920)",
+      "title": "Form ADV Part 1A annual amendment: regulatory AUM, staffing, custodian",
+      "filed_or_dated": "2026-03-31",
+      "filer_or_source_agency": "SEC Investment Adviser Public Disclosure (IAPD)",
+      "key_figures": {
+        "regulatory_aum_discretionary_usd": 476872842,
+        "regulatory_aum_non_discretionary_usd": 0,
+        "accounts": 6,
+        "employees": 12,
+        "investment_advisory_employees": 10,
+        "sec_registration_effective": "2022-05-02",
+        "prior_status": "ERA (withdrawn 2022-03-31)",
+        "office": "34 East 51st Street, 11th Floor, New York, NY",
+        "fund_custodian": "JPMorgan Chase Bank, N.A.",
+        "fund_administrator": "Gen II Fund Services, LLC",
+        "brochure": "BSP FORM ADV 2A 2026 AA 3.31.2026"
+      },
+      "what_it_tells_us": "BSP is a ~$477M-RAUM firm with 10 investment professionals running 6 private funds. Every portfolio company is a meaningful share of AUM, and a residential-services platform like Punctual Pros gets senior deal-team attention. The firm has not yet reported a Fund II vehicle in its ADV.",
+      "confidence": "high",
+      "source_url": "https://reports.adviserinfo.sec.gov/reports/ADV/317966/PDF/317966.pdf",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-007",
+      "category": "form_adv",
+      "entity": "Broad Sky Partners, LP (Fund I) and BSP co-invest funds",
+      "title": "Form ADV Schedule D 7.B.(1): private fund gross asset values and beneficial owners",
+      "filed_or_dated": "2026-03-31",
+      "filer_or_source_agency": "SEC IAPD (Form ADV Schedule D)",
+      "key_figures": {
+        "Broad_Sky_Partners_LP_GAV_usd": 414217413,
+        "Broad_Sky_Partners_LP_beneficial_owners": 45,
+        "BSP-CET_Co-Invest_GAV_usd": 8504193,
+        "BSP-CET_owners": 1,
+        "BSP-FL_Co-Invest_GAV_usd": 32907249,
+        "BSP-FL_owners": 8,
+        "BSP-TS_Co-Invest_I_GAV_usd": 8667476,
+        "BSP-TS_Co-Invest_I_owners": 7,
+        "BSP-TS_Co-Invest_II_GAV_usd": 12461081,
+        "BSP-TS_Co-Invest_II_owners": 3,
+        "BSP-TS_Management_GAV_usd": 115429,
+        "BSP-TS_Management_owners": 31,
+        "sum_of_GAV_usd": 476872841,
+        "note": "GAV-to-fund mapping follows the order of the funds in Schedule D; the sum reconciles to reported RAUM"
+      },
+      "what_it_tells_us": "Fund I (which holds Punctual Pros) reports $414.2M of gross assets against $335M of commitments, roughly 1.2x. That implies aggregate unrealized marks at or above cost across the portfolio as of the ADV date. The ADV gives no marks for individual positions, so the Punctual Pros carrying value is not disclosed.",
+      "confidence": "medium",
+      "source_url": "https://reports.adviserinfo.sec.gov/reports/ADV/317966/PDF/317966.pdf",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-008",
+      "category": "form_adv",
+      "entity": "Broad Sky Partners LLC (control persons)",
+      "title": "Form ADV Schedules A/B: ownership chain; no Capital Constellation/Wafra entity listed",
+      "filed_or_dated": "2026-03-31",
+      "filer_or_source_agency": "SEC IAPD (Form ADV Schedules A/B)",
+      "key_figures": {
+        "direct_owner": "BSP Management Holdings, LLC (ownership code E = 75%+; since 12/2021)",
+        "indirect_owner": "Tyler Thomas Zachem via BSP I, LLC (owner code E; BSP I, LLC is manager of BSP Management Holdings)",
+        "chief_compliance_officer": "Aditya Narain (since 03/2022)",
+        "wafra_or_capital_constellation_listed": false,
+        "disclosure_events": "none flagged (firm_ia_disclosure_fl = N)"
+      },
+      "what_it_tells_us": "Control sits with founder Tyler Zachem. Capital Constellation's 2022 GP-stake investment does not appear, which means it is below the 25% indirect-owner reporting threshold (a passive minority revenue/equity share). Punctual Pros governance decisions are therefore Zachem-controlled at the GP level.",
+      "confidence": "high",
+      "source_url": "https://reports.adviserinfo.sec.gov/reports/ADV/317966/PDF/317966.pdf",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-009",
+      "category": "press_financial",
+      "entity": "Broad Sky Partners LLC / Capital Constellation (managed by Wafra Inc.)",
+      "title": "Capital Constellation strategic (GP-stake) investment in Broad Sky, announced with Thomas Scientific acquisition",
+      "filed_or_dated": "2022-01-27",
+      "filer_or_source_agency": "Business Wire (via MarketScreener); also PE Hub",
+      "key_figures": {
+        "investment_amount": "not disclosed",
+        "wafra_aum_usd_approx": "~$28 billion (est. as of 2021-09-30)",
+        "wafra_minority_partnerships": 23,
+        "bsp_team_size_at_announcement": "23 professionals",
+        "founder": "Tyler Zachem, ex-Co-Head of Carlyle Global Partners"
+      },
+      "what_it_tells_us": "Wafra's Capital Constellation provides GP-level capital. That helps explain how a first-time $335M fund can support platform plus add-on activity, but it is not portfolio-company debt or equity in Punctual Pros. No public filing ties Wafra capital directly to the Punctual Pros deal.",
+      "confidence": "medium",
+      "source_url": "https://www.marketscreener.com/news/latest/Broad-Sky-Partners-Announces-Investment-From-Capital-Constellation-and-Acquisition-of-Thomas-Scienti--37659893/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-010",
+      "category": "press_financial",
+      "entity": "Punctual Pros Midco, LLC (borrower) / PGIM Private Credit Fund (lender; CIK 0001923622)",
+      "title": "SEC 10-Q schedule of investments: first-lien term loan and delayed-draw term loan to Punctual Pros Midco, LLC",
+      "filed_or_dated": "2026-08-13 (as of 2026-06-30)",
+      "filer_or_source_agency": "U.S. SEC (EDGAR), PGIM Private Credit Fund Form 10-Q; repeated in 424B3 prospectus supplement no. 2 filed 2026-08-18",
+      "key_figures": {
+        "industry_classification": "Construction & Engineering",
+        "term_loan_par_usd_thousands": 4830,
+        "term_loan_cost_usd_thousands": 4761,
+        "term_loan_fair_value_usd_thousands": 4762,
+        "term_loan_pct_of_fund_net_assets": "1.62%",
+        "delayed_draw_term_loan_unfunded_commitment_usd_thousands": 1400,
+        "ddtl_cost_usd_thousands": -10,
+        "ddtl_fair_value_usd_thousands": -20,
+        "reference_rate_and_spread": "3M SOFR + 5.00%",
+        "all_in_interest_rate": "8.73%",
+        "maturity": "2029-03-26",
+        "footnote_14": "All or a portion held in PGIM Private Credit Fund ABL LLC (pledged to fund's asset-based facility)",
+        "first_appearance": "not in 12/31/2025 schedule; appears in 6/30/2026 schedule",
+        "fund_net_assets_usd_thousands": 294413
+      },
+      "what_it_tells_us": "This is the only public filing that reveals Punctual Pros' LBO debt. The borrower is a 'Midco' holding entity, the loan is senior secured unitranche/first-lien at S+500, and the 3/26/2029 maturity implies a 5-year loan dated at the April 2024 closing. Fair value at ~98.6% of par (cost ~98.6%) shows the credit is performing. The $1.4M undrawn DDTL (PGIM PCF's share only) is a committed add-on acquisition facility. Total facility size and agent are not disclosed. PGIM PCF's $4.83M is probably a slice of a larger PGIM-managed allocation across affiliated accounts.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1923622/000119312526349252/ck0001923622-20260630.htm",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-011",
+      "category": "press_financial",
+      "entity": "Punctual Pros (board) / UGI Corp (filer)",
+      "title": "UGI Corp DEF 14A: director Kelly A. Romano disclosed as a director of Punctual Pros",
+      "filed_or_dated": "2024-12-19",
+      "filer_or_source_agency": "U.S. SEC (EDGAR), UGI Corp proxy statement",
+      "key_figures": {
+        "director": "Kelly A. Romano",
+        "background": "former senior executive at United Technologies (UTC); director of Dorman Products; chair of Athira Pharma; former operating partner AE Industrial Partners; former executive advisory board Gryphon Investors",
+        "other_boards_listed": "Punctual Pros; United Safety & Survivability; Potter Global Technologies"
+      },
+      "what_it_tells_us": "BSP put an independent director with public-company and UTC (Carrier HVAC heritage) operating experience on the Punctual Pros board. That governance level fits a sponsor planning a buy-and-build and an eventual sale to a larger consolidator.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/884614/000155837024016395/ugi-20250131xdef14a.htm",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-012",
+      "category": "sba_ppp",
+      "entity": "The Rohrer Company Inc (predecessor of Punctual Pros; 516 Running Pump Road, Lancaster PA 17601)",
+      "title": "PPP first-draw loan to The Rohrer Company Inc",
+      "filed_or_dated": "2020-04-07",
+      "filer_or_source_agency": "SBA via USAspending.gov (FAIN 5657387000, CFDA 59.073)",
+      "key_figures": {
+        "loan_amount_usd": 745985,
+        "federal_subsidy_cost_usd": 758815.94,
+        "approval_date": "2020-04-07",
+        "implied_avg_monthly_payroll_usd": 298394,
+        "implied_annual_payroll_costs_usd": 3580728,
+        "second_draw_found": false,
+        "jobs_reported": "not in USAspending record",
+        "lender": "not in USAspending record",
+        "forgiveness": "not in USAspending record; subsidy cost at 101.7% of principal is consistent with SBA treating it as forgiven"
+      },
+      "what_it_tells_us": "PPP = 2.5x average monthly payroll costs (comp capped at $100K per employee, including health, retirement and state taxes), which implies ~$3.6M of 2019 payroll costs. At Lancaster County's 2019 plumbing/HVAC average pay of $62,157 plus ~10-15% benefits, that is ~50-58 employees. With payroll at 30-40% of revenue for residential service contractors, 2019 revenue was roughly $9-12M. Headcount roughly doubling to ~113 by 2024 therefore implies strong pre-deal growth.",
+      "confidence": "high",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_5657387000_073",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-013",
+      "category": "sba_ppp",
+      "entity": "Horvath Home Services Inc (1130 Ship Avenue, Beachwood NJ 08722)",
+      "title": "PPP first-draw loan to Horvath Home Services Inc (acquired by Punctual Pros Dec 2024)",
+      "filed_or_dated": "2020-04-28",
+      "filer_or_source_agency": "SBA via USAspending.gov (FAIN 3807147202, CFDA 59.073)",
+      "key_figures": {
+        "loan_amount_usd": 251894,
+        "federal_subsidy_cost_usd": 256226.58,
+        "implied_avg_monthly_payroll_usd": 100758,
+        "implied_annual_payroll_costs_usd": 1209091,
+        "second_draw_found": false
+      },
+      "what_it_tells_us": "Implies ~$1.2M of 2019 payroll costs, or ~19-22 employees at Ocean County's 2019 plumbing/HVAC average pay of $55,085. That implies ~$3-4M of 2019 revenue. The add-on added roughly 20-30% to the platform's pre-deal scale and 6 franchise territories.",
+      "confidence": "high",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_3807147202_073",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-014",
+      "category": "sba_ppp",
+      "entity": "Horvath Home Services (Beachwood NJ)",
+      "title": "SBA COVID EIDL (disaster) loan to Horvath Home Services",
+      "filed_or_dated": "2020-05-15",
+      "filer_or_source_agency": "SBA Office of Disaster Assistance via USAspending.gov (FAIN 6776667401, CFDA 59.008)",
+      "key_figures": {
+        "loan_amount_usd": 150000,
+        "federal_subsidy_cost_usd": 20430
+      },
+      "what_it_tells_us": "EIDLs are 30-year, 3.75% loans secured by a blanket UCC lien on business assets. Unless it was repaid, this had to be paid off or released at the Dec 2024 closing so Punctual Pros' senior lenders could take a first-priority lien. It is a diligence item for any NJ UCC search.",
+      "confidence": "high",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_6776667401_073",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-015",
+      "category": "sba_ppp",
+      "entity": "BSP sister portfolio companies (Commonwealth Electrical Technologies, Bully Pulpit Interactive, Fair Harbor Clothing); Thomas Scientific; Frontline; Punctual Pros",
+      "title": "PPP/EIDL scan across BSP portfolio names",
+      "filed_or_dated": "2020-04-07 to 2021",
+      "filer_or_source_agency": "SBA via USAspending.gov",
+      "key_figures": {
+        "Commonwealth_Electrical_Technologies_Inc_PPP_usd": 2062000,
+        "CET_PPP_date": "2020-04-07",
+        "CET_location": "Worcester, MA",
+        "Bully_Pulpit_Interactive_LLC_PPP_loan_value_usd": 0.0,
+        "Fair_Harbor_Clothing_Inc_PPP_usd": 16993.85,
+        "Fair_Harbor_Clothing_Inc_EIDL_usd": 150000,
+        "Thomas_Scientific_records": 0,
+        "Frontline_Managed_Services_records": 0,
+        "Punctual_Pros_records": 0
+      },
+      "what_it_tells_us": "For context, CET's $2.06M PPP implies ~$9.9M of 2019 payroll, roughly 2.8x Rohrer's. Punctual Pros was one of the smaller businesses BSP bought. A $0 loan value for Bully Pulpit Interactive suggests a cancelled or returned loan.",
+      "confidence": "medium",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_4644687003_073",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-016",
+      "category": "fdd_item19",
+      "entity": "One Hour Air Conditioning Franchising SPE LLC (Authority Brands / Clockwork IP)",
+      "title": "One Hour Heating & Air Conditioning 2026 FDD Item 19: FY2025 gross revenue by territory and franchisee quartile",
+      "filed_or_dated": "2026-04-26 (issued); MN file no. 9762, doc 36227-202604-14",
+      "filer_or_source_agency": "Minnesota Dept. of Commerce CARDS franchise registration",
+      "key_figures": {
+        "franchisees_at_2025-12-31": 109,
+        "territories_operated": 418,
+        "reporting_franchisees": 88,
+        "reporting_territories": 364,
+        "aggregate_gross_revenue_usd": 359273411,
+        "avg_revenue_per_territory_usd": 605630,
+        "median_revenue_per_territory_usd": 884016,
+        "top25_territories_avg_usd": 3062355,
+        "2nd_quartile_territories_avg_usd": 1218365,
+        "avg_revenue_per_franchisee_usd": 4082652,
+        "median_revenue_per_franchisee_usd": 2217669,
+        "top25_franchisees": {
+          "count": 22,
+          "territories": 172,
+          "avg_usd": 11509564,
+          "median_usd": 7435302,
+          "high_usd": 48865630,
+          "low_usd": 4370880
+        },
+        "2nd_quartile_franchisees": {
+          "avg_usd": 3040586,
+          "median_usd": 2866281,
+          "low_usd": 2231900
+        },
+        "same_store_sales": {
+          "2024_usd": 324580820,
+          "2025_usd": 351727128,
+          "growth": "8.4%",
+          "territories": 348
+        },
+        "systemwide_sales": {
+          "2023_usd": 359150544,
+          "2024_usd": 335524270,
+          "2025_usd": 365840208,
+          "2025_growth": "9.0%",
+          "2025_territories": 420
+        }
+      },
+      "what_it_tells_us": "Punctual Pros' PP OH, LLC holds 9 PA One Hour territories, roughly the size of a top-quartile franchisee (172 territories / 22 = 7.8 each). That implies FY2025 One Hour revenue in the ~$4.4M (quartile floor) to ~$11.5M (quartile average) range, with ~$7.4M as the central case. Plus ~$1-3M for the 3 NJ One Hour territories. System same-store growth of +8.4% in 2025 after a -6.6% 2024 is a tailwind for 2025-26 marks.",
+      "confidence": "medium",
+      "source_url": "https://cards.web.commerce.state.mn.us/documents/%7B204CB19E-0000-C81A-9DFD-5EB62BCE02E6%7D/download?documentClass=FRANCHISE_REGISTRATIONS&contentSequence=0",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-017",
+      "category": "fdd_item19",
+      "entity": "Benjamin Franklin Franchising SPE LLC (Authority Brands / Clockwork IP)",
+      "title": "Benjamin Franklin Plumbing 2026 FDD Item 19: FY2025 gross revenue by territory and franchisee quartile",
+      "filed_or_dated": "2026-04 (MN doc 36229-202604-13)",
+      "filer_or_source_agency": "Minnesota Dept. of Commerce CARDS franchise registration",
+      "key_figures": {
+        "franchisees_at_2025-12-31": 96,
+        "territories_operated": 399,
+        "reporting_franchisees": 86,
+        "reporting_territories": 373,
+        "aggregate_gross_revenue_usd": 244924761,
+        "avg_revenue_per_territory_usd": 656635,
+        "median_revenue_per_territory_usd": 610560,
+        "top25_territories_avg_usd": 1725356,
+        "top25_franchisees": {
+          "count": 22,
+          "territories": 222,
+          "avg_usd": 7531940,
+          "median_usd": 5171685,
+          "high_usd": 30985391,
+          "low_usd": 3921443
+        },
+        "2nd_quartile_franchisees": {
+          "count": 21,
+          "territories": 74,
+          "avg_usd": 2354574,
+          "median_usd": 2311515,
+          "low_usd": 1681611
+        },
+        "3rd_quartile_franchisees": {
+          "avg_usd": 1124760,
+          "median_usd": 1175402
+        },
+        "same_store_sales": {
+          "2024_usd": 220432399,
+          "2025_usd": 239959441,
+          "growth": "8.9%",
+          "territories": 319
+        },
+        "systemwide_sales": {
+          "2023_usd": 232388722,
+          "2024_usd": 228849236,
+          "2025_usd": 248704546,
+          "2025_growth": "8.7%",
+          "2025_territories": 414
+        }
+      },
+      "what_it_tells_us": "PP Plumbing, LLC's 7 PA territories sit between the 2nd quartile (~3.5 territories, ~$2.3M) and the top quartile (~10 territories, $5.2M median). That implies ~$2.3-5.2M of FY2025 plumbing revenue, ~$3.5M central, plus ~$0.6-1.5M for 2 NJ territories. Plumbing per-territory revenue is below HVAC, so the plumbing line is a cross-sell lever more than a scale driver.",
+      "confidence": "medium",
+      "source_url": "https://cards.web.commerce.state.mn.us/documents/%7B004CB19E-0000-C41A-8A6B-A18726A209BB%7D/download?documentClass=FRANCHISE_REGISTRATIONS&contentSequence=0",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-018",
+      "category": "fdd_item19",
+      "entity": "Mister Sparky Franchising SPE LLC (Authority Brands / Clockwork IP)",
+      "title": "Mister Sparky 2026 FDD Item 19: FY2025 gross revenue by territory and franchisee quartile",
+      "filed_or_dated": "2026-04 (MN doc 36228-202604-12)",
+      "filer_or_source_agency": "Minnesota Dept. of Commerce CARDS franchise registration",
+      "key_figures": {
+        "franchisees_at_2025-12-31": 78,
+        "territories_operated": 249,
+        "reporting_franchisees": 60,
+        "reporting_territories": 185,
+        "aggregate_gross_revenue_usd": 227092982,
+        "avg_revenue_per_territory_usd": 1227530,
+        "median_revenue_per_territory_usd": 455253,
+        "avg_revenue_per_franchisee_usd": 3784883,
+        "median_revenue_per_franchisee_usd": 1413147,
+        "top25_franchisees": {
+          "count": 15,
+          "territories": 74,
+          "avg_usd": 11958201,
+          "median_usd": 8566582,
+          "high_usd": 73346184
+        },
+        "2nd_quartile_franchisees": {
+          "count": 15,
+          "territories": 57,
+          "avg_usd": 2115267,
+          "median_usd": 1893286
+        },
+        "3rd_quartile_franchisees": {
+          "avg_usd": 809168,
+          "median_usd": 747837
+        },
+        "same_store_sales": {
+          "2024_usd": 185022593,
+          "2025_usd": 211542716,
+          "growth": "14.3%",
+          "territories": 143
+        },
+        "systemwide_sales": {
+          "2023_usd": 177890273,
+          "2024_usd": 193763256,
+          "2025_usd": 230936426,
+          "2025_growth": "19.2%",
+          "2025_territories": 249
+        }
+      },
+      "what_it_tells_us": "PP Electric, LLC (3 PA territories) is most like a 2nd- or 3rd-quartile Mister Sparky franchisee, ~$0.8-2.1M of FY2025 revenue (~$1.5M central). Mister Sparky is the fastest-growing Authority service-trade brand (+14.3% same-store, +19.2% systemwide), so electrical is Punctual Pros' highest organic-growth line even though it is the smallest.",
+      "confidence": "medium",
+      "source_url": "https://cards.web.commerce.state.mn.us/documents/%7BF051B19E-0000-CF1E-A975-BB7E0C7F5E48%7D/download?documentClass=FRANCHISE_REGISTRATIONS&contentSequence=0",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-019",
+      "category": "fdd_item19",
+      "entity": "Authority Brands service-trade franchisors (One Hour, Benjamin Franklin, Mister Sparky SPE LLCs)",
+      "title": "2026 FDD Items 5, 6 and 7: initial fee, royalty, brand fund, initial investment (fee structure Punctual Pros pays)",
+      "filed_or_dated": "2026-04",
+      "filer_or_source_agency": "Minnesota Dept. of Commerce CARDS franchise registration",
+      "key_figures": {
+        "initial_fee_one_hour_usd": "43,000 + $0.43 per person above 100,000 in territory",
+        "initial_fee_ben_franklin_usd": "43,000 + $0.43 per person above 100,000",
+        "initial_fee_mister_sparky_usd": "33,000 + $0.165 per person above 200,000",
+        "2025_one_hour_fees_collected_range_usd": "22,028 to 67,408",
+        "existing_franchisee_discount": "30% off additional territories",
+        "royalty": "6% of Gross Revenue or $1,500/month minimum, whichever is greater (all three brands)",
+        "brand_fund": "1.5% of first $5M; 1.25% $5-10M; 1.0% $10-15M; 0.75% $15-20M; 0% above $20M (per brand, contiguous territories combined; cap 4%)",
+        "item7_total_initial_investment_one_hour_usd": "143,273 to 286,702",
+        "item7_total_initial_investment_ben_franklin_usd": "143,273 to 286,702",
+        "item7_total_initial_investment_mister_sparky_usd": "133,273 to 276,702"
+      },
+      "what_it_tells_us": "Punctual Pros pays ~7.2-7.5% of revenue to Authority Brands (6% royalty + ~1.2-1.5% blended brand fund), roughly $1.5-1.7M a year on ~$22M of revenue. That is the key margin gap versus independent HVAC/plumbing platforms. New territories cost only ~$30-60K in fees (30% existing-franchisee discount), so greenfield territory expansion inside Authority Brands is cheap compared with buying independents.",
+      "confidence": "high",
+      "source_url": "https://cards.web.commerce.state.mn.us/documents/%7B204CB19E-0000-C81A-9DFD-5EB62BCE02E6%7D/download?documentClass=FRANCHISE_REGISTRATIONS&contentSequence=0",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-020",
+      "category": "fdd_franchisee_list",
+      "entity": "PP OH, LLC; PP Plumbing, LLC; PP Electric, LLC; Punctual Pros NJ, LLC",
+      "title": "2026 FDD Exhibit franchisee lists: Punctual Pros operating entities and territory counts",
+      "filed_or_dated": "2026-04 (franchisee lists as of 2025-12-31)",
+      "filer_or_source_agency": "Minnesota Dept. of Commerce CARDS (One Hour, Benjamin Franklin, Mister Sparky FDD exhibits)",
+      "key_figures": {
+        "PP_OH_LLC_PA_territories": 9,
+        "PP_Plumbing_LLC_PA_territories": 7,
+        "PP_Electric_LLC_PA_territories": 3,
+        "Punctual_Pros_NJ_LLC_one_hour_territories": 3,
+        "Punctual_Pros_NJ_LLC_ben_franklin_territories": 2,
+        "Punctual_Pros_NJ_LLC_mister_sparky_territories": 1,
+        "total_territories": 25,
+        "PA_territories": 19,
+        "NJ_territories": 6,
+        "listed_contact": "Matthew Buckwalter",
+        "listed_address": "516 Running Pump Road, Lancaster PA 17601 (PP Electric listed at 518 Running Pump Road)",
+        "other_PA_one_hour_franchisees_listed": "Pittsburgh Classic Air Care, LLC (6); Big Daddy HVAC, LLC, Levittown (5)",
+        "other_NJ_one_hour_franchisees_listed": "Superior Heating & AC, LLC, Cherry Hill (2); RM Comfort Installation, Inc., Manalapan (1)"
+      },
+      "what_it_tells_us": "These are the legal operating entities under Punctual Pros Midco: one LLC per brand in PA plus a single NJ LLC for the Horvath territories. The 25-territory footprint is the unit count to use for unit-economics benchmarking. Punctual Pros is the largest One Hour operator in PA (9 of 21 franchised PA outlets) and holds 7 of 15 PA Ben Franklin and 3 of 5 PA Mister Sparky outlets.",
+      "confidence": "high",
+      "source_url": "https://cards.web.commerce.state.mn.us/documents/%7B204CB19E-0000-C81A-9DFD-5EB62BCE02E6%7D/download?documentClass=FRANCHISE_REGISTRATIONS&contentSequence=0",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-021",
+      "category": "fdd_franchisee_list",
+      "entity": "Authority Brands service-trade franchisors (Item 20 PA/NJ outlet tables)",
+      "title": "2026 FDD Item 20: PA/NJ franchised outlets and 2024 transfers matching the BSP and Horvath ownership changes",
+      "filed_or_dated": "2026-04 (FY2023-2025 data)",
+      "filer_or_source_agency": "Minnesota Dept. of Commerce CARDS",
+      "key_figures": {
+        "transfers_2024_PA": {
+          "one_hour": 9,
+          "ben_franklin": 7,
+          "mister_sparky": 3
+        },
+        "transfers_2024_NJ": {
+          "one_hour": 3,
+          "ben_franklin": 2,
+          "mister_sparky": 1
+        },
+        "franchised_outlets_end_2025_PA": {
+          "one_hour": 21,
+          "ben_franklin": 15,
+          "mister_sparky": 5
+        },
+        "franchised_outlets_end_2025_NJ": {
+          "one_hour": 8,
+          "ben_franklin": 10,
+          "mister_sparky": 3
+        },
+        "systemwide_franchised_outlets_end_2025": {
+          "one_hour": 418,
+          "ben_franklin": 399,
+          "mister_sparky": 249
+        },
+        "one_hour_system_terminations_nonrenewals_ceased_2025": "9 terminations, 2 non-renewals, 6 ceased (of 405 start)"
+      },
+      "what_it_tells_us": "Every PA and NJ transfer Authority Brands recorded in 2024 (19 PA, 6 NJ) exactly matches Punctual Pros' territory counts. That independently confirms the April 2024 change of control and the December 2024 Horvath purchase, with no territories added or dropped. PA outlet counts were flat in 2025, so 2025 growth was same-territory growth, not new units.",
+      "confidence": "high",
+      "source_url": "https://cards.web.commerce.state.mn.us/documents/%7B004CB19E-0000-C41A-8A6B-A18726A209BB%7D/download?documentClass=FRANCHISE_REGISTRATIONS&contentSequence=0",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-023",
+      "category": "tax_or_assessment",
+      "entity": "HERIJ Real Estate Co LLC (owner) / Punctual Pros HQ, 516 Running Pump Road, East Hempfield Twp (Lancaster County PA)",
+      "title": "Lancaster County parcel record for Punctual Pros headquarters",
+      "filed_or_dated": "parcel data as of 2026-09; recorded sale and deed date 2022-03-11",
+      "filer_or_source_agency": "Lancaster County PA GIS / Assessment (Parcels_HUBnew feature service)",
+      "key_figures": {
+        "pin": "290-2352726-264812-0-0000",
+        "account": "2907261200000",
+        "district": "290 (East Hempfield Twp)",
+        "owner": "HERIJ REAL ESTATE CO LLC",
+        "recorded_sale_price_usd": 1500000,
+        "deed_reference": "6669035",
+        "land_assessment_usd": 243300,
+        "building_assessment_usd": 671200,
+        "total_assessment_usd": 914500,
+        "deed_acres": 1.39,
+        "land_use_code": "566",
+        "owner_mailing_address_type": "private residence in Lancaster (not the company address)",
+        "sale_and_deed_date": "2022-03-11"
+      },
+      "what_it_tells_us": "The operating company does not own its HQ. The building is held by a separate real-estate LLC whose mailing address is a private residence, which points to a related-party (likely legacy-owner) landlord and an operating lease left out of the BSP acquisition. Rent is an EBITDAR-to-EBITDA adjustment and a lease-renewal risk to note in any model.",
+      "confidence": "medium",
+      "source_url": "https://services1.arcgis.com/I6XnrlnguPDoEObn/arcgis/rest/services/Parcels_HUBnew/FeatureServer/0",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-024",
+      "category": "tax_or_assessment",
+      "entity": "Horvath Home Services location, 1130 Ship Ave, Beachwood Boro (Ocean County NJ)",
+      "title": "NJ MOD-IV parcel record for the Horvath Home Services location",
+      "filed_or_dated": "parcel data published 2026",
+      "filer_or_source_agency": "NJ Office of GIS Parcels Composite (MOD-IV tax list)",
+      "key_figures": {
+        "block_lot": "6.49 / 8 (plus lot 9)",
+        "property_class": "4A (commercial)",
+        "land_value_usd": 159900,
+        "improvement_value_usd": 129400,
+        "net_assessed_value_usd": 289300,
+        "last_year_tax_usd": 8401.27,
+        "last_deed_date": "2006-12-29",
+        "deed_book_page": "13497/00290",
+        "recorded_sale_price_usd": 562000,
+        "owner_name": "not shown in composite layer"
+      },
+      "what_it_tells_us": "The NJ branch runs from a small commercial lot (~$8.4K annual property tax), a light fixed-asset footprint that fits a service-van-based model. Ownership (Horvath family vs. company) was not visible. If the Horvaths retained it, there is probably another related-party lease.",
+      "confidence": "medium",
+      "source_url": "https://services2.arcgis.com/XVOqAjTOJ5P6ngMu/arcgis/rest/services/Parcels_Composite_NJ_WM/FeatureServer/0",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-025",
+      "category": "osha_dol",
+      "entity": "Punctual Pros / The Rohrer Company / Horvath Home Services; brand-name establishments in PA/NJ",
+      "title": "OSHA establishment search (inspections opened 2016-09-24 to 2026-09-24; IMIS limits establishment search to a 10-year window)",
+      "filed_or_dated": "searched 2026-09-24",
+      "filer_or_source_agency": "U.S. DOL OSHA IMIS establishment search",
+      "key_figures": {
+        "punctual_results": 0,
+        "rohrer_results_total": 14,
+        "rohrer_results_PA": "1 (H.E. Rohrer, Inc., NAICS 485410, 2017; unrelated bus company)",
+        "horvath_results_PA_NJ": 0,
+        "one_hour_results_PA_NJ": 0,
+        "benjamin_franklin_results_PA_NJ": 0,
+        "mister_sparky_results_PA_NJ": 0,
+        "DOL_WHD": "not queried (API key required)"
+      },
+      "what_it_tells_us": "No federal OSHA inspection history was found for Punctual Pros or its predecessors, which is a clean safety and regulatory record for a ~113-150 person trades employer. Wage-and-hour (WHD) history is still unverified.",
+      "confidence": "medium",
+      "source_url": "https://www.osha.gov/ords/imis/establishment.html",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-026",
+      "category": "press_financial",
+      "entity": "Punctual Pros / Broad Sky Partners",
+      "title": "Business Wire: Broad Sky Partners acquires Punctual Pros (terms undisclosed); deal advisors",
+      "filed_or_dated": "2024-04-03",
+      "filer_or_source_agency": "Business Wire (mirror on FinancialContent); also covered by LNP/LancasterOnline (2024-04-09), CPBJ, PE Hub, Axios Pro Rata, WSJ Pro, PitchBook, S&P, The Deal",
+      "key_figures": {
+        "terms": "not disclosed",
+        "zip_codes_served": 240,
+        "founded": "1958 as The Rohrer Company",
+        "ceo": "Matt Buckwalter (founder/CEO)",
+        "other_management_named": "Aaron Buckwalter",
+        "authority_brands_territories_cited": "over 2,800",
+        "bsp_financial_advisor": "Harris Williams",
+        "bsp_legal_advisor": "Greenberg Traurig",
+        "seller_financial_advisor": "Boxwood Partners",
+        "seller_accounting_advisor": "Trout CPA",
+        "seller_legal_advisor": "Barley Snyder"
+      },
+      "what_it_tells_us": "No price, revenue or EBITDA was disclosed in any of the listed coverage. A lower-middle-market sell-side bank (Boxwood) and a regional CPA firm (Trout CPA) point to a sub-$50M enterprise value. That is consistent with the PGIM loan size and the PPP-implied scale.",
+      "confidence": "high",
+      "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-027",
+      "category": "press_financial",
+      "entity": "Punctual Pros / Horvath Home Services",
+      "title": "PR Newswire: Punctual Pros acquires Horvath Home Services (Ocean and Monmouth Counties NJ)",
+      "filed_or_dated": "2024-12-03",
+      "filer_or_source_agency": "PR Newswire (issued by Punctual Pros)",
+      "key_figures": {
+        "terms": "not stated in release",
+        "horvath_operating_history": "more than 20 years",
+        "brands_acquired": "One Hour Heating & Air Conditioning, Benjamin Franklin Plumbing, Mister Sparky Electric",
+        "markets": "Ocean and Monmouth Counties, NJ",
+        "first_out_of_state_acquisition": true,
+        "authority_brands_territories_cited": "over 2,000",
+        "seller": "Frank Horvath (owner)"
+      },
+      "what_it_tells_us": "This is the first add-on and was probably funded by the delayed-draw term loan plus equity. At a PPP-implied ~$3-4M of pre-COVID revenue, it added about 6 territories and ~20-30% to revenue, a typical tuck-in at a lower multiple than the platform. It also brings Ocean County, the largest county by transfer volume in the user's deed dataset.",
+      "confidence": "high",
+      "source_url": "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-028",
+      "category": "industry_benchmark",
+      "entity": "Authority Brands (parent franchisor)",
+      "title": "Authority Brands corporate scale claims",
+      "filed_or_dated": "website as retrieved 2026-09-24",
+      "filer_or_source_agency": "authoritybrands.com (company website)",
+      "key_figures": {
+        "franchisor_brands": 15,
+        "franchise_owners": "more than 1,000",
+        "revenue_claim": "more than $2 billion in revenue",
+        "per_unit_goal": "grow franchise brands that average over $1 million in per-unit revenue",
+        "hq": "Columbia, MD"
+      },
+      "what_it_tells_us": "Punctual Pros is a multi-brand operator inside a $2B+ system. Its likely ~$0.9M revenue per territory (about $22M over 25 territories) is close to Authority's '$1M per unit' aspiration and above the One Hour and Ben Franklin system averages ($0.61M and $0.66M per territory).",
+      "confidence": "medium",
+      "source_url": "https://www.authoritybrands.com/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-029",
+      "category": "industry_benchmark",
+      "entity": "Plumbing/HVAC and electrical contractors (NAICS 23822, 23821), Lancaster County PA and Ocean County NJ",
+      "title": "BLS QCEW private-sector employment and average annual pay, 2019 and 2024",
+      "filed_or_dated": "2024 annual averages (2019 comparison)",
+      "filer_or_source_agency": "U.S. BLS Quarterly Census of Employment and Wages (open data API)",
+      "key_figures": {
+        "lancaster_23822_2024": {
+          "establishments": 203,
+          "employment": 2847,
+          "avg_annual_pay_usd": 76155,
+          "total_wages_usd": 216820127
+        },
+        "lancaster_23821_2024": {
+          "establishments": 158,
+          "employment": 2062,
+          "avg_annual_pay_usd": 80533
+        },
+        "ocean_nj_23822_2024": {
+          "establishments": 319,
+          "employment": 1971,
+          "avg_annual_pay_usd": 71558
+        },
+        "ocean_nj_23821_2024": {
+          "establishments": 231,
+          "employment": 1475,
+          "avg_annual_pay_usd": 65575
+        },
+        "lancaster_23822_2019_avg_pay_usd": 62157,
+        "ocean_23822_2019_avg_pay_usd": 55085
+      },
+      "what_it_tells_us": "Lancaster plumbing/HVAC wages rose ~22.5% from 2019 to 2024, which squeezes margins at a royalty-paying franchisee. At ~$76K average pay, ~113 PA employees imply ~$8.6M of wages (~$9.5-10M with benefits and taxes), which supports a PA revenue run-rate near $20M at a 40-45% total labor ratio. With ~2,847 plumbing/HVAC workers in Lancaster County, Punctual Pros (~100 there) holds roughly a 3-4% labor share, so it is local scale but not dominant.",
+      "confidence": "medium",
+      "source_url": "https://data.bls.gov/cew/data/api/2024/a/area/42071.csv",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "pp-fil-030",
+      "category": "county_deed_or_mortgage",
+      "entity": "Residential deed transfers in Punctual Pros' counties (PA: Lancaster, Dauphin, Chester, York, Montgomery; NJ: Ocean, Monmouth)",
+      "title": "90-day county recorder deed-transfer pull as a new-mover demand and marketing signal (user-compiled dataset)",
+      "filed_or_dated": "2026-01-02 to 2026-04-10",
+      "filer_or_source_agency": "County recorders of deeds (compiled in /Users/syed/BSP/data/pp_sales_90d.json; territory from pp_zips.json)",
+      "key_figures": {
+        "transfer_records": 7159,
+        "records_by_county": {
+          "Ocean": 3190,
+          "Chester": 1229,
+          "Lancaster": 1061,
+          "Dauphin": 1010,
+          "York": 297,
+          "Montgomery": 241,
+          "Monmouth": 131
+        },
+        "priced_arms_length_records_gte_10k": 1915,
+        "median_price_usd": 312500,
+        "total_priced_volume_usd": 680387442,
+        "records_in_modeled_territory_zips": 2195,
+        "territory_priced_records": 1644,
+        "territory_median_price_usd": 305750,
+        "territory_priced_volume_usd": 573868391,
+        "territory_meaningful_sales_90d": 2137,
+        "territory_homeowner_sales_90d": 1641,
+        "territory_zip_count": 248,
+        "territory_housing_units": 1001408,
+        "territory_owner_occupied_base": 675738,
+        "builder_grantor_records": 74,
+        "data_quality": "prices missing (0) for Ocean, Chester, York, Monmouth; York rows lack dates"
+      },
+      "what_it_tells_us": "The 248 modeled PA territory zips see ~2,100 meaningful sales per quarter (~8,500 a year). Each is a new owner who typically has inspection-driven HVAC, water-heater, panel and plumbing work in the first 12-24 months. Capturing 5% would add ~425 new customer relationships a year, meaningful against a ~$22M revenue base, and would make the deed feed a practical marketing portal. Ocean County, where Horvath operates, shows the heaviest transfer volume (3,190 in 90 days), so it deserves priority targeting once price and zip fields are backfilled.",
+      "confidence": "medium",
+      "source_url": "file:///Users/syed/BSP/data/pp_sales_90d.json",
+      "retrieved": "2026-09-24"
+    }
+  ]
+}

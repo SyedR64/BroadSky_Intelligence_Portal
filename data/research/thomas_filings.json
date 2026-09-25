@@ -1,0 +1,896 @@
+{
+ "meta": {
+  "dataset": "Thomas Scientific — filings & financial research track (Broad Sky Partners portfolio)",
+  "generated": "2026-09-24",
+  "method": "SEC EDGAR full-text search (efts) for 'Thomas Scientific', 'Thomas Scientific, LLC', 'BSP-TS', 'Broad Sky Partners'. Parsed schedule-of-investments tables from 19 MFIC/Apollo Investment Corp and 4 MAIPL 10-Q/10-K filings (Dec-2021 → Jun-2026). Parsed Form D XML for 5 BSP vehicles and N-PORT XML for the Barings/Cascade fund holding BSP-TS Co-Invest I. Pulled USASpending API (recipient profile, spending_over_time, spending_by_award, IDVs, subagency). Pulled Harvard Bioscience 8-K pro forma (Denville). Checked CourtListener RECAP search, PR Newswire company newsroom, Carlyle and Broad Sky news pages, ZoomInfo firmographics and Avantor XBRL. The WebSearch budget was exhausted, so discovery relied on direct fetches of known endpoints.",
+  "sources_summary": "SEC: 23 BDC periodic filings, 13 Form D/D-A, ~16 N-PORT, 4 proxies/8-K. Federal: USASpending API. Press: Carlyle release, 6 Thomas Scientific PR Newswire releases, Broad Sky news index. Other: CourtListener, ZoomInfo, SEC XBRL (Avantor).",
+  "caveats": [
+   "BDC data shows only Apollo's MFIC and MAIPL slices; total facility size, agent and the other lenders are inferred, not disclosed.",
+   "EV, EBITDA and leverage estimates are derived from BDC marks and equity cheques using LMM rules of thumb, not company financials.",
+   "ZoomInfo revenue ($300M) and employees (400) are modeled estimates.",
+   "The brief said Carlyle bought in 2015; Carlyle's own release says 2017. Founding year is 1900 in all sources checked, including the May-2026 125th-anniversary release.",
+   "The Business Wire, FederalPay, thomassci.com and businesswire newsroom pages returned HTTP 403; the Carlyle and PR Newswire versions were used instead.",
+   "Form D 'amount sold' is cumulative capital raised by each vehicle; the co-invest vehicles probably invest through BSP-TS, LP, so do not add the amounts together.",
+   "Verified 2026-09-24: sampled 33, confirmed 31, removed 2"
+  ],
+  "item_count": 31,
+  "financial_picture": "(1) Broad Sky's BSP-TS, LP raised $236.1M of equity at the 2021-12-14 close, later topped up to $257.1M, against a ~$335M Fund I; about $108M of the equity came from co-invest vehicles (Co-Invest I/II, management). That makes Thomas the fund's largest and most concentrated bet. (2) Debt is an Apollo/MidCap unitranche priced at L+625 with a 1% floor, maturing 2027-12-14, including a DDTL and revolver. MFIC's slice is about $35M and MAIPL's about $8M; if Apollo's BDCs hold the typical 15–25% of an Apollo-led deal, the total facility is about $180–300M. (3) At a typical 45–55% equity share, the $236M cheque implies an entry EV of about $430–525M. With about $200–275M of debt at 4.5–5.5x, that implies about $40–55M of LTM EBITDA at entry. That EBITDA was inflated by about $175M of FY2020–21 federal COVID swab and transport-media contracts plus commercial testing demand. (4) Revenue at entry is estimated at $300–400M (ZoomInfo models $300M today; the Carlyle roll-up added about $25M via Denville plus three other add-ons), so entry EBITDA margins were likely a COVID-flattered 12–15%. (5) The loan's pricing history traces performance: a step-down to L+550 in mid-2022 (leverage fell), a step-up to SOFR+640 in 2023, revolver drawn by Q4-2023, then a PIK amendment in Q4-2024 (SOFR+340 cash + 4.50% PIK) that points to cash interest coverage near 1.0–1.3x. (6) Federal revenue fell from $84–91M a year to $6.7–8.3M. Avantor, the closest listed peer, lost 12.8% of revenue from 2022 to 2025. Both are consistent with a 25–40% drop in Thomas's EBITDA from the COVID peak, to about $25–35M. (7) The sponsor put in about $21M of new money (preferred in Dec-2023 and more around the 2024 PIK amendment; MFIC's Jun-2026 SOI relabels these tranches as Class C and Class D units, not new 2026 money). The 2023 add-ons (Quintana, Day, Arrowhead) were small tuck-ins, not transformational. (8) Equity marks show a near-total impairment of the original common: Barings' $5M co-invest stake went from $4.99M to $6.9K, and MFIC's BSP-TS common went from $185K cost to $0. (9) The first-lien loan was carried at 95–97% of par through 2025 and marked down to 88.3% in Q2-2026, with 15 months left to maturity and only $0.74M of MFIC's revolver undrawn. Lenders now see EV at or slightly below total debt. (10) With estimated debt of about $210–310M after PIK accretion and a stressed 7–9x multiple, today's EV is plausibly $200–280M, implying EBITDA of about $25–35M and total leverage of about 7–10x. (11) The main near-term event is the December 2027 maturity: expect an amend-and-extend with more sponsor preferred, a lender-led recap (equitization), or a sale. The Q1-2026 return to all-cash interest may reflect a paydown or new preferred money rather than organic improvement. (12) Portfolio implication: Thomas is Broad Sky Fund I's most impaired and largest exposure, and should be tracked quarterly via MFIC 10-Q marks (next: the 2026-09-30 10-Q, around early November 2026).",
+  "estimate_table": [
+   {
+    "metric": "Equity invested at close (BSP-TS, LP)",
+    "estimate": "$236.1M (Dec-2021); $257.1M cumulative by Jan-2024",
+    "basis": "Form D / D-A amount sold",
+    "confidence": "high"
+   },
+   {
+    "metric": "Entry enterprise value",
+    "estimate": "$430–525M",
+    "basis": "$236M equity at an assumed 45–55% equity share of EV",
+    "confidence": "medium"
+   },
+   {
+    "metric": "Total first-lien facility (TL + DDTL + RCF)",
+    "estimate": "$180–300M",
+    "basis": "Apollo BDC holds ~$44M; typical 15–25% BDC share of Apollo/MidCap-led loans; EV minus equity",
+    "confidence": "low"
+   },
+   {
+    "metric": "Entry LTM EBITDA (COVID-inflated)",
+    "estimate": "$40–55M",
+    "basis": "Implied debt / 4.5–5.5x LMM leverage; EV / ~10x",
+    "confidence": "low"
+   },
+   {
+    "metric": "Revenue at entry (CY2021)",
+    "estimate": "$300–400M",
+    "basis": "ZoomInfo $300M today; $84–91M/yr federal COVID awards FY20–21; roll-up history",
+    "confidence": "low"
+   },
+   {
+    "metric": "Current revenue (CY2025/26)",
+    "estimate": "$250–320M",
+    "basis": "ZoomInfo $300M modeled; ~13% peer decline (Avantor) offset by 4 tuck-ins",
+    "confidence": "low"
+   },
+   {
+    "metric": "Current EBITDA",
+    "estimate": "$25–35M",
+    "basis": "PIK amendment implies ~1.0–1.3x cash interest coverage on ~$250M at ~9–10% all-in; loan at 88% of par and equity at zero",
+    "confidence": "low"
+   },
+   {
+    "metric": "Current total leverage",
+    "estimate": "7–10x",
+    "basis": "Debt $210–310M after PIK accretion / EBITDA $25–35M",
+    "confidence": "low"
+   },
+   {
+    "metric": "Loan all-in cost",
+    "estimate": "SOFR+640 (~10.1% with 3.7% SOFR) cash, as of 2026-06-30",
+    "basis": "MFIC Jun-2026 SOI",
+    "confidence": "high"
+   },
+   {
+    "metric": "Sponsor common equity value",
+    "estimate": "~0 (≤1% of cost)",
+    "basis": "Barings N-PORT $6.9K on $5.1M; MFIC common FV $0",
+    "confidence": "high"
+   },
+   {
+    "metric": "Federal revenue run-rate",
+    "estimate": "$7–8.5M/yr (FY2024–25)",
+    "basis": "USASpending obligations",
+    "confidence": "high"
+   },
+   {
+    "metric": "Employees",
+    "estimate": "~400 (plus ~70+ via NCI/Day tuck-ins)",
+    "basis": "ZoomInfo; press releases",
+    "confidence": "low"
+   }
+  ],
+  "data_gaps": [
+   "Total facility size, agent and full lender group not disclosed (Apollo private funds not public); no lender press release found.",
+   "No Moody's/S&P/KBRA/Fitch private rating found (private unitranche, likely unrated). No Debtwire/9fin/PE Hub summary retrieved (paywalled; web search budget exhausted).",
+   "Carlyle-era (2017–2021) debt: no BDC ever listed Thomas Scientific before Dec-2021, so the Carlyle-era lenders are unknown (likely bank/non-BDC credit).",
+   "Three of the four Carlyle-era add-ons are unnamed (only Denville, Jan-2018, confirmed).",
+   "PPP: FederalPay/ProPublica cross-checks blocked (HTTP 403); USASpending shows $0 loans.",
+   "NJ DORES entity filings and NJ/DE UCC lien searches not performed (paid portals); the UCC would confirm the collateral agent.",
+   "SAM.gov entity record not pulled (API key required); USASpending provides UEI CN1DHDM1HDZ5, DUNS 080887713 and business types.",
+   "OSHA/DOL WHD establishment data not queried (DOL enforcement API key required).",
+   "No Inc. 5000 or Lab Manager distributor-ranking entry found (web search unavailable).",
+   "No disclosed revenue figure ('$X million') found in press; ZoomInfo is modeled.",
+   "The Broad Sky Business Wire release (Capital Constellation terms) could not be read (HTTP 403)."
+  ],
+  "next_pulls": [
+   "MFIC 10-Q for 2026-09-30 (expected early Nov 2026): watch the Thomas loan mark (<88%?), non-accrual flag (footnote 14), maturity extension beyond 12/14/27, new preferred classes.",
+   "MAIPL 10-Q 2026-09-30 for confirmation; also scan Apollo Debt Solutions BDC and other Apollo vehicles' N-PORT/10-Q under 'Thomas Scientific'.",
+   "Barings/Cascade Private Capital Fund N-PORT 2026-09-30 for BSP TS Co-Invest I mark.",
+   "NJ and DE UCC-1 search on Thomas Scientific, LLC and BSP-TS entities to name the collateral agent (expected MidCap Financial Services).",
+   "SAM.gov entity API (UEI CN1DHDM1HDZ5) for ownership/CAGE, and a GSA eLibrary check.",
+   "DOL OSHA establishment search for 1654 High Hill Rd, Swedesboro NJ and the 8–9 distribution centers.",
+   "Re-run web search (when budget allows) for Carlyle 2017 acquisition terms, Carlyle-era add-ons, the 2021 Apollo/MidCap financing announcement, and any 2025–26 recapitalization or CEO-change news.",
+   "Form D amendments due ~Apr-2026 for BSP-TS vehicles (not yet indexed) to see further sponsor capital calls.",
+   "Competitor pulls: Thermo Fisher (Fisher Scientific channel) and VWR segment data, plus private peers (e.g., Stellar Scientific, Fisher-affiliated regional dealers) for the rivals track."
+  ]
+ },
+ "items": [
+  {
+   "category": "bdc_loan_schedule",
+   "title": "Apollo Investment Corp (now MFIC) 10-Q: first appearance of Thomas Scientific unitranche + BSP-TS common equity at close",
+   "filed_or_dated": "2022-02-03 (period 2021-12-31)",
+   "filer_or_source_agency": "Apollo Investment Corp / MidCap Financial Investment Corp (MFIC), SEC 10-Q",
+   "key_figures": {
+    "term_loan_commitment_par_usd_k": 31852,
+    "term_loan_cost_usd_k": 26088,
+    "term_loan_fair_value_usd_k": 26081,
+    "revolver_commitment_usd_k": 2963,
+    "revolver_drawn_usd_k": 0,
+    "unfunded_commitments_usd_k": 8148,
+    "pricing": "LIBOR+625 bps, 1.00% floor",
+    "maturity": "2027-12-14",
+    "co_invest_equity": "BSP-TS, LP common, 185 shares, cost $185K",
+    "footnote": "(9) co-investment with Apollo affiliates under SEC exemptive order"
+   },
+   "what_it_tells_us": "Confirms the Broad Sky buyout financing closed 2021-12-14 with an Apollo/MidCap-affiliated first-lien unitranche (6-year tenor, L+625). MFIC's slice was ~$26.5M funded term loan plus ~$5.3M delayed-draw term loan (DDTL, for add-ons) and a $2.96M revolver; Apollo also co-invested a small $185K in the BSP-TS, LP equity. Apollo appears to be the lead/agent group (co-investment across Apollo affiliates), so the full facility is several times MFIC's hold.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000127875222000004/ainv2022q310-q.htm",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-01"
+  },
+  {
+   "category": "bdc_loan_schedule",
+   "title": "MFIC 10-Q Jun-2022: term loan margin steps down to L+550; DDTL shown separately",
+   "filed_or_dated": "2022-08-02 (period 2022-06-30)",
+   "filer_or_source_agency": "MFIC (Apollo Investment Corp), SEC 10-Q",
+   "key_figures": {
+    "term_loan_par_usd_k": 26533,
+    "term_loan_fv_usd_k": 26287,
+    "term_loan_pricing": "L+550, 1.00% floor",
+    "ddtl_commitment_usd_k": 5185,
+    "ddtl_pricing": "L+625",
+    "ddtl_fv_usd_k": -48,
+    "bsp_ts_common_fv_usd_k": 217,
+    "bsp_ts_common_cost_usd_k": 185
+   },
+   "what_it_tells_us": "A 75 bp margin step-down six months after close usually signals a leverage-based pricing grid ratchet, meaning reported leverage fell (COVID-era EBITDA still flowing through). Equity was marked up 17% over cost at mid-2022, the high-water mark of the investment.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000127875222000019/ainv2023q110-q.htm",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-02"
+  },
+  {
+   "category": "bdc_loan_schedule",
+   "title": "MFIC 10-Q Sep-2022 / 10-KT Dec-2022: DDTL funded (NCI add-on), loan at ~par",
+   "filed_or_dated": "2022-11-03 and 2023-02-21 (periods 2022-09-30, 2022-12-31)",
+   "filer_or_source_agency": "MFIC, SEC 10-Q / 10-KT",
+   "key_figures": {
+    "term_loan_par_2022-09-30_usd_k": 31652,
+    "term_loan_fv_2022-09-30_usd_k": 31333,
+    "pricing_2022-09-30": "L+600",
+    "term_loan_par_2022-12-31_usd_k": 31572,
+    "term_loan_fv_2022-12-31_usd_k": 31124,
+    "pricing_2022-12-31": "L+550",
+    "unfunded_revolver_usd_k": 2963,
+    "bsp_ts_common_fv_2022-12-31_usd_k": 235
+   },
+   "what_it_tells_us": "Term principal jumped from $26.5M to $31.7M between June and September 2022, when the $5.2M DDTL was drawn. The timing matches the 2022-08-01 North Central Instruments (NCI) add-on. Equity was marked at 1.27x cost at year-end 2022, the peak mark for the equity.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000095017023003448/mfic-20221231.htm",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-03"
+  },
+  {
+   "category": "bdc_loan_schedule",
+   "title": "MFIC 2023 quarterly marks: SOFR transition, spread to S+640, equity marks fall below cost",
+   "filed_or_dated": "2023-05-02 / 2023-08-02 / 2023-11-07",
+   "filer_or_source_agency": "MFIC, SEC 10-Q",
+   "key_figures": {
+    "2023-03-31": {
+     "tl_par_usd_k": 31493,
+     "tl_fv_usd_k": 31010,
+     "pricing": "SOFR+625",
+     "common_fv_usd_k": 195
+    },
+    "2023-06-30": {
+     "tl_par_usd_k": 31413,
+     "tl_fv_usd_k": 30817,
+     "pricing": "SOFR+640",
+     "common_fv_usd_k": 138
+    },
+    "2023-09-30": {
+     "tl_par_usd_k": 31333,
+     "tl_fv_usd_k": 30753,
+     "pricing": "SOFR+640",
+     "revolver_pricing": "SOFR+565",
+     "common_fv_usd_k": 128
+    }
+   },
+   "what_it_tells_us": "The move from L+550 to SOFR+640 (roughly +90 bp including the credit-spread adjustment) suggests the pricing grid ratcheted back up as leverage rose after the COVID-testing revenue rolled off. The mark on the common equity fell from 1.27x to 0.69x cost during 2023, the first clear sign of underperformance.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000095017023060325/mfic-20230930.htm",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-04"
+  },
+  {
+   "category": "bdc_loan_schedule",
+   "title": "MFIC 10-K Dec-2023: revolver drawn at Prime+525 and new BSP-TS preferred equity appears",
+   "filed_or_dated": "2024-02-26 (period 2023-12-31)",
+   "filer_or_source_agency": "MFIC, SEC 10-K",
+   "key_figures": {
+    "tl_par_usd_k": 31254,
+    "tl_fv_usd_k": 30735,
+    "tl_pricing": "SOFR+640, 1.00% floor",
+    "revolver_commitment_usd_k": 2963,
+    "revolver_drawn_usd_k": 444,
+    "revolver_pricing": "Prime+525",
+    "preferred_equity": "BSP-TS, LP preferred, 17 shares, cost $17K, FV $18K",
+    "common_fv_usd_k": 161,
+    "top_holding_rank": "#10 largest MFIC position at 12/31/2023: $31M, 1.3% of portfolio (per MFIC merger 425 deck, 2024-03-04)"
+   },
+   "what_it_tells_us": "Late 2023 marks the first liquidity strain: the revolver was drawn and a preferred equity layer was issued above the common in BSP-TS, LP. The preferred timing matches the BSP-TS, LP Form D/A (+$21.0M of equity). The revolver's Prime-based draw suggests a short-notice draw.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000095017024020118/mfic-20231231.htm",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-05"
+  },
+  {
+   "category": "bdc_loan_schedule",
+   "title": "MFIC 2024 marks: term loan re-cut into TL + DDTL, revolver fully drawn by Q3-2024",
+   "filed_or_dated": "2024-05-07 / 2024-08-07 / 2024-11-07",
+   "filer_or_source_agency": "MFIC, SEC 10-Q",
+   "key_figures": {
+    "2024-03-31": {
+     "tl_par_usd_k": 31174,
+     "tl_fv_usd_k": 30772,
+     "revolver_drawn_usd_k": 741,
+     "revolver_lc_usd_k": 296,
+     "common_fv_usd_k": 164
+    },
+    "2024-06-30": {
+     "tl_par_usd_k": 26000,
+     "ddtl_par_usd_k": 5094,
+     "tl_fv_usd_k": 25589,
+     "ddtl_fv_usd_k": 5014,
+     "revolver_drawn_usd_k": 1259,
+     "common_fv_usd_k": 134
+    },
+    "2024-09-30": {
+     "tl_par_usd_k": 25933,
+     "ddtl_par_usd_k": 5081,
+     "revolver_drawn_usd_k": 2222,
+     "revolver_undrawn_usd_k": 444,
+     "common_fv_usd_k": 100
+    }
+   },
+   "what_it_tells_us": "Revolver use climbed from 0% to about 85% of commitment in nine months, a sign of cash burn or working-capital pressure. A $296K letter of credit was also issued. The equity mark fell to 0.54x cost by Q3-2024.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000095017024122744/mfic-20240930.htm",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-06"
+  },
+  {
+   "category": "bdc_loan_schedule",
+   "title": "MFIC 10-K Dec-2024: amendment converts part of the cash coupon to PIK (SOFR+340 cash + 4.50% PIK)",
+   "filed_or_dated": "2025-02-25 (period 2024-12-31)",
+   "filer_or_source_agency": "MFIC, SEC 10-K",
+   "key_figures": {
+    "tl_par_usd_k": 31448,
+    "tl_cost_usd_k": 31083,
+    "tl_fv_usd_k": 30746,
+    "tl_pricing": "SOFR+340 cash + 4.50% PIK, 1.00% floor (all-in margin ~SOFR+790)",
+    "revolver_drawn_usd_k": 2239,
+    "revolver_pricing": "SOFR+335 cash + 4.50% PIK",
+    "preferred": "30 shares, cost $25K, FV $28K",
+    "common_fv_usd_k": 97,
+    "portfolio_weight": "1.1% of MFIC portfolio (top-10 issuer list)"
+   },
+   "what_it_tells_us": "Moving part of the coupon to payment-in-kind (PIK) is a classic amendment to relieve cash interest. It suggests fixed-charge coverage had tightened, which is consistent with the post-COVID EBITDA decline plus SOFR near 4.3–5.3%. The sponsor put in more preferred equity (cost basis 17→25) alongside the amendment, and lenders took about 150 bp of extra all-in margin.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000095017025026688/mfic-20241231.htm",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-07"
+  },
+  {
+   "category": "bdc_loan_schedule",
+   "title": "MFIC 2025 marks: PIK at 4.25%, principal accreting, common equity near zero",
+   "filed_or_dated": "2025-05-12 / 2025-08-11 / 2025-11-06 / 2026-02-26",
+   "filer_or_source_agency": "MFIC, SEC 10-Q/10-K",
+   "key_figures": {
+    "2025-03-31": {
+     "tl_par_usd_k": 31782,
+     "tl_fv_usd_k": 30810,
+     "pik": "4.25%",
+     "common_fv_usd_k": 34
+    },
+    "2025-06-30": {
+     "tl_par_usd_k": 32124,
+     "tl_fv_usd_k": 31179,
+     "common_fv_usd_k": 42
+    },
+    "2025-09-30": {
+     "tl_par_usd_k": 32473,
+     "tl_fv_usd_k": 31298,
+     "common_fv_usd_k": 18
+    },
+    "2025-12-31": {
+     "tl_par_usd_k": 32846,
+     "tl_fv_usd_k": 31716,
+     "pik": "4.50%",
+     "revolver_drawn_usd_k": 2324,
+     "preferred_fv_usd_k": 34,
+     "common_fv_usd_k": 34
+    }
+   },
+   "what_it_tells_us": "Term principal grew about 4.4% in 2025 purely from PIK accrual, so leverage rose even without new borrowing. Lenders held the loan at 95–97% of par, meaning they still saw full recovery, while the sponsor common was marked at 10–20% of cost.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000119312526076499/mfic-20251231.htm",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-08"
+  },
+  {
+   "category": "bdc_loan_schedule",
+   "title": "MFIC 10-Q Mar-2026: PIK removed, loan back to all-cash SOFR+640",
+   "filed_or_dated": "2026-05-06 (period 2026-03-31)",
+   "filer_or_source_agency": "MFIC, SEC 10-Q",
+   "key_figures": {
+    "tl_par_usd_k": 32850,
+    "tl_cost_usd_k": 32608,
+    "tl_fv_usd_k": 31625,
+    "tl_pricing": "SOFR+640, 1.00% floor (cash)",
+    "revolver_drawn_usd_k": 2352,
+    "revolver_commitment_usd_k": 3092,
+    "preferred_fv_usd_k": 59,
+    "common_fv_usd_k": 10
+   },
+   "what_it_tells_us": "The PIK toggle ended and par stopped accreting ($32,846K→$32,850K). That implies the company resumed full cash interest, which can mean cash flow improved or the sponsor's preferred money funded interest. The preferred mark jumped to 2.4x cost while the common fell to $10K, so value moved into the new-money preferred.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000119312526208941/mfic-20260331.htm",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-09"
+  },
+  {
+   "category": "bdc_loan_schedule",
+   "title": "MFIC 10-Q Jun-2026 (latest): term loan marked to 88% of par; preferred split into Class C (zero) and Class D units; common at zero",
+   "filed_or_dated": "2026-08-06 (period 2026-06-30)",
+   "filer_or_source_agency": "MFIC, SEC 10-Q",
+   "key_figures": {
+    "tl_par_usd_k": 32850,
+    "tl_cost_usd_k": 32634,
+    "tl_fv_usd_k": 29004,
+    "tl_fv_pct_par": "88.3%",
+    "revolver_drawn_usd_k": 2352,
+    "revolver_fv_usd_k": 1988,
+    "revolver_undrawn_usd_k": 740,
+    "class_d_preferred": "13 units, cost $8K, FV $17K (same 13 units/$8K cost added in 2024; not new 2026 money)",
+    "class_c_preferred_fv": 0,
+    "common_fv": 0,
+    "mfic_unrealized_loss_q2_2026_usd_m": -3.0,
+    "mfic_unrealized_loss_h1_2026_usd_m": -3.1,
+    "maturity": "2027-12-14",
+    "class_c_preferred": "17 units, cost $17K, FV $0 (the Dec-2023 preferred tranche)"
+   },
+   "what_it_tells_us": "A 12% discount on a first-lien loan maturing in about 15 months signals real credit impairment and refinancing risk. The previously reported 30 preferred units ($25K cost) are now split into Class C (17 units/$17K, the Dec-2023 tranche) marked at zero and Class D (13 units/$8K, the 2024 tranche) marked at $17K, so only the later-money preferred carries value; the common is also at zero. The enterprise value is judged to be at or below the debt plus senior preferred. Thomas Scientific was the 5th-largest unrealized loser in MFIC's book for Q2-2026 (-$3.0M).",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000119312526335848/mfic-20260630.htm",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-10"
+  },
+  {
+   "category": "bdc_loan_schedule",
+   "title": "MidCap Apollo Institutional Private Lending (MAIPL) holds Thomas Scientific term loan",
+   "filed_or_dated": "2024-08-13 → 2026-08-13 (periods 2024-06-30 → 2026-06-30)",
+   "filer_or_source_agency": "MidCap Apollo Institutional Private Lending (CIK 2006758), SEC 10-Q/10-K",
+   "key_figures": {
+    "2024-06-30": {
+     "par_usd_k": 7939,
+     "fv_usd_k": 7813,
+     "pricing": "S+640"
+    },
+    "2024-12-31": {
+     "par_usd_k": 8029,
+     "fv_usd_k": 7850,
+     "pricing": "S+325 cash + 4.50% PIK"
+    },
+    "2025-12-31": {
+     "par_usd_k": 8386,
+     "fv_usd_k": 8098
+    },
+    "2026-06-30": {
+     "par_usd_k": 8387,
+     "fv_usd_k": 7405,
+     "fv_pct_par": "88.3%",
+     "pricing": "S+640"
+    }
+   },
+   "what_it_tells_us": "A second Apollo vehicle confirms the facility is spread across multiple Apollo/MidCap funds, which supports the view that MidCap is agent and the total loan is much larger than MFIC's roughly $35M. Its marks move in lockstep with MFIC's, including the Q2-2026 drop to 88% of par.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/2006758/000119312526349327/ck0002006758-20260630.htm",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-11"
+  },
+  {
+   "entity": "BSP-TS, LP",
+   "category": "sec_form_d",
+   "title": "Form D: BSP-TS, LP (Thomas Scientific acquisition vehicle) raised $236.1M of equity at close",
+   "filed_or_dated": "2021-12-28 (first sale 2021-12-14)",
+   "filer_or_source_agency": "SEC Form D, CIK 0001901071",
+   "key_figures": {
+    "total_amount_sold_usd": 236059230,
+    "investors": 12,
+    "min_investment_usd": 100000,
+    "exemption": "Rule 506(b), 3(c)(1)",
+    "related_person": "Tyler Zachem",
+    "address": "34 East 51st St, 11th Fl, New York",
+    "revenue_range": "Decline to Disclose"
+   },
+   "what_it_tells_us": "This is the best public anchor for the equity cheque: about $236M of equity at close, with the first sale on 2021-12-14, the same date as the loan origination. At a typical 45–55% equity share of enterprise value (EV), that implies an entry EV of about $430–525M.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1901071/000190107121000001/xslFormDX01/primary_doc.xml",
+   "retrieved": "2026-09-24",
+   "id": "ts-12"
+  },
+  {
+   "entity": "BSP-TS, LP",
+   "category": "sec_form_d",
+   "title": "Form D/A: BSP-TS, LP equity raised to $257.1M (+$21.0M follow-on)",
+   "filed_or_dated": "2024-01-18",
+   "filer_or_source_agency": "SEC Form D/A, CIK 0001901071",
+   "key_figures": {
+    "total_amount_sold_usd": 257078866,
+    "increase_vs_2021_usd": 21019636,
+    "investors": 13,
+    "min_investment_usd": 5000,
+    "offering": "Indefinite"
+   },
+   "what_it_tells_us": "About $21M of new equity went in by January 2024, which matches the preferred equity first shown in MFIC's 12/31/2023 schedule. That is roughly a 9% top-up to fund the 2023 add-ons (Quintana, Day, Arrowhead) and/or liquidity support.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1901071/000190107124000001/xslFormDX01/primary_doc.xml",
+   "retrieved": "2026-09-24",
+   "id": "ts-13"
+  },
+  {
+   "entity": "BSP-TS Co-Invest I, LLC / BSP-TS Co-Invest II, LLC / BSP-TS Management, LP",
+   "category": "sec_form_d",
+   "title": "Form D series for Thomas Scientific co-invest and management vehicles",
+   "filed_or_dated": "2021-12-28 → 2025-04-30",
+   "filer_or_source_agency": "SEC Form D, CIKs 0001900890, 0001917661, 0001902886",
+   "key_figures": {
+    "co_invest_I": {
+     "2021": 30000000,
+     "2024-04": 34783585,
+     "2025-04": 35871936,
+     "investors": 7,
+     "min_investment_usd": 1500000
+    },
+    "co_invest_II": {
+     "first_sale": "2022-03-15",
+     "2022": 55000000,
+     "2024-04": 57475204,
+     "2025-04": 59633599,
+     "investors": 3,
+     "min_investment_usd": 5000000
+    },
+    "management_lp": {
+     "2021": 12509230,
+     "2023-04": 12809230,
+     "2025-04": 12422444,
+     "investors_2025": 33
+    }
+   },
+   "what_it_tells_us": "The co-invest vehicles total about $108M, which suggests the $299–335M Broad Sky flagship fund syndicated a large share of the equity. Co-Invest II's three large LPs ($5M minimum), closing in March 2022 alongside the Capital Constellation announcement, are probably a post-close sell-down to Capital Constellation and similar investors (inference). About $12.5M of management rollover or co-investment from 22–33 holders means management has meaningful stakes.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1917661/000139834425008284/xslFormDX01/primary_doc.xml",
+   "retrieved": "2026-09-24",
+   "id": "ts-14"
+  },
+  {
+   "entity": "Broad Sky Partners, LP",
+   "category": "sec_form_d",
+   "title": "Form D: Broad Sky Partners, LP (Fund I) size",
+   "filed_or_dated": "2022-03-22 → 2025-04-30",
+   "filer_or_source_agency": "SEC Form D, CIK 0001917706",
+   "key_figures": {
+    "2022_sold_usd": 298710000,
+    "2023_sold_usd": 303720000,
+    "2024_sold_usd": 323760000,
+    "2025_sold_usd": 335000000,
+    "investors_2025": 46,
+    "placement_agent_fee_usd": 1560000,
+    "placement_agent": "Asante Capital Group Advisors LLC (fee $1.56M per 2025 Form D/A; was $1.35M in 2024 D/A)"
+   },
+   "what_it_tells_us": "Fund I is about $335M, so a $236–257M Thomas Scientific equity cheque could not sit in the fund alone. That confirms heavy co-invest and LP syndication, and makes Thomas the largest and most concentrated exposure in the portfolio.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1917706/000139834425008250/xslFormDX01/primary_doc.xml",
+   "retrieved": "2026-09-24",
+   "id": "ts-15"
+  },
+  {
+   "entity": "BSP TS Co-Invest I, LLC (held by Barings Private Equity Opportunities & Commitments Fund / Cascade Private Capital Fund)",
+   "category": "other",
+   "title": "N-PORT marks on a $5M LP stake in BSP-TS Co-Invest I show equity written down to ~0",
+   "filed_or_dated": "2022-05-31 → 2026-08-28 (periods 2022-03-31 → 2026-06-30)",
+   "filer_or_source_agency": "SEC N-PORT-P, CIK 0001864609",
+   "key_figures": {
+    "commitment_basis_usd": "~5.0–5.13M",
+    "fv_2022-03-31_usd": 4987655,
+    "fv_2022-12-31_usd": 5008752,
+    "fv_2023-12-31_usd": 4933345,
+    "fv_2024-03-31_usd": 5385331,
+    "fv_2024-09-30_usd": 3044308,
+    "fv_2024-12-31_usd": 2542618,
+    "fv_2025-03-31_usd": 2506096,
+    "fv_2025-06-30_usd": 555592,
+    "fv_2025-09-30_usd": 541256,
+    "fv_2025-12-31_usd": 12778,
+    "fv_2026-03-31_usd": 33319,
+    "fv_2026-06-30_usd": 6871
+   },
+   "what_it_tells_us": "A third-party mark by an independent fund lines up with the MFIC marks. The co-invest common equity held at about 1.0x until early 2024, fell to about 0.5x by year-end 2024 and to about 0.1x by mid-2025, and was effectively zero (0.1%) by year-end 2025. That points to EV falling below net debt plus preferred claims.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1864609/000119312526373850/primary_doc.xml",
+   "retrieved": "2026-09-24",
+   "id": "ts-16"
+  },
+  {
+   "entity": "Carlyle / Broad Sky Partners",
+   "category": "press_financial",
+   "title": "Carlyle announces sale of Thomas Scientific to Broad Sky Partners",
+   "filed_or_dated": "2022-01-27",
+   "filer_or_source_agency": "The Carlyle Group press release",
+   "key_figures": {
+    "carlyle_hold": "2017–2022 (~5 years)",
+    "carlyle_era_add_ons": 4,
+    "distribution_service_centers": 8,
+    "founded": 1900,
+    "ceo_at_sale": "Charles Simmons",
+    "sell_side_advisors": "Jefferies (lead), Baird",
+    "seller_counsel": "Latham & Watkins",
+    "price": "not disclosed"
+   },
+   "what_it_tells_us": "The press release corrects the brief: Carlyle's ownership began in 2017, not 2015. The sale ran as a banked auction (Jefferies/Baird) that closed at the COVID-testing demand peak, which explains the rich entry leverage and valuation.",
+   "confidence": "high",
+   "source_url": "https://www.carlyle.com/media-room/news-release-archive/carlyle-announces-sale-thomas-scientific-broad-sky-partners",
+   "retrieved": "2026-09-24",
+   "id": "ts-17"
+  },
+  {
+   "entity": "Harvard Bioscience, Inc. / Denville Scientific",
+   "category": "press_financial",
+   "title": "Carlyle-era add-on: Thomas Scientific bought Denville Scientific from Harvard Bioscience for ~$20M",
+   "filed_or_dated": "2018-01-26 (agreement 2018-01-22)",
+   "filer_or_source_agency": "Harvard Bioscience 8-K Ex. 99.2 (SEC)",
+   "key_figures": {
+    "price_usd_m": 20,
+    "earn_out_usd_m": 3,
+    "cash_at_close_usd_m": 17,
+    "denville_revenue_2015_usd_k": 26980,
+    "denville_revenue_2016_usd_k": 25298,
+    "denville_revenue_9m2017_usd_k": 18658,
+    "denville_gross_margin_2016": "34.8% (1 - 16,494/25,298)",
+    "implied_ev_revenue": "~0.8x"
+   },
+   "what_it_tells_us": "This is the one Carlyle-era add-on with public financials: about $25M of revenue bought at about 0.8x sales. It gives a lab-distribution gross margin benchmark of about 35% for private-label and consumable-heavy lines, and shows Carlyle's roll-up was buying at low multiples.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1123494/000117184318000685/exh_992.htm",
+   "retrieved": "2026-09-24",
+   "id": "ts-19"
+  },
+  {
+   "category": "press_financial",
+   "title": "BSP-era add-on #1: North Central Instruments (NCI), Brooklyn Park MN",
+   "filed_or_dated": "2022-08-02 (closed 2022-08-01)",
+   "filer_or_source_agency": "PR Newswire (Thomas Scientific)",
+   "key_figures": {
+    "nci_employees": 60,
+    "nci_founded": 1967,
+    "acquisition_count": "5th since late 2017",
+    "ts_distribution_centers": 8,
+    "ceo": "Charles Simmons",
+    "nci_focus": "cleanroom, microscopy (Leica dealer since 1990), histology"
+   },
+   "what_it_tells_us": "This was Thomas's first Midwest footprint. It was funded by the roughly $5.2M DDTL draw seen in MFIC's Q3-2022 schedule, which scales to a larger draw across the whole facility. A 60-person dealer implies roughly $15–30M of revenue (estimate).",
+   "confidence": "high",
+   "source_url": "https://www.prnewswire.com/news-releases/thomas-scientific-bolsters-distribution-and-sales-capabilities-with-acquisition-of-nci-301597482.html",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-20"
+  },
+  {
+   "category": "press_financial",
+   "title": "BSP-era add-ons #2–3: Quintana Supply (Haverhill MA) and Day Associates (Dracut MA)",
+   "filed_or_dated": "2023-08-03 / 2023-08-04 (closed 2023-08-01 / 2023-08-02)",
+   "filer_or_source_agency": "PR Newswire (Thomas Scientific)",
+   "key_figures": {
+    "quintana_founded": 1990,
+    "day_founded": 1977,
+    "day_employees": 10,
+    "acquisition_count": "6th since late 2017",
+    "ts_distribution_centers": 9,
+    "stocking_locations_added_since_2017": 8,
+    "ceo": "Stan Haas",
+    "svp_controlled_environments": "Kareem Dossa"
+   },
+   "what_it_tells_us": "These were small tuck-ins in cleanroom and controlled-environment consumables for Northeast medical-device and semiconductor customers. They are a push into higher-margin critical-environment consumables to replace COVID-testing volume.",
+   "confidence": "high",
+   "source_url": "https://www.prnewswire.com/news-releases/thomas-scientific-expands-distribution-and-sales-capabilities-with-the-acquisition-of-quintana-supply-301891643.html",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-21"
+  },
+  {
+   "category": "press_financial",
+   "title": "BSP-era add-on #4: Arrowhead Forensics (Lenexa KS)",
+   "filed_or_dated": "2023-10-19 (closed 2023-10-05)",
+   "filer_or_source_agency": "PR Newswire (Thomas Scientific)",
+   "key_figures": {
+    "arrowhead_founded": "~1993",
+    "ts_distribution_centers": 9,
+    "arrowhead_leaders": "Pat Snedden (President), Brad Brown"
+   },
+   "what_it_tells_us": "This adds a forensics and law-enforcement vertical, and it shows up in federal data: an ATF forensic-imaging BPA in 2026 and DEA/FBI/Secret Service orders. The three 2023 deals coincide with the revolver draw and the new preferred equity, which suggests they were partly equity-funded.",
+   "confidence": "high",
+   "source_url": "https://www.prnewswire.com/news-releases/thomas-scientific-broadens-portfolio-and-sales-expertise-with-the-acquisition-of-arrowhead-forensics-301961348.html",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-22"
+  },
+  {
+   "category": "press_financial",
+   "title": "Leadership: Stan Haas named President & CEO; Lynn Calpeter (BSP Operating Partner) is Chair",
+   "filed_or_dated": "2023-04-25",
+   "filer_or_source_agency": "PR Newswire (Thomas Scientific)",
+   "key_figures": {
+    "new_ceo": "Stan Haas (ex-COO, ex-Affiliated Distributors COO, ex-VWR)",
+    "prior_ceo": "Charles Simmons (6 years; remains on board)",
+    "chair": "Lynn Calpeter (Broad Sky Operating Partner, ex-GE finance)",
+    "acquisitions_under_simmons": 5
+   },
+   "what_it_tells_us": "A CEO change about 15 months after the buyout, with a sponsor operating partner as chair, is consistent with the sponsor stepping in as performance weakened in 2023. A later release in May 2026 names Adrian Whipple as CFO & COO and does not name Haas; whether Haas is still CEO is unverified.",
+   "confidence": "high",
+   "source_url": "https://www.prnewswire.com/news-releases/thomas-scientific-appoints-stan-haas-to-president-and-chief-executive-officer-301806043.html",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-23"
+  },
+  {
+   "category": "press_financial",
+   "title": "Thomas Scientific 125-year anniversary release (latest corporate press)",
+   "filed_or_dated": "2026-05-27",
+   "filer_or_source_agency": "PR Newswire (Thomas Scientific)",
+   "key_figures": {
+    "executives_named": "Adrian Whipple (CFO & COO), Diane Skala (VP Corporate & Supplier Marketing)",
+    "revenue": "not disclosed",
+    "employees": "not disclosed"
+   },
+   "what_it_tells_us": "The release gives no financial figures. The combined CFO/COO title and the absence of a named CEO may point to a leadership change during the 2026 restructuring window (unverified).",
+   "confidence": "medium",
+   "source_url": "https://www.prnewswire.com/news-releases/thomas-scientific-celebrates-125-years-of-advancing-scientific-discovery-302780856.html",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-24"
+  },
+  {
+   "category": "other",
+   "title": "USASpending: federal prime contract obligations by fiscal year (UEI CN1DHDM1HDZ5 + legacy DUNS)",
+   "filed_or_dated": "FY2008–FY2026 (FY2026 partial to 2026-09)",
+   "filer_or_source_agency": "USASpending.gov API (Treasury)",
+   "key_figures": {
+    "FY2014": 621607,
+    "FY2015": 622025,
+    "FY2016": 749433,
+    "FY2017": 291959,
+    "FY2018": 497476,
+    "FY2019": 223206,
+    "FY2020": 90881439,
+    "FY2021": 84224785,
+    "FY2022": 6658203,
+    "FY2023": 6734524,
+    "FY2024": 7697807,
+    "FY2025": 8298735,
+    "FY2026_ytd": 5550692,
+    "lifetime_by_agency_usd": {
+     "DoD": 116201356,
+     "HHS": 65340073,
+     "DHS": 26359091,
+     "DOJ": 1995811,
+     "VA": 1362658
+    },
+    "recipient_business_types": "small_business; foreign_owned_and_us_located_business; LLC",
+    "hq": "1654 High Hill Rd, Swedesboro NJ 08085"
+   },
+   "what_it_tells_us": "Federal COVID-testing demand brought about $175M of obligations over FY2020–21, against less than $1M a year before and about $7–8M a year after. That swing inflated the LTM EBITDA Broad Sky bought on in December 2021. The post-2022 federal run-rate of $7–8M (growing about 8–10% a year) is under 3% of estimated revenue.",
+   "confidence": "high",
+   "source_url": "https://www.usaspending.gov/recipient/57b253c2-516a-d9e3-a34d-f6c43264d885-C/all",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-25"
+  },
+  {
+   "category": "other",
+   "title": "USASpending: largest COVID-era awards (NP swabs, viral transport media)",
+   "filed_or_dated": "2020-05 → 2021-05",
+   "filer_or_source_agency": "USASpending.gov (DLA, HHS/ASPR, FEMA)",
+   "key_figures": {
+    "SPE2DS21F0025_DLA_flocked_NP_swabs_usd": 51845880,
+    "SPE2DS21F0041_DLA_flocked_NP_swabs_usd": 24139096,
+    "75A50120C00178_ASPR_NP_swabs_usd": 23310000,
+    "75A50120C00135_ASPR_VTM_usd": 20212500,
+    "75A50120C00140_ASPR_NP_swabs_usd": 13985297,
+    "70FB7020F00000118_FEMA_media_usd": 13395058,
+    "70FB7020F00000106_FEMA_VTM_usd": 12073546
+   },
+   "what_it_tells_us": "Seven awards total about $159M, all for commodity testing consumables. They are non-recurring and probably lower-margin pass-through, but they flattered the 2020–21 financials used for the sale.",
+   "confidence": "high",
+   "source_url": "https://www.usaspending.gov/recipient/57b253c2-516a-d9e3-a34d-f6c43264d885-C/all",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-26"
+  },
+  {
+   "category": "other",
+   "title": "Federal contract vehicles (IDVs): DLA ECAT, NIH BPAs, CDC, Army, ATF",
+   "filed_or_dated": "2005 → 2026",
+   "filer_or_source_agency": "USASpending.gov IDV search",
+   "key_figures": {
+    "DLA_ECAT": [
+     "SPE2DE20D0006 (2019-12-19)",
+     "SPE2DF25D0001 (2024-12-19)"
+    ],
+    "DLA_other": [
+     "SPE2DP21D0004 Med/Surg MTO (2020)",
+     "SPE2D020D0013 (2020)"
+    ],
+    "NIH_BPAs": [
+     "HHSN263201500002B",
+     "HHSN263201600080B",
+     "HHSN263201800010B",
+     "75N98024A00181 (2024)"
+    ],
+    "CDC": [
+     "75D30120A08191",
+     "75D30121A10892"
+    ],
+    "Army": "W911QY18A0008 lab supplies BPA (2018)",
+    "ATF": "15A00026AAQA00041 forensic imaging BPA (2026-03-09)",
+    "EPA": "EPBPA15H0003 national lab supplies BPA",
+    "GSA_MAS_schedule": "none found in USASpending IDV list",
+    "FY22-26_top_subagencies_usd": {
+     "DLA": 29414285,
+     "VA": 1336517,
+     "DEA": 806282,
+     "NIH": 633978
+    }
+   },
+   "what_it_tells_us": "Federal sales run through DLA ECAT (electronic catalog) and agency BPAs, not a GSA Multiple Award Schedule. The 2024 ECAT renewal and the 2026 ATF BPA show the government channel is intact and adding forensics volume.",
+   "confidence": "high",
+   "source_url": "https://www.usaspending.gov/recipient/57b253c2-516a-d9e3-a34d-f6c43264d885-P/all",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-27"
+  },
+  {
+   "category": "sba_ppp",
+   "title": "PPP: no PPP/SBA loan found under Thomas Scientific UEI in USASpending",
+   "filed_or_dated": "2020–2021",
+   "filer_or_source_agency": "USASpending.gov recipient profile (loan face value)",
+   "key_figures": {
+    "total_face_value_loan_amount_usd": 0,
+    "loan_transactions": 0,
+    "federalpay_lookup": "HTTP 403 (not verified)"
+   },
+   "what_it_tells_us": "As expected for a Carlyle-owned company, no PPP loan appears (PPP loans are reported in USASpending as SBA loan face value). This is medium confidence because the FederalPay and ProPublica cross-checks were blocked.",
+   "confidence": "medium",
+   "source_url": "https://www.usaspending.gov/recipient/57b253c2-516a-d9e3-a34d-f6c43264d885-P/all",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-28"
+  },
+  {
+   "entity": "Ortho Clinical Diagnostics / Covetrus / CF Finance Acquisition Corp",
+   "category": "other",
+   "title": "SEC proxy mentions: Carlyle related-party purchases and Thomas Scientific board members",
+   "filed_or_dated": "2019-12-02 / 2021-04-01 / 2022-05-02",
+   "filer_or_source_agency": "SEC DEF 14A filings",
+   "key_figures": {
+    "ortho_purchases_from_ts_fy2021_usd_m": 2.3,
+    "board_chair_2019": "Mr. Sharp (CF Finance Acquisition Corp director bio: 'Chairman of Thomas Scientific')",
+    "director_since_2018": "Mr. Malenfant (ex-VWR Americas President; DWK Life Sciences Exec. Chair)"
+   },
+   "what_it_tells_us": "Carlyle stacked the board with VWR and lab-supply veterans. The Ortho figure ($2.3M of purchases from a Carlyle portfolio company) is a small data point on Thomas's clinical-diagnostics customer base.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1828443/000095017022006776/ocdx_-_proxy_statement_-.htm",
+   "retrieved": "2026-09-24",
+   "id": "ts-30"
+  },
+  {
+   "category": "litigation",
+   "title": "CourtListener: no material recent litigation with Thomas Scientific as a named party; appears as a trade creditor in customer bankruptcies",
+   "filed_or_dated": "2004 → 2026",
+   "filer_or_source_agency": "CourtListener RECAP",
+   "key_figures": {
+    "named_party_dockets": 5,
+    "latest_named_party_case": "Allman III v. Thomas Scientific, Inc. (Bankr. M.D.N.C. adv. 20-06039, 2020; preference-type)",
+    "historic": "Thomas Scientific v. Agilent (D.N.J. 2010, contract)",
+    "creditor_mentions_2025_2026": [
+     "Azzur Group entities (D. Del. 2025)",
+     "Molecular Templates (D. Del. 2025)",
+     "Desktop Metal (S.D. Tex. 2025)",
+     "Wolfspeed (S.D. Tex. 2025)",
+     "Cannabist Co. (D. Del. 2026)",
+     "U.S. TelePacific (S.D. Tex. 2026)"
+    ],
+    "total_docket_mentions": 158
+   },
+   "what_it_tells_us": "There are no lawsuits big enough to matter. The creditor listings show exposure to distressed biotech, contract-lab, semiconductor and cannabis customers, which adds to 2025–26 bad-debt and volume headwinds.",
+   "confidence": "medium",
+   "source_url": "https://www.courtlistener.com/?q=%22Thomas+Scientific%22&type=r",
+   "entity": "Thomas Scientific, LLC",
+   "retrieved": "2026-09-24",
+   "id": "ts-31"
+  },
+  {
+   "entity": "Avantor, Inc. (VWR) — competitor",
+   "category": "industry_benchmark",
+   "title": "Competitor benchmark: Avantor (VWR) revenue 2021–2025 from SEC XBRL",
+   "filed_or_dated": "FY2017–FY2025 10-Ks",
+   "filer_or_source_agency": "SEC XBRL companyfacts, CIK 1722482",
+   "key_figures": {
+    "revenue_usd_m": {
+     "2020": 6394,
+     "2021": 7386,
+     "2022": 7512,
+     "2023": 6967,
+     "2024": 6784,
+     "2025": 6552
+    },
+    "gross_profit_usd_m": {
+     "2021": 2503,
+     "2022": 2603,
+     "2023": 2364,
+     "2024": 2279,
+     "2025": 2139
+    },
+    "gross_margin": {
+     "2022": "34.7%",
+     "2025": "32.6%"
+    },
+    "revenue_change_2022_2025": "-12.8%"
+   },
+   "what_it_tells_us": "The largest pure-play lab-supply distributor shrank about 13% from 2022 to 2025 with about 210 bp of gross-margin compression, as post-COVID destocking and weak biotech funding hit lab demand. Thomas faced the same headwind with far more leverage.",
+   "confidence": "high",
+   "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001722482.json",
+   "retrieved": "2026-09-24",
+   "id": "ts-32"
+  },
+  {
+   "entity": "MidCap Financial Investment Corp",
+   "category": "lender_press",
+   "title": "Lender identity: Apollo/MidCap platform (co-investment under SEC exemptive order); no standalone lender press found",
+   "filed_or_dated": "2021-12 → 2026-08",
+   "filer_or_source_agency": "MFIC/MAIPL SOI footnote (9); MFIC merger 425 investor deck",
+   "key_figures": {
+    "mfic_total_commitment_2026-06-30_usd_k": 35942,
+    "maipl_par_2026-06-30_usd_k": 8387,
+    "known_apollo_hold_usd_k": 44329,
+    "mfic_top10_rank_2023-12-31": "#10, $31M, 1.3% of portfolio"
+   },
+   "what_it_tells_us": "The facility is led by the Apollo/MidCap direct-lending platform. The two disclosed Apollo BDC holds total about $44M, and other Apollo private funds and partners (not public) hold the rest. No Churchill, Antares, Golub, Twin Brook or Blackstone BDC lists the name in EDGAR full-text search.",
+   "confidence": "medium",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000119312524058024/d804394d425.htm",
+   "retrieved": "2026-09-24",
+   "id": "ts-33"
+  }
+ ]
+}

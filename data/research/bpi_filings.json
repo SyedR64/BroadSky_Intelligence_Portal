@@ -1,0 +1,585 @@
+{
+  "meta": {
+    "dataset": "BPI (Bully Pulpit International, fka Bully Pulpit Interactive), financial filings and public-record research, part of the Broad Sky Partners portfolio and competitor track",
+    "generated": "2026-09-24",
+    "subject": {
+      "company": "Bully Pulpit International (BPI Group); legal entities incl. Bully Pulpit Interactive, LLC (DC), BPI Europe LLC (DE), Bully Pulpit Limited (UK)",
+      "hq": "1445 New York Ave NW, 5th Floor, Washington DC 20005",
+      "founder_ceo": "Andrew Bleeker",
+      "sponsor": "Broad Sky Partners (majority, Apr 2023; vehicle BSP-BPI Holdings LLC)",
+      "offices_verified": "Washington DC, New York, Chicago, San Francisco, Los Angeles, Miami, Boston (2026), London, Berlin, Dusseldorf, Brussels, Oslo, Zurich (14 offices / 6 countries as of Mar 2025)"
+    },
+    "method": "Primary-source pulls only; web search budget was exhausted, so no search-engine results were used. Sources: SEC EDGAR full-text search (efts) and archive/submissions APIs with a declared User-Agent; OpenFEC schedule_b/by_recipient aggregates (DEMO_KEY; itemized pulls hit the rate limit); USASpending.gov award and transaction APIs; UK Companies House public pages (company, officers, PSC, charges, filing history); iXBRL accounts parsed; the MR01 debenture was OCR'd with macOS Vision; CourtListener v4 search API; BPI press releases via bpigroup.com sitemap; peer 10-Ks (PPHC, Stagwell). All figures come from the cited documents. Estimates are labelled as such in estimate_table.",
+    "sources_summary": "SEC: 3 Form D filings (BSP-BPI Holdings, Broad Sky Fund I, PineBridge PC III), PPHC S-1/424B4/10-K, Stagwell 10-K, Yelp and Lord Abbett proxy/N-CSR bios. FEC: by-recipient totals for 9 cycles, 2010-2026. USASpending: PPP award and transaction history. Companies House: 4 BPI UK entities, 2 sets of accounts for Seven Hills, 1 for Message House, 8 charge registrations, and the debenture instrument. CourtListener: 1 material docket. bpigroup.com: 5 acquisition releases.",
+    "caveats": [
+      "FEC disbursements are gross billings to BPI, mostly pass-through media spend; they are not BPI revenue. The by-recipient aggregation may include memo or duplicate entries and only covers federal committees; state and local committees, 501(c)(4)s and corporate advocacy clients are not captured.",
+      "Committee C00703975 is shown by FEC under its current name 'Fight for the People PAC'. We identify it as the Biden (2020) / Biden-Harris (2024) principal campaign committee from its ID history and timing; the committee history endpoint was rate-limited, so this should be confirmed.",
+      "PineBridge Private Credit III as the specific lending vehicle is an inference from agent identity and vintage. No public schedule of investments names BPI.",
+      "The PPP implied payroll assumes the standard 2.5x-monthly-payroll formula with the $100K per-employee cap, so it understates true payroll.",
+      "Seven Hills and Message House file abbreviated or filleted UK accounts with no P&L; profit is inferred from retained-earnings changes, assuming no dividends.",
+      "An EDGAR hit for 'BPI Intermediate Holdings, Inc.' (Cliffwater Corporate Lending Fund: first-lien SOFR+775, maturity 4/30/2026, $9.75M) is almost certainly a different company, because the maturity predates BPI's Dec-2023 facility and it has a separate revolver. It was excluded from items.",
+      "Estimates in estimate_table are analyst inferences with explicit bases; treat them as ranges, not facts.",
+      "Verified 2026-09-24: sampled 23, confirmed 21, removed 2",
+      "Verification notes 2026-09-24: bpi-008 (FEC 2020 cycle) and bpi-009 (FEC 2010-2026 cycle series) were removed because OpenFEC returned HTTP 429 (shared DEMO_KEY rate limit) for over an hour, so their figures could not be re-checked; the 2024-cycle total they cite ($115,309,926) was independently confirmed in bpi-007. Corrections: bpi-014 (the release lists BOLDT's own cities as Brussels, Berlin, London, Oslo, Zurich; Dusseldorf is not attributed to BOLDT), bpi-021 (exhibit 10.12 is PPHC's Bank of America credit agreement, and the lease appears in its schedule), bpi-023 (source repointed from the EDGAR browse page to the FY2025 10-K filed 2026-03-13). Seven Hills FY2025 accounts name the consolidating parent as Bully Pulpit Holdings, LLC (Delaware). bpi-019's bpigroup.com-sourced people items (LaBolt, Robertson, Whiting, Mandala) were not re-checked; Gibbs (Yelp DEF 14A) and Shalett (Lord Abbett N-CSR) were confirmed."
+    ],
+    "item_count": 21,
+    "financial_picture": "(1) BPI is a sponsor-backed, levered buy-and-build platform: Broad Sky put $90.0M of equity into BSP-BPI Holdings LLC in April 2023 (Form D), about 27% of its $335M Fund I, which implies LP co-invest. (2) A senior secured Credit and Guaranty Agreement followed on 7 Dec 2023, with PineBridge Private Credit Agent LLC as administrative agent and Alter Domus as collateral agent. It was amended on 29 Oct 2024, the day the UK add-ons closed, and the UK subsidiaries granted all-asset debentures in Jan 2025. So the facility funds M&A, and debt has probably grown with each tuck-in. (3) Scale is best measured by headcount: more than 250 staff in Dec 2023 (after BOLDT), more than 325 in Nov 2024 and more than 350 in Mar 2025, across 14 offices in 6 countries. Adding Agado (May 2025) and 365 Sherpas (May 2026), we estimate about 375-425 people today. (4) Applying public-affairs and PR net revenue per head of about $240-340K gives 2025 net (fee) revenue of roughly $85-125M, while gross billings including pass-through media are materially higher. (5) The PPP record ($2.221M approved Apr 2020, cancelled 5 May 2020) implies about $10.7M of capped payroll and roughly 100-150 staff in early 2020, so the company has roughly tripled in five years, about half through acquisitions. (6) Political work is large but cyclical: federal committees paid BPI $115.3M in the 2024 cycle, including $114.2M from the Biden/Harris committee, and $96.5M in 2020, against only $3.1M in 2022 and $41K so far in 2026. 2024 was therefore a peak year and 2025 an off-year trough, a pattern Stagwell confirms with a $62.7M off-year advocacy decline and a 28.5% segment EBITDA drop in 2025. (7) Listed peers bound margins: PPHC earns a 24-26% adjusted EBITDA margin and Stagwell Communications 26-33% of net revenue. For a media-heavy BPI we assume 18-24% of net revenue, or about $17-28M of 2025 EBITDA, with 2024 likely higher. (8) With typical lower-middle-market leverage of 3.5-5.0x, senior debt is likely about $60-110M, but the principal is not disclosed anywhere public. (9) Sponsor equity of $90M suggests an entry enterprise value of about $150-220M, depending on whether acquisition debt was in place at close (the credit agreement post-dates the close by 7 months), or about 10-13x an estimated $14-18M of 2022-23 EBITDA. (10) UK entities give hard data points: Seven Hills has about 40 staff, retained about £0.85M of FY2025 earnings and held £1.73M cash; Message House had 16 staff, £1.80M cash and £3.04M net assets. That supports an estimate of UK annual revenue in the low-to-mid-teens of millions of pounds across about 70 London staff. (11) Overall, BPI looks like a roughly $100M-plus fee-revenue, roughly $20-25M EBITDA agency that has diversified from US Democratic political media into corporate affairs and Europe. It will likely be marketed around the 2027-28 cycle to strategics (e.g. Stagwell, PPHC, FGS, Teneo) or a larger sponsor.",
+    "estimate_table": [
+      {
+        "metric": "Group headcount (Sept 2026)",
+        "estimate": "~375-425",
+        "basis": ">350 disclosed Mar 2025 (14 offices) + Agado (May 2025) + 365 Sherpas (May 2026, est. 20-40 staff); Seven Hills trend -4 heads in 2025",
+        "confidence": "medium"
+      },
+      {
+        "metric": "Headcount early 2020",
+        "estimate": "~100-150",
+        "basis": "PPP $2.221M implies ~$10.7M PPP-eligible payroll ($100K cap); DC agency avg capped comp ~$75-95K",
+        "confidence": "medium"
+      },
+      {
+        "metric": "Net (fee) revenue FY2025",
+        "estimate": "$85-125M",
+        "basis": "~360 avg FTE x $240-340K net revenue/FTE (PR and public-affairs norms; PPHC and Stagwell Communications ratios)",
+        "confidence": "low"
+      },
+      {
+        "metric": "Net (fee) revenue FY2024",
+        "estimate": "$95-140M",
+        "basis": "FY2025 range plus election uplift: $115M FEC federal billings at ~5-15% agency take, plus non-federal political and advocacy work",
+        "confidence": "low"
+      },
+      {
+        "metric": "Federal political gross billings, 2024 cycle",
+        "estimate": "$115.3M (hard floor for total political billings)",
+        "basis": "FEC schedule_b by_recipient; excludes state, local and non-FEC advocacy",
+        "confidence": "high"
+      },
+      {
+        "metric": "Adj. EBITDA FY2025",
+        "estimate": "$17-28M (18-24% of net revenue)",
+        "basis": "PPHC 24.3% margin; Stagwell Communications 26.4% of net revenue in off-year 2025; BPI media-heavy mix and integration costs push it lower",
+        "confidence": "low"
+      },
+      {
+        "metric": "Senior secured debt outstanding",
+        "estimate": "$60-110M",
+        "basis": "3.5-5.0x of $17-25M EBITDA; facility dated 2023-12-07, amended 2024-10-29 for UK M&A; agent PineBridge",
+        "confidence": "low"
+      },
+      {
+        "metric": "Entry enterprise value, Apr 2023",
+        "estimate": "$150-220M (~10-13x est. 2022-23 EBITDA of $14-18M)",
+        "basis": "$90.0M equity (Form D); equity at 45-60% of capitalization if debt was used, or all-equity with a later recap (credit agreement signed 7 months after close)",
+        "confidence": "low"
+      },
+      {
+        "metric": "UK platform (Seven Hills + Message House) annual revenue",
+        "estimate": "£8-12M",
+        "basis": "~57 combined staff (41+16) at ~£140-200K revenue/head; Seven Hills FY2025 retained earnings +£0.85M",
+        "confidence": "low"
+      },
+      {
+        "metric": "Public-peer valuation benchmark",
+        "estimate": "~8.4x EV / 2025 Adj. EBITDA (PPHC)",
+        "basis": "28.93M shares x $12.25 IPO price + $26.6M net debt, divided by $45.4M adj. EBITDA",
+        "confidence": "high"
+      }
+    ],
+    "data_gaps": [
+      "BDC schedule of investments (Technique A): no BDC, interval fund or 10-K/10-Q on EDGAR lists a BPI or Bully Pulpit loan. The lender (PineBridge) runs private funds with no public schedules, so principal, spread and fair value are unknown.",
+      "Lender press or credit ratings (Technique E): no public KBRA, Moody's, S&P or Fitch rating or lender press release found. 9fin, Debtwire and PitchBook were not accessible (paywalled; web search budget exhausted).",
+      "O'Dwyer's and PRovoke fee-income rankings and Inc. 5000 (Technique D): no ranked fee income found. PRovoke, PR Week, PE Hub, The Middle Market and Business Wire deal articles returned 403 or paywall, so deal-press revenue and headcount at entry (Apr 2023) are unverified.",
+      "PPP jobs reported and lender: USASpending shows amount and cancellation only; ProPublica (bot check) and FederalPay (403) were unavailable.",
+      "Itemized FEC disbursements (dates, descriptions, memo flags) and committee name history: OpenFEC DEMO_KEY rate-limited (HTTP 429). State-level political ad spending was not pulled.",
+      "DC DLCP CorpOnline and Delaware entity details, and US UCC-1 filings (DC Recorder of Deeds / DE UCC): not accessible without login or captcha. The UK charges stand in for them.",
+      "Svoboda Capital's earlier investment (size and date) is not confirmed in any public filing; only the 2017-2022 outside board seat (Shalett) supports an earlier institutional round.",
+      "Deal terms for BOLDT, Seven Hills, Message House, Propper Daley, Agado and 365 Sherpas are not disclosed. German Handelsregister filings for BOLDT and 365 Sherpas were not pulled.",
+      "OSHA and DOL WHD: not searched (low relevance for an office-based agency)."
+    ],
+    "next_pulls": [
+      "Download Bully Pulpit Limited's first accounts (due by 2026-10-23, period to 2025-12-31). This may be the first group-level UK filing with intercompany debt and possibly consolidated UK turnover.",
+      "Download Message House Ltd accounts for the 17 months to 2025-12-31 (due 2026-09-30, may already be filed) and Message House Holdings first accounts (due 2026-10-09).",
+      "OCR the rest of the 130-page MR01 instruments (charges ...0001) for the credit facility's defined terms (facility types such as delayed-draw term loan or revolver, any amounts) and the full list of US credit parties.",
+      "Re-run OpenFEC with a registered API key: itemized schedule_b for C00703975 (2020, 2024) plus by-recipient totals for rivals SKDK, GMMB, Precision Strategies, Waterfront Strategies, Blue State, Mothership Strategies and Rising Tide Interactive, to size BPI's share of Democratic digital spend.",
+      "Pull the SBA PPP FOIA CSV (150k+ file) to see whether cancelled-loan records keep JobsReported and lender name for FAIN 6222807001.",
+      "Handelsregister (Berlin-Charlottenburg / Dusseldorf) for BOLDT GmbH and 365 Sherpas GmbH: Bilanz filings on unternehmensregister.de give balance sheet size and employee bands.",
+      "DC Recorder of Deeds UCC search for 'Bully Pulpit Interactive' and 'BPI Europe LLC' to confirm the US UCC-1 by Alter Domus and its filing date.",
+      "Monitor MetLife filings (PineBridge was acquired by MetLife) for any private-credit disclosure. Monitor Cliffwater, Lord Abbett and other interval funds for syndicated BPI paper if the facility is refinanced.",
+      "Read the Moore v. SMP final judgment and docket entries to confirm BPI's dismissal or no liability."
+    ]
+  },
+  "items": [
+    {
+      "id": "bpi-001",
+      "entity": "BSP-BPI Holdings LLC (Broad Sky vehicle for BPI)",
+      "category": "sec_form_d",
+      "title": "Form D, equity offering by BSP-BPI Holdings LLC",
+      "filed_or_dated": "2023-05-08",
+      "filer_or_source_agency": "SEC EDGAR (CIK 0001976569)",
+      "key_figures": {
+        "total_amount_sold_usd": 90000000,
+        "total_offering_amount": "Indefinite",
+        "number_of_investors": 6,
+        "date_of_first_sale": "2023-04-20",
+        "minimum_investment_accepted_usd": 3907847,
+        "security_type": "Equity",
+        "signer": "Tyler Zachem, President",
+        "jurisdiction": "Delaware, formed 2023",
+        "address": "34 E 51st St, 11th Fl, New York NY"
+      },
+      "what_it_tells_us": "This is the equity cheque behind Broad Sky's April 2023 majority investment in BPI: $90.0M sold to 6 investors, with the first sale on 2023-04-20, one week before the 2023-04-27 announcement. The $3.9M minimum and small investor count point to a Broad Sky fund plus a few LP co-investors. It sets a floor on sponsor equity. Any seller rollover would sit outside this vehicle.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1976569/000197656923000001/primary_doc.xml",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-002",
+      "entity": "Broad Sky Partners, LP (Fund I)",
+      "category": "sec_form_d",
+      "title": "Form D/A, Broad Sky Partners LP fund offering (latest amendment)",
+      "filed_or_dated": "2025-04-30",
+      "filer_or_source_agency": "SEC EDGAR (CIK 0001917706)",
+      "key_figures": {
+        "total_amount_sold_usd": 335000000,
+        "number_of_investors": 46,
+        "date_of_first_sale": "2021-12-31",
+        "minimum_investment_accepted_usd": 100000,
+        "bpi_vehicle_equity_as_pct_of_fund_sold": "~26.9% ($90.0M / $335.0M)"
+      },
+      "what_it_tells_us": "BPI's $90M equity vehicle equals about 27% of Fund I's $335M. That is well above a normal single-deal concentration limit (usually 15-20%), so part of the $90M is very likely LP co-invest. BPI is still one of the largest exposures in Broad Sky's portfolio.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1917706/000139834425008250/primary_doc.xml",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-003",
+      "entity": "BPI Europe LLC / Bully Pulpit Limited / Seven Hills Communications Ltd / Message House Holdings Ltd / Message House Ltd",
+      "category": "ucc_lien",
+      "title": "UK Companies House charge register (MR01): security for BPI group credit facility",
+      "filed_or_dated": "2025-01-24 (created); registered 2025-01-28 to 2025-02-03",
+      "filer_or_source_agency": "UK Companies House",
+      "key_figures": {
+        "charges_per_UK_entity": 2,
+        "status": "Outstanding",
+        "persons_entitled": "Alter Domus (US) LLC as Collateral Agent",
+        "charge_types": "fixed charge, floating charge over all property and undertaking, IP charge, negative pledge",
+        "entities_charged": [
+          "Bully Pulpit Limited 16037592",
+          "Seven Hills Communications Limited 07078911",
+          "Message House Holdings Limited 16006492",
+          "Message House Ltd 08597751"
+        ],
+        "certified_by": "Sidley Austin LLP"
+      },
+      "what_it_tells_us": "The UK subsidiaries bought in October 2024 were added as guarantors and chargors under a US-style senior secured facility that uses a third-party collateral agent (Alter Domus). This is the UK equivalent of a UCC-1 filing. It confirms BPI carries sponsor-style senior secured debt with all-asset security and a negative pledge.",
+      "confidence": "high",
+      "source_url": "https://find-and-update.company-information.service.gov.uk/company/07078911/charges",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-004",
+      "entity": "BPI Europe LLC (Parent/borrower) and BPI credit parties",
+      "category": "ucc_lien",
+      "title": "Debenture dated 24 Jan 2025 (Companies House charge 0707 8911 0002 instrument), which names the credit agreement and agent",
+      "filed_or_dated": "2025-01-24",
+      "filer_or_source_agency": "UK Companies House (Sidley Austin-certified instrument; text read by OCR)",
+      "key_figures": {
+        "credit_agreement": "Credit and Guaranty Agreement originally dated 7 December 2023",
+        "latest_amendment": "Consent and First Amendment to Credit and Guaranty Agreement dated 29 October 2024",
+        "administrative_agent": "PineBridge Private Credit Agent LLC",
+        "collateral_agent": "Alter Domus (US) LLC",
+        "parent_chargor": "BPI Europe LLC, Delaware entity file no. 2695272, 1445 New York Ave NW 5th Fl, Washington DC 20005",
+        "uk_bank_accounts": "Lloyds Bank PLC (Message House); Coutts & Co. (Seven Hills)",
+        "principal_amount": "not disclosed in debenture"
+      },
+      "what_it_tells_us": "BPI's senior lender group is led by PineBridge Investments' private-credit arm (administrative agent). The credit agreement was signed on 7 Dec 2023, about 7 months after the Broad Sky close and one week before the BOLDT acquisition (14 Dec 2023), so the facility was probably a post-close recap and/or acquisition facility. The 29 Oct 2024 'Consent and First Amendment' matches the Seven Hills and Message House closing date, which suggests an incremental or delayed-draw funding for the UK add-ons.",
+      "confidence": "high",
+      "source_url": "https://find-and-update.company-information.service.gov.uk/company/07078911/filing-history",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-005",
+      "entity": "PineBridge Private Credit III, L.P. (and parallel/RFF feeders)",
+      "category": "sec_form_d",
+      "title": "Form D/A, PineBridge Private Credit III fund family",
+      "filed_or_dated": "2023-08-25",
+      "filer_or_source_agency": "SEC EDGAR (CIK 0001936785)",
+      "key_figures": {
+        "total_amount_sold_usd": 1035000000,
+        "number_of_investors": 25,
+        "date_of_first_sale": "2022-08-31"
+      },
+      "what_it_tells_us": "PineBridge Private Credit III (about $1.0B, 2022-23 vintage) was the flagship PineBridge direct-lending fund when BPI's December 2023 facility closed, so it is the most likely lending vehicle. This is an inference: no filing ties the fund to BPI. PineBridge's funds are private, so there is no public schedule of investments showing BPI loan pricing or fair value.",
+      "confidence": "medium",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1936785/000193678523000001/primary_doc.xml",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-006",
+      "entity": "Bully Pulpit Interactive, LLC",
+      "category": "sba_ppp",
+      "title": "PPP loan (SBA 7(a) guaranteed, CFDA 59.073), approved then cancelled",
+      "filed_or_dated": "2020-04-07 (approved); 2020-05-05 (revised to $0)",
+      "filer_or_source_agency": "SBA via USASpending.gov (award FAIN 6222807001)",
+      "key_figures": {
+        "face_value_usd": 2221000,
+        "original_subsidy_cost_usd": 2259201.2,
+        "revision_2020_05_05_face_value_usd": -2221000,
+        "net_loan_value_usd": 0,
+        "borrower_address": "1445 New York Ave NW, 5th Floor, Washington DC",
+        "implied_PPP_eligible_annual_payroll_usd": "~10,660,000 (= $2.221M / 2.5 x 12; per-employee comp capped at $100K)",
+        "jobs_reported": "not available (cancelled loans are omitted from SBA public loan-level file)"
+      },
+      "what_it_tells_us": "BPI was approved for $2.221M in the first PPP round and returned or cancelled it within 4 weeks, around the SBA's May 2020 safe-harbor deadline for repaying loans after the 'economic necessity' guidance. The loan size implies roughly $10.7M of PPP-eligible annual payroll. Because comp was capped at $100K per head, actual payroll was higher. This suggests about 100-150 employees in early 2020.",
+      "confidence": "high",
+      "source_url": "https://api.usaspending.gov/api/v2/awards/ASST_NON_6222807001_073/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-007",
+      "entity": "Bully Pulpit Interactive LLC (vendor)",
+      "category": "other",
+      "title": "FEC Schedule B disbursements to BPI, 2024 cycle (federal committees)",
+      "filed_or_dated": "2023-01-01 to 2024-12-31 (cycle 2024)",
+      "filer_or_source_agency": "Federal Election Commission (OpenFEC schedule_b/by_recipient)",
+      "key_figures": {
+        "cycle_total_usd": 115309926,
+        "from_C00703975_usd": 114233175,
+        "C00703975_itemized_count": 88,
+        "C00703975_current_FEC_name": "Fight for the People PAC (principal presidential committee of Biden (2020) and Biden/Harris (2024), later renamed)",
+        "next_largest_payers": {
+          "The PAC for America's Future": 302500,
+          "DNC": 191306,
+          "McBride for Delaware": 186780
+        }
+      },
+      "what_it_tells_us": "BPI was a lead digital media vendor to the 2024 Democratic presidential campaign, with $114.2M paid by one committee. These are gross media billings that are largely passed through to platforms. BPI's own fee or commission is probably a single-digit to mid-teens percentage, so about $6-17M of 2024 fee revenue came from this one client. That makes 2024 a peak revenue and EBITDA year and 2025 a structural comparison trough.",
+      "confidence": "high",
+      "source_url": "https://api.open.fec.gov/v1/schedules/schedule_b/by_recipient/?recipient_name=bully%20pulpit&cycle=2024",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-010",
+      "entity": "Bully Pulpit Interactive, LLC",
+      "category": "other",
+      "title": "USASpending.gov recipient search: federal contracts, grants, IDVs",
+      "filed_or_dated": "FY2008-FY2026",
+      "filer_or_source_agency": "USASpending.gov (Treasury)",
+      "key_figures": {
+        "federal_contracts_usd": 0,
+        "federal_grants_usd": 0,
+        "idvs": 0,
+        "loans": "1 (the cancelled PPP loan above)",
+        "name_variants_found": [
+          "BULLY PULPIT INTERACTIVE, LLC (DC)",
+          "BULLY PULPIT INC (Salt Lake City UT, unrelated, $12,500 PPP)"
+        ]
+      },
+      "what_it_tells_us": "BPI has no federal prime contracts or grants. Its public-sector work is political and advocacy-committee work, not government procurement. The Utah 'Bully Pulpit Inc' is an unrelated entity.",
+      "confidence": "high",
+      "source_url": "https://api.usaspending.gov/api/v2/search/spending_by_award/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-011",
+      "entity": "Bully Pulpit Limited (UK holdco, 16037592)",
+      "category": "state_business_filing",
+      "title": "Companies House: incorporation, officers, PSC",
+      "filed_or_dated": "2024-10-23 (incorporated); officer change 2025-10-01; RO change 2026-09-17",
+      "filer_or_source_agency": "UK Companies House",
+      "key_figures": {
+        "incorporated": "2024-10-23",
+        "SIC": "96090",
+        "directors": [
+          "Andrew Bleeker (appointed 2024-10-23)",
+          "Benny Seto (appointed 2025-10-01)"
+        ],
+        "resigned": "Carolyn Snyder McVie (resigned 2025-10-01)",
+        "PSC": "No registrable person (statement), i.e. owned through a US parent, BPI Europe LLC",
+        "registered_office": "6th Floor, 11 Belgrave Road, London SW1V 1RB (from 2026-09-17)",
+        "first_accounts_due": "2026-10-23 for period to 2025-12-31"
+      },
+      "what_it_tells_us": "The UK acquisition holdco was set up days before the Seven Hills and Message House acquisitions (29 Oct 2024). The director change from McVie to Seto on 1 Oct 2025, which also appears on every UK subsidiary, most likely marks a group finance-leadership change (McVie was probably the prior CFO; not verified). The Sept 2026 move of all UK entities to one Belgrave Road office shows London integration. The first group-level UK accounts are due 23 Oct 2026 and should show consolidated UK revenue.",
+      "confidence": "high",
+      "source_url": "https://find-and-update.company-information.service.gov.uk/company/16037592",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-012",
+      "entity": "Seven Hills Communications Limited (07078911), a BPI UK subsidiary",
+      "category": "state_business_filing",
+      "title": "Small-company accounts FY2024 and FY2025 (filleted; P&L not filed)",
+      "filed_or_dated": "2025-09-26 (FY2024); 2026-06-08 (FY2025)",
+      "filer_or_source_agency": "UK Companies House",
+      "key_figures": {
+        "avg_employees_2023": 40,
+        "avg_employees_2024": 41,
+        "avg_employees_2025": 37,
+        "net_assets_gbp_2023": 847824,
+        "net_assets_gbp_2024": 1444994,
+        "net_assets_gbp_2025": 2299753,
+        "cash_gbp_2024": 786092,
+        "cash_gbp_2025": 1734275,
+        "debtors_gbp_2025": 1096155,
+        "retained_earnings_increase_gbp_2024": 557543,
+        "retained_earnings_increase_gbp_2025": 854759,
+        "acquired": "2024-10-29 (PSC now Bully Pulpit Limited, 75%+)",
+        "sellers": "Nicholas Giles and Michael Hayman (co-founders) among others"
+      },
+      "what_it_tells_us": "Seven Hills is a roughly 40-person London strategic-comms firm. Its retained earnings rose about £0.85M in FY2025, and cash accumulated at subsidiary level, so it is solidly profitable, likely around £1M+ pre-tax with revenue probably £5-7M at typical UK agency fee rates. The note that it guarantees 'group financing arrangements' without being a borrower is consistent with the PineBridge facility.",
+      "confidence": "high",
+      "source_url": "https://find-and-update.company-information.service.gov.uk/company/07078911/filing-history",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-013",
+      "entity": "Message House Ltd (08597751) / Message House Holdings Ltd (16006492), a BPI UK subsidiary",
+      "category": "state_business_filing",
+      "title": "Unaudited micro/small accounts FY ending 31 Jul 2024 and ownership chain",
+      "filed_or_dated": "2025-04-30 (FY Jul-2024 accounts)",
+      "filer_or_source_agency": "UK Companies House",
+      "key_figures": {
+        "avg_employees_FY2023": 12,
+        "avg_employees_FY2024": 16,
+        "net_assets_gbp_2024": 3038274,
+        "net_assets_gbp_2023": 2809678,
+        "cash_gbp_2024": 1801632,
+        "stocks_gbp_2024": 920560,
+        "debtors_gbp_2024": 464865,
+        "acquired": "2024-10-29 (Holdings owned by Bully Pulpit Limited; founders Matt and Erica Carter ceased as PSCs)",
+        "year_end_change": "extended from 31 Jul 2025 to 31 Dec 2025"
+      },
+      "what_it_tells_us": "Message House is a small (about 16-person) insights, polling and messaging firm with a cash-rich balance sheet at acquisition (£1.8M cash, £3.0M net assets). The seller probably received much of that value on top of the purchase price. Its year-end has been moved to December to line up with BPI group reporting.",
+      "confidence": "high",
+      "source_url": "https://find-and-update.company-information.service.gov.uk/company/08597751/filing-history",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-014",
+      "entity": "Bully Pulpit International (BPI)",
+      "category": "press_financial",
+      "title": "BPI acquires BOLDT (European business strategy/public policy/communications)",
+      "filed_or_dated": "2023-12-14",
+      "filer_or_source_agency": "BPI press release (bpigroup.com)",
+      "key_figures": {
+        "BOLDT_headcount": ">50 professionals",
+        "BOLDT_countries": 5,
+        "combined_headcount": ">250 team members",
+        "combined_countries": 6,
+        "combined_offices": 10,
+        "office_list": [
+          "Berlin",
+          "Brussels",
+          "Chicago",
+          "Washington DC",
+          "Dusseldorf",
+          "London",
+          "New York",
+          "Oslo",
+          "San Francisco",
+          "Zurich"
+        ]
+      },
+      "what_it_tells_us": "This was the first add-on after the Broad Sky deal, closing one week after the 7 Dec 2023 credit agreement. BPI had about 200 staff before BOLDT (inferred: >250 combined less >50 BOLDT). Per the release, BOLDT's own offices were Brussels, Berlin, London, Oslo and Zurich (5 countries); Dusseldorf appears only in the combined 10-office list, so the release does not say it came with BOLDT.",
+      "confidence": "high",
+      "source_url": "https://bpigroup.com/bpi-adds-european-business-strategy-public-policy-and-communications-offering-with-acquisition-of-boldt/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-015",
+      "entity": "Bully Pulpit International (BPI)",
+      "category": "press_financial",
+      "title": "BPI acquires Seven Hills and Message House (UK)",
+      "filed_or_dated": "2024-11-12",
+      "filer_or_source_agency": "BPI press release (bpigroup.com); also PRovoke Media 2024-11-12",
+      "key_figures": {
+        "BPI_headcount": ">325 communications, creative, measurement and media professionals",
+        "London_headcount": "~70",
+        "offices": 12,
+        "countries": 6,
+        "London_rank": "second-largest location after Washington DC"
+      },
+      "what_it_tells_us": "Headcount went from more than 250 to more than 325 in 11 months. Seven Hills (41) and Message House (16), about 57 people from Companies House, account for most of the gain, so organic net hiring was modest. London became BPI's #2 hub.",
+      "confidence": "high",
+      "source_url": "https://bpigroup.com/bpi-expands-uk-presence-and-insights-practice-with-acquisitions-of-seven-hills-and-message-house/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-016",
+      "entity": "Bully Pulpit International (BPI)",
+      "category": "press_financial",
+      "title": "BPI acquires Propper Daley (culture-first social impact agency, Los Angeles)",
+      "filed_or_dated": "2025-03-06",
+      "filer_or_source_agency": "BPI press release (bpigroup.com)",
+      "key_figures": {
+        "BPI_headcount": ">350",
+        "offices": 14,
+        "countries": 6,
+        "new_markets": [
+          "Los Angeles",
+          "Miami"
+        ]
+      },
+      "what_it_tells_us": "This is the fourth add-on and the latest disclosed group headcount (more than 350). It adds West Coast entertainment and cultural-influence capability.",
+      "confidence": "high",
+      "source_url": "https://bpigroup.com/bpi-acquires-propper-daley-to-create-change-through-culture-first-strategies/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-017",
+      "entity": "Bully Pulpit International (BPI)",
+      "category": "press_financial",
+      "title": "BPI acquires Agado Communications (sports), Mark Jones to lead sports offering",
+      "filed_or_dated": "2025-05-13",
+      "filer_or_source_agency": "BPI press release (bpigroup.com)",
+      "key_figures": {
+        "Agado_founded": 2020,
+        "headcount": "not disclosed",
+        "deal_terms": "not disclosed"
+      },
+      "what_it_tells_us": "This fifth add-on was a small sports-communications tuck-in. It shows a steady cadence of about 2 tuck-ins per year funded under the credit facility and/or equity.",
+      "confidence": "high",
+      "source_url": "https://bpigroup.com/bpi-acquires-agado-communications-appoints-mark-jones-to-lead-sports-offering-strategy-and-growth/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-018",
+      "entity": "Bully Pulpit International (BPI)",
+      "category": "press_financial",
+      "title": "BPI acquires 365 Sherpas (Berlin corporate-affairs consultancy)",
+      "filed_or_dated": "2026-05-05",
+      "filer_or_source_agency": "BPI press release (bpigroup.com)",
+      "key_figures": {
+        "365_Sherpas_founded": 2013,
+        "award": "Germany's Communications Consultancy of the Year 2025 (PR Report Awards)",
+        "Germany_rank_in_BPI": "third-largest global market",
+        "headcount": "not disclosed",
+        "deal_terms": "not disclosed"
+      },
+      "what_it_tells_us": "The sixth add-on makes Germany BPI's #3 market after the US and UK, with BOLDT BPI plus 365 Sherpas. International revenue is now a material share of the group, which reduces US election-cycle volatility.",
+      "confidence": "high",
+      "source_url": "https://bpigroup.com/bpi-strengthens-transatlantic-corporate-affairs-offer-with-acquisition-of-365-sherpas/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-019",
+      "entity": "Bully Pulpit International (BPI)",
+      "category": "other",
+      "title": "Leadership and people signals in SEC proxy filings and BPI releases",
+      "filed_or_dated": "2017-2026",
+      "filer_or_source_agency": "SEC EDGAR (Yelp DEF 14A 2026-04-17; Lord Abbett N-CSR/10-K 2025-2026); bpigroup.com",
+      "key_figures": {
+        "Robert_Gibbs": "Partner at BPI Mar 2020-Jul 2024; senior advisor since Jul 2024 (Yelp DEF 14A)",
+        "Lisa_Shalett": "Board member of Bully Pulpit Interactive 2017-2022 (Lord Abbett trustee bios)",
+        "Ben_LaBolt": "returned to BPI as President (BPI release)",
+        "Jo-ann_Robertson": "named President, Europe (Sept 2025), commenced 2026-03-03",
+        "Dave_Whiting": "named Partner, Boston presence (Aug 2026)",
+        "alliance": "Mandala Partners strategic alliance (Nov 2025)"
+      },
+      "what_it_tells_us": "An independent outside director (a former Goldman partner) sat on BPI's board from 2017 to 2022. That matches a formal board under the earlier minority institutional investor (Svoboda Capital, per the task brief; not independently verified here) before Broad Sky. Senior hiring in 2025-26 is focused on Europe and on new offerings, which fits a buy-and-build plan.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1345016/000134501626000027/yelp-20260417.htm",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-020",
+      "entity": "Bully Pulpit Interactive LLC",
+      "category": "litigation",
+      "title": "Moore v. Senate Majority PAC et al., N.D. Ala. 4:19-cv-01855 (defamation over 2017 Alabama Senate ads); 11th Cir. 23-13531 and 22-13406",
+      "filed_or_dated": "2019-11-15 (filed); docket terminated 2026-08-03",
+      "filer_or_source_agency": "CourtListener (RECAP/PACER mirror)",
+      "key_figures": {
+        "defendants": [
+          "Senate Majority PAC",
+          "Priorities USA",
+          "Guy Cecil",
+          "Waterfront Strategies",
+          "Bully Pulpit Interactive LLC"
+        ],
+        "BPI_counsel": "Marc Elias (filings 2020)",
+        "appeal_23-13531": "Senate Majority PAC is the sole appellant",
+        "appeal_22-13406": "Moore v. Guy Cecil, published opinion 2024-07-31"
+      },
+      "what_it_tells_us": "BPI was a named defendant in a long-running political-ad defamation case. The 2023 appeal lists only SMP as appellant, so BPI does not appear to be carrying a judgment. Exposure looks limited, but the case shows the content-liability risk in political advertising. The dispositions were not read in full.",
+      "confidence": "medium",
+      "source_url": "https://www.courtlistener.com/docket/16478802/moore-v-senate-majority-pac/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-021",
+      "entity": "Bully Pulpit Interactive, LLC",
+      "category": "other",
+      "title": "Historic DC lease: 1140 Connecticut Ave NW (shared with Blue Engine Message & Media), listed in the lease schedule to PPHC's Bank of America Credit Agreement filed as S-1 exhibit 10.12",
+      "filed_or_dated": "2025-10-10 (S-1); lease dated 2012-06-29",
+      "filer_or_source_agency": "SEC EDGAR (PPHC S-1, CIK 0001903508)",
+      "key_figures": {
+        "lease_date": "2012-06-29",
+        "landlord": "WRIT 1140 CT, LLC (now Zircon 1140 Conn Property LLC)",
+        "co-tenants": "Blue Engine Message & Media, LLC and Bully Pulpit Interactive, LLC",
+        "current_BPI_HQ": "1445 New York Ave NW, 5th Floor, Washington DC 20005"
+      },
+      "what_it_tells_us": "BPI and Blue Engine (now PPHC's Seven Letter) shared an office lease in their early years, a historical link to a now-public competitor. BPI has since moved HQ to 1445 New York Ave NW.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1903508/000162828025044817/exhibit1012-sx1.htm",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-022",
+      "entity": "Public Policy Holding Company, Inc. (PPHC; Nasdaq/AIM: PPHC), a public-affairs rival",
+      "category": "industry_benchmark",
+      "title": "PPHC FY2025 10-K and Jan 2026 Nasdaq IPO: public comparable for DC public affairs and communications",
+      "filed_or_dated": "2026-03-31 (10-K); 2026-01-29 (424B4)",
+      "filer_or_source_agency": "SEC EDGAR (CIK 0001903508)",
+      "key_figures": {
+        "revenue_2025_usd_m": 186.5,
+        "revenue_2024_usd_m": 149.6,
+        "organic_growth_2025": "6.2%",
+        "adj_EBITDA_2025_usd_m": 45.4,
+        "adj_EBITDA_margin_2025": "24.3%",
+        "adj_EBITDA_2024_usd_m": 38.6,
+        "adj_EBITDA_margin_2024": "25.8%",
+        "corp_comms_public_affairs_segment_rev_2025_usd_m": 65.1,
+        "net_debt_2025YE_usd_m": 26.6,
+        "IPO_price_usd": 12.25,
+        "shares_outstanding_2026-03-24": 28928777,
+        "implied_equity_value_at_IPO_price_usd_m": 354.4,
+        "implied_EV_usd_m": 381.0,
+        "implied_EV_to_2025_adj_EBITDA": "~8.4x",
+        "TrailRunner_initial_consideration_usd_m": 33.0,
+        "Pine_Cove_initial_consideration_usd_m": 3.0,
+        "named_competitors": "Edelman, Burson, FGS; boutiques Penta, Precision, Firehouse Strategies, Avoq; UK/EU Brunswick, Teneo"
+      },
+      "what_it_tells_us": "PPHC is the closest listed peer. A DC public-affairs roll-up of similar scale earns about 24-26% adjusted EBITDA margins and trades at about 8-9x EBITDA as a small-cap. It buys tuck-ins with 60-80% of value paid through earnouts. That gives a margin ceiling and exit-multiple floor for BPI; a sponsor exit for a scaled, growing BPI would likely clear at 10-13x.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1903508/000162828026022359/pphc-20251231.htm",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "bpi-023",
+      "entity": "Stagwell Inc. Communications segment (SKDK, Targeted Victory, Allison, Consulum), a political and advocacy rival",
+      "category": "industry_benchmark",
+      "title": "Stagwell FY2025 10-K: Communications segment including Advocacy",
+      "filed_or_dated": "2026-03-13 (FY2025 10-K)",
+      "filer_or_source_agency": "SEC EDGAR (Stagwell, CIK 0000876883)",
+      "key_figures": {
+        "segment_revenue_2025_usd_k": 592577,
+        "segment_revenue_2024_usd_k": 703065,
+        "net_revenue_2025_usd_k": 393431,
+        "net_revenue_2024_usd_k": 435626,
+        "billable_costs_2025_usd_k": 199146,
+        "billable_costs_2024_usd_k": 267439,
+        "adj_EBITDA_2025_usd_k": 103934,
+        "adj_EBITDA_2024_usd_k": 145355,
+        "adj_EBITDA_pct_net_revenue_2025": "26.4%",
+        "adj_EBITDA_pct_net_revenue_2024": "33.4%",
+        "advocacy_organic_net_revenue_decline_2025_usd_m": 62.7,
+        "add-on": "Wavelength (digital advocacy and communications) acquired 2026-01-30 for ~$10.2M est. purchase price (10-K subsequent event); combination with SKDK not stated in the 10-K"
+      },
+      "what_it_tells_us": "The largest listed political-advocacy group shows the off-year effect: after the 2024 election, advocacy net revenue fell $62.7M and segment EBITDA fell 28.5%. Margin compressed from 33% to 26% of net revenue. BPI's 2025 P&L likely had a similar though smaller step-down from 2024. It also confirms that gross billings for media-heavy agencies run about 1.5x net revenue.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/876883/000087688326000010/stgw-20251231.htm",
+      "retrieved": "2026-09-24"
+    }
+  ]
+}
