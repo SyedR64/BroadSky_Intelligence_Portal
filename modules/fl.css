@@ -1,0 +1,38 @@
+/* Frontline Managed Services module — scoped styles (.m-fl) */
+.m-fl .pips{display:inline-flex;gap:2px;vertical-align:middle}
+.m-fl .pips i{width:7px;height:9px;border-radius:2px;background:var(--surface-3)}
+.m-fl .pips i.on{background:var(--pc,var(--red))}
+.m-fl .pips + .pv{font-family:var(--mono);font-size:11px;margin-left:5px;color:var(--text-2)}
+.m-fl .acts{display:flex;flex-direction:column;gap:8px;counter-reset:act}
+.m-fl .act{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:start;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-2);color:inherit;text-decoration:none}
+.m-fl .act:hover{border-color:var(--c-fl);text-decoration:none;background:var(--surface-3)}
+.m-fl .act::before{counter-increment:act;content:counter(act);font-family:var(--mono);font-size:11px;font-weight:700;color:var(--c-fl);border:1px solid color-mix(in srgb,var(--c-fl) 45%,transparent);border-radius:50%;width:20px;height:20px;display:grid;place-items:center}
+.m-fl .act .h{font-weight:600;font-size:12px;color:var(--text)}
+.m-fl .act .d{font-size:11.5px;color:var(--text-2);margin-top:2px}
+.m-fl .act .go{font-size:11px;color:var(--c-fl);white-space:nowrap;align-self:center}
+.m-fl .mini{width:100%;border-collapse:collapse;font-size:12px}
+.m-fl .mini td,.m-fl .mini th{padding:5px 6px;border-bottom:1px solid var(--hair);text-align:left;white-space:nowrap}
+.m-fl .mini th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);font-weight:600}
+.m-fl .mini td.num,.m-fl .mini th.num{text-align:right;font-family:var(--mono)}
+.m-fl .mini tr.click{cursor:pointer} .m-fl .mini tr.click:hover td{background:var(--hair)}
+.m-fl .mini td.w{white-space:normal;color:var(--text-2);font-size:11.5px}
+.m-fl .rk{font-family:var(--mono);color:var(--dim);font-size:11px;width:26px}
+.m-fl .kv-note{font-size:10.5px;color:var(--dim);margin-top:6px}
+.m-fl .legend-row{display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:var(--muted);margin-top:8px}
+.m-fl .legend-row i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.m-fl .stat-line{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:4px 0;border-bottom:1px solid var(--hair)}
+.m-fl .stat-line .v{font-family:var(--mono);color:var(--text)}
+.m-fl .ctx-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--text-2)}
+.m-fl .ctx-list li::before{content:"›";color:var(--c-fl);margin-right:6px}
+#inspector .m-fl-b{display:grid;grid-template-columns:1fr auto;gap:3px 8px;font-size:12px;align-items:center}
+#inspector .m-fl-b .why{grid-column:1/-1;font-size:11px;color:var(--muted);margin-bottom:6px}
+#inspector .m-fl-sig{border-left:2px solid var(--c-fl);padding:2px 0 8px 10px;margin-left:2px}
+#inspector .m-fl-sig .d{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+#inspector .m-fl-sig .t{font-size:12px;margin-top:1px}
+.m-fl .fill-panel .panel-body{flex:1;display:flex;flex-direction:column}
+.m-fl .fill-panel .panel-body>.map{flex:1;min-height:520px;border:0;border-radius:0}
+.m-fl .m-fl-tg .chip{max-width:190px;overflow:hidden;text-overflow:ellipsis;display:inline-block}
+.m-fl .m-fl-tg td.wrap{min-width:240px;white-space:normal}
+.m-fl .m-fl-tg td{max-width:210px}
+.m-fl .m-fl-fil .tbl td.num{white-space:normal;max-width:220px;text-align:left}
+.m-fl .m-fl-fil .tbl td{max-width:320px}

@@ -1,0 +1,3109 @@
+{
+ "meta": {
+  "dataset": "Punctual Pros weather-to-service-call demand model (HVAC / plumbing / electrical), NWS alert playbook, territory zone codes and weather hubs",
+  "generated": "2026-09-24",
+  "method": "Baselines are derived from national homeowner surveys (American Home Shield 2024 share of homeowners calling each trade; Census American Housing Survey breakdown incidence; DuraPlas maintenance survey) converted to calls/day per 10k households with stated visit-frequency assumptions. Weather multipliers use ServiceTitan heat-wave elasticities (+20% calls, +25% jobs, +55\u201390% revenue) and NWS/Consumer Reports thresholds; magnitudes without a public elasticity are labeled \"assumption\" with rationale. Local exceedance frequencies were computed from NOAA GHCN-Daily (2019\u20132025) for hub stations, event-history counts from NOAA Storm Events, and zone/UGC codes and hub grid metadata were pulled live from api.weather.gov.",
+  "formula": {
+   "expected_calls[trade,county,day]": "baseline_per_10k[trade] x households[county]/10,000 x month_index[trade,month] x max(weather multipliers active for trade that day, with 0.5 x each additional independent driver above 1.0) x housing_age_modifier",
+   "pp_expected_calls": "expected_calls x PP_market_share[county] (parameter; set from PP booked-call history / ServiceTitan data)",
+   "combination_rule_basis": "assumption \u2014 avoids double counting correlated drivers (e.g., heat + humidity)",
+   "multiplier_point_estimate": "use midpoint of range until calibrated",
+   "calibration": "Regress PP daily booked calls by trade on TMAX/TMIN/PRCP/WSF5 from the hub stations (GHCN-Daily) and NWS alert flags; replace assumption ranges with fitted elasticities once 12+ months of PP data are loaded."
+  },
+  "sources_summary": [
+   "ServiceTitan (heat-wave study; State of the Trades after-hours data)",
+   "Samsara HVAC service-trip telematics",
+   "American Home Shield homeowner survey (Nov 2024)",
+   "US Census Bureau American Housing Survey brief (1999)",
+   "ACHR News (DuraPlas maintenance survey; service agreements)",
+   "Housecall Pro 2026 Home Services Report",
+   "Consumer Reports (frozen pipe threshold)",
+   "Insurance Information Institute (lightning claims 2025)",
+   "Climate Central (weather-related outages 2000\u20132023)",
+   "National Weather Service (weather.gov product definitions, LWX criteria, api.weather.gov zones/points/alert types)",
+   "NOAA NCEI GHCN-Daily and Storm Events",
+   "Nature Communications 2026 (effective CDD)",
+   "OpenStreetMap Nominatim (hub geocoding)"
+  ],
+  "nws_product_naming_note": "api.weather.gov/alerts/types (retrieved 2026-09-24) lists \"Extreme Heat Warning/Watch\" and \"Extreme Cold Warning/Watch\" and \"Cold Weather Advisory\"; the legacy names Excessive Heat Warning and Wind Chill Warning/Advisory no longer appear \u2014 portal filters should match both names for historical alerts.",
+  "caveats": [
+   "No public source gives calls per 10k households directly; baselines are derived market-wide totals across all providers and must be multiplied by PP market share, which is unknown (parameter).",
+   "Most plumbing and electrical multipliers and all heating multipliers are assumptions (clearly labeled) \u2014 only the cooling heat-wave effect has a published multi-shop elasticity (ServiceTitan, national, 2019\u20132021; Northeast not broken out).",
+   "County household counts were not embedded: the Census ACS API now requires a key; the portal should join ACS B11001 households by county_fips.",
+   "Climatology station proxies: Carlisle/Lebanon use Harrisburg Intl; Chambersburg/Gettysburg use York Airport; Toms River uses Atlantic City Intl (Lakehurst NAS daily record too sparse); Freehold COOP station has no wind-gust data.",
+   "NWS local warning criteria for CTP (State College) and PHI (Mt Holly) were not retrievable; LWX (Sterling) criteria are used as the regional reference for heat/wind thresholds.",
+   "Companion dataset /Users/syed/BSP/data/research/pp_storm_events.json holds the county-month storm history this model references."
+  ],
+  "item_count": 54,
+  "component_counts": {
+   "baseline": 3,
+   "baseline_seasonality": 1,
+   "modifier": 1,
+   "multiplier": 8,
+   "event_playbook": 10,
+   "nws_zone": 15,
+   "weather_hub": 10,
+   "station_climatology": 6
+  }
+ },
+ "items": [
+  {
+   "id": "baseline_hvac",
+   "component": "baseline",
+   "trade": "HVAC",
+   "metric": "baseline_calls_per_day_per_10k_households",
+   "value_point": 10,
+   "value_range": [
+    8,
+    13
+   ],
+   "scope": "market-wide reactive (repair/no-heat/no-cool) calls to all providers, annualized average day; excludes planned maintenance",
+   "derivation": "26% of homeowners called an HVAC technician in the past year (American Home Shield survey, Nov 2024, n=993) x assumed 1.1\u20131.8 visits per calling household = 0.29\u20130.47 calls/household/yr -> 10,000 x (0.29\u20130.47)/365 = 7.8\u201312.8/day. Housecall Pro platform data: ~88% of HVAC jobs in Q1 2026 were repairs.",
+   "planned_maintenance_addon": {
+    "value_range": [
+     8,
+     16
+    ],
+    "derivation": "30% of homeowners schedule preventive HVAC maintenance (DuraPlas/Pollfish, Jun 2023) x 1\u20132 visits/yr -> 8.2\u201316.4 per 10k households/day; schedulable, not weather-driven",
+    "source_url": "https://www.achrnews.com/articles/153396-survey-only-30-of-americans-schedule-preventive-maintenance-for-their-hvac-systems"
+   },
+   "basis": "derived",
+   "source_url": "https://www.ahs.com/home-matters/homebuyer-hub-resources-and-guides/home-maintenance-issues-statistics/",
+   "source_urls": [
+    "https://www.ahs.com/home-matters/homebuyer-hub-resources-and-guides/home-maintenance-issues-statistics/",
+    "https://www.housecallpro.com/resources/home-service-spending-report/",
+    "https://www.achrnews.com/articles/153396-survey-only-30-of-americans-schedule-preventive-maintenance-for-their-hvac-systems"
+   ],
+   "assumptions": [
+    "visits per calling household 1.1\u20131.8 (assumption: repair + return/parts visit)",
+    "survey skews to homeowners; renters call landlords"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "baseline_plumbing",
+   "component": "baseline",
+   "trade": "Plumbing",
+   "metric": "baseline_calls_per_day_per_10k_households",
+   "value_point": 16,
+   "value_range": [
+    10,
+    21
+   ],
+   "scope": "market-wide residential service/repair calls (leaks, clogs, water heaters, toilets, sewer)",
+   "derivation": "52% of homeowners called a plumber in the past year (American Home Shield, Nov 2024) x 1.0\u20131.5 visits = 0.52\u20130.78/household/yr -> 14\u201321/day per 10k households. Floor cross-check from Census American Housing Survey 1999: inside water leak 10% of households/12 mo; all-toilets-down 3%, water-supply stoppage 4%, sewer/septic breakdown 2% per 3 months -> ~0.35\u20130.45 serious incidents/household/yr (~10\u201312/day per 10k) before routine clogs/water-heater work. Housecall Pro: ~87% of plumbing jobs were repairs.",
+   "basis": "derived",
+   "source_url": "https://www.ahs.com/home-matters/homebuyer-hub-resources-and-guides/home-maintenance-issues-statistics/",
+   "source_urls": [
+    "https://www.ahs.com/home-matters/homebuyer-hub-resources-and-guides/home-maintenance-issues-statistics/",
+    "https://census.gov/content/dam/Census/library/publications/2001/demo/ahb-01-1.pdf",
+    "https://www.housecallpro.com/resources/home-service-spending-report/"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "baseline_electrical",
+   "component": "baseline",
+   "trade": "Electrical",
+   "metric": "baseline_calls_per_day_per_10k_households",
+   "value_point": 7,
+   "value_range": [
+    5,
+    10
+   ],
+   "scope": "market-wide residential electrical service calls (outages in home, breakers, outlets, surge damage, generator); excludes planned projects such as panel upgrades and EV chargers",
+   "derivation": "27% of homeowners called an electrician in the past year (American Home Shield, Nov 2024) x 1.0\u20131.3 visits = 0.27\u20130.35/household/yr -> 7.4\u20139.6/day per 10k households; discounted toward 5 because part of electrician demand is project work. AHS 1999: 11% of households had fuses blown/breakers tripped in the past 3 months (27% of those 3+ times), mostly DIY resets -> latent demand pool.",
+   "basis": "derived",
+   "source_url": "https://www.ahs.com/home-matters/homebuyer-hub-resources-and-guides/home-maintenance-issues-statistics/",
+   "source_urls": [
+    "https://www.ahs.com/home-matters/homebuyer-hub-resources-and-guides/home-maintenance-issues-statistics/",
+    "https://census.gov/content/dam/Census/library/publications/2001/demo/ahb-01-1.pdf"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "baseline_seasonal_shape_hvac",
+   "component": "baseline_seasonality",
+   "trade": "HVAC",
+   "monthly_index": null,
+   "notes": "Samsara telematics (65M HVAC service trips, Sep 2023\u2013Jun 2025): October is the busiest month nationally (heating start-up), July\u2013October is primary demand season, a consistent September dip, February the annual low. ServiceTitan: off-hours share of inbound calls 14.1% in June vs 9.8% in October 2025 (after-hours weekday 9.3% vs 6.8%; weekend 4.9% Aug vs 2.95% Oct); off-hours peak 5\u20139 pm local.",
+   "portal_use": "Scale baseline by month before applying weather multipliers; pull PP ServiceTitan/CRM history to replace with actual monthly index once available.",
+   "basis": "sourced",
+   "source_url": "https://www.samsara.com/blog/peak-season-for-hvac",
+   "source_urls": [
+    "https://www.samsara.com/blog/peak-season-for-hvac",
+    "https://www.servicetitan.com/toolbox/state-of-the-trades/trends/hvac-summer-after-hours-call-spike"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "age_of_housing_modifier",
+   "component": "modifier",
+   "trade": "All",
+   "rule": "Breakdown incidence rises with housing age: pre-1940 homes vs 1990s homes: fuses/breakers 14% vs 9%, uncomfortably cold last winter 11% vs 6%, water leak from outside 20% vs 9% (AHS 1999 Table 1). Apply 1.2\u20131.5x to baselines for ZIPs with median year built < 1960 (Lancaster/Reading/York/Harrisburg city cores).",
+   "value_range": [
+    1.2,
+    1.5
+   ],
+   "basis": "derived",
+   "source_url": "https://census.gov/content/dam/Census/library/publications/2001/demo/ahb-01-1.pdf",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "mult_hvac_cooling_tmax",
+   "trade": "HVAC",
+   "driver": "daily max temperature (TMAX) at nearest hub station",
+   "piecewise": [
+    {
+     "condition": "TMAX < 85F",
+     "multiplier": [
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "condition": "85F <= TMAX < 90F",
+     "multiplier": [
+      1.05,
+      1.15
+     ],
+     "basis": "assumption"
+    },
+    {
+     "condition": "90F <= TMAX < 95F for 1 day",
+     "multiplier": [
+      1.1,
+      1.25
+     ],
+     "basis": "assumption"
+    },
+    {
+     "condition": "heat wave: >=2 consecutive days unusually hot with warm nights (EPA/ServiceTitan definition), approx TMAX>=90F and TMIN>=70F",
+     "multiplier": [
+      1.2,
+      1.25
+     ],
+     "basis": "sourced",
+     "note": "ServiceTitan (~800 HVAC shops, 2019\u20132021): heat waves raised daily calls +20%, jobs +25%, revenue +55%"
+    },
+    {
+     "condition": "TMAX >= 95F or heat index >= 105F (Extreme Heat Warning territory)",
+     "multiplier": [
+      1.3,
+      1.6
+     ],
+     "basis": "assumption",
+     "note": "extrapolated beyond ServiceTitan average; ticket mix shifts to replacements/refrigerant"
+    }
+   ],
+   "season_sequence_decay": {
+    "1st_heat_wave": 1.0,
+    "2nd": 0.6,
+    "3rd": 0.45,
+    "5th": 0.2,
+    "after_5th": 0.0,
+    "basis": "derived: ServiceTitan revenue uplift by heat-wave order 90%/55%/40%/20%/~0% normalized to first wave"
+   },
+   "lag_days": [
+    0,
+    2
+   ],
+   "after_hours_share_shift": "+4 to +5 pts of calls after hours in peak summer (ServiceTitan 14.1% Jun vs 9.8% Oct)",
+   "local_frequency": {
+    "USW00054737": {
+     "hub": "Lancaster",
+     "tmax_ge_90_days_per_yr": 27.9,
+     "tmax_ge_95_days_per_yr": 6.3
+    },
+    "USW00014711": {
+     "hub": "Harrisburg",
+     "tmax_ge_90_days_per_yr": 29.9,
+     "tmax_ge_95_days_per_yr": 6.6
+    },
+    "USW00093778": {
+     "hub": "York",
+     "tmax_ge_90_days_per_yr": 22.7,
+     "tmax_ge_95_days_per_yr": 3.4
+    },
+    "USW00014712": {
+     "hub": "Reading",
+     "tmax_ge_90_days_per_yr": 30.9,
+     "tmax_ge_95_days_per_yr": 6.7
+    },
+    "USC00283181": {
+     "hub": "Freehold",
+     "tmax_ge_90_days_per_yr": 33.3,
+     "tmax_ge_95_days_per_yr": 8.6
+    },
+    "USW00093730": {
+     "hub": "Jersey Shore proxy (Atlantic City Intl)",
+     "tmax_ge_90_days_per_yr": 25.9,
+     "tmax_ge_95_days_per_yr": 5.4
+    }
+   },
+   "source_url": "https://www.servicetitan.com/blog/hvac-revenue-heat-waves",
+   "source_urls": [
+    "https://www.servicetitan.com/blog/hvac-revenue-heat-waves",
+    "https://www.servicetitan.com/toolbox/state-of-the-trades/trends/hvac-summer-after-hours-call-spike",
+    "https://www.weather.gov/key/climate_heat_cool",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC13483456/"
+   ],
+   "note_humidity": "Casselman & Karamperidou (Nature Communications 2026): humidity-adjusted \"effective CDD\" rises 7.5\u201315% faster than conventional CDD over much of the US; use heat index, not just TMAX, for the warning tier.",
+   "component": "multiplier",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "mult_hvac_cdd",
+   "trade": "HVAC",
+   "driver": "daily cooling degree days (base 65F, NWS definition: mean temp minus 65)",
+   "piecewise": [
+    {
+     "condition": "CDD <= 10",
+     "multiplier": [
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "condition": "10 < CDD <= 15",
+     "multiplier": [
+      1.05,
+      1.15
+     ]
+    },
+    {
+     "condition": "15 < CDD <= 20",
+     "multiplier": [
+      1.15,
+      1.3
+     ]
+    },
+    {
+     "condition": "CDD > 20 (mean temp > 85F)",
+     "multiplier": [
+      1.3,
+      1.6
+     ]
+    }
+   ],
+   "basis": "assumption",
+   "rationale": "CDD is the standard proxy for cooling load (NWS/EIA); thresholds chosen so CDD>15 (mean >80F, roughly TMAX>=90F with warm night) aligns with the ServiceTitan heat-wave tier. Recalibrate with PP call logs.",
+   "local_frequency": {
+    "USW00054737": {
+     "hub": "Lancaster",
+     "approx_annual_cdd_base65": 1197
+    },
+    "USW00014711": {
+     "hub": "Harrisburg",
+     "approx_annual_cdd_base65": 1322
+    },
+    "USW00093778": {
+     "hub": "York",
+     "approx_annual_cdd_base65": 1001
+    },
+    "USW00014712": {
+     "hub": "Reading",
+     "approx_annual_cdd_base65": 1249
+    },
+    "USC00283181": {
+     "hub": "Freehold",
+     "approx_annual_cdd_base65": 1161
+    },
+    "USW00093730": {
+     "hub": "Jersey Shore proxy (Atlantic City Intl)",
+     "approx_annual_cdd_base65": 1232
+    }
+   },
+   "source_url": "https://www.weather.gov/key/climate_heat_cool",
+   "source_urls": [
+    "https://www.weather.gov/key/climate_heat_cool",
+    "https://www.eia.gov/energyexplained/units-and-calculators/degree-days.php",
+    "https://www.servicetitan.com/blog/hvac-revenue-heat-waves"
+   ],
+   "component": "multiplier",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "mult_hvac_heating_tmin",
+   "trade": "HVAC",
+   "driver": "daily minimum temperature (TMIN) / heating degree days",
+   "piecewise": [
+    {
+     "condition": "TMIN > 25F",
+     "multiplier": [
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "condition": "20F < TMIN <= 25F",
+     "multiplier": [
+      1.05,
+      1.15
+     ]
+    },
+    {
+     "condition": "10F < TMIN <= 20F",
+     "multiplier": [
+      1.2,
+      1.5
+     ]
+    },
+    {
+     "condition": "0F < TMIN <= 10F",
+     "multiplier": [
+      1.5,
+      2.0
+     ]
+    },
+    {
+     "condition": "TMIN <= 0F or Extreme Cold Warning",
+     "multiplier": [
+      2.0,
+      3.0
+     ]
+    },
+    {
+     "condition": "first cold snap of season (first day HDD >= 25, i.e. mean <= 40F, after Oct 1)",
+     "multiplier": [
+      1.3,
+      1.6
+     ],
+     "note": "no-heat start-up failures; Samsara shows October national peak driven by heating reactivation"
+    }
+   ],
+   "basis": "assumption",
+   "rationale": "No public dataset quantifies no-heat call elasticity; tiers mirror the cooling side and the AHS finding that 7% of households were uncomfortably cold in the prior winter. Samsara documents that a ~10F seasonal drop triggers heating-system service spikes.",
+   "local_frequency": {
+    "USW00054737": {
+     "hub": "Lancaster",
+     "tmin_le_20_days_per_yr": 19.0,
+     "tmin_le_10_days_per_yr": 3.3,
+     "tmin_le_0_days_per_yr": 0.4,
+     "approx_annual_hdd_base65": 4678
+    },
+    "USW00014711": {
+     "hub": "Harrisburg",
+     "tmin_le_20_days_per_yr": 14.9,
+     "tmin_le_10_days_per_yr": 2.7,
+     "tmin_le_0_days_per_yr": 0.4,
+     "approx_annual_hdd_base65": 4600
+    },
+    "USW00093778": {
+     "hub": "York",
+     "tmin_le_20_days_per_yr": 33.6,
+     "tmin_le_10_days_per_yr": 6.6,
+     "tmin_le_0_days_per_yr": 1.7,
+     "approx_annual_hdd_base65": 5031
+    },
+    "USW00014712": {
+     "hub": "Reading",
+     "tmin_le_20_days_per_yr": 18.9,
+     "tmin_le_10_days_per_yr": 2.9,
+     "tmin_le_0_days_per_yr": 0.6,
+     "approx_annual_hdd_base65": 4646
+    },
+    "USC00283181": {
+     "hub": "Freehold",
+     "tmin_le_20_days_per_yr": 19.6,
+     "tmin_le_10_days_per_yr": 2.7,
+     "tmin_le_0_days_per_yr": 0.1,
+     "approx_annual_hdd_base65": 4602
+    },
+    "USW00093730": {
+     "hub": "Jersey Shore proxy (Atlantic City Intl)",
+     "tmin_le_20_days_per_yr": 18.6,
+     "tmin_le_10_days_per_yr": 2.1,
+     "tmin_le_0_days_per_yr": 0.0,
+     "approx_annual_hdd_base65": 4346
+    }
+   },
+   "source_url": "https://www.samsara.com/blog/peak-season-for-hvac",
+   "source_urls": [
+    "https://www.samsara.com/blog/peak-season-for-hvac",
+    "https://census.gov/content/dam/Census/library/publications/2001/demo/ahb-01-1.pdf",
+    "https://www.weather.gov/key/climate_heat_cool"
+   ],
+   "component": "multiplier",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "mult_plumbing_hard_freeze",
+   "trade": "Plumbing",
+   "driver": "hard freeze: TMIN <= 20F for >= 2 consecutive days",
+   "piecewise": [
+    {
+     "condition": "single night TMIN <= 20F",
+     "multiplier": [
+      1.05,
+      1.2
+     ]
+    },
+    {
+     "condition": "2+ consecutive days TMIN <= 20F",
+     "multiplier": [
+      1.5,
+      2.5
+     ]
+    },
+    {
+     "condition": "2+ days TMIN <= 10F or daytime TMAX < 32F",
+     "multiplier": [
+      2.0,
+      3.5
+     ]
+    },
+    {
+     "condition": "thaw day (first TMAX > 40F after hard freeze) \u2014 bursts discovered as ice melts",
+     "multiplier": [
+      2.0,
+      3.0
+     ],
+     "lag_days": [
+      1,
+      3
+     ]
+    }
+   ],
+   "threshold_source": "Consumer Reports: frozen pipes generally occur below 20F (earlier in uninsulated spaces); IBHS: burst pipes are among the most common cold-weather property losses.",
+   "basis": "assumption (threshold sourced; multiplier magnitudes assumed)",
+   "local_frequency": {
+    "USW00054737": {
+     "hub": "Lancaster",
+     "hard_freeze_episodes_per_yr": 4.4
+    },
+    "USW00014711": {
+     "hub": "Harrisburg",
+     "hard_freeze_episodes_per_yr": 3.4
+    },
+    "USW00093778": {
+     "hub": "York",
+     "hard_freeze_episodes_per_yr": 8.4
+    },
+    "USW00014712": {
+     "hub": "Reading",
+     "hard_freeze_episodes_per_yr": 4.7
+    },
+    "USC00283181": {
+     "hub": "Freehold",
+     "hard_freeze_episodes_per_yr": 5.0
+    },
+    "USW00093730": {
+     "hub": "Jersey Shore proxy (Atlantic City Intl)",
+     "hard_freeze_episodes_per_yr": 4.6
+    }
+   },
+   "source_url": "https://www.consumerreports.org/home-garden/home-maintenance-repairs/how-to-keep-pipes-from-freezing-a2277945570/",
+   "source_urls": [
+    "https://www.consumerreports.org/home-garden/home-maintenance-repairs/how-to-keep-pipes-from-freezing-a2277945570/",
+    "https://census.gov/content/dam/Census/library/publications/2001/demo/ahb-01-1.pdf"
+   ],
+   "component": "multiplier",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "mult_plumbing_heavy_rain",
+   "trade": "Plumbing",
+   "driver": "daily precipitation",
+   "piecewise": [
+    {
+     "condition": "PRCP >= 1.0 in/day",
+     "multiplier": [
+      1.1,
+      1.3
+     ]
+    },
+    {
+     "condition": "PRCP >= 1.5 in/day",
+     "multiplier": [
+      1.3,
+      2.0
+     ],
+     "note": "sump pump failure, basement seepage, sewer/drain backup"
+    },
+    {
+     "condition": "Flash Flood Warning in county",
+     "multiplier": [
+      1.5,
+      2.5
+     ]
+    }
+   ],
+   "lag_days": [
+    0,
+    2
+   ],
+   "basis": "assumption",
+   "rationale": "AHS 1999: 12% of households had water leak in from outside within 12 months (13% owners); older stock ~2x. Flash floods are the #2 event type by count in the PP territory (Storm Events 2019\u20132025, peak July).",
+   "local_frequency": {
+    "USW00054737": {
+     "hub": "Lancaster",
+     "prcp_ge_1_5in_days_per_yr": 3.0,
+     "prcp_ge_1in_days_per_yr": 9.4
+    },
+    "USW00014711": {
+     "hub": "Harrisburg",
+     "prcp_ge_1_5in_days_per_yr": 3.3,
+     "prcp_ge_1in_days_per_yr": 11.4
+    },
+    "USW00093778": {
+     "hub": "York",
+     "prcp_ge_1_5in_days_per_yr": 2.0,
+     "prcp_ge_1in_days_per_yr": 7.7
+    },
+    "USW00014712": {
+     "hub": "Reading",
+     "prcp_ge_1_5in_days_per_yr": 5.1,
+     "prcp_ge_1in_days_per_yr": 11.0
+    },
+    "USC00283181": {
+     "hub": "Freehold",
+     "prcp_ge_1_5in_days_per_yr": 5.4,
+     "prcp_ge_1in_days_per_yr": 13.6
+    },
+    "USW00093730": {
+     "hub": "Jersey Shore proxy (Atlantic City Intl)",
+     "prcp_ge_1_5in_days_per_yr": 5.0,
+     "prcp_ge_1in_days_per_yr": 13.6
+    }
+   },
+   "source_url": "https://census.gov/content/dam/Census/library/publications/2001/demo/ahb-01-1.pdf",
+   "source_urls": [
+    "https://census.gov/content/dam/Census/library/publications/2001/demo/ahb-01-1.pdf",
+    "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
+   ],
+   "component": "multiplier",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "mult_electrical_wind",
+   "trade": "Electrical",
+   "driver": "peak 5-second wind gust (WSF5)",
+   "piecewise": [
+    {
+     "condition": "gust < 40 mph",
+     "multiplier": [
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "condition": "40 <= gust < 58 mph",
+     "multiplier": [
+      1.1,
+      1.4
+     ]
+    },
+    {
+     "condition": "gust >= 58 mph (NWS severe / High Wind criteria)",
+     "multiplier": [
+      1.5,
+      2.5
+     ]
+    }
+   ],
+   "lag_days": [
+    0,
+    3
+   ],
+   "basis": "assumption",
+   "rationale": "Tree/limb contact with service drops and weatherheads, then restoration surges. Climate Central: 80% of major US outages 2000\u20132023 were weather-related; severe weather (wind, rain, thunderstorms) 58%, winter weather 23%, tropical 14%; Pennsylvania ranked 9th nationally (82 outages). NWS High Wind criteria: sustained 40 mph for 1h or gusts 58 mph.",
+   "local_frequency": {
+    "USW00054737": {
+     "hub": "Lancaster",
+     "gust_ge_40mph_days_per_yr": 23.0,
+     "gust_ge_58mph_days_per_yr": 0.6
+    },
+    "USW00014711": {
+     "hub": "Harrisburg",
+     "gust_ge_40mph_days_per_yr": 27.6,
+     "gust_ge_58mph_days_per_yr": 1.0
+    },
+    "USW00093778": {
+     "hub": "York",
+     "gust_ge_40mph_days_per_yr": 10.7,
+     "gust_ge_58mph_days_per_yr": 0.0
+    },
+    "USW00014712": {
+     "hub": "Reading",
+     "gust_ge_40mph_days_per_yr": 25.0,
+     "gust_ge_58mph_days_per_yr": 0.7
+    },
+    "USC00283181": {
+     "hub": "Freehold",
+     "gust_ge_40mph_days_per_yr": null,
+     "gust_ge_58mph_days_per_yr": null
+    },
+    "USW00093730": {
+     "hub": "Jersey Shore proxy (Atlantic City Intl)",
+     "gust_ge_40mph_days_per_yr": 38.9,
+     "gust_ge_58mph_days_per_yr": 2.9
+    }
+   },
+   "source_url": "https://www.climatecentral.org/report/weather-related-power-outages-rising",
+   "source_urls": [
+    "https://www.climatecentral.org/report/weather-related-power-outages-rising",
+    "https://www.weather.gov/lwx/WarningsDefined",
+    "https://www.weather.gov/safety/wind-ww"
+   ],
+   "component": "multiplier",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "mult_electrical_outage",
+   "trade": "Electrical",
+   "driver": "utility outage affecting > 5% of customers in a county (from utility outage map / PowerOutage feeds)",
+   "piecewise": [
+    {
+     "condition": "outage < 24h",
+     "multiplier": [
+      1.2,
+      1.5
+     ],
+     "note": "breaker/surge, generator start failures"
+    },
+    {
+     "condition": "outage >= 24h",
+     "multiplier": [
+      1.5,
+      3.0
+     ],
+     "note": "generator installs/repairs, restoration-surge damage, meter-base/mast repairs required before utility reconnect"
+    }
+   ],
+   "lag_days": [
+    0,
+    5
+   ],
+   "basis": "assumption",
+   "rationale": "Outage-driven demand is well documented qualitatively; no public elasticity. Winter outages also lift HVAC (no-heat) and plumbing (freeze) calls.",
+   "source_url": "https://www.climatecentral.org/report/weather-related-power-outages-rising",
+   "component": "multiplier",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "mult_electrical_lightning",
+   "trade": "Electrical",
+   "driver": "lightning / Severe Thunderstorm Warning with CG lightning in county",
+   "piecewise": [
+    {
+     "condition": "Severe Thunderstorm Warning",
+     "multiplier": [
+      1.2,
+      1.6
+     ]
+    },
+    {
+     "condition": "documented lightning strike damage in Storm Events",
+     "multiplier": [
+      1.3,
+      2.0
+     ],
+     "note": "surge-damaged panels, GFCIs, HVAC control boards"
+    }
+   ],
+   "lag_days": [
+    0,
+    2
+   ],
+   "basis": "assumption (context sourced)",
+   "rationale": "III: 61,986 US homeowners lightning claims in 2025 ($1.649B, avg $26,616); Pennsylvania #8 with 2,177 claims ($33.4M, avg $15,355). Thunderstorm Wind is the #1 Storm Events type in PP territory (peak Jun\u2013Jul).",
+   "source_url": "https://www.iii.org/fact-statistic/facts-statistics-lightning",
+   "source_urls": [
+    "https://www.iii.org/fact-statistic/facts-statistics-lightning",
+    "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
+   ],
+   "component": "multiplier",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "playbook_extreme_heat_warning",
+   "component": "event_playbook",
+   "nws_event": "Extreme Heat Warning",
+   "aliases_and_related": [
+    "Excessive Heat Warning (pre-2025 name)"
+   ],
+   "expected_call_volume_multiplier": {
+    "HVAC": [
+     1.4,
+     2.0
+    ],
+    "Plumbing": [
+     1.0,
+     1.1
+    ],
+    "Electrical": [
+     1.1,
+     1.3
+    ]
+   },
+   "multiplier_basis": "assumption \u2014 composed from the trade multipliers above; calibrate against PP call history",
+   "lead_time": "12\u201324 h (LWX criteria: heat index >=110F east of Blue Ridge within 12\u201324 h); Extreme Heat Watch 24\u201372 h",
+   "actions": [
+    "Move all HVAC maintenance visits off the schedule; convert to repair capacity",
+    "Extend dispatch to 10\u201312 h shifts + on-call after-hours rotation (5\u20139 pm peak)",
+    "Pre-stage capacitors, contactors, condenser fan motors, R-410A/R-454B, hard-start kits on every truck",
+    "Triage: elderly/medical households first; offer portable AC loaners",
+    "CSR overflow + callback SLA; pause non-emergency outbound marketing"
+   ],
+   "local_history": {
+    "event_types": [
+     "Excessive Heat",
+     "Heat"
+    ],
+    "territory_episodes_2019_2025": 28,
+    "avg_episodes_per_year": 4.0,
+    "basis": "NOAA NCEI Storm Events, PP core + Horvath counties (9 PA + Ocean/Monmouth NJ), distinct EPISODE_ID",
+    "source_url": "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
+   },
+   "source_url": "https://www.weather.gov/lwx/WarningsDefined",
+   "source_urls": [
+    "https://www.weather.gov/lwx/WarningsDefined",
+    "https://www.weather.gov/safety/heat-ww",
+    "https://www.servicetitan.com/blog/hvac-revenue-heat-waves"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "playbook_heat_advisory",
+   "component": "event_playbook",
+   "nws_event": "Heat Advisory",
+   "aliases_and_related": [],
+   "expected_call_volume_multiplier": {
+    "HVAC": [
+     1.15,
+     1.4
+    ],
+    "Plumbing": [
+     1.0,
+     1.0
+    ],
+    "Electrical": [
+     1.0,
+     1.1
+    ]
+   },
+   "multiplier_basis": "assumption \u2014 composed from the trade multipliers above; calibrate against PP call history",
+   "lead_time": "12\u201324 h (LWX: heat index 105\u2013109F east of Blue Ridge)",
+   "actions": [
+    "Hold 10\u201315% of HVAC slots open for same-day no-cool",
+    "Stock AC parts; pre-confirm refrigerant supply",
+    "Upsell membership/tune-up follow-ups to non-urgent callers"
+   ],
+   "local_history": {
+    "event_types": [
+     "Heat"
+    ],
+    "territory_episodes_2019_2025": 3,
+    "avg_episodes_per_year": 0.4,
+    "basis": "NOAA NCEI Storm Events, PP core + Horvath counties (9 PA + Ocean/Monmouth NJ), distinct EPISODE_ID",
+    "source_url": "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
+   },
+   "source_url": "https://www.weather.gov/lwx/WarningsDefined",
+   "source_urls": [
+    "https://www.weather.gov/lwx/WarningsDefined",
+    "https://www.weather.gov/safety/heat-ww",
+    "https://www.servicetitan.com/blog/hvac-revenue-heat-waves"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "playbook_extreme_cold_warning",
+   "component": "event_playbook",
+   "nws_event": "Extreme Cold Warning",
+   "aliases_and_related": [
+    "Wind Chill Warning (pre-Oct-2024 name)",
+    "Cold Weather Advisory (formerly Wind Chill Advisory)"
+   ],
+   "expected_call_volume_multiplier": {
+    "HVAC": [
+     1.8,
+     3.0
+    ],
+    "Plumbing": [
+     1.8,
+     3.0
+    ],
+    "Electrical": [
+     1.1,
+     1.4
+    ]
+   },
+   "multiplier_basis": "assumption \u2014 composed from the trade multipliers above; calibrate against PP call history",
+   "lead_time": "12\u201336 h; Extreme Cold Watch earlier",
+   "actions": [
+    "Staff 24/7 no-heat and frozen-pipe queues; suspend non-urgent installs",
+    "Stock ignitors, flame sensors, inducer motors, heat-pump defrost boards, PEX/copper fittings, SharkBite couplings, pipe thaw equipment",
+    "Pre-cold outbound campaign to members: drip faucets, open cabinets, disconnect hoses (IBHS guidance)",
+    "Plan thaw-day plumbing surge 1\u20133 days after cold breaks"
+   ],
+   "local_history": {
+    "event_types": [
+     "Cold/Wind Chill",
+     "Extreme Cold/Wind Chill"
+    ],
+    "territory_episodes_2019_2025": 3,
+    "avg_episodes_per_year": 0.4,
+    "basis": "NOAA NCEI Storm Events, PP core + Horvath counties (9 PA + Ocean/Monmouth NJ), distinct EPISODE_ID",
+    "source_url": "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
+   },
+   "source_url": "https://www.weather.gov/safety/cold-ww",
+   "source_urls": [
+    "https://www.weather.gov/safety/cold-ww",
+    "https://www.weather.gov/lwx/WarningsDefined",
+    "https://api.weather.gov/alerts/types",
+    "https://www.consumerreports.org/home-garden/home-maintenance-repairs/how-to-keep-pipes-from-freezing-a2277945570/"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "playbook_winter_storm_warning",
+   "component": "event_playbook",
+   "nws_event": "Winter Storm Warning",
+   "aliases_and_related": [],
+   "expected_call_volume_multiplier": {
+    "HVAC": [
+     1.2,
+     1.6
+    ],
+    "Plumbing": [
+     1.1,
+     1.5
+    ],
+    "Electrical": [
+     1.2,
+     1.8
+    ]
+   },
+   "multiplier_basis": "assumption \u2014 composed from the trade multipliers above; calibrate against PP call history",
+   "lead_time": "12\u201336 h; Winter Storm Watch typically 24\u201348 h",
+   "actions": [
+    "Pre-position techs near home territories (reduce drive time on bad roads); 4WD vehicles to priority zones",
+    "Generator service/repair readiness (electrical)",
+    "Stage snow-clearing for shop and supply house access",
+    "Front-load calls the day before the storm"
+   ],
+   "local_history": {
+    "event_types": [
+     "Winter Storm",
+     "Heavy Snow",
+     "Blizzard"
+    ],
+    "territory_episodes_2019_2025": 35,
+    "avg_episodes_per_year": 5.0,
+    "basis": "NOAA NCEI Storm Events, PP core + Horvath counties (9 PA + Ocean/Monmouth NJ), distinct EPISODE_ID",
+    "source_url": "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
+   },
+   "source_url": "https://www.weather.gov/safety/winter-ww",
+   "source_urls": [
+    "https://www.weather.gov/safety/winter-ww",
+    "https://www.weather.gov/lwx/WarningsDefined"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "playbook_ice_storm_warning",
+   "component": "event_playbook",
+   "nws_event": "Ice Storm Warning",
+   "aliases_and_related": [],
+   "expected_call_volume_multiplier": {
+    "HVAC": [
+     1.3,
+     2.0
+    ],
+    "Plumbing": [
+     1.2,
+     1.8
+    ],
+    "Electrical": [
+     1.8,
+     3.0
+    ]
+   },
+   "multiplier_basis": "assumption \u2014 composed from the trade multipliers above; calibrate against PP call history",
+   "lead_time": "12\u201336 h; ice accumulation ~1/4 in or more",
+   "actions": [
+    "Expect multi-day outages (snapped lines): stage generator transfer switches, service mast/weatherhead kits, meter bases",
+    "Coordinate with PPL / Met-Ed / PECO / JCP&L reconnect requirements",
+    "No-heat queue for households without backup heat"
+   ],
+   "local_history": {
+    "event_types": [
+     "Ice Storm",
+     "Sleet"
+    ],
+    "territory_episodes_2019_2025": 1,
+    "avg_episodes_per_year": 0.1,
+    "basis": "NOAA NCEI Storm Events, PP core + Horvath counties (9 PA + Ocean/Monmouth NJ), distinct EPISODE_ID",
+    "source_url": "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
+   },
+   "source_url": "https://www.weather.gov/safety/winter-ww",
+   "source_urls": [
+    "https://www.weather.gov/safety/winter-ww",
+    "https://www.climatecentral.org/report/weather-related-power-outages-rising"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "playbook_freeze_warning",
+   "component": "event_playbook",
+   "nws_event": "Freeze Warning",
+   "aliases_and_related": [
+    "Freeze Watch"
+   ],
+   "expected_call_volume_multiplier": {
+    "HVAC": [
+     1.1,
+     1.3
+    ],
+    "Plumbing": [
+     1.05,
+     1.2
+    ],
+    "Electrical": [
+     1.0,
+     1.0
+    ]
+   },
+   "multiplier_basis": "assumption \u2014 composed from the trade multipliers above; calibrate against PP call history",
+   "lead_time": "Freeze Watch 24\u201336 h ahead; issued in growing-season shoulder months",
+   "actions": [
+    "Heating start-up/tune-up push (first-cold-snap effect)",
+    "Outdoor spigot/irrigation winterization offers",
+    "Shoulder-season freeze is a heating start-up signal, not a burst-pipe signal (burst risk is <=20F)"
+   ],
+   "local_history": {
+    "event_types": [
+     "Frost/Freeze"
+    ],
+    "territory_episodes_2019_2025": 0,
+    "avg_episodes_per_year": 0.0,
+    "basis": "NOAA NCEI Storm Events, PP core + Horvath counties (9 PA + Ocean/Monmouth NJ), distinct EPISODE_ID",
+    "source_url": "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
+   },
+   "source_url": "https://www.weather.gov/safety/cold-ww",
+   "source_urls": [
+    "https://www.weather.gov/safety/cold-ww",
+    "https://www.samsara.com/blog/peak-season-for-hvac"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "playbook_severe_thunderstorm_warning",
+   "component": "event_playbook",
+   "nws_event": "Severe Thunderstorm Warning",
+   "aliases_and_related": [
+    "Severe Thunderstorm Watch",
+    "Tornado Warning"
+   ],
+   "expected_call_volume_multiplier": {
+    "HVAC": [
+     1.1,
+     1.3
+    ],
+    "Plumbing": [
+     1.05,
+     1.3
+    ],
+    "Electrical": [
+     1.3,
+     2.0
+    ]
+   },
+   "multiplier_basis": "assumption \u2014 composed from the trade multipliers above; calibrate against PP call history",
+   "lead_time": "Watch: hours ahead; Warning: minutes to ~1 h (wind >=58 mph and/or hail >=1 in)",
+   "actions": [
+    "Post-storm 0\u201348 h electrical surge queue (surge-damaged panels, outlets, HVAC control boards)",
+    "Sump-pump/backup check calls if heavy rain accompanies",
+    "Surge-protector and whole-home generator campaigns in the following week"
+   ],
+   "local_history": {
+    "event_types": [
+     "Thunderstorm Wind",
+     "Hail",
+     "Lightning",
+     "Tornado"
+    ],
+    "territory_episodes_2019_2025": 348,
+    "avg_episodes_per_year": 49.7,
+    "basis": "NOAA NCEI Storm Events, PP core + Horvath counties (9 PA + Ocean/Monmouth NJ), distinct EPISODE_ID",
+    "source_url": "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
+   },
+   "source_url": "https://www.weather.gov/safety/thunderstorm-ww",
+   "source_urls": [
+    "https://www.weather.gov/safety/thunderstorm-ww",
+    "https://www.weather.gov/safety/wind-ww",
+    "https://www.iii.org/fact-statistic/facts-statistics-lightning"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "playbook_flash_flood_warning",
+   "component": "event_playbook",
+   "nws_event": "Flash Flood Warning",
+   "aliases_and_related": [
+    "Flood Watch",
+    "Flood Warning",
+    "Flash Flood Watch"
+   ],
+   "expected_call_volume_multiplier": {
+    "HVAC": [
+     1.05,
+     1.2
+    ],
+    "Plumbing": [
+     1.5,
+     2.5
+    ],
+    "Electrical": [
+     1.2,
+     1.6
+    ]
+   },
+   "multiplier_basis": "assumption \u2014 composed from the trade multipliers above; calibrate against PP call history",
+   "lead_time": "Flood/Flash Flood Watch 12\u201348 h; Warning imminent/occurring",
+   "actions": [
+    "Stock sump pumps, battery-backup units, check valves, backwater valves, drain-cleaning equipment",
+    "Water-heater and furnace replacements after basement flooding (HVAC/plumbing)",
+    "Electrical safety inspections before re-energizing flooded panels/receptacles"
+   ],
+   "local_history": {
+    "event_types": [
+     "Flash Flood",
+     "Flood",
+     "Heavy Rain"
+    ],
+    "territory_episodes_2019_2025": 80,
+    "avg_episodes_per_year": 11.4,
+    "basis": "NOAA NCEI Storm Events, PP core + Horvath counties (9 PA + Ocean/Monmouth NJ), distinct EPISODE_ID",
+    "source_url": "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
+   },
+   "source_url": "https://www.weather.gov/safety/flood-watch-warning",
+   "source_urls": [
+    "https://www.weather.gov/safety/flood-watch-warning",
+    "https://census.gov/content/dam/Census/library/publications/2001/demo/ahb-01-1.pdf"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "playbook_high_wind_warning",
+   "component": "event_playbook",
+   "nws_event": "High Wind Warning",
+   "aliases_and_related": [
+    "High Wind Watch",
+    "Wind Advisory"
+   ],
+   "expected_call_volume_multiplier": {
+    "HVAC": [
+     1.05,
+     1.15
+    ],
+    "Plumbing": [
+     1.0,
+     1.05
+    ],
+    "Electrical": [
+     1.4,
+     2.2
+    ]
+   },
+   "multiplier_basis": "assumption \u2014 composed from the trade multipliers above; calibrate against PP call history",
+   "lead_time": "Watch 12\u201348 h; LWX/NWS criteria: sustained >=40 mph for 1 h or gusts >=58 mph",
+   "actions": [
+    "Electrical crews on standby for service-drop/mast damage and outage restoration work",
+    "Generator repair stock",
+    "Secure rooftop/outdoor equipment at shop"
+   ],
+   "local_history": {
+    "event_types": [
+     "High Wind",
+     "Strong Wind"
+    ],
+    "territory_episodes_2019_2025": 43,
+    "avg_episodes_per_year": 6.1,
+    "basis": "NOAA NCEI Storm Events, PP core + Horvath counties (9 PA + Ocean/Monmouth NJ), distinct EPISODE_ID",
+    "source_url": "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
+   },
+   "source_url": "https://www.weather.gov/lwx/WarningsDefined",
+   "source_urls": [
+    "https://www.weather.gov/lwx/WarningsDefined",
+    "https://www.weather.gov/safety/wind-ww",
+    "https://www.climatecentral.org/report/weather-related-power-outages-rising"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "playbook_tropical_storm_warning",
+   "component": "event_playbook",
+   "nws_event": "Tropical Storm Warning",
+   "aliases_and_related": [
+    "Tropical Storm Watch",
+    "Hurricane Warning",
+    "Hurricane Watch",
+    "Storm Surge Warning"
+   ],
+   "expected_call_volume_multiplier": {
+    "HVAC": [
+     1.2,
+     1.8
+    ],
+    "Plumbing": [
+     1.5,
+     2.5
+    ],
+    "Electrical": [
+     1.8,
+     3.0
+    ]
+   },
+   "multiplier_basis": "assumption \u2014 composed from the trade multipliers above; calibrate against PP call history",
+   "lead_time": "Tropical Storm Warning: TS conditions (39\u201373 mph sustained) expected within 36 h; Hurricane Warning issued 36 h before TS-force winds",
+   "actions": [
+    "Horvath (Ocean/Monmouth) and Atlantic/Burlington highest exposure; Central PA mainly inland flooding (e.g., Ida Sep 2021: $40M Chester, $20M/event Montgomery flash-flood damage)",
+    "Pre-storm: generator service, sump backups; post-storm: flooded-equipment replacements for 1\u20133 weeks",
+    "Mutual aid: shift PA techs to NJ (or vice-versa) for 3\u20137 days"
+   ],
+   "local_history": {
+    "event_types": [
+     "Tropical Storm",
+     "Tropical Depression",
+     "Hurricane",
+     "Storm Surge/Tide",
+     "Coastal Flood"
+    ],
+    "territory_episodes_2019_2025": 25,
+    "avg_episodes_per_year": 3.6,
+    "basis": "NOAA NCEI Storm Events, PP core + Horvath counties (9 PA + Ocean/Monmouth NJ), distinct EPISODE_ID",
+    "source_url": "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
+   },
+   "source_url": "https://www.weather.gov/safety/hurricane-ww",
+   "source_urls": [
+    "https://www.weather.gov/safety/hurricane-ww",
+    "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_PA_lancaster",
+   "component": "nws_zone",
+   "county": "Lancaster",
+   "state": "PA",
+   "county_fips": "42071",
+   "state_fips": "42",
+   "pp_territory_tier": "core",
+   "nws_county_ugc": "PAC071",
+   "nws_forecast_zone_ugcs": [
+    "PAZ066"
+   ],
+   "forecast_zone_names": [
+    "Lancaster"
+   ],
+   "cwa": "CTP",
+   "all_ugcs": [
+    "PAC071",
+    "PAZ066"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=PAC071,PAZ066",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/PAC071",
+    "https://api.weather.gov/zones/forecast/PAZ066"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=PA&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=PA&type=county",
+    "https://api.weather.gov/zones?area=PA&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_PA_york",
+   "component": "nws_zone",
+   "county": "York",
+   "state": "PA",
+   "county_fips": "42133",
+   "state_fips": "42",
+   "pp_territory_tier": "core",
+   "nws_county_ugc": "PAC133",
+   "nws_forecast_zone_ugcs": [
+    "PAZ065"
+   ],
+   "forecast_zone_names": [
+    "York"
+   ],
+   "cwa": "CTP",
+   "all_ugcs": [
+    "PAC133",
+    "PAZ065"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=PAC133,PAZ065",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/PAC133",
+    "https://api.weather.gov/zones/forecast/PAZ065"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=PA&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=PA&type=county",
+    "https://api.weather.gov/zones?area=PA&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_PA_dauphin",
+   "component": "nws_zone",
+   "county": "Dauphin",
+   "state": "PA",
+   "county_fips": "42043",
+   "state_fips": "42",
+   "pp_territory_tier": "core",
+   "nws_county_ugc": "PAC043",
+   "nws_forecast_zone_ugcs": [
+    "PAZ057"
+   ],
+   "forecast_zone_names": [
+    "Dauphin"
+   ],
+   "cwa": "CTP",
+   "all_ugcs": [
+    "PAC043",
+    "PAZ057"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=PAC043,PAZ057",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/PAC043",
+    "https://api.weather.gov/zones/forecast/PAZ057"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=PA&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=PA&type=county",
+    "https://api.weather.gov/zones?area=PA&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_PA_cumberland",
+   "component": "nws_zone",
+   "county": "Cumberland",
+   "state": "PA",
+   "county_fips": "42041",
+   "state_fips": "42",
+   "pp_territory_tier": "core",
+   "nws_county_ugc": "PAC041",
+   "nws_forecast_zone_ugcs": [
+    "PAZ063"
+   ],
+   "forecast_zone_names": [
+    "Cumberland"
+   ],
+   "cwa": "CTP",
+   "all_ugcs": [
+    "PAC041",
+    "PAZ063"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=PAC041,PAZ063",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/PAC041",
+    "https://api.weather.gov/zones/forecast/PAZ063"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=PA&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=PA&type=county",
+    "https://api.weather.gov/zones?area=PA&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_PA_berks",
+   "component": "nws_zone",
+   "county": "Berks",
+   "state": "PA",
+   "county_fips": "42011",
+   "state_fips": "42",
+   "pp_territory_tier": "core",
+   "nws_county_ugc": "PAC011",
+   "nws_forecast_zone_ugcs": [
+    "PAZ060"
+   ],
+   "forecast_zone_names": [
+    "Berks"
+   ],
+   "cwa": "PHI",
+   "all_ugcs": [
+    "PAC011",
+    "PAZ060"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=PAC011,PAZ060",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/PAC011",
+    "https://api.weather.gov/zones/forecast/PAZ060"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=PA&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=PA&type=county",
+    "https://api.weather.gov/zones?area=PA&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_PA_lebanon",
+   "component": "nws_zone",
+   "county": "Lebanon",
+   "state": "PA",
+   "county_fips": "42075",
+   "state_fips": "42",
+   "pp_territory_tier": "core",
+   "nws_county_ugc": "PAC075",
+   "nws_forecast_zone_ugcs": [
+    "PAZ059"
+   ],
+   "forecast_zone_names": [
+    "Lebanon"
+   ],
+   "cwa": "CTP",
+   "all_ugcs": [
+    "PAC075",
+    "PAZ059"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=PAC075,PAZ059",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/PAC075",
+    "https://api.weather.gov/zones/forecast/PAZ059"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=PA&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=PA&type=county",
+    "https://api.weather.gov/zones?area=PA&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_PA_franklin",
+   "component": "nws_zone",
+   "county": "Franklin",
+   "state": "PA",
+   "county_fips": "42055",
+   "state_fips": "42",
+   "pp_territory_tier": "core",
+   "nws_county_ugc": "PAC055",
+   "nws_forecast_zone_ugcs": [
+    "PAZ036"
+   ],
+   "forecast_zone_names": [
+    "Franklin"
+   ],
+   "cwa": "CTP",
+   "all_ugcs": [
+    "PAC055",
+    "PAZ036"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=PAC055,PAZ036",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/PAC055",
+    "https://api.weather.gov/zones/forecast/PAZ036"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=PA&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=PA&type=county",
+    "https://api.weather.gov/zones?area=PA&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_PA_adams",
+   "component": "nws_zone",
+   "county": "Adams",
+   "state": "PA",
+   "county_fips": "42001",
+   "state_fips": "42",
+   "pp_territory_tier": "core",
+   "nws_county_ugc": "PAC001",
+   "nws_forecast_zone_ugcs": [
+    "PAZ064"
+   ],
+   "forecast_zone_names": [
+    "Adams"
+   ],
+   "cwa": "CTP",
+   "all_ugcs": [
+    "PAC001",
+    "PAZ064"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=PAC001,PAZ064",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/PAC001",
+    "https://api.weather.gov/zones/forecast/PAZ064"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=PA&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=PA&type=county",
+    "https://api.weather.gov/zones?area=PA&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_PA_perry",
+   "component": "nws_zone",
+   "county": "Perry",
+   "state": "PA",
+   "county_fips": "42099",
+   "state_fips": "42",
+   "pp_territory_tier": "core",
+   "nws_county_ugc": "PAC099",
+   "nws_forecast_zone_ugcs": [
+    "PAZ056"
+   ],
+   "forecast_zone_names": [
+    "Perry"
+   ],
+   "cwa": "CTP",
+   "all_ugcs": [
+    "PAC099",
+    "PAZ056"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=PAC099,PAZ056",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/PAC099",
+    "https://api.weather.gov/zones/forecast/PAZ056"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=PA&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=PA&type=county",
+    "https://api.weather.gov/zones?area=PA&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_PA_chester",
+   "component": "nws_zone",
+   "county": "Chester",
+   "state": "PA",
+   "county_fips": "42029",
+   "state_fips": "42",
+   "pp_territory_tier": "adjacent",
+   "nws_county_ugc": "PAC029",
+   "nws_forecast_zone_ugcs": [
+    "PAZ101",
+    "PAZ102"
+   ],
+   "forecast_zone_names": [
+    "Western Chester",
+    "Eastern Chester"
+   ],
+   "cwa": "PHI",
+   "all_ugcs": [
+    "PAC029",
+    "PAZ101",
+    "PAZ102"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=PAC029,PAZ101,PAZ102",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/PAC029",
+    "https://api.weather.gov/zones/forecast/PAZ101",
+    "https://api.weather.gov/zones/forecast/PAZ102"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=PA&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=PA&type=county",
+    "https://api.weather.gov/zones?area=PA&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_PA_montgomery",
+   "component": "nws_zone",
+   "county": "Montgomery",
+   "state": "PA",
+   "county_fips": "42091",
+   "state_fips": "42",
+   "pp_territory_tier": "adjacent",
+   "nws_county_ugc": "PAC091",
+   "nws_forecast_zone_ugcs": [
+    "PAZ103",
+    "PAZ104"
+   ],
+   "forecast_zone_names": [
+    "Western Montgomery",
+    "Eastern Montgomery"
+   ],
+   "cwa": "PHI",
+   "all_ugcs": [
+    "PAC091",
+    "PAZ103",
+    "PAZ104"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=PAC091,PAZ103,PAZ104",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/PAC091",
+    "https://api.weather.gov/zones/forecast/PAZ103",
+    "https://api.weather.gov/zones/forecast/PAZ104"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=PA&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=PA&type=county",
+    "https://api.weather.gov/zones?area=PA&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_NJ_ocean",
+   "component": "nws_zone",
+   "county": "Ocean",
+   "state": "NJ",
+   "county_fips": "34029",
+   "state_fips": "34",
+   "pp_territory_tier": "horvath_nj",
+   "nws_county_ugc": "NJC029",
+   "nws_forecast_zone_ugcs": [
+    "NJZ020",
+    "NJZ026"
+   ],
+   "forecast_zone_names": [
+    "Ocean",
+    "Coastal Ocean"
+   ],
+   "cwa": "PHI",
+   "all_ugcs": [
+    "NJC029",
+    "NJZ020",
+    "NJZ026"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=NJC029,NJZ020,NJZ026",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/NJC029",
+    "https://api.weather.gov/zones/forecast/NJZ020",
+    "https://api.weather.gov/zones/forecast/NJZ026"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=NJ&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=NJ&type=county",
+    "https://api.weather.gov/zones?area=NJ&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_NJ_monmouth",
+   "component": "nws_zone",
+   "county": "Monmouth",
+   "state": "NJ",
+   "county_fips": "34025",
+   "state_fips": "34",
+   "pp_territory_tier": "horvath_nj",
+   "nws_county_ugc": "NJC025",
+   "nws_forecast_zone_ugcs": [
+    "NJZ013",
+    "NJZ014"
+   ],
+   "forecast_zone_names": [
+    "Western Monmouth",
+    "Eastern Monmouth"
+   ],
+   "cwa": "PHI",
+   "all_ugcs": [
+    "NJC025",
+    "NJZ013",
+    "NJZ014"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=NJC025,NJZ013,NJZ014",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/NJC025",
+    "https://api.weather.gov/zones/forecast/NJZ013",
+    "https://api.weather.gov/zones/forecast/NJZ014"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=NJ&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=NJ&type=county",
+    "https://api.weather.gov/zones?area=NJ&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_NJ_atlantic",
+   "component": "nws_zone",
+   "county": "Atlantic",
+   "state": "NJ",
+   "county_fips": "34001",
+   "state_fips": "34",
+   "pp_territory_tier": "adjacent",
+   "nws_county_ugc": "NJC001",
+   "nws_forecast_zone_ugcs": [
+    "NJZ022",
+    "NJZ025"
+   ],
+   "forecast_zone_names": [
+    "Atlantic",
+    "Coastal Atlantic"
+   ],
+   "cwa": "PHI",
+   "all_ugcs": [
+    "NJC001",
+    "NJZ022",
+    "NJZ025"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=NJC001,NJZ022,NJZ025",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/NJC001",
+    "https://api.weather.gov/zones/forecast/NJZ022",
+    "https://api.weather.gov/zones/forecast/NJZ025"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=NJ&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=NJ&type=county",
+    "https://api.weather.gov/zones?area=NJ&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "zone_NJ_burlington",
+   "component": "nws_zone",
+   "county": "Burlington",
+   "state": "NJ",
+   "county_fips": "34005",
+   "state_fips": "34",
+   "pp_territory_tier": "adjacent",
+   "nws_county_ugc": "NJC005",
+   "nws_forecast_zone_ugcs": [
+    "NJZ019",
+    "NJZ027"
+   ],
+   "forecast_zone_names": [
+    "Northwestern Burlington",
+    "Southeastern Burlington"
+   ],
+   "cwa": "PHI",
+   "all_ugcs": [
+    "NJC005",
+    "NJZ019",
+    "NJZ027"
+   ],
+   "active_alerts_url": "https://api.weather.gov/alerts/active?zone=NJC005,NJZ019,NJZ027",
+   "zone_urls": [
+    "https://api.weather.gov/zones/county/NJC005",
+    "https://api.weather.gov/zones/forecast/NJZ019",
+    "https://api.weather.gov/zones/forecast/NJZ027"
+   ],
+   "note": "NWS issues heat/cold/winter/wind products on forecast zones (PAZ/NJZ) and convective/flood warnings on counties (PAC/NJC) or polygons; filter on all_ugcs.",
+   "source_url": "https://api.weather.gov/zones?area=NJ&type=county",
+   "source_urls": [
+    "https://api.weather.gov/zones?area=NJ&type=county",
+    "https://api.weather.gov/zones?area=NJ&type=forecast"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "hub_lancaster",
+   "component": "weather_hub",
+   "name": "Lancaster",
+   "lat": 40.038,
+   "lon": -76.3057,
+   "geo_precision": "city",
+   "nws_cwa": "CTP",
+   "nws_grid": "CTP/127,30",
+   "forecast_url": "https://api.weather.gov/gridpoints/CTP/127,30/forecast",
+   "forecast_hourly_url": "https://api.weather.gov/gridpoints/CTP/127,30/forecast/hourly",
+   "county_ugc": "PAC071",
+   "forecast_zone_ugc": "PAZ066",
+   "nearest_obs_stations": [
+    {
+     "id": "KLNS",
+     "name": "Lancaster, Lancaster Airport"
+    },
+    {
+     "id": "KMQS",
+     "name": "Chester County Airport"
+    }
+   ],
+   "climatology_station": "USW00054737",
+   "climatology_station_name": "LANCASTER AIRPORT, PA US",
+   "climatology_proxy": false,
+   "source_url": "https://api.weather.gov/points/40.038,-76.3057",
+   "source_urls": [
+    "https://api.weather.gov/points/40.038,-76.3057",
+    "https://nominatim.openstreetmap.org/search?q=Lancaster%2C+Pennsylvania&format=json&limit=1&countrycodes=us"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "hub_york",
+   "component": "weather_hub",
+   "name": "York",
+   "lat": 39.9625,
+   "lon": -76.7277,
+   "geo_precision": "city",
+   "nws_cwa": "CTP",
+   "nws_grid": "CTP/113,25",
+   "forecast_url": "https://api.weather.gov/gridpoints/CTP/113,25/forecast",
+   "forecast_hourly_url": "https://api.weather.gov/gridpoints/CTP/113,25/forecast/hourly",
+   "county_ugc": "PAC133",
+   "forecast_zone_ugc": "PAZ065",
+   "nearest_obs_stations": [
+    {
+     "id": "KTHV",
+     "name": "York, York Airport"
+    },
+    {
+     "id": "KMDT",
+     "name": "Harrisburg, Harrisburg International Airport"
+    }
+   ],
+   "climatology_station": "USW00093778",
+   "climatology_station_name": "YORK AIRPORT, PA US",
+   "climatology_proxy": false,
+   "source_url": "https://api.weather.gov/points/39.9625,-76.7277",
+   "source_urls": [
+    "https://api.weather.gov/points/39.9625,-76.7277",
+    "https://nominatim.openstreetmap.org/search?q=York%2C+Pennsylvania&format=json&limit=1&countrycodes=us"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "hub_harrisburg",
+   "component": "weather_hub",
+   "name": "Harrisburg",
+   "lat": 40.2663,
+   "lon": -76.8861,
+   "geo_precision": "city",
+   "nws_cwa": "CTP",
+   "nws_grid": "CTP/106,38",
+   "forecast_url": "https://api.weather.gov/gridpoints/CTP/106,38/forecast",
+   "forecast_hourly_url": "https://api.weather.gov/gridpoints/CTP/106,38/forecast/hourly",
+   "county_ugc": "PAC043",
+   "forecast_zone_ugc": "PAZ057",
+   "nearest_obs_stations": [
+    {
+     "id": "KCXY",
+     "name": "Harrisburg, Capital City Airport"
+    },
+    {
+     "id": "KMDT",
+     "name": "Harrisburg, Harrisburg International Airport"
+    }
+   ],
+   "climatology_station": "USW00014711",
+   "climatology_station_name": "MIDDLETOWN HARRISBURG INTERNATIONAL AIRPORT, PA US",
+   "climatology_proxy": false,
+   "source_url": "https://api.weather.gov/points/40.2663,-76.8861",
+   "source_urls": [
+    "https://api.weather.gov/points/40.2663,-76.8861",
+    "https://nominatim.openstreetmap.org/search?q=Harrisburg%2C+Pennsylvania&format=json&limit=1&countrycodes=us"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "hub_carlisle",
+   "component": "weather_hub",
+   "name": "Carlisle",
+   "lat": 40.2015,
+   "lon": -77.1891,
+   "geo_precision": "city",
+   "nws_cwa": "CTP",
+   "nws_grid": "CTP/95,33",
+   "forecast_url": "https://api.weather.gov/gridpoints/CTP/95,33/forecast",
+   "forecast_hourly_url": "https://api.weather.gov/gridpoints/CTP/95,33/forecast/hourly",
+   "county_ugc": "PAC041",
+   "forecast_zone_ugc": "PAZ063",
+   "nearest_obs_stations": [
+    {
+     "id": "KCXY",
+     "name": "Harrisburg, Capital City Airport"
+    },
+    {
+     "id": "KMDT",
+     "name": "Harrisburg, Harrisburg International Airport"
+    }
+   ],
+   "climatology_station": "USW00014711",
+   "climatology_station_name": "MIDDLETOWN HARRISBURG INTERNATIONAL AIRPORT, PA US",
+   "climatology_proxy": true,
+   "source_url": "https://api.weather.gov/points/40.2015,-77.1891",
+   "source_urls": [
+    "https://api.weather.gov/points/40.2015,-77.1891",
+    "https://nominatim.openstreetmap.org/search?q=Carlisle%2C+Pennsylvania&format=json&limit=1&countrycodes=us"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "hub_reading",
+   "component": "weather_hub",
+   "name": "Reading",
+   "lat": 40.3353,
+   "lon": -75.9279,
+   "geo_precision": "city",
+   "nws_cwa": "PHI",
+   "nws_grid": "PHI/21,92",
+   "forecast_url": "https://api.weather.gov/gridpoints/PHI/21,92/forecast",
+   "forecast_hourly_url": "https://api.weather.gov/gridpoints/PHI/21,92/forecast/hourly",
+   "county_ugc": "PAC011",
+   "forecast_zone_ugc": "PAZ060",
+   "nearest_obs_stations": [
+    {
+     "id": "KRDG",
+     "name": "Reading, Reading Regional Airport"
+    },
+    {
+     "id": "KPTW",
+     "name": "Pottstown, Pottstown Limerick Airport"
+    }
+   ],
+   "climatology_station": "USW00014712",
+   "climatology_station_name": "READING REGIONAL AIRPORT, PA US",
+   "climatology_proxy": false,
+   "source_url": "https://api.weather.gov/points/40.3353,-75.9279",
+   "source_urls": [
+    "https://api.weather.gov/points/40.3353,-75.9279",
+    "https://nominatim.openstreetmap.org/search?q=Reading%2C+Pennsylvania&format=json&limit=1&countrycodes=us"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "hub_lebanon",
+   "component": "weather_hub",
+   "name": "Lebanon",
+   "lat": 40.3757,
+   "lon": -76.4626,
+   "geo_precision": "city",
+   "nws_cwa": "CTP",
+   "nws_grid": "CTP/119,44",
+   "forecast_url": "https://api.weather.gov/gridpoints/CTP/119,44/forecast",
+   "forecast_hourly_url": "https://api.weather.gov/gridpoints/CTP/119,44/forecast/hourly",
+   "county_ugc": "PAC075",
+   "forecast_zone_ugc": "PAZ059",
+   "nearest_obs_stations": [
+    {
+     "id": "KMUI",
+     "name": "Muir Army Air Field / Indiantown"
+    },
+    {
+     "id": "KMDT",
+     "name": "Harrisburg, Harrisburg International Airport"
+    }
+   ],
+   "climatology_station": "USW00014711",
+   "climatology_station_name": "MIDDLETOWN HARRISBURG INTERNATIONAL AIRPORT, PA US",
+   "climatology_proxy": true,
+   "source_url": "https://api.weather.gov/points/40.3757,-76.4626",
+   "source_urls": [
+    "https://api.weather.gov/points/40.3757,-76.4626",
+    "https://nominatim.openstreetmap.org/search?q=Lebanon%2C+Pennsylvania&format=json&limit=1&countrycodes=us"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "hub_chambersburg",
+   "component": "weather_hub",
+   "name": "Chambersburg",
+   "lat": 39.9375,
+   "lon": -77.6613,
+   "geo_precision": "city",
+   "nws_cwa": "CTP",
+   "nws_grid": "CTP/81,19",
+   "forecast_url": "https://api.weather.gov/gridpoints/CTP/81,19/forecast",
+   "forecast_hourly_url": "https://api.weather.gov/gridpoints/CTP/81,19/forecast/hourly",
+   "county_ugc": "PAC055",
+   "forecast_zone_ugc": "PAZ036",
+   "nearest_obs_stations": [
+    {
+     "id": "KHGR",
+     "name": "Hagerstown, Washington County Regional Airport"
+    },
+    {
+     "id": "KTHV",
+     "name": "York, York Airport"
+    }
+   ],
+   "climatology_station": "USW00093778",
+   "climatology_station_name": "YORK AIRPORT, PA US",
+   "climatology_proxy": true,
+   "source_url": "https://api.weather.gov/points/39.9375,-77.6613",
+   "source_urls": [
+    "https://api.weather.gov/points/39.9375,-77.6613",
+    "https://nominatim.openstreetmap.org/search?q=Chambersburg%2C+Pennsylvania&format=json&limit=1&countrycodes=us"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "hub_gettysburg",
+   "component": "weather_hub",
+   "name": "Gettysburg",
+   "lat": 39.8309,
+   "lon": -77.231,
+   "geo_precision": "city",
+   "nws_cwa": "CTP",
+   "nws_grid": "CTP/96,16",
+   "forecast_url": "https://api.weather.gov/gridpoints/CTP/96,16/forecast",
+   "forecast_hourly_url": "https://api.weather.gov/gridpoints/CTP/96,16/forecast/hourly",
+   "county_ugc": "PAC001",
+   "forecast_zone_ugc": "PAZ064",
+   "nearest_obs_stations": [
+    {
+     "id": "KTHV",
+     "name": "York, York Airport"
+    },
+    {
+     "id": "KHGR",
+     "name": "Hagerstown, Washington County Regional Airport"
+    }
+   ],
+   "climatology_station": "USW00093778",
+   "climatology_station_name": "YORK AIRPORT, PA US",
+   "climatology_proxy": true,
+   "source_url": "https://api.weather.gov/points/39.8309,-77.231",
+   "source_urls": [
+    "https://api.weather.gov/points/39.8309,-77.231",
+    "https://nominatim.openstreetmap.org/search?q=Gettysburg%2C+Pennsylvania&format=json&limit=1&countrycodes=us"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "hub_toms_river",
+   "component": "weather_hub",
+   "name": "Toms River",
+   "lat": 39.9528,
+   "lon": -74.1967,
+   "geo_precision": "city",
+   "nws_cwa": "PHI",
+   "nws_grid": "PHI/83,84",
+   "forecast_url": "https://api.weather.gov/gridpoints/PHI/83,84/forecast",
+   "forecast_hourly_url": "https://api.weather.gov/gridpoints/PHI/83,84/forecast/hourly",
+   "county_ugc": "NJC029",
+   "forecast_zone_ugc": "NJZ020",
+   "nearest_obs_stations": [
+    {
+     "id": "KBLM",
+     "name": "Monmouth Executive Airport"
+    },
+    {
+     "id": "KWRI",
+     "name": "Mcguire Air Force Base"
+    }
+   ],
+   "climatology_station": "USW00093730",
+   "climatology_station_name": "ATLANTIC CITY INTERNATIONAL AIRPORT, NJ US",
+   "climatology_proxy": true,
+   "source_url": "https://api.weather.gov/points/39.9528,-74.1967",
+   "source_urls": [
+    "https://api.weather.gov/points/39.9528,-74.1967",
+    "https://nominatim.openstreetmap.org/search?q=Toms+River%2C+New+Jersey&format=json&limit=1&countrycodes=us"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "hub_freehold",
+   "component": "weather_hub",
+   "name": "Freehold",
+   "lat": 40.2601,
+   "lon": -74.2738,
+   "geo_precision": "city",
+   "nws_cwa": "PHI",
+   "nws_grid": "PHI/78,97",
+   "forecast_url": "https://api.weather.gov/gridpoints/PHI/78,97/forecast",
+   "forecast_hourly_url": "https://api.weather.gov/gridpoints/PHI/78,97/forecast/hourly",
+   "county_ugc": "NJC025",
+   "forecast_zone_ugc": "NJZ013",
+   "nearest_obs_stations": [
+    {
+     "id": "KBLM",
+     "name": "Monmouth Executive Airport"
+    },
+    {
+     "id": "KWRI",
+     "name": "Mcguire Air Force Base"
+    }
+   ],
+   "climatology_station": "USC00283181",
+   "climatology_station_name": "FREEHOLD MARLBORO, NJ US",
+   "climatology_proxy": false,
+   "source_url": "https://api.weather.gov/points/40.2601,-74.2738",
+   "source_urls": [
+    "https://api.weather.gov/points/40.2601,-74.2738",
+    "https://nominatim.openstreetmap.org/search?q=Freehold%2C+New+Jersey&format=json&limit=1&countrycodes=us"
+   ],
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "climo_USW00054737",
+   "component": "station_climatology",
+   "hub": "Lancaster",
+   "station_id": "USW00054737",
+   "station_name": "LANCASTER AIRPORT, PA US",
+   "period": "2019-01-01..2025-12-31",
+   "n_days": 2552,
+   "coverage_days": {
+    "tmax": 2543,
+    "tmin": 2543,
+    "prcp": 2539,
+    "wsf5": 2429
+   },
+   "annual_avg_days_2019_2025": {
+    "tmax_ge_90": 27.9,
+    "tmax_ge_95": 6.3,
+    "tmin_le_20": 19.0,
+    "tmin_le_10": 3.3,
+    "tmin_le_0": 0.4,
+    "hard_freeze_episodes_2plus_days_le20": 4.4,
+    "prcp_ge_1in": 9.4,
+    "prcp_ge_1_5in": 3.0,
+    "gust_ge_40mph": 23.0,
+    "gust_ge_58mph": 0.6
+   },
+   "by_year": {
+    "2019": {
+     "tmax_ge_90": 26,
+     "tmax_ge_95": 3,
+     "tmin_le_20": 25,
+     "tmin_le_10": 7,
+     "tmin_le_0": 1,
+     "hard_freeze_episodes_2plus_days_le20": 5,
+     "prcp_ge_1in": 10,
+     "prcp_ge_1_5in": 1,
+     "gust_ge_40mph": 27,
+     "gust_ge_58mph": 0
+    },
+    "2020": {
+     "tmax_ge_90": 33,
+     "tmax_ge_95": 6,
+     "tmin_le_20": 16,
+     "tmin_le_10": 1,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 5,
+     "prcp_ge_1in": 9,
+     "prcp_ge_1_5in": 4,
+     "gust_ge_40mph": 19,
+     "gust_ge_58mph": 0
+    },
+    "2021": {
+     "tmax_ge_90": 27,
+     "tmax_ge_95": 5,
+     "tmin_le_20": 6,
+     "tmin_le_10": 0,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 1,
+     "prcp_ge_1in": 10,
+     "prcp_ge_1_5in": 5,
+     "gust_ge_40mph": 21,
+     "gust_ge_58mph": 0
+    },
+    "2022": {
+     "tmax_ge_90": 34,
+     "tmax_ge_95": 5,
+     "tmin_le_20": 33,
+     "tmin_le_10": 5,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 9,
+     "prcp_ge_1in": 8,
+     "prcp_ge_1_5in": 1,
+     "gust_ge_40mph": 18,
+     "gust_ge_58mph": 2
+    },
+    "2023": {
+     "tmax_ge_90": 27,
+     "tmax_ge_95": 6,
+     "tmin_le_20": 4,
+     "tmin_le_10": 0,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 1,
+     "prcp_ge_1in": 11,
+     "prcp_ge_1_5in": 2,
+     "gust_ge_40mph": 19,
+     "gust_ge_58mph": 0
+    },
+    "2024": {
+     "tmax_ge_90": 31,
+     "tmax_ge_95": 12,
+     "tmin_le_20": 15,
+     "tmin_le_10": 2,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 4,
+     "prcp_ge_1in": 9,
+     "prcp_ge_1_5in": 4,
+     "gust_ge_40mph": 27,
+     "gust_ge_58mph": 1
+    },
+    "2025": {
+     "tmax_ge_90": 17,
+     "tmax_ge_95": 7,
+     "tmin_le_20": 34,
+     "tmin_le_10": 8,
+     "tmin_le_0": 2,
+     "hard_freeze_episodes_2plus_days_le20": 6,
+     "prcp_ge_1in": 9,
+     "prcp_ge_1_5in": 4,
+     "gust_ge_40mph": 30,
+     "gust_ge_58mph": 1
+    }
+   },
+   "monthly_degree_days": {
+    "1": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 31.86,
+     "days_observed": 217
+    },
+    "2": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 28.59,
+     "days_observed": 194
+    },
+    "3": {
+     "avg_daily_cdd": 0.02,
+     "avg_daily_hdd": 20.06,
+     "days_observed": 217
+    },
+    "4": {
+     "avg_daily_cdd": 0.32,
+     "avg_daily_hdd": 11.62,
+     "days_observed": 210
+    },
+    "5": {
+     "avg_daily_cdd": 2.22,
+     "avg_daily_hdd": 4.16,
+     "days_observed": 217
+    },
+    "6": {
+     "avg_daily_cdd": 7.74,
+     "avg_daily_hdd": 0.25,
+     "days_observed": 210
+    },
+    "7": {
+     "avg_daily_cdd": 13.36,
+     "avg_daily_hdd": 0.0,
+     "days_observed": 217
+    },
+    "8": {
+     "avg_daily_cdd": 10.34,
+     "avg_daily_hdd": 0.06,
+     "days_observed": 212
+    },
+    "9": {
+     "avg_daily_cdd": 4.5,
+     "avg_daily_hdd": 1.14,
+     "days_observed": 206
+    },
+    "10": {
+     "avg_daily_cdd": 0.48,
+     "avg_daily_hdd": 8.26,
+     "days_observed": 217
+    },
+    "11": {
+     "avg_daily_cdd": 0.05,
+     "avg_daily_hdd": 20.06,
+     "days_observed": 209
+    },
+    "12": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 28.46,
+     "days_observed": 217
+    }
+   },
+   "approx_annual_cdd_base65": 1197,
+   "approx_annual_hdd_base65": 4678,
+   "source_url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=USW00054737&startDate=2019-01-01&endDate=2025-12-31&dataTypes=TMAX,TMIN,PRCP,SNOW,WSF5&units=standard&format=json&includeStationName=true",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "climo_USW00014711",
+   "component": "station_climatology",
+   "hub": "Harrisburg",
+   "station_id": "USW00014711",
+   "station_name": "MIDDLETOWN HARRISBURG INTERNATIONAL AIRPORT, PA US",
+   "period": "2019-01-01..2025-12-31",
+   "n_days": 2557,
+   "coverage_days": {
+    "tmax": 2557,
+    "tmin": 2557,
+    "prcp": 2557,
+    "wsf5": 2548
+   },
+   "annual_avg_days_2019_2025": {
+    "tmax_ge_90": 29.9,
+    "tmax_ge_95": 6.6,
+    "tmin_le_20": 14.9,
+    "tmin_le_10": 2.7,
+    "tmin_le_0": 0.4,
+    "hard_freeze_episodes_2plus_days_le20": 3.4,
+    "prcp_ge_1in": 11.4,
+    "prcp_ge_1_5in": 3.3,
+    "gust_ge_40mph": 27.6,
+    "gust_ge_58mph": 1.0
+   },
+   "by_year": {
+    "2019": {
+     "tmax_ge_90": 33,
+     "tmax_ge_95": 6,
+     "tmin_le_20": 22,
+     "tmin_le_10": 5,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 5,
+     "prcp_ge_1in": 9,
+     "prcp_ge_1_5in": 3,
+     "gust_ge_40mph": 25,
+     "gust_ge_58mph": 0
+    },
+    "2020": {
+     "tmax_ge_90": 35,
+     "tmax_ge_95": 12,
+     "tmin_le_20": 8,
+     "tmin_le_10": 0,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 2,
+     "prcp_ge_1in": 9,
+     "prcp_ge_1_5in": 1,
+     "gust_ge_40mph": 24,
+     "gust_ge_58mph": 1
+    },
+    "2021": {
+     "tmax_ge_90": 34,
+     "tmax_ge_95": 6,
+     "tmin_le_20": 2,
+     "tmin_le_10": 0,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 0,
+     "prcp_ge_1in": 10,
+     "prcp_ge_1_5in": 4,
+     "gust_ge_40mph": 22,
+     "gust_ge_58mph": 1
+    },
+    "2022": {
+     "tmax_ge_90": 32,
+     "tmax_ge_95": 4,
+     "tmin_le_20": 27,
+     "tmin_le_10": 5,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 8,
+     "prcp_ge_1in": 12,
+     "prcp_ge_1_5in": 2,
+     "gust_ge_40mph": 25,
+     "gust_ge_58mph": 1
+    },
+    "2023": {
+     "tmax_ge_90": 19,
+     "tmax_ge_95": 4,
+     "tmin_le_20": 2,
+     "tmin_le_10": 0,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 1,
+     "prcp_ge_1in": 13,
+     "prcp_ge_1_5in": 5,
+     "gust_ge_40mph": 19,
+     "gust_ge_58mph": 0
+    },
+    "2024": {
+     "tmax_ge_90": 33,
+     "tmax_ge_95": 11,
+     "tmin_le_20": 13,
+     "tmin_le_10": 1,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 3,
+     "prcp_ge_1in": 16,
+     "prcp_ge_1_5in": 4,
+     "gust_ge_40mph": 28,
+     "gust_ge_58mph": 1
+    },
+    "2025": {
+     "tmax_ge_90": 23,
+     "tmax_ge_95": 3,
+     "tmin_le_20": 30,
+     "tmin_le_10": 8,
+     "tmin_le_0": 3,
+     "hard_freeze_episodes_2plus_days_le20": 5,
+     "prcp_ge_1in": 11,
+     "prcp_ge_1_5in": 4,
+     "gust_ge_40mph": 50,
+     "gust_ge_58mph": 3
+    }
+   },
+   "monthly_degree_days": {
+    "1": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 32.05,
+     "days_observed": 217
+    },
+    "2": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 28.67,
+     "days_observed": 198
+    },
+    "3": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 19.98,
+     "days_observed": 217
+    },
+    "4": {
+     "avg_daily_cdd": 0.31,
+     "avg_daily_hdd": 11.0,
+     "days_observed": 210
+    },
+    "5": {
+     "avg_daily_cdd": 2.47,
+     "avg_daily_hdd": 3.79,
+     "days_observed": 217
+    },
+    "6": {
+     "avg_daily_cdd": 8.61,
+     "avg_daily_hdd": 0.19,
+     "days_observed": 210
+    },
+    "7": {
+     "avg_daily_cdd": 14.63,
+     "avg_daily_hdd": 0.0,
+     "days_observed": 217
+    },
+    "8": {
+     "avg_daily_cdd": 11.4,
+     "avg_daily_hdd": 0.03,
+     "days_observed": 217
+    },
+    "9": {
+     "avg_daily_cdd": 5.05,
+     "avg_daily_hdd": 0.85,
+     "days_observed": 210
+    },
+    "10": {
+     "avg_daily_cdd": 0.57,
+     "avg_daily_hdd": 7.5,
+     "days_observed": 217
+    },
+    "11": {
+     "avg_daily_cdd": 0.06,
+     "avg_daily_hdd": 19.43,
+     "days_observed": 210
+    },
+    "12": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 28.46,
+     "days_observed": 217
+    }
+   },
+   "approx_annual_cdd_base65": 1322,
+   "approx_annual_hdd_base65": 4600,
+   "source_url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=USW00014711&startDate=2019-01-01&endDate=2025-12-31&dataTypes=TMAX,TMIN,PRCP,SNOW,WSF5&units=standard&format=json&includeStationName=true",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "climo_USW00093778",
+   "component": "station_climatology",
+   "hub": "York",
+   "station_id": "USW00093778",
+   "station_name": "YORK AIRPORT, PA US",
+   "period": "2019-01-01..2025-12-31",
+   "n_days": 2549,
+   "coverage_days": {
+    "tmax": 2545,
+    "tmin": 2545,
+    "prcp": 2502,
+    "wsf5": 2423
+   },
+   "annual_avg_days_2019_2025": {
+    "tmax_ge_90": 22.7,
+    "tmax_ge_95": 3.4,
+    "tmin_le_20": 33.6,
+    "tmin_le_10": 6.6,
+    "tmin_le_0": 1.7,
+    "hard_freeze_episodes_2plus_days_le20": 8.4,
+    "prcp_ge_1in": 7.7,
+    "prcp_ge_1_5in": 2.0,
+    "gust_ge_40mph": 10.7,
+    "gust_ge_58mph": 0.0
+   },
+   "by_year": {
+    "2019": {
+     "tmax_ge_90": 20,
+     "tmax_ge_95": 1,
+     "tmin_le_20": 42,
+     "tmin_le_10": 13,
+     "tmin_le_0": 4,
+     "hard_freeze_episodes_2plus_days_le20": 12,
+     "prcp_ge_1in": 9,
+     "prcp_ge_1_5in": 2,
+     "gust_ge_40mph": 13,
+     "gust_ge_58mph": 0
+    },
+    "2020": {
+     "tmax_ge_90": 24,
+     "tmax_ge_95": 3,
+     "tmin_le_20": 26,
+     "tmin_le_10": 4,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 6,
+     "prcp_ge_1in": 8,
+     "prcp_ge_1_5in": 1,
+     "gust_ge_40mph": 14,
+     "gust_ge_58mph": 0
+    },
+    "2021": {
+     "tmax_ge_90": 28,
+     "tmax_ge_95": 4,
+     "tmin_le_20": 29,
+     "tmin_le_10": 2,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 6,
+     "prcp_ge_1in": 7,
+     "prcp_ge_1_5in": 4,
+     "gust_ge_40mph": 7,
+     "gust_ge_58mph": 0
+    },
+    "2022": {
+     "tmax_ge_90": 22,
+     "tmax_ge_95": 0,
+     "tmin_le_20": 54,
+     "tmin_le_10": 11,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 16,
+     "prcp_ge_1in": 6,
+     "prcp_ge_1_5in": 2,
+     "gust_ge_40mph": 6,
+     "gust_ge_58mph": 0
+    },
+    "2023": {
+     "tmax_ge_90": 18,
+     "tmax_ge_95": 4,
+     "tmin_le_20": 15,
+     "tmin_le_10": 0,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 4,
+     "prcp_ge_1in": 9,
+     "prcp_ge_1_5in": 2,
+     "gust_ge_40mph": 6,
+     "gust_ge_58mph": 0
+    },
+    "2024": {
+     "tmax_ge_90": 33,
+     "tmax_ge_95": 10,
+     "tmin_le_20": 25,
+     "tmin_le_10": 6,
+     "tmin_le_0": 2,
+     "hard_freeze_episodes_2plus_days_le20": 7,
+     "prcp_ge_1in": 8,
+     "prcp_ge_1_5in": 1,
+     "gust_ge_40mph": 16,
+     "gust_ge_58mph": 0
+    },
+    "2025": {
+     "tmax_ge_90": 14,
+     "tmax_ge_95": 2,
+     "tmin_le_20": 44,
+     "tmin_le_10": 10,
+     "tmin_le_0": 6,
+     "hard_freeze_episodes_2plus_days_le20": 8,
+     "prcp_ge_1in": 7,
+     "prcp_ge_1_5in": 2,
+     "gust_ge_40mph": 13,
+     "gust_ge_58mph": 0
+    }
+   },
+   "monthly_degree_days": {
+    "1": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 33.47,
+     "days_observed": 217
+    },
+    "2": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 29.73,
+     "days_observed": 198
+    },
+    "3": {
+     "avg_daily_cdd": 0.01,
+     "avg_daily_hdd": 21.62,
+     "days_observed": 216
+    },
+    "4": {
+     "avg_daily_cdd": 0.25,
+     "avg_daily_hdd": 12.78,
+     "days_observed": 208
+    },
+    "5": {
+     "avg_daily_cdd": 1.85,
+     "avg_daily_hdd": 4.96,
+     "days_observed": 217
+    },
+    "6": {
+     "avg_daily_cdd": 6.52,
+     "avg_daily_hdd": 0.6,
+     "days_observed": 210
+    },
+    "7": {
+     "avg_daily_cdd": 11.66,
+     "avg_daily_hdd": 0.0,
+     "days_observed": 217
+    },
+    "8": {
+     "avg_daily_cdd": 8.69,
+     "avg_daily_hdd": 0.11,
+     "days_observed": 214
+    },
+    "9": {
+     "avg_daily_cdd": 3.24,
+     "avg_daily_hdd": 1.83,
+     "days_observed": 208
+    },
+    "10": {
+     "avg_daily_cdd": 0.34,
+     "avg_daily_hdd": 9.54,
+     "days_observed": 215
+    },
+    "11": {
+     "avg_daily_cdd": 0.06,
+     "avg_daily_hdd": 21.74,
+     "days_observed": 208
+    },
+    "12": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 29.74,
+     "days_observed": 217
+    }
+   },
+   "approx_annual_cdd_base65": 1001,
+   "approx_annual_hdd_base65": 5031,
+   "source_url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=USW00093778&startDate=2019-01-01&endDate=2025-12-31&dataTypes=TMAX,TMIN,PRCP,SNOW,WSF5&units=standard&format=json&includeStationName=true",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "climo_USW00014712",
+   "component": "station_climatology",
+   "hub": "Reading",
+   "station_id": "USW00014712",
+   "station_name": "READING REGIONAL AIRPORT, PA US",
+   "period": "2019-01-01..2025-12-31",
+   "n_days": 2557,
+   "coverage_days": {
+    "tmax": 2557,
+    "tmin": 2557,
+    "prcp": 2557,
+    "wsf5": 2550
+   },
+   "annual_avg_days_2019_2025": {
+    "tmax_ge_90": 30.9,
+    "tmax_ge_95": 6.7,
+    "tmin_le_20": 18.9,
+    "tmin_le_10": 2.9,
+    "tmin_le_0": 0.6,
+    "hard_freeze_episodes_2plus_days_le20": 4.7,
+    "prcp_ge_1in": 11.0,
+    "prcp_ge_1_5in": 5.1,
+    "gust_ge_40mph": 25.0,
+    "gust_ge_58mph": 0.7
+   },
+   "by_year": {
+    "2019": {
+     "tmax_ge_90": 25,
+     "tmax_ge_95": 1,
+     "tmin_le_20": 28,
+     "tmin_le_10": 6,
+     "tmin_le_0": 3,
+     "hard_freeze_episodes_2plus_days_le20": 7,
+     "prcp_ge_1in": 14,
+     "prcp_ge_1_5in": 5,
+     "gust_ge_40mph": 27,
+     "gust_ge_58mph": 0
+    },
+    "2020": {
+     "tmax_ge_90": 37,
+     "tmax_ge_95": 7,
+     "tmin_le_20": 14,
+     "tmin_le_10": 0,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 4,
+     "prcp_ge_1in": 12,
+     "prcp_ge_1_5in": 8,
+     "gust_ge_40mph": 29,
+     "gust_ge_58mph": 2
+    },
+    "2021": {
+     "tmax_ge_90": 34,
+     "tmax_ge_95": 7,
+     "tmin_le_20": 13,
+     "tmin_le_10": 0,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 2,
+     "prcp_ge_1in": 10,
+     "prcp_ge_1_5in": 4,
+     "gust_ge_40mph": 21,
+     "gust_ge_58mph": 0
+    },
+    "2022": {
+     "tmax_ge_90": 37,
+     "tmax_ge_95": 6,
+     "tmin_le_20": 32,
+     "tmin_le_10": 6,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 10,
+     "prcp_ge_1in": 9,
+     "prcp_ge_1_5in": 3,
+     "gust_ge_40mph": 15,
+     "gust_ge_58mph": 0
+    },
+    "2023": {
+     "tmax_ge_90": 20,
+     "tmax_ge_95": 4,
+     "tmin_le_20": 2,
+     "tmin_le_10": 0,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 1,
+     "prcp_ge_1in": 10,
+     "prcp_ge_1_5in": 7,
+     "gust_ge_40mph": 13,
+     "gust_ge_58mph": 0
+    },
+    "2024": {
+     "tmax_ge_90": 37,
+     "tmax_ge_95": 15,
+     "tmin_le_20": 14,
+     "tmin_le_10": 2,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 3,
+     "prcp_ge_1in": 13,
+     "prcp_ge_1_5in": 5,
+     "gust_ge_40mph": 24,
+     "gust_ge_58mph": 0
+    },
+    "2025": {
+     "tmax_ge_90": 26,
+     "tmax_ge_95": 7,
+     "tmin_le_20": 29,
+     "tmin_le_10": 6,
+     "tmin_le_0": 1,
+     "hard_freeze_episodes_2plus_days_le20": 6,
+     "prcp_ge_1in": 9,
+     "prcp_ge_1_5in": 4,
+     "gust_ge_40mph": 46,
+     "gust_ge_58mph": 3
+    }
+   },
+   "monthly_degree_days": {
+    "1": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 32.04,
+     "days_observed": 217
+    },
+    "2": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 29.05,
+     "days_observed": 198
+    },
+    "3": {
+     "avg_daily_cdd": 0.01,
+     "avg_daily_hdd": 20.1,
+     "days_observed": 217
+    },
+    "4": {
+     "avg_daily_cdd": 0.39,
+     "avg_daily_hdd": 11.3,
+     "days_observed": 210
+    },
+    "5": {
+     "avg_daily_cdd": 2.44,
+     "avg_daily_hdd": 3.99,
+     "days_observed": 217
+    },
+    "6": {
+     "avg_daily_cdd": 8.02,
+     "avg_daily_hdd": 0.31,
+     "days_observed": 210
+    },
+    "7": {
+     "avg_daily_cdd": 13.82,
+     "avg_daily_hdd": 0.0,
+     "days_observed": 217
+    },
+    "8": {
+     "avg_daily_cdd": 10.73,
+     "avg_daily_hdd": 0.03,
+     "days_observed": 217
+    },
+    "9": {
+     "avg_daily_cdd": 4.67,
+     "avg_daily_hdd": 1.06,
+     "days_observed": 210
+    },
+    "10": {
+     "avg_daily_cdd": 0.54,
+     "avg_daily_hdd": 7.76,
+     "days_observed": 217
+    },
+    "11": {
+     "avg_daily_cdd": 0.09,
+     "avg_daily_hdd": 19.67,
+     "days_observed": 210
+    },
+    "12": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 28.19,
+     "days_observed": 217
+    }
+   },
+   "approx_annual_cdd_base65": 1249,
+   "approx_annual_hdd_base65": 4646,
+   "source_url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=USW00014712&startDate=2019-01-01&endDate=2025-12-31&dataTypes=TMAX,TMIN,PRCP,SNOW,WSF5&units=standard&format=json&includeStationName=true",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "climo_USC00283181",
+   "component": "station_climatology",
+   "hub": "Freehold",
+   "station_id": "USC00283181",
+   "station_name": "FREEHOLD MARLBORO, NJ US",
+   "period": "2019-01-01..2025-12-31",
+   "n_days": 2551,
+   "coverage_days": {
+    "tmax": 2536,
+    "tmin": 2530,
+    "prcp": 2496
+   },
+   "annual_avg_days_2019_2025": {
+    "tmax_ge_90": 33.3,
+    "tmax_ge_95": 8.6,
+    "tmin_le_20": 19.6,
+    "tmin_le_10": 2.7,
+    "tmin_le_0": 0.1,
+    "hard_freeze_episodes_2plus_days_le20": 5.0,
+    "prcp_ge_1in": 13.6,
+    "prcp_ge_1_5in": 5.4,
+    "gust_ge_40mph": null,
+    "gust_ge_58mph": null
+   },
+   "by_year": {
+    "2019": {
+     "tmax_ge_90": 33,
+     "tmax_ge_95": 6,
+     "tmin_le_20": 31,
+     "tmin_le_10": 5,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 7,
+     "prcp_ge_1in": 18,
+     "prcp_ge_1_5in": 4,
+     "gust_ge_40mph": 0,
+     "gust_ge_58mph": 0
+    },
+    "2020": {
+     "tmax_ge_90": 40,
+     "tmax_ge_95": 9,
+     "tmin_le_20": 14,
+     "tmin_le_10": 0,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 3,
+     "prcp_ge_1in": 16,
+     "prcp_ge_1_5in": 6,
+     "gust_ge_40mph": 0,
+     "gust_ge_58mph": 0
+    },
+    "2021": {
+     "tmax_ge_90": 43,
+     "tmax_ge_95": 10,
+     "tmin_le_20": 13,
+     "tmin_le_10": 0,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 2,
+     "prcp_ge_1in": 14,
+     "prcp_ge_1_5in": 5,
+     "gust_ge_40mph": 0,
+     "gust_ge_58mph": 0
+    },
+    "2022": {
+     "tmax_ge_90": 54,
+     "tmax_ge_95": 24,
+     "tmin_le_20": 31,
+     "tmin_le_10": 8,
+     "tmin_le_0": 1,
+     "hard_freeze_episodes_2plus_days_le20": 9,
+     "prcp_ge_1in": 8,
+     "prcp_ge_1_5in": 5,
+     "gust_ge_40mph": 0,
+     "gust_ge_58mph": 0
+    },
+    "2023": {
+     "tmax_ge_90": 18,
+     "tmax_ge_95": 1,
+     "tmin_le_20": 2,
+     "tmin_le_10": 2,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 1,
+     "prcp_ge_1in": 17,
+     "prcp_ge_1_5in": 10,
+     "gust_ge_40mph": 0,
+     "gust_ge_58mph": 0
+    },
+    "2024": {
+     "tmax_ge_90": 27,
+     "tmax_ge_95": 5,
+     "tmin_le_20": 16,
+     "tmin_le_10": 1,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 5,
+     "prcp_ge_1in": 13,
+     "prcp_ge_1_5in": 5,
+     "gust_ge_40mph": 0,
+     "gust_ge_58mph": 0
+    },
+    "2025": {
+     "tmax_ge_90": 18,
+     "tmax_ge_95": 5,
+     "tmin_le_20": 30,
+     "tmin_le_10": 3,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 8,
+     "prcp_ge_1in": 9,
+     "prcp_ge_1_5in": 3,
+     "gust_ge_40mph": 0,
+     "gust_ge_58mph": 0
+    }
+   },
+   "monthly_degree_days": {
+    "1": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 30.63,
+     "days_observed": 214
+    },
+    "2": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 28.12,
+     "days_observed": 195
+    },
+    "3": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 20.27,
+     "days_observed": 212
+    },
+    "4": {
+     "avg_daily_cdd": 0.31,
+     "avg_daily_hdd": 12.27,
+     "days_observed": 208
+    },
+    "5": {
+     "avg_daily_cdd": 1.75,
+     "avg_daily_hdd": 4.92,
+     "days_observed": 214
+    },
+    "6": {
+     "avg_daily_cdd": 7.17,
+     "avg_daily_hdd": 0.5,
+     "days_observed": 207
+    },
+    "7": {
+     "avg_daily_cdd": 13.33,
+     "avg_daily_hdd": 0.0,
+     "days_observed": 215
+    },
+    "8": {
+     "avg_daily_cdd": 10.15,
+     "avg_daily_hdd": 0.07,
+     "days_observed": 213
+    },
+    "9": {
+     "avg_daily_cdd": 4.48,
+     "avg_daily_hdd": 1.12,
+     "days_observed": 208
+    },
+    "10": {
+     "avg_daily_cdd": 0.5,
+     "avg_daily_hdd": 7.65,
+     "days_observed": 216
+    },
+    "11": {
+     "avg_daily_cdd": 0.14,
+     "avg_daily_hdd": 18.79,
+     "days_observed": 209
+    },
+    "12": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 27.67,
+     "days_observed": 214
+    }
+   },
+   "approx_annual_cdd_base65": 1161,
+   "approx_annual_hdd_base65": 4602,
+   "source_url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=USC00283181&startDate=2019-01-01&endDate=2025-12-31&dataTypes=TMAX,TMIN,PRCP,SNOW,WSF5&units=standard&format=json&includeStationName=true",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "climo_USW00093730",
+   "component": "station_climatology",
+   "hub": "Jersey Shore proxy (Atlantic City Intl)",
+   "station_id": "USW00093730",
+   "station_name": "ATLANTIC CITY INTERNATIONAL AIRPORT, NJ US",
+   "period": "2019-01-01..2025-12-31",
+   "n_days": 2557,
+   "coverage_days": {
+    "tmax": 2557,
+    "tmin": 2557,
+    "prcp": 2557,
+    "wsf5": 2550
+   },
+   "annual_avg_days_2019_2025": {
+    "tmax_ge_90": 25.9,
+    "tmax_ge_95": 5.4,
+    "tmin_le_20": 18.6,
+    "tmin_le_10": 2.1,
+    "tmin_le_0": 0.0,
+    "hard_freeze_episodes_2plus_days_le20": 4.6,
+    "prcp_ge_1in": 13.6,
+    "prcp_ge_1_5in": 5.0,
+    "gust_ge_40mph": 38.9,
+    "gust_ge_58mph": 2.9
+   },
+   "by_year": {
+    "2019": {
+     "tmax_ge_90": 34,
+     "tmax_ge_95": 7,
+     "tmin_le_20": 26,
+     "tmin_le_10": 5,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 6,
+     "prcp_ge_1in": 12,
+     "prcp_ge_1_5in": 2,
+     "gust_ge_40mph": 47,
+     "gust_ge_58mph": 1
+    },
+    "2020": {
+     "tmax_ge_90": 31,
+     "tmax_ge_95": 4,
+     "tmin_le_20": 10,
+     "tmin_le_10": 0,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 2,
+     "prcp_ge_1in": 16,
+     "prcp_ge_1_5in": 6,
+     "gust_ge_40mph": 43,
+     "gust_ge_58mph": 9
+    },
+    "2021": {
+     "tmax_ge_90": 26,
+     "tmax_ge_95": 2,
+     "tmin_le_20": 10,
+     "tmin_le_10": 0,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 2,
+     "prcp_ge_1in": 12,
+     "prcp_ge_1_5in": 5,
+     "gust_ge_40mph": 38,
+     "gust_ge_58mph": 2
+    },
+    "2022": {
+     "tmax_ge_90": 31,
+     "tmax_ge_95": 8,
+     "tmin_le_20": 39,
+     "tmin_le_10": 7,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 10,
+     "prcp_ge_1in": 15,
+     "prcp_ge_1_5in": 6,
+     "gust_ge_40mph": 43,
+     "gust_ge_58mph": 3
+    },
+    "2023": {
+     "tmax_ge_90": 15,
+     "tmax_ge_95": 3,
+     "tmin_le_20": 2,
+     "tmin_le_10": 0,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 1,
+     "prcp_ge_1in": 11,
+     "prcp_ge_1_5in": 5,
+     "gust_ge_40mph": 31,
+     "gust_ge_58mph": 2
+    },
+    "2024": {
+     "tmax_ge_90": 23,
+     "tmax_ge_95": 5,
+     "tmin_le_20": 15,
+     "tmin_le_10": 1,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 5,
+     "prcp_ge_1in": 14,
+     "prcp_ge_1_5in": 5,
+     "gust_ge_40mph": 25,
+     "gust_ge_58mph": 1
+    },
+    "2025": {
+     "tmax_ge_90": 21,
+     "tmax_ge_95": 9,
+     "tmin_le_20": 28,
+     "tmin_le_10": 2,
+     "tmin_le_0": 0,
+     "hard_freeze_episodes_2plus_days_le20": 6,
+     "prcp_ge_1in": 15,
+     "prcp_ge_1_5in": 6,
+     "gust_ge_40mph": 45,
+     "gust_ge_58mph": 2
+    }
+   },
+   "monthly_degree_days": {
+    "1": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 29.66,
+     "days_observed": 217
+    },
+    "2": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 27.02,
+     "days_observed": 198
+    },
+    "3": {
+     "avg_daily_cdd": 0.03,
+     "avg_daily_hdd": 19.31,
+     "days_observed": 217
+    },
+    "4": {
+     "avg_daily_cdd": 0.45,
+     "avg_daily_hdd": 11.54,
+     "days_observed": 210
+    },
+    "5": {
+     "avg_daily_cdd": 1.92,
+     "avg_daily_hdd": 4.6,
+     "days_observed": 217
+    },
+    "6": {
+     "avg_daily_cdd": 7.84,
+     "avg_daily_hdd": 0.35,
+     "days_observed": 210
+    },
+    "7": {
+     "avg_daily_cdd": 13.74,
+     "avg_daily_hdd": 0.0,
+     "days_observed": 217
+    },
+    "8": {
+     "avg_daily_cdd": 10.49,
+     "avg_daily_hdd": 0.02,
+     "days_observed": 217
+    },
+    "9": {
+     "avg_daily_cdd": 4.99,
+     "avg_daily_hdd": 0.83,
+     "days_observed": 210
+    },
+    "10": {
+     "avg_daily_cdd": 0.6,
+     "avg_daily_hdd": 6.48,
+     "days_observed": 217
+    },
+    "11": {
+     "avg_daily_cdd": 0.11,
+     "avg_daily_hdd": 18.08,
+     "days_observed": 210
+    },
+    "12": {
+     "avg_daily_cdd": 0.0,
+     "avg_daily_hdd": 25.69,
+     "days_observed": 217
+    }
+   },
+   "approx_annual_cdd_base65": 1232,
+   "approx_annual_hdd_base65": 4346,
+   "source_url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=USW00093730&startDate=2019-01-01&endDate=2025-12-31&dataTypes=TMAX,TMIN,PRCP,SNOW,WSF5&units=standard&format=json&includeStationName=true",
+   "retrieved": "2026-09-24"
+  }
+ ]
+}

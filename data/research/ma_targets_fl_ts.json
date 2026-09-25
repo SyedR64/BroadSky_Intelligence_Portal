@@ -1,0 +1,2627 @@
+{
+  "meta": {
+    "dataset": "BSP add-on M&A target screen — Frontline Managed Services & Thomas Scientific",
+    "generated": "2026-09-24",
+    "method": "Seeded with ZoomInfo find_similar_companies for both platforms (results were dominated by large-cap IT services and life-science majors, so used only for competitor context), then built long-lists from web research (WebSearch, legal-industry directories such as ALA/Legaltech Hub, company websites) and ZoomInfo search_companies by domain for headcount/revenue/IDs. Each candidate was verified by fetching its website or a press/directory page; candidates that could not be retrieved were dropped. Fit scores are analyst judgments on five 1-5 dimensions weighted capability 30%, customer overlap 25%, scale 15%, ownership readiness 15%, geography 15%, scaled to 0-100.",
+    "sources_summary": [
+      "ZoomInfo MCP (search_companies, find_similar_companies)",
+      "Company websites (fetched)",
+      "PR Newswire / GlobeNewswire / BusinessWire press releases",
+      "ChannelE2E, Consulting.us, Law360 Pulse, LawSites (LawNext), Legal IT Insider",
+      "ALA (alanet.org) vendor directory, Legaltech Hub, British Legal IT Forum",
+      "Harvey & Company, Berenson, Carlyle, ROI-NJ, Tracxn (Thomas Scientific deal history)",
+      "Wikipedia (Cole-Parmer ownership)"
+    ],
+    "caveats": [
+      "ZoomInfo revenue figures are modeled estimates and can diverge sharply from reality (e.g., Helm360 $116.5M, Midland $147.4M, ZAGENO possibly GMV); treat as directional only.",
+      "ZoomInfo enrich_companies returned 'limit exceeded', so founded year/ownership came from websites where stated; otherwise null.",
+      "Ownership 'not disclosed' means no sponsor was found on the retrieved pages — it does not confirm independence.",
+      "The session's WebSearch budget ran out mid-screen, and several distributor sites (e.g., Neta Scientific, LabChem, LabRepco, Spectrum Chemical, RPI, EquipNet, Hazmasters, Oakwood Chemical) blocked automated fetches. They were left out for lack of a retrieved source, not because they fit poorly; worth checking by hand.",
+      "lat/lon are approximate city centroids (geo_precision 'city') unless marked 'address'; hq_address is given where the company publishes it.",
+      "Element Technologies (New Charter Technologies), Cedarlane and LabChem (TCP Analytical) are already inside consolidators; they are listed as competitors, or scored low on ownership_readiness, rather than treated as actionable targets.",
+      "Smith + Howard is excluded (BSP exit to TPG Growth, closed Aug 6 2026).",
+      "Public strategic comps (Avantor/VWR, Thermo Fisher/Fisher Scientific, Transcat) are not profiled here because no source page was retrieved for them in this run.",
+      "Verified 2026-09-24: sampled 25, confirmed 25, removed 0",
+      "Verifier corrections 2026-09-24: fl-06 Affinity Consulting HQ changed from Columbus OH to Largo FL (address given on the ALA listing source; the company site does not state an HQ); fl-22 founded_year set to 1996 (site: supporting Toronto since 1996); ts-24 founded_year set to 1900 (site: name known since 1900); hq_address filled from fetched company pages for fl-01, fl-22, ts-04, ts-05, ts-09, ts-13, ts-23, ts-24. Not confirmed from sources: ZAGENO (ts-17) Cambridge MA HQ and DOT Scientific (ts-21) Burton MI location, because both sites render with JavaScript (business descriptions and DOT's woman-owned status were confirmed). ZAGENO is venture-backed rather than independent."
+    ],
+    "item_count": 48,
+    "platform_counts": {
+      "frontline": 23,
+      "thomas_scientific": 25
+    },
+    "scoring_weights": {
+      "capability": 0.3,
+      "customer_overlap": 0.25,
+      "scale": 0.15,
+      "ownership_readiness": 0.15,
+      "geography": 0.15
+    },
+    "frontline": {
+      "platform_context": {
+        "prior_acquisitions": [
+          "InvoicePrep (outsourced eBilling/invoice compliance)",
+          "Glasser Tech (NYC legal IT; 100+ law-firm clients)",
+          "Logicforce (legal IT consultancy, founded 1995)",
+          "LANsultants"
+        ],
+        "divestitures": [
+          "eDiscovery unit sold to Complete Legal"
+        ],
+        "recent": "Strategic partnership with KL Software Technologies (M365/SharePoint legal apps), announced Aug 2026",
+        "stated_criteria": "CEO Seelin Naidoo (Mergermarket, via frontlinems.com): tuck-ins ~$5M revenue / $1-2M EBITDA; larger PE- or partner-owned targets $20M+ revenue; point solutions, proprietary software, GenAI; geographic priorities California, Texas, Atlanta, South Florida, UK.",
+        "sources": [
+          "https://frontlinems.com/press/frontline-managed-services-acquisition-targets/",
+          "https://www.channele2e.com/news/frontline-acquires-glasser-tech",
+          "https://www.prnewswire.com/news-releases/frontline-managed-services-continues-strategic-expansion-with-acquisition-of-legal-it-consulting-firm-logicforce-301366434.html",
+          "https://complexdiscovery.com/complete-legals-acquisition-of-frontline-managed-services-ediscovery-unit-setting-a-client-centric-standard-in-legal-tech/",
+          "https://klstinc.com/frontline-managed-services-and-kl-software-technologies-partner-to-deliver-intelligent-optimized-legal-platforms/"
+        ]
+      },
+      "ranked_top_8": [
+        {
+          "rank": 1,
+          "id": "fl-01",
+          "company": "Innovative Computing Systems, Inc.",
+          "fit_score": 91
+        },
+        {
+          "rank": 2,
+          "id": "fl-03",
+          "company": "Helm360",
+          "fit_score": 91
+        },
+        {
+          "rank": 3,
+          "id": "fl-09",
+          "company": "Quiss Technology PLC",
+          "fit_score": 86
+        },
+        {
+          "rank": 4,
+          "id": "fl-02",
+          "company": "Kraft & Kennedy, Inc. (Kraft Kennedy)",
+          "fit_score": 85
+        },
+        {
+          "rank": 5,
+          "id": "fl-08",
+          "company": "Traveling Coaches",
+          "fit_score": 82
+        },
+        {
+          "rank": 6,
+          "id": "fl-16",
+          "company": "The Legal Billing Group",
+          "fit_score": 78
+        },
+        {
+          "rank": 7,
+          "id": "fl-06",
+          "company": "Affinity Consulting Group",
+          "fit_score": 77
+        },
+        {
+          "rank": 8,
+          "id": "fl-14",
+          "company": "The Garver Group",
+          "fit_score": 77
+        }
+      ],
+      "pe_backed_competitors": [
+        {
+          "company": "Morae Global",
+          "hq": "Houston, TX",
+          "sponsor": "Lateral Investment Management (also Ares, Mount Logan, BlackRock, Garland Capital listed as investors)",
+          "scale": "~1,436 employees (ZoomInfo)",
+          "notes": "Legal tech consulting, eBilling/matter management; acquired Gimmal (May 2025).",
+          "sources": [
+            "https://www.lateralim.com/portfolio/morae-global",
+            "https://www.globenewswire.com/news-release/2025/05/14/3081116/0/en/Morae-Acquires-Information-Governance-Vendor-Gimmal-Broadening-Its-Technology-Based-Solutions-for-Law-Firms-and-Law-Departments.html",
+            "https://www.morae.com/about/"
+          ]
+        },
+        {
+          "company": "Harbor Global (formerly HBR Consulting)",
+          "hq": "Chicago, IL",
+          "sponsor": null,
+          "scale": "900+ experts (site); ~800 (ZoomInfo)",
+          "notes": "Acquired Keno Kozie (legal IT, help-desk outsourcing) Mar 2021; HBR's advisory practice was sold to Renovus Capital Partners. Current sponsor not verified.",
+          "sources": [
+            "https://www.harborglobal.com/",
+            "https://www.consulting.us/news/5633/hbr-consulting-buys-law-sector-it-consultancy-keno-kozie",
+            "https://www.consulting.us/news/8409/hbr-consulting-sells-advisory-practice-to-renovus-capital-partners"
+          ]
+        },
+        {
+          "company": "New Charter Technologies (owner of Element Technologies)",
+          "hq": null,
+          "sponsor": null,
+          "scale": "~1,300 employees, ~30 local teams",
+          "notes": "MSP roll-up; its Element Technologies unit is a NetDocuments Diamond Partner and legal MSP competing directly with Frontline.",
+          "sources": [
+            "https://www.newchartertech.com/",
+            "https://www.ele-ment.com/"
+          ]
+        },
+        {
+          "company": "OneAdvanced (owner of Tikit legal)",
+          "hq": "UK",
+          "sponsor": null,
+          "scale": "Tikit ~307 employees (ZoomInfo)",
+          "notes": "tikit.com now redirects to OneAdvanced; legal software plus managed IT services in the UK.",
+          "sources": [
+            "https://www.tikit.com"
+          ]
+        },
+        {
+          "company": "Complete Legal",
+          "hq": null,
+          "sponsor": null,
+          "scale": null,
+          "notes": "Bought Frontline's eDiscovery unit.",
+          "sources": [
+            "https://complexdiscovery.com/complete-legals-acquisition-of-frontline-managed-services-ediscovery-unit-setting-a-client-centric-standard-in-legal-tech/"
+          ]
+        },
+        {
+          "company": "All Covered ('The Lawyer's Help Desk')",
+          "hq": "Anaheim, CA",
+          "sponsor": "Strategic (Konica Minolta IT services unit), not PE",
+          "scale": "~600 employees (ZoomInfo)",
+          "notes": "Generalist MSP with a branded legal help desk.",
+          "sources": [
+            "https://www.allcovered.com/industries/legal"
+          ]
+        },
+        {
+          "company": "Dataprise",
+          "hq": "Rockville, MD",
+          "sponsor": null,
+          "scale": "~500 employees (ZoomInfo)",
+          "notes": "Generalist MSP with a legal vertical; sponsor not verified.",
+          "sources": [
+            "https://www.dataprise.com/industry/legal-law-firms/"
+          ]
+        }
+      ]
+    },
+    "thomas_scientific": {
+      "platform_context": {
+        "prior_acquisitions": [
+          "Phenix Research Products (Candler NC, Dec 2017)",
+          "Denville Scientific (Holliston MA, Jan 2018)",
+          "American Cleanstat (Irvine CA, May 2018)",
+          "E&K Scientific (Santa Clara CA, May 2018)",
+          "North Central Instruments (Minneapolis MN)",
+          "Quintana Supply (MA, Aug 1 2023)",
+          "Day Associates (MA, Aug 2 2023)",
+          "Arrowhead Forensics (Lenexa KS, Oct 2023 per Tracxn)"
+        ],
+        "observation": "No acquisition since late 2023 was found in public sources as of Jul 2026 (Tracxn). The platform's add-on pattern: regional life-science and cleanroom distributors.",
+        "sources": [
+          "https://harveyllc.com/harvey-company-initiates-fourth-deal-thomas-scientific/",
+          "https://www.prnewswire.com/news-releases/thomas-scientific-expands-distribution-and-sales-capabilities-with-the-acquisition-of-quintana-supply-301891643.html",
+          "https://www.prnewswire.com/news-releases/thomas-scientific-expands-distribution-and-sales-capabilities-with-the-acquisition-of-day-associates-inc-301892907.html",
+          "https://www.thomassci.com/blog/_/nci-press-release",
+          "https://tracxn.com/d/acquisitions/acquisitions-by-thomas-scientific/__vcg_beEQ-b_9hISgNpZGkaCwORG7UEs4B3L4-bAiYvg"
+        ]
+      },
+      "ranked_top_8": [
+        {
+          "rank": 1,
+          "id": "ts-01",
+          "company": "Midland Scientific, Inc. (MSI)",
+          "fit_score": 92
+        },
+        {
+          "rank": 2,
+          "id": "ts-02",
+          "company": "Capitol Scientific",
+          "fit_score": 91
+        },
+        {
+          "rank": 3,
+          "id": "ts-03",
+          "company": "MIDSCI",
+          "fit_score": 91
+        },
+        {
+          "rank": 4,
+          "id": "ts-05",
+          "company": "Valutek",
+          "fit_score": 91
+        },
+        {
+          "rank": 5,
+          "id": "ts-04",
+          "company": "Mandel Scientific",
+          "fit_score": 86
+        },
+        {
+          "rank": 6,
+          "id": "ts-07",
+          "company": "Andwin Corporation (Andwin Scientific / Andwin Clinical)",
+          "fit_score": 85
+        },
+        {
+          "rank": 7,
+          "id": "ts-08",
+          "company": "Genesee Scientific",
+          "fit_score": 82
+        },
+        {
+          "rank": 8,
+          "id": "ts-11",
+          "company": "Micronova Manufacturing",
+          "fit_score": 79
+        }
+      ],
+      "pe_backed_competitors": [
+        {
+          "company": "Cole-Parmer",
+          "hq": "Vernon Hills, IL",
+          "sponsor": "Brookfield Asset Management private equity + CDPQ (2025, reported ~$1.4B); previously GTCR (2014-2025)",
+          "scale": "~1,000 employees (ZoomInfo)",
+          "notes": "Lab instruments/consumables; InnoCal calibration and repair.",
+          "sources": [
+            "https://en.wikipedia.org/wiki/Cole-Parmer"
+          ]
+        },
+        {
+          "company": "TCP Analytical Holdings",
+          "hq": "Isle of Palms, SC (ZoomInfo)",
+          "sponsor": null,
+          "scale": "11 brands",
+          "notes": "Consolidator of lab chemicals and reagent brands: LabChem, Cedarlane, Alconox, Advanced ChemTech, AAPPTec, Barker Industries, Tangram, Burrell Scientific, Lifecycle Biotechnologies, Critical Process Filtration. Competes with Thomas for reagent and chemical targets.",
+          "sources": [
+            "https://www.tcpanalytical.com/",
+            "https://www.cedarlanelabs.com/"
+          ]
+        },
+        {
+          "company": "Technical Safety Services (TSS)",
+          "hq": "La Jolla, CA (ZoomInfo)",
+          "sponsor": null,
+          "scale": "~530 employees (ZoomInfo)",
+          "notes": "Cleanroom certification, lab-equipment testing and calibration (ISO 17025). A consolidator in the lab-service adjacency; sponsor not verified.",
+          "sources": [
+            "https://www.techsafety.com/"
+          ]
+        }
+      ]
+    }
+  },
+  "items": [
+    {
+      "id": "fl-01",
+      "platform": "frontline",
+      "company": "Innovative Computing Systems, Inc.",
+      "website": "https://www.innovativecomp.com",
+      "hq_city": "Los Angeles",
+      "state": "CA",
+      "country": "United States",
+      "hq_address": "1000 Wilshire Boulevard, Suite 1900, Los Angeles, CA 90017",
+      "lat": 34.0522,
+      "lon": -118.2437,
+      "geo_precision": "city",
+      "founded_year": 1989,
+      "employees": 60,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 12564000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private, independent (no sponsor disclosed)",
+      "offerings": [
+        "Managed IT for law firms (Innovative Managed Solution, launched May 2025)",
+        "Cloud-hosted infrastructure/workstations",
+        "Cybersecurity",
+        "Document management systems",
+        "Backup & DR",
+        "Telephony",
+        "Professional services"
+      ],
+      "customer_segments": [
+        "Large and midsize law firms",
+        "Corporate legal departments"
+      ],
+      "strategic_rationale": "Law-firm-exclusive MSP since 1989 with offices in Los Angeles, San Francisco and Austin — directly hits two of Frontline CEO Seelin Naidoo's stated expansion geographies (California, Texas). Fits the ~$5M-revenue / $1-2M EBITDA tuck-in profile and adds a West Coast service desk/field-support bench for mid/large firms.",
+      "fit_score": 91,
+      "fit_breakdown": {
+        "capability": 5,
+        "customer_overlap": 5,
+        "scale": 3,
+        "ownership_readiness": 4,
+        "geography": 5
+      },
+      "risk_flags": [
+        "Founder succession/ownership details not public",
+        "ZoomInfo revenue is modeled, not reported"
+      ],
+      "zoominfo_id": "19317404",
+      "sources": [
+        "https://www.innovativecomp.com/",
+        "https://www.globenewswire.com/news-release/2025/05/19/3084156/0/en/Innovative-Computing-Systems-Unveils-Comprehensive-Managed-IT-Solution-Tailored-for-U-S-Law-Firms.html",
+        "https://www.alanet.org/legal-management-software-products-services/innovative-computing-systems"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-02",
+      "platform": "frontline",
+      "company": "Kraft & Kennedy, Inc. (Kraft Kennedy)",
+      "website": "https://www.kraftkennedy.com",
+      "hq_city": "New York",
+      "state": "NY",
+      "country": "United States",
+      "hq_address": "630 Third Avenue, New York, NY",
+      "lat": 40.7497,
+      "lon": -73.976,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 155,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 21531000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Managed IT services",
+        "Security & compliance (CISO-led)",
+        "Enterprise content/document management",
+        "Managed desktop",
+        "IT strategy & project management",
+        "AI transformation",
+        "Procurement"
+      ],
+      "customer_segments": [
+        "Law firms",
+        "Financial firms",
+        "Legal departments",
+        "Nonprofits"
+      ],
+      "strategic_rationale": "One of the best-known legal-focused technology consultancies/MSPs (NYC HQ; offices in Chicago, Houston, Wilton CT). Adds senior DMS/security consulting depth and a Houston foothold (Texas priority). Scale (~155 staff) fits Frontline's 'larger target' track for partner-owned firms.",
+      "fit_score": 85,
+      "fit_breakdown": {
+        "capability": 5,
+        "customer_overlap": 5,
+        "scale": 4,
+        "ownership_readiness": 3,
+        "geography": 3
+      },
+      "risk_flags": [
+        "NYC overlap with Frontline's Glasser Tech legacy branch",
+        "Also serves financial-services clients (partial legal focus)"
+      ],
+      "zoominfo_id": "60393362",
+      "sources": [
+        "https://www.kraftkennedy.com/",
+        "https://theorg.com/org/kraft-kennedy-inc#offices",
+        "https://www.konaequity.com/company/kraft-kennedy-inc-4393842391/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-03",
+      "platform": "frontline",
+      "company": "Helm360",
+      "website": "https://helm360.com",
+      "hq_city": "Poway",
+      "state": "CA",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 32.9628,
+      "lon": -117.0359,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 299,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 116502000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private; part of CCS Global Tech group (subsidiaries Helm 360 Ltd (UK), Helm Analytics Pvt Ltd (India), Digital Eye 360 LLC)",
+      "offerings": [
+        "Elite 3E / Elite Enterprise / ProLaw application managed services",
+        "Billing support",
+        "Elite 3E QA testing & implementation",
+        "Business intelligence & reporting",
+        "Cloud hosting",
+        "Termi chatbot (Aderant/3E/ProLaw)",
+        "Automation/AI"
+      ],
+      "customer_segments": [
+        "Large law firms (incl. top-100 global firms)",
+        "Accounting and financial firms"
+      ],
+      "strategic_rationale": "Deepest-fit capability add: financial/practice-management application managed services (Elite 3E, ProLaw, Aderant) sit directly under Frontline's Financial Performance & Revenue Operations line, and Helm360 has supported 160+ 3E implementations. Brings California, UK and India delivery — all Frontline priority or existing geographies — plus proprietary software (Termi, Digital Eye), matching the stated appetite for targets with proprietary software/GenAI.",
+      "fit_score": 91,
+      "fit_breakdown": {
+        "capability": 5,
+        "customer_overlap": 5,
+        "scale": 4,
+        "ownership_readiness": 3,
+        "geography": 5
+      },
+      "risk_flags": [
+        "Group structure (CCS Global Tech) may complicate carve-out",
+        "ZoomInfo revenue estimate ($116.5M) likely overstated vs. headcount",
+        "Thomson Reuters partner dependency"
+      ],
+      "zoominfo_id": "347196196",
+      "sources": [
+        "https://helm360.com/about/",
+        "https://helm360.com/",
+        "https://www.lawnext.com/2022/09/new-tool-from-helm360-automates-firms-testing-of-elite-3e-implementations-to-save-time-and-cost.html"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-04",
+      "platform": "frontline",
+      "company": "Intelligent Technical Solutions (ITS)",
+      "website": "https://www.itsasap.com",
+      "hq_city": "Las Vegas",
+      "state": "NV",
+      "country": "United States",
+      "hq_address": "2880 Meade Ave 350, Las Vegas, NV 89102",
+      "lat": 36.1699,
+      "lon": -115.1398,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 200,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 48746000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not verified; PitchBook profile exists)",
+      "offerings": [
+        "Managed & co-managed IT ($150-$300/user/month tiers)",
+        "Cybersecurity",
+        "Compliance",
+        "Cloud",
+        "VoIP",
+        "Backup & DR",
+        "Data analytics"
+      ],
+      "customer_segments": [
+        "SMB law firms (legal vertical)",
+        "Other SMB verticals"
+      ],
+      "strategic_rationale": "Multi-office Western US MSP (Las Vegas HQ; sales offices incl. Los Angeles, San Francisco, Sacramento, Dallas, Phoenix, Seattle) with a published law-firm practice. Would give Frontline instant West Coast/Texas field coverage, though revenue is only partly legal.",
+      "fit_score": 66,
+      "fit_breakdown": {
+        "capability": 3,
+        "customer_overlap": 3,
+        "scale": 4,
+        "ownership_readiness": 3,
+        "geography": 4
+      },
+      "risk_flags": [
+        "Generalist MSP — legal is one vertical",
+        "Possible existing sponsor ownership (not verified)"
+      ],
+      "zoominfo_id": "139101176",
+      "sources": [
+        "https://www.itsasap.com/ultimate-guide-managed-it-law",
+        "https://www.zoominfo.com/c/intelligent-technical-solutions/139101176",
+        "https://pitchbook.com/profiles/company/136858-69"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-05",
+      "platform": "frontline",
+      "company": "Uptime Legal Systems",
+      "website": "https://www.uptimelegal.com",
+      "hq_city": "Eden Prairie",
+      "state": "MN",
+      "country": "United States",
+      "hq_address": "7500 Flying Cloud Drive, Suite 625, Eden Prairie, MN 55344",
+      "lat": 44.8547,
+      "lon": -93.4708,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 24,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 7293000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private, independent",
+      "offerings": [
+        "Uptime Manage (managed IT for law firms)",
+        "Uptime Cloud (legal application hosting)",
+        "LexWorkplace document management",
+        "Legal application support",
+        "Legal marketing (Inbound Law Marketing)"
+      ],
+      "customer_segments": [
+        "Small and mid-size law firms (500+ law firm clients)",
+        "Canadian law firms (via LexCloud)"
+      ],
+      "strategic_rationale": "Legal-only cloud/MSP with 500+ firm clients and offices in Austin TX and Toronto; serial acquirer (JurisPage, Inbound Law Marketing, Flywhere, LexCloud). Adds a down-market SMB-firm product line and owned SaaS (LexWorkplace) Frontline could cross-sell.",
+      "fit_score": 69,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 3,
+        "scale": 2,
+        "ownership_readiness": 4,
+        "geography": 4
+      },
+      "risk_flags": [
+        "Small-firm customer base differs from Frontline's AmLaw/mid-market core",
+        "Founding year conflicts across sources (2002 site footer vs 2005 third-party)"
+      ],
+      "zoominfo_id": "181321904",
+      "sources": [
+        "https://www.uptimelegal.com/company/",
+        "https://www.uptimelegal.com/uptime-legal-systems-acquires-lexcloud/",
+        "https://www.channele2e.com/news/uptime-legal-acquires-flywhere"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-06",
+      "platform": "frontline",
+      "company": "Affinity Consulting Group",
+      "website": "https://www.affinityconsulting.com",
+      "hq_city": "Largo",
+      "state": "FL",
+      "country": "United States",
+      "hq_address": "8200 Bryan Dairy Road, Suite 160, Largo, FL 33777",
+      "lat": 27.9095,
+      "lon": -82.7873,
+      "geo_precision": "city",
+      "founded_year": 2004,
+      "employees": 97,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 8812000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Partner-owned (founders Steve Best, Debbie Foster, Barron Henley, Paul Unger); merged with Lawyerist team 2023",
+      "offerings": [
+        "Practice/financial management & billing system consulting",
+        "Document management & automation",
+        "AI strategy",
+        "Software training",
+        "Strategic planning & financial analysis",
+        "Lawyerist (small-firm community)"
+      ],
+      "customer_segments": [
+        "Law firms solo-to-large",
+        "Corporate legal departments",
+        "Bar associations"
+      ],
+      "strategic_rationale": "Legal-only technology & management consultancy formed from six regional firms; adds practice-management/billing implementation and training that feeds Frontline's Legal Technology Optimization and RCM lines, plus the Lawyerist small-firm audience for top-of-funnel.",
+      "fit_score": 77,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 4,
+        "scale": 3,
+        "ownership_readiness": 5,
+        "geography": 3
+      },
+      "risk_flags": [
+        "Consulting revenue is project-based (less recurring)",
+        "Key-person concentration in founding partners"
+      ],
+      "zoominfo_id": "354095086",
+      "sources": [
+        "https://www.affinityconsulting.com/how-we-started/",
+        "https://www.alanet.org/legal-management-software-products-services/affinity-consulting-group"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-07",
+      "platform": "frontline",
+      "company": "Legal Workspace",
+      "website": "https://legal-workspace.com",
+      "hq_city": "Dallas",
+      "state": "TX",
+      "country": "United States",
+      "hq_address": "1909 Woodall Rodgers Fwy, Suite 550, Dallas, TX 75201",
+      "lat": 32.7894,
+      "lon": -96.8009,
+      "geo_precision": "address",
+      "founded_year": 2008,
+      "employees": 23,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 3712000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Subsidiary of Business Network Consulting (BNC, founded 1997)",
+      "offerings": [
+        "Cloud-hosted virtual law office",
+        "Legal practice-management application hosting",
+        "IT support"
+      ],
+      "customer_segments": [
+        "Small and mid-size law firms"
+      ],
+      "strategic_rationale": "Texas-based, legal-exclusive cloud-hosting provider ('first cloud infrastructure designed exclusively for law firms'); a small Dallas tuck-in that gives Frontline a Texas hosting/support node.",
+      "fit_score": 66,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 3,
+        "scale": 1,
+        "ownership_readiness": 3,
+        "geography": 5
+      },
+      "risk_flags": [
+        "Parent BNC ownership — carve-out needed",
+        "Sub-scale (~23 staff)"
+      ],
+      "zoominfo_id": "347764983",
+      "sources": [
+        "https://legal-workspace.com/about-us/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-08",
+      "platform": "frontline",
+      "company": "Traveling Coaches",
+      "website": "https://www.travelingcoaches.com",
+      "hq_city": "Plano",
+      "state": "TX",
+      "country": "United States",
+      "hq_address": "5345 Towne Square Dr., Suite 200, Plano, TX 75024",
+      "lat": 33.0784,
+      "lon": -96.8103,
+      "geo_precision": "address",
+      "founded_year": 1995,
+      "employees": 33,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 9018000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Founder-led, woman-owned (founder Gina Buser)",
+      "offerings": [
+        "Technology training & support for law firms",
+        "LegalMind learning platform (4,000+ courses)",
+        "AI adoption training",
+        "iManage & NetDocuments services",
+        "OnGuard security awareness",
+        "Certified Legal Trainer Program"
+      ],
+      "customer_segments": [
+        "AmLaw 100/200 firms (87 of AmLaw 100)",
+        "UK Magic Circle firms",
+        "Corporate legal departments"
+      ],
+      "strategic_rationale": "Adds a training/adoption and security-awareness layer that attaches to every Frontline service-desk and platform rollout; >1,000 law-firm relationships and Dallas-area base (Texas priority). High customer overlap with Frontline's AmLaw client base.",
+      "fit_score": 82,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 5,
+        "scale": 2,
+        "ownership_readiness": 4,
+        "geography": 5
+      },
+      "risk_flags": [
+        "Project/training revenue less recurring",
+        "Founder dependency"
+      ],
+      "zoominfo_id": "38797551",
+      "sources": [
+        "https://www.travelingcoaches.com/",
+        "https://www.legaltechnologyhub.com/vendors/traveling-coaches/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-09",
+      "platform": "frontline",
+      "company": "Quiss Technology PLC",
+      "website": "https://www.quiss.co.uk",
+      "hq_city": "Tamworth",
+      "state": "England",
+      "country": "United Kingdom",
+      "hq_address": "Claymore, Tame Valley Industrial Estate, Tamworth, B77 5DQ",
+      "lat": 52.6336,
+      "lon": -1.691,
+      "geo_precision": "city",
+      "founded_year": 1988,
+      "employees": 89,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 18835000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Privately owned",
+      "offerings": [
+        "IT managed services",
+        "Azure cloud",
+        "Cyber security",
+        "Data governance & compliance",
+        "NOC",
+        "Digital transformation"
+      ],
+      "customer_segments": [
+        "UK mid-market law firms (30-400 users)",
+        "Professional services firms"
+      ],
+      "strategic_rationale": "ISO 27001 UK MSP with a mid-market law-firm core (~100 staff). Directly addresses Frontline's stated wish to build UK presence beyond its London office, adding a Midlands delivery base and a UK mid-market book.",
+      "fit_score": 86,
+      "fit_breakdown": {
+        "capability": 5,
+        "customer_overlap": 4,
+        "scale": 3,
+        "ownership_readiness": 4,
+        "geography": 5
+      },
+      "risk_flags": [
+        "ZoomInfo lists Harrow (London) address vs. Tamworth HQ on site",
+        "GBP-denominated, UK regulatory (SRA) client obligations"
+      ],
+      "zoominfo_id": "65783215",
+      "sources": [
+        "https://www.quiss.co.uk/about-us/",
+        "https://www.britishlegalitforum.com/sponsor/quiss-technology/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-10",
+      "platform": "frontline",
+      "company": "Tabush Group",
+      "website": "https://www.tabush.com",
+      "hq_city": "New York",
+      "state": "NY",
+      "country": "United States",
+      "hq_address": "148 W 37th St, 6th Fl, New York, NY 10018",
+      "lat": 40.7536,
+      "lon": -73.9895,
+      "geo_precision": "city",
+      "founded_year": 2001,
+      "employees": 35,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 27560000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Founder-owned (Morris Tabush, Founder & President)",
+      "offerings": [
+        "Desktop-as-a-Service (Boxtop)",
+        "Managed IT",
+        "Cloud management (Overture)",
+        "SOCaaS (Boxtop Guardian)",
+        "Co-managed IT"
+      ],
+      "customer_segments": [
+        "Small and midsize law firms",
+        "Professional service firms"
+      ],
+      "strategic_rationale": "NYC/Boston MSP serving hundreds of law firms with proprietary DaaS/SOC products; founder-owned and a clean tuck-in for Frontline's New York small/mid-firm book.",
+      "fit_score": 74,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 4,
+        "scale": 2,
+        "ownership_readiness": 5,
+        "geography": 3
+      },
+      "risk_flags": [
+        "NYC overlap with existing Frontline branch",
+        "Not legal-exclusive"
+      ],
+      "zoominfo_id": "110395489",
+      "sources": [
+        "https://www.tabush.com/about",
+        "https://www.tabush.com/managed-it-services-for-law-firms"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-11",
+      "platform": "frontline",
+      "company": "Element Technologies",
+      "website": "https://www.ele-ment.com",
+      "hq_city": "Bloomington",
+      "state": "MN",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 44.8408,
+      "lon": -93.2983,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 92,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 22423000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Subsidiary of New Charter Technologies (MSP roll-up, ~1,300 employees)",
+      "offerings": [
+        "Managed IT & helpdesk (24/7)",
+        "Cybersecurity & compliance",
+        "NetDocuments implementation (Diamond Partner)",
+        "Microsoft 365",
+        "AI & automation (ndMAX)"
+      ],
+      "customer_segments": [
+        "Law firms nationwide"
+      ],
+      "strategic_rationale": "Strong legal-specialist capability (NetDocuments Diamond Partner, legal MSP) but already inside a sponsor-style MSP roll-up — track as a competitor and potential carve-out rather than a near-term target.",
+      "fit_score": 68,
+      "fit_breakdown": {
+        "capability": 5,
+        "customer_overlap": 4,
+        "scale": 3,
+        "ownership_readiness": 1,
+        "geography": 2
+      },
+      "risk_flags": [
+        "Owned by New Charter Technologies — not independently actionable",
+        "Competes directly for NetDocuments firms"
+      ],
+      "zoominfo_id": "348177706",
+      "sources": [
+        "https://www.ele-ment.com/",
+        "https://www.ele-ment.com/netdoc-implementation",
+        "https://www.newchartertech.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-12",
+      "platform": "frontline",
+      "company": "PSM Partners (Porcaro Stolarek Mete Partners, LLC)",
+      "website": "https://www.psmpartners.com",
+      "hq_city": "Chicago",
+      "state": "IL",
+      "country": "United States",
+      "hq_address": "209 W. Jackson Blvd, Suite 903, Chicago, IL",
+      "lat": 41.8781,
+      "lon": -87.6298,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 105,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 25592000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Partner-owned LLC",
+      "offerings": [
+        "Law-firm managed IT",
+        "MDR & incident response",
+        "GRC cybersecurity",
+        "Cloud",
+        "vCIO",
+        "Legal application management (NetDocuments, Clio, docketing, e-discovery platforms)"
+      ],
+      "customer_segments": [
+        "Law firms (Chicago and global)",
+        "Financial firms"
+      ],
+      "strategic_rationale": "Chicago MSP with explicit law-firm IT and MDR/IR practice; adds a Midwest service desk and security-operations capability to Frontline's Cybersecurity & Compliance line.",
+      "fit_score": 71,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 4,
+        "scale": 3,
+        "ownership_readiness": 4,
+        "geography": 2
+      },
+      "risk_flags": [
+        "Mixed legal/financial client base",
+        "Chicago not a stated priority geography"
+      ],
+      "zoominfo_id": "371592184",
+      "sources": [
+        "https://www.psmpartners.com/law-firm-it-service-support/",
+        "https://www.psmpartners.com/law-firm-cybersecurity-chicago-il/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-13",
+      "platform": "frontline",
+      "company": "Synergy Technical",
+      "website": "https://www.synergy-technical.com",
+      "hq_city": "Richmond",
+      "state": "VA",
+      "country": "United States",
+      "hq_address": "2201 West Broad Street, Suite 100, Richmond, VA 23220",
+      "lat": 37.5407,
+      "lon": -77.436,
+      "geo_precision": "city",
+      "founded_year": 2011,
+      "employees": 50,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 12187000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Managed IT for law firms",
+        "Microsoft cloud & security (Microsoft Security Deployment Partner of the Year)",
+        "Data protection",
+        "Endpoint/MDM",
+        "Security monitoring"
+      ],
+      "customer_segments": [
+        "Law firms",
+        "Mid-market enterprises"
+      ],
+      "strategic_rationale": "Microsoft-security-centric MSP with a dedicated law-firm offering; adds M365/Azure security engineering depth.",
+      "fit_score": 63,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 3,
+        "scale": 3,
+        "ownership_readiness": 3,
+        "geography": 2
+      },
+      "risk_flags": [
+        "Legal is one of several verticals"
+      ],
+      "zoominfo_id": "355346666",
+      "sources": [
+        "https://www.synergy-technical.com/managed-it-services/law-firms"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-14",
+      "platform": "frontline",
+      "company": "The Garver Group",
+      "website": "https://www.garvergroup.com",
+      "hq_city": "Voorhees",
+      "state": "NJ",
+      "country": "United States",
+      "hq_address": "1103 Laurel Oak Rd., Suite 107, Voorhees, NJ 08043",
+      "lat": 39.8454,
+      "lon": -74.953,
+      "geo_precision": "city",
+      "founded_year": 1992,
+      "employees": 31,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 8019000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Family-owned (Phil Garver, Chairman & Founder; Rachel Garver Kahn, President & CEO)",
+      "offerings": [
+        "Managed legal billing",
+        "Remote eBilling",
+        "Legal bookkeeping",
+        "Tabs3 billing software support"
+      ],
+      "customer_segments": [
+        "Small and mid-size law firms nationwide"
+      ],
+      "strategic_rationale": "Pure-play outsourced legal billing/eBilling/bookkeeping — the closest analog to Frontline's InvoicePrep acquisition and a direct add to the revenue-cycle (Managed Financial Operations) segment, extending it down-market to Tabs3 firms.",
+      "fit_score": 77,
+      "fit_breakdown": {
+        "capability": 5,
+        "customer_overlap": 4,
+        "scale": 2,
+        "ownership_readiness": 5,
+        "geography": 2
+      },
+      "risk_flags": [
+        "Tabs3-centric (small-firm) platform",
+        "Second-generation family succession dynamics"
+      ],
+      "zoominfo_id": "15630463",
+      "sources": [
+        "https://www.garvergroup.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-15",
+      "platform": "frontline",
+      "company": "Level5 Management",
+      "website": "https://www.level5mgmt.com",
+      "hq_city": "Boca Raton",
+      "state": "FL",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 26.3683,
+      "lon": -80.1289,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 23,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 7021000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Law-firm IT support & consulting (since 2008)",
+        "Compliance services",
+        "Cybersecurity",
+        "Managed IT"
+      ],
+      "customer_segments": [
+        "South Florida law firms",
+        "SMBs in FL, CO, AZ"
+      ],
+      "strategic_rationale": "South Florida MSP with a law-firm practice since 2008 — a small entry point into the South Florida market Frontline's CEO named as a priority.",
+      "fit_score": 66,
+      "fit_breakdown": {
+        "capability": 3,
+        "customer_overlap": 3,
+        "scale": 2,
+        "ownership_readiness": 4,
+        "geography": 5
+      },
+      "risk_flags": [
+        "Small; legal is one vertical",
+        "Website blocks automated access (limited verification)"
+      ],
+      "zoominfo_id": "415239362",
+      "sources": [
+        "https://www.level5mgmt.com/south-florida-it-services-for-law-firms/",
+        "https://www.level5mgmt.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-16",
+      "platform": "frontline",
+      "company": "The Legal Billing Group",
+      "website": "https://www.thelegalbillinggroup.com",
+      "hq_city": "West Hollywood",
+      "state": "CA",
+      "country": "United States",
+      "hq_address": "8605 Santa Monica Blvd, Suite 369905, West Hollywood, CA 90069",
+      "lat": 34.09,
+      "lon": -118.3617,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 15,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 2105000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Founder-owned (Alex Newberry, CEO/Founder)",
+      "offerings": [
+        "Managed legal billing",
+        "Accounts receivable management",
+        "eBilling",
+        "Bookkeeping",
+        "Billing analytics"
+      ],
+      "customer_segments": [
+        "Solo to mid-size law firms",
+        "Large corporate law firms"
+      ],
+      "strategic_rationale": "Small California RCM tuck-in run by former AmLaw billing managers; adds West Coast billing talent to Frontline's revenue-cycle line.",
+      "fit_score": 78,
+      "fit_breakdown": {
+        "capability": 5,
+        "customer_overlap": 3,
+        "scale": 1,
+        "ownership_readiness": 5,
+        "geography": 5
+      },
+      "risk_flags": [
+        "Sub-scale (~15 staff)",
+        "Key-person risk"
+      ],
+      "zoominfo_id": "1340664441",
+      "sources": [
+        "https://www.thelegalbillinggroup.com/about-us",
+        "https://www.thelegalbillinggroup.com/services"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-17",
+      "platform": "frontline",
+      "company": "Accurate Legal Billing (ALB)",
+      "website": "https://www.accuratelegalbilling.com",
+      "hq_city": "London",
+      "state": "England",
+      "country": "United Kingdom",
+      "hq_address": null,
+      "lat": 51.5074,
+      "lon": -0.1278,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 18,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 3863000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "AI time-entry OCG compliance (ALB 1.0/2.0)",
+        "ALBHub multi-portal eBilling upload",
+        "Billing & eBilling staffing services",
+        "Invoice appeals & collections"
+      ],
+      "customer_segments": [
+        "Insurance-defense and panel law firms",
+        "Law firms subject to OCGs"
+      ],
+      "strategic_rationale": "Combines proprietary OCG-compliance AI with outsourced billing staff — a software-plus-service asset that could automate Frontline's eBilling operations.",
+      "fit_score": 66,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 3,
+        "scale": 1,
+        "ownership_readiness": 4,
+        "geography": 4
+      },
+      "risk_flags": [
+        "HQ ambiguous (ZoomInfo London vs US toll-free presence)",
+        "Small"
+      ],
+      "zoominfo_id": "465148414",
+      "sources": [
+        "https://www.accuratelegalbilling.com/",
+        "https://www.accuratelegalbilling.com/e-billing-services"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-18",
+      "platform": "frontline",
+      "company": "Strategic Technology Solutions (STS)",
+      "website": "https://stspartner.com",
+      "hq_city": "Torrance",
+      "state": "CA",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 33.8358,
+      "lon": -118.3406,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 17,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 10332000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Fully managed IT for law firms",
+        "Cybersecurity maturity program",
+        "SOC 2 Type II certified",
+        "vCIO",
+        "Cloud"
+      ],
+      "customer_segments": [
+        "Law firms (Southern California)"
+      ],
+      "strategic_rationale": "Legal-focused Southern California MSP with SOC 2 Type II certification — a California tuck-in consistent with Frontline's geographic priorities.",
+      "fit_score": 77,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 4,
+        "scale": 2,
+        "ownership_readiness": 4,
+        "geography": 5
+      },
+      "risk_flags": [
+        "Small",
+        "Ownership not disclosed"
+      ],
+      "zoominfo_id": "442295607",
+      "sources": [
+        "https://stspartner.com/",
+        "https://stspartner.com/our-partners/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-19",
+      "platform": "frontline",
+      "company": "Allnext Legal",
+      "website": "https://www.allnextlegal.com",
+      "hq_city": null,
+      "state": null,
+      "country": "United States",
+      "hq_address": null,
+      "lat": null,
+      "lon": null,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": null,
+      "employees_source": null,
+      "revenue_est_usd": null,
+      "revenue_source": null,
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Legal managed IT / service desk",
+        "Cybersecurity",
+        "Cloud & infrastructure (e.g., ProLaw on Azure)",
+        "AI & data",
+        "Fiber internet",
+        "Voice (RingCentral)"
+      ],
+      "customer_segments": [
+        "Boutique, midsize and multi-office law firms"
+      ],
+      "strategic_rationale": "Legal-exclusive MSP whose case studies include Southern California defense firms and ProLaw-to-Azure migrations; worth a first call but firmographics unverified.",
+      "fit_score": 65,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 4,
+        "scale": 1,
+        "ownership_readiness": 3,
+        "geography": 3
+      },
+      "risk_flags": [
+        "No ZoomInfo match; HQ/headcount unknown",
+        "Limited public information"
+      ],
+      "zoominfo_id": null,
+      "sources": [
+        "https://www.allnextlegal.com/",
+        "https://www.allnextlegal.com/managed-it-services-for-law-firms"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-20",
+      "platform": "frontline",
+      "company": "LegalEase Solutions",
+      "website": "https://www.legaleasesolutions.com",
+      "hq_city": "Ann Arbor",
+      "state": "MI",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 42.2808,
+      "lon": -83.743,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 89,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 7439000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Contract abstraction & CLM implementation",
+        "AI-assisted contract review",
+        "Legal research & virtual attorney",
+        "Litigation support",
+        "Compliance (FINRA, AML, privacy)"
+      ],
+      "customer_segments": [
+        "Corporate legal departments",
+        "Small law firms"
+      ],
+      "strategic_rationale": "Legal-process/document BPO with AI tooling; adjacent to Frontline's Document & Knowledge Operations line but weaker fit to its IT/RCM core.",
+      "fit_score": 57,
+      "fit_breakdown": {
+        "capability": 2,
+        "customer_overlap": 3,
+        "scale": 3,
+        "ownership_readiness": 4,
+        "geography": 3
+      },
+      "risk_flags": [
+        "Different service line (LPO vs IT/RCM)",
+        "Offshore delivery footprint not verified"
+      ],
+      "zoominfo_id": "74485300",
+      "sources": [
+        "https://www.legaleasesolutions.com"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-21",
+      "platform": "frontline",
+      "company": "Mentis Group",
+      "website": "https://www.mentis-group.com",
+      "hq_city": "Dallas",
+      "state": "TX",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 32.7767,
+      "lon": -96.797,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 35,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 8531000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Fully managed & co-managed IT",
+        "Managed cybersecurity",
+        "Cloud",
+        "VoIP",
+        "CIO-led guidance"
+      ],
+      "customer_segments": [
+        "DFW and Texas law firms",
+        "AEC, financial, manufacturing, nonprofit clients"
+      ],
+      "strategic_rationale": "DFW MSP with a Legal Managed IT practice; a Texas field-support tuck-in.",
+      "fit_score": 61,
+      "fit_breakdown": {
+        "capability": 3,
+        "customer_overlap": 2,
+        "scale": 2,
+        "ownership_readiness": 4,
+        "geography": 5
+      },
+      "risk_flags": [
+        "Generalist MSP"
+      ],
+      "zoominfo_id": "47760777",
+      "sources": [
+        "https://www.mentis-group.com/legal-managed-it-dallas/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-22",
+      "platform": "frontline",
+      "company": "CG Technologies",
+      "website": "https://cgtechnologies.com",
+      "hq_city": "Concord",
+      "state": "ON",
+      "country": "Canada",
+      "hq_address": "8-2499 Rutherford Rd., Concord, ON L4K 0J9, Canada",
+      "lat": 43.8,
+      "lon": -79.4833,
+      "geo_precision": "city",
+      "founded_year": 1996,
+      "employees": 22,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 5363000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Managed IT for Toronto law firms",
+        "Cybersecurity",
+        "Managed helpdesk",
+        "Cloud backup & DR",
+        "Microsoft 365"
+      ],
+      "customer_segments": [
+        "Toronto-area law firms",
+        "SMBs"
+      ],
+      "strategic_rationale": "Toronto-area MSP with a law-firm offering; could backfill Frontline's Toronto office with local SMB-firm clients.",
+      "fit_score": 55,
+      "fit_breakdown": {
+        "capability": 3,
+        "customer_overlap": 2,
+        "scale": 1,
+        "ownership_readiness": 4,
+        "geography": 4
+      },
+      "risk_flags": [
+        "Generalist MSP; small"
+      ],
+      "zoominfo_id": "19171497",
+      "sources": [
+        "https://cgtechnologies.com/industries/managed-it-for-law-firms/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-23",
+      "platform": "frontline",
+      "company": "Lumifi",
+      "website": "https://www.lumificyber.com",
+      "hq_city": "Scottsdale",
+      "state": "AZ",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 33.4942,
+      "lon": -111.9261,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 54,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 11343000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Vendor-agnostic managed detection & response (MDR)",
+        "Legal-industry security operations"
+      ],
+      "customer_segments": [
+        "Law firms",
+        "Mid-market enterprises"
+      ],
+      "strategic_rationale": "MDR provider with a legal-industry practice; would internalize SOC capability behind Frontline's vCISO/cybersecurity services.",
+      "fit_score": 52,
+      "fit_breakdown": {
+        "capability": 3,
+        "customer_overlap": 2,
+        "scale": 2,
+        "ownership_readiness": 3,
+        "geography": 3
+      },
+      "risk_flags": [
+        "Security-only; legal is one vertical",
+        "Website blocks automated access"
+      ],
+      "zoominfo_id": "565091430",
+      "sources": [
+        "https://www.lumificyber.com/solutions/industries/legal/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-01",
+      "platform": "thomas_scientific",
+      "company": "Midland Scientific, Inc. (MSI)",
+      "website": "https://www.midlandsci.com",
+      "hq_city": "La Vista",
+      "state": "NE",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 41.1839,
+      "lon": -96.0314,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 199,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 147391000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Woman-owned, private",
+      "offerings": [
+        "Full-line lab distribution (chemicals, instrumentation, glassware, plasticware, media, reagents)",
+        "MSI private-label brand (chemicals, chromatography, cleanroom & controlled environment, consumables, equipment)"
+      ],
+      "customer_segments": [
+        "Agricultural labs",
+        "Education",
+        "Food",
+        "Industrial",
+        "Research"
+      ],
+      "strategic_rationale": "Largest independent full-line regional distributor found in screening (~199 staff) with a national sales force and its own MSI brand incl. cleanroom lines. Fills Thomas's Plains/Midwest gap and adds ag/food testing end-markets; private label supports gross-margin expansion.",
+      "fit_score": 92,
+      "fit_breakdown": {
+        "capability": 5,
+        "customer_overlap": 4,
+        "scale": 5,
+        "ownership_readiness": 4,
+        "geography": 5
+      },
+      "risk_flags": [
+        "ZoomInfo revenue estimate may be overstated",
+        "Founding year not verified"
+      ],
+      "zoominfo_id": "24986899",
+      "sources": [
+        "https://www.midlandsci.com"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-02",
+      "platform": "thomas_scientific",
+      "company": "Capitol Scientific",
+      "website": "https://www.capitolscientific.com",
+      "hq_city": "Austin",
+      "state": "TX",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 30.2672,
+      "lon": -97.7431,
+      "geo_precision": "city",
+      "founded_year": 1963,
+      "employees": 87,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 64438000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Lab equipment",
+        "Lab supplies/consumables",
+        "Reagents & chemicals incl. electronic-grade",
+        "Microlithography products",
+        "Cleanroom & safety",
+        "Procurement portals"
+      ],
+      "customer_segments": [
+        "Research institutions",
+        "Industrial & semiconductor/electronics labs",
+        "Clinical facilities",
+        "Manufacturing"
+      ],
+      "strategic_rationale": "Texas distributor (site references 1963) representing 300+ manufacturers with semiconductor/microlithography and cleanroom lines — overlaps Thomas's controlled-environment strategy and opens the Central Texas semiconductor corridor.",
+      "fit_score": 91,
+      "fit_breakdown": {
+        "capability": 5,
+        "customer_overlap": 5,
+        "scale": 4,
+        "ownership_readiness": 3,
+        "geography": 5
+      },
+      "risk_flags": [
+        "Ownership/succession not disclosed",
+        "Semiconductor cyclicality"
+      ],
+      "zoominfo_id": "18713428",
+      "sources": [
+        "https://www.capitolscientific.com/",
+        "https://www.capitolscientific.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-03",
+      "platform": "thomas_scientific",
+      "company": "MIDSCI",
+      "website": "https://www.midsci.com",
+      "hq_city": "Fenton",
+      "state": "MO",
+      "country": "United States",
+      "hq_address": "115 Cassens Court, Fenton, MO 63026",
+      "lat": 38.5131,
+      "lon": -90.436,
+      "geo_precision": "address",
+      "founded_year": 1983,
+      "employees": 48,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 15956000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Family-owned",
+      "offerings": [
+        "PR1MA private-label lab essentials (tubes, reagents, tips)",
+        "TPP cell-culture plastics distribution",
+        "40,000+ supplies, chemicals, equipment",
+        "E-commerce (shop.midsci.com)"
+      ],
+      "customer_segments": [
+        "Academic research",
+        "Biotech",
+        "Pharma",
+        "Clinical research",
+        "Government labs"
+      ],
+      "strategic_rationale": "Family-owned St. Louis life-science distributor with its own PR1MA brand and exclusive-style TPP relationship; classic Thomas bolt-on (Phenix/Denville/E&K pattern) with private-label margin and Midwest warehouse.",
+      "fit_score": 91,
+      "fit_breakdown": {
+        "capability": 5,
+        "customer_overlap": 5,
+        "scale": 3,
+        "ownership_readiness": 5,
+        "geography": 4
+      },
+      "risk_flags": [
+        "Supplier concentration (TPP)"
+      ],
+      "zoominfo_id": "474769071",
+      "sources": [
+        "http://midsci.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-04",
+      "platform": "thomas_scientific",
+      "company": "Mandel Scientific",
+      "website": "https://www.mandel.ca",
+      "hq_city": "Guelph",
+      "state": "ON",
+      "country": "Canada",
+      "hq_address": "2 Admiral Place, Guelph, ON N1G 4N4, Canada",
+      "lat": 43.5448,
+      "lon": -80.2482,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 73,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 22450000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "100% Canadian-owned, private",
+      "offerings": [
+        "Analytical instruments & chromatography distribution",
+        "General lab & life-science equipment",
+        "Pipettes & liquid handling",
+        "ISO 17025 pipette calibration & repair (Gilson authorized service centre)",
+        "Instrument service & maintenance"
+      ],
+      "customer_segments": [
+        "Canadian research, industrial, environmental and life-science labs"
+      ],
+      "strategic_rationale": "Platform-quality Canadian entry: equipment distribution plus accredited service/calibration revenue (recurring). Gives Thomas a Canada beachhead and a lab-equipment service capability it lacks.",
+      "fit_score": 86,
+      "fit_breakdown": {
+        "capability": 5,
+        "customer_overlap": 4,
+        "scale": 3,
+        "ownership_readiness": 4,
+        "geography": 5
+      },
+      "risk_flags": [
+        "Cross-border integration (CAD, bilingual)",
+        "Instrument-heavy mix vs Thomas consumables"
+      ],
+      "zoominfo_id": "41551828",
+      "sources": [
+        "https://www.mandel.ca/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-05",
+      "platform": "thomas_scientific",
+      "company": "Valutek",
+      "website": "https://www.valutek.com",
+      "hq_city": "Phoenix",
+      "state": "AZ",
+      "country": "United States",
+      "hq_address": "220 S. 9th Street, Phoenix, AZ 85034",
+      "lat": 33.4484,
+      "lon": -112.074,
+      "geo_precision": "city",
+      "founded_year": 1988,
+      "employees": 135,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 99989000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Cleanroom gloves",
+        "Wipers (dry & pre-saturated)",
+        "Cleanroom apparel",
+        "Adhesive mats",
+        "Cleaning supplies",
+        "ESD products",
+        "Documentation products"
+      ],
+      "customer_segments": [
+        "Semiconductor & advanced materials",
+        "Life sciences (med device, pharma, biotech)",
+        "Nanofab & university research"
+      ],
+      "strategic_rationale": "Contamination-control specialist that deepens the cleanroom franchise Thomas built via American Cleanstat, Quintana and Day Associates; adds Southwest/semiconductor exposure and IEST-tested proprietary products.",
+      "fit_score": 91,
+      "fit_breakdown": {
+        "capability": 5,
+        "customer_overlap": 5,
+        "scale": 5,
+        "ownership_readiness": 3,
+        "geography": 4
+      },
+      "risk_flags": [
+        "Partly manufacturer (channel conflict)",
+        "Semiconductor cyclicality"
+      ],
+      "zoominfo_id": "131334368",
+      "sources": [
+        "https://www.valutek.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-06",
+      "platform": "thomas_scientific",
+      "company": "GFS Chemicals",
+      "website": "https://www.gfschemicals.com",
+      "hq_city": "Powell",
+      "state": "OH",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 40.1578,
+      "lon": -83.0752,
+      "geo_precision": "city",
+      "founded_year": 1928,
+      "employees": 140,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 70663000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private; describes itself as a family business",
+      "offerings": [
+        "10,000+ chemicals: acids, bases, buffers",
+        "Inorganic technologies (rare earths, perchlorates)",
+        "Fine & specialty organics",
+        "Solvents (ACS/HPLC/GC)",
+        "Reference standards",
+        "Lab supplies"
+      ],
+      "customer_segments": [
+        "Research & analytical labs",
+        "Production-scale customers"
+      ],
+      "strategic_rationale": "US-made specialty/analytical chemicals maker (est. 1928) that could anchor a Thomas-branded reagent line and reduce reliance on third-party chemical brands.",
+      "fit_score": 77,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 4,
+        "scale": 4,
+        "ownership_readiness": 4,
+        "geography": 3
+      },
+      "risk_flags": [
+        "Manufacturing/EHS liabilities",
+        "Hazmat logistics"
+      ],
+      "zoominfo_id": "67144372",
+      "sources": [
+        "https://www.gfschemicals.com/",
+        "https://www.gfschemicals.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-07",
+      "platform": "thomas_scientific",
+      "company": "Andwin Corporation (Andwin Scientific / Andwin Clinical)",
+      "website": "https://andwincorp.com",
+      "hq_city": "Simi Valley",
+      "state": "CA",
+      "country": "United States",
+      "hq_address": "167 W Cochran St, Simi Valley, CA 93065",
+      "lat": 34.2694,
+      "lon": -118.7815,
+      "geo_precision": "address",
+      "founded_year": 1950,
+      "employees": 27,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 8340000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private; Certified Women Business Enterprise",
+      "offerings": [
+        "Lab supplies distribution (Andwin Scientific)",
+        "Clinical trial supply & specimen kitting (Andwin Clinical)",
+        "ISO-7 cleanroom kitting",
+        "Industrial distribution",
+        "Injection molding",
+        "Supply-chain management"
+      ],
+      "customer_segments": [
+        "Global life-science & biopharma",
+        "Clinical research organizations",
+        "Industrial"
+      ],
+      "strategic_rationale": "Outsourced clinical-research supply chain and kitting (ISO 13485; ISO-7 cleanroom) complements Thomas's supply-chain services and biopharma/clinical focus; multi-state footprint (CA, NC, IL, FL, TX) plus Netherlands.",
+      "fit_score": 85,
+      "fit_breakdown": {
+        "capability": 5,
+        "customer_overlap": 5,
+        "scale": 2,
+        "ownership_readiness": 4,
+        "geography": 4
+      },
+      "risk_flags": [
+        "ZoomInfo headcount (27) likely understates multi-division operations",
+        "Diversified divisions (paper, industrial) may need carve-out"
+      ],
+      "zoominfo_id": "1108568084",
+      "sources": [
+        "https://andwincorp.com/",
+        "https://www.andwin.com"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-08",
+      "platform": "thomas_scientific",
+      "company": "Genesee Scientific",
+      "website": "https://www.geneseesci.com",
+      "hq_city": "El Cajon",
+      "state": "CA",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 32.7948,
+      "lon": -116.9625,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 100,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 21112000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership/investors not disclosed)",
+      "offerings": [
+        "Lab essentials (pipette tips, serological pipettes)",
+        "Reagents",
+        "Life-science equipment",
+        "Curated own-brand portfolio"
+      ],
+      "customer_segments": [
+        "Life sciences",
+        "Pharma & biotech",
+        "Academic labs"
+      ],
+      "strategic_rationale": "Life-science consumables specialist with strong own-brand essentials and local product specialists; would scale Thomas's West Coast life-science share beyond E&K's Bay Area base.",
+      "fit_score": 82,
+      "fit_breakdown": {
+        "capability": 5,
+        "customer_overlap": 5,
+        "scale": 3,
+        "ownership_readiness": 2,
+        "geography": 4
+      },
+      "risk_flags": [
+        "Ownership not verified (may already be sponsor-backed)"
+      ],
+      "zoominfo_id": "25266521",
+      "sources": [
+        "https://www.geneseesci.com/about-us",
+        "https://www.geneseesci.com"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-09",
+      "platform": "thomas_scientific",
+      "company": "Laboratory Equipment Company (LabEquipCo)",
+      "website": "https://labequipco.com",
+      "hq_city": "Hayward",
+      "state": "CA",
+      "country": "United States",
+      "hq_address": "2506 Technology Drive, Hayward, CA 94545",
+      "lat": 37.6688,
+      "lon": -122.0808,
+      "geo_precision": "city",
+      "founded_year": 1948,
+      "employees": 18,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 5148000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Family-operated (Kolhede family)",
+      "offerings": [
+        "Independent lab-equipment distribution (ULT freezers, cryo storage, biosafety cabinets, centrifuges, environmental chambers, water purification, sterilizers, lab furniture)",
+        "Installation & post-sale technical service"
+      ],
+      "customer_segments": [
+        "Biotech startups",
+        "Academic research",
+        "Pharma",
+        "Clinical",
+        "Vivarium"
+      ],
+      "strategic_rationale": "Bay Area capital-equipment specialist that would bolt onto the E&K Scientific base, adding equipment/installation expertise to Thomas's consumables-heavy West Coast business.",
+      "fit_score": 71,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 4,
+        "scale": 1,
+        "ownership_readiness": 5,
+        "geography": 3
+      },
+      "risk_flags": [
+        "Small",
+        "Equipment sales are lumpy"
+      ],
+      "zoominfo_id": "68717781",
+      "sources": [
+        "https://labequipco.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-10",
+      "platform": "thomas_scientific",
+      "company": "Krackeler Scientific, Inc.",
+      "website": "https://www.krackeler.com",
+      "hq_city": "Albany",
+      "state": "NY",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 42.6526,
+      "lon": -73.7562,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 22,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 6205000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Lab equipment & instruments",
+        "Consumables",
+        "Life-science products",
+        "Chemicals",
+        "Chromatography"
+      ],
+      "customer_segments": [
+        "Life science & pharma",
+        "Biomedical",
+        "Environmental & water testing",
+        "Food & beverage",
+        "Clinical/physician labs",
+        "Cannabis & hemp testing"
+      ],
+      "strategic_rationale": "Upstate New York regional distributor serving environmental, clinical and cannabis-testing labs — tuck-in density for Thomas's Northeast network.",
+      "fit_score": 68,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 4,
+        "scale": 2,
+        "ownership_readiness": 3,
+        "geography": 3
+      },
+      "risk_flags": [
+        "Small; founding year unverified"
+      ],
+      "zoominfo_id": "32556208",
+      "sources": [
+        "https://www.krackeler.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-11",
+      "platform": "thomas_scientific",
+      "company": "Micronova Manufacturing",
+      "website": "https://www.micronova-mfg.com",
+      "hq_city": "Torrance",
+      "state": "CA",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 33.8358,
+      "lon": -118.3406,
+      "geo_precision": "city",
+      "founded_year": 1984,
+      "employees": 118,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 21069000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Woman-owned, private",
+      "offerings": [
+        "Cleanroom mopping systems",
+        "Wipes, liners, tapes",
+        "Detergents",
+        "Buckets/carts",
+        "Compliance services & training"
+      ],
+      "customer_segments": [
+        "BioPharma",
+        "Compounding pharmacies",
+        "Semiconductors",
+        "Aerospace",
+        "Medical devices",
+        "Clinical labs"
+      ],
+      "strategic_rationale": "Southern California cleanroom-cleaning manufacturer that would give Thomas proprietary controlled-environment SKUs and compliance training to pair with American Cleanstat's Irvine base.",
+      "fit_score": 79,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 5,
+        "scale": 3,
+        "ownership_readiness": 4,
+        "geography": 3
+      },
+      "risk_flags": [
+        "Manufacturer — channel conflict with other distributors"
+      ],
+      "zoominfo_id": "66242600",
+      "sources": [
+        "https://www.micronova-mfg.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-12",
+      "platform": "thomas_scientific",
+      "company": "RICCA Chemical Company",
+      "website": "https://www.riccachemical.com",
+      "hq_city": "Arlington",
+      "state": "TX",
+      "country": "United States",
+      "hq_address": "412 West Fork Drive, Arlington, TX",
+      "lat": 32.7357,
+      "lon": -97.1081,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 108,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 25873000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Acids, bases, buffers",
+        "Certified reference materials (VeriSpec: pH, conductivity, PFAS standards)",
+        "Titrants",
+        "Ion chromatography standards"
+      ],
+      "customer_segments": [
+        "Lab, field and production QC"
+      ],
+      "strategic_rationale": "ISO 17025/17034-accredited reagent and CRM producer (50+ years) in Texas; adds proprietary standards and PFAS testing tailwinds to Thomas's chemicals offering.",
+      "fit_score": 74,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 4,
+        "scale": 3,
+        "ownership_readiness": 2,
+        "geography": 5
+      },
+      "risk_flags": [
+        "Ownership not verified",
+        "Manufacturing/EHS"
+      ],
+      "zoominfo_id": "32801023",
+      "sources": [
+        "https://www.riccachemical.com/",
+        "https://www.riccachemical.com/about-us"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-13",
+      "platform": "thomas_scientific",
+      "company": "Aqua Solutions",
+      "website": "https://www.aquasolutions.org",
+      "hq_city": "Deer Park",
+      "state": "TX",
+      "country": "United States",
+      "hq_address": "6913 Highway 225, Deer Park, TX 77536",
+      "lat": 29.7052,
+      "lon": -95.1238,
+      "geo_precision": "city",
+      "founded_year": 1978,
+      "employees": 113,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 6554000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Standardized solutions",
+        "Reagent chemicals",
+        "Auto-analyzer solutions",
+        "Conductivity & TOC standards",
+        "HPLC solvents",
+        "Custom blends"
+      ],
+      "customer_segments": [
+        "US industrial, environmental and petrochemical labs"
+      ],
+      "strategic_rationale": "Gulf Coast reagent/solutions maker (Houston and New Orleans areas) — private-label reagent capacity near Thomas's industrial/petrochemical customers.",
+      "fit_score": 69,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 3,
+        "scale": 2,
+        "ownership_readiness": 3,
+        "geography": 5
+      },
+      "risk_flags": [
+        "ZoomInfo headcount vs revenue inconsistent"
+      ],
+      "zoominfo_id": "353764231",
+      "sources": [
+        "https://www.aquasolutions.org/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-14",
+      "platform": "thomas_scientific",
+      "company": "Boston BioProducts",
+      "website": "https://www.bostonbioproducts.com",
+      "hq_city": "Ashland",
+      "state": "MA",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 42.2612,
+      "lon": -71.4634,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 30,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 6029000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Biological buffers",
+        "Process liquids",
+        "Culture media",
+        "Custom buffer manufacturing (cGMP, ISO 13485)"
+      ],
+      "customer_segments": [
+        "Research labs (4,000+)",
+        "Bioprocessing",
+        "Diagnostics/assay development"
+      ],
+      "strategic_rationale": "cGMP custom-buffer maker with 4,000+ lab customers in the Boston biocluster; complements Quintana/Day Associates in Massachusetts with a proprietary bioprocess consumable.",
+      "fit_score": 73,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 5,
+        "scale": 2,
+        "ownership_readiness": 3,
+        "geography": 3
+      },
+      "risk_flags": [
+        "Small; ownership not disclosed"
+      ],
+      "zoominfo_id": "7094900",
+      "sources": [
+        "https://www.bostonbioproducts.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-15",
+      "platform": "thomas_scientific",
+      "company": "Lab Alley",
+      "website": "https://www.laballey.com",
+      "hq_city": "Austin",
+      "state": "TX",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 30.2672,
+      "lon": -97.7431,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 19,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 5055000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Woman-owned small business (SBA WOSB)",
+      "offerings": [
+        "E-commerce lab chemicals",
+        "Solvents, acids, salts, ethanol",
+        "Custom blending",
+        "Lab supplies"
+      ],
+      "customer_segments": [
+        "Education",
+        "Healthcare & pharma",
+        "Food & beverage",
+        "Cannabis",
+        "Government (GSA)",
+        "Manufacturing"
+      ],
+      "strategic_rationale": "Digitally native chemicals e-tailer (248,000+ customers, GSA contract) — digital customer acquisition engine and WOSB status for set-aside contracts.",
+      "fit_score": 69,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 3,
+        "scale": 1,
+        "ownership_readiness": 4,
+        "geography": 5
+      },
+      "risk_flags": [
+        "Small; consumer/hobby mix"
+      ],
+      "zoominfo_id": "439533643",
+      "sources": [
+        "https://www.laballey.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-16",
+      "platform": "thomas_scientific",
+      "company": "Quartzy",
+      "website": "https://www.quartzy.com",
+      "hq_city": "Hayward",
+      "state": "CA",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 37.6688,
+      "lon": -122.0808,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 96,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 20165000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (investors not disclosed on site)",
+      "offerings": [
+        "Lab inventory management software",
+        "Procurement/request workflows",
+        "Marketplace (10M+ products, 1,800+ brands)",
+        "Integrations (QuickBooks, NetSuite, Slack)"
+      ],
+      "customer_segments": [
+        "Early-stage biotech",
+        "Public biopharma",
+        "Academic labs (10,000+ orgs, 425,000 scientists)"
+      ],
+      "strategic_rationale": "Procurement software + marketplace embedded in 10,000+ labs; would give Thomas a digital front-end and demand data for biotech customers.",
+      "fit_score": 73,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 5,
+        "scale": 3,
+        "ownership_readiness": 2,
+        "geography": 3
+      },
+      "risk_flags": [
+        "Venture-style economics; marketplace margin",
+        "Channel conflict with other distributors on platform"
+      ],
+      "zoominfo_id": "346572125",
+      "sources": [
+        "https://www.quartzy.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-17",
+      "platform": "thomas_scientific",
+      "company": "ZAGENO",
+      "website": "https://www.zageno.com",
+      "hq_city": "Cambridge",
+      "state": "MA",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 42.3736,
+      "lon": -71.1097,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 130,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 96286000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (investors not disclosed on site)",
+      "offerings": [
+        "Multi-supplier life-science marketplace",
+        "Procurement for research labs"
+      ],
+      "customer_segments": [
+        "Biopharma and research labs"
+      ],
+      "strategic_rationale": "Life-science e-commerce marketplace; option to acquire digital procurement capability — lower priority given marketplace economics.",
+      "fit_score": 67,
+      "fit_breakdown": {
+        "capability": 3,
+        "customer_overlap": 5,
+        "scale": 3,
+        "ownership_readiness": 2,
+        "geography": 3
+      },
+      "risk_flags": [
+        "Marketplace/GMV revenue (ZoomInfo figure may be GMV)",
+        "Venture ownership"
+      ],
+      "zoominfo_id": "408407317",
+      "sources": [
+        "https://www.zageno.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-18",
+      "platform": "thomas_scientific",
+      "company": "Tovatech",
+      "website": "https://www.tovatech.com",
+      "hq_city": "Plano",
+      "state": "TX",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 33.0198,
+      "lon": -96.6989,
+      "geo_precision": "city",
+      "founded_year": 2005,
+      "employees": 27,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 4287000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Ultrasonic cleaners (benchtop & industrial)",
+        "Flow meters, scales, moisture analyzers",
+        "Pre-purchase technical consultation"
+      ],
+      "customer_segments": [
+        "Aerospace",
+        "Electronics",
+        "Medical devices",
+        "Pharma",
+        "Academic labs"
+      ],
+      "strategic_rationale": "Niche e-commerce equipment specialist (10,000+ customers) — small SEO-driven channel add.",
+      "fit_score": 60,
+      "fit_breakdown": {
+        "capability": 3,
+        "customer_overlap": 3,
+        "scale": 1,
+        "ownership_readiness": 4,
+        "geography": 4
+      },
+      "risk_flags": [
+        "Small; niche category",
+        "HQ per ZoomInfo not confirmed on site"
+      ],
+      "zoominfo_id": "175079564",
+      "sources": [
+        "https://www.tovatech.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-19",
+      "platform": "thomas_scientific",
+      "company": "BioSurplus",
+      "website": "https://www.biosurplus.com",
+      "hq_city": "San Diego",
+      "state": "CA",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 32.7157,
+      "lon": -117.1611,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 20,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 4795000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Pre-owned life-science equipment sales",
+        "Online auctions",
+        "Asset recovery & redeployment",
+        "Equipment sourcing"
+      ],
+      "customer_segments": [
+        "Biotech",
+        "Pharma",
+        "Research institutions"
+      ],
+      "strategic_rationale": "Circular-economy equipment channel (buy/sell/auction) that would let Thomas monetize lab decommissioning and offer value-tier equipment.",
+      "fit_score": 59,
+      "fit_breakdown": {
+        "capability": 3,
+        "customer_overlap": 4,
+        "scale": 1,
+        "ownership_readiness": 3,
+        "geography": 3
+      },
+      "risk_flags": [
+        "Small; recently relaunched",
+        "Used-equipment liability/warranty"
+      ],
+      "zoominfo_id": "11260429",
+      "sources": [
+        "https://www.biosurplus.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-20",
+      "platform": "thomas_scientific",
+      "company": "Stellar Scientific",
+      "website": "https://www.stellarscientific.com",
+      "hq_city": "Owings Mills",
+      "state": "MD",
+      "country": "United States",
+      "hq_address": "10715 Red Run Blvd Suite 112, Owings Mills, MD 21117",
+      "lat": 39.4196,
+      "lon": -76.7803,
+      "geo_precision": "address",
+      "founded_year": null,
+      "employees": 9,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 3828000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Online lab equipment & supplies (Benchmark, Binder, OHAUS, Memmert, Hoefer)",
+        "Electrophoresis & molecular biology",
+        "Microscopy"
+      ],
+      "customer_segments": [
+        "Clinical",
+        "Industrial",
+        "Academic"
+      ],
+      "strategic_rationale": "Mid-Atlantic online equipment reseller near the Baltimore/DC biocluster; very small tuck-in for digital share.",
+      "fit_score": 57,
+      "fit_breakdown": {
+        "capability": 3,
+        "customer_overlap": 3,
+        "scale": 1,
+        "ownership_readiness": 4,
+        "geography": 3
+      },
+      "risk_flags": [
+        "Below 20-employee screen floor"
+      ],
+      "zoominfo_id": "373760020",
+      "sources": [
+        "https://www.stellarscientific.com/"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-21",
+      "platform": "thomas_scientific",
+      "company": "DOT Scientific, Inc.",
+      "website": "https://www.dotscientific.com",
+      "hq_city": "Burton",
+      "state": "MI",
+      "country": "United States",
+      "hq_address": null,
+      "lat": 42.9995,
+      "lon": -83.6163,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 22,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 4161000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Woman-owned small business",
+      "offerings": [
+        "General lab supplies & equipment",
+        "Life-science research consumables"
+      ],
+      "customer_segments": [
+        "Universities",
+        "Biotech",
+        "Clinical labs",
+        "Pharma R&D",
+        "Government labs",
+        "Incubators"
+      ],
+      "strategic_rationale": "Michigan life-science supply distributor with WOSB status — Great Lakes density and set-aside contract access.",
+      "fit_score": 71,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 4,
+        "scale": 1,
+        "ownership_readiness": 4,
+        "geography": 4
+      },
+      "risk_flags": [
+        "Small"
+      ],
+      "zoominfo_id": "36901213",
+      "sources": [
+        "https://www.dotscientific.com"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-22",
+      "platform": "thomas_scientific",
+      "company": "Levitt-Safety",
+      "website": "https://www.levitt-safety.com",
+      "hq_city": "Oakville",
+      "state": "ON",
+      "country": "Canada",
+      "hq_address": null,
+      "lat": 43.4675,
+      "lon": -79.6877,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 327,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 63498000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not verified)",
+      "offerings": [
+        "Safety products distribution",
+        "Safety equipment services"
+      ],
+      "customer_segments": [
+        "Canadian industrial & institutional customers"
+      ],
+      "strategic_rationale": "Scaled Canadian safety distributor; relevant only if Thomas pursues a Canada lab-safety/PPE adjacency alongside a lab-distribution entry (e.g., Mandel).",
+      "fit_score": 61,
+      "fit_breakdown": {
+        "capability": 3,
+        "customer_overlap": 2,
+        "scale": 4,
+        "ownership_readiness": 2,
+        "geography": 5
+      },
+      "risk_flags": [
+        "Industrial-safety focus beyond lab",
+        "Limited verification (site returned minimal content)"
+      ],
+      "zoominfo_id": "49841944",
+      "sources": [
+        "https://www.levitt-safety.com"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-23",
+      "platform": "thomas_scientific",
+      "company": "Globe Scientific",
+      "website": "https://www.globescientific.com",
+      "hq_city": "Mahwah",
+      "state": "NJ",
+      "country": "United States",
+      "hq_address": "400 Corporate Drive, Mahwah, NJ 07430",
+      "lat": 41.0887,
+      "lon": -74.1438,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 54,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 14948000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Test tubes, slides, transfer pipets, pipette tips",
+        "Centrifuge tubes",
+        "Analyzer consumables",
+        "Specimen containers & blood collection",
+        "Serological pipettes"
+      ],
+      "customer_segments": [
+        "Clinical diagnostics labs",
+        "Research labs"
+      ],
+      "strategic_rationale": "New Jersey maker of clinical/lab plastics sold through distributors — backward integration into a private-label clinical-consumables line near Swedesboro.",
+      "fit_score": 74,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 4,
+        "scale": 3,
+        "ownership_readiness": 3,
+        "geography": 4
+      },
+      "risk_flags": [
+        "Manufacturer; channel conflict with competing distributors"
+      ],
+      "zoominfo_id": "50530264",
+      "sources": [
+        "https://www.globescientific.com"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-24",
+      "platform": "thomas_scientific",
+      "company": "Pfaltz & Bauer",
+      "website": "https://www.pfaltzandbauer.com",
+      "hq_city": "Waterbury",
+      "state": "CT",
+      "country": "United States",
+      "hq_address": "172 E. Aurora St., Waterbury, CT 06708",
+      "lat": 41.5582,
+      "lon": -73.0515,
+      "geo_precision": "city",
+      "founded_year": 1900,
+      "employees": 27,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 3552000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Specialty & rare research chemicals"
+      ],
+      "customer_segments": [
+        "Research and industrial chemistry labs"
+      ],
+      "strategic_rationale": "Long-established specialty/rare chemicals catalog house — adds hard-to-find SKUs to Thomas's chemicals catalog.",
+      "fit_score": 54,
+      "fit_breakdown": {
+        "capability": 3,
+        "customer_overlap": 3,
+        "scale": 1,
+        "ownership_readiness": 3,
+        "geography": 3
+      },
+      "risk_flags": [
+        "Small; hazmat"
+      ],
+      "zoominfo_id": "39912065",
+      "sources": [
+        "https://www.pfaltzandbauer.com"
+      ],
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "ts-25",
+      "platform": "thomas_scientific",
+      "company": "Cleanroom Connection LLC",
+      "website": "https://www.cleanroomsupplies.com",
+      "hq_city": "Spring Branch",
+      "state": "TX",
+      "country": "United States",
+      "hq_address": "18534 Forty Six Pkwy Suite 1a, Spring Branch, TX 78070",
+      "lat": 29.8633,
+      "lon": -98.4264,
+      "geo_precision": "city",
+      "founded_year": null,
+      "employees": 6,
+      "employees_source": "ZoomInfo",
+      "revenue_est_usd": 1178000,
+      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "ownership": "Private (ownership not disclosed)",
+      "offerings": [
+        "Cleanroom apparel, gloves, masks",
+        "Disinfectants & cleaning chemicals",
+        "Wipes, mops, tacky mats",
+        "USP 797/800 pharmacy compliance products",
+        "Cleanroom furniture"
+      ],
+      "customer_segments": [
+        "Sterile compounding pharmacies",
+        "Biotech",
+        "Hospitals",
+        "Semiconductor",
+        "Universities (1,000+ cleanrooms)"
+      ],
+      "strategic_rationale": "Texas cleanroom-supply e-commerce specialist serving 1,000+ cleanrooms incl. USP 797/800 pharmacies — a very small customer-list tuck-in for Thomas's controlled-environment business.",
+      "fit_score": 74,
+      "fit_breakdown": {
+        "capability": 4,
+        "customer_overlap": 4,
+        "scale": 1,
+        "ownership_readiness": 4,
+        "geography": 5
+      },
+      "risk_flags": [
+        "Below 20-employee screen floor"
+      ],
+      "zoominfo_id": "347259702",
+      "sources": [
+        "https://www.cleanroomsupplies.com/"
+      ],
+      "retrieved": "2026-09-24"
+    }
+  ]
+}

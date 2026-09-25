@@ -1,0 +1,631 @@
+{
+  "meta": {
+    "dataset": "Frontline Managed Services - filings and financial research track (BSP portfolio), with BSP fund context and competitor credit benchmarks",
+    "generated": "2026-09-24",
+    "method": "SEC EDGAR full-text search (efts.sec.gov) and submissions API for Form D, N-PORT, N-CSR and BDC 10-K/10-Q schedules; direct parsing of Form D XML and N-PORT XML; UK Companies House public web pages (filing history, officers, charges) with accounts PDFs rendered locally and read page by page; SBA PPP FOIA public_150k_plus CSV scanned locally; company press releases and About page (frontlinems.com); BSP news page. WebSearch budget was exhausted, so discovery relied on direct registries and EDGAR. ProPublica, FederalPay and OpenCorporates were blocked by bot challenges and were not bypassed.",
+    "sources_summary": "SEC EDGAR (BSP-FL LP and BSP-FL Co-Invest Form Ds; Broad Sky Partners LP Form D/As; other BSP deal-vehicle Form Ds; Carlyle AlpInvest Private Markets Fund N-PORT-P x5 and N-CSR; Audax Credit BDC, Audax Private Credit Fund, Golub Capital Direct Lending, WhiteHorse Finance and Runway Growth 10-K/10-Q schedules); UK Companies House (Intelliteach Ltd 07039190 accounts FY2022-FY2024, officers, charges); SBA PPP FOIA; frontlinems.com (About, Awards, Press, Leadership, press releases 2020-2026); broadskypartners.com/news.",
+    "caveats": [
+      "The $90M term-loan figure comes from UK subsidiary notes describing the group facility. Revolver, DDTL or incremental tranches since Dec 2024 are not disclosed.",
+      "Whether Carlyle AlpInvest's $12.5M in BSP-FL Intermediate Inc. is additional to, or part of, the $137M BSP-FL LP raise is unknown, so total equity is given as a range.",
+      "EBITDA, revenue and EV figures are analyst estimates from leverage and multiple assumptions, not disclosed financials.",
+      "The client count varies by source: 800+ (Dec 2024), 900+ (2025-26) and '300 Law Firms Served' on the current homepage. Scope definitions likely differ.",
+      "Mapping BSP vehicle codes (TS, BPI, CET) to portfolio companies is inferred from press timing.",
+      "UK accounts omit the P&L (small-companies regime), but the FY2024 accounts include a turnover note: GBP 581,072 (2024) and GBP 728,131 (2023).",
+      "Verified 2026-09-24: sampled 21, confirmed 21, removed 0"
+    ],
+    "item_count": 21,
+    "financial_picture": "Frontline was bought by Broad Sky on Dec 9, 2024 through BSP-FL Holdings Inc. The deal was funded by an equity vehicle (BSP-FL LP) that sold $136.95M to 21 investors, plus a $90M initial term loan co-led by NXT Capital and Audax Private Debt (UK sub accounts, note 11). Carlyle AlpInvest separately put $12.5M of equity directly into BSP-FL Intermediate Inc. on Dec 5, 2024, and BV Investment Partners rolled a minority stake. Sponsor equity is therefore roughly $137-150M plus rollover, against $90M of debt, or about 60% equity. Adding equity and debt gives a transaction value of roughly $230-260M. If the lenders sized the $90M loan at a typical 4.5-5.5x LMM leverage, adjusted EBITDA at close was about $16-20M, for an entry multiple of about 12-15x. The BV-era debt history supports that range. Webster Bank lent $30M plus a $5M revolver in Feb 2019, and term debt reached $47.7M by Dec 2023 after the 2020-21 add-ons. At bank-style 3-4x leverage, that implies 2023 EBITDA of about $12-16M, growing into the $16-20M implied at the BSP close. Headcount rose from 600+ (2020, after Hilltop) to about 850 (c.2022), 1,000+ (2023) and about 1,100 (Jan 2026), with a heavy offshore base (Goa, Hyderabad, Cape Town). At an assumed $90-130K revenue per employee for an offshore-weighted legal MSP/BPO, revenue is estimated at about $100-140M, implying 13-18% EBITDA margins. The MSP 501 ranks (#38 in 2024, #36 in 2026) weight revenue, EBITDA and recurring revenue, which supports a large-MSP scale ($100M+) without giving an exact band. After the close, Carlyle held the position at cost for five quarters, then marked it up about 10% to $13.75M at 3/31/2026, a modest positive signal after the Jan 2026 CEO change to Tim Britt (ex-Synoptek roll-up founder). Relative to rivals, Frontline's structure is simpler and cheaper than Elevate's (about 12.8%+ venture debt), less stretched than Consilio's (senior plus PIK sub debt), and healthier-looking than Epiq's (loan marked about 91% of par). Frontline's own loan pricing is not public, but Audax's comparable LMM unitranches (for example Mitratech at S+475) suggest roughly S+475-550. Main open risks: undisclosed incremental debt for a likely buy-and-build (KL Software, Aug 2026), UK sub filing lapses, and inconsistent client-count disclosures.",
+    "estimate_table": [
+      {
+        "metric": "Sponsor equity at close",
+        "estimate": "$137-150M (plus undisclosed BV rollover)",
+        "basis": "BSP-FL LP Form D $136.95M sold; Carlyle AlpInvest $12.5M direct in BSP-FL Intermediate",
+        "confidence": "high"
+      },
+      {
+        "metric": "Senior debt at close",
+        "estimate": "$90M initial term loan (NXT Capital + Audax Private Debt)",
+        "basis": "Intelliteach Ltd FY2024 accounts note 11",
+        "confidence": "high"
+      },
+      {
+        "metric": "Transaction enterprise value",
+        "estimate": "$230-260M",
+        "basis": "Equity + $90M debt; excludes fees and any undrawn facilities",
+        "confidence": "medium"
+      },
+      {
+        "metric": "Adjusted EBITDA at close (2024 run-rate)",
+        "estimate": "$16-20M",
+        "basis": "$90M / 4.5-5.5x typical LMM private-credit leverage",
+        "confidence": "medium"
+      },
+      {
+        "metric": "Entry EV/EBITDA",
+        "estimate": "12-15x",
+        "basis": "EV range / EBITDA range",
+        "confidence": "low"
+      },
+      {
+        "metric": "2023 EBITDA (BV era)",
+        "estimate": "$12-16M",
+        "basis": "$47.7M Webster term debt at 3-4x bank leverage",
+        "confidence": "low"
+      },
+      {
+        "metric": "Revenue (2025 run-rate)",
+        "estimate": "$100-140M",
+        "basis": "~1,000-1,100 employees x $90-130K revenue/employee (offshore-weighted); consistent with MSP 501 top-40 rank",
+        "confidence": "low"
+      },
+      {
+        "metric": "EBITDA margin",
+        "estimate": "13-18%",
+        "basis": "EBITDA estimate / revenue estimate",
+        "confidence": "low"
+      },
+      {
+        "metric": "Equity value change since close",
+        "estimate": "+9.5-10% (at 6/30/2026)",
+        "basis": "Carlyle AlpInvest fair value $13.72M vs $12.5M cost",
+        "confidence": "high"
+      },
+      {
+        "metric": "Likely term-loan pricing",
+        "estimate": "SOFR + 4.75-5.50%",
+        "basis": "Audax 2024-2026 LMM unitranche comps (Mitratech S+475, Inhabit S+450, Integreon S+550)",
+        "confidence": "low"
+      }
+    ],
+    "data_gaps": [
+      "No public BDC schedule line for the Frontline $90M term loan (NXT/Audax loans appear to sit in private funds); spread, maturity and fair value are unknown.",
+      "PPP: no loan found in the >$150K FOIA file; the <$150K files were not scanned; ProPublica and FederalPay blocked automated access.",
+      "Missouri SOS (Cash Management Solutions Holding Company; Frontline entities), Ohio SOS (Toledo), Hawaii, Delaware (BSP-FL Holdings Inc.) business-entity records were not retrieved (stateful search portals).",
+      "US UCC-1 filings (Delaware/Missouri) naming NXT Capital or Audax as secured party were not retrieved.",
+      "Canadian (Toronto), South African (Cape Town, CIPC) and Indian (Goa/Hyderabad, MCA) subsidiary filings were not retrieved; Indian MCA/Tofler revenue bands would help size offshore cost.",
+      "Channel Futures MSP 501 publishes rank only; no company-specific revenue band obtained. No Inc. 5000 listing found or checked (WebSearch budget exhausted).",
+      "No OSHA/DOL WHD or CourtListener litigation check completed for Frontline or predecessors.",
+      "BV Investment Partners' 2019 entry price and exit proceeds are undisclosed; Frontline no longer appears on bvlp.com current portfolio page.",
+      "Deal press on PE Hub / Mergermarket / PitchBook with any disclosed EV not retrieved."
+    ],
+    "next_pulls": [
+      "Delaware and Missouri UCC searches for 'BSP-FL Holdings', 'BSP-FL Intermediate', 'Cash Management Solutions Holding Company', 'Resolve Parent' (secured party NXT Capital LLC as agent) to confirm facility and any add-on liens.",
+      "Missouri SOS bsd.sos.mo.gov: Cash Management Solutions Holding Co. and Frontline Managed Services LLC annual reports (officers, registered agent).",
+      "India MCA / Tofler / Zaubacorp for Frontline or Intelliteach India subsidiaries (FY24-FY25 revenue and employee cost) to calibrate offshore economics.",
+      "Carlyle AlpInvest N-PORT for 2026-09-30 (due about late Nov 2026) to track the next mark on BSP-FL Intermediate.",
+      "Intelliteach Ltd FY2025 accounts (due 2026-12-31) for any new charge or facility-size update; watch the Companies House charges register.",
+      "SBA PPP <$150K FOIA CSVs (MO/OH/HI) for Hilltop Consultants, Glasser Tech, InvoicePrep, LogicForce (pre-acquisition add-ons) to size acquired payroll.",
+      "EDGAR EFTS for 'Hilltop Consultants', 'LogicForce', 'InvoicePrep', 'KL Software' and for 'Audax Senior Debt' or 'NXT Capital Senior Loan' private-fund N-PORT/N-CSR vehicles.",
+      "Channel Futures MSP 501 2025 and 2026 list pages for rank context, and ILTA/Legaltech News vendor coverage for rival sizing (Keno Kozie, Innovative Computing Systems, Element Technologies)."
+    ]
+  },
+  "items": [
+    {
+      "id": "fl-001",
+      "entity": "BSP-FL LP (Broad Sky Partners Frontline holding vehicle)",
+      "category": "sec_form_d",
+      "title": "Form D - BSP-FL LP (CIK 2048389), pooled investment vehicle for Frontline buyout",
+      "filed_or_dated": "2024-12-23 (first sale 2024-12-09)",
+      "filer_or_source_agency": "SEC EDGAR / signed by Tyler Zachem",
+      "key_figures": {
+        "total_offering_usd": 137452357,
+        "total_amount_sold_usd": 136952357,
+        "total_remaining_usd": 500000,
+        "investors": 21,
+        "min_investment_usd": 22237,
+        "exemption": "06b, 3C.1",
+        "date_of_first_sale": "2024-12-09"
+      },
+      "what_it_tells_us": "This is the equity check behind the Frontline deal: about $137.0M sold to 21 investors, dated the same day as the Dec 9, 2024 share purchase agreement. Including Fund I, the co-invest LLC and probably rollover, it is the best public anchor for sponsor equity. Equity of about $137M against a $90M term loan puts sponsor equity at roughly 60% of the capital structure.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2048389/000204839024000002/primary_doc.xml",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-002",
+      "entity": "BSP-FL Co-Invest, LLC",
+      "category": "sec_form_d",
+      "title": "Form D - BSP-FL Co-Invest, LLC (CIK 2048390), private equity co-invest fund",
+      "filed_or_dated": "2024-12-23 (first sale 2024-12-09; two Form D filings same day)",
+      "filer_or_source_agency": "SEC EDGAR / signed by Tyler Zachem",
+      "key_figures": {
+        "total_offering_usd": 37500000,
+        "total_amount_sold_usd": 30000000,
+        "total_remaining_usd": 7500000,
+        "investors": 8,
+        "min_investment_usd": 416666,
+        "exemption": "3C, 3C.7"
+      },
+      "what_it_tells_us": "BSP syndicated $30M of LP co-invest (with room for $37.5M) alongside Fund I. The co-invest LLC is most likely one of the 21 investors in BSP-FL LP, so do not add it on top of the $137M. It shows the deal was large relative to the $335M Fund I and needed co-invest.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2048390/000204839024000001/primary_doc.xml",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-003",
+      "entity": "BSP-FL Intermediate Inc. (Frontline) - Carlyle AlpInvest Private Markets Fund",
+      "category": "other",
+      "title": "N-PORT / N-CSR schedule of investments: direct equity co-investment in Frontline",
+      "filed_or_dated": "Quarterly 2024-12-31 through 2026-06-30",
+      "filer_or_source_agency": "Carlyle AlpInvest Private Markets Fund (CIK 1899610), SEC N-PORT-P and N-CSR",
+      "key_figures": {
+        "acquisition_date": "2024-12-05",
+        "cost_usd_2026_03_31": 12524844,
+        "fair_value_usd": {
+          "2024-12-31": 12500000,
+          "2025-03-31": 12500000,
+          "2025-06-30": 12500000,
+          "2025-09-30": 12500000,
+          "2025-12-31": 12508790,
+          "2026-03-31": 13750000,
+          "2026-06-30": 13715215
+        },
+        "markup_vs_cost_2026_06_30_pct": 9.5,
+        "asset_category": "EC (equity), Level 3, restricted",
+        "pct_of_fund_nav_2026_06_30": "~0.27% ($13.72M of $5.03B net assets)",
+        "name_change": "listed as 'Frontline Managed Services' in N-PORTs for 12/2024 and 3/2025, then as 'BSP-FL Intermediate Inc.'"
+      },
+      "what_it_tells_us": "Carlyle AlpInvest put $12.5M of equity directly into the Frontline holdco, so total third-party equity is at least about $150M if this sits outside BSP-FL LP. The position was held at cost for 5 quarters. It was then marked up about 10% at 3/31/2026, after the CEO transition (Jan 2026), which suggests modest positive value creation, not a markdown.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1899610/000189961026000006/capm_202603xn-csr.htm",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-004",
+      "entity": "Intelliteach Ltd (UK subsidiary of Frontline, Co. No. 07039190)",
+      "category": "state_business_filing",
+      "title": "UK Companies House accounts FY2024: note 11 - $90M term loan from NXT Capital and Audax Private Debt",
+      "filed_or_dated": "Accounts to 2024-12-31, approved 2026-04-13, filed 2026-04-21",
+      "filer_or_source_agency": "UK Companies House (auditor Moore Kingston Smith LLP, unqualified)",
+      "key_figures": {
+        "group_initial_term_loan_usd": 90000000,
+        "lenders": [
+          "NXT Capital LLC",
+          "Audax Private Debt LLC"
+        ],
+        "closing_date": "2024-12-09",
+        "ultimate_controlling_party_post_deal": "BSP-FL Holdings Inc. (c/o Broad Sky Partners LLC, 667 Madison Ave, NY)",
+        "prior_ultimate_parent": "Intelliteach Holdings L.P.; controlling party BVIP L.P.",
+        "immediate_parent": "Cash Management Solutions Holding Company, 701 Emerson Rd, Creve Coeur MO 63141"
+      },
+      "what_it_tells_us": "This is the key leverage disclosure. BSP's Dec 9, 2024 buyout was financed with a $90M initial term loan co-led by NXT Capital and Audax Private Debt, which refinanced the Webster Bank facility. At typical 4.5-5.5x LMM leverage, $90M implies about $16-20M of adjusted EBITDA at close.",
+      "confidence": "high",
+      "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-005",
+      "entity": "Resolve Parent Inc. (BV-era Frontline/Intelliteach holdco)",
+      "category": "lender_press",
+      "title": "UK accounts FY2023 note 9: Webster Bank credit facility history under BV Investment Partners",
+      "filed_or_dated": "Accounts to 2023-12-31, approved 2025-06-16",
+      "filer_or_source_agency": "UK Companies House - Intelliteach Ltd",
+      "key_figures": {
+        "facility_date": "2019-02-01",
+        "initial_term_loan_usd": 30000000,
+        "revolver_usd": 5000000,
+        "lender": "Webster Bank NA",
+        "add_on_loans": "2021 (amount undisclosed)",
+        "term_loans_outstanding_2022_12_31_usd": 45000000,
+        "term_loans_outstanding_2023_12_31_usd": 47700000,
+        "term_loans_outstanding_2021_12_31_usd": 48700000
+      },
+      "what_it_tells_us": "BV bought Intelliteach in Feb 2019 with a modest bank facility ($30M TL + $5M RCF). It then levered up to $48.7M by Dec 2021 (from $33.5M in 2020) to fund the 2020-21 add-ons (Hilltop, Glasser Tech, InvoicePrep, LogicForce); term loans were $45.0M in 2022 and $47.7M in 2023. At bank-style 3-4x leverage this implies about $12-16M EBITDA in 2023. Debt nearly doubled to $90M at the BSP deal, consistent with EBITDA growth plus a higher-leverage private-credit structure.",
+      "confidence": "high",
+      "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-006",
+      "entity": "Intelliteach Ltd (UK)",
+      "category": "state_business_filing",
+      "title": "UK subsidiary balance sheet, turnover note and headcount FY2021-FY2024 (small-company accounts, P&L omitted but turnover note 3 filed for FY2024)",
+      "filed_or_dated": "FY2021-FY2024 accounts",
+      "filer_or_source_agency": "UK Companies House",
+      "key_figures": {
+        "avg_employees": {
+          "2021": 16,
+          "2022": 18,
+          "2023": 16,
+          "2024": 11
+        },
+        "net_liabilities_gbp": {
+          "2022": -1512727,
+          "2023": -1431419,
+          "2024": -1355186
+        },
+        "owed_to_group_undertakings_gbp": {
+          "2023": 1454131,
+          "2024": 1338655
+        },
+        "trade_debtors_gbp_2024": 31383,
+        "compliance_flags": "Compulsory strike-off (GAZ1) notices 2024-11-05, 2025-03-04, 2026-03-03, each discontinued; confirmation statement currently shown overdue",
+        "directors": "Seelin Naidoo (since 2012-03-01), Jeff Calcagno (since 2023-03-01)",
+        "turnover_gbp": {
+          "2023": 728131,
+          "2024": 581072
+        },
+        "profit_gbp": {
+          "2023": 81308,
+          "2024": 76233
+        }
+      },
+      "what_it_tells_us": "The London operation is a small UK/Europe help-desk node (11-18 staff), funded by intercompany balances and near breakeven (reported profit of GBP 81,308 in 2023 and GBP 76,233 in 2024). The P&L is omitted under the small-companies regime, but FY2024 note 3 does disclose turnover: GBP 581,072 in 2024 (GBP 447,144 intercompany, GBP 133,928 external) versus GBP 728,131 in 2023. Repeated late filings and strike-off notices are a minor governance and hygiene flag for the portfolio team.",
+      "confidence": "high",
+      "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-007",
+      "entity": "Intelliteach Ltd (UK) - charges register",
+      "category": "ucc_lien",
+      "title": "UK charges register: lien history 2012-2019 (UK analogue of UCC search)",
+      "filed_or_dated": "2012-02-29 to 2019-02-11",
+      "filer_or_source_agency": "UK Companies House charges register",
+      "key_figures": {
+        "charges_total": 5,
+        "outstanding": 0,
+        "history": [
+          {
+            "created": "2012-02-29",
+            "chargee": "Fifth Third Bank",
+            "type": "debenture",
+            "satisfied": "2014-11-25"
+          },
+          {
+            "created": "2012-02-29",
+            "chargee": "Northstar Mezzanine Partners V L.P.",
+            "type": "debenture",
+            "satisfied": "2014-11-13"
+          },
+          {
+            "created": "2013-05-10",
+            "chargee": "Fifth Third Bank",
+            "satisfied": "2014-11-13"
+          },
+          {
+            "created": "2013-07-26",
+            "chargee": "Fifth Third Bank",
+            "satisfied": "2014-11-13"
+          },
+          {
+            "created": "2015-02-19",
+            "chargee": "NXT Capital, LLC (Agent)",
+            "satisfied": "2019-02-11"
+          }
+        ]
+      },
+      "what_it_tells_us": "Maps the capital-structure lineage: Fifth Third senior plus Northstar mezzanine financed CMS's 2012 purchase of Intelliteach, and NXT Capital agented a 2015-2019 facility. That was repaid at BV's Feb 2019 buyout, when Webster came in. NXT returning as co-lead in Dec 2024 means an incumbent relationship lender. No UK charge has been registered for the 2024 NXT/Audax facility, which suggests the UK sub gave a guarantee without a registered UK debenture.",
+      "confidence": "high",
+      "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/charges",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-008",
+      "entity": "Frontline Managed Services",
+      "category": "press_financial",
+      "title": "Company press release: 'Frontline Managed Services ... Secures Investment from Broad Sky Partners'",
+      "filed_or_dated": "2024-12-11",
+      "filer_or_source_agency": "Frontline Managed Services / Business Wire",
+      "key_figures": {
+        "law_firm_clients": "800+",
+        "am_law_200_penetration": ">50%",
+        "employees": 1000,
+        "msp501_2024_rank": 38,
+        "prior_sponsor_status": "BV Investment Partners remains minority investor",
+        "bsp_deal_lead": "Evan Azus, Managing Director"
+      },
+      "what_it_tells_us": "Confirms deal timing and that BV rolled a minority stake, so part of total equity is BV rollover not captured in the Form Ds. Service mix spans managed IT (help desk, cyber, network monitoring) plus revenue-cycle services (billing, eBilling, A/R support). The recurring, outsourced mix supports a double-digit EBITDA multiple.",
+      "confidence": "high",
+      "source_url": "https://frontlinems.com/press/frontline-managed-services-and-broad-sky-partners/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-009",
+      "entity": "Frontline Managed Services",
+      "category": "ranking_listing",
+      "title": "Channel Futures / Channel Partners MSP 501 rankings 2023-2026",
+      "filed_or_dated": "2023-2026 (2026 release dated 2026-06-29)",
+      "filer_or_source_agency": "Channel Futures / Channel Partners MSP 501 (via company releases)",
+      "key_figures": {
+        "2023": "Top 50",
+        "2024": "#38 of 501",
+        "2025": "listed winner (rank not captured)",
+        "2026": "#36 of 501; highest-ranked legal-only MSP",
+        "msp501_2024_aggregate_revenue_usd": "~25 billion across 501 MSPs",
+        "msp501_2024_avg_recurring_revenue_growth_pct": 19,
+        "ranking_inputs": "annual revenue, EBITDA profitability, recurring revenue"
+      },
+      "what_it_tells_us": "MSP 501 ranks mainly on revenue, EBITDA and recurring revenue, so a steady #36-#38 rank puts Frontline among the larger MSPs globally, typically $100M+ revenue territory for top-40 ranks. No exact revenue band per company was obtained. The rank improving from #38 to #36 after the buyout suggests growth held up.",
+      "confidence": "medium",
+      "source_url": "https://frontlinems.com/press/frontline-managed-services-msp-501-ranking-2026/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-010",
+      "entity": "Frontline Managed Services",
+      "category": "press_financial",
+      "title": "Company history timeline (About page): predecessor entities and M&A",
+      "filed_or_dated": "Accessed 2026-09-24",
+      "filer_or_source_agency": "frontlinems.com",
+      "key_figures": {
+        "1987": "Cash Management Solutions (CMS) founded (law-firm A/R)",
+        "1998": "Intelliteach founded (legal help desk; Atlanta, St. Louis)",
+        "2009": "London office",
+        "2010": "Toronto office",
+        "2012": "CMS Management acquires Intelliteach",
+        "2019": "20M cumulative tickets; 1.5M in one year; eBilling launched",
+        "2020": "Toledo OH office (to ~200 jobs); Hilltop Consultants acquired -> 600+ employees, 400+ clients",
+        "2021": "Rebrand to Frontline; Glasser Tech, InvoicePrep, LOGICFORCE acquired; serves 40% of Am Law 200",
+        "2023": ">1,000 employees; Cape Town office (Jul 2023)",
+        "locations": [
+          "Cape Town",
+          "Goa",
+          "Honolulu",
+          "Hyderabad",
+          "London",
+          "Nashville",
+          "New York",
+          "Washington DC",
+          "St. Louis",
+          "Toledo",
+          "Toronto"
+        ]
+      },
+      "what_it_tells_us": "Headcount grew from 600+ (2020) to 850 (c.2022) to 1,000+ (2023) to about 1,100 (Jan 2026), roughly 12-15% a year including M&A. Growth has leaned on offshore delivery (India, South Africa), which lowers revenue per head and supports margins. 'Frontline Managed Services' in its current form is the 2021 rebrand of Intelliteach plus Hilltop and later tuck-ins.",
+      "confidence": "high",
+      "source_url": "https://frontlinems.com/about-frontline/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-011",
+      "entity": "Frontline Managed Services",
+      "category": "press_financial",
+      "title": "Post-close scale and leadership disclosures (2025-2026 press releases)",
+      "filed_or_dated": "2025-11-04; 2026-01-27; 2026-06-04; 2026-08-10",
+      "filer_or_source_agency": "Frontline Managed Services press releases",
+      "key_figures": {
+        "law_firm_clients_nov_2025": "900+",
+        "law_firm_clients_jan_2026": "nearly 900",
+        "law_firm_clients_jun_2026": "900+ incl. 50% of Am Law 200 and 28% of Am Law 50",
+        "employees_jan_2026": "~1,100",
+        "ceo_change": "Tim Britt (founder/ex-CEO Synoptek) replaced Seelin Naidoo 2026-01-27; Naidoo to board",
+        "new_cfo": "Pinakin Sheth (joined May 2026; announced 2026-06-04; per frontlinems.com leadership page and 'Expands Executive Leadership Team' release, not the cited CEO release)",
+        "bsp_partner_quoted": "Adam Glucksman",
+        "service_extensions": "Accounting services added to RCM (Nov 2025); HELIX AI service desk (ILTACON Aug 2025); KL Software partnership/acquisition (Aug 2026)",
+        "website_hero_stat_conflict": "homepage says '300 Law Firms Served' and '39 Years', versus 800-900 in press releases"
+      },
+      "what_it_tells_us": "BSP has put in a PE-style operating team (roll-up CEO from Synoptek, new CFO, CIO/CEO of IT Services) about 13-18 months after close. That usually means an M&A/buy-and-build push, likely funded by delayed-draw or incremental debt. The client-count mismatch (300 versus 900) probably reflects managed-IT clients versus all clients including eBilling/RCM. Confirm before quoting.",
+      "confidence": "high",
+      "source_url": "https://frontlinems.com/press/frontline-managed-services-appoints-tim-britt-as-chief-executive-officer/",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-012",
+      "entity": "Frontline / Intelliteach / Cash Management Solutions / Resolve Parent",
+      "category": "sba_ppp",
+      "title": "SBA PPP FOIA (loans >$150K) - no matching loan found",
+      "filed_or_dated": "PPP rounds 2020-2021",
+      "filer_or_source_agency": "SBA PPP FOIA public_150k_plus dataset (968,524 rows scanned)",
+      "key_figures": {
+        "matches": 0,
+        "names_searched": [
+          "Frontline Managed Services",
+          "Intelliteach",
+          "Cash Management Solutions (MO)",
+          "Resolve Parent",
+          "701 Emerson Rd address"
+        ],
+        "false_positives_excluded": "Cash Management Solutions, Inc. (Clearwater FL, 19 jobs, $270,000, NAICS 522190) is an unrelated Florida company"
+      },
+      "what_it_tells_us": "No PPP loan of $150K or more went to the Frontline predecessor group. That fits a BV-backed business with 600+ employees (2020) that would fail SBA size and affiliation tests. The absence is informative: headcount already exceeded about 500 by 2020.",
+      "confidence": "medium",
+      "source_url": "https://data.sba.gov/dataset/ppp-foia",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-013",
+      "entity": "Frontline Managed Services",
+      "category": "bdc_loan_schedule",
+      "title": "BDC / private-credit schedule search - Frontline loan not found in public BDC filings",
+      "filed_or_dated": "Searched 10-K/10-Q/N-CSR filed 2024-10 to 2026-09",
+      "filer_or_source_agency": "SEC EDGAR full-text search; Audax Credit BDC and Audax Private Credit Fund 10-Qs (6/30/2026)",
+      "key_figures": {
+        "efts_hits_frontline_managed": "2 (both Carlyle AlpInvest N-PORT equity lines)",
+        "frontline_named_bdc_loans": "only 'Frontline Road Safety' (unrelated; ARCC, GSBD, BCRED, ASIF, OHA etc.)",
+        "audax_bdc_dec2024_originations_checked": [
+          "Inhabit (12/10/2024)",
+          "Qlik",
+          "Midwest Eye Services"
+        ],
+        "result": "no Frontline/BSP-FL line in Audax Credit BDC or Audax Private Credit Fund"
+      },
+      "what_it_tells_us": "The $90M NXT/Audax term loan appears to sit in private (non-SEC-reporting) Audax Private Debt and NXT/ORIX funds, so spread, maturity and fair value cannot be read from BDC schedules. Pricing has to be benchmarked from comparable Audax LMM unitranches (S+450-550 in 2024-2026).",
+      "confidence": "medium",
+      "source_url": "https://efts.sec.gov/LATEST/search-index?q=%22Frontline%20Managed%20Services%22",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-014",
+      "entity": "Epiq (legal services / eDiscovery / legal business services - rival)",
+      "category": "bdc_loan_schedule",
+      "title": "Epiq 1st-lien term loan in Audax Credit BDC and Audax Private Credit Fund",
+      "filed_or_dated": "10-Q as of 2026-06-30 (filed 2026-08-13/14)",
+      "filer_or_source_agency": "Audax Credit BDC Inc. (CIK 1633858); Audax Private Credit Fund LLC (CIK 2033362)",
+      "key_figures": {
+        "instrument": "1st Lien Term Loan",
+        "spread": "SOFR+4.00%",
+        "rate_pct": 7.73,
+        "maturity": "2029-04-26",
+        "audax_bdc_principal_usd": 2244868,
+        "audax_bdc_cost_usd": 2182957,
+        "audax_bdc_fair_value_usd": 2051809,
+        "fv_pct_of_par": 91.4,
+        "apcf_principal_usd": 905235,
+        "apcf_fair_value_usd": 827385
+      },
+      "what_it_tells_us": "Epiq, the largest scaled rival in outsourced legal business services (including law-firm billing and IT managed services), has its broadly syndicated loan marked at about 91% of par. That signals lender caution on large legal-services credits. It contrasts with Frontline's equity being marked up about 10%.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1633858/000119312526348682/ck0001633858-20260630.htm",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-015",
+      "entity": "Mitratech (legal ops / e-billing software - adjacent rival)",
+      "category": "bdc_loan_schedule",
+      "title": "Mitratech unitranche term loan and revolver in Audax vehicles",
+      "filed_or_dated": "As of 2026-06-30",
+      "filer_or_source_agency": "Audax Credit BDC; Audax Private Credit Fund",
+      "key_figures": {
+        "instrument": "Unitranche Term Loan / Revolver / DDTL",
+        "spread": "SOFR+4.75%",
+        "rate_pct": 8.48,
+        "acquired": "2025-12-01/02",
+        "maturity": "2031-12-02",
+        "apcf_principal_usd": 9174312,
+        "apcf_fair_value_usd": 9128440,
+        "fv_pct_of_par": 99.5
+      },
+      "what_it_tells_us": "Mitratech (TyMetrix/Collaborati e-billing, legal-spend software) competes with Frontline's eBilling/RCM line from the software side. The Dec 2025 unitranche at S+475, marked near par, is a clean pricing benchmark for sponsor-backed legal-tech credit from the same lender (Audax) that funds Frontline.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2033362/000119312526351877/ck0002033362-20260630.htm",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-016",
+      "entity": "Consilio (Consilio Midco Limited - legal services / eDiscovery / legal managed services rival)",
+      "category": "bdc_loan_schedule",
+      "title": "Consilio senior secured and PIK subordinated debt in Golub Capital Direct Lending Corp",
+      "filed_or_dated": "10-Q as of 2026-06-30 (filed 2026-08-13)",
+      "filer_or_source_agency": "Golub Capital Direct Lending Corp (CIK 1868878); also held by ARCC, BXSL, Antares, Apollo, Barings etc.",
+      "key_figures": {
+        "senior_secured_spread": "SOFR+4.75%",
+        "senior_rate_pct": 8.48,
+        "senior_maturity": "2032-04",
+        "sub_debt_spread": "SOFR+7.50% PIK (USD, 10.94%); EURIBOR+7.25% PIK (9.72%) at 6/30/2026 (EURIBOR+7.50% at 9/30/2025)",
+        "sub_debt_maturity": "2033-04",
+        "gdlc_senior_principal_usd_000s": [
+          1283,
+          791
+        ],
+        "senior_rate_pct_2025_09_30": 9.04
+      },
+      "what_it_tells_us": "Consilio, a GI Partners-backed legal services consolidator, carries a senior loan plus PIK holdco sub debt, a heavier structure than Frontline's single $90M term loan. The PIK layer points to stretched leverage among larger legal-services rivals.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1868878/000186887826000031/gdlc-20260630.htm",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-017",
+      "entity": "Integreon (E-Phoenix Acquisition Co. Inc. d/b/a Integreon - legal process outsourcing rival)",
+      "category": "bdc_loan_schedule",
+      "title": "Integreon first-lien term loan in WhiteHorse Finance",
+      "filed_or_dated": "10-K as of 2025-12-31 (filed 2026-03-06)",
+      "filer_or_source_agency": "WhiteHorse Finance, Inc. (CIK 1552198)",
+      "key_figures": {
+        "instrument": "First Lien Secured Term Loan",
+        "floor_pct": 1.0,
+        "spread": "SOFR+5.50%",
+        "rate_pct": 9.98,
+        "acquired": "2021-07-15",
+        "maturity": "2027-06-23",
+        "principal_usd_000s": 8342,
+        "cost_usd_000s": 8299,
+        "fair_value_usd_000s": 8342
+      },
+      "what_it_tells_us": "Integreon competes with Frontline in offshore law-firm back-office work (billing, document and admin support from India and other hubs). Its loan is marked at par at S+550, a benchmark for LMM legal-BPO credit. It matures mid-2027, so a refinancing or sale event is likely within about 12 months.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1552198/000110465926024735/whf-20251231x10k.htm",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-018",
+      "entity": "Elevate Services, Inc. (law-firm and legal-department services rival)",
+      "category": "bdc_loan_schedule",
+      "title": "Elevate Services senior secured venture/growth loan in Runway Growth Finance",
+      "filed_or_dated": "10-Q as of 2026-06-30 (filed 2026-08-06)",
+      "filer_or_source_agency": "Runway Growth Finance Corp. (CIK 1653384)",
+      "key_figures": {
+        "instrument": "Senior Secured",
+        "pricing": "SOFR+7.50%, 12.78% floor, 0.50% ETP",
+        "originated": "2023-07-10",
+        "maturity": "2027-07-10",
+        "principal_usd_000s": 39000,
+        "cost_usd_000s": 38414,
+        "fair_value_usd_000s": 39195
+      },
+      "what_it_tells_us": "Elevate, a venture-backed rival in law-firm business services including billing and eBilling, funds itself with $39M of expensive growth debt (about 12.8%+ all-in), well above Frontline's sponsor-backed private-credit cost. That points to a structural cost-of-capital edge for PE-backed consolidators like Frontline.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1653384/000119312526337968/rway-20260630.htm",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-019",
+      "entity": "Broad Sky Partners, LP (Fund I)",
+      "category": "sec_form_d",
+      "title": "Form D / D/A - Broad Sky Partners, LP (CIK 1917706)",
+      "filed_or_dated": "2022-03-22; amendments 2023-04-20, 2024-04-16, 2025-04-30",
+      "filer_or_source_agency": "SEC EDGAR",
+      "key_figures": {
+        "amount_sold_usd": {
+          "2022": 298710000,
+          "2023": 303720000,
+          "2024": 323760000,
+          "2025": 335000000
+        },
+        "investors": {
+          "2022": 14,
+          "2023": 15,
+          "2024": 16,
+          "2025": 46
+        },
+        "address": "34 East 51st Street, 11th Floor, New York"
+      },
+      "what_it_tells_us": "Fund I is about $335M. Frontline's $137M equity vehicle was therefore far bigger than a normal single-fund position (typically 10-15% of fund, or about $35-50M), which confirms heavy co-invest and LP syndication (Carlyle AlpInvest, BSP-FL Co-Invest, likely BV rollover). The jump from 16 to 46 investors in the 2025 amendment is unexplained (likely feeder or secondary changes).",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1917706/000139834425008250/primary_doc.xml",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-020",
+      "entity": "BSP portfolio deal vehicles (Thomas Scientific, Bully Pulpit Interactive, Commonwealth Electrical Technologies)",
+      "category": "sec_form_d",
+      "title": "Form D filings of other BSP deal vehicles - equity-size benchmarks versus Frontline",
+      "filed_or_dated": "2021-12 to 2025-04",
+      "filer_or_source_agency": "SEC EDGAR",
+      "key_figures": {
+        "BSP-TS, LP (Thomas Scientific, first sale 2021-12-14)": 257078866,
+        "BSP-TS Co-Invest I, LLC": 35871936,
+        "BSP-TS Co-Invest II, LLC": 59633599,
+        "BSP-BPI Holdings LLC (Bully Pulpit Interactive, first sale 2023-04-20)": 90000000,
+        "BSP-CET Co-Invest LLC (CET, first sale 2025-02-05)": 7500000,
+        "BSP-FL LP (Frontline)": 136952357,
+        "mapping_basis": "vehicle suffix matched to BSP press-release timing (TS=Thomas Scientific Jan 2022; BPI=Bully Pulpit Apr 2023; CET=Commonwealth Electrical Technologies)"
+      },
+      "what_it_tells_us": "Frontline (about $137M equity) is BSP's second-largest disclosed equity vehicle after Thomas Scientific (about $257M), and bigger than BPI ($90M). It is a core Fund I position with meaningful LP co-invest at stake.",
+      "confidence": "medium",
+      "source_url": "https://efts.sec.gov/LATEST/search-index?q=%22Zachem%22&forms=D",
+      "retrieved": "2026-09-24"
+    },
+    {
+      "id": "fl-021",
+      "entity": "Frontline Managed Services",
+      "category": "industry_benchmark",
+      "title": "Derived capital-structure and valuation triangulation (analyst calculation)",
+      "filed_or_dated": "2026-09-24",
+      "filer_or_source_agency": "Analyst synthesis of fl-001, fl-003, fl-004, fl-005",
+      "key_figures": {
+        "sponsor_equity_usd": "~137M (BSP-FL LP) + up to 12.5M (Carlyle direct) = 137-150M; plus undisclosed BV rollover",
+        "debt_usd": "90M initial term loan (plus any undisclosed revolver/DDTL)",
+        "implied_EV_usd": "~227-260M",
+        "implied_EBITDA_usd": "~16-20M at 4.5-5.5x",
+        "implied_EV_to_EBITDA": "~12-15x",
+        "equity_share_of_cap": "~60%"
+      },
+      "what_it_tells_us": "Transaction value was probably about $230-260M. With leverage at a conservative 4.5-5.5x, Frontline entered at about 12-15x adjusted EBITDA of $16-20M. That is a premium multiple consistent with vertical-specialist, high-recurring MSPs.",
+      "confidence": "medium",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2048389/000204839024000002/primary_doc.xml",
+      "retrieved": "2026-09-24"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+/* Module registry — order = rail order. Each module: {id,name,tag,color,group,views:[{id,name,icon,badge,flush,render(ctx)}]} */
+import home from './home.js?v=20260924203049';
+import cet from './cet.js?v=20260924203049';
+import pp from './pp.js?v=20260924203049';
+import fl from './fl.js?v=20260924203049';
+import ts from './ts.js?v=20260924203049';
+import bpi from './bpi.js?v=20260924203049';
+import fh from './fh.js?v=20260924203049';
+import ma from './ma.js?v=20260924203049';
+import pe from './pe.js?v=20260924203049';
+import fin from './fin.js?v=20260924203049';
+import briefing from './briefing.js?v=20260924203049';
+export const modules = [home, cet, pp, fl, ts, bpi, fh, ma, pe, fin, briefing];

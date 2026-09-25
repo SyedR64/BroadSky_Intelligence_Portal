@@ -1,0 +1,1684 @@
+{
+  "meta": {
+    "dataset": "rival_filings",
+    "title": "Rival platforms — filings & financial research track (PE-backed and public competitors to Broad Sky Partners portfolio companies)",
+    "generated": "2026-09-24",
+    "subject": "Rival platforms across BSP portfolio overlaps: cet (commercial electrical, MA), punctual_pros (residential HVAC/plumbing, PA/NJ), frontline (legal managed IT / legal services), thomas_scientific (lab distribution), bpi (strategic comms / public affairs), fair_harbor (men's swim/casual apparel)",
+    "method": "(A) SEC EDGAR full-text search (efts.sec.gov) for each rival and its borrower entities (HGH Purchaser, Helios Buyer, Java Buyer, E-Phoenix, Skopima, DTI Holdco, Kite Bidco, Life Science Intermediate Holdings), then parsing of BDC 10-Q/10-K Schedules of Investments and N-PORT-P XML holdings (par, cost, fair value, spread, PIK, maturity) with User-Agent 'BroadSkyPortal research syed@toughleaf.com'; Form D XML parsing for co-invest/topco vehicles; lender 8-Ks. (B) SBA PPP FOIA public_150k_plus CSV (968,524 rows, local copy) regex-matched on rival borrower names; implied annual payroll costs = loan ÷ 2.5 × 12. (D) XBRL companyfacts API + 10-K/10-Q text for IES, Avantor, Stagwell, Solo Brands (revenue, operating income, employees, segments). Company websites for self-reported scale. Estimates are clearly labeled analyst computations.",
+    "sources_summary": {
+      "note": "approximate count of distinct source documents by type",
+      "sec_bdc_10q_10k_schedules": 14,
+      "sec_nport_holdings": 5,
+      "sec_form_d": 3,
+      "sec_10k_10q_public_rivals": 11,
+      "sec_8k_6k": 4,
+      "sba_ppp_foia": 7,
+      "company_websites": 8,
+      "wikipedia": 1
+    },
+    "caveats": [
+      "BDC/N-PORT holdings show only one lender's slice of each facility; total facility size, and therefore leverage and EBITDA, cannot be observed directly. Implied EBITDA ranges are analyst estimates.",
+      "PPP figures are from 2020–21 and predate most PE roll-ups; they describe the predecessor operating company, not the current platform.",
+      "PPP-implied payroll = loan/2.5×12 applies the $100k per-employee cap. Loans at the $10M cap (J&M Brown) are lower bounds.",
+      "Web-search budget for this session was exhausted before this track started, so credit-rating press (Moody's/S&P/KBRA), deal press with revenue/EBITDA, Inc. 5000 listings and ownership confirmations could not be pulled. Ownership attributions in the brief (e.g., Bregal Sagemount for Horizon, MSCP for Sila, Genstar for Harbor Global, EagleTree for Integreon, OMERS/Harvest for Epiq, StoneCalibre for Calibre) are NOT verified by this dataset except where an item says so.",
+      "Name collisions were screened out: 'Consilio Midco Limited (dba Cyncly)' (software) is not the legal Consilio; 'Redwood Services Group, LLC' (IT services, North Haven PIF) is not Redwood Services, LP (HVAC); 'Frontline Road Safety' is not BSP's Frontline; 'Horizon Services Acquisition, LLC' Form D (Bloomfield Hills MI pooled fund, 2024) could not be linked to Horizon Services and was excluded; sciens.com is an unrelated consulting firm.",
+      "Website metrics are company-reported marketing claims and unaudited.",
+      "PPP items (rival-030, 031, 034, 035, 041, 045, 051) were not re-verified on 2026-09-24. Their source_url is the SBA dataset landing page, which lists no loan-level figures, and the CSV was not downloaded.",
+      "Verified 2026-09-24: sampled 44, confirmed 44, removed 0"
+    ],
+    "item_count": 51,
+    "financial_picture": [
+      "Home services is splitting in two. The scaled platforms (Wrench, Apex, Redwood, Legacy) borrow at S+425–475, marked at par, with delayed-draw lines for acquisitions. The next tier (TurnPoint, Horizon, Any Hour, Len the Plumber) has moved to part PIK interest and is marked at 89–94. Lenders are paying for scale and punishing leverage taken on at 2021-era prices.",
+      "Punctual Pros' PA/NJ/DE footprint is exposed to the stressed side: Horizon Services (HGH Purchaser) has at least $211M of first lien at Blue Owl alone, paying 3.75% PIK, marked 92.5, with lenders also holding its common equity. Heartland's debt matures Dec 15, 2026. So two regional competitors are likely to sell assets or be restructured in the next 12 months rather than bid aggressively for add-ons.",
+      "Sila (King of Prussia) and Haller (Lancaster, 254 trucks) are the healthier local rivals. Sila's 2,500+ employees imply about $0.45–0.65B revenue, versus a single ~96-person company in its 2020 PPP record, so its growth has come almost entirely from acquisitions.",
+      "For CET, IES's Commercial & Industrial segment is the cleanest margin benchmark: $427.7M revenue, 20.3% gross margin, 11.0% operating margin, and backlog that doubled to $625.2M. Across the whole company, IES earns 11.4% operating margins with no net debt, so it can pay strategic prices for New England contractors.",
+      "PPP data puts CET's largest private MA competitors at about $100–135M (Interstate Electrical: $8.57M loan, 500 jobs, ~$41.1M payroll costs) and at least $120–160M (J&M Brown: $10M capped loan, 445 jobs, payroll costs of at least $48M). Both are family-owned union contractors with no lender filings, so they compete on labor capacity rather than on capital.",
+      "Legal services lenders are signaling real stress. Consilio's term loan fell from 90.95 to 77.85–82.94 in the first half of 2026 with a May 2028 maturity, and Epiq's (DTI Holdco) traded at 89–93. That is consistent with AI compressing managed-review and eDiscovery revenue, and it weakens two large vendors that compete with Frontline for law-firm technology budgets.",
+      "Integreon (WhiteHorse/Twin Brook unitranche, S+550, June 2027 maturity) and Kraft Kennedy (about 100 staff and ~$7.5M payroll in 2020, implying ~$20–30M revenue) are the rivals closest to Frontline in size. Kraft Kennedy's SOC/security push matches the upsell path Frontline is pursuing with AmLaw firms.",
+      "In lab distribution, Avantor's $785M goodwill impairment on VWR, 4.6% Lab Solutions sales decline and 10.2% Q2-2026 adjusted operating margin at VWR Distribution & Services give Thomas Scientific a vulnerable category leader to take share from and a realistic margin ceiling. Calibre Scientific (S+600 debt maturing June 2027, CEO departed March 2026) looks like a 2026–27 refinancing or sale.",
+      "In strategic communications, KKR's $1.7B enterprise value for FGS (WPP stake $775M), financed with an S+450 unitranche, sets a premium valuation. Precision Strategies' new March-2026 leverage facility (about $10.7M visible at Stellus) shows sponsors are now financing mid-size Democratic-aligned agencies like BPI.",
+      "Stagwell's Communications segment (SKDK) lost 16.5% of organic net revenue in 2025, and advocacy alone fell $62.7M. That quantifies the election-cycle swing BPI should expect: a sharp off-year decline followed by an 11% consolidated revenue recovery in Q2 2026 heading into the midterms.",
+      "In apparel, Chubbies (Fair Harbor's closest public comparison) earned about $22.4M of segment contribution on $122.9M of FY2025 sales (57.9% gross margin). But Q2-2026 DTC sales fell 20.8%, and its parent Solo Brands was delisted from the NYSE in July 2026 with about $249M of debt, so a Chubbies sale is plausible. Private Vuori and Outerknown left no SEC or PPP trace."
+    ],
+    "estimate_table": [
+      {
+        "metric": "Wrench Group annual revenue",
+        "estimate": "$1.5–2.0B",
+        "basis": "7,400+ team members (website) × $200–270k revenue/employee typical for residential HVAC/plumbing",
+        "confidence": "low"
+      },
+      {
+        "metric": "Sila Services annual revenue",
+        "estimate": "$450–650M",
+        "basis": "2,500+ team members (website) × $180–260k revenue/employee",
+        "confidence": "low"
+      },
+      {
+        "metric": "Horizon Services first-lien debt (minimum)",
+        "estimate": "≥ $211M",
+        "basis": "OBDC funded term loan $197.58M + revolver $13.45M par at 6/30/2026; Crescent holds an additional ~$16.4M of unitranche/revolver par",
+        "confidence": "high"
+      },
+      {
+        "metric": "Horizon Services EBITDA",
+        "estimate": "$30–40M",
+        "basis": "≥$227M visible first lien (OBDC $211.0M + Crescent $16.4M); PIK toggle and a 92.5 mark imply leverage of about 6–7.5x",
+        "confidence": "low"
+      },
+      {
+        "metric": "Interstate Electrical Services revenue (2020)",
+        "estimate": "$100–135M",
+        "basis": "PPP-implied payroll costs $41.1M ÷ 30–40% labor share; cross-check 500 jobs × $200–260k",
+        "confidence": "medium"
+      },
+      {
+        "metric": "J&M Brown revenue (2020)",
+        "estimate": "≥ $120–160M",
+        "basis": "PPP at $10M cap ⇒ payroll costs ≥ $48M incl. union benefits; ÷ 30–40% labor share",
+        "confidence": "medium"
+      },
+      {
+        "metric": "Any Hour revenue (2020, pre-PE)",
+        "estimate": "$45–55M",
+        "basis": "PPP payroll costs $15.6M + $1.36M (Dig Pro's); 260 jobs × ~$200k/employee",
+        "confidence": "medium"
+      },
+      {
+        "metric": "Kraft Kennedy revenue (2020)",
+        "estimate": "$20–30M",
+        "basis": "PPP payroll costs ~$7.5M, 100 jobs; IT services revenue/employee $200–300k",
+        "confidence": "medium"
+      },
+      {
+        "metric": "Consilio revenue",
+        "estimate": "$0.8–1.1B",
+        "basis": "5,400+ employees (website) × $150–200k/employee (legal services / managed review mix)",
+        "confidence": "low"
+      },
+      {
+        "metric": "FGS Global 2023 EBITDA",
+        "estimate": "$105–140M",
+        "basis": "$1.7B EV per WPP 6-K described as 'attractive multiple to 2023 EBITDA'; assumed 12–16x",
+        "confidence": "low"
+      },
+      {
+        "metric": "Precision Strategies EBITDA",
+        "estimate": "$5–10M",
+        "basis": "Stellus visible term debt $10.7M; assumed 30–50% hold of a $20–40M facility at 3.5–5x leverage",
+        "confidence": "low"
+      },
+      {
+        "metric": "Chubbies FY2025 segment contribution margin",
+        "estimate": "18.2% ($22.4M)",
+        "basis": "Net sales $122.94M − COGS $51.75M − segment opex $48.78M (Solo Brands 10-K)",
+        "confidence": "high"
+      },
+      {
+        "metric": "VWR distribution adjusted operating margin",
+        "estimate": "10.2% (Q2 2026)",
+        "basis": "$126.4M adj. OI / $1,240.5M net sales (Avantor 10-Q)",
+        "confidence": "high"
+      },
+      {
+        "metric": "Commercial electrical operating margin benchmark",
+        "estimate": "11.0%",
+        "basis": "IES Commercial & Industrial FY2025 OI $47.26M / revenue $427.74M",
+        "confidence": "high"
+      },
+      {
+        "metric": "Stagwell Communications (SKDK) off-cycle swing",
+        "estimate": "−16.5% organic net revenue",
+        "basis": "Stagwell FY2025 10-K segment MD&A; advocacy −$62.7M",
+        "confidence": "high"
+      }
+    ],
+    "data_gaps": [
+      "Credit-rating press (Moody's/S&P/KBRA/Fitch) for Wrench, Apex, TurnPoint, Consilio, Epiq, Calibre and Kite Bidco was not retrieved because the web-search budget was exhausted; rating agency pages are also paywalled.",
+      "Deal press with disclosed revenue/EBITDA (PE Hub, 9fin, Debtwire, PR Newswire) was not retrieved for the same reason. Ownership for Horizon, Haller, Heartland, Sila (MSCP), Harbor Global, Integreon (EagleTree), Epiq (OMERS/Harvest), Calibre (StoneCalibre), Legacy and Redwood is unverified.",
+      "Inc. 5000 profiles (inc.com) returned HTTP 403, and ProPublica/FederalPay PPP lookups were blocked by bot checks. PPP coverage relies only on the SBA 150k+ FOIA file, so loans under $150k are not covered.",
+      "No PPP ≥$150k record was found for Wayne J. Griffin Electric, Sullivan & McLaughlin Companies, Haller Enterprises, Horizon Services (DE), Precision Strategies, Vuori, Outerknown, Marshall Scientific, SKDK, FGS/Sard Verbinnen, Harbor Global, Epiq or Consilio. That can mean no loan, a loan under $150k, or a different legal name.",
+      "No SEC full-text hits for Haller Enterprises, Interstate Electrical Services, Wayne J. Griffin, Sullivan & McLaughlin, Kraft Kennedy, Marshall Scientific, CELLTREAT, StoneCalibre or Harbor Global Holdings.",
+      "Sila Services has no BDC schedule hit under 'Sila Services', 'Sila Holdco' or 'Sila Buyer', so the borrower entity name is unknown.",
+      "Apex's total facility size, TurnPoint's full capital structure and the Wrench unitranche total are not observable from single-lender slices.",
+      "Techniques C (state registries, UCC liens, OSHA/DOL, CourtListener) were not run in this track.",
+      "Vuori (General Atlantic) and Outerknown: no SEC, PPP or BDC footprint found, so there are no financial data points in this dataset."
+    ],
+    "next_pulls": [
+      "Raise CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION, then pull Moody's/S&P rating actions and PE Hub/9fin/PRN deal press for Wrench (2025 refi size), Apex (2024 refi size), TurnPoint (amendment/PIK), Consilio and Epiq (term loan sizes, ratings), Kite Bidco/FGS, Calibre, Horizon (restructuring details).",
+      "EDGAR full-text search for the Sila borrower entity (try 'Sila Intermediate', 'SSG Buyer', 'Sila Parent') and for Harbor Global's and Haller's lenders; check BDC SOIs for 'Haller'.",
+      "MA Secretary of the Commonwealth corporate filings and UCC searches for Interstate Electrical Services Corp., J.&M. Brown Company, Wayne J. Griffin Electric, Sullivan & McLaughlin Companies (officers, secured parties that would reveal PE or bank lenders).",
+      "OSHA establishment search (osha.gov/ords/imis/establishment.html) for Interstate, J&M Brown, Griffin, S&M, Haller, Horizon, Sila, to get inspection counts and headcount at inspected sites.",
+      "ENR Top 600 Specialty Contractors / NECA rankings for Interstate, J&M Brown, Griffin, S&M (electrical revenue).",
+      "O'Dwyer's / PRovoke fee rankings for FGS Global, SKDK, Precision Strategies versus BPI.",
+      "PA DOS and PA UCC search for Haller Enterprises (ownership, lenders), plus CourtListener dockets for Horizon Services / HGH Purchaser (restructuring) and Consilio.",
+      "Re-pull Heartland Home Services BDC marks after 12/15/2026 to see whether the debt was refinanced, extended or defaulted; re-check Integreon (June 2027) and Calibre (June 2027) maturities quarterly."
+    ]
+  },
+  "items": [
+    {
+      "id": "rival-001",
+      "entity": "IES Holdings, Inc. (NASDAQ: IESC)",
+      "category": "press_financial",
+      "title": "IES Holdings FY2025 10-K consolidated results (FYE 2025-09-30)",
+      "filed_or_dated": "2025-11-21",
+      "filer_or_source_agency": "SEC / IES Holdings 10-K",
+      "key_figures": {
+        "revenue_fy2025_usd": 3371468000,
+        "revenue_fy2024_usd": 2884358000,
+        "revenue_fy2023_usd": 2377227000,
+        "operating_income_fy2025_usd": 383529000,
+        "operating_income_fy2024_usd": 300876000,
+        "net_income_fy2025_usd": 305975000,
+        "gross_profit_fy2025_usd": 859497000,
+        "employees_2025_09_30": 10283,
+        "full_time_employees_2025_09_30": 10262,
+        "employees_2024_09_30": 9485,
+        "long_term_debt_noncurrent_2025_09_30_usd": 0
+      },
+      "what_it_tells_us": "IES grew revenue 16.9% and operating income 27.5% in FY2025 with an 11.4% operating margin and essentially no funded long-term debt, so it can outbid LMM sponsors for electrical/communications contractors. Revenue per employee is about $328k, a useful ceiling benchmark for CET's labor productivity.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1048268/000104826825000174/iesc-20250930.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "cet"
+      ],
+      "cik": "0001048268",
+      "xbrl_source": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001048268.json",
+      "verification_notes": [
+        "2026-09-24: all FY2025/FY2024 figures were confirmed in the 10-K except employees_2024_09_30 (9,485), which does not appear in this filing (probably from the FY2024 10-K)."
+      ]
+    },
+    {
+      "id": "rival-002",
+      "entity": "IES Holdings, Inc. (NASDAQ: IESC) — Commercial & Industrial segment",
+      "category": "industry_benchmark",
+      "title": "IES Commercial & Industrial segment P&L FY2025 vs FY2024",
+      "filed_or_dated": "2025-11-21",
+      "filer_or_source_agency": "SEC / IES Holdings 10-K (segment MD&A)",
+      "key_figures": {
+        "cni_revenue_fy2025_usd": 427735000,
+        "cni_revenue_fy2024_usd": 367948000,
+        "cni_revenue_fy2023_usd": 279594000,
+        "cni_gross_margin_fy2025_pct": 20.3,
+        "cni_sga_pct_fy2025": 9.3,
+        "cni_operating_income_fy2025_usd": 47259000,
+        "cni_operating_margin_fy2025_pct": 11.0,
+        "cni_operating_income_fy2024_usd": 41396000,
+        "cni_backlog_2025_09_30_usd": 625165000,
+        "cni_backlog_2024_09_30_usd": 318441000
+      },
+      "what_it_tells_us": "The C&I electrical segment (the closest public analog to CET's commercial electrical work) earns ~20% gross and ~11% operating margins, with growth driven by education, healthcare and data-center end markets. Backlog nearly doubled to $625.2M, showing that demand from data centers and institutions is strong across this type of contractor.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1048268/000104826825000174/iesc-20250930.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "cet"
+      ]
+    },
+    {
+      "id": "rival-003",
+      "entity": "IES Holdings, Inc. (NASDAQ: IESC)",
+      "category": "press_financial",
+      "title": "IES FY2026 year-to-date results (9 months to 2026-06-30) from XBRL 10-Q facts",
+      "filed_or_dated": "2026-07-31",
+      "filer_or_source_agency": "SEC XBRL companyfacts API",
+      "key_figures": {
+        "revenue_q3_fy2026_apr_jun_2026_usd": 1242697000,
+        "operating_income_q3_fy2026_usd": 178547000,
+        "revenue_9m_fy2026_usd": 3087939000,
+        "operating_income_9m_fy2026_usd": 388535000,
+        "revenue_q3_fy2025_usd": 890158000,
+        "operating_income_9m_fy2025_usd": 279216000
+      },
+      "what_it_tells_us": "Quarterly revenue grew 39.6% year over year to $1.24B, and nine-month operating income ($388.5M) is already above all of FY2025. The public comp is growing much faster than New England LMM electrical contractors, mostly on the back of data centers.",
+      "confidence": "high",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001048268.json",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "cet"
+      ]
+    },
+    {
+      "id": "rival-004",
+      "entity": "Avantor, Inc. (NYSE: AVTR) — VWR",
+      "category": "press_financial",
+      "title": "Avantor FY2025 10-K: consolidated and Laboratory Solutions results, headcount",
+      "filed_or_dated": "2026-02-11",
+      "filer_or_source_agency": "SEC / Avantor 10-K",
+      "key_figures": {
+        "revenue_fy2025_usd": 6552200000,
+        "revenue_fy2024_usd": 6783600000,
+        "revenue_fy2023_usd": 6967200000,
+        "operating_income_fy2025_usd": -246200000,
+        "operating_income_fy2024_usd": 1084800000,
+        "net_income_fy2025_usd": -530200000,
+        "lab_solutions_net_sales_fy2025_usd": 4399700000,
+        "lab_solutions_net_sales_fy2024_usd": 4610100000,
+        "lab_solutions_adj_operating_income_fy2025_usd": 510400000,
+        "lab_solutions_adj_operating_income_fy2024_usd": 598000000,
+        "employees_2025_12_31": 13500,
+        "employees_2024_12_31": 13500,
+        "long_term_debt_2026_03_31_usd": 3816300000
+      },
+      "what_it_tells_us": "Avantor's lab distribution business (VWR, Thomas Scientific's largest rival) shrank for a second year: Lab Solutions sales fell 4.6% and adjusted operating income fell 14.6% (margin 11.6%, down from 13.0%). The consolidated operating loss comes from a non-cash goodwill impairment, not from cash operations.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000162828026007118/avtr-20251231.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "thomas_scientific"
+      ],
+      "cik": "0001722482",
+      "xbrl_source": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001722482.json"
+    },
+    {
+      "id": "rival-005",
+      "entity": "Avantor, Inc. (NYSE: AVTR) — VWR",
+      "category": "other",
+      "title": "Avantor $785.0M goodwill impairment on Distribution (VWR) reporting unit, Q3 2025",
+      "filed_or_dated": "2026-02-11",
+      "filer_or_source_agency": "SEC / Avantor 10-K",
+      "key_figures": {
+        "goodwill_impairment_usd": 785000000,
+        "quarter": "Q3 2025",
+        "reporting_unit": "Distribution (formerly referred to as the Buy Sell reporting unit)",
+        "q3_2025_operating_income_usd": -648800000
+      },
+      "what_it_tells_us": "Avantor wrote down the value of its lab distribution unit, a public admission that the economics of the category leader got worse (volume, pricing, freight). This supports a pitch that VWR customers can be won over, and it lowers the valuation benchmark for lab distribution assets.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000162828026007118/avtr-20251231.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "thomas_scientific"
+      ],
+      "verification_notes": [
+        "2026-09-24: $785.0M Q3 2025 goodwill impairment confirmed in 10-K; the 10-K says the unit was formerly the 'Buy Sell' reporting unit (corrected). q3_2025_operating_income (-648.8M) is not in the cited 10-K (from Q3 2025 10-Q), so it was not verified here."
+      ]
+    },
+    {
+      "id": "rival-006",
+      "entity": "Avantor, Inc. (NYSE: AVTR) — VWR Distribution & Services",
+      "category": "industry_benchmark",
+      "title": "Avantor Q2 2026 10-Q: new segment 'VWR Distribution & Services' net sales and adjusted operating income",
+      "filed_or_dated": "2026-07-29",
+      "filer_or_source_agency": "SEC / Avantor 10-Q",
+      "key_figures": {
+        "vwr_dist_services_net_sales_q2_2026_usd": 1240500000,
+        "vwr_dist_services_net_sales_q2_2025_usd": 1207500000,
+        "vwr_dist_services_adj_operating_income_q2_2026_usd": 126400000,
+        "vwr_dist_services_adj_op_margin_q2_2026_pct": 10.2,
+        "vwr_dist_services_net_sales_h1_2026_usd": 2390500000,
+        "consolidated_net_sales_q2_2026_usd": 1692300000,
+        "consolidated_operating_income_q2_2026_usd": 121800000
+      },
+      "what_it_tells_us": "Avantor now reports VWR distribution on its own: $1.24B of quarterly sales (+2.7% y/y) at about a 10% adjusted operating margin. That margin is a direct benchmark for Thomas Scientific's distribution margin.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000162828026050415/avtr-20260630.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "thomas_scientific"
+      ]
+    },
+    {
+      "id": "rival-007",
+      "entity": "Avantor, Inc. (NYSE: AVTR)",
+      "category": "lender_press",
+      "title": "Avantor Credit Agreement Amendment No. 15: €374.2M incremental B-7 Euro term loan (Goldman Sachs agent)",
+      "filed_or_dated": "2026-07-17",
+      "filer_or_source_agency": "SEC / Avantor 8-K (Item 1.01/2.03)",
+      "key_figures": {
+        "incremental_b7_euro_term_loan_eur": 374208296.62,
+        "administrative_agent": "Goldman Sachs Bank USA",
+        "original_credit_agreement_date": "2017-11-21",
+        "ceo_cfo_change": "Todd Garner appointed EVP & CFO effective 2026-09-21 (8-K 2026-09-21)"
+      },
+      "what_it_tells_us": "Avantor is actively refinancing and changing management, including a new CFO in September 2026. That is typical of a turnaround, and distraction at VWR can open doors for smaller distributors.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000162828026048676/avtr-20260714.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "thomas_scientific"
+      ],
+      "verification_notes": [
+        "2026-09-24: the EUR 374,208,296.62 incremental B-7 loan, the Goldman Sachs agent role and the 2017-11-21 credit agreement were confirmed. The CFO change comes from a separate 8-K that was not checked."
+      ]
+    },
+    {
+      "id": "rival-008",
+      "entity": "Stagwell Inc. (NASDAQ: STGW)",
+      "category": "press_financial",
+      "title": "Stagwell FY2025 10-K consolidated results and headcount",
+      "filed_or_dated": "2026-03-13",
+      "filer_or_source_agency": "SEC / Stagwell 10-K",
+      "key_figures": {
+        "revenue_fy2025_usd": 2909000000,
+        "revenue_fy2024_usd": 2841216000,
+        "revenue_fy2023_usd": 2527177000,
+        "operating_income_fy2025_usd": 159001000,
+        "operating_income_fy2024_usd": 133068000,
+        "net_income_attrib_fy2025_usd": 29101000,
+        "full_time_employees_2025_12_31": 10951,
+        "contractors_part_time_2025_12_31": 1678,
+        "full_time_employees_2024_12_31": 11857,
+        "contractors_part_time_2024_12_31": 2750,
+        "long_term_debt_2026_06_30_usd": 1450112000
+      },
+      "what_it_tells_us": "Stagwell (owner of SKDK) grew revenue 2.4% but cut about 900 full-time staff. That points to margin work in an off-cycle political year. Long-term debt is about $1.45B (6/30/2026), roughly 9x FY2025 GAAP operating income; leverage on an EBITDA basis would be lower.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/876883/000087688326000010/stgw-20251231.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "bpi"
+      ],
+      "cik": "0000876883",
+      "xbrl_source": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000876883.json"
+    },
+    {
+      "id": "rival-009",
+      "entity": "Stagwell Inc. — Communications segment (SKDK, Targeted Victory, Allison, Consulum)",
+      "category": "industry_benchmark",
+      "title": "Stagwell Communications segment revenue and organic decline (Advocacy seasonality)",
+      "filed_or_dated": "2026-03-13",
+      "filer_or_source_agency": "SEC / Stagwell 10-K (segment MD&A)",
+      "key_figures": {
+        "communications_revenue_fy2025_usd": 592577000,
+        "communications_revenue_fy2024_usd": 703065000,
+        "communications_net_revenue_fy2025_usd": 393431000,
+        "communications_net_revenue_fy2024_usd": 435626000,
+        "organic_net_revenue_change_pct": -16.5,
+        "advocacy_service_line_decline_usd": 62700000
+      },
+      "what_it_tells_us": "SKDK's segment lost $110.5M of gross revenue (-15.7%) in 2025 as political spending dropped after the 2024 cycle. Advocacy work swings hard with the election cycle, which is a benchmark for how much BPI's public-affairs fee income can move from year to year.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/876883/000087688326000010/stgw-20251231.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "bpi"
+      ]
+    },
+    {
+      "id": "rival-010",
+      "entity": "Stagwell Inc. (NASDAQ: STGW)",
+      "category": "press_financial",
+      "title": "Stagwell Q2 2026 results (XBRL 10-Q)",
+      "filed_or_dated": "2026-07-31",
+      "filer_or_source_agency": "SEC XBRL companyfacts API",
+      "key_figures": {
+        "revenue_q2_2026_usd": 786307000,
+        "revenue_q2_2025_usd": 706818000,
+        "operating_income_q2_2026_usd": 11546000,
+        "revenue_h1_2026_usd": 1490450000,
+        "operating_income_h1_2026_usd": 21188000
+      },
+      "what_it_tells_us": "Revenue is up 11.2% y/y into the 2026 midterm cycle, but first-half operating income is thin ($21.2M), so volume isn't turning into profit. Political and advocacy demand is recovering, which bodes well for BPI's 2026 pipeline.",
+      "confidence": "high",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000876883.json",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "bpi"
+      ]
+    },
+    {
+      "id": "rival-011",
+      "entity": "Solo Brands, Inc. (SBDS) — Chubbies segment",
+      "category": "press_financial",
+      "title": "Solo Brands FY2025 10-K: Chubbies segment net sales, COGS and opex",
+      "filed_or_dated": "2026-03-23",
+      "filer_or_source_agency": "SEC / Solo Brands 10-K",
+      "key_figures": {
+        "chubbies_net_sales_fy2025_usd": 122943000,
+        "chubbies_net_sales_fy2024_usd": 112713000,
+        "chubbies_growth_pct": 9.1,
+        "chubbies_cogs_fy2025_usd": 51749000,
+        "chubbies_cogs_fy2024_usd": 45707000,
+        "chubbies_opex_fy2025_usd": 48783000,
+        "chubbies_opex_fy2024_usd": 51193000,
+        "chubbies_marketing_fy2025_usd": 12371000,
+        "chubbies_segment_contribution_fy2025_usd_computed": 22411000,
+        "chubbies_segment_contribution_fy2024_usd_computed": 15813000,
+        "chubbies_retail_stores": 11,
+        "solo_brands_total_revenue_fy2025_usd": 316581000,
+        "solo_brands_operating_income_fy2025_usd": -113483000,
+        "solo_brands_employees_2025_12_31": 327
+      },
+      "what_it_tells_us": "Chubbies is the closest public read on Fair Harbor: a men's casual/swim brand with $122.9M of sales, a 57.9% gross margin and about $22M of segment contribution (18%). It has nearly eliminated China sourcing and is shifting toward wholesale and retail.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1870600/000187060026000013/dtc-20251231.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "fair_harbor"
+      ],
+      "cik": "0001870600",
+      "note": "segment contribution = net sales − COGS − segment operating expenses (analyst computation)"
+    },
+    {
+      "id": "rival-012",
+      "entity": "Solo Brands, Inc. (SBDS) — Chubbies segment",
+      "category": "press_financial",
+      "title": "Solo Brands Q2 2026 10-Q: Chubbies net sales decline, DTC down 20.8%",
+      "filed_or_dated": "2026-08-13",
+      "filer_or_source_agency": "SEC / Solo Brands 10-Q",
+      "key_figures": {
+        "chubbies_net_sales_q2_2026_usd": 40648000,
+        "chubbies_net_sales_q2_2025_usd": 44455000,
+        "chubbies_q2_change_pct": -8.6,
+        "chubbies_dtc_q2_2026_usd": 18581000,
+        "chubbies_dtc_change_pct": -20.8,
+        "chubbies_retail_q2_2026_usd": 22067000,
+        "chubbies_net_sales_h1_2026_usd": 77323000,
+        "chubbies_h1_change_pct": -11.3
+      },
+      "what_it_tells_us": "Chubbies' DTC channel fell about 20% in peak swim season 2026 while wholesale held up. That suggests weak DTC demand or a pullback in paid acquisition across the men's swim/shorts category, which Fair Harbor's DTC numbers should be tested against.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1870600/000187060026000044/dtc-20260630.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "fair_harbor"
+      ]
+    },
+    {
+      "id": "rival-013",
+      "entity": "Solo Brands, Inc. (parent of Chubbies)",
+      "category": "other",
+      "title": "NYSE Form 25-NSE: removal of Solo Brands Class A common stock from listing",
+      "filed_or_dated": "2026-07-08",
+      "filer_or_source_agency": "SEC / NYSE Form 25-NSE",
+      "key_figures": {
+        "rule": "17 CFR 240.12d2-2(b)",
+        "security": "Class A Common Stock",
+        "q2_2026_operating_income_usd": 3513000,
+        "long_term_debt_2026_06_30_usd": 249246000
+      },
+      "what_it_tells_us": "Chubbies' parent was removed from the NYSE while carrying about $249M of debt against a shrinking Solo Stove business. Chubbies could be sold or have its strategy disrupted, which could open wholesale doors for Fair Harbor or put a competitor brand up for sale.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1870600/000087666126000606/primary_doc.xml",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "fair_harbor"
+      ]
+    },
+    {
+      "id": "rival-014",
+      "entity": "Wrench Group LLC (Leonard Green & Partners)",
+      "category": "bdc_loan_schedule",
+      "title": "Wrench Group 2025 first-lien term loan / DDTL / revolver held by T. Rowe Price OHA Select Private Credit Fund",
+      "filed_or_dated": "2026-08-13",
+      "filer_or_source_agency": "SEC / T. Rowe Price OHA Select Private Credit Fund 10-Q (6/30/2026 SOI)",
+      "key_figures": {
+        "instrument": "First lien term loan",
+        "spread": "SOFR + 4.75%",
+        "all_in_rate_pct": 8.48,
+        "maturity": "2032-09-03",
+        "par_usd": 39089000,
+        "amortized_cost_usd": 38912000,
+        "fair_value_usd": 38894000,
+        "ddtl_commitment_unfunded_usd": 5357000,
+        "revolver_commitment_unfunded_usd": 5357000,
+        "revolver_maturity": "2031-09-03",
+        "pct_net_assets": 2.37
+      },
+      "what_it_tells_us": "In September 2025 Wrench refinanced into a private-credit unitranche (S+475, 7-year) with an undrawn DDTL for acquisitions. Marks near par (99.5) show lenders see it as a healthy large-cap home-services credit.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1901164/000190116426000022/oha-20260630.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ]
+    },
+    {
+      "id": "rival-015",
+      "entity": "Wrench Group LLC",
+      "category": "lender_press",
+      "title": "AGL Private Credit Income Fund 8-K: new $35.0M commitment to Wrench Group (S+4.75%, 10/1/2025)",
+      "filed_or_dated": "2025-10-29",
+      "filer_or_source_agency": "SEC / AGL Private Credit Income Fund 8-K",
+      "key_figures": {
+        "commitment_usd": 35000000,
+        "funded_usd": 27500000,
+        "spread": "SOFR + 4.75%",
+        "investment_date": "2025-10-01",
+        "maturity": "2032-09-03"
+      },
+      "what_it_tells_us": "At least three private-credit lenders (OHA, AGL, Senior Credit Investments/Jefferies) hold the Sept-2025 Wrench facility, so it is a club unitranche that is probably well over $1B. It is the pricing benchmark (S+475) for scaled home-services platforms. The claim that the total facility tops $1B is an inference from how many lenders participate and Wrench's scale, not a disclosed figure.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2011498/000119312525256187/d938112d8k.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ]
+    },
+    {
+      "id": "rival-016",
+      "entity": "Wrench Group LLC (Leonard Green & Partners)",
+      "category": "sec_form_d",
+      "title": "Form D/A — Wrench Coinvest LLC (LGP co-invest vehicle), Los Angeles",
+      "filed_or_dated": "2019-04-23",
+      "filer_or_source_agency": "SEC EDGAR Form D",
+      "key_figures": {
+        "issuer": "Wrench Coinvest LLC",
+        "jurisdiction": "Delaware",
+        "industry_group": "Investing",
+        "revenue_range": "Decline to Disclose",
+        "exemptions": [
+          "06b",
+          "3C",
+          "3C.7"
+        ],
+        "related_persons": [
+          "John Danhakl",
+          "Jonathan Sokoloff",
+          "Cody Franklin",
+          "Andrew Goldberg",
+          "Leonard Green & Partners, L.P."
+        ],
+        "signer": "Andrew C. Goldberg (VP, GC & Secretary of issuer's manager)"
+      },
+      "what_it_tells_us": "This confirms Leonard Green's 2019 control investment in Wrench through a co-invest vehicle. By 2026 LGP will have held Wrench about 7 years, so a sale or recap is likely soon.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1772582/000177258219000002/primary_doc.xml",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ]
+    },
+    {
+      "id": "rival-017",
+      "entity": "Wrench Group LLC",
+      "category": "other",
+      "title": "Wrench Group website self-reported scale metrics",
+      "filed_or_dated": "2026-09-24",
+      "filer_or_source_agency": "wrenchgroup.com (company website)",
+      "key_figures": {
+        "team_members": "7,400+",
+        "markets": 26,
+        "states": 15,
+        "service_vehicles": "5,500+",
+        "customers_per_year": "2.5M+",
+        "brands": 24
+      },
+      "what_it_tells_us": "With 7,400 employees and 5,500 trucks, Wrench is roughly 20–30x the size of a typical LMM regional HVAC/plumbing platform. At $200–270k revenue per employee that implies about $1.5–2.0B revenue (analyst estimate, not company-disclosed).",
+      "confidence": "medium",
+      "source_url": "https://www.wrenchgroup.com",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ]
+    },
+    {
+      "id": "rival-018",
+      "entity": "Apex Service Partners LLC (Alpine Investors)",
+      "category": "bdc_loan_schedule",
+      "title": "Apex Service Partners first-lien term loan, DDTLs and revolver — KKR Enhanced US Direct Lending Fund-L",
+      "filed_or_dated": "2026-08-13",
+      "filer_or_source_agency": "SEC / KKR Enhanced US Direct Lending Fund-L 10-Q (6/30/2026 SOI)",
+      "key_figures": {
+        "tl_spread": "SOFR + 5.00%",
+        "tl_maturity": "2030-10-24",
+        "tl_par_usd": 13442000,
+        "ddtl_replacement_par_usd": 3083000,
+        "tl_dd_opco_par_usd": 8197000,
+        "ddtl_11_25_spread": "SOFR + 4.75%",
+        "ddtl_11_25_commitment_usd": 5793000,
+        "ddtl_11_25_funded_usd": 2288000,
+        "revolver_maturity": "2029-10-24",
+        "facility_vintage": "Sept 2024 (1L 09/24); incremental DDTL Nov 2025"
+      },
+      "what_it_tells_us": "Apex refinanced in Sept 2024 and added a lower-priced (S+475) acquisition DDTL in Nov 2025, so it is still consolidating HVAC/plumbing businesses. Marks at 99–100 (HL Scope, StepStone N-PORTs at 99.1–99.6) show a healthy credit.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012839/000162828026056657/ebdc-20260630.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ]
+    },
+    {
+      "id": "rival-019",
+      "entity": "Apex Service Partners LLC / Any Hour LLC / Redwood Services, LP / Wrench Group LLC",
+      "category": "bdc_loan_schedule",
+      "title": "Jefferies Credit Partners BDC 6/30/2026 SOI — home services cluster (Any Hour PIK, Apex, Redwood, Wrench)",
+      "filed_or_dated": "2026-08-12",
+      "filer_or_source_agency": "SEC / Jefferies Credit Partners BDC Inc. 10-Q",
+      "key_figures": {
+        "any_hour_tl_spread": "SOFR + 5.75% (includes 3.25% PIK)",
+        "any_hour_tl_maturity": "2030-05-23",
+        "any_hour_tl_par_usd": 16356000,
+        "any_hour_tl_cost_usd": 16183000,
+        "any_hour_tl_fair_value_usd": 14597000,
+        "any_hour_tl_mark_pct_of_par": 89.2,
+        "apex_tl_spread": "SOFR + 5.00%",
+        "apex_tl_par_usd": 5688000,
+        "apex_tl_fair_value_usd": 5688000,
+        "redwood_tl_spread": "SOFR + 4.25%",
+        "redwood_tl_maturity": "2032-06-16",
+        "redwood_tl_par_usd": 10360000,
+        "redwood_tl_fair_value_usd": 10257000,
+        "wrench_tl_spread": "SOFR + 4.75%",
+        "wrench_tl_par_usd": 20555000,
+        "wrench_tl_fair_value_usd": 20556000
+      },
+      "what_it_tells_us": "One lender's book shows the home-services credit spectrum: Wrench and Apex marked at par; Redwood newly financed at a tight S+425; and Any Hour (Utah) partly paying interest in kind (PIK) and marked at 89. Any Hour's borrowing is clearly stressed.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1959604/000119312526345216/ck0001959604-20260630.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ]
+    },
+    {
+      "id": "rival-020",
+      "entity": "TurnPoint Services Inc (OMERS Private Equity)",
+      "category": "bdc_loan_schedule",
+      "title": "TurnPoint Services first-lien loans with PIK toggle — FS KKR Capital Corp",
+      "filed_or_dated": "2026-08-06",
+      "filer_or_source_agency": "SEC / FS KKR Capital Corp 10-Q (6/30/2026 SOI)",
+      "key_figures": {
+        "tl_2031_spread": "SOFR + 5.5% (2.8% PIK)",
+        "tl_2031_maturity": "2031-06",
+        "tl_2031_par_usd_m": 8.4,
+        "tl_2031_cost_usd_m": 8.4,
+        "tl_2031_fair_value_usd_m": 7.9,
+        "tl_2031_mark_pct": 94.0,
+        "tl_2030_spread": "SOFR + 5.3% (0.0% cash / 3.0% PIK option)",
+        "prior_period_spread": "SOFR + 5.0%",
+        "floor_pct": 0.8,
+        "kkr_usdl_fund_u_tl_mark_pct": 93.63,
+        "kkr_usdl_fund_u_tl_par_usd": 10132594
+      },
+      "what_it_tells_us": "TurnPoint's spread rose from S+500 to S+550 with 2.8% PIK now being accrued, and the loan is marked at 94. That pattern means an amendment that gave the company interest relief, i.e. a leveraged platform under pressure.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1422183/000162828026053783/fsk-20260630.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ],
+      "secondary_url": "https://www.sec.gov/Archives/edgar/data/1987990/000119312526371471/primary_doc.xml"
+    },
+    {
+      "id": "rival-021",
+      "entity": "Horizon Services (HGH Purchaser, Inc.)",
+      "category": "bdc_loan_schedule",
+      "title": "HGH Purchaser, Inc. (dba Horizon Services) first-lien loan with 3.75% PIK — Blue Owl Capital Corp (OBDC)",
+      "filed_or_dated": "2026-08-05",
+      "filer_or_source_agency": "SEC / Blue Owl Capital Corporation 10-Q (6/30/2026 SOI)",
+      "key_figures": {
+        "tl_spread": "SOFR + 3.25% cash + 3.75% PIK",
+        "tl_maturity": "2028-11",
+        "tl_par_usd": 197580000,
+        "tl_cost_usd": 196971000,
+        "tl_fair_value_usd": 182761000,
+        "tl_mark_pct_of_par": 92.5,
+        "revolver_spread": "SOFR + 6.50%",
+        "revolver_par_usd": 13454000,
+        "revolver_fair_value_usd": 12206000,
+        "obdc_total_funded_par_usd": 211034000,
+        "prior_period_tl_par_usd": 194861000,
+        "prior_period_tl_fair_value_usd": 179760000
+      },
+      "what_it_tells_us": "Horizon Services (a Delaware-based HVAC/plumbing/electrical platform serving the DE/PA/NJ market, a Punctual Pros rival in its region) has at least $211M of first-lien debt at OBDC alone. Part of the interest is paid in kind (PIK) at 3.75%, the loan is marked at 92.5, and it matures November 2028. Blue Owl also holds the equity, so this is a distressed, lender-supported platform.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1655888/000165588826000056/obdc-20260630.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ]
+    },
+    {
+      "id": "rival-022",
+      "entity": "Horizon Services (HGH Purchaser, Inc.)",
+      "category": "bdc_loan_schedule",
+      "title": "HGH Purchaser unitranche (S+700 incl. 375 PIK) and common equity — Crescent Capital BDC",
+      "filed_or_dated": "2026-08-10",
+      "filer_or_source_agency": "SEC / Crescent Capital BDC 10-Q (6/30/2026 SOI)",
+      "key_figures": {
+        "unitranche_spread": "SOFR + 7.00% (3.75% PIK), 0.75% floor",
+        "all_in_rate_pct": 10.83,
+        "maturity": "2029-11",
+        "tl_par_usd": 8192000,
+        "tl_fair_value_usd": 7756000,
+        "ddtl_par_usd": 6921000,
+        "revolver_spread": "SOFR + 6.50%",
+        "common_stock_shares": 4171,
+        "common_stock_cost_usd": 417000,
+        "common_stock_fair_value_usd": 334000
+      },
+      "what_it_tells_us": "The lenders now hold common stock at a markdown, which indicates a restructuring in which debt was partly converted to equity. Horizon is financially constrained and unlikely to bid aggressively for PA/NJ/DE add-ons.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1633336/000119312526342351/ccap-20260630.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ],
+      "verification_notes": [
+        "2026-09-24: figures confirmed in the CCAP 10-Q. CCAP shows an 11/2029 maturity, while OBDC (rival-021) shows 11/2028 for HGH Purchaser's first lien. Treat the maturity as unresolved (possibly an extension recorded differently by each lender)."
+      ]
+    },
+    {
+      "id": "rival-023",
+      "entity": "Len the Plumber (Mario Purchaser, LLC / Mario Midco Holdings, Inc.)",
+      "category": "bdc_loan_schedule",
+      "title": "Len the Plumber first lien (S+4.00% + 2.00% PIK) and holdco unsecured (S+10.75%) — Blue Owl Capital Corp",
+      "filed_or_dated": "2026-08-05",
+      "filer_or_source_agency": "SEC / Blue Owl Capital Corporation 10-Q (6/30/2026 SOI)",
+      "key_figures": {
+        "first_lien_spread": "SOFR + 4.00% + 2.00% PIK",
+        "first_lien_maturity": "2029-04",
+        "first_lien_par_usd": 27981000,
+        "first_lien_fair_value_usd": 25743000,
+        "first_lien_mark_pct": 92.0,
+        "holdco_unsecured_spread": "SOFR + 10.75%",
+        "holdco_unsecured_par_usd": 9544000,
+        "holdco_unsecured_fair_value_usd": 8184000
+      },
+      "what_it_tells_us": "Another Mid-Atlantic plumbing/HVAC platform on PIK and marked in the low 90s. Several PE-backed rivals in the Punctual Pros footprint are over-levered, which favors disciplined buyers of add-ons.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1655888/000165588826000056/obdc-20260630.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ]
+    },
+    {
+      "id": "rival-024",
+      "entity": "Heartland Home Services, Inc. (fka Helios Buyer, Inc.)",
+      "category": "bdc_loan_schedule",
+      "title": "Heartland Home Services first-lien loans maturing 12/15/2026 — Goldman Sachs BDC and Carlyle Secured Lending",
+      "filed_or_dated": "2026-08-06",
+      "filer_or_source_agency": "SEC / Goldman Sachs BDC 10-Q and Carlyle Secured Lending 10-Q (6/30/2026 SOI)",
+      "key_figures": {
+        "gsbd_spread": "SOFR + 6.00%",
+        "gsbd_rate_pct": 9.83,
+        "maturity": "2026-12-15",
+        "gsbd_tranche_pars_usd": [
+          18310000,
+          14323000,
+          7546000
+        ],
+        "gsbd_tranche_fair_values_usd": [
+          17806000,
+          13929000,
+          7338000
+        ],
+        "gsbd_mark_pct": 97.2,
+        "cgbd_spreads": "SOFR + 5.75% / 6.00% / 6.75%",
+        "cgbd_par_usd": [
+          9964000,
+          6934000,
+          637000
+        ],
+        "cgbd_fair_value_usd": [
+          9797000,
+          6827000,
+          627000
+        ],
+        "ncdl_spread": "SOFR + 6.00%"
+      },
+      "what_it_tells_us": "Heartland's first-lien debt matures in under 3 months (Dec 15, 2026) and still carries S+600 or more, with lenders marking it at 97–98. It faces refinancing or sale pressure right now, which could put brands up for sale.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1572694/000119312526338331/gsbd-20260630.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ],
+      "secondary_url": "https://www.sec.gov/Archives/edgar/data/1544206/000154420626000055/csl-20260630.htm"
+    },
+    {
+      "id": "rival-025",
+      "entity": "Heartland Home Services, Inc.",
+      "category": "other",
+      "title": "Heartland Home Services website: brands and workforce claims",
+      "filed_or_dated": "2026-09-24",
+      "filer_or_source_agency": "heartlandhomeservices.com (company website)",
+      "key_figures": {
+        "founded": 2017,
+        "brands": "over 25",
+        "workforce_growth_claim_pct": 40,
+        "workforce_growth_claim_pct_scope": "single partner-company testimonial (Schaafsma Heating & Cooling), not a platform-wide figure"
+      },
+      "what_it_tells_us": "A 2017-vintage buy-and-build of 25+ local brands. Its debt now falls due in December 2026, so the sponsor is probably trying to sell or recapitalize the platform.",
+      "confidence": "medium",
+      "source_url": "https://www.heartlandhomeservices.com",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ],
+      "verification_notes": [
+        "2026-09-24: the founding year (2017) and 'over 25' brands were confirmed. The 40% workforce growth is one acquired company's testimonial, not a platform metric (clarified)."
+      ]
+    },
+    {
+      "id": "rival-026",
+      "entity": "Redwood Services, LP",
+      "category": "bdc_loan_schedule",
+      "title": "Redwood Services 2032 first-lien term loan / DDTL / revolver — HL Scope RIC N-PORT and Jefferies/SCI 10-Qs",
+      "filed_or_dated": "2026-08-27",
+      "filer_or_source_agency": "SEC / HL Scope RIC LLC N-PORT-P (period 2026-06-30)",
+      "key_figures": {
+        "tl_maturity": "2032-06-16",
+        "spread": "SOFR + 4.25%",
+        "hl_scope_tl_par_usd": 34200000,
+        "hl_scope_tl_value_usd": 33867318,
+        "hl_scope_tl_mark_pct": 99.03,
+        "hl_scope_ddtl_par_usd": 10800000,
+        "hl_scope_other_tranche_par_usd": 4500000,
+        "hl_scope_total_par_usd": 49500000
+      },
+      "what_it_tells_us": "HL Scope alone holds $49.5M of Redwood's June-2025 facility at a tight S+425, so the total facility is probably several hundred million dollars. Redwood is financing an active 100% residential, non-new-construction partner model at a lower cost of debt than most rivals.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2040278/000100371526003067/primary_doc.xml",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ]
+    },
+    {
+      "id": "rival-027",
+      "entity": "Legacy Service Partners (Legacy Parent Holdings, LLC)",
+      "category": "bdc_loan_schedule",
+      "title": "Legacy Service Partners first-lien term loan (repriced/added Feb 2026) — Audax Credit BDC; HL Scope N-PORT",
+      "filed_or_dated": "2026-08-13",
+      "filer_or_source_agency": "SEC / Audax Credit BDC 10-Q (6/30/2026 SOI)",
+      "key_figures": {
+        "spread": "SOFR + 4.50%",
+        "rate_pct": 8.23,
+        "investment_date": "2026-02-17",
+        "maturity": "2031-11-10",
+        "audax_par_usd": 1028703,
+        "audax_fair_value_usd": 1020987,
+        "hl_scope_tl_par_usd": 5947273,
+        "hl_scope_mark_pct": 99.61,
+        "hl_scope_notes": "includes 'Eleventh Amendment' tranche — frequent incremental add-ons",
+        "ncpif_top_holding_pct_of_portfolio": 0.92
+      },
+      "what_it_tells_us": "Legacy (Tampa, 19 states) has amended its facility at least eleven times, which shows a fast add-on pace funded by incremental term loans at S+450 and marked at par. It is a well-funded rival for HVAC/plumbing add-on targets.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1633858/000119312526348682/ck0001633858-20260630.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ],
+      "secondary_url": "https://www.sec.gov/Archives/edgar/data/1911066/000191106626000103/ncpif-20260828.htm",
+      "verification_notes": [
+        "2026-09-24: the Audax row was confirmed (1,028,703 par / 1,020,987 FV, S+4.50%, 8.23%, 2/17/2026, due 11/10/2031). The HL Scope figures come from a different filing and were not checked."
+      ]
+    },
+    {
+      "id": "rival-028",
+      "entity": "Legacy Service Partners",
+      "category": "other",
+      "title": "Legacy Service Partners website scale metrics",
+      "filed_or_dated": "2026-09-24",
+      "filer_or_source_agency": "legacyservicepartners.com (company website)",
+      "key_figures": {
+        "partnerships": "22+",
+        "states": 19,
+        "customers_per_year": "200,000+",
+        "hq": "Tampa, FL"
+      },
+      "what_it_tells_us": "Legacy is a mid-size partnership platform: 22+ brands serving about 200k customers a year, likely $300–500M of revenue (analyst estimate). It competes directly for founder-owned HVAC/plumbing companies.",
+      "confidence": "medium",
+      "source_url": "https://www.legacyservicepartners.com",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ]
+    },
+    {
+      "id": "rival-029",
+      "entity": "Sila Services",
+      "category": "other",
+      "title": "Sila Services website scale metrics",
+      "filed_or_dated": "2026-09-24",
+      "filer_or_source_agency": "silaservices.com (company website)",
+      "key_figures": {
+        "brands": "40+",
+        "team_members": "2,500+",
+        "customers_served": "1M+"
+      },
+      "what_it_tells_us": "Sila (King of Prussia, PA) is a PE-backed rival based in Punctual Pros' home region. Its 2,500+ employees imply roughly $450–650M revenue at $180–260k per employee (analyst estimate). A Goldman Sachs Private Credit Corp N-14 names Sila as a past GS AWM Private deal, confirming GS's prior ownership.",
+      "confidence": "medium",
+      "source_url": "https://www.silaservices.com",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ],
+      "secondary_url": "https://www.sec.gov/Archives/edgar/data/1920145/000119312526033659/d99038dn148c.htm",
+      "verification_notes": [
+        "2026-09-24: website metrics confirmed. The site currently describes Goldman Sachs Alternatives as Sila's private-equity partner, so GS ownership looks current rather than 'prior'. This conflicts with the MSCP attribution noted in meta.caveats."
+      ]
+    },
+    {
+      "id": "rival-030",
+      "entity": "Sila Heating and Air Conditioning, Inc. (Sila Services predecessor)",
+      "category": "sba_ppp",
+      "title": "PPP loan — Sila Heating and Air Conditioning, Inc., King of Prussia PA",
+      "filed_or_dated": "2020-04-06",
+      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus)",
+      "key_figures": {
+        "loan_number": "6254277002",
+        "approved_amount_usd": 1534600,
+        "jobs_reported": 96,
+        "naics": "238220",
+        "lender": "Wilmington Savings Fund Society, FSB",
+        "forgiveness_amount_usd": 1544396.21,
+        "forgiveness_date": "2020-12-08",
+        "implied_annual_payroll_costs_usd": 7366080
+      },
+      "what_it_tells_us": "In 2020 the original Sila operating company had about 96 employees and roughly $7.4M of payroll costs (loan ÷ 2.5 × 12), about $20–25M revenue. That shows how much of the platform's current scale came from acquisitions.",
+      "confidence": "high",
+      "source_url": "https://data.sba.gov/dataset/ppp-foia",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ]
+    },
+    {
+      "id": "rival-031",
+      "entity": "Any Hour LLC / Any Hour Inc.",
+      "category": "sba_ppp",
+      "title": "PPP loans — Any Hour Inc and Any Hour Dig Pro's, LLC (Orem, UT)",
+      "filed_or_dated": "2020-04-14",
+      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus)",
+      "key_figures": {
+        "any_hour_inc_loan_number": "5752777106",
+        "any_hour_inc_amount_usd": 3251800,
+        "any_hour_inc_jobs": 238,
+        "any_hour_inc_naics": "238220",
+        "any_hour_inc_forgiven_usd": 3091586.91,
+        "dig_pros_loan_number": "7403317109",
+        "dig_pros_amount_usd": 282400,
+        "dig_pros_jobs": 22,
+        "lender": "Meadows Bank",
+        "implied_annual_payroll_costs_usd": 15608640
+      },
+      "what_it_tells_us": "Before its PE deal, Any Hour had about 260 employees and roughly $15.6M of payroll costs, implying about $45–55M revenue in 2020. The 2026 BDC marks (89% of par, partly paid in kind) suggest the leveraged buyout is now struggling.",
+      "confidence": "high",
+      "source_url": "https://data.sba.gov/dataset/ppp-foia",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ]
+    },
+    {
+      "id": "rival-032",
+      "entity": "Haller Enterprises (Lititz/Lancaster, PA)",
+      "category": "other",
+      "title": "Haller Enterprises website self-reported metrics; no SEC/PPP(>$150k) footprint found",
+      "filed_or_dated": "2026-09-24",
+      "filer_or_source_agency": "hallerenterprises.com (company website); SEC EFTS; SBA PPP FOIA",
+      "key_figures": {
+        "years_in_business": 43,
+        "trucks_on_road": 254,
+        "sec_full_text_hits": 0,
+        "ppp_150k_plus_match": "none found"
+      },
+      "what_it_tells_us": "Haller runs 254 trucks in Lancaster County PA, a direct Punctual Pros competitor in PA. At $250–300k revenue per truck, that suggests about $60–80M revenue (analyst estimate). No lender or Form D filing was found, so ownership (founder vs. PE) is unconfirmed.",
+      "confidence": "medium",
+      "source_url": "https://www.hallerenterprises.com",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "punctual_pros"
+      ]
+    },
+    {
+      "id": "rival-033",
+      "entity": "Sciens Building Solutions (Java Buyer, Inc.)",
+      "category": "bdc_loan_schedule",
+      "title": "Java Buyer, Inc. (Sciens Building Solutions) first-lien loans — Blackstone Secured Lending, T. Rowe OHA, Nuveen Churchill",
+      "filed_or_dated": "2026-08-06",
+      "filer_or_source_agency": "SEC / BXSL 10-Q; T. Rowe Price OHA Select 10-Q; NCDL 10-Q (6/30/2026 SOI)",
+      "key_figures": {
+        "new_tranche_spread": "SOFR + 4.50%",
+        "new_tranche_date": "2026-02-06",
+        "new_maturity": "2030-12-15",
+        "bxsl_tl_par_usd": 9926000,
+        "bxsl_fair_value_usd": 9926000,
+        "oha_tl_par_usd": 6643000,
+        "legacy_tranche_spread": "SOFR + 5.00%",
+        "legacy_tranche_maturity": "2027-12-15",
+        "ncdl_legacy_par_usd": 9127000,
+        "ncdl_legacy_ddtl_par_usd": 4821000,
+        "mark_pct": 100.0
+      },
+      "what_it_tells_us": "In Feb 2026 Sciens (a building-systems/fire-life-safety platform; the Huron ownership in the brief is not verified here) repriced to S+450 and pushed maturity out 3 years, with marks at par. It has cheap, flexible debt for buying Northeast building-systems contractors that CET might also target.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1736035/000173603526000016/bxsl-20260630.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "cet"
+      ],
+      "secondary_url": "https://www.sec.gov/Archives/edgar/data/1737924/000173792426000084/ncdlc-20260630.htm",
+      "verification_notes": [
+        "2026-09-24: the BXSL figures (9,926 par at S+450 due 12/15/2030, 2026-02-06 tranche, and legacy S+500 due 12/15/2027) were confirmed. The OHA/NCDL pars come from other filings and were not checked here."
+      ]
+    },
+    {
+      "id": "rival-034",
+      "entity": "Interstate Electrical Services Corp. (North Billerica, MA)",
+      "category": "sba_ppp",
+      "title": "PPP loan — Interstate Electrical Services Corp.",
+      "filed_or_dated": "2020-04-13",
+      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus)",
+      "key_figures": {
+        "loan_number": "5067577107",
+        "approved_amount_usd": 8572700,
+        "jobs_reported": 500,
+        "naics": "238210",
+        "lender": "Salem Five Cents Savings Bank",
+        "forgiveness_amount_usd": 8682716.32,
+        "forgiveness_date": "2021-07-22",
+        "implied_annual_payroll_costs_usd": 41148960
+      },
+      "what_it_tells_us": "Interstate had about 500 employees and roughly $41.1M of annual payroll costs in 2020. Because payroll is typically 30–40% of revenue for union electrical contractors, that implies about $100–135M revenue, making it one of the largest private MA electrical contractors CET competes with.",
+      "confidence": "high",
+      "source_url": "https://data.sba.gov/dataset/ppp-foia",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "cet"
+      ]
+    },
+    {
+      "id": "rival-035",
+      "entity": "J.&M. Brown Company, Inc. (Jamaica Plain, MA)",
+      "category": "sba_ppp",
+      "title": "PPP loan — J.&M. Brown Company, Inc. (at $10M program cap)",
+      "filed_or_dated": "2020-04-15",
+      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus)",
+      "key_figures": {
+        "loan_number": "8322977100",
+        "approved_amount_usd": 10000000,
+        "jobs_reported": 445,
+        "naics": "238210",
+        "lender": "Citizens Bank, National Association",
+        "forgiveness_amount_usd": 10113698.63,
+        "implied_annual_payroll_costs_usd_min": 48000000,
+        "at_program_cap": true
+      },
+      "what_it_tells_us": "The loan hit the $10M program cap, so actual payroll costs, including union benefits, were at least $48M a year for 445 workers. That implies revenue of at least $120–160M, and J&M Brown is likely the largest private electrical rival to CET in the Boston market.",
+      "confidence": "high",
+      "source_url": "https://data.sba.gov/dataset/ppp-foia",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "cet"
+      ]
+    },
+    {
+      "id": "rival-036",
+      "entity": "Consilio (Skopima Consilio Parent LLC / Skopima Merger Sub Inc.)",
+      "category": "bdc_loan_schedule",
+      "title": "Consilio 2024 repriced term loan N-PORT marks: 90.95 → 77.85 → 82.23",
+      "filed_or_dated": "2026-08-21",
+      "filer_or_source_agency": "SEC / Lincoln Partners Group Royalty Fund N-PORT-P (periods 2025-12-31, 2026-03-31, 2026-06-30)",
+      "key_figures": {
+        "instrument": "Skopima Merger Sub Inc 2024 Repriced Term Loan",
+        "maturity": "2028-05-12",
+        "coupon_pct_2026_06_30": 7.39,
+        "mark_2025_12_31_pct": 90.95,
+        "mark_2026_03_31_pct": 77.85,
+        "mark_2026_06_30_pct": 82.23,
+        "aristotle_floating_rate_income_fund_par_usd": 12405391,
+        "aristotle_value_usd": 10288721,
+        "aristotle_mark_pct": 82.94
+      },
+      "what_it_tells_us": "Consilio's broadly syndicated term loan fell to the high-70s/low-80s in 2026, with maturity in May 2028. That is distressed-level pricing and means the market doubts it can refinance; the likely cause is AI pressure on document-review and eDiscovery volumes. Consilio may cut prices or sell assets.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2054995/000141036826084121/primary_doc.xml",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "frontline"
+      ],
+      "secondary_url": "https://www.sec.gov/Archives/edgar/data/1959372/000089418926023847/primary_doc.xml",
+      "verification_notes": [
+        "2026-09-24: marks of 90.95 / 77.85 / 82.23 were confirmed from Lincoln Partners Group Royalty Fund N-PORTs (periods 12/31/2025, 3/31/2026, 6/30/2026; the Lincoln slice was $496,177 par / $408,001 value on 6/30/2026), along with the 7.39% coupon and 2028-05-12 maturity. The Aristotle fund figures come from secondary_url and were not checked."
+      ]
+    },
+    {
+      "id": "rival-037",
+      "entity": "Consilio (Skopima TopCo Holdings LP / T-VIII Skopima Co-Invest LP)",
+      "category": "sec_form_d",
+      "title": "Form D — Skopima TopCo Holdings LP and T-VIII Skopima Co-Invest LP (Trident VIII / Stone Point)",
+      "filed_or_dated": "2021-12-16",
+      "filer_or_source_agency": "SEC EDGAR Form D",
+      "key_figures": {
+        "topco_issuer": "Skopima TopCo Holdings LP",
+        "topco_location": "Washington, DC",
+        "industry_group": "Business Services",
+        "revenue_range": "Decline to Disclose",
+        "co_invest_issuer": "T-VIII Skopima Co-Invest LP (Greenwich, CT)",
+        "co_invest_gp": "Trident Capital VIII, L.P.",
+        "co_invest_filed": "2021-04-27",
+        "related_persons_topco": [
+          "Andy Macdonald",
+          "Timothy Yost",
+          "Scott Bronner",
+          "Ian Broadwater",
+          "Matt Woeste",
+          "Rory Shaw"
+        ]
+      },
+      "what_it_tells_us": "These filings confirm that Stone Point's Trident VIII fund controls Consilio's holding company, with the 2021 recapitalization done through the Skopima entities. The 2028 debt maturity lands in year 7 of the hold.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1894311/000189431121000002/primary_doc.xml",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "frontline"
+      ],
+      "secondary_url": "https://www.sec.gov/Archives/edgar/data/1858818/000185881821000002/primary_doc.xml"
+    },
+    {
+      "id": "rival-038",
+      "entity": "Consilio",
+      "category": "other",
+      "title": "Consilio website scale metrics",
+      "filed_or_dated": "2026-09-24",
+      "filer_or_source_agency": "consilio.com (company website)",
+      "key_figures": {
+        "employees": "5,400+",
+        "matters_hosted": "30k+"
+      },
+      "what_it_tells_us": "Consilio has about 5,400 staff; at $150–200k revenue per employee that implies roughly $0.8–1.1B revenue (analyst estimate). It is heavily weighted to labor-intensive managed review, which is the part of the business AI threatens.",
+      "confidence": "medium",
+      "source_url": "https://www.consilio.com",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "frontline"
+      ]
+    },
+    {
+      "id": "rival-039",
+      "entity": "Epiq (DTI Holdco, Inc.)",
+      "category": "bdc_loan_schedule",
+      "title": "Epiq (DTI Holdco) 2029 term loan N-PORT marks — HL Scope RIC",
+      "filed_or_dated": "2026-08-27",
+      "filer_or_source_agency": "SEC / HL Scope RIC LLC N-PORT-P (periods 2026-03-31 and 2026-06-30)",
+      "key_figures": {
+        "instrument": "DTI Holdco Inc. term loan (2025 Term Loan B)",
+        "maturity": "2029-04-26",
+        "coupon_pct": 7.64,
+        "par_usd": 17968340,
+        "value_2026_06_30_usd": 16660552,
+        "mark_2026_06_30_pct": 92.72,
+        "mark_2026_03_31_pct": 89.12,
+        "prior_private_tranche_2024": "3M SOFR + 4.75%, maturity 2029-04-26 (Prospect Floating Rate fund, 3/31/2024)"
+      },
+      "what_it_tells_us": "Epiq's broadly syndicated term loan traded around 89–93 in 2026, weaker than a healthy credit but better than Consilio. That fits sector-wide pressure on legal-services credits, probably from AI-driven price compression (an inference, not a disclosed cause).",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2040278/000100371526003067/primary_doc.xml",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "frontline"
+      ]
+    },
+    {
+      "id": "rival-040",
+      "entity": "Integreon (E-Phoenix Acquisition Co. Inc.)",
+      "category": "bdc_loan_schedule",
+      "title": "E-Phoenix Acquisition Co. (d/b/a Integreon) first-lien term loan — WhiteHorse Finance",
+      "filed_or_dated": "2026-03-06",
+      "filer_or_source_agency": "SEC / WhiteHorse Finance, Inc. 10-K (FY2025) — WhiteHorse-STRS JV investment listing as of 12/31/2024",
+      "key_figures": {
+        "floor_pct": 1.0,
+        "spread": "SOFR + 5.50%",
+        "rate_pct": 9.98,
+        "acquisition_date": "2021-07-15",
+        "maturity": "2027-06-23",
+        "par_usd": 8342000,
+        "cost_usd": 8299000,
+        "fair_value_usd": 8342000,
+        "other_holders": [
+          "TPG/AG Twin Brook Capital Income Fund",
+          "AG Twin Brook BDC"
+        ],
+        "as_of_date": "2024-12-31"
+      },
+      "what_it_tells_us": "As of 12/31/2024, Integreon (legal/business process outsourcing) had a 2021 first-lien term loan (S+550, 1% floor) held in the WhiteHorse-STRS JV, marked at par and maturing June 2027. The loan does not appear in the JV's or WhiteHorse's 12/31/2025 schedules, which suggests it was repaid or sold during 2025. It is therefore not evidence of a current holding or a live 2027 maturity.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1552198/000110465926024735/whf-20251231x10k.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "frontline"
+      ],
+      "verification_notes": [
+        "2026-09-24: all figures are present in the cited 10-K, but only in the STRS JV listing as of 12/31/2024 (the 24.1% column is the JV's net assets). E-Phoenix/Integreon is absent from the 12/31/2025 schedules. The as-of date and interpretation were corrected. The Twin Brook co-holders are not in the cited source."
+      ]
+    },
+    {
+      "id": "rival-041",
+      "entity": "Kraft & Kennedy, Inc. (New York, NY)",
+      "category": "sba_ppp",
+      "title": "PPP loan — Kraft & Kennedy, Inc.",
+      "filed_or_dated": "2020-04-09",
+      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus)",
+      "key_figures": {
+        "loan_number": "8996177005",
+        "approved_amount_usd": 1568427,
+        "jobs_reported": 100,
+        "naics": "541512",
+        "lender": "JPMorgan Chase Bank, National Association",
+        "forgiveness_amount_usd": 1578460.58,
+        "forgiveness_date": "2020-12-02",
+        "implied_annual_payroll_costs_usd": 7528450
+      },
+      "what_it_tells_us": "Kraft Kennedy, the most direct law-firm managed-IT rival to Frontline, had about 100 staff and roughly $7.5M of payroll costs in 2020. That implies about $20–30M revenue, a similar scale to Frontline. No lender or Form D filings were found, consistent with private or founder ownership.",
+      "confidence": "high",
+      "source_url": "https://data.sba.gov/dataset/ppp-foia",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "frontline"
+      ]
+    },
+    {
+      "id": "rival-042",
+      "entity": "Kraft Kennedy",
+      "category": "other",
+      "title": "Kraft Kennedy website delivery metrics",
+      "filed_or_dated": "2026-09-24",
+      "filer_or_source_agency": "kraftkennedy.com (company website)",
+      "key_figures": {
+        "users_migrated_windows": "275,000+",
+        "dms_documents_processed": "76 million+",
+        "teams_users_migrated": "50,000+",
+        "mecm_implementations": "250+",
+        "soc_devices_protected": "20,000+"
+      },
+      "what_it_tells_us": "Kraft Kennedy is expanding into SOC and managed security for law firms (20,000+ devices protected), which is the same cyber and AI upsell Frontline is pursuing with AmLaw firms.",
+      "confidence": "medium",
+      "source_url": "https://www.kraftkennedy.com",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "frontline"
+      ]
+    },
+    {
+      "id": "rival-043",
+      "entity": "Calibre Scientific (Life Science Intermediate Holdings, LLC)",
+      "category": "bdc_loan_schedule",
+      "title": "Life Science Intermediate Holdings (Calibre Scientific) delayed-draw and revolving loans — StepStone Private Credit Fund",
+      "filed_or_dated": "2026-08-14",
+      "filer_or_source_agency": "SEC / StepStone Private Credit Fund LLC 10-Q (6/30/2026 SOI)",
+      "key_figures": {
+        "spread": "1M SOFR + 6.00% / 1.00% floor",
+        "rate_pct": 9.74,
+        "maturity": "2027-06-10",
+        "ddtl_d_par_usd": [
+          1612000,
+          3250000
+        ],
+        "ddtl_f_par_usd": 3851000,
+        "revolver_2025_par_usd": 875000,
+        "mark_pct": 99.9,
+        "legal_entity_confirmed_by": "calibrescientific.com footer: © 2026 Life Science Intermediate Holdings, LLC"
+      },
+      "what_it_tells_us": "Calibre's debt costs S+600 and matures June 2027, expensive for a roll-up of lab-consumables distributors. Along with the CEO's move to Mesa Labs (March 2026), this points to a 2026–27 refinancing or sale.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1950803/000119312526351731/na-20260630.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "thomas_scientific"
+      ]
+    },
+    {
+      "id": "rival-044",
+      "entity": "Calibre Scientific",
+      "category": "other",
+      "title": "Mesa Laboratories 8-K: Calibre Scientific CEO (since Jan 2025) named Mesa Labs CEO",
+      "filed_or_dated": "2026-03-09",
+      "filer_or_source_agency": "SEC / Mesa Laboratories 8-K (Item 5.02) and employment agreement exhibit",
+      "key_figures": {
+        "calibre_ceo_since": "2025-01",
+        "event": "appointed CEO of Mesa Laboratories",
+        "board_seat_condition": "must leave at least one of Calibre Scientific Group / ALS Limited boards before 2026-10-01"
+      },
+      "what_it_tells_us": "Calibre's CEO left for Mesa Labs about 14 months into the job while the company's debt matures in 2027. That suggests leadership churn and possibly a sponsor preparing an exit.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/724004/000072400426000020/mlab20260309_8k.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "thomas_scientific"
+      ],
+      "verification_notes": [
+        "2026-09-24: the 8-K confirms Kadia has been Calibre CEO since January 2025 and was appointed Mesa CEO effective about 2026-04-13. The board-seat condition (ALS / 2026-10-01) is not in the 8-K body; it is probably in Ex. 10.1, which was not checked."
+      ]
+    },
+    {
+      "id": "rival-045",
+      "entity": "CELLTREAT Scientific Products, LLC (Pepperell, MA)",
+      "category": "sba_ppp",
+      "title": "PPP loan — CELLTREAT Scientific Products, LLC",
+      "filed_or_dated": "2020-04-29",
+      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus)",
+      "key_figures": {
+        "loan_number": "2402227308",
+        "approved_amount_usd": 252530,
+        "jobs_reported": 24,
+        "naics": "424610",
+        "lender": "Middlesex Savings Bank",
+        "forgiveness_amount_usd": 253841.75,
+        "forgiveness_date": "2020-11-03",
+        "implied_annual_payroll_costs_usd": 1212144
+      },
+      "what_it_tells_us": "In 2020 CELLTREAT was a small (24 staff) private-label cell-culture plastics distributor. It is a niche competitor and a possible add-on target for Thomas Scientific rather than a threat at scale.",
+      "confidence": "high",
+      "source_url": "https://data.sba.gov/dataset/ppp-foia",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "thomas_scientific"
+      ]
+    },
+    {
+      "id": "rival-046",
+      "entity": "FGS Global (Kite Bidco Inc. / Kite Topco Inc.; KKR)",
+      "category": "lender_press",
+      "title": "WPP 6-K: sale of c.50% FGS Global stake to KKR (Kite Bidco) at $1.7bn enterprise value",
+      "filed_or_dated": "2024-08-07",
+      "filer_or_source_agency": "SEC / WPP plc Form 6-K",
+      "key_figures": {
+        "enterprise_value_usd": 1700000000,
+        "wpp_stake_pct": "c.50",
+        "consideration_usd": 775000000,
+        "after_tax_usd": 707000000,
+        "total_cash_proceeds_usd": 767000000,
+        "experts": "1,400+",
+        "clients": "1,600+",
+        "kkr_minority_entry": "2023-07",
+        "valuation_basis": "'attractive valuation multiple to the 2023 EBITDA' (multiple not disclosed)"
+      },
+      "what_it_tells_us": "KKR paid a $1.7B enterprise value for the top strategic-communications firm, which sets a premium valuation for strategic comms and public affairs. At an assumed 12–16x EBITDA, FGS's 2023 EBITDA would be about $105–140M (analyst estimate).",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/806968/000165495424010059/a4670z.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "bpi"
+      ]
+    },
+    {
+      "id": "rival-047",
+      "entity": "FGS Global (Kite Bidco Inc.)",
+      "category": "bdc_loan_schedule",
+      "title": "FGS Global (Kite Bidco Inc.) first-lien term loan — Apollo Debt Solutions BDC",
+      "filed_or_dated": "2026-08-10",
+      "filer_or_source_agency": "SEC / Apollo Debt Solutions BDC 10-Q (6/30/2026 SOI)",
+      "key_figures": {
+        "tl_spread": "SOFR + 4.50%, 0% floor",
+        "tl_maturity": "2031-11-25",
+        "tl_par_usd": 61788000,
+        "tl_cost_usd": 61024000,
+        "tl_fair_value_usd": 60966000,
+        "tl_mark_pct": 98.7,
+        "ddtl_spread": "SOFR + 5.00%",
+        "ddtl_maturity": "2031-09-20"
+      },
+      "what_it_tells_us": "KKR's FGS buyout is financed with a private unitranche at S+450; Apollo alone holds $61.8M, marked near par. FGS also has a DDTL to fund acquisitions (for example Memetica in Jan 2026), so it keeps buying in areas where BPI competes.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1837532/000119312526341358/ck0001837532-20260630.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "bpi"
+      ]
+    },
+    {
+      "id": "rival-048",
+      "entity": "FGS Global (Kite Topco Inc. / FGS Global Inc.)",
+      "category": "sec_form_d",
+      "title": "Form D — Kite Topco Inc. equity offerings (employee/partner equity) and 2023 FGS Global Inc. offering",
+      "filed_or_dated": "2026-08-10",
+      "filer_or_source_agency": "SEC EDGAR Form D",
+      "key_figures": {
+        "kite_topco_2025_12_10_offering_usd": 10000000,
+        "kite_topco_2025_12_10_sold_usd": 1925311,
+        "kite_topco_2025_12_10_investors": 57,
+        "kite_topco_2026_08_10_offering_usd": 10000000,
+        "kite_topco_2026_08_10_sold_usd": 10000000,
+        "kite_topco_2026_08_10_investors": 1,
+        "fgs_global_2023_10_17_offering_usd": 18442252,
+        "fgs_global_2023_10_17_sold_usd": 6457856,
+        "exemption": "Rule 506(b)",
+        "signers": [
+          "Akin Harrison (CLO)",
+          "Ajay Junnarkar (CFO, 2023)"
+        ]
+      },
+      "what_it_tells_us": "FGS keeps selling small blocks of Topco equity to dozens of partners, which is partner-ownership retention and a talent tool BPI must match when hiring senior people. The August 2026 $10M sale to a single investor may be a strategic or co-invest top-up.",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1894552/000189455226000002/primary_doc.xml",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "bpi"
+      ],
+      "secondary_url": "https://www.sec.gov/Archives/edgar/data/1894552/000189455225000003/primary_doc.xml"
+    },
+    {
+      "id": "rival-049",
+      "entity": "Precision Strategies, LLC (Washington, DC)",
+      "category": "bdc_loan_schedule",
+      "title": "Precision Strategies first-lien term loan and revolver (new 3/3/2026 financing) — Stellus Capital and Stellus Private Credit BDC",
+      "filed_or_dated": "2026-08-10",
+      "filer_or_source_agency": "SEC / Stellus Capital Investment Corp 10-Q and Stellus Private Credit BDC 10-Q (6/30/2026 SOI)",
+      "key_figures": {
+        "spread": "1M SOFR + 5.00%, 1.00% floor",
+        "rate_pct": 8.64,
+        "origination": "2026-03-03",
+        "maturity": "2031-03-03",
+        "scm_par_usd": 6160571,
+        "scm_fair_value_usd": 6098965,
+        "spcb_par_usd": 4513038,
+        "spcb_fair_value_usd": 4467908,
+        "revolver_commitments_unfunded_usd": [
+          1177716,
+          100000
+        ],
+        "visible_total_term_par_usd": 10673609,
+        "industry": "Services: Business"
+      },
+      "what_it_tells_us": "Precision Strategies (a Democratic-aligned comms/digital agency and a direct BPI rival) took on a sponsor-style leverage facility in March 2026, likely tied to a PE recapitalization. Stellus's slice ($10.7M) implies a total facility of about $20–40M, and at 3.5–5x that would mean roughly $5–10M EBITDA (analyst estimate).",
+      "confidence": "high",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1551901/000110465926093435/scm-20260630x10q.htm",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "bpi"
+      ],
+      "secondary_url": "https://www.sec.gov/Archives/edgar/data/1901037/000110465926094771/tmb-20260630x10q.htm"
+    },
+    {
+      "id": "rival-050",
+      "entity": "SKDK (Stagwell)",
+      "category": "press_financial",
+      "title": "SKDK acquisition history and Stagwell ownership (Wikipedia summary of press)",
+      "filed_or_dated": "2026-09-24",
+      "filer_or_source_agency": "Wikipedia (secondary; cites press)",
+      "key_figures": {
+        "acquired_by": "The Stagwell Group",
+        "acquisition_date": "2015-10",
+        "estimated_price_usd": 75000000,
+        "add_ons": [
+          "Sloane & Co. (Feb 2020, from MDC Partners)",
+          "Jasper Advisors (May 2023)",
+          "Wavelength Strategy (combined with SKDK, per Stagwell 10-K)"
+        ]
+      },
+      "what_it_tells_us": "SKDK has grown by acquiring Sloane and Wavelength and is reported inside Stagwell's Communications segment, not separately. Its revenue has to be inferred from segment trends ($592.6M segment revenue in FY2025).",
+      "confidence": "medium",
+      "source_url": "https://en.wikipedia.org/wiki/SKDK",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "bpi"
+      ]
+    },
+    {
+      "id": "rival-051",
+      "entity": "Chubbies, Inc. (Austin, TX)",
+      "category": "sba_ppp",
+      "title": "PPP loan — Chubbies, Inc. (pre-Solo Brands acquisition)",
+      "filed_or_dated": "2020-04-09",
+      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus)",
+      "key_figures": {
+        "loan_number": "9018667003",
+        "approved_amount_usd": 1561435,
+        "jobs_reported": 90,
+        "naics": "424320",
+        "lender": "JPMorgan Chase Bank, National Association",
+        "forgiveness_amount_usd": 1581157.66,
+        "forgiveness_date": "2021-07-22",
+        "implied_annual_payroll_costs_usd": 7494888
+      },
+      "what_it_tells_us": "Chubbies had 90 staff and about $7.5M of payroll costs in 2020. Five years later it is a $123M brand, so a Fair Harbor-type brand can scale to over $100M with a lean corporate team.",
+      "confidence": "high",
+      "source_url": "https://data.sba.gov/dataset/ppp-foia",
+      "retrieved": "2026-09-24",
+      "tags": [
+        "rival"
+      ],
+      "bsp_overlap": [
+        "fair_harbor"
+      ]
+    }
+  ]
+}

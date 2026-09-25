@@ -1,0 +1,352 @@
+[
+ {
+  "index": 1,
+  "order": 100,
+  "module": "home",
+  "hash": "#/home/overview",
+  "caption": "Broad Sky Operating Intelligence. Six platforms, one portal: every datapoint tied to a revenue, acquisition or operating decision.",
+  "caption_html": "<b>Broad Sky Operating Intelligence.</b> Six platforms, one portal: every datapoint tied to a revenue, acquisition or operating decision.",
+  "narration": "Welcome to Broad Sky Operating Intelligence: six platforms, one portal, and every datapoint tied to an action.",
+  "duration": 7000
+ },
+ {
+  "index": 2,
+  "order": 110,
+  "module": "home",
+  "hash": "#/home/overview",
+  "caption": "This week. Signals pull live bid deadlines, NWS alerts, top-ranked add-ons and rival deals; Data coverage lists every dataset, including home sales in 36 portfolio counties.",
+  "caption_html": "<b>This week.</b> Signals pull live bid deadlines, NWS alerts, top-ranked add-ons and rival deals; <b>Data coverage</b> lists every dataset, including home sales in 36 portfolio counties.",
+  "narration": "Signals pull live bid deadlines, weather alerts, top add-ons and rival deals. The coverage table lists every dataset, including county home sales.",
+  "duration": 9000
+ },
+ {
+  "index": 3,
+  "order": 120,
+  "module": "home",
+  "hash": "#/home/firm",
+  "caption": "Broad Sky Partners. Founded 2014 · 7 platforms · 23 add-ons · first exit: Smith + Howard → TPG (Aug 2026).",
+  "caption_html": "<b>Broad Sky Partners.</b> Founded 2014 · 7 platforms · 23 add-ons · first exit: Smith + Howard → TPG (Aug 2026).",
+  "narration": "Broad Sky itself: founded in 2014, seven platforms, twenty-three add-ons, and a first exit to TPG.",
+  "duration": 7000
+ },
+ {
+  "index": 4,
+  "order": 200,
+  "module": "cet",
+  "hash": "#/cet/overview",
+  "caption": "CET: a New England-only platform. Horton turns funded wastewater plants into prime-able work; the top-10 action list drives the week.",
+  "caption_html": "<b>CET:</b> a New England-only platform. Horton turns funded wastewater plants into prime-able work; the top-10 action list drives the week.",
+  "narration": "CET is New England only. Horton turns funded wastewater plants into work CET can prime.",
+  "duration": 6500
+ },
+ {
+  "index": 5,
+  "order": 210,
+  "module": "cet",
+  "hash": "#/cet/opportunities",
+  "caption": "Opportunity radar: sourced bids, capital plans and legacy feeds in one ranked list, colour-coded by capability.",
+  "caption_html": "<b>Opportunity radar:</b> sourced bids, capital plans and legacy feeds in one ranked list, colour-coded by capability.",
+  "narration": "The radar ranks every sourced bid, capital plan and award by capability, value and due date.",
+  "duration": 7000
+ },
+ {
+  "index": 6,
+  "order": 220,
+  "module": "cet",
+  "hash": "#/cet/wastewater",
+  "caption": "Horton cross-sell: 183 CT–MA–RI treatment plants ranked by fit, with funded projects and solar, storage, generator and efficiency plays.",
+  "caption_html": "<b>Horton cross-sell:</b> 183 CT–MA–RI treatment plants ranked by fit, with funded projects and solar, storage, generator and efficiency plays.",
+  "narration": "Every treatment plant in Connecticut, Massachusetts and Rhode Island, ranked for the Horton cross-sell, with funded projects flagged.",
+  "duration": 7500
+ },
+ {
+  "index": 7,
+  "order": 230,
+  "module": "cet",
+  "hash": "#/cet/transfers",
+  "caption": "New owner = retrofit trigger. Commercial & industrial sales become an outreach list; ~46K home sales across CET's MA, CT and RI counties add the residential demand signal.",
+  "caption_html": "<b>New owner = retrofit trigger.</b> Commercial & industrial sales become an outreach list; ~46K home sales across CET's MA, CT and RI counties add the residential demand signal.",
+  "narration": "Each commercial sale brings a new owner with a capital plan. The view also maps about forty-six thousand home sales in CET counties.",
+  "duration": 9500
+ },
+ {
+  "index": 8,
+  "order": 300,
+  "module": "pp",
+  "hash": "#/pp/overview",
+  "caption": "Punctual Pros. ~1.6M housing units: 248 Central PA zips plus Horvath on the Jersey Shore — three levers: new movers, weather surge, adjacent zips.",
+  "caption_html": "<b>Punctual Pros.</b> ~1.6M housing units: 248 Central PA zips plus Horvath on the Jersey Shore — three levers: new movers, weather surge, adjacent zips.",
+  "narration": "Punctual Pros serves Central Pennsylvania and the Jersey Shore. The levers: new movers, weather staffing and adjacent zips.",
+  "duration": 7500
+ },
+ {
+  "index": 9,
+  "order": 310,
+  "module": "pp",
+  "hash": "#/pp/weather",
+  "caption": "Weather → calls → techs. Live NWS alerts and 7-day hub forecasts become a Service-Call Pressure Index per trade and a surge-staffing number.",
+  "caption_html": "<b>Weather → calls → techs.</b> Live NWS alerts and 7-day hub forecasts become a Service-Call Pressure Index per trade and a surge-staffing number.",
+  "narration": "Live alerts and forecasts become a service-call pressure index, and from there, how many extra technicians to schedule.",
+  "duration": 7500
+ },
+ {
+  "index": 10,
+  "order": 320,
+  "module": "pp",
+  "hash": "#/pp/movers",
+  "caption": "Every home sale is a lead. 12 months of county deed records, scored 0–100, with the right offer for each house and a mailing list ready to export.",
+  "caption_html": "<b>Every home sale is a lead.</b> 12 months of county deed records, scored 0–100, with the right offer for each house and a mailing list ready to export.",
+  "narration": "Every closed home sale in the footprint becomes a scored new-mover lead, with the right offer attached.",
+  "duration": 7000
+ },
+ {
+  "index": 11,
+  "order": 330,
+  "module": "pp",
+  "hash": "#/pp/targets",
+  "caption": "Tuck-ins. 61 screened HVAC/plumbing/electrical operators — Authority Brands franchisees and family-owned independents — against the PE platforms bidding for them.",
+  "caption_html": "<b>Tuck-ins.</b> 61 screened HVAC/plumbing/electrical operators — Authority Brands franchisees and family-owned independents — against the PE platforms bidding for them.",
+  "narration": "Sixty-one screened tuck-ins, led by same-brand franchisees, set against the private-equity platforms competing for them.",
+  "duration": 6500
+ },
+ {
+  "index": 12,
+  "order": 400,
+  "module": "fl",
+  "hash": "#/fl/overview",
+  "caption": "Frontline Managed Services. 149 AM Law firms mapped against 11 offices. 93 are Tier 1; growth comes from cross-selling cyber + RCM bundles.",
+  "caption_html": "<b>Frontline Managed Services.</b> 149 AM Law firms mapped against 11 offices. 93 are Tier 1; growth comes from cross-selling cyber + RCM bundles.",
+  "narration": "Frontline runs IT, security and revenue cycle for over eight hundred law firms; ninety-three AM Law firms are Tier-one targets.",
+  "duration": 8500
+ },
+ {
+  "index": 13,
+  "order": 410,
+  "module": "fl",
+  "hash": "#/fl/amlaw?tier=Tier%201&cyber=5",
+  "caption": "Cyber-first entry. Tier-1 firms scoring 5/5 on cyber urgency. Each firm opens a recommended bundle and a next action.",
+  "caption_html": "<b>Cyber-first entry.</b> Tier-1 firms scoring 5/5 on cyber urgency. Each firm opens a recommended bundle and a next action.",
+  "narration": "Filter to Tier-one firms with the highest cyber urgency; each opens a service bundle and a next action.",
+  "duration": 7500
+ },
+ {
+  "index": 14,
+  "order": 420,
+  "module": "fl",
+  "hash": "#/fl/filings",
+  "caption": "Deal math from public filings. ~$137M Form D equity plus a $90M term loan implies a ~$230–260M EV. Carlyle's co-invest mark is up ~10%.",
+  "caption_html": "<b>Deal math from public filings.</b> ~$137M Form D equity plus a $90M term loan implies a ~$230–260M EV. Carlyle's co-invest mark is up ~10%.",
+  "narration": "Public filings imply an enterprise value of roughly two hundred thirty to two hundred sixty million dollars.",
+  "duration": 7000
+ },
+ {
+  "index": 15,
+  "order": 500,
+  "module": "ts",
+  "hash": "#/ts/overview",
+  "caption": "Thomas Scientific. 27.5K scored lab & hospital sites; 713 Pursue sites hold ~$4B of 2023 Medicare-allowed lab spend.",
+  "caption_html": "<b>Thomas Scientific.</b> 27.5K scored lab & hospital sites; 713 Pursue sites hold ~$4B of 2023 Medicare-allowed lab spend.",
+  "narration": "Thomas Scientific: seven hundred Pursue sites hold about four billion dollars of Medicare-allowed lab spend. That is the target-account list.",
+  "duration": 8500
+ },
+ {
+  "index": 16,
+  "order": 510,
+  "module": "ts",
+  "hash": "#/ts/sites?label=Pursue",
+  "caption": "Site explorer: filter to a call list by state, archetype and priority, then export it to the CRM.",
+  "caption_html": "<b>Site explorer:</b> filter to a call list by state, archetype and priority, then export it to the CRM.",
+  "narration": "The site explorer turns the map into a call list, filtered by state, archetype and priority, and exported to the CRM.",
+  "duration": 9000
+ },
+ {
+  "index": 17,
+  "order": 520,
+  "module": "ts",
+  "hash": "#/ts/filings",
+  "caption": "Credit file: lenders mark the loan at 88% of par and equity near zero. Growth in target accounts is the path out.",
+  "caption_html": "<b>Credit file:</b> lenders mark the loan at 88% of par and equity near zero. Growth in target accounts is the path out.",
+  "narration": "The credit file is sobering: the loan is marked at eighty-eight percent of par. Target-account growth is the way out.",
+  "duration": 8500
+ },
+ {
+  "index": 18,
+  "order": 600,
+  "module": "bpi",
+  "hash": "#/bpi/overview",
+  "caption": "Bully Pulpit International. A ~400-person transatlantic public-affairs platform built on 6 add-ons since Broad Sky's April 2023 investment.",
+  "caption_html": "<b>Bully Pulpit International.</b> A ~400-person transatlantic public-affairs platform built on 6 add-ons since Broad Sky's April 2023 investment.",
+  "narration": "Bully Pulpit is a roughly four-hundred-person transatlantic public-affairs platform, built on six add-ons since April 2023.",
+  "duration": 7000
+ },
+ {
+  "index": 19,
+  "order": 610,
+  "module": "bpi",
+  "hash": "#/bpi/opportunities",
+  "caption": "12 sourced growth opportunities: federal comms recompetes, AI-era reputation work, litigation comms and EU corporate affairs.",
+  "caption_html": "<b>12 sourced growth opportunities</b>: federal comms recompetes, AI-era reputation work, litigation comms and EU corporate affairs.",
+  "narration": "Twelve sourced growth plays, from federal communications recompetes to AI-era reputation advisory.",
+  "duration": 5500
+ },
+ {
+  "index": 20,
+  "order": 620,
+  "module": "bpi",
+  "hash": "#/bpi/market",
+  "caption": "DC home sales since Jan 2025, mapped by parcel: the cost-of-living floor for BPI's largest office.",
+  "caption_html": "<b>DC home sales</b> since Jan 2025, mapped by parcel: the cost-of-living floor for BPI's largest office.",
+  "narration": "Every District of Columbia home sale since January 2025 sets the cost-of-living floor for BPI's largest office.",
+  "duration": 7000
+ },
+ {
+  "index": 21,
+  "order": 700,
+  "module": "fh",
+  "hash": "#/fh/overview",
+  "caption": "Fair Harbor. A sustainable beachwear brand, 4.5 years into the hold, with heavy markdowns. The value lever is margin, not stores.",
+  "caption_html": "<b>Fair Harbor.</b> A sustainable beachwear brand, 4.5 years into the hold, with heavy markdowns. The value lever is margin, not stores.",
+  "narration": "For Fair Harbor, the value lever is margin repair, not more stores.",
+  "duration": 5500
+ },
+ {
+  "index": 22,
+  "order": 710,
+  "module": "fh",
+  "hash": "#/fh/opportunities",
+  "caption": "9 capital-light growth plays: wholesale doors, golf and collegiate licensing, B2B custom and international DTC.",
+  "caption_html": "<b>9 capital-light growth plays</b>: wholesale doors, golf and collegiate licensing, B2B custom and international DTC.",
+  "narration": "Nine capital-light growth plays, from wholesale doors and golf to licensing and international direct-to-consumer.",
+  "duration": 6000
+ },
+ {
+  "index": 23,
+  "order": 720,
+  "module": "fh",
+  "hash": "#/fh/market",
+  "caption": "Manhattan home sales by ZIP: where the $2M+ coastal-weekend customer lives, for clienteling around the SoHo store.",
+  "caption_html": "<b>Manhattan home sales</b> by ZIP: where the $2M+ coastal-weekend customer lives, for clienteling around the SoHo store.",
+  "narration": "A year of Manhattan home sales by ZIP shows where the affluent weekend customer lives, around the SoHo store.",
+  "duration": 8000
+ },
+ {
+  "index": 24,
+  "order": 800,
+  "module": "ma",
+  "hash": "#/ma/overview",
+  "caption": "Acquisition engine. Every screened add-on across CET, Punctual Pros, Frontline and Thomas Scientific, ranked, with this quarter’s top ten.",
+  "caption_html": "<b>Acquisition engine.</b> Every screened add-on across CET, Punctual Pros, Frontline and Thomas Scientific, ranked, with this quarter’s top ten.",
+  "narration": "The acquisition engine ranks every screened add-on across four platforms, with this quarter's top ten.",
+  "duration": 6500
+ },
+ {
+  "index": 25,
+  "order": 810,
+  "module": "ma",
+  "hash": "#/ma/theses",
+  "caption": "Platform theses. Each buy-and-build thesis is written from its target pool, and home-sales turnover in every portfolio company’s counties flags density plays and sourcing gaps.",
+  "caption_html": "<b>Platform theses.</b> Each buy-and-build thesis is written from its target pool, and home-sales turnover in every portfolio company’s counties flags density plays and sourcing gaps.",
+  "narration": "Each thesis comes from its own target pool; county home sales show where housing turnover and target density line up.",
+  "duration": 8500
+ },
+ {
+  "index": 26,
+  "order": 820,
+  "module": "ma",
+  "hash": "#/ma/rivals",
+  "caption": "Rival platforms. Lender filings show which consolidators are stressed (PIK, sub-95 marks) and are likely sellers rather than bidders.",
+  "caption_html": "<b>Rival platforms.</b> Lender filings show which consolidators are stressed (PIK, sub-95 marks) and are likely sellers rather than bidders.",
+  "narration": "Lender filings flag rival consolidators paying interest in kind: likely sellers, not bidders.",
+  "duration": 5500
+ },
+ {
+  "index": 27,
+  "order": 900,
+  "module": "pe",
+  "hash": "#/pe/landscape",
+  "caption": "PE landscape. 35 sponsors chase the same deals; 9 are high-threat and most run flagships 5–15× the size of Fund I.",
+  "caption_html": "<b>PE landscape.</b> 35 sponsors chase the same deals; 9 are high-threat and most run flagships 5–15× the size of Fund I.",
+  "narration": "Broad Sky competes with thirty-five sponsors, nine of them high-threat. We win on focus and operating credibility, not price.",
+  "duration": 8000
+ },
+ {
+  "index": 28,
+  "order": 910,
+  "module": "pe",
+  "hash": "#/pe/heatmap",
+  "caption": "Sector heatmap. Punctual Pros sits in the most crowded field; CET and Frontline still have open space to consolidate.",
+  "caption_html": "<b>Sector heatmap.</b> Punctual Pros sits in the most crowded field; CET and Frontline still have open space to consolidate.",
+  "narration": "Residential services is the most crowded field; CET and Frontline still have open space to accelerate add-ons.",
+  "duration": 7000
+ },
+ {
+  "index": 29,
+  "order": 920,
+  "module": "pe",
+  "hash": "#/pe/deals",
+  "caption": "Deal flow 2025–26. Every disclosed platform, add-on and exit by rival sponsors, with the ones touching BSP sectors flagged.",
+  "caption_html": "<b>Deal flow 2025–26.</b> Every disclosed platform, add-on and exit by rival sponsors, with the ones touching BSP sectors flagged.",
+  "narration": "Every disclosed rival deal since January 2025, with those touching our sectors flagged.",
+  "duration": 5500
+ },
+ {
+  "index": 30,
+  "order": 1000,
+  "module": "fin",
+  "hash": "#/fin/portfolio",
+  "caption": "Filings & financials. Form D and Form ADV give Broad Sky's own capital picture; each platform's revenue, EBITDA and debt are triangulated from public records.",
+  "caption_html": "<b>Filings & financials.</b> Form D and Form ADV give Broad Sky's own capital picture; each platform's revenue, EBITDA and debt are triangulated from public records.",
+  "narration": "Form D and ADV filings show the capital in each deal vehicle; platform financials are triangulated from public records.",
+  "duration": 8000
+ },
+ {
+  "index": 31,
+  "order": 1010,
+  "module": "fin",
+  "hash": "#/fin/comps",
+  "caption": "Public comparables. 31 listed peers set the margin, growth and revenue-per-employee bar for each portfolio company.",
+  "caption_html": "<b>Public comparables.</b> 31 listed peers set the margin, growth and revenue-per-employee bar for each portfolio company.",
+  "narration": "Thirty-one listed peers benchmark growth, margin and revenue per employee for every portfolio company.",
+  "duration": 6000
+ },
+ {
+  "index": 32,
+  "order": 1020,
+  "module": "fin",
+  "hash": "#/fin/methods",
+  "caption": "Methods & gaps. Every number has a formula and a source; open gaps are queued as specific pulls for PitchBook, Capital IQ and state registries.",
+  "caption_html": "<b>Methods & gaps.</b> Every number has a formula and a source; open gaps are queued as specific pulls for PitchBook, Capital IQ and state registries.",
+  "narration": "Every number has a formula and a source, and open gaps are queued as specific data pulls.",
+  "duration": 7000
+ },
+ {
+  "index": 33,
+  "order": 1100,
+  "module": "briefing",
+  "hash": "#/briefing/play",
+  "caption": "Monday priorities. CET: win bids due ≤60 days and cross-sell Horton accounts · Punctual Pros: new-mover capture and weather staffing.",
+  "caption_html": "<b>Monday priorities.</b> CET: win bids due ≤60 days and cross-sell Horton accounts · Punctual Pros: new-mover capture and weather staffing.",
+  "narration": "To recap: CET wins near-term bids and cross-sells Horton accounts; Punctual Pros captures new movers and staffs to the weather.",
+  "duration": 8500
+ },
+ {
+  "index": 34,
+  "order": 1110,
+  "module": "briefing",
+  "hash": "#/briefing/play",
+  "caption": "Across the portfolio. Frontline and Thomas sell into ranked account lists · BPI and Fair Harbor pursue sourced growth plays and margin repair · M&A works the top-ten lists.",
+  "caption_html": "<b>Across the portfolio.</b> Frontline and Thomas sell into ranked account lists · BPI and Fair Harbor pursue sourced growth plays and margin repair · M&A works the top-ten lists.",
+  "narration": "Frontline and Thomas sell into ranked account lists; BPI and Fair Harbor pursue growth plays.",
+  "duration": 6500
+ },
+ {
+  "index": 35,
+  "order": 1120,
+  "module": "briefing",
+  "hash": "#/briefing/play",
+  "caption": "Public + licensed data · verify before use. Replay this briefing any time from ▶ in the top bar.",
+  "caption_html": "<b>Public + licensed data · verify before use.</b> Replay this briefing any time from ▶ in the top bar.",
+  "narration": "Everything here is public or licensed research. Verify before use, and replay this briefing any time.",
+  "duration": 7000
+ }
+]

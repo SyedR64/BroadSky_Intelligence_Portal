@@ -1,0 +1,4 @@
+<!DOCTYPE html><html><body><pre id="out"></pre><script type="module">
+import { modules } from '../modules/registry.js';
+document.getElementById('out').textContent = JSON.stringify(modules.flatMap(m => m.views.map(v => `#/${m.id}/${v.id}`)));
+</script></body></html>
