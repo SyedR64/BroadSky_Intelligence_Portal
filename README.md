@@ -23,7 +23,7 @@ A static operating-intelligence site for the **Broad Sky Partners Portfolio Reso
 | `theater.html` | Full-screen 3D theater (also in the portal at `#/theater/play`) |
 | `briefing/` | Rendered briefing (`broad_sky_briefing.mp4`), 29-second intro, executive memo (HTML + PDF), shot lists |
 
-Every concept page carries the same dismissible banner ("Concept redesign proposed by Syed Rizvi for the Broad Sky Portfolio Resource Group — not an official site.") with the shared navigation **Portal · Site concepts · OS program · Briefing**, the floating assistant, and the same footer disclaimer as the landing page. All internal links are relative, so the site works from any GitHub Pages sub-path.
+Every concept page carries the same dismissible banner ("Concept redesign proposed by Syed Rahman for the Broad Sky Portfolio Resource Group — not an official site.") with the shared navigation **Portal · Site concepts · OS program · Briefing**, the floating assistant, and the same footer disclaimer as the landing page. All internal links are relative, so the site works from any GitHub Pages sub-path.
 
 ## Module map (portal)
 

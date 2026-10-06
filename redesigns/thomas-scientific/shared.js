@@ -147,7 +147,7 @@ export const LOGO = `<svg viewBox="0 0 32 32" width="30" height="30" aria-hidden
 export function banner() {
   try { if (localStorage.getItem('ts-banner-x') === '1') return; } catch { }
   const b = document.createElement('div'); b.className = 'concept'; b.setAttribute('role', 'note');
-  b.innerHTML = `<p>Concept redesign proposed by Syed Rizvi for the Broad Sky Portfolio Resource Group — not an official site. <a href="../../app.html">Portal</a> · <a href="../index.html">Site concepts</a> · <a href="../../#os">OS program</a> · <a href="../../#briefing">Briefing</a></p><button aria-label="Dismiss concept banner">✕</button>`;
+  b.innerHTML = `<p>Concept redesign proposed by Syed Rahman for the Broad Sky Portfolio Resource Group — not an official site. <a href="../../app.html">Portal</a> · <a href="../index.html">Site concepts</a> · <a href="../../#os">OS program</a> · <a href="../../#briefing">Briefing</a></p><button aria-label="Dismiss concept banner">✕</button>`;
   b.querySelector('button').onclick = () => { b.remove(); try { localStorage.setItem('ts-banner-x', '1'); } catch { } };
   document.body.prepend(b);
 }
