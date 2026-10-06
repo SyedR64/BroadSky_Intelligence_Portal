@@ -11,7 +11,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261006122625';
+import { Data, Fmt, Live, esc } from './core.js?v=20261006134218';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -41,7 +41,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261006122625';
+const BACKEND_JS = './backend.js?v=20261006134218';
 let BE = null, BE_P = null;
 function backend() {
   if (!BE_P) BE_P = import(BACKEND_JS).then(async m => {
@@ -88,7 +88,7 @@ async function expansionPlan() {
   const phases = K('expansion_phase'); const levers = K('growth_lever'); const agents = K('ai_agent'); const pros = K('pro_program'); const fin = K('financing');
   const road = nw?.meta?.kpi_roadmap || []; const assume = (ev?.items || []).find(i => i.kind === 'roadmap_assumption' && (i.company === 'pp' || /punctual/i.test(i.company || '')));
   const sh = tmpl.length ? `<h4>The template: Smith + Howard, regional → national</h4><p>${esc(sentences(nw?.meta?.narrative, 2))}.</p>${tbl(['When', 'Move', 'Where'], tmpl.slice(0, 8).map(t => [esc(Fmt.dateShort(t.date) === '—' ? t.date : Fmt.date(t.date)), `<b>${esc(t.event)}</b>${t.metric ? ` <span class="ch-badge">${esc(t.metric)}</span>` : ''}`, esc(t.location || '')]))}<p>Same motion for Punctual Pros: densify, tuck in, regional hub, national — with ServiceOS as the integration spine instead of an accounting practice-management stack.</p>` : `<h4>The template: Smith + Howard, regional → national</h4><p>One Atlanta office and ~100 professionals at entry; nine add-ons later it was 11 locations across the Southeast plus India, ~800 people and roughly 4× revenue, sold to TPG Growth in August 2026. Punctual Pros runs the same motion in home services.</p>`;
-  const ph = phases.length ? phases.map((p, i) => `<h4>Phase ${i + 1} · ${esc(phaseName(p))}${phaseMonths(p) ? ` <span class="ch-badge">${esc(phaseMonths(p))}</span>` : ''}</h4><p>${esc(p.thesis || '')}${p.geography?.length ? ` <span style="color:var(--ch-mute)">(${esc((Array.isArray(p.geography) ? p.geography : [p.geography]).slice(0, 6).join(', '))})</span>` : ''}</p>${p.kpi_targets ? `<p class="ch-num">Targets: ${['revenue_usd', 'ebitda_usd', 'technicians', 'territories', 'members'].filter(k => p.kpi_targets[k] != null).map(k => `${({ revenue_usd: 'Revenue', ebitda_usd: 'EBITDA', technicians: 'Technicians', territories: 'Territories', members: 'Members' })[k]} ${/usd/.test(k) ? Fmt.money(p.kpi_targets[k]) : Fmt.num(p.kpi_targets[k])}`).join(' · ')} <span class="ch-badge">est.</span></p>` : ''}`).join('') :
+  const ph = phases.length ? phases.map((p, i) => `<h4>Phase ${i + 1} · ${esc(phaseName(p))}${phaseMonths(p) ? ` <span class="ch-badge">${esc(phaseMonths(p))}</span>` : ''}</h4><p>${esc(p.thesis || '')}${p.geography?.length ? ` <span style="color:var(--ch-mute)">(${esc((Array.isArray(p.geography) ? p.geography : [p.geography]).slice(0, 6).join(', '))})</span>` : ''}</p>${p.kpi_targets ? `<p class="ch-num">Targets: ${['revenue_usd', 'ebitda_usd', 'technicians', 'territories', 'members'].filter(k => p.kpi_targets[k] != null).map(k => `${({ revenue_usd: 'Revenue', ebitda_usd: 'EBITDA', technicians: 'Technicians', territories: 'Territories', members: 'Members' })[k]} ${/usd/.test(k) ? Fmt.money(p.kpi_targets[k]) : Fmt.num(p.kpi_targets[k])}`).join(' · ')} <span class="ch-badge ch-est">est.</span></p>` : ''}`).join('') :
     `<h4>Phase 1 · Densify (0–12 mo)</h4><p>${n(t1adj.length)} Tier-1 adjacent zips sit just outside the footprint${Object.keys(byState).length ? ` (${Object.entries(byState).map(([s, c]) => `${s} ${c}`).join(', ')})` : ''}: win them with the new-mover engine and weather-driven capacity, not new branches.</p><h4>Phase 2 · Tuck-ins PA · NJ · MD · DE (6–24 mo)</h4><p>${n(tgt.length)} screened add-ons${Object.keys(tgtByState).length ? ` (${Object.entries(tgtByState).sort((a, b) => b[1] - a[1]).map(([s, c]) => `${s} ${c}`).join(', ')})` : ''}; top: ${tgt.slice(0, 3).map(t => `<b>${esc(t.company)}</b> (${esc(t.state || '')}, fit ${t.fit_score})`).join('; ')}.</p><h4>Phase 3 · Mid-Atlantic hub (18–36 mo)</h4><p>Consolidate franchisees along I-81/I-95 (Baltimore–DC, Richmond, Philadelphia suburbs, Pittsburgh). ${rivals.length ? `${n(rivals.length)} sponsors already compete here, so speed and operator credibility beat price.` : ''}</p><h4>Phase 4 · National (36+ mo)</h4><p>Preferred consolidator inside the Authority Brands network (1,000+ owners, 15 brands); ServiceOS is the spine every acquired shop plugs into.</p>`;
   const lv = (levers.length ? levers : [{ lever: 'Website & online booking', baseline: null, target: null, evidence: 'Conversion-first site, instant booking, reviews' }, { lever: 'Comfort Club memberships', evidence: 'Recurring revenue, higher retention, cheaper demand in shoulder seasons' }, { lever: 'New-mover marketing', evidence: 'Deed feed → scored mailing within 30 days of closing' }, { lever: 'Storm & weather plan', evidence: 'Pre-positioned crews and inventory ahead of NWS alerts' }, { lever: 'IAQ, water-treatment & generator attach', evidence: 'Higher ticket on every visit' }, { lever: 'Consumer financing attach', evidence: 'Replacement close-rate lift' }, { lever: 'Dynamic price-book', evidence: 'Margin discipline across trades' }, { lever: 'Tuck-in machine on ServiceOS', evidence: '100-day integration plan' }]).slice(0, 8);
   const levHtml = `<h4>Eight ways we improve the business (not just the website)</h4>${tbl(['Lever', 'Baseline → target', 'Evidence'], lv.map(l => [`<b>${esc(l.lever)}</b>`, l.baseline != null || l.target != null ? `<span class="ch-num">${esc(l.baseline ?? '—')} → ${esc(l.target ?? '—')}${l.unit ? ' ' + esc(l.unit) : ''}</span>` : '—', `<span style="color:var(--ch-fg2)">${esc(clip(l.evidence || '', 110))}</span>`]))}`;
@@ -110,9 +110,22 @@ async function weatherImpact() {
   const hubs = [{ name: 'Lancaster', lat: 40.04, lon: -76.31 }, { name: 'Toms River', lat: 39.95, lon: -74.2 }];
   const fc = await Promise.all(hubs.map(h => Live.forecast(h.lat, h.lon).catch(() => null)));
   const play = (model?.items || []).filter(i => i.component === 'event_playbook');
-  const rows = alerts.slice(0, 6).map(a => { const p = play.find(x => new RegExp(String(x.alert_type || x.event || '').split(' ')[0], 'i').test(a.event)); return [`<b>${esc(a.event)}</b> <span class="ch-badge">${esc(a.severity)}</span>`, esc((a.areas || []).filter(x => [...TERRITORY_PA, ...TERRITORY_NJ].some(c => x.includes(c))).slice(0, 3).join(', ')), p ? esc(String(p.call_multiplier || p.multiplier_range || p.expected_multiplier || '').slice(0, 24)) : '—']; });
+  const evNames = x => [x.nws_event, ...(x.aliases_and_related || [])].filter(Boolean).map(nm => String(nm).replace(/\s*\(.*\)\s*$/, '').toLowerCase());
+  const planFor = ev => { const e = String(ev || '').toLowerCase(); return play.find(x => evNames(x).some(nm => nm && e.includes(nm))); };
+  const planByName = nm => play.find(x => String(x.nws_event || '').toLowerCase() === nm.toLowerCase());
+  const mult = p => Object.entries(p?.expected_call_volume_multiplier || {}).map(([t, r]) => `${t} ${Array.isArray(r) ? (r[0] === r[1] ? r[0] : `${r[0]}–${r[1]}`) : r}×`).join(' · ');
+  const rows = alerts.slice(0, 6).map(a => { const p = planFor(a.event); return [`<b>${esc(a.event)}</b> <span class="ch-badge">${esc(a.severity)}</span>`, esc((a.areas || []).filter(x => [...TERRITORY_PA, ...TERRITORY_NJ].some(c => x.includes(c))).slice(0, 3).join(', ')), p ? esc(mult(p)) : '—']; });
   const fcRows = hubs.map((h, i) => { const d = (fc[i] || []).filter(x => !x.past).slice(0, 7); if (!d.length) return [h.name, '—', '—', '—']; const hot = d.filter(x => x.tmax >= 90).length, cold = d.filter(x => x.tmin <= 20).length, wet = d.filter(x => (x.precip || 0) >= 1.5).length, gust = d.filter(x => (x.gust || 0) >= 40).length; return [h.name, `${Math.round(Math.min(...d.map(x => x.tmin)))}–${Math.round(Math.max(...d.map(x => x.tmax)))}°F`, `${hot} hot · ${cold} freeze · ${wet} heavy-rain · ${gust} gusty days`, d.some(x => x.tmax >= 90) ? 'HVAC surge' : d.some(x => x.tmin <= 20) ? 'Plumbing freeze risk' : gust ? 'Electrical/outage risk' : 'Baseline staffing']; });
-  return { html: `<h4>Weather → service-call pressure (live)</h4><p>${n(alerts.length)} active NWS alerts touch the Punctual Pros territory right now${alerts.length ? ':' : '.'}</p>${alerts.length ? tbl(['Alert', 'Counties', 'Call multiplier'], rows) : ''}<h4>Next 7 days by hub</h4>${tbl(['Hub', 'Range', 'Trigger days', 'Implication'], fcRows)}<div class="ch-src">Sources: NWS alerts API, Open-Meteo forecast, ${cite('pp_demand_model')} (ServiceTitan heat-wave elasticities, NOAA storm events).</div>`, links: [app('#/pp/weather', 'Open Weather & demand')], followups: ['Show the storm history for Ocean County', 'How many techs do we need on the peak day?'] };
+  /* response plans: the ones the live alerts call for, then the ones this week's forecast triggers, else the season's most likely */
+  const wk = fc.flatMap(f => (f || []).filter(x => !x.past).slice(0, 7));
+  const fcTrig = [wk.some(x => x.tmax >= 90) && 'Heat Advisory', wk.some(x => x.tmin <= 20) && 'Extreme Cold Warning', wk.some(x => (x.precip || 0) >= 1.5) && 'Flash Flood Warning', wk.some(x => (x.gust || 0) >= 40) && 'High Wind Warning'].filter(Boolean);
+  const mo = new Date().getMonth() + 1;
+  const season = mo >= 10 && mo <= 11 ? ['Freeze Warning', 'High Wind Warning', 'Winter Storm Warning'] : mo === 12 || mo <= 2 ? ['Extreme Cold Warning', 'Winter Storm Warning', 'Ice Storm Warning'] : mo <= 5 ? ['Severe Thunderstorm Warning', 'Flash Flood Warning', 'Freeze Warning'] : ['Heat Advisory', 'Severe Thunderstorm Warning', 'Tropical Storm Warning'];
+  const live = [...alerts.map(a => planFor(a.event)), ...fcTrig.map(planByName)].filter(Boolean);
+  const plans = [...new Set(live.length ? live : season.map(planByName).filter(Boolean))].slice(0, 4);
+  const planRows = plans.map(p => [`<b>${esc(p.nws_event)}</b>`, esc(mult(p)), esc(clip(String(p.lead_time || '—').replace(/>=/g, '≥').replace(/<=/g, '≤'), 70)), esc(clip((p.actions || []).slice(0, 2).join('; ').replace(/>=/g, '≥').replace(/<=/g, '≤'), 150))]);
+  const planHtml = planRows.length ? `<h4>${live.length ? 'Response plan for this week' : 'Response plan on file for the season'} <span class="ch-badge">analyst assumptions</span></h4>${live.length ? '' : '<p>No trigger in the live alerts or the 7-day forecast, so these are the plans most likely to be needed this season.</p>'}${tbl(['If the Weather Service issues', 'Expected calls', 'Lead time', 'First moves'], planRows)}` : '';
+  return { html: `<h4>Weather → service-call pressure (live)</h4><p>${n(alerts.length)} active NWS alerts touch the Punctual Pros territory right now${alerts.length ? ':' : '.'}</p>${alerts.length ? tbl(['Alert', 'Counties', 'Call multiplier'], rows) : ''}<h4>Next 7 days by hub</h4>${tbl(['Hub', 'Range', 'Trigger days', 'Implication'], fcRows)}${planHtml}<div class="ch-src">Sources: NWS alerts API, Open-Meteo forecast, ${cite('pp_demand_model')} (ServiceTitan heat-wave elasticities, NOAA storm events).</div>`, links: [app('#/pp/weather', 'Open Weather & demand')], followups: ['Show the storm history for Ocean County', 'How many techs do we need on the peak day?'] };
 }
 async function wastewater() {
   const d = await Data.research('cet_wwtp_targets'); if (!d) return null;
@@ -193,7 +206,7 @@ async function adsProgram(q) {
   const it = d.items || []; const K = k => it.filter(i => i.kind === k);
   const plan = K('media_plan')[0]; const plat = K('ctv_platform').slice().sort((a, b) => (a.minimum_spend_usd ?? 1e9) - (b.minimum_spend_usd ?? 1e9)); const cr = K('creative');
   const ctv = cr.filter(c => /ctv/.test(c.format || ''));
-  return { html: `<h4>Growth marketing & sample ads — Punctual Pros</h4><p>${esc(sentences(d.meta?.strategy_summary, 3))}.</p>${plan ? `<h4>${esc(plan.phase)} media plan <span class="ch-badge">est.</span></h4><p class="ch-num">${money(plan.monthly_budget_usd)}/mo → ${n(plan.channel_mix?.reduce((a, c) => a + (c.est_leads || 0), 0))} leads · ${n(plan.channel_mix?.reduce((a, c) => a + (c.est_booked_jobs || 0), 0))} booked jobs · CPA ${money(plan.expected_cpa_usd)} · revenue ${money(plan.expected_revenue_usd)}</p>${tbl(['Channel', 'Share', 'Monthly', 'Leads', 'Jobs'], (plan.channel_mix || []).map(c => [esc(c.channel), `${c.share_pct ?? '—'}%`, money(c.monthly_usd), c.est_leads ?? '—', c.est_booked_jobs ?? '—']))}` : ''}<h4>Cheapest CTV entry points</h4>${tbl(['CTV platform', 'Minimum', 'CPM', 'Targets'], plat.slice(0, 6).map(p => [`<b>${esc(p.platform)}</b>${p.self_serve ? ' <span class="ch-badge">self-serve</span>' : ''}`, p.minimum_spend_usd != null ? money(p.minimum_spend_usd) : '—', Array.isArray(p.cpm_range_usd) ? `$${p.cpm_range_usd[0]}–${p.cpm_range_usd[1]}` : '—', esc((p.targeting || []).slice(0, 3).join(', '))]))}<h4>Sample spots</h4><ul>${ctv.slice(0, 4).map(c => `<li><b>${esc(c.title)}</b> (${esc(c.format)}) — ${esc(c.audience || '')}: “${esc(clip(c.hook || '', 110))}”</li>`).join('')}</ul>`, links: [link(ROOT + 'redesigns/punctual-pros/ads.html', 'Open sample ads & media plan'), app('#/pp/weather', 'Storm triggers'), app('#/pp/movers', 'New-mover feed')], followups: ['Show me how to take Punctual Pros nationwide', 'Which AI agents pay back fastest?'] };
+  return { html: `<h4>Growth marketing & sample ads — Punctual Pros</h4><p>${esc(sentences(d.meta?.strategy_summary, 3))}.</p>${plan ? `<h4>${esc(plan.phase)} media plan <span class="ch-badge ch-est">est.</span></h4><p class="ch-num">${money(plan.monthly_budget_usd)}/mo → ${n(plan.channel_mix?.reduce((a, c) => a + (c.est_leads || 0), 0))} leads · ${n(plan.channel_mix?.reduce((a, c) => a + (c.est_booked_jobs || 0), 0))} booked jobs · CPA ${money(plan.expected_cpa_usd)} · revenue ${money(plan.expected_revenue_usd)}</p>${tbl(['Channel', 'Share', 'Monthly', 'Leads', 'Jobs'], (plan.channel_mix || []).map(c => [esc(c.channel), `${c.share_pct ?? '—'}%`, money(c.monthly_usd), c.est_leads ?? '—', c.est_booked_jobs ?? '—']))}` : ''}<h4>Cheapest CTV entry points</h4>${tbl(['CTV platform', 'Minimum', 'CPM', 'Targets'], plat.slice(0, 6).map(p => [`<b>${esc(p.platform)}</b>${p.self_serve ? ' <span class="ch-badge">self-serve</span>' : ''}`, p.minimum_spend_usd != null ? money(p.minimum_spend_usd) : '—', Array.isArray(p.cpm_range_usd) ? `$${p.cpm_range_usd[0]}–${p.cpm_range_usd[1]}` : '—', esc((p.targeting || []).slice(0, 3).join(', '))]))}<h4>Sample spots</h4><ul>${ctv.slice(0, 4).map(c => `<li><b>${esc(c.title)}</b> (${esc(c.format)}) — ${esc(c.audience || '')}: “${esc(clip(c.hook || '', 110))}”</li>`).join('')}</ul>`, links: [link(ROOT + 'redesigns/punctual-pros/ads.html', 'Open sample ads & media plan'), app('#/pp/weather', 'Storm triggers'), app('#/pp/movers', 'New-mover feed')], followups: ['Show me how to take Punctual Pros nationwide', 'Which AI agents pay back fastest?'] };
 }
 async function companyPlaybook(q) {
   const co = coOf(q); if (!co || co === 'pp') return expansionPlan();
@@ -287,7 +300,7 @@ async function nationalScorer(q) {
   const row = (x, i) => [i + 1, `<b>${esc(x.r.county_name)}</b>, ${esc(x.r.state)}`, `<b class="ch-num">${x.score}</b>`, `<span class="ch-num">${pct(x.r.pre1980_share)}</span>`, `<span class="ch-num">${pct(x.r.owner_occupied_share)}</span>`, x.r.permits_per_1k_hu_2025 != null ? `<span class="ch-num">${Fmt.num(x.r.permits_per_1k_hu_2025, 1)}</span>` : '—', x.sales != null ? `<span class="ch-num">${Fmt.num(x.sales, 1)}</span>` : '—', x.r.authority_brands_presence ? 'Yes' : '—'];
   const head = ['#', 'County', 'Score', 'Pre-1980', 'Owners', 'Permits /1k', 'Sales /1k', 'Brand nearby'];
   return {
-    html: `<h4>${st ? `Top ${esc(ST_NAME[st] || st)} counties for Punctual Pros` : 'Where Punctual Pros should expand first, nationwide'} <span class="ch-badge">est.</span></h4><p>A simple default score ranks the ${n(all.length)} US counties with 100,000+ residents${st ? ` (${n(pool.length)} in ${esc(ST_NAME[st] || st)})` : ''} on four equal-weight signals, each as a percentile: <b>older housing</b> (share built before 1980, more replacement work), <b>owner share</b> (owners buy repairs and memberships), <b>permit momentum</b> (2025 permits per 1,000 homes) and <b>sales velocity</b> (home sales in the last 12 months per 1,000 homes, a new-mover feed).</p>${top.length ? tbl(head, top.map(row)) : `<p>No ${esc(ST_NAME[st] || st || '')} county with 100,000+ residents has enough data to score.</p>`}${near.length ? `<p><b>Closest to today's footprint:</b> ${near.map(x => `${esc(x.r.county_name)}, ${esc(x.r.state)} (${x.score})`).join(' · ')}. Expanding next door repeats the Horvath move: buy a local operator, then densify.</p>` : ''}<p>“Brand nearby” marks counties that already have an Authority Brands location (One Hour, Benjamin Franklin or Mister Sparky), where growth means buying or partnering rather than opening.</p><div class="ch-src">Source: ${cite('national_counties')} (Census ACS 2023 and population estimates, Census building permits, Redfin home sales, NOAA climate normals, County Business Patterns). Equal weights are an analyst default, not a forecast; the scorer page lets you reweight.</div>`,
+    html: `<h4>${st ? `Top ${esc(ST_NAME[st] || st)} counties for Punctual Pros` : 'Where Punctual Pros should expand first, nationwide'} <span class="ch-badge ch-est">est.</span></h4><p>A simple default score ranks the ${n(all.length)} US counties with 100,000+ residents${st ? ` (${n(pool.length)} in ${esc(ST_NAME[st] || st)})` : ''} on four equal-weight signals, each as a percentile: <b>older housing</b> (share built before 1980, more replacement work), <b>owner share</b> (owners buy repairs and memberships), <b>permit momentum</b> (2025 permits per 1,000 homes) and <b>sales velocity</b> (home sales in the last 12 months per 1,000 homes, a new-mover feed).</p>${top.length ? tbl(head, top.map(row)) : `<p>No ${esc(ST_NAME[st] || st || '')} county with 100,000+ residents has enough data to score.</p>`}${near.length ? `<p><b>Closest to today's footprint:</b> ${near.map(x => `${esc(x.r.county_name)}, ${esc(x.r.state)} (${x.score})`).join(' · ')}. Expanding next door repeats the Horvath move: buy a local operator, then densify.</p>` : ''}<p>“Brand nearby” marks counties that already have an Authority Brands location (One Hour, Benjamin Franklin or Mister Sparky), where growth means buying or partnering rather than opening.</p><div class="ch-src">Source: ${cite('national_counties')} (Census ACS 2023 and population estimates, Census building permits, Redfin home sales, NOAA climate normals, County Business Patterns). Equal weights are an analyst default, not a forecast; the scorer page lets you reweight.</div>`,
     links: L, followups: st ? [NEW_FOLLOW.national, NEW_FOLLOW.cases] : fus,
   };
 }
@@ -386,18 +399,18 @@ const mdBase = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^#{2,
 
 /* ── Personas ─────────────────────────────────────────────────────────────── */
 export const PERSONAS = {
-  portal: { name: 'Broad Sky Intelligence', initials: 'BS', greeting: 'Ask anything about the six portfolio companies: opportunities, add-on targets, filings, competitors, weather-driven demand, or the tech-enablement theses. Answers come from the portal\'s own verified datasets.', placeholder: 'Ask the portfolio… e.g. "Show me how to take Punctual Pros nationwide"', color: '#d9622b',
+  portal: { name: 'Broad Sky Intelligence', short: 'the portfolio', initials: 'BS', greeting: 'Ask anything about the six portfolio companies: opportunities, add-on targets, filings, competitors, weather-driven demand, or the tech-enablement theses. Answers come from the portal\'s own verified datasets.', placeholder: 'Ask the portfolio… e.g. "Show me how to take Punctual Pros nationwide"', color: '#d9622b',
     suggestions: ['Show me how to take Punctual Pros nationwide', 'Which wastewater plants should Horton call first?', 'What is the storm impact on Punctual Pros this week?', 'Who competes with Broad Sky for home-services deals?', 'Which CET bids are due in the next 30 days?', 'Which counties nationwide should Punctual Pros expand to first?', 'What did sponsors do with companies like Punctual Pros before selling them?', 'How does Broad Sky actually buy companies?', 'Estimate Punctual Pros revenue from public filings', 'Show the top add-on targets for CET in Connecticut', 'What is ServiceOS and why does it raise valuation?', 'How many new-mover leads are in Lancaster County?', 'Compare the portfolio to public comps', 'Open the PE landscape', 'What are the tech-enablement theses for every company?', 'Show me sample CTV ads and the media plan for Punctual Pros', 'How does Broad Sky scale CET across the Northeast?', 'What is the growth plan for Frontline?', 'Which AI agents create the most value across the portfolio?', 'How much revenue does 24/7 voice AI recover for Punctual Pros?'],
     intents: PORTAL_INTENTS, faq: [] },
 };
 /** Customer-facing site personas are extended by each redesign (faq/suggestions/intents via mount options). */
 const SITE_BASE = {
-  pp: { name: 'Punctual Pros assistant', initials: 'PP', color: '#f08a3c', greeting: 'Hi! I can check whether we serve your address, book a visit, explain memberships and rebates, or tell you what this week\'s weather means for your home.', placeholder: 'Ask about service, coverage, pricing…', suggestions: ['Do you serve 17601?', 'Book a tune-up', 'Can I reach you at 2am?', 'What does the Comfort Club membership include?', 'What rebates are available for a heat pump?', 'Is there a storm coming this week?', 'My AC stopped working'] },
-  cet: { name: 'CET project desk', initials: 'CE', color: '#4c8dff', greeting: 'Ask about electrical construction, solar and storage, EV charging, wastewater and pump-station work (Horton), or energy-efficiency programs (NuWave) anywhere in New England.', placeholder: 'Ask about capabilities, states served, programs…', suggestions: ['Do you work in Connecticut?', 'What incentives exist for commercial solar in Massachusetts?', 'Can you upgrade a wastewater plant\'s switchgear?', 'Request a design-build estimate', 'Which EV charging programs are open now?'] },
-  fl: { name: 'Frontline advisor', initials: 'FL', color: '#9d7bff', greeting: 'I help law firms scope managed IT, service desk, cybersecurity and revenue-cycle support. Ask about coverage, security posture or a quick assessment.', placeholder: 'Ask about managed IT for law firms…', suggestions: ['Do you support AM Law 200 firms?', 'What is included in the service desk?', 'How do you handle eBilling and A/R?', 'Request a security assessment', 'Which offices do you operate from?'] },
-  ts: { name: 'Thomas Scientific concierge', initials: 'TS', color: '#2ecc8f', greeting: 'Find products, categories and services for research, clinical, biopharma and cleanroom labs, or reach an account representative.', placeholder: 'Search products or ask about services…', suggestions: ['Do you supply cleanroom consumables?', 'Set up a punchout catalog', 'Who is my account rep?', 'Do you serve cannabis testing labs?', 'What is vendor-managed inventory?'] },
-  bpi: { name: 'BPI desk', initials: 'BP', color: '#e05c8a', greeting: 'Ask about public affairs, corporate reputation, campaigns, research and AI-era communications work.', placeholder: 'Ask about services or case studies…', suggestions: ['What services does BPI offer?', 'Can you run a corporate reputation campaign?', 'Which offices do you have?', 'Start a conversation with the team'] },
-  fh: { name: 'Fair Harbor helper', initials: 'FH', color: '#3fd0e0', greeting: 'Sizing, fabric, shipping, returns, sustainability and wholesale questions, answered.', placeholder: 'Ask about sizing, shipping, fabric…', suggestions: ['How do the swim trunks fit?', 'What are the trunks made of?', 'What is the return policy?', 'Do you sell wholesale?'] },
+  pp: { name: 'Punctual Pros assistant', short: 'Punctual Pros', initials: 'PP', color: '#f08a3c', greeting: 'Hi! I can check whether we serve your address, book a visit, explain memberships and rebates, or tell you what this week\'s weather means for your home.', placeholder: 'Ask about service, coverage, pricing…', suggestions: ['Do you serve 17601?', 'Book a tune-up', 'Can I reach you at 2am?', 'What does the Comfort Club membership include?', 'What rebates are available for a heat pump?', 'Is there a storm coming this week?', 'My AC stopped working'] },
+  cet: { name: 'CET project desk', short: 'CET', initials: 'CE', color: '#4c8dff', greeting: 'Ask about electrical construction, solar and storage, EV charging, wastewater and pump-station work (Horton), or energy-efficiency programs (NuWave) anywhere in New England.', placeholder: 'Ask about capabilities, states served, programs…', suggestions: ['Do you work in Connecticut?', 'What incentives exist for commercial solar in Massachusetts?', 'Can you upgrade a wastewater plant\'s switchgear?', 'Request a design-build estimate', 'Which EV charging programs are open now?'] },
+  fl: { name: 'Frontline advisor', short: 'Frontline', initials: 'FL', color: '#9d7bff', greeting: 'I help law firms scope managed IT, service desk, cybersecurity and revenue-cycle support. Ask about coverage, security posture or a quick assessment.', placeholder: 'Ask about managed IT for law firms…', suggestions: ['Do you support AM Law 200 firms?', 'What is included in the service desk?', 'How do you handle eBilling and A/R?', 'Request a security assessment', 'Which offices do you operate from?'] },
+  ts: { name: 'Thomas Scientific concierge', short: 'Thomas Scientific', initials: 'TS', color: '#2ecc8f', greeting: 'Find products, categories and services for research, clinical, biopharma and cleanroom labs, or reach an account representative.', placeholder: 'Search products or ask about services…', suggestions: ['Do you supply cleanroom consumables?', 'Set up a punchout catalog', 'Who is my account rep?', 'Do you serve cannabis testing labs?', 'What is vendor-managed inventory?'] },
+  bpi: { name: 'BPI desk', short: 'BPI', initials: 'BP', color: '#e05c8a', greeting: 'Ask about public affairs, corporate reputation, campaigns, research and AI-era communications work.', placeholder: 'Ask about services or case studies…', suggestions: ['What services does BPI offer?', 'Can you run a corporate reputation campaign?', 'Which offices do you have?', 'Start a conversation with the team'] },
+  fh: { name: 'Fair Harbor helper', short: 'Fair Harbor', initials: 'FH', color: '#3fd0e0', greeting: 'Sizing, fabric, shipping, returns, sustainability and wholesale questions, answered.', placeholder: 'Ask about sizing, shipping, fabric…', suggestions: ['How do the swim trunks fit?', 'What are the trunks made of?', 'What is the return policy?', 'Do you sell wholesale?'] },
 };
 async function siteIntents(co) {
   const list = [];
@@ -512,13 +525,15 @@ class Tracker {
 const ID_RX = /(?<![\w/.#=@-])([a-z][a-z0-9]*(?:_[a-z0-9]+)+)(?:\.json)?(?![\w/-])/g;
 /** Wrap tables, turn raw dataset identifiers into readable names and add inline [n] references. Mutates `sources`. */
 function polishAnswer(root, sources) {
+  // estimate badges read lowercase "est.", apart from the uppercase status badges (any source: intents, deep dives, page intents)
+  root.querySelectorAll('.ch-badge, .sys-est').forEach(b => { if (/^\s*est\.?\s*$/i.test(b.textContent)) { b.classList.add('ch-est'); b.textContent = 'est.'; } });
   root.querySelectorAll('table').forEach(t => {
     if (!t.parentElement?.classList.contains('ch-tbl')) { const w = document.createElement('div'); w.className = 'ch-tbl'; t.replaceWith(w); w.appendChild(t); }
     const cols = t.querySelectorAll('thead th').length; if (cols >= 4 && !t.style.minWidth) t.style.minWidth = `${Math.min(720, cols * 112)}px`;
     const rows = [...t.querySelectorAll('tbody tr')]; if (rows.length) t.querySelectorAll('thead th').forEach((th, c) => { if (rows.every(r => r.children[c]?.classList.contains('n'))) th.classList.add('n'); });
   });
   const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);   // house terminology on every visible string
-  for (let t = tw.nextNode(); t; t = tw.nextNode()) { if (/playbook|platform/i.test(t.nodeValue)) t.nodeValue = terms(t.nodeValue); if (/[.…]\./.test(t.nodeValue)) t.nodeValue = t.nodeValue.replace(/(?<!\.)\.\.(?!\.)/g, '.').replace(/…\./g, '…'); }
+  for (let t = tw.nextNode(); t; t = tw.nextNode()) { if (/playbook|platform/i.test(t.nodeValue)) t.nodeValue = terms(t.nodeValue); if (/[.…]\./.test(t.nodeValue)) t.nodeValue = t.nodeValue.replace(/(?<!\.)\.\.(?!\.)/g, '.').replace(/…\./g, '…'); if (/\d\/\d{1,2}\/(?:19|20)\d\d/.test(t.nodeValue)) t.nodeValue = t.nodeValue.replace(/(?<![\w/.-])(1[0-2]|0?[1-9])\/(3[01]|[12]\d|0?[1-9])\/((?:19|20)\d\d)(?![\w/-])/g, (m, mo, d, y) => `${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+mo - 1]} ${+d}, ${y}`); }
   const idx = new Map(sources.map((s, i) => [s.key, i]));
   root.querySelectorAll('[data-cite]').forEach(el => { const key = srcKey(el.dataset.cite); el.removeAttribute('data-cite'); if (!SRC[key]) return; let i = idx.get(key); if (i == null) { sources.push(srcOf(key)); i = sources.length - 1; idx.set(key, i); } el.after(refEl(i, sources[i])); });
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); const nodes = [];
@@ -631,7 +646,8 @@ const plain = html => { const d = document.createElement('div'); d.innerHTML = h
 const ago = t => { const s = (Date.now() - t) / 1000; return s < 60 ? 'now' : s < 3600 ? `${Math.floor(s / 60)}m` : s < 86400 ? `${Math.floor(s / 3600)}h` : `${Math.floor(s / 86400)}d`; };
 function resolvePersona(id, opts = {}) {
   const base = PERSONAS[id] || SITE_BASE[id] || PERSONAS.portal;
-  return { ...base, ...opts, faq: [...(base.faq || []), ...(opts.faq || [])], suggestions: opts.suggestions ? [...opts.suggestions, ...(base.suggestions || [])] : (base.suggestions || []), intents: [...(opts.intents || []), ...(base.intents || [])] };
+  const short = opts.short_name || opts.short || base.short;
+  return { ...base, ...opts, short, faq: [...(base.faq || []), ...(opts.faq || [])], suggestions: opts.suggestions ? [...opts.suggestions, ...(base.suggestions || [])] : (base.suggestions || []), intents: [...(opts.intents || []), ...(base.intents || [])] };
 }
 
 /** The working-status row: cycles through real steps, then collapses to "Answered in 1.3 s · 5 sources". */
@@ -690,12 +706,13 @@ function reveal(root, ctl) {
 
 /* ── Widget ───────────────────────────────────────────────────────────────── */
 export const Chat = {
-  /** mode: 'inline' (hero), 'floating' (launcher + panel) or 'full' (assistant.html). Options are unchanged from v1. */
+  /** mode: 'inline' (hero), 'floating' (launcher + panel) or 'full' (assistant.html). Options are unchanged from v1, plus
+      short_name: the short label for the launcher ("Ask {short_name}"); defaults to the persona's own short name. */
   mount(el, opts = {}) {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261006122625'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261006134218'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };
@@ -722,7 +739,7 @@ class Widget {
     this.bindPopover();
     if (this.mode === 'inline') { el.appendChild(this.root); this.renderInline(); }
     else if (this.mode === 'full') { el.appendChild(this.root); this.renderFull(); }
-    else { document.body.appendChild(this.root); this.renderLauncher(); if (opts.openOnLoad) this.togglePanel(true); }
+    else { document.body.appendChild(this.root); this.renderLauncher(); this.watchTuck(); if (opts.openOnLoad) this.togglePanel(true); }
     this.loadExtra(); this.watchTheme(); WIDGETS.add(this);
     if (opts.autoAsk) setTimeout(() => { this.ask(opts.autoAsk); if (this.mode === 'full') { try { const u = new URL(location.href); u.searchParams.delete('q'); history.replaceState(null, '', u); } catch { /* keep URL */ } } }, 600);
   }
@@ -796,8 +813,37 @@ class Widget {
   showEmpty() { if (this.mode === 'inline') return; this.msgs.innerHTML = this.emptyHTML(); }
 
   renderLauncher() {
-    const who = this.persona.initials === 'BS' ? 'the portfolio' : String(this.persona.name || 'us').split(' ')[0];
+    if (this._tuck) setTimeout(this._tuck, 0);
+    const who = this.persona.short || (this.persona.initials === 'BS' ? 'the portfolio' : String(this.persona.name || 'us').split(' ')[0]);
     this.root.innerHTML = `<button type="button" class="ch-launch" aria-label="Open ${esc(this.persona.name)}" aria-haspopup="dialog"><span class="ch-launch-av" aria-hidden="true">${I.spark}</span><span>Ask ${esc(who)}</span><span class="ch-dot" aria-hidden="true"></span></button>`;
+  }
+  /* Phones (<=560px): the launcher steps aside while it would sit on top of a page button or link,
+     and comes back once the user scrolls past it. Sampled with elementsFromPoint, throttled to one frame. */
+  watchTuck() {
+    if (this._tuckOn) return; this._tuckOn = true;
+    const mq = window.matchMedia ? window.matchMedia('(max-width:560px)') : null;
+    const HIT = 'a[href],button,[role=button],input,select,textarea,summary,label[for]';
+    let raf = 0;
+    const run = () => {
+      raf = 0;
+      const b = this.root.querySelector('.ch-launch'); if (!b) return;
+      if (!mq || !mq.matches || this.open || b.contains(document.activeElement)) { b.classList.remove('ch-launch--tuck'); return; }
+      const r = b.getBoundingClientRect(); if (!r.width) return;
+      const pad = 6, xs = [r.left - pad, r.left + r.width / 2, r.right + pad - 1], ys = [r.top - pad, r.top + r.height / 2, r.bottom + pad - 1];
+      let hit = false;
+      for (const x of xs) for (const y of ys) {
+        if (hit || x < 0 || y < 0 || x >= innerWidth || y >= innerHeight) continue;
+        for (const el of document.elementsFromPoint(x, y)) {
+          if (this.root.contains(el)) continue;
+          const t = el.closest(HIT); if (t && !this.root.contains(t)) { hit = true; break; }
+        }
+      }
+      b.classList.toggle('ch-launch--tuck', hit);
+    };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(run); };
+    document.addEventListener('scroll', kick, { passive: true, capture: true }); addEventListener('resize', kick, { passive: true });
+    if (mq && mq.addEventListener) mq.addEventListener('change', kick);
+    this._tuck = kick; kick(); setTimeout(kick, 400); setTimeout(kick, 1500);
   }
   togglePanel(open) {
     if (this.mode !== 'floating') { if (open) this.focus(); return; }
@@ -1261,7 +1307,7 @@ class Widget {
   }
   renderThreads() {
     const box = this.root.querySelector('.ch-threads'); if (!box) return; const list = this.threads();
-    box.innerHTML = list.length ? list.map(t => { const p = PERSONAS[t.persona] || SITE_BASE[t.persona]; return `<div class="ch-th${this.thread?.id === t.id ? ' on' : ''}"><button type="button" class="ch-th-b" data-thread="${esc(t.id)}" ${this.thread?.id === t.id ? 'aria-current="true"' : ''}><span class="ch-th-t">${esc(t.title)}</span><span class="ch-th-m">${esc(p?.initials === 'BS' ? 'Portfolio' : (p?.name || '').split(' ')[0] || 'Chat')} · ${ago(t.updated || t.created)}</span></button><button type="button" class="ch-th-x" data-del-thread="${esc(t.id)}" aria-label="Delete chat: ${esc(t.title)}" data-tip="Delete">${I.trash}</button></div>`; }).join('') : `<p class="ch-th-empty">Your chats appear here. ${esc(this.threadNote().replace(/^Chats are/, 'They are'))}</p>`;
+    box.innerHTML = list.length ? list.map(t => { const p = PERSONAS[t.persona] || SITE_BASE[t.persona]; return `<div class="ch-th${this.thread?.id === t.id ? ' on' : ''}"><button type="button" class="ch-th-b" data-thread="${esc(t.id)}" ${this.thread?.id === t.id ? 'aria-current="true"' : ''}><span class="ch-th-t">${esc(t.title)}</span><span class="ch-th-m">${esc(p?.initials === 'BS' ? 'Portfolio' : p?.short || (p?.name || '').split(' ')[0] || 'Chat')} · ${ago(t.updated || t.created)}</span></button><button type="button" class="ch-th-x" data-del-thread="${esc(t.id)}" aria-label="Delete chat: ${esc(t.title)}" data-tip="Delete">${I.trash}</button></div>`; }).join('') : `<p class="ch-th-empty">Your chats appear here. ${esc(this.threadNote().replace(/^Chats are/, 'They are'))}</p>`;
   }
   openThread(id) {
     const t = this.threads().find(x => x.id === id); if (!t) return;
@@ -1273,7 +1319,7 @@ class Widget {
       const turn = this.botShell(); this.msgs.appendChild(turn); const rec = x.rec || {};
       if (rec.note) this.note(turn, { from: rec.note, q: rec.eq || rec.q });
       Status.render(turn.querySelector('.ch-status'), rec.meta);
-      turn.querySelector('.ch-answer').innerHTML = rec.html || ''; rec.sources ||= [];
+      turn.querySelector('.ch-answer').innerHTML = rec.html || ''; turn.querySelectorAll('.ch-answer .ch-badge').forEach(b => { if (/^\s*est\.?\s*$/i.test(b.textContent)) b.classList.add('ch-est'); }); rec.sources ||= [];
       if (rec.synth?.html) { const sy = turn.querySelector('.ch-synth'); sy.hidden = false; sy.innerHTML = this.synthHead(rec.synth.model) + `<div class="ch-synth-body">${rec.synth.html}</div>`; }
       this.renderAfter(turn, rec);
       this.history.push({ role: 'assistant', html: rec.html, text: plain(rec.html || '') });

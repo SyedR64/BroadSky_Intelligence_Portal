@@ -1,7 +1,7 @@
 /* Fair Harbor — growth plan (concept page). Reads the portal's research datasets; no shared code is modified. */
-import { Data } from '../../assets/core.js?v=20261006122625';
-import { Chat } from '../../assets/chat.js?v=20261006122625';
-import { Frame } from '../../assets/frame.js?v=20261006122625';
+import { Data } from '../../assets/core.js?v=20261006134218';
+import { Chat } from '../../assets/chat.js?v=20261006134218';
+import { Frame } from '../../assets/frame.js?v=20261006134218';
 
 const $ = (s, r = document) => r.querySelector(s);
 const tkn = (n, fb) => { try { return getComputedStyle(document.body).getPropertyValue(n).trim() || fb; } catch { return fb; } };
@@ -169,7 +169,7 @@ if (!pb) {
   const chub = byId('tpl-an-chubbies')?.key_figures || {};
   const f5 = byId('fin-05'), f1 = byId('fin-01');
   const q2 = (rival?.items || []).find(i => i.id === 'rival-012')?.key_figures || {};
-  $('#watch').innerHTML = `<div class="sys-chips"><span class="sys-chip sys-chip--soft">Opportunistic watch, not a screened target</span></div><h3 class="sys-card-title">Chubbies, owned by a delisted, levered parent</h3><p class="sys-card-body">${esc(clean(f5?.implication || ''))}</p><dl class="pb-dl"><dt>FY2025 net sales</dt><dd>${money(chub.net_sales_fy2025_usd)}</dd><dt>Wholesale + retail share</dt><dd>${chub.wholesale_retail_share_pct ?? '—'}%</dd><dt>Segment EBITDA margin</dt><dd>${chub.segment_ebitda_margin_pct ?? '—'}%</dd><dt>Q2 2026 net sales change</dt><dd>${q2.chubbies_q2_change_pct ?? '—'}%</dd><dt>Q2 2026 DTC change</dt><dd>${chub.q2_2026_dtc_change_pct ?? '—'}%</dd><dt>Parent long-term debt (6/30/26)</dt><dd>${money(f5?.key_figures?.solo_long_term_debt_2026_06_30_usd)}</dd></dl><p class="sys-card-body">Chubbies is ~${(chub.net_sales_fy2025_usd / m0.revenue_usd).toFixed(1)}x Fair Harbor's est. revenue, so the play is to pick up doors, reps or a license if they come loose, and be the clean-balance-sheet partner. ${askLink(6)} commissions a proper tuck-in screen.</p><p class="sys-src"><b>Source:</b> ${srcLink(byId('tpl-an-chubbies')?.source_url, 'Solo Brands 10-K')} · ${srcLink(f5?.source_url, 'Form 25 / 10-Q')} · ${cite('rival-012', 'Solo Brands Q2 2026 10-Q')}</p>`;
+  $('#watch').innerHTML = `<div class="sys-chips"><span class="sys-chip sys-chip--soft">Opportunistic watch, not a screened target</span></div><h3 class="sys-card-title">Chubbies, owned by a delisted, levered parent</h3><p class="sys-card-body">${esc(clean(f5?.implication || ''))}</p><dl class="pb-dl"><dt>FY2025 net sales</dt><dd>${money(chub.net_sales_fy2025_usd)}</dd><dt>Wholesale + retail share</dt><dd>${chub.wholesale_retail_share_pct ?? '—'}%</dd><dt>Segment EBITDA margin</dt><dd>${chub.segment_ebitda_margin_pct ?? '—'}%</dd><dt>Q2 2026 net sales change</dt><dd>${q2.chubbies_q2_change_pct ?? '—'}%</dd><dt>Q2 2026 DTC change</dt><dd>${chub.q2_2026_dtc_change_pct ?? '—'}%</dd><dt>Parent long-term debt (Jun 30, 2026)</dt><dd>${money(f5?.key_figures?.solo_long_term_debt_2026_06_30_usd)}</dd></dl><p class="sys-card-body">Chubbies is ~${(chub.net_sales_fy2025_usd / m0.revenue_usd).toFixed(1)}x Fair Harbor's est. revenue, so the play is to pick up doors, reps or a license if they come loose, and be the clean-balance-sheet partner. ${askLink(6)} commissions a proper tuck-in screen.</p><p class="sys-src"><b>Source:</b> ${srcLink(byId('tpl-an-chubbies')?.source_url, 'Solo Brands 10-K')} · ${srcLink(f5?.source_url, 'Form 25 / 10-Q')} · ${cite('rival-012', 'Solo Brands Q2 2026 10-Q')}</p>`;
 
   /* ── financing ── */
   $('#road-table').innerHTML = `<div class="sys-table-wrap"><table class="sys-table"><thead><tr><th scope="col">Month</th><th scope="col" class="sys-n">Revenue</th><th scope="col" class="sys-n">EBITDA</th><th scope="col" class="sys-n">Margin</th><th scope="col" class="sys-n">Headcount</th><th scope="col" class="sys-n">Rev / FTE</th><th scope="col" class="sys-n">Doors + stores</th></tr></thead><tbody>${road.map(r => `<tr class="${r.month === 36 ? 'hl' : ''}"><td>${r.month === 0 ? 'Today' : 'M' + r.month} <small>${mDate(r.month)}</small></td><td class="sys-n">${money(r.revenue_usd)}</td><td class="sys-n">${money(r.ebitda_usd, 2)}</td><td class="sys-n">${r.ebitda_margin_pct.toFixed(1)}%</td><td class="sys-n">${r.headcount}</td><td class="sys-n">${money(r.revenue_per_employee_usd)}</td><td class="sys-n">${r.locations_or_accounts}</td></tr>`).join('')}</tbody><caption>Source: Fair Harbor growth plan (KPI roadmap), Oct 2026. Analyst assumptions, not company guidance.</caption></table></div>`;
@@ -389,6 +389,6 @@ function mountChat(ctx) {
     faq.push({ q: 'Which AI agents does HarborOS deploy for Fair Harbor?', href: 'growth-plan.html#agents', a: `<p>${ag.length} agents, an est. ${ra ? range(ra.investment_usd, v => money(v)) : '$0.3–0.7M'} build (vendor claims are upper bounds):</p><ul>${ag.map(a => `<li><b>${esc(a.agent)}</b> — ${esc(clean(a.who_it_helps))}; ${a.weeks_to_deploy ? `${a.weeks_to_deploy[0]}–${a.weeks_to_deploy[1]} weeks` : ''}</li>`).join('')}</ul>` });
   }
   try {
-    Frame.mount({}).setChat(Chat.mount(null, { persona: 'fh', mode: 'floating', theme: 'light', name: 'Fair\u00a0Harbor helper', faq, suggestions: faq.map(f => f.q) }));
+    Frame.mount({}).setChat(Chat.mount(null, { persona: 'fh', short_name: 'Fair Harbor', mode: 'floating', theme: 'light', name: 'Fair Harbor helper', faq, suggestions: faq.map(f => f.q) }));
   } catch (e) { console.warn('Chat widget did not mount:', e.message); }
 }

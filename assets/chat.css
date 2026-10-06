@@ -26,6 +26,8 @@
 .ch-avatar.xs{width:22px;height:22px;border-radius:7px;font-size:9px}
 .ch-avatar.lg{width:44px;height:44px;border-radius:13px;font-size:14px}
 .ch-badge{display:inline-block;font:600 10px/1.6 Inter,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:999px;background:var(--ch-bg3);color:var(--ch-fg2);margin-left:6px;vertical-align:1px;white-space:nowrap}
+/* estimate badge: always lowercase "est.", amber like .sys-est, separate from the uppercase status badges */
+.ch-badge.ch-est,.ch-answer .ch-badge.ch-est{text-transform:none;letter-spacing:.03em;font:600 10.5px/1.5 var(--ch-mono);padding:1px 6px;border-radius:999px;color:var(--ch-warn);background:color-mix(in srgb,var(--ch-warn) 12%,transparent);border:1px solid color-mix(in srgb,var(--ch-warn) 32%,transparent);white-space:nowrap}
 .ch-engine{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 8px;border:1px solid var(--ch-line);border-radius:999px;background:var(--ch-bg);color:var(--ch-fg2);font:600 11.5px Inter,system-ui,sans-serif;cursor:pointer;white-space:nowrap;transition:border-color .15s,color .15s}
 .ch-engine:hover{border-color:var(--ch-line2);color:var(--ch-fg)}
 .ch-engine svg:last-child{color:var(--ch-mute)}
@@ -357,7 +359,10 @@
   .ch-inline .ch-thread .ch-msgs{padding:16px 14px 22px}
   .ch-tbar .ch-engine{display:none}
   .ch-full .ch-groups{grid-template-columns:1fr}
-  .ch-full .ch-group .ch-cards .ch-pc:nth-child(n+3){display:none}
+  /* every suggestion stays visible on phones; cards just get tighter */
+  .ch-full .ch-groups{gap:16px}
+  .ch-full .ch-pc{min-height:0;padding:10px 12px}
+  .ch-full .ch-groups.own .ch-cards{grid-template-columns:1fr;gap:8px}
   .ch-turn.bot,.ch-full .ch-turn.bot{grid-template-columns:minmax(0,1fr)}
   .ch-turn.bot>.ch-avatar{display:none}
   .ch-ubox{max-width:88%}
@@ -400,3 +405,17 @@
 .ch-synth-wait{display:flex;align-items:center;gap:8px;color:var(--ch-mute);font-size:13px}
 @media (max-width:600px){.ch-status .ch-eng{display:flex;width:max-content;margin:2px 0 0 -2px}.ch-actions>.ch-synth-btn{margin-left:2px}}
 @media print{.ch-synth-btn{display:none!important}}
+
+/* ── launcher on phones (≤560px): a 44px icon-only circle in the bottom-right
+   corner, clear of the safe area, so it never sits over hero buttons or card
+   copy. The full "Ask …" pill returns from 561px up. Label stays in aria-label. ── */
+@media (max-width:560px){
+  .ch .ch-launch{right:calc(12px + env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));width:44px;height:44px;padding:0;gap:0;justify-content:center;border:0;background:var(--ch-grad);color:#fff;box-shadow:0 10px 26px -10px rgba(12,19,32,.55),0 2px 6px rgba(12,19,32,.22)}
+  .ch .ch-launch>span:not(.ch-launch-av):not(.ch-dot){display:none}
+  .ch .ch-launch-av{width:44px;height:44px;background:transparent}
+  .ch .ch-launch-av svg{width:18px;height:18px}
+  .ch .ch-launch .ch-dot{position:absolute;top:1px;right:1px;width:10px;height:10px;box-shadow:0 0 0 2px #fff}
+  .ch.ch-dark .ch-launch .ch-dot{box-shadow:0 0 0 2px #0a0e14}
+  .ch .ch-launch{transition:opacity .18s ease,transform .18s var(--ch-ease),visibility 0s linear 0s}
+  .ch .ch-launch.ch-launch--tuck{opacity:0;transform:scale(.6);visibility:hidden;pointer-events:none;transition:opacity .18s ease,transform .18s var(--ch-ease),visibility 0s linear .18s}
+}

@@ -81,7 +81,7 @@ export function common({ Chat, page = 'home', suggestions } = {}) {
   // chat
   if (Chat) {
     try {
-      inst = Chat.mount(null, { persona: 'fl', mode: 'floating', theme: 'light', color: ACCENT, name: 'Frontline advisor',
+      inst = Chat.mount(null, { persona: 'fl', short_name: 'Frontline', mode: 'floating', theme: 'light', color: ACCENT, name: 'Frontline advisor',
         greeting: page === 'os' ? 'Ask about FirmOS: the Tier-0 AI desk, the security score card, LEDES pre-flight, the client portal or the value-creation math.' : 'I help law firms scope managed IT, the 24/7 service desk, cybersecurity and eBilling. Ask about coverage, security posture or an assessment.',
         faq: FAQ, suggestions: suggestions || SUGGESTIONS });
     } catch (e) { console.warn('chat mount failed', e); }
@@ -201,7 +201,7 @@ const INSIGHTS = [
   { cat: 'Revenue cycle', type: 'Report', min: 7, t: 'Rejections jumped from 11% to 18% in 2025. A pre-flight checklist to bring them back.', d: 'Client AI tools now audit every line. These are the five LEDES checks that catch most rejections before submission.', src: 'https://www.elite.com/insights/news/new-elite-research-law-firms-see-64-climb-in-rejection-rates-as-client-ai-billing-scrutiny-advances' },
   { cat: 'Security', type: 'Bulletin', min: 4, t: 'Outside counsel guidelines are the new security questionnaire', d: 'Clients now write MFA, EDR and breach-notice windows into engagement terms. Here is how to keep an evidence library current.' },
   { cat: 'Service desk', type: 'Guide', min: 6, t: 'What "AI-optimized" should mean on a law-firm service desk', d: 'Tier-0 should handle resets and access requests. Judgment calls should not go to a bot. A field guide to drawing that line.' },
-  { cat: 'AI', type: 'Guide', min: 8, t: 'Generative AI and privilege: a deployment checklist for firm GCs', d: 'Data boundaries, vendor terms, audit logs and the client consent questions to settle before rollout.' },
+  { cat: 'AI', type: 'Guide', min: 8, t: 'Generative AI in the firm: a deployment checklist for IT leaders', d: 'Data boundaries, vendor terms, audit logs and the rollout questions to settle before go-live.' },
   { cat: 'Revenue cycle', type: 'Benchmark', min: 5, t: '62 days to 50: how eBilling automation shortens the cash cycle', d: 'What the fastest-paying firms do differently between invoice approval and cash application.', src: 'https://www.elite.com/insights/news/new-elite-research-law-firms-see-64-climb-in-rejection-rates-as-client-ai-billing-scrutiny-advances' },
   { cat: 'Service desk', type: 'Event', ic: 'i-users', min: 2, t: 'Meet Frontline at ILTACON and ALA', d: 'Tabletop demos, the FirmOS posture score and a CIO roundtable on co-managed IT. Book time with the team.' },
 ];

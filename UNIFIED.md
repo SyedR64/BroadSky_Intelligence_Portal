@@ -61,7 +61,12 @@ body[data-co?]                          ← company pages only: pp | cet | fl | 
   footer.sys-footer                     ← injected: brand + author line, Portal / Site concepts / Programs / Briefing, disclaimer
 ```
 
-Section content uses only: `.sys-grid--2|3|4`, `.sys-card` (`-label`, `-title`, `-body`, `-list`, `-foot`), `.sys-kpi` (`-label`, `-value`, `-sub`, `.sys-delta--up|down`), `.sys-table-wrap > table.sys-table` (`.sys-n` numeric cells, `<caption>` provenance), `.sys-note--info|warn|good|bad|co`, `.sys-chip`, `.sys-est`, `.sys-btn`, `.sys-prose`, `.sys-src`. Anything bespoke (map, chart, simulator, 3D) sits inside a `.sys-card` or a full-width block inside `.sys-wrap`.
+Section content uses only: `.sys-grid--2|3|4`, `.sys-card` (`-label`, `-title`, `-body`, `-list`, `-foot`), `.sys-kpi` (`-label`, `-value`, `-sub`, `.sys-delta--up|down`), `.sys-table-wrap > table.sys-table` (`.sys-n` numeric cells, `<caption>` provenance), `.sys-note--info|warn|good|bad|co`, `.sys-chip` (`--soft` for the company accent; `--good|warn|bad|info` for status, so pages never define their own status chips), `.sys-est`, `.sys-btn`, `.sys-prose`, `.sys-src`. Anything bespoke (map, chart, simulator, 3D) sits inside a `.sys-card` or a full-width block inside `.sys-wrap`.
+
+### 3a · Sub-nav (`nav.sys-subnav`)
+
+- **Title, dot only.** `a.sys-subnav-title` is the page's short name as plain text (company name on a concept home, the OS name on an OS page, the plan name on a plan). The frame draws one dot before it in the company accent (brand orange on portfolio-wide pages). No logo, icon, wordmark or SVG inside the title; system.css hides any that remain.
+- **One CTA, and the portal link has one wording.** `.sys-subnav-actions` holds at most one `.sys-btn--sm`. When it links into the portal it reads exactly **"Open in portal"** (not "Open in the portal", "Open the portal" or "View in portal"), uses `.sys-btn--secondary`, and points at the most specific route (`app.html#/cet/overview`, `app.html#/techos/overview`). A page-local action ("Try the demo", "Request a quote") uses `.sys-btn--primary` instead; never both. The CTA is hidden at ≤560px, so nothing important may live only there.
 
 Alternate band: `.sys-section--alt` (warm grey). Dark band: `data-sys-theme="dark"` on the section. Never more than one dark band in a row, never two `.sys-section--alt` in a row.
 
@@ -85,7 +90,7 @@ Fonts: Inter for everything; JetBrains Mono only for numbers, labels, kickers an
 
 Spacing scale `--sys-sp-1…10` = 4, 8, 12, 16, 24, 32, 48, 64, 96, 128. Rhythm: section padding `--sys-section-y` (56→112px); section head → content `--sys-head-gap` (28→48px); grid gap 16px (24px with `.sys-grid--gap-lg`); inside cards 10px between parts. Content width `--sys-wrap` 1200px with `--sys-gut` 16→40px; the frame uses the same width so edges line up.
 
-Radii: 6 (kbd, code), 10 (notes, small controls), 16 (cards, tables, KPI strips), 24 (feature cards, CTA), pill (buttons, chips, nav). Shadows: `--sys-sh-1` resting, `--sys-sh-2` hover/raised, `--sys-sh-3` floating media only.
+Radii: 6 (kbd, code), 10 (notes, small controls), 16 (cards, tables, KPI strips), 24 (feature cards, CTA), pill (buttons, chips, nav). Tokens `--sys-r-xs|sm|r|lg|pill`; `--sys-r-md` is an alias of `--sys-r` (16) for pages that think in sm/md/lg, so never redefine it locally. Shadows: `--sys-sh-1` resting, `--sys-sh-2` hover/raised, `--sys-sh-3` floating media only.
 
 Buttons: one `.sys-btn--primary` per view region; `--secondary` beside it; `--ghost` for tertiary; `--accent` (gradient) at most once per page, usually in the hero or CTA; `--co` only on company pages. Sizes `--sm` (36px, top bars, card feet), default (44px), `--lg` (52px, hero and CTA).
 
@@ -99,13 +104,13 @@ Buttons: one `.sys-btn--primary` per view region; `--secondary` beside it; `--gh
 | `redesigns/<co>/<os>.html` | `Frame.mount({})` | company | Active = OS program; crumb ends with the OS name (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS). |
 | `redesigns/<co>/growth-plan.html`, `punctual-pros/nationwide.html`, `ads.html` | `Frame.mount({})` | company | Active = Growth plans. |
 | `redesigns/voice-ai.html`, `ai-agents.html` | `Frame.mount({ banner: true })` | portal | Crumb `Home / Growth plans / Page`. |
-| `app.html` | `Frame.mount({ variant: 'app', theme: 'dark' })` | portal | See §8. Hotkey ⌘J (⌘K stays the portal search). |
+| `app.html` | `Frame.mount({ variant: 'app', theme: 'dark' })` | portal | See §8. Hotkey ⌘J (⌘K stays the portal search). The app variant sets `nav: { briefing: 'app.html#/briefing/play' }` itself. |
 | `theater.html` | `Frame.mount({ variant: 'minimal', theme: 'dark' })` | portal | See §9. |
 | `briefing/executive_memo.html` | no mount | — | See §10. |
 
-Other options: `co`, `active`, `persona`, `crumb: [{label, href?, co?}]` (hrefs are root-relative: `'redesigns/'`, `'app.html#/pp/overview'`), `crumbAside: 'Concept · Oct 2026'`, `cta: {label, href}` (small primary button in the bar), `footer`, `hotkey`, `chat` (an existing widget instance), `humanize: true | 'observe' | false`. Mount once per page; a second call returns the first frame.
+Other options: `nav` (per-page override of primary links, `{ <id>: href }` or `{ <id>: { href, label, hint } }`; ids are `portal`, `concepts`, `os`, `playbooks`, `briefing`, `github`. A link whose href is a `#/` route on the current page is marked `aria-current` while the hash is on that route and the frame keeps it in sync on `hashchange`, so pages never patch frame links after mount), `co`, `active`, `persona`, `crumb: [{label, href?, co?}]` (hrefs are root-relative: `'redesigns/'`, `'app.html#/pp/overview'`), `crumbAside: 'Concept · Oct 2026'`, `cta: {label, href}` (small primary button in the bar), `footer`, `hotkey`, `chat` (an existing widget instance), `humanize: true | 'observe' | false`. Mount once per page; a second call returns the first frame.
 
-Chat: pages keep mounting their own floating widget (`Chat.mount(null, { persona, mode: 'floating', theme })`) with their FAQ and suggestions. The Ask button opens that widget if present, else focuses an inline chat, else lazy-loads `chat.js` with the persona. Pass `chat: inst` to `Frame.mount` (or call `Frame.mount(...).setChat(inst)`) when you hold the instance.
+Chat: pages keep mounting their own floating widget (`Chat.mount(null, { persona, mode: 'floating', theme })`) with their FAQ and suggestions. **Launcher label rule:** the floating launcher reads "Ask " + the persona's short name — the persona's `short` field, or `short_name` passed to `Chat.mount` when a page renames its assistant ("Ask Punctual Pros", "Ask CET", "Ask Fair Harbor", "Ask the portfolio"). Never derive it by truncating the persona name to its first word ("Ask Punctual", "Ask Fair"); a persona without a short name gets one added, not a fallback. At ≤560px the launcher is an icon-only 44px circle (label kept in `aria-label`), see §11. The Ask button opens that widget if present, else focuses an inline chat, else lazy-loads `chat.js` with the persona. Pass `chat: inst` to `Frame.mount` (or call `Frame.mount(...).setChat(inst)`) when you hold the instance.
 
 ## 6 · Accent rules
 
@@ -113,7 +118,7 @@ Chat: pages keep mounting their own floating widget (`Chat.mount(null, { persona
 - **Company accent** (`--co-pp` #f08a3c, `--co-cet` #4c8dff, `--co-fl` #9d7bff, `--co-ts` #2ecc8f, `--co-bpi` #e05c8a, `--co-fh` #3fd0e0): set `data-co` on `<body>` for a company page, or on a single card, chip, KPI or crumb item on portfolio-wide pages. Allowed on: dots, card top bars, KPI top borders, list bullets, kicker rule, crumb dot, sub-nav dot and active pill (`--co-soft` / `--co-ink`), `.sys-note--co`, `.sys-btn--co`, hero glow. Not allowed on: body text, headings, section backgrounds, large fills, table text. Text in an accent uses `--co-ink`, never the raw `--co`.
 - One company per card. Portfolio pages show each company only in its own colour; the order is always PP, CET, Frontline, Thomas Scientific, BPI, Fair Harbor.
 - Status colours (`--sys-good|warn|bad|info`) mean status only: deltas, notes, est./illustrative/live badges.
-- Concept sites keep the company's identity through `--co`, the company logo in `.sys-subnav-title`, and photography or demos inside cards — not through a private type scale, header or palette.
+- Concept sites keep the company's identity through `--co`, the accent dot before `.sys-subnav-title` (§3a), and photography or demos inside cards — not through a private type scale, header or palette.
 
 ## 7 · Copy rules
 
@@ -133,6 +138,7 @@ Chat: pages keep mounting their own floating widget (`Chat.mount(null, { persona
 - Remove the rail's site-link block and the rail logo text duplicate; keep module navigation. Map `app.css` colours to `--sys-*` over time (`--bg → --sys-bg`, `--surface → --sys-surface`, `--text → --sys-ink`, `--border → --sys-line`, `--c-pp → --co-pp` …); radii become `--sys-r-xs` / `--sys-r-sm`.
 - The portal's light toggle sets `html[data-theme="light"]`; system.css switches the frame to light tokens automatically.
 - ⌘K stays the portal's search palette; the Ask button and ⌘J open the chat.
+- The frame's Briefing link points at `app.html#/briefing/play` (app-variant default of the `nav` option) and carries `aria-current` while the hash is on `#/briefing/…`; Portal carries it otherwise. No post-mount link patching in `app.html`.
 - Module renderers write human labels (`Frame.label`) and `.sys-est` badges; `humanize: 'observe'` catches anything that slips through on re-render.
 
 ## 9 · `theater.html` (minimal transparent frame)
@@ -147,7 +153,7 @@ Chat: pages keep mounting their own floating widget (`Chat.mount(null, { persona
 
 ## 11 · Mobile
 
-Mobile-first. The top bar collapses to brand + Ask + menu at ≤960px (the sheet lists every primary link with a hint); the crumb drops "Home" at ≤560px; the sub-nav scrolls horizontally with a fade; grids are one column below 720px (KPI strips two columns); hero and CTA buttons stack. Nothing may scroll the page horizontally at 390px — wide tables scroll inside `.sys-table-wrap`, maps and charts size to their container.
+Mobile-first. The top bar collapses to brand + Ask + menu at ≤960px (the sheet lists every primary link with a hint); the crumb drops "Home" at ≤560px; the concept banner is one line at ≤560px (truncated, with a "More" toggle that expands it in place), so top bar + banner + crumb stay under 160px (56 + 36 + 41 at 390px); the floating chat launcher is an icon-only 44px circle anchored bottom-right inside the safe-area insets at ≤560px and the full "Ask …" pill from 561px up, and it steps aside (fades out, `.ch-launch--tuck`) while it would sit on a page button or link, coming back as soon as the user scrolls past it; the footer carries extra bottom padding so the launcher never sits on its last line; the sub-nav scrolls horizontally with a fade; grids are one column below 720px (KPI strips two columns); hero and CTA buttons stack. Nothing may scroll the page horizontally at 390px — wide tables scroll inside `.sys-table-wrap`, maps and charts size to their container.
 
 ## 12 · Checklist (every page must pass all twelve)
 

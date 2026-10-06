@@ -1,6 +1,6 @@
 /* Fair Harbor concept — home page behaviour. Booted from an inline module in index.html
    (so scripts/bump_version.sh can stamp the shared core/chat imports). */
-import { art, PRODUCTS, COLORS, recommend, FAQ, SUGGESTIONS, INTENTS, chrome, toast, esc, setFrame, ep } from './common.js?v=20261006122625';
+import { art, PRODUCTS, COLORS, recommend, FAQ, SUGGESTIONS, INTENTS, chrome, toast, esc, setFrame, ep } from './common.js?v=20261006134218';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -21,7 +21,7 @@ export async function boot({ Chat, Data, Frame }) {
   faq();
   email();
   const chat = Chat.mount(null, {
-    persona: 'fh', mode: 'floating', theme: 'light', name: 'Harbor helper · Fair Harbor', initials: 'FH',
+    persona: 'fh', short_name: 'Fair Harbor', mode: 'floating', theme: 'light', name: 'Harbor helper · Fair Harbor', initials: 'FH',
     greeting: 'Hi! I can pick your size, explain the BreezeKnit liner and the recycled-bottle fabric, and answer shipping, returns, store and wholesale questions.',
     placeholder: 'Ask about sizing, fabric, shipping…', faq: FAQ, suggestions: SUGGESTIONS, intents: INTENTS, autoAsk: new URLSearchParams(location.search).get('ask') || undefined,
   });

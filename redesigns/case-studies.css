@@ -15,8 +15,7 @@ body .m-cases{font-size:14px}
 .cs-mv-w{font:600 var(--sys-fs-2xs)/1.3 var(--sys-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--sys-mute)}
 .cs-moves-list b{font-size:16px;line-height:1.3;color:var(--sys-ink);letter-spacing:var(--sys-tr-title)}
 .cs-mv-e{grid-column:1/-1;font-size:var(--sys-fs-sm);line-height:1.5;color:var(--sys-ink-2);margin-top:6px}
-.cs-moves-list .cs-ck-chip{grid-column:1/-1;justify-self:start;margin-top:8px;display:inline-flex;padding:3px 9px;border-radius:var(--sys-r-pill);font:600 11.5px/1.2 var(--sys-font);color:var(--n,var(--sys-info));background:color-mix(in srgb,var(--n,var(--sys-info)) 12%,transparent);border:1px solid color-mix(in srgb,var(--n,var(--sys-info)) 28%,transparent)}
-.cs-moves-list .cs-ck-chip--good{--n:var(--sys-good)} .cs-moves-list .cs-ck-chip--warn{--n:var(--sys-warn)} .cs-moves-list .cs-ck-chip--bad{--n:var(--sys-bad)}
+.cs-moves-list .sys-chip{grid-column:1/-1;justify-self:start;margin-top:8px;min-height:26px;padding:0 10px;font-size:12px}
 
 /* drawers */
 .cs-drawer{margin-top:var(--sys-sp-5);padding:0;overflow:hidden}

@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261006122625">
-<link rel="stylesheet" href="site.css?v=20261006122625">
-<link rel="stylesheet" href="harboros.css?v=20261006122625">
+<link rel="stylesheet" href="../../assets/system.css?v=20261006134218">
+<link rel="stylesheet" href="site.css?v=20261006134218">
+<link rel="stylesheet" href="harboros.css?v=20261006134218">
 </head>
 <body data-co="fh">
 <main id="main">
@@ -20,7 +20,7 @@
     <div class="sys-subnav-in">
       <a class="sys-subnav-title" href="#main"><span class="hx-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path class="hx-w1" d="M3 14c3-3 5.5-3 9 0s6 3 9 0" fill="none" stroke-width="2.4" stroke-linecap="round"/><path class="hx-w2" d="M3 9c3-3 5.5-3 9 0s6 3 9 0" fill="none" stroke-width="2.4" stroke-linecap="round"/></svg></span>HarborOS</a>
       <div class="sys-subnav-links"><a href="#modules">Modules</a><a href="#demo">Demo</a><a href="#math">Value math</a><a href="#stack">Stack</a><a href="#roadmap">Roadmap</a><a href="#risks">Risks</a><a href="#exit">Exit</a><a href="index.html">Fair Harbor site</a></div>
-      <div class="sys-subnav-actions"><a class="sys-btn sys-btn--primary sys-btn--sm" href="#demo">Try the demo</a></div>
+      <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../../app.html#/techos/overview">Open in portal</a></div>
     </div>
   </nav>
 
@@ -188,10 +188,10 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261006122625';
-  import { Chat } from '../../assets/chat.js?v=20261006122625';
-  import { Data } from '../../assets/core.js?v=20261006122625';
-  import { boot } from './harboros.js?v=20261006122625';
+  import { Frame } from '../../assets/frame.js?v=20261006134218';
+  import { Chat } from '../../assets/chat.js?v=20261006134218';
+  import { Data } from '../../assets/core.js?v=20261006134218';
+  import { boot } from './harboros.js?v=20261006134218';
   Frame.mount({});
   boot({ Chat, Data, Frame }).catch(e => console.error('HarborOS concept failed to boot', e));
 </script>

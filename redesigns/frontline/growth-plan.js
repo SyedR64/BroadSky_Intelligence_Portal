@@ -657,7 +657,7 @@ function mountChat(Chat, D, frame) {
     { q: 'Which operating levers move EBITDA?', href: '#levers', a: `<ul><li>AM Law 200 share of wallet: 50% → 54% (m12) → 60% (m36)</li><li>E-billing rejection rate: 18% → 11% (m30)</li><li>Days from invoice to payment: 62 → 50 (m30)</li><li>Service desk first-level resolution: 74% → 82% (m12) → 90% (m36)</li><li>Tier-0 autonomous resolution: 20% (m12) → 30% (m36)</li><li>Adj. EBITDA margin: ${(a.ebitda_usd / a.revenue_usd * 100).toFixed(1)}% → ${(z.ebitda_usd / z.revenue_usd * 100).toFixed(1)}% (m36)</li></ul><p>Baselines are benchmarks where Frontline's own figure is not public (est.).</p>` },
   ];
   const inst = Chat.mount(null, {
-    persona: 'fl', mode: 'floating', theme: 'light', name: 'Frontline growth plan', color: PHASE_COLORS[0], greeting: 'Ask about the Frontline value-creation plan: phases, add-on targets, AI agents, financing or the Smith + Howard template.',
+    persona: 'fl', short_name: 'Frontline', mode: 'floating', theme: 'light', name: 'Frontline growth plan', color: PHASE_COLORS[0], greeting: 'Ask about the Frontline value-creation plan: phases, add-on targets, AI agents, financing or the Smith + Howard template.',
     placeholder: 'Ask the plan…', faq,
     suggestions: faq.map(f => f.q).concat(['How does Frontline compare with Smith + Howard?', 'What are the biggest risks?']),
   });

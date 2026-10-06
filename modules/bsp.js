@@ -6,11 +6,11 @@
    Datasets: Broad Sky acquisition methodology, Broad Sky professional network,
    Punctual Pros / CET / Frontline and Thomas Scientific add-on target screens.
    ═══════════════════════════════════════════════════════════════════════════ */
-import * as Copy from './copy.js?v=20261006122625';
+import * as Copy from './copy.js?v=20261006134218';
 import {
   loadBundle, isTargetTest, PLATFORMS, PORDER, sellerLabel, DEAL_TYPE, STRENGTH, TESTS, critShort, GROUPS, TYPE_LABEL, REL_LABEL,
   graphSVG, legendHTML, stripSVG, bindGraph, nodeDetail, introFor, firstCallScript, nextFive, fmtMonth, fmtDay, monthsBetween, clip, host, TODAY,
-} from './bsp-lib.js?v=20261006122625';
+} from './bsp-lib.js?v=20261006134218';
 
 const COLOR = 'var(--c-bsp)';
 const PCOL = { pp: 'var(--c-pp)', cet: 'var(--c-cet)', fl: 'var(--c-fl)', ts: 'var(--c-ts)', bpi: 'var(--c-bpi)', fh: 'var(--c-fh)', sh: 'var(--sys-mute)' };
@@ -22,8 +22,10 @@ const SRC_METH = 'Broad Sky acquisition methodology (primary releases, SEC filin
 const SRC_NET = 'Broad Sky professional network (public roles only)';
 const SRC_POOLS = 'Add-on target screens: Punctual Pros, CET, Frontline, Thomas Scientific';
 
+/* free text from the deal record in plain English: ISO dates in words ("2027-12-14" → "Dec 14, 2027", "2026-06" → "Jun 2026", "Q4-2024" → "Q4 2024") */
+const words = s => s == null ? s : Copy.text(String(s).replace(/\bQ([1-4])-((?:19|20)\d\d)\b/g, 'Q$1 $2').replace(/\b((?:19|20)\d\d)-(0[1-9]|1[0-2])\b(?!-\d)/g, (m, y, mo) => fmtMonth(`${y}-${mo}-01`)));
 const openInsp = (ctx, opts) => { ctx.inspector.open(opts); document.querySelector('#inspector .insp-body')?.classList.add('m-bsp'); };
-const injectCss = () => { if (!document.getElementById('css-bsp')) { const l = document.createElement('link'); l.id = 'css-bsp'; l.rel = 'stylesheet'; l.href = 'modules/bsp.css?v=20261006122625'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-bsp')) { const l = document.createElement('link'); l.id = 'css-bsp'; l.rel = 'stylesheet'; l.href = 'modules/bsp.css?v=20261006134218'; document.head.appendChild(l); } };
 
 let _b = null;
 function bundle(data) {
@@ -49,8 +51,8 @@ const pChip = (fmt, p) => p ? fmt.chip(PLATFORMS[p].short, PCOL[p]) : '—';
 function vehiclesHTML(ctx, d) {
   const { esc, fmt } = ctx; const v = d.co_invest_vehicle;
   if (!v) return '—';
-  const list = (v.vehicles || []).map(x => `<li><b>${esc(x.entity)}</b>${x.amount_sold_usd != null ? ` · ${fmt.money(x.amount_sold_usd)} sold` : ''}${x.investors ? ` · ${x.investors} investor${x.investors > 1 ? 's' : ''}` : ''}${x.note ? `<div class="dim small">${esc(x.note)}</div>` : ''}</li>`).join('');
-  return `<ul class="bsp-ul">${list}</ul>${v.note ? `<div class="dim small mt-4">${esc(v.note)}</div>` : ''}`;
+  const list = (v.vehicles || []).map(x => `<li><b>${esc(x.entity)}</b>${x.amount_sold_usd != null ? ` · ${fmt.money(x.amount_sold_usd)} sold` : ''}${x.investors ? ` · ${x.investors} investor${x.investors > 1 ? 's' : ''}` : ''}${x.note ? `<div class="dim small">${esc(words(x.note))}</div>` : ''}</li>`).join('');
+  return `<ul class="bsp-ul">${list}</ul>${v.note ? `<div class="dim small mt-4">${esc(words(v.note))}</div>` : ''}`;
 }
 const vehicleShort = d => { const v = d.co_invest_vehicle; if (!v?.vehicles?.length) return null; const t = v.vehicles.reduce((a, x) => a + (x.amount_sold_usd || 0), 0); return `${v.vehicles[0].entity}${v.vehicles.length > 1 ? ` +${v.vehicles.length - 1}` : ''}${t ? ` · $${(t / 1e6).toFixed(1)}M` : ''}`; };
 function openDeal(ctx, b, d) {
@@ -63,11 +65,11 @@ function openDeal(ctx, b, d) {
     sub: `${esc(DEAL_TYPE[d.deal_type] || 'Deal')} · ${esc(P?.short || d.platform)} · ${esc(fmtDay(d.date))}${d.hq ? ` · ${esc(d.hq)}` : ''}`,
     sections: [
       d.rationale_quoted ? { label: 'Rationale, in their words', html: `<blockquote class="bsp-quote">${esc(d.rationale_quoted)}</blockquote>` } : null,
-      { label: 'Deal', html: ui.kv({ Seller: `${esc(sellerLabel(d.seller_type))}${d.seller ? `<div class="dim small">${esc(d.seller)}</div>` : ''}`, Timing: timing ? esc(timing) : null, Sector: d.sector ? esc(d.sector) : null, 'Buy-side advisers': esc(d.buyer_advisor || '—'), 'Sell-side advisers': esc(d.seller_advisor || '—'), 'Lenders and capital': esc(d.lender_or_capital || 'Not disclosed'), 'Co-invest vehicle': vehiclesHTML(ctx, d) }) },
-      d.structure_notes ? { label: 'Structure', html: `<div class="small text-2">${esc(d.structure_notes)}</div>` } : null,
-      d.size_signals ? { label: 'Size signals', html: `<div class="small text-2">${esc(d.size_signals)}</div><div class="dim small mt-4">Figures marked est. are the portal’s labelled estimates, not disclosures.</div>` } : null,
+      { label: 'Deal', html: ui.kv({ Seller: `${esc(sellerLabel(d.seller_type))}${d.seller ? `<div class="dim small">${esc(words(d.seller))}</div>` : ''}`, Timing: timing ? esc(timing) : null, Sector: d.sector ? esc(d.sector) : null, 'Buy-side advisers': esc(words(d.buyer_advisor) || '—'), 'Sell-side advisers': esc(words(d.seller_advisor) || '—'), 'Lenders and capital': esc(words(d.lender_or_capital) || 'Not disclosed'), 'Co-invest vehicle': vehiclesHTML(ctx, d) }) },
+      d.structure_notes ? { label: 'Structure', html: `<div class="small text-2">${esc(words(d.structure_notes))}</div>` } : null,
+      d.size_signals ? { label: 'Size signals', html: `<div class="small text-2">${esc(words(d.size_signals))}</div><div class="dim small mt-4">Figures marked est. are the portal’s labelled estimates, not disclosures.</div>` } : null,
       pats.length ? { label: 'Patterns this deal supports', html: `<div class="row wrap gap-4">${pats.map(p => chip(ctx.fmt, clip(p.pattern.split(':')[0], 60), STR_COL[p.strength])).join(' ')}</div>` } : null,
-      { label: 'Source', html: `<div class="small">${ctx.fmt.link(d.source_url, host(d.source_url) || 'Release')}</div><div class="dim small mt-4">Retrieved ${esc(d.retrieved || '—')}</div>` },
+      { label: 'Source', html: `<div class="small">${ctx.fmt.link(d.source_url, host(d.source_url) || 'Release')}</div><div class="dim small mt-4">Retrieved ${esc(d.retrieved ? fmtDay(d.retrieved) : '—')}</div>` },
     ].filter(Boolean),
     actions: [d.source_url ? { label: 'Release ↗', href: d.source_url } : null, P?.co ? { id: 'mod', label: `${esc(P.short)} module`, onClick: () => app.go(P.co) } : null].filter(Boolean),
   });
@@ -92,21 +94,21 @@ async function viewDeals(ctx) {
     <div class="mt-12"></div>
     ${ui.panel({ title: 'Deal chronology', sub: 'Each mark is a disclosed transaction. Select one to read the rationale, advisers, lenders and co-invest vehicle.', body: `<div class="bsp-stripwrap">${stripSVG(b, PCOL)}</div>`, foot: ui.source(SRC_METH, null, 'Oct 2026') + `<span>Thomas Scientific uses the Jan 2022 announcement; CET uses the Feb 2025 Form D first sale.</span>` })}
     <div class="mt-12"></div>
-    ${ui.panel({ title: 'Deal ledger', sub: 'Portfolio company, add-on and exit records with seller type, advisers, lenders and co-invest vehicles', body: '<div data-f></div><div data-t></div>', foot: ui.source(SRC_METH, null, 'Oct 2026') })}
+    ${ui.panel({ title: 'Deal ledger', sub: 'Portfolio company, add-on and exit records with seller type, advisers, lenders and co-invest vehicles', body: '<div data-f></div><div class="bsp-ledger" data-t></div>', foot: ui.source(SRC_METH, null, 'Oct 2026') })}
   </div>`;
   const root = el.querySelector('.m-bsp');
   root.querySelectorAll('.bsp-mk').forEach(g => { const go = () => { const d = b.dealById.get(g.dataset.deal); root.querySelectorAll('.bsp-mk').forEach(x => x.classList.toggle('sel', x === g)); openDeal(ctx, b, d); }; g.addEventListener('click', go); g.addEventListener('keydown', e => { if (e.key === 'Enter') go(); }); });
-  const rows = b.deals.map(d => ({ ...d, _type: DEAL_TYPE[d.deal_type] || d.deal_type, _plat: PLATFORMS[d._p]?.short || d.platform, _seller: sellerLabel(d.seller_type), _buy: d.buyer_advisor || '—', _sell: d.seller_advisor || '—', _lend: d.lender_or_capital || 'Not disclosed', _veh: vehicleShort(d) || '—' }));
+  const rows = b.deals.map(d => ({ ...d, _type: DEAL_TYPE[d.deal_type] || d.deal_type, _plat: PLATFORMS[d._p]?.short || d.platform, _seller: sellerLabel(d.seller_type), _buy: words(d.buyer_advisor) || '—', _sell: words(d.seller_advisor) || '—', _lend: words(d.lender_or_capital) || 'Not disclosed', _veh: vehicleShort(d) || '—' }));
   const cols = [
     { key: 'date', label: 'Date', fmt: v => `<span class="num">${esc(fmtMonth(v))}</span>` },
     { key: 'company', label: 'Company', fmt: (v, r) => `<b>${esc(v)}</b>`, wrap: true },
     { key: '_plat', label: 'Portfolio company', fmt: (v, r) => pChip(fmt, r._p) },
     { key: '_type', label: 'Type', fmt: v => esc(v) },
-    { key: '_seller', label: 'Seller type', fmt: v => esc(v) },
-    { key: '_buy', label: 'Buy-side advisers', fmt: v => `<span title="${esc(v)}">${esc(clip(v, 46))}</span>`, wrap: true },
-    { key: '_sell', label: 'Sell-side advisers', fmt: v => `<span title="${esc(v)}">${esc(clip(v, 46))}</span>`, wrap: true },
-    { key: '_lend', label: 'Lenders', fmt: v => `<span title="${esc(v)}">${esc(clip(v, 52))}</span>`, wrap: true },
-    { key: '_veh', label: 'Co-invest vehicle', fmt: v => esc(v), wrap: true },
+    { key: '_seller', label: 'Seller type', fmt: v => `<div style="min-width:90px">${esc(v)}</div>`, wrap: true },
+    { key: '_buy', label: 'Buy-side advisers', fmt: v => `<div class="bsp-cell">${esc(v)}</div>`, wrap: true },
+    { key: '_sell', label: 'Sell-side advisers', fmt: v => `<div class="bsp-cell">${esc(v)}</div>`, wrap: true },
+    { key: '_lend', label: 'Lenders', fmt: v => `<div class="bsp-cell bsp-cell--wide">${esc(v)}</div>`, wrap: true },
+    { key: '_veh', label: 'Co-invest vehicle', fmt: v => `<div class="bsp-cell bsp-cell--narrow">${esc(v)}</div>`, wrap: true },
   ];
   let tbl;
   const f = ui.filters(root.querySelector('[data-f]'), [
@@ -198,11 +200,11 @@ async function viewRubric(ctx) {
   const tested = b.criteria.filter(c => isTargetTest(c.id)).reduce((a, c) => a + c.weight_pct, 0);
   const platW = b.criteria.filter(c => TESTS[c.id]?.tested === 'platform').reduce((a, c) => a + c.weight_pct, 0);
   const pools = PORDER.filter(p => all.some(r => r._p === p));
-  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Acquisition rubric', sub: `<b>So what:</b> scored against the criteria Broad Sky’s own deals imply, ${pri} of ${ranked.length} add-on targets clear the 70 gate and ${watch} sit on the watch list: the company screens already filter for what Broad Sky buys, so the rubric’s job is ordering. Broad Sky closes about one add-on per company-year, so the top 15 is the call list. The score uses the five criteria the screens can test per target (${tested}% of the rubric weight); essentiality and add-on runway are scored at company level (${platW}%), and recurring revenue, tech upside and bench wait for diligence.`, chips: `${fmt.chip('Weights are inferred, not disclosed', 'var(--amber)')} ${fmt.chip(`${ranked.length} targets · ${pools.length} companies`, COLOR)}` })}
+  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Acquisition rubric', sub: `<b>So what:</b> <b>${pri} of ${ranked.length} targets clear the 70-point gate</b>, and ${watch} more sit on the watch list. That is most of the list because the company screens already keep only what Broad Sky buys, so <b>the score is for ordering, not for passing or failing a target</b>. Broad Sky closes about one add-on per company-year, so work the top 15 first: use the Top 15 switch on the table below. The score uses the five criteria the screens can test per target (${tested}% of the rubric weight); essentiality and add-on runway are scored at company level (${platW}%), and recurring revenue, tech upside and bench wait for diligence.`, chips: `${fmt.chip('Weights are inferred, not disclosed', 'var(--amber)')} ${fmt.chip(`${ranked.length} targets · ${pools.length} companies`, COLOR)}` })}
     ${missingNote(ui, b)}
     ${ui.kpis([
       { label: 'Targets scored', value: fmt.num(ranked.length), sub: `${all.length - ranked.length} held out (affiliation check)`, color: COLOR },
-      { label: 'Clear the 70 gate', value: fmt.num(pri), sub: 'Priority band of the inferred rubric', color: 'var(--green)' },
+      { label: 'Clear the 70 gate', value: `${fmt.num(pri)} of ${fmt.num(ranked.length)}`, sub: 'Most clear it: the score orders the list', color: 'var(--green)' },
       { label: 'Watch list (55–69)', value: fmt.num(watch), sub: 'Re-score after a first call', color: 'var(--amber)' },
       { label: 'Rubric weight tested per target', value: `${tested}%`, sub: `${platW}% at company level · rest in diligence`, color: COLOR },
       ...pools.map(p => ({ label: `Independents · ${PLATFORMS[p].short}`, value: fmt.num(S.indep[p] || 0), sub: 'Fragmentation test (25+ = 5)', color: PCOL[p] })).slice(0, 2),
@@ -213,7 +215,7 @@ async function viewRubric(ctx) {
       ${ui.panel({ title: 'Top 15 by Broad Sky fit', sub: 'Across all company screens. Select a row for the criterion breakdown, intro path and first-call script.', body: '<div data-top></div>', foot: ui.source(SRC_POOLS, null, 'Sept 2026') })}
     </div>
     <div class="mt-12"></div>
-    ${ui.panel({ title: 'Every target, scored', sub: 'Sort any column; export the scored pipeline to CSV.', body: '<div data-f></div><div data-t></div>', foot: ui.source(SRC_POOLS, null, 'Sept 2026') + `<span>Rubric: ${esc(SRC_METH)}</span>` })}
+    ${ui.panel({ title: 'Every target, scored', sub: 'Ranked by Broad Sky fit. Switch to the top 15 for the call list; sort any column; export the scored pipeline to CSV.', actions: '<div data-top15></div>', body: '<div data-f></div><div data-t></div>', foot: ui.source(SRC_POOLS, null, 'Sept 2026') + `<span>Rubric: ${esc(SRC_METH)}</span>` })}
   </div>`;
   const root = el.querySelector('.m-bsp');
   root.querySelectorAll('.bsp-cr').forEach(x => x.onclick = () => { const c = b.criteria.find(k => k.id === x.dataset.crit); openInsp(ctx, { title: esc(c.criterion), color: COLOR, sub: `Weight ${c.weight_pct}%`, sections: [
@@ -242,10 +244,13 @@ async function viewRubric(ctx) {
     { key: 'q', label: 'Search target or town', type: 'search' },
     { key: 'p', label: 'Company', type: 'select', options: pools.map(p => ({ value: p, label: PLATFORMS[p].short })) },
     { key: 'g', label: 'Gate', type: 'select', options: ['Priority', 'Watch list', 'Pass', 'Held out'] },
-    { key: 'top', label: 'Top 15 only', type: 'toggle' },
-  ], st => { const q = (st.q || '').toLowerCase(); let r = allRows.filter(x => (!st.p || x._p === st.p) && (!st.g || x._gate === st.g) && (!q || `${x.company} ${x._loc}`.toLowerCase().includes(q))); if (st.top) r = r.filter(x => x._rank && x._rank <= 15); tbl.update(r); f.setCount(`${r.length} targets`); });
+  ], st => draw(st));
+  // Top 15 switch: the call list (ranks 1–15 by Broad Sky fit) or every scored target
+  let top15 = params.top === '15' || params.top === '1';
+  const draw = (st = f.state) => { const q = (st.q || '').toLowerCase(); let r = allRows.filter(x => (!st.p || x._p === st.p) && (!st.g || x._gate === st.g) && (!q || `${x.company} ${x._loc}`.toLowerCase().includes(q))); if (top15) r = r.filter(x => x._rank && x._rank <= 15); tbl.update(r); f.setCount(top15 ? `${r.length} of the top 15` : `${r.length} targets`); };
+  ui.seg(root.querySelector('[data-top15]'), [{ value: 'top', label: 'Top 15' }, { value: 'all', label: `All ${allRows.length}` }], top15 ? 'top' : 'all', v => { top15 = v === 'top'; draw(); });
   tbl = ui.table(root.querySelector('[data-t]'), { columns: cols, rows: allRows, pageSize: 25, exportName: 'broad_sky_fit_scored_pipeline', sortKey: '_score', onRow: r => openTarget(ctx, b, r) });
-  f.setCount(`${allRows.length} targets`);
+  draw();
   if (params.t) { const r = all.find(x => x.id === params.t); if (r) openTarget(ctx, b, r); }
 }
 

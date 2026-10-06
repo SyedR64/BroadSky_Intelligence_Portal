@@ -2,7 +2,7 @@
    record fields, the est. badge, and a post-render pass that turns the console's
    textual "est." markers into .sys-est badges. Module renderers call these at the
    source; Frame.humanize stays the safety net. */
-import { Frame } from '../assets/frame.js?v=20261006122625';
+import { Frame } from '../assets/frame.js?v=20261006134218';
 
 export const EST = '<span class="sys-est">est.</span>';
 export const ILLUS = '<span class="sys-est sys-est--illus">illustrative</span>';
@@ -17,10 +17,10 @@ const MORE = {
   financial_picture: 'financial picture', estimate_table: 'estimate table', manifest: 'dataset manifest', collections: 'product collections', products: 'product catalogue',
 };
 const SUFFIX = [
-  [/_usd_m$/, ' ($M)'], [/_usd_k$/, ' ($K)'], [/_usd_000s$/, ' ($K)'], [/_usd_bn$/, ' ($B)'], [/_usd$/, ' ($)'], [/_gbp$/, ' (£)'], [/_gbp_(\d{4})$/, ' (£, $1)'],
+  [/_usd_m$/, ' ($M)'], [/_usd_k$/, ' ($K)'], [/_usd_000s$/, ' ($K)'], [/_usd_thousands$/, ' ($K)'], [/_usd_approx$/, ' ($, approx.)'], [/_usd_bn$/, ' ($B)'], [/_usd$/, ' ($)'], [/_gbp$/, ' (£)'], [/_gbp_(\d{4})$/, ' (£, $1)'],
   [/_pct$/, ' (%)'], [/_000s$/, ' (thousands)'], [/_mi$/, ' (miles)'], [/_yrs?$/, ' (years)'], [/_count$/, ' count'],
 ];
-const WORDS = { usd: 'USD', ebitda: 'EBITDA', ceo: 'CEO', cfo: 'CFO', sba: 'SBA', ppp: 'PPP', sec: 'SEC', adv: 'ADV', nci: 'NCI', fy: 'FY', ma: 'MA', pe: 'PE', bdc: 'BDC', llc: 'LLC', gbp: 'GBP', hq: 'HQ', ev: 'EV', d: 'D', a: 'A', and: 'and', of: 'of', rfp: 'RFP', rfps: 'RFPs', nyc: 'NYC', nj: 'NJ', pa: 'PA', ct: 'CT', ri: 'RI', dc: 'DC', ny: 'NY', de: 'DE', md: 'MD', va: 'VA', mo: 'MO', uk: 'UK', us: 'US', naics: 'NAICS', cbp: 'CBP', llp: 'LLP', inc: 'Inc.', ev: 'EV', o: 'O', m: 'M', coinvest: 'co-invest', l2: 'Level 2', level2: 'Level 2', yr: 'year', yrs: 'years', num: 'number', avg: 'average', qty: 'quantity', pct: '%', ts: 'Thomas Scientific', bsp: 'Broad Sky', pp: 'Punctual Pros', cet: 'CET', fl: 'Frontline', fh: 'Fair Harbor', bpi: 'BPI', id: 'ID', url: 'link', est: 'est.', approx: 'approx.', yoy: 'YoY', ltv: 'LTV', cac: 'CAC', roi: 'ROI', kpi: 'KPI', osha: 'OSHA', dol: 'DOL', ftes: 'FTEs', fte: 'FTE', mw: 'MW', wwtp: 'wastewater plant', gm: 'GM', ar: 'AR' };
+const WORDS = { aum: 'AUM', bsp: 'BSP', usd: 'USD', ebitda: 'EBITDA', ceo: 'CEO', cfo: 'CFO', sba: 'SBA', ppp: 'PPP', sec: 'SEC', adv: 'ADV', nci: 'NCI', fy: 'FY', ma: 'MA', pe: 'PE', bdc: 'BDC', llc: 'LLC', gbp: 'GBP', hq: 'HQ', ev: 'EV', d: 'D', a: 'A', and: 'and', of: 'of', rfp: 'RFP', rfps: 'RFPs', nyc: 'NYC', nj: 'NJ', pa: 'PA', ct: 'CT', ri: 'RI', dc: 'DC', ny: 'NY', de: 'DE', md: 'MD', va: 'VA', mo: 'MO', uk: 'UK', us: 'US', naics: 'NAICS', cbp: 'CBP', llp: 'LLP', inc: 'Inc.', ev: 'EV', o: 'O', m: 'M', coinvest: 'co-invest', l2: 'Level 2', level2: 'Level 2', yr: 'year', yrs: 'years', num: 'number', avg: 'average', qty: 'quantity', pct: '%', ts: 'Thomas Scientific', bsp: 'Broad Sky', pp: 'Punctual Pros', cet: 'CET', fl: 'Frontline', fh: 'Fair Harbor', bpi: 'BPI', id: 'ID', url: 'link', est: 'est.', approx: 'approx.', yoy: 'YoY', ltv: 'LTV', cac: 'CAC', roi: 'ROI', kpi: 'KPI', osha: 'OSHA', dol: 'DOL', ftes: 'FTEs', fte: 'FTE', mw: 'MW', wwtp: 'wastewater plant', gm: 'GM', ar: 'AR' };
 
 /** Dataset id or file name → human name ("pp_sales_pa_a" → "Punctual Pros deed records (PA)"). */
 export function dataset(id) {
@@ -178,3 +178,40 @@ export function targets(items) {
 
 /** Frame.humanize passthrough for modules that host third-party text (the theater captions). */
 export const humanize = root => Frame.humanize(root);
+
+/* ── one h1 pattern for every portal view ─────────────────────────────────────
+   "<Module name> · <view name in sentence case>"; company modules lead with the
+   company name ("Punctual Pros · operating picture"). Renderers keep writing their
+   own pageHead titles; retitle() runs after every render (app.html) and rewrites
+   the view's first h1 so every module reads the same way. Proper nouns and
+   acronyms keep their case; everything else is lower case after the dot. */
+export const VIEW_TITLES = {
+  'home/overview': 'portfolio overview', 'home/firm': 'Broad Sky profile',
+  'bsp/deals': 'deal ledger', 'bsp/patterns': 'deal patterns', 'bsp/rubric': 'acquisition rubric', 'bsp/network': 'deal network',
+  'cet/overview': 'operating picture', 'cet/opportunities': 'opportunity radar', 'cet/wastewater': 'wastewater accounts', 'cet/territory': 'territory fit', 'cet/transfers': 'property transfers', 'cet/targets': 'add-on targets', 'cet/filings': 'filings and financials',
+  'pp/overview': 'operating picture', 'pp/weather': 'weather and demand', 'pp/movers': 'new-mover marketing', 'pp/territory': 'territory and expansion', 'pp/market': 'market and competitors', 'pp/targets': 'add-on targets', 'pp/filings': 'filings and financials',
+  'fl/overview': 'operating picture', 'fl/amlaw': 'AM Law account map', 'fl/midsize': 'mid-size firm targets', 'fl/targets': 'add-on targets', 'fl/filings': 'filings and financials',
+  'ts/overview': 'operating picture', 'ts/accounts': 'accounts', 'ts/sites': 'site explorer', 'ts/targets': 'add-on targets', 'ts/filings': 'filings and financials',
+  'bpi/overview': 'operating picture', 'bpi/opportunities': 'growth opportunities', 'bpi/benchmarks': 'public-affairs comparables', 'bpi/filings': 'filings and financials',
+  'fh/overview': 'operating picture', 'fh/opportunities': 'growth opportunities', 'fh/benchmarks': 'public comparables', 'fh/filings': 'filings and financials', 'fh/market': 'Manhattan home sales',
+  'ma/overview': 'cross-portfolio overview', 'ma/pipeline': 'add-on pipeline', 'ma/theses': 'company theses', 'ma/rivals': 'rival companies', 'ma/valuation': 'valuation benchmarks', 'ma/whitespace': 'white space',
+  'cases/timeline': 'case timelines', 'cases/levers': 'value-creation levers', 'cases/sequence': 'the Punctual Pros sequence', 'cases/exits': 'entry to exit',
+  'pe/landscape': 'sponsor landscape', 'pe/deals': 'deal flow, 2025 to 2026', 'pe/heatmap': 'sector heatmap', 'pe/comparables': 'portfolio company comparables',
+  'national/scorer': 'county scorer', 'national/phases': 'Punctual Pros phases on the national map', 'national/markets': 'metro markets', 'national/method': 'method, sources and coverage',
+  'fin/portfolio': 'portfolio financial picture', 'fin/deal': 'value and exit scoreboard', 'fin/explorer': 'filings explorer', 'fin/comps': 'public comparables', 'fin/rivals': 'rival company financials', 'fin/methods': 'methods and gaps',
+  'techos/overview': 'program overview', 'techos/evidence': 'valuation evidence', 'techos/roadmap': 'OS roadmap', 'techos/calculator': 'value-creation calculator',
+  'theater/play': 'cinematic map scenes', 'briefing/play': 'executive briefing',
+};
+const KEEP_CASE = /^(?:[A-Z]{2,}|AM|OS|Broad|Punctual|Manhattan|New|Thomas|Frontline|Fair)\b/;
+/** Sentence-case a view name: first letter lower unless it starts with an acronym or a proper noun. */
+export const sentence = s => { const t = String(s || '').replace(/\s*&\s*/g, ' and ').replace(/\s*→\s*/g, ' to ').trim(); return KEEP_CASE.test(t) ? t : t.charAt(0).toLowerCase() + t.slice(1); };
+/** The h1 text for a module view. */
+export const viewTitle = (m, v) => `${m.name} · ${VIEW_TITLES[`${m.id}/${v.id}`] || sentence(v.name)}`;
+/** Rewrite the first h1 under root to the shared pattern (idempotent; safe inside a MutationObserver). */
+export function retitle(root, m, v) {
+  if (!root || !m || !v) return;
+  const h = root.querySelector('.page-head h1, .side-head h1'); // the 3D theater's h1 is a per-scene caption, not a page title: left alone
+  if (!h) return;
+  const want = viewTitle(m, v);
+  if (h.textContent !== want) { h.textContent = want; h.dataset.viewTitle = '1'; }
+}

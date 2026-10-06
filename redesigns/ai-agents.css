@@ -137,14 +137,13 @@
 .ag-cat{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:20px;align-items:start;margin-top:18px}
 .ag-cat>*{min-width:0}
 .ag-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-/* .ag-card is a .sys-card rendered as a <button>: only the button reset and the selectable state live here */
-.ag-card{width:100%;text-align:left;font:inherit;cursor:pointer}
-.ag-card:hover{border-color:var(--sys-line-2);box-shadow:var(--sys-sh-2);transform:translateY(-1px)}
-.ag-card[aria-pressed="true"]{border-color:var(--sys-ink);box-shadow:0 0 0 3px color-mix(in srgb,var(--sys-ink) 12%,transparent),var(--sys-sh-2)}
+/* catalog cards are .sys-card.sys-card--link rendered as <button>: only the button reset and the selected state live here */
+.ag-cards>.sys-card{width:100%;text-align:left;font:inherit;cursor:pointer}
+.ag-cards>.sys-card[aria-pressed="true"]{border-color:var(--sys-ink);box-shadow:0 0 0 3px color-mix(in srgb,var(--sys-ink) 12%,transparent),var(--sys-sh-2)}
 .c-top{display:flex;align-items:center;gap:8px;font:500 11.5px var(--sys-mono);color:var(--sys-mute)}
 .c-co{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--sys-ink-2)}
 .c-wave{margin-left:auto;text-align:right}
-.ag-card h3{font-size:16px;font-weight:700;line-height:1.25;letter-spacing:var(--sys-tr-title)}
+.ag-cards>.sys-card h3{font-size:16px;font-weight:700;line-height:1.25;letter-spacing:var(--sys-tr-title)}
 .flow{display:grid;grid-template-columns:auto 1fr auto 1fr auto;align-items:center}
 .fn{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:var(--sys-r-xs);font:600 10.5px var(--sys-mono);letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
 .fn svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -153,7 +152,7 @@
 .fn-h{background:color-mix(in srgb,var(--ag-human) 13%,transparent);color:var(--ag-human)}
 .fl{position:relative;height:2px;margin:0 4px;overflow:hidden;border-radius:2px;background:repeating-linear-gradient(90deg,var(--sys-line-2) 0 5px,transparent 5px 9px)}
 .fl::after{content:"";position:absolute;top:0;left:-30%;width:30%;height:100%;opacity:0;background:linear-gradient(90deg,transparent,var(--sys-ink),transparent);animation:ag-flow 2.4s linear infinite}
-.ag-card:hover .fl::after,.ag-card[aria-pressed="true"] .fl::after{opacity:1}
+.ag-cards>.sys-card:hover .fl::after,.ag-cards>.sys-card[aria-pressed="true"] .fl::after{opacity:1}
 @keyframes ag-flow{to{left:100%}}
 .c-trig{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;color:var(--sys-ink-2)}
 .c-trig b{color:var(--sys-ink)}
@@ -233,10 +232,10 @@
 .w-bar{position:absolute;top:4px;bottom:4px;display:flex;align-items:center;padding:0 10px;overflow:hidden;white-space:nowrap;border-radius:var(--sys-r-xs);background:var(--sys-ink);font:600 11px var(--sys-mono);color:var(--sys-on-ink)}
 .w-mat{position:absolute;top:-3px;bottom:-3px;width:0;border-left:2px dashed var(--sys-bad)}
 .w-mat-key{display:inline-block;width:0;height:12px;margin-right:6px;border-left:2px dashed var(--sys-bad);vertical-align:-1px}
-.w-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-/* wave pills are .sys-chip[data-co]; long agent names may wrap inside the chip */
-.w-pills .sys-chip{white-space:normal;text-align:left;min-height:28px;padding-block:4px}
-.w-pills .sys-chip.w-moved{border-color:color-mix(in srgb,var(--sys-warn) 40%,transparent);background:color-mix(in srgb,var(--sys-warn) 8%,var(--sys-surface))}
+.w-chips{gap:6px;margin-top:12px}
+/* wave chips are .sys-chip[data-co] in .sys-chips; long agent names may wrap inside the chip */
+.w-chips .sys-chip{white-space:normal;text-align:left;min-height:28px;padding-block:4px}
+.w-chips .sys-chip.w-moved{border-color:color-mix(in srgb,var(--sys-warn) 40%,transparent);background:color-mix(in srgb,var(--sys-warn) 8%,var(--sys-surface))}
 .w-gate,.w-note{display:flex;gap:8px;margin-top:12px;font-size:13px;color:var(--sys-ink-2)}
 .w-gate b,.w-note b{flex:none;height:fit-content;padding:3px 6px;border-radius:5px;font:600 10.5px var(--sys-mono);text-transform:uppercase}
 .w-gate b{color:var(--sys-warn);background:color-mix(in srgb,var(--sys-warn) 12%,transparent)}

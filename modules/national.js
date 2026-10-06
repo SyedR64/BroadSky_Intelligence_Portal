@@ -5,7 +5,7 @@
          (OMB July 2023 metro crosswalk), data/research/pp_nationwide.json (Punctual Pros phases 1–4).
    All scores are computed client-side from percentile ranks; every score is a modelled estimate.
    ═══════════════════════════════════════════════════════════════════════════ */
-import { EST } from './copy.js?v=20261006122625';
+import { EST } from './copy.js?v=20261006134218';
 
 const COLOR = 'var(--c-pp)';
 const PP_HEX = '#f08a3c';
@@ -22,14 +22,20 @@ const FACTORS = [
   { id: 'climate', label: 'Climate demand', hint: 'Normal heating plus cooling degree days (HVAC run time)', vint: 'NOAA 1991–2020', w: 10, fields: ['hdd_normal_1991_2020', 'cdd_normal_1991_2020'] },
   { id: 'comp', label: 'Competitor density', hint: 'Fewer HVAC, plumbing and electrical contractors per 10,000 homes scores higher', vint: 'CBP 2022', w: 10, fields: ['hvac_plumbing_electrical_establishments', 'housing_units'] },
   { id: 'growth', label: 'Population growth', hint: 'Population change July 2020 to July 2024', vint: 'PEP V2024', w: 10, fields: ['pop_growth_2020_2024'] },
+  { id: 'adj', label: 'Adjacency', hint: 'Full credit within 30 miles of a Punctual Pros hub county (PA core, Ocean and Monmouth NJ), none beyond 150 miles', vint: 'Gazetteer 2023 · plan Oct 2026', w: 0, fields: ['lat', 'lon'] },
 ];
+/* Punctual Pros hub counties for the adjacency input: the Phase 1 core (PA) plus the Horvath Home Services counties (NJ) */
+const HUB_NJ = ['Ocean', 'Monmouth'];
 const DEFAULT_W = Object.fromEntries(FACTORS.map(f => [f.id, f.w]));
 const PRESETS = [
   { id: 'balanced', label: 'Balanced', w: DEFAULT_W },
   { id: 'aging', label: 'Aging owner stock', w: { age: 30, owner: 25, permits: 0, sales: 15, income: 15, climate: 10, comp: 5, growth: 0 } },
   { id: 'growth', label: 'Growth markets', w: { age: 0, owner: 10, permits: 25, sales: 20, income: 10, climate: 5, comp: 5, growth: 25 } },
   { id: 'hvac', label: 'HVAC climate', w: { age: 15, owner: 15, permits: 5, sales: 10, income: 10, climate: 35, comp: 5, growth: 5 } },
+  /* the nationwide plan's own argument: older housing stock, heating and cooling run time, and route density next to the hubs it already runs */
+  { id: 'thesis', label: 'Punctual Pros thesis', w: { age: 30, owner: 5, permits: 0, sales: 5, income: 10, climate: 20, comp: 0, growth: 0, adj: 30 } },
 ];
+const THESIS = PRESETS.find(p => p.id === 'thesis');
 const BINS = [
   { min: 0.95, label: 'Top 5%', hex: '#fcfdbf' },
   { min: 0.90, label: 'Top 10%', hex: '#fe9f6d' },
@@ -128,7 +134,14 @@ async function loadModel(ctx) {
   }
   for (const r of rows) r._cbsa = cbsaOf.get(r.fips) || null;
   const phases = buildPhases(rows, pn, metros);
-  MODEL = { meta, rows, byFips, metros, cbsaMeta: cbsa?.meta || null, pn, phases, V, natPace, srcOf, loadMs: Math.round(performance.now() - t0) };
+  // adjacency: great-circle distance to the nearest Punctual Pros hub county, inverted percentile (closer = higher)
+  const hubs = rows.filter(r => (r._phase === 1 && phases[0]?.basis.get(r.fips) === 'Punctual Pros core (Phase 1 source list)') || (r.state === 'NJ' && HUB_NJ.includes(String(r.county_name).replace(/\s+County$/i, ''))));
+  const km = (a, b) => { const R = 6371, rad = Math.PI / 180, dLa = (b.lat - a.lat) * rad, dLo = (b.lon - a.lon) * rad; const h = Math.sin(dLa / 2) ** 2 + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLo / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(h)); };
+  for (const r of rows) r._adjKm = hubs.length && fin(r.lat) && fin(r.lon) ? Math.min(...hubs.map(h => km(r, h))) : null;
+  // not a percentile: the plan's own radius. Full credit inside the 30-mile density tuck-in radius, falling to zero at 150 miles (the Phase 2 reach)
+  const ADJ_IN = 30 / 0.621371, ADJ_OUT = 150 / 0.621371;
+  for (const r of rows) r._p.adj = r._adjKm == null ? NaN : r._adjKm <= ADJ_IN ? 1 : r._adjKm >= ADJ_OUT ? 0 : 1 - (r._adjKm - ADJ_IN) / (ADJ_OUT - ADJ_IN);
+  MODEL = { meta, rows, byFips, metros, cbsaMeta: cbsa?.meta || null, pn, phases, hubs, V, natPace, srcOf, loadMs: Math.round(performance.now() - t0) };
   score(MODEL);
   return MODEL;
 }
@@ -148,9 +161,15 @@ function score(M) {
   M.scored = scored;
   M.version = (M.version || 0) + 1;
 }
+/* national rank of every county under a given weight set, without touching the live scores (fips → rank) */
+function rankWith(M, w) {
+  const out = []; for (const r of M.rows) { let s = 0, t = 0; for (const f of FACTORS) { const wi = w[f.id] || 0; if (!wi) continue; const p = r._p[f.id]; if (isNaN(p)) continue; s += wi * p; t += wi; } if (t > 0) out.push([r.fips, s / t]); }
+  out.sort((a, b) => b[1] - a[1]); return new Map(out.map(([f], i) => [f, i + 1]));
+}
+const median = a => { const v = a.filter(fin).map(Number).sort((x, y) => x - y); return v.length ? (v.length % 2 ? v[(v.length - 1) / 2] : (v[v.length / 2 - 1] + v[v.length / 2]) / 2) : null; };
 const scoreHtml = (fmt, r) => r._score == null ? '—' : `${fmt.score(r._score, PP_HEX)}${EST}`;
 const isCustom = () => FACTORS.some(f => (S.weights[f.id] || 0) !== DEFAULT_W[f.id]);
-const wName = () => { const p = PRESETS.find(p => FACTORS.every(f => (p.w[f.id] || 0) === (S.weights[f.id] || 0))); return p ? `${p.label.toLowerCase()} weights` : 'custom weights'; };
+const wName = () => { const p = PRESETS.find(p => FACTORS.every(f => (p.w[f.id] || 0) === (S.weights[f.id] || 0))); return p ? `${p.id === 'thesis' ? p.label : p.label.toLowerCase()} weights` : 'custom weights'; };
 
 /* ═══ phases: Punctual Pros Phase 1–4 geographies mapped onto county FIPS ═══ */
 function buildPhases(rows, pn, metros) {
@@ -235,6 +254,7 @@ const factorRaw = (M, f, r, fmt) => ({
   climate: fin(r._dd) ? `${fmt.num(r._dd)} degree days (${pctTxt(r.cdd_hdd_proxy)} cooling)` : '—',
   comp: fin(r._dens) ? `${fmt.num(r._dens, 1)} per 10k homes (${fmt.num(r.hvac_plumbing_electrical_establishments)} firms)` : '—',
   growth: signed(r.pop_growth_2020_2024),
+  adj: fin(r._adjKm) ? (r._adjKm < 1 ? 'a Punctual Pros hub county' : `${fmt.num(r._adjKm * 0.621371)} mi from the nearest Punctual Pros hub county`) : '—',
 }[f.id]);
 function nextStep(r) {
   const ab = r.authority_brands_presence;
@@ -269,6 +289,25 @@ const fitUS = map => { const go = () => { if (map._nxDead) return; map.fitBounds
 const kill = map => { map._nxDead = true; map.off(); map.remove(); };
 const radiusHU = hu => Math.min(22, 2 + Math.sqrt(Math.max(0, hu || 0) / 1000) * 0.45);
 const legendHtml = (esc, title, items) => `<div class="m-national-lg"><b>${esc(title)}</b>${items.map(i => `<span><i style="background:${i.hex}"></i>${esc(i.label)}</span>`).join('')}</div>`;
+/* Source names and vintages carry raw field keys and file names (GEO_ID, LAST_UPDATED, co2025a.txt …): plain English for the method view */
+const SRC_TEXT = [
+  [/\s*\(county rows, GEO_ID [^)]*\)/, ' (county rows)'], [/,\s*table-based summary file/, ', summary file'],
+  [/\s*\(co-est2024-alldata\.csv\)/, ''], [/\s*\(cbp22co\)/, ''], [/,\s*county file\b/, ', county file'],
+  [/\(HDD element 25, CDD element 26, period code 0010 = 1991-2020\)/, '(heating and cooling degree-day normals, 1991 to 2020)'],
+  [/\(All Residential, not seasonally adjusted, monthly rows\)/, '(all residential, not seasonally adjusted, monthly)'],
+];
+const VINT_TEXT = [
+  [/^ACS (\d{4}) 5-yr$/, (m, y) => `ACS ${+y - 4} to ${y}, five-year estimates`],
+  [/^V(\d{4}) \(July 1 (\d{4})-(\d{4})\)$/, (m, v, a, b) => `Vintage ${v} (July 1, ${a} to ${b})`],
+  [/^co\d{4}a\.txt \((\d{4}) annual, Jan-Dec; final file - \d{4} is complete\)$/, (m, y) => `${y} annual, January to December (final)`],
+  [/^co\d{4}y\.txt \(Jan-(\w{3}) (\d{4}) cumulative\)$/, (m, mo, y) => `January to ${({ Jan: 'January', Feb: 'February', Mar: 'March', Apr: 'April', May: 'May', Jun: 'June', Jul: 'July', Aug: 'August', Sep: 'September', Oct: 'October', Nov: 'November', Dec: 'December' })[mo] || mo} ${y}, cumulative`],
+  [/^months ending (\d{4}-\d{2}-\d{2})\s*\.\.\s*(\d{4}-\d{2}-\d{2}); file LAST_UPDATED (\d{4}-\d{2}-\d{2}).*$/, (m, a, b, u) => `12-month windows ending ${isoWords(a)} through ${isoWords(b)}; file last updated ${isoWords(u)}`],
+  [/^(\d{4})-(\d{4}) normals, files (\d{4})(\d{2})(\d{2})$/, (m, a, b, y, mo, d) => `${a} to ${b} normals, files dated ${isoWords(`${y}-${mo}-${d}`)}`],
+  [/^as listed on (\d{4}-\d{2}-\d{2})$/, (m, d) => `as listed on ${isoWords(d)}`],
+];
+const isoWords = iso => { const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(String(iso || '').trim()); if (!m) return String(iso || '—'); const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'][+m[2] - 1]; return m[3] ? `${mon} ${+m[3]}, ${m[1]}` : `${mon} ${m[1]}`; };
+const plainSrc = t => SRC_TEXT.reduce((x, [rx, to]) => x.replace(rx, to), String(t || '')).replace(/\b([A-Z]+)_([A-Z_]+)\b/g, m => m.toLowerCase().replace(/_/g, ' ')).replace(/\b((?:19|20)\d\d)-((?:19|20)\d\d)\b/g, '$1 to $2');
+const plainVint = t => { const v = String(t || '').trim(); for (const [rx, fn] of VINT_TEXT) if (rx.test(v)) return v.replace(rx, fn); return plainSrc(v).replace(/\b(\d{4}-\d{2}-\d{2})\b/g, d => isoWords(d)); };
 const RAW_LBL = { fips: 'FIPS code', state: 'state', county_name: 'county name', lat: 'latitude', lon: 'longitude', permits_units_2024: 'units permitted 2024' };
 const missingNote = (ui) => `<div class="m-national">${ui.note('The national county table is not yet available. Run the county builder to publish it, then reload.', 'warn')}</div>`;
 
@@ -283,6 +322,7 @@ async function scorer(ctx) {
   el.innerHTML = `<div class="m-national">
     <div id="nx-head"></div>
     <div id="nx-kpis"></div>
+    <div class="mt-12" id="nx-why"></div>
     <div class="grid grid-side mt-12">
       ${ui.panel({ title: 'Weights', sub: 'Relative weights · the score renormalises over the inputs each county has', actions: `<button class="btn xs" id="nx-reset">Reset</button>`, body: `<div class="m-national-presets" id="nx-presets"></div><div class="m-national-sliders" id="nx-sl"></div>`, foot: `<span class="src">Inputs: ACS 2019–23 · PEP V2024 · Census building permits 2025 + ${esc(V.p26)} · Redfin ${esc(V.sales)} · NOAA 1991–2020 normals · CBP 2022</span>` })}
       ${ui.panel({ title: 'County score map', sub: 'Colour = score band (national percentile) · size = housing units (ACS 2019–23) · click a county', actions: `<div id="nx-mode"></div>`, body: `<div class="map tall" id="nx-map" style="min-height:700px"></div>`, flush: true, foot: ui.source('National county table: Census, Redfin, NOAA, CBP · OMB metro crosswalk', 'https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2023_Gazetteer/', 'Oct 2026') })}
@@ -355,6 +395,30 @@ async function scorer(ctx) {
     ]);
     $('#nx-note').innerHTML = ui.note(`<b>How the score works.</b> Each input is converted to the county’s percentile among all US counties that report it (contractor density is inverted: fewer contractors per home scores higher). The score is the weighted average of those percentiles on a 0–100 scale; a county missing an input has that weight spread over the rest, and its inspector says so. Scores are model outputs, so every score carries an est. badge. Full formulas, vintages and coverage are on the <a href="#/national/method">Method</a> tab.`, 'brand');
   };
+  // why the Pennsylvania core ranks mid-pack, and the same counties on the plan's own weights (both views side by side)
+  const drawWhy = () => {
+    const core = (M.hubs || []).filter(r => r.state === 'PA'); if (!core.length) { $('#nx-why').innerHTML = ''; return; }
+    const bal = rankWith(M, DEFAULT_W), th = rankWith(M, THESIS.w), n = M.scored.length;
+    const medRank = rk => median(core.map(r => rk.get(r.fips)));
+    const pct = k => median(core.map(r => r._p[k])), pp = v => { if (!fin(v)) return '—'; const n = Math.round(v * 100), t = n % 100; return `${n}${t >= 11 && t <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th'}`; };
+    const band = v => !fin(v) ? 'unknown' : v < 1 / 3 ? 'in the bottom third' : v < 2 / 3 ? 'in the middle third' : 'in the top third';
+    const ownP = pct('owner'), ownV = median(core.map(r => r.owner_occupied_share)), ownUS = median(M.rows.map(r => r.owner_occupied_share));
+    const pace = median(core.map(r => r._trend)), paceP = median(core.map(r => r._permParts.trend));
+    const top50 = (rk, sts) => M.rows.filter(r => sts.includes(r.state) && (rk.get(r.fips) || 1e9) <= 50).length;
+    const bestPaNj = rk => M.rows.filter(r => ['PA', 'NJ'].includes(r.state) && rk.get(r.fips)).sort((a, b) => rk.get(a.fips) - rk.get(b.fips))[0];
+    const bB = bestPaNj(bal), bT = bestPaNj(th);
+    const card = (title, rk, body, preset) => `<div class="m-national-why-c"><div class="m-national-why-h"><b>${esc(title)}</b>${fmt.chip(`core median #${fmt.num(medRank(rk))} of ${fmt.num(n)}`, preset === 'thesis' ? PP_HEX : null)}</div><div class="small text-2">${body}</div><div class="row wrap gap-4 mt-8"><span class="dim small">PA and NJ counties in the national top 50: <b>${fmt.num(top50(rk, ['PA', 'NJ']))}</b> · best: ${bestPaNj(rk) ? `${esc(bestPaNj(rk)._name)} #${fmt.num(rk.get(bestPaNj(rk).fips))}` : '—'}</span><button class="btn xs" data-why="${preset}">${preset === 'thesis' ? 'Score on the Punctual Pros thesis' : 'Score on balanced weights'}</button></div></div>`;
+    $('#nx-why').innerHTML = ui.panel({
+      title: 'Why the Pennsylvania core ranks mid-pack',
+      sub: `The nine Phase 1 core counties (${esc(core.map(r => String(r.county_name).replace(/\s+County$/i, '')).join(', '))}) on two weight sets. Ranks are national, across ${fmt.num(n)} scored counties; every score is an estimate.`,
+      body: `<div class="m-national-why">${card('Balanced weights: the market view', bal,
+        `Two inputs hold the core back. <b>Owner share</b>: a median ${pctTxt(ownV)} of homes are owner-occupied, ${fin(ownV) && fin(ownUS) && ownV < ownUS ? 'below' : 'close to'} the median US county (${pctTxt(ownUS)}), because rural counties everywhere own more; that is the ${pp(ownP)} percentile. <b>2026 permit pace</b>: January to August 2026 permits run ${signed(pace, 0)} against the US pace, the ${pp(paceP)} percentile, so building momentum also sits ${band(paceP)}. Older homes (${pp(pct('age'))} percentile) and income (${pp(pct('income'))}) help, but not enough to lift the core into the top quartile on market-wide weights.`, 'balanced')}
+      ${card('Punctual Pros thesis: the plan’s view', th,
+        `The nationwide plan argues from <b>older housing</b> (30% weight), <b>heating and cooling demand</b> (20%) and <b>adjacency</b> to the hubs Punctual Pros already runs (30%), with income, owner share and sales as tie-breakers. On those weights the same counties score on what route density and furnace and boiler replacement actually depend on, and the plan’s next counties surface in Pennsylvania and New Jersey first. Adjacency is the one input built for the plan: full credit within 30 miles of a core or Toms River hub county, none beyond 150 miles.`, 'thesis')}</div>`,
+      foot: ui.source('National county table (ACS 2019–23, Census building permits Jan–Aug 2026) · Punctual Pros nationwide plan', null, 'Oct 2026'),
+    });
+    el.querySelectorAll('[data-why]').forEach(b => b.onclick = () => { S.weights = { ...(b.dataset.why === 'thesis' ? THESIS.w : DEFAULT_W) }; lsSet(S.weights); drawSliders(); recompute(); });
+  };
   // map
   const map = maps.create($('#nx-map'), { center: [38.6, -96.5], zoom: 4, minZoom: 3 }); fitUS(map);
   const layer = L.layerGroup().addTo(map); let ring = null;
@@ -379,7 +443,7 @@ async function scorer(ctx) {
   const onMove = debounce(() => { if (!map._nxDead && S.mapMode !== 'states') drawMap(); }, 120); map.on('zoomend moveend', onMove);
   const recompute = debounce(() => { if (map._nxDead) return; score(M); drawKpis(); drawTable(); drawMap(); }, 70);
   $('#nx-all').onclick = () => ui.exportCSV(M.rows.slice().sort((a, b) => (a._rank || 1e9) - (b._rank || 1e9)).map(r => ({ ...r, score: r._score != null ? Math.round(r._score * 10) / 10 : null, national_rank: r._rank, inputs_missing: r._miss, sales_per_100_homes: r._turn != null ? Math.round(r._turn * 100) / 100 : null, permit_pace_vs_us: r._trend != null ? Math.round(r._trend * 1000) / 1000 : null, contractors_per_10k_homes: r._dens != null ? Math.round(r._dens * 100) / 100 : null, metro: r._cbsa?.title || null, pp_phase: r._phase })), [{ key: 'national_rank' }, { key: 'fips' }, { key: 'county_name' }, { key: 'state' }, { key: 'score' }, { key: 'inputs_missing' }, { key: 'metro' }, { key: 'pp_phase' }, ...['housing_units', 'owner_occupied_share', 'pre1980_share', 'median_year_built', 'median_household_income', 'pop_growth_2020_2024', 'permits_units_2024', 'permits_units_2025ytd', 'permits_units_2026ytd', 'permits_per_1k_hu_2025', 'home_sales_12m', 'median_sale_price', 'median_dom', 'hdd_normal_1991_2020', 'cdd_normal_1991_2020', 'hvac_plumbing_electrical_establishments', 'authority_brands_presence'].map(k => ({ key: k })), { key: 'sales_per_100_homes' }, { key: 'permit_pace_vs_us' }, { key: 'contractors_per_10k_homes' }], 'national_county_scores');
-  drawSliders(); drawKpis(); drawTable(); drawMap();
+  drawSliders(); drawKpis(); drawWhy(); drawTable(); drawMap();
   // search index (top counties on default weights) + deep link
   app.index(M.scored.slice(0, 300).map(r => ({ label: r._name, sub: `County score ${Math.round(r._score)} · rank #${r._rank}`, href: `#/national/scorer?fips=${r.fips}`, kind: 'County', color: PP_HEX })));
   if (params.fips && M.byFips.get(params.fips)) { const r = M.byFips.get(params.fips); selectCounty(r); map.setView([r.lat, r.lon], 7); }
@@ -527,15 +591,16 @@ async function method(ctx) {
     climate: 'percentile of normal heating degree days + cooling degree days (base 65°F, NOAA 1991–2020)',
     comp: 'inverted percentile of (NAICS 238220 + 238210 establishments, CBP 2022) ÷ housing units × 10,000',
     growth: 'percentile of PEP July 2024 ÷ July 2020 population − 1',
+    adj: 'not a percentile: 1.0 when the county’s internal point is within 30 miles (the plan’s density tuck-in radius) of a Punctual Pros hub county (the nine Phase 1 core counties in PA, Ocean and Monmouth in NJ), falling in a straight line to 0 at 150 miles (the Phase 2 reach); weighted only in the Punctual Pros thesis preset',
   };
-  const srcRows = (meta.sources || []).map(s => ({ name: s.name, fields: s.field_group, vint: s.vintage, ret: s.retrieved, url: srcUrl(s) }));
-  if (M.cbsaMeta?.source) srcRows.push({ name: M.cbsaMeta.source.name, fields: 'metro roll-ups (county to metro area)', vint: M.cbsaMeta.source.vintage, ret: M.cbsaMeta.source.retrieved, url: M.cbsaMeta.source.url });
-  const pnMeta = M.pn?.meta; if (pnMeta) srcRows.push({ name: 'Punctual Pros nationwide plan (phases 1–4)', fields: 'phase geographies, plan targets', vint: pnMeta.generated, ret: pnMeta.generated, url: M.pn.items.find(i => i.id === 'pn-phase-1')?.source_url || null });
+  const srcRows = (meta.sources || []).map(s => ({ name: plainSrc(s.name), fields: s.field_group, vint: plainVint(s.vintage), ret: isoWords(s.retrieved), url: srcUrl(s) }));
+  if (M.cbsaMeta?.source) srcRows.push({ name: plainSrc(M.cbsaMeta.source.name), fields: 'metro roll-ups (county to metro area)', vint: plainVint(M.cbsaMeta.source.vintage), ret: isoWords(M.cbsaMeta.source.retrieved), url: M.cbsaMeta.source.url });
+  const pnMeta = M.pn?.meta; if (pnMeta) srcRows.push({ name: 'Punctual Pros nationwide plan (phases 1–4)', fields: 'phase geographies, plan targets', vint: isoWords(pnMeta.generated), ret: isoWords(pnMeta.generated), url: M.pn.items.find(i => i.id === 'pn-phase-1')?.source_url || null });
   const covFields = FIELD_ROWS(M).flatMap(([g, fs]) => fs.map(([k, l, , v]) => ({ k, l, v, c: covOf(k) })));
   el.innerHTML = `<div class="m-national">${ui.pageHead({
     title: 'Method, sources and coverage',
     sub: `<b>So what:</b> every county score is rebuilt in the browser from ${FACTORS.length} public inputs; the weakest coverage is Redfin home sales (${pctTxt(covOf('home_sales_12m'))} of counties, mostly missing in small rural ones), so rural scores lean on the other inputs and say so in the inspector.`,
-    chips: `${fmt.chip(`${fmt.num(M.rows.length)} counties`, COLOR)}${fmt.chip(`table generated ${esc(meta.generated || '—')}`)}${fmt.chip(`${srcRows.length} sources`)}`,
+    chips: `${fmt.chip(`${fmt.num(M.rows.length)} counties`, COLOR)}${fmt.chip(`table generated ${esc(isoWords(String(meta.generated || '').slice(0, 10)))}`)}${fmt.chip(`${srcRows.length} sources`)}`,
   })}
   <div class="grid grid-2">
     ${ui.panel({ title: 'Score formula', sub: 'Score = Σ (weight × percentile) ÷ Σ weights over the inputs a county has, × 100', body: `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Input</th><th class="num">Now</th><th class="num">Default</th><th style="width:52%">Formula</th><th class="num">Coverage</th></tr></thead><tbody>${FACTORS.map(f => `<tr><td><b>${esc(f.label)}</b><div class="dim small">${esc(f.vint)}</div></td><td class="num">${S.weights[f.id] || 0}</td><td class="num">${f.w}</td><td class="wrap small">${esc(FORM[f.id])}</td><td class="num">${pctTxt(factorCov(f), 1)}</td></tr>`).join('')}</tbody></table></div><div class="small text-2 mt-8">Percentiles use average ranks for ties across all ${fmt.num(M.rows.length)} counties, so 0.5 is the median US county. Score bands on the maps are national percentiles of the score itself. Metro and phase scores are housing-weighted averages of county scores. Every score is a model output and carries an est. badge.</div>`, foot: ui.source('Analyst model over the national county table', null, 'Oct 2026') })}
@@ -544,7 +609,7 @@ async function method(ctx) {
   <div class="mt-12">${ui.panel({ title: 'Sources and vintages', body: `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Source</th><th>Fields</th><th>Vintage</th><th>Retrieved</th></tr></thead><tbody>${srcRows.map(s => `<tr><td class="wrap">${s.url && /^https?:/.test(s.url) ? fmt.link(s.url, s.name) : esc(s.name)}</td><td class="wrap small text-2">${esc(String(s.fields || '').split(',').map(x => x.trim()).filter(Boolean).map(k => FIELD_ROWS(M).flatMap(([, fs]) => fs).find(f => f[0] === k)?.[1] || RAW_LBL[k] || (/\*$/.test(k) ? k.replace(/_\*$/, '').replace(/_/g, ' ') + ' fields' : k.replace(/_/g, ' '))).join(', '))}</td><td class="wrap small">${esc(s.vint || '—')}</td><td class="small">${esc(s.ret || '—')}</td></tr>`).join('')}</tbody></table></div>`, foot: ui.source('Source notes carried in each dataset', null, meta.generated) })}</div>
   <div class="grid grid-2 mt-12">
     ${ui.panel({ title: 'Derived measures', body: ui.kv({ [derived._turn]: `home sales (${esc(V.sales)}) ÷ housing units × 100`, [derived._trend]: `(${esc(V.p26)} units ÷ 2025 units) ÷ US ratio ${M.natPace.toFixed(3)} − 1; the US ratio removes the Jan–Aug seasonality`, [derived._dd]: 'HDD + CDD normals (base 65°F)', [derived._dens]: 'trade contractors ÷ housing units × 10,000 (CBP 2022 vs ACS 2019–23)', 'Metro roll-up': 'sums over member counties; score is housing-weighted; Authority Brands offices summed where the county has a count', 'Phase assignment': 'earliest phase wins when a county is named twice' }), foot: ui.source('Analyst definitions', null, 'Oct 2026') })}
-    ${ui.panel({ title: 'Caveats', body: `<ul class="m-national-cav">${(meta.caveats || []).map(c => `<li>${esc(String(c).replace(/\bnull\b/g, 'blank').replace(/HDD\/CDD\/cdd_hdd_proxy/g, 'heating and cooling degree days and the cooling share').replace(/\bcdd_hdd_proxy\b/g, 'cooling share of degree days'))}</li>`).join('')}<li>Phase 2 “Central & Eastern PA” and the whole of Phase 4 are analyst mappings of the plan’s wording, not county lists from the source.</li><li>Authority Brands counts are offices with a street address, not service territories; one office can cover several counties.</li></ul>`, scroll: true, foot: ui.source('National county table caveats · analyst notes', null, meta.generated) })}
+    ${ui.panel({ title: 'Caveats', body: `<ul class="m-national-cav">${(meta.caveats || []).map(c => `<li>${esc(String(c).replace(/\bnull\b/g, 'blank').replace(/HDD\/CDD\/cdd_hdd_proxy/g, 'heating and cooling degree days and the cooling share').replace(/\bcdd_hdd_proxy\b/g, 'cooling share of degree days').replace(/\bab_onehour\b/g, 'One Hour offices').replace(/\bab_benfranklin\b/g, 'Benjamin Franklin offices').replace(/\bab_mistersparky\b/g, 'Mister Sparky offices').replace(/\bhome_sales_12m\b/g, 'home sales over 12 months').replace(/\bZCTA\b/g, 'ZIP-code area'))}</li>`).join('')}<li>Phase 2 “Central & Eastern PA” and the whole of Phase 4 are analyst mappings of the plan’s wording, not county lists from the source.</li><li>Authority Brands counts are offices with a street address, not service territories; one office can cover several counties.</li></ul>`, scroll: true, foot: ui.source('National county table caveats · analyst notes', null, meta.generated) })}
   </div></div>`;
 }
 

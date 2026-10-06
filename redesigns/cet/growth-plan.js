@@ -2,7 +2,7 @@
    (CET growth plan, opportunity radar, wastewater-plant screen, add-on screen, filings review,
    county fit model, sponsor landscape, firm profile, GridOS evidence base, portfolio agent model).
    The page frame (top bar, concept notice, breadcrumb, footer) comes from assets/frame.js. */
-import { humanizeText } from '../../assets/frame.js?v=20261006122625';
+import { humanizeText } from '../../assets/frame.js?v=20261006134218';
 
 const NE = ['MA', 'CT', 'RI', 'NH', 'ME', 'VT'];
 const STATE_NAME = { MA: 'Massachusetts', CT: 'Connecticut', RI: 'Rhode Island', NH: 'New Hampshire', ME: 'Maine', VT: 'Vermont' };
@@ -531,6 +531,6 @@ function chat() {
     { q: 'How does CET earn a higher exit multiple?', href: '#returns', a: `<p>The multiple comes from mix. Moving from one-off hard bids to <b>~25% recurring</b> O&amp;M (SCADA and pump-station monitoring, solar and storage O&amp;M, EV charger management, NuWave efficiency) moves CET toward the premium band. PKF puts project-heavy firms at 5–6x and repeatable service at 10x+. Capstone/IMAP put typical deals at 6.8x and premium deals at 9.8x.</p><p>GridOS (est.): ${ra ? `${M(ra.investment_usd[0])}–${M(ra.investment_usd[1])} investment, ${M(ra.ebitda_impact_usd[0])}–${M(ra.ebitda_impact_usd[1])} EBITDA impact and <b>${ra.multiple_expansion_turns.join('–')} turns</b>` : '0.5–1.5 turns'} of multiple expansion.</p>` },
     { q: 'Will CET expand into New York City?', href: '#risks', a: `<p><b>No.</b> Management guidance is a New England focus with no NYC expansion, and this plan is New England only. Every number on the page, including ${M(z.revenue_usd)} at month 36, comes from the six New England states. Anything beyond would be a separate board decision, not part of this plan.</p>` },
   ];
-  const inst = H.Chat.mount(null, { persona: 'cet', mode: 'floating', theme: 'light', faq, suggestions: faq.map(f => f.q) });
+  const inst = H.Chat.mount(null, { persona: 'cet', short_name: 'CET', mode: 'floating', theme: 'light', faq, suggestions: faq.map(f => f.q) });
   H.frame?.setChat?.(inst);
 }

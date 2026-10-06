@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261006122625">
-<link rel="stylesheet" href="methodology.css?v=20261006122625">
+<link rel="stylesheet" href="../assets/system.css?v=20261006134218">
+<link rel="stylesheet" href="methodology.css?v=20261006134218">
 </head>
 <body>
 <main id="main" class="mx">
@@ -33,7 +33,8 @@
 
   <!-- 1 · hero -->
   <section class="sys-hero" aria-labelledby="h-hero">
-    <div class="sys-wrap">
+    <div class="sys-wrap mx-hero">
+      <div class="mx-hero-copy">
       <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Methodology</b> · for the Portfolio Resource Group</p>
       <h1 id="h-hero" class="sys-h1">How Broad Sky buys: <span class="sys-grad-text">the methodology, reverse-engineered</span></h1>
       <p class="sys-lead">Every disclosed Broad Sky deal since 2022, read the way a seller’s banker would read it: who sold, who advised, who lent, how fast the add-ons came. The patterns become a screening rubric, the rubric scores every add-on target in the pipeline, and the network shows who can make the introduction.</p>
@@ -41,8 +42,11 @@
         <a class="sys-btn sys-btn--accent sys-btn--lg" href="#next">See the next five</a>
         <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#rubric">Score the pipeline</a>
       </div>
-      <div class="sys-kpis" role="list" id="kpis" aria-live="polite"></div>
-      <p class="sys-src" id="kpi-src"></p>
+      </div>
+      <div class="mx-hero-side">
+        <div class="sys-kpis" role="list" id="kpis" aria-live="polite"></div>
+        <p class="sys-src" id="kpi-src"></p>
+      </div>
     </div>
   </section>
 
@@ -184,14 +188,14 @@
 </main>
 
 <script type="module">
-import { Frame } from '../assets/frame.js?v=20261006122625';
-import { Chat } from '../assets/chat.js?v=20261006122625';
-import { boot } from './methodology.js?v=20261006122625';
+import { Frame } from '../assets/frame.js?v=20261006134218';
+import { Chat } from '../assets/chat.js?v=20261006134218';
+import { boot } from './methodology.js?v=20261006134218';
 const frame = Frame.mount({ banner: true, active: 'playbooks', crumb: [{ label: 'Home', href: './' }, { label: 'Growth plans', href: 'redesigns/#growth-plans' }, { label: 'How Broad Sky buys' }] });
 const d = await boot().catch(e => { console.warn('methodology boot failed', e); return null; });
 try {
   const chat = Chat.mount(null, {
-    persona: 'portal', mode: 'floating', theme: 'light',
+    persona: 'portal', short_name: 'the method', mode: 'floating', theme: 'light',
     faq: d?.faq || [], intents: d?.intents || [],
     suggestions: ['What is Broad Sky\'s acquisition pattern?', 'Who in the network can introduce us to the top Punctual Pros target?', 'Score the pipeline with the Broad Sky rubric', 'How long until the first add-on after a anchor deal?', 'Which banks and lawyers does Broad Sky use?'],
   });

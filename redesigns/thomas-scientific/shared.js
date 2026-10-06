@@ -157,7 +157,7 @@ export function reveal() {
 /** Mount the floating concierge and hand it to the frame so Ask and the hotkey open the same widget. */
 export function mountChat(Chat, frame) {
   try {
-    const inst = Chat.mount(null, { persona: 'ts', mode: 'floating', theme: 'light', faq: FAQ, suggestions: SUGGESTIONS, greeting: 'Search the catalog, find your regional lab team, or ask about punchout, VMI, kitting and cleanroom supply.' });
+    const inst = Chat.mount(null, { persona: 'ts', short_name: 'Thomas', mode: 'floating', theme: 'light', faq: FAQ, suggestions: SUGGESTIONS, greeting: 'Search the catalog, find your regional lab team, or ask about punchout, VMI, kitting and cleanroom supply.' });
     frame?.setChat?.(inst);
     return inst;
   } catch (e) { console.warn('chat unavailable', e.message); return null; }

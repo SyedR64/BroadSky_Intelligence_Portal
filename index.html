@@ -26,9 +26,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/system.css?v=20261006122625">
-<link rel="stylesheet" href="assets/landing-page.css?v=20261006122625">
-<link rel="modulepreload" href="assets/chat.js?v=20261006122625">
+<link rel="stylesheet" href="assets/system.css?v=20261006134218">
+<link rel="stylesheet" href="assets/landing-page.css?v=20261006134218">
+<link rel="modulepreload" href="assets/chat.js?v=20261006134218">
 </head>
 <body data-page="landing">
 <main id="main">
@@ -394,23 +394,23 @@
 </main>
 
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261006122625';
-  import { Landing } from './assets/landing.js?v=20261006122625';
+  import { Frame } from './assets/frame.js?v=20261006134218';
+  import { Landing } from './assets/landing.js?v=20261006134218';
   Frame.mount({ crumb: false });
   Landing.init();
 </script>
 <script type="module">
-  import { Chat } from './assets/chat.js?v=20261006122625';
-  import { Landing } from './assets/landing.js?v=20261006122625';
+  import { Chat } from './assets/chat.js?v=20261006134218';
+  import { Landing } from './assets/landing.js?v=20261006134218';
   const host = document.querySelector('#hero-chat');
   host.querySelector('.lp-skeleton')?.remove();
   const chat = Chat.mount(host, { persona: 'portal', mode: 'inline', theme: 'light' });
   Landing.attachChat(chat);
 </script>
 <script type="module">
-  import { Counter } from './assets/counter.js?v=20261006122625';
-  import { Frame } from './assets/frame.js?v=20261006122625';
-  import { Landing } from './assets/landing.js?v=20261006122625';
+  import { Counter } from './assets/counter.js?v=20261006134218';
+  import { Frame } from './assets/frame.js?v=20261006134218';
+  import { Landing } from './assets/landing.js?v=20261006134218';
   const el = document.getElementById('hero-counter');
   if (el) Counter.mount(el, { theme: 'light', caption: 'Revenue left on the table across the portfolio so far today' })
     .then(inst => Landing.attachCounter(el, inst, Frame.humanizeText))

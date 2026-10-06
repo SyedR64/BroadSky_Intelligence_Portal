@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261006122625';
+import * as Copy from './copy.js?v=20261006134218';
 /* ═══════════════════════════════════════════════════════════════════════════
    Filings & financials — portfolio-wide financial and regulatory intelligence.
    Broad Sky's own SEC filings (Form D / ADV), each platform's public
@@ -85,7 +85,7 @@ function kfVal(fmt, k, v) {
   if (typeof v === 'number') {
     if (Number.isInteger(v) && v >= 1800 && v <= 2100 && /founded|year|(^|_)fy|date|since|vintage|period/.test(kl)) return String(v);
     if (/pct|percent|margin/.test(kl)) return `${fmt.num(v, v % 1 ? 1 : 0)}%`;
-    if (/usd_k$/.test(kl)) return fmt.money(v * 1000);
+    if (/usd_k$|usd_thousands$|usd_000s?$/.test(kl)) return fmt.money(v * 1000);
     if (/usd_m$/.test(kl)) return `$${fmt.num(v, 1)}M`;
     if (/usd|amount|sold|offering|par|value|revenue|cost|loan|debt|payroll|gav|aum|price|sales|income|proceeds|consideration|fees?/.test(kl) && Math.abs(v) >= 1000) return fmt.money(v);
     return fmt.num(v, v % 1 ? 2 : 0);
@@ -94,8 +94,8 @@ function kfVal(fmt, k, v) {
   return String(v ?? '—');
 }
 const KEY_MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const humanKey = k => String(k).replace(/_usd(_k|_m)?$/i, '').replace(/_/g, ' ').replace(/\s+/g, ' ').trim()
-  .replace(/\b((?:19|20)\d\d) (0[1-9]|1[0-2]) (0[1-9]|[12]\d|3[01])\b/g, (m, y, mo, d) => `${KEY_MON[+mo - 1]} ${+d}, ${y}`).replace(/\s*\bpct\b/g, '').trim();
+const humanKey = k => String(k).replace(/_usd(_k|_m|_thousands|_000s?)?$/i, '').replace(/_/g, ' ').replace(/\s+/g, ' ').trim()
+  .replace(/\b((?:19|20)\d\d) (0[1-9]|1[0-2]) (0[1-9]|[12]\d|3[01])\b/g, (m, y, mo, d) => `${KEY_MON[+mo - 1]} ${+d}, ${y}`).replace(/\s*\bpct\b/g, '').replace(/\b(aum|gav|bsp|ebitda|sec|ppp|sba|ev|llc|lp)\b/gi, m => m.toUpperCase()).trim().replace(/^[a-z]/, c => c.toUpperCase());
 const kfSummary = (fmt, kf, n = 4) => flatKF(kf).filter(([k]) => !/note|mapping_basis|legal_entity|signer|related_person/i.test(k)).slice(0, n).map(([k, v]) => `${humanKey(k)}: ${kfVal(fmt, k, v)}`).join(' · ');
 const kfTable = (fmt, esc, kf) => { const rows = flatKF(kf); return rows.length ? `<table><tbody>${rows.map(([k, v]) => `<tr><td class="text-2">${esc(humanKey(k))}</td><td class="n">${esc(kfVal(fmt, k, v))}</td></tr>`).join('')}</tbody></table>` : '<span class="dim">—</span>'; };
 const numKF = (kf, re, exclude) => flatKF(kf).filter(([k, v]) => re.test(k) && !(exclude && exclude.test(k))).flatMap(([k, v]) => Array.isArray(v) ? v : [v]).filter(v => typeof v === 'number' && !isNaN(v));
@@ -105,7 +105,7 @@ const clip = (t, n) => { const x = clean(t); if (x.length <= n) return x; const 
 const shortEst = s => String(s || '').replace(/\s*\([^)]*\)/g, '').split(/;\s/)[0].trim();
 
 function injectCss() {
-  if (!document.getElementById('css-fin')) { const l = document.createElement('link'); l.id = 'css-fin'; l.rel = 'stylesheet'; l.href = 'modules/fin.css?v=20261006122625'; document.head.appendChild(l); }
+  if (!document.getElementById('css-fin')) { const l = document.createElement('link'); l.id = 'css-fin'; l.rel = 'stylesheet'; l.href = 'modules/fin.css?v=20261006134218'; document.head.appendChild(l); }
 }
 
 /* ── data layer ─────────────────────────────────────────────────────────── */

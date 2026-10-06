@@ -6,7 +6,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261006122625';
+       import { Frame } from '../../assets/frame.js?v=20261006134218';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app', theme: 'dark' });       // app.html
@@ -22,6 +22,11 @@
      crumb    false | [{ label, href? }, …]        (default: auto for pages under redesigns/)
      crumbAside  short text at the right of the crumb row, e.g. 'Concept · Oct 2026'
      cta      { label, href }                      small primary button in the top bar
+     nav      { <nav id>: href | { href?, label?, hint? } }   per-page override of primary links,
+                                                    e.g. { briefing: 'app.html#/briefing/play' }. An href
+                                                    with a '#/' route on this page is marked current while
+                                                    location.hash is on that route (kept in sync on hashchange).
+                                                    Variant 'app' defaults to { briefing: 'app.html#/briefing/play' }.
      footer   true|false                           (default true, false for app/minimal)
      hotkey   'mod+k'|'mod+j'|false                (default 'mod+k'; 'mod+j' for variant 'app',
                                                     where ⌘K already opens the portal search)
@@ -114,8 +119,8 @@ function autoCrumb(w) {
 
 /* ── markup ───────────────────────────────────────────────────────────────── */
 function topHTML(o) {
-  const links = NAV.map(n => `<a href="${esc(url(n.href))}"${n.external ? ' rel="noopener" target="_blank"' : ''}${n.id === o.active ? ' aria-current="page"' : ''}>${esc(n.label)}${n.external ? EXT : ''}</a>`).join('');
-  const sheet = NAV.map(n => `<a href="${esc(url(n.href))}"${n.external ? ' rel="noopener" target="_blank"' : ''}${n.id === o.active ? ' aria-current="page"' : ''}>${esc(n.label)} <span>${esc(n.hint)}</span></a>`).join('');
+  const links = o.nav.map(n => `<a data-nav="${esc(n.id)}" href="${esc(url(n.href))}"${n.external ? ' rel="noopener" target="_blank"' : ''}${n.id === o.active ? ' aria-current="page"' : ''}>${esc(n.label)}${n.external ? EXT : ''}</a>`).join('');
+  const sheet = o.nav.map(n => `<a data-nav="${esc(n.id)}" href="${esc(url(n.href))}"${n.external ? ' rel="noopener" target="_blank"' : ''}${n.id === o.active ? ' aria-current="page"' : ''}>${esc(n.label)} <span>${esc(n.hint)}</span></a>`).join('');
   const kbd = o.hotkey ? `<span class="sys-kbd" aria-hidden="true">${IS_MAC ? '⌘' : 'Ctrl '}${o.hotkey.split('+').pop().toUpperCase()}</span>` : '';
   const cta = o.cta ? `<a class="sys-btn sys-btn--primary sys-btn--sm sys-top-cta" href="${esc(url(o.cta.href))}">${esc(o.cta.label)}</a>` : '';
   return `<div class="sys-top-in">
@@ -130,7 +135,7 @@ function topHTML(o) {
   </div>`;
 }
 function bannerHTML() {
-  return `<div class="sys-banner-in"><span class="sys-banner-tag">Concept</span><p>${esc(BANNER_TEXT)}</p><button class="sys-banner-x" type="button" aria-label="Dismiss concept notice">×</button></div>`;
+  return `<div class="sys-banner-in"><span class="sys-banner-tag">Concept</span><p id="sys-banner-text">${esc(BANNER_TEXT)}</p><button class="sys-banner-more" type="button" aria-expanded="false" aria-controls="sys-banner-text">More</button><button class="sys-banner-x" type="button" aria-label="Dismiss concept notice">×</button></div>`;
 }
 function crumbHTML(items, aside) {
   const li = items.map((it, i) => {
@@ -230,7 +235,8 @@ const RX_ISO = /(?<![\w#/.:-])((?:19|20)\d\d)-(0[1-9]|1[0-2])(?:-(0[1-9]|[12]\d|
 const RX_UPSNAKE = /(?<![\w@/.#:=$-])([A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)+)(?![\w@/-]|\.\w)/g;
 const RX_SLASHSNAKE = /(?<![\w.:/@-])([A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)*(?:\/[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)*)+)(?![\w/.@-])/g;
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const RX_QUICK = /_[A-Za-z0-9]|\b(?:ra|ref|kb|vs|ag|op|tg|id)-(?:pp|cet|fl|ts|bpi|fh|bsp)|null|undefined|NaN|None\)|\b(?:19|20)\d\d-(?:0[1-9]|1[0-2])\b/;
+const RX_USDATE = /(?<![\w/.-])(1[0-2]|0?[1-9])\/(3[01]|[12]\d|0?[1-9])\/((?:19|20)\d\d)(?![\w/-])/g;
+const RX_QUICK = /\b\d{1,2}\/\d{1,2}\/(?:19|20)\d\d\b|_[A-Za-z0-9]|\b(?:ra|ref|kb|vs|ag|op|tg|id)-(?:pp|cet|fl|ts|bpi|fh|bsp)|null|undefined|NaN|None\)|\b(?:19|20)\d\d-(?:0[1-9]|1[0-2])\b/;
 /** ISO dates in copy → words ("2026-10-06" → "Oct 6, 2026", "2025-04" → "Apr 2025"). Bid and file numbers ("IFB 2026-01", "#2027-09") and year ranges ("2011-12") are left alone. */
 function isoToWords(t) {
   return t.replace(RX_ISO, (m, y, mo, d, off, str) => {
@@ -263,6 +269,7 @@ export function humanizeText(s) {
   t = t.replace(/\b(Post|Pre)-((?:19|20)\d\d-\d\d-\d\d)\b/g, (m, w, d) => `${w === 'Post' ? 'After' : 'Before'} ${d}`);
   t = t.replace(/(?<![\w#/.:-])((?:19|20)\d\d)-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])\/(0[1-9]|[12]\d|3[01])\b/g, (m, y, mo, d1, d2) => `${MON[+mo - 1]} ${+d1}–${+d2}, ${y}`);
   t = isoToWords(t);
+  t = t.replace(RX_USDATE, (m, mo, d, y) => `${MON[+mo - 1]} ${+d}, ${y}`);
   const bare = t.trim();
   if (/^(?:null|undefined|NaN)$/.test(bare)) return t.replace(bare, '—');
   if (t !== s) t = t.replace(/\(\s*\)|\[\s*\]/g, '').replace(/([·|])(\s*[·|])+/g, '$1').replace(/ {2,}/g, ' ').replace(/ +([,.;:)])/g, '$1');
@@ -321,6 +328,35 @@ function spySubnav() {
   for (const sec of map.keys()) io.observe(sec);
 }
 
+/* ── primary nav: per-page overrides + hash-route current state ───────────── */
+const APP_NAV = { briefing: 'app.html#/briefing/play' };
+/** NAV with per-page overrides applied: { id: href } or { id: { href, label, hint } }. */
+function navFor(over) {
+  if (!over || typeof over !== 'object') return NAV;
+  return NAV.map(n => {
+    const v = over[n.id];
+    if (v == null || v === false) return n;
+    const o = typeof v === 'string' ? { href: v } : v;
+    return { ...n, ...o, external: o.href ? /^[a-z]+:|^\/\//i.test(o.href) && !o.href.startsWith(ROOT) : n.external };
+  });
+}
+/** '#/route' of a nav href when it points into the current page, else null. */
+function hashRoute(href) {
+  try {
+    const u = new URL(url(href), location.href);
+    if (u.origin + u.pathname !== location.origin + location.pathname) return null;
+    return /^#\//.test(u.hash) ? u.hash : null;
+  } catch { return null; }
+}
+/** aria-current on the top bar and sheet: a hash-route link on this page wins while the hash is on it; otherwise the page's active id. */
+function syncCurrent(top, nav, active) {
+  const h = location.hash || '';
+  const routed = nav.map(n => [n.id, hashRoute(n.href)]).filter(([, r]) => r);
+  const hit = routed.find(([, r]) => { const base = r.match(/^#\/[^/?]+/)[0]; return h === base || h.startsWith(base + '/'); });   // '#/briefing/play' owns '#/briefing/…'
+  const cur = hit ? hit[0] : active;
+  for (const a of top.querySelectorAll('a[data-nav]')) a.dataset.nav === cur ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current');
+}
+
 /* ── mount ────────────────────────────────────────────────────────────────── */
 function ensureCSS() {
   if ([...document.styleSheets].some(s => s.href && s.href.includes('/assets/system.css')) || document.querySelector('link[href*="assets/system.css"]')) return;
@@ -338,6 +374,7 @@ function mount(opts = {}) {
     hotkey: opts.hotkey !== undefined ? opts.hotkey : (variant === 'app' ? 'mod+j' : 'mod+k'),
     cta: opts.cta || null,
   };
+  o.nav = navFor(opts.nav !== undefined ? opts.nav : (variant === 'app' ? APP_NAV : null));
   state.persona = opts.persona || o.co || 'portal';
   state.theme = opts.theme === 'dark' ? 'dark' : 'light';
   if (opts.chat) state.chat = opts.chat;
@@ -392,8 +429,17 @@ function mount(opts = {}) {
   document.addEventListener('click', e => { if (!sheet.hidden && !top.contains(e.target)) setSheet(false); });
   matchMedia('(min-width: 961px)').addEventListener?.('change', ev => { if (ev.matches) setSheet(false); });
 
-  // banner dismiss
+  // banner dismiss + "More" (the banner is one line at ≤560px)
   banner?.querySelector('.sys-banner-x').addEventListener('click', () => { banner.hidden = true; store.set('sys-banner-off', '1'); });
+  banner?.querySelector('.sys-banner-more').addEventListener('click', e => {
+    const open = !banner.classList.contains('sys-banner--open');
+    banner.classList.toggle('sys-banner--open', open);
+    e.currentTarget.setAttribute('aria-expanded', String(open));
+    e.currentTarget.textContent = open ? 'Less' : 'More';
+  });
+
+  // primary nav current state follows hash routes (e.g. app.html#/briefing/play)
+  if (o.nav.some(n => hashRoute(n.href))) { syncCurrent(top, o.nav, o.active); window.addEventListener('hashchange', () => syncCurrent(top, o.nav, o.active)); }
 
   // ask + hotkey
   top.querySelector('[data-sys-ask]').addEventListener('click', () => openChat());
@@ -406,7 +452,7 @@ function mount(opts = {}) {
   const hz = opts.humanize !== undefined ? opts.humanize : 'observe';
   if (hz) { humanize(body); if (hz === 'observe') observe(body); }
 
-  state.mounted = { top, banner, footer, root: ROOT, page: w, openChat, humanize, setChat: inst => { state.chat = inst; } };
+  state.mounted = { top, banner, footer, root: ROOT, page: w, nav: o.nav, openChat, humanize, setChat: inst => { state.chat = inst; } };
   return state.mounted;
 }
 

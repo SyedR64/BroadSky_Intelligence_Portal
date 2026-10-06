@@ -12,8 +12,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<link rel="stylesheet" href="assets/system.css?v=20261006122625">
-<link rel="stylesheet" href="assets/app.css?v=20261006122625">
+<link rel="stylesheet" href="assets/system.css?v=20261006134218">
+<link rel="stylesheet" href="assets/app.css?v=20261006134218">
 </head>
 <body>
 <div id="app">
@@ -38,23 +38,25 @@
   <aside id="inspector"></aside>
 </div>
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261006122625';
-  import { App } from './assets/core.js?v=20261006122625';
-  import { modules } from './modules/registry.js?v=20261006122625';
-  import { enhance } from './modules/copy.js';
+  import { Frame } from './assets/frame.js?v=20261006134218';
+  import { App } from './assets/core.js?v=20261006134218';
+  import { modules } from './modules/registry.js?v=20261006134218';
+  import { enhance, retitle, viewTitle } from './modules/copy.js';
 
   // 1 · shared frame strip above the rail and console (UNIFIED.md §8)
   const frame = Frame.mount({ variant: 'app', theme: 'dark' });
 
   // 2 · copy safety net after every route render: plain English, est. badges
   const content = document.getElementById('content');
-  const settle = () => { enhance(content); Frame.humanize(content); Frame.humanize(document.getElementById('topbar')); };
+  // one h1 pattern for every view: "<Module name> · <view name in sentence case>" (modules/copy.js VIEW_TITLES)
+  const title = () => { const m = App.current, v = App.view; if (!m || !v) return; retitle(content, m, v); const t = `${viewTitle(m, v)} · Broad Sky`; if (document.title !== t) document.title = t; };
+  const settle = () => { enhance(content); Frame.humanize(content); Frame.humanize(document.getElementById('topbar')); title(); };
   const route = App.route;
   App.route = async function (...args) { const r = await route.apply(App, args); settle(); return r; };
   let queue = new Set(), pending = 0;
   const watch = el => new MutationObserver(muts => {
     for (const m of muts) for (const n of m.addedNodes) if (n.nodeType === 1 && !n.closest('.leaflet-pane')) queue.add(n); else if (n.nodeType === 3 && n.parentElement) queue.add(n.parentElement);
-    if (!pending) pending = requestAnimationFrame(() => { pending = 0; const q = queue; queue = new Set(); for (const n of q) if (n.isConnected) enhance(n); });
+    if (!pending) pending = requestAnimationFrame(() => { pending = 0; const q = queue; queue = new Set(); for (const n of q) if (n.isConnected) enhance(n); title(); });
   }).observe(el, { childList: true, subtree: true });
   watch(content); watch(document.getElementById('inspector'));
 
@@ -70,20 +72,9 @@
   fetch('data/manifest.json', { cache: 'force-cache' }).then(r => r.ok ? r.json() : null).then(m => { if (m?.datasets?.length) paintCount(m.datasets.length); }).catch(() => {});
   App.start();
 
-  // 3b · the frame's Briefing link stays inside the console (#/briefing/play)
-  const briefLinks = [...document.querySelectorAll('.sys-top a')].filter(a => /#briefing$/.test(a.getAttribute('href') || ''));
-  const portalLinks = [...document.querySelectorAll('.sys-top a')].filter(a => /\/app\.html$/.test(a.getAttribute('href') || ''));
-  for (const a of briefLinks) a.setAttribute('href', '#/briefing/play');
-  const markActive = () => {
-    const onBrief = /^#\/briefing\b/.test(location.hash);
-    for (const a of briefLinks) onBrief ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current');
-    for (const a of portalLinks) onBrief ? a.removeAttribute('aria-current') : a.setAttribute('aria-current', 'page');
-  };
-  window.addEventListener('hashchange', markActive); markActive();
-
   // 4 · grounded assistant: the frame's Ask button and ⌘J open the same widget
-  import('./assets/chat.js?v=20261006122625').then(({ Chat }) => frame.setChat(Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'auto' })));
-  import('./assets/counter.js?v=20261006122625').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; document.querySelector('#rail .rail-foot').before(slot); Counter.mount(slot, { theme: 'dark', compact: true, caption: 'Left on the table since you opened this' }).then(() => Frame.humanize(slot)); });
+  import('./assets/chat.js?v=20261006134218').then(({ Chat }) => frame.setChat(Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'auto' })));
+  import('./assets/counter.js?v=20261006134218').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; document.querySelector('#rail .rail-foot').before(slot); Counter.mount(slot, { theme: 'dark', compact: true, caption: 'Left on the table since you opened this' }).then(() => Frame.humanize(slot)); });
 </script>
 </body>
 </html>

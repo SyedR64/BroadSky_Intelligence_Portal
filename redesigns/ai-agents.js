@@ -1,7 +1,7 @@
 /* The agentic layer — renders the portfolio AI-agent plan (plus the tech-enablement evidence for the
    OS EBITDA ranges). No framework, no build step. Markup uses the shared sys- components
    (assets/system.css, UNIFIED.md); company colour comes from data-co, never from literals here. */
-import { humanizeText } from '../assets/frame.js?v=20261006122625';
+import { humanizeText } from '../assets/frame.js?v=20261006134218';
 const ROOT = new URL('../', import.meta.url).href;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -38,7 +38,23 @@ const PLAIN = { cet_opportunities: 'CET bid radar', cet_wwtp_targets: 'CET waste
 /* Controls are numbered by their position in the plan, so references stay consistent if a control is retired. */
 let GOVNUM = {};
 const gnum = n => GOVNUM[+n] ?? +n;
-const deID = s => humanizeText(String(s ?? '').replace(/\s*-(?:>|&gt;)\s*/g, ' → ').replace(/agent est_annual_value_usd/g, 'agent value estimates').replace(/\b(cet_opportunities|cet_wwtp_targets|pp_storm_events|pp_demand_model|est_annual_value_usd|metric_claim)\b/g, m => PLAIN[m]).replace(/\bgov-0?(\d+)\s+to\s+gov-0?(\d+)/g, (m, a, b) => `controls ${gnum(a)}–${gnum(b)}`).replace(/\bgov-0?(\d+)/g, (m, a) => `control ${gnum(a)}`).replace(/\s*\(control (\d+)\)/g, ' (control $1)').replace(/\bPRG\b/g, 'Portfolio Resource Group').replace(/\bPP's\b/g, "Punctual Pros'").replace(/\bPP\b/g, 'Punctual Pros').replace(/\bTS\b/g, 'Thomas Scientific'));
+const deID = s => humanizeText(String(s ?? '').replace(/\s*-(?:>|&gt;)\s*/g, ' → ').replace(/agent est_annual_value_usd/g, 'agent value estimates').replace(/\b(cet_opportunities|cet_wwtp_targets|pp_storm_events|pp_demand_model|est_annual_value_usd|metric_claim)\b/g, m => PLAIN[m]).replace(/\bgov-0?(\d+)\s+to\s+gov-0?(\d+)/g, (m, a, b) => `controls ${gnum(a)}–${gnum(b)}`).replace(/\bgov-0?(\d+)/g, (m, a) => `control ${gnum(a)}`).replace(/\s*\(control (\d+)\)/g, ' (control $1)').replace(/\s*\(PRG\)/g, '').replace(/\bPRG\b/g, 'Portfolio Resource Group').replace(/\bPP's\b/g, "Punctual Pros'").replace(/\bPP\b/g, 'Punctual Pros').replace(/\bTS\b/g, 'Thomas Scientific'));
+
+/* Operational guardrails only: dataset rows that still cite court rulings, statutes or law-firm commentary are
+   restated as operating rules with an operational source (vendor documentation), or lose the citation. */
+const LEGAL = /Moffatt|[Tt]ribunal|\bruling\b|\blaws\b|\bliable\b|ethics opinion|mccarthy\.ca|fkks\.com|artificial voice/; // only rows still carrying legal framing are restated
+const OPS = {
+  'gov-02': {
+    evidence: 'The OpenAI Agents SDK pauses a run until a person approves or rejects a sensitive tool call; tier-2 and tier-3 actions wait for the named approver the same way.',
+    metric_value: 2, metric_unit: 'tiers that wait for a named person before the action runs',
+    source_url: 'https://openai.github.io/openai-agents-python/human_in_the_loop/',
+  },
+  'gov-07': { evidence: 'Law-firm clients ask for proof that their data never trains a model and that a person supervises the output; a generic assurance does not satisfy them.', metric_value: null, metric_unit: null, source_url: null },
+  'ag-fh-01': { risk_notes: 'Say it is a virtual assistant in the first message. Answers on price, refunds and policy come only from the help-center articles; anything outside them goes to a person, and a person reviews a daily sample of conversations.' },
+  'ag-pp-01': { risk_notes: 'Inbound answering only: callbacks go by text to the caller who just contacted us, or by a person. Safety scripts (gas, carbon monoxide, flooding) hand off to a person instantly. Say it is a virtual assistant at the start of the call.' },
+  'ag-bpi-02': { risk_notes: 'Client confidentiality: separate workspaces per client, no cross-client retrieval, no-training model terms. Political clients: label AI-generated ad content and keep a person on every final cut.' },
+  'ag-fh-06': { risk_notes: 'A person makes every denial, and customers get a clear appeal path.' },
+};
 
 /* ── PRG analyst overlays (est.) ─────────────────────────────────────────
    The dataset values are ceilings. These overlays add what a CEO needs before approving anything:
@@ -133,6 +149,7 @@ export async function boot() {
   D = d; AG = d.items.filter(i => i.kind === 'agent'); PAT = d.items.filter(i => i.kind === 'pattern'); GOV = d.items.filter(i => i.kind === 'governance');
   GOVNUM = Object.fromEntries(GOV.map((g, i) => [+String(g.id).replace(/\D/g, ''), i + 1]));
   for (const i of ev?.items || []) if (i.kind === 'roadmap_assumption') RA[i.company] = i;
+  for (const i of d.items) if (OPS[i.id] && LEGAL.test([i.evidence, i.risk_notes, i.source_url, i.metric_unit].join(' '))) Object.assign(i, OPS[i.id]);
   // Reader-facing text: no internal ids or dataset names.
   const TXT = ['trigger', 'job_to_be_done', 'human_in_the_loop', 'risk_notes', 'build_once_note', 'description', 'evidence', 'requirement', 'owner', 'metric_claim'];
   for (const i of d.items) { for (const k of TXT) if (typeof i[k] === 'string') i[k] = deID(i[k]); if (Array.isArray(i.tools_it_uses)) i.tools_it_uses = i.tools_it_uses.map(deID); if (Array.isArray(i.shared_components)) i.shared_components = i.shared_components.map(deID); }
@@ -279,7 +296,7 @@ function filters() {
   $('#f-sort').onchange = e => { S.sort = e.target.value; renderCatalog(); };
   let t; $('#f-q').oninput = e => { clearTimeout(t); t = setTimeout(() => { S.q = e.target.value.trim().toLowerCase(); renderCatalog(); }, 120); };
   $('#f-reset').onclick = () => resetFilters();
-  $('#cards').onclick = e => { const c = e.target.closest('.ag-card'); if (c) select(c.dataset.id, { scroll: false, open: true }); };
+  $('#cards').onclick = e => { const c = e.target.closest('#cards [data-id]'); if (c) select(c.dataset.id, { scroll: false, open: true }); };
 }
 function resetFilters() {
   Object.assign(S, { co: 'all', layer: 'all', q: '', pattern: null, wk: +$('#f-wk').max });
@@ -309,7 +326,7 @@ function renderCatalog() {
   $('#f-pattern').innerHTML = p ? `<span class="pchip">Pattern: ${esc(p.pattern)} <button type="button" aria-label="Clear pattern filter">×</button></span>` : '';
   if (p) $('#f-pattern button').onclick = () => { S.pattern = null; renderCatalog(); };
   const lim = mobile() ? 6 : 12; const shown = S.more ? list : list.slice(0, lim);
-  $('#cards').innerHTML = list.length ? shown.map(a => `<button type="button" class="sys-card ag-card" data-co="${a.company}" data-id="${a.id}" aria-pressed="${a.id === S.sel}">
+  $('#cards').innerHTML = list.length ? shown.map(a => `<button type="button" class="sys-card sys-card--link" data-co="${a.company}" data-id="${a.id}" aria-pressed="${a.id === S.sel}">
       <div class="c-top"><span class="c-co">${dot(a.company)}${esc(CO[a.company].name)}</span><span class="c-wave">Wave ${a.wave} · ${a.weeks_to_deploy} wks · payback ${pbTxt(E[a.id].payback)}</span></div>
       <h3>${esc(a.agent)}</h3>
       ${flowHTML()}
@@ -329,7 +346,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet()
 
 function select(id, { scroll = true, open = true, url = true } = {}) {
   const a = AG.find(x => x.id === id); if (!a) return;
-  S.sel = id; $$('#cards .ag-card').forEach(c => c.setAttribute('aria-pressed', c.dataset.id === id));
+  S.sel = id; $$('#cards > [data-id]').forEach(c => c.setAttribute('aria-pressed', c.dataset.id === id));
   const P = PAT.find(p => p.id === a.pattern_id); const c = CO[a.company]; const dec = decision(a); const e = E[a.id]; const t = VT[e.t];
   const W = WAVES.find(w => w.wave === a.wave); const [ws, we] = (W?.months || '0-0').split('-').map(Number);
   const et = evType(a);
@@ -373,7 +390,7 @@ function focusAgent(id) {
   if (!filtered().some(x => x.id === id)) resetFilters();
   if (!S.more) { S.more = true; renderCatalog(); }
   select(id, { scroll: !mobile(), open: true });
-  if (!mobile()) setTimeout(() => $(`#cards .ag-card[data-id="${id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 450);
+  if (!mobile()) setTimeout(() => $(`#cards > [data-id="${id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 450);
 }
 
 /* ── Patterns ──────────────────────────────────────────────────────────── */
@@ -413,13 +430,13 @@ function timeline() {
         <div class="w-stats"><div><span>Agents</span><b>${ags.length}</b></div><div><span>Adds (ceiling)</span><b>${money(r.T.ceil)}${EST()}</b></div><div><span>Live at wave end</span><b>${money(live)}${EST()}</b></div></div></div>
       <div>
         <div class="w-track" aria-hidden="true"><div class="w-bar" style="left:${s / span * 100}%;width:${(e - s) / span * 100}%">Wave ${w.wave}</div>${matPct <= 100 ? `<i class="w-mat" style="left:${matPct}%"></i>` : ''}</div>
-        <div class="w-pills">${ags.map(a => `<button type="button" class="sys-chip${RESEQ[a.id] ? ' w-moved' : ''}" data-co="${CO[a.company] ? a.company : ''}" data-id="${a.id}" title="${esc(CO[a.company].full)} · ${money(a.est_annual_value_usd)} ceiling">${esc(a.agent)}</button>`).join('')}</div>
+        <div class="sys-chips w-chips">${ags.map(a => `<button type="button" class="sys-chip${RESEQ[a.id] ? ' w-moved' : ''}" data-co="${CO[a.company] ? a.company : ''}" data-id="${a.id}" title="${esc(CO[a.company].full)} · ${money(a.est_annual_value_usd)} ceiling">${esc(a.agent)}</button>`).join('')}</div>
         ${moved.length ? `<p class="w-note"><b>Moved in</b><span>${moved.map(a => esc(RESEQ[a.id].why)).join(' ')}</span></p>` : ''}
         <p class="w-gate"><b>Gate</b><span>${esc(gate)}</span></p>
       </div>
     </article>`;
   }).join('') + `<p class="tl-foot"><i class="w-mat-key" aria-hidden="true"></i> Red line: Thomas Scientific loan maturity, December 2027. Calendar assumes approval this month (month 0 = ${monOf(0)}). <b>Live at wave end</b> assumes each agent goes live its deploy weeks after the wave starts and ramps evenly to full value over two quarters, the same window the kill rule uses. The full ${money(totals().ceil)} ceiling run-rate arrives around ${qOf(fullMo)}, not month 18.</p>`;
-  $('#timeline').onclick = e => { const b = e.target.closest('.w-pills .sys-chip'); if (b) focusAgent(b.dataset.id); };
+  $('#timeline').onclick = e => { const b = e.target.closest('.w-chips .sys-chip'); if (b) focusAgent(b.dataset.id); };
 }
 
 /* ── Value by company (inline SVG stacked by value type, re-rendered at container width) ─────── */
@@ -505,7 +522,7 @@ function governance() {
       ${g.requirement.length <= 240 ? `<p id="gr-${g.id}">${esc(deID(g.requirement))}</p>` : `<p id="gr-${g.id}">${esc(deID(clip(g.requirement, 200)))}</p><details><summary>Full requirement</summary><p>${esc(deID(g.requirement))}</p></details>`}
       <div class="g-meta"><span class="tag">${esc(area(g.area))}</span><span class="tag">${(g.applies_to || []).includes('all') ? 'All companies' : (g.applies_to || []).map(c => CO[c]?.name || c).join(', ')}</span></div>
       <p class="g-owner"><b>Owner:</b> ${esc(deID(g.owner))}</p>
-      <p class="g-ev">${esc(deID(clip(g.evidence, 170)))} <a href="${esc(g.source_url)}" target="_blank" rel="noopener">${esc(host(g.source_url))} ↗</a></p>
+      <p class="g-ev">${esc(deID(clip(g.evidence, 170)))}${g.source_url ? ` <a href="${esc(g.source_url)}" target="_blank" rel="noopener">${esc(host(g.source_url))} ↗</a>` : ''}</p>
     </li>`;
   }).join('');
   const sync = () => { const n = done.size; $('#gov-count').textContent = `${n} of ${GOV.length} controls live`; $('#gov-fill').style.width = `${n / GOV.length * 100}%`; };

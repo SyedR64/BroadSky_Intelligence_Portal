@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261006122625">
-<link rel="stylesheet" href="ai-agents.css?v=20261006122625">
+<link rel="stylesheet" href="../assets/system.css?v=20261006134218">
+<link rel="stylesheet" href="ai-agents.css?v=20261006134218">
 </head>
 <body>
 <main id="main">
@@ -28,7 +28,7 @@
         <a href="#build-buy">Build vs buy</a>
         <a href="#companies">Companies</a>
       </div>
-      <div class="sys-subnav-actions"><a class="sys-btn sys-btn--primary sys-btn--sm" href="../app.html#/techos/overview">Open in the portal</a></div>
+      <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../app.html#/techos/overview">Open in portal</a></div>
     </div>
   </nav>
 
@@ -294,14 +294,14 @@
 </main>
 
 <script type="module">
-import { Frame } from '../assets/frame.js?v=20261006122625';
-import { Chat } from '../assets/chat.js?v=20261006122625';
-import { boot } from './ai-agents.js?v=20261006122625';
+import { Frame } from '../assets/frame.js?v=20261006134218';
+import { Chat } from '../assets/chat.js?v=20261006134218';
+import { boot } from './ai-agents.js?v=20261006134218';
 const frame = Frame.mount({ banner: true });
 const d = await boot().catch(e => { console.warn('agentic layer boot failed', e); return null; });
 try {
   const chat = Chat.mount(null, {
-    persona: 'portal', mode: 'floating', theme: 'light',
+    persona: 'portal', short_name: 'the portfolio', mode: 'floating', theme: 'light',
     faq: d?.faq || [],
     suggestions: ['What does wave 1 cost and need?', 'What does the agent program cost?', 'Which agents pay back fastest?', 'How much value does each company get from AI agents?', 'Who approves what an agent does?', 'What are the kill criteria for an agent?']
   });

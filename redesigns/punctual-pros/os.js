@@ -1,5 +1,5 @@
 /* ServiceOS product page — demo logic. Shared helpers come from ./site.js (same folder). */
-import { FAQ, TERRITORY, HUBS, classifyZip, zipIndex, cleanCity, miles, fillRange, territoryAlerts, alertLevel } from './site.js?v=20261006122625';
+import { FAQ, TERRITORY, HUBS, classifyZip, zipIndex, cleanCity, miles, fillRange, territoryAlerts, alertLevel } from './site.js?v=20261006134218';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -15,7 +15,7 @@ export function init({ Data, Fmt, Live, Chat, esc, Frame }) {
   const faq = FAQ.map(f => ({ ...f, a: f.a.replace(/href="#/g, 'href="./index.html#'), href: f.href && f.href.startsWith('#') ? './index.html' + f.href : f.href }));
   faq.push({ q: 'How much does ServiceOS cost and what does it return?', a: '<p>Estimated $0.4–0.9M of software and implementation, 6–12 months to value, and 2–4 points of EBITDA margin on ~$22M of revenue (~$0.3–1.1M), all labelled est. in the <a href="#value">value math</a>.</p>', href: '#value' });
   faq.push({ q: 'What is the Service-Call Pressure Index?', a: '<p>A 7-day forecast of expected service calls per hub and trade, computed from the live forecast and the portal\'s weather-to-demand multipliers. 100 is a normal day. <a href="#demo">Open the demo</a>.</p>', href: '#demo' });
-  try { return Chat.mount(null, { persona: 'pp', mode: 'floating', theme: 'light', faq, suggestions: ['What is ServiceOS?', 'What is the Service-Call Pressure Index?', 'Is there a storm coming this week?', 'How much does ServiceOS cost and what does it return?', 'Do you serve 08753?'] }); } catch (e) { console.warn('chat mount failed', e); return null; }
+  try { return Chat.mount(null, { persona: 'pp', short_name: 'Punctual Pros', mode: 'floating', theme: 'light', faq, suggestions: ['What is ServiceOS?', 'What is the Service-Call Pressure Index?', 'Is there a storm coming this week?', 'How much does ServiceOS cost and what does it return?', 'Do you serve 08753?'] }); } catch (e) { console.warn('chat mount failed', e); return null; }
 }
 function tabs() {
   const btns = $$('.tabs [role="tab"]');

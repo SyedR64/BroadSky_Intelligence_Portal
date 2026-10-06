@@ -1,5 +1,5 @@
 /* Thomas Scientific — growth plan. Renders every section from the portal datasets. */
-import { badgeEst } from './shared.js?v=20261006122625';
+import { badgeEst } from './shared.js?v=20261006134218';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 let esc = s => String(s ?? '');
@@ -515,6 +515,6 @@ function mountChat(Chat) {
     { q: 'Which AI agents should Thomas deploy first?', href: '#agents', a: `<h4>Wave 1 agents: release cash</h4><ul>${w1.map(x => `<li><b>${esc(x.agent)}</b> (${esc((x.vendor_examples || []).slice(0, 2).join(', '))}, ~${x.weeks_to_deploy} wks): ${esc(cut(x.metric_claim, 130))}</li>`).join('')}</ul><p>Wave 2 sells (quote, account health, rep copilot); wave 3 is digital (search, self-serve assistant, forecasting). Vendor results are self-reported upper bounds.</p>` },
   ];
   let autoAsk; try { autoAsk = new URLSearchParams(location.search).get('ask') || undefined; } catch { }
-  const inst = Chat.mount(null, { persona: 'ts', mode: 'floating', theme: 'light', faq, suggestions: faq.map(f => f.q).concat(['How does Thomas compare with Smith + Howard?']), autoAsk });
+  const inst = Chat.mount(null, { persona: 'ts', short_name: 'Thomas', mode: 'floating', theme: 'light', faq, suggestions: faq.map(f => f.q).concat(['How does Thomas compare with Smith + Howard?']), autoAsk });
   S.frame?.setChat?.(inst);
 }

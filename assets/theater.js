@@ -8,11 +8,16 @@
      Basemap             OpenFreeMap vector styles (key-free): /styles/dark, fallback /styles/positron
      Terrain             AWS Terrarium DEM tiles (CORS-enabled), exaggeration 1.4, plus hillshade
    Usage:
-     import { Theater } from './assets/theater.js?v=20261006122625';
+     import { Theater } from './assets/theater.js?v=20261006134218';
      await Theater.mount(el, { autoplay: true, scene: 'S1', onScene: (id, scene) => {} });
      Theater.play(); Theater.pause(); Theater.goTo('S3'); Theater.destroy();
    window.BSPTheater exposes the same API (plus state()) for automation.
    ═══════════════════════════════════════════════════════════════════════════ */
+
+import { label } from './frame.js?v=20261006134218';
+/* Caption source lines: dataset keys become their readable names (Frame.label); {id, note} adds a note in brackets. */
+const RX_KEY = /^[a-z][a-z0-9]*(?:_[a-z0-9]+)+$/;
+const SRC = (...parts) => [...new Set(parts.map(p => typeof p === 'string' ? (RX_KEY.test(p) ? label(p) : p) : `${label(p.id)} (${p.note})`))].join(' · ');
 
 const LIBS = {
   mlJs: ['https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js', 'https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.js'],
@@ -119,33 +124,33 @@ const SCENES = [
   { id: 'S1', name: 'Portfolio', color: C.bsp, duration: 15000, labels: 'major',
     layers: ['hq', 'ppCore', 'cetCounties'],
     keys: [{ at: 0, center: [-80.5, 39.6], zoom: 4.75, pitch: 45, bearing: -8 }, { at: 4200, center: [-74.6, 41.2], zoom: 6.15, pitch: 52, bearing: -18, duration: 9000 }],
-    caption: s => ({ kicker: 'Broad Sky Partners · portfolio', title: `${s.holdings === 6 ? 'Six' : s.holdings} companies, one map`, line: `CET across New England, Punctual Pros in Central PA and the Jersey Shore, plus Frontline, Thomas Scientific, BPI and Fair Harbor. Orange hexes: ${num(s.ppCoreZips)} Punctual Pros core zips, raised by housing units. Blue columns: CET county fit across ${num(s.cetCounties)} New England counties.`, src: 'bsp_firm · pp_zips (ACS) · cet_ne_counties' }),
+    caption: s => ({ kicker: 'Broad Sky Partners · portfolio', title: `${s.holdings === 6 ? 'Six' : s.holdings} companies, one map`, line: `CET across New England, Punctual Pros in Central PA and the Jersey Shore, plus Frontline, Thomas Scientific, BPI and Fair Harbor. Orange hexes: ${num(s.ppCoreZips)} Punctual Pros core zips, raised by housing units. Blue columns: CET county fit across ${num(s.cetCounties)} New England counties.`, src: SRC('bsp_firm', { id: 'pp_zips', note: 'Census ACS' }, 'cet_ne_counties') }),
     legend: () => [['dot', C.pp, 'PP core zips · height = housing units'], ['dot', C.cet, 'CET county fit · height = score'], ['ring', '#ffffff', 'Company headquarters']] },
   { id: 'S2', name: 'Where the homes trade', color: C.pp, duration: 17000, labels: 'pp', needs: 'sales',
     layers: ['hq', 'sales', 'salesNew'],
     keys: [{ at: 0, center: [-75.95, 39.86], zoom: 7.35, pitch: 56, bearing: -14 }, { at: 3800, center: [-75.85, 39.98], zoom: 7.75, pitch: 60, bearing: 10, duration: 12000 }],
-    caption: s => s.sales ? ({ kicker: 'Punctual Pros · demand signal', title: 'Where the homes trade', line: `${num(s.sales.n)} recorded sales across ${num(s.sales.counties)} PA and NJ counties, ${dateOfDay(s.sales.minDay)} to ${dateOfDay(s.sales.maxDay)}. Column height = sales per 1.5 km hex; colour = median price. Pulsing points: the ${num(s.sales.n90)} sales in the newest 90 days. Each is a new owner who will need HVAC, plumbing and electrical work.`, src: 'County deed records & NJ SR1A · pp_sales_pa_a / pa_b / nj' })
-      : ({ kicker: 'Punctual Pros · demand signal', title: 'Where the homes trade', line: s.salesError ? 'Home-sales files could not be loaded. Check data/sales/pp_sales_*.json.' : 'Loading every recorded home sale in the territory…', src: 'pp_sales_pa_a / pa_b / nj' }),
+    caption: s => s.sales ? ({ kicker: 'Punctual Pros · demand signal', title: 'Where the homes trade', line: `${num(s.sales.n)} recorded sales across ${num(s.sales.counties)} PA and NJ counties, ${dateOfDay(s.sales.minDay)} to ${dateOfDay(s.sales.maxDay)}. Column height = sales per 1.5 km hex; colour = median price. Pulsing points: the ${num(s.sales.n90)} sales in the newest 90 days. Each is a new owner who will need HVAC, plumbing and electrical work.`, src: SRC('County deed records and NJ SR1A filings', 'pp_sales_pa_a', 'pp_sales_pa_b', 'pp_sales_nj') })
+      : ({ kicker: 'Punctual Pros · demand signal', title: 'Where the homes trade', line: s.salesError ? 'The home-sales files could not be loaded. Reload the page, or open the home-sales view in the portal.' : 'Loading every recorded home sale in the territory…', src: SRC('pp_sales_pa_a', 'pp_sales_pa_b', 'pp_sales_nj') }),
     legend: s => [['ramp', PRICE_RANGE, 'Median sale price per hex', s.sales ? `low → high · territory median ${money(s.sales.median)}` : 'low → high'], ['dot', '#ffe9b0', 'Sold in the newest 90 days']] },
   { id: 'S3', name: 'Nationwide', color: C.amber, duration: 17000, labels: 'origin',
     layers: ['hq', 'ppCore', 'arcs', 'destLabels', 'ppTargets'],
     keys: [{ at: 0, center: [-76.6, 40.1], zoom: 6.4, pitch: 50, bearing: -10 }, { at: 3200, center: [-78.6, 39.0], zoom: 5.5, pitch: 52, bearing: -18, duration: 4200 }, { at: 7600, center: [-87.5, 36.9], zoom: 4.25, pitch: 48, bearing: -24, duration: 5200 }],
-    caption: s => ({ kicker: 'Punctual Pros · the nationwide plan', title: 'From East Hempfield to the Sun Belt', line: `${s.phaseLine} Columns: ${num(s.ppTargets)} screened add-on targets; height = fit score.`, src: s.nationwide ? 'pp_nationwide (expansion phases) · ma_targets_pp' : 'Illustrative phase geography · ma_targets_pp' }),
+    caption: s => ({ kicker: 'Punctual Pros · the nationwide plan', title: 'From East Hempfield to the Sun Belt', line: `${s.phaseLine} Columns: ${num(s.ppTargets)} screened add-on targets; height = fit score.`, src: s.nationwide ? SRC({ id: 'pp_nationwide', note: 'expansion phases' }, 'ma_targets_pp') : SRC('Illustrative phase geography', 'ma_targets_pp') }),
     legend: () => [['line', PHASE_COL[2], 'Phase 2 · tuck-ins, 9–24 mo'], ['line', PHASE_COL[3], 'Phase 3 · metro anchors, 18–36 mo'], ['line', PHASE_COL[4], 'Phase 4 · national, 36–60 mo'], ['dot', '#ffb37a', 'Add-on target · height = fit']] },
   { id: 'S4', name: 'New England grid', color: C.cet, duration: 21000, labels: 'cet', zoomScaled: true,
     layers: ['hq', 'cetOpps', 'wwtp', 'cetSales'],
     keys: [{ at: 0, center: [-71.8023, 42.2626], zoom: 12.4, pitch: 70, bearing: -32 }, { at: 3600, center: [-72.68, 41.77], zoom: 10.2, pitch: 66, bearing: 18, duration: 6000 }, { at: 10200, center: [-71.25, 41.72], zoom: 8.7, pitch: 62, bearing: 42, duration: 5200 }, { at: 15600, center: [-72.75, 41.55], zoom: 7.3, pitch: 56, bearing: 6, duration: 4400 }],
-    caption: s => ({ kicker: 'CET · New England grid', title: 'Wastewater, solar and the Horton opening', line: `${num(s.cetOpps)} tracked opportunities worth ${money(s.cetOppValue)} (est., where disclosed). Column height = estimated value; colour = lead capability. Floating discs: ${num(s.wwtp)} municipal wastewater plants sized by design flow. Horton (Canton CT, Sept 2026) makes this work prime-able.`, src: 'cet_opportunities · cet_wwtp_targets (EPA ECHO, CT CWF) · cet_home_sales' }),
+    caption: s => ({ kicker: 'CET · New England grid', title: 'Wastewater, solar and the Horton opening', line: `${num(s.cetOpps)} tracked opportunities worth ${money(s.cetOppValue)} (est., where disclosed). Column height = estimated value; colour = lead capability. Floating discs: ${num(s.wwtp)} municipal wastewater plants sized by design flow. Horton (Canton CT, Sept 2026) makes this work prime-able.`, src: SRC('cet_opportunities', { id: 'cet_wwtp_targets', note: 'EPA ECHO, Connecticut Clean Water Fund' }, 'cet_home_sales_ma', 'cet_home_sales_ct_ri') }),
     legend: () => [...['wastewater', 'pump_station', 'electrical_construction', 'ev_charging', 'generator', 'solar'].map(k => ['dot', CAP_COL[k], CAP_LABEL[k]]), ['ring', C.cyan, 'WWTP · disc size = design flow (MGD)']] },
   { id: 'S5', name: 'Storm', color: C.red, duration: 14000, labels: 'pp', needs: 'alerts',
     layers: ['hq', 'ppCore', 'alerts', 'hubs', 'territory'],
     keys: [{ at: 0, center: [-75.7, 39.95], zoom: 6.9, pitch: 52, bearing: -22 }, { at: 3200, center: [-76.0, 40.05], zoom: 7.25, pitch: 58, bearing: 14, duration: 10000 }],
     caption: s => {
       const a = s.alerts;
-      if (!a) return { kicker: 'Punctual Pros · live weather', title: 'Storm watch', line: 'Checking the National Weather Service for active alerts over Pennsylvania and New Jersey…', src: 'api.weather.gov · live' };
-      if (a.error) return { kicker: 'Punctual Pros · live weather', title: 'Storm watch', line: 'The NWS alerts feed did not respond. Territory counties and weather hubs are shown; retry from the portal\'s Weather view.', src: 'api.weather.gov · live' };
-      if (!a.polys) return { kicker: 'Punctual Pros · live weather', title: 'Calm over the territory', line: `${a.count ? `${num(a.count)} NWS alert${a.count === 1 ? '' : 's'} active in PA/NJ, none with a mappable footprint` : 'No active NWS alerts over Pennsylvania or New Jersey'} as of ${a.asof}. Territory counties and the ${num(s.hubs)} weather hubs that drive call-volume staffing are shown.`, src: 'api.weather.gov alerts · pp_demand_model hubs · live' };
-      return { kicker: 'Punctual Pros · live weather', title: a.severe ? 'Severe weather in PA and NJ' : 'Storm watch', line: `${num(a.count)} active NWS alerts touch PA/NJ, ${num(a.severe)} severe or extreme. Extrusion height = severity. The ${num(s.hubs)} weather hubs convert these into call-volume and staffing calls. As of ${a.asof}.`, src: 'api.weather.gov alerts · pp_demand_model hubs · live' };
+      if (!a) return { kicker: 'Punctual Pros · live weather', title: 'Storm watch', line: 'Checking the National Weather Service for active alerts over Pennsylvania and New Jersey…', src: 'National Weather Service alerts (live)' };
+      if (a.error) return { kicker: 'Punctual Pros · live weather', title: 'Storm watch', line: 'The NWS alerts feed did not respond. Territory counties and weather hubs are shown; retry from the portal\'s Weather view.', src: 'National Weather Service alerts (live)' };
+      if (!a.polys) return { kicker: 'Punctual Pros · live weather', title: 'Calm over the territory', line: `${a.count ? `${num(a.count)} NWS alert${a.count === 1 ? '' : 's'} active in PA/NJ, none with a mappable footprint` : 'No active NWS alerts over Pennsylvania or New Jersey'} as of ${a.asof}. Territory counties and the ${num(s.hubs)} weather hubs that drive call-volume staffing are shown.`, src: SRC('National Weather Service alerts (live)', { id: 'pp_demand_model', note: 'weather hubs' }) };
+      return { kicker: 'Punctual Pros · live weather', title: a.severe ? 'Severe weather in PA and NJ' : 'Storm watch', line: `${num(a.count)} active NWS alerts touch PA/NJ, ${num(a.severe)} severe or extreme. Extrusion height = severity. The ${num(s.hubs)} weather hubs convert these into call-volume and staffing calls. As of ${a.asof}.`, src: SRC('National Weather Service alerts (live)', { id: 'pp_demand_model', note: 'weather hubs' }) };
     },
     legend: () => [['dot', 'rgb(255,92,92)', 'Severe / extreme alert'], ['dot', 'rgb(245,183,61)', 'Moderate alert'], ['dot', 'rgb(63,208,224)', 'Minor alert'], ['ring', '#ffffff', 'PP weather hub']] },
   { id: 'S6', name: 'Close', color: C.bsp, duration: 15000, labels: 'none',
@@ -334,8 +339,9 @@ class TheaterInstance {
   async _init() {
     if (!document.getElementById('bsp-theater-css')) { const st = document.createElement('style'); st.id = 'bsp-theater-css'; st.textContent = CSS; document.head.appendChild(st); }
     const root = document.createElement('div'); root.className = 'bsp-theater'; this.root = root;
+    const ht = document.querySelector('h1') ? 'h2' : 'h1';   // the scene title is the page heading unless the page already has one
     root.innerHTML = `<div class="bt-map"></div><div class="bt-shade"></div>
-      <div class="bt-cap out" aria-live="polite"><div class="bt-kicker"></div><h2 class="bt-title"></h2><div class="bt-line"></div><div class="bt-src"></div><div class="bt-prog"><i></i></div></div>
+      <div class="bt-cap out" aria-live="polite"><div class="bt-kicker"></div><${ht} class="bt-title"></${ht}><div class="bt-line"></div><div class="bt-src"></div><div class="bt-prog"><i></i></div></div>
       <nav class="bt-rail" aria-label="Scenes">${SCENES.map((s, i) => `<button data-s="${s.id}" style="--bc:${s.color}" title="${esc(s.name)}"><span class="n">0${i + 1}</span><span class="t">${esc(s.name)}</span></button>`).join('')}
         <div class="bt-ctl"><button data-act="prev" title="Previous (←)">‹</button><button data-act="play" title="Play / pause (space)">▶</button><button data-act="next" title="Next (→)">›</button></div><div class="bt-hint">← → scenes · space play</div></nav>
       <div class="bt-legend"></div><div class="bt-status">Loading 3D engine…</div><div class="bt-tip" hidden></div>`;
@@ -353,7 +359,7 @@ class TheaterInstance {
     window.addEventListener('keydown', this._onKey);
     this._syncPlay();
 
-    if (!this.core) this.core = await import('./core.js?v=20261006122625');
+    if (!this.core) this.core = await import('./core.js?v=20261006134218');
     const baseP = loadBase(this.core);
     if (!webglOK() || this.opts.forceFallback) return this._fallback(this.opts.forceFallback ? 'Static fallback requested.' : 'WebGL is not available in this browser, so the 3D theater is showing a static 2D map.', baseP);
     loadCss(LIBS.mlCss, 'maplibre-css');

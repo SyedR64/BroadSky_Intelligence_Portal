@@ -69,7 +69,7 @@ export function init({ Data, Fmt, Live, Chat, esc, Frame }) {
     () => storm(Data, Live, esc), () => careers(Data, esc), () => rationale(Data, esc)];
   for (const fn of parts) { try { fn(); } catch (e) { console.warn('section failed', e); } }
   try {
-    return Chat.mount(null, { persona: 'pp', mode: 'floating', theme: 'light', faq: FAQ, suggestions: SUGGESTIONS });
+    return Chat.mount(null, { persona: 'pp', short_name: 'Punctual Pros', mode: 'floating', theme: 'light', faq: FAQ, suggestions: SUGGESTIONS });
   } catch (e) { console.warn('chat mount failed', e); return null; }
 }
 

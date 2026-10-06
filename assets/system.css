@@ -58,7 +58,7 @@
   /* layout */
   --sys-wrap:1200px; --sys-wrap-wide:1320px; --sys-wrap-narrow:760px; --sys-gut:clamp(16px,4vw,40px);
   /* radii */
-  --sys-r-xs:6px; --sys-r-sm:10px; --sys-r:16px; --sys-r-lg:24px; --sys-r-pill:999px;
+  --sys-r-xs:6px; --sys-r-sm:10px; --sys-r:16px; --sys-r-md:var(--sys-r); --sys-r-lg:24px; --sys-r-pill:999px;  /* --sys-r-md is an alias of --sys-r */
   /* shadows */
   --sys-sh-1:0 1px 2px rgba(12,19,32,.05),0 1px 1px rgba(12,19,32,.03);
   --sys-sh-2:0 12px 32px -12px rgba(12,19,32,.16),0 2px 6px rgba(12,19,32,.05);
@@ -181,6 +181,8 @@ html:has(.sys-subnav){--sys-subnav-h:48px}
 .sys-banner a{color:inherit;text-underline-offset:2px}
 .sys-banner-x{flex-shrink:0;width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:var(--sys-r-pill);background:transparent;color:inherit;opacity:.7;cursor:pointer;font-size:18px;line-height:1}
 .sys-banner-x:hover{opacity:1;background:rgba(255,255,255,.1)}
+.sys-banner-more{display:none;flex-shrink:0;height:26px;padding:0 9px;border:1px solid rgba(255,255,255,.22);border-radius:var(--sys-r-pill);background:transparent;color:inherit;font:600 12px/1 var(--sys-font);cursor:pointer;white-space:nowrap}
+.sys-banner-more:hover{background:rgba(255,255,255,.1)}
 
 /* ── 5d · frame: breadcrumb ───────────────────────────────────────────────── */
 .sys-crumb{background:var(--sys-bg);border-bottom:1px solid var(--sys-line);font:500 13px/1 var(--sys-font)}
@@ -202,7 +204,8 @@ html:has(.sys-subnav){--sys-subnav-h:48px}
 .sys-subnav{position:sticky;top:var(--sys-top-h);z-index:70;background:var(--sys-top-bg);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid var(--sys-line);font-family:var(--sys-font)}
 .sys-subnav-in{max-width:var(--sys-wrap);margin:0 auto;padding:0 var(--sys-gut);height:48px;display:flex;align-items:center;gap:var(--sys-sp-4)}
 .sys-subnav-title{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;font-weight:700;font-size:14.5px;letter-spacing:-.01em;color:var(--sys-ink);text-decoration:none;white-space:nowrap}
-.sys-subnav-title::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--co)}
+.sys-subnav-title::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--co,var(--sys-brand));flex-shrink:0}
+.sys-subnav-title>:is(svg,img,[class*="-mark"],[class*="logo"]){display:none}   /* dot-only title: UNIFIED.md §3a */
 .sys-subnav-links{display:flex;align-items:center;gap:2px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent)}
 .sys-subnav-links::-webkit-scrollbar{display:none}
 .sys-subnav-links a{display:inline-flex;align-items:center;height:32px;padding:0 10px;border-radius:var(--sys-r-pill);font:500 13.5px/1 var(--sys-font);color:var(--sys-ink-2);text-decoration:none;white-space:nowrap;transition:background var(--sys-t),color var(--sys-t)}
@@ -320,6 +323,11 @@ button.sys-chip,a.sys-chip{cursor:pointer;transition:border-color var(--sys-t),c
 button.sys-chip:hover,a.sys-chip:hover{border-color:var(--sys-ink);color:var(--sys-ink)}
 .sys-chip[aria-pressed="true"],.sys-chip[aria-current]{background:var(--sys-ink);border-color:var(--sys-ink);color:var(--sys-on-ink)}
 .sys-chip--soft{border-color:transparent;background:var(--co-soft);color:var(--co-ink);font-weight:600}
+/* status chips: same hues as notes and est. badges; status only (§6) */
+.sys-chip--good{--s:var(--sys-good)} .sys-chip--warn{--s:var(--sys-warn)} .sys-chip--bad{--s:var(--sys-bad)} .sys-chip--info{--s:var(--sys-info)}
+:is(.sys-chip--good,.sys-chip--warn,.sys-chip--bad,.sys-chip--info){border-color:color-mix(in srgb,var(--s) 32%,transparent);background:color-mix(in srgb,var(--s) 10%,var(--sys-surface));color:var(--s);font-weight:600}
+:is(.sys-chip--good,.sys-chip--warn,.sys-chip--bad,.sys-chip--info)::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+:is(.sys-chip--good,.sys-chip--warn,.sys-chip--bad,.sys-chip--info)[data-co]::before{background:currentColor}
 
 /* ── 6j · buttons ─────────────────────────────────────────────────────────── */
 .sys-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:var(--sys-r-pill);border:1px solid transparent;font:600 15px/1 var(--sys-font);letter-spacing:-.01em;text-decoration:none;white-space:nowrap;cursor:pointer;transition:transform var(--sys-t) var(--sys-ease),box-shadow var(--sys-t) var(--sys-ease),background var(--sys-t),border-color var(--sys-t),color var(--sys-t)}
@@ -423,8 +431,17 @@ body[data-sys-layout="app"] #app{flex:1 1 0;height:auto;min-height:0;width:100%}
 @media (max-width:560px){
   .sys-ask .sys-kbd,.sys-top-cta{display:none}
   .sys-ask{padding:0 13px}
-  .sys-banner-in{align-items:flex-start;padding-top:9px;padding-bottom:9px}
-  .sys-banner-tag{margin-top:2px}
+  /* concept banner: one line (≈34px) with a More toggle, so top bar + banner + crumb stay under 160px */
+  .sys-banner-in{gap:var(--sys-sp-2);padding-top:4px;padding-bottom:4px;min-height:34px}
+  .sys-banner p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12.5px}
+  .sys-banner-more{display:inline-flex;align-items:center}
+  .sys-banner-x{width:28px;height:28px}
+  .sys-banner--open .sys-banner-in{align-items:flex-start;padding-top:8px;padding-bottom:8px}
+  .sys-banner--open p{white-space:normal;overflow:visible}
+  .sys-banner--open .sys-banner-tag{margin-top:2px}
+  .sys-crumb-in{height:40px}
+  /* room for the 44px chat launcher under the last line of the page */
+  .sys-footer{padding-bottom:calc(28px + 56px + env(safe-area-inset-bottom,0px))}
   .sys-crumb-aside{display:none}
   .sys-subnav-actions{display:none}
   .sys-subnav-title{font-size:13.5px}

@@ -13,6 +13,14 @@
 .mx .mx-note-s{margin:0 0 var(--sys-sp-4);font-size:var(--sys-fs-sm)}
 .mx .sys-hero .sys-kpis{margin-top:var(--sys-sp-6)}
 .mx .sys-hero .sys-src{margin-top:var(--sys-sp-3)}
+/* wide screens: the four headline numbers sit beside the title instead of under it */
+@media (min-width:1180px){
+  .mx .mx-hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:var(--sys-sp-8);align-items:center}
+  .mx .mx-hero .sys-h1{font-size:clamp(44px,4.4vw,64px)}
+  .mx .mx-hero-side .sys-kpis{margin-top:0;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mx .mx-hero-side .sys-kpi{padding:24px 24px 22px}
+  .mx .mx-hero-side .sys-kpi-value{font-size:clamp(34px,3vw,44px)}
+}
 
 /* narrative */
 .mx .mx-nar-list{margin:0;padding:0;list-style:none;counter-reset:nar;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sys-sp-3) var(--sys-sp-6)}

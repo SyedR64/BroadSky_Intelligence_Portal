@@ -1,7 +1,7 @@
 /* BPI concept: shared behaviour for index.html and signalos.html (reveal, office clocks, chat).
    The frame (top bar, concept banner, breadcrumb, footer) comes from assets/frame.js. */
-import { Chat } from '../../assets/chat.js?v=20261006122625';
-import { Frame } from '../../assets/frame.js?v=20261006122625';
+import { Chat } from '../../assets/chat.js?v=20261006134218';
+import { Frame } from '../../assets/frame.js?v=20261006134218';
 
 /** Plain-English copy from dataset strings: dataset file paths become their human names,
     internal record ids (bpi-022, ra-bpi, lever-03 …) are dropped. */
@@ -58,7 +58,7 @@ export function chrome() {
 
 export function mountChat(extraSuggestions) {
   try {
-    const chat = Chat.mount(null, { persona: 'bpi', mode: 'floating', theme: 'light', faq: FAQ, suggestions: extraSuggestions || SUGGESTIONS,
+    const chat = Chat.mount(null, { persona: 'bpi', short_name: 'BPI', mode: 'floating', theme: 'light', faq: FAQ, suggestions: extraSuggestions || SUGGESTIONS,
       greeting: 'Hi, I’m the BPI desk. Ask about our services, offices, how retainers work, crisis response, or SignalOS, our intelligence layer.' });
     Frame.mount({}).setChat(chat);
     return chat;

@@ -1,8 +1,8 @@
 /* 24/7 Voice AI — the growth engine. Renders the voice AI research dataset into the page.
    No framework, no build step. Markup uses the shared sys- components (assets/system.css, UNIFIED.md);
    every dollar figure is an estimate and carries the est. badge; dataset text passes through plain(). */
-import { Data } from '../assets/core.js?v=20261006122625';
-import { humanizeText } from '../assets/frame.js?v=20261006122625';
+import { Data } from '../assets/core.js?v=20261006134218';
+import { humanizeText } from '../assets/frame.js?v=20261006134218';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -28,6 +28,7 @@ const FIXES = [
   [/\s*-(?:>|&gt;)\s*/g, ' → '],
   [/(\d|\))\s+x\s+(?=[\d$(]|[a-z])/g, '$1 × '],
   [/^\s*[:;,]\s*/, ''],
+  [/\bdisclosure given\b/g, 'virtual-assistant greeting given'],
   [/\bPP's\b/g, "Punctual Pros'"],
   [/\bPP\b/g, 'Punctual Pros'],
 ];
@@ -39,6 +40,13 @@ const plain = s => {
 };
 /* Dataset text that lost words upstream (empty parentheses, dangling commas) is not shown. */
 const broken = s => /\(\s|\s[,;]|\bnot ;|\bpost- |\bthe \.|\bthe \?/.test(String(s || ''));
+/* Operational sources only: if a use case still cites a legal-article host, show the company or the data feed
+   the line runs on instead, or no citation. */
+const UC_SRC = {
+  'uc-cet-emergency': ['https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/', 'CET: Horton wastewater and pump-station service'],
+  'uc-cet-storm-pm': ['https://www.weather.gov/documentation/services-web-api', 'National Weather Service alerts API'],
+  'uc-bpi-pressline': null,
+};
 const RETRIEVAL = { fetched: 'page read Oct 2026', search_snippet: 'search result, Oct 2026', repo_dataset: 'portfolio dataset' };
 const cap = s => String(s || '').replace(/^\w/, c => c.toUpperCase());
 
@@ -192,7 +200,10 @@ const LOG = {
 };
 const BLURB = { 'call-pp-noheat': 'After hours · inbound', 'call-pp-storm': 'Storm overflow · inbound', 'call-pp-renewal': 'Membership · outbound' };
 
+/* Scripted greetings say calls are reviewed for coaching (operational QA), not that they are recorded. */
+const coachLine = t => String(t || '').replace(/\bthis call is recorded\b/g, 'calls are reviewed for coaching').replace(/\bThis call is recorded\b/g, 'Calls are reviewed for coaching');
 function demo(calls) {
+  calls = calls.map(c => ({ ...c, lines: (c.lines || []).map(l => ({ ...l, text: coachLine(l.text) })) }));
   const S = { call: calls[0], token: 0, playing: false, voiceOn: true };
   const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
   let voice = null;
@@ -345,6 +356,7 @@ function calculator(meta, items) {
 }
 
 /* ── 5. Use cases ─────────────────────────────────────────────────────── */
+const ucSrc = u => { if (!/rcfp\.org|cooley\.com|akingump\.com/.test(u.source_url || '')) return srcLink(u.source_url); const o = UC_SRC[u.id]; return o ? srcLink(o[0], o[1]) : ''; };
 function useCases(items) {
   const ucs = items.filter(i => i.kind === 'use_case');
   const cos = ['all', ...Object.keys(CO).filter(k => ucs.some(u => u.company === k))];
@@ -359,7 +371,7 @@ function useCases(items) {
       <h3 class="sys-card-title">${esc(plain(u.name))}</h3>
       <dl class="vai-dl"><div><dt>Trigger</dt><dd>${esc(plain(u.trigger))}</dd></div><div><dt>Human handoff</dt><dd>${esc(plain(u.handoff_rule))}</dd></div>
       <div><dt>KPIs</dt><dd class="vai-kpi-chips">${(u.kpis || []).map(k => `<span>${esc(plain(k))}</span>`).join('')}</dd></div></dl>
-      <details class="vai-details"><summary>Call flow and risks</summary><ol>${(u.flow || []).map(f => `<li>${esc(plain(f))}</li>`).join('')}</ol>${u.risk_notes && !broken(u.risk_notes) ? `<p><b>Risk:</b> ${esc(plain(u.risk_notes))}</p>` : ''}<p class="vai-formula-lite sys-num">${esc(plain(u.value_formula))}</p><p class="sys-src"><b>Evidence:</b> ${srcLink(u.source_url)}</p></details>
+      <details class="vai-details"><summary>Call flow and risks</summary><ol>${(u.flow || []).map(f => `<li>${esc(plain(f))}</li>`).join('')}</ol>${u.risk_notes && !broken(u.risk_notes) ? `<p><b>Risk:</b> ${esc(plain(u.risk_notes))}</p>` : ''}<p class="vai-formula-lite sys-num">${esc(plain(u.value_formula))}</p>${ucSrc(u) ? `<p class="sys-src"><b>Evidence:</b> ${ucSrc(u)}</p>` : ''}</details>
       <div class="sys-card-foot"><span><b class="sys-num vai-uc-v">${money(u.est_annual_value_usd)}</b>${EST}</span><span class="sys-muted">a year</span></div>
     </article>`).join('');
   };

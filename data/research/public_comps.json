@@ -3,7 +3,7 @@
   "dataset": "BSP public comparables: FY2023-FY2025 (latest available) SEC XBRL fundamentals for 31 listed peers across all six BSP portfolio sectors",
   "generated": "2026-09-24",
   "scope_note": "Built for the whole BSP portfolio and its public rivals, not only Punctual Pros: residential home services (Punctual Pros), commercial electrical/energy (CET / NuWave), legal/BPO managed services (Frontline; CBIZ also covers Smith + Howard), lab distribution (Thomas Scientific), communications agencies, and apparel/DTC (Fair Harbor).",
-  "method": "CIKs resolved via sec.gov/files/company_tickers.json and EDGAR company search (for delisted or renamed filers: TopBuild 1633931, WNS 1356570, Patterson 891024, Interpublic 51644). Pulled data.sec.gov/api/xbrl/companyfacts for every ticker with a declared User-Agent. For each concept, took annual-duration facts (340-380 days) from 10-K/20-F filings and kept the latest-filed value per fiscal year. Revenue concept priority: Revenues > RevenueFromContractWithCustomerExcludingAssessedTax > IFRS Revenue. Operating income: OperatingIncomeLoss (IFRS ProfitLossFromOperatingActivities); where not reported (FTDR, KD), pre-tax income + interest expense. Net income: NetIncomeLoss (attributable to parent). D&A: DepreciationDepletionAndAmortization / DepreciationAndAmortization, else Depreciation + AmortizationOfIntangibleAssets. EBITDA approx = operating income + D&A, unadjusted, so impairments and deal costs stay in. dei:EntityNumberOfEmployees is rarely tagged, so headcount came from each 10-K/20-F Human Capital section, text-parsed from 95 downloaded filings. Fiscal year = calendar year of period end, except Jan/Feb year-ends (LULU, DLTH), which take the prior year. Latest-year growth = latest FY vs prior FY. Revenue/employee = latest FY revenue / year-end headcount. Sector values are medians across the comps listed for that sector; FIX counts in both residential and commercial.",
+  "method": "CIKs resolved via sec.gov/files/company_tickers.json and EDGAR company search (for delisted or renamed filers: TopBuild 1633931, WNS 1356570, Patterson 891024, Interpublic 51644). Pulled data.sec.gov/api/xbrl/companyfacts for every ticker with a declared User-Agent. For each concept, took annual-duration facts (340-380 days) from 10-K/20-F filings and kept the latest-filed value per fiscal year. Revenue concept priority: Revenues > RevenueFromContractWithCustomerExcludingAssessedTax > IFRS Revenue. Operating income: OperatingIncomeLoss (IFRS ProfitLossFromOperatingActivities); where not reported (FTDR, KD), pre-tax income + interest expense. Net income: NetIncomeLoss (attributable to parent). D&A: DepreciationDepletionAndAmortization / DepreciationAndAmortization, else Depreciation + AmortizationOfIntangibleAssets. EBITDA approx = operating income + D&A, unadjusted, so impairments and deal costs stay in. dei:EntityNumberOfEmployees is rarely tagged, so headcount came from each 10-K/20-F Human Capital section, text-parsed from 95 downloaded filings. Fiscal year = calendar year of period end, except Jan/Feb year-ends (LULU, DLTH), which take the prior year. Latest-year growth = latest FY vs prior FY. Revenue/employee = latest FY revenue / year-end headcount. Sector values are medians across the comps listed for that sector, except legal/BPO revenue per employee, which is the median of the onshore comps (CBIZ, Kyndryl) because offshore BPO headcount is not comparable; FIX counts in both residential and commercial.",
   "sources_summary": "SEC XBRL companyfacts API (31 companies); SEC submissions API (filing lists, 10-K URLs, 15-12G/DEFM14A/DEFA14A/S-4 events); 95 primary 10-K/20-F documents for headcount, Ameresco FY2025 statements and WPP amortisation; Federal Reserve G.5A annual average GBP/USD rates (release of 2026-01-05) for WPP conversion.",
   "caveats": [
    "All figures are GAAP/IFRS as reported and are not adjusted. EBITDA here is operating income + D&A, not company-defined Adjusted EBITDA. One-offs depress latest-year margins at AVTR (impairment), CROX (impairment), OMC (IPG deal costs), WPP (GBP 641M goodwill impairment) and TECH FY2025.",
@@ -73,8 +73,9 @@
     "median_operating_margin_latest_pct": 12.6,
     "median_operating_margin_multiyear_avg_pct": 11.3,
     "median_ebitda_margin_latest_pct": 16.9,
-    "median_revenue_per_employee_usd": 33396,
-    "what_this_implies_for_bsp": "BPO/managed-services comps posted a median 10.1% latest-year growth at a 12.6% operating margin and ~16.9% EBITDA margin, with TaskUs (+19.0%) and EXL (+13.6%) outgrowing Genpact (+6.6%) and WNS/Kyndryl flat. Revenue per employee is a delivery-model signal rather than a quality signal: offshore-heavy Genpact/EXL/TaskUs/WNS run $18k-$35k per head, while onshore professional-services models (CBIZ $290k, Kyndryl $210k) run 6-15x higher. For Frontline, an onshore US legal-services model should be benchmarked on the CBIZ-type revenue/employee and 8-12% operating margins, with offshore leverage the main path toward Genpact/EXL-style 15% margins; CBIZ's pending $55/share cash sale to a Grant Thornton affiliate is also a live valuation marker for Smith + Howard-type accounting companies."
+    "median_revenue_per_employee_usd": 249963,
+    "median_revenue_per_employee_basis": "Onshore comps only: median of CBIZ ($290k, FY2025) and Kyndryl ($210k, FY2026), each latest-year revenue divided by year-end headcount from its annual report. The six-comp median is about $33k because the four offshore BPO comps (Genpact $35k, EXL $32k, WNS $21k, TaskUs $18k) employ mostly offshore delivery staff, which does not describe an onshore US legal-services company such as Frontline.",
+    "what_this_implies_for_bsp": "BPO/managed-services comps posted a median 10.1% latest-year growth at a 12.6% operating margin and ~16.9% EBITDA margin, with TaskUs (+19.0%) and EXL (+13.6%) outgrowing Genpact (+6.6%) and WNS/Kyndryl flat. Revenue per employee is a delivery-model signal rather than a quality signal: offshore-heavy Genpact/EXL/TaskUs/WNS run $18k-$35k per head, while onshore professional-services models (CBIZ $290k, Kyndryl $210k) run 6-15x higher, so the revenue-per-employee benchmark for this sector uses the onshore comps only (about $250k). For Frontline, an onshore US legal-services model should be benchmarked on the CBIZ-type revenue/employee and 8-12% operating margins, with offshore leverage the main path toward Genpact/EXL-style 15% margins; CBIZ's pending $55/share cash sale to a Grant Thornton affiliate is also a live valuation marker for Smith + Howard-type accounting companies."
    },
    "lab_distribution": {
     "bsp_company": "Thomas Scientific",
@@ -670,7 +671,7 @@
    "cik": "0000105634",
    "sector_tag": "commercial_electrical_energy",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "CET / NuWave (NYC commercial electrical & energy contractor; portal tool \"CET / NuWave NYC Project Intelligence & Bid Pipeline\")",
+   "benchmarks_bsp": "CET / NuWave (New England commercial electrical & energy contractor; portal tool \"CET / NuWave Project Intelligence & Bid Pipeline\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -760,7 +761,7 @@
    "cik": "0001048268",
    "sector_tag": "commercial_electrical_energy",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "CET / NuWave (NYC commercial electrical & energy contractor; portal tool \"CET / NuWave NYC Project Intelligence & Bid Pipeline\")",
+   "benchmarks_bsp": "CET / NuWave (New England commercial electrical & energy contractor; portal tool \"CET / NuWave Project Intelligence & Bid Pipeline\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -840,7 +841,7 @@
    "cik": "0000700923",
    "sector_tag": "commercial_electrical_energy",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "CET / NuWave (NYC commercial electrical & energy contractor; portal tool \"CET / NuWave NYC Project Intelligence & Bid Pipeline\")",
+   "benchmarks_bsp": "CET / NuWave (New England commercial electrical & energy contractor; portal tool \"CET / NuWave Project Intelligence & Bid Pipeline\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -920,7 +921,7 @@
    "cik": "0001361538",
    "sector_tag": "commercial_electrical_energy",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "CET / NuWave (NYC commercial electrical & energy contractor; portal tool \"CET / NuWave NYC Project Intelligence & Bid Pipeline\")",
+   "benchmarks_bsp": "CET / NuWave (New England commercial electrical & energy contractor; portal tool \"CET / NuWave Project Intelligence & Bid Pipeline\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -1001,7 +1002,7 @@
    "cik": "0001050915",
    "sector_tag": "commercial_electrical_energy",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "CET / NuWave (NYC commercial electrical & energy contractor; portal tool \"CET / NuWave NYC Project Intelligence & Bid Pipeline\")",
+   "benchmarks_bsp": "CET / NuWave (New England commercial electrical & energy contractor; portal tool \"CET / NuWave Project Intelligence & Bid Pipeline\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -1090,7 +1091,7 @@
    "cik": "0001488139",
    "sector_tag": "commercial_electrical_energy",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "CET / NuWave (NYC commercial electrical & energy contractor; portal tool \"CET / NuWave NYC Project Intelligence & Bid Pipeline\")",
+   "benchmarks_bsp": "CET / NuWave (New England commercial electrical & energy contractor; portal tool \"CET / NuWave Project Intelligence & Bid Pipeline\")",
    "fiscal_years": [
     {
      "fy": 2023,

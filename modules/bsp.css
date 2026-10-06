@@ -84,3 +84,9 @@ html[data-theme="light"] .m-bsp{ --bn-1:#2a78d6; --bn-2:#eb6834; --bn-3:#1baf7a;
 .m-bsp .bsp-pathc-h{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;line-height:1.3}
 .m-bsp .bsp-pathc-m{font-size:11px;color:var(--sys-mute)}
 @media (max-width:900px){ .m-bsp .bsp-search{width:150px} }
+
+/* deal ledger: adviser and lender cells show their full text, wrapped */
+.m-bsp .bsp-cell{min-width:150px;max-width:240px;white-space:normal;overflow-wrap:anywhere;line-height:1.45}
+.m-bsp .bsp-cell--wide{min-width:210px;max-width:300px}
+.m-bsp .bsp-cell--narrow{min-width:110px;max-width:170px}
+.m-bsp .bsp-ledger .tbl td{vertical-align:top}

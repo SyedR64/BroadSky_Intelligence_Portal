@@ -1,8 +1,8 @@
 /* Shared, higher-level components used by several modules (targets, filings, opportunities). */
-import { esc } from './core.js?v=20261006122625';
+import { esc } from './core.js?v=20261006134218';
 
 const num = v => (v == null || isNaN(v)) ? null : Number(v);
-const fmtFig = x => x == null ? '—' : typeof x === 'number' ? x.toLocaleString() : typeof x === 'object' ? (Array.isArray(x) ? x.map(fmtFig).join(', ') : Object.entries(x).map(([k, v]) => `${k} ${fmtFig(v)}`).join('; ')) : String(x);
+const fmtFig = x => x == null ? '—' : typeof x === 'boolean' ? (x ? 'yes' : 'no') : typeof x === 'number' ? x.toLocaleString() : typeof x === 'object' ? (Array.isArray(x) ? x.map(fmtFig).join(', ') : Object.entries(x).map(([k, v]) => `${k} ${fmtFig(v)}`).join('; ')) : String(x);
 export const fitTierOf = s => s >= 80 ? 'Tier 1' : s >= 65 ? 'Tier 2' : s >= 50 ? 'Tier 3' : 'Tier 4';
 
 /** M&A target screen: filters + table + inspector. items follow the ma_targets_* schema. */

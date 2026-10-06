@@ -6,7 +6,7 @@
 import {
   build, esc, clean, when, monthLabel, mLabel, dash, capFirst, median, usd, xTimes, yrs, host, hrefFor, kpiVal,
   FAMILY, SECTOR, SECTOR_ORDER, TODAY, timingText, legendHTML, timelineHTML, matrixHTML, clockHTML, ganttHTML, ladderHTML, ladderRows, growthHTML, kpiCardsHTML, csv, download, eventRows,
-} from '../modules/cases-lib.js?v=20261006122625';
+} from '../modules/cases-lib.js?v=20261006134218';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -23,6 +23,7 @@ const S = { primary: 'case-ch', compare: ['case-si'], mode: 'aligned', showPP: t
 export async function boot({ Data }) {
   const d = await Data.research('value_creation_cases');
   M = build(d);
+  if (M) reconcile(M);
   if (!M) {
     const warn = '<div class="sys-note sys-note--warn"><span><b>Dataset not available.</b> The value-creation case set could not be loaded, so this section is empty.</span></div>';
     ['#hero-kpis', '#tl', '#ee-table', '#matrix', '#clock', '#gantt'].forEach(s => { const el = $(s); if (el) el.outerHTML = warn; });
@@ -36,6 +37,21 @@ export async function boot({ Data }) {
   return { faq: faq(), intents: intents() };
 }
 
+/* Champions: the members card used the Feb 2020 service-agreement count (40,000) while technicians and
+   members per technician start in Jan 2021. Put all three on the same base year: 60,000+ club members and
+   850+ technicians at the Jan 2021 sale to Odyssey (both in the case timeline), so 60,000 / 850 ≈ 70.6 per tech. */
+function reconcile(M) {
+  const ch = M.byId?.['case-ch']; if (!ch?.kpis) return;
+  const mem = ch.kpis.find(k => /member|service agreement/i.test(k.kpi) && !/per tech/i.test(k.kpi));
+  const tech = ch.kpis.find(k => /technician/i.test(k.kpi) && !/per/i.test(k.kpi));
+  const per = ch.kpis.find(k => /per tech/i.test(k.kpi));
+  if (mem && tech && Number(mem.before) === 40000) { mem.before = 60000; mem.kpi = 'Active members'; mem.period = tech.period; if (per) per.period = tech.period; }
+  if (typeof ch.copy === 'string') ch.copy = ch.copy.replace(/~40,000 \(2020\)/, '~60,000 (2021)');
+  const fix = t => typeof t === 'string' ? t.replace(/Active members \/ service agreements: 40,000/g, 'Active members: 60,000').replace(/~?40,000 \(2020\)/g, '~60,000 (2021)') : t;
+  for (const p of M.patterns || []) for (const e of p.evidence || []) if (e.case === 'case-ch') e.fact = fix(e.fact);
+  if (typeof M.narrative === 'string') M.narrative = M.narrative.replace('Champions grew from about 40,000 service agreements in 2020 to about 150,000 members (about 83 per technician)', 'Champions grew from about 60,000 members in 2021 to about 150,000 in 2026 (about 71 to 83 per technician)');
+}
+
 /* ── hero ─────────────────────────────────────────────────────────────────── */
 function hero() {
   const st = M.stats;
@@ -44,7 +60,7 @@ function hero() {
   $('#hero-kpis').innerHTML = [
     k('Cases', String(st.n), `${st.nHome} home services, ${st.nCross} adjacent sectors · ${st.yearMin}–${st.yearMax}`),
     k('Median hold', `${st.hold.toFixed(1)} yrs`, `First sponsor, ${st.holdN} exits · ${st.holdHome?.toFixed(1)} yrs in home services`),
-    k('Median exit multiple', `~${xTimes(st.exitMult)}${EST}`, `EBITDA, press-reported (${esc(mults)}); most sponsors disclose none`),
+    k('Median exit multiple', `~${xTimes(st.exitMult)}${EST}<small>n=${st.exitMults.length}</small>`, `EBITDA, press-reported (${esc(mults)}); most sponsors disclose none`),
     k('Median revenue growth', `~${xTimes(st.growth)}${EST}`, `Across the hold, ${st.growthN} cases with sourced before and after figures`),
   ].join('');
   $('#hero-src').innerHTML = `<b>Source:</b> Value-creation case set: ${st.events} dated events from sponsor and company releases, SEC and Companies House filings and trade press, retrieved ${esc(monthLabel(when(M.retrieved).t))}. Exit multiples and growth are estimates.`;
@@ -54,7 +70,7 @@ function hero() {
     const p = M.patterns.find(x => x.id === id); if (!p) return '';
     const win = (p.pattern.split(':')[0] || '').replace(/(\d)-(\d)/g, '$1–$2');
     const ex = p.evidence.find(e => e.fact && M.byId[e.case]);
-    return `<li><a href="#patterns" data-pat-link="${esc(p.id)}"><span class="cs-mv-n">${i + 1}</span><span class="cs-mv-w">${esc(win)}</span><b>${esc(title)}</b><span class="cs-mv-e">${ex ? `${esc(M.byId[ex.case]?.short || '')}: ${esc(ex.fact)}` : ''}</span><span class="cs-ck-chip cs-ck-chip--${p.tone}">Punctual Pros · ${esc(p.chip)}</span></a></li>`;
+    return `<li><a href="#patterns" data-pat-link="${esc(p.id)}"><span class="cs-mv-n">${i + 1}</span><span class="cs-mv-w">${esc(win)}</span><b>${esc(title)}</b><span class="cs-mv-e">${ex ? `${esc(M.byId[ex.case]?.short || '')}: ${esc(ex.fact)}` : ''}</span><span class="sys-chip sys-chip--soft" data-co="pp">Punctual Pros · ${esc(p.chip)}</span></a></li>`;
   }).join('')}</ol>`;
   $$('#moves [data-pat-link]').forEach(a => a.addEventListener('click', () => { S.pat = a.dataset.patLink; renderPatterns(); }));
 
@@ -134,7 +150,7 @@ function renderCasePanel() {
     <h4 class="cs-sub">Levers used</h4>
     <div class="sys-chips cs-lv-chips">${c.levers.map(l => `<span class="sys-chip">${esc(l)}</span>`).join('')}</div>
     <p class="sys-src"><b>Evidence:</b> ${esc(c.basis)}. ${c.sources?.length || 0} sources, retrieved ${esc(when(c.retrieved)?.label || 'Oct 2026')}.</p>
-    <div class="cs-case-links"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="${ROOT}app.html#/cases/timeline?case=${esc(c.id)}">Open in the portal</a>${c.portal ? `<a class="sys-link" href="${esc(hrefFor(c.portal, ROOT))}">${esc(c.portal.label)} →</a>` : ''}</div>
+    <div class="cs-case-links"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="${ROOT}app.html#/cases/timeline?case=${esc(c.id)}">Open in portal</a>${c.portal ? `<a class="sys-link" href="${esc(hrefFor(c.portal, ROOT))}">${esc(c.portal.label)} →</a>` : ''}</div>
   </div>`;
 }
 function selectEvent(key, scrollRow) {
@@ -317,7 +333,7 @@ function caseAnswer(q) {
   const lead = cut ? `<p>Up to ${esc(cut.w.label)}, when ${esc(cut.event.split(/[;,.]/)[0])}, the owners made ${N(evs.length)} dated moves:</p>` : `<p>${esc(c.chain)}. Entry ${esc(c.entry?.label || '—')}${c.exit ? `; exit ${esc(c.exit.label)} to ${esc(c.buyer)}` : `; ${esc(c.statusLabel.toLowerCase())}`}${c.hold != null ? ` (${yrs(c.hold)})` : ''}.</p>`;
   return {
     html: `<h4>${esc(c.name)}</h4>${lead}${rows.length ? T(['When', 'What happened', 'Source'], rows) : '<p>No dated events before that point.</p>'}${k.length ? `<h4>Before and after</h4>${T(['KPI', 'Before → after', 'Period'], k)}` : ''}<p><b>What Broad Sky can copy:</b> ${esc(c.copy)}</p>`,
-    links: [A(`#case=${c.id}`, `Show ${c.short} on the timeline`), A(`${ROOT}app.html#/cases/timeline?case=${c.id}`, 'Open in the portal')],
+    links: [A(`#case=${c.id}`, `Show ${c.short} on the timeline`), A(`${ROOT}app.html#/cases/timeline?case=${c.id}`, 'Open in portal')],
     followups: ['How long did sponsors hold home-services companies?', 'Which levers moved EBITDA fastest?', 'What should Punctual Pros do in the next 12 months?'],
   };
 }
@@ -393,7 +409,7 @@ function faq() {
     { q: 'What is the median hold for a home-services company?', a: `<p>${yrs(st.holdHome)} in residential home services (n=${st.holdHomeN}) and ${yrs(st.hold)} across all first-sponsor exits (n=${st.holdN}).</p>` },
     { q: 'How soon after entry did sponsors buy the first add-on?', a: `<p>A median of ${st.firstAddon?.median} months (n=${st.firstAddon?.n}). Punctual Pros bought Horvath in month ${st.pp?.first_addon_month}.</p>` },
     { q: 'What tuck-in cadence did the winners keep?', a: `<p>About one deal every ${st.cadence?.median} months after the first (n=${st.cadence?.n}).</p>` },
-    ch ? { q: 'What did Champions sell for?', a: `<p>Blackstone agreed to buy Champions in Feb 2026 at a reported ~$2.5B, about ${xTimes(ch.exit_multiple_ebitda)} trailing EBITDA (press estimate). Members grew from about 40,000 to about 150,000 under its owners.</p>`, href: '#case=case-ch' } : null,
+    ch ? { q: 'What did Champions sell for?', a: `<p>Blackstone agreed to buy Champions in Feb 2026 at a reported ~$2.5B, about ${xTimes(ch.exit_multiple_ebitda)} trailing EBITDA (press estimate). Members grew from about 60,000 at the Jan 2021 sale to Odyssey to about 150,000, roughly 71 to 83 per technician.</p>`, href: '#case=case-ch' } : null,
     sh ? { q: 'What did Broad Sky do with Smith + Howard?', a: `<p>${esc(sh.copy)}</p>`, href: '#case=cx-01' } : null,
     { q: 'Which lever did the most cases use?', a: `<p>${esc(lev?.name || '')}: ${lev?.cases.length} of ${st.n} cases. ${esc(lev?.pp || '')}</p>`, href: '#levers' },
     { q: 'Is Punctual Pros behind the cases?', a: `<p>On the first add-on it is in line (month 8 vs a median of about 7). On cadence it is behind: no second add-on appears in public sources since Horvath. It is about 30 months into the hold.</p>`, href: '#patterns' },

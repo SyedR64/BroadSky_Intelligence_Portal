@@ -1,9 +1,9 @@
-import * as Copy from './copy.js?v=20261006122625';
+import * as Copy from './copy.js?v=20261006134218';
 /* ═══════════════════════════════════════════════════════════════════════════
    Punctual Pros — residential HVAC · plumbing · electrical (Central PA + Jersey Shore)
    Views: overview · weather & demand · new-mover marketing · territory · market · targets · filings
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, renderFilings } from '../assets/components.js?v=20261006122625';
+import { renderTargets, renderFilings } from '../assets/components.js?v=20261006134218';
 
 const PP = '#f08a3c';
 const HQ = { lat: 40.0629, lon: -76.37, label: 'PP HQ · East Hempfield' };
@@ -64,7 +64,7 @@ const nameConflict = t => /punctual\s*pros/i.test(String(t?.company || ''));
 const pick = (o, ...ks) => { for (const k of ks) if (o && o[k] != null && o[k] !== '') return o[k]; return null; };
 
 function css() {
-  if (!document.getElementById('css-pp')) { const l = document.createElement('link'); l.id = 'css-pp'; l.rel = 'stylesheet'; l.href = 'modules/pp.css?v=20261006122625'; document.head.appendChild(l); }
+  if (!document.getElementById('css-pp')) { const l = document.createElement('link'); l.id = 'css-pp'; l.rel = 'stylesheet'; l.href = 'modules/pp.css?v=20261006134218'; document.head.appendChild(l); }
 }
 
 /* ── shared data ──────────────────────────────────────────────────────── */
@@ -1183,8 +1183,8 @@ async function filings(ctx) {
   const d = await data.research('pp_filings');
   el.innerHTML = `<div class="m-pp">${ui.pageHead({ title: 'Filings and financials', sub: d ? (() => { const et = d.meta?.estimate_table || []; const f = re => et.find(e => re.test(e.metric || '')); const rv = f(/pro forma total revenue/i) || f(/revenue/i), eb = f(/EBITDA/i); return `<b>So what:</b> no audited financials are public; triangulating PPP, SEC Form D, FDD Item 19 and assessment records puts ${rv ? `${esc(rv.metric)} at <b>${esc(rv.estimate)}</b> (${esc(rv.confidence)} confidence)` : 'revenue in a wide range'}${eb ? ` and ${esc(eb.metric)} at <b>${esc(eb.estimate)}</b> (${esc(eb.confidence)})` : ''} — use these to frame diligence asks, not valuation.`; })() : 'Public-record financial picture for Punctual Pros', chips: d ? `${fmt.chip(`${(d.items || []).length} records`, 'var(--c-pp)')}${fmt.chip(`${(d.meta?.estimate_table || []).length} estimates`)}${fmt.chip(`generated ${d.meta?.generated || ''}`)}` : '' })}<div id="pp-fil"></div></div>`;
   // shared renderFilings prints nested key_figures objects as "[object Object]" and snake_case keys do not wrap — flatten to readable text first
-  const flat = v => Array.isArray(v) ? v.map(flat).join(', ') : v && typeof v === 'object' ? Object.entries(v).map(([k, x]) => `${k.replace(/_/g, ' ')} ${typeof x === 'number' ? x.toLocaleString('en-US') : flat(x)}`).join(', ') : v;
-  const dd = d ? { ...d, items: (d.items || []).map(i => i.key_figures && typeof i.key_figures === 'object' ? { ...i, key_figures: Object.fromEntries(Object.entries(i.key_figures).map(([k, v]) => [k.replace(/_/g, ' ').replace(/\b(bsp|pe|ev|ebitda|hq|ceo|cfo)\b/gi, m => m.toUpperCase()), flat(v)])) } : i) } : d;
+  const flat = v => typeof v === 'boolean' ? (v ? 'yes' : 'no') : Array.isArray(v) ? v.map(flat).join(', ') : v && typeof v === 'object' ? Object.entries(v).map(([k, x]) => `${Copy.field(k)} ${typeof x === 'number' ? x.toLocaleString('en-US') : flat(x)}`).join(', ') : v;
+  const dd = d ? { ...d, items: (d.items || []).map(i => i.key_figures && typeof i.key_figures === 'object' ? { ...i, key_figures: Object.fromEntries(Object.entries(i.key_figures).map(([k, v]) => [k, flat(v)])) } : i) } : d;
   renderFilings(ctx, el.querySelector('#pp-fil'), { data: Copy.filings(dd), color: 'var(--c-pp)', title: 'Punctual Pros' });
   // split the numbered synthesis into a scannable list
   const pr = el.querySelector('#pp-fil .prose');

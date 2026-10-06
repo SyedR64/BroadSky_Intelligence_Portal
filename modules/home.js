@@ -1,5 +1,5 @@
 /* Command Center — portfolio-wide situational awareness */
-import { dataset, srcLabel } from './copy.js?v=20261006122625';
+import { dataset, srcLabel } from './copy.js?v=20261006134218';
 const GROUP_TXT = { research: 'Research', sales: 'Deed records', legacy: 'Core tables' };
 const BASIS_TXT = { live: 'Live count', snapshot: 'Snapshot', 'live (manifest)': 'Live (manifest)' };
 const COS = [
@@ -161,7 +161,7 @@ async function overview(ctx) {
     { label: 'M&A targets screened', value: targets ? fmt.num(targets) : '—', sub: `CET ${maCet?.items?.length || 0} · PP ${maPp?.items?.length || 0} · FL+TS ${maFlTs?.items?.length || 0}`, color: 'var(--c-ma)' },
     { label: 'PE sponsors profiled', value: pe ? fmt.num(pe.items.length) : '—', sub: pe ? `${fmt.num(pe.items.filter(f => f.threat_level === 'high').length)} high-threat · funds · deals` : 'dataset pending', color: 'var(--c-pe)' },
   ]) +
-  `<div class="mt-12">${ui.panel({ title: 'Value & exit readiness', sub: 'Per company: hold length, add-ons, entry value and current scale (est.), debt, public mark signal, exit window and the one action. Click a row for the basis behind each estimate.', actions: `<button class="btn xs" id="est-toggle" aria-pressed="true"></button>`, body: `<div id="vx-tbl"></div>`, flush: true, foot: `${ui.source('Broad Sky firm profile (entry, add-ons) · company filings estimate tables (SEC Form D and ADV, BDC schedules, PPP loans, franchise disclosures)', '#/fin/portfolio', firm?.meta?.generated || 'Sept 2026')} · <span class="dim">est. = triangulated from public filings, not company-reported · dot = confidence (green high · amber medium · grey low)</span>` })}</div>` +
+  `<div class="mt-12">${ui.panel({ title: 'Value & exit readiness', sub: 'Per company: hold length, add-ons, exit window and the one next action, then entry value and current scale (est.), debt and public mark signal. Click a row for the basis behind each estimate.', actions: `<button class="btn xs" id="est-toggle" aria-pressed="true"></button>`, body: `<div id="vx-tbl"></div>`, flush: true, foot: `${ui.source('Broad Sky firm profile (entry, add-ons) · company filings estimate tables (SEC Form D and ADV, BDC schedules, PPP loans, franchise disclosures)', '#/fin/portfolio', firm?.meta?.generated || 'Sept 2026')} · <span class="dim">est. = triangulated from public filings, not company-reported · dot = confidence (green high · amber medium · grey low)</span>` })}</div>` +
   `<div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Portfolio footprint', sub: `Headquarters, operating footprints and live NWS alerts touching operating counties (${fmt.num(alerts.length)} of ${fmt.num(allAlerts.length)} statewide alerts in PA · NJ · MA · CT)`, body: `<div class="map tall" id="home-map"></div>`, flush: true, foot: ui.source('Company filings & press; NWS alerts API', 'https://api.weather.gov', 'live') })}
     <div class="col gap-12">
@@ -188,15 +188,17 @@ async function overview(ctx) {
     { key: 'debt_est', label: 'Debt · maturity (est.)', wrap: true, width: '150px', fmt: (v, r) => r.status === 'exited' ? '<span class="dim small">—</span>' : `${estCell(r, 'debt')}${r.mat ? `<div class="small" style="color:${r.matMonths <= 24 ? 'var(--red)' : 'var(--text-2)'}">matures ${esc(monYr(r.mat))}${r.matMonths != null ? ` (${r.matMonths} mo)` : ''}</div>` : ''}${r.e?.lev ? `<div class="small text-2">leverage ${esc(r.e.lev.v)}${dot(r.e.lev.conf)}</div>` : ''}` },
     { key: 'mark_est', label: 'Public mark signal', wrap: true, fmt: (v, r) => r.e?.mark ? `${estCell(r, 'mark')}<div class="small dim">${esc(r.e.mark.metric.replace(/\s*\(.*$/, '').slice(0, 34))}</div>` : '<span class="dim small">—</span>' },
   ];
+  // exit window and the next action sit right after the company columns, so the action is never the column a narrow
+  // console (inspector open, laptop width) scrolls out of view; the estimate columns follow and scroll instead
   const tailCols = [
     { key: '_wk', label: 'Exit window', wrap: true, width: '150px', fmt: (v, r) => fmt.chip(r.window, r.flag.c) },
-    { key: 'action', label: 'Next action', wrap: true, fmt: v => `<div class="small text-2" style="min-width:180px;max-width:28ch">${esc(v)}</div>` },
+    { key: 'action', label: 'Next action', wrap: true, fmt: v => `<div class="small text-2" style="min-width:200px;max-width:34ch;white-space:normal">${esc(v)}</div>` },
   ];
   const vxEl = el.querySelector('#vx-tbl'), tgl = el.querySelector('#est-toggle');
   let showEst = getShowEst(), vx = null;
   const drawVx = () => {
     tgl.textContent = showEst ? 'BSP-only: estimates shown · hide' : 'Estimates hidden · show (BSP-only)'; tgl.setAttribute('aria-pressed', String(showEst)); tgl.classList.toggle('active', showEst);
-    vx = ui.table(vxEl, { columns: [...baseCols, ...(showEst ? estCols : []), ...tailCols], rows: board, pageSize: 10, sortKey: '_wk', exportName: showEst ? 'bsp_value_exit_readiness_EST_bsp_only' : 'bsp_value_exit_readiness', onRow: openVx });
+    vx = ui.table(vxEl, { columns: [...baseCols, ...tailCols, ...(showEst ? estCols : [])], rows: board, pageSize: 10, sortKey: '_wk', exportName: showEst ? 'bsp_value_exit_readiness_EST_bsp_only' : 'bsp_value_exit_readiness', onRow: openVx });
   };
   const openVx = r => {
     if (r.status === 'exited') return inspector.open({ title: 'Smith + Howard', sub: 'Exited · template for the current portfolio', color: CO_HEX.sh, sections: [

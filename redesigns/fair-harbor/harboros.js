@@ -1,5 +1,5 @@
 /* HarborOS concept page — booted from an inline module in harboros.html. */
-import { art, PRODUCTS, COLORS, recommend, SIZES, FAQ, INTENTS, chrome, toast, esc, fmtMoney, setFrame, plain, ep } from './common.js?v=20261006122625';
+import { art, PRODUCTS, COLORS, recommend, SIZES, FAQ, INTENTS, chrome, toast, esc, fmtMoney, setFrame, plain, ep } from './common.js?v=20261006134218';
 /* Chart colours come from the system tokens (read once; SVG attributes need concrete values). */
 const tok = (n, fb) => { try { return getComputedStyle(document.body).getPropertyValue(n).trim() || fb; } catch { return fb; } };
 const T = { co: tok('--co', '#3fd0e0'), ink: tok('--sys-ink', '#0c1320'), mute: tok('--sys-mute', '#5f6774'), mute2: tok('--sys-mute-2', '#9aa1ab'), line: tok('--sys-line', '#e8e5de'), bad: tok('--sys-bad', '#c62828'), warn: tok('--sys-warn', '#b45309'), orange: tok('--sys-orange', '#f2832f'), good: tok('--sys-good', '#15803d') };
@@ -23,7 +23,7 @@ export async function boot({ Chat, Data, Frame }) {
   const want = new URLSearchParams(location.search).get('tab') || (location.hash.match(/^#demo\/(\w+)/) || [])[1];
   if (want && ['fit', 'retention', 'wholesale', 'forecast', 'trace'].includes(want)) { select(want); if (location.hash.startsWith('#demo')) $('#demo').scrollIntoView(); }
   const chat = Chat.mount(null, {
-    persona: 'fh', mode: 'floating', theme: 'light', name: 'Harbor helper · HarborOS', initials: 'HX',
+    persona: 'fh', short_name: 'Fair Harbor', mode: 'floating', theme: 'light', name: 'Harbor helper · HarborOS', initials: 'HX',
     greeting: 'Ask how HarborOS cuts returns, lifts repeat purchase, runs wholesale and forecasting, what it costs and how it pays back. Shopper questions work too.',
     placeholder: 'Ask about HarborOS, ROI, vendors…', faq: [...OS_FAQ, ...[0, 1, 3, 4, 5, 6, 7, 12].map(i => FAQ[i])], intents: INTENTS, autoAsk: new URLSearchParams(location.search).get('ask') || undefined,
     suggestions: ['How does HarborOS cut returns?', 'What does HarborOS cost and how fast does it pay back?', 'Which vendors are in the stack?', 'How does the wholesale portal work?', 'How does bottle-to-trunk traceability work?'],

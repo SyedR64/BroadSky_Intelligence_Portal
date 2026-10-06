@@ -475,7 +475,7 @@ function mountChat(Chat, pb) {
     { q: 'What returns could BPI generate at exit?', a: ret, href: '#returns' },
     { q: 'Which AI agents should BPI deploy first?', a: '<p>Three form the SignalOS core: <b>narrative early-warning monitor</b> (6–10 wks), <b>compliance-gated drafting agent</b> (Writer TEI: 85% faster review cycles) and <b>synthetic-audience message tester</b> (Aaru for EY: 0.90 correlation in one day). Then come the policy radar, journalist matching, insights synthesis, the meeting copilot, outcome dashboards and a scope guard. Vendor figures are upper bounds.</p>', href: '#agents' },
   ];
-  try { const chat = Chat.mount(null, { persona: 'bpi', mode: 'floating', theme: 'light', faq, suggestions: faq.map(f => f.q) }); FR?.mount({}).setChat(chat); } catch (e) { console.warn('chat mount failed', e); }
+  try { const chat = Chat.mount(null, { persona: 'bpi', short_name: 'BPI', mode: 'floating', theme: 'light', faq, suggestions: faq.map(f => f.q) }); FR?.mount({}).setChat(chat); } catch (e) { console.warn('chat mount failed', e); }
 }
 
 /* ── Bars animate in when visible (content itself is never hidden) ────── */

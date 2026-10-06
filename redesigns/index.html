@@ -26,8 +26,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261006122625">
-<link rel="stylesheet" href="gallery.css?v=20261006122625">
+<link rel="stylesheet" href="../assets/system.css?v=20261006134218">
+<link rel="stylesheet" href="gallery.css?v=20261006134218">
 </head>
 <body data-page="gallery">
 <main id="main">
@@ -35,7 +35,7 @@
     <div class="sys-subnav-in">
       <a class="sys-subnav-title" href="#top">Site concepts</a>
       <div class="sys-subnav-links"><a href="#concepts">Concepts</a><a href="#os">OS program</a><a href="#growth-plans">Growth plans</a><a href="#principles-sec">Principles</a><a href="#why">Rationale</a></div>
-      <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../app.html">Open the portal</a></div>
+      <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../app.html">Open in portal</a></div>
     </div>
   </nav>
 
@@ -364,10 +364,10 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../assets/frame.js?v=20261006122625';
-  import { Chat } from '../assets/chat.js?v=20261006122625';
-  import { Gallery } from '../assets/landing.js?v=20261006122625';
-  const chat = Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'light' });
+  import { Frame } from '../assets/frame.js?v=20261006134218';
+  import { Chat } from '../assets/chat.js?v=20261006134218';
+  import { Gallery } from '../assets/landing.js?v=20261006134218';
+  const chat = Chat.mount(null, { persona: 'portal', short_name: 'the portfolio', mode: 'floating', theme: 'light' });
   Frame.mount({ crumb: [{ label: 'Home', href: './' }, { label: 'Site concepts' }], chat });
   Gallery.init();
 </script>

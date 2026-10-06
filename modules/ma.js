@@ -1,10 +1,10 @@
-import * as Copy from './copy.js?v=20261006122625';
+import * as Copy from './copy.js?v=20261006134218';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition engine (M&A) — cross-portfolio buy-and-build intelligence.
    Datasets: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets, Competitor filings,
              Public comparables, Private-equity landscape, Broad Sky firm profile; sales/* (property transfers, lazy, theses view).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, fitTierOf } from '../assets/components.js?v=20261006122625';
+import { renderTargets, fitTierOf } from '../assets/components.js?v=20261006134218';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 const PLAT = {
@@ -89,7 +89,7 @@ const pctOf = (n, d) => d ? Math.round((n / d) * 100) : 0;
 const titleCase = s => String(s || '').replace(/_/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
 const ownerClass = s => { const x = String(s || '').toLowerCase().replace(/no sponsor disclosed|no pe affiliation/g, ''); if (!x.trim()) return 'Unverified'; if (/subsidiary|part of|venture-backed|pe-backed|private equity|backed by|\bpe\b/.test(x)) return 'Sponsor / corporate'; if (/founder|family/.test(x)) return 'Founder / family'; if (/unknown|unverified|not disclosed|not verified/.test(x)) return 'Unverified'; if (/esop|employee-owned/.test(x)) return 'ESOP'; if (/franchisee/.test(x)) return 'Franchisee'; return 'Private independent'; };
 const OWNER_COLOR = { 'Founder / family': 'var(--green)', 'Private independent': 'var(--accent)', Franchisee: 'var(--cyan)', ESOP: 'var(--amber)', Unverified: 'var(--dim)', 'Sponsor / corporate': 'var(--red)' };
-const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261006122625'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261006134218'; document.head.appendChild(l); } };
 const shortList = a => { const v = (Array.isArray(a) ? a : [a]).filter(Boolean).map(x => { const y = String(x).replace(/\s*\(.*?\)\s*/g, ' ').replace(/_/g, ' ').trim(); return y.length > 26 ? y.slice(0, 25).trim() + '…' : y; }); return v.length > 2 ? [...v.slice(0, 2), `+${v.length - 2}`] : v; };
 const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
 const pctTxt = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;
@@ -621,6 +621,29 @@ function thesisPanel(ctx, b, p, s) {
 /* Property-transfer demand signal: home and commercial sales gathered in the counties every platform serves (lazy).
    PP and CET counties are joined to their add-on targets; BPI (DC) and Fair Harbor (Manhattan) are HQ-market context;
    Frontline (St. Louis, MO: non-disclosure state) has no records yet and is listed as a next pull; Thomas Scientific (Gloucester NJ) is covered. */
+/* Raw county GIS layer and file names carried in the sales datasets' coverage notes → plain English (first match wins). */
+const LAYER_LABELS = [
+  [/Parcels_HUBnew/i, 'Lancaster County parcel map (county GIS)'],
+  [/OPEN_DATA Parcels/i, 'York County parcel map (county open data)'],
+  [/Tax Parcel Tax Estimates/i, 'Cumberland County tax parcel map'],
+  [/DEVNET wEdge|DC_Parcels/i, 'Dauphin County property tax sales history'],
+  [/GIS_BOA_LAND/i, 'Montgomery County assessment land records'],
+  [/Parcels_owners/i, 'Chester County parcel owner map'],
+  [/CAMA Master\/Residential|BerksCountyGIS/i, 'Berks County assessment records and parcel map'],
+  [/LandRecords\/TaxParcels|lebcogis/i, 'Lebanon County tax parcel map'],
+  [/FC_TaxRecords/i, 'Franklin County tax records'],
+  [/Parcel_Owners/i, 'Adams County parcel owner map'],
+  [/Perry_County_Web_Map/i, 'Perry County parcel web map'],
+  [/SR1A.*MOD-IV/i, 'New Jersey deed sales file joined to the state parcel and assessment map'],
+  [/SR1A/i, 'New Jersey deed sales file joined to the state parcel map'],
+  [/^ct_cama_parcels$|CT Statewide CAMA/i, 'Connecticut statewide assessor parcel map'],
+  [/^ct_opm_sales$|CT OPM Real Estate Sales/i, 'Connecticut real estate sales (state Office of Policy and Management)'],
+  [/^cranston_ri_parcels$|Cranston RI Parcels/i, 'Cranston, RI parcel map'],
+  [/Lincoln RI Parcels/i, 'Lincoln, RI parcel map'],
+  [/MassGIS L3/i, 'MassGIS standardized assessor parcels'],
+];
+const layerLabel = src => { const t = String(src || ''); const hit = LAYER_LABELS.find(([rx]) => rx.test(t)); return hit ? hit[1] : Copy.text(t.replace(/\b([A-Za-z]+)_([A-Za-z0-9_]+)\b/g, (m) => m.replace(/_/g, ' '))); };
+const dayWords = iso => { const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?/.exec(String(iso || '')); if (!m) return iso ? String(iso) : '—'; const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m[2] - 1]; return m[3] ? `${mon} ${+m[3]}, ${m[1]}` : `${mon} ${m[1]}`; };
 const cname = r => /n\/a/.test(r.county) ? `${r.state} (county n/a)` : `${r.county} ${r.state}`;
 const HP = { ...Object.fromEntries(PKEYS.map(p => [p, { label: PLAT[p].label, color: PLAT[p].color }])), bpi: { label: 'BPI', color: 'var(--c-bpi)' }, fh: { label: 'Fair Harbor', color: 'var(--c-fh)' } };
 const SALES = [{ n: 'sales/pp_sales_pa_a', p: 'pp' }, { n: 'sales/pp_sales_pa_b', p: 'pp' }, { n: 'sales/pp_sales_nj', p: 'pp' }, { n: 'sales/cet_transfers_ma', p: 'cet' }, { n: 'sales/cet_transfers_ct_ri', p: 'cet' }, { n: 'sales/cet_home_sales_ma', p: 'cet' }, { n: 'sales/cet_home_sales_ct_ri', p: 'cet' }, { n: 'sales/ts_sales_gloucester_nj', p: 'ts' }, { n: 'sales/bpi_sales_dc', p: 'bpi' }, { n: 'sales/fh_sales_nyc', p: 'fh' }];
@@ -691,7 +714,7 @@ async function housingPanel(ctx, host, b, alive) {
     title: TITLE, accent: true,
     sub: `${fmt.num(totRes)} home sales and ${fmt.num(totNon)} commercial/industrial transfers across ${counties.length} counties served by ${Object.keys(HP).filter(p => counties.some(c => c.p === p)).length} portfolio companies (${loaded}/${SALES.length} sales files loaded)`,
     body: `<div class="h-note"><b>So what:</b> ${ppT.length ? `${fmt.num(ppCovered)} of ${fmt.num(ppT.length)} Punctual Pros targets are headquartered in a county with gathered home-sales records. ` : ''}Home turnover (sales per month) is a leading indicator of replacement, repair and new-mover demand. ${dens.length ? `Density plays, meaning high turnover plus Tier 1–2 targets, are strongest in ${dens.slice(0, 3).map(r => esc(cname(r))).join(', ')}.` : ''} ${gaps.length ? `Sourcing gaps, meaning high turnover with no screened target, are ${gaps.slice(0, 3).map(r => esc(cname(r))).join(', ')}: extend the screen there.` : ''} ${hqTxt ? `Portfolio home markets (median home price, sales per month): ${hqTxt}.` : ''} ${missingCos.length ? `No home-sales records yet for ${andList(missingCos.map(p => esc(HP[p].label)))}${missingCos.includes('cet') ? ' (CET pulls hold commercial/industrial transfers only)' : ''}.` : ''} ${pulls.length ? `${pulls.length} counties have no records yet (${pulls.slice(0, 4).map(r => esc(cname(r))).join(', ')}${pulls.length > 4 ? ', …' : ''}), so pull them next.` : ''} <span class="analyst">Analyst view</span></div><div id="ma-house-tbl"></div>`,
-    foot: `${srcs.map(c => ui.source(`${c.county} ${c.state}: ${clip(c.source || '', 60)}`, c.source_url, c.date_to)).join('')}<span class="src">CET counties are matched to the nearest county centroid within 45 km (approximate). Records hold each parcel’s last sale. BPI and Fair Harbor rows are HQ-market context (no add-on screen yet).</span>`,
+    foot: `${srcs.map(c => ui.source(`${c.county} ${c.state}: ${layerLabel(c.source)}`, c.source_url, c.date_to)).join('')}<span class="src">CET counties are matched to the nearest county centroid within 45 km (approximate). Records hold each parcel’s last sale. BPI and Fair Harbor rows are HQ-market context (no add-on screen yet).</span>`,
   });
   ctx.ui.table(host.querySelector('#ma-house-tbl'), {
     rows, pageSize: 15, sortKey: 'targets', exportName: 'ma_county_home_sales_vs_targets',
@@ -714,7 +737,7 @@ async function housingPanel(ctx, host, b, alive) {
         { label: 'Transfers', html: ui.kv({ 'Home sales': r.res ? `${fmt.num(r.res)} (${fmt.num(r.resPerMo, 0)}/mo)` : r.nonres ? 'not in this pull (commercial/industrial only)' : 'not gathered', 'Median home price': r.medPrice ? `${fmt.moneyFull(r.medPrice)} <span class="dim small">arms-length, ≥$10K</span>` : null, 'Comm./ind. transfers': r.nonres != null ? `${fmt.num(r.nonres)} (${fmt.num(r.nonresPerMo, 1)}/mo)` : null, Window: esc(r.window), 'Portfolio presence': r.hq ? esc(r.hq) : null }) },
         rel[r._p] && r.signal === 'HQ market' ? { label: 'Why it matters', html: `<div class="small text-2">${esc(rel[r._p])}</div>` } : null,
         r._scr ? { label: 'Screened targets in county', html: `<div class="col gap-4 small">${(r._list || []).slice().sort((x, y) => (y.fit_score || 0) - (x.fit_score || 0)).map(t => `<span>${fmt.score(t.fit_score)} ${esc(t.company)}</span>`).join('') || '<span class="dim">None screened. Extend the ZoomInfo radius pass to this county.</span>'}</div>` } : null,
-        { label: 'Sources', html: `<div class="col gap-4 small">${cov.filter(c => c.county === r.county && c.state === r.state).map(c => `${c.source_url ? `<a href="${esc(c.source_url)}" target="_blank" rel="noopener">${esc(clip(c.source || c.source_url, 80))}</a>` : esc(c.source || '')} <span class="dim">${esc(c.date_from || '')} → ${esc(c.date_to || '')}</span>`).join('') || '<span class="dim">No county records gathered yet</span>'}</div>` },
+        { label: 'Sources', html: `<div class="col gap-4 small">${cov.filter(c => c.county === r.county && c.state === r.state).map(c => `${c.source_url ? `<a href="${esc(c.source_url)}" target="_blank" rel="noopener">${esc(c.source ? layerLabel(c.source) : 'County records')}</a>` : esc(layerLabel(c.source))} <span class="dim">${esc(dayWords(c.date_from))} to ${esc(dayWords(c.date_to))}</span>`).join('') || '<span class="dim">No county records gathered yet</span>'}</div>` },
         { label: 'Next action', html: `<div class="small text-2">${esc(r.signal === 'Pull records' ? `Gather county deed/assessor sales for ${cname(r)} (same method as the PA/NJ/MA/DC/NYC pulls) so ${r.platform} can be read against local housing turnover.` : r.signal === 'HQ market' ? `Use as ${r.platform}’s home-market context (cost-of-living and customer affluence); refresh with each quarterly pull.` : r.signal === 'Sourcing gap' ? 'High turnover and no screened target: run a ZoomInfo radius pass plus franchise-directory check for this county.' : r.signal === 'Density play' ? 'Prioritise outreach to the Tier 1–2 targets here; overlay PP new-mover marketing once acquired.' : 'Keep on watch; re-rank when the next sales pull lands.')}</div>` },
       ].filter(Boolean) }),
   });
