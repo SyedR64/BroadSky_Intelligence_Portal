@@ -7,6 +7,54 @@ const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const BASE = new URL('.', import.meta.url).href.replace(/assets\/$/, '');
 
+/* ── Icons (inline SVG, currentColor) ─────────────────────────────────────── */
+const svgI = d => `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+export const ICON = {
+  search: svgI('<circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/>'),
+  play: svgI('<path d="M5 3.5v9l7-4.5z" fill="currentColor" stroke="none"/>'),
+  stop: svgI('<rect x="4" y="4" width="8" height="8" rx="1.5" fill="currentColor" stroke="none"/>'),
+  panel: svgI('<rect x="2" y="2.5" width="12" height="11" rx="2"/><path d="M10 2.5v11"/>'),
+  sun: svgI('<circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/>'),
+  moon: svgI('<path d="M13 9.6A5.5 5.5 0 0 1 6.4 3a5.5 5.5 0 1 0 6.6 6.6z"/>'),
+  close: svgI('<path d="m4 4 8 8M12 4l-8 8"/>'),
+};
+
+/* ── Theme ────────────────────────────────────────────────────────────────────
+   One preference for every page: html[data-sys-theme] = 'light' | 'dark', saved under localStorage 'bsp-theme'
+   (light by default, like the site; an explicit saved choice wins). system.css swaps the tokens; html[data-theme] is
+   mirrored for older module CSS hooks. Whoever flips the attribute (the console toggle, the frame, the assistant),
+   Theme.watch callers hear it: maps swap their tiles in place, so a view keeps its filters and selection. */
+const THEME_KEY = 'bsp-theme';
+export const Theme = {
+  key: THEME_KEY,
+  get: () => document.documentElement.dataset.sysTheme === 'dark' ? 'dark' : 'light',
+  saved() { try { const t = localStorage.getItem(THEME_KEY); return t === 'dark' || t === 'light' ? t : null; } catch { return null; } },
+  apply(t) {
+    const h = document.documentElement, v = t === 'dark' ? 'dark' : 'light';
+    if (h.dataset.sysTheme !== v) h.dataset.sysTheme = v;
+    if (h.dataset.theme !== v) h.dataset.theme = v;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', v === 'dark' ? '#0a0e14' : '#fbfaf7');
+  },
+  set(t) {
+    const F = globalThis.BSPFrame;
+    if (F && typeof F.setTheme === 'function') { try { F.setTheme(t); } catch { /* frame without a theme API */ } }
+    Theme.apply(t);
+    try { localStorage.setItem(THEME_KEY, Theme.get()); } catch { /* storage blocked: this page only */ }
+  },
+  toggle() { Theme.set(Theme.get() === 'dark' ? 'light' : 'dark'); },
+  _fns: new Set(), _mo: null,
+  /** fn(theme) on every change of html[data-sys-theme]; returns an unsubscribe function. */
+  watch(fn) {
+    Theme._fns.add(fn);
+    if (!Theme._mo && typeof MutationObserver !== 'undefined') {
+      let last = Theme.get();
+      Theme._mo = new MutationObserver(() => { const t = Theme.get(); if (t === last) return; last = t; Theme.apply(t); for (const f of Theme._fns) { try { f(t); } catch (e) { console.debug(e); } } });
+      Theme._mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-sys-theme'] });
+    }
+    return () => Theme._fns.delete(fn);
+  },
+};
+
 /* ── Shared fetches ─────────────────────────────────────────────────────────
    data/manifest.json is read by the frame, the rail, the assistant and the home view: Data.manifest() keeps one
    promise per page (shared across module instances via globalThis), and plain fetch() calls for that exact URL are
@@ -100,30 +148,43 @@ export const Fmt = {
   days: s => { if (!s) return null; const d = parseDate(s); if (isNaN(d)) return null; const t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((d - t) / 864e5); },
   score: (v, color) => `<span class="score" style="--sc:${color || Fmt.scoreColor(v)}"><span class="bar"><i style="width:${Math.max(0, Math.min(100, v || 0))}%"></i></span>${v == null ? '—' : Math.round(v)}</span>`,
   scoreColor: v => v >= 80 ? 'var(--green)' : v >= 60 ? 'var(--accent)' : v >= 40 ? 'var(--amber)' : 'var(--dim)',
-  tier: t => { const s = String(t ?? '').toLowerCase(); const n = (s.match(/\d/) || ['4'])[0]; return `<span class="chip t${n}"><i class="cdot"></i>${esc(t)}</span>`; },
-  chip: (t, color) => `<span class="chip" style="${color ? `--cc:${color}` : ''}">${esc(t)}</span>`,
+  /** Tier chip: a .sys-chip status chip (Tier 1 good · 2 info · 3 warn · 4 neutral); .chip.t<n> kept for module CSS hooks. */
+  tier: t => { const s = String(t ?? '').toLowerCase(); const n = (s.match(/\d/) || ['4'])[0]; const st = { 1: ' sys-chip--good', 2: ' sys-chip--info', 3: ' sys-chip--warn' }[n] || ''; return `<span class="sys-chip${st} chip t${n}">${esc(t)}</span>`; },
+  /** Chip: a neutral .sys-chip, or with a colour a .sys-chip--soft tinted by that accent (data-co derives the text-safe shade). */
+  chip: (t, color) => color ? `<span class="sys-chip sys-chip--soft chip" data-co="" style="--co:${color};--cc:${color}">${esc(t)}</span>` : `<span class="sys-chip chip">${esc(t)}</span>`,
   list: (a, n = 3) => Array.isArray(a) ? a.slice(0, n).map(x => esc(x)).join(', ') + (a.length > n ? ` +${a.length - n}` : '') : esc(a),
   link: (u, t) => u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t || (new URL(u, 'https://x').hostname.replace('www.', '')))}</a>` : '—',
   host: u => { try { return new URL(u).hostname.replace('www.', ''); } catch { return ''; } },
 };
 
 /* ── UI components ────────────────────────────────────────────────────────── */
+/* Every helper writes system.css components (.sys-card, .sys-kpi, .sys-table, .sys-chip, .sys-btn, .sys-note,
+   .sys-est …) and keeps the old console class on the same element (class="sys-card panel") so module CSS hooks such
+   as `.m-ts .ikpis .kpi .value` keep matching. Look comes from system.css; app.css only lays the console out.
+   Old → system map: UNIFIED.md §8. */
+const NOTE_KIND = { warn: 'warn', good: 'good', bad: 'bad', brand: 'co', info: 'info' };
+const btnCls = (variant = 'secondary', size = 'sm', legacy = '') => `sys-btn sys-btn--${variant}${size ? ` sys-btn--${size}` : ''} btn${legacy ? ' ' + legacy : ''}`;
 export const UI = {
-  kpi: ({ label, value, sub, delta, color, spark, small }) => `<div class="kpi" style="${color ? `--kc:${color}` : ''}"><div class="label">${esc(label)}</div><div class="value">${value}${small ? `<small>${esc(small)}</small>` : ''}${delta != null ? `<span class="delta ${delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat'}">${delta > 0 ? '▲' : delta < 0 ? '▼' : '•'} ${esc(typeof delta === 'number' ? Math.abs(delta) : delta)}</span>` : ''}</div>${sub ? `<div class="sub">${sub}</div>` : ''}${spark ? `<div class="spark">${spark}</div>` : ''}</div>`,
-  kpis: items => `<div class="kpis">${items.map(UI.kpi).join('')}</div>`,
-  panel: ({ title, sub, actions, body, foot, cls = '', id = '', accent = false, flush = false, scroll = false }) => `<section class="panel ${accent ? 'accent' : ''} ${cls}" ${id ? `id="${id}"` : ''}>${title ? `<div class="panel-head"><div><h3>${title}</h3>${sub ? `<div class="sub">${sub}</div>` : ''}</div>${actions ? `<div class="actions">${actions}</div>` : ''}</div>` : ''}<div class="panel-body ${flush ? 'flush' : ''} ${scroll ? 'scroll' : ''}">${body}</div>${foot ? `<div class="panel-foot">${foot}</div>` : ''}</section>`,
+  btnCls,
+  kpi: ({ label, value, sub, delta, color, spark, small }) => `<div class="sys-kpi kpi"${color ? ` style="--kc:${color}"` : ''}><div class="sys-kpi-label label">${color ? `<span class="sys-dot" style="--co:${color}" aria-hidden="true"></span>` : ''}${esc(label)}</div><div class="sys-kpi-value value">${value}${small ? `<small>${esc(small)}</small>` : ''}${delta != null ? `<span class="sys-delta ${delta > 0 ? 'sys-delta--up delta up' : delta < 0 ? 'sys-delta--down delta down' : 'sys-muted delta flat'}">${delta > 0 ? '▲' : delta < 0 ? '▼' : '•'} ${esc(typeof delta === 'number' ? Math.abs(delta) : delta)}</span>` : ''}</div>${sub ? `<div class="sys-kpi-sub sub">${sub}</div>` : ''}${spark ? `<div class="spark">${spark}</div>` : ''}</div>`,
+  kpis: items => `<div class="sys-kpis kpis">${items.map(UI.kpi).join('')}</div>`,
+  /** Card with a head (title, sub, actions), a body and a source line. accent → the module accent bar (.sys-card[data-co]). */
+  panel: ({ title, sub, actions, body, foot, cls = '', id = '', accent = false, flush = false, scroll = false }) => `<section class="sys-card panel${accent ? ' accent' : ''}${cls ? ' ' + cls : ''}"${accent ? ' data-co=""' : ''}${id ? ` id="${id}"` : ''}>${title ? `<div class="panel-head"><div class="panel-title"><h3 class="sys-card-title">${title}</h3>${sub ? `<div class="sys-card-body sub">${sub}</div>` : ''}</div>${actions ? `<div class="actions">${actions}</div>` : ''}</div>` : ''}<div class="panel-body${flush ? ' flush' : ''}${scroll ? ' scroll' : ''}">${body}</div>${foot ? `<div class="sys-src panel-foot">${foot}</div>` : ''}</section>`,
   source: (text, url, asof) => `<span class="src">Source: ${url ? Fmt.link(url, text) : esc(text)}${asof ? ` · as of ${esc(asof)}` : ''}</span>`,
-  pageHead: ({ title, sub, actions, chips }) => `<div class="page-head"><div><h1>${title}</h1>${sub ? `<div class="sub">${sub}</div>` : ''}${chips ? `<div class="row wrap mt-8">${chips}</div>` : ''}</div>${actions ? `<div class="actions">${actions}</div>` : ''}</div>`,
+  /** View heading: .sys-h1 + .sys-lead, status chips in .sys-chips, buttons in .sys-actions. */
+  pageHead: ({ title, sub, actions, chips }) => `<header class="page-head"><div class="page-head-copy"><h1 class="sys-h1">${title}</h1>${sub ? `<div class="sys-lead sub">${sub}</div>` : ''}${chips ? `<div class="sys-chips chips">${chips}</div>` : ''}</div>${actions ? `<div class="sys-actions actions">${actions}</div>` : ''}</header>`,
   empty: msg => `<div class="empty">${esc(msg || 'No data')}</div>`,
-  loading: msg => `<div class="loading"><div class="spinner"></div>${esc(msg || 'Loading…')}</div>`,
-  note: (html, kind = '') => `<div class="note ${kind}">${html}</div>`,
-  kv: obj => `<dl class="kv">${Object.entries(obj).filter(([k, v]) => v != null && v !== '' && !(Array.isArray(v) && !v.length)).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${Array.isArray(v) ? v.map(x => `<span class="chip">${esc(x)}</span>`).join(' ') : v}</dd>`).join('')}</dl>`,
+  loading: msg => `<div class="loading" role="status"><div class="spinner" aria-hidden="true"></div>${esc(msg || 'Loading…')}</div>`,
+  /** Note: '' or 'info' → .sys-note--info, 'warn', 'good', 'bad', 'brand' (→ .sys-note--co, the module accent). */
+  note: (html, kind = '') => `<div class="sys-note sys-note--${NOTE_KIND[kind] || 'info'} note${kind ? ' ' + kind : ''}">${html}</div>`,
+  kv: obj => `<dl class="kv">${Object.entries(obj).filter(([k, v]) => v != null && v !== '' && !(Array.isArray(v) && !v.length)).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${Array.isArray(v) ? `<span class="sys-chips">${v.map(x => `<span class="sys-chip chip">${esc(x)}</span>`).join('')}</span>` : v}</dd>`).join('')}</dl>`,
   timeline: items => `<div class="timeline">${items.map(i => `<div class="tl-item" style="${i.color ? `--cc:${i.color}` : ''}"><div class="d">${esc(i.date)}</div><div class="e">${i.html || esc(i.text)}</div></div>`).join('')}</div>`,
-  toast(msg, ms = 2600) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), ms); },
-  seg(el, options, value, onChange) { el.innerHTML = `<div class="seg">${options.map(o => `<button data-v="${esc(o.value)}" class="${o.value === value ? 'active' : ''}" aria-pressed="${o.value === value}">${esc(o.label)}</button>`).join('')}</div>`; $$('button', el).forEach(b => b.onclick = () => { $$('button', el).forEach(x => { x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', String(x === b)); }); onChange(b.dataset.v); }); },
-  /** Filter bar. filters: [{key,label,type:'select'|'search'|'range',options:[{value,label}],value}] */
+  toast(msg, ms = 2600) { const t = document.createElement('div'); t.className = 'sys-note sys-note--info toast'; t.setAttribute('role', 'status'); t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), ms); },
+  /** Segmented choice: .sys-chip buttons in a .sys-chips group; the pressed one is the selected (ink) chip. */
+  seg(el, options, value, onChange) { el.innerHTML = `<div class="sys-chips seg" role="group">${options.map(o => `<button type="button" data-v="${esc(o.value)}" class="sys-chip${o.value === value ? ' active' : ''}" aria-pressed="${o.value === value}">${esc(o.label)}</button>`).join('')}</div>`; $$('button', el).forEach(b => b.onclick = () => { $$('button', el).forEach(x => { x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', String(x === b)); }); onChange(b.dataset.v); }); },
+  /** Filter bar. filters: [{key,label,type:'select'|'search'|'toggle',options:[{value,label}],value}] → .sys-input / .sys-field / pressed .sys-chip */
   filters(el, filters, onChange) {
-    el.innerHTML = `<div class="filters">${filters.map(f => f.type === 'search' ? `<input type="search" data-k="${f.key}" placeholder="${esc(f.label)}" aria-label="${esc(f.label)}" value="${esc(f.value || '')}">` : f.type === 'toggle' ? `<button class="btn sm ${f.value ? 'active' : ''}" data-k="${f.key}" data-toggle aria-pressed="${f.value ? 'true' : 'false'}">${esc(f.label)}</button>` : `<label class="f">${esc(f.label)} <select data-k="${f.key}"><option value="">All</option>${(f.options || []).map(o => { const v = typeof o === 'object' ? o.value : o, l = typeof o === 'object' ? o.label : o; return `<option value="${esc(v)}" ${String(f.value) === String(v) ? 'selected' : ''}>${esc(l)}</option>`; }).join('')}</select></label>`).join('')}<span class="count" data-count></span></div>`;
+    el.innerHTML = `<div class="sys-filters filters">${filters.map(f => f.type === 'search' ? `<input class="sys-input" type="search" data-k="${f.key}" placeholder="${esc(f.label)}" aria-label="${esc(f.label)}" value="${esc(f.value || '')}">` : f.type === 'toggle' ? `<button type="button" class="sys-chip${f.value ? ' active' : ''}" data-k="${f.key}" data-toggle aria-pressed="${f.value ? 'true' : 'false'}">${esc(f.label)}</button>` : `<label class="sys-field f"><span class="sys-field-label">${esc(f.label)}</span><select class="sys-input" data-k="${f.key}"><option value="">All</option>${(f.options || []).map(o => { const v = typeof o === 'object' ? o.value : o, l = typeof o === 'object' ? o.label : o; return `<option value="${esc(v)}" ${String(f.value) === String(v) ? 'selected' : ''}>${esc(l)}</option>`; }).join('')}</select></label>`).join('')}<span class="sys-src count" data-count></span></div>`;
     const state = Object.fromEntries(filters.map(f => [f.key, f.value ?? (f.type === 'toggle' ? false : '')]));
     const emit = () => onChange(state);
     $$('select', el).forEach(s => s.onchange = () => { state[s.dataset.k] = s.value; emit(); });
@@ -131,13 +192,13 @@ export const UI = {
     $$('[data-toggle]', el).forEach(b => b.onclick = () => { state[b.dataset.k] = !state[b.dataset.k]; b.classList.toggle('active', state[b.dataset.k]); b.setAttribute('aria-pressed', String(!!state[b.dataset.k])); emit(); });
     return { state, setCount: n => { const c = $('[data-count]', el); if (c) c.textContent = n; } };
   },
-  /** Sortable, paginated table. columns: [{key,label,fmt(v,row),num,width,wrap,sort(a,b)}] */
+  /** Sortable, paginated .sys-table in a .sys-table-wrap scroller. columns: [{key,label,fmt(v,row),num,width,wrap,sort(a,b)}] */
   table(el, { columns, rows, pageSize = 50, onRow, selectedKey, rowKey = r => r.id, exportName, sortKey, sortDir = -1, rowClass }) {
     let page = 0, sk = sortKey || null, sd = sortDir, data = rows.slice(), selected = null;
     const sortRows = () => { if (!sk) return; const col = columns.find(c => c.key === sk); const cmp = col?.sort || ((a, b) => { const x = a[sk], y = b[sk]; return typeof x === 'number' && typeof y === 'number' ? x - y : String(x).localeCompare(String(y)); }); const nul = v => v == null || v === '' || (typeof v === 'number' && isNaN(v)); data.sort((a, b) => { const na = nul(a[sk]), nb = nul(b[sk]); if (na && nb) return 0; if (na) return 1; if (nb) return -1; return cmp(a, b) * sd; }); };
     const render = () => {
       sortRows(); const start = page * pageSize, slice = data.slice(start, start + pageSize), pages = Math.max(1, Math.ceil(data.length / pageSize));
-      el.innerHTML = `<div class="tbl-wrap"><table class="tbl"><thead><tr>${columns.map(c => `<th data-k="${c.key}" class="${c.num ? 'num' : ''} ${sk === c.key ? 'sorted' : ''}" style="${c.width ? `width:${c.width}` : ''}" tabindex="0" aria-sort="${sk === c.key ? (sd > 0 ? 'ascending' : 'descending') : 'none'}">${esc(c.label)}${sk === c.key ? `<span class="arr">${sd > 0 ? '▲' : '▼'}</span>` : ''}</th>`).join('')}</tr></thead><tbody>${slice.length ? slice.map((r, i) => `<tr data-i="${start + i}" class="${selected != null && rowKey(r) === selected ? 'selected' : ''} ${rowClass ? rowClass(r) : ''}"${onRow ? ` tabindex="0"${selected != null && rowKey(r) === selected ? ' aria-selected="true"' : ''}` : ''}>${columns.map(c => `<td class="${c.num ? 'num' : ''} ${c.wrap ? 'wrap' : ''}" title="${c.title ? esc(c.title(r)) : ''}">${c.fmt ? c.fmt(r[c.key], r) : esc(r[c.key] ?? '—')}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${columns.length}"><div class="empty">No rows match</div></td></tr>`}</tbody></table></div><div class="tbl-foot"><span class="num">${Fmt.num(data.length)} rows</span>${exportName ? `<button class="btn xs" data-export>⇩ CSV</button>` : ''}<div class="pages"><button class="btn xs" data-pg="-1" aria-label="Previous page" ${page === 0 ? 'disabled' : ''}>‹</button><span class="num">${page + 1} / ${pages}</span><button class="btn xs" data-pg="1" aria-label="Next page" ${page >= pages - 1 ? 'disabled' : ''}>›</button></div></div>`;
+      el.innerHTML = `<div class="sys-table-wrap tbl-wrap"><table class="sys-table tbl"><thead><tr>${columns.map(c => `<th data-k="${c.key}" class="${c.num ? 'sys-n num' : ''}${sk === c.key ? ' sorted' : ''}" style="${c.width ? `width:${c.width}` : ''}" tabindex="0" aria-sort="${sk === c.key ? (sd > 0 ? 'ascending' : 'descending') : 'none'}">${esc(c.label)}${sk === c.key ? `<span class="arr" aria-hidden="true">${sd > 0 ? '▲' : '▼'}</span>` : ''}</th>`).join('')}</tr></thead><tbody>${slice.length ? slice.map((r, i) => `<tr data-i="${start + i}" class="${selected != null && rowKey(r) === selected ? 'selected' : ''} ${rowClass ? rowClass(r) : ''}"${onRow ? ` tabindex="0"${selected != null && rowKey(r) === selected ? ' aria-selected="true"' : ''}` : ''}>${columns.map(c => `<td class="${c.num ? 'sys-n num' : ''} ${c.wrap ? 'wrap' : ''}" title="${c.title ? esc(c.title(r)) : ''}">${c.fmt ? c.fmt(r[c.key], r) : esc(r[c.key] ?? '—')}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${columns.length}"><div class="empty">No rows match</div></td></tr>`}</tbody></table></div><div class="tbl-foot"><span class="sys-src">${Fmt.num(data.length)} rows</span>${exportName ? `<button type="button" class="${btnCls('secondary', 'sm', 'xs')}" data-export>⇩ CSV</button>` : ''}<div class="pages"><button type="button" class="${btnCls('ghost', 'sm', 'xs ghost')}" data-pg="-1" aria-label="Previous page" ${page === 0 ? 'disabled' : ''}>‹</button><span class="sys-src">${page + 1} / ${pages}</span><button type="button" class="${btnCls('ghost', 'sm', 'xs ghost')}" data-pg="1" aria-label="Next page" ${page >= pages - 1 ? 'disabled' : ''}>›</button></div></div>`;
       $$('th', el).forEach(th => { th.onclick = () => { const k = th.dataset.k; if (sk === k) sd = -sd; else { sk = k; sd = -1; } page = 0; render(); $(`th[data-k="${CSS.escape(k)}"]`, el)?.focus({ preventScroll: true }); }; th.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); th.onclick(); } }; });
       $$('[data-pg]', el).forEach(b => b.onclick = () => { page = Math.max(0, Math.min(Math.ceil(data.length / pageSize) - 1, page + Number(b.dataset.pg))); render(); });
       $$('tbody tr', el).forEach(tr => { tr.onclick = () => { const r = data[Number(tr.dataset.i)]; if (!r) return; selected = rowKey(r); $$('tbody tr', el).forEach(x => { x.classList.toggle('selected', x === tr); if (onRow) x.toggleAttribute('aria-selected', x === tr); }); onRow && onRow(r); }; if (onRow) tr.onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === tr) { e.preventDefault(); tr.onclick(); } }; });
@@ -153,19 +214,23 @@ export const UI = {
     const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv); a.download = `${name || 'export'}_${new Date().toISOString().slice(0, 10)}.csv`; a.click();
     UI.toast(`Exported ${rows.length} rows`);
   },
+  /** Selectable list of .sys-card items in a .sys-grid; each card carries its accent as the .sys-card[data-co] top bar. */
   cards(items, { color, onSelect, selectedId } = {}) {
-    return `<div class="cards">${items.map(i => `<div class="card ${i.id === selectedId ? 'selected' : ''}" data-id="${esc(i.id)}" style="--cc:${i.color || color || 'var(--border-2)'}"><div class="t">${i.title}${i.rank != null ? `<span class="rk">#${i.rank}</span>` : ''}</div>${i.sub ? `<div class="s">${i.sub}</div>` : ''}${i.chips ? `<div class="m">${i.chips}</div>` : ''}</div>`).join('')}</div>`;
+    return `<div class="sys-grid cards">${items.map(i => { const c = i.color || color || 'var(--sys-line-2)'; return `<div class="sys-card sys-card--link card${i.id === selectedId ? ' selected' : ''}" data-co="" data-id="${esc(i.id)}" style="--co:${c};--cc:${c}" tabindex="0" role="button"${i.id === selectedId ? ' aria-pressed="true"' : ''}><div class="sys-card-title t">${i.title}${i.rank != null ? `<span class="sys-num rk">#${i.rank}</span>` : ''}</div>${i.sub ? `<div class="sys-card-body s">${i.sub}</div>` : ''}${i.chips ? `<div class="sys-chips m">${i.chips}</div>` : ''}</div>`; }).join('')}</div>`;
   },
-  bindCards(el, items, onSelect) { $$('.card', el).forEach(c => c.onclick = () => { $$('.card', el).forEach(x => x.classList.toggle('selected', x === c)); onSelect(items.find(i => String(i.id) === c.dataset.id)); }); },
+  bindCards(el, items, onSelect) { $$('.card', el).forEach(c => { c.onclick = () => { $$('.card', el).forEach(x => { x.classList.toggle('selected', x === c); x.toggleAttribute('aria-pressed', x === c); }); onSelect(items.find(i => String(i.id) === c.dataset.id)); }; c.onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === c) { e.preventDefault(); c.onclick(); } }; }); },
 };
 
 /* ── Inspector (right panel) ──────────────────────────────────────────────── */
 export const Inspector = {
+  /** Right-hand drawer (#inspector is a .sys-card): accent bar from `color`, sections with .sys-card-label heads, .sys-btn actions. */
   open({ title, sub, color, sections = [], actions = [] }) {
     const el = $('#inspector'); if (!el) return;
-    el.innerHTML = `<div class="insp-head" style="--mc:${color || 'var(--accent)'}"><div class="grow"><h2>${title}</h2>${sub ? `<div class="sub">${sub}</div>` : ''}</div><button class="icon-btn" type="button" data-close title="Close (Esc)" aria-label="Close inspector">✕</button></div><div class="insp-body">${sections.map(s => `<div class="insp-sec">${s.label ? `<h4>${esc(s.label)}</h4>` : ''}${s.html}</div>`).join('')}</div>${actions.length ? `<div class="insp-actions">${actions.map(a => a.href ? `<a class="btn sm" href="${esc(a.href)}" target="_blank" rel="noopener">${a.label}</a>` : `<button class="btn sm" data-act="${esc(a.id)}">${a.label}</button>`).join('')}</div>` : ''}`;
+    const c = color || 'var(--mc, var(--sys-brand))';
+    el.dataset.co = ''; el.style.setProperty('--co', c); el.style.setProperty('--mc', c);
+    el.innerHTML = `<div class="insp-head" style="--mc:${c}"><div class="grow"><h2 class="sys-card-title">${title}</h2>${sub ? `<div class="sys-kpi-sub sub">${sub}</div>` : ''}</div><button class="${btnCls('ghost', 'sm', 'icon-btn')} sys-btn--icon" type="button" data-close title="Close (Esc)" aria-label="Close inspector">${ICON.close}</button></div><div class="insp-body">${sections.map(s => `<section class="insp-sec">${s.label ? `<h4 class="sys-card-label">${esc(s.label)}</h4>` : ''}${s.html}</section>`).join('')}</div>${actions.length ? `<div class="insp-actions">${actions.map(a => a.href ? `<a class="${btnCls('secondary', 'sm', 'sm')}" href="${esc(a.href)}" target="_blank" rel="noopener">${a.label}</a>` : `<button type="button" class="${btnCls('secondary', 'sm', 'sm')}" data-act="${esc(a.id)}">${a.label}</button>`).join('')}</div>` : ''}`;
     const wasOpen = el.classList.contains('open');
-    el.classList.add('open');
+    el.classList.add('open'); el.setAttribute('aria-hidden', 'false');
     // keyboard: remember what opened the inspector and move focus to its close button; Esc or close hands focus back
     const from = document.activeElement;
     if (!wasOpen || !el.contains(from)) Inspector._from = from && from !== document.body ? from : null;
@@ -176,7 +241,7 @@ export const Inspector = {
   close() {
     const el = $('#inspector'); if (!el) return;
     const had = el.contains(document.activeElement);
-    el.classList.remove('open'); setTimeout(() => { if (!el.classList.contains('open')) el.innerHTML = ''; }, 250);
+    el.classList.remove('open'); el.setAttribute('aria-hidden', 'true'); setTimeout(() => { if (!el.classList.contains('open')) el.innerHTML = ''; }, 250);
     const back = Inspector._from; Inspector._from = null;
     if (had && back && back.isConnected) back.focus({ preventScroll: true });
   },
@@ -191,12 +256,27 @@ const TILES = {
 export const Maps = {
   create(el, { center = [41.5, -73.5], zoom = 7, minZoom = 4, maxZoom = 18 } = {}) {
     if (!window.L) throw new Error('Leaflet not loaded');
-    const theme = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
     const map = L.map(el, { center, zoom, minZoom, maxZoom: Math.min(maxZoom, 16), zoomControl: true, preferCanvas: true, attributionControl: true });
-    const T = TILES[theme]; L.tileLayer(T.url, { attribution: T.attr, maxZoom: T.maxZoom, maxNativeZoom: T.maxZoom }).addTo(map); L.tileLayer(T.ref, { maxZoom: T.maxZoom, maxNativeZoom: T.maxZoom, pane: 'shadowPane', opacity: .9 }).addTo(map);
+    Maps._tile(map, Theme.get()); Maps._live.add(map);
     map._renderer = L.canvas({ padding: 0.5 });
     setTimeout(() => map.invalidateSize(), 60); setTimeout(() => map.invalidateSize(), 240);
     return map;
+  },
+  /** Base + label tiles for a theme; a theme change swaps them on every live map (Theme.watch below). */
+  _live: new Set(),
+  _tile(map, theme) {
+    const T = TILES[theme === 'dark' ? 'dark' : 'light'];
+    if (map._bspTiles) { for (const l of map._bspTiles) map.removeLayer(l); }
+    const base = L.tileLayer(T.url, { attribution: T.attr, maxZoom: T.maxZoom, maxNativeZoom: T.maxZoom }).addTo(map);
+    const ref = L.tileLayer(T.ref, { maxZoom: T.maxZoom, maxNativeZoom: T.maxZoom, pane: 'shadowPane', opacity: .9 }).addTo(map);
+    base.bringToBack(); map._bspTiles = [base, ref]; map._bspTheme = theme;
+  },
+  retheme(theme = Theme.get()) {
+    for (const map of Maps._live) {
+      const c = map.getContainer?.();
+      if (!c || !c.isConnected) { Maps._live.delete(map); continue; }
+      if (map._bspTheme !== theme) { try { Maps._tile(map, theme); } catch (e) { console.debug(e); } }
+    }
   },
   /** Add points. rows need lat/lon (or latKey/lonKey). opts: color(row)|string, radius(row)|n, popup(row)->html, onClick(row), cluster:boolean */
   points(map, rows, { latKey = 'lat', lonKey = 'lon', color = '#4c8dff', radius = 5, popup, onClick, cluster = true, opacity = .85, weight = 1, stroke = '#0a0e14', clusterZoom = 9, gridDeg } = {}) {
@@ -225,7 +305,7 @@ export const Maps = {
     return { layer: group, rows: valid, redraw: draw, remove() { map.off('zoomend moveend', h); map.removeLayer(group); }, fit(pad = 0.08) { if (valid.length) map.fitBounds(L.latLngBounds(valid.map(r => [r[latKey], r[lonKey]])), { padding: [20, 20], maxZoom: 11 }); } };
   },
   marker(map, lat, lon, { color = '#d9622b', label, popup, size = 12 } = {}) {
-    const icon = L.divIcon({ className: '', html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 0 0 3px ${color}55,0 2px 8px rgba(0,0,0,.6)"></div>${label ? `<div style="position:absolute;left:${size + 4}px;top:-2px;white-space:nowrap;font:600 10.5px Inter,sans-serif;color:#fff;text-shadow:0 1px 3px #000,0 0 6px #000">${esc(label)}</div>` : ''}`, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
+    const icon = L.divIcon({ className: '', html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid var(--sys-bg,#fff);box-shadow:0 0 0 3px ${color}55,0 2px 8px rgba(0,0,0,.35)"></div>${label ? `<div style="position:absolute;left:0;top:100%;margin-top:4px;transform:translateX(calc(-50% + ${size/2}px));white-space:nowrap;font:600 11px/1.2 Inter,system-ui,sans-serif;color:var(--sys-ink,#0f172a);background:color-mix(in srgb,var(--sys-bg,#fff) 88%,transparent);border:1px solid var(--sys-line,rgba(0,0,0,.12));border-radius:999px;padding:2px 7px;pointer-events:none">${esc(label)}</div>` : ''}`, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
     const m = L.marker([lat, lon], { icon, zIndexOffset: 1000 }).addTo(map); if (popup) m.bindPopup(popup); return m;
   },
   legend(map, items, title) { const d = L.control({ position: 'bottomright' }); d.onAdd = () => { const div = L.DomUtil.create('div', 'map-legend'); div.innerHTML = `${title ? `<div class="t">${esc(title)}</div>` : ''}${items.map(i => `<div class="li"><span class="sw" style="background:${i.color};${i.ring ? `background:transparent;border:2px solid ${i.color}` : ''}"></span>${esc(i.label)}</div>`).join('')}`; return div; }; d.addTo(map); return d; },
@@ -417,8 +497,8 @@ export const Tour = {
   /** Steps may carry an optional numeric `order`; the narrative is kept sorted by order (steps without one keep registration order, after ordered ones). */
   _seq: 0,
   register(steps) { for (const st of steps || []) Tour.steps.push({ ...st, _seq: Tour._seq++ }); const k = st => (typeof st.order === 'number' ? st.order : 1e9); Tour.steps.sort((a, b) => k(a) - k(b) || a._seq - b._seq); },
-  start(from = 0, { speak = true } = {}) { if (!Tour.steps.length) return UI.toast('No briefing steps registered'); Tour.speak = speak && 'speechSynthesis' in window; Tour.running = true; Tour.i = from; Tour._show(); },
-  stop() { Tour.running = false; clearTimeout(Tour.timer); if (window.speechSynthesis) speechSynthesis.cancel(); $('#tour')?.remove(); },
+  start(from = 0, { speak = true } = {}) { if (!Tour.steps.length) return UI.toast('No briefing steps registered'); Tour.speak = speak && 'speechSynthesis' in window; Tour.running = true; Tour.i = from; Tour._show(); App._tourBtn?.(); },
+  stop() { Tour.running = false; clearTimeout(Tour.timer); if (window.speechSynthesis) speechSynthesis.cancel(); $('#tour')?.remove(); App._tourBtn?.(); },
   next() { Tour.i++; if (Tour.i >= Tour.steps.length) return Tour.stop(); Tour._show(); },
   prev() { Tour.i = Math.max(0, Tour.i - 1); Tour._show(); },
   _show() {
@@ -426,7 +506,8 @@ export const Tour = {
     if (s.hash && location.hash !== s.hash) location.hash = s.hash;
     let el = $('#tour'); if (!el) { el = document.createElement('div'); el.id = 'tour'; document.body.appendChild(el); }
     const dur = s.duration || Math.max(6000, (s.narration || s.caption).split(' ').length * 420);
-    el.innerHTML = `<div class="cap">${s.caption}</div><div class="meta"><span class="num">${Tour.i + 1} / ${Tour.steps.length}</span><div class="prog"><i style="width:0%"></i></div><button class="btn xs" data-t="prev">‹ Back</button><button class="btn xs" data-t="next">Next ›</button><button class="btn xs ghost" data-t="stop">Exit</button></div>`;
+    if (!el.classList.contains('sys-card')) { el.className = 'sys-card'; el.setAttribute('role', 'region'); el.setAttribute('aria-label', 'Briefing'); }
+    el.innerHTML = `<div class="cap">${s.caption}</div><div class="meta"><span class="sys-src">${Tour.i + 1} / ${Tour.steps.length}</span><div class="prog" aria-hidden="true"><i style="width:0%"></i></div><button type="button" class="${btnCls('secondary', 'sm', 'xs')}" data-t="prev">‹ Back</button><button type="button" class="${btnCls('primary', 'sm', 'xs primary')}" data-t="next">Next ›</button><button type="button" class="${btnCls('ghost', 'sm', 'xs ghost')}" data-t="stop">Exit</button></div>`;
     $('[data-t=prev]', el).onclick = Tour.prev; $('[data-t=next]', el).onclick = Tour.next; $('[data-t=stop]', el).onclick = Tour.stop;
     requestAnimationFrame(() => { const p = $('#tour .prog i'); if (p) { p.style.transition = `width ${dur}ms linear`; p.style.width = '100%'; } });
     if (Tour.speak) { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(s.narration || s.caption.replace(/<[^>]+>/g, '')); u.rate = 1.02; u.pitch = 1; const v = speechSynthesis.getVoices().find(v => /Samantha|Daniel|Google US English|Alex/.test(v.name)); if (v) u.voice = v; speechSynthesis.speak(u); }
@@ -449,6 +530,8 @@ export const App = {
     if (App._unmount) { try { App._unmount(); } catch { } App._unmount = null; }
     App.current = m; App.view = v; App.params = params; Inspector.close(); clearSnapshotNote();
     document.documentElement.style.setProperty('--mc', m.color);
+    // the module accent drives .sys-card[data-co] bars, .sys-chip--soft, .sys-note--co and the current view tab (system.css §3)
+    const main = $('#main'); if (main) { main.dataset.co = m.id; main.style.setProperty('--co', m.color); }
     App.renderRail(); App.renderTop();
     const content = $('#content'); content.className = v.flush ? 'flush' : ''; content.scrollTop = 0; content.innerHTML = UI.loading(`Loading ${m.name} · ${v.name}`);
     const ctx = { el: content, module: m, view: v, params, data: Data, ui: UI, maps: Maps, charts: Charts, fmt: Fmt, live: Live, inspector: Inspector, app: App, esc, $, $$ };
@@ -459,23 +542,26 @@ export const App = {
   renderRail() {
     const nav = $('#rail .rail-nav'); const groups = [...new Set(App.modules.map(m => m.group || 'Portfolio'))];
     const refocus = App._railKey && nav.contains(document.activeElement);   // keyboard user on the rail: keep focus there after the re-render
-    nav.innerHTML = groups.map(g => `<div class="rail-section">${esc(g)}</div>${App.modules.filter(m => (m.group || 'Portfolio') === g).map(m => `<div class="rail-item ${m === App.current ? 'active' : ''}" style="--mc:${m.color}" data-mod="${m.id}" role="link" tabindex="0"${m === App.current ? ' aria-current="page"' : ''}><span class="dot"></span><span class="ellipsis">${esc(m.name)}</span>${m.tag ? `<span class="tag">${esc(m.tag)}</span>` : ''}</div>`).join('')}`).join('');
-    $$('.rail-item', nav).forEach(el => { el.onclick = () => App.go(el.dataset.mod); el.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); App.go(el.dataset.mod); } }; });
+    nav.innerHTML = groups.map(g => `<div class="rail-group"><div class="sys-card-label rail-section">${esc(g)}</div>${App.modules.filter(m => (m.group || 'Portfolio') === g).map(m => `<a class="rail-item${m === App.current ? ' active' : ''}" href="#/${esc(m.id)}/" data-co="" style="--co:${m.color};--mc:${m.color}" data-mod="${m.id}"${m === App.current ? ' aria-current="page"' : ''}><span class="sys-dot" aria-hidden="true"></span><span class="ellipsis">${esc(m.name)}</span>${m.tag ? `<span class="sys-kbd tag">${esc(m.tag)}</span>` : ''}</a>`).join('')}</div>`).join('');
+    $$('.rail-item', nav).forEach(el => { el.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); App.go(el.dataset.mod); }; el.onkeydown = e => { if (e.key === ' ') { e.preventDefault(); App.go(el.dataset.mod); } }; });
     if (refocus) $(`.rail-item[data-mod="${CSS.escape(App._railKey)}"]`, nav)?.focus({ preventScroll: true });
+    // phone strip: keep the current module in view
+    const cur = $('.rail-item.active', nav); if (cur && nav.scrollWidth > nav.clientWidth + 4) { const a = cur.getBoundingClientRect(), b = nav.getBoundingClientRect(); if (a.left < b.left || a.right > b.right) nav.scrollLeft += a.left - b.left - (b.width - a.width) / 2; }
   },
   renderTop() {
     const m = App.current, v = App.view; const t = $('#topbar');
-    $('.crumb', t).innerHTML = `<span class="co" style="--mc:${m.color}"><span class="dot"></span>${esc(m.name)}</span><span class="sep">/</span><span>${esc(v.name)}</span>`;
-    $('.view-tabs', t).innerHTML = m.views.map(x => `<button class="view-tab ${x === v ? 'active' : ''}" type="button" data-v="${x.id}"${x === v ? ' aria-current="page"' : ''}>${x.icon ? `<span>${x.icon}</span>` : ''}${esc(x.name)}${x.badge ? `<span class="n">${esc(x.badge)}</span>` : ''}</button>`).join('');
-    $$('.view-tab', t).forEach(b => b.onclick = () => App.go(m.id, b.dataset.v));
+    $('.crumb', t).innerHTML = `<a class="sys-subnav-title" href="#/${esc(m.id)}/" data-co="" style="--co:${m.color}">${esc(m.name)}</a><span class="sys-sr"> · ${esc(v.name)}</span>`;
+    $('.view-tabs', t).innerHTML = m.views.map(x => `<a class="view-tab" href="#/${esc(m.id)}/${esc(x.id)}" data-v="${x.id}"${x === v ? ' aria-current="page"' : ''}>${x.icon ? `<span class="ico" aria-hidden="true">${x.icon}</span>` : ''}${esc(x.name)}${x.badge ? `<span class="sys-kbd n">${esc(x.badge)}</span>` : ''}</a>`).join('');
+    $$('.view-tab', t).forEach(b => b.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); App.go(m.id, b.dataset.v); });
+    const cur = $('.view-tab[aria-current]', t), tabs = $('.view-tabs', t); if (cur && tabs.scrollWidth > tabs.clientWidth) { const a = cur.getBoundingClientRect(), b = tabs.getBoundingClientRect(); if (a.left < b.left || a.right > b.right - 24) tabs.scrollLeft += a.left - b.left - 24; }
   },
   palette() {
     let el = $('#palette'); if (el) return el.remove();
-    el = document.createElement('div'); el.id = 'palette'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Search the portal'); el.innerHTML = `<div class="pal"><input placeholder="Search views, companies, targets, opportunities…" aria-label="Search views, companies, targets and opportunities" autofocus><div class="pal-list"></div></div>`; document.body.appendChild(el);
+    el = document.createElement('div'); el.id = 'palette'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Search the portal'); el.innerHTML = `<div class="sys-card pal"><div class="pal-in">${ICON.search}<input class="pal-input" placeholder="Search views, companies, targets, opportunities…" aria-label="Search views, companies, targets and opportunities" autofocus><span class="sys-kbd">Esc</span></div><div class="pal-list" role="listbox"></div></div>`; document.body.appendChild(el);
     const inp = $('input', el), list = $('.pal-list', el); let items = [], active = 0;
-    const draw = () => { const q = inp.value.trim().toLowerCase(); items = (q ? searchIndex.filter(i => (i.label + ' ' + (i.sub || '')).toLowerCase().includes(q)) : searchIndex.filter(i => i.kind === 'View')).slice(0, 40); active = 0; list.innerHTML = items.map((i, k) => `<div class="pal-item ${k === 0 ? 'active' : ''}" data-h="${esc(i.href)}"><span class="k" style="color:${i.color || 'var(--dim)'}">${esc(i.kind || '')}</span><span class="ellipsis">${esc(i.label)}</span>${i.sub ? `<span class="s ellipsis">${esc(i.sub)}</span>` : ''}</div>`).join('') || `<div class="empty">No matches</div>`; $$('.pal-item', list).forEach(x => x.onclick = () => { location.hash = x.dataset.h; el.remove(); }); };
+    const draw = () => { const q = inp.value.trim().toLowerCase(); items = (q ? searchIndex.filter(i => (i.label + ' ' + (i.sub || '')).toLowerCase().includes(q)) : searchIndex.filter(i => i.kind === 'View')).slice(0, 40); active = 0; list.innerHTML = items.map((i, k) => `<div class="pal-item ${k === 0 ? 'active' : ''}" role="option" aria-selected="${k === 0}" data-h="${esc(i.href)}"><span class="sys-card-label k"><span class="sys-dot" style="--co:${i.color || 'var(--sys-mute-2)'}" aria-hidden="true"></span>${esc(i.kind || '')}</span><span class="ellipsis">${esc(i.label)}</span>${i.sub ? `<span class="s ellipsis">${esc(i.sub)}</span>` : ''}</div>`).join('') || `<div class="empty">No matches</div>`; $$('.pal-item', list).forEach(x => x.onclick = () => { location.hash = x.dataset.h; el.remove(); }); };
     inp.oninput = draw; draw(); inp.focus();
-    inp.onkeydown = e => { if (e.key === 'Escape') el.remove(); if (e.key === 'ArrowDown') { active = Math.min(items.length - 1, active + 1); } if (e.key === 'ArrowUp') { active = Math.max(0, active - 1); } if (e.key === 'Enter' && items[active]) { location.hash = items[active].href; el.remove(); } $$('.pal-item', list).forEach((x, k) => x.classList.toggle('active', k === active)); };
+    inp.onkeydown = e => { if (e.key === 'Escape') el.remove(); if (e.key === 'ArrowDown') { active = Math.min(items.length - 1, active + 1); } if (e.key === 'ArrowUp') { active = Math.max(0, active - 1); } if (e.key === 'Enter' && items[active]) { location.hash = items[active].href; el.remove(); } $$('.pal-item', list).forEach((x, k) => { x.classList.toggle('active', k === active); x.setAttribute('aria-selected', String(k === active)); if (k === active) x.scrollIntoView({ block: 'nearest' }); }); };
     el.onclick = e => { if (e.target === el) el.remove(); };
   },
   start() {
@@ -484,13 +570,19 @@ export const App = {
     // keep keyboard focus on the chosen rail item when the rail re-renders after a route change
     $('#rail .rail-nav')?.addEventListener('focusin', e => { const it = e.target.closest('.rail-item'); App._railKey = it ? it.dataset.mod : null; });
     $('#search-btn').onclick = App.palette;
-    $('#theme-btn').onclick = () => { const r = document.documentElement; r.dataset.theme = r.dataset.theme === 'light' ? 'dark' : 'light'; try { localStorage.setItem('bsp-theme', r.dataset.theme); } catch { } App.route(); };
-    $('#insp-btn').onclick = () => $('#inspector').classList.contains('open') ? Inspector.close() : UI.toast('Select an entity to inspect');
-    $('#tour-btn').onclick = () => Tour.running ? Tour.stop() : Tour.start(0);
-    try { const th = localStorage.getItem('bsp-theme'); if (th) document.documentElement.dataset.theme = th; } catch { }
-    const clock = $('#clock'); setInterval(() => { clock.textContent = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'America/New_York' }) + ' ET'; }, 1000);
+    // theme: one preference shared with every page (Theme above); the console toggle hides when the frame brings its own
+    const tb = $('#theme-btn');
+    const paintTheme = () => { if (!tb) return; const d = Theme.get() === 'dark'; tb.innerHTML = d ? ICON.sun : ICON.moon; tb.setAttribute('aria-label', d ? 'Switch to light theme' : 'Switch to dark theme'); tb.title = tb.getAttribute('aria-label'); };
+    if (tb) { tb.onclick = () => Theme.toggle(); if (document.querySelector('.sys-top [data-sys-theme-toggle], .sys-top .sys-theme')) tb.hidden = true; }
+    Theme.apply(Theme.get()); paintTheme();
+    Theme.watch(t => { paintTheme(); Maps.retheme(t); });
+    const ib = $('#insp-btn'); if (ib) { ib.innerHTML = ICON.panel; ib.onclick = () => $('#inspector').classList.contains('open') ? Inspector.close() : UI.toast('Select a row, card or map point to inspect it'); }
+    const rb = $('#tour-btn'); App._tourBtn = () => { if (!rb) return; rb.innerHTML = Tour.running ? ICON.stop : ICON.play; const l = Tour.running ? 'Stop the briefing' : 'Play the briefing'; rb.setAttribute('aria-label', l); rb.title = l; };
+    if (rb) { rb.onclick = () => Tour.running ? Tour.stop() : Tour.start(0); App._tourBtn(); }
+    const sb = $('#search-btn .sys-kbd'); if (sb && !/mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent)) sb.textContent = 'Ctrl K';
+    const clock = $('#clock'); const tick = () => { if (clock) clock.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' }) + ' ET'; }; tick(); setInterval(tick, 1000);
     App.route();
   },
 };
-// Guard: assets/components.js imports ./core.js?v=20261006155542 without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
-window.BSP = window.BSP || { Data, Fmt, UI, Maps, Charts, Live, Tour, App, Inspector };
+// Guard: assets/components.js imports ./core.js?v=20261006180606 without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
+window.BSP = window.BSP || { Data, Fmt, UI, Maps, Charts, Live, Tour, App, Inspector, Theme };

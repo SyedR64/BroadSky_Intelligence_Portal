@@ -6,6 +6,7 @@
 <title>Operating Intelligence · Broad Sky</title>
 <meta name="description" content="Operating intelligence for the Broad Sky Partners portfolio: ask a question in plain English and get the answer, the evidence and the portal view for six companies, plus six website concepts, the OS program and growth plans.">
 <meta name="theme-color" content="#fbfaf7">
+<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
 <meta name="author" content="Syed Rahman">
 <link rel="icon" href="BSP_Logo.png">
 <link rel="apple-touch-icon" href="BSP_Logo.png">
@@ -26,9 +27,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/system.css?v=20261006155542">
-<link rel="stylesheet" href="assets/landing-page.css?v=20261006155542">
-<link rel="modulepreload" href="assets/chat.js?v=20261006155542">
+<link rel="stylesheet" href="assets/system.css?v=20261006180606">
+<link rel="stylesheet" href="assets/landing-page.css?v=20261006180606">
+<link rel="modulepreload" href="assets/chat.js?v=20261006180606">
 </head>
 <body data-page="landing">
 <main id="main">
@@ -394,21 +395,21 @@
 </main>
 
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261006155542';
-  import { Landing } from './assets/landing.js?v=20261006155542';
+  import { Frame } from './assets/frame.js?v=20261006180606';
+  import { Landing } from './assets/landing.js?v=20261006180606';
   Frame.mount({ crumb: false });
   Landing.init();
 </script>
 <script type="module">
-  import { Chat } from './assets/chat.js?v=20261006155542';
-  import { Landing } from './assets/landing.js?v=20261006155542';
+  import { Chat } from './assets/chat.js?v=20261006180606';
+  import { Landing } from './assets/landing.js?v=20261006180606';
   const host = document.querySelector('#hero-chat');
   host.querySelector('.lp-skeleton')?.remove();
   const chat = Chat.mount(host, { persona: 'portal', mode: 'inline', theme: 'light' });
   Landing.attachChat(chat);
 </script>
 <script type="module">
-  import { Counter } from './assets/counter.js?v=20261006155542';
+  import { Counter } from './assets/counter.js?v=20261006180606';
   const el = document.getElementById('hero-counter');
   // baseline 'today' counts from local midnight; below minDisplay the clock shows "—" so a first frame never reads "$1"
   if (el) Counter.mount(el, { theme: 'light', baseline: 'today', minDisplay: 100, caption: 'Revenue left on the table across the portfolio so far today' })

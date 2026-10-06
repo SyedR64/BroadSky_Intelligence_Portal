@@ -1,44 +1,31 @@
-/* Thomas Scientific module — scoped styles (prefix .m-ts) */
-.m-ts .acts{display:flex;flex-direction:column}
-.m-ts .act{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:start;padding:9px 0;border-top:1px solid var(--hair)}
-.m-ts .act:first-child{border-top:0;padding-top:2px}
-.m-ts .act .n{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--c-ts);border:1px solid color-mix(in srgb,var(--c-ts) 45%,transparent);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center}
-.m-ts .act .h{font-weight:600;font-size:12.5px;color:var(--text)}
-.m-ts .act .d{font-size:11.5px;color:var(--text-2);margin-top:2px;line-height:1.45}
-.m-ts .act .go{font-size:11px;white-space:nowrap;padding-top:2px}
-.m-ts .ikpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-.m-ts .ikpis .kpi{padding:8px 9px}
-.m-ts .ikpis .kpi .value{font-size:15px}
-.m-ts .ikpis .kpi .label{font-size:9px}
-.m-ts .slist{display:flex;flex-direction:column}
-.m-ts .slist .si{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1px 8px;padding:6px 0;border-top:1px solid var(--hair);cursor:pointer}
-.m-ts .slist .si:first-child{border-top:0}
-.m-ts .slist .si .t{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.m-ts .slist .si:hover .t{color:var(--c-ts)}
-.m-ts .slist .si .s{font-size:11px;color:var(--muted)}
-.m-ts .slist .si .v{font-family:var(--mono);font-size:11px;color:var(--text-2);text-align:right}
-.m-ts .dv{position:relative;display:inline-block;width:56px;height:8px;background:var(--surface-3);border-radius:2px;vertical-align:middle;margin-right:6px}
-.m-ts .dv::after{content:'';position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--border-2)}
-.m-ts .dv i{position:absolute;top:0;bottom:0;border-radius:2px}
-.m-ts .subh{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:12px 0 6px}
-.m-ts .subh:first-child{margin-top:0}
-.m-ts .rk{display:grid;grid-template-columns:24px minmax(0,1fr) 92px;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--hair);cursor:pointer}
-.m-ts .rk:first-child{border-top:0}
-.m-ts .rk:hover .t{color:var(--c-ts)}
-.m-ts .rk .i{font-family:var(--mono);font-size:11px;color:var(--dim);text-align:right}
-.m-ts .rk .t{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.m-ts .rk .s{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.m-ts .pcard{border:1px solid var(--border);border-left:3px solid var(--c-pe);border-radius:var(--radius);padding:9px 11px;margin-bottom:8px}
-.m-ts .pcard:last-child{margin-bottom:0}
-.m-ts .pcard .t{font-weight:600;font-size:12.5px}
-.m-ts .pcard .s{font-size:11px;color:var(--muted);margin-top:2px}
-.m-ts .pcard .d{font-size:11.5px;color:var(--text-2);margin-top:5px;line-height:1.45}
-.m-ts .clear{cursor:pointer}
-.m-ts .bignum{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--text)}
-.m-ts .mgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.m-ts .mgrid .kpi{padding:8px 10px}
-.m-ts .mgrid .kpi .value{font-size:16px}
+/* Thomas Scientific module (.m-ts) — layout only.
+   Every colour, radius and font is a system token (assets/system.css); cards, KPI tiles, tables, chips,
+   notes and est. badges are the .sys- components. Rules here place things the system does not lay out. */
+
+/* lever / next-action list (.sys-card-list) */
+.m-ts .m-levers{gap:var(--sys-sp-3)}
+.m-ts .m-levers b{color:var(--sys-ink);font-weight:600}
+.m-ts .m-levers li>div{margin-top:2px}
+#inspector .m-sites tbody tr[tabindex]{cursor:pointer}
+
+/* the inspector drawer is phone-narrow: the system's compact cell padding (system.css uses it at phone width) */
+#inspector .m-sites th,#inspector .m-sites td{padding:10px 12px}
+.m-ts .sys-table tbody tr[tabindex]{cursor:pointer}
+.m-ts .m-bridge td:first-child{white-space:normal}
+.m-ts .m-bridge tr.tot td{font-weight:600;color:var(--sys-ink);border-top:1px solid var(--sys-line-2)}
+.m-ts .heat th[scope="row"]{position:static;text-transform:none;letter-spacing:0;font:500 var(--sys-fs-xs)/1.3 var(--sys-font);color:var(--sys-ink)}
+.m-ts .m-pad{padding:var(--sys-sp-3) var(--pad)}
+.m-ts .m-map-420{min-height:420px}
+.m-ts .m-kpi2 .sys-kpis{margin-top:0;grid-template-columns:repeat(2,minmax(0,1fr))}
+.m-ts .m-pe .sys-card{gap:var(--sys-sp-2)}
+
+/* mini diverging bar in the comps table (growth / margin around zero) */
+.m-ts .dv{position:relative;display:inline-block;width:56px;height:8px;margin-right:6px;vertical-align:middle;background:var(--sys-bg-3);border-radius:var(--sys-r-pill)}
+.m-ts .dv::after{content:'';position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--sys-line-2)}
+.m-ts .dv i{position:absolute;top:0;bottom:0;border-radius:var(--sys-r-pill)}
+.m-ts .dv i.pos{background:var(--sys-good)} .m-ts .dv i.neg{background:var(--sys-bad)}
 .m-ts .chart text{font-size:10px}
+
 /* keep the shared renderTargets table compact inside this module */
 .m-ts #tg-screen .tbl td:nth-child(2){max-width:250px}
 .m-ts #tg-screen .tbl td:nth-child(6){max-width:170px}
@@ -57,13 +44,4 @@
 .m-ts #fil-table .tbl td:nth-child(4){white-space:normal;min-width:120px;max-width:170px}
 .m-ts #fil-table .tbl td:nth-child(5){white-space:normal;min-width:260px;max-width:340px;overflow-wrap:anywhere}
 .m-ts #fil-table .tbl td:nth-child(5) span{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
-/* coverage bridge + share-of-wallet tables */
-.m-ts table.bridge{width:100%;border-collapse:collapse;font-size:11.5px}
-.m-ts table.bridge th{font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);text-align:right;padding:3px 4px;border-bottom:1px solid var(--hair)}
-.m-ts table.bridge th:first-child{text-align:left}
-.m-ts table.bridge td{padding:5px 4px;border-top:1px solid var(--hair);color:var(--text-2);text-align:right;font-family:var(--mono);white-space:nowrap;vertical-align:top}
-.m-ts table.bridge td:first-child{text-align:left;font-family:inherit;white-space:normal;color:var(--text)}
-.m-ts table.bridge tr.tot td{border-top:1px solid var(--border-2);font-weight:600;color:var(--text)}
-.m-ts table.wallet td:first-child a{font-weight:600}
-.m-ts .heat th,.m-ts .heat td{padding:6px 3px}
-.m-ts .heat td.nowrap{padding-right:6px}
+.m-ts .heat th,.m-ts .heat td{padding:8px 6px}

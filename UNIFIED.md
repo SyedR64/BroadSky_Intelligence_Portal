@@ -27,6 +27,7 @@ Retire as pages migrate: `.announce`, `.concept` / `.concept-in` banners, every 
 <title>Page name · Broad Sky</title>
 <meta name="description" content="One plain-English sentence.">
 <meta name="theme-color" content="#fbfaf7">          <!-- #0a0e14 on dark pages -->
+<script>/* one theme for the whole site … */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
 <link rel="icon" href="{root}BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -104,13 +105,13 @@ Buttons: one `.sys-btn--primary` per view region; `--secondary` beside it; `--gh
 | `redesigns/<co>/<os>.html` | `Frame.mount({})` | company | Active = OS program; crumb ends with the OS name (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS). |
 | `redesigns/<co>/growth-plan.html`, `punctual-pros/nationwide.html`, `ads.html` | `Frame.mount({})` | company | Active = Growth plans. |
 | `redesigns/voice-ai.html`, `ai-agents.html` | `Frame.mount({ banner: true })` | portal | Crumb `Home / Growth plans / Page`. |
-| `app.html` | `Frame.mount({ variant: 'app', theme: 'dark' })` | portal | See §8. Hotkey ⌘J (⌘K stays the portal search). The app variant sets `nav: { briefing: 'app.html#/briefing/play' }` itself. |
+| `app.html` | `Frame.mount({ variant: 'app', theme })` (the saved `bsp-theme`, light by default) | portal | See §8. Hotkey ⌘J (⌘K stays the portal search). The app variant sets `nav: { briefing: 'app.html#/briefing/play' }` itself. |
 | `theater.html` | `Frame.mount({ variant: 'minimal', theme: 'dark' })` | portal | See §9. |
 | `briefing/executive_memo.html` | no mount | — | See §10. |
 
 Other options: `nav` (per-page override of primary links, `{ <id>: href }` or `{ <id>: { href, label, hint } }`; ids are `portal`, `concepts`, `os`, `playbooks`, `briefing`, `github`. A link whose href is a `#/` route on the current page is marked `aria-current` while the hash is on that route and the frame keeps it in sync on `hashchange`, so pages never patch frame links after mount), `co`, `active`, `persona`, `crumb: [{label, href?, co?}]` (hrefs are root-relative: `'redesigns/'`, `'app.html#/pp/overview'`), `crumbAside: 'Concept · Oct 2026'`, `cta: {label, href}` (small primary button in the bar), `footer`, `hotkey`, `chat` (an existing widget instance), `humanize: true | 'observe' | false`. Mount once per page; a second call returns the first frame.
 
-Chat: pages keep mounting their own floating widget (`Chat.mount(null, { persona, mode: 'floating', theme })`) with their FAQ and suggestions. **Launcher label rule:** the floating launcher reads "Ask " + the persona's short name — the persona's `short` field, or `short_name` passed to `Chat.mount` when a page renames its assistant ("Ask Punctual Pros", "Ask CET", "Ask Fair Harbor", "Ask the portfolio"). Never derive it by truncating the persona name to its first word ("Ask Punctual", "Ask Fair"); a persona without a short name gets one added, not a fallback. At ≤560px the launcher is an icon-only 44px circle (label kept in `aria-label`), see §11. The Ask button opens that widget if present, else focuses an inline chat, else lazy-loads `chat.js` with the persona. Pass `chat: inst` to `Frame.mount` (or call `Frame.mount(...).setChat(inst)`) when you hold the instance.
+Chat: pages keep mounting their own floating widget (`Chat.mount(null, { persona, mode: 'floating' })`; any `theme` option is ignored, the widget follows the page theme) with their FAQ and suggestions. **Launcher label rule:** the floating launcher reads "Ask " + the persona's short name — the persona's `short` field, or `short_name` passed to `Chat.mount` when a page renames its assistant ("Ask Punctual Pros", "Ask CET", "Ask Fair Harbor", "Ask the portfolio"). Never derive it by truncating the persona name to its first word ("Ask Punctual", "Ask Fair"); a persona without a short name gets one added, not a fallback. At ≤560px the launcher is an icon-only 44px circle (label kept in `aria-label`), see §11. The Ask button opens that widget if present, else focuses an inline chat, else lazy-loads `chat.js` with the persona. Pass `chat: inst` to `Frame.mount` (or call `Frame.mount(...).setChat(inst)`) when you hold the instance.
 
 ## 6 · Accent rules
 
@@ -131,14 +132,41 @@ Chat: pages keep mounting their own floating widget (`Chat.mount(null, { persona
 7. Concept notice wording comes only from the frame (`Frame.BANNER_TEXT`); pages never write their own.
 8. Link text says where it goes ("Wastewater accounts →"), never "click here". External links open in a new tab with `rel="noopener"`.
 
-## 8 · `app.html` (portal console, dark)
+## 8 · `app.html` (portal console: the website, with a rail)
 
-- `<html data-sys-theme="dark">`; load `system.css` before `app.css`; call `Frame.mount({ variant: 'app', theme: 'dark' })` before `App.start()`.
-- The frame strip (56px) sits above the rail and content; `body[data-sys-layout="app"]` becomes a column flex and `#app` fills the remaining height (rules in system.css §7a override `#app{height:100vh}`). No banner, no breadcrumb row (the console keeps its own `#topbar` crumb), no footer.
-- Remove the rail's site-link block and the rail logo text duplicate; keep module navigation. Map `app.css` colours to `--sys-*` over time (`--bg → --sys-bg`, `--surface → --sys-surface`, `--text → --sys-ink`, `--border → --sys-line`, `--c-pp → --co-pp` …); radii become `--sys-r-xs` / `--sys-r-sm`.
-- The portal's light toggle sets `html[data-theme="light"]`; system.css switches the frame to light tokens automatically.
-- ⌘K stays the portal's search palette; the Ask button and ⌘J open the chat.
-- The frame's Briefing link points at `app.html#/briefing/play` (app-variant default of the `nav` option) and carries `aria-current` while the hash is on `#/briefing/…`; Portal carries it otherwise. No post-mount link patching in `app.html`.
+The portal is not a separate product skin. A visitor moving between `index.html`, a concept page and `app.html` sees the same background, surfaces, type scale, card radius and shadow, KPI tiles, tables, buttons, chips, notes and est. badges, and the same light or dark theme.
+
+**Theme (one preference, every page).** `html[data-sys-theme]` is `light` or `dark`; the choice is saved under `localStorage['bsp-theme']`, light by default like the site, and an explicit saved choice wins. Every page applies it in the inline `<head>` script of §2 before the stylesheets (no flash). The one toggle is the frame's top-bar button (`.sys-theme[data-sys-theme-toggle]`, next to Ask) on every page; it calls `Frame.setTheme()` (also `getTheme`, `toggleTheme`), which writes the attribute and the key, and other open tabs follow through the `storage` event. Only `theater.html` (`variant: 'minimal', theme: 'dark'`) is locked dark and shows no toggle. In the portal, `Frame.mount({ variant: 'app', theme })` gets the saved value, the console's own `#theme-btn` hides because the frame renders the toggle, and `Theme.set()` in `assets/core.js` calls `Frame.setTheme()`. Every chat widget follows the page (`theme` is always `'auto'`; the assistant page's own theme button also calls `Frame.setTheme()`). Dark exists only as system.css §2 tokens; the console has no palette of its own. `html[data-theme]` is mirrored for older module CSS hooks. `Theme.watch` hears every change, whoever makes it, and Leaflet maps swap between the Esri light and dark tiles in place (filters and selection survive). The chat widget (`theme: 'auto'`) follows the attribute.
+
+**Load order and shell.** `system.css` before `app.css`; `Frame.mount` before `App.start()`. The frame strip (56px, the same top bar as every page) sits above the rail and content; `body[data-sys-layout="app"]` becomes a column flex and `#app` fills the rest (system.css §7a). No banner, breadcrumb row or footer. ⌘K opens the portal search; the Ask button and ⌘J open the chat. The frame's Briefing link points at `app.html#/briefing/play` and carries `aria-current` on `#/briefing/…`.
+
+| Console part | Built from |
+|---|---|
+| Rail `#rail` | a vertical sys-nav on `--sys-bg`: `.sys-card-label` group heads, `a.rail-item` links (14px Inter, pill hover on `--sys-bg-3`, current = `--co-soft` / `--co-ink`), the module's `.sys-dot` accent, `.sys-kbd` tags; the counter sits in a `.sys-kpi`, the footer is a `.sys-src` line. At ≤900px the rail is a strip of chips (current = ink fill, the `.sys-chip[aria-current]` look). |
+| View bar `#topbar` | the sub-nav pattern (§3a): `.sys-subnav-title` with the module dot, `nav.sys-subnav-links` of `a.view-tab` links (current = `--co-soft`), then `.sys-btn--secondary` search with `.sys-kbd`, a `.sys-chip` live clock with `.sys-dot--live`, and `.sys-btn--ghost.sys-btn--icon` buttons. |
+| Content `#content` | `--sys-bg`, padding `--sys-sp-6` / `--sys-gut`. `#main[data-co]` carries the module accent (`--co`), so `.sys-card[data-co]` bars, `.sys-chip--soft`, `.sys-note--co` and the current tab read it. |
+| Inspector `#inspector` | a `.sys-card` drawer (`--sys-sh-2`, accent bar from `data-co`), `.sys-card-title` head, `.sys-card-label` section heads, `.sys-btn--secondary.sys-btn--sm` actions; full-height overlay at ≤900px. |
+| Palette `#palette`, tour `#tour`, toast | `.sys-card` dialog and bar; palette rows use `.sys-card-label` kinds; tour uses `.sys-btn` and the brand gradient progress; toast is a `.sys-note`. |
+
+**Components (core.js helpers write the system class, and keep the old class on the same element for module CSS hooks).** `app.css` holds layout and aliases only: no colour, radius, shadow or font of its own (every value is a token).
+
+| Old console class | System class it now carries | Helper |
+|---|---|---|
+| `.page-head` `h1` `.sub` `.actions` | `.sys-h1` (console size: `--sys-fs-2xl`, system.css §7c) · `.sys-lead` · `.sys-chips` · `.sys-actions` | `ui.pageHead` |
+| `.panel` `.panel-head h3` `.sub` `.panel-foot` | `.sys-card` · `.sys-card-title` · `.sys-card-body` · `.sys-src`; `accent` adds `data-co` (top bar) | `ui.panel` |
+| `.kpis` `.kpi` `.label` `.value` `.sub` `.delta` | `.sys-kpis` strip · `.sys-kpi` · `.sys-kpi-label` (with a `.sys-dot` when a colour is given) · `.sys-kpi-value` · `.sys-kpi-sub` · `.sys-delta--up/--down` | `ui.kpis`, `ui.kpi` |
+| `.tbl-wrap` `table.tbl` `th.num` | `.sys-table-wrap` · `.sys-table` · `.sys-n`; footer: `.sys-src` count, `.sys-btn--secondary.sys-btn--sm` CSV export, `.sys-btn--ghost` pager | `ui.table` |
+| `.filters` `.f` `select` `input[type=search]` toggle `.btn.active` | `.sys-filters` · `.sys-field` + `.sys-field-label` · `.sys-input` · pressed `.sys-chip` | `ui.filters` |
+| `.seg button.active` | `.sys-chips` of `.sys-chip[aria-pressed]` | `ui.seg` |
+| `.chip` · `.chip` with `--cc` · `.chip.t1–t4` | `.sys-chip` · `.sys-chip--soft[data-co]` with `--co` · `.sys-chip--good/--info/--warn` | `fmt.chip`, `fmt.tier` |
+| `.btn` `.primary` `.brand` `.ghost` `.sm` `.xs` | `.sys-btn` `--primary` `--accent` `--ghost` `--secondary` (default) `--sm`; pressed = `[aria-pressed="true"]` | `ui.btnCls(variant, size)` |
+| `.note` `.warn` `.good` `.bad` `.brand` | `.sys-note` `--info` (default) `--warn` `--good` `--bad` `--co` | `ui.note` |
+| `.cards` `.card` `.t` `.s` `.m` | `.sys-grid` · `.sys-card.sys-card--link[data-co]` · `.sys-card-title` · `.sys-card-body` · `.sys-chips` | `ui.cards` |
+| `.icon-btn` | `.sys-btn--ghost.sys-btn--sm.sys-btn--icon` | shell |
+| est. text | `.sys-est` (`--illus`, `--live`) | copy pass |
+
+**Bespoke blocks in a module** use the same vocabulary, never new colours: a block is `<section class="sys-card">` with `<h3 class="sys-card-title">`, `<div class="sys-card-body">` and a `<p class="sys-src">` source line; a figure is `<div class="sys-kpi"><div class="sys-kpi-label">…</div><div class="sys-kpi-value">…</div><div class="sys-kpi-sub">…</div></div>` inside `.sys-kpis`; status is `.sys-chip--good/--warn/--bad/--info`; an accent is `data-co="<company>"` (or `data-co="" style="--co:var(--c-…)"`). Hand-written `.panel/.kpi/.btn/.chip/.tbl/.note` still work: `modules/copy.js` adds the matching `.sys-` class after every render and `app.css` aliases the old child classes to the same tokens.
+
 - Module renderers write human labels (`Frame.label`) and `.sys-est` badges; `humanize: 'observe'` catches anything that slips through on re-render.
 
 ## 9 · `theater.html` (minimal transparent frame)

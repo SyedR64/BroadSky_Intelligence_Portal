@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261006155542';
+import * as Copy from './copy.js?v=20261006180606';
 /* ═══════════════════════════════════════════════════════════════════════════
    Tech enablement — the "OS" program across six Broad Sky platforms.
    ServiceOS (Punctual Pros) · GridOS (CET) · FirmOS (Frontline) · LabOS (Thomas Scientific)
@@ -8,9 +8,9 @@ import * as Copy from './copy.js?v=20261006155542';
              research/*_filings (estimate tables → calculator defaults).
    Every value-creation number here is an analyst estimate (labelled est.).
    ═══════════════════════════════════════════════════════════════════════════ */
-const injectCss = () => { if (!document.getElementById('css-techos')) { const l = document.createElement('link'); l.id = 'css-techos'; l.rel = 'stylesheet'; l.href = 'modules/techos.css?v=20261006155542'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-techos')) { const l = document.createElement('link'); l.id = 'css-techos'; l.rel = 'stylesheet'; l.href = 'modules/techos.css?v=20261006180606'; document.head.appendChild(l); } };
 
-const OUT_LINKS = `<a class="btn sm" href="index.html" title="Broad Sky Operating Intelligence landing page">Landing</a><a class="btn sm" href="redesigns/index.html" title="Portfolio site concepts + OS program gallery">Site concepts</a>`;
+const OUT_LINKS = `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="index.html" title="Broad Sky Operating Intelligence landing page">Landing</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="redesigns/index.html" title="Portfolio site concepts + OS program gallery">Site concepts</a>`;
 /* ── Platform / OS definitions (copy + calculator wiring) ────────────────── */
 const ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
 const ICON = {
@@ -25,7 +25,7 @@ const icon = (k, s = 18) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24"
 
 const OS = {
   pp: {
-    os: 'ServiceOS', co: 'Punctual Pros', color: 'var(--c-pp)', hex: '#f08a3c', rgb: '240,138,60', module: 'pp', page: 'redesigns/punctual-pros/serviceos.html', filings: 'pp_filings', bench: 'residential_home_services', basis: 'ebitda',
+    os: 'ServiceOS', co: 'Punctual Pros', color: 'var(--co-pp)', hex: 'var(--co-pp)', rgb: '240,138,60', module: 'pp', page: 'redesigns/punctual-pros/serviceos.html', filings: 'pp_filings', bench: 'residential_home_services', basis: 'ebitda',
     sub: 'Residential HVAC, plumbing & electrical · Central PA + Jersey Shore',
     promise: 'Answer every call, price every job the same way, and turn each visit into a membership.',
     pick: { rev: [/pro forma total revenue/i, 0], ebitda: [/^Adjusted EBITDA/i, 0], debt: [/^Total senior debt/i, 0] },
@@ -35,7 +35,7 @@ const OS = {
     fb: { inv: [400000, 900000], ttv: [6, 12], pts: [2, 4], turns: [1, 2.5], rev: [16e6, 28e6], ebitda: 2.6e6, debt: 14e6 },
   },
   cet: {
-    os: 'GridOS', co: 'CET', color: 'var(--c-cet)', hex: '#4c8dff', rgb: '76,141,255', module: 'cet', page: 'redesigns/cet/gridos.html', filings: 'cet_filings', bench: 'commercial_electrical_energy', basis: 'ebitda',
+    os: 'GridOS', co: 'CET', color: 'var(--co-cet)', hex: 'var(--co-cet)', rgb: '76,141,255', module: 'cet', page: 'redesigns/cet/gridos.html', filings: 'cet_filings', bench: 'commercial_electrical_energy', basis: 'ebitda',
     sub: 'CET + NuWave + Horton · electrical, solar, W/WW · New England only',
     promise: 'Bid only what CET can win, run every job on one record, and sell monitoring, not just installs.',
     pick: { rev: [/^Pro forma (?:platform|portfolio company|company)/i, 0], ebitda: [/^Pro forma (?:platform|portfolio company|company)/i, 1], debt: [/^Pro forma senior debt/i, 0] },
@@ -45,7 +45,7 @@ const OS = {
     fb: { inv: [800000, 1800000], ttv: [9, 15], pts: [1, 2.5], turns: [0.5, 1.5], rev: [62e6, 105e6], ebitda: 8.5e6, debt: 40e6 },
   },
   fl: {
-    os: 'FirmOS', co: 'Frontline', color: 'var(--c-fl)', hex: '#9d7bff', rgb: '157,123,255', module: 'fl', page: 'redesigns/frontline/firmos.html', filings: 'frontline_filings', bench: 'legal_bpo_managed_services', basis: 'ebitda',
+    os: 'FirmOS', co: 'Frontline', color: 'var(--co-fl)', hex: 'var(--co-fl)', rgb: '157,123,255', module: 'fl', page: 'redesigns/frontline/firmos.html', filings: 'frontline_filings', bench: 'legal_bpo_managed_services', basis: 'ebitda',
     sub: 'Managed IT, cyber & revenue cycle for 800+ law firms',
     promise: 'Resolve tickets at Level 1, get law firms paid faster, and sell security as a measured service.',
     pick: { rev: [/^Revenue \(2025/i, 0], ebitda: [/^Adjusted EBITDA at close/i, 0], debt: [/^Senior debt at close/i, 0] },
@@ -55,7 +55,7 @@ const OS = {
     fb: { inv: [1500000, 3000000], ttv: [6, 12], pts: [1.5, 3], turns: [0.5, 1.5], rev: [100e6, 140e6], ebitda: 18e6, debt: 90e6 },
   },
   ts: {
-    os: 'LabOS', co: 'Thomas Scientific', color: 'var(--c-ts)', hex: '#2ecc8f', rgb: '46,204,143', module: 'ts', page: 'redesigns/thomas-scientific/labos.html', filings: 'thomas_filings', bench: 'lab_distribution', basis: 'ebitda',
+    os: 'LabOS', co: 'Thomas Scientific', color: 'var(--co-ts)', hex: 'var(--co-ts)', rgb: '46,204,143', module: 'ts', page: 'redesigns/thomas-scientific/labos.html', filings: 'thomas_filings', bench: 'lab_distribution', basis: 'ebitda',
     sub: 'Lab supply distribution since 1900 · Swedesboro NJ',
     promise: 'Move the long tail to self-serve ordering and cut cost-to-serve before the 2027 refinancing.',
     pick: { rev: [/^Current revenue/i, 0], ebitda: [/^Current EBITDA/i, 0], debt: [/first-lien facility/i, 0] },
@@ -65,7 +65,7 @@ const OS = {
     fb: { inv: [2000000, 4000000], ttv: [9, 18], pts: [0.5, 1.5], turns: [0.5, 1.0], rev: [250e6, 320e6], ebitda: 30e6, debt: 240e6 },
   },
   bpi: {
-    os: 'SignalOS', co: 'BPI', color: 'var(--c-bpi)', hex: '#e05c8a', rgb: '224,92,138', module: 'bpi', page: 'redesigns/bpi/signalos.html', filings: 'bpi_filings', bench: 'communications_agencies', basis: 'ebitda',
+    os: 'SignalOS', co: 'BPI', color: 'var(--co-bpi)', hex: 'var(--co-bpi)', rgb: '224,92,138', module: 'bpi', page: 'redesigns/bpi/signalos.html', filings: 'bpi_filings', bench: 'communications_agencies', basis: 'ebitda',
     sub: 'Bully Pulpit International · strategic comms & public affairs',
     promise: 'Turn campaign-cycle monitoring into an always-on subscription with its own revenue line.',
     pick: { rev: [/^Net \(fee\) revenue FY2025/i, 0], ebitda: [/^Adj\. EBITDA FY2025/i, 0], debt: [/^Senior secured debt/i, 0] },
@@ -75,7 +75,7 @@ const OS = {
     fb: { inv: [1000000, 2000000], ttv: [6, 12], pts: [1, 3], turns: [0.5, 2], rev: [85e6, 125e6], ebitda: 22.5e6, debt: 85e6 },
   },
   fh: {
-    os: 'HarborOS', co: 'Fair Harbor', color: 'var(--c-fh)', hex: '#3fd0e0', rgb: '63,208,224', module: 'fh', page: 'redesigns/fair-harbor/harboros.html', filings: 'fairharbor_filings', bench: 'apparel_dtc', basis: 'revenue',
+    os: 'HarborOS', co: 'Fair Harbor', color: 'var(--co-fh)', hex: 'var(--co-fh)', rgb: '63,208,224', module: 'fh', page: 'redesigns/fair-harbor/harboros.html', filings: 'fairharbor_filings', bench: 'apparel_dtc', basis: 'revenue',
     sub: 'Sustainable beachwear · DTC + wholesale · NYC',
     promise: 'Fewer returns, more repeat buyers and a tighter seasonal buy: margin first, then the multiple.',
     pick: { rev: [/^2025 net revenue/i, 0], ebitda: [/^2025 EBITDA/i, 0], debt: [/^Funded debt/i, 0] },
@@ -85,7 +85,7 @@ const OS = {
     fb: { inv: [300000, 700000], ttv: [4, 9], pts: [2, 5], turns: [0.2, 0.5], rev: [20e6, 35e6], ebitda: 2e6, debt: 5e6 },
   },
 };
-const PRG = { os: 'Shared PRG layer', co: 'Portfolio Resource Group', color: 'var(--cyan)', hex: '#3fd0e0' };
+const PRG = { os: 'Shared PRG layer', co: 'Portfolio Resource Group', color: 'var(--sys-brand)', hex: 'var(--sys-brand)' };
 const DEFAULTS = { prob: 70, years: 3 };
 
 /* ── Roadmap: 24 months from Oct 2026 (M0) ───────────────────────────────── */
@@ -159,7 +159,7 @@ const turnsTxt = (a, basis) => a ? `+${trim(a[0], 2)}–${trim(a[1], 2)}x${basis
 const mult = (v, basis) => v == null ? '—' : `${trim(v, 2)}x${basis === 'revenue' ? ' rev.' : ''}`;
 const pts = v => v == null ? '—' : `${trim(v, 2)} pts`;
 const clip = (s, n = 180) => { s = String(s ?? ''); if (s.length <= n) return s; const c = s.slice(0, n); const i = c.lastIndexOf('. '); return i > n * 0.5 ? c.slice(0, i + 1) : c.replace(/\s+\S*$/, '') + '…'; };
-const confColor = c => c === 'high' ? 'var(--green)' : c === 'medium' ? 'var(--amber)' : 'var(--dim)';
+const confColor = c => c === 'high' ? 'var(--sys-good)' : c === 'medium' ? 'var(--sys-warn)' : 'var(--sys-mute-2)';
 const unitShort = u => { u = String(u || ''); return /^%/.test(u) ? '%' : /days/.test(u) ? ' d' : /members/.test(u) ? '/tech' : ''; };
 const kpiVal = (v, u) => v == null ? 'n/d' : `${trim(v, 1)}${unitShort(u)}`;
 const host = u => { try { return new URL(u).hostname.replace('www.', ''); } catch { return ''; } };
@@ -167,7 +167,7 @@ const extLink = (u, t) => u ? `<a href="${escAttr(u)}" target="_blank" rel="noop
 const escTxt = s => Copy.text(String(s ?? '')).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const escAttr = escTxt;
 const platColor = k => (OS[k] || PRG).color;
-const platChip = (fmt, k) => OS[k] ? fmt.chip(OS[k].co, OS[k].color) : fmt.chip(String(k || ''), 'var(--muted)');
+const platChip = (fmt, k) => OS[k] ? fmt.chip(OS[k].co, OS[k].color) : fmt.chip(String(k || ''), 'var(--sys-mute)');
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 /** Parse "$16-28M", "~$22M (range $16-28M)", "$65–100M revenue; $6–11M EBITDA", "under $10M" into {lo, hi, point} in USD. */
@@ -239,14 +239,14 @@ const srcFoot = (ui, b, extra) => ui.source(`ServiceOS evidence${extra ? ' + ' +
 /* ── Inspectors ──────────────────────────────────────────────────────────── */
 function openOS(ctx, b, p) {
   const { ui, fmt, inspector, app } = ctx;
-  const kpiRows = p.kpis.map(x => `<tr><td>${escTxt(x.kpi)}<div class="dim">${escTxt(clip(x.target_basis || '', 120))}</div></td><td class="num">${kpiVal(x.baseline, x.unit)}</td><td class="num">${kpiVal(x.target, x.unit)}</td></tr>`).join('');
+  const kpiRows = p.kpis.map(x => `<tr><td>${escTxt(x.kpi)}<div class="dim">${escTxt(clip(x.target_basis || '', 120))}</div></td><td class="sys-n">${kpiVal(x.baseline, x.unit)}</td><td class="sys-n">${kpiVal(x.target, x.unit)}</td></tr>`).join('');
   inspector.open({
     title: `${escTxt(p.os)} <span class="dim" style="font-weight:500">· ${escTxt(p.co)}</span>`, sub: escTxt(p.sub), color: p.color,
     sections: [
       { label: 'Promise', html: `<div class="m-techos-i"><div class="lede">${escTxt(p.promise)}</div></div>` },
       { label: 'Value case (est.)', html: ui.kv({ 'OS investment': rangeM(p.inv), 'EBITDA uplift': `${pts(p.pts[0])}–${pts(p.pts[1])} of revenue · ${rangeM(p.impactUsd)}`, 'Multiple expansion': `${turnsTxt(p.turns, p.basis)} <span class="dim small">${escTxt(p.ra?.multiple_basis || '')}</span>`, 'Time to value': `${p.ttv[0]}–${p.ttv[1]} months`, 'Revenue basis': `${rangeM(p.revBasis)} <div class="dim small">${escTxt(p.ra?.revenue_source || 'built-in snapshot')}</div>`, 'EBITDA today (est.)': escTxt(p.ra?.current_ebitda_estimate || $M(p.def.ebitda)), 'Mid-case EV created': `<b>${$M(p.mid.dEV)}</b> <span class="dim small">gross, before execution haircut</span>` }) },
       p.ra?.rationale ? { label: 'Why this range', html: `<div class="small text-2">${escTxt(p.ra.rationale)}</div>` } : null,
-      p.kpis.length ? { label: 'KPIs it moves · industry baseline → best-in-class', html: `<div class="m-techos-i"><table class="mini"><thead><tr><th>KPI</th><th class="num">Base</th><th class="num">Target</th></tr></thead><tbody>${kpiRows}</tbody></table></div>` } : null,
+      p.kpis.length ? { label: 'KPIs it moves · industry baseline → best-in-class', html: `<div class="m-techos-i"><div class="sys-table-wrap"><table class="sys-table mini"><thead><tr><th>KPI</th><th class="sys-n">Base</th><th class="sys-n">Target</th></tr></thead><tbody>${kpiRows}</tbody></table></div></div>` } : null,
       p.vendors.length ? { label: `Build vs buy · ${p.vendors.length} named vendors`, html: `<div class="m-techos-i">${p.vendors.map(v => `<div class="it"><div class="t">${escTxt(v.vendor)} <span class="dim">· ${escTxt(v.category)}</span></div><div class="d">${escTxt(clip(v.what_it_does, 150))}</div>${v.pricing_note ? `<div class="d dim">${escTxt(clip(v.pricing_note, 140))}</div>` : ''}<div class="d">${extLink(v.source_url)}</div></div>`).join('')}</div>` } : null,
       p.evidence.length ? { label: `Evidence · ${p.evidence.length} linked items`, html: `<div class="m-techos-i">${p.evidence.filter(e => e.kind === 'valuation_evidence').map(e => `<div class="it"><div class="t">${escTxt(e.title)}</div><div class="d">${fmt.chip(e.confidence || 'n/d', confColor(e.confidence))} <span class="dim">${escTxt(e.source_name || '')} · ${escTxt(e.date || '')}</span></div><div class="d">${extLink(e.source_url)}</div></div>`).join('')}</div>` } : null,
       p.bench ? { label: 'Public comps tie-in', html: ui.kv({ Sector: escTxt(p.bench.bsp_company ? `${titleSector(p.k)} · ${p.bench.n} comps` : titleSector(p.k)), Comps: escTxt((p.bench.comps || []).join(', ')), 'Median EBITDA margin': `${trim(p.bench.median_ebitda_margin_latest_pct, 1)}%`, 'Median revenue growth': `${trim(p.bench.median_revenue_growth_latest_pct, 1)}%`, [`${p.co} today (est.)`]: `${trim(p.def.margin, 1)}% EBITDA margin → ${trim(p.def.margin + midOf(p.pts), 1)}% with ${escTxt(p.os)} (mid)` }) } : null,
@@ -269,7 +269,7 @@ function openEvidence(ctx, b, e) {
   const isVal = e.kind === 'valuation_evidence', isKpi = e.kind === 'kpi_benchmark', isVend = e.kind === 'vendor_stack';
   const links = [e.source_url, ...(e.related_urls || [])].filter(Boolean);
   inspector.open({
-    title: escTxt(e.title || e.kpi || e.vendor || e.id), sub: `${escTxt(isVal ? 'Valuation evidence' : isKpi ? 'KPI benchmark' : isVend ? 'Vendor stack' : e.kind)} · ${escTxt(e.id)}${e.date ? ' · ' + escTxt(e.date) : ''}`, color: 'var(--cyan)',
+    title: escTxt(e.title || e.kpi || e.vendor || e.id), sub: `${escTxt(isVal ? 'Valuation evidence' : isKpi ? 'KPI benchmark' : isVend ? 'Vendor stack' : e.kind)} · ${escTxt(e.id)}${e.date ? ' · ' + escTxt(e.date) : ''}`, color: 'var(--sys-brand)',
     sections: [
       isVal ? { label: 'Claim', html: `<div class="small text-2">${escTxt(e.claim)}</div>` } : null,
       isVal ? { label: 'Metric', html: ui.kv({ Value: e.metric_value != null ? `<b class="num">${escTxt(fmtMetric(e))}</b>` : 'qualitative', Unit: escTxt(e.metric_unit), Range: e.metric_range ? escTxt(e.metric_range.join(' – ')) : null, Confidence: fmt.chip(e.confidence || 'n/d', confColor(e.confidence)), Source: escTxt(e.source_name), Dated: escTxt(e.date) }) } : null,
@@ -304,26 +304,26 @@ async function overview(ctx) {
   el.innerHTML = `<div class="m-techos">${ui.pageHead({
     title: 'Tech enablement',
     sub: `<b>So what:</b> six buyer-legible operating systems, one per company, assembled from proven vendors plus the portal’s data layer. Together they need an est. <b>${rangeM(inv)}</b> of spend for <b>${rangeM(imp)}</b> of run-rate EBITDA and <b>+${trim(tLo, 1)}–${trim(tHi, 1)} turns</b> of multiple. The mid case adds ≈<b>${$M(dEV)}</b> of enterprise value; ${escTxt(lead.os)} at ${escTxt(lead.co)} is the largest single prize.`,
-    chips: `${fmt.chip('OS program', 'var(--cyan)')}${fmt.chip('est. · analyst assumptions, not guidance', 'var(--amber)')}${b.items.length ? fmt.chip(`${b.items.length} evidence items`, 'var(--cyan)') : fmt.chip('built-in snapshot', 'var(--amber)')}${fmt.chip('Smith + Howard excluded (exited Aug 2026)', 'var(--dim)')}`,
-    actions: `${OUT_LINKS}<button class="btn sm" data-go="evidence">Evidence</button><button class="btn sm" data-go="roadmap">Roadmap</button><button class="btn sm primary" data-go="calculator">Open calculator →</button>`,
+    chips: `${fmt.chip('OS program', 'var(--sys-brand)')}${fmt.chip('est. · analyst assumptions, not guidance', 'var(--sys-warn)')}${b.items.length ? fmt.chip(`${b.items.length} evidence items`, 'var(--sys-brand)') : fmt.chip('built-in snapshot', 'var(--sys-warn)')}${fmt.chip('Smith + Howard excluded (exited Aug 2026)', 'var(--sys-mute-2)')}`,
+    actions: `${OUT_LINKS}<button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="evidence">Evidence</button><button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="roadmap">Roadmap</button><button class="sys-btn sys-btn--primary sys-btn--sm btn sm primary" data-go="calculator">Open calculator →</button>`,
   })}
   ${missingNote(ui, b)}
   ${ui.kpis([
-    { label: 'OS programs', value: '6', sub: 'One per active company', color: 'var(--cyan)' },
-    { label: 'Investment (est.)', value: rangeM(inv), sub: 'Software, implementation, change mgmt', color: 'var(--cyan)' },
-    { label: 'Run-rate EBITDA uplift', value: rangeM(imp), sub: 'Revenue est. × margin pts', color: 'var(--green)' },
-    { label: 'Multiple re-rating', value: `+${trim(tLo, 1)}–${trim(tHi, 1)}x`, sub: 'EV/EBITDA turns credited to tech · HarborOS on revenue', color: 'var(--purple)' },
-    { label: 'Mid-case EV created', value: $M(dEV), sub: `Gross · ${$M(riskNet)} net at ${DEFAULTS.prob}% delivery`, color: 'var(--green)' },
-    { label: 'Time to first value', value: `${ttvLo}–${ttvHi} mo`, sub: 'HarborOS first, LabOS last', color: 'var(--amber)' },
+    { label: 'OS programs', value: '6', sub: 'One per active company', color: 'var(--sys-brand)' },
+    { label: 'Investment (est.)', value: rangeM(inv), sub: 'Software, implementation, change mgmt', color: 'var(--sys-brand)' },
+    { label: 'Run-rate EBITDA uplift', value: rangeM(imp), sub: 'Revenue est. × margin pts', color: 'var(--sys-good)' },
+    { label: 'Multiple re-rating', value: `+${trim(tLo, 1)}–${trim(tHi, 1)}x`, sub: 'EV/EBITDA turns credited to tech · HarborOS on revenue', color: 'var(--co-fl)' },
+    { label: 'Mid-case EV created', value: $M(dEV), sub: `Gross · ${$M(riskNet)} net at ${DEFAULTS.prob}% delivery`, color: 'var(--sys-good)' },
+    { label: 'Time to first value', value: `${ttvLo}–${ttvHi} mo`, sub: 'HarborOS first, LabOS last', color: 'var(--sys-warn)' },
   ])}
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'The thesis', sub: 'Why tech enablement is a multiple story, not an IT budget', accent: true, body: thesisHtml(b, ve), foot: srcFoot(ui, b, 'PKF, Capstone/IMAP, ServiceTitan') })}
     ${ui.panel({ title: 'Where the value sits', sub: 'EV created per $1 of OS spend vs months to first value · bubble = mid-case EV created (est.)', body: `<div id="tx-matrix"></div>`, foot: srcFoot(ui, b) })}
   </div>
-  <div class="tx-sec"><h2>Six operating systems</h2><span class="dim small">Click a card for the full value case, vendor stack and evidence trail.</span></div>
-  <div class="tx-cards" id="tx-cards">${P.map(p => osCard(ctx, p)).join('')}</div>
+  <div class="tx-sec"><h2 class="sys-card-title">Six operating systems</h2><span class="sys-muted small">Click a card for the full value case, vendor stack and evidence trail.</span></div>
+  <div class="sys-grid tx-cards" id="tx-cards">${P.map(p => osCard(ctx, p)).join('')}</div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Value bridge by company', sub: 'Mid case · EV from the EBITDA uplift vs EV from multiple re-rating (est.)', body: bridgeHtml(P), actions: `<button class="btn xs" id="tx-ov-csv">⇩ CSV</button>`, foot: srcFoot(ui, b, '*_filings') })}
+    ${ui.panel({ title: 'Value bridge by company', sub: 'Mid case · EV from the EBITDA uplift vs EV from multiple re-rating (est.)', body: bridgeHtml(P), actions: `<button class="sys-btn sys-btn--secondary sys-btn--sm btn xs" id="tx-ov-csv">⇩ CSV</button>`, foot: srcFoot(ui, b, 'company public filings') })}
     ${ui.panel({ title: 'What the evidence does and does not support', sub: 'Read before quoting any number on this page', body: limitsHtml(b, prem), foot: srcFoot(ui, b) })}
   </div></div>`;
 
@@ -337,7 +337,7 @@ async function overview(ctx) {
   el.querySelectorAll('.tx-bridge .br[data-k]').forEach(r => r.onclick = () => openOS(ctx, b, b.P[r.dataset.k]));
   el.querySelector('#tx-ov-csv').onclick = () => ui.exportCSV(P.map(p => ({ os: p.os, company: p.co, investment_low_usd: p.inv[0], investment_high_usd: p.inv[1], ebitda_uplift_pts_low: p.pts[0], ebitda_uplift_pts_high: p.pts[1], ebitda_uplift_low_usd: Math.round(p.impactUsd[0]), ebitda_uplift_high_usd: Math.round(p.impactUsd[1]), multiple_turns_low: p.turns[0], multiple_turns_high: p.turns[1], multiple_basis: p.basis === 'revenue' ? 'EV/revenue' : 'EV/EBITDA', time_to_value_months: `${p.ttv[0]}-${p.ttv[1]}`, mid_ev_created_usd: Math.round(p.mid.dEV), mid_ebitda_effect_usd: Math.round(p.mid.effE), mid_multiple_effect_usd: Math.round(p.mid.effM), label: 'est. analyst assumption' })), null, 'techos_os_program');
   if (params.os && b.P[params.os]) sel(params.os);
-  ctx.app.index(P.map(p => ({ label: `${p.os} · ${p.co}`, sub: `OS program · ${rangeM(p.inv)} · ${turnsTxt(p.turns, p.basis)}`, href: `#/techos/overview?os=${p.k}`, kind: 'OS', color: 'var(--cyan)' })));
+  ctx.app.index(P.map(p => ({ label: `${p.os} · ${p.co}`, sub: `OS program · ${rangeM(p.inv)} · ${turnsTxt(p.turns, p.basis)}`, href: `#/techos/overview?os=${p.k}`, kind: 'OS', color: 'var(--sys-brand)' })));
   return unMatrix;
 }
 
@@ -348,29 +348,29 @@ function thesisHtml(b, ve) {
   const beats = [
     { k: pkf ? `${trim(pkf.metric_range?.[0] ?? 5, 1)}–6x → ${trim(pkf.metric_value, 0)}x+` : '5–6x → 10x+', h: 'Buyers pay for predictability', d: pkf ? 'PKF’s 2026 HVAC grid puts project-heavy, low-retention firms at 5–6x EBITDA and repeatable-service firms with in-house capabilities at 10x+. Capstone/IMAP see a 3.0-turn spread between typical (6.8x) and premium (9.8x) middle-market deals.' : 'Banker grids price repeatable, visible earnings well above project-heavy work.', src: pkf },
     { k: nV ? `${nV} vendors` : 'Proven vendors', h: 'Assemble, don’t build', d: 'Each OS is a named, buyer-legible stack of proven vendors (ServiceTitan, Procore, ConnectWise/Kaseya, Shopify Plus, Brandwatch, Klaviyo) plus a thin Broad Sky data layer from this portal. No custom software risk.', src: null },
-    { k: st ? `${st.extra_metrics?.top_quartile_gtv_growth_pct ?? 20}% vs ${st.extra_metrics?.bottom_quartile_gtv_growth_pct ?? 8}%` : '20% vs 8%', h: 'Adoption shows up in growth', d: 'ServiceTitan’s S-1 shows heavy platform users growing GTV 20% versus 8% for light users; pricebook adopters grew ticket 14% versus 8%. The KPIs are measurable within two quarters.', src: st },
+    { k: st ? `${st.extra_metrics?.top_quartile_gtv_growth_pct ?? 20}% vs ${st.extra_metrics?.bottom_quartile_gtv_growth_pct ?? 8}%` : '20% vs 8%', h: 'Adoption shows up in growth', d: 'ServiceTitan’s S-1 shows heavy ServiceTitan users growing GTV 20% versus 8% for light users; pricebook adopters grew ticket 14% versus 8%. The KPIs are measurable within two quarters.', src: st },
     { k: `+${trim(0.5, 1)}–2.5x`, h: 'Credit only a fraction', d: `Champions (${ch ? trim(ch.metric_value, 1) : '18.5'}x) and Sila (${sila ? trim(sila.metric_value, 0) : '17'}x) are scale prints. This program credits tech with 0.5–2.5 turns, inside the ${cap ? trim(cap.metric_value, 1) : '3.0'}-turn quality spread.`, src: ch },
   ];
   return `<div class="tx-thesis"><p class="hl">${escTxt(prem?.headline || 'Services businesses with recurring, visible, tech-enabled earnings trade at a premium; tech can credibly claim part of it.')}</p>
-    <div class="beats">${beats.map((x, i) => `<div class="beat"><div class="n">0${i + 1}</div><div class="k num">${escTxt(x.k)}</div><div class="h">${escTxt(x.h)}</div><div class="d">${escTxt(x.d)}</div>${x.src?.source_url ? `<div class="s">${extLink(x.src.source_url, x.src.source_name ? clip(x.src.source_name, 48) : host(x.src.source_url))}</div>` : ''}</div>`).join('')}</div></div>`;
+    <div class="sys-grid beats">${beats.map((x, i) => `<div class="sys-card sys-card--flat beat"><div class="sys-card-label n">0${i + 1}</div><div class="sys-kpi-value k">${escTxt(x.k)}</div><div class="sys-card-title h">${escTxt(x.h)}</div><div class="sys-card-body d">${escTxt(x.d)}</div>${x.src?.source_url ? `<div class="s">${extLink(x.src.source_url, x.src.source_name ? clip(x.src.source_name, 48) : host(x.src.source_url))}</div>` : ''}</div>`).join('')}</div></div>`;
 }
 
 function osCard(ctx, p) {
   const { fmt } = ctx;
   const hiConf = p.evidence.filter(e => e.confidence === 'high').length;
   const kp = p.kpis.slice(0, 3);
-  return `<article class="os-card" data-k="${p.k}" tabindex="0" role="button" aria-label="${escAttr(`${p.os} for ${p.co}: open value case`)}" style="--cc:${p.hex};--crgb:${p.rgb}">
-    <div class="os-top"><span class="os-glyph">${icon(p.k, 20)}</span><div class="grow"><div class="os-name">${escTxt(p.os)}</div><div class="os-co">${escTxt(p.co)} · ${escTxt(p.sub.split(' · ').slice(-1)[0])}</div></div><span class="os-turns num" title="Multiple expansion credited (est.)">${turnsTxt(p.turns, p.basis)}</span></div>
-    <p class="os-promise">${escTxt(p.promise)}</p>
+  return `<article class="sys-card sys-card--link os-card" data-co="" data-k="${p.k}" tabindex="0" role="button" aria-label="${escAttr(`${p.os} for ${p.co}: open value case`)}" style="--co:${p.hex};--cc:${p.hex}">
+    <div class="os-top"><span class="os-glyph">${icon(p.k, 20)}</span><div class="grow"><div class="sys-card-title os-name">${escTxt(p.os)}</div><div class="os-co">${escTxt(p.co)} · ${escTxt(p.sub.split(' · ').slice(-1)[0])}</div></div><span class="os-turns num" title="Multiple expansion credited (est.)">${turnsTxt(p.turns, p.basis)}</span></div>
+    <p class="sys-card-body os-promise">${escTxt(p.promise)}</p>
     <div class="os-stats">
       <div><span>Investment</span><b class="num">${rangeM(p.inv)}</b></div>
       <div><span>EBITDA uplift</span><b class="num">${rangeM(p.impactUsd)}</b></div>
       <div><span>First value</span><b class="num">${p.ttv[0]}–${p.ttv[1]} mo</b></div>
       <div><span>EV created</span><b class="num">${$M(p.mid.dEV)}</b></div>
     </div>
-    ${kp.length ? `<div class="os-kpis"><div class="lbl">KPIs it moves <span>industry baseline → best-in-class</span></div>${kp.map(x => { const bl = num(x.baseline), tg = num(x.target); const w = bl != null && tg ? clamp((Math.min(bl, tg) / Math.max(bl, tg)) * 100, 4, 100) : 0; const down = bl != null && tg != null && tg < bl; return `<div class="kr"><span class="kn">${escTxt(clip(x.kpi, 46))}</span><span class="kval num">${kpiVal(x.baseline, x.unit)} <i>→</i> <b>${kpiVal(x.target, x.unit)}</b></span><span class="kb ${down ? 'down' : ''}"><i style="width:${w}%"></i></span></div>`; }).join('')}</div>` : ''}
-    ${p.vendors.length ? `<div class="os-stack">${p.vendors.slice(0, 5).map(v => `<span>${escTxt(v.vendor.replace(/\s*\(.*\)\s*/, ''))}</span>`).join('')}</div>` : ''}
-    <div class="os-foot"><span class="dim">${p.evidence.length ? `${p.evidence.length} evidence · ${hiConf} high-conf.` : 'built-in snapshot'}</span><span class="grow"></span><a href="${escAttr(p.page)}" target="_blank" rel="noopener">OS page ↗</a><button class="lnk" data-road="${p.k}">Roadmap</button><button class="lnk strong" data-calc="${p.k}">Model it →</button></div>
+    ${kp.length ? `<div class="os-kpis"><div class="sys-card-label lbl">KPIs it moves <span>industry baseline → best-in-class</span></div>${kp.map(x => { const bl = num(x.baseline), tg = num(x.target); const w = bl != null && tg ? clamp((Math.min(bl, tg) / Math.max(bl, tg)) * 100, 4, 100) : 0; const down = bl != null && tg != null && tg < bl; return `<div class="kr"><span class="kn">${escTxt(clip(x.kpi, 46))}</span><span class="kval num">${kpiVal(x.baseline, x.unit)} <i>→</i> <b>${kpiVal(x.target, x.unit)}</b></span><span class="kb ${down ? 'down' : ''}"><i style="width:${w}%"></i></span></div>`; }).join('')}</div>` : ''}
+    ${p.vendors.length ? `<div class="sys-chips os-stack">${p.vendors.slice(0, 5).map(v => `<span class="sys-chip">${escTxt(v.vendor.replace(/\s*\(.*\)\s*/, ''))}</span>`).join('')}</div>` : ''}
+    <div class="sys-card-foot os-foot"><span class="dim">${p.evidence.length ? `${p.evidence.length} evidence · ${hiConf} high-conf.` : 'built-in snapshot'}</span><span class="grow"></span><a href="${escAttr(p.page)}" target="_blank" rel="noopener">OS page ↗</a><button type="button" class="sys-btn sys-btn--ghost sys-btn--sm" data-road="${p.k}">Roadmap</button><button type="button" class="sys-btn sys-btn--secondary sys-btn--sm" data-calc="${p.k}">Model it →</button></div>
   </article>`;
 }
 
@@ -453,16 +453,16 @@ async function evidence(ctx) {
   el.innerHTML = `<div class="m-techos">${ui.pageHead({
     title: 'Valuation evidence',
     sub: `<b>So what:</b> the market pays up to ~3 turns more for recurring, visible earnings (Capstone 6.8x → 9.8x; PKF 5–6x → 10x+). The 17–18.5x prints are scale, not software, so the OS program credits tech with only <b>0.5–2.5 turns</b>. Every datapoint below is sourced, dated and confidence-rated.`,
-    chips: `${fmt.chip(`${K.val.length} valuation datapoints`, 'var(--cyan)')}${fmt.chip(`${K.kpi.length} KPI benchmarks`, 'var(--cyan)')}${fmt.chip(`${K.vend.length} vendors`, 'var(--cyan)')}${fmt.chip(`${sources.size} source domains`, 'var(--dim)')}`,
-    actions: `${OUT_LINKS}<button class="btn sm" data-go="overview">Overview</button><button class="btn sm primary" data-go="calculator">Calculator →</button>`,
+    chips: `${fmt.chip(`${K.val.length} valuation datapoints`, 'var(--sys-brand)')}${fmt.chip(`${K.kpi.length} KPI benchmarks`, 'var(--sys-brand)')}${fmt.chip(`${K.vend.length} vendors`, 'var(--sys-brand)')}${fmt.chip(`${sources.size} source domains`, 'var(--sys-mute-2)')}`,
+    actions: `${OUT_LINKS}<button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="overview">Overview</button><button class="sys-btn sys-btn--primary sys-btn--sm btn sm primary" data-go="calculator">Calculator →</button>`,
   })}
   ${missingNote(ui, b)}
   ${ui.kpis([
-    { label: 'Quality spread', value: '3.0 turns', sub: 'Capstone/IMAP typical 6.8x vs premium 9.8x', color: 'var(--cyan)' },
-    { label: 'HVAC banker grid', value: '5–6x → 10x+', sub: 'PKF, Summer 2026', color: 'var(--c-pp)' },
-    { label: 'Credited to tech', value: '0.5–2.5x', sub: 'EV/EBITDA turns, by company', color: 'var(--purple)' },
-    { label: 'High-confidence', value: `${hi} / ${K.val.length}`, sub: 'Valuation datapoints', color: 'var(--green)' },
-    { label: 'Evidence window', value: `${escTxt(dates[0]?.slice(0, 4) || '—')}–${escTxt(dates[dates.length - 1]?.slice(0, 4) || '—')}`, sub: `${dates.filter(d => d >= '2026').length} of ${K.val.length} dated 2026 · newest ${escTxt(dates[dates.length - 1] || '—')}`, color: 'var(--amber)' },
+    { label: 'Quality spread', value: '3.0 turns', sub: 'Capstone/IMAP typical 6.8x vs premium 9.8x', color: 'var(--sys-brand)' },
+    { label: 'HVAC banker grid', value: '5–6x → 10x+', sub: 'PKF, Summer 2026', color: 'var(--co-pp)' },
+    { label: 'Credited to tech', value: '0.5–2.5x', sub: 'EV/EBITDA turns, by company', color: 'var(--co-fl)' },
+    { label: 'High-confidence', value: `${hi} / ${K.val.length}`, sub: 'Valuation datapoints', color: 'var(--sys-good)' },
+    { label: 'Evidence window', value: `${escTxt(dates[0]?.slice(0, 4) || '—')}–${escTxt(dates[dates.length - 1]?.slice(0, 4) || '—')}`, sub: `${dates.filter(d => d >= '2026').length} of ${K.val.length} dated 2026 · newest ${escTxt(dates[dates.length - 1] || '—')}`, color: 'var(--sys-warn)' },
   ])}
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'The multiple ladder', sub: 'EV/EBITDA prints and banker bands that frame the OS premium · click a row for the source', body: ladderHtml(b), foot: srcFoot(ui, b) })}
@@ -485,7 +485,7 @@ async function evidence(ctx) {
         { key: 'title', label: 'Evidence', wrap: true, fmt: (v, r) => `<b>${escTxt(v)}</b><div class="dim small">${escTxt(r.source_name || '')}</div>` },
         { key: '_metric', label: 'Metric', num: true, width: '90px', fmt: (v, r) => `<b>${escTxt(v)}</b>`, sort: (a, b2) => (num(a.metric_value) || 0) - (num(b2.metric_value) || 0) },
         { key: 'metric_unit', label: 'Unit', wrap: true, fmt: v => `<span class="small text-2">${escTxt(clip(v || '', 60))}</span>` },
-        { key: '_plat', label: 'Applies to', fmt: (v, r) => (r.applies_to || []).length >= 6 ? fmt.chip('All six', 'var(--cyan)') : `<div class="row wrap gap-4">${(r.applies_to || []).map(k => platChip(fmt, k)).join('')}</div>` },
+        { key: '_plat', label: 'Applies to', fmt: (v, r) => (r.applies_to || []).length >= 6 ? fmt.chip('All six', 'var(--sys-brand)') : `<div class="row wrap gap-4">${(r.applies_to || []).map(k => platChip(fmt, k)).join('')}</div>` },
         { key: 'date', label: 'Date', num: true, width: '84px' },
         { key: 'source_url', label: 'Source', fmt: v => v ? fmt.link(v) : '—' },
       ], conf: true },
@@ -536,7 +536,7 @@ async function evidence(ctx) {
   const ch = el.querySelector('#tx-comps');
   if (!compRows.length) ch.innerHTML = ui.note('Public comparables dataset not available.', 'warn');
   else ui.table(ch, { columns: [
-    { key: 'os', label: 'OS', fmt: (v, r) => `<b style="color:${OS[r.k].hex}">${escTxt(v)}</b><div class="dim small">${escTxt(r.sector)}</div>` },
+    { key: 'os', label: 'OS', fmt: (v, r) => `<span class="sys-dot" style="--co:${OS[r.k].hex}" aria-hidden="true"></span> <b>${escTxt(v)}</b><div class="dim small">${escTxt(r.sector)}</div>` },
     { key: 'margin', label: 'Sector EBITDA', num: true, fmt: v => v == null ? '—' : `${trim(v, 1)}%` },
     { key: 'today', label: 'Today (est.)', num: true, fmt: v => `${trim(v, 1)}%` },
     { key: 'withOS', label: 'With OS (mid)', num: true, fmt: (v, r) => `<b>${trim(v, 1)}%</b>` },
@@ -550,15 +550,15 @@ async function evidence(ctx) {
 
   if (params.id && b.byId.get(params.id)) openEvidence(ctx, b, b.byId.get(params.id));
   ctx.app.index([
-    ...K.val.map(e => ({ label: e.title, sub: `OS evidence · ${e.confidence} · ${e.date || ''}`, href: `#/techos/evidence?id=${encodeURIComponent(e.id)}`, kind: 'Evidence', color: 'var(--cyan)' })),
-    ...K.vend.map(e => ({ label: `${e.vendor}`, sub: `${OS[e.company]?.os || ''} vendor · ${e.category}`, href: `#/techos/evidence?tab=vend&id=${encodeURIComponent(e.id)}`, kind: 'Vendor', color: 'var(--cyan)' })),
+    ...K.val.map(e => ({ label: e.title, sub: `OS evidence · ${e.confidence} · ${e.date || ''}`, href: `#/techos/evidence?id=${encodeURIComponent(e.id)}`, kind: 'Evidence', color: 'var(--sys-brand)' })),
+    ...K.vend.map(e => ({ label: `${e.vendor}`, sub: `${OS[e.company]?.os || ''} vendor · ${e.category}`, href: `#/techos/evidence?tab=vend&id=${encodeURIComponent(e.id)}`, kind: 'Vendor', color: 'var(--sys-brand)' })),
   ]);
 }
 
 function ladderHtml(b) {
   const xMin = 4, xMax = 20; const X = v => ((clamp(v, xMin, xMax) - xMin) / (xMax - xMin)) * 100;
   const band = `<i class="band" style="left:${X(6.8)}%;width:${X(9.8) - X(6.8)}%"></i>`;
-  const colorFor = id => { const e = b.byId.get(id); const a = e?.applies_to || []; return a.length === 1 ? OS[a[0]]?.hex : 'var(--cyan)'; };
+  const colorFor = id => { const e = b.byId.get(id); const a = e?.applies_to || []; return a.length === 1 ? OS[a[0]]?.hex : 'var(--sys-brand)'; };
   return `<div class="tx-ladder">
     <div class="lr ax"><div class="ll"></div><div class="lt">${[4, 6, 8, 10, 12, 14, 16, 18, 20].map(v => `<span style="left:${X(v)}%">${v}x</span>`).join('')}</div></div>
     ${LADDER.map(r => { const c = colorFor(r.id); const has = b.byId.has(r.id); const lo = r.lo ?? r.v, hi = r.hi ?? r.v;
@@ -573,7 +573,7 @@ function premiumHtml(b, prem) {
       <div class="pt"><i style="left:${(r[0] / max) * 100}%;width:${((r[1] - r[0]) / max) * 100}%"></i></div>
       <div class="ps">${by[k]?.strength ? `<span class="st">${escTxt(by[k].strength)}</span>` : ''}${escTxt(clip(by[k]?.support || '', 150))}</div></div>`; }).join('')}
     <div class="pax num"><span>0</span><span>1x</span><span>2x</span><span>3x</span></div>
-    ${prem?.headline ? `<div class="note mt-12">${escTxt(prem.headline)}</div>` : ''}</div>`;
+    ${prem?.headline ? `<div class="sys-note sys-note--info note mt-12">${escTxt(prem.headline)}</div>` : ''}</div>`;
 }
 
 /* ══ View: Roadmap ══════════════════════════════════════════════════════════ */
@@ -589,16 +589,16 @@ async function roadmap(ctx) {
   el.innerHTML = `<div class="m-techos">${ui.pageHead({
     title: 'OS roadmap',
     sub: `<b>So what:</b> every OS shows first value inside ${lastVal} months, starting with HarborOS at month ${firstVal}. The critical date is <b>December 2027</b>: LabOS must hand Thomas Scientific’s lenders a cost-to-serve and digital-mix story before its loan matures. The shared KPI layer (months 0–4) gates four of the six programs.`,
-    chips: `${fmt.chip('Oct 2026 → Sep 2028', 'var(--cyan)')}${fmt.chip('Owners are roles, not named individuals', 'var(--dim)')}${fmt.chip('est. · planning assumption', 'var(--amber)')}`,
-    actions: `${OUT_LINKS}<button class="btn sm" data-go="overview">Overview</button><button class="btn sm primary" data-go="calculator">Calculator →</button>`,
+    chips: `${fmt.chip('Oct 2026 → Sep 2028', 'var(--sys-brand)')}${fmt.chip('Owners are roles, not named individuals', 'var(--sys-mute-2)')}${fmt.chip('est. · planning assumption', 'var(--sys-warn)')}`,
+    actions: `${OUT_LINKS}<button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="overview">Overview</button><button class="sys-btn sys-btn--primary sys-btn--sm btn sm primary" data-go="calculator">Calculator →</button>`,
   })}
   ${missingNote(ui, b)}
   ${ui.kpis([
-    { label: 'Workstreams', value: String(WS.length), sub: `${groups.length - 1} companies + shared PRG layer`, color: 'var(--cyan)' },
-    { label: 'First value', value: `Month ${firstVal}`, sub: `${monthLabel(firstVal, true)} · HarborOS`, color: 'var(--green)' },
-    { label: 'All six live', value: `Month ${lastVal}`, sub: `${monthLabel(lastVal, true)} · LabOS full value`, color: 'var(--amber)' },
-    { label: 'Gated by shared layer', value: String(sharedDeps), sub: `Workstreams waiting on PRG KPI/vendor work · ${deps} hand-offs in all`, color: 'var(--purple)' },
-    { label: 'Hard date', value: 'Dec 2027', sub: 'Thomas Scientific loan maturity', color: 'var(--red)' },
+    { label: 'Workstreams', value: String(WS.length), sub: `${groups.length - 1} companies + shared PRG layer`, color: 'var(--sys-brand)' },
+    { label: 'First value', value: `Month ${firstVal}`, sub: `${monthLabel(firstVal, true)} · HarborOS`, color: 'var(--sys-good)' },
+    { label: 'All six live', value: `Month ${lastVal}`, sub: `${monthLabel(lastVal, true)} · LabOS full value`, color: 'var(--sys-warn)' },
+    { label: 'Gated by shared layer', value: String(sharedDeps), sub: `Workstreams waiting on PRG KPI/vendor work · ${deps} hand-offs in all`, color: 'var(--co-fl)' },
+    { label: 'Hard date', value: 'Dec 2027', sub: 'Thomas Scientific loan maturity', color: 'var(--sys-bad)' },
   ])}
   ${ui.panel({ title: 'Program plan', sub: 'Bars = workstreams (label = vendor/tool) · shaded band = time-to-value window from the evidence file · ◆ = milestone · click any bar', cls: 'mt-12', actions: `<div id="tx-rf"></div>`, body: `<div id="tx-gantt"></div>`, flush: true, foot: srcFoot(ui, b, 'analyst roadmap') })}
   <div class="grid grid-2 mt-12">
@@ -643,13 +643,13 @@ async function roadmap(ctx) {
   // load
   const load2 = Array.from({ length: SPAN }, (_, i) => WS.filter(w => w.s <= i && w.e > i && w.id !== 'prg-3').length);
   const peak = Math.max(...load2), peakM = load2.indexOf(peak);
-  el.querySelector('#tx-load').innerHTML = charts.bar(load2.map((v, i) => ({ label: monthLabel(i), value: v, color: i === peakM ? 'var(--amber)' : 'var(--cyan)' })), { h: 170, fmt: v => Math.round(v), labelEvery: 3 }) + `<div class="small text-2 mt-8">Peak of <b>${peak}</b> concurrent workstreams in <b>${monthLabel(peakM, true)}</b> (excluding the standing quarterly audit). Stagger CET’s estimating standard and Frontline’s compliance tier if operating-partner time is the constraint; the evidence file does not depend on their exact start month.</div>`;
+  el.querySelector('#tx-load').innerHTML = charts.bar(load2.map((v, i) => ({ label: monthLabel(i), value: v, color: i === peakM ? 'var(--sys-warn)' : 'var(--sys-brand)' })), { h: 170, fmt: v => Math.round(v), labelEvery: 3 }) + `<div class="small text-2 mt-8">Peak of <b>${peak}</b> concurrent workstreams in <b>${monthLabel(peakM, true)}</b> (excluding the standing quarterly audit). Stagger CET’s estimating standard and Frontline’s compliance tier if operating-partner time is the constraint; the evidence file does not depend on their exact start month.</div>`;
 
   // register
   let reg;
   const regRows = () => WS.filter(w => !filt || w.k === filt || (filt !== 'prg' && w.k === 'prg' && false)).map(w => ({ ...w, _os: meta(w.k).os, _co: meta(w.k).co, _start: monthLabel(w.s, true), _end: monthLabel(Math.max(w.s, w.e - 1), true), _dur: w.e - w.s, _deps: w.deps.map(d => byId.get(d)?.name || d).join('; ') }));
   const regCols = [
-    { key: '_os', label: 'OS', fmt: (v, r) => `<b style="color:${meta(r.k).hex}">${escTxt(v)}</b>` },
+    { key: '_os', label: 'OS', fmt: (v, r) => `<span class="sys-dot" style="--co:${meta(r.k).hex}" aria-hidden="true"></span> <b>${escTxt(v)}</b>` },
     { key: 'name', label: 'Workstream', wrap: true, fmt: v => `<span class="strong">${escTxt(v)}</span>` },
     { key: 'owner', label: 'Owner (role)', wrap: true, fmt: v => `<span class="small text-2">${escTxt(v)}</span>` },
     { key: 's', label: 'Start', num: true, fmt: (v, r) => escTxt(r._start) },
@@ -660,7 +660,7 @@ async function roadmap(ctx) {
   ];
   const drawReg = () => { const rows = regRows(); reg ? reg.update(rows) : (reg = ui.table(el.querySelector('#tx-reg'), { columns: regCols, rows, pageSize: 15, sortKey: 's', sortDir: 1, exportName: 'techos_roadmap', onRow: openWS })); };
   drawReg();
-  ctx.app.index(WS.map(w => ({ label: w.name, sub: `${meta(w.k).os} roadmap · M${w.s}–M${w.e}`, href: `#/techos/roadmap?co=${w.k}`, kind: 'Workstream', color: 'var(--cyan)' })));
+  ctx.app.index(WS.map(w => ({ label: w.name, sub: `${meta(w.k).os} roadmap · M${w.s}–M${w.e}`, href: `#/techos/roadmap?co=${w.k}`, kind: 'Workstream', color: 'var(--sys-brand)' })));
 }
 
 /* ══ View: Calculator ═══════════════════════════════════════════════════════ */
@@ -693,17 +693,17 @@ async function calculator(ctx) {
   el.innerHTML = `<div class="m-techos">${ui.pageHead({
     title: 'Value-creation calculator',
     sub: `<b>So what:</b> EBITDA uplift × today’s multiple, plus the re-rating on the new EBITDA, minus what the OS costs. Defaults come from the evidence file and the filings estimate tables; every input is an <b>est.</b> you can move.`,
-    chips: `${fmt.chip('est. · illustrative, not a forecast', 'var(--amber)')}${fmt.chip('Defaults: ServiceOS evidence and company public filings', 'var(--cyan)')}`,
-    actions: `${OUT_LINKS}<button class="btn sm" data-go="overview">Overview</button><button class="btn sm" data-go="evidence">Evidence</button>`,
+    chips: `${fmt.chip('est. · illustrative, not a forecast', 'var(--sys-warn)')}${fmt.chip('Defaults: ServiceOS evidence and company public filings', 'var(--sys-brand)')}`,
+    actions: `${OUT_LINKS}<button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="overview">Overview</button><button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="evidence">Evidence</button>`,
   })}
   ${missingNote(ui, b)}
-  <div class="tx-plats" id="tx-plats" role="tablist" aria-label="Company">${ORDER.map(k => `<button role="tab" data-k="${k}" style="--cc:${OS[k].hex}" aria-selected="${k === co}" class="${k === co ? 'on' : ''}"><span class="gi">${icon(k, 15)}</span><b>${escTxt(OS[k].os)}</b><span>${escTxt(OS[k].co)}</span></button>`).join('')}</div>
+  <div class="sys-chips tx-plats" id="tx-plats" role="tablist" aria-label="Company">${ORDER.map(k => `<button type="button" role="tab" data-k="${k}" data-co="" style="--co:${OS[k].hex};--cc:${OS[k].hex}" aria-selected="${k === co}" class="sys-chip ${k === co ? 'on' : ''}"><b>${escTxt(OS[k].os)}</b><span class="sys-muted">${escTxt(OS[k].co)}</span></button>`).join('')}</div>
   <div class="tx-calc">
-    <section class="panel tx-in"><div class="panel-head"><div><h3>Inputs</h3><div class="sub" id="tx-in-sub"></div></div><div class="actions"><div class="seg" id="tx-scn"><button data-v="low">Low</button><button data-v="mid" class="active">Mid</button><button data-v="high">High</button></div></div></div><div class="panel-body" id="tx-inputs"></div><div class="panel-foot">${srcFoot(ui, b, '*_filings')}</div></section>
+    <section class="sys-card panel tx-in"><div class="panel-head"><div class="panel-title"><h3 class="sys-card-title">Inputs</h3><div class="sys-card-body sub" id="tx-in-sub"></div></div><div class="actions"><div class="sys-chips seg" id="tx-scn" role="group" aria-label="Scenario"><button type="button" class="sys-chip" data-v="low" aria-pressed="false">Low</button><button type="button" class="sys-chip active" data-v="mid" aria-pressed="true">Mid</button><button type="button" class="sys-chip" data-v="high" aria-pressed="false">High</button></div></div></div><div class="panel-body" id="tx-inputs"></div><div class="sys-src panel-foot">${srcFoot(ui, b, 'company public filings')}</div></section>
     <div class="tx-outcol" id="tx-out"></div>
   </div>
-  ${ui.panel({ title: 'Portfolio roll-up', sub: 'All six OS programs at evidence defaults · choose a scenario · click a row to model it', cls: 'mt-12', actions: `<div id="tx-rscn"></div>`, body: `<div id="tx-roll"></div>`, foot: srcFoot(ui, b, '*_filings') })}
-  ${ui.panel({ title: 'Labelled assumptions', sub: 'Where each default comes from', cls: 'mt-12', body: `<div id="tx-assume"></div>`, foot: srcFoot(ui, b, '*_filings') })}
+  ${ui.panel({ title: 'Portfolio roll-up', sub: 'All six OS programs at evidence defaults · choose a scenario · click a row to model it', cls: 'mt-12', actions: `<div id="tx-rscn"></div>`, body: `<div id="tx-roll"></div>`, foot: srcFoot(ui, b, 'company public filings') })}
+  ${ui.panel({ title: 'Labelled assumptions', sub: 'Where each default comes from', cls: 'mt-12', body: `<div id="tx-assume"></div>`, foot: srcFoot(ui, b, 'company public filings') })}
   </div>`;
   el.querySelectorAll('[data-go]').forEach(x => x.onclick = () => app.go('techos', x.dataset.go));
   const inEl = el.querySelector('#tx-inputs'), outEl = el.querySelector('#tx-out');
@@ -713,23 +713,23 @@ async function calculator(ctx) {
     el.querySelector('#tx-in-sub').innerHTML = `${escTxt(p.os)} · ${escTxt(p.co)}${p.fromFallback ? ' · built-in snapshot' : ''}`;
     inEl.innerHTML = `<div class="tx-sliders">${defs.map(d => d.g ? `<div class="gh">${escTxt(d.g)}</div>` : (() => { const v = clamp(s[d.k], d.min, d.max); const bandHtml = d.band ? `<i class="eb" style="left:${((d.band[0] - d.min) / (d.max - d.min)) * 100}%;width:${((d.band[1] - d.band[0]) / (d.max - d.min)) * 100}%"></i>` : '';
       return `<label class="sl"><span class="lt"><span>${escTxt(d.label)}</span><b class="num" data-v="${d.k}">${d.f(s[d.k])}</b></span><span class="rw">${bandHtml}<input type="range" data-k="${d.k}" min="${d.min}" max="${d.max}" step="${d.step}" value="${v}" aria-label="${escAttr(d.label)}"></span><span class="ev" data-ev="${d.k}">${escTxt(d.ev)}</span></label>`; })()).join('')}</div>
-      <div class="row gap-8 mt-8"><button class="btn sm" id="tx-reset">Reset to evidence defaults</button><span class="dim small">Shaded track = evidence range</span></div>`;
+      <div class="row gap-8 mt-8"><button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" id="tx-reset">Reset to evidence defaults</button><span class="dim small">Shaded track = evidence range</span></div>`;
     inEl.querySelectorAll('input[type=range]').forEach(i => i.oninput = () => { s[i.dataset.k] = Number(i.value); const d = defs.find(x => x.k === i.dataset.k); inEl.querySelector(`[data-v="${d.k}"]`).textContent = d.f(s[d.k]); if (d.k === 'rev' || d.k === 'margin') { const m = inEl.querySelector('[data-ev="margin"]'); if (m) m.textContent = `= ${$M(s.rev * s.margin / 100)} EBITDA · sector median ${p.bench ? trim(p.bench.median_ebitda_margin_latest_pct, 1) + '%' : 'n/a'}`; } setScn(null); drawOut(); });
     inEl.querySelector('#tx-reset').onclick = () => { s = { ...p.def }; setScn('mid'); drawInputs(); drawOut(); };
   };
-  const setScn = v => el.querySelectorAll('#tx-scn button').forEach(x => x.classList.toggle('active', x.dataset.v === v));
+  const setScn = v => el.querySelectorAll('#tx-scn button').forEach(x => { const on = x.dataset.v === v; x.classList.toggle('active', on); x.setAttribute('aria-pressed', String(on)); });
   el.querySelectorAll('#tx-scn button').forEach(x => x.onclick = () => { const sc = scenarioInputs(p, x.dataset.v); s = { ...s, pts: sc.pts, turns: sc.turns, inv: sc.inv, ttv: sc.ttv }; setScn(x.dataset.v); drawInputs(); drawOut(); });
 
   const drawOut = () => {
     const r = compute(p.basis, s); const rev = p.basis === 'revenue';
     const sens = sensitivity(p, s);
     outEl.innerHTML = `${ui.kpis([
-      { label: 'Run-rate EBITDA uplift', value: `+${$M(r.dE)}`, sub: `${$M(r.e0)} → ${$M(r.e1)} · +${trim(s.pts, 1)} pts`, color: 'var(--green)' },
-      { label: 'EV created (gross)', value: $M(r.dEV), sub: rev ? 'All re-rating (valued on revenue)' : `${$M(r.effE)} EBITDA + ${$M(r.effM)} multiple`, color: 'var(--cyan)' },
-      { label: 'Net of OS spend', value: $M(r.net), sub: `incl. ${$M(r.cash)} uplift cash over ${trim(r.cashYrs, 1)} yrs`, color: r.net >= 0 ? 'var(--green)' : 'var(--red)' },
-      { label: `Risk-adjusted @ ${s.prob}%`, value: $M(r.risk), sub: `${s.prob}% × (EV created + cash) − spend`, color: r.risk >= 0 ? 'var(--purple)' : 'var(--red)' },
-      { label: 'Return on OS spend', value: r.roi != null ? `${trim(r.roi, 1)}x` : '—', sub: `(EV + cash) ÷ spend${r.payback != null ? ` · cash payback ≈ month ${Math.round(r.payback)}` : ''}`, color: 'var(--amber)' },
-      { label: 'Equity value uplift', value: r.eqUp != null ? `+${trim(r.eqUp * 100, 0)}%` : 'n/m', sub: r.eq0 > 0 ? `${$M(r.eq0)} → ${$M(r.eq1)} after ${$M(s.debt)} net debt` : 'Equity ≤ 0 at today’s multiple', color: 'var(--green)' },
+      { label: 'Run-rate EBITDA uplift', value: `+${$M(r.dE)}`, sub: `${$M(r.e0)} → ${$M(r.e1)} · +${trim(s.pts, 1)} pts`, color: 'var(--sys-good)' },
+      { label: 'EV created (gross)', value: $M(r.dEV), sub: rev ? 'All re-rating (valued on revenue)' : `${$M(r.effE)} EBITDA + ${$M(r.effM)} multiple`, color: 'var(--sys-brand)' },
+      { label: 'Net of OS spend', value: $M(r.net), sub: `incl. ${$M(r.cash)} uplift cash over ${trim(r.cashYrs, 1)} yrs`, color: r.net >= 0 ? 'var(--sys-good)' : 'var(--sys-bad)' },
+      { label: `Risk-adjusted @ ${s.prob}%`, value: $M(r.risk), sub: `${s.prob}% × (EV created + cash) − spend`, color: r.risk >= 0 ? 'var(--co-fl)' : 'var(--sys-bad)' },
+      { label: 'Return on OS spend', value: r.roi != null ? `${trim(r.roi, 1)}x` : '—', sub: `(EV + cash) ÷ spend${r.payback != null ? ` · cash payback ≈ month ${Math.round(r.payback)}` : ''}`, color: 'var(--sys-warn)' },
+      { label: 'Equity value uplift', value: r.eqUp != null ? `+${trim(r.eqUp * 100, 0)}%` : 'n/m', sub: r.eq0 > 0 ? `${$M(r.eq0)} → ${$M(r.eq1)} after ${$M(s.debt)} net debt` : 'Equity ≤ 0 at today’s multiple', color: 'var(--sys-good)' },
     ])}
     <div class="grid grid-2 mt-12 tx-out2">
       ${ui.panel({ title: 'Enterprise value bridge', sub: `${escTxt(p.os)} · est. · axis starts at ${$M(wfFloor(r))}`, body: waterfall(r, p, s.inv) })}
@@ -738,8 +738,8 @@ async function calculator(ctx) {
     ${ui.panel({ title: 'Formulas', sub: 'What the calculator does, line by line, with the current inputs', cls: 'mt-12', body: `<div class="tx-formula">${formulaHtml(p, s, r)}</div>` })}`;
   };
   const drawAssume = () => {
-    const row = (k, v, src, conf) => `<tr><td>${escTxt(k)}</td><td class="num">${v}</td><td class="small text-2">${escTxt(src)}${conf ? ` ${fmt.chip(conf, confColor(conf))}` : ''}</td></tr>`;
-    el.querySelector('#tx-assume').innerHTML = `<div class="tx-at"><table class="mini"><thead><tr><th>Input</th><th class="num">Default</th><th>Source / basis</th></tr></thead><tbody>
+    const row = (k, v, src, conf) => `<tr><td>${escTxt(k)}</td><td class="sys-n">${v}</td><td class="small text-2">${escTxt(src)}${conf ? ` ${fmt.chip(conf, confColor(conf))}` : ''}</td></tr>`;
+    el.querySelector('#tx-assume').innerHTML = `<div class="sys-table-wrap tx-at"><table class="sys-table mini"><thead><tr><th>Input</th><th class="sys-n">Default</th><th>Source / basis</th></tr></thead><tbody>
       ${row('Revenue', $M(p.def.rev), p.src.rev ? `${p.src.rev.row.metric}: ${p.src.rev.row.estimate}` : (p.ra?.revenue_source || 'built-in snapshot'), p.src.rev?.row?.confidence)}
       ${row('EBITDA today', $M(p.def.ebitda), p.src.ebitda ? `${p.src.ebitda.row.metric}: ${p.src.ebitda.row.estimate}` : (p.ra?.current_ebitda_estimate || 'built-in snapshot'), p.src.ebitda?.row?.confidence)}
       ${row(p.basis === 'revenue' ? 'EV / revenue today' : 'EV / EBITDA today', mult(p.def.mult, p.basis), p.mult.basis, 'low')}
@@ -757,7 +757,7 @@ async function calculator(ctx) {
   let scn = 'mid', rt;
   const rollRows = () => b.plats.map(q => { const inp = scenarioInputs(q, scn); const r = compute(q.basis, inp); return { k: q.k, os: q.os, co: q.co, rev: inp.rev, pts: inp.pts, dE: r.dE, mult: inp.mult, basis: q.basis, turns: inp.turns, inv: inp.inv, dEV: r.dEV, net: r.net, risk: r.risk, roi: r.roi, eqUp: r.eqUp }; });
   const rollCols = [
-    { key: 'os', label: 'OS', fmt: (v, r) => `<b style="color:${OS[r.k].hex}">${escTxt(v)}</b><div class="dim small">${escTxt(r.co)}</div>` },
+    { key: 'os', label: 'OS', fmt: (v, r) => `<span class="sys-dot" style="--co:${OS[r.k].hex}" aria-hidden="true"></span> <b>${escTxt(v)}</b><div class="dim small">${escTxt(r.co)}</div>` },
     { key: 'rev', label: 'Revenue (est.)', num: true, fmt: v => $M(v) },
     { key: 'pts', label: 'Uplift', num: true, fmt: v => `+${trim(v, 2)} pts` },
     { key: 'dE', label: 'Δ EBITDA', num: true, fmt: v => $M(v) },
@@ -810,7 +810,7 @@ function formulaHtml(p, s, r) {
 
 /* ── Module ──────────────────────────────────────────────────────────────── */
 export default {
-  id: 'techos', name: 'Tech enablement', tag: 'OS', color: 'var(--cyan)', group: 'Intelligence',
+  id: 'techos', name: 'Tech enablement', tag: 'OS', color: 'var(--sys-brand)', group: 'Intelligence',
   tagline: 'Six buyer-legible operating systems (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS) with sourced valuation evidence, a 24-month roadmap and value-creation math',
   hq: { lat: 40.7536, lon: -73.9832, label: 'Broad Sky Partners, New York, NY' },
   views: [

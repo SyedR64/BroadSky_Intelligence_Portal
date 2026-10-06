@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/system.css?v=20261006155542">
+<link rel="stylesheet" href="assets/system.css?v=20261006180606">
 <style>
   /* page layout only: full-bleed WebGL stage under the minimal transparent frame (UNIFIED.md §9) */
   html, body { height: 100%; overflow: hidden; background: var(--sys-bg); }
@@ -18,18 +18,17 @@
   /* engine chrome that sits top-right / top-left clears the frame bar and the Ask button */
   .bsp-theater .bt-rail { top: calc(var(--sys-top-h) + 8px) !important; }
   .bsp-theater .bt-status { top: calc(var(--sys-top-h) + 8px) !important; }
-  .bsp-theater .bt-rail .th-about { border-top: 1px solid var(--sys-line); border-radius: 0 0 8px 8px; margin-top: 2px; padding-top: 8px; }
-  #about { position: fixed; left: clamp(16px, 3.2vw, 48px); top: calc(var(--sys-top-h) + 8px); z-index: 11; width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - var(--sys-top-h) - 24px); overflow: auto; padding: var(--sys-sp-4) var(--sys-sp-5); border: 1px solid var(--sys-line-2); border-radius: var(--sys-r); background: color-mix(in srgb, var(--sys-surface) 94%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: var(--sys-sh-3); font-size: var(--sys-fs-sm); line-height: 1.55; color: var(--sys-ink-2); }
+  .bsp-theater .bt-rail .th-about { margin-top: 2px; border-top: 1px solid var(--sys-line); border-radius: 0 0 var(--sys-r-sm) var(--sys-r-sm); }
+  /* the About panel is a .sys-card floating over the stage; only its position and scroll are page layout */
+  #about { position: fixed; left: var(--sys-gut); top: calc(var(--sys-top-h) + 8px); z-index: 11; width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - var(--sys-top-h) - 24px); overflow: auto; background: color-mix(in srgb, var(--sys-surface) 94%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: var(--sys-sh-3); }
   /* map attribution and engine controls use the system font (the vendor CSS ships Helvetica Neue) */
   .bsp-theater .maplibregl-ctrl, .bsp-theater .maplibregl-ctrl-attrib, .bsp-theater .maplibregl-ctrl-attrib a, .bsp-theater .maplibregl-popup, .bsp-theater .deck-tooltip, .bsp-theater button { font-family: var(--sys-font); }
   #about[hidden] { display: none; }
-  #about .th-about-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
-  #about h2 { margin: 0; font-size: 15px; font-weight: 700; color: var(--sys-ink); }
-  #about ol { margin: 8px 0; padding-left: 18px; }
-  #about li { margin: 2px 0; }
+  #about .th-about-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sys-sp-3); }
+  #about .sys-card-body > * + * { margin-top: var(--sys-sp-2); }
+  #about ol { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
   #about li b { color: var(--sys-ink); }
-  #about .sys-src { margin-top: 10px; }
-  #about-x { width: 30px; height: 30px; border: 0; border-radius: var(--sys-r-pill); background: var(--sys-bg-3); color: var(--sys-ink); font-size: 16px; line-height: 1; cursor: pointer; }
+  #about .sys-src { margin-top: 0; }
   @media (max-width: 760px) {
     .bsp-theater .bt-rail { top: calc(var(--sys-top-h) + 4px) !important; }
     .bsp-theater .bt-status { top: auto !important; }
@@ -42,8 +41,9 @@
 <body>
 <h1 class="sys-h1 sys-sr">3D theater: the Broad Sky portfolio on one map</h1>
 <div id="stage"></div>
-<aside id="about" hidden aria-labelledby="about-h">
-  <div class="th-about-head"><h2 id="about-h">The portfolio as a film</h2><button id="about-x" type="button" aria-label="Close about panel">×</button></div>
+<aside id="about" class="sys-card" hidden aria-labelledby="about-h">
+  <div class="th-about-head"><h2 class="sys-card-title" id="about-h">The portfolio as a film</h2><button id="about-x" class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon" type="button" aria-label="Close about panel"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></button></div>
+  <div class="sys-card-body">
   <p>Six scenes render the portal's own data on the GPU, over vector tiles with 3D terrain. Each scene answers one question a partner would ask:</p>
   <ol>
     <li><b>Portfolio</b>: where the portfolio companies sit and how big each footprint is.</li>
@@ -53,13 +53,14 @@
     <li><b>Storm</b>: live National Weather Service alerts over the territory and the hubs that staff to them.</li>
     <li><b>Close</b>: every layer at once.</li>
   </ol>
-  <p>Hover a column, disc or marker for details. Estimates are marked est.; verify public and licensed data before use.</p>
+  <p>Hover a column, disc or marker for details. Estimates are marked <span class="sys-est">est.</span>; verify public and licensed data before use.</p>
+  </div>
   <p class="sys-src"><b>Keys:</b> <kbd class="sys-kbd">←</kbd> <kbd class="sys-kbd">→</kbd> change scene · <kbd class="sys-kbd">Space</kbd> play or pause</p>
   <p class="sys-src"><b>Source:</b> Punctual Pros deed records (PA and NJ), CET opportunity radar, CET wastewater-plant targets, National Weather Service alerts (live). Maps: MapLibre GL, deck.gl, OpenFreeMap and OpenMapTiles, AWS Terrain Tiles.</p>
 </aside>
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261006155542';
-  import { Theater } from './assets/theater.js?v=20261006155542';
+  import { Frame } from './assets/frame.js?v=20261006180606';
+  import { Theater } from './assets/theater.js?v=20261006180606';
   Frame.mount({ variant: 'minimal', theme: 'dark' });
   const qp = new URLSearchParams(location.search);
   const autoplay = qp.get('autoplay') !== '0';

@@ -6,17 +6,18 @@
 <title>Assistant · Broad Sky</title>
 <meta name="description" content="The full-screen Broad Sky assistant: grounded answers from the portfolio's verified datasets, precomputed deep dives and hosted Claude when the backend is live, with sources, follow-ups and saved chats.">
 <meta name="theme-color" content="#fbfaf7">
+<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
 <meta name="author" content="Syed Rahman">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/system.css?v=20261006155542">
-<link rel="stylesheet" id="bsp-chat-css" href="assets/chat.css?v=20261006155542">
-<link rel="modulepreload" href="assets/frame.js?v=20261006155542">
-<link rel="modulepreload" href="assets/chat.js?v=20261006155542">
-<link rel="modulepreload" href="assets/backend.js?v=20261006155542">
+<link rel="stylesheet" href="assets/system.css?v=20261006180606">
+<link rel="stylesheet" id="bsp-chat-css" href="assets/chat.css?v=20261006180606">
+<link rel="modulepreload" href="assets/frame.js?v=20261006180606">
+<link rel="modulepreload" href="assets/chat.js?v=20261006180606">
+<link rel="modulepreload" href="assets/backend.js?v=20261006180606">
 <style>
   /* The assistant fills the viewport under the frame's top bar; the frame footer follows below. */
   #assistant{--ch-full-top:var(--sys-top-h);--ch-full-h:calc(100dvh - var(--sys-top-h));height:var(--ch-full-h);overflow:hidden}
@@ -30,8 +31,8 @@
 </main>
 <noscript><p class="sys-wrap">The Broad Sky assistant needs JavaScript. <a href="app.html">Open the portal</a> instead.</p></noscript>
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261006155542';
-  import { Chat } from './assets/chat.js?v=20261006155542';
+  import { Frame } from './assets/frame.js?v=20261006180606';
+  import { Chat } from './assets/chat.js?v=20261006180606';
   const host = document.getElementById('assistant');
   const p = new URLSearchParams(location.search);
   host.innerHTML = '';

@@ -6,12 +6,13 @@
 <title>AI agents · Broad Sky</title>
 <meta name="description" content="45 AI agents across six Broad Sky portfolio companies: what starts each one, who approves it, what it costs and is worth (est.), how it rolls out and how the Portfolio Resource Group governs it.">
 <meta name="theme-color" content="#fbfaf7">
+<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
 <link rel="icon" href="../BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261006155542">
-<link rel="stylesheet" href="ai-agents.css?v=20261006155542">
+<link rel="stylesheet" href="../assets/system.css?v=20261006180606">
+<link rel="stylesheet" href="ai-agents.css?v=20261006180606">
 </head>
 <body>
 <main id="main">
@@ -294,9 +295,9 @@
 </main>
 
 <script type="module">
-import { Frame } from '../assets/frame.js?v=20261006155542';
-import { Chat } from '../assets/chat.js?v=20261006155542';
-import { boot } from './ai-agents.js?v=20261006155542';
+import { Frame } from '../assets/frame.js?v=20261006180606';
+import { Chat } from '../assets/chat.js?v=20261006180606';
+import { boot } from './ai-agents.js?v=20261006180606';
 const frame = Frame.mount({ banner: true });
 const d = await boot().catch(e => { console.warn('agentic layer boot failed', e); return null; });
 try {

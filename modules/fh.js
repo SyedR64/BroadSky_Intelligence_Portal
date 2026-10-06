@@ -1,11 +1,11 @@
-import * as Copy from './copy.js?v=20261006155542';
+import * as Copy from './copy.js?v=20261006180606';
 /* Fair Harbor — sustainable beachwear from recycled plastic (BSP investment, Mar 2022).
    Views: overview · opportunities · benchmarks · filings · NYC context (Manhattan home sales, demoted: context only). Shared helpers are duplicated in bpi.js by design (no cross-module imports). */
-import { renderFilings, opportunityCard } from '../assets/components.js?v=20261006155542';
+import { renderFilings, opportunityCard } from '../assets/components.js?v=20261006180606';
 
 /* ── module config (the only block that differs from bpi.js) ──────────────── */
 const CFG = {
-  id: 'fh', name: 'Fair Harbor', short: 'Fair Harbor', color: 'var(--c-fh)', hex: '#3fd0e0',
+  id: 'fh', name: 'Fair Harbor', short: 'Fair Harbor', color: 'var(--co-fh)', hex: 'var(--co-fh)',
   firmId: 'bsp-fh', oppKey: 'fh_opportunities', filings: 'fairharbor_filings', sector: 'apparel_dtc', peKey: 'fair_harbor',
   sectorLabel: 'Apparel/DTC comps', site: 'https://fairharborclothing.com',
   sales: 'sales/fh_sales_nyc', salesArea: 'Manhattan (New York County)', salesShort: 'NYC', center: [40.772, -73.975], zoom: 12, zipAgg: true,
@@ -16,7 +16,7 @@ const CFG = {
     if (!it) return { title: 'Catalog health', body: ctx.ui.note('Catalog snapshot not in Fair Harbor public filings yet.', 'warn') };
     const k = it.key_figures;
     return { title: 'Catalog health (live Shopify snapshot)', sub: `${ctx.fmt.num(k.active_products)} active products · ${ctx.fmt.num(k.variants)} variants · median price $${ctx.fmt.num(k.median_variant_price_usd)}`,
-      body: `<div class="row gap-12" style="align-items:flex-start"><div class="kpi" style="--kc:var(--red);min-width:120px"><div class="label">Marked down</div><div class="value">${ctx.fmt.num(k.markdown_share_pct, 1)}%</div><div class="sub">${ctx.fmt.num(k.variants_marked_down_vs_compare_at)} of ${ctx.fmt.num(k.variants)} variants</div></div><div class="grow">${ctx.charts.hbar(Object.entries(k.product_type_mix).map(([l, v]) => ({ label: l, value: v, color: /swim|rash|short/i.test(l) ? CFG.hex : '#7d8796' })), { fmt: v => ctx.fmt.num(v), labelW: 120 })}</div></div><div class="small text-2 mt-8">Swim and summer items (teal) are ~${ctx.fmt.num(((k.product_type_mix.Swim || 0) + (k.product_type_mix.Shorts || 0) + (k.product_type_mix.Rashguard || 0)) / k.active_products * 100)}% of the catalog. Women's products live: ${ctx.fmt.num(k.womens_products)}. "Marked down" = variant price below its compare-at price on the public store.</div><div class="small mt-8"><b>Question for management:</b> is this planned end-of-season clearance or carry-over inventory? Ask for Summer 2026 sell-through and markdown dollars by category.</div>`,
+      body: `${ctx.ui.kpis([{ label: 'Marked down', value: `${ctx.fmt.num(k.markdown_share_pct, 1)}%`, sub: `${ctx.fmt.num(k.variants_marked_down_vs_compare_at)} of ${ctx.fmt.num(k.variants)} variants`, color: 'var(--sys-bad)' }])}<div class="mt-16">${ctx.charts.hbar(Object.entries(k.product_type_mix).map(([l, v]) => ({ label: l, value: v, color: /swim|rash|short/i.test(l) ? CFG.hex : 'var(--sys-mute-2)' })), { fmt: v => ctx.fmt.num(v), labelW: 120 })}</div><div class="small text-2 mt-8">Swim and summer items (teal) are ~${ctx.fmt.num(((k.product_type_mix.Swim || 0) + (k.product_type_mix.Shorts || 0) + (k.product_type_mix.Rashguard || 0)) / k.active_products * 100)}% of the catalog. Women's products live: ${ctx.fmt.num(k.womens_products)}. "Marked down" = variant price below its compare-at price on the public store.</div><div class="small mt-8"><b>Question for management:</b> is this planned end-of-season clearance or carry-over inventory? Ask for Summer 2026 sell-through and markdown dollars by category.</div>`,
       foot: ctx.ui.source('Fair Harbor Shopify product catalogue (Fair Harbor public filings)', it.source_url, it.retrieved) };
   },
   levers: () => [
@@ -57,18 +57,26 @@ const label = t => String(t || 'other').replace(/_usd$/, ' ($)').replace(/_pct$/
 const nameCase = s => /[a-z]/.test(s || '') ? s : String(s || '').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
 const parseMoney = s => { const m = String(s || '').match(/\$\s?([\d.,]+)\s*(billion|million|thousand|bn|B|M|K)?/i); if (!m) return null; const n = parseFloat(m[1].replace(/,/g, '')); const u = (m[2] || '').toLowerCase(); return n * (u.startsWith('b') ? 1e9 : u.startsWith('m') ? 1e6 : u.startsWith('t') || u === 'k' ? 1e3 : 1); };
 const links = (esc, fmt, urls) => `<div class="col gap-4 small">${urls.filter(Boolean).map(u => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(fmt.host(u) || u)} ↗</a>`).join('') || '<span class="dim">No source URL</span>'}</div>`;
+/* Diverging bars around a zero axis (an inline chart, like core Charts.hbar): geometry inline, colours and radii are system tokens. */
 const divBars = (fmt, rows, { color = CFG.hex, fmtV = v => pp(fmt, v, true), labelW = 70 } = {}) => {
   const mx = Math.max(1, ...rows.map(r => Math.abs(r.value || 0)));
-  return `<div class="col gap-4">${rows.map(r => { const w = Math.abs(r.value || 0) / mx * 50; const neg = (r.value || 0) < 0; return `<div class="row" style="gap:8px"><div class="small text-2 ellipsis" style="width:${labelW}px;flex-shrink:0" title="${r.title || ''}">${r.label}</div><div class="grow" style="position:relative;height:12px;background:var(--surface-3);border-radius:3px"><div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--border-2)"></div><div style="position:absolute;top:1px;bottom:1px;${neg ? `right:50%` : `left:50%`};width:${w}%;background:${neg ? 'var(--red)' : (r.color || color)};border-radius:2px"></div></div><div class="num small" style="width:58px;text-align:right;flex-shrink:0">${fmtV(r.value)}</div></div>`; }).join('')}</div>`;
+  return `<div class="col gap-4">${rows.map(r => { const w = Math.abs(r.value || 0) / mx * 50; const neg = (r.value || 0) < 0; return `<div class="row" style="gap:8px"><div class="small text-2 ellipsis" style="width:${labelW}px;flex-shrink:0" title="${r.title || ''}">${r.label}</div><div class="grow" style="position:relative;height:10px;background:var(--sys-bg-3);border-radius:var(--sys-r-pill)"><div style="position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--sys-line-2)"></div><div style="position:absolute;top:0;bottom:0;${neg ? `right:50%` : `left:50%`};width:${w}%;background:${neg ? 'var(--sys-bad)' : (r.color || color)};border-radius:var(--sys-r-pill)"></div></div><div class="num small right" style="width:58px;flex-shrink:0">${fmtV(r.value)}</div></div>`; }).join('')}</div>`;
 };
+/* lever list: the system card list (title link + reason); estimate rows: a system table with status chips */
+const leverList = (esc, items) => `<ul class="sys-card-list" data-co="${CFG.id}">${items.map(l => `<li><b><a href="${esc(l.href)}">${esc(l.t)}</a></b><div>${esc(l.why)}</div></li>`).join('')}</ul>`;
+const confChip = c => `<span class="sys-chip${c === 'high' ? ' sys-chip--good' : c === 'medium' ? ' sys-chip--warn' : ''}">${String(c || '—').replace(/^./, x => x.toUpperCase())}</span>`;
+const estTable = (esc, est) => `<div class="sys-table-wrap mt-8"><table class="sys-table"><thead><tr><th>Metric</th><th>Estimate</th><th>Confidence</th></tr></thead><tbody>${est.map(e => `<tr><td>${esc(e.metric)}</td><td class="num" title="${esc(e.basis || '')}">${esc(e.estimate)}</td><td>${confChip(e.confidence)}</td></tr>`).join('')}</tbody></table></div>`;
+const words = s => { const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(String(s || '')); return m ? new Date(+m[1], +m[2] - 1, +(m[3] || 15)).toLocaleDateString('en-US', m[3] ? { month: 'long', day: 'numeric', year: 'numeric' } : { month: 'long', year: 'numeric' }) : s; };
 const metricFmt = ({ fmt, esc }, k, v) => Array.isArray(v) ? esc(v.join(', ')) : typeof v !== 'number' ? esc(v) : /founded|year|rank/i.test(k) ? String(v) : /usd/i.test(k) ? fmt.moneyFull(v) : fmt.num(v);
 const money = (fmt, v) => fmt.money(v >= 995000 && v < 1e6 ? 1e6 : v); // avoid '$1000K' from compact rounding
 const day = (fmt, s) => fmt.date(typeof s === 'string' && s.length === 10 ? `${s}T12:00:00` : s); // avoid UTC→ET off-by-one on bare dates
-const kv2 = (esc, t) => { t = String(t ?? '—'); return t.length > 12 ? `<span style="font-size:15px;line-height:1.25;display:inline-block">${esc(t)}</span>` : esc(t); }; // long text KPI values
+const kv2 = (esc, t) => { t = String(t ?? '—'); return t.length > 12 ? `<span class="sys-card-title">${esc(t)}</span>` : esc(t); }; // long text KPI values read at the card-title size
 const useLbl = v => { const t = nameCase(String(v || '').replace(/^\d+\s*/, '')); const m = t.match(/\((Row|Det|Sem|Garag|Mis)[^)]*$/); return m ? t.replace(/\([^)]*$/, `(${{ Row: 'Row house', Det: 'Detached', Sem: 'Semi-detached', Garag: 'Garage', Mis: 'Misc.' }[m[1]]})`) : t; }; // DC source truncates use codes at 30 chars
 const zipOk = z => /^\d{5}$/.test(String(z || '')) && z !== '00000' ? z : ''; // source has truncated/placeholder ZIPs ('20', '00000')
-const band = p => p >= 2e6 ? '#e05c8a' : p >= 1e6 ? '#f5b73d' : p >= 5e5 ? '#3fd0e0' : '#4c8dff';
-const BANDS = [{ color: '#4c8dff', label: '< $500K' }, { color: '#3fd0e0', label: '$500K – $1M' }, { color: '#f5b73d', label: '$1M – $2M' }, { color: '#e05c8a', label: '$2M +' }];
+/* price bands in system tokens; tok() resolves one for the Leaflet canvas renderer */
+const band = p => p >= 2e6 ? 'var(--co-bpi)' : p >= 1e6 ? 'var(--sys-warn)' : p >= 5e5 ? 'var(--co-fh)' : 'var(--sys-info)';
+const BANDS = [{ color: 'var(--sys-info)', label: '< $500K' }, { color: 'var(--co-fh)', label: '$500K – $1M' }, { color: 'var(--sys-warn)', label: '$1M – $2M' }, { color: 'var(--co-bpi)', label: '$2M +' }];
+const tok = v => { const m = /^var\((--[\w-]+)\)$/.exec(String(v || '')); if (!m) return v; try { return getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim() || v; } catch { return v; } };
 
 async function load(ctx, withSales = false) {
   const { data } = ctx;
@@ -112,31 +120,31 @@ async function overview(ctx) {
   const doors = doorsIt?.key_figures?.specialty_retail_doors || null;
   const nonSwim = k ? (k.active_products - (k.product_type_mix.Swim || 0)) : null;
   el.innerHTML = ui.pageHead({ title: esc(CFG.name), sub: `<b>So what:</b> ${esc(CFG.soWhat(d))}`,
-    chips: co ? `${fmt.chip(`BSP entry ${co.entry_date}`, CFG.hex)}${fmt.chip(CFG.hq.label)}${fmt.chip(`${d.addOns} add-ons`)}${fmt.chip(co.status === 'held' ? 'Held' : co.status, 'var(--green)')}` : '',
-    actions: `<a class="btn" href="#/${CFG.id}/opportunities">Opportunities</a><a class="btn" href="#/${CFG.id}/filings">Filings</a>` }) +
+    chips: co ? `${fmt.chip(`Broad Sky portfolio company since ${words(co.entry_date)}`, CFG.hex)}${fmt.chip(CFG.hq.label)}${fmt.chip(`${d.addOns} add-ons`)}<span class="sys-chip sys-chip--good">${co.status === 'held' ? 'Held' : esc(co.status)}</span>` : '',
+    actions: `<a class="sys-btn sys-btn--primary" href="#/${CFG.id}/opportunities">Opportunities</a><a class="sys-btn sys-btn--secondary" href="#/${CFG.id}/filings">Filings</a>` }) +
   (co ? '' : ui.note('Company record not found in Broad Sky firm profile. Profile panels are empty until it lands.', 'warn')) +
   ui.kpis([
-    { label: 'Variants marked down', value: k ? `${fmt.num(k.markdown_share_pct, 1)}%` : '—', sub: k ? `${fmt.num(k.variants_marked_down_vs_compare_at)} of ${fmt.num(k.variants)} · public store, ${esc(day(fmt, cat.retrieved))}` : 'catalog snapshot pending', color: 'var(--red)' },
+    { label: 'Variants marked down', value: k ? `${fmt.num(k.markdown_share_pct, 1)}%` : '—', sub: k ? `${fmt.num(k.variants_marked_down_vs_compare_at)} of ${fmt.num(k.variants)} · public store, ${esc(day(fmt, cat.retrieved))}` : 'catalog snapshot pending', color: 'var(--sys-bad)' },
     { label: 'Specialty doors (2022)', value: doors ? esc(doors) : '—', sub: '+ Nordstrom, Saks · Scheels 2023 · confirm current count', color: CFG.color },
-    { label: 'Non-swim share of catalog', value: k ? `${fmt.num(nonSwim / k.active_products * 100, 1)}%` : '—', sub: k ? `${fmt.num(nonSwim)} of ${fmt.num(k.active_products)} live products · year-round shift` : '', color: 'var(--green)' },
-    { label: 'Revenue 2025 (est.)', value: revEst ? kv2(esc, String(revEst.estimate).split(' (')[0]) : '—', sub: revEst ? `outside-in · ${esc(revEst.confidence)} conf. · not disclosed` : `no estimate in ${esc(CFG.filings)}`, color: 'var(--c-fin)' },
-    { label: 'Growth opportunities', value: fmt.num(d.opps.length), sub: `${new Set(d.opps.map(o => o.type)).size} types · sourced · no $ disclosed`, color: 'var(--c-ma)' },
-    { label: `${CFG.sectorLabel} median growth`, value: pp(fmt, d.bm?.median_revenue_growth_latest_pct, true), sub: `op. margin ${pp(fmt, d.bm?.median_operating_margin_latest_pct)} · ${d.bm?.n ?? '—'} peers · SEC XBRL`, color: 'var(--accent)' },
+    { label: 'Non-swim share of catalog', value: k ? `${fmt.num(nonSwim / k.active_products * 100, 1)}%` : '—', sub: k ? `${fmt.num(nonSwim)} of ${fmt.num(k.active_products)} live products · year-round shift` : '', color: 'var(--sys-good)' },
+    { label: 'Revenue 2025 (est.)', value: revEst ? kv2(esc, String(revEst.estimate).split(' (')[0]) : '—', sub: revEst ? `outside-in · ${esc(revEst.confidence)} confidence · not disclosed` : 'no estimate in Fair Harbor public filings', color: 'var(--sys-info)' },
+    { label: 'Growth opportunities', value: fmt.num(d.opps.length), sub: `${new Set(d.opps.map(o => o.type)).size} types · sourced · no $ disclosed`, color: 'var(--sys-warn)' },
+    { label: `${CFG.sectorLabel} median growth`, value: pp(fmt, d.bm?.median_revenue_growth_latest_pct, true), sub: `op. margin ${pp(fmt, d.bm?.median_operating_margin_latest_pct)} · ${d.bm?.n ?? '—'} peers · SEC XBRL`, color: 'var(--sys-info)' },
   ]) +
   `<div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Company profile', sub: esc(co?.sector || ''), body: co ? `<div class="prose small">${esc(co.description)}</div><h4 class="mt-12 small dim">INVESTMENT THESIS</h4><div class="prose small">${esc(co.thesis)}</div><div class="mt-12">${ui.kv({ Leadership: esc(co.ceo), HQ: `${esc(CFG.hq.detail)}<div class="dim small">${esc(CFG.hq.alt)}</div>`, 'BSP entry': `${esc(co.entry_date)} · <span class="dim">${esc(co.entry_source)}</span>`, Employees: esc(co.employees_est || '—'), 'Capital / co-investors': esc(co.lenders_or_co_investors || '—'), ...Object.fromEntries(Object.entries(co.key_metrics || {}).map(([k, v]) => [label(k), `<span class="num">${metricFmt(ctx, k, v)}</span>`])) })}</div>` : ui.empty('Profile pending'),
+    ${ui.panel({ title: 'Company profile', sub: esc(co?.sector || ''), body: co ? `<div class="prose small">${esc(co.description)}</div><h4 class="sys-card-label mt-16">Investment thesis</h4><div class="prose small">${esc(co.thesis)}</div><div class="mt-12">${ui.kv({ Leadership: esc(co.ceo), HQ: `${esc(CFG.hq.detail)}<div class="dim small">${esc(CFG.hq.alt)}</div>`, 'BSP entry': `${esc(words(co.entry_date))} · <span class="dim">${esc(co.entry_source)}</span>`, Employees: esc(co.employees_est || '—'), 'Capital / co-investors': esc(co.lenders_or_co_investors || '—'), ...Object.fromEntries(Object.entries(co.key_metrics || {}).map(([k, v]) => [label(k), `<span class="num">${metricFmt(ctx, k, v)}</span>`])) })}</div>` : ui.empty('Profile pending'),
       foot: co ? `${ui.source('Broad Sky firm profile', co.sources?.[0], co.retrieved)} · ${(co.sources || []).slice(1, 6).map(u => fmt.link(u)).join(' · ')}` : '' })}
     ${ui.panel({ title: d.addOns ? 'Add-ons & milestones' : 'Milestones', sub: d.addOns ? `${d.addOns} add-ons since BSP entry` : 'No add-ons yet · organic milestones since BSP entry', scroll: true, body: (() => {
       const ev = [...(co?.add_ons || []).map(a => ({ date: a.date, color: CFG.hex, html: `<b>${esc(a.name)}</b> <span class="dim">(${esc(a.hq || '')})</span><div class="small text-2">${esc(a.note || '')}</div>${a.source_url ? `<a class="small" href="${esc(a.source_url)}" target="_blank" rel="noopener">source ↗</a>` : ''}` })),
-        ...d.timeline.filter(t => t.type !== 'add_on').map(t => ({ date: t.date, color: '#7d8796', html: `${esc(t.event)}${t.source_url ? ` <a class="small" href="${esc(t.source_url)}" target="_blank" rel="noopener">↗</a>` : ''}` }))].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+        ...d.timeline.filter(t => t.type !== 'add_on').map(t => ({ date: t.date, color: 'var(--sys-mute-2)', html: `${esc(t.event)}${t.source_url ? ` <a class="small" href="${esc(t.source_url)}" target="_blank" rel="noopener">↗</a>` : ''}` }))].sort((a, b) => String(b.date).localeCompare(String(a.date)));
       return ev.length ? ui.timeline(ev) : ui.empty('No add-ons recorded'); })(), foot: ui.source('Company press releases (Broad Sky firm profile)', CFG.site, d.firm?.meta?.generated) })}
   </div>
   <div class="grid grid-3 mt-12">
-    ${ui.panel({ title: 'Growth levers', sub: 'Ranked by value at stake × feasibility (analyst view)', body: `<div class="col gap-12">${CFG.levers(d).map((l, i) => `<a href="${l.href}" class="row" style="align-items:flex-start;gap:10px;color:inherit;text-decoration:none"><span class="chip solid" style="--cc:${CFG.hex};min-width:22px;justify-content:center">${i + 1}</span><div><div class="strong small">${esc(l.t)}</div><div class="small text-2">${esc(l.why)}</div></div></a>`).join('')}</div>` })}
+    ${ui.panel({ title: 'Growth levers', sub: 'Ranked by value at stake × feasibility (analyst view)', body: leverList(esc, CFG.levers(d)) })}
     ${(() => { const s = CFG.signal(ctx, d); return ui.panel({ title: s.title, sub: s.sub, body: s.body, foot: s.foot }); })()}
-    ${ui.panel({ title: 'First meeting, then 90 days', sub: 'Confirm with management first; owner: BSP deal team + PRG with CEO', accent: true, body: `<h4 class="small dim">CONFIRM WITH MANAGEMENT</h4><ol class="prose small" style="padding-left:4px">${CFG.confirm.map(a => `<li>${esc(a)}</li>`).join('')}</ol><h4 class="small dim mt-12">THEN, NEXT 90 DAYS</h4><ol class="prose small" style="padding-left:4px">${CFG.actions.map(a => `<li>${esc(a)}</li>`).join('')}</ol>`, foot: ui.source('Synthesis of the Broad Sky firm profile, Fair Harbor public filings, public comparables and the private-equity landscape (analyst view)', null, '2026-09-24') })}
+    ${ui.panel({ title: 'First meeting, then 90 days', sub: 'Confirm with management first; owner: BSP deal team + PRG with CEO', accent: true, body: `<h4 class="sys-card-label">Confirm with management</h4><ol class="prose small">${CFG.confirm.map(a => `<li>${esc(a)}</li>`).join('')}</ol><h4 class="sys-card-label mt-16">Then, next 90 days</h4><ol class="prose small">${CFG.actions.map(a => `<li>${esc(a)}</li>`).join('')}</ol>`, foot: ui.source('Synthesis of the Broad Sky firm profile, Fair Harbor public filings, public comparables and the private-equity landscape (analyst view)', null, 'September 24, 2026') })}
   </div>`;
-  ctx.app.index([...d.opps.map(o => ({ label: o.title, sub: `${CFG.short} opportunity · ${label(o.type)}`, href: `#/${CFG.id}/opportunities?id=${encodeURIComponent(o.id)}`, kind: 'Opportunity', color: CFG.color })), ...d.rivals.map(r => ({ label: r.firm, sub: `PE competitor to ${CFG.short}`, href: `#/${CFG.id}/benchmarks`, kind: 'PE firm', color: 'var(--c-pe)' }))]);
+  ctx.app.index([...d.opps.map(o => ({ label: o.title, sub: `${CFG.short} opportunity · ${label(o.type)}`, href: `#/${CFG.id}/opportunities?id=${encodeURIComponent(o.id)}`, kind: 'Opportunity', color: CFG.color })), ...d.rivals.map(r => ({ label: r.firm, sub: `PE competitor to ${CFG.short}`, href: `#/${CFG.id}/benchmarks`, kind: 'PE firm', color: 'var(--sys-mute)' }))]);
 }
 
 /* Analyst classification (est.): capital intensity × time-to-revenue for each opportunity. Keyed on title/type text so new rows degrade to 'unclassified'. */
@@ -155,10 +163,10 @@ const CAP = ['—', 'Low', 'Medium', 'High'];
 const ttrLbl = m => m == null ? '—' : m <= 3 ? '≤ 3 mo' : m <= 6 ? '3-6 mo' : m <= 12 ? '6-12 mo' : '12+ mo';
 const classify = o => { const c = CLASS.find(x => x.re.test(`${o.title} ${o.type}`)); return c ? { _cap: c.cap, _capLbl: CAP[c.cap], _capNote: c.capNote, _ttr: c.ttr, _ttrLbl: ttrLbl(c.ttr), _window: c.window } : { _cap: null, _capLbl: '—', _capNote: '', _ttr: null, _ttrLbl: '—', _window: '' }; };
 const QUADS = [
-  { id: 'q1', t: 'Quick wins', s: 'low capital · revenue ≤ 6 mo', f: o => o._cap === 1 && o._ttr <= 6, c: 'var(--green)' },
-  { id: 'q2', t: 'Timed bets', s: 'more capital · revenue ≤ 6 mo', f: o => o._cap > 1 && o._ttr <= 6, c: 'var(--amber)' },
-  { id: 'q3', t: 'Cheap options', s: 'low capital · revenue > 6 mo', f: o => o._cap === 1 && o._ttr > 6, c: 'var(--cyan)' },
-  { id: 'q4', t: 'Strategic builds', s: 'more capital · > 6 mo · gate on sell-through data', f: o => o._cap > 1 && o._ttr > 6, c: 'var(--red)' },
+  { id: 'q1', t: 'Quick wins', s: 'low capital · revenue ≤ 6 months', f: o => o._cap === 1 && o._ttr <= 6, c: 'var(--sys-good)' },
+  { id: 'q2', t: 'Timed bets', s: 'more capital · revenue ≤ 6 months', f: o => o._cap > 1 && o._ttr <= 6, c: 'var(--sys-warn)' },
+  { id: 'q3', t: 'Cheap options', s: 'low capital · revenue > 6 months', f: o => o._cap === 1 && o._ttr > 6, c: 'var(--co-fh)' },
+  { id: 'q4', t: 'Strategic builds', s: 'more capital · > 6 months · gate on sell-through data', f: o => o._cap > 1 && o._ttr > 6, c: 'var(--sys-bad)' },
 ];
 
 async function opportunities(ctx) {
@@ -170,47 +178,44 @@ async function opportunities(ctx) {
   const top = opps.filter(o => o._value).sort((a, b) => b._value - a._value)[0];
   const q = Object.fromEntries(QUADS.map(x => [x.id, opps.filter(x.f)]));
   const nm = o => esc(String(o.title).split(/ \(| - |:| beyond | as | with | to de-/)[0].trim());
-  const quad = x => `<div style="border:1px solid var(--border);border-radius:6px;padding:8px;min-height:92px;background:var(--surface-2)"><div class="small strong" style="color:${x.c}">${esc(x.t)} · ${q[x.id].length}</div><div class="dim small mb-8">${esc(x.s)}</div><div class="col gap-4">${q[x.id].map(o => `<button type="button" class="m-fh-q small" data-id="${esc(o.id)}" style="all:unset;cursor:pointer;display:flex;gap:6px;align-items:flex-start;font-size:12px;line-height:1.35"><span class="chip solid" style="--cc:${x.c};min-width:18px;justify-content:center">${o._n}</span><span class="text-2">${nm(o)}</span></button>`).join('') || '<span class="dim small">None</span>'}</div></div>`;
-  const matrix = `<div style="display:grid;grid-template-columns:18px 1fr 1fr;grid-template-rows:auto auto auto;gap:6px;align-items:stretch">
-      <div style="grid-row:1/3;writing-mode:vertical-rl;transform:rotate(180deg);text-align:center" class="dim small">capital intensity ↑</div>
-      ${quad(QUADS[1])}${quad(QUADS[3])}
-      ${quad(QUADS[0])}${quad(QUADS[2])}
-      <div></div><div class="dim small" style="grid-column:2/4;text-align:center">time to revenue → (≤ 6 mo | > 6 mo)</div></div>`;
+  /* 2×2 of system cards: the quadrant colour is the card's accent bar (data-co); each opportunity is a numbered link */
+  const quad = x => `<div class="sys-card sys-card--flat" data-co="" style="--co:${x.c}"><h4 class="sys-card-label">${esc(x.t)} · ${q[x.id].length}</h4><div class="dim small">${esc(x.s)}</div><ul class="sys-card-list">${q[x.id].map(o => `<li><a href="#/${CFG.id}/opportunities?id=${encodeURIComponent(o.id)}" class="m-fh-q" data-id="${esc(o.id)}"><span class="num">${o._n}.</span> ${nm(o)}</a></li>`).join('') || '<li class="dim">None</li>'}</ul></div>`;
+  const matrix = `<div class="grid grid-2">${quad(QUADS[1])}${quad(QUADS[3])}${quad(QUADS[0])}${quad(QUADS[2])}</div><p class="small muted mt-8">Top row: more capital · bottom row: low capital · left: revenue within 6 months · right: revenue after 6 months.</p>`;
   el.innerHTML = ui.pageHead({ title: 'Growth opportunities', sub: `<b>So what:</b> ${fmt.num(opps.length)} sourced opportunities across ${types.length} types. ${top ? `The largest headline value is <b>${fmt.money(top._value)}</b> (${esc(top.title)}).` : 'None has a disclosed dollar value, so they are ranked by capital intensity and time to revenue (analyst view).'} ${fmt.num(q.q1.length)} are quick wins on assets already live; the bigger builds (wholesale doors, year-round depth, women's) should be gated on FY25 sell-through data from management and timed to buy windows.`, chips: byType.map(g => fmt.chip(`${label(g.t)} · ${g.rows.length}`)).join('') }) +
     ui.kpis([
       { label: 'Opportunities', value: fmt.num(opps.length), sub: `${types.length} types · each with a primary source`, color: CFG.color },
-      { label: 'Quick wins', value: fmt.num(q.q1.length), sub: 'low capital, revenue ≤ 6 mo (est.)', color: 'var(--green)' },
-      { label: 'Timed bets', value: fmt.num(q.q2.length), sub: 'more capital, revenue ≤ 6 mo (est.)', color: 'var(--amber)' },
-      { label: 'Strategic builds', value: fmt.num(q.q4.length), sub: 'gate on sell-through data (est.)', color: 'var(--red)' },
-      ...(top ? [{ label: 'Largest headline $', value: fmt.money(top._value), sub: esc(label(top.type)), color: 'var(--c-ma)' }]
-        : [{ label: 'Dollar-sized', value: '0', sub: 'no disclosed $: size in diligence', color: 'var(--dim)' }]),
+      { label: 'Quick wins', value: fmt.num(q.q1.length), sub: 'low capital, revenue ≤ 6 months (est.)', color: 'var(--sys-good)' },
+      { label: 'Timed bets', value: fmt.num(q.q2.length), sub: 'more capital, revenue ≤ 6 months (est.)', color: 'var(--sys-warn)' },
+      { label: 'Strategic builds', value: fmt.num(q.q4.length), sub: 'gate on sell-through data (est.)', color: 'var(--sys-bad)' },
+      ...(top ? [{ label: 'Largest headline $', value: fmt.money(top._value), sub: esc(label(top.type)), color: 'var(--sys-warn)' }]
+        : [{ label: 'Dollar-sized', value: '0', sub: 'no disclosed $: size in diligence', color: 'var(--sys-mute-2)' }]),
     ]) +
     `<div class="grid grid-main mt-12">
-      ${ui.panel({ title: 'Opportunities by type', sub: 'Click a card for why-now, buy window, source and next action', scroll: true, body: `<div id="op-cards">${byType.map(g => `<h4 class="small dim mt-12 mb-8">${esc(label(g.t).toUpperCase())} · ${g.rows.length}</h4>${ui.cards(g.rows.map(o => card(ctx, o)))}`).join('')}</div>`, foot: ui.source('Broad Sky firm profile: ' + CFG.name + ' opportunities', null, d.firm?.meta?.generated) })}
+      ${ui.panel({ title: 'Opportunities by type', sub: 'Click a card for why-now, buy window, source and next action', scroll: true, body: `<div id="op-cards">${byType.map(g => `<h4 class="sys-card-label mt-16 mb-8">${esc(label(g.t))} · ${g.rows.length}</h4>${ui.cards(g.rows.map(o => card(ctx, o)))}`).join('')}</div>`, foot: ui.source('Broad Sky firm profile: ' + CFG.name + ' opportunities', null, d.firm?.meta?.generated) })}
       <div class="col gap-12">
-        ${ui.panel({ title: 'Capital intensity × time to revenue', sub: 'Numbers match the table · click to open · analyst classification (est.)', body: `<div id="op-2x2">${matrix}</div>`, foot: ui.source('Analyst view on Fair Harbor opportunities (Broad Sky firm profile) and Fair Harbor public filings', null, '2026-10-06') })}
-        ${ui.panel({ title: 'How to prioritize', accent: true, body: `<ol class="prose small" style="padding-left:4px"><li><b>Buy windows first.</b> Wholesale and resort buyers commit Spring/Summer orders months ahead, so door expansion and golf pro-shop items (PGA Show, late Jan) must be in front of buyers this fall and winter or they slip a season.</li><li><b>Then quick wins on live assets</b>: B2B custom, collabs, sustainability credentials and a Shopify Markets test need little capital and can book revenue within two quarters.</li><li><b>Licensing: check the capital need.</b> Confirm royalty minimums and stocked inventory before adding more schools.</li><li><b>Gate the builds</b> (women's relaunch, cold-weather and kids depth) on FY25 sell-through and markdown data from management.</li><li>One owner per card in the BSP value-creation plan; review monthly.</li></ol>` })}
+        ${ui.panel({ title: 'Capital intensity × time to revenue', sub: 'Numbers match the table · click to open · analyst classification (est.)', body: `<div id="op-2x2">${matrix}</div>`, foot: ui.source('Analyst view on Fair Harbor opportunities (Broad Sky firm profile) and Fair Harbor public filings', null, 'October 6, 2026') })}
+        ${ui.panel({ title: 'How to prioritize', accent: true, body: `<ol class="prose small"><li><b>Buy windows first.</b> Wholesale and resort buyers commit Spring/Summer orders months ahead, so door expansion and golf pro-shop items (PGA Show, late Jan) must be in front of buyers this fall and winter or they slip a season.</li><li><b>Then quick wins on live assets</b>: B2B custom, collabs, sustainability credentials and a Shopify Markets test need little capital and can book revenue within two quarters.</li><li><b>Licensing: check the capital need.</b> Confirm royalty minimums and stocked inventory before adding more schools.</li><li><b>Gate the builds</b> (women's relaunch, cold-weather and kids depth) on FY25 sell-through and markdown data from management.</li><li>One owner per card in the BSP value-creation plan; review monthly.</li></ol>` })}
       </div>
     </div>
     <div class="mt-12">${ui.panel({ title: 'All opportunities', sub: 'Sortable · CSV export · capital and timing are analyst estimates', body: '<div id="op-tbl"></div>' })}</div>`;
   const open = o => inspector.open({ title: esc(o.title), sub: `${esc(CFG.short)} · ${esc(label(o.type))}`, color: CFG.color, sections: [
-    { label: 'Value / scale', html: `<div class="small">${esc(o.value_or_scale || '—')}</div>${o._value ? `<div class="mt-8">${fmt.chip(`headline ${fmt.money(o._value)}`, 'var(--green)')}</div>` : ''}` },
+    { label: 'Value / scale', html: `<div class="small">${esc(o.value_or_scale || '—')}</div>${o._value ? `<div class="sys-chips mt-8"><span class="sys-chip sys-chip--good">Headline ${fmt.money(o._value)}</span></div>` : ''}` },
     { label: 'Why now', html: `<div class="small text-2">${esc(o.why_now || '—')}</div>` },
     { label: 'Priority (analyst est.)', html: ui.kv({ 'Capital intensity': `${esc(o._capLbl)}${o._capNote ? ` <span class="dim">· ${esc(o._capNote)}</span>` : ''}`, 'Time to revenue': esc(o._ttrLbl), 'Buy window': esc(o._window || '—') }) },
-    o.caveat ? { label: 'Caveat', html: `<div class="small" style="color:var(--amber)">${esc(o.caveat)}</div>` } : null,
+    o.caveat ? { label: 'Caveat', html: ui.note(esc(o.caveat), 'warn') } : null,
     { label: 'Sources', html: links(esc, fmt, [o.source_url, o.source_url_2, o.source_url_api]) + `<div class="dim small mt-8">Retrieved ${esc(o.retrieved || '')}</div>` },
     { label: 'Next action', html: `<div class="small text-2">${esc(nextAction(o))}</div>` },
   ].filter(Boolean), actions: [o.source_url ? { label: 'Open source ↗', href: o.source_url } : null].filter(Boolean) });
   const cards = byType.flatMap(g => g.rows.map(o => card(ctx, o)));
   ui.bindCards(el.querySelector('#op-cards'), cards, c => open(opps.find(o => o.id === c.id)));
-  el.querySelectorAll('#op-2x2 .m-fh-q').forEach(b => b.addEventListener('click', () => { const o = opps.find(x => x.id === b.dataset.id); if (o) open(o); }));
+  el.querySelectorAll('#op-2x2 .m-fh-q').forEach(b => b.addEventListener('click', e => { const o = opps.find(x => x.id === b.dataset.id); if (o) { e.preventDefault(); open(o); } }));
   ui.table(el.querySelector('#op-tbl'), { rows: opps, pageSize: 25, exportName: `${CFG.id}_opportunities`, onRow: open, sortKey: top ? '_value' : '_n', sortDir: top ? -1 : 1, columns: [
     { key: '_n', label: '#', num: true },
     { key: 'type', label: 'Type', fmt: v => fmt.chip(label(v), CFG.hex) },
     { key: 'title', label: 'Opportunity', wrap: true, fmt: v => `<b>${esc(v)}</b>` },
     ...(top ? [{ key: '_value', label: 'Headline $', num: true, fmt: v => fmt.money(v) }] : []),
     { key: 'value_or_scale', label: 'Value / scale', wrap: true, fmt: v => `<span class="small text-2">${esc(String(v || '').replace(/\[\s*'([^\]]*)'\s*\]/g, '$1').replace(/\b[a-z]+(?:_[a-z]+)+\b/g, m => m.replace(/_/g, ' ')))}</span>` },
-    { key: '_cap', label: 'Capital (est.)', num: true, fmt: (v, r) => fmt.chip(r._capLbl, v === 1 ? 'var(--green)' : v === 2 ? 'var(--amber)' : v === 3 ? 'var(--red)' : 'var(--dim)') },
+    { key: '_cap', label: 'Capital (est.)', num: true, fmt: (v, r) => `<span class="sys-chip${v === 1 ? ' sys-chip--good' : v === 2 ? ' sys-chip--warn' : v === 3 ? ' sys-chip--bad' : ''}">${esc(r._capLbl)}</span>` },
     { key: '_ttr', label: 'Time to rev. (est.)', num: true, fmt: (v, r) => esc(r._ttrLbl) },
     { key: '_window', label: 'Buy window', wrap: true, fmt: v => `<span class="small text-2">${esc(v)}</span>` },
     { key: 'why_now', label: 'Why now', wrap: true, fmt: v => `<span class="small text-2">${esc(String(v || '').slice(0, 160))}</span>` },
@@ -218,7 +223,7 @@ async function opportunities(ctx) {
   ] });
   if (params.id) { const o = opps.find(x => x.id === params.id); if (o) open(o); }
 }
-const card = (ctx, o) => { const c = opportunityCard(ctx, o, CFG.color); c.sub = ctx.esc(String(o.why_now || '').slice(0, 150)) + (String(o.why_now || '').length > 150 ? '…' : ''); c.chips += ctx.fmt.chip(String(o.value_or_scale || '').split(/[;(]/)[0].replace(/\[\s*'([^\]]*)'\s*\]/g, '$1').replace(/\b[a-z]+(?:_[a-z]+)+\b/g, m => m.replace(/_/g, ' ')).slice(0, 60), 'var(--muted)'); return c; };
+const card = (ctx, o) => { const c = opportunityCard(ctx, o, CFG.color); c.sub = ctx.esc(String(o.why_now || '').slice(0, 150)) + (String(o.why_now || '').length > 150 ? '…' : ''); c.chips += ctx.fmt.chip(String(o.value_or_scale || '').split(/[;(]/)[0].replace(/\[\s*'([^\]]*)'\s*\]/g, '$1').replace(/\b[a-z]+(?:_[a-z]+)+\b/g, m => m.replace(/_/g, ' ')).slice(0, 60)); return c; };
 const nextAction = o => { const t = `${o.title} ${o.type}`;
   return /sustainab|b corp/i.test(t) ? 'Package B Corp (94.3) and recycled-bottle proof points into a one-page procurement sheet; use it in every B2B and hospitality pitch this quarter.'
     : /wholesale/i.test(t) ? 'Get the current door list with sell-through and reorder rate by account, then build a target list (golf pro shops, coastal specialty, campus stores) for the Spring/Summer 2027 line review.'
@@ -238,26 +243,26 @@ async function benchmarks(ctx) {
   el.innerHTML = ui.pageHead({ title: 'Public comparables', sub: `<b>So what:</b> ${esc(CFG.sectorLabel)} (${esc((bm.comps || []).join(', '))}) grew a median ${pp(fmt, bm.median_revenue_growth_latest_pct, true)} last year at a ${pp(fmt, bm.median_operating_margin_latest_pct)} operating margin (${pp(fmt, bm.median_operating_margin_multiyear_avg_pct)} multi-year average). The benchmark ${esc(CFG.short)} should be held to is below.` }) +
     ui.kpis([
       { label: 'Comps', value: fmt.num(peers.length), sub: esc(peers.map(p => p.ticker).join(' · ')), color: CFG.color },
-      { label: 'Median growth (latest)', value: pp(fmt, bm.median_revenue_growth_latest_pct, true), sub: `CAGR since 2023 ${pp(fmt, bm.median_revenue_cagr_2023_latest_pct, true)}`, color: 'var(--c-ma)' },
-      { label: 'Median op. margin', value: pp(fmt, bm.median_operating_margin_latest_pct), sub: `multi-yr avg ${pp(fmt, bm.median_operating_margin_multiyear_avg_pct)}`, color: 'var(--accent)' },
-      { label: 'Median EBITDA margin', value: pp(fmt, bm.median_ebitda_margin_latest_pct), sub: 'op. income + D&A (approx.)', color: 'var(--green)' },
-      { label: 'Median revenue / employee', value: fmt.money(bm.median_revenue_per_employee_usd), sub: 'latest FY, year-end headcount', color: 'var(--cyan)' },
-      { label: 'PE competitors', value: fmt.num(d.rivals.length), sub: `${d.rivals.filter(r => r.threat_level === 'high').length} high threat`, color: 'var(--c-pe)' },
+      { label: 'Median growth (latest)', value: pp(fmt, bm.median_revenue_growth_latest_pct, true), sub: `CAGR since 2023 ${pp(fmt, bm.median_revenue_cagr_2023_latest_pct, true)}`, color: 'var(--sys-warn)' },
+      { label: 'Median op. margin', value: pp(fmt, bm.median_operating_margin_latest_pct), sub: `multi-year avg ${pp(fmt, bm.median_operating_margin_multiyear_avg_pct)}`, color: 'var(--sys-info)' },
+      { label: 'Median EBITDA margin', value: pp(fmt, bm.median_ebitda_margin_latest_pct), sub: 'op. income + D&A (approx.)', color: 'var(--sys-good)' },
+      { label: 'Median revenue / employee', value: fmt.money(bm.median_revenue_per_employee_usd), sub: 'latest FY, year-end headcount', color: 'var(--co-fh)' },
+      { label: 'PE competitors', value: fmt.num(d.rivals.length), sub: `${d.rivals.filter(r => r.threat_level === 'high').length} high threat`, color: 'var(--sys-mute)' },
     ]) +
     `<div class="grid grid-main mt-12">
       <div class="col gap-12">
       ${ui.panel({ title: 'Public comparables', sub: 'SEC XBRL fundamentals, latest fiscal year. Click a row for history and 10-K', body: '<div id="bm-tbl"></div>', foot: ui.source('SEC EDGAR XBRL company facts (public comparables)', 'https://www.sec.gov/edgar/search/', d.comps.meta?.generated) })}
-      ${ui.panel({ title: 'Growth, margin and productivity', sub: `Latest FY · red = negative · sector medians: growth ${pp(fmt, bm.median_revenue_growth_latest_pct, true)}, op. margin ${pp(fmt, bm.median_operating_margin_latest_pct)}, rev/emp ${fmt.money(bm.median_revenue_per_employee_usd)}`, body: `<div class="grid grid-3"><div><h4 class="small dim mb-8">REVENUE GROWTH</h4>${divBars(fmt, peers.map(p => ({ label: esc(p.ticker), title: esc(p.company), value: p.revenue_growth_latest_pct })), { labelW: 40 })}</div><div><h4 class="small dim mb-8">OPERATING MARGIN</h4>${divBars(fmt, peers.map(p => ({ label: esc(p.ticker), title: esc(p.company), value: p.operating_margin_latest_pct, color: 'var(--accent)' })), { labelW: 40 })}</div><div><h4 class="small dim mb-8">REVENUE / EMPLOYEE</h4>${charts.hbar(peers.map(p => ({ label: p.ticker, value: p.revenue_per_employee_usd, color: CFG.hex })), { fmt: v => fmt.money(v), labelW: 40 })}</div></div>` })}
+      ${ui.panel({ title: 'Growth, margin and productivity', sub: `Latest FY · red = negative · sector medians: growth ${pp(fmt, bm.median_revenue_growth_latest_pct, true)}, op. margin ${pp(fmt, bm.median_operating_margin_latest_pct)}, rev/emp ${fmt.money(bm.median_revenue_per_employee_usd)}`, body: `<div class="grid grid-3"><div><h4 class="sys-card-label mb-8">Revenue growth</h4>${divBars(fmt, peers.map(p => ({ label: esc(p.ticker), title: esc(p.company), value: p.revenue_growth_latest_pct })), { labelW: 40 })}</div><div><h4 class="sys-card-label mb-8">Operating margin</h4>${divBars(fmt, peers.map(p => ({ label: esc(p.ticker), title: esc(p.company), value: p.operating_margin_latest_pct, color: 'var(--sys-info)' })), { labelW: 40 })}</div><div><h4 class="sys-card-label mb-8">Revenue / employee</h4>${charts.hbar(peers.map(p => ({ label: p.ticker, value: p.revenue_per_employee_usd, color: CFG.hex })), { fmt: v => fmt.money(v), labelW: 40 })}</div></div>` })}
       </div>
-      ${ui.panel({ title: `What this implies for ${esc(CFG.short)}`, accent: true, body: `<div class="prose small">${esc(bm.what_this_implies_for_bsp || 'Sector benchmark text pending.')}</div>${est.length ? `<h4 class="small dim mt-12">${esc(CFG.short)} OUTSIDE-IN ESTIMATES (BSP-INTERNAL, NOT COMPANY DATA)</h4><div class="col gap-4 mt-8">${est.map(e => `<div class="row" style="align-items:flex-start;gap:10px;border-bottom:1px solid var(--border);padding:4px 0"><div class="grow"><div class="small dim">${esc(e.metric)}</div><div class="strong small num" title="${esc(e.basis || '')}">${esc(e.estimate)}</div></div>${fmt.chip(e.confidence, e.confidence === 'high' ? 'var(--green)' : e.confidence === 'medium' ? 'var(--amber)' : 'var(--dim)')}</div>`).join('')}</div>` : ''}`, foot: ui.source(`Public comparables: ${Copy.field(CFG.sector).toLowerCase()} sector benchmarks; ${CFG.name} public filings estimate table`, null, '2026-09-24') })}
+      ${ui.panel({ title: `What this implies for ${esc(CFG.short)}`, accent: true, body: `<div class="prose small">${esc(bm.what_this_implies_for_bsp || 'Sector benchmark text pending.')}</div>${est.length ? `<h4 class="sys-card-label mt-16">${esc(CFG.short)} outside-in estimates (BSP-internal, not company data)</h4>${estTable(esc, est)}` : ''}`, foot: ui.source(`Public comparables: ${Copy.field(CFG.sector).toLowerCase()} sector benchmarks; ${CFG.name} public filings estimate table`, null, 'September 24, 2026') })}
     </div>
     <div class="grid grid-main mt-12">
       ${ui.panel({ title: 'PE competitors overlapping ' + esc(CFG.short), sub: esc(d.pe?.meta?.sector_heatmap?.[CFG.peKey]?.note || 'Sponsors with companies or theses that overlap'), body: '<div id="pe-tbl"></div>', foot: ui.source('Private-equity landscape (firm sites, press, PitchBook-sourced results)', null, d.pe?.meta?.generated) })}
-      ${ui.panel({ title: 'Competitive read-out', body: `<div class="col gap-12">${ui.kv({ Intensity: esc(d.pe?.meta?.sector_heatmap?.[CFG.peKey]?.intensity || '—'), 'Most active': esc((d.pe?.meta?.sector_heatmap?.[CFG.peKey]?.most_active || []).map(id => (d.pe?.items || []).find(x => x.id === id)?.firm || id).join(', ')) })}<ol class="prose small" style="padding-left:4px"><li>Treat <b>high-threat</b> sponsors as competing bidders on add-ons: move early with proprietary, founder-direct outreach.</li><li>The same sponsors are <b>exit buyers</b>. Track their fund vintages; a 2023-2026 fund needs deployment.</li><li>Benchmark ${esc(CFG.short)}'s margin and revenue/employee against the comps table before each budget cycle.</li></ol></div>` })}
+      ${ui.panel({ title: 'Competitive read-out', body: `<div class="col gap-12">${ui.kv({ Intensity: esc(d.pe?.meta?.sector_heatmap?.[CFG.peKey]?.intensity || '—'), 'Most active': esc((d.pe?.meta?.sector_heatmap?.[CFG.peKey]?.most_active || []).map(id => (d.pe?.items || []).find(x => x.id === id)?.firm || id).join(', ')) })}<ol class="prose small"><li>Treat <b>high-threat</b> sponsors as competing bidders on add-ons: move early with proprietary, founder-direct outreach.</li><li>The same sponsors are <b>exit buyers</b>. Track their fund vintages; a 2023-2026 fund needs deployment.</li><li>Benchmark ${esc(CFG.short)}'s margin and revenue/employee against the comps table before each budget cycle.</li></ol></div>` })}
     </div>`;
   const cols = [
     { key: 'ticker', label: 'Ticker', fmt: v => `<b class="mono">${esc(v)}</b>` },
-    { key: 'company', label: 'Company', fmt: (v, r) => `${esc(nameCase(v))}${r.status_note ? ` <span title="${esc(r.status_note)}" style="color:var(--amber)">⚠</span>` : ''}` },
+    { key: 'company', label: 'Company', fmt: (v, r) => `${esc(nameCase(v))}${r.status_note ? ` <span class="sys-est" title="${esc(r.status_note)}">note</span>` : ''}` },
     { key: 'latest_fy', label: 'FY', num: true },
     { key: 'rev', label: 'Revenue', num: true, fmt: v => fmt.money(v) },
     { key: 'revenue_growth_latest_pct', label: 'Growth', num: true, fmt: v => pp(fmt, v, true) },
@@ -268,23 +273,23 @@ async function benchmarks(ctx) {
   ui.table(el.querySelector('#bm-tbl'), { rows: peers, columns: cols, pageSize: 20, sortKey: 'rev', exportName: `${CFG.id}_public_comps`, onRow: p => inspector.open({ title: `${esc(p.ticker)} · ${esc(nameCase(p.company))}`, sub: `${esc(label(p.sector_tag))} · FY${esc(p.latest_fy)}`, color: CFG.color, sections: [
     { label: 'Revenue by fiscal year', html: charts.bar((p.fiscal_years || []).map(f => ({ label: `FY${f.fy}`, value: f.revenue_usd, color: CFG.hex })), { h: 130, fmt: v => fmt.money(v) }) },
     { label: 'Latest year', html: ui.kv({ Revenue: fmt.money(p.rev), Employees: fmt.num(p.emp), Growth: pp(fmt, p.revenue_growth_latest_pct, true), 'CAGR 2023→latest': pp(fmt, p.revenue_cagr_2023_latest_pct, true), 'Op. margin': pp(fmt, p.operating_margin_latest_pct), 'Op. margin (avg)': pp(fmt, p.operating_margin_avg_pct), 'EBITDA margin': pp(fmt, p.ebitda_margin_latest_pct), 'Revenue / employee': fmt.money(p.revenue_per_employee_usd) }) },
-    p.status_note || p.employee_note ? { label: 'Notes', html: `<div class="small" style="color:var(--amber)">${esc(p.status_note || '')} ${esc(p.employee_note || '')}</div>` } : null,
+    p.status_note || p.employee_note ? { label: 'Notes', html: ui.note(`${esc(p.status_note || '')} ${esc(p.employee_note || '')}`, 'warn') } : null,
     { label: 'Sources', html: links(esc, fmt, [p.tenk_url, p.source_url]) + `<div class="dim small mt-8">${esc(p.tenk_form || '')} filed ${esc(p.tenk_filed || '')} · confidence ${esc(p.confidence || '')}</div>` },
     { label: 'Next action', html: `<div class="small text-2">Use ${esc(p.ticker)}'s margin and revenue/employee as a comparison line in ${esc(CFG.short)}'s monthly KPI pack.</div>` },
   ].filter(Boolean), actions: [p.tenk_url ? { label: 'Open 10-K ↗', href: p.tenk_url } : null].filter(Boolean) }) });
-  const threatC = t => t === 'high' ? 'var(--red)' : t === 'medium' ? 'var(--amber)' : 'var(--dim)';
+  const threatChip = t => `<span class="sys-chip${t === 'high' ? ' sys-chip--bad' : t === 'medium' ? ' sys-chip--warn' : ''}">${String(t || '—').replace(/^./, x => x.toUpperCase())}</span>`;
   const rivals = d.rivals.map(r => ({ ...r, _fund: r.latest_fund?.size_usd || null, _tl: { high: 3, medium: 2, low: 1 }[r.threat_level] || 0 }));
   ui.table(el.querySelector('#pe-tbl'), { rows: rivals, pageSize: 15, sortKey: '_tl', exportName: `${CFG.id}_pe_competitors`, columns: [
     { key: 'firm', label: 'Firm', fmt: (v, r) => `<b>${esc(v)}</b><div class="dim small">${esc(r.hq || '')}</div>` },
-    { key: '_tl', label: 'Threat', fmt: (v, r) => fmt.chip(r.threat_level || '—', threatC(r.threat_level)) },
+    { key: '_tl', label: 'Threat', fmt: (v, r) => threatChip(r.threat_level) },
     { key: '_fund', label: 'Latest fund', num: true, title: r => r.latest_fund?.name || '', fmt: (v, r) => `${fmt.money(v)}${r.latest_fund?.year ? `<div class="dim small">${r.latest_fund.year}</div>` : ''}` },
     { key: 'platforms_relevant', label: 'Relevant companies', wrap: true, fmt: v => `<span class="small text-2">${fmt.list((v || []).map(p => p.name), 3)}</span>` },
     { key: 'competes_for', label: 'Competes for', fmt: v => fmt.chip(({ deals: 'Companies', targets: 'Add-on targets', both: 'Companies and add-ons' })[v] || v || '—') },
-  ], onRow: r => inspector.open({ title: esc(r.firm), sub: `${esc(r.hq || '')} · founded ${esc(r.founded || '—')} · threat ${esc(r.threat_level)}`, color: 'var(--c-pe)', sections: [
+  ], onRow: r => inspector.open({ title: esc(r.firm), sub: `${esc(r.hq || '')} · founded ${esc(r.founded || '—')} · threat ${esc(r.threat_level)}`, color: 'var(--sys-mute)', sections: [
     { label: 'Why it matters to ' + CFG.short, html: `<div class="small text-2">${esc(r.threat_rationale || '')}</div>` },
     { label: 'Fund', html: ui.kv({ 'Latest fund': `${esc(r.latest_fund?.name || '—')} · ${fmt.money(r.latest_fund?.size_usd)}`, AUM: fmt.money(r.aum_usd), 'Check size': r.check_size_usd?.min ? `${fmt.money(r.check_size_usd.min)}–${fmt.money(r.check_size_usd.max)}` : null, Strategy: esc(r.strategy || '') }) },
     { label: 'Relevant companies', html: `<div class="col gap-4 small">${(r.platforms_relevant || []).map(p => `<div><b>${esc(p.name)}</b> <span class="dim">${esc(p.sector || '')}${p.status ? ` · ${esc(p.status)}` : ''}</span>${p.notes ? `<div class="text-2">${esc(p.notes)}</div>` : ''}</div>`).join('') || '—'}</div>` },
-    (r.deals_2025_2026 || []).length ? { label: 'Deals 2025-26', html: `<div class="col gap-4 small">${r.deals_2025_2026.map(x => `<div><span class="num dim">${esc(x.date)}</span> ${esc(x.company)} <span class="dim">(${esc(({ platform: 'anchor', add_on: 'add-on', exit: 'exit' })[x.type] || String(x.type || '').replace(/_/g, '-'))})</span></div>`).join('')}</div>` } : null,
+    (r.deals_2025_2026 || []).length ? { label: 'Deals 2025-26', html: `<div class="col gap-4 small">${r.deals_2025_2026.map(x => `<div><span class="num dim">${esc(words(x.date))}</span> ${esc(x.company)} <span class="dim">(${esc(({ platform: 'anchor', add_on: 'add-on', exit: 'exit' })[x.type] || String(x.type || '').replace(/_/g, '-'))})</span></div>`).join('')}</div>` } : null,
     { label: 'Sources', html: links(esc, fmt, [r.website, ...(r.sources || [])].slice(0, 6)) },
     { label: 'Next action', html: `<div class="small text-2">${r.threat_level === 'high' ? 'Map this sponsor\'s live add-on targets against ours; pre-empt with founder outreach and faster diligence.' : 'Monitor fund deployment and keep on the exit-buyer list.'}</div>` },
   ].filter(Boolean), actions: r.website ? [{ label: 'Website ↗', href: r.website }] : [] }) });
@@ -294,23 +299,23 @@ async function benchmarks(ctx) {
 async function market(ctx) {
   const { el, ui, fmt, esc, charts, maps, inspector } = ctx;
   let raw = null; try { raw = await ctx.data.load(CFG.sales); } catch (e) { console.warn(e.message); }
-  if (!raw?.items?.length) { el.innerHTML = ui.pageHead({ title: `${esc(CFG.salesArea.replace(/\s*\(.*\)$/, ''))} home sales` }) + ui.note(`Sales dataset <span class="mono">data/${esc(CFG.sales)}.json</span> is not available yet.`, 'warn'); return; }
+  if (!raw?.items?.length) { el.innerHTML = ui.pageHead({ title: `${esc(CFG.salesArea.replace(/\s*\(.*\)$/, ''))} home sales` }) + ui.note('The Manhattan home-sales dataset is not available yet.', 'warn'); return; }
   const meta = raw.meta || {}; const all = raw.items; const s = salesStats(all, fmt);
-  el.innerHTML = ui.pageHead({ title: `${esc(CFG.salesArea.replace(/\s*\(.*\)$/, ''))} home sales`, sub: `<b>So what:</b> ${esc(CFG.marketLens(s))}`, chips: `${fmt.chip(`${fmt.num(all.length)} recorded sales`, CFG.hex)}${fmt.chip(`${day(fmt, meta.coverage?.date_from)} – ${day(fmt, meta.coverage?.date_to)}`)}${fmt.chip('owner names not retained')}${fmt.chip('context only', 'var(--amber)')}` }) +
-    `<div style="margin-bottom:12px">${ui.note('Context only, not an operating metric. No dataset links Manhattan home buyers to Fair Harbor customers, and 12 months of data (Sept 2025 – Aug 2026) cannot give a same-period YoY trend, so none is shown.', 'warn')}</div>` +
+  el.innerHTML = ui.pageHead({ title: `${esc(CFG.salesArea.replace(/\s*\(.*\)$/, ''))} home sales`, sub: `<b>So what:</b> ${esc(CFG.marketLens(s))}`, chips: `${fmt.chip(`${fmt.num(all.length)} recorded sales`, CFG.hex)}${fmt.chip(`${day(fmt, meta.coverage?.date_from)} – ${day(fmt, meta.coverage?.date_to)}`)}${fmt.chip('owner names not retained')}<span class="sys-chip sys-chip--warn">Context only</span>` }) +
+    `<div class="mb-12">${ui.note('Context only, not an operating metric. No dataset links Manhattan home buyers to Fair Harbor customers, and 12 months of data (September 2025 – August 2026) cannot give a same-period YoY trend, so none is shown.', 'warn')}</div>` +
     ui.kpis([
       { label: 'Arms-length home sales', value: s.n, sub: `residential, price ≥ $50K · of ${fmt.num(all.length)} recorded transfers`, color: CFG.color },
-      { label: 'Median price', value: s.medTxt, sub: 'arms-length residential', color: 'var(--c-ma)' },
-      { label: '$2M+ sales', value: s.lux, sub: `${pp(fmt, s.res.filter(i => i.price >= 2e6).length / Math.max(1, s.res.length) * 100)} of home sales`, color: 'var(--c-bpi)' },
-      { label: 'Top $2M+ area', value: kv2(esc, s.top[0] || '—'), sub: `${fmt.num(s.hoodRows.find(h => h.hood === s.top[0])?.lux)} sales ≥ $2M`, color: 'var(--cyan)' },
+      { label: 'Median price', value: s.medTxt, sub: 'arms-length residential', color: 'var(--sys-warn)' },
+      { label: '$2M+ sales', value: s.lux, sub: `${pp(fmt, s.res.filter(i => i.price >= 2e6).length / Math.max(1, s.res.length) * 100)} of home sales`, color: 'var(--co-bpi)' },
+      { label: 'Top $2M+ area', value: kv2(esc, s.top[0] || '—'), sub: `${fmt.num(s.hoodRows.find(h => h.hood === s.top[0])?.lux)} sales ≥ $2M`, color: 'var(--co-fh)' },
     ]) +
     `<div class="mt-12" id="mk-f"></div>
     <div class="grid grid-main">
       ${ui.panel({ title: CFG.zipAgg ? 'Sales by ZIP (bubble = count, colour = median price)' : 'Sales by parcel (colour = price band)', flush: true, body: '<div class="map tall" id="mk-map"></div>', foot: ui.source(meta.method ? Copy.text(String(meta.method).split(/[.(]/)[0].slice(0, 90)) : 'Public property records', (all[0] || {}).source_url, meta.generated) })}
       <div class="col gap-12">
         ${ui.panel({ title: 'Monthly volume', sub: 'Arms-length residential sales per month (partial latest month dropped)', body: charts.bar(s.byM.map(m => ({ label: m.m.slice(2), value: m.n, color: CFG.hex })), { h: 130, fmt: v => fmt.num(v), labelEvery: Math.max(1, Math.ceil(s.byM.length / 7)) }) })}
-        ${ui.panel({ title: 'Median price by month', sub: 'Monthly medians move with sales mix; not a price index', body: charts.line([{ name: 'Median', color: 'var(--c-ma)', points: s.byM.map(m => [m.m.slice(2), m.med]) }], { h: 130, fmt: v => money(fmt, v), area: true, xLabels: s.byM.map((m, i) => i % 2 === 0 && i < s.byM.length - 1 ? m.m.slice(2) : '') }) })}
-        ${ui.panel({ title: `What it means for ${esc(CFG.short)}`, accent: true, body: `<ol class="prose small" style="padding-left:4px">${CFG.marketActions(s).map(a => `<li>${esc(a)}</li>`).join('')}</ol>` })}
+        ${ui.panel({ title: 'Median price by month', sub: 'Monthly medians move with sales mix; not a price index', body: charts.line([{ name: 'Median', color: 'var(--sys-warn)', points: s.byM.map(m => [m.m.slice(2), m.med]) }], { h: 130, fmt: v => money(fmt, v), area: true, xLabels: s.byM.map((m, i) => i % 2 === 0 && i < s.byM.length - 1 ? m.m.slice(2) : '') }) })}
+        ${ui.panel({ title: `What it means for ${esc(CFG.short)}`, accent: true, body: `<ol class="prose small">${CFG.marketActions(s).map(a => `<li>${esc(a)}</li>`).join('')}</ol>` })}
       </div>
     </div>
     <div class="grid grid-side mt-12">
@@ -345,15 +350,15 @@ async function market(ctx) {
     if (layer) layer.remove();
     if (CFG.zipAgg) { const z = {}; for (const r of rows) if (r.lat != null) { const k = r.zip; (z[k] ||= { zip: k, lat: r.lat, lon: r.lon, p: [] }).p.push(r.price); }
       const zr = Object.values(z).map(x => ({ ...x, n: x.p.length, median: med(x.p) }));
-      layer = maps.points(map, zr, { cluster: false, color: r => band(r.median), radius: r => Math.min(20, 3 + Math.sqrt(r.n) * 0.75), opacity: .6, popup: r => `<b>ZIP ${esc(r.zip)}</b><br>${fmt.num(r.n)} sales · median ${money(fmt, r.median)}` });
-    } else layer = maps.points(map, rows, { cluster: false, color: r => band(r.price), radius: 3.2, weight: 0, opacity: .75, popup: r => `<b>${esc(r.addr)}</b><br>${money(fmt, r.price)} · ${day(fmt, r.sale_date)}<br><span class="muted">${esc(r.neighborhood || '')} · ${esc(r.use_code_raw || '')}</span>`, onClick: openSale });
+      layer = maps.points(map, zr, { cluster: false, color: r => tok(band(r.median)), radius: r => Math.min(20, 3 + Math.sqrt(r.n) * 0.75), opacity: .6, popup: r => `<b>ZIP ${esc(r.zip)}</b><br>${fmt.num(r.n)} sales · median ${money(fmt, r.median)}` });
+    } else layer = maps.points(map, rows, { cluster: false, color: r => tok(band(r.price)), radius: 3.2, weight: 0, opacity: .75, popup: r => `<b>${esc(r.addr)}</b><br>${money(fmt, r.price)} · ${day(fmt, r.sale_date)}<br><span class="muted">${esc(r.neighborhood || '')} · ${esc(r.use_code_raw || '')}</span>`, onClick: openSale });
     const sorted = rows.slice().sort((a, b) => String(b.sale_date).localeCompare(String(a.sale_date)));
     tbl ? tbl.update(sorted) : (tbl = ui.table(el.querySelector('#mk-tbl'), { rows: sorted, pageSize: 15, exportName: `${CFG.id}_home_sales`, onRow: openSale, columns: [
       { key: 'sale_date', label: 'Date', num: true, fmt: v => day(fmt, v) },
       { key: 'addr', label: 'Address', fmt: (v, r) => `${esc(v)}<div class="dim small">${esc(r.neighborhood || '')} · ${esc(zipOk(r.zip) || '—')}</div>` },
-      { key: 'use_code_raw', label: 'Type', fmt: v => { const t = useLbl(v); return `<span class="small text-2 ellipsis" style="display:inline-block;max-width:190px;vertical-align:bottom" title="${esc(t)}">${esc(t)}</span>`; } },
+      { key: 'use_code_raw', label: 'Type', fmt: v => { const t = useLbl(v); return `<span class="small text-2" title="${esc(t)}">${esc(t)}</span>`; } },
       { key: 'price', label: 'Price', num: true, fmt: v => money(fmt, v) },
-      { key: 'arms_length', label: 'Arms', fmt: v => v ? fmt.chip('yes', 'var(--green)') : fmt.chip('no', 'var(--dim)') },
+      { key: 'arms_length', label: 'Arms-length', fmt: v => v ? '<span class="sys-chip sys-chip--good">Yes</span>' : '<span class="sys-chip">No</span>' },
     ] }));
   }
   hoodTbl = ui.table(el.querySelector('#mk-hood'), { rows: s.hoodRows, pageSize: 15, sortKey: 'n', exportName: `${CFG.id}_neighborhoods`, onRow: openHood, columns: [
@@ -372,9 +377,9 @@ async function filings(ctx) {
   el.innerHTML = ui.pageHead({ title: 'Filings and financials', sub: data ? `<b>So what:</b> ${esc(CFG.filingsSoWhat || String(data.meta?.financial_picture || '').slice(0, 420))}` : 'Public-record financial picture' }) +
     (data ? ui.kpis([
       { label: 'Records', value: fmt.num(items.length), sub: `${new Set(items.map(i => i.category)).size} categories`, color: CFG.color },
-      { label: 'High confidence', value: fmt.num(items.filter(i => i.confidence === 'high').length), sub: 'primary-source pulls', color: 'var(--green)' },
-      { label: 'Estimates', value: fmt.num((data.meta?.estimate_table || []).length), sub: 'metric · basis · confidence', color: 'var(--c-fin)' },
-      { label: 'Data gaps', value: fmt.num((data.meta?.data_gaps || []).length), sub: `${(data.meta?.next_pulls || []).length} next pulls queued`, color: 'var(--amber)' },
+      { label: 'High confidence', value: fmt.num(items.filter(i => i.confidence === 'high').length), sub: 'primary-source pulls', color: 'var(--sys-good)' },
+      { label: 'Estimates', value: fmt.num((data.meta?.estimate_table || []).length), sub: 'metric · basis · confidence', color: 'var(--sys-info)' },
+      { label: 'Data gaps', value: fmt.num((data.meta?.data_gaps || []).length), sub: `${(data.meta?.next_pulls || []).length} next pulls queued`, color: 'var(--sys-warn)' },
     ]) : '') + (data ? `<div class="mt-12">${ui.note('<b>BSP-internal.</b> Revenue, EBITDA, enterprise value and headcount below are outside-in estimates (mostly low confidence), not company data. Do not circulate to management; replace with the FY25 P&L once received.', 'warn')}</div>` : '') + '<div id="fil" class="mt-12"></div>';
   // renderFilings expects meta.sources_summary to be an array; research files ship it as a string (normalise here).
   const ss = data?.meta?.sources_summary; const norm = data ? { ...data, meta: { ...data.meta, sources_summary: Array.isArray(ss) ? ss : String(ss || '').split(/(?<=\.)\s+|;\s+/).filter(Boolean) } } : null;
@@ -383,7 +388,7 @@ async function filings(ctx) {
   // Layout patch (shared component): give the estimate table equal width and let long estimates wrap instead of clipping.
   const g = fil.querySelector('.grid-main'); if (g) g.className = 'grid grid-2';
   fil.querySelectorAll('.grid .panel:nth-child(2) tbody tr').forEach(tr => [...tr.children].forEach((td, i) => { td.style.whiteSpace = 'normal'; td.style.verticalAlign = 'top'; if (i === 0) td.style.width = '28%'; if (i === 1) { td.style.minWidth = '110px'; td.style.textAlign = 'left'; } }));
-  if (data) ctx.app.index(items.map(i => ({ label: i.title, sub: `${CFG.short} filing · ${i.category}`, href: `#/${CFG.id}/filings`, kind: 'Filing', color: CFG.color })));
+  if (data) ctx.app.index(items.map(i => ({ label: i.title, sub: `${CFG.short} filing · ${Copy.category(i.category)}`, href: `#/${CFG.id}/filings`, kind: 'Filing', color: CFG.color })));
 }
 
 export default {

@@ -6,17 +6,20 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261006155542';
+       import { Frame } from '../../assets/frame.js?v=20261006180606';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
-     Frame.mount({ variant: 'app', theme: 'dark' });       // app.html
+     Frame.mount({ variant: 'app' });                      // app.html
      Frame.mount({ variant: 'minimal', theme: 'dark' });   // theater.html
 
    Options (all optional):
      active   'home'|'portal'|'concepts'|'os'|'playbooks'|'briefing'  (auto from URL)
      co       'pp'|'cet'|'fl'|'ts'|'bpi'|'fh'   company accent + crumb  (auto from URL)
      persona  chat persona for the Ask button      (default: co, else 'portal')
-     theme    'light'|'dark'                       (default 'light'; sets html[data-sys-theme])
+     theme    'light'|'dark'                       fallback when the visitor has no saved choice (default 'light').
+                                                    The visitor's choice (localStorage 'bsp-theme', set by the top-bar
+                                                    theme button on every page) always wins, except on a 'minimal'
+                                                    page that passes theme: 'dark' (the 3D theater stage), which stays dark.
      variant  'default'|'app'|'minimal'            (app: strip above the console; minimal: transparent, no footer)
      banner   true|false                           (default: true on concept pages under redesigns/<company>/)
      crumb    false | [{ label, href? }, …]        (default: auto for pages under redesigns/)
@@ -128,6 +131,7 @@ function topHTML(o) {
     <nav class="sys-nav" aria-label="Primary">${links}</nav>
     <div class="sys-top-actions">
       <button class="sys-ask" type="button" data-sys-ask aria-label="Ask the assistant${o.hotkey ? ` (${IS_MAC ? 'Command' : 'Control'} ${o.hotkey.split('+').pop().toUpperCase()})` : ''}"><span class="sys-dot" aria-hidden="true"></span>Ask${kbd}</button>
+      ${o.themeToggle ? `<button class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon sys-theme" type="button" data-sys-theme-toggle aria-label="Switch to dark theme" title="Switch to dark theme"></button>` : ''}
       ${cta}
       <button class="sys-menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sys-sheet"><span></span><span></span></button>
     </div>
@@ -167,6 +171,43 @@ function footerHTML() {
 /* ── chat wiring ──────────────────────────────────────────────────────────── */
 const state = { mounted: null, chat: null, persona: 'portal', theme: 'light', observer: null, loading: null };
 
+/* ── theme: one preference for every page ─────────────────────────────────────
+   html[data-sys-theme] = 'light' | 'dark', saved under localStorage 'bsp-theme' (light by default). Each page's
+   head applies the saved value before the stylesheets load; the top-bar button (and the portal's Theme helper,
+   which calls setTheme) changes it everywhere, and other open tabs follow through the storage event. */
+const THEME_KEY = 'bsp-theme';
+const THEME_ICON = {
+  sun: '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/></svg>',
+  moon: '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 9.6A5.5 5.5 0 0 1 6.4 3a5.5 5.5 0 1 0 6.6 6.6z"/></svg>',
+};
+let themeLocked = false;
+function savedTheme() { try { const v = localStorage.getItem(THEME_KEY); return v === 'dark' || v === 'light' ? v : null; } catch { return null; } }
+function getTheme() { return document.documentElement.dataset.sysTheme === 'dark' ? 'dark' : 'light'; }
+function paintThemeToggles() {
+  const d = getTheme() === 'dark', label = d ? 'Switch to light theme' : 'Switch to dark theme';
+  for (const b of document.querySelectorAll('[data-sys-theme-toggle]')) {
+    b.innerHTML = d ? THEME_ICON.sun : THEME_ICON.moon; b.setAttribute('aria-label', label); b.title = label;
+  }
+}
+function applyTheme(t) {
+  t = t === 'dark' ? 'dark' : 'light';
+  const h = document.documentElement;
+  if (h.dataset.sysTheme !== t) h.dataset.sysTheme = t;
+  if (h.hasAttribute('data-theme') && h.dataset.theme !== t) h.dataset.theme = t;   // older module CSS hooks html[data-theme]
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', t === 'dark' ? '#0a0e14' : '#fbfaf7');
+  state.theme = t; paintThemeToggles();
+  return t;
+}
+/** Set and remember the theme for every page of the site. */
+function setTheme(t) {
+  if (themeLocked) return getTheme();
+  t = applyTheme(t);
+  try { localStorage.setItem(THEME_KEY, t); } catch { /* storage blocked: this page only */ }
+  return t;
+}
+function toggleTheme() { return setTheme(getTheme() === 'dark' ? 'light' : 'dark'); }
+window.addEventListener('storage', e => { if (e.key === THEME_KEY && !themeLocked && (e.newValue === 'dark' || e.newValue === 'light')) applyTheme(e.newValue); });
+
 async function openChat() {
   const inst = state.chat;
   if (inst && typeof inst.togglePanel === 'function') {
@@ -186,7 +227,7 @@ async function openChat() {
   if (!state.loading) {
     state.loading = (async () => {
       const Chat = window.BSPChat || (await import(ROOT + 'assets/chat.js' + QV)).Chat;
-      state.chat = Chat.mount(null, { persona: state.persona, mode: 'floating', theme: state.theme, openOnLoad: true });
+      state.chat = Chat.mount(null, { persona: state.persona, mode: 'floating', theme: 'auto', openOnLoad: true });
       return state.chat;
     })().catch(e => { console.warn('[frame] chat unavailable', e); return null; }).finally(() => { state.loading = null; });
   }
@@ -396,10 +437,12 @@ function mount(opts = {}) {
   };
   o.nav = navFor(opts.nav !== undefined ? opts.nav : (variant === 'app' ? APP_NAV : null));
   state.persona = opts.persona || o.co || 'portal';
-  state.theme = opts.theme === 'dark' ? 'dark' : 'light';
+  // theme: the visitor's saved choice wins; a 'minimal' page that asks for dark (the 3D theater) stays dark
+  themeLocked = variant === 'minimal' && opts.theme === 'dark';
+  o.themeToggle = !themeLocked && opts.themeToggle !== false;
+  applyTheme(themeLocked ? 'dark' : (savedTheme() || (opts.theme === 'dark' ? 'dark' : 'light')));
   if (opts.chat) state.chat = opts.chat;
   const html = document.documentElement, body = document.body;
-  if (opts.theme) html.dataset.sysTheme = opts.theme;
   body.dataset.sysLayout = variant;
   if (o.co && !body.dataset.co) body.dataset.co = o.co;
 
@@ -474,6 +517,10 @@ function mount(opts = {}) {
   // primary nav current state follows hash routes (e.g. app.html#/briefing/play)
   if (o.nav.some(n => hashRoute(n.href))) { syncCurrent(top, o.nav, o.active); window.addEventListener('hashchange', () => syncCurrent(top, o.nav, o.active)); }
 
+  // theme toggle
+  top.querySelector('[data-sys-theme-toggle]')?.addEventListener('click', () => toggleTheme());
+  paintThemeToggles();
+
   // ask + hotkey
   top.querySelector('[data-sys-ask]').addEventListener('click', () => openChat());
   bindHotkey(o.hotkey);
@@ -502,10 +549,10 @@ function mount(opts = {}) {
   let rz = 0; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => scrollAccess(body), 200); });
   window.addEventListener('load', () => scrollAccess(body), { once: true });
 
-  state.mounted = { top, banner, footer, root: ROOT, page: w, nav: o.nav, openChat, humanize, setChat: inst => { state.chat = inst; } };
+  state.mounted = { top, banner, footer, root: ROOT, page: w, nav: o.nav, openChat, humanize, setTheme, getTheme, toggleTheme, setChat: inst => { state.chat = inst; } };
   return state.mounted;
 }
 
-export const Frame = { mount, humanize, humanizeText, label, keyDates, openChat, COMPANIES, NAV, LABELS, BANNER_TEXT, DISCLAIMER, ROOT };
+export const Frame = { mount, humanize, humanizeText, label, keyDates, openChat, setTheme, getTheme, toggleTheme, COMPANIES, NAV, LABELS, BANNER_TEXT, DISCLAIMER, ROOT };
 window.BSPFrame = Frame;
 export default Frame;

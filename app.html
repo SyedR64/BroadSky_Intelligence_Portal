@@ -1,19 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" data-sys-theme="dark">
+<html lang="en" data-sys-theme="light" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portal · Broad Sky</title>
 <meta name="description" content="The Broad Sky portfolio console: territory analytics, opportunity radar, acquisition targets, the private-equity landscape and filings for six companies.">
-<meta name="theme-color" content="#0a0e14">
+<meta name="theme-color" content="#fbfaf7">
 <link rel="icon" href="BSP_Logo.png">
+<script>
+  /* One theme for the whole site (UNIFIED.md §8): html[data-sys-theme] from the saved choice under localStorage
+     'bsp-theme', light by default like every other page. Runs before the stylesheets so dark never flashes light. */
+  (function () { var t = 'light'; try { var s = localStorage.getItem('bsp-theme'); if (s === 'dark' || s === 'light') t = s; } catch (e) { }
+    var h = document.documentElement; h.setAttribute('data-sys-theme', t); h.setAttribute('data-theme', t);
+    if (t === 'dark') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0a0e14'); })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<link rel="stylesheet" href="assets/system.css?v=20261006155542">
-<link rel="stylesheet" href="assets/app.css?v=20261006155542">
+<link rel="stylesheet" href="assets/system.css?v=20261006180606">
+<link rel="stylesheet" href="assets/app.css?v=20261006180606">
 <style>
   /* the floating "Ask" launcher sits over the bottom-right corner of the console; keep the last table row
      scrollable clear of it (--launch-clear is measured from the launcher once it mounts; 88px until then) */
@@ -24,32 +31,32 @@
 <div id="app">
   <aside id="rail" aria-label="Portal modules">
     <nav class="rail-nav" aria-label="Modules"></nav>
-    <div class="rail-foot"><b>Portfolio Resource Group</b> · working draft, Oct 2026<br><span data-rail-count>16 modules · 6 companies · 56 datasets</span><br><span class="dim">Public and licensed data · verify before use</span></div>
+    <div class="sys-src rail-foot"><b>Portfolio Resource Group</b> · working draft, October 2026<br><span data-rail-count>16 modules · 6 companies · 56 datasets</span><br><span class="dim">Public and licensed data · verify before use</span></div>
   </aside>
   <main id="main">
     <header id="topbar">
       <div class="crumb"></div>
-      <div class="view-tabs"></div>
+      <nav class="sys-subnav-links view-tabs" aria-label="Views"></nav>
       <div class="top-right">
-        <button id="search-btn" class="search-btn" type="button"><span aria-hidden="true">⌕</span> Search everything <kbd>⌘K</kbd></button>
-        <span class="live-pill" title="Live feeds: National Weather Service alerts and Open-Meteo forecasts"><span class="pulse"></span><span id="clock">—</span></span>
-        <button id="tour-btn" class="icon-btn" type="button" title="Play briefing" aria-label="Play briefing">▶</button>
-        <button id="insp-btn" class="icon-btn" type="button" title="Inspector" aria-label="Inspector">☰</button>
-        <button id="theme-btn" class="icon-btn" type="button" title="Toggle light or dark" aria-label="Toggle light or dark">◐</button>
+        <button id="search-btn" class="sys-btn sys-btn--secondary sys-btn--sm search-btn" type="button" aria-label="Search the portal"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg><span class="search-label">Search everything</span><span class="sys-kbd" aria-hidden="true">⌘K</span></button>
+        <span class="sys-chip live-pill" title="Live feeds: National Weather Service alerts and Open-Meteo forecasts"><span class="sys-dot sys-dot--live" aria-hidden="true"></span><span id="clock" class="sys-num">—</span></span>
+        <button id="tour-btn" class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon icon-btn" type="button" title="Play the briefing" aria-label="Play the briefing"></button>
+        <button id="insp-btn" class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon icon-btn" type="button" title="Inspector" aria-label="Inspector"></button>
+        <button id="theme-btn" class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon icon-btn" type="button" title="Switch to dark theme" aria-label="Switch to dark theme"></button>
       </div>
     </header>
     <section id="content"></section>
   </main>
-  <aside id="inspector"></aside>
+  <aside id="inspector" class="sys-card" aria-label="Inspector" aria-hidden="true"></aside>
 </div>
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261006155542';
-  import { App } from './assets/core.js?v=20261006155542';
-  import { modules } from './modules/registry.js?v=20261006155542';
-  import { enhance, retitle, viewTitle } from './modules/copy.js?v=20261006155542';
+  import { Frame } from './assets/frame.js?v=20261006180606';
+  import { App } from './assets/core.js?v=20261006180606';
+  import { modules } from './modules/registry.js?v=20261006180606';
+  import { enhance, retitle, viewTitle } from './modules/copy.js?v=20261006180606';
 
-  // 1 · shared frame strip above the rail and console (UNIFIED.md §8)
-  const frame = Frame.mount({ variant: 'app', theme: 'dark' });
+  // 1 · shared frame strip above the rail and console (UNIFIED.md §8); the theme is the visitor's saved choice (light by default)
+  const frame = Frame.mount({ variant: 'app', theme: document.documentElement.dataset.sysTheme === 'dark' ? 'dark' : 'light' });
 
   // 2 · copy safety net after every route render: plain English, est. badges
   const content = document.getElementById('content');
@@ -88,12 +95,12 @@
     const r = l.getBoundingClientRect(); if (!r.height) return;
     document.documentElement.style.setProperty('--launch-clear', `${Math.max(48, Math.ceil(innerHeight - r.top + 12))}px`);
   };
-  import('./assets/chat.js?v=20261006155542').then(({ Chat }) => {
+  import('./assets/chat.js?v=20261006180606').then(({ Chat }) => {
     frame.setChat(Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'auto' }));
     requestAnimationFrame(launchClear);
     addEventListener('resize', () => requestAnimationFrame(launchClear));
   });
-  import('./assets/counter.js?v=20261006155542').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; document.querySelector('#rail .rail-foot').before(slot); Counter.mount(slot, { theme: 'dark', compact: true, baseline: 'today', minDisplay: 100, caption: 'Left on the table so far today' }).then(() => Frame.humanize(slot)); });
+  import('./assets/counter.js?v=20261006180606').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; document.querySelector('#rail .rail-foot').before(slot); slot.className = 'sys-kpi'; Counter.mount(slot, { theme: document.documentElement.dataset.sysTheme === 'dark' ? 'dark' : 'light', compact: true, baseline: 'today', minDisplay: 100, caption: 'Left on the table so far today' }).then(() => Frame.humanize(slot)); });
 </script>
 </body>
 </html>

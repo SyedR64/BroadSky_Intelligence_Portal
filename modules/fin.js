@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261006155542';
+import * as Copy from './copy.js?v=20261006180606';
 /* ═══════════════════════════════════════════════════════════════════════════
    Filings & financials — portfolio-wide financial and regulatory intelligence.
    Broad Sky's own SEC filings (Form D / ADV), each platform's public
@@ -6,12 +6,12 @@ import * as Copy from './copy.js?v=20261006155542';
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const COS = [
-  { id: 'cet', ds: 'cet_filings', name: 'Commonwealth Electrical (CET)', short: 'CET', color: 'var(--c-cet)', ledger: /Commonwealth|\bCET\b/i, sector: 'commercial_electrical_energy' },
-  { id: 'pp', ds: 'pp_filings', name: 'Punctual Pros', short: 'PP', color: 'var(--c-pp)', ledger: /Punctual/i, sector: 'residential_home_services' },
-  { id: 'fl', ds: 'frontline_filings', name: 'Frontline Managed Services', short: 'FL', color: 'var(--c-fl)', ledger: /Frontline/i, sector: 'legal_bpo_managed_services' },
-  { id: 'ts', ds: 'thomas_filings', name: 'Thomas Scientific', short: 'TS', color: 'var(--c-ts)', ledger: /Thomas/i, sector: 'lab_distribution' },
-  { id: 'bpi', ds: 'bpi_filings', name: 'Bully Pulpit International', short: 'BPI', color: 'var(--c-bpi)', ledger: /Bully|\bBPI\b/i, sector: 'communications_agencies' },
-  { id: 'fh', ds: 'fairharbor_filings', name: 'Fair Harbor', short: 'FH', color: 'var(--c-fh)', ledger: /Fair Harbor/i, sector: 'apparel_dtc' },
+  { id: 'cet', ds: 'cet_filings', name: 'Commonwealth Electrical (CET)', short: 'CET', color: 'var(--co-cet)', ledger: /Commonwealth|\bCET\b/i, sector: 'commercial_electrical_energy' },
+  { id: 'pp', ds: 'pp_filings', name: 'Punctual Pros', short: 'PP', color: 'var(--co-pp)', ledger: /Punctual/i, sector: 'residential_home_services' },
+  { id: 'fl', ds: 'frontline_filings', name: 'Frontline Managed Services', short: 'FL', color: 'var(--co-fl)', ledger: /Frontline/i, sector: 'legal_bpo_managed_services' },
+  { id: 'ts', ds: 'thomas_filings', name: 'Thomas Scientific', short: 'TS', color: 'var(--co-ts)', ledger: /Thomas/i, sector: 'lab_distribution' },
+  { id: 'bpi', ds: 'bpi_filings', name: 'Bully Pulpit International', short: 'BPI', color: 'var(--co-bpi)', ledger: /Bully|\bBPI\b/i, sector: 'communications_agencies' },
+  { id: 'fh', ds: 'fairharbor_filings', name: 'Fair Harbor', short: 'FH', color: 'var(--co-fh)', ledger: /Fair Harbor/i, sector: 'apparel_dtc' },
 ];
 const RIVAL = { id: 'rival', name: 'Rival companies', short: 'Rival', color: 'var(--c-pe)' };
 const SECTORS = {
@@ -55,9 +55,9 @@ const NEXT_ACTION = {
 /* ── formatting helpers ─────────────────────────────────────────────────── */
 const pctF = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;
 const sPct = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${v > 0 ? '+' : ''}${fmt.num(v, d)}%`;
-const confColor = c => c === 'high' ? 'var(--green)' : c === 'medium' ? 'var(--amber)' : 'var(--dim)';
+const confColor = c => c === 'high' ? 'var(--sys-good)' : c === 'medium' ? 'var(--sys-warn)' : 'var(--sys-mute-2)';
 const confDot = c => `<i class="cdot" style="--cc:${confColor(c)}" title="${String(c || 'n/a').replace(/[^a-z/ -]/gi, '')} confidence"></i>`;
-const catLabel = c => String(c || 'other').replace(/_/g, ' ');
+const catLabel = c => Copy.category(c || 'other');
 const CAT_SHORT = { bdc_loan_schedule: 'BDC loans', sec_form_d: 'Form D', form_adv: 'ADV', sba_ppp: 'PPP', press_financial: 'Press', industry_benchmark: 'Benchmark', state_business_filing: 'State filing', ucc_lien: 'UCC', lender_press: 'Lender', fdd_item19: 'FDD 19', fdd_franchisee_list: 'FDD list', tax_or_assessment: 'Assessor', county_deed_or_mortgage: 'Deed', litigation: 'Litigation', osha_dol: 'OSHA', ranking_listing: 'Ranking', other: 'Other' };
 const catShort = c => CAT_SHORT[c] || catLabel(c);
 const dateKey = s => { const m = String(s || '').match(/(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?/); return m ? `${m[1]}-${m[2] || '01'}-${m[3] || '01'}` : ''; };
@@ -97,7 +97,7 @@ const KEY_MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 
 const humanKey = k => String(k).replace(/_usd(_k|_m|_thousands|_000s?)?$/i, '').replace(/_/g, ' ').replace(/\s+/g, ' ').trim()
   .replace(/\b((?:19|20)\d\d) (0[1-9]|1[0-2]) (0[1-9]|[12]\d|3[01])\b/g, (m, y, mo, d) => `${KEY_MON[+mo - 1]} ${+d}, ${y}`).replace(/\s*\bpct\b/g, '').replace(/\b(aum|gav|bsp|ebitda|sec|ppp|sba|ev|llc|lp)\b/gi, m => m.toUpperCase()).trim().replace(/^[a-z]/, c => c.toUpperCase());
 const kfSummary = (fmt, kf, n = 4) => flatKF(kf).filter(([k]) => !/note|mapping_basis|legal_entity|signer|related_person/i.test(k)).slice(0, n).map(([k, v]) => `${humanKey(k)}: ${kfVal(fmt, k, v)}`).join(' · ');
-const kfTable = (fmt, esc, kf) => { const rows = flatKF(kf); return rows.length ? `<table><tbody>${rows.map(([k, v]) => `<tr><td class="text-2">${esc(humanKey(k))}</td><td class="n">${esc(kfVal(fmt, k, v))}</td></tr>`).join('')}</tbody></table>` : '<span class="dim">—</span>'; };
+const kfTable = (fmt, esc, kf) => { const rows = flatKF(kf); return rows.length ? `<div class="sys-table-wrap"><table class="sys-table"><tbody>${rows.map(([k, v]) => `<tr><td class="text-2">${esc(humanKey(k))}</td><td class="sys-n n">${esc(kfVal(fmt, k, v))}</td></tr>`).join('')}</tbody></table></div>` : '<span class="dim">—</span>'; };
 const numKF = (kf, re, exclude) => flatKF(kf).filter(([k, v]) => re.test(k) && !(exclude && exclude.test(k))).flatMap(([k, v]) => Array.isArray(v) ? v : [v]).filter(v => typeof v === 'number' && !isNaN(v));
 /* scrub collection-tooling jargon out of analyst text, and clip on a word boundary */
 const clean = t => Copy.text(String(t ?? '')).replace(/Raise\s+CLAUDE_CODE_\w+,?\s*then\s+(\w)/gi, (m, c) => c.toUpperCase()).replace(/CLAUDE_CODE_\w+/g, 'research limits').replace(/\bweb[\s-]?search budget\b/gi, 'research budget').replace(/\s+for this session\b/gi, ' this cycle').replace(/\bthis session\b/gi, 'this cycle');
@@ -105,7 +105,7 @@ const clip = (t, n) => { const x = clean(t); if (x.length <= n) return x; const 
 const shortEst = s => String(s || '').replace(/\s*\([^)]*\)/g, '').split(/;\s/)[0].trim();
 
 function injectCss() {
-  if (!document.getElementById('css-fin')) { const l = document.createElement('link'); l.id = 'css-fin'; l.rel = 'stylesheet'; l.href = 'modules/fin.css?v=20261006155542'; document.head.appendChild(l); }
+  if (!document.getElementById('css-fin')) { const l = document.createElement('link'); l.id = 'css-fin'; l.rel = 'stylesheet'; l.href = 'modules/fin.css?v=20261006180606'; document.head.appendChild(l); }
 }
 
 /* ── data layer ─────────────────────────────────────────────────────────── */
@@ -261,14 +261,14 @@ async function portfolioView(ctx) {
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Portfolio financial picture',
     sub: `<b>So what:</b> six companies add up to roughly ${fmt.money(pfRev)} of revenue and ${fmt.money(pfEbitda)} of EBITDA (est., midpoints, current or pro forma)${biggest ? `; ${esc(biggest.co.name)} is the largest at ~${fmt.money(biggest.rev_sort)}` : ''}. Broad Sky Fund I has ${fundSold ? fmt.money(fundSold) : '—'} of commitments (Form D, ${esc(monLabel(capital?.as_of))}) plus ${fmt.money(vehEquity)} raised in deal SPVs. Every figure below comes from public records and is an estimate.`,
-    chips: `${fmt.chip(`${present.length} of ${COS.length} company datasets`, present.length < COS.length ? 'var(--amber)' : 'var(--green)')}${fmt.chip('Estimates, not audited', 'var(--amber)')}${fmt.chip('Operating view: no lender or equity marks', 'var(--green)')}${fmt.chip('As of Sept 2026', 'var(--c-fin)')}`,
-    actions: `<a class="btn sm" href="#/fin/deal">Deal team view (BSP only) →</a><a class="btn sm" href="#/fin/explorer">Filings explorer</a><a class="btn sm" href="#/fin/methods">Methods & gaps</a>`,
+    chips: `${fmt.chip(`${present.length} of ${COS.length} company datasets`, present.length < COS.length ? 'var(--sys-warn)' : 'var(--sys-good)')}${fmt.chip('Estimates, not audited', 'var(--sys-warn)')}${fmt.chip('Operating view: no lender or equity marks', 'var(--sys-good)')}${fmt.chip('As of Sept 2026', 'var(--c-fin)')}`,
+    actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/deal">Deal team view (BSP only) →</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/explorer">Filings explorer</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/methods">Methods & gaps</a>`,
   })}
   ${ui.kpis([
     { label: 'Portfolio revenue (est.)', value: pfRev ? fmt.money(pfRev) : '—', sub: `sum of midpoints · ${snap.filter(r => r.rev && isPF(r.rev)).length} pro forma`, color: 'var(--c-fin)' },
-    { label: 'Portfolio EBITDA (est.)', value: pfEbitda ? fmt.money(pfEbitda) : '—', sub: pfRev && pfEbitda ? `~${fmt.num(pfEbitda / pfRev * 100, 0)}% blended margin` : '', color: 'var(--green)' },
-    { label: 'Fund I commitments', value: fundSold ? fmt.money(fundSold) : '—', sub: `Form D ${esc(capital?.as_of || '')} · ${fmt.num(capital?.investors)} investors`, color: 'var(--c-bsp)' },
-    { label: 'Deal-SPV equity', value: fmt.money(vehEquity), sub: `${vehicles.length} Form D vehicles · not additive to Fund I`, color: 'var(--c-bsp)' },
+    { label: 'Portfolio EBITDA (est.)', value: pfEbitda ? fmt.money(pfEbitda) : '—', sub: pfRev && pfEbitda ? `~${fmt.num(pfEbitda / pfRev * 100, 0)}% blended margin` : '', color: 'var(--sys-good)' },
+    { label: 'Fund I commitments', value: fundSold ? fmt.money(fundSold) : '—', sub: `Form D ${esc(capital?.as_of || '')} · ${fmt.num(capital?.investors)} investors`, color: 'var(--sys-brand)' },
+    { label: 'Deal-SPV equity', value: fmt.money(vehEquity), sub: `${vehicles.length} Form D vehicles · not additive to Fund I`, color: 'var(--sys-brand)' },
     { label: 'Filings indexed', value: fmt.num(rows.length), sub: `${fmt.num(companyRows.length)} portfolio · ${D.rival ? `${fmt.num(rows.length - companyRows.length)} rival` : 'Competitor filings pending'}`, color: 'var(--c-fin)' },
     { label: 'Public comps tracked', value: nComps ? fmt.num(nComps) : '—', sub: comps ? `${Object.keys(comps?.meta?.sector_benchmarks || {}).length} sector benchmark sets` : 'Public comparables dataset pending', color: 'var(--c-pe)' },
   ])}
@@ -287,7 +287,7 @@ async function portfolioView(ctx) {
   ui.table(el.querySelector('#fin-snap'), {
     rows: snap, pageSize: 10, exportName: 'fin_portfolio_snapshot', rowKey: r => r.id, sortKey: 'revenue_est', onRow: r => openCompany(ctx, r.co, cos.find(x => x.co.id === r.co.id)?.d, D),
     columns: [
-      { key: 'company', label: 'Company', fmt: (v, r) => `<span class="row" style="gap:6px"><i class="fin-dot" style="--cc:${r.co.color}"></i><b>${esc(r.co.short)}</b></span>${r.missing ? '<div class="small" style="color:var(--amber)">dataset pending</div>' : ''}`, width: '70px' },
+      { key: 'company', label: 'Company', fmt: (v, r) => `<span class="row" style="gap:6px"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${r.co.color}"></i><b>${esc(r.co.short)}</b></span>${r.missing ? '<div class="small" style="color:var(--sys-warn-ink)">dataset pending</div>' : ''}`, width: '70px' },
       { key: 'bsp_equity_est', label: 'BSP equity (est.)', num: true, wrap: true, sort: byNum('equity'), fmt: (v, r) => `${r.eq.primary ? `<div class="est-cell" title="${esc(r.eq.label)}">${confDot(r.eq.e ? r.eq.e.confidence : 'high')}${esc(r.eq.primary)}</div>` : '<span class="dim">—</span>'}${r.eq.sub ? `<div class="small dim fin-sub">${esc(r.eq.sub)}</div>` : ''}` },
       { key: 'revenue_est', label: 'Revenue (current / PF)', num: true, wrap: true, sort: byNum('rev_sort'), fmt: (v, r) => `${estCellK(esc, fmt, r.rev, 'revenue')}${r.rev ? `<div class="small dim fin-sub">${esc(clip(r.rev.metric, 44))}</div>` : ''}` },
       { key: 'ebitda_est', label: 'EBITDA', num: true, wrap: true, sort: byNum('ebitda_sort'), fmt: (v, r) => `${estCellK(esc, fmt, r.ebitda, 'ebitda')}${r.ebitda ? `<div class="small dim fin-sub">${esc(clip(r.ebitda.metric, 44))}</div>` : ''}` },
@@ -308,35 +308,35 @@ async function portfolioView(ctx) {
 
   // company panels
   el.querySelector('#fin-cos').innerHTML = cos.map(({ co, d }) => {
-    if (!d) return ui.panel({ title: `<span class="fin-co-head"><i class="fin-dot" style="--cc:${co.color}"></i>${esc(co.name)}</span>`, sub: 'Filings dataset pending', body: `${ui.note(`<b>${esc(co.ds)}.json</b> is still being verified. Comps for ${esc(SECTORS[co.sector]?.label || '')} are live in <a href="#/fin/comps?sector=${co.sector}">Public comparables</a>.`, 'warn')}`, actions: `<a class="fin-link" href="#/${co.id}">Module →</a>` });
+    if (!d) return ui.panel({ title: `<span class="fin-co-head"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${co.color}"></i>${esc(co.name)}</span>`, sub: 'Filings dataset pending', body: `${ui.note(`<b>${esc(Copy.dataset(co.ds))}</b> is still being verified. Comps for ${esc(SECTORS[co.sector]?.label || '')} are live in <a href="#/fin/comps?sector=${co.sector}">Public comparables</a>.`, 'warn')}`, actions: `<a class="fin-link" href="#/${co.id}">Module →</a>` });
     const m = d.meta || {}; const est = toArr(m.estimate_table); const opEst = est.filter(e => !isSens(e));
     const cats = {}; (d.items || []).forEach(i => { cats[i.category] = (cats[i.category] || 0) + 1; });
     const pri = opEst.map((e, i) => ({ e, i, s: (/revenue|EBITDA|equity|headcount|employees|territor/i.test(e.metric) ? 2 : 0) + (e.confidence === 'high' ? 1 : 0) - (/payroll|per /i.test(e.metric) ? 1 : 0) })).sort((a, b) => b.s - a.s || a.i - b.i).slice(0, 5).sort((a, b) => a.i - b.i).map(x => x.e);
     const lead = opSegments(m.financial_picture)[0];
     return ui.panel({
-      title: `<span class="fin-co-head"><i class="fin-dot" style="--cc:${co.color}"></i>${esc(co.name)}</span>`,
+      title: `<span class="fin-co-head"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${co.color}"></i>${esc(co.name)}</span>`,
       sub: `${fmt.num((d.items || []).length)} records · ${fmt.num(opEst.length)} operating estimates · generated ${esc(m.generated || '')}`,
       actions: `<a class="fin-link" href="#/fin/explorer?company=${co.id}">Filings →</a>`,
       body: `<div class="fin-excerpt">${lead ? esc(sentences(lead, 2)) : '<span class="dim">Capital-structure narrative only: see the <a href="#/fin/deal">Deal team view</a>.</span>'}</div>
-        <table class="fin-mini"><tbody>${pri.map(e => `<tr title="${esc(Copy.text(e.basis || ''))}"><td class="m">${esc(e.metric)}</td><td class="v">${esc(shortEst(e.estimate).slice(0, 34))}</td><td class="c">${confDot(e.confidence)}</td></tr>`).join('') || '<tr><td>No estimates</td></tr>'}</tbody></table>
-        <div class="fin-chips">${Object.entries(cats).sort((a, b) => b[1] - a[1]).map(([c, n]) => `<a href="#/fin/explorer?company=${co.id}&category=${encodeURIComponent(c)}" style="text-decoration:none">${fmt.chip(`${catLabel(c)} ${n}`, co.color)}</a>`).join('')}</div>
-        <div class="row mt-8"><button class="btn xs" data-co="${co.id}">Operating estimates & gaps</button><a class="btn xs" href="#/${co.id}">Open ${esc(co.short)} module</a></div>`,
+        <div class="sys-table-wrap"><table class="sys-table fin-mini"><tbody>${pri.map(e => `<tr title="${esc(Copy.text(e.basis || ''))}"><td class="m">${esc(e.metric)}</td><td class="v">${esc(shortEst(e.estimate).slice(0, 34))}</td><td class="c">${confDot(e.confidence)}</td></tr>`).join('') || '<tr><td>No estimates</td></tr>'}</tbody></table></div>
+        <div class="sys-chips fin-chips">${Object.entries(cats).sort((a, b) => b[1] - a[1]).map(([c, n]) => `<a href="#/fin/explorer?company=${co.id}&category=${encodeURIComponent(c)}" style="text-decoration:none">${fmt.chip(`${catLabel(c)} ${n}`, co.color)}</a>`).join('')}</div>
+        <div class="row mt-8"><button class="sys-btn sys-btn--secondary sys-btn--sm btn xs" data-co="${co.id}">Operating estimates & gaps</button><a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/${co.id}">Open ${esc(co.short)} module</a></div>`,
       foot: ui.source(srcList(m).slice(0, 2).join(' · ').slice(0, 140) || 'SEC EDGAR, SBA PPP, state registries', null, m.generated),
     });
   }).join('');
   el.querySelectorAll('[data-co]').forEach(b => b.onclick = () => { const x = cos.find(c => c.co.id === b.dataset.co); openCompany(ctx, x.co, x.d, D); });
 
   // ledger chart (Form D amounts sold are public and already on EDGAR)
-  const led = [...(fundSold ? [{ label: 'Broad Sky Partners, LP (Fund I)', value: fundSold, color: 'var(--c-bsp)' }] : []), ...vehicles.map(v => ({ label: `${v.vehicle}`, value: v.sold_usd, color: (COS.find(c => c.ledger.test(v.company)) || {}).color }))].sort((a, b) => b.value - a.value);
+  const led = [...(fundSold ? [{ label: 'Broad Sky Partners, LP (Fund I)', value: fundSold, color: 'var(--sys-brand)' }] : []), ...vehicles.map(v => ({ label: `${v.vehicle}`, value: v.sold_usd, color: (COS.find(c => c.ledger.test(v.company)) || {}).color }))].sort((a, b) => b.value - a.value);
   const fhRaise = (capital?.deal_vehicles || []).find(v => /issuer Form D/i.test(v.vehicle));
-  el.querySelector('#fin-ledger').innerHTML = led.length ? `${charts.hbar(led, { fmt: v => fmt.money(v), labelW: 170 })}<div class="legend mt-12">${COS.filter(c => vehicles.some(v => c.ledger.test(v.company))).map(c => `<span><i style="background:${c.color}"></i>${esc(c.short)}</span>`).join('')}<span><i style="background:var(--c-bsp)"></i>Fund I</span></div>${fhRaise ? `<div class="small dim mt-8">Fair Harbor: issuer-level Form D ${fmt.money(fhRaise.sold_usd)} sold (${esc(fhRaise.first_sale || '')}) alongside the BSP round — not a BSP vehicle.</div>` : ''}<div class="small dim mt-8">No Punctual Pros SPV exists on EDGAR: PP was funded from Fund I alone.</div>` : ui.note('Broad Sky firm profile ledger not available yet.', 'warn');
+  el.querySelector('#fin-ledger').innerHTML = led.length ? `${charts.hbar(led, { fmt: v => fmt.money(v), labelW: 170 })}<div class="sys-chips legend mt-12">${COS.filter(c => vehicles.some(v => c.ledger.test(v.company))).map(c => `<span><i style="background:${c.color}"></i>${esc(c.short)}</span>`).join('')}<span><i style="background:var(--sys-brand)"></i>Fund I</span></div>${fhRaise ? `<div class="small dim mt-8">Fair Harbor: issuer-level Form D ${fmt.money(fhRaise.sold_usd)} sold (${esc(fhRaise.first_sale || '')}) alongside the BSP round — not a BSP vehicle.</div>` : ''}<div class="small dim mt-8">No Punctual Pros SPV exists on EDGAR: PP was funded from Fund I alone.</div>` : ui.note('Broad Sky firm profile ledger not available yet.', 'warn');
 
   // actions: first queued pull per company that is not about marks or debt
   const acts = [];
   for (const { co, d } of cos) {
     const np = toArr(d?.meta?.next_pulls).map(clean).find(t => !SENS_TEXT.test(t));
     if (np) acts.push({ chip: co.short, color: co.color, text: clip(np, 260) });
-    else if (!d) acts.push({ chip: co.short, color: co.color, text: `Complete ${co.ds}: issuer Form D, state filings and benchmarks against the ${SECTORS[co.sector]?.label || ''} comp set.` });
+    else if (!d) acts.push({ chip: co.short, color: co.color, text: `Complete ${Copy.dataset(co.ds)}: issuer Form D, state filings and benchmarks against the ${SECTORS[co.sector]?.label || ''} comp set.` });
   }
   el.querySelector('#fin-acts').innerHTML = actionList(ctx, acts);
 
@@ -355,7 +355,7 @@ function openCompany(ctx, co, d, D, deal = false) {
     title: esc(co.name), color: co.color, sub: `${fmt.num((d.items || []).length)} records · generated ${esc(m.generated || '')}${deal ? ' · <b>Deal team (BSP only)</b>' : ''}`,
     sections: [
       { label: deal ? 'Financial picture' : 'Financial picture (operating extract)', html: `<div class="small text-2" style="line-height:1.55">${segs.map(s => `<p class="mb-8">${esc(clean(s))}</p>`).join('') || '—'}</div>` },
-      { label: deal ? 'Estimate table' : 'Operating estimates', html: `<div class="fin-insp"><table><thead><tr><th>Metric</th><th class="n">Estimate</th></tr></thead><tbody>${est.map(e => `<tr title="${esc(Copy.text(e.basis || ''))}"><td>${confDot(e.confidence)}${esc(e.metric)}<div class="dim small">${esc(e.basis || '')}</div></td><td class="n">${esc(e.estimate)}</td></tr>`).join('')}</tbody></table></div>${nHidden ? `<div class="small dim mt-8">${fmt.num(nHidden)} valuation, debt and mark rows are kept in the <a href="#/fin/deal">Deal team view</a>.</div>` : ''}` },
+      { label: deal ? 'Estimate table' : 'Operating estimates', html: `<div class="fin-insp sys-table-wrap"><table class="sys-table"><thead><tr><th>Metric</th><th class="sys-n n">Estimate</th></tr></thead><tbody>${est.map(e => `<tr title="${esc(Copy.text(e.basis || ''))}"><td>${confDot(e.confidence)}${esc(e.metric)}<div class="dim small">${esc(e.basis || '')}</div></td><td class="sys-n n">${esc(e.estimate)}</td></tr>`).join('')}</tbody></table></div>${nHidden ? `<div class="small dim mt-8">${fmt.num(nHidden)} valuation, debt and mark rows are kept in the <a href="#/fin/deal">Deal team view</a>.</div>` : ''}` },
       { label: 'Data gaps', html: `<ul class="prose small">${toArr(m.data_gaps).map(clean).filter(g => deal || !SENS_TEXT.test(g)).map(g => `<li>${esc(g)}</li>`).join('') || '<li>—</li>'}</ul>` },
       { label: 'Next action', html: `<div class="small text-2">${esc(pull || 'Commission a PitchBook / Capital IQ pull for the deal record.')}</div>` },
       { label: 'Sources', html: `<div class="small dim">${esc(srcList(m).join(' · ') || asText(m.method).slice(0, 400))}</div>` },
@@ -388,10 +388,10 @@ function maturityOf(co, d) {
   return out.sort((a, b) => b.date.localeCompare(a.date))[0] || null;
 }
 function exitFlag(held, mo) {
-  if (mo != null && mo < 24) return { t: `Debt matures in ${Math.max(0, Math.round(mo))} mo: refinance-or-sell decision`, c: 'var(--red)', k: 0 };
-  if (held != null && held >= 4) return { t: 'In exit window (4+ yr hold)', c: 'var(--amber)', k: 1 };
-  if (held != null && held >= 3) return { t: 'Exit prep (S+H sold at 3.7 yrs)', c: 'var(--c-bsp)', k: 2 };
-  return { t: 'Build: add-ons and integration', c: 'var(--green)', k: 3 };
+  if (mo != null && mo < 24) return { t: `Debt matures in ${Math.max(0, Math.round(mo))} mo: refinance-or-sell decision`, c: 'var(--sys-bad)', k: 0 };
+  if (held != null && held >= 4) return { t: 'In exit window (4+ yr hold)', c: 'var(--sys-warn)', k: 1 };
+  if (held != null && held >= 3) return { t: 'Exit prep (S+H sold at 3.7 yrs)', c: 'var(--sys-brand)', k: 2 };
+  return { t: 'Build: add-ons and integration', c: 'var(--sys-good)', k: 3 };
 }
 const DEAL_ACTION = {
   ts: r => `Unitranche matures ${r.matLabel || 'Dec 2027'}: fix a refinance-vs-sale decision date (Q1 2027). The refinancing case rests on target-account revenue, so make share-of-wallet growth the board's first KPI.`,
@@ -443,15 +443,15 @@ async function dealView(ctx) {
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Value and exit scoreboard',
     sub: `<b>So what:</b> ${urgent.length ? `${esc(urgent.map(r => r.co.short).join(' and '))} need${urgent.length === 1 ? 's' : ''} an exit or refinancing decision in the next 12–18 months` : 'No portfolio company is yet in its exit window'}${nextMat ? `; ${esc(nextMat.co.short)}'s debt matures ${esc(nextMat.matLabel)} (${fmt.num(nextMat.mo, 0)} months)` : ''}. Average hold is ${fmt.num(avgHold, 1)} years against the Smith + Howard template exit at ${fmt.num(tplHeld, 1)} years with ${TEMPLATE_EXIT.addOns} add-ons. All values are public-record estimates.`,
-    chips: `${fmt.chip('BSP only · do not forward to portfolio management', 'var(--red)')}${fmt.chip('Estimates, not audited', 'var(--amber)')}${fmt.chip('As of Sept 2026', 'var(--c-fin)')}`,
-    actions: `<a class="btn sm" href="#/fin/portfolio">← Operating view</a><a class="btn sm" href="#/fin/methods">Methods & gaps</a>`,
+    chips: `${fmt.chip('BSP only · do not forward to portfolio management', 'var(--sys-bad)')}${fmt.chip('Estimates, not audited', 'var(--sys-warn)')}${fmt.chip('As of Sept 2026', 'var(--c-fin)')}`,
+    actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/portfolio">← Operating view</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/methods">Methods & gaps</a>`,
   })}
   ${ui.kpis([
-    { label: 'Average hold', value: `${fmt.num(avgHold, 1)} yrs`, sub: `S+H template exit: ${fmt.num(tplHeld, 1)} yrs`, color: 'var(--c-bsp)' },
-    { label: 'In exit window', value: fmt.num(inWindow.length), sub: inWindow.length ? esc(inWindow.map(r => `${r.co.short} ${fmt.num(r.held, 1)}y`).join(' · ')) : 'none held 4+ yrs', color: 'var(--amber)' },
-    { label: 'Nearest maturity', value: nextMat ? esc(nextMat.matLabel) : '—', sub: nextMat ? `${esc(nextMat.co.short)} · ${fmt.num(nextMat.mo, 0)} months` : 'no maturities disclosed', color: 'var(--red)' },
-    { label: 'Lowest lender mark', value: lowMark ? `${fmt.num(lowMark.lm.v, 1)}%` : '—', sub: lowMark ? `${esc(lowMark.co.short)} · % of par · ${esc(fmt.date(lowMark.lm.date))}` : '', color: 'var(--red)' },
-    { label: 'Fund I gross mark', value: fundGav && fundSold ? `${fmt.num(fundGav / fundSold, 2)}x` : '—', sub: fundGav ? `${fmt.money(fundGav)} GAV (ADV) vs ${fmt.money(fundSold)} sold` : 'Form ADV not loaded', color: 'var(--green)' },
+    { label: 'Average hold', value: `${fmt.num(avgHold, 1)} yrs`, sub: `S+H template exit: ${fmt.num(tplHeld, 1)} yrs`, color: 'var(--sys-brand)' },
+    { label: 'In exit window', value: fmt.num(inWindow.length), sub: inWindow.length ? esc(inWindow.map(r => `${r.co.short} ${fmt.num(r.held, 1)}y`).join(' · ')) : 'none held 4+ yrs', color: 'var(--sys-warn)' },
+    { label: 'Nearest maturity', value: nextMat ? esc(nextMat.matLabel) : '—', sub: nextMat ? `${esc(nextMat.co.short)} · ${fmt.num(nextMat.mo, 0)} months` : 'no maturities disclosed', color: 'var(--sys-bad)' },
+    { label: 'Lowest lender mark', value: lowMark ? `${fmt.num(lowMark.lm.v, 1)}%` : '—', sub: lowMark ? `${esc(lowMark.co.short)} · % of par · ${esc(fmt.date(lowMark.lm.date))}` : '', color: 'var(--sys-bad)' },
+    { label: 'Fund I gross mark', value: fundGav && fundSold ? `${fmt.num(fundGav / fundSold, 2)}x` : '—', sub: fundGav ? `${fmt.money(fundGav)} GAV (ADV) vs ${fmt.money(fundSold)} sold` : 'Form ADV not loaded', color: 'var(--sys-good)' },
   ])}
   <div class="mt-12">${ui.panel({ title: 'Value & exit scoreboard', sub: 'One row per company · sorted by exit urgency · equity = fund + co-invest estimate · ranges are est. with confidence dot · click a row for the full estimate table and filings', body: '<div id="dl-board"></div>', foot: ui.source('Company public filings (estimate tables, BDC schedules) · Broad Sky firm profile entry dates · SEC Form D / ADV', 'https://www.sec.gov/cgi-bin/browse-edgar?company=BSP-&type=D', 'Sept 2026') })}</div>
   <div class="grid grid-2 mt-12">
@@ -465,35 +465,35 @@ async function dealView(ctx) {
   ui.table(el.querySelector('#dl-board'), {
     rows: board, pageSize: 10, sortKey: 'exit_flag', sortDir: 1, exportName: 'bsp_value_exit_scoreboard', rowKey: r => r.id, onRow: r => openCompany(ctx, r.co, r.d, D, true),
     columns: [
-      { key: 'company', label: 'Company', fmt: (v, r) => `<span class="row" style="gap:6px"><i class="fin-dot" style="--cc:${r.co.color}"></i><b>${esc(r.co.short)}</b></span>`, width: '64px' },
+      { key: 'company', label: 'Company', fmt: (v, r) => `<span class="row" style="gap:6px"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${r.co.color}"></i><b>${esc(r.co.short)}</b></span>`, width: '64px' },
       { key: 'held_years', label: 'Held', num: true, fmt: (v, r) => v === '' ? '—' : `${fmt.num(v, 1)} yrs<div class="small dim">${esc(r.entryLabel)} · ${fmt.num(r.addOns)} add-on${r.addOns === 1 ? '' : 's'}</div>`, width: '96px' },
       { key: 'bsp_equity_est', label: 'BSP equity', num: true, wrap: true, width: '150px', sort: byNum('equity'), fmt: (v, r) => `${r.eq.primary ? `<div class="est-cell" title="${esc(r.eq.label)}">${confDot(r.eq.e ? r.eq.e.confidence : 'high')}${esc(r.eq.primary)}</div>` : '—'}${r.eq.sub ? `<div class="small dim fin-sub">${esc(r.eq.sub)}</div>` : ''}` },
       { key: 'entry_ev_est', label: 'Entry EV', num: true, wrap: true, sort: byNum('ev_sort'), fmt: (v, r) => estCellK(esc, fmt, r.ev) },
       { key: 'ebitda_est', label: 'EBITDA now', num: true, wrap: true, sort: byNum('ebitda_sort'), fmt: (v, r) => estCellK(esc, fmt, r.ebitda, 'ebitda') },
       { key: 'senior_debt_est', label: 'Senior debt', num: true, wrap: true, sort: byNum('debt_sort'), fmt: (v, r) => `${estCellK(esc, fmt, r.debt)}${r.lev ? `<div class="small dim fin-sub">lev. ${esc(shortEst(r.lev.estimate))}</div>` : ''}` },
-      { key: 'maturity', label: 'Maturity', fmt: (v, r) => r.mat ? `<span style="color:${r.mo != null && r.mo < 24 ? 'var(--red)' : 'var(--text-2)'}">${esc(r.matLabel)}</span><div class="small dim">${r.mo != null ? `${fmt.num(r.mo, 0)} mo` : ''}</div>` : '<span class="dim">n/d</span>', width: '84px' },
-      { key: 'sponsor_marks', label: 'Latest mark', wrap: true, sort: byNum('mark_sort'), fmt: (v, r) => `${r.lm ? `<div style="color:${r.lm.v < 90 ? 'var(--red)' : r.lm.v < 97 ? 'var(--amber)' : 'var(--green)'}">${fmt.num(r.lm.v, 1)}% of par</div>` : ''}${r.sm.map(e => `<div class="small text-2" title="${esc(`${e.metric}: ${e.estimate}`)}">${esc(shortEst(e.estimate))} <span class="dim">${esc(markLabel(e.metric))}</span></div>`).join('')}${!r.lm && !r.sm.length ? '<span class="dim">none public</span>' : ''}` },
+      { key: 'maturity', label: 'Maturity', fmt: (v, r) => r.mat ? `<span style="color:${r.mo != null && r.mo < 24 ? 'var(--sys-bad-ink)' : 'var(--sys-ink-2)'}">${esc(r.matLabel)}</span><div class="small dim">${r.mo != null ? `${fmt.num(r.mo, 0)} mo` : ''}</div>` : '<span class="dim">n/d</span>', width: '84px' },
+      { key: 'sponsor_marks', label: 'Latest mark', wrap: true, sort: byNum('mark_sort'), fmt: (v, r) => `${r.lm ? `<div style="color:${r.lm.v < 90 ? 'var(--sys-bad-ink)' : r.lm.v < 97 ? 'var(--sys-warn-ink)' : 'var(--sys-good-ink)'}">${fmt.num(r.lm.v, 1)}% of par</div>` : ''}${r.sm.map(e => `<div class="small text-2" title="${esc(`${e.metric}: ${e.estimate}`)}">${esc(shortEst(e.estimate))} <span class="dim">${esc(markLabel(e.metric))}</span></div>`).join('')}${!r.lm && !r.sm.length ? '<span class="dim">none public</span>' : ''}` },
       { key: 'exit_flag', label: 'Exit window', wrap: true, sort: byNum('flag_sort'), fmt: (v, r) => fmt.chip(r.flag.t, r.flag.c) },
       { key: 'next_action', label: 'Next action', wrap: true, width: '230px', fmt: v => `<span class="small text-2">${esc(v)}</span>` },
     ],
   });
 
   // hold bars incl. template
-  const hb = [...holds.map(r => ({ label: `${r.co.short} · ${monLabel(r.entry)}`, value: +r.held.toFixed(2), color: r.co.color })), { label: `${TEMPLATE_EXIT.name} (exited)`, value: +tplHeld.toFixed(2), color: 'var(--c-bsp)' }].sort((a, b) => b.value - a.value);
+  const hb = [...holds.map(r => ({ label: `${r.co.short} · ${monLabel(r.entry)}`, value: +r.held.toFixed(2), color: r.co.color })), { label: `${TEMPLATE_EXIT.name} (exited)`, value: +tplHeld.toFixed(2), color: 'var(--sys-brand)' }].sort((a, b) => b.value - a.value);
   el.querySelector('#dl-hold').innerHTML = `${charts.hbar(hb, { fmt: v => `${fmt.num(v, 1)} yrs`, labelW: 170 })}<div class="small dim mt-8">${esc(TEMPLATE_EXIT.name)}: ${TEMPLATE_EXIT.addOns} add-ons, ${esc(TEMPLATE_EXIT.note)}. Add-ons to date: ${board.map(r => `${esc(r.co.short)} ${fmt.num(r.addOns)}`).join(' · ')}.</div>`;
 
   // marks list
   const mk = [];
   for (const r of board) {
-    if (r.lm) mk.push({ r, t: `Lender mark ${fmt.num(r.lm.v, 1)}% of par`, s: `${r.lm.item.filer_or_source_agency || r.lm.item.title || ''} · ${r.lm.item.filed_or_dated || ''}`, url: r.lm.item.source_url, c: r.lm.v < 90 ? 'var(--red)' : 'var(--amber)' });
-    r.sm.forEach(e => mk.push({ r, t: `${e.metric}: ${e.estimate}`, s: e.basis || '', c: /~0|≤1%|write/i.test(e.estimate) ? 'var(--red)' : 'var(--green)' }));
+    if (r.lm) mk.push({ r, t: `Lender mark ${fmt.num(r.lm.v, 1)}% of par`, s: `${r.lm.item.filer_or_source_agency || r.lm.item.title || ''} · ${r.lm.item.filed_or_dated || ''}`, url: r.lm.item.source_url, c: r.lm.v < 90 ? 'var(--sys-bad-ink)' : 'var(--sys-warn-ink)' });
+    r.sm.forEach(e => mk.push({ r, t: `${e.metric}: ${e.estimate}`, s: e.basis || '', c: /~0|≤1%|write/i.test(e.estimate) ? 'var(--sys-bad-ink)' : 'var(--sys-good-ink)' }));
   }
   el.querySelector('#dl-marks').innerHTML = mk.length ? mk.map(x => `<div class="sig">${fmt.chip(x.r.co.short, x.r.co.color)}<div class="grow"><div class="t" style="color:${x.c}">${esc(x.t)}</div><div class="small dim">${esc(clip(x.s, 200))}${x.url ? ` · ${fmt.link(x.url, 'Source ↗')}` : ''}</div></div></div>`).join('') : ui.empty('No public marks found');
 
   vehiclesTable(ctx, el.querySelector('#fin-veh'), rows);
 
   const acts = board.slice().sort((a, b) => a.flag.k - b.flag.k || (b.held || 0) - (a.held || 0)).map(r => ({ chip: r.co.short, color: r.co.color, text: r.action }));
-  if (fundGav) acts.push({ chip: 'BSP', color: 'var(--c-bsp)', text: `Watch the Mar 31 Form ADV amendment: Fund I gross assets (${fmt.money(fundGav)}) and any new Fund II vehicle are the cleanest public read on marks and fundraising.` });
+  if (fundGav) acts.push({ chip: 'BSP', color: 'var(--sys-brand)', text: `Watch the Mar 31 Form ADV amendment: Fund I gross assets (${fmt.money(fundGav)}) and any new Fund II vehicle are the cleanest public read on marks and fundraising.` });
   el.querySelector('#dl-acts').innerHTML = actionList(ctx, acts);
 }
 
@@ -516,7 +516,7 @@ function vehiclesTable(ctx, host, rows) {
     rows: vrows, pageSize: 12, exportName: 'bsp_form_d_adv_records', sortKey: '_date', rowKey: r => r._key, onRow: r => openItem(ctx, r),
     columns: [
       { key: 'entity', label: 'Entity', wrap: true, width: '300px', fmt: (v, r) => `<b>${esc(String(v).slice(0, 80))}</b><div class="small dim">${esc(String(r.title || '').slice(0, 90))}</div>` },
-      { key: '_bsp', label: 'Owner', fmt: (v, r) => v ? fmt.chip('BSP', 'var(--c-bsp)') : fmt.chip('3rd party', 'var(--muted)') },
+      { key: '_bsp', label: 'Owner', fmt: (v, r) => v ? fmt.chip('BSP', 'var(--sys-brand)') : fmt.chip('3rd party', 'var(--sys-mute)') },
       { key: 'category', label: 'Form', fmt: v => v === 'form_adv' ? 'ADV' : 'D' },
       { key: '_offering', label: 'Offering', num: true, fmt: v => typeof v === 'number' ? fmt.money(v) : esc(v ?? '—') },
       { key: '_headline', label: 'Sold / GAV', num: true, fmt: (v, r) => v == null ? '—' : `${fmt.money(v)}<span class="dim small"> ${r._hlKind}</span>` },
@@ -546,14 +546,14 @@ async function explorerView(ctx) {
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Filings explorer',
     sub: `<b>So what:</b> ${fmt.num(rows.length)} primary records across ${groups.length} datasets — ${fmt.num(Math.round(hi / rows.length * 100))}% rated high confidence. BDC loan schedules and Form D filings carry the hard numbers; PPP, FDD and state filings anchor pre-deal scale. Filter, open a record for its key figures, and export.`,
-    chips: missing.length ? fmt.chip(`Pending: ${missing.join(', ')}`, 'var(--amber)') : '',
+    chips: missing.length ? fmt.chip(`Pending: ${missing.join(', ')}`, 'var(--sys-warn)') : '',
   })}
   ${ui.kpis([
     { label: 'Records', value: fmt.num(rows.length), sub: `${groups.length} datasets`, color: 'var(--c-fin)' },
-    { label: 'High confidence', value: `${fmt.num(Math.round(hi / rows.length * 100))}%`, sub: `${fmt.num(hi)} records`, color: 'var(--green)' },
+    { label: 'High confidence', value: `${fmt.num(Math.round(hi / rows.length * 100))}%`, sub: `${fmt.num(hi)} records`, color: 'var(--sys-good)' },
     { label: 'Categories', value: fmt.num(cats.length), sub: `top: ${esc(catLabel(cats[0]))}`, color: 'var(--c-pe)' },
-    { label: 'BDC / lender lines', value: fmt.num(rows.filter(r => /bdc_loan_schedule|lender_press/.test(r._cat)).length), sub: 'debt marks & pricing', color: 'var(--c-ts)' },
-    { label: 'Latest record', value: recent[0] ? fmt.dateShort(recent[0]._date) : '—', sub: recent[0] ? esc(`${recent[0]._coName} · ${catLabel(recent[0]._cat)}`) : '', color: 'var(--c-bsp)' },
+    { label: 'BDC / lender lines', value: fmt.num(rows.filter(r => /bdc_loan_schedule|lender_press/.test(r._cat)).length), sub: 'debt marks & pricing', color: 'var(--co-ts)' },
+    { label: 'Latest record', value: recent[0] ? fmt.dateShort(recent[0]._date) : '—', sub: recent[0] ? esc(`${recent[0]._coName} · ${catLabel(recent[0]._cat)}`) : '', color: 'var(--sys-brand)' },
   ])}
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Coverage matrix', sub: 'Records by dataset × category — where the evidence is thick and where it is thin', body: charts.heatgrid(groups.map(g => g.short), topCats.map(catShort), groups.map(g => topCats.map(c => rows.filter(r => r._co === g.id && r._cat === c).length || null)), { fmt: v => v ?? '', color: '139,211,255' }), foot: ui.source('Company public filings and competitor filings', null, 'Sept 2026') })}
@@ -591,10 +591,10 @@ async function explorerView(ctx) {
   apply(f.state);
 
   const acts = [
-    { chip: 'BDC', color: 'var(--c-ts)', text: `Diary the next BDC 10-Q cycle (early Nov 2026) for the ${rows.filter(r => r._cat === 'bdc_loan_schedule' && r._co !== 'rival').length} portfolio and ${rows.filter(r => r._cat === 'bdc_loan_schedule' && r._co === 'rival').length} rival loan lines: marks, PIK toggles, non-accruals.` },
-    { chip: 'Form D', color: 'var(--c-bsp)', text: 'Set an EDGAR alert on "BSP-" and "Broad Sky" Form D filings: a new SPV is the earliest public tell of a new company or add-on equity raise.' },
-    { chip: 'UCC', color: 'var(--amber)', text: `Run UCC-1 searches in MA, CT, PA, NJ, DE and MO to identify agent banks where no BDC line exists (${rows.filter(r => r._cat === 'ucc_lien').length} lien records found so far).` },
-    { chip: 'PPP', color: 'var(--c-pp)', text: `Use the ${rows.filter(r => r._cat === 'sba_ppp').length} PPP records as pre-deal payroll anchors and compare them with current headcount to size organic growth since 2020.` },
+    { chip: 'BDC', color: 'var(--co-ts)', text: `Diary the next BDC 10-Q cycle (early Nov 2026) for the ${rows.filter(r => r._cat === 'bdc_loan_schedule' && r._co !== 'rival').length} portfolio and ${rows.filter(r => r._cat === 'bdc_loan_schedule' && r._co === 'rival').length} rival loan lines: marks, PIK toggles, non-accruals.` },
+    { chip: 'Form D', color: 'var(--sys-brand)', text: 'Set an EDGAR alert on "BSP-" and "Broad Sky" Form D filings: a new SPV is the earliest public tell of a new company or add-on equity raise.' },
+    { chip: 'UCC', color: 'var(--sys-warn)', text: `Run UCC-1 searches in MA, CT, PA, NJ, DE and MO to identify agent banks where no BDC line exists (${rows.filter(r => r._cat === 'ucc_lien').length} lien records found so far).` },
+    { chip: 'PPP', color: 'var(--co-pp)', text: `Use the ${rows.filter(r => r._cat === 'sba_ppp').length} PPP records as pre-deal payroll anchors and compare them with current headcount to size organic growth since 2020.` },
   ];
   el.querySelector('#fx-acts').innerHTML = actionList(ctx, acts);
   app.index(rows.slice(0, 300).map(r => ({ label: `${r.entity}`.slice(0, 80), sub: `${r._coName} · ${catLabel(r._cat)} · ${r.filed_or_dated || ''}`, href: `#/fin/explorer?q=${encodeURIComponent(String(r.entity || '').slice(0, 30))}`, kind: 'Filing', color: 'var(--c-fin)' })));
@@ -611,7 +611,7 @@ function scatter(ctx, comps, meds, onPick) {
   const gy = [-10, 0, 10, 20, 30].map(v => `<g class="g"><line x1="${pl}" x2="${W - pr}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${pl - 5}" y="${Y(v) + 3}" text-anchor="end">${v}%</text></g>`).join('');
   const md = meds.g != null && meds.m != null ? `<g class="md"><line x1="${X(meds.g)}" x2="${X(meds.g)}" y1="${pt}" y2="${H - pb}"/><line x1="${pl}" x2="${W - pr}" y1="${Y(meds.m)}" y2="${Y(meds.m)}"/></g>` : '';
   const pts = comps.filter(c => c.revenue_growth_latest_pct != null && c.ebitda_margin_latest_pct != null).map(c => {
-    const col = coById(SECTORS[c.sector_tag]?.co)?.color || 'var(--accent)';
+    const col = coById(SECTORS[c.sector_tag]?.co)?.color || 'var(--sys-info)';
     const out = c.ebitda_margin_latest_pct < ymin || c.revenue_growth_latest_pct < xmin || c.revenue_growth_latest_pct > xmax || c.ebitda_margin_latest_pct > ymax;
     return `<g data-t="${esc(c.ticker)}"><circle cx="${X(c.revenue_growth_latest_pct)}" cy="${Y(c.ebitda_margin_latest_pct)}" r="5" style="fill:${col}"><title>${esc(c.ticker)} · ${esc(c.company)}: growth ${sPct(fmt, c.revenue_growth_latest_pct)}, EBITDA margin ${pctF(fmt, c.ebitda_margin_latest_pct)}${out ? ' (off-scale, clamped)' : ''}</title></circle><text class="lbl" x="${X(c.revenue_growth_latest_pct) + 7}" y="${Y(c.ebitda_margin_latest_pct) + 3}">${esc(c.ticker)}${out ? '*' : ''}</text></g>`;
   }).join('');
@@ -634,18 +634,18 @@ async function compsView(ctx) {
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Public comparables',
     sub: `<b>So what:</b> ${esc(sentences(pc.meta?.financial_picture, 2))}`,
-    chips: `${fmt.chip(`${items.length} listed peers`, 'var(--c-fin)')}${fmt.chip('SEC XBRL companyfacts', 'var(--muted)')}${fmt.chip('EBITDA = op. income + D&A (not adjusted)', 'var(--amber)')}`,
+    chips: `${fmt.chip(`${items.length} listed peers`, 'var(--c-fin)')}${fmt.chip('SEC XBRL companyfacts', 'var(--sys-mute)')}${fmt.chip('EBITDA = op. income + D&A (not adjusted)', 'var(--sys-warn)')}`,
   })}
   ${ui.kpis([
     { label: 'Comps tracked', value: fmt.num(items.length), sub: `${Object.keys(bm).length} sectors · FY2023–latest`, color: 'var(--c-fin)' },
-    { label: 'Median revenue growth', value: sPct(fmt, allG), sub: 'latest FY, all comps', color: 'var(--green)' },
-    { label: 'Median EBITDA margin', value: pctF(fmt, allM), sub: `op. margin ${pctF(fmt, allO)}`, color: 'var(--c-ts)' },
-    { label: 'Fastest sector', value: fastSector ? sPct(fmt, fastSector[1].median_revenue_growth_latest_pct) : '—', sub: fastSector ? esc(SECTORS[fastSector[0]]?.label || fastSector[0]) : '', color: 'var(--c-cet)' },
+    { label: 'Median revenue growth', value: sPct(fmt, allG), sub: 'latest FY, all comps', color: 'var(--sys-good)' },
+    { label: 'Median EBITDA margin', value: pctF(fmt, allM), sub: `op. margin ${pctF(fmt, allO)}`, color: 'var(--co-ts)' },
+    { label: 'Fastest sector', value: fastSector ? sPct(fmt, fastSector[1].median_revenue_growth_latest_pct) : '—', sub: fastSector ? esc(SECTORS[fastSector[0]]?.label || fastSector[0]) : '', color: 'var(--co-cet)' },
     { label: 'Fastest grower', value: best ? esc(best.ticker) : '—', sub: best ? `${sPct(fmt, best.revenue_growth_latest_pct)} · ${esc(best._sector)}` : '', color: 'var(--c-pe)' },
   ])}
   <div class="mt-12" id="cp-f"></div>
   <div class="grid grid-main">
-    ${ui.panel({ title: 'Growth vs EBITDA margin', sub: 'Latest FY · colour = BSP company benchmarked · dashed = median of selection · * = off-scale, clamped · click a dot', body: '<div id="cp-sc"></div><div class="legend mt-8" id="cp-leg"></div>', foot: ui.source('SEC XBRL companyfacts', 'https://data.sec.gov/api/xbrl/companyfacts/', pc.meta?.generated) })}
+    ${ui.panel({ title: 'Growth vs EBITDA margin', sub: 'Latest FY · colour = BSP company benchmarked · dashed = median of selection · * = off-scale, clamped · click a dot', body: '<div id="cp-sc"></div><div class="sys-chips legend mt-8" id="cp-leg"></div>', foot: ui.source('SEC XBRL companyfacts', 'https://data.sec.gov/api/xbrl/companyfacts/', pc.meta?.generated) })}
     ${ui.panel({ title: 'Revenue growth by comp', sub: 'Latest FY y/y · dashed = selection median', body: '<div id="cp-g"></div>', scroll: true, foot: ui.source('SEC XBRL companyfacts', 'https://data.sec.gov/api/xbrl/companyfacts/', pc.meta?.generated) })}
   </div>
   <div class="grid grid-3 mt-12" id="cp-bm"></div>
@@ -665,7 +665,7 @@ async function compsView(ctx) {
     { key: '_sector', label: 'Sector', fmt: (v, r) => fmt.chip(coById(r._co)?.short || '', coById(r._co)?.color) + ` <span class="small dim">${esc(v)}</span>` },
     { key: 'latest_fy', label: 'FY', num: true, fmt: v => esc(v) },
     { key: '_rev', label: 'Revenue', num: true, fmt: v => fmt.money(v) },
-    { key: 'revenue_growth_latest_pct', label: 'Growth', num: true, fmt: v => `<span style="color:${v == null ? 'var(--dim)' : v >= 0 ? 'var(--green)' : 'var(--red)'}">${sPct(fmt, v)}</span>` },
+    { key: 'revenue_growth_latest_pct', label: 'Growth', num: true, fmt: v => `<span style="color:${v == null ? 'var(--sys-mute-2)' : v >= 0 ? 'var(--sys-good-ink)' : 'var(--sys-bad-ink)'}">${sPct(fmt, v)}</span>` },
     { key: 'operating_margin_latest_pct', label: 'Op. margin', num: true, fmt: v => pctF(fmt, v) },
     { key: 'ebitda_margin_latest_pct', label: 'EBITDA mgn', num: true, fmt: v => pctF(fmt, v) },
     { key: '_emp', label: 'Employees', num: true, fmt: v => fmt.num(v) },
@@ -679,7 +679,7 @@ async function compsView(ctx) {
       title: `${esc(c.ticker)} · ${esc(c.company)}`, color: co?.color, sub: `${esc(c._sector)} · benchmarks ${esc(String(c.benchmarks_bsp || '').split('(')[0])}`,
       sections: [
         { label: 'Latest FY', html: ui.kv({ 'Fiscal year': esc(c.latest_fy), Revenue: fmt.money(c._rev), 'Revenue growth': sPct(fmt, c.revenue_growth_latest_pct), '3-yr CAGR': sPct(fmt, c.revenue_cagr_2023_latest_pct), 'Operating margin': `${pctF(fmt, c.operating_margin_latest_pct)} <span class="dim">(avg ${pctF(fmt, c.operating_margin_avg_pct)})</span>`, 'EBITDA margin': pctF(fmt, c.ebitda_margin_latest_pct), Employees: fmt.num(c._emp), 'Revenue / employee': fmt.money(c.revenue_per_employee_usd), Confidence: fmt.chip(c.confidence || 'n/a', confColor(c.confidence)) }) },
-        { label: 'Fiscal years', html: `<div class="fin-insp"><table><thead><tr><th>FY</th><th class="n">Revenue</th><th class="n">Op. inc.</th><th class="n">EBITDA</th><th class="n">Op. mgn</th><th class="n">Staff</th></tr></thead><tbody>${(c.fiscal_years || []).map(y => `<tr><td class="n">${esc(y.fy)}</td><td class="n">${fmt.money(y.revenue_usd)}</td><td class="n">${fmt.money(y.operating_income_usd)}</td><td class="n">${fmt.money(y.ebitda_approx_usd)}</td><td class="n">${pctF(fmt, y.operating_margin_pct)}</td><td class="n">${fmt.num(y.employees)}</td></tr>`).join('')}</tbody></table></div>` },
+        { label: 'Fiscal years', html: `<div class="fin-insp sys-table-wrap"><table class="sys-table"><thead><tr><th>FY</th><th class="sys-n n">Revenue</th><th class="sys-n n">Op. inc.</th><th class="sys-n n">EBITDA</th><th class="sys-n n">Op. mgn</th><th class="sys-n n">Staff</th></tr></thead><tbody>${(c.fiscal_years || []).map(y => `<tr><td class="sys-n n">${esc(y.fy)}</td><td class="sys-n n">${fmt.money(y.revenue_usd)}</td><td class="sys-n n">${fmt.money(y.operating_income_usd)}</td><td class="sys-n n">${fmt.money(y.ebitda_approx_usd)}</td><td class="sys-n n">${pctF(fmt, y.operating_margin_pct)}</td><td class="sys-n n">${fmt.num(y.employees)}</td></tr>`).join('')}</tbody></table></div>` },
         { label: 'What it tells us', html: `<div class="small text-2">${esc(c.what_it_tells_us || '')}</div>${c.status_note ? `<div class="small dim mt-8">${esc(c.status_note)}</div>` : ''}${c.employee_note ? `<div class="small dim mt-8">${esc(c.employee_note)}</div>` : ''}` },
         { label: 'Sources', html: `<div class="col gap-4 small">${c.tenk_url ? fmt.link(c.tenk_url, `${c.tenk_form || '10-K'} filed ${c.tenk_filed || ''}`) : ''}${fmt.link(c.source_url, 'XBRL companyfacts (JSON)')}</div><div class="dim small mt-8">Retrieved ${esc(c.retrieved || '')}</div>` },
         { label: 'Next action', html: `<div class="small text-2">Use ${esc(c.ticker)} as a ${esc(c._sector.toLowerCase())} reference point for ${esc(co?.name || 'the portfolio company')}: compare its ${fmt.money(c.revenue_per_employee_usd)} revenue per employee and ${pctF(fmt, c.ebitda_margin_latest_pct)} EBITDA margin with the company's management accounts.</div>` },
@@ -697,7 +697,7 @@ async function compsView(ctx) {
     // diverging growth bars
     const lim = 40; const gs = sel.filter(c => c.revenue_growth_latest_pct != null).sort((a, b) => b.revenue_growth_latest_pct - a.revenue_growth_latest_pct);
     const pos = v => (Math.max(-lim, Math.min(lim, v)) + lim) / (2 * lim) * 100;
-    el.querySelector('#cp-g').innerHTML = gs.length ? `<div class="dv">${gs.map(c => { const v = c.revenue_growth_latest_pct, col = coById(c._co)?.color; const a = pos(Math.min(0, v)), b = pos(Math.max(0, v)); return `<div class="r" data-t="${esc(c.ticker)}" title="${esc(c.company)}: ${sPct(fmt, v)}${Math.abs(v) > lim ? ' (bar clamped)' : ''}"><span class="lb">${esc(c.ticker)}</span><span class="tr"><i style="left:${a}%;width:${b - a}%;background:${col}"></i><span class="z" style="left:50%"></span>${mg != null ? `<span class="md" style="left:${pos(mg)}%"></span>` : ''}</span><span class="vv" style="color:${v >= 0 ? 'var(--green)' : 'var(--red)'}">${sPct(fmt, v)}</span></div>`; }).join('')}</div><div class="axis-l" style="margin:4px 64px 0 60px"><span>−${lim}%</span><span>0</span><span>+${lim}%</span></div>` : ui.empty('No comps');
+    el.querySelector('#cp-g').innerHTML = gs.length ? `<div class="dv">${gs.map(c => { const v = c.revenue_growth_latest_pct, col = coById(c._co)?.color; const a = pos(Math.min(0, v)), b = pos(Math.max(0, v)); return `<div class="r" data-t="${esc(c.ticker)}" title="${esc(c.company)}: ${sPct(fmt, v)}${Math.abs(v) > lim ? ' (bar clamped)' : ''}"><span class="lb">${esc(c.ticker)}</span><span class="tr"><i style="left:${a}%;width:${b - a}%;background:${col}"></i><span class="z" style="left:50%"></span>${mg != null ? `<span class="md" style="left:${pos(mg)}%"></span>` : ''}</span><span class="vv" style="color:${v >= 0 ? 'var(--sys-good-ink)' : 'var(--sys-bad-ink)'}">${sPct(fmt, v)}</span></div>`; }).join('')}</div><div class="axis-l" style="margin:4px 64px 0 60px"><span>−${lim}%</span><span>0</span><span>+${lim}%</span></div>` : ui.empty('No comps');
     el.querySelectorAll('#cp-g [data-t]').forEach(g => g.onclick = () => { const c = items.find(x => x.ticker === g.dataset.t); if (c) openComp(c); });
     // dumbbell margins
     const lo = -10, hi = 30; const P = v => (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * 100;
@@ -707,8 +707,8 @@ async function compsView(ctx) {
     // benchmark panels
     el.querySelector('#cp-bm').innerHTML = Object.entries(bm).filter(([s]) => !st.sector || s === st.sector).map(([s, b]) => {
       const co = coById(SECTORS[s]?.co);
-      return ui.panel({ cls: 'bench', title: `<span class="fin-co-head"><i class="fin-dot" style="--cc:${co?.color}"></i>${esc(SECTORS[s]?.label || s)}</span>`, sub: `Benchmarks ${esc(b.bsp_company || co?.name || '')}, ${esc(b.n)} peers · ${esc((b.comps || []).join(', '))}`,
-        body: `<div class="stats"><div class="st"><div class="l">Growth</div><div class="v">${sPct(fmt, b.median_revenue_growth_latest_pct)}</div></div><div class="st"><div class="l">Op. margin</div><div class="v">${pctF(fmt, b.median_operating_margin_latest_pct)}</div></div><div class="st"><div class="l">EBITDA mgn</div><div class="v">${pctF(fmt, b.median_ebitda_margin_latest_pct)}</div></div><div class="st"><div class="l">Rev / emp</div><div class="v">${fmt.money(b.median_revenue_per_employee_usd)}</div></div></div><div class="imp">${esc(b.what_this_implies_for_bsp || '')}</div>`,
+      return ui.panel({ cls: 'bench', title: `<span class="fin-co-head"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${co?.color}"></i>${esc(SECTORS[s]?.label || s)}</span>`, sub: `Benchmarks ${esc(b.bsp_company || co?.name || '')}, ${esc(b.n)} peers · ${esc((b.comps || []).join(', '))}`,
+        body: `<div class="sys-kpis stats"><div class="sys-kpi st"><div class="sys-kpi-label l">Growth</div><div class="sys-kpi-value v">${sPct(fmt, b.median_revenue_growth_latest_pct)}</div></div><div class="sys-kpi st"><div class="sys-kpi-label l">Op. margin</div><div class="sys-kpi-value v">${pctF(fmt, b.median_operating_margin_latest_pct)}</div></div><div class="sys-kpi st"><div class="sys-kpi-label l">EBITDA margin</div><div class="sys-kpi-value v">${pctF(fmt, b.median_ebitda_margin_latest_pct)}</div></div><div class="sys-kpi st"><div class="sys-kpi-label l">Rev / employee</div><div class="sys-kpi-value v">${fmt.money(b.median_revenue_per_employee_usd)}</div></div></div><div class="sys-card-body imp">${esc(b.what_this_implies_for_bsp || '')}</div>`,
         actions: `<a class="fin-link" href="#/fin/comps?sector=${s}">Filter →</a>`, foot: ui.source('Median of sector comps, latest FY', null, pc.meta?.generated) });
     }).join('') || '';
     tbl ? tbl.update(sel) : (tbl = ui.table(el.querySelector('#cp-t'), { columns, rows: sel, pageSize: 40, sortKey: 'revenue_growth_latest_pct', exportName: 'bsp_public_comps', rowKey: r => r.id, onRow: openComp }));
@@ -814,21 +814,21 @@ async function rivalsView(ctx) {
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Rival company financials',
     sub: `<b>So what:</b> ${esc(sentences(fp[0], 2))}`,
-    chips: `${fmt.chip(`${groups.length} rival companies`, 'var(--c-pe)')}${fmt.chip('BDC marks = one lender slice', 'var(--amber)')}${fmt.chip('Ratings not yet retrieved', 'var(--muted)')}`,
+    chips: `${fmt.chip(`${groups.length} rival companies`, 'var(--c-pe)')}${fmt.chip('BDC marks = one lender slice', 'var(--sys-warn)')}${fmt.chip('Ratings not yet retrieved', 'var(--sys-mute)')}`,
   })}
   ${ui.kpis([
     { label: 'Rival companies', value: fmt.num(groups.length), sub: `${fmt.num(rv.items.length)} filings · ${overlaps.length} BSP sectors`, color: 'var(--c-pe)' },
-    { label: 'BDC loan lines', value: fmt.num(rv.items.filter(i => i.category === 'bdc_loan_schedule').length), sub: `${marked.length} borrowers with a visible mark`, color: 'var(--c-ts)' },
-    { label: 'Lowest lender mark', value: marked[0] ? fmt.num(marked[0].h.mark, 1) : '—', sub: marked[0] ? esc(marked[0].name) : '', color: 'var(--red)' },
-    { label: 'Borrowers paying PIK', value: fmt.num(pik.length), sub: esc(pik.slice(0, 3).map(g => g.name).join(', ')), color: 'var(--amber)' },
-    { label: 'PPP records', value: fmt.num(rv.items.filter(i => i.category === 'sba_ppp').length), sub: 'pre-roll-up payroll anchors', color: 'var(--c-pp)' },
+    { label: 'BDC loan lines', value: fmt.num(rv.items.filter(i => i.category === 'bdc_loan_schedule').length), sub: `${marked.length} borrowers with a visible mark`, color: 'var(--co-ts)' },
+    { label: 'Lowest lender mark', value: marked[0] ? fmt.num(marked[0].h.mark, 1) : '—', sub: marked[0] ? esc(marked[0].name) : '', color: 'var(--sys-bad)' },
+    { label: 'Borrowers paying PIK', value: fmt.num(pik.length), sub: esc(pik.slice(0, 3).map(g => g.name).join(', ')), color: 'var(--sys-warn)' },
+    { label: 'PPP records', value: fmt.num(rv.items.filter(i => i.category === 'sba_ppp').length), sub: 'pre-roll-up payroll anchors', color: 'var(--co-pp)' },
   ])}
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Where lenders are marking rivals', sub: 'Lowest visible BDC / fund mark (% of par) per borrower · red < 90 · amber < 97 · click for the filings', body: `<div id="rv-mk"></div>`, foot: ui.source('BDC 10-Q/10-K schedules of investments, N-PORT', 'https://efts.sec.gov/LATEST/search-index?q=%22HGH%20Purchaser%22', rv.meta?.generated) })}
     ${ui.panel({ title: 'What the rival filings tell us', sub: 'Analyst synthesis', body: `<div>${fp.map((p, i) => `<div class="act"><span class="n">${String(i + 1).padStart(2, '0')}</span><div class="x">${esc(clean(p))}</div></div>`).join('')}</div>`, scroll: true, foot: ui.source('Competitor filings: financial picture', null, rv.meta?.generated) })}
   </div>
   <div class="mt-12" id="rv-f"></div>
-  <div class="rv-grid" id="rv-cards"></div>
+  <div class="sys-grid rv-grid mt-12" id="rv-cards"></div>
   <div class="grid grid-2 mt-12">
     ${ui.panel({ title: 'Rival estimates', sub: 'Triangulated figures (est.) with basis', body: '<div id="rv-est"></div>', foot: ui.source('Competitor filings: estimate table', null, rv.meta?.generated) })}
     ${ui.panel({ title: 'Next actions', sub: 'What to pull next and why it matters for BSP', body: `<div id="rv-acts"></div>`, foot: ui.source('Competitor filings: next pulls', null, rv.meta?.generated) })}
@@ -840,8 +840,8 @@ async function rivalsView(ctx) {
     inspector.open({
       title: esc(g.name), color: g.color, sub: `${g.items.length} filings · ${esc(g.overlap.map(o => OVERLAP[o]?.label || o).join(', '))}${g.owner ? ` · ${esc(g.owner)}` : ''}`,
       sections: [
-        { label: 'Headline figures', html: ui.kv({ Revenue: h.revenue ? `${esc(h.revenue.v)} <span class="dim small">${esc(h.revenue.s)}</span>` : null, Debt: h.debt ? `${esc(h.debt.v)} <span class="dim small">${esc(h.debt.s)}</span>` : null, 'Enterprise value': h.ev || null, 'Lowest mark': h.mark != null ? `${fmt.num(h.mark, 1)}% of par` : null, Pricing: h.spread ? esc(h.spread) : null, PIK: h.pik ? fmt.chip('PIK interest', 'var(--amber)') : null, Leverage: h.leverage ? `${esc(h.leverage)} <span class="dim small">est.</span>` : null, Rating: h.rating ? esc(h.rating) : '<span class="dim">not retrieved (see gaps)</span>', Staff: h.staff ? `${esc(h.staff.v)} <span class="dim small">${esc(h.staff.s)}</span>` : null }) },
-        h.est.length ? { label: 'Estimates', html: `<div class="fin-insp"><table><tbody>${h.est.map(e => `<tr><td>${confDot(e.confidence)}${esc(e.metric)}<div class="dim small">${esc(e.basis || '')}</div></td><td class="n">${esc(e.estimate)}</td></tr>`).join('')}</tbody></table></div>` } : null,
+        { label: 'Headline figures', html: ui.kv({ Revenue: h.revenue ? `${esc(h.revenue.v)} <span class="dim small">${esc(h.revenue.s)}</span>` : null, Debt: h.debt ? `${esc(h.debt.v)} <span class="dim small">${esc(h.debt.s)}</span>` : null, 'Enterprise value': h.ev || null, 'Lowest mark': h.mark != null ? `${fmt.num(h.mark, 1)}% of par` : null, Pricing: h.spread ? esc(h.spread) : null, PIK: h.pik ? fmt.chip('PIK interest', 'var(--sys-warn)') : null, Leverage: h.leverage ? `${esc(h.leverage)} <span class="dim small">est.</span>` : null, Rating: h.rating ? esc(h.rating) : '<span class="dim">not retrieved (see gaps)</span>', Staff: h.staff ? `${esc(h.staff.v)} <span class="dim small">${esc(h.staff.s)}</span>` : null }) },
+        h.est.length ? { label: 'Estimates', html: `<div class="fin-insp sys-table-wrap"><table class="sys-table"><tbody>${h.est.map(e => `<tr><td>${confDot(e.confidence)}${esc(e.metric)}<div class="dim small">${esc(e.basis || '')}</div></td><td class="sys-n n">${esc(e.estimate)}</td></tr>`).join('')}</tbody></table></div>` } : null,
         { label: `Filings (${g.items.length})`, html: `<div class="fin-insp">${g.items.sort((a, b) => b._date.localeCompare(a._date)).map(r => itemHtml(ctx, r)).join('')}</div>` },
         { label: 'Next action', html: `<div class="small text-2">${h.mark != null && h.mark < 95 ? `Stressed credit (${fmt.num(h.mark, 1)} mark${h.pik ? ', PIK' : ''}): monitor for a distressed sale of assets or technicians in overlapping markets; brief ${esc(g.overlap.map(o => coById(OVERLAP[o]?.co)?.short).join('/'))} management on talent and customer poaching opportunities.` : `Track the next quarterly filing; pull rating-agency reports and PitchBook deal history to size ${esc(g.name)}'s acquisition capacity against ${esc(g.overlap.map(o => coById(OVERLAP[o]?.co)?.short).join('/'))}.`}</div>` },
       ].filter(Boolean),
@@ -849,12 +849,12 @@ async function rivalsView(ctx) {
     });
   };
 
-  el.querySelector('#rv-mk').innerHTML = marked.length ? marked.map(g => { const v = g.h.mark; const c = v < 90 ? 'var(--red)' : v < 97 ? 'var(--amber)' : 'var(--green)'; return `<div class="mk" data-g="${esc(g.id)}" title="${esc(g.name)} · ${fmt.num(v, 1)}% of par${g.h.pik ? ' · PIK' : ''}"><span class="lb">${esc(g.name)}${g.h.pik ? ' <span class="small" style="color:var(--amber)">PIK</span>' : ''}</span><span class="tr"><i style="width:${Math.max(2, (v - 70) / 30 * 100)}%;background:${c}"></i></span><span class="vv">${fmt.num(v, 1)}</span></div>`; }).join('') + `<div class="axis-l" style="margin:4px 56px 0 158px"><span>70</span><span>85</span><span>100</span></div>
-    <h4 class="mt-16 mb-8">Pricing & maturity wall</h4><div class="fin-insp"><table><thead><tr><th>Borrower</th><th>Pricing</th><th class="n">Earliest maturity</th></tr></thead><tbody>${marked.slice().sort((a, b) => String(a.h.maturity || '9').localeCompare(String(b.h.maturity || '9'))).map(g => { const mo = g.h.maturity ? (new Date(g.h.maturity.length === 7 ? g.h.maturity + '-01' : g.h.maturity) - new Date()) / 2.63e9 : null; return `<tr><td>${esc(g.name)}</td><td class="small text-2">${esc(String(g.h.spread || '—').slice(0, 42))}</td><td class="n" style="color:${mo != null && mo < 18 ? 'var(--red)' : 'var(--text-2)'}">${esc(g.h.maturity || '—')}</td></tr>`; }).join('')}</tbody></table></div>` : ui.empty('No marks disclosed');
+  el.querySelector('#rv-mk').innerHTML = marked.length ? marked.map(g => { const v = g.h.mark; const c = v < 90 ? 'var(--sys-bad)' : v < 97 ? 'var(--sys-warn)' : 'var(--sys-good)'; return `<div class="mk" data-g="${esc(g.id)}" title="${esc(g.name)} · ${fmt.num(v, 1)}% of par${g.h.pik ? ' · PIK' : ''}"><span class="lb">${esc(g.name)}${g.h.pik ? ' <span class="small" style="color:var(--sys-warn-ink)">PIK</span>' : ''}</span><span class="tr"><i style="width:${Math.max(2, (v - 70) / 30 * 100)}%;background:${c}"></i></span><span class="vv">${fmt.num(v, 1)}</span></div>`; }).join('') + `<div class="axis-l" style="margin:4px 56px 0 158px"><span>70</span><span>85</span><span>100</span></div>
+    <h4 class="sys-card-label mt-16 mb-8">Pricing & maturity wall</h4><div class="fin-insp sys-table-wrap"><table class="sys-table"><thead><tr><th>Borrower</th><th>Pricing</th><th class="sys-n n">Earliest maturity</th></tr></thead><tbody>${marked.slice().sort((a, b) => String(a.h.maturity || '9').localeCompare(String(b.h.maturity || '9'))).map(g => { const mo = g.h.maturity ? (new Date(g.h.maturity.length === 7 ? g.h.maturity + '-01' : g.h.maturity) - new Date()) / 2.63e9 : null; return `<tr><td>${esc(g.name)}</td><td class="small text-2">${esc(String(g.h.spread || '—').slice(0, 42))}</td><td class="sys-n n" style="color:${mo != null && mo < 18 ? 'var(--sys-bad-ink)' : 'var(--sys-ink-2)'}">${esc(g.h.maturity || '—')}</td></tr>`; }).join('')}</tbody></table></div>` : ui.empty('No marks disclosed');
   el.querySelectorAll('#rv-mk [data-g]').forEach(n => n.onclick = () => openG(groups.find(g => g.id === n.dataset.g)));
 
   const card = g => { const h = g.h; const st = (l, v, s) => `<div class="h"><div class="l">${l}</div><div class="v ${v ? '' : 'na'}" title="${esc(s || '')}">${v ? esc(v) : 'n/a'}</div>${v && s ? `<div class="s">${esc(s)}</div>` : ''}</div>`;
-    return `<div class="rv" data-g="${esc(g.id)}" style="--cc:${g.color}"><div class="t">${esc(g.name)}<span class="n">${g.items.length} filings</span></div>${g.owner ? `<div class="own">${esc(g.owner)}</div>` : ''}<div class="hs">${st('Revenue', h.revenue?.v, h.revenue?.s)}${st('Debt', h.debt?.v, h.debt?.s)}${st('Low mark', h.mark != null ? fmt.num(h.mark, 1) : null, 'lowest % of par')}${st('Staff', h.staff?.v, h.staff?.s)}</div><div class="m">${g.overlap.map(o => fmt.chip(OVERLAP[o]?.label || o, coById(OVERLAP[o]?.co)?.color)).join('')}${h.pik ? fmt.chip('PIK', 'var(--amber)') : ''}${h.leverage ? fmt.chip(`lev. ${h.leverage} est.`, 'var(--red)') : ''}${h.spread ? fmt.chip(String(h.spread).replace(/\s*\(.*$/, '').slice(0, 26), 'var(--muted)') : ''}</div></div>`; };
+    return `<div class="sys-card sys-card--link rv" tabindex="0" role="button" data-co="" data-g="${esc(g.id)}" style="--co:${g.color}"><div class="sys-card-title t">${esc(g.name)}<span class="n">${g.items.length} filings</span></div>${g.owner ? `<div class="sys-card-body own">${esc(g.owner)}</div>` : ''}<div class="hs">${st('Revenue', h.revenue?.v, h.revenue?.s)}${st('Debt', h.debt?.v, h.debt?.s)}${st('Low mark', h.mark != null ? fmt.num(h.mark, 1) : null, 'lowest % of par')}${st('Staff', h.staff?.v, h.staff?.s)}</div><div class="m">${g.overlap.map(o => fmt.chip(OVERLAP[o]?.label || o, coById(OVERLAP[o]?.co)?.color)).join('')}${h.pik ? fmt.chip('PIK', 'var(--sys-warn)') : ''}${h.leverage ? fmt.chip(`lev. ${h.leverage} est.`, 'var(--sys-bad)') : ''}${h.spread ? fmt.chip(String(h.spread).replace(/\s*\(.*$/, '').slice(0, 26), 'var(--sys-mute)') : ''}</div></div>`; };
   const draw = st => {
     const q = (st.q || '').toLowerCase();
     const sel = groups.filter(g => (!st.sector || g.overlap.includes(st.sector)) && (!st.stress || (g.h.pik || (g.h.mark != null && g.h.mark < 95))) && (!q || JSON.stringify(g.items).toLowerCase().includes(q) || g.name.toLowerCase().includes(q)));
@@ -897,7 +897,7 @@ async function methodsView(ctx) {
   injectCss();
   el.innerHTML = ui.loading('Compiling methods, caveats and gaps…');
   const D = await loadAll(ctx);
-  const dsList = [...D.cos.map(x => ({ id: x.co.id, name: x.co.name, short: x.co.short, color: x.co.color, file: x.co.ds, d: x.d })), { id: 'rival', name: 'Rival companies', short: 'Rival', color: RIVAL.color, file: 'rival_filings', d: D.rival }, { id: 'comps', name: 'Public comparables', short: 'Comps', color: 'var(--c-fin)', file: 'public_comps', d: D.comps }, { id: 'firm', name: 'Broad Sky firm', short: 'BSP', color: 'var(--c-bsp)', file: 'bsp_firm', d: D.firm }];
+  const dsList = [...D.cos.map(x => ({ id: x.co.id, name: x.co.name, short: x.co.short, color: x.co.color, file: x.co.ds, d: x.d })), { id: 'rival', name: 'Rival companies', short: 'Rival', color: RIVAL.color, file: 'rival_filings', d: D.rival }, { id: 'comps', name: 'Public comparables', short: 'Comps', color: 'var(--c-fin)', file: 'public_comps', d: D.comps }, { id: 'firm', name: 'Broad Sky firm', short: 'BSP', color: 'var(--sys-brand)', file: 'bsp_firm', d: D.firm }];
   const present = dsList.filter(x => x.d);
   const gaps = [], pulls = [], cav = [];
   for (const x of present) {
@@ -920,26 +920,26 @@ async function methodsView(ctx) {
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Methods & gaps',
     sub: `<b>So what:</b> every figure in this module comes from a public filing and a stated formula; ${fmt.num(Math.round(hi / Math.max(1, D.rows.length) * 100))}% of records are high confidence, but revenue, EBITDA and leverage for private companies remain estimates. ${fmt.num(gaps.length)} open data gaps map to ${fmt.num(pulls.length)} specific next pulls, most of which need a paid data source (PitchBook / Capital IQ) or a manual state-registry search.`,
-    chips: `${fmt.chip(`${present.length} / ${dsList.length} datasets loaded`, present.length < dsList.length ? 'var(--amber)' : 'var(--green)')}${fmt.chip('Public records only', 'var(--c-fin)')}`,
+    chips: `${fmt.chip(`${present.length} / ${dsList.length} datasets loaded`, present.length < dsList.length ? 'var(--sys-warn)' : 'var(--sys-good)')}${fmt.chip('Public records only', 'var(--c-fin)')}`,
   })}
   ${ui.kpis([
-    { label: 'Datasets', value: `${present.length}/${dsList.length}`, sub: dsList.filter(x => !x.d).map(x => x.short).join(', ') ? `pending: ${esc(dsList.filter(x => !x.d).map(x => x.short).join(', '))}` : 'all loaded', color: present.length < dsList.length ? 'var(--amber)' : 'var(--green)' },
+    { label: 'Datasets', value: `${present.length}/${dsList.length}`, sub: dsList.filter(x => !x.d).map(x => x.short).join(', ') ? `pending: ${esc(dsList.filter(x => !x.d).map(x => x.short).join(', '))}` : 'all loaded', color: present.length < dsList.length ? 'var(--sys-warn)' : 'var(--sys-good)' },
     { label: 'Records', value: fmt.num(allItems.length), sub: `${fmt.num(D.rows.length)} filings · ${fmt.num(D.comps?.items?.length || 0)} comps`, color: 'var(--c-fin)' },
-    { label: 'High confidence', value: `${fmt.num(Math.round(hi / Math.max(1, D.rows.length) * 100))}%`, sub: 'of filing records', color: 'var(--green)' },
-    { label: 'Open data gaps', value: fmt.num(gaps.length), sub: 'across datasets', color: 'var(--amber)' },
-    { label: 'Next pulls', value: fmt.num(pulls.length), sub: 'queued requests', color: 'var(--c-bsp)' },
+    { label: 'High confidence', value: `${fmt.num(Math.round(hi / Math.max(1, D.rows.length) * 100))}%`, sub: 'of filing records', color: 'var(--sys-good)' },
+    { label: 'Open data gaps', value: fmt.num(gaps.length), sub: 'across datasets', color: 'var(--sys-warn)' },
+    { label: 'Next pulls', value: fmt.num(pulls.length), sub: 'queued requests', color: 'var(--sys-brand)' },
   ])}
   <div class="grid grid-3 mt-12">${METHODS.map(mt => {
     const n = mt.cats.length ? D.rows.filter(r => mt.cats.includes(r._cat)).length : D.rows.filter(r => mt.re && mt.re.test(JSON.stringify(r.key_figures || {}) + r.title)).length;
     const nComps = mt.extra === 'comps' ? (D.comps?.items?.length || 0) : 0;
     const by = COS.concat([RIVAL]).map(c => ({ c, n: D.rows.filter(r => r._co === c.id && mt.cats.includes(r._cat)).length })).filter(x => x.n);
-    return ui.panel({ title: esc(mt.title), sub: `${fmt.num(n + nComps)} records${nComps ? ` (incl. ${nComps} comps)` : ''}`, body: `<div class="mth"><div class="f">${esc(Copy.text(mt.formula))}</div><div class="d">${esc(Copy.text(mt.text))}</div><div class="cv">⚠ ${esc(Copy.text(mt.caveat))}</div><div class="ct">${by.map(x => fmt.chip(`${x.c.short} ${x.n}`, x.c.color)).join('') || (n + nComps ? '' : fmt.chip('no records yet', 'var(--amber)'))}</div></div>` });
+    return ui.panel({ title: esc(mt.title), sub: `${fmt.num(n + nComps)} records${nComps ? ` (incl. ${nComps} comps)` : ''}`, body: `<div class="mth"><div class="f">${esc(Copy.text(mt.formula))}</div><div class="d">${esc(Copy.text(mt.text))}</div><div class="cv">⚠ ${esc(Copy.text(mt.caveat))}</div><div class="ct">${by.map(x => fmt.chip(`${x.c.short} ${x.n}`, x.c.color)).join('') || (n + nComps ? '' : fmt.chip('no records yet', 'var(--sys-warn)'))}</div></div>` });
   }).join('')}</div>
   <div class="mt-12">${ui.panel({ title: 'Data gaps & next pulls — merged register', sub: 'Every open gap and queued request across datasets · filter, export and assign', body: '<div id="mt-f"></div><div id="mt-t"></div>', foot: ui.source('Data gaps and next pulls listed in each research dataset', null, 'Sept 2026') })}</div>
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Caveats', sub: 'Stated limitations by dataset — read before quoting a number', body: '<div id="mt-cv"></div>', scroll: true })}
     <div class="col gap-12">
-      ${ui.panel({ title: 'Dataset registry', sub: 'Status, vintage and size of each input', body: `<div class="fin-insp"><table><thead><tr><th>Company</th><th>Dataset</th><th class="n">Items</th><th>Generated</th></tr></thead><tbody>${dsList.map(x => `<tr><td>${fmt.chip(x.short, x.color)}</td><td class="small ${x.d ? '' : 'miss'}">${esc(Copy.dataset(x.file))}${x.d ? '' : ' — pending'}</td><td class="n">${x.d ? fmt.num(x.d.items?.length || 0) : '—'}</td><td class="small dim">${esc(x.d?.meta?.generated || '')}</td></tr>`).join('')}</tbody></table></div>` })}
+      ${ui.panel({ title: 'Dataset registry', sub: 'Status, vintage and size of each input', body: `<div class="fin-insp sys-table-wrap"><table class="sys-table"><thead><tr><th>Company</th><th>Dataset</th><th class="sys-n n">Items</th><th>Generated</th></tr></thead><tbody>${dsList.map(x => `<tr><td>${fmt.chip(x.short, x.color)}</td><td class="small ${x.d ? '' : 'miss'}">${esc(Copy.dataset(x.file))}${x.d ? '' : ' — pending'}</td><td class="sys-n n">${x.d ? fmt.num(x.d.items?.length || 0) : '—'}</td><td class="small dim">${esc(x.d?.meta?.generated || '')}</td></tr>`).join('')}</tbody></table></div>` })}
       ${ui.panel({ title: 'County home-sales & property-transfer records', sub: 'Deed / assessor sales for the counties each portfolio company serves or recruits from — coverage check across all six companies', body: `<div class="fin-insp" id="mt-sales">${ui.loading('Checking files…')}</div>`, foot: ui.source('County deed and assessor records (state and county sources)', null, 'Sept 2026') })}
     </div>
   </div>
@@ -953,7 +953,7 @@ async function methodsView(ctx) {
   const reg = [...gaps, ...pulls].map((r, i) => ({ ...r, id: i }));
   let tbl;
   const cols = [
-    { key: 'kind', label: 'Type', fmt: v => fmt.chip(v, v === 'Data gap' ? 'var(--amber)' : 'var(--c-fin)'), width: '90px' },
+    { key: 'kind', label: 'Type', fmt: v => fmt.chip(v, v === 'Data gap' ? 'var(--sys-warn)' : 'var(--c-fin)'), width: '90px' },
     { key: 'ds', label: 'Dataset', fmt: (v, r) => fmt.chip(Copy.dataset(v), r.color), width: '70px' },
     { key: 'text', label: 'Item', wrap: true, fmt: v => `<span class="small text-2">${esc(v)}</span>` },
   ];
@@ -966,15 +966,15 @@ async function methodsView(ctx) {
   ], applyReg);
   applyReg(f.state);
 
-  el.querySelector('#mt-cv').innerHTML = cav.length ? `<div>${cav.slice(0, 60).map(c => `<div class="sig">${fmt.chip(Copy.dataset(c.ds), c.color)}<div class="t" style="color:var(--text-2)">${esc(Copy.text(c.text))}</div></div>`).join('')}</div>` : ui.empty('No caveats recorded');
+  el.querySelector('#mt-cv').innerHTML = cav.length ? `<div>${cav.slice(0, 60).map(c => `<div class="sig">${fmt.chip(Copy.dataset(c.ds), c.color)}<div class="t" style="color:var(--sys-ink-2)">${esc(Copy.text(c.text))}</div></div>`).join('')}</div>` : ui.empty('No caveats recorded');
 
   el.querySelector('#mt-acts').innerHTML = actionList(ctx, [
-    { chip: 'Paid', color: 'var(--c-bsp)', text: 'License a PitchBook / Capital IQ seat for the PRG finance workstream: deal records for 7 companies and 23 add-ons close the largest share of gaps.' },
-    { chip: 'UCC', color: 'var(--amber)', text: 'Run manual SOS / UCC searches (MA, CT, PA, NJ, DE, MO) to name agent banks for CET, Punctual Pros and Frontline.' },
-    { chip: 'BDC', color: 'var(--c-ts)', text: 'Refresh BDC schedules after the Sept 30 quarter-end 10-Qs (early Nov 2026): Thomas Scientific and rival marks first.' },
-    { chip: 'FH', color: 'var(--c-fh)', text: D.cos.find(x => x.co.id === 'fh')?.d ? 'Review the Fair Harbor filings track against the apparel DTC comps.' : 'Complete the Fair Harbor filings track (Fair Harbor public filings) so all six companies are covered.' },
+    { chip: 'Paid', color: 'var(--sys-brand)', text: 'License a PitchBook / Capital IQ seat for the PRG finance workstream: deal records for 7 companies and 23 add-ons close the largest share of gaps.' },
+    { chip: 'UCC', color: 'var(--sys-warn)', text: 'Run manual SOS / UCC searches (MA, CT, PA, NJ, DE, MO) to name agent banks for CET, Punctual Pros and Frontline.' },
+    { chip: 'BDC', color: 'var(--co-ts)', text: 'Refresh BDC schedules after the Sept 30 quarter-end 10-Qs (early Nov 2026): Thomas Scientific and rival marks first.' },
+    { chip: 'FH', color: 'var(--co-fh)', text: D.cos.find(x => x.co.id === 'fh')?.d ? 'Review the Fair Harbor filings track against the apparel DTC comps.' : 'Complete the Fair Harbor filings track (Fair Harbor public filings) so all six companies are covered.' },
     { chip: 'Ratings', color: 'var(--c-pe)', text: 'Pull Moody\'s / S&P reports for Wrench, Apex, TurnPoint, Consilio and Epiq to replace inferred leverage.' },
-    { chip: 'Sales', color: 'var(--c-fl)', text: 'Close the last county home-sales gap: St. Louis City & County, MO (Frontline HQ). Missouri does not disclose sale prices and the county parcel layer carries no usable deed date, so this needs a licensed MLS / ATTOM feed. Gloucester County, NJ (Thomas Scientific) is now covered from the NJ SR1A file.' },
+    { chip: 'Sales', color: 'var(--co-fl)', text: 'Close the last county home-sales gap: St. Louis City & County, MO (Frontline HQ). Missouri does not disclose sale prices and the county parcel layer carries no usable deed date, so this needs a licensed MLS / ATTOM feed. Gloucester County, NJ (Thomas Scientific) is now covered from the NJ SR1A file.' },
   ]);
 
   // HEAD check for sales files (no body download)
@@ -982,7 +982,7 @@ async function methodsView(ctx) {
   const box = el.querySelector('#mt-sales');
   const nOk = res.filter(s => s.ok).length, coOk = new Set(res.filter(s => s.ok).map(s => s.co));
   const missCos = COS.filter(c => !coOk.has(c.id));
-  if (box) box.innerHTML = `<table><thead><tr><th>Coverage</th><th>Dataset</th><th class="n">Size</th></tr></thead><tbody>${res.map(s => `<tr><td>${fmt.chip(coById(s.co).short, coById(s.co).color)} <span class="small">${esc(s.label)}</span></td><td class="small ${s.ok ? 'ok' : 'miss'}">${s.ok ? '✓' : s.planned ? '✗ not collected' : '✗ pending'} ${esc(Copy.dataset(s.f))}</td><td class="n" style="white-space:nowrap">${s.ok && s.bytes ? `${fmt.num(s.bytes / 1048576, 1)} MB` : '—'}</td></tr>`).join('')}</tbody></table><div class="small dim mt-8">${fmt.num(nOk)} of ${fmt.num(res.length)} county files present · ${fmt.num(coOk.size)} of ${COS.length} companies covered${missCos.length ? ` · <span style="color:var(--amber)">next pull: ${esc(missCos.map(c => c.short).join(', '))} (county assessor / recorder sales for their HQ counties)</span>` : ''}. Residential (home) sales sit alongside commercial transfers; explore them in the ${COS.filter(c => coOk.has(c.id)).map(c => `<a href="#/${c.id}">${esc(c.short)}</a>`).join(', ')} modules.</div>`;
+  if (box) box.innerHTML = `<div class="sys-table-wrap"><table class="sys-table"><thead><tr><th>Coverage</th><th>Dataset</th><th class="sys-n n">Size</th></tr></thead><tbody>${res.map(s => `<tr><td>${fmt.chip(coById(s.co).short, coById(s.co).color)} <span class="small">${esc(s.label)}</span></td><td class="small ${s.ok ? 'ok' : 'miss'}">${s.ok ? '✓' : s.planned ? '✗ not collected' : '✗ pending'} ${esc(Copy.dataset(s.f))}</td><td class="sys-n n" style="white-space:nowrap">${s.ok && s.bytes ? `${fmt.num(s.bytes / 1048576, 1)} MB` : '—'}</td></tr>`).join('')}</tbody></table><div class="small dim mt-8">${fmt.num(nOk)} of ${fmt.num(res.length)} county files present · ${fmt.num(coOk.size)} of ${COS.length} companies covered${missCos.length ? ` · <span style="color:var(--sys-warn-ink)">next pull: ${esc(missCos.map(c => c.short).join(', '))} (county assessor / recorder sales for their HQ counties)</span>` : ''}. Residential (home) sales sit alongside commercial transfers; explore them in the ${COS.filter(c => coOk.has(c.id)).map(c => `<a href="#/${c.id}">${esc(c.short)}</a>`).join(', ')} modules.</div>`;
 }
 
 export default {

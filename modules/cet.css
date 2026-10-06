@@ -1,62 +1,63 @@
-/* CET module — scoped styles (prefix .m-cet) */
-.m-cet .actions-list{counter-reset:act;display:flex;flex-direction:column;gap:7px}
-.m-cet .actions-list .act{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:var(--text-2);line-height:1.45}
-.m-cet .actions-list .act .n{flex-shrink:0;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font:600 10.5px var(--mono);background:color-mix(in srgb,var(--c-cet) 18%,transparent);color:var(--c-cet);border:1px solid color-mix(in srgb,var(--c-cet) 40%,transparent)}
-.m-cet .actions-list .act b{color:var(--text)}
-.m-cet .mini-list{display:flex;flex-direction:column}
-.m-cet .mini-list .it{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--hair);cursor:pointer}
-.m-cet .mini-list .it:last-child{border-bottom:0}
-.m-cet .mini-list .it:hover .t{color:var(--accent-2)}
-.m-cet .mini-list .it .t{font-size:12px;font-weight:600;color:var(--text)}
-.m-cet .mini-list .it .s{font-size:11px;color:var(--muted);margin-top:1px}
-.m-cet .mini-list .it .r{margin-left:auto;text-align:right;flex-shrink:0;font-family:var(--mono);font-size:11px;color:var(--text-2)}
-.m-cet .rk{flex-shrink:0;font:600 10.5px var(--mono);color:var(--dim);width:22px;padding-top:1px}
-.m-cet .archived{display:flex;gap:8px;align-items:center;font-size:11px;color:var(--dim);padding:6px 10px;border:1px dashed var(--border-2);border-radius:var(--radius);margin-top:12px}
-.m-cet .archived .chip{--cc:var(--dim)}
-.m-cet .side-head{display:flex;align-items:flex-start;gap:8px;margin-bottom:10px}
-.m-cet .side-head h1{font-size:16px}
-.m-cet .side-head .sub{font-size:11.5px;color:var(--muted);margin-top:2px}
-.m-cet .side .filters{gap:6px}
-.m-cet .side .filters input[type=search]{min-width:0;flex:1 1 100%}
-.m-cet .side .filters .f{font-size:11px}
-.m-cet .side .kpis{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:10px}
-.m-cet .side .kpi{padding:7px 9px}
-.m-cet .side .kpi .value{font-size:16px}
-.m-cet .more{font-size:11px;color:var(--dim);text-align:center;padding:10px}
-.m-cet .cs{display:inline-flex;flex-wrap:nowrap;gap:3px}
-.m-cet .cs .chip{padding:1px 6px;font-size:10px}
-.m-cet .seg-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
-.m-cet .town-chip{cursor:pointer}
-.m-cet .bar-caption{font-size:10.5px;color:var(--dim);margin-top:4px}
-.m-cet .legend-inline{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--muted);margin-top:6px}
-.m-cet .legend-inline i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+/* CET module — layout only (UNIFIED.md §8). Every look comes from system.css components
+   (.sys-card, .sys-kpi, .sys-table, .sys-chip, .sys-btn, .sys-note, .sys-card-list, .sys-kbd);
+   this file only places them and sizes the charts and maps, with --sys-* tokens. */
+
+/* numbered action lists: .sys-card-list with a .sys-kbd number instead of the bullet */
+.cet-acts{gap:var(--sys-sp-3)}
+.cet-acts>li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:var(--sys-sp-3);align-items:start;padding-left:0}
+.cet-acts>li::before{content:none}
+
+/* clickable rows in .sys-table lists (bid slate, top 15, top 10) and their group heads */
+.cet-rows tbody tr[tabindex]{cursor:pointer}
+.cet-rows td{vertical-align:top}
+.cet-rows .sys-n{white-space:nowrap}
+.cet-rows tr.cet-grp th{position:static}
+
+/* stacked stage bars (capital program by state) */
+.cet-stk{display:flex;flex-direction:column;gap:var(--sys-sp-2);margin-bottom:var(--sys-sp-4)}
+.cet-stk-row{display:grid;grid-template-columns:minmax(96px,auto) minmax(0,1fr) 64px;gap:var(--sys-sp-2);align-items:center}
+.cet-stk-row .sys-num{text-align:right}
+.cet-stk-bar{display:flex;height:12px;border-radius:var(--sys-r-pill);background:var(--sys-bg-3);overflow:hidden}
+.cet-stk-bar i{display:block;height:100%;min-width:2px}
+.cet-legend{margin-bottom:var(--sys-sp-3)}
+
+/* bid status control in the inspector */
+.cet-bid{display:flex;flex-direction:column;gap:var(--sys-sp-3)}
+.cet-bid-owner{flex-direction:column;align-items:stretch}
+.cet-bid-owner .sys-input{width:100%}
+
+/* table cell clips and chip strips */
+.cet-clip{display:inline-block;max-width:260px;vertical-align:middle}
+.cet-clip-sm{max-width:180px}
+.cet-nowrap{flex-wrap:nowrap;gap:var(--sys-sp-1)}
+.cet-pad{padding:0 var(--sys-sp-5) var(--sys-sp-3)}
+.cet-map-md{min-height:500px}
+
+/* opportunity radar: split list + map */
+.m-cet.split>.side .page-head{margin-bottom:var(--sys-sp-4)}
+.m-cet.split>.side .sys-h1{font-size:var(--sys-fs-xl);letter-spacing:var(--sys-tr-title)}
+.m-cet.split>.side .sys-lead{font-size:var(--sys-fs-sm)}
+.m-cet.split>.side .sys-filters{margin-bottom:var(--sys-sp-3)}
+.m-cet.split>.side .sys-filters input[type=search]{flex:1 1 100%}
+.m-cet.split>.side .sys-kpis{grid-template-columns:repeat(3,minmax(0,1fr));margin:0 0 var(--sys-sp-3)}
+.m-cet.split>.side .sys-kpi{padding:var(--sys-sp-3)}
+.m-cet.split>.side .sys-kpi-value{font-size:var(--sys-fs-xl)}
+.m-cet.split>.side .sys-grid{grid-template-columns:minmax(0,1fr)}
 @media (max-width:1100px){
   .m-cet.split{grid-template-rows:minmax(0,1fr) 44vh}
   .m-cet.split>.side{min-height:0}
 }
 .m-cet .map-overlay{left:52px;width:max-content;max-width:300px}
-/* shared renderFilings estimate table: let long estimate/basis text wrap instead of overflowing */
+
+/* shared renderFilings: estimate table full width, synthesis as a two-column list, long text wraps */
+.m-cet #cet-fil>.grid.grid-main{grid-template-columns:minmax(0,1fr)}
+.m-cet .cet-fp{display:block;columns:2;column-gap:var(--sys-sp-6)}
+.m-cet .cet-fp li{margin:0 0 var(--sys-sp-2);break-inside:avoid}
+@media (max-width:1180px){.m-cet .cet-fp{columns:1}}
 .m-cet #cet-fil .tbl td{white-space:normal;max-width:none}
 .m-cet #cet-fil .tbl td.num{white-space:normal;min-width:110px}
-.m-cet .tbl td .cs{white-space:nowrap}
-/* overview: dated top-10 actions, grouped bid slate, stacked stage bars */
-.m-cet .actions-list .act .dl{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
-.m-cet .actions-list .act .dl .chip{padding:1px 6px;font-size:10px}
-.m-cet .actions-list .act.lapsed{opacity:.55}
-.m-cet .actions-list .act.lapsed .n{background:transparent;color:var(--dim);border-color:var(--border-2)}
-.m-cet .mini-list .grp{font:600 10.5px var(--sans,inherit);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:8px 0 3px;border-bottom:1px solid var(--hair)}
-.m-cet .mini-list .grp:first-child{padding-top:0}
-.m-cet .mini-list .it .r .chip{padding:1px 6px;font-size:10px;white-space:nowrap}
-.m-cet .stk{display:flex;flex-direction:column;gap:7px}
-.m-cet .stk-row{display:grid;grid-template-columns:96px minmax(0,1fr) 58px;gap:8px;align-items:center;font-size:11.5px}
-.m-cet .stk-l{color:var(--text-2);white-space:nowrap;font-family:var(--mono)}
-.m-cet .stk-l .dim{font-size:10px}
-.m-cet .stk-bar{display:flex;height:12px;border-radius:3px;background:var(--hair);overflow:hidden}
-.m-cet .stk-bar i{display:block;height:100%;min-width:2px}
-.m-cet .stk-v{text-align:right;font-family:var(--mono);color:var(--text-2)}
-/* radar: per-viewer bid status in the inspector */
-.m-cet .bid-ctl{display:flex;flex-direction:column;gap:8px}
-.m-cet .bid-ctl .btn.active{border-color:var(--accent);color:var(--text);background:color-mix(in srgb,var(--accent) 18%,transparent)}
-.m-cet .bid-ctl .own{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--muted)}
-.m-cet .bid-ctl input{font:inherit;font-size:12px;color:var(--text);background:var(--bg-2,transparent);border:1px solid var(--border-2);border-radius:var(--radius,6px);padding:5px 8px}
-.m-cet .side .seg-row{margin-bottom:8px}
+/* phones: long chips wrap inside the column instead of widening the page */
+@media (max-width:640px){
+  .m-cet .sys-chip{max-width:100%;white-space:normal;padding-top:var(--sys-sp-1);padding-bottom:var(--sys-sp-1)}
+  .m-cet .cet-stk-row{grid-template-columns:minmax(80px,auto) minmax(0,1fr) 56px}
+}

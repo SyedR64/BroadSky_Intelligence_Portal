@@ -1,18 +1,22 @@
-/* Value-creation cases — component styles shared by the portal module (#/cases/*)
+/* Value-creation cases — chart and layout styles shared by the portal module (#/cases/*)
    and the public page (redesigns/case-studies.html). Every selector is scoped .m-cases.
-   Colours read --sys-* tokens only (they follow the portal's dark/light switch and the
-   page's light theme); the seven event-family hues are chart encodings set inline. */
+   Cards, KPI tiles, chips, buttons, inputs and notes are the system components
+   (system.css: .sys-kpi, .sys-chip, .sys-btn, .sys-input, .sys-note); this file only lays
+   out the timeline, matrix, hold clock, Gantt and bar charts. Every value is a --sys-* /
+   --co-* token, so both surfaces follow the one light/dark theme; the seven event-family
+   hues are system palette tokens set inline by cases-lib.js. */
 
-.m-cases{--cs-acc:var(--sys-violet);--cs-acc-2:color-mix(in srgb,var(--sys-violet) 55%,var(--sys-mute-2));--cs-acc-3:color-mix(in srgb,var(--sys-violet) 18%,var(--sys-mute-2));font-size:12.5px;color:var(--sys-ink-2)}
+.m-cases{--cs-acc:var(--sys-violet);--cs-acc-2:color-mix(in srgb,var(--sys-violet) 55%,var(--sys-mute-2));--cs-acc-3:color-mix(in srgb,var(--sys-violet) 18%,var(--sys-mute-2));font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
 .m-cases button{font:inherit;color:inherit}
 .m-cases .cs-empty{margin:0;padding:14px 0;color:var(--sys-mute);font-size:.95em}
 
 /* ── legend ── */
 .m-cases .cs-legend{display:flex;flex-wrap:wrap;gap:6px}
-.m-cases .cs-leg{display:inline-flex;align-items:center;gap:7px;padding:4px 10px;min-height:28px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-pill);background:var(--sys-surface);font-size:.92em;line-height:1.2;color:var(--sys-ink-2);white-space:nowrap}
+.m-cases .cs-leg{display:inline-flex;align-items:center;gap:7px;min-height:30px;padding:0 12px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-pill);background:var(--sys-surface);font:500 13px/1.2 var(--sys-font);color:var(--sys-ink-2);white-space:nowrap;transition:border-color var(--sys-t),color var(--sys-t)}   /* same metrics as .sys-chip; a legend toggle keeps the surface fill so the hue dots stay legible */
 .m-cases button.cs-leg{cursor:pointer}
+.m-cases button.cs-leg:hover{border-color:var(--sys-ink);color:var(--sys-ink)}
 .m-cases .cs-leg i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
-.m-cases .cs-leg[aria-pressed="false"]{opacity:.5}
+.m-cases .cs-leg[aria-pressed="false"]{color:var(--sys-mute-2);border-style:dashed}
 .m-cases .cs-leg[aria-pressed="false"] i{background:transparent;box-shadow:inset 0 0 0 1.5px var(--c)}
 
 /* ── timeline ── */
@@ -55,15 +59,13 @@
 .m-cases .cs-type{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:.92em;color:var(--sys-ink-2)}
 .m-cases .cs-type i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
 
-/* ── KPI before → after ── */
-.m-cases .cs-kba{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
-.m-cases .cs-kba-i{display:flex;flex-direction:column;gap:5px;padding:12px;border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface);min-width:0}
-.m-cases .cs-kba-k{font:600 .78em/1.3 var(--sys-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--sys-mute)}
-.m-cases .cs-kba-v{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px;font-family:var(--sys-mono);font-variant-numeric:tabular-nums;color:var(--sys-mute);font-size:1.02em}
-.m-cases .cs-kba-v b{font-size:1.3em;font-weight:600;color:var(--sys-ink)}
-.m-cases .cs-kba-v i{font-style:normal;color:var(--sys-mute-2)}
-.m-cases .cs-kba-u{font-size:.86em;color:var(--sys-mute);line-height:1.35}
-.m-cases .cs-kba-s{font-size:.84em;color:var(--sys-mute);text-decoration:underline;text-decoration-color:var(--sys-line-2);text-underline-offset:2px;overflow-wrap:anywhere}
+/* ── KPI before → after: .sys-kpi tiles in a .sys-kpis strip ── */
+.m-cases .cs-kba{margin-top:0}
+.m-cases .cs-kba-v{gap:8px}
+.m-cases .cs-kba-v>span,.m-cases .cs-kba-v i{font-size:.62em;letter-spacing:-.02em;color:var(--sys-mute)}
+.m-cases .cs-kba-v b{font-weight:600;color:var(--sys-ink)}
+.m-cases .cs-kba-v i{font-style:normal}
+.m-cases .cs-kba-s{margin-top:0;text-decoration:underline;text-decoration-color:var(--sys-line-2);text-underline-offset:2px;overflow-wrap:anywhere}
 
 /* ── lever × case matrix ── */
 .m-cases .cs-mx-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface)}
@@ -112,8 +114,7 @@
 .m-cases .cs-ck-med{position:absolute;top:3px;width:2px;height:18px;margin-left:-1px;background:var(--sys-ink)}
 .m-cases .cs-ck-now{position:absolute;top:-2px;bottom:-2px;border-left:2px dotted var(--sys-brand)}
 .m-cases .cs-ck-span{position:absolute;left:8px;right:6px;top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:500 .84em/1.2 var(--sys-mono);color:var(--sys-mute)}
-.m-cases .cs-ck-chip{justify-self:start;display:inline-flex;align-items:center;padding:3px 9px;border-radius:var(--sys-r-pill);font:600 .8em/1.2 var(--sys-font);white-space:nowrap;color:var(--n-ink,var(--sys-info-ink));background:color-mix(in srgb,var(--n,var(--sys-info)) 12%,transparent);border:1px solid color-mix(in srgb,var(--n,var(--sys-info)) 28%,transparent)}
-.m-cases .cs-ck-chip--good{--n:var(--sys-good);--n-ink:var(--sys-good-ink)} .m-cases .cs-ck-chip--warn{--n:var(--sys-warn);--n-ink:var(--sys-warn-ink)} .m-cases .cs-ck-chip--bad{--n:var(--sys-bad);--n-ink:var(--sys-bad-ink)} .m-cases .cs-ck-chip--info{--n:var(--sys-info);--n-ink:var(--sys-info-ink)}
+.m-cases .cs-ck-chip{justify-self:start;min-height:26px;padding:0 10px;font-size:var(--sys-fs-xs)}   /* a .sys-chip status chip */
 .m-cases .cs-ck-axis .cs-ck-chip{visibility:hidden}
 .m-cases .cs-ck-ticks{position:relative;height:40px}
 .m-cases .cs-ck-ticks span{position:absolute;top:6px;transform:translateX(-50%);font:500 .8em/1 var(--sys-mono);color:var(--sys-mute);white-space:nowrap}
@@ -121,7 +122,7 @@
 .m-cases .cs-ck-ticks em{position:absolute;top:22px;transform:translateX(-50%);font:600 .78em/1 var(--sys-mono);font-style:normal;color:var(--sys-brand);white-space:nowrap}
 
 /* ── Punctual Pros sequence (Gantt) ── */
-.m-cases .cs-g-h{margin:0 0 8px;font:600 .78em/1.3 var(--sys-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--sys-mute)}
+.m-cases .cs-g-h{margin:0 0 var(--sys-sp-2)}   /* .sys-card-label */
 .m-cases .cs-g-done ol{list-style:none;margin:0 0 18px;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .m-cases .cs-g-done button,.m-cases .cs-g-label{display:flex;gap:10px;align-items:flex-start;width:100%;padding:10px 12px;border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface);text-align:left;cursor:pointer}
 .m-cases .cs-g-done button>span:last-child,.m-cases .cs-g-label>span:last-child{display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -147,7 +148,7 @@
 .m-cases .cs-g-today{position:absolute;top:-6px;bottom:-6px;border-left:2px dotted var(--sys-brand);z-index:1}
 .m-cases .cs-g-bar{position:absolute;top:5px;height:20px;padding:0 8px;border-radius:var(--sys-r-xs);border:0;display:flex;align-items:center;overflow:hidden;font:600 .74em/1 var(--sys-mono);letter-spacing:.02em;white-space:nowrap;cursor:pointer;z-index:2}
 .m-cases .cs-g-bar span{overflow:hidden;text-overflow:clip}
-.m-cases .cs-g-bar--rec{background:var(--cs-acc);color:#fff}
+.m-cases .cs-g-bar--rec{background:var(--cs-acc);color:var(--sys-on-ink)}
 .m-cases .cs-g-bar--opt{background:transparent;color:var(--cs-acc);border:1.5px dashed var(--cs-acc)}
 .m-cases .cs-g-bar:hover,.m-cases .cs-g-bar:focus-visible{filter:brightness(1.08);box-shadow:0 0 0 2px color-mix(in srgb,var(--cs-acc) 35%,transparent)}
 .m-cases .cs-g-links{display:flex;flex-direction:column;gap:2px;min-width:0;font-size:.88em;line-height:1.3}
@@ -178,20 +179,27 @@
 .m-cases .cs-bar-ticks i{position:absolute;top:6px;transform:translateX(-50%);font:500 .78em/1 var(--sys-mono);font-style:normal;color:var(--sys-mute)}
 
 /* ── portal module layout ── */
-.m-cases .cs-ctl{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-bottom:12px}
-.m-cases .cs-ctl label{display:inline-flex;align-items:center;gap:8px;font-size:.92em;color:var(--sys-mute)}
-.m-cases .cs-ctl select{min-width:220px}
-.m-cases .cs-cmp{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.m-cases .cs-cmp-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 4px 3px 10px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-pill);background:var(--sys-surface-2);font-size:.92em;color:var(--sys-ink)}
-.m-cases .cs-cmp-chip button{width:20px;height:20px;border-radius:50%;border:0;background:var(--sys-bg-3);cursor:pointer;line-height:1;color:var(--sys-mute)}
+.m-cases .cs-ctl{margin-bottom:var(--sys-sp-3)}   /* .sys-filters */
+.m-cases .cs-ctl select{min-width:min(220px,100%)}
+.m-cases .cs-check{cursor:pointer}
+.m-cases .cs-check input{accent-color:var(--sys-ink)}
+.m-cases .cs-cmp{display:flex;flex-wrap:wrap;gap:var(--sys-sp-2);align-items:center}
+.m-cases .cs-cmp.sys-chips:empty{display:none}
+/* the public page writes plain buttons and spans: give them the .sys-chip metrics so both surfaces match */
+.m-cases .cs-cmp-chip:not(.sys-chip),.m-cases .cs-seg:not(.sys-chips) button{display:inline-flex;align-items:center;gap:7px;min-height:30px;padding:0 12px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-pill);background:var(--sys-surface);font:500 13px/1.2 var(--sys-font);color:var(--sys-ink-2);white-space:nowrap}
+.m-cases .cs-seg:not(.sys-chips){display:inline-flex;flex-wrap:wrap;gap:var(--sys-sp-2)}
+.m-cases .cs-seg:not(.sys-chips) button{cursor:pointer}
+.m-cases .cs-seg:not(.sys-chips) button:hover{border-color:var(--sys-ink);color:var(--sys-ink)}
+.m-cases .cs-seg:not(.sys-chips) button[aria-pressed="true"]{background:var(--sys-ink);border-color:var(--sys-ink);color:var(--sys-on-ink)}
+.m-cases .cs-cmp-chip{padding-right:4px}
 .m-cases .cs-cmp-chip button:hover{color:var(--sys-ink)}
-.m-cases .cs-seg{display:inline-flex;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-pill);overflow:hidden}
-.m-cases .cs-seg button{padding:5px 12px;border:0;background:transparent;color:var(--sys-mute);cursor:pointer;font-size:.92em}
-.m-cases .cs-seg button[aria-pressed="true"]{background:var(--sys-ink);color:var(--sys-on-ink)}
-.m-cases .cs-copy{margin:0;padding:10px 12px;border-left:3px solid var(--co-pp);border-radius:var(--sys-r-xs);background:color-mix(in srgb,var(--co-pp) 7%,var(--sys-surface));color:var(--sys-ink-2);line-height:1.55}
+.m-cases .cs-cmp-chip button{width:22px;height:22px;border-radius:50%;border:0;background:var(--sys-bg-3);cursor:pointer;line-height:1;color:var(--sys-mute)}
+.m-cases .cs-cmp-chip button:hover{color:var(--sys-ink)}
+.m-cases .cs-copy{display:block;margin:0}   /* .sys-note.sys-note--co in the Punctual Pros accent; block so the bold lead-in flows with the text */
+.m-cases .cs-focus{margin:0 -4px;padding:2px 4px;border-radius:var(--sys-r-xs);background:var(--co-soft)}
 .m-cases .cs-copy b{color:var(--sys-ink)}
 .m-cases .cs-facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px 16px;margin:0}
-.m-cases .cs-facts dt{font:600 .74em/1.3 var(--sys-mono);text-transform:uppercase;letter-spacing:.07em;color:var(--sys-mute)}
+.m-cases .cs-facts dt{font:600 var(--sys-fs-2xs)/1.3 var(--sys-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--sys-mute)}
 .m-cases .cs-facts dd{margin:3px 0 0;color:var(--sys-ink);line-height:1.4}
 .m-cases .cs-links{display:flex;flex-wrap:wrap;gap:6px 14px}
 .m-cases .cs-src-list{margin:0;padding-left:18px;font-size:.9em;line-height:1.6;overflow-wrap:anywhere}

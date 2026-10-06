@@ -1,5 +1,5 @@
 /* 3D theater module — portal-only adjustments (engine styles live in assets/theater.js, scoped to .bsp-theater) */
-.m-theater{position:relative;height:100%;min-height:480px;background:#05070b}
+.m-theater{position:relative;height:100%;min-height:480px;background:var(--sys-stage)}
 /* keep the legend and attribution clear of the portal's floating chat launcher */
 .m-theater .bsp-theater .bt-legend{bottom:88px}
 .m-theater .bsp-theater .bt-cap{bottom:clamp(30px,6vh,70px)}

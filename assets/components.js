@@ -1,5 +1,5 @@
 /* Shared, higher-level components used by several modules (targets, filings, opportunities). */
-import { esc } from './core.js?v=20261006155542';
+import { esc } from './core.js?v=20261006180606';
 
 const num = v => (v == null || isNaN(v)) ? null : Number(v);
 const fmtFig = x => x == null ? '—' : typeof x === 'boolean' ? (x ? 'yes' : 'no') : typeof x === 'number' ? x.toLocaleString() : typeof x === 'object' ? (Array.isArray(x) ? x.map(fmtFig).join(', ') : Object.entries(x).map(([k, v]) => `${k} ${fmtFig(v)}`).join('; ')) : String(x);
@@ -37,12 +37,12 @@ export function renderTargets(ctx, el, { items, color, platformLabel, exportName
     const fb = t.fit_breakdown || {};
     inspector.open({ title: esc(t.company), sub: `${esc(t.hq_city || '')}${t.hq_city ? ', ' : ''}${esc(t._state)} · ${platformLabel || ''} add-on candidate`, color,
       sections: [
-        { label: 'Fit', html: `<div class="row gap-12"><div class="kpi grow" style="--kc:${color}"><div class="label">Fit score</div><div class="value">${t.fit_score ?? '—'}</div><div class="sub">${esc(t._tier)}</div></div></div>${Object.keys(fb).length ? (() => { const vals = Object.values(fb).map(num).filter(x => x != null); const scale = Math.max(...vals, 0) <= 5 ? 20 : Math.max(...vals, 0) <= 10 ? 10 : 1; return `<div class="mt-8">${ctx.charts.hbar(Object.entries(fb).map(([k, v]) => ({ label: k.replace(/_/g, ' '), value: Math.round((num(v) || 0) * scale) })), { max: 100, fmt: v => v, labelW: 130, color })}</div>`; })() : ''}` },
+        { label: 'Fit', html: `<div class="sys-kpis kpis insp-kpis">${ui.kpi({ label: 'Fit score', value: esc(t.fit_score ?? '—'), sub: fmt.tier(t._tier), color })}</div>${Object.keys(fb).length ? (() => { const vals = Object.values(fb).map(num).filter(x => x != null); const scale = Math.max(...vals, 0) <= 5 ? 20 : Math.max(...vals, 0) <= 10 ? 10 : 1; return `<div class="mt-8">${ctx.charts.hbar(Object.entries(fb).map(([k, v]) => ({ label: k.replace(/_/g, ' '), value: Math.round((num(v) || 0) * scale) })), { max: 100, fmt: v => v, labelW: 130, color })}</div>`; })() : ''}` },
         { label: 'Profile', html: ui.kv({ Founded: t.founded_year, Employees: fmt.num(t.employees), 'Revenue (est.)': t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)} <span class="dim small">${esc(t.revenue_source || '')}</span>` : null, Ownership: t.ownership, Brands: t.brands_or_franchise, Specialties: t.specialties || t.trades || t.offerings, 'End markets': t.end_markets || t.customer_segments, Geography: t.geography_served, Reviews: t.review_count ? `${fmt.num(t.review_count)} · ${t.review_rating || ''}★` : null, 'Distance (Lancaster)': t.distance_mi_from_lancaster ? `${t.distance_mi_from_lancaster} mi` : null, 'Distance (Toms River)': t.distance_mi_from_toms_river ? `${t.distance_mi_from_toms_river} mi` : null, Website: t.website ? fmt.link(t.website) : null, 'ZoomInfo ID': t.zoominfo_id }) },
         { label: 'Strategic rationale', html: `<div class="small text-2">${esc(t.strategic_rationale || '')}</div>` },
         t.risk_flags?.length ? { label: 'Risk flags', html: t.risk_flags.map(r => fmt.chip(r, 'var(--amber)')).join(' ') } : null,
         { label: 'Sources', html: `<div class="col gap-4 small">${(t.sources || []).map(s => `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(fmt.host(s) || s)}</a>`).join('') || '—'}</div><div class="dim small mt-8">Retrieved ${esc(t.retrieved || '')}</div>` },
-        { label: 'Next action', html: `<div class="small text-2">Log in deal pipeline → owner outreach via PRG → request 3-yr financials + customer concentration → indicative valuation at sector multiple (see Filings & Financials).</div>` },
+        { label: 'Next action', html: `<div class="sys-card-body">Log it in the deal pipeline, open owner outreach through the Portfolio Resource Group, request three years of financials and customer concentration, then set an indicative valuation at the sector multiple (see Fundamentals).</div>` },
       ].filter(Boolean),
       actions: [t.website ? { label: 'Website ↗', href: t.website } : null, { id: 'csv', label: 'Export shortlist', onClick: () => ui.exportCSV(tbl.rows, columns.filter(c => !c.key.startsWith('_')), exportName) }].filter(Boolean) });
   }
@@ -59,14 +59,14 @@ export function renderFilings(ctx, el, { data, color, title }) {
   const cats = [...new Set(items.map(i => i.category))];
   const est = m.estimate_table || [];
   el.innerHTML = `
-    <div class="grid grid-main">
-      ${ui.panel({ title: 'Financial picture', sub: 'Synthesis from public filings and datasets — estimates, not audited figures', body: `<div class="prose">${esc(m.financial_picture || 'No synthesis available.')}</div>`, accent: true, foot: `<span class="dim">${esc((Array.isArray(m.sources_summary) ? m.sources_summary : []).slice(0, 6).map(x => typeof x === 'string' ? x : (x && (x.source || x.name || x.portal)) || JSON.stringify(x)).join(' · '))}</span>` })}
-      ${ui.panel({ title: 'Estimate table', sub: 'Metric · estimate · basis · confidence', body: est.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Metric</th><th>Estimate</th><th>Basis</th><th>Conf.</th></tr></thead><tbody>${est.map(e => `<tr><td class="wrap">${esc(e.metric)}</td><td class="num wrap">${esc(e.estimate)}</td><td class="wrap small text-2">${esc(e.basis)}</td><td>${fmt.chip(e.confidence, e.confidence === 'high' ? 'var(--green)' : e.confidence === 'medium' ? 'var(--amber)' : 'var(--dim)')}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('No estimates') })}
+    <div class="sys-grid grid grid-main">
+      ${ui.panel({ title: 'Financial picture', sub: 'Synthesis from public filings and datasets — estimates, not audited figures', body: `<div class="sys-card-body prose">${esc(m.financial_picture || 'No synthesis available.')}</div>`, accent: true, foot: `<span class="dim">${esc((Array.isArray(m.sources_summary) ? m.sources_summary : []).slice(0, 6).map(x => typeof x === 'string' ? x : (x && (x.source || x.name || x.portal)) || JSON.stringify(x)).join(' · '))}</span>` })}
+      ${ui.panel({ title: 'Estimate table', sub: 'Metric · estimate · basis · confidence', body: est.length ? `<div class="sys-table-wrap tbl-wrap"><table class="sys-table tbl"><thead><tr><th>Metric</th><th>Estimate</th><th>Basis</th><th>Conf.</th></tr></thead><tbody>${est.map(e => `<tr><td class="wrap">${esc(e.metric)}</td><td class="sys-n num wrap">${esc(e.estimate)}</td><td class="wrap small text-2">${esc(e.basis)}</td><td>${fmt.chip(e.confidence, e.confidence === 'high' ? 'var(--green)' : e.confidence === 'medium' ? 'var(--amber)' : 'var(--dim)')}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('No estimates') })}
     </div>
     <div class="mt-12" id="fil-filters"></div><div id="fil-table"></div>
-    <div class="grid grid-2 mt-12">
-      ${ui.panel({ title: 'Data gaps', body: `<ul class="prose">${(Array.isArray(m.data_gaps) ? m.data_gaps : []).map(g => `<li>${esc(g)}</li>`).join('') || '<li>—</li>'}</ul>` })}
-      ${ui.panel({ title: 'Next pulls (paid tools / diligence)', body: `<ul class="prose">${(Array.isArray(m.next_pulls) ? m.next_pulls : []).map(g => `<li>${esc(g)}</li>`).join('') || '<li>—</li>'}</ul>` })}
+    <div class="sys-grid grid grid-2 mt-12">
+      ${ui.panel({ title: 'Data gaps', body: `<ul class="sys-card-list prose">${(Array.isArray(m.data_gaps) ? m.data_gaps : []).map(g => `<li>${esc(g)}</li>`).join('') || '<li>—</li>'}</ul>` })}
+      ${ui.panel({ title: 'Next pulls (paid tools / diligence)', body: `<ul class="sys-card-list prose">${(Array.isArray(m.next_pulls) ? m.next_pulls : []).map(g => `<li>${esc(g)}</li>`).join('') || '<li>—</li>'}</ul>` })}
     </div>`;
   const columns = [
     { key: 'category', label: 'Category', fmt: v => fmt.chip(String(v || '').replace(/_/g, ' '), color) },

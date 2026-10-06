@@ -1,17 +1,19 @@
-import * as Copy from './copy.js?v=20261006155542';
+import * as Copy from './copy.js?v=20261006180606';
 /* 3D theater — cinematic GPU map scenes over the portal's datasets (engine: assets/theater.js) */
 const V = new URL(import.meta.url).search; // reuse the registry's ?v= stamp for cache-busting the engine
 
 async function play(ctx) {
   const { el, params, data, live, maps, fmt, esc, app } = ctx;
-  if (!document.getElementById('css-theater')) { const l = document.createElement('link'); l.id = 'css-theater'; l.rel = 'stylesheet'; l.href = `modules/theater.css?v=20261006155542${V}`; document.head.appendChild(l); }
+  if (!document.getElementById('css-theater')) { const l = document.createElement('link'); l.id = 'css-theater'; l.rel = 'stylesheet'; l.href = `modules/theater.css?v=20261006180606${V}`; document.head.appendChild(l); }
   // the view's page heading follows the portal pattern (set by retitle in app.html); it is visually hidden so the
   // engine's per-scene caption stays the visible title (the engine renders it as h2 when the page already has an h1)
-  el.innerHTML = `<div class="page-head" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0"><h1>3D theater · cinematic map scenes</h1></div><div class="m-theater" style="position:relative;height:100%;min-height:480px;background:#05070b"></div>`;
+  // the stage is a dark band (system.css §2): data-sys-theme="dark" resolves the system tokens to the dark set inside it,
+  // so the film reads the same on the light and the dark portal while the rail, bar and inspector follow the page theme
+  el.innerHTML = `<div class="page-head sys-sr"><h1 class="sys-h1">3D theater · cinematic map scenes</h1></div><div class="m-theater" data-sys-theme="dark" style="position:relative;height:100%;min-height:480px;background:var(--sys-bg)"></div>`;
   const host = el.querySelector('.m-theater');
   let Theater;
-  try { ({ Theater } = await import(`../assets/theater.js?v=20261006155542${V}`)); }
-  catch (e) { host.innerHTML = ctx.ui.note(`The 3D theater engine failed to load: <span class="mono">${esc(e.message)}</span>`, 'warn'); return; }
+  try { ({ Theater } = await import(`../assets/theater.js?v=20261006180606${V}`)); }
+  catch (e) { host.innerHTML = `<div style="padding:var(--sys-sp-6) var(--sys-gut)">${ctx.ui.note('The 3D theater engine could not load. Check the connection and reload; the same scenes play on the standalone theater page.', 'warn')}</div>`; console.warn('[theater]', e); return; }
   if (!el.isConnected) return;
   const scene = params.scene || 'S1';
   const autoplay = params.autoplay != null ? params.autoplay !== '0' : true;
@@ -30,11 +32,11 @@ async function play(ctx) {
   const mo = new MutationObserver(() => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; Copy.humanize(host); }); });
   mo.observe(host, { childList: true, subtree: true, characterData: true });
   app.index([
-    { label: '3D theater · Portfolio scene', sub: 'Portfolio companies, PP core zips, CET county fit', href: '#/theater/play?scene=S1', kind: 'Scene', color: 'var(--cyan)' },
-    { label: '3D theater · Where the homes trade', sub: 'Every PP-territory home sale, extruded by count', href: '#/theater/play?scene=S2', kind: 'Scene', color: 'var(--cyan)' },
-    { label: '3D theater · Nationwide', sub: 'Punctual Pros expansion arcs by phase', href: '#/theater/play?scene=S3', kind: 'Scene', color: 'var(--cyan)' },
-    { label: '3D theater · New England grid', sub: 'CET opportunities and wastewater plants', href: '#/theater/play?scene=S4', kind: 'Scene', color: 'var(--cyan)' },
-    { label: '3D theater · Storm', sub: 'Live NWS alerts over the PP territory', href: '#/theater/play?scene=S5', kind: 'Scene', color: 'var(--cyan)' },
+    { label: '3D theater · Portfolio scene', sub: 'Portfolio companies, Punctual Pros core ZIP codes, CET county fit', href: '#/theater/play?scene=S1', kind: 'Scene', color: 'var(--co-fh)' },
+    { label: '3D theater · Where the homes trade', sub: 'Every home sale in the Punctual Pros territory, extruded by count', href: '#/theater/play?scene=S2', kind: 'Scene', color: 'var(--co-fh)' },
+    { label: '3D theater · Nationwide', sub: 'Punctual Pros expansion arcs by phase', href: '#/theater/play?scene=S3', kind: 'Scene', color: 'var(--co-fh)' },
+    { label: '3D theater · New England grid', sub: 'CET opportunities and wastewater plants', href: '#/theater/play?scene=S4', kind: 'Scene', color: 'var(--co-fh)' },
+    { label: '3D theater · Storm', sub: 'Live National Weather Service alerts over the Punctual Pros territory', href: '#/theater/play?scene=S5', kind: 'Scene', color: 'var(--co-fh)' },
   ]);
   return () => { mo.disconnect(); try { Theater.destroy(); } catch { } };
 }
@@ -43,7 +45,7 @@ export default {
   id: 'theater',
   name: '3D theater',
   tag: 'WebGL',
-  color: 'var(--cyan)',
+  color: 'var(--co-fh)',
   group: 'Command',
   tagline: 'Cinematic, GPU-rendered map scenes over the portfolio datasets: home sales, expansion arcs, CET infrastructure and live weather',
   views: [

@@ -11,7 +11,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261006155542';
+import { Data, Fmt, Live, esc } from './core.js?v=20261006180606';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -43,7 +43,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261006155542';
+const BACKEND_JS = './backend.js?v=20261006180606';
 let BE = null, BE_P = null;
 function backend() {
   if (!BE_P) BE_P = import(BACKEND_JS).then(async m => {
@@ -853,7 +853,7 @@ const GROUPS = [
 ];
 const groupOf = s => (GROUPS.find(g => g[3].test(s)) || GROUPS[2])[0];
 const COMMANDS = [['/portal', 'Broad Sky Intelligence', 'portal'], ['/pp', 'Punctual Pros assistant', 'pp'], ['/cet', 'CET project desk', 'cet'], ['/fl', 'Frontline advisor', 'fl'], ['/ts', 'Thomas Scientific concierge', 'ts'], ['/bpi', 'BPI desk', 'bpi'], ['/fh', 'Fair Harbor helper', 'fh'], ['/new', 'Start a new chat'], ['/clear', 'Clear this conversation'], ['/key', 'Claude key and model settings']];
-const FB_LS = 'bsp-chat-feedback', TH_LS = 'bsp-assistant-threads', THEME_LS = 'bsp-assistant-theme';
+const FB_LS = 'bsp-chat-feedback', TH_LS = 'bsp-assistant-threads', THEME_KEY = 'bsp-theme';
 const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } };
 const hash = s => { let h = 2166136261; for (const c of String(s)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); };
@@ -927,7 +927,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261006155542'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261006180606'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };
@@ -942,7 +942,7 @@ class Widget {
   constructor(el, persona, personaId, opts) {
     this.opts = opts; this.baseId = personaId; this.basePersona = persona; this.persona = persona; this.id = personaId;
     this.mode = opts.mode === 'full' ? 'full' : opts.mode === 'inline' || opts.mode === 'floating' ? opts.mode : (el ? 'inline' : 'floating');
-    this.theme = this.mode === 'full' ? (lsGet(THEME_LS, null) || opts.theme || 'auto') : (opts.theme || 'auto');
+    this.theme = 'auto';   // every widget follows the page: one site-wide theme (html[data-sys-theme], localStorage 'bsp-theme', set from the frame's top bar)
     this.history = []; this.open = false; this.extra = null; this.ctx = null; this.busy = false; this.ctl = null; this.prompts = []; this.lastQ = ''; this.thread = null;
     this.root = document.createElement('div'); this.root.className = `ch ch-${this.mode}`;
     this.setAccent(); this.applyTheme();
@@ -962,7 +962,6 @@ class Widget {
   /* ── theme & chrome ── */
   isDark() {
     if (this.theme === 'dark') return true; if (this.theme === 'light') return false;
-    if (this.mode === 'full') return matchMedia('(prefers-color-scheme: dark)').matches;
     const h = document.documentElement;
     if (h.dataset.theme === 'light' || h.dataset.sysTheme === 'light') return false;
     if (h.dataset.sysTheme === 'dark' || document.body.classList.contains('dark')) return true;
@@ -972,10 +971,8 @@ class Widget {
   }
   applyTheme() {
     const d = this.isDark(); this.root.classList.toggle('ch-dark', d); this.pop?.classList.toggle('ch-dark', d);
-    if (this.mode === 'full') { document.documentElement.dataset.sysTheme = d ? 'dark' : 'light'; document.querySelector('meta[name="theme-color"]')?.setAttribute('content', d ? '#0a0e14' : '#fbfaf7'); }   // the page frame follows the assistant's theme
     const t = this.root.querySelector('[data-a="theme"]'); if (t) { t.innerHTML = d ? I.sun : I.moon; t.setAttribute('aria-label', d ? 'Switch to light theme' : 'Switch to dark theme'); } }
   watchTheme() {
-    if (this.mode === 'full') { try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => this.applyTheme()); } catch { /* old browsers */ } return; }
     if (this.theme !== 'auto' || !('MutationObserver' in window)) return;
     const mo = new MutationObserver(() => this.applyTheme());
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-sys-theme', 'class'] });
@@ -1490,7 +1487,12 @@ class Widget {
     else if (a === 'jump') this.msgs.scrollTo({ top: this.msgs.scrollHeight, behavior: reduced() ? 'auto' : 'smooth' });
     else if (a === 'steps') { const ol = t.parentElement?.querySelector('.ch-steps'); if (!ol) return; ol.hidden = !ol.hidden; t.setAttribute('aria-expanded', String(!ol.hidden)); }
     else if (a === 'sources') { const d = t.closest('.ch-after')?.querySelector('.ch-sources'); if (d) { d.open = true; d.querySelector('summary')?.focus(); } }
-    else if (a === 'theme') { this.theme = this.isDark() ? 'light' : 'dark'; lsSet(THEME_LS, this.theme); this.applyTheme(); }
+    else if (a === 'theme') {   // the assistant's own button sets the one site-wide theme
+      const t = this.isDark() ? 'light' : 'dark', F = window.BSPFrame;
+      if (F && typeof F.setTheme === 'function') F.setTheme(t);
+      else { document.documentElement.dataset.sysTheme = t; try { localStorage.setItem(THEME_KEY, t); } catch { /* storage blocked */ } }
+      this.applyTheme();
+    }
     else if (a === 'menu') this.root.classList.toggle('ch-side-open');
   }
   onKey(e) {

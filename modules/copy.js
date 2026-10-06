@@ -2,7 +2,7 @@
    record fields, the est. badge, and a post-render pass that turns the console's
    textual "est." markers into .sys-est badges. Module renderers call these at the
    source; Frame.humanize stays the safety net. */
-import { Frame } from '../assets/frame.js?v=20261006155542';
+import { Frame } from '../assets/frame.js?v=20261006180606';
 
 export const EST = '<span class="sys-est">est.</span>';
 export const ILLUS = '<span class="sys-est sys-est--illus">illustrative</span>';
@@ -76,6 +76,7 @@ export function text(s) {
 /* ── post-render pass: textual est. markers → .sys-est badges ──────────────── */
 const SKIP = 'code,pre,kbd,script,style,textarea,input,select,option,svg,.sys-est,[data-raw],.ch';
 // "est." as its own token: "$22M est.", "(est.)", "est. $3M", "· est." — never "interest." or "largest."
+const RX_NEQ = /\bn=(\d)/, RX_NEQ_G = /\bn=(\d+)/g;
 const RX_EST = /(^|[\s(·,/~≈])\(?(?:est\.|EST\.|Est\.)\)?(?=$|[\s),·;:/])/;
 /* ── shared component vocabulary: console markup carries the .sys- classes ──────
    Renderers keep writing .panel / .kpi / .btn / .chip / .tbl / .note (core.js
@@ -88,7 +89,7 @@ const ALIAS = [
   ['table.tbl', el => ['sys-table']],
   ['.tbl-wrap', el => ['sys-table-wrap']],
   ['.note', el => ['sys-note', el.classList.contains('warn') ? 'sys-note--warn' : el.classList.contains('good') ? 'sys-note--good' : el.classList.contains('bad') ? 'sys-note--bad' : el.classList.contains('brand') ? 'sys-note--co' : 'sys-note--info']],
-  ['.btn', el => { const c = el.classList; return ['sys-btn', c.contains('primary') ? 'sys-btn--primary' : c.contains('brand') ? 'sys-btn--accent' : c.contains('ghost') ? 'sys-btn--ghost' : 'sys-btn--secondary', ...(c.contains('sm') || c.contains('xs') ? ['sys-btn--sm'] : [])]; }],
+  ['.btn', el => { const c = el.classList; if ([...c].some(k => /^sys-btn--(primary|secondary|accent|ghost|co)$/.test(k))) return ['sys-btn']; return ['sys-btn', c.contains('primary') ? 'sys-btn--primary' : c.contains('brand') ? 'sys-btn--accent' : c.contains('ghost') ? 'sys-btn--ghost' : 'sys-btn--secondary', ...(c.contains('sm') || c.contains('xs') ? ['sys-btn--sm'] : [])]; }],
 ];
 const ALIAS_SEL = ALIAS.map(a => a[0]).join(',');
 export function alias(root) {
@@ -104,7 +105,9 @@ export function enhance(root) {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   const hits = [];
   for (let t = walker.nextNode(); t; t = walker.nextNode()) {
-    const v = t.nodeValue;
+    let v = t.nodeValue;
+    // statistics shorthand in data-sourced prose ("n=21") reads as words, never key=value (UNIFIED.md §7)
+    if (v && v.indexOf('n=') >= 0 && RX_NEQ.test(v) && !t.parentElement?.closest(SKIP)) v = t.nodeValue = v.replace(RX_NEQ_G, 'n = $1');
     if (!v || v.indexOf('st.') < 0 || !RX_EST.test(v)) continue;
     const p = t.parentElement;
     if (!p || p.closest(SKIP)) continue;

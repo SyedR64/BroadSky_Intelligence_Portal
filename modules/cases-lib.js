@@ -29,13 +29,14 @@ export const STATUS = { sold: 'Sold', held: 'Still held', recap: 'Recap or minor
 
 /** Seven colour families for the fourteen event types (chart encoding only). */
 export const FAMILY = {
-  deal: { label: 'Add-ons', color: '#e8772e' },
-  owner: { label: 'Recaps and exits', color: '#8b5cf6' },
-  ops: { label: 'Systems, pricing, contact center', color: '#14a39a' },
-  members: { label: 'Memberships', color: '#22a35a' },
-  people: { label: 'Leadership and training', color: '#3b82f6' },
-  brand: { label: 'Brand and marketing', color: '#db4f9a' },
-  info: { label: 'KPI disclosures and other', color: '#8a94a6' },
+  // system palette tokens (assets/system.css), so the encoding follows the shared light/dark theme
+  deal: { label: 'Add-ons', color: 'var(--sys-orange)' },
+  owner: { label: 'Recaps and exits', color: 'var(--sys-violet)' },
+  ops: { label: 'Systems, pricing, contact center', color: 'var(--sys-info)' },
+  members: { label: 'Memberships', color: 'var(--sys-good)' },
+  people: { label: 'Leadership and training', color: 'var(--sys-ink-2)' },
+  brand: { label: 'Brand and marketing', color: 'var(--sys-coral)' },
+  info: { label: 'KPI disclosures and other', color: 'var(--sys-mute-2)' },
 };
 export const EVENT = {
   add_on: ['Add-on', 'deal'], recap: ['Recap or refinancing', 'owner'], exit: ['Exit', 'owner'],
@@ -226,7 +227,7 @@ export function build(d) {
     const timing = {};
     const tt0 = l.typical_timing_months_from_entry || {};
     const fa = tt0.first_addon || null, mpd = tt0.months_per_deal || null;
-    const tt = fa ? { range: fa.range, median: fa.median, n: fa.n, label: 'First add-on', basis: `First add-on a median ${fa.median} months after entry (n=${fa.n})${mpd ? `; then one deal every ${mpd.median} months (range ${mpd.range?.[0]}–${mpd.range?.[1]}, n=${mpd.n})` : ''}.` } : tt0;
+    const tt = fa ? { range: fa.range, median: fa.median, n: fa.n, label: 'First add-on', basis: `First add-on a median ${fa.median} months after entry (${fa.n} cases)${mpd ? `; then one deal every ${mpd.median} months (range ${mpd.range?.[0]}–${mpd.range?.[1]}, n=${mpd.n})` : ''}.` } : tt0;
     for (const [cid, mo] of Object.entries(fa?.by_case || {})) if (byId[cid]) timing[cid] = { m: mo, fact: `first add-on, month ${Math.round(mo)}`, date: null, url: null };
     for (const ev of l.evidence || []) {
       if (!byId[ev.case]) continue;
@@ -399,11 +400,11 @@ export function clockHTML(model, { selected = null } = {}) {
     const med = p.w.median ?? null;
     const lab = has ? `Months ${Math.round(s)}–${Math.round(e)}${rel}` : 'Applies across the hold';
     const mh = p.w.median_hold_years ? Math.round(p.w.median_hold_years * 12) : null;
-    const bar = has ? `<span class="cs-ck-bar cs-ck-bar--${p.tone}" style="left:${pct(s, 0, MAX).toFixed(2)}%;width:${Math.max(1.2, pct(e, 0, MAX) - pct(s, 0, MAX)).toFixed(2)}%"></span>${med != null ? `<span class="cs-ck-med" style="left:${pct(med, 0, MAX).toFixed(2)}%" title="Median month ${med}"></span>` : ''}` : mh ? `<span class="cs-ck-med" style="left:${pct(mh, 0, MAX).toFixed(2)}%" title="Median hold ${p.w.median_hold_years} years"></span><span class="cs-ck-span" style="left:calc(${pct(mh, 0, MAX).toFixed(2)}% + 8px)">Median hold ${p.w.median_hold_years} yrs (n=${p.w.n})${p.w.home_services_median_hold_years ? ` · ${p.w.home_services_median_hold_years} in home services` : ''}</span>` : `<span class="cs-ck-span">No fixed window</span>`;
+    const bar = has ? `<span class="cs-ck-bar cs-ck-bar--${p.tone}" style="left:${pct(s, 0, MAX).toFixed(2)}%;width:${Math.max(1.2, pct(e, 0, MAX) - pct(s, 0, MAX)).toFixed(2)}%"></span>${med != null ? `<span class="cs-ck-med" style="left:${pct(med, 0, MAX).toFixed(2)}%" title="Median month ${med}"></span>` : ''}` : mh ? `<span class="cs-ck-med" style="left:${pct(mh, 0, MAX).toFixed(2)}%" title="Median hold ${p.w.median_hold_years} years"></span><span class="cs-ck-span" style="left:calc(${pct(mh, 0, MAX).toFixed(2)}% + 8px)">Median hold ${p.w.median_hold_years} yrs (${p.w.n} cases)${p.w.home_services_median_hold_years ? ` · ${p.w.home_services_median_hold_years} in home services` : ''}</span>` : `<span class="cs-ck-span">No fixed window</span>`;
     return `<li class="${selected === p.id ? 'is-sel' : ''}"><button type="button" class="cs-ck-row" data-pat="${esc(p.id)}" aria-label="${esc(`${p.name}. ${lab}. Punctual Pros: ${p.chip}`)}">
       <span class="cs-ck-label"><b>${esc(capFirst(p.name.replace(/^(?:Day|Months?|Years?|Last|Mid-hold|Exit route|Failure pattern|Chain value)[^:]*:\s*/i, '') || p.name))}</b><span>${esc(lab)}</span></span>
       <span class="cs-ck-track">${bar}<span class="cs-ck-now" style="left:${pct(ppM, 0, MAX).toFixed(2)}%"></span></span>
-      <span class="cs-ck-chip cs-ck-chip--${p.tone}">${esc(p.chip)}</span></button></li>`;
+      <span class="sys-chip sys-chip--${p.tone} cs-ck-chip">${esc(p.chip)}</span></button></li>`;
   }).join('');
   const ticks = [0, 12, 24, 36, 48, 60, 72, 84].map(v => `<span class="${(v / 12) % 2 ? 'is-odd' : ''}" style="left:${pct(v, 0, MAX)}%">${v === 0 ? 'Entry' : `Year ${v / 12}`}</span>`).join('');
   return `<div class="cs-ck"><ol class="cs-ck-list">${rows}</ol>
@@ -429,8 +430,8 @@ export function ganttHTML(model, { root = '', selected = null } = {}) {
   const axis = qs.map((q, i) => `<span class="${q.y ? 'is-y' : ''}" style="left:${pct(q.t, A, B).toFixed(2)}%">${esc(q.y || i === 0 ? q.l : q.l.split(' ')[0])}</span>`).join('');
   const doneHTML = done.map(s => `<li><button type="button" data-step="${s.step}"><span class="cs-g-n cs-g-n--done">✓</span><span><b>${esc(s.title)}</b><span>${esc(s.a.label)} · hold month ${s.hold_month_start}</span></span></button></li>`).join('');
   return `<div class="cs-g">
-    <div class="cs-g-done"><p class="cs-g-h">Already done</p><ol>${doneHTML}</ol></div>
-    <div class="cs-g-fwd"><div class="cs-g-headrow"><p class="cs-g-h">Next 36 months · Oct 2026 – Sept 2029</p><span class="cs-g-key"><i class="cs-g-k cs-g-k--rec"></i>Recommended <i class="cs-g-k cs-g-k--opt"></i>Option <span>Bar text = months of Broad Sky's hold</span></span></div>
+    <div class="cs-g-done"><p class="sys-card-label cs-g-h">Already done</p><ol>${doneHTML}</ol></div>
+    <div class="cs-g-fwd"><div class="cs-g-headrow"><p class="sys-card-label cs-g-h">Next 36 months · Oct 2026 – Sept 2029</p><span class="cs-g-key"><i class="cs-g-k cs-g-k--rec"></i>Recommended <i class="cs-g-k cs-g-k--opt"></i>Option <span>Bar text = months of Broad Sky's hold</span></span></div>
       <div class="cs-g-axisrow" aria-hidden="true"><span></span><div class="cs-g-axis">${axis}<em style="left:${today.toFixed(2)}%">Today</em></div><span></span></div>
       <ol class="cs-g-rows">${rows}</ol></div>
   </div>`;
@@ -478,11 +479,12 @@ export function growthHTML(model) {
 /** KPI before → after cards for one case. */
 export function kpiCardsHTML(c) {
   if (!c?.kpis?.length) return '<p class="cs-empty">This case discloses no before/after KPIs.</p>';
-  return `<div class="cs-kba">${c.kpis.map(k => `<div class="cs-kba-i">
-      <span class="cs-kba-k">${esc(k.kpi)}</span>
-      <span class="cs-kba-v"><span>${esc(kpiVal(k.before))}</span><i aria-hidden="true">→</i><b>${esc(kpiVal(k.after))}</b></span>
-      <span class="cs-kba-u">${esc([k.unit, k.period].filter(Boolean).join(' · '))}${/derived|est|~/i.test(`${k.unit} ${k.before} ${k.after}`) ? '<span class="sys-est">est.</span>' : ''}</span>
-      ${k.source_url ? `<a class="cs-kba-s" href="${esc(k.source_url)}" target="_blank" rel="noopener">${esc(host(k.source_url))} ↗</a>` : ''}
+  // the system KPI tile (.sys-kpi in a .sys-kpis strip): label, before → after value, unit and period, source line
+  return `<div class="sys-kpis cs-kba">${c.kpis.map(k => `<div class="sys-kpi cs-kba-i">
+      <div class="sys-kpi-label cs-kba-k">${esc(k.kpi)}</div>
+      <div class="sys-kpi-value cs-kba-v"><span>${esc(kpiVal(k.before))}</span><i aria-hidden="true">→</i><b>${esc(kpiVal(k.after))}</b></div>
+      <div class="sys-kpi-sub cs-kba-u">${esc([k.unit, k.period].filter(Boolean).join(' · '))}${/derived|est|~/i.test(`${k.unit} ${k.before} ${k.after}`) ? '<span class="sys-est">est.</span>' : ''}</div>
+      ${k.source_url ? `<a class="sys-src cs-kba-s" href="${esc(k.source_url)}" target="_blank" rel="noopener">${esc(host(k.source_url))} ↗</a>` : ''}
     </div>`).join('')}</div>`;
 }
 

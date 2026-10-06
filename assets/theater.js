@@ -8,13 +8,13 @@
      Basemap             OpenFreeMap vector styles (key-free): /styles/dark, fallback /styles/positron
      Terrain             AWS Terrarium DEM tiles (CORS-enabled), exaggeration 1.4, plus hillshade
    Usage:
-     import { Theater } from './assets/theater.js?v=20261006155542';
+     import { Theater } from './assets/theater.js?v=20261006180606';
      await Theater.mount(el, { autoplay: true, scene: 'S1', onScene: (id, scene) => {} });
      Theater.play(); Theater.pause(); Theater.goTo('S3'); Theater.destroy();
    window.BSPTheater exposes the same API (plus state()) for automation.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-import { label } from './frame.js?v=20261006155542';
+import { label } from './frame.js?v=20261006180606';
 /* Caption source lines: dataset keys become their readable names (Frame.label); {id, note} adds a note in brackets. */
 const RX_KEY = /^[a-z][a-z0-9]*(?:_[a-z0-9]+)+$/;
 const SRC = (...parts) => [...new Set(parts.map(p => typeof p === 'string' ? (RX_KEY.test(p) ? label(p) : p) : `${label(p.id)} (${p.note})`))].join(' · ');
@@ -42,7 +42,7 @@ const compact = n => n == null || !isFinite(n) ? '—' : Math.abs(n) >= 1e9 ? (n
 const money = n => n == null || !isFinite(n) ? '—' : '$' + compact(n);
 const DAY = 864e5;
 const dayOf = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s || '')); return m ? Math.floor(Date.UTC(+m[1], +m[2] - 1, +m[3]) / DAY) : NaN; };
-const dateOfDay = d => new Date(d * DAY).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const dateOfDay = d => new Date(d * DAY).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).replace(/^Sep /, 'Sept ');   // the site writes Sept
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 const _loads = new Map();
@@ -262,52 +262,55 @@ function loadAlerts(core) {
 
 /* ── scoped CSS ───────────────────────────────────────────────────────────── */
 const CSS = `
-.bsp-theater{position:relative;width:100%;height:100%;min-height:420px;overflow:hidden;background:#05070b;color:#e8eef6;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;--sc:#d9622b}
-.bsp-theater .bt-map{position:absolute;inset:0;z-index:0;background:#11233a}
+/* UI chrome reads the system tokens (assets/system.css); the stage is always a dark band (data-sys-theme="dark" on the root),
+   so the same tokens resolve to the dark set on the light site and in the light portal. Fallbacks cover a page without system.css. */
+.bsp-theater{position:relative;width:100%;height:100%;min-height:420px;overflow:hidden;background:var(--sys-bg,#0a0e14);color:var(--sys-ink,#e6edf3);font-family:var(--sys-font,Inter,system-ui,sans-serif);--sc:var(--sys-brand,#f0874a);--bt-glass:color-mix(in srgb,var(--sys-bg,#0a0e14) 66%,transparent)}
+.bsp-theater .bt-map{position:absolute;inset:0;z-index:0;background:var(--sys-bg-2,#0e141c)}
 .bsp-theater .bt-map canvas{outline:none}
-.bsp-theater .bt-shade{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(5,7,11,.55) 0%,rgba(5,7,11,0) 18%,rgba(5,7,11,0) 52%,rgba(5,7,11,.82) 100%),radial-gradient(120% 90% at 50% 45%,rgba(0,0,0,0) 55%,rgba(0,0,0,.45) 100%)}
-.bsp-theater .bt-cap{position:absolute;z-index:2;left:clamp(16px,3.2vw,48px);bottom:clamp(26px,5.5vh,64px);max-width:min(640px,calc(100% - 300px));pointer-events:none;transition:opacity .6s ease,transform .6s ease}
+.bsp-theater .bt-shade{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,color-mix(in srgb,var(--sys-bg) 55%,transparent) 0%,transparent 18%,transparent 52%,color-mix(in srgb,var(--sys-bg) 82%,transparent) 100%),radial-gradient(120% 90% at 50% 45%,transparent 55%,color-mix(in srgb,var(--sys-bg) 45%,transparent) 100%)}
+.bsp-theater .bt-cap{position:absolute;z-index:2;left:var(--sys-gut,24px);bottom:clamp(26px,5.5vh,64px);max-width:min(640px,calc(100% - 300px));pointer-events:none;transition:opacity .6s var(--sys-ease),transform .6s var(--sys-ease)}
 .bsp-theater .bt-cap.out{opacity:0;transform:translateY(10px)}
-.bsp-theater .bt-kicker{font:600 11px/1 "JetBrains Mono","SF Mono",Menlo,monospace;letter-spacing:.2em;text-transform:uppercase;color:var(--sc);display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.bsp-theater .bt-kicker:before{content:"";width:28px;height:2px;background:var(--sc);box-shadow:0 0 12px var(--sc)}
-.bsp-theater .bt-title{font-size:clamp(28px,3.4vw,50px);line-height:1.04;font-weight:800;letter-spacing:-.025em;margin:0 0 14px;text-shadow:0 2px 24px rgba(0,0,0,.65)}
-.bsp-theater .bt-line{font-size:clamp(13px,1.08vw,15.5px);line-height:1.55;color:rgba(232,238,246,.86);text-shadow:0 1px 10px rgba(0,0,0,.8);max-width:600px}
-.bsp-theater .bt-src{margin-top:12px;font:500 10.5px/1.3 "JetBrains Mono",Menlo,monospace;color:rgba(232,238,246,.5);letter-spacing:.02em}
-.bsp-theater .bt-prog{margin-top:16px;height:2px;width:220px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
-.bsp-theater .bt-prog i{display:block;height:100%;width:0;background:var(--sc);box-shadow:0 0 10px var(--sc)}
-.bsp-theater .bt-rail{position:absolute;top:16px;right:16px;display:flex;flex-direction:column;gap:4px;padding:8px;border-radius:12px;background:rgba(8,12,18,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);z-index:3;min-width:206px}
-.bsp-theater .bt-rail button{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:8px;font-size:12.5px;color:rgba(232,238,246,.72);position:relative}
-.bsp-theater .bt-rail button:hover{background:rgba(255,255,255,.06);color:#fff}
-.bsp-theater .bt-rail button:focus-visible{outline:2px solid var(--sc)}
-.bsp-theater .bt-rail button .n{font:600 10.5px "JetBrains Mono",Menlo,monospace;color:rgba(232,238,246,.45);width:20px}
-.bsp-theater .bt-rail button.on{background:rgba(255,255,255,.08);color:#fff}
-.bsp-theater .bt-rail button.on:before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:2px;border-radius:2px;background:var(--bc)}
-.bsp-theater .bt-rail button.on .n{color:var(--bc)}
-.bsp-theater .bt-ctl{display:flex;gap:6px;margin-top:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08)}
-.bsp-theater .bt-ctl button{flex:1;justify-content:center;background:rgba(255,255,255,.05);font-size:12px;padding:6px 8px}
-.bsp-theater .bt-hint{font:500 10px "JetBrains Mono",Menlo,monospace;color:rgba(232,238,246,.38);text-align:center;margin-top:6px}
-.bsp-theater .bt-legend{position:absolute;right:16px;bottom:34px;padding:10px 12px;border-radius:10px;background:rgba(8,12,18,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);font-size:11.5px;color:rgba(232,238,246,.82);display:flex;flex-direction:column;gap:5px;z-index:2;max-width:270px;transition:opacity .5s}
+.bsp-theater .bt-kicker{display:flex;align-items:center;gap:10px;margin-bottom:var(--sys-sp-4);font:600 var(--sys-fs-xs)/1 var(--sys-mono);letter-spacing:var(--sys-tr-label);text-transform:uppercase;color:var(--sc)}
+.bsp-theater .bt-kicker:before{content:"";width:18px;height:2px;border-radius:2px;background:var(--sc);flex-shrink:0}
+.bsp-theater .bt-title{margin:0 0 var(--sys-sp-3);font-size:var(--sys-fs-2xl);line-height:1.06;font-weight:800;letter-spacing:var(--sys-tr-head);color:var(--sys-ink);text-shadow:0 2px 24px color-mix(in srgb,var(--sys-bg) 70%,transparent)}
+.bsp-theater .bt-line{max-width:600px;font-size:clamp(14px,1.1vw,16px);line-height:1.6;color:var(--sys-ink-2);text-shadow:0 1px 10px var(--sys-bg)}
+.bsp-theater .bt-src{margin-top:var(--sys-sp-3);font:500 var(--sys-fs-xs)/1.5 var(--sys-mono);color:var(--sys-mute)}
+.bsp-theater .bt-prog{margin-top:var(--sys-sp-4);height:2px;width:220px;background:var(--sys-line-2);border-radius:var(--sys-r-pill);overflow:hidden}
+.bsp-theater .bt-prog i{display:block;height:100%;width:0;background:var(--sc)}
+.bsp-theater .bt-rail{position:absolute;top:16px;right:16px;z-index:3;display:flex;flex-direction:column;gap:2px;min-width:206px;padding:var(--sys-sp-2);border:1px solid var(--sys-line);border-radius:var(--sys-r);background:var(--bt-glass);box-shadow:var(--sys-sh-2);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.bsp-theater .bt-rail button{all:unset;box-sizing:border-box;position:relative;display:flex;align-items:center;gap:10px;min-height:32px;padding:0 var(--sys-sp-3);border-radius:var(--sys-r-pill);font:500 var(--sys-fs-sm)/1.2 var(--sys-font);color:var(--sys-ink-2);cursor:pointer;transition:background var(--sys-t),color var(--sys-t)}
+.bsp-theater .bt-rail button:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
+.bsp-theater .bt-rail button:focus-visible{outline:2px solid var(--sys-focus);outline-offset:-2px}
+.bsp-theater .bt-rail button .n{width:20px;font:600 var(--sys-fs-2xs)/1 var(--sys-mono);color:var(--sys-mute)}
+.bsp-theater .bt-rail button.on{background:color-mix(in srgb,var(--bc) 14%,transparent);color:var(--sys-ink)}
+.bsp-theater .bt-rail button.on .n{color:color-mix(in srgb,var(--bc) 80%,var(--sys-ink))}
+.bsp-theater .bt-ctl{display:flex;gap:6px;margin-top:6px;padding-top:var(--sys-sp-2);border-top:1px solid var(--sys-line)}
+.bsp-theater .bt-ctl button{flex:1;justify-content:center;border:1px solid var(--sys-line-2);background:var(--sys-surface)}
+.bsp-theater .bt-ctl button:hover{border-color:var(--sys-ink)}
+.bsp-theater .bt-hint{margin-top:6px;text-align:center;font:500 var(--sys-fs-2xs)/1.3 var(--sys-mono);color:var(--sys-mute-2)}
+.bsp-theater .bt-legend{position:absolute;right:16px;bottom:34px;z-index:2;display:flex;flex-direction:column;gap:5px;max-width:270px;padding:10px 12px;border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--bt-glass);box-shadow:var(--sys-sh-1);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);font-size:var(--sys-fs-xs);color:var(--sys-ink-2);transition:opacity .5s}
 .bsp-theater .bt-legend .li{display:flex;align-items:center;gap:8px}
 .bsp-theater .bt-legend .sw{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .bsp-theater .bt-legend .sw.ring{background:transparent!important;border:2px solid currentColor;width:8px;height:8px}
-.bsp-theater .bt-legend .sw.ln{width:16px;height:3px;border-radius:2px}
-.bsp-theater .bt-legend .ramp{height:8px;width:150px;border-radius:2px}
-.bsp-theater .bt-legend .sub{font-size:10.5px;color:rgba(232,238,246,.5)}
-.bsp-theater .bt-status{position:absolute;left:16px;top:16px;z-index:3;font:500 11px "JetBrains Mono",Menlo,monospace;color:rgba(232,238,246,.75);padding:6px 10px;border-radius:999px;background:rgba(8,12,18,.6);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:8px;transition:opacity .4s}
-.bsp-theater .bt-status:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--sc);box-shadow:0 0 8px var(--sc);animation:btp 1.2s ease-in-out infinite}
+.bsp-theater .bt-legend .sw.ln{width:16px;height:3px;border-radius:var(--sys-r-pill)}
+.bsp-theater .bt-legend .ramp{height:8px;width:150px;border-radius:var(--sys-r-pill)}
+.bsp-theater .bt-legend .sub{font-size:var(--sys-fs-2xs);color:var(--sys-mute)}
+.bsp-theater .bt-status{position:absolute;left:16px;top:16px;z-index:3;display:flex;align-items:center;gap:8px;min-height:30px;padding:0 12px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-pill);background:var(--bt-glass);font:500 var(--sys-fs-xs)/1.2 var(--sys-mono);color:var(--sys-ink-2);transition:opacity .4s}
+.bsp-theater .bt-status:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--sc);animation:btp 1.2s ease-in-out infinite}
 .bsp-theater .bt-status.hide{opacity:0;pointer-events:none}
 @keyframes btp{50%{opacity:.25}}
-.bsp-theater .bt-tip{position:absolute;z-index:4;pointer-events:none;max-width:280px;padding:8px 10px;border-radius:8px;background:rgba(8,12,18,.92);border:1px solid rgba(255,255,255,.12);font-size:12px;line-height:1.45;color:#e8eef6;box-shadow:0 8px 24px rgba(0,0,0,.5)}
-.bsp-theater .bt-tip b{color:#fff} .bsp-theater .bt-tip .d{color:rgba(232,238,246,.6);font-size:11px}
-.bsp-theater .bt-fallback{position:absolute;left:16px;right:16px;top:60px;z-index:5;max-width:520px;padding:10px 12px;border-radius:10px;background:rgba(245,183,61,.12);border:1px solid rgba(245,183,61,.4);color:#f5d58a;font-size:12.5px}
-.bsp-theater .maplibregl-ctrl-attrib{background:rgba(8,12,18,.55)!important;color:rgba(232,238,246,.55);font-size:10px}
-.bsp-theater .maplibregl-ctrl-attrib a{color:rgba(232,238,246,.7)}
+@media (prefers-reduced-motion:reduce){.bsp-theater .bt-status:before{animation:none}}
+.bsp-theater .bt-tip{position:absolute;z-index:4;pointer-events:none;max-width:280px;padding:8px 10px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-xs);background:var(--sys-surface);box-shadow:var(--sys-sh-2);font-size:var(--sys-fs-xs);line-height:1.45;color:var(--sys-ink-2)}
+.bsp-theater :is(.bt-tip,.bt-tip-deck) b{color:var(--sys-ink)} .bsp-theater :is(.bt-tip,.bt-tip-deck) .d{color:var(--sys-mute);font-size:var(--sys-fs-2xs)}
+.bsp-theater .bt-fallback{position:absolute;left:16px;right:16px;top:60px;z-index:5;max-width:520px;padding:10px 12px;border:1px solid color-mix(in srgb,var(--sys-warn) 32%,transparent);border-left:3px solid var(--sys-warn);border-radius:var(--sys-r-sm);background:color-mix(in srgb,var(--sys-warn) 10%,var(--sys-surface));font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
+.bsp-theater .maplibregl-ctrl-attrib{background:color-mix(in srgb,var(--sys-bg) 70%,transparent)!important;color:var(--sys-mute);font-size:10px}
+.bsp-theater .maplibregl-ctrl-attrib a{color:var(--sys-ink-2)}
 .bsp-theater .maplibregl-ctrl-attrib-button{filter:invert(1) opacity(.6)}
 .bsp-theater.lite .bt-rail{min-width:0}
 .bsp-theater.lite .leaflet-top.leaflet-left{top:104px}
 @media (max-width:760px){
  .bsp-theater .bt-rail{flex-direction:row;flex-wrap:wrap;left:12px;right:12px;top:12px;min-width:0;padding:6px;gap:2px}
- .bsp-theater .bt-rail button{padding:5px 7px}
+ .bsp-theater .bt-rail button{padding:0 9px}
  .bsp-theater .bt-rail button .t{display:none}
  .bsp-theater .bt-ctl{margin:0;padding:0;border:0;flex:1 0 100%}
  .bsp-theater .bt-hint{display:none}
@@ -338,12 +341,12 @@ class TheaterInstance {
 
   async _init() {
     if (!document.getElementById('bsp-theater-css')) { const st = document.createElement('style'); st.id = 'bsp-theater-css'; st.textContent = CSS; document.head.appendChild(st); }
-    const root = document.createElement('div'); root.className = 'bsp-theater'; this.root = root;
+    const root = document.createElement('div'); root.className = 'bsp-theater'; root.dataset.sysTheme = 'dark'; this.root = root;   // a dark band: system tokens resolve to the dark set here on any page
     const ht = document.querySelector('h1') ? 'h2' : 'h1';   // the scene title is the page heading unless the page already has one
     root.innerHTML = `<div class="bt-map"></div><div class="bt-shade"></div>
       <div class="bt-cap out" aria-live="polite"><div class="bt-kicker"></div><${ht} class="bt-title"></${ht}><div class="bt-line"></div><div class="bt-src"></div><div class="bt-prog"><i></i></div></div>
-      <nav class="bt-rail" aria-label="Scenes">${SCENES.map((s, i) => `<button data-s="${s.id}" style="--bc:${s.color}" title="${esc(s.name)}"><span class="n">0${i + 1}</span><span class="t">${esc(s.name)}</span></button>`).join('')}
-        <div class="bt-ctl"><button data-act="prev" title="Previous (←)">‹</button><button data-act="play" title="Play / pause (space)">▶</button><button data-act="next" title="Next (→)">›</button></div><div class="bt-hint">← → scenes · space play</div></nav>
+      <nav class="bt-rail" aria-label="Scenes">${SCENES.map((s, i) => `<button type="button" data-s="${s.id}" style="--bc:${s.color}" title="${esc(s.name)}" aria-label="Scene ${i + 1}: ${esc(s.name)}"><span class="n">0${i + 1}</span><span class="t">${esc(s.name)}</span></button>`).join('')}
+        <div class="bt-ctl"><button type="button" data-act="prev" title="Previous (←)" aria-label="Previous scene">‹</button><button type="button" data-act="play" title="Play / pause (space)" aria-label="Play or pause">▶</button><button type="button" data-act="next" title="Next (→)" aria-label="Next scene">›</button></div><div class="bt-hint">← → scenes · space play</div></nav>
       <div class="bt-legend"></div><div class="bt-status">Loading 3D engine…</div><div class="bt-tip" hidden></div>`;
     this.el.appendChild(root);
     const q = s => root.querySelector(s);
@@ -359,7 +362,7 @@ class TheaterInstance {
     window.addEventListener('keydown', this._onKey);
     this._syncPlay();
 
-    if (!this.core) this.core = await import('./core.js?v=20261006155542');
+    if (!this.core) this.core = await import('./core.js?v=20261006180606');
     const baseP = loadBase(this.core);
     if (!webglOK() || this.opts.forceFallback) return this._fallback(this.opts.forceFallback ? 'Static fallback requested.' : 'WebGL is not available in this browser, so the 3D theater is showing a static 2D map.', baseP);
     loadCss(LIBS.mlCss, 'maplibre-css');
@@ -446,7 +449,7 @@ class TheaterInstance {
     else if (id === 'bt-sales' && object.count != null) html = `<b>${num(object.count)} sales</b> in this 1.5 km hex<div>Median ${money(object.colorValue)}</div>`;
     else if (id === 'bt-hubs') html = `<b>${esc(object.name)}</b><div class="d">Punctual Pros weather hub</div>`;
     else return null;
-    return { html, className: 'bt-tip-deck', style: { background: 'rgba(8,12,18,.92)', color: '#e8eef6', border: '1px solid rgba(255,255,255,.12)', borderRadius: '8px', fontSize: '12px', lineHeight: '1.45', padding: '8px 10px', maxWidth: '280px', fontFamily: 'Inter,system-ui,sans-serif' } };
+    return { html, className: 'bt-tip-deck', style: { background: 'var(--sys-surface)', color: 'var(--sys-ink-2)', border: '1px solid var(--sys-line-2)', borderRadius: 'var(--sys-r-xs)', boxShadow: 'var(--sys-sh-2)', fontSize: 'var(--sys-fs-xs)', lineHeight: '1.45', padding: '8px 10px', maxWidth: '280px', fontFamily: 'var(--sys-font)' } };
   }
 
   /* ── scene control ── */
@@ -481,7 +484,7 @@ class TheaterInstance {
     if (this.destroyed) return;
     this.scene = scene; this.elapsed = 0; this.sceneStart = performance.now(); this.arcT0 = scene.id === 'S3' ? performance.now() : 0;
     this.root.style.setProperty('--sc', scene.color);
-    this.root.querySelectorAll('.bt-rail [data-s]').forEach(b => b.classList.toggle('on', b.dataset.s === scene.id));
+    this.root.querySelectorAll('.bt-rail [data-s]').forEach(b => { const on = b.dataset.s === scene.id; b.classList.toggle('on', on); if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); });
     for (const k of Object.keys(this.target)) this.target[k] = 0;
     for (const k of scene.layers) this.target[k] = 1;
     if (scene.id === 'S4' && !SC && S) loadCetSales().then(s => { SC = s; this._invalidate(); }).catch(() => { });

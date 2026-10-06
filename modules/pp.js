@@ -1,11 +1,45 @@
-import * as Copy from './copy.js?v=20261006155542';
+import * as Copy from './copy.js?v=20261006180606';
 /* ═══════════════════════════════════════════════════════════════════════════
    Punctual Pros — residential HVAC · plumbing · electrical (Central PA + Jersey Shore)
    Views: overview · weather & demand · new-mover marketing · territory · market · targets · filings
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, renderFilings } from '../assets/components.js?v=20261006155542';
+import { renderTargets, renderFilings } from '../assets/components.js?v=20261006180606';
+import { esc as E } from '../assets/core.js?v=20261006180606';
 
-const PP = '#f08a3c';
+/* System palette only (UNIFIED.md §6, §8): company accents for categories, status tokens for status. */
+const PAL = { pp: 'var(--co-pp)', cet: 'var(--co-cet)', amber: 'var(--sys-warn)', green: 'var(--sys-good)', red: 'var(--sys-bad)', sky: 'var(--sys-info)', purple: 'var(--co-fl)', cyan: 'var(--co-fh)', ts: 'var(--co-ts)', muted: 'var(--sys-mute)', dim: 'var(--sys-mute-2)' };
+const PP = PAL.pp;
+/* ── system vocabulary ── chip(): status colour → .sys-chip--good|warn|bad|info; the PP accent or the brand →
+   .sys-chip--soft; any other palette colour → a neutral .sys-chip with that dot; none/mute → neutral.
+   dot(): a category (footprint, trade, ownership, offer) → neutral chip with the category dot. */
+const TONE = { [PAL.green]: 'good', [PAL.amber]: 'warn', [PAL.red]: 'bad', [PAL.sky]: 'info' };
+const QUIET = new Set([PAL.muted, PAL.dim, '']);
+const dot = (t, c) => c && !QUIET.has(c) ? `<span class="sys-chip" data-co="" style="--co:${c}">${E(t)}</span>` : `<span class="sys-chip">${E(t)}</span>`;
+const chip = (t, c) => c == null || QUIET.has(c) ? `<span class="sys-chip">${E(t)}</span>` : TONE[c] ? `<span class="sys-chip sys-chip--${TONE[c]}">${E(t)}</span>` : (c === PP || c === 'var(--sys-brand)') ? `<span class="sys-chip sys-chip--soft" data-co="" style="--co:${c}">${E(t)}</span>` : dot(t, c);
+/** legend as dot chips: [[colour, label], …] plus an optional muted note */
+const legend = (items, note = '') => `<div class="sys-chips pp-legend">${items.map(([c, l]) => dot(l, c)).join('')}${note ? `<span class="sys-muted small">${note}</span>` : ''}</div>`;
+/** clickable rows / cells: click, Enter and Space */
+const bindRows = (root, sel, fn) => root.querySelectorAll(sel).forEach(n => { n.onclick = () => fn(n); n.onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === n) { e.preventDefault(); fn(n); } }; });
+/* Leaflet draws points on a canvas, which cannot read CSS variables: resolve a palette token to its current value. */
+const hx = v => { if (typeof v !== 'string' || !v.startsWith('var(')) return v; const r = getComputedStyle(document.documentElement).getPropertyValue(v.slice(4, -1).trim()).trim(); return r || '#7a889a'; };
+/* points layer whose palette colours follow the theme: resolved per theme, redrawn when html[data-sys-theme] changes */
+const pts = (maps, map, rows, o) => {
+  const c = o.color, memo = new Map(), th = () => document.documentElement.dataset.sysTheme || 'light';
+  const res = v => { const k = th() + v; if (!memo.has(k)) memo.set(k, hx(v)); return memo.get(k); };
+  const h = maps.points(map, rows, { ...o, color: r => res(typeof c === 'function' ? c(r) : c) });
+  const mo = new MutationObserver(() => { if (!map.getContainer()?.isConnected) return mo.disconnect(); try { h.redraw(); } catch { mo.disconnect(); } });
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-sys-theme'] });
+  const rm = h.remove; h.remove = () => { mo.disconnect(); rm.call(h); };
+  return h;
+};
+const INK = 'var(--sys-ink)';
+/** heat fill for a share a (0–1) of a palette colour; text flips to the on-accent ink on deep fills */
+const heatBg = (c, a) => a > 0 ? `background:color-mix(in srgb,${c} ${Math.round(10 + a * 78)}%,transparent);${a > .55 ? 'color:var(--sys-on-accent);' : ''}` : '';
+/** heat grid as a .sys-table: rows × cols, shaded by value against the grid max */
+function heatTable(rows, cols, values, { color = PP, fmt = v => v, head = '' } = {}) {
+  const mx = Math.max(1, ...values.flat().filter(v => v != null));
+  return `<div class="sys-table-wrap"><table class="sys-table pp-grid"><thead><tr><th>${E(head)}</th>${cols.map(c => `<th class="sys-n">${E(c)}</th>`).join('')}</tr></thead><tbody>${rows.map((r, i) => `<tr><td>${E(r)}</td>${cols.map((c, j) => { const v = values[i][j]; const a = v == null ? 0 : Math.min(1, v / mx); return `<td class="sys-n" style="${heatBg(color, a)}" title="${E(r)} · ${E(c)}: ${E(fmt(v))}">${v == null ? '' : E(fmt(v))}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
 const HQ = { lat: 40.0629, lon: -76.37, label: 'PP HQ · East Hempfield' };
 const HORVATH = { lat: 39.939, lon: -74.2021, label: 'Horvath · Beachwood NJ' };
 const CORE = ['Lancaster', 'York', 'Dauphin', 'Cumberland', 'Berks', 'Lebanon', 'Franklin', 'Adams', 'Perry'];
@@ -16,8 +50,7 @@ const AVG_TICKET = 400;           // blended residential repair ticket, $350–4
 const FALLBACK_REV = 22e6;         // FY2025 pro forma revenue est. (Punctual Pros public filings estimate table) when the dataset is missing
 const shTxt = v => `${(v * 100).toFixed(v < 0.1 && Math.round(v * 1000) % 10 ? 1 : 0)}%`;
 const TRADES = ['HVAC', 'Plumbing', 'Electrical'];
-const TRADE_RGB = { HVAC: '240,138,60', Plumbing: '76,141,255', Electrical: '245,183,61' };
-const TRADE_HEX = { HVAC: '#f08a3c', Plumbing: '#4c8dff', Electrical: '#f5b73d' };
+const TRADE_HEX = { HVAC: PAL.pp, Plumbing: PAL.cet, Electrical: PAL.purple };
 const FALLBACK_BASE = { HVAC: 10, Plumbing: 16, Electrical: 7 };
 const FALLBACK_HUBS = [
   { name: 'Lancaster', lat: 40.038, lon: -76.3057, county: 'Lancaster', state: 'PA' },
@@ -28,13 +61,14 @@ const FALLBACK_HUBS = [
   { name: 'Toms River', lat: 39.9528, lon: -74.1967, county: 'Ocean', state: 'NJ' },
 ];
 const STATUS = {
-  territory: { label: 'PP core', color: 'var(--c-pp)', hex: '#f08a3c' },
-  horvath: { label: 'Horvath NJ', color: 'var(--amber)', hex: '#f5b73d' },
-  adjacent: { label: 'Adjacent ring', color: 'var(--accent)', hex: '#8ab4ff' },
-  outer: { label: 'Outer', color: 'var(--dim)', hex: '#5b6b7f' },
+  territory: { label: 'PP core', color: PAL.pp },
+  horvath: { label: 'Horvath NJ', color: PAL.amber },
+  adjacent: { label: 'Adjacent ring', color: PAL.sky },
+  outer: { label: 'Outer', color: PAL.dim },
 };
-const TIER_HEX = { 'Tier I': '#2ecc8f', 'Tier II': '#4c8dff', 'Tier III': '#5b6b7f' };
-const SEV = { Extreme: 'var(--red)', Severe: 'var(--brand-2)', Moderate: 'var(--amber)', Minor: 'var(--accent)' };
+const TIER_HEX = { 'Tier I': PAL.green, 'Tier II': PAL.sky, 'Tier III': PAL.dim };
+const SEV = { Extreme: PAL.red, Severe: PAL.red, Moderate: PAL.amber, Minor: PAL.sky };
+const SEV_NOTE = { Extreme: 'bad', Severe: 'bad', Moderate: 'warn', Minor: 'info' };
 const SRC = {
   acs: 'https://data.census.gov/', nws: 'https://api.weather.gov', meteo: 'https://open-meteo.com/', ncei: 'https://www.ncei.noaa.gov/access/storm-events-database/',
 };
@@ -56,15 +90,15 @@ const dlab = s => new Date(noon(s)).toLocaleDateString('en-US', { weekday: 'shor
 const dfull = (fmt, s) => !s ? '—' : /^\d{4}-\d{2}$/.test(String(s)) ? new Date(s + '-15T12:00:00').toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : /^\d{4}-\d{2}-\d{2}/.test(String(s)) ? fmt.date(noon(s)) : String(s);
 const miles = (a, b, c, d) => { const R = 3958.8, t = x => x * Math.PI / 180; const h = Math.sin(t(c - a) / 2) ** 2 + Math.cos(t(a)) * Math.cos(t(c)) * Math.sin(t(d - b) / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(h)); };
 const pctTxt = v => v == null || !fin(v) ? '—' : `${Math.round(v * 100)}%`;
-const tierChip = (esc, t) => { const n = { 'Tier I': 1, 'Tier II': 2, 'Tier III': 3 }[t] || 4; return t ? `<span class="chip t${n}"><i class="cdot"></i>${esc(t)}</span>` : '—'; };
-const statusChip = (fmt, s) => fmt.chip(STATUS[s]?.label || s, STATUS[s]?.color);
-const basisConf = b => { const s = String(b || '').toLowerCase(); return s.startsWith('sourced') ? ['high', 'var(--green)'] : s.startsWith('derived') ? ['medium', 'var(--amber)'] : ['low · assumption', 'var(--dim)']; };
+const tierChip = (esc, t) => { const k = { 'Tier I': 'good', 'Tier II': 'info', 'Tier III': 'warn' }[t]; return t ? `<span class="sys-chip${k ? ` sys-chip--${k}` : ''}">${esc(t)}</span>` : '—'; };
+const statusChip = (fmt, s) => s === 'territory' ? chip(STATUS[s].label, PP) : dot(STATUS[s]?.label || s, STATUS[s]?.color);
+const basisConf = b => { const s = String(b || '').toLowerCase(); return s.startsWith('sourced') ? ['high', PAL.green] : s.startsWith('derived') ? ['medium', PAL.amber] : ['low · assumption', PAL.dim]; };
 /* targets trading under the platform's own name (e.g. 'The Punctual Pros NJ') may already be affiliated → never ranked as cold targets */
 const nameConflict = t => /punctual\s*pros/i.test(String(t?.company || ''));
 const pick = (o, ...ks) => { for (const k of ks) if (o && o[k] != null && o[k] !== '') return o[k]; return null; };
 
 function css() {
-  if (!document.getElementById('css-pp')) { const l = document.createElement('link'); l.id = 'css-pp'; l.rel = 'stylesheet'; l.href = 'modules/pp.css?v=20261006155542'; document.head.appendChild(l); }
+  if (!document.getElementById('css-pp')) { const l = document.createElement('link'); l.id = 'css-pp'; l.rel = 'stylesheet'; l.href = 'modules/pp.css?v=20261006180606'; document.head.appendChild(l); }
 }
 
 /* ── shared data ──────────────────────────────────────────────────────── */
@@ -225,9 +259,9 @@ function stackBars(labels, series, { h = 210, baseline, fmtv = v => Math.round(v
   labels.forEach((l, i) => {
     let acc = 0; const x = padL + i * bw + bw * .16, bwi = bw * .68;
     series.forEach(s => { const v = s.values[i] || 0; out += `<rect x="${x}" y="${y(acc + v)}" width="${bwi}" height="${Math.max(0, y(acc) - y(acc + v))}" fill="${s.color}" rx="1.5"><title>${s.name} · ${l}: ${fmtv(v)}</title></rect>`; acc += v; });
-    out += `<text x="${x + bwi / 2}" y="${y(acc) - 4}" text-anchor="middle" style="fill:var(--text-2);font-family:var(--mono)">${fmtv(acc)}</text><text x="${x + bwi / 2}" y="${h - 8}" text-anchor="middle">${l}</text>`;
+    out += `<text x="${x + bwi / 2}" y="${y(acc) - 4}" text-anchor="middle" style="fill:var(--sys-ink-2);font-family:var(--sys-mono)">${fmtv(acc)}</text><text x="${x + bwi / 2}" y="${h - 8}" text-anchor="middle">${l}</text>`;
   });
-  if (baseline) out += `<line x1="${padL}" x2="${w - 4}" y1="${y(baseline)}" y2="${y(baseline)}" stroke="var(--text-2)" stroke-dasharray="4 3" stroke-width="1"/>`;
+  if (baseline) out += `<line x1="${padL}" x2="${w - 4}" y1="${y(baseline)}" y2="${y(baseline)}" stroke="var(--sys-ink-2)" stroke-dasharray="4 3" stroke-width="1"/>`;
   return `<svg class="chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="height:${h}px">${out}</svg>`;
 }
 
@@ -244,7 +278,7 @@ async function overview(ctx) {
   const s90 = (sales90 || []).filter(s => num(s.price) >= 10000 && servedCounties.has(cty(s.county)));
   const win = meta?.sales_layer; const winTxt = win ? `${dfull(fmt, win.window_start)} – ${dfull(fmt, win.window_end)}` : 'Jan–Apr 2026';
   const snapAge = daysSince(win?.window_end || '2026-04-10'); const snapStale = snapAge != null && snapAge > 45;
-  const snapChip = snapAge == null ? '' : fmt.chip(snapStale ? `stale · ${snapAge} d old` : `${snapAge} d old`, snapStale ? 'var(--red)' : 'var(--green)');
+  const snapChip = snapAge == null ? '' : chip(snapStale ? `stale · ${snapAge} days old` : `${snapAge} days old`, snapStale ? PAL.red : PAL.green);
   const targets = ma?.items || []; const byIdT = new Map(targets.map(t => [t.id, t])); const top = (ma?.meta?.ranked_top_10 || []).find(r => !nameConflict(r) && !nameConflict(byIdT.get(r.id)));
   const conflicts = targets.filter(nameConflict);
   const pbs = (model?.items || []).filter(i => i.component === 'event_playbook');
@@ -257,16 +291,16 @@ async function overview(ctx) {
   const missing = [['ma_targets_pp', ma], ['pp_demand_model', model], ['pp_storm_events', storms]].filter(x => !x[1]).map(x => x[0]);
 
   const kpis = alerts => ui.kpis([
-    { label: 'Core territory zips', value: fmt.num(terr.length), sub: `9 PA counties · +${horv.length} Horvath NJ zips`, color: 'var(--c-pp)' },
-    { label: 'Housing units served', value: fmt.compact(huTerr + huH), sub: `${fmt.compact(huTerr)} PA core · ${fmt.compact(huH)} Ocean/Monmouth`, color: 'var(--c-pp)' },
-    { label: 'Home sales · Q1-2026 snapshot', value: fmt.num(s90.length), sub: `≥$10K deeds · served counties · ${esc(winTxt)} ${snapChip}`, color: snapStale ? 'var(--red)' : 'var(--green)' },
-    { label: 'Live NWS alerts in territory', value: alerts == null ? '…' : fmt.num(alerts.alerts.length), sub: alerts == null ? 'querying api.weather.gov' : alerts.failed ? 'feed unavailable' : `${alerts.alerts.filter(a => /Extreme|Severe/.test(a.severity)).length} severe/extreme · PA + NJ`, color: alerts?.alerts?.some(a => /Extreme|Severe/.test(a.severity)) ? 'var(--red)' : 'var(--amber)' },
-    { label: 'Tier-I expansion zips (adjacent)', value: fmt.num(adjT1.length), sub: `${fmt.compact(huAdjT1)} housing units next door`, color: 'var(--green)' },
-    { label: 'Add-on targets screened', value: ma ? fmt.num(targets.length - conflicts.length) : '—', sub: top ? `#1 ${esc(String(top.company).split(/[,(]/)[0].trim())} · fit ${top.fit_score}${conflicts.length ? ` · ${conflicts.length} held for affiliation check` : ''}` : 'ma_targets_pp', color: 'var(--c-ma)' },
+    { label: 'Core territory zips', value: fmt.num(terr.length), sub: `9 PA counties · +${horv.length} Horvath NJ zips`, color: PP },
+    { label: 'Housing units served', value: fmt.compact(huTerr + huH), sub: `${fmt.compact(huTerr)} PA core · ${fmt.compact(huH)} Ocean/Monmouth`, color: PP },
+    { label: 'Home sales · Q1 2026 snapshot', value: fmt.num(s90.length), sub: `deeds of $10K or more · served counties · ${esc(winTxt)}<div class="mt-8">${snapChip}</div>`, color: snapStale ? PAL.red : PAL.green },
+    { label: 'Live NWS alerts in territory', value: alerts == null ? '…' : fmt.num(alerts.alerts.length), sub: alerts == null ? 'querying api.weather.gov' : alerts.failed ? 'feed unavailable' : `${alerts.alerts.filter(a => /Extreme|Severe/.test(a.severity)).length} severe/extreme · PA + NJ`, color: alerts?.alerts?.some(a => /Extreme|Severe/.test(a.severity)) ? PAL.red : PAL.amber },
+    { label: 'Tier-I expansion zips (adjacent)', value: fmt.num(adjT1.length), sub: `${fmt.compact(huAdjT1)} housing units next door`, color: PAL.green },
+    { label: 'Add-on targets screened', value: ma ? fmt.num(targets.length - conflicts.length) : '—', sub: top ? `#1 ${esc(String(top.company).split(/[,(]/)[0].trim())} · fit ${top.fit_score}${conflicts.length ? ` · ${conflicts.length} held for affiliation check` : ''}` : 'Punctual Pros add-on targets pending', color: PP },
   ]);
 
   const levers = [
-    { n: fmt.num(s90.length), u: 'sales · Q1-26 snapshot', t: 'New-mover marketing', d: `Every closed sale is a home that needs a tune-up, inspection or plan — mail within 60 days of closing. This snapshot ends ${esc(dfull(fmt, win?.window_end || '2026-04-10'))}${snapAge != null ? ` (${snapAge} days old${snapStale ? ', stale' : ''})` : ''}: work the mail-ready list in the New-mover view and refresh the deed pull to the trailing 90 days.`, h: '#/pp/movers' },
+    { n: fmt.num(s90.length), u: 'sales · Q1 2026 snapshot', t: 'New-mover marketing', d: `Every closed sale is a home that needs a tune-up, inspection or plan — mail within 60 days of closing. This snapshot ends ${esc(dfull(fmt, win?.window_end || '2026-04-10'))}${snapAge != null ? ` (${snapAge} days old${snapStale ? ', stale' : ''})` : ''}: work the mail-ready list in the New-mover view and refresh the deed pull to the trailing 90 days.`, h: '#/pp/movers' },
     { n: model ? fmt.num(Math.round(epsYr)) : '—', u: 'warning-type episodes / yr', t: 'Weather-driven capacity', d: `${model ? `Territory averages ~${Math.round(epsYr)} episodes a year of the ${pbs.length} NWS warning types in the plan (Storm Events 2019–25; the Weather view’s higher all-event episode count also includes event types outside the plan).` : 'Episode frequency pending Punctual Pros demand model.'} Convert maintenance slots to repair capacity when the pressure index clears 120 and pre-stage parts.`, h: '#/pp/weather' },
     { n: fmt.num(adjT1.length), u: 'Tier-I zips', t: 'Contiguous expansion', d: `${fmt.compact(huAdjT1)} housing units in adjacent Tier-I zips (Schuylkill, Chester, Montgomery, northern MD) can be served from existing hubs with route density.`, h: '#/pp/territory' },
     { n: top ? String(top.fit_score) : '—', u: 'top fit score', t: 'Tuck-in M&A', d: top ? `${esc(top.company)} leads a ${targets.length - conflicts.length}-company screen; Authority Brands franchisees in West Chester, Bucks County and Monmouth are same-model tuck-ins.${conflicts.length ? ` ${conflicts.length === 1 ? 'One South Jersey franchisee' : `${conflicts.length} franchisees`} trading as “The Punctual Pros” ${conflicts.length === 1 ? 'is' : 'are'} held out until affiliation is verified.` : ''}` : 'Target screen pending.', h: '#/pp/targets' },
@@ -276,34 +310,34 @@ async function overview(ctx) {
   el.innerHTML = `<div class="m-pp">${ui.pageHead({
     title: 'Punctual Pros',
     sub: `<b>So what:</b> PP serves ~${fmt.compact(huTerr + huH)} housing units across ${terr.length} Central PA zips and the Horvath Jersey Shore footprint; the fastest levers are new-mover capture (${fmt.num(s90.length)} served-county sales in a single quarter, Q1 2026), weather-driven surge staffing, and ${adjT1.length} Tier-I zips directly adjacent to today’s routes.`,
-    chips: `${fmt.chip('One Hour · Benjamin Franklin · Mister Sparky', 'var(--c-pp)')}${fmt.chip('Horvath Home Services (Dec 2024)', 'var(--amber)')}${fmt.chip('HQ East Hempfield, Lancaster Co.')}`,
-    actions: `<a class="btn" href="#/pp/weather">Weather & demand</a><a class="btn" href="#/pp/movers">New movers</a>`,
+    chips: `${chip('One Hour · Benjamin Franklin · Mister Sparky', PP)}${dot('Horvath Home Services (December 2024)', STATUS.horvath.color)}${chip('HQ East Hempfield, Lancaster County')}`,
+    actions: `<a class="${ui.btnCls('secondary', '')}" href="#/pp/weather">Weather and demand →</a><a class="${ui.btnCls('secondary', '')}" href="#/pp/movers">New movers →</a>`,
   })}
   ${missing.length ? ui.note(`Research dataset not yet available: <b>${esc(missing.map(Copy.dataset).join(', '))}</b> — dependent KPIs, levers and storm columns show “—”.`, 'warn') : ''}
   <div id="pp-ov-kpis">${kpis(null)}</div>
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Service territory', sub: 'Core zips (orange), Horvath NJ (amber), adjacent expansion ring (blue) · click a zip for detail', body: `<div class="map tall" id="pp-ov-map"></div>`, flush: true, foot: ui.source('Punctual Pros ZIP-code model, v6 (ACS 5-year, analyst scoring)', SRC.acs, meta?.sales_layer?.window_end || '2026') })}
-    ${ui.panel({ title: 'Value-creation levers', sub: 'Ranked by speed to EBITDA · click to open the working view', body: `<div>${levers.map(l => `<a class="pp-lever" href="${l.h}"><div class="n">${l.n}<small>${esc(l.u)}</small></div><div class="b"><b>${esc(l.t)}</b><div class="small text-2">${l.d}</div></div><span class="go">open →</span></a>`).join('')}</div>`, foot: ui.source('Punctual Pros ZIP-code model · home sales (last 90 days) · demand model · add-on targets', null, '2026-09-24') })}
+    ${ui.panel({ title: 'Value-creation levers', sub: 'Ranked by speed to EBITDA · open the working view for each', body: `<ul class="pp-levers">${levers.map(l => `<li><div><div class="sys-kpi-value">${l.n}</div><div class="sys-kpi-label mt-8">${esc(l.u)}</div></div><div><a class="sys-link" href="${l.h}">${esc(l.t)} →</a><p class="sys-card-body mt-8">${l.d}</p></div></li>`).join('')}</ul>`, foot: ui.source('Punctual Pros ZIP-code model · home sales (last 90 days) · demand model · add-on targets', null, '2026-09-24') })}
   </div>
   <div class="mt-12">${ui.panel({ title: 'County rollup — served footprint', sub: `Housing mass, priority and storm exposure by county · ${esc(topCounty ? `${topCounty.county} is the largest book (${fmt.compact(topCounty.hu)} units)` : '')} · click a row to open its zips`, body: `<div id="pp-ov-cty"></div>`, foot: ui.source('Punctual Pros ZIP-code model (ACS 5-year) · NOAA Storm Events 2019–2025', SRC.ncei, '2026-09') })}</div>
   </div>`;
 
   // map
   const map = maps.create(el.querySelector('#pp-ov-map'), { center: [40.1, -76.1], zoom: 7 });
-  const zpop = z => `<b>${esc(z.zip)} · ${esc(z.city)}</b><br>${esc(z.county)}, ${esc(z.state)}<br>${esc(STATUS[z._status].label)} · ${esc(z.practical_priority_tier)} (${Math.round(z.practical_priority_score)})<br><span class="muted">${fmt.num(z.housing_units)} housing units</span>`;
-  maps.points(map, adj, { color: '#8ab4ff', radius: 3.5, cluster: false, opacity: .28, weight: 0, popup: zpop, onClick: z => openZip(ctx, z) });
-  maps.points(map, horv, { color: STATUS.horvath.hex, radius: 4.5, cluster: false, opacity: .8, popup: zpop, onClick: z => openZip(ctx, z) });
-  maps.points(map, terr, { color: PP, radius: 4.5, cluster: false, opacity: .85, popup: zpop, onClick: z => openZip(ctx, z) });
-  maps.marker(map, HQ.lat, HQ.lon, { color: '#ffffff', label: HQ.label, popup: '<b>Punctual Pros HQ</b><br>Running Pump Rd, East Hempfield Twp (Lancaster Co.)' });
-  maps.marker(map, HORVATH.lat, HORVATH.lon, { color: '#f5b73d', label: HORVATH.label, popup: '<b>Horvath Home Services</b><br>Beachwood / Toms River NJ (acq. Dec 2024) · city centroid' });
-  maps.legend(map, [{ color: PP, label: `PP core zips (${terr.length})` }, { color: STATUS.horvath.hex, label: `Horvath NJ zips (${horv.length})` }, { color: '#8ab4ff', label: `Adjacent ring (${adj.length})` }], 'Footprint');
+  const zpop = z => `<b>${esc(z.zip)} · ${esc(z.city)}</b><br>${esc(z.county)}, ${esc(z.state)}<br>${esc(STATUS[z._status].label)} · ${esc(z.practical_priority_tier)} (${Math.round(z.practical_priority_score)})<br><span class="sys-muted">${fmt.num(z.housing_units)} housing units</span>`;
+  pts(maps, map, adj, { color: STATUS.adjacent.color, radius: 3.5, cluster: false, opacity: .28, weight: 0, popup: zpop, onClick: z => openZip(ctx, z) });
+  pts(maps, map, horv, { color: STATUS.horvath.color, radius: 4.5, cluster: false, opacity: .8, popup: zpop, onClick: z => openZip(ctx, z) });
+  pts(maps, map, terr, { color: PP, radius: 4.5, cluster: false, opacity: .85, popup: zpop, onClick: z => openZip(ctx, z) });
+  maps.marker(map, HQ.lat, HQ.lon, { color: hx(INK), label: HQ.label, popup: '<b>Punctual Pros HQ</b><br>Running Pump Rd, East Hempfield Twp (Lancaster County)' });
+  maps.marker(map, HORVATH.lat, HORVATH.lon, { color: hx(STATUS.horvath.color), label: HORVATH.label, popup: '<b>Horvath Home Services</b><br>Beachwood / Toms River NJ (acquired December 2024) · city centroid' });
+  maps.legend(map, [{ color: PP, label: `PP core zips (${terr.length})` }, { color: STATUS.horvath.color, label: `Horvath NJ zips (${horv.length})` }, { color: STATUS.adjacent.color, label: `Adjacent ring (${adj.length})` }], 'Footprint');
   maps.fitPoints(map, [...terr, ...horv].map(z => [z.lat, z.lon]), 8);
 
   // county table
   ui.table(el.querySelector('#pp-ov-cty'), {
     columns: [
       { key: 'county', label: 'County', fmt: (v, r) => `<b>${esc(v)}</b> <span class="dim">${esc(r.state)}</span>` },
-      { key: 'footprint', label: 'Footprint', fmt: v => fmt.chip(v, v === 'PP core' ? 'var(--c-pp)' : 'var(--amber)') },
+      { key: 'footprint', label: 'Footprint', fmt: v => v === 'PP core' ? chip(v, PP) : dot(v, STATUS.horvath.color) },
       { key: 'zips', label: 'Zips', num: true },
       { key: 'hu', label: 'Housing units', num: true, fmt: v => fmt.num(v) },
       { key: 'owner_occ', label: 'Owner-occ.', num: true, fmt: v => pctTxt(v) },
@@ -336,12 +370,12 @@ function openZip(ctx, z) {
   inspector.open({
     title: `${esc(z.zip)} · ${esc(z.city)}`, sub: `${esc(z.county)}, ${esc(z.state)} · ${esc(STATUS[z._status].label)}`, color: STATUS[z._status].color,
     sections: [
-      { label: 'Priority', html: `<div class="row gap-12 wrap">${tierChip(esc, z.practical_priority_tier)}${fmt.chip(z.practical_priority_label || '', 'var(--c-pp)')}${fmt.chip(`data ${z.data_confidence}`, z.data_confidence === 'High' ? 'var(--green)' : z.data_confidence === 'Medium' ? 'var(--amber)' : 'var(--red)')}</div><div class="mt-8">${ctx.charts.hbar([{ label: 'Practical priority', value: z.practical_priority_score }, { label: 'Opportunity v3', value: z.opportunity_score_v3 }, { label: 'Executive rank', value: z.executive_rank_score }, { label: 'Cluster score', value: z.cluster_score }, { label: 'Blended (w/ sales)', value: z.blended_expansion_priority_score }], { max: 100, fmt: v => fmt.num(v, 0), labelW: 120, color: PP })}</div>` },
+      { label: 'Priority', html: `<div class="sys-chips">${tierChip(esc, z.practical_priority_tier)}${z.practical_priority_label ? chip(z.practical_priority_label, PP) : ''}${chip(`data confidence ${String(z.data_confidence || 'n/a').toLowerCase()}`, z.data_confidence === 'High' ? PAL.green : z.data_confidence === 'Medium' ? PAL.amber : PAL.red)}</div><div class="mt-8">${ctx.charts.hbar([{ label: 'Practical priority', value: z.practical_priority_score }, { label: 'Opportunity v3', value: z.opportunity_score_v3 }, { label: 'Executive rank', value: z.executive_rank_score }, { label: 'Cluster score', value: z.cluster_score }, { label: 'Blended (w/ sales)', value: z.blended_expansion_priority_score }], { max: 100, fmt: v => fmt.num(v, 0), labelW: 120, color: PP })}</div>` },
       { label: 'Housing', html: ui.kv({ 'Housing units': fmt.num(z.housing_units), 'Owner-occupied': pctTxt(z.owner_occupancy_rate), 'Older stock share': pctTxt(z.old_housing_share), 'Density / sq mi': fmt.num(z.housing_density_per_sqmi), 'Owner base (ACS)': fmt.num(z.owner_base_size), 'Recent owner moves': fmt.num(z.recent_owner_moves), 'Tier-I peers ≤20 km': fmt.num(z.nearby_tier1_count), '90-day deeds (homeowner/builder)': `${fmt.num(z.homeowner_sale_count_90d)} / ${fmt.num(z.builder_sale_count_90d)}` }) },
       { label: 'Why this score', html: `<div class="small text-2">${esc(z.v3_reason || '—')}</div>` },
       { label: 'Sales layer', html: `<div class="small text-2">${esc(z.sales_layer_reason || '—')}</div>` },
-      { label: 'Tailwind', html: `<div class="small" style="color:var(--green)">${esc(z.expansion_tailwind || '—')}</div>` },
-      { label: 'Headwind', html: `<div class="small" style="color:var(--amber)">${esc(z.expansion_headwind || '—')}</div>` },
+      { label: 'Tailwind', html: ui.note(esc(z.expansion_tailwind || '—'), 'good') },
+      { label: 'Headwind', html: ui.note(esc(z.expansion_headwind || '—'), 'warn') },
       { label: 'Next action', html: `<div class="small text-2">${next}</div>` },
       { label: 'Sources', html: `<div class="small col gap-4">${fmt.link(SRC.acs, 'US Census ACS 5-yr (B25038 owner tenure, housing age)')}<span class="dim">Punctual Pros ZIP-code model v6 · analyst scoring (weights in Punctual Pros territory profile)</span></div>` },
     ],
@@ -369,21 +403,21 @@ async function weather(ctx) {
   el.innerHTML = `<div class="m-pp">${ui.pageHead({
     title: 'Weather & demand',
     sub: `<span id="wx-sowhat">Loading live NWS alerts and 7-day forecasts for ${hubs.length} weather hubs…</span>`,
-    chips: `${fmt.chip(`${hubs.length} weather hubs`, 'var(--c-pp)')}${fmt.chip('NWS alerts · live', 'var(--red)')}${fmt.chip('Open-Meteo 7-day · live', 'var(--accent)')}${fmt.chip(`${JOBS_PER_TECH} jobs / tech-day (assumption)`, 'var(--dim)')}`,
+    chips: `${chip(`${hubs.length} weather hubs`, PP)}${chip('NWS alerts · live', PAL.green)}${chip('Open-Meteo 7-day forecast · live', PAL.green)}${chip(`${JOBS_PER_TECH} jobs per tech-day (assumption)`)}`,
   })}
   ${model ? '' : ui.note('Demand model dataset <b>Punctual Pros demand model</b> is not available — using fallback hubs (Lancaster, York, Harrisburg, Reading, Chambersburg, Toms River) and default baselines (HVAC 10 · Plumbing 16 · Electrical 7 calls/day per 10k households).', 'warn')}
   <div id="wx-kpis">${ui.kpis([{ label: 'Territory alerts (live)', value: '…' }, { label: 'Peak HVAC pressure', value: '…' }, { label: 'Peak plumbing pressure', value: '…' }, { label: 'Peak electrical pressure', value: '…' }, { label: 'Peak-day PP calls (est.)', value: '…' }, { label: 'Surge techs, peak day', value: '…' }])}</div>
   <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Service-Call Pressure Index · hubs × days', sub: '100 = baseline day for the trade · first 2 columns observed, then 7-day forecast · click a cell for drivers', actions: '<div id="wx-trade"></div>', body: `<div id="wx-heat">${ui.loading(`Fetching Open-Meteo forecasts for ${hubs.length} hubs…`)}</div><div class="pp-legend" id="wx-heat-leg"></div>`, foot: `${ui.source('Open-Meteo forecast API', SRC.meteo, 'live')} ${modelSrc}` })}
-    ${ui.panel({ title: 'Live NWS alerts touching the territory', sub: 'PA + NJ feeds filtered to 15 territory counties by UGC zone/county code and FIPS', body: `<div id="wx-alerts">${ui.loading('Querying api.weather.gov…')}</div>`, scroll: true, foot: ui.source('National Weather Service alerts API', 'https://api.weather.gov/alerts/active?area=PA', 'live') })}
+    ${ui.panel({ title: 'Service-Call Pressure Index · hubs × days', sub: '100 = baseline day for the trade · first 2 columns observed, then 7-day forecast · click a cell for drivers', actions: '<div id="wx-trade"></div>', body: `<div id="wx-heat">${ui.loading(`Fetching Open-Meteo forecasts for ${hubs.length} hubs…`)}</div><div id="wx-heat-leg"></div>`, foot: `${`${ui.source('Open-Meteo forecast API', SRC.meteo)} ${Copy.LIVE}`} ${modelSrc}` })}
+    ${ui.panel({ title: 'Live NWS alerts touching the territory', sub: 'PA + NJ feeds filtered to 15 territory counties by UGC zone/county code and FIPS', body: `<div id="wx-alerts">${ui.loading('Querying api.weather.gov…')}</div>`, scroll: true, foot: `${ui.source('National Weather Service alerts API', 'https://api.weather.gov/alerts/active?area=PA')} ${Copy.LIVE}` })}
   </div>
   <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Staffing implication · expected PP calls by trade', sub: 'Market calls × PP share (default calibrated to revenue est.) → techs = ⌈calls ÷ 6 jobs per tech-day⌉', actions: '<div id="wx-share"></div>', body: `<div id="wx-staff">${ui.loading()}</div>`, foot: `${modelSrc}<span class="dim">Households = housing units of served zips (ACS), Perry rolled into Harrisburg hub</span>` })}
-    ${ui.panel({ title: 'Hub conditions · next 7 days', sub: 'Extremes driving the index · served housing units per hub', body: `<div id="wx-hubs">${ui.loading()}</div>`, foot: ui.source('Open-Meteo · Punctual Pros ZIP-code model housing units', SRC.meteo, 'live') })}
+    ${ui.panel({ title: 'Staffing implication · expected PP calls by trade', sub: 'Market calls × PP share (default calibrated to revenue est.) → techs = ⌈calls ÷ 6 jobs per tech-day⌉', actions: '<div id="wx-share"></div>', body: `<div id="wx-staff">${ui.loading()}</div>`, foot: `${modelSrc} <span class="dim">· Households = housing units of served zips (ACS), Perry rolled into the Harrisburg hub</span>` })}
+    ${ui.panel({ title: 'Hub conditions · next 7 days', sub: 'Extremes driving the index · served housing units per hub', body: `<div id="wx-hubs">${ui.loading()}</div>`, foot: `${ui.source('Open-Meteo · Punctual Pros ZIP-code model housing units', SRC.meteo)} ${Copy.LIVE}` })}
   </div>
-  <div class="pp-sec">Historical storm exposure · NOAA Storm Events 2019–2026 YTD</div>
+  <h2 class="sys-h3 pp-sec">Historical storm exposure · NOAA Storm Events 2019 to 2026 year to date</h2>
   <div id="wx-hist"></div>
-  <div class="pp-sec">Model transparency · baselines, multipliers, growth plan</div>
+  <h2 class="sys-h3 pp-sec">Model transparency · baselines, multipliers, growth plan</h2>
   <div id="wx-model"></div>
   </div>`;
   const root = el.querySelector('.m-pp'); const alive = () => root.isConnected;
@@ -413,12 +447,12 @@ async function weather(ctx) {
   const dates = okRows[0].days.map(d => d.date); const fIdx = okRows[0].days.map((d, i) => i).filter(i => !okRows[0].days[i].past);
 
   const drawHeat = () => {
-    const t = state.trade; const rgb = t === 'Peak' ? '255,92,92' : TRADE_RGB[t];
+    const t = state.trade; const hue = t === 'Peak' ? PAL.red : TRADE_HEX[t];
     const val = c => t === 'Peak' ? Math.max(...TRADES.map(x => c.idx[x])) : c.idx[t];
     const all = okRows.flatMap(g => g.cells.map(val)); const mx = Math.max(1.3, ...all);
-    root.querySelector('#wx-heat').innerHTML = `<div class="tbl-wrap" style="border:0;background:transparent"><table class="pp-heat"><thead><tr><th style="text-align:left">Hub</th>${dates.map((d, i) => `<th class="${okRows[0].days[i].past ? 'past' : ''}">${esc(dlab(d))}${okRows[0].days[i].past ? '<span class="obs">observed</span>' : i === 2 ? '<span class="obs">today</span>' : ''}</th>`).join('')}</tr></thead><tbody>${grid.map((g, gi) => `<tr><td class="lbl">${esc(g.hub.name)} <span class="dim">${esc(hubWhere(g.hub))}</span></td>${g.days ? g.cells.map((c, i) => { const v = val(c); const a = Math.max(0, Math.min(1, (v - 1) / (mx - 1))); return `<td class="${c.d.past ? 'past' : ''}" data-g="${gi}" data-i="${i}" style="background:${v > 1.0001 ? `rgba(${rgb},${(0.12 + a * 0.78).toFixed(2)})` : 'var(--surface-2)'};color:${a > .5 ? '#0a0e14' : v > 1.0001 ? 'var(--text)' : 'var(--dim)'}" title="${esc(g.hub.name)} ${esc(c.d.date)}: ${Math.round(v * 100)}">${Math.round(v * 100)}</td>`; }).join('') : `<td class="na" colspan="${dates.length}">forecast unavailable</td>`}</tr>`).join('')}</tbody></table></div>`;
-    root.querySelector('#wx-heat-leg').innerHTML = `<span><i style="background:var(--surface-2)"></i>100 = baseline</span><span><i style="background:rgba(${rgb},.35)"></i>110–120 elevated</span><span><i style="background:rgba(${rgb},.9)"></i>≥${Math.round(mx * 100)} peak in window</span><span class="dim">Combination: max driver + 0.5 × each additional independent hazard (model formula); correlated drivers of one hazard count once</span>`;
-    root.querySelectorAll('#wx-heat td[data-g]').forEach(td => td.onclick = () => openCell(grid[+td.dataset.g], +td.dataset.i));
+    root.querySelector('#wx-heat').innerHTML = `<div class="sys-table-wrap"><table class="sys-table pp-grid pp-heat"><thead><tr><th>Hub</th>${dates.map((d, i) => `<th class="sys-n${okRows[0].days[i].past ? ' past' : ''}">${esc(dlab(d))}${okRows[0].days[i].past ? '<span class="pp-obs">observed</span>' : i === 2 ? '<span class="pp-obs">today</span>' : ''}</th>`).join('')}</tr></thead><tbody>${grid.map((g, gi) => `<tr><td>${esc(g.hub.name)} <span class="sys-muted small">${esc(hubWhere(g.hub))}</span></td>${g.days ? g.cells.map((c, i) => { const v = val(c); const a = Math.max(0, Math.min(1, (v - 1) / (mx - 1))); return `<td class="sys-n${c.d.past ? ' past' : ''}" data-g="${gi}" data-i="${i}" tabindex="0" style="${v > 1.0001 ? heatBg(hue, 0.08 + a * 0.92) : ''}" title="${esc(g.hub.name)} ${esc(dfull(fmt, c.d.date))}: ${Math.round(v * 100)}">${Math.round(v * 100)}</td>`; }).join('') : `<td class="sys-muted" colspan="${dates.length}">forecast unavailable</td>`}</tr>`).join('')}</tbody></table></div>`;
+    root.querySelector('#wx-heat-leg').innerHTML = `<div class="sys-chips pp-legend"><span class="sys-chip">100 = baseline</span><span class="sys-chip" style="${heatBg(hue, .3)}">110–120 elevated</span><span class="sys-chip" style="${heatBg(hue, 1)}">${Math.round(mx * 100)}+ peak in window</span></div><p class="sys-muted small">Combination: max driver + 0.5 × each additional independent hazard (model formula); correlated drivers of one hazard count once.</p>`;
+    bindRows(root, '#wx-heat td[data-g]', td => openCell(grid[+td.dataset.g], +td.dataset.i));
   };
   ui.seg(root.querySelector('#wx-trade'), [...TRADES.map(t => ({ value: t, label: t })), { value: 'Peak', label: 'Max' }], state.trade, v => { state.trade = v; drawHeat(); });
 
@@ -434,15 +468,15 @@ async function weather(ctx) {
   };
   const xcheck = () => {
     const yrCalls = mktCallsDay * state.share * 365; const impl = yrCalls * AVG_TICKET; const ratio = impl / REV;
-    const c = ratio > 1.5 || ratio < 0.67 ? 'var(--red)' : ratio > 1.15 || ratio < 0.87 ? 'var(--amber)' : 'var(--green)';
-    return `<div class="pp-xcheck small mt-8" style="--cc:${c}"><b>Revenue cross-check:</b> ${shTxt(state.share)} share → ~${fmt.compact(yrCalls)} baseline calls / yr × $${AVG_TICKET} avg ticket (assumption, $350–450 range) = <b>${fmt.money(impl)}</b> vs. <b>${fmt.money(REV)}</b> FY2025 pro forma revenue est.${revRow ? ` (Punctual Pros public filings, ${esc(revRow.confidence || 'n/a')} confidence)` : ' (fallback)'} → ${fmt.chip(`${ratio.toFixed(1)}× revenue`, c)}${ratio > 1.15 ? ' — this share overstates PP volume; use it as an upside sensitivity only.' : ratio < 0.87 ? ' — understates PP volume.' : ' — consistent with the revenue estimate.'} Weather-day surge calls come on top of this baseline.</div>`;
+    const c = ratio > 1.5 || ratio < 0.67 ? PAL.red : ratio > 1.15 || ratio < 0.87 ? PAL.amber : PAL.green;
+    return `<div class="mt-12">${ui.note(`<span><b>Revenue cross-check:</b> ${shTxt(state.share)} share → ~${fmt.compact(yrCalls)} baseline calls / yr × $${AVG_TICKET} avg ticket (assumption, $350–450 range) = <b>${fmt.money(impl)}</b> vs. <b>${fmt.money(REV)}</b> FY2025 pro forma revenue est.${revRow ? ` (Punctual Pros public filings, ${esc(revRow.confidence || 'n/a')} confidence)` : ' (fallback)'} → ${chip(`${ratio.toFixed(1)}× revenue`, c)}${ratio > 1.15 ? ' — this share overstates PP volume; use it as an upside sensitivity only.' : ratio < 0.87 ? ' — understates PP volume.' : ' — consistent with the revenue estimate.'} Weather-day surge calls come on top of this baseline.</span>`, TONE[c])}</div>`;
   };
   const drawStaff = () => {
     const rows = staffCalc();
     root.querySelector('#wx-staff').innerHTML = stackBars(rows.map(r => dlab(r.date)), TRADES.map(t => ({ name: t, color: TRADE_HEX[t], values: rows.map(r => r[t]) })), { baseline: rows[0]?.base }) +
-      `<div class="pp-legend">${TRADES.map(t => `<span><i style="background:${TRADE_HEX[t]}"></i>${t}</span>`).join('')}<span class="dim">dashed = baseline-day calls (${fmt.num(rows[0]?.base)}) at ${shTxt(state.share)} share</span></div>${xcheck()}
-      <div class="tbl-wrap mt-8"><table class="tbl"><thead><tr><th>Day</th>${TRADES.map(t => `<th class="num">${t}</th>`).join('')}<th class="num">PP calls</th><th class="num">vs base</th><th class="num">Techs</th><th class="num">Surge</th><th>Top driver</th></tr></thead><tbody>${rows.map(r => `<tr><td class="nowrap">${esc(dlab(r.date))}</td>${TRADES.map(t => `<td class="num">${fmt.num(r[t])}</td>`).join('')}<td class="num"><b>${fmt.num(r.total)}</b></td><td class="num" style="color:${r.total > r.base * 1.02 ? 'var(--amber)' : 'var(--muted)'}">${r.total >= r.base ? '+' : ''}${fmt.num((r.total / r.base - 1) * 100, 0)}%</td><td class="num">${fmt.num(r.techs)}</td><td class="num" style="color:${r.surge > 0 ? 'var(--red)' : 'var(--muted)'}">${r.surge > 0 ? '+' : ''}${fmt.num(r.surge)}</td><td class="small text-2" title="${esc(r.driver)}">${esc(r.driver)}</td></tr>`).join('')}</tbody></table></div>
-      <div class="note mt-8">Market-wide calls use model baselines (HVAC ${P.base.HVAC} · Plumbing ${P.base.Plumbing} · Electrical ${P.base.Electrical} per 10k households/day) × served housing units × daily multiplier. <b>PP share (${shTxt(state.share)}), $${AVG_TICKET} average ticket and ${JOBS_PER_TECH} jobs per tech-day are assumptions</b> — the default share is back-solved from the revenue estimate; replace with ServiceTitan booked-call history to calibrate. Excludes planned maintenance (schedulable).</div>`;
+      legend(TRADES.map(t => [TRADE_HEX[t], t]), `dashed line = baseline-day calls (${fmt.num(rows[0]?.base)}) at ${shTxt(state.share)} share`) + xcheck() + `
+      <div class="sys-table-wrap mt-12"><table class="sys-table"><thead><tr><th>Day</th>${TRADES.map(t => `<th class="sys-n">${t}</th>`).join('')}<th class="sys-n">PP calls</th><th class="sys-n">vs base</th><th class="sys-n">Techs</th><th class="sys-n">Surge</th><th>Top driver</th></tr></thead><tbody>${rows.map(r => `<tr><td class="nowrap">${esc(dlab(r.date))}</td>${TRADES.map(t => `<td class="sys-n">${fmt.num(r[t])}</td>`).join('')}<td class="sys-n"><b>${fmt.num(r.total)}</b></td><td class="sys-n">${r.total > r.base * 1.02 ? chip(`+${fmt.num((r.total / r.base - 1) * 100, 0)}%`, PAL.amber) : `${r.total >= r.base ? '+' : ''}${fmt.num((r.total / r.base - 1) * 100, 0)}%`}</td><td class="sys-n">${fmt.num(r.techs)}</td><td class="sys-n">${r.surge > 0 ? chip(`+${fmt.num(r.surge)}`, PAL.red) : fmt.num(r.surge)}</td><td class="small text-2">${esc(r.driver)}</td></tr>`).join('')}</tbody></table></div>
+      <div class="mt-12">${ui.note(`Market-wide calls use model baselines (HVAC ${P.base.HVAC} · Plumbing ${P.base.Plumbing} · Electrical ${P.base.Electrical} per 10k households/day) × served housing units × daily multiplier. <b>PP share (${shTxt(state.share)}), $${AVG_TICKET} average ticket and ${JOBS_PER_TECH} jobs per tech-day are assumptions</b> — the default share is back-solved from the revenue estimate; replace with ServiceTitan booked-call history to calibrate. Excludes planned maintenance (schedulable).`)}</div>`;
     return rows;
   };
   const drawAll = () => {
@@ -452,12 +486,12 @@ async function weather(ctx) {
     const pk = Object.fromEntries(TRADES.map(t => [t, peak(t)]));
     const pday = rows.slice().sort((a, b) => b.total - a.total)[0];
     const sev = AR.alerts.filter(a => /Extreme|Severe/.test(a.severity)).length;
-    const k = t => ({ label: `Peak ${t === 'HVAC' ? 'HVAC' : t.toLowerCase()} pressure`, value: `${Math.round(pk[t].v * 100)}`, sub: pk[t].v > 1.0001 ? `${esc(pk[t].hub)} · ${esc(dlab(pk[t].date))} · ${esc(String(pk[t].drv || '').split(' (')[0].slice(0, 34))}` : 'baseline all week', color: pk[t].v >= 1.2 ? 'var(--red)' : pk[t].v > 1.0001 ? 'var(--amber)' : 'var(--green)' });
+    const k = t => ({ label: `Peak ${t === 'HVAC' ? 'HVAC' : t.toLowerCase()} pressure`, value: `${Math.round(pk[t].v * 100)}`, sub: pk[t].v > 1.0001 ? `${esc(pk[t].hub)} · ${esc(dlab(pk[t].date))} · ${esc(String(pk[t].drv || '').split(' (')[0].slice(0, 34))}` : 'baseline all week', color: pk[t].v >= 1.2 ? PAL.red : pk[t].v > 1.0001 ? PAL.amber : PAL.green });
     root.querySelector('#wx-kpis').innerHTML = ui.kpis([
-      { label: 'Territory alerts (live)', value: AR.failed ? 'n/a' : fmt.num(AR.alerts.length), sub: AR.failed ? 'NWS feed unavailable' : `${sev} severe · ${AR.alerts.filter(a => a.pb).length} with growth plan`, color: sev ? 'var(--red)' : AR.alerts.length ? 'var(--amber)' : 'var(--green)' },
+      { label: 'Territory alerts (live)', value: AR.failed ? '—' : fmt.num(AR.alerts.length), sub: AR.failed ? 'NWS feed unavailable' : `${sev} severe · ${AR.alerts.filter(a => a.pb).length} with a growth plan entry`, color: sev ? PAL.red : AR.alerts.length ? PAL.amber : PAL.green },
       k('HVAC'), k('Plumbing'), k('Electrical'),
-      { label: 'Peak-day PP calls (est.)', value: fmt.num(pday?.total), sub: `${esc(dlab(pday?.date))} · ${pday && pday.total >= pday.base ? '+' : ''}${fmt.num(pday ? (pday.total / pday.base - 1) * 100 : 0, 0)}% vs baseline · ${shTxt(state.share)} share (est.)`, color: 'var(--c-pp)' },
-      { label: 'Surge techs, peak day', value: `${pday?.surge > 0 ? '+' : ''}${fmt.num(pday?.surge)}`, sub: `${fmt.num(pday?.techs)} vs ${fmt.num(pday?.baseTechs)} base · 6 jobs/tech (assum.)`, color: pday?.surge > 0 ? 'var(--red)' : 'var(--green)' },
+      { label: 'Peak-day PP calls (est.)', value: fmt.num(pday?.total), sub: `${esc(dlab(pday?.date))} · ${pday && pday.total >= pday.base ? '+' : ''}${fmt.num(pday ? (pday.total / pday.base - 1) * 100 : 0, 0)}% vs baseline · ${shTxt(state.share)} share (est.)`, color: PP },
+      { label: 'Surge techs, peak day', value: `${pday?.surge > 0 ? '+' : ''}${fmt.num(pday?.surge)}`, sub: `${fmt.num(pday?.techs)} vs ${fmt.num(pday?.baseTechs)} base · 6 jobs per tech (assumption)`, color: pday?.surge > 0 ? PAL.red : PAL.green },
     ]);
     const hot = TRADES.filter(t => pk[t].v >= 1.1).sort((a, b) => pk[b].v - pk[a].v);
     root.querySelector('#wx-sowhat').innerHTML = `<b>So what:</b> ${hot.length ? `${hot.map(t => `${t} pressure peaks at <b>${Math.round(pk[t].v * 100)}</b> (${esc(pk[t].hub)}, ${esc(dlab(pk[t].date))})`).join('; ')} — ${pday?.surge > 0 ? `plan <b>+${pday.surge} techs</b> on ${esc(dlab(pday.date))} and convert maintenance slots to repair capacity` : 'absorbable within current capacity'}.` : 'a quiet week — no hub clears 110 on any trade; keep maintenance and membership tune-ups on the board and push new-mover campaigns.'} ${AR.failed ? 'NWS alert feed unavailable.' : AR.alerts.length ? `${AR.alerts.length} live NWS alert${AR.alerts.length > 1 ? 's' : ''} touch the territory${sev ? ` (${sev} severe)` : ''}.` : 'No active NWS alerts in territory.'}`;
@@ -473,10 +507,10 @@ async function weather(ctx) {
   ui.table(root.querySelector('#wx-hubs'), {
     columns: [
       { key: 'hub', label: 'Hub', fmt: (v, r) => `<b>${esc(v)}</b><div class="dim small">${esc(r.county)} · ${fmt.compact(r.hu)} units</div>` },
-      { key: 'tmax', label: 'Hi / Lo °F', num: true, fmt: (v, r) => fin(v) ? `<span style="color:${v >= 90 ? 'var(--red)' : v >= 85 ? 'var(--amber)' : 'inherit'}">${Math.round(v)}</span> / <span style="color:${r.tmin <= 20 ? 'var(--accent-2)' : 'inherit'}">${fin(r.tmin) ? Math.round(r.tmin) : '—'}</span>` : '—' },
+      { key: 'tmax', label: 'Hi / Lo °F', num: true, fmt: (v, r) => fin(v) ? `${v >= 85 ? chip(String(Math.round(v)), v >= 90 ? PAL.red : PAL.amber) : Math.round(v)} / ${fin(r.tmin) && r.tmin <= 20 ? chip(String(Math.round(r.tmin)), PAL.sky) : fin(r.tmin) ? Math.round(r.tmin) : '—'}` : '—' },
       { key: 'precip', label: 'Rain"', num: true, fmt: v => fin(v) ? v.toFixed(2) : '—' },
       { key: 'gust', label: 'Gust', num: true, fmt: v => fin(v) ? Math.round(v) : '—' },
-      { key: 'peak', label: 'Peak', num: true, fmt: v => v ? `<b style="color:${v >= 120 ? 'var(--red)' : v > 100 ? 'var(--amber)' : 'var(--muted)'}">${v}</b>` : '—' },
+      { key: 'peak', label: 'Peak', num: true, fmt: v => v ? (v > 100 ? chip(String(v), v >= 120 ? PAL.red : PAL.amber) : `<b>${v}</b>`) : '—' },
     ], rows: hubRows, pageSize: 12, sortKey: 'peak', exportName: 'pp_hub_conditions', rowKey: r => r.hub,
     onRow: r => r._g && openCell(r._g, fIdx.reduce((b, i) => Math.max(...TRADES.map(t => r._g.cells[i].idx[t])) > Math.max(...TRADES.map(t => r._g.cells[b].idx[t])) ? i : b, fIdx[0])),
   });
@@ -485,12 +519,12 @@ async function weather(ctx) {
     if (!g?.days) return; const c = g.cells[i]; const d = c.d;
     const calls = Object.fromEntries(TRADES.map(t => [t, P.base[t] * g.hub.hu / 1e4 * c.idx[t]]));
     inspector.open({
-      title: `${esc(g.hub.name)} · ${esc(dfull(fmt, d.date))}`, sub: `${esc(g.hub.county)} ${esc(g.hub.state)} · ${d.past ? 'observed' : 'forecast'} · ${esc(live.wmo(d.code))}`, color: 'var(--c-pp)',
+      title: `${esc(g.hub.name)} · ${esc(dfull(fmt, d.date))}`, sub: `${esc(hubWhere(g.hub))} · ${d.past ? 'observed' : 'forecast'} · ${esc(live.wmo(d.code))}`, color: PP,
       sections: [
         { label: 'Pressure index', html: charts.hbar(TRADES.map(t => ({ label: t, value: Math.round(c.idx[t] * 100), color: TRADE_HEX[t] })), { max: Math.max(150, ...TRADES.map(t => c.idx[t] * 100)), fmt: v => v, labelW: 80 }) },
         { label: 'Weather', html: ui.kv({ 'High / low': `${fin(num(d.tmax)) ? Math.round(d.tmax) : '—'}°F / ${fin(num(d.tmin)) ? Math.round(d.tmin) : '—'}°F`, Precipitation: `${fin(num(d.precip)) ? Number(d.precip).toFixed(2) : '—'} in${d.pop != null ? ` · ${d.pop}% chance` : ''}`, 'Peak gust': `${fin(num(d.gust)) ? Math.round(d.gust) : '—'} mph`, Snow: `${fin(num(d.snow)) ? Number(d.snow).toFixed(1) : '0'} in`, Condition: esc(live.wmo(d.code)) }) },
-        { label: 'Active drivers', html: TRADES.some(t => c.drv[t].length) ? `<div class="col gap-4">${TRADES.flatMap(t => c.drv[t].map(x => `<div class="row small"><span class="chip" style="--cc:${TRADE_HEX[t]}">${t}</span><span class="num">×${x.m.toFixed(2)}</span><span class="text-2">${esc(x.l)}</span></div>`)).join('')}</div>` : '<div class="small dim">No driver above threshold — baseline day.</div>' },
-        { label: 'Expected market calls (all providers)', html: ui.kv(Object.fromEntries([...TRADES.map(t => [t, `${fmt.num(calls[t])} <span class="dim">(base ${fmt.num(P.base[t] * g.hub.hu / 1e4)})</span>`]), ['Served units', fmt.num(g.hub.hu)], [`PP @ ${shTxt(state.share)} share (est.)`, `${fmt.num(sum(TRADES, t => calls[t]) * state.share)} calls → ${Math.ceil(sum(TRADES, t => calls[t]) * state.share / JOBS_PER_TECH)} techs`]])) },
+        { label: 'Active drivers', html: TRADES.some(t => c.drv[t].length) ? `<div class="col gap-8">${TRADES.flatMap(t => c.drv[t].map(x => `<div class="sys-row small">${dot(t, TRADE_HEX[t])}<span class="sys-num">×${x.m.toFixed(2)}</span><span class="text-2">${esc(x.l)}</span></div>`)).join('')}</div>` : '<div class="small sys-muted">No driver above threshold — baseline day.</div>' },
+        { label: 'Expected market calls (all providers)', html: ui.kv(Object.fromEntries([...TRADES.map(t => [t, `${fmt.num(calls[t])} <span class="dim">(base ${fmt.num(P.base[t] * g.hub.hu / 1e4)})</span>`]), ['Served units', fmt.num(g.hub.hu)], [`PP at ${shTxt(state.share)} share (est.)`, `${fmt.num(sum(TRADES, t => calls[t]) * state.share)} calls → ${Math.ceil(sum(TRADES, t => calls[t]) * state.share / JOBS_PER_TECH)} techs`]])) },
         { label: 'Next action', html: `<div class="small text-2">${Math.max(...TRADES.map(t => c.idx[t])) >= 1.2 ? 'Pull maintenance visits forward/back out of this day, extend dispatch hours, pre-stage parts for the driving trade and open CSR overflow.' : Math.max(...TRADES.map(t => c.idx[t])) > 1.0001 ? 'Hold 10–15% of slots open for same-day demand in the driving trade.' : 'Normal schedule; use capacity for maintenance and membership visits.'}</div>` },
         { label: 'Sources', html: `<div class="small col gap-4">${fmt.link(SRC.meteo, 'Open-Meteo forecast (hub point)')}${g.hub.src ? fmt.link(g.hub.src, `NWS point metadata${g.hub.grid ? ' · ' + g.hub.grid : ''}`) : ''}<span class="dim">Climatology station: ${esc(g.hub.station || '—')}</span></div>` },
       ],
@@ -505,23 +539,23 @@ function renderAlerts(ctx, box, AR) {
   if (AR.failed) { box.innerHTML = ui.note('NWS alert feed unavailable right now (api.weather.gov). The plan below still applies when alerts are issued.', 'warn'); return; }
   if (!AR.alerts.length) { box.innerHTML = `<div class="empty">No active NWS alerts touch the 15 territory counties.<br><span class="small">Checked PA + NJ statewide feeds · ${esc(new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }))}</span></div>`; return; }
   box.innerHTML = AR.alerts.map((a, k) => {
-    const tierOf = c => c.pp_territory_tier === 'core' ? 'var(--c-pp)' : c.pp_territory_tier === 'horvath_nj' ? 'var(--amber)' : 'var(--accent)';
+    const tierOf = c => c.pp_territory_tier === 'core' ? PP : c.pp_territory_tier === 'horvath_nj' ? STATUS.horvath.color : STATUS.adjacent.color;
     const m = a.pb?.expected_call_volume_multiplier;
-    return `<div class="pp-alert" data-k="${k}" style="--cc:${SEV[a.severity] || 'var(--muted)'}"><div class="h"><span class="t">${esc(a.event)}</span>${fmt.chip(a.severity || 'Unknown', SEV[a.severity])}<span class="small dim num">${esc(dfull(fmt, a.onset || a.sent))} → ${esc(a.ends ? dfull(fmt, a.ends) : 'until further notice')}</span></div>
-      <div class="row wrap mt-8" style="gap:4px">${a.counties.map(c => fmt.chip(`${c.county} ${c.state}`, tierOf(c))).join('')}</div>
-      ${a.pb ? `<div class="row wrap mt-8" style="gap:4px">${TRADES.map(t => m?.[t] ? `<span class="chip" style="--cc:${TRADE_HEX[t]}">${t} ×${m[t][0]}–${m[t][1]}</span>` : '').join('')}</div><ul>${(a.pb.actions || []).slice(0, 3).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : `<div class="small dim mt-8">No growth plan entry for this event type — monitor; log outcomes for calibration.</div>`}</div>`;
+    return `<div class="sys-note sys-note--${SEV_NOTE[a.severity] || 'info'} pp-alert" data-k="${k}" tabindex="0" role="button" aria-label="${esc(a.event)}: open details"><div class="grow"><div class="sys-row"><b>${esc(a.event)}</b>${chip(a.severity || 'Unknown', SEV[a.severity])}<span class="small sys-muted">${esc(dfull(fmt, a.onset || a.sent))} to ${esc(a.ends ? dfull(fmt, a.ends) : 'until further notice')}</span></div>
+      <div class="sys-chips mt-8">${a.counties.map(c => dot(`${c.county} ${c.state}`, tierOf(c))).join('')}</div>
+      ${a.pb ? `<div class="sys-chips mt-8">${TRADES.map(t => m?.[t] ? dot(`${t} ×${m[t][0]}–${m[t][1]}`, TRADE_HEX[t]) : '').join('')}</div><ul class="sys-card-list mt-8">${(a.pb.actions || []).slice(0, 3).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : `<p class="small sys-muted mt-8">No growth plan entry for this event type — monitor; log outcomes for calibration.</p>`}</div></div>`;
   }).join('');
-  box.querySelectorAll('.pp-alert').forEach(n => n.onclick = () => {
+  bindRows(box, '.pp-alert', n => {
     const a = AR.alerts[+n.dataset.k];
     inspector.open({
-      title: esc(a.event), sub: `${esc(a.severity)} · ${esc(a.urgency || '')} · ${esc(a.sender || '')}`, color: SEV[a.severity] || 'var(--amber)',
+      title: esc(a.event), sub: `${esc(a.severity)} · ${esc(a.urgency || '')} · ${esc(a.sender || '')}`, color: SEV[a.severity] || PAL.amber,
       sections: [
-        { label: 'Territory counties', html: a.counties.map(c => fmt.chip(`${c.county}, ${c.state} · ${String(c.pp_territory_tier || '').replace('_', ' ')}`)).join(' ') },
+        { label: 'Territory counties', html: `<div class="sys-chips">${a.counties.map(c => chip(`${c.county}, ${c.state} · ${c.pp_territory_tier === 'core' ? 'PP core' : c.pp_territory_tier === 'horvath_nj' ? 'Horvath NJ' : 'adjacent'}`)).join('')}</div>` },
         { label: 'Headline', html: `<div class="small text-2">${esc(a.headline || '')}</div>` },
-        { label: 'Timing', html: ui.kv({ Onset: esc(a.onset || a.sent || '—'), Ends: esc(a.ends || '—'), 'Lead time (model)': a.pb ? esc(a.pb.lead_time || '—') : null }) },
-        a.pb ? { label: 'Growth plan actions', html: `<ul class="prose small">${(a.pb.actions || []).map(x => `<li>${esc(x)}</li>`).join('')}</ul><div class="small dim mt-8">Expected call multipliers: ${TRADES.map(t => `${t} ×${esc((a.pb.expected_call_volume_multiplier?.[t] || []).join('–'))}`).join(' · ')} (${esc(a.pb.multiplier_basis || '')})</div>` } : null,
+        { label: 'Timing', html: ui.kv({ Onset: esc(dfull(fmt, a.onset || a.sent)), Ends: a.ends ? esc(dfull(fmt, a.ends)) : 'until further notice', 'Lead time (model)': a.pb ? esc(a.pb.lead_time || '—') : null }) },
+        a.pb ? { label: 'Growth plan actions', html: `<ul class="sys-card-list">${(a.pb.actions || []).map(x => `<li>${esc(x)}</li>`).join('')}</ul><div class="small dim mt-8">Expected call multipliers: ${TRADES.map(t => `${t} ×${esc((a.pb.expected_call_volume_multiplier?.[t] || []).join('–'))}`).join(' · ')} (${esc(a.pb.multiplier_basis || '')})</div>` } : null,
         a.pb?.local_history ? { label: 'Local history', html: `<div class="small text-2">${fmt.num(a.pb.local_history.territory_episodes_2019_2025)} episodes 2019–25 (~${a.pb.local_history.avg_episodes_per_year}/yr) · ${esc(a.pb.local_history.basis || '')}</div>` } : null,
-        { label: 'NWS text', html: `<div class="small text-2" style="white-space:pre-wrap;max-height:260px;overflow:auto">${esc(String(a.description || '').slice(0, 2400))}</div>${a.instruction ? `<div class="small mt-8" style="white-space:pre-wrap">${esc(String(a.instruction).slice(0, 800))}</div>` : ''}` },
+        { label: 'NWS text', html: `<div class="small text-2 pp-pre pp-pre--scroll">${esc(String(a.description || '').slice(0, 2400))}</div>${a.instruction ? `<div class="small mt-8 pp-pre">${esc(String(a.instruction).slice(0, 800))}</div>` : ''}` },
         { label: 'Next action', html: `<div class="small text-2">${a.pb ? esc(a.pb.actions?.[0] || '') : 'Brief dispatch; no model growth plan for this event.'}</div>` },
         { label: 'Source', html: `<div class="small">${fmt.link(String(a.id || '').startsWith('http') ? a.id : 'https://api.weather.gov/alerts/active', 'api.weather.gov alert record')}${a.pb?.source_url ? ` · ${fmt.link(a.pb.source_url, 'growth plan basis')}` : ''}</div>` },
       ].filter(Boolean),
@@ -546,23 +580,23 @@ function renderHistory(ctx, box, storms) {
   const cRows = [...cmap.values()].sort((a, b) => (tiers[a.tier] ?? 9) - (tiers[b.tier] ?? 9) || a.county.localeCompare(b.county));
   const cTypes = types.filter(t => cRows.some(c => c.t[t])).slice(0, 10);
   box.innerHTML = `<div class="grid grid-2">
-    ${ui.panel({ title: 'Seasonality · events by month', sub: `Top event types, all 15 counties, ${esc(m.seasonality_basis || '2019–2025')} · July is the convective peak, Jan–Feb the freeze/winter peak`, body: charts.heatgrid(types, months, types.map(t => seas[t].monthly_event_counts || []), { color: '240,138,60', fmt: v => v || '' }), foot: src })}
-    ${ui.panel({ title: 'Annual event totals', sub: `Avg ${fmt.num(avgEv)} events / ${fmt.num(avgEp)} episodes per full year (all Storm Events types, territory counties; the overview’s lower figure counts growth plan warning types only) · busiest ${esc(maxY || '—')} · ${yrs.some(y => at[y].partial_year) ? `${esc(yrs.find(y => at[y].partial_year))} is partial (NCEI lag)` : ''}`, body: charts.line([{ name: 'Events', color: '#f08a3c', points: yrs.map(y => [y + (at[y].partial_year ? '*' : ''), at[y].event_count]) }, { name: 'Episodes', color: '#4c8dff', points: yrs.map(y => [y + (at[y].partial_year ? '*' : ''), at[y].episode_count]) }], { h: 200, area: true }) + `<div class="pp-legend"><span><i style="background:#f08a3c"></i>Event reports</span><span><i style="background:#4c8dff"></i>Distinct episodes</span><span class="dim">* partial year</span></div><div class="tbl-wrap mt-8"><table class="tbl"><thead><tr><th>Year</th><th class="num">Events</th><th class="num">Episodes</th><th class="num">Property damage</th><th class="num">Deaths</th></tr></thead><tbody>${yrs.map(y => `<tr><td>${esc(y)}${at[y].partial_year ? ' <span class="dim">(partial)</span>' : ''}</td><td class="num">${fmt.num(at[y].event_count)}</td><td class="num">${fmt.num(at[y].episode_count)}</td><td class="num">${fmt.money(at[y].total_damage_property_usd)}</td><td class="num">${fmt.num(at[y].deaths)}</td></tr>`).join('')}</tbody></table></div>`, foot: src })}
+    ${ui.panel({ title: 'Seasonality · events by month', sub: `Top event types, all 15 counties, ${esc(m.seasonality_basis || '2019–2025')} · July is the convective peak, January and February the freeze and winter peak`, body: heatTable(types, months, types.map(t => seas[t].monthly_event_counts || []), { color: PP, fmt: v => v || '', head: 'Event type' }), flush: true, foot: src })}
+    ${ui.panel({ title: 'Annual event totals', sub: `Avg ${fmt.num(avgEv)} events / ${fmt.num(avgEp)} episodes per full year (all Storm Events types, territory counties; the overview’s lower figure counts growth plan warning types only) · busiest ${esc(maxY || '—')} · ${yrs.some(y => at[y].partial_year) ? `${esc(yrs.find(y => at[y].partial_year))} is partial (NCEI lag)` : ''}`, body: charts.line([{ name: 'Events', color: PP, points: yrs.map(y => [y + (at[y].partial_year ? '*' : ''), at[y].event_count]) }, { name: 'Episodes', color: PAL.cet, points: yrs.map(y => [y + (at[y].partial_year ? '*' : ''), at[y].episode_count]) }], { h: 200, area: true }) + legend([[PP, 'Event reports'], [PAL.cet, 'Distinct episodes']], '* partial year') + `<div class="sys-table-wrap mt-12"><table class="sys-table"><thead><tr><th>Year</th><th class="sys-n">Events</th><th class="sys-n">Episodes</th><th class="sys-n">Property damage</th><th class="sys-n">Deaths</th></tr></thead><tbody>${yrs.map(y => `<tr><td>${esc(y)}${at[y].partial_year ? ' <span class="sys-muted">(partial)</span>' : ''}</td><td class="sys-n">${fmt.num(at[y].event_count)}</td><td class="sys-n">${fmt.num(at[y].episode_count)}</td><td class="sys-n">${fmt.money(at[y].total_damage_property_usd)}</td><td class="sys-n">${fmt.num(at[y].deaths)}</td></tr>`).join('')}</tbody></table></div>`, foot: src })}
   </div>
   <div class="mt-12">${ui.panel({ title: 'Notable events', sub: 'Largest damage / casualty events in territory counties · click for NWS narrative', body: '<div id="wx-notable"></div>', foot: src })}</div>
-  <div class="mt-12">${ui.panel({ title: 'County × event type · distinct episodes 2019–2025', sub: 'Episodes de-duplicate zone-split counties · core PA first, then Horvath NJ, then adjacent', body: charts.heatgrid(cRows.map(c => `${c.county} ${c.state} · ${c.tier === 'core' ? 'core' : c.tier === 'horvath_nj' ? 'Horvath' : 'adj.'}`), cTypes, cRows.map(c => cTypes.map(t => c.t[t] || null)), { color: '76,141,255', fmt: v => v ?? '' }), foot: src })}</div>`;
+  <div class="mt-12">${ui.panel({ title: 'County × event type · distinct episodes 2019–2025', sub: 'Episodes de-duplicate zone-split counties · core PA first, then Horvath NJ, then adjacent', body: heatTable(cRows.map(c => `${c.county} ${c.state} · ${c.tier === 'core' ? 'core' : c.tier === 'horvath_nj' ? 'Horvath' : 'adjacent'}`), cTypes, cRows.map(c => cTypes.map(t => c.t[t] || null)), { color: PAL.cet, fmt: v => v ?? '', head: 'County' }), flush: true, foot: src })}</div>`;
   const ne = (m.notable_events || []).map(e => ({ ...e, _cas: (e.deaths || 0) + (e.injuries || 0) }));
   ui.table(box.querySelector('#wx-notable'), {
     columns: [
       { key: 'begin_date', label: 'Date', num: true, fmt: v => esc(dfull(ctx.fmt, v)) },
-      { key: 'event_type', label: 'Event', fmt: v => fmt.chip(v, /Flood/.test(v) ? 'var(--accent)' : /Heat/.test(v) ? 'var(--red)' : /Winter|Snow|Ice|Cold|Blizzard/.test(v) ? 'var(--cyan)' : 'var(--amber)') },
+      { key: 'event_type', label: 'Event', fmt: v => dot(v, /Flood/.test(v) ? PAL.cet : /Heat/.test(v) ? PAL.red : /Winter|Snow|Ice|Cold|Blizzard/.test(v) ? PAL.cyan : PAL.amber) },
       { key: 'county', label: 'County', fmt: (v, r) => `${esc(v)}, ${esc(r.state)}` },
       { key: 'begin_location', label: 'Location' },
       { key: 'damage_property_usd', label: 'Damage', num: true, fmt: v => v ? fmt.money(v) : '—' },
       { key: '_cas', label: 'Deaths / inj.', num: true, fmt: (v, r) => `${r.deaths || 0} / ${r.injuries || 0}` },
       { key: 'narrative', label: 'Narrative', wrap: true, fmt: v => `<span class="small text-2">${esc(String(v || '').slice(0, 150))}${String(v || '').length > 150 ? '…' : ''}</span>` },
     ], rows: ne, pageSize: 8, sortKey: 'damage_property_usd', exportName: 'pp_notable_storm_events', rowKey: r => r.event_id,
-    onRow: e => inspector.open({ title: `${esc(e.event_type)} · ${esc(e.county)}, ${esc(e.state)}`, sub: `${esc(dfull(fmt, e.begin_date))} · ${esc(e.begin_location || '')}`, color: 'var(--c-pp)', sections: [{ label: 'Impact', html: ui.kv({ 'Property damage': fmt.moneyFull(e.damage_property_usd), Deaths: e.deaths, Injuries: e.injuries, Magnitude: e.magnitude != null ? `${e.magnitude} ${e.magnitude_type || ''}` : null, 'Tornado scale': e.tor_f_scale, 'NCEI event id': e.event_id }) }, { label: 'NWS narrative', html: `<div class="small text-2">${esc(e.narrative || '')}</div>` }, { label: 'Operating read-across', html: `<div class="small text-2">${/Flood|Rain/.test(e.event_type) ? 'Flood events drive sump-pump, water-heater and basement electrical calls 0–3 days later; pre-position pumps and restoration partners.' : /Wind|Tornado|Thunder/.test(e.event_type) ? 'Wind/convective damage drives service-drop, meter-base and surge-protection work; coordinate with utility restoration crews.' : 'Temperature extremes drive no-heat / no-cool and frozen-pipe calls; stage parts and extend dispatch.'}</div>` }, { label: 'Source', html: fmt.link(e.source_url, 'NCEI Storm Events record') }], actions: e.source_url ? [{ label: 'NCEI record ↗', href: e.source_url }] : [] }),
+    onRow: e => inspector.open({ title: `${esc(e.event_type)} · ${esc(e.county)}, ${esc(e.state)}`, sub: `${esc(dfull(fmt, e.begin_date))} · ${esc(e.begin_location || '')}`, color: PP, sections: [{ label: 'Impact', html: ui.kv({ 'Property damage': fmt.moneyFull(e.damage_property_usd), Deaths: e.deaths, Injuries: e.injuries, Magnitude: e.magnitude != null ? `${e.magnitude} ${e.magnitude_type || ''}` : null, 'Tornado scale': e.tor_f_scale }) }, { label: 'NWS narrative', html: `<div class="small text-2">${esc(e.narrative || '')}</div>` }, { label: 'Operating read-across', html: `<div class="small text-2">${/Flood|Rain/.test(e.event_type) ? 'Flood events drive sump-pump, water-heater and basement electrical calls 0–3 days later; pre-position pumps and restoration partners.' : /Wind|Tornado|Thunder/.test(e.event_type) ? 'Wind/convective damage drives service-drop, meter-base and surge-protection work; coordinate with utility restoration crews.' : 'Temperature extremes drive no-heat / no-cool and frozen-pipe calls; stage parts and extend dispatch.'}</div>` }, { label: 'Source', html: fmt.link(e.source_url, 'NCEI Storm Events record') }], actions: e.source_url ? [{ label: 'NCEI record ↗', href: e.source_url }] : [] }),
   });
 }
 
@@ -570,20 +604,20 @@ function renderModel(ctx, box, model, P) {
   const { ui, fmt, esc } = ctx;
   if (!model) { box.innerHTML = ui.note('Punctual Pros demand model not available — the index above uses fallback thresholds (heat ≥90°F, cold ≤20°F, rain ≥1.5 in, gusts ≥40 mph, snow ≥1 in) and default baselines.', 'warn'); return; }
   const it = model.items || []; const m = model.meta || {};
-  const conf = b => { const [l, c] = basisConf(b); return fmt.chip(l, c); };
+  const conf = b => { const [l, c] = basisConf(b); return chip(l, c); };
   const baselines = it.filter(i => i.component === 'baseline');
   const mults = it.filter(i => i.component === 'multiplier');
   const pbs = it.filter(i => i.component === 'event_playbook');
   box.innerHTML = `<div>
-    ${ui.panel({ title: 'Baselines & multipliers', sub: 'What the index multiplies · confidence from the model’s own basis tag', body: `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Trade</th><th>Component</th><th>Value / tiers</th><th>Conf.</th><th>Source</th></tr></thead><tbody>
-      ${baselines.map(b => `<tr><td><span class="chip" style="--cc:${TRADE_HEX[b.trade]}">${esc(b.trade)}</span></td><td class="wrap small">Baseline calls / day / 10k households</td><td class="num" style="text-align:left">${esc(b.value_point)} <span class="dim">(${esc((b.value_range || []).join('–'))})</span></td><td>${conf(b.basis)}</td><td>${fmt.link(b.source_url, fmt.host(b.source_url))}</td></tr>`).join('')}
-      ${mults.map(x => `<tr><td><span class="chip" style="--cc:${TRADE_HEX[x.trade] || 'var(--muted)'}">${esc(x.trade)}</span></td><td class="wrap small" style="min-width:200px;max-width:260px">${esc(x.driver)}</td><td class="wrap small text-2" style="max-width:none">${(x.piecewise || []).filter(p => mid(p.multiplier) > 1).map(p => `<div>${esc(String(p.condition).slice(0, 110))} <span class="num" style="color:${TRADE_HEX[x.trade] || 'var(--text)'}">×${esc((p.multiplier || []).join('–'))}</span></div>`).join('')}</td><td>${conf(x.basis)}</td><td>${fmt.link(x.source_url, fmt.host(x.source_url))}</td></tr>`).join('')}
-    </tbody></table></div>`, foot: ui.source('Punctual Pros demand model', null, m.generated) })}
-    <div class="mt-12"></div>${ui.panel({ title: 'NWS alert growth plan', sub: 'Expected call multipliers and first actions per warning type · territory frequency from Storm Events', body: `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>NWS event</th>${TRADES.map(t => `<th class="num">${t}</th>`).join('')}<th class="num">Episodes / yr</th><th>Lead time</th><th>First action</th></tr></thead><tbody>${pbs.map(p => `<tr><td class="wrap"><b>${esc(p.nws_event)}</b>${(p.aliases_and_related || []).length ? `<div class="dim small">${esc(p.aliases_and_related.join(' · '))}</div>` : ''}</td>${TRADES.map(t => `<td class="num">×${esc((p.expected_call_volume_multiplier?.[t] || []).join('–'))}</td>`).join('')}<td class="num">${p.local_history?.avg_episodes_per_year ?? '—'}</td><td class="wrap small text-2" style="max-width:none">${esc(String(p.lead_time || '').slice(0, 140))}</td><td class="wrap small text-2" style="max-width:none;min-width:260px">${esc((p.actions || [])[0] || '')}</td></tr>`).join('')}</tbody></table></div>`, foot: ui.source('NWS warning definitions · NOAA Storm Events', 'https://www.weather.gov/lwx/WarningsDefined', m.generated) })}
+    ${ui.panel({ title: 'Baselines and multipliers', sub: 'What the index multiplies · confidence from the model’s own basis tag', body: `<div class="sys-table-wrap"><table class="sys-table"><thead><tr><th>Trade</th><th>Component</th><th>Value / tiers</th><th>Confidence</th><th>Source</th></tr></thead><tbody>
+      ${baselines.map(b => `<tr><td>${dot(b.trade, TRADE_HEX[b.trade])}</td><td class="small">Baseline calls per day per 10k households</td><td><span class="sys-num">${esc(b.value_point)}</span> <span class="sys-muted">(${esc((b.value_range || []).join('–'))})</span></td><td>${conf(b.basis)}</td><td>${fmt.link(b.source_url, fmt.host(b.source_url))}</td></tr>`).join('')}
+      ${mults.map(x => `<tr><td>${dot(x.trade, TRADE_HEX[x.trade])}</td><td class="small pp-w-md">${esc(x.driver)}</td><td class="small text-2">${(x.piecewise || []).filter(p => mid(p.multiplier) > 1).map(p => `<div>${esc(String(p.condition).slice(0, 110))} <span class="sys-num">×${esc((p.multiplier || []).join('–'))}</span></div>`).join('')}</td><td>${conf(x.basis)}</td><td>${fmt.link(x.source_url, fmt.host(x.source_url))}</td></tr>`).join('')}
+    </tbody></table></div>`, flush: true, foot: ui.source('Punctual Pros demand model', null, m.generated) })}
+    <div class="mt-12"></div>${ui.panel({ title: 'NWS alert growth plan', sub: 'Expected call multipliers and first actions per warning type · territory frequency from Storm Events', body: `<div class="sys-table-wrap"><table class="sys-table"><thead><tr><th>NWS event</th>${TRADES.map(t => `<th class="sys-n">${t}</th>`).join('')}<th class="sys-n">Episodes / yr</th><th>Lead time</th><th>First action</th></tr></thead><tbody>${pbs.map(p => `<tr><td><b>${esc(p.nws_event)}</b>${(p.aliases_and_related || []).length ? `<div class="sys-muted small">${esc(p.aliases_and_related.join(' · '))}</div>` : ''}</td>${TRADES.map(t => `<td class="sys-n">×${esc((p.expected_call_volume_multiplier?.[t] || []).join('–'))}</td>`).join('')}<td class="sys-n">${p.local_history?.avg_episodes_per_year ?? '—'}</td><td class="small text-2">${esc(String(p.lead_time || '').slice(0, 140))}</td><td class="small text-2 pp-w-lg">${esc((p.actions || [])[0] || '')}</td></tr>`).join('')}</tbody></table></div>`, flush: true, foot: ui.source('NWS warning definitions · NOAA Storm Events', 'https://www.weather.gov/lwx/WarningsDefined', m.generated) })}
   </div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'How the portal computes the index', body: `<ul class="prose small"><li><b>Formula (model):</b> <code>${esc(m.formula?.['expected_calls[trade,county,day]'] || 'baseline × households/10k × multiplier')}</code></li><li><b>Point estimates:</b> midpoint of each multiplier range (${esc(Copy.text(m.formula?.multiplier_point_estimate || 'model guidance'))}); thunderstorm days use the lower bound of the Severe-Thunderstorm range (×${P.M.ts}).</li><li><b>Thresholds applied to hub forecasts:</b> TMAX ≥85/90/95°F and heat waves; TMIN ≤25/20/10/0°F; hard freeze ≥2 days ≤20°F and thaw rebound; rain ≥1.0/1.5 in; gusts ≥40/58 mph; snow ≥1/4 in (winter-storm plan); live NWS alerts with a growth plan entry apply on their active days.</li><li><b>Not yet applied:</b> monthly seasonality index (left out until Punctual Pros call history loads), housing-age modifier ×1.2–1.5 for pre-1960 cores, heat-wave season decay.</li><li><b>Assumptions:</b> PP market share (selector), ${JOBS_PER_TECH} completed jobs per technician-day.</li></ul>` })}
-    ${ui.panel({ title: 'Caveats (from the model)', body: `<ul class="prose small">${(m.caveats || []).map(c => `<li>${esc(Copy.text(c))}</li>`).join('')}</ul>`, foot: `<span class="dim">Calibration: ${esc(Copy.text(m.formula?.calibration || 'regress PP booked calls on hub weather once 12+ months are loaded'))}</span>` })}
+    ${ui.panel({ title: 'How the portal computes the index', body: `<ul class="sys-card-list"><li><b>Formula (model):</b> <code class="sys-mono">${esc(m.formula?.['expected_calls[trade,county,day]'] || 'baseline × households/10k × multiplier')}</code></li><li><b>Point estimates:</b> midpoint of each multiplier range (${esc(Copy.text(m.formula?.multiplier_point_estimate || 'model guidance'))}); thunderstorm days use the lower bound of the Severe-Thunderstorm range (×${P.M.ts}).</li><li><b>Thresholds applied to hub forecasts:</b> TMAX ≥85/90/95°F and heat waves; TMIN ≤25/20/10/0°F; hard freeze ≥2 days ≤20°F and thaw rebound; rain ≥1.0/1.5 in; gusts ≥40/58 mph; snow ≥1/4 in (winter-storm plan); live NWS alerts with a growth plan entry apply on their active days.</li><li><b>Not yet applied:</b> monthly seasonality index (left out until Punctual Pros call history loads), housing-age modifier ×1.2–1.5 for pre-1960 cores, heat-wave season decay.</li><li><b>Assumptions:</b> PP market share (selector), ${JOBS_PER_TECH} completed jobs per technician-day.</li></ul>` })}
+    ${ui.panel({ title: 'Caveats (from the model)', body: `<ul class="sys-card-list">${(m.caveats || []).map(c => `<li>${esc(Copy.text(c))}</li>`).join('')}</ul>`, foot: `<span class="dim">Calibration: ${esc(Copy.text(m.formula?.calibration || 'regress PP booked calls on hub weather once 12+ months are loaded'))}</span>` })}
   </div>`;
 }
 
@@ -650,8 +684,8 @@ function scoreLead(L, yearNow) {
   L.offer = L.builder ? 'Maintenance plan (new build)' : L.pre1980 ? 'Safety inspection (pre-1980)' : 'Welcome tune-up';
   L.band = L.price >= 600000 ? '$600K+' : L.price >= 350000 ? '$350–600K' : L.price >= 200000 ? '$200–350K' : '<$200K';
 }
-const scoreHex = s => s >= 75 ? '#2ecc8f' : s >= 55 ? '#4c8dff' : s >= 35 ? '#f5b73d' : '#5b6b7f';
-const OFFER_C = { 'Welcome tune-up': 'var(--c-pp)', 'Safety inspection (pre-1980)': 'var(--red)', 'Maintenance plan (new build)': 'var(--green)' };
+const scoreHex = s => s >= 75 ? PAL.green : s >= 55 ? PAL.sky : s >= 35 ? PAL.amber : PAL.dim;
+const OFFER_C = { 'Welcome tune-up': PAL.pp, 'Safety inspection (pre-1980)': PAL.purple, 'Maintenance plan (new build)': PAL.ts };
 
 async function movers(ctx) {
   const { el, ui, fmt, data, maps, charts, esc, inspector, app, params } = ctx; css();
@@ -679,24 +713,24 @@ async function movers(ctx) {
     return { county: c.county, state: c.state, foot, raw: c.raw, leads: c.leads, legacy: c.legacy, first: c.first, last: c.last, lag, status, source: m?.source || [...c.sources][0] || '', url: m?.source_url || [...c.urls][0] || null };
   });
   for (const cn of [...CORE.map(c => [c, 'PA']), ...NJ_H.map(c => [c, 'NJ'])]) if (!covRows.some(r => r.county === cn[0] && r.state === cn[1])) covRows.push({ county: cn[0], state: cn[1], foot: cn[1] === 'NJ' ? 'Horvath NJ' : 'PP core', raw: 0, leads: 0, status: 'missing', source: 'no file', url: null });
-  const stC = { current: 'var(--green)', lagging: 'var(--amber)', stale: 'var(--red)', partial: 'var(--red)', missing: 'var(--red)' };
+  const stC = { current: PAL.green, lagging: PAL.amber, stale: PAL.red, partial: PAL.red, missing: PAL.red };
   const fo = { 'PP core': 0, 'Horvath NJ': 1, Adjacent: 2 };
   covRows.sort((a, b) => fo[a.foot] - fo[b.foot] || b.leads - a.leads);
   const gaps = covRows.filter(r => r.foot !== 'Adjacent' && r.status !== 'current');
 
   root.innerHTML = `${ui.pageHead({
     title: 'New-mover marketing',
-    sub: `<b>So what:</b> of ${fmt.num(nServedAll)} in-footprint home sales on file (${esc(dfull(fmt, winFrom))} – ${esc(dfull(fmt, lastDate))}, county files), only <b>${fmt.num(n60)}</b> closed in the last 60 days and <b>${fmt.num(n90)}</b> in the last 90 — that is the mail-ready list (default filter: sold ≤90 days). Median lead age is ${fmt.num(medAge)} days, so the remaining ${fmt.num(nServedAll - n90)} are aged: use a neighbor / membership offer, never “welcome home” copy. ${gaps.length ? `Fresh leads cannot come from ${gaps.map(g => `${esc(g.county)}${g.last ? ` (latest ${esc(dfull(fmt, g.last))})` : ''}`).join(', ')} until those files are refreshed.` : ''}`,
-    chips: `${fmt.chip(`${fmt.num(all.length)} residential sales ≥$10K`, 'var(--c-pp)')}${fmt.chip(`${LD.cov.size} counties`, 'var(--accent)')}${fmt.chip(`latest ${dfull(fmt, lastDate)}`)}`,
-    actions: `<button class="btn brand" id="mv-mail" title="Exports the filtered list (default: sold ≤90 days)">⇩ Mailing list CSV · filtered</button>`,
+    sub: `<b>So what:</b> of ${fmt.num(nServedAll)} in-footprint home sales on file (${esc(dfull(fmt, winFrom))} – ${esc(dfull(fmt, lastDate))}, county files), only <b>${fmt.num(n60)}</b> closed in the last 60 days and <b>${fmt.num(n90)}</b> in the last 90 — that is the mail-ready list (default filter: sold within 90 days). Median lead age is ${fmt.num(medAge)} days, so the remaining ${fmt.num(nServedAll - n90)} are aged: use a neighbor / membership offer, never “welcome home” copy. ${gaps.length ? `Fresh leads cannot come from ${gaps.map(g => `${esc(g.county)}${g.last ? ` (latest ${esc(dfull(fmt, g.last))})` : ''}`).join(', ')} until those files are refreshed.` : ''}`,
+    chips: `${chip(`${fmt.num(all.length)} residential sales of $10K or more`, PP)}${chip(`${LD.cov.size} counties`)}${chip(`latest ${dfull(fmt, lastDate)}`)}`,
+    actions: `<button type="button" class="${ui.btnCls('accent', '')}" id="mv-mail" title="Exports the filtered list (default: sold within 90 days)">⇩ Mailing list CSV · filtered</button>`,
   })}
-  <div class="pp-fresh small"><b>Lead age · in-footprint</b>${fmt.chip(`≤60 d · ${fmt.num(n60)}`, 'var(--green)')}${fmt.chip(`61–90 d · ${fmt.num(n90 - n60)}`, 'var(--accent)')}${fmt.chip(`91–180 d · ${fmt.num(n61_180 - (n90 - n60))}`, 'var(--amber)')}${fmt.chip(`>180 d (aged) · ${fmt.num(nAged)}`, 'var(--red)')}<span class="dim">as of ${esc(dfull(fmt, new Date().toISOString().slice(0, 10)))} · county recording lag 2–4 months</span></div>
+  <div class="sys-row mb-12"><span class="sys-field-label">Lead age · in footprint</span>${chip(`60 days or less · ${fmt.num(n60)}`, PAL.green)}${chip(`61–90 days · ${fmt.num(n90 - n60)}`, PAL.sky)}${chip(`91–180 days · ${fmt.num(n61_180 - (n90 - n60))}`, PAL.amber)}${chip(`over 180 days (aged) · ${fmt.num(nAged)}`, PAL.red)}<span class="sys-muted small">as of ${esc(dfull(fmt, new Date().toISOString().slice(0, 10)))} · county recording lag 2–4 months</span></div>
   <div id="mv-filters"></div>
   <div id="mv-kpis"></div>
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Lead map', sub: 'Colored by lead score (highest on top) · capped at ~6,000 most recent leads, allocated by county volume · click a point for the lead', body: `<div class="map tall" id="mv-map"></div>`, flush: true, foot: ui.source('County parcel/CAMA layers · NJ Taxation SR1A', 'https://www.nj.gov/treasury/taxation/lpt/statdata/YTDSR1A2026.zip', '2026-09-24') })}
     <div class="col gap-12">
-      ${ui.panel({ title: 'Campaigns', sub: 'Target counts from the filtered list · in-footprint vs. all', body: '<div id="mv-camp"></div>', foot: '<span class="dim">Response 2–4% is an industry-typical direct-mail assumption (illustrative)</span>' })}
+      ${ui.panel({ title: 'Campaigns', sub: 'Target counts from the filtered list · in-footprint vs. all', body: '<div id="mv-camp" class="col gap-12"></div>', foot: `<span class="dim">Response of 2–4% is an industry-typical direct-mail assumption</span> ${Copy.ILLUS}` })}
       ${ui.panel({ title: 'Lead flow by sale month', sub: 'Filtered leads · source lags make the last 1–3 months look light', body: '<div id="mv-month"></div>' })}
     </div>
   </div>
@@ -704,20 +738,20 @@ async function movers(ctx) {
   <div class="mt-12">
     ${ui.panel({ title: 'Sales-record coverage by served county', sub: 'Home-sale records gathered for every county PP and Horvath serve · recording lag and gaps flagged', body: '<div id="mv-cov"></div>', foot: ui.source('County GIS / assessment layers; NJ Division of Taxation SR1A', null, '2026-09-24') })}
   </div><div class="mt-12">
-    ${ui.panel({ title: 'Lead score (0–100) — method', body: `<div class="small text-2"><table class="tbl"><tbody>
+    ${ui.panel({ title: 'Lead score (0–100) — method', body: `<div class="sys-table-wrap"><table class="sys-table"><tbody>
       <tr><td><b>Recency</b> · 35</td><td class="wrap">≤60 days 35 · ≤120 26 · ≤180 18 · ≤365 9 · older 3 (new owners book in the first 60 days)</td></tr>
       <tr><td><b>Price band</b> · 20</td><td class="wrap">$600K+ 20 · $350–600K 16 · $200–350K 11 · &lt;$200K 6 (bigger homes = bigger/multi-zone systems)</td></tr>
       <tr><td><b>Housing age</b> · 20</td><td class="wrap">Year built when published (≥45 yrs 20 · 25–44 15 · 10–24 8 · &lt;10 3); else 20 × zip older-stock share (Punctual Pros ZIP-code model)</td></tr>
       <tr><td><b>Resale</b> · 10</td><td class="wrap">Resale 10 · builder / new construction 0 (routes to maintenance-plan offer instead)</td></tr>
-      <tr><td><b>Territory</b> · 15</td><td class="wrap">PP core or Horvath zip 15 · adjacent ring 7 · outside 0</td></tr></tbody></table>
-      <div class="note mt-8">Filters out nominal (&lt;$10K) and non-arms-length deeds and non-residential use. Missing zips are inferred from the nearest Punctual Pros ZIP-code model centroid. Buyer names are shown only where the county publishes them; NJ SR1A redacts names, so NJ mailers address “Current Resident”.</div></div>` })}
+      <tr><td><b>Territory</b> · 15</td><td class="wrap">PP core or Horvath zip 15 · adjacent ring 7 · outside 0</td></tr></tbody></table></div>
+      <div class="mt-12">${ui.note(`Filters out nominal (&lt;$10K) and non-arms-length deeds and non-residential use. Missing zips are inferred from the nearest Punctual Pros ZIP-code model centroid. Buyer names are shown only where the county publishes them; NJ SR1A redacts names, so NJ mailers address “Current Resident”.`)}</div>` })}
   </div>`;
 
   const map = maps.create(root.querySelector('#mv-map'), { center: [40.1, -76.0], zoom: 7 });
-  maps.marker(map, HQ.lat, HQ.lon, { color: '#ffffff', label: 'PP HQ' });
-  maps.marker(map, HORVATH.lat, HORVATH.lon, { color: '#f5b73d', label: 'Horvath' });
-  maps.legend(map, [{ color: '#2ecc8f', label: 'Score ≥75' }, { color: '#4c8dff', label: '55–74' }, { color: '#f5b73d', label: '35–54' }, { color: '#5b6b7f', label: '<35' }], 'Lead score');
-  let pts = null, tbl = null, cur = all, fitted = false;
+  maps.marker(map, HQ.lat, HQ.lon, { color: hx(INK), label: 'PP HQ' });
+  maps.marker(map, HORVATH.lat, HORVATH.lon, { color: hx(STATUS.horvath.color), label: 'Horvath' });
+  maps.legend(map, [{ color: PAL.green, label: 'Score 75+' }, { color: PAL.sky, label: '55–74' }, { color: PAL.amber, label: '35–54' }, { color: PAL.dim, label: 'Under 35' }], 'Lead score');
+  let pts_ = null, tbl = null, cur = all, fitted = false;
   const tcols = [
     { key: 'score', label: 'Score', num: true, width: '96px', fmt: v => fmt.score(v, scoreHex(v)) },
     { key: 'sale_date', label: 'Sold', num: true, fmt: v => esc(dfull(fmt, v)) },
@@ -726,7 +760,7 @@ async function movers(ctx) {
     { key: 'county', label: 'County', fmt: (v, r) => `${esc(v)} <span class="dim">${esc(r.state)}</span>` },
     { key: 'price', label: 'Price', num: true, fmt: v => fmt.money(v) },
     { key: 'year_built', label: 'Built', num: true, sort: (a, b) => (a.year_built || -1) - (b.year_built || -1), fmt: v => v || '—' },
-    { key: 'offer', label: 'Suggested offer', fmt: v => fmt.chip(v, OFFER_C[v]) },
+    { key: 'offer', label: 'Suggested offer', fmt: v => dot(v, OFFER_C[v]) },
     { key: 'status', label: 'Footprint', fmt: v => statusChip(fmt, v) },
   ];
   const f = ui.filters(root.querySelector('#mv-filters'), [
@@ -746,21 +780,21 @@ async function movers(ctx) {
     const served = cur.filter(r => r.served);
     const addr = sum(cur, r => r.p_old25);
     root.querySelector('#mv-kpis').innerHTML = ui.kpis([
-      { label: 'Leads (filtered)', value: fmt.num(cur.length), sub: `${fmt.num(cur.filter(r => r.score >= 75).length)} scored ≥75`, color: 'var(--c-pp)' },
-      { label: 'In PP / Horvath footprint', value: fmt.num(served.length), sub: `${cur.length ? Math.round(served.length / cur.length * 100) : 0}% of filtered`, color: 'var(--green)' },
-      { label: 'Avg sale price', value: fmt.money(avg(cur, r => r.price)), sub: `median ${fmt.money(median(cur.map(r => r.price)))}`, color: 'var(--accent)' },
-      { label: 'Median days since sale', value: fmt.num(median(cur.map(r => r.days))), sub: `${fmt.num(cur.filter(r => r.days <= 60).length)} ≤60 d · ${fmt.num(cur.filter(r => r.days > 180).length)} aged >180 d`, color: median(cur.map(r => r.days)) > 90 ? 'var(--red)' : 'var(--amber)' },
-      { label: 'Addressable HVAC replacements', value: fmt.num(addr), sub: 'est. · homes >25 yrs (year built or zip older-stock share)', color: 'var(--red)' },
-      { label: 'New-construction buyers', value: fmt.num(cur.filter(r => r.builder).length), sub: 'maintenance-plan offer', color: 'var(--green)' },
+      { label: 'Leads (filtered)', value: fmt.num(cur.length), sub: `${fmt.num(cur.filter(r => r.score >= 75).length)} scored 75 or more`, color: PP },
+      { label: 'In PP / Horvath footprint', value: fmt.num(served.length), sub: `${cur.length ? Math.round(served.length / cur.length * 100) : 0}% of filtered`, color: PAL.green },
+      { label: 'Average sale price', value: fmt.money(avg(cur, r => r.price)), sub: `median ${fmt.money(median(cur.map(r => r.price)))}`, color: PAL.sky },
+      { label: 'Median days since sale', value: fmt.num(median(cur.map(r => r.days))), sub: `${fmt.num(cur.filter(r => r.days <= 60).length)} within 60 days · ${fmt.num(cur.filter(r => r.days > 180).length)} aged over 180 days`, color: median(cur.map(r => r.days)) > 90 ? PAL.red : PAL.amber },
+      { label: 'Addressable HVAC replacements', value: `${fmt.num(addr)} ${Copy.EST}`, sub: 'homes over 25 years old (year built or zip older-stock share)', color: PAL.red },
+      { label: 'New-construction buyers', value: fmt.num(cur.filter(r => r.builder).length), sub: 'maintenance-plan offer', color: PAL.green },
     ]);
     // map (cap 6000 most recent)
     const geoRows = cur.filter(r => r.lat != null); const byC = new Map(); for (const r of geoRows) { if (!byC.has(r.county)) byC.set(r.county, []); byC.get(r.county).push(r); }
     // cap ~6,000: most recent per county, proportional to county volume (keeps lagging NJ files on the map)
     const mp = geoRows.length <= 6000 ? geoRows.slice() : [...byC.values()].flatMap(L => L.sort((a, b) => b.sale_date.localeCompare(a.sale_date)).slice(0, Math.ceil(6000 * L.length / geoRows.length)));
     mp.sort((a, b) => a.score - b.score);
-    if (pts) pts.remove();
-    pts = maps.points(map, mp, { color: r => scoreHex(r.score), radius: r => r.score >= 75 ? 4 : 3, cluster: false, weight: 0, opacity: .8, popup: r => `<b>${esc(r.addr)}</b><br>${esc(r.muni)} ${esc(r.zip)} · ${esc(r.county)}, ${esc(r.state)}<br>Sold ${esc(dfull(fmt, r.sale_date))} · ${fmt.money(r.price)}<br>Score <b>${r.score}</b> · ${esc(r.offer)}`, onClick: openLead });
-    if (!fitted || st.county) { if (mp.length) { pts.fit(); fitted = true; } }
+    if (pts_) pts_.remove();
+    pts_ = pts(maps, map, mp, { color: r => scoreHex(r.score), radius: r => r.score >= 75 ? 4 : 3, cluster: false, weight: 0, opacity: .8, popup: r => `<b>${esc(r.addr)}</b><br>${esc(r.muni)} ${esc(r.zip)} · ${esc(r.county)}, ${esc(r.state)}<br>Sold ${esc(dfull(fmt, r.sale_date))} · ${fmt.money(r.price)}<br>Score <b>${r.score}</b> · ${esc(r.offer)}`, onClick: openLead });
+    if (!fitted || st.county) { if (mp.length) { pts_.fit(); fitted = true; } }
     tbl ? tbl.update(cur) : (tbl = ui.table(root.querySelector('#mv-table'), { columns: tcols, rows: cur, pageSize: 25, sortKey: 'score', exportName: 'pp_new_mover_leads', onRow: openLead, rowKey: r => r.id }));
     drawCampaigns(); drawMonths();
   }
@@ -774,7 +808,7 @@ async function movers(ctx) {
     ];
     root.querySelector('#mv-camp').innerHTML = C.map(c => {
       const rows = campaignRows(c.k); const inF = rows.filter(r => r.served).length; const aged = rows.filter(r => r.served && r.days > 90).length;
-      return `<div class="pp-camp" style="--cc:${OFFER_C[c.k]}"><div class="top"><b>${esc(c.t)}</b><span class="big">${fmt.num(inF)}</span></div><div class="small text-2 mt-8">${esc(c.d)}</div><div class="meta">${fmt.chip(`${fmt.num(rows.length)} filtered · ${fmt.num(inF)} in footprint`)}${fmt.chip(`median ${fmt.money(median(rows.map(r => r.price)))}`)}${fmt.chip(`${fmt.num(inF * 0.02)}–${fmt.num(inF * 0.04)} responses (illustrative)`, 'var(--dim)')}${aged ? fmt.chip(`${fmt.num(aged)} aged >90 d · not “welcome” copy`, 'var(--red)') : ''}<span class="small dim">${esc(c.when)}</span><button class="btn xs" data-camp="${esc(c.k)}" style="margin-left:auto">⇩ list</button></div></div>`;
+      return `<div class="sys-note sys-note--co pp-camp" data-co="" style="--co:${OFFER_C[c.k]}"><div class="grow"><div class="pp-camp-top"><b>${esc(c.t)}</b><span class="sys-num pp-camp-n">${fmt.num(inF)}</span></div><p class="small text-2 mt-8">${esc(c.d)}</p><div class="sys-chips mt-8">${chip(`${fmt.num(rows.length)} filtered · ${fmt.num(inF)} in footprint`)}${chip(`median ${fmt.money(median(rows.map(r => r.price)))}`)}${chip(`${fmt.num(inF * 0.02)}–${fmt.num(inF * 0.04)} responses`)}${aged ? chip(`${fmt.num(aged)} aged over 90 days · not “welcome” copy`, PAL.red) : ''}</div><div class="sys-row mt-8"><span class="small sys-muted">${esc(c.when)}</span><button type="button" class="${ui.btnCls('secondary', 'sm')} pp-camp-btn" data-camp="${esc(c.k)}">⇩ List CSV</button></div></div></div>`;
     }).join('');
     root.querySelectorAll('[data-camp]').forEach(b => b.onclick = () => exportMail(campaignRows(b.dataset.camp).filter(r => r.served), `pp_campaign_${b.dataset.camp.split(' ')[0].toLowerCase()}`));
   }
@@ -796,7 +830,7 @@ async function movers(ctx) {
         { label: `Lead score · ${r.score}`, html: ctx.charts.hbar(Object.entries(r.parts).map(([k, v]) => ({ label: k, value: v })), { max: 35, fmt: v => v, labelW: 90, color: PP }) },
         { label: 'Sale', html: ui.kv({ 'Sale date': esc(dfull(fmt, r.sale_date)), 'Days since': fmt.num(r.days), Price: fmt.moneyFull(r.price), 'Year built': r.year_built || '—', 'Living area': r.sqft ? `${fmt.num(r.sqft)} sq ft` : null, Buyer: r.buyer ? esc(r.buyer) : '<span class="dim">not published</span>', Type: r.builder ? 'Builder / new construction' : 'Resale' }) },
         { label: 'Zip context', html: ui.kv({ Footprint: statusChip(fmt, r.status), 'Zip priority tier': r.zip_tier ? tierChip(esc, r.zip_tier) : '—', 'Older-stock share': pctTxt(r.old_share) }) },
-        { label: 'Suggested offer', html: fmt.chip(r.offer, OFFER_C[r.offer]) },
+        { label: 'Suggested offer', html: dot(r.offer, OFFER_C[r.offer]) },
         { label: 'Next action', html: `<div class="small text-2">${esc(next)}</div>` },
         { label: 'Source', html: `<div class="small">${r.src_url ? fmt.link(r.src_url, r.src) : esc(r.src)}</div>` },
       ],
@@ -804,16 +838,16 @@ async function movers(ctx) {
     });
   }
 
-  root.querySelector('#mv-cov').innerHTML = `${gaps.length ? ui.note(`<b>Coverage gaps in served counties:</b> ${gaps.map(g => `${esc(g.county)} (${esc(g.status)}${g.last ? `, latest ${esc(dfull(fmt, g.last))}` : ''})`).join(' · ')}. Dauphin is only partly back-filled by the legacy 90-day deed layer, which itself ends Apr 10, 2026. <b>Next pulls:</b> refresh the deed layer to the trailing 90 days; Dauphin Recorder of Deeds bulk export or a licensed feed (ATTOM/CoreLogic); Franklin CAMA refresh; NJ SR1A monthly refresh (runs 3–4 months behind).`, 'warn') : ''}<div id="mv-cov-t" class="mt-8 pp-cov"></div>`;
+  root.querySelector('#mv-cov').innerHTML = `${gaps.length ? ui.note(`<b>Coverage gaps in served counties:</b> ${gaps.map(g => `${esc(g.county)} (${esc(g.status)}${g.last ? `, latest ${esc(dfull(fmt, g.last))}` : ''})`).join(' · ')}. Dauphin is only partly back-filled by the legacy 90-day deed layer, which itself ends Apr 10, 2026. <b>Next pulls:</b> refresh the deed layer to the trailing 90 days; Dauphin Recorder of Deeds bulk export or a licensed feed (ATTOM/CoreLogic); Franklin CAMA refresh; NJ SR1A monthly refresh (runs 3–4 months behind).`, 'warn') : ''}<div id="mv-cov-t" class="mt-12 pp-cov"></div>`;
   ui.table(root.querySelector('#mv-cov-t'), {
     columns: [
       { key: 'county', label: 'County', fmt: (v, r) => `<b>${esc(v)}</b> <span class="dim">${esc(r.state)}</span>` },
-      { key: 'foot', label: 'Footprint', fmt: v => fmt.chip(v, v === 'PP core' ? 'var(--c-pp)' : v === 'Horvath NJ' ? 'var(--amber)' : 'var(--accent)') },
+      { key: 'foot', label: 'Footprint', fmt: v => v === 'PP core' ? chip(v, PP) : dot(v, v === 'Horvath NJ' ? STATUS.horvath.color : STATUS.adjacent.color) },
       { key: 'raw', label: 'Records', num: true, fmt: v => fmt.num(v) },
       { key: 'leads', label: 'Home-sale leads', num: true, fmt: (v, r) => `${fmt.num(v)}${r.legacy ? `<div class="dim small">${fmt.num(r.legacy)} from 90d layer</div>` : ''}` },
       { key: 'last', label: 'Window', num: true, fmt: (v, r) => r.first ? `${esc(dfull(fmt, r.first))} → ${esc(dfull(fmt, v))}` : '—' },
       { key: 'lag', label: 'Lag (d)', num: true, sort: (a, b) => (a.lag ?? -1) - (b.lag ?? -1), fmt: v => v == null ? '—' : fmt.num(v) },
-      { key: 'status', label: 'Status', fmt: v => fmt.chip(v, stC[v]) },
+      { key: 'status', label: 'Status', fmt: v => chip(v, stC[v]) },
       { key: 'source', label: 'Source', wrap: true, fmt: (v, r) => `<span class="small">${r.url ? fmt.link(r.url, String(v).slice(0, 60)) : esc(String(v).slice(0, 60))}</span>` },
     ], rows: covRows, pageSize: 20, exportName: 'pp_sales_coverage', rowKey: r => r.county + r.state,
     onRow: r => { const s = root.querySelector('#mv-filters select[data-k="county"]'); if (s && counties.includes(r.county)) { s.value = r.county; s.onchange(); } },
@@ -844,21 +878,21 @@ async function territory(ctx) {
   el.innerHTML = `<div class="m-pp">${ui.pageHead({
     title: 'Territory & expansion',
     sub: `<b>So what:</b> ${adjT1.length} Tier-I (“Go now”) zips with ${fmt.compact(sum(adjT1, z => z.housing_units))} housing units sit directly on the edge of today’s ${terr.length}-zip footprint; ${esc(topC[0] ? `${topC[0].county} ${topC[0].state}` : '')}${topC[1] ? ` and ${esc(topC[1].county)} ${esc(topC[1].state)}` : ''} are the densest clusters to extend routes into before a tuck-in is needed.`,
-    chips: `${fmt.chip(`${fmt.num(zips.length)} zips scored`, 'var(--c-pp)')}${fmt.chip(`radius ${meta?.radius_km || 20} km peer clusters`)}${fmt.chip(`model ${meta?.version || 'v6'}`)}`,
+    chips: `${chip(`${fmt.num(zips.length)} zips scored`, PP)}${chip(`${meta?.radius_km || 20} km peer clusters`)}${chip(`model ${meta?.version || 'v6'}`)}`,
   })}
   ${ui.kpis([
-    { label: 'PP core zips', value: fmt.num(terr.length), sub: `${fmt.compact(sum(terr, z => z.housing_units))} housing units`, color: 'var(--c-pp)' },
-    { label: 'Horvath NJ zips', value: fmt.num(horv.length), sub: `${fmt.compact(sum(horv, z => z.housing_units))} units · Ocean + Monmouth`, color: 'var(--amber)' },
-    { label: 'Adjacent ring', value: fmt.num(adj.length), sub: `${fmt.num(adjT1.length)} Tier I · ${fmt.num(adj.filter(z => z.practical_priority_tier === 'Tier II').length)} Tier II`, color: 'var(--accent)' },
-    { label: 'Tier-I units next door', value: fmt.compact(sum(adjT1, z => z.housing_units)), sub: 'adjacent Tier-I housing units', color: 'var(--green)' },
-    { label: 'Tier-I zips beyond ring', value: fmt.num(exp.length - adjT1.length), sub: 'need a tuck-in or new hub', color: 'var(--purple)' },
-    { label: 'Avg core priority', value: fmt.num(avg(terr, z => z.practical_priority_score), 0), sub: `vs ${fmt.num(avg(adjT1, z => z.practical_priority_score), 0)} adjacent Tier I`, color: 'var(--c-pp)' },
+    { label: 'PP core zips', value: fmt.num(terr.length), sub: `${fmt.compact(sum(terr, z => z.housing_units))} housing units`, color: PP },
+    { label: 'Horvath NJ zips', value: fmt.num(horv.length), sub: `${fmt.compact(sum(horv, z => z.housing_units))} units · Ocean + Monmouth`, color: STATUS.horvath.color },
+    { label: 'Adjacent ring', value: fmt.num(adj.length), sub: `${fmt.num(adjT1.length)} Tier I · ${fmt.num(adj.filter(z => z.practical_priority_tier === 'Tier II').length)} Tier II`, color: STATUS.adjacent.color },
+    { label: 'Tier-I units next door', value: fmt.compact(sum(adjT1, z => z.housing_units)), sub: 'adjacent Tier-I housing units', color: PAL.green },
+    { label: 'Tier-I zips beyond ring', value: fmt.num(exp.length - adjT1.length), sub: 'need a tuck-in or new hub', color: PAL.purple },
+    { label: 'Average core priority', value: fmt.num(avg(terr, z => z.practical_priority_score), 0), sub: `vs ${fmt.num(avg(adjT1, z => z.practical_priority_score), 0)} adjacent Tier I`, color: PP },
   ])}
   <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Priority map', sub: 'Non-footprint zips colored by practical priority tier · footprint in orange/amber · click for reasons', body: `<div class="map tall" id="tr-map" style="min-height:640px"></div>`, flush: true, foot: ui.source('Punctual Pros ZIP-code model, v6 · ACS 5-year · analyst scoring', SRC.acs, meta?.sales_layer?.window_end) })}
+    ${ui.panel({ title: 'Priority map', sub: 'Non-footprint zips colored by practical priority tier · footprint in orange/amber · click for reasons', body: `<div class="map tall pp-map-lg" id="tr-map"></div>`, flush: true, foot: ui.source('Punctual Pros ZIP-code model, v6 · ACS 5-year · analyst scoring', SRC.acs, meta?.sales_layer?.window_end) })}
     <div class="col gap-12">
-      ${ui.panel({ title: 'Top expansion clusters', sub: 'Tier-I zips outside the footprint by county · ranked by units × score × adjacency × proximity to a PP hub · click to zoom', body: `<div class="tbl-wrap"><table class="tbl" id="tr-clu"><thead><tr><th>Cluster</th><th class="num">Tier-I zips</th><th class="num">Units</th><th class="num">Adjacent</th><th class="num">Mi to hub</th><th class="num">Score</th></tr></thead><tbody>${topC.map((c, i) => `<tr data-i="${i}"><td><b>${esc(c.county)}</b> <span class="dim">${esc(c.state)}</span></td><td class="num">${c.n}</td><td class="num">${fmt.compact(c.hu)}</td><td class="num">${pctTxt(c.adjShare)}</td><td class="num">${fmt.num(c.mi)}</td><td class="num">${fmt.num(c.score, 0)}</td></tr>`).join('')}</tbody></table></div>`, foot: ui.source('Punctual Pros ZIP-code model: practical priority tier', null, meta?.version) })}
-      ${ui.panel({ title: 'Tier-I housing units by county (outside footprint)', body: charts.hbar(clusters.slice(0, 12).map(c => ({ label: `${c.county} ${c.state}`, value: c.hu, color: c.adjShare >= .5 ? '#2ecc8f' : '#4c8dff' })), { fmt: fmt.compact, labelW: 120 }) + `<div class="pp-legend"><span><i style="background:#2ecc8f"></i>mostly adjacent ring</span><span><i style="background:#4c8dff"></i>beyond ring</span></div>` })}
+      ${ui.panel({ title: 'Top expansion clusters', sub: 'Tier-I zips outside the footprint by county · ranked by units × score × adjacency × proximity to a PP hub · click to zoom', body: `<div class="sys-table-wrap"><table class="sys-table pp-rows" id="tr-clu"><thead><tr><th>Cluster</th><th class="sys-n">Tier-I zips</th><th class="sys-n">Units</th><th class="sys-n">Adjacent</th><th class="sys-n">Miles to hub</th><th class="sys-n">Score</th></tr></thead><tbody>${topC.map((c, i) => `<tr data-i="${i}" tabindex="0"><td><b>${esc(c.county)}</b> <span class="sys-muted">${esc(c.state)}</span></td><td class="sys-n">${c.n}</td><td class="sys-n">${fmt.compact(c.hu)}</td><td class="sys-n">${pctTxt(c.adjShare)}</td><td class="sys-n">${fmt.num(c.mi)}</td><td class="sys-n">${fmt.num(c.score, 0)}</td></tr>`).join('')}</tbody></table></div>`, flush: true, foot: ui.source(`Punctual Pros ZIP-code model ${meta?.version || 'v6'}: practical priority tier`) })}
+      ${ui.panel({ title: 'Tier-I housing units by county (outside footprint)', body: charts.hbar(clusters.slice(0, 12).map(c => ({ label: `${c.county} ${c.state}`, value: c.hu, color: c.adjShare >= .5 ? PAL.green : PAL.sky })), { fmt: fmt.compact, labelW: 120 }) + legend([[PAL.green, 'mostly adjacent ring'], [PAL.sky, 'beyond ring']]), foot: ui.source(`Punctual Pros ZIP-code model ${meta?.version || 'v6'}: practical priority tier`) })}
     </div>
   </div>
   <div class="mt-12">${ui.note(`<b>Scoring weights (Punctual Pros territory profile ${esc(meta?.version || '')}):</b> ${Object.entries(w).map(([k, v]) => `${esc(k.replace(/_/g, ' '))} ${Math.round(v * 100)}%`).join(' · ') || 'n/a'}. Practical priority tiers: Tier I “Go now”, Tier II “Build”, Tier III “Monitor”. Sales-layer blend: ${Object.entries(meta?.sales_layer?.blended_weights || {}).map(([k, v]) => `${esc(k.replace(/_/g, ' '))} ${Math.round(v * 100)}%`).join(' · ')} (90-day window ${esc(meta?.sales_layer?.window_start || '')} → ${esc(meta?.sales_layer?.window_end || '')}). Peer clusters within ${meta?.radius_km || 20} km.`, 'brand')}</div>
@@ -866,20 +900,20 @@ async function territory(ctx) {
   </div>`;
   const root = el.querySelector('.m-pp');
   const map = maps.create(root.querySelector('#tr-map'), { center: [40.1, -76.3], zoom: 7 });
-  const pop = z => `<b>${esc(z.zip)} · ${esc(z.city)}</b><br>${esc(z.county)}, ${esc(z.state)}<br>${esc(STATUS[z._status].label)} · ${esc(z.practical_priority_tier)} ${Math.round(z.practical_priority_score)}<br><span class="muted">${fmt.num(z.housing_units)} units</span>`;
+  const pop = z => `<b>${esc(z.zip)} · ${esc(z.city)}</b><br>${esc(z.county)}, ${esc(z.state)}<br>${esc(STATUS[z._status].label)} · ${esc(z.practical_priority_tier)} ${Math.round(z.practical_priority_score)}<br><span class="sys-muted">${fmt.num(z.housing_units)} units</span>`;
   const rad = z => Math.max(2.5, Math.min(8, Math.sqrt(z.housing_units || 0) / 14));
   const others = zips.filter(z => !z._served);
-  maps.points(map, others.filter(z => z.practical_priority_tier !== 'Tier I'), { color: z => TIER_HEX[z.practical_priority_tier] || '#5b6b7f', radius: z => rad(z) * .7, cluster: false, opacity: .22, weight: 0, popup: pop, onClick: z => openZip(ctx, z) });
-  maps.points(map, exp, { color: '#2ecc8f', radius: rad, cluster: false, opacity: .8, popup: pop, onClick: z => openZip(ctx, z) });
-  maps.points(map, [...terr, ...horv], { color: z => STATUS[z._status].hex, radius: rad, cluster: false, opacity: .9, popup: pop, onClick: z => openZip(ctx, z) });
-  maps.marker(map, HQ.lat, HQ.lon, { color: '#ffffff', label: 'PP HQ' });
-  maps.marker(map, HORVATH.lat, HORVATH.lon, { color: '#f5b73d', label: 'Horvath' });
+  pts(maps, map, others.filter(z => z.practical_priority_tier !== 'Tier I'), { color: z => TIER_HEX[z.practical_priority_tier] || PAL.dim, radius: z => rad(z) * .7, cluster: false, opacity: .22, weight: 0, popup: pop, onClick: z => openZip(ctx, z) });
+  pts(maps, map, exp, { color: PAL.green, radius: rad, cluster: false, opacity: .8, popup: pop, onClick: z => openZip(ctx, z) });
+  pts(maps, map, [...terr, ...horv], { color: z => STATUS[z._status].color, radius: rad, cluster: false, opacity: .9, popup: pop, onClick: z => openZip(ctx, z) });
+  maps.marker(map, HQ.lat, HQ.lon, { color: hx(INK), label: 'PP HQ' });
+  maps.marker(map, HORVATH.lat, HORVATH.lon, { color: hx(STATUS.horvath.color), label: 'Horvath' });
   maps.fitPoints(map, [...terr, ...horv, ...adj].map(z => [z.lat, z.lon]), 9);
-  maps.legend(map, [{ color: PP, label: 'PP core' }, { color: '#f5b73d', label: 'Horvath NJ' }, { color: '#2ecc8f', label: 'Tier I · Go now' }, { color: '#4c8dff', label: 'Tier II · Build' }, { color: '#5b6b7f', label: 'Tier III · Monitor' }], 'Practical priority');
-  root.querySelectorAll('#tr-clu tbody tr').forEach(tr => tr.onclick = () => { const c = topC[+tr.dataset.i]; maps.fitPoints(map, c.rows.map(z => [z.lat, z.lon]), 10); const s = root.querySelector('#tr-f select[data-k="county"]'); if (s) { s.value = c.county; s.onchange(); } });
+  maps.legend(map, [{ color: PP, label: 'PP core' }, { color: STATUS.horvath.color, label: 'Horvath NJ' }, { color: PAL.green, label: 'Tier I · Go now' }, { color: PAL.sky, label: 'Tier II · Build' }, { color: PAL.dim, label: 'Tier III · Monitor' }], 'Practical priority');
+  bindRows(root, '#tr-clu tbody tr', tr => { const c = topC[+tr.dataset.i]; maps.fitPoints(map, c.rows.map(z => [z.lat, z.lon]), 10); const s = root.querySelector('#tr-f select[data-k="county"]'); if (s) { s.value = c.county; s.onchange(); } });
 
   const cols = [
-    { key: 'zip', label: 'Zip', fmt: (v, r) => `<b class="num">${esc(v)}</b>` },
+    { key: 'zip', label: 'Zip', fmt: (v, r) => `<b class="sys-num">${esc(v)}</b>` },
     { key: 'city', label: 'Place', fmt: (v, r) => `${esc(String(v || '—').replace(/ (city|borough|CDP|township|town|village)$/i, '') || '—')}<div class="dim small">${esc(r._county)}, ${esc(r.state)}</div>` },
     { key: '_status', label: 'Footprint', fmt: v => statusChip(fmt, v) },
     { key: 'practical_priority_tier', label: 'Tier', fmt: v => tierChip(esc, v) },
@@ -908,7 +942,7 @@ async function territory(ctx) {
   f.state.county = initCounty; f.state.q = params.zip || '';
   root.querySelector('#tr-f select[data-k="county"]').dispatchEvent(new Event('change'));
   if (params.zip && Z.byZip.get(params.zip)) { const z = Z.byZip.get(params.zip); openZip(ctx, z); map.setView([z.lat, z.lon], 11); }
-  app.index(exp.slice().sort((a, b) => b.housing_units - a.housing_units).slice(0, 150).map(z => ({ label: `${z.zip} ${z.city}`, sub: `PP expansion · Tier I · ${z.county}`, href: `#/pp/territory?zip=${z.zip}`, kind: 'Zip', color: '#2ecc8f' })));
+  app.index(exp.slice().sort((a, b) => b.housing_units - a.housing_units).slice(0, 150).map(z => ({ label: `${z.zip} ${z.city}`, sub: `PP expansion · Tier I · ${z.county}`, href: `#/pp/territory?zip=${z.zip}`, kind: 'Zip', color: PAL.green })));
   return () => map.remove();
 }
 
@@ -934,11 +968,11 @@ async function market(ctx) {
   // franchise sites: prefer pp_market; fall back to ma_targets_pp authority map
   const sites = fts.length ? fts.map(f => ({ brand: f.brand, name: f.name, city: f.city, state: f.state, address: f.address, owner: f.pp_affiliation || f.franchisee_name || '', aff: f.pp_affiliation_status || 'no_public_evidence', basis: f.pp_affiliation_basis, rating: f.location_rating, reviews: f.location_review_count, lat: num(f.lat), lon: num(f.lon), website: f.website, sources: f.source_urls || [f.source_url].filter(Boolean), note: f.note || f.rating_note }))
     : (ma?.meta?.authority_brands_territory_map || []).map(a => { const g = geo(a.city, a.state); return { brand: a.brand, name: a.location, city: a.city, state: a.state, address: a.address, owner: a.owner || '', aff: /owned/.test(a.owner_status) ? 'confirmed' : /inferred/.test(a.owner_status) ? 'likely' : 'no_public_evidence', basis: a.owner_status, lat: g?.lat ?? null, lon: g?.lon ?? null, sources: a.sources || [], note: a.note, target: (String(a.owner_status).match(/pp-t\d+/) || [])[0] || null }; });
-  const AFF = { confirmed: ['PP confirmed', PP], yes: ['PP confirmed', PP], likely: ['PP likely', '#f5b73d'], possible: ['PP possible', '#c9a0ff'], no_public_evidence: ['Other franchisee', '#4c8dff'] };
+  const AFF = { confirmed: ['PP confirmed', PP], yes: ['PP confirmed', PP], likely: ['PP likely', PAL.amber], possible: ['PP possible', PAL.purple], no_public_evidence: ['Other franchisee', PAL.cet] };
   const affOf = s => AFF[s] || AFF.no_public_evidence;
   const ppSites = sites.filter(x => /confirmed|yes|likely/.test(x.aff));
-  const OWN = { pe_backed: ['PE-backed', '#ff5c5c'], 'utility-affiliated': ['Utility', '#9d7bff'], independent: ['Independent', '#2ecc8f'] };
-  const ownOf = o => OWN[o] || ['Unknown', '#8b98a8'];
+  const OWN = { pe_backed: ['PE-backed', PAL.red], 'utility-affiliated': ['Utility', PAL.purple], independent: ['Independent', PAL.ts] };
+  const ownOf = o => OWN[o] || ['Unknown', PAL.muted];
   const core = profs.filter(p => /core/i.test(p.territory_role || ''));
   const oilHH = sum(core, p => p.oil_plus_propane_households);
   const activeInc = incs.filter(i => /^active/i.test(i.status || ''));
@@ -949,18 +983,18 @@ async function market(ctx) {
   el.innerHTML = `<div class="m-pp">${ui.pageHead({
     title: 'Market & competitors',
     sub: `<b>So what:</b> ${!mk && !ma ? 'Market study (Punctual Pros market profile) and add-on screen (Punctual Pros add-on targets) are not yet available — competitor, franchise and PE views will populate when published.' : mk ? `PE capital is already inside the core (${esc(peComps.slice(0, 3).map(c => c.name.split(' (')[0]).join('; '))}), and ${peHigh.length} PE-backed rivals rate a high threat. PP’s counter: densify the growth corridor, tuck in same-brand franchisees, and sell the ${fmt.compact(oilHH)} oil/propane-heated core households onto heat pumps while ${activeInc.length} incentive programs are live.` : `${peHigh.length} PE-backed companies rate a high threat and are buying inside the core; Authority Brands franchisees nearby are same-model tuck-ins.`}`,
-    chips: `${fmt.chip(`${comps.length || '—'} competitors tracked`, 'var(--accent)')}${fmt.chip(`${pe.length} PE-backed rivals profiled`, 'var(--red)')}${fmt.chip(`${sites.length} Authority Brands sites`, 'var(--c-pp)')}${mm.generated ? fmt.chip(`Punctual Pros market profile ${mm.generated}`) : ''}`,
+    chips: `${chip(`${comps.length || '—'} competitors tracked`)}${chip(`${pe.length} PE-backed rivals profiled`, PAL.red)}${chip(`${sites.length} Authority Brands sites`, PP)}${mm.generated ? chip(`market profile of ${dfull(fmt, mm.generated)}`) : ''}`,
   })}
   ${mk ? '' : ui.note('<b>Punctual Pros market profile</b> (competitor census, franchise territories, incentives, county profiles, market signals) is not published yet — showing the Authority Brands territory map and PE landscape from the add-on screen.', 'warn')}
   ${ui.kpis([
-    { label: 'Competitors tracked', value: comps.length ? fmt.num(comps.length) : '—', sub: comps.length ? `${peComps.length} PE-backed · ${comps.filter(c => c.ownership === 'utility-affiliated').length} utility · ${comps.filter(c => c.ownership === 'independent').length} indep.` : 'pending Punctual Pros market profile', color: 'var(--accent)' },
-    { label: 'PE-backed rivals (bidders)', value: ma ? fmt.num(pe.length) : '—', sub: ma ? `${peHigh.length} rated high threat to PP` : 'pending Punctual Pros add-on targets', color: 'var(--red)' },
-    { label: 'Authority sites · PP', value: fmt.num(ppSites.length), sub: `confirmed + likely · of ${sites.length} Authority Brands sites`, color: 'var(--c-pp)' },
-    { label: 'Oil + propane homes (core)', value: oilHH ? fmt.compact(oilHH) : '—', sub: 'heat-pump conversion pool · ACS', color: 'var(--amber)' },
-    { label: 'Incentives live', value: incs.length ? fmt.num(activeInc.length) : '—', sub: incs.length ? `of ${incs.length} tracked · rest expired/pending` : 'pending Punctual Pros market profile', color: 'var(--green)' },
-    { label: 'Market signals', value: sigs.length ? fmt.num(sigs.length) : '—', sub: sigs.length ? `latest ${esc(dfull(fmt, sigs.map(x => x.date).filter(Boolean).sort().pop()))}` : 'pending Punctual Pros market profile', color: 'var(--purple)' },
+    { label: 'Competitors tracked', value: comps.length ? fmt.num(comps.length) : '—', sub: comps.length ? `${peComps.length} PE-backed · ${comps.filter(c => c.ownership === 'utility-affiliated').length} utility · ${comps.filter(c => c.ownership === 'independent').length} independent` : 'pending Punctual Pros market profile', color: PAL.sky },
+    { label: 'PE-backed rivals (bidders)', value: ma ? fmt.num(pe.length) : '—', sub: ma ? `${peHigh.length} rated high threat to PP` : 'pending Punctual Pros add-on targets', color: PAL.red },
+    { label: 'Authority sites · PP', value: fmt.num(ppSites.length), sub: `confirmed + likely · of ${sites.length} Authority Brands sites`, color: PP },
+    { label: 'Oil + propane homes (core)', value: oilHH ? fmt.compact(oilHH) : '—', sub: 'heat-pump conversion pool · ACS', color: PAL.amber },
+    { label: 'Incentives live', value: incs.length ? fmt.num(activeInc.length) : '—', sub: incs.length ? `of ${incs.length} tracked · rest expired or pending` : 'pending Punctual Pros market profile', color: PAL.green },
+    { label: 'Market signals', value: sigs.length ? fmt.num(sigs.length) : '—', sub: sigs.length ? `latest ${esc(dfull(fmt, sigs.map(x => x.date).filter(Boolean).sort().pop()))}` : 'pending Punctual Pros market profile', color: PAL.purple },
   ])}
-  ${thesis.length ? `<div class="mt-12">${ui.panel({ title: 'Expansion thesis', sub: 'Ranked moves from the market study · evidence and named targets', accent: true, body: `<div class="pp-kgrid">${thesis.map(t => `<div class="pp-camp" style="--cc:${t.priority === 'watch' ? 'var(--dim)' : t.priority === 1 ? 'var(--c-pp)' : 'var(--accent)'}"><div class="top"><span class="chip solid" style="--cc:${t.priority === 'watch' ? '#8b98a8' : PP}">${t.priority === 'watch' ? 'WATCH' : '#' + esc(t.priority)}</span><b>${esc(t.move)}</b></div><div class="small text-2 mt-8">${esc(String(t.evidence || '').slice(0, 260))}${String(t.evidence || '').length > 260 ? '…' : ''}</div>${t.targets ? `<div class="small mt-8"><span class="dim">Targets:</span> ${esc(String(t.targets).slice(0, 200))}${String(t.targets).length > 200 ? '…' : ''}</div>` : ''}</div>`).join('')}</div>`, foot: mSrc })}</div>` : ''}
+  ${thesis.length ? `<div class="mt-12">${ui.panel({ title: 'Expansion thesis', sub: 'Ranked moves from the market study · evidence and named targets', accent: true, body: `<div class="sys-grid pp-kgrid">${thesis.map(t => `<div class="sys-card sys-card--flat"${t.priority === 'watch' ? '' : ` data-co="" style="--co:${t.priority === 1 ? PP : PAL.sky}"`}><div class="sys-card-label">${t.priority === 'watch' ? 'Watch' : `Priority ${esc(t.priority)}`}</div><div class="sys-card-title" role="heading" aria-level="4">${esc(t.move)}</div><p class="sys-card-body">${esc(String(t.evidence || '').slice(0, 260))}${String(t.evidence || '').length > 260 ? '…' : ''}</p>${t.targets ? `<p class="small"><span class="sys-muted">Targets:</span> ${esc(String(t.targets).slice(0, 200))}${String(t.targets).length > 200 ? '…' : ''}</p>` : ''}</div>`).join('')}</div>`, foot: mSrc })}</div>` : ''}
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Competitor & franchise map', sub: 'Competitors by ownership (size = reviews) · Authority Brands sites by PP affiliation · click for detail', body: `<div class="map tall" id="mk-map"></div>`, flush: true, foot: mSrc })}
     ${intens.length ? ui.panel({ title: 'Competitive intensity by county', sub: 'Tracked competitors, PE presence and households per competitor', body: '<div id="mk-int"></div>', foot: mSrc }) : ui.panel({ title: 'PE-backed competitors', body: '<div id="mk-pe2"></div>' })}
@@ -982,24 +1016,24 @@ async function market(ctx) {
   // map
   const map = maps.create(root.querySelector('#mk-map'), { center: [40.0, -75.8], zoom: 7 });
   const sPts = sites.filter(x => fin(x.lat));
-  maps.points(map, sPts, { color: x => affOf(x.aff)[1], radius: x => /confirmed|yes|likely/.test(x.aff) ? 8 : 6, cluster: false, opacity: .9, popup: x => `<b>${esc(x.name)}</b><br>${esc(x.city)}, ${esc(x.state)}<br><span class="muted">${esc(affOf(x.aff)[0])}${x.owner ? ' · ' + esc(x.owner) : ''}</span>`, onClick: openSite });
+  pts(maps, map, sPts, { color: x => affOf(x.aff)[1], radius: x => /confirmed|yes|likely/.test(x.aff) ? 8 : 6, cluster: false, opacity: .9, popup: x => `<b>${esc(x.name)}</b><br>${esc(x.city)}, ${esc(x.state)}<br><span class="sys-muted">${esc(affOf(x.aff)[0])}${x.owner ? ' · ' + esc(x.owner) : ''}</span>`, onClick: openSite });
   const cPts = comps.filter(c => fin(num(c.lat)));
-  maps.points(map, cPts, { color: c => ownOf(c.ownership)[1], radius: c => fin(num(c.review_count)) ? Math.max(4, Math.min(12, Math.sqrt(c.review_count) / 7)) : 4, cluster: false, opacity: .75, popup: c => `<b>${esc(c.name)}</b><br>${esc(c.hq)} · ${esc(ownOf(c.ownership)[0])}${c.parent_owner ? ' · ' + esc(c.parent_owner) : ''}<br><span class="muted">${c.review_count ? fmt.num(c.review_count) + ' reviews' : ''}</span>`, onClick: openComp });
-  maps.marker(map, HQ.lat, HQ.lon, { color: '#ffffff', label: 'PP HQ' });
-  maps.legend(map, [{ color: PP, label: 'Authority site · PP confirmed' }, { color: '#f5b73d', label: 'Authority site · PP likely' }, { color: '#4c8dff', label: 'Authority site · other franchisee' }, { color: '#ff5c5c', label: 'Competitor · PE-backed' }, { color: '#9d7bff', label: 'Competitor · utility' }, { color: '#2ecc8f', label: 'Competitor · independent' }], 'Ownership');
+  pts(maps, map, cPts, { color: c => ownOf(c.ownership)[1], radius: c => fin(num(c.review_count)) ? Math.max(4, Math.min(12, Math.sqrt(c.review_count) / 7)) : 4, cluster: false, opacity: .75, popup: c => `<b>${esc(c.name)}</b><br>${esc(c.hq)} · ${esc(ownOf(c.ownership)[0])}${c.parent_owner ? ' · ' + esc(c.parent_owner) : ''}<br><span class="sys-muted">${c.review_count ? fmt.num(c.review_count) + ' reviews' : ''}</span>`, onClick: openComp });
+  maps.marker(map, HQ.lat, HQ.lon, { color: hx(INK), label: 'PP HQ' });
+  maps.legend(map, [{ color: PP, label: 'Authority site · PP confirmed' }, { color: PAL.amber, label: 'Authority site · PP likely' }, { color: PAL.cet, label: 'Authority site · other franchisee' }, { color: PAL.red, label: 'Competitor · PE-backed' }, { color: PAL.purple, label: 'Competitor · utility' }, { color: PAL.ts, label: 'Competitor · independent' }], 'Ownership');
   maps.fitPoints(map, [...cPts.map(c => [c.lat, c.lon]), ...sPts.filter(x => ['PA', 'NJ'].includes(x.state)).map(x => [x.lat, x.lon])], 8);
 
   if (intens.length) ui.table(root.querySelector('#mk-int'), {
     columns: [
       { key: 'county', label: 'County', fmt: v => `<b>${esc(v)}</b>` },
-      { key: 'intensity', label: 'Intensity', fmt: v => fmt.chip(v || '—', /high/i.test(v) ? 'var(--red)' : /medium|moderate/i.test(v) ? 'var(--amber)' : 'var(--green)') },
+      { key: 'intensity', label: 'Intensity', fmt: v => chip(v || '—', /high/i.test(v) ? PAL.red : /medium|moderate/i.test(v) ? PAL.amber : PAL.green) },
       { key: 'tracked_competitors', label: 'Tracked', num: true },
-      { key: 'pe_n', label: 'PE-backed', num: true, fmt: v => v ? `<b style="color:var(--red)">${v}</b>` : '0' },
+      { key: 'pe_n', label: 'PE-backed', num: true, fmt: v => v ? chip(String(v), PAL.red) : '0' },
       { key: 'households_per_tracked_competitor', label: 'HH / comp.', num: true, fmt: v => fmt.compact(v) },
     ], rows: intens, pageSize: 15, sortKey: 'tracked_competitors', exportName: 'pp_competitive_intensity', rowKey: r => r.county,
-    onRow: r => inspector.open({ title: `${esc(r.county)} · ${esc(r.intensity || '')} intensity`, sub: `${fmt.num(r.tracked_competitors)} tracked competitors · ${fmt.num(r.occupied_households)} occupied households`, color: 'var(--c-pp)', sections: [
-      { label: 'PE-backed', html: (r.pe_backed_competitors || []).map(x => fmt.chip(x, 'var(--red)')).join(' ') || '<span class="dim small">none tracked</span>' },
-      { label: 'Utility-affiliated', html: (r.utility_affiliated || []).map(x => fmt.chip(x, 'var(--purple)')).join(' ') || '<span class="dim small">none</span>' },
+    onRow: r => inspector.open({ title: `${esc(r.county)} · ${esc(r.intensity || '')} intensity`, sub: `${fmt.num(r.tracked_competitors)} tracked competitors · ${fmt.num(r.occupied_households)} occupied households`, color: PP, sections: [
+      { label: 'PE-backed', html: (r.pe_backed_competitors || []).length ? `<div class="sys-chips">${r.pe_backed_competitors.map(x => dot(x, PAL.red)).join('')}</div>` : '<span class="sys-muted small">none tracked</span>' },
+      { label: 'Utility-affiliated', html: (r.utility_affiliated || []).length ? `<div class="sys-chips">${r.utility_affiliated.map(x => dot(x, PAL.purple)).join('')}</div>` : '<span class="sys-muted small">none</span>' },
       { label: 'Largest tracked', html: `<div class="small text-2">${fmt.list(r.largest_tracked || [], 8)}</div>` },
       { label: 'Authority Brands sites', html: `<div class="small text-2">${fmt.list(r.authority_brands_sites || [], 8)}</div>` },
       { label: 'Read', html: `<div class="small text-2">${esc(r.rationale || '')}</div>` },
@@ -1009,7 +1043,7 @@ async function market(ctx) {
   if (comps.length) ui.table(root.querySelector('#mk-comp'), {
     columns: [
       { key: 'name', label: 'Competitor', fmt: (v, r) => `<b>${esc(v)}</b><div class="dim small">${esc(r.hq || '')}</div>` },
-      { key: 'ownership', label: 'Ownership', fmt: v => fmt.chip(ownOf(v)[0], ownOf(v)[1]) },
+      { key: 'ownership', label: 'Ownership', fmt: v => dot(ownOf(v)[0], ownOf(v)[1]) },
       { key: 'parent_owner', label: 'Parent / status', wrap: true, fmt: (v, r) => `<span class="small">${esc(String(v || r.ownership_status || '—').slice(0, 60))}</span>` },
       { key: 'trades', label: 'Trades', wrap: true, fmt: v => `<span class="small">${fmt.list(v || [], 3)}</span>` },
       { key: 'employees_est', label: 'Staff est.', num: true, fmt: v => v ? fmt.num(v) : '—' },
@@ -1020,16 +1054,16 @@ async function market(ctx) {
   ui.table(root.querySelector('#mk-pe'), {
     columns: [
       { key: 'platform', label: 'Company', fmt: (v, r) => `<b>${esc(v)}</b><div class="dim small">${esc(String(r.sponsor || 'sponsor n/a').split(/[;(]/)[0])}</div>` },
-      { key: 'threat', label: 'Threat', fmt: v => fmt.chip(String(v || '—').split(':')[0].split(' ')[0], /^High/i.test(v) ? 'var(--red)' : /^Medium/i.test(v) ? 'var(--amber)' : 'var(--muted)') },
+      { key: 'threat', label: 'Threat', fmt: v => chip(String(v || '—').split(':')[0].split(' ')[0], /^High/i.test(v) ? PAL.red : /^Medium/i.test(v) ? PAL.amber : PAL.muted) },
       { key: 'regional_holdings', label: 'Regional holdings', wrap: true, fmt: v => `<span class="small text-2">${fmt.list(v || [], 2)}</span>` },
     ], rows: pe, pageSize: 8, exportName: 'pp_pe_competitors', rowKey: r => r.platform, onRow: openPE,
   });
   if (!intens.length && root.querySelector('#mk-pe2')) root.querySelector('#mk-pe2').innerHTML = ui.empty('See PE-backed companies below');
   ui.table(root.querySelector('#mk-ft'), {
     columns: [
-      { key: 'brand', label: 'Brand', fmt: v => fmt.chip(String(v).replace(/ Heating & Air Conditioning| Plumbing/, ''), /One Hour/.test(v) ? 'var(--accent)' : /Franklin/.test(v) ? 'var(--cyan)' : 'var(--amber)') },
+      { key: 'brand', label: 'Brand', fmt: v => dot(String(v).replace(/ Heating & Air Conditioning| Plumbing/, ''), /One Hour/.test(v) ? PAL.pp : /Franklin/.test(v) ? PAL.cet : PAL.purple) },
       { key: 'city', label: 'Site', fmt: (v, r) => `<b>${esc(v)}, ${esc(r.state)}</b><div class="dim small">${esc(r.owner || 'franchisee not published')}</div>` },
-      { key: 'aff', label: 'PP affiliation', fmt: v => fmt.chip(affOf(v)[0], affOf(v)[1]) },
+      { key: 'aff', label: 'PP affiliation', fmt: v => /confirmed|yes/.test(v) ? chip(affOf(v)[0], PP) : dot(affOf(v)[0], affOf(v)[1]) },
       { key: 'reviews', label: 'Reviews', num: true, sort: (a, b) => (num(a.reviews) || -1) - (num(b.reviews) || -1), fmt: (v, r) => v ? `${fmt.num(v)}${r.rating ? ` · ${r.rating}★` : ''}` : '—' },
     ], rows: sites.slice().sort((a, b) => (/confirmed|yes/.test(b.aff) - /confirmed|yes/.test(a.aff)) || (/likely/.test(b.aff) - /likely/.test(a.aff)) || String(a.state).localeCompare(String(b.state))), pageSize: 10, exportName: 'pp_authority_territories', rowKey: r => r.name + r.brand, onRow: openSite,
   });
@@ -1040,12 +1074,12 @@ async function market(ctx) {
       { k: 'pop_growth_2020_2025', l: 'Pop. growth 20–25', f: v => fin(v) ? `${v >= 0 ? '+' : ''}${(v * 100).toFixed(1)}%` : '—' }, { k: 'sf_permits_2025', l: 'SF permits 2025', f: v => fmt.num(v) }, { k: 'median_household_income', l: 'Median HH inc.', f: v => fmt.money(v) },
     ];
     const rng = Object.fromEntries(cols.map(c => { const v = profs.map(p => num(p[c.k])).filter(fin); return [c.k, [Math.min(...v), Math.max(...v)]]; }));
-    const shade = (c, v) => { const [lo, hi] = rng[c.k]; if (!fin(v) || hi === lo) return ''; let a = (v - lo) / (hi - lo); if (c.inv) a = 1 - a; return `background:rgba(240,138,60,${(0.08 + a * 0.62).toFixed(2)});${a > .6 ? 'color:#0a0e14;' : ''}`; };
+    const shade = (c, v) => { const [lo, hi] = rng[c.k]; if (!fin(v) || hi === lo) return ''; let a = (v - lo) / (hi - lo); if (c.inv) a = 1 - a; return heatBg(PP, 0.1 + a * 0.75); };
     const pr = profs.slice().sort((a, b) => (/core/i.test(b.territory_role) - /core/i.test(a.territory_role)) || (b.housing_units - a.housing_units));
-    root.querySelector('#mk-prof').innerHTML = `<div class="tbl-wrap"><table class="tbl heat"><thead><tr><th style="text-align:left">County</th>${cols.map(c => `<th>${esc(c.l)}</th>`).join('')}</tr></thead><tbody>${pr.map((p, i) => `<tr data-i="${i}"><td style="text-align:left;font-family:var(--font);white-space:nowrap"><b>${esc(String(p.name).replace(/ County/, ''))}</b><div class="dim small">${esc(String(p.territory_role || '').split(' (')[0])}</div></td>${cols.map(c => `<td style="${shade(c, num(p[c.k]))}">${c.f(p[c.k])}</td>`).join('')}</tr>`).join('')}</tbody></table></div><div class="pp-mini mt-8">Darker = more of the opportunity (for median year built, darker = older stock). Click a county for its heating-fuel mix.</div>`;
-    root.querySelectorAll('#mk-prof tbody tr').forEach(tr => tr.onclick = () => { const p = pr[+tr.dataset.i]; const hf = p.heating_fuel_mix || {};
-      inspector.open({ title: esc(p.name), sub: `${esc(p.territory_role || '')} · ${esc(p.acs_vintage || '')}`, color: 'var(--c-pp)', sections: [
-        { label: 'Heating fuel mix', html: ctx.charts.hbar(Object.entries(hf).filter(([, v]) => v >= 0.001).sort((a, b) => b[1] - a[1]).map(([k, v]) => ({ label: k.replace(/_/g, ' '), value: v * 100, color: /oil|propane/.test(k) ? '#f08a3c' : '#4c8dff' })), { max: 100, fmt: v => `${v.toFixed(1)}%`, labelW: 130 }) },
+    root.querySelector('#mk-prof').innerHTML = `<div class="sys-table-wrap"><table class="sys-table pp-grid pp-rows"><thead><tr><th>County</th>${cols.map(c => `<th class="sys-n">${esc(c.l)}</th>`).join('')}</tr></thead><tbody>${pr.map((p, i) => `<tr data-i="${i}" tabindex="0"><td class="nowrap"><b>${esc(String(p.name).replace(/ County/, ''))}</b><div class="sys-muted small">${esc(String(p.territory_role || '').split(' (')[0])}</div></td>${cols.map(c => `<td class="sys-n" style="${shade(c, num(p[c.k]))}">${c.f(p[c.k])}</td>`).join('')}</tr>`).join('')}</tbody></table></div><p class="sys-muted small pp-pad">Darker = more of the opportunity (for median year built, darker = older stock). Click a county for its heating-fuel mix.</p>`;
+    bindRows(root, '#mk-prof tbody tr', tr => { const p = pr[+tr.dataset.i]; const hf = p.heating_fuel_mix || {};
+      inspector.open({ title: esc(p.name), sub: `${esc(p.territory_role || '')} · ${esc(p.acs_vintage || '')}`, color: PP, sections: [
+        { label: 'Heating fuel mix', html: ctx.charts.hbar(Object.entries(hf).filter(([, v]) => v >= 0.001).sort((a, b) => b[1] - a[1]).map(([k, v]) => ({ label: k.replace(/_/g, ' '), value: v * 100, color: /oil|propane/.test(k) ? PP : PAL.cet })), { max: 100, fmt: v => `${v.toFixed(1)}%`, labelW: 130 }) },
         { label: 'Housing & growth', html: ui.kv({ Population: fmt.num(p.population_acs), 'Housing units': fmt.num(p.housing_units), 'Median year built': p.median_year_built != null ? esc(p.median_year_built) : null, 'Built pre-1980': pctTxt(p.share_built_pre1980), 'Single-family detached': pctTxt(p.single_family_detached_share), 'Oil+propane households': fmt.num(p.oil_plus_propane_households), 'Pop. growth 2020–25': fin(num(p.pop_growth_2020_2025)) ? `${(p.pop_growth_2020_2025 * 100).toFixed(1)}%` : '—', 'SF permits 2024 / 2025': `${fmt.num(p.sf_permits_2024)} / ${fmt.num(p.sf_permits_2025)}`, 'Median HH income': fmt.moneyFull(p.median_household_income) }) },
         { label: 'Notes', html: `<div class="small text-2">${esc(p.notes || '')}</div>` },
         { label: 'Next action', html: `<div class="small text-2">${p.oil_plus_propane_share >= 0.25 ? `Launch a heat-pump / hybrid conversion campaign to ~${fmt.compact(p.oil_plus_propane_households)} oil and propane households, stacked with live utility rebates.` : p.share_built_pre1980 >= 0.55 ? 'Lead with panel, water-heater and sewer-line safety inspections for pre-1980 stock.' : 'Lean on new-construction maintenance plans and new-mover welcome offers.'}</div>` },
@@ -1056,9 +1090,9 @@ async function market(ctx) {
     columns: [
       { key: 'name', label: 'Program', wrap: true, fmt: (v, r) => `<b class="small">${esc(v)}</b><div class="dim small">${esc(r.sponsor || '')} · ${esc(r.state || '')}</div>` },
       { key: 'amount_max', label: 'Amount', num: true, fmt: (v, r) => fin(num(v)) ? (r.amount_min != null && r.amount_min !== v ? `${fmt.money(r.amount_min)}–${fmt.money(v)}` : fmt.money(v)) : `<span class="small">${esc(String(r.amount_usd || '—').slice(0, 24))}</span>` },
-      { key: 'status', label: 'Status', fmt: v => fmt.chip(String(v || '—').split(/[ (-]/)[0], /^active/i.test(v) ? 'var(--green)' : /expired|lapsed/i.test(v) ? 'var(--red)' : 'var(--amber)') },
+      { key: 'status', label: 'Status', fmt: v => chip(String(v || '—').split(/[ (-]/)[0], /^active/i.test(v) ? PAL.green : /expired|lapsed/i.test(v) ? PAL.red : PAL.amber) },
     ], rows: incs.slice().sort((a, b) => /^active/i.test(b.status) - /^active/i.test(a.status)), pageSize: 8, exportName: 'pp_incentives', rowKey: r => r.name,
-    onRow: r => inspector.open({ title: esc(r.name), sub: `${esc(r.sponsor || '')} · ${esc(r.state || '')}`, color: /^active/i.test(r.status) ? 'var(--green)' : 'var(--amber)', sections: [
+    onRow: r => inspector.open({ title: esc(r.name), sub: `${esc(r.sponsor || '')} · ${esc(r.state || '')}`, color: /^active/i.test(r.status) ? PAL.green : PAL.amber, sections: [
       { label: 'Program', html: ui.kv({ Measure: esc(r.measure || ''), Amount: esc(r.amount_usd ?? ''), Eligibility: esc(r.eligibility || ''), Status: esc(r.status || ''), Dates: esc(r.dates || ''), Counties: r.counties_affected || [] }) },
       { label: 'Notes', html: `<div class="small text-2">${esc(r.notes || '')}</div>` },
       { label: 'Next action', html: `<div class="small text-2">${/^active/i.test(r.status) ? 'Load into the ServiceTitan pricebook as a financing/rebate line and train CSRs to quote it on replacement calls.' : 'Do not quote; monitor for relaunch and remove from marketing copy.'}</div>` },
@@ -1068,10 +1102,10 @@ async function market(ctx) {
   if (sigs.length) ui.table(root.querySelector('#mk-sig'), {
     columns: [
       { key: 'date', label: 'Date', num: true, sort: (a, b) => String(a.date || '0000').localeCompare(String(b.date || '0000')), fmt: v => esc(dfull(fmt, v)) },
-      { key: 'category', label: 'Category', fmt: v => fmt.chip(v || '—', /labor/.test(v) ? 'var(--purple)' : /housing/.test(v) ? 'var(--green)' : /energy|utility/.test(v) ? 'var(--amber)' : /PE|consolid/.test(v) ? 'var(--red)' : 'var(--accent)') },
+      { key: 'category', label: 'Category', fmt: v => dot(String(v || '—').replace(/_/g, ' '), /labor/.test(v) ? PAL.purple : /housing/.test(v) ? PAL.ts : /energy|utility/.test(v) ? PAL.amber : /PE|consolid/.test(v) ? PAL.red : PAL.cet) },
       { key: 'name', label: 'Signal', wrap: true, fmt: (v, r) => `<b class="small">${esc(v)}</b><div class="dim small">${esc(r.geography || '')}</div>` },
     ], rows: sigs, pageSize: 8, sortKey: 'date', exportName: 'pp_market_signals', rowKey: r => r.name,
-    onRow: r => inspector.open({ title: esc(r.name), sub: `${esc(dfull(fmt, r.date))} · ${esc(r.geography || '')} · ${esc(r.category || '')}`, color: 'var(--purple)', sections: [
+    onRow: r => inspector.open({ title: esc(r.name), sub: `${esc(dfull(fmt, r.date))} · ${esc(r.geography || '')} · ${esc(String(r.category || '').replace(/_/g, ' '))}`, color: PAL.purple, sections: [
       { label: 'Detail', html: `<div class="small text-2">${esc(r.detail || '')}</div>` },
       r.wage_median_hvac ? { label: 'Median wages', html: ui.kv({ HVAC: fmt.moneyFull(r.wage_median_hvac), Plumber: fmt.moneyFull(r.wage_median_plumber), Electrician: fmt.moneyFull(r.wage_median_electrician) }) } : null,
       { label: 'Implication for PP', html: `<div class="small text-2">${esc(r.implication || '')}</div>` },
@@ -1081,7 +1115,7 @@ async function market(ctx) {
 
   function openSite(x) {
     inspector.open({ title: esc(x.name), sub: `${esc(x.brand)} · ${esc(x.city)}, ${esc(x.state)}`, color: affOf(x.aff)[1], sections: [
-      { label: 'Affiliation', html: `${fmt.chip(affOf(x.aff)[0], affOf(x.aff)[1])}<div class="small text-2 mt-8">${esc(x.basis || '')}</div>` },
+      { label: 'Affiliation', html: `${dot(affOf(x.aff)[0], affOf(x.aff)[1])}<div class="small text-2 mt-8">${esc(Copy.text(x.basis || ''))}</div>` },
       { label: 'Site', html: ui.kv({ Address: esc(x.address || ''), Owner: esc(x.owner || 'not published'), Reviews: x.reviews ? `${fmt.num(x.reviews)} · ${x.rating || ''}★` : null, Website: x.website ? fmt.link(x.website) : null, Note: x.note ? esc(x.note) : null }) },
       { label: 'Next action', html: `<div class="small text-2">${/confirmed|yes/.test(x.aff) ? 'PP site: benchmark review velocity and membership penetration against neighbouring franchisees.' : /likely|possible/.test(x.aff) ? 'Verify ownership (state business filings, FDD franchisee list) before counting it in the PP footprint.' : 'Tuck-in pool: identify the franchisee, confirm Authority Brands transfer path, add to the target screen.'}</div>` },
       { label: 'Sources', html: `<div class="small col gap-4">${(x.sources || []).map(s => fmt.link(s)).join('') || '—'}</div>` },
@@ -1092,20 +1126,20 @@ async function market(ctx) {
       { label: 'Profile', html: ui.kv({ Ownership: esc(ownOf(c.ownership)[0]), 'Parent / status': esc(c.parent_owner || c.ownership_status || '—'), Founded: c.founded != null ? esc(c.founded) : null, Trades: c.trades || [], 'Employees (est.)': c.employees_est ? `${fmt.num(c.employees_est)} <span class="dim small">${esc(c.employees_source || '')}</span>` : null, Reviews: c.review_count ? `${fmt.num(c.review_count)} · ${c.rating || ''}★ <span class="dim small">${esc(c.review_source || '')}</span>` : null, 'Overlap with PP': c.territory_overlap || [], Website: c.website ? fmt.link(c.website) : null }) },
       { label: 'Notes', html: `<div class="small text-2">${esc(c.notes || '')}</div>` },
       { label: 'Next action', html: `<div class="small text-2">${c.ownership === 'pe_backed' ? 'Defend: map overlapping zips, protect memberships and technicians there; expect aggressive hiring offers.' : c.ownership === 'utility-affiliated' ? 'Partner or flank: utility-affiliated shops win on bill-pay access; compete on speed and brand guarantees.' : 'Assess as tuck-in (family/founder ownership, reviews, trade mix) before a PE-backed buyer does.'}</div>` },
-      { label: 'Sources', html: `<div class="small col gap-4">${(c.source_urls || [c.source_url]).filter(Boolean).map(u => fmt.link(u)).join('')}</div><div class="dim small mt-8">Retrieved ${esc(c.retrieved || '')}</div>` },
+      { label: 'Sources', html: `<div class="small col gap-4">${(c.source_urls || [c.source_url]).filter(Boolean).map(u => fmt.link(u)).join('')}</div>${c.retrieved ? `<div class="dim small mt-8">Retrieved ${esc(dfull(fmt, c.retrieved))}</div>` : ''}` },
     ], actions: c.website ? [{ label: 'Website ↗', href: c.website }] : [] });
   }
   function openPE(p) {
-    inspector.open({ title: esc(p.platform), sub: `${esc(p.hq || 'HQ n/a')} · ${esc(String(p.sponsor || 'sponsor n/a').split(';')[0])}`, color: /^High/i.test(p.threat || '') ? 'var(--red)' : 'var(--amber)', sections: [
+    inspector.open({ title: esc(p.platform), sub: `${esc(p.hq || 'HQ n/a')} · ${esc(String(p.sponsor || 'sponsor n/a').split(';')[0])}`, color: /^High/i.test(p.threat || '') ? PAL.red : PAL.amber, sections: [
       { label: 'Threat to PP', html: `<div class="small text-2">${esc(p.threat || '—')}</div>` },
       { label: 'Sponsor', html: `<div class="small text-2">${esc(p.sponsor || '—')}</div>` },
       { label: 'Footprint', html: `<div class="small text-2">${esc(p.footprint || '—')}</div>` },
-      { label: 'Regional holdings', html: `<ul class="prose small">${(p.regional_holdings || []).map(h => `<li>${esc(h)}</li>`).join('') || '<li>—</li>'}</ul>` },
+      { label: 'Regional holdings', html: `<ul class="sys-card-list">${(p.regional_holdings || []).map(h => `<li>${esc(h)}</li>`).join('') || '<li>—</li>'}</ul>` },
       { label: 'Next action', html: `<div class="small text-2">${/^High/i.test(p.threat || '') ? 'Defend: lock key technicians, accelerate membership renewals in overlapping zips, and move first on independents they are courting.' : 'Track deal flow; expect them as rival bidders on targets in the screen.'}</div>` },
       { label: 'Sources', html: `<div class="small col gap-4">${(p.sources || []).map(s => fmt.link(s)).join('') || '—'}</div>` },
     ] });
   }
-  app.index([...comps.map(c => ({ label: c.name, sub: `PP competitor · ${ownOf(c.ownership)[0]} · ${c.hq || ''}`, href: '#/pp/market', kind: 'Competitor', color: ownOf(c.ownership)[1] })), ...pe.map(p => ({ label: p.platform, sub: `PE-backed rival · ${p.threat || ''}`, href: '#/pp/market', kind: 'Competitor', color: 'var(--red)' }))].slice(0, 120));
+  app.index([...comps.map(c => ({ label: c.name, sub: `PP competitor · ${ownOf(c.ownership)[0]} · ${c.hq || ''}`, href: '#/pp/market', kind: 'Competitor', color: ownOf(c.ownership)[1] })), ...pe.map(p => ({ label: p.platform, sub: `PE-backed rival · ${p.threat || ''}`, href: '#/pp/market', kind: 'Competitor', color: PAL.red }))].slice(0, 120));
   return () => map.remove();
 }
 
@@ -1126,54 +1160,54 @@ async function targets(ctx) {
   const franchisees = items.filter(t => /franchisee/.test(t.ownership || ''));
   el.innerHTML = `<div class="m-pp">${ui.pageHead({
     title: 'Add-on targets',
-    sub: `<b>So what:</b> ${t1.length} of ${items.length} screened companies score Tier 1 (≥80)${conflicts.length ? ` after holding out ${conflicts.length} that trade${conflicts.length === 1 ? 's' : ''} under the Punctual Pros name (affiliation unverified)` : ''}. ${top[0] ? `${esc(top[0].company)} (fit ${top[0].fit_score}) is the highest-density tuck-in; ` : ''}${franchisees.length} Authority Brands franchisees can fold in with no rebrand, and ${fam.length} family/founder-owned independents are the succession pipeline.`,
-    chips: `${fmt.chip(`${items.length} companies`, 'var(--c-pp)')}${fmt.chip(`PA ${items.filter(t => t.state === 'PA').length} · NJ ${items.filter(t => t.state === 'NJ').length} · MD ${items.filter(t => t.state === 'MD').length} · DE ${items.filter(t => t.state === 'DE').length}`)}${fmt.chip(`screened ${m.generated || ''}`)}${conflicts.length ? fmt.chip(`${conflicts.length} held · name conflict`, 'var(--red)') : ''}`,
+    sub: `<b>So what:</b> ${t1.length} of ${items.length} screened companies score Tier 1 (fit 80+)${conflicts.length ? ` after holding out ${conflicts.length} that trade${conflicts.length === 1 ? 's' : ''} under the Punctual Pros name (affiliation unverified)` : ''}. ${top[0] ? `${esc(top[0].company)} (fit ${top[0].fit_score}) is the highest-density tuck-in; ` : ''}${franchisees.length} Authority Brands franchisees can fold in with no rebrand, and ${fam.length} family/founder-owned independents are the succession pipeline.`,
+    chips: `${chip(`${items.length} companies`, PP)}${chip(`PA ${items.filter(t => t.state === 'PA').length} · NJ ${items.filter(t => t.state === 'NJ').length} · MD ${items.filter(t => t.state === 'MD').length} · DE ${items.filter(t => t.state === 'DE').length}`)}${m.generated ? chip(`screened ${dfull(fmt, m.generated)}`) : ''}${conflicts.length ? chip(`${conflicts.length} held · name conflict`, PAL.red) : ''}`,
   })}
   ${ui.kpis([
-    { label: 'Targets screened', value: fmt.num(items.length), sub: `${fmt.num(m.excluded_pe_or_strategic_owned?.length || 0)} PE/strategic-owned excluded${conflicts.length ? ` · ${conflicts.length} held for affiliation check` : ''}`, color: 'var(--c-pp)' },
-    { label: 'Tier 1 (fit ≥80)', value: fmt.num(t1.length), sub: `${fmt.num(items.filter(t => t.fit_score >= 65 && t.fit_score < 80).length)} Tier 2`, color: 'var(--green)' },
-    { label: 'Within route reach', value: fmt.num(near.length), sub: '≤60 mi Lancaster or ≤40 mi Toms River', color: 'var(--accent)' },
-    { label: 'Authority franchisees', value: fmt.num(franchisees.length), sub: 'same brands · no rebrand', color: 'var(--c-pp)' },
-    { label: 'Family / founder-owned', value: fmt.num(fam.length), sub: 'succession-driven sellers', color: 'var(--amber)' },
-    { label: 'Median distance · Lancaster', value: `${fmt.num(median(items.map(t => t.distance_mi_from_lancaster)))} mi`, sub: 'straight-line, city centroids', color: 'var(--dim)' },
+    { label: 'Targets screened', value: fmt.num(items.length), sub: `${fmt.num(m.excluded_pe_or_strategic_owned?.length || 0)} PE- or strategic-owned excluded${conflicts.length ? ` · ${conflicts.length} held for affiliation check` : ''}`, color: PP },
+    { label: 'Tier 1 (fit 80+)', value: fmt.num(t1.length), sub: `${fmt.num(items.filter(t => t.fit_score >= 65 && t.fit_score < 80).length)} Tier 2`, color: PAL.green },
+    { label: 'Within route reach', value: fmt.num(near.length), sub: 'within 60 miles of Lancaster or 40 miles of Toms River', color: PAL.sky },
+    { label: 'Authority franchisees', value: fmt.num(franchisees.length), sub: 'same brands · no rebrand', color: PP },
+    { label: 'Family or founder owned', value: fmt.num(fam.length), sub: 'succession-driven sellers', color: PAL.amber },
+    { label: 'Median distance · Lancaster', value: `${fmt.num(median(items.map(t => t.distance_mi_from_lancaster)))} mi`, sub: 'straight-line, city centroids', color: PAL.dim },
   ])}
   <div class="grid grid-3 mt-12">
-    ${ui.panel({ title: 'Ranked top 10', sub: `Analyst ranking · click for profile${conflicts.length ? ' · name-conflict rows removed and re-ranked' : ''}`, body: `<div class="pp-top10">${top.map(t => `<div class="r" data-id="${esc(t.id)}"><span class="rk">#${t.rank}</span><div class="grow"><b class="small">${esc(t.company)}</b>${t.backfill ? ` ${fmt.chip('next by fit score', 'var(--dim)')}` : ''}<div class="small text-2">${esc(String(t.why || '').slice(0, 170))}</div></div>${fmt.score(t.fit_score)}</div>`).join('') || ui.empty('No ranking')}</div>`, scroll: true, foot: ui.source(`Punctual Pros add-on targets, top-10 ranking${backfill.length ? ` (+${backfill.length} back-filled by fit score)` : ''}`, null, m.generated) })}
-    ${ui.panel({ title: 'Target map', sub: 'Fit tier · Tier 1 green · Tier 2 blue · Tier 3+ amber', body: `<div class="map tall" id="tg-map" style="min-height:520px"></div>`, flush: true, foot: ui.source('ZoomInfo search · company sites · Authority directories', null, m.generated) })}
-    ${ui.panel({ title: 'PE-backed competitors (rival bidders)', sub: 'Who else is buying in PA / NJ / MD / DE', body: `<div class="col gap-8">${(m.pe_backed_competitors || []).filter(p => !/^Other/i.test(p.platform)).map(p => `<div class="row" style="align-items:flex-start"><span class="chip" style="--cc:${/^High/i.test(p.threat || '') ? 'var(--red)' : /^Medium/i.test(p.threat || '') ? 'var(--amber)' : 'var(--muted)'};flex-shrink:0">${esc(String(p.threat || '—').split(':')[0].split(' ')[0])}</span><div class="grow"><b class="small">${esc(p.platform)}</b><div class="small text-2">${esc(String(p.sponsor || 'sponsor n/a').split(/[;(]/)[0])}${p.regional_holdings?.length ? ` · ${esc(p.regional_holdings.slice(0, 2).join(', '))}` : ''}</div></div></div>`).join('')}</div>`, scroll: true, foot: ui.source('Sponsor press releases · roll-up trackers', null, m.generated) })}
+    ${ui.panel({ title: 'Ranked top 10', sub: `Analyst ranking · click for profile${conflicts.length ? ' · name-conflict rows removed and re-ranked' : ''}`, body: top.length ? `<div class="sys-table-wrap"><table class="sys-table pp-rows pp-top10"><thead><tr><th class="sys-n">#</th><th>Company</th><th class="sys-n">Fit</th></tr></thead><tbody>${top.map(t => `<tr data-id="${esc(t.id)}" tabindex="0"><td class="sys-n">${t.rank}</td><td><b>${esc(t.company)}</b>${t.backfill ? ` ${chip('next by fit score')}` : ''}<div class="small text-2">${esc(String(t.why || '').slice(0, 170))}</div></td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('No ranking'), flush: !!top.length, scroll: true, foot: ui.source(`Punctual Pros add-on targets, top-10 ranking${backfill.length ? ` (+${backfill.length} back-filled by fit score)` : ''}`, null, m.generated) })}
+    ${ui.panel({ title: 'Target map', sub: 'Fit tier · Tier 1 green · Tier 2 blue · Tier 3+ amber', body: `<div class="map tall pp-map-md" id="tg-map"></div>`, flush: true, foot: ui.source('ZoomInfo search · company sites · Authority directories', null, m.generated) })}
+    ${ui.panel({ title: 'PE-backed competitors (rival bidders)', sub: 'Who else is buying in PA / NJ / MD / DE', body: `<ul class="sys-card-list pp-pe">${(m.pe_backed_competitors || []).filter(p => !/^Other/i.test(p.platform)).map(p => `<li><div class="sys-row"><b>${esc(p.platform)}</b>${chip(String(p.threat || '—').split(':')[0].split(' ')[0], /^High/i.test(p.threat || '') ? PAL.red : /^Medium/i.test(p.threat || '') ? PAL.amber : PAL.muted)}</div><div class="small text-2">${esc(String(p.sponsor || 'sponsor n/a').split(/[;(]/)[0])}${p.regional_holdings?.length ? ` · ${esc(p.regional_holdings.slice(0, 2).join(', '))}` : ''}</div></li>`).join('')}</ul>`, scroll: true, foot: ui.source('Sponsor press releases · roll-up trackers', null, m.generated) })}
   </div>
-  ${conflicts.length ? `<div class="mt-12">${ui.panel({ title: 'Verify affiliation — held out of ranking', sub: 'Trades under the portfolio company’s own name: either already part of the Punctual Pros / Authority network (owned or related party) or a brand conflict. PP team to confirm status (owned · related · independent) before any outreach.', body: `<div class="pp-affil">${conflicts.map(t => `<div class="r" data-id="${esc(t.id)}">${fmt.score(t.fit_score)}<div class="grow"><b class="small">${esc(t.company)}</b> ${fmt.chip('name conflict — verify', 'var(--red)')} ${fmt.chip('affiliation: unverified', 'var(--amber)')}<div class="small text-2">${esc(t.hq_city || '')}, ${esc(t.state || '')} · ${esc(t.brands_or_franchise || '')}</div><div class="flags">${(t.risk_flags || []).map(r => fmt.chip(r, /collision|affiliat|conflict/i.test(r) ? 'var(--red)' : 'var(--amber)')).join('')}</div></div></div>`).join('')}</div>`, foot: ui.source('Punctual Pros add-on targets: risk flags · PitchBook profile', 'https://pitchbook.com/profiles/company/593145-91', m.generated), accent: true })}</div>` : ''}
+  ${conflicts.length ? `<div class="mt-12">${ui.panel({ title: 'Verify affiliation — held out of ranking', sub: 'Trades under the portfolio company’s own name: either already part of the Punctual Pros / Authority network (owned or related party) or a brand conflict. PP team to confirm status (owned · related · independent) before any outreach.', body: `<div class="sys-table-wrap"><table class="sys-table pp-rows pp-affil"><thead><tr><th>Company</th><th class="sys-n">Fit</th></tr></thead><tbody>${conflicts.map(t => `<tr data-id="${esc(t.id)}" tabindex="0"><td><div class="sys-row"><b>${esc(t.company)}</b>${chip('name conflict — verify', PAL.red)}${chip('affiliation: unverified', PAL.amber)}</div><div class="small text-2 mt-8">${esc(t.hq_city || '')}, ${esc(t.state || '')} · ${esc(t.brands_or_franchise || '')}</div><ul class="sys-card-list mt-8">${(t.risk_flags || []).map(r => `<li>${esc(Copy.text(r))}</li>`).join('')}</ul></td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}</tbody></table></div>`, flush: true, foot: ui.source('Punctual Pros add-on targets: risk flags · PitchBook profile', 'https://pitchbook.com/profiles/company/593145-91', m.generated), accent: true })}</div>` : ''}
   <div class="mt-12">${ui.panel({ title: 'Target screen', sub: `Fit rubric: ${esc(Object.keys(m.scoring_rubric || {}).map(k => k.replace(/_/g, ' ')).join(' · '))} (20 pts each)`, body: '<div id="tg-screen"></div>', foot: ui.source('Punctual Pros add-on targets', null, m.generated) })}</div>
   ${(m.caveats || []).length ? `<div class="mt-12">${ui.note(`<b>Caveats:</b> ${(m.caveats || []).slice(0, 3).map(c => esc(Copy.text(c))).join(' ')}`, 'warn')}</div>` : ''}
   </div>`;
   const root = el.querySelector('.m-pp');
   renderTargets(ctx, root.querySelector('#tg-screen'), {
-    items: Copy.targets(items), color: 'var(--c-pp)', platformLabel: 'Punctual Pros', exportName: 'pp_addon_targets', pageSize: 25,
+    items: Copy.targets(items), color: PP, platformLabel: 'Punctual Pros', exportName: 'pp_addon_targets', pageSize: 25,
     extraColumns: [
       { key: 'distance_mi_from_lancaster', label: 'Mi (Lanc / TR)', num: true, fmt: (v, r) => `${v == null ? '—' : fmt.num(v)}<span class="dim"> / ${r.distance_mi_from_toms_river == null ? '—' : fmt.num(r.distance_mi_from_toms_river)}</span>` },
       { key: 'review_count', label: 'Reviews', num: true, fmt: (v, r) => v ? `${fmt.num(v)}${r.review_rating ? ` · ${esc(r.review_rating)}★` : ''}` : '<span class="dim">—</span>' },
     ],
   });
   const map = maps.create(root.querySelector('#tg-map'), { center: [40.0, -75.9], zoom: 7 });
-  const tc = s => s >= 80 ? '#2ecc8f' : s >= 65 ? '#4c8dff' : '#f5b73d';
-  maps.points(map, items.filter(t => fin(t.lat)), { color: t => tc(t.fit_score), radius: t => Math.max(4, (t.fit_score - 40) / 6), cluster: false, popup: t => `<b>${esc(t.company)}</b><br>${esc(t.hq_city)}, ${esc(t.state)} · fit ${t.fit_score}<br><span class="muted">${esc(Copy.text(t.ownership || ''))}</span>`, onClick: openT });
-  if (conflicts.some(t => fin(t.lat))) maps.points(map, conflicts.filter(t => fin(t.lat)), { color: '#ff5c5c', radius: 5, cluster: false, popup: t => `<b>${esc(t.company)}</b><br>${esc(t.hq_city)}, ${esc(t.state)}<br><b style="color:#ff5c5c">Name conflict — verify affiliation</b>`, onClick: openT });
-  maps.marker(map, HQ.lat, HQ.lon, { color: '#ffffff', label: 'PP HQ' });
-  maps.marker(map, HORVATH.lat, HORVATH.lon, { color: '#f5b73d', label: 'Horvath' });
-  maps.circle(map, HQ.lat, HQ.lon, 60 * 1609, { color: '#f08a3c', fill: .03, dash: '4 4' });
-  maps.legend(map, [{ color: '#2ecc8f', label: 'Tier 1 (≥80)' }, { color: '#4c8dff', label: 'Tier 2 (65–79)' }, { color: '#f5b73d', label: 'Tier 3+ (<65)' }, { color: '#f08a3c', label: '60 mi from HQ', ring: true }, ...(conflicts.length ? [{ color: '#ff5c5c', label: 'Name conflict · verify' }] : [])], 'Fit');
+  const tc = s => s >= 80 ? PAL.green : s >= 65 ? PAL.sky : PAL.amber;
+  pts(maps, map, items.filter(t => fin(t.lat)), { color: t => tc(t.fit_score), radius: t => Math.max(4, (t.fit_score - 40) / 6), cluster: false, popup: t => `<b>${esc(t.company)}</b><br>${esc(t.hq_city)}, ${esc(t.state)} · fit ${t.fit_score}<br><span class="sys-muted">${esc(Copy.text(t.ownership || ''))}</span>`, onClick: openT });
+  if (conflicts.some(t => fin(t.lat))) pts(maps, map, conflicts.filter(t => fin(t.lat)), { color: PAL.red, radius: 5, cluster: false, popup: t => `<b>${esc(t.company)}</b><br>${esc(t.hq_city)}, ${esc(t.state)}<br><b>Name conflict — verify affiliation</b>`, onClick: openT });
+  maps.marker(map, HQ.lat, HQ.lon, { color: hx(INK), label: 'PP HQ' });
+  maps.marker(map, HORVATH.lat, HORVATH.lon, { color: hx(STATUS.horvath.color), label: 'Horvath' });
+  maps.circle(map, HQ.lat, HQ.lon, 60 * 1609, { color: hx(PP), fill: .03, dash: '4 4' });
+  maps.legend(map, [{ color: PAL.green, label: 'Tier 1 (80+)' }, { color: PAL.sky, label: 'Tier 2 (65–79)' }, { color: PAL.amber, label: 'Tier 3+ (under 65)' }, { color: PP, label: '60 miles from HQ', ring: true }, ...(conflicts.length ? [{ color: PAL.red, label: 'Name conflict · verify' }] : [])], 'Fit');
   maps.fitPoints(map, items.filter(t => fin(t.lat)).map(t => [t.lat, t.lon]), 8);
-  root.querySelectorAll('.pp-top10 .r, .pp-affil .r').forEach(r => r.onclick = () => { const t = byId.get(r.dataset.id); if (t) openT(t); });
+  bindRows(root, '.pp-top10 tr[data-id], .pp-affil tr[data-id]', r => { const t = byId.get(r.dataset.id); if (t) openT(t); });
   function openT(t) {
     const fb = t.fit_breakdown || {}; const nc = nameConflict(t);
-    inspector.open({ title: esc(t.company), sub: `${esc(t.hq_city || '')}, ${esc(t.state || '')} · fit ${t.fit_score}${nc ? ' · held out of ranking' : ''}`, color: nc ? 'var(--red)' : tc(t.fit_score), sections: [
-      nc ? { label: 'Affiliation', html: `<div class="row gap-8 wrap">${fmt.chip('name conflict — verify', 'var(--red)')}${fmt.chip('status: unverified (owned · related · independent?)', 'var(--amber)')}</div><div class="small text-2 mt-8">Trades as “The Punctual Pros”. Confirm with PP management and the Authority Brands franchise register whether this is an existing network entity before it re-enters the ranking.</div>` } : null,
+    inspector.open({ title: esc(t.company), sub: `${esc(t.hq_city || '')}, ${esc(t.state || '')} · fit ${t.fit_score}${nc ? ' · held out of ranking' : ''}`, color: nc ? PAL.red : tc(t.fit_score), sections: [
+      nc ? { label: 'Affiliation', html: `<div class="sys-chips">${chip('name conflict — verify', PAL.red)}${chip('status: unverified', PAL.amber)}</div><div class="small text-2 mt-8">Owned, related or independent: not yet confirmed. Trades as “The Punctual Pros”. Confirm with PP management and the Authority Brands franchise register whether this is an existing network entity before it re-enters the ranking.</div>` } : null,
       { label: 'Fit breakdown', html: Object.keys(fb).length ? ctx.charts.hbar(Object.entries(fb).map(([k, v]) => ({ label: k.replace(/_/g, ' '), value: v })), { max: 20, fmt: v => v, labelW: 130, color: PP }) : '—' },
       { label: 'Profile', html: ui.kv({ Founded: t.founded_year != null ? esc(t.founded_year) : null, Ownership: esc(Copy.text(t.ownership || '')), 'Ownership notes': esc(Copy.text(t.ownership_notes || '')), Brands: esc(t.brands_or_franchise || ''), Trades: (t.trades || []).map(x => Copy.text(x)), 'Mi from Lancaster': t.distance_mi_from_lancaster, 'Mi from Toms River': t.distance_mi_from_toms_river, Reviews: t.review_count ? `${fmt.num(t.review_count)} · ${esc(t.review_rating || '')}★` : null, Website: t.website ? fmt.link(t.website) : null }) },
       { label: 'Strategic rationale', html: `<div class="small text-2">${esc(t.strategic_rationale || '')}</div>` },
-      t.risk_flags?.length ? { label: 'Risk flags', html: t.risk_flags.map(r => fmt.chip(r, 'var(--amber)')).join(' ') } : null,
+      t.risk_flags?.length ? { label: 'Risk flags', html: `<ul class="sys-card-list">${t.risk_flags.map(r => `<li>${esc(Copy.text(r))}</li>`).join('')}</ul>` } : null,
       { label: 'Next action', html: nc ? `<div class="small text-2"><b>Do not contact yet.</b> PP CEO to confirm ownership / related-party status; if independent, resolve the trade-name overlap first, then re-score.</div>` : `<div class="small text-2">Log in pipeline → PRG-led owner outreach → request 3-yr P&L, membership count and tech roster → indicative value at sector multiple (see Filings & financials).${/franchisee/.test(t.ownership || '') ? ' Confirm Authority Brands transfer approval path.' : ''}</div>` },
-      { label: 'Sources', html: `<div class="small col gap-4">${(t.sources || []).map(s => fmt.link(s)).join('') || '—'}</div><div class="dim small mt-8">Retrieved ${esc(t.retrieved || '')}</div>` },
+      { label: 'Sources', html: `<div class="small col gap-4">${(t.sources || []).map(s => fmt.link(s)).join('') || '—'}</div>${t.retrieved ? `<div class="dim small mt-8">Retrieved ${esc(dfull(fmt, t.retrieved))}</div>` : ''}` },
     ].filter(Boolean), actions: t.website ? [{ label: 'Website ↗', href: t.website }] : [] });
   }
   return () => map.remove();
@@ -1183,19 +1217,19 @@ async function targets(ctx) {
 async function filings(ctx) {
   const { el, ui, data, esc, fmt } = ctx; css();
   const d = await data.research('pp_filings');
-  el.innerHTML = `<div class="m-pp">${ui.pageHead({ title: 'Filings and financials', sub: d ? (() => { const et = d.meta?.estimate_table || []; const f = re => et.find(e => re.test(e.metric || '')); const rv = f(/pro forma total revenue/i) || f(/revenue/i), eb = f(/EBITDA/i); return `<b>So what:</b> no audited financials are public; triangulating PPP, SEC Form D, FDD Item 19 and assessment records puts ${rv ? `${esc(rv.metric)} at <b>${esc(rv.estimate)}</b> (${esc(rv.confidence)} confidence)` : 'revenue in a wide range'}${eb ? ` and ${esc(eb.metric)} at <b>${esc(eb.estimate)}</b> (${esc(eb.confidence)})` : ''} — use these to frame diligence asks, not valuation.`; })() : 'Public-record financial picture for Punctual Pros', chips: d ? `${fmt.chip(`${(d.items || []).length} records`, 'var(--c-pp)')}${fmt.chip(`${(d.meta?.estimate_table || []).length} estimates`)}${fmt.chip(`generated ${d.meta?.generated || ''}`)}` : '' })}<div id="pp-fil"></div></div>`;
+  el.innerHTML = `<div class="m-pp">${ui.pageHead({ title: 'Filings and financials', sub: d ? (() => { const et = d.meta?.estimate_table || []; const f = re => et.find(e => re.test(e.metric || '')); const rv = f(/pro forma total revenue/i) || f(/revenue/i), eb = f(/EBITDA/i); return `<b>So what:</b> no audited financials are public; triangulating PPP, SEC Form D, FDD Item 19 and assessment records puts ${rv ? `${esc(rv.metric)} at <b>${esc(rv.estimate)}</b> (${esc(rv.confidence)} confidence)` : 'revenue in a wide range'}${eb ? ` and ${esc(eb.metric)} at <b>${esc(eb.estimate)}</b> (${esc(eb.confidence)})` : ''} — use these to frame diligence asks, not valuation.`; })() : 'Public-record financial picture for Punctual Pros', chips: d ? `${chip(`${(d.items || []).length} records`, PP)}${chip(`${(d.meta?.estimate_table || []).length} estimates`, PAL.amber)}${d.meta?.generated ? chip(`compiled ${dfull(fmt, d.meta.generated)}`) : ''}` : '' })}<div id="pp-fil"></div></div>`;
   // shared renderFilings prints nested key_figures objects as "[object Object]" and snake_case keys do not wrap — flatten to readable text first
   const flat = v => typeof v === 'boolean' ? (v ? 'yes' : 'no') : Array.isArray(v) ? v.map(flat).join(', ') : v && typeof v === 'object' ? Object.entries(v).map(([k, x]) => `${Copy.field(k)} ${typeof x === 'number' ? x.toLocaleString('en-US') : flat(x)}`).join(', ') : v;
   const dd = d ? { ...d, items: (d.items || []).map(i => i.key_figures && typeof i.key_figures === 'object' ? { ...i, key_figures: Object.fromEntries(Object.entries(i.key_figures).map(([k, v]) => [k, flat(v)])) } : i) } : d;
-  renderFilings(ctx, el.querySelector('#pp-fil'), { data: Copy.filings(dd), color: 'var(--c-pp)', title: 'Punctual Pros' });
+  renderFilings(ctx, el.querySelector('#pp-fil'), { data: Copy.filings(dd), color: PP, title: 'Punctual Pros' });
   // split the numbered synthesis into a scannable list
   const pr = el.querySelector('#pp-fil .prose');
-  if (pr && d?.meta?.financial_picture) { const parts = String(d.meta.financial_picture).split(/\s*(?=\b\d{1,2}\)\s)/).map(x => x.replace(/^\d{1,2}\)\s*/, '').trim()).filter(Boolean); if (parts.length > 2) pr.outerHTML = `<ol class="pp-fp small">${parts.map(x => `<li>${esc(x)}</li>`).join('')}</ol>`; }
+  if (pr && d?.meta?.financial_picture) { const parts = String(d.meta.financial_picture).split(/\s*(?=\b\d{1,2}\)\s)/).map(x => x.replace(/^\d{1,2}\)\s*/, '').trim()).filter(Boolean); if (parts.length > 2) pr.outerHTML = `<ol class="sys-card-list pp-fp">${parts.map(x => `<li>${esc(x)}</li>`).join('')}</ol>`; }
 }
 
 /* ═══ module ═══════════════════════════════════════════════════════════ */
 export default {
-  id: 'pp', name: 'Punctual Pros', tag: 'PA · NJ', color: 'var(--c-pp)', group: 'Portfolio',
+  id: 'pp', name: 'Punctual Pros', tag: 'PA · NJ', color: PP, group: 'Portfolio',
   tagline: 'Residential HVAC, plumbing & electrical — Central PA and the Jersey Shore',
   hq: { lat: 40.0629, lon: -76.37, label: 'East Hempfield, PA' },
   views: [
