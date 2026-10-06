@@ -1,10 +1,10 @@
-import * as Copy from './copy.js?v=20261006143735';
+import * as Copy from './copy.js?v=20261006155542';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition engine (M&A) — cross-portfolio buy-and-build intelligence.
    Datasets: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets, Competitor filings,
              Public comparables, Private-equity landscape, Broad Sky firm profile; sales/* (property transfers, lazy, theses view).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, fitTierOf } from '../assets/components.js?v=20261006143735';
+import { renderTargets, fitTierOf } from '../assets/components.js?v=20261006155542';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 const PLAT = {
@@ -89,7 +89,7 @@ const pctOf = (n, d) => d ? Math.round((n / d) * 100) : 0;
 const titleCase = s => String(s || '').replace(/_/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
 const ownerClass = s => { const x = String(s || '').toLowerCase().replace(/no sponsor disclosed|no pe affiliation/g, ''); if (!x.trim()) return 'Unverified'; if (/subsidiary|part of|venture-backed|pe-backed|private equity|backed by|\bpe\b/.test(x)) return 'Sponsor / corporate'; if (/founder|family/.test(x)) return 'Founder / family'; if (/unknown|unverified|not disclosed|not verified/.test(x)) return 'Unverified'; if (/esop|employee-owned/.test(x)) return 'ESOP'; if (/franchisee/.test(x)) return 'Franchisee'; return 'Private independent'; };
 const OWNER_COLOR = { 'Founder / family': 'var(--green)', 'Private independent': 'var(--accent)', Franchisee: 'var(--cyan)', ESOP: 'var(--amber)', Unverified: 'var(--dim)', 'Sponsor / corporate': 'var(--red)' };
-const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261006143735'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261006155542'; document.head.appendChild(l); } };
 const shortList = a => { const v = (Array.isArray(a) ? a : [a]).filter(Boolean).map(x => { const y = String(x).replace(/\s*\(.*?\)\s*/g, ' ').replace(/_/g, ' ').trim(); return y.length > 26 ? y.slice(0, 25).trim() + '…' : y; }); return v.length > 2 ? [...v.slice(0, 2), `+${v.length - 2}`] : v; };
 const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
 const pctTxt = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;
@@ -762,7 +762,7 @@ async function rivalsView(ctx) {
     title: 'Rival companies',
     sub: `<b>${all.length} rival companies tracked through lender filings, 10-Ks and PPP records. ${stressed.length} show credit stress (PIK interest or lender marks below 95) and ${refi.length} have debt maturing by 2027.</b> Stressed rivals are more likely to sell assets than to bid. ${ppR} of the ${all.length} compete with Punctual Pros, the most contested portfolio company, while the healthy, well-financed consolidators (Wrench, Apex, Redwood, Legacy) set add-on pricing.`,
     chips: `${fmt.chip('Lender marks = one lender’s slice, not the full facility', 'var(--amber)')}${fmt.chip('Estimates labelled est.')}`,
-    actions: `<a class="btn" href="#/pe">PE landscape →</a>`,
+    actions: `<a class="btn" href="#/pe">Private equity →</a>`,
   }) +
   ui.kpis([
     { label: 'Rival companies', value: fmt.num(all.length), sub: `${fmt.num(b.rivals.items?.length)} filings parsed`, color: 'var(--red)' },
@@ -776,7 +776,7 @@ async function rivalsView(ctx) {
   <div id="ma-rtbl"></div>
   <div class="src-line mt-8">Sources: SEC EDGAR BDC schedules of investments (10-Q/10-K, N-PORT), issuer 10-Ks, Form D and SBA PPP FOIA (Competitor filings, ${esc(fmt.num(b.rivals.items?.length))} filings) · estimates labelled est. · generated ${esc(m.generated || '—')}</div>
   <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Competitive intensity by sector', sub: 'PE landscape heat map: most active sponsors per BSP company sector. Click a row for detail.', body: `<div class="intens" id="ma-heatrows"></div>`, foot: ui.source('Private-equity landscape: sector heatmap', null, b.pe?.meta?.generated) })}
+    ${ui.panel({ title: 'Competitive intensity by sector', sub: 'Private-equity heat map: most active sponsors per BSP company sector. Click a row for detail.', body: `<div class="intens" id="ma-heatrows"></div>`, foot: ui.source('Private-equity landscape: sector heatmap', null, b.pe?.meta?.generated) })}
     ${ui.panel({ title: 'What the filings say', sub: 'Synthesis by the research team (competitor filings)', body: `<div class="fp">${(Array.isArray(m.financial_picture) ? m.financial_picture : [m.financial_picture]).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join('')}</div><div class="th-h">Next pulls</div><ul class="bul">${(m.next_pulls || []).slice(0, 5).map(x => `<li>${esc(x)}</li>`).join('')}</ul>`, scroll: true, foot: ui.source('SEC EDGAR (BDC 10-Q/10-K, N-PORT, 10-K, Form D), SBA PPP FOIA', 'https://efts.sec.gov/LATEST/search-index', m.generated) })}
   </div></div>`;
   ui.seg(el.querySelector('#ma-rseg'), [{ value: 'all', label: `All (${all.length})` }, ...Object.entries(OVERLAP).map(([k, o]) => ({ value: k, label: `${o.label} (${all.filter(r => r.overlapList.includes(k)).length})` }))], sel, v => app.go('ma', 'rivals', v === 'all' ? undefined : { o: v }));
@@ -799,8 +799,8 @@ async function rivalsView(ctx) {
   el.querySelectorAll('#ma-heatrows .r').forEach(n => n.onclick = () => { const h = heat[n.dataset.k]; const firms = (h.most_active || []).map(id => (b.pe?.items || []).find(f => f.id === id)).filter(Boolean);
     ctx.inspector.open({ title: esc(OVERLAP[n.dataset.k]?.label || titleCase(n.dataset.k)), sub: `${esc(h.sector)} · intensity ${esc(h.intensity)}`, color: OVERLAP[n.dataset.k]?.color,
       sections: [{ label: 'Read-out', html: `<div class="small text-2">${esc(h.note || '')}</div>` }, { label: `Most active sponsors (${firms.length})`, html: `<div class="m-ma-insp">${firms.map(f => `<div class="it"><div class="t">${esc(f.firm)} ${fmt.chip(`threat ${f.threat_level}`, f.threat_level === 'high' ? 'var(--red)' : f.threat_level === 'medium' ? 'var(--amber)' : 'var(--dim)')}</div><div class="w">${esc(clip(f.threat_rationale || f.strategy || '', 220))}</div>${f.website ? `<div class="kf"><a href="${esc(f.website)}" target="_blank" rel="noopener">${esc(fmt.host(f.website))}</a></div>` : ''}</div>`).join('')}</div>` },
-        { label: 'Next action', html: `<div class="small text-2">Review sponsor deal flow in the PE landscape module; flag any target in this sector that a listed sponsor has approached.</div>` }],
-      actions: [{ id: 'pe', label: 'Open PE landscape', onClick: () => app.go('pe') }] }); });
+        { label: 'Next action', html: `<div class="small text-2">Review sponsor deal flow in the Private equity module; flag any target in this sector that a listed sponsor has approached.</div>` }],
+      actions: [{ id: 'pe', label: 'Open Private equity', onClick: () => app.go('pe') }] }); });
   app.index(all.map(r => ({ label: r.name, sub: `Rival company · ${r.owner}`, href: `#/ma/rivals?r=${r.id}`, kind: 'Rival', color: '#ff5c5c' })));
   if (params.r) { const r = all.find(x => x.id === params.r); if (r) { tbl.select(r.id); openRival(ctx, b, r, peName); } }
 }
@@ -817,7 +817,7 @@ function openRival(ctx, b, r, peName) {
       r.estRows?.length ? { label: 'Analyst estimates', html: `<ul class="bul m-ma-insp">${r.estRows.map(e => `<li><b>${esc(e.metric)}</b>: ${esc(e.estimate)} <span class="dim">(${esc(e.confidence)})</span></li>`).join('')}</ul>` } : null,
       { label: 'Next action', html: `<div class="small text-2">${esc(r.signal === 'Stressed' ? 'Likely seller rather than bidder: map its branches in BSP portfolio company counties and approach its lenders or sponsor about carve-outs of non-core regions.' : r.signal === 'Refi due' ? 'Refinancing due soon: watch for a sale process or asset disposals; prepare a carve-out bid for overlapping branches.' : r.type === 'Public strategic' ? 'Use as a margin/scale benchmark and a potential exit buyer; track its M&A for price discovery.' : r.alsoTarget ? 'Also on a BSP target list: treat as a possible acquisition, not only a competitor.' : 'Well-financed bidder: avoid auctions it will contest; win proprietary deals on speed and operating credibility.')}</div>` },
     ].filter(Boolean),
-    actions: [{ id: 'pe', label: 'PE landscape', onClick: () => app.go('pe') }],
+    actions: [{ id: 'pe', label: 'Private equity', onClick: () => app.go('pe') }],
   });
 }
 

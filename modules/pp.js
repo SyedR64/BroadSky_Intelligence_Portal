@@ -1,9 +1,9 @@
-import * as Copy from './copy.js?v=20261006143735';
+import * as Copy from './copy.js?v=20261006155542';
 /* ═══════════════════════════════════════════════════════════════════════════
    Punctual Pros — residential HVAC · plumbing · electrical (Central PA + Jersey Shore)
    Views: overview · weather & demand · new-mover marketing · territory · market · targets · filings
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, renderFilings } from '../assets/components.js?v=20261006143735';
+import { renderTargets, renderFilings } from '../assets/components.js?v=20261006155542';
 
 const PP = '#f08a3c';
 const HQ = { lat: 40.0629, lon: -76.37, label: 'PP HQ · East Hempfield' };
@@ -64,7 +64,7 @@ const nameConflict = t => /punctual\s*pros/i.test(String(t?.company || ''));
 const pick = (o, ...ks) => { for (const k of ks) if (o && o[k] != null && o[k] !== '') return o[k]; return null; };
 
 function css() {
-  if (!document.getElementById('css-pp')) { const l = document.createElement('link'); l.id = 'css-pp'; l.rel = 'stylesheet'; l.href = 'modules/pp.css?v=20261006143735'; document.head.appendChild(l); }
+  if (!document.getElementById('css-pp')) { const l = document.createElement('link'); l.id = 'css-pp'; l.rel = 'stylesheet'; l.href = 'modules/pp.css?v=20261006155542'; document.head.appendChild(l); }
 }
 
 /* ── shared data ──────────────────────────────────────────────────────── */
@@ -203,6 +203,8 @@ function dayDrivers(days, i, M, hubAlerts) {
   return out;
 }
 
+/* Hub location label: the county only when it differs from the hub's own name, so a row never reads "Lancaster · Lancaster PA". */
+const hubWhere = h => [h.county && h.county !== h.name ? `${h.county} County` : '', h.state || ''].filter(Boolean).join(', ');
 function hubList(model, Z) {
   const it = model?.items || []; const zones = it.filter(i => i.component === 'nws_zone');
   let hubs = it.filter(i => i.component === 'weather_hub').map(h => {
@@ -414,7 +416,7 @@ async function weather(ctx) {
     const t = state.trade; const rgb = t === 'Peak' ? '255,92,92' : TRADE_RGB[t];
     const val = c => t === 'Peak' ? Math.max(...TRADES.map(x => c.idx[x])) : c.idx[t];
     const all = okRows.flatMap(g => g.cells.map(val)); const mx = Math.max(1.3, ...all);
-    root.querySelector('#wx-heat').innerHTML = `<div class="tbl-wrap" style="border:0;background:transparent"><table class="pp-heat"><thead><tr><th style="text-align:left">Hub</th>${dates.map((d, i) => `<th class="${okRows[0].days[i].past ? 'past' : ''}">${esc(dlab(d))}${okRows[0].days[i].past ? '<span class="obs">observed</span>' : i === 2 ? '<span class="obs">today</span>' : ''}</th>`).join('')}</tr></thead><tbody>${grid.map((g, gi) => `<tr><td class="lbl">${esc(g.hub.name)} <span class="dim">${esc(g.hub.county)}${g.hub.state ? ' ' + esc(g.hub.state) : ''}</span></td>${g.days ? g.cells.map((c, i) => { const v = val(c); const a = Math.max(0, Math.min(1, (v - 1) / (mx - 1))); return `<td class="${c.d.past ? 'past' : ''}" data-g="${gi}" data-i="${i}" style="background:${v > 1.0001 ? `rgba(${rgb},${(0.12 + a * 0.78).toFixed(2)})` : 'var(--surface-2)'};color:${a > .5 ? '#0a0e14' : v > 1.0001 ? 'var(--text)' : 'var(--dim)'}" title="${esc(g.hub.name)} ${esc(c.d.date)}: ${Math.round(v * 100)}">${Math.round(v * 100)}</td>`; }).join('') : `<td class="na" colspan="${dates.length}">forecast unavailable</td>`}</tr>`).join('')}</tbody></table></div>`;
+    root.querySelector('#wx-heat').innerHTML = `<div class="tbl-wrap" style="border:0;background:transparent"><table class="pp-heat"><thead><tr><th style="text-align:left">Hub</th>${dates.map((d, i) => `<th class="${okRows[0].days[i].past ? 'past' : ''}">${esc(dlab(d))}${okRows[0].days[i].past ? '<span class="obs">observed</span>' : i === 2 ? '<span class="obs">today</span>' : ''}</th>`).join('')}</tr></thead><tbody>${grid.map((g, gi) => `<tr><td class="lbl">${esc(g.hub.name)} <span class="dim">${esc(hubWhere(g.hub))}</span></td>${g.days ? g.cells.map((c, i) => { const v = val(c); const a = Math.max(0, Math.min(1, (v - 1) / (mx - 1))); return `<td class="${c.d.past ? 'past' : ''}" data-g="${gi}" data-i="${i}" style="background:${v > 1.0001 ? `rgba(${rgb},${(0.12 + a * 0.78).toFixed(2)})` : 'var(--surface-2)'};color:${a > .5 ? '#0a0e14' : v > 1.0001 ? 'var(--text)' : 'var(--dim)'}" title="${esc(g.hub.name)} ${esc(c.d.date)}: ${Math.round(v * 100)}">${Math.round(v * 100)}</td>`; }).join('') : `<td class="na" colspan="${dates.length}">forecast unavailable</td>`}</tr>`).join('')}</tbody></table></div>`;
     root.querySelector('#wx-heat-leg').innerHTML = `<span><i style="background:var(--surface-2)"></i>100 = baseline</span><span><i style="background:rgba(${rgb},.35)"></i>110–120 elevated</span><span><i style="background:rgba(${rgb},.9)"></i>≥${Math.round(mx * 100)} peak in window</span><span class="dim">Combination: max driver + 0.5 × each additional independent hazard (model formula); correlated drivers of one hazard count once</span>`;
     root.querySelectorAll('#wx-heat td[data-g]').forEach(td => td.onclick = () => openCell(grid[+td.dataset.g], +td.dataset.i));
   };
@@ -464,9 +466,9 @@ async function weather(ctx) {
 
   // hub conditions table
   const hubRows = grid.map(g => {
-    if (!g.days) return { hub: g.hub.name, county: g.hub.county, hu: g.hub.hu, na: true };
+    if (!g.days) return { hub: g.hub.name, county: hubWhere(g.hub), hu: g.hub.hu, na: true };
     const f = fIdx.map(i => g.days[i]); const peakI = fIdx.reduce((b, i) => Math.max(...TRADES.map(t => g.cells[i].idx[t])) > Math.max(...TRADES.map(t => g.cells[b].idx[t])) ? i : b, fIdx[0]);
-    return { hub: g.hub.name, county: `${g.hub.county}${g.hub.note ? ' · ' + g.hub.note : ''}`, hu: g.hub.hu, tmax: Math.max(...f.map(d => num(d.tmax)).filter(fin)), tmin: Math.min(...f.map(d => num(d.tmin)).filter(fin)), precip: Math.max(...f.map(d => num(d.precip)).filter(fin)), gust: Math.max(...f.map(d => num(d.gust)).filter(fin)), snow: sum(f, d => d.snow), peak: Math.round(Math.max(...TRADES.map(t => g.cells[peakI].idx[t])) * 100), _g: g };
+    return { hub: g.hub.name, county: `${hubWhere(g.hub)}${g.hub.note ? ' · ' + g.hub.note : ''}`, hu: g.hub.hu, tmax: Math.max(...f.map(d => num(d.tmax)).filter(fin)), tmin: Math.min(...f.map(d => num(d.tmin)).filter(fin)), precip: Math.max(...f.map(d => num(d.precip)).filter(fin)), gust: Math.max(...f.map(d => num(d.gust)).filter(fin)), snow: sum(f, d => d.snow), peak: Math.round(Math.max(...TRADES.map(t => g.cells[peakI].idx[t])) * 100), _g: g };
   });
   ui.table(root.querySelector('#wx-hubs'), {
     columns: [

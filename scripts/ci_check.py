@@ -8,8 +8,12 @@ without console errors or uncaught page errors.
 Pages:  every *.html in the repo except scripts/, .git/, node_modules/.
 Routes: app.html#/<module>/<view> for each module/view parsed from modules/*.js (cross-checked against the
         live App registry once the app boots).
-Ignored noise: luma.gl / deck.gl warnings, map-tile 4xx, failed loads of third-party URLs (live public APIs,
-        CDNs) — same-origin 404s are errors because they mean a missing file in this repo.
+Ignored noise: luma.gl / deck.gl warnings and map-tile failures.
+Warnings (listed in the report, never fatal): console errors caused by external hosts, i.e. third-party URLs (live
+        public APIs, CDNs) answering 429 or 5xx, timing out, failing CORS or dropping the connection. The site
+        falls back to data/live snapshots for those, so a rate limit upstream must not fail CI.
+Errors (fatal): everything local: same-origin 4xx/5xx (a missing file in this repo), uncaught page errors and any
+        console error that does not come from an external resource.
 Exit 1 if any page or route has errors. Writes <out>/ci_summary.json and <out>/ci_summary.md.
 Requires: pip install playwright && python -m playwright install chromium
 """
@@ -24,6 +28,7 @@ IGNORE_TEXT = [
     re.compile(r'WebGL|GPU stall|GL Driver Message|CONTEXT_LOST|THREE\.WebGLRenderer', re.I),   # headless GPU noise
     re.compile(r'Download the React DevTools', re.I),
 ]
+URL_RX = re.compile(r"https?://[^\s'\"()<>]+")
 TILE_RX = re.compile(r'tile|/\d+/\d+/\d+(@2x)?\.(png|jpg|jpeg|webp|pbf|mvt)|basemaps|cartocdn|openstreetmap|arcgisonline|mapbox|stadiamaps|maptiler', re.I)
 
 
@@ -96,39 +101,60 @@ def start_server(port):
 
 
 class Collector:
-    def __init__(self, origin):
-        self.origin, self.errors, self.ignored = origin, [], 0
+    """errors fail the run; warnings (external hosts: 429/5xx, CORS, timeouts, dropped connections) are listed only."""
+    RESOURCE_RX = re.compile(r'Failed to load resource|net::ERR_|blocked by CORS policy|CORS request did not succeed', re.I)
 
-    def _ignore(self, text, url=''):
-        if any(rx.search(text) for rx in IGNORE_TEXT): return True
-        if url and TILE_RX.search(url): return True
-        if url and urlparse(url).netloc and urlparse(url).netloc != urlparse(self.origin).netloc: return True
-        return False
+    def __init__(self, origin):
+        self.origin, self.errors, self.warnings, self.ignored = origin, [], [], 0
+        self.host = urlparse(origin).netloc
+
+    def _external(self, url):
+        n = urlparse(url).netloc if url else ''
+        return bool(n) and n != self.host
+
+    def _warn(self, kind, text, url=''):
+        if url and TILE_RX.search(url): self.ignored += 1; return   # map tiles are noise, not a signal
+        if any(w['text'] == text[:300] for w in self.warnings): return   # retries log the same line twice
+        self.warnings.append({'kind': kind, 'text': text[:300], 'url': url})
 
     def on_console(self, msg):
         if msg.type != 'error': return
         loc = (msg.location or {}).get('url', '') if isinstance(msg.location, dict) else ''
         text = msg.text
-        if 'Failed to load resource' in text:
-            if self._ignore(text, loc or 'external://'): self.ignored += 1; return   # resource errors with no url are external fetches
-        elif self._ignore(text):
-            self.ignored += 1; return
+        if any(rx.search(text) for rx in IGNORE_TEXT): self.ignored += 1; return
+        if self.RESOURCE_RX.search(text):
+            # the failing resource is the console location, or the first URL in the message (CORS, net::ERR_*)
+            urls = [loc] + URL_RX.findall(text) if 'Failed to load resource' in text else URL_RX.findall(text) + [loc]
+            target = next((u for u in urls if u and u.startswith('http')), '')
+            if target and self._external(target): self._warn('external', text, target); return
+            if not target and not loc: self._warn('external', text); return   # resource errors with no url are external fetches
         self.errors.append({'kind': 'console', 'text': text[:500], 'url': loc})
 
     def on_pageerror(self, err):
         text = str(err)
-        if self._ignore(text): self.ignored += 1; return
+        if any(rx.search(text) for rx in IGNORE_TEXT): self.ignored += 1; return
         self.errors.append({'kind': 'pageerror', 'text': text[:500]})
 
     def on_response(self, resp):
-        if resp.status >= 400 and urlparse(resp.url).netloc == urlparse(self.origin).netloc and not TILE_RX.search(resp.url):
+        if resp.status < 400 or TILE_RX.search(resp.url): return
+        if not self._external(resp.url):
             self.errors.append({'kind': 'http', 'text': f'{resp.status} {resp.url}'})
+        elif resp.status == 429 or resp.status >= 500:
+            self._warn('external', f'{resp.status} {resp.url}', resp.url)
+
+    def on_requestfailed(self, req):
+        if not self._external(req.url): return   # a local request that never completes surfaces as a console or http error
+        f = req.failure
+        reason = (f.get('errorText') if isinstance(f, dict) else f) or 'failed'
+        if 'ERR_ABORTED' in str(reason): return   # our own 6 s timeout or a navigation, not an upstream failure
+        self._warn('external', f'{reason} {req.url}', req.url)
 
 
 def attach(page, col):
     page.on('console', col.on_console)
     page.on('pageerror', col.on_pageerror)
     page.on('response', col.on_response)
+    page.on('requestfailed', col.on_requestfailed)
 
 
 async def check_page(ctx, base, path, settle, sem):
@@ -141,7 +167,7 @@ async def check_page(ctx, base, path, settle, sem):
             col.errors.append({'kind': 'navigation', 'text': str(e)[:300]})
         finally:
             await page.close()
-        return {'target': path, 'errors': col.errors, 'ignored': col.ignored, 'seconds': round(time.time() - t0, 1)}
+        return {'target': path, 'errors': col.errors, 'warnings': col.warnings, 'ignored': col.ignored, 'seconds': round(time.time() - t0, 1)}
 
 
 async def check_routes(ctx, base, routes, settle):
@@ -152,7 +178,7 @@ async def check_routes(ctx, base, routes, settle):
     live = await page.evaluate('() => window.BSP.App.modules.flatMap(m => m.views.map(v => [m.id, v.id]))')
     missing = [r for r in map(tuple, live) if r not in routes]
     for mid, vid in routes + missing:
-        n0 = len(col.errors); t0 = time.time()
+        n0, w0 = len(col.errors), len(col.warnings); t0 = time.time()
         try:
             await page.evaluate('h => { if (location.hash !== h) location.hash = h; }', f'#/{mid}/{vid}')
             await page.wait_for_function(
@@ -163,7 +189,7 @@ async def check_routes(ctx, base, routes, settle):
             if failed: col.errors.append({'kind': 'render', 'text': failed[:300]})
         except Exception as e:
             col.errors.append({'kind': 'navigation', 'text': str(e)[:300]})
-        results.append({'target': f'app.html#/{mid}/{vid}', 'errors': col.errors[n0:], 'ignored': 0, 'seconds': round(time.time() - t0, 1)})
+        results.append({'target': f'app.html#/{mid}/{vid}', 'errors': col.errors[n0:], 'warnings': col.warnings[w0:], 'ignored': 0, 'seconds': round(time.time() - t0, 1)})
     await page.close()
     unknown = [f'{m}/{v}' for m, v in routes if [m, v] not in live]
     return results, unknown
@@ -194,24 +220,33 @@ async def run(args):
     results = page_results + route_results
     flaky = [r['target'] for r in results if r.get('flaky_first_run')]
     bad = [r for r in results if r['errors']]
+    warned = [r for r in results if r.get('warnings')]
     summary = {'base': args.base, 'checked_at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), 'pages': len(pages), 'routes': len(route_results),
-               'failed': len(bad), 'ok': not bad, 'flaky_passed_on_retry': flaky, 'routes_parsed_but_not_registered': unknown, 'results': results}
+               'failed': len(bad), 'ok': not bad, 'warned': len(warned), 'flaky_passed_on_retry': flaky, 'routes_parsed_but_not_registered': unknown, 'results': results}
     os.makedirs(args.out, exist_ok=True)
     json.dump(summary, open(os.path.join(args.out, 'ci_summary.json'), 'w'), indent=1)
-    md = [f"# Pages check: {'PASS' if not bad else 'FAIL'}", '', f"{len(pages)} pages and {len(route_results)} app routes checked; {len(bad)} with errors.", '']
+    md = [f"# Pages check: {'PASS' if not bad else 'FAIL'}", '', f"{len(pages)} pages and {len(route_results)} app routes checked; {len(bad)} with errors, {len(warned)} with external-host warnings (not failing).", '']
     if unknown: md += [f"Routes in modules/*.js not registered at runtime: {', '.join(unknown)}", '']
     if flaky: md += [f"Passed on retry (first run had errors): {', '.join(flaky)}", '']
     md += ['| Target | Result | Time |', '|---|---|---|']
     for r in results:
-        md.append(f"| `{r['target']}` | {'ok' if not r['errors'] else str(len(r['errors'])) + ' error(s)'} | {r['seconds']}s |")
+        res = 'ok' if not r['errors'] else str(len(r['errors'])) + ' error(s)'
+        if r.get('warnings'): res += f" · {len(r['warnings'])} warning(s)"
+        md.append(f"| `{r['target']}` | {res} | {r['seconds']}s |")
     for r in bad:
         md += ['', f"## {r['target']}"] + [f"- **{e['kind']}**: {e['text']}" for e in r['errors'][:20]]
+    if warned:
+        md += ['', '## Warnings: external hosts (not failing)', '']
+        for r in warned:
+            md += [f"- `{r['target']}`: {w['text']}" for w in r['warnings'][:10]]
     open(os.path.join(args.out, 'ci_summary.md'), 'w').write('\n'.join(md) + '\n')
     for r in results:
         print(f"  {'ok  ' if not r['errors'] else 'FAIL'}  {r['target']}  ({r['seconds']}s){'  [flaky: passed on retry]' if r.get('flaky_first_run') else ''}")
         for e in r['errors'][:8]:
             print(f"        {e['kind']}: {e['text'][:220]}")
-    print(f"ci_check: {'PASS' if not bad else 'FAIL'} - {len(results) - len(bad)}/{len(results)} clean. Summary: {os.path.join(args.out, 'ci_summary.md')}")
+        for w in (r.get('warnings') or [])[:4]:
+            print(f"        warning (external): {w['text'][:200]}")
+    print(f"ci_check: {'PASS' if not bad else 'FAIL'} - {len(results) - len(bad)}/{len(results)} clean, {len(warned)} with external-host warnings. Summary: {os.path.join(args.out, 'ci_summary.md')}")
     return 0 if not bad else 1
 
 

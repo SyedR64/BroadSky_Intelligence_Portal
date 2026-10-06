@@ -169,3 +169,42 @@ Mobile-first. The top bar collapses to brand + Ask + menu at ≤960px (the sheet
 10. Author appears only as "Syed Rahman"; no email, phone, employer or other name anywhere in markup, metadata or scripts.
 11. Ask opens the chat with the page's persona (§5); ⌘K (⌘J in the portal) does the same; the floating launcher and Ask open the same widget.
 12. `scripts/check_page.sh "<path>" /tmp/x.png 1600 1000` shows zero console errors, and a 390px run (Playwright or a 390px iframe) shows `scrollWidth === 390`, a working menu sheet and readable crumb, hero and footer; open both PNGs and look at them.
+
+## 13 · Accessibility
+
+Target: WCAG 2.2 AA. Checked with axe-core 4.10 (Playwright, 1400px, light and dark where a page has both) plus a keyboard walk. The system carries the rules below so pages get them for free; page CSS and renderers must not undo them.
+
+**Contrast (tokens, system.css §1–2)**
+
+- Every text token passes 4.5:1 on every surface it can sit on, `--sys-bg-3` included. `--sys-mute` / `--sys-mute-2` are `#545c69` / `#646b77` light and `#8b98a8` / `#7a889a` dark. Never fade text with `opacity` or a lighter literal to make it "ghost"; use `--sys-mute-2` (the portal's `--dim` and `--ghost` both read it). Past or inactive cells fade their fill (`filter: saturate()`), not their number.
+- Status colours used **as text** read the text-safe shades `--sys-good-ink | --sys-warn-ink | --sys-bad-ink | --sys-info-ink` (75% of the status hue mixed with ink, declared on every theme root). `.sys-est`, `.sys-chip--good|warn|bad|info` and page-level status labels use them; the raw `--sys-good …` stay for dots, bars, borders and tints.
+- Company accents as text read `--co-ink` (45% accent + ink on light, 80% on dark), which passes on the page background and on `--co-soft`.
+- Text on an accent or brand **fill** (solid chips, avatar tiles, Gantt bars) uses `--sys-on-accent` (`#0a0e14`); white is allowed only on the deep fills that clear 4.5:1 (`--sys-good`, a darkened violet).
+- Pages that own their print layout (`data-sys-print="own"`, the memo) read the text-safe brand for their private orange accent.
+
+**Focus**
+
+- `:where(:focus-visible)` draws a 2px ring in `--sys-focus` on every interactive element of every page (`#b84a17` light, `#f0874a` on dark pages, the banner, the footer and dark bands; both clear 3:1). The rule has zero specificity, so a page may replace the ring (an input's box-shadow ring, a thicker stroke on an SVG node) but must never remove focus without a replacement.
+- Inside clipped scrollers (portal rail, view tabs, tables, palette) the ring draws inside the element (`outline-offset: -2px`) so it is never cut off.
+
+**Landmarks, skip link, names**
+
+- One `main#main` per page; the frame adds `a.sys-skip` ("Skip to content") as the first tab stop. It focuses `<main>` (made `tabindex="-1"`) without touching `location.hash`, so it is safe on hash-routed pages such as `app.html`.
+- The concept banner is a top-level `<aside aria-label="Concept notice">`; nothing on a page sits outside a landmark. Embedded widgets (the full-screen assistant) never add a second `<main>`.
+- Icon-only buttons carry an `aria-label` that starts with their visible text when there is any ("Ask the portfolio (opens the … chat)", "Close inspector", "Previous page", "Next page", "Open menu" / "Close menu", "Dismiss concept notice"). Search boxes without a visible label carry `aria-label`; selects sit inside their `<label>`.
+- A table wrap that scrolls but holds nothing focusable gets `tabindex="0"`, `role="region"` and a name from its caption or card heading (the frame does this on mount, on DOM changes and on resize), so keyboard users can scroll it.
+
+**Keyboard**
+
+- Tab order: skip link → brand → primary links → Ask → (portal) rail items → view tabs → console actions → view content (filters, sortable headers, rows) → chat composer when open.
+- Portal rail items are `role="link"` with `tabindex="0"` and `aria-current="page"` on the active module; Enter or Space opens the module and focus stays on the item after the route change. View tabs carry `aria-current="page"`; segmented buttons and filter toggles carry `aria-pressed`.
+- `UI.table`: sortable headers are focusable with `aria-sort` and sort on Enter or Space; when a table has a row inspector, rows are focusable and open it on Enter or Space.
+- The inspector moves focus to its close button when opened from the keyboard; Escape or the close button closes it and returns focus to the row or control that opened it. Escape inside the chat closes only the chat.
+- Escape closes the floating chat panel and returns focus to its launcher; ⌘K / ⌘J still open it.
+- The mobile menu sheet (≤960px) traps focus while open (menu button plus sheet links form one loop), opens onto its first link when activated from the keyboard, and Escape closes it and returns focus to the menu button.
+
+**Checks before shipping a page**
+
+1. axe-core shows no serious or critical violations at 1400px in each theme the page supports (`color-contrast`, `button-name`, `label`, `link-name`, `duplicate-id`, `scrollable-region-focusable`, landmark rules).
+2. A keyboard-only pass reaches every control with a visible ring, and Escape closes whatever is open.
+3. Page markup follows the ARIA patterns it claims: `role="tablist"` holds only `role="tab"` children (no `aria-pressed` on tabs), `aria-expanded` only on elements that support it (not on plain table rows), `aria-label` only on elements with a role, `<aside>` only at the top level, headings step down one level at a time, and an SVG with `role="img"` contains no focusable nodes.

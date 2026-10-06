@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261006143735';
+import * as Copy from './copy.js?v=20261006155542';
 /* PE landscape — history, trajectory, deal flow and buy-and-build benchmarks for the sponsors competing with Broad Sky.
    Data: Private-equity landscape (35 firms), Broad Sky firm profile (BSP reference), Competitor filings (financials of rival companies),
    sales/* (home-sale turnover in the counties each platform serves: PP PA/NJ, CET MA/CT/RI, BPI DC, Fair Harbor NYC). */
@@ -100,7 +100,7 @@ async function load(ctx) {
   return _bundle;
 }
 
-function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261006143735'; document.head.appendChild(l); } }
+function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261006155542'; document.head.appendChild(l); } }
 function missing(ctx, title) { ctx.el.innerHTML = ctx.ui.pageHead({ title, sub: 'Competitive intelligence on the private-equity sponsors bidding against Broad Sky.' }) + ctx.ui.note('Research dataset <b>Private-equity landscape</b> is not yet available (still being verified). This view will populate automatically once it is published.', 'warn'); }
 const srcFoot = (ctx, meta, extra) => ctx.ui.source(SRC_PE.text, null, meta?.generated) + (extra ? ` <span class="dim">· ${extra}</span>` : '');
 

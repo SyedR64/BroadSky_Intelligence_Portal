@@ -1,9 +1,9 @@
-import * as Copy from './copy.js?v=20261006143735';
+import * as Copy from './copy.js?v=20261006155542';
 /* ═══════════════════════════════════════════════════════════════════════════
    CET — Commonwealth Electrical Technologies (Worcester + Taunton MA; NuWave, Norwell MA;
    Horton Electrical Services, CT). New England only — NYC analysis archived (CEO guidance).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, renderFilings, opportunityCard, fitTierOf } from '../assets/components.js?v=20261006143735';
+import { renderTargets, renderFilings, opportunityCard, fitTierOf } from '../assets/components.js?v=20261006155542';
 
 const COLOR = 'var(--c-cet)';
 const HEX = { cet: '#4c8dff', cyan: '#3fd0e0', amber: '#f5b73d', green: '#2ecc8f', purple: '#9d7bff', blue: '#4c8dff', muted: '#8b98a8', red: '#ff5c5c', orange: '#f08a3c', dim: '#5b6b7f', pink: '#e05c8a', sky: '#8ab4ff' };
@@ -26,7 +26,7 @@ const SRC = {
 };
 
 /* ── helpers ────────────────────────────────────────────────────────────── */
-function ensureCss() { if (!document.getElementById('css-cet')) { const l = document.createElement('link'); l.id = 'css-cet'; l.rel = 'stylesheet'; l.href = 'modules/cet.css?v=20261006143735'; document.head.appendChild(l); } }
+function ensureCss() { if (!document.getElementById('css-cet')) { const l = document.createElement('link'); l.id = 'css-cet'; l.rel = 'stylesheet'; l.href = 'modules/cet.css?v=20261006155542'; document.head.appendChild(l); } }
 const safe = p => Promise.resolve(p).catch(e => { console.warn(e?.message || String(e)); return null; });
 const sum = (a, f) => a.reduce((s, x) => s + (Number(f(x)) || 0), 0);
 const median = a => { const v = a.filter(x => x != null && !isNaN(x)).sort((x, y) => x - y); if (!v.length) return null; const m = v.length >> 1; return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };

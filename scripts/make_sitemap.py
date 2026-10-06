@@ -90,6 +90,8 @@ def pages():
 
 def modules():
     reg = (ROOT / 'modules/registry.js').read_text()
+    _nm = re.search(r"const NAMES = \{([^}]*)\}", reg)
+    names = dict(re.findall(r"(\w+):\s*'([^']+)'", _nm.group(1))) if _nm else {}
     files = re.findall(r"import \w+ from '\./([\w-]+)\.js", reg)
     mods = []
     for f in files:
@@ -105,7 +107,7 @@ def modules():
         vi = s.find('views:', i)
         views = re.findall(r"\{\s*id:\s*'([\w-]+)',\s*name:\s*'([^']+)'", s[vi:]) if vi > 0 else []
         if mid:
-            mods.append((mid.group(1), mname.group(1) if mname else f, views))
+            mods.append((mid.group(1), names.get(mid.group(1), mname.group(1) if mname else f), views))
     return mods
 
 

@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="../../assets/system.css?v=20261006143735">
-<link rel="stylesheet" href="growth-plan.css?v=20261006143735">
+<link rel="stylesheet" href="../../assets/system.css?v=20261006155542">
+<link rel="stylesheet" href="growth-plan.css?v=20261006155542">
 </head>
 <body data-co="ts">
 <main id="main">
@@ -82,7 +82,7 @@
     <div class="pb-phase-bar sys-chips" role="tablist" aria-label="Expansion phases" id="phase-bar"></div>
     <div class="pb-map-grid">
       <div class="pb-map-wrap">
-        <div id="leaf" class="pb-leaf" role="img" aria-label="Map of scored lab sites by state, Thomas Scientific locations and add-on targets, coloured by expansion phase"></div>
+        <div id="leaf" class="pb-leaf" role="region" aria-label="Map of scored lab sites by state, Thomas Scientific locations and add-on targets, coloured by expansion phase"></div>
         <div class="pb-map-legend" id="map-legend"></div>
         <div class="pb-map-status" id="map-status">Loading 27,503 sites…</div>
       </div>
@@ -259,10 +259,10 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script type="module">
-import { Frame } from '../../assets/frame.js?v=20261006143735';
-import { Data, Fmt, esc } from '../../assets/core.js?v=20261006143735';
-import { Chat } from '../../assets/chat.js?v=20261006143735';
-import { boot } from './growth-plan.js?v=20261006143735';
+import { Frame } from '../../assets/frame.js?v=20261006155542';
+import { Data, Fmt, esc } from '../../assets/core.js?v=20261006155542';
+import { Chat } from '../../assets/chat.js?v=20261006155542';
+import { boot } from './growth-plan.js?v=20261006155542';
 const frame = Frame.mount({});
 boot({ Data, Fmt, esc, Chat, Frame, frame });
 </script>

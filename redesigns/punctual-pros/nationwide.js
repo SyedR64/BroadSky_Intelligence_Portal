@@ -131,7 +131,7 @@ function hero() {
   const p2 = S.K('expansion_phase')[1]?.data_points || {};
   const strip = [
     [comma(p1.core_zips), 'Core ZIP codes', `${comma((p1.core_housing_units || 0) / 1e6, 1)}M homes today`],
-    [comma(p1.adjacent_tier1_zips_total), 'Tier-1 ZIPs next door', 'The adjacent ring for Phase 1'],
+    [comma(p1.adjacent_tier1_zips_total), 'Tier-1 ZIPs next door', 'Opportunity-score Tier 1 in the Phase 1 ring'],
     [comma((S.ma?.items || []).length), 'Add-on targets screened', 'PA, NJ, MD, DE and NY'],
     [comma(p4.fdd_system_outlets_end_2025?.total), 'Tri-brand outlets', 'One Hour, Ben Franklin, Mister Sparky nationally'],
     [comma(p2.pe_sponsors_overlapping_punctual_pros), 'PE sponsors', 'Chasing the same founders'],
@@ -160,13 +160,13 @@ function template() {
   more.onclick = () => { $('#timeline').classList.toggle('all'); setMore(); };
   $('#timeline').after(more); setMore();
   const _draw = draw;
-  $$('#tpl-seg button').forEach(b => b.onclick = () => { $$('#tpl-seg button').forEach(x => { x.setAttribute('aria-selected', String(x === b)); x.setAttribute('aria-pressed', String(x === b)); }); _draw(b.dataset.f); setMore(); });
+  $$('#tpl-seg button').forEach(b => b.onclick = () => { $$('#tpl-seg button').forEach(x => { x.setAttribute('aria-pressed', String(x === b)); }); _draw(b.dataset.f); setMore(); });
   $('#tpl-caveat').textContent = 'Smith + Howard is an Atlanta accounting and advisory firm. Frontline, which serves law firms, was already national when Broad Sky invested, so it appears as a secondary analog.';
   const r = S.road, a = r[0] || {}, z = r[r.length - 1] || {}, an = S.nw?.meta?.anchors || {};
   const rows = [
     ['Start', 'One Atlanta office, ~100 professionals (Nov 2022)', `Lancaster HQ + Horvath (NJ), ${esc(an.staff_est || '~130–150')} staff, ${comma(an.territories)} territories`],
     ['Revenue', '<b>$53.2M</b> FY23 → <b>~$175M</b> expected 2026', `<b>${usd(a.revenue_usd)}</b> today (FY25 ~${usd(an.fy2025_revenue_est_usd)}) → <b>${usd(z.revenue_usd)}</b> month ${z.month} <span class="sys-est">est.</span>`],
-    ['Add-ons', '<b>9</b> in 3.5 years', '<b>1</b> so far (Horvath, Dec 2024) → 2 in year 1, then a steady cadence'],
+    ['Add-ons', '<b>9</b> in about 3.7 years', '<b>1</b> so far (Horvath, Dec 2024) → 2 in year 1, then a steady cadence'],
     ['People', '<b>~100 → ~800</b> professionals', `<b>${comma(a.technicians)} → ${comma(z.technicians)}</b> technicians <span class="sys-est">est.</span>`],
     ['Footprint', '1 office → 11 locations, 7 states + India', '9 PA counties + 2 NJ → PA, NJ, MD, DE, southern NY → national'],
     ['Exit', 'TPG Growth, closed Aug 6 2026 (~4x revenue)', `~${(z.revenue_usd / a.revenue_usd).toFixed(1)}x today's revenue, sold into GF Data's 10x EBITDA tier`],
@@ -177,7 +177,7 @@ function template() {
     ['Bauknight Pietras & Stormer: ~90 staff, the biggest local firm', 'Oliver Heating & Cooling: 230+ staff, anchor-size deal'],
     ['Geels Norton: adds a cyber capability buyers pay for', 'ServiceOS + AI agents: the capability buyers pay for'],
   ];
-  $('#compare').innerHTML = `<div class="sys-card cmp" data-sys-theme="dark"><span class="sys-card-label">Smith + Howard actuals vs the Punctual Pros plan</span><h3 class="sys-card-title">Same plan, new sector</h3><table><thead><tr><th></th><th>Smith + Howard</th><th>Punctual Pros</th></tr></thead><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody></table><div class="pairs">${pairs.map(p => `<div class="pair"><span>${esc(p[0])}</span><i>→</i><span>${esc(p[1])}</span></div>`).join('')}</div><p class="sys-src"><b>Source:</b> Smith + Howard and TPG Growth releases; Punctual Pros nationwide plan.</p></div>`;
+  $('#compare').innerHTML = `<div class="sys-card cmp" data-sys-theme="dark"><span class="sys-card-label">Smith + Howard actuals vs the Punctual Pros plan</span><h3 class="sys-card-title">Same plan, new sector</h3><table><thead><tr><th><span class="sys-sr">Measure</span></th><th>Smith + Howard</th><th>Punctual Pros</th></tr></thead><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody></table><div class="pairs">${pairs.map(p => `<div class="pair"><span>${esc(p[0])}</span><i>→</i><span>${esc(p[1])}</span></div>`).join('')}</div><p class="sys-src"><b>Source:</b> Smith + Howard and TPG Growth releases; Punctual Pros nationwide plan.</p></div>`;
 }
 
 /* ── 3 · map ────────────────────────────────────────────────────────────── */
@@ -275,7 +275,7 @@ async function buildMap(Data) {
 
 function phaseBar(phases) {
   const short = ['Densify the core', 'Tuck-ins PA·NJ·MD·DE·NY', 'Mid-Atlantic metros', 'National consolidator'];
-  $('#phase-bar').innerHTML = `<button class="sys-chip" type="button" role="tab" aria-selected="true" aria-pressed="true" data-p="all"><b>All phases</b><small>0–60 mo</small></button>${phases.map((p, i) => `<button class="sys-chip" type="button" role="tab" aria-selected="false" aria-pressed="false" data-p="${i + 1}"><span class="sw" style="background:${PHASE_C[i + 1]}"></span><b>${i + 1} · ${esc(short[i] || p.phase)}</b><small>${esc(p.months)} mo</small></button>`).join('')}<button class="sys-btn sys-btn--secondary sys-btn--sm ph-play" type="button" id="ph-play" aria-label="Play through the phases"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>Play</button>`;
+  $('#phase-bar').innerHTML = `<button class="sys-chip" type="button" aria-pressed="true" data-p="all"><b>All phases</b><small>0–60 mo</small></button>${phases.map((p, i) => `<button class="sys-chip" type="button" aria-pressed="false" data-p="${i + 1}"><span class="sw" style="background:${PHASE_C[i + 1]}"></span><b>${i + 1} · ${esc(short[i] || p.phase)}</b><small>${esc(p.months)} mo</small></button>`).join('')}<button class="sys-btn sys-btn--secondary sys-btn--sm ph-play" type="button" id="ph-play" aria-label="Play through the phases"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>Play</button>`;
   $$('#phase-bar .sys-chip').forEach(b => b.onclick = () => { stopPlay(); setPhase(b.dataset.p); });
   $('#ph-play').onclick = () => { if (M.timer) { stopPlay(); return; } const seq = ['1', '2', '3', '4', 'all']; let i = 0; const step = () => { setPhase(seq[i]); i++; if (i >= seq.length) { stopPlay(); return; } M.timer = setTimeout(step, 4200); }; $('#ph-play').lastChild.textContent = 'Stop'; step(); };
 }
@@ -283,7 +283,7 @@ function stopPlay() { clearTimeout(M.timer); M.timer = null; const b = $('#ph-pl
 
 function setPhase(p, fly = true) {
   S.phase = p; const G = M.groups, map = M.map; if (!map) return;
-  $$('#phase-bar .sys-chip').forEach(b => { b.setAttribute('aria-selected', String(b.dataset.p === p)); b.setAttribute('aria-pressed', String(b.dataset.p === p)); });
+  $$('#phase-bar .sys-chip').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.p === p)); });
   const want = new Set(['hq']);
   const st = [];
   if (p === 'all') { want.add('core').add('horv').add('adj').add('top'); st.push('PA', 'NJ', 'MD', 'DE'); [1, 2, 3].forEach(n => want.add('ring' + n)); }
@@ -415,7 +415,7 @@ function agents() {
   const ag = S.K('ai_agent').slice().sort((a, b) => (a.weeks_to_deploy || 99) - (b.weeks_to_deploy || 99)); if (!ag.length) return;
   const counts = {}; ag.forEach(a => counts[a.who_it_helps] = (counts[a.who_it_helps] || 0) + 1);
   const keys = ['all', ...Object.keys(WHO).filter(k => counts[k])];
-  $('#ag-seg').innerHTML = keys.map(k => `<button class="sys-chip" role="tab" aria-selected="${k === 'all'}" aria-pressed="${k === 'all'}" data-w="${k}">${k === 'all' ? 'All agents' : 'Helps the ' + WHO[k].label.toLowerCase()}<span class="c">${k === 'all' ? ag.length : counts[k]}</span></button>`).join('');
+  $('#ag-seg').innerHTML = keys.map(k => `<button class="sys-chip" type="button" aria-pressed="${k === 'all'}" data-w="${k}">${k === 'all' ? 'All agents' : 'Helps the ' + WHO[k].label.toLowerCase()}<span class="c">${k === 'all' ? ag.length : counts[k]}</span></button>`).join('');
   const maxW = Math.max(...ag.map(a => a.weeks_to_deploy || 0), 10);
   const draw = w => {
     const list = w === 'all' ? ag : ag.filter(a => a.who_it_helps === w);
@@ -429,7 +429,7 @@ function agents() {
     $$('#runway .rw-row').forEach(r => { const go = () => { const c = $(`#${CSS.escape(r.dataset.id)}`); if (!c) return; c.scrollIntoView({ behavior: 'smooth', block: 'center' }); $$('.agent.hl').forEach(x => x.classList.remove('hl')); c.classList.add('hl'); setTimeout(() => c.classList.remove('hl'), 2200); }; r.onclick = go; r.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }; });
   };
   draw('all');
-  $$('#ag-seg button').forEach(b => b.onclick = () => { $$('#ag-seg button').forEach(x => { x.setAttribute('aria-selected', String(x === b)); x.setAttribute('aria-pressed', String(x === b)); }); draw(b.dataset.w); });
+  $$('#ag-seg button').forEach(b => b.onclick = () => { $$('#ag-seg button').forEach(x => { x.setAttribute('aria-pressed', String(x === b)); }); draw(b.dataset.w); });
 }
 
 /* ── 6 · pros ───────────────────────────────────────────────────────────── */
@@ -638,7 +638,7 @@ function chatIntents() {
     { id: 'nw_agents', rx: [/\bai\b|agents?\b|automat|efficien|copilot|pay ?back/i], run: async q => { const w = whoOf(q); let ag = S.K('ai_agent'); if (w) ag = ag.filter(a => a.who_it_helps === w); ag = ag.slice().sort((a, b) => (a.weeks_to_deploy || 99) - (b.weeks_to_deploy || 99)); const f = ag[0];
       return { html: `<h4>AI agents${w ? ` that help the ${esc(WHO[w].label.toLowerCase())}` : ''}, fastest to value first</h4>${f ? `<p>Fastest: <b>${esc(f.agent)}</b>, live in ${N(f.weeks_to_deploy + ' weeks')}. ${esc(f.metric_claim)}</p>` : ''}${T(['Agent', 'Helps', 'Live in', 'Published benchmark'], ag.map(a => [`<b>${esc(a.agent.replace(/\s*\(.*\)/, ''))}</b><br><span style="color:var(--ch-mute)">${esc((a.vendor_examples || []).slice(0, 2).join(', '))}</span>`, esc(a.who_it_helps), N(a.weeks_to_deploy + ' wk'), N(fmtVal(a.metric_value, a.metric_unit)) + ' ' + esc(valUnit(a.metric_value, a.metric_unit)[1])]))}<div class="ch-src">Weeks to deploy is the speed proxy; actual payback depends on Punctual Pros' call volume and ticket size. Results are vendor-published case studies, so treat them as upper bounds.</div>`, links: [A('#agents', 'See the agent catalog'), A('serviceos.html', 'ServiceOS demo')], followups: w ? ['Which AI agents pay back fastest?', 'What is the 100-day integration plan?'] : ['Which AI agents help technicians?', 'Which AI agents help the office?'] }; } },
     { id: 'nw_template', rx: [/smith|howard|template|\btpg\b|law.?firm|accounting firm|regional.{0,15}national|compare|analog/i], run: async () => { const t = S.K('template').filter(x => !/frontline/i.test(x.company)).sort((a, b) => String(a.date).localeCompare(String(b.date))); const z = S.road[S.road.length - 1] || {}, an = S.nw?.meta?.anchors || {};
-      return { html: `<h4>Smith + Howard vs Punctual Pros</h4>${T(['', 'Smith + Howard (actual)', 'Punctual Pros (plan, est.)'], [['Start', '1 Atlanta office, ~100 people', `Lancaster + Horvath NJ, ${esc(an.staff_est)} staff`], ['Revenue', '$53.2M FY23 → ~$175M 2026', `${usd(S.road[0]?.revenue_usd)} today → ${usd(z.revenue_usd)} month ${z.month}`], ['Add-ons', '9 in 3.5 years', '1 so far (Horvath) → 2 in year 1, then Phases 2–4'], ['Exit', 'TPG Growth, Aug 2026, ~4x revenue', `~${(z.revenue_usd / (S.road[0]?.revenue_usd || 1)).toFixed(1)}x today's revenue, sold into the 10x EBITDA tier`]])}<p><b>Key moves:</b> ${t.filter(x => /^Add-on/.test(x.event)).map(x => esc(x.company)).join(', ')}.</p><div class="ch-src">Smith + Howard is an accounting and advisory firm, not a law firm. Frontline (managed IT for law firms) is a secondary analog because it was already national at entry.</div>`, links: [A('#template', 'See the timeline')], followups: ['Which counties come first?', 'What are the top tuck-in targets?'] }; } },
+      return { html: `<h4>Smith + Howard vs Punctual Pros</h4>${T(['', 'Smith + Howard (actual)', 'Punctual Pros (plan, est.)'], [['Start', '1 Atlanta office, ~100 people', `Lancaster + Horvath NJ, ${esc(an.staff_est)} staff`], ['Revenue', '$53.2M FY23 → ~$175M 2026', `${usd(S.road[0]?.revenue_usd)} today → ${usd(z.revenue_usd)} month ${z.month}`], ['Add-ons', '9 in about 3.7 years', '1 so far (Horvath) → 2 in year 1, then Phases 2–4'], ['Exit', 'TPG Growth, Aug 2026, ~4x revenue', `~${(z.revenue_usd / (S.road[0]?.revenue_usd || 1)).toFixed(1)}x today's revenue, sold into the 10x EBITDA tier`]])}<p><b>Key moves:</b> ${t.filter(x => /^Add-on/.test(x.event)).map(x => esc(x.company)).join(', ')}.</p><div class="ch-src">Smith + Howard is an accounting and advisory firm, not a law firm. Frontline (managed IT for law firms) is a secondary analog because it was already national at entry.</div>`, links: [A('#template', 'See the timeline')], followups: ['Which counties come first?', 'What are the top tuck-in targets?'] }; } },
     { id: 'nw_pros', rx: [/technicians?|\btechs\b|(?<!punctual )\bpros\b|contractors?|hvac (people|workers)|plumbers?|electricians?|shortage|apprentic|training|talent|hiring|recruit|veteran|thaddeus|workforce/i], run: async () => { const p = S.K('pro_program'); const bls = p.filter(x => /\(BLS\)/.test(x.program)); const progs = p.filter(x => !/shortage|wage benchmark/i.test(x.program));
       return { html: `<h4>Helping the pros</h4><p>BLS projects ${N(comma(bls.reduce((a, b) => a + b.metric_value, 0)))} openings a year for HVAC techs, plumbers and electricians (${bls.map(b => `${esc(b.program.replace(/^Technician shortage - |\s*\(BLS\)/g, ''))} ${N(comma(b.metric_value))}`).join(', ')}). Technicians, not demand, limit growth.</p><ul>${progs.map(x => `<li><b>${esc(x.program)}</b>: ${N(fmtVal(x.metric_value, x.metric_unit))} ${esc(valUnit(x.metric_value, x.metric_unit)[1])}</li>`).join('')}</ul>`, links: [A('#pros', 'Helping the pros')], followups: ['Which AI agents help technicians?', 'What do we need from the Portfolio Resource Group?'] }; } },
     { id: 'nw_authority', rx: [/authority|franchis|one hour|ben(jamin)? franklin|mister sparky|\bfdd\b|tri-?brand/i], run: async () => { const d = ph[3]?.data_points || {}, me = S.nw?.meta?.market_evidence?.authority_brands || {}; const o = d.fdd_system_outlets_end_2025 || {};

@@ -38,6 +38,8 @@
 .tabs button[aria-selected="true"]{background:var(--sys-ink);color:var(--sys-on-ink)}
 .tabs button:hover:not([aria-selected="true"]){background:var(--sys-bg-3);color:var(--sys-ink)}
 .demo-bar .sys-est{flex:none}
+/* selected chips keep light-on-ink text under hover (system.css button.sys-chip:hover outranks the pressed state) */
+:is(button,a).sys-chip:is([aria-pressed="true"],[aria-current]):hover{background:var(--sys-ink);border-color:var(--sys-ink);color:var(--sys-on-ink)}
 .demo-bar .sys-est.alert{color:var(--sys-bad);background:color-mix(in srgb,var(--sys-bad) 10%,transparent);border-color:color-mix(in srgb,var(--sys-bad) 30%,transparent)}
 .pane{padding:20px}
 .pane[hidden]{display:none}

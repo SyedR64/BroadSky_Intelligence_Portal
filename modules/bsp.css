@@ -19,7 +19,8 @@ html[data-theme="light"] .m-bsp{ --bn-1:#2a78d6; --bn-2:#eb6834; --bn-3:#1baf7a;
 .m-bsp .bsp-mk > :not(title):not(.bsp-hit){fill:var(--pc);stroke:var(--sys-surface);stroke-width:2}
 .m-bsp .bsp-mk-exit > rect{fill:var(--sys-surface)!important;stroke:var(--pc)!important;stroke-width:2.5!important}
 .m-bsp .bsp-hit{fill:transparent;stroke:none}
-.m-bsp .bsp-mk:hover > :not(.bsp-hit),.m-bsp .bsp-mk:focus-visible > :not(.bsp-hit),.m-bsp .bsp-mk.sel > :not(.bsp-hit){stroke:var(--sys-ink);stroke-width:2}
+.m-bsp .bsp-mk:hover > :not(.bsp-hit),.m-bsp .bsp-mk.sel > :not(.bsp-hit){stroke:var(--sys-ink);stroke-width:2}
+.m-bsp .bsp-mk:focus-visible > :not(.bsp-hit){stroke:var(--sys-focus);stroke-width:3}
 .m-bsp .bsp-key{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:var(--sys-mute)}
 .m-bsp .bsp-key span{display:inline-flex;align-items:center;gap:6px}
 .m-bsp .bsp-key svg{fill:var(--sys-mute)}
@@ -64,6 +65,8 @@ html[data-theme="light"] .m-bsp{ --bn-1:#2a78d6; --bn-2:#eb6834; --bn-3:#1baf7a;
 .m-bsp .bn-e{stroke:var(--bn-edge);stroke-width:.8;transition:opacity .15s}
 .m-bsp .bn-n{cursor:pointer;outline:none;transition:opacity .15s}
 .m-bsp .bn-n > :not(title):not(.bn-hit):not(text){stroke:var(--bn-bg);stroke-width:1.5}
+.m-bsp .bn-n:focus-visible > :not(title):not(.bn-hit):not(text){stroke:var(--sys-focus);stroke-width:3}   /* keyboard focus on a network node (outline is off for SVG nodes) */
+.m-bsp .bn-n:focus-visible .bn-t{display:block}
 .m-bsp .bn-hit{fill:transparent}
 .m-bsp .bn-g1{fill:var(--bn-1)} .m-bsp .bn-g2{fill:var(--bn-2)} .m-bsp .bn-g3{fill:var(--bn-3)} .m-bsp .bn-g4{fill:var(--bn-4)} .m-bsp .bn-g5{fill:var(--bn-5)} .m-bsp .bn-g6{fill:var(--bn-6)} .m-bsp .bn-g7{fill:var(--bn-7)}
 .m-bsp .bn-g7 .bn-ring,.m-bsp svg.bn-g7 .bn-ring{fill:var(--bn-bg);stroke:var(--bn-7)!important;stroke-width:2.2!important}

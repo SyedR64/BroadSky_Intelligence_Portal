@@ -6,11 +6,11 @@
    Datasets: Broad Sky acquisition methodology, Broad Sky professional network,
    Punctual Pros / CET / Frontline and Thomas Scientific add-on target screens.
    ═══════════════════════════════════════════════════════════════════════════ */
-import * as Copy from './copy.js?v=20261006143735';
+import * as Copy from './copy.js?v=20261006155542';
 import {
   loadBundle, isTargetTest, PLATFORMS, PORDER, sellerLabel, DEAL_TYPE, STRENGTH, TESTS, critShort, GROUPS, TYPE_LABEL, REL_LABEL,
   graphSVG, legendHTML, stripSVG, bindGraph, nodeDetail, introFor, firstCallScript, nextFive, fmtMonth, fmtDay, monthsBetween, clip, host, TODAY,
-} from './bsp-lib.js?v=20261006143735';
+} from './bsp-lib.js?v=20261006155542';
 
 const COLOR = 'var(--c-bsp)';
 const PCOL = { pp: 'var(--c-pp)', cet: 'var(--c-cet)', fl: 'var(--c-fl)', ts: 'var(--c-ts)', bpi: 'var(--c-bpi)', fh: 'var(--c-fh)', sh: 'var(--sys-mute)' };
@@ -25,7 +25,7 @@ const SRC_POOLS = 'Add-on target screens: Punctual Pros, CET, Frontline, Thomas 
 /* free text from the deal record in plain English: ISO dates in words ("2027-12-14" → "Dec 14, 2027", "2026-06" → "Jun 2026", "Q4-2024" → "Q4 2024") */
 const words = s => s == null ? s : Copy.text(String(s).replace(/\bQ([1-4])-((?:19|20)\d\d)\b/g, 'Q$1 $2').replace(/\b((?:19|20)\d\d)-(0[1-9]|1[0-2])\b(?!-\d)/g, (m, y, mo) => fmtMonth(`${y}-${mo}-01`)));
 const openInsp = (ctx, opts) => { ctx.inspector.open(opts); document.querySelector('#inspector .insp-body')?.classList.add('m-bsp'); };
-const injectCss = () => { if (!document.getElementById('css-bsp')) { const l = document.createElement('link'); l.id = 'css-bsp'; l.rel = 'stylesheet'; l.href = 'modules/bsp.css?v=20261006143735'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-bsp')) { const l = document.createElement('link'); l.id = 'css-bsp'; l.rel = 'stylesheet'; l.href = 'modules/bsp.css?v=20261006155542'; document.head.appendChild(l); } };
 
 let _b = null;
 function bundle(data) {
@@ -132,7 +132,7 @@ async function viewPatterns(ctx) {
   const first = PORDER.map(p => c.firstAddon.find(f => f.p === p)).filter(f => f && f.months != null).map(f => ({ label: PLATFORMS[f.p].short, value: Math.round(f.months * 10) / 10 }));
   const waiting = c.firstAddon.filter(f => f.months == null).map(f => `${PLATFORMS[f.p].short} (${n1(f.sinceMonths)} months, none yet)`);
   const rate = PORDER.map(p => c.rates.find(r => r.p === p)).filter(Boolean).map(r => ({ label: PLATFORMS[r.p].short, value: r.perYear }));
-  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Deal patterns', sub: `<b>So what:</b> ${strong} of ${b.patterns.length} patterns are strong. Broad Sky buys a thesis first, prefers essential services, keeps founder CEOs, lands the first add-on about ${n1(c.medianFirst)} months after the company and finances each company with a different private-credit lender.`, chips: fmt.chip('Inferred from the public deal record', COLOR) })}
+  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Deal patterns', sub: `<b>So what:</b> ${strong} of ${b.patterns.length} patterns are strong. Broad Sky buys a thesis first, prefers essential services, keeps founder CEOs, lands the first add-on about ${n1(c.medianFirst)} months after the anchor acquisition and finances each company with a different private-credit lender.`, chips: fmt.chip('Inferred from the public deal record', COLOR) })}
     ${missingNote(ui, b)}
     ${ui.kpis([
       { label: 'Months between anchor deals', value: n1(c.medianGap), sub: `Median; mean ${n1(c.meanGap)} · ${c.gaps.length} intervals`, color: COLOR },
@@ -312,7 +312,7 @@ export default {
   ],
   tour: [
     { order: 925, hash: '#/bsp/deals', caption: '<b>How Broad Sky buys.</b> Every disclosed deal on one strip: seven companies, twenty-one named add-ons and the Smith + Howard exit, each with seller, advisers, lenders and co-invest vehicle.', narration: 'How Broad Sky buys. Every disclosed deal on one strip: seven companies, twenty-one named add-ons and the Smith plus Howard exit, each with its seller, advisers, lenders and co-invest vehicle.' },
-    { order: 926, hash: '#/bsp/patterns', caption: '<b>The patterns behind the deals.</b> Thesis first, essential services, founder CEOs stay, first add-on about eight months after the company, a different private-credit lender on every company.', narration: 'The patterns behind the deals. Thesis first, essential services, founder CEOs stay, the first add-on about eight months after the company, and a different private-credit lender on every company.' },
+    { order: 926, hash: '#/bsp/patterns', caption: '<b>The patterns behind the deals.</b> Thesis first, essential services, founder CEOs stay, first add-on about eight months after the anchor acquisition, a different private-credit lender on every company.', narration: 'The patterns behind the deals. Thesis first, essential services, founder CEOs stay, the first add-on about eight months after the anchor acquisition, and a different private-credit lender on every company.' },
     { order: 927, hash: '#/bsp/rubric', caption: '<b>The rubric, applied.</b> Ten inferred criteria with weights, run live across every add-on target: the top fifteen, why each scores, the intro path and a first-call script.', narration: 'The rubric, applied. Ten inferred criteria with weights, run live across every add-on target, with the top fifteen, why each scores, the intro path and a first-call script.' },
   ],
 };

@@ -191,14 +191,14 @@ body[data-co="cet"],body[data-co="cet"] [data-sys-theme="dark"]{--go-water:color
 .go-gr--hd>div:first-child{text-align:left;border-left:0;padding-left:12px}
 .go-lb{padding:8px 12px;font-size:12.5px;font-weight:600;line-height:1.3;color:var(--sys-ink)}
 .go-lb span{display:block;margin-top:2px;font:500 10.5px var(--sys-mono);color:var(--sys-mute)}
-.go-gbar{height:22px;margin:0 2px;padding:0 8px;display:flex;align-items:center;border-radius:var(--sys-r-xs);font:600 10.5px var(--sys-mono);white-space:nowrap;overflow:hidden;--c:var(--co);background:var(--c);color:var(--sys-on-ink)}
-.go-gbar--elec2{--c:color-mix(in srgb,var(--co) 72%,var(--sys-surface))} .go-gbar--water{--c:var(--go-water)} .go-gbar--solar{--c:var(--go-solar)} .go-gbar--ev{--c:var(--go-ev)} .go-gbar--eff{--c:var(--go-eff)}
+.go-gbar{height:22px;margin:0 2px;padding:0 8px;display:flex;align-items:center;border-radius:var(--sys-r-xs);font:600 10.5px var(--sys-mono);white-space:nowrap;overflow:hidden;--c:var(--co);background:var(--c);color:var(--sys-on-accent)}   /* bars are accent fills: dark text keeps 4.5:1 */
+.go-gbar--elec2{--c:color-mix(in srgb,var(--co) 72%,var(--sys-surface))} .go-gbar--water{--c:var(--go-water)} .go-gbar--solar{--c:var(--go-solar)} .go-gbar--ev{--c:var(--go-ev);color:#fff} .go-gbar--eff{--c:color-mix(in srgb,var(--go-eff) 88%,#0a0e14);color:#fff}   /* the two deep fills take white text (4.5:1+) */
 .go-gcell{display:grid;place-items:center}
 .go-gms{width:14px;height:14px;transform:rotate(45deg);background:var(--sys-warn);border-radius:2px;box-shadow:0 0 0 4px color-mix(in srgb,var(--sys-warn) 18%,transparent)}
 
 /* risks + exit */
-.go-lv{align-self:flex-start;font:700 10.5px var(--sys-mono);letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:var(--sys-r-xs);--n:var(--sys-good);color:var(--n);background:color-mix(in srgb,var(--n) 12%,transparent)}
-.go-lv--hi{--n:var(--sys-bad)} .go-lv--md{--n:var(--sys-warn)}
+.go-lv{align-self:flex-start;font:700 10.5px var(--sys-mono);letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:var(--sys-r-xs);--n:var(--sys-good);--n-ink:var(--sys-good-ink);color:var(--n-ink);background:color-mix(in srgb,var(--n) 12%,transparent)}
+.go-lv--hi{--n:var(--sys-bad);--n-ink:var(--sys-bad-ink)} .go-lv--md{--n:var(--sys-warn);--n-ink:var(--sys-warn-ink)}
 .go-risk .sys-card-foot{display:block;font-size:13.5px;color:var(--sys-ink-2)}
 .go-risk .sys-card-foot b{color:var(--sys-ink)}
 .go-ex-n{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}

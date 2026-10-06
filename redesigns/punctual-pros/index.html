@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="../../assets/system.css?v=20261006143735">
-<link rel="stylesheet" href="./site.css?v=20261006143735">
+<link rel="stylesheet" href="../../assets/system.css?v=20261006155542">
+<link rel="stylesheet" href="./site.css?v=20261006155542">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
 </head>
 <body data-co="pp">
@@ -339,9 +339,9 @@
       <p class="sys-lead">Sample reviews written for this concept, showing the voice the site would feature.<span class="sys-est sys-est--illus">illustrative</span></p>
     </div>
     <div class="sys-grid sys-grid--3">
-      <figure class="sys-card q"><div class="stars" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"Furnace quit on the first cold night. I booked online at 9 p.m., got a text with the tech's photo, and he was in my basement by 8:15 the next morning."</blockquote><figcaption class="sys-card-foot"><span><b>Karen S.</b><small>Mount Joy, PA · Heating</small></span></figcaption></figure>
-      <figure class="sys-card q"><div class="stars" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"Three options with prices on an iPad before he touched anything. We went with the middle one and the rebate paperwork was already filled in."</blockquote><figcaption class="sys-card-foot"><span><b>David R.</b><small>Camp Hill, PA · Water heater</small></span></figcaption></figure>
-      <figure class="sys-card q"><div class="stars" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"After the last nor'easter half the street lost power. Our generator kicked on, and they'd already checked it at our spring visit."</blockquote><figcaption class="sys-card-foot"><span><b>Maria T.</b><small>Toms River, NJ · Generator</small></span></figcaption></figure>
+      <figure class="sys-card q"><div class="stars" role="img" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"Furnace quit on the first cold night. I booked online at 9 p.m., got a text with the tech's photo, and he was in my basement by 8:15 the next morning."</blockquote><figcaption class="sys-card-foot"><span><b>Karen S.</b><small>Mount Joy, PA · Heating</small></span></figcaption></figure>
+      <figure class="sys-card q"><div class="stars" role="img" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"Three options with prices on an iPad before he touched anything. We went with the middle one and the rebate paperwork was already filled in."</blockquote><figcaption class="sys-card-foot"><span><b>David R.</b><small>Camp Hill, PA · Water heater</small></span></figcaption></figure>
+      <figure class="sys-card q"><div class="stars" role="img" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"After the last nor'easter half the street lost power. Our generator kicked on, and they'd already checked it at our spring visit."</blockquote><figcaption class="sys-card-foot"><span><b>Maria T.</b><small>Toms River, NJ · Generator</small></span></figcaption></figure>
     </div>
   </div>
 </section>
@@ -435,10 +435,10 @@
 <div class="actionbar" role="region" aria-label="Quick actions"><a class="sys-btn sys-btn--secondary" href="tel:+17175550123" data-phone-link><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>Call</a><a class="sys-btn sys-btn--primary" href="#book">Book now</a></div>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261006143735';
-  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261006143735';
-  import { Chat } from '../../assets/chat.js?v=20261006143735';
-  import { init } from './site.js?v=20261006143735';
+  import { Frame } from '../../assets/frame.js?v=20261006155542';
+  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261006155542';
+  import { Chat } from '../../assets/chat.js?v=20261006155542';
+  import { init } from './site.js?v=20261006155542';
   const frame = Frame.mount({});
   const chat = init({ Data, Fmt, Live, Chat, esc, Frame });
   if (chat) frame.setChat(chat);

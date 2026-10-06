@@ -119,7 +119,7 @@ T = [
  ("2026-01-13", "Milestone: with BPS, Smith + Howard has >600 employees, >45 partners and 10 offices, ranks No. 85 on Accounting Today's 2025 Top 100, and expects about $175M of 2026 revenue.", SH, "Southeast US", "~$175M expected 2026 revenue; 10 offices; >600 employees", "https://www.accountingtoday.com/news/smith-howard-buys-bauknight-pietras-stormer"),
  ("2026-02-03", "Add-on 9: Geels Norton joins. Service line: cyber-risk, SOC audit and advisory. The firm called it its third strategic growth milestone in six months.", "Geels Norton", "Atlanta, GA (location not disclosed)", "Adds a cyber/SOC capability", "https://www.smith-howard.com/smith-howard-welcomes-geels-norton-expanding-cyber-risk-audit-and-advisory-capabilities/"),
  ("2026-06-09", "TPG Growth signs a definitive agreement to make a significant investment in Smith + Howard, which marks Broad Sky's exit.", SH, "AL, GA, NC, SC, TN, TX, VA", "~800 professionals across 7 states", "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/"),
- ("2026-08-06", "Broad Sky completes the sale of Smith + Howard to TPG, its first exit. Over 3.5 years: ~100 to ~800 professionals, 1 office to 11 locations across the Southeast plus an India offshore delivery center, nine strategic acquisitions, ~4x revenue, and investment in leadership, technology and AI-enabled capabilities.", SH, "Atlanta, GA -> Southeast US + India", "~4x revenue; 8x headcount; 1 -> 11 locations; 9 acquisitions", "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/"),
+ ("2026-08-06", "Broad Sky completes the sale of Smith + Howard to TPG, its first exit. Over 3.7 years: ~100 to ~800 professionals, 1 office to 11 locations across the Southeast plus an India offshore delivery center, nine strategic acquisitions, ~4x revenue, and investment in leadership, technology and AI-enabled capabilities.", SH, "Atlanta, GA -> Southeast US + India", "~4x revenue; 8x headcount; 1 -> 11 locations; 9 acquisitions", "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/"),
 ]
 for n, (d, e, c, loc, m, u) in enumerate(T, 1):
     add(id=f"pn-tpl-{n:02d}", kind="template", date=d, event=e, company=c, location=loc, metric=m, source_url=u)
@@ -256,7 +256,7 @@ G = [
  ("Consumer financing attach", None, 14, "% higher spend for financed customers",
   "Synchrony's Tenth Annual Major Purchase Study (2025) found its cardholders spent $1,665 (14%) more on average than non-cardholders. Presenting financing on every replacement quote is the lever.",
   "https://www.synchrony.com/business/b2b/industries/heating-air-conditioning"),
- ("New-mover marketing engine", 2137, None, "meaningful home sales per 90 days in the 248 core zips (repo deed data)",
+ ("New-mover marketing engine", 2137, None, "meaningful home sales per 90 days in the 248 core zips (county deed records)",
   "American Home Shield's 2024 survey (n>1,000) found that 92% of new homeowners hit a home issue in year one, including electrical 20%, HVAC failure 16% and water heater failure 14%. 82% paid out of pocket, averaging $5,719. The repo's deed pull shows ~2,137 meaningful sales per quarter in PP's core zips.",
   "https://www.parealtors.org/blog/92-of-homeowners-experience-a-home-related-issue-in-year-one/"),
  ("Storm / weather surge growth plan", 20, 55, "% lift during a heat wave (calls -> revenue)",
@@ -302,11 +302,11 @@ phases = [
       market_evidence=[f"One Hour FY2025 avg revenue per territory ${oh['avg_revenue_per_territory_usd']:,} vs top-quartile ${oh['top25_territories_avg_usd']:,} (2026 FDD Item 19).",
                        "Heat waves lift HVAC daily revenue 55% on average and ~90% for the first event of a season (ServiceTitan, ~800 shops).",
                        "Only 52% of home-services callers reach a person (Invoca 2026)."],
-      kpi_targets={"revenue_usd": 38_000_000, "ebitda_usd": 5_300_000, "technicians": 135, "territories": 36, "members": 11_000},
+      kpi_targets={"revenue_usd": 38_000_000, "ebitda_usd": 5_300_000, "technicians": 135, "territories": 32, "members": 11_000},
       source_urls=[FDD_URL, "https://www.servicetitan.com/blog/hvac-revenue-heat-waves", "https://invoca.com/reports/the-invoca-home-services-lead-conversion-benchmarks-report-2026", BSP_PP_URL]),
  dict(phase="Phase 2 - Tuck-ins across PA, NJ, MD, DE and southern NY", months="9-24",
       geography=["Central & Eastern PA", "Jersey Shore (Ocean, Monmouth) + South Jersey", "Northern MD", "Delaware", "Southern NY (Southern Tier, lower Hudson)"],
-      thesis="Repeat the Horvath play (Dec 2024, first out-of-state deal) by buying Authority Brands franchisees and strong independents next to PA and NJ hubs, then convert independents to the tri-brand where Authority grants the territory. The 17 PE sponsors tracked in PE landscape as overlapping Punctual Pros (e.g., Sila/Goldman, Legacy/Gridiron, Ally/Watchtower, Northwinds/TruArc, Wrench/Leonard Green) are bidding for the same founders. Broad Sky's edge is the operator growth plan plus the AI stack, which raises a tuck-in's margin within 12 months. This is Smith + Howard's 2024-25 cadence: several deals a year, each adding a new state or a new service line.",
+      thesis="Repeat the Horvath play (Dec 2024, first out-of-state deal) by buying Authority Brands franchisees and strong independents next to PA and NJ hubs, then convert independents to the tri-brand where Authority grants the territory. The 17 PE sponsors tracked in the private-equity landscape as overlapping Punctual Pros (e.g., Sila/Goldman, Legacy/Gridiron, Ally/Watchtower, Northwinds/TruArc, Wrench/Leonard Green) are bidding for the same founders. Broad Sky's edge is the operator growth plan plus the AI stack, which raises a tuck-in's margin within 12 months. This is Smith + Howard's 2024-25 cadence: several deals a year, each adding a new state or a new service line.",
       data_points={"addon_targets_by_state": tg_by_state, "addon_targets_fit70plus_by_state": tg_fit70_by_state,
                    "addon_targets_modeled_revenue_usd_by_state": tg_rev_by_state, "addon_targets_modeled_employees_by_state": tg_emp_by_state,
                    "authority_territories_mapped": ab_total, "authority_territories_by_state": ab_by_state,
@@ -321,7 +321,7 @@ phases = [
       market_evidence=[f"PA has {pa_outlets} and NJ {nj_outlets} franchised One Hour / Ben Franklin / Mister Sparky outlets (2026 FDD Item 20); Punctual Pros operates 25 of them.",
                        "GF Data: sub-$25M TEV deals price at 6.3-6.9x EBITDA vs 10.0x for $100-250M TEV (H1 2025), which is the buy-and-build multiple arbitrage.",
                        "Authority Brands added 340 territories and 246 owners in 2025, so the franchisor is growing its system, which helps territory approvals."],
-      kpi_targets={"revenue_usd": 65_000_000, "ebitda_usd": 9_800_000, "technicians": 230, "territories": 60, "members": 20_000},
+      kpi_targets={"revenue_usd": 65_000_000, "ebitda_usd": 9_800_000, "technicians": 230, "territories": 44, "members": 20_000},
       source_urls=[HORVATH_URL, "https://middlemarketgrowth.org/gf-data-report-h1-2025/", AB_1851, fil["pp-fil-021"]["source_url"]]),
  dict(phase="Phase 3 - Mid-Atlantic hub along I-81 / I-95", months="18-36",
       geography=["Baltimore", "Washington DC (MD suburbs)", "Richmond, VA", "Philadelphia suburbs (Montgomery, Chester, Bucks, Delaware)", "Pittsburgh"],
@@ -335,7 +335,7 @@ phases = [
       market_evidence=["US HVAC services market ~$17.9B (2025), growing ~5.9%/yr (Mordor Intelligence).",
                        "BLS: ~155,300 annual openings across HVAC (40,600), plumbing (42,000) and electrical (72,700), so a talent engine is a moat at metro scale.",
                        "Smith + Howard entered VA through Fahrenheit Advisors (140+ professionals), its first Mid-Atlantic office."],
-      kpi_targets={"revenue_usd": 100_000_000, "ebitda_usd": 16_000_000, "technicians": 350, "territories": 95, "members": 32_000},
+      kpi_targets={"revenue_usd": 100_000_000, "ebitda_usd": 16_000_000, "technicians": 350, "territories": 58, "members": 32_000},
       source_urls=["https://www.mordorintelligence.com/industry-reports/united-states-hvac-services-market", "https://www.bls.gov/ooh/installation-maintenance-and-repair/heating-air-conditioning-and-refrigeration-mechanics-and-installers.htm",
                    "https://www.cpapracticeadvisor.com/2024/12/12/smith-howard-acquires-fahrenheit-advisors-in-virginia/152764/", SPV_URL]),
  dict(phase="Phase 4 - National consolidator inside the Authority Brands network", months="36-60",
@@ -351,7 +351,7 @@ phases = [
       market_evidence=[f"Tri-brand FY2025 reported gross revenue ${fdd_rev/1e6:,.1f}M across {fdd_outlets:,} outlets (2026 FDDs).",
                        "Authority Brands: 15 brands, 1,000+ owners, 2,700+ territories; claims >$2B revenue.",
                        "GF Data Q2 2026: initial-buyout total debt 2.9x EBITDA at a 7.0x average valuation, so equity-heavy structures dominate and a co-invest is needed for large buys."],
-      kpi_targets={"revenue_usd": 175_000_000, "ebitda_usd": 29_000_000, "technicians": 600, "territories": 160, "members": 55_000},
+      kpi_targets={"revenue_usd": 175_000_000, "ebitda_usd": 29_000_000, "technicians": 600, "territories": 85, "members": 55_000},
       source_urls=[FDD_URL, FDD_BF_URL, FDD_MS_URL, AB_1851, AB_URL, "https://www.acg.org/news-trends/news/gf-data-reports-show-steady-middle-market-deal-flow-amid-more-selective"]),
 ]
 for n, ph in enumerate(phases, 1):
@@ -402,11 +402,11 @@ narrative = (
 kpi_roadmap = [
  {"month": 0, "revenue_usd": 24_000_000, "ebitda_usd": 2_900_000, "technicians": 85, "territories": 25, "members": 6_500,
   "note": "ASSUMPTION. Oct 2026 run-rate = FY2025 est. ~$22M grown ~8% (2025 system same-store sales +8.4-14.3%); EBITDA ~12%; technicians ~60-65% of ~130-150 staff; members ~0.9% of core owner-occupied units."},
- {"month": 12, "revenue_usd": 38_000_000, "ebitda_usd": 5_300_000, "technicians": 135, "territories": 36, "members": 11_000,
+ {"month": 12, "revenue_usd": 38_000_000, "ebitda_usd": 5_300_000, "technicians": 135, "territories": 32, "members": 11_000,
   "note": "ASSUMPTION. Phase 1 complete: +10-12% organic from AI answering/booking and memberships, plus 2 tuck-ins (~$10M acquired revenue); margin ~14%."},
- {"month": 24, "revenue_usd": 65_000_000, "ebitda_usd": 9_800_000, "technicians": 230, "territories": 60, "members": 20_000,
+ {"month": 24, "revenue_usd": 65_000_000, "ebitda_usd": 9_800_000, "technicians": 230, "territories": 44, "members": 20_000,
   "note": "ASSUMPTION. Phase 2 tuck-ins in NJ / MD / DE / southern NY plus the first Phase 3 metro anchor; margin ~15% from shared contact center and AI dispatch."},
- {"month": 36, "revenue_usd": 100_000_000, "ebitda_usd": 16_000_000, "technicians": 350, "territories": 95, "members": 32_000,
+ {"month": 36, "revenue_usd": 100_000_000, "ebitda_usd": 16_000_000, "technicians": 350, "territories": 58, "members": 32_000,
   "note": "ASSUMPTION. Mid-Atlantic hub (~4.5x FY2025 revenue in ~3 years, the Smith + Howard ~4x analog); margin ~16%; exit-ready national company story."},
 ]
 meta = {

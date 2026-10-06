@@ -1,14 +1,17 @@
-import * as Copy from './copy.js?v=20261006143735';
+import * as Copy from './copy.js?v=20261006155542';
 /* Thomas Scientific — target-account intelligence, add-on screen and financial picture.
    Data: Thomas Scientific lab sites (27.5K scored sites, columnar) is the single source for every site and account number:
    parent accounts are rolled up from it, so the overview and the account list always agree.
    Thomas Scientific parent accounts (legacy top-500 account plan) only flags plan membership. Frontline and Thomas Scientific add-on targets,
    Thomas Scientific public filings, Public comparables. Lender marks and sponsor equity marks sit behind the
    BSP-only deal-team toggle on the Financials view (#/ts/filings?deal=1), never on company-facing views. */
-import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261006143735';
+import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261006155542';
 
 const C = 'var(--c-ts)', HEX = '#2ecc8f';
 const HQ = { lat: 39.7476, lon: -75.3105, label: 'Swedesboro, NJ' };
+/* Legacy top-500 account plan tiers (Thomas Scientific parent accounts): the 500 plan accounts are ranked by commercial score v3c
+   (ties: more sites, then the older commercial and fit scores); top 20% Pursue, next 30% Develop, last 50% Monitor. */
+const PLAN_RULE = 'The 500 plan accounts are tiered by commercial score: top 20% Pursue, next 30% Develop, last 50% Monitor.';
 /* Coverage priority = v3c commercial label, adjusted: non-lab buyers excluded; national-contract parents moved to Enterprise / GPO. */
 const LABELS = ['Pursue', 'Enterprise', 'Nurture', 'Watch', 'Excluded'];
 const LBL_HEX = { Pursue: '#2ecc8f', Enterprise: '#9d7bff', Nurture: '#4c8dff', Watch: '#6f7f93', Excluded: '#e05c8a' };
@@ -61,7 +64,7 @@ const PLAYS = {
 };
 const playFor = a => PLAYS[a] || { motion: 'Qualify', play: 'Qualify buying centre and current distributor before assigning a motion.', owner: 'Inside sales' };
 
-function injectCss() { if (!document.getElementById('css-ts')) { const l = document.createElement('link'); l.id = 'css-ts'; l.rel = 'stylesheet'; l.href = 'modules/ts.css?v=20261006143735'; document.head.appendChild(l); } }
+function injectCss() { if (!document.getElementById('css-ts')) { const l = document.createElement('link'); l.id = 'css-ts'; l.rel = 'stylesheet'; l.href = 'modules/ts.css?v=20261006155542'; document.head.appendChild(l); } }
 
 /* ── Aggregation (computed once per session, reused by every view) ───────────── */
 let AGG = null;
@@ -105,7 +108,7 @@ function rollup(A, plan) {
     out.push({ parent, coverage_priority: ent ? 'Enterprise' : 'Pursue', ultimate_parent: ent ? ent._ult : '', coverage_note: ent ? ent._why : '', sites: ss.length, pursue_sites: np, states: st, _nstates: st.length,
       vert: sortedEntries(vm)[0][0], _arch: dominantArch(ss), commercial_score_v3c: sc.length ? Math.max(...sc) : null, commercial_tier_v3c: ct.length ? Math.min(...ct) : null,
       cms_sites: cmsN, clia_sites: ss.filter(s => s.coverage_layer === 'clia_only').length, hosp_sites: ss.filter(s => s.hosp_name).length,
-      medicare_2023_allowed: cms, medicare_2023_pursue_sites: pcms, max_cms_allowed: mx, in_top500_plan: pl ? 'yes' : '', legacy_fit_deprecated: pl?.score ?? null,
+      medicare_2023_allowed: cms, medicare_2023_pursue_sites: pcms, max_cms_allowed: mx, in_top500_plan: pl ? 'yes' : '', plan_tier: pl?.commercial_priority_label_v3c || '', legacy_fit_deprecated: pl?.score ?? null,
       ts_customer_status: 'CRM match pending', ts_revenue_band: '' });
   }
   return (A.accounts = out);
@@ -253,7 +256,7 @@ async function overview(ctx) {
           <tr><td>− National-contract parents → Enterprise / GPO</td><td>−${fmt.num(B.ent)}</td><td>−${fmt.money(B.entCms)}</td></tr>
           <tr class="tot"><td>Named-account Pursue <span class="dim">(${fmt.num(A.pursueParents)} parents)</span></td><td>${fmt.num(A.pursue.length)}</td><td>${fmt.money(A.pursueCms)}</td></tr>
         </tbody></table>
-        <div class="dim small mt-8">The legacy fit tier is retired: it put ${fmt.num(A.rows.filter(r => r.tier === 1).length)} of ${fmt.num(A.rows.length)} sites in Tier 1, so it did not prioritize. ${fmt.num(plan)} of the ${fmt.num(A.pursueParents)} Pursue accounts are in the legacy top-500 account plan (shown as a subset on Accounts).</div></div>`, foot: srcSites(ui) })}
+        <div class="dim small mt-8">The legacy fit tier is retired: it put ${fmt.num(A.rows.filter(r => r.tier === 1).length)} of ${fmt.num(A.rows.length)} sites in Tier 1, so it did not prioritize. ${fmt.num(plan)} of the ${fmt.num(A.pursueParents)} Pursue accounts are in the legacy top-500 account plan (shown as a subset on Accounts). ${esc(PLAN_RULE)}</div></div>`, foot: srcSites(ui) })}
       ${ui.panel({ title: 'Sites by vertical', sub: 'Share of scored sites', body: charts.donut(sortedEntries(A.byVert).map(([k, v]) => ({ label: k, value: v, color: VERT_HEX[k] })), { size: 118, thick: 16, fmt: v => fmt.compact(v) }), foot: srcSites(ui) })}
     </div>
   </div>
@@ -317,7 +320,7 @@ async function accounts(ctx) {
     <div class="mt-12">${ui.panel({ title: 'Account list', sub: 'Click an account for sites, evidence and the recommended play · sortable · CSV includes blank customer-status and revenue-band columns to fill from Thomas ERP', body: '<div id="ac-t"></div>', flush: true, foot: `${srcSites(ui)} · accounts rolled up from the site file · national-network ownership mapped manually` })}</div>
     <div class="mt-12">${ui.panel({ title: 'Account plays by archetype', sub: 'Selling motion per buying centre — apply to the filtered list', accent: true, body: '<div id="ac-plays"></div>' })}</div></div>`;
   const columns = [
-    { key: 'parent', label: 'Account', fmt: (v, r) => `<b>${nm(ctx, v)}</b><div class="dim small">${r.ultimate_parent && r.ultimate_parent.toLowerCase() !== String(v).toLowerCase() ? `${esc(r.ultimate_parent)} · ` : ''}${esc(r._arch)}${r.in_top500_plan ? ' · top-500 plan' : ''}</div>` },
+    { key: 'parent', label: 'Account', fmt: (v, r) => `<b>${nm(ctx, v)}</b><div class="dim small">${r.ultimate_parent && r.ultimate_parent.toLowerCase() !== String(v).toLowerCase() ? `${esc(r.ultimate_parent)} · ` : ''}${esc(r._arch)}${r.in_top500_plan ? ` · top-500 plan${r.plan_tier ? `, ${esc(r.plan_tier)} tier` : ''}` : ''}</div>` },
     { key: 'coverage_priority', label: 'Coverage', fmt: v => labelChip(fmt, v), sort: (a, b) => LORD[b.coverage_priority] - LORD[a.coverage_priority] },
     { key: 'vert', label: 'Vertical', fmt: v => esc(v || '—') },
     { key: 'sites', label: 'Sites', num: true, fmt: (v, r) => `${fmt.num(v)}${r.coverage_priority === 'Pursue' && r.pursue_sites !== v ? ` <span class="dim">(${fmt.num(r.pursue_sites)} P)</span>` : ''}` },

@@ -194,7 +194,7 @@
 .vai-prog{height:6px;overflow:hidden;border-radius:3px;background:var(--sys-bg-3)}
 .vai-prog i{display:block;height:100%;background:var(--sys-grad)}
 .vai-gate{margin-top:auto;padding:8px 10px;border-radius:var(--sys-r-sm);background:var(--sys-bg-2);font-size:12.5px;line-height:1.45;color:var(--sys-ink-2)}
-.vai-gate b{display:block;font:600 var(--sys-fs-2xs)/1.3 var(--sys-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sys-warn)}
+.vai-gate b{display:block;font:600 var(--sys-fs-2xs)/1.3 var(--sys-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sys-warn-ink)}
 .vai-caveats{margin-top:var(--sys-sp-6)}
 .vai-caveats ul{margin:6px 0 0;padding-left:18px}
 .vai-caveats li{margin:3px 0}

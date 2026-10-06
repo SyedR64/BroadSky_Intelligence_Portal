@@ -17,9 +17,10 @@
   /* surfaces + ink */
   --sys-bg:#fbfaf7; --sys-bg-2:#f4f2ed; --sys-bg-3:#ece9e2;
   --sys-surface:#ffffff; --sys-surface-2:#faf9f6;
-  --sys-ink:#0c1320; --sys-ink-2:#3a4250; --sys-mute:#5f6774; --sys-mute-2:#9aa1ab;
+  --sys-ink:#0c1320; --sys-ink-2:#3a4250; --sys-mute:#545c69; --sys-mute-2:#646b77;   /* both pass 4.5:1 on --sys-bg-3 (Accessibility, UNIFIED.md §13) */
   --sys-line:#e8e5de; --sys-line-2:#d8d4ca;
   --sys-on-ink:#ffffff;                 /* text on an ink (primary) fill */
+  --sys-on-accent:#0a0e14;              /* text on a company-accent or brand fill (white fails on most accents) */
   --sys-navy:#0e2236;
   /* brand */
   --sys-brand:#b84a17; --sys-orange:#f2832f; --sys-coral:#e2533f; --sys-violet:#6a5cff;
@@ -75,7 +76,7 @@
   color-scheme:dark;
   --sys-bg:#0a0e14; --sys-bg-2:#0e141c; --sys-bg-3:#161f2a;
   --sys-surface:#111821; --sys-surface-2:#161f2a;
-  --sys-ink:#e6edf3; --sys-ink-2:#b6c2d0; --sys-mute:#8b98a8; --sys-mute-2:#5b6b7f;
+  --sys-ink:#e6edf3; --sys-ink-2:#b6c2d0; --sys-mute:#8b98a8; --sys-mute-2:#7a889a;
   --sys-line:#1f2a37; --sys-line-2:#2a3746;
   --sys-on-ink:#0a0e14;
   --sys-brand:#f0874a;
@@ -97,20 +98,27 @@
 :root[data-sys-theme="dark"][data-theme="light"],[data-sys-theme="light"]{
   color-scheme:light;
   --sys-bg:#fbfaf7; --sys-bg-2:#f4f2ed; --sys-bg-3:#ece9e2; --sys-surface:#fff; --sys-surface-2:#faf9f6;
-  --sys-ink:#0c1320; --sys-ink-2:#3a4250; --sys-mute:#5f6774; --sys-mute-2:#9aa1ab;
+  --sys-ink:#0c1320; --sys-ink-2:#3a4250; --sys-mute:#545c69; --sys-mute-2:#646b77;
   --sys-line:#e8e5de; --sys-line-2:#d8d4ca; --sys-on-ink:#fff; --sys-brand:#b84a17;
   --sys-good:#15803d; --sys-warn:#b45309; --sys-bad:#c62828; --sys-info:#2563eb;
   --sys-top-bg:rgba(251,250,247,.86); --sys-banner-bg:#0c1320; --sys-banner-fg:#e9ecf1;
   --sys-footer-bg:#0c1320; --sys-footer-fg:#c4ccd8; --sys-footer-mute:#8792a3;
 }
 [data-sys-theme="light"]:not(html){background:var(--sys-bg);color:var(--sys-ink)}
+/* Text-safe status shades: status colours as text (est. badges, status chips,
+   risk levels) sit on 10–12% tints of themselves, where the raw hue misses
+   4.5:1. Declared on every theme root so a dark band resolves its own shade.   */
+:root,[data-sys-theme]{
+  --sys-good-ink:color-mix(in srgb,var(--sys-good) 75%,var(--sys-ink)); --sys-warn-ink:color-mix(in srgb,var(--sys-warn) 75%,var(--sys-ink));
+  --sys-bad-ink:color-mix(in srgb,var(--sys-bad) 75%,var(--sys-ink));   --sys-info-ink:color-mix(in srgb,var(--sys-info) 75%,var(--sys-ink));
+}
 
 /* ── 3 · company accents ──────────────────────────────────────────────────── */
 /* data-co on <body> (whole concept site) or on one card/chip/crumb. --co is the
    raw accent (bars, dots, rules); --co-ink is a text-safe shade of it.          */
 [data-co="pp"]{--co:var(--co-pp)} [data-co="cet"]{--co:var(--co-cet)} [data-co="fl"]{--co:var(--co-fl)}
 [data-co="ts"]{--co:var(--co-ts)} [data-co="bpi"]{--co:var(--co-bpi)} [data-co="fh"]{--co:var(--co-fh)}
-[data-co]{--co-ink:color-mix(in srgb,var(--co) 62%,var(--sys-ink));--co-soft:color-mix(in srgb,var(--co) 12%,transparent)}
+[data-co]{--co-ink:color-mix(in srgb,var(--co) 45%,var(--sys-ink));--co-soft:color-mix(in srgb,var(--co) 12%,transparent)}
 [data-sys-theme="dark"] [data-co],[data-sys-theme="dark"][data-co]{--co-ink:color-mix(in srgb,var(--co) 80%,var(--sys-ink))}
 
 /* ── 4 · base (zero specificity, page CSS overrides) ──────────────────────── */
@@ -122,17 +130,33 @@ html:has(.sys-subnav){--sys-subnav-h:48px}
 :where([class*="sys-"]) :where(img,svg,video){max-width:100%}
 :where([class*="sys-"]) :where(a){color:inherit}
 :where([class*="sys-"]) :where(button){font:inherit;color:inherit}
-:where(.sys-top,.sys-banner,.sys-crumb,.sys-footer,[class*="sys-"]) :focus-visible{outline:2px solid var(--sys-brand);outline-offset:3px;border-radius:6px}
+/* Focus: every interactive element on every page gets a visible ring. The bare
+   :where(:focus-visible) fallback has zero specificity, so a page that draws its
+   own ring (box-shadow on inputs, stroke on SVG nodes) still wins; nothing may
+   remove focus without replacing it (UNIFIED.md §13). Dark surfaces inside a
+   light page (banner, footer, dark bands) switch to the light-on-dark shade.   */
+:root{--sys-focus:#b84a17}
+[data-sys-theme="dark"],.sys-banner,.sys-footer{--sys-focus:#f0874a}
+:root[data-sys-theme="dark"][data-theme="light"],[data-sys-theme="light"]{--sys-focus:#b84a17}
+:where(:focus-visible){outline:2px solid var(--sys-focus);outline-offset:2px}
+:where(.sys-top,.sys-banner,.sys-crumb,.sys-footer,[class*="sys-"]) :focus-visible{outline:2px solid var(--sys-focus);outline-offset:3px;border-radius:6px}
+:where(main[tabindex="-1"]):focus{outline:none}
+/* Pages that own their print layout (the memo) keep a private orange accent for
+   kickers, footnote marks and h4 labels; on white it misses 4.5:1, so text reads
+   the text-safe brand shade instead (same hue family, 4.6:1 on the memo tints). */
+body[data-sys-print="own"]{--accent:var(--sys-brand)}
 .sys-wrap{width:100%;max-width:var(--sys-wrap);margin:0 auto;padding:0 var(--sys-gut)}
 .sys-wrap--wide{max-width:var(--sys-wrap-wide)}
 .sys-wrap--narrow{max-width:calc(var(--sys-wrap-narrow) + 2 * var(--sys-gut))}
 .sys-skip{position:absolute;left:-9999px;top:8px;z-index:200;background:var(--sys-ink);color:var(--sys-on-ink);padding:10px 14px;border-radius:var(--sys-r-sm);text-decoration:none;font:600 14px var(--sys-font)}
-.sys-skip:focus{left:12px}
+.sys-skip:focus{left:12px;outline:2px solid var(--sys-focus);outline-offset:2px}
 .sys-sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .sys-mono{font-family:var(--sys-mono)}
 .sys-num{font-family:var(--sys-mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .sys-grad-text{background:var(--sys-grad);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .sys-muted{color:var(--sys-mute)}
+/* muted text inside a selected (ink-filled) chip or button reads the fill's own ink */
+:is([aria-pressed="true"],[aria-current],[aria-selected="true"]).sys-chip .sys-muted{color:color-mix(in srgb,var(--sys-on-ink) 80%,var(--sys-ink))}
 .sys-stack{display:flex;flex-direction:column;gap:var(--sys-sp-4)}
 .sys-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sys-sp-3)}
 .sys-divider{height:1px;border:0;background:var(--sys-line);margin:var(--sys-sp-6) 0}
@@ -310,9 +334,9 @@ a.sys-card:hover,.sys-card--link:hover{transform:translateY(-3px);box-shadow:var
 .sys-note-ico{flex-shrink:0;width:18px;height:18px;margin-top:1px;color:var(--n)}
 
 /* ── 6h · estimate badge ──────────────────────────────────────────────────── */
-.sys-est{display:inline-flex;align-items:center;margin-left:.35em;padding:3px 6px;border-radius:var(--sys-r-pill);vertical-align:.12em;font:600 10.5px/1 var(--sys-mono);letter-spacing:.03em;white-space:nowrap;color:var(--sys-warn);background:color-mix(in srgb,var(--sys-warn) 12%,transparent);border:1px solid color-mix(in srgb,var(--sys-warn) 32%,transparent)}
-.sys-est--illus{color:var(--sys-info);background:color-mix(in srgb,var(--sys-info) 10%,transparent);border-color:color-mix(in srgb,var(--sys-info) 30%,transparent)}
-.sys-est--live{color:var(--sys-good);background:color-mix(in srgb,var(--sys-good) 10%,transparent);border-color:color-mix(in srgb,var(--sys-good) 30%,transparent)}
+.sys-est{display:inline-flex;align-items:center;margin-left:.35em;padding:3px 6px;border-radius:var(--sys-r-pill);vertical-align:.12em;font:600 10.5px/1 var(--sys-mono);letter-spacing:.03em;white-space:nowrap;color:var(--sys-warn-ink);background:color-mix(in srgb,var(--sys-warn) 12%,transparent);border:1px solid color-mix(in srgb,var(--sys-warn) 32%,transparent)}
+.sys-est--illus{color:var(--sys-info-ink);background:color-mix(in srgb,var(--sys-info) 10%,transparent);border-color:color-mix(in srgb,var(--sys-info) 30%,transparent)}
+.sys-est--live{color:var(--sys-good-ink);background:color-mix(in srgb,var(--sys-good) 10%,transparent);border-color:color-mix(in srgb,var(--sys-good) 30%,transparent)}
 .sys-kpi-value .sys-est{font-size:10px;letter-spacing:.03em}
 
 /* ── 6i · chips ───────────────────────────────────────────────────────────── */
@@ -324,8 +348,8 @@ button.sys-chip:hover,a.sys-chip:hover{border-color:var(--sys-ink);color:var(--s
 .sys-chip[aria-pressed="true"],.sys-chip[aria-current]{background:var(--sys-ink);border-color:var(--sys-ink);color:var(--sys-on-ink)}
 .sys-chip--soft{border-color:transparent;background:var(--co-soft);color:var(--co-ink);font-weight:600}
 /* status chips: same hues as notes and est. badges; status only (§6) */
-.sys-chip--good{--s:var(--sys-good)} .sys-chip--warn{--s:var(--sys-warn)} .sys-chip--bad{--s:var(--sys-bad)} .sys-chip--info{--s:var(--sys-info)}
-:is(.sys-chip--good,.sys-chip--warn,.sys-chip--bad,.sys-chip--info){border-color:color-mix(in srgb,var(--s) 32%,transparent);background:color-mix(in srgb,var(--s) 10%,var(--sys-surface));color:var(--s);font-weight:600}
+.sys-chip--good{--s:var(--sys-good);--s-ink:var(--sys-good-ink)} .sys-chip--warn{--s:var(--sys-warn);--s-ink:var(--sys-warn-ink)} .sys-chip--bad{--s:var(--sys-bad);--s-ink:var(--sys-bad-ink)} .sys-chip--info{--s:var(--sys-info);--s-ink:var(--sys-info-ink)}
+:is(.sys-chip--good,.sys-chip--warn,.sys-chip--bad,.sys-chip--info){border-color:color-mix(in srgb,var(--s) 32%,transparent);background:color-mix(in srgb,var(--s) 10%,var(--sys-surface));color:var(--s-ink);font-weight:600}
 :is(.sys-chip--good,.sys-chip--warn,.sys-chip--bad,.sys-chip--info)::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
 :is(.sys-chip--good,.sys-chip--warn,.sys-chip--bad,.sys-chip--info)[data-co]::before{background:currentColor}
 

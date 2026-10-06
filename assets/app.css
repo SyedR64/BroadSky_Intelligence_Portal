@@ -16,7 +16,7 @@
   --bg:var(--sys-bg); --bg-1:var(--sys-bg-2); --bg-2:var(--sys-bg-3);
   --surface:var(--sys-surface); --surface-2:var(--sys-surface-2); --surface-3:color-mix(in srgb,var(--sys-surface-2) 62%,var(--sys-line-2));
   --border:var(--sys-line); --border-2:var(--sys-line-2); --hair:color-mix(in srgb,var(--sys-ink) 6%,transparent);
-  --text:var(--sys-ink); --text-2:var(--sys-ink-2); --muted:var(--sys-mute); --dim:var(--sys-mute-2); --ghost:color-mix(in srgb,var(--sys-mute-2) 60%,var(--sys-bg));
+  --text:var(--sys-ink); --text-2:var(--sys-ink-2); --muted:var(--sys-mute); --dim:var(--sys-mute-2); --ghost:var(--sys-mute-2);   /* ghost text used to be a 60% fade of dim; it now reads dim so it keeps 4.5:1 */
   /* brand + status → system tokens */
   --accent:var(--sys-info); --accent-2:color-mix(in srgb,var(--sys-info) 70%,var(--sys-ink)); --brand:var(--sys-brand); --brand-2:var(--sys-orange);
   --green:var(--sys-good); --amber:var(--sys-warn); --red:var(--sys-bad);
@@ -37,7 +37,10 @@ html,body{height:100%;background:var(--sys-bg);color:var(--sys-ink);font-family:
 :where(#app,#palette,#tour) button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 :where(#app,#palette) :is(input,select,textarea){font:inherit;color:var(--sys-ink);background:var(--sys-surface-2);border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);padding:6px 10px;outline:none}
 :where(#app,#palette) :is(input,select):focus{border-color:var(--sys-line-2);box-shadow:var(--sys-ring)}
-:where(#app) :focus-visible{outline:2px solid var(--sys-brand);outline-offset:2px;border-radius:var(--sys-r-xs)}
+:where(#app) :focus-visible{outline:2px solid var(--sys-focus);outline-offset:2px;border-radius:var(--sys-r-xs)}
+/* focus inside clipped scrollers (rail, tables, view tabs) draws inside the element so it is never cut off */
+:where(.rail-item,.view-tab,.tbl th,.tbl tbody tr,.card,.pal-item):focus-visible{outline:2px solid var(--sys-focus);outline-offset:-2px}
+.tbl tbody tr[tabindex]:focus-visible{background:var(--hair)}
 ::-webkit-scrollbar{width:10px;height:10px} ::-webkit-scrollbar-thumb{background:var(--sys-line-2);border-radius:8px;border:2px solid var(--sys-bg)} ::-webkit-scrollbar-track{background:transparent}
 .mono,.num{font-family:var(--sys-mono);font-variant-numeric:tabular-nums}
 :where(#app) :is(h1,h2,h3,h4){font-weight:700;letter-spacing:var(--sys-tr-title);line-height:1.25;color:var(--sys-ink)}
@@ -129,7 +132,9 @@ html,body{height:100%;background:var(--sys-bg);color:var(--sys-ink);font-family:
 
 /* chips / badges = .sys-chip */
 .chip{min-height:0;display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:var(--sys-r-pill);font-size:11px;font-weight:600;letter-spacing:.01em;line-height:1.5;background:color-mix(in srgb,var(--cc,var(--sys-mute)) 14%,transparent);color:color-mix(in srgb,var(--cc,var(--sys-ink-2)) 80%,var(--sys-ink));border:1px solid color-mix(in srgb,var(--cc,var(--sys-mute)) 30%,transparent);white-space:nowrap}
-.chip.solid{background:var(--cc,var(--sys-mute));color:var(--sys-on-ink);border-color:transparent}
+.chip.solid{background:var(--cc,var(--sys-mute));color:var(--sys-on-accent);border-color:transparent}   /* solid chips carry company accents: dark text keeps 4.5:1 on every one */
+/* light console: tinted chips read a darker shade of their accent (80% misses 4.5:1 on the light tint) */
+:root[data-theme="light"] .chip:not(.solid){color:color-mix(in srgb,var(--cc,var(--sys-ink-2)) 50%,var(--sys-ink))}
 .chip .cdot{width:6px;height:6px;border-radius:50%;background:var(--cc,var(--sys-mute))}
 .tier-1,.t1{--cc:var(--sys-good)} .tier-2,.t2{--cc:var(--sys-info)} .tier-3,.t3{--cc:var(--sys-warn)} .tier-4,.t4{--cc:var(--sys-mute-2)}
 .sev-extreme{--cc:var(--sys-bad)} .sev-severe{--cc:var(--sys-orange)} .sev-moderate{--cc:var(--sys-warn)} .sev-minor{--cc:var(--sys-info)} .sev-unknown{--cc:var(--sys-mute)}

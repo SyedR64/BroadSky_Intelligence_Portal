@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="../../assets/system.css?v=20261006143735">
-<link rel="stylesheet" href="./nationwide.css?v=20261006143735">
+<link rel="stylesheet" href="../../assets/system.css?v=20261006155542">
+<link rel="stylesheet" href="./nationwide.css?v=20261006155542">
 </head>
 <body data-co="pp">
 
@@ -34,7 +34,7 @@
       <div class="nw-hero-copy">
         <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Growth plan</b> · Oct 2026</p>
         <h1 class="sys-h1" id="hero-h">From Lancaster to <span class="sys-grad-text">national.</span></h1>
-        <p class="sys-lead" id="hero-lede">Broad Sky took Smith + Howard from one Atlanta office to 11 locations, nine add-ons and ~4x revenue in 3.5 years, then sold it to TPG Growth. Punctual Pros can run the same play: densify Central PA, repeat the Horvath deal across the Mid-Atlantic, and become the national consolidator inside the Authority Brands system. The new website is the front door. Behind it sit AI agents, programs for the technicians and a tuck-in machine.</p>
+        <p class="sys-lead" id="hero-lede">Broad Sky took Smith + Howard from one Atlanta office to 11 locations, nine add-ons and ~4x revenue in about 3.7 years, then sold it to TPG Growth. Punctual Pros can run the same play: densify Central PA, repeat the Horvath deal across the Mid-Atlantic, and become the national consolidator inside the Authority Brands system. The new website is the front door. Behind it sit AI agents, programs for the technicians and a tuck-in machine.</p>
         <div class="sys-actions">
           <a class="sys-btn sys-btn--primary sys-btn--lg" href="#returns">See the returns</a>
           <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#template">Read the template</a>
@@ -59,14 +59,14 @@
   <div class="sys-wrap">
     <div class="sys-section-head">
       <p class="sys-kicker">01 · The template</p>
-      <h2 class="sys-h2" id="tpl-h">Smith + Howard went regional to national in 3.5 years. We run it again.</h2>
+      <h2 class="sys-h2" id="tpl-h">Smith + Howard went regional to national in under four years. We run it again.</h2>
       <p class="sys-lead">Every step below is sourced. On the right, the same moves mapped onto Punctual Pros. <span class="sys-muted" id="tpl-caveat"></span></p>
     </div>
     <div class="tpl-grid">
       <div>
-        <div class="sys-chips seg" role="tablist" aria-label="Template filter" id="tpl-seg">
-          <button class="sys-chip" role="tab" aria-selected="true" aria-pressed="true" data-f="sh">Smith + Howard</button>
-          <button class="sys-chip" role="tab" aria-selected="false" aria-pressed="false" data-f="all">+ Frontline (law-firm analog)</button>
+        <div class="sys-chips seg" role="group" aria-label="Template filter" id="tpl-seg">
+          <button class="sys-chip" type="button" aria-pressed="true" data-f="sh">Smith + Howard</button>
+          <button class="sys-chip" type="button" aria-pressed="false" data-f="all">+ Frontline (law-firm analog)</button>
         </div>
         <ol class="timeline" id="timeline"></ol>
       </div>
@@ -83,10 +83,10 @@
       <h2 class="sys-h2" id="map-h">Four phases, from 248 core ZIP codes to a national franchise system.</h2>
       <p class="sys-lead">Core ZIPs, Tier-1 adjacent ZIPs and every screened add-on target are plotted from the portal's datasets. Pick a phase, or press play.</p>
     </div>
-    <div class="phase-bar" role="tablist" aria-label="Expansion phases" id="phase-bar"></div>
+    <div class="phase-bar" role="group" aria-label="Expansion phases" id="phase-bar"></div>
     <div class="map-grid">
       <div class="map-wrap">
-        <div id="leaf" class="leaf" role="img" aria-label="Map of Punctual Pros core territory, adjacent ZIP codes, add-on targets and expansion phases"></div>
+        <div id="leaf" class="leaf" role="region" aria-label="Map of Punctual Pros core territory, adjacent ZIP codes, add-on targets and expansion phases"></div>
         <div class="map-legend" id="map-legend"></div>
       </div>
       <aside class="sys-card phase-panel" id="phase-panel" aria-live="polite"></aside>
@@ -116,7 +116,7 @@
       <h2 class="sys-h2" id="ag-h">AI agents for the office, the truck and the customer.</h2>
       <p class="sys-lead">Eleven agents from named vendors, each with a published benchmark and weeks to deploy. Each card says what its number is: a result, a survey or the size of the problem. They go live in the order on the runway, fastest payback first.</p>
     </div>
-    <div class="sys-chips seg" role="tablist" aria-label="Filter agents by who they help" id="ag-seg"></div>
+    <div class="sys-chips seg" role="group" aria-label="Filter agents by who they help" id="ag-seg"></div>
     <div class="ag-grid">
       <div class="sys-card runway" id="runway" aria-label="Deployment runway in weeks"></div>
       <div class="agents" id="agent-grid"></div>
@@ -249,10 +249,10 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261006143735';
-  import { Data, Fmt, esc } from '../../assets/core.js?v=20261006143735';
-  import { Chat } from '../../assets/chat.js?v=20261006143735';
-  import { boot } from './nationwide.js?v=20261006143735';
+  import { Frame } from '../../assets/frame.js?v=20261006155542';
+  import { Data, Fmt, esc } from '../../assets/core.js?v=20261006155542';
+  import { Chat } from '../../assets/chat.js?v=20261006155542';
+  import { boot } from './nationwide.js?v=20261006155542';
   const frame = Frame.mount({});
   boot({ Data, Fmt, esc, Chat, onChat: inst => frame.setChat(inst) });
 </script>

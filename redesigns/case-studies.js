@@ -6,7 +6,7 @@
 import {
   build, esc, clean, when, monthLabel, mLabel, dash, capFirst, median, usd, xTimes, yrs, host, hrefFor, kpiVal,
   FAMILY, SECTOR, SECTOR_ORDER, TODAY, timingText, legendHTML, timelineHTML, matrixHTML, clockHTML, ganttHTML, ladderHTML, ladderRows, growthHTML, kpiCardsHTML, csv, download, eventRows,
-} from '../modules/cases-lib.js?v=20261006143735';
+} from '../modules/cases-lib.js?v=20261006155542';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -23,7 +23,6 @@ const S = { primary: 'case-ch', compare: ['case-si'], mode: 'aligned', showPP: t
 export async function boot({ Data }) {
   const d = await Data.research('value_creation_cases');
   M = build(d);
-  if (M) reconcile(M);
   if (!M) {
     const warn = '<div class="sys-note sys-note--warn"><span><b>Dataset not available.</b> The value-creation case set could not be loaded, so this section is empty.</span></div>';
     ['#hero-kpis', '#tl', '#ee-table', '#matrix', '#clock', '#gantt'].forEach(s => { const el = $(s); if (el) el.outerHTML = warn; });
@@ -35,21 +34,6 @@ export async function boot({ Data }) {
   window.addEventListener('hashchange', fromHash);
   fromHash();
   return { faq: faq(), intents: intents() };
-}
-
-/* Champions: the members card used the Feb 2020 service-agreement count (40,000) while technicians and
-   members per technician start in Jan 2021. Put all three on the same base year: 60,000+ club members and
-   850+ technicians at the Jan 2021 sale to Odyssey (both in the case timeline), so 60,000 / 850 ≈ 70.6 per tech. */
-function reconcile(M) {
-  const ch = M.byId?.['case-ch']; if (!ch?.kpis) return;
-  const mem = ch.kpis.find(k => /member|service agreement/i.test(k.kpi) && !/per tech/i.test(k.kpi));
-  const tech = ch.kpis.find(k => /technician/i.test(k.kpi) && !/per/i.test(k.kpi));
-  const per = ch.kpis.find(k => /per tech/i.test(k.kpi));
-  if (mem && tech && Number(mem.before) === 40000) { mem.before = 60000; mem.kpi = 'Active members'; mem.period = tech.period; if (per) per.period = tech.period; }
-  if (typeof ch.copy === 'string') ch.copy = ch.copy.replace(/~40,000 \(2020\)/, '~60,000 (2021)');
-  const fix = t => typeof t === 'string' ? t.replace(/Active members \/ service agreements: 40,000/g, 'Active members: 60,000').replace(/~?40,000 \(2020\)/g, '~60,000 (2021)') : t;
-  for (const p of M.patterns || []) for (const e of p.evidence || []) if (e.case === 'case-ch') e.fact = fix(e.fact);
-  if (typeof M.narrative === 'string') M.narrative = M.narrative.replace('Champions grew from about 40,000 service agreements in 2020 to about 150,000 members (about 83 per technician)', 'Champions grew from about 60,000 members in 2021 to about 150,000 in 2026 (about 71 to 83 per technician)');
 }
 
 /* ── hero ─────────────────────────────────────────────────────────────────── */

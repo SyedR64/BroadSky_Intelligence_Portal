@@ -40,7 +40,8 @@
 .mx .bsp-mk > :not(title):not(.bsp-hit){fill:var(--pc);stroke:var(--sys-surface);stroke-width:2}
 .mx .bsp-mk-exit > rect{fill:var(--sys-surface)!important;stroke:var(--pc)!important;stroke-width:2.5!important}
 .mx .bsp-hit{fill:transparent;stroke:none}
-.mx .bsp-mk:hover > :not(.bsp-hit),.mx .bsp-mk:focus-visible > :not(.bsp-hit),.mx .bsp-mk.sel > :not(.bsp-hit){stroke:var(--sys-ink);stroke-width:2}
+.mx .bsp-mk:hover > :not(.bsp-hit),.mx .bsp-mk.sel > :not(.bsp-hit){stroke:var(--sys-ink);stroke-width:2}
+.mx .bsp-mk:focus-visible > :not(.bsp-hit){stroke:var(--sys-focus);stroke-width:3}
 .mx .bsp-key{display:flex;flex-wrap:wrap;gap:var(--sys-sp-4);margin-top:var(--sys-sp-2);font-size:var(--sys-fs-xs);color:var(--sys-mute)}
 .mx .bsp-key span{display:inline-flex;align-items:center;gap:6px}
 .mx .bsp-key svg{fill:var(--sys-mute)}
@@ -116,7 +117,7 @@
 .mx .bn-e{stroke:var(--bn-edge);stroke-width:.8;transition:opacity .15s}
 .mx .bn-n{cursor:pointer;outline:none;transition:opacity .15s}
 .mx .bn-n > :not(title):not(.bn-hit):not(text){stroke:var(--bn-bg);stroke-width:1.5}
-.mx .bn-n:focus-visible > :not(title):not(.bn-hit):not(text){stroke:var(--sys-ink);stroke-width:2}
+.mx .bn-n:focus-visible > :not(title):not(.bn-hit):not(text){stroke:var(--sys-focus);stroke-width:3}
 .mx .bn-hit{fill:transparent}
 .mx .bn-g1{fill:var(--bn-1)} .mx .bn-g2{fill:var(--bn-2)} .mx .bn-g3{fill:var(--bn-3)} .mx .bn-g4{fill:var(--bn-4)} .mx .bn-g5{fill:var(--bn-5)} .mx .bn-g6{fill:var(--bn-6)} .mx .bn-g7{fill:var(--bn-7)}
 .mx .bn-g7 .bn-ring{fill:var(--bn-bg);stroke:var(--bn-7)!important;stroke-width:2.2!important}

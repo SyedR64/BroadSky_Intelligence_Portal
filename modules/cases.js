@@ -4,12 +4,12 @@
    modelled by ./cases-lib.js (shared with redesigns/case-studies.html).
    Views: timeline · levers · sequence · exits.
    ═══════════════════════════════════════════════════════════════════════════ */
-import * as L from './cases-lib.js?v=20261006143735';
-import * as Copy from './copy.js?v=20261006143735';
+import * as L from './cases-lib.js?v=20261006155542';
+import * as Copy from './copy.js?v=20261006155542';
 
 const COLOR = 'var(--purple)';
 const PAGE = 'redesigns/case-studies.html';
-const injectCss = () => { if (!document.getElementById('css-cases')) { const l = document.createElement('link'); l.id = 'css-cases'; l.rel = 'stylesheet'; l.href = 'modules/cases.css?v=20261006143735'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-cases')) { const l = document.createElement('link'); l.id = 'css-cases'; l.rel = 'stylesheet'; l.href = 'modules/cases.css?v=20261006155542'; document.head.appendChild(l); } };
 const esc = L.esc;
 const EST = Copy.EST;
 const ext = (u, t) => u ? `<a href="${esc(u)}" target="_blank" rel="noopener" title="${esc(u)}">${esc(t || L.host(u))} ↗</a>` : '—';

@@ -2,7 +2,7 @@
    (CET growth plan, opportunity radar, wastewater-plant screen, add-on screen, filings review,
    county fit model, sponsor landscape, firm profile, GridOS evidence base, portfolio agent model).
    The page frame (top bar, concept notice, breadcrumb, footer) comes from assets/frame.js. */
-import { humanizeText } from '../../assets/frame.js?v=20261006143735';
+import { humanizeText } from '../../assets/frame.js?v=20261006155542';
 
 const NE = ['MA', 'CT', 'RI', 'NH', 'ME', 'VT'];
 const STATE_NAME = { MA: 'Massachusetts', CT: 'Connecticut', RI: 'Rhode Island', NH: 'New Hampshire', ME: 'Maine', VT: 'Vermont' };
@@ -178,7 +178,7 @@ function template() {
   $('#compare').innerHTML = `<span class="sys-card-label">Template against this plan</span><h3 class="sys-card-title">Smith + Howard and the CET plan</h3><p class="sys-card-body">Smith + Howard facts are sourced. CET figures are labelled assumptions.</p>
     <table class="pb-cmp"><thead><tr><th></th><th>Smith + Howard</th><th>CET plan</th></tr></thead><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody></table>
     <div class="sys-note sys-note--co"><span><b>Why about 3x and not 4x.</b> CET starts about 2.7x larger by headcount than Smith + Howard did. The multiple comes from mix (recurring O&amp;M) and margin (10% to 12.5%), not only from adding sites.</span></div>
-    <div class="sys-note sys-note--info"><span><b>The hold is longer.</b> Smith + Howard took 3.5 years. CET reaches month 36 about 4.7 years after Broad Sky’s entry, so the returns card in section 07 shows IRR as well as MOIC.</span></div>`;
+    <div class="sys-note sys-note--info"><span><b>The hold is longer.</b> Smith + Howard took about 3.7 years. CET reaches month 36 about 4.7 years after Broad Sky’s entry, so the returns card in section 07 shows IRR as well as MOIC.</span></div>`;
 }
 const fmtDate = s => { if (!s) return ''; const [y, m, d] = String(s).split('-'); const mo = m ? new Date(2000, +m - 1, 1).toLocaleString('en-US', { month: 'short' }) : ''; return [mo, d ? +d : '', y].filter(Boolean).join(' ').replace(/ (\d{4})$/, d ? ', $1' : ' $1'); };
 

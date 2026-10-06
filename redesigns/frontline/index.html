@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261006143735">
-<link rel="stylesheet" href="site.css?v=20261006143735">
+<link rel="stylesheet" href="../../assets/system.css?v=20261006155542">
+<link rel="stylesheet" href="site.css?v=20261006155542">
 </head>
 <body data-co="fl">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -246,7 +246,7 @@
         <p class="sys-lead">Follow-the-sun coverage from St. Louis to Cape Town means a partner in London and an associate in Honolulu reach the same desk, with the same context, at any hour.</p>
       </div>
       <div class="globe rv">
-        <div class="mapbox"><div id="fl-map" role="img" aria-label="Map of Frontline's nine delivery hubs"></div><div class="overlay"><b id="on-count">—</b> of 9 hubs in local business hours · desk staffed 24/7</div></div>
+        <div class="mapbox"><div id="fl-map" role="region" aria-label="Map of Frontline's nine delivery hubs"></div><div class="overlay"><b id="on-count">—</b> of 9 hubs in local business hours · desk staffed 24/7</div></div>
         <div class="sys-card hubs">
           <div class="hd"><b>Live hub clock</b><span>Local time · green means in business hours</span></div>
           <div id="hub-list"></div>
@@ -414,10 +414,10 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261006143735';
-  import { Chat } from '../../assets/chat.js?v=20261006143735';
-  import { Data, Fmt, esc } from '../../assets/core.js?v=20261006143735';
-  import { common, home } from './site.js?v=20261006143735';
+  import { Frame } from '../../assets/frame.js?v=20261006155542';
+  import { Chat } from '../../assets/chat.js?v=20261006155542';
+  import { Data, Fmt, esc } from '../../assets/core.js?v=20261006155542';
+  import { common, home } from './site.js?v=20261006155542';
   const frame = Frame.mount({});
   frame.setChat(common({ Chat, page: 'home' }));
   home({ Data, Fmt, esc });

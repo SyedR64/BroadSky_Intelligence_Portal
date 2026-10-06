@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261006143735';
+import * as Copy from './copy.js?v=20261006155542';
 /* ═══════════════════════════════════════════════════════════════════════════
    Tech enablement — the "OS" program across six Broad Sky platforms.
    ServiceOS (Punctual Pros) · GridOS (CET) · FirmOS (Frontline) · LabOS (Thomas Scientific)
@@ -8,7 +8,7 @@ import * as Copy from './copy.js?v=20261006143735';
              research/*_filings (estimate tables → calculator defaults).
    Every value-creation number here is an analyst estimate (labelled est.).
    ═══════════════════════════════════════════════════════════════════════════ */
-const injectCss = () => { if (!document.getElementById('css-techos')) { const l = document.createElement('link'); l.id = 'css-techos'; l.rel = 'stylesheet'; l.href = 'modules/techos.css?v=20261006143735'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-techos')) { const l = document.createElement('link'); l.id = 'css-techos'; l.rel = 'stylesheet'; l.href = 'modules/techos.css?v=20261006155542'; document.head.appendChild(l); } };
 
 const OUT_LINKS = `<a class="btn sm" href="index.html" title="Broad Sky Operating Intelligence landing page">Landing</a><a class="btn sm" href="redesigns/index.html" title="Portfolio site concepts + OS program gallery">Site concepts</a>`;
 /* ── Platform / OS definitions (copy + calculator wiring) ────────────────── */

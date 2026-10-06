@@ -36,6 +36,7 @@ const LIMITS = {
   excerpt: 1000,
   id: 64,
 };
+const TIMEOUTS = { dbPing: 2000, upstreamHeaders: 45000 };   // ms: /health never hangs on D1; a silent upstream fails fast
 const CHAT_WINDOW_MS = 10 * 60 * 1000;
 const WRITE_WINDOW_MS = 10 * 60 * 1000, WRITE_PER_WINDOW = 120;   // feedback + thread saves, per isolate
 
@@ -115,7 +116,10 @@ async function ipKey(request) {
 }
 async function dbOk(env) {
   if (!env.DB) return false;
-  try { await env.DB.prepare('SELECT 1 AS ok').first(); return true; } catch { return false; }
+  let timer;
+  const ping = env.DB.prepare('SELECT 1 AS ok').first().then(() => true, () => false);
+  const late = new Promise(resolve => { timer = setTimeout(() => resolve(false), TIMEOUTS.dbPing); });
+  try { return await Promise.race([ping, late]); } finally { clearTimeout(timer); }
 }
 function requireDb(env) {
   if (!env.DB) throw new HttpError(503, 'no_database', 'Storage is not configured on this backend.');
@@ -232,7 +236,13 @@ async function callClaude(env, payload, withFallback) {
   const headers = { 'content-type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': ANTHROPIC_VERSION };
   const body = { ...payload };
   if (withFallback) { headers['anthropic-beta'] = FALLBACK_BETA; body.fallbacks = 'default'; }
-  return fetch(ANTHROPIC_URL, { method: 'POST', headers, body: JSON.stringify(body) });
+  // The timer covers only the wait for response headers; once they arrive it is cleared so a long stream is never cut.
+  const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), TIMEOUTS.upstreamHeaders);
+  try { return await fetch(ANTHROPIC_URL, { method: 'POST', headers, body: JSON.stringify(body), signal: ctl.signal }); }
+  catch (e) {
+    if (e && e.name === 'AbortError') throw new HttpError(504, 'upstream_timeout', 'Claude did not answer in time. Try again in a minute.', { retryAfter: 30 });
+    throw new HttpError(503, 'upstream_unavailable', 'Claude is temporarily unavailable. Try again shortly.', { retryAfter: 30 });
+  } finally { clearTimeout(timer); }
 }
 function upstreamError(status, detail) {
   if (status === 401 || status === 403) return new HttpError(502, 'backend_auth', 'The assistant backend is not authorised with Claude yet. Grounded answers still work.');

@@ -3,7 +3,8 @@
 .m-pp .pp-sec::after{content:"";flex:1;height:1px;background:var(--border)}
 .m-pp .pp-heat{border-collapse:separate;border-spacing:2px;width:100%}
 .m-pp .pp-heat th{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:4px 3px;text-align:center;white-space:nowrap;background:transparent;border:0;position:static;cursor:default}
-.m-pp .pp-heat th.past,.m-pp .pp-heat td.past{opacity:.55}
+/* past days: desaturate the heat fill instead of fading the whole cell, so the number keeps 4.5:1 */
+.m-pp .pp-heat th.past{color:var(--dim)} .m-pp .pp-heat td.past{filter:saturate(.3)}
 .m-pp .pp-heat th .obs{display:block;font-size:8.5px;color:var(--dim);letter-spacing:.08em}
 .m-pp .pp-heat td{font-family:var(--mono);font-size:11.5px;text-align:center;padding:7px 3px;border-radius:4px;cursor:pointer;border:1px solid transparent}
 .m-pp .pp-heat td:hover{border-color:var(--text-2)}

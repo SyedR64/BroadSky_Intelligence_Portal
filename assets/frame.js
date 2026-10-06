@@ -6,7 +6,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261006143735';
+       import { Frame } from '../../assets/frame.js?v=20261006155542';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app', theme: 'dark' });       // app.html
@@ -302,14 +302,34 @@ function fixText(t) {
   t.nodeValue = h;
   return true;
 }
-function observe(root) {
+function observe(root, words = true) {
   if (state.observer || !('MutationObserver' in window)) return;
   let queue = new Set(), raf = 0;
   state.observer = new MutationObserver(muts => {
     for (const m of muts) for (const node of m.addedNodes) queue.add(node);
-    if (!raf) raf = requestAnimationFrame(() => { raf = 0; const q = queue; queue = new Set(); for (const node of q) if (node.isConnected) humanize(node); });
+    if (!raf) raf = requestAnimationFrame(() => {
+      raf = 0; const q = queue; queue = new Set(); let scan = false;
+      for (const node of q) if (node.isConnected) { if (words) humanize(node); if (node.nodeType === 1) scan = true; }
+      if (scan) scrollAccess(root);
+    });
   });
   state.observer.observe(root, { childList: true, subtree: true });
+}
+
+/* ── accessibility helpers ────────────────────────────────────────────────── */
+const SCROLL_SEL = '.sys-table-wrap,.tbl-wrap,.ch-tbl,[data-sys-scroll]';
+const FOCUSABLE = 'a[href],button:not([disabled]),input:not([type="hidden"]),select,textarea,[tabindex]:not([tabindex="-1"]),summary,iframe';
+/** A table wrap that scrolls but holds nothing focusable becomes a named, focusable region, so keyboard users can scroll it (axe: scrollable-region-focusable). */
+function scrollAccess(root = document.body) {
+  if (!root || !root.querySelectorAll) return;
+  for (const w of root.querySelectorAll(SCROLL_SEL)) {
+    const scrolls = w.scrollWidth > w.clientWidth + 1 || w.scrollHeight > w.clientHeight + 1;
+    if (w.dataset.sysScrollA11y) { if (!scrolls) { w.removeAttribute('tabindex'); w.removeAttribute('role'); w.removeAttribute('aria-label'); delete w.dataset.sysScrollA11y; } continue; }
+    if (!scrolls || w.hasAttribute('tabindex') || w.querySelector(FOCUSABLE)) continue;
+    const cap = w.querySelector('caption')?.textContent || w.closest('.panel,.sys-card,section')?.querySelector('h1,h2,h3,h4')?.textContent || 'Table';
+    w.setAttribute('tabindex', '0'); w.setAttribute('role', 'region'); w.setAttribute('aria-label', `${cap.trim().slice(0, 80)} (scrollable)`);
+    w.dataset.sysScrollA11y = '1';
+  }
 }
 
 /* ── sub-nav scroll-spy ───────────────────────────────────────────────────── */
@@ -395,8 +415,8 @@ function mount(opts = {}) {
   const wantBanner = opts.banner !== undefined ? opts.banner : w.concept;
   let banner = null;
   if (wantBanner && variant !== 'minimal') {
-    banner = document.createElement('div');
-    banner.className = 'sys-banner'; banner.setAttribute('role', 'note'); banner.setAttribute('aria-label', 'Concept notice');
+    banner = document.createElement('aside');   // top-level complementary landmark, so the notice sits inside a landmark
+    banner.className = 'sys-banner'; banner.setAttribute('aria-label', 'Concept notice');
     banner.innerHTML = bannerHTML();
     if (store.get('sys-banner-off') === '1') banner.hidden = true;
     frag.appendChild(banner);
@@ -422,10 +442,23 @@ function mount(opts = {}) {
 
   // menu sheet
   const menu = top.querySelector('.sys-menu'), sheet = top.querySelector('.sys-sheet');
-  const setSheet = open => { sheet.hidden = !open; menu.setAttribute('aria-expanded', String(open)); menu.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); };
-  menu.addEventListener('click', () => setSheet(sheet.hidden));
+  const setSheet = (open, focusFirst) => {
+    sheet.hidden = !open; menu.setAttribute('aria-expanded', String(open)); menu.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    if (open && focusFirst) sheet.querySelector('a')?.focus();
+  };
+  menu.addEventListener('click', e => setSheet(sheet.hidden, e.detail === 0));   // keyboard activation moves focus into the sheet
   sheet.addEventListener('click', e => { if (e.target.closest('a')) setSheet(false); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !sheet.hidden) { setSheet(false); menu.focus(); } });
+  document.addEventListener('keydown', e => {
+    if (sheet.hidden) return;
+    if (e.key === 'Escape') { setSheet(false); menu.focus(); return; }
+    if (e.key !== 'Tab') return;
+    // focus trap while the sheet is open: the menu button and the sheet links form one loop
+    const ring = [menu, ...sheet.querySelectorAll('a[href],button:not([disabled])')].filter(el => el.offsetParent !== null || el === menu);
+    const i = ring.indexOf(document.activeElement);
+    if (i === -1) { e.preventDefault(); ring[0].focus(); return; }
+    const next = e.shiftKey ? (i === 0 ? ring.length - 1 : i - 1) : (i === ring.length - 1 ? 0 : i + 1);
+    e.preventDefault(); ring[next].focus();
+  });
   document.addEventListener('click', e => { if (!sheet.hidden && !top.contains(e.target)) setSheet(false); });
   matchMedia('(min-width: 961px)').addEventListener?.('change', ev => { if (ev.matches) setSheet(false); });
 
@@ -448,9 +481,26 @@ function mount(opts = {}) {
   // page sub-nav scroll-spy
   spySubnav();
 
+  // skip link: focus <main> without touching location.hash (hash routers such as app.html read '#main' as a route)
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href="#main"]');
+    const main = a && document.getElementById('main');
+    if (!main) return;
+    e.preventDefault();
+    if (!main.hasAttribute('tabindex')) main.setAttribute('tabindex', '-1');
+    main.focus({ preventScroll: true });
+    main.scrollIntoView({ block: 'start', behavior: 'auto' });
+  });
+
   // copy safety net
   const hz = opts.humanize !== undefined ? opts.humanize : 'observe';
   if (hz) { humanize(body); if (hz === 'observe') observe(body); }
+
+  // keyboard access for scrolling table wraps (now, after late renders, and on resize)
+  scrollAccess(body);
+  if (!state.observer) observe(body, false);
+  let rz = 0; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => scrollAccess(body), 200); });
+  window.addEventListener('load', () => scrollAccess(body), { once: true });
 
   state.mounted = { top, banner, footer, root: ROOT, page: w, nav: o.nav, openChat, humanize, setChat: inst => { state.chat = inst; } };
   return state.mounted;

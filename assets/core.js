@@ -7,12 +7,51 @@ const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const BASE = new URL('.', import.meta.url).href.replace(/assets\/$/, '');
 
+/* ── Shared fetches ─────────────────────────────────────────────────────────
+   data/manifest.json is read by the frame, the rail, the assistant and the home view: Data.manifest() keeps one
+   promise per page (shared across module instances via globalThis), and plain fetch() calls for that exact URL are
+   answered from the same request, so the file is downloaded once. Snapshots in data/live/ share one map with
+   assets/live.js. */
+const SHARED = globalThis.__bspShared || (globalThis.__bspShared = { manifest: null, manifestJson: null, snaps: new Map() });
+if (!SHARED.snaps) SHARED.snaps = new Map();
+const nativeFetch = globalThis.__bspNativeFetch || (globalThis.__bspNativeFetch = globalThis.fetch.bind(globalThis));
+const MANIFEST_URL = BASE + 'data/manifest.json';
+function manifestText() {
+  if (!SHARED.manifest) {
+    const p = nativeFetch(MANIFEST_URL, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(`Dataset manifest not found (${r.status})`); return r.text(); });
+    SHARED.manifest = p; p.catch(() => { if (SHARED.manifest === p) SHARED.manifest = null; });
+  }
+  return SHARED.manifest;
+}
+if (!globalThis.__bspFetchShim) {
+  globalThis.__bspFetchShim = true;
+  globalThis.fetch = function (input, init) {
+    try {
+      const raw = typeof input === 'string' || input instanceof URL ? String(input) : input?.url;
+      const method = String(init?.method || (typeof input === 'object' && !(input instanceof URL) && input?.method) || 'GET').toUpperCase();
+      if (raw && method === 'GET' && new URL(raw, location.href).href === MANIFEST_URL) {
+        return manifestText().then(t => new Response(t, { status: 200, headers: { 'Content-Type': 'application/json' } }), () => nativeFetch(input, init));
+      }
+    } catch { /* not a URL we share */ }
+    return nativeFetch(input, init);
+  };
+}
+function snapshot(name) {
+  if (!/^[a-z0-9_]+$/.test(name)) return Promise.resolve(null);
+  if (!SHARED.snaps.has(name)) {
+    const p = nativeFetch(`${BASE}data/live/${name}.json`, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null)).catch(() => null);
+    SHARED.snaps.set(name, p); p.then(v => { if (v == null && SHARED.snaps.get(name) === p) SHARED.snaps.delete(name); });
+  }
+  return SHARED.snaps.get(name);
+}
+
 /* ── Data ─────────────────────────────────────────────────────────────────── */
 const _cache = new Map();
 export const Data = {
   /** Load data/<name>.json (or data/research/<name>.json). Decodes the columnar format transparently. */
   async load(name) {
     if (_cache.has(name)) return _cache.get(name);
+    if (name === 'manifest') return Data.manifest();
     const p = (async () => {
       // Legacy tables live in data/; everything else (research datasets) lives in data/research/. No probing → no 404 noise.
       const LEGACY = new Set(['cet_ne_counties', 'cet_ne_development', 'cet_ne_rfps', 'cet_nyc_archive_summary', 'pp_zips', 'pp_meta', 'pp_sales_90d', 'fl_lawfirms', 'ts_sites', 'ts_parents', 'manifest']);
@@ -38,6 +77,11 @@ export const Data = {
   },
   /** Load a research dataset and return {meta, items, ...}; tolerant of missing files (returns null). */
   async research(name) { try { return await Data.load(name); } catch (e) { console.debug(e.message); return null; } },
+  /** data/manifest.json, fetched once per page however many callers ask (frame, rail, counter, assistant, home). */
+  manifest() {
+    if (!SHARED.manifestJson) { const p = manifestText().then(t => JSON.parse(t)); SHARED.manifestJson = p; p.catch(() => { if (SHARED.manifestJson === p) SHARED.manifestJson = null; }); }
+    return SHARED.manifestJson;
+  },
   clear() { _cache.clear(); },
 };
 
@@ -76,15 +120,15 @@ export const UI = {
   kv: obj => `<dl class="kv">${Object.entries(obj).filter(([k, v]) => v != null && v !== '' && !(Array.isArray(v) && !v.length)).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${Array.isArray(v) ? v.map(x => `<span class="chip">${esc(x)}</span>`).join(' ') : v}</dd>`).join('')}</dl>`,
   timeline: items => `<div class="timeline">${items.map(i => `<div class="tl-item" style="${i.color ? `--cc:${i.color}` : ''}"><div class="d">${esc(i.date)}</div><div class="e">${i.html || esc(i.text)}</div></div>`).join('')}</div>`,
   toast(msg, ms = 2600) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), ms); },
-  seg(el, options, value, onChange) { el.innerHTML = `<div class="seg">${options.map(o => `<button data-v="${esc(o.value)}" class="${o.value === value ? 'active' : ''}">${esc(o.label)}</button>`).join('')}</div>`; $$('button', el).forEach(b => b.onclick = () => { $$('button', el).forEach(x => x.classList.toggle('active', x === b)); onChange(b.dataset.v); }); },
+  seg(el, options, value, onChange) { el.innerHTML = `<div class="seg">${options.map(o => `<button data-v="${esc(o.value)}" class="${o.value === value ? 'active' : ''}" aria-pressed="${o.value === value}">${esc(o.label)}</button>`).join('')}</div>`; $$('button', el).forEach(b => b.onclick = () => { $$('button', el).forEach(x => { x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', String(x === b)); }); onChange(b.dataset.v); }); },
   /** Filter bar. filters: [{key,label,type:'select'|'search'|'range',options:[{value,label}],value}] */
   filters(el, filters, onChange) {
-    el.innerHTML = `<div class="filters">${filters.map(f => f.type === 'search' ? `<input type="search" data-k="${f.key}" placeholder="${esc(f.label)}" value="${esc(f.value || '')}">` : f.type === 'toggle' ? `<button class="btn sm ${f.value ? 'active' : ''}" data-k="${f.key}" data-toggle>${esc(f.label)}</button>` : `<label class="f">${esc(f.label)} <select data-k="${f.key}"><option value="">All</option>${(f.options || []).map(o => { const v = typeof o === 'object' ? o.value : o, l = typeof o === 'object' ? o.label : o; return `<option value="${esc(v)}" ${String(f.value) === String(v) ? 'selected' : ''}>${esc(l)}</option>`; }).join('')}</select></label>`).join('')}<span class="count" data-count></span></div>`;
+    el.innerHTML = `<div class="filters">${filters.map(f => f.type === 'search' ? `<input type="search" data-k="${f.key}" placeholder="${esc(f.label)}" aria-label="${esc(f.label)}" value="${esc(f.value || '')}">` : f.type === 'toggle' ? `<button class="btn sm ${f.value ? 'active' : ''}" data-k="${f.key}" data-toggle aria-pressed="${f.value ? 'true' : 'false'}">${esc(f.label)}</button>` : `<label class="f">${esc(f.label)} <select data-k="${f.key}"><option value="">All</option>${(f.options || []).map(o => { const v = typeof o === 'object' ? o.value : o, l = typeof o === 'object' ? o.label : o; return `<option value="${esc(v)}" ${String(f.value) === String(v) ? 'selected' : ''}>${esc(l)}</option>`; }).join('')}</select></label>`).join('')}<span class="count" data-count></span></div>`;
     const state = Object.fromEntries(filters.map(f => [f.key, f.value ?? (f.type === 'toggle' ? false : '')]));
     const emit = () => onChange(state);
     $$('select', el).forEach(s => s.onchange = () => { state[s.dataset.k] = s.value; emit(); });
     $$('input[type=search]', el).forEach(i => { let t; i.oninput = () => { clearTimeout(t); t = setTimeout(() => { state[i.dataset.k] = i.value; emit(); }, 180); }; });
-    $$('[data-toggle]', el).forEach(b => b.onclick = () => { state[b.dataset.k] = !state[b.dataset.k]; b.classList.toggle('active', state[b.dataset.k]); emit(); });
+    $$('[data-toggle]', el).forEach(b => b.onclick = () => { state[b.dataset.k] = !state[b.dataset.k]; b.classList.toggle('active', state[b.dataset.k]); b.setAttribute('aria-pressed', String(!!state[b.dataset.k])); emit(); });
     return { state, setCount: n => { const c = $('[data-count]', el); if (c) c.textContent = n; } };
   },
   /** Sortable, paginated table. columns: [{key,label,fmt(v,row),num,width,wrap,sort(a,b)}] */
@@ -93,10 +137,10 @@ export const UI = {
     const sortRows = () => { if (!sk) return; const col = columns.find(c => c.key === sk); const cmp = col?.sort || ((a, b) => { const x = a[sk], y = b[sk]; return typeof x === 'number' && typeof y === 'number' ? x - y : String(x).localeCompare(String(y)); }); const nul = v => v == null || v === '' || (typeof v === 'number' && isNaN(v)); data.sort((a, b) => { const na = nul(a[sk]), nb = nul(b[sk]); if (na && nb) return 0; if (na) return 1; if (nb) return -1; return cmp(a, b) * sd; }); };
     const render = () => {
       sortRows(); const start = page * pageSize, slice = data.slice(start, start + pageSize), pages = Math.max(1, Math.ceil(data.length / pageSize));
-      el.innerHTML = `<div class="tbl-wrap"><table class="tbl"><thead><tr>${columns.map(c => `<th data-k="${c.key}" class="${c.num ? 'num' : ''} ${sk === c.key ? 'sorted' : ''}" style="${c.width ? `width:${c.width}` : ''}">${esc(c.label)}${sk === c.key ? `<span class="arr">${sd > 0 ? '▲' : '▼'}</span>` : ''}</th>`).join('')}</tr></thead><tbody>${slice.length ? slice.map((r, i) => `<tr data-i="${start + i}" class="${selected != null && rowKey(r) === selected ? 'selected' : ''} ${rowClass ? rowClass(r) : ''}">${columns.map(c => `<td class="${c.num ? 'num' : ''} ${c.wrap ? 'wrap' : ''}" title="${c.title ? esc(c.title(r)) : ''}">${c.fmt ? c.fmt(r[c.key], r) : esc(r[c.key] ?? '—')}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${columns.length}"><div class="empty">No rows match</div></td></tr>`}</tbody></table></div><div class="tbl-foot"><span class="num">${Fmt.num(data.length)} rows</span>${exportName ? `<button class="btn xs" data-export>⇩ CSV</button>` : ''}<div class="pages"><button class="btn xs" data-pg="-1" ${page === 0 ? 'disabled' : ''}>‹</button><span class="num">${page + 1} / ${pages}</span><button class="btn xs" data-pg="1" ${page >= pages - 1 ? 'disabled' : ''}>›</button></div></div>`;
-      $$('th', el).forEach(th => th.onclick = () => { const k = th.dataset.k; if (sk === k) sd = -sd; else { sk = k; sd = -1; } page = 0; render(); });
+      el.innerHTML = `<div class="tbl-wrap"><table class="tbl"><thead><tr>${columns.map(c => `<th data-k="${c.key}" class="${c.num ? 'num' : ''} ${sk === c.key ? 'sorted' : ''}" style="${c.width ? `width:${c.width}` : ''}" tabindex="0" aria-sort="${sk === c.key ? (sd > 0 ? 'ascending' : 'descending') : 'none'}">${esc(c.label)}${sk === c.key ? `<span class="arr">${sd > 0 ? '▲' : '▼'}</span>` : ''}</th>`).join('')}</tr></thead><tbody>${slice.length ? slice.map((r, i) => `<tr data-i="${start + i}" class="${selected != null && rowKey(r) === selected ? 'selected' : ''} ${rowClass ? rowClass(r) : ''}"${onRow ? ` tabindex="0"${selected != null && rowKey(r) === selected ? ' aria-selected="true"' : ''}` : ''}>${columns.map(c => `<td class="${c.num ? 'num' : ''} ${c.wrap ? 'wrap' : ''}" title="${c.title ? esc(c.title(r)) : ''}">${c.fmt ? c.fmt(r[c.key], r) : esc(r[c.key] ?? '—')}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${columns.length}"><div class="empty">No rows match</div></td></tr>`}</tbody></table></div><div class="tbl-foot"><span class="num">${Fmt.num(data.length)} rows</span>${exportName ? `<button class="btn xs" data-export>⇩ CSV</button>` : ''}<div class="pages"><button class="btn xs" data-pg="-1" aria-label="Previous page" ${page === 0 ? 'disabled' : ''}>‹</button><span class="num">${page + 1} / ${pages}</span><button class="btn xs" data-pg="1" aria-label="Next page" ${page >= pages - 1 ? 'disabled' : ''}>›</button></div></div>`;
+      $$('th', el).forEach(th => { th.onclick = () => { const k = th.dataset.k; if (sk === k) sd = -sd; else { sk = k; sd = -1; } page = 0; render(); $(`th[data-k="${CSS.escape(k)}"]`, el)?.focus({ preventScroll: true }); }; th.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); th.onclick(); } }; });
       $$('[data-pg]', el).forEach(b => b.onclick = () => { page = Math.max(0, Math.min(Math.ceil(data.length / pageSize) - 1, page + Number(b.dataset.pg))); render(); });
-      $$('tbody tr', el).forEach(tr => tr.onclick = () => { const r = data[Number(tr.dataset.i)]; if (!r) return; selected = rowKey(r); $$('tbody tr', el).forEach(x => x.classList.toggle('selected', x === tr)); onRow && onRow(r); });
+      $$('tbody tr', el).forEach(tr => { tr.onclick = () => { const r = data[Number(tr.dataset.i)]; if (!r) return; selected = rowKey(r); $$('tbody tr', el).forEach(x => { x.classList.toggle('selected', x === tr); if (onRow) x.toggleAttribute('aria-selected', x === tr); }); onRow && onRow(r); }; if (onRow) tr.onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === tr) { e.preventDefault(); tr.onclick(); } }; });
       const ex = $('[data-export]', el); if (ex) ex.onclick = () => UI.exportCSV(data, columns, exportName);
     };
     render();
@@ -119,12 +163,23 @@ export const UI = {
 export const Inspector = {
   open({ title, sub, color, sections = [], actions = [] }) {
     const el = $('#inspector'); if (!el) return;
-    el.innerHTML = `<div class="insp-head" style="--mc:${color || 'var(--accent)'}"><div class="grow"><h2>${title}</h2>${sub ? `<div class="sub">${sub}</div>` : ''}</div><button class="icon-btn" data-close title="Close (Esc)">✕</button></div><div class="insp-body">${sections.map(s => `<div class="insp-sec">${s.label ? `<h4>${esc(s.label)}</h4>` : ''}${s.html}</div>`).join('')}</div>${actions.length ? `<div class="insp-actions">${actions.map(a => a.href ? `<a class="btn sm" href="${esc(a.href)}" target="_blank" rel="noopener">${a.label}</a>` : `<button class="btn sm" data-act="${esc(a.id)}">${a.label}</button>`).join('')}</div>` : ''}`;
+    el.innerHTML = `<div class="insp-head" style="--mc:${color || 'var(--accent)'}"><div class="grow"><h2>${title}</h2>${sub ? `<div class="sub">${sub}</div>` : ''}</div><button class="icon-btn" type="button" data-close title="Close (Esc)" aria-label="Close inspector">✕</button></div><div class="insp-body">${sections.map(s => `<div class="insp-sec">${s.label ? `<h4>${esc(s.label)}</h4>` : ''}${s.html}</div>`).join('')}</div>${actions.length ? `<div class="insp-actions">${actions.map(a => a.href ? `<a class="btn sm" href="${esc(a.href)}" target="_blank" rel="noopener">${a.label}</a>` : `<button class="btn sm" data-act="${esc(a.id)}">${a.label}</button>`).join('')}</div>` : ''}`;
+    const wasOpen = el.classList.contains('open');
     el.classList.add('open');
+    // keyboard: remember what opened the inspector and move focus to its close button; Esc or close hands focus back
+    const from = document.activeElement;
+    if (!wasOpen || !el.contains(from)) Inspector._from = from && from !== document.body ? from : null;
+    if (Inspector._from && Inspector._from.matches?.(':focus-visible')) $('[data-close]', el)?.focus({ preventScroll: true });
     $('[data-close]', el).onclick = () => Inspector.close();
     actions.forEach(a => { if (a.onClick) { const b = $(`[data-act="${a.id}"]`, el); if (b) b.onclick = a.onClick; } });
   },
-  close() { const el = $('#inspector'); if (el) { el.classList.remove('open'); setTimeout(() => { if (!el.classList.contains('open')) el.innerHTML = ''; }, 250); } },
+  close() {
+    const el = $('#inspector'); if (!el) return;
+    const had = el.contains(document.activeElement);
+    el.classList.remove('open'); setTimeout(() => { if (!el.classList.contains('open')) el.innerHTML = ''; }, 250);
+    const back = Inspector._from; Inspector._from = null;
+    if (had && back && back.isConnected) back.focus({ preventScroll: true });
+  },
 };
 
 /* ── Maps (Leaflet) ───────────────────────────────────────────────────────── */
@@ -222,22 +277,138 @@ export const Charts = {
 };
 
 /* ── Live data (NWS alerts, Open-Meteo forecast) ──────────────────────────── */
-const _live = new Map();
-async function cachedFetch(url, ttlMs = 5 * 60e3, init) { const now = Date.now(); const c = _live.get(url); if (c && now - c.t < ttlMs) return c.v; const r = await fetch(url, init); if (!r.ok) throw new Error(`${r.status} ${url}`); const v = await r.json(); _live.set(url, { t: now, v }); return v; }
+/* One helper for every public weather API call: 6 s timeout, one retry with backoff on 429, 5xx, timeout or network
+   failure, a 10-minute sessionStorage cache (so repeated views and CI sweeps do not hit rate limits) and a 2-minute
+   failure marker that sends repeat calls straight to the snapshot. When the API stays down, nwsAlerts and forecast
+   resolve from the nightly snapshot in data/live/*.json (scripts/refresh_live.py) and the page shows a
+   "snapshot from <date>" note instead of an error. */
+const LIVE_CFG = { timeout: 6000, ttl: 10 * 60e3, failTtl: 2 * 60e3, prefix: 'bsp-live:' };
+const _live = new Map(), _liveInflight = new Map();
+/* Per-host guard: until a host has answered once this session, its first call goes alone and the rest wait for it, so a
+   rate-limited API (HTTP 429) costs one request rather than one per hub; a 429 then sends that host's calls straight
+   to the snapshot for the failure window. */
+const _hostOk = new Set(), _hostGate = new Map();
+const liveHost = u => { try { return new URL(u).host; } catch { return ''; } };
+class LiveError extends Error { constructor(msg, status = 0, retryAfter = null) { super(msg); this.name = 'LiveError'; this.status = status; this.retryAfter = retryAfter; } }
+const ssGet = k => { try { const s = sessionStorage.getItem(LIVE_CFG.prefix + k); return s ? JSON.parse(s) : null; } catch { return null; } };
+const ssSet = (k, o) => {
+  let s; try { s = JSON.stringify(o); } catch { return; }
+  try { sessionStorage.setItem(LIVE_CFG.prefix + k, s); }
+  catch { try { for (let i = sessionStorage.length - 1; i >= 0; i--) { const key = sessionStorage.key(i); if (key && key.startsWith(LIVE_CFG.prefix)) sessionStorage.removeItem(key); } sessionStorage.setItem(LIVE_CFG.prefix + k, s); } catch { /* storage full or blocked: memory cache only */ } }
+};
+const liveSleep = ms => new Promise(r => setTimeout(r, ms));
+async function liveAttempt(url, init) {
+  const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), LIVE_CFG.timeout);
+  try {
+    const r = await nativeFetch(url, { ...init, signal: ctl.signal });
+    if (!r.ok) throw new LiveError(`${r.status} ${url}`, r.status, r.headers.get('Retry-After'));
+    return await r.json();
+  } catch (e) {
+    if (e instanceof LiveError) throw e;
+    throw new LiveError(`${e?.name === 'AbortError' ? 'timeout' : 'network'} ${url}`, 0);
+  } finally { clearTimeout(timer); }
+}
+/** GET a public JSON API through the shared timeout / retry / cache path. Rejects with a LiveError ({status}) after one retry. */
+async function fetchLive(url, { ttl = LIVE_CFG.ttl, headers } = {}) {
+  const now = Date.now();
+  const hit = _live.get(url) || ssGet(url);
+  if (hit && now - hit.t < ttl) { _live.set(url, hit); return hit.v; }
+  const fail = _live.get(url + '#fail') || ssGet(url + '#fail');
+  if (fail && now - fail.t < LIVE_CFG.failTtl) throw new LiveError(`recent failure (${fail.status || 'network'}) ${url}`, fail.status || 0);
+  if (_liveInflight.has(url)) return _liveInflight.get(url);
+  const host = liveHost(url), hkey = 'host:' + host + '#429';
+  const limited = () => { const h = _live.get(hkey) || ssGet(hkey); return h && Date.now() - h.t < LIVE_CFG.failTtl; };
+  if (limited()) throw new LiveError(`rate limited (429) ${url}`, 429);
+  const init = headers ? { headers } : {};
+  const retryable = e => !e.status || e.status >= 500 || (e.status === 429 && Number(e.retryAfter) > 0 && Number(e.retryAfter) <= 5);
+  const run = async () => {
+    if (host && !_hostOk.has(host) && _hostGate.has(host)) { await _hostGate.get(host); if (limited()) throw new LiveError(`rate limited (429) ${url}`, 429); }
+    return liveAttempt(url, init)
+      .catch(async e => {
+        if (e.status === 429) { const h = { t: Date.now(), status: 429 }; _live.set(hkey, h); ssSet(hkey, h); }
+        if (!retryable(e)) throw e;
+        const ra = Number(e.retryAfter);
+        await liveSleep(Number.isFinite(ra) && ra > 0 && ra <= 5 ? ra * 1000 : 800 + Math.random() * 700);
+        return liveAttempt(url, init);
+      });
+  };
+  const p = run()
+    .then(v => { const o = { t: Date.now(), v }; _live.set(url, o); ssSet(url, o); _live.delete(url + '#fail'); if (host) _hostOk.add(host); return v; },
+      e => { const f = { t: Date.now(), status: e.status || 0 }; _live.set(url + '#fail', f); ssSet(url + '#fail', f); throw e; })
+    .finally(() => _liveInflight.delete(url));
+  if (host && !_hostOk.has(host) && !_hostGate.has(host)) _hostGate.set(host, p.then(() => { }, () => { }).finally(() => _hostGate.delete(host)));
+  _liveInflight.set(url, p);
+  return p;
+}
+
+/* "snapshot from <date>" note: one small status line per page, cleared on every app route change. */
+const _snapNotes = new Map();
+const longDate = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }); };
+function clearSnapshotNote() { _snapNotes.clear(); document.getElementById('bsp-live-note')?.remove(); }
+function paintSnapshotNote() {
+  if (!_snapNotes.size || typeof document === 'undefined' || !document.body) return;
+  let el = document.getElementById('bsp-live-note');
+  if (!el) {
+    el = document.createElement('div'); el.id = 'bsp-live-note'; el.setAttribute('role', 'status');
+    el.style.cssText = 'position:fixed;left:50%;bottom:max(16px,var(--launch-clear,16px));transform:translateX(-50%);z-index:70;box-sizing:border-box;width:max-content;max-width:min(560px,calc(100vw - 32px));display:flex;gap:10px;align-items:flex-start;padding:9px 10px 9px 12px;border-radius:10px;font:500 12.5px/1.45 var(--sys-font,system-ui,sans-serif);color:var(--sys-ink-2,#333);background:var(--sys-surface,#fff);border:1px solid var(--sys-line-2,#ccc);border-left:3px solid var(--sys-warn,#b7791f);box-shadow:0 10px 28px -14px rgba(0,0,0,.5)';
+    document.body.appendChild(el);
+  }
+  const items = [..._snapNotes.entries()], dates = [...new Set(items.map(([, d]) => longDate(d)))];
+  const what = items.map(([label]) => label);
+  const list = what.length > 1 ? `${what.slice(0, -1).join(', ')} and ${what[what.length - 1]}` : what[0];
+  const text = dates.length === 1
+    ? `Live ${list} unavailable right now; showing the snapshot from ${dates[0]}.`
+    : `Live ${list} unavailable right now; showing saved snapshots (${items.map(([label, d]) => `${label} from ${longDate(d)}`).join('; ')}).`;
+  el.innerHTML = `<span style="flex:1;min-width:0">${esc(text)}</span><button type="button" aria-label="Dismiss" style="flex:none;border:0;background:none;color:inherit;cursor:pointer;font:inherit;line-height:1;padding:2px 4px">✕</button>`;
+  el.querySelector('button').onclick = () => el.remove();
+}
+function markSnapshot(v, snap, label) {
+  try { Object.defineProperty(v, '_snapshot', { value: { fetched_at: snap.fetched_at, name: snap.dataset }, enumerable: false }); } catch { /* frozen */ }
+  _snapNotes.set(label, snap.fetched_at);
+  try { window.dispatchEvent(new CustomEvent('bsp:live-snapshot', { detail: { name: snap.dataset, label, fetched_at: snap.fetched_at } })); } catch { /* no window */ }
+  if (typeof document !== 'undefined') { if (document.body) paintSnapshotNote(); else document.addEventListener('DOMContentLoaded', paintSnapshotNote, { once: true }); }
+  return v;
+}
+const localISO = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const normAlert = (f, area) => { const p = f.properties || {}; return { id: p.id, event: p.event, severity: p.severity, urgency: p.urgency, certainty: p.certainty, headline: p.headline, areaDesc: p.areaDesc, areas: (p.areaDesc || '').split(';').map(s => s.trim()), zones: (p.geocode?.UGC || []), fips: (p.geocode?.SAME || []), onset: p.onset, ends: p.ends || p.expires, sent: p.sent, description: p.description, instruction: p.instruction, sender: p.senderName, geometry: f.geometry, state: area }; };
 export const Live = {
-  /** Active NWS alerts for a state code (PA, NJ, MA…). Returns normalized array. */
+  /** Active NWS alerts for a state code (PA, NJ, MA…). Returns normalized array; falls back to the nightly snapshot. */
   async nwsAlerts(area) {
-    const j = await cachedFetch(`https://api.weather.gov/alerts/active?area=${area}`, 3 * 60e3, { headers: { Accept: 'application/geo+json' } });
-    return (j.features || []).map(f => { const p = f.properties; return { id: p.id, event: p.event, severity: p.severity, urgency: p.urgency, certainty: p.certainty, headline: p.headline, areaDesc: p.areaDesc, areas: (p.areaDesc || '').split(';').map(s => s.trim()), zones: (p.geocode?.UGC || []), fips: (p.geocode?.SAME || []), onset: p.onset, ends: p.ends || p.expires, sent: p.sent, description: p.description, instruction: p.instruction, sender: p.senderName, geometry: f.geometry, state: area }; });
+    try {
+      const j = await fetchLive(`https://api.weather.gov/alerts/active?area=${area}`, { headers: { Accept: 'application/geo+json' } });
+      return (j.features || []).map(f => normAlert(f, area));
+    } catch (e) {
+      const s = await snapshot('nws_alerts');
+      if (!s || !Array.isArray(s.items) || (Array.isArray(s.states) && !s.states.includes(area)) || s.errors?.[area]) throw e;
+      const now = Date.now();
+      const rows = s.items.filter(a => a.state === area && !(a.ends && Date.parse(a.ends) < now))
+        .map(a => ({ ...a, areas: String(a.areaDesc || '').split(';').map(x => x.trim()).filter(Boolean), zones: a.zones || [], fips: a.fips || [], geometry: null }));
+      return markSnapshot(rows, s, 'weather alerts');
+    }
   },
-  /** 7-day daily forecast via Open-Meteo (no key). */
+  /** 7-day daily forecast via Open-Meteo (no key), plus 2 observed days flagged past; falls back to the nearest snapshot hub. */
   async forecast(lat, lon, days = 7) {
     const u = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,weather_code,snowfall_sum&hourly=temperature_2m&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York&forecast_days=${days}&past_days=2`;
-    const j = await cachedFetch(u, 30 * 60e3); const d = j.daily; return d.time.map((t, i) => ({ date: t, tmax: d.temperature_2m_max[i], tmin: d.temperature_2m_min[i], precip: d.precipitation_sum[i], pop: d.precipitation_probability_max?.[i], wind: d.wind_speed_10m_max[i], gust: d.wind_gusts_10m_max[i], code: d.weather_code[i], snow: d.snowfall_sum[i], past: i < 2 }));
+    try {
+      const j = await fetchLive(u); const d = j.daily; return d.time.map((t, i) => ({ date: t, tmax: d.temperature_2m_max[i], tmin: d.temperature_2m_min[i], precip: d.precipitation_sum[i], pop: d.precipitation_probability_max?.[i], wind: d.wind_speed_10m_max[i], gust: d.wind_gusts_10m_max[i], code: d.weather_code[i], snow: d.snowfall_sum[i], past: i < 2 }));
+    } catch (e) {
+      const s = await snapshot('forecast_hubs');
+      const dist = h => Math.hypot(h.lat - lat, (h.lon - lon) * Math.cos(lat * Math.PI / 180));
+      const hub = (s?.items || []).filter(h => Array.isArray(h.days) && Number.isFinite(h.lat) && Number.isFinite(h.lon)).sort((a, b) => dist(a) - dist(b))[0];
+      if (!hub || dist(hub) > 0.3) throw e;   // ~20 miles: beyond that a hub's forecast is not this point's forecast
+      const today = localISO();
+      const all = hub.days.map(x => ({ date: x.date, tmax: x.tmax, tmin: x.tmin, precip: x.precip, pop: x.pop, wind: x.wind, gust: x.gust, code: x.code, snow: x.snow, past: x.date < today }));
+      const fut = all.filter(x => !x.past).slice(0, days); if (!fut.length) throw e;
+      return markSnapshot([...all.filter(x => x.past).slice(-2), ...fut], s, 'weather forecast');
+    }
   },
   wmo: c => ({ 0: 'Clear', 1: 'Mostly clear', 2: 'Partly cloudy', 3: 'Overcast', 45: 'Fog', 48: 'Rime fog', 51: 'Light drizzle', 53: 'Drizzle', 55: 'Heavy drizzle', 61: 'Light rain', 63: 'Rain', 65: 'Heavy rain', 66: 'Freezing rain', 67: 'Freezing rain', 71: 'Light snow', 73: 'Snow', 75: 'Heavy snow', 77: 'Snow grains', 80: 'Showers', 81: 'Showers', 82: 'Violent showers', 85: 'Snow showers', 86: 'Snow showers', 95: 'Thunderstorm', 96: 'T-storm w/ hail', 99: 'T-storm w/ hail' }[c] || '—'),
-  /** Historical daily weather (Open-Meteo archive) — for backtesting. */
-  async history(lat, lon, start, end) { const u = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${start}&end_date=${end}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_gusts_10m_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York`; const j = await cachedFetch(u, 6 * 3600e3); const d = j.daily; return d.time.map((t, i) => ({ date: t, tmax: d.temperature_2m_max[i], tmin: d.temperature_2m_min[i], precip: d.precipitation_sum[i], gust: d.wind_gusts_10m_max[i] })); },
+  /** Historical daily weather (Open-Meteo archive) — for backtesting. No snapshot: callers handle the rejection. */
+  async history(lat, lon, start, end) { const u = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${start}&end_date=${end}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_gusts_10m_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York`; const j = await fetchLive(u, { ttl: 6 * 3600e3 }); const d = j.daily; return d.time.map((t, i) => ({ date: t, tmax: d.temperature_2m_max[i], tmin: d.temperature_2m_min[i], precip: d.precipitation_sum[i], gust: d.wind_gusts_10m_max[i] })); },
+  /** The shared helper, for other public JSON APIs: Live.fetchJSON(url, { ttl, headers }). */
+  fetchJSON: fetchLive,
+  /** Nightly snapshot data/live/<name>.json (null if missing); shared with assets/live.js. */
+  snapshot,
 };
 
 /* ── Tour / briefing engine ───────────────────────────────────────────────── */
@@ -276,7 +447,7 @@ export const App = {
     const { mod, view, params } = App.parse(); const m = App.modules.find(x => x.id === mod) || App.modules[0]; if (!m) return;
     const v = m.views.find(x => x.id === view) || m.views[0];
     if (App._unmount) { try { App._unmount(); } catch { } App._unmount = null; }
-    App.current = m; App.view = v; App.params = params; Inspector.close();
+    App.current = m; App.view = v; App.params = params; Inspector.close(); clearSnapshotNote();
     document.documentElement.style.setProperty('--mc', m.color);
     App.renderRail(); App.renderTop();
     const content = $('#content'); content.className = v.flush ? 'flush' : ''; content.scrollTop = 0; content.innerHTML = UI.loading(`Loading ${m.name} · ${v.name}`);
@@ -287,18 +458,20 @@ export const App = {
   },
   renderRail() {
     const nav = $('#rail .rail-nav'); const groups = [...new Set(App.modules.map(m => m.group || 'Portfolio'))];
-    nav.innerHTML = groups.map(g => `<div class="rail-section">${esc(g)}</div>${App.modules.filter(m => (m.group || 'Portfolio') === g).map(m => `<div class="rail-item ${m === App.current ? 'active' : ''}" style="--mc:${m.color}" data-mod="${m.id}"><span class="dot"></span><span class="ellipsis">${esc(m.name)}</span>${m.tag ? `<span class="tag">${esc(m.tag)}</span>` : ''}</div>`).join('')}`).join('');
-    $$('.rail-item', nav).forEach(el => el.onclick = () => App.go(el.dataset.mod));
+    const refocus = App._railKey && nav.contains(document.activeElement);   // keyboard user on the rail: keep focus there after the re-render
+    nav.innerHTML = groups.map(g => `<div class="rail-section">${esc(g)}</div>${App.modules.filter(m => (m.group || 'Portfolio') === g).map(m => `<div class="rail-item ${m === App.current ? 'active' : ''}" style="--mc:${m.color}" data-mod="${m.id}" role="link" tabindex="0"${m === App.current ? ' aria-current="page"' : ''}><span class="dot"></span><span class="ellipsis">${esc(m.name)}</span>${m.tag ? `<span class="tag">${esc(m.tag)}</span>` : ''}</div>`).join('')}`).join('');
+    $$('.rail-item', nav).forEach(el => { el.onclick = () => App.go(el.dataset.mod); el.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); App.go(el.dataset.mod); } }; });
+    if (refocus) $(`.rail-item[data-mod="${CSS.escape(App._railKey)}"]`, nav)?.focus({ preventScroll: true });
   },
   renderTop() {
     const m = App.current, v = App.view; const t = $('#topbar');
     $('.crumb', t).innerHTML = `<span class="co" style="--mc:${m.color}"><span class="dot"></span>${esc(m.name)}</span><span class="sep">/</span><span>${esc(v.name)}</span>`;
-    $('.view-tabs', t).innerHTML = m.views.map(x => `<button class="view-tab ${x === v ? 'active' : ''}" data-v="${x.id}">${x.icon ? `<span>${x.icon}</span>` : ''}${esc(x.name)}${x.badge ? `<span class="n">${esc(x.badge)}</span>` : ''}</button>`).join('');
+    $('.view-tabs', t).innerHTML = m.views.map(x => `<button class="view-tab ${x === v ? 'active' : ''}" type="button" data-v="${x.id}"${x === v ? ' aria-current="page"' : ''}>${x.icon ? `<span>${x.icon}</span>` : ''}${esc(x.name)}${x.badge ? `<span class="n">${esc(x.badge)}</span>` : ''}</button>`).join('');
     $$('.view-tab', t).forEach(b => b.onclick = () => App.go(m.id, b.dataset.v));
   },
   palette() {
     let el = $('#palette'); if (el) return el.remove();
-    el = document.createElement('div'); el.id = 'palette'; el.innerHTML = `<div class="pal"><input placeholder="Search views, companies, targets, opportunities…" autofocus><div class="pal-list"></div></div>`; document.body.appendChild(el);
+    el = document.createElement('div'); el.id = 'palette'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Search the portal'); el.innerHTML = `<div class="pal"><input placeholder="Search views, companies, targets, opportunities…" aria-label="Search views, companies, targets and opportunities" autofocus><div class="pal-list"></div></div>`; document.body.appendChild(el);
     const inp = $('input', el), list = $('.pal-list', el); let items = [], active = 0;
     const draw = () => { const q = inp.value.trim().toLowerCase(); items = (q ? searchIndex.filter(i => (i.label + ' ' + (i.sub || '')).toLowerCase().includes(q)) : searchIndex.filter(i => i.kind === 'View')).slice(0, 40); active = 0; list.innerHTML = items.map((i, k) => `<div class="pal-item ${k === 0 ? 'active' : ''}" data-h="${esc(i.href)}"><span class="k" style="color:${i.color || 'var(--dim)'}">${esc(i.kind || '')}</span><span class="ellipsis">${esc(i.label)}</span>${i.sub ? `<span class="s ellipsis">${esc(i.sub)}</span>` : ''}</div>`).join('') || `<div class="empty">No matches</div>`; $$('.pal-item', list).forEach(x => x.onclick = () => { location.hash = x.dataset.h; el.remove(); }); };
     inp.oninput = draw; draw(); inp.focus();
@@ -307,7 +480,9 @@ export const App = {
   },
   start() {
     window.addEventListener('hashchange', App.route);
-    document.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); App.palette(); } if (e.key === 'Escape') { Inspector.close(); $('#palette')?.remove(); } });
+    document.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); App.palette(); } if (e.key === 'Escape' && !(e.target.closest && e.target.closest('.ch'))) { if ($('#palette')) $('#palette').remove(); else Inspector.close(); } });
+    // keep keyboard focus on the chosen rail item when the rail re-renders after a route change
+    $('#rail .rail-nav')?.addEventListener('focusin', e => { const it = e.target.closest('.rail-item'); App._railKey = it ? it.dataset.mod : null; });
     $('#search-btn').onclick = App.palette;
     $('#theme-btn').onclick = () => { const r = document.documentElement; r.dataset.theme = r.dataset.theme === 'light' ? 'dark' : 'light'; try { localStorage.setItem('bsp-theme', r.dataset.theme); } catch { } App.route(); };
     $('#insp-btn').onclick = () => $('#inspector').classList.contains('open') ? Inspector.close() : UI.toast('Select an entity to inspect');
@@ -317,5 +492,5 @@ export const App = {
     App.route();
   },
 };
-// Guard: assets/components.js imports ./core.js?v=20261006143735 without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
+// Guard: assets/components.js imports ./core.js?v=20261006155542 without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
 window.BSP = window.BSP || { Data, Fmt, UI, Maps, Charts, Live, Tour, App, Inspector };

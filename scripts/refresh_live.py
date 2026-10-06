@@ -4,7 +4,8 @@ fallback when a browser-side live API call fails (CORS, rate limits, outages).
 
 Sources (all public, no keys):
   nws_alerts.json         NWS active alerts for PA, NJ, MA, CT, RI, NH, ME, VT
-  forecast_hubs.json      Open-Meteo 7-day forecast for the 10 Punctual Pros weather hubs
+  forecast_hubs.json      Open-Meteo 7-day forecast (plus 2 observed days) for the 10 Punctual Pros weather hubs;
+                          the browser's Live.forecast falls back to the nearest hub when Open-Meteo fails
   usaspending_trades.json USASpending contract awards, NAICS 238210/238220, 8 states, since 2026-01-01
   echo_npdes_majors.json  EPA ECHO NPDES major POTWs (SIC 4952) in CT, MA, RI with compliance status
   census_permits.json     Census Building Permits Survey, newest monthly county file, 8 states
@@ -48,7 +49,12 @@ def http(url, data=None, headers=None, timeout=45, retries=2, raw=False):
             last = e
             if isinstance(e, urllib.error.HTTPError) and 400 <= e.code < 500 and e.code != 429:
                 break
-            time.sleep(2 * (attempt + 1))
+            wait = 2 * (attempt + 1)
+            if isinstance(e, urllib.error.HTTPError) and e.code == 429:   # honour a short Retry-After
+                try: wait = max(wait, min(30, int(e.headers.get('Retry-After') or 0)))
+                except (TypeError, ValueError): pass
+            if attempt < retries:
+                time.sleep(wait)
     raise RuntimeError(f'{url}: {last}')
 
 
@@ -110,7 +116,7 @@ def src_forecast():
     lon = ','.join(f'{h[2]:.4f}' for h in hs)
     daily = 'temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,weather_code,snowfall_sum'
     u = ('https://api.open-meteo.com/v1/forecast?' + urllib.parse.urlencode({'latitude': lat, 'longitude': lon, 'daily': daily, 'temperature_unit': 'fahrenheit',
-         'wind_speed_unit': 'mph', 'precipitation_unit': 'inch', 'timezone': 'America/New_York', 'forecast_days': 7}))
+         'wind_speed_unit': 'mph', 'precipitation_unit': 'inch', 'timezone': 'America/New_York', 'forecast_days': 7, 'past_days': 2}))
     j = http(u)
     if isinstance(j, dict):
         j = [j]
