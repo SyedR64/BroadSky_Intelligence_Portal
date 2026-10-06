@@ -1,0 +1,54 @@
+name: Pages check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: .github/workflows/pages-check.yml
+
+      - name: Install Playwright + Chromium
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Start static server
+        run: |
+          nohup python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/http.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:8765/index.html && break; sleep 1; done
+
+      - name: Load every page and app route in headless Chromium
+        run: python3 scripts/ci_check.py --base http://127.0.0.1:8765 --out ci-report
+
+      - name: Job summary
+        if: always()
+        run: test -f ci-report/ci_summary.md && cat ci-report/ci_summary.md >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Upload summary artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-check-summary
+          path: ci-report/
+          if-no-files-found: ignore
+          retention-days: 14

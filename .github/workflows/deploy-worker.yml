@@ -1,0 +1,165 @@
+# Deploys the assistant backend (worker/) to Cloudflare Workers with D1 + KV, then
+# publishes the Worker URL to assets/runtime.json so the static site discovers it.
+# Does nothing (and stays green) until the CLOUDFLARE_* repo secrets exist. See SETUP.md.
+name: deploy-worker
+
+on:
+  push:
+    branches: [main]
+    paths: ['worker/**', '.github/workflows/deploy-worker.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-worker
+  cancel-in-progress: false
+
+env:
+  NOREPLY_DOMAIN: users.noreply.github.com
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.secrets.outputs.ready }}
+    steps:
+      - id: secrets
+        name: Check for Cloudflare secrets
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$CF_TOKEN" ] && [ -n "$CF_ACCOUNT" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Backend not deployed::Add the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID repository secrets (see SETUP.md), then re-run this workflow."
+          fi
+
+  deploy:
+    needs: check
+    if: needs.check.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # commit assets/runtime.json
+      pages: write      # request a Pages rebuild after that commit
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      WRANGLER: npx --yes wrangler@4
+      D1_NAME: bsp_assistant
+      KV_TITLE: bsp_assistant_rl
+      WRANGLER_SEND_METRICS: 'false'
+    defaults:
+      run:
+        working-directory: worker
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Ensure D1 database exists
+        id: d1
+        run: |
+          set -euo pipefail
+          find_id() { $WRANGLER d1 list --json | jq -r --arg n "$D1_NAME" '[.[] | select(.name == $n)][0].uuid // empty'; }
+          ID="$(find_id || true)"
+          if [ -z "$ID" ]; then
+            echo "Creating D1 database $D1_NAME"
+            $WRANGLER d1 create "$D1_NAME"
+            ID="$(find_id)"
+          fi
+          [ -n "$ID" ] || { echo "::error::Could not find or create D1 database $D1_NAME"; exit 1; }
+          echo "id=$ID" >> "$GITHUB_OUTPUT"
+          echo "D1 $D1_NAME = $ID"
+
+      - name: Ensure KV namespace exists
+        id: kv
+        run: |
+          set -euo pipefail
+          # Older wrangler versions prefix the title with the worker name; match either form.
+          find_id() { $WRANGLER kv namespace list | jq -r --arg t "$KV_TITLE" '[.[] | select(.title == $t or (.title | endswith("-" + $t)))][0].id // empty'; }
+          ID="$(find_id || true)"
+          if [ -z "$ID" ]; then
+            echo "Creating KV namespace $KV_TITLE"
+            $WRANGLER kv namespace create "$KV_TITLE"
+            ID="$(find_id)"
+          fi
+          [ -n "$ID" ] || { echo "::error::Could not find or create KV namespace $KV_TITLE"; exit 1; }
+          echo "id=$ID" >> "$GITHUB_OUTPUT"
+          echo "KV $KV_TITLE = $ID"
+
+      - name: Bind resource ids (runner copy only, never committed)
+        run: |
+          sed -i "s/D1_DATABASE_ID_PLACEHOLDER/${{ steps.d1.outputs.id }}/; s/KV_NAMESPACE_ID_PLACEHOLDER/${{ steps.kv.outputs.id }}/" wrangler.toml
+          grep -nE 'database_id|^id' wrangler.toml
+
+      - name: Apply D1 schema (idempotent)
+        run: $WRANGLER d1 execute "$D1_NAME" --remote --file=schema.sql
+
+      - name: Deploy Worker
+        id: deploy
+        run: |
+          set -euo pipefail
+          $WRANGLER deploy 2>&1 | tee deploy.log
+          URL="$(grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev' deploy.log | head -n1 || true)"
+          if [ -z "$URL" ]; then
+            # Fall back to the account's workers.dev subdomain.
+            SUB="$(curl -fsS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" | jq -r '.result.subdomain // empty' || true)"
+            NAME="$(sed -nE 's/^name *= *"([^"]+)".*/\1/p' wrangler.toml | head -n1)"
+            [ -n "$SUB" ] && URL="https://$NAME.$SUB.workers.dev"
+          fi
+          [ -n "$URL" ] || { echo "::error::Deployed, but no workers.dev URL was found. Open Workers & Pages in the Cloudflare dashboard once to choose a workers.dev subdomain, then re-run."; exit 1; }
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "Worker URL: $URL"
+
+      - name: Set ANTHROPIC_API_KEY secret
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::warning title=No model key::ANTHROPIC_API_KEY repo secret is missing. The backend is live for threads, feedback and stats, but /chat returns 503 until the key is added."
+            exit 0
+          fi
+          printf '%s' "$ANTHROPIC_API_KEY" | $WRANGLER secret put ANTHROPIC_API_KEY
+
+      - name: Verify /health
+        run: |
+          for i in 1 2 3 4 5 6; do
+            if curl -fsS "${{ steps.deploy.outputs.url }}/health" | tee health.json; then echo; jq -e '.ok == true' health.json >/dev/null && exit 0; fi
+            sleep 5
+          done
+          echo "::warning::/health did not answer yet; runtime.json is still updated (the site re-checks on every page load)."
+
+      - name: Publish endpoint to assets/runtime.json
+        working-directory: .
+        env:
+          URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          set -euo pipefail
+          MODEL="$(sed -nE 's/^MODEL *= *"([^"]+)".*/\1/p' worker/wrangler.toml | head -n1)"
+          git checkout -- worker/wrangler.toml   # drop the runner-only id substitution
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@${NOREPLY_DOMAIN}"   # GitHub's standard bot identity
+          for attempt in 1 2 3; do
+            git pull --rebase --quiet origin main
+            jq -n --arg u "$URL" --arg t "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --arg m "$MODEL" \
+              '{chatEndpoint: $u, deployedAt: $t, model: $m}' > assets/runtime.json
+            git add assets/runtime.json
+            git diff --cached --quiet && { echo "runtime.json unchanged"; exit 0; }
+            git commit -m "Publish assistant backend endpoint to runtime.json"
+            git push origin HEAD:main && exit 0
+            git reset --hard --quiet HEAD~1; sleep 3
+          done
+          echo "::error::Could not push runtime.json"; exit 1
+
+      - name: Request a GitHub Pages rebuild
+        continue-on-error: true
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds" || echo "Pages will pick up runtime.json on the next push."

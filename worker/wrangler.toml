@@ -1,0 +1,30 @@
+# Cloudflare Worker: Broad Sky assistant backend.
+# The two resource ids below are placeholders. The deploy-worker GitHub Action looks up
+# (or creates) the real D1 database and KV namespace and substitutes their ids at deploy
+# time; it never commits them. For a manual deploy, paste your ids here locally.
+name = "bsp-assistant"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+
+[vars]
+MODEL = "claude-opus-5-5"          # "claude-sonnet-5-5" roughly halves the per-answer cost
+EFFORT = "medium"                  # low | medium | high
+DAILY_CAP = "2000"                 # global /chat requests per UTC day, across all visitors
+RL_PER_10MIN = "30"                # /chat requests per visitor IP per rolling 10 minutes
+ALLOWED_ORIGINS = "https://syedr64.github.io,http://127.0.0.1:8765"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bsp_assistant"
+database_id = "D1_DATABASE_ID_PLACEHOLDER"
+
+[[kv_namespaces]]
+binding = "RL"
+id = "KV_NAMESPACE_ID_PLACEHOLDER"
+
+# Secret (never in this file): ANTHROPIC_API_KEY
+#   echo "$ANTHROPIC_API_KEY" | npx wrangler secret put ANTHROPIC_API_KEY
+
+[observability]
+enabled = true

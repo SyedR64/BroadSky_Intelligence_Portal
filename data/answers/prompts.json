@@ -1,0 +1,159 @@
+{
+ "meta": {
+  "title": "Precomputed deep-dive prompts",
+  "note": "Suggested prompts copied from the assistant personas (assets/chat.js). scripts/generate_answers.py answers each one with Claude, grounded on data/research, and writes data/answers/<slug>.json. Optional per-prompt \"datasets\" overrides the keyword mapping.",
+  "count": 30
+ },
+ "items": [
+  {
+   "slug": "show-me-how-to-take-punctual-pros-nationwide",
+   "question": "Show me how to take Punctual Pros nationwide",
+   "persona": "portal"
+  },
+  {
+   "slug": "which-wastewater-plants-should-horton-call-first",
+   "question": "Which wastewater plants should Horton call first?",
+   "persona": "portal"
+  },
+  {
+   "slug": "what-is-the-storm-impact-on-punctual-pros-this-week",
+   "question": "What is the storm impact on Punctual Pros this week?",
+   "persona": "portal"
+  },
+  {
+   "slug": "who-competes-with-broad-sky-for-home-services-deals",
+   "question": "Who competes with Broad Sky for home-services deals?",
+   "persona": "portal"
+  },
+  {
+   "slug": "which-cet-bids-are-due-in-the-next-30-days",
+   "question": "Which CET bids are due in the next 30 days?",
+   "persona": "portal"
+  },
+  {
+   "slug": "estimate-punctual-pros-revenue-from-public-filings",
+   "question": "Estimate Punctual Pros revenue from public filings",
+   "persona": "portal"
+  },
+  {
+   "slug": "show-the-top-add-on-targets-for-cet-in-connecticut",
+   "question": "Show the top add-on targets for CET in Connecticut",
+   "persona": "portal"
+  },
+  {
+   "slug": "what-is-serviceos-and-why-does-it-raise-valuation",
+   "question": "What is ServiceOS and why does it raise valuation?",
+   "persona": "portal"
+  },
+  {
+   "slug": "how-many-new-mover-leads-are-in-lancaster-county",
+   "question": "How many new-mover leads are in Lancaster County?",
+   "persona": "portal"
+  },
+  {
+   "slug": "compare-the-portfolio-to-public-comps",
+   "question": "Compare the portfolio to public comps",
+   "persona": "portal"
+  },
+  {
+   "slug": "open-the-pe-landscape",
+   "question": "Open the PE landscape",
+   "persona": "portal"
+  },
+  {
+   "slug": "what-are-the-tech-enablement-theses-for-every-company",
+   "question": "What are the tech-enablement theses for every company?",
+   "persona": "portal"
+  },
+  {
+   "slug": "show-me-sample-ctv-ads-and-the-media-plan-for-punctual-pros",
+   "question": "Show me sample CTV ads and the media plan for Punctual Pros",
+   "persona": "portal"
+  },
+  {
+   "slug": "how-does-broad-sky-scale-cet-across-the-northeast",
+   "question": "How does Broad Sky scale CET across the Northeast?",
+   "persona": "portal"
+  },
+  {
+   "slug": "what-is-the-value-creation-playbook-for-frontline",
+   "question": "What is the value-creation playbook for Frontline?",
+   "persona": "portal"
+  },
+  {
+   "slug": "which-ai-agents-create-the-most-value-across-the-portfolio",
+   "question": "Which AI agents create the most value across the portfolio?",
+   "persona": "portal"
+  },
+  {
+   "slug": "how-much-revenue-does-24-7-voice-ai-recover-for-punctual-pro",
+   "question": "How much revenue does 24/7 voice AI recover for Punctual Pros?",
+   "persona": "portal"
+  },
+  {
+   "slug": "pp-can-i-reach-you-at-2am",
+   "question": "Can I reach you at 2am?",
+   "persona": "pp"
+  },
+  {
+   "slug": "pp-what-does-the-comfort-club-membership-include",
+   "question": "What does the Comfort Club membership include?",
+   "persona": "pp"
+  },
+  {
+   "slug": "pp-what-rebates-are-available-for-a-heat-pump",
+   "question": "What rebates are available for a heat pump?",
+   "persona": "pp"
+  },
+  {
+   "slug": "pp-is-there-a-storm-coming-this-week",
+   "question": "Is there a storm coming this week?",
+   "persona": "pp"
+  },
+  {
+   "slug": "cet-what-incentives-exist-for-commercial-solar-in-massachusetts",
+   "question": "What incentives exist for commercial solar in Massachusetts?",
+   "persona": "cet"
+  },
+  {
+   "slug": "cet-can-you-upgrade-a-wastewater-plant-s-switchgear",
+   "question": "Can you upgrade a wastewater plant's switchgear?",
+   "persona": "cet"
+  },
+  {
+   "slug": "cet-which-ev-charging-programs-are-open-now",
+   "question": "Which EV charging programs are open now?",
+   "persona": "cet"
+  },
+  {
+   "slug": "fl-what-is-included-in-the-service-desk",
+   "question": "What is included in the service desk?",
+   "persona": "fl"
+  },
+  {
+   "slug": "fl-how-do-you-handle-ebilling-and-a-r",
+   "question": "How do you handle eBilling and A/R?",
+   "persona": "fl"
+  },
+  {
+   "slug": "ts-do-you-supply-cleanroom-consumables",
+   "question": "Do you supply cleanroom consumables?",
+   "persona": "ts"
+  },
+  {
+   "slug": "ts-what-is-vendor-managed-inventory",
+   "question": "What is vendor-managed inventory?",
+   "persona": "ts"
+  },
+  {
+   "slug": "bpi-what-services-does-bpi-offer",
+   "question": "What services does BPI offer?",
+   "persona": "bpi"
+  },
+  {
+   "slug": "fh-what-are-the-trunks-made-of",
+   "question": "What are the trunks made of?",
+   "persona": "fh"
+  }
+ ]
+}

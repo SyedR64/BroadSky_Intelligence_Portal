@@ -1,0 +1,59 @@
+name: Refresh live data
+
+on:
+  schedule:
+    - cron: '10 9 * * *'   # daily 09:10 UTC
+  workflow_dispatch: {}
+
+env:
+  NOREPLY_DOMAIN: users.noreply.github.com
+
+permissions:
+  contents: write
+  pages: write   # request a Pages rebuild after a data commit
+
+concurrency:
+  group: data-commit
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Snapshot live sources
+        run: python3 scripts/refresh_live.py
+
+      - name: Regenerate research README
+        run: python3 scripts/describe_research.py > /dev/null
+
+      - name: Commit if changed
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@${NOREPLY_DOMAIN}"   # GitHub's standard bot identity
+          git add data/live data/research/README.md README.md
+          if git diff --cached --quiet; then
+            echo "No data changes."
+            exit 0
+          fi
+          git commit -m "Nightly live-data refresh $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push && { echo "pushed=true" >> "$GITHUB_OUTPUT"; exit 0; }
+            sleep $((i * 5))
+          done
+          exit 1
+
+      # Pushes made with GITHUB_TOKEN may not start a Pages build on their own.
+      - name: Request a GitHub Pages rebuild
+        if: steps.commit.outputs.pushed == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds" || echo "Pages will pick up the commit on the next push."

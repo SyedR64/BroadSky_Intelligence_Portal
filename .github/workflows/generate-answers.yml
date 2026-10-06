@@ -1,0 +1,94 @@
+name: Generate Claude deep-dives
+
+on:
+  schedule:
+    - cron: '0 10 * * 1'   # Mondays 10:00 UTC
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Regenerate every answer, even ones younger than 7 days'
+        type: boolean
+        default: false
+      only:
+        description: 'Comma-separated prompt slugs (blank = all)'
+        type: string
+        default: ''
+
+env:
+  NOREPLY_DOMAIN: users.noreply.github.com
+
+permissions:
+  contents: write
+  pages: write   # request a Pages rebuild after an answers commit
+
+concurrency:
+  group: data-commit
+  cancel-in-progress: false
+
+jobs:
+  # Secrets cannot be read in a job-level `if`, so a tiny job turns "is the secret set?" into an output.
+  check-key:
+    runs-on: ubuntu-latest
+    outputs:
+      has_key: ${{ steps.k.outputs.has_key }}
+    steps:
+      - id: k
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -n "$ANTHROPIC_API_KEY" ]; then echo "has_key=true" >> "$GITHUB_OUTPUT"; else
+            echo "has_key=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::ANTHROPIC_API_KEY secret is not set; skipping answer generation."
+          fi
+
+  generate:
+    needs: check-key
+    if: needs.check-key.outputs.has_key == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Anthropic SDK
+        run: pip install --quiet anthropic
+
+      - name: Generate answers
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MODEL: ${{ vars.ANSWERS_MODEL || 'claude-opus-5-5' }}
+          EFFORT: ${{ vars.ANSWERS_EFFORT || 'medium' }}
+          FORCE: ${{ inputs.force && '--force' || '' }}
+          ONLY: ${{ inputs.only }}
+        run: |
+          args="$FORCE"
+          if [ -n "$ONLY" ]; then args="$args --only $ONLY"; fi
+          python3 scripts/generate_answers.py $args
+
+      - name: Commit if changed
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@${NOREPLY_DOMAIN}"   # GitHub's standard bot identity
+          git add data/answers
+          if git diff --cached --quiet; then
+            echo "No answer changes."
+            exit 0
+          fi
+          git commit -m "Weekly Claude deep-dives $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push && { echo "pushed=true" >> "$GITHUB_OUTPUT"; exit 0; }
+            sleep $((i * 5))
+          done
+          exit 1
+
+      # Pushes made with GITHUB_TOKEN may not start a Pages build on their own.
+      - name: Request a GitHub Pages rebuild
+        if: steps.commit.outputs.pushed == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds" || echo "Pages will pick up the commit on the next push."
