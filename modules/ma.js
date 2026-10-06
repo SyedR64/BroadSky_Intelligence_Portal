@@ -1,10 +1,10 @@
-import * as Copy from './copy.js?v=20261006134218';
+import * as Copy from './copy.js?v=20261006143735';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition engine (M&A) — cross-portfolio buy-and-build intelligence.
    Datasets: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets, Competitor filings,
              Public comparables, Private-equity landscape, Broad Sky firm profile; sales/* (property transfers, lazy, theses view).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, fitTierOf } from '../assets/components.js?v=20261006134218';
+import { renderTargets, fitTierOf } from '../assets/components.js?v=20261006143735';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 const PLAT = {
@@ -89,7 +89,7 @@ const pctOf = (n, d) => d ? Math.round((n / d) * 100) : 0;
 const titleCase = s => String(s || '').replace(/_/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
 const ownerClass = s => { const x = String(s || '').toLowerCase().replace(/no sponsor disclosed|no pe affiliation/g, ''); if (!x.trim()) return 'Unverified'; if (/subsidiary|part of|venture-backed|pe-backed|private equity|backed by|\bpe\b/.test(x)) return 'Sponsor / corporate'; if (/founder|family/.test(x)) return 'Founder / family'; if (/unknown|unverified|not disclosed|not verified/.test(x)) return 'Unverified'; if (/esop|employee-owned/.test(x)) return 'ESOP'; if (/franchisee/.test(x)) return 'Franchisee'; return 'Private independent'; };
 const OWNER_COLOR = { 'Founder / family': 'var(--green)', 'Private independent': 'var(--accent)', Franchisee: 'var(--cyan)', ESOP: 'var(--amber)', Unverified: 'var(--dim)', 'Sponsor / corporate': 'var(--red)' };
-const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261006134218'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261006143735'; document.head.appendChild(l); } };
 const shortList = a => { const v = (Array.isArray(a) ? a : [a]).filter(Boolean).map(x => { const y = String(x).replace(/\s*\(.*?\)\s*/g, ' ').replace(/_/g, ' ').trim(); return y.length > 26 ? y.slice(0, 25).trim() + '…' : y; }); return v.length > 2 ? [...v.slice(0, 2), `+${v.length - 2}`] : v; };
 const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
 const pctTxt = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;
@@ -363,7 +363,7 @@ async function overview(ctx) {
   for (const i of firmItems) { const p = PKEYS.find(k => PLAT[k].firmId === i.id); if (p && i.lat != null) maps.marker(map, i.lat, i.lon, { color: PLAT[p].hex, label: PLAT[p].key.toUpperCase(), size: 13, popup: `<b>${esc(i.company)}</b><br>${esc(i.hq_city || '')}, ${esc(i.state || '')}<br><a href="#/${PLAT[p].module}">Open module →</a>` }); }
   maps.legend(map, [...PKEYS.map(p => ({ color: PLAT[p].hex, label: `${PLAT[p].label} targets (${byP[p].length})` })), { color: '#ffffff', label: 'Company HQ', ring: true }], 'Add-on targets');
 
-  app.index([...T.slice(0, 260).map(t => ({ label: t.company, sub: `${PLAT[t._p].label} add-on target · ${t.hq_city || ''} ${t._state} · fit ${t.fit_score ?? '—'}`, href: `#/ma/pipeline?portfolio company=${t._p}&q=${encodeURIComponent(t.company)}`, kind: 'Target', color: PLAT[t._p].hex })), ...rivals.map(r => ({ label: r.name, sub: `Rival company · ${r.owner}`, href: `#/ma/rivals?r=${r.id}`, kind: 'Rival', color: '#ff5c5c' }))]);
+  app.index([...T.slice(0, 260).map(t => ({ label: t.company, sub: `${PLAT[t._p].label} add-on target · ${t.hq_city || ''} ${t._state} · fit ${t.fit_score ?? '—'}`, href: `#/ma/pipeline?platform=${t._p}&q=${encodeURIComponent(t.company)}`, kind: 'Target', color: PLAT[t._p].hex })), ...rivals.map(r => ({ label: r.name, sub: `Rival company · ${r.owner}`, href: `#/ma/rivals?r=${r.id}`, kind: 'Rival', color: '#ff5c5c' }))]);
   return () => map.remove();
 }
 
@@ -474,7 +474,7 @@ async function pipeline(ctx) {
     { label: 'Founder/family-owned', value: `${pctOf(ff, rows.length)}%`, sub: `${fmt.num(ff)} confirmed · ${esc(topState || '—')}`, color: 'var(--green)' },
     { label: 'In play', value: fmt.num(inPlay.length), sub: inPlay.length ? `${STAGES.filter(s => byStage[s]).map(s => `${s} ${byStage[s]}`).join(' · ')}${overdue ? ` · ${overdue} overdue` : ''}` : 'set stage in the row inspector', color: overdue ? 'var(--red)' : 'var(--cyan)' },
   ]) +
-  `<div class="ma-seg-row mt-12"><span class="lbl">Portfolio company</span><div id="ma-seg"></div>${q ? `<span class="chip" style="--cc:var(--c-ma)">Search: ${esc(q)}</span><a class="btn xs" href="#/ma/pipeline${sel !== 'all' ? `?portfolio company=${sel}` : ''}">Clear ✕</a>` : ''}${!q ? `<button class="btn xs ${showPass ? 'active' : ''}" id="ma-pass" aria-pressed="${showPass}">${showPass ? 'Hide' : 'Show'} passed (${passed.length})</button>` : ''}</div>
+  `<div class="ma-seg-row mt-12"><span class="lbl">Portfolio company</span><div id="ma-seg"></div>${q ? `<span class="chip" style="--cc:var(--c-ma)">Search: ${esc(q)}</span><a class="btn xs" href="#/ma/pipeline${sel !== 'all' ? `?platform=${sel}` : ''}">Clear ✕</a>` : ''}${!q ? `<button class="btn xs ${showPass ? 'active' : ''}" id="ma-pass" aria-pressed="${showPass}">${showPass ? 'Hide' : 'Show'} passed (${passed.length})</button>` : ''}</div>
   <div id="ma-tg"></div>
   <div class="src-line mt-8">${sel === 'all' ? 'Sources: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets (ZoomInfo company search, franchise directories, company websites)' : esc(clip(ceoFix(meta?.method || ''), 320))} · generated ${esc(meta?.generated || b.pp?.meta?.generated || '—')} · stages saved in this browser</div>
   <div class="grid grid-2 mt-12">

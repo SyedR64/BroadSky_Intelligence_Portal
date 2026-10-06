@@ -45,13 +45,35 @@ const ORG_G = 0.12, FEES = 0.03;
 const BENCH = {
   'pn-lev-05': l => [fmtVal(l.baseline, '%'), 'of US homes have a home standby generator (Generac). That is the attach headroom, not a Punctual Pros baseline.'],
   'pn-lev-06': l => [fmtVal(l.target, '%'), 'higher spend from customers who finance (published benchmark). Punctual Pros\' financing attach rate is not public.'],
-  'pn-lev-07': l => [comma(l.baseline), 'home sales every 90 days in the 248 core zips (county deed records): the new-mover pool to market to.'],
+  'pn-lev-07': l => [comma(l.baseline), 'home sales in 90 days (Jan to Apr 2026) in core ZIPs, from the Lancaster, Dauphin and York deed records only. A floor: Redfin counts ~26,900 sales a year across all 9 core counties.'],
   'pn-lev-08': l => [`+${fmtVal(l.baseline, '%')} calls · +${fmtVal(l.target, '%')} revenue`, 'during a heat wave (ServiceTitan data). The surge a storm plan captures, not a company baseline.'],
 };
 const isBench = l => l.value_kind === 'benchmark' || !!BENCH[l.id];
 /* What each agent's headline number is, so a problem statistic is never read as a result. Duplicates point at the lever that already counts them. */
 const AG_KIND = { 'pn-ai-02': ['Problem it solves', 'warn'], 'pn-ai-08': ['Survey benchmark', 'warn'], 'pn-ai-10': ['Vendor claim', 'warn'] };
 const AG_DUP = { 'pn-ai-06': 'pn-lev-09', 'pn-ai-07': 'pn-lev-04' };
+/* The measurable KPI each agent and each technician program moves, read monthly from ServiceTitan, payroll and the HR system. */
+const AG_KPI = {
+  'pn-ai-01': 'Booking rate on inbound calls (booked ÷ answered), including after-hours calls',
+  'pn-ai-02': 'Speed to lead (minutes to first reply) and share of missed calls that become bookings',
+  'pn-ai-03': 'Close rate on unsold estimates and replacement revenue per estimate',
+  'pn-ai-04': 'Average ticket per technician and in-home sales conversion rate',
+  'pn-ai-05': 'First-time fix rate (second truck rolls per 100 jobs)',
+  'pn-ai-06': 'Average ticket, jobs per technician-day and drive time per job',
+  'pn-ai-07': 'Membership renewal rate and active members (lever 04)',
+  'pn-ai-08': 'New Google reviews per month and average star rating (lever 03)',
+  'pn-ai-09': 'Cost per invoice and days sales outstanding',
+  'pn-ai-10': 'Days from job sold to permit issued, and office hours per permit',
+  'pn-ai-11': 'Days to fill a technician opening and applicant-to-hire rate',
+};
+const PRO_KPI = {
+  'pn-pro-01': 'Graduates hired a year and cost per technician hire',
+  'pn-pro-02': 'Apprentices enrolled and share who become licensed technicians',
+  'pn-pro-07': 'Annual technician turnover (industry 16% in HVAC; goal below 12%)',
+  'pn-pro-09': 'Average ticket per technician and time for a new hire to reach it',
+  'pn-pro-10': 'Share of storm-week calls served (served ÷ received) and overflow jobs a month',
+  'pn-pro-11': 'Veteran hires a year and their 12-month retention',
+};
 const needsVerify = t => (t.risk_flags || []).some(f => /name collision|already affiliated/i.test(f));
 const FIT_KEYS = [['density_adjacency', 'Density', '#f26b1d'], ['trade_mix', 'Trade mix', '#0b1f3a'], ['scale', 'Scale', '#2f7de1'], ['ownership_readiness', 'Ownership', '#0f9d8a'], ['brand_alignment', 'Brand fit', '#f5a524']];
 
@@ -91,7 +113,8 @@ const prose = v => String(v ?? '')
   .replace(/\s*\((?:see\s+)?(?:ve|kb|ra|ref|pn)-[a-z0-9-]+\)/gi, '').replace(/\b(?:pn-(?:lev|ai|ph|fin|pro|tpl)-\d+)\b/g, '')
   .replace(/(?<![\w/.-])([a-z][a-z0-9]*(?:_[a-z0-9]+)+)(?![\w/-])/g, (m, id) => dsName(id))
   .replace(/\bplatform-scale\b/g, 'anchor-scale').replace(/\bplaybooks\b/g, 'franchise systems').replace(/\b([Pp])laybook\b/g, (m, p) => p === 'P' ? 'Plan' : 'plan')
-  .replace(/\bBSP\b/g, 'Broad Sky').replace(/\s{2,}/g, ' ').trim();
+  .replace(/The repo's deed pull shows ~?([\d,]+) meaningful sales per quarter in PP's core zips\./, 'County deed records show ~$1 sales in one quarter (Jan to Apr 2026) in the core ZIPs of Lancaster, Dauphin and York counties, a floor for the full core.')
+  .replace(/\bBSP\b/g, 'Broad Sky').replace(/\bPP's\b/g, "Punctual Pros'").replace(/\bPP\b/g, 'Punctual Pros').replace(/\s{2,}/g, ' ').trim();
 
 /* ── 1 · hero ───────────────────────────────────────────────────────────── */
 function spark(vals, color = 'var(--co)') {
@@ -179,7 +202,9 @@ async function buildMap(Data) {
   const canvas = L.canvas({ padding: .5 }), svg = L.svg({ padding: .5 });
   map.on('focus', () => map.scrollWheelZoom.enable()); map.on('blur', () => map.scrollWheelZoom.disable());
 
-  const zips = await Data.load('pp_zips');
+  const [zips, nc] = await Promise.all([Data.load('pp_zips'), Data.load('./national_counties').catch(() => null)]);
+  const ncRows = Array.isArray(nc) ? nc : nc?.items || [];
+  M.nc = new Map(ncRows.map(r => [`${r.state}|${r.county_name}`, r]));
   const core = zips.filter(z => z.service_territory_flag === 1 && z.lat != null);
   const adjT1 = zips.filter(z => z.adjacent_to_service_territory === 1 && z.service_territory_flag !== 1 && z.opportunity_tier_v3 === 'Tier 1' && z.lat != null);
   const ncT1 = zips.filter(z => z.service_territory_flag !== 1 && z.adjacent_to_service_territory !== 1 && z.opportunity_tier_v3 === 'Tier 1' && z.lat != null);
@@ -287,23 +312,69 @@ function phasePanel(p) {
   if (p === 'all') {
     el.innerHTML = `<span class="sys-card-label">The route</span><h3 class="sys-card-title">Densify, tuck in, anchor metros, then go national.</h3><p class="thesis">${esc(prose(String(S.nw?.meta?.narrative || '').split('. ').slice(2, 4).join('. ')))}.</p>${ph.map((x, i) => `<button class="sys-chip nw-go" type="button" data-go="${i + 1}"><span class="sw" style="background:${PHASE_C[i + 1]}"></span><span><b>Phase ${i + 1} · ${esc(x.phase.replace(/^Phase \d+\s*-\s*/, ''))}</b><small>Months ${esc(x.months)}</small></span></button>`).join('')}`;
     $$('[data-go]', el).forEach(b => b.onclick = () => { stopPlay(); setPhase(b.dataset.go); });
+    countyTable(p);
     return;
   }
   const x = ph[+p - 1]; if (!x) return; const d = x.data_points || {};
   let body = '';
+  const hasCt = M.nc?.size > 0;   // the county table below repeats the county and metro lists, so the panel keeps only the headline stats
   if (p === '1') {
-    body = `<div class="stats">${stat(comma(d.core_zips), 'core zips (9 PA counties)')}${stat(comma((d.core_housing_units || 0) / 1e6, 2) + 'M', 'housing units in the core')}${stat(comma(d.adjacent_tier1_zips_total), `Tier-1 adjacent zips (${Object.entries(d.adjacent_tier1_zips_by_state || {}).map(([s, n]) => `${s} ${n}`).join(' · ')})`)}${stat(comma(d.pa_addon_targets), `PA add-on targets, ${comma(d.pa_addon_targets_fit70plus)} with fit 70+`)}</div>${list('Core zips by county', Object.entries(d.core_zips_by_county || {}).slice(0, 5).map(([c, n]) => [c.replace(' County', ''), n]))}${list('Next ring: Tier-1 zips by county', (d.adjacent_tier1_top_counties || []).slice(0, 5).map(s => { const m = /^(.*) \((\d+)\)$/.exec(s); return m ? [m[1].replace(' County', ''), m[2]] : [s, '']; }))}`;
+    body = `<div class="stats">${stat(comma(d.core_zips), 'core zips (9 PA counties)')}${stat(comma((d.core_housing_units || 0) / 1e6, 2) + 'M', 'housing units in the core')}${stat(comma(d.adjacent_tier1_zips_total), `Tier-1 adjacent zips (${Object.entries(d.adjacent_tier1_zips_by_state || {}).map(([s, n]) => `${s} ${n}`).join(' · ')})`)}${stat(comma(d.pa_addon_targets), `PA add-on targets, ${comma(d.pa_addon_targets_fit70plus)} with fit 70+`)}</div>${hasCt ? '' : list('Core zips by county', Object.entries(d.core_zips_by_county || {}).slice(0, 5).map(([c, n]) => [c.replace(' County', ''), n]))}${hasCt ? '' : list('Next ring: Tier-1 zips by county', (d.adjacent_tier1_top_counties || []).slice(0, 5).map(s => { const m = /^(.*) \((\d+)\)$/.exec(s); return m ? [m[1].replace(' County', ''), m[2]] : [s, '']; }))}`;
   } else if (p === '2') {
     const notPP = Object.values(d.authority_territories_not_pp_by_state || {}).reduce((a, b) => a + b, 0);
-    body = `<div class="stats">${stat(comma(d.authority_territories_mapped), 'Authority territories mapped (PA/NJ/MD/DE)')}${stat(comma(notPP), 'of them not owned by Punctual Pros')}${stat(comma(Object.entries(d.addon_targets_by_state || {}).filter(([s]) => s !== 'PA').reduce((a, [, n]) => a + n, 0)), 'NJ, MD and DE add-on targets')}${stat(comma(d.pe_sponsors_overlapping_punctual_pros), `PE sponsors in the same market (${comma(d.pe_sponsor_threat_mix?.high)} high threat)`)}</div>${list('Metros in this phase · housing units', (d.metros || []).map(m => [m.metro.replace(/\s*\(.*\)/, ''), usd(m.housing_units).replace('$', '')]))}`;
+    body = `<div class="stats">${stat(comma(d.authority_territories_mapped), 'Authority territories mapped (PA/NJ/MD/DE)')}${stat(comma(notPP), 'of them not owned by Punctual Pros')}${stat(comma(Object.entries(d.addon_targets_by_state || {}).filter(([s]) => s !== 'PA').reduce((a, [, n]) => a + n, 0)), 'NJ, MD and DE add-on targets')}${stat(comma(d.pe_sponsors_overlapping_punctual_pros), `PE sponsors in the same market (${comma(d.pe_sponsor_threat_mix?.high)} high threat)`)}</div>${hasCt ? '' : list('Metros in this phase · housing units', (d.metros || []).map(m => [m.metro.replace(/\s*\(.*\)/, ''), usd(m.housing_units).replace('$', '')]))}`;
   } else if (p === '3') {
     const hu = (d.metros || []).reduce((a, m) => a + (m.housing_units || 0), 0);
-    body = `<div class="stats">${stat(comma((d.metros || []).length + 1), 'metro anchors (incl. Richmond)')}${stat(comma(hu / 1e6, 1) + 'M', 'housing units in the 4 modeled metros')}${stat(comma(d.md_tier1_zips_noncore), 'Tier-1 zips in Maryland')}${stat(comma(d.authority_territories_md_not_pp), 'MD Authority territories, none owned by PP')}</div>${list('Metro · Tier-1 zips · homes', (d.metros || []).map(m => [`${m.metro.replace(/\s*\(.*\)/, '')} (${m.tier1_zips})`, usd(m.housing_units).replace('$', '')]))}<p class="sys-src">Pittsburgh: ${esc(prose(d.fdd_other_pa_one_hour_franchisees) || '—')}. Richmond needs a separate ZIP pull (VA is not in the model).</p>`;
+    body = `<div class="stats">${stat(comma((d.metros || []).length + 1), 'metro anchors (incl. Richmond)')}${stat(comma(hu / 1e6, 1) + 'M', 'housing units in the 4 modeled metros')}${stat(comma(d.md_tier1_zips_noncore), 'Tier-1 zips in Maryland')}${stat(comma(d.authority_territories_md_not_pp), 'MD Authority territories, none owned by PP')}</div>${hasCt ? '' : list('Metro · Tier-1 zips · homes', (d.metros || []).map(m => [`${m.metro.replace(/\s*\(.*\)/, '')} (${m.tier1_zips})`, usd(m.housing_units).replace('$', '')]))}<p class="sys-src">Pittsburgh: ${esc(prose(d.fdd_other_pa_one_hour_franchisees) || '—')}. Richmond needs a separate ZIP pull (VA is not in the model).</p>`;
   } else if (p === '4') {
     const o = d.fdd_system_outlets_end_2025 || {}, lg = d.largest_franchisee_revenue_usd || {};
     body = `<div class="stats">${stat(comma(o.total), 'One Hour + Ben Franklin + Mister Sparky outlets')}${stat(comma(d.fdd_franchisees_end_2025), 'franchisees in the tri-brand system')}${stat(usd(d.fdd_reported_gross_revenue_fy2025_usd), 'reported system revenue FY2025')}${stat(comma(d.pp_share_of_tri_brand_outlets_pct, 2) + '%', 'Punctual Pros share of outlets today')}</div>${list('Largest single franchisee (FDD Item 19)', [['Mister Sparky', usd(lg.mister_sparky)], ['One Hour', usd(lg.one_hour)], ['Ben Franklin', usd(lg.ben_franklin)]])}<p class="sys-src">Arcs show the priority regions named in the thesis (Sun Belt, Midwest). They are illustrative, not specific targets.<span class="sys-est sys-est--illus">illustrative</span></p>`;
   }
+  const ct = countyTable(p);
+  if (ct) body = `<div class="stats">${stat(comma(ct.n), `counties${ct.dup ? ` (+${ct.dup} shared with Phase 1)` : ''}`)}${stat(comma(ct.hu / 1e6, 2) + 'M<span class="sys-est">est.</span>', 'housing units in those counties (ACS)')}${stat(comma(ct.sales), 'home sales in the last 12 months (Redfin)')}${stat(comma(ct.ab), 'of them with an Authority Brands outlet')}</div>` + body;
   el.innerHTML = `<span class="sys-card-label"><span class="sw" style="background:${PHASE_C[p]}"></span>Phase ${p} · months ${esc(x.months)}</span><h3 class="sys-card-title">${esc(x.phase.replace(/^Phase \d+\s*-\s*/, ''))}</h3><p class="thesis">${esc(prose(String(x.thesis || '').split('. ').slice(0, 2).join('. ')))}.</p>${body}`;
+}
+
+/* Every phase names its counties, with ACS housing units and Redfin home sales from the national county base table.
+   County lists come from the plan's phase geography; Delaware, Richmond and the Phase 4 regions are named on the map but not in the phase metros. */
+const DE_COUNTIES = ['New Castle County', 'Kent County', 'Sussex County'];
+const RIC_COUNTIES = ['Richmond city', 'Henrico County', 'Chesterfield County', 'Hanover County'];
+const P4_REGIONS = [['Sun Belt · Atlanta', 'GA', 'Fulton County'], ['Texas · Dallas', 'TX', 'Dallas County'], ['Florida · Orlando', 'FL', 'Orange County'], ['Midwest · Columbus', 'OH', 'Franklin County'], ['Midwest · Chicago', 'IL', 'Cook County'], ['Carolinas · Charlotte', 'NC', 'Mecklenburg County']];
+function phaseGroups(p) {
+  const ph = M.phases, d = n => ph[n - 1]?.data_points || {};
+  if (p === '1') {
+    const core = Object.keys(d(1).core_zips_by_county || {}).map(c => ['PA', c]);
+    const ringTxt = String((ph[0]?.geography || []).find(g => /adjacent ring/i.test(g)) || '').replace(/^adjacent ring:\s*/i, '');
+    const ring = ringTxt.split(';').flatMap(part => { const m = /^(.*)\s(PA|MD|NJ|DE|NY)$/.exec(part.trim()); if (!m) return []; return m[1].split(',').map(n => [m[2], n.trim().replace(/\s*Co\.$/, '').replace(/\s*County$/, '') + ' County']); });
+    return [['Core: the 9 counties served today', core], ['Adjacent ring: Tier-1 ZIPs next door', ring]];
+  }
+  if (p === '2') return [...(d(2).metros || []).map(m => [m.metro, (m.counties || []).map(c => [m.state, c])]), ['Delaware', DE_COUNTIES.map(c => ['DE', c])]];
+  if (p === '3') return [...(d(3).metros || []).map(m => [m.metro, (m.counties || []).map(c => [m.state, c])]), ['Richmond, VA (not yet in the ZIP model)', RIC_COUNTIES.map(c => ['VA', c])]];
+  if (p === '4') return [['Priority regions named in the thesis (illustrative anchor counties)', P4_REGIONS.map(([, s, c]) => [s, c])]];
+  return [];
+}
+function countyTable(p) {
+  const host = $('#phase-counties'); if (!host) return null;
+  if (!M.nc?.size) { host.innerHTML = ''; return null; }
+  const ab = r => (r?.ab_onehour ? 1 : 0) + (r?.ab_benfranklin ? 1 : 0) + (r?.ab_mistersparky ? 1 : 0);
+  const abTxt = r => { const b = [r?.ab_onehour && 'One Hour', r?.ab_benfranklin && 'Ben Franklin', r?.ab_mistersparky && 'Mister Sparky'].filter(Boolean); return b.length ? b.join(', ') : '—'; };
+  const sumOf = rows => rows.reduce((a, [, , r]) => ({ n: a.n + 1, hu: a.hu + (r?.housing_units || 0), sales: a.sales + (r?.home_sales_12m || 0), ab: a.ab + (ab(r) ? 1 : 0) }), { n: 0, hu: 0, sales: 0, ab: 0 });
+  const p1Keys = new Set(phaseGroups('1').flatMap(([, l]) => l.map(([s, c]) => `${s}|${c}`)));
+  const resolve = (n, list) => list.map(([s, c]) => [s, c, M.nc.get(`${s}|${c}`)]).filter(x => x[2]);
+  const est = '<span class="sys-est">est.</span>';
+  const caption = `<caption>Housing units: Census ACS 2019–2023 five-year estimates (whole county; the ZIP model counts only served ZIPs). Home sales: Redfin county market tracker, all residential, twelve months ending May 2026. Authority Brands outlets: national county base table.${p === '4' ? ' Phase 4 regions are illustrative, not named targets.' : ''}</caption>`;
+  if (p === 'all') {
+    const rows = ['1', '2', '3', '4'].map(n => { const seen = new Set(); const all = phaseGroups(n).flatMap(([, l]) => resolve(n, l)).filter(([s, c]) => { const k = `${s}|${c}`; if (seen.has(k) || (n !== '1' && p1Keys.has(k))) return false; seen.add(k); return true; }); return [n, sumOf(all)]; });
+    host.innerHTML = `<div class="sys-table-wrap"><table class="sys-table" aria-label="Counties, housing units and home sales by phase"><thead><tr><th>Phase</th><th class="sys-n">Counties</th><th class="sys-n">Housing units${est}</th><th class="sys-n">Home sales, 12 months</th><th class="sys-n">With an Authority Brands outlet</th></tr></thead><tbody>${rows.map(([n, t]) => `<tr><td><span class="sw" style="background:${PHASE_C[n]}"></span><b>Phase ${n}</b> · ${esc(M.phases[n - 1]?.phase.replace(/^Phase \d+\s*-\s*/, '') || '')}${n === '4' ? '<span class="sys-est sys-est--illus">illustrative</span>' : ''}</td><td class="sys-n">${comma(t.n)}</td><td class="sys-n">${comma(t.hu)}</td><td class="sys-n">${comma(t.sales)}</td><td class="sys-n">${comma(t.ab)}</td></tr>`).join('')}</tbody>${caption.replace('</caption>', ' Counties already counted in Phase 1 are not counted again in later phases. Pick a phase above to see every county.</caption>')}</table></div>`;
+    return null;
+  }
+  const groups = phaseGroups(p).map(([g, l]) => [g, resolve(p, l)]);
+  const flat = groups.flatMap(([, l]) => l);
+  const seen = new Set(); const uniq = flat.filter(([s, c]) => { const k = `${s}|${c}`; if (seen.has(k) || (p !== '1' && p1Keys.has(k))) return false; seen.add(k); return true; });
+  const t = sumOf(uniq), dup = new Set(flat.filter(([s, c]) => p !== '1' && p1Keys.has(`${s}|${c}`)).map(([s, c]) => `${s}|${c}`)).size;
+  const tr = ([s, c, r]) => { const shared = p !== '1' && p1Keys.has(`${s}|${c}`); return `<tr${shared ? ' class="shared"' : ''}><td>${esc(c.replace(/ County$/, ''))}, ${esc(s)}${shared ? '<small>also in the Phase 1 ring</small>' : ''}</td><td class="sys-n">${comma(r.housing_units)}</td><td class="sys-n">${r.home_sales_12m != null ? comma(r.home_sales_12m) : '<span class="sys-muted">not reported</span>'}</td><td>${esc(abTxt(r))}</td></tr>`; };
+  host.innerHTML = `<div class="sys-table-wrap"><table class="sys-table" aria-label="Phase ${p} counties"><thead><tr><th>County</th><th class="sys-n">Housing units${est}</th><th class="sys-n">Home sales, 12 months</th><th>Authority Brands outlets</th></tr></thead>${groups.map(([g, l]) => `<tbody><tr class="grp"><th colspan="4" scope="colgroup">${esc(g)}</th></tr>${l.map(tr).join('')}</tbody>`).join('')}<tfoot><tr><td><b>Phase ${p} total</b> · ${comma(t.n)} counties${dup ? `, excluding ${dup} shared with Phase 1` : ''}${p === '4' ? '<span class="sys-est sys-est--illus">illustrative</span>' : ''}</td><td class="sys-n"><b>${comma(t.hu)}</b></td><td class="sys-n"><b>${comma(t.sales)}</b></td><td>${comma(t.ab)} with an outlet</td></tr></tfoot>${caption}</table></div>`;
+  return { ...t, dup };
 }
 
 function onHash() {
@@ -353,7 +424,7 @@ function agents() {
     $('#agent-grid').innerHTML = list.map((a, i) => {
       const w = WHO[a.who_it_helps] || WHO.office; const [v, u] = valUnit(a.metric_value, a.metric_unit);
       const dup = AG_DUP[a.id] && levNo(AG_DUP[a.id]); const kind = dup ? [`Same evidence as lever ${dup}, counted once`, 'dup'] : AG_KIND[a.id] || ['Published result', ''];
-      return `<article class="sys-card agent" id="${esc(agSlug(a))}"><div class="ag-top"><span class="ag-ic" style="--w:${w.c}"><svg viewBox="0 0 24 24" aria-hidden="true">${w.ic}</svg></span><div><span class="sys-card-label">Helps the ${w.label.toLowerCase()}</span><h3 class="sys-card-title">${esc(a.agent)}</h3></div></div><p class="job">${esc(prose(a.job_to_be_done))}</p><div class="ag-metric" title="${esc(prose(a.metric_claim))}"><span class="ag-kind ${kind[1]}">${esc(kind[0])}</span><b>${v}</b><span>${esc(u)}</span></div><p class="claim">${esc(prose(a.metric_claim))}</p><div class="vend">${(a.vendor_examples || []).map(x => `<span class="sys-chip">${esc(x)}</span>`).join('')}</div><div class="sys-card-foot ag-foot"><span>Live in <span class="wk">${a.weeks_to_deploy ?? '—'} weeks</span> · ${esc(String(a.cost_model || '').split(/[;,(]/)[0])}</span>${srcLink(a.source_url)}</div></article>`;
+      return `<article class="sys-card agent" id="${esc(agSlug(a))}"><div class="ag-top"><span class="ag-ic" style="--w:${w.c}"><svg viewBox="0 0 24 24" aria-hidden="true">${w.ic}</svg></span><div><span class="sys-card-label">Helps the ${w.label.toLowerCase()}</span><h3 class="sys-card-title">${esc(a.agent)}</h3></div></div><p class="job">${esc(prose(a.job_to_be_done))}</p><div class="ag-metric" title="${esc(prose(a.metric_claim))}"><span class="ag-kind ${kind[1]}">${esc(kind[0])}</span><b>${v}</b><span>${esc(u)}</span></div><p class="claim">${esc(prose(a.metric_claim))}</p>${AG_KPI[a.id] ? `<p class="ag-kpi"><b>KPI it moves:</b> ${esc(AG_KPI[a.id])}</p>` : ''}<div class="vend">${(a.vendor_examples || []).map(x => `<span class="sys-chip">${esc(x)}</span>`).join('')}</div><div class="sys-card-foot ag-foot"><span>Live in <span class="wk">${a.weeks_to_deploy ?? '—'} weeks</span> · ${esc(String(a.cost_model || '').split(/[;,(]/)[0])}</span>${srcLink(a.source_url)}</div></article>`;
     }).join('');
     $$('#runway .rw-row').forEach(r => { const go = () => { const c = $(`#${CSS.escape(r.dataset.id)}`); if (!c) return; c.scrollIntoView({ behavior: 'smooth', block: 'center' }); $$('.agent.hl').forEach(x => x.classList.remove('hl')); c.classList.add('hl'); setTimeout(() => c.classList.remove('hl'), 2200); }; r.onclick = go; r.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }; });
   };
@@ -372,7 +443,7 @@ function pros() {
   const lab = p => p.program.replace(/^Technician shortage - /, '').replace(/\s*\(BLS\)/, '');
   $('#shortage').innerHTML = `<div class="sys-card sh-main" data-sys-theme="dark"><span class="sys-card-label">The binding constraint · BLS 2025–35</span><div class="sh-big">${comma(total)}</div><p class="sh-cap">openings a year for HVAC techs, plumbers and electricians in the US. Every phase of the plan needs more of them than the market produces.</p><div class="stack">${bls.map((p, i) => `<div style="flex-grow:${p.metric_value};background:${cols[i]}">${comma(p.metric_value)}</div>`).join('')}</div><div class="stack-l">${bls.map((p, i) => `<span><i style="background:${cols[i]}"></i>${esc(lab(p))}</span>`).join('')}</div><div style="margin-top:12px">${bls.map(p => srcLink(p.source_url, 'BLS ' + lab(p))).join(' ')}</div></div><div class="sh-side">${[ind, turn, wage, appr].filter(Boolean).map(p => `<div class="sys-kpi sh-tile"><span class="sys-kpi-value">${fmtVal(p.metric_value, p.metric_unit)}</span><span class="sys-kpi-sub">${esc(valUnit(p.metric_value, p.metric_unit)[1])}</span>${srcLink(p.source_url)}</div>`).join('')}</div>`;
   const progs = pr.filter(p => !bls.includes(p) && p !== ind && p !== wage);
-  $('#programs').innerHTML = progs.map(p => { const [v, u] = valUnit(p.metric_value, p.metric_unit); return `<article class="sys-card prog"><span class="sys-card-label">For the ${p.who_it_helps === 'owner' ? 'owner and partner contractors' : 'technicians'}</span><h3 class="sys-card-title">${esc(p.program)}</h3><div class="pm"><b>${v}</b><span>${esc(u)}</span></div><p class="sys-card-body">${esc(prose(p.evidence))}</p>${p.cost_note ? `<div class="cost">${esc(prose(p.cost_note))}</div>` : ''}<span class="sys-card-foot">${srcLink(p.source_url)}</span></article>`; }).join('');
+  $('#programs').innerHTML = progs.map(p => { const [v, u] = valUnit(p.metric_value, p.metric_unit); return `<article class="sys-card prog"><span class="sys-card-label">For the ${p.who_it_helps === 'owner' ? 'owner and partner contractors' : 'technicians'}</span><h3 class="sys-card-title">${esc(p.program)}</h3><div class="pm"><b>${v}</b><span>${esc(u)}</span></div><p class="sys-card-body">${esc(prose(p.evidence))}</p>${PRO_KPI[p.id] ? `<p class="ag-kpi"><b>KPI it moves:</b> ${esc(PRO_KPI[p.id])}</p>` : ''}${p.cost_note ? `<div class="cost">${esc(prose(p.cost_note))}</div>` : ''}<span class="sys-card-foot">${srcLink(p.source_url)}</span></article>`; }).join('');
 }
 
 /* ── 7 · tuck-ins + 100-day plan ────────────────────────────────────────── */
@@ -415,6 +486,8 @@ function bridgeNums(mx, os) {
   const r = S.road, a = r[0] || {}, z = r[r.length - 1] || {}, fin = S.K('financing');
   const rng = (rx, re) => { const f = fin.find(x => rx.test(x.source_of_funds)); const m = re.exec(f?.amount_or_range || ''); return m ? m.slice(1).map(Number) : null; };
   const arbR = rng(/arbitrage/i, /([\d.]+)-([\d.]+)x entry.*vs ([\d.]+)x/), levR = rng(/leverage/i, /([\d.]+)-([\d.]+)x/), rollR = rng(/rollover/i, /(\d+)-(\d+)%/);
+  const dd = fin.find(x => /delayed-draw|credit facility/i.test(x.source_of_funds)) || {};
+  const ddtl = +((/\$([\d.]+)M unfunded/.exec(dd.amount_or_range || '') || [])[1] || 0) * 1e6, fac = (/~\$([\d.]+)-([\d.]+)M/.exec(dd.amount_or_range || '') || []).slice(1).map(v => +v * 1e6), par = +((/\$([\d.]+)M par/.exec(dd.evidence || '') || [])[1] || 0) * 1e6;
   const m0 = arbR ? (arbR[0] + arbR[1]) / 2 : 6.6, mExit = arbR ? arbR[2] : 10, lev = levR ? (levR[0] + levR[1]) / 2 : 3.1, roll = rollR ? (rollR[0] + rollR[1]) / 200 : 0.275;
   mx = mx ?? mExit; os = os ?? 0;
   const yrs = (z.month || 36) / 12, e0 = a.ebitda_usd || 0, e36 = z.ebitda_usd || 0, mg0 = e0 / (a.revenue_usd || 1), mg36 = e36 / (z.revenue_usd || 1);
@@ -427,7 +500,7 @@ function bridgeNums(mx, os) {
   const gOrg = (orgE - e0) * m0, gAcq = acqE36 * m0, arb = e36 * (mx - m0), prem = e36 * os, ev36 = e36 * mx;
   const debt36 = debt0 + debtNew, eq36 = ev36 - debt36, eqIn = eq0 + eqNew + rollover, moic = eq36 / eqIn, irr = moic > 0 ? moic ** (1 / yrs) - 1 : -1;
   const moicUp = (eq36 + prem) / eqIn, irrUp = moicUp ** (1 / yrs) - 1;
-  return { e0, e36, m0, mx, os, lev, roll, yrs, mg0, mg36, orgRev, orgE, acqRev, acqE, acqE36, price, fees, os$, uses, debtNew, rollover, eqNew, ev0, debt0, eq0, gOrg, gAcq, arb, prem, ev36, debt36, eq36, eqIn, moic, irr, moicUp, irrUp };
+  return { ddtl, fac, par, e0, e36, m0, mx, os, lev, roll, yrs, mg0, mg36, orgRev, orgE, acqRev, acqE, acqE36, price, fees, os$, uses, debtNew, rollover, eqNew, ev0, debt0, eq0, gOrg, gAcq, arb, prem, ev36, debt36, eq36, eqIn, moic, irr, moicUp, irrUp };
 }
 const pct = v => `${Math.round(v * 100)}%`;
 function roadNote() {
@@ -440,7 +513,7 @@ function roadNote() {
 function financing() {
   const fin = S.K('financing');
   const tag = f => /credit|loan|debt/i.test(f.source_of_funds) ? 'Debt' : /Fund I/i.test(f.source_of_funds) ? 'Fund equity' : /co-invest/i.test(f.source_of_funds) ? 'Co-invest' : /rollover/i.test(f.source_of_funds) ? 'Seller equity' : /leverage/i.test(f.source_of_funds) ? 'Market check' : 'Value creation';
-  $('#fin-grid').innerHTML = fin.map(f => `<article class="sys-card fin"><span class="sys-card-label">${tag(f)}</span><h3 class="sys-card-title">${esc(f.source_of_funds)}</h3><div class="amt">${esc(f.amount_or_range)}</div><p class="sys-card-body">${esc(prose(f.evidence))}</p><span class="sys-card-foot">${srcLink(f.source_url)}</span></article>`).join('');
+  $('#fin-grid').innerHTML = fin.map(f => `<article class="sys-card fin"><span class="sys-card-label">${tag(f)}</span><h3 class="sys-card-title">${esc(f.source_of_funds)}</h3><div class="amt">${esc(prose(f.amount_or_range))}</div><p class="sys-card-body">${esc(prose(f.evidence))}</p><span class="sys-card-foot">${srcLink(f.source_url)}</span></article>`).join('');
   // roadmap chart + table
   const r = S.road; if (r.length) {
     const W = 600, H = 270, pl = 30, pr = 30, pt = 30, pb = 40, cw = (W - pl - pr) / r.length;
@@ -482,18 +555,20 @@ function returnsTable(b) {
       row('ServiceOS build', usd(b.os$), 'midpoint of the ServiceOS case'),
       row('Total uses', usd(b.uses))].join('')}</table></div>
     <div><h4>Sources</h4><table class="tbl su">${[
-      row('Acquisition debt', usd(b.debtNew), `delayed-draw / unitranche at ${b.lev.toFixed(1)}x acquired EBITDA`),
+      ...(b.ddtl ? [row('Existing delayed-draw line', usd(b.ddtl), 'undrawn commitment in PGIM Private Credit Fund\'s slice (10-Q, Jun 30, 2026)'),
+        row('Upsized or incremental term loan', usd(b.debtNew - b.ddtl), `to be raised; total acquisition debt ${usd(b.debtNew)} = ${b.lev.toFixed(1)}x acquired EBITDA`)]
+        : [row('Acquisition debt', usd(b.debtNew), `delayed-draw / unitranche at ${b.lev.toFixed(1)}x acquired EBITDA`)]),
       row('Seller rollover', usd(b.rollover), `${pct(b.roll)} of price (20–35% typical)`),
       row('New equity', usd(b.eqNew), 'Fund I follow-on + deal co-invest'),
       row('Total sources', usd(b.debtNew + b.rollover + b.eqNew))].join('')}</table></div>
     <div><h4>Equity returns at ${b.mx.toFixed(1)}x exit</h4><table class="tbl su">${[
       row('Exit enterprise value', usd(b.ev36), `${usd(b.e36)} × ${b.mx.toFixed(1)}x, no AI premium`),
-      row('Less net debt', '−' + usd(b.debt36), `today ${usd(b.debt0)} + acquisition ${usd(b.debtNew)}; no paydown assumed (${(b.debt36 / b.e36).toFixed(1)}x exit EBITDA)`),
+      row('Less net debt', '−' + usd(b.debt36), `today ~${usd(b.debt0)} (${b.lev.toFixed(1)}x today's EBITDA${b.fac.length ? `, consistent with a facility estimated at ~${usd(b.fac[0])}–${usd(b.fac[1])}` : ''}) + acquisition ${usd(b.debtNew)}; no paydown assumed (${(b.debt36 / b.e36).toFixed(1)}x exit EBITDA)`),
       row('Equity value at exit', usd(b.eq36)),
       row('Equity in', usd(b.eqIn), `today's equity at ${b.m0.toFixed(1)}x (${usd(b.eq0)}) + new ${usd(b.eqNew)} + rollover ${usd(b.rollover)}`),
       row('IRR', pct(b.irr), `all equity counted from day 0${b.os ? `; upside case ${b.moicUp.toFixed(1)}x / ${pct(b.irrUp)}` : ''}`),
       row('Gross MOIC', b.moic.toFixed(1) + 'x')].join('')}</table></div>`;
-  $('#su-note').innerHTML = `Every line is an analyst estimate built from the roadmap above and the financing sources on this page. Acquired revenue (${usd(b.acqRev)} at month 36) is bought at today's ~${pct(b.mg0)} margin; organic growth is ~${pct(ORG_G)} a year. Returns are measured on today's value (${b.m0.toFixed(1)}x run-rate EBITDA), not on Broad Sky's original cost, and are gross of fees and carry. Debt is held flat, which understates returns if cash flow pays it down.`;
+  $('#su-note').innerHTML = `Every line is an analyst estimate built from the roadmap above and the financing sources on this page. Acquired revenue (${usd(b.acqRev)} at month 36) is bought at today's ~${pct(b.mg0)} margin; organic growth is ~${pct(ORG_G)} a year. Returns are measured on today's value (${b.m0.toFixed(1)}x run-rate EBITDA), not on Broad Sky's original cost, and are gross of fees and carry. Debt is held flat, which understates returns if cash flow pays it down.${b.ddtl ? ` <b>Debt capacity check:</b> the only acquisition line visible in filings is PGIM Private Credit Fund's first-lien loan to Punctual Pros Midco (${usd(b.par)} par, SOFR + 5.00%, due March 2029) with ${usd(b.ddtl)} undrawn on its delayed-draw commitment. Other lenders likely hold the rest of a facility estimated at ~${usd(b.fac[0])}–${usd(b.fac[1])}. The plan therefore assumes the lender group upsizes the unitranche or adds an incremental term loan for the other ${usd(b.debtNew - b.ddtl)}, sized at ${b.lev.toFixed(1)}x acquired EBITDA, the midpoint of GF Data's 2.9–3.3x.` : ''}`;
 }
 
 /* ── 9 · risks & asks; footer sources ───────────────────────────────────── */
@@ -572,7 +647,7 @@ function chatIntents() {
       return { html: `<h4>Who else is bidding for HVAC founders</h4><p>${N(d.pe_sponsors_overlapping_punctual_pros)} PE sponsors overlap Punctual Pros (${N(d.pe_sponsor_threat_mix?.high)} high, ${N(d.pe_sponsor_threat_mix?.medium)} medium, ${N(d.pe_sponsor_threat_mix?.low)} low threat).</p><ul>${(d.pe_sponsors_high_threat || []).map(s => `<li>${esc(s)}</li>`).join('')}</ul><p>Broad Sky's edge is the operator growth plan plus the AI stack, which raises a tuck-in's margin within 12 months, and rollover that keeps founders in the upside.</p>`, links: [portal('#/pe/landscape', 'PE landscape'), A('#tuckins', 'Our top 10')], followups: ['What are the top tuck-in targets?', 'How do we fund the expansion?'] }; } },
     { id: 'nw_targets', rx: [/tuck.?ins?|targets?\b|acqui|add.?ons?|\bm&a\b|\bbuy\b|founders? to call/i], run: async q => { const st = stateOf(q); let t = S.screen.slice(); if (st) t = t.filter(x => x.state === st); t.sort((a, b) => (b.fit_score || 0) - (a.fit_score || 0));
       return { html: `<h4>Top tuck-in targets${st ? ` · ${st}` : ''}</h4>${t.length ? T(['Fit', 'Company', 'HQ', 'Staff', 'Rev. est.'], t.slice(0, 8).map(x => [N(x.fit_score ?? '—'), `<b>${esc(x.company)}</b>`, esc(`${x.hq_city || ''}, ${x.state}`), N(x.employees ?? '—'), N(usd(x.revenue_est_usd))])) : '<p>No screened targets in that state yet.</p>'}<div class="ch-src">${t.length} of ${(S.ma?.items || []).length} screened companies${st ? ` are in ${st}` : ''}. Scores: density, trade mix, scale, ownership readiness, brand alignment (each /20).${S.verify.filter(x => !st || x.state === st).length ? ` Not ranked until ownership is confirmed: ${S.verify.filter(x => !st || x.state === st).map(x => esc(x.company.replace(/\s*\(.*\)/, ''))).join(', ')} (trades under the Punctual Pros name).` : ''}</div>`, links: [A('#tuckins', 'Ranked list + 100-day plan'), portal('#/ma/pipeline?platform=pp', 'Full add-on pipeline')], followups: [st === 'NJ' ? 'Show tuck-in targets in Delaware' : 'Show tuck-in targets in New Jersey', 'What is the 100-day integration plan?'] }; } },
-    { id: 'nw_fin', rx: [/\bfund(ing|s)?\b|how do we (pay|finance)|financ(e|ing) (the|it|expansion|deals?|plan)|\bdebt\b|leverage|\bcapital\b|co.?invest|rollover|pay for|unitranche|pgim|delayed.?draw/i], run: async () => ({ html: `<h4>How we fund the expansion</h4>${T(['Source', 'Amount / range'], S.K('financing').map(f => [`<b>${esc(f.source_of_funds)}</b>`, esc(f.amount_or_range)]))}${(() => { const b = bridgeNums(); return `<p>Modeled uses to month 36: ${N(usd(b.uses))} (tuck-ins ${usd(b.price)}, fees, ServiceOS). Sources: ${N(usd(b.debtNew))} debt, ${N(usd(b.rollover))} seller rollover, ${N(usd(b.eqNew))} new equity <span class="ch-badge">est.</span></p>`; })()}<p>Year 1 tuck-ins run on the existing unitranche and its delayed-draw line plus seller rollover. Phase 3–4 anchor deals need a deal-level co-invest SPV, as Broad Sky raised for Thomas Scientific, Frontline and CET.</p>`, links: [A('#returns', 'Financing & returns')], followups: ['What is the multiple-expansion case?', 'What is the revenue plan for month 36?'] }) },
+    { id: 'nw_fin', rx: [/\bfund(ing|s)?\b|how do we (pay|finance)|financ(e|ing) (the|it|expansion|deals?|plan)|\bdebt\b|leverage|\bcapital\b|co.?invest|rollover|pay for|unitranche|pgim|delayed.?draw/i], run: async () => ({ html: `<h4>How we fund the expansion</h4>${T(['Source', 'Amount / range'], S.K('financing').map(f => [`<b>${esc(f.source_of_funds)}</b>`, esc(f.amount_or_range)]))}${(() => { const b = bridgeNums(); return `<p>Modeled uses to month 36: ${N(usd(b.uses))} (tuck-ins ${usd(b.price)}, fees, ServiceOS). Sources: ${N(usd(b.debtNew))} debt, ${N(usd(b.rollover))} seller rollover, ${N(usd(b.eqNew))} new equity <span class="ch-badge">est.</span></p>`; })()}${(() => { const b = bridgeNums(); return b.ddtl ? `<p>Only ${N(usd(b.ddtl))} of undrawn delayed-draw capacity is visible today (PGIM Private Credit Fund's slice of the unitranche), so year-1 tuck-ins also lean on seller rollover and Fund I equity, and the other ${usd(b.debtNew - b.ddtl)} of acquisition debt assumes an upsized or incremental term loan <span class="ch-badge">est.</span></p>` : ''; })()}<p>Phase 3–4 anchor deals need a deal-level co-invest vehicle, as Broad Sky raised for Thomas Scientific, Frontline and CET.</p>`, links: [A('#returns', 'Financing & returns')], followups: ['What is the multiple-expansion case?', 'What is the revenue plan for month 36?'] }) },
     { id: 'nw_value', rx: [/multiple|valuation|\bexit\b|serviceos|arbitrage|returns?\b|worth|enterprise value|moic|\birr\b|sources and uses/i], run: async () => { const b = bridgeNums(); const ra = S.ra;
       return { html: `<h4>Value and returns at month 36 <span class="ch-badge">est.</span></h4>${T(['Step', 'Value'], [['EV today', `${N(usd(b.ev0))} (${usd(b.e0)} × ${b.m0.toFixed(1)}x)`], ['+ Organic EBITDA growth', N('+' + usd(b.gOrg))], ['+ Acquired EBITDA (≈ what the tuck-ins cost)', N('+' + usd(b.gAcq))], [`+ Multiple arbitrage to ${b.mx.toFixed(1)}x`, N('+' + usd(b.arb))], ['<b>Base EV month 36</b>', `<b>${N(usd(b.ev36))}</b> (${usd(b.e36)} × ${b.mx.toFixed(1)}x)`], ['Less net debt', N('−' + usd(b.debt36))], ['Equity in → equity out', `${N(usd(b.eqIn))} → ${N(usd(b.eq36))}`], ['<b>Gross MOIC / IRR</b>', `<b>${N(b.moic.toFixed(1) + 'x')}</b> / ${N(pct(b.irr))}`]])}<p>Tuck-ins cost ~${N(usd(b.price))}, funded by ${N(usd(b.debtNew))} of debt, ${N(usd(b.rollover))} of seller rollover and ${N(usd(b.eqNew))} of new equity.</p>${ra ? `<p>No AI premium in the base: ServiceOS (${usd(ra.investment_usd[0])}–${usd(ra.investment_usd[1])} investment, ${usd(ra.ebitda_impact_usd[0])}–${usd(ra.ebitda_impact_usd[1])} EBITDA impact) is already inside the margin path. A premium of up to 1 turn is shown only as an upside case.</p>` : ''}<div class="ch-src">Multiples from GF Data (sub-$25M TEV 6.3–6.9x vs $100–250M TEV 10.0x). Returns on today's value, gross of fees and carry, debt held flat.</div>`, links: [A('#returns', 'Value bridge and sources & uses')], followups: ['How do we fund the expansion?', 'What are the biggest risks?'] }; } },
     { id: 'nw_road', rx: [/revenue|ebitda|month\s*\d+|\bkpis?\b|roadmap|members?(hip)?|grow to|36 months|\b\d+ years?\b|three years|look like in|numbers/i], run: async () => ({ html: `<h4>36-month KPI roadmap <span class="ch-badge">est.</span></h4>${T(['Month', 'Revenue', 'EBITDA', 'Techs', 'Territories', 'Members'], S.road.map(x => [N(x.month), N(usd(x.revenue_usd)), N(usd(x.ebitda_usd)), N(x.technicians), N(x.territories), N(comma(x.members))]))}<p>${esc(S.road[S.road.length - 1]?.note || '')}</p>`, links: [A('#returns', 'Roadmap chart')], followups: ['What is the multiple-expansion case?', 'How do we fund the expansion?'] }) },
@@ -597,14 +672,14 @@ function chatFaq() {
     { q: 'What did the Horvath Home Services deal prove?', a: '<p>Horvath (Beachwood / Toms River NJ, Dec 2024) was Punctual Pros\' first out-of-state add-on, its Market Street Partners moment. Phase 2 repeats it across PA, NJ, MD, DE and southern NY.</p>', href: '#phase-2' },
     { q: 'How big is the HVAC services market?', a: `<p>Mordor Intelligence puts US HVAC services (residential + commercial) at ${usd(me.hvac_services_us?.value_usd)} in ${me.hvac_services_us?.year}, growing ~5.9% a year. Publishers disagree, so treat it as a range.</p>` },
     { q: 'Where does the website redesign fit?', a: '<p>It is lever 1 of 10: online booking from ~5% to 20% of jobs. It is the front door. The AI agents, memberships, financing and tuck-ins create most of the value.</p>', href: 'index.html' },
-    { q: 'What does the debt look like today?', a: '<p>PGIM Private Credit Fund\'s 10-Q shows a first-lien loan to Punctual Pros Midco at SOFR+5.00% due 3/26/2029, plus a $1.4M unfunded delayed-draw commitment in that fund\'s slice.</p>', href: '#returns' },
+    { q: 'What does the debt look like today?', a: '<p>PGIM Private Credit Fund\'s 10-Q shows a first-lien loan to Punctual Pros Midco at SOFR+5.00% due March 26, 2029, plus a $1.4M unfunded delayed-draw commitment in that fund\'s slice.</p>', href: '#returns' },
     { q: 'What is the Thaddeus Stevens partnership?', a: '<p>Thaddeus Stevens College in Lancaster reports 97% placement and 18 job opportunities per graduate. Punctual Pros would fund scholarships, lab equipment and a signing-bonus pool (est. $50–150K/yr) to get first pick.</p>', href: '#pros' },
   ];
 }
 
 function mountChat(Chat) {
   const intents = chatIntents(), faq = chatFaq();
-  const common = { persona: 'pp', theme: 'light', name: 'Growth plan assistant', initials: 'PP', color: '#b84a17', greeting: 'Ask me anything about taking Punctual Pros national: where we expand first, which AI agents to deploy, how we help technicians, the tuck-in targets, financing and returns. Every answer is computed from the plan datasets.', placeholder: 'Ask how Punctual Pros goes national…', suggestions: SUGG, faq, intents };
+  const common = { persona: 'pp', short_name: 'Punctual Pros', theme: 'light', name: 'Growth plan assistant', initials: 'PP', color: '#b84a17', greeting: 'Ask me anything about taking Punctual Pros national: where we expand first, which AI agents to deploy, how we help technicians, the tuck-in targets, financing and returns. Every answer is computed from the plan datasets.', placeholder: 'Ask how Punctual Pros goes national…', suggestions: SUGG, faq, intents };
   let qp = null; try { qp = new URLSearchParams(location.search); } catch { /* ignore */ }
   const autoAsk = qp?.get('ask') || undefined;
   const inline = Chat.mount($('#hero-chat'), { ...common, mode: 'inline', autoAsk });

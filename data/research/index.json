@@ -1,0 +1,387 @@
+{
+ "generated": "2026-10-06",
+ "files": [
+  {
+   "name": "ai_agents_portfolio",
+   "folder": "research",
+   "title": "ai_agents_portfolio - portfolio-wide AI-agent program (the agentic layer of every Broad Sky OS)",
+   "item_count": 61,
+   "bytes": 95775,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "bpi_filings",
+   "folder": "research",
+   "title": "BPI (Bully Pulpit International, fka Bully Pulpit Interactive), financial filings and public-record research, part of the Broad Sky Partners portfolio and competitor track",
+   "item_count": 21,
+   "bytes": 41912,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "bpi_playbook",
+   "folder": "research",
+   "title": "Bully Pulpit International: the growth plan",
+   "item_count": 53,
+   "bytes": 58146,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "bsp_firm",
+   "folder": "research",
+   "title": "bsp_firm",
+   "item_count": 6,
+   "bytes": 76192,
+   "generated": "2026-09-24",
+   "lists": {
+    "timeline": 52,
+    "bpi_opportunities": 12,
+    "fh_opportunities": 9
+   }
+  },
+  {
+   "name": "bsp_methodology",
+   "folder": "research",
+   "title": "How Broad Sky buys: a reverse-engineered acquisition methodology",
+   "item_count": 68,
+   "bytes": 117054,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "bsp_network",
+   "folder": "research",
+   "title": "Broad Sky Partners professional network graph (public roles only)",
+   "item_count": 314,
+   "bytes": 157660,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "cases_cross_sector",
+   "folder": "research",
+   "title": "Sponsor value-creation case studies outside residential home services: chronological analogs for Punctual Pros and Broad Sky's other sectors",
+   "item_count": 17,
+   "bytes": 119460,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "cases_home_services",
+   "folder": "research",
+   "title": "How sponsors built residential HVAC/plumbing/electrical companies: chronological case studies for Punctual Pros",
+   "item_count": 17,
+   "bytes": 108255,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "cet_filings",
+   "folder": "research",
+   "title": "Commonwealth Electrical Technologies (Broad Sky Partners) – filings & financial research track",
+   "item_count": 25,
+   "bytes": 50861,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "cet_opportunities",
+   "folder": "research",
+   "title": "CET New England Opportunity Radar",
+   "item_count": 86,
+   "bytes": 113101,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "cet_playbook",
+   "folder": "research",
+   "title": "Commonwealth Electrical Technologies: the growth plan (from New England electrical/energy contractor to Northeast infrastructure company)",
+   "item_count": 46,
+   "bytes": 63350,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "cet_wwtp_targets",
+   "folder": "research",
+   "title": "CET / Horton Electrical - municipal wastewater (WPCF/WWTF) target accounts, CT-MA-RI",
+   "item_count": 183,
+   "bytes": 342225,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "county_cbsa",
+   "folder": "research",
+   "title": "County to metro / micro area crosswalk (OMB July 2023 delineation)",
+   "item_count": 925,
+   "bytes": 354514,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "design_refs",
+   "folder": "research",
+   "title": "Design references for the BSP landing page and the six portfolio website concepts",
+   "item_count": 26,
+   "bytes": 84952,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "fairharbor_filings",
+   "folder": "research",
+   "title": "Fair Harbor (Broad Sky Partners portfolio) - public filings and financial research track",
+   "item_count": 25,
+   "bytes": 45346,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "fh_playbook",
+   "folder": "research",
+   "title": "Fair Harbor: the growth plan",
+   "item_count": 46,
+   "bytes": 48223,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "fl_midsize_firms",
+   "folder": "research",
+   "title": "Frontline Managed Services - mid-size US law firm target universe (40-350 attorneys, beyond AM Law 200 coverage)",
+   "item_count": 143,
+   "bytes": 278715,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "fl_playbook",
+   "folder": "research",
+   "title": "Frontline Managed Services: the growth plan - AM Law core to mid-market and international (Smith + Howard template, AI agents, talent, growth levers, expansion phases, financing)",
+   "item_count": 49,
+   "bytes": 69557,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "frontline_filings",
+   "folder": "research",
+   "title": "Frontline Managed Services - filings and financial research track (BSP portfolio), with BSP fund context and competitor credit benchmarks",
+   "item_count": 21,
+   "bytes": 39342,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "ma_targets_cet",
+   "folder": "research",
+   "title": "CET add-on acquisition target screen (New England electrical, solar, controls, utility, generator, W/WW I&C)",
+   "item_count": 48,
+   "bytes": 101687,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "ma_targets_fl_ts",
+   "folder": "research",
+   "title": "BSP add-on M&A target screen — Frontline Managed Services & Thomas Scientific",
+   "item_count": 48,
+   "bytes": 93991,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "ma_targets_pp",
+   "folder": "research",
+   "title": "Punctual Pros add-on acquisition target screen (residential HVAC / plumbing / electrical; Central PA + Jersey Shore + adjacent DE/MD/South Jersey)",
+   "item_count": 61,
+   "bytes": 172996,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "pe_landscape",
+   "folder": "research",
+   "title": "Private-equity competitive landscape for Broad Sky Partners (LMM business & consumer services)",
+   "item_count": 35,
+   "bytes": 169348,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "pp_ads",
+   "folder": "research",
+   "title": "Punctual Pros advertising program - cheap CTV, LSA, new-mover mail and weather-triggered creative (with Fair Harbor DTC appendix)",
+   "item_count": 64,
+   "bytes": 150847,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "pp_demand_model",
+   "folder": "research",
+   "title": "Punctual Pros weather-to-service-call demand model (HVAC / plumbing / electrical), NWS alert response plan, territory zone codes and weather hubs",
+   "item_count": 54,
+   "bytes": 93475,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "pp_filings",
+   "folder": "research",
+   "title": "Punctual Pros public filings and regulatory data",
+   "item_count": 29,
+   "bytes": 57702,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "pp_market",
+   "folder": "research",
+   "title": "Punctual Pros market context: Central Pennsylvania and Jersey Shore (competitors, Authority Brands franchise territories, incentives, county profiles, market signals)",
+   "item_count": 177,
+   "bytes": 227220,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "pp_nationwide",
+   "folder": "research",
+   "title": "How Broad Sky takes Punctual Pros nationwide: Smith + Howard template, AI agents, pro programs, growth levers, expansion phases, financing",
+   "item_count": 59,
+   "bytes": 58940,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "pp_storm_events",
+   "folder": "research",
+   "title": "Punctual Pros territory — NOAA NCEI Storm Events history (Central PA + SE PA + Jersey Shore), 2019–2026 YTD",
+   "item_count": 1575,
+   "bytes": 1630515,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "public_comps",
+   "folder": "research",
+   "title": "BSP public comparables: FY2023-FY2025 (latest available) SEC XBRL fundamentals for 31 listed peers across all six BSP portfolio sectors",
+   "item_count": 31,
+   "bytes": 118842,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "rival_filings",
+   "folder": "research",
+   "title": "Rival companies — filings & financial research track (PE-backed and public competitors to Broad Sky Partners portfolio companies)",
+   "item_count": 51,
+   "bytes": 84276,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "serviceos_evidence",
+   "folder": "research",
+   "title": "Tech-enablement (\"OS\") value-creation evidence file: ServiceOS (Punctual Pros), GridOS (CET), FirmOS (Frontline), LabOS (Thomas Scientific), SignalOS (BPI), HarborOS (Fair Harbor)",
+   "item_count": 80,
+   "bytes": 70947,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "thomas_filings",
+   "folder": "research",
+   "title": "Thomas Scientific — filings & financial research track (Broad Sky Partners portfolio)",
+   "item_count": 31,
+   "bytes": 47008,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "ts_playbook",
+   "folder": "research",
+   "title": "Thomas Scientific: the growth plan",
+   "item_count": 43,
+   "bytes": 49246,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "value_creation_cases",
+   "folder": "research",
+   "title": "How sponsors created value in home-services and adjacent companies: merged case set, common levers, chronological patterns and a dated Punctual Pros sequence",
+   "item_count": 64,
+   "bytes": 429673,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "voice_ai",
+   "folder": "research",
+   "title": "Voice-AI as a growth engine: 24/7 voice-agent economics, vendors, use cases, sample calls, reference platforms, technical stack and governance for the Broad Sky Partners portfolio (Punctual Pros focus)",
+   "item_count": 81,
+   "bytes": 79037,
+   "generated": "2026-10-06"
+  },
+  {
+   "name": "bpi_sales_dc",
+   "folder": "sales",
+   "title": "bpi_sales_dc",
+   "item_count": 8003,
+   "bytes": 1344278,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "cet_home_sales_ct_ri",
+   "folder": "sales",
+   "title": "cet_home_sales_ct_ri",
+   "item_count": 31591,
+   "bytes": 7844086,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "cet_home_sales_ma",
+   "folder": "sales",
+   "title": "cet_home_sales_ma",
+   "item_count": 14273,
+   "bytes": 5127229,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "cet_transfers_ct_ri",
+   "folder": "sales",
+   "title": "cet_transfers_ct_ri",
+   "item_count": 5816,
+   "bytes": 1394837,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "cet_transfers_ma",
+   "folder": "sales",
+   "title": "cet_transfers_ma",
+   "item_count": 4317,
+   "bytes": 1601459,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "fh_sales_nyc",
+   "folder": "sales",
+   "title": "fh_sales_nyc",
+   "item_count": 19553,
+   "bytes": 3215067,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "pp_sales_nj",
+   "folder": "sales",
+   "title": "BSP property-transfer dataset - New Jersey Jersey Shore ring (Ocean, Monmouth, Atlantic, Burlington)",
+   "item_count": 25486,
+   "bytes": 4114559,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "pp_sales_pa_a",
+   "folder": "sales",
+   "title": "pp_sales_pa_a - Property transfers (sales) for Lancaster, York, Dauphin, Cumberland Counties, PA (Broad Sky Partners operating-intelligence portal)",
+   "item_count": 19822,
+   "bytes": 4127371,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "pp_sales_pa_b",
+   "folder": "sales",
+   "title": "pp_sales_pa_b - Property transfers (deeds/sales) for Punctual Pros / BSP portfolio service-area counties in PA: Berks, Lebanon, Franklin, Adams, Perry, Chester, Montgomery",
+   "item_count": 31941,
+   "bytes": 5403367,
+   "generated": "2026-09-24"
+  },
+  {
+   "name": "ts_sales_gloucester_nj",
+   "folder": "sales",
+   "title": "ts_sales_gloucester_nj",
+   "item_count": 2936,
+   "bytes": 447494,
+   "generated": "2026-09-24"
+  }
+ ],
+ "totals": {
+  "research_files": 36,
+  "research_items": 4663,
+  "sales_files": 10,
+  "sales_rows": 163738,
+  "bytes": 40520137,
+  "data_from": "2026-09-24",
+  "data_to": "2026-10-06"
+ }
+}

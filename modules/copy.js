@@ -2,7 +2,7 @@
    record fields, the est. badge, and a post-render pass that turns the console's
    textual "est." markers into .sys-est badges. Module renderers call these at the
    source; Frame.humanize stays the safety net. */
-import { Frame } from '../assets/frame.js?v=20261006134218';
+import { Frame } from '../assets/frame.js?v=20261006143735';
 
 export const EST = '<span class="sys-est">est.</span>';
 export const ILLUS = '<span class="sys-est sys-est--illus">illustrative</span>';
@@ -100,6 +100,7 @@ export function alias(root) {
 export function enhance(root) {
   if (!root || !root.querySelectorAll) return;
   alias(root);
+  spellPRG(root);
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   const hits = [];
   for (let t = walker.nextNode(); t; t = walker.nextNode()) {
@@ -123,6 +124,24 @@ export function enhance(root) {
       } else frag.appendChild(document.createTextNode(part));
     }
     t.replaceWith(frag);
+  }
+}
+
+/** Content rule: spell out Portfolio Resource Group on first use in a view. Walks the view (#content, or the
+    given root) in reading order; if the first mention is a bare "PRG", it becomes "Portfolio Resource Group (PRG)". */
+function spellPRG(root) {
+  const scope = (root.closest && root.closest('#content, #inspector')) || root;
+  const all = scope.textContent || '';
+  if (all.indexOf('PRG') < 0) return;
+  const w = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT);
+  for (let t = w.nextNode(); t; t = w.nextNode()) {
+    const v = t.nodeValue || '';
+    const full = v.indexOf('Portfolio Resource Group'), i = v.search(/\bPRG\b/);
+    if (full < 0 && i < 0) continue;
+    const p = t.parentElement; if (!p || p.closest(SKIP)) continue;
+    if (full >= 0 && (i < 0 || full < i)) return;
+    t.nodeValue = v.slice(0, i) + 'Portfolio Resource Group (PRG)' + v.slice(i + 3);
+    return;
   }
 }
 

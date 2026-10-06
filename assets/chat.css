@@ -239,6 +239,7 @@
 .ch-inline .ch-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:14px 0 0}
 .ch-chip{flex-shrink:0;padding:8px 14px;border:1px solid var(--ch-line);border-radius:999px;background:var(--ch-bg);color:var(--ch-fg2);font-size:13px;cursor:pointer;white-space:nowrap;transition:border-color .15s,color .15s}
 .ch-chip:hover{border-color:var(--ch-fg);color:var(--ch-fg)}
+.ch-inline .ch-chip{max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .ch-inline .ch-thread{display:none;margin-top:18px;border:1px solid var(--ch-line);border-radius:20px;background:var(--ch-bg);box-shadow:0 10px 40px rgba(15,23,42,.08);overflow:hidden}
 .ch-inline .ch-thread.open{display:flex;flex-direction:column;max-height:72vh;animation:ch-pop .2s var(--ch-ease)}
 .ch-inline .ch-thread .ch-msgs{max-height:62vh;overflow-y:auto;overscroll-behavior:contain;padding:20px 22px 26px}

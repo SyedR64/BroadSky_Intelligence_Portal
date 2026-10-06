@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    Broad Sky Operating Intelligence — landing page + concept gallery behaviour.
-   No framework, no dependency on the portal runtime: the page paints without
-   data, then reads counts lazily from the data files (streaming only the
-   first few KB of each file to find meta.item_count).
+   No framework, no dependency on the portal runtime: the page paints with the
+   static counts in index.html, then refreshes them from the dataset index
+   (data/research/index.json) and data/manifest.json.
    ═══════════════════════════════════════════════════════════════════════════ */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -11,56 +11,32 @@ const reduced = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').ma
 const fmtN = n => Number(n).toLocaleString('en-US');
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-/* ── data: lazy counts ─────────────────────────────────────────────────────── */
-const RESEARCH = ['ai_agents_portfolio', 'bpi_filings', 'bpi_playbook', 'bsp_firm', 'bsp_methodology', 'bsp_network', 'cases_cross_sector', 'cases_home_services', 'cet_filings', 'cet_opportunities', 'cet_playbook', 'cet_wwtp_targets', 'county_cbsa', 'design_refs', 'fairharbor_filings', 'fh_playbook', 'fl_midsize_firms', 'fl_playbook', 'frontline_filings', 'ma_targets_cet', 'ma_targets_fl_ts', 'ma_targets_pp', 'pe_landscape', 'pp_ads', 'pp_demand_model', 'pp_filings', 'pp_market', 'pp_nationwide', 'pp_storm_events', 'public_comps', 'rival_filings', 'serviceos_evidence', 'thomas_filings', 'ts_playbook', 'value_creation_cases', 'voice_ai'];
-const SALES = ['bpi_sales_dc', 'cet_home_sales_ct_ri', 'cet_home_sales_ma', 'cet_transfers_ct_ri', 'cet_transfers_ma', 'fh_sales_nyc', 'pp_sales_nj', 'pp_sales_pa_a', 'pp_sales_pa_b', 'ts_sales_gloucester_nj'];
-
-/** Stream a JSON file until meta.item_count (and meta.generated) appear, then cancel the download. */
-async function peekMeta(url, limit = 160000) {
-  const r = await fetch(url, { cache: 'force-cache' });
-  if (!r.ok) throw new Error(`${r.status} ${url}`);
-  const rxN = /"item_count"\s*:\s*(\d+)/, rxG = /"generated"\s*:\s*"(\d{4}-\d{2}-\d{2})/;
-  if (!r.body || !r.body.getReader) { const t = await r.text(); return { n: +(t.match(rxN) || [])[1] || null, gen: (t.match(rxG) || [])[1] || null }; }
-  const reader = r.body.getReader(), dec = new TextDecoder(); let buf = '';
-  try {
-    for (;;) {
-      const { done, value } = await reader.read(); if (done) break;
-      buf += dec.decode(value, { stream: true });
-      const m = buf.match(rxN);
-      if (m) return { n: +m[1], gen: (buf.match(rxG) || [])[1] || null };
-      if (buf.length > limit) break;
-    }
-  } finally { reader.cancel().catch(() => {}); }
-  return { n: null, gen: (buf.match(rxG) || [])[1] || null };
-}
-async function pool(items, fn, k = 6) {
-  const out = new Array(items.length); let i = 0;
-  await Promise.all(Array.from({ length: Math.min(k, items.length) }, async () => { while (i < items.length) { const j = i++; try { out[j] = await fn(items[j]); } catch { out[j] = null; } } }));
-  return out;
-}
+/* ── data: one small index ──────────────────────────────────────────────────
+   data/research/index.json (written by scripts/describe_research.py) carries the
+   item count, size and date of every research and deed file, so the landing page
+   reads two small files (that index and data/manifest.json) instead of opening
+   all 46 datasets. If the index is missing, the static numbers in index.html stay. */
 let _stats = null;
 function loadStats() {
   if (_stats) return _stats;
+  const get = url => fetch(ROOT + url, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null);
   _stats = (async () => {
-    const [manifest, research, sales, firm] = await Promise.all([
-      fetch(ROOT + 'data/manifest.json', { cache: 'force-cache' }).then(r => r.ok ? r.json() : null).catch(() => null),
-      pool(RESEARCH, n => peekMeta(ROOT + `data/research/${n}.json`)),
-      pool(SALES, n => peekMeta(ROOT + `data/sales/${n}.json`)),
-      fetch(ROOT + 'data/research/bsp_firm.json', { cache: 'force-cache' }).then(r => r.ok ? r.json() : null).catch(() => null),
-    ]);
-    const R = Object.fromEntries(RESEARCH.map((n, i) => [n, research[i]]));
+    const [manifest, index] = await Promise.all([get('data/manifest.json'), get('data/research/index.json')]);
+    const files = Array.isArray(index?.files) ? index.files : null;
+    if (!files || !files.length) throw new Error('dataset index unavailable');
+    const F = Object.fromEntries(files.map(f => [`${f.folder}/${f.name}`, f]));
+    const research = files.filter(f => f.folder === 'research'), sales = files.filter(f => f.folder === 'sales' && f.item_count != null);
     const core = manifest?.datasets || [];
     const rows = n => core.find(d => d.file === `${n}.json`)?.rows;
-    const resOk = research.filter(Boolean).length, salesOk = sales.filter(x => x && x.n != null);
-    if (!core.length && !resOk && !salesOk.length) throw new Error('no data reachable');
-    const cnt = n => R[n]?.n || 0;
-    const opps = { radar: cnt('cet_opportunities'), rfps: rows('cet_ne_rfps') || 0, bpi: firm?.bpi_opportunities?.length || 0, fh: firm?.fh_opportunities?.length || 0 };
-    const gens = [manifest?.generated, ...research.map(x => x?.gen), ...sales.map(x => x?.gen)].filter(Boolean).sort();
+    const cnt = n => F[`research/${n}`]?.item_count || 0;
+    const firm = F['research/bsp_firm']?.lists || {};
+    const opps = { radar: cnt('cet_opportunities'), rfps: rows('cet_ne_rfps') || 0, bpi: firm.bpi_opportunities || 0, fh: firm.fh_opportunities || 0 };
+    const gens = [manifest?.generated, ...files.map(f => f.generated)].filter(Boolean).map(s => String(s).slice(0, 10)).sort();
     return {
-      datasets: core.length + resOk + salesOk.length,
-      datasetsSub: `${core.length} core tables · ${resOk} research files · ${salesOk.length} deed files`,
-      sales: salesOk.reduce((s, x) => s + x.n, 0),
-      salesSub: `home sales and commercial deeds in ${salesOk.length} county files`,
+      datasets: core.length + research.length + sales.length,
+      datasetsSub: `${core.length} core tables · ${research.length} research files · ${sales.length} deed files`,
+      sales: sales.reduce((s, x) => s + x.item_count, 0),
+      salesSub: `home sales and commercial deeds in ${sales.length} county files`,
       opps: opps.radar + opps.rfps + opps.bpi + opps.fh,
       oppsSub: `CET radar ${opps.radar} · public bids ${opps.rfps} · BPI ${opps.bpi} · Fair Harbor ${opps.fh}`,
       targets: cnt('ma_targets_cet') + cnt('ma_targets_pp') + cnt('ma_targets_fl_ts'),
@@ -72,7 +48,7 @@ function loadStats() {
   })();
   return _stats;
 }
-const fmtDate = s => { if (!s) return ''; const d = new Date(s + 'T12:00:00'); return isNaN(d) ? s : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); };
+const fmtDate = s => { if (!s) return ''; const d = new Date(s + 'T12:00:00'); return isNaN(d) ? s : d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }); };
 function countUp(el, to) {
   if (!to && to !== 0) return;
   if (reduced()) { el.textContent = fmtN(to); return; }
@@ -91,10 +67,10 @@ function initNumbers() {
       const sub = $(`[data-sub="${k}"]`); if (sub && data[k + 'Sub']) sub.textContent = data[k + 'Sub'];
     }
     const src = $('#numbers-src');
-    if (src) src.innerHTML = `<b>Source:</b> read live from the portal's dataset index and the header of every research and deed file <span class="sys-est sys-est--live">live</span> · data generated ${esc(fmtDate(data.genFrom))} to ${esc(fmtDate(data.genTo))}.`;
+    if (src) src.innerHTML = `<b>Source:</b> read from the portal's dataset index of core tables, research files and deed files <span class="sys-est sys-est--live">live</span> · data generated ${esc(fmtDate(data.genFrom))} to ${esc(fmtDate(data.genTo))}.`;
   };
   const go = () => loadStats().then(d => { data = d; paint(); $$('.sys-hero [data-stat="datasets"]').forEach(el => { el.textContent = fmtN(d.datasets); }); })
-    .catch(() => { const src = $('#numbers-src'); if (src) src.innerHTML = '<b>Source:</b> portal snapshot of Oct 6, 2026; live counts are unavailable right now.'; });
+    .catch(() => { const src = $('#numbers-src'); if (src) src.innerHTML = '<b>Source:</b> counts are the portal snapshot of October 6, 2026; the dataset index is unavailable right now.'; });
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting && e.intersectionRatio > 0) {
       if (e.target === sec && e.intersectionRatio >= .25) { shown = true; paint(); io.disconnect(); }
@@ -311,39 +287,6 @@ function initPreviews() {
   if (new URLSearchParams(location.search).get('live') === '1') loadAll();
 }
 
-/* ── revenue counter: start from today's running total, not from $0 ─────────
-   counter.js counts up from page load, so the first frame reads "$1". Here the
-   clock is re-based to local midnight (the per-day figure prorated to the time of
-   page load), and anything under $100 shows "—" so a thumbnail never shows a
-   broken-looking number. Source names in the breakdown are written out. */
-const COUNTER_SRC = [
-  [/^voice_ai\b/, 'Voice AI research · Punctual Pros revenue model'],
-  [/^placeholder/, 'Placeholder estimate until the Voice AI research is published'],
-  [/^pp_ads\b/, 'Punctual Pros ad plan · Phase 1 media plan'],
-  [/^cet_opportunities\b/, 'CET opportunity radar · open bids'],
-];
-function attachCounter(el, inst, clean = s => s) {
-  if (!el || !inst || !(inst.perSec > 0)) return;
-  inst.destroy?.();
-  const val = el.querySelector('.rc-val'); if (!val) return;
-  el.querySelectorAll('.rc-row a').forEach((a, i) => {
-    const raw = inst.comps?.[i]?.src || a.textContent;
-    const hit = COUNTER_SRC.find(([rx]) => rx.test(raw));
-    a.textContent = hit ? hit[1] : clean(raw);
-  });
-  const midnight = new Date(); midnight.setHours(0, 0, 0, 0);
-  const t0 = performance.now(), base = (Date.now() - midnight.getTime()) / 1000;
-  const paint = () => {
-    const v = Math.floor((base + (performance.now() - t0) / 1000) * inst.perSec);
-    val.textContent = v >= 100 ? '$' + fmtN(v) : '—';
-  };
-  paint();
-  if (reduced()) { setInterval(paint, 1000); return; }
-  let last = 0;
-  const loop = now => { if (now - last > 90) { paint(); last = now; } requestAnimationFrame(loop); };
-  requestAnimationFrame(loop);
-}
-
 /* ── public API ────────────────────────────────────────────────────────────── */
 const REVEAL = '.sys-section .sys-grid > *, .sys-section .sys-kpis, .lp-stage, .lp-video, .lp-bridge, .lp-pr, .sys-cta-in';
 export const Landing = {
@@ -361,7 +304,6 @@ export const Landing = {
     form?.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && /nationwide/i.test(e.target.value || '')) markStep('ask'); });
     while (pending.length) { const q = pending.shift(); setTimeout(() => chat.ask(q), 200); }
   },
-  attachCounter,
   ask,
 };
 export const Gallery = {

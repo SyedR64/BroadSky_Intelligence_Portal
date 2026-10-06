@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261006134218';
+import * as Copy from './copy.js?v=20261006143735';
 /* PE landscape — history, trajectory, deal flow and buy-and-build benchmarks for the sponsors competing with Broad Sky.
    Data: Private-equity landscape (35 firms), Broad Sky firm profile (BSP reference), Competitor filings (financials of rival companies),
    sales/* (home-sale turnover in the counties each platform serves: PP PA/NJ, CET MA/CT/RI, BPI DC, Fair Harbor NYC). */
@@ -100,7 +100,7 @@ async function load(ctx) {
   return _bundle;
 }
 
-function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261006134218'; document.head.appendChild(l); } }
+function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261006143735'; document.head.appendChild(l); } }
 function missing(ctx, title) { ctx.el.innerHTML = ctx.ui.pageHead({ title, sub: 'Competitive intelligence on the private-equity sponsors bidding against Broad Sky.' }) + ctx.ui.note('Research dataset <b>Private-equity landscape</b> is not yet available (still being verified). This view will populate automatically once it is published.', 'warn'); }
 const srcFoot = (ctx, meta, extra) => ctx.ui.source(SRC_PE.text, null, meta?.generated) + (extra ? ` <span class="dim">· ${extra}</span>` : '');
 
@@ -250,7 +250,7 @@ async function landscape(ctx) {
       <div class="s">${esc(f.hq || 'HQ n/d')}${f.founded ? ` · est. ${esc(f.founded)}` : ''}${f.aum_usd ? ` · AUM ${fmt.money(f.aum_usd)}` : ''}</div>
       <div class="pe-fund"><b>${f._fund != null ? fmt.money(f._fund) : 'n/d'}</b><span title="${esc(f._fundName || '')}">${esc(f._fundName || 'Latest fund not disclosed')}${f._fundYear ? ` · ${f._fundYear}` : ''}</span></div>
       <div class="pe-strat">${esc(firstSentence(f.strategy))}</div>
-      <div class="m">${overlapChips(ctx, f._overlap)}${fmt.chip(`${f._deals.length} deal${f._deals.length === 1 ? '' : 's'}`, 'var(--accent)')}${fmt.chip(`${f._plats.length} portfolio company${f._plats.length === 1 ? '' : 's'}`, 'var(--muted)')}</div></div>`).join('')}</div>` : ui.empty('No firms match these filters');
+      <div class="m">${overlapChips(ctx, f._overlap)}${fmt.chip(`${f._deals.length} deal${f._deals.length === 1 ? '' : 's'}`, 'var(--accent)')}${fmt.chip(`${f._plats.length} portfolio compan${f._plats.length === 1 ? 'y' : 'ies'}`, 'var(--muted)')}</div></div>`).join('')}</div>` : ui.empty('No firms match these filters');
     cardsEl.querySelectorAll('.pe-card').forEach(c => c.onclick = () => { cardsEl.querySelectorAll('.pe-card').forEach(x => x.classList.toggle('selected', x === c)); openFirm(ctx, B.byId[c.dataset.id], B); });
   };
   const fl = ui.filters(el.querySelector('#pe-f'), [
@@ -525,7 +525,7 @@ async function platforms(ctx) {
     { label: 'In BSP sectors', value: fmt.num(inB.length), sub: `${fmt.num(inB.filter(p => p._bucket === 'punctual_pros').length)} residential services`, color: 'var(--amber)' },
     { label: 'Disclosed add-on counts', value: fmt.num(withAdd.length), sub: `${fmt.num(withAdd.reduce((s, p) => s + p.add_ons_count, 0))} add-ons in total`, color: 'var(--accent)' },
     { label: 'Rival median pace', value: `${fmt.num(rivMed, 1)}<small>/yr</small>`, sub: `${withVel.length} companies with an entry year`, color: 'var(--red)' },
-    { label: 'BSP median pace', value: `${fmt.num(bspMed, 1)}<small>/yr</small>`, sub: `${bspTotal} add-ons across ${bspPlats.length} portfolio company${bspPlats.length === 1 ? '' : 's'}`, color: 'var(--c-bsp)' },
+    { label: 'BSP median pace', value: `${fmt.num(bspMed, 1)}<small>/yr</small>`, sub: `${bspTotal} add-ons across ${bspPlats.length} portfolio compan${bspPlats.length === 1 ? 'y' : 'ies'}`, color: 'var(--c-bsp)' },
   ]) + (B.bsp ? '' : `<div class="mt-12">${ui.note('Research dataset <b>Broad Sky firm profile</b> is not available — the Broad Sky benchmark falls back to Smith + Howard only (published exit facts); BSP pace is not representative until <span class="mono">Broad Sky firm profile</span> is restored.', 'warn')}</div>`) + `
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Add-on velocity — rivals vs Broad Sky', sub: 'Disclosed add-ons ÷ years held (mid-year entry assumed where month unknown) · Broad Sky companies marked ▶', actions: `<div id="pe-vseg"></div>`, body: `<div id="pe-vel"></div>`, foot: srcFoot(ctx, meta, 'add-on counts mix lifetime and single-year figures — indicative') + ` · ${ui.source('Broad Sky firm profile', 'https://broadskypartners.com/news/', B.bsp?.meta?.generated)}` })}

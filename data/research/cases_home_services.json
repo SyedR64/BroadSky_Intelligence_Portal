@@ -21,7 +21,7 @@
    "recap": 3,
    "ipo": 1
   },
-  "narrative": "Across 17 companies, the sponsors that sold for more did the same few things in roughly the same order. First, hire a professional CEO and integrator early (Trivest's Kurt Bratton at TurnPoint, Investcorp's Ken Haines at Wrench, Alpine's AJ Brown at Apex). Second, add one company roughly every quarter, then accelerate (Apex did 46 add-ons in 2023 and 60 in 2025). Third, put every brand on one system (CenterOak's single IT system at Service Champions; ServiceTitan at Wrench, Any Hour and across Authority Brands since 2024). Fourth, build recurring membership revenue: Champions went from ~40,000 to ~150,000 members (about 83 per technician) and sold to Blackstone at a reported ~18.5x, and Frontdoor keeps 84% of customers on auto-pay. Fifth, own the technician pipeline (Horizon's training center, Apex's academies and 8,000+ technicians supported, Sila's 2026 academy purchase). Chains like Alpine -> Investcorp -> LGP (Wrench), Dubin Clark -> MSCP -> Goldman (Sila) and CenterOak -> Odyssey -> Blackstone (Champions) show that each buyer paid for a bigger, more digital, more recurring portfolio company. The failures are just as instructive: Horizon (lender-owned by 2026), Any Hour (PIK, marked 89) and TurnPoint (PIK, CEO change) grew brand counts faster than they integrated them. For Punctual Pros the sequence is: integrator COO, a contiguous add-on cadence (Horvath first), ServiceTitan-based reporting and online booking, members-per-technician as the north-star metric, and a Lancaster academy, with moderate leverage."
+  "narrative": "Across 17 companies, the sponsors that sold for more did the same few things in roughly the same order. First, hire a professional CEO and integrator early (Trivest's Kurt Bratton at TurnPoint, Investcorp's Ken Haines at Wrench, Alpine's AJ Brown at Apex). Second, add one company roughly every quarter, then accelerate (Apex did 46 add-ons in 2023 and 60 in 2025). Third, put every brand on one system (CenterOak's single IT system at Service Champions; ServiceTitan at Wrench, Any Hour and across Authority Brands since 2024). Fourth, build recurring membership revenue: Champions went from ~60,000 (2021) to ~150,000 (2026) members (about 83 per technician) and sold to Blackstone at a reported ~18.5x, and Frontdoor keeps 84% of customers on auto-pay. Fifth, own the technician pipeline (Horizon's training center, Apex's academies and 8,000+ technicians supported, Sila's 2026 academy purchase). Chains like Alpine -> Investcorp -> LGP (Wrench), Dubin Clark -> MSCP -> Goldman (Sila) and CenterOak -> Odyssey -> Blackstone (Champions) show that each buyer paid for a bigger, more digital, more recurring portfolio company. The failures are just as instructive: Horizon (lender-owned by 2026), Any Hour (PIK, marked 89) and TurnPoint (PIK, CEO change) grew brand counts faster than they integrated them. For Punctual Pros the sequence is: integrator COO, a contiguous add-on cadence (Horvath first), ServiceTitan-based reporting and online booking, members-per-technician as the north-star metric, and a Lancaster academy, with moderate leverage."
  },
  "items": [
   {
@@ -1498,12 +1498,13 @@
    ],
    "kpi_before_after": [
     {
-     "kpi": "Active members / service agreements",
-     "before": 40000,
+     "kpi": "Active members",
+     "before": 60000,
      "after": 150000,
      "unit": "members",
-     "period": "2020-02 -> 2026-02",
-     "source_url": "https://www.contractingbusiness.com/industry-events/news/55358855/blackstone-to-acquire-champions-group-residential-services-platform"
+     "period": "2021-01 -> 2026-02",
+     "source_url": "https://www.contractingbusiness.com/industry-events/news/55358855/blackstone-to-acquire-champions-group-residential-services-platform",
+     "before_source_url": "https://www.privateequitywire.co.uk/centeroak-partners-sells-service-champions/"
     },
     {
      "kpi": "Field technicians",
@@ -1518,7 +1519,7 @@
      "before": 70.6,
      "after": 83.3,
      "unit": "members per technician (derived)",
-     "period": "2021 -> 2026",
+     "period": "2021-01 -> 2026-02",
      "source_url": "https://www.contractingbusiness.com/industry-events/news/55358855/blackstone-to-acquire-champions-group-residential-services-platform"
     },
     {
@@ -1530,7 +1531,7 @@
      "source_url": "https://www.ocbj.com/oc-500/2025/oc500-2025-frank-dimarco/"
     }
    ],
-   "what_broad_sky_can_copy": "Champions is the clearest proof that membership density drives the exit multiple: members grew from ~40,000 (2020) to ~150,000 (2026), or about 83 per technician, and Blackstone paid a reported ~18.5x. Punctual Pros should make 'active members per technician' its north-star metric, offer a membership on every service call, and target 60-80 per tech within three years. CenterOak's earlier moves (one IT system across brands and consolidated purchasing before the sale) are the pre-exit housekeeping PP should finish before Broad Sky runs a process.",
+   "what_broad_sky_can_copy": "Champions is the clearest proof that membership density drives the exit multiple: members grew from ~60,000 (2021) to ~150,000 (2026), or from about 71 to about 83 per technician, and Blackstone paid a reported ~18.5x. Punctual Pros should make 'active members per technician' its north-star metric, offer a membership on every service call, and target 60-80 per tech within three years. CenterOak's earlier moves (one IT system across brands and consolidated purchasing before the sale) are the pre-exit housekeeping PP should finish before Broad Sky runs a process.",
    "sources": [
     "https://www.privateequitywire.co.uk/centeroaks-service-champions-acquires-bell-brothers-plumbing-heating-and-air/",
     "https://www.privateequitywire.co.uk/centeroak-partners-sells-service-champions/",
@@ -1542,7 +1543,7 @@
     "https://www.servicemag.org/news/blackstone-champions-group-acquisition-2-5-billion"
    ],
    "retrieved": "2026-10-06",
-   "data_notes": "CenterOak's entry date is not in the sources read. The 2020 figure counts 'residential service agreements' and the 2021/2026 figures count 'club members' / 'active members', which are treated as comparable. EV and 18.5x are press estimates (Bloomberg); Blackstone did not disclose terms. Members-per-tech values are derived, and an upper bound because technicians are stated as 'more than'."
+   "data_notes": "CenterOak's entry date is not in the sources read. Membership KPIs use the January 2021 base (60,000+ club members and 850+ technicians at the sale to Odyssey) so members, technicians and members per technician share one start date; the February 2020 count of 40,000+ 'residential service agreements' stays in the timeline only. EV and 18.5x are press estimates (Bloomberg); Blackstone did not disclose terms. Members-per-tech values are derived, and an upper bound because technicians are stated as 'more than'."
   },
   {
    "id": "case-th",

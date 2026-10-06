@@ -315,3 +315,18 @@ input[type=range]{width:100%;accent-color:var(--co)}
   .tl-more{display:inline-flex;margin:0 0 24px 40px}
 }
 @media (max-width:440px){.nw-kpis{grid-template-columns:minmax(0,1fr)}}
+/* phase county tables (counties, ACS housing units, Redfin home sales) */
+.ph-counties{margin-top:16px}
+.ph-counties:empty{display:none}
+.ph-counties .sys-table td small{display:block;font-size:11.5px;color:var(--sys-mute)}
+.ph-counties .sys-table tr.grp th{background:var(--sys-surface-2,transparent);text-align:left;font-weight:600;font-size:12.5px;color:var(--sys-ink);padding-top:12px}
+.ph-counties .sys-table tr.shared td{color:var(--sys-mute)}
+.ph-counties .sys-table tfoot td{border-top:1px solid var(--sys-line-2)}
+.ph-counties .sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:7px;vertical-align:.05em}
+.ph-counties .sys-table{min-width:560px}
+/* the KPI each agent or program moves */
+.ag-kpi{margin:0;font-size:13px;line-height:1.45;color:var(--sys-ink-2)}
+.ag-kpi b{color:var(--sys-ink);font-weight:600}
+
+/* a pressed chip keeps its light text while hovered (system hover rule otherwise turns it ink-on-ink) */
+button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-pressed="true"]:hover{color:var(--sys-on-ink);border-color:var(--sys-ink)}

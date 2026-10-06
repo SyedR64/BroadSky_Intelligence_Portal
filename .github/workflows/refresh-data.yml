@@ -38,7 +38,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@${NOREPLY_DOMAIN}"   # GitHub's standard bot identity
-          git add data/live data/research/README.md README.md
+          git add data/live data/research/README.md data/research/index.json README.md
           if git diff --cached --quiet; then
             echo "No data changes."
             exit 0

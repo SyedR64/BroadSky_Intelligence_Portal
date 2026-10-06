@@ -12,8 +12,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<link rel="stylesheet" href="assets/system.css?v=20261006134218">
-<link rel="stylesheet" href="assets/app.css?v=20261006134218">
+<link rel="stylesheet" href="assets/system.css?v=20261006143735">
+<link rel="stylesheet" href="assets/app.css?v=20261006143735">
+<style>
+  /* the floating "Ask" launcher sits over the bottom-right corner of the console; keep the last table row
+     scrollable clear of it (--launch-clear is measured from the launcher once it mounts; 88px until then) */
+  #content:not(.flush){padding-bottom:var(--launch-clear,88px)}
+</style>
 </head>
 <body>
 <div id="app">
@@ -38,10 +43,10 @@
   <aside id="inspector"></aside>
 </div>
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261006134218';
-  import { App } from './assets/core.js?v=20261006134218';
-  import { modules } from './modules/registry.js?v=20261006134218';
-  import { enhance, retitle, viewTitle } from './modules/copy.js';
+  import { Frame } from './assets/frame.js?v=20261006143735';
+  import { App } from './assets/core.js?v=20261006143735';
+  import { modules } from './modules/registry.js?v=20261006143735';
+  import { enhance, retitle, viewTitle } from './modules/copy.js?v=20261006143735';
 
   // 1 · shared frame strip above the rail and console (UNIFIED.md §8)
   const frame = Frame.mount({ variant: 'app', theme: 'dark' });
@@ -69,12 +74,26 @@
   const DATASETS = { core: 10, research: 36, deeds: 10 };   // data/manifest.json tables · data/research files · data/sales deed files (Oct 6, 2026)
   const paintCount = core => { railCount.textContent = `${modules.length} modules · ${nCos} companies · ${core + DATASETS.research + DATASETS.deeds} datasets`; railCount.title = `${nViews} views · ${core} core tables, ${DATASETS.research} research files and ${DATASETS.deeds} deed files`; };
   paintCount(DATASETS.core);
-  fetch('data/manifest.json', { cache: 'force-cache' }).then(r => r.ok ? r.json() : null).then(m => { if (m?.datasets?.length) paintCount(m.datasets.length); }).catch(() => {});
+  const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null);
+  Promise.all([getJSON('data/manifest.json'), getJSON('data/research/index.json')]).then(([m, ix]) => {
+    const files = Array.isArray(ix?.files) ? ix.files : [];
+    if (files.length) { DATASETS.research = files.filter(f => f.folder === 'research').length; DATASETS.deeds = files.filter(f => f.folder === 'sales').length; }
+    paintCount(m?.datasets?.length || DATASETS.core);
+  });
   App.start();
 
   // 4 · grounded assistant: the frame's Ask button and ⌘J open the same widget
-  import('./assets/chat.js?v=20261006134218').then(({ Chat }) => frame.setChat(Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'auto' })));
-  import('./assets/counter.js?v=20261006134218').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; document.querySelector('#rail .rail-foot').before(slot); Counter.mount(slot, { theme: 'dark', compact: true, caption: 'Left on the table since you opened this' }).then(() => Frame.humanize(slot)); });
+  const launchClear = () => {
+    const l = document.querySelector('.ch.ch-floating .ch-launch'); if (!l) return;
+    const r = l.getBoundingClientRect(); if (!r.height) return;
+    document.documentElement.style.setProperty('--launch-clear', `${Math.max(48, Math.ceil(innerHeight - r.top + 12))}px`);
+  };
+  import('./assets/chat.js?v=20261006143735').then(({ Chat }) => {
+    frame.setChat(Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'auto' }));
+    requestAnimationFrame(launchClear);
+    addEventListener('resize', () => requestAnimationFrame(launchClear));
+  });
+  import('./assets/counter.js?v=20261006143735').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; document.querySelector('#rail .rail-foot').before(slot); Counter.mount(slot, { theme: 'dark', compact: true, baseline: 'today', minDisplay: 100, caption: 'Left on the table so far today' }).then(() => Frame.humanize(slot)); });
 </script>
 </body>
 </html>

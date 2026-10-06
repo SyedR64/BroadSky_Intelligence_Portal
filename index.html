@@ -26,9 +26,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/system.css?v=20261006134218">
-<link rel="stylesheet" href="assets/landing-page.css?v=20261006134218">
-<link rel="modulepreload" href="assets/chat.js?v=20261006134218">
+<link rel="stylesheet" href="assets/system.css?v=20261006143735">
+<link rel="stylesheet" href="assets/landing-page.css?v=20261006143735">
+<link rel="modulepreload" href="assets/chat.js?v=20261006143735">
 </head>
 <body data-page="landing">
 <main id="main">
@@ -154,7 +154,7 @@
         <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">PE sponsors</span><span class="sys-kpi-value"><span data-stat="sponsors">35</span></span><span class="sys-kpi-sub" data-sub="sponsors">profiled with funds and deals</span></div>
         <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Lab sites</span><span class="sys-kpi-value"><span data-stat="sites">27,503</span></span><span class="sys-kpi-sub" data-sub="sites">scored for Thomas Scientific</span></div>
       </div>
-      <p class="sys-src" id="numbers-src"><b>Source:</b> counts are read from the portal's dataset index and every research and deed file when this section loads.</p>
+      <p class="sys-src" id="numbers-src"><b>Source:</b> counts are read from the portal's dataset index of core tables, research files and deed files when this section loads.</p>
     </div>
   </section>
 
@@ -394,26 +394,24 @@
 </main>
 
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261006134218';
-  import { Landing } from './assets/landing.js?v=20261006134218';
+  import { Frame } from './assets/frame.js?v=20261006143735';
+  import { Landing } from './assets/landing.js?v=20261006143735';
   Frame.mount({ crumb: false });
   Landing.init();
 </script>
 <script type="module">
-  import { Chat } from './assets/chat.js?v=20261006134218';
-  import { Landing } from './assets/landing.js?v=20261006134218';
+  import { Chat } from './assets/chat.js?v=20261006143735';
+  import { Landing } from './assets/landing.js?v=20261006143735';
   const host = document.querySelector('#hero-chat');
   host.querySelector('.lp-skeleton')?.remove();
   const chat = Chat.mount(host, { persona: 'portal', mode: 'inline', theme: 'light' });
   Landing.attachChat(chat);
 </script>
 <script type="module">
-  import { Counter } from './assets/counter.js?v=20261006134218';
-  import { Frame } from './assets/frame.js?v=20261006134218';
-  import { Landing } from './assets/landing.js?v=20261006134218';
+  import { Counter } from './assets/counter.js?v=20261006143735';
   const el = document.getElementById('hero-counter');
-  if (el) Counter.mount(el, { theme: 'light', caption: 'Revenue left on the table across the portfolio so far today' })
-    .then(inst => Landing.attachCounter(el, inst, Frame.humanizeText))
+  // baseline 'today' counts from local midnight; below minDisplay the clock shows "—" so a first frame never reads "$1"
+  if (el) Counter.mount(el, { theme: 'light', baseline: 'today', minDisplay: 100, caption: 'Revenue left on the table across the portfolio so far today' })
     .catch(() => el.remove());
 </script>
 </body>

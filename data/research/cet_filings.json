@@ -148,7 +148,7 @@
         "confidence": "low"
       },
       {
-        "metric": "Pro forma portfolio company (CET+NuWave+Horton) revenue / EBITDA",
+        "metric": "Pro forma company (CET+NuWave+Horton) revenue / EBITDA",
         "estimate": "$65–100M revenue; $6–11M EBITDA",
         "basis": "sum of component estimates; 8–12% margin",
         "confidence": "low"

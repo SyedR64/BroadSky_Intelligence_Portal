@@ -509,3 +509,6 @@ input[type=range]:focus-visible { outline: 3px solid color-mix(in srgb, var(--co
 .sys-cta .sys-src{margin-top:var(--sys-sp-4);max-width:none;font:500 var(--sys-fs-xs)/1.55 var(--sys-mono);color:var(--sys-mute)}
 #plat-filter .sys-chip .mut{margin-left:4px;font-family:var(--sys-mono);font-size:11px}
 @media (max-width:1100px){.ads-hero{grid-template-columns:minmax(0,1fr)}.hero-vis{max-width:560px}}
+
+/* a pressed chip keeps its light text while hovered (system hover rule otherwise turns it ink-on-ink) */
+button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-pressed="true"]:hover{color:var(--sys-on-ink);border-color:var(--sys-ink)}

@@ -335,3 +335,6 @@ input[type="range"]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;b
   .days{gap:6px}
 }
 @media print{.actionbar,.art{display:none}}
+
+/* a pressed chip keeps its light text while hovered (system hover rule otherwise turns it ink-on-ink) */
+button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-pressed="true"]:hover{color:var(--sys-on-ink);border-color:var(--sys-ink)}

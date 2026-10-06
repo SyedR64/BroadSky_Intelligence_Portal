@@ -1,16 +1,16 @@
-import * as Copy from './copy.js?v=20261006134218';
+import * as Copy from './copy.js?v=20261006143735';
 /* 3D theater — cinematic GPU map scenes over the portal's datasets (engine: assets/theater.js) */
 const V = new URL(import.meta.url).search; // reuse the registry's ?v= stamp for cache-busting the engine
 
 async function play(ctx) {
   const { el, params, data, live, maps, fmt, esc, app } = ctx;
-  if (!document.getElementById('css-theater')) { const l = document.createElement('link'); l.id = 'css-theater'; l.rel = 'stylesheet'; l.href = `modules/theater.css?v=20261006134218${V}`; document.head.appendChild(l); }
+  if (!document.getElementById('css-theater')) { const l = document.createElement('link'); l.id = 'css-theater'; l.rel = 'stylesheet'; l.href = `modules/theater.css?v=20261006143735${V}`; document.head.appendChild(l); }
   // the view's page heading follows the portal pattern (set by retitle in app.html); it is visually hidden so the
   // engine's per-scene caption stays the visible title (the engine renders it as h2 when the page already has an h1)
   el.innerHTML = `<div class="page-head" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0"><h1>3D theater · cinematic map scenes</h1></div><div class="m-theater" style="position:relative;height:100%;min-height:480px;background:#05070b"></div>`;
   const host = el.querySelector('.m-theater');
   let Theater;
-  try { ({ Theater } = await import(`../assets/theater.js?v=20261006134218${V}`)); }
+  try { ({ Theater } = await import(`../assets/theater.js?v=20261006143735${V}`)); }
   catch (e) { host.innerHTML = ctx.ui.note(`The 3D theater engine failed to load: <span class="mono">${esc(e.message)}</span>`, 'warn'); return; }
   if (!el.isConnected) return;
   const scene = params.scene || 'S1';

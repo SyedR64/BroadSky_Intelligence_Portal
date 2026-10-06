@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261006134218">
-<link rel="stylesheet" href="./os.css?v=20261006134218">
+<link rel="stylesheet" href="../../assets/system.css?v=20261006143735">
+<link rel="stylesheet" href="./os.css?v=20261006143735">
 </head>
 <body data-co="pp">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -38,7 +38,7 @@
     <div class="sys-subnav-links">
       <a href="#modules">Modules</a><a href="#demo">Live demo</a><a href="#membership">Membership</a><a href="#movers">New movers</a><a href="#value">Value math</a><a href="#evidence">Evidence</a><a href="#stack">Stack</a><a href="#roadmap">Roadmap</a><a href="#risks">Risks</a><a href="#exit">At exit</a>
     </div>
-    <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../../app.html#/techos/overview">Open in portal</a></div>
+    <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../../app.html#/techos/overview">Open in portal</a><a class="sys-btn sys-btn--primary sys-btn--sm" href="#demo">Try the demo</a></div>
   </div>
 </nav>
 
@@ -222,6 +222,8 @@
         <h3 class="sys-card-title">Enterprise value bridge<span class="sys-est">est.</span></h3>
         <div id="wf"></div>
         <div class="res" id="v-res"></div>
+        <p class="sys-src val-math" id="v-math" aria-live="polite"></p>
+        <p class="val-calc" style="margin:12px 0 0"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../../app.html#/techos/calculator?co=pp">Model it in the portal calculator</a></p>
         <p class="sys-src"><b>Method:</b> EV today = EBITDA × multiple → + EBITDA uplift at today's multiple → + re-rating on the new EBITDA → − investment. Franchise royalties (~7.2–7.5% of revenue) cap margin upside (Punctual Pros public filings). Analyst assumption, not a forecast or company guidance.</p>
       </div>
     </div>
@@ -305,10 +307,10 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261006134218';
-  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261006134218';
-  import { Chat } from '../../assets/chat.js?v=20261006134218';
-  import { init } from './os.js?v=20261006134218';
+  import { Frame } from '../../assets/frame.js?v=20261006143735';
+  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261006143735';
+  import { Chat } from '../../assets/chat.js?v=20261006143735';
+  import { init } from './os.js?v=20261006143735';
   const frame = Frame.mount({});
   const chat = init({ Data, Fmt, Live, Chat, esc, Frame });
   if (chat) frame.setChat(chat);

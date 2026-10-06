@@ -1,5 +1,5 @@
 /* Command Center — portfolio-wide situational awareness */
-import { dataset, srcLabel } from './copy.js?v=20261006134218';
+import { dataset, srcLabel } from './copy.js?v=20261006143735';
 const GROUP_TXT = { research: 'Research', sales: 'Deed records', legacy: 'Core tables' };
 const BASIS_TXT = { live: 'Live count', snapshot: 'Snapshot', 'live (manifest)': 'Live (manifest)' };
 const COS = [
@@ -231,7 +231,7 @@ async function overview(ctx) {
   if (sigAlerts.length) sigAlerts.forEach(a => { const cos = [...new Set(a.hits.map(h => h.co))]; sig.push({ c: /Extreme|Severe/.test(a.severity) ? 'var(--red)' : 'var(--amber)', t: `${a.event} · ${cos.map(c => CO_SHORT[c]).join('+')}`, s: `${a.hits.map(h => `${h.county} ${h.state}`).join(', ')} — ${a.headline || a.areaDesc || ''}`, h: cos.includes('pp') ? '#/pp/weather' : '#/cet/overview' }); });
   else sig.push({ c: 'var(--green)', t: 'Weather · clear', s: `No active NWS alerts touch PP's 15 territory counties or CET's operating counties (${fmt.num(allAlerts.length)} statewide alerts in PA/NJ/MA/CT filtered out)`, h: '#/pp/weather' });
   const ranked = [['PP', 'pp', maPp?.meta?.ranked_top_10], ['CET', 'cet', maCet?.meta?.ranked_top_10], ['FL', 'fl', maFlTs?.meta?.frontline?.ranked_top_8], ['TS', 'ts', maFlTs?.meta?.thomas_scientific?.ranked_top_8]];
-  ranked.forEach(([lab, p, list]) => { const t = (list || [])[0]; if (t && t.company) sig.push({ c: 'var(--c-ma)', t: `${lab} add-on #${t.rank ?? 1} · fit ${t.fit_score ?? '—'}`, s: `${t.company}${t.why ? ` — ${t.why}` : ''}`, h: `#/ma/pipeline?portfolio company=${p}&q=${encodeURIComponent(String(t.company).split(/[,(/]/)[0].trim())}` }); });
+  ranked.forEach(([lab, p, list]) => { const t = (list || [])[0]; if (t && t.company) sig.push({ c: 'var(--c-ma)', t: `${lab} add-on #${t.rank ?? 1} · fit ${t.fit_score ?? '—'}`, s: `${t.company}${t.why ? ` — ${t.why}` : ''}`, h: `#/ma/pipeline?platform=${p}&q=${encodeURIComponent(String(t.company).split(/[,(/]/)[0].trim())}` }); });
   const deals = (pe?.items || []).flatMap(f => (f.deals_2025_2026 || []).map(d => ({ ...d, firm: f.firm }))).filter(d => d.date).sort((a, b) => String(b.date).localeCompare(String(a.date)));
   deals.slice(0, 2).forEach(d => sig.push({ c: 'var(--c-pe)', t: `PE deal · ${fmt.dateShort(d.date)}`, s: `${d.firm} → ${d.company}${d.type ? ` (${({ platform: 'anchor', add_on: 'add-on', exit: 'exit' })[d.type] || String(d.type).replace(/_/g, '-')})` : ''}${d.sector ? ` · ${d.sector}` : ''}`, h: '#/pe/deals' }));
   el.querySelector('#signals').innerHTML = sig.length ? `<div class="col gap-8">${sig.slice(0, 11).map(s => `<a class="row" style="align-items:flex-start;color:inherit;text-decoration:none" href="${esc(s.h)}"><span class="chip" style="--cc:${s.c};flex-shrink:0">${esc(s.t)}</span><span class="small text-2 ellipsis" title="${esc(s.s)}">${esc(s.s)}</span></a>`).join('')}</div>` : ui.empty('No signals');
@@ -241,6 +241,9 @@ async function overview(ctx) {
   el.querySelector('#tl').innerHTML = tl.length ? ui.timeline(tl.slice(0, 40).map(t => ({ date: t.date, color: tlColor(t.company), html: `${t.company ? `<b>${esc(t.company)}</b> · ` : ''}${esc(cleanEvent(t.event))}${t.source_url ? ` <a class="dim" href="${esc(t.source_url)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` : ''}` }))) : ui.note('Timeline pending: the <b>Broad Sky firm profile</b> research dataset is not available yet.', 'warn');
 
 
+  // the company chip already names the company, so the label drops a leading "CET " / "BPI " (sentence case kept)
+  const DS_CO = /^(CET|PP|BPI|FL|TS|FH|Punctual Pros|Thomas Scientific|Frontline|Fair Harbor|Bully Pulpit International)\s+(?=\S)/;
+  const dsLabel = (v, co) => { const l = String(dataset(v)); if (!CO_SHORT[co] || co === 'bsp' || !DS_CO.test(l)) return l; const t = l.replace(DS_CO, ''); return /^[A-Z]{2}/.test(t) ? t : t.charAt(0).toUpperCase() + t.slice(1); };
   // data coverage — legacy rows from manifest.json, research/sales from the embedded inventory, live where this page already holds the data
   const loaded = { bsp_firm: firm, ma_targets_cet: maCet, ma_targets_pp: maPp, ma_targets_fl_ts: maFlTs, pe_landscape: pe, cet_opportunities: cetOpp, pp_demand_model: ppModel, ...Object.fromEntries(COS.map(c => [EST[c.id].ds, fins[c.id]])) };
   const rows = [
@@ -248,7 +251,7 @@ async function overview(ctx) {
     ...DATA_FILES.map(d => { const L = loaded[d.n]; return { id: `${d.g}/${d.n}`, g: d.g, n: d.n, co: d.co, rows: L ? (L.items || []).length : d.rows, res: d.g === 'sales' ? d.res : 0, counties: d.counties ? d.counties.length : 0, countyList: d.counties || [], gen: L?.meta?.generated ? String(L.meta.generated).slice(0, 10) : d.gen, basis: L ? 'live' : 'snapshot', src: '' }; }),
   ];
   const cols = [
-    { key: 'n', label: 'Dataset', fmt: (v, r) => `<span class="chip solid" style="--cc:${CO_HEX[r.co] || CO_HEX.bsp};min-width:38px;justify-content:center">${esc(CO_SHORT[r.co] || r.co)}</span> <span class="small">${esc(dataset(v))}</span>` },
+    { key: 'n', label: 'Dataset', fmt: (v, r) => `<span class="chip solid" style="--cc:${CO_HEX[r.co] || CO_HEX.bsp};min-width:38px;justify-content:center">${esc(CO_SHORT[r.co] || r.co)}</span> <span class="small">${esc(dsLabel(v, r.co))}</span>` },
     { key: 'g', label: 'Group', fmt: v => `<span class="dim small">${esc(GROUP_TXT[v] || v)}</span>` },
     { key: 'rows', label: 'Rows', num: true, fmt: v => v == null ? '—' : fmt.num(v) },
     { key: 'res', label: 'Home sales', num: true, fmt: v => v ? fmt.num(v) : '<span class="dim">—</span>' },

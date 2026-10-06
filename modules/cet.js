@@ -1,9 +1,9 @@
-import * as Copy from './copy.js?v=20261006134218';
+import * as Copy from './copy.js?v=20261006143735';
 /* ═══════════════════════════════════════════════════════════════════════════
    CET — Commonwealth Electrical Technologies (Worcester + Taunton MA; NuWave, Norwell MA;
    Horton Electrical Services, CT). New England only — NYC analysis archived (CEO guidance).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, renderFilings, opportunityCard, fitTierOf } from '../assets/components.js?v=20261006134218';
+import { renderTargets, renderFilings, opportunityCard, fitTierOf } from '../assets/components.js?v=20261006143735';
 
 const COLOR = 'var(--c-cet)';
 const HEX = { cet: '#4c8dff', cyan: '#3fd0e0', amber: '#f5b73d', green: '#2ecc8f', purple: '#9d7bff', blue: '#4c8dff', muted: '#8b98a8', red: '#ff5c5c', orange: '#f08a3c', dim: '#5b6b7f', pink: '#e05c8a', sky: '#8ab4ff' };
@@ -26,7 +26,7 @@ const SRC = {
 };
 
 /* ── helpers ────────────────────────────────────────────────────────────── */
-function ensureCss() { if (!document.getElementById('css-cet')) { const l = document.createElement('link'); l.id = 'css-cet'; l.rel = 'stylesheet'; l.href = 'modules/cet.css?v=20261006134218'; document.head.appendChild(l); } }
+function ensureCss() { if (!document.getElementById('css-cet')) { const l = document.createElement('link'); l.id = 'css-cet'; l.rel = 'stylesheet'; l.href = 'modules/cet.css?v=20261006143735'; document.head.appendChild(l); } }
 const safe = p => Promise.resolve(p).catch(e => { console.warn(e?.message || String(e)); return null; });
 const sum = (a, f) => a.reduce((s, x) => s + (Number(f(x)) || 0), 0);
 const median = a => { const v = a.filter(x => x != null && !isNaN(x)).sort((x, y) => x - y); if (!v.length) return null; const m = v.length >> 1; return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };
@@ -37,7 +37,7 @@ const addDays = (iso, n) => { const d = new Date(iso); if (isNaN(d)) return null
 const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const actionsList = (items, esc) => `<div class="actions-list">${items.map((a, i) => `<div class="act"><span class="n">${i + 1}</span><div>${a}</div></div>`).join('')}</div>`;
 /* bid-slate helpers: owner verification, due-day chips */
-const UNVERIFIED_RE = /locked on BidNet|\bverify\b|confirm owner/i;
+const UNVERIFIED_RE = /locked on BidNet|issuer not named|\bverify\b|confirm owner/i;
 const isUnverified = o => UNVERIFIED_RE.test(o.owner_or_agency || '');
 const dueChip = (d, fmt) => d === 0 ? fmt.chip('due today · go/no-go', 'var(--red)') : d < 0 ? fmt.chip(`${-d}d ago`, 'var(--dim)') : fmt.chip(`${d}d left`, d <= 14 ? 'var(--red)' : d <= 45 ? 'var(--amber)' : 'var(--green)');
 /* county data gap: the legacy pull has no population / establishment / permit inputs (all of CT) */

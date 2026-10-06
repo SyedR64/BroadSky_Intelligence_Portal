@@ -5,13 +5,13 @@
 <meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chat test · Broad Sky</title>
-<meta name="description" content="Developer page: the grounded assistant mounted inline, asking one question from the URL.">
+<meta name="description" content="Developer page: the grounded assistant mounted inline, asking one question from the URL (q) and an optional follow-up (f).">
 <meta name="theme-color" content="#fbfaf7">
 <link rel="icon" href="../BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261006134218">
+<link rel="stylesheet" href="../assets/system.css?v=20261006143735">
 <style>#hero-chat{max-width:760px;margin:0 auto}</style>
 </head>
 <body>
@@ -23,10 +23,13 @@
   </div>
 </main>
 <script type="module">
-import { Chat } from '../assets/chat.js?v=20261006134218';
+import { Chat } from '../assets/chat.js?v=20261006143735';
 const qp = new URLSearchParams(location.search);
 const q = qp.get('q') || 'Show me how to take Punctual Pros nationwide';
 window.__w = Chat.mount(document.querySelector('#hero-chat'), { persona: qp.get('p') || 'portal', mode: 'inline', theme: 'light', autoAsk: q });
+// Optional follow-up (?f=…): asked once the first answer lands, to test conversation memory.
+const f = qp.get('f');
+if (f) { const t0 = Date.now(); const wait = () => { const t = [...document.querySelectorAll('.ch-turn.bot')].at(-1); if (t && t._rec && !document.querySelector('.ch.ch-busy')) window.__w.ask(f); else if (Date.now() - t0 < 30000) setTimeout(wait, 150); }; setTimeout(wait, 900); }
 </script>
 </body>
 </html>

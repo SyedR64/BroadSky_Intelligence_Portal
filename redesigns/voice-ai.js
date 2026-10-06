@@ -1,8 +1,8 @@
 /* 24/7 Voice AI — the growth engine. Renders the voice AI research dataset into the page.
    No framework, no build step. Markup uses the shared sys- components (assets/system.css, UNIFIED.md);
    every dollar figure is an estimate and carries the est. badge; dataset text passes through plain(). */
-import { Data } from '../assets/core.js?v=20261006134218';
-import { humanizeText } from '../assets/frame.js?v=20261006134218';
+import { Data } from '../assets/core.js?v=20261006143735';
+import { humanizeText } from '../assets/frame.js?v=20261006143735';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];

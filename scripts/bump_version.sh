@@ -25,7 +25,7 @@ for d, dirs, fs in os.walk(ROOT):
         s, k = re_stamp.subn('?v=' + V, s); n_stamps += k
         if f.endswith('.html'):
             s, k = re_html.subn(lambda m: m.group(1) + m.group(2) + '?v=' + V + m.group(3), s); n_added += k
-        if f.endswith('.js'):
+        if f.endswith(('.js', '.html')):
             s, k = re_js.subn(lambda m: m.group(1) + m.group(2) + '?v=' + V + m.group(3), s); n_added += k
         if s != o:
             open(p, 'w', encoding='utf-8').write(s); n_files += 1

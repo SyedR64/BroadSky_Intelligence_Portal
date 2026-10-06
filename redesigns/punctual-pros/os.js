@@ -1,5 +1,5 @@
 /* ServiceOS product page — demo logic. Shared helpers come from ./site.js (same folder). */
-import { FAQ, TERRITORY, HUBS, classifyZip, zipIndex, cleanCity, miles, fillRange, territoryAlerts, alertLevel } from './site.js?v=20261006134218';
+import { FAQ, TERRITORY, HUBS, classifyZip, zipIndex, cleanCity, miles, fillRange, territoryAlerts, alertLevel } from './site.js?v=20261006143735';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -373,6 +373,7 @@ function valueMath() {
     const y = v => H - 40 - v / top * (H - 70);
     $('#wf').innerHTML = `<svg class="wf" viewBox="0 0 ${W} ${H}" role="img" aria-label="Enterprise value bridge">${[0, .25, .5, .75, 1].map(f => `<line x1="${pad}" x2="${W - 8}" y1="${y(top * f)}" y2="${y(top * f)}" style="stroke:var(--sys-line)"/>`).join('')}${steps.map((s, i) => { const x = pad + i * gap + (gap - bw) / 2; const y0 = y(s[1] + s[2]), y1 = y(s[1]); const val = i === 3 ? -s[2] : s[2]; return `<rect x="${x}" y="${y0}" width="${bw}" height="${Math.max(2, y1 - y0)}" rx="6" style="fill:${s[3]}"/><text x="${x + bw / 2}" y="${y0 - 8}" text-anchor="middle" style="fill:var(--sys-ink);font-family:var(--sys-mono)" font-weight="600" font-size="${sm ? 12 : 14}">${val < 0 ? '−' : ''}$${Math.abs(val).toFixed(1)}M</text><text x="${x + bw / 2}" y="${H - 20}" text-anchor="middle" style="fill:var(--sys-ink-2);font-family:var(--sys-font)" font-weight="600" font-size="${sm ? 10.5 : 12}">${sm ? s[0].replace('EBITDA uplift', 'Uplift') : s[0]}</text>${sm ? '' : `<text x="${x + bw / 2}" y="${H - 5}" text-anchor="middle" style="fill:var(--sys-mute);font-family:var(--sys-mono)" font-size="10">${s[4]}</text>`}${i < steps.length - 1 ? `<line x1="${x + bw}" x2="${x + gap}" y1="${y(lv[i])}" y2="${y(lv[i])}" style="stroke:var(--sys-line-2)" stroke-dasharray="3 3"/>` : ''}}`; }).join('')}</svg>`;
     $('#v-res').innerHTML = kpi('EBITDA uplift', `+$${dE.toFixed(2)}M`, `${(+el.pts.value).toFixed(2)} pts × $${R.toFixed(1)}M`, true) + kpi('Exit multiple', `${(m + dm).toFixed(1)}x`, `${m.toFixed(1)}x + ${dm.toFixed(1)} turns`, true) + kpi('Equity value created', `+$${created.toFixed(1)}M`, `${(created / inv).toFixed(0)}× the ServiceOS spend`, true, 'hi');
+    const vm = $('#v-math'); if (vm) vm.innerHTML = `<b>The arithmetic</b> <span class="sys-est">est.</span><br>EV today = $${E0.toFixed(1)}M EBITDA × ${m.toFixed(1)}x = $${ev0.toFixed(1)}M · new EBITDA = $${E0.toFixed(1)}M + ${(+el.pts.value).toFixed(2)} pts × $${R.toFixed(1)}M = $${E1.toFixed(2)}M · <b>multiple applied ${(m + dm).toFixed(1)}x</b> (${m.toFixed(1)}x today + ${dm.toFixed(1)} turns) · EV after = $${E1.toFixed(2)}M × ${(m + dm).toFixed(1)}x − $${inv.toFixed(2)}M = $${(ev1 - inv).toFixed(1)}M`;
   };
   ids.forEach(i => el[i].addEventListener('input', upd)); upd();
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(upd, 150); });
