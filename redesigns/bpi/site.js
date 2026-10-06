@@ -1,5 +1,5 @@
 /* BPI concept — shared page chrome: banner, nav, reveal, office clocks, chat widget. */
-import { Chat } from '../../assets/chat.js?v=20261006085442';
+import { Chat } from '../../assets/chat.js?v=20261006090506';
 
 export const OFFICES = [
   { c: 'Washington, DC', tz: 'America/New_York', g: 'Americas', note: 'Headquarters · 1445 New York Ave NW', lat: 38.9, lon: -77.03, hq: 1 },

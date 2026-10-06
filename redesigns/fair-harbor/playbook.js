@@ -1,6 +1,6 @@
 /* Fair Harbor — value-creation playbook (concept page). Reads the portal's research datasets; no shared code is modified. */
-import { Data } from '../../assets/core.js?v=20261006085442';
-import { Chat } from '../../assets/chat.js?v=20261006085442';
+import { Data } from '../../assets/core.js?v=20261006090506';
+import { Chat } from '../../assets/chat.js?v=20261006090506';
 
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

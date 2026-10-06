@@ -1,6 +1,6 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><title>chat test</title><link rel="icon" href="../BSP_Logo.png"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"><style>body{font-family:Inter,sans-serif;background:#f6f7f9;margin:0;padding:40px}#hero-chat{max-width:760px;margin:0 auto}</style></head><body><div id="hero-chat"></div>
 <script type="module">
-import { Chat } from '../assets/chat.js?v=20261006085442';
+import { Chat } from '../assets/chat.js?v=20261006090506';
 const q = new URLSearchParams(location.search).get('q') || 'Show me how to take Punctual Pros nationwide';
 window.__w = Chat.mount(document.querySelector('#hero-chat'), { persona: new URLSearchParams(location.search).get('p') || 'portal', mode: 'inline', theme: 'light', autoAsk: q });
 </script></body></html>

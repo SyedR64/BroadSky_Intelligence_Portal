@@ -1,5 +1,5 @@
 /* BPI concept homepage behaviour. */
-import { Data } from '../../assets/core.js?v=20261006085442';
+import { Data } from '../../assets/core.js?v=20261006090506';
 import { chrome, mountChat, faqHTML, OFFICES, timeIn, isOpen } from './site.js';
 import { mountMonitor, mountPulse } from './monitor.js';
 

@@ -102,7 +102,7 @@ const clip = (t, n) => { const x = clean(t); if (x.length <= n) return x; const 
 const shortEst = s => String(s || '').replace(/\s*\([^)]*\)/g, '').split(/;\s/)[0].trim();
 
 function injectCss() {
-  if (!document.getElementById('css-fin')) { const l = document.createElement('link'); l.id = 'css-fin'; l.rel = 'stylesheet'; l.href = 'modules/fin.css?v=20261006085442'; document.head.appendChild(l); }
+  if (!document.getElementById('css-fin')) { const l = document.createElement('link'); l.id = 'css-fin'; l.rel = 'stylesheet'; l.href = 'modules/fin.css?v=20261006090506'; document.head.appendChild(l); }
 }
 
 /* ── data layer ─────────────────────────────────────────────────────────── */

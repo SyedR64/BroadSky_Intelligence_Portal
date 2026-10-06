@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/landing.css?v=20261006085442">
-<link rel="modulepreload" href="assets/chat.js?v=20261006085442">
+<link rel="stylesheet" href="assets/landing.css?v=20261006090506">
+<link rel="modulepreload" href="assets/chat.js?v=20261006090506">
 </head>
 <body data-page="landing">
 <a class="skip" href="#main">Skip to content</a>
@@ -63,7 +63,7 @@
       </div>
       <div class="hero-actions">
         <a class="pill pill-ink" href="app.html">Open the portal <span aria-hidden="true">→</span></a>
-        <a class="pill pill-ghost" href="#briefing" data-play="briefing"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor"/></svg>Watch the 4-minute briefing</a>
+        <a class="pill pill-ghost" href="#briefing" data-play="briefing"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor"/></svg>Watch the 5-minute briefing</a>
       </div>
       <p class="hero-note"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 2.5 3.8v3.9c0 3.2 2.3 6 5.5 6.8 3.2-.8 5.5-3.6 5.5-6.8V3.8z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="m5.6 8 1.7 1.7 3.2-3.4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg><span>Internal working draft for the Broad Sky Partners PRG · public-record and licensed data · every number sourced, estimates labelled <i>est.</i></span></p>
     </div>
@@ -360,17 +360,17 @@
 </footer>
 
 <script type="module">
-  import { Landing } from './assets/landing.js?v=20261006085442';
+  import { Landing } from './assets/landing.js?v=20261006090506';
   Landing.init();
 </script>
 <script type="module">
-  import { Chat } from './assets/chat.js?v=20261006085442';
-  import { Landing } from './assets/landing.js?v=20261006085442';
+  import { Chat } from './assets/chat.js?v=20261006090506';
+  import { Landing } from './assets/landing.js?v=20261006090506';
   const host = document.querySelector('#hero-chat');
   host.querySelector('.chat-skeleton')?.remove();
   const chat = Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline', theme: 'light' });
   Landing.attachChat(chat);
 </script>
-<script type="module">import { Counter } from './assets/counter.js?v=20261006085442'; const el = document.getElementById('hero-counter'); if (el) Counter.mount(el, { theme: 'light', caption: 'Revenue left on the table across the portfolio since you opened this page' });</script>
+<script type="module">import { Counter } from './assets/counter.js?v=20261006090506'; const el = document.getElementById('hero-counter'); if (el) Counter.mount(el, { theme: 'light', caption: 'Revenue left on the table across the portfolio since you opened this page' });</script>
 </body>
 </html>

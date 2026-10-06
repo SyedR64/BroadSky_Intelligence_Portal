@@ -1,5 +1,5 @@
 /* SignalOS product page: demo tabs, synthetic-audience test, compliance workflow, value math, evidence. */
-import { Data, Fmt } from '../../assets/core.js?v=20261006085442';
+import { Data, Fmt } from '../../assets/core.js?v=20261006090506';
 import { chrome, mountChat } from './site.js';
 import { mountMonitor, reduceMotion } from './monitor.js';
 

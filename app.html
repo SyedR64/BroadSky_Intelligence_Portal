@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<link rel="stylesheet" href="assets/app.css?v=20261006085442">
+<link rel="stylesheet" href="assets/app.css?v=20261006090506">
 </head>
 <body>
 <div id="app">
@@ -39,12 +39,12 @@
   <aside id="inspector"></aside>
 </div>
 <script type="module">
-  import { App } from './assets/core.js?v=20261006085442';
-  import { modules } from './modules/registry.js?v=20261006085442';
+  import { App } from './assets/core.js?v=20261006090506';
+  import { modules } from './modules/registry.js?v=20261006090506';
   for (const m of modules) App.register(m);
   App.start();
-  import('./assets/chat.js?v=20261006085442').then(({ Chat }) => Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'auto' }));
-  import('./assets/counter.js?v=20261006085442').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; slot.style.cssText = 'padding:10px 16px;border-top:1px solid var(--border)'; document.querySelector('#rail .rail-foot').before(slot); Counter.mount(slot, { theme: 'dark', compact: true, caption: 'Left on the table since you opened this' }); });
+  import('./assets/chat.js?v=20261006090506').then(({ Chat }) => Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'auto' }));
+  import('./assets/counter.js?v=20261006090506').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; slot.style.cssText = 'padding:10px 16px;border-top:1px solid var(--border)'; document.querySelector('#rail .rail-foot').before(slot); Counter.mount(slot, { theme: 'dark', compact: true, caption: 'Left on the table since you opened this' }); });
 </script>
 </body>
 </html>

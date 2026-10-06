@@ -8,7 +8,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261006085442';
+import { Data, Fmt, Live, esc } from './core.js?v=20261006090506';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -280,7 +280,7 @@ export const Chat = {
     const personaId = opts.persona || 'portal';
     const base = PERSONAS[personaId] || SITE_BASE[personaId] || PERSONAS.portal;
     const persona = { ...base, ...opts, faq: [...(base.faq || []), ...(opts.faq || [])], suggestions: opts.suggestions ? [...opts.suggestions, ...(base.suggestions || [])] : (base.suggestions || []), intents: [...(opts.intents || []), ...(base.intents || [])] };
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261006085442'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261006090506'; document.head.appendChild(l); }
     const inst = new Widget(el, persona, personaId, opts); return inst;
   },
 };

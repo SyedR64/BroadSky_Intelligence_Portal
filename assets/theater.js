@@ -353,7 +353,7 @@ class TheaterInstance {
     window.addEventListener('keydown', this._onKey);
     this._syncPlay();
 
-    if (!this.core) this.core = await import('./core.js?v=20261006085442');
+    if (!this.core) this.core = await import('./core.js?v=20261006090506');
     const baseP = loadBase(this.core);
     if (!webglOK() || this.opts.forceFallback) return this._fallback(this.opts.forceFallback ? 'Static fallback requested.' : 'WebGL is not available in this browser, so the 3D theater is showing a static 2D map.', baseP);
     loadCss(LIBS.mlCss, 'maplibre-css');

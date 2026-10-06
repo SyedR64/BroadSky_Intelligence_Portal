@@ -99,7 +99,7 @@ async function load(ctx) {
   return _bundle;
 }
 
-function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261006085442'; document.head.appendChild(l); } }
+function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261006090506'; document.head.appendChild(l); } }
 function missing(ctx, title) { ctx.el.innerHTML = ctx.ui.pageHead({ title, sub: 'Competitive intelligence on the private-equity sponsors bidding against Broad Sky.' }) + ctx.ui.note('Research dataset <b>pe_landscape</b> is not yet available (still being verified). This view will populate automatically once <span class="mono">data/research/pe_landscape.json</span> is published.', 'warn'); }
 const srcFoot = (ctx, meta, extra) => ctx.ui.source(SRC_PE.text, null, meta?.generated) + (extra ? ` <span class="dim">· ${extra}</span>` : '');
 

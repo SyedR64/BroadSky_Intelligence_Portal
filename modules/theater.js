@@ -3,11 +3,11 @@ const V = new URL(import.meta.url).search; // reuse the registry's ?v= stamp for
 
 async function play(ctx) {
   const { el, params, data, live, maps, fmt, esc, app } = ctx;
-  if (!document.getElementById('css-theater')) { const l = document.createElement('link'); l.id = 'css-theater'; l.rel = 'stylesheet'; l.href = `modules/theater.css?v=20261006085442${V}`; document.head.appendChild(l); }
+  if (!document.getElementById('css-theater')) { const l = document.createElement('link'); l.id = 'css-theater'; l.rel = 'stylesheet'; l.href = `modules/theater.css?v=20261006090506${V}`; document.head.appendChild(l); }
   el.innerHTML = `<div class="m-theater" style="position:relative;height:100%;min-height:480px;background:#05070b"></div>`;
   const host = el.firstElementChild;
   let Theater;
-  try { ({ Theater } = await import(`../assets/theater.js?v=20261006085442${V}`)); }
+  try { ({ Theater } = await import(`../assets/theater.js?v=20261006090506${V}`)); }
   catch (e) { host.innerHTML = ctx.ui.note(`The 3D theater engine failed to load: <span class="mono">${esc(e.message)}</span>`, 'warn'); return; }
   if (!el.isConnected) return;
   const scene = params.scene || 'S1';

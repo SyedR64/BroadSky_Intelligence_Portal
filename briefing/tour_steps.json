@@ -11,26 +11,56 @@
  },
  {
   "index": 2,
-  "order": 110,
+  "order": 105,
   "module": "home",
   "hash": "#/home/overview",
-  "caption": "This week. Signals pull live bid deadlines, NWS alerts, top-ranked add-ons and rival deals; Data coverage lists every dataset, including home sales in 36 portfolio counties.",
-  "caption_html": "<b>This week.</b> Signals pull live bid deadlines, NWS alerts, top-ranked add-ons and rival deals; <b>Data coverage</b> lists every dataset, including home sales in 36 portfolio counties.",
-  "narration": "Signals pull live bid deadlines, weather alerts, top add-ons and rival deals. The coverage table lists every dataset, including county home sales.",
+  "caption": "Value & exit readiness. Hold length, add-ons, estimated entry value and scale, debt maturity and the exit window for every platform, benchmarked to the Smith + Howard exit.",
+  "caption_html": "<b>Value & exit readiness.</b> Hold length, add-ons, estimated entry value and scale, debt maturity and the exit window for every platform, benchmarked to the Smith + Howard exit.",
+  "narration": "The scoreboard shows hold length, add-ons, estimated value and debt, and the exit window for every platform, benchmarked against the Smith and Howard exit.",
   "duration": 9000
  },
  {
   "index": 3,
-  "order": 120,
+  "order": 110,
   "module": "home",
-  "hash": "#/home/firm",
-  "caption": "Broad Sky Partners. Founded 2014 · 7 platforms · 23 add-ons · first exit: Smith + Howard → TPG (Aug 2026).",
-  "caption_html": "<b>Broad Sky Partners.</b> Founded 2014 · 7 platforms · 23 add-ons · first exit: Smith + Howard → TPG (Aug 2026).",
-  "narration": "Broad Sky itself: founded in 2014, seven platforms, twenty-three add-ons, and a first exit to TPG.",
-  "duration": 7000
+  "hash": "#/home/overview",
+  "caption": "This week. Signals pull live bid deadlines, NWS alerts in operating counties, top-ranked add-ons and rival deals; Data coverage lists every dataset behind the portal.",
+  "caption_html": "<b>This week.</b> Signals pull live bid deadlines, NWS alerts in operating counties, top-ranked add-ons and rival deals; <b>Data coverage</b> lists every dataset behind the portal.",
+  "narration": "Signals pull live bid deadlines, weather alerts in operating counties, top add-ons and rival deals. The coverage table lists every dataset.",
+  "duration": 9000
  },
  {
   "index": 4,
+  "order": 120,
+  "module": "home",
+  "hash": "#/home/firm",
+  "caption": "Broad Sky Partners. Fund I $335M (Form D) · 7 platforms · 23 add-ons · first exit: Smith + Howard → TPG Growth (Aug 2026).",
+  "caption_html": "<b>Broad Sky Partners.</b> Fund I $335M (Form D) · 7 platforms · 23 add-ons · first exit: Smith + Howard → TPG Growth (Aug 2026).",
+  "narration": "Broad Sky itself: a three hundred thirty-five million dollar first fund, seven platforms, twenty-three add-ons, and a first exit to TPG.",
+  "duration": 7000
+ },
+ {
+  "index": 5,
+  "order": 150,
+  "module": "theater",
+  "hash": "#/theater/play?scene=S2&autoplay=0",
+  "caption": "3D theater. Every home sale in the Punctual Pros territory, extruded by count and coloured by median price. The newest 90 days pulse: new owners who will need service.",
+  "caption_html": "<b>3D theater.</b> Every home sale in the Punctual Pros territory, extruded by count and coloured by median price. The newest 90 days pulse: new owners who will need service.",
+  "narration": "The 3D theater renders the data on the GPU. Here, every home sale in the Punctual Pros territory, with the last ninety days pulsing.",
+  "duration": 10000
+ },
+ {
+  "index": 6,
+  "order": 151,
+  "module": "theater",
+  "hash": "#/theater/play?scene=S4&autoplay=0",
+  "caption": "New England grid. CET opportunities rise by estimated value; floating discs mark the wastewater plants Horton makes prime-able. Use ← → to change scenes.",
+  "caption_html": "<b>New England grid.</b> CET opportunities rise by estimated value; floating discs mark the wastewater plants Horton makes prime-able. Use ← → to change scenes.",
+  "narration": "For CET, opportunities rise by estimated value, and the floating discs mark the wastewater plants Horton opens up.",
+  "duration": 10000
+ },
+ {
+  "index": 7,
   "order": 200,
   "module": "cet",
   "hash": "#/cet/overview",
@@ -40,7 +70,7 @@
   "duration": 6500
  },
  {
-  "index": 5,
+  "index": 8,
   "order": 210,
   "module": "cet",
   "hash": "#/cet/opportunities",
@@ -50,7 +80,7 @@
   "duration": 7000
  },
  {
-  "index": 6,
+  "index": 9,
   "order": 220,
   "module": "cet",
   "hash": "#/cet/wastewater",
@@ -60,7 +90,7 @@
   "duration": 7500
  },
  {
-  "index": 7,
+  "index": 10,
   "order": 230,
   "module": "cet",
   "hash": "#/cet/transfers",
@@ -70,7 +100,7 @@
   "duration": 9500
  },
  {
-  "index": 8,
+  "index": 11,
   "order": 300,
   "module": "pp",
   "hash": "#/pp/overview",
@@ -80,7 +110,7 @@
   "duration": 7500
  },
  {
-  "index": 9,
+  "index": 12,
   "order": 310,
   "module": "pp",
   "hash": "#/pp/weather",
@@ -90,7 +120,7 @@
   "duration": 7500
  },
  {
-  "index": 10,
+  "index": 13,
   "order": 320,
   "module": "pp",
   "hash": "#/pp/movers",
@@ -100,37 +130,37 @@
   "duration": 7000
  },
  {
-  "index": 11,
+  "index": 14,
   "order": 330,
   "module": "pp",
   "hash": "#/pp/targets",
-  "caption": "Tuck-ins. 61 screened HVAC/plumbing/electrical operators — Authority Brands franchisees and family-owned independents — against the PE platforms bidding for them.",
-  "caption_html": "<b>Tuck-ins.</b> 61 screened HVAC/plumbing/electrical operators — Authority Brands franchisees and family-owned independents — against the PE platforms bidding for them.",
-  "narration": "Sixty-one screened tuck-ins, led by same-brand franchisees, set against the private-equity platforms competing for them.",
+  "caption": "Tuck-ins. 60 ranked HVAC/plumbing/electrical operators — Authority Brands franchisees and family-owned independents — against the PE platforms bidding for them; one name-conflict held for affiliation check.",
+  "caption_html": "<b>Tuck-ins.</b> 60 ranked HVAC/plumbing/electrical operators — Authority Brands franchisees and family-owned independents — against the PE platforms bidding for them; one name-conflict held for affiliation check.",
+  "narration": "Sixty ranked tuck-ins, led by same-brand franchisees, set against the private-equity platforms competing for them.",
   "duration": 6500
  },
  {
-  "index": 12,
+  "index": 15,
   "order": 400,
   "module": "fl",
   "hash": "#/fl/overview",
-  "caption": "Frontline Managed Services. 149 AM Law firms mapped against 11 offices. 93 are Tier 1; growth comes from cross-selling cyber + RCM bundles.",
-  "caption_html": "<b>Frontline Managed Services.</b> 149 AM Law firms mapped against 11 offices. 93 are Tier 1; growth comes from cross-selling cyber + RCM bundles.",
-  "narration": "Frontline runs IT, security and revenue cycle for over eight hundred law firms; ninety-three AM Law firms are Tier-one targets.",
+  "caption": "Frontline Managed Services. 147 large law firms mapped against 11 offices. Most are likely existing clients, so growth comes from cross-selling cyber, RCM and AI-desk bundles.",
+  "caption_html": "<b>Frontline Managed Services.</b> 147 large law firms mapped against 11 offices. Most are likely existing clients, so growth comes from cross-selling cyber, RCM and AI-desk bundles.",
+  "narration": "Frontline runs IT, security and revenue cycle for over eight hundred law firms; the account map shows where cyber and revenue-cycle cross-sell is largest.",
   "duration": 8500
  },
  {
-  "index": 13,
+  "index": 16,
   "order": 410,
   "module": "fl",
   "hash": "#/fl/amlaw?tier=Tier%201&cyber=5",
-  "caption": "Cyber-first entry. Tier-1 firms scoring 5/5 on cyber urgency. Each firm opens a recommended bundle and a next action.",
-  "caption_html": "<b>Cyber-first entry.</b> Tier-1 firms scoring 5/5 on cyber urgency. Each firm opens a recommended bundle and a next action.",
-  "narration": "Filter to Tier-one firms with the highest cyber urgency; each opens a service bundle and a next action.",
+  "caption": "Cyber-first cross-sell. Tier-1 accounts scoring 5/5 on cyber urgency. Each firm opens a recommended bundle and a next action.",
+  "caption_html": "<b>Cyber-first cross-sell.</b> Tier-1 accounts scoring 5/5 on cyber urgency. Each firm opens a recommended bundle and a next action.",
+  "narration": "Filter to Tier-one accounts with the highest cyber urgency; each opens a service bundle and a next action.",
   "duration": 7500
  },
  {
-  "index": 14,
+  "index": 17,
   "order": 420,
   "module": "fl",
   "hash": "#/fl/filings",
@@ -140,37 +170,47 @@
   "duration": 7000
  },
  {
-  "index": 15,
+  "index": 18,
   "order": 500,
   "module": "ts",
   "hash": "#/ts/overview",
-  "caption": "Thomas Scientific. 27.5K scored lab & hospital sites; 713 Pursue sites hold ~$4B of 2023 Medicare-allowed lab spend.",
-  "caption_html": "<b>Thomas Scientific.</b> 27.5K scored lab & hospital sites; 713 Pursue sites hold ~$4B of 2023 Medicare-allowed lab spend.",
-  "narration": "Thomas Scientific: seven hundred Pursue sites hold about four billion dollars of Medicare-allowed lab spend. That is the target-account list.",
+  "caption": "Thomas Scientific. 27.5K scored lab & hospital sites; 643 Pursue accounts (650 sites) bill ~$3.1B of 2023 Medicare, a test-volume proxy. National-contract labs move to an Enterprise play.",
+  "caption_html": "<b>Thomas Scientific.</b> 27.5K scored lab & hospital sites; 643 Pursue accounts (650 sites) bill ~$3.1B of 2023 Medicare, a test-volume proxy. National-contract labs move to an Enterprise play.",
+  "narration": "Thomas Scientific: six hundred and forty Pursue accounts bill about three billion dollars of Medicare lab volume. That is the named-account list; national networks are a separate enterprise play.",
+  "duration": 9000
+ },
+ {
+  "index": 19,
+  "order": 505,
+  "module": "ts",
+  "hash": "#/ts/accounts?label=Pursue",
+  "caption": "Accounts: the same Pursue list rolled up to parents, with the play per archetype and a CSV ready for the customer / share-of-wallet match.",
+  "caption_html": "<b>Accounts:</b> the same Pursue list rolled up to parents, with the play per archetype and a CSV ready for the customer / share-of-wallet match.",
+  "narration": "The account list rolls the same Pursue sites up to parents, with a selling play for each archetype and an export for the customer match.",
   "duration": 8500
  },
  {
-  "index": 16,
+  "index": 20,
   "order": 510,
   "module": "ts",
   "hash": "#/ts/sites?label=Pursue",
-  "caption": "Site explorer: filter to a call list by state, archetype and priority, then export it to the CRM.",
-  "caption_html": "<b>Site explorer:</b> filter to a call list by state, archetype and priority, then export it to the CRM.",
+  "caption": "Site explorer: filter to a call list by state, archetype and coverage priority, then export it to the CRM.",
+  "caption_html": "<b>Site explorer:</b> filter to a call list by state, archetype and coverage priority, then export it to the CRM.",
   "narration": "The site explorer turns the map into a call list, filtered by state, archetype and priority, and exported to the CRM.",
   "duration": 9000
  },
  {
-  "index": 17,
+  "index": 21,
   "order": 520,
   "module": "ts",
   "hash": "#/ts/filings",
-  "caption": "Credit file: lenders mark the loan at 88% of par and equity near zero. Growth in target accounts is the path out.",
-  "caption_html": "<b>Credit file:</b> lenders mark the loan at 88% of par and equity near zero. Growth in target accounts is the path out.",
-  "narration": "The credit file is sobering: the loan is marked at eighty-eight percent of par. Target-account growth is the way out.",
+  "caption": "Financials: federal COVID revenue has normalized and listed peers grow ~2%, so share-of-wallet in target accounts is the growth lever.",
+  "caption_html": "<b>Financials:</b> federal COVID revenue has normalized and listed peers grow ~2%, so share-of-wallet in target accounts is the growth lever.",
+  "narration": "Federal COVID revenue has normalized and peers are barely growing, so share of wallet in target accounts is the lever.",
   "duration": 8500
  },
  {
-  "index": 18,
+  "index": 22,
   "order": 600,
   "module": "bpi",
   "hash": "#/bpi/overview",
@@ -180,7 +220,7 @@
   "duration": 7000
  },
  {
-  "index": 19,
+  "index": 23,
   "order": 610,
   "module": "bpi",
   "hash": "#/bpi/opportunities",
@@ -190,47 +230,47 @@
   "duration": 5500
  },
  {
-  "index": 20,
+  "index": 24,
   "order": 620,
   "module": "bpi",
-  "hash": "#/bpi/market",
-  "caption": "DC home sales since Jan 2025, mapped by parcel: the cost-of-living floor for BPI's largest office.",
-  "caption_html": "<b>DC home sales</b> since Jan 2025, mapped by parcel: the cost-of-living floor for BPI's largest office.",
-  "narration": "Every District of Columbia home sale since January 2025 sets the cost-of-living floor for BPI's largest office.",
+  "hash": "#/bpi/benchmarks",
+  "caption": "Valued against public-affairs deals: PPHC's ~8.4x EBITDA IPO is the floor, KKR's $1.7B FGS Global deal the ceiling, Penta's sale to Shamrock the closest analog.",
+  "caption_html": "<b>Valued against public-affairs deals</b>: PPHC's ~8.4x EBITDA IPO is the floor, KKR's $1.7B FGS Global deal the ceiling, Penta's sale to Shamrock the closest analog.",
+  "narration": "BPI is benchmarked against public-affairs deals: PPHC at about eight times EBITDA as the floor, and KKR's one-point-seven-billion-dollar FGS Global deal as the ceiling.",
   "duration": 7000
  },
  {
-  "index": 21,
+  "index": 25,
   "order": 700,
   "module": "fh",
   "hash": "#/fh/overview",
-  "caption": "Fair Harbor. A sustainable beachwear brand, 4.5 years into the hold, with heavy markdowns. The value lever is margin, not stores.",
-  "caption_html": "<b>Fair Harbor.</b> A sustainable beachwear brand, 4.5 years into the hold, with heavy markdowns. The value lever is margin, not stores.",
-  "narration": "For Fair Harbor, the value lever is margin repair, not more stores.",
-  "duration": 5500
- },
- {
-  "index": 22,
-  "order": 710,
-  "module": "fh",
-  "hash": "#/fh/opportunities",
-  "caption": "9 capital-light growth plays: wholesale doors, golf and collegiate licensing, B2B custom and international DTC.",
-  "caption_html": "<b>9 capital-light growth plays</b>: wholesale doors, golf and collegiate licensing, B2B custom and international DTC.",
-  "narration": "Nine capital-light growth plays, from wholesale doors and golf to licensing and international direct-to-consumer.",
+  "caption": "Fair Harbor. 4.5 years into the hold, the first-meeting questions are sell-through, markdown mix (38.5% of live variants) and wholesale doors.",
+  "caption_html": "<b>Fair Harbor.</b> 4.5 years into the hold, the first-meeting questions are sell-through, markdown mix (38.5% of live variants) and wholesale doors.",
+  "narration": "For Fair Harbor, the first questions for management are sell-through, markdowns and wholesale doors.",
   "duration": 6000
  },
  {
-  "index": 23,
-  "order": 720,
+  "index": 26,
+  "order": 710,
   "module": "fh",
-  "hash": "#/fh/market",
-  "caption": "Manhattan home sales by ZIP: where the $2M+ coastal-weekend customer lives, for clienteling around the SoHo store.",
-  "caption_html": "<b>Manhattan home sales</b> by ZIP: where the $2M+ coastal-weekend customer lives, for clienteling around the SoHo store.",
-  "narration": "A year of Manhattan home sales by ZIP shows where the affluent weekend customer lives, around the SoHo store.",
-  "duration": 8000
+  "hash": "#/fh/opportunities",
+  "caption": "9 sourced growth plays ranked by capital intensity and time to revenue: quick wins on live assets, builds gated on sell-through data.",
+  "caption_html": "<b>9 sourced growth plays</b> ranked by capital intensity and time to revenue: quick wins on live assets, builds gated on sell-through data.",
+  "narration": "Nine sourced growth plays, ranked by capital intensity and time to revenue.",
+  "duration": 6000
  },
  {
-  "index": 24,
+  "index": 27,
+  "order": 720,
+  "module": "fh",
+  "hash": "#/fh/filings",
+  "caption": "Filings. $30.7M of primary equity at entry is the hard number; revenue and EBITDA are outside-in estimates until management shares FY25.",
+  "caption_html": "<b>Filings.</b> $30.7M of primary equity at entry is the hard number; revenue and EBITDA are outside-in estimates until management shares FY25.",
+  "narration": "In the filings, the equity check is the hard number; revenue and EBITDA stay estimates until management shares the books.",
+  "duration": 7000
+ },
+ {
+  "index": 28,
   "order": 800,
   "module": "ma",
   "hash": "#/ma/overview",
@@ -240,7 +280,7 @@
   "duration": 6500
  },
  {
-  "index": 25,
+  "index": 29,
   "order": 810,
   "module": "ma",
   "hash": "#/ma/theses",
@@ -250,7 +290,7 @@
   "duration": 8500
  },
  {
-  "index": 26,
+  "index": 30,
   "order": 820,
   "module": "ma",
   "hash": "#/ma/rivals",
@@ -260,17 +300,17 @@
   "duration": 5500
  },
  {
-  "index": 27,
+  "index": 31,
   "order": 900,
   "module": "pe",
   "hash": "#/pe/landscape",
-  "caption": "PE landscape. 35 sponsors chase the same deals; 9 are high-threat and most run flagships 5–15× the size of Fund I.",
-  "caption_html": "<b>PE landscape.</b> 35 sponsors chase the same deals; 9 are high-threat and most run flagships 5–15× the size of Fund I.",
+  "caption": "PE landscape. 35 sponsors chase the same deals; 9 are high-threat. The median rival flagship ($1.5B) is ~4.5× Fund I ($335M, SEC Form D).",
+  "caption_html": "<b>PE landscape.</b> 35 sponsors chase the same deals; 9 are high-threat. The median rival flagship ($1.5B) is ~4.5× Fund I ($335M, SEC Form D).",
   "narration": "Broad Sky competes with thirty-five sponsors, nine of them high-threat. We win on focus and operating credibility, not price.",
   "duration": 8000
  },
  {
-  "index": 28,
+  "index": 32,
   "order": 910,
   "module": "pe",
   "hash": "#/pe/heatmap",
@@ -280,7 +320,7 @@
   "duration": 7000
  },
  {
-  "index": 29,
+  "index": 33,
   "order": 920,
   "module": "pe",
   "hash": "#/pe/deals",
@@ -290,7 +330,47 @@
   "duration": 5500
  },
  {
-  "index": 30,
+  "index": 34,
+  "order": 950,
+  "module": "techos",
+  "hash": "#/techos/overview",
+  "caption": "Tech enablement. One operating system per platform (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS), built from proven vendors plus this portal’s data layer.",
+  "caption_html": "<b>Tech enablement.</b> One operating system per platform (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS), built from proven vendors plus this portal’s data layer.",
+  "narration": "Tech enablement: one operating system per platform, built from proven vendors and this portal’s data layer, each tied to the KPIs a buyer pays for.",
+  "duration": 8000
+ },
+ {
+  "index": 35,
+  "order": 953,
+  "module": "techos",
+  "hash": "#/techos/evidence",
+  "caption": "Why buyers pay. Banker data put repeatable-service firms at 10x+ versus 5–6x for project-heavy peers; we credit tech with only 0.5–2.5 turns of that spread.",
+  "caption_html": "<b>Why buyers pay.</b> Banker data put repeatable-service firms at 10x+ versus 5–6x for project-heavy peers; we credit tech with only 0.5–2.5 turns of that spread.",
+  "narration": "Banker data put repeatable, visible earnings at ten times or more, versus five to six for project-heavy work. We credit technology with only part of that spread.",
+  "duration": 8500
+ },
+ {
+  "index": 36,
+  "order": 956,
+  "module": "techos",
+  "hash": "#/techos/roadmap",
+  "caption": "24-month roadmap. Every OS shows first value inside 18 months; LabOS must reach Thomas Scientific’s lenders before the December 2027 maturity.",
+  "caption_html": "<b>24-month roadmap.</b> Every OS shows first value inside 18 months; LabOS must reach Thomas Scientific’s lenders before the December 2027 maturity.",
+  "narration": "Every program shows first value within eighteen months, and LabOS has to land before Thomas Scientific’s December 2027 loan maturity.",
+  "duration": 7500
+ },
+ {
+  "index": 37,
+  "order": 959,
+  "module": "techos",
+  "hash": "#/techos/calculator?co=pp",
+  "caption": "Value math. EBITDA uplift × multiple, plus re-rating, minus spend: ServiceOS alone is worth an est. ~$11M of EV in the mid case. Every input is a labelled estimate.",
+  "caption_html": "<b>Value math.</b> EBITDA uplift × multiple, plus re-rating, minus spend: ServiceOS alone is worth an est. ~$11M of EV in the mid case. Every input is a labelled estimate.",
+  "narration": "The calculator turns margin uplift and re-rating into equity value, net of spend, with every input labelled as an estimate.",
+  "duration": 8000
+ },
+ {
+  "index": 38,
   "order": 1000,
   "module": "fin",
   "hash": "#/fin/portfolio",
@@ -300,7 +380,7 @@
   "duration": 8000
  },
  {
-  "index": 31,
+  "index": 39,
   "order": 1010,
   "module": "fin",
   "hash": "#/fin/comps",
@@ -310,7 +390,7 @@
   "duration": 6000
  },
  {
-  "index": 32,
+  "index": 40,
   "order": 1020,
   "module": "fin",
   "hash": "#/fin/methods",
@@ -320,7 +400,7 @@
   "duration": 7000
  },
  {
-  "index": 33,
+  "index": 41,
   "order": 1100,
   "module": "briefing",
   "hash": "#/briefing/play",
@@ -330,7 +410,7 @@
   "duration": 8500
  },
  {
-  "index": 34,
+  "index": 42,
   "order": 1110,
   "module": "briefing",
   "hash": "#/briefing/play",
@@ -340,7 +420,7 @@
   "duration": 6500
  },
  {
-  "index": 35,
+  "index": 43,
   "order": 1120,
   "module": "briefing",
   "hash": "#/briefing/play",

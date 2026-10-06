@@ -148,7 +148,7 @@ async function overview(ctx) {
   el.innerHTML = ui.pageHead({
     title: 'Command Center',
     sub: `<b>So what:</b> Broad Sky has ${COS.length} active platforms, ${fmt.num(stats.add_ons)} add-ons to date and one realized exit (Smith + Howard → TPG Growth, Aug 2026, after a ${sh ? sh.hold.toFixed(1) : '~3.7'}-year hold). ${inWindow.length ? `${inWindow.map(r => `${esc(r.short)} (${r.hold.toFixed(1)} yrs)`).join(' and ')} ${inWindow.length > 1 ? 'are' : 'is'} already past that hold, so exit readiness is the first agenda item. ` : ''}This week: ${fmt.num(due.length)} CET bids fall due within 60 days, ${fmt.num(targets)} add-on targets are screened, and ${alerts.length ? `${fmt.num(alerts.length)} NWS alert${alerts.length > 1 ? 's' : ''} touch${alerts.length > 1 ? '' : 'es'} operating counties` : 'no NWS alerts touch operating counties'}.`,
-    actions: `<button class="btn brand" id="play-brief">▶ Play 4-minute briefing</button><a class="btn" href="#/ma">Acquisition engine</a><a class="btn" href="#/fin/portfolio">Financial picture</a>`,
+    actions: `<button class="btn brand" id="play-brief">▶ Play 5-minute briefing</button><a class="btn" href="#/ma">Acquisition engine</a><a class="btn" href="#/fin/portfolio">Financial picture</a>`,
   }) +
   ui.kpis([
     { label: 'Active platforms', value: COS.length, sub: `${fmt.num(stats.add_ons)} add-ons · ${fmt.num(stats.exits)} exit (S+H)`, color: 'var(--c-bsp)' },

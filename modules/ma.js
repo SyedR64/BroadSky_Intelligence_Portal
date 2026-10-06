@@ -3,7 +3,7 @@
    Datasets: research/ma_targets_cet, ma_targets_pp, ma_targets_fl_ts, rival_filings,
              public_comps, pe_landscape, bsp_firm; sales/* (property transfers, lazy, theses view).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, fitTierOf } from '../assets/components.js?v=20261006085442';
+import { renderTargets, fitTierOf } from '../assets/components.js?v=20261006090506';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 const PLAT = {
@@ -88,7 +88,7 @@ const pctOf = (n, d) => d ? Math.round((n / d) * 100) : 0;
 const titleCase = s => String(s || '').replace(/_/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
 const ownerClass = s => { const x = String(s || '').toLowerCase().replace(/no sponsor disclosed|no pe affiliation/g, ''); if (!x.trim()) return 'Unverified'; if (/subsidiary|part of|venture-backed|pe-backed|private equity|backed by|\bpe\b/.test(x)) return 'Sponsor / corporate'; if (/founder|family/.test(x)) return 'Founder / family'; if (/unknown|unverified|not disclosed|not verified/.test(x)) return 'Unverified'; if (/esop|employee-owned/.test(x)) return 'ESOP'; if (/franchisee/.test(x)) return 'Franchisee'; return 'Private independent'; };
 const OWNER_COLOR = { 'Founder / family': 'var(--green)', 'Private independent': 'var(--accent)', Franchisee: 'var(--cyan)', ESOP: 'var(--amber)', Unverified: 'var(--dim)', 'Sponsor / corporate': 'var(--red)' };
-const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261006085442'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261006090506'; document.head.appendChild(l); } };
 const shortList = a => { const v = (Array.isArray(a) ? a : [a]).filter(Boolean).map(x => { const y = String(x).replace(/\s*\(.*?\)\s*/g, ' ').replace(/_/g, ' ').trim(); return y.length > 26 ? y.slice(0, 25).trim() + '…' : y; }); return v.length > 2 ? [...v.slice(0, 2), `+${v.length - 2}`] : v; };
 const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
 const pctTxt = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;

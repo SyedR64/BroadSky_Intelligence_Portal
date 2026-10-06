@@ -1,6 +1,6 @@
 /* 24/7 Voice AI — the growth engine. Renders data/research/voice_ai.json into the page.
    No framework, no build step. Every dollar figure is an estimate and is labelled so. */
-import { Data } from '../assets/core.js?v=20261006085442';
+import { Data } from '../assets/core.js?v=20261006090506';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
