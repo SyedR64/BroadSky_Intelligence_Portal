@@ -109,8 +109,10 @@ with sync_playwright() as p:
 parts = []
 for i, (v, d, _) in enumerate(segments):
     outp = os.path.join(WORK, f'seg{i:02d}.mp4')
+    # keep the LAST d seconds of the recording (the action + hold), not the settle/loading period at the start
+    vlen = vid_dur(v); start = max(0.0, vlen - d - 0.15) if vlen > d + 1.0 else 0.0
     vf = f"scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2,fps={FPS},tpad=stop_mode=clone:stop_duration=2,trim=duration={d:.2f},setpts=PTS-STARTPTS,fade=t=in:st=0:d=0.35,fade=t=out:st={max(0,d-.45):.2f}:d=0.45,format=yuv420p"
-    subprocess.run([FF, '-y', '-loglevel', 'error', '-i', v, '-vf', vf, '-an', '-c:v', 'libx264', '-preset', 'medium', '-crf', '21', '-r', str(FPS), outp], check=True); parts.append(outp)
+    subprocess.run([FF, '-y', '-loglevel', 'error', '-ss', f'{start:.2f}', '-i', v, '-vf', vf, '-an', '-c:v', 'libx264', '-preset', 'medium', '-crf', '21', '-r', str(FPS), outp], check=True); parts.append(outp)
 lst = os.path.join(WORK, 'list.txt'); open(lst, 'w').write(''.join(f"file '{x}'\n" for x in parts))
 vid_only = os.path.join(WORK, 'video.mp4'); subprocess.run([FF, '-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', lst, '-c', 'copy', vid_only], check=True)
 total = sum(d for _, d, _ in segments)
