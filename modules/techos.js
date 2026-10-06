@@ -38,7 +38,7 @@ const OS = {
     os: 'GridOS', co: 'CET', color: 'var(--c-cet)', hex: '#4c8dff', rgb: '76,141,255', module: 'cet', page: 'redesigns/cet/gridos.html', filings: 'cet_filings', bench: 'commercial_electrical_energy', basis: 'ebitda',
     sub: 'CET + NuWave + Horton · electrical, solar, W/WW · New England only',
     promise: 'Bid only what CET can win, run every job on one record, and sell monitoring, not just installs.',
-    pick: { rev: [/^Pro forma platform/i, 0], ebitda: [/^Pro forma platform/i, 1], debt: [/^Pro forma senior debt/i, 0] },
+    pick: { rev: [/^Pro forma (?:platform|portfolio company|company)/i, 0], ebitda: [/^Pro forma (?:platform|portfolio company|company)/i, 1], debt: [/^Pro forma senior debt/i, 0] },
     mult: { v: 10.0, basis: 'Est. entry 9–12x EBITDA (CET public filings estimate table); PKF grid rewards service mix and retention.' },
     owner: 'PRG Operating Partner · Infrastructure', lead: 'CET VP Operations',
     next: 'Run the next 30 days of sourced bids through go/no-go scoring; standardise estimating at Worcester and Horton; quote monitoring on NuWave’s installed solar base as a recurring O&M contract.',

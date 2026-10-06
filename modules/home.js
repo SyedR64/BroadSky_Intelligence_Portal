@@ -66,7 +66,7 @@ function alertMatcher(ppModel) {
 
 /* ── Value & exit readiness: picks from each company's filings meta.estimate_table (all est., confidence-rated) ── */
 const EST = {
-  cet: { ds: 'cet_filings', ev: /^Entry enterprise value/i, rev: [/^Pro forma platform/i, 0], ebitda: [/^Pro forma platform/i, 1], debt: /^Pro forma senior debt/i, mark: /co-invest mark/i },
+  cet: { ds: 'cet_filings', ev: /^Entry enterprise value/i, rev: [/^Pro forma (?:platform|portfolio company|company)/i, 0], ebitda: [/^Pro forma (?:platform|portfolio company|company)/i, 1], debt: /^Pro forma senior debt/i, mark: /co-invest mark/i },
   pp: { ds: 'pp_filings', ev: /^Entry enterprise value/i, rev: /pro forma total revenue/i, ebitda: /^Adjusted EBITDA/i, debt: /^Total senior debt/i },
   fl: { ds: 'frontline_filings', ev: /^Transaction enterprise value/i, rev: /^Revenue \(2025/i, ebitda: /^Adjusted EBITDA at close/i, debt: /^Senior debt at close/i, mark: /^Equity value change/i },
   ts: { ds: 'thomas_filings', ev: /^Entry enterprise value/i, rev: /^Current revenue/i, ebitda: /^Current EBITDA/i, debt: /^Total first-lien facility/i, lev: /^Current total leverage/i, mark: /^Sponsor common equity value/i },

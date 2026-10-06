@@ -155,7 +155,7 @@ function actionList(ctx, acts) {
 
 /* estimate_table row pickers for the portfolio snapshot */
 function pickEst(est, kind) {
-  const score = { revenue: e => { const m = e.metric; if (!/revenue/i.test(m) || /per (territory|employee)|federal|UK platform|payroll|billings/i.test(m)) return null; let s = 0; if (/pro forma/i.test(m)) s += 5; else if (/current|2025|run-rate|2026/i.test(m)) s += 3; if (/2019|2020|2023|FY2024|at entry|pre-/i.test(m)) s -= 3; if (/NuWave|Horton/i.test(m) && !/pro forma/i.test(m)) s -= 4; return s; },
+  const score = { revenue: e => { const m = e.metric; if (!/revenue/i.test(m) || /per (territory|employee)|federal|UK (?:platform|company|portfolio company)|payroll|billings/i.test(m)) return null; let s = 0; if (/pro forma/i.test(m)) s += 5; else if (/current|2025|run-rate|2026/i.test(m)) s += 3; if (/2019|2020|2023|FY2024|at entry|pre-/i.test(m)) s -= 3; if (/NuWave|Horton/i.test(m) && !/pro forma/i.test(m)) s -= 4; return s; },
     ebitda: e => { const m = e.metric; if (!/EBITDA/i.test(m) || /margin|EV\s*\/|multiple|benchmark|PPHC|Entry EV/i.test(m)) return null; let s = 0; if (/pro forma/i.test(m)) s += 5; else if (/current|2025|run-rate/i.test(m)) s += 3; if (/at entry|at close/i.test(m)) s -= 1; if (/2023|BV era/i.test(m)) s -= 3; return s; },
     ev: e => /enterprise value/i.test(e.metric) ? (/entry|transaction/i.test(e.metric) ? 2 : 1) : null,
     debt: e => { const m = e.metric; if (!/debt|first-lien facility|term loan/i.test(m) || /interest|pricing|cost|exposure/i.test(m)) return null; return /total|outstanding|facility|pro forma/i.test(m) ? 2 : 1; },
