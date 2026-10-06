@@ -1,139 +1,143 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LabOS — Thomas Scientific's operating system (concept)</title>
-<meta name="description" content="LabOS: the tech-enablement thesis for Thomas Scientific. AI product search, punchout commerce, vendor-managed inventory, supplier-consolidation analytics and account-health scoring, with the value-creation math.">
-<meta name="theme-color" content="#08131f">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LabOS · Broad Sky</title>
+<meta name="description" content="LabOS, the tech-enablement plan for Thomas Scientific: AI product search, punchout commerce, vendor-managed inventory, supplier consolidation and account-health scoring, with the value-creation math.">
+<meta name="theme-color" content="#fbfaf7">
+<link rel="icon" href="../../BSP_Logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b7d77'/%3E%3Cpath d='M9 9h14M16 9v6.5l-5.6 8.3A1.6 1.6 0 0 0 11.7 26h8.6a1.6 1.6 0 0 0 1.3-2.2L16 15.5' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../assets/system.css?v=20261006122625">
+<link rel="stylesheet" href="site.css?v=20261006122625">
 </head>
-<body class="ts os">
-<a class="skip" href="#main">Skip to content</a>
-<header class="hdr hdr-os">
-  <div class="wrap hdr-in">
-    <a class="brand" href="index.html" aria-label="Thomas Scientific concept home"><span class="logo" data-logo></span><span class="wm">Thomas<b>Scientific</b></span><span class="os-badge">LabOS</span></a>
-    <nav class="hnav" aria-label="LabOS sections">
-      <a href="#modules">Modules</a><a href="#demo">Demo</a><a href="#thesis">Thesis</a><a href="#value">Value math</a><a href="#stack">Stack</a><a href="#roadmap">Roadmap</a>
-    </nav>
-    <a class="btn btn-dark btn-sm" href="index.html">← Store concept</a>
-    <button class="menu-btn" aria-label="Open menu" aria-expanded="false" data-menu><span></span><span></span></button>
-  </div>
-</header>
-
+<body data-co="ts">
 <main id="main">
-<!-- ═══ Hero ═══ -->
-<section class="os-hero" aria-labelledby="osh">
-  <div class="os-hero-bg" aria-hidden="true"></div>
-  <div class="wrap">
-    <p class="kicker light">LabOS · the tech-enablement thesis for Thomas Scientific</p>
-    <h1 id="osh">Make every reorder digital.<br><span>Make every account visible.</span></h1>
-    <p class="lede">LabOS is the operating layer for a 125-year-old distributor: AI search that understands specs and CAS numbers, punchout into the customer's procurement system, vendor-managed inventory, and account-health scoring across <b data-stat="sites">27,503</b> mapped US lab sites. Built mostly from proven vendors, with a thin Broad Sky data layer on top.</p>
-    <div class="hero-cta"><a class="btn btn-signal" href="#demo">Try the live demo</a><a class="btn btn-ghost-dark" href="#value">See the value math →</a></div>
-    <div class="os-kpis" data-os-kpis></div>
+<nav class="sys-subnav" aria-label="On this page">
+  <div class="sys-subnav-in">
+    <a class="sys-subnav-title" href="#main">LabOS</a>
+    <div class="sys-subnav-links"><a href="#modules">Modules</a><a href="#demo">Demo</a><a href="#thesis">Thesis</a><a href="#value">Value math</a><a href="#stack">Stack</a><a href="#roadmap">Roadmap</a><a href="#risks">Risks</a></div>
+    <div class="sys-subnav-actions"><a class="sys-btn sys-btn--primary sys-btn--sm" href="#demo">Try the live demo</a></div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="sys-hero" aria-labelledby="osh">
+  <div class="sys-wrap">
+    <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>LabOS</b> · the tech-enablement plan for Thomas Scientific</p>
+    <h1 id="osh" class="sys-h1">Make every reorder digital. <span class="sys-grad-text">Make every account visible.</span></h1>
+    <p class="sys-lead">LabOS is the operating layer for a 125-year-old distributor: AI search that understands specs and CAS numbers, punchout into the customer's procurement system, vendor-managed inventory, and account-health scoring across <b data-stat="sites">27,503</b> mapped US lab sites. Built mostly from proven vendors, with a thin Broad Sky data layer on top.</p>
+    <div class="sys-actions"><a class="sys-btn sys-btn--primary sys-btn--lg" href="#demo">Try the live demo</a><a class="sys-btn sys-btn--secondary sys-btn--lg" href="index.html">See the Thomas Scientific store →</a></div>
+    <div class="sys-kpis" role="list" data-os-kpis></div>
+    <p class="sys-src"><b>Source:</b> Avantor Form 10-K FY2025; Grainger Q4 2025 results; ServiceOS evidence (LabOS assumption), Oct 2026.</p>
   </div>
 </section>
 
-<!-- ═══ Modules ═══ -->
-<section class="sec" id="modules" aria-labelledby="mod-h">
-  <div class="wrap">
-    <div class="sec-head" data-reveal><p class="kicker">What it is</p><h2 id="mod-h">Six modules, one operating layer.</h2><p>Each module replaces a phone call, a spreadsheet or a sales visit with a workflow the customer runs inside their own systems.</p></div>
-    <div class="mod-grid" data-modules></div>
+<!-- Modules -->
+<section class="sys-section" id="modules" aria-labelledby="mod-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head" data-reveal><p class="sys-kicker">What it is</p><h2 id="mod-h" class="sys-h2">Six modules, one operating layer.</h2><p class="sys-lead">Each module replaces a phone call, a spreadsheet or a sales visit with a workflow the customer runs inside their own systems.</p></div>
+    <div class="sys-grid sys-grid--3" data-modules></div>
   </div>
 </section>
 
-<!-- ═══ Demo ═══ -->
-<section class="sec sec-alt" id="demo" aria-labelledby="demo-h">
-  <div class="wrap">
-    <div class="sec-head" data-reveal><p class="kicker">Interactive demo</p><h2 id="demo-h">Run LabOS on real portal data.</h2><p>Account health runs on the portal's aggregated <span class="mono">ts_parents</span> and <span class="mono">ts_sites</span> datasets with no names shown. Search, VMI and spend data are illustrative mocks.</p></div>
-    <div class="app" data-app>
-      <div class="app-bar"><i></i><i></i><i></i><span class="mono">labos.thomassci · concept</span></div>
-      <div class="app-tabs" role="tablist" aria-label="LabOS demo modules">
-        <button role="tab" id="t-health" aria-selected="true" aria-controls="p-health" data-tab="health">Account health</button>
-        <button role="tab" id="t-search" aria-selected="false" aria-controls="p-search" data-tab="search">AI product search</button>
-        <button role="tab" id="t-vmi" aria-selected="false" aria-controls="p-vmi" data-tab="vmi">VMI dashboard</button>
-        <button role="tab" id="t-spend" aria-selected="false" aria-controls="p-spend" data-tab="spend">Supplier consolidation</button>
+<!-- Demo -->
+<section class="sys-section sys-section--alt" id="demo" aria-labelledby="demo-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head" data-reveal><p class="sys-kicker">Interactive demo</p><h2 id="demo-h" class="sys-h2">Run LabOS on real portal data.</h2><p class="sys-lead">Account health runs on the portal's Thomas Scientific parent accounts and lab sites, aggregated, with no names shown. Search, VMI and spend data are illustrative mock-ups.</p></div>
+    <div class="ts-app" data-app>
+      <div class="ts-app-bar"><i></i><i></i><i></i><span>LabOS · concept</span></div>
+      <div class="ts-app-tabs" role="tablist" aria-label="LabOS demo modules">
+        <button type="button" role="tab" id="t-health" aria-selected="true" aria-controls="p-health" data-tab="health">Account health</button>
+        <button type="button" role="tab" id="t-search" aria-selected="false" aria-controls="p-search" data-tab="search">AI product search</button>
+        <button type="button" role="tab" id="t-vmi" aria-selected="false" aria-controls="p-vmi" data-tab="vmi">VMI dashboard</button>
+        <button type="button" role="tab" id="t-spend" aria-selected="false" aria-controls="p-spend" data-tab="spend">Supplier consolidation</button>
       </div>
-      <div class="app-p" role="tabpanel" id="p-health" aria-labelledby="t-health" data-panel="health"></div>
-      <div class="app-p" role="tabpanel" id="p-search" aria-labelledby="t-search" data-panel="search" hidden></div>
-      <div class="app-p" role="tabpanel" id="p-vmi" aria-labelledby="t-vmi" data-panel="vmi" hidden></div>
-      <div class="app-p" role="tabpanel" id="p-spend" aria-labelledby="t-spend" data-panel="spend" hidden></div>
+      <div class="ts-app-p" role="tabpanel" id="p-health" aria-labelledby="t-health" data-panel="health"></div>
+      <div class="ts-app-p" role="tabpanel" id="p-search" aria-labelledby="t-search" data-panel="search" hidden></div>
+      <div class="ts-app-p" role="tabpanel" id="p-vmi" aria-labelledby="t-vmi" data-panel="vmi" hidden></div>
+      <div class="ts-app-p" role="tabpanel" id="p-spend" aria-labelledby="t-spend" data-panel="spend" hidden></div>
     </div>
   </div>
 </section>
 
-<!-- ═══ Thesis ═══ -->
-<section class="sec" id="thesis" aria-labelledby="th-h">
-  <div class="wrap">
-    <div class="sec-head" data-reveal><p class="kicker">The e-commerce penetration thesis</p><h2 id="th-h">Volume is flat. Digital share is not.</h2><p>Lab distribution grows in the low single digits. The distributors gaining share are the ones whose customers order digitally, inside their own procurement systems.</p></div>
-    <div class="th-grid" data-thesis></div>
+<!-- Thesis -->
+<section class="sys-section" id="thesis" aria-labelledby="th-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head" data-reveal><p class="sys-kicker">The e-commerce penetration thesis</p><h2 id="th-h" class="sys-h2">Volume is flat. Digital share is not.</h2><p class="sys-lead">Lab distribution grows in the low single digits. The distributors gaining share are the ones whose customers order digitally, inside their own procurement systems.</p></div>
+    <div class="sys-grid sys-grid--2" data-thesis></div>
   </div>
 </section>
 
-<!-- ═══ Value math ═══ -->
-<section class="sec value" id="value" aria-labelledby="vl-h">
-  <div class="wrap">
-    <div class="sec-head" data-reveal><p class="kicker light">Value-creation math</p><h2 id="vl-h">An EBITDA and cash program first.</h2><p>Every input defaults to the evidence file's LabOS assumption (est.). Move the sliders to stress it.</p></div>
-    <div class="vl-grid">
-      <form class="vl-in card-dark" data-calc aria-label="Value creation calculator"></form>
-      <div class="vl-out" data-calc-out aria-live="polite"></div>
+<!-- Value math (dark band) -->
+<section class="sys-section" id="value" data-sys-theme="dark" data-co="ts" aria-labelledby="vl-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head" data-reveal><p class="sys-kicker">Value-creation math</p><h2 id="vl-h" class="sys-h2">An EBITDA and cash program first.</h2><p class="sys-lead">Every input defaults to the LabOS assumption in the ServiceOS evidence file <span class="sys-est">est.</span> Move the sliders to stress it.</p></div>
+    <div class="ts-vl-grid">
+      <form class="sys-card" data-calc aria-label="Value creation calculator"></form>
+      <div class="sys-card sys-card--feature" data-calc-out aria-live="polite"></div>
     </div>
-    <div class="vl-range" data-range></div>
+    <div class="sys-card ts-vl-range" data-range></div>
   </div>
 </section>
 
-<!-- ═══ Stack ═══ -->
-<section class="sec" id="stack" aria-labelledby="st-h">
-  <div class="wrap">
-    <div class="sec-head" data-reveal><p class="kicker">Build vs buy</p><h2 id="st-h">Buy the systems. Build the data layer.</h2><p>Named vendors and pricing from the evidence file. The proprietary part is the account and site intelligence the portal already holds.</p></div>
-    <div class="stk" data-stack></div>
+<!-- Stack -->
+<section class="sys-section" id="stack" aria-labelledby="st-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head" data-reveal><p class="sys-kicker">Build vs buy</p><h2 id="st-h" class="sys-h2">Buy the systems. Build the data layer.</h2><p class="sys-lead">Named vendors and pricing from the ServiceOS evidence. The proprietary part is the account and site intelligence the portal already holds.</p></div>
+    <div class="sys-grid sys-grid--3" data-stack></div>
   </div>
 </section>
 
-<!-- ═══ Roadmap ═══ -->
-<section class="sec sec-alt" id="roadmap" aria-labelledby="rm-h">
-  <div class="wrap">
-    <div class="sec-head" data-reveal><p class="kicker">12-month roadmap</p><h2 id="rm-h">Value in two quarters, scale in four.</h2><p>Sequenced so search and quick order pay for punchout, and punchout data pays for VMI. Time-to-value 9–18 months (est.).</p></div>
-    <div class="gantt card" data-gantt></div>
+<!-- Roadmap -->
+<section class="sys-section sys-section--alt" id="roadmap" aria-labelledby="rm-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head" data-reveal><p class="sys-kicker">12-month roadmap</p><h2 id="rm-h" class="sys-h2">Value in two quarters, scale in four.</h2><p class="sys-lead">Sequenced so search and quick order pay for punchout, and punchout data pays for VMI. Time to value is 9–18 months <span class="sys-est">est.</span></p></div>
+    <div class="sys-card ts-gantt" data-gantt></div>
   </div>
 </section>
 
-<!-- ═══ Risks + exit ═══ -->
-<section class="sec" id="risks" aria-labelledby="rk-h">
-  <div class="wrap rk-wrap">
+<!-- Risks + exit -->
+<section class="sys-section" id="risks" aria-labelledby="rk-h">
+  <div class="sys-wrap ts-rk-wrap">
     <div>
-      <div class="sec-head" data-reveal><p class="kicker">Risks</p><h2 id="rk-h">What could go wrong, and the mitigation.</h2></div>
-      <div class="rk" data-risks></div>
+      <div class="sys-section-head" data-reveal><p class="sys-kicker">Risks</p><h2 id="rk-h" class="sys-h2">What could go wrong, and the mitigation.</h2></div>
+      <div class="ts-rk" data-risks></div>
     </div>
-    <aside class="exit card" aria-labelledby="ex-h">
-      <p class="kicker">At exit</p>
-      <h2 id="ex-h">Why a buyer pays for this.</h2>
-      <ol class="exit-l" data-exit></ol>
+    <aside class="sys-card sys-card--feature ts-exit" data-co="ts" aria-labelledby="ex-h">
+      <p class="sys-kicker">At exit</p>
+      <h2 id="ex-h" class="sys-h3">Why a buyer pays for this.</h2>
+      <ol class="ts-exit-l" data-exit></ol>
     </aside>
+  </div>
+</section>
+
+<!-- Closing CTA -->
+<section class="sys-cta" aria-labelledby="cta-h">
+  <div class="sys-wrap">
+    <div class="sys-cta-in">
+      <div class="sys-cta-copy">
+        <h2 id="cta-h">Put LabOS inside the operating plan.</h2>
+        <p>The plan sequences LabOS behind the cash levers and the December 2027 maturity; the portal holds the account and site data it runs on.</p>
+      </div>
+      <div class="sys-actions">
+        <a class="sys-btn sys-btn--accent sys-btn--lg" href="growth-plan.html">Read the plan</a>
+        <a class="sys-btn sys-btn--secondary sys-btn--lg" href="../../app.html#/techos/overview">Tech enablement in the portal</a>
+      </div>
+    </div>
   </div>
 </section>
 </main>
 
-<footer class="ftr ftr-os">
-  <div class="wrap ftr-in">
-    <div class="ftr-brand"><a class="brand" href="index.html"><span class="logo" data-logo></span><span class="wm">Thomas<b>Scientific</b></span></a><p>LabOS is a concept for the Broad Sky Portfolio Resource Group.</p></div>
-    <div><h3>LabOS</h3><a href="#modules">Modules</a><a href="#demo">Demo</a><a href="#value">Value math</a><a href="#roadmap">Roadmap</a></div>
-    <div><h3>Concept</h3><a href="index.html">Thomas Scientific store concept</a><a href="../index.html">All site concepts</a><a href="../../">Broad Sky landing</a></div>
-    <div><h3>Portal</h3><a href="../../app.html#/techos/overview">Tech enablement program</a><a href="../../app.html#/ts/overview">Thomas Scientific module</a><a href="../../app.html#/techos/calculator">Value calculator</a></div>
-    <div><h3>Sources</h3><a href="#thesis">Evidence</a><a href="#stack">Vendors</a><a href="#value">Assumptions</a></div>
-  </div>
-  <div class="wrap ftr-legal"><span>Every figure marked est. is an analyst assumption from data/research/serviceos_evidence.json (ra-ts) or the portal filings estimates, not company guidance. Illustrative demo data is labelled. No customer names are shown.</span><a href="../../app.html#/techos/overview">Open in the portal →</a></div>
-<p class="bsp-disclaimer" style="box-sizing:border-box;max-width:1200px;margin:0 auto;padding:12px 20px 18px;font-size:12px;line-height:1.55">Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.</p>
-</footer>
-
 <script type="module">
-import { Data } from '../../assets/core.js?v=20261006090506';
-import { Chat } from '../../assets/chat.js?v=20261006090506';
-import { init } from './labos.js';
-init({ Data, Chat });
+import { Frame } from '../../assets/frame.js?v=20261006122625';
+import { Data } from '../../assets/core.js?v=20261006122625';
+import { Chat } from '../../assets/chat.js?v=20261006122625';
+import { init } from './labos.js?v=20261006122625';
+const frame = Frame.mount({});
+init({ Data, Chat, Frame, frame });
 </script>
 </body>
 </html>

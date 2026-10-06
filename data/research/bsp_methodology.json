@@ -1,0 +1,2022 @@
+{
+ "meta": {
+  "dataset": "bsp_methodology",
+  "title": "How Broad Sky buys: a reverse-engineered acquisition methodology",
+  "author": "Syed Rahman",
+  "generated": "2026-10-06",
+  "method": "Deal records rebuild every disclosed Broad Sky transaction (7 companies, the Smith + Howard exit and 21 of 23 add-ons identified by name) from primary press releases fetched 2026-10-06 (Business Wire via FinancialContent mirrors, PR Newswire, bpigroup.com, smith-howard.com, comelectrical.com, broadskypartners.com, Franchise Times, Accounting Today, frontlinems.com, BV and Audax/SFNet releases). They are cross-referenced to the repo's SEC Form D, Form ADV, BDC schedule-of-investments and UK Companies House evidence in Broad Sky firm profile, Thomas Scientific filings, Frontline filings, BPI filings, Punctual Pros filings, CET filings and Fair Harbor filings (retrieved 2026-09-24). quoted rationale strings are copied verbatim from the cited release; size signals marked 'est.' are the repo's labelled estimates, not disclosures. Patterns were inferred by tabulating seller type, advisers, lenders, SPVs, CEO outcomes and add-on timing across the deal records. Criteria weights are analyst inference from those patterns. cadence stats are computed in Python from the deal dates.",
+  "caveats": [
+   "Weights, strengths and size bands are inferences from public evidence, not Broad Sky's internal screening criteria.",
+   "BSP states 23 add-ons; 21 are identified by name here. One Punctual Pros add-on (the BSP portfolio page lists 2) and one Smith + Howard acquisition (the exit release says nine) could not be identified.",
+   "Fund I is $335.0M sold per the Apr-2025 Form D/A. The '$137M Fund I' figure in some repo files matches the BSP-FL LP deal vehicle (Frontline), not the main fund.",
+   "Smith + Howard is included only as transaction history (portfolio company, add-ons, exit) to read methodology; it is exited and has no opportunity build.",
+   "seller type adds 'partner-owned' to the requested enum for CPA and agency partnerships (S+H, BOLDT, Market Street, Smith Kesler, Horton Lee & Burnett, BPS); seller type is null where ownership was not disclosed (CET portfolio company, NCI, Arrowhead).",
+   "Lenders for CET, Smith + Howard, Fair Harbor and most add-ons are not public. Linking Thomas's DDTL to NCI and Horton's funding to debt or rollover is inference from timing.",
+   "Thomas Scientific close appears to be 2021-12-14 (Form D first sale, loan maturity); the announcement date 2022-01-27 is used for cadence. CET uses Feb 2025 (Form D first sale 2025-02-05) although it was announced 2025-03-19.",
+   "The Harvey & Company add-on program for Thomas dates to the Carlyle era (article dated 2018-05-12); whether BSP retained Harvey after 2022 is not public.",
+   "People are named only in their public professional roles as stated in press releases, SEC filings or firm websites. No personal contact details are included.",
+   "Earn-outs: none reported in any BSP-era release (the only earn-out in the record is Carlyle-era Denville, $3M)."
+  ],
+  "item_count": 68,
+  "counts": {
+   "deal": 29,
+   "pattern": 17,
+   "criterion": 10,
+   "sourcing_channel": 12,
+   "platforms": 7,
+   "add_ons": 21,
+   "exits": 1
+  },
+  "methodology_narrative": [
+   "Broad Sky buys theme-first: every company release frames the deal as the output of a sector thesis the team had already studied, from RJ David's 'over a year' in electrical services before CET to Adam Glucksman's long watch on accounting before Smith + Howard.",
+   "Since 2024 the filter has narrowed to essential services. Punctual Pros, Frontline and CET are all non-discretionary, and Fair Harbor remains the only discretionary consumer bet and the only portfolio company besides Frontline with no add-ons.",
+   "Anchor acquisitions come from two kinds of seller: sponsor secondaries for the larger checks (Thomas from Carlyle, BPI from Svoboda, Frontline from BV) and founder or partner owners taking first institutional capital for the smaller ones (Fair Harbor, Smith + Howard, Punctual Pros, CET).",
+   "In secondaries the outgoing sponsor often rolls a minority (Svoboda at BPI, BV at Frontline), and the inherited CEO is replaced at about 13-15 months (Simmons to Haas at Thomas, Naidoo to Britt at Frontline) while founder CEOs such as Sean Taylor, Matt Buckwalter and John Duquette Jr. stay.",
+   "Anchor acquisitions are bought in banked processes (6 of 7 had a named sell-side adviser, and Punctual Pros went to 'eight finalists'). Berenson advised BSP on Thomas, BPI, Frontline and CET, Harris Williams on Punctual Pros and Frontline, and Morrison Cohen or Greenberg Traurig was counsel on every deal.",
+   "The first add-on typically closes 6-9 months after the company (NCI at 6.1 months, BOLDT 7.6, Horvath 8.0, NuWave 8.0, Market Street 9.0), and the median is 8.0 months.",
+   "Add-ons are small founder-, family- or partner-owned firms (Day Associates with 10 people, Smith Kesler with 30+, Horton with 120+). None of the 21 identified came from a PE seller, and many were sourced through relationships, such as Matt Buckwalter's decade-long tie to Horvath.",
+   "Add-ons alternate between filling in geography (Market Street, Smith Kesler, Horton Lee & Burnett, Horvath, Horton) and adding new capabilities that create cross-sell (VIP, Fahrenheit, Geels Norton, Message House, Agado, NuWave).",
+   "Each company is financed with a private-credit unitranche from a different direct lender (Apollo/MidCap at Thomas, PineBridge at BPI, PGIM at Punctual Pros, NXT and Audax at Frontline), with delayed-draw or amendment capacity sized for the add-on program.",
+   "Larger companies get a deal-named co-invest SPV (BSP-TS, BSP-BPI Holdings, BSP-FL, BSP-CET). Against a $335M Fund I, a company needing more than about $40M of equity depends on co-investors such as Carlyle AlpInvest.",
+   "Smith + Howard is the template so far: about 100 professionals grew to about 800 through 9 add-ons and a tech, AI and offshore build-out, and the firm was sold to TPG Growth after 3.7 years with William Blair and Baird running the process.",
+   "The lesson from Thomas Scientific (PIK amendment, loan marked at 88% of par) is to avoid peak-earnings, fully levered entries. For the next deals the implied rubric favors $3-20M EBITDA essential-services leaders in fragmented regional markets with a founder CEO who will stay and run M&A, a warm first add-on, and a credible tech-enablement story."
+  ],
+  "cadence_stats": {
+   "platform_dates_used": {
+    "Thomas Scientific": "2022-01-27",
+    "Fair Harbor Clothing": "2022-03-23",
+    "Smith + Howard (via Smith + Howard Advisory LLC)": "2022-11-15",
+    "Bully Pulpit Interactive (BPI)": "2023-04-27",
+    "Punctual Pros": "2024-04-03",
+    "Frontline Managed Services": "2024-12-11",
+    "Commonwealth Electrical Technologies (CET)": "2025-02-05"
+   },
+   "months_between_platform_deals": [
+    1.8,
+    7.8,
+    5.4,
+    11.2,
+    8.3,
+    1.8
+   ],
+   "median_months_between_platform_deals": 6.6,
+   "mean_months_between_platform_deals": 6.0,
+   "months_to_first_add_on": {
+    "Thomas Scientific": 6.1,
+    "Bully Pulpit International": 7.6,
+    "Punctual Pros": 8.0,
+    "Commonwealth Electrical Technologies": 8.0,
+    "Smith + Howard": 9.0
+   },
+   "median_months_to_first_add_on": 8.0,
+   "platforms_without_add_on": {
+    "Frontline Managed Services": 21.8,
+    "Fair Harbor": 54.5
+   },
+   "add_ons_per_platform_per_year": {
+    "Thomas Scientific": {
+     "add_ons_stated_by_bsp": 4,
+     "years_held": 4.69,
+     "add_ons_per_year": 0.85
+    },
+    "Smith + Howard": {
+     "add_ons_stated_by_bsp": 9,
+     "years_held": 3.72,
+     "add_ons_per_year": 2.42
+    },
+    "Bully Pulpit International": {
+     "add_ons_stated_by_bsp": 6,
+     "years_held": 3.44,
+     "add_ons_per_year": 1.74
+    },
+    "Commonwealth Electrical Technologies": {
+     "add_ons_stated_by_bsp": 2,
+     "years_held": 1.66,
+     "add_ons_per_year": 1.2
+    },
+    "Punctual Pros": {
+     "add_ons_stated_by_bsp": 2,
+     "years_held": 2.51,
+     "add_ons_per_year": 0.8
+    },
+    "Frontline Managed Services": {
+     "add_ons_stated_by_bsp": 0,
+     "years_held": 1.82,
+     "add_ons_per_year": 0.0
+    },
+    "Fair Harbor": {
+     "add_ons_stated_by_bsp": 0,
+     "years_held": 4.54,
+     "add_ons_per_year": 0.0
+    }
+   },
+   "median_add_ons_per_platform_per_year_all7": 0.85,
+   "median_add_ons_per_platform_per_year_active_buyers": 1.2,
+   "portfolio_add_ons_per_platform_year": 1.03,
+   "add_ons_identified_by_name": 21,
+   "add_ons_stated_by_bsp": 23,
+   "exit_hold_months": {
+    "Smith + Howard": 44.7
+   },
+   "basis": "Portfolio company dates are announcement dates from primary releases, except CET, which uses the 2025-02-05 Form D first sale because CET says Broad Sky became majority investor in February 2025 (announced 2025-03-19). Add-on dates are close/effective dates. Add-on rates use BSP's stated counts (23 total; S+H 9, PP 2) over years held to 2026-10-06 (S+H to the 2026-08-06 exit). Months = days/30.4375."
+  },
+  "rubric_summary": {
+   "weights_pct": {
+    "Sector essentiality (non-discretionary demand)": 15,
+    "Recurring or repeat revenue and contract visibility": 12,
+    "Fragmentation and add-on runway": 15,
+    "Founder or management transition readiness, with a CEO who will stay": 10,
+    "Size band (entry and add-on)": 8,
+    "Geographic adjacency, with a regional champion that can go national": 8,
+    "Thematic tailwind that BSP research has already identified": 10,
+    "Tech-enablement / AI upside": 7,
+    "Management depth and culture fit ('people-first')": 7,
+    "Downside protection: earnings quality, cyclicality and leverage": 8
+   },
+   "total_weight_pct": 100,
+   "scoring": "Score each criterion 1-5 using its scoring bands, then compute sum(weight % x score)/5 for a 0-100 fit score. Suggested gates: >=70 is a priority portfolio company or add-on, 55-69 goes on the watch list, <55 is a pass.",
+   "back_test_note": "The weights are inferred from the observed deal record, not disclosed by BSP. Frontline, CET and S+H would score highest on essentiality and fragmentation; Fair Harbor scores lowest on essentiality, the criterion with the joint-highest weight.",
+   "size_band_finding": "The working assumption of $5-25M entry EBITDA is only partly supported. Estimated entry EBITDA ranges from ~$2-3M (Punctual Pros) and $3-6M (CET) to $14-20M (BPI, Frontline) and $40-55M (Thomas, COVID-inflated). The core band evidenced since 2023 is about $2-20M. Add-ons cluster at 10-150 employees or roughly $1-5M EBITDA, consistent with Frontline's stated tuck-in criteria (~$5M revenue / $1-2M EBITDA)."
+  },
+  "network_connections": [
+   {
+    "from": "Tyler Zachem (BSP CEO)",
+    "to": "MidOcean Partners",
+    "relation": "14 years incl. Head of Business Services, Media & Communications (public bio)",
+    "source_url": "https://broadskypartners.com/team/tyler-zachem/"
+   },
+   {
+    "from": "Tyler Zachem (BSP CEO)",
+    "to": "The Carlyle Group",
+    "relation": "Co-Head Carlyle Global Partners; co-chair CEOF IC (2015-2021)",
+    "source_url": "https://broadskypartners.com/team/tyler-zachem/"
+   },
+   {
+    "from": "BSP partners",
+    "to": "Thomas Scientific management",
+    "relation": "Known 'for several years' from Carlyle investment/operating roles (CEO quote at close)",
+    "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific"
+   },
+   {
+    "from": "Carlyle AlpInvest",
+    "to": "Frontline (BSP-FL Intermediate)",
+    "relation": "$12.5M direct equity co-invest, Dec 2024",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1899610/000189961026000006/capm_202603xn-csr.htm"
+   },
+   {
+    "from": "Capital Constellation (Wafra)",
+    "to": "Broad Sky Partners",
+    "relation": "Strategic GP investment, Jan 2022",
+    "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific"
+   },
+   {
+    "from": "Guggenheim Securities",
+    "to": "BSP",
+    "relation": "Sold Frontline to BSP (for BV, 2024); advised TPG buying S+H from BSP (2026)",
+    "source_url": "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/"
+   },
+   {
+    "from": "Baird",
+    "to": "BSP",
+    "relation": "Co-advised Carlyle selling Thomas to BSP (2022); co-advised S+H and BSP on the TPG sale (2026)",
+    "source_url": "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/"
+   },
+   {
+    "from": "FMI Capital Advisors",
+    "to": "CET",
+    "relation": "Sold CET to BSP (2025) and NuWave to CET (2025)",
+    "source_url": "https://comelectrical.com/commonwealth-electrical-technologies-acquires-nuwave-energy-solutions-a-full-service-design-build-energy-conservation-firm/"
+   },
+   {
+    "from": "Koltin Consulting Group",
+    "to": "Smith + Howard",
+    "relation": "Portfolio company adviser (2022) and add-on adviser (2023, 2025)",
+    "source_url": "https://www.smith-howard.com/smith-howard-acquires-smith-kesler-and-co/"
+   },
+   {
+    "from": "Charles Simmons (ex-CEO Thomas)",
+    "to": "BSP Executive Board",
+    "relation": "Former portfolio CEO kept in the operator network",
+    "source_url": "https://broadskypartners.com/team/"
+   },
+   {
+    "from": "Lynn Calpeter (BSP operating partner)",
+    "to": "Thomas Scientific",
+    "relation": "Board chair",
+    "source_url": "https://www.prnewswire.com/news-releases/thomas-scientific-appoints-stan-haas-to-president-and-chief-executive-officer-301806043.html"
+   },
+   {
+    "from": "Kelly A. Romano",
+    "to": "Punctual Pros",
+    "relation": "Director (public proxy disclosure); ex-AE Industrial operating partner",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/884614/000155837024016395/ugi-20250131xdef14a.htm"
+   }
+  ],
+  "related_datasets": [
+   "bsp_firm.json",
+   "thomas_filings.json",
+   "frontline_filings.json",
+   "bpi_filings.json",
+   "pp_filings.json",
+   "cet_filings.json",
+   "fairharbor_filings.json",
+   "pe_landscape.json",
+   "ma_targets_pp.json",
+   "ma_targets_cet.json",
+   "ma_targets_fl_ts.json"
+  ]
+ },
+ "items": [
+  {
+   "kind": "deal",
+   "platform": "Thomas Scientific",
+   "company": "Thomas Scientific",
+   "deal_type": "platform",
+   "date": "2022-01-27",
+   "seller_type": "pe_sponsor",
+   "seller": "The Carlyle Group (owner since 2017)",
+   "buyer_advisor": "Berenson & Co. (financial); Morrison Cohen LLP (legal)",
+   "seller_advisor": "Jefferies (lead) and Baird (financial); Latham & Watkins (legal) for Carlyle",
+   "lender_or_capital": "Apollo/MidCap unitranche (MFIC + MidCap Apollo Institutional Private Lending): term loan + DDTL + revolver at LIBOR+625, 1% floor, maturing 2027-12-14; later PIK amendment (Q4-2024) and loan marked ~88% of par at 2026-06-30. Firm-level: Capital Constellation (Wafra-managed) strategic GP investment announced same day.",
+   "co_invest_vehicle": {
+    "vehicles": [
+     {
+      "entity": "BSP-TS, LP",
+      "amount_sold_usd": 257078866,
+      "note": "$236.1M at Dec-2021 close; first sale 2021-12-14"
+     },
+     {
+      "entity": "BSP-TS Co-Invest I, LLC",
+      "amount_sold_usd": 35871936
+     },
+     {
+      "entity": "BSP-TS Co-Invest II, LLC",
+      "amount_sold_usd": 59633599
+     },
+     {
+      "entity": "BSP-TS Management, LP",
+      "amount_sold_usd": 12422444
+     }
+    ],
+    "source_urls": [
+     "https://www.sec.gov/Archives/edgar/data/1901071/000190107124000001/xslFormDX01/primary_doc.xml",
+     "https://www.sec.gov/Archives/edgar/data/1917661/000139834425008284/xslFormDX01/primary_doc.xml"
+    ]
+   },
+   "structure_notes": "Control buyout of a sponsor-owned portfolio company (secondary). Carlyle-era CEO Charles Simmons retained at close, replaced by COO Stan Haas in Apr 2023 (~15 months); Simmons stayed on the board and joined BSP's Executive Board; BSP operating partner Lynn Calpeter is board chair. Closing appears to be 2021-12-14 (Form D first sale and loan maturity date); announced 2022-01-27. No rollover or earn-out reported.",
+   "hq": "Swedesboro, NJ",
+   "sector": "Distribution & logistics services: lab/scientific and cleanroom supply distribution",
+   "rationale_quoted": "“We’ve identified several powerful, long-term drivers of growth in life sciences and clinical diagnostics, and believe Thomas Scientific has a company that is uniquely positioned for significant expansion through organic growth as well as strategic acquisitions.” (Adam Glucksman, Partner)",
+   "size_signals": "Equity $236.1M at close (Form D); est. entry EV $430-525M and COVID-inflated LTM EBITDA $40-55M, revenue $300-400M (thomas_filings.json estimates, low-medium confidence); 8 distribution centers at entry; founded 1900.",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06",
+   "id": "deal-ts"
+  },
+  {
+   "kind": "deal",
+   "platform": "Fair Harbor",
+   "company": "Fair Harbor Clothing",
+   "deal_type": "platform",
+   "date": "2022-03-23",
+   "seller_type": "founder",
+   "seller": "Founders Jake and Caroline Danehy (first institutional capital; primary equity raise)",
+   "buyer_advisor": "Raymond James (financial); Morrison Cohen LLP (legal)",
+   "seller_advisor": "PricewaterhouseCoopers Corporate Finance LLC (financial); Orrick Herrington & Sutcliffe LLP (legal)",
+   "lender_or_capital": "Equity-only on public record: no term loan, BDC line or lender press found (fairharbor_filings.json).",
+   "co_invest_vehicle": {
+    "vehicles": [
+     {
+      "entity": "Fair Harbor Clothing Inc. (issuer Form D, BSP round)",
+      "amount_sold_usd": 30734684,
+      "offering_usd": 36734657,
+      "investors": 24
+     }
+    ],
+    "note": "No BSP-named co-invest SPV; equity sold at issuer level.",
+    "source_urls": [
+     "https://www.sec.gov/Archives/edgar/data/1920023/000192002322000001/primary_doc.xml"
+    ]
+   },
+   "structure_notes": "Growth/primary investment; ownership percentage not disclosed. Founders retained as CEO/CBO. Operating Partner Roberta Bowman (ESG) named; retail veterans added to board Oct 2023. No add-ons since.",
+   "hq": "Larchmont / New York, NY",
+   "sector": "Consumer: sustainable apparel/beachwear (DTC + wholesale)",
+   "rationale_quoted": "“As sector-focused, thematic investors, we see significant opportunities to invest in the intersection of sustainable and direct-to-consumer business models and are following the impact the shift to sustainability is having in consumer packaging and supply chains.” (Jonathan Marlow, Partner)",
+   "size_signals": "$30.7M primary equity sold (Form D); est. 2021 revenue $30-40M and entry EV $40-90M (fairharbor_filings.json, low confidence); Inc. 5000 #26 (2020); ~250 specialty doors plus Nordstrom and Saks.",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06",
+   "id": "deal-fh"
+  },
+  {
+   "kind": "deal",
+   "platform": "Smith + Howard",
+   "company": "Smith + Howard (via Smith + Howard Advisory LLC)",
+   "deal_type": "platform",
+   "date": "2022-11-15",
+   "seller_type": "partner_owned",
+   "seller": "Smith + Howard partners (BSP was the firm's first external investor)",
+   "buyer_advisor": "Morrison Cohen LLP (legal)",
+   "seller_advisor": "Allan Koltin, Koltin Consulting Group (exclusive financial adviser); Hunton Andrews Kurth LLP (legal to Smith + Howard)",
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "Alternative practice structure: licensed CPA firm Smith + Howard PC keeps attest work; BSP invests in Smith + Howard Advisory LLC (tax, accounting, advisory). CEO Sean Taylor retained through exit. No BSP-named Form D vehicle found for this deal.",
+   "hq": "Atlanta, GA",
+   "sector": "Professional services: tax, accounting and advisory (CPA firm, APS model)",
+   "rationale_quoted": "“Our investment in Smith + Howard is exemplary of our thematic, sector-focused approach to investing. We see significant tailwinds at the intersection of outsourcing, workforce virtualization, and advisory services,” (Adam Glucksman, Partner)",
+   "size_signals": "Single Atlanta office with ~100 professionals at entry (BSP exit release); third BSP portfolio company.",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
+   "retrieved": "2026-10-06",
+   "id": "deal-sh"
+  },
+  {
+   "kind": "deal",
+   "platform": "Bully Pulpit International",
+   "company": "Bully Pulpit Interactive (BPI)",
+   "deal_type": "platform",
+   "date": "2023-04-27",
+   "seller_type": "pe_sponsor",
+   "seller": "Svoboda Capital Partners (prior lead sponsor; continues as investor)",
+   "buyer_advisor": "Berenson & Co. (financial); Morrison Cohen LLP (legal)",
+   "seller_advisor": null,
+   "lender_or_capital": "Senior secured Credit and Guaranty Agreement dated 2023-12-07, PineBridge Private Credit Agent LLC administrative agent, Alter Domus collateral agent; amended 2024-10-29 when UK add-ons closed (Companies House debenture).",
+   "co_invest_vehicle": {
+    "vehicles": [
+     {
+      "entity": "BSP-BPI Holdings LLC",
+      "amount_sold_usd": 90000000,
+      "investors": 6,
+      "first_sale": "2023-04-20"
+     }
+    ],
+    "source_urls": [
+     "https://www.sec.gov/Archives/edgar/data/1976569/000197656923000001/primary_doc.xml"
+    ]
+   },
+   "structure_notes": "Significant (lead-investor) stake; prior sponsor Svoboda rolls and stays as investor. President Andrew Bleeker retained (later CEO); Ben LaBolt returned as President Apr 2025.",
+   "hq": "Washington, DC",
+   "sector": "Media/professional services: strategic communications & public affairs",
+   "rationale_quoted": "“BPI is a competitively differentiated, tech-enabled professional services firm in an attractive market with strong tailwinds. We have been focused on the communications and advisory services space for some time.” … “BPI embodies many of the characteristics we look for when identifying attractive opportunities within our investment themes, including strong organic growth and a people-first culture.” (Tyler Zachem, CEO and Founder)",
+   "size_signals": "200+ FTEs at entry; $90.0M equity vehicle (Form D); est. entry EV $150-220M on ~$14-18M EBITDA (bpi_filings.json, low confidence).",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06",
+   "id": "deal-bpi"
+  },
+  {
+   "kind": "deal",
+   "platform": "Punctual Pros",
+   "company": "Punctual Pros",
+   "deal_type": "platform",
+   "date": "2024-04-03",
+   "seller_type": "franchisee",
+   "seller": "Founder-owners Matt and Aaron Buckwalter (Authority Brands multi-brand franchisee; founded 1958 as The Rohrer Company)",
+   "buyer_advisor": "Harris Williams (buy-side); Greenberg Traurig (legal)",
+   "seller_advisor": "Boxwood Partners (exclusive sell-side); Trout CPA (accounting); Barley Snyder (legal)",
+   "lender_or_capital": "PGIM Private Credit Fund first-lien term loan to Punctual Pros Midco, LLC at 3M SOFR+5.00%, maturing 2029-03-26 ($4.83M funded in PGIM fund) plus $1.4M unfunded delayed-draw term loan (10-Q at 2026-06-30).",
+   "co_invest_vehicle": null,
+   "structure_notes": "Majority ownership (Franchise Times). Founder Matt Buckwalter stays CEO and keeps executive team; his stated job is sourcing independent add-ons. Seller ran a process down to 'eight finalists'. No BSP co-invest SPV found.",
+   "hq": "East Hempfield Township (Lancaster), PA",
+   "sector": "Residential services: HVAC/plumbing/electrical (franchisee of One Hour, Benjamin Franklin, Mister Sparky)",
+   "rationale_quoted": "“This investment continues Broad Sky Partners’ thematic investment strategy within essential sectors of the economy where our capital, resources, and operational excellence can drive growth and deliver value to both customers and stakeholders,” (Jonathan Marlow, Partner)",
+   "size_signals": "240 zip codes; ~113 employees (brief, unverified); est. revenue ~$18-22M and adj. EBITDA ~$1.8-3.1M, EV ~$18-30M, Fund I check ~$8-15M (pp_filings.json, low confidence).",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06",
+   "id": "deal-pp"
+  },
+  {
+   "kind": "deal",
+   "platform": "Frontline Managed Services",
+   "company": "Frontline Managed Services",
+   "deal_type": "platform",
+   "date": "2024-12-11",
+   "seller_type": "pe_sponsor",
+   "seller": "BV Investment Partners (prior lead sponsor; retains minority stake)",
+   "buyer_advisor": "Berenson & Company and Harris Williams (buy-side); Morrison Cohen (legal); Borden Ladner Gervais (Canadian counsel)",
+   "seller_advisor": "Guggenheim Securities (exclusive sell-side); Ropes & Gray (legal)",
+   "lender_or_capital": "$90M initial unitranche term loan, NXT Capital and Audax Private Debt (Audax as joint lead arranger); Carlyle AlpInvest $12.5M direct equity into BSP-FL Intermediate Inc. (2024-12-05).",
+   "co_invest_vehicle": {
+    "vehicles": [
+     {
+      "entity": "BSP-FL LP",
+      "amount_sold_usd": 136952357,
+      "investors": 21,
+      "first_sale": "2024-12-09"
+     },
+     {
+      "entity": "BSP-FL Co-Invest, LLC",
+      "amount_sold_usd": 30000000,
+      "offering_usd": 37500000,
+      "investors": 8
+     }
+    ],
+    "source_urls": [
+     "https://www.sec.gov/Archives/edgar/data/2048389/000204839024000002/primary_doc.xml",
+     "https://www.sec.gov/Archives/edgar/data/2048390/000204839024000001/primary_doc.xml"
+    ]
+   },
+   "structure_notes": "Control secondary buyout with BV rolling a minority. CEO Seelin Naidoo retained at close, replaced by Tim Britt (ex-Synoptek founder) on 2026-01-27 (~13.5 months); Naidoo moved to the board. No add-ons announced since close.",
+   "hq": "St. Louis, MO",
+   "sector": "IT & tech services: managed IT and revenue-cycle management for law firms",
+   "rationale_quoted": "“Broad Sky’s strategic focus is to back great teams providing essential services in thematically growing markets with strong organic and acquisition growth prospects. The opportunity to partner with the Frontline team is emblematic of that strategy.” (Evan Azus, Managing Director)",
+   "size_signals": "~1,000 employees, 800+ law-firm clients incl. >50% of AmLaw 200; 92-93% recurring revenue on 3-5 year contracts (CEO, frontlinems.com); est. EV $230-260M, EBITDA $16-20M (frontline_filings.json, medium/low).",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06",
+   "id": "deal-fl"
+  },
+  {
+   "kind": "deal",
+   "platform": "Commonwealth Electrical Technologies",
+   "company": "Commonwealth Electrical Technologies (CET)",
+   "deal_type": "platform",
+   "date": "2025-02-05",
+   "seller_type": null,
+   "seller": "Private owners (not disclosed); FMI ran a sell-side process",
+   "buyer_advisor": "Stifel and Berenson & Company (buy-side); Greenberg Traurig LLP (legal)",
+   "seller_advisor": "FMI Capital Advisors (exclusive sell-side); Kirkland & Ellis LLP (legal to CET)",
+   "lender_or_capital": null,
+   "co_invest_vehicle": {
+    "vehicles": [
+     {
+      "entity": "BSP-CET Co-Invest LLC",
+      "amount_sold_usd": 7500000,
+      "investors": 1,
+      "first_sale": "2025-02-05"
+     }
+    ],
+    "note": "Marked at $8.50M gross asset value in Mar-2026 Form ADV.",
+    "source_urls": [
+     "https://www.sec.gov/Archives/edgar/data/2056574/000205657425000001/xslFormDX01/primary_doc.xml",
+     "https://reports.adviserinfo.sec.gov/reports/ADV/317966/PDF/317966.pdf"
+    ]
+   },
+   "structure_notes": "Majority investment (BSP 'majority investor since February 2025'); announced 2025-03-19. CEO John Duquette Jr. retained. Deal led by MD RJ David after 'over a year' of sector study. No lender identified in SEC/BDC searches.",
+   "hq": "Worcester, MA",
+   "sector": "Infrastructure services: commercial/industrial electrical, solar, EV charging, energy efficiency",
+   "rationale_quoted": "“For over a year, our team has studied the electrical services sector, focusing on businesses that enhance energy capacity and maintain critical infrastructure. We identified CET as a best-in-class business with exceptional growth potential.” (RJ David, Managing Director)",
+   "size_signals": "~125 employees at announcement (Mar 2025); est. revenue $35-55M, EBITDA $3-6M, EV $35-75M (cet_filings.json, low confidence).",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06",
+   "id": "deal-cet"
+  },
+  {
+   "kind": "deal",
+   "platform": "Smith + Howard",
+   "company": "Smith + Howard",
+   "deal_type": "exit",
+   "date": "2026-08-06",
+   "seller_type": "pe_sponsor",
+   "seller": "Broad Sky Partners (sale to TPG via TPG Growth; definitive agreement 2026-06-09)",
+   "buyer_advisor": "Guggenheim Securities (financial to TPG); Weil, Gotshal & Manges (legal to TPG)",
+   "seller_advisor": "William Blair (lead financial) and Baird (co-financial) to Smith + Howard and BSP; Morrison Cohen LLP (legal); Levenfeld Pearlstein represented S+H management and partners",
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "First BSP exit; hold ~3.7 years (Nov 2022 to Aug 2026). Buyer is a larger growth-equity sponsor. APS structure continues post-close. Terms not disclosed.",
+   "hq": "Atlanta, GA",
+   "sector": "Professional services: accounting & advisory",
+   "rationale_quoted": "“The Smith + Howard investment is emblematic of BSP’s integrated investor-operator model: working alongside exceptional management teams to build scaled companies in attractive essential services sectors,” (Tyler Zachem, CEO and Partner)",
+   "size_signals": "Nine acquisitions; ~100 professionals in one office grew to ~800 professionals across 11 locations (Southeast US and India); nearly 4x revenue growth (BSP release). Accounting Today put revenue at $125M with 600+ employees in Sep 2025.",
+   "source_url": "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/",
+   "retrieved": "2026-10-06",
+   "id": "deal-sh-exit"
+  },
+  {
+   "kind": "deal",
+   "platform": "Thomas Scientific",
+   "company": "North Central Instruments (NCI)",
+   "deal_type": "add_on",
+   "date": "2022-08-01",
+   "seller_type": null,
+   "seller": "NCI owners (led by President Brad Johnson since 2001; ownership not disclosed)",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": "Delayed-draw term loan under the Apollo/MidCap facility was funded in Q3-2022, consistent with financing this add-on (MFIC 10-Q/10-KT marks).",
+   "co_invest_vehicle": null,
+   "structure_notes": "First BSP-era add-on, ~6 months after the company; first Midwest location; exclusive regional Leica Microsystems dealer.",
+   "hq": "Brooklyn Park (Minneapolis), MN",
+   "sector": "Lab equipment, cleanroom and microscopy distribution",
+   "rationale_quoted": "\"The acquisition of NCI will give Thomas Scientific a more substantial presence in the Midwest to more effectively meet our customers' inventory and delivery requirements,\" (Chris Pease, VP North American Operations)",
+   "size_signals": "60-person team; founded 1967.",
+   "source_url": "https://www.prnewswire.com/news-releases/thomas-scientific-bolsters-distribution-and-sales-capabilities-with-acquisition-of-nci-301597482.html",
+   "retrieved": "2026-10-06",
+   "id": "deal-ts-nci"
+  },
+  {
+   "kind": "deal",
+   "platform": "Thomas Scientific",
+   "company": "Quintana Supply",
+   "deal_type": "add_on",
+   "date": "2023-08-01",
+   "seller_type": "founder",
+   "seller": "Co-founders Frank and Mike Quintana",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "Facility kept open as Thomas's 'Northeast hub'; founder says Thomas approached them (relationship-led, not an auction).",
+   "hq": "Haverhill, MA",
+   "sector": "Cleanroom, packaging and industrial products distribution",
+   "rationale_quoted": "\"When Thomas approached us it seemed like family and when they stated they wanted to grow our facility, not shutter it, it was a done deal.\" (Frank Quintana, co-founder, seller)",
+   "size_signals": "Founded 1990; 32 years of operation; headcount not disclosed.",
+   "source_url": "https://www.prnewswire.com/news-releases/thomas-scientific-expands-distribution-and-sales-capabilities-with-the-acquisition-of-quintana-supply-301891643.html",
+   "retrieved": "2026-10-06",
+   "id": "deal-ts-quintana"
+  },
+  {
+   "kind": "deal",
+   "platform": "Thomas Scientific",
+   "company": "Day Associates, Inc.",
+   "deal_type": "add_on",
+   "date": "2023-08-02",
+   "seller_type": "founder",
+   "seller": "Founder and owner Billy Day",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "Closed one day after Quintana; both Massachusetts cleanroom distributors (Northeast density play).",
+   "hq": "Dracut, MA",
+   "sector": "Cleanroom, safety and industrial products distribution",
+   "rationale_quoted": "\"By Day Associates joining the Thomas Scientific family of companies, the customers will have access to an even broader portfolio of products and a national network of distribution centers and inventory to meet their needs now and into the future.\" (Stan Haas, CEO)",
+   "size_signals": "Ten employees; founded 1977.",
+   "source_url": "https://www.prnewswire.com/news-releases/thomas-scientific-expands-distribution-and-sales-capabilities-with-the-acquisition-of-day-associates-inc-301892907.html",
+   "retrieved": "2026-10-06",
+   "id": "deal-ts-day"
+  },
+  {
+   "kind": "deal",
+   "platform": "Thomas Scientific",
+   "company": "Arrowhead Forensics",
+   "deal_type": "add_on",
+   "date": "2023-10-05",
+   "seller_type": null,
+   "seller": "Arrowhead leadership (President Pat Snedden and Brad Brown named; ownership not disclosed)",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "End-market extension into law-enforcement forensics; adds Midwest distribution and kitting. Announced 2023-10-19.",
+   "hq": "Lenexa, KS",
+   "sector": "Forensic and crime-scene products distribution",
+   "rationale_quoted": "\"By combining our two companies, we will be further enhancing our goal of providing customers an end-to-end solution of products and services.\" (Stan Haas, CEO)",
+   "size_signals": "About 30 years in operation; headcount not disclosed.",
+   "source_url": "https://www.prnewswire.com/news-releases/thomas-scientific-broadens-portfolio-and-sales-expertise-with-the-acquisition-of-arrowhead-forensics-301961348.html",
+   "retrieved": "2026-10-06",
+   "id": "deal-ts-arrowhead"
+  },
+  {
+   "kind": "deal",
+   "platform": "Bully Pulpit International",
+   "company": "BOLDT",
+   "deal_type": "add_on",
+   "date": "2023-12-14",
+   "seller_type": "partner_owned",
+   "seller": "BOLDT partners (Managing Partner Jeremy Galbraith became BPI's European leader)",
+   "buyer_advisor": "Berenson (advisor on the deal per BPI release)",
+   "seller_advisor": null,
+   "lender_or_capital": "BPI's PineBridge-agented Credit and Guaranty Agreement is dated 2023-12-07, one week before this deal.",
+   "co_invest_vehicle": null,
+   "structure_notes": "Brand retained as 'BOLDT, a BPI Company'; BPI rebrands from Interactive to International. First add-on ~7.5 months after portfolio company.",
+   "hq": "Brussels / Berlin / London / Oslo / Zurich",
+   "sector": "European business strategy, public policy and communications",
+   "rationale_quoted": "“On topics from the green transition to AI, privacy, and antitrust, sophisticated companies must reach beyond Washington and Brussels and into key European constituencies,” (Andrew Bleeker, BPI President)",
+   "size_signals": "More than 50 professionals across five countries; combined BPI >250 staff.",
+   "source_url": "https://bpigroup.com/bpi-adds-european-business-strategy-public-policy-and-communications-offering-with-acquisition-of-boldt/",
+   "retrieved": "2026-10-06",
+   "id": "deal-bpi-boldt"
+  },
+  {
+   "kind": "deal",
+   "platform": "Bully Pulpit International",
+   "company": "Seven Hills",
+   "deal_type": "add_on",
+   "date": "2024-11-12",
+   "seller_type": "founder",
+   "seller": "Co-founders incl. Chair Michael Hayman",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": "BPI credit agreement amended 2024-10-29 (Consent and First Amendment) as the UK add-ons closed; UK subsidiaries granted debentures to Alter Domus in Jan 2025.",
+   "co_invest_vehicle": null,
+   "structure_notes": "Paired UK deal with Message House; operates as 'Seven Hills BPI'.",
+   "hq": "London, UK",
+   "sector": "Campaigns and communications",
+   "rationale_quoted": "“These acquisitions not only accelerate our offering in the UK but also unite our global operation through an integrated data-centric approach to messaging.” (Andrew Bleeker, BPI President)",
+   "size_signals": "About 40 staff (Companies House, per bpi_filings.json); BPI >325 staff after the UK deals.",
+   "source_url": "https://bpigroup.com/bpi-expands-uk-presence-and-insights-practice-with-acquisitions-of-seven-hills-and-message-house/",
+   "retrieved": "2026-10-06",
+   "id": "deal-bpi-sevenhills"
+  },
+  {
+   "kind": "deal",
+   "platform": "Bully Pulpit International",
+   "company": "Message House",
+   "deal_type": "add_on",
+   "date": "2024-11-12",
+   "seller_type": "founder",
+   "seller": "Founder Matt Carter",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": "Same amended PineBridge facility; Message House entities charged to Alter Domus (Jan 2025).",
+   "co_invest_vehicle": null,
+   "structure_notes": "Capability add-on (elite-audience message testing / research) bought alongside Seven Hills.",
+   "hq": "London, UK",
+   "sector": "Stakeholder research and message testing",
+   "rationale_quoted": "“The ability to acquire talent across Europe was a key reason BOLDT merged with BPI last year, and I am excited to see us moving so quickly to do this,” (Jeremy Galbraith, BPI European leader)",
+   "size_signals": "16 staff (Companies House, per bpi_filings.json).",
+   "source_url": "https://bpigroup.com/bpi-expands-uk-presence-and-insights-practice-with-acquisitions-of-seven-hills-and-message-house/",
+   "retrieved": "2026-10-06",
+   "id": "deal-bpi-messagehouse"
+  },
+  {
+   "kind": "deal",
+   "platform": "Bully Pulpit International",
+   "company": "Propper Daley",
+   "deal_type": "add_on",
+   "date": "2025-03-06",
+   "seller_type": "founder",
+   "seller": "Propper Daley principals (President Greg Propper quoted)",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "Operates as 'Propper Daley BPI'; adds Los Angeles and Miami.",
+   "hq": "Los Angeles, CA (and Miami, FL)",
+   "sector": "Culture-first social-impact and entertainment-philanthropy agency",
+   "rationale_quoted": "“An effective campaign combines the best of communications and marketing with the power of influence, partnerships, and creators of culture, which is exactly what Propper Daley brings to the table.” (Andrew Bleeker, BPI President)",
+   "size_signals": "BPI >350 staff across 14 offices after the deal; Propper Daley headcount not disclosed.",
+   "source_url": "https://bpigroup.com/bpi-acquires-propper-daley-to-create-change-through-culture-first-strategies/",
+   "retrieved": "2026-10-06",
+   "id": "deal-bpi-propper"
+  },
+  {
+   "kind": "deal",
+   "platform": "Bully Pulpit International",
+   "company": "Agado Communications",
+   "deal_type": "add_on",
+   "date": "2025-05-13",
+   "seller_type": "founder",
+   "seller": "Founder Mark Jones (now leads BPI's sports offering)",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "Acqui-hire style capability add-on: founder becomes practice lead.",
+   "hq": "United States",
+   "sector": "Sports, media and advocacy communications",
+   "rationale_quoted": "“Leading sports organizations now transcend their industries and need to navigate the same nuanced political, legal, and financial waters as other global brands.” (Andrew Bleeker, BPI CEO)",
+   "size_signals": "Founded 2020; headcount and terms not disclosed.",
+   "source_url": "https://bpigroup.com/bpi-acquires-agado-communications-appoints-mark-jones-to-lead-sports-offering-strategy-and-growth/",
+   "retrieved": "2026-10-06",
+   "id": "deal-bpi-agado"
+  },
+  {
+   "kind": "deal",
+   "platform": "Bully Pulpit International",
+   "company": "365 Sherpas",
+   "deal_type": "add_on",
+   "date": "2026-05-05",
+   "seller_type": "founder",
+   "seller": "Founder and Executive Chairman Cornelius Winter and partners",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "Sellers (Winter, CEO Jan Böttger, CGO Daniel Wixforth) become shareholders in BPI, i.e. equity rollover into the company; BOLDT BPI Germany merges into '365 Sherpas BPI'.",
+   "hq": "Berlin, Germany (and Brussels)",
+   "sector": "Corporate affairs and strategic communications",
+   "rationale_quoted": "“We really studied the German market and couldn’t be happier to introduce our clients to the Sherpas’ team.” (Andrew Bleeker, BPI CEO)",
+   "size_signals": "Germany becomes BPI's third-largest market; headcount not disclosed (est. 20-40 in bpi_filings.json).",
+   "source_url": "https://bpigroup.com/bpi-strengthens-transatlantic-corporate-affairs-offer-with-acquisition-of-365-sherpas/",
+   "retrieved": "2026-10-06",
+   "id": "deal-bpi-365sherpas"
+  },
+  {
+   "kind": "deal",
+   "platform": "Punctual Pros",
+   "company": "Horvath Home Services",
+   "deal_type": "add_on",
+   "date": "2024-12-03",
+   "seller_type": "franchisee",
+   "seller": "Owner Frank Horvath (Authority Brands tri-brand franchisee)",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": "PGIM delayed-draw term loan exists on the Punctual Pros Midco facility; funding source of this deal not disclosed.",
+   "co_invest_vehicle": null,
+   "structure_notes": "First out-of-state add-on, 8 months after portfolio company; same three franchise brands, so a territory roll-up inside the franchise system; built on a relationship of more than a decade.",
+   "hq": "Ocean and Monmouth Counties (Toms River area), NJ",
+   "sector": "Residential HVAC/plumbing/electrical franchisee",
+   "rationale_quoted": "\"After building a relationship with the team for more than a decade, I've seen firsthand how the company's core values, team camaraderie and extraordinary operations align perfectly with ours.\" (Matt Buckwalter, founder and CEO)",
+   "size_signals": "PPP-implied ~19-22 employees and ~$3-4M 2019 revenue; 6 NJ territories (pp_filings.json, medium/low).",
+   "source_url": "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+   "retrieved": "2026-10-06",
+   "id": "deal-pp-horvath"
+  },
+  {
+   "kind": "deal",
+   "platform": "Commonwealth Electrical Technologies",
+   "company": "NuWave Energy Solutions",
+   "deal_type": "add_on",
+   "date": "2025-10-07",
+   "seller_type": "founder",
+   "seller": "Founder, CEO and President Ryan Blair",
+   "buyer_advisor": "Greenberg Traurig LLP (legal to CET)",
+   "seller_advisor": "FMI Capital Advisors (exclusive sell-side); Baker, Braverman and Barbadoro (legal)",
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "First CET add-on, ~8 months after the company; capability add-on (design/build energy efficiency). FMI also sold CET to BSP.",
+   "hq": "Norwell, MA",
+   "sector": "Design/build energy-conservation services",
+   "rationale_quoted": "“This acquisition marks an important step in CET’s growth journey, reinforcing our vision for sustainable growth and significantly increasing our service offering,” (John J. Duquette, CEO)",
+   "size_signals": "Founded 2019; PPP-era 4 jobs (2020); est. revenue $2-10M (cet_filings.json, low).",
+   "source_url": "https://comelectrical.com/commonwealth-electrical-technologies-acquires-nuwave-energy-solutions-a-full-service-design-build-energy-conservation-firm/",
+   "retrieved": "2026-10-06",
+   "id": "deal-cet-nuwave"
+  },
+  {
+   "kind": "deal",
+   "platform": "Commonwealth Electrical Technologies",
+   "company": "Horton Electrical Services",
+   "deal_type": "add_on",
+   "date": "2026-09-15",
+   "seller_type": "family",
+   "seller": "Horton family (third-generation; founded 1976 by Arthur Horton; led by Warren A. Horton)",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": "No new BSP Form D; likely incremental debt and/or seller rollover (cet_filings.json inference, low confidence).",
+   "co_invest_vehicle": null,
+   "structure_notes": "Warren Horton continues to lead Horton; transformational add-on that nearly doubles CET workforce and enters Connecticut wastewater/pump-station work.",
+   "hq": "Connecticut",
+   "sector": "Electrical and civil contracting (wastewater, solar O&M, generators)",
+   "rationale_quoted": "“Together, we’re building a stronger portfolio company with greater capabilities, broader geographic reach, and even more opportunity ahead.” (John Duquette, Jr., CEO)",
+   "size_signals": "100+ field staff and 20 managers; 2020 PPP showed 42 jobs; est. revenue $25-40M (cet_filings.json, low).",
+   "source_url": "https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/",
+   "retrieved": "2026-10-06",
+   "id": "deal-cet-horton"
+  },
+  {
+   "kind": "deal",
+   "platform": "Smith + Howard",
+   "company": "Market Street Partners, PLLC",
+   "deal_type": "add_on",
+   "date": "2023-08-15",
+   "seller_type": "partner_owned",
+   "seller": "Market Street partners (Co-Founding Partner Kyle Bryant became Managing Partner, Chattanooga)",
+   "buyer_advisor": "Koltin Consulting Group (advised both firms)",
+   "seller_advisor": "Koltin Consulting Group (advised both firms)",
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "Merger into S+H brand; first S+H add-on, 9 months after portfolio company.",
+   "hq": "Chattanooga, TN",
+   "sector": "Accounting firm",
+   "rationale_quoted": "“With our firms united, we are expanding our footprint in the Southeast region while enhancing the breadth and depth of services we provide.” (Sean Taylor, CEO)",
+   "size_signals": "Not disclosed; described by Koltin as one of Tennessee's youngest and fastest-growing firms.",
+   "source_url": "https://www.smith-howard.com/smith-howard-and-market-street-partners-join-forces/",
+   "retrieved": "2026-10-06",
+   "id": "deal-sh-msp"
+  },
+  {
+   "kind": "deal",
+   "platform": "Smith + Howard",
+   "company": "JMM CPAs",
+   "deal_type": "add_on",
+   "date": "2024-01-31",
+   "seller_type": "founder",
+   "seller": "Founder James Moyna (now Partner, Smith + Howard PC)",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "Specialty-practice tuck-in (employee benefit plan audit); all employees join.",
+   "hq": "Chicago, IL",
+   "sector": "Employee benefit plan audit",
+   "rationale_quoted": "“JMM’s nationally recognized and respected employee benefit plan audit practice and their strong culture of client service, integrity and community, made this a natural and obvious fit.” (J. Sean Spitzer, President, Smith + Howard PC)",
+   "size_signals": "Combined EBP practice: 500+ plans and 30 dedicated employees.",
+   "source_url": "https://www.smith-howard.com/smith-howard-announces-expansion-of-benefit-plan-audit-practice/",
+   "retrieved": "2026-10-06",
+   "id": "deal-sh-jmm"
+  },
+  {
+   "kind": "deal",
+   "platform": "Smith + Howard",
+   "company": "VIP Search Group / VIP Solutions Group",
+   "deal_type": "add_on",
+   "date": "2024-04-30",
+   "seller_type": "founder",
+   "seller": "Founders Mike Haynes, Eric Foerster and Jess Padek (remain in leadership)",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "Service-line add-on (office-of-the-CFO search, staffing, interim management); rebranded S+H Search and S+H Consulting.",
+   "hq": "Dallas, TX",
+   "sector": "Finance/accounting search, staffing and consulting",
+   "rationale_quoted": "“This transaction represents a continued realization of Smith + Howard’s strategic vision to aggressively expand our service offering and geographic reach.” (Sean Taylor, CEO)",
+   "size_signals": "Founded 2008; headcount not disclosed; third S+H deal in 12 months.",
+   "source_url": "https://www.smith-howard.com/smith-howard-acquires-vip-search-and-vip-solutions-businesses/",
+   "retrieved": "2026-10-06",
+   "id": "deal-sh-vip"
+  },
+  {
+   "kind": "deal",
+   "platform": "Smith + Howard",
+   "company": "Fahrenheit Advisors",
+   "deal_type": "add_on",
+   "date": "2024-12-09",
+   "seller_type": "founder",
+   "seller": "Co-founders Keith Middleton and Rich Reinecke",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "Definitive agreement announced 2024-12-09; keeps its brand inside the S+H family of companies; first Mid-Atlantic location; adds HCM consulting.",
+   "hq": "Richmond, VA",
+   "sector": "Business strategy, finance/accounting, human-capital consulting and executive search",
+   "rationale_quoted": "“This addition to the Smith + Howard family of companies is another key step to expanding our service offerings, our national footprint, and creating new opportunities for our clients and colleagues.” (Sean Taylor, CEO)",
+   "size_signals": "140+ professionals; founded 2010; S+H's fourth deal in 15 months.",
+   "source_url": "https://www.smith-howard.com/smith-howard-acquires-fahrenheit-advisors/",
+   "retrieved": "2026-10-06",
+   "id": "deal-sh-fahrenheit"
+  },
+  {
+   "kind": "deal",
+   "platform": "Smith + Howard",
+   "company": "Smith Kesler & Co.",
+   "deal_type": "add_on",
+   "date": "2025-01-31",
+   "seller_type": "partner_owned",
+   "seller": "Shareholders led by Managing Stockholder Steve Hinds (becomes Partner)",
+   "buyer_advisor": "Allan Koltin advised on the transaction",
+   "seller_advisor": null,
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "Folded into S+H brand; extends construction-accounting niche into the Carolinas.",
+   "hq": "North Carolina / South Carolina (four offices)",
+   "sector": "Construction-focused audit and tax",
+   "rationale_quoted": "“Expanding into the Carolinas allows us to introduce Smith + Howard’s world-class advisory services in a region that is central to our long-term growth strategy.” (Sean Taylor, CEO)",
+   "size_signals": "30+ professionals; established 1974; fifth S+H deal in 16 months.",
+   "source_url": "https://www.smith-howard.com/smith-howard-acquires-smith-kesler-and-co/",
+   "retrieved": "2026-10-06",
+   "id": "deal-sh-skc"
+  },
+  {
+   "kind": "deal",
+   "platform": "Smith + Howard",
+   "company": "Horton, Lee & Burnett",
+   "deal_type": "add_on",
+   "date": "2025-08-31",
+   "seller_type": "partner_owned",
+   "seller": "Horton, Lee & Burnett partners",
+   "buyer_advisor": null,
+   "seller_advisor": "Founders Advisors (advisor to Horton, Lee & Burnett)",
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "Entry into Alabama; effective Aug 31, announced 2025-09-03.",
+   "hq": "Birmingham, AL",
+   "sector": "Accounting, audit, tax and consulting",
+   "rationale_quoted": "“This acquisition aligns with our strategy to combine organic growth with targeted expansions that add depth to our expertise and geographic reach,” (Sean Taylor, CEO)",
+   "size_signals": "Founded 1967; S+H itself at $125M revenue, 600+ staff, 47 partners (Accounting Today).",
+   "source_url": "https://www.smith-howard.com/smith-howard-expands-southeastern-u-s-presence-with-acquisition-of-horton-lee-burnett/",
+   "retrieved": "2026-10-06",
+   "id": "deal-sh-hlb"
+  },
+  {
+   "kind": "deal",
+   "platform": "Smith + Howard",
+   "company": "Bauknight Pietras & Stormer, P.A. (BPS)",
+   "deal_type": "add_on",
+   "date": "2026-01-13",
+   "seller_type": "partner_owned",
+   "seller": "BPS shareholders (Managing Shareholder Jay Swearingen)",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "Transitions to S+H brand; adds captive insurance, telecom, forensic accounting; signed ~5 months before the TPG agreement.",
+   "hq": "South Carolina",
+   "sector": "Public accounting and advisory",
+   "rationale_quoted": "“This acquisition reflects our continued focus on thoughtful, high-quality growth that expands both our geographic reach and our service depth,” (Sean Taylor, CEO)",
+   "size_signals": "INSIDE Public Accounting Top 250 firm; headcount not disclosed.",
+   "source_url": "https://www.smith-howard.com/smith-howard-acquires-bps-expanding-presence-in-south-carolina-and-strengthening-southeast-advisory-capabilities/",
+   "retrieved": "2026-10-06",
+   "id": "deal-sh-bps"
+  },
+  {
+   "kind": "deal",
+   "platform": "Smith + Howard",
+   "company": "Geels Norton",
+   "deal_type": "add_on",
+   "date": "2026-02-01",
+   "seller_type": "founder",
+   "seller": "Co-founders Nick Norton and Bryan Geels",
+   "buyer_advisor": null,
+   "seller_advisor": null,
+   "lender_or_capital": null,
+   "co_invest_vehicle": null,
+   "structure_notes": "Long-time partner firm folded in; keeps Geels Norton brand for advisory; creates a Cyber and Risk Practice. Last S+H deal before the TPG agreement.",
+   "hq": null,
+   "sector": "Cyber, SOC 2 / ISO risk audit and advisory",
+   "rationale_quoted": "“Geels Norton has been a valued partner for the past several years, and their expertise in cyber and risk audit complements our portfolio company and our culture.” (Sean Taylor, CEO)",
+   "size_signals": "Founded 2021; headcount not disclosed.",
+   "source_url": "https://www.smith-howard.com/smith-howard-welcomes-geels-norton-expanding-cyber-risk-audit-and-advisory-capabilities/",
+   "retrieved": "2026-10-06",
+   "id": "deal-sh-geels"
+  },
+  {
+   "id": "pat-thesis-first",
+   "kind": "pattern",
+   "pattern": "Thesis before target: every company release frames the deal as the output of a sector theme the team had studied in advance ('studied the electrical services sector' for over a year at CET; accounting 'we’ve been watching for a long time' at S+H; 'focused on the communications and advisory services space for some time' at BPI; 'thematic investment strategy within essential sectors' at Punctual Pros).",
+   "evidence_deal_ids": [
+    "deal-cet",
+    "deal-sh",
+    "deal-bpi",
+    "deal-pp",
+    "deal-fh",
+    "deal-fl"
+   ],
+   "strength": "strong",
+   "implication_for_next_deals": "Bring BSP a written sector map (fragmentation, tailwind, 2-3 candidate anchor companies) before naming a company; a target pitched without a theme does not match how they buy.",
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-essential-drift",
+   "kind": "pattern",
+   "pattern": "The self-description narrowed from 'business services and consumer companies' (2022-23) to 'essential businesses' / 'essential services' (2024 onward). Every deal since Apr 2023 is a B2B or non-discretionary residential service. Fair Harbor (discretionary DTC apparel, 2022) is the outlier and has had no add-ons.",
+   "evidence_deal_ids": [
+    "deal-fh",
+    "deal-bpi",
+    "deal-pp",
+    "deal-fl",
+    "deal-cet",
+    "deal-sh-exit"
+   ],
+   "strength": "strong",
+   "implication_for_next_deals": "Screen out discretionary consumer products; residential services qualify only when demand is non-discretionary (repair, replace, code-driven).",
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+    "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-seller-mix",
+   "kind": "pattern",
+   "pattern": "Two seller archetypes, roughly half each. Sponsor-to-sponsor secondaries are the larger checks: Thomas from Carlyle, BPI from Svoboda, Frontline from BV. First-institutional-capital deals are the smaller ones: Fair Harbor (founders), Smith + Howard (first external investor), Punctual Pros (founder franchisee), CET (private owners). In 2 of 3 secondaries the prior sponsor rolled and stayed (Svoboda, BV).",
+   "evidence_deal_ids": [
+    "deal-ts",
+    "deal-bpi",
+    "deal-fl",
+    "deal-fh",
+    "deal-sh",
+    "deal-pp",
+    "deal-cet"
+   ],
+   "strength": "strong",
+   "implication_for_next_deals": "For a larger company ($15M+ EBITDA), expect a sponsor seller and offer the outgoing sponsor a minority roll. For smaller companies, target founder or partner owners taking their first institutional capital.",
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+    "https://www.bvlp.com/news-resource/bv-investment-partners-announces-sale-of-frontline-managed-services-to-broad-sky-partners/",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-ceo-retention",
+   "kind": "pattern",
+   "pattern": "Founder CEOs stay; CEOs inherited from a prior sponsor get replaced at about 13-15 months. Retained: Danehy (Fair Harbor), Taylor (S+H, through exit), Bleeker (BPI), Buckwalter (Punctual Pros), Duquette (CET). Replaced: Simmons became Haas at Thomas (Apr 2023, ~15 months); Naidoo became Britt at Frontline (Jan 2026, ~13.5 months). Each outgoing CEO moved to the board, and Simmons joined BSP's Executive Board.",
+   "evidence_deal_ids": [
+    "deal-fh",
+    "deal-sh",
+    "deal-bpi",
+    "deal-pp",
+    "deal-cet",
+    "deal-ts",
+    "deal-fl"
+   ],
+   "strength": "strong",
+   "implication_for_next_deals": "For a secondary, underwrite a CEO-succession option (an operator from the Executive Board or the network) by month 12. For a founder deal, the founder's willingness to stay 3-5 years and run M&A is a gating item.",
+   "source_urls": [
+    "https://www.prnewswire.com/news-releases/thomas-scientific-appoints-stan-haas-to-president-and-chief-executive-officer-301806043.html",
+    "https://www.prnewswire.com/news-releases/frontline-managed-services-appoints-tim-britt-as-chief-executive-officer-302670506.html",
+    "https://www.franchisetimes.com/franchise_mergers_and_acquisitions/broad-sky-partners-acquires-large-authority-brands-operator/article_9c40f990-139e-11ef-a7c2-5bd16306f779.html",
+    "https://broadskypartners.com/team/"
+   ],
+   "source_url": "https://www.prnewswire.com/news-releases/thomas-scientific-appoints-stan-haas-to-president-and-chief-executive-officer-301806043.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-first-addon-6-9m",
+   "kind": "pattern",
+   "pattern": "The first add-on closes 6-9 months after the company: Thomas NCI 6.1 months, BPI BOLDT 7.6, Punctual Pros Horvath 8.0, CET NuWave 8.0, S+H Market Street 9.0. Exceptions are Frontline (no add-on 22 months in, during a CEO change) and Fair Harbor (none).",
+   "evidence_deal_ids": [
+    "deal-ts-nci",
+    "deal-bpi-boldt",
+    "deal-pp-horvath",
+    "deal-cet-nuwave",
+    "deal-sh-msp",
+    "deal-fl",
+    "deal-fh"
+   ],
+   "strength": "strong",
+   "implication_for_next_deals": "Have a named, warm first add-on before signing a company. A target that can only be the company and never feeds one is less attractive.",
+   "source_urls": [
+    "https://www.prnewswire.com/news-releases/thomas-scientific-bolsters-distribution-and-sales-capabilities-with-acquisition-of-nci-301597482.html",
+    "https://bpigroup.com/bpi-adds-european-business-strategy-public-policy-and-communications-offering-with-acquisition-of-boldt/",
+    "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+    "https://comelectrical.com/commonwealth-electrical-technologies-acquires-nuwave-energy-solutions-a-full-service-design-build-energy-conservation-firm/",
+    "https://www.smith-howard.com/smith-howard-and-market-street-partners-join-forces/"
+   ],
+   "source_url": "https://www.prnewswire.com/news-releases/thomas-scientific-bolsters-distribution-and-sales-capabilities-with-acquisition-of-nci-301597482.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-addon-founder-small",
+   "kind": "pattern",
+   "pattern": "Add-ons are small, founder-, family- or partner-owned firms, usually under 150 people and often 10-60 (Day Associates 10, Smith Kesler 30+, NCI 60, BOLDT 50+, Fahrenheit 140+, Horton 120+). None of the 21 identified add-ons came from a PE seller.",
+   "evidence_deal_ids": [
+    "deal-ts-day",
+    "deal-ts-nci",
+    "deal-sh-skc",
+    "deal-bpi-boldt",
+    "deal-sh-fahrenheit",
+    "deal-cet-horton",
+    "deal-pp-horvath",
+    "deal-sh-jmm"
+   ],
+   "strength": "strong",
+   "implication_for_next_deals": "Build add-on pools from owner-operated firms that are succession-ready (founder age and tenure, family generation). Exclude sponsor-owned assets from tuck-in lists.",
+   "source_urls": [
+    "https://www.prnewswire.com/news-releases/thomas-scientific-expands-distribution-and-sales-capabilities-with-the-acquisition-of-day-associates-inc-301892907.html",
+    "https://www.smith-howard.com/smith-howard-acquires-smith-kesler-and-co/",
+    "https://www.prnewswire.com/news-releases/thomas-scientific-bolsters-distribution-and-sales-capabilities-with-acquisition-of-nci-301597482.html",
+    "https://bpigroup.com/bpi-adds-european-business-strategy-public-policy-and-communications-offering-with-acquisition-of-boldt/",
+    "https://www.smith-howard.com/smith-howard-acquires-fahrenheit-advisors/",
+    "https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/"
+   ],
+   "source_url": "https://www.prnewswire.com/news-releases/thomas-scientific-expands-distribution-and-sales-capabilities-with-the-acquisition-of-day-associates-inc-301892907.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-capability-plus-geo",
+   "kind": "pattern",
+   "pattern": "Add-ons alternate between geographic density and new capabilities. Geography: Market Street (TN), Smith Kesler (Carolinas), Horton Lee & Burnett (AL), BPS (SC), Quintana and Day (Northeast hub), Horvath (NJ). Capability: VIP (search), Fahrenheit (HCM), JMM (EBP audit), Geels Norton (cyber), Message House (research), Propper Daley (culture), Agado (sports), NuWave (energy-efficiency design/build), Horton (wastewater), Arrowhead (forensics end-market).",
+   "evidence_deal_ids": [
+    "deal-sh-msp",
+    "deal-sh-skc",
+    "deal-sh-hlb",
+    "deal-sh-bps",
+    "deal-ts-quintana",
+    "deal-ts-day",
+    "deal-pp-horvath",
+    "deal-sh-vip",
+    "deal-sh-fahrenheit",
+    "deal-sh-jmm",
+    "deal-sh-geels",
+    "deal-bpi-messagehouse",
+    "deal-bpi-propper",
+    "deal-bpi-agado",
+    "deal-cet-nuwave",
+    "deal-cet-horton",
+    "deal-ts-arrowhead"
+   ],
+   "strength": "strong",
+   "implication_for_next_deals": "Tag every candidate in the add-on target lists as geo-fill or capability and pace them in turn. A capability deal usually supports cross-selling into the existing base.",
+   "source_urls": [
+    "https://www.smith-howard.com/smith-howard-acquires-vip-search-and-vip-solutions-businesses/",
+    "https://www.smith-howard.com/smith-howard-acquires-fahrenheit-advisors/",
+    "https://www.smith-howard.com/smith-howard-welcomes-geels-norton-expanding-cyber-risk-audit-and-advisory-capabilities/",
+    "https://bpigroup.com/bpi-acquires-propper-daley-to-create-change-through-culture-first-strategies/",
+    "https://bpigroup.com/bpi-acquires-agado-communications-appoints-mark-jones-to-lead-sports-offering-strategy-and-growth/",
+    "https://comelectrical.com/commonwealth-electrical-technologies-acquires-nuwave-energy-solutions-a-full-service-design-build-energy-conservation-firm/",
+    "https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/",
+    "https://www.prnewswire.com/news-releases/thomas-scientific-broadens-portfolio-and-sales-expertise-with-the-acquisition-of-arrowhead-forensics-301961348.html"
+   ],
+   "source_url": "https://www.smith-howard.com/smith-howard-acquires-vip-search-and-vip-solutions-businesses/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-adjacent-then-leap",
+   "kind": "pattern",
+   "pattern": "Geographic expansion first fills the region next door, then makes one larger move. Punctual Pros went Central PA to Central NJ. CET went Worcester/Taunton to Norwell MA to Connecticut, and the CEO has ruled out NYC. S+H went Atlanta to TN, VA, Carolinas and AL before going national at exit. BPI went DC to Brussels and Berlin, then London, then LA and Miami.",
+   "evidence_deal_ids": [
+    "deal-pp-horvath",
+    "deal-cet-nuwave",
+    "deal-cet-horton",
+    "deal-sh-msp",
+    "deal-sh-skc",
+    "deal-sh-hlb",
+    "deal-bpi-boldt",
+    "deal-bpi-sevenhills",
+    "deal-bpi-propper"
+   ],
+   "strength": "moderate",
+   "implication_for_next_deals": "Score add-ons on distance to the nearest existing node, with a bonus for one new adjacent state per year. Respect stated management boundaries (CET: no NYC).",
+   "source_urls": [
+    "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+    "https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/",
+    "https://www.smith-howard.com/smith-howard-expands-southeastern-u-s-presence-with-acquisition-of-horton-lee-burnett/",
+    "https://bpigroup.com/bpi-adds-european-business-strategy-public-policy-and-communications-offering-with-acquisition-of-boldt/"
+   ],
+   "source_url": "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-spv-coinvest",
+   "kind": "pattern",
+   "pattern": "Larger companies each get a deal-named SPV, and co-invest scales with check size. Thomas: BSP-TS LP $257.1M plus Co-Invest I/II $95.5M. BPI: BSP-BPI Holdings $90.0M. Frontline: BSP-FL LP $137.0M plus Co-Invest $30.0M. CET: BSP-CET Co-Invest $7.5M from a single LP. Fair Harbor raised at the issuer level ($30.7M), and no SPV was found for Punctual Pros or S+H.",
+   "evidence_deal_ids": [
+    "deal-ts",
+    "deal-bpi",
+    "deal-fl",
+    "deal-cet",
+    "deal-fh",
+    "deal-pp",
+    "deal-sh"
+   ],
+   "strength": "moderate",
+   "implication_for_next_deals": "Against a $335M Fund I, any company needing more than ~$40M of equity probably needs a co-invest SPV. Pre-sound co-invest LPs, including Carlyle AlpInvest (Frontline), when sizing the next company.",
+   "source_urls": [
+    "https://www.sec.gov/Archives/edgar/data/1901071/000190107124000001/xslFormDX01/primary_doc.xml",
+    "https://www.sec.gov/Archives/edgar/data/1917661/000139834425008284/xslFormDX01/primary_doc.xml",
+    "https://www.sec.gov/Archives/edgar/data/1976569/000197656923000001/primary_doc.xml",
+    "https://www.sec.gov/Archives/edgar/data/2048389/000204839024000002/primary_doc.xml",
+    "https://www.sec.gov/Archives/edgar/data/2048390/000204839024000001/primary_doc.xml",
+    "https://www.sec.gov/Archives/edgar/data/2056574/000205657425000001/xslFormDX01/primary_doc.xml",
+    "https://www.sec.gov/Archives/edgar/data/1920023/000192002322000001/primary_doc.xml"
+   ],
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1901071/000190107124000001/xslFormDX01/primary_doc.xml",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-private-credit",
+   "kind": "pattern",
+   "pattern": "Debt comes from private-credit direct lenders, a different one on each company, structured as a unitranche with delayed-draw or amendment capacity for add-ons. Lenders: Apollo/MidCap at Thomas (a DDTL funded around the NCI add-on), PineBridge at BPI (facility amended the day the UK add-ons closed), PGIM at Punctual Pros ($1.4M undrawn DDTL), NXT and Audax at Frontline ($90M). No lender appears twice, and none was found for CET or S+H.",
+   "evidence_deal_ids": [
+    "deal-ts",
+    "deal-ts-nci",
+    "deal-bpi",
+    "deal-bpi-sevenhills",
+    "deal-pp",
+    "deal-fl"
+   ],
+   "strength": "strong",
+   "implication_for_next_deals": "Size the add-on delayed-draw line at close. Thomas's PIK amendment and 88%-of-par mark show the cost of entering at peak earnings with full leverage.",
+   "source_urls": [
+    "https://www.sec.gov/Archives/edgar/data/1278752/000127875222000004/ainv2022q310-q.htm",
+    "https://www.sec.gov/Archives/edgar/data/1278752/000095017023003448/mfic-20221231.htm",
+    "https://www.sec.gov/Archives/edgar/data/1278752/000119312526335848/mfic-20260630.htm",
+    "https://find-and-update.company-information.service.gov.uk/company/07078911/filing-history",
+    "https://www.sec.gov/Archives/edgar/data/1923622/000119312526349252/ck0001923622-20260630.htm",
+    "https://www.sfnet.com/home/chapters/canada/news-detail/2024/12/23/audax-private-debt-provides-financing-to-support-broad-sky-partners-acquisition-of-frontline-managed-services",
+    "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history"
+   ],
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000127875222000004/ainv2022q310-q.htm",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-repeat-advisors",
+   "kind": "pattern",
+   "pattern": "The same buy-side advisers recur. Berenson worked 4 companies (Thomas, BPI, Frontline, CET) and BOLDT. Harris Williams worked 2 (Punctual Pros, Frontline), Morrison Cohen 5 companies plus the S+H exit, and Greenberg Traurig Punctual Pros, CET and NuWave. Counsel splits by deal team: Morrison Cohen on business-services and consumer deals, Greenberg Traurig on residential and infrastructure.",
+   "evidence_deal_ids": [
+    "deal-ts",
+    "deal-bpi",
+    "deal-fl",
+    "deal-cet",
+    "deal-bpi-boldt",
+    "deal-pp",
+    "deal-fh",
+    "deal-sh",
+    "deal-sh-exit",
+    "deal-cet-nuwave"
+   ],
+   "strength": "strong",
+   "implication_for_next_deals": "Berenson and Harris Williams coverage bankers are the people most likely to see BSP's next company. Brief them on the theme map, and expect Berenson on any $100M+ EV deal.",
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+    "https://bpigroup.com/bpi-adds-european-business-strategy-public-policy-and-communications-offering-with-acquisition-of-boldt/",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+    "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-banked-platforms-proprietary-addons",
+   "kind": "pattern",
+   "pattern": "Anchor companies are bought in sell-side processes: 6 of 7 had a named sell-side adviser (Jefferies/Baird, PwC CF, Koltin, Boxwood, Guggenheim, FMI), and Punctual Pros ran to 'eight finalists'. Add-ons are mostly relationship-led: Horvath (relationship of more than a decade), Geels Norton (years of partnership), Quintana ('Thomas approached us'), and a Carlyle-era program in which Harvey & Company initiated proprietary add-ons for Thomas.",
+   "evidence_deal_ids": [
+    "deal-ts",
+    "deal-fh",
+    "deal-sh",
+    "deal-pp",
+    "deal-fl",
+    "deal-cet",
+    "deal-pp-horvath",
+    "deal-sh-geels",
+    "deal-ts-quintana"
+   ],
+   "strength": "moderate",
+   "implication_for_next_deals": "Win anchor acquisitions through thematic preparation and banker relationships. Build add-on funnels through portfolio-company CEO relationships, outbound owner outreach and possibly a retained search firm.",
+   "source_urls": [
+    "https://www.franchisetimes.com/franchise_mergers_and_acquisitions/broad-sky-partners-acquires-large-authority-brands-operator/article_9c40f990-139e-11ef-a7c2-5bd16306f779.html",
+    "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+    "https://www.smith-howard.com/smith-howard-welcomes-geels-norton-expanding-cyber-risk-audit-and-advisory-capabilities/",
+    "https://www.prnewswire.com/news-releases/thomas-scientific-expands-distribution-and-sales-capabilities-with-the-acquisition-of-quintana-supply-301891643.html",
+    "https://harveyllc.com/harvey-company-initiates-fourth-deal-thomas-scientific/"
+   ],
+   "source_url": "https://www.franchisetimes.com/franchise_mergers_and_acquisitions/broad-sky-partners-acquires-large-authority-brands-operator/article_9c40f990-139e-11ef-a7c2-5bd16306f779.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-exit-growth-equity",
+   "kind": "pattern",
+   "pattern": "The one exit follows a clear sequence: a regional founder-led firm, 9 add-ons over 3.7 years, investment in tech, AI and an India delivery center, then a sale to a larger growth-equity sponsor (TPG Growth) run by William Blair and Baird. Headcount went from ~100 to ~800 and revenue grew nearly 4x.",
+   "evidence_deal_ids": [
+    "deal-sh",
+    "deal-sh-exit",
+    "deal-sh-msp",
+    "deal-sh-fahrenheit",
+    "deal-sh-geels"
+   ],
+   "strength": "moderate",
+   "implication_for_next_deals": "Plan exits around a 3.5-4.5 year hold and a sponsor buyer. A visible tech/AI and offshore-delivery story was part of TPG's quoted rationale. By hold length and add-on count, BPI (3.4 years, 6 add-ons) looks closest to exit-ready.",
+   "source_urls": [
+    "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/",
+    "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/"
+   ],
+   "source_url": "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-carlyle-midocean-network",
+   "kind": "pattern",
+   "pattern": "Connections run through Carlyle and MidOcean. The seller and management of Thomas knew BSP's partners from their Carlyle roles. Carlyle AlpInvest co-invested $12.5M directly in Frontline. Zachem, Glucksman, Kiser, Narain and RJ David are Carlyle alumni, and Jodi Kahn was a Carlyle operating advisor. Zachem (14 years) and Marlow came from MidOcean, whose theme-driven, operating-partner model and franchise-services focus BSP mirrors. Guggenheim sold Frontline to BSP and later advised TPG on buying S+H; Baird advised Carlyle on Thomas and co-advised the S+H sale.",
+   "evidence_deal_ids": [
+    "deal-ts",
+    "deal-fl",
+    "deal-sh-exit"
+   ],
+   "strength": "strong",
+   "implication_for_next_deals": "Look first at assets held by Carlyle and MidOcean-adjacent sponsors and by BV- or Svoboda-style lower-middle-market sponsors. Treat Guggenheim and Baird as two-way counterparties (they sell to BSP and buy from BSP).",
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+    "https://www.sec.gov/Archives/edgar/data/1899610/000189961026000006/capm_202603xn-csr.htm",
+    "https://broadskypartners.com/team/tyler-zachem/",
+    "https://broadskypartners.com/broad-sky-partners-appoints-rj-david-as-managing-director/",
+    "https://broadskypartners.com/team/",
+    "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/",
+    "https://www.carlyle.com/media-room/news-release-archive/carlyle-announces-sale-thomas-scientific-broad-sky-partners"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-check-size-downshift",
+   "kind": "pattern",
+   "pattern": "After the first deal, check sizes moved down market. Thomas used ~$236M of equity at close (with co-invest) and is now the stressed position (PIK amendment, loan at 88% of par, common marked near zero). Later checks were smaller: Fair Harbor $30.7M, BPI $90M, Punctual Pros an estimated $8-15M, CET an estimated $25-45M. The exception is Frontline at $137M+$30M, a high-recurring-revenue asset.",
+   "evidence_deal_ids": [
+    "deal-ts",
+    "deal-fh",
+    "deal-bpi",
+    "deal-pp",
+    "deal-cet",
+    "deal-fl"
+   ],
+   "strength": "moderate",
+   "implication_for_next_deals": "Default entry is a $2-20M EBITDA portfolio company at a sub-$100M EV, built up by add-ons. Go large only with >85% recurring revenue (Frontline-type) and avoid peak-cycle earnings (Thomas's COVID-testing bump).",
+   "source_urls": [
+    "https://www.sec.gov/Archives/edgar/data/1901071/000190107124000001/xslFormDX01/primary_doc.xml",
+    "https://www.sec.gov/Archives/edgar/data/1278752/000119312526335848/mfic-20260630.htm",
+    "https://www.sec.gov/Archives/edgar/data/1920023/000192002322000001/primary_doc.xml",
+    "https://www.sec.gov/Archives/edgar/data/1976569/000197656923000001/primary_doc.xml",
+    "https://www.sec.gov/Archives/edgar/data/2048389/000204839024000002/primary_doc.xml",
+    "https://www.sec.gov/Archives/edgar/data/2056574/000205657425000001/xslFormDX01/primary_doc.xml",
+    "https://frontlinems.com/press/frontline-managed-services-acquisition-targets/"
+   ],
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1901071/000190107124000001/xslFormDX01/primary_doc.xml",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-operator-boards",
+   "kind": "pattern",
+   "pattern": "Operators are placed on boards at entry: Lynn Calpeter (BSP operating partner) chairs Thomas, Roberta Bowman (ESG operating partner) at Fair Harbor, outside director Kelly Romano (ex-UTC, ex-AE Industrial operating partner) at Punctual Pros, and retail veterans added to Fair Harbor's board. The Portfolio Resource Group, or PRG (Jodi Kahn, Sam Pawliger, Georgette Kiser, Aditya Narain) runs the growth plan.",
+   "evidence_deal_ids": [
+    "deal-ts",
+    "deal-fh",
+    "deal-pp"
+   ],
+   "strength": "moderate",
+   "implication_for_next_deals": "Name the board chair and the PRG workstreams (tech/ops, finance, pricing, recruiting) in the first-round letter. Sellers cited BSP's 'dedicated operating resources' as a reason to choose it.",
+   "source_urls": [
+    "https://www.prnewswire.com/news-releases/thomas-scientific-appoints-stan-haas-to-president-and-chief-executive-officer-301806043.html",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+    "https://www.sec.gov/Archives/edgar/data/884614/000155837024016395/ugi-20250131xdef14a.htm",
+    "https://broadskypartners.com/strategy/"
+   ],
+   "source_url": "https://www.prnewswire.com/news-releases/thomas-scientific-appoints-stan-haas-to-president-and-chief-executive-officer-301806043.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pat-rollover-culture",
+   "kind": "pattern",
+   "pattern": "'People-first' and culture language is used as a screening filter and as a closing tool, alongside seller equity rollover. BSP's own quotes cite 'people-first culture' at BPI and Punctual Pros. Founders roll into the company (365 Sherpas sellers become BPI shareholders; Svoboda and BV roll). S+H and add-on sellers repeatedly say culture fit decided the deal.",
+   "evidence_deal_ids": [
+    "deal-bpi",
+    "deal-pp",
+    "deal-bpi-365sherpas",
+    "deal-fl",
+    "deal-sh-msp",
+    "deal-sh-fahrenheit",
+    "deal-sh-skc"
+   ],
+   "strength": "moderate",
+   "implication_for_next_deals": "Offer founders of add-ons rollover into the portfolio company, not only cash, and test culture fit before price. In professional services, rollover is the retention mechanism.",
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+    "https://bpigroup.com/bpi-strengthens-transatlantic-corporate-affairs-offer-with-acquisition-of-365-sherpas/",
+    "https://www.smith-howard.com/smith-howard-and-market-street-partners-join-forces/",
+    "https://www.smith-howard.com/smith-howard-acquires-fahrenheit-advisors/",
+    "https://www.smith-howard.com/smith-howard-acquires-smith-kesler-and-co/"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "crit-essential",
+   "kind": "criterion",
+   "criterion": "Sector essentiality (non-discretionary demand)",
+   "weight_pct": 15,
+   "test": "Share of revenue tied to repair, replace, compliance, regulated or mission-critical outsourced work. Measure from service-line mix on the website, NAICS code and customer type, and for residential services the repair-vs-install mix and Google review volume.",
+   "scoring_bands": {
+    "5": ">80% non-discretionary (repair, compliance, managed services)",
+    "3": "50-80%",
+    "1": "<50% or discretionary consumer product"
+   },
+   "evidence_deal_ids": [
+    "deal-pp",
+    "deal-fl",
+    "deal-cet",
+    "deal-sh",
+    "deal-fh"
+   ],
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+    "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "crit-recurring",
+   "kind": "criterion",
+   "criterion": "Recurring or repeat revenue and contract visibility",
+   "weight_pct": 12,
+   "test": "Percent contracted or recurring revenue (Frontline 92-93% on 3-5 year contracts); membership/maintenance-plan penetration for home services; repeat audit/tax clients for CPA firms; consumables share for distribution. Sources: CEO interviews, FDD Item 19, service-agreement counts on the website.",
+   "scoring_bands": {
+    "5": ">=85% recurring",
+    "3": "40-85%",
+    "1": "<40% project/one-off"
+   },
+   "evidence_deal_ids": [
+    "deal-fl",
+    "deal-sh",
+    "deal-ts",
+    "deal-pp",
+    "deal-cet"
+   ],
+   "source_urls": [
+    "https://frontlinems.com/press/frontline-managed-services-acquisition-targets/",
+    "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/"
+   ],
+   "source_url": "https://frontlinems.com/press/frontline-managed-services-acquisition-targets/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "crit-fragmentation",
+   "kind": "criterion",
+   "criterion": "Fragmentation and add-on runway",
+   "weight_pct": 15,
+   "test": "Count of owner-operated firms in the sub-sector within 150 miles of the company (ZoomInfo/Census CBP establishments; add-on target lists). BSP pace is 1-2.4 add-ons per company-year, so the target is 10+ actionable candidates.",
+   "scoring_bands": {
+    "5": ">=25 independent targets in footprint",
+    "3": "10-24",
+    "1": "<10"
+   },
+   "evidence_deal_ids": [
+    "deal-sh",
+    "deal-bpi",
+    "deal-ts",
+    "deal-cet",
+    "deal-pp"
+   ],
+   "source_urls": [
+    "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/",
+    "https://bpigroup.com/bpi-strengthens-transatlantic-corporate-affairs-offer-with-acquisition-of-365-sherpas/",
+    "https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/"
+   ],
+   "source_url": "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "crit-founder-transition",
+   "kind": "criterion",
+   "criterion": "Founder or management transition readiness, with a CEO who will stay",
+   "weight_pct": 10,
+   "test": "Founder or family owner with long tenure who wants a partner rather than a full exit (rollover appetite). For a secondary, an identified CEO-succession bench. Signals: founder age and tenure, generation (Horton is third-generation), named second-tier leaders, a sell-side adviser engaged.",
+   "scoring_bands": {
+    "5": "Founder staying 3-5 years and leading M&A, plus a successor identified",
+    "3": "Founder staying, thin bench",
+    "1": "Owner exiting fully, no successor"
+   },
+   "evidence_deal_ids": [
+    "deal-pp",
+    "deal-cet",
+    "deal-sh",
+    "deal-ts",
+    "deal-fl",
+    "deal-cet-horton"
+   ],
+   "source_urls": [
+    "https://www.franchisetimes.com/franchise_mergers_and_acquisitions/broad-sky-partners-acquires-large-authority-brands-operator/article_9c40f990-139e-11ef-a7c2-5bd16306f779.html",
+    "https://www.prnewswire.com/news-releases/thomas-scientific-appoints-stan-haas-to-president-and-chief-executive-officer-301806043.html",
+    "https://www.prnewswire.com/news-releases/frontline-managed-services-appoints-tim-britt-as-chief-executive-officer-302670506.html",
+    "https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/"
+   ],
+   "source_url": "https://www.franchisetimes.com/franchise_mergers_and_acquisitions/broad-sky-partners-acquires-large-authority-brands-operator/article_9c40f990-139e-11ef-a7c2-5bd16306f779.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "crit-size-band",
+   "kind": "criterion",
+   "criterion": "Size band (entry and add-on)",
+   "weight_pct": 8,
+   "test": "Portfolio company: est. EBITDA $2-20M core (observed estimates from ~$2-3M at Punctual Pros to $16-20M at Frontline; Thomas at $40-55M was the outlier), equity check $8-90M with SPV co-invest above ~$40M. Add-on: $1-5M EBITDA or 10-150 employees (Frontline's stated tuck-in ~$5M revenue / $1-2M EBITDA). Estimate via PPP payroll, headcount x revenue-per-employee and Form D amounts.",
+   "scoring_bands": {
+    "5": "Portfolio company $3-20M EBITDA / add-on $1-5M",
+    "3": "Portfolio company $2-3M or $20-40M",
+    "1": "<$2M or >$40M"
+   },
+   "evidence_deal_ids": [
+    "deal-pp",
+    "deal-cet",
+    "deal-bpi",
+    "deal-fl",
+    "deal-ts",
+    "deal-ts-day",
+    "deal-cet-horton"
+   ],
+   "source_urls": [
+    "https://frontlinems.com/press/frontline-managed-services-acquisition-targets/",
+    "https://www.sec.gov/Archives/edgar/data/1901071/000190107124000001/xslFormDX01/primary_doc.xml",
+    "https://www.sec.gov/Archives/edgar/data/2056574/000205657425000001/xslFormDX01/primary_doc.xml",
+    "https://www.sec.gov/Archives/edgar/data/1923622/000119312526349252/ck0001923622-20260630.htm"
+   ],
+   "source_url": "https://frontlinems.com/press/frontline-managed-services-acquisition-targets/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "crit-geo-adjacency",
+   "kind": "criterion",
+   "criterion": "Geographic adjacency, with a regional champion that can go national",
+   "weight_pct": 8,
+   "test": "Straight-line miles to the nearest portfolio company node (<=60 mi best). Regional share in the home market; one new adjacent state or metro per year. Respect management-stated boundaries (CET: New England only, no NYC).",
+   "scoring_bands": {
+    "5": "<=60 mi or fills a named gap",
+    "3": "60-150 mi",
+    "1": ">150 mi with no node"
+   },
+   "evidence_deal_ids": [
+    "deal-pp-horvath",
+    "deal-cet-nuwave",
+    "deal-cet-horton",
+    "deal-sh-skc",
+    "deal-sh-hlb"
+   ],
+   "source_urls": [
+    "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+    "https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/",
+    "https://www.smith-howard.com/smith-howard-expands-southeastern-u-s-presence-with-acquisition-of-horton-lee-burnett/"
+   ],
+   "source_url": "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "crit-thematic-tailwind",
+   "kind": "criterion",
+   "criterion": "Thematic tailwind that BSP research has already identified",
+   "weight_pct": 10,
+   "test": "The target sits inside a theme BSP has publicly named (outsourcing and workforce virtualization; energy capacity and critical infrastructure; legal-IT outsourcing and cyber; housing-stock and weather-driven home services; transatlantic policy complexity). Evidence: a public BSP quote or strategy-page sector list plus a measurable driver (permits, deeds, regulation, rate cases).",
+   "scoring_bands": {
+    "5": "Named BSP theme plus a measurable driver",
+    "3": "Adjacent to a named theme",
+    "1": "No theme"
+   },
+   "evidence_deal_ids": [
+    "deal-cet",
+    "deal-sh",
+    "deal-fl",
+    "deal-bpi",
+    "deal-pp"
+   ],
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+    "https://broadskypartners.com/strategy/"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "crit-tech-upside",
+   "kind": "criterion",
+   "criterion": "Tech-enablement / AI upside",
+   "weight_pct": 7,
+   "test": "Gap between current tooling and best practice: field-service software, CRM, AI service desk, offshore delivery. S+H's exit cited AI and an India delivery center; Frontline launched the HELIX AI service desk; BPI has ChangeOS. Check job posts, vendor case studies and web stack.",
+   "scoring_bands": {
+    "5": "Clear 1+ turn multiple case from tech/offshore",
+    "3": "Partial",
+    "1": "Already fully digitized or not applicable"
+   },
+   "evidence_deal_ids": [
+    "deal-sh-exit",
+    "deal-fl",
+    "deal-bpi"
+   ],
+   "source_urls": [
+    "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/",
+    "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/"
+   ],
+   "source_url": "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "crit-mgmt-culture",
+   "kind": "criterion",
+   "criterion": "Management depth and culture fit ('people-first')",
+   "weight_pct": 7,
+   "test": "Named leaders below the CEO, low key-person concentration, retention evidence (Glassdoor, tenure in releases), and whether culture fit appears in the seller's own language. BSP quotes cite 'people-first culture' at BPI and Punctual Pros.",
+   "scoring_bands": {
+    "5": "Deep bench and documented culture",
+    "3": "Some bench",
+    "1": "Single key person"
+   },
+   "evidence_deal_ids": [
+    "deal-bpi",
+    "deal-pp",
+    "deal-sh-msp",
+    "deal-sh-fahrenheit"
+   ],
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+    "https://www.smith-howard.com/smith-howard-and-market-street-partners-join-forces/"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "crit-downside",
+   "kind": "criterion",
+   "criterion": "Downside protection: earnings quality, cyclicality and leverage",
+   "weight_pct": 8,
+   "test": "Normalize for one-off peaks (Thomas COVID testing: federal revenue fell from $84-91M to $7-8M a year; BPI election-cycle billings). Leverage <=5x at entry with a DDTL for add-ons. Customer concentration <10%. Watch BDC marks after close.",
+   "scoring_bands": {
+    "5": "Stable earnings, <=4.5x leverage, low concentration",
+    "3": "Some cyclicality",
+    "1": "Peak-cycle earnings or >6x"
+   },
+   "evidence_deal_ids": [
+    "deal-ts",
+    "deal-bpi",
+    "deal-pp",
+    "deal-fl"
+   ],
+   "source_urls": [
+    "https://www.sec.gov/Archives/edgar/data/1278752/000119312526335848/mfic-20260630.htm",
+    "https://www.sec.gov/Archives/edgar/data/1923622/000119312526349252/ck0001923622-20260630.htm",
+    "https://www.sfnet.com/home/chapters/canada/news-detail/2024/12/23/audax-private-debt-provides-financing-to-support-broad-sky-partners-acquisition-of-frontline-managed-services"
+   ],
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000119312526335848/mfic-20260630.htm",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "src-berenson",
+   "kind": "sourcing_channel",
+   "channel": "Berenson & Company",
+   "channel_type": "buy_side_banker",
+   "roles": [
+    {
+     "deal_id": "deal-ts",
+     "role": "financial advisor to BSP",
+     "date": "2022-01-27"
+    },
+    {
+     "deal_id": "deal-bpi",
+     "role": "financial advisor to BSP",
+     "date": "2023-04-27"
+    },
+    {
+     "deal_id": "deal-bpi-boldt",
+     "role": "advisor on the deal",
+     "date": "2023-12-14"
+    },
+    {
+     "deal_id": "deal-fl",
+     "role": "buy-side advisor (with Harris Williams)",
+     "date": "2024-12-11"
+    },
+    {
+     "deal_id": "deal-cet",
+     "role": "buy-side advisor (with Stifel)",
+     "date": "2025-03-19"
+    }
+   ],
+   "deal_count": 5,
+   "implication": "BSP's most-used buy-side bank, on every larger company except Punctual Pros and Fair Harbor. It is the most likely channel for BSP's next company.",
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+    "https://bpigroup.com/bpi-adds-european-business-strategy-public-policy-and-communications-offering-with-acquisition-of-boldt/",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "src-harris-williams",
+   "kind": "sourcing_channel",
+   "channel": "Harris Williams",
+   "channel_type": "buy_side_banker",
+   "roles": [
+    {
+     "deal_id": "deal-pp",
+     "role": "buy-side advisor",
+     "date": "2024-04-03"
+    },
+    {
+     "deal_id": "deal-fl",
+     "role": "buy-side advisor (with Berenson)",
+     "date": "2024-12-11"
+    }
+   ],
+   "deal_count": 2,
+   "implication": "Used on the residential-services and legal-IT deals; HW's consumer and business-services coverage sees lower-middle-market home-services processes.",
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "src-stifel",
+   "kind": "sourcing_channel",
+   "channel": "Stifel",
+   "channel_type": "buy_side_banker",
+   "roles": [
+    {
+     "deal_id": "deal-cet",
+     "role": "buy-side advisor (with Berenson)",
+     "date": "2025-03-19"
+    }
+   ],
+   "deal_count": 1,
+   "implication": "Infrastructure/electrical coverage; first appearance came with RJ David's infrastructure theme.",
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "src-raymond-james",
+   "kind": "sourcing_channel",
+   "channel": "Raymond James",
+   "channel_type": "buy_side_banker",
+   "roles": [
+    {
+     "deal_id": "deal-fh",
+     "role": "financial advisor to BSP",
+     "date": "2022-03-23"
+    }
+   ],
+   "deal_count": 1,
+   "implication": "Consumer coverage; used only on the 2022 consumer deal.",
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "src-koltin",
+   "kind": "sourcing_channel",
+   "channel": "Koltin Consulting Group (Allan Koltin)",
+   "channel_type": "accounting_ma_consultant",
+   "roles": [
+    {
+     "deal_id": "deal-sh",
+     "role": "exclusive financial adviser",
+     "date": "2022-11-15"
+    },
+    {
+     "deal_id": "deal-sh-msp",
+     "role": "advised both firms",
+     "date": "2023-08-15"
+    },
+    {
+     "deal_id": "deal-sh-skc",
+     "role": "advised on the transaction",
+     "date": "2025-01-31"
+    }
+   ],
+   "deal_count": 3,
+   "implication": "In CPA-firm M&A the specialist intermediary sourced both the company and later add-ons. Sector-specialist brokers are worth courting in each theme.",
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
+    "https://www.smith-howard.com/smith-howard-and-market-street-partners-join-forces/",
+    "https://www.smith-howard.com/smith-howard-acquires-smith-kesler-and-co/"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "src-sell-side-banks",
+   "kind": "sourcing_channel",
+   "channel": "Sell-side advisers BSP bought from (Jefferies/Baird, PwC CF, Boxwood, Guggenheim, FMI, Founders Advisors)",
+   "channel_type": "sell_side_banker",
+   "roles": [
+    {
+     "deal_id": "deal-ts",
+     "role": "Jefferies (lead) and Baird for Carlyle",
+     "date": "2022-01-27"
+    },
+    {
+     "deal_id": "deal-fh",
+     "role": "PwC Corporate Finance for Fair Harbor",
+     "date": "2022-03-23"
+    },
+    {
+     "deal_id": "deal-pp",
+     "role": "Boxwood Partners exclusive sell-side",
+     "date": "2024-04-03"
+    },
+    {
+     "deal_id": "deal-fl",
+     "role": "Guggenheim Securities exclusive sell-side for BV",
+     "date": "2024-12-11"
+    },
+    {
+     "deal_id": "deal-cet",
+     "role": "FMI Capital Advisors exclusive sell-side",
+     "date": "2025-03-19"
+    },
+    {
+     "deal_id": "deal-cet-nuwave",
+     "role": "FMI Capital Advisors exclusive sell-side",
+     "date": "2025-10-07"
+    },
+    {
+     "deal_id": "deal-sh-hlb",
+     "role": "Founders Advisors for Horton, Lee & Burnett",
+     "date": "2025-09-03"
+    }
+   ],
+   "deal_count": 7,
+   "implication": "Anchor companies come out of banked processes. FMI (electrical/construction) sold both CET and NuWave to BSP, so sector-specialist sell-side banks are repeat counterparties for add-ons.",
+   "source_urls": [
+    "https://www.carlyle.com/media-room/news-release-archive/carlyle-announces-sale-thomas-scientific-broad-sky-partners",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+    "https://comelectrical.com/commonwealth-electrical-technologies-acquires-nuwave-energy-solutions-a-full-service-design-build-energy-conservation-firm/",
+    "https://www.smith-howard.com/smith-howard-expands-southeastern-u-s-presence-with-acquisition-of-horton-lee-burnett/"
+   ],
+   "source_url": "https://www.carlyle.com/media-room/news-release-archive/carlyle-announces-sale-thomas-scientific-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "src-exit-banks",
+   "kind": "sourcing_channel",
+   "channel": "Exit advisers (William Blair, Baird) and buyer adviser (Guggenheim)",
+   "channel_type": "exit_banker",
+   "roles": [
+    {
+     "deal_id": "deal-sh-exit",
+     "role": "William Blair lead and Baird co-financial advisor to S+H and BSP; Guggenheim to TPG",
+     "date": "2026-06-09"
+    }
+   ],
+   "deal_count": 1,
+   "implication": "Baird and Guggenheim appear on both sides of BSP deals (buy and sell). William Blair is the reference exit bank for professional services.",
+   "source_urls": [
+    "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/",
+    "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/"
+   ],
+   "source_url": "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "src-counsel",
+   "kind": "sourcing_channel",
+   "channel": "Deal counsel: Morrison Cohen LLP and Greenberg Traurig",
+   "channel_type": "legal_counsel",
+   "roles": [
+    {
+     "deal_id": "deal-ts",
+     "role": "Morrison Cohen, legal to BSP",
+     "date": "2022-01-27"
+    },
+    {
+     "deal_id": "deal-fh",
+     "role": "Morrison Cohen, legal to BSP",
+     "date": "2022-03-23"
+    },
+    {
+     "deal_id": "deal-sh",
+     "role": "Morrison Cohen, legal to BSP",
+     "date": "2022-11-15"
+    },
+    {
+     "deal_id": "deal-bpi",
+     "role": "Morrison Cohen, legal to BSP",
+     "date": "2023-04-27"
+    },
+    {
+     "deal_id": "deal-fl",
+     "role": "Morrison Cohen, legal to BSP",
+     "date": "2024-12-11"
+    },
+    {
+     "deal_id": "deal-sh-exit",
+     "role": "Morrison Cohen, counsel to S+H and BSP",
+     "date": "2026-06-09"
+    },
+    {
+     "deal_id": "deal-pp",
+     "role": "Greenberg Traurig, legal to BSP",
+     "date": "2024-04-03"
+    },
+    {
+     "deal_id": "deal-cet",
+     "role": "Greenberg Traurig, legal to BSP",
+     "date": "2025-03-19"
+    },
+    {
+     "deal_id": "deal-cet-nuwave",
+     "role": "Greenberg Traurig, legal to CET",
+     "date": "2025-10-07"
+    }
+   ],
+   "deal_count": 9,
+   "implication": "Counsel is not a sourcing channel, but which firm is engaged shows which deal team is running the deal.",
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+    "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "src-platform-ceo-relationships",
+   "kind": "sourcing_channel",
+   "channel": "Portfolio-company CEO and partner relationships (proprietary add-ons)",
+   "channel_type": "platform_relationship",
+   "roles": [
+    {
+     "deal_id": "deal-pp-horvath",
+     "role": "CEO relationship of more than a decade",
+     "date": "2024-12-03"
+    },
+    {
+     "deal_id": "deal-sh-geels",
+     "role": "long-time partner firm folded in",
+     "date": "2026-02-01"
+    },
+    {
+     "deal_id": "deal-ts-quintana",
+     "role": "Thomas approached the founders directly",
+     "date": "2023-08-01"
+    },
+    {
+     "deal_id": "deal-bpi-365sherpas",
+     "role": "BPI 'really studied the German market'; sellers roll into BPI equity",
+     "date": "2026-05-05"
+    }
+   ],
+   "deal_count": 4,
+   "implication": "Add-ons mostly come from people the portfolio-company CEO already knows. Each portfolio-company CEO's relationship map is the first add-on list.",
+   "source_urls": [
+    "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+    "https://www.smith-howard.com/smith-howard-welcomes-geels-norton-expanding-cyber-risk-audit-and-advisory-capabilities/",
+    "https://www.prnewswire.com/news-releases/thomas-scientific-expands-distribution-and-sales-capabilities-with-the-acquisition-of-quintana-supply-301891643.html",
+    "https://bpigroup.com/bpi-strengthens-transatlantic-corporate-affairs-offer-with-acquisition-of-365-sherpas/",
+    "https://www.franchisetimes.com/franchise_mergers_and_acquisitions/broad-sky-partners-acquires-large-authority-brands-operator/article_9c40f990-139e-11ef-a7c2-5bd16306f779.html"
+   ],
+   "source_url": "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "src-harvey",
+   "kind": "sourcing_channel",
+   "channel": "Harvey & Company (retained add-on search; Carlyle-era Thomas program)",
+   "channel_type": "proprietary_search",
+   "roles": [
+    {
+     "deal_id": "deal-ts",
+     "role": "Initiated four proprietary Thomas add-ons in six months for the sponsor at the time (Carlyle, 2017-2018)",
+     "date": "2018-05-12"
+    }
+   ],
+   "deal_count": 1,
+   "implication": "Part of the Thomas growth plan the BSP partners knew from Carlyle. A retained buy-side search mandate is a proven way to run a proprietary add-on program on a new company. Whether BSP-era Thomas deals used Harvey is not public.",
+   "source_urls": [
+    "https://harveyllc.com/harvey-company-initiates-fourth-deal-thomas-scientific/",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific"
+   ],
+   "source_url": "https://harveyllc.com/harvey-company-initiates-fourth-deal-thomas-scientific/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "src-thematic-research",
+   "kind": "sourcing_channel",
+   "channel": "In-house thematic research by the deal team",
+   "channel_type": "thematic_research",
+   "roles": [
+    {
+     "deal_id": "deal-cet",
+     "role": "'For over a year, our team has studied the electrical services sector'",
+     "date": "2025-03-19"
+    },
+    {
+     "deal_id": "deal-sh",
+     "role": "'a rapidly evolving space we’ve been watching for a long time'",
+     "date": "2022-11-15"
+    },
+    {
+     "deal_id": "deal-bpi",
+     "role": "'focused on the communications and advisory services space for some time'",
+     "date": "2023-04-27"
+    }
+   ],
+   "deal_count": 3,
+   "implication": "Theme-first origination: BSP picks a sector, then meets the leaders. Presenting a theme map is the way into their pipeline.",
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "src-capital-partners",
+   "kind": "sourcing_channel",
+   "channel": "Capital channels: Capital Constellation/Wafra GP stake, Asante placement agent, co-invest LPs (Carlyle AlpInvest)",
+   "channel_type": "capital_partner",
+   "roles": [
+    {
+     "deal_id": "deal-ts",
+     "role": "Capital Constellation strategic investment announced with the first deal",
+     "date": "2022-01-27"
+    },
+    {
+     "deal_id": "deal-fl",
+     "role": "Carlyle AlpInvest $12.5M direct equity co-invest",
+     "date": "2024-12-05"
+    }
+   ],
+   "deal_count": 2,
+   "implication": "Co-invest capacity sets the maximum company size. Carlyle AlpInvest and the Constellation members are the natural co-investors for a larger next deal.",
+   "source_urls": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+    "https://www.sec.gov/Archives/edgar/data/1899610/000189961026000006/capm_202603xn-csr.htm",
+    "https://www.sec.gov/Archives/edgar/data/1917706/000139834425008250/xslFormDX01/primary_doc.xml"
+   ],
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  }
+ ]
+}

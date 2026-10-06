@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design System · Broad Sky</title>
+<meta name="description" content="Every component of the Broad Sky Operating Intelligence design system, in light and dark.">
+<meta name="theme-color" content="#fbfaf7">
+<link rel="icon" href="../BSP_Logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/system.css?v=20261006122625">
+<style>
+  /* demo-only helpers (not part of the system) */
+  .demo-sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px}
+  .demo-sw div{border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);overflow:hidden;background:var(--sys-surface);font:500 11px/1.4 var(--sys-mono);color:var(--sys-mute)}
+  .demo-sw i{display:block;height:44px;background:var(--c)}
+  .demo-sw span{display:block;padding:7px 9px}
+  .demo-type>*+*{margin-top:14px}
+  .demo-type small{display:block;font:500 11px var(--sys-mono);color:var(--sys-mute);margin-bottom:4px}
+  .demo-sp{display:flex;flex-direction:column;gap:6px;font:500 11px var(--sys-mono);color:var(--sys-mute)}
+  .demo-sp div{display:flex;align-items:center;gap:10px}
+  .demo-sp i{display:block;height:10px;border-radius:3px;background:var(--sys-grad)}
+  .demo-rad{display:flex;flex-wrap:wrap;gap:12px}
+  .demo-rad div{width:84px;height:64px;display:grid;place-items:center;background:var(--sys-surface);border:1px solid var(--sys-line-2);font:500 11px var(--sys-mono);color:var(--sys-mute)}
+  .demo-h{margin:48px 0 16px;font:600 12px/1 var(--sys-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--sys-mute)}
+  .demo-h:first-child{margin-top:0}
+  .demo-raw{white-space:pre-wrap;font:500 13px/1.6 var(--sys-mono)}
+</style>
+</head>
+<body>
+<main id="main">
+  <nav class="sys-subnav" aria-label="On this page" data-co="pp">
+    <div class="sys-subnav-in">
+      <a class="sys-subnav-title" href="#main">Design system</a>
+      <div class="sys-subnav-links"><a href="#kit-light">Light</a><a href="#kit-dark">Dark</a><a href="#hz">Copy safety net</a><a href="#cta">Next step</a></div>
+      <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../app.html">Open in portal</a></div>
+    </div>
+  </nav>
+  <section class="sys-hero" aria-labelledby="hero-title">
+    <div class="sys-wrap">
+      <p class="sys-eyebrow"><span class="sys-dot sys-dot--live" aria-hidden="true"></span><b>Design system</b> · v1 · Oct 2026</p>
+      <h1 id="hero-title" class="sys-h1">One frame. <span class="sys-grad-text">Every page.</span></h1>
+      <p class="sys-lead">Tokens, frame and page scaffolding shared by the landing, the portal, the six concept sites, the OS pages, the growth plans and the theater. This page shows every component in light, then again in the dark console variant.</p>
+      <div class="sys-actions">
+        <a class="sys-btn sys-btn--primary" href="#kit-light">See the components <span aria-hidden="true">↓</span></a>
+        <a class="sys-btn sys-btn--secondary" href="#kit-dark">Dark variant</a>
+        <button class="sys-btn sys-btn--ghost" type="button" data-ask-demo>Ask the portfolio</button>
+      </div>
+      <div class="sys-kpis" role="list">
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Companies</span><span class="sys-kpi-value">6</span><span class="sys-kpi-sub">Broad Sky portfolio companies</span></div>
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Verified datasets</span><span class="sys-kpi-value">49</span><span class="sys-kpi-sub">Public record and licensed</span></div>
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Revenue upside</span><span class="sys-kpi-value">$41M<span class="sys-est">est.</span></span><span class="sys-kpi-sub"><span class="sys-delta sys-delta--up">▲ 12%</span> vs. plan</span></div>
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Calls missed after hours</span><span class="sys-kpi-value">27%<span class="sys-est sys-est--illus">illustrative</span></span><span class="sys-kpi-sub"><span class="sys-delta sys-delta--down">▼ 4 pts</span> since July</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sys-section" id="kit-light" aria-labelledby="kit-light-title">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">Light · default</p>
+        <h2 id="kit-light-title" class="sys-h2">Every component, light.</h2>
+        <p class="sys-lead">The off-white canvas, ink type and the orange-to-violet accent from the landing page. Company accents appear only on bars, dots and rules.</p>
+      </div>
+      <div class="demo-slot"></div>
+    </div>
+  </section>
+
+  <section class="sys-section" id="kit-dark" data-sys-theme="dark" aria-labelledby="kit-dark-title">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">Dark · portal console and theater</p>
+        <h2 id="kit-dark-title" class="sys-h2">The same components, dark.</h2>
+        <p class="sys-lead">Set data-sys-theme="dark" on the html element for a whole page, or on any section for a dark band. Type, spacing, radii and accents do not change.</p>
+      </div>
+      <div class="demo-slot"></div>
+    </div>
+  </section>
+
+  <section class="sys-section sys-section--alt" id="hz" aria-labelledby="hz-title">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">Copy safety net</p>
+        <h2 id="hz-title" class="sys-h2">No identifiers reach the reader.</h2>
+        <p class="sys-lead">Frame.humanize rewrites visible text after the frame mounts and again whenever a page renders new content. Code, keyboard keys and anything marked data-raw stay untouched.</p>
+      </div>
+      <div class="sys-grid sys-grid--2">
+        <div class="sys-card sys-card--flat">
+          <span class="sys-card-label">What the renderer wrote</span>
+          <p>Four lines that leak dataset keys, a file name, an agent code, a missing value and a failed number. The frame rewrites them in place before anyone sees them.</p>
+        </div>
+        <div class="sys-card">
+          <span class="sys-card-label">What the reader sees</span>
+          <p class="demo-raw" id="hz-out"></p>
+        </div>
+      </div>
+      <p class="sys-src"><b>Rule:</b> renderers should still write plain English; humanize is the net, not the plan. Inline code and anything marked data-raw stay as written.</p>
+    </div>
+  </section>
+
+  <section class="sys-cta" id="cta" aria-labelledby="cta-title">
+    <div class="sys-wrap">
+      <div class="sys-cta-in">
+        <div class="sys-cta-copy">
+          <h2 id="cta-title">Build the next page on the frame.</h2>
+          <p>Load system.css, call Frame.mount, use the sys- classes and pass the twelve-point checklist in UNIFIED.md.</p>
+        </div>
+        <div class="sys-actions">
+          <a class="sys-btn sys-btn--accent sys-btn--lg" href="../app.html">Open the portal</a>
+          <a class="sys-btn sys-btn--secondary sys-btn--lg" href="../redesigns/">Site concepts</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<template id="kit">
+  <h3 class="demo-h">Colour tokens</h3>
+  <div class="demo-sw">
+    <div><i style="--c:var(--sys-bg)"></i><span>--sys-bg</span></div>
+    <div><i style="--c:var(--sys-bg-2)"></i><span>--sys-bg-2</span></div>
+    <div><i style="--c:var(--sys-surface)"></i><span>--sys-surface</span></div>
+    <div><i style="--c:var(--sys-ink)"></i><span>--sys-ink</span></div>
+    <div><i style="--c:var(--sys-ink-2)"></i><span>--sys-ink-2</span></div>
+    <div><i style="--c:var(--sys-mute)"></i><span>--sys-mute</span></div>
+    <div><i style="--c:var(--sys-line-2)"></i><span>--sys-line-2</span></div>
+    <div><i style="--c:var(--sys-brand)"></i><span>--sys-brand</span></div>
+    <div><i style="--c:var(--sys-grad)"></i><span>--sys-grad</span></div>
+    <div><i style="--c:var(--sys-good)"></i><span>--sys-good</span></div>
+    <div><i style="--c:var(--sys-warn)"></i><span>--sys-warn</span></div>
+    <div><i style="--c:var(--sys-bad)"></i><span>--sys-bad</span></div>
+  </div>
+  <h3 class="demo-h">Company accents</h3>
+  <div class="demo-sw">
+    <div><i style="--c:var(--co-pp)"></i><span>--co-pp · Punctual Pros</span></div>
+    <div><i style="--c:var(--co-cet)"></i><span>--co-cet · CET</span></div>
+    <div><i style="--c:var(--co-fl)"></i><span>--co-fl · Frontline</span></div>
+    <div><i style="--c:var(--co-ts)"></i><span>--co-ts · Thomas Scientific</span></div>
+    <div><i style="--c:var(--co-bpi)"></i><span>--co-bpi · BPI</span></div>
+    <div><i style="--c:var(--co-fh)"></i><span>--co-fh · Fair Harbor</span></div>
+  </div>
+  <h3 class="demo-h">Type scale</h3>
+  <div class="sys-grid sys-grid--2 sys-grid--gap-lg">
+    <div class="demo-type">
+      <div><small>h1 · --sys-fs-3xl · 800</small><p class="sys-h1" style="margin:0">Six-state grid</p></div>
+      <div><small>h2 · --sys-fs-2xl · 800</small><p class="sys-h2">Ask like an operator</p></div>
+      <div><small>h3 · --sys-fs-xl · 700</small><p class="sys-h3">Horton wastewater pipeline</p></div>
+    </div>
+    <div class="demo-type">
+      <div><small>lead · --sys-fs-lg</small><p class="sys-lead" style="margin:0">Each question runs against the portal's own datasets and hands you the module where the work continues.</p></div>
+      <div><small>body · 16 / 1.6</small><p>Body copy is Inter 16px on a 1.6 line height, ink-2 for long runs and ink for emphasis.</p></div>
+      <div><small>kicker · mono 12 · .12em</small><p class="sys-kicker" style="margin:0">What it answers</p></div>
+      <div><small>numerals · mono tabular</small><p class="sys-num" style="font-size:22px;font-weight:600">$1,284,500 · 27.4% · 4,417</p></div>
+    </div>
+  </div>
+  <h3 class="demo-h">Spacing, radii, shadows</h3>
+  <div class="sys-grid sys-grid--3 sys-grid--gap-lg">
+    <div class="demo-sp">
+      <div><i style="width:4px"></i>sp-1 · 4</div><div><i style="width:8px"></i>sp-2 · 8</div><div><i style="width:12px"></i>sp-3 · 12</div><div><i style="width:16px"></i>sp-4 · 16</div><div><i style="width:24px"></i>sp-5 · 24</div><div><i style="width:32px"></i>sp-6 · 32</div><div><i style="width:48px"></i>sp-7 · 48</div><div><i style="width:64px"></i>sp-8 · 64</div><div><i style="width:96px"></i>sp-9 · 96</div><div><i style="width:128px"></i>sp-10 · 128</div>
+    </div>
+    <div class="demo-rad">
+      <div style="border-radius:var(--sys-r-xs)">xs · 6</div><div style="border-radius:var(--sys-r-sm)">sm · 10</div><div style="border-radius:var(--sys-r)">md · 16</div><div style="border-radius:var(--sys-r-lg)">lg · 24</div><div style="border-radius:var(--sys-r-pill)">pill</div>
+    </div>
+    <div class="demo-rad">
+      <div style="border-radius:var(--sys-r);box-shadow:var(--sys-sh-1)">sh-1</div><div style="border-radius:var(--sys-r);box-shadow:var(--sys-sh-2)">sh-2</div><div style="border-radius:var(--sys-r);box-shadow:var(--sys-sh-3)">sh-3</div>
+    </div>
+  </div>
+
+  <h3 class="demo-h">Buttons</h3>
+  <div class="sys-row">
+    <a class="sys-btn sys-btn--primary" href="#">Primary</a>
+    <a class="sys-btn sys-btn--secondary" href="#">Secondary</a>
+    <a class="sys-btn sys-btn--ghost" href="#">Ghost</a>
+    <a class="sys-btn sys-btn--accent" href="#">Accent</a>
+    <a class="sys-btn sys-btn--co" data-co="cet" href="#">Company</a>
+    <button class="sys-btn sys-btn--primary" type="button" disabled>Disabled</button>
+  </div>
+  <div class="sys-row" style="margin-top:12px">
+    <a class="sys-btn sys-btn--primary sys-btn--sm" href="#">Small</a>
+    <a class="sys-btn sys-btn--primary" href="#">Medium</a>
+    <a class="sys-btn sys-btn--primary sys-btn--lg" href="#">Large</a>
+  </div>
+
+  <h3 class="demo-h">Chips and badges</h3>
+  <div class="sys-chips">
+    <span class="sys-chip" data-co="pp">Punctual Pros</span><span class="sys-chip" data-co="cet">CET</span><span class="sys-chip" data-co="fl">Frontline</span><span class="sys-chip" data-co="ts">Thomas Scientific</span><span class="sys-chip" data-co="bpi">BPI</span><span class="sys-chip" data-co="fh">Fair Harbor</span>
+    <button class="sys-chip" type="button" aria-pressed="true">Selected</button><button class="sys-chip" type="button" aria-pressed="false">Filter</button><span class="sys-chip sys-chip--soft" data-co="ts">Soft accent</span>
+  </div>
+  <p style="margin-top:14px">Revenue run-rate $186M<span class="sys-est">est.</span> · sample ad spend $12K<span class="sys-est sys-est--illus">illustrative</span> · NWS alerts<span class="sys-est sys-est--live">live</span></p>
+
+  <h3 class="demo-h">Cards (grid 3, company accents)</h3>
+  <div class="sys-grid sys-grid--3">
+    <a class="sys-card" data-co="pp" href="#">
+      <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Punctual Pros · ServiceOS</span>
+      <span class="sys-card-title">Answer every call, book into dispatch</span>
+      <span class="sys-card-body">A 24/7 voice agent that books the job and pages the on-call tech in under two minutes.</span>
+      <span class="sys-card-foot"><span class="sys-num">$4.2M<span class="sys-est">est.</span></span><span>Open →</span></span>
+    </a>
+    <div class="sys-card" data-co="cet">
+      <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>CET · GridOS</span>
+      <span class="sys-card-title">Wastewater plants to call first</span>
+      <ul class="sys-card-list"><li>142 plants scored across six states</li><li>Clean Water SRF funding dates attached</li><li>Horton owns the relationship</li></ul>
+      <span class="sys-card-foot"><a href="#">Wastewater accounts →</a></span>
+    </div>
+    <div class="sys-card">
+      <span class="sys-card-label">Neutral card</span>
+      <span class="sys-card-title">Plain card without a company</span>
+      <span class="sys-card-body">Uses the brand accent for kickers and the neutral line for borders.</span>
+      <p class="sys-src"><b>Source:</b> county deed records, Sept 2026.</p>
+    </div>
+  </div>
+
+  <h3 class="demo-h">KPIs (grid 4)</h3>
+  <div class="sys-grid sys-grid--4">
+    <div class="sys-kpi" data-co="fl"><span class="sys-kpi-label">AM Law 200 clients</span><span class="sys-kpi-value">64</span><span class="sys-kpi-sub">Frontline today</span></div>
+    <div class="sys-kpi" data-co="ts"><span class="sys-kpi-label">Scored lab sites</span><span class="sys-kpi-value">27,118</span><span class="sys-kpi-sub">Target-account universe</span></div>
+    <div class="sys-kpi" data-co="bpi"><span class="sys-kpi-label">Retainer mix</span><span class="sys-kpi-value">58%<span class="sys-est">est.</span></span><span class="sys-kpi-sub"><span class="sys-delta sys-delta--up">▲ 9 pts</span> in 24 months</span></div>
+    <div class="sys-kpi" data-co="fh"><span class="sys-kpi-label">Repeat-purchase rate</span><span class="sys-kpi-value">31%<small>of buyers</small></span><span class="sys-kpi-sub">Year-round lines lift it</span></div>
+  </div>
+
+  <h3 class="demo-h">Table</h3>
+  <div class="sys-table-wrap">
+    <table class="sys-table">
+      <thead><tr><th>Add-on target</th><th>State</th><th class="sys-n">Revenue</th><th class="sys-n">Fit</th></tr></thead>
+      <tbody>
+        <tr><td>Keystone Comfort Services</td><td>PA</td><td class="sys-n">$14.2M<span class="sys-est">est.</span></td><td class="sys-n">92</td></tr>
+        <tr><td>Shore Point Plumbing</td><td>NJ</td><td class="sys-n">$8.9M<span class="sys-est">est.</span></td><td class="sys-n">88</td></tr>
+        <tr><td>Harbor Electric (null)</td><td>NJ</td><td class="sys-n">null</td><td class="sys-n">81</td></tr>
+      </tbody>
+      <caption>Source: Punctual Pros add-on targets, state licensing records, Sept 2026. Names illustrative.</caption>
+    </table>
+  </div>
+
+  <h3 class="demo-h">Notes</h3>
+  <div class="sys-stack">
+    <div class="sys-note sys-note--info"><span><b>How to read this.</b> Scores blend permits, population and drive time; higher is a better fit.</span></div>
+    <div class="sys-note sys-note--warn"><span><b>Estimate.</b> Revenue figures are modelled from headcount and public filings, not reported numbers.</span></div>
+    <div class="sys-note sys-note--good"><span><b>Verified.</b> Matched against state license records on 24 Sept 2026.</span></div>
+    <div class="sys-note sys-note--co" data-co="pp"><span><b>Punctual Pros.</b> Company-accented note for concept pages.</span></div>
+  </div>
+
+  <h3 class="demo-h">Prose</h3>
+  <div class="sys-prose">
+    <p>Long-form pages such as the memo and growth plans use <strong>sys-prose</strong>: 17px Inter on 1.7, a 68-character measure and <a href="#">underlined links</a>.</p>
+    <blockquote>Make Massachusetts and Connecticut one operating company before buying a third state.</blockquote>
+    <ul><li>Every estimate carries an est. badge.</li><li>Every chart or table ends with a provenance line.</li></ul>
+  </div>
+</template>
+
+<script type="module">
+  // stamp the component kit into the light and dark sections, then mount the frame
+  const kit = document.getElementById('kit');
+  document.querySelectorAll('.demo-slot').forEach(slot => slot.replaceWith(kit.content.cloneNode(true)));
+  const raw = 'Calls routed with book_job + page_on_call.\nCoverage from pp_sales_pa_a.json and cet_wwtp_targets (null).\nAgent ra-pp booked 41 jobs · null · in Lancaster.\nMedian household income: NaN%';
+  document.querySelectorAll('#hz-out').forEach(el => { el.textContent = raw; });
+  const theme = new URLSearchParams(location.search).get('theme') === 'dark' ? 'dark' : undefined;
+  const { Frame } = await import('../assets/frame.js?v=20261006122625');
+  Frame.mount({
+    co: null, theme, persona: 'portal', banner: true, crumbAside: 'Concept · Oct 2026',
+    crumb: [{ label: 'Home', href: './' }, { label: 'Site concepts', href: 'redesigns/' }, { label: 'Punctual Pros', co: 'pp', href: 'redesigns/punctual-pros/' }, { label: 'Design system' }],
+  });
+  document.querySelector('[data-ask-demo]').addEventListener('click', () => Frame.openChat());
+</script>
+</body>
+</html>

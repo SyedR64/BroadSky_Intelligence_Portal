@@ -1,6 +1,6 @@
 /* Thomas Scientific concept — shared catalog, FAQ, geography and helpers.
    Products and catalog numbers are ILLUSTRATIVE (concept only). Lab-site counts come from
-   the portal's ts_sites dataset and are only ever shown in aggregate. */
+   the portal's lab-site dataset and are only ever shown in aggregate. */
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export const num = (n, d = 0) => n == null || isNaN(n) ? '—' : Number(n).toLocaleString('en-US', { maximumFractionDigits: d, minimumFractionDigits: d });
 
@@ -89,7 +89,7 @@ export function search(q, limit = 8) {
 /* ── Verticals ───────────────────────────────────────────────────────────── */
 export const VERTICALS = [
   { id: 'research', name: 'Academic & research', siteKey: ['Academic Medical'], likeLabel: 'Academic medical center lab sites', pain: 'Grant-funded budgets, hundreds of PIs ordering independently, procurement inside Jaggaer or Ariba.', fix: 'Punchout catalogs per department, PI-level budgets, quick reorder of the core consumables list.' },
-  { id: 'biopharma', name: 'Biopharma & CDMO', siteKey: [], pain: 'GMP documentation, validated substitutes, cleanroom gowning and cold-chain sample movement.', fix: 'CoA/SDS on every line, change-notification on approved items, VMI in QC and manufacturing stockrooms.' },
+  { id: 'biopharma', name: 'Biopharma & CDMO', siteKey: [], pain: 'GMP documentation, validated substitutes, cleanroom gowning and cold-chain sample movement.', fix: 'CoA and SDS on every line, change-notification on approved items, VMI in QC and manufacturing stockrooms.' },
   { id: 'clinical', name: 'Clinical diagnostics', siteKey: ['Diagnostics Lab', 'Pathology', 'Hospital', 'Oncology Clinic', 'Diagnostic Center'], likeLabel: 'Clinical lab sites (diagnostics, pathology, hospital, oncology)', pain: 'CLIA-regulated workflows, standing orders, no tolerance for a stock-out on collection kits.', fix: 'Standing orders with lot control, collection-kit assembly, multi-site replenishment from one account.' },
   { id: 'cleanroom', name: 'Cleanroom & advanced tech', siteKey: [], pain: 'ISO-class contamination control across gowning rooms, multiple shifts and sterile consumables.', fix: 'Gowning-room VMI, ISO-class kitting and Northeast cleanroom specialists from the Quintana Supply and Day Associates teams.' },
   { id: 'cannabis', name: 'Cannabis & hemp testing', siteKey: [], pain: 'State-mandated potency, pesticide and solvent testing on HPLC/LC-MS, under tight turnaround and audit.', fix: 'HPLC/LC-MS-grade solvents and vials, filtration, PPE and audit-ready documentation in one order.' },
@@ -110,7 +110,7 @@ export const REGIONS = [
 ];
 export const regionOf = st => REGIONS.find(r => r.states.includes(st));
 
-/* ── Aggregates of ts_sites (fallback, recomputed live when the dataset loads) ─── */
+/* ── Aggregates of the lab-site dataset (fallback, recomputed live when the dataset loads) ─── */
 export const SITES_FALLBACK = { total: 27503, parents: 20001, states: 55, vertical: { 'Diagnostics Lab': 20292, 'Academic Medical': 2975, Pathology: 2195, Hospital: 1046, 'Oncology Clinic': 918, 'Diagnostic Center': 77 } };
 export function aggregateSites(rows) {
   const by = {}, vert = {}, arche = {}, label = {}; const parents = new Set();
@@ -137,22 +137,15 @@ export const FAQ = [
   { q: 'Where can I find CoA and SDS documents?', a: '<p>Certificates of Analysis and Safety Data Sheets attach to every product and order line in the document center, searchable by catalog number or lot.</p>', href: '#categories' },
   { q: 'Where do you ship from?', a: '<p>Headquarters and distribution in <b>Swedesboro, NJ</b>, with regional teams from North Central Instruments (Brooklyn Park, MN), Quintana Supply and Day Associates (Massachusetts) and Arrowhead Forensics (Lenexa, KS).</p>', href: '#reps' },
   { q: 'How long has Thomas Scientific been in business?', a: '<p>Since <b>1900</b>, more than 125 years of supplying laboratories. Broad Sky Partners became the majority investor in January 2022.</p>', href: '#heritage' },
-  { q: 'Are you hiring?', a: '<p>Distribution, customer service, inside sales and lab specialists. In this concept the careers link sits in the footer.</p>', href: '#footer' },
+  { q: 'Are you hiring?', a: '<p>Distribution, customer service, inside sales and lab specialists. In production a careers page would list open roles by distribution center.</p>', href: '#faq' },
   { q: 'What is LabOS?', a: '<p><b>LabOS</b> is the operating layer behind this site: AI product search, punchout and B2B commerce, vendor-managed inventory, supplier-consolidation analytics and account-health scoring. <a href="labos.html">See the LabOS product page →</a></p>', href: 'labos.html' },
 ];
 export const SUGGESTIONS = ['Do you supply cleanroom consumables?', 'How do I set up a punchout catalog?', 'What is vendor-managed inventory?', 'Who is my account representative?', 'What is LabOS?'];
 
 /* ── Shared UI bits ──────────────────────────────────────────────────────── */
-export const LOGO = `<svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--ink)"/><path d="M9 9h14M16 9v6.5l-5.6 8.3A1.6 1.6 0 0 0 11.7 26h8.6a1.6 1.6 0 0 0 1.3-2.2L16 15.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="15" cy="22" r="1.4" fill="var(--signal)"/><circle cx="18" cy="20" r="1" fill="var(--brand-2)"/></svg>`;
-export function banner() {
-  try { if (localStorage.getItem('ts-banner-x') === '1') return; } catch { }
-  const b = document.createElement('div'); b.className = 'concept'; b.setAttribute('role', 'note');
-  b.innerHTML = `<p>Concept redesign proposed by Syed Rahman for the Broad Sky Portfolio Resource Group — not an official site. <a href="../../app.html">Portal</a> · <a href="../index.html">Site concepts</a> · <a href="../../#os">OS program</a> · <a href="../../#briefing">Briefing</a></p><button aria-label="Dismiss concept banner">✕</button>`;
-  b.querySelector('button').onclick = () => { b.remove(); try { localStorage.setItem('ts-banner-x', '1'); } catch { } };
-  document.body.prepend(b);
-}
+/* The frame (assets/frame.js) owns the top bar, concept banner, breadcrumb and footer. */
 export function toast(msg) {
-  let t = document.querySelector('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.setAttribute('aria-live', 'polite'); document.body.appendChild(t); }
+  let t = document.querySelector('.ts-toast'); if (!t) { t = document.createElement('div'); t.className = 'ts-toast'; t.setAttribute('role', 'status'); t.setAttribute('aria-live', 'polite'); document.body.appendChild(t); }
   t.innerHTML = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 3200);
 }
 export function reveal() {
@@ -161,8 +154,32 @@ export function reveal() {
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
   els.forEach(e => io.observe(e));
 }
-export function mountChat(Chat) {
+/** Mount the floating concierge and hand it to the frame so Ask and the hotkey open the same widget. */
+export function mountChat(Chat, frame) {
   try {
-    Chat.mount(null, { persona: 'ts', mode: 'floating', theme: 'light', color: '#0b7d77', faq: FAQ, suggestions: SUGGESTIONS, greeting: 'Search the catalog, find your regional lab team, or ask about punchout, VMI, kitting and cleanroom supply.' });
-  } catch (e) { console.warn('chat unavailable', e.message); }
+    const inst = Chat.mount(null, { persona: 'ts', mode: 'floating', theme: 'light', faq: FAQ, suggestions: SUGGESTIONS, greeting: 'Search the catalog, find your regional lab team, or ask about punchout, VMI, kitting and cleanroom supply.' });
+    frame?.setChat?.(inst);
+    return inst;
+  } catch (e) { console.warn('chat unavailable', e.message); return null; }
+}
+/* Turn plain-text "est." in rendered copy into the system badge (UNIFIED §7.3),
+   placed after the number it qualifies: "est. $285M" → "$285M [est.]". */
+const RX_EST = /\(est\.\)|\best\.(\s+[~$−-]*\d[\d.,]*(?:\s?[–-]\s?\$?[\d.,]+)?(?:[MBK%x]|\s?bps)?)?/g;
+export function badgeEst(root) {
+  if (!root) return;
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); const hits = [];
+  for (let t = w.nextNode(); t; t = w.nextNode()) { const pe = t.parentElement; if (pe && !pe.closest('.sys-est,script,style,svg,textarea,code,[data-raw]') && /\best\./.test(t.nodeValue)) hits.push(t); }
+  const badge = () => { const b = document.createElement('span'); b.className = 'sys-est'; b.textContent = 'est.'; return b; };
+  for (const t of hits) {
+    const v = t.nodeValue, frag = document.createDocumentFragment(); let last = 0, m;
+    RX_EST.lastIndex = 0;
+    while ((m = RX_EST.exec(v))) {
+      let pre = v.slice(last, m.index);
+      if (m[1]) { frag.append(pre + m[1].trimStart()); frag.append(badge()); }
+      else { frag.append(pre.replace(/\s+$/, '')); frag.append(badge()); }
+      last = m.index + m[0].length;
+    }
+    frag.append(v.slice(last).replace(/^\s*\(\s*\)/, ''));
+    t.replaceWith(frag);
+  }
 }

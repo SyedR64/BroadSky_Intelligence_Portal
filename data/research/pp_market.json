@@ -2,7 +2,7 @@
   "meta": {
     "dataset": "Punctual Pros market context: Central Pennsylvania and Jersey Shore (competitors, Authority Brands franchise territories, incentives, county profiles, market signals)",
     "generated": "2026-09-24",
-    "method": "Competitors came from ZoomInfo company searches (radius around Lancaster 17601, Toms River 08753, Chambersburg 17201 and Reading 19601), Google News RSS deal searches, and fetches of each company website for founding year, reviews and ownership claims. PE and utility ownership is stated only where a deal article or company page confirms it. Franchise territories were parsed from the official One Hour, Benjamin Franklin Plumbing and Mister Sparky location directories (PA, NJ, MD, DE); each location page was fetched for rating, license and team names, and PP/Horvath affiliation is graded confirmed, likely, possible or no_public_evidence. Incentives come from utility, IRS and agency pages plus news of program status. County profiles use ACS 2020-2024 5-year tables (via the Census Reporter API, because api.census.gov now requires a key), Census PEP vintage 2025 county estimates, and Census Building Permits Survey 2024/2025 annual county files. Market signals are fetched news, trade-press and BLS OEWS May 2025 wage data.",
+    "method": "Competitors came from ZoomInfo company searches (radius around Lancaster 17601, Toms River 08753, Chambersburg 17201 and Reading 19601), Google News RSS deal searches, and fetches of each company website for founding year, reviews and ownership claims. PE and utility ownership is stated only where a deal article or company page confirms it. Franchise territories were parsed from the official One Hour, Benjamin Franklin Plumbing and Mister Sparky location directories (PA, NJ, MD, DE); each location page was fetched for rating, license and team names, and PP/Horvath affiliation is graded confirmed, likely, possible or no public evidence. Incentives come from utility, IRS and agency pages plus news of program status. County profiles use ACS 2020-2024 5-year tables (via the Census Reporter API, because api.census.gov now requires a key), Census PEP vintage 2025 county estimates, and Census Building Permits Survey 2024/2025 annual county files. Market signals are fetched news, trade-press and BLS OEWS May 2025 wage data.",
     "sources_summary": [
       "onehourheatandair.com / benjaminfranklinplumbing.com / mistersparky.com location directories",
       "ZoomInfo MCP (company search)",
@@ -39,8 +39,8 @@
       "PECO and JCP&L rebate dollar amounts could not be retrieved (JS-rendered or connection refused). FirstEnergy PA (Met-Ed) says it is 'working to finalize new programs' for Act 129 Phase V, so amounts are null.",
       "NJ HEAR/HOMES status after Sept 2025 is unverified. PA Penn Energy Savers was still 'proposed' as of July 2026.",
       "An apparent 'Lennar Roselyn Lancaster 1,860-unit' development in search results is in Lancaster, South Carolina, and was excluded.",
-      "Web search quota was exhausted. Discovery used Google News RSS and ZoomInfo, and every item's primary source_url was fetched directly. Some secondary URLs (Business Wire, NJ.com, PennLive, Capital-Star, Glassdoor) returned 403 or paywalls and are cited from search results only.",
-      "NJBIZ cites NJ DCA data showing 859 housing units authorized in Monmouth in 2025. The Census BPS county file shows 2,138 total units (1,481 single-family) for 2025. Sources and definitions differ; county_profile uses Census BPS.",
+      "Web search quota was exhausted. Discovery used Google News RSS and ZoomInfo, and every item's primary source URL was fetched directly. Some secondary URLs (Business Wire, NJ.com, PennLive, Capital-Star, Glassdoor) returned 403 or paywalls and are cited from search results only.",
+      "NJBIZ cites NJ DCA data showing 859 housing units authorized in Monmouth in 2025. The Census BPS county file shows 2,138 total units (1,481 single-family) for 2025. Sources and definitions differ; the county profile uses Census BPS.",
       "Smith + Howard (BSP's exited portfolio company) is out of scope and excluded.",
       "Verified 2026-09-24: sampled 24, confirmed 24, removed 0"
     ],
@@ -56,7 +56,7 @@
         "priority": 2,
         "move": "Enter Berks (Reading) and Lebanon, whitespace for the tri-brand",
         "evidence": "No One Hour / Ben Franklin / Mister Sparky location in Berks or Lebanon. Berks has 163k households, 63.6% built before 1980 (oldest in set), and 48.9k oil and propane homes (30.0%). Lebanon has 37.6% oil and propane and only 0.3% of homes for sale, so owners repair in place. The 537-unit Cumru Twp development and Highland Place 55+ add new-build demand. Competition is UGI HVAC plus a fragmented field; P1 already took Essig, so move before Sila (Palmyra) extends east.",
-        "targets": "Platform tuck-in in Reading (e.g., Trinity Comfort about 72 employees, Gehringer Mechanical tri-trade, M&M Mechanical), paired with securing Authority Brands territory rights for Berks and Lebanon zip codes."
+        "targets": "Company tuck-in in Reading (e.g., Trinity Comfort about 72 employees, Gehringer Mechanical tri-trade, M&M Mechanical), paired with securing Authority Brands territory rights for Berks and Lebanon zip codes."
       },
       {
         "priority": 3,
@@ -67,14 +67,14 @@
       {
         "priority": 4,
         "move": "Scale Horvath from Ocean into Monmouth",
-        "evidence": "Ocean is the fastest-growing county in the footprint (+5.7%, about 36k residents 2020-25, JCP&L $108M grid build and 50+ MW of new connection requests, 2,372 single-family permits in 2025). Monmouth has the highest income ($124,845), 81% gas heat, and NJNG SAVEGREEN pays up to $3,650 HVAC and $4,000 hybrid heat with $25k 0% OBRP. Neither county has a PE platform tracked.",
-        "targets": "The separate Manalapan One Hour and Mister Sparky franchisee(s) (a repeat of the Horvath franchise-to-franchise playbook). Independents: Dash Mechanical (about 92 employees, Brick), Lawes (Shrewsbury, 1926), Air Experts, Garden State AC, Eastern Shore HVAC."
+        "evidence": "Ocean is the fastest-growing county in the footprint (+5.7%, about 36k residents 2020-25, JCP&L $108M grid build and 50+ MW of new connection requests, 2,372 single-family permits in 2025). Monmouth has the highest income ($124,845), 81% gas heat, and NJNG SAVEGREEN pays up to $3,650 HVAC and $4,000 hybrid heat with $25k 0% OBRP. Neither county has a tracked PE-backed operator.",
+        "targets": "The separate Manalapan One Hour and Mister Sparky franchisee(s) (a repeat of the Horvath franchise-to-franchise plan). Independents: Dash Mechanical (about 92 employees, Brick), Lawes (Shrewsbury, 1926), Air Experts, Garden State AC, Eastern Shore HVAC."
       },
       {
         "priority": 5,
         "move": "Authority Brands franchisee roll-up in adjacent mid-Atlantic markets",
         "evidence": "Tri-brand co-located operators near PP with strong review bases: Wilmington DE (One Hour 4.9 / 3,276; Ben Franklin 4.9 / 3,400; 410 Meco Dr), Dover DE, Bel Air/Harford MD, Mount Airy MD (One Hour 4.7 / 863), Bethlehem PA (Ben Franklin). A Pleasantville NJ operator trades as 'The Punctual Pros'; confirm whether it is related before treating it as a target.",
-        "targets": "Operators within about 90 minutes of Lancaster that already share PP's brand system, which means lower integration risk. Apex's $10B valuation (May 2026) and Sila's Goldman backing show platform exit multiples reward mid-Atlantic density."
+        "targets": "Operators within about 90 minutes of Lancaster that already share PP's brand system, which means lower integration risk. Apex's $10B valuation (May 2026) and Sila's Goldman backing show company exit multiples reward mid-Atlantic density."
       },
       {
         "priority": "watch",
@@ -150,7 +150,7 @@
         "authority_brands_sites": [],
         "occupied_households": 106427,
         "households_per_tracked_competitor": 8869,
-        "rationale": "West Shore cluster of mid-size independents (Central Penn Plumbing, Pronto/SECCO, Zimmerman, A.C. Rimmer). No PE platform confirmed. Fastest-growing PA county in the footprint (+6.9% 2020-25)."
+        "rationale": "West Shore cluster of mid-size independents (Central Penn Plumbing, Pronto/SECCO, Zimmerman, A.C. Rimmer). No PE-backed operator confirmed. Fastest-growing PA county in the footprint (+6.9% 2020-25)."
       },
       "York": {
         "intensity": "medium",
@@ -170,7 +170,7 @@
         ],
         "occupied_households": 181583,
         "households_per_tracked_competitor": 13968,
-        "rationale": "13 tracked competitors, all independent; no PE-backed platform found. Most PA single-family permits in the footprint (1,025 in 2025)."
+        "rationale": "13 tracked competitors, all independent; no PE-backed company found. Most PA single-family permits in the footprint (1,025 in 2025)."
       },
       "Berks": {
         "intensity": "medium",
@@ -296,7 +296,7 @@
         ],
         "authority_brands_sites": [
           "One Hour Heating & Air Conditioning (Lansdale; PP status: possible)",
-          "Mister Sparky (Jenkintown; PP status: no_public_evidence)"
+          "Mister Sparky (Jenkintown; PP status: no public evidence)"
         ],
         "occupied_households": 335505,
         "households_per_tracked_competitor": 111835,
@@ -322,7 +322,7 @@
         ],
         "occupied_households": 243843,
         "households_per_tracked_competitor": 22168,
-        "rationale": "NJR Home Services (utility-affiliated), Dash Mechanical (about 92 employees) and many 15-25 person shops. No PE platform tracked in-county. Horvath (Beachwood) is the only Authority Brands operator in Ocean."
+        "rationale": "NJR Home Services (utility-affiliated), Dash Mechanical (about 92 employees) and many 15-25 person shops. No PE-backed operator tracked in-county. Horvath (Beachwood) is the only Authority Brands operator in Ocean."
       },
       "Monmouth": {
         "intensity": "medium-high",
@@ -338,8 +338,8 @@
           "Mid-State Heating & Cooling"
         ],
         "authority_brands_sites": [
-          "One Hour Heating & Air Conditioning (Manalapan; PP status: no_public_evidence)",
-          "Mister Sparky (Manalapan Township; PP status: no_public_evidence)"
+          "One Hour Heating & Air Conditioning (Manalapan; PP status: no public evidence)",
+          "Mister Sparky (Manalapan Township; PP status: no public evidence)"
         ],
         "occupied_households": 251712,
         "households_per_tracked_competitor": 25171,
@@ -640,7 +640,7 @@
       "territory_overlap": [
         "Lancaster"
       ],
-      "notes": "The only confirmed PE-backed platform with a Lancaster County brand. It keeps the Neffsville name. Len The Plumber also has PA locations in Horsham and Boothwyn.",
+      "notes": "The only confirmed PE-backed company with a Lancaster County brand. It keeps the Neffsville name. Len The Plumber also has PA locations in Horsham and Boothwyn.",
       "source_url": "https://lancasteronline.com/business/local_business/neffsville-plumbing-sold-to-baltimore-firm-for-undisclosed-price/article_01812f5c-9c54-11eb-a75f-1b0848970aa2.html",
       "source_urls": [
         "https://lancasteronline.com/business/local_business/neffsville-plumbing-sold-to-baltimore-firm-for-undisclosed-price/article_01812f5c-9c54-11eb-a75f-1b0848970aa2.html",
@@ -675,7 +675,7 @@
       "territory_overlap": [
         "Berks"
       ],
-      "notes": "Third-generation Berks and Lehigh business, office at 448 Snyder Rd. P1's first mid-Atlantic platform deal.",
+      "notes": "Third-generation Berks and Lehigh business, office at 448 Snyder Rd. P1's first mid-Atlantic anchor deal.",
       "source_url": "https://www.wfmz.com/news/area/berks/essig-plumbing-acquired-by-private-equity-backed-outfit/article_ad77e324-5ebc-11ed-a31d-6bbac67a1ef1.html",
       "source_urls": [
         "https://www.wfmz.com/news/area/berks/essig-plumbing-acquired-by-private-equity-backed-outfit/article_ad77e324-5ebc-11ed-a31d-6bbac67a1ef1.html",
@@ -5339,7 +5339,7 @@
       "geography": "US",
       "category": "consolidation / PE",
       "detail": "Apollo to invest about $2B alongside Alpine Investors; Apex has 75 local brands in 46 states, 13,000+ employees and over $3B revenue.",
-      "implication": "Platform valuations keep rising and national roll-ups remain active buyers. Supports exit multiples for a scaled mid-Atlantic PP.",
+      "implication": "Company valuations keep rising and national roll-ups remain active buyers. Supports exit multiples for a scaled mid-Atlantic PP.",
       "source_url": "https://homepros.news/apex-service-partners-to-receive-minority-investment-at-10-billion-valuation/",
       "source_urls": [
         "https://homepros.news/apex-service-partners-to-receive-minority-investment-at-10-billion-valuation/"

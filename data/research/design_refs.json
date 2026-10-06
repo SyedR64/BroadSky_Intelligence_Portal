@@ -3,8 +3,8 @@
   "dataset": "design_refs",
   "title": "Design references for the BSP landing page and the six portfolio website concepts",
   "generated": "2026-10-06",
-  "purpose": "Input for the website-concept builders (CONTRACT_SITES.md): each concept's 'Design rationale' drawer cites 2–3 of these references, the element borrowed, and the KPI it should move.",
-  "method": "Candidates were picked per vertical, prioritising PE-owned platforms in the same vertical, then category leaders and public comparables, plus NYC/US tech startups for the landing page. Every URL was fetched on 2026-10-06 with curl (status, served HTML, headings, nav, CTA text, @font-face and font-family declarations from linked stylesheets, hex colours) and rendered in headless Chrome at 1440x1000; the screenshots were reviewed by eye. Two sites could not be screenshotted (McMaster-Carr, Vuori), so their structure comes from served HTML and a WebFetch parse. Owner/backer facts were checked against sponsor press releases and trade press via web search. Observations describe what the page showed on the retrieval date; hero carousels and promos change often.",
+  "purpose": "Input for the website-concept builders: each concept's design-principles section shows 2–3 of these principles, the element applied and the KPI it should move. Reference company names and owners stay in the data for provenance and are never rendered.",
+  "method": "Candidates were picked per vertical, prioritising PE-owned companies in the same vertical, then category leaders and public comparables, plus NYC/US tech startups for the landing page. Every URL was fetched on 2026-10-06 with curl (status, served HTML, headings, nav, CTA text, @font-face and font-family declarations from linked stylesheets, hex colours) and rendered in headless Chrome at 1440x1000; the screenshots were reviewed by eye. Two sites could not be screenshotted (McMaster-Carr, Vuori), so their structure comes from served HTML and a WebFetch parse. Owner/backer facts were checked against sponsor press releases and trade press via web search. Observations describe what the page showed on the retrieval date; hero carousels and promos change often.",
   "sources_summary": "26 live reference homepages (7 targets x 3–4 each); sponsor/ownership confirmations from leonardgreen.com, businesswire.com (TSG/Oak Hill–Wrench; KKR–FGS; BayPine–Harbor; Blackstone–Shermco), alpineinvestors / ACHR News (Apex–Frank Gay), Knox Lane/Varagon (Any Hour), huroncapital.com / Carlyle (Sciens), Tower Arch / Holland & Hart (ITS), Axios (Shamrock–Penta), O'Dwyer's / pulse2 (Precision–Abry, Firehouse), Glossy / FITT (Vuori), FashionUnited / Digital Commerce 360 (Allbirds–American Exchange Group).",
   "caveats": [
    "apexservicepartners.com, edelman.com, teneo.com and justworks.com return HTTP 403 / bot challenges to automated fetches. Apex is represented by its founding brand Frank Gay Services; Edelman and Teneo were dropped for BPI; Justworks rendered in headless Chrome but was not chosen.",
@@ -51,10 +51,10 @@
     "note": "Hero has a G2 4.6 rating under the CTAs and a 'What do you want to do?' row of intent pills (Run payroll, Offer health benefits…), a direct analogue for the portal's suggestion chips."
    },
    {
-    "name": "Wrench Group (platform site)",
+    "name": "Wrench Group (group site)",
     "url": "https://www.wrenchgroup.com/",
     "status": 200,
-    "note": "Dark cinematic hero 'THE STANDARD IN HOME SERVICES' with 'National home services platform' eyebrow; nav Our Story, Brands, Careers, Newsroom, Contact. Useful for a PP platform 'about' page; Parker & Sons is used as the customer-facing reference."
+    "note": "Dark cinematic hero 'THE STANDARD IN HOME SERVICES' with 'National home services company' eyebrow; nav Our Story, Brands, Careers, Newsroom, Contact. Useful for a PP company 'about' page; Parker & Sons is used as the customer-facing reference."
    },
    {
     "name": "Wachter",
@@ -141,7 +141,7 @@
    {
     "id": "p5",
     "principle": "Make coverage the first question for physical-service businesses.",
-    "how_to_apply": "Location chip, geo banner, zip check or service-area finder in or next to the hero, wired to real coverage data (pp_zips; CET's six New England states, no NYC).",
+    "how_to_apply": "Location chip, geo banner, zip check or service-area finder in or next to the hero, wired to real coverage data (Punctual Pros ZIP coverage; CET's six New England states, no NYC).",
     "exhibited_by": [
      "ref-pp-anyhour",
      "ref-pp-parker",
@@ -153,7 +153,7 @@
    {
     "id": "p6",
     "principle": "Productize the service into a named offer.",
-    "how_to_apply": "Give the recurring program a name and a hero (S3, Penta live, BlissBlend, Financial Options). Each portfolio OS page (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS) follows this pattern.",
+    "how_to_apply": "Give the recurring program a name and a hero (a named service suite, a live-intelligence product, a named fabric technology, a financing menu). Each portfolio OS page (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS) follows this pattern.",
     "exhibited_by": [
      "ref-cet-sciens",
      "ref-bpi-penta",
@@ -164,7 +164,7 @@
    },
    {
     "id": "p7",
-    "principle": "Make the platform and M&A story visible.",
+    "principle": "Make the company and M&A story visible.",
     "how_to_apply": "'Acquisitions' or 'Partner with us' in primary nav, founder stories, brand-count stats. The website becomes a proprietary deal-sourcing channel for add-ons.",
     "exhibited_by": [
      "ref-cet-shermco",
@@ -223,7 +223,7 @@
    "name": "Ramp",
    "url": "https://ramp.com/",
    "owner_or_backer": "Venture-backed private fintech; HQ 28 West 23rd Street, New York (address in the site footer).",
-   "why_it_is_a_reference": "It is the clearest NYC example of a homepage that sells with live numbers and a working product rather than adjectives. One input and one button sit in the hero, and the proof is a running counter of activity on the platform.",
+   "why_it_is_a_reference": "A homepage that sells with live numbers and a working product rather than adjectives: one input and one button in the hero, with a running activity counter as the proof.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot (1440x1000)",
@@ -235,7 +235,7 @@
    "elements_to_borrow": [
     {
      "element": "Live counter ticker in the hero eyebrow plus a bottom 'at work today' strip",
-     "what_it_does_for_conversion_or_valuation": "Turns scale into something you can watch. For the portal, the numbers strip (datasets, home sales, opportunities, targets) should count up from data/manifest.json so Tyler sees the size of the evidence base before he reads a word."
+     "what_it_does_for_conversion_or_valuation": "Turns scale into something you can watch. For the portal, the numbers strip (datasets, home sales, opportunities, targets) should count up from data/manifest.json so the reader sees the size of the evidence base before he reads a word."
     },
     {
      "element": "Hero input joined to one button",
@@ -260,7 +260,7 @@
    "name": "Linear",
    "url": "https://linear.app/",
    "owner_or_backer": "Venture-backed private software company.",
-   "why_it_is_a_reference": "Linear is the reference for an operating system for a team: dark, quiet, and run almost entirely through product screenshots arranged as numbered capabilities. It shows how to present several modules as one system without the page turning into a feature dump.",
+   "why_it_is_a_reference": "Presents several modules as one operating system: dark, quiet, and run almost entirely through product screenshots arranged as numbered capabilities, so the page never turns into a feature dump.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -272,7 +272,7 @@
    "elements_to_borrow": [
     {
      "element": "Capability sections in a fixed order (Intake, Plan, AI and automations, Build and ship, Changelog)",
-     "what_it_does_for_conversion_or_valuation": "Frames many features as one system. Use it for the six platform cards and the OS program: one sentence, one screenshot, one link each."
+     "what_it_does_for_conversion_or_valuation": "Frames many features as one system. Use it for the six portfolio-company cards and the OS program: one sentence, one screenshot, one link each."
     },
     {
      "element": "Agent or chat panel shown inside the product screenshot",
@@ -280,7 +280,7 @@
     },
     {
      "element": "Changelog / 'Now' section",
-     "what_it_does_for_conversion_or_valuation": "Signals momentum, which raises trust and repeat visits. A 'What's new in the portal' strip (new datasets, new modules, dates) tells the PRG the tool is maintained."
+     "what_it_does_for_conversion_or_valuation": "Signals momentum, which raises trust and repeat visits. A 'What's new in the portal' strip (new datasets, new modules, dates) tells the Portfolio Resource Group the tool is maintained."
     },
     {
      "element": "Closing band that repeats the three entry points",
@@ -297,7 +297,7 @@
    "name": "Hebbia",
    "url": "https://www.hebbia.com/",
    "owner_or_backer": "Venture-backed NYC AI company (investors reported to include a16z); serves asset managers, banks and law firms.",
-   "why_it_is_a_reference": "Hebbia sells AI to investors, so its page is set up to look institutional rather than playful: serif display type, a security badge row and a document matrix demo. It is the closest analogue to an AI portal for a PE firm.",
+   "why_it_is_a_reference": "An AI product sold to investors that looks institutional rather than playful: serif display type, a security badge row and a documents-by-questions matrix demo. It is the closest analogue to an AI portal for a PE firm.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -313,7 +313,7 @@
     },
     {
      "element": "Solutions split by user (Investing / Banking / Legal / Corporate)",
-     "what_it_does_for_conversion_or_valuation": "Shortens time to relevance. Split the 'what it answers' strip by PRG role: deal team, operating partner, CFO, board."
+     "what_it_does_for_conversion_or_valuation": "Shortens time to relevance. Split the 'what it answers' strip by Portfolio Resource Group role: deal team, operating partner, CFO, board."
     },
     {
      "element": "Security and compliance badge row",
@@ -334,7 +334,7 @@
    "name": "Mercury",
    "url": "https://mercury.com/",
    "owner_or_backer": "Venture-backed private fintech (site shows a '$5.2B valuation' news tile).",
-   "why_it_is_a_reference": "Mercury pairs a centred hero and a no-signup 'Launch demo' with a stat band and plain-language regulatory disclosure placed right in the hero. That combination of trust and openness suits a page that shows PE portfolio data.",
+   "why_it_is_a_reference": "A centred hero and a no-signup demo, paired with a stat band and a plain-language disclosure placed in the hero. That mix of trust and openness suits a page that shows PE portfolio data.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -358,7 +358,7 @@
     },
     {
      "element": "Segment menu that names a 'VC Funds / portfolio companies' use case",
-     "what_it_does_for_conversion_or_valuation": "Shows that portfolio-level views are a recognised product category. Gives the BSP portal language for its 'all six platforms in one place' framing."
+     "what_it_does_for_conversion_or_valuation": "Shows that portfolio-level views are a recognised product category. Gives the BSP portal language for its 'all six companies in one place' framing."
     }
    ],
    "typography_note": "Arcadia / Arcadia Display (geometric sans) for UI and headlines, Tiempos serif for editorial moments, IBM Plex Mono for figures.",
@@ -371,7 +371,7 @@
    "name": "Sila Services",
    "url": "https://silaservices.com/",
    "owner_or_backer": "Private Equity at Goldman Sachs Alternatives (stated on the site: 'Sila Services is a portfolio company of Private Equity at Goldman Sachs Alternatives').",
-   "why_it_is_a_reference": "Sila is the platform-level site of a PE-backed residential HVAC/plumbing/electrical roll-up, and its homepage is written for selling founders as much as for customers. It is the model for a 'Partner with Punctual Pros' page that turns the website into an M&A sourcing channel.",
+   "why_it_is_a_reference": "A company-level site for a PE-backed residential HVAC/plumbing/electrical roll-up, written for selling founders as much as for customers. It is the model for a 'Partner with Punctual Pros' page that turns the website into an M&A sourcing channel.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -383,18 +383,18 @@
    "elements_to_borrow": [
     {
      "element": "Partner / sell-your-business path in primary nav",
-     "what_it_does_for_conversion_or_valuation": "Turns the site into a proprietary deal-flow source. A 'Join the Punctual Pros family' page for Central PA and NJ owners feeds ma_targets_pp, lowering acquisition multiples (multiple arbitrage)."
+     "what_it_does_for_conversion_or_valuation": "Turns the site into a proprietary deal-flow source. A 'Join the Punctual Pros family' page for Central PA and NJ owners feeds Punctual Pros add-on targets, lowering acquisition multiples (multiple arbitrage)."
     },
     {
      "element": "Founder-story testimonials",
      "what_it_does_for_conversion_or_valuation": "Removes the main seller objection ('what happens to my people and name?'). Use the Horvath Home Services story as proof."
     },
     {
-     "element": "Platform stat band (brands, team members, customers)",
+     "element": "Company stat band (brands, team members, customers)",
      "what_it_does_for_conversion_or_valuation": "Signals scale to sellers, recruits and future buyers. PP's version: trades x brands x zips covered x technicians."
     },
     {
-     "element": "Training academy as a named program (Sila University)",
+     "element": "Training academy as a named program",
      "what_it_does_for_conversion_or_valuation": "Recruiting and retention signal; technician supply is the binding constraint on home-services growth."
     }
    ],
@@ -408,7 +408,7 @@
    "name": "Parker & Sons (Wrench Group)",
    "url": "https://www.parkerandsons.com/",
    "owner_or_backer": "Wrench Group brand. Leonard Green & Partners holds the majority; TSG Consumer Partners and Oak Hill Capital made a significant minority investment in Nov 2022.",
-   "why_it_is_a_reference": "It is the conversion playbook of a mature PE-owned home-services brand. Rating, review count, phone and 'Schedule Now' sit in the header on every page, and each trade menu ends in membership, warranties and financing. Wrench is one of the most valuable platforms in the category, so its funnel is the benchmark for PP's sites.",
+   "why_it_is_a_reference": "The conversion funnel of a mature PE-owned home-services brand. Rating, review count, phone and 'Schedule Now' sit in the header on every page, and each trade menu ends in membership, warranties and financing. Its owner is one of the most valuable groups in the category, so this funnel is the benchmark for PP's sites.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -444,8 +444,8 @@
    "applies_to": "pp",
    "name": "Any Hour Services (Any Hour Group)",
    "url": "https://anyhourservices.com/",
-   "owner_or_backer": "Knox Lane (San Francisco PE) partnered with Any Hour in July 2021 to form Any Hour Group, a Mountain West HVAC/plumbing/electrical platform.",
-   "why_it_is_a_reference": "Any Hour puts location first: a location chip in the corner, a trade picker of six icon tiles, and a booking button in the hero. It matches PP's situation, a multi-trade, multi-territory operator whose main question is 'do you serve me, and can I book now?'.",
+   "owner_or_backer": "Knox Lane (San Francisco PE) partnered with Any Hour in July 2021 to form Any Hour Group, a Mountain West HVAC/plumbing/electrical company.",
+   "why_it_is_a_reference": "Location comes first: a location chip in the corner, a trade picker of six icon tiles and a booking button in the hero. It matches PP's situation, a multi-trade, multi-territory operator whose main question is 'do you serve me, and can I book now?'.",
    "observed": {
     "http_status": 200,
     "method": "curl (redirect anyhour.com → anyhourservices.com) + headless Chrome screenshot",
@@ -457,7 +457,7 @@
    "elements_to_borrow": [
     {
      "element": "Location chip plus service-area page",
-     "what_it_does_for_conversion_or_valuation": "Qualifies the visitor at once and cuts wasted calls. PP's chat already answers 'Do you serve 17601?' from pp_zips, so put a zip check in the hero."
+     "what_it_does_for_conversion_or_valuation": "Qualifies the visitor at once and cuts wasted calls. PP's chat already answers 'Do you serve 17601?' from Punctual Pros ZIP coverage, so put a zip check in the hero."
     },
     {
      "element": "Six-tile trade picker directly under the hero",
@@ -481,8 +481,8 @@
    "applies_to": "pp",
    "name": "Frank Gay Services (Apex Service Partners)",
    "url": "https://www.frankgayservices.com/",
-   "owner_or_backer": "Apex Service Partners, the residential services platform Alpine Investors launched in 2019 with Frank Gay as a founding brand.",
-   "why_it_is_a_reference": "It shows how a 50-year founder brand looks after joining a PE platform. Heritage is kept (the 50-years badge), the site leads with review volume, and storm and heat language drives emergency demand. That is PP's position as a 1958-founded operator under BSP.",
+   "owner_or_backer": "Apex Service Partners, the residential services company Alpine Investors launched in 2019 with Frank Gay as a founding brand.",
+   "why_it_is_a_reference": "Shows how a 50-year founder brand looks after joining a PE-backed group. Heritage is kept (the 50-years badge), the site leads with review volume, and storm and heat language drives emergency demand. That is PP's position as a 1958-founded operator under BSP.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot (apexservicepartners.com itself returned HTTP 403 to automated requests, so the founding Apex brand site was used)",
@@ -498,7 +498,7 @@
     },
     {
      "element": "Weather-driven demand framing ('heat, storms & surprises')",
-     "what_it_does_for_conversion_or_valuation": "Ties marketing to a real demand driver. PP's live NWS storm banner and the pp_storm_events evidence do this with live data."
+     "what_it_does_for_conversion_or_valuation": "Ties marketing to a real demand driver. PP's live NWS storm banner and the Punctual Pros storm-event history evidence do this with live data."
     },
     {
      "element": "License numbers in the footer",
@@ -519,7 +519,7 @@
    "name": "Shermco",
    "url": "https://shermco.com/",
    "owner_or_backer": "Blackstone (Blackstone Energy Transition Partners) acquired Shermco from Gryphon Investors in a deal valued at about $1.6B (closed Oct 2025); Hitachi Energy took a minority stake alongside Blackstone.",
-   "why_it_is_a_reference": "Shermco is a PE-built electrical services platform that recently exited at roughly $1.6B, and its site carries the signals buyers pay for: certified headcount, location count, 24/7 emergency response and an 'Acquisitions' link in the primary nav. It is the closest valuation-grade template for CET.",
+   "why_it_is_a_reference": "A PE-built electrical services company that recently exited at roughly $1.6B, with a site that carries the signals buyers pay for: certified headcount, location count, 24/7 emergency response and an 'Acquisitions' link in the primary nav. It is the closest valuation-grade template for CET.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -531,7 +531,7 @@
    "elements_to_borrow": [
     {
      "element": "'Acquisitions' as a primary-nav item",
-     "what_it_does_for_conversion_or_valuation": "Tells founders that CET is the regional consolidator, which builds the proprietary add-on pipeline (ma_targets_cet) behind multiple arbitrage."
+     "what_it_does_for_conversion_or_valuation": "Tells founders that CET is the regional consolidator, which builds the proprietary add-on pipeline (CET add-on targets) behind multiple arbitrage."
     },
     {
      "element": "Credentialed-workforce stat band (certified techs, engineers, locations)",
@@ -556,7 +556,7 @@
    "name": "Sciens Building Solutions",
    "url": "https://www.sciensusa.com/",
    "owner_or_backer": "Carlyle majority investment (Nov 2021); founding sponsor Huron Capital retained a minority stake.",
-   "why_it_is_a_reference": "Sciens turned a buy-and-build of local fire/life-safety contractors into one productized offer, the Sciens Service Suite (S3), with one point of contact and unified billing. That is the move from project revenue to recurring service revenue that CET's GridOS thesis needs to show.",
+   "why_it_is_a_reference": "A buy-and-build of local fire/life-safety contractors turned into one productized offer, with one point of contact and unified billing. That is the move from project revenue to recurring service revenue that CET's GridOS thesis needs to show.",
    "observed": {
     "http_status": 200,
     "method": "curl (sciensbuildingsolutions.com redirects to sciensusa.com) + headless Chrome screenshot",
@@ -567,7 +567,7 @@
    },
    "elements_to_borrow": [
     {
-     "element": "Named, productized service bundle (S3) as the hero",
+     "element": "Named, productized service bundle as the hero",
      "what_it_does_for_conversion_or_valuation": "Turns one-off projects into contracted recurring revenue, the biggest valuation lever for a contractor. CET can package inspection, maintenance and monitoring for pump stations, generators and solar as a named program."
     },
     {
@@ -593,7 +593,7 @@
    "name": "Ameresco",
    "url": "https://www.ameresco.com/",
    "owner_or_backer": "Publicly listed (NYSE: AMRC); included as the scaled public comparable for energy infrastructure, efficiency and water work.",
-   "why_it_is_a_reference": "Ameresco shows how an energy-infrastructure contractor sells to municipalities: it leads with outcomes (reliable power, modernized infrastructure) and makes 'Financial Options' (ESPC, PPAs, energy-as-a-service, budget-neutral upgrades) a top-level navigation category. CET's wastewater and municipal buyers decide on funding as much as on scope.",
+   "why_it_is_a_reference": "An energy-infrastructure contractor that sells to municipalities by leading with outcomes (reliable power, modernized infrastructure) and by making financing options (ESPC, PPAs, energy-as-a-service, budget-neutral upgrades) a top-level navigation category. CET's wastewater and municipal buyers decide on funding as much as on scope.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -605,7 +605,7 @@
    "elements_to_borrow": [
     {
      "element": "'Financial Options' as a first-class nav category",
-     "what_it_does_for_conversion_or_valuation": "Municipal buyers move when funding is solved. A CET page that maps projects to CWSRF, state SRF and grant programs (from cet_opportunities) lifts win rate on wastewater bids."
+     "what_it_does_for_conversion_or_valuation": "Municipal buyers move when funding is solved. A CET page that maps projects to CWSRF, state SRF and grant programs (from CET opportunity radar) lifts win rate on wastewater bids."
     },
     {
      "element": "Two-pillar split under the hero",
@@ -630,7 +630,7 @@
    "name": "Vanta Trust Center",
    "url": "https://trust.vanta.com/",
    "owner_or_backer": "Vanta (venture-backed private company; offices include New York).",
-   "why_it_is_a_reference": "AM Law 200 firms buy managed IT through security reviews, and a public trust center answers most of the questionnaire before procurement asks. Vanta's own trust center shows the pattern: certifications, live controls and an AI 'Ask a question' panel over the security documents.",
+   "why_it_is_a_reference": "AM Law 200 firms buy managed IT through security reviews, and a public trust center answers most of the questionnaire before procurement asks. The pattern: certifications, live controls and an AI 'Ask a question' panel over the security documents.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -667,7 +667,7 @@
    "name": "Kraft Kennedy",
    "url": "https://www.kraftkennedy.com/",
    "owner_or_backer": "Independent, founder-led (Michael Kraft, founded 1988); no private-equity sponsor found in public sources. Included as the direct legal-IT peer.",
-   "why_it_is_a_reference": "Kraft Kennedy is a direct competitor selling managed IT and security to law firms. Its site shows how the segment expects to be addressed: 24x7x365 security first, law firms first in the industries list, and a utility bar for existing clients (portal, remote support).",
+   "why_it_is_a_reference": "A law-firm managed IT and security site that shows how the segment expects to be addressed: 24x7x365 security first, law firms first in the industries list, and a utility bar for existing clients (portal, remote support).",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -704,7 +704,7 @@
    "name": "Intelligent Technical Solutions (ITS)",
    "url": "https://www.itsasap.com/",
    "owner_or_backer": "Tower Arch Capital (recapitalization July 2022, financing by Deerpath Capital); has since acquired several MSPs.",
-   "why_it_is_a_reference": "ITS is a PE-backed MSP roll-up whose site is a lead-generation machine: separate sales and support phone lines, 'Managed IT Pricing in 1 Minute', and a menu of calculators (IT cost, downtime, needs analyzer). That is the self-serve ROI tooling FirmOS should provide.",
+   "why_it_is_a_reference": "A PE-backed MSP roll-up whose site is a lead-generation machine: separate sales and support phone lines, a one-minute pricing estimate and a menu of calculators (IT cost, downtime, needs analyzer). That is the self-serve ROI tooling FirmOS should provide.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -741,7 +741,7 @@
    "name": "Harbor (Harbor Global)",
    "url": "https://harborglobal.com/",
    "owner_or_backer": "BayPine majority investment (June 2025); Renovus Capital (original sponsor) remains a significant investor. Formed from HBR Consulting, LAC Group and Wilson Allen.",
-   "why_it_is_a_reference": "Harbor is the PE-backed roll-up selling consulting and technology to law firms, and the most direct design comparable for Frontline's combined managed IT plus revenue-cycle story. Three firms are presented as one editorial brand with a filterable insights hub.",
+   "why_it_is_a_reference": "A PE-backed roll-up selling consulting and technology to law firms, and the most direct design comparable for Frontline's combined managed IT plus revenue-cycle story. Three firms are presented as one editorial brand with a filterable insights hub.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -753,7 +753,7 @@
    "elements_to_borrow": [
     {
      "element": "Single editorial brand over a roll-up",
-     "what_it_does_for_conversion_or_valuation": "Shows integration (one brand, one story), which buyers reward with a platform multiple. Frontline's IT + RCM + accounting should read as one firm."
+     "what_it_does_for_conversion_or_valuation": "Shows integration (one brand, one story), which buyers reward with a company multiple. Frontline's IT + RCM + accounting should read as one firm."
     },
     {
      "element": "Filterable insights hub (sector / topic / type)",
@@ -778,7 +778,7 @@
    "name": "Fisher Scientific (Thermo Fisher)",
    "url": "https://www.fishersci.com/us/en/home.html",
    "owner_or_backer": "Thermo Fisher Scientific (NYSE: TMO); the category leader TS competes with.",
-   "why_it_is_a_reference": "It is the benchmark lab-supply storefront. Search dominates the page, and Quick Order, Order Status and 'Documents and Certificates' sit in the header because reorders and compliance paperwork are the real jobs to be done. Supplier-funded sponsored tiles turn the homepage into a margin line.",
+   "why_it_is_a_reference": "The benchmark lab-supply storefront. Search dominates the page, and Quick Order, Order Status and 'Documents and Certificates' sit in the header because reorders and compliance paperwork are the real jobs to be done. Supplier-funded sponsored tiles turn the homepage into a margin line.",
    "observed": {
     "http_status": "403 to curl; 200 in headless Chrome",
     "method": "headless Chrome screenshot",
@@ -790,7 +790,7 @@
    "elements_to_borrow": [
     {
      "element": "Quick Order (paste catalog numbers) and Order Status in the header",
-     "what_it_does_for_conversion_or_valuation": "Reorder speed is lab-supply retention; fewer clicks per reorder lifts share of wallet with existing accounts (ts_parents)."
+     "what_it_does_for_conversion_or_valuation": "Reorder speed is lab-supply retention; fewer clicks per reorder lifts share of wallet with existing accounts (Thomas parent-account list)."
     },
     {
      "element": "'Documents and Certificates' (CoA / SDS) as a top-level menu",
@@ -815,7 +815,7 @@
    "name": "VWR, part of Avantor",
    "url": "https://www.avantorsciences.com/",
    "owner_or_backer": "Avantor, Inc. (NYSE: AVTR); avantorsciences.com redirects to vwr.com.",
-   "why_it_is_a_reference": "It is the other scaled lab distributor. Its header is built around procurement (search by keyword, supplier or part number; Order Entry; a running cart total), and 'Digital Solutions' is a top-level nav item. That is the e-procurement and punchout layer TS's LabOS thesis would productize.",
+   "why_it_is_a_reference": "A scaled lab-distribution header built around procurement (search by keyword, supplier or part number; Order Entry; a running cart total), with 'Digital Solutions' as a top-level nav item. That is the e-procurement and punchout layer TS's LabOS thesis would productize.",
    "observed": {
     "http_status": 200,
     "method": "curl (Angular SPA shell) + headless Chrome screenshot",
@@ -852,7 +852,7 @@
    "name": "McMaster-Carr",
    "url": "https://www.mcmaster.com/",
    "owner_or_backer": "Privately held industrial distributor (no PE sponsor); included purely as the UX benchmark.",
-   "why_it_is_a_reference": "McMaster is the standard for B2B catalog UX. The homepage is the category index itself: no hero, no promos, instant browse. The promise is explicit: over 595,000 products, 98% shipped from stock for same- or next-day delivery. For a lab-supply distributor, speed to the right SKU is the brand.",
+   "why_it_is_a_reference": "The standard for B2B catalog UX. The homepage is the category index itself: no hero, no promos, instant browse, and an explicit promise that almost everything ships from stock for same- or next-day delivery. For a lab-supply distributor, speed to the right SKU is the brand.",
    "observed": {
     "http_status": 200,
     "method": "curl (headless screenshot timed out on its heavy client app; structure taken from served HTML and meta)",
@@ -889,7 +889,7 @@
    "name": "Calibre Scientific",
    "url": "https://www.calibrescientific.com/",
    "owner_or_backer": "StoneCalibre (private investment firm); a buy-and-build of 64+ life-science and diagnostics brands.",
-   "why_it_is_a_reference": "Calibre is a PE-built life-science roll-up that keeps a calm corporate 'brand of brands' site separate from its webstore. That split is how TS can tell its scale and segment story (research, biopharma, clinical diagnostics, cleanroom) to buyers and acquirers without cluttering the shop.",
+   "why_it_is_a_reference": "A PE-built life-science roll-up that keeps a calm corporate 'brand of brands' site separate from its webstore. That split is how TS can tell its scale and segment story (research, biopharma, clinical diagnostics, cleanroom) to buyers and acquirers without cluttering the shop.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -901,7 +901,7 @@
    "elements_to_borrow": [
     {
      "element": "Corporate story site separate from the webstore",
-     "what_it_does_for_conversion_or_valuation": "Lets TS present the platform (distribution centers, segments, add-ons) to buyers, lenders and acquisition targets without disrupting e-commerce conversion."
+     "what_it_does_for_conversion_or_valuation": "Lets TS present the company (distribution centers, segments, add-ons) to buyers, lenders and acquisition targets without disrupting e-commerce conversion."
     },
     {
      "element": "Segment sections by end market",
@@ -926,7 +926,7 @@
    "name": "FGS Global",
    "url": "https://fgsglobal.com/",
    "owner_or_backer": "KKR majority owner (bought WPP's stake in a deal valuing FGS at about $1.7B, building on KKR's 2023 minority investment); 500+ employee shareholders hold about 26%.",
-   "why_it_is_a_reference": "FGS is the clearest PE-owned strategic-communications brand at scale. Its site reads like a leadership advisory, not an agency: a serif statement over a dark aerial photo, monospace navigation, multilingual switcher, and a capability list that includes Transaction & Financial Communications and AI + Innovation.",
+   "why_it_is_a_reference": "A PE-owned strategic-communications brand at scale whose site reads like a leadership advisory, not an agency: a serif statement over a dark aerial photo, monospace navigation, a language switcher, and a capability list that includes transaction communications and AI.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -963,18 +963,18 @@
    "name": "Penta",
    "url": "https://pentagroup.co/",
    "owner_or_backer": "Shamrock Capital acquired Penta Group (Aug 2025); previously majority-backed by Falfurrias Capital Partners.",
-   "why_it_is_a_reference": "Penta is a PE-backed DC stakeholder-advisory firm that sells intelligence as a product: 'Penta live' is a persistent nav CTA, and 'Intelligence' is listed first in its expertise. That is the SignalOS thesis, a data and monitoring layer that adds recurring revenue to a services firm.",
+   "why_it_is_a_reference": "A PE-backed stakeholder-advisory firm that sells intelligence as a product: a live-intelligence product is a persistent nav action, and 'Intelligence' is listed first in its expertise. That is the SignalOS thesis, a data and monitoring layer that adds recurring revenue to a services firm.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
     "nav": "Our Expertise (Intelligence, Advisory, Campaigns, AI Transformation), News & Insights, Our Work, Our People, Careers, Contact; dark-green 'Penta live' pill.",
     "hero": "Carousel on a light network-graph background: 'A corporate advisory firm built for today' / 'Serving the Global 100' / 'Cut through the noise', with sub 'Predict what matters. Control the narrative. Drive material outcomes.' and arrow controls.",
     "cta_placement": "Penta live (nav, persistent); 'Meet Our Team'; perspectives cards.",
-    "trust_signals": "Dark band with big mint numerals (25%, 25M, 2,500+, 8); 'Serving the Global 100'; dated perspectives (e.g., Sept 2026 'In the AI era, judgment is premium. CAOs need a new playbook.'); In The News."
+    "trust_signals": "Dark band with big mint numerals (25%, 25M, 2,500+, 8); 'Serving the Global 100'; dated perspectives (e.g., a Sept 2026 piece on judgment as the premium skill for chief administrative officers); In The News."
    },
    "elements_to_borrow": [
     {
-     "element": "A named live-intelligence product in the primary nav ('Penta live')",
+     "element": "A named live-intelligence product in the primary nav",
      "what_it_does_for_conversion_or_valuation": "Productized monitoring creates subscription-like revenue inside an agency, the core multiple-expansion move for BPI (SignalOS)."
     },
     {
@@ -1000,7 +1000,7 @@
    "name": "Precision",
    "url": "https://www.precisionstrategies.com/",
    "owner_or_backer": "Abry Partners strategic minority investment (2023); Precision acquired Firehouse Strategies in March 2026.",
-   "why_it_is_a_reference": "Precision is BPI's closest peer: founded by Obama campaign veterans, it is an integrated strategy and digital agency for companies, causes and campaigns, and now PE-backed and acquisitive. Its bold two-tone headline and arrow motif show how a campaign-born firm can look corporate without losing energy.",
+   "why_it_is_a_reference": "A campaign-born integrated strategy and digital agency for companies, causes and campaigns, now PE-backed and acquisitive. Its bold two-tone headline and arrow motif show how a campaign-born firm can look corporate without losing energy.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -1037,7 +1037,7 @@
    "name": "Vuori",
    "url": "https://vuoriclothing.com/",
    "owner_or_backer": "Private; $825M round co-led by General Atlantic and Stripes (Nov 2024, about $5.5B valuation), after a $400M SoftBank Vision Fund 2 round in 2021.",
-   "why_it_is_a_reference": "Vuori is the valuation benchmark for a coastal-California lifestyle DTC apparel brand. Its homepage sells named fabric technologies and core franchises (Kore, BlissBlend™) rather than discounts, and it has an 'Ask Vuori' assistant in the nav.",
+   "why_it_is_a_reference": "The valuation benchmark for a coastal-California lifestyle DTC apparel brand. The homepage sells named fabric technologies and core franchises rather than discounts, and an AI assistant sits in the nav.",
    "observed": {
     "http_status": "200 (WebFetch); headless screenshot timed out",
     "method": "WebFetch page parse + curl HTML",
@@ -1048,11 +1048,11 @@
    },
    "elements_to_borrow": [
     {
-     "element": "Named fabric technology as a franchise (BlissBlend™, Kore)",
+     "element": "Named fabric technology as a franchise",
      "what_it_does_for_conversion_or_valuation": "Builds pricing power and repeat purchase. Fair Harbor's BreezeKnit liner and recycled-bottle fabric deserve the same named-tech treatment."
     },
     {
-     "element": "'Ask Vuori' assistant in the nav",
+     "element": "AI assistant in the nav",
      "what_it_does_for_conversion_or_valuation": "Answers fit and size questions before purchase, which lowers returns, the biggest DTC margin leak (HarborOS fit/size thesis)."
     },
     {
@@ -1074,7 +1074,7 @@
    "name": "Chubbies",
    "url": "https://www.chubbiesshorts.com/",
    "owner_or_backer": "Solo Brands (NYSE: DTC), which acquired Chubbies in 2021.",
-   "why_it_is_a_reference": "Chubbies is the closest category peer (men's shorts and swim) and the reference for voice-led DTC. The headlines have humour, there are pill CTAs over lifestyle photos, and the nav includes a resale program (Afterparty), rewards, NFL licensing and a women's line.",
+   "why_it_is_a_reference": "The closest category peer in men's shorts and swim, and the reference for voice-led DTC: humorous headlines, pill CTAs over lifestyle photos, and a nav that includes a resale program, rewards, licensed collections and a women's line.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -1093,7 +1093,7 @@
      "what_it_does_for_conversion_or_valuation": "Repeat-purchase engine; higher LTV/CAC supports valuation."
     },
     {
-     "element": "Licensed and segment collections (NFL, golf, For Her)",
+     "element": "Licensed and segment collections (sports leagues, golf, women's)",
      "what_it_does_for_conversion_or_valuation": "New-audience growth without new fabric R&D. Fair Harbor already has collegiate, golf and women's lines."
     },
     {
@@ -1111,7 +1111,7 @@
    "name": "Outerknown",
    "url": "https://www.outerknown.com/",
    "owner_or_backer": "Founder-led (Kelly Slater and John Moore); since 2024 held with Firewire and Slater Designs under a common holding company. Kering was an early strategic investor.",
-   "why_it_is_a_reference": "Outerknown is the premium sustainable surf brand Fair Harbor is most often compared with. The site is monochrome and quiet, lets surf and nature photography carry the story, and puts 'Pre-Owned' in primary navigation next to Men's and Women's.",
+   "why_it_is_a_reference": "A premium sustainable surf brand in Fair Harbor's set. The site is monochrome and quiet, lets surf and nature photography carry the story, and puts 'Pre-Owned' in primary navigation next to Men's and Women's.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",
@@ -1126,7 +1126,7 @@
      "what_it_does_for_conversion_or_valuation": "Puts circularity in the primary nav as part of the brand; supports the B Corp story and full-price positioning."
     },
     {
-     "element": "Hero-product franchise as its own category (The Blanket Shirt)",
+     "element": "Hero-product franchise as its own category",
      "what_it_does_for_conversion_or_valuation": "One iconic product anchors acquisition; Fair Harbor's equivalent is its core swim trunk with the BreezeKnit liner."
     },
     {
@@ -1148,7 +1148,7 @@
    "name": "Allbirds",
    "url": "https://www.allbirds.com/",
    "owner_or_backer": "Brand and IP being sold to American Exchange Group (definitive agreement announced Mar 2026, about $39M) as Allbirds, Inc. winds down; formerly NASDAQ-listed.",
-   "why_it_is_a_reference": "Allbirds set the template for material-led sustainable DTC: natural-material storytelling, a calm palette and a strong type system. It is also a cautionary valuation reference, since sustainability branding without unit economics fell from a $4B+ peak to a roughly $39M asset sale. Borrow the design, not the model.",
+   "why_it_is_a_reference": "Material-led sustainable DTC: natural-material storytelling, a calm palette and a strong type system. It is also a cautionary valuation reference, since sustainability branding without unit economics ended in an asset sale far below the peak valuation. Borrow the design, not the model.",
    "observed": {
     "http_status": 200,
     "method": "curl + headless Chrome screenshot",

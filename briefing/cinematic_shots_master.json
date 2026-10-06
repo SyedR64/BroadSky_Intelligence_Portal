@@ -11,7 +11,7 @@
    "duration_s": 4,
    "size": 88
   },
-  "narration": "Tyler, this is a working system, not a deck. Six platforms, one portal, and every datapoint tied to an action."
+  "narration": "This is a working system, not a deck. Six companies, one portal, and every datapoint tied to an action."
  },
  {
   "id": "landing_chat",
@@ -26,7 +26,7 @@
   "duration_s": 17,
   "settle_ms": 2500,
   "title_card": null,
-  "narration": "Ask it the question you would ask an associate. It answers from verified data: filings, deed records, add-on screens, and the Smith and Howard template you already proved."
+  "narration": "Ask it the question an operating partner would ask. It answers from verified data: filings, deed records, add-on screens, and the regional-to-national template Broad Sky has already proven."
  },
  {
   "id": "nationwide",
@@ -43,7 +43,7 @@
    "headline": "From Lancaster to national, in four phases.",
    "duration_s": 3.2
   },
-  "narration": "Densify the core, tuck in franchisees across four states, build the Mid-Atlantic platform, then consolidate inside the Authority Brands network."
+  "narration": "Densify the core, tuck in franchisees across four states, build the Mid-Atlantic hub, then consolidate inside the Authority Brands network."
  },
  {
   "id": "theater_homes",
@@ -116,7 +116,7 @@
   "duration_s": 9,
   "settle_ms": 2500,
   "title_card": null,
-  "narration": "Cheap connected-TV flights that switch on with storm alerts, Local Services Ads for intent, and new-mover postcards from the deed feed, all with sourced costs."
+  "narration": "Connected-TV flights that switch on with storm alerts, Local Services Ads for intent, and new-mover postcards from the deed feed, all with sourced costs."
  },
  {
   "id": "cet",
@@ -133,7 +133,7 @@
    "headline": "Horton's first calls, ranked.",
    "duration_s": 3
   },
-  "narration": "For CET, one hundred eighty-three treatment plants ranked by fit, with funded projects, so Horton knows who to call on Monday."
+  "narration": "For Commonwealth Electrical, one hundred eighty-three treatment plants ranked by fit, with funded projects, so the Horton team knows who to call on Monday."
  },
  {
   "id": "os",
@@ -150,7 +150,7 @@
    "headline": "ServiceOS. GridOS. FirmOS. LabOS.",
    "duration_s": 3
   },
-  "narration": "Each platform gets an operating system: the integration spine for every tuck-in, and the story a buyer pays a tech-enabled multiple for."
+  "narration": "Each company gets an operating system: the integration spine for every tuck-in, and the story a buyer pays a tech-enabled multiple for."
  },
  {
   "id": "ma",
@@ -186,11 +186,11 @@
   "settle_ms": 2500,
   "title_card": {
    "kicker": "Syed Rahman \u00b7 for the Portfolio Resource Group",
-   "headline": "Let's put this to work inside the portfolio.",
+   "headline": "One system for the whole portfolio.",
    "duration_s": 5,
    "size": 84,
    "foot": "syedr64.github.io/BroadSky_Intelligence_Portal"
   },
-  "narration": "I built this to show how I would work inside the PRG. I would like to put it to work with you."
+  "narration": "Built to show how the Portfolio Resource Group could run on one system. Ready to put to work."
  }
 ]

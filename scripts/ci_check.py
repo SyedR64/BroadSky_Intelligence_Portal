@@ -5,7 +5,7 @@ without console errors or uncaught page errors.
   python3 scripts/ci_check.py                    # starts its own static server if :8765 is free
   python3 scripts/ci_check.py --base http://127.0.0.1:8765 --out ci-report --settle 2500
 
-Pages:  every *.html in the repo except legacy/, scripts/, .git/, node_modules/.
+Pages:  every *.html in the repo except scripts/, .git/, node_modules/.
 Routes: app.html#/<module>/<view> for each module/view parsed from modules/*.js (cross-checked against the
         live App registry once the app boots).
 Ignored noise: luma.gl / deck.gl warnings, map-tile 4xx, failed loads of third-party URLs (live public APIs,

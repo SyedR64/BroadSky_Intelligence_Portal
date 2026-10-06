@@ -13,7 +13,7 @@
    "Some comps no longer file: TopBuild (acquired by QXO, 15-12G 2026-07-13), WNS (15-12G 2025-10-27), Patterson (take-private, 15-12G 2025-04-28) and Interpublic (acquired by Omnicom, 15-12G 2025-12-08). Their latest year is their last annual report. CBIZ (Grant Thornton affiliate, $55/share cash) and Bio-Techne (Merck KGaA) have pending acquisitions.",
    "Ameresco's FY2025 10-K has no XBRL in companyfacts, so its FY2025 values were transcribed from the 10-K HTML.",
    "Kyndryl (March FYE) and Bio-Techne (June FYE) include FY2026 as the latest year. IES (Sept FYE) and WNS (March FYE) are shown on their own fiscal calendars.",
-   "The mid-cap and large-cap public comps are 10-1000x the size of BSP's lower-middle-market platforms. Use them for direction (margin structure, productivity, growth cycle), not for valuation parity.",
+   "The mid-cap and large-cap public comps are 10-1000x the size of BSP's lower-middle-market companies. Use them for direction (margin structure, productivity, growth cycle), not for valuation parity.",
    "Allbirds now appears in EDGAR as 'Smartbird, Inc.' with the same CIK and ticker BIRD.",
    "Verified 2026-09-24: sampled 31, confirmed 31, removed 0"
   ],
@@ -74,7 +74,7 @@
     "median_operating_margin_multiyear_avg_pct": 11.3,
     "median_ebitda_margin_latest_pct": 16.9,
     "median_revenue_per_employee_usd": 33396,
-    "what_this_implies_for_bsp": "BPO/managed-services comps posted a median 10.1% latest-year growth at a 12.6% operating margin and ~16.9% EBITDA margin, with TaskUs (+19.0%) and EXL (+13.6%) outgrowing Genpact (+6.6%) and WNS/Kyndryl flat. Revenue per employee is a delivery-model signal rather than a quality signal: offshore-heavy Genpact/EXL/TaskUs/WNS run $18k-$35k per head, while onshore professional-services models (CBIZ $290k, Kyndryl $210k) run 6-15x higher. For Frontline, an onshore US legal-services model should be benchmarked on the CBIZ-type revenue/employee and 8-12% operating margins, with offshore leverage the main path toward Genpact/EXL-style 15% margins; CBIZ's pending $55/share cash sale to a Grant Thornton affiliate is also a live valuation marker for Smith + Howard-type accounting platforms."
+    "what_this_implies_for_bsp": "BPO/managed-services comps posted a median 10.1% latest-year growth at a 12.6% operating margin and ~16.9% EBITDA margin, with TaskUs (+19.0%) and EXL (+13.6%) outgrowing Genpact (+6.6%) and WNS/Kyndryl flat. Revenue per employee is a delivery-model signal rather than a quality signal: offshore-heavy Genpact/EXL/TaskUs/WNS run $18k-$35k per head, while onshore professional-services models (CBIZ $290k, Kyndryl $210k) run 6-15x higher. For Frontline, an onshore US legal-services model should be benchmarked on the CBIZ-type revenue/employee and 8-12% operating margins, with offshore leverage the main path toward Genpact/EXL-style 15% margins; CBIZ's pending $55/share cash sale to a Grant Thornton affiliate is also a live valuation marker for Smith + Howard-type accounting companies."
    },
    "lab_distribution": {
     "bsp_company": "Thomas Scientific",
@@ -109,7 +109,7 @@
     "median_operating_margin_multiyear_avg_pct": 7.8,
     "median_ebitda_margin_latest_pct": 8.6,
     "median_revenue_per_employee_usd": 190892,
-    "what_this_implies_for_bsp": "Agency holding companies are shrinking or flat on a like-for-like basis: median latest-year growth is 0.3%, with WPP down 8.1% in GBP, IPG down 1.8% before its sale, Stagwell +2.4%, and Omnicom's +10.1% driven by the IPG acquisition. Reported margins are distorted by impairments and deal costs (median latest operating margin 4.2% vs a 7.8% multi-year average), while normalized holding-company margins sit around 11-15% (OMC and IPG before 2025) and revenue per employee is ~$145k-$265k. For a BSP agency platform, benchmarks are roughly $190k-$265k revenue per employee and a 10-15% EBITDA margin, and growth has to come from specialist/earned-media and data capabilities because the category itself is ex-growth and consolidating."
+    "what_this_implies_for_bsp": "Agency holding companies are shrinking or flat on a like-for-like basis: median latest-year growth is 0.3%, with WPP down 8.1% in GBP, IPG down 1.8% before its sale, Stagwell +2.4%, and Omnicom's +10.1% driven by the IPG acquisition. Reported margins are distorted by impairments and deal costs (median latest operating margin 4.2% vs a 7.8% multi-year average), while normalized holding-company margins sit around 11-15% (OMC and IPG before 2025) and revenue per employee is ~$145k-$265k. For a BSP agency portfolio company, benchmarks are roughly $190k-$265k revenue per employee and a 10-15% EBITDA margin, and growth has to come from specialist/earned-media and data capabilities because the category itself is ex-growth and consolidating."
    },
    "apparel_dtc": {
     "bsp_company": "Fair Harbor",
@@ -130,7 +130,7 @@
     "what_this_implies_for_bsp": "Apparel/DTC comps are bifurcated: the median latest-year growth is -1.5% and median operating margin 3.7%, but LULU (19.9%) and CROX (about 25-26% in FY2023-24, before its 2025 impairments) show what brand heat earns, while DLTH, RVLV and BIRD run -2% to 6% or deep losses. Allbirds (revenue down 19.7%, -52% operating margin, headcount 927 to 362 in two years) is the cautionary case for a single-category, DTC-first, sustainability-positioned footwear/apparel brand scaling stores too early. For Fair Harbor, the benchmark is roughly $275k-$500k revenue per employee and a positive high-single-digit EBITDA margin before scaling retail, with wholesale/marketplace mix (as Crocs and Revolve show) preferable to heavy owned-store build-outs."
    }
   },
-  "financial_picture": "Across 31 public peers, the BSP portfolio splits into three economic regimes. (1) Construction and trades (CET / NuWave and Punctual Pros) is the growth engine: commercial electrical/MEP comps compounded revenue at a median 16.8% from FY2023 to FY2025, versus 8.4% for the residential and trade set. The trades still have thin margins, with a median operating margin of 6.4% for commercial electrical, 11.2% approximate EBITDA, and only specialists like FIX (14.4%), IESC (11.4%) and EME (10.1%) at or above 10%, so contractor value creation comes from mix (service, mission-critical) more than price. Residential comps show the split Punctual Pros faces: pure residential installers IBP and TopBuild grew only 1-1.5% in FY2025 at 13-15% operating margins, while the fast growers (FIX, LMB) are leaning on non-residential work. Frontdoor's 24% approximate EBITDA margin on about $1.03M revenue per employee shows the value of a subscription and asset-light contractor-network model in home services. (2) Services and people businesses (Frontline, Smith + Howard, the agency holding) are priced on productivity per head. Offshore BPO earns 12-15% operating margins at only $18k-$35k revenue per employee, while onshore professional services (CBIZ $290k, Kyndryl $210k) earn 3-9%. So a US-heavy legal or accounting platform should expect CBIZ-like economics unless it adds offshore leverage. Agencies are ex-growth (median +0.3%, WPP -8.1% in GBP) and consolidating (Omnicom absorbed Interpublic, taking headcount from 74,900 to about 120,000), so a BSP agency asset has to win on specialist growth rather than category tailwind. (3) Product businesses (Thomas Scientific, Fair Harbor) are scale-and-mix stories. Lab distribution grows at a median 1.5% with 4-5% operating margins for pure distributors (HSIC, PDCO), against 17-21% for manufacturers (TMO, TECH), so private-label and proprietary content are the margin lever for Thomas Scientific. Apparel/DTC is the most dispersed sector: LULU earns about 20% operating margin, but Duluth and Allbirds show negative margins and shrinking revenue, and Allbirds went from 927 to 362 employees in two years. For Fair Harbor, capital discipline around retail expansion matters more than top-line speed. Finally, M&A activity among the comps (QXO/TopBuild, the WNS and Patterson take-outs in 2025, Omnicom/Interpublic, Grant Thornton affiliate/CBIZ at $55 cash, Merck KGaA/Bio-Techne) signals active strategic and sponsor demand in four of BSP's six sectors, which supports exit optionality for the portfolio.",
+  "financial_picture": "Across 31 public peers, the BSP portfolio splits into three economic regimes. (1) Construction and trades (CET / NuWave and Punctual Pros) is the growth engine: commercial electrical/MEP comps compounded revenue at a median 16.8% from FY2023 to FY2025, versus 8.4% for the residential and trade set. The trades still have thin margins, with a median operating margin of 6.4% for commercial electrical, 11.2% approximate EBITDA, and only specialists like FIX (14.4%), IESC (11.4%) and EME (10.1%) at or above 10%, so contractor value creation comes from mix (service, mission-critical) more than price. Residential comps show the split Punctual Pros faces: pure residential installers IBP and TopBuild grew only 1-1.5% in FY2025 at 13-15% operating margins, while the fast growers (FIX, LMB) are leaning on non-residential work. Frontdoor's 24% approximate EBITDA margin on about $1.03M revenue per employee shows the value of a subscription and asset-light contractor-network model in home services. (2) Services and people businesses (Frontline, Smith + Howard, the agency holding) are priced on productivity per head. Offshore BPO earns 12-15% operating margins at only $18k-$35k revenue per employee, while onshore professional services (CBIZ $290k, Kyndryl $210k) earn 3-9%. So a US-heavy legal or accounting company should expect CBIZ-like economics unless it adds offshore leverage. Agencies are ex-growth (median +0.3%, WPP -8.1% in GBP) and consolidating (Omnicom absorbed Interpublic, taking headcount from 74,900 to about 120,000), so a BSP agency asset has to win on specialist growth rather than category tailwind. (3) Product businesses (Thomas Scientific, Fair Harbor) are scale-and-mix stories. Lab distribution grows at a median 1.5% with 4-5% operating margins for pure distributors (HSIC, PDCO), against 17-21% for manufacturers (TMO, TECH), so private-label and proprietary content are the margin lever for Thomas Scientific. Apparel/DTC is the most dispersed sector: LULU earns about 20% operating margin, but Duluth and Allbirds show negative margins and shrinking revenue, and Allbirds went from 927 to 362 employees in two years. For Fair Harbor, capital discipline around retail expansion matters more than top-line speed. Finally, M&A activity among the comps (QXO/TopBuild, the WNS and Patterson take-outs in 2025, Omnicom/Interpublic, Grant Thornton affiliate/CBIZ at $55 cash, Merck KGaA/Bio-Techne) signals active strategic and sponsor demand in four of BSP's six sectors, which supports exit optionality for the portfolio.",
   "estimate_table": [
    {
     "metric": "Benchmark revenue per employee, commercial electrical contractor (CET / NuWave)",
@@ -257,7 +257,7 @@
    "cik": "0001727263",
    "sector_tag": "residential_home_services",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "Punctual Pros (residential home services platform; portal tool \"Punctual Pros Territory Intelligence\")",
+   "benchmarks_bsp": "Punctual Pros (residential home services company; portal tool \"Punctual Pros Territory Intelligence\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -322,7 +322,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "Frontdoor, Inc.",
-   "title": "FTDR 10-K FY2025 public comp for residential_home_services",
+   "title": "FTDR 10-K FY2025 public comp for residential home services",
    "filed_or_dated": "2026-02-26",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "medium",
@@ -349,7 +349,7 @@
    "secondary_sector_tags": [
     "residential_home_services"
    ],
-   "benchmarks_bsp": "Punctual Pros (residential home services platform; portal tool \"Punctual Pros Territory Intelligence\")",
+   "benchmarks_bsp": "Punctual Pros (residential home services company; portal tool \"Punctual Pros Territory Intelligence\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -405,7 +405,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "COMFORT SYSTEMS USA, INC.",
-   "title": "FIX 10-K FY2025 public comp for residential_home_services",
+   "title": "FIX 10-K FY2025 public comp for residential home services",
    "filed_or_dated": "2026-02-19",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -429,7 +429,7 @@
    "cik": "0001606163",
    "sector_tag": "residential_home_services",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "Punctual Pros (residential home services platform; portal tool \"Punctual Pros Territory Intelligence\")",
+   "benchmarks_bsp": "Punctual Pros (residential home services company; portal tool \"Punctual Pros Territory Intelligence\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -485,7 +485,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "LIMBACH HOLDINGS, INC.",
-   "title": "LMB 10-K FY2025 public comp for residential_home_services",
+   "title": "LMB 10-K FY2025 public comp for residential home services",
    "filed_or_dated": "2026-03-02",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -509,7 +509,7 @@
    "cik": "0001580905",
    "sector_tag": "residential_home_services",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "Punctual Pros (residential home services platform; portal tool \"Punctual Pros Territory Intelligence\")",
+   "benchmarks_bsp": "Punctual Pros (residential home services company; portal tool \"Punctual Pros Territory Intelligence\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -565,7 +565,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "Installed Building Products, Inc.",
-   "title": "IBP 10-K FY2025 public comp for residential_home_services",
+   "title": "IBP 10-K FY2025 public comp for residential home services",
    "filed_or_dated": "2026-02-26",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -589,7 +589,7 @@
    "cik": "0001633931",
    "sector_tag": "residential_home_services",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "Punctual Pros (residential home services platform; portal tool \"Punctual Pros Territory Intelligence\")",
+   "benchmarks_bsp": "Punctual Pros (residential home services company; portal tool \"Punctual Pros Territory Intelligence\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -645,7 +645,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "TopBuild Corp",
-   "title": "BLD 10-K FY2025 public comp for residential_home_services",
+   "title": "BLD 10-K FY2025 public comp for residential home services",
    "filed_or_dated": "2026-02-26",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -735,7 +735,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "EMCOR Group, Inc.",
-   "title": "EME 10-K FY2025 public comp for commercial_electrical_energy",
+   "title": "EME 10-K FY2025 public comp for commercial electrical and energy",
    "filed_or_dated": "2026-02-26",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -816,7 +816,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "IES Holdings, Inc.",
-   "title": "IESC 10-K FY2025 public comp for commercial_electrical_energy",
+   "title": "IESC 10-K FY2025 public comp for commercial electrical and energy",
    "filed_or_dated": "2025-11-21",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -896,7 +896,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "MYR GROUP INC.",
-   "title": "MYRG 10-K FY2025 public comp for commercial_electrical_energy",
+   "title": "MYRG 10-K FY2025 public comp for commercial electrical and energy",
    "filed_or_dated": "2026-02-25",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -976,7 +976,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "Primoris Services Corporation",
-   "title": "PRIM 10-K FY2025 public comp for commercial_electrical_energy",
+   "title": "PRIM 10-K FY2025 public comp for commercial electrical and energy",
    "filed_or_dated": "2026-02-24",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -1066,7 +1066,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "QUANTA SERVICES, INC.",
-   "title": "PWR 10-K FY2025 public comp for commercial_electrical_energy",
+   "title": "PWR 10-K FY2025 public comp for commercial electrical and energy",
    "filed_or_dated": "2026-02-19",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -1149,7 +1149,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "Ameresco, Inc.",
-   "title": "AMRC 10-K FY2025 public comp for commercial_electrical_energy",
+   "title": "AMRC 10-K FY2025 public comp for commercial electrical and energy",
    "filed_or_dated": "2026-03-03",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "medium",
@@ -1174,7 +1174,7 @@
    "cik": "0001398659",
    "sector_tag": "legal_bpo_managed_services",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "Frontline (legal / managed-services platform; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory, portal tool \"Smith + Howard NYC Metro Prospect Map\")",
+   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory, portal tool \"Smith + Howard NYC Metro Prospect Map\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -1239,7 +1239,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "Genpact Limited",
-   "title": "G 10-K FY2025 public comp for legal_bpo_managed_services",
+   "title": "G 10-K FY2025 public comp for legal BPO and managed services",
    "filed_or_dated": "2026-02-26",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -1264,7 +1264,7 @@
    "cik": "0001297989",
    "sector_tag": "legal_bpo_managed_services",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "Frontline (legal / managed-services platform; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory, portal tool \"Smith + Howard NYC Metro Prospect Map\")",
+   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory, portal tool \"Smith + Howard NYC Metro Prospect Map\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -1320,7 +1320,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "EXLSERVICE HOLDINGS, INC.",
-   "title": "EXLS 10-K FY2025 public comp for legal_bpo_managed_services",
+   "title": "EXLS 10-K FY2025 public comp for legal BPO and managed services",
    "filed_or_dated": "2026-02-24",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -1344,7 +1344,7 @@
    "cik": "0001829864",
    "sector_tag": "legal_bpo_managed_services",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "Frontline (legal / managed-services platform; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory, portal tool \"Smith + Howard NYC Metro Prospect Map\")",
+   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory, portal tool \"Smith + Howard NYC Metro Prospect Map\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -1409,7 +1409,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "TaskUs, Inc.",
-   "title": "TASK 10-K FY2025 public comp for legal_bpo_managed_services",
+   "title": "TASK 10-K FY2025 public comp for legal BPO and managed services",
    "filed_or_dated": "2026-03-05",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -1433,7 +1433,7 @@
    "cik": "0001356570",
    "sector_tag": "legal_bpo_managed_services",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "Frontline (legal / managed-services platform; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory, portal tool \"Smith + Howard NYC Metro Prospect Map\")",
+   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory, portal tool \"Smith + Howard NYC Metro Prospect Map\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -1489,7 +1489,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "WNS (HOLDINGS) LIMITED",
-   "title": "WNS 10-K FY2025 public comp for legal_bpo_managed_services",
+   "title": "WNS 10-K FY2025 public comp for legal BPO and managed services",
    "filed_or_dated": "2025-05-13",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -1517,7 +1517,7 @@
    "secondary_sector_tags": [
     "accounting_advisory (Smith + Howard)"
    ],
-   "benchmarks_bsp": "Frontline (legal / managed-services platform; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory, portal tool \"Smith + Howard NYC Metro Prospect Map\")",
+   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory, portal tool \"Smith + Howard NYC Metro Prospect Map\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -1573,7 +1573,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "CBIZ, Inc.",
-   "title": "CBZ 10-K FY2025 public comp for legal_bpo_managed_services",
+   "title": "CBZ 10-K FY2025 public comp for legal BPO and managed services",
    "filed_or_dated": "2026-02-26",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -1599,7 +1599,7 @@
    "cik": "0001867072",
    "sector_tag": "legal_bpo_managed_services",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "Frontline (legal / managed-services platform; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory, portal tool \"Smith + Howard NYC Metro Prospect Map\")",
+   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory, portal tool \"Smith + Howard NYC Metro Prospect Map\")",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -1684,7 +1684,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "Kyndryl Holdings, Inc.",
-   "title": "KD 10-K FY2026 public comp for legal_bpo_managed_services",
+   "title": "KD 10-K FY2026 public comp for legal BPO and managed services",
    "filed_or_dated": "2026-05-29",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "medium",
@@ -1766,7 +1766,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "Avantor, Inc.",
-   "title": "AVTR 10-K FY2025 public comp for lab_distribution",
+   "title": "AVTR 10-K FY2025 public comp for lab distribution",
    "filed_or_dated": "2026-02-11",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -1856,7 +1856,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "THERMO FISHER SCIENTIFIC INC.",
-   "title": "TMO 10-K FY2025 public comp for lab_distribution",
+   "title": "TMO 10-K FY2025 public comp for lab distribution",
    "filed_or_dated": "2026-02-26",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -1936,7 +1936,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "HENRY SCHEIN, INC.",
-   "title": "HSIC 10-K FY2025 public comp for lab_distribution",
+   "title": "HSIC 10-K FY2025 public comp for lab distribution",
    "filed_or_dated": "2026-02-24",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -2004,7 +2004,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "PATTERSON COMPANIES, INC.",
-   "title": "PDCO 10-K FY2024 public comp for lab_distribution",
+   "title": "PDCO 10-K FY2024 public comp for lab distribution",
    "filed_or_dated": "2024-06-18",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -2098,7 +2098,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "BIO-TECHNE Corp",
-   "title": "TECH 10-K FY2026 public comp for lab_distribution",
+   "title": "TECH 10-K FY2026 public comp for lab distribution",
    "filed_or_dated": "2026-08-24",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -2180,7 +2180,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "OMNICOM GROUP INC.",
-   "title": "OMC 10-K FY2025 public comp for communications_agencies",
+   "title": "OMC 10-K FY2025 public comp for communications agencies",
    "filed_or_dated": "2026-02-20",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -2248,7 +2248,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "INTERPUBLIC GROUP OF COMPANIES, INC.",
-   "title": "IPG 10-K FY2024 public comp for communications_agencies",
+   "title": "IPG 10-K FY2024 public comp for communications agencies",
    "filed_or_dated": "2025-02-20",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -2329,7 +2329,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "Stagwell Inc",
-   "title": "STGW 10-K FY2025 public comp for communications_agencies",
+   "title": "STGW 10-K FY2025 public comp for communications agencies",
    "filed_or_dated": "2026-03-13",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -2442,7 +2442,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "WPP plc",
-   "title": "WPP 20-F FY2025 public comp for communications_agencies",
+   "title": "WPP 20-F FY2025 public comp for communications agencies",
    "filed_or_dated": "2026-03-19",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "medium",
@@ -2523,7 +2523,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "lululemon athletica inc.",
-   "title": "LULU 10-K FY2025 public comp for apparel_dtc",
+   "title": "LULU 10-K FY2025 public comp for apparel DTC",
    "filed_or_dated": "2026-03-17",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -2604,7 +2604,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "CROCS, INC.",
-   "title": "CROX 10-K FY2025 public comp for apparel_dtc",
+   "title": "CROX 10-K FY2025 public comp for apparel DTC",
    "filed_or_dated": "2026-02-12",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -2685,7 +2685,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "DULUTH HOLDINGS INC.",
-   "title": "DLTH 10-K FY2025 public comp for apparel_dtc",
+   "title": "DLTH 10-K FY2025 public comp for apparel DTC",
    "filed_or_dated": "2026-03-20",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -2766,7 +2766,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "REVOLVE GROUP, INC.",
-   "title": "RVLV 10-K FY2025 public comp for apparel_dtc",
+   "title": "RVLV 10-K FY2025 public comp for apparel DTC",
    "filed_or_dated": "2026-02-25",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",
@@ -2846,7 +2846,7 @@
    "retrieved": "2026-09-24",
    "category": "industry_benchmark",
    "entity": "Smartbird, Inc.",
-   "title": "BIRD 10-K FY2025 public comp for apparel_dtc",
+   "title": "BIRD 10-K FY2025 public comp for apparel DTC",
    "filed_or_dated": "2026-03-31",
    "filer_or_source_agency": "SEC EDGAR (XBRL companyfacts + 10-K/20-F text)",
    "confidence": "high",

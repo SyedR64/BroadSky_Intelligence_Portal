@@ -27,16 +27,16 @@ PER_DATASET = 4000
 MAX_DATASETS = 6
 
 LABELS = {
-    'ai_agents_portfolio': 'Portfolio AI-agent plan', 'bpi_filings': 'BPI public filings', 'bpi_playbook': 'BPI playbook', 'bsp_firm': 'Broad Sky firm profile',
+    'ai_agents_portfolio': 'Portfolio AI-agent plan', 'bpi_filings': 'BPI public filings', 'bpi_playbook': 'BPI growth plan', 'bsp_firm': 'Broad Sky firm profile',
     'bsp_methodology': 'Broad Sky acquisition methodology', 'bsp_network': 'Broad Sky professional network', 'cases_cross_sector': 'Cross-sector sponsor case studies',
-    'cases_home_services': 'Home-services platform case studies', 'cet_filings': 'CET public filings', 'cet_opportunities': 'CET opportunity radar',
-    'cet_playbook': 'CET playbook', 'cet_wwtp_targets': 'CET wastewater-plant targets', 'design_refs': 'Design references', 'fairharbor_filings': 'Fair Harbor public filings',
-    'fh_playbook': 'Fair Harbor playbook', 'fl_midsize_firms': 'Mid-size law firms', 'fl_playbook': 'Frontline playbook', 'frontline_filings': 'Frontline public filings',
+    'cases_home_services': 'Home-services company case studies', 'cet_filings': 'CET public filings', 'cet_opportunities': 'CET opportunity radar',
+    'cet_playbook': 'CET growth plan', 'cet_wwtp_targets': 'CET wastewater-plant targets', 'design_refs': 'Design principles', 'fairharbor_filings': 'Fair Harbor public filings',
+    'fh_playbook': 'Fair Harbor growth plan', 'fl_midsize_firms': 'Mid-size law firms', 'fl_playbook': 'Frontline growth plan', 'frontline_filings': 'Frontline public filings',
     'ma_targets_cet': 'CET add-on targets', 'ma_targets_fl_ts': 'Frontline and Thomas Scientific add-on targets', 'ma_targets_pp': 'Punctual Pros add-on targets',
     'pe_landscape': 'Private-equity landscape', 'pp_ads': 'Punctual Pros ad plan', 'pp_demand_model': 'Punctual Pros demand model', 'pp_filings': 'Punctual Pros public filings',
     'pp_market': 'Punctual Pros market profile', 'pp_nationwide': 'Punctual Pros nationwide plan', 'pp_storm_events': 'Punctual Pros storm events',
     'public_comps': 'Public comparables', 'rival_filings': 'Competitor filings', 'serviceos_evidence': 'ServiceOS evidence', 'thomas_filings': 'Thomas Scientific public filings',
-    'ts_playbook': 'Thomas Scientific playbook', 'voice_ai': 'Voice AI research', 'cet_ne_rfps': 'New England public bids', 'pp_meta': 'Punctual Pros territory profile',
+    'ts_playbook': 'Thomas Scientific growth plan', 'voice_ai': 'Voice AI research', 'cet_ne_rfps': 'New England public bids', 'pp_meta': 'Punctual Pros territory profile',
     'live:nws_alerts': 'National Weather Service alerts (nightly snapshot)', 'live:forecast_hubs': 'Open-Meteo 7-day forecast (nightly snapshot)',
     'live:usaspending_trades': 'Federal trade-contractor awards (nightly snapshot)', 'live:echo_npdes_majors': 'EPA wastewater-plant compliance (nightly snapshot)',
     'live:census_permits': 'Census building permits (nightly snapshot)',
@@ -61,7 +61,7 @@ KEYWORDS = [
     (r'public comps|comparables|\bcomps\b', ['public_comps', 'serviceos_evidence'], None),
     (r'\bctv\b|\bads?\b|media plan|advertis|marketing', ['pp_ads'], None),
     (r'northeast|new england|scale cet', ['cet_playbook', 'cet_opportunities', 'ma_targets_cet', 'live:census_permits'], None),
-    (r'playbook|value-?creation', [], 'playbook'),
+    (r'growth plan|playbook|value-?creation', [], 'playbook'),
     (r'ai agents?|agentic|automation', ['ai_agents_portfolio', 'voice_ai'], None),
     (r'voice|24/7|2am|after-?hours|missed call', ['voice_ai', 'pp_demand_model'], None),
     (r'membership|comfort club|rebate|heat pump', ['pp_market', 'pp_nationwide', 'pp_filings'], None),
@@ -191,6 +191,9 @@ def system_prompt(persona):
             "- Never invent numbers. If a figure is not in the context, say what data would answer it instead of guessing.\n"
             "- Label anything modelled or inferred as an estimate (write 'est.').\n"
             "- No legal or regulatory-compliance advice.\n"
+            "- House style: say 'growth plan' (never 'playbook') and 'portfolio company' for a sponsor's company ('platform' only for software). "
+            "Write dates in words (Oct 6, 2026). Never print file names or identifiers with underscores. No greetings and no addressing anyone by name. "
+            "Do not cite brands as design inspiration.\n"
             "- End with 2-4 concrete next actions for the operating team.")
 
 

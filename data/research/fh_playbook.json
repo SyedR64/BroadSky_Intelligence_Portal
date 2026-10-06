@@ -1,21 +1,21 @@
 {
  "meta": {
   "dataset": "fh_playbook",
-  "title": "Fair Harbor: the value-creation playbook",
+  "title": "Fair Harbor: the growth plan",
   "generated": "2026-10-06",
   "subject": "Fair Harbor Clothing PBC (Broad Sky Partners portfolio, entry Mar 2022)",
   "thesis": "From DTC swim brand to year-round sustainable lifestyle brand: category extension, wholesale door growth, retention/membership, international; AI agents for fit/size, CX and demand planning; 3PL and returns talent/ops; capital-light financing.",
-  "method": "Built on 2026-10-06 from the portal's verified datasets (data/research/fairharbor_filings.json, bsp_firm.json bsp-fh item, timeline and fh_opportunities, rival_filings.json Chubbies items, public_comps.json apparel_dtc benchmarks, pe_landscape.json fair_harbor heatmap, serviceos_evidence.json HarborOS items) plus new web research (search and direct fetches) on vendor claims, analog brands, returns/3PL benchmarks and lending norms. data/research/pp_nationwide.json was not present, so item shape follows serviceos_evidence conventions (kind, id, source_url, retrieved, est. labels). Computed data points (markdown share, non-swim share, Chubbies channel mix and growth, B2B SKU count, ABL capacity, leverage capacity) are calculated in the build script from those datasets; the KPI roadmap and all targets are explicit analyst assumptions anchored to the filings estimate_table.",
+  "method": "Built on 2026-10-06 from the portal's verified datasets (data/research/fairharbor_filings.json, bsp_firm.json bsp-fh item, timeline and Fair Harbor opportunities, rival_filings.json Chubbies items, public_comps.json apparel DTC benchmarks, pe_landscape.json Fair Harbor heatmap, serviceos_evidence.json HarborOS items) plus new web research (search and direct fetches) on vendor claims, analog brands, returns/3PL benchmarks and lending norms. data/research/pp_nationwide.json was not present, so item shape follows ServiceOS evidence conventions (kind, id, source URL, retrieved, est. labels). Computed data points (markdown share, non-swim share, Chubbies channel mix and growth, B2B SKU count, ABL capacity, leverage capacity) are calculated in the build script from those datasets; the KPI roadmap and all targets are explicit analyst assumptions anchored to the filings estimate table.",
   "caveats": [
    "Fair Harbor has never disclosed revenue, EBITDA or debt; the $27M revenue and 6% EBITDA baseline are midpoints of low-confidence estimates ($20-35M; 0-12%).",
    "Vendor metrics (Bold Metrics, Gorgias, Loop, Global-e, Meta, ShipBob, Happy Returns, Metyis) are self-reported, self-selected and unaudited; treat them as upper bounds.",
    "The McKinsey forecasting figure (20-50% fewer errors, up to 65% fewer lost sales) was confirmed via HubSpot's citation of the McKinsey article; the McKinsey page itself timed out on direct fetch.",
    "Faherty's ~$250M figure comes from a Guy Raz newsletter describing it as a '$250 million lifestyle brand'; it is not an audited revenue number.",
    "Door counts date from the 2022 release (~250 specialty plus Nordstrom and Saks); the current stockist list is not public, so the door baseline may be stale.",
-   "Weeks-to-deploy, ABL inputs (58% gross margin, 2.5x turns, 40% wholesale, 45-day DSO) and every kpi_target are analyst assumptions labelled est.",
+   "Weeks-to-deploy, ABL inputs (58% gross margin, 2.5x turns, 40% wholesale, 45-day DSO) and every KPI target are analyst assumptions labelled est.",
    "Middle-market leverage (3.8x) is an all-sector figure; no consumer-apparel-specific LMM leverage figure was verified.",
    "The current lender after the Dec 2025 eCapital lien release is unknown.",
-   "Smith + Howard is used only as a template (exited Aug 2026); it is not an active platform."
+   "Smith + Howard is used only as a template (exited Aug 2026); it is not an active company."
   ],
   "item_count": 46,
   "item_counts": {
@@ -27,7 +27,7 @@
    "financing": 6
   },
   "narrative": [
-   "Tyler, Fair Harbor is our only consumer brand and, about 4.5 years in, it is still a ~$27M business (est. range $20-35M) with low single-digit EBITDA and no add-ons.",
+   "Fair Harbor is our only consumer brand and, about 4.5 years in, it is still a ~$27M business (est. range $20-35M) with low single-digit EBITDA and no add-ons.",
    "The good news is the shift to a year-round lifestyle brand has already happened on the shelf: 64.0% of the 372 live products are non-swim, and golf, kids, collegiate and B2B custom launched in 2025-2026.",
    "The bad news is margin: 38.5% of live variants are marked down, women's was cleared at ~70% off, and swim is the most-returned category at Shopify brands (21.6%).",
    "So the first six months are about fixing the base (markdown discipline, fit and returns, and buying to forecast) before we pay for growth.",
@@ -38,7 +38,7 @@
    "International starts in month 30 as merchant-of-record DTC into Canada, the UK and Australia, following Vuori's e-commerce-first launch, because the store ships only to the US today.",
    "We should stay capital-light: the unsold ~$6M of the 2022 equity sleeve and an ABL of roughly $3.4-4.6M cover the plan, and Solo Brands' delisting shows what term debt does to a swim brand.",
    "The roadmap assumes revenue grows from ~$27M to ~$40M and EBITDA from ~$1.6M to ~$5.2M by month 36. That is still below Chubbies' 18% margin, and every figure is an analyst assumption, not company data.",
-   "The Smith + Howard lesson applies: buyers paid for a scaled, legible platform, so the exit story is wholesale breadth, repeat-customer economics and margin, and the logical buyers are strategics and brand owners."
+   "The Smith + Howard lesson applies: buyers paid for a scaled, legible portfolio company, so the exit story is wholesale breadth, repeat-customer economics and margin, and the logical buyers are strategics and brand owners."
   ],
   "kpi_roadmap": [
    {
@@ -50,7 +50,7 @@
     "revenue_per_employee_usd": 450000,
     "locations_or_accounts": 254,
     "locations_or_accounts_basis": "wholesale doors + 2 owned stores",
-    "note": "Baseline = fairharbor_filings estimate_table point (2025 net revenue ~$27M, range $20-35M; EBITDA 0-12%, midpoint 6%); headcount 40-80 midpoint; ~250 specialty doors + Nordstrom + Saks (2022 release) + 2 owned stores. All low confidence.",
+    "note": "Baseline = Fair Harbor filings estimate table point (2025 net revenue ~$27M, range $20-35M; EBITDA 0-12%, midpoint 6%); headcount 40-80 midpoint; ~250 specialty doors + Nordstrom + Saks (2022 release) + 2 owned stores. All low confidence.",
     "label": "est. analyst assumption anchored to data/research/fairharbor_filings.json; not company guidance"
    },
    {
@@ -90,7 +90,7 @@
     "label": "est. analyst assumption anchored to data/research/fairharbor_filings.json; not company guidance"
    }
   ],
-  "kpi_roadmap_label": "est. analyst assumptions anchored to fairharbor_filings estimate_table; not forecasts or company guidance",
+  "kpi_roadmap_label": "est. analyst assumptions anchored to Fair Harbor filings estimate table; not forecasts or company guidance",
   "baseline_anchors": {
    "revenue_2025_est_usd": [
     20000000,
@@ -112,7 +112,7 @@
    "source": "data/research/fairharbor_filings.json estimate_table"
   },
   "consumers": [
-   "redesigns/* Fair Harbor playbook page",
+   "redesigns/* Fair Harbor growth plan page",
    "HarborOS page",
    "portal chat (assets/chat.js)"
   ]
@@ -122,8 +122,8 @@
    "id": "tpl-sh-1",
    "kind": "template",
    "entity": "Smith + Howard",
-   "move": "Platform entry: founder-led regional leader, first institutional capital",
-   "what_they_did": "Broad Sky made a strategic platform investment in Smith + Howard (Atlanta, ~100 professionals, one office) in Nov 2022.",
+   "move": "Entry: founder-led regional leader, first institutional capital",
+   "what_they_did": "Broad Sky made a strategic anchor investment in Smith + Howard (Atlanta, ~100 professionals, one office) in Nov 2022.",
    "fair_harbor_translation": "Fair Harbor is the same set-up in consumer: a founder-led brand taking its first institutional capital ($30.7M Form D, Mar 2022). The S+H lesson is that the entry thesis named the adjacent services up front; Fair Harbor's equivalent is a named category-and-channel map (year-round apparel, golf, collegiate, B2B, international).",
    "key_figures": {
     "entry_professionals": 100,
@@ -187,7 +187,7 @@
    "entity": "Smith + Howard",
    "move": "Technology, AI and offshore delivery as the margin engine",
    "what_they_did": "Per the exit release, Broad Sky invested in leadership, technology, AI-enabled capabilities and an offshore delivery centre in India; Geels Norton (cyber, Feb 2026) added a tech-heavy service line.",
-   "fair_harbor_translation": "HarborOS is the consumer equivalent: fit/size, CX, returns-to-exchange and demand-planning agents on Shopify/Klaviyo, sized at $0.3-0.7M for 2-5 points of EBITDA margin (serviceos_evidence ra-fh, est.).",
+   "fair_harbor_translation": "HarborOS is the consumer equivalent: fit/size, CX, returns-to-exchange and demand-planning agents on Shopify/Klaviyo, sized at $0.3-0.7M for 2-5 points of EBITDA margin (ServiceOS evidence ra-fh, est.).",
    "key_figures": {
     "levers": [
      "leadership",
@@ -204,9 +204,9 @@
    "id": "tpl-sh-6",
    "kind": "template",
    "entity": "Smith + Howard",
-   "move": "The exit: a scaled, buyer-legible platform sold to a growth investor",
+   "move": "The exit: a scaled, buyer-legible portfolio company sold to a growth investor",
    "what_they_did": "Sold to TPG (TPG Growth), closed Aug 6 2026 after ~3.5 years: ~100 to ~800 professionals, 1 to 11 Southeast locations plus India, 9 add-ons, nearly 4x revenue.",
-   "fair_harbor_translation": "Fair Harbor is ~4.5 years into its hold with no add-ons (FH-16). The S+H template says the exit story must be a scaled platform with visible recurring earnings; for a brand that means wholesale breadth, repeat-customer economics and margin, not just top-line.",
+   "fair_harbor_translation": "Fair Harbor is ~4.5 years into its hold with no add-ons (FH-16). The S+H template says the exit story must be a scaled company with visible recurring earnings; for a brand that means wholesale breadth, repeat-customer economics and margin, not just top-line.",
    "key_figures": {
     "professionals_entry": 100,
     "professionals_exit": 800,
@@ -306,7 +306,7 @@
    },
    "data_point_sources": [
     "data/research/fairharbor_filings.json",
-    "data/research/bsp_firm.json (bsp-fh, fh_opportunities)",
+    "data/research/bsp_firm.json (bsp-fh, Fair Harbor opportunities)",
     "data/research/rival_filings.json",
     "data/research/public_comps.json",
     "data/research/serviceos_evidence.json",
@@ -373,7 +373,7 @@
    },
    "data_point_sources": [
     "data/research/fairharbor_filings.json",
-    "data/research/bsp_firm.json (bsp-fh, fh_opportunities)",
+    "data/research/bsp_firm.json (bsp-fh, Fair Harbor opportunities)",
     "data/research/rival_filings.json",
     "data/research/public_comps.json",
     "data/research/serviceos_evidence.json",
@@ -439,7 +439,7 @@
    },
    "data_point_sources": [
     "data/research/fairharbor_filings.json",
-    "data/research/bsp_firm.json (bsp-fh, fh_opportunities)",
+    "data/research/bsp_firm.json (bsp-fh, Fair Harbor opportunities)",
     "data/research/rival_filings.json",
     "data/research/public_comps.json",
     "data/research/serviceos_evidence.json",
@@ -510,7 +510,7 @@
    },
    "data_point_sources": [
     "data/research/fairharbor_filings.json",
-    "data/research/bsp_firm.json (bsp-fh, fh_opportunities)",
+    "data/research/bsp_firm.json (bsp-fh, Fair Harbor opportunities)",
     "data/research/rival_filings.json",
     "data/research/public_comps.json",
     "data/research/serviceos_evidence.json",
@@ -948,8 +948,8 @@
   {
    "id": "tp-06",
    "kind": "talent_program",
-   "program": "Lean corporate team benchmark (PRG operating cadence)",
-   "who_it_helps": "Management, board, Broad Sky PRG",
+   "program": "Lean corporate team benchmark (Portfolio Resource Group operating cadence)",
+   "who_it_helps": "Management, board, Broad Sky Portfolio Resource Group",
    "evidence": "Chubbies ran with 90 staff and ~$7.5M payroll in 2020 (PPP) and grew to $122.9M of sales by 2025; Fair Harbor's 2026 headcount is est. 40-80. Hold corporate headcount near 70 through month 36 while revenue grows ~48%.",
    "metric": "revenue per employee $450K to $571K (est.) vs apparel comp median $421K",
    "source_url": "https://data.sba.gov/dataset/ppp-foia",

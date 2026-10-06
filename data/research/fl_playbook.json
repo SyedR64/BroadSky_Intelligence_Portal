@@ -1,22 +1,22 @@
 {
  "meta": {
   "dataset": "fl_playbook",
-  "title": "Frontline Managed Services: the value-creation playbook - AM Law core to mid-market and international (Smith + Howard template, AI agents, talent, growth levers, expansion phases, financing)",
+  "title": "Frontline Managed Services: the growth plan - AM Law core to mid-market and international (Smith + Howard template, AI agents, talent, growth levers, expansion phases, financing)",
   "generated": "2026-10-06",
   "portfolio_company": "Frontline Managed Services (Broad Sky Partners; St. Louis; managed IT + revenue-cycle/eBilling for law firms)",
-  "method": "Template, AI-agent, talent and market evidence was fetched on 2026-10-06 from Broad Sky, Smith + Howard, EagleTree, Stone Point/Consilio, Elite, Microsoft (security blog + arXiv RCT), Moveworks, HighRadius, Laurel, Rewst, Accurate Legal Billing, JumpCloud, Law360 (ILTA 2025 survey), Kaseya, Pearson VUE, BPESA, NASSCOM coverage, Apprenticeship.gov, Legal Business (TheCityUK), the Federation of Law Societies of Canada 2025 statistics PDF (parsed locally) and Gulfstar (GF Data). Items marked retrieved 2026-09-24 reuse sources already verified in the repo's frontline_filings, ma_targets_fl_ts, fl_midsize_firms and public_comps research tracks. Expansion-phase data_points were computed with python3 from data/fl_lawfirms.json, data/research/fl_midsize_firms.json, data/research/ma_targets_fl_ts.json (platform == 'frontline'), data/research/frontline_filings.json, data/research/public_comps.json, data/research/pe_landscape.json, data/research/bsp_firm.json and data/research/serviceos_evidence.json (kpi_benchmark kb-fl-* and valuation_evidence ve-06/14/15/17). No market_evidence or kpi_targets dataset exists in the repo, so per-phase market_evidence holds fetched figures and kpi_targets are explicit analyst assumptions. Structure follows data/research/pp_nationwide.json.",
+  "method": "Template, AI-agent, talent and market evidence was fetched on 2026-10-06 from Broad Sky, Smith + Howard, EagleTree, Stone Point/Consilio, Elite, Microsoft (security blog + arXiv RCT), Moveworks, HighRadius, Laurel, Rewst, Accurate Legal Billing, JumpCloud, Law360 (ILTA 2025 survey), Kaseya, Pearson VUE, BPESA, NASSCOM coverage, Apprenticeship.gov, Legal Business (TheCityUK), the Federation of Law Societies of Canada 2025 statistics PDF (parsed locally) and Gulfstar (GF Data). Items marked retrieved 2026-09-24 reuse sources already verified in the repo's Frontline filings, Frontline and Thomas add-on targets, mid-size law-firm list and public comparables research tracks. Expansion-phase data points were computed with python3 from data/fl_lawfirms.json, data/research/fl_midsize_firms.json, data/research/ma_targets_fl_ts.json (Frontline targets), data/research/frontline_filings.json, data/research/public_comps.json, data/research/pe_landscape.json, data/research/bsp_firm.json and data/research/serviceos_evidence.json (KPI benchmark kb-fl-* and valuation evidence ve-06/14/15/17). No market evidence or KPI targets dataset exists in the repo, so per-phase market evidence holds fetched figures and KPI targets are explicit analyst assumptions. Structure follows data/research/pp_nationwide.json.",
   "caveats": [
-   "Frontline revenue, EBITDA and margin are analyst estimates from leverage and headcount assumptions (frontline_filings estimate_table, low/medium confidence), not company disclosures. Every revenue/EBITDA figure in kpi_roadmap and the financing math inherits that uncertainty.",
-   "KL Software (Aug 2026) is a strategic partnership, not an acquisition (Minnesota Lawyer, 2026-08-24). frontline_filings fl-011 and its financial_picture describe it as 'partnership/acquisition' and should be corrected.",
-   "data/fl_lawfirms.json marks current_frontline_client = false for all 149 firms, and revenue_m is null for 78 rows. Phase 1 counts are therefore prospect-universe counts; actual AM Law client counts come only from Frontline's stated shares (50% of AM Law 200, 28% of AM Law 50).",
-   "Client-count conflict: press releases say 800-900+ law-firm clients, while the homepage says '300 Law Firms Served'. kpi_roadmap accounts use the 900 press figure.",
+   "Frontline revenue, EBITDA and margin are analyst estimates from leverage and headcount assumptions (Frontline filings estimate table, low/medium confidence), not company disclosures. Every revenue/EBITDA figure in KPI roadmap and the financing math inherits that uncertainty.",
+   "KL Software (Aug 2026) is a strategic partnership, not an acquisition (Minnesota Lawyer, 2026-08-24). Frontline filings fl-011 and its financial picture describe it as 'partnership/acquisition' and should be corrected.",
+   "data/fl_lawfirms.json marks current Frontline client = false for all 149 firms, and revenue is null for 78 rows. Phase 1 counts are therefore prospect-universe counts; actual AM Law client counts come only from Frontline's stated shares (50% of AM Law 200, 28% of AM Law 50).",
+   "Client-count conflict: press releases say 800-900+ law-firm clients, while the homepage says '300 Law Firms Served'. KPI roadmap accounts use the 900 press figure.",
    "AI-agent metrics are mostly vendor-published case studies (Moveworks 2019, HighRadius, Laurel, Rewst, ALB) or vendor-run studies (Microsoft RCTs). Treat them as directional upper bounds. Moveworks' 25-35% figure dates from 2019. HELIX has no published deflection metric.",
-   "weeks_to_deploy, cost_model and all kpi_targets/talent metric targets are analyst assumptions, labelled as such.",
+   "weeks to deploy, cost model and all KPI targets/talent metric targets are analyst assumptions, labelled as such.",
    "ZoomInfo revenue estimates on M&A targets are modelled and can be badly wrong (e.g., Helm360 $116.5M), so RCM and MSP target revenue sums are directional only.",
    "Smith + Howard figures: the ~100 -> ~800 professionals, 11 locations, 9 acquisitions and ~4x revenue figures are Broad Sky's own claims. The S+H Sep 2025 release cites revenue of $40M -> $125M over two years. Entry revenue is not disclosed.",
    "Sector leverage norm (GF Data 1H2025 total debt 4.0x, senior 3.1x) covers $10-500M EV deals and is cited via Gulfstar's summary, not the GF Data report itself. The broader-market median of 4.6x quoted in some summaries was not verified.",
    "UK legal-services revenue (GBP 47.1bn) is the TheCityUK 2024 report figure for 2023, read via Legal Business. Canada's lawyer count is the FLSC 2025 statistics 'Total Active/Practicing Membership' (117,467), which mixes reporting years by jurisdiction.",
-   "Two vertical analogs are legal services (Integreon, Consilio) rather than legal MSPs; no sponsor-backed pure legal-MSP roll-up with public outcome data was found (pe_landscape: 'no direct sponsor-backed copy').",
+   "Two vertical analogs are legal services (Integreon, Consilio) rather than legal MSPs; no sponsor-backed pure legal-MSP roll-up with public outcome data was found (PE landscape: 'no direct sponsor-backed copy').",
    "Retrieved dates: 2026-10-06 = fetched in this run; 2026-09-24 = verified by the repo's earlier research tracks and reused here."
   ],
   "item_count": 49,
@@ -28,7 +28,7 @@
    "talent_program": 6,
    "financing": 6
   },
-  "narrative": "Tyler, Frontline already has what Smith + Howard spent 3.5 years building (national reach, offshore delivery and about half the AM Law 200), so its playbook is about earning more per firm, moving down-market and going international. Our estimates put it at roughly $100-140M of revenue and $16-20M of adjusted EBITDA at close, bought at about 12-15x with $137M+ of equity and a $90M NXT/Audax term loan, so the premium is already paid and EBITDA growth has to carry the return. Phase 1 (months 0-12) turns HELIX into a product-led service desk with a Tier-0 AI agent, then adds a cyber-posture subscription and legal-AI enablement for the AM Law base, where ILTA finds 68% of firms have Copilot but only 8% have deployed it firm-wide. Phase 2 (months 6-18) goes after the 143 mid-size firms (17,042 attorneys) in our 16-metro screen, 37 of which score 65+, and buys local legal MSPs such as Kraft Kennedy, Tabush, Innovative Computing Systems and PSM Partners, just as Smith + Howard opened with Market Street Partners. Phase 3 (months 12-30) consolidates eBilling and AR now that client-side AI has pushed invoice rejections from 11% to 18%, buying from a screen that includes Helm360, The Garver Group and The Legal Billing Group and running four finance agents priced on days-to-pay. Phase 4 (months 24-42) builds the UK and Canada through acquired local providers (Quiss, Accurate Legal Billing, CG Technologies), the way Consilio entered the UK through Lawyers On Demand, because Frontline's own London subsidiary booked only about GBP 0.6M in 2024. The single Smith + Howard move most worth copying is Geels Norton: a SOC 2 and ISO cyber-assurance capability bought months before TPG signed, which Frontline should own before any sale process. On talent, the Hyderabad, Goa and Cape Town base needs a named leader with an integration mandate, as the S+H India team got, plus a certification ladder and a US apprenticeship track. The KPI roadmap is an explicit assumption rather than guidance: revenue moves from about $130M to $215M and EBITDA from $20M to $41M over 36 months, with about $55M of acquired revenue and margin rising from roughly 15% to 19%. Funding is the binding constraint, since incremental debt at sector-norm leverage covers perhaps $15-35M against a $50-80M add-on plan, so a co-invest top-up should be planned now. The diligence gaps to close first are the 300-versus-900 client count, actual churn and recurring mix, and the undisclosed revolver or delayed-draw facility, and the KL Software deal (Aug 2026) should be recorded as a partnership rather than an acquisition.",
+  "narrative": "Frontline already has what Smith + Howard spent 3.5 years building (national reach, offshore delivery and about half the AM Law 200), so its plan is about earning more per firm, moving down-market and going international. Our estimates put it at roughly $100-140M of revenue and $16-20M of adjusted EBITDA at close, bought at about 12-15x with $137M+ of equity and a $90M NXT/Audax term loan, so the premium is already paid and EBITDA growth has to carry the return. Phase 1 (months 0-12) turns HELIX into a product-led service desk with a Tier-0 AI agent, then adds a cyber-posture subscription and legal-AI enablement for the AM Law base, where ILTA finds 68% of firms have Copilot but only 8% have deployed it firm-wide. Phase 2 (months 6-18) goes after the 143 mid-size firms (17,042 attorneys) in our 16-metro screen, 37 of which score 65+, and buys local legal MSPs such as Kraft Kennedy, Tabush, Innovative Computing Systems and PSM Partners, just as Smith + Howard opened with Market Street Partners. Phase 3 (months 12-30) consolidates eBilling and AR now that client-side AI has pushed invoice rejections from 11% to 18%, buying from a screen that includes Helm360, The Garver Group and The Legal Billing Group and running four finance agents priced on days-to-pay. Phase 4 (months 24-42) builds the UK and Canada through acquired local providers (Quiss, Accurate Legal Billing, CG Technologies), the way Consilio entered the UK through Lawyers On Demand, because Frontline's own London subsidiary booked only about GBP 0.6M in 2024. The single Smith + Howard move most worth copying is Geels Norton: a SOC 2 and ISO cyber-assurance capability bought months before TPG signed, which Frontline should own before any sale process. On talent, the Hyderabad, Goa and Cape Town base needs a named leader with an integration mandate, as the S+H India team got, plus a certification ladder and a US apprenticeship track. The KPI roadmap is an explicit assumption rather than guidance: revenue moves from about $130M to $215M and EBITDA from $20M to $41M over 36 months, with about $55M of acquired revenue and margin rising from roughly 15% to 19%. Funding is the binding constraint, since incremental debt at sector-norm leverage covers perhaps $15-35M against a $50-80M add-on plan, so a co-invest top-up should be planned now. The diligence gaps to close first are the 300-versus-900 client count, actual churn and recurring mix, and the undisclosed revolver or delayed-draw facility, and the KL Software deal (Aug 2026) should be recorded as a partnership rather than an acquisition.",
   "kpi_roadmap": [
    {
     "month": 0,
@@ -153,7 +153,7 @@
     ],
     "source_url": "https://gulfstargroup.com/middle-market-commentary-first-half-2025/"
    },
-   "competitive_consolidators": "pe_landscape: Alpine Evergreen (MSP roll-up), EagleTree/Integreon, Stone Point/Consilio, BV (former owner); 'Frontline's legal IT + RCM combination has no direct sponsor-backed copy'"
+   "competitive_consolidators": "PE landscape: Alpine Evergreen (MSP roll-up), EagleTree/Integreon, Stone Point/Consilio, BV (former owner); 'Frontline's legal IT + RCM combination has no direct sponsor-backed copy'"
   }
  },
  "items": [
@@ -164,7 +164,7 @@
    "company": "Smith + Howard",
    "location": "Atlanta, GA",
    "move_type": "platform_entry",
-   "event": "Broad Sky makes a strategic platform investment in Smith + Howard, a single-office Atlanta tax, accounting and advisory firm. The stated plan was to broaden advisory services, widen the footprint and speed up technology through acquisitions.",
+   "event": "Broad Sky makes a strategic anchor investment in Smith + Howard, a single-office Atlanta tax, accounting and advisory firm. The stated plan was to broaden advisory services, widen the footprint and speed up technology through acquisitions.",
    "metric": "~100 professionals, one Atlanta office at entry (per BSP's Aug 2026 exit release)",
    "lesson_for_frontline": "Frontline entered Dec 2024 already national (800+ law-firm clients, ~1,000 staff). The S+H lesson is the build order: operating leadership and tech first, then add-ons.",
    "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
@@ -257,7 +257,7 @@
    "move_type": "exit_signing",
    "event": "TPG signs a definitive agreement to make a significant investment via TPG Growth. By then S+H had ~800 professionals across 7 states (AL, GA, NC, SC, TN, TX, VA) and assurance, tax, advisory, cyber risk, finance, human-capital and transaction services.",
    "metric": "~800 professionals, 7 states, 6+ service lines",
-   "lesson_for_frontline": "The buyer bought a multi-line, multi-state platform with an offshore leg and cyber capability. Frontline's exit story needs the same shape: legal IT + RCM + cyber + AI enablement across US mid-market and UK/Canada.",
+   "lesson_for_frontline": "The buyer bought a multi-line, multi-state portfolio company with an offshore leg and cyber capability. Frontline's exit story needs the same shape: legal IT + RCM + cyber + AI enablement across US mid-market and UK/Canada.",
    "source_url": "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/",
    "retrieved": "2026-10-06"
   },
@@ -283,7 +283,7 @@
    "move_type": "vertical_analog_offshore",
    "event": "EagleTree acquires Integreon from NewQuest Capital Partners. Integreon has 3,500+ professionals in delivery centers on three continents providing litigation support, cyber incident response, contracts/compliance and legal administrative services to law firms and corporate legal departments. EagleTree's plan pairs organic growth with acquisitions.",
    "metric": "3,500+ professionals; offshore delivery on 3 continents",
-   "lesson_for_frontline": "Shows that a legal-vertical services platform with an offshore delivery base supports a sponsor-to-sponsor trade. Integreon's loan sits at S+550 in WhiteHorse Finance (frontline_filings fl-017), a useful leverage comp.",
+   "lesson_for_frontline": "Shows that a legal-vertical services company with an offshore delivery base supports a sponsor-to-sponsor trade. Integreon's loan sits at S+550 in WhiteHorse Finance (Frontline filings fl-017), a useful leverage comp.",
    "source_url": "https://www.eagletree.com/eagletree-capital-acquires-integreon-from-newquest-capital-partners/",
    "retrieved": "2026-10-06"
   },
@@ -296,7 +296,7 @@
    "move_type": "vertical_analog_scale_addon",
    "event": "Consilio acquires Legility (managed review, flexible legal talent, enterprise legal solutions, eDiscovery), adding scale and European capabilities. It followed the Apr 2021 combination with Xact Data Discovery.",
    "metric": "Second scaled combination within ~8 months of the 2021 recap",
-   "lesson_for_frontline": "Analog for the scale add-on step: a legal-vertical platform buying a peer that brings new service lines and an international leg.",
+   "lesson_for_frontline": "Analog for the scale add-on step: a legal-vertical portfolio company buying a peer that brings new service lines and an international leg.",
    "source_url": "https://www.stonepoint.com/news/consilio-acquires-legal-services-provider-legility/",
    "retrieved": "2026-10-06"
   },
@@ -309,7 +309,7 @@
    "move_type": "vertical_analog_international",
    "event": "Consilio agrees to acquire Lawyers On Demand (LOD), a UK flexible-legal-talent pioneer with a 4,500+ practitioner community across 25 countries, and SYKE, a UK legal-technology consultancy. The deal extended its Enterprise Legal Services business to Europe, the Middle East, Africa, Asia and Australia.",
    "metric": "4,500+ practitioners; 25 countries",
-   "lesson_for_frontline": "Template for Phase 4: enter the UK through an acquired, UK-native legal-services brand plus a legal-tech consultancy, rather than a US-led greenfield office. Consilio is now 5,400+ people (pe_landscape).",
+   "lesson_for_frontline": "Template for Phase 4: enter the UK through an acquired, UK-native legal-services brand plus a legal-tech consultancy, rather than a US-led greenfield office. Consilio is now 5,400+ people (PE landscape).",
    "source_url": "https://www.consilio.com/consilio-announces-intent-to-acquire-lawyers-on-demand-and-syke-to-bolster-legal-flexible-talent-and-advisory-capabilities/",
    "retrieved": "2026-10-06"
   },
@@ -357,7 +357,7 @@
     "implied_amlaw200_clients": 100,
     "implied_amlaw50_clients": 14,
     "law_firm_clients_total": "900+ (Jun 2026 press)",
-    "basis": "python3 over data/fl_lawfirms.json (149 rows: tier_label, priority_tier, cyber_urgency_score, ai_opportunity_signal, international_offices, revenue_m where not null); shares from frontline_filings fl-011. Implied client counts = share x 200 / 50 (derived). current_frontline_client is false for all 149 rows, so the dataset cannot separate clients from prospects."
+    "basis": "python3 over data/fl_lawfirms.json (149 rows: tier label, priority tier, cyber-urgency score, AI-opportunity signal, international offices, revenue where not null); shares from Frontline filings fl-011. Implied client counts = share x 200 / 50 (derived). current Frontline client is false for all 149 rows, so the dataset cannot separate clients from prospects."
    },
    "market_evidence": {
     "elite_rejection_rate_pct": {
@@ -509,7 +509,7 @@
     ],
     "us_legal_msp_targets_zoominfo_revenue_usd": 181357000,
     "us_legal_msp_targets_fit75plus": 3,
-    "basis": "python3 over data/research/fl_midsize_firms.json (143 items: metro, attorney_count, frontline_fit_score, recommended_offer, estimated_it_spend_band, signals) and data/research/ma_targets_fl_ts.json (platform == 'frontline', 23 items). ZoomInfo revenue estimates are modelled and directional only."
+    "basis": "python3 over data/research/fl_midsize_firms.json (143 items: metro, attorney count, Frontline fit score, recommended offer, estimated IT spend band, signals) and data/research/ma_targets_fl_ts.json (Frontline targets, 23 items). ZoomInfo revenue estimates are modelled and directional only."
    },
    "market_evidence": {
     "ilta_2025_small_firm_genai_pct": {
@@ -564,7 +564,7 @@
     "US national (delivered from St. Louis, Toledo, Hyderabad, Goa, Cape Town)",
     "insurance-defense-heavy metros: Philadelphia, New York metro, Miami, Dallas/Houston, St. Louis"
    ],
-   "thesis": "Corporate legal departments now review invoices with AI, and Elite's 2026 data show rejection rates rose from 11% to 18% in 2025. That makes revenue-cycle outsourcing a CFO-level purchase. Buy legal billing and Elite 3E application-services firms (Helm360, The Garver Group, The Legal Billing Group, plus Affinity Consulting for practice-management advisory). Run them on one offshore-weighted RCM platform with four agents: OCG pre-bill compliance, eBilling submission/appeals, AR follow-up and time capture. Price part of it on outcomes (days-to-pay, realization). This is S+H's VIP/Fahrenheit step: add a new service line, not just headcount.",
+   "thesis": "Corporate legal departments now review invoices with AI, and Elite's 2026 data show rejection rates rose from 11% to 18% in 2025. That makes revenue-cycle outsourcing a CFO-level purchase. Buy legal billing and Elite 3E application-services firms (Helm360, The Garver Group, The Legal Billing Group, plus Affinity Consulting for practice-management advisory). Run them as one offshore-weighted RCM operation with four agents: OCG pre-bill compliance, eBilling submission/appeals, AR follow-up and time capture. Price part of it on outcomes (days-to-pay, realization). This is S+H's VIP/Fahrenheit step: add a new service line, not just headcount.",
    "data_points": {
     "midsize_firms_offer_ebilling_or_bundle": 81,
     "midsize_insurance_related_firms": 44,
@@ -577,13 +577,13 @@
      "Affinity Consulting Group (Largo, FL; fit 77; ~97 staff; ZoomInfo rev est $8.8M)"
     ],
     "rcm_targets_zoominfo_revenue_usd": 135438000,
-    "frontline_prior_rcm_addon": "InvoicePrep (Jul 2021, under BV) - bsp_firm pre_bsp_acquisitions",
-    "frontline_rcm_extension": "Accounting services added to RCM (Nov 2025) - frontline_filings fl-011",
+    "frontline_prior_rcm_addon": "InvoicePrep (Jul 2021, under BV) - Broad Sky firm profile pre-BSP acquisitions",
+    "frontline_rcm_extension": "Accounting services added to RCM (Nov 2025) - Frontline filings fl-011",
     "elite_days_to_pay": {
      "before_2025": 62,
      "2025_ebillinghub_customers": 50
     },
-    "basis": "python3 over data/research/fl_midsize_firms.json (recommended_offer in ebilling/bundle; client_base contains 'insurance'; signals type ebilling) and data/research/ma_targets_fl_ts.json (fl-03, fl-14, fl-16, fl-06); Elite figures from serviceos_evidence kb-fl-1/kb-fl-2 re-read 2026-10-06. Helm360's ZoomInfo revenue ($116.5M) is flagged as implausible in ma_targets_fl_ts caveats and inflates the RCM sum."
+    "basis": "python3 over data/research/fl_midsize_firms.json (recommended offer in ebilling/bundle; client base contains 'insurance'; signals type ebilling) and data/research/ma_targets_fl_ts.json (fl-03, fl-14, fl-16, fl-06); Elite figures from ServiceOS evidence kb-fl-1/kb-fl-2 re-read 2026-10-06. Helm360's ZoomInfo revenue ($116.5M) is flagged as implausible in Frontline and Thomas add-on targets caveats and inflates the RCM sum."
    },
    "market_evidence": {
     "elite_research_2026": {
@@ -641,7 +641,7 @@
     "Canada (Toronto / Ontario)",
     "follow-the-client: AM Law firms with international offices"
    ],
-   "thesis": "Frontline has had London (2009) and Toronto (2010) offices for more than a decade, yet its UK subsidiary reported only GBP 581K turnover in 2024. International is therefore a small foothold, not a business. Build it the Consilio/LOD way: buy a UK legal MSP (Quiss Technology) and a UK eBilling/OCG-compliance specialist (Accurate Legal Billing), plus a Toronto legal MSP (CG Technologies). Then sell the AM Law product set to the international offices of US clients and to UK/Canadian firms. This is the step that turns 'US legal MSP' into a 'global legal operations platform' for the exit buyer, as Fahrenheit's Mid-Atlantic entry and the India leg did for S+H.",
+   "thesis": "Frontline has had London (2009) and Toronto (2010) offices for more than a decade, yet its UK subsidiary reported only GBP 581K turnover in 2024. International is therefore a small foothold, not a business. Build it the Consilio/LOD way: buy a UK legal MSP (Quiss Technology) and a UK eBilling/OCG-compliance specialist (Accurate Legal Billing), plus a Toronto legal MSP (CG Technologies). Then sell the AM Law product set to the international offices of US clients and to UK/Canadian firms. This is the step that turns 'US legal MSP' into a 'global legal operations portfolio company' for the exit buyer, as Fahrenheit's Mid-Atlantic entry and the India leg did for S+H.",
    "data_points": {
     "amlaw_firms_with_international_offices": 54,
     "amlaw_intl_by_tier": {
@@ -666,7 +666,7 @@
      "Goa",
      "Cape Town (Jul 2023)"
     ],
-    "basis": "python3 over data/fl_lawfirms.json (international_offices true) and data/research/ma_targets_fl_ts.json (fl-09 Quiss, fl-17 ALB, fl-22 CG Technologies); UK subsidiary figures from data/research/frontline_filings.json fl-004/fl-006 (Intelliteach Ltd accounts); office dates from fl-010."
+    "basis": "python3 over data/fl_lawfirms.json (international offices true) and data/research/ma_targets_fl_ts.json (fl-09 Quiss, fl-17 ALB, fl-22 CG Technologies); UK subsidiary figures from data/research/frontline_filings.json fl-004/fl-006 (Intelliteach Ltd accounts); office dates from fl-010."
    },
    "market_evidence": {
     "uk_legal_services_revenue_gbp": {
@@ -717,7 +717,7 @@
    "baseline": 50,
    "target": 60,
    "unit": "% of AM Law 200 firms served",
-   "evidence": "Frontline serves 50% of the Am Law 200 and 28% of the Am Law 50 (Jun 2026). fl_lawfirms scores 149 AM Law firms; 57 have cyber-urgency >= 4 and 73 show partial or planned AI programs. Upsell per firm matters more than new logos here.",
+   "evidence": "Frontline serves 50% of the Am Law 200 and 28% of the Am Law 50 (Jun 2026). AM Law firm list scores 149 AM Law firms; 57 have cyber-urgency >= 4 and 73 show partial or planned AI programs. Upsell per firm matters more than new logos here.",
    "dataset_refs": "data/fl_lawfirms.json; frontline_filings fl-011",
    "label": "baseline/target are analyst assumptions unless sourced; null = not public",
    "source_url": "https://frontlinems.com/press/frontline-managed-services-appoints-tim-britt-as-chief-executive-officer/",
@@ -730,7 +730,7 @@
    "baseline": null,
    "target": 25,
    "unit": "new mid-size firm logos by month 18",
-   "evidence": "143 independent mid-size firms (17,042 attorneys) across 16 metros; 37 score 65+ on the fit heuristic; recommended offers: {'bundle': 54, 'managed_it': 56, 'ebilling': 27, 'service_desk': 5, 'cyber': 1}. ILTA 2025: 63% of firms with <=50 attorneys already use or explore genAI.",
+   "evidence": "143 independent mid-size firms (17,042 attorneys) across 16 metros; 37 score 65+ on the fit heuristic; recommended offers: bundle 54, managed IT 56, e-billing 27, service desk 5, cyber 1. ILTA 2025: 63% of firms with <=50 attorneys already use or explore genAI.",
    "dataset_refs": "data/research/fl_midsize_firms.json",
    "label": "baseline/target are analyst assumptions unless sourced; null = not public",
    "source_url": "https://www.law360.com/pulse/articles/2387443",
@@ -821,7 +821,7 @@
    "baseline": 15.5,
    "target": 19,
    "unit": "% adj. EBITDA margin",
-   "evidence": "Baseline is the midpoint of the 13-18% analyst estimate (frontline_filings estimate_table). Legal/BPO public comps median EBITDA margin 16.9% (G, EXLS, TASK, WNS, CBZ, KD); EXLS 17.9%, WNS 17.6%.",
+   "evidence": "Baseline is the midpoint of the 13-18% analyst estimate (Frontline filings estimate table). Legal/BPO public comps median EBITDA margin 16.9% (G, EXLS, TASK, WNS, CBZ, KD); EXLS 17.9%, WNS 17.6%.",
    "dataset_refs": "data/research/public_comps.json sector_benchmarks.legal_bpo_managed_services",
    "label": "baseline/target are analyst assumptions unless sourced; null = not public",
    "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001297989.json",
@@ -1107,7 +1107,7 @@
    "kind": "talent_program",
    "program": "Legal-technologist / AI enablement academy",
    "who_it_helps": "consultants who sell and deliver Copilot/genAI enablement; client attorneys",
-   "evidence": "ILTA 2025: firms offering AI training doubled from 17% to 36% year-over-year, yet only 8% deployed Copilot to all staff. Traveling Coaches (target fl-08) runs a 4,000+ course LegalMind platform and AI adoption training.",
+   "evidence": "ILTA 2025: firms offering AI training doubled from 17% to 36% year-over-year, yet only 8% deployed Copilot to all staff. Traveling Coaches (target fl-08) runs a 4,000+ course LegalMind learning platform and AI adoption training.",
    "metric": "Target 40 certified legal-AI enablement consultants by month 18 (analyst assumption)",
    "source_url": "https://www.law360.com/pulse/articles/2387443",
    "retrieved": "2026-10-06"
@@ -1118,7 +1118,7 @@
    "program": "Integration and leadership bench (CIO + integration office)",
    "who_it_helps": "acquired-company staff; Frontline leadership",
    "evidence": "Smith + Howard paired a new CIO with an India operations director (Sep 2025) while running 2-3 acquisitions a year; revenue rose from $40M to $125M in two years. Frontline has already added CEO Tim Britt (ex-Synoptek roll-up founder) and CFO Pinakin Sheth.",
-   "metric": "Integration playbook reused across 6+ add-ons by month 36 (analyst assumption)",
+   "metric": "Integration plan reused across 6+ add-ons by month 36 (analyst assumption)",
    "source_url": "https://www.smith-howard.com/smith-howard-advances-strategic-roadmap-with-key-technology-and-global-leadership-appointments/",
    "retrieved": "2026-10-06"
   },
@@ -1147,7 +1147,7 @@
    "kind": "financing",
    "source_of_funds": "Incremental / delayed-draw debt for add-ons (estimate)",
    "amount_or_range": "~$15-35M of incremental capacity by month 12 (estimate)",
-   "evidence": "If adj. EBITDA reaches ~$20-25M (kpi_roadmap) and lenders hold total leverage near the 4.5-5.0x at close, debt capacity is ~$90-125M against the $90M drawn. GF Data 1H2025 middle-market average total debt is 4.0x (senior 3.1x), so sector norms sit below Frontline's entry leverage; incremental debt alone will not fund the plan.",
+   "evidence": "If adj. EBITDA reaches ~$20-25M (KPI roadmap) and lenders hold total leverage near the 4.5-5.0x at close, debt capacity is ~$90-125M against the $90M drawn. GF Data 1H2025 middle-market average total debt is 4.0x (senior 3.1x), so sector norms sit below Frontline's entry leverage; incremental debt alone will not fund the plan.",
    "dataset_refs": "derived from fl-004 + kpi_roadmap; GF Data via Gulfstar",
    "source_url": "https://gulfstargroup.com/middle-market-commentary-first-half-2025/",
    "retrieved": "2026-10-06"
@@ -1165,9 +1165,9 @@
   {
    "id": "fp-fin-05",
    "kind": "financing",
-   "source_of_funds": "Equity top-up for platform-sized add-ons (co-invest)",
+   "source_of_funds": "Equity top-up for company-sized add-ons (co-invest)",
    "amount_or_range": "$7.5M unsold BSP-FL Co-Invest capacity + new co-invest; total add-on spend ~$50-80M over 36 months (estimate)",
-   "evidence": "Buying ~$55M of acquired revenue (growth_lever fp-lev-11) at ~12-15% EBITDA margins is ~$7-8M EBITDA. At Aventis' 9.9-10.0x median for $50-500M MSP deals (smaller tuck-ins nearer 5-9x) the cost is ~$50-80M, more than incremental debt covers. Expect a co-invest or fund equity top-up of ~$20-45M, with buy-low tuck-ins blended toward the 8.9x median.",
+   "evidence": "Buying ~$55M of acquired revenue (growth lever fp-lev-11) at ~12-15% EBITDA margins is ~$7-8M EBITDA. At Aventis' 9.9-10.0x median for $50-500M MSP deals (smaller tuck-ins nearer 5-9x) the cost is ~$50-80M, more than incremental debt covers. Expect a co-invest or fund equity top-up of ~$20-45M, with buy-low tuck-ins blended toward the 8.9x median.",
    "dataset_refs": "fl-002 total_remaining_usd; serviceos ve-14",
    "source_url": "https://aventis-advisors.com/msp-valuation-multiples/",
    "retrieved": "2026-09-24"

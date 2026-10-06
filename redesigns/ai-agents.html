@@ -2,314 +2,310 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The agentic layer — AI agents across the Broad Sky portfolio</title>
-<meta name="description" content="45 AI agents across six Broad Sky platforms: what starts each one, who approves it, what it costs and is worth (est.), how it rolls out and how the PRG governs it.">
-<meta name="theme-color" content="#f7f7f4">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI agents · Broad Sky</title>
+<meta name="description" content="45 AI agents across six Broad Sky portfolio companies: what starts each one, who approves it, what it costs and is worth (est.), how it rolls out and how the Portfolio Resource Group governs it.">
+<meta name="theme-color" content="#fbfaf7">
+<link rel="icon" href="../BSP_Logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="ai-agents.css?v=4">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111'/%3E%3Ccircle cx='9' cy='16' r='3' fill='%23fff'/%3E%3Ccircle cx='23' cy='16' r='3' fill='%2366e3c4'/%3E%3Cpath d='M12 16h8' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/system.css?v=20261006122625">
+<link rel="stylesheet" href="ai-agents.css?v=20261006122625">
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
-
-<div class="concept" id="concept" role="note">
-  <div class="wrap concept-in">
-    <span class="concept-tag">Concept</span>
-    <p>Concept redesign proposed by Syed Rahman for the Broad Sky Portfolio Resource Group — not an official site. <a href="../app.html">Portal</a> · <a href="index.html">Site concepts</a> · <a href="../#os">OS program</a> · <a href="../#briefing">Briefing</a></p>
-    <button class="concept-x" type="button" aria-label="Dismiss concept banner">&times;</button>
-  </div>
-</div>
-
-<header class="nav" id="top">
-  <div class="wrap nav-in">
-    <a class="brand" href="#top" aria-label="The agentic layer, top of page">
-      <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#111"/><circle cx="9" cy="16" r="3" fill="#fff"/><circle cx="23" cy="16" r="3" fill="#66e3c4"/><path d="M12 16h8" stroke="#fff" stroke-width="2"/></svg>
-      <span><b>Agentic layer</b><small>Broad Sky · PRG</small></span>
-    </a>
-    <nav class="nav-links" aria-label="Page sections">
-      <a href="#economics">Economics</a>
-      <a href="#catalog">Catalog</a>
-      <a href="#patterns">Patterns</a>
-      <a href="#rollout">Rollout</a>
-      <a href="#value">Value</a>
-      <a href="#governance">Governance</a>
-      <a href="#build-buy">Build vs buy</a>
-      <a href="#companies">Companies</a>
-    </nav>
-    <a class="btn btn-dark btn-sm" href="../app.html#/techos/overview">Open portal <span aria-hidden="true">→</span></a>
-  </div>
-</header>
-
 <main id="main">
-  <!-- HERO -->
-  <section class="hero">
-    <div class="wrap hero-grid">
-      <div class="hero-copy">
-        <p class="eyebrow"><span class="pulse" aria-hidden="true"></span> Portfolio Resource Group · AI program · <span id="hero-date">Oct 2026</span></p>
-        <h1>The agentic layer.</h1>
-        <p class="lede"><b id="hero-count">45</b> AI agents across Broad Sky's six platforms. Each one is started by an event, not a person remembering, and each one names the human who approves what it does.</p>
-        <div class="hero-total">
-          <div class="ht-top">
-            <div class="ht-num"><span id="hero-total">$12.7M</span><span class="est">ceiling</span></div>
-            <div class="ht-lbl">a year once every agent is ramped, before run costs and not de-duplicated. Risk-adjusted by value type and net of est. run costs: <b id="hero-radj">$3–5M</b>. <a href="#economics">Costs and the ask&nbsp;→</a></div>
-          </div>
-          <div id="hero-vt" class="ht-vt"></div>
-        </div>
-        <div class="hero-cta">
-          <a class="btn btn-grad" href="#economics">See the wave-1 ask</a>
-          <a class="btn btn-ghost" href="#catalog">Browse the 45 agents</a>
-        </div>
-        <dl class="kpis" id="hero-kpis">
-          <div><dt>Agents</dt><dd>45</dd></div>
-          <div><dt>Build cost</dt><dd>—</dd></div>
-          <div><dt>Run cost / yr</dt><dd>—</dd></div>
-          <div><dt>Payback</dt><dd>—</dd></div>
-        </dl>
+  <nav class="sys-subnav" aria-label="On this page">
+    <div class="sys-subnav-in">
+      <a class="sys-subnav-title" href="#main">AI agents</a>
+      <div class="sys-subnav-links">
+        <a href="#economics">Economics</a>
+        <a href="#catalog">Catalog</a>
+        <a href="#patterns">Patterns</a>
+        <a href="#rollout">Rollout</a>
+        <a href="#value">Value</a>
+        <a href="#governance">Governance</a>
+        <a href="#build-buy">Build vs buy</a>
+        <a href="#companies">Companies</a>
       </div>
-      <div class="hero-demo" aria-label="Example agent run">
-        <div class="run" id="run">
+      <div class="sys-subnav-actions"><a class="sys-btn sys-btn--primary sys-btn--sm" href="../app.html#/techos/overview">Open in the portal</a></div>
+    </div>
+  </nav>
+
+  <!-- hero -->
+  <section class="sys-hero" aria-labelledby="hero-h">
+    <div class="sys-wrap ag-hero">
+      <div class="ag-hero-copy">
+        <p class="sys-eyebrow"><b>AI agents growth plan</b><span class="ag-eb-aud"> · for the Portfolio Resource Group</span> · <span id="hero-date">Oct 2026</span></p>
+        <h1 id="hero-h" class="sys-h1">The <span class="sys-grad-text">agentic layer</span>.</h1>
+        <p class="sys-lead"><b id="hero-count">45</b> AI agents across Broad Sky's six companies. Each one is started by an event, not a person remembering, and each one names the human who approves what it does.</p>
+        <div class="sys-card ag-total">
+          <div class="ag-total-top">
+            <p class="ag-total-num"><span class="sys-num" id="hero-total">$12.7M</span><span class="sys-est">est. ceiling</span></p>
+            <p class="ag-total-lbl">A year once every agent is ramped, before run costs and not de-duplicated. Risk-adjusted by value type and net of estimated run costs: <b id="hero-radj">$3–5M</b><span class="sys-est">est.</span> <a href="#economics">Costs and the ask →</a></p>
+          </div>
+          <div id="hero-vt"></div>
+        </div>
+        <div class="sys-actions">
+          <a class="sys-btn sys-btn--accent sys-btn--lg" href="#economics">See the wave-1 ask</a>
+          <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#catalog">Browse the 45 agents</a>
+        </div>
+        <div class="sys-kpis" id="hero-kpis" role="list" aria-label="Program headline">
+          <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Agents</span><span class="sys-kpi-value">45</span></div>
+          <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Build cost</span><span class="sys-kpi-value">—</span></div>
+          <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Run cost a year</span><span class="sys-kpi-value">—</span></div>
+          <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Payback</span><span class="sys-kpi-value">—</span></div>
+        </div>
+        <p class="sys-src"><b>Source:</b> Portfolio AI-agent plan and tech-enablement evidence (generated <span id="gen-date">Oct 2026</span>); costs, haircuts and ramp are analyst overlays on this page.</p>
+      </div>
+      <div class="ag-hero-demo" aria-label="Example agent run">
+        <div class="ag-run" id="run">
           <div class="run-head">
             <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="run-title mono" id="run-id">Punctual Pros · agent run</span>
+            <span class="run-title" id="run-id">Punctual Pros · agent run</span>
             <span class="run-status" id="run-status">awaiting approval</span>
           </div>
           <ol class="run-steps">
-            <li class="rs rs-trigger"><span class="rs-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><div><span class="rs-k">Trigger</span><p id="run-trigger">Inbound call not answered by a CSR within 3 rings…</p></div></li>
-            <li class="rs rs-agent"><span class="rs-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><path d="M12 3v3"/></svg></span><div><span class="rs-k">Agent</span><p id="run-agent">Missed-call &amp; after-hours booking agent</p><span class="rs-tools" id="run-tools"></span></div></li>
-            <li class="rs rs-human"><span class="rs-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span><div><span class="rs-k">Human approval</span><p id="run-human">On-call tech or dispatcher confirms any after-hours emergency dispatch…</p></div></li>
+            <li class="rs rs-trigger"><span class="rs-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><div><span class="rs-k">Trigger</span><p id="run-trigger">Inbound call not answered by a rep within three rings…</p></div></li>
+            <li class="rs rs-agent"><span class="rs-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><path d="M12 3v3"/></svg></span><div><span class="rs-k">Agent</span><p id="run-agent">Missed-call and after-hours booking agent</p><span class="rs-tools" id="run-tools"></span></div></li>
+            <li class="rs rs-human"><span class="rs-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span><div><span class="rs-k">Human approval</span><p id="run-human">The on-call tech or dispatcher confirms any after-hours emergency dispatch…</p></div></li>
           </ol>
-          <div class="run-foot"><span id="run-co">Punctual Pros · ServiceOS</span><span class="mono" id="run-val">$116K/yr ceiling</span></div>
+          <div class="run-foot"><span id="run-co">Punctual Pros · ServiceOS</span><span class="sys-num" id="run-val">$116K a year ceiling</span></div>
         </div>
-        <p class="demo-cap">Live sample cycling through the catalog. Every agent has the same three parts.</p>
+        <p class="ag-demo-cap">Sample cycling through the wave-1 agents. Every agent has the same three parts.</p>
       </div>
     </div>
-    <div class="wrap">
-      <details class="summary" id="summary">
+    <div class="sys-wrap">
+      <details class="ag-summary" id="summary">
         <summary>Read the program summary</summary>
         <div id="summary-body"><p>Loading…</p></div>
       </details>
     </div>
   </section>
 
-  <!-- ECONOMICS -->
-  <section class="sec sec-alt" id="economics" aria-labelledby="eco-h">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="kicker">01 · Program economics</p>
-        <h2 id="eco-h">What it costs, who builds it, and what we are asking for.</h2>
-        <p class="sec-sub">The headline is a ceiling. This section nets it: what each agent costs to build and run, how much of its value survives a haircut by value type, and how long it takes to pay back. Costs are analyst assumptions until vendor quotes exist.</p>
+  <!-- 01 economics -->
+  <section class="sys-section sys-section--alt" id="economics" aria-labelledby="eco-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">01 · Program economics</p>
+        <h2 id="eco-h" class="sys-h2">What it costs, who builds it, and what we are asking for</h2>
+        <p class="sys-lead">The headline is a ceiling. This section nets it: what each agent costs to build and run, how much of its value survives a haircut by value type, and how long it takes to pay back. Costs are analyst assumptions until vendor quotes exist.</p>
       </div>
-      <div class="eco-kpis" id="eco-kpis"></div>
-      <div class="eco-grid">
-        <div class="eco-card">
-          <h3>How the ceiling is built</h3>
+      <div class="ag-eco-kpis" id="eco-kpis"></div>
+      <div class="ag-eco-grid">
+        <div class="sys-card ag-eco-card">
+          <h3 class="sys-card-title">How the ceiling is built</h3>
           <div id="eco-strip"></div>
-          <div class="tbl-scroll"><table class="eco-tbl" id="eco-types"></table></div>
-          <p class="eco-foot" id="eco-types-foot"></p>
+          <div class="ag-scroll"><table class="ag-tbl ag-eco-tbl" id="eco-types"></table></div>
+          <p class="ag-foot" id="eco-types-foot"></p>
         </div>
-        <aside class="ask" id="ask" aria-labelledby="ask-h"></aside>
+        <aside class="sys-card ag-ask" id="ask" data-sys-theme="dark" aria-labelledby="ask-h"></aside>
       </div>
-      <div class="eco-card eco-waves">
-        <h3>By wave: cost, team and payback</h3>
-        <div class="tbl-scroll"><table class="eco-tbl" id="eco-waves"></table></div>
-        <details class="eco-assume"><summary>Cost and risk assumptions</summary><ul id="eco-assume"></ul></details>
+      <div class="sys-card ag-eco-card ag-eco-waves">
+        <h3 class="sys-card-title">By wave: cost, team and payback</h3>
+        <div class="ag-scroll"><table class="ag-tbl ag-eco-tbl" id="eco-waves"></table></div>
+        <details class="ag-details"><summary>Cost and risk assumptions</summary><ul id="eco-assume"></ul></details>
+        <p class="sys-src"><b>Source:</b> Portfolio AI-agent plan; tech-enablement evidence; analyst cost model on this page. All figures are estimates.</p>
       </div>
     </div>
   </section>
 
-  <!-- CATALOG -->
-  <section class="sec" id="catalog" aria-labelledby="cat-h">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="kicker">02 · Agent catalog</p>
-        <h2 id="cat-h">Every agent, its trigger, and who signs off.</h2>
-        <p class="sec-sub">Filter by company, layer and how fast it deploys. Select a card to open the inspector: job to be done, tools, the approval gate, cost and payback, the evidence, the value formula and the risks.</p>
+  <!-- 02 catalog -->
+  <section class="sys-section" id="catalog" aria-labelledby="cat-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">02 · Agent catalog</p>
+        <h2 id="cat-h" class="sys-h2">Every agent, its trigger, and who signs off</h2>
+        <p class="sys-lead">Filter by company, layer and how fast it deploys. Select a card to open the inspector: job to be done, tools, the approval gate, cost and payback, the evidence, the value formula and the risks.</p>
       </div>
-      <div class="filters" role="group" aria-label="Catalog filters">
+      <div class="sys-card ag-filters" role="group" aria-label="Catalog filters">
         <div class="f-row">
           <span class="f-lbl">Company</span>
-          <div class="chips" id="f-co"></div>
+          <div class="sys-chips ag-chips" id="f-co"></div>
         </div>
         <div class="f-row">
           <span class="f-lbl">Layer</span>
-          <div class="chips" id="f-layer"></div>
+          <div class="sys-chips ag-chips" id="f-layer"></div>
         </div>
         <div class="f-row f-row-split">
           <label class="f-range"><span class="f-lbl">Deploys in ≤ <b id="f-wk-out">12</b> weeks</span>
             <input type="range" id="f-wk" min="4" max="12" step="2" value="12" aria-describedby="f-wk-out"></label>
           <label class="f-sel"><span class="f-lbl">Sort</span>
             <select id="f-sort"><option value="value">Value ceiling (est.)</option><option value="net">Risk-adjusted net (est.)</option><option value="payback">Payback (est.)</option><option value="perweek">Value per deploy-week</option><option value="weeks">Fastest to deploy</option><option value="wave">Rollout wave</option></select></label>
-          <label class="f-search"><span class="sr">Search agents</span>
+          <label class="f-search"><span class="sys-sr">Search agents</span>
             <input type="search" id="f-q" placeholder="Search agents, tools, vendors…" autocomplete="off"></label>
         </div>
-        <div class="f-status"><span id="f-count">45 agents</span><span id="f-pattern"></span><button type="button" class="link-btn" id="f-reset">Reset filters</button></div>
+        <div class="f-status"><span id="f-count">45 agents</span><span id="f-pattern"></span><button type="button" class="ag-linkbtn" id="f-reset">Reset filters</button></div>
       </div>
-      <div class="cat-grid">
-        <div class="cards" id="cards" aria-live="polite"></div>
-        <aside class="inspector" id="inspector" aria-label="Agent inspector" tabindex="-1">
+      <div class="ag-cat">
+        <div class="ag-cards" id="cards" aria-live="polite"></div>
+        <aside class="ag-inspector" id="inspector" aria-label="Agent inspector" tabindex="-1">
           <div class="insp-empty"><p>Select an agent to inspect it.</p></div>
         </aside>
       </div>
+      <p class="sys-src"><b>Source:</b> Portfolio AI-agent plan, Oct 2026. Values are ceilings and analyst estimates; each agent cites its evidence.</p>
     </div>
   </section>
 
-  <!-- PATTERNS -->
-  <section class="sec sec-alt" id="patterns" aria-labelledby="pat-h">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="kicker">03 · Reusable patterns</p>
-        <h2 id="pat-h">Eight patterns, built once, swapped per company.</h2>
-        <p class="sec-sub">The 45 agents are not 45 science projects. Each one is an instance of a pattern whose disclosure, approval and audit layer the PRG builds once; only the connector to each company's system of record changes.</p>
+  <!-- 03 patterns -->
+  <section class="sys-section sys-section--alt" id="patterns" aria-labelledby="pat-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">03 · Reusable patterns</p>
+        <h2 id="pat-h" class="sys-h2">Eight patterns, built once, swapped per company</h2>
+        <p class="sys-lead">The 45 agents are not 45 science projects. Each one is an instance of a pattern whose disclosure, approval and audit layer the Portfolio Resource Group builds once; only the connector to each company's system of record changes.</p>
       </div>
-      <p class="swipe-hint" aria-hidden="true">Swipe for all eight →</p>
-      <div class="patterns" id="pattern-grid"></div>
+      <p class="ag-swipe" aria-hidden="true">Swipe for all eight →</p>
+      <div class="ag-patterns" id="pattern-grid"></div>
     </div>
   </section>
 
-  <!-- ROLLOUT -->
-  <section class="sec" id="rollout" aria-labelledby="roll-h">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="kicker">04 · Rollout waves</p>
-        <h2 id="roll-h">Four waves over 18 months, lowest risk first.</h2>
-        <p class="sec-sub">Inbound-contact and document agents go first because they have the clearest baselines. Finance follows, then revenue agents, then monitoring services that can be sold as recurring revenue. Each wave has a gate. Thomas Scientific is sequenced to its December 2027 loan maturity.</p>
+  <!-- 04 rollout -->
+  <section class="sys-section" id="rollout" aria-labelledby="roll-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">04 · Rollout waves</p>
+        <h2 id="roll-h" class="sys-h2">Four waves over 18 months, lowest risk first</h2>
+        <p class="sys-lead">Inbound-contact and document agents go first because they have the clearest baselines. Finance follows, then revenue agents, then monitoring services that can be sold as recurring revenue. Each wave has a gate. Thomas Scientific is sequenced to its December 2027 loan maturity.</p>
       </div>
-      <div class="timeline" id="timeline"></div>
+      <div class="ag-timeline" id="timeline"></div>
     </div>
   </section>
 
-  <!-- VALUE -->
-  <section class="sec sec-alt" id="value" aria-labelledby="val-h">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="kicker">05 · Value by company</p>
-        <h2 id="val-h">Where the $12.7M ceiling comes from.</h2>
-        <p class="sec-sub" id="val-sub">Bars are each company's agent ceiling, stacked by the kind of value it is. The whisker is the whole OS program's EBITDA case. Agents are part of that case, not on top of it.</p>
+  <!-- 05 value -->
+  <section class="sys-section sys-section--alt" id="value" aria-labelledby="val-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">05 · Value by company</p>
+        <h2 id="val-h" class="sys-h2">Where the $12.7M ceiling comes from</h2>
+        <p class="sys-lead" id="val-sub">Bars are each company's agent ceiling, stacked by the kind of value it is. The whisker is the whole OS program's EBITDA case. Agents are part of that case, not on top of it.</p>
       </div>
-      <div class="value-wrap">
-        <figure class="chart-card">
+      <div class="ag-value">
+        <figure class="sys-card ag-chart-card">
           <div class="chart-top">
-            <figcaption><b>Agent value ceiling by company and value type</b><span>USD a year after ramp, est. Under each name: share of current adj. EBITDA; orange = uses ≥ 75% of its OS case top.</span></figcaption>
-            <div class="seg" role="tablist" aria-label="Chart or table">
+            <figcaption><b>Agent value ceiling by company and value type</b><span>USD a year after ramp, estimated. Under each name: share of current adjusted EBITDA; amber means the agents use at least 75% of the top of the OS case.</span></figcaption>
+            <div class="ag-seg" role="tablist" aria-label="Chart or table">
               <button type="button" role="tab" aria-selected="true" data-view="chart">Chart</button>
               <button type="button" role="tab" aria-selected="false" data-view="table">Table</button>
             </div>
           </div>
-          <div class="legend" id="chart-legend" aria-hidden="true"></div>
-          <div class="chart" id="chart" role="img" aria-label="Stacked horizontal bar chart of estimated annual agent value by company and value type, with each OS program's EBITDA range; the Table view has the same numbers"></div>
+          <div class="ag-legend" id="chart-legend" aria-hidden="true"></div>
+          <div class="ag-chart" id="chart" role="img" aria-label="Stacked horizontal bar chart of estimated annual agent value by company and value type, with each OS program's EBITDA range; the Table view has the same numbers"></div>
           <div class="chart-table" id="chart-table" hidden></div>
-          <div class="tip" id="tip" role="tooltip" hidden></div>
+          <div class="ag-tip" id="tip" role="tooltip" hidden></div>
+          <p class="sys-src"><b>Source:</b> Portfolio AI-agent plan; tech-enablement evidence (OS EBITDA cases, adjusted EBITDA estimates), Oct 2026.</p>
         </figure>
-        <div class="value-notes">
-          <div class="vn-card"><span class="vn-k">Agents vs the OS EBITDA case</span><div id="reality"></div></div>
+        <div class="ag-value-notes">
+          <div class="sys-card ag-vn"><span class="sys-card-label">Agents vs the OS EBITDA case</span><div id="reality"></div></div>
         </div>
       </div>
-      <div class="value-more">
-        <div class="vn-card vn-ts"><span class="vn-k">Thomas Scientific: cash before EBITDA</span><div id="ts-cash"></div></div>
-        <div class="vn-card"><span class="vn-k">By wave</span><div id="by-wave"></div></div>
-        <div class="vn-card"><span class="vn-k">Read it carefully</span><ul class="caveats" id="caveats"></ul></div>
+      <div class="ag-value-more">
+        <div class="sys-card ag-vn ag-vn-ts" data-co="ts"><span class="sys-card-label">Thomas Scientific: cash before EBITDA</span><div id="ts-cash"></div></div>
+        <div class="sys-card ag-vn"><span class="sys-card-label">By wave</span><div id="by-wave"></div></div>
+        <div class="sys-card ag-vn"><span class="sys-card-label">Read it carefully</span><ul class="ag-caveats" id="caveats"></ul></div>
       </div>
     </div>
   </section>
 
-  <!-- GOVERNANCE -->
-  <section class="sec" id="governance" aria-labelledby="gov-h">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="kicker">06 · Governance checklist</p>
-        <h2 id="gov-h">Six controls before any agent touches a customer. Seven at Frontline.</h2>
-        <p class="sec-sub">Controls 1–6 gate wave 1 at every company, because three wave-1 agents talk to customers (Punctual Pros calls, the Fair Harbor CX agent, the Frontline service desk). Control 7 and its ABA Opinion 512 evidence pack gate any Frontline agent that touches law-firm data, from wave 1, not a year later. Control 8 gates the wave-2 finance agents; control 9 applies to every agent from launch. Tick controls off as each company goes live; ticks stay in this browser only.</p>
+  <!-- 06 governance -->
+  <section class="sys-section" id="governance" aria-labelledby="gov-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">06 · Governance checklist</p>
+        <h2 id="gov-h" class="sys-h2">Five controls before any agent touches a customer. Six at Frontline.</h2>
+        <p class="sys-lead">Controls 1–5 gate wave 1 at every company, because three wave-1 agents talk to customers (Punctual Pros calls, the Fair Harbor support agent, the Frontline service desk). Control 6 and its confidentiality evidence pack gate any Frontline agent that touches law-firm data, from wave 1. Control 7 gates the wave-2 finance agents; control 8 applies to every agent from launch. Tick controls off as each company goes live; ticks stay in this browser only.</p>
       </div>
-      <div class="tiers" id="tiers" aria-label="Approval tiers by consequence"></div>
-      <div class="gov-top"><div class="gov-progress"><div class="gp-bar"><i id="gov-fill"></i></div><span id="gov-count">0 of 9 controls live</span></div><button type="button" class="link-btn" id="gov-reset">Clear ticks</button></div>
-      <ol class="gov-list" id="gov-list"></ol>
+      <div class="ag-tiers" id="tiers" aria-label="Approval tiers by consequence"></div>
+      <div class="ag-gov-top"><div class="ag-gov-progress"><div class="gp-bar"><i id="gov-fill"></i></div><span id="gov-count">0 controls live</span></div><button type="button" class="ag-linkbtn" id="gov-reset">Clear ticks</button></div>
+      <ol class="ag-gov-list" id="gov-list"></ol>
     </div>
   </section>
 
-  <!-- BUILD VS BUY -->
-  <section class="sec sec-alt" id="build-buy" aria-labelledby="bb-h">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="kicker">07 · Build vs buy</p>
-        <h2 id="bb-h">Buy the plumbing. Build the judgment that only Broad Sky has.</h2>
-        <p class="sec-sub">Classification below is derived from each agent's named vendor or build path. The rules are the PRG's analyst guidance, not company decisions.</p>
+  <!-- 07 build vs buy -->
+  <section class="sys-section sys-section--alt" id="build-buy" aria-labelledby="bb-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">07 · Build vs buy</p>
+        <h2 id="bb-h" class="sys-h2">Buy the plumbing. Build the judgment that only Broad Sky has.</h2>
+        <p class="sys-lead">The classification below comes from each agent's named vendor or build path. The rules are analyst guidance, not company decisions.</p>
       </div>
-      <div class="bb-cols" id="bb-cols"></div>
-      <div class="bb-rules">
-        <h3>Decision rules</h3>
+      <div class="sys-grid sys-grid--3" id="bb-cols"></div>
+      <div class="sys-card ag-bb-rules">
+        <h3 class="sys-card-title">Decision rules</h3>
         <ol>
           <li><b>Buy when the agent lives inside the system of record.</b> If ServiceTitan, Procore or Gorgias ships it natively, speed beats differentiation; a buyer will not pay more for a home-built dispatch board.</li>
-          <li><b>Build when the agent's memory is Broad Sky data.</b> Bid go/no-go on CET's New England bid radar, weather surge on Punctual Pros' storm history, grant signals from NIH RePORTER, docket tracking: that scoring is the IP that makes an OS an OS at exit.</li>
-          <li><b>Hybrid by default for documents.</b> Buy extraction or transport (Conexiom, Vic.ai, Intapp), build the exception queue, disclosure and audit layer once at PRG level and reuse it across companies.</li>
-          <li><b>Every purchase passes the vendor AI review (control 5).</b> 30-day pilot against the company's own baseline, SOC 2 Type II, no training on portfolio data, exit/export clause.</li>
+          <li><b>Build when the agent's memory is Broad Sky data.</b> Bid go or no-go on CET's New England bid radar, weather surge on Punctual Pros' storm history, grant signals from NIH RePORTER, docket tracking: that scoring is the IP that makes an OS an OS at exit.</li>
+          <li><b>Hybrid by default for documents.</b> Buy extraction or transport (Conexiom, Vic.ai, Intapp), build the exception queue, disclosure and audit layer once and reuse it across companies.</li>
+          <li><b>Every purchase passes the vendor AI review (control 5).</b> A 30-day pilot against the company's own baseline, SOC 2 Type II, no training on portfolio data, and an exit and export clause.</li>
           <li><b>Never single-source the model.</b> Route small models to extraction and frontier models to drafting; keep a second provider qualified for failover (control 4).</li>
         </ol>
       </div>
-      <div class="bb-table-wrap">
-        <div class="seg" role="tablist" aria-label="Filter build vs buy table" id="bb-tabs"></div>
-        <div class="tbl-scroll"><table class="bb-table" id="bb-table"></table></div>
+      <div class="sys-card ag-bb-table">
+        <div class="ag-seg" role="tablist" aria-label="Filter build vs buy table" id="bb-tabs"></div>
+        <div class="ag-scroll ag-bb-scroll"><table class="ag-tbl bb-table" id="bb-table"></table></div>
+        <p class="sys-src"><b>Source:</b> Portfolio AI-agent plan, vendor or build path per agent, Oct 2026.</p>
       </div>
     </div>
   </section>
 
-  <!-- COMPANIES -->
-  <section class="sec" id="companies" aria-labelledby="co-h">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="kicker">08 · By company</p>
-        <h2 id="co-h">Each OS, its agents, its playbook.</h2>
-        <p class="sec-sub">The agentic layer is the part of each operating system that acts. Jump to the OS product page, the value-creation playbook, the concept site or the portal module.</p>
+  <!-- 08 companies -->
+  <section class="sys-section" id="companies" aria-labelledby="co-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">08 · By company</p>
+        <h2 id="co-h" class="sys-h2">Each OS, its agents, its plan</h2>
+        <p class="sys-lead">The agentic layer is the part of each operating system that acts. Jump to the OS product page, the growth plan, the concept site or the portal module.</p>
       </div>
-      <div class="co-grid" id="co-grid"></div>
+      <div class="sys-grid sys-grid--3" id="co-grid"></div>
     </div>
   </section>
 
-  <!-- RATIONALE -->
-  <section class="sec sec-alt" id="rationale" aria-labelledby="rat-h">
-    <div class="wrap rat-grid">
-      <div>
-        <p class="kicker">Why this page</p>
-        <h2 id="rat-h">Design and program rationale</h2>
-        <p class="sec-sub">Written for Tyler and the PRG. The page has one job: make 45 agents legible enough that an operating partner can approve a wave in one meeting, and a buyer's diligence team can see the controls behind the value.</p>
+  <!-- rationale -->
+  <section class="sys-section sys-section--alt" id="rationale" aria-labelledby="rat-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">Why this page</p>
+        <h2 id="rat-h" class="sys-h2">Design and program rationale</h2>
+        <p class="sys-lead">Written for the Broad Sky Portfolio Resource Group. The page has one job: make 45 agents legible enough that an operating partner can approve a wave in one meeting, and a buyer's diligence team can see the controls behind the value.</p>
       </div>
-      <div class="rat-cards">
-        <article class="rat"><h3>Linear — the system, not a feature dump</h3><p><b>Borrowed:</b> numbered sections and an agent panel shown as product, with every item using the same anatomy (trigger → agent → approver).</p><p><b>Does:</b> turns 45 agents into one system a PRG partner can scan in minutes.</p><p class="rat-kpi">KPI: time-to-approve a wave; agents killed vs shipped per quarter.</p></article>
-        <article class="rat"><h3>Vanta Trust Center — controls up front</h3><p><b>Borrowed:</b> a visible, checkable controls list with owners and evidence links.</p><p><b>Does:</b> answers the security and legal questionnaire (ABA 512, TCPA, EU AI Act) before an AM Law client or an exit buyer asks.</p><p class="rat-kpi">KPI: diligence questions answered from the page; Tier-3 incidents (target 0).</p></article>
-        <article class="rat"><h3>Ramp — lead with the number</h3><p><b>Borrowed:</b> a single headline figure in the hero, backed by a working product below it.</p><p><b>Does:</b> frames the program as EBITDA, not experimentation, puts the cost and the risk-adjusted net next to the ceiling, and keeps every figure labelled est. until re-based on an 8-week baseline.</p><p class="rat-kpi">KPI: share of the $12.7M ceiling re-based on measured baselines; capacity value counted only with a hiring plan.</p></article>
-        <article class="rat"><h3>Hebbia — institutional AI for finance</h3><p><b>Borrowed:</b> sober type, the inspector detail panel and sources on every claim.</p><p><b>Does:</b> reads as a value-creation memo, not a vendor pitch, which is what a Smith + Howard-style exit narrative needs.</p><p class="rat-kpi" id="kpi-effect">KPI: agents backed by an effect from a comparable deployment (target 45 of 45 via pilots).</p></article>
+      <div class="sys-grid sys-grid--2">
+        <article class="sys-card"><h3 class="sys-card-title">One system, not a feature dump</h3><p class="sys-card-body"><b>Element:</b> numbered sections and an agent panel shown as product, with every item using the same anatomy (trigger → agent → approver).</p><p class="sys-card-body"><b>Does:</b> turns 45 agents into one system a partner can scan in minutes.</p><p class="sys-card-foot">KPI: time to approve a wave; agents stopped vs shipped per quarter.</p></article>
+        <article class="sys-card"><h3 class="sys-card-title">Controls up front</h3><p class="sys-card-body"><b>Element:</b> a visible, checkable controls list with owners and evidence links.</p><p class="sys-card-body"><b>Does:</b> answers the security and legal questionnaire before an AM Law client or an exit buyer asks.</p><p class="sys-card-foot">KPI: diligence questions answered from the page; tier-3 incidents (target 0).</p></article>
+        <article class="sys-card"><h3 class="sys-card-title">Lead with the number</h3><p class="sys-card-body"><b>Element:</b> a single headline figure in the hero, backed by a working product below it.</p><p class="sys-card-body"><b>Does:</b> frames the program as EBITDA, not experimentation, puts the cost and the risk-adjusted net next to the ceiling, and keeps every figure labelled est. until re-based on an 8-week baseline.</p><p class="sys-card-foot">KPI: share of the $12.7M ceiling re-based on measured baselines; capacity value counted only with a hiring plan.</p></article>
+        <article class="sys-card"><h3 class="sys-card-title">Institutional tone, sources on every claim</h3><p class="sys-card-body"><b>Element:</b> sober type, the inspector detail panel and sources on every claim.</p><p class="sys-card-body"><b>Does:</b> reads as a value-creation memo, not a vendor pitch, which is what an exit narrative needs.</p><p class="sys-card-foot" id="kpi-effect">KPI: agents backed by an effect from a comparable deployment (target 45 of 45 via pilots).</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sys-cta" aria-labelledby="cta-h">
+    <div class="sys-wrap">
+      <div class="sys-cta-in">
+        <div class="sys-cta-copy">
+          <h2 id="cta-h">Approve wave 1, measure for 90 days.</h2>
+          <p>Six agents, controls 1–5 live everywhere, and a day-90 review against 8-week baselines. Track it in the portal's tech-enablement module.</p>
+        </div>
+        <div class="sys-actions">
+          <a class="sys-btn sys-btn--primary sys-btn--lg" href="../app.html#/techos/overview">Open tech enablement</a>
+          <a class="sys-btn sys-btn--secondary sys-btn--lg" href="voice-ai.html">24/7 Voice AI</a>
+        </div>
       </div>
     </div>
   </section>
 </main>
 
-<footer class="foot">
-  <div class="wrap foot-in">
-    <div>
-      <b>The agentic layer</b> · Broad Sky Partners Portfolio Resource Group concept, by Syed Rahman.
-      <p>Data: the portal's AI-agent program dataset and the tech-enablement evidence file (generated <span id="gen-date">2026-10-06</span>). Values are analyst assumptions built from vendor case studies and public benchmarks with explicit haircuts; costs, value-type haircuts, ramp and calendar dates are PRG analyst overlays on this page. Vendor names are cited as sources, not endorsements. Not an official Broad Sky publication.</p>
-    </div>
-    <nav aria-label="Footer">
-      <a href="../app.html#/techos/overview">Portal · Tech enablement</a>
-      <a href="index.html">Concept gallery</a>
-      <a href="../index.html">Landing</a>
-      <a href="#top">Back to top ↑</a>
-    </nav>
-  </div>
-<p class="bsp-disclaimer" style="box-sizing:border-box;max-width:1200px;margin:0 auto;padding:12px 20px 18px;font-size:12px;line-height:1.55">Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.</p>
-</footer>
-
 <script type="module">
-import { Chat } from '../assets/chat.js?v=20261006090506';
-import { boot } from './ai-agents.js?v=4';
+import { Frame } from '../assets/frame.js?v=20261006122625';
+import { Chat } from '../assets/chat.js?v=20261006122625';
+import { boot } from './ai-agents.js?v=20261006122625';
+const frame = Frame.mount({ banner: true });
 const d = await boot().catch(e => { console.warn('agentic layer boot failed', e); return null; });
 try {
-  Chat.mount(null, {
+  const chat = Chat.mount(null, {
     persona: 'portal', mode: 'floating', theme: 'light',
     faq: d?.faq || [],
     suggestions: ['What does wave 1 cost and need?', 'What does the agent program cost?', 'Which agents pay back fastest?', 'How much value does each company get from AI agents?', 'Who approves what an agent does?', 'What are the kill criteria for an agent?']
   });
+  frame.setChat(chat);
 } catch (e) { console.warn('chat mount failed', e); }
 </script>
 </body>

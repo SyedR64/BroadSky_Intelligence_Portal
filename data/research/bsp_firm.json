@@ -62,7 +62,7 @@
       "employees_est": "~140 (Oct 2025 release) / 170 (WBJ Oct 2025); Horton adds 120+ (100+ field staff, 20 managers), nearly doubling workforce (Sep 2026)",
       "revenue_est_usd": null,
       "description": "Electrical and energy infrastructure services company (founded 2008) serving commercial, industrial, institutional, utility and renewables customers across New England: electrical construction, solar installation/O&M, EV charging (incl. on-street chargers in Holyoke), energy efficiency; licensed in all six New England states.",
-      "thesis": "BSP platform to consolidate New England electrical services (The Deal, Oct 14 2025); CET positioned for grid-resilient, energy-optimized facilities demand. CEO guidance: no NYC expansion; growth within New England footprint.",
+      "thesis": "BSP portfolio company to consolidate New England electrical services (The Deal, Oct 14 2025); CET positioned for grid-resilient, energy-optimized facilities demand. CEO guidance: no NYC expansion; growth within New England footprint.",
       "add_ons": [
         {
           "name": "NuWave Energy Solutions",
@@ -220,7 +220,7 @@
       "employees_est": null,
       "revenue_est_usd": null,
       "description": "Founded 1900; North America's largest pure-play distributor of scientific and controlled-environment products, serving laboratory research, biopharma, medical device, clinical diagnostics, cleanroom/advanced technology and forensics markets through a national network of distribution centers (8 at acquisition, expanded via add-ons).",
-      "thesis": "Powerful long-term growth drivers in life sciences and clinical diagnostics; platform positioned for significant expansion through organic growth and strategic acquisitions (Adam Glucksman). First BSP deal; board chaired by Lynn Calpeter.",
+      "thesis": "Powerful long-term growth drivers in life sciences and clinical diagnostics; portfolio company positioned for significant expansion through organic growth and strategic acquisitions (Adam Glucksman). First BSP deal; board chaired by Lynn Calpeter.",
       "add_ons": [
         {
           "name": "North Central Instruments (NCI)",
@@ -301,7 +301,7 @@
           "name": "Seven Hills",
           "date": "2024-11-12",
           "hq": "London, UK",
-          "note": "Campaigns firm (Chair/co-founder Michael Hayman); UK growth and Change Makers events platform.",
+          "note": "Campaigns firm (Chair/co-founder Michael Hayman); UK growth and Change Makers events portfolio company.",
           "source_url": "https://bpigroup.com/bpi-expands-uk-presence-and-insights-practice-with-acquisitions-of-seven-hills-and-message-house/"
         },
         {
@@ -535,7 +535,7 @@
         }
       ]
     },
-    "strategy": "Sector-focused, thematic private equity investing in leading middle-market companies that provide essential services to business and consumer end markets, paired with a proprietary value-creation playbook delivered by a dedicated Portfolio Resource Group; buy-and-build via add-on acquisitions (7 platforms, 23 add-ons since late-2021 launch).",
+    "strategy": "Sector-focused, thematic private equity investing in leading middle-market companies that provide essential services to business and consumer end markets, paired with a proprietary growth plan delivered by a dedicated Portfolio Resource Group; buy-and-build via add-on acquisitions (7 companies, 23 add-ons since late-2021 launch).",
     "sectors": [
       "Professional Services",
       "Infrastructure Services",
@@ -652,7 +652,7 @@
       }
     ],
     "prg": {
-      "description": "Broad Sky's dedicated Portfolio Resource Group is comprised of seasoned executives and experts who work in lockstep with the investment team and company management to plan and execute growth strategies, using a proprietary value-creation playbook (best-practice tools, frameworks and strategies for middle-market priorities). Led by Partner Jodi Kahn.",
+      "description": "Broad Sky's dedicated Portfolio Resource Group is comprised of seasoned executives and experts who work in lockstep with the investment team and company management to plan and execute growth strategies, using a proprietary growth plan (best-practice tools, frameworks and strategies for middle-market priorities). Led by Partner Jodi Kahn.",
       "members": [
         {
           "name": "Jodi Kahn",
@@ -866,7 +866,7 @@
     },
     {
       "date": "2022-11-15",
-      "event": "Strategic platform investment in Smith + Howard (third platform)",
+      "event": "Strategic anchor investment in Smith + Howard (third company)",
       "type": "platform",
       "company": "Smith + Howard",
       "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment"
@@ -1208,7 +1208,7 @@
       "title": "AI-era corporate reputation resilience advisory (2026 Reputation Resilience Index briefings)",
       "type": "practice_expansion_ai_comms",
       "value_or_scale": "Index covers 170 companies across US/UK/France/Germany (18,000+ adults); 81% say AI makes it too easy to spread false rumors",
-      "why_now": "BPI is offering private briefings (resilience@bpigroup.com) - direct pipeline into corporate clients facing AI-job-cut and 'greedflation' narratives in the run-up to the Nov 2026 U.S. midterm cycle.",
+      "why_now": "BPI is offering private briefings by request - a direct pipeline into corporate clients facing AI-job-cut and 'greedflation' narratives in the run-up to the Nov 2026 U.S. midterm cycle.",
       "source_url": "https://bpigroup.com/bpis-2026-reputation-resilience-index-finds-ai-is-accelerating-reputation-risk-across-industries/",
       "retrieved": "2026-09-24"
     },
@@ -1273,7 +1273,7 @@
       "id": "fh-opp-02",
       "title": "International DTC - store currently ships only to the U.S.",
       "type": "international",
-      "value_or_scale": "ships_to_countries = ['US']; 372 published products",
+      "value_or_scale": "Ships to the US only; 372 published products",
       "why_now": "Zero cross-border DTC today; Canada/UK/Australia coastal markets are a low-capex extension of a Shopify storefront.",
       "source_url": "https://fairharborclothing.com/meta.json",
       "retrieved": "2026-09-24"
@@ -1313,7 +1313,7 @@
       "title": "Brand collaborations as awareness engine (Athletic Brewing, The White Lotus/HBO, Mikey DeTemple)",
       "type": "collab_signal",
       "value_or_scale": "Athletic Brewing (May 2026, 4 products); The White Lotus x Fair Harbor (Dec 2024, 16 products); Mikey DeTemple x Fair Harbor (Jul 2026, 7 products)",
-      "why_now": "Steady 2024-2026 cadence of collabs indicates repeatable playbook to reach new audiences.",
+      "why_now": "Steady 2024-2026 cadence of collabs indicates a repeatable approach to reach new audiences.",
       "source_url": "https://www.fairharborclothing.com/collections/athletic-brewing-collaboration",
       "source_url_2": "https://www.fairharborclothing.com/collections/white-lotus",
       "retrieved": "2026-09-24"

@@ -1,20 +1,21 @@
 /* SignalOS product page: demo tabs, synthetic-audience test, compliance workflow, value math, evidence. */
-import { Data, Fmt } from '../../assets/core.js?v=20261006090506';
-import { chrome, mountChat } from './site.js';
-import { mountMonitor, reduceMotion } from './monitor.js';
+import { Data, Fmt } from '../../assets/core.js?v=20261006122625';
+import { chrome, mountChat, plain } from './site.js?v=20261006122625';
+import { mountMonitor, reduceMotion } from './monitor.js?v=20261006122625';
+import { Frame } from '../../assets/frame.js?v=20261006122625';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const $ = (s, r = document) => r.querySelector(s);
 const m$ = (v, d = 1) => '$' + (Math.abs(v) >= 1e9 ? (v / 1e9).toFixed(1) + 'B' : (v / 1e6).toFixed(d) + 'M');
 chrome();
 
-/* ── cyclicality chart (FEC gross billings to BPI, from bpi_filings) ───── */
+/* ── cyclicality chart (FEC gross billings to BPI, from the BPI filings dataset) ── */
 (function cyc() {
   const el = $('#cyc-chart'); if (!el) return;
   const d = [['2020', 96.5], ['2022', 3.1], ['2024', 115.3], ['2026 YTD', 0.04]];
   const W = 560, H = 330, pl = 8, pb = 34, pt = 34, bw = 86, gap = (W - pl * 2 - bw * d.length) / (d.length - 1), mx = 120;
-  const bars = d.map(([y, v], i) => { const x = pl + i * (bw + gap), h = Math.max(2, v / mx * (H - pb - pt)), yy = H - pb - h; const peak = v > 50; return `<rect x="${x}" y="${yy}" width="${bw}" height="${h}" rx="6" fill="${peak ? '#2b2bff' : '#0b0b0d'}"/><text x="${x + bw / 2}" y="${yy - 9}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="20" fill="#0b0b0d" letter-spacing="-.5">${v >= 1 ? '$' + v.toFixed(1) + 'M' : '$41K'}</text><text x="${x + bw / 2}" y="${H - 10}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#62626c">${y}</text>`; }).join('');
-  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Federal political committee payments to BPI: 2020 $96.5M, 2022 $3.1M, 2024 $115.3M, 2026 year to date $41K"><line x1="0" x2="${W}" y1="${H - pb}" y2="${H - pb}" stroke="#d2d2d8"/>${bars}</svg>`;
+  const bars = d.map(([y, v], i) => { const x = pl + i * (bw + gap), h = Math.max(2, v / mx * (H - pb - pt)), yy = H - pb - h; const peak = v > 50; return `<rect x="${x}" y="${yy}" width="${bw}" height="${h}" rx="6" class="${peak ? 'bar-b' : 'bar-a'}"/><text x="${x + bw / 2}" y="${yy - 9}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="600" font-size="19" class="lab-v" letter-spacing="-.5">${v >= 1 ? '$' + v.toFixed(1) + 'M' : '$41K'}</text><text x="${x + bw / 2}" y="${H - 10}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" class="lab-x">${y}</text>`; }).join('');
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Federal political committee payments to BPI: 2020 $96.5M, 2022 $3.1M, 2024 $115.3M, 2026 year to date $41K"><line x1="0" x2="${W}" y1="${H - pb}" y2="${H - pb}" class="base"/>${bars}</svg>`;
 })();
 
 /* ── demo tabs ─────────────────────────────────────────────────────────── */
@@ -41,7 +42,7 @@ $('#mt-msgs').innerHTML = MSGS.map(m => `<div class="msg-opt"><b>${m.k} · ${esc
 $('#mt-aud').innerHTML = AUD.map((a, i) => `<label><input type="checkbox" value="${a.id}" ${i !== 4 ? 'checked' : ''}><span>${esc(a.name)}</span></label>`).join('');
 const resRow = (a, filled) => { const best = a.sc.indexOf(Math.max(...a.sc)); return `<div class="mt-row"><div class="who">${esc(a.name)}</div><div class="bars">${a.sc.map((v, i) => `<div class="bar${filled && i === best ? ' win' : ''}"><span>${MSGS[i].k}</span><span class="tk"><i style="width:${filled ? v : 0}%"></i><span class="ci" style="left:${filled ? v - a.ci : 0}%;width:${filled ? a.ci * 2 : 0}%"></span></span><span>${filled ? v + ' ±' + a.ci : '—'}</span></div>`).join('')}</div></div>`; };
 const chosen = () => [...document.querySelectorAll('#mt-aud input:checked')].map(i => AUD.find(a => a.id === i.value));
-const drawEmpty = () => { const c = chosen(); $('#mt-res').innerHTML = c.map(a => resRow(a, false)).join('') || '<p class="src">Pick at least one audience.</p>'; $('#mt-rec').innerHTML = ''; $('#mt-n').textContent = c.length ? `${c.length * 480} synthetic respondents` : '—'; $('#mt-prog').style.width = '0'; };
+const drawEmpty = () => { const c = chosen(); $('#mt-res').innerHTML = c.map(a => resRow(a, false)).join('') || '<p class="sys-src">Pick at least one audience.</p>'; $('#mt-rec').innerHTML = ''; $('#mt-n').textContent = c.length ? `${c.length * 480} synthetic respondents` : '—'; $('#mt-prog').style.width = '0'; };
 document.querySelectorAll('#mt-aud input').forEach(i => i.addEventListener('change', drawEmpty)); drawEmpty();
 $('#mt-run').addEventListener('click', () => {
   const c = chosen(); if (!c.length) return; const btn = $('#mt-run'); btn.disabled = true; drawEmpty();
@@ -53,8 +54,8 @@ $('#mt-run').addEventListener('click', () => {
     const avg = MSGS.map((m, i) => Math.round(c.reduce((s, a) => s + a.sc[i], 0) / c.length));
     const bi = avg.indexOf(Math.max(...avg)); const second = avg.map((v, i) => [v, i]).sort((x, y) => y[0] - x[0])[1][1];
     const splits = c.filter(a => a.sc.indexOf(Math.max(...a.sc)) !== bi);
-    $('#mt-rec').innerHTML = `<div class="move" style="border:1px solid var(--night-line);border-radius:12px;overflow:hidden"><div style="grid-column:1/-1"><span class="sev lo">Recommendation</span><h4>Lead with ${MSGS[bi].k} · ${esc(MSGS[bi].name)} (avg ${avg[bi]})</h4><ol><li>${splits.length ? `Use ${splits.map(a => `${MSGS[a.sc.indexOf(Math.max(...a.sc))].k} with ${esc(a.name)}`).join('; ')}, where it outperforms.` : `It wins every audience tested; no split messaging needed.`}</li><li>Validate ${MSGS[bi].k} and ${MSGS[second].k} with a live Message House elite panel (about 300 respondents, 48–72 hours) before launch.</li><li>Drop the lowest scorer from paid media; keep it for owned channels only if employees respond.</li></ol></div></div>`;
-    btn.disabled = false; btn.innerHTML = 'Run again <span class="arr" aria-hidden="true">→</span>';
+    $('#mt-rec').innerHTML = `<div class="move rec"><div style="grid-column:1/-1"><span class="sev lo">Recommendation</span><h4>Lead with ${MSGS[bi].k} · ${esc(MSGS[bi].name)} (avg ${avg[bi]})</h4><ol><li>${splits.length ? `Use ${splits.map(a => `${MSGS[a.sc.indexOf(Math.max(...a.sc))].k} with ${esc(a.name)}`).join('; ')}, where it outperforms.` : `It wins every audience tested; no split messaging needed.`}</li><li>Validate ${MSGS[bi].k} and ${MSGS[second].k} with a live Message House elite panel (about 300 respondents, 48–72 hours) before launch.</li><li>Drop the lowest scorer from paid media; keep it for owned channels only if employees respond.</li></ol></div></div>`;
+    btn.disabled = false; btn.innerHTML = 'Run again <span aria-hidden="true">→</span>';
   };
   requestAnimationFrame(step);
 });
@@ -85,10 +86,10 @@ function drawWF() {
   $('#wf-steps').innerHTML = STEPS.map(([t, s, kind], k) => { const st = stepState(k); const lbl = st === 'done' ? 'Passed' : st === 'flag' ? 'Flagged' : st === 'run' ? (kind === 'gate' ? 'Awaiting human' : 'Running') : kind === 'gate' ? 'Human gate' : kind === 'check' ? 'Checkpoint' : 'Automated'; return `<li class="step ${st}${kind === 'gate' && !st ? ' gate' : ''}"><span class="n">${st === 'done' ? '✓' : st === 'flag' ? '!' : k + 1}</span><div><b>${esc(t)}</b><span>${esc(s)}</span></div><span class="st">${lbl}</span></li>`; }).join('');
   $('#wf-doc').innerHTML = docHTML();
   const iss = [];
-  if (wf.i >= 2) iss.push(wf.fixed.c1 ? `<div class="issue ok"><span><b>Claims check passed.</b> Replaced with a figure from the approved fact base.</span></div>` : `<div class="issue"><span><b>Unsupported claim:</b> “30% productivity” has no approved source. Suggested: the AI academy figure from the fact base.</span><button class="btn-sm" data-fix="c1">Apply fix</button></div>`);
-  if (wf.i >= 3) iss.push(wf.fixed.c2 ? `<div class="issue ok"><span><b>Disclosure check passed.</b> Forward-looking hiring number removed.</span></div>` : `<div class="issue"><span><b>Forward-looking statement:</b> a hiring forecast from a listed company needs safe-harbor language or removal.</span><button class="btn-sm" data-fix="c2">Remove forecast</button></div>`);
-  if (wf.i >= 5 && !wf.signed) iss.push(`<div class="issue" style="border-color:rgba(43,43,255,.5);background:rgba(43,43,255,.1);color:#d8d8ff"><span><b>Human gate:</b> employment counsel must approve before anything ships.</span><button class="btn-sm blue" data-sign>Sign off as counsel</button></div>`);
-  if (wf.i >= 6) iss.push(`<div class="issue ok"><span><b>Published.</b> Scorecard tracking started: share of voice, sentiment on the “AI is replacing workers” cluster, reporter pickup. Time from alert to release in this run: under 2 hours (illustrative).</span></div>`);
+  if (wf.i >= 2) iss.push(wf.fixed.c1 ? `<div class="sys-note sys-note--good"><span><b>Claims check passed.</b> Replaced with a figure from the approved fact base.</span></div>` : `<div class="sys-note sys-note--warn"><span><b>Unsupported claim:</b> “30% productivity” has no approved source. Suggested: the AI academy figure from the fact base.</span><button class="sys-btn sys-btn--secondary sys-btn--sm" type="button" data-fix="c1">Apply fix</button></div>`);
+  if (wf.i >= 3) iss.push(wf.fixed.c2 ? `<div class="sys-note sys-note--good"><span><b>Disclosure check passed.</b> Forward-looking hiring number removed.</span></div>` : `<div class="sys-note sys-note--warn"><span><b>Forward-looking statement:</b> a hiring forecast from a listed company needs safe-harbor language or removal.</span><button class="sys-btn sys-btn--secondary sys-btn--sm" type="button" data-fix="c2">Remove forecast</button></div>`);
+  if (wf.i >= 5 && !wf.signed) iss.push(`<div class="sys-note sys-note--co"><span><b>Human gate:</b> employment counsel must approve before anything ships.</span><button class="sys-btn sys-btn--co sys-btn--sm" type="button" data-sign>Sign off as counsel</button></div>`);
+  if (wf.i >= 6) iss.push(`<div class="sys-note sys-note--good"><span><b>Published.</b> Scorecard tracking started: share of voice, sentiment on the “AI is replacing workers” cluster, reporter pickup. Time from alert to release in this run: under 2 hours (illustrative).</span></div>`);
   $('#wf-issues').innerHTML = iss.join('');
   document.querySelectorAll('[data-fix]').forEach(b => b.onclick = () => { wf.fixed[b.dataset.fix] = true; drawWF(); advance(); });
   document.querySelector('[data-sign]')?.addEventListener('click', () => { wf.signed = true; drawWF(); advance(); });
@@ -125,14 +126,13 @@ calc(); cases(null);
 
 /* ── evidence + stack from serviceos_evidence.json ─────────────────────── */
 const fmtMetric = i => { const v = i.metric_value, u = String(i.metric_unit || ''); if (v == null) return '—'; if (/USD/.test(u)) return m$(v, 1); if (/%/.test(u)) return v + '%'; if (/^x|x EV|x EBITDA/.test(u)) return v.toFixed(1) + 'x'; return String(v); };
-const conf = c => `<span class="badge${c === 'high' ? ' blue' : ''}">${esc(c || '—')}</span>`;
+const conf = c => `<span class="bpi-tag${c === 'high' ? ' bpi-tag--co' : ''}">${esc(c ? c[0].toUpperCase() + c.slice(1) + ' confidence' : '—')}</span>`;
 Data.load('research/serviceos_evidence').then(d => {
   const items = d?.items || []; const ra = items.find(i => i.id === 'ra-bpi');
   if (ra) {
     cases(ra);
     const [i0, i1] = ra.investment_usd || [1e6, 2e6]; $('#r-inv').min = i0 / 1e6; $('#r-inv').max = i1 / 1e6;
     const [t0, t1] = ra.multiple_expansion_turns || [0.5, 2]; $('#k2').textContent = `+${t0}–${t1.toFixed(1)}x`;
-    $('#k2-src').textContent = `Source: serviceos_evidence ra-bpi · ${ra.label || 'est.'}`;
     calc();
   }
   const kb1 = items.find(i => i.id === 'kb-bpi-1'); if (kb1) { $('#k1-from').textContent = kb1.baseline + '%'; $('#k1-to').textContent = kb1.target + '%'; }
@@ -141,8 +141,9 @@ Data.load('research/serviceos_evidence').then(d => {
   $('#evidence').innerHTML = ev.map(i => {
     const kb = i.kind === 'kpi_benchmark';
     const big = kb ? `${i.baseline ?? '—'}${i.target != null ? ' → ' + i.target : ''}${/%/.test(i.unit) ? '%' : ''}` : fmtMetric(i);
-    return `<article class="evc"><span class="badge">${kb ? 'KPI benchmark' : 'Valuation evidence'} · ${esc(i.id)}</span><div class="v">${esc(big)}</div><b>${esc(kb ? i.kpi : i.title)}</b><p>${esc(String(kb ? (i.baseline_basis + ' ' + (i.target_basis || '')) : i.claim).slice(0, 230))}${String(kb ? i.baseline_basis : i.claim).length > 230 ? '…' : ''}</p><div class="ft"><a class="src" href="${esc(i.source_url)}" target="_blank" rel="noopener">${esc(kb ? Fmt.host(i.source_url) : (i.source_name || Fmt.host(i.source_url)))} ↗</a>${kb ? '<span class="badge">benchmark</span>' : conf(i.confidence)}</div></article>`;
-  }).join('') || '<p class="src">Evidence file not available.</p>';
+    const body = String(kb ? [i.baseline_basis, i.target_basis].filter(Boolean).join(' ') : (i.claim || ''));
+    return `<article class="sys-card evc"><span class="sys-card-label">${kb ? 'KPI benchmark' : 'Valuation evidence'}</span><div class="v">${esc(big)}${kb && i.target != null ? '<span class="sys-est">est.</span>' : ''}</div><p class="sys-card-title">${esc(plain(kb ? i.kpi : i.title))}</p><p class="sys-card-body">${esc(plain(body).slice(0, 230))}${body.length > 230 ? '…' : ''}</p><div class="ft"><a class="sys-src" href="${esc(i.source_url)}" target="_blank" rel="noopener">${esc(kb ? Fmt.host(i.source_url) : plain(i.source_name || Fmt.host(i.source_url)))} ↗</a>${kb ? '<span class="bpi-tag">Benchmark</span>' : conf(i.confidence)}</div></article>`;
+  }).join('') || '<p class="sys-src">Evidence file not available.</p>';
   const vs = items.filter(i => i.kind === 'vendor_stack' && i.company === 'bpi');
   const build = [
     ['Narrative models', 'BPI-built (on vendor feeds)', 'Clusters signals into client-specific narratives; scores velocity, sentiment and synthetic-media risk; drafts the recommended move.', 'Inside the $1–2M program (est.)', 'build'],
@@ -150,24 +151,24 @@ Data.load('research/serviceos_evidence').then(d => {
     ['Compliance rules', 'BPI-built rules engine', 'Fact base per client, claims tracing, regulated-sector disclosures (health, energy, financial), legal routing and audit log.', 'Inside the $1–2M program (est.)', 'build'],
     ['Outcome dashboards', 'BPI-built BI layer', 'Retainer scorecards: share of voice, narrative sentiment, policy outcomes, paid-media lift.', 'Inside the $1–2M program (est.)', 'build'],
   ];
-  $('#stack-tbl tbody').innerHTML = vs.map(v => `<tr><td><b>${esc(v.category)}</b></td><td><a href="${esc(v.source_url)}" target="_blank" rel="noopener"><b>${esc(v.vendor)}</b></a></td><td>${esc(v.what_it_does)}</td><td>${esc(v.pricing_note)}</td><td><span class="bb buy">Buy</span></td></tr>`).join('') + build.map(b => `<tr><td><b>${esc(b[0])}</b></td><td><b>${esc(b[1])}</b></td><td>${esc(b[2])}</td><td>${esc(b[3])}</td><td><span class="bb build">Build</span></td></tr>`).join('');
-}).catch(() => { $('#evidence').innerHTML = '<p class="src">Evidence file not available; defaults above come from serviceos_evidence ra-bpi.</p>'; });
+  $('#stack-tbl tbody').innerHTML = vs.map(v => `<tr><td>${esc(Frame.humanizeText(String(v.category || '')))}</td><td><a href="${esc(v.source_url)}" target="_blank" rel="noopener">${esc(v.vendor)}</a></td><td>${esc(plain(v.what_it_does))}</td><td>${esc(plain(v.pricing_note))}</td><td><span class="bb buy">Buy</span></td></tr>`).join('') + build.map(b => `<tr><td>${esc(b[0])}</td><td>${esc(b[1])}</td><td>${esc(b[2])}</td><td>${esc(b[3])}</td><td><span class="bb build">Build</span></td></tr>`).join('');
+}).catch(() => { $('#evidence').innerHTML = '<p class="sys-src">Evidence file not available; the defaults above come from the OS program evidence.</p>'; });
 
 /* ── roadmap ───────────────────────────────────────────────────────────── */
 (function gantt() {
   const months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
   const rows = [
-    ['Stack & data layer', 'Owner: BPI COO + PRG', 1, 2, '', 'Contracts, SSO, client workspaces'],
-    ['Narrative Monitor pilot', 'Owner: Insights lead', 2, 5, 'b', '10 corporate clients from RRI briefings'],
-    ['Compliance Studio', 'Owner: Head of corporate affairs', 3, 6, '', 'Fact bases + legal routing'],
-    ['Audience Lab', 'Owner: Message House', 4, 8, '', 'Synthetic + live panel loop'],
+    ['Stack and data layer', 'Owner: BPI COO and the Portfolio Resource Group', 1, 2, '', 'Contracts, SSO, client workspaces'],
+    ['Narrative monitor pilot', 'Owner: Insights lead', 2, 5, 'b', '10 corporate clients from Index briefings'],
+    ['Compliance studio', 'Owner: Head of corporate affairs', 3, 6, '', 'Fact bases and legal routing'],
+    ['Audience lab', 'Owner: Message House', 4, 8, '', 'Synthetic and live panel loop'],
     ['Outcome dashboards', 'Owner: Analytics', 6, 9, '', 'Renewal scorecards'],
-    ['Productized tiers GA', 'Owner: CEO + CFO', 6, 12, 'b', 'Pricing, contracts, enablement'],
-    ['Europe rollout', 'Owner: London + Berlin MDs', 8, 12, 'l', 'DE / FR, EU data residency'],
+    ['Productized tiers launch', 'Owner: CEO and CFO', 6, 12, 'b', 'Pricing, contracts, enablement'],
+    ['Europe rollout', 'Owner: London and Berlin MDs', 8, 12, 'l', 'DE and FR, EU data residency'],
   ];
   const el = $('#gantt'); if (!el) return;
   const rng = (a, b) => `${months[a - 1]}${a === b ? '' : '–' + months[b - 1]}`;
-  el.innerHTML = `<div class="g-head"><div class="lbl">Workstream · Oct 2026 – Sep 2027</div><div class="g-months">${months.map(m => `<span>${m}</span>`).join('')}</div></div>` + rows.map(([t, o, s, e, c, note]) => `<div class="g-row"><div class="lbl"><b>${esc(t)}</b><span>${esc(note)} · ${esc(o.replace('Owner: ', ''))}</span></div><div class="g-track"><span class="g-bar ${c}" style="left:calc(${(s - 1) / 12 * 100}% + 4px);width:calc(${(e - s + 1) / 12 * 100}% - 8px)">${rng(s, e)}</span></div></div>`).join('') + `<div class="g-row"><div class="lbl"><b>Milestones</b><span>M6 first SignalOS revenue · M12 ARR reported to board &amp; lenders</span></div><div class="g-track g-mst" style="height:56px"><span class="g-ms" style="left:calc(50% - 1px)" data-l="M6 · first SignalOS revenue"></span><span class="g-ms" style="left:calc(100% - 4px)"></span><span class="g-m12" style="position:absolute;right:12px;top:8px;font:600 10px/1 var(--mono);color:var(--neg)">M12 · ARR reported to board</span></div></div>`;
+  el.innerHTML = `<div class="g-head"><div class="lbl">Workstream · Oct 2026 – Sep 2027</div><div class="g-months">${months.map(m => `<span>${m}</span>`).join('')}</div></div>` + rows.map(([t, o, s, e, c, note]) => `<div class="g-row"><div class="lbl"><b>${esc(t)}</b><span>${esc(note)} · ${esc(o.replace('Owner: ', ''))}</span></div><div class="g-track"><span class="g-bar ${c}" style="left:calc(${(s - 1) / 12 * 100}% + 4px);width:calc(${(e - s + 1) / 12 * 100}% - 8px)">${rng(s, e)}</span></div></div>`).join('') + `<div class="g-row"><div class="lbl"><b>Milestones</b><span>Month 6 first SignalOS revenue · month 12 ARR reported to the board and lenders</span></div><div class="g-track g-mst" style="height:56px"><span class="g-ms" style="left:calc(50% - 1px)" data-l="Month 6 · first SignalOS revenue"></span><span class="g-ms" style="left:calc(100% - 4px)"></span><span class="g-m12">Month 12 · ARR reported to board</span></div></div>`;
 })();
 
 mountChat(['What is SignalOS?', 'How do retainers and pricing work?', 'How fast can you respond in a crisis?', 'Can you test our message before we launch it?', 'Do you work in Brussels and Berlin?']);

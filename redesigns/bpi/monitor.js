@@ -80,7 +80,7 @@ export const SCENARIOS = [
     ],
   },
   {
-    id: 'eu-ai', label: 'EU AI Act enforcement', client: 'US platform company with EU operations', markets: 'EU · DE · US', risk: 46,
+    id: 'eu-ai', label: 'EU AI Act enforcement', client: 'US portfolio company with EU operations', markets: 'EU · DE · US', risk: 46,
     curve: { base: 210, spikeAt: 10, amp: 1.4, s0: -0.05, dip: -0.22 },
     clusters: [
       { n: 'Compliance gaps in general-purpose AI', share: 33, s: -0.45, tr: 'up' },
@@ -127,15 +127,15 @@ export function chartSVG(data, { w = 600, h = 170 } = {}) {
   const pad = { l: 34, r: 30, t: 10, b: 22 }, iw = w - pad.l - pad.r, ih = h - pad.t - pad.b;
   const mx = Math.max(...data.map(d => d.v)) * 1.08, bw = iw / data.length;
   const y = v => pad.t + ih - (v / mx) * ih, ys = s => pad.t + ih / 2 - s * (ih / 2);
-  const bars = data.map((d, i) => `<rect x="${(pad.l + i * bw + 1.5).toFixed(1)}" y="${y(d.v).toFixed(1)}" width="${(bw - 3).toFixed(1)}" height="${(pad.t + ih - y(d.v)).toFixed(1)}" rx="2" fill="${i >= data.length - 1 ? '#6f6fff' : '#3a3a48'}"/>`).join('');
+  const bars = data.map((d, i) => `<rect x="${(pad.l + i * bw + 1.5).toFixed(1)}" y="${y(d.v).toFixed(1)}" width="${(bw - 3).toFixed(1)}" height="${(pad.t + ih - y(d.v)).toFixed(1)}" rx="2" style="fill:${i >= data.length - 1 ? 'var(--co)' : 'var(--sys-mute-2)'}"/>`).join('');
   const pts = data.map((d, i) => `${(pad.l + i * bw + bw / 2).toFixed(1)},${ys(d.s).toFixed(1)}`).join(' ');
-  const grid = [0, 0.5, 1].map(f => `<line x1="${pad.l}" x2="${w - pad.r}" y1="${pad.t + ih * f}" y2="${pad.t + ih * f}" stroke="#26262e" ${f === 0.5 ? 'stroke-dasharray="3 4"' : ''}/>`).join('');
-  const xl = [0, 6, 12, 18, 23].map(i => `<text x="${pad.l + i * bw + bw / 2}" y="${h - 6}" fill="#7d7d89" font-size="10" font-family="JetBrains Mono,monospace" text-anchor="middle">${i === 23 ? 'now' : `−${24 - i}h`}</text>`).join('');
-  const yl = `<text x="${pad.l - 6}" y="${pad.t + 8}" fill="#7d7d89" font-size="10" font-family="JetBrains Mono,monospace" text-anchor="end">${compact(mx)}</text><text x="${w - pad.r + 5}" y="${pad.t + 8}" fill="#7d7d89" font-size="10" font-family="JetBrains Mono,monospace">+1</text><text x="${w - pad.r + 5}" y="${pad.t + ih / 2 + 3}" fill="#7d7d89" font-size="10" font-family="JetBrains Mono,monospace">0</text><text x="${w - pad.r + 5}" y="${pad.t + ih}" fill="#7d7d89" font-size="10" font-family="JetBrains Mono,monospace">−1</text>`;
-  return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Mentions per hour (bars) and net sentiment (line) over the last 24 hours, illustrative">${grid}${bars}<polyline points="${pts}" fill="none" stroke="#ff6b61" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>${xl}${yl}</svg>`;
+  const grid = [0, 0.5, 1].map(f => `<line x1="${pad.l}" x2="${w - pad.r}" y1="${pad.t + ih * f}" y2="${pad.t + ih * f}" style="stroke:var(--sys-line-2)" ${f === 0.5 ? 'stroke-dasharray="3 4"' : ''}/>`).join('');
+  const xl = [0, 6, 12, 18, 23].map(i => `<text x="${pad.l + i * bw + bw / 2}" y="${h - 6}" style="fill:var(--sys-mute)" font-size="10" font-family="JetBrains Mono,monospace" text-anchor="middle">${i === 23 ? 'now' : `−${24 - i}h`}</text>`).join('');
+  const yl = `<text x="${pad.l - 6}" y="${pad.t + 8}" style="fill:var(--sys-mute)" font-size="10" font-family="JetBrains Mono,monospace" text-anchor="end">${compact(mx)}</text><text x="${w - pad.r + 5}" y="${pad.t + 8}" style="fill:var(--sys-mute)" font-size="10" font-family="JetBrains Mono,monospace">+1</text><text x="${w - pad.r + 5}" y="${pad.t + ih / 2 + 3}" style="fill:var(--sys-mute)" font-size="10" font-family="JetBrains Mono,monospace">0</text><text x="${w - pad.r + 5}" y="${pad.t + ih}" style="fill:var(--sys-mute)" font-size="10" font-family="JetBrains Mono,monospace">−1</text>`;
+  return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Mentions per hour (bars) and net sentiment (line) over the last 24 hours, illustrative">${grid}${bars}<polyline points="${pts}" fill="none" style="stroke:var(--sys-bad)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>${xl}${yl}</svg>`;
 }
 const sbar = s => { const w = Math.abs(s) * 50; return `<span class="sbar" aria-hidden="true"><i style="${s < 0 ? `right:50%` : `left:50%`};width:${w}%;background:${sCol(s)}"></i></span>`; };
-const gaugeSVG = v => { const a = Math.PI * (1 - v / 100), x = 46 + 38 * Math.cos(a), y = 50 - 38 * Math.sin(a); const col = v >= 65 ? '#ef4135' : v >= 50 ? '#f5a524' : '#0fa765'; return `<svg viewBox="0 0 92 56" aria-hidden="true"><path d="M8 50a38 38 0 0 1 76 0" fill="none" stroke="#26262e" stroke-width="8" stroke-linecap="round"/><path d="M8 50A38 38 0 0 1 ${x.toFixed(1)} ${y.toFixed(1)}" fill="none" stroke="${col}" stroke-width="8" stroke-linecap="round"/></svg>`; };
+const gaugeSVG = v => { const a = Math.PI * (1 - v / 100), x = 46 + 38 * Math.cos(a), y = 50 - 38 * Math.sin(a); const col = v >= 65 ? 'var(--sys-bad)' : v >= 50 ? 'var(--sys-warn)' : 'var(--sys-good)'; return `<svg viewBox="0 0 92 56" aria-hidden="true"><path d="M8 50a38 38 0 0 1 76 0" fill="none" style="stroke:var(--sys-line-2)" stroke-width="8" stroke-linecap="round"/><path d="M8 50A38 38 0 0 1 ${x.toFixed(1)} ${y.toFixed(1)}" fill="none" style="stroke:${col}" stroke-width="8" stroke-linecap="round"/></svg>`; };
 const ago = m => m < 1 ? 'now' : m < 60 ? `${Math.round(m)}m` : `${Math.floor(m / 60)}h`;
 
 /** Full monitor UI. Returns { setScenario, destroy }. */
@@ -144,13 +144,13 @@ export function mountMonitor(root, { initial = 'ai-jobs', interval = 2600 } = {}
   root.innerHTML = `
     <div class="mon-bar">
       <div class="seg" role="tablist" aria-label="Issue being monitored">${SCENARIOS.map(s => `<button role="tab" aria-selected="${s.id === initial}" data-sc="${s.id}">${esc(s.label)}</button>`).join('')}</div>
-      <div class="meta"><span class="dot g" aria-hidden="true"></span><span data-k="client"></span></div>
+      <div class="meta"><span class="dot" aria-hidden="true"></span><span data-k="client"></span></div>
       <button class="ctl" data-k="pause" aria-pressed="false"><span aria-hidden="true">❚❚</span> <span class="lbl">Pause</span></button>
     </div>
     <div class="mon-body">
       <div class="mon-left">
         <div class="kpis" data-k="kpis"></div>
-        <div class="chart-box"><div class="hd"><span>Last 24 hours</span><span class="lg"><span><i style="background:#3a3a48"></i>Mentions / hr</span><span><i style="background:#ff6b61"></i>Net sentiment</span></span></div><div data-k="chart"></div></div>
+        <div class="chart-box"><div class="hd"><span>Last 24 hours</span><span class="lg"><span><i class="lg-bar"></i>Mentions an hour</span><span><i class="lg-line"></i>Net sentiment</span></span></div><div data-k="chart"></div></div>
         <div><div class="sub-h"><span>Narrative clusters</span><span>share · sentiment</span></div><div class="clusters" data-k="clusters"></div></div>
       </div>
       <div class="mon-right">
@@ -166,11 +166,11 @@ export function mountMonitor(root, { initial = 'ai-jobs', interval = 2600 } = {}
     const risk = Math.max(5, Math.min(97, Math.round(sc.risk + (-net) * 12 + (seen - 5) * 0.6)));
     const vel = Math.round((sc.curve.amp * 100) + seen * 3);
     $('kpis').innerHTML = [
-      ['Mentions / hr', mentions.toLocaleString('en-US'), `${sc.markets}`],
+      ['Mentions an hour', mentions.toLocaleString('en-US'), `${sc.markets}`],
       ['Net sentiment', `<span class="${net < -0.1 ? 'neg' : net > 0.1 ? 'pos' : ''}">${sgn(net)}</span>`, 'last 6 signals'],
       ['Velocity', `+${vel}%`, 'vs. 7-day baseline'],
-      ['Risk index', `${risk}<span style="font-size:13px;color:#8e8e9b">/100</span>`, risk >= 65 ? 'elevated' : risk >= 50 ? 'watch' : 'stable'],
-    ].map(([l, v, d]) => `<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="d">${esc(d)}</div></div>`).join('');
+      ['Risk index', `${risk}<small>/100</small>`, risk >= 65 ? 'elevated' : risk >= 50 ? 'watch' : 'stable'],
+    ].map(([l, v, d]) => `<div class="sys-kpi"><span class="sys-kpi-label">${l}</span><span class="sys-kpi-value">${v}</span><span class="sys-kpi-sub">${esc(d)}</span></div>`).join('');
     $('count').textContent = `${seen} signals · illustrative`;
   };
   const sigHTML = (x, fresh) => `<li class="sig${fresh ? ' new' : ''}"><span class="gl" aria-hidden="true">${GLYPH[x.ch] || ''}</span><div><div class="row"><b>${esc(x.ch)}</b><span>${esc(x.src)}</span><span class="rg">${esc(x.rg)}</span><span class="t">${ago(x.age)}</span></div><p>${esc(x.tx)}</p><div class="bot">${sbar(x.s)}<span style="color:${sCol(x.s)}">${sgn(x.s)}</span><span>reach ${compact(x.r)}</span>${x.flag ? `<span class="flag">${esc(x.flag)}</span>` : ''}</div></div></li>`;
@@ -180,7 +180,7 @@ export function mountMonitor(root, { initial = 'ai-jobs', interval = 2600 } = {}
     const cw = $('chart').clientWidth || 600; $('chart').innerHTML = chartSVG(data, cw < 460 ? { w: 360, h: 150 } : {});
     $('clusters').innerHTML = sc.clusters.map(c => `<div class="cl"><div class="nm"><span class="tr ${c.tr}">${c.tr === 'up' ? '▲' : c.tr === 'dn' ? '▼' : '■'}</span><span title="${esc(c.n)}">${esc(c.n)}</span>${c.flag ? `<span class="flag">${esc(c.flag)}</span>` : ''}</div>${sbar(c.s)}<div class="pc">${c.share}%</div></div>`).join('');
     const m = sc.move;
-    $('move').innerHTML = `<div><div class="gauge">${gaugeSVG(sc.risk)}<div><span class="sev ${m.sev}">${esc(m.sevL)}</span><div class="src" style="margin-top:6px;color:#8e8e9b">${esc(m.window)} · recommended by SignalOS</div></div></div><h4>${esc(m.title)}</h4><ol>${m.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol></div><div><div class="sub-h"><span>Draft holding statement</span><span>AI draft · human-approved</span></div><blockquote>${esc(m.draft)}</blockquote><div class="checks">${m.checks.map(([k, t]) => `<span class="${k}">${esc(t)}</span>`).join('')}</div></div>`;
+    $('move').innerHTML = `<div><div class="gauge">${gaugeSVG(sc.risk)}<div><span class="sev ${m.sev}">${esc(m.sevL)}</span><div class="sys-src" style="margin-top:6px">${esc(m.window)} · recommended by SignalOS</div></div></div><h4>${esc(m.title)}</h4><ol>${m.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol></div><div><div class="sub-h"><span>Draft holding statement</span><span>AI draft · human approval</span></div><blockquote>${esc(m.draft)}</blockquote><div class="checks">${m.checks.map(([k, t]) => `<span class="${k}">${esc(t)}</span>`).join('')}</div></div>`;
     root.querySelector('[data-k="client"]').textContent = `Client: ${sc.client} (illustrative)`;
   };
   const setScenario = id => {
@@ -214,10 +214,10 @@ export function mountPulse(el) {
   const pts = data.map((d, i) => [i / (data.length - 1) * w, h - 6 - d.v / mx * (h - 14)]);
   const line = pts.map(p => p.map(n => n.toFixed(1)).join(',')).join(' ');
   sp.setAttribute('viewBox', `0 0 ${w} ${h}`);
-  sp.innerHTML = `<defs><linearGradient id="pg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#2b2bff" stop-opacity=".55"/><stop offset="1" stop-color="#2b2bff" stop-opacity="0"/></linearGradient></defs><polygon points="0,${h} ${line} ${w},${h}" fill="url(#pg)"/><polyline points="${line}" fill="none" stroke="#8f8fff" stroke-width="2"/><circle cx="${pts[pts.length - 1][0] - 3}" cy="${pts[pts.length - 1][1]}" r="4" fill="#fff"/>`;
+  sp.innerHTML = `<defs><linearGradient id="pg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:var(--co);stop-opacity:.5"/><stop offset="1" style="stop-color:var(--co);stop-opacity:0"/></linearGradient></defs><polygon points="0,${h} ${line} ${w},${h}" fill="url(#pg)"/><polyline points="${line}" fill="none" style="stroke:var(--co)" stroke-width="2"/><circle cx="${pts[pts.length - 1][0] - 3}" cy="${pts[pts.length - 1][1]}" r="4" style="fill:var(--sys-ink)"/>`;
   big.textContent = data[data.length - 1].v.toLocaleString('en-US');
   let i = 0; const items = sc.signals;
-  const row = x => `<li><span class="ch">${esc(x.ch)}</span><span>${esc(x.tx.length > 74 ? x.tx.slice(0, 72) + '…' : x.tx)}</span><span class="s" style="color:${x.s < -0.25 ? '#ff8a80' : x.s > 0.25 ? '#5ee6a6' : '#aaa'}">${sgn(x.s)}</span></li>`;
+  const row = x => `<li><span class="chn">${esc(x.ch)}</span><span>${esc(x.tx.length > 74 ? x.tx.slice(0, 72) + '…' : x.tx)}</span><span class="s" style="color:${sCol(x.s)}">${sgn(x.s)}</span></li>`;
   list.innerHTML = [0, 1, 2].map(k => row(items[k])).join('').replace(/<li>/g, '<li style="animation:none">');
   if (reduceMotion()) return;
   setInterval(() => { if (document.hidden) return; i = (i + 1) % items.length; list.insertAdjacentHTML('afterbegin', row(items[(i + 2) % items.length])); while (list.children.length > 3) list.lastElementChild.remove(); }, 3400);

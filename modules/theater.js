@@ -1,13 +1,14 @@
+import * as Copy from './copy.js?v=20261006122625';
 /* 3D theater — cinematic GPU map scenes over the portal's datasets (engine: assets/theater.js) */
 const V = new URL(import.meta.url).search; // reuse the registry's ?v= stamp for cache-busting the engine
 
 async function play(ctx) {
   const { el, params, data, live, maps, fmt, esc, app } = ctx;
-  if (!document.getElementById('css-theater')) { const l = document.createElement('link'); l.id = 'css-theater'; l.rel = 'stylesheet'; l.href = `modules/theater.css?v=20261006090506${V}`; document.head.appendChild(l); }
+  if (!document.getElementById('css-theater')) { const l = document.createElement('link'); l.id = 'css-theater'; l.rel = 'stylesheet'; l.href = `modules/theater.css?v=20261006122625${V}`; document.head.appendChild(l); }
   el.innerHTML = `<div class="m-theater" style="position:relative;height:100%;min-height:480px;background:#05070b"></div>`;
   const host = el.firstElementChild;
   let Theater;
-  try { ({ Theater } = await import(`../assets/theater.js?v=20261006090506${V}`)); }
+  try { ({ Theater } = await import(`../assets/theater.js?v=20261006122625${V}`)); }
   catch (e) { host.innerHTML = ctx.ui.note(`The 3D theater engine failed to load: <span class="mono">${esc(e.message)}</span>`, 'warn'); return; }
   if (!el.isConnected) return;
   const scene = params.scene || 'S1';
@@ -22,14 +23,18 @@ async function play(ctx) {
       if (location.hash !== h) history.replaceState(null, '', h);
     },
   });
+  // captions are rewritten by the engine on every scene tick; keep them in plain English
+  let raf = 0;
+  const mo = new MutationObserver(() => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; Copy.humanize(host); }); });
+  mo.observe(host, { childList: true, subtree: true, characterData: true });
   app.index([
-    { label: '3D theater · Portfolio scene', sub: 'Platforms, PP core zips, CET county fit', href: '#/theater/play?scene=S1', kind: 'Scene', color: 'var(--cyan)' },
+    { label: '3D theater · Portfolio scene', sub: 'Portfolio companies, PP core zips, CET county fit', href: '#/theater/play?scene=S1', kind: 'Scene', color: 'var(--cyan)' },
     { label: '3D theater · Where the homes trade', sub: 'Every PP-territory home sale, extruded by count', href: '#/theater/play?scene=S2', kind: 'Scene', color: 'var(--cyan)' },
     { label: '3D theater · Nationwide', sub: 'Punctual Pros expansion arcs by phase', href: '#/theater/play?scene=S3', kind: 'Scene', color: 'var(--cyan)' },
     { label: '3D theater · New England grid', sub: 'CET opportunities and wastewater plants', href: '#/theater/play?scene=S4', kind: 'Scene', color: 'var(--cyan)' },
     { label: '3D theater · Storm', sub: 'Live NWS alerts over the PP territory', href: '#/theater/play?scene=S5', kind: 'Scene', color: 'var(--cyan)' },
   ]);
-  return () => { try { Theater.destroy(); } catch { } };
+  return () => { mo.disconnect(); try { Theater.destroy(); } catch { } };
 }
 
 export default {

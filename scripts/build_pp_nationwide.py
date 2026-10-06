@@ -106,7 +106,7 @@ def add(**kw):
 SH = "Smith + Howard"
 # 1. template
 T = [
- ("2022-11-15", "Broad Sky Partners makes a strategic platform investment in Smith + Howard (Atlanta tax, accounting and advisory firm, founded ~1971). Stated plan: expand advisory services, widen the geographic footprint and speed up technology through acquisitions.", SH, "Atlanta, GA", "~100 professionals in a single Atlanta office at entry (per BSP's Aug 2026 exit release)", "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment"),
+ ("2022-11-15", "Broad Sky Partners makes a strategic investment in Smith + Howard (Atlanta tax, accounting and advisory firm, founded ~1971). Stated plan: expand advisory services, widen the geographic footprint and speed up technology through acquisitions.", SH, "Atlanta, GA", "~100 professionals in a single Atlanta office at entry (per BSP's Aug 2026 exit release)", "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment"),
  ("2023-08-17", "Add-on 1: merges with Market Street Partners. Service line: accounting, tax and advisory. This was the first move outside Georgia, into Tennessee.", "Market Street Partners", "Chattanooga, TN", "First new state (TN); first acquisition under BSP", "https://www.accountingtoday.com/news/smith-howard-acquires-market-street-partners"),
  ("2024-01-31", "Add-on 2: acquires JMM CPAs. Service line: employee benefit plan (EBP) audit. It gives the EBP practice a national footprint.", "JMM CPAs", "Chicago, IL", "30 EBP-dedicated staff; combined practice serves 500+ plans", "https://www.smith-howard.com/smith-howard-announces-expansion-of-benefit-plan-audit-practice/"),
  ("2024-04-30", "Add-on 3: acquires VIP Search Group. Service line: executive search / talent advisory.", "VIP Search Group", "Richardson (Dallas), TX", "Texas entry; local press called it the third acquisition in 12 months", "https://www.smith-howard.com/smith-howard-acquires-vip-search-and-vip-solutions-businesses/"),
@@ -145,7 +145,7 @@ A = [
   ["ServiceTitan Field Pro (Atlas)", "ServiceTitan Sales Pro", "XOi", "Profit Rhino"],
   "Above + Beyond Service Co., a ~$20M Oklahoma shop about Punctual Pros' size, generated $1.2M from unsold estimates in H1 2025 and lifted average ticket 29% using Field Pro's AI.", 1.2, "USD M revenue recovered from unsold estimates (H1 2025)", "Add-on SKU to FSM platform; one follow-up coordinator FTE", 6,
   "https://www.servicetitan.com/blog/success-story-above-beyond-field-pro"),
- ("Technician sales copilot (AI ride-alongs)", "Record in-home conversations with consent, score them against the playbook, and send targeted coaching clips, so a manager can 'ride along' with every tech every day.", "technician",
+ ("Technician sales copilot (AI ride-alongs)", "Record in-home conversations with consent, score them against the plan, and send targeted coaching clips, so a manager can 'ride along' with every tech every day.", "technician",
   ["Rilla", "ServiceTitan Field Pro"],
   "A Houston Mister Sparky (same Authority Brands franchise Punctual Pros runs) raised technicians' average ticket 25% with Rilla, and managers reviewed 10 calls in the time one ride-along took.", 25, "% average-ticket lift", "Per-seat SaaS per month", 4,
   "https://legacy.rilla.com/testimonials/mister-sparky"),
@@ -171,7 +171,7 @@ A = [
   "https://tradeshift.com/state-of-epayables-2025-report/"),
  ("Permit & inspection filing agent", "Pre-fill municipal mechanical, plumbing and electrical permits for each township from job data, track approvals and book inspections. This matters across ~250 PA municipalities plus NJ, MD and DE jurisdictions.", "office",
   ["PermitFlow", "Shovels (permit data)"],
-  "PermitFlow says (vendor claim) its platform delivers 2.5x faster permit approvals and a 90% reduction in permitting workload.", 90, "% reduction in permitting workload (vendor claim)", "SaaS / per-permit", 10,
+  "PermitFlow says (vendor claim) its software delivers 2.5x faster permit approvals and a 90% reduction in permitting workload.", 90, "% reduction in permitting workload (vendor claim)", "SaaS / per-permit", 10,
   "https://www.permitflow.com/permit-management"),
  ("Recruiting screener & interview agent", "Chat with tech, apprentice and CSR applicants 24/7, screen licenses, EPA 608 and driving records, and schedule ride-along interviews automatically. Also feeds the trade-school pipeline.", "owner",
   ["Workday Paradox (Olivia)", "Workstream", "ServiceTitan hiring partners"],
@@ -259,8 +259,8 @@ G = [
  ("New-mover marketing engine", 2137, None, "meaningful home sales per 90 days in the 248 core zips (repo deed data)",
   "American Home Shield's 2024 survey (n>1,000) found that 92% of new homeowners hit a home issue in year one, including electrical 20%, HVAC failure 16% and water heater failure 14%. 82% paid out of pocket, averaging $5,719. The repo's deed pull shows ~2,137 meaningful sales per quarter in PP's core zips.",
   "https://www.parealtors.org/blog/92-of-homeowners-experience-a-home-related-issue-in-year-one/"),
- ("Storm / weather surge playbook", 20, 55, "% lift during a heat wave (calls -> revenue)",
-  "ServiceTitan's study of ~800 HVAC shops found heat waves raise daily calls 20%, jobs 25% and revenue 55%. The first heat wave of the season lifts daily revenue ~90%, so staffing and marketing should be pre-positioned before the first event (see pp_demand_model).",
+ ("Storm / weather surge growth plan", 20, 55, "% lift during a heat wave (calls -> revenue)",
+  "ServiceTitan's study of ~800 HVAC shops found heat waves raise daily calls 20%, jobs 25% and revenue 55%. The first heat wave of the season lifts daily revenue ~90%, so staffing and marketing should be pre-positioned before the first event (see Punctual Pros demand model).",
   "https://www.servicetitan.com/blog/hvac-revenue-heat-waves"),
  ("Dynamic pricing & digital price book", None, 14, "% average-ticket lift (dispatch + price book)",
   "ServiceTitan reports Dispatch Pro customers raised average ticket 14%. Pricing every task flat-rate in a tablet price book with good/better/best options, then routing high-ticket jobs to the best closers, is the mechanism. ServiceTitan also cites that 66% of homeowners would rebook if mobile is part of the experience.",
@@ -306,7 +306,7 @@ phases = [
       source_urls=[FDD_URL, "https://www.servicetitan.com/blog/hvac-revenue-heat-waves", "https://invoca.com/reports/the-invoca-home-services-lead-conversion-benchmarks-report-2026", BSP_PP_URL]),
  dict(phase="Phase 2 - Tuck-ins across PA, NJ, MD, DE and southern NY", months="9-24",
       geography=["Central & Eastern PA", "Jersey Shore (Ocean, Monmouth) + South Jersey", "Northern MD", "Delaware", "Southern NY (Southern Tier, lower Hudson)"],
-      thesis="Repeat the Horvath play (Dec 2024, first out-of-state deal) by buying Authority Brands franchisees and strong independents next to PA and NJ hubs, then convert independents to the tri-brand where Authority grants the territory. The 17 PE sponsors tracked in pe_landscape as overlapping Punctual Pros (e.g., Sila/Goldman, Legacy/Gridiron, Ally/Watchtower, Northwinds/TruArc, Wrench/Leonard Green) are bidding for the same founders. Broad Sky's edge is the operator playbook plus the AI stack, which raises a tuck-in's margin within 12 months. This is Smith + Howard's 2024-25 cadence: several deals a year, each adding a new state or a new service line.",
+      thesis="Repeat the Horvath play (Dec 2024, first out-of-state deal) by buying Authority Brands franchisees and strong independents next to PA and NJ hubs, then convert independents to the tri-brand where Authority grants the territory. The 17 PE sponsors tracked in PE landscape as overlapping Punctual Pros (e.g., Sila/Goldman, Legacy/Gridiron, Ally/Watchtower, Northwinds/TruArc, Wrench/Leonard Green) are bidding for the same founders. Broad Sky's edge is the operator growth plan plus the AI stack, which raises a tuck-in's margin within 12 months. This is Smith + Howard's 2024-25 cadence: several deals a year, each adding a new state or a new service line.",
       data_points={"addon_targets_by_state": tg_by_state, "addon_targets_fit70plus_by_state": tg_fit70_by_state,
                    "addon_targets_modeled_revenue_usd_by_state": tg_rev_by_state, "addon_targets_modeled_employees_by_state": tg_emp_by_state,
                    "authority_territories_mapped": ab_total, "authority_territories_by_state": ab_by_state,
@@ -323,9 +323,9 @@ phases = [
                        "Authority Brands added 340 territories and 246 owners in 2025, so the franchisor is growing its system, which helps territory approvals."],
       kpi_targets={"revenue_usd": 65_000_000, "ebitda_usd": 9_800_000, "technicians": 230, "territories": 60, "members": 20_000},
       source_urls=[HORVATH_URL, "https://middlemarketgrowth.org/gf-data-report-h1-2025/", AB_1851, fil["pp-fil-021"]["source_url"]]),
- dict(phase="Phase 3 - Mid-Atlantic platform along I-81 / I-95", months="18-36",
+ dict(phase="Phase 3 - Mid-Atlantic hub along I-81 / I-95", months="18-36",
       geography=["Baltimore", "Washington DC (MD suburbs)", "Richmond, VA", "Philadelphia suburbs (Montgomery, Chester, Bucks, Delaware)", "Pittsburgh"],
-      thesis="Win a metro anchor in each of four or five large Mid-Atlantic metros (1M+ housing units each), as Fahrenheit Advisors gave Smith + Howard its first Mid-Atlantic office. Run them through one shared contact center, AI dispatch, pricing, finance and recruiting backbone in Lancaster. Pittsburgh (Pittsburgh Classic Air Care holds 6 One Hour territories) and the 19 mapped MD Authority territories are the obvious franchise-to-franchise conversations. Fund the larger platform deals with a Broad Sky co-invest SPV like the TS, FL and CET vehicles.",
+      thesis="Win a metro anchor in each of four or five large Mid-Atlantic metros (1M+ housing units each), as Fahrenheit Advisors gave Smith + Howard its first Mid-Atlantic office. Run them through one shared contact center, AI dispatch, pricing, finance and recruiting backbone in Lancaster. Pittsburgh (Pittsburgh Classic Air Care holds 6 One Hour territories) and the 19 mapped MD Authority territories are the obvious franchise-to-franchise conversations. Fund the larger anchor deals with a Broad Sky co-invest SPV like the TS, FL and CET vehicles.",
       data_points={"metros": [bal, dcmd, phl, pgh], "richmond_va": "not in data/pp_zips.json (VA not modeled); needs a separate ZIP pull",
                    "authority_territories_md": ab_by_state.get("MD"), "authority_territories_md_not_pp": ab_non_pp_by_state.get("MD"),
                    "authority_territories_western_pa_outside_screen": sum(1 for x in abm if "Western PA" in x["owner_status"]),
@@ -340,7 +340,7 @@ phases = [
                    "https://www.cpapracticeadvisor.com/2024/12/12/smith-howard-acquires-fahrenheit-advisors-in-virginia/152764/", SPV_URL]),
  dict(phase="Phase 4 - National consolidator inside the Authority Brands network", months="36-60",
       geography=["Authority Brands franchise system nationwide (One Hour, Ben Franklin, Mister Sparky)", "priority: Sun Belt and Midwest multi-territory franchisees"],
-      thesis="Become the largest multi-brand operator in the One Hour / Benjamin Franklin / Mister Sparky system by buying multi-territory franchisees whose founders want liquidity, and plug them into Punctual Pros' AI and talent operating system. Exit as a scaled ~$100M+ revenue national platform to a larger sponsor or strategic, as Smith + Howard went to TPG Growth with ~4x revenue. The FDD shows the size of the pool: over a thousand outlets, ~280 franchisees, and the largest single franchisees at $31-73M of revenue.",
+      thesis="Become the largest multi-brand operator in the One Hour / Benjamin Franklin / Mister Sparky system by buying multi-territory franchisees whose founders want liquidity, and plug them into Punctual Pros' AI and talent operating system. Exit as a scaled ~$100M+ revenue national company to a larger sponsor or strategic, as Smith + Howard went to TPG Growth with ~4x revenue. The FDD shows the size of the pool: over a thousand outlets, ~280 franchisees, and the largest single franchisees at $31-73M of revenue.",
       data_points={"fdd_system_outlets_end_2025": {"one_hour": oh["territories_operated"], "ben_franklin": bf["territories_operated"], "mister_sparky": ms["territories_operated"], "total": fdd_outlets},
                    "fdd_franchisees_end_2025": fdd_franchisees, "fdd_reported_gross_revenue_fy2025_usd": fdd_rev,
                    "pp_share_of_tri_brand_outlets_pct": round(100 * pp_terr["total_territories"] / fdd_outlets, 2),
@@ -350,12 +350,12 @@ phases = [
                    "basis": "python3 over data/research/pp_filings.json (FDD Items 19/20) plus Authority Brands 2025 growth release"},
       market_evidence=[f"Tri-brand FY2025 reported gross revenue ${fdd_rev/1e6:,.1f}M across {fdd_outlets:,} outlets (2026 FDDs).",
                        "Authority Brands: 15 brands, 1,000+ owners, 2,700+ territories; claims >$2B revenue.",
-                       "GF Data Q2 2026: platform buyout total debt 2.9x EBITDA at a 7.0x average valuation, so equity-heavy structures dominate and a co-invest is needed for large buys."],
+                       "GF Data Q2 2026: initial-buyout total debt 2.9x EBITDA at a 7.0x average valuation, so equity-heavy structures dominate and a co-invest is needed for large buys."],
       kpi_targets={"revenue_usd": 175_000_000, "ebitda_usd": 29_000_000, "technicians": 600, "territories": 160, "members": 55_000},
       source_urls=[FDD_URL, FDD_BF_URL, FDD_MS_URL, AB_1851, AB_URL, "https://www.acg.org/news-trends/news/gf-data-reports-show-steady-middle-market-deal-flow-amid-more-selective"]),
 ]
 for n, ph in enumerate(phases, 1):
-    ph["kpi_targets"]["basis"] = "Analyst assumption, not company guidance; anchored to FY2025 est. revenue ~$22M / adj. EBITDA ~$2.6M / 25 territories (pp_filings estimate_table)"
+    ph["kpi_targets"]["basis"] = "Analyst assumption, not company guidance; anchored to FY2025 est. revenue ~$22M / adj. EBITDA ~$2.6M / 25 territories (Punctual Pros filings estimate table)"
     add(id=f"pn-phase-{n}", kind="expansion_phase", **ph, source_url=ph["source_urls"][0])
 
 # 6. financing
@@ -366,17 +366,17 @@ F = [
  ("Broad Sky Fund I equity (follow-on capital)", "Fund I $335.0M sold (46 investors); PP entry check est. ~$8-15M",
   "Broad Sky Partners, LP's Apr 2025 Form D/A reports $335.0M sold to 46 investors. Form ADV Schedule D shows $414.2M gross asset value, and no Punctual Pros-specific vehicle exists, so add-ons so far are funded from the main fund and debt.",
   FORMD_URL, REPO_RET),
- ("Deal-specific co-invest SPV (template from TS / FL / CET)", "$7.5M-$95M per platform historically",
-  "Broad Sky has raised deal-level co-invest for other platforms: BSP-TS Co-Invest I ($35.9M) and II ($59.6M), BSP-FL Co-Invest ($30.0M of $37.5M offered) and BSP-CET Co-Invest ($7.5M, 1 investor). A Punctual Pros co-invest would fund Phase 3-4 platform-size deals.",
+ ("Deal-specific co-invest SPV (template from TS / FL / CET)", "$7.5M-$95M per company historically",
+  "Broad Sky has raised deal-level co-invest for other portfolio companies: BSP-TS Co-Invest I ($35.9M) and II ($59.6M), BSP-FL Co-Invest ($30.0M of $37.5M offered) and BSP-CET Co-Invest ($7.5M, 1 investor). A Punctual Pros co-invest would fund the larger Phase 3-4 deals.",
   SPV_URL, REPO_RET),
  ("Seller rollover equity", "20-35% of tuck-in consideration (typical)",
   "GHJ / FocalPoint find typical rolled equity today ranges from 20% to 35% in most PE transactions (range 5-49%). Founder rollover cuts the cash at close and keeps sellers like Frank Horvath aligned to the exit.",
   "https://www.ghjadvisors.com/ghj-insights/trends-in-deal-structures-rollover-equity", TODAY),
  ("Typical lower-middle-market leverage", "2.9-3.3x total debt / EBITDA",
-  "GF Data reports total debt/EBITDA for platform buyouts of 2.9x in Q2 2026 (down from 3.4x), with senior debt pricing at 7.8% and an average valuation of 7.0x TTM adjusted EBITDA. Expect equity-heavy add-on funding.",
+  "GF Data reports total debt/EBITDA for initial (non-add-on) buyouts of 2.9x in Q2 2026 (down from 3.4x), with senior debt pricing at 7.8% and an average valuation of 7.0x TTM adjusted EBITDA. Expect equity-heavy add-on funding.",
   "https://www.acg.org/news-trends/news/gf-data-reports-show-steady-middle-market-deal-flow-amid-more-selective", TODAY),
  ("Multiple arbitrage (buy small, sell scaled)", "6.3-6.9x entry (sub-$25M TEV) vs 10.0x ($100-250M TEV)",
-  "GF Data H1 2025: sub-$25M TEV deals averaged 6.3-6.9x EBITDA while $100-250M TEV deals priced at 10.0x. Rolling ~$2-5M-EBITDA tuck-ins into a ~$16-29M-EBITDA platform creates value even before synergies.",
+  "GF Data H1 2025: sub-$25M TEV deals averaged 6.3-6.9x EBITDA while $100-250M TEV deals priced at 10.0x. Rolling ~$2-5M-EBITDA tuck-ins into a ~$16-29M-EBITDA company creates value even before synergies.",
   "https://middlemarketgrowth.org/gf-data-report-h1-2025/", TODAY),
 ]
 for n, f in enumerate(F, 1):
@@ -386,18 +386,18 @@ for n, f in enumerate(F, 1):
 # ---------------- meta ----------------
 counts = dict(collections.Counter(i["kind"] for i in items))
 narrative = (
- "Tyler, Punctual Pros can follow the Smith + Howard playbook: Broad Sky took a single-office Atlanta firm with ~100 professionals to ~800 professionals, 11 locations, nine acquisitions and ~4x revenue in 3.5 years, then sold it to TPG Growth. "
+ "Punctual Pros can follow the Smith + Howard growth plan: Broad Sky took a single-office Atlanta firm with ~100 professionals to ~800 professionals, 11 locations, nine acquisitions and ~4x revenue in 3.5 years, then sold it to TPG Growth. "
  f"Punctual Pros starts from a similar base: ~$22M estimated FY2025 revenue, 25 Authority Brands territories, {len(core)} core Central-PA zips with ~{core_hu/1e6:.1f}M housing units, and one out-of-state add-on (Horvath, Jersey Shore). "
  f"Phase 1 (months 0-12) densifies the core and the {len(adj_t1)} Tier-1 adjacent zips ({adj_t1_by_state.get('PA',0)} PA, {adj_t1_by_state.get('MD',0)} MD) and closes 1-2 tuck-ins from the 61-company target screen. "
  f"Phase 2 (9-24) repeats the Horvath deal across PA, NJ, MD, DE and southern NY, where {len(ab_non_pp)} mapped Authority territories are not yet owned by Punctual Pros and {len(pp_spons)} PE sponsors are competing for the same founders. "
- "Phase 3 (18-36) builds a Mid-Atlantic platform along I-81/I-95 (Baltimore-DC, Richmond, Philadelphia suburbs, Pittsburgh), just as Fahrenheit Advisors gave Smith + Howard its first Mid-Atlantic office. "
+ "Phase 3 (18-36) builds a Mid-Atlantic hub along I-81/I-95 (Baltimore-DC, Richmond, Philadelphia suburbs, Pittsburgh), just as Fahrenheit Advisors gave Smith + Howard its first Mid-Atlantic office. "
  f"Phase 4 makes Punctual Pros the national consolidator inside the One Hour / Ben Franklin / Mister Sparky system: {fdd_outlets:,} outlets and ${fdd_rev/1e6:,.0f}M of reported revenue, where Punctual Pros holds ~{100*pp_terr['total_territories']/fdd_outlets:.1f}% today. "
  "The redesigned website is only the front door; the real leverage is an AI layer: a 24/7 voice dispatcher (ServiceTitan reports 70% booking, 90% capacity-adjusted), missed-call text-back, AI estimating that recovered $1.2M of unsold estimates at a $20M peer, Rilla coaching that lifted a Mister Sparky's ticket 25%, AI dispatch, and back-office agents for AP, permits and recruiting. "
  "Just as important, the plan helps the pros themselves: a Thaddeus Stevens College pipeline (97% placement, 18 job opportunities per graduate), PA earn-while-you-learn apprenticeships, pay ladders and tool stipends against 16-21% annual technician turnover, AI copilots that make junior techs productive faster, and veteran hiring. "
  "That matters because BLS projects ~155,000 HVAC, plumbing and electrical openings a year nationally, so technician capacity, not demand, is the binding constraint. "
- "Growth levers stack on top: online booking, Google LSA and reviews, memberships (members spend 2.5x more), financing, generator and IAQ attach, new-mover marketing from the deed feed, and a weather-surge playbook. "
- "Funding comes from the existing unitranche and its delayed-draw line, 20-35% seller rollover, Fund I follow-ons and, for platform deals, a co-invest SPV like those for Thomas Scientific, Frontline and CET, at today's equity-heavy ~2.9-3.3x leverage. "
- "The exit thesis is multiple arbitrage plus organic growth: buy tuck-ins at ~6-7x, build a ~$100M+ revenue, AI-enabled national platform, and sell it in the 10x+ tier, as Smith + Howard went to TPG."
+ "Growth levers stack on top: online booking, Google LSA and reviews, memberships (members spend 2.5x more), financing, generator and IAQ attach, new-mover marketing from the deed feed, and a weather-surge plan. "
+ "Funding comes from the existing unitranche and its delayed-draw line, 20-35% seller rollover, Fund I follow-ons and, for larger company deals, a co-invest SPV like those for Thomas Scientific, Frontline and CET, at today's equity-heavy ~2.9-3.3x leverage. "
+ "The exit thesis is multiple arbitrage plus organic growth: buy tuck-ins at ~6-7x, build a ~$100M+ revenue, AI-enabled national company, and sell it in the 10x+ tier, as Smith + Howard went to TPG."
 )
 kpi_roadmap = [
  {"month": 0, "revenue_usd": 24_000_000, "ebitda_usd": 2_900_000, "technicians": 85, "territories": 25, "members": 6_500,
@@ -407,22 +407,22 @@ kpi_roadmap = [
  {"month": 24, "revenue_usd": 65_000_000, "ebitda_usd": 9_800_000, "technicians": 230, "territories": 60, "members": 20_000,
   "note": "ASSUMPTION. Phase 2 tuck-ins in NJ / MD / DE / southern NY plus the first Phase 3 metro anchor; margin ~15% from shared contact center and AI dispatch."},
  {"month": 36, "revenue_usd": 100_000_000, "ebitda_usd": 16_000_000, "technicians": 350, "territories": 95, "members": 32_000,
-  "note": "ASSUMPTION. Mid-Atlantic platform (~4.5x FY2025 revenue in ~3 years, the Smith + Howard ~4x analog); margin ~16%; exit-ready national platform story."},
+  "note": "ASSUMPTION. Mid-Atlantic hub (~4.5x FY2025 revenue in ~3 years, the Smith + Howard ~4x analog); margin ~16%; exit-ready national company story."},
 ]
 meta = {
  "dataset": "pp_nationwide",
  "title": "How Broad Sky takes Punctual Pros nationwide: Smith + Howard template, AI agents, pro programs, growth levers, expansion phases, financing",
  "generated": TODAY,
- "method": "Template events come from Broad Sky, Smith + Howard and Frontline releases plus Accounting Today, CPA Practice Advisor and Inside Public Accounting coverage, fetched 2026-10-06. AI-agent, pro-program and growth-lever evidence comes from vendor case studies (ServiceTitan, Rilla, XOi, Workday Paradox, PermitFlow), industry benchmarks (Invoca 2026, BrightLocal 2025, SearchLight Feb 2026, Ardent Partners 2025, GF Data, Synchrony) and government sources (BLS OOH 2025-35, BLS QCEW, PA L&I). Each claim was read on the cited page except where a caveat says otherwise. Expansion-phase data_points were computed with python3 from repo datasets: data/pp_zips.json (columnar, decoded with cols/enums/rows; core = service_territory_flag 1; adjacent = adjacent_to_service_territory 1; Tier = opportunity_tier_v3), data/research/ma_targets_pp.json (items and meta.authority_brands_territory_map), data/research/pe_landscape.json (overlap_with_bsp contains 'punctual_pros'), data/research/pp_filings.json (FDD Items 19/20, PGIM 10-Q, Form D/ADV). KPI targets and kpi_roadmap are labelled analyst assumptions anchored to pp_filings' FY2025 estimates.",
+ "method": "Template events come from Broad Sky, Smith + Howard and Frontline releases plus Accounting Today, CPA Practice Advisor and Inside Public Accounting coverage, fetched 2026-10-06. AI-agent, pro-program and growth-lever evidence comes from vendor case studies (ServiceTitan, Rilla, XOi, Workday Paradox, PermitFlow), industry benchmarks (Invoca 2026, BrightLocal 2025, SearchLight Feb 2026, Ardent Partners 2025, GF Data, Synchrony) and government sources (BLS OOH 2025-35, BLS QCEW, PA L&I). Each claim was read on the cited page except where a caveat says otherwise. Expansion-phase data points were computed with python3 from repo datasets: data/pp_zips.json (columnar, decoded with cols/enums/rows; core = service-territory flag 1; adjacent = adjacent to service territory 1; Tier = opportunity tier), data/research/ma_targets_pp.json (items and meta.authority_brands_territory_map), data/research/pe_landscape.json (overlap with BSP contains 'punctual_pros'), data/research/pp_filings.json (FDD Items 19/20, PGIM 10-Q, Form D/ADV). KPI targets and KPI roadmap are labelled analyst assumptions anchored to pp_filings' FY2025 estimates.",
  "caveats": [
-  "The user's request mentioned 'the law firm company that went from regional to nationwide'. The best match for a regional-to-national Broad Sky story is Smith + Howard, an Atlanta accounting/advisory firm (not a law firm), sold to TPG Aug 2026. Frontline Managed Services serves law firms but was already national/global at entry, so it is included only as a secondary analog (3 items). Confirm which company Tyler had in mind.",
-  "Per earlier user guidance, Smith + Howard gets no portal module. It appears here only as the template timeline inside the Punctual Pros evidence base.",
+  "Smith + Howard is the closest Broad Sky precedent for a regional-to-national build: an Atlanta accounting and advisory firm (not a law firm) that Broad Sky sold to TPG Growth in August 2026. Frontline Managed Services serves law firms but was already national at entry, so it appears only as a secondary analog (3 items).",
+  "Smith + Howard has exited the portfolio, so it has no portal module; it appears here only as the template timeline inside the Punctual Pros evidence base.",
   "Add-on count conflict: BSP's Aug 2026 release says 'nine strategic acquisitions', while BSP's Smith + Howard portfolio page lists 5 add-ons. Named transactions found: Market Street Partners, JMM CPAs, VIP Search + VIP Solutions (one transaction), Fahrenheit Advisors, Smith Kesler & Co., Horton Lee & Burnett, BPS and Geels Norton. Counting VIP Search and VIP Solutions separately reaches nine; that split is an analyst reconciliation.",
   "Smith + Howard entry revenue was not disclosed. Known figures are FY23 $53.2M, FY24 $74.2M and ~$175M expected for 2026; '~4x' is BSP's own claim. The India delivery center date and city are not public.",
   "AI-agent metrics are mostly vendor-published case studies or vendor claims (ServiceTitan, Rilla, XOi, PermitFlow, Paradox) and represent selected customers, not controlled studies. Treat them as directional upper-bound benchmarks.",
   "Punctual Pros' current membership count, review count, online-booking share and technician headcount are not public. Baselines marked 'analyst assumption' or null must be replaced with company data.",
   "Market-size figures vary by publisher: Mordor's US HVAC services estimate is $17.93B (2025) in its latest vintage and $21.16B in an older one. GMI's $26.5B is residential equipment, not services. No residential-only plumbing or electrical services size was verified.",
-  "Richmond, VA is named in Phase 3, but data/pp_zips.json covers only PA, NJ, MD, NY and WV, so it has no ZIP metrics; DE also has no ZIP rows. Authority territory counts cover only the 66 PA/NJ/MD/DE locations parsed in ma_targets_pp, not the national system.",
+  "Richmond, VA is named in Phase 3, but data/pp_zips.json covers only PA, NJ, MD, NY and WV, so it has no ZIP metrics; DE also has no ZIP rows. Authority territory counts cover only the 66 PA/NJ/MD/DE locations parsed in Punctual Pros add-on targets, not the national system.",
   "Expanding the franchise footprint needs Authority Brands' territory approval and transfer consent. Converting independents to franchise brands, or acquiring outside the franchise system, may face territorial restrictions not analysed here.",
   "Generac's ~6.5% home-standby penetration and the Frontdoor 10-K figures were taken from summaries of the filings (SEC ARS PDF; StockTitan 10-K summary), not read line by line.",
  ],

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Assistant · Broad Sky</title>
+<meta name="description" content="The full-screen Broad Sky assistant: grounded answers from the portfolio's verified datasets, precomputed deep dives and hosted Claude when the backend is live, with sources, follow-ups and saved chats.">
+<meta name="theme-color" content="#fbfaf7">
+<meta name="author" content="Syed Rahman">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="BSP_Logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/system.css?v=20261006122625">
+<link rel="stylesheet" id="bsp-chat-css" href="assets/chat.css?v=20261006122625">
+<link rel="modulepreload" href="assets/frame.js?v=20261006122625">
+<link rel="modulepreload" href="assets/chat.js?v=20261006122625">
+<link rel="modulepreload" href="assets/backend.js?v=20261006122625">
+<style>
+  /* The assistant fills the viewport under the frame's top bar; the frame footer follows below. */
+  #assistant{--ch-full-top:var(--sys-top-h);--ch-full-h:calc(100dvh - var(--sys-top-h));height:var(--ch-full-h);overflow:hidden}
+  .boot{display:grid;place-items:center;height:100%;font:500 var(--sys-fs-sm,14px)/1.4 var(--sys-font);color:var(--sys-mute)}
+</style>
+</head>
+<body>
+<main id="main">
+  <h1 class="sys-sr">Broad Sky assistant</h1>
+  <div id="assistant"><div class="boot" aria-live="polite">Loading the assistant…</div></div>
+</main>
+<noscript><p class="sys-wrap">The Broad Sky assistant needs JavaScript. <a href="app.html">Open the portal</a> instead.</p></noscript>
+<script type="module">
+  import { Frame } from './assets/frame.js?v=20261006122625';
+  import { Chat } from './assets/chat.js?v=20261006122625';
+  const host = document.getElementById('assistant');
+  const p = new URLSearchParams(location.search);
+  host.innerHTML = '';
+  const inst = window.__assistant = Chat.mount(host, { mode: 'full', persona: p.get('persona') || 'portal', autoAsk: p.get('q') || undefined });
+  Frame.mount({ active: 'portal', crumb: false, persona: inst.id, chat: inst });
+</script>
+</body>
+</html>

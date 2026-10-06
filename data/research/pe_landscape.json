@@ -3,7 +3,7 @@
     "dataset": "pe_landscape",
     "title": "Private-equity competitive landscape for Broad Sky Partners (LMM business & consumer services)",
     "generated": "2026-09-24",
-    "method": "Started from the must-cover candidate list plus sponsors found while tracing who owns the consolidators active in each BSP platform's niche (residential HVAC/plumbing/electrical in PA/NJ, electrical/energy contracting, legal managed services, lab supply distribution, public affairs, consumer brands). Pulled facts from firm websites and press releases (fund closes, portfolio pages, news archives), newswire/trade coverage, and deal trackers (PrivSource, DealSeam, Cascade Partners' H2-2025 electrical M&A report, Copper Run). Each firm was checked for fit and dropped if its mandate did not overlap BSP. Threat levels are analyst judgments combining equity-check overlap with BSP's $50-250M range, sector overlap with named BSP platforms, and geographic overlap (Central PA/NJ, New England).",
+    "method": "Started from the must-cover candidate list plus sponsors found while tracing who owns the consolidators active in each BSP portfolio company's niche (residential HVAC/plumbing/electrical in PA/NJ, electrical/energy contracting, legal managed services, lab supply distribution, public affairs, consumer brands). Pulled facts from firm websites and press releases (fund closes, portfolio pages, news archives), newswire/trade coverage, and deal trackers (PrivSource, DealSeam, Cascade Partners' H2-2025 electrical M&A report, Copper Run). Each firm was checked for fit and dropped if its mandate did not overlap BSP. Threat levels are analyst judgments combining equity-check overlap with BSP's $50-250M range, sector overlap with named BSP portfolio companies, and geographic overlap (Central PA/NJ, New England).",
     "sources_summary": [
       "Firm websites & press releases (midoceanpartners.com, alpineinvestors.com, gryphon-inv.com, sterlinglp.com, knoxlane.com, gridironcapital.com, truarcpartners.com, watchtowercp.com, kohlberg.com, stonecalibre.com, stonepoint.com, eagletree.com, vesterracap.com, courtsquare.com, etc.)",
       "PR Newswire / Business Wire / GlobeNewswire release pages (some Business Wire pages returned 403 and are cited as search-result URLs)",
@@ -30,12 +30,12 @@
       "BSP is one of the smallest institutional sponsors on this map. Fund I is about $137M, while peers competing for similar deals run $0.9-2.1B flagships (Trivest VII $950M, CIVC VII $870M, Comvest/Vesterra VI $881M, Bertram V $1.5B, Sterling V $1.6B, Gridiron V $2.1B, TruArc V $1.2B). BSP's $50-250M equity range therefore depends on co-invest and operating credibility, not blind-pool scale.",
       "The closest thesis-level peers are firms that are pure business-services or services-plus-consumer shops in a similar equity band: MidOcean (Zachem's former firm, same sector taxonomy including franchise services and media/marketing), CIVC (business-services only; legal support, IT, utility services), Trilantic North America ($50-300M checks, business services + consumer), Palladium ($50-150M), Vesterra/Comvest (up to $150M) and Bertram ($150-500M EV).",
       "Residential services (Punctual Pros) is the most crowded field. National consolidators (Apex/Alpine, Wrench/LGP, TurnPoint/OMERS, Redwood/Altas, Any Hour/Knox Lane, T3/Riverside) set add-on pricing. In PA/NJ specifically, Sila (Goldman Sachs), Legacy Service Partners/HL Bowman (Gridiron), Ally Services (Watchtower) and Northwinds (TruArc) are buying in or next to Punctual Pros' counties.",
-      "Commercial electrical and energy services (CET) have only recently drawn institutional money. Cascade Partners reports that PE now accounts for most electrical-contractor M&A since 2023, with new platforms from Kohlberg (RESA Power, Loenbro, plus CLEAResult in energy efficiency) and Huron (Criticore; Albireo Energy expanding into Upstate NY). CET is still one of very few sponsor-backed electrical platforms anchored in New England.",
+      "Commercial electrical and energy services (CET) have only recently drawn institutional money. Cascade Partners reports that PE now accounts for most electrical-contractor M&A since 2023, with new companies from Kohlberg (RESA Power, Loenbro, plus CLEAResult in energy efficiency) and Huron (Criticore; Albireo Energy expanding into Upstate NY). CET is still one of very few sponsor-backed electrical companies anchored in New England.",
       "Legal services (Frontline) have a thin set of sponsor competitors: Stone Point/Aquiline's Consilio (eDiscovery/review), EagleTree's Integreon (legal managed services; ownership may have changed), CIVC's Magna Legal Services, Gridiron's Esquire Deposition Solutions, and BV Investment Partners (Frontline's former owner). None of them combines law-firm IT managed services with billing/RCM the way Frontline does.",
       "Lab supply distribution (Thomas Scientific) has one very aggressive sponsor-backed consolidator, StoneCalibre's Calibre Scientific, which made more than a dozen lab distribution and consumables acquisitions in 2024 alone, mostly in Europe; its U.S. diagnostics foothold (Alpha-Tec) dates to 2017. Sterling's distribution mandate (consumables/MRO) is the other relevant overlap.",
       "Public affairs and communications (BPI) turned over sponsor-to-sponsor in 2025 when Shamrock Capital bought Penta Group from Falfurrias. Most other institutional money in PR sits with large caps (KKR/FGS Global) or holding companies (Stagwell), which leaves mid-market ownership of public-affairs firms uncrowded.",
       "Consumer apparel (Fair Harbor) has the least verified overlap in this dataset. Only generalist consumer investors (Bertram, Palladium, Trilantic, EagleTree, Gryphon) appear, and no dedicated apparel sponsor was profiled, so the competitive picture there is incomplete.",
-      "Upmarket sponsors (Leonard Green, Goldman Sachs Alternatives, Court Square, Audax, Stone Point, Altas) matter mainly as exit buyers. Recent sponsor-to-sponsor trades (NEFCO Bertram to LGP, Service Logic LGP to Bain, Sila MSCP to GS, Jensen Hughes Gryphon to New Mountain, Smith + Howard BSP to TPG Growth) show deep demand for scaled services platforms."
+      "Upmarket sponsors (Leonard Green, Goldman Sachs Alternatives, Court Square, Audax, Stone Point, Altas) matter mainly as exit buyers. Recent sponsor-to-sponsor trades (NEFCO Bertram to LGP, Service Logic LGP to Bain, Sila MSCP to GS, Jensen Hughes Gryphon to New Mountain, Smith + Howard BSP to TPG Growth) show deep demand for scaled services companies."
     ],
     "sector_heatmap": {
       "punctual_pros": {
@@ -69,7 +69,7 @@
           "midocean"
         ],
         "intensity": "medium, rising",
-        "note": "New electrical/energy platforms (Kohlberg's RESA Power, Loenbro and CLEAResult; Huron's Criticore and Albireo) are mostly outside New England today; Albireo's Upstate NY move is the nearest."
+        "note": "New electrical/energy roll-ups (Kohlberg's RESA Power, Loenbro and CLEAResult; Huron's Criticore and Albireo) are mostly outside New England today; Albireo's Upstate NY move is the nearest."
       },
       "frontline": {
         "sector": "Legal IT managed services + law-firm billing/RCM",
@@ -83,7 +83,7 @@
           "renovus"
         ],
         "intensity": "low-medium",
-        "note": "Sponsors own eDiscovery, managed review, court reporting and generalist MSP roll-ups (Alpine's Evergreen), but no verified sponsor-backed platform combines legal IT and RCM."
+        "note": "Sponsors own eDiscovery, managed review, court reporting and generalist MSP roll-ups (Alpine's Evergreen), but no verified sponsor-backed company combines legal IT and RCM."
       },
       "thomas_scientific": {
         "sector": "Lab supplies, equipment & supply-chain distribution",
@@ -122,11 +122,11 @@
       }
     },
     "implications_for_bsp": [
-      "Punctual Pros faces the hardest add-on competition. Sila (Goldman Sachs), Legacy/HL Bowman (Gridiron) and Ally (Watchtower) are all buying in Central PA/NJ. BSP should lean on the franchise-system angle (Authority Brands territory rights, brand conversion) and on proprietary outreach to sub-$3M EBITDA shops that large-cap platforms skip, rather than join auctions.",
-      "CET has open space in New England. Institutional electrical/energy platforms (Kohlberg's RESA Power, Loenbro and CLEAResult; Huron's Criticore and Albireo) are mostly outside the six-state footprint, so CET can keep consolidating New England electrical, wastewater and energy-efficiency contractors (Horton-style) before those platforms reach the region. Albireo's Upstate NY expansion and Kohlberg's energy-efficiency cluster are the ones to watch.",
+      "Punctual Pros faces the hardest add-on competition. Sila (Goldman Sachs), Legacy/HL Bowman (Gridiron) and Ally (Watchtower) are all buying in Central PA/NJ. BSP should lean on the franchise-system angle (Authority Brands territory rights, brand conversion) and on proprietary outreach to sub-$3M EBITDA shops that large-cap sponsors skip, rather than join auctions.",
+      "CET has open space in New England. Institutional electrical/energy roll-ups (Kohlberg's RESA Power, Loenbro and CLEAResult; Huron's Criticore and Albireo) are mostly outside the six-state footprint, so CET can keep consolidating New England electrical, wastewater and energy-efficiency contractors (Horton-style) before those roll-ups reach the region. Albireo's Upstate NY expansion and Kohlberg's energy-efficiency cluster are the ones to watch.",
       "Frontline's legal IT + RCM combination has no direct sponsor-backed copy. The likely challengers are Alpine's Evergreen (MSP roll-up), EagleTree/Integreon and BV (the former owner), so BSP should lock in law-firm MSP and billing-services add-ons before a generalist MSP consolidator builds a legal vertical.",
       "Thomas Scientific should treat Calibre Scientific as its main bidding competitor for U.S. chromatography, consumables and specialty-distribution add-ons, and could use Calibre's European focus to win U.S. line-card and distribution targets.",
-      "At the fund level, MidOcean, CIVC, Trilantic NA, Palladium and Vesterra run the same business-services/consumer playbook with larger pools. The Smith + Howard exit to TPG Growth (about 100 to 800 professionals, 9 add-ons) is BSP's best proof point for Fund II fundraising and for winning founder-led deals on operating credibility. Upmarket buyers (LGP, GS, Court Square, New Mountain, Bain, TPG) are clearly paying for scaled services platforms, which supports exit multiples."
+      "At the fund level, MidOcean, CIVC, Trilantic NA, Palladium and Vesterra run the same business-services/consumer approach with larger pools. The Smith + Howard exit to TPG Growth (about 100 to 800 professionals, 9 add-ons) is BSP's best proof point for Fund II fundraising and for winning founder-led deals on operating credibility. Upmarket buyers (LGP, GS, Court Square, New Mountain, Bain, TPG) are clearly paying for scaled services companies, which supports exit multiples."
     ],
     "excluded_candidates": [
       {
@@ -136,7 +136,7 @@
       },
       {
         "firm": "Corridor Capital (Heartland Home Services)",
-        "reason": "Heartland Home Services is owned by The Jordan Company with Cobepa (minority), not Corridor. Corridor's contractor-adjacent deal (CEO Warrior) is a training business, not a competing platform.",
+        "reason": "Heartland Home Services is owned by The Jordan Company with Cobepa (minority), not Corridor. Corridor's contractor-adjacent deal (CEO Warrior) is a training business, not a competing company.",
         "source_url": "https://www.rwbaird.com/transactions/investment-banking/dealcard/5650/"
       },
       {
@@ -146,7 +146,7 @@
       },
       {
         "firm": "Boathouse Capital",
-        "reason": "Focused on SaaS/software, tech-enabled services and healthcare IT with small checks ($300M Fund III); no overlap with BSP platforms.",
+        "reason": "Focused on SaaS/software, tech-enabled services and healthcare IT with small checks ($300M Fund III); no overlap with BSP portfolio companies.",
         "source_url": "https://boathousecapital.com/boathouse-capital-successfully-closes-oversubscribed-300-million-fund-iii/"
       },
       {
@@ -163,10 +163,10 @@
     "caveats": [
       "Web search quota ran out partway through research, so later firms were verified mainly from firm websites and previously retrieved search results. Some fund sizes (Gryphon VI, Trilantic VII, Palladium VI, Tailwind IV, Shore Business Services II) are unknown and set to null.",
       "Several Business Wire pages returned HTTP 403. Where cited, those URLs come from search results rather than fetched pages.",
-      "deals_2025_2026 covers disclosed transactions only; many sponsors do not announce add-ons, so counts are lower bounds. Some entries record partial liquidity (e.g., Apollo's minority stake in Apex) or structured-equity deals typed as exit/platform with explanatory notes.",
-      "Add-on counts in platforms_relevant mix lifetime and single-year figures (see notes); treat them as indicative.",
+      "2025-2026 deals covers disclosed transactions only; many sponsors do not announce add-ons, so counts are lower bounds. Some entries record partial liquidity (e.g., Apollo's minority stake in Apex) or structured-equity deals typed as an exit or an initial buyout with explanatory notes.",
+      "Add-on counts in the relevant-companies lists mix lifetime and single-year figures (see notes); treat them as indicative.",
       "AUM figures come from different dates (e.g., Shore about $17B on its website vs. $14B+ in Oct 2025; Kohlberg about $15B in 2024 vs. $18B on its website).",
-      "HQ coordinates are city centroids (geo_precision: city). HQs for Huron (Detroit), Stone Point (Greenwich), Trilantic NA (New York), Sverica (Boston), Alpine (San Francisco) and OMERS (Toronto) come from general knowledge and were not confirmed on a fetched page.",
+      "HQ coordinates are city centroids (location precision: city). HQs for Huron (Detroit), Stone Point (Greenwich), Trilantic NA (New York), Sverica (Boston), Alpine (San Francisco) and OMERS (Toronto) come from general knowledge and were not confirmed on a fetched page.",
       "Threat levels and implications are analyst judgments, not reported facts.",
       "Smith + Howard is excluded as a BSP overlap sector because it was sold (TPG Growth, closed Aug 6, 2026).",
       "Integreon: the Global Legal Post 'Law.com's owner' headline describes EagleTree's own Jun 2021 purchase (EagleTree owns ALM); no later sale found.",
@@ -310,7 +310,7 @@
           "company": "GSTV",
           "type": "platform",
           "sector": "Retail media network",
-          "note": "New platform in media/marketing services theme.",
+          "note": "New company in media/marketing services theme.",
           "source_url": "https://www.midoceanpartners.com/news-media"
         },
         {
@@ -394,7 +394,7 @@
           "source_url": "https://www.midoceanpartners.com/news-media"
         }
       ],
-      "trajectory": "Founded in 2003 in New York (DB Capital Partners heritage), MidOcean grew its flagship from $1.2B (Fund V) to $1.5B+ (Fund VI, Apr 2023, ~25% larger) and has done 50+ platforms and 140+ add-ons. It broadened into alternative credit and, from 2024, structured equity (EquipmentShare, Emergency Care Partners), so not every 2025-26 deal is a control buyout. In 2026 it has mostly been harvesting business-services holdings (Questex, Zonda, SI Solutions) while keeping the same sector taxonomy that BSP's CEO helped build there.",
+      "trajectory": "Founded in 2003 in New York (DB Capital Partners heritage), MidOcean grew its flagship from $1.2B (Fund V) to $1.5B+ (Fund VI, Apr 2023, ~25% larger) and has done 50+ portfolio companies and 140+ add-ons. It broadened into alternative credit and, from 2024, structured equity (EquipmentShare, Emergency Care Partners), so not every 2025-26 deal is a control buyout. In 2026 it has mostly been harvesting business-services holdings (Questex, Zonda, SI Solutions) while keeping the same sector taxonomy that BSP's CEO helped build there.",
       "overlap_with_bsp": [
         "bpi",
         "punctual_pros",
@@ -497,14 +497,14 @@
       },
       "platforms_relevant": [],
       "deals_2025_2026": [],
-      "trajectory": "AUM went from about $1B in 2019 to $9.1B in Oct 2024, $14B+ in Oct 2025, and about $17B on the current website. That growth came from adding sector-specific funds, including Business Services Fund II (2024) and Industrials Fund II (2026). The firm is still sub-$7M EBITDA microcap, so it mostly builds the add-on-sized companies that BSP platforms would otherwise buy.",
+      "trajectory": "AUM went from about $1B in 2019 to $9.1B in Oct 2024, $14B+ in Oct 2025, and about $17B on the current website. That growth came from adding sector-specific funds, including Business Services Fund II (2024) and Industrials Fund II (2026). The firm is still sub-$7M EBITDA microcap, so it mostly builds the add-on-sized companies that BSP portfolio companies would otherwise buy.",
       "overlap_with_bsp": [
         "frontline",
         "cet"
       ],
       "competes_for": "targets",
       "threat_level": "medium",
-      "threat_rationale": "Shore rarely competes for BSP's $50-250M equity platform deals. It does compete for small founder-owned IT, professional and field-services companies that are natural add-ons, and at exit it sells scaled microcaps that could be BSP platforms.",
+      "threat_rationale": "Shore rarely competes for BSP's $50-250M equity anchor deals. It does compete for small founder-owned IT, professional and field-services companies that are natural add-ons, and at exit it sells scaled microcaps that could become BSP anchor acquisitions.",
       "key_people": [
         {
           "name": "Justin Ishbia",
@@ -563,7 +563,7 @@
           "year": 2023
         }
       ],
-      "strategy": "'People-driven' private equity that launches 'Service Partners' platforms in fragmented services markets, often with its own CEOs-in-Training, and runs very high add-on volume. Its services portfolio covers residential trades, commercial facility services, IT services, accounting/wealth and healthcare RCM.",
+      "strategy": "'People-driven' private equity that launches 'Service Partners' companies in fragmented services markets, often with its own CEOs-in-Training, and runs very high add-on volume. Its services portfolio covers residential trades, commercial facility services, IT services, accounting/wealth and healthcare RCM.",
       "sectors": [
         "Residential services (HVAC/plumbing/electrical, restoration, roofing, windows & doors)",
         "Commercial facility & access services",
@@ -646,7 +646,7 @@
           "status": "held",
           "exit_year": null,
           "exit_buyer": null,
-          "notes": "RCM platform; adjacent to Frontline's law-firm RCM/billing offering."
+          "notes": "RCM portfolio company; adjacent to Frontline's law-firm RCM/billing offering."
         }
       ],
       "deals_2025_2026": [
@@ -655,7 +655,7 @@
           "company": "Oakline Properties",
           "type": "platform",
           "sector": "Residential property management",
-          "note": "New platform launched Sep 2025.",
+          "note": "New company launched Sep 2025.",
           "source_url": "https://alpineinvestors.com/update/2025-year-in-review/"
         },
         {
@@ -663,7 +663,7 @@
           "company": "Mosaic Service Partners",
           "type": "platform",
           "sector": "Residential windows & doors",
-          "note": "New platform launched Nov 2025.",
+          "note": "New company launched Nov 2025.",
           "source_url": "https://alpineinvestors.com/update/2025-year-in-review/"
         },
         {
@@ -671,7 +671,7 @@
           "company": "Innovative Systems",
           "type": "exit",
           "sector": "Software/services",
-          "note": "One platform exit in 2025 (plus 9 ASG portfolio exits).",
+          "note": "One company exit in 2025 (plus 9 ASG portfolio exits).",
           "source_url": "https://alpineinvestors.com/update/2025-year-in-review/"
         },
         {
@@ -699,7 +699,7 @@
           "source_url": "https://alpineinvestors.com/news/"
         }
       ],
-      "trajectory": "Alpine has raised nine flagship funds and now manages $17.7B. Fund IX hit its $4.5B hard cap in 2023, and the Apex Service Partners continuation vehicle raised $3.4B the same year. In 2025 it closed a record 190 deals (5 new platforms, from 18,000 sourced) and extended the 'Service Partners' model from home trades into windows/doors, commercial access, facility services and the UK. Selling a minority stake in Apex to Apollo in May 2026 lets Alpine hold one of the largest residential-services consolidators for longer.",
+      "trajectory": "Alpine has raised nine flagship funds and now manages $17.7B. Fund IX hit its $4.5B hard cap in 2023, and the Apex Service Partners continuation vehicle raised $3.4B the same year. In 2025 it closed a record 190 deals (5 new companies, from 18,000 sourced) and extended the 'Service Partners' model from home trades into windows/doors, commercial access, facility services and the UK. Selling a minority stake in Apex to Apollo in May 2026 lets Alpine hold one of the largest residential-services consolidators for longer.",
       "overlap_with_bsp": [
         "punctual_pros",
         "frontline",
@@ -760,7 +760,7 @@
           "year": null
         }
       ],
-      "strategy": "Invests only in founder-led and family-owned businesses in the US and Canada, through four strategies: Discovery (<$4M EBITDA), Mid-Market Fund VII ($4-15M EBITDA), Growth (non-control) and Recognition (larger founder businesses). It is known for pricing certainty ('close at the price in our LOI') and has recently launched home-services platforms.",
+      "strategy": "Invests only in founder-led and family-owned businesses in the US and Canada, through four strategies: Discovery (<$4M EBITDA), Mid-Market Fund VII ($4-15M EBITDA), Growth (non-control) and Recognition (larger founder businesses). It is known for pricing certainty ('close at the price in our LOI') and has recently launched home-services companies.",
       "sectors": [
         "Home services (garage doors)",
         "Consumer services (pool services)",
@@ -789,35 +789,35 @@
         },
         {
           "name": "Wheelhouse",
-          "sector": "Residential garage door services platform",
+          "sector": "Residential garage door services company",
           "entry_year": null,
           "hq": null,
           "add_ons_count": null,
           "status": "held",
           "exit_year": null,
           "exit_buyer": null,
-          "notes": "Home-services platform launch listed on Trivest site."
+          "notes": "Home-services company launch listed on Trivest site."
         },
         {
           "name": "AquaVerse",
-          "sector": "Pool services platform",
+          "sector": "Pool services company",
           "entry_year": null,
           "hq": null,
           "add_ons_count": null,
           "status": "held",
           "exit_year": null,
           "exit_buyer": null,
-          "notes": "Consumer-services platform formation listed on Trivest site."
+          "notes": "Consumer-services company formation listed on Trivest site."
         }
       ],
       "deals_2025_2026": [],
-      "trajectory": "Trivest has invested since 1981 and has 70+ platforms. It went from a single buyout strategy to four fund families totaling about $6B AUM, with the Recognition Fund ($1.3B) above the $950M Fund VII. Building and selling TurnPoint to OMERS in 2020 gave it a proven residential-services playbook, which it is now reusing in adjacent trades (Wheelhouse garage doors, AquaVerse pools).",
+      "trajectory": "Trivest has invested since 1981 and has 70+ portfolio companies. It went from a single buyout strategy to four fund families totaling about $6B AUM, with the Recognition Fund ($1.3B) above the $950M Fund VII. Building and selling TurnPoint to OMERS in 2020 gave it a proven residential-services approach, which it is now reusing in adjacent trades (Wheelhouse garage doors, AquaVerse pools).",
       "overlap_with_bsp": [
         "punctual_pros"
       ],
       "competes_for": "both",
       "threat_level": "medium",
-      "threat_rationale": "It has a proven home-services buy-and-build record and targets founder-owned sellers, the same seller profile as Punctual Pros add-ons. Its current platforms are in adjacent trades rather than HVAC/plumbing/electrical franchises in Central PA/NJ.",
+      "threat_rationale": "It has a proven home-services buy-and-build record and targets founder-owned sellers, the same seller profile as Punctual Pros add-ons. Its current companies are in adjacent trades rather than HVAC/plumbing/electrical franchises in Central PA/NJ.",
       "key_people": [
         {
           "name": "Troy Templeton",
@@ -873,7 +873,7 @@
           "year": 2026
         }
       ],
-      "strategy": "Control investor across Flagship, Heritage and Junior Capital strategies in five industry groups, supported by 15+ operating partners and 65+ executive advisors. It has made 75 platform investments and 550+ add-ons since 1995.",
+      "strategy": "Control investor across Flagship, Heritage and Junior Capital strategies in five industry groups, supported by 15+ operating partners and 65+ executive advisors. It has made 75 anchor investments and 550+ add-ons since 1995.",
       "sectors": [
         "Business Services",
         "Consumer Products & Services",
@@ -992,7 +992,7 @@
       ],
       "competes_for": "deals",
       "threat_level": "medium",
-      "threat_rationale": "It competes for larger business-services and consumer-brand platforms, with deep co-invest capacity that can outbid BSP. Overlap is mostly thematic: fire/life-safety and environmental services near CET, and consumer products near Fair Harbor.",
+      "threat_rationale": "It competes for larger business-services and consumer-brand companies, with deep co-invest capacity that can outbid BSP. Overlap is mostly thematic: fire/life-safety and environmental services near CET, and consumer products near Fair Harbor.",
       "key_people": [
         {
           "name": "David Andrews",
@@ -1130,7 +1130,7 @@
           "year": 2023
         }
       ],
-      "strategy": "Buy-and-build control investor in North American middle-market platforms ($20-100M EBITDA; $200M-1B TEV), plus Origins (smaller companies) and Strategic Capital (mid-hold equity) strategies. It passed its 1,500th add-on acquisition.",
+      "strategy": "Buy-and-build control investor in North American middle-market companies ($20-100M EBITDA; $200M-1B TEV), plus Origins (smaller companies) and Strategic Capital (mid-hold equity) strategies. It passed its 1,500th add-on acquisition.",
       "sectors": [
         "Business Services",
         "Financial Services",
@@ -1176,7 +1176,7 @@
       ],
       "competes_for": "deals",
       "threat_level": "low",
-      "threat_rationale": "The flagship EBITDA floor ($20M+) is above most BSP entry deals, and Origins is the main area where they could meet. Audax matters more as a potential exit buyer for scaled BSP platforms in business services.",
+      "threat_rationale": "The flagship EBITDA floor ($20M+) is above most BSP entry deals, and Origins is the main area where they could meet. Audax matters more as a potential exit buyer for scaled BSP portfolio companies in business services.",
       "key_people": [],
       "website": "https://audaxprivateequity.com",
       "sources": [
@@ -1224,7 +1224,7 @@
           "year": null
         }
       ],
-      "strategy": "Lower-middle-market control investor using its 'Bertram High 5' playbook and an in-house technology/digital team (Bertram Labs). Flagship targets $50-250M revenue, $7.5M+ EBITDA and $150-500M EV; the Ignite fund covers $3.5-7.5M EBITDA.",
+      "strategy": "Lower-middle-market control investor using its 'Bertram High 5' framework and an in-house technology/digital team (Bertram Labs). Flagship targets $50-250M revenue, $7.5M+ EBITDA and $150-500M EV; the Ignite fund covers $3.5-7.5M EBITDA.",
       "sectors": [
         "Business services",
         "Consumer",
@@ -1315,7 +1315,7 @@
       ],
       "competes_for": "deals",
       "threat_level": "medium",
-      "threat_rationale": "Its $150-500M EV band and business-services/consumer focus sit right on top of BSP's, and Ignite covers smaller platforms. Bertram Labs' digital playbook also appeals to consumer brands like Fair Harbor.",
+      "threat_rationale": "Its $150-500M EV band and business-services/consumer focus sit right on top of BSP's, and Ignite covers smaller companies. Bertram Labs' digital approach also appeals to consumer brands like Fair Harbor.",
       "key_people": [
         {
           "name": "Jeff Drazan",
@@ -1501,7 +1501,7 @@
         "year": null
       },
       "fund_history": [],
-      "strategy": "People-first, thematic buy-and-build investor that pairs executives with a pre-identified sector thesis (ExecFactor program) and invests $50M+ of equity per platform. It focuses on infrastructure, facility and residential services and has built 290+ platform and add-on businesses.",
+      "strategy": "People-first, thematic buy-and-build investor that pairs executives with a pre-identified sector thesis (ExecFactor program) and invests $50M+ of equity per company. It focuses on infrastructure, facility and residential services and has built 290+ anchor and add-on businesses.",
       "sectors": [
         "Infrastructure services",
         "Facility services",
@@ -1538,7 +1538,7 @@
           "status": "held",
           "exit_year": null,
           "exit_buyer": null,
-          "notes": "Western US electrical platform per Cascade Partners H2-2025 platform table."
+          "notes": "Western US electrical company per Cascade Partners H2-2025 portfolio company table."
         },
         {
           "name": "Albireo Energy",
@@ -1599,7 +1599,7 @@
           "company": "Colorado Moisture Control (Rampart Exterior Services)",
           "type": "add_on",
           "sector": "Building exterior services",
-          "note": "Third acquisition for platform.",
+          "note": "Third acquisition for company.",
           "source_url": "https://www.huroncapital.com/news/"
         },
         {
@@ -1634,7 +1634,7 @@
       ],
       "competes_for": "both",
       "threat_level": "high",
-      "threat_rationale": "Huron owns electrical contracting (Criticore) and building-automation/energy-services (Albireo Energy, expanding into Upstate NY) platforms, which overlap CET's electrical, energy-efficiency and O&M lines and will compete for Northeast add-ons. It also has a residential services mandate.",
+      "threat_rationale": "Huron owns electrical contracting (Criticore) and building-automation/energy-services (Albireo Energy, expanding into Upstate NY) companies, which overlap CET's electrical, energy-efficiency and O&M lines and will compete for Northeast add-ons. It also has a residential services mandate.",
       "key_people": [],
       "website": "https://www.huroncapital.com",
       "sources": [
@@ -1695,14 +1695,14 @@
         }
       ],
       "deals_2025_2026": [],
-      "trajectory": "Founded in 1998, Prospect closed Fund V at its $225M hard cap in Oct 2024 after nine months in market. It is still a sub-scale, pre-LMM buy-and-build investor, and its platforms become sale candidates for LMM firms like BSP.",
+      "trajectory": "Founded in 1998, Prospect closed Fund V at its $225M hard cap in Oct 2024 after nine months in market. It is still a sub-scale, pre-LMM buy-and-build investor, and its portfolio companies become sale candidates for LMM firms like BSP.",
       "overlap_with_bsp": [
         "cet",
         "thomas_scientific"
       ],
       "competes_for": "targets",
       "threat_level": "low",
-      "threat_rationale": "Its deals are much smaller than BSP platform deals, but it competes for specialty-services and distribution add-ons, and its exits are a source of platforms.",
+      "threat_rationale": "Its deals are much smaller than BSP anchor deals, but it competes for specialty-services and distribution add-ons, and its exits are a source of companies.",
       "key_people": [
         {
           "name": "Erik Maurer",
@@ -1853,7 +1853,7 @@
       ],
       "competes_for": "deals",
       "threat_level": "medium",
-      "threat_rationale": "Any Hour is a direct residential HVAC/plumbing/electrical comparable, and Guardian Fire and SAGE Integration are adjacent commercial services. Its geography (Mountain West) doesn't overlap BSP's PA/NJ/New England markets today, but it competes for national home-services and consumer-services platform deals of similar size.",
+      "threat_rationale": "Any Hour is a direct residential HVAC/plumbing/electrical comparable, and Guardian Fire and SAGE Integration are adjacent commercial services. Its geography (Mountain West) doesn't overlap BSP's PA/NJ/New England markets today, but it competes for national home-services and consumer-services anchor deals of similar size.",
       "key_people": [],
       "website": "https://www.knoxlane.com",
       "sources": [
@@ -1916,7 +1916,7 @@
           "source_url": "https://www.altas.com/news/redwood-services-announces-strategic-investment-from-altas-partners"
         }
       ],
-      "trajectory": "Union Main founded Redwood in 2020 as a partnership model for top contractors and grew it to 19 companies and $500M+ revenue by 2025. Altas's roughly $1.1B-valuation majority deal in 2025 moved the platform to a $10B+ AUM, large-cap owner with patient capital, so expect larger partnership deals ahead.",
+      "trajectory": "Union Main founded Redwood in 2020 as a partnership model for top contractors and grew it to 19 companies and $500M+ revenue by 2025. Altas's roughly $1.1B-valuation majority deal in 2025 moved the company to a $10B+ AUM, large-cap owner with patient capital, so expect larger partnership deals ahead.",
       "overlap_with_bsp": [
         "punctual_pros"
       ],
@@ -1994,7 +1994,7 @@
       ],
       "competes_for": "targets",
       "threat_level": "low",
-      "threat_rationale": "TurnPoint is a national home-services consolidator but historically focused on the Southeast/Midwest/West, not Central PA. It competes for residential targets and sets valuation benchmarks rather than competing for BSP's platform deals.",
+      "threat_rationale": "TurnPoint is a national home-services consolidator but historically focused on the Southeast/Midwest/West, not Central PA. It competes for residential targets and sets valuation benchmarks rather than competing for BSP's anchor deals.",
       "key_people": [
         {
           "name": "Graham Brown",
@@ -2043,7 +2043,7 @@
           "year": 2026
         }
       ],
-      "strategy": "Large-cap investor in consumer, services and healthcare, and a frequent buyer of scaled LMM platforms from other sponsors (e.g., NEFCO from Bertram, Crosslake continuation from Falfurrias). It controls Wrench Group, one of the largest residential HVAC/plumbing/electrical platforms.",
+      "strategy": "Large-cap investor in consumer, services and healthcare, and a frequent buyer of scaled LMM companies from other sponsors (e.g., NEFCO from Bertram, Crosslake continuation from Falfurrias). It controls Wrench Group, one of the largest residential HVAC/plumbing/electrical companies.",
       "sectors": [
         "Residential services",
         "Commercial HVAC/building services",
@@ -2109,14 +2109,14 @@
           "source_url": "https://www.leonardgreen.com/2026/"
         }
       ],
-      "trajectory": "Founded in 1989, LGP grew to $77.8B AUM (2024) and in Jan 2026 raised an inaugural $3.6B+ Sage Equity Investors vehicle. It has cycled through residential and commercial HVAC (Wrench held, Service Logic sold to Bain in 2025) and buys scaled LMM platforms from sponsors.",
+      "trajectory": "Founded in 1989, LGP grew to $77.8B AUM (2024) and in Jan 2026 raised an inaugural $3.6B+ Sage Equity Investors vehicle. It has cycled through residential and commercial HVAC (Wrench held, Service Logic sold to Bain in 2025) and buys scaled LMM companies from sponsors.",
       "overlap_with_bsp": [
         "punctual_pros",
         "cet"
       ],
       "competes_for": "deals",
       "threat_level": "low",
-      "threat_rationale": "It rarely competes at BSP's entry size. It is more relevant as an exit buyer for scaled BSP home-services or commercial-services platforms, and Wrench's add-on appetite sets prices in residential services.",
+      "threat_rationale": "It rarely competes at BSP's entry size. It is more relevant as an exit buyer for scaled BSP home-services or commercial-services companies, and Wrench's add-on appetite sets prices in residential services.",
       "key_people": [],
       "website": "https://www.leonardgreen.com",
       "sources": [
@@ -2171,7 +2171,7 @@
         }
       ],
       "deals_2025_2026": [],
-      "trajectory": "MSCP's 2021-2024 Sila hold is the clearest local precedent for a residential-services roll-up exit in BSP's Punctual Pros geography. After exiting, MSCP no longer has a disclosed residential services platform in the Mid-Atlantic.",
+      "trajectory": "MSCP's 2021-2024 Sila hold is the clearest local precedent for a residential-services roll-up exit in BSP's Punctual Pros geography. After exiting, MSCP no longer has a disclosed residential services company in the Mid-Atlantic.",
       "overlap_with_bsp": [
         "punctual_pros"
       ],
@@ -2202,7 +2202,7 @@
         "year": null
       },
       "fund_history": [],
-      "strategy": "Goldman Sachs Alternatives' private equity business (over $75B invested since inception) holds a majority of Sila Services, a King of Prussia, PA-based residential HVAC, plumbing, electrical, water-treatment and IAQ platform. Sila is actively consolidating Pennsylvania, the Mid-Atlantic and now New England.",
+      "strategy": "Goldman Sachs Alternatives' private equity business (over $75B invested since inception) holds a majority of Sila Services, a King of Prussia, PA-based residential HVAC, plumbing, electrical, water-treatment and IAQ portfolio company. Sila is actively consolidating Pennsylvania, the Mid-Atlantic and now New England.",
       "sectors": [
         "Residential HVAC/plumbing/electrical",
         "Water treatment / IAQ / home performance"
@@ -2266,7 +2266,7 @@
           "company": "NEOH (Ohio)",
           "type": "add_on",
           "sector": "Residential HVAC/plumbing",
-          "note": "Ohio platform acquisition per 2026 tracker.",
+          "note": "Ohio anchor acquisition per 2026 tracker.",
           "source_url": "https://dealseam.com/hvac-pe-rollup-tracker-2026"
         }
       ],
@@ -2318,7 +2318,7 @@
           "year": 2023
         }
       ],
-      "strategy": "Chicago business-services specialist offering growth and buyout capital to middle-market companies, with 200+ platform and add-on acquisitions. Sub-sectors include utility & infrastructure services, facility services, IT services, compliance, digital marketing and legal support.",
+      "strategy": "Chicago business-services specialist offering growth and buyout capital to middle-market companies, with 200+ anchor and add-on acquisitions. Sub-sectors include utility & infrastructure services, facility services, IT services, compliance, digital marketing and legal support.",
       "sectors": [
         "Utility & infrastructure services",
         "Facility services",
@@ -2414,7 +2414,7 @@
       ],
       "competes_for": "deals",
       "threat_level": "high",
-      "threat_rationale": "It is a business-services-only fund of similar scale to BSP, with direct precedents in legal support (Magna), IT managed services (Datavail) and utility infrastructure services (PowerTeam, GPRS). It will compete head-to-head for legal/IT and energy/utility services platforms.",
+      "threat_rationale": "It is a business-services-only fund of similar scale to BSP, with direct precedents in legal support (Magna), IT managed services (Datavail) and utility infrastructure services (PowerTeam, GPRS). It will compete head-to-head for legal/IT and energy/utility services companies.",
       "key_people": [],
       "website": "https://www.civc.com",
       "sources": [
@@ -2445,7 +2445,7 @@
           "year": null
         }
       ],
-      "strategy": "New York middle-market control investor in asset-light, services-oriented North American companies. Its 'Accelerate Change' model pairs technology adoption and top-line initiatives with add-on M&A (50+ platforms, 250+ add-ons).",
+      "strategy": "New York middle-market control investor in asset-light, services-oriented North American companies. Its 'Accelerate Change' model pairs technology adoption and top-line initiatives with add-on M&A (50+ portfolio companies, 250+ add-ons).",
       "sectors": [
         "Infrastructure services",
         "Supply chain",
@@ -2536,7 +2536,7 @@
           "source_url": "https://www.tailwind.com/"
         }
       ],
-      "trajectory": "Tailwind has $6.0B of committed capital and has narrowed from a generalist to three verticals: infrastructure services, supply chain and IT services. Deal pace picked up in 2026 with a new infrastructure-services platform (Valor) and several IT-services add-ons.",
+      "trajectory": "Tailwind has $6.0B of committed capital and has narrowed from a generalist to three verticals: infrastructure services, supply chain and IT services. Deal pace picked up in 2026 with a new infrastructure-services company (Valor) and several IT-services add-ons.",
       "overlap_with_bsp": [
         "cet",
         "frontline",
@@ -2608,7 +2608,7 @@
           "company": "Foundation repair / waterproofing SPV",
           "type": "platform",
           "sector": "Residential services",
-          "note": "Oversubscribed SPV to fund a consolidation platform.",
+          "note": "Oversubscribed SPV to fund a consolidation portfolio company.",
           "source_url": "https://www.prnewswire.com/news-releases/hci-equity-partners-closes-special-purpose-vehicle-to-invest-in-residential-foundation-repair-and-basement-waterproofing-businesses-302621245.html"
         }
       ],
@@ -2700,7 +2700,7 @@
           "status": "held",
           "exit_year": null,
           "exit_buyer": null,
-          "notes": "National platform per Cascade Partners H2-2025 table."
+          "notes": "National company per Cascade Partners H2-2025 table."
         },
         {
           "name": "CLEAResult",
@@ -2750,7 +2750,7 @@
           "company": "Loenbro",
           "type": "platform",
           "sector": "Electrical/infrastructure contracting",
-          "note": "New electrical platform (5 acquisitions per Cascade table).",
+          "note": "New electrical company (5 acquisitions per Cascade table).",
           "source_url": "https://cascade-partners.com/wp-content/uploads/2026/02/Electrical-Contracting-and-Utility-Infrastructure-MA-Update-H2-2025-vF.pdf"
         }
       ],
@@ -2760,7 +2760,7 @@
       ],
       "competes_for": "both",
       "threat_level": "high",
-      "threat_rationale": "Its electrical and energy-efficiency cluster (RESA Power, Loenbro, CLEAResult) targets the same electrician labor pool and energy-efficiency program work as CET/NuWave. Well-funded platforms will bid for Northeast electrical and energy-services add-ons.",
+      "threat_rationale": "Its electrical and energy-efficiency cluster (RESA Power, Loenbro, CLEAResult) targets the same electrician labor pool and energy-efficiency program work as CET/NuWave. Well-funded roll-ups will bid for Northeast electrical and energy-services add-ons.",
       "key_people": [
         {
           "name": "Sam Frieder",
@@ -2855,7 +2855,7 @@
         }
       ],
       "deals_2025_2026": [],
-      "trajectory": "Comvest ran PE alongside a much larger credit franchise ($21.5B credit platform after Manulife). After the 2025 separation, the $2.0B-AUM PE team relaunched as Vesterra with a services-only mandate, and CIP VI closed at $881M in Mar 2024.",
+      "trajectory": "Comvest ran PE alongside a much larger credit franchise ($21.5B credit business after Manulife). After the 2025 separation, the $2.0B-AUM PE team relaunched as Vesterra with a services-only mandate, and CIP VI closed at $881M in Mar 2024.",
       "overlap_with_bsp": [
         "cet",
         "frontline",
@@ -2903,7 +2903,7 @@
           "year": null
         }
       ],
-      "strategy": "Middle-market buyout investor ($50-150M equity) in consumer, services, industrials and healthcare, with an emphasis on the U.S. Hispanic market, founder/family-owned companies and accretive M&A. It has made 42 platforms and 200+ add-ons.",
+      "strategy": "Middle-market buyout investor ($50-150M equity) in consumer, services, industrials and healthcare, with an emphasis on the U.S. Hispanic market, founder/family-owned companies and accretive M&A. It has made 42 companies and 200+ add-ons.",
       "sectors": [
         "Consumer",
         "Services",
@@ -2928,7 +2928,7 @@
           "status": "held",
           "exit_year": null,
           "exit_buyer": null,
-          "notes": "Second Fund VI platform; bought from WayPoint Capital Partners; 70+ warehouses in 9 states."
+          "notes": "Second Fund VI portfolio company; bought from WayPoint Capital Partners; 70+ warehouses in 9 states."
         },
         {
           "name": "Superior Environmental Solutions",
@@ -2970,18 +2970,18 @@
           "company": "DME Express",
           "type": "platform",
           "sector": "Healthcare services",
-          "note": "Majority investment; second Fund VI platform.",
+          "note": "Majority investment; second Fund VI portfolio company.",
           "source_url": "https://www.homecaremag.com/news/palladium-equity-partners-acquires-majority-stake-dme-express"
         }
       ],
-      "trajectory": "Founded in 1997, Palladium has about $3.6B AUM and targeted $1.5B for Fund VI, which is now deploying (DME Express as its second platform in 2026). It keeps its Hispanic-market and founder-transition focus while moving further into services.",
+      "trajectory": "Founded in 1997, Palladium has about $3.6B AUM and targeted $1.5B for Fund VI, which is now deploying (DME Express as its second company in 2026). It keeps its Hispanic-market and founder-transition focus while moving further into services.",
       "overlap_with_bsp": [
         "fair_harbor",
         "cet"
       ],
       "competes_for": "deals",
       "threat_level": "medium",
-      "threat_rationale": "Its $50-150M equity range sits directly inside BSP's $50-250M, and it invests in both consumer and services with founder/family sellers. Direct sector overlap with current BSP platforms is limited.",
+      "threat_rationale": "Its $50-150M equity range sits directly inside BSP's $50-250M, and it invests in both consumer and services with founder/family sellers. Direct sector overlap with current BSP portfolio companies is limited.",
       "key_people": [],
       "website": "https://www.palladiumequity.com",
       "sources": [
@@ -3012,7 +3012,7 @@
           "year": 2025
         }
       ],
-      "strategy": "Large alternative investment manager focused on global financial services and related industries (insurance distribution, fund administration, benefits), plus legal services through Consilio. Consilio (co-owned with Aquiline) is a 5,400+-person eDiscovery, document review and legal talent platform.",
+      "strategy": "Large alternative investment manager focused on global financial services and related industries (insurance distribution, fund administration, benefits), plus legal services through Consilio. Consilio (co-owned with Aquiline) is a 5,400+-person eDiscovery, document review and legal talent portfolio company.",
       "sectors": [
         "Financial services",
         "Insurance services",
@@ -3073,7 +3073,7 @@
           "source_url": "https://www.stonepoint.com/news/"
         }
       ],
-      "trajectory": "Stone Point's flagship reached $11.5B with Trident X (Jul 2025). It remains mainly a financial-services investor, and Consilio is its legal-services consolidation platform, built through XDD, Legility and Lawyers On Demand.",
+      "trajectory": "Stone Point's flagship reached $11.5B with Trident X (Jul 2025). It remains mainly a financial-services investor, and Consilio is its legal-services consolidation portfolio company, built through XDD, Legility and Lawyers On Demand.",
       "overlap_with_bsp": [
         "frontline"
       ],
@@ -3105,7 +3105,7 @@
         "year": null
       },
       "fund_history": [],
-      "strategy": "New York middle-market investor in business services, consumer and specialty industrial companies, with 45+ platforms and 105+ add-ons. Its business-services book includes legal managed services (Integreon) and marketing agencies (MMGY Global).",
+      "strategy": "New York middle-market investor in business services, consumer and specialty industrial companies, with 45+ portfolio companies and 105+ add-ons. Its business-services book includes legal managed services (Integreon) and marketing agencies (MMGY Global).",
       "sectors": [
         "Business services (legal managed services, marketing agencies)",
         "Consumer",
@@ -3363,7 +3363,7 @@
       ],
       "competes_for": "deals",
       "threat_level": "low",
-      "threat_rationale": "Its fund size puts most deals above BSP's range. It is relevant as an upmarket buyer of scaled business-services platforms (infrastructure engineering and water/wastewater work near Horton's niche; IT services near Frontline).",
+      "threat_rationale": "Its fund size puts most deals above BSP's range. It is relevant as an upmarket buyer of scaled business-services companies (infrastructure engineering and water/wastewater work near Horton's niche; IT services near Frontline).",
       "key_people": [],
       "website": "https://www.courtsquare.com",
       "sources": [
@@ -3561,7 +3561,7 @@
       ],
       "competes_for": "deals",
       "threat_level": "low",
-      "threat_rationale": "It is tech-leaning and targets smaller EV (up to ~$150M). It could meet BSP on IT-services or marketing-services platforms but has no direct overlap with current BSP platforms.",
+      "threat_rationale": "It is tech-leaning and targets smaller EV (up to ~$150M). It could meet BSP on IT-services or marketing-services companies but has no direct overlap with current BSP portfolio companies.",
       "key_people": [],
       "website": "https://sverica.com",
       "sources": [
@@ -3659,7 +3659,7 @@
       ],
       "competes_for": "deals",
       "threat_level": "medium",
-      "threat_rationale": "It is a Philadelphia-area LMM professional/tech-services buyer with SBIC-cheapened capital. It competes for tech-enabled professional-services and consulting platforms, including legal/admin services near Frontline and advisory/communications firms near BPI.",
+      "threat_rationale": "It is a Philadelphia-area LMM professional/tech-services buyer with SBIC-cheapened capital. It competes for tech-enabled professional-services and consulting companies, including legal/admin services near Frontline and advisory/communications firms near BPI.",
       "key_people": [
         {
           "name": "Atif Gilani",
@@ -3760,7 +3760,7 @@
         }
       ],
       "deals_2025_2026": [],
-      "trajectory": "Fund V closed at $2.1B in Oct 2023 against a $1.8B target, 56% larger than Fund IV. In 2024 Gridiron completed 24 add-ons across Funds IV and V and exited GSM Outdoors (Platinum) and Foundation Wellness (Bansk). It keeps adding residential-services brands through Legacy (HVAC) and a 2024 garage-door platform.",
+      "trajectory": "Fund V closed at $2.1B in Oct 2023 against a $1.8B target, 56% larger than Fund IV. In 2024 Gridiron completed 24 add-ons across Funds IV and V and exited GSM Outdoors (Platinum) and Foundation Wellness (Bansk). It keeps adding residential-services brands through Legacy (HVAC) and a 2024 garage-door portfolio company.",
       "overlap_with_bsp": [
         "punctual_pros",
         "frontline"
@@ -3810,7 +3810,7 @@
           "year": 2026
         }
       ],
-      "strategy": "NYC middle-market investor in specialty manufacturing and business services focused on 'transformational growth' through organic initiatives and add-ons. The team has done 24 platforms and 118 add-ons since 2005.",
+      "strategy": "NYC middle-market investor in specialty manufacturing and business services focused on 'transformational growth' through organic initiatives and add-ons. The team has done 24 companies and 118 add-ons since 2005.",
       "sectors": [
         "Residential & commercial HVAC/plumbing",
         "Security services",
@@ -3903,7 +3903,7 @@
           "company": "Schill Grounds Management",
           "type": "platform",
           "sector": "Commercial landscaping",
-          "note": "New platform (2025).",
+          "note": "New company (2025).",
           "source_url": "https://truarcpartners.com/portfolio"
         },
         {
@@ -3919,7 +3919,7 @@
           "company": "Matrix Adhesives Group",
           "type": "platform",
           "sector": "Specialty manufacturing",
-          "note": "New platform (2026).",
+          "note": "New company (2026).",
           "source_url": "https://truarcpartners.com/portfolio"
         }
       ],
@@ -3966,7 +3966,7 @@
         "year": null
       },
       "fund_history": [],
-      "strategy": "Hands-on lower-middle-market investor in consumer services, commercial services and B2B products, making initial platform investments of up to $100M. Its first platform, Ally Services, is a Mid-Atlantic residential HVAC/plumbing roll-up.",
+      "strategy": "Hands-on lower-middle-market investor in consumer services, commercial services and B2B products, making initial anchor investments of up to $100M. Its first company, Ally Services, is a Mid-Atlantic residential HVAC/plumbing roll-up.",
       "sectors": [
         "Residential HVAC/plumbing",
         "Consumer services",
@@ -4020,13 +4020,13 @@
           "source_url": "https://watchtowercp.com/ally-services-completes-three-add-on-acquisitions-in-2025-expanding-residential-hvac-platform/"
         }
       ],
-      "trajectory": "Watchtower is a newer LMM sponsor. Its first platform (Ally, 2023) went from two founding businesses to a six-jurisdiction Mid-Atlantic footprint and more than doubled revenue in 2025. The next step is likely deeper into PA/NJ.",
+      "trajectory": "Watchtower is a newer LMM sponsor. Its first company (Ally, 2023) went from two founding businesses to a six-jurisdiction Mid-Atlantic footprint and more than doubled revenue in 2025. The next step is likely deeper into PA/NJ.",
       "overlap_with_bsp": [
         "punctual_pros"
       ],
       "competes_for": "targets",
       "threat_level": "high",
-      "threat_rationale": "It is a same-size LMM sponsor (up to $100M initial checks) whose Ally platform already covers PA and NJ, the two states where Punctual Pros operates (Central PA; Ocean/Monmouth NJ via Horvath). It will bid for the same founder-owned residential HVAC/plumbing add-ons.",
+      "threat_rationale": "It is a same-size LMM sponsor (up to $100M initial checks) whose Ally portfolio company already covers PA and NJ, the two states where Punctual Pros operates (Central PA; Ocean/Monmouth NJ via Horvath). It will bid for the same founder-owned residential HVAC/plumbing add-ons.",
       "key_people": [
         {
           "name": "Mike Minchella",
@@ -4106,7 +4106,7 @@
       ],
       "competes_for": "deals",
       "threat_level": "medium",
-      "threat_rationale": "Penta is a direct comparable to BPI (DC-based public affairs/reputation counsel). Shamrock now has a platform that will compete for public-affairs and communications add-ons and could be an exit buyer for BPI.",
+      "threat_rationale": "Penta is a direct comparable to BPI (DC-based public affairs/reputation counsel). Shamrock now has a company that will compete for public-affairs and communications add-ons and could be an exit buyer for BPI.",
       "key_people": [
         {
           "name": "Laura Held",
@@ -4136,7 +4136,7 @@
         "year": null
       },
       "fund_history": [],
-      "strategy": "Boston middle-market investor in business services, IT services and software that aims to 'grow value through earnings' through organic initiatives and add-ons. It has raised 12 funds and made 124 platform investments.",
+      "strategy": "Boston middle-market investor in business services, IT services and software that aims to 'grow value through earnings' through organic initiatives and add-ons. It has raised 12 funds and made 124 anchor investments.",
       "sectors": [
         "Business services",
         "IT services",
@@ -4206,7 +4206,7 @@
       ],
       "competes_for": "deals",
       "threat_level": "medium",
-      "threat_rationale": "As Frontline's former owner, BV knows the legal-MSP/RCM thesis and its targets well and could back a competing professional-services IT platform. It is also a logical bidder for IT services to law and accounting firms.",
+      "threat_rationale": "As Frontline's former owner, BV knows the legal-MSP/RCM thesis and its targets well and could back a competing professional-services IT company. It is also a logical bidder for IT services to law and accounting firms.",
       "key_people": [],
       "website": "https://www.bvlp.com",
       "sources": [

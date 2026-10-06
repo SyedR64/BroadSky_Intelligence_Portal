@@ -3,3 +3,8 @@
 /briefing/*.aiff
 /briefing/*.wav
 .claude/
+ci-report/
+
+# scratch output of scripts/apply_terms.py and builder test harnesses
+scripts/_terms_review.txt
+scripts/_*.html

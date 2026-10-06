@@ -13,12 +13,12 @@
     ],
     "caveats": [
       "WebSearch quota was exhausted before this task, so NLJ 500 / Law360 400 / Business Journal book-of-lists rankings could NOT be pulled; the universe was assembled from analyst knowledge of each metro and verified firm-by-firm on firm websites. Coverage is therefore broad but not exhaustive.",
-      "attorney_count_confidence='approx' items (directory counts from sitemaps) may include paralegals/patent agents or miss unlisted lawyers; treat as +/-25%. A few (e.g., McElroy Deutsch, Genova Burns) likely undercount because their sitemaps are partial.",
+      "attorney-count confidence='approx' items (directory counts from sitemaps) may include paralegals/patent agents or miss unlisted lawyers; treat as +/-25%. A few (e.g., McElroy Deutsch, Genova Burns) likely undercount because their sitemaps are partial.",
       "Firms that self-identify as Am Law 200 (Arnall Golden Gregory, Hodgson Russ) and firms believed to be Am Law 200 members (e.g., Kasowitz, McKool Smith, Keker, Robins Kaplan, Wiley, Fredrikson, Kelley Drye, Pryor Cashman, Herrick) were excluded to avoid overlap with the existing AM Law 200 dataset; Am Law membership of the remaining firms was not independently verified.",
-      "No cyber incidents at these firms other than Bassford Remele's posted notice could be verified without news search; absence of a cyber_incident signal is not evidence of no incident.",
+      "No cyber incidents at these firms other than Bassford Remele's posted notice could be verified without news search; absence of a cyber incident signal is not evidence of no incident.",
       "CIO/CTO signals reflect roles listed on leadership pages; hire dates were generally not stated (date=null).",
-      "estimated_it_spend_band is a headcount/footprint heuristic, not a disclosed budget.",
-      "HQ lat/lon are approximate city centroids (geo_precision='city'); office lists are parsed from street addresses on retrieved firm pages and may be incomplete.",
+      "estimated IT spend band is a headcount/footprint heuristic, not a disclosed budget.",
+      "HQ lat/lon are approximate city centroids (location precision='city'); office lists are parsed from street addresses on retrieved firm pages and may be incomplete.",
       "Gallagher & Kennedy is merging into Fennemore (already in the AM Law dataset) effective 2026-12-01 - route through the Fennemore account.",
       "Scoring weights are analyst judgment, not calibrated to Frontline win data.",
       "Verified 2026-09-24: sampled 24, confirmed 24, removed 0"

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Broad Sky buys · Broad Sky</title>
+<meta name="description" content="Broad Sky Partners' acquisition methodology reverse-engineered from every disclosed deal: the chronology, the patterns, an inferred screening rubric with weights, cadence, the professional network and the next five add-ons with intro paths and first-call scripts.">
+<meta name="theme-color" content="#fbfaf7">
+<link rel="icon" href="../BSP_Logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/system.css?v=20261006122625">
+<link rel="stylesheet" href="methodology.css?v=20261006122625">
+</head>
+<body>
+<main id="main" class="mx">
+  <nav class="sys-subnav" aria-label="On this page">
+    <div class="sys-subnav-in">
+      <a class="sys-subnav-title" href="#main">How Broad Sky buys</a>
+      <div class="sys-subnav-links">
+        <a href="#narrative">Narrative</a>
+        <a href="#deals">Deals</a>
+        <a href="#patterns">Patterns</a>
+        <a href="#rubric">Rubric</a>
+        <a href="#cadence">Cadence</a>
+        <a href="#network">Network</a>
+        <a href="#next">Next five</a>
+      </div>
+      <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../app.html#/bsp/deals">Open in portal</a></div>
+    </div>
+  </nav>
+
+  <!-- 1 · hero -->
+  <section class="sys-hero" aria-labelledby="h-hero">
+    <div class="sys-wrap">
+      <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Methodology</b> · for the Portfolio Resource Group</p>
+      <h1 id="h-hero" class="sys-h1">How Broad Sky buys: <span class="sys-grad-text">the methodology, reverse-engineered</span></h1>
+      <p class="sys-lead">Every disclosed Broad Sky deal since 2022, read the way a seller’s banker would read it: who sold, who advised, who lent, how fast the add-ons came. The patterns become a screening rubric, the rubric scores every add-on target in the pipeline, and the network shows who can make the introduction.</p>
+      <div class="sys-actions">
+        <a class="sys-btn sys-btn--accent sys-btn--lg" href="#next">See the next five</a>
+        <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#rubric">Score the pipeline</a>
+      </div>
+      <div class="sys-kpis" role="list" id="kpis" aria-live="polite"></div>
+      <p class="sys-src" id="kpi-src"></p>
+    </div>
+  </section>
+
+  <!-- 2 · narrative -->
+  <section id="narrative" class="sys-section sys-section--alt" aria-labelledby="h-nar">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">The short version</p>
+        <h2 id="h-nar" class="sys-h2">Thesis first, essential services, founders stay</h2>
+        <p class="sys-lead" id="nar-lead">Observations, each traceable to a press release or a filing. Weights and strengths are analyst inference from the public record, not Broad Sky’s internal criteria.</p>
+      </div>
+      <div class="mx-nar" id="nar"></div>
+      <p class="sys-src" id="nar-src"></p>
+    </div>
+  </section>
+
+  <!-- 3 · deals -->
+  <section id="deals" class="sys-section" aria-labelledby="h-deals">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">Deal chronology</p>
+        <h2 id="h-deals" class="sys-h2">Seven companies, twenty-three add-ons, one exit</h2>
+        <p class="sys-lead">Each mark is a disclosed transaction. Select one to read the rationale in the buyer’s or seller’s own words, with advisers, lenders and the co-invest vehicle.</p>
+      </div>
+      <div class="sys-card mx-flush"><div class="mx-strip" id="strip"></div></div>
+      <div class="mx-deal" id="deal-detail" aria-live="polite"></div>
+      <div class="sys-table-wrap mx-gap" id="deal-table"></div>
+    </div>
+  </section>
+
+  <!-- 4 · patterns -->
+  <section id="patterns" class="sys-section sys-section--alt" aria-labelledby="h-pat">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">Patterns</p>
+        <h2 id="h-pat" class="sys-h2">What the deal record says about how they buy</h2>
+        <p class="sys-lead">Each pattern carries its strength, the deals behind it and what it means for the next acquisition.</p>
+      </div>
+      <div class="mx-chips sys-chips" id="pat-filter" role="group" aria-label="Filter patterns by strength"></div>
+      <div class="sys-grid sys-grid--3" id="pat-grid"></div>
+      <div class="mx-sub">
+        <h3 class="sys-h3">Where the deals come from</h3>
+        <div class="sys-table-wrap" id="channels"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · rubric -->
+  <section id="rubric" class="sys-section" aria-labelledby="h-rub">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">The rubric</p>
+        <h2 id="h-rub" class="sys-h2">Ten criteria, weighted the way the deals imply</h2>
+        <p class="sys-lead" id="rub-lead">Each criterion scores 1 to 5. The Broad Sky fit score uses the five criteria the add-on screens can test per target, at their rubric weights, on a 0–100 scale.</p>
+      </div>
+      <div class="mx-rubric">
+        <div class="sys-card" id="weights"></div>
+        <div>
+          <div class="mx-toolbar">
+            <div class="sys-chips" id="rub-filter" role="group" aria-label="Filter by company"></div>
+            <button class="sys-btn sys-btn--secondary sys-btn--sm" type="button" id="csv">Download scored pipeline (CSV)</button>
+          </div>
+          <div class="sys-table-wrap" id="scored"></div>
+        </div>
+      </div>
+      <div class="sys-note sys-note--info mx-gap"><span><b>How to read the score.</b> The add-on screens were built to find companies that fit each company, so most targets clear the 70 gate; the rubric’s job is ordering. Recurring revenue, tech upside and the bench below the owner are 26% of the weight and come from the first call, which is why the script below asks for them.</span></div>
+    </div>
+  </section>
+
+  <!-- 6 · cadence -->
+  <section id="cadence" class="sys-section sys-section--alt" aria-labelledby="h-cad">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">Cadence</p>
+        <h2 id="h-cad" class="sys-h2">A company every six to seven months, an add-on eight months later</h2>
+        <p class="sys-lead">Computed from the deal dates. Add-on rates use Broad Sky’s own stated counts over years held.</p>
+      </div>
+      <div class="sys-kpis" role="list" id="cad-kpis"></div>
+      <div class="sys-grid sys-grid--2 mx-gap">
+        <div class="sys-card"><p class="sys-card-label">Months from company to first add-on</p><div class="mx-bars" id="bars-first"></div><p class="sys-src" id="bars-first-note"></p></div>
+        <div class="sys-card"><p class="sys-card-label">Add-ons per company-year</p><div class="mx-bars" id="bars-rate"></div><p class="sys-src"><b>Source:</b> Broad Sky acquisition methodology, stated add-on counts, Oct 2026.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · network -->
+  <section id="network" class="sys-section" aria-labelledby="h-net">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">The network</p>
+        <h2 id="h-net" class="sys-h2">Who knows whom, in public</h2>
+        <p class="sys-lead">People appear only in professional roles disclosed in public sources. Hover a node to see its connections, select it for role and sources, or trace an intro path.</p>
+      </div>
+      <div class="mx-net">
+        <div class="sys-card mx-flush">
+          <div class="mx-net-bar"><input type="search" id="net-q" class="mx-input" placeholder="Search people, firms, sectors" aria-label="Search the network"><span class="mx-hits" id="net-hits" aria-live="polite"></span></div>
+          <div class="mx-graph" id="graph"></div>
+          <div class="mx-legend" id="legend"></div>
+        </div>
+        <aside class="sys-card mx-node" id="node" aria-live="polite"></aside>
+      </div>
+      <div class="mx-sub">
+        <h3 class="sys-h3">Intro paths</h3>
+        <p class="sys-muted mx-note-s">Hypotheses over public connections, not known relationships. Select one to trace it on the map.</p>
+        <div class="sys-grid sys-grid--3" id="paths"></div>
+        <p class="mx-more-row"><button class="sys-btn sys-btn--secondary sys-btn--sm" type="button" id="paths-more" hidden>Show all intro paths</button></p>
+      </div>
+      <p class="sys-src" id="net-src"></p>
+    </div>
+  </section>
+
+  <!-- 8 · next five -->
+  <section id="next" class="sys-section sys-section--alt" aria-labelledby="h-next">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">The next five acquisitions</p>
+        <h2 id="h-next" class="sys-h2">Top of the rubric, with the introduction and the first call</h2>
+        <p class="sys-lead">The highest Broad Sky fit scores, at most two per company. Each card names the intro path and a draft first-call script that fills the criteria the screens cannot test.</p>
+      </div>
+      <div class="mx-next" id="next-list"></div>
+      <p class="sys-src" id="next-src"></p>
+    </div>
+  </section>
+
+  <section class="sys-cta" aria-labelledby="h-cta">
+    <div class="sys-wrap">
+      <div class="sys-cta-in">
+        <div class="sys-cta-copy">
+          <h2 id="h-cta">Bring Broad Sky a theme, not a company.</h2>
+          <p>Every company release opens with a sector thesis. Pitch the next add-on the same way: the theme, the runway, the founder who stays, and the warm path to the first call.</p>
+        </div>
+        <div class="sys-actions">
+          <a class="sys-btn sys-btn--primary sys-btn--lg" href="../app.html#/bsp/rubric">Open the rubric in the portal</a>
+          <a class="sys-btn sys-btn--secondary sys-btn--lg" href="../app.html#/ma/overview">Acquisition engine</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+import { Frame } from '../assets/frame.js?v=20261006122625';
+import { Chat } from '../assets/chat.js?v=20261006122625';
+import { boot } from './methodology.js?v=20261006122625';
+const frame = Frame.mount({ banner: true, active: 'playbooks', crumb: [{ label: 'Home', href: './' }, { label: 'Growth plans', href: 'redesigns/#growth-plans' }, { label: 'How Broad Sky buys' }] });
+const d = await boot().catch(e => { console.warn('methodology boot failed', e); return null; });
+try {
+  const chat = Chat.mount(null, {
+    persona: 'portal', mode: 'floating', theme: 'light',
+    faq: d?.faq || [], intents: d?.intents || [],
+    suggestions: ['What is Broad Sky\'s acquisition pattern?', 'Who in the network can introduce us to the top Punctual Pros target?', 'Score the pipeline with the Broad Sky rubric', 'How long until the first add-on after a anchor deal?', 'Which banks and lawyers does Broad Sky use?'],
+  });
+  frame.setChat(chat);
+} catch (e) { console.warn('chat mount failed', e); }
+</script>
+</body>
+</html>

@@ -111,7 +111,7 @@ keep = ['zip','city','county','state','housing_units','owner_occupancy_rate','ol
         'blended_expansion_priority_score','sales_layer_reason']
 zips = [{k: z.get(k) for k in keep} for z in raw['zips']]
 save('pp_zips.json', zips, 'Legacy Punctual Pros tool v6/v11: ACS 5-yr (B25038 owner move-in, housing stock), analyst scoring; sales layer 2026-01-10 → 2026-04-10',
-     'ZIP-level territory + expansion scoring. service_territory_flag=1 marks modeled core footprint (248 PA zips).')
+     'ZIP-level territory + expansion scoring. A service-territory flag of 1 marks the modeled core footprint (248 PA zips).')
 meta = raw['meta']; meta['legacy_note'] = 'Scoring weights: executive_rank 0.46, opportunity_v3 0.20, cluster 0.24, housing_mass 0.10'
 json.dump(meta, open(os.path.join(OUT, 'pp_meta.json'), 'w'), indent=1)
 sales = literal(p, 'SALES')

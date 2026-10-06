@@ -1,0 +1,293 @@
+#!/usr/bin/env python3
+"""Generate sitemap.html (every page and every portal route, grouped by company) from the repo.
+
+Pages are discovered from the HTML files on disk; portal routes are read from
+modules/registry.js and each module's `views: [...]` list, so the sitemap stays
+in step with the site. Re-run after adding a page or a portal view:
+
+    python3 scripts/make_sitemap.py
+
+Writes ./sitemap.html using the unified system (assets/system.css + assets/frame.js).
+"""
+import html
+import re
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+VER = '20261006090506'
+m = re.search(r"system\.css\?v=(\d+)", (ROOT / 'index.html').read_text())
+if m:
+    VER = m.group(1)
+
+CO = [  # portfolio order is fixed: PP, CET, Frontline, Thomas Scientific, BPI, Fair Harbor
+    ('pp', 'punctual-pros', 'Punctual Pros', 'Residential HVAC, plumbing and electrical, Central PA and the Jersey Shore'),
+    ('cet', 'cet', 'Commonwealth Electrical Technologies', 'Electrical and energy infrastructure across New England'),
+    ('fl', 'frontline', 'Frontline Managed Services', 'Managed IT, security and revenue cycle for law firms'),
+    ('ts', 'thomas-scientific', 'Thomas Scientific', 'Lab supply distribution'),
+    ('bpi', 'bpi', 'Bully Pulpit International', 'Strategic communications and public affairs'),
+    ('fh', 'fair-harbor', 'Fair Harbor', 'Sustainable beachwear'),
+]
+OS = {'pp': 'ServiceOS', 'cet': 'GridOS', 'fl': 'FirmOS', 'ts': 'LabOS', 'bpi': 'SignalOS', 'fh': 'HarborOS'}
+
+# Hand-written names and one-line blurbs for known pages (plain English, no identifiers).
+KNOWN = {
+    'index.html': ('Home', 'The landing page: ask the portfolio, the three-step start, the six companies, the OS program and the briefing.'),
+    'app.html': ('Portal', 'The analyst console: every module and view listed below.'),
+    'theater.html': ('3D theater', 'A WebGL fly-through of home sales, expansion arcs, New England opportunities and live storms.'),
+    'sitemap.html': ('Sitemap', 'This page.'),
+    'redesigns/index.html': ('Site concepts', 'Six concept websites, the OS program, design principles and the value-creation rationale.'),
+    'redesigns/voice-ai.html': ('24/7 Voice AI', 'Answering every call as a revenue line: missed-call economics, vendors and a playable call.'),
+    'redesigns/ai-agents.html': ('AI agents', '45 agents across six companies: triggers, approvals, rollout waves and estimated value.'),
+    'redesigns/case-studies.html': ('Value-creation case studies', 'How peer sponsors grew comparable companies, in order, with the levers they pulled.'),
+    'redesigns/methodology.html': ('Broad Sky methodology', 'How Broad Sky sources, buys and builds companies, and the network behind it.'),
+    'assistant.html': ('Assistant', 'The full-page portfolio assistant.'),
+    'briefing/executive_memo.html': ('Executive memo', 'Six pages on what the data says and what to do next, footnoted to filings.'),
+}
+CO_PAGE = {
+    'index.html': ('Concept site', 'A modern front door for the company, wired to portal data.'),
+    'growth-plan.html': ('Growth plan', 'The plan from today to the next multiple, with sourced figures and estimates.'),
+    'nationwide.html': ('Nationwide plan', 'From Lancaster to national in four phases: tuck-ins, AI agents, programs for technicians and returns.'),
+    'ads.html': ('Growth marketing and sample ads', 'Connected TV on storm alerts, Local Services Ads and new-mover mail, with a media plan.'),
+}
+FILES = [
+    ('briefing/broad_sky_briefing.mp4', 'Full briefing video', '6 minutes 36 seconds, 52 chapters, 1080p.'),
+    ('briefing/broad_sky_intro.mp4', 'Cinematic film', '2 minutes 22 seconds, rendered from the live pages.'),
+    ('briefing/Broad_Sky_Operating_Intelligence_Memo.pdf', 'Executive memo (PDF)', 'The memo as a printable PDF.'),
+]
+SKIP_DIRS = {'legacy', 'scripts', 'node_modules', 'data', '.git', 'assets'}
+
+
+def esc(s):
+    return html.escape(str(s), quote=True)
+
+
+def title_of(path):
+    t = re.search(r'<title>([^<]*)</title>', path.read_text(errors='ignore'))
+    t = html.unescape(t.group(1)) if t else path.stem.replace('-', ' ').capitalize()
+    return re.split(r'\s+[·|—–-]\s+', t)[0].strip()
+
+
+def desc_of(path):
+    d = re.search(r'<meta name="description" content="([^"]*)"', path.read_text(errors='ignore'))
+    if not d:
+        return ''
+    d = html.unescape(d.group(1))
+    first = re.split(r'(?<=[.!?])\s', d)[0]
+    return first if len(first) <= 160 else first[:157].rsplit(' ', 1)[0] + '…'
+
+
+def pages():
+    out = []
+    for p in sorted(ROOT.rglob('*.html')):
+        rel = p.relative_to(ROOT).as_posix()
+        if rel.split('/')[0] in SKIP_DIRS:
+            continue
+        out.append(rel)
+    if 'sitemap.html' not in out:
+        out.append('sitemap.html')
+    return out
+
+
+def modules():
+    reg = (ROOT / 'modules/registry.js').read_text()
+    files = re.findall(r"import \w+ from '\./([\w-]+)\.js", reg)
+    mods = []
+    for f in files:
+        s = (ROOT / f'modules/{f}.js').read_text()
+        i = s.find('export default')
+        head = s[i:i + 600]
+        mid = re.match(r"export default \{\s*id:\s*'([\w-]+)'", head)
+        mname = re.search(r"\bname:\s*'([^']+)'", head)
+        if not mid:  # modules configured through a CFG object (bpi.js, fh.js)
+            cfg = re.search(r"CFG\s*=\s*\{([^}]*)\}", s)
+            mid = re.search(r"\bid:\s*'([\w-]+)'", cfg.group(1)) if cfg else None
+            mname = re.search(r"\bname:\s*'([^']+)'", cfg.group(1)) if cfg else None
+        vi = s.find('views:', i)
+        views = re.findall(r"\{\s*id:\s*'([\w-]+)',\s*name:\s*'([^']+)'", s[vi:]) if vi > 0 else []
+        if mid:
+            mods.append((mid.group(1), mname.group(1) if mname else f, views))
+    return mods
+
+
+def item(href, name, blurb, extra=''):
+    return f'<li><a href="{esc(href)}">{esc(name)}</a><span>{esc(blurb)}</span>{extra}</li>'
+
+
+def routes_html(mid, views):
+    def nice(n):  # spell out company abbreviations in visible link text
+        return re.sub(r'\bPP\b', 'Punctual Pros', n)
+    links = ''.join(f'<a href="app.html#/{esc(mid)}/{esc(v)}">{esc(nice(n))}</a>' for v, n in views)
+    return f'<span class="lp-map-routes">{links}</span>'
+
+
+def main():
+    all_pages = pages()
+    mods = modules()
+    mod_by_id = {m[0]: m for m in mods}
+    groups = []
+
+    # 1. start
+    start = [p for p in ['index.html', 'app.html', 'theater.html', 'sitemap.html', 'assistant.html'] if p in all_pages]
+    lis = [item(p if p != 'index.html' else './', *KNOWN[p]) for p in start]
+    groups.append(('start', 'Start', 'The front door, the portal and the 3D theater.', None, lis))
+
+    # 2. companies
+    used = set(start)
+    for co, slug, name, what in CO:
+        lis = []
+        base = f'redesigns/{slug}/'
+        files = [p for p in all_pages if p.startswith(base)]
+        order = ['index.html', f'{OS[co].lower()}.html', 'nationwide.html', 'growth-plan.html', 'ads.html']
+        files.sort(key=lambda p: (order.index(p[len(base):]) if p[len(base):] in order else 99, p))
+        for p in files:
+            fn = p[len(base):]
+            used.add(p)
+            if fn.lower() == f'{OS[co].lower()}.html':
+                nm, bl = OS[co], f'The {OS[co]} product page, thesis and interactive demo.'
+            elif fn in CO_PAGE:
+                nm, bl = CO_PAGE[fn]
+            else:
+                nm, bl = title_of(ROOT / p), desc_of(ROOT / p)
+            lis.append(item(base if fn == 'index.html' else p, nm, bl))
+        if co in mod_by_id:
+            mid, mname, views = mod_by_id[co]
+            lis.append(item(f'app.html#/{mid}/{views[0][0]}' if views else 'app.html', 'Portal module', f'{len(views)} views in the portal.', routes_html(mid, views)))
+        groups.append((co, name, what, co, lis))
+
+    # 3. portfolio-wide programs and pages
+    lis = []
+    for p in ['redesigns/index.html', 'redesigns/voice-ai.html', 'redesigns/ai-agents.html', 'redesigns/case-studies.html', 'redesigns/methodology.html']:
+        if p in all_pages:
+            used.add(p)
+            lis.append(item('redesigns/' if p == 'redesigns/index.html' else p, *KNOWN[p]))
+    for p in all_pages:  # anything new that is not yet classified
+        if p in used or p in KNOWN or p.startswith('briefing/'):
+            continue
+        used.add(p)
+        lis.append(item(p, title_of(ROOT / p), desc_of(ROOT / p)))
+    groups.append(('programs', 'Portfolio programs', 'Programs and pages that run across all six companies.', None, lis))
+
+    # 4. portfolio-wide portal modules
+    lis = []
+    co_ids = {c[0] for c in CO}
+    for mid, mname, views in mods:
+        if mid in co_ids:
+            continue
+        lis.append(item(f'app.html#/{mid}/{views[0][0]}' if views else 'app.html', mname, f'{len(views)} view{"s" if len(views) != 1 else ""}.', routes_html(mid, views)))
+    groups.append(('portal', 'Portal: portfolio modules', 'Console modules that span the whole portfolio.', None, lis))
+
+    # 5. briefing
+    lis = []
+    if 'briefing/executive_memo.html' in all_pages:
+        lis.append(item('briefing/executive_memo.html', *KNOWN['briefing/executive_memo.html']))
+    for f, nm, bl in FILES:
+        if (ROOT / f).exists():
+            lis.append(item(f, nm, bl))
+    groups.append(('briefing', 'Briefing', 'Videos and the memo.', None, lis))
+
+    n_pages = len(all_pages)
+    n_routes = sum(len(m[2]) for m in mods)
+    SHORT = {'start': 'Start', 'pp': 'Punctual Pros', 'cet': 'CET', 'fl': 'Frontline', 'ts': 'Thomas Scientific', 'bpi': 'BPI', 'fh': 'Fair Harbor', 'programs': 'Programs', 'portal': 'Portal modules', 'briefing': 'Briefing'}
+    sub = ''.join(f'<a href="#g-{g[0]}">{esc(SHORT.get(g[0], g[1]))}</a>' for g in groups)
+
+    KICK = {'start': 'Overview', 'pp': 'Home services', 'cet': 'Electrical and energy', 'fl': 'Legal IT', 'ts': 'Lab supply', 'bpi': 'Communications', 'fh': 'Consumer', 'programs': 'Across the portfolio', 'portal': 'Portal', 'briefing': 'Briefing'}
+
+    def section(i, g):
+        gid, name, what, co, lis = g
+        alt = ' sys-section--alt' if i % 2 == 1 else ''
+        dco = f' data-co="{co}"' if co else ''
+        dot = '<span class="sys-dot" aria-hidden="true"></span>' if co else ''
+        return f'''  <section class="sys-section sys-section--tight lp-map-group{alt}" id="g-{gid}"{dco} aria-labelledby="g-{gid}-t">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">{esc(KICK.get(gid, 'Section'))}</p>
+        <h2 id="g-{gid}-t" class="sys-h2">{esc(name)}</h2>
+        <p class="sys-lead">{esc(what if what.endswith('.') else what + '.')}</p>
+      </div>
+      <ul class="lp-list lp-map-list">
+        {chr(10).join("        " + x for x in lis).strip()}
+      </ul>
+    </div>
+  </section>'''
+
+    body = '\n\n'.join(section(i, g) for i, g in enumerate(groups))
+    page = f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sitemap · Broad Sky</title>
+<meta name="description" content="Every page of the Broad Sky Operating Intelligence site and every portal view, grouped by company.">
+<meta name="theme-color" content="#fbfaf7">
+<meta name="author" content="Syed Rahman">
+<link rel="icon" href="BSP_Logo.png">
+<link rel="apple-touch-icon" href="BSP_Logo.png">
+<link rel="canonical" href="https://syedr64.github.io/BroadSky_Intelligence_Portal/sitemap.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Broad Sky Operating Intelligence">
+<meta property="og:title" content="Sitemap · Broad Sky Operating Intelligence">
+<meta property="og:description" content="Every page and portal view, grouped by company.">
+<meta property="og:url" content="https://syedr64.github.io/BroadSky_Intelligence_Portal/sitemap.html">
+<meta property="og:image" content="https://syedr64.github.io/BroadSky_Intelligence_Portal/assets/img/portal_home_overview.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sitemap · Broad Sky Operating Intelligence">
+<meta name="twitter:description" content="Every page and portal view, grouped by company.">
+<meta name="twitter:image" content="https://syedr64.github.io/BroadSky_Intelligence_Portal/assets/img/portal_home_overview.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/system.css?v={VER}">
+<link rel="stylesheet" href="assets/sitemap.css?v={VER}">
+</head>
+<body data-page="sitemap">
+<!-- Generated by scripts/make_sitemap.py; edit the script, not this file. -->
+<main id="main">
+  <nav class="sys-subnav" aria-label="On this page">
+    <div class="sys-subnav-in">
+      <a class="sys-subnav-title" href="#top">Sitemap</a>
+      <div class="sys-subnav-links">{sub}</div>
+    </div>
+  </nav>
+
+  <section class="sys-hero" id="top" aria-labelledby="map-title">
+    <div class="sys-wrap">
+      <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>{n_pages} pages</b> · {n_routes} portal views · {len(mods)} modules</p>
+      <h1 id="map-title" class="sys-h1">Every page, <span class="sys-grad-text">one list.</span></h1>
+      <p class="sys-lead">The whole site and every portal view, grouped by company in portfolio order, then the programs and modules that span all six companies.</p>
+      <div class="sys-chips" style="margin-top:var(--sys-sp-6)">
+        {''.join(f'<a class="sys-chip" data-co="{c[0]}" href="#g-{c[0]}">{esc(SHORT[c[0]])}</a>' for c in CO)}
+      </div>
+    </div>
+  </section>
+
+{body}
+
+  <section class="sys-cta" aria-labelledby="cta-title">
+    <div class="sys-wrap">
+      <div class="sys-cta-in">
+        <div class="sys-cta-copy">
+          <h2 id="cta-title">Not sure where to start?</h2>
+          <p>Ask the portfolio a question and the assistant hands you the right page.</p>
+        </div>
+        <div class="sys-actions">
+          <a class="sys-btn sys-btn--accent sys-btn--lg" href="./#start">Start here</a>
+          <a class="sys-btn sys-btn--secondary sys-btn--lg" href="app.html">Open the portal</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+  import {{ Frame }} from './assets/frame.js?v={VER}';
+  Frame.mount({{ crumb: [{{ label: 'Home', href: './' }}, {{ label: 'Sitemap' }}] }});
+</script>
+</body>
+</html>
+'''
+    (ROOT / 'sitemap.html').write_text(page)
+    print(f'sitemap.html: {n_pages} pages, {n_routes} portal views, {len(mods)} modules, {len(groups)} groups')
+
+
+if __name__ == '__main__':
+    main()

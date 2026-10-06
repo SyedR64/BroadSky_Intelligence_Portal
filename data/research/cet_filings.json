@@ -63,17 +63,17 @@
       }
     ],
     "caveats": [
-      "All revenue, EBITDA, leverage and valuation figures in estimate_table are analyst inferences from payroll, headcount and fund-size proxies. None is disclosed by CET, Broad Sky or any lender.",
+      "All revenue, EBITDA, leverage and valuation figures in estimate table are analyst inferences from payroll, headcount and fund-size proxies. None is disclosed by CET, Broad Sky or any lender.",
       "PPP-implied payroll caps compensation at $100k per employee and reflects 2019/early-2020 conditions (pre-PE, pre-add-ons).",
       "Form ADV gross asset value for the co-invest vehicle may include cash or fee accruals and is a manager mark, not a transaction price.",
       "The EDGAR full-text hit for 'Broad Sky' in Capital Southwest 10-Ks refers to 'Broad Sky Networks, LLC' (an unrelated telecom borrower). 'CET Acquisition CO Inc' (CIK 1416379) is an unrelated 2007 paper Reg D filer.",
       "'Horton Electrical Services, Inc.' (Maryland; DoD 2015 award) and the Horton party in the Center City Healthcare bankruptcy are different entities from the CT Horton acquired by CET.",
       "The OSHA records for 'Commonwealth Electrical Technologies, Inc.' show a Devens MA mailing address and NAICS 237130. The name matches exactly and the sites are in CET's service area, but entity identity was not independently confirmed.",
-      "The relayed user request asks for coverage of the entire Broad Sky portfolio and rivals. This file covers the CET platform (CET, NuWave, Horton) plus CET-relevant rivals and public comps only; other portfolio companies are handled in separate files.",
+      "The relayed user request asks for coverage of the entire Broad Sky portfolio and rivals. This file covers the CET portfolio company (CET, NuWave, Horton) plus CET-relevant rivals and public comps only; other portfolio companies are handled in separate files.",
       "Verified 2026-09-24: sampled 25, confirmed 24, removed 0"
     ],
     "item_count": 25,
-    "financial_picture": "1) Pre-deal scale: CET's April 2020 PPP loan ($2.062M, 121 jobs) implies about $9.9M of annual payroll. At the 30–40% labor-to-revenue ratio typical of commercial electrical contractors, 2019 revenue was roughly $25–33M. 2) By October 2025 CET reported about 140 employees (the brief's ~160 'licensed professionals' may count differently). Applying $250–375k revenue per employee, bracketed by IES Holdings' ~$328k, gives 2025 standalone revenue of about $35–55M (midpoint ~$45M). 3) At the 8–12% EBITDA margins seen at Limbach (~10%) and IES (~13%, high end), CET's standalone EBITDA at entry was probably about $3–6M, a true lower-middle-market platform. 4) The equity structure supports that scale. The only co-invest was one LP writing $7.5M (Form D, first sale 2025-02-05), from a ~$335M fund where a typical position is $25–50M. Total equity was therefore likely ~$25–45M. 5) Applying the brief's 3.5–5.5x LMM leverage to $3–6M of EBITDA implies $10–33M of senior debt at close. Entry enterprise value was likely ~$35–75M (~9–12x), but none of the debt is visible. 6) No BDC schedule, lender press release, Form D debt vehicle or credit rating names CET, 'CET Acquisition Holdings, LLC' or Horton. EDGAR full-text search found zero hits and 73 downloaded BDC/credit-fund filings were negative. So the facility most likely sits with a bank or a non-SEC-reporting private lender or SBIC. 7) Broad Sky's March 2026 Form ADV marks the CET co-invest vehicle at $8.504M against $7.5M invested (1.13x gross). That modest markup fits the NuWave tuck-in plus organic growth, not a re-rating. 8) NuWave was tiny at acquisition (PPP: 4 jobs in 2020, founded 2019) and adds engineering/design-build capability, not scale; call it $2–10M of revenue (low confidence). 9) Horton is the transformational add-on. Its 2020 PPP ($646k, 42 jobs, ~$3.1M payroll) has grown to 120+ staff, so revenue is plausibly ~$25–40M today. CET says the deal 'nearly doubles' the workforce. 10) Pro forma for both add-ons, the platform is roughly 260–290 employees, $65–100M revenue and $6–11M EBITDA (low confidence). Horton was bought by the CET LLC subsidiary with no new Broad Sky Form D, so it was likely funded with incremental or delayed-draw debt plus seller rollover, pushing leverage toward the upper half of the 3.5–5.5x band. 11) Offsetting positives: a clean OSHA history, no material litigation, full PPP forgiveness, and state-funded program work (MassCEC On-Street Charging prime vendor, CT Clean Water Fund wastewater exposure via Horton). Watch items: a likely related-party lease of Horton's Canton facility (97 River Road CBP, LLC) and a possible Duquette-affiliated mechanical firm (A. Duquette & Son) across the street from CET HQ.",
+    "financial_picture": "1) Pre-deal scale: CET's April 2020 PPP loan ($2.062M, 121 jobs) implies about $9.9M of annual payroll. At the 30–40% labor-to-revenue ratio typical of commercial electrical contractors, 2019 revenue was roughly $25–33M. 2) By October 2025 CET reported about 140 employees (the brief's ~160 'licensed professionals' may count differently). Applying $250–375k revenue per employee, bracketed by IES Holdings' ~$328k, gives 2025 standalone revenue of about $35–55M (midpoint ~$45M). 3) At the 8–12% EBITDA margins seen at Limbach (~10%) and IES (~13%, high end), CET's standalone EBITDA at entry was probably about $3–6M, a true lower-middle-market company. 4) The equity structure supports that scale. The only co-invest was one LP writing $7.5M (Form D, first sale 2025-02-05), from a ~$335M fund where a typical position is $25–50M. Total equity was therefore likely ~$25–45M. 5) Applying the brief's 3.5–5.5x LMM leverage to $3–6M of EBITDA implies $10–33M of senior debt at close. Entry enterprise value was likely ~$35–75M (~9–12x), but none of the debt is visible. 6) No BDC schedule, lender press release, Form D debt vehicle or credit rating names CET, 'CET Acquisition Holdings, LLC' or Horton. EDGAR full-text search found zero hits and 73 downloaded BDC/credit-fund filings were negative. So the facility most likely sits with a bank or a non-SEC-reporting private lender or SBIC. 7) Broad Sky's March 2026 Form ADV marks the CET co-invest vehicle at $8.504M against $7.5M invested (1.13x gross). That modest markup fits the NuWave tuck-in plus organic growth, not a re-rating. 8) NuWave was tiny at acquisition (PPP: 4 jobs in 2020, founded 2019) and adds engineering/design-build capability, not scale; call it $2–10M of revenue (low confidence). 9) Horton is the transformational add-on. Its 2020 PPP ($646k, 42 jobs, ~$3.1M payroll) has grown to 120+ staff, so revenue is plausibly ~$25–40M today. CET says the deal 'nearly doubles' the workforce. 10) Pro forma for both add-ons, the company is roughly 260–290 employees, $65–100M revenue and $6–11M EBITDA (low confidence). Horton was bought by the CET LLC subsidiary with no new Broad Sky Form D, so it was likely funded with incremental or delayed-draw debt plus seller rollover, pushing leverage toward the upper half of the 3.5–5.5x band. 11) Offsetting positives: a clean OSHA history, no material litigation, full PPP forgiveness, and state-funded program work (MassCEC On-Street Charging prime vendor, CT Clean Water Fund wastewater exposure via Horton). Watch items: a likely related-party lease of Horton's Canton facility (97 River Road CBP, LLC) and a possible Duquette-affiliated mechanical firm (A. Duquette & Son) across the street from CET HQ.",
     "estimate_table": [
       {
         "metric": "CET annual payroll, 2019/early 2020",
@@ -148,7 +148,7 @@
         "confidence": "low"
       },
       {
-        "metric": "Pro forma platform (CET+NuWave+Horton) revenue / EBITDA",
+        "metric": "Pro forma portfolio company (CET+NuWave+Horton) revenue / EBITDA",
         "estimate": "$65–100M revenue; $6–11M EBITDA",
         "basis": "sum of component estimates; 8–12% margin",
         "confidence": "low"
@@ -417,7 +417,7 @@
         "legacy_principal": "Warren Horton",
         "address": "97 River Road, Canton CT 06019"
       },
-      "what_it_tells_us": "These filings confirm the September 15, 2026 Horton deal closed into a CET-owned Delaware LLC, a wholly owned subsidiary of CET LLC, with the old Horton LLC merged in. Horton was bought by the platform subsidiary rather than a separate Broad Sky vehicle. So it was likely funded with platform debt (delayed-draw or incremental term loan) and/or seller rollover, not a new Form D co-invest. No new BSP Form D was found as of 2026-09-24.",
+      "what_it_tells_us": "These filings confirm the September 15, 2026 Horton deal closed into a CET-owned Delaware LLC, a wholly owned subsidiary of CET LLC, with the old Horton LLC merged in. Horton was bought by the CET operating subsidiary rather than a separate Broad Sky vehicle. So it was likely funded with CET-level debt (delayed-draw or incremental term loan) and/or seller rollover, not a new Form D co-invest. No new BSP Form D was found as of 2026-09-24.",
       "confidence": "high",
       "source_url": "https://data.ct.gov/resource/n7gp-d28j.json?accountnumber=3518996",
       "retrieved": "2026-09-24"
@@ -659,7 +659,7 @@
           "EV (program director + program manager)"
         ]
       },
-      "what_it_tells_us": "CET has hired a dedicated M&A manager and a CFO, the usual PE-platform build-out for serial acquisitions. Expect more add-ons after Horton. Family leadership (the Duquettes) remains in place post-deal.",
+      "what_it_tells_us": "CET has hired a dedicated M&A manager and a CFO, the usual build-out at a PE-backed company making serial acquisitions. Expect more add-ons after Horton. Family leadership (the Duquettes) remains in place post-deal.",
       "confidence": "high",
       "source_url": "https://comelectrical.com/company/leadership/",
       "retrieved": "2026-09-24"
@@ -703,7 +703,7 @@
           "A M Rizzo Electrical ($2.95M, 70)"
         ]
       },
-      "what_it_tells_us": "Before the deal, CET was an upper-mid-tier MA electrical contractor, well below the Boston-area majors (~$8–10M PPP, 300–500 jobs), and its closest Worcester rival, Ostrow, was about 1.9x larger by payroll. CET's payroll per job ran about 10% above the MA median, consistent with a skilled, technical (solar/efficiency) workforce. Combined with Horton, the platform reaches roughly the top 15–20 MA/CT independents by headcount.",
+      "what_it_tells_us": "Before the deal, CET was an upper-mid-tier MA electrical contractor, well below the Boston-area majors (~$8–10M PPP, 300–500 jobs), and its closest Worcester rival, Ostrow, was about 1.9x larger by payroll. CET's payroll per job ran about 10% above the MA median, consistent with a skilled, technical (solar/efficiency) workforce. Combined with Horton, the company reaches roughly the top 15–20 MA/CT independents by headcount.",
       "confidence": "medium",
       "source_url": "https://data.sba.gov/sites/default/files/distribution/SBA-OCA-2022-07-001/public_150k_plus_240930.csv",
       "retrieved": "2026-09-24"
@@ -780,7 +780,7 @@
         "horton_federal_awards": "PPP loan 7091657008 only ($646,100). Other 'Horton Electrical Services, Inc.' records (2015 DoD $12,100; PPP 5504017102 and 3135298400, $60,495 each, MD) are an unrelated Maryland entity.",
         "nuwave_federal_awards": "PPP loan 9564477100 ($157,100); SBA business loan 8341708200 ($350,000, issued 2020-09-21, CFDA 59.012); EIDL advance grant EIDLGT:3300892183 ($4,000)"
       },
-      "what_it_tells_us": "Public-sector revenue across the platform is state and municipal (MassCEC, CT wastewater), not federal: there are no federal prime contracts or program grants. Federal records are limited to COVID-era SBA assistance. NuWave's $350k SBA loan (Sept 2020) is a liability that may have been assumed or repaid at the Oct 2025 acquisition.",
+      "what_it_tells_us": "Public-sector revenue across the company is state and municipal (MassCEC, CT wastewater), not federal: there are no federal prime contracts or program grants. Federal records are limited to COVID-era SBA assistance. NuWave's $350k SBA loan (Sept 2020) is a liability that may have been assumed or repaid at the Oct 2025 acquisition.",
       "confidence": "high",
       "source_url": "https://api.usaspending.gov/api/v2/search/spending_by_award/",
       "retrieved": "2026-09-24",

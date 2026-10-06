@@ -23,7 +23,7 @@
    "Funded-debt note from verification: USPTO assignment records show ABL security interests on the core mark from Merchant Financial (2020-2021) and Gerber Finance/eCapital (2021-2025, released 2025-12-11), so the 'no agent-bank lien confirmed' gap and the Funded debt estimate should be read in that light.",
    "Verified 2026-09-24: sampled 25, confirmed 22, removed 0"
   ],
-  "financial_picture": "1) Fair Harbor was bootstrapped from about $24K of first-year sales (2015) and a projected $250K in 2017 to an Inc. 5000 #26 ranking with 11,475% three-year growth, so 2020 revenue was about 116x the 2017 base. That puts 2020 revenue at no less than about $11.6M, and plausibly $17-29M if the 2017 base was $150-250K. 2) Headcount and payroll were tiny: a $16,994 PPP loan implies about $82K of annualized W-2 payroll, and Inc listed 1-10 employees, so the pre-deal model was highly outsourced and founder-run. 3) The Broad Sky deal (March 2022) was Fair Harbor's first institutional capital: $30.73M of primary equity sold to 24 investors (Form D), with $6.0M more authorized. At about 9% of Broad Sky's $335M Fund I, this was a platform-sized check. 4) Broad Sky's ownership share is not disclosed. If Broad Sky holds a control stake of 60-80% with light leverage, the implied enterprise value is about $40-90M, or roughly 1.3-2.5x an estimated 2021 revenue of $30-40M. That is below the Chubbies precedent (~$130M, Sept 2021) but fits a brand about a quarter of Chubbies' size. 5) No BDC schedule-of-investments line, lender press release, credit rating or Form D for a debt vehicle mentions Fair Harbor. The capital structure is likely equity-heavy with at most an asset-based revolver for inventory, not a sponsor-style unitranche. 6) The move of the core FAIR HARBOR trademark into Fair Harbor Clothing Topco LLC (Jersey City) fits a PE holdco structure and possibly a lender collateral package; the USPTO assignment record would confirm this. 7) After the deal, management spent capital on category breadth (fleece, flannels, denim, sweaters, polos, kids), two owned stores (SoHo; Palm Beach Gardens by February 2023), B Corp/PBC status (score 94.3) and women's swim. 8) Women's was paused and liquidated at about 70% off by December 2025, and 38.5% of live variants carried markdowns in September 2026. Both point to margin pressure and inventory clean-up in FY2025-FY2026. 9) Newer growth levers are licensing and partnerships (FootJoy, collegiate, HBO's White Lotus, Discovery, Rothy's, Athletic Brewing) and a B2B custom program. These are capital-light and wholesale-like, and they follow the path Chubbies took, where retail and wholesale reached 52% of 2025 sales. 10) Fair Harbor's web traffic is about 20% of Chubbies' (Similarweb, summer 2026). Scaled against Chubbies' $59M DTC, that suggests Fair Harbor web DTC of about $10-12M. With 35-45% wholesale, B2B and stores, total 2025 revenue is plausibly about $20-35M, meaning growth has been modest since 2021. 11) With Chubbies' segment economics as the ceiling (58-60% gross margin, 14-18% segment margin at $113-123M) and Fair Harbor's smaller scale, store leases and 2025 women's write-downs, Fair Harbor's EBITDA is likely low single-digit millions (about $0-4M). 12) At about 4.5 years into the hold with no exit, the likely exit is a strategic sale to a brand-management or outdoor/lifestyle acquirer, where the IP holdco structure and licensing momentum would support value.",
+  "financial_picture": "1) Fair Harbor was bootstrapped from about $24K of first-year sales (2015) and a projected $250K in 2017 to an Inc. 5000 #26 ranking with 11,475% three-year growth, so 2020 revenue was about 116x the 2017 base. That puts 2020 revenue at no less than about $11.6M, and plausibly $17-29M if the 2017 base was $150-250K. 2) Headcount and payroll were tiny: a $16,994 PPP loan implies about $82K of annualized W-2 payroll, and Inc listed 1-10 employees, so the pre-deal model was highly outsourced and founder-run. 3) The Broad Sky deal (March 2022) was Fair Harbor's first institutional capital: $30.73M of primary equity sold to 24 investors (Form D), with $6.0M more authorized. At about 9% of Broad Sky's $335M Fund I, this was a company-sized check. 4) Broad Sky's ownership share is not disclosed. If Broad Sky holds a control stake of 60-80% with light leverage, the implied enterprise value is about $40-90M, or roughly 1.3-2.5x an estimated 2021 revenue of $30-40M. That is below the Chubbies precedent (~$130M, Sept 2021) but fits a brand about a quarter of Chubbies' size. 5) No BDC schedule-of-investments line, lender press release, credit rating or Form D for a debt vehicle mentions Fair Harbor. The capital structure is likely equity-heavy with at most an asset-based revolver for inventory, not a sponsor-style unitranche. 6) The move of the core FAIR HARBOR trademark into Fair Harbor Clothing Topco LLC (Jersey City) fits a PE holdco structure and possibly a lender collateral package; the USPTO assignment record would confirm this. 7) After the deal, management spent capital on category breadth (fleece, flannels, denim, sweaters, polos, kids), two owned stores (SoHo; Palm Beach Gardens by February 2023), B Corp/PBC status (score 94.3) and women's swim. 8) Women's was paused and liquidated at about 70% off by December 2025, and 38.5% of live variants carried markdowns in September 2026. Both point to margin pressure and inventory clean-up in FY2025-FY2026. 9) Newer growth levers are licensing and partnerships (FootJoy, collegiate, HBO's White Lotus, Discovery, Rothy's, Athletic Brewing) and a B2B custom program. These are capital-light and wholesale-like, and they follow the path Chubbies took, where retail and wholesale reached 52% of 2025 sales. 10) Fair Harbor's web traffic is about 20% of Chubbies' (Similarweb, summer 2026). Scaled against Chubbies' $59M DTC, that suggests Fair Harbor web DTC of about $10-12M. With 35-45% wholesale, B2B and stores, total 2025 revenue is plausibly about $20-35M, meaning growth has been modest since 2021. 11) With Chubbies' segment economics as the ceiling (58-60% gross margin, 14-18% segment margin at $113-123M) and Fair Harbor's smaller scale, store leases and 2025 women's write-downs, Fair Harbor's EBITDA is likely low single-digit millions (about $0-4M). 12) At about 4.5 years into the hold with no exit, the likely exit is a strategic sale to a brand-management or outdoor/lifestyle acquirer, where the IP holdco structure and licensing momentum would support value.",
   "estimate_table": [
    {
     "metric": "2020 net revenue",
@@ -101,7 +101,7 @@
    "No add-on acquisitions were found for 2022-2026."
   ],
   "next_pulls": [
-   "SBA PPP FOIA public_up_to_150k CSV: filter LoanNumber 5452127304 for JobsReported, ServicingLenderName and ForgivenessAmount/Date.",
+   "SBA PPP FOIA PPP loans up to $150k CSV: filter LoanNumber 5452127304 for JobsReported, ServicingLenderName and ForgivenessAmount/Date.",
    "USPTO Assignment Center: search reel/frame for reg 4994440 / serial 86599280 to identify conveyance (assignment vs security interest) and any lender.",
    "Delaware Division of Corporations: status and formation date for 'Fair Harbor Clothing Topco LLC' and 'Fair Harbor Clothing PBC'.",
    "NY UCC e-filing (ucc-efiling.dos.ny.gov) and Delaware UCC-11: debtor 'Fair Harbor Clothing' to find the ABL agent.",
@@ -164,7 +164,7 @@
     "fund_type": "Private Equity Fund",
     "executive": "Tyler Zachem"
    },
-   "what_it_tells_us": "Fund I closed at about $335M. A roughly $30M equity check in Fair Harbor would be about 9% of the fund, a normal platform-sized position for a $300M+ LMM fund. Fair Harbor was the fund's first consumer platform, completed about two months after Thomas Scientific in January 2022.",
+   "what_it_tells_us": "Fund I closed at about $335M. A roughly $30M equity check in Fair Harbor would be about 9% of the fund, a normal anchor-investment size for a $300M+ LMM fund. Fair Harbor was the fund's first consumer portfolio company, completed about two months after Thomas Scientific in January 2022.",
    "confidence": "high",
    "source_url": "https://www.sec.gov/Archives/edgar/data/1917706/000139834425008250/primary_doc.xml",
    "retrieved": "2026-09-24"
@@ -367,7 +367,7 @@
    "id": "FH-11",
    "entity": "Fair Harbor Clothing Inc.",
    "category": "other",
-   "title": "USPTO: December 2021 'lifestyle platform' intent-to-use filings mostly abandoned",
+   "title": "USPTO: December 2021 'lifestyle brand' intent-to-use filings mostly abandoned",
    "filed_or_dated": "Filed 2021-12-03; dead (Refused/Dismissed) per TSDR: FAIR PEAKS 2023-03-30, other listed serials 2025-10-01",
    "filer_or_source_agency": "USPTO tmsearch",
    "key_figures": {
@@ -384,7 +384,7 @@
      "IC24 towels"
     ]
    },
-   "what_it_tells_us": "Just before the Broad Sky close, management filed for a broad lifestyle and hospitality platform: home goods, a hotel and restaurant concept, a 'Fair Peaks' mountain line and a 'Fair Company' umbrella. Almost all of these lapsed, so the post-deal plan narrowed to apparel adjacencies. Only candles, water bottles and towels reached use. [Verified 2026-09-24: TSDR shows FAIR PEAKS (97154583/84) went dead 2023-03-30 and the FAIR HARBOR IC08/IC20/IC43 and THE FAIR COMPANY serials went dead 2025-10-01, not 2023-2024 as first stated.]",
+   "what_it_tells_us": "Just before the Broad Sky close, management filed for a broad lifestyle and hospitality brand: home goods, a hotel and restaurant concept, a 'Fair Peaks' mountain line and a 'Fair Company' umbrella. Almost all of these lapsed, so the post-deal plan narrowed to apparel adjacencies. Only candles, water bottles and towels reached use. [Verified 2026-09-24: TSDR shows FAIR PEAKS (97154583/84) went dead 2023-03-30 and the FAIR HARBOR IC08/IC20/IC43 and THE FAIR COMPANY serials went dead 2025-10-01, not 2023-2024 as first stated.]",
    "confidence": "high",
    "source_url": "https://tmsearch.uspto.gov/search/search-information",
    "retrieved": "2026-09-24"
@@ -515,7 +515,7 @@
    "category": "other",
    "title": "New categories, collaborations and channels 2022-2026 (site collections and landing pages)",
    "filed_or_dated": "2022-2026",
-   "filer_or_source_agency": "fairharborclothing.com collections.json (published_at) and Wayback page index",
+   "filer_or_source_agency": "fairharborclothing.com collections.json (publish date) and Wayback page index",
    "key_figures": {
     "golf_shop": "collection 2023-02 (59 products)",
     "scheels_partnership": "landing page 2023-06",
@@ -530,7 +530,7 @@
     "resort_collection_2026": "14 products",
     "acquisitions_found": 0
    },
-   "what_it_tells_us": "Post-deal growth has come from partnerships and licensing (FootJoy golf, collegiate, HBO/Discovery IP, Rothy's), corporate and B2B custom orders, and specialty/sporting-goods wholesale (Scheels). No acquisitions turned up, so Fair Harbor has grown organically as a platform with no add-ons.",
+   "what_it_tells_us": "Post-deal growth has come from partnerships and licensing (FootJoy golf, collegiate, HBO/Discovery IP, Rothy's), corporate and B2B custom orders, and specialty/sporting-goods wholesale (Scheels). No acquisitions turned up, so Fair Harbor has grown organically as a company with no add-ons.",
    "confidence": "high",
    "source_url": "https://fairharborclothing.com/collections.json",
    "retrieved": "2026-09-24"
@@ -540,7 +540,7 @@
    "entity": "Fair Harbor",
    "category": "other",
    "title": "Owned retail stores: SoHo (Prince St) and Palm Beach Gardens (second store)",
-   "filed_or_dated": "SoHo page 2022-05/07; Palm Beach Gardens page captured 2023-02-08",
+   "filed_or_dated": "SoHo page May to July 2022; Palm Beach Gardens page captured 2023-02-08",
    "filer_or_source_agency": "fairharborclothing.com store pages (Wayback)",
    "key_figures": {
     "store_1": "SoHo, NYC (store-page-prince-st / soho pages, 2022)",

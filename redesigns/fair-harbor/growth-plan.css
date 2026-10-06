@@ -1,0 +1,125 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Fair Harbor value-creation growth plan · page layout only
+   Every surface is a system component (.sys-card, .sys-kpi, .sys-grid,
+   .sys-table, .sys-chip, .sys-note). This file only lays out the bespoke
+   pieces inside those cards: the KPI bars, the template bars, the phased map,
+   lever tracks, deploy-time bars, add-on rows, the roadmap chart and the
+   returns calculator. Accent = --co (Fair Harbor) via body[data-co="fh"].
+   ═══════════════════════════════════════════════════════════════════════════ */
+main *,main *::before,main *::after{box-sizing:border-box}
+.pb-block{margin-top:var(--sys-gap)}
+.pb-tabs{margin-bottom:var(--sys-sp-5)}
+.pb-tabs .sys-chip{cursor:pointer}
+.pb-tabs .sys-chip .sys-num{font-size:11px;opacity:.7}
+.sys-card .sys-table-wrap{box-shadow:none}
+
+/* hero: copy left, KPI board right (top-aligned) */
+.pb-hero-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sys-sp-6);align-items:start}
+@media (min-width:1020px){.pb-hero-grid{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:var(--sys-sp-7)}}
+.pb-hero-grid>*{min-width:0}
+.pb-board-label{justify-content:space-between}
+.pb-kpis{margin-top:0;grid-template-columns:repeat(2,minmax(0,1fr))}
+.pb-kpis .sys-kpi{padding:14px 16px;gap:6px}
+.pb-kpis .sys-kpi-value{font-size:clamp(20px,2vw,26px)}
+.pb-bar{height:4px;background:var(--sys-bg-3);border-radius:var(--sys-r-pill);overflow:hidden}
+.pb-bar i{display:block;height:100%;background:var(--co);border-radius:var(--sys-r-pill)}
+
+/* numbered card lists (memo, template steps) */
+.pb-list{list-style:none;margin:0;padding:0}
+
+/* template vs plan bars */
+.pb-vs{display:grid;gap:10px;margin-top:4px}
+.pb-vs-row{display:grid;grid-template-columns:130px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13.5px}
+.pb-vs-row .lab{color:var(--sys-ink-2);font-weight:600}
+.pb-vs-row .val{font:600 12.5px var(--sys-mono);white-space:nowrap}
+.pb-track{position:relative;height:10px;background:var(--sys-bg-3);border-radius:var(--sys-r-pill);overflow:hidden}
+.pb-track i{position:absolute;left:0;top:0;bottom:0;border-radius:var(--sys-r-pill);background:var(--sys-ink-2)}
+.pb-vs--fh .pb-track i{background:var(--co)}
+
+/* phased map */
+.pb-map{display:grid;grid-template-columns:minmax(0,1fr) 360px;padding:0;gap:0;overflow:hidden}
+.pb-map>*{min-width:0}
+#map{height:520px;background:var(--sys-bg-3);z-index:1}
+.pb-phase{display:flex;flex-direction:column;gap:10px;padding:clamp(18px,2vw,24px);border-left:1px solid var(--sys-line);overflow:auto;max-height:520px}
+.pb-phase .sys-table{font-size:13px}
+.pb-phase .sys-table td{padding:8px 10px}
+.pb-phase small,.pb-sub{font:500 var(--sys-fs-2xs) var(--sys-mono);color:var(--sys-mute)}
+.pb-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--sys-ink-2);margin-top:var(--sys-sp-4)}
+.pb-legend span{display:inline-flex;align-items:center;gap:6px}
+.pb-legend i{width:11px;height:11px;border-radius:50%;display:inline-block;border:2px solid var(--sys-surface);box-shadow:0 0 0 1px var(--sys-line-2)}
+.pb-legend i.reg{background:color-mix(in srgb,var(--co) 25%,transparent);border-color:var(--co)}
+.leaflet-container{font-family:var(--sys-font)}
+.leaflet-tooltip.fh-tip{font-size:12px;border-radius:var(--sys-r-sm);padding:6px 8px}
+
+/* levers */
+.pb-lever-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;align-items:baseline}
+.pb-lever-top .vals{font:600 13px var(--sys-mono);white-space:nowrap}
+.pb-lever-top .vals b{color:var(--co-ink)}
+.pb-ltrack{position:relative;height:14px;background:var(--sys-bg-3);border-radius:var(--sys-r-pill);margin:4px 0 0}
+.pb-ltrack .base{position:absolute;top:0;bottom:0;left:0;background:var(--sys-mute-2);border-radius:var(--sys-r-pill)}
+.pb-ltrack .base.bench,.pb-hatch{background:repeating-linear-gradient(135deg,var(--sys-mute-2) 0 4px,var(--sys-bg-3) 4px 8px);box-shadow:inset 0 0 0 1px var(--sys-mute-2)}
+.pb-hatch{display:inline-block;width:22px;height:10px;border-radius:var(--sys-r-xs);vertical-align:middle;margin-right:6px}
+.pb-ltrack .tgt{position:absolute;top:0;bottom:0;border-radius:var(--sys-r-pill);background:var(--co);opacity:.9}
+.pb-ltrack.down .tgt{background:var(--sys-orange)}
+.pb-ltrack .mk{position:absolute;top:-4px;width:3px;height:22px;background:var(--sys-ink);border-radius:var(--sys-r-xs)}
+.pb-ltrack .cp{position:absolute;top:-2px;width:2px;height:18px;background:var(--sys-ink);opacity:.55;border-radius:var(--sys-r-xs)}
+.pb-lpath{display:flex;flex-wrap:wrap;gap:2px 6px;font:600 11.5px var(--sys-mono);color:var(--sys-ink-2)}
+.pb-lpath i{font-style:normal;color:var(--sys-mute);font-weight:500}
+.pb-lpath .sep{color:var(--sys-line-2)}
+
+/* agents */
+.pb-agent{transition:opacity .2s,transform .2s}
+.pb-agent.dim{opacity:.28;transform:scale(.985)}
+.pb-ic{width:28px;height:28px;border-radius:var(--sys-r-sm);background:var(--co-soft);display:grid;place-items:center;flex-shrink:0}
+.pb-ic svg{stroke:var(--sys-ink)}
+.pb-metric{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;padding:8px 12px;border-radius:var(--sys-r-sm);background:var(--sys-surface-2);font-size:13px;color:var(--sys-ink-2)}
+.pb-metric b{font:600 20px var(--sys-mono);letter-spacing:-.02em;color:var(--sys-ink)}
+.pb-wk{display:grid;grid-template-columns:72px minmax(0,1fr);gap:8px;align-items:center;font:600 11px var(--sys-mono);color:var(--sys-mute)}
+.pb-wk .t{position:relative;height:6px;background:var(--sys-bg-3);border-radius:var(--sys-r-pill)}
+.pb-wk .t i{position:absolute;top:0;bottom:0;background:var(--sys-warn);border-radius:var(--sys-r-pill)}
+
+/* add-on rows */
+.pb-units{display:flex;flex-direction:column}
+.pb-unit{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;padding:14px 0;border-top:1px solid var(--sys-line)}
+.pb-unit:first-child{border-top:0;padding-top:0}
+.pb-unit .delta{font:600 15px var(--sys-mono);text-align:right;white-space:nowrap}
+.pb-unit .delta small{display:block;font:500 11px var(--sys-mono);color:var(--sys-mute);white-space:normal}
+.pb-unit .t{grid-column:1/-1;height:8px;background:var(--sys-bg-3);border-radius:var(--sys-r-pill);position:relative;overflow:hidden}
+.pb-unit .t i{position:absolute;top:0;bottom:0;left:0;background:var(--sys-mute-2)}
+.pb-unit .t b{position:absolute;top:0;bottom:0;background:var(--co)}
+.pb-dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:13.5px;margin:0}
+.pb-dl dt{color:var(--sys-mute)} .pb-dl dd{margin:0;font-family:var(--sys-mono);font-size:13px;text-align:right}
+
+/* financing */
+.pb-chart{width:100%;height:auto;display:block}
+.pb-range label{display:block;font-size:13px;font-weight:600;color:var(--sys-ink-2);margin:4px 0 4px}
+.pb-range input[type=range]{width:100%;accent-color:var(--co-ink)}
+.pb-range .row{display:flex;justify-content:space-between;font:600 12.5px var(--sys-mono)}
+.pb-calc-kpis{margin-top:var(--sys-sp-3)}
+.pb-calc-kpis .sys-kpi{padding:14px 16px}
+.pb-calc-kpis .sys-kpi-value{font-size:clamp(20px,2vw,24px)}
+.sys-table tr.hl td{background:var(--co-soft)}
+.sys-table td small{font:500 var(--sys-fs-2xs) var(--sys-mono);color:var(--sys-mute)}
+
+/* responsive */
+@media (max-width:1020px){
+  .pb-map{grid-template-columns:minmax(0,1fr)}
+  .pb-phase{border-left:0;border-top:1px solid var(--sys-line);max-height:none}
+}
+@media (max-width:720px){
+  .pb-vs-row{grid-template-columns:100px minmax(0,1fr) auto}
+  #map{height:380px}
+  .pb-lever-top .vals{white-space:normal}
+}
+/* long chip labels (analog figures, owners, geography) wrap inside narrow cards */
+.sys-card .sys-chip{white-space:normal;max-width:100%;padding-top:4px;padding-bottom:4px}
+/* memo: one card, numbered points in two columns */
+.pb-memo{list-style:none;margin:0;padding:0;counter-reset:m;columns:2 360px;column-gap:var(--sys-sp-7)}
+.pb-memo li{counter-increment:m;position:relative;break-inside:avoid;padding:0 0 var(--sys-sp-4) 38px;font-size:15px;line-height:1.6;color:var(--sys-ink-2)}
+.pb-memo li::before{content:counter(m,decimal-leading-zero);position:absolute;left:0;top:2px;font:600 var(--sys-fs-xs) var(--sys-mono);color:var(--co-ink)}
+#versus-src{margin-bottom:0}
+#road-table td:first-child,#exit-box td:first-child{white-space:nowrap}
+@media (max-width:720px){
+  .pb-unit{grid-template-columns:minmax(0,1fr)}
+  .pb-unit .delta{text-align:left}
+}

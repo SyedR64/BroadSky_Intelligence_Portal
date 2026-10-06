@@ -3,7 +3,7 @@
     "dataset": "CET New England Opportunity Radar",
     "generated": "2026-09-24",
     "portfolio_company": "Commonwealth Electrical Technologies (CET) - Broad Sky Partners; add-ons NuWave Energy Solutions (Oct 2025) and Horton Electrical Services (Sep 15, 2026)",
-    "method": "Pulled funded/ranked wastewater and pump-station projects from the CT DEEP Clean Water Fund FY26-27 draft priority list, the Maine DEP FFY2026 CWSRF Intended Use Plan and the Vermont 2026 CWSRF legislative report, then scanned live public solicitations on BidNet Direct (MA, CT, RI, NH, ME, VT), the Vermont Business Registry, municipal Bonfire portals and owner project pages. Federal awards came from the USASpending API (spending_by_award, NAICS 238210/237110/237130/236220, New England place of performance, 2026 start dates). EV, solar and storage programs came from state agency and program-administrator pages. Each item is scored 0-100 on fit with CET's capabilities (with extra weight for Horton's wastewater, pump-station and generator work), distance from Worcester/Taunton/Connecticut crews, how well-defined the scope is, and timing.",
+    "method": "Pulled funded/ranked wastewater and pump-station projects from the CT DEEP Clean Water Fund FY26-27 draft priority list, the Maine DEP FFY2026 CWSRF Intended Use Plan and the Vermont 2026 CWSRF legislative report, then scanned live public solicitations on BidNet Direct (MA, CT, RI, NH, ME, VT), the Vermont Business Registry, municipal Bonfire portals and owner project pages. Federal awards came from the USASpending API (awards search, NAICS 238210/237110/237130/236220, New England place of performance, 2026 start dates). EV, solar and storage programs came from state agency and program-administrator pages. Each item is scored 0-100 on fit with CET's capabilities (with extra weight for Horton's wastewater, pump-station and generator work), distance from Worcester/Taunton/Connecticut crews, how well-defined the scope is, and timing.",
     "sources_summary": [
       "CT DEEP Clean Water Fund Priority List FY2026-2027 (portal.ct.gov)",
       "Maine DEP CWSRF Final IUP FFY2026 (maine.gov)",
@@ -19,8 +19,8 @@
     "caveats": [
       "mass.gov (MassDEP 2026 CWSRF IUP / priority-list CSV), COMMBUYS, CTsource/BizNet (CAPTCHA), RI Purchasing and NH DAS blocked automated access, so the MA SRF project list is not itemized. Pull the MassDEP 2026 IUP Tables 3-4 by hand; the IUP covers 76 CW projects worth about $1.02B.",
       "The CT CWF list is the 12/29/2025 DRAFT (public comment closed 2/27/2026). Final amounts and fundable status may differ. Values are requested amounts, not bid values.",
-      "BidNet Direct hides the issuing organization and solicitation number from unregistered users. Where the owner could not be confirmed, the item says so and lat/lon are state or region centroids (geo_precision 'state'/'region'/'statewide'). Register on BidNet to confirm these before bidding.",
-      "Items marked stage 'awarded' include some past-due bids whose award could not be verified. Their fit_rationale says so. Treat them as sub-contract or competitor intelligence, not open bids.",
+      "BidNet Direct hides the issuing organization and solicitation number from unregistered users. Where the owner could not be confirmed, the item says so and lat/lon are state or region centroids (location precision 'state'/'region'/'statewide'). Register on BidNet to confirm these before bidding.",
+      "Items marked stage 'awarded' include some past-due bids whose award could not be verified. Their fit rationale says so. Treat them as sub-contract or competitor intelligence, not open bids.",
       "The web-search budget ran out partway through. Categories not fully covered: MSBA school projects, DCAMM filed sub-bids, private data-center, life-science and industrial electrical packages, MBTA/CTDOT/Massport capital programs beyond the two Massport items, and hospital/university energy retrofits (Mass Save custom). Treat this as a first pass on those areas.",
       "Lat/lon are approximate town centroids unless marked 'address'.",
       "All opportunities are in New England, in line with CET CEO guidance (no New York City).",
@@ -2076,7 +2076,7 @@
         "Suffolk Construction (GC)"
       ],
       "source_url": "https://www.usaspending.gov/award/CONT_AWD_36C24126C0018_3600_-NONE-_-NONE-",
-      "source_name": "USASpending.gov API (spending_by_award)",
+      "source_name": "USASpending.gov API (awards search)",
       "retrieved": "2026-09-24"
     },
     {
@@ -2140,7 +2140,7 @@
         "Whiting-Turner Contracting Co. (GC)"
       ],
       "source_url": "https://www.usaspending.gov/award/CONT_AWD_70Z04726FPCNI0016_7008_70Z04723DPCNI0006_7008",
-      "source_name": "USASpending.gov API (spending_by_award)",
+      "source_name": "USASpending.gov API (awards search)",
       "retrieved": "2026-09-24"
     },
     {
@@ -2269,7 +2269,7 @@
         "Tocci Construct LLC (GC)"
       ],
       "source_url": "https://www.usaspending.gov/award/CONT_AWD_47PB5126C0013_4740_-NONE-_-NONE-",
-      "source_name": "USASpending.gov API (spending_by_award)",
+      "source_name": "USASpending.gov API (awards search)",
       "retrieved": "2026-09-24"
     },
     {
@@ -2301,7 +2301,7 @@
         "Sawtooth Construction JV II LLC (GC)"
       ],
       "source_url": "https://www.usaspending.gov/award/CONT_AWD_36C77626C0067_3600_-NONE-_-NONE-",
-      "source_name": "USASpending.gov API (spending_by_award)",
+      "source_name": "USASpending.gov API (awards search)",
       "retrieved": "2026-09-24"
     },
     {
@@ -2607,7 +2607,7 @@
         "Armitage SAI JV (MACC holder)"
       ],
       "source_url": "https://www.usaspending.gov/award/CONT_AWD_N4008526F0970_9700_N4008522D0054_9700",
-      "source_name": "USASpending.gov API (spending_by_award)",
+      "source_name": "USASpending.gov API (awards search)",
       "retrieved": "2026-09-24"
     },
     {
@@ -2667,7 +2667,7 @@
         "Boissonneault Electric Corp"
       ],
       "source_url": "https://www.usaspending.gov/award/CONT_AWD_70Z0G126CCGA00003_7008_-NONE-_-NONE-",
-      "source_name": "USASpending.gov API (spending_by_award)",
+      "source_name": "USASpending.gov API (awards search)",
       "retrieved": "2026-09-24"
     },
     {
@@ -2701,7 +2701,7 @@
         "Cianbro Harkins Joint Venture (GC)"
       ],
       "source_url": "https://www.usaspending.gov/award/CONT_AWD_70B01C26F00000386_7014_70Z04723DPCNI0009_7008",
-      "source_name": "USASpending.gov API (spending_by_award)",
+      "source_name": "USASpending.gov API (awards search)",
       "retrieved": "2026-09-24"
     },
     {
@@ -2794,7 +2794,7 @@
         "Emmaty, Inc."
       ],
       "source_url": "https://www.usaspending.gov/award/CONT_AWD_70Z0G126CCCOD0001_7008_-NONE-_-NONE-",
-      "source_name": "USASpending.gov API (spending_by_award)",
+      "source_name": "USASpending.gov API (awards search)",
       "retrieved": "2026-09-24"
     },
     {

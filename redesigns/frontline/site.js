@@ -5,7 +5,9 @@ const store = {
   get(k, d = null) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* private mode */ } },
 };
-export const ACCENT = '#4b3bff';
+/* Frontline accent, read from the design-system token so JS-drawn marks match the page. */
+const tok = (n, d) => { try { return getComputedStyle(document.documentElement).getPropertyValue(n).trim() || d; } catch { return d; } };
+export const ACCENT = tok('--co-fl', '#9d7bff');
 const money = n => '$' + (Math.abs(n) >= 1e9 ? (n / 1e9).toFixed(1) + 'B' : Math.abs(n) >= 1e6 ? (n / 1e6).toFixed(Math.abs(n) >= 1e8 ? 0 : 1) + 'M' : Math.abs(n) >= 1e3 ? Math.round(n / 1e3) + 'K' : Math.round(n));
 const num = n => Math.round(n).toLocaleString('en-US');
 
@@ -38,9 +40,9 @@ export function tierOf(score, answered = 10) {
 export function ring(el, value, { label = 'of 100', color, size = 150, stroke = 12, max = 100 } = {}) {
   if (!el) return;
   const r = (size - stroke) / 2, c = 2 * Math.PI * r, v = value == null ? 0 : Math.max(0, Math.min(max, value));
-  const col = color || (value == null ? 'var(--line-2)' : v >= 85 ? 'var(--ok)' : v >= 70 ? 'var(--warn)' : v >= 50 ? '#ef6b3a' : 'var(--bad)');
+  const col = color || (value == null ? 'var(--sys-line-2)' : v >= 85 ? 'var(--sys-good)' : v >= 70 ? 'var(--sys-warn)' : 'var(--sys-bad)');
   el.style.width = el.style.height = size + 'px';
-  el.innerHTML = `<svg viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="var(--bg-3)" stroke-width="${stroke}"/><circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${col}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - v / max)}" style="transition:stroke-dashoffset .6s ease,stroke .3s"/></svg><div class="v"><div><b>${value == null ? '—' : Math.round(v)}</b><span>${label}</span></div></div>`;
+  el.innerHTML = `<svg viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="var(--sys-bg-3)" stroke-width="${stroke}"/><circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" style="stroke:${col}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - v / max)}" style="transition:stroke-dashoffset .6s ease,stroke .3s"/></svg><div class="v"><div><b>${value == null ? '—' : Math.round(v)}</b><span>${label}</span></div></div>`;
 }
 
 /* ── Chat FAQ (shared) ───────────────────────────────────────────────────── */
@@ -63,12 +65,7 @@ export const SUGGESTIONS = ['What is included in the 24/7 service desk?', 'How d
 
 /* ── Common: banner, nav, reveal, counters, chat ─────────────────────────── */
 export function common({ Chat, page = 'home', suggestions } = {}) {
-  const banner = $('#concept');
-  try { if (sessionStorage.getItem('fl-concept-x') === '1') banner?.classList.add('gone'); } catch { /* ignore */ }
-  $('#concept-x')?.addEventListener('click', () => { banner.classList.add('gone'); try { sessionStorage.setItem('fl-concept-x', '1'); } catch { /* ignore */ } });
-  const nav = $('#nav'); const onScroll = () => nav?.classList.toggle('scrolled', window.scrollY > 8); onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
-  const burger = $('#burger'); burger?.addEventListener('click', () => { const o = nav.classList.toggle('open'); burger.setAttribute('aria-expanded', o); });
-  $$('#nav nav a').forEach(a => a.addEventListener('click', () => { nav.classList.remove('open'); burger?.setAttribute('aria-expanded', 'false'); }));
+  let inst = null;
   // reveal
   const els = $$('.rv');
   if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -84,11 +81,12 @@ export function common({ Chat, page = 'home', suggestions } = {}) {
   // chat
   if (Chat) {
     try {
-      Chat.mount(null, { persona: 'fl', mode: 'floating', theme: 'light', color: ACCENT, name: 'Frontline advisor',
+      inst = Chat.mount(null, { persona: 'fl', mode: 'floating', theme: 'light', color: ACCENT, name: 'Frontline advisor',
         greeting: page === 'os' ? 'Ask about FirmOS: the Tier-0 AI desk, the security score card, LEDES pre-flight, the client portal or the value-creation math.' : 'I help law firms scope managed IT, the 24/7 service desk, cybersecurity and eBilling. Ask about coverage, security posture or an assessment.',
         faq: FAQ, suggestions: suggestions || SUGGESTIONS });
     } catch (e) { console.warn('chat mount failed', e); }
   }
+  return inst;
 }
 
 /* ── Home page ───────────────────────────────────────────────────────────── */
@@ -108,7 +106,7 @@ const fmtTime = tz => { try { return new Intl.DateTimeFormat('en-US', { timeZone
 const onShift = tz => { const { h, wd } = localHour(tz); return h >= 8 && h < 19 && wd !== 'Sat' && wd !== 'Sun'; };
 
 function heroConsole() {
-  ring($('#hero-ring'), 87, { label: 'posture' , color: 'var(--accent)' });
+  ring($('#hero-ring'), 87, { label: 'posture', color: 'var(--co)' });
   const feed = $('#hero-feed'); if (!feed) return;
   const T = [['t0', 'T0', 'MFA reset for associate, NYC office', '0:31'], ['l1', 'L1', 'iManage workspace access, M&A team', '3:48'], ['t0', 'T0', 'Password unlock, Toledo staff', '0:22'], ['t0', 'T0', 'Printer queue cleared, 14th floor', '0:40'], ['l2', 'L2', 'VPN appliance patch, London', '22:10'], ['t0', 'T0', 'Outlook profile rebuild, partner', '1:05'], ['l1', 'L1', 'Elite time-entry sync error', '6:12'], ['t0', 'T0', 'New-hire laptop provisioning started', '0:55']];
   let i = 0; const now = new Date();
@@ -134,7 +132,7 @@ function assessment() {
     ring($('#as-ring'), shown, { label: answered < 10 && answered ? `${answered}/10 answered` : 'of 100', size: 168, stroke: 13 });
     const t = tierOf(shown ?? 0, answered); const tierEl = $('#as-tier'); tierEl.className = 'tier ' + t.cls; tierEl.textContent = answered ? t.label + (answered < 10 ? ' (provisional)' : '') : t.label;
     const gaps = QUESTIONS.filter(q => ans[q.id] != null && ans[q.id] < 1).map(q => ({ ...q, loss: q.w * (1 - ans[q.id]) })).sort((a, b) => b.loss - a.loss).slice(0, 3);
-    $('#as-gaps').innerHTML = gaps.length ? `<h4>Your top ${gaps.length === 1 ? 'gap' : gaps.length + ' gaps'}</h4>${gaps.map((g, i) => `<div class="gap"><span class="n">${i + 1}</span><div>${g.fix}<small>+${Math.round(g.loss)} pts · closed by <b>${g.svc}</b></small></div></div>`).join('')}` : (answered ? '<h4>No gaps flagged yet</h4><p class="src">Every control you answered is in place.</p>' : '');
+    $('#as-gaps').innerHTML = gaps.length ? `<h4>Your top ${gaps.length === 1 ? 'gap' : gaps.length + ' gaps'}</h4>${gaps.map((g, i) => `<div class="gap"><span class="n">${i + 1}</span><div>${g.fix}<small>+${Math.round(g.loss)} pts · closed by <b>${g.svc}</b></small></div></div>`).join('')}` : (answered ? '<h4>No gaps flagged yet</h4><p class="sys-src">Every control you answered is in place.</p>' : '');
     const em = $('#as-empty'); if (em) em.hidden = answered > 0;
     store.set('fl-posture', ans);
   };
@@ -169,14 +167,14 @@ function hubs() {
   const list = $('#hub-list'); if (!list) return;
   const draw = () => {
     let on = 0;
-    list.innerHTML = HUBS.map(h => { const s = onShift(h.tz); if (s) on++; return `<button class="hub" type="button" data-id="${h.id}"><span class="st ${s ? 'on' : ''}" aria-label="${s ? 'in business hours' : 'after hours'}"></span><span class="nm">${h.name}${h.hq ? ' <span class="badge" style="padding:1px 6px;font-size:9.5px">HQ</span>' : ''}<small>${h.role}</small></span><span class="tm">${fmtTime(h.tz)}<small>${localHour(h.tz).wd}</small></span></button>`; }).join('');
+    list.innerHTML = HUBS.map(h => { const s = onShift(h.tz); if (s) on++; return `<button class="hub" type="button" data-id="${h.id}"><span class="st ${s ? 'on' : ''}" aria-label="${s ? 'in business hours' : 'after hours'}"></span><span class="nm">${h.name}${h.hq ? ' <span class="hq">HQ</span>' : ''}<small>${h.role}</small></span><span class="tm">${fmtTime(h.tz)}<small>${localHour(h.tz).wd}</small></span></button>`; }).join('');
     ['#on-count', '#hubs-on'].forEach(s => { const e = $(s); if (e) e.textContent = on; });
     return on;
   };
   draw(); setInterval(draw, 30000);
   // lazy-load Leaflet when the map nears the viewport
   const box = $('#fl-map'); let started = false;
-  const start = () => { if (started) return; started = true; loadLeaflet().then(() => drawMap(box)).catch(e => { console.warn('map unavailable', e); box.innerHTML = '<p class="src" style="padding:20px">Map unavailable offline. The hub clock lists every location.</p>'; }); };
+  const start = () => { if (started) return; started = true; loadLeaflet().then(() => drawMap(box)).catch(e => { console.warn('map unavailable', e); box.innerHTML = '<p class="sys-src" style="padding:20px">Map unavailable offline. The hub clock lists every location.</p>'; }); };
   if ('IntersectionObserver' in window) { const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { start(); io.disconnect(); } }, { rootMargin: '400px' }); io.observe(box); } else start();
   list.addEventListener('click', e => { const b = e.target.closest('.hub'); if (!b || !window._flMap) return; const h = HUBS.find(x => x.id === b.dataset.id); window._flMap.flyTo([h.lat, h.lon], 5, { duration: .8 }); });
 }
@@ -207,16 +205,17 @@ const INSIGHTS = [
   { cat: 'Revenue cycle', type: 'Benchmark', min: 5, t: '62 days to 50: how eBilling automation shortens the cash cycle', d: 'What the fastest-paying firms do differently between invoice approval and cash application.', src: 'https://www.elite.com/insights/news/new-elite-research-law-firms-see-64-climb-in-rejection-rates-as-client-ai-billing-scrutiny-advances' },
   { cat: 'Service desk', type: 'Event', ic: 'i-users', min: 2, t: 'Meet Frontline at ILTACON and ALA', d: 'Tabletop demos, the FirmOS posture score and a CIO roundtable on co-managed IT. Book time with the team.' },
 ];
-const ART = { 'Revenue cycle': ['#efedff', '#4b3bff', 'i-invoice'], 'Security': ['#0b0b1e', '#a99fff', 'i-shield'], 'Service desk': ['#eef0f6', '#4b3bff', 'i-desk'], 'AI': ['#14142e', '#7cf0c0', 'i-spark'] };
-function artSvg(x) { const [bg, fg, ic0] = ART[x.cat] || ART['Service desk']; const ic = x.ic || ic0; const dark = bg.startsWith('#0') || bg.startsWith('#1'); let g = ''; for (let k = 0; k < 7; k++) g += `<circle cx="200" cy="65" r="${26 + k * 22}" fill="none" stroke="${fg}" stroke-opacity="${(dark ? .32 : .22) - k * .035}"/>`; return `<svg viewBox="0 0 400 130" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="400" height="130" fill="${bg}"/>${g}<rect x="176" y="41" width="48" height="48" rx="14" fill="${dark ? '#1d1d3f' : '#fff'}" stroke="${fg}" stroke-opacity=".35"/><use href="#${ic}" x="188" y="53" width="24" height="24" color="${fg}"/></svg>`; }
+const MIX = (c, p, base = 'var(--sys-surface)') => `color-mix(in srgb,${c} ${p}%,${base})`;
+const ART = { 'Revenue cycle': [MIX('var(--co)', 12), 'var(--co)', 'i-invoice', false], 'Security': ['var(--sys-navy)', MIX('var(--co)', 80, '#fff'), 'i-shield', true], 'Service desk': ['var(--sys-bg-3)', 'var(--co)', 'i-desk', false], 'AI': ['var(--sys-ink)', 'var(--sys-good)', 'i-spark', true] };
+function artSvg(x) { const [bg, fg, ic0, dark] = ART[x.cat] || ART['Service desk']; const ic = x.ic || ic0; let g = ''; for (let k = 0; k < 7; k++) g += `<circle cx="200" cy="65" r="${26 + k * 22}" style="fill:none;stroke:${fg};stroke-opacity:${((dark ? .32 : .22) - k * .035).toFixed(3)}"/>`; return `<svg viewBox="0 0 400 130" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="400" height="130" style="fill:${bg}"/>${g}<rect x="176" y="41" width="48" height="48" rx="14" style="fill:${dark ? MIX('var(--sys-navy)', 80, '#fff') : 'var(--sys-surface)'};stroke:${fg};stroke-opacity:.35"/><use href="#${ic}" x="188" y="53" width="24" height="24" style="color:${fg}"/></svg>`; }
 function insights() {
   const grid = $('#in-grid'), bar = $('#in-filters'); if (!grid) return;
   const cats = ['All', ...new Set(INSIGHTS.map(x => x.cat))]; let cur = 'All', savedOnly = false;
   const saved = new Set(store.get('fl-saved', []) || []);
-  bar.innerHTML = cats.map(c => `<button type="button" data-c="${c}" aria-pressed="${c === cur}">${c}</button>`).join('') + `<button type="button" class="saved" data-s="1" aria-pressed="false">Saved (<span id="sv-n">${saved.size}</span>)</button>`;
+  bar.innerHTML = cats.map(c => `<button class="sys-chip" type="button" data-c="${c}" aria-pressed="${c === cur}">${c}</button>`).join('') + `<button class="sys-chip" type="button" data-s="1" aria-pressed="false"><span>Saved (<span id="sv-n">${saved.size}</span>)</span></button>`;
   const draw = () => {
     const rows = INSIGHTS.map((x, i) => ({ ...x, i })).filter(x => (cur === 'All' || x.cat === cur) && (!savedOnly || saved.has(x.i)));
-    grid.innerHTML = rows.length ? rows.map(x => `<article class="card post"><div class="art">${artSvg(x)}</div><div class="bd"><div class="meta"><span class="type">${x.type}</span><span>${x.cat}</span><span>· ${x.min} min</span></div><h3>${x.t}</h3><p>${x.d}</p><div class="ft"><span class="src">${x.src ? `<a href="${x.src}" target="_blank" rel="noopener">Data source</a>` : 'Concept article'}</span><button class="bm" type="button" data-i="${x.i}" aria-pressed="${saved.has(x.i)}" aria-label="${saved.has(x.i) ? 'Remove from saved' : 'Save for later'}"><svg><use href="#i-mark"/></svg></button></div></div></article>`).join('') : '<p class="src">Nothing saved yet. Use the bookmark on any piece.</p>';
+    grid.innerHTML = rows.length ? rows.map(x => `<article class="sys-card post"><div class="art">${artSvg(x)}</div><div class="bd"><span class="sys-card-label"><span class="type">${x.type}</span><span>· ${x.cat} · ${x.min} min</span></span><h3 class="sys-card-title">${x.t}</h3><p class="sys-card-body">${x.d}</p><div class="sys-card-foot">${x.src ? `<a href="${x.src}" target="_blank" rel="noopener">Elite research →</a>` : '<span class="sys-muted">Concept article</span>'}<button class="bm" type="button" data-i="${x.i}" aria-pressed="${saved.has(x.i)}" aria-label="${saved.has(x.i) ? 'Remove from saved' : 'Save for later'}"><svg aria-hidden="true"><use href="#i-mark"/></svg></button></div></div></article>`).join('') : '<p class="sys-src">Nothing saved yet. Use the bookmark on any piece.</p>';
     $('#sv-n').textContent = saved.size;
   };
   bar.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.s) { savedOnly = !savedOnly; b.setAttribute('aria-pressed', savedOnly); } else { cur = b.dataset.c; $$('button[data-c]', bar).forEach(x => x.setAttribute('aria-pressed', x === b)); } draw(); });
@@ -231,13 +230,22 @@ function faqList(esc) {
 
 async function rationale({ Data, esc }) {
   const el = $('#refs'); if (!el) return;
-  const HERE = { 'ref-fl-vantatrust': ['Trust panel with mapped frameworks, "Updated X min ago" live chips, advisor chat over FAQ', 'Trust strip, hero console, chat'], 'ref-fl-harbor': ['One editorial brand over IT + security + RCM; filterable insights with type labels and bookmarks', 'Services, Insights'], 'ref-fl-its': ['ROI calculator and self-assessment; separate sales vs support in the utility bar; 3-step engagement', 'Assessment, ROI, utility bar, steps'], 'ref-fl-kraftkennedy': ['Client-portal link in the utility bar; events and security bulletins as content', 'Utility bar, Insights'] };
+  const HERE = { 'ref-fl-vantatrust': ['Trust panel with mapped frameworks, "Updated X min ago" live chips, advisor chat over FAQ', 'Trust strip, hero console, chat'], 'ref-fl-harbor': ['One editorial brand over IT + security + RCM; filterable insights with type labels and bookmarks', 'Services, Insights'], 'ref-fl-its': ['ROI calculator and self-assessment; one clear sales call to action; 3-step engagement', 'Assessment, ROI, steps'], 'ref-fl-kraftkennedy': ['Client-portal links; events and security bulletins as content', 'Hero, Insights'] };
   let refs = [];
   try { const d = await Data.load('research/design_refs'); refs = (d?.items || []).filter(r => [].concat(r.applies_to || []).includes('fl')); } catch (e) { console.debug(e); }
-  if (!refs.length) { el.innerHTML = '<p class="src">Design reference dataset not available.</p>'; return; }
+  if (!refs.length) { el.innerHTML = '<p class="sys-src">Design reference dataset not available.</p>'; return; }
   const order = ['ref-fl-vantatrust', 'ref-fl-harbor', 'ref-fl-its', 'ref-fl-kraftkennedy'];
   refs.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
-  el.innerHTML = refs.map(r => `<article class="card ref"><div class="hd"><div><h3>${esc(r.name)}</h3><div class="own">${esc(r.owner_or_backer)}</div></div><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(new URL(r.url).hostname.replace('www.', ''))} ↗</a></div><p class="why-t">${esc(r.why_it_is_a_reference)}</p><table><thead><tr><th>Borrowed element</th><th>What it does for conversion or value</th></tr></thead><tbody>${(r.elements_to_borrow || []).slice(0, 3).map(x => `<tr><td>${esc(x.element)}</td><td>${esc(x.what_it_does_for_conversion_or_valuation)}</td></tr>`).join('')}</tbody></table>${HERE[r.id] ? `<p class="src" style="margin-top:12px"><b style="color:var(--accent-ink)">Used here:</b> ${esc(HERE[r.id][0])} → <i>${esc(HERE[r.id][1])}</i></p>` : ''}<p class="src">Type: ${esc(r.typography_note)} Colour: ${esc(r.color_note)}</p></article>`).join('');
+  const clean = t => (window.BSPFrame ? window.BSPFrame.humanizeText(String(t ?? '')) : String(t ?? '')).replace(/\bBSP\b/g, 'Broad Sky');
+  const PRINCIPLE = { 'ref-fl-vantatrust': 'Prove security continuously, in public', 'ref-fl-harbor': 'One brand over the roll-up', 'ref-fl-its': 'Let prospects build their own business case', 'ref-fl-kraftkennedy': 'Serve existing clients from the top bar' };
+  const unbrand = (r, t) => {
+    const parts = String(r.name || '').split(/[()]/).map(n => n.trim()).filter(Boolean);
+    const names = [...new Set([...parts, ...parts.map(n => n.split(/\s+/)[0]).filter(n => n.length >= 4)])].sort((a, b) => b.length - a.length);
+    let s = clean(t);
+    for (const n of names) { const rx = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); s = s.replace(new RegExp(`\\s*\\([^)]*\\b${rx}\\b[^)]*\\)`, 'g'), '').replace(new RegExp(`\\b${rx}(?:'s)?\\b`, 'g'), 'the reference'); }
+    return s;
+  };
+  el.innerHTML = refs.map(r => `<article class="sys-card ref"><div class="hd"><h3 class="sys-card-title">${esc(PRINCIPLE[r.id] || unbrand(r, r.elements_to_borrow?.[0]?.element))}</h3></div><div class="sys-table-wrap"><table class="sys-table"><thead><tr><th>Element</th><th>What it does for conversion or value</th></tr></thead><tbody>${(r.elements_to_borrow || []).slice(0, 3).map(x => `<tr><td>${esc(unbrand(r, x.element))}</td><td>${esc(unbrand(r, x.what_it_does_for_conversion_or_valuation))}</td></tr>`).join('')}</tbody></table></div>${HERE[r.id] ? `<p class="sys-card-body"><b>Used here:</b> ${esc(HERE[r.id][0])} → <i>${esc(HERE[r.id][1])}</i></p>` : ''}</article>`).join('');
 }
 
 function leadForm() {
@@ -247,9 +255,9 @@ function leadForm() {
     e.preventDefault();
     const name = f.name.value.trim(), email = f.email.value.trim(), firm = f.firm.value.trim();
     const done = $('#lead-done'); done.hidden = false;
-    if (!name || !/^\S+@\S+\.\S+$/.test(email) || !firm) { done.style.background = 'var(--bad-soft)'; done.style.color = 'var(--bad)'; done.textContent = 'Please add your name, a valid work email and your firm.'; return; }
+    if (!name || !/^\S+@\S+\.\S+$/.test(email) || !firm) { done.className = 'sys-note sys-note--bad form-done'; done.textContent = 'Please add your name, a valid work email and your firm.'; return; }
     const p = store.get('fl-posture', {}) || {}; const { score, answered } = postureScore(p);
-    done.style.background = ''; done.style.color = '';
+    done.className = 'sys-note sys-note--good form-done';
     done.textContent = `Thanks, ${name.split(' ')[0]}. In the live site a senior consultant would reply within one business day${answered ? `, starting from your self-assessed score of ${Math.round(score / QUESTIONS.filter(q => p[q.id] != null).reduce((s, q) => s + q.w, 0) * 100)}` : ''}. (Concept form: nothing was sent.)`;
   });
 }

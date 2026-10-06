@@ -40,7 +40,7 @@ const CHAT_WINDOW_MS = 10 * 60 * 1000;
 const WRITE_WINDOW_MS = 10 * 60 * 1000, WRITE_PER_WINDOW = 120;   // feedback + thread saves, per isolate
 
 /* ── Personas: ids only; the client cannot inject its own system prompt ───── */
-const PORTAL_BRIEF = 'Broad Sky Partners is a lower-middle-market private-equity firm. Its portfolio platforms: Punctual Pros (residential HVAC, plumbing and electrical home services), Commonwealth Electrical Technologies (CET: electrical construction, solar, EV charging; Horton wastewater; NuWave energy efficiency, New England), Frontline Managed Services (managed IT and revenue-cycle services for law firms), Thomas Scientific (laboratory supply distribution), Bully Pulpit International (public affairs and communications) and Fair Harbor (apparel).';
+const PORTAL_BRIEF = 'Broad Sky Partners is a lower-middle-market private-equity firm. Its portfolio companies: Punctual Pros (residential HVAC, plumbing and electrical home services), Commonwealth Electrical Technologies (CET: electrical construction, solar, EV charging; Horton wastewater; NuWave energy efficiency, New England), Frontline Managed Services (managed IT and revenue-cycle services for law firms), Thomas Scientific (laboratory supply distribution), Bully Pulpit International (public affairs and communications) and Fair Harbor (apparel).';
 const PERSONAS = {
   portal: { name: 'Broad Sky Intelligence', role: `You are Broad Sky Intelligence, the analyst assistant inside the Broad Sky operating-intelligence portal. You help the investment and operating team turn public data into revenue, M&A and operating actions. ${PORTAL_BRIEF} Write like a sharp operating partner: lead with the answer and the "so what", then the evidence, then concrete next actions.` },
   pp: { name: 'Punctual Pros assistant', role: 'You are the assistant on a concept website for Punctual Pros, a residential HVAC, plumbing and electrical home-services company. Help homeowners understand services, coverage, memberships, rebates and what to do next. You cannot book appointments, quote firm prices or confirm availability yourself: point people to the booking or contact options on the site.' },
@@ -59,6 +59,7 @@ const GROUNDING = [
   '5. Stay on topic: this assistant covers the portfolio, the portal and the concept sites. Politely decline unrelated tasks (general coding help, essays, other companies\' confidential matters).',
   '6. These are concept redesigns proposed by Syed Rahman for the Broad Sky Portfolio Resource Group, not official company sites. Do not claim to be an official representative or reveal non-public information.',
   '7. Format for a chat panel: short paragraphs, **bold** for key figures, "- " bullets, "### " for at most two headings. No tables unless asked, no HTML. Keep most answers under 250 words.',
+  '8. House style: say "growth plan" (never "playbook") and "portfolio company" for a sponsor\'s company ("platform" only for software). Write dates in words (Oct 6, 2026). Use the plain-English names of datasets, never file names or identifiers with underscores. No greetings and no addressing anyone by name.',
 ].join('\n');
 
 /* ── Small helpers ─────────────────────────────────────────────────────────── */
@@ -223,7 +224,7 @@ function buildSystem(persona, context) {
   const ctx = context.length
     ? context.map((c, i) => `[${i + 1}] ${c.title || 'Untitled'}${c.href ? ` (${c.href})` : ''}\n${c.text}`).join('\n\n')
     : '(No sources were retrieved for this question.)';
-  return `${p.role}\n\nToday is ${today()}.\n\n${GROUNDING}\n\n<context>\n${ctx}\n</context>`;
+  return `${p.role}\n\nToday is ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}.\n\n${GROUNDING}\n\n<context>\n${ctx}\n</context>`;
 }
 
 /* ── Claude streaming call ─────────────────────────────────────────────────── */

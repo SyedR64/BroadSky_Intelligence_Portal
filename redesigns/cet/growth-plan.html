@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CET growth plan · Broad Sky</title>
+<meta name="description" content="How Broad Sky takes Commonwealth Electrical Technologies from a two-state electrical contractor to a six-state New England energy-infrastructure company, following the Smith + Howard template.">
+<meta name="theme-color" content="#fbfaf7">
+<link rel="icon" href="../../BSP_Logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/system.css?v=20261006122625">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<link rel="stylesheet" href="growth-plan.css?v=20261006122625">
+</head>
+<body data-co="cet">
+<main id="main">
+<nav class="sys-subnav" aria-label="On this page">
+  <div class="sys-subnav-in">
+    <a class="sys-subnav-title" href="#top">CET growth plan</a>
+    <div class="sys-subnav-links">
+      <a href="#template">Template</a><a href="#map">Phases</a><a href="#levers">Levers</a><a href="#agents">AI agents</a><a href="#talent">Talent</a><a href="#addons">Add-ons</a><a href="#returns">Returns</a><a href="#risks">Risks</a>
+    </div>
+    <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../../app.html#/cet/overview">Open in the portal</a></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="sys-hero" id="top" aria-labelledby="hero-h">
+  <div class="sys-wrap">
+    <div class="pb-hero">
+      <div>
+        <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Growth plan</b> · for the Broad Sky Portfolio Resource Group (PRG) · Oct 2026</p>
+        <h1 id="hero-h" class="sys-h1">Two states today. <span class="sys-grad-text">Six-state grid</span> by month 36.</h1>
+        <p class="sys-lead" id="hero-lede">Smith + Howard went from one Atlanta office to 11 locations, nine add-ons and about 4x revenue in 3.5 years. CET starts bigger, with Horton and NuWave already inside, so the plan is about 3x in 36 months: make MA and CT one company, fill in the other four New England states CET is already licensed in, and move the mix toward recurring O&amp;M work. That mix shift is what earns a higher multiple.</p>
+        <div class="sys-actions">
+          <a class="sys-btn sys-btn--primary sys-btn--lg" href="#map">See the three phases</a>
+          <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#returns">Jump to returns</a>
+        </div>
+      </div>
+      <figure class="sys-card pb-sld" data-sys-theme="dark" aria-labelledby="sld-cap">
+        <svg id="sld" viewBox="0 0 440 330" role="img" aria-label="Single-line diagram of the CET group: four energized sites in Massachusetts and Connecticut, four planned feeders to RI, NH, ME and VT, a recurring O&amp;M line, and an open breaker marking an optional Phase 4 that is outside this plan"></svg>
+        <figcaption id="sld-cap" class="pb-sld-cap">The company drawn as a single-line diagram. <b>Energized</b>: the four sites today. <b>Planned feeders</b>: Phase 2 states. <b>Open breaker</b>: an optional Phase 4, a separate board decision at month 24 and not in any number here.</figcaption>
+      </figure>
+    </div>
+    <div class="sys-grid sys-grid--4 pb-kpis" id="kpis" aria-live="polite"></div>
+    <p class="sys-src">Today means the Oct 2026 pro forma run-rate; month 36 is the plan. All figures are analyst assumptions <span class="sys-est">est.</span> anchored to a review of public filings (PPP payroll, revenue per employee, peer margins), not company guidance. Replace them with actuals in the first 30 days.</p>
+    <div class="sys-kpis pb-strip" id="hero-strip" role="list" aria-label="Plan at a glance"></div>
+    <p class="sys-src" id="strip-note"></p>
+  </div>
+</section>
+
+<!-- 01 TEMPLATE -->
+<section class="sys-section" id="template" aria-labelledby="tpl-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">01 · The template</p>
+      <h2 id="tpl-h" class="sys-h2">Smith + Howard showed the path. CET runs it with electricians.</h2>
+      <p class="sys-lead">Broad Sky’s first exit, in dated and sourced steps. Each one is paired with the CET move it maps to. Switch to the electrical analogs to see who else is running this play in New England.</p>
+    </div>
+    <div class="pb-tpl">
+      <div>
+        <div class="sys-chips pb-seg" role="tablist" aria-label="Template filter" id="tpl-seg">
+          <button class="sys-chip" type="button" role="tab" aria-selected="true" aria-pressed="true" data-f="sh">Smith + Howard</button>
+          <button class="sys-chip" type="button" role="tab" aria-selected="false" aria-pressed="false" data-f="an">Electrical analogs</button>
+        </div>
+        <ol class="pb-timeline" id="timeline"></ol>
+      </div>
+      <aside class="sys-card pb-compare" id="compare" aria-label="Smith + Howard compared with the CET plan"></aside>
+    </div>
+  </div>
+</section>
+
+<!-- 02 MAP -->
+<section class="sys-section sys-section--alt" id="map" aria-labelledby="map-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">02 · Where we go, in order</p>
+      <h2 id="map-h" class="sys-h2">Three phases: a two-state core, all six New England states, then recurring service.</h2>
+      <p class="sys-lead">Every point comes from the portal’s datasets: bid and program opportunities, screened wastewater plants, add-on targets and county fit scores. Choose a phase, or press play.</p>
+    </div>
+    <div class="pb-phase-bar" role="group" aria-label="Expansion phases" id="phase-bar"></div>
+    <div class="pb-map-grid">
+      <div class="sys-card pb-map">
+        <div id="leaf" class="pb-leaf" role="img" aria-label="Map of New England with CET sites, opportunities, wastewater plants, add-on targets and county fit by phase"></div>
+        <div class="pb-map-legend" id="map-legend"></div>
+      </div>
+      <aside class="sys-card pb-phase-panel" id="phase-panel" aria-live="polite"></aside>
+    </div>
+    <div class="sys-table-wrap pb-state-table" id="state-table"></div>
+  </div>
+</section>
+
+<!-- 03 LEVERS -->
+<section class="sys-section" id="levers" aria-labelledby="lev-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">03 · Organic growth</p>
+      <h2 id="lev-h" class="sys-h2">Eight levers, each with a sourced baseline and a target.</h2>
+      <p class="sys-lead">Where CET’s own number is not public, the bar is hatched and labelled. Filling in those numbers is the first job of the 30-day data request.</p>
+    </div>
+    <div class="sys-grid sys-grid--4" id="lever-grid"></div>
+    <p class="sys-src" id="lever-more"></p>
+  </div>
+</section>
+
+<!-- 04 AGENTS (dark band) -->
+<section class="sys-section" id="agents" data-sys-theme="dark" aria-labelledby="ag-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">04 · The AI layer (GridOS)</p>
+      <h2 id="ag-h" class="sys-h2">Nine agents for the estimators, the crews and the plant operators.</h2>
+      <p class="sys-lead">Each agent comes from a named vendor and has a published result and a deployment time in weeks. Filter by who it helps. The runway shows the go-live order, quickest to deploy first.</p>
+    </div>
+    <div class="sys-chips pb-seg" role="tablist" aria-label="Filter agents by who they help" id="ag-seg"></div>
+    <div class="pb-ag-grid">
+      <div class="sys-card pb-runway" id="runway" aria-label="Deployment runway in weeks"></div>
+      <div class="sys-grid sys-grid--3 pb-agents" id="agent-grid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 TALENT -->
+<section class="sys-section" id="talent" aria-labelledby="tal-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">05 · Talent</p>
+      <h2 id="tal-h" class="sys-h2">The real constraint is licensed electricians, not demand.</h2>
+      <p class="sys-lead">CET’s OSHA records show it as a merit shop. Some targets are union. The plan runs two apprenticeship lanes, claims the MA and CT tax credits, shortens the time to a journeyman license and gives foremen equity.</p>
+    </div>
+    <div class="sys-kpis pb-shortage" id="shortage" role="list"></div>
+    <div class="sys-grid sys-grid--3 pb-programs" id="programs"></div>
+  </div>
+</section>
+
+<!-- 06 ADD-ONS -->
+<section class="sys-section sys-section--alt" id="addons" aria-labelledby="ad-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">06 · The add-on machine</p>
+      <h2 id="ad-h" class="sys-h2">48 screened targets. Call these first.</h2>
+      <p class="sys-lead" id="ad-sub">Ranked from the portal’s add-on screen (fit out of 100: capability, geography, scale, ownership readiness). Revenue figures are ZoomInfo models and still need checking.</p>
+    </div>
+    <div class="sys-chips pb-seg" role="tablist" aria-label="Filter targets by state" id="ad-seg"></div>
+    <div class="pb-ad-grid">
+      <div class="pb-targets" id="targets"></div>
+      <div class="pb-ad-side">
+        <div class="sys-card" id="ad-states"></div>
+        <div class="sys-card" id="hundred"></div>
+        <div class="sys-card" id="rivals"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 RETURNS -->
+<section class="sys-section" id="returns" aria-labelledby="ret-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">07 · Financing and returns</p>
+      <h2 id="ret-h" class="sys-h2">How it gets funded, and what it is worth at exit.</h2>
+      <p class="sys-lead">Funding follows the Horton precedent: delayed-draw debt plus seller rollover, with co-invest for the bigger add-on wave. Value comes from organic EBITDA growth, EBITDA bought through add-ons (net of what is paid for it) and a quality premium for the shift to recurring, tech-enabled earnings. Every figure is an estimate <span class="sys-est">est.</span></p>
+    </div>
+    <div class="pb-fin-grid" id="fin-grid"></div>
+    <div class="pb-ret-grid">
+      <div class="sys-card sys-card--feature">
+        <div class="pb-card-h"><h3 class="sys-h3">36-month KPI roadmap</h3><span class="sys-est">est.</span></div>
+        <div id="road-chart" class="pb-road-chart"></div>
+        <div id="road-table" class="sys-table-wrap pb-road-table"></div>
+      </div>
+      <div class="sys-card sys-card--feature">
+        <div class="pb-card-h"><h3 class="sys-h3">Value bridge: today to month 36</h3><span class="sys-est">est.</span></div>
+        <div class="pb-bridge-ctl">
+          <label for="mx">Base exit multiple <output class="sys-num" id="mx-out">6.8x</output></label>
+          <input type="range" id="mx" min="5" max="10" step="0.1" value="6.8">
+          <label for="os">GridOS and quality premium <output class="sys-num" id="os-out">1.0 turn</output></label>
+          <input type="range" id="os" min="0" max="1.5" step="0.25" value="1">
+        </div>
+        <div id="bridge" class="pb-bridge"></div>
+        <div id="gridos-case" class="pb-gridos-case"></div>
+        <p class="sys-src" id="bridge-note"></p>
+      </div>
+    </div>
+    <details class="sys-card pb-drawer" id="returns-card">
+      <summary><span><b>PRG view: equity returns</b> <span class="pb-muted">downside, base and upside, with MOIC and IRR from the Feb 2025 entry</span></span><span class="pb-chev" aria-hidden="true"></span></summary>
+      <div class="pb-drawer-body" id="returns-body"></div>
+    </details>
+  </div>
+</section>
+
+<!-- 08 RISKS & ASKS -->
+<section class="sys-section sys-section--alt" id="risks" aria-labelledby="risk-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">08 · Eyes open</p>
+      <h2 id="risk-h" class="sys-h2">What could go wrong, and what we need from the PRG.</h2>
+    </div>
+    <div class="pb-risk-grid">
+      <div class="sys-card sys-card--feature"><h3 class="sys-h3 pb-h3i"><span class="pb-ic pb-ic--bad" aria-hidden="true">!</span>Risks and mitigations</h3><ul class="pb-risk-list" id="risk-list"></ul><p class="sys-note sys-note--warn pb-beyond" id="beyond"></p></div>
+      <div class="sys-card sys-card--feature"><h3 class="sys-h3 pb-h3i"><span class="pb-ic pb-ic--good" aria-hidden="true">✓</span>Asks of the Portfolio Resource Group</h3><ol class="pb-ask-list" id="ask-list"></ol></div>
+    </div>
+  </div>
+</section>
+
+<!-- METHOD + RATIONALE -->
+<section class="sys-section" id="method" aria-labelledby="meth-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">Method</p>
+      <h2 id="meth-h" class="sys-h2">Sources, caveats and why the page looks this way.</h2>
+    </div>
+    <div class="sys-stack">
+      <details class="sys-card pb-drawer" id="srcs"><summary><span><b>Method, sources and caveats</b> <span class="pb-muted">every dataset and link behind the numbers</span></span><span class="pb-chev" aria-hidden="true"></span></summary><div class="pb-drawer-body sys-prose pb-src-body" id="src-body"></div></details>
+      <details class="sys-card pb-drawer" id="rat-drawer">
+        <summary><span><b id="rationale">Design rationale</b> <span class="pb-muted">why this page looks and reads the way it does</span></span><span class="pb-chev" aria-hidden="true"></span></summary>
+        <div class="pb-drawer-body">
+          <div class="sys-grid sys-grid--2">
+            <div class="sys-card sys-card--flat"><span class="sys-card-title">A single-line diagram as the hero</span><span class="sys-card-body">Electrical engineers read single-line diagrams every day, so the expansion is drawn as feeders and a breaker: energized MA and CT sites and planned RI, NH, ME and VT feeders. The open breaker shows that anything beyond New England is outside the plan. It tells the CET team the plan is written in their language, and shows a lender at a glance that the numbers are New England only.</span></div>
+            <div class="sys-card sys-card--flat"><span class="sys-card-title">Lead with the number</span><span class="sys-card-body">A KPI-first hero and one accent colour on a calm canvas. The four numbers the deal team gets asked about (revenue, EBITDA, people, sites) are on the first screen, so the page works as a 30-second read before an investment committee or lender call.</span></div>
+            <div class="sys-card sys-card--flat"><span class="sys-card-title">Entry to exit on a dated timeline</span><span class="sys-card-body">Each CET move is mapped onto the growth plan that already produced a Broad Sky exit (Smith + Howard), which makes the plan easier for the PRG, lenders and a future buyer to believe. KPI moved: time to a committee-ready plan.</span></div>
+            <div class="sys-card sys-card--flat"><span class="sys-card-title">Show the mix, not just the size</span><span class="sys-card-body">Each capability segment is shown on its own line, and acquired founders keep their brands inside one partner network. The levers and add-on sections show a buyer a growing recurring mix and a repeatable add-on cadence. KPIs moved: recurring share, add-ons closed per year, exit multiple.</span></div>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="sys-cta" aria-labelledby="cta-h">
+  <div class="sys-wrap">
+    <div class="sys-cta-in">
+      <div class="sys-cta-copy">
+        <h2 id="cta-h">See the parts working.</h2>
+        <p>The operating system, the website and the live portal views this plan is built on, including all 48 screened add-on targets with their sources.</p>
+      </div>
+      <div class="sys-actions">
+        <a class="sys-btn sys-btn--accent sys-btn--lg" href="gridos.html">Open GridOS</a>
+        <a class="sys-btn sys-btn--secondary sys-btn--lg" href="index.html">The CET website</a>
+        <a class="sys-btn sys-btn--ghost sys-btn--lg" href="../../app.html#/ma/pipeline?platform=cet">Add-on pipeline →</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script type="module">
+import { Frame } from '../../assets/frame.js?v=20261006122625';
+import { Data, Fmt, esc } from '../../assets/core.js?v=20261006122625';
+import { Chat } from '../../assets/chat.js?v=20261006122625';
+import { boot } from './growth-plan.js?v=20261006122625';
+const frame = Frame.mount({});
+boot({ Data, Fmt, esc, Chat, frame });
+</script>
+</body>
+</html>

@@ -1,37 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-sys-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Broad Sky — Operating Intelligence · Portal</title>
-<meta name="description" content="Broad Sky Partners portfolio operating-intelligence portal: territory analytics, opportunity radar, M&A targets, PE landscape and filings intelligence.">
+<title>Portal · Broad Sky</title>
+<meta name="description" content="The Broad Sky portfolio console: territory analytics, opportunity radar, acquisition targets, the private-equity landscape and filings for six companies.">
+<meta name="theme-color" content="#0a0e14">
 <link rel="icon" href="BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<link rel="stylesheet" href="assets/app.css?v=20261006090506">
+<link rel="stylesheet" href="assets/system.css?v=20261006122625">
+<link rel="stylesheet" href="assets/app.css?v=20261006122625">
 </head>
 <body>
 <div id="app">
-  <aside id="rail">
-    <a class="rail-logo" href="./" title="Broad Sky Operating Intelligence home" style="color:inherit;text-decoration:none">
-      <img src="BSP_Logo.png" alt="Broad Sky Partners">
-      <div><div class="name">Broad Sky Partners</div><div class="sub">Operating Intelligence</div></div>
-    </a>
+  <aside id="rail" aria-label="Portal modules">
     <nav class="rail-nav" aria-label="Modules"></nav>
-    <div class="rail-foot"><nav aria-label="Site" style="display:flex;flex-wrap:wrap;gap:2px 8px;margin-bottom:6px"><a href="app.html#/home/overview">Portal</a><a href="redesigns/">Site concepts</a><a href="./#os">OS program</a><a href="./#briefing">Briefing</a></nav><b>Portfolio Resource Group</b> · working draft<br>Prepared by Syed Rahman · Oct 2026<br>13 modules · 6 platforms · 49 datasets<br><span class="dim">Public + licensed data · verify before use</span></div>
+    <div class="rail-foot"><b>Portfolio Resource Group</b> · working draft, Oct 2026<br><span data-rail-count>16 modules · 6 companies · 56 datasets</span><br><span class="dim">Public and licensed data · verify before use</span></div>
   </aside>
   <main id="main">
     <header id="topbar">
       <div class="crumb"></div>
       <div class="view-tabs"></div>
       <div class="top-right">
-        <button id="search-btn" class="search-btn">⌕ Search everything <kbd>⌘K</kbd></button>
-        <span class="live-pill" title="Live feeds: NWS alerts, Open-Meteo"><span class="pulse"></span><span id="clock">—</span></span>
-        <button id="tour-btn" class="icon-btn" title="Play briefing">▶</button>
-        <button id="insp-btn" class="icon-btn" title="Inspector">☰</button>
-        <button id="theme-btn" class="icon-btn" title="Toggle theme">◐</button>
+        <button id="search-btn" class="search-btn" type="button"><span aria-hidden="true">⌕</span> Search everything <kbd>⌘K</kbd></button>
+        <span class="live-pill" title="Live feeds: National Weather Service alerts and Open-Meteo forecasts"><span class="pulse"></span><span id="clock">—</span></span>
+        <button id="tour-btn" class="icon-btn" type="button" title="Play briefing" aria-label="Play briefing">▶</button>
+        <button id="insp-btn" class="icon-btn" type="button" title="Inspector" aria-label="Inspector">☰</button>
+        <button id="theme-btn" class="icon-btn" type="button" title="Toggle light or dark" aria-label="Toggle light or dark">◐</button>
       </div>
     </header>
     <section id="content"></section>
@@ -39,12 +38,52 @@
   <aside id="inspector"></aside>
 </div>
 <script type="module">
-  import { App } from './assets/core.js?v=20261006090506';
-  import { modules } from './modules/registry.js?v=20261006090506';
+  import { Frame } from './assets/frame.js?v=20261006122625';
+  import { App } from './assets/core.js?v=20261006122625';
+  import { modules } from './modules/registry.js?v=20261006122625';
+  import { enhance } from './modules/copy.js';
+
+  // 1 · shared frame strip above the rail and console (UNIFIED.md §8)
+  const frame = Frame.mount({ variant: 'app', theme: 'dark' });
+
+  // 2 · copy safety net after every route render: plain English, est. badges
+  const content = document.getElementById('content');
+  const settle = () => { enhance(content); Frame.humanize(content); Frame.humanize(document.getElementById('topbar')); };
+  const route = App.route;
+  App.route = async function (...args) { const r = await route.apply(App, args); settle(); return r; };
+  let queue = new Set(), pending = 0;
+  const watch = el => new MutationObserver(muts => {
+    for (const m of muts) for (const n of m.addedNodes) if (n.nodeType === 1 && !n.closest('.leaflet-pane')) queue.add(n); else if (n.nodeType === 3 && n.parentElement) queue.add(n.parentElement);
+    if (!pending) pending = requestAnimationFrame(() => { pending = 0; const q = queue; queue = new Set(); for (const n of q) if (n.isConnected) enhance(n); });
+  }).observe(el, { childList: true, subtree: true });
+  watch(content); watch(document.getElementById('inspector'));
+
+  // 3 · portal console: every module registers before the first route, and the
+  // rail footer counts come from the same registry the rail and ⌘K search use
   for (const m of modules) App.register(m);
+  const nViews = modules.reduce((n, m) => n + (m.views || []).length, 0);
+  const nCos = modules.filter(m => m.group === 'Portfolio').length;
+  const railCount = document.querySelector('[data-rail-count]');
+  const DATASETS = { core: 10, research: 36, deeds: 10 };   // data/manifest.json tables · data/research files · data/sales deed files (Oct 6, 2026)
+  const paintCount = core => { railCount.textContent = `${modules.length} modules · ${nCos} companies · ${core + DATASETS.research + DATASETS.deeds} datasets`; railCount.title = `${nViews} views · ${core} core tables, ${DATASETS.research} research files and ${DATASETS.deeds} deed files`; };
+  paintCount(DATASETS.core);
+  fetch('data/manifest.json', { cache: 'force-cache' }).then(r => r.ok ? r.json() : null).then(m => { if (m?.datasets?.length) paintCount(m.datasets.length); }).catch(() => {});
   App.start();
-  import('./assets/chat.js?v=20261006090506').then(({ Chat }) => Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'auto' }));
-  import('./assets/counter.js?v=20261006090506').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; slot.style.cssText = 'padding:10px 16px;border-top:1px solid var(--border)'; document.querySelector('#rail .rail-foot').before(slot); Counter.mount(slot, { theme: 'dark', compact: true, caption: 'Left on the table since you opened this' }); });
+
+  // 3b · the frame's Briefing link stays inside the console (#/briefing/play)
+  const briefLinks = [...document.querySelectorAll('.sys-top a')].filter(a => /#briefing$/.test(a.getAttribute('href') || ''));
+  const portalLinks = [...document.querySelectorAll('.sys-top a')].filter(a => /\/app\.html$/.test(a.getAttribute('href') || ''));
+  for (const a of briefLinks) a.setAttribute('href', '#/briefing/play');
+  const markActive = () => {
+    const onBrief = /^#\/briefing\b/.test(location.hash);
+    for (const a of briefLinks) onBrief ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current');
+    for (const a of portalLinks) onBrief ? a.removeAttribute('aria-current') : a.setAttribute('aria-current', 'page');
+  };
+  window.addEventListener('hashchange', markActive); markActive();
+
+  // 4 · grounded assistant: the frame's Ask button and ⌘J open the same widget
+  import('./assets/chat.js?v=20261006122625').then(({ Chat }) => frame.setChat(Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'auto' })));
+  import('./assets/counter.js?v=20261006122625').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; document.querySelector('#rail .rail-foot').before(slot); Counter.mount(slot, { theme: 'dark', compact: true, caption: 'Left on the table since you opened this' }).then(() => Frame.humanize(slot)); });
 </script>
 </body>
 </html>

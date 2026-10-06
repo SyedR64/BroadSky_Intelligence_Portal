@@ -1,6 +1,6 @@
 /* Fair Harbor concept — home page behaviour. Booted from an inline module in index.html
    (so scripts/bump_version.sh can stamp the shared core/chat imports). */
-import { art, PRODUCTS, COLORS, recommend, FAQ, SUGGESTIONS, INTENTS, chrome, toast, esc } from './common.js';
+import { art, PRODUCTS, COLORS, recommend, FAQ, SUGGESTIONS, INTENTS, chrome, toast, esc, setFrame, ep } from './common.js?v=20261006122625';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -8,7 +8,8 @@ const TINT = { navy: '#E2E8EE', sea: '#D9ECEE', sunset: '#FBE3D7', sand: '#F3EBD
 const PRINT = { solid: 'Solid', stripe: 'Stripe', hstripe: 'Rugby stripe', pin: 'Pinstripe', palm: 'Palm print', wave: 'Wave print', dot: 'Dot', gingham: 'Gingham' };
 const F = { reviews: '35,000+', bottles: 27e6, bottlesTxt: '27M+', bscore: '94.3', doors: '250+', markdown: 38.5, revenue: 27e6, swimPrice: 88, swimShare: 0.40, perTrunk: 11 };
 
-export async function boot({ Chat, Data }) {
+export async function boot({ Chat, Data, Frame }) {
+  setFrame(Frame);
   chrome();
   $('#hero-trunk').innerHTML = art('trunk', 'sea', 'palm', 'The Bayberry Trunk in Sea Glass palm print');
   bottleFlow();
@@ -20,17 +21,18 @@ export async function boot({ Chat, Data }) {
   faq();
   email();
   const chat = Chat.mount(null, {
-    persona: 'fh', mode: 'floating', theme: 'light', color: '#1F7A8C', name: 'Harbor helper · Fair Harbor', initials: 'FH',
+    persona: 'fh', mode: 'floating', theme: 'light', name: 'Harbor helper · Fair Harbor', initials: 'FH',
     greeting: 'Hi! I can pick your size, explain the BreezeKnit liner and the recycled-bottle fabric, and answer shipping, returns, store and wholesale questions.',
     placeholder: 'Ask about sizing, fabric, shipping…', faq: FAQ, suggestions: SUGGESTIONS, intents: INTENTS, autoAsk: new URLSearchParams(location.search).get('ask') || undefined,
   });
+  Frame?.mount({}).setChat(chat);
   $('#ask-btn')?.addEventListener('click', () => chat.togglePanel(true));
   // data-powered facts + rationale (graceful if datasets are missing)
   const [fil, refs, ev, pb] = await Promise.all(['fairharbor_filings', 'design_refs', 'serviceos_evidence', 'fh_playbook'].map(n => Data.research(n).catch(() => null)));
   facts(fil); counter(); rationale(refs, ev, pb);
 }
 
-/* ── facts from data/research/fairharbor_filings.json ─────────────────── */
+/* ── facts from the Fair Harbor public filings dataset ───────────────── */
 function facts(fil) {
   try {
     const it = fil?.items || [];
@@ -71,21 +73,21 @@ function swatchBg(k, pr) { const c = COLORS[k]; return pr === 'solid' ? c.base :
 function shop() {
   const fam = [['navy', '#1E3550'], ['sea', '#2C8C99'], ['sunset', '#E8684A'], ['sand', '#E2D2B4'], ['palm', '#3E6B57'], ['sky', '#9CC9DA']];
   $('#color-filter').innerHTML = fam.map(([k, c]) => `<button class="cf" style="background:${c}" data-fam="${k}" aria-pressed="false" aria-label="${esc(COLORS[k].name)}" title="${esc(COLORS[k].name)}"></button>`).join('');
-  $('#grid').innerHTML = PRODUCTS.map(p => `<article class="pc" data-id="${p.id}">
-      <div class="pc-art">${p.badge ? `<span class="pc-badge">${esc(p.badge)}</span>` : ''}${p.bottles ? `<span class="pc-bottle" title="Recycled plastic bottles in this item (trunks ≈11 per brand; others est.)">≈${p.bottles} bottles</span>` : ''}<div class="pc-svg"></div></div>
+  $('#grid').innerHTML = PRODUCTS.map(p => `<article class="sys-card pc" data-id="${p.id}">
+      <div class="pc-art">${p.badge ? `<span class="pc-badge">${esc(p.badge)}</span>` : ''}${p.bottles ? `<span class="pc-bottle" title="Recycled plastic bottles in this item (trunks about 11 per the brand; others estimated)">≈${p.bottles} bottles</span>` : ''}<div class="pc-svg"></div></div>
       <div class="pc-body"><div class="pc-top"><h3>${esc(p.name)}</h3><span class="price">$${p.price}</span></div>
       <p class="meta">${esc(p.meta)}</p><p class="cw"></p>
       <div class="sw" role="group" aria-label="${esc(p.name)} colorways">${p.ways.map(([k, pr], i) => `<button data-i="${i}" style="background:${swatchBg(k, pr)}" aria-label="${esc(COLORS[k].name)} ${esc(PRINT[pr])}" aria-pressed="${i === 0}"></button>`).join('')}</div>
-      <button class="add">Quick add</button></div></article>`).join('') + '<p class="empty-p" hidden>No styles in that combination yet. Try another color.</p>';
+      <button class="sys-btn sys-btn--secondary sys-btn--sm sys-btn--block add" type="button">Quick add</button></div></article>`).join('') + '<p class="empty-p" hidden>No styles in that combination yet. Try another color.</p>';
   PRODUCTS.forEach(p => setWay(p.id, 0));
   $$('#grid .pc').forEach(card => {
     const id = card.dataset.id;
     card.querySelectorAll('.sw button').forEach(b => b.addEventListener('click', () => setWay(id, +b.dataset.i)));
     card.querySelector('.add').addEventListener('click', () => addToBag(id));
   });
-  $$('.chips .chip').forEach(b => b.addEventListener('click', () => { state.cat = b.dataset.cat; $$('.chips .chip').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', String(x === b)); }); filter(); }));
+  $$('#cat-chips [data-cat]').forEach(b => b.addEventListener('click', () => { state.cat = b.dataset.cat; $$('#cat-chips [data-cat]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); filter(); }));
   $$('.cf').forEach(b => b.addEventListener('click', () => { const on = b.getAttribute('aria-pressed') === 'true'; state.color = on ? null : b.dataset.fam; $$('.cf').forEach(x => x.setAttribute('aria-pressed', String(!on && x === b))); filter(); }));
-  $$('[data-filter]').forEach(a => a.addEventListener('click', () => { const c = $(`.chip[data-cat="${a.dataset.filter}"]`); c?.click(); }));
+  $$('[data-filter]').forEach(a => a.addEventListener('click', () => { const c = $(`#cat-chips [data-cat="${a.dataset.filter}"]`); c?.click(); }));
 }
 function setWay(id, i) {
   const p = PRODUCTS.find(x => x.id === id), card = $(`.pc[data-id="${id}"]`); const [k, pr] = p.ways[i]; state.active[id] = i;
@@ -106,7 +108,7 @@ function filter() {
 }
 function addToBag(id, size) {
   const p = PRODUCTS.find(x => x.id === id); const [k] = p.ways[state.active[id] || 0]; state.bag++;
-  const bag = $('.bag'); bag.classList.add('has'); $('.bag-n').textContent = state.bag; bag.setAttribute('aria-label', `Bag, ${state.bag} item${state.bag > 1 ? 's' : ''}`);
+  const bag = $('.bag'); if (!bag) { toast(`Added ${p.name}${size ? ` (${size})` : ''}. Concept only: no checkout.`); return; } bag.classList.add('has'); $('.bag-n').textContent = state.bag; bag.setAttribute('aria-label', `Bag, ${state.bag} item${state.bag > 1 ? 's' : ''}`);
   toast(`Added ${p.name}${size ? ` (${size})` : ''} in ${COLORS[k].name}. Concept only: no checkout.`);
 }
 
@@ -125,10 +127,10 @@ function fit() {
     const max = Math.max(...r.probs.map(x => x.p));
     const conf = Math.round(r.confidence * 100);
     $('#fit-out').innerHTML = `<div class="fo-top"><div class="fo-size${last !== r.size ? ' pop' : ''}" aria-label="Recommended size ${r.size}">${r.size}</div>
-      <div><p class="fo-k">Your size</p><p class="fo-prod">${esc(r.product)} · ${r.inseam}"</p><p class="fo-conf"><i style="background:${conf >= 60 ? '#2E9D6A' : '#E39A42'}"></i>${conf}% confidence · est. waist ${r.waist.toFixed(1)}"</p></div></div>
+      <div><p class="fo-k">Your size</p><p class="fo-prod">${esc(r.product)} · ${r.inseam}"</p><p class="fo-conf"><i class="${conf >= 60 ? 'conf-hi' : 'conf-lo'}"></i>${conf}% confidence · waist ${r.waist.toFixed(1)}"<span class="sys-est">est.</span></p></div></div>
       <div class="dist" role="img" aria-label="Probability by size: ${r.probs.map(x => `${x.size} ${Math.round(x.p * 100)}%`).join(', ')}">${r.probs.map(x => `<div class="${x.size === r.size ? 'on' : ''}"><em>${Math.round(x.p * 100)}%</em><i style="height:${Math.max(3, (x.p / max) * 100)}%"></i><span>${x.size}</span></div>`).join('')}</div>
-      <ul class="fo-notes">${r.notes.map(n => `<li>${esc(n)}</li>`).join('')}<li>Shirts and polos: start with <b>${r.top}</b>.</li></ul>
-      <div class="fo-actions"><button class="btn btn-ink sm" data-add="${pid}">Add ${esc(r.size)} to bag · $${p.price}</button><span class="meta">Free exchange if it's off.</span></div>`;
+      <ul class="sys-card-list">${r.notes.map(n => `<li>${esc(n)}</li>`).join('')}<li>Shirts and polos: start with <b>${r.top}</b>.</li></ul>
+      <div class="fo-actions"><button class="sys-btn sys-btn--primary" type="button" data-add="${pid}">Add ${esc(r.size)} to bag · $${p.price}</button><span class="meta">Free exchange if it's off.</span></div>`;
     $('#fit-out [data-add]').onclick = () => addToBag(pid, r.size);
     last = r.size;
   };
@@ -152,10 +154,10 @@ function counter() {
   el.textContent = fmt(now());
 }
 function kit() {
-  const rows = [['Swim trunks', 11, 2, 'brand ratio'], ['Boardshorts', 14, 0, 'est.'], ['Camp shirts & polos', 8, 1, 'est.'], ['Hybrid shorts', 10, 0, 'est.']];
+  const rows = [['Swim trunks', 11, 2, 'brand ratio'], ['Boardshorts', 14, 0, 'estimate'], ['Camp shirts and polos', 8, 1, 'estimate'], ['Hybrid shorts', 10, 0, 'estimate']];
   $('#kit').innerHTML = rows.map(([n, b, v, s], i) => `<div class="kr"><span>${n}<small>≈${b} bottles each · ${s}</small></span><div class="step" role="group" aria-label="${n} count"><button data-k="${i}" data-d="-1" aria-label="Fewer ${n}">−</button><output data-o="${i}">${v}</output><button data-k="${i}" data-d="1" aria-label="More ${n}">+</button></div></div>`).join('');
   const vals = rows.map(r => r[2]);
-  const upd = () => { const tot = vals.reduce((a, v, i) => a + v * rows[i][1], 0); $('#kit-n').textContent = tot; const show = Math.min(tot, 72); $('#kit-viz').innerHTML = '<i></i>'.repeat(show) + (tot > show ? `<span class="mono" style="font-size:12px;color:#A9C3CB;align-self:center">+${tot - show}</span>` : ''); rows.forEach((_, i) => { $(`[data-o="${i}"]`).textContent = vals[i]; }); };
+  const upd = () => { const tot = vals.reduce((a, v, i) => a + v * rows[i][1], 0); $('#kit-n').textContent = tot; const show = Math.min(tot, 72); $('#kit-viz').innerHTML = '<i></i>'.repeat(show) + (tot > show ? `<span class="more">+${tot - show}</span>` : ''); rows.forEach((_, i) => { $(`[data-o="${i}"]`).textContent = vals[i]; }); };
   $('#kit').addEventListener('click', e => { const b = e.target.closest('button[data-k]'); if (!b) return; const i = +b.dataset.k; vals[i] = Math.max(0, Math.min(12, vals[i] + +b.dataset.d)); upd(); });
   upd();
 }
@@ -172,13 +174,13 @@ function channels() {
   };
   const C = [
     ['dept', 'Department stores', 'Premium department-store swim and resort floors, with full size runs in core prints.', 'Nordstrom · Saks Fifth Avenue (2022)'],
-    ['surf', 'Specialty surf & coastal', 'Independent surf, resort and coastal boutiques from Montauk to the Gulf. The heart of the brand.', '250+ specialty doors (2022)'],
+    ['surf', 'Specialty surf and coastal', 'Independent surf, resort and coastal boutiques from Montauk to the Gulf. The heart of the brand.', '250+ specialty doors (2022)'],
     ['sport', 'Sporting goods', 'Regional sporting-goods chains bring the brand to lake and river towns far from the coast.', 'Scheels partnership (2023)'],
     ['golf', 'Golf pro shops', 'Polos, hybrid shorts and a co-branded line for green-grass and resort pro shops.', 'FootJoy × Fair Harbor (2026)'],
     ['campus', 'Campus stores', 'Licensed collegiate trunks and shirts for alumni weekends and spring break.', 'Michigan · Syracuse · Purdue · Colgate · Fairfield (2026)'],
-    ['custom', 'Corporate & custom', 'Embroidered trunks, shirts and sweatshirts for companies, clubs, hotels and wedding parties.', 'B2B custom program (2025–26)'],
+    ['custom', 'Corporate and custom', 'Embroidered trunks, shirts and sweatshirts for companies, clubs, hotels and wedding parties.', 'B2B custom program (2025–26)'],
   ];
-  $('#channels').innerHTML = C.map(([k, t, d, f]) => `<article class="chan" data-reveal><div class="chan-ico"><svg viewBox="0 0 24 24" aria-hidden="true">${I[k]}</svg></div><h3>${t}</h3><p>${d}</p><p class="chan-fact">${f}</p></article>`).join('');
+  $('#channels').innerHTML = C.map(([k, t, d, f]) => `<article class="sys-card chan"><span class="fh-ic"><svg viewBox="0 0 24 24" aria-hidden="true">${I[k]}</svg></span><p class="sys-card-title">${t}</p><p class="sys-card-body">${d}</p><p class="sys-card-foot chan-fact">${f}</p></article>`).join('');
 }
 
 /* ── reviews (illustrative) ──────────────────────────────────────────── */
@@ -193,7 +195,7 @@ function reviews() {
     ['My daughter checks the care label for the bottle count on every pair. Eleven, every time.', 'Jen A.', 'Wilmington, NC', 'Bayberry · kept L'],
     ['Ordered for the whole wedding party with embroidered initials. Arrived early and fit everyone.', 'Pat G.', 'Nantucket, MA', 'Custom order'],
   ];
-  $('#reviews').innerHTML = R.map(([q, n, c, p]) => `<figure class="rvw"><div class="rvw-top"><span class="stars" aria-label="5 out of 5 stars">★★★★★</span><span class="ill">Illustrative</span></div><blockquote>“${esc(q)}”</blockquote><span class="kept">${esc(p)}</span><figcaption><b>${esc(n)}</b><span>${esc(c)}</span></figcaption></figure>`).join('');
+  $('#reviews').innerHTML = R.map(([q, n, c, p]) => `<figure class="sys-card rvw"><div class="rvw-top"><span class="stars" aria-label="5 out of 5 stars">★★★★★</span><span class="sys-est sys-est--illus">illustrative</span></div><blockquote>“${esc(q)}”</blockquote><span class="fh-tag">${esc(p)}</span><figcaption><b>${esc(n)}</b><span>${esc(c)}</span></figcaption></figure>`).join('');
 }
 
 /* ── FAQ ─────────────────────────────────────────────────────────────── */
@@ -211,21 +213,24 @@ function email() {
   });
 }
 
-/* ── design rationale from data/research/design_refs.json ───────────── */
+/* ── design rationale from the design references dataset ─────────────── */
 function rationale(refs, ev, pb) {
+  // Principle-only: reference sites are never named on the page; element labels are restated generically.
   const HERE = {
-    'ref-fh-vuori': { pick: [0, 1], here: 'BreezeKnit and the recycled-bottle shell get their own section, like a fabric franchise; the Harbor helper chat sits on every page.', kpi: ['Conversion rate', 'Fit-related returns'] },
-    'ref-fh-chubbies': { pick: [0, 3], here: 'Pre-Loved sits in the primary nav (Harbor Again trade-in), and the headlines carry the brand voice ("The trunks that used to be bottles.") instead of a discount banner.', kpi: ['Repeat purchase rate', 'CAC payback'] },
-    'ref-fh-outerknown': { pick: [1, 2], here: 'The Bayberry trunk is the hero franchise with spec callouts; a restrained ink-and-sand UI lets the product colours carry the page.', kpi: ['Full-price sell-through', 'Markdown share'] },
-    'ref-fh-allbirds': { pick: [0, 2], here: 'Material-first copy and a per-product bottle count; floating pill nav over the sky gradient; no entry discount modal.', kpi: ['Email capture without discount', 'Gross margin'] },
+    'ref-fh-vuori': { title: 'Make the fabric a franchise', pick: [0, 1], el: ['Named fabric technology treated as a franchise', 'A fit and size assistant one click from every page'], here: 'BreezeKnit and the recycled-bottle shell get their own section, like a fabric franchise; the Harbor helper chat sits on every page.', kpi: ['Conversion rate', 'Fit-related returns'] },
+    'ref-fh-chubbies': { title: 'Voice and circularity over discounts', pick: [0, 3], el: ['A resale (pre-loved) program in the primary nav', 'A seasonal, funny headline over lifestyle photography'], here: 'Pre-Loved sits next to the bottle counter (Harbor Again trade-in), and the headlines carry the brand voice ("The trunks that used to be bottles.") instead of a discount banner.', kpi: ['Repeat purchase rate', 'CAC payback'] },
+    'ref-fh-outerknown': { title: 'Let the product carry the page', pick: [1, 2], el: ['One hero product as its own category', 'A monochrome interface with full-bleed nature photography'], here: 'The Bayberry trunk is the hero franchise with spec callouts; a restrained neutral interface lets the product colours carry the page.', kpi: ['Full-price sell-through', 'Markdown share'] },
+    'ref-fh-allbirds': { title: 'Material first, no entry discount', pick: [0, 2], el: ['Material-first product naming and copy', 'A floating rounded nav over full-bleed imagery'], here: 'Material-first copy and a per-product bottle count on every card; no entry discount modal.', kpi: ['Email capture without discount', 'Gross margin'] },
   };
+  const BRAND = /\b(Vuori|Chubbies|Outerknown|Allbirds|BlissBlend|Kore|Blanket Shirt)\b/i;
+  const scrub = t => String(t || '').split(/(?<=\.)\s+/).filter(x => !BRAND.test(x)).join(' ');
   const items = (refs?.items || []).filter(i => [].concat(i.applies_to || []).includes('fh'));
   const g = $('#ra-grid');
-  if (!items.length) g.innerHTML = '<p class="fine">Design references dataset not available; see data/research/design_refs.json.</p>';
-  else g.innerHTML = items.map(r => { const h = HERE[r.id] || { pick: [0], here: '', kpi: [] }; const els = h.pick.map(i => r.elements_to_borrow?.[i]).filter(Boolean);
-    return `<article class="ra-card" data-reveal><header><h3><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.name)} ↗</a></h3><span>${h.kpi.map(k => `<span class="ra-kpi-tag">${esc(k)}</span>`).join('')}</span></header>
-      <p class="ra-own">${esc(String(r.owner_or_backer || '').split('. ')[0].replace(/\.$/, ''))}.</p>
-      ${els.map(e => `<div class="ra-el"><span class="k">Borrowed</span><p><b>${esc(e.element)}.</b> ${esc(e.what_it_does_for_conversion_or_valuation)}</p></div>`).join('')}
+  if (!items.length) g.innerHTML = '<p class="sys-src">The design principles are not available.</p>';
+  else g.innerHTML = items.map(r => { const h = HERE[r.id] || { title: '', pick: [0], el: [], here: '', kpi: [] }; const els = h.pick.map((i, k) => { const e = r.elements_to_borrow?.[i]; if (!e) return null; const name = h.el[k] || (BRAND.test(e.element) ? '' : e.element); return name ? { name, does: scrub(e.what_it_does_for_conversion_or_valuation) } : null; }).filter(Boolean);
+    if (!h.title) return '';
+    return `<article class="sys-card"><span class="sys-card-label">Design principle</span><h3 class="sys-card-title">${esc(h.title)}</h3><div class="sys-chips">${h.kpi.map(k => `<span class="sys-chip sys-chip--soft">${esc(k)}</span>`).join('')}</div>
+      ${els.map(e => `<div class="ra-el"><span class="k">Element</span><p><b>${ep(e.name)}.</b> ${ep(e.does)}</p></div>`).join('')}
       <div class="ra-el"><span class="k">On this page</span><p>${esc(h.here)}</p></div></article>`; }).join('');
   // KPI table from serviceos_evidence + fh_playbook
   const E = id => (ev?.items || []).find(i => i.id === id); const P = id => (pb?.items || []).find(i => i.id === id);
@@ -238,7 +243,6 @@ function rationale(refs, ev, pb) {
     ['Wholesale doors', g1 ? `~${g1.baseline} (2022 release)` : '~252', g1 ? `${g1.target} by month 24 est.` : '420 est.', 'Six named channels and a direct path to the wholesale portal'],
     ['EBITDA margin', '~6% est. (0–12%)', ra ? `+${ra.ebitda_impact_pct_revenue[0]}–${ra.ebitda_impact_pct_revenue[1]} pts est.` : '+2–5 pts est.', 'All of the above, run on HarborOS (see the value-creation math)'],
   ];
-  $('#ra-kpi').innerHTML = rows.map(r => `<tr><td>${esc(r[0])}</td><td class="n">${esc(r[1])}</td><td class="n">${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join('');
-  // newly injected reveal targets
-  $$('#ra-grid [data-reveal], #channels [data-reveal]').forEach(el => el.classList.add('in'));
+  const estB = v => esc(v).replace(/\s*est\.\s*/, '<span class="sys-est">est.</span> ').trim();
+  $('#ra-kpi').innerHTML = rows.map(r => `<tr><td>${esc(r[0])}</td><td class="sys-n">${estB(r[1])}</td><td class="sys-n">${estB(r[2])}</td><td>${esc(r[3])}</td></tr>`).join('');
 }

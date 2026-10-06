@@ -2,10 +2,10 @@
 """Cinematic product-intro film: Playwright screen recording of scripted interactions + title cards + narration + music.
 Usage: python3 scripts/make_cinematic.py [shots.json] [base_url]
 Requires: pip --user playwright (+ `python3 -m playwright install chromium`), imageio-ffmpeg, macOS `say`.
-Shot schema (briefing/cinematic_shots.json): [{id, url, action: static|scroll|type_chat|hover_cards|click_tab, action_args, duration_s, title_card:{kicker,headline}|null, narration}]"""
+Shot schema (briefing/cinematic_shots_master.json): [{id, url, action: static|scroll|type_chat|hover_cards|click_tab, action_args, duration_s, title_card:{kicker,headline}|null, narration}]"""
 import json, os, re, subprocess, sys, tempfile, time, wave, contextlib, shutil
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SHOTS = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'briefing', 'cinematic_shots.json')
+SHOTS = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'briefing', 'cinematic_shots_master.json')
 BASE = sys.argv[2] if len(sys.argv) > 2 else 'http://127.0.0.1:8765/'
 OUT = os.path.join(ROOT, 'briefing'); os.makedirs(OUT, exist_ok=True)
 import imageio_ffmpeg; FF = imageio_ffmpeg.get_ffmpeg_exe()
@@ -47,7 +47,7 @@ with sync_playwright() as p:
             dur = max(dur, dur_wav(narw) + 0.9)
         # optional title card before the shot
         if s.get('title_card'):
-            tc = s['title_card']; html = TITLE_HTML.replace('{{KICKER}}', esc(tc.get('kicker', ''))).replace('{{HEADLINE}}', esc(tc.get('headline', ''))).replace('{{SIZE}}', str(tc.get('size', 96))).replace('{{FOOT}}', esc(tc.get('foot', 'Prepared for Tyler Zachem and the Portfolio Resource Group'))).replace('{{LOGO}}', BASE + 'BSP_Logo.png')
+            tc = s['title_card']; html = TITLE_HTML.replace('{{KICKER}}', esc(tc.get('kicker', ''))).replace('{{HEADLINE}}', esc(tc.get('headline', ''))).replace('{{SIZE}}', str(tc.get('size', 96))).replace('{{FOOT}}', esc(tc.get('foot', 'Prepared for the Broad Sky Portfolio Resource Group'))).replace('{{LOGO}}', BASE + 'BSP_Logo.png')
             hp = os.path.join(WORK, f'tc{i:02d}.html'); open(hp, 'w').write(html)
             ctx = browser.new_context(viewport={'width': W, 'height': H}); pg = ctx.new_page(); pg.goto('file://' + hp); pg.wait_for_timeout(900); png = os.path.join(WORK, f'tc{i:02d}.png'); pg.screenshot(path=png); ctx.close()
             tdur = float(tc.get('duration_s', 3.2)); tcv = os.path.join(WORK, f'tc{i:02d}.mp4')

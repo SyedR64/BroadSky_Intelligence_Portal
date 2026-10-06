@@ -2,324 +2,313 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fair Harbor — Swim trunks made from recycled bottles (concept)</title>
-<meta name="description" content="Concept redesign of Fair Harbor: sustainable swim trunks, shirts and boardshorts made from recycled plastic bottles. Fit finder, bottle counter, wholesale and HarborOS.">
-<meta name="theme-color" content="#F6E3CC">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..800;1,14..32,300..600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./site.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230F2733'/%3E%3Cpath d='M5 19c4-4 7-4 11 0s7 4 11 0' stroke='%23F2B263' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fair Harbor concept · Broad Sky</title>
+<meta name="description" content="Concept site for Fair Harbor: swim trunks and shirts made from recycled plastic bottles, with a fit finder, bottle counter, wholesale and HarborOS.">
+<meta name="theme-color" content="#fbfaf7">
+<link rel="icon" href="../../BSP_Logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/system.css?v=20261006122625">
+<link rel="stylesheet" href="site.css?v=20261006122625">
 </head>
-<body class="fh">
-<a class="skip" href="#main">Skip to content</a>
-
-<div class="concept" role="region" aria-label="Concept notice">
-  <p>Concept redesign proposed by Syed Rahman for the Broad Sky Portfolio Resource Group — not an official site.
-  <a href="../../app.html">Portal</a><span aria-hidden="true">·</span><a href="../index.html">Site concepts</a><span aria-hidden="true">·</span><a href="../../#os">OS program</a><span aria-hidden="true">·</span><a href="../../#briefing">Briefing</a></p>
-  <button class="concept-x" aria-label="Dismiss concept notice">&times;</button>
-</div>
-
-<header class="site-head">
-  <nav class="nav" aria-label="Primary">
-    <a class="brand" href="./" aria-label="Fair Harbor home">
-      <svg viewBox="0 0 40 24" aria-hidden="true"><path d="M2 15c5-5 9-5 14 0s9 5 14 0 6-4 8-2" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="29" cy="6" r="3.4" fill="#F2B263"/></svg>
-      <span>FAIR HARBOR</span>
-    </a>
-    <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Menu"><span></span><span></span></button>
-    <ul class="nav-links" id="nav-links">
-      <li><a href="#shop">Swim</a></li>
-      <li><a href="#shop" data-filter="shirts">Shirts</a></li>
-      <li><a href="#fit">Fit finder</a></li>
-      <li><a href="#impact">Impact</a></li>
-      <li><a href="#impact" class="pre">Pre-Loved</a></li>
-      <li><a href="#wholesale">Wholesale</a></li>
-    <li><a href="playbook.html">Playbook</a></li>
-      <li class="nav-os"><a href="./harboros.html"><i class="os-dot"></i>Powered by HarborOS</a></li>
-    </ul>
-    <button class="bag" aria-label="Bag, 0 items"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Zm4 0a3 3 0 0 1 6 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="bag-n">0</span></button>
-  </nav>
-</header>
-
+<body data-co="fh">
 <main id="main">
-<!-- ═══ HERO ═══ -->
-<section class="hero" aria-labelledby="hero-h">
-  <div class="hero-sky" aria-hidden="true"><i class="sun"></i><i class="gull g1"></i><i class="gull g2"></i></div>
-  <div class="hero-waves" aria-hidden="true">
-    <svg class="w w3" viewBox="0 0 2880 220" preserveAspectRatio="none"><path d="M0 110 C360 60 1080 160 1440 110 C1800 60 2520 160 2880 110 V220 H0Z" fill="#A9D3DB" opacity=".6"/></svg>
-    <svg class="w w2" viewBox="0 0 2880 220" preserveAspectRatio="none"><path d="M0 140 C360 175 1080 100 1440 140 C1800 175 2520 100 2880 140 V220 H0Z" fill="#6DB1BD" opacity=".5"/></svg>
-    <svg class="w w1" viewBox="0 0 2880 220" preserveAspectRatio="none"><path d="M0 178 C360 150 1080 206 1440 178 C1800 150 2520 206 2880 178 V220 H0Z" fill="#FBF8F2"/></svg>
-  </div>
-  <div class="wrap hero-grid">
-    <div class="hero-copy">
-      <p class="pill-tag"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 8.2l2 2 4-4.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Certified B Corp · Public Benefit Corporation</p>
-      <h1 id="hero-h">The trunks that <em>used to be</em> bottles.</h1>
-      <p class="lede">Roughly eleven recycled plastic bottles in every pair, a BreezeKnit liner that ends chafe, and a size you can trust before you hit buy.</p>
-      <div class="cta-row">
-        <a class="btn btn-ink" href="#shop">Shop swim</a>
-        <a class="btn btn-white" href="#fit">Find my size <span aria-hidden="true">→</span></a>
+  <nav class="sys-subnav" aria-label="On this page">
+    <div class="sys-subnav-in">
+      <a class="sys-subnav-title" href="#main"><svg viewBox="0 0 40 24" aria-hidden="true"><path d="M2 15c5-5 9-5 14 0s9 5 14 0 6-4 8-2" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle class="fh-sun" cx="29" cy="6" r="3.4"/></svg>Fair Harbor</a>
+      <div class="sys-subnav-links"><a href="#shop">Shop</a><a href="#fabric">Fabric</a><a href="#fit">Fit finder</a><a href="#impact">Impact</a><a href="#wholesale">Wholesale</a><a href="#reviews-sec">Reviews</a><a href="#faq">FAQ</a><a href="harboros.html">HarborOS</a><a href="growth-plan.html">Growth plan</a></div>
+      <div class="sys-subnav-actions"><button class="bag" type="button" aria-label="Bag, 0 items"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Zm4 0a3 3 0 0 1 6 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="bag-n">0</span></button><a class="sys-btn sys-btn--primary sys-btn--sm" href="#fit">Find my size</a></div>
+    </div>
+  </nav>
+
+  <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+  <section class="sys-hero" aria-labelledby="hero-h">
+    <div class="sys-wrap">
+      <div class="fh-hero-grid">
+        <div>
+          <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Certified B Corp</b> · Public Benefit Corporation</p>
+          <h1 class="sys-h1" id="hero-h">The trunks that <span class="sys-grad-text">used to be bottles.</span></h1>
+          <p class="sys-lead">Roughly eleven recycled plastic bottles in every pair, a BreezeKnit liner that ends chafe, and a size you can trust before you hit buy.</p>
+          <div class="sys-actions">
+            <a class="sys-btn sys-btn--primary sys-btn--lg" href="#shop">Shop swim</a>
+            <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#fit">Find my size <span aria-hidden="true">→</span></a>
+          </div>
+          <p class="fh-os-link"><a class="sys-link" href="harboros.html"><span class="sys-dot" aria-hidden="true"></span>Powered by HarborOS →</a></p>
+        </div>
+        <div class="sys-card sys-card--feature fh-art" aria-hidden="true">
+          <div class="hero-trunk" id="hero-trunk"></div>
+          <div class="callout c1"><b>≈11 bottles</b><span>recycled shell</span></div>
+          <div class="callout c2"><b>BreezeKnit</b><span>anti-chafe liner</span></div>
+          <div class="callout c3"><b>5.5"</b><span>Bayberry inseam</span></div>
+        </div>
       </div>
-      <a class="os-link" href="./harboros.html"><i class="os-dot"></i><span>Powered by <b>HarborOS</b> — fit, replenishment and wholesale in one system <span aria-hidden="true">→</span></span></a>
-    </div>
-    <div class="hero-art" aria-hidden="true">
-      <div class="hero-trunk" id="hero-trunk"></div>
-      <div class="callout c1"><b>≈11 bottles</b><span>recycled shell</span></div>
-      <div class="callout c2"><b>BreezeKnit</b><span>anti-chafe liner</span></div>
-      <div class="callout c3"><b>5.5"</b><span>Bayberry inseam</span></div>
-    </div>
-  </div>
-  <div class="wrap proof" id="proof">
-    <div><b data-fact="reviews">35,000+</b><span><i class="stars" aria-hidden="true">★★★★★</i> five-star reviews</span></div>
-    <div><b data-fact="bottles">27M+</b><span>bottles recycled</span></div>
-    <div><b data-fact="bscore">94.3</b><span>B Impact score</span></div>
-    <div><b data-fact="doors">250+</b><span>specialty stores</span></div>
-    <p class="proof-src">Company-reported figures (Business Wire 2022; B Lab profile). <a href="#rationale">Sources</a></p>
-  </div>
-</section>
-
-<div class="ticker" aria-hidden="true"><div class="ticker-t">
-  <span>Recycled-bottle shell</span><span>BreezeKnit liner</span><span>Free exchanges</span><span>Quick-dry</span><span>Certified B Corp</span><span>Swim-to-street</span><span>Recycled-bottle shell</span><span>BreezeKnit liner</span><span>Free exchanges</span><span>Quick-dry</span><span>Certified B Corp</span><span>Swim-to-street</span>
-</div></div>
-
-<!-- ═══ SHOP ═══ -->
-<section class="sec" id="shop" aria-labelledby="shop-h">
-  <div class="wrap">
-    <div class="sec-head split" data-reveal>
-      <div><p class="eyebrow">Shop the core</p><h2 id="shop-h">Built for the water. <span class="soft">Worn everywhere after.</span></h2></div>
-      <p class="sec-sub">Trunks, boardshorts and shirts in the colors of a late-August afternoon. Tap a swatch to see every colorway.</p>
-    </div>
-    <div class="shop-bar" data-reveal>
-      <div class="chips" role="group" aria-label="Filter by category">
-        <button class="chip on" data-cat="all" aria-pressed="true">All</button>
-        <button class="chip" data-cat="swim" aria-pressed="false">Swim</button>
-        <button class="chip" data-cat="shirts" aria-pressed="false">Shirts</button>
-        <button class="chip" data-cat="golf" aria-pressed="false">Golf</button>
-        <button class="chip" data-cat="kids" aria-pressed="false">Kids</button>
+      <div class="sys-kpis" id="proof" role="list" aria-label="Fair Harbor by the numbers">
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Five-star reviews</span><span class="sys-kpi-value" data-fact="reviews">35,000+</span><span class="sys-kpi-sub"><i class="stars" aria-hidden="true">★★★★★</i> company-reported</span></div>
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Bottles recycled</span><span class="sys-kpi-value" data-fact="bottles">27M+</span><span class="sys-kpi-sub">Into Fair Harbor fabric</span></div>
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">B Impact score</span><span class="sys-kpi-value" data-fact="bscore">94.3</span><span class="sys-kpi-sub">80 qualifies for certification</span></div>
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Specialty stores</span><span class="sys-kpi-value" data-fact="doors">250+</span><span class="sys-kpi-sub">Wholesale doors (2022)</span></div>
       </div>
-      <div class="by-color" role="group" aria-label="Shop by color"><span>Shop by color</span><div id="color-filter"></div></div>
+      <p class="sys-src"><b>Source:</b> company-reported figures (Business Wire 2022; B Lab profile), compiled in Fair Harbor public filings, Sept 2026. <a href="#rationale">More sources</a></p>
     </div>
-    <div class="grid-p" id="grid" aria-live="polite"></div>
-    <p class="fine">Concept catalog: product names, prices and colorways are illustrative. Median swim price ($88) matches the live catalog snapshot (Sept 2026).</p>
-  </div>
-</section>
+  </section>
 
-<!-- ═══ FABRIC FRANCHISE ═══ -->
-<section class="sec tech" aria-labelledby="tech-h">
-  <div class="wrap">
-    <div class="sec-head" data-reveal><p class="eyebrow">What's inside</p><h2 id="tech-h">Two technologies. <span class="soft">One very good pair of trunks.</span></h2></div>
-    <div class="tech-grid">
-      <article class="tech-card knit" data-reveal>
-        <div class="tech-viz" aria-hidden="true"><svg viewBox="0 0 320 180"><defs><pattern id="knit" width="16" height="14" patternUnits="userSpaceOnUse"><path d="M1 2 L8 11 L15 2" fill="none" stroke="#9CC9DA" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></pattern><linearGradient id="kg" x1="0" x2="1"><stop offset="0" stop-color="#EAF4F4"/><stop offset="1" stop-color="#F6EFE3"/></linearGradient><radialGradient id="kl" cx=".7" cy=".55" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><rect width="320" height="180" fill="url(#kg)"/><rect width="320" height="180" fill="url(#knit)" opacity=".75"/><circle cx="214" cy="100" r="62" fill="url(#kl)"/><g transform="translate(214 100)"><circle r="40" fill="#fff" stroke="#1F7A8C" stroke-width="2"/><path d="M-22-8 L-11 6 L0-8 L11 6 L22-8" fill="none" stroke="#1F7A8C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M-22 4 L-11 18 L0 4 L11 18 L22 4" fill="none" stroke="#9CC9DA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g><rect x="18" y="18" width="196" height="30" rx="15" fill="#0F2733"/><text x="34" y="37.5" font-family="JetBrains Mono" font-size="11" letter-spacing="1" fill="#fff">SOFT KNIT · NOT MESH</text><g font-family="Inter" font-size="11" font-weight="600"><rect x="18" y="128" width="92" height="30" rx="15" fill="#fff"/><text x="32" y="147" fill="#5A6E78">Mesh  ✕</text><rect x="116" y="128" width="104" height="30" rx="15" fill="#1F7A8C"/><text x="130" y="147" fill="#fff">BreezeKnit  ✓</text></g></svg></div>
-        <h3>BreezeKnit liner</h3>
-        <p>The scratchy mesh liner is the reason guys stop wearing swim trunks. BreezeKnit replaces it with a soft, stretchy knit that moves with you and dries fast, so the trunks go from the water to lunch without the chafe.</p>
-        <ul class="ticks"><li>Anti-chafe knit, not mesh</li><li>In the Bayberry and Anchor</li><li>Built for all-day wear</li></ul>
-      </article>
-      <article class="tech-card shell" data-reveal>
-        <div class="tech-viz" aria-hidden="true"><svg viewBox="0 0 320 180" id="bottle-flow"></svg></div>
-        <h3>Recycled-bottle shell</h3>
-        <p>Post-consumer bottles are collected, washed, flaked, melted into pellets and spun into yarn, then woven into a quick-dry shell. About eleven bottles become one pair of trunks, and every pair carries the count on its care label.</p>
-        <ul class="ticks"><li>≈11 bottles per trunk</li><li>Quick-dry finish</li><li>Traceable lot on every label (HarborOS)</li></ul>
-      </article>
-    </div>
-  </div>
-</section>
+  <div class="ticker" aria-hidden="true"><div class="ticker-t">
+    <span>Recycled-bottle shell</span><span>BreezeKnit liner</span><span>Free exchanges</span><span>Quick-dry</span><span>Certified B Corp</span><span>Swim-to-street</span><span>Recycled-bottle shell</span><span>BreezeKnit liner</span><span>Free exchanges</span><span>Quick-dry</span><span>Certified B Corp</span><span>Swim-to-street</span>
+  </div></div>
 
-<!-- ═══ FIT FINDER ═══ -->
-<section class="sec fit" id="fit" aria-labelledby="fit-h">
-  <div class="wrap">
-    <div class="sec-head split" data-reveal>
-      <div><p class="eyebrow">Fit finder</p><h2 id="fit-h">Your size in ten seconds. <span class="soft">No tape measure.</span></h2></div>
-      <p class="sec-sub">Fit is the number-one reason swimwear comes back. Tell us three things and we'll pick the size and inseam, with an honest confidence score.</p>
+  <!-- ── Shop ─────────────────────────────────────────────────────────── -->
+  <section class="sys-section" id="shop" aria-labelledby="shop-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">Shop the core</p>
+        <h2 class="sys-h2" id="shop-h">Built for the water. Worn everywhere after.</h2>
+        <p class="sys-lead">Trunks, boardshorts and shirts in the colors of a late-August afternoon. Tap a swatch to see every colorway.</p>
+      </div>
+      <div class="shop-bar">
+        <div class="sys-chips" id="cat-chips" role="group" aria-label="Filter by category">
+          <button class="sys-chip" type="button" data-cat="all" aria-pressed="true">All</button>
+          <button class="sys-chip" type="button" data-cat="swim" aria-pressed="false">Swim</button>
+          <button class="sys-chip" type="button" data-cat="shirts" aria-pressed="false">Shirts</button>
+          <button class="sys-chip" type="button" data-cat="golf" aria-pressed="false">Golf</button>
+          <button class="sys-chip" type="button" data-cat="kids" aria-pressed="false">Kids</button>
+        </div>
+        <div class="by-color" role="group" aria-label="Shop by color"><span>Shop by color</span><div id="color-filter"></div></div>
+      </div>
+      <div class="grid-p" id="grid" aria-live="polite"></div>
+      <p class="sys-src"><b>Note:</b> concept catalog. Product names, prices and colorways are illustrative<span class="sys-est sys-est--illus">illustrative</span>; the median swim price ($88) matches the live catalog snapshot (Sept 2026).</p>
     </div>
-    <div class="fit-card" data-reveal>
-      <form class="fit-form" id="fit-form" aria-label="Fit finder">
-        <div class="field"><label for="f-h">Height <output id="o-h">5′10″</output></label><input type="range" id="f-h" min="60" max="78" value="70" step="1"></div>
-        <div class="field"><label for="f-w">Weight <output id="o-w">175 lb</output></label><input type="range" id="f-w" min="110" max="280" value="175" step="5"></div>
-        <div class="field"><label for="f-waist">Jeans waist <span class="opt">(optional)</span></label>
-          <select id="f-waist"><option value="">I'm not sure</option></select></div>
-        <fieldset class="field"><legend>How do you like them?</legend><div class="seg">
-          <label><input type="radio" name="fit" value="trim"><span>Trim</span></label><label><input type="radio" name="fit" value="true" checked><span>True</span></label><label><input type="radio" name="fit" value="relaxed"><span>Relaxed</span></label></div>
-        </fieldset>
-        <fieldset class="field"><legend>Mostly for</legend><div class="seg">
-          <label><input type="radio" name="use" value="laps"><span>Laps</span></label><label><input type="radio" name="use" value="beach" checked><span>Beach &amp; boat</span></label><label><input type="radio" name="use" value="surf"><span>Surf</span></label></div>
-        </fieldset>
-      </form>
-      <div class="fit-out" id="fit-out" aria-live="polite"></div>
-    </div>
-    <p class="fine">Illustrative model running in your browser. In production, HarborOS learns from Fair Harbor's own kept-versus-returned orders; fit vendors report 17–18% fewer fit-related returns for shoppers who follow the recommended size (Bold Metrics, vendor claim).</p>
-  </div>
-</section>
+  </section>
 
-<!-- ═══ IMPACT ═══ -->
-<section class="sec impact" id="impact" aria-labelledby="impact-h">
-  <svg class="impact-wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 30 C240 0 480 60 720 30 S1200 0 1440 30 V0 H0Z" fill="#FBF8F2"/></svg>
-  <div class="wrap">
-    <div class="impact-grid">
-      <div data-reveal>
-        <p class="eyebrow light">Sustainability counter</p>
-        <h2 id="impact-h">Bottles turned into trunks, <span class="soft">and counting.</span></h2>
-        <div class="counter" aria-live="off"><span id="bottle-count" class="mono">27,000,000</span><small>bottles recycled into Fair Harbor fabric <b>(illustrative running estimate)</b></small></div>
-        <div class="rate"><span><b id="rate-day" class="mono">—</b> per day</span><span><b id="rate-trunk" class="mono">≈11</b> per trunk</span><span><b id="rate-year" class="mono">—</b> per year</span></div>
+  <!-- ── Fabric ───────────────────────────────────────────────────────── -->
+  <section class="sys-section sys-section--alt" id="fabric" aria-labelledby="tech-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">What’s inside</p>
+        <h2 class="sys-h2" id="tech-h">Two technologies. One very good pair of trunks.</h2>
+      </div>
+      <div class="sys-grid sys-grid--2 sys-grid--gap-lg">
+        <article class="sys-card sys-card--feature rvl" data-reveal>
+          <div class="tech-viz" aria-hidden="true"><svg viewBox="0 0 320 180"><defs><pattern id="knit" width="16" height="14" patternUnits="userSpaceOnUse"><path d="M1 2 L8 11 L15 2" fill="none" stroke="#9CC9DA" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></pattern><linearGradient id="kg" x1="0" x2="1"><stop offset="0" stop-color="#EAF4F4"/><stop offset="1" stop-color="#F6EFE3"/></linearGradient><radialGradient id="kl" cx=".7" cy=".55" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><rect width="320" height="180" fill="url(#kg)"/><rect width="320" height="180" fill="url(#knit)" opacity=".75"/><circle cx="214" cy="100" r="62" fill="url(#kl)"/><g transform="translate(214 100)"><circle r="40" fill="#fff" stroke="#1F7A8C" stroke-width="2"/><path d="M-22-8 L-11 6 L0-8 L11 6 L22-8" fill="none" stroke="#1F7A8C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M-22 4 L-11 18 L0 4 L11 18 L22 4" fill="none" stroke="#9CC9DA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g><rect x="18" y="18" width="196" height="30" rx="15" fill="#0F2733"/><text x="34" y="37.5" font-family="JetBrains Mono" font-size="11" letter-spacing="1" fill="#fff">SOFT KNIT · NOT MESH</text><g font-family="Inter" font-size="11" font-weight="600"><rect x="18" y="128" width="92" height="30" rx="15" fill="#fff"/><text x="32" y="147" fill="#5A6E78">Mesh  ✕</text><rect x="116" y="128" width="104" height="30" rx="15" fill="#1F7A8C"/><text x="130" y="147" fill="#fff">BreezeKnit  ✓</text></g></svg></div>
+          <h3 class="sys-h3">BreezeKnit liner</h3>
+          <p class="sys-card-body">The scratchy mesh liner is the reason guys stop wearing swim trunks. BreezeKnit replaces it with a soft, stretchy knit that moves with you and dries fast, so the trunks go from the water to lunch without the chafe.</p>
+          <div class="sys-chips"><span class="sys-chip sys-chip--soft">Anti-chafe knit, not mesh</span><span class="sys-chip sys-chip--soft">In the Bayberry and Anchor</span><span class="sys-chip sys-chip--soft">Built for all-day wear</span></div>
+        </article>
+        <article class="sys-card sys-card--feature rvl" data-reveal>
+          <div class="tech-viz" aria-hidden="true"><svg viewBox="0 0 320 180" id="bottle-flow"></svg></div>
+          <h3 class="sys-h3">Recycled-bottle shell</h3>
+          <p class="sys-card-body">Post-consumer bottles are collected, washed, flaked, melted into pellets and spun into yarn, then woven into a quick-dry shell. About eleven bottles become one pair of trunks, and every pair carries the count on its care label.</p>
+          <div class="sys-chips"><span class="sys-chip sys-chip--soft">≈11 bottles per trunk</span><span class="sys-chip sys-chip--soft">Quick-dry finish</span><span class="sys-chip sys-chip--soft">Traceable lot on every label (HarborOS)</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Fit finder ───────────────────────────────────────────────────── -->
+  <section class="sys-section" id="fit" aria-labelledby="fit-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">Fit finder</p>
+        <h2 class="sys-h2" id="fit-h">Your size in ten seconds. No tape measure.</h2>
+        <p class="sys-lead">Fit is the number-one reason swimwear comes back. Tell us three things and we will pick the size and inseam, with an honest confidence score.</p>
+      </div>
+      <div class="sys-card sys-card--feature fit-split rvl" data-reveal>
+        <form class="fit-form" id="fit-form" aria-label="Fit finder">
+          <div class="field"><label for="f-h">Height <output id="o-h">5′10″</output></label><input type="range" id="f-h" min="60" max="78" value="70" step="1"></div>
+          <div class="field"><label for="f-w">Weight <output id="o-w">175 lb</output></label><input type="range" id="f-w" min="110" max="280" value="175" step="5"></div>
+          <div class="field"><label for="f-waist">Jeans waist <span class="opt">(optional)</span></label>
+            <select id="f-waist"><option value="">I’m not sure</option></select></div>
+          <fieldset class="field"><legend>How do you like them?</legend><div class="seg">
+            <label><input type="radio" name="fit" value="trim"><span>Trim</span></label><label><input type="radio" name="fit" value="true" checked><span>True</span></label><label><input type="radio" name="fit" value="relaxed"><span>Relaxed</span></label></div>
+          </fieldset>
+          <fieldset class="field"><legend>Mostly for</legend><div class="seg">
+            <label><input type="radio" name="use" value="laps"><span>Laps</span></label><label><input type="radio" name="use" value="beach" checked><span>Beach and boat</span></label><label><input type="radio" name="use" value="surf"><span>Surf</span></label></div>
+          </fieldset>
+        </form>
+        <div class="fit-out" id="fit-out" aria-live="polite"></div>
+      </div>
+      <p class="sys-src"><b>Note:</b> illustrative model running in your browser<span class="sys-est sys-est--illus">illustrative</span>. In production, HarborOS learns from Fair Harbor’s own kept-versus-returned orders; fit vendors report 17–18% fewer fit-related returns for shoppers who follow the recommended size (Bold Metrics, vendor claim).</p>
+    </div>
+  </section>
+
+  <!-- ── Impact (dark band) ───────────────────────────────────────────── -->
+  <section class="sys-section" id="impact" data-sys-theme="dark" data-co="fh" aria-labelledby="impact-h">
+    <div class="sys-wrap impact-grid">
+      <div>
+        <div class="sys-section-head">
+          <p class="sys-kicker">Sustainability counter</p>
+          <h2 class="sys-h2" id="impact-h">Bottles turned into trunks, and counting.</h2>
+        </div>
+        <div class="counter" aria-live="off"><span id="bottle-count">27,000,000</span><small>bottles recycled into Fair Harbor fabric<span class="sys-est">est.</span> (running estimate)</small></div>
+        <div class="rate"><span><b id="rate-day" class="sys-num">—</b> a day</span><span><b id="rate-trunk" class="sys-num">≈11</b> a trunk</span><span><b id="rate-year" class="sys-num">—</b> a year</span></div>
         <details class="formula" open>
           <summary>How we count (the formula)</summary>
-          <p class="mono f-eq">bottles(t) = <b>27.0M</b> + <b>r</b> × days since 1 Jan 2023</p>
-          <p class="mono f-eq">r = (<b id="f-rev">$27M</b> est. revenue × <b>40%</b> swim share ÷ <b id="f-price">$88</b> median swim price × <b>11</b> bottles) ÷ 365</p>
-          <p>27M+ is the company-reported total on Fair Harbor's B Lab profile (certified June 2022), conservatively anchored at 1 Jan 2023. Revenue is the midpoint of a low-confidence estimate ($20–35M); the 40% swim share is an assumption; $88 is the median swim price on the live catalog (Sept 2026); 11 bottles per trunk is the brand's own ratio. Every input is labelled so the PRG can swap in actuals.</p>
+          <p class="f-eq">bottles(t) = <b>27.0M</b> + <b>r</b> × days since 1 Jan 2023</p>
+          <p class="f-eq">r = (<b id="f-rev">$27M</b> est. revenue × <b>40%</b> swim share ÷ <b id="f-price">$88</b> median swim price × <b>11</b> bottles) ÷ 365</p>
+          <p>27M+ is the company-reported total on Fair Harbor’s B Lab profile (certified June 2022), conservatively anchored at 1 Jan 2023. Revenue is the midpoint of a low-confidence estimate ($20–35M); the 40% swim share is an assumption; $88 is the median swim price on the live catalog (Sept 2026); 11 bottles per trunk is the brand’s own ratio. Every input is labelled so the Portfolio Resource Group can swap in actuals.</p>
         </details>
       </div>
-      <div class="kit" data-reveal>
-        <h3>Your kit's footprint</h3>
-        <p class="kit-sub">Add what's in your drawer and see how many bottles you're wearing.</p>
+      <div class="sys-card sys-card--feature kit">
+        <h3 class="sys-h3">Your kit’s footprint</h3>
+        <p class="sys-card-body">Add what is in your drawer and see how many bottles you are wearing.</p>
         <div class="kit-rows" id="kit"></div>
-        <div class="kit-total"><span>You're wearing</span><b id="kit-n" class="mono">22</b><span>bottles</span></div>
+        <div class="kit-total"><span>You are wearing</span><b id="kit-n">22</b><span>bottles</span></div>
         <div class="kit-bottles" id="kit-viz" aria-hidden="true"></div>
-        <p class="fine light">Trunk ratio (≈11) is the brand's; boardshort, shirt and short ratios are est. from fabric weight.</p>
-        <div class="again">
-          <span class="again-tag">Pre-Loved · proposed</span>
-          <h4>Harbor Again</h4>
-          <p>Send back worn Fair Harbor trunks for <b>$20 credit</b>. Good pairs are cleaned and resold as Pre-Loved; the rest go back into fiber. Circularity in the primary nav, the way Outerknown and Chubbies do it.</p>
+        <p class="sys-src">Trunk ratio (≈11) is the brand’s; boardshort, shirt and short ratios are estimates<span class="sys-est">est.</span> from fabric weight.</p>
+        <div class="sys-note sys-note--co"><span><b>Harbor Again · proposed.</b> Send back worn Fair Harbor trunks for $20 credit. Good pairs are cleaned and resold as Pre-Loved; the rest go back into fiber. Circularity up front, where the buyer sees it.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Wholesale ────────────────────────────────────────────────────── -->
+  <section class="sys-section" id="wholesale" aria-labelledby="ws-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head sys-section-head--row">
+        <div>
+          <p class="sys-kicker">Find us in stores</p>
+          <h2 class="sys-h2" id="ws-h">Wherever the water is, we are on the rack.</h2>
+          <p class="sys-lead">Fair Harbor started online and now sells through six wholesale channels plus two of its own stores. Store buyers can see line sheets, pre-book and reorder from sell-through in one portal.</p>
         </div>
+        <a class="sys-btn sys-btn--secondary" href="harboros.html#demo">Open a wholesale account <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="sys-grid sys-grid--3" id="channels"></div>
+      <div class="stores">
+        <div class="store"><span class="pin" aria-hidden="true"></span><div><b>SoHo, New York</b><span>Prince Street store</span></div></div>
+        <div class="store"><span class="pin" aria-hidden="true"></span><div><b>Palm Beach Gardens, Florida</b><span>Downtown at the Gardens</span></div></div>
+      </div>
+      <p class="sys-src"><b>Source:</b> Fair Harbor’s 2022 investment release (Nordstrom, Saks, about 250 specialty doors), site landing pages (Scheels 2023; FootJoy and collegiate 2026) and the B2B custom program (2025–26). No retailer logos are used.</p>
+    </div>
+  </section>
+
+  <!-- ── Reviews ──────────────────────────────────────────────────────── -->
+  <section class="sys-section sys-section--alt" id="reviews-sec" aria-labelledby="rv-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">Reviews</p>
+        <h2 class="sys-h2" id="rv-h"><span data-fact="reviews">35,000+</span> five-star reviews. Here is the gist.</h2>
+        <p class="sys-lead">The review count is company-reported (2022). The quotes below are illustrative, written for this concept to show the module; production pulls verified reviews with size-kept tags.</p>
       </div>
     </div>
-  </div>
-</section>
+    <div class="rv-track" id="reviews" tabindex="0" aria-label="Illustrative reviews, scrollable"></div>
+  </section>
 
-<!-- ═══ WHOLESALE ═══ -->
-<section class="sec" id="wholesale" aria-labelledby="ws-h">
-  <div class="wrap">
-    <div class="sec-head split" data-reveal>
-      <div><p class="eyebrow">Find us in stores</p><h2 id="ws-h">Wherever the water is, <span class="soft">we're on the rack.</span></h2></div>
-      <div class="sec-sub"><p>Fair Harbor started online and now sells through six wholesale channels plus two of its own stores. Store buyers can see line sheets, pre-book and reorder from sell-through in one portal.</p><a class="btn btn-ink sm" href="./harboros.html#demo">Open a wholesale account <span aria-hidden="true">→</span></a></div>
-    </div>
-    <div class="channels" id="channels"></div>
-    <div class="stores" data-reveal>
-      <div class="store"><span class="pin" aria-hidden="true"></span><div><b>SoHo, New York</b><span>Prince Street store</span></div></div>
-      <div class="store"><span class="pin" aria-hidden="true"></span><div><b>Palm Beach Gardens, Florida</b><span>Downtown at the Gardens</span></div></div>
-      <p class="fine">Channel facts from Fair Harbor's 2022 investment release (Nordstrom, Saks, ~250 specialty doors), site landing pages (Scheels 2023; FootJoy and collegiate 2026) and the B2B custom program (2025–26). No retailer logos are used.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ REVIEWS ═══ -->
-<section class="sec reviews" aria-labelledby="rv-h">
-  <div class="wrap">
-    <div class="sec-head split" data-reveal>
-      <div><p class="eyebrow">Reviews</p><h2 id="rv-h"><span data-fact="reviews">35,000+</span> five-star reviews. <span class="soft">Here's the gist.</span></h2></div>
-      <p class="sec-sub">Review count is company-reported (2022). The quotes below are <b>illustrative</b>, written for this concept to show the module; production pulls verified reviews with size-kept tags.</p>
-    </div>
-  </div>
-  <div class="rv-track" id="reviews" tabindex="0" aria-label="Illustrative reviews, scrollable"></div>
-</section>
-
-<!-- ═══ HARBOROS TEASER ═══ -->
-<section class="sec" aria-labelledby="os-h">
-  <div class="wrap">
-    <div class="os-teaser" data-reveal>
-      <div class="os-copy">
-        <p class="eyebrow light"><i class="os-dot"></i>Powered by HarborOS</p>
-        <h2 id="os-h">The operating system behind the trunks.</h2>
-        <p>The fit finder, the bottle counter, the wholesale portal and the replenishment emails on this site all run on one data layer. HarborOS is Broad Sky's tech-enablement thesis for Fair Harbor: fewer returns, more second orders, smarter buys.</p>
-        <ul class="os-mods"><li>AI fit &amp; size</li><li>Replenishment engine</li><li>Wholesale B2B portal</li><li>Inventory forecasting</li><li>Bottle → trunk traceability</li></ul>
-        <a class="btn btn-sun" href="./harboros.html">Explore HarborOS <span aria-hidden="true">→</span></a>
+  <!-- ── HarborOS teaser ──────────────────────────────────────────────── -->
+  <section class="sys-section" aria-labelledby="os-h">
+    <div class="sys-wrap os-teaser">
+      <div class="sys-section-head">
+        <p class="sys-kicker">Powered by HarborOS</p>
+        <h2 class="sys-h2" id="os-h">The operating system behind the trunks.</h2>
+        <p class="sys-lead">The fit finder, the bottle counter, the wholesale portal and the replenishment emails on this site all run on one data layer. HarborOS is Broad Sky’s tech-enablement thesis for Fair Harbor: fewer returns, more second orders, smarter buys.</p>
+        <div class="sys-chips" style="margin-top:var(--sys-sp-5)"><span class="sys-chip">AI fit and size</span><span class="sys-chip">Replenishment engine</span><span class="sys-chip">Wholesale portal</span><span class="sys-chip">Inventory forecasting</span><span class="sys-chip">Bottle-to-trunk traceability</span></div>
+        <div class="sys-actions"><a class="sys-btn sys-btn--co" href="harboros.html">Explore HarborOS <span aria-hidden="true">→</span></a></div>
       </div>
-      <div class="os-mock" aria-hidden="true">
-        <div class="mock-bar"><i></i><i></i><i></i><span>harboros · overview</span></div>
+      <div class="os-mock" data-sys-theme="dark" data-co="fh" aria-hidden="true">
+        <div class="mock-bar"><i></i><i></i><i></i><span>HarborOS · overview</span></div>
         <div class="mock-body">
-          <div class="mk"><span>Online return rate</span><b>19.3% → 17.4%</b><em>est. · NRF; True Fit case</em></div>
-          <div class="mk"><span>Repeat purchase</span><b>20% → 30%</b><em>est. · Klaviyo benchmark</em></div>
-          <div class="mk wide"><span>Swim demand · Bayberry · forecast vs on-hand</span><svg viewBox="0 0 300 70" preserveAspectRatio="none"><path d="M0 60 C40 58 60 52 90 40 S140 8 170 10 S220 40 250 52 S290 60 300 60" fill="none" stroke="#F2B263" stroke-width="2.5"/><path d="M0 60 C40 58 60 52 90 40 S140 8 170 10 S220 40 250 52 S290 60 300 60 V70 H0Z" fill="#F2B263" opacity=".12"/><path d="M0 30 H140 L150 50 H300" fill="none" stroke="#7FC8D3" stroke-width="2" stroke-dasharray="5 4"/></svg></div>
+          <div class="mk"><span>Online return rate</span><b>19.3% → 17.4%<span class="sys-est">est.</span></b><span>NRF baseline; True Fit case</span></div>
+          <div class="mk"><span>Repeat purchase</span><b>20% → 30%<span class="sys-est">est.</span></b><span>Klaviyo benchmark</span></div>
+          <div class="mk wide"><span>Swim demand · Bayberry · forecast vs on-hand</span><svg viewBox="0 0 300 70" preserveAspectRatio="none"><path class="ln-a" d="M0 60 C40 58 60 52 90 40 S140 8 170 10 S220 40 250 52 S290 60 300 60" stroke-width="2.5"/><path class="ar-a" d="M0 60 C40 58 60 52 90 40 S140 8 170 10 S220 40 250 52 S290 60 300 60 V70 H0Z"/><path class="ln-b" d="M0 30 H140 L150 50 H300" stroke-width="2" stroke-dasharray="5 4"/></svg></div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ═══ SHIPPING / RETURNS ═══ -->
-<section class="sec ship" aria-labelledby="ship-h">
-  <div class="wrap">
-    <div class="sec-head" data-reveal><p class="eyebrow">Shipping &amp; returns</p><h2 id="ship-h">Easy in, easy out.</h2></div>
-    <div class="ship-grid">
-      <div class="ship-card" data-reveal><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h16v13H3zM19 13h6l4 5v4h-10z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="24" r="2.5" fill="#FBF8F2" stroke="currentColor" stroke-width="1.8"/><circle cx="24" cy="24" r="2.5" fill="#FBF8F2" stroke="currentColor" stroke-width="1.8"/></svg><h3>Free shipping over $100</h3><p>Ships in 1–2 business days; 3–5 days to most of the US.</p></div>
-      <div class="ship-card" data-reveal><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 12a10 10 0 0 1 18-4M26 20a10 10 0 0 1-18 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M24 3v5h-5M8 29v-5h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><h3>Free exchanges</h3><p>Wrong size? We ship the new one as soon as the carrier scans your return.</p></div>
-      <div class="ship-card" data-reveal><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="6" width="22" height="21" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 12h22M11 3v5M21 3v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M11 19l3 3 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><h3>30-day returns</h3><p>Unworn, tags on, liner intact. Refund to your card or instant store credit.</p></div>
-      <div class="ship-card" data-reveal><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3l11 5v7c0 7-5 12-11 14C10 27 5 22 5 15V8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M11 16l3.5 3.5L21 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><h3>Fit guarantee</h3><p>Followed the fit finder and it's still off? The exchange is on us, both ways.</p></div>
+  <!-- ── Shipping and returns ─────────────────────────────────────────── -->
+  <section class="sys-section sys-section--alt" aria-labelledby="ship-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">Shipping and returns</p>
+        <h2 class="sys-h2" id="ship-h">Easy in, easy out.</h2>
+      </div>
+      <div class="sys-grid sys-grid--4">
+        <div class="sys-card"><span class="fh-ic"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h16v13H3zM19 13h6l4 5v4h-10z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="24" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="24" cy="24" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></span><p class="sys-card-title">Free shipping over $100</p><p class="sys-card-body">Ships in 1–2 business days; 3–5 days to most of the US.</p></div>
+        <div class="sys-card"><span class="fh-ic"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 12a10 10 0 0 1 18-4M26 20a10 10 0 0 1-18 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M24 3v5h-5M8 29v-5h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><p class="sys-card-title">Free exchanges</p><p class="sys-card-body">Wrong size? We ship the new one as soon as the carrier scans your return.</p></div>
+        <div class="sys-card"><span class="fh-ic"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="6" width="22" height="21" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 12h22M11 3v5M21 3v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M11 19l3 3 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><p class="sys-card-title">30-day returns</p><p class="sys-card-body">Unworn, tags on, liner intact. Refund to your card or instant store credit.</p></div>
+        <div class="sys-card"><span class="fh-ic"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3l11 5v7c0 7-5 12-11 14C10 27 5 22 5 15V8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M11 16l3.5 3.5L21 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><p class="sys-card-title">Fit guarantee</p><p class="sys-card-body">Followed the fit finder and it is still off? The exchange is on us, both ways.</p></div>
+      </div>
+      <p class="sys-src"><b>Note:</b> proposed policy for this concept; confirm thresholds with Fair Harbor operations before launch.</p>
     </div>
-    <p class="fine">Proposed policy for this concept; confirm thresholds with Fair Harbor operations before launch.</p>
-  </div>
-</section>
+  </section>
 
-<!-- ═══ FAQ ═══ -->
-<section class="sec faq" id="faq" aria-labelledby="faq-h">
-  <div class="wrap faq-grid">
-    <div data-reveal>
-      <p class="eyebrow">FAQ</p><h2 id="faq-h">Questions, answered.</h2>
-      <p class="sec-sub">Still wondering? The Fair Harbor helper answers sizing, shipping and wholesale questions any time.</p>
-      <button class="btn btn-ink" id="ask-btn">Ask the helper</button>
+  <!-- ── FAQ ──────────────────────────────────────────────────────────── -->
+  <section class="sys-section" id="faq" aria-labelledby="faq-h">
+    <div class="sys-wrap faq-grid">
+      <div class="sys-section-head">
+        <p class="sys-kicker">FAQ</p>
+        <h2 class="sys-h2" id="faq-h">Questions, answered.</h2>
+        <p class="sys-lead">Still wondering? The Fair Harbor helper answers sizing, shipping and wholesale questions any time.</p>
+        <div class="sys-actions"><button class="sys-btn sys-btn--secondary" type="button" id="ask-btn">Ask the helper</button></div>
+      </div>
+      <div class="faq-list" id="faq-list"></div>
     </div>
-    <div class="faq-list" id="faq-list"></div>
-  </div>
-</section>
+  </section>
 
-<!-- ═══ EMAIL ═══ -->
-<section class="sec" aria-labelledby="em-h">
-  <div class="wrap">
-    <div class="email" data-reveal>
-      <div><p class="eyebrow">The Harbor Report</p><h2 id="em-h">Get the fit guide, <span class="soft">not a coupon.</span></h2><p>First look at new prints, the summer drop calendar and our one-page fit guide. No pop-ups, no blanket 10% off, about two emails a month.</p></div>
-      <form class="em-form" id="em-form" novalidate>
-        <label class="sr" for="em">Email address</label>
-        <input id="em" type="email" placeholder="you@example.com" autocomplete="email" required>
-        <button class="btn btn-ink" type="submit">Send me the guide</button>
+  <!-- ── Email ────────────────────────────────────────────────────────── -->
+  <section class="sys-section sys-section--alt" aria-labelledby="em-h">
+    <div class="sys-wrap fh-split">
+      <div class="sys-section-head">
+        <p class="sys-kicker">The Harbor Report</p>
+        <h2 class="sys-h2" id="em-h">Get the fit guide, not a coupon.</h2>
+        <p class="sys-lead">First look at new prints, the summer drop calendar and our one-page fit guide. No pop-ups, no blanket 10% off, about two emails a month.</p>
+      </div>
+      <form class="sys-card sys-card--feature em-form" id="em-form" novalidate>
+        <label class="sys-sr" for="em">Email address</label>
+        <input id="em" type="email" placeholder="Your email address" autocomplete="email" required>
+        <button class="sys-btn sys-btn--primary" type="submit">Send me the guide</button>
         <p class="em-msg" id="em-msg" aria-live="polite"></p>
       </form>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ═══ DESIGN RATIONALE ═══ -->
-<section class="sec rationale" id="rationale" aria-labelledby="ra-h">
-  <div class="wrap">
-    <div class="ra-head" data-reveal>
-      <p class="eyebrow">Design rationale · for Tyler Zachem and the Portfolio Resource Group</p>
-      <h2 id="ra-h">Why this site looks and works the way it does.</h2>
-      <p class="sec-sub">Fair Harbor's job online is to sell full-price trunks with fewer returns and bring the buyer back next summer. Each choice below is borrowed from a reference site we reviewed on 6 Oct 2026 and tied to the KPI it should move.</p>
+  <!-- ── Design rationale ─────────────────────────────────────────────── -->
+  <section class="sys-section" id="rationale" aria-labelledby="ra-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">Design rationale · for the Portfolio Resource Group</p>
+        <h2 class="sys-h2" id="ra-h">Why this site looks and works the way it does.</h2>
+        <p class="sys-lead">Fair Harbor’s job online is to sell full-price trunks with fewer returns and bring the buyer back next summer. Each principle below comes from a review of apparel sites on Oct 6, 2026 and is tied to the KPI it should move.</p>
+      </div>
+      <div class="sys-grid sys-grid--2" id="ra-grid"></div>
+      <div class="ra-kpis">
+        <h3 class="sys-h3" style="margin-bottom:var(--sys-sp-4)">KPIs this design should move</h3>
+        <div class="sys-table-wrap"><table class="sys-table">
+          <thead><tr><th scope="col">KPI</th><th scope="col">Baseline</th><th scope="col">Target</th><th scope="col">Lever on this page</th></tr></thead>
+          <tbody id="ra-kpi"></tbody>
+          <caption>Source: baselines are benchmarks because Fair Harbor actuals are not public. OS program evidence (Fair Harbor KPI benchmarks), Fair Harbor growth plan (growth levers) and Fair Harbor public filings, Oct 2026.</caption>
+        </table></div>
+      </div>
+      <div class="sys-grid sys-grid--3" style="margin-top:var(--sys-gap)">
+        <article class="sys-card sys-card--flat"><p class="sys-card-title">What we deliberately left out</p><p class="sys-card-body">Many apparel sites open with a “10% off” entry modal and a floating deals pill. With <b data-fact="markdown">38.5%</b> of Fair Harbor’s live variants already marked down (Sept 2026), training buyers to wait for a discount is the last thing the P&amp;L needs. This site captures email with the fit guide instead.</p></article>
+        <article class="sys-card sys-card--flat"><p class="sys-card-title">Accessibility is a cost line</p><p class="sys-card-body">Fair Harbor has faced two ADA web-accessibility suits in S.D.N.Y. (2024, 2026). This concept is built to WCAG 2.2 AA: landmarks, skip link, visible focus, labelled controls, reduced-motion support and 4.5:1 text contrast. That closes off a recurring legal cost.</p></article>
+        <article class="sys-card sys-card--flat"><p class="sys-card-title">One system, not a skin</p><p class="sys-card-body">Every interactive module (fit, bottle counter, wholesale, replenishment) is a HarborOS surface, so the site doubles as the demo of the value-creation thesis. <a class="sys-link" href="harboros.html#math">See the math</a></p></article>
+      </div>
     </div>
-    <div class="ra-grid" id="ra-grid"></div>
-    <div class="ra-kpis" data-reveal>
-      <h3>KPIs this design should move</h3>
-      <div class="tbl-wrap"><table class="kpi-t">
-        <thead><tr><th scope="col">KPI</th><th scope="col">Baseline</th><th scope="col">Target</th><th scope="col">Lever on this page</th></tr></thead>
-        <tbody id="ra-kpi"></tbody>
-      </table></div>
-      <p class="fine">Baselines are benchmarks because Fair Harbor actuals are not public. Sources: data/research/serviceos_evidence.json (kb-fh-1…3), data/research/fh_playbook.json (gl-01, gl-03, gl-04), data/research/fairharbor_filings.json.</p>
+  </section>
+
+  <section class="sys-cta" aria-labelledby="cta-h">
+    <div class="sys-wrap">
+      <div class="sys-cta-in">
+        <div class="sys-cta-copy">
+          <h2 id="cta-h">See the system behind the trunks.</h2>
+          <p>HarborOS runs fit, retention, wholesale and forecasting on one data layer. The plan shows what it is worth.</p>
+        </div>
+        <div class="sys-actions">
+          <a class="sys-btn sys-btn--accent sys-btn--lg" href="harboros.html">Explore HarborOS</a>
+          <a class="sys-btn sys-btn--secondary sys-btn--lg" href="growth-plan.html">Read the plan</a>
+        </div>
+      </div>
     </div>
-    <div class="ra-notes">
-      <article class="ra-note" data-reveal><h3>What we deliberately did not copy</h3><p>Allbirds opens with a "10% off" entry modal and a floating deals pill. With <b data-fact="markdown">38.5%</b> of Fair Harbor's live variants already marked down (Sept 2026), training buyers to wait for a discount is the last thing the P&amp;L needs. This site captures email with the fit guide instead.</p></article>
-      <article class="ra-note" data-reveal><h3>Accessibility is a cost line</h3><p>Fair Harbor has faced two ADA web-accessibility suits in S.D.N.Y. (2024, 2026). This concept is built to WCAG 2.2 AA: landmarks, skip link, visible focus, labelled controls, reduced-motion support and 4.5:1 text contrast. That closes off a recurring legal cost.</p></article>
-      <article class="ra-note" data-reveal><h3>One system, not a skin</h3><p>Every interactive module (fit, bottle counter, wholesale, replenishment) is a HarborOS surface, so the site doubles as the demo of the value-creation thesis. <a href="./harboros.html#math">See the math</a>.</p></article>
-    </div>
-  </div>
-</section>
+  </section>
 </main>
 
-<footer class="foot">
-  <div class="wrap foot-grid">
-    <div class="foot-brand">
-      <a class="brand light" href="./"><svg viewBox="0 0 40 24" aria-hidden="true"><path d="M2 15c5-5 9-5 14 0s9 5 14 0 6-4 8-2" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="29" cy="6" r="3.4" fill="#F2B263"/></svg><span>FAIR HARBOR</span></a>
-      <p>Sustainable beachwear made from recycled plastic bottles. Founded by siblings Jake and Caroline Danehy. Fair Harbor Clothing PBC, New York, NY.</p>
-    </div>
-    <nav aria-label="Shop"><h4>Shop</h4><a href="#shop">Swim</a><a href="#shop">Shirts</a><a href="#shop">Golf</a><a href="#shop">Kids</a><a href="#impact">Pre-Loved</a></nav>
-    <nav aria-label="Help"><h4>Help</h4><a href="#fit">Fit finder</a><a href="#faq">FAQ</a><a href="#faq">Shipping &amp; returns</a><a href="#wholesale">Wholesale</a></nav>
-    <nav aria-label="Concept"><h4>Concept</h4><a href="./harboros.html">HarborOS</a><a href="./playbook.html">Value-creation playbook</a><a href="#rationale">Design rationale</a><a href="../index.html">All site concepts</a><a href="../../app.html#/fh/overview">Fair Harbor in the portal</a><a href="../../app.html#/techos/overview">Tech-enablement program</a></nav>
-  </div>
-  <div class="wrap foot-base"><span>Concept by Syed Rahman for the Broad Sky Portfolio Resource Group. Not affiliated with or endorsed by Fair Harbor Clothing PBC. All product art is original SVG; no photos or logos are used.</span></div>
-<p class="bsp-disclaimer" style="box-sizing:border-box;max-width:1200px;margin:0 auto;padding:12px 20px 18px;font-size:12px;line-height:1.55">Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.</p>
-</footer>
-
 <script type="module">
-  import { Chat } from '../../assets/chat.js?v=20261006090506';
-  import { Data } from '../../assets/core.js?v=20261006090506';
-  import { boot } from './site.js';
-  boot({ Chat, Data }).catch(e => console.error('Fair Harbor concept failed to boot', e));
+  import { Frame } from '../../assets/frame.js?v=20261006122625';
+  import { Chat } from '../../assets/chat.js?v=20261006122625';
+  import { Data } from '../../assets/core.js?v=20261006122625';
+  import { boot } from './site.js?v=20261006122625';
+  Frame.mount({});
+  boot({ Chat, Data, Frame }).catch(e => console.error('Fair Harbor concept failed to boot', e));
 </script>
 </body>
 </html>

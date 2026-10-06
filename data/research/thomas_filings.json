@@ -2,7 +2,7 @@
  "meta": {
   "dataset": "Thomas Scientific — filings & financial research track (Broad Sky Partners portfolio)",
   "generated": "2026-09-24",
-  "method": "SEC EDGAR full-text search (efts) for 'Thomas Scientific', 'Thomas Scientific, LLC', 'BSP-TS', 'Broad Sky Partners'. Parsed schedule-of-investments tables from 19 MFIC/Apollo Investment Corp and 4 MAIPL 10-Q/10-K filings (Dec-2021 → Jun-2026). Parsed Form D XML for 5 BSP vehicles and N-PORT XML for the Barings/Cascade fund holding BSP-TS Co-Invest I. Pulled USASpending API (recipient profile, spending_over_time, spending_by_award, IDVs, subagency). Pulled Harvard Bioscience 8-K pro forma (Denville). Checked CourtListener RECAP search, PR Newswire company newsroom, Carlyle and Broad Sky news pages, ZoomInfo firmographics and Avantor XBRL. The WebSearch budget was exhausted, so discovery relied on direct fetches of known endpoints.",
+  "method": "SEC EDGAR full-text search (efts) for 'Thomas Scientific', 'Thomas Scientific, LLC', 'BSP-TS', 'Broad Sky Partners'. Parsed schedule-of-investments tables from 19 MFIC/Apollo Investment Corp and 4 MAIPL 10-Q/10-K filings (Dec-2021 → Jun-2026). Parsed Form D XML for 5 BSP vehicles and N-PORT XML for the Barings/Cascade fund holding BSP-TS Co-Invest I. Pulled USASpending API (recipient profile, spending over time, awards search, IDVs, subagency). Pulled Harvard Bioscience 8-K pro forma (Denville). Checked CourtListener RECAP search, PR Newswire company newsroom, Carlyle and Broad Sky news pages, ZoomInfo firmographics and Avantor XBRL. The WebSearch budget was exhausted, so discovery relied on direct fetches of known endpoints.",
   "sources_summary": "SEC: 23 BDC periodic filings, 13 Form D/D-A, ~16 N-PORT, 4 proxies/8-K. Federal: USASpending API. Press: Carlyle release, 6 Thomas Scientific PR Newswire releases, Broad Sky news index. Other: CourtListener, ZoomInfo, SEC XBRL (Avantor).",
   "caveats": [
    "BDC data shows only Apollo's MFIC and MAIPL slices; total facility size, agent and the other lenders are inferred, not disclosed.",
@@ -707,7 +707,7 @@
      "DOJ": 1995811,
      "VA": 1362658
     },
-    "recipient_business_types": "small_business; foreign_owned_and_us_located_business; LLC",
+    "recipient_business_types": "Small business; foreign-owned, US-located business; LLC",
     "hq": "1654 High Hill Rd, Swedesboro NJ 08085"
    },
    "what_it_tells_us": "Federal COVID-testing demand brought about $175M of obligations over FY2020–21, against less than $1M a year before and about $7–8M a year after. That swing inflated the LTM EBITDA Broad Sky bought on in December 2021. The post-2022 federal run-rate of $7–8M (growing about 8–10% a year) is under 3% of estimated revenue.",
@@ -877,7 +877,7 @@
   {
    "entity": "MidCap Financial Investment Corp",
    "category": "lender_press",
-   "title": "Lender identity: Apollo/MidCap platform (co-investment under SEC exemptive order); no standalone lender press found",
+   "title": "Lender identity: Apollo/MidCap lending group (co-investment under SEC exemptive order); no standalone lender press found",
    "filed_or_dated": "2021-12 → 2026-08",
    "filer_or_source_agency": "MFIC/MAIPL SOI footnote (9); MFIC merger 425 investor deck",
    "key_figures": {

@@ -58,7 +58,7 @@ Every panel that shows data ends with a provenance footer: `foot: ui.source('NOA
 - Colours: company tokens `--c-bsp --c-cet --c-pp --c-fl --c-ts --c-bpi --c-fh --c-ma --c-pe --c-fin`; semantic `--green --amber --red --accent --purple --cyan`.
 
 ## 5. Facts (do not contradict; see data/research/bsp_firm.json for more)
-- Broad Sky Partners: NYC LMM PE, CEO/founder Tyler Zachem; 7 platforms, 23 add-ons; first exit Smith + Howard → TPG (Aug 2026, ~100→800 professionals, 9 add-ons). Portfolio Resource Group (PRG) led by operators.
+- Broad Sky Partners: NYC LMM PE, CEO/founder Tyler Zachem; 7 companies, 23 add-ons; first exit Smith + Howard → TPG (Aug 2026, ~100→800 professionals, 9 add-ons). Portfolio Resource Group (PRG) led by operators.
 - CET (Commonwealth Electrical Technologies): Worcester + Taunton MA; NuWave Energy Solutions (Norwell MA, Oct 2025); Horton Electrical Services (CT, Sept 15 2026, 120+ staff, wastewater/pump stations/solar/civil). Licensed in all 6 New England states. **No NYC expansion** (CEO guidance) — NYC analysis archived.
 - Punctual Pros: East Hempfield (Lancaster Co.) PA; One Hour / Benjamin Franklin / Mister Sparky; ~240 zips; Horvath Home Services (Beachwood/Toms River NJ, Dec 2024; Ocean & Monmouth).
 - Frontline Managed Services: St. Louis; 800+ law firms, >50% of AM Law 200; managed IT + revenue cycle.

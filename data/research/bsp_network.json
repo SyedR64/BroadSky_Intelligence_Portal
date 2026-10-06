@@ -1,0 +1,4449 @@
+{
+ "meta": {
+  "dataset": "bsp_network",
+  "title": "Broad Sky Partners professional network graph (public roles only)",
+  "author": "Syed Rahman",
+  "generated": "2026-10-06",
+  "method": "Nodes and edges built from broadskypartners.com (team, bios, strategy, deal pages), deal press releases (Business Wire via FinancialContent mirrors, PR Newswire, CPA Practice Advisor, Pulse 2.0, MR Magazine), company newsrooms, SEC filings (Form D, Form ADV, BDC 10-Q/N-PORT/N-CSR schedules of investments), UK Companies House accounts and charges, USPTO assignment records, and franchise trade press (ACHR News, Apax, IFA, CleanFax, Citybiz). Existing repo datasets (Broad Sky firm profile, filings datasets, add-on target lists) were reused with their original source URLs and retrieval dates; new facts were fetched 2026-10-06. Edges carry one-sentence evidence and the source that supports it. Intro paths are analyst constructions over sourced nodes and edges; confidence reflects proximity (same franchise system or same seller-banker = high/medium; geography-only = low).",
+  "schema": {
+   "node": "{id, kind:'node', type, name, org, title, sector_tags[], relevance_to_pipeline, source_url, retrieved}",
+   "edge": "{id, kind:'edge', from, to, relation, evidence, date, source_url, retrieved, current?}",
+   "node_types": [
+    "bsp_team",
+    "executive_board",
+    "operating_partner",
+    "portfolio_ceo",
+    "portfolio_board",
+    "advisor_banker",
+    "lender",
+    "lp_investor",
+    "franchisor",
+    "former_firm",
+    "industry_body"
+   ],
+   "node_types_extended": {
+    "firm": "Broad Sky itself (hub)",
+    "portfolio_company": "portfolio companies and named add-ons, needed as edge endpoints",
+    "counterparty_sponsor": "other sponsors on BSP deals (BV, Svoboda, TPG Growth, Apax)"
+   },
+   "relations": [
+    "works_at",
+    "board_of",
+    "advised_deal",
+    "lent_to",
+    "co_invested",
+    "former_colleague",
+    "franchisor_of",
+    "member_of"
+   ],
+   "relations_extended": {
+    "invested_in": "sponsor or buyer equity investment in a company",
+    "acquired": "portfolio company acquired an add-on / franchisor acquired brands"
+   },
+   "notes": "works at with current=false marks a prior or outside role. advised deal for BSP people marks their deal-team role. portfolio CEO is used for portfolio-company leaders, including add-on owners who joined the company."
+  },
+  "counts": {
+   "nodes": 131,
+   "edges": 183,
+   "intro_paths": 17
+  },
+  "intro_paths": [
+   {
+    "id": "ip01",
+    "target": "Ron Williams group: Benjamin Franklin / One Hour / Mister Sparky of West Chester, PA (fit 82)",
+    "target_ref": "ma_targets_pp.json#pp-t01",
+    "path_node_ids": [
+     "org-bsp",
+     "pc-pp",
+     "p-mbuckwalter",
+     "f-authority",
+     "p-clemente"
+    ],
+    "hops": 4,
+    "path": "Same franchise system: Matt Buckwalter (Punctual Pros) -> Authority Brands trade-brands leadership (Steve Clemente / Mark Dawson) -> tri-brand franchisee. Authority Brands must approve territory transfers, so the franchisor is both the intro path and a required consent.",
+    "confidence": "high",
+    "confidence_score": 0.8,
+    "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip02",
+    "target": "PHE, Inc. d/b/a The Punctual Pros NJ (South Jersey tri-brand franchisee, fit 80)",
+    "target_ref": "ma_targets_pp.json#pp-t06",
+    "path_node_ids": [
+     "org-bsp",
+     "pc-pp",
+     "pc-horvath",
+     "p-fhorvath",
+     "f-authority"
+    ],
+    "hops": 4,
+    "path": "Peer franchisee path: Frank Horvath (NJ tri-brand operator, now inside Punctual Pros) and Matt Buckwalter -> Authority Brands franchisee community -> South Jersey operator. Shared brand set and NJ footprint make this the warmest path.",
+    "confidence": "high",
+    "confidence_score": 0.75,
+    "source_url": "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip03",
+    "target": "Calvert's: One Hour / Benjamin Franklin of Wilmington & Dover, DE (fit 74)",
+    "target_ref": "ma_targets_pp.json#pp-t03",
+    "path_node_ids": [
+     "org-bsp",
+     "pc-pp",
+     "f-clockwork",
+     "f-authority",
+     "p-dawson"
+    ],
+    "hops": 4,
+    "path": "Same One Hour / Benjamin Franklin brands -> Authority Brands service-trades leadership -> Delaware franchisee.",
+    "confidence": "medium",
+    "confidence_score": 0.6,
+    "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip04",
+    "target": "Lancaster Plumbing, Heating, Cooling & Electrical (independent, East Petersburg PA, fit 84)",
+    "target_ref": "ma_targets_pp.json#pp-t11",
+    "path_node_ids": [
+     "org-bsp",
+     "pc-pp",
+     "a-boxwood",
+     "a-barley",
+     "a-trout"
+    ],
+    "hops": 4,
+    "path": "Independent (no franchise tie): best public path is the sell-side team that ran the Punctual Pros sale (Boxwood Partners, Barley Snyder, Trout CPA), which already advises Central PA home-services owners, plus Matt Buckwalter's local reputation.",
+    "confidence": "medium",
+    "confidence_score": 0.5,
+    "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip05",
+    "target": "C&C Air Conditioning, Heating, Plumbing & Electric (Belford, Monmouth Co. NJ, fit 82)",
+    "target_ref": "ma_targets_pp.json#pp-t48",
+    "path_node_ids": [
+     "org-bsp",
+     "pc-pp",
+     "pc-horvath",
+     "p-fhorvath"
+    ],
+    "hops": 3,
+    "path": "Local-market peer: Frank Horvath ran Ocean/Monmouth County franchises for 20+ years, so the Monmouth independent is a same-county competitor he can reach. A Lennox dealer, so a rebrand would be needed.",
+    "confidence": "low",
+    "confidence_score": 0.4,
+    "source_url": "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip06",
+    "target": "McDonald Electrical Corporation (Hingham MA; ANJ union division, fit 83)",
+    "target_ref": "ma_targets_cet.json#cet-t01",
+    "path_node_ids": [
+     "org-bsp",
+     "pc-cet",
+     "a-fmi",
+     "pc-nuwave"
+    ],
+    "hops": 3,
+    "path": "Banker path: FMI Capital Advisors ran both the CET sale and the NuWave sale (South Shore MA), and covers New England electrical owners. NuWave (Norwell) is in the neighboring town to Hingham.",
+    "confidence": "medium",
+    "confidence_score": 0.55,
+    "source_url": "https://comelectrical.com/commonwealth-electrical-technologies-acquires-nuwave-energy-solutions-a-full-service-design-build-energy-conservation-firm/",
+    "retrieved": "2026-09-24"
+   },
+   {
+    "id": "ip07",
+    "target": "Coghlin Electrical Contractors (Worcester MA, family-owned since 1885, fit 79)",
+    "target_ref": "ma_targets_cet.json#cet-t04",
+    "path_node_ids": [
+     "org-bsp",
+     "pc-cet",
+     "p-duquette",
+     "p-alexandrescu"
+    ],
+    "hops": 3,
+    "path": "Hometown path: CET is headquartered in Worcester; CEO John Duquette Jr. and Executive Chairman Dorian Alexandrescu (30+ years in the industry) are the natural intro for a same-city family firm.",
+    "confidence": "medium",
+    "confidence_score": 0.5,
+    "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip08",
+    "target": "K.M. Kelly, Inc. (Rochdale/Leicester MA, fit 83)",
+    "target_ref": "ma_targets_cet.json#cet-t02",
+    "path_node_ids": [
+     "org-bsp",
+     "pc-cet",
+     "p-duquette"
+    ],
+    "hops": 2,
+    "path": "Same-county operator path: K.M. Kelly sits near CET's Worcester HQ, so CEO-to-owner outreach is the direct route.",
+    "confidence": "medium",
+    "confidence_score": 0.5,
+    "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip09",
+    "target": "CTEC Solar (Bloomfield CT, fit 75)",
+    "target_ref": "ma_targets_cet.json#cet-t08",
+    "path_node_ids": [
+     "org-bsp",
+     "pc-cet",
+     "pc-horton",
+     "p-whorton"
+    ],
+    "hops": 3,
+    "path": "Connecticut solar peer: Warren Horton (Horton Electrical, CT solar install/O&M, now inside CET) knows the CT solar-contractor community. Roberta Bowman (ex-Duke Energy CSO, BSP Executive Board) adds renewables credibility.",
+    "confidence": "medium",
+    "confidence_score": 0.5,
+    "source_url": "https://www.prnewswire.com/news-releases/commonwealth-electrical-technologies-acquires-horton-electrical-services-expanding-northeast-footprint-and-specialized-infrastructure-capabilities-302878499.html",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip10",
+    "target": "FM Generator (Canton MA, family-owned, fit 78)",
+    "target_ref": "ma_targets_cet.json#cet-t05",
+    "path_node_ids": [
+     "org-bsp",
+     "pc-cet",
+     "pc-horton",
+     "p-whorton"
+    ],
+    "hops": 3,
+    "path": "Capability path: Horton brought generator and 24/7 emergency service to CET, so Horton's generator leadership is a peer-level intro to a generator dealer.",
+    "confidence": "low",
+    "confidence_score": 0.4,
+    "source_url": "https://www.prnewswire.com/news-releases/commonwealth-electrical-technologies-acquires-horton-electrical-services-expanding-northeast-footprint-and-specialized-infrastructure-capabilities-302878499.html",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip11",
+    "target": "Kraft & Kennedy (NYC legal IT, Frontline target, fit 85)",
+    "target_ref": "ma_targets_fl_ts.json#fl-02",
+    "path_node_ids": [
+     "org-bsp",
+     "pc-fl",
+     "p-britt",
+     "ff-synoptek"
+    ],
+    "hops": 3,
+    "path": "MSP-founder path: Tim Britt (Synoptek founder, now Frontline CEO) plus Seelin Naidoo's legal-industry relationships (board). Sam Sliman (ex-Coalfire chair) supports a cyber-led pitch.",
+    "confidence": "medium",
+    "confidence_score": 0.5,
+    "source_url": "https://www.prnewswire.com/news-releases/frontline-managed-services-appoints-tim-britt-as-chief-executive-officer-302670506.html",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip12",
+    "target": "Midland Scientific (La Vista NE, Thomas Scientific target, fit 92)",
+    "target_ref": "ma_targets_fl_ts.json#ts-01",
+    "path_node_ids": [
+     "org-bsp",
+     "pc-ts",
+     "p-haas",
+     "p-simmons"
+    ],
+    "hops": 3,
+    "path": "Distribution-veteran path: Stan Haas (30+ years in scientific distribution) and Executive Board member Charles Simmons (TS CEO 2017-2023, oversaw its pre-2023 acquisition program) reach regional distributor owners. Note: TS equity is marked near zero, so add-on capacity is constrained.",
+    "confidence": "medium",
+    "confidence_score": 0.45,
+    "source_url": "https://www.thomassci.com/blog/_/haas-ceo",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip13",
+    "target": "Next company: second accounting / advisory company (post Smith + Howard)",
+    "target_ref": "next_platform:professional_services_accounting",
+    "path_node_ids": [
+     "org-bsp",
+     "pc-sh",
+     "a-koltin",
+     "p-akoltin"
+    ],
+    "hops": 3,
+    "path": "Allan Koltin (Koltin Consulting) brought Smith + Howard to Broad Sky through a dozen-plus-sponsor process. He is the central CPA-firm M&A adviser and the shortest path to the next top-100 firm seeking PE. Sean Taylor is the reference CEO.",
+    "confidence": "high",
+    "confidence_score": 0.7,
+    "source_url": "https://www.cpapracticeadvisor.com/?p=73326",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip14",
+    "target": "Next company: Testing, Inspection, Certification & compliance services (BSP stated sector, no holding yet)",
+    "target_ref": "next_platform:TIC_compliance",
+    "path_node_ids": [
+     "org-bsp",
+     "p-sliman",
+     "ff-coalfire"
+    ],
+    "hops": 2,
+    "path": "Sam Sliman (former Coalfire chair, KeyData board) gives a public link into cyber-compliance and assessment services, the IT-adjacent TIC sub-segment.",
+    "confidence": "low",
+    "confidence_score": 0.35,
+    "source_url": "https://broadskypartners.com/team/",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip15",
+    "target": "Next company: grid / utility & energy-transition field services",
+    "target_ref": "next_platform:utility_grid_services",
+    "path_node_ids": [
+     "org-bsp",
+     "p-bowman",
+     "ff-duke",
+     "pc-cet",
+     "a-fmi"
+    ],
+    "hops": 4,
+    "path": "Roberta Bowman (ex-Duke Energy CSO) gives a utility-side view. CET's FMI relationship covers sellers. This lets BSP grow a utility-services company beyond New England without breaking CET's no-NYC footprint.",
+    "confidence": "low",
+    "confidence_score": 0.35,
+    "source_url": "https://broadskypartners.com/team/",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip16",
+    "target": "Next company: second franchised home-services system (non-trade brands)",
+    "target_ref": "next_platform:franchise_home_services",
+    "path_node_ids": [
+     "org-bsp",
+     "p-marlow",
+     "pc-pp",
+     "f-authority",
+     "c-apax"
+    ],
+    "hops": 4,
+    "path": "Jonathan Marlow (led Punctual Pros, now Executive Board) plus the Authority Brands / Apax relationship gives a public line into multi-unit franchisee operators of other home-services brands.",
+    "confidence": "medium",
+    "confidence_score": 0.5,
+    "source_url": "https://www.apax.com/news-views/funds-advised-by-apax-partners-acquire-authority-brands/",
+    "retrieved": "2026-10-06"
+   },
+   {
+    "id": "ip17",
+    "target": "Next company: payments- or billing-enabled business services",
+    "target_ref": "next_platform:payments_enabled_services",
+    "path_node_ids": [
+     "org-bsp",
+     "p-kelly",
+     "ff-evo"
+    ],
+    "hops": 2,
+    "path": "Jim Kelly (EVO Payments CEO) on the Executive Board is the public bridge to payments-adjacent services. It also links to Frontline's billing/RCM line.",
+    "confidence": "low",
+    "confidence_score": 0.3,
+    "source_url": "https://broadskypartners.com/team/",
+    "retrieved": "2026-10-06"
+   }
+  ],
+  "network_summary": [
+   "Broad Sky's public network is a Carlyle/MidOcean lineage firm: five of the core investment and operating leaders (Zachem, Glucksman, David, Kiser, Narain) list Carlyle roles, and Zachem and Marlow share MidOcean, so the firm's relationships and growth plan come from Carlyle's U.S. Equity Opportunity middle-market business.",
+   "Capital comes from three layers: Capital Constellation (Wafra-managed, backed by sovereign and pension members such as Alaska Permanent Fund, NYS Common, Railpen, KIA, PIFSS and AP3) at the GP level, a ~$335M Fund I, and per-deal co-invest SPVs that drew institutional LPs such as Carlyle AlpInvest (Frontline) and Barings/Cascade (Thomas Scientific).",
+   "Each company is financed by a different direct lender (Apollo/MidCap for Thomas Scientific, NXT Capital + Audax for Frontline, PineBridge for BPI, PGIM-held paper for Punctual Pros), so BSP has a broad bench of private-credit relationships for add-on DDTLs and new companies.",
+   "On the buy side BSP repeatedly uses Berenson & Co. (TS, BPI, Frontline, CET), Harris Williams (Punctual Pros, Frontline) and Morrison Cohen / Greenberg Traurig as counsel. Sellers' banks (Boxwood, FMI Capital Advisors, Koltin, Guggenheim, PwC CF) are the most useful relationships for finding the next targets in each vertical.",
+   "The 15-member Executive Board maps to sectors: utilities/ESG (Bowman), lab distribution (Simmons), cybersecurity (Sliman), payments (Kelly), media and entertainment (Reynolds, Gertner, Patricof, Sharples), finance (Calpeter, Monahan) and technology (Cahall, Wolf).",
+   "For Punctual Pros, the highest-value node is the franchisor: Authority Brands (Apax-owned since 2018; CEO Jay Caiafa since Aug 2025; Trade Brands led by Steve Clemente) controls territory transfers for One Hour, Benjamin Franklin and Mister Sparky, so franchisee add-ons run through it.",
+   "For CET, the network runs through operators rather than capital: CEO John Duquette Jr., Executive Chairman Dorian Alexandrescu, acquired owners Warren Horton (CT) and NuWave (South Shore MA), and FMI Capital Advisors, which sold both CET and NuWave. All of these intro paths stay inside New England, consistent with the no-NYC guidance.",
+   "Overall the graph shows a thematic, operator-led sourcing model: BSP enters through founder-owned companies sold by specialist banks, installs or keeps industry-veteran CEOs and chairs, and then uses those executives' peer networks for proprietary tuck-ins rather than auctions."
+  ],
+  "caveats": [
+   "PUBLIC-ROLE INFORMATION ONLY: every person appears solely in a professional capacity disclosed in public sources (firm websites, press releases, regulatory filings). The file contains no personal contact details, home addresses, personal social-media data or private-life information, and no LinkedIn data was used.",
+   "Intro paths are hypotheses about plausible public connections, not evidence of personal relationships, and none has been validated with the people involved. Confidence scores are analyst judgment.",
+   "Former-colleague edges based on a shared employer do not prove overlapping tenure unless the evidence says so.",
+   "Executive Board roles are as listed on broadskypartners.com/team on 2026-10-06. Titles described as 'former' may be outdated, and some (e.g. Jim Kelly at EVO Payments) may have changed since EVO's 2023 sale to Global Payments, but are reproduced as BSP lists them.",
+   "Lender edges come from public schedules and UK charge filings that show only part of each facility. The full syndicate, agents and sizes are mostly undisclosed. Punctual Pros' PGIM slice first appears at 6/30/2026.",
+   "Roberta Bowman's tie to Fair Harbor is her role as quoted ESG Operating Partner in 2022. A formal board seat is not confirmed, and the edge is labeled board of for want of a closer relation type.",
+   "Mark Dawson's title (EVP, Service Trades Brands) is as of Apr 2024. Authority Brands later hired Steve Clemente as President and COO of Trade Brands (Dec 2025), and Dawson's current role was not verified.",
+   "Capital Constellation membership is as stated at Jan 2022. Members such as CPP Investments joined later and are excluded. Constellation's stake in BSP is undisclosed and is not listed in Form ADV Schedule A/B.",
+   "Some Business Wire originals returned 403 errors; their FinancialContent mirrors were used instead and carry identical text.",
+   "Thomas Scientific: public BDC and N-PORT marks show sponsor equity near zero and the term loan at about 88% of par (Jun 2026), so leaning on TS add-on intro paths may not be the priority."
+  ]
+ },
+ "items": [
+  {
+   "id": "org-bsp",
+   "kind": "node",
+   "type": "firm",
+   "name": "Broad Sky Partners",
+   "org": "Broad Sky Partners, LLC",
+   "title": "Lower-middle-market PE sponsor (NYC)",
+   "sector_tags": [
+    "essential services",
+    "business services",
+    "consumer services"
+   ],
+   "relevance_to_pipeline": "Hub: every anchor and add-on",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pc-ts",
+   "kind": "node",
+   "type": "portfolio_company",
+   "name": "Thomas Scientific",
+   "org": "Thomas Scientific",
+   "title": "Portfolio company (Jan 2022)",
+   "sector_tags": [
+    "lab distribution",
+    "life sciences"
+   ],
+   "relevance_to_pipeline": "Thomas Scientific portfolio company; distribution & logistics services",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pc-fh",
+   "kind": "node",
+   "type": "portfolio_company",
+   "name": "Fair Harbor",
+   "org": "Fair Harbor Clothing PBC",
+   "title": "Portfolio company (Mar 2022)",
+   "sector_tags": [
+    "consumer",
+    "apparel",
+    "DTC"
+   ],
+   "relevance_to_pipeline": "Fair Harbor portfolio company; consumer brands",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pc-sh",
+   "kind": "node",
+   "type": "portfolio_company",
+   "name": "Smith + Howard",
+   "org": "Smith + Howard Advisory LLC",
+   "title": "Portfolio company (Nov 2022); exited to TPG Growth Aug 2026",
+   "sector_tags": [
+    "accounting",
+    "professional services"
+   ],
+   "relevance_to_pipeline": "Exit proof point; professional services growth plan",
+   "source_url": "https://www.cpapracticeadvisor.com/?p=73326",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pc-bpi",
+   "kind": "node",
+   "type": "portfolio_company",
+   "name": "Bully Pulpit International (BPI)",
+   "org": "Bully Pulpit International",
+   "title": "Portfolio company (Apr 2023)",
+   "sector_tags": [
+    "strategic communications",
+    "public affairs",
+    "media services"
+   ],
+   "relevance_to_pipeline": "BPI portfolio company; media/communications services",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pc-pp",
+   "kind": "node",
+   "type": "portfolio_company",
+   "name": "Punctual Pros",
+   "org": "Punctual Pros",
+   "title": "Portfolio company (Apr 2024)",
+   "sector_tags": [
+    "residential HVAC",
+    "plumbing",
+    "electrical",
+    "franchise"
+   ],
+   "relevance_to_pipeline": "Punctual Pros; residential services add-ons",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pc-fl",
+   "kind": "node",
+   "type": "portfolio_company",
+   "name": "Frontline Managed Services",
+   "org": "Frontline Managed Services",
+   "title": "Portfolio company (Dec 2024)",
+   "sector_tags": [
+    "legal IT",
+    "managed services",
+    "revenue-cycle management"
+   ],
+   "relevance_to_pipeline": "Frontline portfolio company; IT & tech services",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pc-cet",
+   "kind": "node",
+   "type": "portfolio_company",
+   "name": "Commonwealth Electrical Technologies (CET)",
+   "org": "Commonwealth Electrical Technologies",
+   "title": "Portfolio company (Feb-Mar 2025)",
+   "sector_tags": [
+    "electrical contracting",
+    "solar",
+    "EV charging",
+    "energy efficiency"
+   ],
+   "relevance_to_pipeline": "CET portfolio company; infrastructure services add-ons (New England)",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pc-horvath",
+   "kind": "node",
+   "type": "portfolio_company",
+   "name": "Horvath Home Services",
+   "org": "Horvath Home Services (Punctual Pros add-on)",
+   "title": "Add-on (Dec 2024)",
+   "sector_tags": [
+    "residential HVAC",
+    "franchise",
+    "NJ"
+   ],
+   "relevance_to_pipeline": "PP add-on; Ocean/Monmouth NJ franchise peer network",
+   "source_url": "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pc-nuwave",
+   "kind": "node",
+   "type": "portfolio_company",
+   "name": "NuWave Energy Solutions",
+   "org": "NuWave Energy Solutions (CET add-on)",
+   "title": "Add-on (Oct 2025)",
+   "sector_tags": [
+    "energy efficiency",
+    "design-build"
+   ],
+   "relevance_to_pipeline": "CET add-on; South Shore MA energy-efficiency network",
+   "source_url": "https://comelectrical.com/commonwealth-electrical-technologies-acquires-nuwave-energy-solutions-a-full-service-design-build-energy-conservation-firm/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "pc-horton",
+   "kind": "node",
+   "type": "portfolio_company",
+   "name": "Horton Electrical Services",
+   "org": "Horton Electrical Services (CET add-on)",
+   "title": "Add-on (Sep 2026)",
+   "sector_tags": [
+    "electrical",
+    "wastewater",
+    "solar O&M",
+    "generators",
+    "CT"
+   ],
+   "relevance_to_pipeline": "CET add-on; Connecticut wastewater/solar/generator network",
+   "source_url": "https://www.prnewswire.com/news-releases/commonwealth-electrical-technologies-acquires-horton-electrical-services-expanding-northeast-footprint-and-specialized-infrastructure-capabilities-302878499.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "pc-agado",
+   "kind": "node",
+   "type": "portfolio_company",
+   "name": "Agado Communications",
+   "org": "Agado Communications (BPI add-on)",
+   "title": "Add-on (May 2025)",
+   "sector_tags": [
+    "sports communications"
+   ],
+   "relevance_to_pipeline": "BPI add-on; sports/media network",
+   "source_url": "https://bpigroup.com/bpi-acquires-agado-communications-appoints-mark-jones-to-lead-sports-offering-strategy-and-growth/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-zachem",
+   "kind": "node",
+   "type": "bsp_team",
+   "name": "Tyler Zachem",
+   "org": "Broad Sky Partners",
+   "title": "CEO and Partner (founder)",
+   "sector_tags": [
+    "business services",
+    "media"
+   ],
+   "relevance_to_pipeline": "All companies; firm founder and IC",
+   "source_url": "https://broadskypartners.com/team/tyler-zachem/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-frank",
+   "kind": "node",
+   "type": "bsp_team",
+   "name": "Lincoln Frank",
+   "org": "Broad Sky Partners",
+   "title": "Vice Chair",
+   "sector_tags": [
+    "education",
+    "financial services"
+   ],
+   "relevance_to_pipeline": "Investment Committee; ex-Quad Partners founder",
+   "source_url": "https://broadskypartners.com/team/lincoln-frank/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-glucksman",
+   "kind": "node",
+   "type": "bsp_team",
+   "name": "Adam Glucksman",
+   "org": "Broad Sky Partners",
+   "title": "Partner (leads Business Services)",
+   "sector_tags": [
+    "business services",
+    "industrials"
+   ],
+   "relevance_to_pipeline": "Thomas Scientific, Smith + Howard, Frontline",
+   "source_url": "https://broadskypartners.com/team/adam-glucksman/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-kahn",
+   "kind": "node",
+   "type": "bsp_team",
+   "name": "Jodi Kahn",
+   "org": "Broad Sky Partners",
+   "title": "Partner (leads Portfolio Resource Group)",
+   "sector_tags": [
+    "consumer",
+    "digital",
+    "operations"
+   ],
+   "relevance_to_pipeline": "Value creation across all companies",
+   "source_url": "https://broadskypartners.com/team/jodi-kahn/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-david",
+   "kind": "node",
+   "type": "bsp_team",
+   "name": "RJ David",
+   "org": "Broad Sky Partners",
+   "title": "Managing Director",
+   "sector_tags": [
+    "infrastructure services",
+    "consumer",
+    "media"
+   ],
+   "relevance_to_pipeline": "CET deal lead; infrastructure & consumer services",
+   "source_url": "https://broadskypartners.com/broad-sky-partners-appoints-rj-david-as-managing-director/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-margolis",
+   "kind": "node",
+   "type": "bsp_team",
+   "name": "Amy Margolis",
+   "org": "Broad Sky Partners",
+   "title": "Managing Director, Head of Business Development",
+   "sector_tags": [
+    "deal sourcing"
+   ],
+   "relevance_to_pipeline": "Intermediary coverage for all add-ons and new companies",
+   "source_url": "https://broadskypartners.com/team/amy-margolis/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-abuhaidar",
+   "kind": "node",
+   "type": "bsp_team",
+   "name": "Jacqueline Abu-Haidar",
+   "org": "Broad Sky Partners",
+   "title": "Principal, Investor Relations",
+   "sector_tags": [
+    "investor relations",
+    "media"
+   ],
+   "relevance_to_pipeline": "LP relationships / co-invest syndication",
+   "source_url": "https://broadskypartners.com/team/jacqueline-abu-haidar/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-grubbs",
+   "kind": "node",
+   "type": "bsp_team",
+   "name": "Chris Grubbs",
+   "org": "Broad Sky Partners",
+   "title": "Vice President",
+   "sector_tags": [
+    "business services"
+   ],
+   "relevance_to_pipeline": "Deal team",
+   "source_url": "https://broadskypartners.com/team/chris-grubbs/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-lopez",
+   "kind": "node",
+   "type": "bsp_team",
+   "name": "Marjorie Lopez",
+   "org": "Broad Sky Partners",
+   "title": "Vice President (Consumer)",
+   "sector_tags": [
+    "consumer"
+   ],
+   "relevance_to_pipeline": "Consumer deals (Fair Harbor, residential services)",
+   "source_url": "https://broadskypartners.com/team/marjorie-lopez-1/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-zucker",
+   "kind": "node",
+   "type": "bsp_team",
+   "name": "Shelby Zucker",
+   "org": "Broad Sky Partners",
+   "title": "Vice President",
+   "sector_tags": [
+    "business services"
+   ],
+   "relevance_to_pipeline": "Deal team",
+   "source_url": "https://broadskypartners.com/team/shelby-zucker/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-wang",
+   "kind": "node",
+   "type": "bsp_team",
+   "name": "Julia Wang",
+   "org": "Broad Sky Partners",
+   "title": "Vice President",
+   "sector_tags": [
+    "marketing",
+    "advertising"
+   ],
+   "relevance_to_pipeline": "Press/marketing; BPI adjacency",
+   "source_url": "https://broadskypartners.com/team/julia-wang/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-drossman",
+   "kind": "node",
+   "type": "bsp_team",
+   "name": "Jordan Drossman",
+   "org": "Broad Sky Partners",
+   "title": "Associate",
+   "sector_tags": [
+    "healthcare",
+    "business services"
+   ],
+   "relevance_to_pipeline": "Deal team",
+   "source_url": "https://broadskypartners.com/team/jordan-drossman/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-azus",
+   "kind": "node",
+   "type": "bsp_team",
+   "name": "Evan Azus",
+   "org": "Broad Sky Partners (former)",
+   "title": "Former Principal / Managing Director (not on current team page)",
+   "sector_tags": [
+    "business services",
+    "legal services",
+    "professional services"
+   ],
+   "relevance_to_pipeline": "Led-quoted on Smith + Howard and Frontline deals",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-pawliger",
+   "kind": "node",
+   "type": "operating_partner",
+   "name": "Sam Pawliger",
+   "org": "Broad Sky Partners",
+   "title": "Portfolio Resource Group",
+   "sector_tags": [
+    "DTC",
+    "e-commerce",
+    "operations"
+   ],
+   "relevance_to_pipeline": "Consumer/DTC operating support (Fair Harbor, Punctual Pros digital)",
+   "source_url": "https://broadskypartners.com/team/sam-pawliger/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-kiser",
+   "kind": "node",
+   "type": "operating_partner",
+   "name": "Georgette Kiser",
+   "org": "Broad Sky Partners",
+   "title": "Operating Partner, Tech & Ops",
+   "sector_tags": [
+    "technology",
+    "CIO",
+    "cybersecurity"
+   ],
+   "relevance_to_pipeline": "Tech diligence and IT integration; Frontline adjacency",
+   "source_url": "https://broadskypartners.com/team/georgette-kiser/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-narain",
+   "kind": "node",
+   "type": "operating_partner",
+   "name": "Aditya Narain",
+   "org": "Broad Sky Partners",
+   "title": "Operating Partner, Finance, Operations, Risk & Fund Management; CCO per Form ADV",
+   "sector_tags": [
+    "finance",
+    "risk",
+    "fund management"
+   ],
+   "relevance_to_pipeline": "Finance/integration support; fund compliance",
+   "source_url": "https://broadskypartners.com/team/aditya-narain/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-bowman",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "Roberta Bowman",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "Former Chief Sustainability Officer, Duke Energy; former Chief Brand Officer, LPGA",
+   "sector_tags": [
+    "ESG",
+    "utilities",
+    "energy"
+   ],
+   "relevance_to_pipeline": "CET (utility/renewables) and Fair Harbor (sustainability); grid-services company idea",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-cahall",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "Ted Cahall",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "Former COO, Digital River; former CVP, Microsoft",
+   "sector_tags": [
+    "technology",
+    "e-commerce"
+   ],
+   "relevance_to_pipeline": "Frontline (tech services); Fair Harbor e-commerce",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-calpeter",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "Lynn Calpeter",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "Former CFO, GE Capital and NBCU",
+   "sector_tags": [
+    "finance",
+    "industrials",
+    "media"
+   ],
+   "relevance_to_pipeline": "Thomas Scientific board chair",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-howe",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "John Howe",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "Former CEO, Compana Pet Brands",
+   "sector_tags": [
+    "consumer products"
+   ],
+   "relevance_to_pipeline": "Consumer companies",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-gertner",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "Risa Gertner",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "Board Member and Partner, CAA",
+   "sector_tags": [
+    "media",
+    "entertainment",
+    "brand partnerships"
+   ],
+   "relevance_to_pipeline": "BPI (media/culture); Fair Harbor brand",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-herenton",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "Rodney Herenton",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "Co-CEO and Founder, Channing Capital",
+   "sector_tags": [
+    "asset management"
+   ],
+   "relevance_to_pipeline": "LP/allocator network",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-kelly",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "Jim Kelly",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "CEO and Director, EVO Payments",
+   "sector_tags": [
+    "payments",
+    "fintech"
+   ],
+   "relevance_to_pipeline": "Payments-enabled services company idea; RCM/billing (Frontline)",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-marlow",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "Jonathan Marlow",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "Former Broad Sky Partner; MidOcean; Investcorp",
+   "sector_tags": [
+    "consumer",
+    "residential services"
+   ],
+   "relevance_to_pipeline": "Led Fair Harbor and Punctual Pros deals; residential services knowledge",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-monahan",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "Mike Monahan",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "Former EVP, COO and CFO, Pitney Bowes",
+   "sector_tags": [
+    "business services",
+    "logistics"
+   ],
+   "relevance_to_pipeline": "Thomas Scientific distribution; business services",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-patricof",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "Mark Patricof",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "Founder, Patricof Co",
+   "sector_tags": [
+    "media",
+    "sports",
+    "consumer"
+   ],
+   "relevance_to_pipeline": "BPI sports/media; Agado adjacency",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-reynolds",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "Fred Reynolds",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "Former EVP and CFO, CBS",
+   "sector_tags": [
+    "media",
+    "finance"
+   ],
+   "relevance_to_pipeline": "BPI / media services",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-sharples",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "Lisa Sharples",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "Former CEO, Allrecipes; Founder, Fexy",
+   "sector_tags": [
+    "digital media",
+    "consumer"
+   ],
+   "relevance_to_pipeline": "Fair Harbor DTC; media services",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-simmons",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "Charles Simmons",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "Former CEO, Thomas Scientific (2017-2023)",
+   "sector_tags": [
+    "lab distribution",
+    "life sciences"
+   ],
+   "relevance_to_pipeline": "Thomas Scientific add-ons (scientific distribution owners)",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-sliman",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "Sam Sliman",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "Founder, Gulfscape; Board, KeyData; former Chair, Coalfire",
+   "sector_tags": [
+    "cybersecurity",
+    "compliance",
+    "IT services"
+   ],
+   "relevance_to_pipeline": "Frontline cyber; TIC/compliance company idea",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-wolf",
+   "kind": "node",
+   "type": "executive_board",
+   "name": "Bryan Wolf",
+   "org": "Broad Sky Partners Executive Board",
+   "title": "Former Managing Director, Intel Capital",
+   "sector_tags": [
+    "technology",
+    "venture"
+   ],
+   "relevance_to_pipeline": "Tech-enabled services diligence",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-taylor",
+   "kind": "node",
+   "type": "portfolio_ceo",
+   "name": "Sean Taylor",
+   "org": "Smith + Howard",
+   "title": "CEO",
+   "sector_tags": [
+    "accounting"
+   ],
+   "relevance_to_pipeline": "S+H exit reference; accounting-company intro source",
+   "source_url": "https://www.cpapracticeadvisor.com/?p=73326",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-haas",
+   "kind": "node",
+   "type": "portfolio_ceo",
+   "name": "Stan Haas",
+   "org": "Thomas Scientific",
+   "title": "President & CEO (since Apr 2023)",
+   "sector_tags": [
+    "lab distribution"
+   ],
+   "relevance_to_pipeline": "TS add-on sourcing (30+ years in scientific distribution)",
+   "source_url": "https://www.thomassci.com/blog/_/haas-ceo",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-bleeker",
+   "kind": "node",
+   "type": "portfolio_ceo",
+   "name": "Andrew Bleeker",
+   "org": "Bully Pulpit International",
+   "title": "CEO (President at time of BSP deal)",
+   "sector_tags": [
+    "public affairs"
+   ],
+   "relevance_to_pipeline": "BPI add-on sourcing",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-labolt",
+   "kind": "node",
+   "type": "portfolio_ceo",
+   "name": "Ben LaBolt",
+   "org": "Bully Pulpit International",
+   "title": "President",
+   "sector_tags": [
+    "political communications"
+   ],
+   "relevance_to_pipeline": "BPI leadership; Washington network",
+   "source_url": "https://bpigroup.com/former-white-house-communications-director-ben-labolt-returns-to-bpi-as-president/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-jdanehy",
+   "kind": "node",
+   "type": "portfolio_ceo",
+   "name": "Jake Danehy",
+   "org": "Fair Harbor",
+   "title": "CEO & Co-founder",
+   "sector_tags": [
+    "apparel",
+    "DTC"
+   ],
+   "relevance_to_pipeline": "Fair Harbor",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-cdanehy",
+   "kind": "node",
+   "type": "portfolio_ceo",
+   "name": "Caroline Danehy",
+   "org": "Fair Harbor",
+   "title": "Co-founder; Chief Creative Officer (2022 release)",
+   "sector_tags": [
+    "apparel",
+    "brand"
+   ],
+   "relevance_to_pipeline": "Fair Harbor",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-mbuckwalter",
+   "kind": "node",
+   "type": "portfolio_ceo",
+   "name": "Matt Buckwalter",
+   "org": "Punctual Pros",
+   "title": "Founder & CEO",
+   "sector_tags": [
+    "residential HVAC",
+    "franchise"
+   ],
+   "relevance_to_pipeline": "Punctual Pros add-ons; Authority Brands franchisee peer network",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-britt",
+   "kind": "node",
+   "type": "portfolio_ceo",
+   "name": "Tim Britt",
+   "org": "Frontline Managed Services",
+   "title": "CEO (appointed Jan 2026); founder & former CEO of Synoptek",
+   "sector_tags": [
+    "managed IT",
+    "MSP"
+   ],
+   "relevance_to_pipeline": "Frontline MSP add-ons; MSP founder network",
+   "source_url": "https://www.prnewswire.com/news-releases/frontline-managed-services-appoints-tim-britt-as-chief-executive-officer-302670506.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-naidoo",
+   "kind": "node",
+   "type": "portfolio_board",
+   "name": "Seelin Naidoo",
+   "org": "Frontline Managed Services",
+   "title": "Former CEO; moved to Board (Jan 2026)",
+   "sector_tags": [
+    "legal IT"
+   ],
+   "relevance_to_pipeline": "Frontline legal-industry relationships",
+   "source_url": "https://www.prnewswire.com/news-releases/frontline-managed-services-appoints-tim-britt-as-chief-executive-officer-302670506.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-duquette",
+   "kind": "node",
+   "type": "portfolio_ceo",
+   "name": "John Duquette Jr.",
+   "org": "Commonwealth Electrical Technologies",
+   "title": "CEO",
+   "sector_tags": [
+    "electrical contracting",
+    "New England"
+   ],
+   "relevance_to_pipeline": "CET add-ons (New England electrical owners)",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-alexandrescu",
+   "kind": "node",
+   "type": "portfolio_board",
+   "name": "Dorian Alexandrescu",
+   "org": "Commonwealth Electrical Technologies",
+   "title": "Executive Chairman (industry veteran, 30+ years)",
+   "sector_tags": [
+    "electrical",
+    "infrastructure services"
+   ],
+   "relevance_to_pipeline": "CET add-on sourcing via industry network",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-fhorvath",
+   "kind": "node",
+   "type": "portfolio_ceo",
+   "name": "Frank Horvath",
+   "org": "Punctual Pros (via Horvath Home Services)",
+   "title": "Owner, Horvath Home Services; joined Punctual Pros",
+   "sector_tags": [
+    "residential HVAC",
+    "franchise",
+    "NJ"
+   ],
+   "relevance_to_pipeline": "Ocean/Monmouth NJ operator network",
+   "source_url": "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-whorton",
+   "kind": "node",
+   "type": "portfolio_ceo",
+   "name": "Warren A. Horton",
+   "org": "CET (via Horton Electrical Services)",
+   "title": "Owner and Managing Member, Horton Electrical Services",
+   "sector_tags": [
+    "electrical",
+    "wastewater",
+    "CT"
+   ],
+   "relevance_to_pipeline": "Connecticut electrical/solar/generator owner network",
+   "source_url": "https://www.prnewswire.com/news-releases/commonwealth-electrical-technologies-acquires-horton-electrical-services-expanding-northeast-footprint-and-specialized-infrastructure-capabilities-302878499.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-mjones",
+   "kind": "node",
+   "type": "portfolio_ceo",
+   "name": "Mark Jones",
+   "org": "Bully Pulpit International (via Agado)",
+   "title": "Founder, Agado; leads BPI sports offering",
+   "sector_tags": [
+    "sports communications"
+   ],
+   "relevance_to_pipeline": "Sports/media agency network",
+   "source_url": "https://bpigroup.com/bpi-acquires-agado-communications-appoints-mark-jones-to-lead-sports-offering-strategy-and-growth/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "p-gardner",
+   "kind": "node",
+   "type": "portfolio_board",
+   "name": "Tracy Gardner",
+   "org": "Fair Harbor",
+   "title": "Board member (Oct 2023); former President, J.Crew",
+   "sector_tags": [
+    "apparel",
+    "retail"
+   ],
+   "relevance_to_pipeline": "Consumer retail network",
+   "source_url": "https://mr-mag.com/fair-harbor-appoints-three-retail-veterans-to-its-board/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-mazzucchelli",
+   "kind": "node",
+   "type": "portfolio_board",
+   "name": "Silvia Mazzucchelli",
+   "org": "Fair Harbor",
+   "title": "Board member; BCG Senior Advisor",
+   "sector_tags": [
+    "apparel",
+    "retail",
+    "brand turnaround"
+   ],
+   "relevance_to_pipeline": "Consumer retail network",
+   "source_url": "https://mr-mag.com/fair-harbor-appoints-three-retail-veterans-to-its-board/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-olsen",
+   "kind": "node",
+   "type": "portfolio_board",
+   "name": "Jennifer Olsen",
+   "org": "Fair Harbor",
+   "title": "Board member; CMO, Caleres",
+   "sector_tags": [
+    "marketing",
+    "footwear",
+    "retail"
+   ],
+   "relevance_to_pipeline": "Consumer retail network",
+   "source_url": "https://mr-mag.com/fair-harbor-appoints-three-retail-veterans-to-its-board/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-berenson",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Berenson & Co.",
+   "org": "Berenson & Co.",
+   "title": "Investment bank (buy-side advisor)",
+   "sector_tags": [
+    "M&A advisory"
+   ],
+   "relevance_to_pipeline": "BSP's most-used buy-side bank (TS, BPI, FL, CET)",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-harriswilliams",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Harris Williams",
+   "org": "Harris Williams",
+   "title": "Investment bank (buy-side advisor)",
+   "sector_tags": [
+    "M&A advisory",
+    "residential services",
+    "IT services"
+   ],
+   "relevance_to_pipeline": "Buy-side on PP and FL; sees home-services auctions",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-stifel",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Stifel",
+   "org": "Stifel",
+   "title": "Investment bank (buy-side advisor)",
+   "sector_tags": [
+    "M&A advisory",
+    "infrastructure"
+   ],
+   "relevance_to_pipeline": "Buy-side on CET",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-raymondjames",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Raymond James",
+   "org": "Raymond James",
+   "title": "Investment bank (buy-side advisor)",
+   "sector_tags": [
+    "M&A advisory",
+    "consumer"
+   ],
+   "relevance_to_pipeline": "Buy-side on Fair Harbor",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-koltin",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Koltin Consulting Group",
+   "org": "Koltin Consulting Group",
+   "title": "CPA-firm M&A advisor (sell-side for Smith + Howard)",
+   "sector_tags": [
+    "accounting",
+    "professional services M&A"
+   ],
+   "relevance_to_pipeline": "Accounting-company deal flow",
+   "source_url": "https://www.cpapracticeadvisor.com/?p=73326",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-boxwood",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Boxwood Partners",
+   "org": "Boxwood Partners",
+   "title": "Investment bank (sell-side for Punctual Pros)",
+   "sector_tags": [
+    "M&A advisory",
+    "home services"
+   ],
+   "relevance_to_pipeline": "Mid-Atlantic home-services sellers",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-fmi",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "FMI Capital Advisors",
+   "org": "FMI Capital Advisors",
+   "title": "Construction/energy M&A bank (sell-side for CET and NuWave)",
+   "sector_tags": [
+    "construction",
+    "electrical",
+    "energy services"
+   ],
+   "relevance_to_pipeline": "New England electrical/energy contractor sellers",
+   "source_url": "https://fmicorp.com/about/news/fmi-advises-commonwealth-electrical-technologies-in-sale-to-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-guggenheim",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Guggenheim Securities",
+   "org": "Guggenheim Securities",
+   "title": "Investment bank (sell-side for Frontline)",
+   "sector_tags": [
+    "M&A advisory",
+    "tech services"
+   ],
+   "relevance_to_pipeline": "Legal-IT/managed-services deal flow",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-pwccf",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "PwC Corporate Finance",
+   "org": "PwC Corporate Finance",
+   "title": "Financial advisor to Fair Harbor",
+   "sector_tags": [
+    "consumer M&A"
+   ],
+   "relevance_to_pipeline": "Consumer brand deal flow",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-jefferies",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Jefferies",
+   "org": "Jefferies",
+   "title": "Lead sell-side advisor to Carlyle on Thomas Scientific",
+   "sector_tags": [
+    "M&A advisory",
+    "distribution"
+   ],
+   "relevance_to_pipeline": "Distribution deal flow",
+   "source_url": "https://www.carlyle.com/media-room/news-release-archive/carlyle-announces-sale-thomas-scientific-broad-sky-partners",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "a-baird",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Baird",
+   "org": "Baird",
+   "title": "Co-advisor to Carlyle on Thomas Scientific",
+   "sector_tags": [
+    "M&A advisory",
+    "distribution"
+   ],
+   "relevance_to_pipeline": "Distribution deal flow",
+   "source_url": "https://www.carlyle.com/media-room/news-release-archive/carlyle-announces-sale-thomas-scientific-broad-sky-partners",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "a-morrisoncohen",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Morrison Cohen LLP",
+   "org": "Morrison Cohen LLP",
+   "title": "Legal counsel to Broad Sky",
+   "sector_tags": [
+    "legal"
+   ],
+   "relevance_to_pipeline": "BSP's primary deal counsel (TS, FH, S+H, BPI, FL)",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-greenberg",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Greenberg Traurig LLP",
+   "org": "Greenberg Traurig LLP",
+   "title": "Legal counsel to Broad Sky",
+   "sector_tags": [
+    "legal"
+   ],
+   "relevance_to_pipeline": "Counsel on PP, CET and CET add-ons",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-kirkland",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Kirkland & Ellis LLP",
+   "org": "Kirkland & Ellis LLP",
+   "title": "Legal counsel to CET (sell-side)",
+   "sector_tags": [
+    "legal"
+   ],
+   "relevance_to_pipeline": "CET seller counsel",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-ropes",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Ropes & Gray LLP",
+   "org": "Ropes & Gray LLP",
+   "title": "Legal counsel to Frontline",
+   "sector_tags": [
+    "legal"
+   ],
+   "relevance_to_pipeline": "Frontline seller counsel",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-hunton",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Hunton Andrews Kurth LLP",
+   "org": "Hunton Andrews Kurth LLP",
+   "title": "Legal counsel to Smith + Howard",
+   "sector_tags": [
+    "legal"
+   ],
+   "relevance_to_pipeline": "S+H seller counsel",
+   "source_url": "https://www.cpapracticeadvisor.com/?p=73326",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-orrick",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Orrick, Herrington & Sutcliffe LLP",
+   "org": "Orrick, Herrington & Sutcliffe LLP",
+   "title": "Legal counsel to Fair Harbor",
+   "sector_tags": [
+    "legal"
+   ],
+   "relevance_to_pipeline": "Fair Harbor seller counsel",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-barley",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Barley Snyder",
+   "org": "Barley Snyder",
+   "title": "Legal counsel to Punctual Pros sellers",
+   "sector_tags": [
+    "legal",
+    "Pennsylvania"
+   ],
+   "relevance_to_pipeline": "Central PA owner network",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "a-trout",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Trout CPA",
+   "org": "Trout CPA",
+   "title": "Accounting advisor to Punctual Pros sellers",
+   "sector_tags": [
+    "accounting",
+    "Pennsylvania"
+   ],
+   "relevance_to_pipeline": "Central PA owner network",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-akoltin",
+   "kind": "node",
+   "type": "advisor_banker",
+   "name": "Allan Koltin",
+   "org": "Koltin Consulting Group",
+   "title": "CEO; exclusive financial adviser to Smith + Howard",
+   "sector_tags": [
+    "accounting M&A"
+   ],
+   "relevance_to_pipeline": "Accounting/CPA company intros",
+   "source_url": "https://www.cpapracticeadvisor.com/?p=73326",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "l-midcap",
+   "kind": "node",
+   "type": "lender",
+   "name": "MidCap Financial / Apollo direct lending (MFIC, MAIPL)",
+   "org": "MidCap Financial / Apollo direct lending (MFIC, MAIPL)",
+   "title": "First-lien unitranche lender to Thomas Scientific",
+   "sector_tags": [
+    "direct lending"
+   ],
+   "relevance_to_pipeline": "TS debt; add-on DDTL capacity",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000127875222000004/ainv2022q310-q.htm",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "l-nxt",
+   "kind": "node",
+   "type": "lender",
+   "name": "NXT Capital",
+   "org": "NXT Capital",
+   "title": "Co-lead, $90M initial term loan to Frontline",
+   "sector_tags": [
+    "direct lending",
+    "LMM"
+   ],
+   "relevance_to_pipeline": "Frontline debt; incumbent lender since 2015",
+   "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "l-audax",
+   "kind": "node",
+   "type": "lender",
+   "name": "Audax Private Debt",
+   "org": "Audax Private Debt",
+   "title": "Co-lead, $90M initial term loan to Frontline",
+   "sector_tags": [
+    "direct lending",
+    "LMM"
+   ],
+   "relevance_to_pipeline": "Frontline debt; legal-tech credit benchmark",
+   "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "l-pinebridge",
+   "kind": "node",
+   "type": "lender",
+   "name": "PineBridge Private Credit",
+   "org": "PineBridge Private Credit",
+   "title": "Administrative agent, BPI credit facility (Dec 2023)",
+   "sector_tags": [
+    "private credit"
+   ],
+   "relevance_to_pipeline": "BPI acquisition facility",
+   "source_url": "https://find-and-update.company-information.service.gov.uk/company/07078911/filing-history",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "l-alterdomus",
+   "kind": "node",
+   "type": "lender",
+   "name": "Alter Domus (US) LLC",
+   "org": "Alter Domus (US) LLC",
+   "title": "Collateral agent, BPI credit facility",
+   "sector_tags": [
+    "loan agency"
+   ],
+   "relevance_to_pipeline": "BPI facility agent",
+   "source_url": "https://find-and-update.company-information.service.gov.uk/company/07078911/charges",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "l-pgim",
+   "kind": "node",
+   "type": "lender",
+   "name": "PGIM Private Credit Fund",
+   "org": "PGIM Private Credit Fund",
+   "title": "Holder of Punctual Pros Midco first-lien term loan and DDTL",
+   "sector_tags": [
+    "private credit"
+   ],
+   "relevance_to_pipeline": "Punctual Pros debt; DDTL for add-ons",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1923622/000119312526349252/ck0001923622-20260630.htm",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "l-ecapital",
+   "kind": "node",
+   "type": "lender",
+   "name": "eCapital (formerly Gerber Finance)",
+   "org": "eCapital (formerly Gerber Finance)",
+   "title": "Asset-based lender to Fair Harbor (2021-2025)",
+   "sector_tags": [
+    "ABL"
+   ],
+   "relevance_to_pipeline": "Fair Harbor working-capital history",
+   "source_url": "https://tsdr.uspto.gov/#caseNumber=86599280&caseType=SERIAL_NO&searchType=statusSearch",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "l-webster",
+   "kind": "node",
+   "type": "lender",
+   "name": "Webster Bank",
+   "org": "Webster Bank",
+   "title": "Prior credit facility lender to Frontline under BV (refinanced Dec 2024)",
+   "sector_tags": [
+    "bank lending"
+   ],
+   "relevance_to_pipeline": "Frontline pre-BSP capital structure",
+   "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "i-constellation",
+   "kind": "node",
+   "type": "lp_investor",
+   "name": "Capital Constellation",
+   "org": "Wafra-managed GP-stake fund series",
+   "title": "Strategic (GP-stake) investor in Broad Sky (Jan 2022)",
+   "sector_tags": [
+    "GP stakes"
+   ],
+   "relevance_to_pipeline": "Firm-level capital; LP introductions",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "i-wafra",
+   "kind": "node",
+   "type": "lp_investor",
+   "name": "Wafra",
+   "org": "Wafra Inc.",
+   "title": "Manager of Capital Constellation",
+   "sector_tags": [
+    "asset management"
+   ],
+   "relevance_to_pipeline": "GP-stake sponsor network",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-adamson",
+   "kind": "node",
+   "type": "lp_investor",
+   "name": "Daniel Adamson",
+   "org": "Capital Constellation / Wafra",
+   "title": "President of Constellation",
+   "sector_tags": [
+    "GP stakes"
+   ],
+   "relevance_to_pipeline": "Firm-level partner",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-cardenas",
+   "kind": "node",
+   "type": "lp_investor",
+   "name": "Gustavo Cardenas",
+   "org": "Wafra",
+   "title": "Managing Director",
+   "sector_tags": [
+    "GP stakes"
+   ],
+   "relevance_to_pipeline": "Firm-level partner",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "i-apfc",
+   "kind": "node",
+   "type": "lp_investor",
+   "name": "Alaska Permanent Fund",
+   "org": "Alaska Permanent Fund Corporation",
+   "title": "Constellation member",
+   "sector_tags": [
+    "sovereign wealth"
+   ],
+   "relevance_to_pipeline": "Indirect LP via Constellation",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "i-nyscrf",
+   "kind": "node",
+   "type": "lp_investor",
+   "name": "New York State Common Retirement Fund",
+   "org": "NYS Common",
+   "title": "Constellation member",
+   "sector_tags": [
+    "public pension"
+   ],
+   "relevance_to_pipeline": "Indirect LP via Constellation",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "i-railpen",
+   "kind": "node",
+   "type": "lp_investor",
+   "name": "Railpen",
+   "org": "RPMI Railpen",
+   "title": "Constellation member",
+   "sector_tags": [
+    "pension"
+   ],
+   "relevance_to_pipeline": "Indirect LP via Constellation",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "i-kia",
+   "kind": "node",
+   "type": "lp_investor",
+   "name": "Kuwait Investment Authority",
+   "org": "KIA",
+   "title": "Constellation member",
+   "sector_tags": [
+    "sovereign wealth"
+   ],
+   "relevance_to_pipeline": "Indirect LP via Constellation",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "i-pifss",
+   "kind": "node",
+   "type": "lp_investor",
+   "name": "Public Institution for Social Security (Kuwait)",
+   "org": "PIFSS",
+   "title": "Constellation member",
+   "sector_tags": [
+    "pension"
+   ],
+   "relevance_to_pipeline": "Indirect LP via Constellation",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "i-ap3",
+   "kind": "node",
+   "type": "lp_investor",
+   "name": "AP3 (Third Swedish National Pension Fund)",
+   "org": "AP3",
+   "title": "Constellation member",
+   "sector_tags": [
+    "pension"
+   ],
+   "relevance_to_pipeline": "Indirect LP via Constellation",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "i-alpinvest",
+   "kind": "node",
+   "type": "lp_investor",
+   "name": "Carlyle AlpInvest Private Markets Fund",
+   "org": "Carlyle AlpInvest",
+   "title": "Direct equity co-investor in Frontline holdco ($12.5M)",
+   "sector_tags": [
+    "co-investment",
+    "secondaries"
+   ],
+   "relevance_to_pipeline": "Co-invest syndication; Carlyle lineage",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1899610/000189961026000006/capm_202603xn-csr.htm",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "i-barings",
+   "kind": "node",
+   "type": "lp_investor",
+   "name": "Barings Private Equity Opportunities & Commitments Fund / Cascade Private Capital Fund",
+   "org": "Barings",
+   "title": "LP in BSP-TS Co-Invest I (~$5M)",
+   "sector_tags": [
+    "co-investment"
+   ],
+   "relevance_to_pipeline": "Co-invest syndication",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1864609/000119312526373850/primary_doc.xml",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "i-apollo-eq",
+   "kind": "node",
+   "type": "lp_investor",
+   "name": "Apollo (MFIC) equity co-invest",
+   "org": "Apollo / MidCap",
+   "title": "Small common equity in BSP-TS, LP alongside its loan",
+   "sector_tags": [
+    "co-investment",
+    "direct lending"
+   ],
+   "relevance_to_pipeline": "Lender-co-investor",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000127875222000004/ainv2022q310-q.htm",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "c-bv",
+   "kind": "node",
+   "type": "counterparty_sponsor",
+   "name": "BV Investment Partners",
+   "org": "BV Investment Partners",
+   "title": "Prior lead sponsor of Frontline; retained minority stake",
+   "sector_tags": [
+    "tech services",
+    "business services"
+   ],
+   "relevance_to_pipeline": "Frontline co-owner; legal-IT knowledge",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-kinsey",
+   "kind": "node",
+   "type": "counterparty_sponsor",
+   "name": "Matt Kinsey",
+   "org": "BV Investment Partners",
+   "title": "Named BV representative on Frontline transaction",
+   "sector_tags": [
+    "tech services"
+   ],
+   "relevance_to_pipeline": "Frontline co-owner contact",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-axelrod",
+   "kind": "node",
+   "type": "counterparty_sponsor",
+   "name": "Sam Axelrod",
+   "org": "BV Investment Partners",
+   "title": "Named BV representative on Frontline transaction",
+   "sector_tags": [
+    "tech services"
+   ],
+   "relevance_to_pipeline": "Frontline co-owner contact",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "c-svoboda",
+   "kind": "node",
+   "type": "counterparty_sponsor",
+   "name": "Svoboda Capital Partners",
+   "org": "Svoboda Capital Partners",
+   "title": "Prior investor in BPI; remained an investor",
+   "sector_tags": [
+    "business services"
+   ],
+   "relevance_to_pipeline": "BPI co-owner",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "c-tpg",
+   "kind": "node",
+   "type": "counterparty_sponsor",
+   "name": "TPG Growth",
+   "org": "TPG",
+   "title": "Acquirer of Smith + Howard (Aug 2026)",
+   "sector_tags": [
+    "growth equity"
+   ],
+   "relevance_to_pipeline": "Exit buyer reference for upmarket sales",
+   "source_url": "https://pulse2.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg-following-nearly-4x-revenue-growth/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "c-apax",
+   "kind": "node",
+   "type": "counterparty_sponsor",
+   "name": "Apax Partners (funds advised by)",
+   "org": "Apax Partners",
+   "title": "Owner of Authority Brands since Sep 2018",
+   "sector_tags": [
+    "franchising",
+    "services"
+   ],
+   "relevance_to_pipeline": "Owner of Punctual Pros' franchisor",
+   "source_url": "https://www.apax.com/news-views/funds-advised-by-apax-partners-acquire-authority-brands/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "f-authority",
+   "kind": "node",
+   "type": "franchisor",
+   "name": "Authority Brands",
+   "org": "Authority Brands",
+   "title": "Home-services franchisor (Columbia, MD); 2,000+ territories",
+   "sector_tags": [
+    "franchising",
+    "home services"
+   ],
+   "relevance_to_pipeline": "Franchisor of Punctual Pros' three brands; franchisee M&A gatekeeper",
+   "source_url": "https://investorshangout.com/jay-caiafa-takes-helm-as-ceo-at-authority-brands-322409-/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "f-clockwork",
+   "kind": "node",
+   "type": "franchisor",
+   "name": "One Hour Heating & Air / Benjamin Franklin Plumbing / Mister Sparky (ex-Clockwork brands)",
+   "org": "Authority Brands",
+   "title": "Trade brands acquired by Authority Brands in 2019",
+   "sector_tags": [
+    "HVAC",
+    "plumbing",
+    "electrical",
+    "franchising"
+   ],
+   "relevance_to_pipeline": "The three brands Punctual Pros operates",
+   "source_url": "https://www.achrnews.com/articles/141488-authority-brands-acquires-clockwork-inc-companies",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-caiafa",
+   "kind": "node",
+   "type": "franchisor",
+   "name": "Jay Caiafa",
+   "org": "Authority Brands",
+   "title": "CEO (since Aug 18, 2025); ex-COO Americas, IHG",
+   "sector_tags": [
+    "franchising"
+   ],
+   "relevance_to_pipeline": "Franchisor leadership for territory transfers",
+   "source_url": "https://investorshangout.com/jay-caiafa-takes-helm-as-ceo-at-authority-brands-322409-/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-donaldson",
+   "kind": "node",
+   "type": "franchisor",
+   "name": "Craig Donaldson",
+   "org": "Authority Brands",
+   "title": "Former CEO (about 3 years, to Aug 2025)",
+   "sector_tags": [
+    "franchising"
+   ],
+   "relevance_to_pipeline": "Former franchisor leadership",
+   "source_url": "https://investorshangout.com/jay-caiafa-takes-helm-as-ceo-at-authority-brands-322409-/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-greear",
+   "kind": "node",
+   "type": "franchisor",
+   "name": "Josh Greear",
+   "org": "Authority Brands",
+   "title": "CFO (Sep 2025); ex-CFO Primrose Schools",
+   "sector_tags": [
+    "franchising",
+    "finance"
+   ],
+   "relevance_to_pipeline": "Franchisor finance",
+   "source_url": "https://www.citybiz.co/article/748336/authority-brands-appoints-josh-greear-as-chief-financial-officer/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-clemente",
+   "kind": "node",
+   "type": "franchisor",
+   "name": "Steve Clemente",
+   "org": "Authority Brands",
+   "title": "President and COO, Trade Brands (Dec 2025)",
+   "sector_tags": [
+    "franchising",
+    "HVAC",
+    "plumbing"
+   ],
+   "relevance_to_pipeline": "Leads the trade brands Punctual Pros operates",
+   "source_url": "https://cleanfax.com/?p=75081",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-dawson",
+   "kind": "node",
+   "type": "franchisor",
+   "name": "Mark Dawson",
+   "org": "Authority Brands",
+   "title": "EVP, Service Trades Brands (as of Apr 2024)",
+   "sector_tags": [
+    "franchising",
+    "HVAC"
+   ],
+   "relevance_to_pipeline": "Quoted on Punctual Pros deal; trade-brands franchisee relationships",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "p-weddle",
+   "kind": "node",
+   "type": "franchisor",
+   "name": "Rob Weddle",
+   "org": "Authority Brands",
+   "title": "Former CEO (at Apax acquisition 2018 and Clockwork deal 2019)",
+   "sector_tags": [
+    "franchising"
+   ],
+   "relevance_to_pipeline": "Franchisor history",
+   "source_url": "https://www.achrnews.com/articles/141488-authority-brands-acquires-clockwork-inc-companies",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ff-carlyle",
+   "kind": "node",
+   "type": "former_firm",
+   "name": "The Carlyle Group",
+   "org": "The Carlyle Group",
+   "title": "Former employer of Zachem, Glucksman, David, Kiser, Narain; Jodi Kahn was an operating advisor",
+   "sector_tags": [
+    "PE"
+   ],
+   "relevance_to_pipeline": "Lineage: seller of Thomas Scientific; AlpInvest co-invest",
+   "source_url": "https://broadskypartners.com/team/tyler-zachem/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "ff-midocean",
+   "kind": "node",
+   "type": "former_firm",
+   "name": "MidOcean Partners",
+   "org": "MidOcean Partners",
+   "title": "Former employer of Zachem (14 yrs incl. DB Capital Partners) and Marlow",
+   "sector_tags": [
+    "PE",
+    "business services",
+    "media"
+   ],
+   "relevance_to_pipeline": "Lineage: business services & media growth plan",
+   "source_url": "https://broadskypartners.com/team/tyler-zachem/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "ff-platinum",
+   "kind": "node",
+   "type": "former_firm",
+   "name": "Platinum Equity",
+   "org": "Platinum Equity",
+   "title": "RJ David's prior firm (~10 years)",
+   "sector_tags": [
+    "PE"
+   ],
+   "relevance_to_pipeline": "Carve-out / operations network",
+   "source_url": "https://broadskypartners.com/broad-sky-partners-appoints-rj-david-as-managing-director/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ff-investcorp",
+   "kind": "node",
+   "type": "former_firm",
+   "name": "Investcorp",
+   "org": "Investcorp",
+   "title": "Jonathan Marlow's prior firm",
+   "sector_tags": [
+    "PE"
+   ],
+   "relevance_to_pipeline": "Consumer PE network",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ff-quad",
+   "kind": "node",
+   "type": "former_firm",
+   "name": "Quad Partners",
+   "org": "Quad Partners",
+   "title": "Founded by Lincoln Frank (2000)",
+   "sector_tags": [
+    "education PE"
+   ],
+   "relevance_to_pipeline": "Education/services network",
+   "source_url": "https://broadskypartners.com/team/lincoln-frank/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "ff-ci",
+   "kind": "node",
+   "type": "former_firm",
+   "name": "CI Capital Partners",
+   "org": "CI Capital Partners",
+   "title": "Amy Margolis's prior firm (Head of Business Development)",
+   "sector_tags": [
+    "PE",
+    "business services"
+   ],
+   "relevance_to_pipeline": "Intermediary coverage network",
+   "source_url": "https://broadskypartners.com/team/amy-margolis/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "ff-riverside",
+   "kind": "node",
+   "type": "former_firm",
+   "name": "The Riverside Company",
+   "org": "The Riverside Company",
+   "title": "Amy Margolis's prior firm (Principal)",
+   "sector_tags": [
+    "PE",
+    "lower middle market"
+   ],
+   "relevance_to_pipeline": "LMM intermediary network; active home-services buyer",
+   "source_url": "https://broadskypartners.com/team/amy-margolis/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "ff-gecapital",
+   "kind": "node",
+   "type": "former_firm",
+   "name": "GE Capital",
+   "org": "GE Capital",
+   "title": "Former employer of Lynn Calpeter (CFO) and Aditya Narain",
+   "sector_tags": [
+    "financial services"
+   ],
+   "relevance_to_pipeline": "Finance leadership network",
+   "source_url": "https://broadskypartners.com/team/aditya-narain/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "ff-pitney",
+   "kind": "node",
+   "type": "former_firm",
+   "name": "Pitney Bowes",
+   "org": "Pitney Bowes",
+   "title": "Former employer of Mike Monahan (EVP/COO/CFO) and Adam Glucksman",
+   "sector_tags": [
+    "business services",
+    "logistics"
+   ],
+   "relevance_to_pipeline": "Distribution/logistics services network",
+   "source_url": "https://broadskypartners.com/team/adam-glucksman/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "ff-coalfire",
+   "kind": "node",
+   "type": "former_firm",
+   "name": "Coalfire",
+   "org": "Coalfire",
+   "title": "Cybersecurity advisory firm; Sam Sliman former Chair",
+   "sector_tags": [
+    "cybersecurity",
+    "compliance",
+    "assessment"
+   ],
+   "relevance_to_pipeline": "Frontline cyber; TIC/compliance company idea",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ff-duke",
+   "kind": "node",
+   "type": "former_firm",
+   "name": "Duke Energy",
+   "org": "Duke Energy",
+   "title": "Roberta Bowman former Chief Sustainability Officer",
+   "sector_tags": [
+    "utilities",
+    "energy"
+   ],
+   "relevance_to_pipeline": "CET utility/renewables end-market",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ff-synoptek",
+   "kind": "node",
+   "type": "former_firm",
+   "name": "Synoptek",
+   "org": "Synoptek",
+   "title": "Managed IT services firm founded and formerly led by Tim Britt",
+   "sector_tags": [
+    "managed IT",
+    "MSP"
+   ],
+   "relevance_to_pipeline": "Frontline MSP add-on network",
+   "source_url": "https://www.prnewswire.com/news-releases/frontline-managed-services-appoints-tim-britt-as-chief-executive-officer-302670506.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ff-evo",
+   "kind": "node",
+   "type": "former_firm",
+   "name": "EVO Payments",
+   "org": "EVO Payments",
+   "title": "Jim Kelly CEO and Director",
+   "sector_tags": [
+    "payments"
+   ],
+   "relevance_to_pipeline": "Payments-enabled services idea",
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "b-ifa",
+   "kind": "node",
+   "type": "industry_body",
+   "name": "International Franchise Association",
+   "org": "International Franchise Association",
+   "title": "Franchise industry association",
+   "sector_tags": [
+    "franchising"
+   ],
+   "relevance_to_pipeline": "Franchisee/franchisor network for PP add-ons",
+   "source_url": "https://www.franchise.org/media-center/press-releases/authority-brands-names-industry-leader-todd-houghton-president-of",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "b-blab",
+   "kind": "node",
+   "type": "industry_body",
+   "name": "B Lab (Certified B Corporation)",
+   "org": "B Lab (Certified B Corporation)",
+   "title": "B Corp certifier",
+   "sector_tags": [
+    "sustainability"
+   ],
+   "relevance_to_pipeline": "Fair Harbor sustainability peer network",
+   "source_url": "http://web.archive.org/web/20260313073142/https://www.bcorporation.net/en-us/find-a-b-corp/company/fair-harbor/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "b-neif",
+   "kind": "node",
+   "type": "industry_body",
+   "name": "National Energy Improvement Fund (NEIF)",
+   "org": "National Energy Improvement Fund (NEIF)",
+   "title": "Commercial energy-finance program",
+   "sector_tags": [
+    "energy efficiency",
+    "financing"
+   ],
+   "relevance_to_pipeline": "CET approved-contractor network across six New England states",
+   "source_url": "https://www.neifund.org/commonwealth-electrical-technologies-llc/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e001",
+   "kind": "edge",
+   "from": "p-zachem",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Tyler Zachem is listed on the Broad Sky Partners team page as CEO and Partner (founder).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e002",
+   "kind": "edge",
+   "from": "p-frank",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Lincoln Frank is listed on the Broad Sky Partners team page as Vice Chair.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e003",
+   "kind": "edge",
+   "from": "p-glucksman",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Adam Glucksman is listed on the Broad Sky Partners team page as Partner (leads Business Services).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e004",
+   "kind": "edge",
+   "from": "p-kahn",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Jodi Kahn is listed on the Broad Sky Partners team page as Partner (leads Portfolio Resource Group).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e005",
+   "kind": "edge",
+   "from": "p-david",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "RJ David is listed on the Broad Sky Partners team page as Managing Director.",
+   "date": "2024-01-24",
+   "source_url": "https://broadskypartners.com/broad-sky-partners-appoints-rj-david-as-managing-director/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e006",
+   "kind": "edge",
+   "from": "p-margolis",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Amy Margolis is listed on the Broad Sky Partners team page as Managing Director, Head of Business Development.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e007",
+   "kind": "edge",
+   "from": "p-abuhaidar",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Jacqueline Abu-Haidar is listed on the Broad Sky Partners team page as Principal, Investor Relations.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e008",
+   "kind": "edge",
+   "from": "p-grubbs",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Chris Grubbs is listed on the Broad Sky Partners team page as Vice President.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e009",
+   "kind": "edge",
+   "from": "p-lopez",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Marjorie Lopez is listed on the Broad Sky Partners team page as Vice President (Consumer).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e010",
+   "kind": "edge",
+   "from": "p-zucker",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Shelby Zucker is listed on the Broad Sky Partners team page as Vice President.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e011",
+   "kind": "edge",
+   "from": "p-wang",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Julia Wang is listed on the Broad Sky Partners team page as Vice President.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e012",
+   "kind": "edge",
+   "from": "p-drossman",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Jordan Drossman is listed on the Broad Sky Partners team page as Associate.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e013",
+   "kind": "edge",
+   "from": "p-azus",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Quoted as Broad Sky Managing Director in the Dec 2024 Frontline release; absent from the current team page.",
+   "date": "2024-12-11",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e014",
+   "kind": "edge",
+   "from": "p-pawliger",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Sam Pawliger is listed under Broad Sky's Portfolio Resource Group / Operating Partners.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e015",
+   "kind": "edge",
+   "from": "p-kiser",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Georgette Kiser is listed under Broad Sky's Portfolio Resource Group / Operating Partners.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e016",
+   "kind": "edge",
+   "from": "p-narain",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Aditya Narain is listed under Broad Sky's Portfolio Resource Group / Operating Partners.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e017",
+   "kind": "edge",
+   "from": "p-narain",
+   "to": "org-bsp",
+   "relation": "works_at",
+   "evidence": "Form ADV Schedule A lists Aditya Narain as Chief Compliance Officer of Broad Sky since 03/2022.",
+   "date": "2022-03",
+   "source_url": "https://reports.adviserinfo.sec.gov/reports/ADV/317966/PDF/317966.pdf",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e018",
+   "kind": "edge",
+   "from": "p-bowman",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "Roberta Bowman is listed as a Broad Sky Partners Executive Board member (Former Chief Sustainability Officer, Duke Energy; former Chief Brand Officer, LPGA).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e019",
+   "kind": "edge",
+   "from": "p-cahall",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "Ted Cahall is listed as a Broad Sky Partners Executive Board member (Former COO, Digital River; former CVP, Microsoft).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e020",
+   "kind": "edge",
+   "from": "p-calpeter",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "Lynn Calpeter is listed as a Broad Sky Partners Executive Board member (Former CFO, GE Capital and NBCU).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e021",
+   "kind": "edge",
+   "from": "p-howe",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "John Howe is listed as a Broad Sky Partners Executive Board member (Former CEO, Compana Pet Brands).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e022",
+   "kind": "edge",
+   "from": "p-gertner",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "Risa Gertner is listed as a Broad Sky Partners Executive Board member (Board Member and Partner, CAA).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e023",
+   "kind": "edge",
+   "from": "p-herenton",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "Rodney Herenton is listed as a Broad Sky Partners Executive Board member (Co-CEO and Founder, Channing Capital).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e024",
+   "kind": "edge",
+   "from": "p-kelly",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "Jim Kelly is listed as a Broad Sky Partners Executive Board member (CEO and Director, EVO Payments).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e025",
+   "kind": "edge",
+   "from": "p-marlow",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "Jonathan Marlow is listed as a Broad Sky Partners Executive Board member (Former Broad Sky Partner; MidOcean; Investcorp).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e026",
+   "kind": "edge",
+   "from": "p-monahan",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "Mike Monahan is listed as a Broad Sky Partners Executive Board member (Former EVP, COO and CFO, Pitney Bowes).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e027",
+   "kind": "edge",
+   "from": "p-patricof",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "Mark Patricof is listed as a Broad Sky Partners Executive Board member (Founder, Patricof Co).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e028",
+   "kind": "edge",
+   "from": "p-reynolds",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "Fred Reynolds is listed as a Broad Sky Partners Executive Board member (Former EVP and CFO, CBS).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e029",
+   "kind": "edge",
+   "from": "p-sharples",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "Lisa Sharples is listed as a Broad Sky Partners Executive Board member (Former CEO, Allrecipes; Founder, Fexy).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e030",
+   "kind": "edge",
+   "from": "p-simmons",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "Charles Simmons is listed as a Broad Sky Partners Executive Board member (Former CEO, Thomas Scientific (2017-2023)).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e031",
+   "kind": "edge",
+   "from": "p-sliman",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "Sam Sliman is listed as a Broad Sky Partners Executive Board member (Founder, Gulfscape; Board, KeyData; former Chair, Coalfire).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e032",
+   "kind": "edge",
+   "from": "p-wolf",
+   "to": "org-bsp",
+   "relation": "board_of",
+   "evidence": "Bryan Wolf is listed as a Broad Sky Partners Executive Board member (Former Managing Director, Intel Capital).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e033",
+   "kind": "edge",
+   "from": "p-taylor",
+   "to": "pc-sh",
+   "relation": "works_at",
+   "evidence": "Sean Taylor is CEO of Smith + Howard (quoted at BSP entry Nov 2022 and at the TPG exit Aug 2026).",
+   "date": "2022-11-15",
+   "source_url": "https://www.cpapracticeadvisor.com/?p=73326",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e034",
+   "kind": "edge",
+   "from": "p-haas",
+   "to": "pc-ts",
+   "relation": "works_at",
+   "evidence": "Thomas Scientific appointed Stan Haas President and CEO; he joined in 2017 as a director, then COO.",
+   "date": "2023-04-25",
+   "source_url": "https://www.thomassci.com/blog/_/haas-ceo",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e035",
+   "kind": "edge",
+   "from": "p-bleeker",
+   "to": "pc-bpi",
+   "relation": "works_at",
+   "evidence": "Andrew Bleeker, President of BPI, was quoted on the Broad Sky investment.",
+   "date": "2023-04-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e036",
+   "kind": "edge",
+   "from": "p-labolt",
+   "to": "pc-bpi",
+   "relation": "works_at",
+   "evidence": "BPI announced former White House Communications Director Ben LaBolt's return as President.",
+   "date": "2025-04",
+   "source_url": "https://bpigroup.com/former-white-house-communications-director-ben-labolt-returns-to-bpi-as-president/",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e037",
+   "kind": "edge",
+   "from": "p-jdanehy",
+   "to": "pc-fh",
+   "relation": "works_at",
+   "evidence": "Jake Danehy is named CEO of Fair Harbor in the Broad Sky investment release.",
+   "date": "2022-03-23",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e038",
+   "kind": "edge",
+   "from": "p-cdanehy",
+   "to": "pc-fh",
+   "relation": "works_at",
+   "evidence": "Caroline Danehy is named Chief Creative Officer of Fair Harbor in the Broad Sky investment release.",
+   "date": "2022-03-23",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e039",
+   "kind": "edge",
+   "from": "p-mbuckwalter",
+   "to": "pc-pp",
+   "relation": "works_at",
+   "evidence": "Matt Buckwalter, Founder and CEO of Punctual Pros, was quoted on the Broad Sky acquisition.",
+   "date": "2024-04-03",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e040",
+   "kind": "edge",
+   "from": "p-britt",
+   "to": "pc-fl",
+   "relation": "works_at",
+   "evidence": "Frontline appointed Tim Britt CEO on Jan 27, 2026.",
+   "date": "2026-01-27",
+   "source_url": "https://www.prnewswire.com/news-releases/frontline-managed-services-appoints-tim-britt-as-chief-executive-officer-302670506.html",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e041",
+   "kind": "edge",
+   "from": "p-naidoo",
+   "to": "pc-fl",
+   "relation": "board_of",
+   "evidence": "The Jan 2026 release states Seelin Naidoo transitions from CEO to the Frontline board.",
+   "date": "2026-01-27",
+   "source_url": "https://www.prnewswire.com/news-releases/frontline-managed-services-appoints-tim-britt-as-chief-executive-officer-302670506.html",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e042",
+   "kind": "edge",
+   "from": "p-duquette",
+   "to": "pc-cet",
+   "relation": "works_at",
+   "evidence": "John Duquette Jr. is named CEO of CET in the Broad Sky deal release.",
+   "date": "2025-03-19",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e043",
+   "kind": "edge",
+   "from": "p-alexandrescu",
+   "to": "pc-cet",
+   "relation": "board_of",
+   "evidence": "The CET release says industry veteran Dorian Alexandrescu joins the CET board as Executive Chairman.",
+   "date": "2025-03-19",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e044",
+   "kind": "edge",
+   "from": "p-fhorvath",
+   "to": "pc-horvath",
+   "relation": "works_at",
+   "evidence": "Frank Horvath, owner of Horvath Home Services, is named in the Dec 2024 add-on release as joining Punctual Pros.",
+   "date": "2024-12-03",
+   "source_url": "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e045",
+   "kind": "edge",
+   "from": "p-whorton",
+   "to": "pc-horton",
+   "relation": "works_at",
+   "evidence": "Warren A. Horton, owner and managing member of Horton Electrical, is quoted in the Sep 2026 CET acquisition release.",
+   "date": "2026-09-15",
+   "source_url": "https://www.prnewswire.com/news-releases/commonwealth-electrical-technologies-acquires-horton-electrical-services-expanding-northeast-footprint-and-specialized-infrastructure-capabilities-302878499.html",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e046",
+   "kind": "edge",
+   "from": "p-mjones",
+   "to": "pc-agado",
+   "relation": "works_at",
+   "evidence": "BPI acquired Agado and appointed founder Mark Jones to lead its sports offering.",
+   "date": "2025-05-13",
+   "source_url": "https://bpigroup.com/bpi-acquires-agado-communications-appoints-mark-jones-to-lead-sports-offering-strategy-and-growth/",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e047",
+   "kind": "edge",
+   "from": "p-gardner",
+   "to": "pc-fh",
+   "relation": "board_of",
+   "evidence": "Fair Harbor appointed Tracy Gardner to its board in Oct 2023.",
+   "date": "2023-10-25",
+   "source_url": "https://mr-mag.com/fair-harbor-appoints-three-retail-veterans-to-its-board/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e048",
+   "kind": "edge",
+   "from": "p-mazzucchelli",
+   "to": "pc-fh",
+   "relation": "board_of",
+   "evidence": "Fair Harbor appointed Silvia Mazzucchelli to its board in Oct 2023 (also disclosed in VTEX 20-F).",
+   "date": "2023-10-25",
+   "source_url": "https://mr-mag.com/fair-harbor-appoints-three-retail-veterans-to-its-board/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e049",
+   "kind": "edge",
+   "from": "p-olsen",
+   "to": "pc-fh",
+   "relation": "board_of",
+   "evidence": "Fair Harbor appointed Jennifer Olsen (Caleres CMO) to its board in Oct 2023.",
+   "date": "2023-10-25",
+   "source_url": "https://mr-mag.com/fair-harbor-appoints-three-retail-veterans-to-its-board/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e050",
+   "kind": "edge",
+   "from": "p-calpeter",
+   "to": "pc-ts",
+   "relation": "board_of",
+   "evidence": "The Jan 2022 release names Lynn Calpeter Operating Partner and Chair of the Thomas Scientific board.",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e051",
+   "kind": "edge",
+   "from": "p-simmons",
+   "to": "pc-ts",
+   "relation": "works_at",
+   "evidence": "Charles Simmons was President & CEO of Thomas Scientific at the Jan 2022 Broad Sky acquisition.",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e052",
+   "kind": "edge",
+   "from": "p-bowman",
+   "to": "pc-fh",
+   "relation": "board_of",
+   "evidence": "Roberta Bowman was quoted as Broad Sky ESG Operating Partner on the Fair Harbor investment (board seat not stated; relation reflects operating-partner role).",
+   "date": "2022-03-23",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e053",
+   "kind": "edge",
+   "from": "p-mazzucchelli",
+   "to": "pc-fh",
+   "relation": "board_of",
+   "evidence": "VTEX FY2024 20-F bio describes Silvia Mazzucchelli as a director of Fair Harbor.",
+   "date": "2025-02-25",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1793663/000095017025026601/ck0001793663-20241231.htm",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e054",
+   "kind": "edge",
+   "from": "p-zachem",
+   "to": "pc-ts",
+   "relation": "advised_deal",
+   "evidence": "Zachem announced the Thomas Scientific acquisition as Broad Sky's first transaction. (deal-team role)",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e055",
+   "kind": "edge",
+   "from": "p-marlow",
+   "to": "pc-fh",
+   "relation": "advised_deal",
+   "evidence": "Jonathan Marlow (then Partner, Consumer) was quoted on the Fair Harbor investment. (deal-team role)",
+   "date": "2022-03-23",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e056",
+   "kind": "edge",
+   "from": "p-glucksman",
+   "to": "pc-sh",
+   "relation": "advised_deal",
+   "evidence": "Adam Glucksman (Partner, business services) was named on the Smith + Howard investment. (deal-team role)",
+   "date": "2022-11-15",
+   "source_url": "https://www.cpapracticeadvisor.com/?p=73326",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e057",
+   "kind": "edge",
+   "from": "p-azus",
+   "to": "pc-sh",
+   "relation": "advised_deal",
+   "evidence": "Evan Azus (Principal) was named on the Smith + Howard investment. (deal-team role)",
+   "date": "2022-11-15",
+   "source_url": "https://www.cpapracticeadvisor.com/?p=73326",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e058",
+   "kind": "edge",
+   "from": "p-zachem",
+   "to": "pc-bpi",
+   "relation": "advised_deal",
+   "evidence": "Tyler Zachem was quoted on the BPI investment. (deal-team role)",
+   "date": "2023-04-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e059",
+   "kind": "edge",
+   "from": "p-marlow",
+   "to": "pc-pp",
+   "relation": "advised_deal",
+   "evidence": "Jonathan Marlow (Partner) was quoted on the Punctual Pros acquisition. (deal-team role)",
+   "date": "2024-04-03",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e060",
+   "kind": "edge",
+   "from": "p-azus",
+   "to": "pc-fl",
+   "relation": "advised_deal",
+   "evidence": "Evan Azus (Managing Director) was quoted on the Frontline investment. (deal-team role)",
+   "date": "2024-12-11",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e061",
+   "kind": "edge",
+   "from": "p-glucksman",
+   "to": "pc-fl",
+   "relation": "advised_deal",
+   "evidence": "Adam Glucksman was quoted endorsing Tim Britt's appointment as Frontline CEO. (deal-team role)",
+   "date": "2026-01-27",
+   "source_url": "https://www.prnewswire.com/news-releases/frontline-managed-services-appoints-tim-britt-as-chief-executive-officer-302670506.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e062",
+   "kind": "edge",
+   "from": "p-david",
+   "to": "pc-cet",
+   "relation": "advised_deal",
+   "evidence": "RJ David (Managing Director) was quoted on the CET investment. (deal-team role)",
+   "date": "2025-03-19",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e063",
+   "kind": "edge",
+   "from": "p-zachem",
+   "to": "pc-sh",
+   "relation": "advised_deal",
+   "evidence": "Zachem was quoted on the completed sale of Smith + Howard to TPG. (deal-team role)",
+   "date": "2026-08-06",
+   "source_url": "https://pulse2.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg-following-nearly-4x-revenue-growth/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e064",
+   "kind": "edge",
+   "from": "org-bsp",
+   "to": "pc-ts",
+   "relation": "invested_in",
+   "evidence": "Broad Sky announced its investment in Thomas Scientific.",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e065",
+   "kind": "edge",
+   "from": "org-bsp",
+   "to": "pc-fh",
+   "relation": "invested_in",
+   "evidence": "Broad Sky announced its investment in Fair Harbor.",
+   "date": "2022-03-23",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e066",
+   "kind": "edge",
+   "from": "org-bsp",
+   "to": "pc-sh",
+   "relation": "invested_in",
+   "evidence": "Broad Sky announced its investment in Smith + Howard.",
+   "date": "2022-11-15",
+   "source_url": "https://www.cpapracticeadvisor.com/?p=73326",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e067",
+   "kind": "edge",
+   "from": "org-bsp",
+   "to": "pc-bpi",
+   "relation": "invested_in",
+   "evidence": "Broad Sky announced its investment in Bully Pulpit International (BPI).",
+   "date": "2023-04-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e068",
+   "kind": "edge",
+   "from": "org-bsp",
+   "to": "pc-pp",
+   "relation": "invested_in",
+   "evidence": "Broad Sky announced its investment in Punctual Pros.",
+   "date": "2024-04-03",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e069",
+   "kind": "edge",
+   "from": "org-bsp",
+   "to": "pc-fl",
+   "relation": "invested_in",
+   "evidence": "Broad Sky announced its investment in Frontline Managed Services.",
+   "date": "2024-12-11",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e070",
+   "kind": "edge",
+   "from": "org-bsp",
+   "to": "pc-cet",
+   "relation": "invested_in",
+   "evidence": "Broad Sky announced its investment in Commonwealth Electrical Technologies (CET).",
+   "date": "2025-03-19",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e071",
+   "kind": "edge",
+   "from": "pc-pp",
+   "to": "pc-horvath",
+   "relation": "acquired",
+   "evidence": "Punctual Pros acquired Horvath Home Services.",
+   "date": "2024-12-03",
+   "source_url": "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e072",
+   "kind": "edge",
+   "from": "pc-cet",
+   "to": "pc-nuwave",
+   "relation": "acquired",
+   "evidence": "Commonwealth Electrical Technologies (CET) acquired NuWave Energy Solutions.",
+   "date": "2025-10-07",
+   "source_url": "https://comelectrical.com/commonwealth-electrical-technologies-acquires-nuwave-energy-solutions-a-full-service-design-build-energy-conservation-firm/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "e073",
+   "kind": "edge",
+   "from": "pc-cet",
+   "to": "pc-horton",
+   "relation": "acquired",
+   "evidence": "Commonwealth Electrical Technologies (CET) acquired Horton Electrical Services.",
+   "date": "2026-09-15",
+   "source_url": "https://www.prnewswire.com/news-releases/commonwealth-electrical-technologies-acquires-horton-electrical-services-expanding-northeast-footprint-and-specialized-infrastructure-capabilities-302878499.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e074",
+   "kind": "edge",
+   "from": "pc-bpi",
+   "to": "pc-agado",
+   "relation": "acquired",
+   "evidence": "Bully Pulpit International (BPI) acquired Agado Communications.",
+   "date": "2025-05-13",
+   "source_url": "https://bpigroup.com/bpi-acquires-agado-communications-appoints-mark-jones-to-lead-sports-offering-strategy-and-growth/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "e075",
+   "kind": "edge",
+   "from": "p-akoltin",
+   "to": "a-koltin",
+   "relation": "works_at",
+   "evidence": "Allan Koltin of Koltin Consulting Group served as exclusive financial adviser to Smith + Howard.",
+   "date": "2022-11-15",
+   "source_url": "https://www.cpapracticeadvisor.com/?p=73326",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e076",
+   "kind": "edge",
+   "from": "a-berenson",
+   "to": "pc-ts",
+   "relation": "advised_deal",
+   "evidence": "Financial advisor to Broad Sky on Thomas Scientific.",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e077",
+   "kind": "edge",
+   "from": "a-morrisoncohen",
+   "to": "pc-ts",
+   "relation": "advised_deal",
+   "evidence": "Legal advisor to Broad Sky on Thomas Scientific.",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e078",
+   "kind": "edge",
+   "from": "a-jefferies",
+   "to": "pc-ts",
+   "relation": "advised_deal",
+   "evidence": "Lead financial advisor to Carlyle on the sale of Thomas Scientific.",
+   "date": "2022-01-27",
+   "source_url": "https://www.carlyle.com/media-room/news-release-archive/carlyle-announces-sale-thomas-scientific-broad-sky-partners",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "e079",
+   "kind": "edge",
+   "from": "a-baird",
+   "to": "pc-ts",
+   "relation": "advised_deal",
+   "evidence": "Financial advisor to Carlyle on the sale of Thomas Scientific.",
+   "date": "2022-01-27",
+   "source_url": "https://www.carlyle.com/media-room/news-release-archive/carlyle-announces-sale-thomas-scientific-broad-sky-partners",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "e080",
+   "kind": "edge",
+   "from": "a-raymondjames",
+   "to": "pc-fh",
+   "relation": "advised_deal",
+   "evidence": "Financial advisor to Broad Sky on Fair Harbor.",
+   "date": "2022-03-23",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e081",
+   "kind": "edge",
+   "from": "a-morrisoncohen",
+   "to": "pc-fh",
+   "relation": "advised_deal",
+   "evidence": "Legal advisor to Broad Sky on Fair Harbor.",
+   "date": "2022-03-23",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e082",
+   "kind": "edge",
+   "from": "a-pwccf",
+   "to": "pc-fh",
+   "relation": "advised_deal",
+   "evidence": "Financial advisor to Fair Harbor.",
+   "date": "2022-03-23",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e083",
+   "kind": "edge",
+   "from": "a-orrick",
+   "to": "pc-fh",
+   "relation": "advised_deal",
+   "evidence": "Legal counsel to Fair Harbor.",
+   "date": "2022-03-23",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e084",
+   "kind": "edge",
+   "from": "a-koltin",
+   "to": "pc-sh",
+   "relation": "advised_deal",
+   "evidence": "Exclusive financial adviser to Smith + Howard.",
+   "date": "2022-11-15",
+   "source_url": "https://www.cpapracticeadvisor.com/?p=73326",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e085",
+   "kind": "edge",
+   "from": "a-morrisoncohen",
+   "to": "pc-sh",
+   "relation": "advised_deal",
+   "evidence": "Legal adviser to Broad Sky on Smith + Howard.",
+   "date": "2022-11-15",
+   "source_url": "https://www.cpapracticeadvisor.com/?p=73326",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e086",
+   "kind": "edge",
+   "from": "a-hunton",
+   "to": "pc-sh",
+   "relation": "advised_deal",
+   "evidence": "Legal adviser to Smith + Howard.",
+   "date": "2022-11-15",
+   "source_url": "https://www.cpapracticeadvisor.com/?p=73326",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e087",
+   "kind": "edge",
+   "from": "a-berenson",
+   "to": "pc-bpi",
+   "relation": "advised_deal",
+   "evidence": "Financial advisor to Broad Sky on BPI.",
+   "date": "2023-04-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e088",
+   "kind": "edge",
+   "from": "a-morrisoncohen",
+   "to": "pc-bpi",
+   "relation": "advised_deal",
+   "evidence": "Legal advisor to Broad Sky on BPI.",
+   "date": "2023-04-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e089",
+   "kind": "edge",
+   "from": "a-harriswilliams",
+   "to": "pc-pp",
+   "relation": "advised_deal",
+   "evidence": "Advisor to Broad Sky on Punctual Pros.",
+   "date": "2024-04-03",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e090",
+   "kind": "edge",
+   "from": "a-greenberg",
+   "to": "pc-pp",
+   "relation": "advised_deal",
+   "evidence": "Legal counsel to Broad Sky on Punctual Pros.",
+   "date": "2024-04-03",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e091",
+   "kind": "edge",
+   "from": "a-boxwood",
+   "to": "pc-pp",
+   "relation": "advised_deal",
+   "evidence": "Exclusive sell-side advisor to Punctual Pros.",
+   "date": "2024-04-03",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e092",
+   "kind": "edge",
+   "from": "a-trout",
+   "to": "pc-pp",
+   "relation": "advised_deal",
+   "evidence": "Accounting advisor to Punctual Pros sellers.",
+   "date": "2024-04-03",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e093",
+   "kind": "edge",
+   "from": "a-barley",
+   "to": "pc-pp",
+   "relation": "advised_deal",
+   "evidence": "Legal counsel to Punctual Pros sellers.",
+   "date": "2024-04-03",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e094",
+   "kind": "edge",
+   "from": "a-guggenheim",
+   "to": "pc-fl",
+   "relation": "advised_deal",
+   "evidence": "Exclusive sell-side advisor on Frontline.",
+   "date": "2024-12-11",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e095",
+   "kind": "edge",
+   "from": "a-berenson",
+   "to": "pc-fl",
+   "relation": "advised_deal",
+   "evidence": "Buy-side advisor to Broad Sky on Frontline.",
+   "date": "2024-12-11",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e096",
+   "kind": "edge",
+   "from": "a-harriswilliams",
+   "to": "pc-fl",
+   "relation": "advised_deal",
+   "evidence": "Buy-side advisor to Broad Sky on Frontline.",
+   "date": "2024-12-11",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e097",
+   "kind": "edge",
+   "from": "a-morrisoncohen",
+   "to": "pc-fl",
+   "relation": "advised_deal",
+   "evidence": "Legal advisor to Broad Sky on Frontline.",
+   "date": "2024-12-11",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e098",
+   "kind": "edge",
+   "from": "a-ropes",
+   "to": "pc-fl",
+   "relation": "advised_deal",
+   "evidence": "Legal advisor to Frontline.",
+   "date": "2024-12-11",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e099",
+   "kind": "edge",
+   "from": "a-stifel",
+   "to": "pc-cet",
+   "relation": "advised_deal",
+   "evidence": "Buy-side advisor to Broad Sky on CET.",
+   "date": "2025-03-19",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e100",
+   "kind": "edge",
+   "from": "a-berenson",
+   "to": "pc-cet",
+   "relation": "advised_deal",
+   "evidence": "Buy-side advisor to Broad Sky on CET.",
+   "date": "2025-03-19",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e101",
+   "kind": "edge",
+   "from": "a-greenberg",
+   "to": "pc-cet",
+   "relation": "advised_deal",
+   "evidence": "Legal advisor to Broad Sky on CET.",
+   "date": "2025-03-19",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e102",
+   "kind": "edge",
+   "from": "a-fmi",
+   "to": "pc-cet",
+   "relation": "advised_deal",
+   "evidence": "Exclusive sell-side advisor to CET.",
+   "date": "2025-03-19",
+   "source_url": "https://fmicorp.com/about/news/fmi-advises-commonwealth-electrical-technologies-in-sale-to-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e103",
+   "kind": "edge",
+   "from": "a-kirkland",
+   "to": "pc-cet",
+   "relation": "advised_deal",
+   "evidence": "Legal advisor to CET.",
+   "date": "2025-03-19",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e104",
+   "kind": "edge",
+   "from": "a-fmi",
+   "to": "pc-nuwave",
+   "relation": "advised_deal",
+   "evidence": "Sell-side advisor to NuWave on its sale to CET.",
+   "date": "2025-10-07",
+   "source_url": "https://comelectrical.com/commonwealth-electrical-technologies-acquires-nuwave-energy-solutions-a-full-service-design-build-energy-conservation-firm/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "e105",
+   "kind": "edge",
+   "from": "a-greenberg",
+   "to": "pc-nuwave",
+   "relation": "advised_deal",
+   "evidence": "Counsel to CET on the NuWave acquisition.",
+   "date": "2025-10-07",
+   "source_url": "https://comelectrical.com/commonwealth-electrical-technologies-acquires-nuwave-energy-solutions-a-full-service-design-build-energy-conservation-firm/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "e106",
+   "kind": "edge",
+   "from": "l-midcap",
+   "to": "pc-ts",
+   "relation": "lent_to",
+   "evidence": "Apollo Investment Corp (MFIC) 10-Q shows a Thomas Scientific unitranche (L+625) closed 2021-12-14 with DDTL and revolver.",
+   "date": "2021-12-14",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000127875222000004/ainv2022q310-q.htm",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e107",
+   "kind": "edge",
+   "from": "l-midcap",
+   "to": "pc-ts",
+   "relation": "lent_to",
+   "evidence": "MidCap Apollo Institutional Private Lending also holds the Thomas Scientific term loan (88% of par at 6/30/2026).",
+   "date": "2026-06-30",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/2006758/000119312526349327/ck0002006758-20260630.htm",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e108",
+   "kind": "edge",
+   "from": "l-nxt",
+   "to": "pc-fl",
+   "relation": "lent_to",
+   "evidence": "UK accounts note 11: $90M initial term loan from NXT Capital and Audax Private Debt at the Dec 9, 2024 closing.",
+   "date": "2024-12-09",
+   "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e109",
+   "kind": "edge",
+   "from": "l-audax",
+   "to": "pc-fl",
+   "relation": "lent_to",
+   "evidence": "UK accounts note 11: $90M initial term loan from NXT Capital and Audax Private Debt at the Dec 9, 2024 closing.",
+   "date": "2024-12-09",
+   "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e110",
+   "kind": "edge",
+   "from": "l-nxt",
+   "to": "pc-fl",
+   "relation": "lent_to",
+   "evidence": "UK charges register shows NXT Capital as agent on a 2015-2019 Intelliteach facility (incumbent lender).",
+   "date": "2015-02-19",
+   "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/charges",
+   "retrieved": "2026-09-24",
+   "current": false
+  },
+  {
+   "id": "e111",
+   "kind": "edge",
+   "from": "l-webster",
+   "to": "pc-fl",
+   "relation": "lent_to",
+   "evidence": "UK accounts show a Webster Bank facility under BV ownership, refinanced at the Broad Sky deal.",
+   "date": "2019-02",
+   "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history",
+   "retrieved": "2026-09-24",
+   "current": false
+  },
+  {
+   "id": "e112",
+   "kind": "edge",
+   "from": "l-pinebridge",
+   "to": "pc-bpi",
+   "relation": "lent_to",
+   "evidence": "Debenture names PineBridge Private Credit Agent LLC as administrative agent under BPI's Credit and Guaranty Agreement dated 7 Dec 2023.",
+   "date": "2023-12-07",
+   "source_url": "https://find-and-update.company-information.service.gov.uk/company/07078911/filing-history",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e113",
+   "kind": "edge",
+   "from": "l-alterdomus",
+   "to": "pc-bpi",
+   "relation": "lent_to",
+   "evidence": "UK MR01 charges name Alter Domus (US) LLC as collateral agent over BPI's UK subsidiaries.",
+   "date": "2025-01-24",
+   "source_url": "https://find-and-update.company-information.service.gov.uk/company/07078911/charges",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e114",
+   "kind": "edge",
+   "from": "l-pgim",
+   "to": "pc-pp",
+   "relation": "lent_to",
+   "evidence": "PGIM Private Credit Fund 10-Q lists a first-lien term loan (S+500, maturing 2029-03-26) and DDTL to Punctual Pros Midco, LLC.",
+   "date": "2026-06-30",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1923622/000119312526349252/ck0001923622-20260630.htm",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e115",
+   "kind": "edge",
+   "from": "l-ecapital",
+   "to": "pc-fh",
+   "relation": "lent_to",
+   "evidence": "USPTO assignment records show a Gerber Finance/eCapital security interest on the FAIR HARBOR mark (2021), released Dec 2025.",
+   "date": "2021-08-31",
+   "source_url": "https://tsdr.uspto.gov/#caseNumber=86599280&caseType=SERIAL_NO&searchType=statusSearch",
+   "retrieved": "2026-09-24",
+   "current": false
+  },
+  {
+   "id": "e116",
+   "kind": "edge",
+   "from": "i-constellation",
+   "to": "org-bsp",
+   "relation": "co_invested",
+   "evidence": "Capital Constellation made a strategic investment in Broad Sky, announced with the Thomas Scientific acquisition.",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e117",
+   "kind": "edge",
+   "from": "i-constellation",
+   "to": "org-bsp",
+   "relation": "co_invested",
+   "evidence": "Constellation's 2022 fundraise announcement lists Broad Sky Partners (Jan 2022) among its GP investments.",
+   "date": "2022-01",
+   "source_url": "https://peprofessional.com/2022/11/gp-investor-constellation-completes-1-5-billion-fundraise/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e118",
+   "kind": "edge",
+   "from": "i-wafra",
+   "to": "i-constellation",
+   "relation": "works_at",
+   "evidence": "The Jan 2022 release states Capital Constellation is managed by Wafra.",
+   "date": null,
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e119",
+   "kind": "edge",
+   "from": "p-adamson",
+   "to": "i-constellation",
+   "relation": "works_at",
+   "evidence": "Daniel Adamson is quoted as President of Constellation.",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e120",
+   "kind": "edge",
+   "from": "p-cardenas",
+   "to": "i-wafra",
+   "relation": "works_at",
+   "evidence": "Gustavo Cardenas is quoted as Managing Director at Wafra.",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e121",
+   "kind": "edge",
+   "from": "i-apfc",
+   "to": "i-constellation",
+   "relation": "member_of",
+   "evidence": "Alaska Permanent Fund is listed as a member of Capital Constellation in the Jan 2022 release.",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e122",
+   "kind": "edge",
+   "from": "i-nyscrf",
+   "to": "i-constellation",
+   "relation": "member_of",
+   "evidence": "New York State Common Retirement Fund is listed as a member of Capital Constellation in the Jan 2022 release.",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e123",
+   "kind": "edge",
+   "from": "i-railpen",
+   "to": "i-constellation",
+   "relation": "member_of",
+   "evidence": "Railpen is listed as a member of Capital Constellation in the Jan 2022 release.",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e124",
+   "kind": "edge",
+   "from": "i-kia",
+   "to": "i-constellation",
+   "relation": "member_of",
+   "evidence": "Kuwait Investment Authority is listed as a member of Capital Constellation in the Jan 2022 release.",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e125",
+   "kind": "edge",
+   "from": "i-pifss",
+   "to": "i-constellation",
+   "relation": "member_of",
+   "evidence": "Public Institution for Social Security (Kuwait) is listed as a member of Capital Constellation in the Jan 2022 release.",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e126",
+   "kind": "edge",
+   "from": "i-ap3",
+   "to": "i-constellation",
+   "relation": "member_of",
+   "evidence": "AP3 (Third Swedish National Pension Fund) is listed as a member of Capital Constellation in the Jan 2022 release.",
+   "date": "2022-01-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e127",
+   "kind": "edge",
+   "from": "i-alpinvest",
+   "to": "pc-fl",
+   "relation": "co_invested",
+   "evidence": "Carlyle AlpInvest N-CSR shows a $12.5M direct equity investment in BSP-FL Intermediate Inc. (Frontline) acquired 2024-12-05.",
+   "date": "2024-12-05",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1899610/000189961026000006/capm_202603xn-csr.htm",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e128",
+   "kind": "edge",
+   "from": "i-barings",
+   "to": "pc-ts",
+   "relation": "co_invested",
+   "evidence": "Barings/Cascade N-PORT shows a ~$5M position in BSP TS Co-Invest I, LLC.",
+   "date": "2022-03-31",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1864609/000119312526373850/primary_doc.xml",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e129",
+   "kind": "edge",
+   "from": "i-apollo-eq",
+   "to": "pc-ts",
+   "relation": "co_invested",
+   "evidence": "MFIC 10-Q lists BSP-TS, LP common (cost $185K) as a co-investment alongside the Thomas Scientific loan.",
+   "date": "2021-12-31",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000127875222000004/ainv2022q310-q.htm",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e130",
+   "kind": "edge",
+   "from": "i-apollo-eq",
+   "to": "l-midcap",
+   "relation": "works_at",
+   "evidence": "Same Apollo/MidCap lending group: equity co-invest sits next to the unitranche in MFIC's schedule.",
+   "date": "2021-12-31",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000127875222000004/ainv2022q310-q.htm",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e131",
+   "kind": "edge",
+   "from": "c-bv",
+   "to": "pc-fl",
+   "relation": "co_invested",
+   "evidence": "BV Investment Partners, the previous lead sponsor, remains a minority investor in Frontline.",
+   "date": "2024-12-11",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e132",
+   "kind": "edge",
+   "from": "p-kinsey",
+   "to": "c-bv",
+   "relation": "works_at",
+   "evidence": "Matt Kinsey is named for BV Investment Partners in the Frontline release.",
+   "date": "2024-12-11",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e133",
+   "kind": "edge",
+   "from": "p-axelrod",
+   "to": "c-bv",
+   "relation": "works_at",
+   "evidence": "Sam Axelrod is named for BV Investment Partners in the Frontline release.",
+   "date": "2024-12-11",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e134",
+   "kind": "edge",
+   "from": "c-svoboda",
+   "to": "pc-bpi",
+   "relation": "co_invested",
+   "evidence": "Svoboda Capital Partners, BPI's previous investor, is named in the Broad Sky investment release.",
+   "date": "2023-04-27",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e135",
+   "kind": "edge",
+   "from": "c-tpg",
+   "to": "pc-sh",
+   "relation": "invested_in",
+   "evidence": "TPG completed its investment in Smith + Howard through TPG Growth, buying from Broad Sky.",
+   "date": "2026-08-06",
+   "source_url": "https://pulse2.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg-following-nearly-4x-revenue-growth/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e136",
+   "kind": "edge",
+   "from": "f-authority",
+   "to": "pc-pp",
+   "relation": "franchisor_of",
+   "evidence": "Punctual Pros is described as a leading franchisee within Authority Brands in the Mid-Atlantic.",
+   "date": "2024-04-03",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e137",
+   "kind": "edge",
+   "from": "f-authority",
+   "to": "pc-horvath",
+   "relation": "franchisor_of",
+   "evidence": "Horvath Home Services operated One Hour, Benjamin Franklin and Mister Sparky franchises within Authority Brands.",
+   "date": "2024-12-03",
+   "source_url": "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e138",
+   "kind": "edge",
+   "from": "f-clockwork",
+   "to": "pc-pp",
+   "relation": "franchisor_of",
+   "evidence": "Punctual Pros operates One Hour, Benjamin Franklin and Mister Sparky franchises.",
+   "date": "2024-04-03",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e139",
+   "kind": "edge",
+   "from": "f-authority",
+   "to": "f-clockwork",
+   "relation": "acquired",
+   "evidence": "Authority Brands acquired the Clockwork companies (Benjamin Franklin, One Hour, Mister Sparky) from Direct Energy, doubling system revenue.",
+   "date": "2019-05-01",
+   "source_url": "https://www.achrnews.com/articles/141488-authority-brands-acquires-clockwork-inc-companies",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e140",
+   "kind": "edge",
+   "from": "c-apax",
+   "to": "f-authority",
+   "relation": "invested_in",
+   "evidence": "Funds advised by Apax Partners acquired Authority Brands from PNC Riverarch Capital.",
+   "date": "2018-09-21",
+   "source_url": "https://www.apax.com/news-views/funds-advised-by-apax-partners-acquire-authority-brands/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e141",
+   "kind": "edge",
+   "from": "p-caiafa",
+   "to": "f-authority",
+   "relation": "works_at",
+   "evidence": "Jay Caiafa became Authority Brands CEO on Aug 18, 2025.",
+   "date": "2025-08-18",
+   "source_url": "https://investorshangout.com/jay-caiafa-takes-helm-as-ceo-at-authority-brands-322409-/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e142",
+   "kind": "edge",
+   "from": "p-donaldson",
+   "to": "f-authority",
+   "relation": "works_at",
+   "evidence": "Craig Donaldson preceded Caiafa as CEO for about three years.",
+   "date": null,
+   "source_url": "https://investorshangout.com/jay-caiafa-takes-helm-as-ceo-at-authority-brands-322409-/",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e143",
+   "kind": "edge",
+   "from": "p-greear",
+   "to": "f-authority",
+   "relation": "works_at",
+   "evidence": "Authority Brands appointed Josh Greear CFO.",
+   "date": "2025-09",
+   "source_url": "https://www.citybiz.co/article/748336/authority-brands-appoints-josh-greear-as-chief-financial-officer/",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e144",
+   "kind": "edge",
+   "from": "p-clemente",
+   "to": "f-authority",
+   "relation": "works_at",
+   "evidence": "Authority Brands hired Steve Clemente as President and COO of Trade Brands.",
+   "date": "2025-12",
+   "source_url": "https://cleanfax.com/?p=75081",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e145",
+   "kind": "edge",
+   "from": "p-dawson",
+   "to": "f-authority",
+   "relation": "works_at",
+   "evidence": "Mark Dawson, EVP of Service Trades Brands at Authority Brands, was quoted on the Punctual Pros deal.",
+   "date": "2024-04-03",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e146",
+   "kind": "edge",
+   "from": "p-weddle",
+   "to": "f-authority",
+   "relation": "works_at",
+   "evidence": "Rob Weddle was Authority Brands CEO at the Clockwork acquisition.",
+   "date": "2019-05-01",
+   "source_url": "https://www.achrnews.com/articles/141488-authority-brands-acquires-clockwork-inc-companies",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e147",
+   "kind": "edge",
+   "from": "p-dawson",
+   "to": "pc-pp",
+   "relation": "advised_deal",
+   "evidence": "Mark Dawson provided the franchisor's endorsement quote in the Punctual Pros acquisition release (franchisor consent role, not a paid advisor).",
+   "date": "2024-04-03",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e148",
+   "kind": "edge",
+   "from": "p-zachem",
+   "to": "ff-carlyle",
+   "relation": "works_at",
+   "evidence": "Zachem spent 5+ years at Carlyle as Co-Head of Carlyle Global Partners. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/tyler-zachem/",
+   "retrieved": "2026-09-24",
+   "current": false
+  },
+  {
+   "id": "e149",
+   "kind": "edge",
+   "from": "p-zachem",
+   "to": "ff-midocean",
+   "relation": "works_at",
+   "evidence": "Zachem spent 14 years at MidOcean/DB Capital Partners (Head of Business Services, Media & Communications). (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/tyler-zachem/",
+   "retrieved": "2026-09-24",
+   "current": false
+  },
+  {
+   "id": "e150",
+   "kind": "edge",
+   "from": "p-glucksman",
+   "to": "ff-carlyle",
+   "relation": "works_at",
+   "evidence": "Glucksman spent 10+ years at Carlyle (MD, U.S. Equity Opportunity Fund). (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/adam-glucksman/",
+   "retrieved": "2026-09-24",
+   "current": false
+  },
+  {
+   "id": "e151",
+   "kind": "edge",
+   "from": "p-glucksman",
+   "to": "ff-pitney",
+   "relation": "works_at",
+   "evidence": "Glucksman's bio lists prior experience at Pitney Bowes. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/adam-glucksman/",
+   "retrieved": "2026-09-24",
+   "current": false
+  },
+  {
+   "id": "e152",
+   "kind": "edge",
+   "from": "p-david",
+   "to": "ff-carlyle",
+   "relation": "works_at",
+   "evidence": "RJ David was a Principal at Carlyle (U.S. Buyout and Mid-Market Growth). (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/broad-sky-partners-appoints-rj-david-as-managing-director/",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e153",
+   "kind": "edge",
+   "from": "p-david",
+   "to": "ff-platinum",
+   "relation": "works_at",
+   "evidence": "RJ David spent nearly ten years at Platinum Equity. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/broad-sky-partners-appoints-rj-david-as-managing-director/",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e154",
+   "kind": "edge",
+   "from": "p-kiser",
+   "to": "ff-carlyle",
+   "relation": "works_at",
+   "evidence": "Georgette Kiser was MD & CIO at Carlyle. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/georgette-kiser/",
+   "retrieved": "2026-09-24",
+   "current": false
+  },
+  {
+   "id": "e155",
+   "kind": "edge",
+   "from": "p-narain",
+   "to": "ff-carlyle",
+   "relation": "works_at",
+   "evidence": "Aditya Narain was a CFO at Carlyle. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/aditya-narain/",
+   "retrieved": "2026-09-24",
+   "current": false
+  },
+  {
+   "id": "e156",
+   "kind": "edge",
+   "from": "p-narain",
+   "to": "ff-gecapital",
+   "relation": "works_at",
+   "evidence": "Aditya Narain held senior roles at GE Capital. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/aditya-narain/",
+   "retrieved": "2026-09-24",
+   "current": false
+  },
+  {
+   "id": "e157",
+   "kind": "edge",
+   "from": "p-kahn",
+   "to": "ff-carlyle",
+   "relation": "works_at",
+   "evidence": "Jodi Kahn was an Operating Advisor to Carlyle's middle-market fund. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/jodi-kahn/",
+   "retrieved": "2026-09-24",
+   "current": false
+  },
+  {
+   "id": "e158",
+   "kind": "edge",
+   "from": "p-marlow",
+   "to": "ff-midocean",
+   "relation": "works_at",
+   "evidence": "Marlow's Executive Board entry lists MidOcean. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e159",
+   "kind": "edge",
+   "from": "p-marlow",
+   "to": "ff-investcorp",
+   "relation": "works_at",
+   "evidence": "Marlow's Executive Board entry lists Investcorp. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e160",
+   "kind": "edge",
+   "from": "p-frank",
+   "to": "ff-quad",
+   "relation": "works_at",
+   "evidence": "Lincoln Frank founded Quad Partners in 2000. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/lincoln-frank/",
+   "retrieved": "2026-09-24",
+   "current": false
+  },
+  {
+   "id": "e161",
+   "kind": "edge",
+   "from": "p-margolis",
+   "to": "ff-ci",
+   "relation": "works_at",
+   "evidence": "Amy Margolis was Head of Business Development at CI Capital Partners. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/amy-margolis/",
+   "retrieved": "2026-09-24",
+   "current": false
+  },
+  {
+   "id": "e162",
+   "kind": "edge",
+   "from": "p-margolis",
+   "to": "ff-riverside",
+   "relation": "works_at",
+   "evidence": "Amy Margolis was a Principal at The Riverside Company. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/amy-margolis/",
+   "retrieved": "2026-09-24",
+   "current": false
+  },
+  {
+   "id": "e163",
+   "kind": "edge",
+   "from": "p-calpeter",
+   "to": "ff-gecapital",
+   "relation": "works_at",
+   "evidence": "Lynn Calpeter was CFO of GE Capital. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e164",
+   "kind": "edge",
+   "from": "p-monahan",
+   "to": "ff-pitney",
+   "relation": "works_at",
+   "evidence": "Mike Monahan was EVP, COO and CFO of Pitney Bowes. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e165",
+   "kind": "edge",
+   "from": "p-sliman",
+   "to": "ff-coalfire",
+   "relation": "works_at",
+   "evidence": "Sam Sliman is former Chair of Coalfire. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e166",
+   "kind": "edge",
+   "from": "p-bowman",
+   "to": "ff-duke",
+   "relation": "works_at",
+   "evidence": "Roberta Bowman was Chief Sustainability Officer at Duke Energy. (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e167",
+   "kind": "edge",
+   "from": "p-britt",
+   "to": "ff-synoptek",
+   "relation": "works_at",
+   "evidence": "Tim Britt is founder and former CEO of Synoptek. (prior or outside role)",
+   "date": null,
+   "source_url": "https://www.prnewswire.com/news-releases/frontline-managed-services-appoints-tim-britt-as-chief-executive-officer-302670506.html",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e168",
+   "kind": "edge",
+   "from": "p-kelly",
+   "to": "ff-evo",
+   "relation": "works_at",
+   "evidence": "Jim Kelly is CEO and Director of EVO Payments (per BSP team page). (prior or outside role)",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/",
+   "retrieved": "2026-10-06",
+   "current": false
+  },
+  {
+   "id": "e169",
+   "kind": "edge",
+   "from": "ff-carlyle",
+   "to": "pc-ts",
+   "relation": "advised_deal",
+   "evidence": "Carlyle (owner since 2017) sold Thomas Scientific to Broad Sky (seller counterparty).",
+   "date": "2022-01-27",
+   "source_url": "https://www.carlyle.com/media-room/news-release-archive/carlyle-announces-sale-thomas-scientific-broad-sky-partners",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "e170",
+   "kind": "edge",
+   "from": "p-zachem",
+   "to": "p-glucksman",
+   "relation": "former_colleague",
+   "evidence": "Both were senior investment professionals at Carlyle's U.S. Equity Opportunity Fund era; Glucksman co-relaunched BSP in 2021.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/tyler-zachem/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "e171",
+   "kind": "edge",
+   "from": "p-zachem",
+   "to": "p-david",
+   "relation": "former_colleague",
+   "evidence": "Zachem's announcement of RJ David notes they had worked together in the past (Carlyle).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/broad-sky-partners-appoints-rj-david-as-managing-director/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e172",
+   "kind": "edge",
+   "from": "p-zachem",
+   "to": "p-kiser",
+   "relation": "former_colleague",
+   "evidence": "Both list senior Carlyle roles in their public bios.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/georgette-kiser/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "e173",
+   "kind": "edge",
+   "from": "p-zachem",
+   "to": "p-narain",
+   "relation": "former_colleague",
+   "evidence": "Both list senior Carlyle roles in their public bios.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/aditya-narain/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "e174",
+   "kind": "edge",
+   "from": "p-zachem",
+   "to": "p-kahn",
+   "relation": "former_colleague",
+   "evidence": "Kahn was an Operating Advisor to Carlyle's middle-market fund, which Zachem co-chaired the IC of.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/jodi-kahn/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "e175",
+   "kind": "edge",
+   "from": "p-zachem",
+   "to": "p-marlow",
+   "relation": "former_colleague",
+   "evidence": "Both list MidOcean in their public bios; Marlow co-relaunched BSP in 2021.",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/tyler-zachem/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "e176",
+   "kind": "edge",
+   "from": "p-calpeter",
+   "to": "p-narain",
+   "relation": "former_colleague",
+   "evidence": "Both list senior GE Capital finance roles (overlap in time not established).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/aditya-narain/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "e177",
+   "kind": "edge",
+   "from": "p-glucksman",
+   "to": "p-monahan",
+   "relation": "former_colleague",
+   "evidence": "Both list Pitney Bowes in their public bios (overlap in time not established).",
+   "date": null,
+   "source_url": "https://broadskypartners.com/team/adam-glucksman/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "e178",
+   "kind": "edge",
+   "from": "p-simmons",
+   "to": "p-haas",
+   "relation": "former_colleague",
+   "evidence": "Haas joined Thomas Scientific in 2017 (board, then COO) while Simmons was CEO; Haas succeeded him in 2023.",
+   "date": null,
+   "source_url": "https://www.thomassci.com/blog/_/haas-ceo",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e179",
+   "kind": "edge",
+   "from": "p-naidoo",
+   "to": "p-britt",
+   "relation": "former_colleague",
+   "evidence": "Britt succeeded Naidoo as Frontline CEO; Naidoo moved to the board.",
+   "date": null,
+   "source_url": "https://www.prnewswire.com/news-releases/frontline-managed-services-appoints-tim-britt-as-chief-executive-officer-302670506.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e180",
+   "kind": "edge",
+   "from": "p-donaldson",
+   "to": "p-caiafa",
+   "relation": "former_colleague",
+   "evidence": "Caiafa succeeded Donaldson as Authority Brands CEO.",
+   "date": null,
+   "source_url": "https://investorshangout.com/jay-caiafa-takes-helm-as-ceo-at-authority-brands-322409-/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "e181",
+   "kind": "edge",
+   "from": "f-authority",
+   "to": "b-ifa",
+   "relation": "member_of",
+   "evidence": "Authority Brands press release appears in IFA's Member Press Releases section.",
+   "date": "2023-03-08",
+   "source_url": "https://www.franchise.org/media-center/press-releases/authority-brands-names-industry-leader-todd-houghton-president-of",
+   "retrieved": "2026-10-06",
+   "current": true
+  },
+  {
+   "id": "e182",
+   "kind": "edge",
+   "from": "pc-fh",
+   "to": "b-blab",
+   "relation": "member_of",
+   "evidence": "Fair Harbor is a Certified B Corporation (B Impact Score 94.3).",
+   "date": "2022-07",
+   "source_url": "http://web.archive.org/web/20260313073142/https://www.bcorporation.net/en-us/find-a-b-corp/company/fair-harbor/",
+   "retrieved": "2026-09-24",
+   "current": true
+  },
+  {
+   "id": "e183",
+   "kind": "edge",
+   "from": "pc-cet",
+   "to": "b-neif",
+   "relation": "member_of",
+   "evidence": "CET is listed as an approved NEIF commercial contractor in MA, CT, NH, ME, RI and VT.",
+   "date": null,
+   "source_url": "https://www.neifund.org/commonwealth-electrical-technologies-llc/",
+   "retrieved": "2026-10-06",
+   "current": true
+  }
+ ]
+}

@@ -1,8 +1,8 @@
 {
  "meta": {
   "title": "Precomputed deep-dive prompts",
-  "note": "Suggested prompts copied from the assistant personas (assets/chat.js). scripts/generate_answers.py answers each one with Claude, grounded on data/research, and writes data/answers/<slug>.json. Optional per-prompt \"datasets\" overrides the keyword mapping.",
-  "count": 30
+  "note": "Suggested prompts copied from the assistant personas (assets/chat.js). scripts/generate_answers.py answers each one with Claude, grounded on data/research, and writes data/answers/<slug>.json. Optional per-prompt \"datasets\" overrides the keyword mapping. Wording follows scripts/term_map.json (\"growth plan\", \"portfolio company\"); optional \"aliases\" keep older wording matching the same deep dive.",
+  "count": 33
  },
  "items": [
   {
@@ -76,9 +76,19 @@
    "persona": "portal"
   },
   {
-   "slug": "what-is-the-value-creation-playbook-for-frontline",
-   "question": "What is the value-creation playbook for Frontline?",
-   "persona": "portal"
+   "slug": "what-is-the-growth-plan-for-frontline",
+   "question": "What is the growth plan for Frontline?",
+   "persona": "portal",
+   "aliases": [
+    "What is the growth plan for Frontline?"
+   ],
+   "datasets": [
+    "fl_playbook",
+    "frontline_filings",
+    "ma_targets_fl_ts",
+    "fl_midsize_firms",
+    "bsp_firm"
+   ]
   },
   {
    "slug": "which-ai-agents-create-the-most-value-across-the-portfolio",
@@ -89,6 +99,38 @@
    "slug": "how-much-revenue-does-24-7-voice-ai-recover-for-punctual-pro",
    "question": "How much revenue does 24/7 voice AI recover for Punctual Pros?",
    "persona": "portal"
+  },
+  {
+   "slug": "what-did-sponsors-do-with-companies-like-punctual-pros-befor",
+   "question": "What did sponsors do with companies like Punctual Pros before selling them?",
+   "persona": "portal",
+   "datasets": [
+    "value_creation_cases",
+    "cases_home_services",
+    "pp_nationwide",
+    "bsp_firm"
+   ]
+  },
+  {
+   "slug": "how-does-broad-sky-actually-buy-companies",
+   "question": "How does Broad Sky actually buy companies?",
+   "persona": "portal",
+   "datasets": [
+    "bsp_methodology",
+    "bsp_firm",
+    "pe_landscape"
+   ]
+  },
+  {
+   "slug": "which-counties-nationwide-should-punctual-pros-expand-to-fir",
+   "question": "Which counties nationwide should Punctual Pros expand to first?",
+   "persona": "portal",
+   "datasets": [
+    "national_counties",
+    "pp_nationwide",
+    "value_creation_cases",
+    "ma_targets_pp"
+   ]
   },
   {
    "slug": "pp-can-i-reach-you-at-2am",
@@ -111,7 +153,7 @@
    "persona": "pp"
   },
   {
-   "slug": "cet-what-incentives-exist-for-commercial-solar-in-massachusetts",
+   "slug": "cet-what-incentives-exist-for-commercial-solar-in-massachuse",
    "question": "What incentives exist for commercial solar in Massachusetts?",
    "persona": "cet"
   },

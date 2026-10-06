@@ -2,7 +2,7 @@
   "meta": {
     "dataset": "Frontline Managed Services - filings and financial research track (BSP portfolio), with BSP fund context and competitor credit benchmarks",
     "generated": "2026-09-24",
-    "method": "SEC EDGAR full-text search (efts.sec.gov) and submissions API for Form D, N-PORT, N-CSR and BDC 10-K/10-Q schedules; direct parsing of Form D XML and N-PORT XML; UK Companies House public web pages (filing history, officers, charges) with accounts PDFs rendered locally and read page by page; SBA PPP FOIA public_150k_plus CSV scanned locally; company press releases and About page (frontlinems.com); BSP news page. WebSearch budget was exhausted, so discovery relied on direct registries and EDGAR. ProPublica, FederalPay and OpenCorporates were blocked by bot challenges and were not bypassed.",
+    "method": "SEC EDGAR full-text search (efts.sec.gov) and submissions API for Form D, N-PORT, N-CSR and BDC 10-K/10-Q schedules; direct parsing of Form D XML and N-PORT XML; UK Companies House public web pages (filing history, officers, charges) with accounts PDFs rendered locally and read page by page; SBA PPP FOIA PPP loans over $150k CSV scanned locally; company press releases and About page (frontlinems.com); BSP news page. WebSearch budget was exhausted, so discovery relied on direct registries and EDGAR. ProPublica, FederalPay and OpenCorporates were blocked by bot challenges and were not bypassed.",
     "sources_summary": "SEC EDGAR (BSP-FL LP and BSP-FL Co-Invest Form Ds; Broad Sky Partners LP Form D/As; other BSP deal-vehicle Form Ds; Carlyle AlpInvest Private Markets Fund N-PORT-P x5 and N-CSR; Audax Credit BDC, Audax Private Credit Fund, Golub Capital Direct Lending, WhiteHorse Finance and Runway Growth 10-K/10-Q schedules); UK Companies House (Intelliteach Ltd 07039190 accounts FY2022-FY2024, officers, charges); SBA PPP FOIA; frontlinems.com (About, Awards, Press, Leadership, press releases 2020-2026); broadskypartners.com/news.",
     "caveats": [
       "The $90M term-loan figure comes from UK subsidiary notes describing the group facility. Revolver, DDTL or incremental tranches since Dec 2024 are not disclosed.",
@@ -406,7 +406,7 @@
       "category": "sba_ppp",
       "title": "SBA PPP FOIA (loans >$150K) - no matching loan found",
       "filed_or_dated": "PPP rounds 2020-2021",
-      "filer_or_source_agency": "SBA PPP FOIA public_150k_plus dataset (968,524 rows scanned)",
+      "filer_or_source_agency": "SBA PPP FOIA PPP loans over $150k dataset (968,524 rows scanned)",
       "key_figures": {
         "matches": 0,
         "names_searched": [

@@ -1,5 +1,18 @@
-/* BPI concept — shared page chrome: banner, nav, reveal, office clocks, chat widget. */
-import { Chat } from '../../assets/chat.js?v=20261006090506';
+/* BPI concept: shared behaviour for index.html and signalos.html (reveal, office clocks, chat).
+   The frame (top bar, concept banner, breadcrumb, footer) comes from assets/frame.js. */
+import { Chat } from '../../assets/chat.js?v=20261006122625';
+import { Frame } from '../../assets/frame.js?v=20261006122625';
+
+/** Plain-English copy from dataset strings: dataset file paths become their human names,
+    internal record ids (bpi-022, ra-bpi, lever-03 …) are dropped. */
+export const PLAIN_RX = /\b(?:bpi|rival|kb|ra|ve|vs|lever|tpl|gl|agent|fin|fh|pp|cet|ts|fl|ref|ph|tp|bsp)-(?:[a-z]+-)*(?:[a-z0-9]*\d[a-z0-9]*\b|\*)(?:,?\.\.\d+)?|\bra-(?:bpi|fh|pp|cet|fl|ts)\b|\s?\bmeta\.[a-z_]+/g;
+export function plain(str) {
+  let t = String(str ?? '');
+  t = t.replace(/(?:data\/(?:research\/|sales\/)?)?([a-z][a-z0-9]*(?:_[a-z0-9]+)+)\.(?:json|csv|geojson)/g, (m, id) => id === 'serviceos_evidence' ? 'OS program evidence' : Frame.label(id));
+  t = t.replace(PLAIN_RX, '');
+  t = t.replace(/\(\s*[;,·]\s*/g, '(').replace(/\s*[;,·]\s*\)/g, ')').replace(/\(\s*[,;·\s]*\)/g, '').replace(/\s+([,.;)])/g, '$1').replace(/ {2,}/g, ' ');
+  return Frame.humanizeText(t).replace(/ServiceOS evidence/g, 'OS program evidence').replace(/\s*\(\s*[,;·\s]*\)/g, '').trim();
+}
 
 export const OFFICES = [
   { c: 'Washington, DC', tz: 'America/New_York', g: 'Americas', note: 'Headquarters · 1445 New York Ave NW', lat: 38.9, lon: -77.03, hq: 1 },
@@ -19,7 +32,7 @@ export const timeIn = tz => { try { return new Intl.DateTimeFormat('en-GB', { ho
 export const isOpen = tz => { try { const p = new Intl.DateTimeFormat('en-US', { hour: 'numeric', hour12: false, weekday: 'short', timeZone: tz }).formatToParts(new Date()); const h = +p.find(x => x.type === 'hour').value, d = p.find(x => x.type === 'weekday').value; return !['Sat', 'Sun'].includes(d) && h >= 8 && h < 19; } catch { return false; } };
 
 export const FAQ = [
-  { q: 'What does BPI do?', a: '<p>BPI is a strategic communications and public affairs firm for companies, causes and campaigns. Six practices work as one team: <b>public affairs, corporate reputation, campaigns, research &amp; analytics, digital &amp; paid media, and AI communications</b>, with named offerings in litigation and regulatory risk, sports, and culture-first impact.</p>', href: 'index.html#services' },
+  { q: 'What does BPI do?', a: '<p>BPI is a strategic communications and public affairs firm for companies, causes and campaigns. Six practices work as one team: <b>public affairs, corporate reputation, campaigns, research and analytics, digital and paid media, and AI communications</b>, with named offerings in litigation and regulatory risk, sports, and culture-first impact.</p>', href: 'index.html#services' },
   { q: 'Which offices do you have?', a: '<p>Washington, DC (headquarters), New York, Chicago, San Francisco, Los Angeles and Boston in the US; London, Brussels, Berlin, Oslo and Zurich/Geneva in Europe; and Asia-Pacific coverage through the Mandala Partners alliance in Australia.</p>', href: 'index.html#offices' },
   { q: 'What is SignalOS?', a: '<p><b>SignalOS</b> is the proposed intelligence layer under every BPI retainer: always-on narrative monitoring, synthetic-audience message testing validated with live panels, a compliance-gated content studio and outcome dashboards. It turns monitoring and measurement into a subscription rather than a line item.</p>', href: 'signalos.html' },
   { q: 'How do retainers and pricing work?', a: '<p>Most corporate and public-affairs work runs on monthly retainers; campaigns and research studies are scoped as projects. The concept introduces three productized tiers (Monitor, Advise, Command) so clients can buy intelligence, counsel and execution in predictable bundles. Tier prices on the SignalOS page are illustrative.</p>', href: 'signalos.html#tiers' },
@@ -37,29 +50,18 @@ export const SUGGESTIONS = ['What is SignalOS?', 'How do retainers and pricing w
 
 export function chrome() {
   document.documentElement.classList.remove('no-js');
-  // concept banner
-  const ban = document.querySelector('.concept');
-  try { if (ban && sessionStorage.getItem('bpi-concept-x') === '1') ban.remove(); } catch { }
-  ban?.querySelector('.x')?.addEventListener('click', () => { ban.remove(); try { sessionStorage.setItem('bpi-concept-x', '1'); } catch { } });
-  // nav
-  const nav = document.querySelector('.nav');
-  const onScroll = () => nav?.classList.toggle('scrolled', scrollY > 8); addEventListener('scroll', onScroll, { passive: true }); onScroll();
-  const burger = nav?.querySelector('.burger');
-  burger?.addEventListener('click', () => { const o = nav.classList.toggle('open'); burger.setAttribute('aria-expanded', String(o)); });
-  nav?.querySelectorAll('.sheet a').forEach(a => a.addEventListener('click', () => { nav.classList.remove('open'); burger?.setAttribute('aria-expanded', 'false'); }));
-  addEventListener('keydown', e => { if (e.key === 'Escape' && nav?.classList.contains('open')) { nav.classList.remove('open'); burger?.setAttribute('aria-expanded', 'false'); burger?.focus(); } });
-  // reveal
   const rv = document.querySelectorAll('.rv');
   if ('IntersectionObserver' in window) { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' }); rv.forEach(el => io.observe(el)); }
   else rv.forEach(el => el.classList.add('in'));
   if (innerWidth < 700) document.querySelectorAll('details.rat[open]').forEach(d => d.removeAttribute('open'));
-  document.querySelectorAll('[data-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
 }
 
 export function mountChat(extraSuggestions) {
   try {
-    return Chat.mount(null, { persona: 'bpi', mode: 'floating', theme: 'light', color: '#2b2bff', faq: FAQ, suggestions: extraSuggestions || SUGGESTIONS,
+    const chat = Chat.mount(null, { persona: 'bpi', mode: 'floating', theme: 'light', faq: FAQ, suggestions: extraSuggestions || SUGGESTIONS,
       greeting: 'Hi, I’m the BPI desk. Ask about our services, offices, how retainers work, crisis response, or SignalOS, our intelligence layer.' });
+    Frame.mount({}).setChat(chat);
+    return chat;
   } catch (e) { console.warn('chat unavailable', e); return null; }
 }
 

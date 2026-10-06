@@ -1,6 +1,7 @@
+import * as Copy from './copy.js?v=20261006122625';
 /* Fair Harbor — sustainable beachwear from recycled plastic (BSP investment, Mar 2022).
    Views: overview · opportunities · benchmarks · filings · NYC context (Manhattan home sales, demoted: context only). Shared helpers are duplicated in bpi.js by design (no cross-module imports). */
-import { renderFilings, opportunityCard } from '../assets/components.js?v=20261006090506';
+import { renderFilings, opportunityCard } from '../assets/components.js?v=20261006122625';
 
 /* ── module config (the only block that differs from bpi.js) ──────────────── */
 const CFG = {
@@ -12,11 +13,11 @@ const CFG = {
   hq: { label: 'New York, NY', detail: '520 Broadway, New York, NY (NY DOS principal executive office)', alt: 'Form D and PPP filings use the founders\' Larchmont, NY address' },
   signal: (ctx, d) => {
     const it = (d.filings?.items || []).find(i => i.key_figures?.product_type_mix);
-    if (!it) return { title: 'Catalog health', body: ctx.ui.note('Catalog snapshot not in fairharbor_filings yet.', 'warn') };
+    if (!it) return { title: 'Catalog health', body: ctx.ui.note('Catalog snapshot not in Fair Harbor public filings yet.', 'warn') };
     const k = it.key_figures;
     return { title: 'Catalog health (live Shopify snapshot)', sub: `${ctx.fmt.num(k.active_products)} active products · ${ctx.fmt.num(k.variants)} variants · median price $${ctx.fmt.num(k.median_variant_price_usd)}`,
       body: `<div class="row gap-12" style="align-items:flex-start"><div class="kpi" style="--kc:var(--red);min-width:120px"><div class="label">Marked down</div><div class="value">${ctx.fmt.num(k.markdown_share_pct, 1)}%</div><div class="sub">${ctx.fmt.num(k.variants_marked_down_vs_compare_at)} of ${ctx.fmt.num(k.variants)} variants</div></div><div class="grow">${ctx.charts.hbar(Object.entries(k.product_type_mix).map(([l, v]) => ({ label: l, value: v, color: /swim|rash|short/i.test(l) ? CFG.hex : '#7d8796' })), { fmt: v => ctx.fmt.num(v), labelW: 120 })}</div></div><div class="small text-2 mt-8">Swim and summer items (teal) are ~${ctx.fmt.num(((k.product_type_mix.Swim || 0) + (k.product_type_mix.Shorts || 0) + (k.product_type_mix.Rashguard || 0)) / k.active_products * 100)}% of the catalog. Women's products live: ${ctx.fmt.num(k.womens_products)}. "Marked down" = variant price below its compare-at price on the public store.</div><div class="small mt-8"><b>Question for management:</b> is this planned end-of-season clearance or carry-over inventory? Ask for Summer 2026 sell-through and markdown dollars by category.</div>`,
-      foot: ctx.ui.source('Fair Harbor Shopify products.json via fairharbor_filings', it.source_url, it.retrieved) };
+      foot: ctx.ui.source('Fair Harbor Shopify product catalogue (Fair Harbor public filings)', it.source_url, it.retrieved) };
   },
   levers: () => [
     { t: 'Wholesale & specialty door expansion', why: 'Nordstrom, Saks and ~250 specialty doors (2022) plus Scheels (2023). At Chubbies, retail and wholesale reached 52% of 2025 sales at an 18% segment margin, so wholesale is the proven scale path.', href: '#/fh/opportunities' },
@@ -73,7 +74,7 @@ async function load(ctx, withSales = false) {
   const { data } = ctx;
   const [firm, filings, comps, pe, sales] = await Promise.all([data.research('bsp_firm'), data.research(CFG.filings), data.research('public_comps'), data.research('pe_landscape'), withSales ? data.load(CFG.sales).catch(() => null) : null]);
   const co = (firm?.items || []).find(i => i.id === CFG.firmId) || null;
-  const opps = (firm?.[CFG.oppKey] || []).map((o, i) => ({ ...o, id: o.id || `${CFG.id}-opp-${i + 1}`, _value: parseMoney(o.value_or_scale) }));
+  const opps = (firm?.[CFG.oppKey] || []).map((o, i) => ({ ...o, why_now: Copy.noEmail(o.why_now), next_action: Copy.noEmail(o.next_action), id: o.id || `${CFG.id}-opp-${i + 1}`, _value: parseMoney(o.value_or_scale) }));
   const bm = comps?.meta?.sector_benchmarks?.[CFG.sector] || null;
   const peers = (comps?.items || []).filter(c => c.sector_tag === CFG.sector || (c.secondary_sector_tags || []).includes(CFG.sector)).map(c => { const l = (c.fiscal_years || []).slice(-1)[0] || {}; return { ...c, rev: l.revenue_usd, emp: l.employees }; });
   const rivals = (pe?.items || []).filter(p => (p.overlap_with_bsp || []).includes(CFG.peKey));
@@ -113,27 +114,27 @@ async function overview(ctx) {
   el.innerHTML = ui.pageHead({ title: esc(CFG.name), sub: `<b>So what:</b> ${esc(CFG.soWhat(d))}`,
     chips: co ? `${fmt.chip(`BSP entry ${co.entry_date}`, CFG.hex)}${fmt.chip(CFG.hq.label)}${fmt.chip(`${d.addOns} add-ons`)}${fmt.chip(co.status === 'held' ? 'Held' : co.status, 'var(--green)')}` : '',
     actions: `<a class="btn" href="#/${CFG.id}/opportunities">Opportunities</a><a class="btn" href="#/${CFG.id}/filings">Filings</a>` }) +
-  (co ? '' : ui.note('Company record not found in research/bsp_firm. Profile panels are empty until it lands.', 'warn')) +
+  (co ? '' : ui.note('Company record not found in Broad Sky firm profile. Profile panels are empty until it lands.', 'warn')) +
   ui.kpis([
     { label: 'Variants marked down', value: k ? `${fmt.num(k.markdown_share_pct, 1)}%` : '—', sub: k ? `${fmt.num(k.variants_marked_down_vs_compare_at)} of ${fmt.num(k.variants)} · public store, ${esc(day(fmt, cat.retrieved))}` : 'catalog snapshot pending', color: 'var(--red)' },
     { label: 'Specialty doors (2022)', value: doors ? esc(doors) : '—', sub: '+ Nordstrom, Saks · Scheels 2023 · confirm current count', color: CFG.color },
     { label: 'Non-swim share of catalog', value: k ? `${fmt.num(nonSwim / k.active_products * 100, 1)}%` : '—', sub: k ? `${fmt.num(nonSwim)} of ${fmt.num(k.active_products)} live products · year-round shift` : '', color: 'var(--green)' },
     { label: 'Revenue 2025 (est.)', value: revEst ? kv2(esc, String(revEst.estimate).split(' (')[0]) : '—', sub: revEst ? `outside-in · ${esc(revEst.confidence)} conf. · not disclosed` : `no estimate in ${esc(CFG.filings)}`, color: 'var(--c-fin)' },
     { label: 'Growth opportunities', value: fmt.num(d.opps.length), sub: `${new Set(d.opps.map(o => o.type)).size} types · sourced · no $ disclosed`, color: 'var(--c-ma)' },
-    { label: `${CFG.sectorLabel} median growth`, value: pp(fmt, d.bm?.median_revenue_growth_latest_pct, true), sub: `op. margin ${pp(fmt, d.bm?.median_operating_margin_latest_pct)} · n=${d.bm?.n ?? '—'} · SEC XBRL`, color: 'var(--accent)' },
+    { label: `${CFG.sectorLabel} median growth`, value: pp(fmt, d.bm?.median_revenue_growth_latest_pct, true), sub: `op. margin ${pp(fmt, d.bm?.median_operating_margin_latest_pct)} · ${d.bm?.n ?? '—'} peers · SEC XBRL`, color: 'var(--accent)' },
   ]) +
   `<div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Company profile', sub: esc(co?.sector || ''), body: co ? `<div class="prose small">${esc(co.description)}</div><h4 class="mt-12 small dim">INVESTMENT THESIS</h4><div class="prose small">${esc(co.thesis)}</div><div class="mt-12">${ui.kv({ Leadership: esc(co.ceo), HQ: `${esc(CFG.hq.detail)}<div class="dim small">${esc(CFG.hq.alt)}</div>`, 'BSP entry': `${esc(co.entry_date)} · <span class="dim">${esc(co.entry_source)}</span>`, Employees: esc(co.employees_est || '—'), 'Capital / co-investors': esc(co.lenders_or_co_investors || '—'), ...Object.fromEntries(Object.entries(co.key_metrics || {}).map(([k, v]) => [label(k), `<span class="num">${metricFmt(ctx, k, v)}</span>`])) })}</div>` : ui.empty('Profile pending'),
-      foot: co ? `${ui.source('bsp_firm research', co.sources?.[0], co.retrieved)} · ${(co.sources || []).slice(1, 6).map(u => fmt.link(u)).join(' · ')}` : '' })}
+      foot: co ? `${ui.source('Broad Sky firm profile', co.sources?.[0], co.retrieved)} · ${(co.sources || []).slice(1, 6).map(u => fmt.link(u)).join(' · ')}` : '' })}
     ${ui.panel({ title: d.addOns ? 'Add-ons & milestones' : 'Milestones', sub: d.addOns ? `${d.addOns} add-ons since BSP entry` : 'No add-ons yet · organic milestones since BSP entry', scroll: true, body: (() => {
       const ev = [...(co?.add_ons || []).map(a => ({ date: a.date, color: CFG.hex, html: `<b>${esc(a.name)}</b> <span class="dim">(${esc(a.hq || '')})</span><div class="small text-2">${esc(a.note || '')}</div>${a.source_url ? `<a class="small" href="${esc(a.source_url)}" target="_blank" rel="noopener">source ↗</a>` : ''}` })),
         ...d.timeline.filter(t => t.type !== 'add_on').map(t => ({ date: t.date, color: '#7d8796', html: `${esc(t.event)}${t.source_url ? ` <a class="small" href="${esc(t.source_url)}" target="_blank" rel="noopener">↗</a>` : ''}` }))].sort((a, b) => String(b.date).localeCompare(String(a.date)));
-      return ev.length ? ui.timeline(ev) : ui.empty('No add-ons recorded'); })(), foot: ui.source('Company press releases via bsp_firm', CFG.site, d.firm?.meta?.generated) })}
+      return ev.length ? ui.timeline(ev) : ui.empty('No add-ons recorded'); })(), foot: ui.source('Company press releases (Broad Sky firm profile)', CFG.site, d.firm?.meta?.generated) })}
   </div>
   <div class="grid grid-3 mt-12">
     ${ui.panel({ title: 'Growth levers', sub: 'Ranked by value at stake × feasibility (analyst view)', body: `<div class="col gap-12">${CFG.levers(d).map((l, i) => `<a href="${l.href}" class="row" style="align-items:flex-start;gap:10px;color:inherit;text-decoration:none"><span class="chip solid" style="--cc:${CFG.hex};min-width:22px;justify-content:center">${i + 1}</span><div><div class="strong small">${esc(l.t)}</div><div class="small text-2">${esc(l.why)}</div></div></a>`).join('')}</div>` })}
     ${(() => { const s = CFG.signal(ctx, d); return ui.panel({ title: s.title, sub: s.sub, body: s.body, foot: s.foot }); })()}
-    ${ui.panel({ title: 'First meeting, then 90 days', sub: 'Confirm with management first; owner: BSP deal team + PRG with CEO', accent: true, body: `<h4 class="small dim">CONFIRM WITH MANAGEMENT</h4><ol class="prose small" style="padding-left:4px">${CFG.confirm.map(a => `<li>${esc(a)}</li>`).join('')}</ol><h4 class="small dim mt-12">THEN, NEXT 90 DAYS</h4><ol class="prose small" style="padding-left:4px">${CFG.actions.map(a => `<li>${esc(a)}</li>`).join('')}</ol>`, foot: ui.source('Synthesis of bsp_firm, fairharbor_filings, public_comps and pe_landscape (analyst view)', null, '2026-09-24') })}
+    ${ui.panel({ title: 'First meeting, then 90 days', sub: 'Confirm with management first; owner: BSP deal team + PRG with CEO', accent: true, body: `<h4 class="small dim">CONFIRM WITH MANAGEMENT</h4><ol class="prose small" style="padding-left:4px">${CFG.confirm.map(a => `<li>${esc(a)}</li>`).join('')}</ol><h4 class="small dim mt-12">THEN, NEXT 90 DAYS</h4><ol class="prose small" style="padding-left:4px">${CFG.actions.map(a => `<li>${esc(a)}</li>`).join('')}</ol>`, foot: ui.source('Synthesis of the Broad Sky firm profile, Fair Harbor public filings, public comparables and the private-equity landscape (analyst view)', null, '2026-09-24') })}
   </div>`;
   ctx.app.index([...d.opps.map(o => ({ label: o.title, sub: `${CFG.short} opportunity · ${label(o.type)}`, href: `#/${CFG.id}/opportunities?id=${encodeURIComponent(o.id)}`, kind: 'Opportunity', color: CFG.color })), ...d.rivals.map(r => ({ label: r.firm, sub: `PE competitor to ${CFG.short}`, href: `#/${CFG.id}/benchmarks`, kind: 'PE firm', color: 'var(--c-pe)' }))]);
 }
@@ -163,7 +164,7 @@ const QUADS = [
 async function opportunities(ctx) {
   const { el, ui, fmt, esc, charts, inspector, params } = ctx;
   const d = await load(ctx);
-  if (!d.firm) { el.innerHTML = ui.pageHead({ title: 'Opportunities' }) + ui.note('Research dataset bsp_firm not yet available.', 'warn'); return; }
+  if (!d.firm) { el.innerHTML = ui.pageHead({ title: 'Opportunities' }) + ui.note('Research dataset Broad Sky firm profile not yet available.', 'warn'); return; }
   const opps = d.opps.map((o, i) => ({ ...o, _n: i + 1, ...classify(o) })); const types = [...new Set(opps.map(o => o.type))];
   const byType = types.map(t => ({ t, rows: opps.filter(o => o.type === t) })).sort((a, b) => b.rows.length - a.rows.length);
   const top = opps.filter(o => o._value).sort((a, b) => b._value - a._value)[0];
@@ -175,7 +176,7 @@ async function opportunities(ctx) {
       ${quad(QUADS[1])}${quad(QUADS[3])}
       ${quad(QUADS[0])}${quad(QUADS[2])}
       <div></div><div class="dim small" style="grid-column:2/4;text-align:center">time to revenue → (≤ 6 mo | > 6 mo)</div></div>`;
-  el.innerHTML = ui.pageHead({ title: `${esc(CFG.short)} growth opportunities`, sub: `<b>So what:</b> ${fmt.num(opps.length)} sourced opportunities across ${types.length} types. ${top ? `The largest headline value is <b>${fmt.money(top._value)}</b> (${esc(top.title)}).` : 'None has a disclosed dollar value, so they are ranked by capital intensity and time to revenue (analyst view).'} ${fmt.num(q.q1.length)} are quick wins on assets already live; the bigger builds (wholesale doors, year-round depth, women's) should be gated on FY25 sell-through data from management and timed to buy windows.`, chips: byType.map(g => fmt.chip(`${label(g.t)} · ${g.rows.length}`)).join('') }) +
+  el.innerHTML = ui.pageHead({ title: 'Growth opportunities', sub: `<b>So what:</b> ${fmt.num(opps.length)} sourced opportunities across ${types.length} types. ${top ? `The largest headline value is <b>${fmt.money(top._value)}</b> (${esc(top.title)}).` : 'None has a disclosed dollar value, so they are ranked by capital intensity and time to revenue (analyst view).'} ${fmt.num(q.q1.length)} are quick wins on assets already live; the bigger builds (wholesale doors, year-round depth, women's) should be gated on FY25 sell-through data from management and timed to buy windows.`, chips: byType.map(g => fmt.chip(`${label(g.t)} · ${g.rows.length}`)).join('') }) +
     ui.kpis([
       { label: 'Opportunities', value: fmt.num(opps.length), sub: `${types.length} types · each with a primary source`, color: CFG.color },
       { label: 'Quick wins', value: fmt.num(q.q1.length), sub: 'low capital, revenue ≤ 6 mo (est.)', color: 'var(--green)' },
@@ -185,9 +186,9 @@ async function opportunities(ctx) {
         : [{ label: 'Dollar-sized', value: '0', sub: 'no disclosed $: size in diligence', color: 'var(--dim)' }]),
     ]) +
     `<div class="grid grid-main mt-12">
-      ${ui.panel({ title: 'Opportunities by type', sub: 'Click a card for why-now, buy window, source and next action', scroll: true, body: `<div id="op-cards">${byType.map(g => `<h4 class="small dim mt-12 mb-8">${esc(label(g.t).toUpperCase())} · ${g.rows.length}</h4>${ui.cards(g.rows.map(o => card(ctx, o)))}`).join('')}</div>`, foot: ui.source('bsp_firm.' + CFG.oppKey, null, d.firm?.meta?.generated) })}
+      ${ui.panel({ title: 'Opportunities by type', sub: 'Click a card for why-now, buy window, source and next action', scroll: true, body: `<div id="op-cards">${byType.map(g => `<h4 class="small dim mt-12 mb-8">${esc(label(g.t).toUpperCase())} · ${g.rows.length}</h4>${ui.cards(g.rows.map(o => card(ctx, o)))}`).join('')}</div>`, foot: ui.source('Broad Sky firm profile: ' + CFG.name + ' opportunities', null, d.firm?.meta?.generated) })}
       <div class="col gap-12">
-        ${ui.panel({ title: 'Capital intensity × time to revenue', sub: 'Numbers match the table · click to open · analyst classification (est.)', body: `<div id="op-2x2">${matrix}</div>`, foot: ui.source('Analyst view on bsp_firm.fh_opportunities and fairharbor_filings', null, '2026-10-06') })}
+        ${ui.panel({ title: 'Capital intensity × time to revenue', sub: 'Numbers match the table · click to open · analyst classification (est.)', body: `<div id="op-2x2">${matrix}</div>`, foot: ui.source('Analyst view on Fair Harbor opportunities (Broad Sky firm profile) and Fair Harbor public filings', null, '2026-10-06') })}
         ${ui.panel({ title: 'How to prioritize', accent: true, body: `<ol class="prose small" style="padding-left:4px"><li><b>Buy windows first.</b> Wholesale and resort buyers commit Spring/Summer orders months ahead, so door expansion and golf pro-shop items (PGA Show, late Jan) must be in front of buyers this fall and winter or they slip a season.</li><li><b>Then quick wins on live assets</b>: B2B custom, collabs, sustainability credentials and a Shopify Markets test need little capital and can book revenue within two quarters.</li><li><b>Licensing: check the capital need.</b> Confirm royalty minimums and stocked inventory before adding more schools.</li><li><b>Gate the builds</b> (women's relaunch, cold-weather and kids depth) on FY25 sell-through and markdown data from management.</li><li>One owner per card in the BSP value-creation plan; review monthly.</li></ol>` })}
       </div>
     </div>
@@ -231,10 +232,10 @@ const nextAction = o => { const t = `${o.title} ${o.type}`;
 async function benchmarks(ctx) {
   const { el, ui, fmt, esc, charts, inspector } = ctx;
   const d = await load(ctx);
-  if (!d.comps) { el.innerHTML = ui.pageHead({ title: 'Benchmarks' }) + ui.note('Research dataset public_comps not yet available.', 'warn'); return; }
+  if (!d.comps) { el.innerHTML = ui.pageHead({ title: 'Benchmarks' }) + ui.note('Research dataset Public comparables not yet available.', 'warn'); return; }
   const bm = d.bm || {}; const peers = d.peers.slice().sort((a, b) => (b.rev || 0) - (a.rev || 0));
   const est = (d.filings?.meta?.estimate_table || []).filter(e => /revenue|ebitda|headcount|margin/i.test(e.metric) && !/enterprise/i.test(e.metric)).slice(0, 6);
-  el.innerHTML = ui.pageHead({ title: `${esc(CFG.short)} vs public comps`, sub: `<b>So what:</b> ${esc(CFG.sectorLabel)} (${esc((bm.comps || []).join(', '))}) grew a median ${pp(fmt, bm.median_revenue_growth_latest_pct, true)} last year at a ${pp(fmt, bm.median_operating_margin_latest_pct)} operating margin (${pp(fmt, bm.median_operating_margin_multiyear_avg_pct)} multi-year average). The benchmark ${esc(CFG.short)} should be held to is below.` }) +
+  el.innerHTML = ui.pageHead({ title: 'Public comparables', sub: `<b>So what:</b> ${esc(CFG.sectorLabel)} (${esc((bm.comps || []).join(', '))}) grew a median ${pp(fmt, bm.median_revenue_growth_latest_pct, true)} last year at a ${pp(fmt, bm.median_operating_margin_latest_pct)} operating margin (${pp(fmt, bm.median_operating_margin_multiyear_avg_pct)} multi-year average). The benchmark ${esc(CFG.short)} should be held to is below.` }) +
     ui.kpis([
       { label: 'Comps', value: fmt.num(peers.length), sub: esc(peers.map(p => p.ticker).join(' · ')), color: CFG.color },
       { label: 'Median growth (latest)', value: pp(fmt, bm.median_revenue_growth_latest_pct, true), sub: `CAGR since 2023 ${pp(fmt, bm.median_revenue_cagr_2023_latest_pct, true)}`, color: 'var(--c-ma)' },
@@ -245,13 +246,13 @@ async function benchmarks(ctx) {
     ]) +
     `<div class="grid grid-main mt-12">
       <div class="col gap-12">
-      ${ui.panel({ title: 'Public comparables', sub: 'SEC XBRL fundamentals, latest fiscal year. Click a row for history and 10-K', body: '<div id="bm-tbl"></div>', foot: ui.source('SEC EDGAR XBRL companyfacts via public_comps', 'https://www.sec.gov/edgar/search/', d.comps.meta?.generated) })}
+      ${ui.panel({ title: 'Public comparables', sub: 'SEC XBRL fundamentals, latest fiscal year. Click a row for history and 10-K', body: '<div id="bm-tbl"></div>', foot: ui.source('SEC EDGAR XBRL company facts (public comparables)', 'https://www.sec.gov/edgar/search/', d.comps.meta?.generated) })}
       ${ui.panel({ title: 'Growth, margin and productivity', sub: `Latest FY · red = negative · sector medians: growth ${pp(fmt, bm.median_revenue_growth_latest_pct, true)}, op. margin ${pp(fmt, bm.median_operating_margin_latest_pct)}, rev/emp ${fmt.money(bm.median_revenue_per_employee_usd)}`, body: `<div class="grid grid-3"><div><h4 class="small dim mb-8">REVENUE GROWTH</h4>${divBars(fmt, peers.map(p => ({ label: esc(p.ticker), title: esc(p.company), value: p.revenue_growth_latest_pct })), { labelW: 40 })}</div><div><h4 class="small dim mb-8">OPERATING MARGIN</h4>${divBars(fmt, peers.map(p => ({ label: esc(p.ticker), title: esc(p.company), value: p.operating_margin_latest_pct, color: 'var(--accent)' })), { labelW: 40 })}</div><div><h4 class="small dim mb-8">REVENUE / EMPLOYEE</h4>${charts.hbar(peers.map(p => ({ label: p.ticker, value: p.revenue_per_employee_usd, color: CFG.hex })), { fmt: v => fmt.money(v), labelW: 40 })}</div></div>` })}
       </div>
-      ${ui.panel({ title: `What this implies for ${esc(CFG.short)}`, accent: true, body: `<div class="prose small">${esc(bm.what_this_implies_for_bsp || 'Sector benchmark text pending.')}</div>${est.length ? `<h4 class="small dim mt-12">${esc(CFG.short)} OUTSIDE-IN ESTIMATES (BSP-INTERNAL, NOT COMPANY DATA)</h4><div class="col gap-4 mt-8">${est.map(e => `<div class="row" style="align-items:flex-start;gap:10px;border-bottom:1px solid var(--border);padding:4px 0"><div class="grow"><div class="small dim">${esc(e.metric)}</div><div class="strong small num" title="${esc(e.basis || '')}">${esc(e.estimate)}</div></div>${fmt.chip(e.confidence, e.confidence === 'high' ? 'var(--green)' : e.confidence === 'medium' ? 'var(--amber)' : 'var(--dim)')}</div>`).join('')}</div>` : ''}`, foot: ui.source(`public_comps.sector_benchmarks.${CFG.sector}; ${CFG.filings}.estimate_table`, null, '2026-09-24') })}
+      ${ui.panel({ title: `What this implies for ${esc(CFG.short)}`, accent: true, body: `<div class="prose small">${esc(bm.what_this_implies_for_bsp || 'Sector benchmark text pending.')}</div>${est.length ? `<h4 class="small dim mt-12">${esc(CFG.short)} OUTSIDE-IN ESTIMATES (BSP-INTERNAL, NOT COMPANY DATA)</h4><div class="col gap-4 mt-8">${est.map(e => `<div class="row" style="align-items:flex-start;gap:10px;border-bottom:1px solid var(--border);padding:4px 0"><div class="grow"><div class="small dim">${esc(e.metric)}</div><div class="strong small num" title="${esc(e.basis || '')}">${esc(e.estimate)}</div></div>${fmt.chip(e.confidence, e.confidence === 'high' ? 'var(--green)' : e.confidence === 'medium' ? 'var(--amber)' : 'var(--dim)')}</div>`).join('')}</div>` : ''}`, foot: ui.source(`Public comparables: ${Copy.field(CFG.sector).toLowerCase()} sector benchmarks; ${CFG.name} public filings estimate table`, null, '2026-09-24') })}
     </div>
     <div class="grid grid-main mt-12">
-      ${ui.panel({ title: 'PE competitors overlapping ' + esc(CFG.short), sub: esc(d.pe?.meta?.sector_heatmap?.[CFG.peKey]?.note || 'Sponsors with platforms or theses that overlap'), body: '<div id="pe-tbl"></div>', foot: ui.source('pe_landscape (firm sites, press, PitchBook-sourced results)', null, d.pe?.meta?.generated) })}
+      ${ui.panel({ title: 'PE competitors overlapping ' + esc(CFG.short), sub: esc(d.pe?.meta?.sector_heatmap?.[CFG.peKey]?.note || 'Sponsors with companies or theses that overlap'), body: '<div id="pe-tbl"></div>', foot: ui.source('Private-equity landscape (firm sites, press, PitchBook-sourced results)', null, d.pe?.meta?.generated) })}
       ${ui.panel({ title: 'Competitive read-out', body: `<div class="col gap-12">${ui.kv({ Intensity: esc(d.pe?.meta?.sector_heatmap?.[CFG.peKey]?.intensity || '—'), 'Most active': esc((d.pe?.meta?.sector_heatmap?.[CFG.peKey]?.most_active || []).map(id => (d.pe?.items || []).find(x => x.id === id)?.firm || id).join(', ')) })}<ol class="prose small" style="padding-left:4px"><li>Treat <b>high-threat</b> sponsors as competing bidders on add-ons: move early with proprietary, founder-direct outreach.</li><li>The same sponsors are <b>exit buyers</b>. Track their fund vintages; a 2023-2026 fund needs deployment.</li><li>Benchmark ${esc(CFG.short)}'s margin and revenue/employee against the comps table before each budget cycle.</li></ol></div>` })}
     </div>`;
   const cols = [
@@ -277,13 +278,13 @@ async function benchmarks(ctx) {
     { key: 'firm', label: 'Firm', fmt: (v, r) => `<b>${esc(v)}</b><div class="dim small">${esc(r.hq || '')}</div>` },
     { key: '_tl', label: 'Threat', fmt: (v, r) => fmt.chip(r.threat_level || '—', threatC(r.threat_level)) },
     { key: '_fund', label: 'Latest fund', num: true, title: r => r.latest_fund?.name || '', fmt: (v, r) => `${fmt.money(v)}${r.latest_fund?.year ? `<div class="dim small">${r.latest_fund.year}</div>` : ''}` },
-    { key: 'platforms_relevant', label: 'Relevant platforms', wrap: true, fmt: v => `<span class="small text-2">${fmt.list((v || []).map(p => p.name), 3)}</span>` },
-    { key: 'competes_for', label: 'Competes for', fmt: v => fmt.chip(v || '—') },
+    { key: 'platforms_relevant', label: 'Relevant companies', wrap: true, fmt: v => `<span class="small text-2">${fmt.list((v || []).map(p => p.name), 3)}</span>` },
+    { key: 'competes_for', label: 'Competes for', fmt: v => fmt.chip(({ deals: 'Companies', targets: 'Add-on targets', both: 'Companies and add-ons' })[v] || v || '—') },
   ], onRow: r => inspector.open({ title: esc(r.firm), sub: `${esc(r.hq || '')} · founded ${esc(r.founded || '—')} · threat ${esc(r.threat_level)}`, color: 'var(--c-pe)', sections: [
     { label: 'Why it matters to ' + CFG.short, html: `<div class="small text-2">${esc(r.threat_rationale || '')}</div>` },
     { label: 'Fund', html: ui.kv({ 'Latest fund': `${esc(r.latest_fund?.name || '—')} · ${fmt.money(r.latest_fund?.size_usd)}`, AUM: fmt.money(r.aum_usd), 'Check size': r.check_size_usd?.min ? `${fmt.money(r.check_size_usd.min)}–${fmt.money(r.check_size_usd.max)}` : null, Strategy: esc(r.strategy || '') }) },
-    { label: 'Relevant platforms', html: `<div class="col gap-4 small">${(r.platforms_relevant || []).map(p => `<div><b>${esc(p.name)}</b> <span class="dim">${esc(p.sector || '')}${p.status ? ` · ${esc(p.status)}` : ''}</span>${p.notes ? `<div class="text-2">${esc(p.notes)}</div>` : ''}</div>`).join('') || '—'}</div>` },
-    (r.deals_2025_2026 || []).length ? { label: 'Deals 2025-26', html: `<div class="col gap-4 small">${r.deals_2025_2026.map(x => `<div><span class="num dim">${esc(x.date)}</span> ${esc(x.company)} <span class="dim">(${esc(x.type)})</span></div>`).join('')}</div>` } : null,
+    { label: 'Relevant companies', html: `<div class="col gap-4 small">${(r.platforms_relevant || []).map(p => `<div><b>${esc(p.name)}</b> <span class="dim">${esc(p.sector || '')}${p.status ? ` · ${esc(p.status)}` : ''}</span>${p.notes ? `<div class="text-2">${esc(p.notes)}</div>` : ''}</div>`).join('') || '—'}</div>` },
+    (r.deals_2025_2026 || []).length ? { label: 'Deals 2025-26', html: `<div class="col gap-4 small">${r.deals_2025_2026.map(x => `<div><span class="num dim">${esc(x.date)}</span> ${esc(x.company)} <span class="dim">(${esc(({ platform: 'anchor', add_on: 'add-on', exit: 'exit' })[x.type] || String(x.type || '').replace(/_/g, '-'))})</span></div>`).join('')}</div>` } : null,
     { label: 'Sources', html: links(esc, fmt, [r.website, ...(r.sources || [])].slice(0, 6)) },
     { label: 'Next action', html: `<div class="small text-2">${r.threat_level === 'high' ? 'Map this sponsor\'s live add-on targets against ours; pre-empt with founder outreach and faster diligence.' : 'Monitor fund deployment and keep on the exit-buyer list.'}</div>` },
   ].filter(Boolean), actions: r.website ? [{ label: 'Website ↗', href: r.website }] : [] }) });
@@ -293,9 +294,9 @@ async function benchmarks(ctx) {
 async function market(ctx) {
   const { el, ui, fmt, esc, charts, maps, inspector } = ctx;
   let raw = null; try { raw = await ctx.data.load(CFG.sales); } catch (e) { console.warn(e.message); }
-  if (!raw?.items?.length) { el.innerHTML = ui.pageHead({ title: `${esc(CFG.salesArea)} home sales (context)` }) + ui.note(`Sales dataset <span class="mono">data/${esc(CFG.sales)}.json</span> is not available yet.`, 'warn'); return; }
+  if (!raw?.items?.length) { el.innerHTML = ui.pageHead({ title: `${esc(CFG.salesArea.replace(/\s*\(.*\)$/, ''))} home sales` }) + ui.note(`Sales dataset <span class="mono">data/${esc(CFG.sales)}.json</span> is not available yet.`, 'warn'); return; }
   const meta = raw.meta || {}; const all = raw.items; const s = salesStats(all, fmt);
-  el.innerHTML = ui.pageHead({ title: `${esc(CFG.salesArea)} home sales (context)`, sub: `<b>So what:</b> ${esc(CFG.marketLens(s))}`, chips: `${fmt.chip(`${fmt.num(all.length)} recorded sales`, CFG.hex)}${fmt.chip(`${day(fmt, meta.coverage?.date_from)} – ${day(fmt, meta.coverage?.date_to)}`)}${fmt.chip('owner names not retained')}${fmt.chip('context only', 'var(--amber)')}` }) +
+  el.innerHTML = ui.pageHead({ title: `${esc(CFG.salesArea.replace(/\s*\(.*\)$/, ''))} home sales`, sub: `<b>So what:</b> ${esc(CFG.marketLens(s))}`, chips: `${fmt.chip(`${fmt.num(all.length)} recorded sales`, CFG.hex)}${fmt.chip(`${day(fmt, meta.coverage?.date_from)} – ${day(fmt, meta.coverage?.date_to)}`)}${fmt.chip('owner names not retained')}${fmt.chip('context only', 'var(--amber)')}` }) +
     `<div style="margin-bottom:12px">${ui.note('Context only, not an operating metric. No dataset links Manhattan home buyers to Fair Harbor customers, and 12 months of data (Sept 2025 – Aug 2026) cannot give a same-period YoY trend, so none is shown.', 'warn')}</div>` +
     ui.kpis([
       { label: 'Arms-length home sales', value: s.n, sub: `residential, price ≥ $50K · of ${fmt.num(all.length)} recorded transfers`, color: CFG.color },
@@ -305,7 +306,7 @@ async function market(ctx) {
     ]) +
     `<div class="mt-12" id="mk-f"></div>
     <div class="grid grid-main">
-      ${ui.panel({ title: CFG.zipAgg ? 'Sales by ZIP (bubble = count, colour = median price)' : 'Sales by parcel (colour = price band)', flush: true, body: '<div class="map tall" id="mk-map"></div>', foot: ui.source(meta.method ? String(meta.method).split(/[.(]/)[0].slice(0, 90) : 'Public property records', (all[0] || {}).source_url, meta.generated) })}
+      ${ui.panel({ title: CFG.zipAgg ? 'Sales by ZIP (bubble = count, colour = median price)' : 'Sales by parcel (colour = price band)', flush: true, body: '<div class="map tall" id="mk-map"></div>', foot: ui.source(meta.method ? Copy.text(String(meta.method).split(/[.(]/)[0].slice(0, 90)) : 'Public property records', (all[0] || {}).source_url, meta.generated) })}
       <div class="col gap-12">
         ${ui.panel({ title: 'Monthly volume', sub: 'Arms-length residential sales per month (partial latest month dropped)', body: charts.bar(s.byM.map(m => ({ label: m.m.slice(2), value: m.n, color: CFG.hex })), { h: 130, fmt: v => fmt.num(v), labelEvery: Math.max(1, Math.ceil(s.byM.length / 7)) }) })}
         ${ui.panel({ title: 'Median price by month', sub: 'Monthly medians move with sales mix; not a price index', body: charts.line([{ name: 'Median', color: 'var(--c-ma)', points: s.byM.map(m => [m.m.slice(2), m.med]) }], { h: 130, fmt: v => money(fmt, v), area: true, xLabels: s.byM.map((m, i) => i % 2 === 0 && i < s.byM.length - 1 ? m.m.slice(2) : '') }) })}
@@ -314,7 +315,7 @@ async function market(ctx) {
     </div>
     <div class="grid grid-side mt-12">
       ${ui.panel({ title: 'Neighborhoods', sub: 'Arms-length residential · click for detail', body: '<div id="mk-hood"></div>' })}
-      ${ui.panel({ title: 'Sales ledger', sub: 'Filtered records · newest first', body: '<div id="mk-tbl"></div>', foot: ui.source(`${meta.dataset || CFG.sales}: ${(meta.caveats || [])[0] || ''}`.slice(0, 160), null, meta.generated) })}
+      ${ui.panel({ title: 'Sales ledger', sub: 'Filtered records · newest first', body: '<div id="mk-tbl"></div>', foot: ui.source(Copy.text(`${Copy.dataset(meta.dataset || CFG.sales)}: ${(meta.caveats || [])[0] || ''}`).slice(0, 160), null, meta.generated) })}
     </div>`;
   const map = maps.create(el.querySelector('#mk-map'), { center: CFG.center, zoom: CFG.zoom });
   maps.legend(map, BANDS, CFG.zipAgg ? 'Median price' : 'Sale price');
@@ -368,7 +369,7 @@ async function filings(ctx) {
   const { el, ui, fmt, esc } = ctx;
   const data = await ctx.data.research(CFG.filings);
   const items = data?.items || [];
-  el.innerHTML = ui.pageHead({ title: `${esc(CFG.short)} filings & financials`, sub: data ? `<b>So what:</b> ${esc(CFG.filingsSoWhat || String(data.meta?.financial_picture || '').slice(0, 420))}` : 'Public-record financial picture' }) +
+  el.innerHTML = ui.pageHead({ title: 'Filings and financials', sub: data ? `<b>So what:</b> ${esc(CFG.filingsSoWhat || String(data.meta?.financial_picture || '').slice(0, 420))}` : 'Public-record financial picture' }) +
     (data ? ui.kpis([
       { label: 'Records', value: fmt.num(items.length), sub: `${new Set(items.map(i => i.category)).size} categories`, color: CFG.color },
       { label: 'High confidence', value: fmt.num(items.filter(i => i.confidence === 'high').length), sub: 'primary-source pulls', color: 'var(--green)' },
@@ -378,7 +379,7 @@ async function filings(ctx) {
   // renderFilings expects meta.sources_summary to be an array; research files ship it as a string (normalise here).
   const ss = data?.meta?.sources_summary; const norm = data ? { ...data, meta: { ...data.meta, sources_summary: Array.isArray(ss) ? ss : String(ss || '').split(/(?<=\.)\s+|;\s+/).filter(Boolean) } } : null;
   const fil = el.querySelector('#fil');
-  renderFilings(ctx, fil, { data: norm, color: CFG.color, title: CFG.name });
+  renderFilings(ctx, fil, { data: Copy.filings(norm), color: CFG.color, title: CFG.name });
   // Layout patch (shared component): give the estimate table equal width and let long estimates wrap instead of clipping.
   const g = fil.querySelector('.grid-main'); if (g) g.className = 'grid grid-2';
   fil.querySelectorAll('.grid .panel:nth-child(2) tbody tr').forEach(tr => [...tr.children].forEach((td, i) => { td.style.whiteSpace = 'normal'; td.style.verticalAlign = 'top'; if (i === 0) td.style.width = '28%'; if (i === 1) { td.style.minWidth = '110px'; td.style.textAlign = 'left'; } }));
@@ -386,14 +387,14 @@ async function filings(ctx) {
 }
 
 export default {
-  id: CFG.id, name: CFG.name, tag: CFG.id === 'bpi' ? 'Comms' : 'Consumer', color: CFG.color, group: 'Portfolio',
+  id: CFG.id, name: CFG.short, tag: CFG.id === 'bpi' ? 'Comms' : 'Consumer', color: CFG.color, group: 'Portfolio',
   tagline: CFG.id === 'bpi' ? 'Strategic communications & public affairs, DC-headquartered, transatlantic' : 'Sustainable beachwear from recycled plastic: DTC, wholesale and two owned stores',
   hq: CFG.id === 'bpi' ? { lat: 38.9072, lon: -77.0369, label: 'Washington, DC' } : { lat: 40.7128, lon: -74.006, label: 'New York, NY' },
   views: [
     { id: 'overview', name: 'Overview', icon: '◉', render: overview },
     { id: 'opportunities', name: 'Opportunities', icon: '◆', render: opportunities },
     { id: 'benchmarks', name: 'Benchmarks', icon: '▤', render: benchmarks },
-    { id: 'filings', name: 'Filings & financials', icon: '§', render: filings },
+    { id: 'filings', name: 'Filings and financials', icon: '§', render: filings },
     { id: 'market', name: 'NYC context', icon: '⌂', render: market },
   ],
   tour: [

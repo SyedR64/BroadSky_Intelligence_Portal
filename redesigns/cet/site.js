@@ -1,9 +1,10 @@
-/* CET concept site — interactions + data-powered sections.
-   Data comes from the portal's verified datasets via core.js (Data.research). */
+/* CET concept site: interactions and data-powered sections.
+   Data comes from the portal's verified datasets via core.js (Data.research).
+   The page frame (top bar, concept notice, breadcrumb, footer) comes from assets/frame.js. */
+import { humanizeText } from '../../assets/frame.js?v=20261006122625';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-const store = { get(k) { try { return sessionStorage.getItem(k); } catch { return null; } }, set(k, v) { try { sessionStorage.setItem(k, v); } catch { /* private mode */ } } };
 
 export const STATES = { MA: 'Massachusetts', CT: 'Connecticut', RI: 'Rhode Island', NH: 'New Hampshire', ME: 'Maine', VT: 'Vermont' };
 export const BOUNDS = { MA: [[41.2, -73.5], [42.9, -69.9]], CT: [[40.95, -73.75], [42.05, -71.78]], RI: [[41.1, -71.9], [42.02, -71.1]], NH: [[42.7, -72.56], [45.3, -70.6]], ME: [[43.0, -71.1], [47.46, -66.9]], VT: [[42.73, -73.44], [45.02, -71.46]] };
@@ -14,13 +15,18 @@ export const OFFICES = [
   { name: 'Norwell, MA', k: 'NuWave', lat: 42.1615, lon: -70.7928, note: 'NuWave Energy Solutions' },
   { name: 'Canton, CT', k: 'Horton', lat: 41.8240, lon: -72.8937, note: 'Horton Electrical Services' },
 ];
-export const CAP_COLOR = c => { const m = c.capability_match || []; if (m.includes('wastewater') || m.includes('pump_station')) return '#22d3ee'; if (m.includes('ev_charging')) return '#34d399'; if (m.includes('solar') || m.includes('storage')) return '#fbbf24'; if (m.includes('energy_efficiency')) return '#a78bfa'; return '#5c9dff'; };
+/* map marker colours match the --cet-* category colours in site.css */
+export const CAP_COLOR = c => { const m = c.capability_match || []; if (m.includes('wastewater') || m.includes('pump_station')) return '#0891b2'; if (m.includes('ev_charging')) return '#15803d'; if (m.includes('solar') || m.includes('storage')) return '#d97706'; if (m.includes('energy_efficiency')) return '#6a5cff'; return '#4c8dff'; };
 export const daysTo = s => { if (!s) return null; const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s); if (!m) return null; const d = new Date(+m[1], +m[2] - 1, +m[3]); const t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((d - t) / 864e5); };
 export const isOpen = o => o.stage !== 'awarded' && (o.due_date ? daysTo(o.due_date) >= 0 : (o.stage === 'open' || o.stage === 'recurring'));
 export const money = v => v == null ? '—' : v >= 1e9 ? `$${(v / 1e9).toFixed(1)}B` : v >= 1e6 ? `$${(v / 1e6).toFixed(v >= 1e8 ? 0 : 1)}M` : v >= 1e3 ? `$${Math.round(v / 1e3)}K` : `$${v}`;
 export const shortDate = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); if (!m) return '—'; return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
-export const dueLabel = d => d == null ? 'Rolling' : d === 0 ? 'Today' : d === 1 ? 'Tomorrow' : d > 0 ? `${d} days` : `Closed ${-d}d ago`;
-export const TILE = { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', ref: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', attr: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, OSM contributors', maxZoom: 16 };
+export const dueLabel = d => d == null ? 'Rolling' : d === 0 ? 'Today' : d === 1 ? 'Tomorrow' : d > 0 ? `${d} days` : `Closed ${-d} days ago`;
+export const EST = '<span class="sys-est">est.</span>';
+export const ILLUS = '<span class="sys-est sys-est--illus">illustrative</span>';
+/** Plain-English copy for dataset text: dataset ids and snake_case become readable names. */
+export const plain = s => humanizeText(String(s ?? ''));
+export const TILE = { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', ref: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', attr: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, OSM contributors', maxZoom: 16 };
 
 /* ── Chat content ─────────────────────────────────────────────────────────── */
 export const FAQ = [
@@ -38,7 +44,7 @@ export const FAQ = [
   { q: 'What is GridOS?', a: '<p><b>GridOS</b> is the operating layer behind CET: a bid board for every public opportunity in New England, estimating and field coordination, solar fleet and pump-station monitoring, EV network operations and NuWave M&amp;V dashboards. <a href="gridos.html">See GridOS →</a></p>', href: 'gridos.html' },
   { q: 'Are you hiring electricians and apprentices?', a: '<p>Yes — journeyman electricians, apprentices, SCADA/instrumentation technicians, solar O&amp;M technicians, estimators and energy engineers across Worcester, Taunton, Norwell and Canton CT. We pay for apprenticeship training and support licensing in more than one state.</p>', href: '#careers' },
   { q: 'How quickly do you respond to a bid or quote request?', a: '<p>Quote requests get a response within one business day. Send plans and specs for public bids as early as possible — we prefer to be on the plan-holder list so we can walk the site before bid day.</p>', href: '#contact' },
-  { q: 'Is CET acquiring other contractors?', a: '<p>Yes. With Broad Sky Partners we are building New England’s leading electrical and energy-infrastructure platform. NuWave (2025) and Horton (2026) kept their names and teams. If you own an electrical, generator, controls, solar or efficiency business in New England, start a confidential conversation.</p>', href: '#acquisitions' },
+  { q: 'Is CET acquiring other contractors?', a: '<p>Yes. With Broad Sky Partners we are building New England’s leading electrical and energy-infrastructure company. NuWave (2025) and Horton (2026) kept their names and teams. If you own an electrical, generator, controls, solar or efficiency business in New England, start a confidential conversation.</p>', href: '#acquisitions' },
 ];
 export const SUGGESTIONS = ['Do you offer 24/7 emergency generator and pump-station service?', 'Which programs can fund our project?', 'What is CET Assure?', 'What is GridOS?', 'Are you hiring electricians?'];
 
@@ -56,23 +62,8 @@ const PROGRAM_COPY = [
 ];
 
 /* ── Shell interactions ───────────────────────────────────────────────────── */
-function banner() {
-  const b = $('#concept'); if (!b) return;
-  if (store.get('cet-concept-x') === '1') b.hidden = true;
-  $('[data-dismiss]', b)?.addEventListener('click', () => { b.hidden = true; store.set('cet-concept-x', '1'); });
-}
-function nav() {
-  const n = $('#nav'), btn = $('.burger', n); if (!btn) return;
-  btn.addEventListener('click', () => { const o = !n.classList.contains('open'); n.classList.toggle('open', o); btn.setAttribute('aria-expanded', String(o)); btn.setAttribute('aria-label', o ? 'Close menu' : 'Open menu'); });
-  $$('#menu a', n).forEach(a => a.addEventListener('click', () => { n.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }));
-}
-function reveal() {
-  const els = $$('.rv'); if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
-  els.forEach(e => io.observe(e));
-}
 function tabs() {
-  const list = $('.mk-list'); if (!list) return;
+  const list = $('.cet-mk-list'); if (!list) return;
   const tabsEls = $$('[role=tab]', list);
   const select = t => { tabsEls.forEach(x => { const on = x === t; x.setAttribute('aria-selected', String(on)); x.tabIndex = on ? 0 : -1; const p = document.getElementById(x.getAttribute('aria-controls')); if (p) p.hidden = !on; }); };
   tabsEls.forEach((t, i) => {
@@ -83,7 +74,7 @@ function tabs() {
 }
 function faq() {
   const el = $('#faq-list'); if (!el) return;
-  el.innerHTML = FAQ.map((f, i) => `<details${i === 0 ? ' open' : ''}><summary>${esc(f.q)}</summary><div class="a">${f.a}</div></details>`).join('');
+  el.innerHTML = FAQ.map((f, i) => `<details${i === 0 ? ' open' : ''}><summary>${esc(f.q)}</summary><div class="cet-faq-a">${f.a}</div></details>`).join('');
 }
 function form() {
   const f = $('#quote'); if (!f) return;
@@ -93,7 +84,7 @@ function form() {
   f.addEventListener('submit', e => {
     e.preventDefault();
     let ok = true;
-    const chk = (id, test) => { const fld = $(id, f).closest('.fld'); const good = test($(id, f).value.trim()); fld.classList.toggle('bad', !good); if (!good && ok) { $(id, f).focus(); ok = false; } };
+    const chk = (id, test) => { const fld = $(id, f).closest('.cet-fld'); const good = test($(id, f).value.trim()); fld.classList.toggle('is-bad', !good); if (!good && ok) { $(id, f).focus(); ok = false; } };
     chk('#f-name', v => v.length > 1); chk('#f-email', v => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)); chk('#f-state', v => !!v);
     if (!ok) return;
     const type = f.querySelector('input[name=type]:checked')?.value || 'electrical', st = $('#f-state', f).value, fund = $('#f-fund', f).value;
@@ -108,25 +99,42 @@ function form() {
       : st === 'RI' ? ['Taunton, MA estimating', 'Our South Coast team covers Rhode Island and responds within one business day.']
       : ['Worcester, MA estimating', 'An estimator responds within one business day.'];
     const r = $('#route', f);
-    r.innerHTML = desk ? `<b>Routed to: ${esc(desk[0])}</b><p>${esc(desk[1])}${/SRF|CWF/.test(fund) ? ' We will align the scope to the SRF project list and the funding schedule.' : /SMART|NRES|Mass Save|NEVI|Grant/.test(fund) ? ` We will confirm ${esc(fund)} eligibility before pricing.` : ''}</p><p style="color:#7d8aa3;font-size:12.5px">Concept form: nothing was sent.</p>`
-      : `<b>Thanks — we focus on New England.</b><p>CET works only in MA, CT, RI, NH, ME and VT. We are happy to refer you to a trusted contractor in your region.</p>`;
-    r.classList.add('on');
+    r.innerHTML = desk ? `<b>Routed to: ${esc(desk[0])}</b><span>${esc(desk[1])}${/SRF|CWF/.test(fund) ? ' We will align the scope to the SRF project list and the funding schedule.' : /SMART|NRES|Mass Save|NEVI|Grant/.test(fund) ? ` We will confirm ${esc(fund)} eligibility before pricing.` : ''}</span><span class="sys-src">Concept form: nothing was sent.</span>`
+      : `<b>Thanks. We focus on New England.</b><span>CET works only in MA, CT, RI, NH, ME and VT. We are happy to refer you to a trusted contractor in your region.</span>`;
+    r.hidden = false;
   });
 }
 
-/* ── Design rationale (from data/research/design_refs.json) ───────────────── */
+/* ── Design rationale (design references dataset) ─────────────────────────── */
+/* Principle-only: the reference company, owner and link are never shown. */
+const PRINCIPLE = { 'ref-cet-shermco': ['Scale and founders', 'Show licensed scale and invite founders in'], 'ref-cet-sciens': ['Recurring revenue', 'Package service as a named program'], 'ref-cet-ameresco': ['Public work', 'Solve funding first, then let buyers self-select'] };
+/** Strip any mention of the reference company or its owner from dataset prose. */
+const unbrand = (r, t) => {
+  const parts = String(r.name || '').split(/[()]/).map(n => n.trim()).filter(Boolean);
+  const names = [...new Set([...parts, ...parts.map(n => n.split(/\s+/)[0]).filter(n => n.length >= 4)])].sort((a, b) => b.length - a.length);
+  let s = String(t ?? '').replace(/\bBorrowed authority\b/g, 'Third-party authority');
+  for (const n of names) { const rx = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); s = s.replace(new RegExp(`\\s*\\([^)]*\\b${rx}\\b[^)]*\\)`, 'g'), '').replace(new RegExp(`\\b${rx}(?:'s)?\\b`, 'g'), 'the reference'); }
+  return s;
+};
 const ANCHORS = { 'ref-cet-shermco': [['#acquisitions', 'Acquisitions'], ['#stats', 'Stat band'], ['#emergency', '24/7 band'], ['#markets', 'Markets']], 'ref-cet-sciens': [['#assure', 'CET Assure'], ['#safety', 'Equipment list'], ['#footprint', 'Footprint map'], ['#projects', 'Project stories']], 'ref-cet-ameresco': [['#funding', 'Funding'], ['#pillars', 'Two ways in'], ['#top', 'Hero CTAs'], ['#assure', 'Live bid board']] };
 async function refs(Data) {
   const el = $('#refs'); if (!el) return;
   const d = await Data.research('design_refs');
   const items = (d?.items || []).filter(i => String(i.applies_to).includes('cet'));
-  if (!items.length) { el.innerHTML = '<p>Design references dataset not available.</p>'; return; }
-  el.innerHTML = items.map(r => `<article class="ref"><div class="hd"><h3>${esc(r.name)}</h3><span class="chip">${esc(Fmtr.host(r.url))}</span></div><p class="own">${esc(String(r.owner_or_backer || '').split(';')[0])}</p><p class="why">${esc(r.why_it_is_a_reference)}</p><ul>${(r.elements_to_borrow || []).map((e, i) => `<li><b>${esc(e.element)}</b>${esc(e.what_it_does_for_conversion_or_valuation)}${ANCHORS[r.id]?.[i] ? `<br><a class="jump" href="${ANCHORS[r.id][i][0]}">↳ See it: ${esc(ANCHORS[r.id][i][1])}</a>` : ''}</li>`).join('')}</ul><a href="${esc(r.url)}" target="_blank" rel="noopener">Visit ${esc(Fmtr.host(r.url))} ↗ · reviewed ${esc(r.retrieved || '')}</a></article>`).join('');
+  if (!items.length) { el.innerHTML = '<p class="sys-src">The design references are not available right now.</p>'; return; }
+  el.innerHTML = items.map(r => { const p = PRINCIPLE[r.id] || ['Principle', plain(unbrand(r, r.elements_to_borrow?.[0]?.element || ''))]; return `<article class="sys-card cet-ref"><span class="sys-card-label">${esc(p[0])}</span><h3 class="sys-card-title">${esc(p[1])}</h3><ul>${(r.elements_to_borrow || []).map((e, i) => `<li><b>${esc(plain(unbrand(r, e.element)))}</b>${esc(plain(unbrand(r, e.what_it_does_for_conversion_or_valuation)))}${ANCHORS[r.id]?.[i] ? `<br><a class="cet-jump" href="${ANCHORS[r.id][i][0]}">See it: ${esc(ANCHORS[r.id][i][1])} ↓</a>` : ''}</li>`).join('')}</ul><span class="sys-card-foot"><span class="sys-src">Reviewed ${esc(longDate(r.retrieved))}</span></span></article>`; }).join('');
 }
 export const clip = (s, n = 60) => { s = String(s || ''); if (s.length <= n) return s; const c = s.slice(0, n); return c.slice(0, Math.max(c.lastIndexOf(' '), n - 12)).replace(/[\s(,;:–-]+$/, '') + '…'; };
 export const cleanSrc = s => String(s || '').replace(/\s*\((web search result|search result)[^)]*\)/gi, '').replace(/\s*\(retrieved[^)]*\)/gi, '').trim();
+/** Source names as a reader sees them: no raw API names or dataset ids. */
+export const srcName = s => plain(cleanSrc(s).replace(/\bUSAspending\.gov API\s*\(?spending_by_award\)?/i, 'USAspending.gov award search').replace(/\bspending_by_award\b/g, 'award search'));
+export const STAGE = { open: 'Open bid', planned: 'Planned', recurring: 'Recurring program', awarded: 'Awarded' };
 export const ownerOf = o => /locked|verify|unknown/i.test(o.owner_or_agency || '') ? (o.city ? `${o.city}, ${o.state}` : STATES[o.state] || o.state) : (o.owner_or_agency || '');
 const Fmtr = { host: u => { try { return new URL(u).hostname.replace('www.', ''); } catch { return ''; } } };
+/** '2026-09-24' → 'Sept 24, 2026' (missing → '—'). */
+export const longDate = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); if (!m) return /^\d{4}-\d{2}$/.test(s || '') ? monthYear(s) : s ? String(s) : '—'; const mo = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'][+m[2] - 1]; return `${mo} ${+m[3]}, ${m[1]}`; };
+/** '2026-09-24' → 'Sept 2026'. */
+export const monthYear = s => { const m = /^(\d{4})-(\d{2})/.exec(s || ''); if (!m) return s ? String(s) : '—'; return `${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'][+m[2] - 1]} ${m[1]}`; };
 
 /* ── Opportunity-driven sections ──────────────────────────────────────────── */
 function radarCard(items) {
@@ -135,7 +143,7 @@ function radarCard(items) {
   const next = items.filter(o => o.due_date && daysTo(o.due_date) >= 0 && o.stage !== 'awarded').sort((a, b) => a.due_date.localeCompare(b.due_date))[0];
   $('[data-k=open]', c).textContent = open.length;
   const nst = new Set(open.map(o => o.state)).size; const st = $('[data-k=states]', c); if (st) st.textContent = `open bids · ${nst} state${nst === 1 ? '' : 's'}`;
-  $('[data-k=next]', c).innerHTML = next ? `<span class="due">Next due · ${esc(dueLabel(daysTo(next.due_date)))}</span><br><b>${esc(next.title.length > 74 ? next.title.slice(0, 72) + '…' : next.title)}</b> — ${esc(ownerOf(next))}${/, [A-Z]{2}$/.test(ownerOf(next)) ? '' : ', ' + esc(next.state)}` : 'No public bids due this week.';
+  $('[data-k=next]', c).innerHTML = next ? `<span class="cet-due">Next due · ${esc(dueLabel(daysTo(next.due_date)))}</span><br><b>${esc(next.title.length > 74 ? next.title.slice(0, 72) + '…' : next.title)}</b>, ${esc(ownerOf(next))}${/, [A-Z]{2}$/.test(ownerOf(next)) ? '' : ', ' + esc(next.state)}` : 'No public bids due this week.';
 }
 function mini(items) {
   const m = $('#mini'); if (!m) return;
@@ -143,13 +151,13 @@ function mini(items) {
   $('[data-k=open]', m).textContent = items.filter(o => o.stage === 'open' && isOpen(o)).length;
   $('[data-k=soon]', m).textContent = up.filter(o => daysTo(o.due_date) <= 14).length;
   $('[data-k=pipe]', m).textContent = money(items.filter(o => o.stage !== 'awarded').reduce((s, o) => s + (o.est_value_usd || 0), 0));
-  $('[data-k=rows]', m).innerHTML = up.slice(0, 5).map(o => { const d = daysTo(o.due_date); return `<tr><td class="d">${d === 0 ? 'TODAY' : 'D-' + d}</td><td class="t" title="${esc(o.title)}">${esc(o.title)}</td><td class="mono">${esc(o.state)}</td><td class="hide-s"><span class="fit"><i style="width:${o.fit_score || 0}%"></i></span><span class="mono" style="font-size:11px;color:var(--tx-3)">${o.fit_score ?? '—'}</span></td></tr>`; }).join('') || '<tr><td colspan="4">No bids due in the next weeks.</td></tr>';
+  $('[data-k=rows]', m).innerHTML = up.slice(0, 5).map(o => { const d = daysTo(o.due_date); return `<tr><td class="sys-num cet-due">${esc(dueLabel(d))}</td><td class="cet-t" title="${esc(o.title)}">${esc(o.title)}</td><td class="sys-num">${esc(o.state)}</td><td class="sys-n cet-hide-s"><span class="cet-fit"><i style="width:${o.fit_score || 0}%"></i></span>${o.fit_score ?? '—'}</td></tr>`; }).join('') || '<tr><td colspan="4">No bids due in the next weeks.</td></tr>';
 }
 let MAP = null, LAYER = null, SEL = null, ITEMS = [];
 function statesList(items) {
   const el = $('#states'); if (!el) return;
-  el.innerHTML = Object.keys(STATES).map(st => { const s = items.filter(o => o.state === st); const open = s.filter(isOpen).length; return `<button class="st" type="button" data-st="${st}" aria-pressed="false"><span class="ab">${st}</span><span><span class="nm">${STATES[st]}</span><span class="lic">✓ Licensed</span></span><span class="ct"><b class="num">${open}</b><span>of ${s.length} tracked</span></span></button>`; }).join('');
-  $$('.st', el).forEach(b => b.addEventListener('click', () => selectState(SEL === b.dataset.st ? null : b.dataset.st)));
+  el.innerHTML = Object.keys(STATES).map(st => { const s = items.filter(o => o.state === st); const open = s.filter(isOpen).length; return `<button class="cet-st" type="button" data-st="${st}" aria-pressed="false"><span class="cet-st-ab">${st}</span><span><span class="cet-st-nm">${STATES[st]}</span><span class="cet-st-lic">✓ Licensed</span></span><span class="cet-st-ct"><b>${open}</b><span>of ${s.length} tracked</span></span></button>`; }).join('');
+  $$('.cet-st', el).forEach(b => b.addEventListener('click', () => selectState(SEL === b.dataset.st ? null : b.dataset.st)));
   detail(null);
 }
 function detail(st) {
@@ -157,11 +165,11 @@ function detail(st) {
   const pool = ITEMS.filter(o => (!st || o.state === st) && o.stage !== 'awarded');
   const due = pool.filter(o => o.due_date && daysTo(o.due_date) >= 0).sort((a, b) => a.due_date.localeCompare(b.due_date));
   const list = due.length ? due.slice(0, 4) : pool.sort((a, b) => (b.fit_score || 0) - (a.fit_score || 0)).slice(0, 4);
-  el.innerHTML = `<h4>${due.length ? 'Next deadlines' : 'Funded pipeline'}${st ? ' · ' + esc(STATES[st]) : ''}</h4><ul>${list.map(o => `<li><b>${esc(o.title.length > 80 ? o.title.slice(0, 78) + '…' : o.title)}</b><span>${esc(o.city ? o.city + ', ' + o.state : ownerOf(o))} · ${o.due_date ? esc(shortDate(o.due_date)) + ' · ' + esc(dueLabel(daysTo(o.due_date))) : esc(o.stage)}${o.est_value_usd ? ' · ' + money(o.est_value_usd) + ' est.' : ''}</span></li>`).join('') || '<li><span>Nothing open right now.</span></li>'}</ul>`;
+  el.innerHTML = `<p class="sys-card-label">${due.length ? 'Next deadlines' : 'Funded pipeline'}${st ? ' · ' + esc(STATES[st]) : ''}</p><ul>${list.map(o => `<li><b>${esc(o.title.length > 80 ? o.title.slice(0, 78) + '…' : o.title)}</b><span>${esc(o.city ? o.city + ', ' + o.state : ownerOf(o))} · ${o.due_date ? esc(shortDate(o.due_date)) + ' · ' + esc(dueLabel(daysTo(o.due_date))) : esc(STAGE[o.stage] || o.stage)}${o.est_value_usd ? ' · ' + money(o.est_value_usd) + EST : ''}</span></li>`).join('') || '<li><span>Nothing open right now.</span></li>'}</ul>`;
 }
 function selectState(st) {
   SEL = st;
-  $$('#states .st').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.st === st)));
+  $$('#states .cet-st').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.st === st)));
   const f = $('#map-filter'); if (f) f.innerHTML = st ? `<b>${esc(STATES[st])}</b> · ${ITEMS.filter(o => o.state === st && isOpen(o)).length} open` : 'All states';
   detail(st);
   if (MAP) { drawPoints(); MAP.flyToBounds(st ? BOUNDS[st] : NE, { padding: [20, 20], duration: .6 }); }
@@ -175,19 +183,19 @@ function drawPoints() {
     if (SEL && o.state !== SEL) continue;
     const c = CAP_COLOR(o), live = isOpen(o);
     const m = L.circleMarker([o.lat, o.lon], { radius: 4 + Math.round((o.fit_score || 50) / 20), color: c, weight: live ? 1.5 : 1.2, fillColor: c, fillOpacity: live ? .55 : .12, opacity: live ? .95 : .6 });
-    m.bindPopup(`<b>${esc(o.title)}</b><div class="pm">${esc(ownerOf(o))} · ${esc(o.city || '')}${o.city ? ', ' : ''}${esc(o.state)}</div><div class="pm">${o.due_date ? 'Due ' + esc(shortDate(o.due_date)) + ' · ' + esc(dueLabel(daysTo(o.due_date))) : esc(o.stage)}${o.est_value_usd ? ' · ' + money(o.est_value_usd) + ' est.' : ''}</div>${o.source_url ? `<a href="${esc(o.source_url)}" target="_blank" rel="noopener">Source: ${esc(clip(cleanSrc(o.source_name), 60))} ↗</a>` : ''}`, { maxWidth: 300 });
+    m.bindPopup(`<b>${esc(o.title)}</b><div class="cet-pm">${esc(ownerOf(o))} · ${esc(o.city || '')}${o.city ? ', ' : ''}${esc(o.state)}</div><div class="cet-pm">${o.due_date ? 'Due ' + esc(shortDate(o.due_date)) + ' · ' + esc(dueLabel(daysTo(o.due_date))) : esc(STAGE[o.stage] || o.stage)}${o.est_value_usd ? ' · ' + money(o.est_value_usd) + EST : ''}</div>${o.source_url ? `<a href="${esc(o.source_url)}" target="_blank" rel="noopener">Source: ${esc(clip(srcName(o.source_name), 60))} ↗</a>` : ''}`, { maxWidth: 300 });
     LAYER.addLayer(m);
   }
 }
 function initMap() {
   const L = window.L, el = $('#ne-map'); if (!L || !el || MAP) return;
   MAP = L.map(el, { zoomSnap: .25, scrollWheelZoom: false, attributionControl: true, zoomControl: true });
-  L.tileLayer(TILE.url, { attribution: TILE.attr, maxZoom: TILE.maxZoom, maxNativeZoom: TILE.maxZoom, opacity: .58 }).addTo(MAP);
-  L.tileLayer(TILE.ref, { maxZoom: TILE.maxZoom, maxNativeZoom: TILE.maxZoom, pane: 'shadowPane', opacity: .85 }).addTo(MAP);
+  L.tileLayer(TILE.url, { attribution: TILE.attr, maxZoom: TILE.maxZoom, maxNativeZoom: TILE.maxZoom }).addTo(MAP);
+  L.tileLayer(TILE.ref, { maxZoom: TILE.maxZoom, maxNativeZoom: TILE.maxZoom, pane: 'shadowPane', opacity: .9 }).addTo(MAP);
   MAP.fitBounds(NE, { padding: [8, 8] });
   for (const o of OFFICES) {
-    const icon = L.divIcon({ className: '', html: `<div style="width:14px;height:14px;background:#fff;transform:rotate(45deg);box-shadow:0 0 0 4px rgba(59,130,255,.45),0 2px 10px rgba(0,0,0,.6)"></div><div class="ofc-lbl">${esc(o.name)}</div>`, iconSize: [14, 14], iconAnchor: [7, 7] });
-    L.marker([o.lat, o.lon], { icon, zIndexOffset: 1000, keyboard: true, title: `${o.name} — ${o.note}` }).addTo(MAP).bindPopup(`<b>${esc(o.k === 'HQ' ? 'CET headquarters' : o.k === 'CET' ? 'CET' : o.k)}</b><div class="pm">${esc(o.name)} · ${esc(o.note)}</div>`);
+    const icon = L.divIcon({ className: '', html: `<div class="cet-ofc"></div><div class="cet-ofc-lbl">${esc(o.name)}</div>`, iconSize: [14, 14], iconAnchor: [7, 7] });
+    L.marker([o.lat, o.lon], { icon, zIndexOffset: 1000, keyboard: true, title: `${o.name}: ${o.note}` }).addTo(MAP).bindPopup(`<b>${esc(o.k === 'HQ' ? 'CET headquarters' : o.k === 'CET' ? 'CET' : o.k)}</b><div class="cet-pm">${esc(o.name)} · ${esc(o.note)}</div>`);
   }
   drawPoints();
   setTimeout(() => MAP.invalidateSize(), 200);
@@ -203,27 +211,26 @@ function programs(items) {
   const el = $('#progs'); if (!el) return;
   const progs = items.filter(o => o.type === 'program').map(o => { const c = PROGRAM_COPY.find(p => p[0].test(o.title)); const d = daysTo(o.due_date); return { st: o.state, kind: c?.[2] || 'Program', title: c?.[1] || o.title, body: c?.[3] || '', d, due: o.due_date, url: o.source_url, src: o.source_name }; });
   progs.push({ st: 'MA', kind: 'Utility incentive', title: 'Mass Save — commercial & industrial', body: 'Prescriptive and custom incentives for LED, controls, HVAC and process upgrades. NuWave prepares the application and proves the savings.', d: null, url: 'https://www.masssave.com/business', src: 'masssave.com' });
-  const srf = (rx, st, title) => { const s = items.filter(o => rx.test(o.source_name || '')); return { st, kind: 'Revolving fund', title, body: `${s.length} wastewater and pump-station projects worth ${money(s.reduce((a, o) => a + (o.est_value_usd || 0), 0))} (applicant estimates) on the current lists we track. We price the electrical scope with your engineer.`, d: null, rolling: 'Priority list', url: s[0]?.source_url, src: s[0]?.source_name, value: s.reduce((a, o) => a + (o.est_value_usd || 0), 0) }; };
+  const srf = (rx, st, title) => { const s = items.filter(o => rx.test(o.source_name || '')); return { st, kind: 'Revolving fund', title, body: `${s.length} wastewater and pump-station projects worth ${money(s.reduce((a, o) => a + (o.est_value_usd || 0), 0))}${EST} (applicant estimates) on the current lists we track. We price the electrical scope with your engineer.`, html: true, d: null, rolling: 'Priority list', url: s[0]?.source_url, src: s[0]?.source_name, value: s.reduce((a, o) => a + (o.est_value_usd || 0), 0) }; };
   const ct = srf(/CT DEEP Clean Water Fund/i, 'CT', 'Connecticut Clean Water Fund'); const nne = srf(/Maine DEP CWSRF|VT CWSRF|VT DEC/i, 'ME · VT', 'Maine & Vermont Clean Water SRF');
   progs.push(ct, nne);
   const rank = p => p.d != null && p.d >= 0 ? p.d : p.d == null ? 500 : 1000 - p.d;
   progs.sort((a, b) => rank(a) - rank(b));
-  el.innerHTML = progs.map(p => { const when = p.d == null ? (p.rolling || 'Rolling') : p.d >= 0 ? `Due ${shortDate(p.due)}` : 'Next round'; const soon = p.d != null && p.d >= 0 && p.d <= 30; return `<article class="prog"><div class="top"><span class="st-b">${esc(p.st)}</span><span class="kind">${esc(p.kind)}</span><span class="when ${soon ? 'soon' : ''}">${esc(when)}</span></div><h3>${esc(p.title)}</h3><p>${esc(p.body)}</p>${p.url ? `<a class="s" href="${esc(p.url)}" target="_blank" rel="noopener">Source: ${esc(clip(cleanSrc(p.src || Fmtr.host(p.url)), 62))} ↗</a>` : ''}</article>`; }).join('');
-  if (progs.length > 6) { el.classList.add('collapsed'); const more = document.createElement('button'); more.type = 'button'; more.className = 'btn ghost more-progs'; more.textContent = `Show all ${progs.length} programs`; more.addEventListener('click', () => { el.classList.remove('collapsed'); more.remove(); }); el.after(more); }
+  el.innerHTML = progs.map(p => { const when = p.d == null ? (p.rolling || 'Rolling') : p.d >= 0 ? `Due ${shortDate(p.due)}` : 'Next round'; const soon = p.d != null && p.d >= 0 && p.d <= 30; return `<article class="sys-card cet-prog" data-co="cet"><div class="cet-prog-top"><span class="cet-prog-st">${esc(p.st)}</span><span class="sys-card-label">${esc(p.kind)}</span><span class="cet-prog-when${soon ? ' is-soon' : ''}">${esc(when)}</span></div><h3 class="sys-card-title">${esc(p.title)}</h3><p class="sys-card-body">${p.html ? p.body : esc(p.body)}</p>${p.url ? `<span class="sys-card-foot"><a href="${esc(p.url)}" target="_blank" rel="noopener">Source: ${esc(clip(srcName(p.src || Fmtr.host(p.url)), 62))} ↗</a></span>` : ''}</article>`; }).join('');
+  if (progs.length > 6) { el.classList.add('is-collapsed'); const more = document.createElement('button'); more.type = 'button'; more.className = 'sys-btn sys-btn--secondary cet-more'; more.textContent = `Show all ${progs.length} programs`; more.addEventListener('click', () => { el.classList.remove('is-collapsed'); more.remove(); }); el.after(more); }
   const fs = $('#fund-strip');
-  if (fs) { $('[data-k=srf]', fs).textContent = money(ct.value + nne.value); $('[data-k=progs]', fs).textContent = progs.length - 2; const nx = progs.find(p => p.d != null && p.d >= 0); $('[data-k=nextd]', fs).textContent = nx ? shortDate(nx.due) : 'Rolling'; if (nx) $('[data-k=nextl]', fs).textContent = `next deadline · ${nx.title.split(' — ')[0].replace(/^(MA|CT|NH) /, '$1 ')}`; }
+  if (fs) { $('[data-k=srf]', fs).textContent = money(ct.value + nne.value); $('[data-k=progs]', fs).textContent = progs.length - 2; const nx = progs.find(p => p.d != null && p.d >= 0); $('[data-k=nextd]', fs).textContent = nx ? shortDate(nx.due) : 'Rolling'; if (nx) $('[data-k=nextl]', fs).textContent = nx.title.split(' — ')[0]; }
 }
 
 export async function init({ Data }) {
-  banner(); nav(); reveal(); tabs(); faq(); form();
-  const yr = $('#yr'); if (yr) yr.textContent = new Date().getFullYear();
+  tabs(); faq(); form();
   refs(Data).catch(e => console.warn('refs', e));
   Data.research('cet_wwtp_targets').then(d => { const el = $('[data-k=ww-f]'); if (d && el) { el.textContent = d.items.filter(i => i.project_class && i.project_class !== 'none').length; $('[data-k=ww-n]').textContent = d.items.length; } }).catch(() => {});
   const d = await Data.research('cet_opportunities');
-  if (!d) { ['#radar-card [data-k=next]'].forEach(s => { const e = $(s); if (e) e.textContent = 'Bid radar unavailable right now.'; }); return; }
+  if (!d) { ['#radar-card [data-k=next]'].forEach(s => { const e = $(s); if (e) e.textContent = 'The bid radar is not available right now.'; }); return; }
   ITEMS = d.items || [];
   radarCard(ITEMS); mini(ITEMS); statesList(ITEMS); programs(ITEMS); lazyMap();
-  const src = $('#fp-src'); if (src && d.meta?.generated) src.textContent = `Opportunity data: CET New England opportunity radar — ${ITEMS.length} public opportunities from CT DEEP Clean Water Fund, Maine DEP and Vermont CWSRF lists, BidNet Direct, owner portals and federal awards (compiled ${d.meta.generated}). Dot size = fit score; filled = open now, outlined = funded pipeline.`;
+  const src = $('#fp-src'); if (src && d.meta?.generated) src.innerHTML = `<b>Source:</b> CET opportunity radar, ${ITEMS.length} public opportunities from the CT DEEP Clean Water Fund, Maine DEP and Vermont Clean Water SRF lists, BidNet Direct, owner portals and federal awards, compiled ${esc(longDate(d.meta.generated))}. Dot size shows fit score; filled dots are open now, outlined dots are funded pipeline.`;
 }
 
 /* ── Chat intents grounded on the same datasets (passed to Chat.mount) ───── */
@@ -251,10 +258,10 @@ export function makeIntents(Data, base = '') {
     { id: 'cet-ww', rx: [/(which|top|list|best).*(plants|wpcf|wwtp|treatment facilit)/i, /horton.*(call|target|first)/i], run: async () => {
       const d = await Data.research('cet_wwtp_targets'); if (!d) return null;
       const top = [...d.items].sort((a, b) => b.horton_fit - a.horton_fit).slice(0, 5);
-      return { html: `<h4>Priority wastewater plants for Horton</h4><ol>${top.map(t => `<li><b>${esc(t.facility_name)}</b> (${esc(t.town)}, ${esc(t.state)}, ${t.design_flow_mgd} MGD) — ${esc(t.recent_or_planned_project || 'no listed project')}${t.project_value_usd ? `, ${money(t.project_value_usd)} on the ${esc(t.funding_program)} list` : ''}</li>`).join('')}</ol><p>${d.items.length} CT/MA/RI plants scored from EPA ECHO and state SRF lists.</p>`, links: [lnk('gridos.html#demo', 'Wastewater tracker in GridOS')] };
+      return { html: `<h4>Priority wastewater plants for Horton</h4><ol>${top.map(t => `<li><b>${esc(t.facility_name)}</b> (${esc(t.town)}, ${esc(t.state)}, ${t.design_flow_mgd ?? '—'} MGD): ${esc(t.recent_or_planned_project || 'no listed project')}${t.project_value_usd ? `, ${money(t.project_value_usd)} on the ${esc(t.funding_program)} list` : ''}</li>`).join('')}</ol><p>${d.items.length} plants in CT, MA and RI scored from EPA ECHO and state SRF lists.</p>`, links: [lnk('gridos.html#demo', 'Wastewater tracker in GridOS')] };
     } },
   ];
 }
 
-/** Shared page chrome for sibling pages (GridOS). */
-export function shell() { banner(); nav(); reveal(); const yr = $('#yr'); if (yr) yr.textContent = new Date().getFullYear(); }
+/** Shared page chrome for sibling pages (GridOS). The frame owns the header, banner and footer now. */
+export function shell() { /* nothing page-level left to wire */ }

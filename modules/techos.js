@@ -1,13 +1,14 @@
+import * as Copy from './copy.js?v=20261006122625';
 /* ═══════════════════════════════════════════════════════════════════════════
    Tech enablement — the "OS" program across six Broad Sky platforms.
    ServiceOS (Punctual Pros) · GridOS (CET) · FirmOS (Frontline) · LabOS (Thomas Scientific)
    SignalOS (BPI) · HarborOS (Fair Harbor). Smith + Howard (exited Aug 2026) is excluded.
-   Datasets: research/serviceos_evidence (valuation_evidence, vendor_stack, kpi_benchmark,
-             roadmap_assumption), research/public_comps (sector medians),
+   Datasets: ServiceOS evidence (valuation_evidence, vendor_stack, kpi_benchmark,
+             roadmap_assumption), Public comparables (sector medians),
              research/*_filings (estimate tables → calculator defaults).
    Every value-creation number here is an analyst estimate (labelled est.).
    ═══════════════════════════════════════════════════════════════════════════ */
-const injectCss = () => { if (!document.getElementById('css-techos')) { const l = document.createElement('link'); l.id = 'css-techos'; l.rel = 'stylesheet'; l.href = 'modules/techos.css?v=20261006090506'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-techos')) { const l = document.createElement('link'); l.id = 'css-techos'; l.rel = 'stylesheet'; l.href = 'modules/techos.css?v=20261006122625'; document.head.appendChild(l); } };
 
 const OUT_LINKS = `<a class="btn sm" href="index.html" title="Broad Sky Operating Intelligence landing page">Landing</a><a class="btn sm" href="redesigns/index.html" title="Portfolio site concepts + OS program gallery">Site concepts</a>`;
 /* ── Platform / OS definitions (copy + calculator wiring) ────────────────── */
@@ -28,7 +29,7 @@ const OS = {
     sub: 'Residential HVAC, plumbing & electrical · Central PA + Jersey Shore',
     promise: 'Answer every call, price every job the same way, and turn each visit into a membership.',
     pick: { rev: [/pro forma total revenue/i, 0], ebitda: [/^Adjusted EBITDA/i, 0], debt: [/^Total senior debt/i, 0] },
-    mult: { v: 8.0, basis: 'Est. entry EV ~$18–30M on ~$2.6M adj. EBITDA (pp_filings), haircut toward the Capstone typical 6.8x and the PKF 5–6x project-heavy band.' },
+    mult: { v: 8.0, basis: 'Est. entry EV ~$18–30M on ~$2.6M adj. EBITDA (Punctual Pros public filings), haircut toward the Capstone typical 6.8x and the PKF 5–6x project-heavy band.' },
     owner: 'PRG Operating Partner · Residential services', lead: 'PP COO',
     next: 'Confirm the field-service system of record and pull 12 months of call, ticket and membership data; baseline booking rate and members per technician; put AI call answering on the Lancaster queue before the winter heating peak.',
     fb: { inv: [400000, 900000], ttv: [6, 12], pts: [2, 4], turns: [1, 2.5], rev: [16e6, 28e6], ebitda: 2.6e6, debt: 14e6 },
@@ -38,7 +39,7 @@ const OS = {
     sub: 'CET + NuWave + Horton · electrical, solar, W/WW · New England only',
     promise: 'Bid only what CET can win, run every job on one record, and sell monitoring, not just installs.',
     pick: { rev: [/^Pro forma platform/i, 0], ebitda: [/^Pro forma platform/i, 1], debt: [/^Pro forma senior debt/i, 0] },
-    mult: { v: 10.0, basis: 'Est. entry 9–12x EBITDA (cet_filings estimate table); PKF grid rewards service mix and retention.' },
+    mult: { v: 10.0, basis: 'Est. entry 9–12x EBITDA (CET public filings estimate table); PKF grid rewards service mix and retention.' },
     owner: 'PRG Operating Partner · Infrastructure', lead: 'CET VP Operations',
     next: 'Run the next 30 days of sourced bids through go/no-go scoring; standardise estimating at Worcester and Horton; quote monitoring on NuWave’s installed solar base as a recurring O&M contract.',
     fb: { inv: [800000, 1800000], ttv: [9, 15], pts: [1, 2.5], turns: [0.5, 1.5], rev: [62e6, 105e6], ebitda: 8.5e6, debt: 40e6 },
@@ -48,7 +49,7 @@ const OS = {
     sub: 'Managed IT, cyber & revenue cycle for 800+ law firms',
     promise: 'Resolve tickets at Level 1, get law firms paid faster, and sell security as a measured service.',
     pick: { rev: [/^Revenue \(2025/i, 0], ebitda: [/^Adjusted EBITDA at close/i, 0], debt: [/^Senior debt at close/i, 0] },
-    mult: { v: 13.5, basis: 'Midpoint of the 12–15x entry estimate (serviceos_evidence ve-15; frontline_filings).' },
+    mult: { v: 13.5, basis: 'Midpoint of the 12–15x entry estimate (ServiceOS evidence; Frontline public filings).' },
     owner: 'PRG Operating Partner · Business services', lead: 'Frontline CTO',
     next: 'Choose the PSA of record (ConnectWise vs Kaseya 365); baseline Level-1 resolution and e-billing rejection rates on the top 50 law-firm clients; price a compliance tier backed by automated evidence collection.',
     fb: { inv: [1500000, 3000000], ttv: [6, 12], pts: [1.5, 3], turns: [0.5, 1.5], rev: [100e6, 140e6], ebitda: 18e6, debt: 90e6 },
@@ -58,7 +59,7 @@ const OS = {
     sub: 'Lab supply distribution since 1900 · Swedesboro NJ',
     promise: 'Move the long tail to self-serve ordering and cut cost-to-serve before the 2027 refinancing.',
     pick: { rev: [/^Current revenue/i, 0], ebitda: [/^Current EBITDA/i, 0], debt: [/first-lien facility/i, 0] },
-    mult: { v: 9.0, basis: 'Est. entry EV $430–525M on $40–55M LTM EBITDA ≈ 9.5x (thomas_filings), trimmed for flat lab-distribution growth (sector median +1.5%).' },
+    mult: { v: 9.0, basis: 'Est. entry EV $430–525M on $40–55M LTM EBITDA ≈ 9.5x (Thomas Scientific public filings), trimmed for flat lab-distribution growth (sector median +1.5%).' },
     owner: 'PRG Operating Partner · Distribution', lead: 'Thomas eCommerce lead',
     next: 'Fund product-data clean-up first, since no storefront fixes bad SKU data. Connect punchout for the top 25 accounts and tie the LabOS KPI pack to lender updates ahead of the December 2027 maturity.',
     fb: { inv: [2000000, 4000000], ttv: [9, 18], pts: [0.5, 1.5], turns: [0.5, 1.0], rev: [250e6, 320e6], ebitda: 30e6, debt: 240e6 },
@@ -68,7 +69,7 @@ const OS = {
     sub: 'Bully Pulpit International · strategic comms & public affairs',
     promise: 'Turn campaign-cycle monitoring into an always-on subscription with its own revenue line.',
     pick: { rev: [/^Net \(fee\) revenue FY2025/i, 0], ebitda: [/^Adj\. EBITDA FY2025/i, 0], debt: [/^Senior secured debt/i, 0] },
-    mult: { v: 10.0, basis: 'PPHC trades ~8.4x; a scaled sponsor exit is est. 10–13x (ve-22); entry est. ~10–13x (bpi_filings).' },
+    mult: { v: 10.0, basis: 'PPHC trades ~8.4x; a scaled sponsor exit is est. 10–13x (ServiceOS evidence); entry est. ~10–13x (BPI public filings).' },
     owner: 'PRG Operating Partner · Business services', lead: 'BPI COO',
     next: 'Convert two post-midterm campaign clients to an always-on monitoring retainer by Q1 2027 and report subscription revenue as its own line.',
     fb: { inv: [1000000, 2000000], ttv: [6, 12], pts: [1, 3], turns: [0.5, 2], rev: [85e6, 125e6], ebitda: 22.5e6, debt: 85e6 },
@@ -78,7 +79,7 @@ const OS = {
     sub: 'Sustainable beachwear · DTC + wholesale · NYC',
     promise: 'Fewer returns, more repeat buyers and a tighter seasonal buy: margin first, then the multiple.',
     pick: { rev: [/^2025 net revenue/i, 0], ebitda: [/^2025 EBITDA/i, 0], debt: [/^Funded debt/i, 0] },
-    mult: { v: 1.0, basis: 'Entry est. 1.3–2.5x 2021 revenue (fairharbor_filings); DTC apparel has de-rated since (sector median growth −1.5%), so 1.0x revenue is used as today’s mark (est.).' },
+    mult: { v: 1.0, basis: 'Entry est. 1.3–2.5x 2021 revenue (Fair Harbor public filings); DTC apparel has de-rated since (sector median growth −1.5%), so 1.0x revenue is used as today’s mark (est.).' },
     owner: 'PRG Operating Partner · Consumer', lead: 'Fair Harbor eCommerce lead',
     next: 'Ship replenishment flows and the fit finder before the summer 2027 drop, set the SS27 buy with demand planning, and report returns and repeat rate monthly.',
     fb: { inv: [300000, 700000], ttv: [4, 9], pts: [2, 5], turns: [0.2, 0.5], rev: [20e6, 35e6], ebitda: 2e6, debt: 5e6 },
@@ -92,7 +93,7 @@ const START = new Date(2026, 9, 1);
 const SPAN = 24;
 const monthLabel = (i, long) => { const d = new Date(START.getFullYear(), START.getMonth() + i, 1); return d.toLocaleDateString('en-US', { month: 'short' }) + (long || d.getMonth() === 0 || i === 0 ? ` ’${String(d.getFullYear()).slice(2)}` : ''); };
 const WS = [
-  { id: 'prg-1', k: 'prg', name: 'Portfolio KPI layer: one dictionary, connectors, monthly pack', s: 0, e: 4, owner: 'PRG Data & Technology lead', deps: [], kpi: 'One KPI definition set across six platforms', tool: 'Portal data layer', ms: [{ m: 4, t: 'KPI pack v1' }] },
+  { id: 'prg-1', k: 'prg', name: 'Portfolio KPI layer: one dictionary, connectors, monthly pack', s: 0, e: 4, owner: 'PRG Data & Technology lead', deps: [], kpi: 'One KPI definition set across six companies', tool: 'Portal data layer', ms: [{ m: 4, t: 'KPI pack v1' }] },
   { id: 'prg-2', k: 'prg', name: 'Vendor master agreements and security review', s: 1, e: 5, owner: 'PRG Procurement + Frontline security', deps: [], kpi: 'Portfolio pricing on shared vendors', tool: 'MSAs' },
   { id: 'prg-3', k: 'prg', name: 'Quarterly OS value audit in the board pack', s: 3, e: 24, owner: 'PRG Operating Partners', deps: ['prg-1'], kpi: 'Each OS KPI vs baseline, signed off quarterly', tool: 'Board pack', ms: [6, 9, 12, 15, 18, 21].map(m => ({ m, t: 'Q audit' })) },
   { id: 'prg-4', k: 'prg', name: 'Exit data room: 24 months of OS KPI history', s: 18, e: 24, owner: 'PRG + Broad Sky deal team', deps: ['prg-3'], kpi: 'Buyer-verifiable KPI trend lines', tool: 'Data room' },
@@ -103,7 +104,7 @@ const WS = [
   { id: 'pp-4', k: 'pp', name: 'Membership engine: attach at every call, auto-renewals', s: 4, e: 9, owner: 'PP COO', deps: ['pp-2', 'pp-3'], kpi: 'Members per technician → 83 (kb-pp-3)', tool: 'Podium + memberships' },
   { id: 'pp-5', k: 'pp', name: 'Ride-along coaching for comfort advisors', s: 5, e: 9, owner: 'PP sales manager', deps: ['pp-3'], kpi: 'Replacement close rate +9% (kb-pp-4)', tool: 'Rilla' },
   { id: 'pp-6', k: 'pp', name: 'Storm-readiness staffing from the demand model + NWS', s: 6, e: 10, owner: 'PP dispatch lead', deps: ['prg-1'], kpi: 'Missed calls and overtime on storm days', tool: 'Weatherbit + portal' },
-  { id: 'pp-7', k: 'pp', name: 'Roll ServiceOS to Horvath (Ocean + Monmouth NJ)', s: 9, e: 13, owner: 'PP COO · Horvath GM', deps: ['pp-2', 'pp-4'], kpi: 'NJ booking rate and members at PA levels', tool: 'Playbook' },
+  { id: 'pp-7', k: 'pp', name: 'Roll ServiceOS to Horvath (Ocean + Monmouth NJ)', s: 9, e: 13, owner: 'PP COO · Horvath GM', deps: ['pp-2', 'pp-4'], kpi: 'NJ booking rate and members at PA levels', tool: 'Rollout plan' },
 
   { id: 'cet-1', k: 'cet', name: 'Bid board with go/no-go scoring on sourced opportunities', s: 0, e: 3, owner: 'CET estimating lead · PRG Infrastructure', deps: ['prg-1'], kpi: 'Hard-bid win rate 15% → 30% (kb-cet-1)', tool: 'Portal bid radar' },
   { id: 'cet-2', k: 'cet', name: 'One estimating standard across Worcester, Taunton and Horton', s: 2, e: 7, owner: 'CET estimating lead', deps: ['cet-1'], kpi: 'Bid cycle time and hit rate', tool: 'Accubid Anywhere' },
@@ -163,7 +164,7 @@ const unitShort = u => { u = String(u || ''); return /^%/.test(u) ? '%' : /days/
 const kpiVal = (v, u) => v == null ? 'n/d' : `${trim(v, 1)}${unitShort(u)}`;
 const host = u => { try { return new URL(u).hostname.replace('www.', ''); } catch { return ''; } };
 const extLink = (u, t) => u ? `<a href="${escAttr(u)}" target="_blank" rel="noopener">${escTxt(t || host(u) || 'source')} ↗</a>` : '';
-const escTxt = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const escTxt = s => Copy.text(String(s ?? '')).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const escAttr = escTxt;
 const platColor = k => (OS[k] || PRG).color;
 const platChip = (fmt, k) => OS[k] ? fmt.chip(OS[k].co, OS[k].color) : fmt.chip(String(k || ''), 'var(--muted)');
@@ -233,7 +234,7 @@ function buildPlat(k, kinds, fil, comps, byId, ev) {
   return p;
 }
 const missingNote = (ui, b) => b.missing.length ? ui.note(`Research dataset${b.missing.length > 1 ? 's' : ''} not yet available: <b>${b.missing.map(escTxt).join(', ')}</b>. ${b.missing.includes('serviceos_evidence') ? 'Showing the built-in October 2026 snapshot of the OS assumptions; evidence links, vendor stacks and KPI benchmarks are hidden until the file is restored.' : 'Calculator defaults fall back to the roadmap assumption ranges.'}`, 'warn') + '<div class="mt-12"></div>' : '';
-const srcFoot = (ui, b, extra) => ui.source(`serviceos_evidence${extra ? ' + ' + extra : ''} · est. analyst assumptions`, null, b.ev?.meta?.generated || 'Oct 2026');
+const srcFoot = (ui, b, extra) => ui.source(`ServiceOS evidence${extra ? ' + ' + Copy.text(extra) : ''} · analyst assumptions (est.)`, null, b.ev?.meta?.generated || 'Oct 2026');
 
 /* ── Inspectors ──────────────────────────────────────────────────────────── */
 function openOS(ctx, b, p) {
@@ -301,14 +302,14 @@ async function overview(ctx) {
   const ve = id => b.byId.get(id);
 
   el.innerHTML = `<div class="m-techos">${ui.pageHead({
-    title: 'Tech enablement <span class="tx-pill">OS program</span>',
-    sub: `<b>So what:</b> six buyer-legible operating systems, one per platform, assembled from proven vendors plus the portal’s data layer. Together they need an est. <b>${rangeM(inv)}</b> of spend for <b>${rangeM(imp)}</b> of run-rate EBITDA and <b>+${trim(tLo, 1)}–${trim(tHi, 1)} turns</b> of multiple. The mid case adds ≈<b>${$M(dEV)}</b> of enterprise value; ${escTxt(lead.os)} at ${escTxt(lead.co)} is the largest single prize.`,
-    chips: `${fmt.chip('est. · analyst assumptions, not guidance', 'var(--amber)')}${b.items.length ? fmt.chip(`${b.items.length} evidence items`, 'var(--cyan)') : fmt.chip('built-in snapshot', 'var(--amber)')}${fmt.chip('Smith + Howard excluded (exited Aug 2026)', 'var(--dim)')}`,
+    title: 'Tech enablement',
+    sub: `<b>So what:</b> six buyer-legible operating systems, one per company, assembled from proven vendors plus the portal’s data layer. Together they need an est. <b>${rangeM(inv)}</b> of spend for <b>${rangeM(imp)}</b> of run-rate EBITDA and <b>+${trim(tLo, 1)}–${trim(tHi, 1)} turns</b> of multiple. The mid case adds ≈<b>${$M(dEV)}</b> of enterprise value; ${escTxt(lead.os)} at ${escTxt(lead.co)} is the largest single prize.`,
+    chips: `${fmt.chip('OS program', 'var(--cyan)')}${fmt.chip('est. · analyst assumptions, not guidance', 'var(--amber)')}${b.items.length ? fmt.chip(`${b.items.length} evidence items`, 'var(--cyan)') : fmt.chip('built-in snapshot', 'var(--amber)')}${fmt.chip('Smith + Howard excluded (exited Aug 2026)', 'var(--dim)')}`,
     actions: `${OUT_LINKS}<button class="btn sm" data-go="evidence">Evidence</button><button class="btn sm" data-go="roadmap">Roadmap</button><button class="btn sm primary" data-go="calculator">Open calculator →</button>`,
   })}
   ${missingNote(ui, b)}
   ${ui.kpis([
-    { label: 'OS programs', value: '6', sub: 'One per active platform', color: 'var(--cyan)' },
+    { label: 'OS programs', value: '6', sub: 'One per active company', color: 'var(--cyan)' },
     { label: 'Investment (est.)', value: rangeM(inv), sub: 'Software, implementation, change mgmt', color: 'var(--cyan)' },
     { label: 'Run-rate EBITDA uplift', value: rangeM(imp), sub: 'Revenue est. × margin pts', color: 'var(--green)' },
     { label: 'Multiple re-rating', value: `+${trim(tLo, 1)}–${trim(tHi, 1)}x`, sub: 'EV/EBITDA turns credited to tech · HarborOS on revenue', color: 'var(--purple)' },
@@ -322,7 +323,7 @@ async function overview(ctx) {
   <div class="tx-sec"><h2>Six operating systems</h2><span class="dim small">Click a card for the full value case, vendor stack and evidence trail.</span></div>
   <div class="tx-cards" id="tx-cards">${P.map(p => osCard(ctx, p)).join('')}</div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Value bridge by platform', sub: 'Mid case · EV from the EBITDA uplift vs EV from multiple re-rating (est.)', body: bridgeHtml(P), actions: `<button class="btn xs" id="tx-ov-csv">⇩ CSV</button>`, foot: srcFoot(ui, b, '*_filings') })}
+    ${ui.panel({ title: 'Value bridge by company', sub: 'Mid case · EV from the EBITDA uplift vs EV from multiple re-rating (est.)', body: bridgeHtml(P), actions: `<button class="btn xs" id="tx-ov-csv">⇩ CSV</button>`, foot: srcFoot(ui, b, '*_filings') })}
     ${ui.panel({ title: 'What the evidence does and does not support', sub: 'Read before quoting any number on this page', body: limitsHtml(b, prem), foot: srcFoot(ui, b) })}
   </div></div>`;
 
@@ -424,7 +425,7 @@ function bridgeHtml(P) {
 function limitsHtml(b, prem) {
   const cav = b.ev?.meta?.caveats || [];
   return `<div class="tx-limits">${prem?.what_it_does_not_support ? `<div class="q">${escTxt(prem.what_it_does_not_support)}</div>` : ''}
-    <ul>${cav.slice(0, 6).map(c => `<li>${escTxt(c)}</li>`).join('') || '<li>Evidence caveats load with serviceos_evidence.json.</li>'}</ul></div>`;
+    <ul>${cav.slice(0, 6).map(c => `<li>${escTxt(c)}</li>`).join('') || '<li>Evidence caveats load with ServiceOS evidence.</li>'}</ul></div>`;
 }
 
 /* ══ View: Evidence ═════════════════════════════════════════════════════════ */
@@ -459,17 +460,17 @@ async function evidence(ctx) {
   ${ui.kpis([
     { label: 'Quality spread', value: '3.0 turns', sub: 'Capstone/IMAP typical 6.8x vs premium 9.8x', color: 'var(--cyan)' },
     { label: 'HVAC banker grid', value: '5–6x → 10x+', sub: 'PKF, Summer 2026', color: 'var(--c-pp)' },
-    { label: 'Credited to tech', value: '0.5–2.5x', sub: 'EV/EBITDA turns, by platform', color: 'var(--purple)' },
+    { label: 'Credited to tech', value: '0.5–2.5x', sub: 'EV/EBITDA turns, by company', color: 'var(--purple)' },
     { label: 'High-confidence', value: `${hi} / ${K.val.length}`, sub: 'Valuation datapoints', color: 'var(--green)' },
     { label: 'Evidence window', value: `${escTxt(dates[0]?.slice(0, 4) || '—')}–${escTxt(dates[dates.length - 1]?.slice(0, 4) || '—')}`, sub: `${dates.filter(d => d >= '2026').length} of ${K.val.length} dated 2026 · newest ${escTxt(dates[dates.length - 1] || '—')}`, color: 'var(--amber)' },
   ])}
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'The multiple ladder', sub: 'EV/EBITDA prints and banker bands that frame the OS premium · click a row for the source', body: ladderHtml(b), foot: srcFoot(ui, b) })}
-    ${ui.panel({ title: 'Premium credited to tech, by platform', sub: 'Analyst assumption (est.) · turns of EV/EBITDA, HarborOS in EV/revenue', body: premiumHtml(b, prem), foot: srcFoot(ui, b) })}
+    ${ui.panel({ title: 'Premium credited to tech, by company', sub: 'Analyst assumption (est.) · turns of EV/EBITDA, HarborOS in EV/revenue', body: premiumHtml(b, prem), foot: srcFoot(ui, b) })}
   </div>
   ${ui.panel({ title: 'Evidence library', sub: 'Every item has a source URL, date and confidence · click a row to inspect', body: `<div class="row wrap gap-12 mb-8"><div id="tx-tabs"></div></div><div id="tx-ef"></div><div id="tx-et"></div>`, cls: 'mt-12', foot: srcFoot(ui, b) })}
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Public comps tie-in', sub: 'Sector medians from 10-K/20-F data · where each OS moves the margin', body: `<div id="tx-comps"></div>`, foot: ui.source('public_comps (SEC EDGAR XBRL)', null, b.comps?.meta?.generated || '') })}
+    ${ui.panel({ title: 'Public comps tie-in', sub: 'Sector medians from 10-K/20-F data · where each OS moves the margin', body: `<div id="tx-comps"></div>`, foot: ui.source('Public comparables (SEC EDGAR XBRL)', null, b.comps?.meta?.generated || '') })}
     ${ui.panel({ title: 'Method and caveats', sub: 'How the file was built and what it cannot prove', body: `<div class="tx-limits"><p class="small text-2">${escTxt(clip(b.ev.meta?.method || '', 520))}</p><ul>${(b.ev.meta?.caveats || []).map(c => `<li>${escTxt(c)}</li>`).join('')}</ul></div>`, foot: srcFoot(ui, b) })}
   </div></div>`;
   el.querySelectorAll('[data-go]').forEach(x => x.onclick = () => app.go('techos', x.dataset.go));
@@ -490,7 +491,7 @@ async function evidence(ctx) {
       ], conf: true },
     kpi: { label: `KPI benchmarks (${K.kpi.length})`, rows: K.kpi.map(e => ({ ...e, _plat: OS[e.company]?.co || e.company, _os: OS[e.company]?.os || '' })),
       cols: [
-        { key: '_plat', label: 'Platform', fmt: (v, r) => platChip(fmt, r.company) },
+        { key: '_plat', label: 'Company', fmt: (v, r) => platChip(fmt, r.company) },
         { key: 'kpi', label: 'KPI', wrap: true, fmt: (v, r) => `<b>${escTxt(v)}</b><div class="dim small">${escTxt(r._os)}</div>` },
         { key: 'baseline', label: 'Baseline', num: true, fmt: (v, r) => kpiVal(v, r.unit) },
         { key: 'target', label: 'Target', num: true, fmt: (v, r) => `<b>${kpiVal(v, r.unit)}</b>` },
@@ -500,7 +501,7 @@ async function evidence(ctx) {
       ] },
     vend: { label: `Vendor stack (${K.vend.length})`, rows: K.vend.map(e => ({ ...e, _plat: OS[e.company]?.co || e.company, _os: OS[e.company]?.os || '' })),
       cols: [
-        { key: '_plat', label: 'Platform', fmt: (v, r) => platChip(fmt, r.company) },
+        { key: '_plat', label: 'Company', fmt: (v, r) => platChip(fmt, r.company) },
         { key: 'vendor', label: 'Vendor', fmt: (v, r) => `<b>${escTxt(v)}</b><div class="dim small">${escTxt(r._os)}</div>` },
         { key: 'category', label: 'Category', wrap: true },
         { key: 'what_it_does', label: 'What it does', wrap: true, fmt: v => `<span class="small text-2">${escTxt(clip(v, 150))}</span>` },
@@ -513,7 +514,7 @@ async function evidence(ctx) {
     const T = TABS[cur]; tbl = null;
     const fl = ui.filters(el.querySelector('#tx-ef'), [
       { key: 'q', label: 'Search evidence, vendor, KPI…', type: 'search', value: params.q || '' },
-      { key: 'plat', label: 'Platform', options: ORDER.map(k => ({ value: k, label: `${OS[k].co} · ${OS[k].os}` })), value: params.co || '' },
+      { key: 'plat', label: 'Company', options: ORDER.map(k => ({ value: k, label: `${OS[k].co} · ${OS[k].os}` })), value: params.co || '' },
       ...(T.conf ? [{ key: 'conf', label: 'Confidence', options: ['high', 'medium', 'low'] }] : []),
     ], st => {
       const q = (st.q || '').toLowerCase();
@@ -533,7 +534,7 @@ async function evidence(ctx) {
   const sb = b.comps?.meta?.sector_benchmarks || {};
   const compRows = ORDER.map(k => { const p = b.P[k]; const s = sb[OS[k].bench]; return s ? { k, os: p.os, co: p.co, sector: SECTOR_LABEL[OS[k].bench], comps: (s.comps || []).join(', '), n: s.n, growth: num(s.median_revenue_growth_latest_pct), margin: num(s.median_ebitda_margin_latest_pct), today: p.def.margin, withOS: p.def.margin + midOf(p.pts), rpe: num(s.median_revenue_per_employee_usd), gap: s.median_ebitda_margin_latest_pct != null ? s.median_ebitda_margin_latest_pct - (p.def.margin + midOf(p.pts)) : null, implies: s.what_this_implies_for_bsp } : null; }).filter(Boolean);
   const ch = el.querySelector('#tx-comps');
-  if (!compRows.length) ch.innerHTML = ui.note('public_comps dataset not available.', 'warn');
+  if (!compRows.length) ch.innerHTML = ui.note('Public comparables dataset not available.', 'warn');
   else ui.table(ch, { columns: [
     { key: 'os', label: 'OS', fmt: (v, r) => `<b style="color:${OS[r.k].hex}">${escTxt(v)}</b><div class="dim small">${escTxt(r.sector)}</div>` },
     { key: 'margin', label: 'Sector EBITDA', num: true, fmt: v => v == null ? '—' : `${trim(v, 1)}%` },
@@ -586,14 +587,14 @@ async function roadmap(ctx) {
   const firstVal = Math.min(...b.plats.map(p => p.ttv[0])), lastVal = Math.max(...b.plats.map(p => p.ttv[1]));
   const deps = WS.reduce((s, w) => s + w.deps.length, 0); const sharedDeps = WS.filter(w => w.k !== 'prg' && w.deps.some(d => d.startsWith('prg-'))).length;
   el.innerHTML = `<div class="m-techos">${ui.pageHead({
-    title: 'OS roadmap · 24 months',
+    title: 'OS roadmap',
     sub: `<b>So what:</b> every OS shows first value inside ${lastVal} months, starting with HarborOS at month ${firstVal}. The critical date is <b>December 2027</b>: LabOS must hand Thomas Scientific’s lenders a cost-to-serve and digital-mix story before its loan matures. The shared KPI layer (months 0–4) gates four of the six programs.`,
     chips: `${fmt.chip('Oct 2026 → Sep 2028', 'var(--cyan)')}${fmt.chip('Owners are roles, not named individuals', 'var(--dim)')}${fmt.chip('est. · planning assumption', 'var(--amber)')}`,
     actions: `${OUT_LINKS}<button class="btn sm" data-go="overview">Overview</button><button class="btn sm primary" data-go="calculator">Calculator →</button>`,
   })}
   ${missingNote(ui, b)}
   ${ui.kpis([
-    { label: 'Workstreams', value: String(WS.length), sub: `${groups.length - 1} platforms + shared PRG layer`, color: 'var(--cyan)' },
+    { label: 'Workstreams', value: String(WS.length), sub: `${groups.length - 1} companies + shared PRG layer`, color: 'var(--cyan)' },
     { label: 'First value', value: `Month ${firstVal}`, sub: `${monthLabel(firstVal, true)} · HarborOS`, color: 'var(--green)' },
     { label: 'All six live', value: `Month ${lastVal}`, sub: `${monthLabel(lastVal, true)} · LabOS full value`, color: 'var(--amber)' },
     { label: 'Gated by shared layer', value: String(sharedDeps), sub: `Workstreams waiting on PRG KPI/vendor work · ${deps} hand-offs in all`, color: 'var(--purple)' },
@@ -601,7 +602,7 @@ async function roadmap(ctx) {
   ])}
   ${ui.panel({ title: 'Program plan', sub: 'Bars = workstreams (label = vendor/tool) · shaded band = time-to-value window from the evidence file · ◆ = milestone · click any bar', cls: 'mt-12', actions: `<div id="tx-rf"></div>`, body: `<div id="tx-gantt"></div>`, flush: true, foot: srcFoot(ui, b, 'analyst roadmap') })}
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Critical paths', sub: 'Longest dependency chain per platform', body: `<div id="tx-cp"></div>`, foot: srcFoot(ui, b, 'analyst roadmap') })}
+    ${ui.panel({ title: 'Critical paths', sub: 'Longest dependency chain per company', body: `<div id="tx-cp"></div>`, foot: srcFoot(ui, b, 'analyst roadmap') })}
     ${ui.panel({ title: 'PRG load', sub: 'Concurrent workstreams per month: where operating-partner time is scarce', body: `<div id="tx-load"></div>`, foot: ui.source('Computed from the plan above', null, 'Oct 2026') })}
   </div>
   ${ui.panel({ title: 'Workstream register', sub: 'Owner (role), dates, dependency and the KPI each workstream must move', cls: 'mt-12', body: `<div id="tx-reg"></div>`, foot: srcFoot(ui, b, 'analyst roadmap') })}
@@ -630,7 +631,7 @@ async function roadmap(ctx) {
     </div></div>`;
     el.querySelectorAll('.g-bar').forEach(x => x.onclick = () => { el.querySelectorAll('.g-bar').forEach(y => y.classList.toggle('sel', y === x)); openWS(byId.get(x.dataset.id)); });
   };
-  ui.filters(el.querySelector('#tx-rf'), [{ key: 'co', label: 'Platform', options: groups.map(k => ({ value: k, label: k === 'prg' ? 'Shared PRG layer' : `${OS[k].os} · ${OS[k].co}` })), value: filt }], st => { filt = st.co; drawGantt(); drawReg(); });
+  ui.filters(el.querySelector('#tx-rf'), [{ key: 'co', label: 'Company', options: groups.map(k => ({ value: k, label: k === 'prg' ? 'Shared PRG layer' : `${OS[k].os} · ${OS[k].co}` })), value: filt }], st => { filt = st.co; drawGantt(); drawReg(); });
   drawGantt();
 
   // critical paths
@@ -692,11 +693,11 @@ async function calculator(ctx) {
   el.innerHTML = `<div class="m-techos">${ui.pageHead({
     title: 'Value-creation calculator',
     sub: `<b>So what:</b> EBITDA uplift × today’s multiple, plus the re-rating on the new EBITDA, minus what the OS costs. Defaults come from the evidence file and the filings estimate tables; every input is an <b>est.</b> you can move.`,
-    chips: `${fmt.chip('est. · illustrative, not a forecast', 'var(--amber)')}${fmt.chip('Defaults: serviceos_evidence + *_filings', 'var(--cyan)')}`,
+    chips: `${fmt.chip('est. · illustrative, not a forecast', 'var(--amber)')}${fmt.chip('Defaults: ServiceOS evidence and company public filings', 'var(--cyan)')}`,
     actions: `${OUT_LINKS}<button class="btn sm" data-go="overview">Overview</button><button class="btn sm" data-go="evidence">Evidence</button>`,
   })}
   ${missingNote(ui, b)}
-  <div class="tx-plats" id="tx-plats" role="tablist" aria-label="Platform">${ORDER.map(k => `<button role="tab" data-k="${k}" style="--cc:${OS[k].hex}" aria-selected="${k === co}" class="${k === co ? 'on' : ''}"><span class="gi">${icon(k, 15)}</span><b>${escTxt(OS[k].os)}</b><span>${escTxt(OS[k].co)}</span></button>`).join('')}</div>
+  <div class="tx-plats" id="tx-plats" role="tablist" aria-label="Company">${ORDER.map(k => `<button role="tab" data-k="${k}" style="--cc:${OS[k].hex}" aria-selected="${k === co}" class="${k === co ? 'on' : ''}"><span class="gi">${icon(k, 15)}</span><b>${escTxt(OS[k].os)}</b><span>${escTxt(OS[k].co)}</span></button>`).join('')}</div>
   <div class="tx-calc">
     <section class="panel tx-in"><div class="panel-head"><div><h3>Inputs</h3><div class="sub" id="tx-in-sub"></div></div><div class="actions"><div class="seg" id="tx-scn"><button data-v="low">Low</button><button data-v="mid" class="active">Mid</button><button data-v="high">High</button></div></div></div><div class="panel-body" id="tx-inputs"></div><div class="panel-foot">${srcFoot(ui, b, '*_filings')}</div></section>
     <div class="tx-outcol" id="tx-out"></div>
@@ -743,7 +744,7 @@ async function calculator(ctx) {
       ${row('EBITDA today', $M(p.def.ebitda), p.src.ebitda ? `${p.src.ebitda.row.metric}: ${p.src.ebitda.row.estimate}` : (p.ra?.current_ebitda_estimate || 'built-in snapshot'), p.src.ebitda?.row?.confidence)}
       ${row(p.basis === 'revenue' ? 'EV / revenue today' : 'EV / EBITDA today', mult(p.def.mult, p.basis), p.mult.basis, 'low')}
       ${row('Net debt', $M(p.def.debt), p.src.debt ? `${p.src.debt.row.metric}: ${p.src.debt.row.estimate}` : 'built-in est.', p.src.debt?.row?.confidence)}
-      ${row('Margin uplift', `${trim(p.pts[0], 1)}–${trim(p.pts[1], 1)} pts`, `roadmap_assumption ${p.ra?.id || ''} (est.)`, null)}
+      ${row('Margin uplift', `${trim(p.pts[0], 1)}–${trim(p.pts[1], 1)} pts`, 'Roadmap assumption (est.)', null)}
       ${row('Multiple expansion', turnsTxt(p.turns, p.basis), p.premium?.support || 'roadmap assumption', null)}
       ${row('Investment', rangeM(p.inv), 'Software run-rate + implementation (est.)', null)}
       ${row('Probability of delivery', `${DEFAULTS.prob}%`, 'Analyst haircut, not from the evidence file', null)}
@@ -809,7 +810,7 @@ function formulaHtml(p, s, r) {
 
 /* ── Module ──────────────────────────────────────────────────────────────── */
 export default {
-  id: 'techos', name: 'Tech enablement', tag: 'OS program', color: 'var(--cyan)', group: 'Intelligence',
+  id: 'techos', name: 'Tech enablement', tag: 'OS', color: 'var(--cyan)', group: 'Intelligence',
   tagline: 'Six buyer-legible operating systems (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS) with sourced valuation evidence, a 24-month roadmap and value-creation math',
   hq: { lat: 40.7536, lon: -73.9832, label: 'Broad Sky Partners, New York, NY' },
   views: [
@@ -819,7 +820,7 @@ export default {
     { id: 'calculator', name: 'Calculator', icon: '$', render: calculator },
   ],
   tour: [
-    { order: 950, hash: '#/techos/overview', caption: '<b>Tech enablement.</b> One operating system per platform (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS), built from proven vendors plus this portal’s data layer.', narration: 'Tech enablement: one operating system per platform, built from proven vendors and this portal’s data layer, each tied to the KPIs a buyer pays for.', duration: 8000 },
+    { order: 950, hash: '#/techos/overview', caption: '<b>Tech enablement.</b> One operating system per company (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS), built from proven vendors plus this portal’s data layer.', narration: 'Tech enablement: one operating system per company, built from proven vendors and this portal’s data layer, each tied to the KPIs a buyer pays for.', duration: 8000 },
     { order: 953, hash: '#/techos/evidence', caption: '<b>Why buyers pay.</b> Banker data put repeatable-service firms at 10x+ versus 5–6x for project-heavy peers; we credit tech with only 0.5–2.5 turns of that spread.', narration: 'Banker data put repeatable, visible earnings at ten times or more, versus five to six for project-heavy work. We credit technology with only part of that spread.', duration: 8500 },
     { order: 956, hash: '#/techos/roadmap', caption: '<b>24-month roadmap.</b> Every OS shows first value inside 18 months; LabOS must reach Thomas Scientific’s lenders before the December 2027 maturity.', narration: 'Every program shows first value within eighteen months, and LabOS has to land before Thomas Scientific’s December 2027 loan maturity.', duration: 7500 },
     { order: 959, hash: '#/techos/calculator?co=pp', caption: '<b>Value math.</b> EBITDA uplift × multiple, plus re-rating, minus spend: ServiceOS alone is worth an est. ~$11M of EV in the mid case. Every input is a labelled estimate.', narration: 'The calculator turns margin uplift and re-rating into equity value, net of spend, with every input labelled as an estimate.', duration: 8000 },

@@ -1,10 +1,10 @@
 {
   "meta": {
     "dataset": "rival_filings",
-    "title": "Rival platforms — filings & financial research track (PE-backed and public competitors to Broad Sky Partners portfolio companies)",
+    "title": "Rival companies — filings & financial research track (PE-backed and public competitors to Broad Sky Partners portfolio companies)",
     "generated": "2026-09-24",
-    "subject": "Rival platforms across BSP portfolio overlaps: cet (commercial electrical, MA), punctual_pros (residential HVAC/plumbing, PA/NJ), frontline (legal managed IT / legal services), thomas_scientific (lab distribution), bpi (strategic comms / public affairs), fair_harbor (men's swim/casual apparel)",
-    "method": "(A) SEC EDGAR full-text search (efts.sec.gov) for each rival and its borrower entities (HGH Purchaser, Helios Buyer, Java Buyer, E-Phoenix, Skopima, DTI Holdco, Kite Bidco, Life Science Intermediate Holdings), then parsing of BDC 10-Q/10-K Schedules of Investments and N-PORT-P XML holdings (par, cost, fair value, spread, PIK, maturity) with User-Agent 'BroadSkyPortal research'; Form D XML parsing for co-invest/topco vehicles; lender 8-Ks. (B) SBA PPP FOIA public_150k_plus CSV (968,524 rows, local copy) regex-matched on rival borrower names; implied annual payroll costs = loan ÷ 2.5 × 12. (D) XBRL companyfacts API + 10-K/10-Q text for IES, Avantor, Stagwell, Solo Brands (revenue, operating income, employees, segments). Company websites for self-reported scale. Estimates are clearly labeled analyst computations.",
+    "subject": "Rival companies across BSP portfolio overlaps: cet (commercial electrical, MA), Punctual Pros (residential HVAC/plumbing, PA/NJ), frontline (legal managed IT / legal services), Thomas Scientific (lab distribution), bpi (strategic comms / public affairs), Fair Harbor (men's swim/casual apparel)",
+    "method": "(A) SEC EDGAR full-text search (efts.sec.gov) for each rival and its borrower entities (HGH Purchaser, Helios Buyer, Java Buyer, E-Phoenix, Skopima, DTI Holdco, Kite Bidco, Life Science Intermediate Holdings), then parsing of BDC 10-Q/10-K Schedules of Investments and N-PORT-P XML holdings (par, cost, fair value, spread, PIK, maturity) with User-Agent 'BroadSkyPortal research'; Form D XML parsing for co-invest/topco vehicles; lender 8-Ks. (B) SBA PPP FOIA PPP loans over $150k CSV (968,524 rows, local copy) regex-matched on rival borrower names; implied annual payroll costs = loan ÷ 2.5 × 12. (D) XBRL companyfacts API + 10-K/10-Q text for IES, Avantor, Stagwell, Solo Brands (revenue, operating income, employees, segments). Company websites for self-reported scale. Estimates are clearly labeled analyst computations.",
     "sources_summary": {
       "note": "approximate count of distinct source documents by type",
       "sec_bdc_10q_10k_schedules": 14,
@@ -18,17 +18,17 @@
     },
     "caveats": [
       "BDC/N-PORT holdings show only one lender's slice of each facility; total facility size, and therefore leverage and EBITDA, cannot be observed directly. Implied EBITDA ranges are analyst estimates.",
-      "PPP figures are from 2020–21 and predate most PE roll-ups; they describe the predecessor operating company, not the current platform.",
+      "PPP figures are from 2020–21 and predate most PE roll-ups; they describe the predecessor operating company, not the current company.",
       "PPP-implied payroll = loan/2.5×12 applies the $100k per-employee cap. Loans at the $10M cap (J&M Brown) are lower bounds.",
       "Web-search budget for this session was exhausted before this track started, so credit-rating press (Moody's/S&P/KBRA), deal press with revenue/EBITDA, Inc. 5000 listings and ownership confirmations could not be pulled. Ownership attributions in the brief (e.g., Bregal Sagemount for Horizon, MSCP for Sila, Genstar for Harbor Global, EagleTree for Integreon, OMERS/Harvest for Epiq, StoneCalibre for Calibre) are NOT verified by this dataset except where an item says so.",
       "Name collisions were screened out: 'Consilio Midco Limited (dba Cyncly)' (software) is not the legal Consilio; 'Redwood Services Group, LLC' (IT services, North Haven PIF) is not Redwood Services, LP (HVAC); 'Frontline Road Safety' is not BSP's Frontline; 'Horizon Services Acquisition, LLC' Form D (Bloomfield Hills MI pooled fund, 2024) could not be linked to Horizon Services and was excluded; sciens.com is an unrelated consulting firm.",
       "Website metrics are company-reported marketing claims and unaudited.",
-      "PPP items (rival-030, 031, 034, 035, 041, 045, 051) were not re-verified on 2026-09-24. Their source_url is the SBA dataset landing page, which lists no loan-level figures, and the CSV was not downloaded.",
+      "PPP items (rival-030, 031, 034, 035, 041, 045, 051) were not re-verified on 2026-09-24. Their source URL is the SBA dataset landing page, which lists no loan-level figures, and the CSV was not downloaded.",
       "Verified 2026-09-24: sampled 44, confirmed 44, removed 0"
     ],
     "item_count": 51,
     "financial_picture": [
-      "Home services is splitting in two. The scaled platforms (Wrench, Apex, Redwood, Legacy) borrow at S+425–475, marked at par, with delayed-draw lines for acquisitions. The next tier (TurnPoint, Horizon, Any Hour, Len the Plumber) has moved to part PIK interest and is marked at 89–94. Lenders are paying for scale and punishing leverage taken on at 2021-era prices.",
+      "Home services is splitting in two. The scaled companies (Wrench, Apex, Redwood, Legacy) borrow at S+425–475, marked at par, with delayed-draw lines for acquisitions. The next tier (TurnPoint, Horizon, Any Hour, Len the Plumber) has moved to part PIK interest and is marked at 89–94. Lenders are paying for scale and punishing leverage taken on at 2021-era prices.",
       "Punctual Pros' PA/NJ/DE footprint is exposed to the stressed side: Horizon Services (HGH Purchaser) has at least $211M of first lien at Blue Owl alone, paying 3.75% PIK, marked 92.5, with lenders also holding its common equity. Heartland's debt matures Dec 15, 2026. So two regional competitors are likely to sell assets or be restructured in the next 12 months rather than bid aggressively for add-ons.",
       "Sila (King of Prussia) and Haller (Lancaster, 254 trucks) are the healthier local rivals. Sila's 2,500+ employees imply about $0.45–0.65B revenue, versus a single ~96-person company in its 2020 PPP record, so its growth has come almost entirely from acquisitions.",
       "For CET, IES's Commercial & Industrial segment is the cleanest margin benchmark: $427.7M revenue, 20.3% gross margin, 11.0% operating margin, and backlog that doubled to $625.2M. Across the whole company, IES earns 11.4% operating margins with no net debt, so it can pay strategic prices for New England contractors.",
@@ -144,7 +144,7 @@
       "Vuori (General Atlantic) and Outerknown: no SEC, PPP or BDC footprint found, so there are no financial data points in this dataset."
     ],
     "next_pulls": [
-      "Raise CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION, then pull Moody's/S&P rating actions and PE Hub/9fin/PRN deal press for Wrench (2025 refi size), Apex (2024 refi size), TurnPoint (amendment/PIK), Consilio and Epiq (term loan sizes, ratings), Kite Bidco/FGS, Calibre, Horizon (restructuring details).",
+      "Raise the web-search limit, then pull Moody's/S&P rating actions and PE Hub/9fin/PRN deal press for Wrench (2025 refi size), Apex (2024 refi size), TurnPoint (amendment/PIK), Consilio and Epiq (term loan sizes, ratings), Kite Bidco/FGS, Calibre, Horizon (restructuring details).",
       "EDGAR full-text search for the Sila borrower entity (try 'Sila Intermediate', 'SSG Buyer', 'Sila Parent') and for Harbor Global's and Haller's lenders; check BDC SOIs for 'Haller'.",
       "MA Secretary of the Commonwealth corporate filings and UCC searches for Interstate Electrical Services Corp., J.&M. Brown Company, Wayne J. Griffin Electric, Sullivan & McLaughlin Companies (officers, secured parties that would reveal PE or bank lenders).",
       "OSHA establishment search (osha.gov/ords/imis/establishment.html) for Interstate, J&M Brown, Griffin, S&M, Haller, Horizon, Sila, to get inspection counts and headcount at inspected sites.",
@@ -188,7 +188,7 @@
       "cik": "0001048268",
       "xbrl_source": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001048268.json",
       "verification_notes": [
-        "2026-09-24: all FY2025/FY2024 figures were confirmed in the 10-K except employees_2024_09_30 (9,485), which does not appear in this filing (probably from the FY2024 10-K)."
+        "2026-09-24: all FY2025/FY2024 figures were confirmed in the 10-K except employees at Sep 30, 2024 (9,485), which does not appear in this filing (probably from the FY2024 10-K)."
       ]
     },
     {
@@ -306,7 +306,7 @@
         "thomas_scientific"
       ],
       "verification_notes": [
-        "2026-09-24: $785.0M Q3 2025 goodwill impairment confirmed in 10-K; the 10-K says the unit was formerly the 'Buy Sell' reporting unit (corrected). q3_2025_operating_income (-648.8M) is not in the cited 10-K (from Q3 2025 10-Q), so it was not verified here."
+        "2026-09-24: $785.0M Q3 2025 goodwill impairment confirmed in 10-K; the 10-K says the unit was formerly the 'Buy Sell' reporting unit (corrected). Q3 2025 operating income (-648.8M) is not in the cited 10-K (from Q3 2025 10-Q), so it was not verified here."
       ]
     },
     {
@@ -580,7 +580,7 @@
         "investment_date": "2025-10-01",
         "maturity": "2032-09-03"
       },
-      "what_it_tells_us": "At least three private-credit lenders (OHA, AGL, Senior Credit Investments/Jefferies) hold the Sept-2025 Wrench facility, so it is a club unitranche that is probably well over $1B. It is the pricing benchmark (S+475) for scaled home-services platforms. The claim that the total facility tops $1B is an inference from how many lenders participate and Wrench's scale, not a disclosed figure.",
+      "what_it_tells_us": "At least three private-credit lenders (OHA, AGL, Senior Credit Investments/Jefferies) hold the Sept-2025 Wrench facility, so it is a club unitranche that is probably well over $1B. It is the pricing benchmark (S+475) for scaled home-services companies. The claim that the total facility tops $1B is an inference from how many lenders participate and Wrench's scale, not a disclosed figure.",
       "confidence": "high",
       "source_url": "https://www.sec.gov/Archives/edgar/data/2011498/000119312525256187/d938112d8k.htm",
       "retrieved": "2026-09-24",
@@ -643,7 +643,7 @@
         "customers_per_year": "2.5M+",
         "brands": 24
       },
-      "what_it_tells_us": "With 7,400 employees and 5,500 trucks, Wrench is roughly 20–30x the size of a typical LMM regional HVAC/plumbing platform. At $200–270k revenue per employee that implies about $1.5–2.0B revenue (analyst estimate, not company-disclosed).",
+      "what_it_tells_us": "With 7,400 employees and 5,500 trucks, Wrench is roughly 20–30x the size of a typical LMM regional HVAC/plumbing company. At $200–270k revenue per employee that implies about $1.5–2.0B revenue (analyst estimate, not company-disclosed).",
       "confidence": "medium",
       "source_url": "https://www.wrenchgroup.com",
       "retrieved": "2026-09-24",
@@ -740,7 +740,7 @@
         "kkr_usdl_fund_u_tl_mark_pct": 93.63,
         "kkr_usdl_fund_u_tl_par_usd": 10132594
       },
-      "what_it_tells_us": "TurnPoint's spread rose from S+500 to S+550 with 2.8% PIK now being accrued, and the loan is marked at 94. That pattern means an amendment that gave the company interest relief, i.e. a leveraged platform under pressure.",
+      "what_it_tells_us": "TurnPoint's spread rose from S+500 to S+550 with 2.8% PIK now being accrued, and the loan is marked at 94. That pattern means an amendment that gave the company interest relief, i.e. a leveraged portfolio company under pressure.",
       "confidence": "high",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1422183/000162828026053783/fsk-20260630.htm",
       "retrieved": "2026-09-24",
@@ -773,7 +773,7 @@
         "prior_period_tl_par_usd": 194861000,
         "prior_period_tl_fair_value_usd": 179760000
       },
-      "what_it_tells_us": "Horizon Services (a Delaware-based HVAC/plumbing/electrical platform serving the DE/PA/NJ market, a Punctual Pros rival in its region) has at least $211M of first-lien debt at OBDC alone. Part of the interest is paid in kind (PIK) at 3.75%, the loan is marked at 92.5, and it matures November 2028. Blue Owl also holds the equity, so this is a distressed, lender-supported platform.",
+      "what_it_tells_us": "Horizon Services (a Delaware-based HVAC/plumbing/electrical company serving the DE/PA/NJ market, a Punctual Pros rival in its region) has at least $211M of first-lien debt at OBDC alone. Part of the interest is paid in kind (PIK) at 3.75%, the loan is marked at 92.5, and it matures November 2028. Blue Owl also holds the equity, so this is a distressed, lender-supported portfolio company.",
       "confidence": "high",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1655888/000165588826000056/obdc-20260630.htm",
       "retrieved": "2026-09-24",
@@ -834,7 +834,7 @@
         "holdco_unsecured_par_usd": 9544000,
         "holdco_unsecured_fair_value_usd": 8184000
       },
-      "what_it_tells_us": "Another Mid-Atlantic plumbing/HVAC platform on PIK and marked in the low 90s. Several PE-backed rivals in the Punctual Pros footprint are over-levered, which favors disciplined buyers of add-ons.",
+      "what_it_tells_us": "Another Mid-Atlantic plumbing/HVAC company on PIK and marked in the low 90s. Several PE-backed rivals in the Punctual Pros footprint are over-levered, which favors disciplined buyers of add-ons.",
       "confidence": "high",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1655888/000165588826000056/obdc-20260630.htm",
       "retrieved": "2026-09-24",
@@ -903,9 +903,9 @@
         "founded": 2017,
         "brands": "over 25",
         "workforce_growth_claim_pct": 40,
-        "workforce_growth_claim_pct_scope": "single partner-company testimonial (Schaafsma Heating & Cooling), not a platform-wide figure"
+        "workforce_growth_claim_pct_scope": "single partner-company testimonial (Schaafsma Heating & Cooling), not a company-wide figure"
       },
-      "what_it_tells_us": "A 2017-vintage buy-and-build of 25+ local brands. Its debt now falls due in December 2026, so the sponsor is probably trying to sell or recapitalize the platform.",
+      "what_it_tells_us": "A 2017-vintage buy-and-build of 25+ local brands. Its debt now falls due in December 2026, so the sponsor is probably trying to sell or recapitalize the company.",
       "confidence": "medium",
       "source_url": "https://www.heartlandhomeservices.com",
       "retrieved": "2026-09-24",
@@ -916,7 +916,7 @@
         "punctual_pros"
       ],
       "verification_notes": [
-        "2026-09-24: the founding year (2017) and 'over 25' brands were confirmed. The 40% workforce growth is one acquired company's testimonial, not a platform metric (clarified)."
+        "2026-09-24: the founding year (2017) and 'over 25' brands were confirmed. The 40% workforce growth is one acquired company's testimonial, not a company metric (clarified)."
       ]
     },
     {
@@ -994,7 +994,7 @@
         "customers_per_year": "200,000+",
         "hq": "Tampa, FL"
       },
-      "what_it_tells_us": "Legacy is a mid-size partnership platform: 22+ brands serving about 200k customers a year, likely $300–500M of revenue (analyst estimate). It competes directly for founder-owned HVAC/plumbing companies.",
+      "what_it_tells_us": "Legacy is a mid-size partnership portfolio company: 22+ brands serving about 200k customers a year, likely $300–500M of revenue (analyst estimate). It competes directly for founder-owned HVAC/plumbing companies.",
       "confidence": "medium",
       "source_url": "https://www.legacyservicepartners.com",
       "retrieved": "2026-09-24",
@@ -1029,7 +1029,7 @@
       ],
       "secondary_url": "https://www.sec.gov/Archives/edgar/data/1920145/000119312526033659/d99038dn148c.htm",
       "verification_notes": [
-        "2026-09-24: website metrics confirmed. The site currently describes Goldman Sachs Alternatives as Sila's private-equity partner, so GS ownership looks current rather than 'prior'. This conflicts with the MSCP attribution noted in meta.caveats."
+        "2026-09-24: website metrics confirmed. The site currently describes Goldman Sachs Alternatives as Sila's private-equity partner, so GS ownership looks current rather than 'prior'. This conflicts with the MSCP attribution noted in the dataset caveats."
       ]
     },
     {
@@ -1038,7 +1038,7 @@
       "category": "sba_ppp",
       "title": "PPP loan — Sila Heating and Air Conditioning, Inc., King of Prussia PA",
       "filed_or_dated": "2020-04-06",
-      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus)",
+      "filer_or_source_agency": "SBA PPP FOIA (PPP loans over $150k)",
       "key_figures": {
         "loan_number": "6254277002",
         "approved_amount_usd": 1534600,
@@ -1049,7 +1049,7 @@
         "forgiveness_date": "2020-12-08",
         "implied_annual_payroll_costs_usd": 7366080
       },
-      "what_it_tells_us": "In 2020 the original Sila operating company had about 96 employees and roughly $7.4M of payroll costs (loan ÷ 2.5 × 12), about $20–25M revenue. That shows how much of the platform's current scale came from acquisitions.",
+      "what_it_tells_us": "In 2020 the original Sila operating company had about 96 employees and roughly $7.4M of payroll costs (loan ÷ 2.5 × 12), about $20–25M revenue. That shows how much of the company's current scale came from acquisitions.",
       "confidence": "high",
       "source_url": "https://data.sba.gov/dataset/ppp-foia",
       "retrieved": "2026-09-24",
@@ -1066,7 +1066,7 @@
       "category": "sba_ppp",
       "title": "PPP loans — Any Hour Inc and Any Hour Dig Pro's, LLC (Orem, UT)",
       "filed_or_dated": "2020-04-14",
-      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus)",
+      "filer_or_source_agency": "SBA PPP FOIA (PPP loans over $150k)",
       "key_figures": {
         "any_hour_inc_loan_number": "5752777106",
         "any_hour_inc_amount_usd": 3251800,
@@ -1134,7 +1134,7 @@
         "ncdl_legacy_ddtl_par_usd": 4821000,
         "mark_pct": 100.0
       },
-      "what_it_tells_us": "In Feb 2026 Sciens (a building-systems/fire-life-safety platform; the Huron ownership in the brief is not verified here) repriced to S+450 and pushed maturity out 3 years, with marks at par. It has cheap, flexible debt for buying Northeast building-systems contractors that CET might also target.",
+      "what_it_tells_us": "In Feb 2026 Sciens (a building-systems/fire-life-safety portfolio company; the Huron ownership in the brief is not verified here) repriced to S+450 and pushed maturity out 3 years, with marks at par. It has cheap, flexible debt for buying Northeast building-systems contractors that CET might also target.",
       "confidence": "high",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1736035/000173603526000016/bxsl-20260630.htm",
       "retrieved": "2026-09-24",
@@ -1155,7 +1155,7 @@
       "category": "sba_ppp",
       "title": "PPP loan — Interstate Electrical Services Corp.",
       "filed_or_dated": "2020-04-13",
-      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus)",
+      "filer_or_source_agency": "SBA PPP FOIA (PPP loans over $150k)",
       "key_figures": {
         "loan_number": "5067577107",
         "approved_amount_usd": 8572700,
@@ -1183,7 +1183,7 @@
       "category": "sba_ppp",
       "title": "PPP loan — J.&M. Brown Company, Inc. (at $10M program cap)",
       "filed_or_dated": "2020-04-15",
-      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus)",
+      "filer_or_source_agency": "SBA PPP FOIA (PPP loans over $150k)",
       "key_figures": {
         "loan_number": "8322977100",
         "approved_amount_usd": 10000000,
@@ -1235,7 +1235,7 @@
       ],
       "secondary_url": "https://www.sec.gov/Archives/edgar/data/1959372/000089418926023847/primary_doc.xml",
       "verification_notes": [
-        "2026-09-24: marks of 90.95 / 77.85 / 82.23 were confirmed from Lincoln Partners Group Royalty Fund N-PORTs (periods 12/31/2025, 3/31/2026, 6/30/2026; the Lincoln slice was $496,177 par / $408,001 value on 6/30/2026), along with the 7.39% coupon and 2028-05-12 maturity. The Aristotle fund figures come from secondary_url and were not checked."
+        "2026-09-24: marks of 90.95 / 77.85 / 82.23 were confirmed from Lincoln Partners Group Royalty Fund N-PORTs (periods 12/31/2025, 3/31/2026, 6/30/2026; the Lincoln slice was $496,177 par / $408,001 value on 6/30/2026), along with the 7.39% coupon and 2028-05-12 maturity. The Aristotle fund figures come from secondary URL and were not checked."
       ]
     },
     {
@@ -1366,7 +1366,7 @@
       "category": "sba_ppp",
       "title": "PPP loan — Kraft & Kennedy, Inc.",
       "filed_or_dated": "2020-04-09",
-      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus)",
+      "filer_or_source_agency": "SBA PPP FOIA (PPP loans over $150k)",
       "key_figures": {
         "loan_number": "8996177005",
         "approved_amount_usd": 1568427,
@@ -1476,7 +1476,7 @@
       "category": "sba_ppp",
       "title": "PPP loan — CELLTREAT Scientific Products, LLC",
       "filed_or_dated": "2020-04-29",
-      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus)",
+      "filer_or_source_agency": "SBA PPP FOIA (PPP loans over $150k)",
       "key_figures": {
         "loan_number": "2402227308",
         "approved_amount_usd": 252530,
@@ -1658,7 +1658,7 @@
       "category": "sba_ppp",
       "title": "PPP loan — Chubbies, Inc. (pre-Solo Brands acquisition)",
       "filed_or_dated": "2020-04-09",
-      "filer_or_source_agency": "SBA PPP FOIA (public_150k_plus)",
+      "filer_or_source_agency": "SBA PPP FOIA (PPP loans over $150k)",
       "key_figures": {
         "loan_number": "9018667003",
         "approved_amount_usd": 1561435,

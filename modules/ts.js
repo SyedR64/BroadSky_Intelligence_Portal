@@ -1,10 +1,11 @@
+import * as Copy from './copy.js?v=20261006122625';
 /* Thomas Scientific — target-account intelligence, add-on screen and financial picture.
-   Data: data/ts_sites (27.5K scored sites, columnar) is the single source for every site and account number:
+   Data: Thomas Scientific lab sites (27.5K scored sites, columnar) is the single source for every site and account number:
    parent accounts are rolled up from it, so the overview and the account list always agree.
-   data/ts_parents (legacy top-500 account plan) only flags plan membership. research/ma_targets_fl_ts,
-   research/thomas_filings, research/public_comps. Lender marks and sponsor equity marks sit behind the
+   Thomas Scientific parent accounts (legacy top-500 account plan) only flags plan membership. Frontline and Thomas Scientific add-on targets,
+   Thomas Scientific public filings, Public comparables. Lender marks and sponsor equity marks sit behind the
    BSP-only deal-team toggle on the Financials view (#/ts/filings?deal=1), never on company-facing views. */
-import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261006090506';
+import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261006122625';
 
 const C = 'var(--c-ts)', HEX = '#2ecc8f';
 const HQ = { lat: 39.7476, lon: -75.3105, label: 'Swedesboro, NJ' };
@@ -60,7 +61,7 @@ const PLAYS = {
 };
 const playFor = a => PLAYS[a] || { motion: 'Qualify', play: 'Qualify buying centre and current distributor before assigning a motion.', owner: 'Inside sales' };
 
-function injectCss() { if (!document.getElementById('css-ts')) { const l = document.createElement('link'); l.id = 'css-ts'; l.rel = 'stylesheet'; l.href = 'modules/ts.css?v=20261006090506'; document.head.appendChild(l); } }
+function injectCss() { if (!document.getElementById('css-ts')) { const l = document.createElement('link'); l.id = 'css-ts'; l.rel = 'stylesheet'; l.href = 'modules/ts.css?v=20261006122625'; document.head.appendChild(l); } }
 
 /* ── Aggregation (computed once per session, reused by every view) ───────────── */
 let AGG = null;
@@ -122,7 +123,7 @@ function indexEntities(app, accts) {
 
 async function loadCore(ctx) {
   try { const [A, plan] = await Promise.all([getSites(ctx.data), ctx.data.load('ts_parents').catch(() => [])]); const accounts = rollup(A, plan); indexEntities(ctx.app, accounts); return { A, accounts, plan }; }
-  catch (e) { ctx.el.innerHTML = `<div class="m-ts">${ctx.ui.pageHead({ title: 'Thomas Scientific', sub: 'Site and account tables could not be loaded.' })}${ctx.ui.note(`Thomas Scientific site tables are unavailable (${ctx.esc(e.message)}). Check data/ts_sites.json.`, 'warn')}</div>`; return null; }
+  catch (e) { ctx.el.innerHTML = `<div class="m-ts">${ctx.ui.pageHead({ title: 'Thomas Scientific', sub: 'Site and account tables could not be loaded.' })}${ctx.ui.note(`Thomas Scientific site tables are unavailable (${ctx.esc(e.message)}). Check Thomas Scientific lab sites.`, 'warn')}</div>`; return null; }
 }
 
 /* ── Shared renderers ─────────────────────────────────────────────────────── */
@@ -232,7 +233,7 @@ async function overview(ctx) {
   const stTop = sortedEntries(A.byState); const top3 = stTop.slice(0, 3); const top3Share = top3.reduce((s, x) => s + x[1], 0) / A.rows.length;
   const plan = accounts.filter(p => p.in_top500_plan && p.coverage_priority === 'Pursue').length;
   const sub = `<b>So what:</b> ${fmt.num(A.pursueParents)} Pursue accounts (${fmt.num(A.pursue.length)} sites) bill ${fmt.money(A.pursueCms)}, ${fmt.num(pShareCms * 100, 0)}% of the universe's 2023 Medicare-allowed lab spend (a ${PROXY}). That list is small enough for named-account coverage. ${fmt.num(A.ent.parents)} national-contract parents (Quest, Labcorp and Sonic subsidiaries, national specialty labs, IDNs) move to an Enterprise / GPO play, and non-lab IDTF and imaging sites are excluded.${mat ? ` With the credit facility maturing ${esc(mat)}, revenue from these target accounts is what matters.` : ''}`;
-  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Thomas Scientific — target-account intelligence', sub, chips: `${fmt.chip('Lab supply distribution · est. 1900', C)}${fmt.chip('BSP since Jan 2022 (from Carlyle)')}${fmt.chip('HQ Swedesboro, NJ')}`, actions: `<a class="btn" href="#/ts/accounts">Accounts</a><a class="btn" href="#/ts/sites?label=Pursue">Pursue sites</a><a class="btn" href="#/ts/filings">Financials</a>` })}
+  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Thomas Scientific', sub, chips: `${fmt.chip('Lab supply distribution · est. 1900', C)}${fmt.chip('BSP since Jan 2022 (from Carlyle)')}${fmt.chip('HQ Swedesboro, NJ')}`, actions: `<a class="btn" href="#/ts/accounts">Accounts</a><a class="btn" href="#/ts/sites?label=Pursue">Pursue sites</a><a class="btn" href="#/ts/filings">Financials</a>` })}
   ${ui.kpis([
     { label: 'Pursue accounts', value: fmt.num(A.pursueParents), sub: `${fmt.num(A.pursue.length)} Pursue sites · named-account list`, color: 'var(--green)' },
     { label: 'Pursue Medicare 2023', value: fmt.money(A.pursueCms), sub: `${fmt.num(pShareCms * 100, 0)}% of universe · ${PROXY}`, color: 'var(--c-fin)' },
@@ -444,7 +445,7 @@ async function sites(ctx) {
 async function targetsView(ctx) {
   const { el, ui, fmt, maps, esc, data, params } = ctx; injectCss();
   const ma = await data.research('ma_targets_fl_ts');
-  if (!ma) { el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Add-on targets', sub: 'Lab and cleanroom distributor screen for Thomas Scientific' })}${ui.note('Research dataset not yet available (research/ma_targets_fl_ts).', 'warn')}</div>`; return; }
+  if (!ma) { el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Add-on targets', sub: 'Lab and cleanroom distributor screen for Thomas Scientific' })}${ui.note('Research dataset not yet available (Frontline and Thomas Scientific add-on targets).', 'warn')}</div>`; return; }
   const items = (ma.items || []).filter(t => t.platform === 'thomas_scientific');
   const meta = ma.meta?.thomas_scientific || {}; const ranked = meta.ranked_top_8 || []; const pe = meta.pe_backed_competitors || []; const pc = meta.platform_context || {};
   const A = await getSites(data).catch(() => null);
@@ -461,17 +462,17 @@ async function targetsView(ctx) {
   ])}
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Targets against the demand map', sub: 'Candidate HQs (amber, sized by fit) over Thomas scored-site clusters (slate)', body: '<div class="map" id="tg-map" style="min-height:420px"></div>', flush: true, foot: ui.source('Company websites · ZoomInfo · TS site file', 'https://www.zoominfo.com', ma.meta?.generated) })}
-    ${ui.panel({ title: 'Ranked shortlist (top 8)', sub: 'Click to open the dossier', body: `<div id="tg-rank">${top8.map((t, i) => `<div class="rk" data-q="${esc(t.company)}"><span class="i">${esc(ranked[i]?.rank ?? i + 1)}</span><div style="min-width:0"><div class="t">${esc(t.company)}</div><div class="s">${esc(t.hq_city || '')}, ${esc(t.state || '')} · ${fmt.num(t.employees)} staff · ${fmt.money(t.revenue_est_usd)} est.</div></div>${fmt.score(t.fit_score)}</div>`).join('') || ui.empty('No ranked shortlist in dataset')}</div>`, foot: ui.source('BSP add-on screen (ma_targets_fl_ts)', null, ma.meta?.generated) })}
+    ${ui.panel({ title: 'Ranked shortlist (top 8)', sub: 'Click to open the dossier', body: `<div id="tg-rank">${top8.map((t, i) => `<div class="rk" data-q="${esc(t.company)}"><span class="i">${esc(ranked[i]?.rank ?? i + 1)}</span><div style="min-width:0"><div class="t">${esc(t.company)}</div><div class="s">${esc(t.hq_city || '')}, ${esc(t.state || '')} · ${fmt.num(t.employees)} staff · ${fmt.money(t.revenue_est_usd)} est.</div></div>${fmt.score(t.fit_score)}</div>`).join('') || ui.empty('No ranked shortlist in dataset')}</div>`, foot: ui.source('Broad Sky add-on screen (Frontline and Thomas Scientific add-on targets)', null, ma.meta?.generated) })}
   </div>
   <div class="mt-12">${ui.panel({ title: 'Full screen', sub: 'Filters · sortable · CSV · click a row for fit breakdown, sources and next action', body: '<div id="tg-screen"></div>', foot: `<span class="dim">${esc((ma.meta?.caveats || [])[0] || '')}</span>` })}</div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'PE-backed competitors for the same targets', sub: 'Who bids against Thomas for lab distributors', body: pe.length ? pe.map(p => `<div class="pcard"><div class="t">${esc(p.company)}</div><div class="s">${esc(p.hq || '')} · ${esc(p.sponsor || 'Sponsor not verified')}${p.scale ? ` · ${esc(p.scale)}` : ''}</div><div class="d">${esc(p.notes || '')}</div><div class="small mt-8">${(p.sources || []).map(s => fmt.link(s)).join(' · ')}</div></div>`).join('') : ui.empty('No competitor list in dataset'), foot: ui.source('BSP add-on screen (ma_targets_fl_ts) · company sites · ZoomInfo', null, ma.meta?.generated) })}
-    ${ui.panel({ title: 'Platform add-on history', sub: 'Pattern: regional life-science and cleanroom distributors', body: `${ui.timeline((pc.prior_acquisitions || []).slice().reverse().map(a => ({ date: (String(a).match(/\(([^)]*)\)\s*$/) || [])[1] || '', text: String(a).replace(/\s*\([^)]*\)\s*$/, '') })))}${actList(esc, [
+    ${ui.panel({ title: 'PE-backed competitors for the same targets', sub: 'Who bids against Thomas for lab distributors', body: pe.length ? pe.map(p => `<div class="pcard"><div class="t">${esc(p.company)}</div><div class="s">${esc(p.hq || '')} · ${esc(p.sponsor || 'Sponsor not verified')}${p.scale ? ` · ${esc(p.scale)}` : ''}</div><div class="d">${esc(p.notes || '')}</div><div class="small mt-8">${(p.sources || []).map(s => fmt.link(s)).join(' · ')}</div></div>`).join('') : ui.empty('No competitor list in dataset'), foot: ui.source('Broad Sky add-on screen (Frontline and Thomas Scientific add-on targets) · company sites · ZoomInfo', null, ma.meta?.generated) })}
+    ${ui.panel({ title: 'Company add-on history', sub: 'Pattern: regional life-science and cleanroom distributors', body: `${ui.timeline((pc.prior_acquisitions || []).slice().reverse().map(a => ({ date: (String(a).match(/\(([^)]*)\)\s*$/) || [])[1] || '', text: String(a).replace(/\s*\([^)]*\)\s*$/, '') })))}${actList(esc, [
       { h: 'Re-open the add-on engine', d: 'There has been no deal since Oct 2023. Run owner outreach on the top 8 through PRG; start with founder- and family-owned targets (lowest process risk).' },
       { h: 'Buy margin, not just revenue', d: 'Prioritize targets that add gross margin and stocking reach: private label, cleanroom, equipment service. Structure with seller notes or earn-outs where founders stay on.' },
     ])}`, foot: `<span class="src">Sources: ${(pc.sources || []).slice(0, 4).map(s => fmt.link(s)).join(' · ')}</span>` })}
   </div></div>`;
-  const ctl = renderTargets(ctx, el.querySelector('#tg-screen'), { items, color: C, platformLabel: 'Thomas Scientific', exportName: 'ts_addon_targets', pageSize: 30 });
+  const ctl = renderTargets(ctx, el.querySelector('#tg-screen'), { items: Copy.targets(items), color: C, platformLabel: 'Thomas Scientific', exportName: 'ts_addon_targets', pageSize: 30 });
   const focus = q => { const inp = el.querySelector('#tg-screen input[type=search]'); if (!inp) return; inp.value = q; inp.dispatchEvent(new Event('input')); setTimeout(() => el.querySelector('#tg-screen tbody tr[data-i]')?.click(), 260); };
   el.querySelectorAll('#tg-rank .rk').forEach(d => d.onclick = () => focus(d.dataset.q));
   const map = maps.create(el.querySelector('#tg-map'), { center: [40, -92], zoom: 4 });
@@ -504,9 +505,9 @@ async function filings(ctx) {
   const sub = deal
     ? (cr?.last ? `<b>So what:</b> Broad Sky put ${fmt.money(cr.formD?.v)} of equity into Thomas. Apollo's BDCs now mark the unitranche at ${fmt.num(cr.last[1].pct, 1)}% of par and the sponsor common at ${esc(eqv?.estimate || '≈0')}. That implies EBITDA of ${esc(ebitda?.estimate || 'n/a')} (est.) against ${esc(lev?.estimate || 'n/a')} leverage, with maturity ${esc(fmt.date(dfix(cr.maturity)))}. The operating plan has to grow gross profit in target accounts, not just revenue.` : 'Credit and equity marks for Thomas Scientific from public filings.')
     : `<b>So what:</b> Thomas is an estimated ${esc(rev?.estimate || 'n/a')} lab-supply distributor (est., ZoomInfo-modeled) whose COVID federal revenue ($84–91M a year in FY2020–21) has normalized to ${esc(fedNow || 'n/a')}. Listed lab-distribution peers grew a median ${pctTxt(fmt, labB?.median_revenue_growth_latest_pct)} last year, so growth has to come from share-of-wallet in target accounts and private-label mix, not the market.${mat ? ` Maturity ${esc(mat)}: target-account revenue matters.` : ''}`;
-  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: deal ? 'Deal team: credit & equity marks' : 'Financials & market', sub, actions: fil ? toggle : '', chips: deal ? `${fmt.chip('BSP internal · do not forward', 'var(--red)')}${fmt.chip('SEC EDGAR · BDC schedules', C)}${fmt.chip('Form D')}${fmt.chip('Estimates are labelled est.', 'var(--amber)')}` : `${fmt.chip('USASpending', C)}${fmt.chip('SEC XBRL peers')}${fmt.chip('Company releases')}${fmt.chip('Estimates are labelled est.', 'var(--amber)')}` })}
+  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: deal ? 'Credit and equity marks' : 'Filings and financials', sub, actions: fil ? toggle : '', chips: deal ? `${fmt.chip('BSP internal · do not forward', 'var(--red)')}${fmt.chip('SEC EDGAR · BDC schedules', C)}${fmt.chip('Form D')}${fmt.chip('Estimates are labelled est.', 'var(--amber)')}` : `${fmt.chip('USASpending', C)}${fmt.chip('SEC XBRL peers')}${fmt.chip('Company releases')}${fmt.chip('Estimates are labelled est.', 'var(--amber)')}` })}
   ${deal ? ui.note('<b>BSP deal team only.</b> This view shows lender marks, sponsor equity marks and implied EV / leverage from public BDC and N-PORT filings. Do not forward to Thomas Scientific management; use the company view for operating discussions.', 'warn') : ''}
-  ${!cr ? ui.note('Thomas Scientific filings dataset not yet available (research/thomas_filings).', 'warn') : deal ? ui.kpis([
+  ${!cr ? ui.note('Thomas Scientific filings dataset not yet available (Thomas Scientific public filings).', 'warn') : deal ? ui.kpis([
     { label: 'Sponsor equity raised', value: fmt.money(cr.formD?.v), sub: `Form D · BSP-TS, LP`, color: 'var(--c-bsp)' },
     { label: 'Loan mark (MFIC)', value: `${fmt.num(cr.last?.[1].pct, 1)}%`, sub: `of par · ${esc(cr.last?.[0] || '')}`, color: (cr.last?.[1].pct || 100) < 95 ? 'var(--red)' : 'var(--green)' },
     { label: 'Maturity', value: esc(fmt.date(dfix(cr.maturity))), sub: matDays != null ? `${fmt.num(matDays)} days · refinancing window` : '', color: matDays != null && matDays < 540 ? 'var(--amber)' : 'var(--accent)' },
@@ -537,7 +538,7 @@ async function filings(ctx) {
 
   // comps
   const labs = (comps?.items || []).filter(i => i.sector_tag === 'lab_distribution' || (i.secondary_sector_tags || []).includes('lab_distribution'));
-  if (!comps || !labs.length) { el.querySelector('#fc-t').innerHTML = `<div style="padding:12px">${ui.note('Public comps dataset not yet available (research/public_comps).', 'warn')}</div>`; el.querySelector('#fc-imp').innerHTML = ui.empty('No comps'); }
+  if (!comps || !labs.length) { el.querySelector('#fc-t').innerHTML = `<div style="padding:12px">${ui.note('Public comps dataset not yet available (Public comparables).', 'warn')}</div>`; el.querySelector('#fc-imp').innerHTML = ui.empty('No comps'); }
   else {
     const rr = rangeM(rev?.estimate), er = deal ? rangeM(ebitda?.estimate) : null; // company view: no EBITDA estimate (it is derived from lender marks)
     // revenue/employee: a ZoomInfo record if present, else est. revenue midpoint ÷ estimate-table headcount
@@ -579,7 +580,7 @@ async function filings(ctx) {
       data_gaps: (m.data_gaps || []).filter(g => !/facility|lender|rating|debt|UCC|Capital Constellation|BDC|Form D/i.test(g)),
       next_pulls: (m.next_pulls || []).filter(g => !/MFIC|MAIPL|N-PORT|UCC|Form D|recapitali/i.test(g)) } };
   }
-  renderFilings(ctx, el.querySelector('#fc-fil'), { data: filN, color: C, title: 'Thomas Scientific' });
+  renderFilings(ctx, el.querySelector('#fc-fil'), { data: Copy.filings(filN), color: C, title: 'Thomas Scientific' });
 }
 function fedPanel(ctx, cr, fil) {
   const { ui, charts, fmt } = ctx;
@@ -606,7 +607,7 @@ function openComp(ctx, r) {
 }
 
 export default {
-  id: 'ts', name: 'Thomas Scientific', tag: 'Lab supply', color: C, group: 'Portfolio',
+  id: 'ts', name: 'Thomas Scientific', tag: 'Labs', color: C, group: 'Portfolio',
   tagline: 'Lab supplies & equipment distribution — research, biopharma, clinical diagnostics, cleanroom',
   hq: HQ,
   views: [
@@ -614,7 +615,7 @@ export default {
     { id: 'accounts', name: 'Accounts', icon: '▦', render: accounts },
     { id: 'sites', name: 'Site explorer', icon: '⌖', render: sites },
     { id: 'targets', name: 'Add-on targets', icon: '◎', render: targetsView },
-    { id: 'filings', name: 'Financials', icon: '§', render: filings },
+    { id: 'filings', name: 'Filings and financials', icon: '§', render: filings },
   ],
   tour: [
     { order: 500, hash: '#/ts/overview', caption: '<b>Thomas Scientific.</b> 27.5K scored lab & hospital sites; 643 Pursue accounts (650 sites) bill ~$3.1B of 2023 Medicare, a test-volume proxy. National-contract labs move to an Enterprise play.', narration: 'Thomas Scientific: six hundred and forty Pursue accounts bill about three billion dollars of Medicare lab volume. That is the named-account list; national networks are a separate enterprise play.', duration: 9000 },

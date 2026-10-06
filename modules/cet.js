@@ -1,8 +1,9 @@
+import * as Copy from './copy.js?v=20261006122625';
 /* ═══════════════════════════════════════════════════════════════════════════
    CET — Commonwealth Electrical Technologies (Worcester + Taunton MA; NuWave, Norwell MA;
    Horton Electrical Services, CT). New England only — NYC analysis archived (CEO guidance).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, renderFilings, opportunityCard, fitTierOf } from '../assets/components.js?v=20261006090506';
+import { renderTargets, renderFilings, opportunityCard, fitTierOf } from '../assets/components.js?v=20261006122625';
 
 const COLOR = 'var(--c-cet)';
 const HEX = { cet: '#4c8dff', cyan: '#3fd0e0', amber: '#f5b73d', green: '#2ecc8f', purple: '#9d7bff', blue: '#4c8dff', muted: '#8b98a8', red: '#ff5c5c', orange: '#f08a3c', dim: '#5b6b7f', pink: '#e05c8a', sky: '#8ab4ff' };
@@ -21,11 +22,11 @@ const SRC = {
   opp: ['CET opportunity radar (CT DEEP CWF, ME/VT CWSRF, BidNet, USASpending)', 'https://portal.ct.gov/deep/water/municipal-wastewater/clean-water-fund'],
   wwtp: ['EPA ECHO + CT DEEP CWF FY26-27 + MassDEP 2026 CWSRF IUP + RIDEM SFY27 IUP', 'https://echo.epa.gov/'],
   counties: ['CET legacy county model (Census CBP/ACS, permit proxies)', null],
-  targets: ['ZoomInfo + company websites + press (ma_targets_cet)', null],
+  targets: ['ZoomInfo + company websites + press (CET add-on targets)', null],
 };
 
 /* ── helpers ────────────────────────────────────────────────────────────── */
-function ensureCss() { if (!document.getElementById('css-cet')) { const l = document.createElement('link'); l.id = 'css-cet'; l.rel = 'stylesheet'; l.href = 'modules/cet.css?v=20261006090506'; document.head.appendChild(l); } }
+function ensureCss() { if (!document.getElementById('css-cet')) { const l = document.createElement('link'); l.id = 'css-cet'; l.rel = 'stylesheet'; l.href = 'modules/cet.css?v=20261006122625'; document.head.appendChild(l); } }
 const safe = p => Promise.resolve(p).catch(e => { console.warn(e?.message || String(e)); return null; });
 const sum = (a, f) => a.reduce((s, x) => s + (Number(f(x)) || 0), 0);
 const median = a => { const v = a.filter(x => x != null && !isNaN(x)).sort((x, y) => x - y); if (!v.length) return null; const m = v.length >> 1; return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };
@@ -69,7 +70,7 @@ const bold1 = (s, esc) => { const t = String(s || '').replace(/^\s*\d+\.\s*/, ''
 
 function hortonNode(filings) {
   const txt = filings ? JSON.stringify(filings) : '';
-  if (/Horton's Canton|97 River Road|Canton HQ/i.test(txt)) return { lat: 41.8243, lon: -72.8937, label: 'Horton · Canton CT', town: 'Canton, CT', basis: 'cet_filings: Canton HQ (97 River Road)' };
+  if (/Horton's Canton|97 River Road|Canton HQ/i.test(txt)) return { lat: 41.8243, lon: -72.8937, label: 'Horton · Canton CT', town: 'Canton, CT', basis: 'CET public filings: Canton HQ (97 River Road)' };
   return { lat: 41.6, lon: -72.7, label: 'Horton · Connecticut', town: 'Connecticut', basis: 'state centroid (town not in research)' };
 }
 function addNodes(ctx, map, horton) {
@@ -223,11 +224,11 @@ async function overview(ctx) {
   el.innerHTML = wrap(ui.pageHead({
     title: 'Commonwealth Electrical Technologies (CET)',
     sub: opp ? `<b>So what:</b> CET has <b>${fmt.num(openLive.length)} open, biddable solicitations</b> in New England today, <b>${fmt.num(dueSoon.length)}</b> due in the next 60 days (${fmt.num(slateGood.length)} with a verified owner and at least 5 days left). Only ${fmt.num(openValN)} of the ${fmt.num(openLive.length)} states a value (${fmt.money(openVal)}); the rest need estimator sizing. Behind them sits a <b>${fmt.money(totalVal)} capital-program universe (est.), not a bid pipeline</b>: ${fmt.money(planned.v)} of planned capital work in ${fmt.num(planned.n)} projects, typically 12–36 months from bid${bigPlan ? ` (${esc(bigPlan.title.split(' - ')[0].slice(0, 48))} alone is ${Math.round(bigPlan.est_value_usd / totalVal * 100)}%)` : ''}, and ${fmt.money(awarded.v)} already awarded, where CET can only win sub-tier scope. ${wwtp ? `Horton turns <b>${funded.length}</b> funded CT–MA–RI plant projects (${fmt.money(fundedPipe)} pipeline, est.) into work CET can prime.` : 'Horton adds CT wastewater and pump-station references (plant-level research pending).'}` : 'Electrical, solar, EV and energy-efficiency contractor · Worcester + Taunton MA · NuWave (Norwell MA) · Horton (CT)',
-    chips: `${fmt.chip('Licensed in all 6 New England states', COLOR)}${fmt.chip('Platform since Feb 2025', 'var(--c-bsp)')}${fmt.chip('Add-ons: NuWave (Oct 2025) · Horton (Sept 2026)', 'var(--purple)')}${fmt.chip('No NYC expansion (CEO guidance)', 'var(--dim)')}`,
+    chips: `${fmt.chip('Licensed in all 6 New England states', COLOR)}${fmt.chip('Portfolio company since Feb 2025', 'var(--c-bsp)')}${fmt.chip('Add-ons: NuWave (Oct 2025) · Horton (Sept 2026)', 'var(--purple)')}${fmt.chip('No NYC expansion (CEO guidance)', 'var(--dim)')}`,
     actions: `<a class="btn" href="#/cet/opportunities">Opportunity radar →</a><a class="btn" href="#/cet/wastewater">Horton cross-sell →</a>`,
   }) +
-  (opp ? '' : ui.note('Research dataset <b>cet_opportunities</b> is not available yet — pipeline KPIs are partial.', 'warn')) +
-  (wwtp ? '' : ui.note('Research dataset <b>cet_wwtp_targets</b> is not available yet — wastewater KPIs and map layer are omitted.', 'warn')) +
+  (opp ? '' : ui.note('Research dataset <b>CET opportunity radar</b> is not available yet — pipeline KPIs are partial.', 'warn')) +
+  (wwtp ? '' : ui.note('Research dataset <b>CET wastewater-plant targets</b> is not available yet — wastewater KPIs and map layer are omitted.', 'warn')) +
   ui.kpis([
     { label: 'Open & biddable', value: fmt.num(openLive.length), sub: `${fmt.money(openVal)} stated (${openValN} of ${openLive.length} valued) · ${openPast} open-stage past due · ${items.length} tracked`, color: HEX.green },
     { label: 'Bids due ≤60 days', value: fmt.num(dueSoon.length), sub: `${slateGood.length} verified, ≥5d left · ${slateNow.length} go/no-go now · ${slateUnv.length} owner unverified`, color: dueSoon.length ? HEX.amber : HEX.muted },
@@ -238,10 +239,10 @@ async function overview(ctx) {
   ]) +
   `<div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Operating footprint', sub: 'CET nodes, Horton, county fit tiers and funded wastewater plants (Horton cross-sell anchors)', body: `<div class="map tall" id="cet-ov-map"></div>`, flush: true, foot: `${ui.source('CET / Broad Sky press releases', 'https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/', 'Sept 2026')} ${ui.source(SRC.wwtp[0], SRC.wwtp[1], wwtp?.meta?.generated)}` })}
-    ${ui.panel({ title: 'Top 10 actions', sub: acts ? `Research list of ${esc(fmt.dateShort(opp.meta.generated))}${actAge != null ? ` (${actAge} days old)` : ''}. Deadlines re-checked against today: ${acts.live} with a deadline within 7 days; ${acts.lapsed} lapsed, moved to the bottom.` : 'From the opportunity research', body: acts ? acts.html : ui.note('Top actions will populate from cet_opportunities.', 'warn'), scroll: true, accent: true, foot: ui.source(SRC.opp[0], SRC.opp[1], opp?.meta?.generated) })}
+    ${ui.panel({ title: 'Top 10 actions', sub: acts ? `Research list of ${esc(fmt.dateShort(opp.meta.generated))}${actAge != null ? ` (${actAge} days old)` : ''}. Deadlines re-checked against today: ${acts.live} with a deadline within 7 days; ${acts.lapsed} lapsed, moved to the bottom.` : 'From the opportunity research', body: acts ? acts.html : ui.note('Top actions will populate from CET opportunity radar.', 'warn'), scroll: true, accent: true, foot: ui.source(SRC.opp[0], SRC.opp[1], opp?.meta?.generated) })}
   </div>
   <div class="grid grid-3 mt-12">
-    ${ui.panel({ title: 'Platform build', sub: 'Broad Sky entry and add-ons', body: `<div id="cet-tl"></div>`, foot: ui.source('Broad Sky / CET press releases', 'https://broadskypartners.com/news/', firm?.meta?.generated) })}
+    ${ui.panel({ title: 'Buy-and-build', sub: 'Broad Sky entry and add-ons', body: `<div id="cet-tl"></div>`, foot: ui.source('Broad Sky / CET press releases', 'https://broadskypartners.com/news/', firm?.meta?.generated) })}
     ${ui.panel({ title: 'Bid slate · next 60 days', sub: `${dueSoon.length} solicitations · verified owners with ≥5 days left first, ranked by fit · click to open on the radar`, body: slate.length ? `<div class="mini-list" id="cet-due">${grp('Biddable · ≥5 days left · by fit', slateGood)}${grp('Go/no-go now · under 5 days', slateNow)}${grp('Needs owner verification', slateUnv)}</div>` : ui.empty('No open bids due in the next 60 days'), scroll: true, foot: ui.source('BidNet / owner portals / COMMBUYS', null, opp?.meta?.generated) })}
     ${ui.panel({ title: 'Capital program universe by state', sub: 'Est. stated value by stage · only open items can be bid today', body: `<div class="stk">${byState.map(x => `<div class="stk-row"><div class="stk-l">${esc(x.s)} <span class="dim">${x.nOpen} open / ${x.n}</span></div><div class="stk-bar">${x.seg.filter(g => g.v > 0).map(g => `<i style="width:${(g.v / maxSt * 100).toFixed(2)}%;background:${STAGE_COLOR[g.st]}" title="${esc(g.st)}: ${fmt.money(g.v)}"></i>`).join('')}</div><div class="stk-v">${fmt.money(x.v)}</div></div>`).join('')}</div><div class="row wrap gap-4 mt-12">${STK.map(k => { const z = k === 'open' ? { n: items.filter(o => o.stage === 'open').length, v: sum(items.filter(o => o.stage === 'open'), o => o.est_value_usd) } : stageOf(k); return fmt.chip(`${k} ${z.n} · ${fmt.money(z.v)}`, STAGE_COLOR[k]); }).join('')}</div><div class="bar-caption">Requested / estimated amounts (est.), not bid values. Planned = capital plans and SRF lists (bid windows typically 12–36 months out); awarded = sub-tier or O&amp;M upside only. ${items.length - valued.length} of ${items.length} items state no value.</div>`, foot: ui.source(SRC.opp[0], SRC.opp[1], opp?.meta?.generated) })}
   </div>
@@ -283,7 +284,7 @@ async function opportunities(ctx) {
     <div class="side">
       <div class="side-head"><div class="grow"><h1>Opportunity radar</h1><div class="sub"><b>So what:</b> one New England list covering ${fmt.num(opp?.items?.length || 0)} sourced opportunities, ${fmt.num((rfps || []).length)} legacy COMMBUYS RFPs and ${fmt.num((dev || []).length)} development filings. Bids due within 14 days are pinned to the top; mark each Go / No-go / Submitted and assign an estimator so Monday's open list is clear.</div></div><button class="btn sm" id="op-csv">⇩ CSV</button></div>
       <div class="seg-row"><span class="dim small">Sort</span><div id="op-sort"></div></div>
-      ${opp ? '' : ui.note('Research dataset <b>cet_opportunities</b> is not available yet — showing legacy feeds only.', 'warn')}
+      ${opp ? '' : ui.note('Research dataset <b>CET opportunity radar</b> is not available yet — showing legacy feeds only.', 'warn')}
       <div id="op-kpis"></div><div id="op-f"></div><div id="op-cards"></div>
       <div class="src-line mt-12">Sources: ${esc(SRC.opp[0])} · COMMBUYS legacy feed · Boston/Cambridge permits, USASpending, Census BPS (dev feed) · retrieved ${esc(opp?.meta?.generated || '')}</div>
     </div>
@@ -382,7 +383,7 @@ async function wastewater(ctx) {
   ensureCss();
   const { el, ui, fmt, data, maps, charts, esc, params } = ctx;
   const [wwtp, filings] = await Promise.all([data.research('cet_wwtp_targets'), data.research('cet_filings')]);
-  if (!wwtp) { el.innerHTML = wrap(ui.pageHead({ title: 'Wastewater accounts', sub: 'Horton cross-sell engine' }) + ui.note('Research dataset <b>cet_wwtp_targets</b> is not available yet.', 'warn')); return; }
+  if (!wwtp) { el.innerHTML = wrap(ui.pageHead({ title: 'Wastewater accounts', sub: 'Horton cross-sell engine' }) + ui.note('Research dataset <b>CET wastewater-plant targets</b> is not available yet.', 'warn')); return; }
   const P = wwtp.items || []; const m = wwtp.meta || {};
   const funded = P.filter(p => /_funded$/.test(p.project_class)); const withProj = P.filter(p => p.project_class && p.project_class !== 'none');
   const fundedPipe = sum(funded, p => p.pipeline_value_usd), allPipe = sum(P, p => p.pipeline_value_usd);
@@ -392,8 +393,8 @@ async function wastewater(ctx) {
   const genPS = withProj.filter(p => /^ps_/.test(p.project_class) || (p.cross_sell || []).includes('generator'));
   const permitNoProj = permitSig.filter(p => p.project_class === 'none');
   el.innerHTML = wrap(ui.pageHead({
-    title: 'Wastewater accounts: Horton cross-sell engine',
-    sub: `<b>So what:</b> ${fmt.num(P.length)} CT–MA–RI treatment plants treat ${fmt.num(mgd, 0)} MGD. ${fmt.num(funded.length)} have <b>funded</b> projects (${fmt.money(fundedPipe)} pipeline), and ${fmt.num(withProj.length)} have any listed project. Horton's plant references win the electrical and I&C scope; NuWave and CET then sell efficiency, solar and generators into the same account.`,
+    title: 'Wastewater accounts',
+    sub: `<b>Horton cross-sell engine.</b> ${fmt.num(P.length)} CT–MA–RI treatment plants treat ${fmt.num(mgd, 0)} MGD. ${fmt.num(funded.length)} have <b>funded</b> projects (${fmt.money(fundedPipe)} pipeline), and ${fmt.num(withProj.length)} have any listed project. Horton's plant references win the electrical and I&C scope; NuWave and CET then sell efficiency, solar and generators into the same account.`,
     chips: `${Object.entries(m.counts_by_state || {}).map(([k, v]) => fmt.chip(`${k} ${v}`, COLOR)).join('')}${fmt.chip('Horton fit 0–98 heuristic', 'var(--dim)')}`,
     actions: `<button class="btn" id="ww-csv">⇩ Account list CSV</button>`,
   }) +
@@ -406,12 +407,12 @@ async function wastewater(ctx) {
   ]) +
   `<div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Account map', sub: 'Circle size = design flow (MGD) · colour = project class · click a plant', body: `<div class="map tall" id="ww-map"></div>`, flush: true, foot: ui.source(SRC.wwtp[0], SRC.wwtp[1], m.generated) })}
-    ${ui.panel({ title: 'Priority top 15', sub: 'Ranked by Horton fit, with the research rationale', body: `<div class="mini-list" id="ww-top">${(m.priority_top_15 || []).map(t => `<div class="it" data-id="${esc(t.id)}"><span class="rk">#${esc(t.rank)}</span><div class="grow"><div class="t">${esc(t.facility_name)} <span class="dim small">${esc(t.state)}</span></div><div class="s" style="white-space:normal">${esc(t.rationale)}</div></div><div class="r">${fmt.score(t.horton_fit)}</div></div>`).join('') || ui.empty('Priority list pending')}</div>`, scroll: true, accent: true, foot: ui.source('cet_wwtp_targets · meta.priority_top_15', null, m.generated) })}
+    ${ui.panel({ title: 'Priority top 15', sub: 'Ranked by Horton fit, with the research rationale', body: `<div class="mini-list" id="ww-top">${(m.priority_top_15 || []).map(t => `<div class="it" data-id="${esc(t.id)}"><span class="rk">#${esc(t.rank)}</span><div class="grow"><div class="t">${esc(t.facility_name)} <span class="dim small">${esc(t.state)}</span></div><div class="s" style="white-space:normal">${esc(t.rationale)}</div></div><div class="r">${fmt.score(t.horton_fit)}</div></div>`).join('') || ui.empty('Priority list pending')}</div>`, scroll: true, accent: true, foot: ui.source('CET wastewater-plant targets · top-15 priority list', null, m.generated) })}
   </div>
   <div class="mt-12" id="ww-f"></div><div id="ww-table"></div>
   <div class="grid grid-3 mt-12">
     ${ui.panel({ title: 'Pipeline by project class', sub: 'Sum of listed facility pipeline (est.)', body: charts.hbar(Object.entries(CLASS).filter(([k]) => k !== 'none').map(([k, c]) => ({ label: `${c.label} · ${P.filter(p => p.project_class === k).length}`, value: sum(P.filter(p => p.project_class === k), p => p.pipeline_value_usd), color: c.color })), { fmt: v => fmt.money(v), labelW: 170 }), foot: ui.source('State SRF / CWF lists', null, m.generated) })}
-    ${ui.panel({ title: 'Cross-sell demand', sub: 'Plants with a listed project, by recommended add-on', body: charts.hbar(Object.entries(CROSS).map(([k, c]) => ({ label: c[0], value: withProj.filter(p => (p.cross_sell || []).includes(k)).length, color: c[1] })), { fmt: v => fmt.num(v), labelW: 90 }) + `<div class="bar-caption">Rule-based: solar if ≥1 MGD without large on-site renewables; storage if ≥10 MGD or has renewables/cogen; generator for pump stations and resiliency work.</div>`, foot: ui.source('cet_wwtp_targets method', null, m.generated) })}
+    ${ui.panel({ title: 'Cross-sell demand', sub: 'Plants with a listed project, by recommended add-on', body: charts.hbar(Object.entries(CROSS).map(([k, c]) => ({ label: c[0], value: withProj.filter(p => (p.cross_sell || []).includes(k)).length, color: c[1] })), { fmt: v => fmt.num(v), labelW: 90 }) + `<div class="bar-caption">Rule-based: solar if ≥1 MGD without large on-site renewables; storage if ≥10 MGD or has renewables/cogen; generator for pump stations and resiliency work.</div>`, foot: ui.source('CET wastewater-plant targets: scoring method', null, m.generated) })}
     ${ui.panel({ title: 'NPDES permit status', sub: 'An expired or admin-continued permit often means an upgrade is coming', body: charts.donut(['Effective', 'Admin Continued', 'Expired'].map(s => ({ label: s, value: P.filter(p => p.npdes_permit_status_echo === s).length, color: s === 'Expired' ? HEX.red : s === 'Admin Continued' ? HEX.amber : '#465569' })), { fmt: v => fmt.num(v) }) + `<div class="bar-caption">ECHO status mostly reflects EPA / state permitting backlog, not plant condition. Treat it as a timing signal only.</div>`, foot: ui.source('EPA ECHO CWA REST', 'https://echo.epa.gov/', m.generated) })}
   </div>
   <div class="mt-12">${ui.panel({ title: 'Action list', sub: 'Horton cross-sell plan', accent: true, body: actionsList([
@@ -420,7 +421,7 @@ async function wastewater(ctx) {
     `<b>Generator and pump-station book.</b> ${genPS.length} project accounts need generator/ATS or pump-station electrical work. Quote one crew plan and offer 24/7 service agreements for recurring revenue.`,
     `<b>Permit-renewal watchlist.</b> ${permitNoProj.length} plants have expired or admin-continued permits but no listed project. Open the relationship now, before their upgrade reaches the SRF lists.`,
     `<b>Fill the MA gap.</b> The MA IUP is itemized here, but ${fmt.num(P.filter(p => p.state === 'MA' && p.project_class === 'none').length)} MA plants have no listed project. Work them out of Worcester/Taunton with service and audit offers.`,
-  ], esc), foot: `<span class="dim">${esc((m.caveats || []).slice(0, 2).join(' '))}</span>` })}</div>`);
+  ], esc), foot: `<span class="dim">${esc(Copy.text((m.caveats || []).slice(0, 2).join(' ')))}</span>` })}</div>`);
 
   const map = maps.create(el.querySelector('#ww-map'), { center: [41.9, -71.8], zoom: 8 });
   let layer = null, rows = P, tbl;
@@ -468,7 +469,7 @@ async function territory(ctx) {
   ensureCss();
   const { el, ui, fmt, data, maps, charts, esc, params, inspector } = ctx;
   const [counties, opp, wwtp, filings] = await Promise.all([safe(data.load('cet_ne_counties')), data.research('cet_opportunities'), data.research('cet_wwtp_targets'), data.research('cet_filings')]);
-  if (!counties) { el.innerHTML = wrap(ui.pageHead({ title: 'Territory fit' }) + ui.note('County table <b>cet_ne_counties</b> is not available.', 'warn')); return; }
+  if (!counties) { el.innerHTML = wrap(ui.pageHead({ title: 'Territory fit' }) + ui.note('County table <b>CET New England county scores</b> is not available.', 'warn')); return; }
   const key = (c, s) => `${String(c || '').toLowerCase()}|${s}`;
   const oppBy = groupBy(opp?.items || [], o => key(o.county, o.state)); const ww = groupBy(wwtp?.items || [], w => key(w.county, w.state));
   const C = counties.map(c => { const fb = c.centroid_lat == null && c.state === 'CT' ? CT_CENTROIDS[c.county_name] : null; const os = oppBy.get(key(c.county_name, c.state)) || []; const ws = ww.get(key(c.county_name, c.state)) || []; return { ...c, lat: c.centroid_lat ?? fb?.[0] ?? null, lon: c.centroid_lng ?? fb?.[1] ?? null, _fb: !!fb, _gap: isGap(c), _tier: tierOfC(c), _score: isGap(c) ? null : c.cet_fit_score, _opps: os.length, _oppVal: sum(os, o => o.est_value_usd), _wwtp: ws.length, _wwPipe: sum(ws, w => w.pipeline_value_usd), _wwFunded: ws.filter(w => /_funded$/.test(w.project_class)).length, _oppList: os, _wwList: ws }; });
@@ -484,7 +485,7 @@ async function territory(ctx) {
   const gapStates = [...new Set(gaps.map(c => c.state))].join(', ');
   const tierHex = t => t === 'Tier 1' ? HEX.green : t === 'Tier 2' ? HEX.cet : t === 'Insufficient data' ? GAP_HEX : HEX.amber;
   el.innerHTML = wrap(ui.pageHead({
-    title: 'Territory fit: 67 New England counties',
+    title: 'Territory fit',
     sub: `<b>So what:</b> among the ${scored.length} scored counties, demand concentrates in eastern MA: ${esc(t1.map(c => c.county_name + ' ' + c.state).join(', '))} is the only Tier-1 county, and ${esc(t2.map(c => c.county_name).join(', '))} are Tier 2, all within about an hour of Worcester or Taunton. <b>${gaps.length} ${esc(gapStates)} counties are not scored</b>: the legacy pull has no population, establishment or permit inputs for them, so they show as insufficient data rather than Tier 3. That is Horton's home market, and it holds <b>${fmt.money(ctOpp.v)}</b> of sourced opportunity value (${ctOpp.n} items${oppTot ? `, ${Math.round(ctOpp.v / oppTot * 100)}% of the est. total` : ''}${stOpp[0]?.s === 'CT' ? ', the largest of any state' : ''}) plus ${fmt.money(ctWw)} of WWTP pipeline (est.).`,
     chips: `${fmt.chip(`${t1.length} Tier 1`, 'var(--green)')}${fmt.chip(`${t2.length} Tier 2`, 'var(--accent)')}${fmt.chip(`${t3.length} Tier 3`, 'var(--amber)')}${fmt.chip(`${gaps.length} insufficient data (${gapStates})`, GAP_HEX)}`,
   }) +
@@ -597,10 +598,10 @@ function openTransfer(ctx, r, map) {
 async function transfers(ctx) {
   ensureCss();
   const { el, ui, fmt, data, maps, charts, esc, params } = ctx;
-  el.innerHTML = wrap(ui.pageHead({ title: 'Property transfers: new owner = retrofit trigger', sub: 'Loading commercial, industrial and residential transfers for CET-served counties in MA, CT and RI…' }) + ui.loading('Loading MassGIS / CT OPM / CT CAMA / RI parcel transfers…'));
+  el.innerHTML = wrap(ui.pageHead({ title: 'Property transfers', sub: 'Loading commercial, industrial and residential transfers for CET-served counties in MA, CT and RI…' }) + ui.loading('Loading MassGIS / CT OPM / CT CAMA / RI parcel transfers…'));
   const X = await loadTransfers(data);
   if (!el.isConnected) return;
-  if (!X.rows.length) { el.innerHTML = wrap(ui.pageHead({ title: 'Property transfers', sub: 'Commercial / industrial property transfers and home sales in CET counties' }) + ui.note('Property-transfer datasets <b>sales/cet_transfers_ma</b> and <b>sales/cet_transfers_ct_ri</b> are not available yet.', 'warn')); return; }
+  if (!X.rows.length) { el.innerHTML = wrap(ui.pageHead({ title: 'Property transfers', sub: 'Commercial / industrial property transfers and home sales in CET counties' }) + ui.note('Property-transfer datasets <b>CET property transfers (MA)</b> and <b>CET property transfers (CT and RI)</b> are not available yet.', 'warn')); return; }
   const R = X.rows;
   const metas = [X.ma?.meta, X.ct?.meta, X.hma?.meta, X.hct?.meta].filter(Boolean);
   const coverage = metas.flatMap(m => (m.coverage || []).map(c => ({ ...c, _ds: m.dataset, source: /home_sales/.test(m.dataset || '') ? `Home sales · ${c.source || ''}` : c.source })));
@@ -636,7 +637,7 @@ async function transfers(ctx) {
   const lagD = latestT ? Math.round((Date.now() - latestT) / DAY) : null;
   let seg = params.seg || 'ci', town = null, rollBy = 'n', filtered = [], layer = null, tbl, ttbl;
   el.innerHTML = wrap(ui.pageHead({
-    title: 'Property transfers: new owner = retrofit trigger',
+    title: 'Property transfers',
     sub: `<b>So what:</b> every commercial or industrial sale in CET's MA, CT and RI counties brings a new owner who will set a capital plan within 6–12 months, the best moment to sell lighting and controls retrofits, service upgrades, EV charging and solar. ${fmt.num(ciAll.length)} C&I transfers are on file; the outreach list defaults to the <b>${fmt.num(ciEnt)} bought by entities</b>, and individual owners' names are withheld. The view also summarizes <b>${fmt.num(homeTotal)} home sales</b> in the same counties as a residential demand signal${homeFromMeta ? ' (counts from dataset metadata; residential rows are not in the published files)' : ''}. Records run through <b>${esc(latestLbl)}</b>, so the latest months are still being recorded.`,
     chips: `${fmt.chip(`Data through ${latestLbl}${lagD != null ? ` · ${lagD}d old` : ''}`, lagD != null && lagD > 60 ? 'var(--amber)' : 'var(--green)')}${fmt.chip(`${fmt.num(R.length)} recorded transfers`, COLOR)}${fmt.chip(`${fmt.num(new Set(R.map(r => r.county + r.state)).size)} counties`, 'var(--accent)')}${fmt.chip('MA · CT · RI', 'var(--dim)')}${X.loaded < 2 ? fmt.chip('one dataset missing', 'var(--red)') : ''}`,
     actions: `<button class="btn primary" id="tx-out">⇩ New-owner outreach list</button>`,
@@ -649,11 +650,11 @@ async function transfers(ctx) {
     ${ui.panel({ title: 'Town rollup · top 25', sub: 'Click a town to focus map and table', actions: `<div id="tx-roll-seg"></div>`, body: `<div id="tx-roll"></div>`, flush: true, scroll: true })}
   </div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Home sales by county', sub: homeFromMeta ? 'Residential sale counts for every county covered for CET, from the dataset metadata' : 'Residential sales over $1K in every county covered for CET (all months in the files)', body: `${homeFromMeta ? `<div style="padding:10px 12px 0">${ui.note(`Residential rows are not in the published transfer files (compacted for page size), so this table shows the <b>record counts the source pull reported</b>.${homeEst ? ' MA counts are exact per county; CT/RI counties are <b>est.</b>: the CT/RI residential total is allocated by each county&#39;s share of the rows removed from the file (residential + land under $500K).' : ''} Medians and $ volume need the full residential extract.`, 'warn')}</div>` : ''}<div id="tx-home"></div>`, flush: true, foot: ui.source('MassGIS L3 (last sale), CT OPM / CAMA, Cranston RI parcels · sales/cet_home_sales_ma, cet_home_sales_ct_ri', null, X.hct?.meta?.generated || X.hma?.meta?.generated || '2026-09-24') })}
+    ${ui.panel({ title: 'Home sales by county', sub: homeFromMeta ? 'Residential sale counts for every county covered for CET, from the dataset metadata' : 'Residential sales over $1K in every county covered for CET (all months in the files)', body: `${homeFromMeta ? `<div style="padding:10px 12px 0">${ui.note(`Residential rows are not in the published transfer files (compacted for page size), so this table shows the <b>record counts the source pull reported</b>.${homeEst ? ' MA counts are exact per county; CT/RI counties are <b>est.</b>: the CT/RI residential total is allocated by each county&#39;s share of the rows removed from the file (residential + land under $500K).' : ''} Medians and $ volume need the full residential extract.`, 'warn')}</div>` : ''}<div id="tx-home"></div>`, flush: true, foot: ui.source('MassGIS L3 (last sale), CT OPM / CAMA, Cranston RI parcels · CET deed records (MA, CT and RI)', null, X.hct?.meta?.generated || X.hma?.meta?.generated || '2026-09-24') })}
     ${ui.panel({ title: 'Monthly volume in filter', sub: 'Transfers per month over the Months-back window (latest months still being recorded)', body: `<div id="tx-month"></div><div class="bar-caption">The source windows differ: MA non-residential from Sept 2024, MA residential from Sept 2025, CT OPM through Sept 2025 then CT CAMA (last sale only). Month-to-month steps reflect those windows, not the market.</div>` })}
   </div>
   <h3 class="mt-16 mb-8">Transfers in filter · click a row for the retrofit play <span class="dim small" style="font-weight:400">· records through ${esc(latestLbl)} · individual names withheld</span></h3><div id="tx-table"></div>
-  <div class="mt-12">${ui.panel({ title: 'Coverage & caveats', sub: 'Per-county source windows, plus what could not be pulled', body: `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>County</th><th>Source</th><th class="num">From</th><th class="num">To</th><th class="num">Records</th></tr></thead><tbody>${coverage.map(c => `<tr><td>${esc(c.county)}, ${esc(c.state)}</td><td class="wrap small">${esc(c.source || '')}</td><td class="num">${esc(c.date_from || '')}</td><td class="num">${esc(c.date_to || '')}</td><td class="num">${fmt.num(c.count)}</td></tr>`).join('')}</tbody></table></div><ul class="prose small mt-12">${metas.flatMap(m => (m.caveats || []).slice(0, 3)).map(c => `<li>${esc(c)}</li>`).join('')}</ul><div class="small dim mt-8">Not pulled: ${esc(metas.flatMap(m => (m.failed_sources || []).map(f => f.source)).join(' · ') || '—')}</div>` })}</div>`);
+  <div class="mt-12">${ui.panel({ title: 'Coverage & caveats', sub: 'Per-county source windows, plus what could not be pulled', body: `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>County</th><th>Source</th><th class="num">From</th><th class="num">To</th><th class="num">Records</th></tr></thead><tbody>${coverage.map(c => `<tr><td>${esc(c.county)}, ${esc(c.state)}</td><td class="wrap small">${esc(Copy.text(c.source || ''))}</td><td class="num">${esc(c.date_from || '')}</td><td class="num">${esc(c.date_to || '')}</td><td class="num">${fmt.num(c.count)}</td></tr>`).join('')}</tbody></table></div><ul class="prose small mt-12">${metas.flatMap(m => (m.caveats || []).slice(0, 3)).map(c => `<li>${esc(Copy.text(c))}</li>`).join('')}</ul><div class="small dim mt-8">Not pulled: ${esc(metas.flatMap(m => (m.failed_sources || []).map(f => Copy.text(f.source))).join(' · ') || '—')}</div>` })}</div>`);
 
   const segOpts = homeFromMeta ? SEGS.filter(x => x.value !== 'res') : SEGS; if (!segOpts.some(x => x.value === seg)) seg = 'ci';
   UI_seg(ctx, el.querySelector('#tx-seg'), segOpts, seg, v => { seg = v; apply(f.state); });
@@ -750,12 +751,12 @@ async function targets(ctx) {
   ensureCss();
   const { el, ui, fmt, data, maps, esc, inspector } = ctx;
   const [ma, filings] = await Promise.all([data.research('ma_targets_cet'), data.research('cet_filings')]);
-  if (!ma) { el.innerHTML = wrap(ui.pageHead({ title: 'Add-on targets', sub: 'CET add-on screen' }) + ui.note('Research dataset <b>ma_targets_cet</b> is not available yet.', 'warn')); return; }
+  if (!ma) { el.innerHTML = wrap(ui.pageHead({ title: 'Add-on targets', sub: 'CET add-on screen' }) + ui.note('Research dataset <b>CET add-on targets</b> is not available yet.', 'warn')); return; }
   const T = ma.items || []; const m = ma.meta || {};
   const fam = T.filter(t => t.ownership === 'founder' || t.ownership === 'family'); const near = T.filter(t => (t.nearest_cet_node_miles ?? 999) <= 30);
   const top = m.ranked_top_10 || []; const pe = m.pe_backed_competitors || [];
   el.innerHTML = wrap(ui.pageHead({
-    title: 'Add-on targets: New England electrical roll-up',
+    title: 'Add-on targets',
     sub: `<b>So what:</b> ${fmt.num(T.length)} private New England electrical, solar, controls, generator and W/WW I&C companies were screened. ${fmt.num(fam.length)} are confirmed founder- or family-owned and ${fmt.num(near.length)} sit within 30 miles of a CET node. ${fmt.num(pe.length)} PE-backed consolidators are already active, so approach the founder-owned top 10 first, and prioritize controls/SCADA and generator service to extend Horton.`,
     chips: `${fmt.chip(`${fmt.num(T.length)} screened`, 'var(--c-ma)')}${fmt.chip(`${fmt.num(fam.length)} founder/family`, 'var(--green)')}${fmt.chip(`${fmt.num(pe.length)} PE-backed rivals`, 'var(--red)')}${fmt.chip(`${fmt.num((m.screened_and_excluded || []).length)} excluded`, 'var(--dim)')}`,
   }) +
@@ -772,9 +773,9 @@ async function targets(ctx) {
       ${ui.panel({ title: 'Ranked top 10', sub: 'Research ranking · click for profile', body: `<div class="mini-list" id="tg-top">${top.map(t => `<div class="it" data-id="${esc(t.id)}"><span class="rk">#${esc(t.rank)}</span><div class="grow"><div class="t">${esc(t.company)}</div><div class="s">${esc(T.find(x => x.id === t.id)?.hq_city || '')}, ${esc(t.state)} · ${esc((T.find(x => x.id === t.id)?.specialties || []).slice(0, 2).join(', '))}</div></div><div class="r">${fmt.score(t.fit_score)}</div></div>`).join('') || ui.empty('Ranking pending')}</div>`, scroll: true, accent: true })}
     </div>
   </div>
-  <div class="mt-12">${ui.panel({ title: 'PE-backed competitors already consolidating New England', sub: 'Who else is buying and where they collide with CET', body: pe.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Company</th><th>HQ</th><th>Owner / sponsor</th><th class="num">Year</th><th>Note</th><th>Sources</th></tr></thead><tbody>${pe.map(p => `<tr style="cursor:default"><td><b>${esc(p.company)}</b></td><td>${esc(p.hq || '')}</td><td>${fmt.chip(p.owner || '—', 'var(--red)')}</td><td class="num">${esc(p.year || '')}</td><td class="wrap small text-2">${esc(p.note || '')}</td><td class="small">${(p.sources || []).slice(0, 2).map(u => fmt.link(u)).join('<br>')}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('No PE-backed competitors listed'), foot: `<span class="dim">Scoring rubric: ${esc(Object.entries(m.scoring_rubric || {}).map(([k, v]) => `${k} ${v.split(':')[0]}`).join(' · '))}</span>` })}</div>
+  <div class="mt-12">${ui.panel({ title: 'PE-backed competitors already consolidating New England', sub: 'Who else is buying and where they collide with CET', body: pe.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Company</th><th>HQ</th><th>Owner / sponsor</th><th class="num">Year</th><th>Note</th><th>Sources</th></tr></thead><tbody>${pe.map(p => `<tr style="cursor:default"><td><b>${esc(p.company)}</b></td><td>${esc(p.hq || '')}</td><td>${fmt.chip(p.owner || '—', 'var(--red)')}</td><td class="num">${esc(p.year || '')}</td><td class="wrap small text-2">${esc(p.note || '')}</td><td class="small">${(p.sources || []).slice(0, 2).map(u => fmt.link(u)).join('<br>')}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('No PE-backed competitors listed'), foot: `<span class="dim">Scoring rubric: ${esc(Object.entries(m.scoring_rubric || {}).map(([k, v]) => `${Copy.field(k).toLowerCase()} ${v.split(':')[0]}`).join(' · '))}</span>` })}</div>
   <h3 class="mt-16 mb-8">Full target screen</h3><div id="tg-screen"></div>`);
-  renderTargets(ctx, el.querySelector('#tg-screen'), { items: T, color: 'var(--c-ma)', platformLabel: 'CET', exportName: 'cet_addon_targets', extraColumns: [{ key: 'nearest_cet_node_miles', label: 'Mi to node', num: true, fmt: (v, r) => v != null ? `${fmt.num(v)} <span class="dim small">${esc(String(r.nearest_cet_node || '').split(' ')[0])}</span>` : '—' }] });
+  renderTargets(ctx, el.querySelector('#tg-screen'), { items: Copy.targets(T), color: 'var(--c-ma)', platformLabel: 'CET', exportName: 'cet_addon_targets', extraColumns: [{ key: 'nearest_cet_node_miles', label: 'Mi to node', num: true, fmt: (v, r) => v != null ? `${fmt.num(v)} <span class="dim small">${esc(String(r.nearest_cet_node || '').split(' ')[0])}</span>` : '—' }] });
   const map = maps.create(el.querySelector('#tg-map'), { center: [42.3, -71.6], zoom: 7 });
   const tierHex = s => s >= 80 ? HEX.green : s >= 65 ? HEX.cet : s >= 50 ? HEX.amber : HEX.muted;
   const openT = t => inspector.open({ title: esc(t.company), sub: `${esc(t.hq_city || '')}, ${esc(t.state)} · ${esc(fitTierOf(t.fit_score || 0))} · fit ${esc(t.fit_score)}`, color: tierHex(t.fit_score), sections: [
@@ -802,17 +803,17 @@ async function filingsView(ctx) {
   const est = f?.meta?.estimate_table || [];
   const pick = re => est.find(e => re.test(e.metric))?.estimate;
   el.innerHTML = wrap(ui.pageHead({
-    title: 'Filings & financials: CET',
-    sub: f ? `<b>So what:</b> public filings (PPP, Form D, Form ADV, press) put standalone CET at about <b>${ctx.esc(pick(/standalone revenue/i) || '$35–55M')}</b> revenue. With NuWave and Horton, the platform is roughly 260–290 staff. No lender is disclosed, so leverage is inferred from lower-middle-market norms. All figures are estimates, not audited results.` : 'Financial picture from public filings',
+    title: 'Filings and financials',
+    sub: f ? `<b>So what:</b> public filings (PPP, Form D, Form ADV, press) put standalone CET at about <b>${ctx.esc(pick(/standalone revenue/i) || '$35–55M')}</b> revenue. With NuWave and Horton, the company is roughly 260–290 staff. No lender is disclosed, so leverage is inferred from lower-middle-market norms. All figures are estimates, not audited results.` : 'Financial picture from public filings',
     chips: f ? `${fmt.chip(`${fmt.num((f.items || []).length)} filings / records`, COLOR)}${fmt.chip(`${est.length} estimates`, 'var(--amber)')}${fmt.chip('Estimates · low–medium confidence', 'var(--dim)')}` : '',
   }) + `<div id="cet-fil"></div>`);
   // normalise object-shaped sources_summary entries ({source, records}) to strings for the shared renderer
   const fx = f ? { ...f, meta: { ...(f.meta || {}), sources_summary: (f.meta?.sources_summary || []).map(x => typeof x === 'string' ? x : x?.source || JSON.stringify(x)) } } : null;
-  renderFilings(ctx, el.querySelector('#cet-fil'), { data: fx, color: COLOR, title: 'CET' });
+  renderFilings(ctx, el.querySelector('#cet-fil'), { data: Copy.filings(fx), color: COLOR, title: 'CET' });
 }
 
 export default {
-  id: 'cet', name: 'Commonwealth Electrical (CET)', tag: 'New England', color: 'var(--c-cet)', group: 'Portfolio',
+  id: 'cet', name: 'CET', tag: 'New England', color: 'var(--c-cet)', group: 'Portfolio',
   tagline: 'Electrical, solar, EV & energy efficiency across New England — Worcester + Taunton MA, NuWave (Norwell MA), Horton (CT)',
   hq: { lat: 42.2626, lon: -71.8023, label: 'Worcester, MA' },
   views: [
@@ -822,10 +823,10 @@ export default {
     { id: 'territory', name: 'Territory fit', icon: '▦', render: territory },
     { id: 'transfers', name: 'Property transfers', icon: '⇄', render: transfers },
     { id: 'targets', name: 'Add-on targets', icon: '◆', render: targets },
-    { id: 'filings', name: 'Filings & financials', icon: '§', render: filingsView },
+    { id: 'filings', name: 'Filings and financials', icon: '§', render: filingsView },
   ],
   tour: [
-    { order: 200, hash: '#/cet/overview', caption: '<b>CET:</b> a New England-only platform. Horton turns funded wastewater plants into prime-able work; the top-10 action list drives the week.', narration: 'CET is New England only. Horton turns funded wastewater plants into work CET can prime.', duration: 6500 },
+    { order: 200, hash: '#/cet/overview', caption: '<b>CET:</b> a New England-only company. Horton turns funded wastewater plants into prime-able work; the top-10 action list drives the week.', narration: 'CET is New England only. Horton turns funded wastewater plants into work CET can prime.', duration: 6500 },
     { order: 210, hash: '#/cet/opportunities', caption: '<b>Opportunity radar:</b> sourced bids, capital plans and legacy feeds in one ranked list, colour-coded by capability.', narration: 'The radar ranks every sourced bid, capital plan and award by capability, value and due date.', duration: 7000 },
     { order: 220, hash: '#/cet/wastewater', caption: '<b>Horton cross-sell:</b> 183 CT–MA–RI treatment plants ranked by fit, with funded projects and solar, storage, generator and efficiency plays.', narration: 'Every treatment plant in Connecticut, Massachusetts and Rhode Island, ranked for the Horton cross-sell, with funded projects flagged.', duration: 7500 },
     { order: 230, hash: '#/cet/transfers', caption: '<b>New owner = retrofit trigger.</b> Commercial & industrial sales become an outreach list; ~46K home sales across CET\'s MA, CT and RI counties add the residential demand signal.', narration: 'Each commercial sale brings a new owner with a capital plan. The view also maps about forty-six thousand home sales in CET counties.', duration: 9500 },

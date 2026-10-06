@@ -2,8 +2,8 @@
  "meta": {
   "dataset": "Tech-enablement (\"OS\") value-creation evidence file: ServiceOS (Punctual Pros), GridOS (CET), FirmOS (Frontline), LabOS (Thomas Scientific), SignalOS (BPI), HarborOS (Fair Harbor)",
   "generated": "2026-10-06",
-  "scope_note": "Six active Broad Sky platforms. Smith + Howard (exited to TPG, Aug 2026) is excluded. CET guidance: no NYC expansion; GridOS is New England only.",
-  "method": "Web research on 2026-10-06 (search plus direct fetches of press releases, SEC filings, banker reports and vendor pages), combined with existing verified portal datasets (public_comps, pp_market, pp_filings, cet_filings, frontline_filings, thomas_filings, bpi_filings, rival_filings, fairharbor_filings). Each valuation_evidence item states its number and source; derived arithmetic (e.g., members per technician, implied EV/revenue) is labelled \"derived\". kpi_benchmark baselines and targets come from sourced benchmarks; where a company actual is not public, baseline or target is null. roadmap_assumption items are explicit analyst assumptions (labelled est.) tied by evidence_ids to items in this file; USD EBITDA impact = low/high revenue estimate x low/high margin points.",
+  "scope_note": "Six active Broad Sky portfolio companies. Smith + Howard (exited to TPG, Aug 2026) is excluded. CET guidance: no NYC expansion; GridOS is New England only.",
+  "method": "Web research on 2026-10-06 (search plus direct fetches of press releases, SEC filings, banker reports and vendor pages), combined with existing verified portal datasets (public comparables, Punctual Pros market research, Punctual Pros filings, CET filings, Frontline filings, Thomas Scientific filings, BPI filings, rival filings, Fair Harbor filings). Each valuation evidence item states its number and source; derived arithmetic (e.g., members per technician, implied EV/revenue) is labelled \"derived\". KPI benchmark baselines and targets come from sourced benchmarks; where a company actual is not public, baseline or target is null. roadmap assumption items are explicit analyst assumptions (labelled est.) tied by evidence links to items in this file; USD EBITDA impact = low/high revenue estimate x low/high margin points.",
   "item_counts": {
    "valuation_evidence": 26,
    "vendor_stack": 28,
@@ -12,7 +12,7 @@
   },
   "caveats": [
    "Reported deal multiples (Champions 18.5x, Sila ~17x) are press estimates from people familiar with the deals; sponsors did not disclose terms.",
-   "Scaled-platform multiples mostly reflect scale, density and M&A runway, not technology alone. This file credits only a fraction of the typical-to-premium spread to tech enablement.",
+   "Multiples for scaled roll-ups mostly reflect scale, density and M&A runway, not technology alone. This file credits only a fraction of the typical-to-premium spread to tech enablement.",
    "Vendor case studies (ServiceTitan Pricebook Pro, Rilla, Avoca, True Fit, Bold Metrics, Rewst) are self-reported, self-selected and unaudited; treat them as upper bounds.",
    "Portfolio company revenue/EBITDA figures are low-confidence analyst estimates from the portal filings datasets, not company disclosures.",
    "Vendor pricing marked third-party comes from pricing-guide sites and may be stale; confirm with vendors before budgeting.",
@@ -20,9 +20,9 @@
    "The ServiceTitan TitanAdvisor quartile figure (20% vs 8%) was taken from S-1 search extraction; the direct fetch confirmed other S-1 figures but not this one.",
    "Thomas Scientific's capital structure (est. 7-10x leverage, Dec-2027 maturity) dominates its exit value; LabOS multiple expansion is secondary to EBITDA and refinancing."
   ],
-  "thesis_summary": "Broad Sky's six active platforms are services businesses whose exit multiples depend on how predictable, recurring and scalable their earnings look to the next buyer. Banker data show this directly: PKF puts project-heavy, low-retention HVAC firms at 5-6x EBITDA and repeatable-service firms with value-enhancing in-house capabilities at 10x+, and Capstone/IMAP expect a 3.0-turn spread between typical (6.8x) and premium (9.8x) middle-market deals. Each \"OS\" is a named, buyer-legible operating system assembled mostly from proven vendors (ServiceTitan, Procore, ConnectWise/Kaseya, Shopify Plus/Coupa, Brandwatch/Zignal, Shopify/Klaviyo) plus a thin Broad Sky data layer from the portal, not custom software. ServiceOS for Punctual Pros is the lead case: HVAC call booking rates average 38% versus 59% at 25+ technician shops, pricebook adopters grew tickets 14% vs 8%, and scaled membership-dense platforms (Champions ~18.5x, Sila ~17x) are where the premium sits. GridOS (CET) and FirmOS (Frontline) turn project and ticket work into measured, recurring service lines (solar/SCADA O&M, security and e-billing revenue cycle), the attributes PKF and Aventis say buyers pay for. LabOS (Thomas Scientific) is an EBITDA and cost-to-serve program benchmarked to Avantor's ~80% digital transactions and Grainger's ~15.6% digital growth vs ~2% rep-led growth, because leverage, not multiple, drives that exit. SignalOS (BPI) and HarborOS (Fair Harbor) productize monitoring and retention, following Stagwell's Marketing Cloud (+230%) and DTC retention economics (5 points of retention lifting profit 25-95%, per Bain). Across the six, analyst assumptions total roughly $6.0-12.4M of investment for 0.5-5 points of EBITDA margin and 0.5-2.5 turns of EBITDA multiple (0.2-0.5x revenue for Fair Harbor), each tied to sourced evidence and labelled est.",
+  "thesis_summary": "Broad Sky's six active companies are services businesses whose exit multiples depend on how predictable, recurring and scalable their earnings look to the next buyer. Banker data show this directly: PKF puts project-heavy, low-retention HVAC firms at 5-6x EBITDA and repeatable-service firms with value-enhancing in-house capabilities at 10x+, and Capstone/IMAP expect a 3.0-turn spread between typical (6.8x) and premium (9.8x) middle-market deals. Each \"OS\" is a named, buyer-legible operating system assembled mostly from proven vendors (ServiceTitan, Procore, ConnectWise/Kaseya, Shopify Plus/Coupa, Brandwatch/Zignal, Shopify/Klaviyo) plus a thin Broad Sky data layer from the portal, not custom software. ServiceOS for Punctual Pros is the lead case: HVAC call booking rates average 38% versus 59% at 25+ technician shops, pricebook adopters grew tickets 14% vs 8%, and scaled membership-dense companies (Champions ~18.5x, Sila ~17x) are where the premium sits. GridOS (CET) and FirmOS (Frontline) turn project and ticket work into measured, recurring service lines (solar/SCADA O&M, security and e-billing revenue cycle), the attributes PKF and Aventis say buyers pay for. LabOS (Thomas Scientific) is an EBITDA and cost-to-serve program benchmarked to Avantor's ~80% digital transactions and Grainger's ~15.6% digital growth vs ~2% rep-led growth, because leverage, not multiple, drives that exit. SignalOS (BPI) and HarborOS (Fair Harbor) productize monitoring and retention, following Stagwell's Marketing Cloud (+230%) and DTC retention economics (5 points of retention lifting profit 25-95%, per Bain). Across the six, analyst assumptions total roughly $6.0-12.4M of investment for 0.5-5 points of EBITDA margin and 0.5-2.5 turns of EBITDA multiple (0.2-0.5x revenue for Fair Harbor), each tied to sourced evidence and labelled est.",
   "multiple_premium_summary": {
-   "headline": "The evidence supports a quality premium of up to ~3 turns of EBITDA for services businesses with recurring, visible, tech-enabled earnings. Tech enablement can credibly claim part of it (about 0.5-2.5 turns depending on platform), not the scale-driven 17-20x prints of national roll-ups.",
+   "headline": "The evidence supports a quality premium of up to ~3 turns of EBITDA for services businesses with recurring, visible, tech-enabled earnings. Tech enablement can credibly claim part of it (about 0.5-2.5 turns depending on company), not the scale-driven 17-20x prints of national roll-ups.",
    "by_platform": {
     "pp": {
      "range_turns": [
@@ -76,7 +76,7 @@
    },
    "what_it_does_not_support": "No source isolates a pure \"technology premium\" with a control group; the premiums observed bundle scale, recurring mix, margin and growth. Use the ranges as analyst assumptions in the techos calculator, not as market facts."
   },
-  "public_comps_tie_in": "See data/research/public_comps.json sector_benchmarks: residential home services median EBITDA margin 15.1% (Frontdoor 24.2% on a membership model); commercial electrical median 11.2%; legal/BPO managed services 16.9%; communications agencies and apparel DTC are bimodal (Publicis/LULU vs WPP/smaller DTC).",
+  "public_comps_tie_in": "See data/research/public_comps.json sector benchmarks: residential home services median EBITDA margin 15.1% (Frontdoor 24.2% on a membership model); commercial electrical median 11.2%; legal/BPO managed services 16.9%; communications agencies and apparel DTC are bimodal (Publicis/LULU vs WPP/smaller DTC).",
   "consumers": [
    "modules/techos.js (views: overview, evidence, roadmap, calculator)",
    "redesigns/<slug>/<os>.html value-creation sections"
@@ -88,7 +88,7 @@
    "id": "ve-01",
    "kind": "valuation_evidence",
    "title": "Blackstone buys Champions Group at ~18.5x trailing EBITDA",
-   "claim": "Blackstone (BXPE) agreed to buy residential HVAC/plumbing/electrical platform Champions Group from Odyssey for about $2.5B, reported at about 18.5x trailing EBITDA; Champions runs 1,800+ technicians and ~150,000 active members.",
+   "claim": "Blackstone (BXPE) agreed to buy residential HVAC/plumbing/electrical company Champions Group from Odyssey for about $2.5B, reported at about 18.5x trailing EBITDA; Champions runs 1,800+ technicians and ~150,000 active members.",
    "metric_value": 18.5,
    "metric_unit": "x EV / trailing EBITDA (press estimate)",
    "applies_to": [
@@ -101,7 +101,7 @@
    "related_urls": [
     "https://www.businesswire.com/news/home/20260216402144/en/Blackstone-Announces-Agreement-to-Acquire-Champions-Group"
    ],
-   "note": "Multiple is a press estimate; Blackstone did not disclose terms. Scaled, membership-dense platform; not directly comparable to a ~$22M franchisee."
+   "note": "Multiple is a press estimate; Blackstone did not disclose terms. Scaled, membership-dense company; not directly comparable to a ~$22M franchisee."
   },
   {
    "id": "ve-02",
@@ -155,7 +155,7 @@
    "source_name": "Leonard Green & Partners press release",
    "date": "2022-11-09",
    "confidence": "high",
-   "note": "Shows that upmarket sponsors underwrite home-services platforms partly on digital capability; no number to cite."
+   "note": "Shows that upmarket sponsors underwrite home-services companies partly on digital capability; no number to cite."
   },
   {
    "id": "ve-05",
@@ -231,7 +231,7 @@
     "gross_dollar_retention_pct": ">95",
     "active_customers": 10800
    },
-   "note": "Shows contractors keep expanding spend on the operating system; GTV growth (20%) is the volume running through contractors on the platform."
+   "note": "Shows contractors keep expanding spend on the operating system; GTV growth (20%) is the volume running through contractors on the software."
   },
   {
    "id": "ve-08",
@@ -251,7 +251,7 @@
     "top_quartile_gtv_growth_pct": 20,
     "bottom_quartile_gtv_growth_pct": 8
    },
-   "note": "Correlation, not causation: better operators may both use the platform more and grow faster. Our fetch of the S-1 confirmed active-customer, GTV and retention figures; the quartile figure is from the S-1 per search extraction and should be re-checked before external use."
+   "note": "Correlation, not causation: better operators may both use the software more and grow faster. Our fetch of the S-1 confirmed active-customer, GTV and retention figures; the quartile figure is from the S-1 per search extraction and should be re-checked before external use."
   },
   {
    "id": "ve-09",
@@ -447,7 +447,7 @@
    "source_name": "Avantor Form 10-K FY2025",
    "date": "2026-02",
    "confidence": "high",
-   "note": "Closest public lab-distribution comp for Thomas Scientific; sets the digital-penetration bar. Avantor FY2025 revenue fell 3.4% (public_comps), so digital share is table stakes, not a growth guarantee."
+   "note": "Closest public lab-distribution comp for Thomas Scientific; sets the digital-penetration bar. Avantor FY2025 revenue fell 3.4% (public comparables), so digital share is table stakes, not a growth guarantee."
   },
   {
    "id": "ve-19",
@@ -614,7 +614,7 @@
    "related_urls": [
     "https://projul.com/blog/housecall-pro-pricing-analysis-2026"
    ],
-   "note": "Confirm which FSM PP runs today; pp_filings lists ServiceTitan data as a data gap."
+   "note": "Confirm which FSM PP runs today; Punctual Pros filings lists ServiceTitan data as a data gap."
   },
   {
    "id": "vs-pp-2",
@@ -667,7 +667,7 @@
    "company": "pp",
    "vendor": "Weatherbit",
    "category": "Weather data API",
-   "what_it_does": "Forecast and historical weather feeds that drive the ServiceOS capacity index (heat-wave and cold-snap demand multipliers from pp_demand_model).",
+   "what_it_does": "Forecast and historical weather feeds that drive the ServiceOS capacity index (heat-wave and cold-snap demand multipliers from Punctual Pros demand model).",
    "pricing_note": "Tiered API plans (Free, Standard, Plus, Business, Enterprise) by request volume; check current list price on vendor page.",
    "source_url": "https://www.weatherbit.io/pricing",
    "note": "The portal already uses free NWS/Open-Meteo feeds (Live.forecast), so Weatherbit is optional."
@@ -864,7 +864,7 @@
    "what_it_does": "Storefront, checkout, subscriptions and B2B wholesale channel on one catalog.",
    "pricing_note": "Shopify Plus from $2,300/month (3-year term) or $2,500/month (1-year).",
    "source_url": "https://useamp.com/blog/how-much-does-shopify-plus-cost/",
-   "note": "Confirm Fair Harbor's current platform tier."
+   "note": "Confirm Fair Harbor's current Shopify plan tier."
   },
   {
    "id": "vs-fh-2",
@@ -983,7 +983,7 @@
    ],
    "baseline_basis": "ConstructConnect (citing George Hedley/ENR guidance): hard-bid public work wins 10-20%; baseline shown as the range midpoint.",
    "target_basis": "Negotiated/selective work wins 30-50%; GridOS shifts mix toward selected and repeat-owner bids (lower bound used).",
-   "lever": "GridOS bid board (cet_opportunities) + Accubid estimating + go/no-go scoring"
+   "lever": "GridOS bid board (CET opportunity radar) + Accubid estimating + go/no-go scoring"
   },
   {
    "id": "kb-cet-2",
@@ -1189,7 +1189,7 @@
     12
    ],
    "baseline_basis": "Fair Harbor 2025 EBITDA estimate 0-12% (data/research/fairharbor_filings.json, low confidence); midpoint shown.",
-   "target_basis": "lululemon FY2025 approximate EBITDA margin 24.4% (public_comps) is the best-in-class ceiling, not a near-term target.",
+   "target_basis": "lululemon FY2025 approximate EBITDA margin 24.4% (public comparables) is the best-in-class ceiling, not a near-term target.",
    "lever": "HarborOS returns, repeat and inventory levers"
   },
   {
@@ -1222,7 +1222,7 @@
     16000000.0,
     28000000.0
    ],
-   "revenue_source": "data/research/pp_filings.json financial_picture (FY2025 pro forma ~$22M, range $16-28M, low-medium confidence)",
+   "revenue_source": "data/research/pp_filings.json financial picture (FY2025 pro forma ~$22M, range $16-28M, low-medium confidence)",
    "current_ebitda_estimate": "~$1.8-3.1M adj. EBITDA (central ~$2.6M), low confidence",
    "rationale": "Booking rate is the biggest lever: ServiceTitan shows HVAC at 38% vs 59% for 25+ tech shops, and pricebook adopters grew ticket 14% vs 8%; a 2-4 point margin gain on ~$22M (est.) is ~$0.3-1.1M. Software run-rate (FSM, Avoca, Rilla, Profit Rhino at $35-55/tech/month, Podium $399-599/month) plus implementation fits a $0.4-0.9M budget. The multiple case leans on PKF (5-6x project-heavy vs 10x+ repeatable service with value-enhancing capabilities) and Capstone (6.8x typical vs 9.8x premium); the 17-18.5x Champions/Sila prints are scale-driven, so only 1.0-2.5 turns are credited to tech enablement at PP's size. Franchise royalties (~7.2-7.5% of revenue) cap the margin upside.",
    "evidence_ids": [
@@ -1272,7 +1272,7 @@
     62000000.0,
     105000000.0
    ],
-   "revenue_source": "data/research/cet_filings.json estimate_table (CET $35-55M + Horton $25-40M + NuWave $2-10M, low confidence)",
+   "revenue_source": "data/research/cet_filings.json estimate table (CET $35-55M + Horton $25-40M + NuWave $2-10M, low confidence)",
    "current_ebitda_estimate": "CET standalone $3-6M at entry (low confidence); Horton/NuWave not estimated",
    "rationale": "Combined CET + Horton + NuWave revenue is estimated at ~$62-105M (sum of low-confidence filings estimates). Margin comes from bid selectivity (hard-bid 10-20% win rates vs 30-50% negotiated), less non-productive field time (FMI: 35%), and recurring O&M/SCADA monitoring revenue at NuWave and Horton. Multiple expansion is modest because electrical contracting trades on backlog and mix: PKF's grid rewards repeatable service, retention and in-house capabilities, and Capstone's 3.0-turn typical-to-premium spread is the ceiling; we credit 0.5-1.5 turns. Procore's 95% GRR / 106% NRR shows contractors stick with digital PM once adopted.",
    "evidence_ids": [
@@ -1320,7 +1320,7 @@
     100000000.0,
     140000000.0
    ],
-   "revenue_source": "data/research/frontline_filings.json estimate_table (2025 run-rate $100-140M, low confidence)",
+   "revenue_source": "data/research/frontline_filings.json estimate table (2025 run-rate $100-140M, low confidence)",
    "current_ebitda_estimate": "$16-20M adj. EBITDA at close (medium confidence)",
    "rationale": "Frontline (est. $100-140M revenue, $16-20M EBITDA at close) already entered at an estimated 12-15x, so FirmOS defends the premium rather than creating one. Margin comes from shifting tickets to Level 1/automation (MetricNet $22 vs $62 per ticket; Rewst automation) and from revenue-cycle services that cut e-billing rejections (18% vs 11%) and days-to-pay (62 to 50). Aventis shows MSP multiples rise with scale (9.9-11.2x) and fall with churn above 10%; security attach (Kaseya: top revenue line for 15%+ margin MSPs) and a productized compliance offering (Vanta/Drata) support 0.5-1.5 turns.",
    "evidence_ids": [
@@ -1369,7 +1369,7 @@
     250000000.0,
     320000000.0
    ],
-   "revenue_source": "data/research/thomas_filings.json estimate_table (current revenue $250-320M, low confidence)",
+   "revenue_source": "data/research/thomas_filings.json estimate table (current revenue $250-320M, low confidence)",
    "current_ebitda_estimate": "$25-35M (low confidence)",
    "rationale": "Thomas Scientific is the stressed asset (est. revenue $250-320M, EBITDA $25-35M, leverage 7-10x, sponsor equity marked near zero), so LabOS is an EBITDA and cash program first: digital ordering lowers cost-to-serve and wins long-tail share (Grainger digital +15.6% vs rep-led ~2%; Avantor ~80% digital transactions). Each 0.5 pt of margin on ~$250-320M is ~$1.3-1.6M. Multiple expansion is capped at 0.5-1.0 turns because lab distributors trade on scale and the capital structure dominates exit value; the December 2027 loan maturity sets the timeline.",
    "evidence_ids": [
@@ -1416,7 +1416,7 @@
     85000000.0,
     125000000.0
    ],
-   "revenue_source": "data/research/bpi_filings.json estimate_table (FY2025 net revenue $85-125M, low confidence)",
+   "revenue_source": "data/research/bpi_filings.json estimate table (FY2025 net revenue $85-125M, low confidence)",
    "current_ebitda_estimate": "$17-28M adj. EBITDA FY2025 (low confidence)",
    "rationale": "BPI (est. net revenue $85-125M, adj. EBITDA 18-24%) can package narrative monitoring and dashboards as always-on subscriptions, smoothing the election-cycle swing. Evidence: Stagwell's productized Marketing Cloud grew 230%; data/tech-led Publicis grew 5.6% organically while WPP shrank; PPHC trades at ~8.4x with a 24.3% margin. A sponsor exit for a scaled BPI is estimated at 10-13x, so 0.5-2.0 turns of the gap are credited to a productized recurring layer, conditional on showing subscription revenue in the numbers.",
    "evidence_ids": [
@@ -1463,7 +1463,7 @@
     20000000.0,
     35000000.0
    ],
-   "revenue_source": "data/research/fairharbor_filings.json estimate_table (2025 net revenue $20-35M, low confidence)",
+   "revenue_source": "data/research/fairharbor_filings.json estimate table (2025 net revenue $20-35M, low confidence)",
    "current_ebitda_estimate": "$0-4M (low confidence)",
    "rationale": "Fair Harbor (est. 2025 revenue $20-35M, EBITDA 0-12%) is margin-starved, so the levers are returns (19.3% online return rate; fit tools report 9.8-40% fewer fit-related returns), repeat purchase (20-30% benchmark) and inventory planning for a seasonal line. 2-5 points of margin is ~$0.4-1.75M. Entry was an estimated 1.3-2.5x revenue; credit is limited to 0.2-0.5x revenue because DTC multiples track growth and margin (LULU 24.4% vs smaller peers at 3-6%), and these levers move margin first.",
    "evidence_ids": [

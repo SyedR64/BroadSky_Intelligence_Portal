@@ -1,21 +1,20 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<script>document.documentElement.classList.add('js')</script>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CET — Critical power, water & energy infrastructure for New England (concept)</title>
-<meta name="description" content="Concept redesign: Commonwealth Electrical Technologies — electrical construction, wastewater and pump-station electrical (Horton), solar + storage, EV charging and energy efficiency (NuWave), licensed in all six New England states.">
-<meta name="theme-color" content="#070e1b">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CET concept site · Broad Sky</title>
+<meta name="description" content="Concept website for Commonwealth Electrical Technologies: electrical construction, wastewater and pump-station power, solar, storage, EV charging and efficiency across all six New England states.">
+<meta name="theme-color" content="#fbfaf7">
+<link rel="icon" href="../../BSP_Logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/system.css?v=20261006122625">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="site.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%233b82ff'/%3E%3Cpath d='M18 5 9 18h6l-1 9 9-13h-6z' fill='white'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="site.css?v=20261006122625">
 </head>
-<body>
-<a class="skip" href="#main">Skip to content</a>
-
+<body data-co="cet">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <linearGradient id="g-mark" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5c9dff"/><stop offset="1" stop-color="#1d5ff0"/></linearGradient>
@@ -37,64 +36,39 @@
   </defs>
 </svg>
 
-<div class="concept" id="concept" role="region" aria-label="Concept notice">
-  <div class="wrap">
-    <span class="tag">Concept</span>
-    <span class="msg">Concept redesign proposed by Syed Rahman for the Broad Sky Portfolio Resource Group — not an official site.</span>
-    <span class="links"><a href="../../app.html">Portal</a><a href="../index.html">Site concepts</a><a href="../../#os">OS program</a><a href="../../#briefing">Briefing</a></span>
-    <button class="x" type="button" aria-label="Dismiss concept notice" data-dismiss>×</button>
-  </div>
-</div>
-
-<header class="nav" id="nav">
-  <div class="wrap">
-    <a class="brand" href="#top" aria-label="CET home">
-      <svg class="mk" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="8" fill="url(#g-mark)"/><path d="M8 11h18M8 17h11M8 23h18" stroke="rgba(255,255,255,.35)" stroke-width="1.4"/><circle cx="22.5" cy="17" r="3.2" fill="#fff"/><path d="M19.3 17H8" stroke="#fff" stroke-width="2"/></svg>
-      <span class="wm"><b>CET</b><span>Commonwealth Electrical</span></span>
-    </a>
-    <nav aria-label="Primary">
-      <ul id="menu">
-        <li><a href="#capabilities">Capabilities</a></li>
-        <li><a href="#markets">Markets</a></li>
-        <li><a href="#footprint">Footprint</a></li>
-        <li><a href="#funding">Funding</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#careers">Careers</a></li>
-        <li><a href="#acquisitions">Acquisitions</a></li>
-        <li><a href="playbook.html">Playbook</a></li>
-        <li><a class="os-link" href="gridos.html"><svg width="14" height="14" aria-hidden="true"><use href="#i-wave"/></svg>GridOS</a></li>
-      </ul>
-    </nav>
-    <div class="cta">
-      <a class="phone" href="#contact" data-emergency><i></i>24/7 emergency desk</a>
-      <a class="btn primary sm" href="#contact">Request a quote</a>
-      <button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span></button>
-    </div>
-  </div>
-</header>
-
 <main id="main">
-<!-- ═════════ HERO ═════════ -->
-<section class="hero gridbg" id="top" aria-labelledby="hero-h">
-  <div class="wrap">
-    <div>
-      <span class="eyebrow">Electrical · Energy · Water</span>
-      <h1 id="hero-h">Critical power for the places that <span class="grad">can’t go dark.</span></h1>
-      <p class="lead">CET designs, builds and maintains the electrical systems behind New England’s treatment plants, campuses, hospitals, factories and fleets — with solar, storage, EV charging and efficiency under one license, one crew plan and one point of contact.</p>
-      <div class="actions">
-        <a class="btn primary" href="#contact">Request a quote <span class="ar">→</span></a>
-        <a class="btn ghost" href="#contact" data-type="engineer">Talk to an engineer</a>
-      </div>
-      <a class="os-badge" href="gridos.html"><b>GridOS</b> Every bid, crew and asset on one operating layer <span aria-hidden="true">→</span></a>
-      <div class="trust" aria-label="Credentials">
-        <span><svg aria-hidden="true"><use href="#i-check"/></svg>Licensed in CT · MA · RI · NH · ME · VT</span>
-        <span><svg aria-hidden="true"><use href="#i-check"/></svg>Wastewater heritage since 1976</span>
-        <span><svg aria-hidden="true"><use href="#i-check"/></svg>24/7 emergency response</span>
-      </div>
+<nav class="sys-subnav" aria-label="On this page">
+  <div class="sys-subnav-in">
+    <a class="sys-subnav-title" href="#top">CET</a>
+    <div class="sys-subnav-links">
+      <a href="#capabilities">Capabilities</a><a href="#assure">Assure</a><a href="#markets">Markets</a><a href="#footprint">Footprint</a><a href="#funding">Funding</a><a href="#projects">Projects</a><a href="#careers">Careers</a><a href="#acquisitions">Acquisitions</a><a href="#faq">FAQ</a>
     </div>
-    <div class="diagram rv" aria-label="Illustration: a one-line diagram from the utility feed to a pump station, a solar and storage array, EV chargers and an efficiency retrofit">
-      <div class="bar"><i></i>One-line · Site 07 · Worcester County <span class="r">illustrative</span></div>
-      <svg viewBox="0 0 520 380" role="img" aria-hidden="true">
+    <div class="sys-subnav-actions"><a class="sys-btn sys-btn--primary sys-btn--sm" href="#contact">Request a quote</a></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="sys-hero" id="top" aria-labelledby="hero-h">
+  <div class="sys-wrap">
+    <div class="cet-hero">
+      <div class="cet-hero-copy">
+        <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>CET</b> · Electrical · Energy · Water</p>
+        <h1 id="hero-h" class="sys-h1">Critical power for the places that <span class="sys-grad-text">can’t go dark.</span></h1>
+        <p class="sys-lead">CET designs, builds and maintains the electrical systems behind New England’s treatment plants, campuses, hospitals, factories and fleets. Solar, storage, EV charging and efficiency sit under one license, one crew plan and one point of contact.</p>
+        <div class="sys-actions">
+          <a class="sys-btn sys-btn--primary sys-btn--lg" href="#contact">Request a quote <span aria-hidden="true">→</span></a>
+          <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#contact" data-type="engineer">Talk to an engineer</a>
+        </div>
+        <div class="sys-chips cet-trust" aria-label="Credentials">
+          <span class="sys-chip"><svg aria-hidden="true"><use href="#i-check"/></svg>Licensed in CT, MA, RI, NH, ME and VT</span>
+          <span class="sys-chip"><svg aria-hidden="true"><use href="#i-check"/></svg>Wastewater work since 1976</span>
+          <span class="sys-chip"><svg aria-hidden="true"><use href="#i-check"/></svg>24/7 emergency response</span>
+        </div>
+        <a class="sys-link cet-os-link" href="gridos.html">GridOS: every bid, crew and asset on one operating layer <span aria-hidden="true">→</span></a>
+      </div>
+      <figure class="sys-card cet-diagram" data-sys-theme="dark" aria-label="Illustration: a one-line diagram from the utility feed to a pump station, a solar and storage array, EV chargers and an efficiency retrofit">
+        <figcaption class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span><span>One-line diagram · Site 07 · Worcester County</span><span class="sys-est sys-est--illus">illustrative</span></figcaption>
+      <svg class="cet-diagram-svg" viewBox="0 0 520 380" aria-hidden="true" focusable="false">
         <defs>
           <pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#1b2c4f"/></pattern>
         </defs>
@@ -160,381 +134,411 @@
         <text x="270" y="356" fill="#7385a6" font-size="9.5">ALARMS</text><text x="318" y="356" fill="#34d399" font-size="11" font-weight="600">0</text>
         <text x="350" y="356" fill="#7385a6" font-size="9.5">NEXT PM</text><text x="402" y="356" fill="#e9effb" font-size="11">Tue 07:00</text>
       </svg>
-      <div class="radar-card" id="radar-card" aria-live="polite">
-        <div class="k"><i></i>Public bids we’re tracking</div>
-        <div class="v"><span class="num" data-k="open">—</span><small data-k="states">open bids · 6 states</small></div>
-        <div class="nx" data-k="next">Loading New England bid radar…</div>
+        <div class="cet-radar" id="radar-card" aria-live="polite">
+          <span class="sys-card-label">Public bids we’re tracking</span>
+          <div class="cet-radar-v"><span class="sys-num" data-k="open">—</span><small data-k="states">open bids · 6 states</small></div>
+          <p class="cet-radar-nx" data-k="next">Loading the New England bid radar…</p>
+        </div>
+      </figure>
+    </div>
+    <div class="sys-kpis" role="list" aria-label="CET at a glance">
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Licensed states</span><span class="sys-kpi-value">6<small>of 6</small></span><span class="sys-kpi-sub">Every New England state</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">People</span><span class="sys-kpi-value">~280<span class="sys-est">est.</span></span><span class="sys-kpi-sub">Electricians, engineers and technicians, with Horton</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Offices</span><span class="sys-kpi-value">4</span><span class="sys-kpi-sub">Worcester, Taunton and Norwell MA; Canton CT</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Wastewater heritage</span><span class="sys-kpi-value">50<small>years</small></span><span class="sys-kpi-sub">Municipal work through Horton, founded 1976</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Emergency desk</span><span class="sys-kpi-value">24/7</span><span class="sys-kpi-sub">Generator, switchgear and pump-station calls</span></div>
+    </div>
+    <p class="sys-src"><b>Source:</b> CET, Horton and NuWave public releases, Oct 2025 and Sept 2026. Headcount is an estimate from public filings.</p>
+  </div>
+</section>
+
+<!-- EMERGENCY -->
+<section class="sys-section sys-section--tight" id="emergency" aria-labelledby="em-h">
+  <div class="sys-wrap">
+    <div class="sys-card sys-card--feature cet-emergency" data-co="cet">
+      <span class="cet-ic" aria-hidden="true"><svg><use href="#i-power"/></svg></span>
+      <div class="cet-emergency-copy">
+        <h2 id="em-h" class="sys-h2">Pump-station alarm at 2 a.m.? Generator won’t transfer?</h2>
+        <p class="sys-card-body">The 24/7 desk dispatches licensed crews from Canton, Worcester and Taunton with the switchgear, transfer-switch and SCADA know-how to restore service, not just reset it.</p>
       </div>
+      <a class="sys-btn sys-btn--co" href="#contact" data-emergency>Open the emergency desk <span aria-hidden="true">→</span></a>
     </div>
   </div>
 </section>
 
-<!-- ═════════ STATS ═════════ -->
-<section class="stats" id="stats" aria-label="CET at a glance">
-  <div class="wrap">
-    <div class="stat"><b>6<em>/6</em></b><span>New England states where we hold electrical licenses</span></div>
-    <div class="stat"><b>~280</b><span>electricians, engineers &amp; technicians</span><small>pro forma with Horton · est.</small></div>
-    <div class="stat"><b>4</b><span>offices: Worcester, Taunton, Norwell MA &amp; Canton CT</span></div>
-    <div class="stat"><b>50<em> yrs</em></b><span>of municipal wastewater electrical work through Horton (est. 1976)</span></div>
-    <div class="stat"><b>24/7</b><span>generator, switchgear &amp; pump-station emergency response</span></div>
-  </div>
-</section>
-
-<!-- ═════════ EMERGENCY ═════════ -->
-<section class="emergency" id="emergency" aria-label="Emergency service">
-  <div class="wrap">
-    <div class="ic"><svg width="26" height="26" aria-hidden="true"><use href="#i-power"/></svg></div>
-    <div>
-      <h3>Pump-station alarm at 2 a.m.? Generator won’t transfer?</h3>
-      <p>Our 24/7 desk dispatches licensed crews from Canton, Worcester and Taunton — with the switchgear, ATS and SCADA know-how to restore service, not just reset it.</p>
+<!-- PILLARS -->
+<section class="sys-section" id="pillars" aria-labelledby="pillars-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">Two ways in</p>
+      <h2 id="pillars-h" class="sys-h2">One contractor for the plant and the parking lot.</h2>
+      <p class="sys-lead">Public-works buyers and private owners buy differently. Pick your path; the same licensed crews, estimators and engineers stand behind both.</p>
     </div>
-    <a class="btn light" href="#contact" data-emergency>Open the emergency desk <span class="ar">→</span></a>
-  </div>
-</section>
-
-<!-- ═════════ PILLARS ═════════ -->
-<section class="sec" id="pillars" aria-labelledby="pillars-h">
-  <div class="wrap">
-    <div class="sec-head">
-      <div><span class="eyebrow"><span class="ix">01</span>Two ways in</span><h2 id="pillars-h">One contractor for the plant and the parking lot.</h2></div>
-      <p class="lead">Public-works buyers and private owners procure differently. Pick your path — the same licensed crews, estimators and engineers stand behind both.</p>
-    </div>
-    <div class="pillars">
-      <article class="pillar water rv">
-        <svg class="art" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#22d3ee" stroke-opacity=".35"><circle cx="100" cy="100" r="30"/><circle cx="100" cy="100" r="55"/><circle cx="100" cy="100" r="80"/></g><path d="M20 100h160M100 20v160" stroke="#22d3ee" stroke-opacity=".2"/></svg>
-        <span class="pk">Public works</span>
-        <h3>Municipal &amp; Wastewater</h3>
-        <p>Treatment plants, pump stations and the standby power that keeps them online through every nor’easter — scoped to your engineer’s drawings and your SRF funding.</p>
-        <ul>
-          <li>Plant electrical &amp; I&amp;C</li><li>Pump-station rebuilds</li>
-          <li>SCADA &amp; telemetry</li><li>Generators, ATS, switchgear</li>
-          <li>Aeration &amp; blower VFDs</li><li>Clean Water SRF projects</li>
+    <div class="sys-grid sys-grid--2 sys-grid--gap-lg">
+      <article class="sys-card sys-card--feature cet-pillar" data-co="cet">
+        <span class="sys-card-label">Public works</span>
+        <h3 class="sys-card-title cet-pillar-title">Municipal and wastewater</h3>
+        <p class="sys-card-body">Treatment plants, pump stations and the standby power that keeps them online through every nor’easter, scoped to your engineer’s drawings and your Clean Water SRF funding.</p>
+        <ul class="sys-card-list cet-two-col">
+          <li>Plant electrical, instrumentation and controls</li><li>Pump-station rebuilds</li>
+          <li>SCADA and telemetry</li><li>Generators, transfer switches, switchgear</li>
+          <li>Aeration and blower drives</li><li>Clean Water SRF projects</li>
         </ul>
-        <span class="lead-by">Led by <b>Horton Electrical Services</b> · Canton, CT</span>
-        <a class="go" href="#markets" data-market="water" style="margin-top:18px">Explore water &amp; wastewater <span class="ar">→</span></a>
+        <div class="sys-card-foot"><span>Led by <b>Horton Electrical Services</b> · Canton, CT</span><a href="#markets" data-market="water">Water and wastewater →</a></div>
       </article>
-      <article class="pillar rv">
-        <svg class="art" viewBox="0 0 200 200" aria-hidden="true"><g stroke="#5c9dff" stroke-opacity=".3" fill="none"><path d="M20 40h160M20 80h160M20 120h160M20 160h160M40 20v160M80 20v160M120 20v160M160 20v160"/></g><path d="M40 160 80 120l40 10 40-90" stroke="#5c9dff" stroke-width="2" fill="none" stroke-opacity=".7"/></svg>
-        <span class="pk">Commercial · Institutional · Industrial</span>
-        <h3>Commercial, Solar &amp; EV</h3>
-        <p>From service entrance to rooftop: design-build electrical, solar and storage, fleet and workplace charging, and efficiency retrofits that pay for themselves — on occupied, operating sites.</p>
-        <ul>
-          <li>Design-build electrical</li><li>Solar + storage EPC &amp; O&amp;M</li>
-          <li>EV fleet &amp; workplace charging</li><li>LED, controls &amp; HVAC efficiency</li>
-          <li>Utility incentive capture</li><li>Service &amp; maintenance</li>
+      <article class="sys-card sys-card--feature cet-pillar" data-co="cet">
+        <span class="sys-card-label">Commercial · institutional · industrial</span>
+        <h3 class="sys-card-title cet-pillar-title">Commercial, solar and EV</h3>
+        <p class="sys-card-body">From service entrance to rooftop: design-build electrical, solar and storage, fleet and workplace charging, and efficiency retrofits that pay for themselves, on occupied, operating sites.</p>
+        <ul class="sys-card-list cet-two-col">
+          <li>Design-build electrical</li><li>Solar and storage build and O&amp;M</li>
+          <li>Fleet and workplace EV charging</li><li>LED, controls and HVAC efficiency</li>
+          <li>Utility incentive capture</li><li>Service and maintenance</li>
         </ul>
-        <span class="lead-by">Led by <b>CET</b> · Worcester &amp; Taunton, with <b>NuWave</b> · Norwell</span>
-        <a class="go" href="#capabilities" style="margin-top:18px">Explore capabilities <span class="ar">→</span></a>
+        <div class="sys-card-foot"><span>Led by <b>CET</b> · Worcester and Taunton, with <b>NuWave</b> · Norwell</span><a href="#capabilities">Capabilities →</a></div>
       </article>
     </div>
   </div>
 </section>
 
-<!-- ═════════ CAPABILITIES ═════════ -->
-<section class="sec" id="capabilities" aria-labelledby="cap-h" style="padding-top:0">
-  <div class="wrap">
-    <div class="sec-head">
-      <div><span class="eyebrow"><span class="ix">02</span>Capabilities</span><h2 id="cap-h">Self-performed, from switchgear to SCADA.</h2></div>
-      <p class="lead">Six disciplines, one safety program and one schedule. We self-perform the electrical scope so owners and GCs get one accountable trade partner instead of four.</p>
+<!-- CAPABILITIES -->
+<section class="sys-section" id="capabilities" aria-labelledby="cap-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">Capabilities</p>
+      <h2 id="cap-h" class="sys-h2">Self-performed, from switchgear to SCADA.</h2>
+      <p class="sys-lead">Six disciplines, one safety program and one schedule. CET self-performs the electrical scope, so owners and general contractors get one accountable trade partner instead of four.</p>
     </div>
-    <div class="caps">
-      <article class="cap rv"><div class="top"><div class="ic"><svg aria-hidden="true"><use href="#i-bolt"/></svg></div><span class="ix">01</span></div><h3>Electrical construction</h3><p>Design-build and bid-build power distribution, switchgear and MCCs, lighting and controls for new construction and occupied facilities.</p><div class="tags"><span class="chip">Design-build</span><span class="chip">149A trade bids</span><span class="chip">Switchgear</span></div><span class="team">CET</span></article>
-      <article class="cap rv"><div class="top"><div class="ic" style="color:var(--cyan);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.3)"><svg aria-hidden="true"><use href="#i-water"/></svg></div><span class="ix">02</span></div><h3>Wastewater &amp; pump stations</h3><p>Plant electrical and instrumentation, VFDs, pump-station rebuilds and SCADA integration — sequenced so the plant never stops treating.</p><div class="tags"><span class="chip">I&amp;C</span><span class="chip">SCADA</span><span class="chip">Wet-well rated</span></div><span class="team">HORTON</span></article>
-      <article class="cap rv"><div class="top"><div class="ic" style="color:var(--amber);background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3)"><svg aria-hidden="true"><use href="#i-power"/></svg></div><span class="ix">03</span></div><h3>Standby power &amp; resiliency</h3><p>Generator sizing and installation, automatic transfer switches, load-bank testing and microgrid controls for loads that cannot drop.</p><div class="tags"><span class="chip">Generators</span><span class="chip">ATS</span><span class="chip">Microgrids</span></div><span class="team">CET · HORTON</span></article>
-      <article class="cap rv"><div class="top"><div class="ic" style="color:var(--amber);background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3)"><svg aria-hidden="true"><use href="#i-sun"/></svg></div><span class="ix">04</span></div><h3>Solar + storage</h3><p>Rooftop, canopy, ground-mount and landfill PV with battery storage, utility interconnection and O&amp;M backed by monitored uptime.</p><div class="tags"><span class="chip">EPC</span><span class="chip">BESS</span><span class="chip">O&amp;M</span></div><span class="team">CET · HORTON</span></article>
-      <article class="cap rv"><div class="top"><div class="ic" style="color:var(--green);background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3)"><svg aria-hidden="true"><use href="#i-ev"/></svg></div><span class="ix">05</span></div><h3>EV charging</h3><p>Level 2 and DC fast charging for fleets, depots, campuses and municipalities: make-ready, installation, commissioning and network operations.</p><div class="tags"><span class="chip">DCFC</span><span class="chip">Fleet depots</span><span class="chip">On-street</span></div><span class="team">CET</span></article>
-      <article class="cap rv"><div class="top"><div class="ic" style="color:var(--violet);background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3)"><svg aria-hidden="true"><use href="#i-gauge"/></svg></div><span class="ix">06</span></div><h3>Energy efficiency</h3><p>LED and controls retrofits, HVAC and process-load optimization, utility-incentive paperwork and measurement &amp; verification you can show a board.</p><div class="tags"><span class="chip">LED + controls</span><span class="chip">Incentives</span><span class="chip">M&amp;V</span></div><span class="team">NUWAVE</span></article>
+    <div class="sys-grid sys-grid--3">
+      <article class="sys-card cet-cap"><div class="cet-cap-top"><span class="cet-ic"><svg aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="sys-card-label">CET</span></div><h3 class="sys-card-title">Electrical construction</h3><p class="sys-card-body">Design-build and bid-build power distribution, switchgear and motor control centers, lighting and controls for new construction and occupied facilities.</p><div class="sys-chips"><span class="sys-chip">Design-build</span><span class="sys-chip">MA 149A trade bids</span><span class="sys-chip">Switchgear</span></div></article>
+      <article class="sys-card cet-cap"><div class="cet-cap-top"><span class="cet-ic cet-ic--water"><svg aria-hidden="true"><use href="#i-water"/></svg></span><span class="sys-card-label">Horton</span></div><h3 class="sys-card-title">Wastewater and pump stations</h3><p class="sys-card-body">Plant electrical and instrumentation, drives, pump-station rebuilds and SCADA integration, sequenced so the plant never stops treating.</p><div class="sys-chips"><span class="sys-chip">Instrumentation</span><span class="sys-chip">SCADA</span><span class="sys-chip">Wet-well rated</span></div></article>
+      <article class="sys-card cet-cap"><div class="cet-cap-top"><span class="cet-ic cet-ic--warn"><svg aria-hidden="true"><use href="#i-power"/></svg></span><span class="sys-card-label">CET · Horton</span></div><h3 class="sys-card-title">Standby power and resiliency</h3><p class="sys-card-body">Generator sizing and installation, automatic transfer switches, load-bank testing and microgrid controls for loads that cannot drop.</p><div class="sys-chips"><span class="sys-chip">Generators</span><span class="sys-chip">Transfer switches</span><span class="sys-chip">Microgrids</span></div></article>
+      <article class="sys-card cet-cap"><div class="cet-cap-top"><span class="cet-ic cet-ic--warn"><svg aria-hidden="true"><use href="#i-sun"/></svg></span><span class="sys-card-label">CET · Horton</span></div><h3 class="sys-card-title">Solar and storage</h3><p class="sys-card-body">Rooftop, canopy, ground-mount and landfill solar with battery storage, utility interconnection and O&amp;M backed by monitored uptime.</p><div class="sys-chips"><span class="sys-chip">Build</span><span class="sys-chip">Battery storage</span><span class="sys-chip">O&amp;M</span></div></article>
+      <article class="sys-card cet-cap"><div class="cet-cap-top"><span class="cet-ic cet-ic--good"><svg aria-hidden="true"><use href="#i-ev"/></svg></span><span class="sys-card-label">CET</span></div><h3 class="sys-card-title">EV charging</h3><p class="sys-card-body">Level 2 and DC fast charging for fleets, depots, campuses and towns: make-ready, installation, commissioning and network operations.</p><div class="sys-chips"><span class="sys-chip">DC fast charging</span><span class="sys-chip">Fleet depots</span><span class="sys-chip">On-street</span></div></article>
+      <article class="sys-card cet-cap"><div class="cet-cap-top"><span class="cet-ic cet-ic--violet"><svg aria-hidden="true"><use href="#i-gauge"/></svg></span><span class="sys-card-label">NuWave</span></div><h3 class="sys-card-title">Energy efficiency</h3><p class="sys-card-body">LED and controls retrofits, HVAC and process-load tuning, utility-incentive paperwork and measured savings you can show a board.</p><div class="sys-chips"><span class="sys-chip">LED and controls</span><span class="sys-chip">Incentives</span><span class="sys-chip">Measured savings</span></div></article>
     </div>
   </div>
 </section>
 
-<!-- ═════════ ASSURE / GRIDOS TEASER ═════════ -->
-<section class="sec gridbg" id="assure" aria-labelledby="assure-h" style="background:var(--ink-0);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
-  <div class="wrap assure">
+<!-- ASSURE (dark band) -->
+<section class="sys-section" id="assure" data-sys-theme="dark" aria-labelledby="assure-h">
+  <div class="sys-wrap cet-split cet-split--wide">
     <div>
-      <span class="eyebrow"><span class="ix">03</span>CET Assure · powered by GridOS</span>
-      <h2 id="assure-h" style="margin-top:16px">One contract for everything that keeps your power on.</h2>
-      <p class="lead" style="margin-top:18px">CET Assure bundles inspection, maintenance, monitoring and 24/7 response for pump stations, generators, switchgear, solar and EV chargers — one point of contact, one invoice, one uptime report.</p>
-      <ol>
-        <li><b>Inspect &amp; test</b><span>Scheduled PM, infrared scans, load-bank and transfer tests on a calendar you can see.</span></li>
-        <li><b>Monitor</b><span>SCADA, inverter and charger telemetry watched by GridOS; alarms open a work order automatically.</span></li>
+      <div class="sys-section-head">
+        <p class="sys-kicker">CET Assure · runs on GridOS</p>
+        <h2 id="assure-h" class="sys-h2">One contract for everything that keeps your power on.</h2>
+        <p class="sys-lead">CET Assure bundles inspection, maintenance, monitoring and 24/7 response for pump stations, generators, switchgear, solar and EV chargers: one point of contact, one invoice, one uptime report.</p>
+      </div>
+      <ol class="cet-steps">
+        <li><b>Inspect and test</b><span>Scheduled maintenance, infrared scans, load-bank and transfer tests on a calendar you can see.</span></li>
+        <li><b>Monitor</b><span>SCADA, inverter and charger alarms watched by GridOS; each alarm opens a work order automatically.</span></li>
         <li><b>Respond</b><span>24/7 dispatch with the parts and drawings already on the truck.</span></li>
         <li><b>Report</b><span>Monthly uptime, energy and compliance reporting for your board, council or lender.</span></li>
       </ol>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <a class="btn primary" href="#contact" data-type="assure">Price an Assure contract</a>
-        <a class="btn ghost" href="gridos.html">See GridOS <span class="ar">→</span></a>
+      <div class="sys-actions">
+        <a class="sys-btn sys-btn--primary" href="#contact" data-type="assure">Price an Assure contract</a>
+        <a class="sys-btn sys-btn--secondary" href="gridos.html">See GridOS <span aria-hidden="true">→</span></a>
       </div>
     </div>
-    <div class="window rv" aria-label="GridOS bid board preview with live New England data">
-      <div class="chrome"><i></i><i></i><i></i><span class="t">gridos · bid board · new england</span><span class="live">LIVE DATA</span></div>
-      <div class="mini" id="mini">
-        <div class="kp"><div><b class="num" data-k="open">—</b><span>Open bids</span></div><div><b class="num" data-k="soon">—</b><span>Due ≤ 14 days</span></div><div><b class="num" data-k="pipe">—</b><span>Pipeline (est.)</span></div></div>
-        <table><thead><tr><th>Due</th><th>Opportunity</th><th>St</th><th class="hide-s">Fit</th></tr></thead><tbody data-k="rows"><tr><td colspan="4" style="color:var(--tx-3)">Loading…</td></tr></tbody></table>
-        <div class="foot"><span>Source: CET opportunity radar (public bid boards, SRF lists)</span><a href="gridos.html#demo" style="color:var(--cyan)">Open demo →</a></div>
+    <div class="sys-card cet-mini" id="mini" aria-label="GridOS bid board preview with New England public data">
+      <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>GridOS · Bid board · New England</span>
+      <div class="cet-mini-kpis">
+        <div class="sys-kpi"><span class="sys-kpi-label">Open bids</span><span class="sys-kpi-value" data-k="open">—</span></div>
+        <div class="sys-kpi"><span class="sys-kpi-label">Due in 14 days</span><span class="sys-kpi-value" data-k="soon">—</span></div>
+        <div class="sys-kpi"><span class="sys-kpi-label">Pipeline</span><span class="sys-kpi-value"><span data-k="pipe">—</span><span class="sys-est">est.</span></span></div>
+      </div>
+      <div class="sys-table-wrap">
+        <table class="sys-table cet-mini-t">
+          <thead><tr><th>Due</th><th>Opportunity</th><th>State</th><th class="sys-n cet-hide-s">Fit</th></tr></thead>
+          <tbody data-k="rows"><tr><td colspan="4">Loading…</td></tr></tbody>
+          <caption>Source: CET opportunity radar (public bid boards and state Clean Water SRF lists), Sept 2026. <a href="gridos.html#demo">Open the demo →</a></caption>
+        </table>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═════════ MARKETS ═════════ -->
-<section class="sec light" id="markets" aria-labelledby="mk-h">
-  <div class="wrap">
-    <div class="sec-head">
-      <div><span class="eyebrow"><span class="ix">04</span>Markets</span><h2 id="mk-h">Built for mission-critical buildings.</h2></div>
-      <p class="lead">Where an outage means a permit violation, a cancelled surgery or a lost crop, owners need an electrical partner who plans for the failure before it happens.</p>
+<!-- MARKETS -->
+<section class="sys-section sys-section--alt" id="markets" aria-labelledby="mk-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">Markets</p>
+      <h2 id="mk-h" class="sys-h2">Built for mission-critical buildings.</h2>
+      <p class="sys-lead">Where an outage means a permit violation, a cancelled surgery or a lost crop, owners need an electrical partner who plans for the failure before it happens.</p>
     </div>
-    <div class="markets">
-      <div class="mk-list" role="tablist" aria-label="Markets">
-        <button class="mk-tab" role="tab" id="t-utility" aria-controls="p-utility" aria-selected="true"><span class="n">01</span>Utility &amp; grid<span class="ar">→</span></button>
-        <button class="mk-tab" role="tab" id="t-water" aria-controls="p-water" aria-selected="false" tabindex="-1"><span class="n">02</span>Municipal water<span class="ar">→</span></button>
-        <button class="mk-tab" role="tab" id="t-edu" aria-controls="p-edu" aria-selected="false" tabindex="-1"><span class="n">03</span>Higher education<span class="ar">→</span></button>
-        <button class="mk-tab" role="tab" id="t-health" aria-controls="p-health" aria-selected="false" tabindex="-1"><span class="n">04</span>Healthcare<span class="ar">→</span></button>
-        <button class="mk-tab" role="tab" id="t-ind" aria-controls="p-ind" aria-selected="false" tabindex="-1"><span class="n">05</span>Industrial<span class="ar">→</span></button>
-        <button class="mk-tab" role="tab" id="t-grow" aria-controls="p-grow" aria-selected="false" tabindex="-1"><span class="n">06</span>Cultivation<span class="ar">→</span></button>
+    <div class="cet-markets">
+      <div class="cet-mk-list" role="tablist" aria-label="Markets">
+        <button class="cet-mk-tab" role="tab" id="t-utility" aria-controls="p-utility" aria-selected="true"><span class="sys-num">01</span>Utility and grid</button>
+        <button class="cet-mk-tab" role="tab" id="t-water" aria-controls="p-water" aria-selected="false" tabindex="-1"><span class="sys-num">02</span>Municipal water</button>
+        <button class="cet-mk-tab" role="tab" id="t-edu" aria-controls="p-edu" aria-selected="false" tabindex="-1"><span class="sys-num">03</span>Higher education</button>
+        <button class="cet-mk-tab" role="tab" id="t-health" aria-controls="p-health" aria-selected="false" tabindex="-1"><span class="sys-num">04</span>Healthcare</button>
+        <button class="cet-mk-tab" role="tab" id="t-ind" aria-controls="p-ind" aria-selected="false" tabindex="-1"><span class="sys-num">05</span>Industrial</button>
+        <button class="cet-mk-tab" role="tab" id="t-grow" aria-controls="p-grow" aria-selected="false" tabindex="-1"><span class="sys-num">06</span>Cultivation</button>
       </div>
       <div>
-        <div class="mk-panel" role="tabpanel" id="p-utility" aria-labelledby="t-utility">
-          <svg class="glyph" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#5c9dff" stroke-width="1.5"><path d="M60 10 40 110M60 10l20 100M44 40h32M38 70h44M48 22h24"/><path d="M20 40h20M80 40h20M14 70h24M82 70h24" stroke-dasharray="3 4"/></g></svg>
-          <span class="eyebrow">Utility &amp; grid</span>
-          <h3>Distribution-side work, done to utility standards.</h3>
-          <p>Interconnection, storage balance-of-plant, substation-adjacent electrical and grid-hardening builds for utilities, co-ops and the developers who sell to them.</p>
-          <div class="cols"><div><h4>What we deliver</h4><ul><li>BESS balance-of-plant &amp; interconnection</li><li>Grid-resilience &amp; microgrid builds</li><li>Traffic, street &amp; on-street EV electrical</li></ul></div><div><h4>Programs that fund it</h4><div class="tags"><span class="chip">MA 83E storage</span><span class="chip">NH GRANITE</span><span class="chip">CT Energy Resilience</span></div></div></div>
-          <div class="proof"><div><b>1,000 MW</b>MA Section 83E storage round now selecting</div><div><b>Dec 1</b>CT DEEP resilience grants due</div></div>
+        <div class="sys-card sys-card--feature cet-mk-panel" data-co="cet" role="tabpanel" id="p-utility" aria-labelledby="t-utility">
+          <svg class="cet-glyph" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#5c9dff" stroke-width="1.5"><path d="M60 10 40 110M60 10l20 100M44 40h32M38 70h44M48 22h24"/><path d="M20 40h20M80 40h20M14 70h24M82 70h24" stroke-dasharray="3 4"/></g></svg>
+          <span class="sys-card-label">Utility and grid</span>
+          <h3 class="sys-h3">Distribution-side work, done to utility standards.</h3>
+          <p class="sys-card-body">Interconnection, storage balance-of-plant, substation-adjacent electrical and grid-hardening builds for utilities, co-ops and the developers who sell to them.</p>
+          <div class="cet-mk-cols"><div><p class="sys-card-label">What we deliver</p><ul class="sys-card-list"><li>Battery storage balance-of-plant and interconnection</li><li>Grid-resilience and microgrid builds</li><li>Traffic, street and on-street EV electrical</li></ul></div><div><p class="sys-card-label">Programs that fund it</p><div class="sys-chips"><span class="sys-chip">MA Section 83E storage</span><span class="sys-chip">NH GRANITE</span><span class="sys-chip">CT Energy Resilience</span></div></div></div>
+          <div class="cet-proof"><div><b class="sys-num">1,000 MW</b><span>MA Section 83E storage round now selecting</span></div><div><b class="sys-num">Dec 1</b><span>CT DEEP resilience grants due</span></div></div>
         </div>
-        <div class="mk-panel" role="tabpanel" id="p-water" aria-labelledby="t-water" hidden>
-          <svg class="glyph" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#22d3ee" stroke-width="1.5"><circle cx="40" cy="70" r="26"/><circle cx="40" cy="70" r="14"/><rect x="74" y="44" width="34" height="52" rx="3"/><path d="M66 70h8M14 70H4M91 44V24h-30" /></g></svg>
-          <span class="eyebrow">Municipal water</span>
-          <h3>Plants and pump stations that never stop treating.</h3>
-          <p>Horton has spent five decades inside New England’s WPCFs and lift stations. We phase electrical upgrades around live process, keep standby power tested, and give operators SCADA they trust at 2 a.m.</p>
-          <div class="cols"><div><h4>What we deliver</h4><ul><li>MCC, switchgear &amp; VFD replacements</li><li>Pump-station generators, ATS &amp; telemetry</li><li>Aeration-blower and energy-recovery electrical</li></ul></div><div><h4>Programs that fund it</h4><div class="tags"><span class="chip">CT Clean Water Fund</span><span class="chip">MA CWSRF</span><span class="chip">RI · ME · VT SRF</span><span class="chip">MassDEP energy recovery</span></div></div></div>
-          <div class="proof" id="water-proof"><div><b class="num" data-k="ww-n">183</b>treatment plants in CT, MA &amp; RI we track</div><div><b class="num" data-k="ww-f">—</b>with funded or requested projects</div></div>
+        <div class="sys-card sys-card--feature cet-mk-panel" data-co="cet" role="tabpanel" id="p-water" aria-labelledby="t-water" hidden>
+          <svg class="cet-glyph" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#22d3ee" stroke-width="1.5"><circle cx="40" cy="70" r="26"/><circle cx="40" cy="70" r="14"/><rect x="74" y="44" width="34" height="52" rx="3"/><path d="M66 70h8M14 70H4M91 44V24h-30" /></g></svg>
+          <span class="sys-card-label">Municipal water</span>
+          <h3 class="sys-h3">Plants and pump stations that never stop treating.</h3>
+          <p class="sys-card-body">Horton has spent five decades inside New England’s treatment plants and lift stations. We phase electrical upgrades around live process, keep standby power tested and give operators SCADA they trust at 2 a.m.</p>
+          <div class="cet-mk-cols"><div><p class="sys-card-label">What we deliver</p><ul class="sys-card-list"><li>Motor control center, switchgear and drive replacements</li><li>Pump-station generators, transfer switches and telemetry</li><li>Aeration-blower and energy-recovery electrical</li></ul></div><div><p class="sys-card-label">Programs that fund it</p><div class="sys-chips"><span class="sys-chip">CT Clean Water Fund</span><span class="sys-chip">MA Clean Water SRF</span><span class="sys-chip">RI, ME and VT SRF</span><span class="sys-chip">MassDEP energy recovery</span></div></div></div>
+          <div class="cet-proof" id="water-proof"><div><b class="sys-num" data-k="ww-n">183</b><span>treatment plants in CT, MA and RI we track</span></div><div><b class="sys-num" data-k="ww-f">—</b><span>with funded or requested projects</span></div></div>
         </div>
-        <div class="mk-panel" role="tabpanel" id="p-edu" aria-labelledby="t-edu" hidden>
-          <svg class="glyph" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#5c9dff" stroke-width="1.5"><path d="M10 50 60 22l50 28-50 28z"/><path d="M30 61v26c10 8 50 8 60 0V61M104 54v30"/></g></svg>
-          <span class="eyebrow">Higher education</span>
-          <h3>Campus power that works between semesters.</h3>
-          <p>We plan around academic calendars: switchgear and lighting upgrades over break, canopy solar on commuter lots, and fleet charging for campus vehicles — without taking a dorm offline.</p>
-          <div class="cols"><div><h4>What we deliver</h4><ul><li>Campus distribution &amp; building electrical</li><li>Parking-canopy solar + storage</li><li>Workplace and fleet EV charging</li></ul></div><div><h4>Programs that fund it</h4><div class="tags"><span class="chip">MA SMART 3.0</span><span class="chip">DOER Leading by Example</span><span class="chip">MassEVIP</span><span class="chip">Mass Save</span></div></div></div>
-          <div class="proof"><div><b>Summer</b>shutdown windows planned 9 months out</div><div><b>One</b>contract for PV, EV and electrical</div></div>
+        <div class="sys-card sys-card--feature cet-mk-panel" data-co="cet" role="tabpanel" id="p-edu" aria-labelledby="t-edu" hidden>
+          <svg class="cet-glyph" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#5c9dff" stroke-width="1.5"><path d="M10 50 60 22l50 28-50 28z"/><path d="M30 61v26c10 8 50 8 60 0V61M104 54v30"/></g></svg>
+          <span class="sys-card-label">Higher education</span>
+          <h3 class="sys-h3">Campus power that works between semesters.</h3>
+          <p class="sys-card-body">We plan around academic calendars: switchgear and lighting upgrades over break, canopy solar on commuter lots and fleet charging for campus vehicles, without taking a dorm offline.</p>
+          <div class="cet-mk-cols"><div><p class="sys-card-label">What we deliver</p><ul class="sys-card-list"><li>Campus distribution and building electrical</li><li>Parking-canopy solar and storage</li><li>Workplace and fleet EV charging</li></ul></div><div><p class="sys-card-label">Programs that fund it</p><div class="sys-chips"><span class="sys-chip">MA SMART 3.0</span><span class="sys-chip">DOER Leading by Example</span><span class="sys-chip">MassEVIP</span><span class="sys-chip">Mass Save</span></div></div></div>
+          <div class="cet-proof"><div><b>Summer</b><span>shutdown windows planned 9 months out</span></div><div><b>One</b><span>contract for solar, EV and electrical</span></div></div>
         </div>
-        <div class="mk-panel" role="tabpanel" id="p-health" aria-labelledby="t-health" hidden>
-          <svg class="glyph" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#5c9dff" stroke-width="1.5"><rect x="20" y="20" width="80" height="80" rx="10"/><path d="M60 38v44M38 60h44"/></g></svg>
-          <span class="eyebrow">Healthcare</span>
-          <h3>Life-safety power with zero tolerance for gaps.</h3>
-          <p>Hospitals and clinics run on essential electrical systems. We install and test generators and transfer equipment, document every test, and sequence shutdowns with infection-control and clinical teams.</p>
-          <div class="cols"><div><h4>What we deliver</h4><ul><li>Essential-system generators &amp; ATS</li><li>Documented monthly and annual testing</li><li>Imaging and OR circuit upgrades</li></ul></div><div><h4>Programs that fund it</h4><div class="tags"><span class="chip">Mass Save</span><span class="chip">CT Energy Resilience</span><span class="chip">Utility C&amp;I incentives</span></div></div></div>
-          <div class="proof"><div><b>24/7</b>generator response</div><div><b>Logged</b>transfer tests in your Assure report</div></div>
+        <div class="sys-card sys-card--feature cet-mk-panel" data-co="cet" role="tabpanel" id="p-health" aria-labelledby="t-health" hidden>
+          <svg class="cet-glyph" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#5c9dff" stroke-width="1.5"><rect x="20" y="20" width="80" height="80" rx="10"/><path d="M60 38v44M38 60h44"/></g></svg>
+          <span class="sys-card-label">Healthcare</span>
+          <h3 class="sys-h3">Life-safety power with zero tolerance for gaps.</h3>
+          <p class="sys-card-body">Hospitals and clinics run on essential electrical systems. We install and test generators and transfer equipment, document every test and sequence shutdowns with infection-control and clinical teams.</p>
+          <div class="cet-mk-cols"><div><p class="sys-card-label">What we deliver</p><ul class="sys-card-list"><li>Essential-system generators and transfer switches</li><li>Documented monthly and annual testing</li><li>Imaging and operating-room circuit upgrades</li></ul></div><div><p class="sys-card-label">Programs that fund it</p><div class="sys-chips"><span class="sys-chip">Mass Save</span><span class="sys-chip">CT Energy Resilience</span><span class="sys-chip">Utility commercial incentives</span></div></div></div>
+          <div class="cet-proof"><div><b>24/7</b><span>generator response</span></div><div><b>Logged</b><span>transfer tests in your Assure report</span></div></div>
         </div>
-        <div class="mk-panel" role="tabpanel" id="p-ind" aria-labelledby="t-ind" hidden>
-          <svg class="glyph" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#5c9dff" stroke-width="1.5"><path d="M10 100V56l26 14V56l26 14V56l26 14V28h20v72z"/><path d="M24 86h10M50 86h10M76 86h10"/></g></svg>
-          <span class="eyebrow">Industrial</span>
-          <h3>Production lines that come back up on schedule.</h3>
-          <p>Manufacturers and distributors across New England bring us service upgrades, new lines, compressed-air and motor efficiency, and rooftop solar that offsets peak demand charges.</p>
-          <div class="cols"><div><h4>What we deliver</h4><ul><li>Service upgrades &amp; new-line power</li><li>Motor, VFD and compressed-air efficiency</li><li>Rooftop PV to shave demand charges</li></ul></div><div><h4>Programs that fund it</h4><div class="tags"><span class="chip">Mass Save</span><span class="chip">CT NRES</span><span class="chip">MA SMART 3.0</span></div></div></div>
-          <div class="proof"><div><b>Weekend</b>cut-overs as standard</div><div><b>M&amp;V</b>on every efficiency project</div></div>
+        <div class="sys-card sys-card--feature cet-mk-panel" data-co="cet" role="tabpanel" id="p-ind" aria-labelledby="t-ind" hidden>
+          <svg class="cet-glyph" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#5c9dff" stroke-width="1.5"><path d="M10 100V56l26 14V56l26 14V56l26 14V28h20v72z"/><path d="M24 86h10M50 86h10M76 86h10"/></g></svg>
+          <span class="sys-card-label">Industrial</span>
+          <h3 class="sys-h3">Production lines that come back up on schedule.</h3>
+          <p class="sys-card-body">Manufacturers and distributors across New England bring us service upgrades, new lines, compressed-air and motor efficiency, and rooftop solar that offsets peak demand charges.</p>
+          <div class="cet-mk-cols"><div><p class="sys-card-label">What we deliver</p><ul class="sys-card-list"><li>Service upgrades and new-line power</li><li>Motor, drive and compressed-air efficiency</li><li>Rooftop solar to shave demand charges</li></ul></div><div><p class="sys-card-label">Programs that fund it</p><div class="sys-chips"><span class="sys-chip">Mass Save</span><span class="sys-chip">CT NRES</span><span class="sys-chip">MA SMART 3.0</span></div></div></div>
+          <div class="cet-proof"><div><b>Weekend</b><span>cut-overs as standard</span></div><div><b>Measured</b><span>savings on every efficiency project</span></div></div>
         </div>
-        <div class="mk-panel" role="tabpanel" id="p-grow" aria-labelledby="t-grow" hidden>
-          <svg class="glyph" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#a78bfa" stroke-width="1.5"><path d="M14 26h92M14 50h92M14 74h92"/><path d="M30 26v8M60 26v8M90 26v8M30 50v8M60 50v8M90 50v8" stroke-width="3"/><path d="M60 110c0-20-14-26-24-26 0 14 10 26 24 26zm0 0c0-20 14-26 24-26 0 14-10 26-24 26z"/></g></svg>
-          <span class="eyebrow">Cultivation &amp; controlled environment</span>
-          <h3>Grow rooms where lighting is the largest bill.</h3>
-          <p>Cultivators and controlled-environment farms run lights and dehumidification nearly around the clock. NuWave designs LED, controls and HVAC retrofits that cut kWh and heat load — then proves it with metered M&amp;V.</p>
-          <div class="cols"><div><h4>What we deliver</h4><ul><li>Horticultural LED &amp; dimming controls</li><li>Dehumidification and HVAC load reduction</li><li>Service and panel capacity upgrades</li></ul></div><div><h4>Programs that fund it</h4><div class="tags"><span class="chip">Mass Save</span><span class="chip">Utility custom incentives</span></div></div></div>
-          <div class="proof"><div><b>Metered</b>savings, not spreadsheet savings</div><div><b>Design-build</b>with incentive paperwork included</div></div>
+        <div class="sys-card sys-card--feature cet-mk-panel" data-co="cet" role="tabpanel" id="p-grow" aria-labelledby="t-grow" hidden>
+          <svg class="cet-glyph" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#a78bfa" stroke-width="1.5"><path d="M14 26h92M14 50h92M14 74h92"/><path d="M30 26v8M60 26v8M90 26v8M30 50v8M60 50v8M90 50v8" stroke-width="3"/><path d="M60 110c0-20-14-26-24-26 0 14 10 26 24 26zm0 0c0-20 14-26 24-26 0 14-10 26-24 26z"/></g></svg>
+          <span class="sys-card-label">Cultivation and controlled environment</span>
+          <h3 class="sys-h3">Grow rooms where lighting is the largest bill.</h3>
+          <p class="sys-card-body">Cultivators and controlled-environment farms run lights and dehumidification nearly around the clock. NuWave designs LED, controls and HVAC retrofits that cut kWh and heat load, then proves it with metered savings.</p>
+          <div class="cet-mk-cols"><div><p class="sys-card-label">What we deliver</p><ul class="sys-card-list"><li>Horticultural LED and dimming controls</li><li>Dehumidification and HVAC load reduction</li><li>Service and panel capacity upgrades</li></ul></div><div><p class="sys-card-label">Programs that fund it</p><div class="sys-chips"><span class="sys-chip">Mass Save</span><span class="sys-chip">Utility custom incentives</span></div></div></div>
+          <div class="cet-proof"><div><b>Metered</b><span>savings, not spreadsheet savings</span></div><div><b>Design-build</b><span>with incentive paperwork included</span></div></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═════════ FOOTPRINT ═════════ -->
-<section class="sec" id="footprint" aria-labelledby="fp-h">
-  <div class="wrap">
-    <div class="sec-head">
-      <div><span class="eyebrow"><span class="ix">05</span>New England footprint</span><h2 id="fp-h">Licensed in all six states. <br>Bidding in all six right now.</h2></div>
-      <p class="lead">Four offices put a licensed crew within a short drive of most of New England’s population. The dots are public opportunities our estimators are tracking today — select a state to see what’s open.</p>
+<!-- FOOTPRINT -->
+<section class="sys-section" id="footprint" aria-labelledby="fp-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">New England footprint</p>
+      <h2 id="fp-h" class="sys-h2">Licensed in all six states. Bidding in all six right now.</h2>
+      <p class="sys-lead">Four offices put a licensed crew within a short drive of most of New England’s population. The dots are public opportunities our estimators are tracking today; select a state to see what is open.</p>
     </div>
-    <div class="foot-grid">
-      <div class="mapbox rv">
+    <div class="cet-foot-grid">
+      <div class="sys-card cet-mapcard">
         <div id="ne-map" role="region" aria-label="Map of CET offices and open public opportunities in New England"></div>
-        <div class="map-filter" id="map-filter" aria-live="polite">All states</div>
-        <div class="map-legend-c" aria-hidden="true">
-          <div><span class="hq"></span>CET office</div>
-          <div><i style="background:#22d3ee"></i>Water &amp; pumps</div>
-          <div><i style="background:#5c9dff"></i>Electrical &amp; standby</div>
-          <div><i style="background:#fbbf24"></i>Solar &amp; storage</div>
-          <div><i style="background:#34d399"></i>EV</div>
-          <div><i style="background:#a78bfa"></i>Efficiency</div>
+        <div class="cet-map-filter" id="map-filter" aria-live="polite">All states</div>
+        <div class="cet-map-legend" aria-hidden="true">
+          <span><i class="cet-hq"></i>CET office</span>
+          <span><i class="cet-lg cet-lg--water"></i>Water and pumps</span>
+          <span><i class="cet-lg cet-lg--elec"></i>Electrical and standby</span>
+          <span><i class="cet-lg cet-lg--solar"></i>Solar and storage</span>
+          <span><i class="cet-lg cet-lg--ev"></i>EV</span>
+          <span><i class="cet-lg cet-lg--eff"></i>Efficiency</span>
         </div>
       </div>
-      <div class="states rv">
-        <div class="hd"><span>State · license</span><span>Open + rolling · tracked</span></div>
+      <div class="sys-card cet-states">
+        <div class="cet-states-hd sys-card-label"><span>State · license</span><span>Open · tracked</span></div>
         <div id="states"></div>
-        <div class="st-detail" id="st-detail"><h4>Next deadlines</h4><ul><li><span>Loading…</span></li></ul></div>
+        <div class="cet-st-detail" id="st-detail"><p class="sys-card-label">Next deadlines</p><ul><li><span>Loading…</span></li></ul></div>
       </div>
     </div>
-    <div class="offices">
-      <div class="office"><span class="k">Headquarters</span><b>Worcester, MA</b><span>125 Blackstone River Rd — electrical construction, estimating, solar &amp; EV</span></div>
-      <div class="office"><span class="k">Southeast MA</span><b>Taunton, MA</b><span>125 John Hancock Rd — South Coast and Cape crews, fleet charging</span></div>
-      <div class="office"><span class="k">NuWave Energy Solutions</span><b>Norwell, MA</b><span>Energy-efficiency design-build, incentives and M&amp;V</span></div>
-      <div class="office"><span class="k">Horton Electrical Services</span><b>Canton, CT</b><span>Wastewater, pump stations, generators, solar O&amp;M and 24/7 response</span></div>
+    <div class="sys-grid sys-grid--4 cet-offices">
+      <div class="sys-card"><span class="sys-card-label">Headquarters</span><span class="sys-card-title">Worcester, MA</span><span class="sys-card-body">125 Blackstone River Rd. Electrical construction, estimating, solar and EV.</span></div>
+      <div class="sys-card"><span class="sys-card-label">Southeast MA</span><span class="sys-card-title">Taunton, MA</span><span class="sys-card-body">125 John Hancock Rd. South Coast and Cape crews, fleet charging.</span></div>
+      <div class="sys-card"><span class="sys-card-label">NuWave Energy Solutions</span><span class="sys-card-title">Norwell, MA</span><span class="sys-card-body">Energy-efficiency design-build, incentives and measured savings.</span></div>
+      <div class="sys-card"><span class="sys-card-label">Horton Electrical Services</span><span class="sys-card-title">Canton, CT</span><span class="sys-card-body">Wastewater, pump stations, generators, solar O&amp;M and 24/7 response.</span></div>
     </div>
-    <p class="src" id="fp-src">Opportunity data: CET New England opportunity radar — CT DEEP Clean Water Fund, Maine DEP and Vermont CWSRF lists, BidNet Direct and municipal portals (retrieved Sept 2026).</p>
+    <p class="sys-src" id="fp-src"><b>Source:</b> CET opportunity radar: CT DEEP Clean Water Fund, Maine DEP and Vermont Clean Water SRF lists, BidNet Direct and municipal portals, Sept 2026.</p>
   </div>
 </section>
 
-<!-- ═════════ FUNDING ═════════ -->
-<section class="sec light" id="funding" aria-labelledby="fund-h">
-  <div class="wrap">
-    <div class="sec-head">
-      <div><span class="eyebrow"><span class="ix">06</span>Funding &amp; programs</span><h2 id="fund-h">Funding solved before the first site walk.</h2></div>
-      <p class="lead">Municipal and institutional projects move when the money is lined up. We map every scope to the incentive, grant or revolving fund that pays for it — and do the paperwork with you.</p>
+<!-- FUNDING -->
+<section class="sys-section sys-section--alt" id="funding" aria-labelledby="fund-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">Funding and programs</p>
+      <h2 id="fund-h" class="sys-h2">Funding solved before the first site walk.</h2>
+      <p class="sys-lead">Municipal and institutional projects move when the money is lined up. We map every scope to the incentive, grant or revolving fund that pays for it, and do the paperwork with you.</p>
     </div>
-    <div class="fund-strip" id="fund-strip">
-      <div><b class="num" data-k="srf">—</b><span>wastewater work on state SRF lists we track</span></div>
-      <div><b class="num" data-k="progs">—</b><span>incentive &amp; grant programs we work in</span></div>
-      <div><b class="num" data-k="nextd">—</b><span data-k="nextl">next program deadline</span></div>
-      <div><b>6</b><span>states’ funding rules, one estimating team</span></div>
+    <div class="sys-kpis cet-fund-kpis" id="fund-strip" role="list">
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Wastewater work on SRF lists</span><span class="sys-kpi-value"><span data-k="srf">—</span><span class="sys-est">est.</span></span><span class="sys-kpi-sub">Applicant project estimates on the lists we track</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Programs we work in</span><span class="sys-kpi-value" data-k="progs">—</span><span class="sys-kpi-sub">Incentives, grants and procurements</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Next deadline</span><span class="sys-kpi-value" data-k="nextd">—</span><span class="sys-kpi-sub" data-k="nextl">Next program deadline</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">States covered</span><span class="sys-kpi-value">6</span><span class="sys-kpi-sub">Six states’ funding rules, one estimating team</span></div>
     </div>
-    <div class="progs" id="progs"></div>
-    <p class="src">Program dates and amounts from public program pages and solicitations captured in the CET opportunity radar (Sept 2026). Mass Save is a utility-sponsored efficiency program; confirm current incentive levels with your utility.</p>
+    <div class="sys-grid sys-grid--3 cet-progs" id="progs"></div>
+    <p class="sys-src"><b>Source:</b> Program pages and solicitations captured in the CET opportunity radar, Sept 2026. Mass Save is a utility-sponsored efficiency program; confirm current incentive levels with your utility.</p>
   </div>
 </section>
 
-<!-- ═════════ PROJECTS ═════════ -->
-<section class="sec" id="projects" aria-labelledby="pj-h">
-  <div class="wrap">
-    <div class="sec-head">
-      <div><span class="eyebrow"><span class="ix">07</span>Project stories</span><h2 id="pj-h">What “done right” looks like.</h2></div>
-      <p class="lead">Three representative scopes across the CET family. <b style="color:var(--amber);font-weight:600">Illustrative</b> — composites written for this concept, not specific client engagements.</p>
+<!-- PROJECTS -->
+<section class="sys-section" id="projects" aria-labelledby="pj-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">Project stories</p>
+      <h2 id="pj-h" class="sys-h2">What “done right” looks like.</h2>
+      <p class="sys-lead">Three representative scopes across the CET family. They are composites written for this concept, not specific client engagements.</p>
     </div>
-    <div class="stories">
-      <article class="story rv">
-        <div class="art" aria-hidden="true"><svg viewBox="0 0 400 190" preserveAspectRatio="xMidYMid slice"><rect width="400" height="190" fill="#0a1c2c"/><g stroke="#22d3ee" stroke-opacity=".35" fill="none"><path d="M40 140 110 90 170 120 230 60 300 100 360 50"/><path d="M110 90 120 40M230 60 260 150M300 100 330 160M170 120 150 170"/></g><g fill="#22d3ee"><circle cx="40" cy="140" r="5"/><circle cx="110" cy="90" r="5"/><circle cx="170" cy="120" r="5"/><circle cx="230" cy="60" r="5"/><circle cx="300" cy="100" r="5"/><circle cx="360" cy="50" r="5"/><circle cx="120" cy="40" r="5"/><circle cx="260" cy="150" r="5"/><circle cx="330" cy="160" r="5"/><circle cx="150" cy="170" r="5"/></g><g fill="none" stroke="#22d3ee" stroke-opacity=".5"><circle cx="230" cy="60" r="14"/><circle cx="230" cy="60" r="24" stroke-opacity=".25"/></g><text x="20" y="28" fill="#22d3ee" font-family="JetBrains Mono" font-size="11">12 PUMP STATIONS · SCADA RING</text></svg></div>
-        <div class="bd"><div class="meta"><span class="label-ill">Illustrative</span><span class="chip">Horton · CT</span><span class="chip">Clean Water Fund</span></div><h3>Twelve pump stations, one resiliency program</h3><p>A regional water-pollution-control authority needed standby power and telemetry at every lift station before hurricane season. Horton replaced generators and transfer switches station by station under bypass, then tied all twelve into one SCADA view.</p><div class="res"><div><b>12</b><span>stations, no unplanned bypass</span></div><div><b>9 mo</b><span>notice-to-proceed to close-out</span></div><div><b>1</b><span>SCADA screen for operators</span></div></div></div>
+    <div class="sys-grid sys-grid--3">
+      <article class="sys-card cet-story">
+        <div class="cet-story-art" aria-hidden="true"><svg viewBox="0 0 400 190" preserveAspectRatio="xMidYMid slice"><rect width="400" height="190" fill="#0a1c2c"/><g stroke="#22d3ee" stroke-opacity=".35" fill="none"><path d="M40 140 110 90 170 120 230 60 300 100 360 50"/><path d="M110 90 120 40M230 60 260 150M300 100 330 160M170 120 150 170"/></g><g fill="#22d3ee"><circle cx="40" cy="140" r="5"/><circle cx="110" cy="90" r="5"/><circle cx="170" cy="120" r="5"/><circle cx="230" cy="60" r="5"/><circle cx="300" cy="100" r="5"/><circle cx="360" cy="50" r="5"/><circle cx="120" cy="40" r="5"/><circle cx="260" cy="150" r="5"/><circle cx="330" cy="160" r="5"/><circle cx="150" cy="170" r="5"/></g><g fill="none" stroke="#22d3ee" stroke-opacity=".5"><circle cx="230" cy="60" r="14"/><circle cx="230" cy="60" r="24" stroke-opacity=".25"/></g><text x="20" y="28" fill="#22d3ee" font-family="JetBrains Mono" font-size="11">12 PUMP STATIONS · SCADA RING</text></svg></div>
+        <div class="sys-chips"><span class="sys-est sys-est--illus">illustrative</span><span class="sys-chip">Horton · CT</span><span class="sys-chip">Clean Water Fund</span></div>
+        <h3 class="sys-card-title">Twelve pump stations, one resiliency program</h3>
+        <p class="sys-card-body">A regional water-pollution-control authority needed standby power and telemetry at every lift station before hurricane season. Horton replaced generators and transfer switches station by station under bypass, then tied all twelve into one SCADA view.</p>
+        <div class="cet-res"><div><b class="sys-num">12</b><span>stations, no unplanned bypass</span></div><div><b class="sys-num">9 mo</b><span>notice to proceed to close-out</span></div><div><b class="sys-num">1</b><span>SCADA screen for operators</span></div></div>
       </article>
-      <article class="story rv">
-        <div class="art" aria-hidden="true"><svg viewBox="0 0 400 190" preserveAspectRatio="xMidYMid slice"><rect width="400" height="190" fill="#1a170c"/><circle cx="330" cy="46" r="20" fill="#fbbf24" opacity=".85"/><path d="M270 46a60 60 0 0 1 120 0" stroke="#fbbf24" stroke-opacity=".3" fill="none"/><g fill="#2a2512" stroke="#fbbf24" stroke-opacity=".6"><path d="M20 120 90 92h120l-60 28z"/><path d="M150 120l60-28h120l-60 28z"/><path d="M0 160 80 128h120l-70 32z"/><path d="M140 160l70-32h120l-70 32z"/></g><g stroke="#fbbf24" stroke-opacity=".25"><path d="M55 106h120M185 106h120M40 144h130M175 144h130"/></g><rect x="330" y="120" width="44" height="44" rx="4" fill="#0b1528" stroke="#34d399"/><text x="352" y="146" fill="#34d399" font-family="JetBrains Mono" font-size="10" text-anchor="middle">BESS</text><text x="20" y="28" fill="#fbbf24" font-family="JetBrains Mono" font-size="11">CANOPY PV + STORAGE</text></svg></div>
-        <div class="bd"><div class="meta"><span class="label-ill">Illustrative</span><span class="chip">CET · MA</span><span class="chip">SMART 3.0</span></div><h3>Commuter-lot canopy that pays the campus back</h3><p>A Massachusetts university wanted carbon progress it could see. CET built parking-canopy solar with battery storage and Level 2 charging underneath, staged across two summers so the lots never fully closed.</p><div class="res"><div><b>1.2 MW</b><span>DC canopy solar</span></div><div><b>2 MWh</b><span>storage for peak shaving</span></div><div><b>48</b><span>EV ports under canopy</span></div></div></div>
+      <article class="sys-card cet-story">
+        <div class="cet-story-art" aria-hidden="true"><svg viewBox="0 0 400 190" preserveAspectRatio="xMidYMid slice"><rect width="400" height="190" fill="#1a170c"/><circle cx="330" cy="46" r="20" fill="#fbbf24" opacity=".85"/><path d="M270 46a60 60 0 0 1 120 0" stroke="#fbbf24" stroke-opacity=".3" fill="none"/><g fill="#2a2512" stroke="#fbbf24" stroke-opacity=".6"><path d="M20 120 90 92h120l-60 28z"/><path d="M150 120l60-28h120l-60 28z"/><path d="M0 160 80 128h120l-70 32z"/><path d="M140 160l70-32h120l-70 32z"/></g><g stroke="#fbbf24" stroke-opacity=".25"><path d="M55 106h120M185 106h120M40 144h130M175 144h130"/></g><rect x="330" y="120" width="44" height="44" rx="4" fill="#0b1528" stroke="#34d399"/><text x="352" y="146" fill="#34d399" font-family="JetBrains Mono" font-size="10" text-anchor="middle">BESS</text><text x="20" y="28" fill="#fbbf24" font-family="JetBrains Mono" font-size="11">CANOPY PV + STORAGE</text></svg></div>
+        <div class="sys-chips"><span class="sys-est sys-est--illus">illustrative</span><span class="sys-chip">CET · MA</span><span class="sys-chip">SMART 3.0</span></div>
+        <h3 class="sys-card-title">Commuter-lot canopy that pays the campus back</h3>
+        <p class="sys-card-body">A Massachusetts university wanted carbon progress it could see. CET built parking-canopy solar with battery storage and Level 2 charging underneath, staged across two summers so the lots never fully closed.</p>
+        <div class="cet-res"><div><b class="sys-num">1.2 MW</b><span>canopy solar</span></div><div><b class="sys-num">2 MWh</b><span>storage for peak shaving</span></div><div><b class="sys-num">48</b><span>EV ports under canopy</span></div></div>
       </article>
-      <article class="story rv">
-        <div class="art" aria-hidden="true"><svg viewBox="0 0 400 190" preserveAspectRatio="xMidYMid slice"><rect width="400" height="190" fill="#140f26"/><g fill="#a78bfa"><rect x="30" y="40" width="90" height="5" rx="2"/><rect x="150" y="40" width="90" height="5" rx="2"/><rect x="270" y="40" width="90" height="5" rx="2"/><rect x="30" y="80" width="90" height="5" rx="2"/><rect x="150" y="80" width="90" height="5" rx="2"/><rect x="270" y="80" width="90" height="5" rx="2"/></g><g fill="#a78bfa" opacity=".12"><path d="M30 45h90l20 30H10z"/><path d="M150 45h90l20 30H130z"/><path d="M270 45h90l20 30H250z"/></g><polyline points="30,120 80,124 130,122 180,150 230,156 280,154 330,158 370,157" fill="none" stroke="#a78bfa" stroke-width="2"/><polyline points="30,120 80,124 130,122 180,124 230,121 280,123 330,122 370,124" fill="none" stroke="#a78bfa" stroke-opacity=".35" stroke-dasharray="4 4"/><text x="20" y="24" fill="#a78bfa" font-family="JetBrains Mono" font-size="11">GROW-ROOM LED · M&amp;V</text><text x="290" y="178" fill="#a78bfa" font-family="JetBrains Mono" font-size="10" opacity=".8">−38% kWh</text></svg></div>
-        <div class="bd"><div class="meta"><span class="label-ill">Illustrative</span><span class="chip">NuWave · MA</span><span class="chip">Mass Save</span></div><h3>Grow-room retrofit with metered savings</h3><p>A licensed cultivator was paying more for lighting than for rent. NuWave swapped legacy fixtures for dimmable horticultural LED, rebalanced dehumidification, captured utility incentives and metered the result for twelve months.</p><div class="res"><div><b>−38%</b><span>lighting kWh, metered</span></div><div><b>&lt;3 yr</b><span>simple payback after incentives</span></div><div><b>12 mo</b><span>M&amp;V reporting</span></div></div></div>
+      <article class="sys-card cet-story">
+        <div class="cet-story-art" aria-hidden="true"><svg viewBox="0 0 400 190" preserveAspectRatio="xMidYMid slice"><rect width="400" height="190" fill="#140f26"/><g fill="#a78bfa"><rect x="30" y="40" width="90" height="5" rx="2"/><rect x="150" y="40" width="90" height="5" rx="2"/><rect x="270" y="40" width="90" height="5" rx="2"/><rect x="30" y="80" width="90" height="5" rx="2"/><rect x="150" y="80" width="90" height="5" rx="2"/><rect x="270" y="80" width="90" height="5" rx="2"/></g><g fill="#a78bfa" opacity=".12"><path d="M30 45h90l20 30H10z"/><path d="M150 45h90l20 30H130z"/><path d="M270 45h90l20 30H250z"/></g><polyline points="30,120 80,124 130,122 180,150 230,156 280,154 330,158 370,157" fill="none" stroke="#a78bfa" stroke-width="2"/><polyline points="30,120 80,124 130,122 180,124 230,121 280,123 330,122 370,124" fill="none" stroke="#a78bfa" stroke-opacity=".35" stroke-dasharray="4 4"/><text x="20" y="24" fill="#a78bfa" font-family="JetBrains Mono" font-size="11">GROW-ROOM LED · M&amp;V</text><text x="290" y="178" fill="#a78bfa" font-family="JetBrains Mono" font-size="10" opacity=".8">−38% kWh</text></svg></div>
+        <div class="sys-chips"><span class="sys-est sys-est--illus">illustrative</span><span class="sys-chip">NuWave · MA</span><span class="sys-chip">Mass Save</span></div>
+        <h3 class="sys-card-title">Grow-room retrofit with metered savings</h3>
+        <p class="sys-card-body">A licensed cultivator was paying more for lighting than for rent. NuWave swapped legacy fixtures for dimmable horticultural LED, rebalanced dehumidification, captured utility incentives and metered the result for twelve months.</p>
+        <div class="cet-res"><div><b class="sys-num">−38%</b><span>lighting kWh, metered</span></div><div><b class="sys-num">&lt;3 yr</b><span>payback after incentives</span></div><div><b class="sys-num">12 mo</b><span>savings reporting</span></div></div>
       </article>
     </div>
   </div>
 </section>
 
-<!-- ═════════ SAFETY ═════════ -->
-<section class="sec light" id="safety" aria-labelledby="sf-h">
-  <div class="wrap safety">
+<!-- SAFETY -->
+<section class="sys-section sys-section--alt" id="safety" aria-labelledby="sf-h">
+  <div class="sys-wrap cet-split">
     <div>
-      <span class="eyebrow"><span class="ix">08</span>Safety &amp; credentials</span>
-      <h2 id="sf-h" style="margin-top:16px">Licensed everywhere we work. Trained for what we touch.</h2>
-      <p class="lead" style="margin-top:18px">Energized gear, confined wet wells and live process plants leave no margin. Our safety program is written for that work — and it travels with every crew across all six states.</p>
-      <div class="lic-row" aria-label="State electrical licenses">
-        <div><b>MA</b><span>LICENSED</span></div><div><b>CT</b><span>LICENSED</span></div><div><b>RI</b><span>LICENSED</span></div><div><b>NH</b><span>LICENSED</span></div><div><b>ME</b><span>LICENSED</span></div><div><b>VT</b><span>LICENSED</span></div>
+      <div class="sys-section-head">
+        <p class="sys-kicker">Safety and credentials</p>
+        <h2 id="sf-h" class="sys-h2">Licensed everywhere we work. Trained for what we touch.</h2>
+        <p class="sys-lead">Energized gear, confined wet wells and live process plants leave no margin. Our safety program is written for that work, and it travels with every crew across all six states.</p>
       </div>
-      <p class="src">Concept copy: the categories below are what a final site would verify and document with CET (license numbers, EMR, certifications).</p>
+      <div class="cet-lic" aria-label="State electrical licenses">
+        <div><b>MA</b><span>Licensed</span></div><div><b>CT</b><span>Licensed</span></div><div><b>RI</b><span>Licensed</span></div><div><b>NH</b><span>Licensed</span></div><div><b>ME</b><span>Licensed</span></div><div><b>VT</b><span>Licensed</span></div>
+      </div>
+      <p class="sys-src">Concept copy: a final site would verify and publish license numbers, safety rating and certifications with CET.</p>
     </div>
     <div>
-      <div class="checks">
-        <div class="check"><div class="ic"><svg aria-hidden="true"><use href="#i-flame"/></svg></div><div><b>Arc-flash &amp; NFPA 70E</b><span>Energized-work permits, PPE categories and labeled equipment on every service job.</span></div></div>
-        <div class="check"><div class="ic"><svg aria-hidden="true"><use href="#i-water"/></svg></div><div><b>Confined-space entry</b><span>Permit-required entry for wet wells and vaults, with gas monitoring and rescue plans.</span></div></div>
-        <div class="check"><div class="ic"><svg aria-hidden="true"><use href="#i-lock"/></svg></div><div><b>Lockout / tagout</b><span>Written LOTO procedures coordinated with plant operators before every shutdown.</span></div></div>
-        <div class="check"><div class="ic"><svg aria-hidden="true"><use href="#i-hard"/></svg></div><div><b>OSHA-trained supervision</b><span>OSHA 30 for foremen and superintendents; OSHA 10 for every field employee.</span></div></div>
-        <div class="check"><div class="ic"><svg aria-hidden="true"><use href="#i-doc"/></svg></div><div><b>Public-bid ready</b><span>Prequalification, bonding and certified-payroll packages for state and municipal work.</span></div></div>
-        <div class="check"><div class="ic"><svg aria-hidden="true"><use href="#i-shield"/></svg></div><div><b>OT-aware SCADA work</b><span>Remote access to water systems designed with segmentation and least-privilege by default.</span></div></div>
+      <div class="sys-grid sys-grid--2">
+        <div class="sys-card cet-check"><span class="cet-ic"><svg aria-hidden="true"><use href="#i-flame"/></svg></span><span class="sys-card-title">Arc-flash and NFPA 70E</span><span class="sys-card-body">Energized-work permits, PPE categories and labeled equipment on every service job.</span></div>
+        <div class="sys-card cet-check"><span class="cet-ic"><svg aria-hidden="true"><use href="#i-water"/></svg></span><span class="sys-card-title">Confined-space entry</span><span class="sys-card-body">Permit-required entry for wet wells and vaults, with gas monitoring and rescue plans.</span></div>
+        <div class="sys-card cet-check"><span class="cet-ic"><svg aria-hidden="true"><use href="#i-lock"/></svg></span><span class="sys-card-title">Lockout and tagout</span><span class="sys-card-body">Written procedures coordinated with plant operators before every shutdown.</span></div>
+        <div class="sys-card cet-check"><span class="cet-ic"><svg aria-hidden="true"><use href="#i-hard"/></svg></span><span class="sys-card-title">OSHA-trained supervision</span><span class="sys-card-body">OSHA 30 for foremen and superintendents; OSHA 10 for every field employee.</span></div>
+        <div class="sys-card cet-check"><span class="cet-ic"><svg aria-hidden="true"><use href="#i-doc"/></svg></span><span class="sys-card-title">Public-bid ready</span><span class="sys-card-body">Prequalification, bonding and certified-payroll packages for state and municipal work.</span></div>
+        <div class="sys-card cet-check"><span class="cet-ic"><svg aria-hidden="true"><use href="#i-shield"/></svg></span><span class="sys-card-title">Secure SCADA work</span><span class="sys-card-body">Remote access to water systems designed with network segmentation and least privilege by default.</span></div>
       </div>
-      <div class="equip" aria-label="Equipment we service">
-        <span class="chip">Medium- &amp; low-voltage switchgear</span><span class="chip">Diesel &amp; natural-gas generators</span><span class="chip">Automatic transfer switches</span><span class="chip">VFDs &amp; MCCs</span><span class="chip">PLCs &amp; SCADA</span><span class="chip">String &amp; central inverters</span><span class="chip">Battery storage</span><span class="chip">L2 &amp; DCFC chargers</span>
+      <div class="sys-chips cet-equip" aria-label="Equipment we service">
+        <span class="sys-chip">Medium- and low-voltage switchgear</span><span class="sys-chip">Diesel and natural-gas generators</span><span class="sys-chip">Automatic transfer switches</span><span class="sys-chip">Drives and motor control centers</span><span class="sys-chip">PLCs and SCADA</span><span class="sys-chip">String and central inverters</span><span class="sys-chip">Battery storage</span><span class="sys-chip">Level 2 and DC fast chargers</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═════════ CAREERS ═════════ -->
-<section class="sec" id="careers" aria-labelledby="cr-h">
-  <div class="wrap careers">
+<!-- CAREERS -->
+<section class="sys-section" id="careers" aria-labelledby="cr-h">
+  <div class="sys-wrap cet-split">
     <div>
-      <span class="eyebrow"><span class="ix">09</span>Careers</span>
-      <h2 id="cr-h" style="margin-top:16px">Build a career on the grid that’s being rebuilt.</h2>
-      <p class="lead" style="margin-top:18px">Solar, storage, EV and water upgrades mean decades of work in New England. Start as an apprentice, license in more than one state, and run your own jobs — with a clear path and the training budget to get there.</p>
-      <div class="ladder" aria-label="Career path">
-        <div class="rung"><span>Year 0</span><div style="width:46%">Apprentice</div></div>
-        <div class="rung"><span>Year 4</span><div style="width:62%">Journeyman electrician</div></div>
-        <div class="rung"><span>Year 6+</span><div style="width:78%">Foreman / lead technician</div></div>
-        <div class="rung"><span>Year 10+</span><div style="width:100%">Superintendent · Project manager</div></div>
+      <div class="sys-section-head">
+        <p class="sys-kicker">Careers</p>
+        <h2 id="cr-h" class="sys-h2">Build a career on the grid that’s being rebuilt.</h2>
+        <p class="sys-lead">Solar, storage, EV and water upgrades mean decades of work in New England. Start as an apprentice, license in more than one state and run your own jobs, with a clear path and the training budget to get there.</p>
       </div>
-      <div class="perks">
-        <div>Paid apprenticeship hours &amp; classroom tuition</div><div>Multi-state licensing support</div>
-        <div>SCADA, solar &amp; EV certifications</div><div>Work close to home: 4 offices</div>
+      <div class="cet-ladder" aria-label="Career path">
+        <div class="cet-rung"><span class="sys-num">Year 0</span><div style="--w:46%">Apprentice</div></div>
+        <div class="cet-rung"><span class="sys-num">Year 4</span><div style="--w:62%">Journeyman electrician</div></div>
+        <div class="cet-rung"><span class="sys-num">Year 6+</span><div style="--w:78%">Foreman or lead technician</div></div>
+        <div class="cet-rung"><span class="sys-num">Year 10+</span><div style="--w:100%">Superintendent or project manager</div></div>
       </div>
+      <ul class="sys-card-list cet-two-col cet-perks">
+        <li>Paid apprenticeship hours and classroom tuition</li><li>Multi-state licensing support</li>
+        <li>SCADA, solar and EV certifications</li><li>Work close to home: 4 offices</li>
+      </ul>
     </div>
     <div>
-      <div class="roles" aria-label="Example openings">
-        <a class="role" href="#contact" data-type="careers"><b>Journeyman Electrician — Commercial</b><span class="loc">Worcester, MA · Field</span><span class="ty chip">Full-time</span></a>
-        <a class="role" href="#contact" data-type="careers"><b>Instrumentation &amp; SCADA Technician</b><span class="loc">Canton, CT · Horton · Water</span><span class="ty chip">Full-time</span></a>
-        <a class="role" href="#contact" data-type="careers"><b>Solar O&amp;M Technician</b><span class="loc">Taunton, MA · Field</span><span class="ty chip">Full-time</span></a>
-        <a class="role" href="#contact" data-type="careers"><b>Electrical Estimator — Public Bids</b><span class="loc">Worcester, MA · Hybrid</span><span class="ty chip">Full-time</span></a>
-        <a class="role" href="#contact" data-type="careers"><b>Energy Engineer — M&amp;V</b><span class="loc">Norwell, MA · NuWave</span><span class="ty chip">Full-time</span></a>
-        <a class="role" href="#contact" data-type="careers"><b>Electrical Apprentice (all levels)</b><span class="loc">All offices · Paid training</span><span class="ty chip">Apprentice</span></a>
+      <div class="sys-card cet-roles" aria-label="Example openings">
+        <a class="cet-role" href="#contact" data-type="careers"><b>Journeyman electrician, commercial</b><span>Worcester, MA · Field</span><span class="sys-chip">Full-time</span></a>
+        <a class="cet-role" href="#contact" data-type="careers"><b>Instrumentation and SCADA technician</b><span>Canton, CT · Horton · Water</span><span class="sys-chip">Full-time</span></a>
+        <a class="cet-role" href="#contact" data-type="careers"><b>Solar O&amp;M technician</b><span>Taunton, MA · Field</span><span class="sys-chip">Full-time</span></a>
+        <a class="cet-role" href="#contact" data-type="careers"><b>Electrical estimator, public bids</b><span>Worcester, MA · Hybrid</span><span class="sys-chip">Full-time</span></a>
+        <a class="cet-role" href="#contact" data-type="careers"><b>Energy engineer, measured savings</b><span>Norwell, MA · NuWave</span><span class="sys-chip">Full-time</span></a>
+        <a class="cet-role" href="#contact" data-type="careers"><b>Electrical apprentice, all levels</b><span>All offices · Paid training</span><span class="sys-chip">Apprentice</span></a>
       </div>
-      <p class="src">Example roles for the concept; a live site would pull from the applicant-tracking system.</p>
+      <p class="sys-src">Example roles for the concept; a live site would pull from the applicant-tracking system.</p>
     </div>
   </div>
 </section>
 
-<!-- ═════════ ACQUISITIONS ═════════ -->
-<section class="sec" id="acquisitions" aria-labelledby="aq-h" style="padding-top:0">
-  <div class="wrap">
-    <div class="acq rv">
-      <div>
-        <span class="eyebrow"><span class="ix">10</span>Acquisitions</span>
-        <h2 id="aq-h" style="margin-top:14px">Own an electrical or energy contractor in New England?</h2>
-        <p>NuWave joined in 2025 and Horton in 2026. Both kept their names, their people and their customers — and gained estimating, safety, fleet and systems support. With Broad Sky Partners behind us, we are looking for the next family business that wants a partner rather than an exit.</p>
+<!-- ACQUISITIONS -->
+<section class="sys-section sys-section--tight" id="acquisitions" aria-labelledby="aq-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">Acquisitions</p>
+      <h2 id="aq-h" class="sys-h2">Own an electrical or energy contractor in New England?</h2>
+      <p class="sys-lead">NuWave joined in 2025 and Horton in 2026. Both kept their names, their people and their customers, and gained estimating, safety, fleet and systems support.</p>
+    </div>
+    <div class="sys-card sys-card--feature cet-acq" data-co="cet">
+      <div class="cet-acq-copy">
+        <p class="sys-card-label">Who we talk to</p>
+        <h3 class="sys-h3">Electrical, solar, generator, controls and efficiency contractors</h3>
+        <p class="sys-card-body">With Broad Sky Partners behind us, we are looking for the next family business that wants a partner rather than an exit. First conversations are confidential and owner to owner.</p>
       </div>
-      <div class="btns">
-        <a class="btn light" href="#contact" data-type="acq">Start a confidential conversation</a>
-        <span class="mono" style="font-size:12px;color:var(--tx-3)">Electrical · solar · generator · controls · efficiency</span>
+      <div class="cet-acq-side">
+        <a class="sys-btn sys-btn--co" href="#contact" data-type="acq">Start a confidential conversation</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═════════ FAQ ═════════ -->
-<section class="sec" id="faq" aria-labelledby="faq-h" style="background:var(--ink-0);border-top:1px solid var(--line)">
-  <div class="wrap faq-grid">
-    <div>
-      <span class="eyebrow"><span class="ix">11</span>FAQ</span>
-      <h2 id="faq-h" style="margin-top:16px">Straight answers.</h2>
-      <p class="lead" style="margin-top:16px">Or ask the CET project desk in the corner — it answers from the same facts, including which incentive programs are open right now.</p>
+<!-- FAQ -->
+<section class="sys-section sys-section--alt" id="faq" aria-labelledby="faq-h">
+  <div class="sys-wrap cet-split">
+    <div class="sys-section-head cet-sticky">
+      <p class="sys-kicker">FAQ</p>
+      <h2 id="faq-h" class="sys-h2">Straight answers.</h2>
+      <p class="sys-lead">Or ask the CET project desk with the Ask button. It answers from the same facts, including which incentive programs are open right now.</p>
     </div>
-    <div class="faq" id="faq-list"></div>
+    <div class="cet-faq" id="faq-list"></div>
   </div>
 </section>
 
-<!-- ═════════ CONTACT ═════════ -->
-<section class="sec light" id="contact" aria-labelledby="ct-h">
-  <div class="wrap quote">
+<!-- CONTACT -->
+<section class="sys-section" id="contact" aria-labelledby="ct-h">
+  <div class="sys-wrap cet-split">
     <div>
-      <span class="eyebrow"><span class="ix">12</span>Request a quote</span>
-      <h2 id="ct-h" style="margin-top:16px">Tell us about the site. We’ll route it to the right desk.</h2>
-      <p class="lead" style="margin-top:18px">Every request lands with an estimator who has built that scope before — Horton for water, NuWave for efficiency, CET for everything electrical, solar and EV.</p>
-      <div class="contact-list">
-        <div><span class="ic"><svg width="18" height="18" aria-hidden="true"><use href="#i-clock"/></svg></span><div><b>Response within one business day</b><span>Emergency requests are routed to the 24/7 desk immediately.</span></div></div>
-        <div><span class="ic"><svg width="18" height="18" aria-hidden="true"><use href="#i-doc"/></svg></span><div><b>Bid invitations welcome</b><span>Add us to your plan-holder list for electrical, generator, solar and EV packages.</span></div></div>
-        <div><span class="ic"><svg width="18" height="18" aria-hidden="true"><use href="#i-pin"/></svg></span><div><b>Worcester · Taunton · Norwell · Canton CT</b><span>All six New England states. We do not take work outside New England.</span></div></div>
+      <div class="sys-section-head">
+        <p class="sys-kicker">Request a quote</p>
+        <h2 id="ct-h" class="sys-h2">Tell us about the site. We’ll route it to the right desk.</h2>
+        <p class="sys-lead">Every request lands with an estimator who has built that scope before: Horton for water, NuWave for efficiency, CET for everything electrical, solar and EV.</p>
+      </div>
+      <div class="cet-contact">
+        <div><span class="cet-ic"><svg aria-hidden="true"><use href="#i-clock"/></svg></span><div><b>Response within one business day</b><span>Emergency requests go to the 24/7 desk immediately.</span></div></div>
+        <div><span class="cet-ic"><svg aria-hidden="true"><use href="#i-doc"/></svg></span><div><b>Bid invitations welcome</b><span>Add us to your plan-holder list for electrical, generator, solar and EV packages.</span></div></div>
+        <div><span class="cet-ic"><svg aria-hidden="true"><use href="#i-pin"/></svg></span><div><b>Worcester · Taunton · Norwell · Canton CT</b><span>All six New England states. We do not take work outside New England.</span></div></div>
       </div>
     </div>
-    <form class="form" id="quote" novalidate aria-describedby="form-note">
-      <fieldset style="border:0;padding:0;margin:0">
-        <legend class="fld" style="padding:0"><label style="font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#5b6b88">What do you need?</label></legend>
-        <div class="seg" id="seg">
+    <form class="sys-card sys-card--feature cet-form" id="quote" novalidate aria-describedby="form-note">
+      <fieldset class="cet-fs">
+        <legend class="sys-card-label">What do you need?</legend>
+        <div class="cet-seg" id="seg">
           <label><input type="radio" name="type" value="electrical" checked><span>Electrical construction</span></label>
-          <label><input type="radio" name="type" value="water"><span>Wastewater / pump station</span></label>
-          <label><input type="radio" name="type" value="power"><span>Generator / resiliency</span></label>
-          <label><input type="radio" name="type" value="solar"><span>Solar + storage</span></label>
+          <label><input type="radio" name="type" value="water"><span>Wastewater or pump station</span></label>
+          <label><input type="radio" name="type" value="power"><span>Generator or resiliency</span></label>
+          <label><input type="radio" name="type" value="solar"><span>Solar and storage</span></label>
           <label><input type="radio" name="type" value="ev"><span>EV charging</span></label>
           <label><input type="radio" name="type" value="efficiency"><span>Efficiency</span></label>
           <label><input type="radio" name="type" value="assure"><span>Assure service contract</span></label>
@@ -543,76 +547,80 @@
           <label><input type="radio" name="type" value="acq"><span>Partnership</span></label>
         </div>
       </fieldset>
-      <div class="row">
-        <div class="fld"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required><span class="err">Please add your name.</span></div>
-        <div class="fld"><label for="f-org">Organization</label><input id="f-org" name="org" autocomplete="organization"></div>
+      <div class="cet-row">
+        <div class="cet-fld"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required><span class="cet-err">Please add your name.</span></div>
+        <div class="cet-fld"><label for="f-org">Organization</label><input id="f-org" name="org" autocomplete="organization"></div>
       </div>
-      <div class="row">
-        <div class="fld"><label for="f-email">Work email</label><input id="f-email" name="email" type="email" autocomplete="email" required><span class="err">Please add a valid email.</span></div>
-        <div class="fld"><label for="f-state">Project state</label><select id="f-state" name="state" required><option value="">Select…</option><option>MA</option><option>CT</option><option>RI</option><option>NH</option><option>ME</option><option>VT</option><option value="other">Outside New England</option></select><span class="err">Please pick a state.</span></div>
+      <div class="cet-row">
+        <div class="cet-fld"><label for="f-email">Work email</label><input id="f-email" name="email" type="email" autocomplete="email" required><span class="cet-err">Please add a valid email.</span></div>
+        <div class="cet-fld"><label for="f-state">Project state</label><select id="f-state" name="state" required><option value="">Select…</option><option>MA</option><option>CT</option><option>RI</option><option>NH</option><option>ME</option><option>VT</option><option value="other">Outside New England</option></select><span class="cet-err">Please pick a state.</span></div>
       </div>
-      <div class="row">
-        <div class="fld"><label for="f-when">Timeline</label><select id="f-when" name="when"><option>Bid due in &lt; 30 days</option><option>This quarter</option><option>Next 6–12 months</option><option>Budgeting / feasibility</option></select></div>
-        <div class="fld"><label for="f-fund">Funding</label><select id="f-fund" name="fund"><option>Not sure yet</option><option>Clean Water SRF / CWF</option><option>MA SMART 3.0</option><option>CT NRES</option><option>Mass Save / utility incentive</option><option>NEVI / MassEVIP</option><option>Grant (resilience / LBE)</option><option>Owner capital</option></select></div>
+      <div class="cet-row">
+        <div class="cet-fld"><label for="f-when">Timeline</label><select id="f-when" name="when"><option>Bid due in under 30 days</option><option>This quarter</option><option>Next 6–12 months</option><option>Budgeting or feasibility</option></select></div>
+        <div class="cet-fld"><label for="f-fund">Funding</label><select id="f-fund" name="fund"><option>Not sure yet</option><option>Clean Water SRF / CWF</option><option>MA SMART 3.0</option><option>CT NRES</option><option>Mass Save / utility incentive</option><option>NEVI / MassEVIP</option><option>Grant (resilience / LBE)</option><option>Owner capital</option></select></div>
       </div>
-      <div class="fld"><label for="f-msg">Scope</label><textarea id="f-msg" name="msg" placeholder="e.g. Replace 2 pump-station generators and ATS; engineer of record is…"></textarea></div>
-      <button class="btn primary" type="submit" style="width:100%">Send request <span class="ar">→</span></button>
-      <p class="note" id="form-note">Concept form — nothing is transmitted. It shows how a request would be routed.</p>
-      <div class="route" id="route" role="status" aria-live="polite"></div>
+      <div class="cet-fld"><label for="f-msg">Scope</label><textarea id="f-msg" name="msg" placeholder="For example: replace two pump-station generators and transfer switches; the engineer of record is…"></textarea></div>
+      <button class="sys-btn sys-btn--primary sys-btn--block" type="submit">Send request <span aria-hidden="true">→</span></button>
+      <p class="sys-src" id="form-note">Concept form: nothing is transmitted. It shows how a request would be routed.</p>
+      <div class="sys-note sys-note--co cet-route" id="route" role="status" aria-live="polite" hidden></div>
     </form>
   </div>
 </section>
 
-<!-- ═════════ RATIONALE ═════════ -->
-<section class="sec light" id="rationale" aria-labelledby="rt-h" style="background:var(--paper-2);border-top:1px solid var(--paper-line)">
-  <div class="wrap">
-    <div class="sec-head">
-      <div><span class="eyebrow"><span class="ix">PRG</span>Design rationale</span><h2 id="rt-h">Why this site looks like a $1B platform.</h2></div>
-      <p class="lead">For Tyler and the Portfolio Resource Group: every pattern here is borrowed from an infrastructure platform that buyers already price at a premium, and each one is tied to a KPI the site should move.</p>
+<!-- RATIONALE -->
+<section class="sys-section sys-section--alt" id="rationale" aria-labelledby="rt-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head">
+      <p class="sys-kicker">Design rationale</p>
+      <h2 id="rt-h" class="sys-h2">Why this site reads like a $1B portfolio company.</h2>
+      <p class="sys-lead">For the Broad Sky deal team and the Portfolio Resource Group: each principle below is one that infrastructure buyers already reward with a premium, and each one is tied to a KPI the site should move.</p>
     </div>
-    <div class="rat-grid" id="refs"></div>
-    <div class="kpis">
-      <div><em>CONVERSION</em><b>Qualified quote requests / month</b><span>Dual CTA + routed form; baseline from current contact form, target +50% in two quarters.</span></div>
-      <div><em>HIGH-MARGIN WORK</em><b>Emergency calls captured</b><span>24/7 band in the first viewport; feeds generator and pump-station service revenue.</span></div>
-      <div><em>RECURRING REVENUE</em><b>Assure contract attach rate</b><span>Share of completed projects that convert to an annual service contract.</span></div>
-      <div><em>PUBLIC WORK</em><b>Plan-holder invitations &amp; bid win rate</b><span>Funding section + footprint map signal credibility to engineers of record.</span></div>
-      <div><em>LABOR</em><b>Qualified applicants per opening</b><span>Career ladder and multi-state licensing pitch for scarce electricians.</span></div>
-      <div><em>M&amp;A</em><b>Inbound founder conversations</b><span>Acquisitions in the primary nav, as Shermco does, builds the proprietary add-on pipeline.</span></div>
+    <div class="sys-grid sys-grid--3" id="refs"></div>
+    <h3 class="sys-h3 cet-sub-h">The KPIs this site should move</h3>
+    <div class="sys-grid sys-grid--3">
+      <div class="sys-card"><span class="sys-card-label">Conversion</span><span class="sys-card-title">Qualified quote requests a month</span><span class="sys-card-body">Two calls to action and a routed form. Baseline from the current contact form; target +50% in two quarters.</span></div>
+      <div class="sys-card"><span class="sys-card-label">High-margin work</span><span class="sys-card-title">Emergency calls captured</span><span class="sys-card-body">A 24/7 band right under the first screen feeds generator and pump-station service revenue.</span></div>
+      <div class="sys-card"><span class="sys-card-label">Recurring revenue</span><span class="sys-card-title">Assure contract attach rate</span><span class="sys-card-body">Share of completed projects that convert to an annual service contract.</span></div>
+      <div class="sys-card"><span class="sys-card-label">Public work</span><span class="sys-card-title">Plan-holder invitations and bid win rate</span><span class="sys-card-body">The funding section and footprint map signal credibility to engineers of record.</span></div>
+      <div class="sys-card"><span class="sys-card-label">Labor</span><span class="sys-card-title">Qualified applicants per opening</span><span class="sys-card-body">A career ladder and a multi-state licensing pitch for scarce electricians.</span></div>
+      <div class="sys-card"><span class="sys-card-label">Acquisitions</span><span class="sys-card-title">Inbound founder conversations</span><span class="sys-card-body">An acquisitions section in the page navigation builds the proprietary add-on pipeline.</span></div>
     </div>
-    <div class="sys">
-      <div><div class="sw"><i style="background:#070e1b"></i><i style="background:#3b82ff"></i><i style="background:#22d3ee"></i><i style="background:#fbbf24"></i></div><b>Color = meaning</b>Navy canvas; one electric blue for action; cyan only for water, amber only for alerts and solar.</div>
-      <div><b style="font-family:var(--sans)">Inter + JetBrains Mono</b>Heavy, tight headlines (Shermco’s confidence); mono spec labels read as engineering, not marketing.</div>
-      <div><b>Grid &amp; one-line motifs</b>The hero is a working single-line diagram — the language our buyers’ engineers already read.</div>
-      <div><b>Light / dark rhythm</b>Dark for power and proof; light for funding, safety and the form, where people read and act.</div>
+    <h3 class="sys-h3 cet-sub-h">How the page is built</h3>
+    <div class="sys-grid sys-grid--4">
+      <div class="sys-card sys-card--flat"><span class="sys-card-title">One Broad Sky frame</span><span class="sys-card-body">The same top bar, concept notice, breadcrumb and footer as every page in the portal; CET keeps its identity through its blue accent.</span></div>
+      <div class="sys-card sys-card--flat"><span class="sys-card-title">Colour means something</span><span class="sys-card-body">CET blue for bars, dots and rules; cyan only for water, amber only for alerts and solar, green only for good status.</span></div>
+      <div class="sys-card sys-card--flat"><span class="sys-card-title">Single-line motifs</span><span class="sys-card-body">The hero is a working single-line diagram, the language our buyers’ engineers already read.</span></div>
+      <div class="sys-card sys-card--flat"><span class="sys-card-title">One dark band</span><span class="sys-card-body">Dark only for the live bid board; light for funding, safety and the form, where people read and act.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="sys-cta" aria-labelledby="cta-h">
+  <div class="sys-wrap">
+    <div class="sys-cta-in">
+      <div class="sys-cta-copy">
+        <h2 id="cta-h">See what runs underneath CET.</h2>
+        <p>GridOS puts every bid, crew and asset on one operating layer. The plan shows how it turns a two-state contractor into a six-state portfolio company.</p>
+      </div>
+      <div class="sys-actions">
+        <a class="sys-btn sys-btn--accent sys-btn--lg" href="gridos.html">Open GridOS</a>
+        <a class="sys-btn sys-btn--secondary sys-btn--lg" href="growth-plan.html">Read the plan</a>
+      </div>
     </div>
   </div>
 </section>
 </main>
 
-<footer class="footer">
-  <div class="wrap">
-    <div class="cols">
-      <div>
-        <a class="brand" href="#top" aria-label="CET home"><svg class="mk" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="8" fill="url(#g-mark)"/><path d="M8 11h18M8 17h11M8 23h18" stroke="rgba(255,255,255,.35)" stroke-width="1.4"/><circle cx="22.5" cy="17" r="3.2" fill="#fff"/><path d="M19.3 17H8" stroke="#fff" stroke-width="2"/></svg><span class="wm"><b>CET</b><span>Commonwealth Electrical Technologies</span></span></a>
-        <p style="margin-top:16px;max-width:320px">Electrical, energy and water infrastructure for New England — with Horton Electrical Services and NuWave Energy Solutions.</p>
-      </div>
-      <div><h4>Capabilities</h4><ul><li><a href="#capabilities">Electrical construction</a></li><li><a href="#markets" data-market="water">Wastewater &amp; pumps</a></li><li><a href="#capabilities">Solar + storage</a></li><li><a href="#capabilities">EV charging</a></li><li><a href="#capabilities">Efficiency (NuWave)</a></li></ul></div>
-      <div><h4>Company</h4><ul><li><a href="#footprint">Footprint</a></li><li><a href="#safety">Safety</a></li><li><a href="#careers">Careers</a></li><li><a href="#acquisitions">Acquisitions</a></li><li><a href="#contact">Contact</a></li></ul></div>
-      <div><h4>Platform</h4><ul><li><a href="gridos.html">GridOS</a></li><li><a href="#funding">Funding programs</a></li><li><a href="#faq">FAQ</a></li></ul></div>
-      <div><h4>This concept</h4><ul><li><a href="#rationale">Design rationale</a></li><li><a href="playbook.html">Value-creation playbook</a></li><li><a href="../index.html">All six concepts</a></li><li><a href="../../app.html#/cet/overview">CET in the portal</a></li><li><a href="../../">Broad Sky OI</a></li></ul></div>
-    </div>
-    <div class="legal"><span>Concept redesign by Syed Rahman for the Broad Sky Portfolio Resource Group — not an official CET website. Project stories and example roles are illustrative.</span><span>© <span id="yr">2026</span></span></div>
-  </div>
-<p class="bsp-disclaimer" style="box-sizing:border-box;max-width:1200px;margin:0 auto;padding:12px 20px 18px;font-size:12px;line-height:1.55">Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.</p>
-</footer>
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
 <script type="module">
-import { Chat } from '../../assets/chat.js?v=20261006090506';
-import { Data, Fmt } from '../../assets/core.js?v=20261006090506';
-import { init, FAQ, SUGGESTIONS, makeIntents } from './site.js';
+import { Frame } from '../../assets/frame.js?v=20261006122625';
+import { Chat } from '../../assets/chat.js?v=20261006122625';
+import { Data, Fmt } from '../../assets/core.js?v=20261006122625';
+import { init, FAQ, SUGGESTIONS, makeIntents } from './site.js?v=20261006122625';
+const chat = Chat.mount(null, { persona: 'cet', mode: 'floating', theme: 'light', faq: FAQ, suggestions: SUGGESTIONS, intents: makeIntents(Data, ''), openOnLoad: /[?&]chat=open/.test(location.search) });
+Frame.mount({ chat });
 try { init({ Data, Fmt }); } catch (e) { console.warn('site init', e); }
-Chat.mount(null, { persona: 'cet', mode: 'floating', theme: 'light', faq: FAQ, suggestions: SUGGESTIONS, intents: makeIntents(Data, ''), openOnLoad: /[?&]chat=open/.test(location.search) });
 </script>
 </body>
 </html>

@@ -4,9 +4,9 @@
   "order": 100,
   "module": "home",
   "hash": "#/home/overview",
-  "caption": "Broad Sky Operating Intelligence. Six platforms, one portal: every datapoint tied to a revenue, acquisition or operating decision.",
-  "caption_html": "<b>Broad Sky Operating Intelligence.</b> Six platforms, one portal: every datapoint tied to a revenue, acquisition or operating decision.",
-  "narration": "Welcome to Broad Sky Operating Intelligence: six platforms, one portal, and every datapoint tied to an action.",
+  "caption": "Broad Sky Operating Intelligence. Six companies, one portal: every datapoint tied to a revenue, acquisition or operating decision.",
+  "caption_html": "<b>Broad Sky Operating Intelligence.</b> Six companies, one portal: every datapoint tied to a revenue, acquisition or operating decision.",
+  "narration": "Welcome to Broad Sky Operating Intelligence: six companies, one portal, and every datapoint tied to an action.",
   "duration": 7000
  },
  {
@@ -14,9 +14,9 @@
   "order": 105,
   "module": "home",
   "hash": "#/home/overview",
-  "caption": "Value & exit readiness. Hold length, add-ons, estimated entry value and scale, debt maturity and the exit window for every platform, benchmarked to the Smith + Howard exit.",
-  "caption_html": "<b>Value & exit readiness.</b> Hold length, add-ons, estimated entry value and scale, debt maturity and the exit window for every platform, benchmarked to the Smith + Howard exit.",
-  "narration": "The scoreboard shows hold length, add-ons, estimated value and debt, and the exit window for every platform, benchmarked against the Smith and Howard exit.",
+  "caption": "Value & exit readiness. Hold length, add-ons, estimated entry value and scale, debt maturity and the exit window for every company, benchmarked to the Smith + Howard exit.",
+  "caption_html": "<b>Value & exit readiness.</b> Hold length, add-ons, estimated entry value and scale, debt maturity and the exit window for every company, benchmarked to the Smith + Howard exit.",
+  "narration": "The scoreboard shows hold length, add-ons, estimated value and debt, and the exit window for every company, benchmarked against the Smith and Howard exit.",
   "duration": 9000
  },
  {
@@ -34,9 +34,9 @@
   "order": 120,
   "module": "home",
   "hash": "#/home/firm",
-  "caption": "Broad Sky Partners. Fund I $335M (Form D) · 7 platforms · 23 add-ons · first exit: Smith + Howard → TPG Growth (Aug 2026).",
-  "caption_html": "<b>Broad Sky Partners.</b> Fund I $335M (Form D) · 7 platforms · 23 add-ons · first exit: Smith + Howard → TPG Growth (Aug 2026).",
-  "narration": "Broad Sky itself: a three hundred thirty-five million dollar first fund, seven platforms, twenty-three add-ons, and a first exit to TPG.",
+  "caption": "Broad Sky Partners. Fund I $335M (Form D) · 7 companies · 23 add-ons · first exit: Smith + Howard → TPG Growth (Aug 2026).",
+  "caption_html": "<b>Broad Sky Partners.</b> Fund I $335M (Form D) · 7 companies · 23 add-ons · first exit: Smith + Howard → TPG Growth (Aug 2026).",
+  "narration": "Broad Sky itself: a three hundred thirty-five million dollar first fund, seven companies, twenty-three add-ons, and a first exit to TPG.",
   "duration": 7000
  },
  {
@@ -64,8 +64,8 @@
   "order": 200,
   "module": "cet",
   "hash": "#/cet/overview",
-  "caption": "CET: a New England-only platform. Horton turns funded wastewater plants into prime-able work; the top-10 action list drives the week.",
-  "caption_html": "<b>CET:</b> a New England-only platform. Horton turns funded wastewater plants into prime-able work; the top-10 action list drives the week.",
+  "caption": "CET: a New England-only company. Horton turns funded wastewater plants into prime-able work; the top-10 action list drives the week.",
+  "caption_html": "<b>CET:</b> a New England-only company. Horton turns funded wastewater plants into prime-able work; the top-10 action list drives the week.",
   "narration": "CET is New England only. Horton turns funded wastewater plants into work CET can prime.",
   "duration": 6500
  },
@@ -134,9 +134,9 @@
   "order": 330,
   "module": "pp",
   "hash": "#/pp/targets",
-  "caption": "Tuck-ins. 60 ranked HVAC/plumbing/electrical operators — Authority Brands franchisees and family-owned independents — against the PE platforms bidding for them; one name-conflict held for affiliation check.",
-  "caption_html": "<b>Tuck-ins.</b> 60 ranked HVAC/plumbing/electrical operators — Authority Brands franchisees and family-owned independents — against the PE platforms bidding for them; one name-conflict held for affiliation check.",
-  "narration": "Sixty ranked tuck-ins, led by same-brand franchisees, set against the private-equity platforms competing for them.",
+  "caption": "Tuck-ins. 60 ranked HVAC/plumbing/electrical operators — Authority Brands franchisees and family-owned independents — against the PE-backed rivals bidding for them; one name-conflict held for affiliation check.",
+  "caption_html": "<b>Tuck-ins.</b> 60 ranked HVAC/plumbing/electrical operators — Authority Brands franchisees and family-owned independents — against the PE-backed rivals bidding for them; one name-conflict held for affiliation check.",
+  "narration": "Sixty ranked tuck-ins, led by same-brand franchisees, set against the private-equity-backed rivals competing for them.",
   "duration": 6500
  },
  {
@@ -214,9 +214,9 @@
   "order": 600,
   "module": "bpi",
   "hash": "#/bpi/overview",
-  "caption": "Bully Pulpit International. A ~400-person transatlantic public-affairs platform built on 6 add-ons since Broad Sky's April 2023 investment.",
-  "caption_html": "<b>Bully Pulpit International.</b> A ~400-person transatlantic public-affairs platform built on 6 add-ons since Broad Sky's April 2023 investment.",
-  "narration": "Bully Pulpit is a roughly four-hundred-person transatlantic public-affairs platform, built on six add-ons since April 2023.",
+  "caption": "Bully Pulpit International. A ~400-person transatlantic public-affairs firm built on 6 add-ons since Broad Sky's April 2023 investment.",
+  "caption_html": "<b>Bully Pulpit International.</b> A ~400-person transatlantic public-affairs firm built on 6 add-ons since Broad Sky's April 2023 investment.",
+  "narration": "Bully Pulpit is a roughly four-hundred-person transatlantic public-affairs firm, built on six add-ons since April 2023.",
   "duration": 7000
  },
  {
@@ -276,7 +276,7 @@
   "hash": "#/ma/overview",
   "caption": "Acquisition engine. Every screened add-on across CET, Punctual Pros, Frontline and Thomas Scientific, ranked, with this quarter’s top ten.",
   "caption_html": "<b>Acquisition engine.</b> Every screened add-on across CET, Punctual Pros, Frontline and Thomas Scientific, ranked, with this quarter’s top ten.",
-  "narration": "The acquisition engine ranks every screened add-on across four platforms, with this quarter's top ten.",
+  "narration": "The acquisition engine ranks every screened add-on across four companies, with this quarter's top ten.",
   "duration": 6500
  },
  {
@@ -284,8 +284,8 @@
   "order": 810,
   "module": "ma",
   "hash": "#/ma/theses",
-  "caption": "Platform theses. Each buy-and-build thesis is written from its target pool, and home-sales turnover in every portfolio company’s counties flags density plays and sourcing gaps.",
-  "caption_html": "<b>Platform theses.</b> Each buy-and-build thesis is written from its target pool, and home-sales turnover in every portfolio company’s counties flags density plays and sourcing gaps.",
+  "caption": "Company theses. Each buy-and-build thesis is written from its target pool, and home-sales turnover in every portfolio company’s counties flags density plays and sourcing gaps.",
+  "caption_html": "<b>Company theses.</b> Each buy-and-build thesis is written from its target pool, and home-sales turnover in every portfolio company’s counties flags density plays and sourcing gaps.",
   "narration": "Each thesis comes from its own target pool; county home sales show where housing turnover and target density line up.",
   "duration": 8500
  },
@@ -294,8 +294,8 @@
   "order": 820,
   "module": "ma",
   "hash": "#/ma/rivals",
-  "caption": "Rival platforms. Lender filings show which consolidators are stressed (PIK, sub-95 marks) and are likely sellers rather than bidders.",
-  "caption_html": "<b>Rival platforms.</b> Lender filings show which consolidators are stressed (PIK, sub-95 marks) and are likely sellers rather than bidders.",
+  "caption": "Rival companies. Lender filings show which consolidators are stressed (PIK, sub-95 marks) and are likely sellers rather than bidders.",
+  "caption_html": "<b>Rival companies.</b> Lender filings show which consolidators are stressed (PIK, sub-95 marks) and are likely sellers rather than bidders.",
   "narration": "Lender filings flag rival consolidators paying interest in kind: likely sellers, not bidders.",
   "duration": 5500
  },
@@ -324,23 +324,113 @@
   "order": 920,
   "module": "pe",
   "hash": "#/pe/deals",
-  "caption": "Deal flow 2025–26. Every disclosed platform, add-on and exit by rival sponsors, with the ones touching BSP sectors flagged.",
-  "caption_html": "<b>Deal flow 2025–26.</b> Every disclosed platform, add-on and exit by rival sponsors, with the ones touching BSP sectors flagged.",
+  "caption": "Deal flow 2025–26. Every disclosed portfolio company, add-on and exit by rival sponsors, with the ones touching BSP sectors flagged.",
+  "caption_html": "<b>Deal flow 2025–26.</b> Every disclosed portfolio company, add-on and exit by rival sponsors, with the ones touching BSP sectors flagged.",
   "narration": "Every disclosed rival deal since January 2025, with those touching our sectors flagged.",
   "duration": 5500
  },
  {
   "index": 34,
-  "order": 950,
-  "module": "techos",
-  "hash": "#/techos/overview",
-  "caption": "Tech enablement. One operating system per platform (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS), built from proven vendors plus this portal’s data layer.",
-  "caption_html": "<b>Tech enablement.</b> One operating system per platform (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS), built from proven vendors plus this portal’s data layer.",
-  "narration": "Tech enablement: one operating system per platform, built from proven vendors and this portal’s data layer, each tied to the KPIs a buyer pays for.",
-  "duration": 8000
+  "order": 925,
+  "module": "bsp",
+  "hash": "#/bsp/deals",
+  "caption": "How Broad Sky buys. Every disclosed deal on one strip: seven companies, twenty-one named add-ons and the Smith + Howard exit, each with seller, advisers, lenders and co-invest vehicle.",
+  "caption_html": "<b>How Broad Sky buys.</b> Every disclosed deal on one strip: seven companies, twenty-one named add-ons and the Smith + Howard exit, each with seller, advisers, lenders and co-invest vehicle.",
+  "narration": "How Broad Sky buys. Every disclosed deal on one strip: seven companies, twenty-one named add-ons and the Smith plus Howard exit, each with its seller, advisers, lenders and co-invest vehicle.",
+  "duration": 9000
  },
  {
   "index": 35,
+  "order": 926,
+  "module": "bsp",
+  "hash": "#/bsp/patterns",
+  "caption": "The patterns behind the deals. Thesis first, essential services, founder CEOs stay, first add-on about eight months after the company, a different private-credit lender on every company.",
+  "caption_html": "<b>The patterns behind the deals.</b> Thesis first, essential services, founder CEOs stay, first add-on about eight months after the company, a different private-credit lender on every company.",
+  "narration": "The patterns behind the deals. Thesis first, essential services, founder CEOs stay, the first add-on about eight months after the company, and a different private-credit lender on every company.",
+  "duration": 9000
+ },
+ {
+  "index": 36,
+  "order": 927,
+  "module": "bsp",
+  "hash": "#/bsp/rubric",
+  "caption": "The rubric, applied. Ten inferred criteria with weights, run live across every add-on target: the top fifteen, why each scores, the intro path and a first-call script.",
+  "caption_html": "<b>The rubric, applied.</b> Ten inferred criteria with weights, run live across every add-on target: the top fifteen, why each scores, the intro path and a first-call script.",
+  "narration": "The rubric, applied. Ten inferred criteria with weights, run live across every add-on target, with the top fifteen, why each scores, the intro path and a first-call script.",
+  "duration": 9000
+ },
+ {
+  "index": 37,
+  "order": 930,
+  "module": "cases",
+  "hash": "#/cases/timeline",
+  "caption": "Value-creation cases. Thirty-four sponsor-built companies on one clock: Champions and Sila lined up against Punctual Pros by months from entry.",
+  "caption_html": "<b>Value-creation cases.</b> Thirty-four sponsor-built companies on one clock: Champions and Sila lined up against Punctual Pros by months from entry.",
+  "narration": "Thirty-four companies that sponsors built and sold, each with dated moves. Lined up by months from entry, Champions and Sila show the sequence, and Punctual Pros sits at month thirty on the same clock.",
+  "duration": 9000
+ },
+ {
+  "index": 38,
+  "order": 931,
+  "module": "cases",
+  "hash": "#/cases/levers",
+  "caption": "Levers. Eighteen levers by case and timing: operator teams at month zero, the first add-on near month seven, then one deal every four to five months.",
+  "caption_html": "<b>Levers.</b> Eighteen levers by case and timing: operator teams at month zero, the first add-on near month seven, then one deal every four to five months.",
+  "narration": "Eighteen levers, mapped case by case with timing. Operator teams come first, the first add-on lands around month seven, and the best builds keep one deal every four to five months.",
+  "duration": 9000
+ },
+ {
+  "index": 39,
+  "order": 932,
+  "module": "cases",
+  "hash": "#/cases/sequence",
+  "caption": "The Punctual Pros sequence. Three steps done, twelve recommended over 36 months, each linked to the portal view that supports it.",
+  "caption_html": "<b>The Punctual Pros sequence.</b> Three steps done, twelve recommended over 36 months, each linked to the portal view that supports it.",
+  "narration": "From the patterns comes a dated, thirty-six month sequence for Punctual Pros: integration leader and KPI pack, one contact center, memberships, a quarterly tuck-in cadence and exit preparation.",
+  "duration": 9000
+ },
+ {
+  "index": 40,
+  "order": 940,
+  "module": "national",
+  "hash": "#/national/scorer",
+  "caption": "National expansion scorer. All 3,144 US counties scored 0–100 on eight weighted signals: housing age, owner share, permits, home-sales velocity, income, climate, contractor density and growth. Drag a weight and the map re-ranks.",
+  "caption_html": "<b>National expansion scorer.</b> All 3,144 US counties scored 0–100 on eight weighted signals: housing age, owner share, permits, home-sales velocity, income, climate, contractor density and growth. Drag a weight and the map re-ranks.",
+  "narration": "The national scorer ranks every US county on eight public signals. Change a weight and the map and the top fifty re-rank instantly.",
+  "duration": 9000
+ },
+ {
+  "index": 41,
+  "order": 943,
+  "module": "national",
+  "hash": "#/national/phases",
+  "caption": "Punctual Pros phases, nationally. Phase 1 core and ring, Phase 2 tuck-ins, Phase 3 Mid-Atlantic metros and Phase 4 Sun Belt and Midwest franchise markets, each with homes, home sales and permits.",
+  "caption_html": "<b>Punctual Pros phases, nationally.</b> Phase 1 core and ring, Phase 2 tuck-ins, Phase 3 Mid-Atlantic metros and Phase 4 Sun Belt and Midwest franchise markets, each with homes, home sales and permits.",
+  "narration": "The four Punctual Pros phases sit on the same county scores, each with its homes, home sales and building permits.",
+  "duration": 8000
+ },
+ {
+  "index": 42,
+  "order": 946,
+  "module": "national",
+  "hash": "#/national/markets",
+  "caption": "Top 25 metros. County scores rolled up to OMB metro areas, with the counties inside and the Authority Brands offices already there.",
+  "caption_html": "<b>Top 25 metros.</b> County scores rolled up to OMB metro areas, with the counties inside and the Authority Brands offices already there.",
+  "narration": "County scores roll up to the top twenty-five metro areas, with the Authority Brands offices already in each.",
+  "duration": 7000
+ },
+ {
+  "index": 43,
+  "order": 950,
+  "module": "techos",
+  "hash": "#/techos/overview",
+  "caption": "Tech enablement. One operating system per company (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS), built from proven vendors plus this portal’s data layer.",
+  "caption_html": "<b>Tech enablement.</b> One operating system per company (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS), built from proven vendors plus this portal’s data layer.",
+  "narration": "Tech enablement: one operating system per company, built from proven vendors and this portal’s data layer, each tied to the KPIs a buyer pays for.",
+  "duration": 8000
+ },
+ {
+  "index": 44,
   "order": 953,
   "module": "techos",
   "hash": "#/techos/evidence",
@@ -350,7 +440,7 @@
   "duration": 8500
  },
  {
-  "index": 36,
+  "index": 45,
   "order": 956,
   "module": "techos",
   "hash": "#/techos/roadmap",
@@ -360,7 +450,7 @@
   "duration": 7500
  },
  {
-  "index": 37,
+  "index": 46,
   "order": 959,
   "module": "techos",
   "hash": "#/techos/calculator?co=pp",
@@ -370,17 +460,17 @@
   "duration": 8000
  },
  {
-  "index": 38,
+  "index": 47,
   "order": 1000,
   "module": "fin",
   "hash": "#/fin/portfolio",
-  "caption": "Filings & financials. Form D and Form ADV give Broad Sky's own capital picture; each platform's revenue, EBITDA and debt are triangulated from public records.",
-  "caption_html": "<b>Filings & financials.</b> Form D and Form ADV give Broad Sky's own capital picture; each platform's revenue, EBITDA and debt are triangulated from public records.",
-  "narration": "Form D and ADV filings show the capital in each deal vehicle; platform financials are triangulated from public records.",
+  "caption": "Filings & financials. Form D and Form ADV give Broad Sky's own capital picture; each company's revenue, EBITDA and debt are triangulated from public records.",
+  "caption_html": "<b>Filings & financials.</b> Form D and Form ADV give Broad Sky's own capital picture; each company's revenue, EBITDA and debt are triangulated from public records.",
+  "narration": "Form D and ADV filings show the capital in each deal vehicle; portfolio company financials are triangulated from public records.",
   "duration": 8000
  },
  {
-  "index": 39,
+  "index": 48,
   "order": 1010,
   "module": "fin",
   "hash": "#/fin/comps",
@@ -390,7 +480,7 @@
   "duration": 6000
  },
  {
-  "index": 40,
+  "index": 49,
   "order": 1020,
   "module": "fin",
   "hash": "#/fin/methods",
@@ -400,7 +490,7 @@
   "duration": 7000
  },
  {
-  "index": 41,
+  "index": 50,
   "order": 1100,
   "module": "briefing",
   "hash": "#/briefing/play",
@@ -410,7 +500,7 @@
   "duration": 8500
  },
  {
-  "index": 42,
+  "index": 51,
   "order": 1110,
   "module": "briefing",
   "hash": "#/briefing/play",
@@ -420,7 +510,7 @@
   "duration": 6500
  },
  {
-  "index": 43,
+  "index": 52,
   "order": 1120,
   "module": "briefing",
   "hash": "#/briefing/play",

@@ -1,0 +1,2223 @@
+{
+ "meta": {
+  "dataset": "cases_cross_sector",
+  "title": "Sponsor value-creation case studies outside residential home services: chronological analogs for Punctual Pros and Broad Sky's other sectors",
+  "generated": "2026-10-06",
+  "author": "Syed Rahman",
+  "scope_note": "17 dated case studies covering Broad Sky's own template (Smith + Howard), Frontline's BV-era assembly, commercial electrical and fire/life-safety companies (Shermco, Sciens, IES), legal-services companies (Consilio, Epiq, Harbor), lab distribution (VWR, Avantor, Fisher/THL with the Thermo merger benchmark), agencies (Stagwell/MDC, FGS Global, Teneo) and consumer brands (Vuori, Chubbies, Allbirds as the cautionary case). Each case lists dated sponsor actions, KPI moves and three or more sentences on what Broad Sky can copy at Punctual Pros.",
+  "method": "WebSearch was used for discovery, and WebFetch read sponsor and company press releases, SEC filings (10-K, S-1, 424B4, S-3, DEF 14A, 8-K exhibits, 10-Q), UK Companies House accounts (via data/research/frontline_filings.json) and trade press, all on 2026-10-06. Figures were taken only from pages opened, except where case caveats say a fact came from a search-result summary or deal database (privsource). Smith + Howard's chronology reuses data/research/pp_nationwide.json (pn-tpl-01..14). Frontline debt and timeline facts reuse data/research/frontline_filings.json (fl-005, fl-008, fl-010; retrieved 2026-09-24). IES employee and FY2026 facts reuse data/research/rival_filings.json (rival-001, rival-003). Where no figure was disclosed, the field is null.",
+  "item_schema": "kind 'case': id, company, sector, sector_note, sponsor, co_investors, entry_*, hold_status (sold|held|recap|ipo), exit_*, moic_or_irr_reported, timeline[{date, event_type, event, metric, source_url}], levers_used[], kpi_before_after[{kpi, before, after, unit, period, source_url}], what_broad_sky_can_copy, case_caveats[], sources[], retrieved",
+  "caveats": [
+   "Disclosure is thin: no case has a disclosed entry and exit EBITDA multiple pair. Sponsors rarely publish price, revenue or EBITDA. The only disclosed EV/EBITDA input is FGS (EV $1.7B, 2023 headline EBITDA $90M), and its ~19x is an analyst calculation left out of the multiple fields.",
+   "KPI 'before' and 'after' values from phrases such as '300+' or 'more than doubled' are recorded as their lower bounds, with the phrase kept in the unit text.",
+   "Perimeters change through M&A: Stagwell, Epiq and Avantor revenue and headcount moves include merged companies and are not organic growth.",
+   "Integreon (EagleTree 2021, later sold to ALM) and Calibre Scientific (StoneCalibre) were researched but left out because sources disclosed no dated KPIs beyond deal announcements. Wayne J. Griffin and Rhone were not researched further.",
+   "Corrections to the brief: Vuori's 2021 $400M round was led by SoftBank Vision Fund 2, and General Atlantic co-led the Nov 2024 $825M secondary with Stripes. FGS's 2024 control seller was WPP, not a PE sponsor. Teneo's 2019 seller was BC Partners, and CVC was the buyer. Epiq's take-private closed in 2016, and Tenor Legal was acquired in July 2026.",
+   "'what Broad Sky can copy' is written for Punctual Pros (Lancaster PA HVAC/plumbing/electrical, an Authority Brands franchisee). It is the analyst's interpretation, not a sourced claim."
+  ],
+  "cross_case_patterns": [
+   "Add-on cadence: Smith + Howard made 9 add-ons in ~3.5 years, Frontline (BV) 4 in ~10 months, Sciens 13 in ~5 years, Shermco 10 named in ~7 years, and VWR 34 in ~7 years. Steady tuck-ins integrated into one back office were the common engine.",
+   "Margin beat volume: VWR's Adjusted EBITDA CAGR was 8.6% vs 3.7% for sales, IES operating income rose +88% on +21% revenue in FY24, and Chubbies' margin went from 14.0% to 18.2%.",
+   "Capacity KPIs drove value in technician businesses: Shermco went from 400+ to 600+ NETA techs and from 20+ to 40+ service centers.",
+   "Centralized delivery hubs: Frontline (Goa, Toledo, Cape Town), Smith + Howard (India center) and VWR (two offshore captive centers, 800 people).",
+   "Partial exits and recaps are common: Frontline (BV rolled a minority), Harbor (Renovus rolled), Teneo (LGT), FGS (minority, then control), Fisher (staged sell-down) and Avantor (IPO plus secondaries).",
+   "Cautionary: Allbirds went from a ~$2.15B IPO valuation to a ~$39M asset sale after scaling stores ahead of unit economics, and Solo Brands' distress hit a healthy Chubbies."
+  ],
+  "item_count": 17,
+  "item_counts_by_sector": {
+   "commercial_services": 4,
+   "legal_services": 4,
+   "lab_distribution": 3,
+   "agency": 3,
+   "consumer": 3
+  }
+ },
+ "items": [
+  {
+   "id": "cx-01",
+   "kind": "case",
+   "company": "Smith + Howard",
+   "sector": "commercial_services",
+   "sector_note": "Atlanta tax, accounting and advisory firm. This is Broad Sky's own house template and first exit; it is not a home-services business.",
+   "sponsor": "Broad Sky Partners",
+   "co_investors": [],
+   "entry_date": "2022-11-15",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": 1,
+   "entry_technicians_or_staff": 100,
+   "hold_status": "sold",
+   "exit_date": "2026-08-06",
+   "exit_buyer": "TPG (TPG Growth)",
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "timeline": [
+    {
+     "date": "2022-11-15",
+     "event_type": "other",
+     "event": "Broad Sky makes a strategic anchor investment in Smith + Howard. The stated plan is to add advisory services, widen the geographic footprint and speed up technology through acquisitions.",
+     "metric": "~100 professionals in one Atlanta office (per BSP's 2026 exit release)",
+     "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment"
+    },
+    {
+     "date": "2023-08-17",
+     "event_type": "add_on",
+     "event": "Add-on #1: Market Street Partners. This is the first move outside Georgia (Tennessee).",
+     "metric": "add-on #1; first new state (TN)",
+     "source_url": "https://www.accountingtoday.com/news/smith-howard-acquires-market-street-partners"
+    },
+    {
+     "date": "2024-01-31",
+     "event_type": "add_on",
+     "event": "Add-on #2: JMM CPAs. It gives the employee-benefit-plan (EBP) audit practice national scale.",
+     "metric": "add-on #2; 30 EBP-dedicated staff; combined practice serves 500+ plans",
+     "source_url": "https://www.smith-howard.com/smith-howard-announces-expansion-of-benefit-plan-audit-practice/"
+    },
+    {
+     "date": "2024-04-30",
+     "event_type": "add_on",
+     "event": "Add-ons #3-4: VIP Search Group and VIP Solutions Group, bought in one transaction. They add an executive-search and talent line and enter Texas.",
+     "metric": "add-ons #3-4; Texas entry",
+     "source_url": "https://www.smith-howard.com/smith-howard-acquires-vip-search-and-vip-solutions-businesses/"
+    },
+    {
+     "date": "2024-11-26",
+     "event_type": "add_on",
+     "event": "Add-on #5: Fahrenheit Advisors (Virginia). It adds strategy, finance, HCM and sales advisory and gives the firm its first Mid-Atlantic office.",
+     "metric": "add-on #5; 140+ professionals added",
+     "source_url": "https://www.cpapracticeadvisor.com/2024/12/12/smith-howard-acquires-fahrenheit-advisors-in-virginia/152764/"
+    },
+    {
+     "date": "2024-12-11",
+     "event_type": "kpi_disclosure",
+     "event": "Inside Public Accounting reports Smith + Howard's FY23 net revenue.",
+     "metric": "FY23 net revenue $53.2M",
+     "source_url": "https://insidepublicaccounting.com/2024/12/11/smith-howard-acquires-fahrenheit-advisors/"
+    },
+    {
+     "date": "2025-01-31",
+     "event_type": "add_on",
+     "event": "Add-on #6: Smith Kesler & Co. It adds construction audit and tax and enters the Carolinas.",
+     "metric": "add-on #6; 4 offices added",
+     "source_url": "https://www.cpapracticeadvisor.com/2025/02/11/smith-howard-adds-smith-kesler-co-in-south-carolina/155885/"
+    },
+    {
+     "date": "2025-09-03",
+     "event_type": "add_on",
+     "event": "Add-on #7: Horton, Lee, Burnett, Peacock, Cleveland & Grainger. Enters Alabama.",
+     "metric": "add-on #7; Alabama entry",
+     "source_url": "https://www.cpapracticeadvisor.com/2025/09/03/smith-howard-acquires-horton-lee-burnett-in-alabama/168402/"
+    },
+    {
+     "date": "2026-01-13",
+     "event_type": "add_on",
+     "event": "Add-on #8: Bauknight Pietras & Stormer (Columbia, SC). It adds audit, tax, advisory and captive insurance.",
+     "metric": "add-on #8; ~90 staff and 13 partners; BPS FY24 net revenue $21.8M vs S+H FY24 $74.2M",
+     "source_url": "https://www.accountingtoday.com/news/smith-howard-buys-bauknight-pietras-stormer"
+    },
+    {
+     "date": "2026-01-13",
+     "event_type": "kpi_disclosure",
+     "event": "Scale milestone disclosed with the BPS deal.",
+     "metric": ">600 employees, >45 partners, 10 offices; ~$175M expected 2026 revenue",
+     "source_url": "https://www.accountingtoday.com/news/smith-howard-buys-bauknight-pietras-stormer"
+    },
+    {
+     "date": "2026-02-03",
+     "event_type": "add_on",
+     "event": "Add-on #9: Geels Norton. It adds cyber-risk, SOC audit and advisory.",
+     "metric": "add-on #9",
+     "source_url": "https://www.smith-howard.com/smith-howard-welcomes-geels-norton-expanding-cyber-risk-audit-and-advisory-capabilities/"
+    },
+    {
+     "date": "2026-06-09",
+     "event_type": "exit",
+     "event": "TPG Growth signs a definitive agreement for a significant investment.",
+     "metric": "~800 professionals across 7 states",
+     "source_url": "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/"
+    },
+    {
+     "date": "2026-08-06",
+     "event_type": "exit",
+     "event": "Broad Sky completes the sale to TPG, its first exit.",
+     "metric": "~100 to ~800 professionals; 1 to 11 locations plus an India delivery center; 9 acquisitions; ~4x revenue",
+     "source_url": "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/"
+    }
+   ],
+   "levers_used": [
+    "buy-and-build (9 acquisitions in ~3.5 years, roughly one every 4-5 months)",
+    "adjacent-state geographic expansion (GA to TN, TX, VA, NC, SC, AL)",
+    "new service lines via M&A (EBP audit, executive search, construction audit, captive insurance, cyber/SOC)",
+    "offshore delivery center (India)",
+    "investment in leadership, technology and AI-enabled capabilities",
+    "sale to a larger growth sponsor"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "professionals / headcount",
+     "before": 100,
+     "after": 800,
+     "unit": "people",
+     "period": "2022-11 to 2026-08",
+     "source_url": "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/"
+    },
+    {
+     "kpi": "locations",
+     "before": 1,
+     "after": 11,
+     "unit": "offices (plus India delivery center)",
+     "period": "2022-11 to 2026-08",
+     "source_url": "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/"
+    },
+    {
+     "kpi": "net revenue",
+     "before": 53200000,
+     "after": 74200000,
+     "unit": "USD",
+     "period": "FY2023 to FY2024",
+     "source_url": "https://www.accountingtoday.com/news/smith-howard-buys-bauknight-pietras-stormer"
+    },
+    {
+     "kpi": "revenue (expected)",
+     "before": 74200000,
+     "after": 175000000,
+     "unit": "USD",
+     "period": "FY2024 actual to 2026 expected",
+     "source_url": "https://www.accountingtoday.com/news/smith-howard-buys-bauknight-pietras-stormer"
+    },
+    {
+     "kpi": "states served",
+     "before": 1,
+     "after": 7,
+     "unit": "states",
+     "period": "2022-11 to 2026-06",
+     "source_url": "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/"
+    }
+   ],
+   "what_broad_sky_can_copy": "Run the Smith + Howard cadence at Punctual Pros: one tuck-in every 4-5 months, each adding either a new county cluster next to Lancaster (York, Harrisburg/Dauphin, Chester, and NJ via Horvath) or a new service line such as generators, water treatment, or EV-charger and panel upgrades, staying inside Authority Brands territory rules. Copy the India delivery center as one shared call, dispatch, permitting and back-office hub, so each acquired shop drops its own admin cost on day one. Publish KPIs that show the step-change (techs, locations, agreements, revenue) the way Smith + Howard did with 100 to 800 staff and 1 to 11 offices, because that story is what set up the TPG exit.",
+   "case_caveats": [
+    "Entry revenue, EV and the exit price were not disclosed. '~4x revenue' is Broad Sky's own claim.",
+    "Add-on numbering counts VIP Search and VIP Solutions separately, which reconciles to BSP's 'nine acquisitions'. BSP's portfolio page lists fewer.",
+    "The 2023-2026 dated chronology and source URLs reuse data/research/pp_nationwide.json items pn-tpl-01..14 (retrieved 2026-10-06)."
+   ],
+   "sources": [
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
+    "https://www.accountingtoday.com/news/smith-howard-acquires-market-street-partners",
+    "https://www.smith-howard.com/smith-howard-announces-expansion-of-benefit-plan-audit-practice/",
+    "https://www.smith-howard.com/smith-howard-acquires-vip-search-and-vip-solutions-businesses/",
+    "https://www.cpapracticeadvisor.com/2024/12/12/smith-howard-acquires-fahrenheit-advisors-in-virginia/152764/",
+    "https://insidepublicaccounting.com/2024/12/11/smith-howard-acquires-fahrenheit-advisors/",
+    "https://www.cpapracticeadvisor.com/2025/02/11/smith-howard-adds-smith-kesler-co-in-south-carolina/155885/",
+    "https://www.cpapracticeadvisor.com/2025/09/03/smith-howard-acquires-horton-lee-burnett-in-alabama/168402/",
+    "https://www.accountingtoday.com/news/smith-howard-buys-bauknight-pietras-stormer",
+    "https://www.smith-howard.com/smith-howard-welcomes-geels-norton-expanding-cyber-risk-audit-and-advisory-capabilities/",
+    "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/",
+    "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-02",
+   "kind": "case",
+   "company": "Frontline Managed Services (formerly Intelliteach)",
+   "sector": "legal_services",
+   "sector_note": "Managed IT, help desk and revenue-cycle/eBilling services for law firms. This case covers the BV Investment Partners era before Broad Sky bought it.",
+   "sponsor": "BV Investment Partners (Fund IX, $750M committed)",
+   "co_investors": [],
+   "entry_date": "2019-02-01",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": 5,
+   "entry_technicians_or_staff": null,
+   "hold_status": "sold",
+   "exit_date": "2024-12-11",
+   "exit_buyer": "Broad Sky Partners (majority; BV kept a minority stake)",
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "timeline": [
+    {
+     "date": "2019-02-01",
+     "event_type": "other",
+     "event": "BV Investment Partners partners with management to buy Intelliteach from Dominus Capital as Fund IX's seventh investment. Mike Bryant, chairman of HaystackID, joins the board.",
+     "metric": "300+ law and accounting firm clients; offices in St. Louis, Atlanta, London, Toronto, Goa",
+     "source_url": "https://www.bvlp.com/news-resource/bv-investment-partners-announces-recapitalization-intelliteach/"
+    },
+    {
+     "date": "2019-02-01",
+     "event_type": "recap",
+     "event": "A Webster Bank credit facility funds the buyout.",
+     "metric": "$30M term loan + $5M revolver",
+     "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history"
+    },
+    {
+     "date": "2019",
+     "event_type": "tech_rollout",
+     "event": "eBilling service launched. The help desk passes 20M cumulative tickets (1.5M in one year).",
+     "metric": "20M cumulative tickets",
+     "source_url": "https://frontlinems.com/about-frontline/"
+    },
+    {
+     "date": "2020",
+     "event_type": "call_center",
+     "event": "Opens a Toledo, OH delivery center, adding to the low-cost India (Goa) delivery base.",
+     "metric": "Toledo office (company timeline)",
+     "source_url": "https://frontlinems.com/about-frontline/"
+    },
+    {
+     "date": "2020-10-21",
+     "event_type": "add_on",
+     "event": "Add-on #1: Hilltop Consultants (legal managed IT, cybersecurity, infrastructure). Adds Philadelphia, Washington DC and Atlanta.",
+     "metric": "add-on #1; Intelliteach had 400+ legal-industry clients pre-deal (ChannelE2E: ~75 Hilltop employees)",
+     "source_url": "https://frontlinems.com/press/legal-merged-companies-hilltop-consultants-acquisition/"
+    },
+    {
+     "date": "2021-02-09",
+     "event_type": "brand",
+     "event": "Intelliteach and Hilltop rebrand as Frontline Managed Services ('out front on every front').",
+     "metric": "single brand across admin, financial and IT managed services",
+     "source_url": "https://frontlinems.com/press/frontline-managed-services-rebranding-news-2021/"
+    },
+    {
+     "date": "2021-07",
+     "event_type": "add_on",
+     "event": "Add-on #2: Glasser Tech (full-service IT provider).",
+     "metric": "add-on #2",
+     "source_url": "https://frontlinems.com/press/law-firm-business-acquisition-logicforce/"
+    },
+    {
+     "date": "2021-07",
+     "event_type": "add_on",
+     "event": "Add-on #3: InvoicePrep (law-firm eBilling). Deepens the revenue-cycle line.",
+     "metric": "add-on #3",
+     "source_url": "https://frontlinems.com/press/law-firm-business-acquisition-logicforce/"
+    },
+    {
+     "date": "2021-08-31",
+     "event_type": "add_on",
+     "event": "Add-on #4: LOGICFORCE (Nashville legal IT consulting, cybersecurity, e-discovery). Frontline called it the third acquisition in two months.",
+     "metric": "add-on #4; +50 professionals; +100 law-firm clients; >750 employees; >40% of Am Law 200",
+     "source_url": "https://frontlinems.com/press/law-firm-business-acquisition-logicforce/"
+    },
+    {
+     "date": "2021-12-31",
+     "event_type": "recap",
+     "event": "Add-on term loans in 2021 fund the M&A program.",
+     "metric": "term loans $48.7M at 2021-12-31 (from $33.5M in 2020)",
+     "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history"
+    },
+    {
+     "date": "2023-07",
+     "event_type": "call_center",
+     "event": "Opens a Cape Town delivery center. Headcount passes 1,000.",
+     "metric": ">1,000 employees",
+     "source_url": "https://frontlinems.com/about-frontline/"
+    },
+    {
+     "date": "2024-12-09",
+     "event_type": "recap",
+     "event": "New $90M term loan from NXT Capital and Audax Private Debt closes with the Broad Sky transaction.",
+     "metric": "$90M initial term loan",
+     "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history"
+    },
+    {
+     "date": "2024-12-11",
+     "event_type": "exit",
+     "event": "Broad Sky Partners invests (majority). BV stays a minority investor.",
+     "metric": "800+ law-firm clients incl. >50% of Am Law 200; ~1,000 employees; 9 offices",
+     "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion"
+    }
+   ],
+   "levers_used": [
+    "recap of a founder/sponsor-owned niche leader",
+    "cross-sell adjacencies to the same law-firm buyer (help desk to cyber/infrastructure to eBilling/RCM)",
+    "4 add-ons in ~10 months (Oct 2020 to Aug 2021)",
+    "rebrand to one name within 4 months of the first merger",
+    "offshore and low-cost delivery centers (Goa, Toledo, Cape Town)",
+    "incremental bank debt to fund M&A",
+    "sell majority to a new sponsor while rolling a minority"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "clients",
+     "before": 300,
+     "after": 800,
+     "unit": "law & accounting firms ('300+' to '800+')",
+     "period": "2019-02 to 2024-12",
+     "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion"
+    },
+    {
+     "kpi": "employees",
+     "before": 600,
+     "after": 1000,
+     "unit": "people ('600+' after Hilltop to '~1,000')",
+     "period": "2020 to 2024-12",
+     "source_url": "https://frontlinems.com/about-frontline/"
+    },
+    {
+     "kpi": "Am Law 200 penetration",
+     "before": 40,
+     "after": 50,
+     "unit": "% of Am Law 200 ('>40%' to '>50%')",
+     "period": "2021-08 to 2024-12",
+     "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion"
+    },
+    {
+     "kpi": "office / delivery locations",
+     "before": 5,
+     "after": 9,
+     "unit": "locations",
+     "period": "2019-02 to 2024-12",
+     "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion"
+    },
+    {
+     "kpi": "senior term debt capacity",
+     "before": 30000000,
+     "after": 90000000,
+     "unit": "USD (initial term loan)",
+     "period": "2019-02 to 2024-12",
+     "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history"
+    }
+   ],
+   "what_broad_sky_can_copy": "Frontline's BV-era growth came from selling more services to law firms it already served (help desk, then cyber and infrastructure, then eBilling), so Punctual Pros should attach plumbing, electrical, IAQ and maintenance agreements to every HVAC customer before chasing new households. Frontline merged Hilltop and rebranded everything as one name in about four months, which argues for moving Horvath and later tuck-ins onto the Punctual Pros brand, phone number and booking flow quickly. Its Toledo, Goa and Cape Town delivery centers map to one central Punctual Pros call and dispatch hub for every territory, so headcount added through M&A goes to field technicians rather than office staff.",
+   "case_caveats": [
+    "Neither BV's entry price nor the Dec 2024 transaction value was disclosed. data/research/frontline_filings.json (fl-021) triangulates ~$227-260M EV at ~12-15x as an analyst estimate, so it is not used as a figure here.",
+    "BV's own release dates the deal Feb 1, 2019, and Frontline's reposted page shows Feb 10, 2019.",
+    "Company-timeline items dated only by year (2019, 2020, Jul 2023) come from frontlinems.com/about-frontline (retrieved 2026-09-24). The debt history comes from Intelliteach Ltd UK accounts (retrieved 2026-09-24).",
+    "Employee 'before' is the earliest disclosed figure (600+ in 2020). BV-entry headcount was not disclosed."
+   ],
+   "sources": [
+    "https://frontlinems.com/press/frontline-and-bv-investment-partners-2019/",
+    "https://www.bvlp.com/news-resource/bv-investment-partners-announces-recapitalization-intelliteach/",
+    "https://frontlinems.com/press/legal-merged-companies-hilltop-consultants-acquisition/",
+    "https://www.channele2e.com/news/intelliteach-buys-hilltop-consultants",
+    "https://frontlinems.com/press/frontline-managed-services-rebranding-news-2021/",
+    "https://frontlinems.com/press/law-firm-business-acquisition-logicforce/",
+    "https://legaltechnology.com/us-acquisition-frontline-managed-services-acquires-logicforce/",
+    "https://frontlinems.com/about-frontline/",
+    "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-03",
+   "kind": "case",
+   "company": "Shermco Industries",
+   "sector": "commercial_services",
+   "sector_note": "NETA-accredited electrical testing, maintenance, commissioning and engineering. This is the closest commercial-electrical analog for CET, and its technician-capacity model also applies to Punctual Pros.",
+   "sponsor": "Gryphon Investors",
+   "co_investors": [],
+   "entry_date": "2018-06-05",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": 20,
+   "entry_technicians_or_staff": 490,
+   "hold_status": "sold",
+   "exit_date": "2025-10-28",
+   "exit_buyer": "Blackstone (Blackstone Energy Transition Partners); Hitachi Energy took a minority stake on 2025-10-29",
+   "exit_ev_usd": 1600000000,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "timeline": [
+    {
+     "date": "2018-06-05",
+     "event_type": "other",
+     "event": "Gryphon buys a majority stake from Oaktree's Power Opportunities Group. Plan: geographic expansion, national accounts and continued acquisitions.",
+     "metric": "400+ NETA techs + 90+ utility protection & control techs; 20+ locations",
+     "source_url": "https://www.gryphon-inv.com/news-article/gryphon-investors-announces-majority-investment-in-shermco-industries/"
+    },
+    {
+     "date": "2019-08-05",
+     "event_type": "add_on",
+     "event": "Southwest Energy Systems (Phoenix, NETA testing/engineering).",
+     "metric": "add-on: Arizona",
+     "source_url": "https://www.privsource.com/acquisitions/deal/LXSZ80"
+    },
+    {
+     "date": "2019-08-27",
+     "event_type": "add_on",
+     "event": "Electrical Manufacturing and Distributors (Wichita Falls, TX), covering process controls, systems integration and panel fabrication.",
+     "metric": "add-on: controls/fabrication capability",
+     "source_url": "https://www.privsource.com/acquisitions/deal/e4Sa9b"
+    },
+    {
+     "date": "2019-09-10",
+     "event_type": "add_on",
+     "event": "NextGen Technologies (North Vancouver, BC), a protection-and-control specialist.",
+     "metric": "add-on: Canada entry",
+     "source_url": "https://www.privsource.com/acquisitions/deal/9zSEqM"
+    },
+    {
+     "date": "2021-06-07",
+     "event_type": "add_on",
+     "event": "Sigma Six Solutions and Innovative Electric.",
+     "metric": "2 add-ons",
+     "source_url": "https://www.privsource.com/acquisitions/deal/VnSJj8"
+    },
+    {
+     "date": "2024-04-02",
+     "event_type": "add_on",
+     "event": "Power Test, Inc.",
+     "metric": "add-on",
+     "source_url": "https://www.privsource.com/acquisitions/deal/X0SmY4"
+    },
+    {
+     "date": "2024-10-15",
+     "event_type": "add_on",
+     "event": "KTR Associates (Sinking Spring, PA): power-system studies, arc-flash and safety training across PA, NJ and NC.",
+     "metric": "add-on; Shermco at 40+ locations",
+     "source_url": "https://www.gryphon-inv.com/news/shermco-industries-acquires-ktr-associates-a-power-system-engineering-company/"
+    },
+    {
+     "date": "2025-03-11",
+     "event_type": "add_on",
+     "event": "Power Products and Solutions (Charlotte): testing plus a PEARL-certified breaker reconditioning shop.",
+     "metric": "doubles Charlotte service capacity",
+     "source_url": "https://www.privsource.com/acquisitions/deal/aYSO9E"
+    },
+    {
+     "date": "2025-05-20",
+     "event_type": "add_on",
+     "event": "R3L Engineering.",
+     "metric": "add-on",
+     "source_url": "https://www.privsource.com/acquisitions/deal/6pSyo2"
+    },
+    {
+     "date": "2025-06-17",
+     "event_type": "add_on",
+     "event": "Eastern High Voltage, Inc.",
+     "metric": "add-on",
+     "source_url": "https://www.ewweb.com/news/mergers-acquisitions/article/55297712/shermco-acquires-ehv-to-bolster-presence-in-electrical-testing-market"
+    },
+    {
+     "date": "2025-08-19",
+     "event_type": "exit",
+     "event": "Blackstone agrees to buy Shermco from Gryphon for ~$1.6B. Gryphon says revenue doubled during its hold.",
+     "metric": "600+ NETA techs, 200 engineers, 40+ service centers (US & Canada)",
+     "source_url": "https://peprofessional.com/2025/08/gryphon-sells-shermco-in-1-6-billion-transaction/"
+    },
+    {
+     "date": "2025-10-28",
+     "event_type": "exit",
+     "event": "Blackstone closes the acquisition. The next day Hitachi Energy takes a minority stake alongside Blackstone Energy Transition Partners.",
+     "metric": "~$1.6B EV",
+     "source_url": "https://www.privsource.com/acquisitions/deal/hitachi-energy-acquires-minority-stake-in-shermco-in-partnership-with-blackstone-5ZSyye"
+    }
+   ],
+   "levers_used": [
+    "buy-and-build: 10 named add-ons (several deals bundled)",
+    "certified-technician capacity as the core asset (NETA techs)",
+    "geographic infill and new metros (AZ, TX, Canada, PA, Carolinas)",
+    "capability add-ons (P&C, controls, breaker reconditioning, power-system studies)",
+    "positioning toward data-center, utility and semiconductor end markets",
+    "exit to an energy-transition fund plus a strategic minority (Hitachi Energy)"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "NETA-certified technicians",
+     "before": 400,
+     "after": 600,
+     "unit": "technicians ('400+' to '600+')",
+     "period": "2018-06 to 2025-08",
+     "source_url": "https://peprofessional.com/2025/08/gryphon-sells-shermco-in-1-6-billion-transaction/"
+    },
+    {
+     "kpi": "service centers / locations",
+     "before": 20,
+     "after": 40,
+     "unit": "locations ('20+' to '40+')",
+     "period": "2018-06 to 2025-08",
+     "source_url": "https://peprofessional.com/2025/08/gryphon-sells-shermco-in-1-6-billion-transaction/"
+    },
+    {
+     "kpi": "revenue index",
+     "before": 1.0,
+     "after": 2.0,
+     "unit": "x entry revenue ('two-fold revenue growth')",
+     "period": "2018-06 to 2025-08",
+     "source_url": "https://peprofessional.com/2025/08/gryphon-sells-shermco-in-1-6-billion-transaction/"
+    }
+   ],
+   "what_broad_sky_can_copy": "Shermco's value tracked certified-technician capacity (400+ to 600+ NETA techs), so Punctual Pros should make licensed or NATE-certified technician count and utilization its headline KPI and value tuck-ins by the licensed techs and maintenance books they bring. The PPS deal, which doubled capacity inside a metro Shermco already served, is the template for density buys inside Lancaster, York and Harrisburg ahead of jumps into new territories. The Blackstone sale with a Hitachi Energy minority shows that technician-led companies with electrification exposure (heat pumps, panel and EV upgrades) attract both energy-transition funds and strategic co-investors, which helps position Punctual Pros' electrical line.",
+   "case_caveats": [
+    "Neither Gryphon's entry price nor any Shermco revenue or EBITDA figure has been disclosed. '~$1.6B' is the announced transaction value.",
+    "entry technicians or staff = 490 is the sum of '400+' NETA techs and '90+' P&C techs in Gryphon's release (lower bound).",
+    "Dates for SWES, EMD, NextGen, Sigma Six/Innovative Electric, Power Test, R3L and EHV come from deal-database entries (privsource) and trade press found by search. The KTR, PPS and Hitachi pages were opened directly. The Blackstone release (businesswire) returned 403, so its figures were read from PE Professional's coverage."
+   ],
+   "sources": [
+    "https://www.gryphon-inv.com/news-article/gryphon-investors-announces-majority-investment-in-shermco-industries/",
+    "https://peprofessional.com/2025/08/gryphon-sells-shermco-in-1-6-billion-transaction/",
+    "https://www.businesswire.com/news/home/20250819136392/en/Blackstone-Announces-Agreement-to-Acquire-Shermco-for-Approximately-1.6-Billion",
+    "https://www.privsource.com/acquisitions/deal/hitachi-energy-acquires-minority-stake-in-shermco-in-partnership-with-blackstone-5ZSyye",
+    "https://www.privsource.com/acquisitions/deal/LXSZ80",
+    "https://www.privsource.com/acquisitions/deal/e4Sa9b",
+    "https://www.privsource.com/acquisitions/deal/9zSEqM",
+    "https://www.privsource.com/acquisitions/deal/VnSJj8",
+    "https://www.privsource.com/acquisitions/deal/X0SmY4",
+    "https://www.gryphon-inv.com/news/shermco-industries-acquires-ktr-associates-a-power-system-engineering-company/",
+    "https://www.privsource.com/acquisitions/deal/aYSO9E",
+    "https://www.privsource.com/acquisitions/deal/6pSyo2",
+    "https://www.ewweb.com/news/mergers-acquisitions/article/55297712/shermco-acquires-ehv-to-bolster-presence-in-electrical-testing-market"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-04",
+   "kind": "case",
+   "company": "Sciens Building Solutions",
+   "sector": "commercial_services",
+   "sector_note": "Commercial fire and life-safety (FLS) design, installation, inspection and maintenance. This is a de novo buy-and-build analog for CET and for Punctual Pros' recurring-maintenance layer.",
+   "sponsor": "Huron Capital (ExecFactor program, with ex-Siemens executive Terry Heath as CEO)",
+   "co_investors": [],
+   "entry_date": "2016-09",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": 1,
+   "entry_technicians_or_staff": null,
+   "hold_status": "sold",
+   "exit_date": "2021-12-15",
+   "exit_buyer": "Carlyle (majority; Huron and management retained minority stakes and Huron kept a board seat)",
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": "Revenue and EBITDA up >35x under Huron (Huron release); returns not disclosed",
+   "timeline": [
+    {
+     "date": "2016-09",
+     "event_type": "add_on",
+     "event": "Anchor acquisition: WSA Systems (Boca Raton, FL). Sciens is set up as a buy-and-build vehicle with Terry Heath as CEO.",
+     "metric": "anchor deal",
+     "source_url": "http://www.securitysystemsnews.com/article/huron-capital-s-sciens-building-solutions-completes-second-acquisition"
+    },
+    {
+     "date": "2017-03-15",
+     "event_type": "add_on",
+     "event": "W.W. Gay Fire & Integrated Systems (Jacksonville, 42-year-old business). The CEO targets 20-25 locations within five years.",
+     "metric": "add-on #2; goal of 20-25 locations",
+     "source_url": "http://www.securitysystemsnews.com/article/huron-capital-s-sciens-building-solutions-completes-second-acquisition"
+    },
+    {
+     "date": "2017-07-20",
+     "event_type": "add_on",
+     "event": "Sabah International (Pleasanton, CA), covering fire detection/suppression, leak detection and security. It gives Sciens a West Coast presence.",
+     "metric": "West Coast entry",
+     "source_url": "https://www.securitysales.com/news/sciens-acquires-fire-systems-sabah/58432/"
+    },
+    {
+     "date": "2019",
+     "event_type": "add_on",
+     "event": "Empire Electric Maintenance and Empire Fire Safety (Florida).",
+     "metric": "Florida density",
+     "source_url": "https://www.huroncapital.com/news/huron-capitals-sciens-building-solutions-completes-st-petersburg-florida-acquisition/"
+    },
+    {
+     "date": "2019-07-22",
+     "event_type": "add_on",
+     "event": "Critical System Solutions (St. Petersburg, FL). Joins 'hundreds' of Sciens employees in Florida.",
+     "metric": "Florida west-coast density",
+     "source_url": "https://www.huroncapital.com/news/huron-capitals-sciens-building-solutions-completes-st-petersburg-florida-acquisition/"
+    },
+    {
+     "date": "2019-10-14",
+     "event_type": "add_on",
+     "event": "SmartWatch Security & Sound (Mount Dora, FL), covering access control, video, fire alarm, ERRCS and sound. Its capabilities are to be leveraged across all locations.",
+     "metric": "40+ staff added",
+     "source_url": "http://www.sciensusa.com/news/sciens-building-solutions-acquires-smartwatch-security-of-florida/"
+    },
+    {
+     "date": "2021-12-15",
+     "event_type": "exit",
+     "event": "Huron sells a majority stake to Carlyle after 13 acquisitions and investment in people, technology and corporate infrastructure.",
+     "metric": "13 acquisitions; revenue and EBITDA up >35x",
+     "source_url": "https://huroncapital.com/huron-capital-completes-the-sale-of-sciens-building-solutions"
+    }
+   ],
+   "levers_used": [
+    "operator-led de novo portfolio company (sponsor recruits industry CEO first, then buys)",
+    "13 acquisitions in ~5 years",
+    "state-level density clusters (Florida first) before national spread",
+    "cross-selling acquired capabilities (security, sound, ERRCS) across all branches",
+    "recurring inspection/maintenance contracts",
+    "investment in corporate infrastructure and technology ahead of exit",
+    "majority sale with sponsor rollover"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "revenue and EBITDA index",
+     "before": 1,
+     "after": 35,
+     "unit": "x vs portfolio company start ('greater than 35-fold')",
+     "period": "2016 to 2021-12",
+     "source_url": "https://huroncapital.com/huron-capital-completes-the-sale-of-sciens-building-solutions"
+    },
+    {
+     "kpi": "acquisitions completed",
+     "before": 0,
+     "after": 13,
+     "unit": "deals",
+     "period": "2016 to 2021-12",
+     "source_url": "https://huroncapital.com/huron-capital-completes-the-sale-of-sciens-building-solutions"
+    }
+   ],
+   "what_broad_sky_can_copy": "Sciens shows that a sponsor-backed operator CEO doing about two deals a year can compound a small regional base many times over, and buyers paid for the recurring inspection and maintenance layer, so Punctual Pros should convert each acquired shop's install-heavy revenue into maintenance agreements within 90 days. Sciens built density in Florida before going national, which argues for Punctual Pros finishing south-central PA and the adjacent NJ corridor before opening distant territories. Its practice of rolling one acquired capability across all branches (SmartWatch's security and sound) maps to taking Horvath's skills, or any electrical or plumbing specialty, into every Punctual Pros territory.",
+   "case_caveats": [
+    "Formation date conflict: Huron's exit release says Sciens was formed in 2016, while trade press says 2015. The first deal (WSA Systems) was in September 2016.",
+    "Huron's release was dated 2021-12-15 and PE Professional covered it on 2021-12-20. No price, revenue or EBITDA levels were disclosed, only the '>35x' growth multiple."
+   ],
+   "sources": [
+    "https://huroncapital.com/huron-capital-completes-the-sale-of-sciens-building-solutions",
+    "https://peprofessional.com/2021/12/huron-capital-sells-sciens-to-carlyle/",
+    "http://www.securitysystemsnews.com/article/huron-capital-s-sciens-building-solutions-completes-second-acquisition",
+    "https://www.securitysales.com/news/sciens-acquires-fire-systems-sabah/58432/",
+    "https://www.huroncapital.com/news/huron-capitals-sciens-building-solutions-completes-st-petersburg-florida-acquisition/",
+    "http://www.sciensusa.com/news/sciens-building-solutions-acquires-smartwatch-security-of-florida/"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-05",
+   "kind": "case",
+   "company": "IES Holdings (formerly Integrated Electrical Services)",
+   "sector": "commercial_services",
+   "sector_note": "A public electrical contractor (commercial, industrial, communications and residential), including Florida residential HVAC and plumbing. This is a controlling-shareholder turnaround, not a classic LBO.",
+   "sponsor": "Tontine Associates (Jeffrey Gendell), the controlling shareholder",
+   "co_investors": [
+    "public shareholders"
+   ],
+   "entry_date": null,
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": 494600000,
+   "entry_ebitda_usd": 8000000,
+   "entry_locations": null,
+   "entry_technicians_or_staff": null,
+   "hold_status": "held",
+   "exit_date": null,
+   "exit_buyer": null,
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": 3371468000,
+   "exit_ebitda_usd": 437500000,
+   "moic_or_irr_reported": null,
+   "timeline": [
+    {
+     "date": "2013-09-13",
+     "event_type": "add_on",
+     "event": "Acquires MISCOR Group. Tontine owns ~58% of IES common stock.",
+     "metric": "Tontine ~58% ownership",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0001048268/000119312513476228/d641755d10k.htm"
+    },
+    {
+     "date": "2013-12-17",
+     "event_type": "kpi_disclosure",
+     "event": "FY2013 results: the turnaround baseline after the 2011 restructuring plan.",
+     "metric": "FY13 revenue $494.6M (+8.4%); Adjusted EBITDA $8.0M",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0001048268/000119312513479156/d647322dex991.htm"
+    },
+    {
+     "date": "2016-05-24",
+     "event_type": "brand",
+     "event": "Shareholders approve the rename to IES Holdings, reflecting a long-term strategy as a holding company that owns and manages diverse businesses.",
+     "metric": "holding-company model",
+     "source_url": "https://investors.ies-corporate.com/news-releases/news-release-details/integrated-electrical-services-announces-name-change"
+    },
+    {
+     "date": "2020-10-01",
+     "event_type": "leadership",
+     "event": "Jeffrey Gendell (Tontine) becomes CEO in addition to Chairman.",
+     "metric": "owner-CEO",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1048268/000104826824000134/iesc-20240930.htm"
+    },
+    {
+     "date": "2020-12",
+     "event_type": "add_on",
+     "event": "Buys 80% of Bayonet Plumbing, Heating & Air-Conditioning (Hudson, FL), a residential HVAC and plumbing business.",
+     "metric": "80% stake; founders keep 20%",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1048268/000104826821000079/exhibit991pressreleaseedmo.htm"
+    },
+    {
+     "date": "2021-05-18",
+     "event_type": "add_on",
+     "event": "Buys 80% of Edmonson Electric (Land O' Lakes, FL), covering residential electric, low voltage and HVAC. IES now offers three trades in Florida.",
+     "metric": "~$107M TTM revenue (to Mar 2021); 80% stake",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1048268/000104826821000079/exhibit991pressreleaseedmo.htm"
+    },
+    {
+     "date": "2024-11",
+     "event_type": "kpi_disclosure",
+     "event": "FY2024: all four segments grow revenue and expand operating margin.",
+     "metric": "revenue $2.9B (+21%); operating income $300.9M (+88%)",
+     "source_url": "https://investors.ies-corporate.com/node/18346"
+    },
+    {
+     "date": "2025-11-21",
+     "event_type": "kpi_disclosure",
+     "event": "FY2025 results. Buys Arrow Engine, Qypsys and a Manitowoc fabrication operation ($52.4M), buys the remaining 20% of Edmonson ($40.0M), repurchases $30.2M of stock and agrees to acquire Gulf Island Fabrication.",
+     "metric": "revenue $3.37B (+17%); op income $383.5M; Adj. EBITDA $437.5M; backlog ~$2.37B",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1048268/000104826825000175/q42025pressrelease-sep.htm"
+    },
+    {
+     "date": "2026-06-30",
+     "event_type": "kpi_disclosure",
+     "event": "Nine months of FY2026 (XBRL 10-Q facts).",
+     "metric": "9M revenue $3.09B; 9M operating income $388.5M",
+     "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001048268.json"
+    }
+   ],
+   "levers_used": [
+    "controlling shareholder installs owner-operator leadership",
+    "margin discipline and project selectivity (operating income +88% on +21% revenue in FY24)",
+    "holding-company structure with decentralized operating units",
+    "80/20 acquisitions with founder rollover, followed by buyout of the remaining 20%",
+    "stacking trades in one metro (Florida: HVAC/plumbing, then electrical)",
+    "capital returns (buybacks) alongside M&A"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "revenue",
+     "before": 494600000,
+     "after": 3371468000,
+     "unit": "USD",
+     "period": "FY2013 to FY2025",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1048268/000104826825000175/q42025pressrelease-sep.htm"
+    },
+    {
+     "kpi": "Adjusted EBITDA",
+     "before": 8000000,
+     "after": 437500000,
+     "unit": "USD",
+     "period": "FY2013 to FY2025",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1048268/000104826825000175/q42025pressrelease-sep.htm"
+    },
+    {
+     "kpi": "operating income",
+     "before": 159800000,
+     "after": 383500000,
+     "unit": "USD",
+     "period": "FY2023 to FY2025",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1048268/000104826825000175/q42025pressrelease-sep.htm"
+    },
+    {
+     "kpi": "employees",
+     "before": 9485,
+     "after": 10283,
+     "unit": "people",
+     "period": "2024-09-30 to 2025-09-30",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1048268/000104826825000174/iesc-20250930.htm"
+    }
+   ],
+   "what_broad_sky_can_copy": "In Florida, IES bought 80% of an HVAC/plumbing company (Bayonet) and then 80% of an electrician (Edmonson) to offer all three trades in one metro, which is exactly Punctual Pros' HVAC-plumbing-electrical model. Punctual Pros can use the same 80/20 rollover structure so Horvath-type sellers stay invested, with a pre-agreed buyout of the last 20% like IES did with Edmonson in FY2025. IES grew operating income faster than revenue by pricing and selecting work for margin, so Punctual Pros' dashboard should track gross margin per job and per technician hour, not just revenue.",
+   "case_caveats": [
+    "Tontine's original purchase date and cost basis are not given here. The case uses the FY2013 snapshot (Tontine ~58%) as the baseline, and entry date is null.",
+    "Adjusted EBITDA definitions changed between FY2013 and FY2025. Treat the 55x move as directional.",
+    "Employee counts and FY2026 nine-month figures come from data/research/rival_filings.json (rival-001, rival-003), which were built from the FY2025 10-K and XBRL company facts."
+   ],
+   "sources": [
+    "https://www.sec.gov/Archives/edgar/data/0001048268/000119312513476228/d641755d10k.htm",
+    "https://www.sec.gov/Archives/edgar/data/0001048268/000119312513479156/d647322dex991.htm",
+    "https://investors.ies-corporate.com/news-releases/news-release-details/integrated-electrical-services-announces-name-change",
+    "https://www.sec.gov/Archives/edgar/data/1048268/000104826824000134/iesc-20240930.htm",
+    "https://investors.ies-corporate.com/node/18346",
+    "https://www.sec.gov/Archives/edgar/data/1048268/000104826821000079/exhibit991pressreleaseedmo.htm",
+    "https://www.sec.gov/Archives/edgar/data/1048268/000104826825000175/q42025pressrelease-sep.htm",
+    "https://www.sec.gov/Archives/edgar/data/1048268/000104826825000174/iesc-20250930.htm",
+    "https://data.sec.gov/api/xbrl/companyfacts/CIK0001048268.json"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-06",
+   "kind": "case",
+   "company": "Consilio",
+   "sector": "legal_services",
+   "sector_note": "eDiscovery, document review, flexible legal talent and legal consulting. It shows how sponsors assemble a legal-services leader, which is relevant to Frontline.",
+   "sponsor": "GI Partners (2018-2021), then Stone Point Capital (2021-present)",
+   "co_investors": [
+    "Aquiline Capital Partners (from 2021)"
+   ],
+   "entry_date": "2018-03-22",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": 41,
+   "entry_technicians_or_staff": 2500,
+   "hold_status": "held",
+   "exit_date": "2021-05-17",
+   "exit_buyer": "Stone Point Capital with Aquiline (GI Partners exit; merged with Xact Data Discovery)",
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "timeline": [
+    {
+     "date": "2018-03-22",
+     "event_type": "add_on",
+     "event": "GI Partners agrees to buy Consilio (from Shamrock and Trinity Hunt) and Advanced Discovery (from Trivest) together and merge them under CEO Andy Macdonald.",
+     "metric": "2,500+ employees; 14 data centers; 23 review facilities; 11 countries",
+     "source_url": "https://peprofessional.com/2018/03/gi-partners-makes-big-move-legal-services/"
+    },
+    {
+     "date": "2018-10-30",
+     "event_type": "add_on",
+     "event": "Acquires DiscoverReady (from H.I.G. Bayside), covering eDiscovery, document review and compliance.",
+     "metric": "third company merged in 2018",
+     "source_url": "https://lawjournalnewsletters.com/2018/10/30/breaking-news-consilio-acquires-e-discovery-solutions-provider-discoverready"
+    },
+    {
+     "date": "2021-04-20",
+     "event_type": "exit",
+     "event": "GI Partners agrees to sell to Stone Point. GI cites targeted investment in technology, people and scale and the merger of three management teams into one company.",
+     "metric": "3,000+ clients; 45 offices; 9 countries",
+     "source_url": "https://www.gipartners.com/news/gi-partners-announces-sale-of-consilio"
+    },
+    {
+     "date": "2021-05-17",
+     "event_type": "add_on",
+     "event": "Closes the merger with Xact Data Discovery under Stone Point and Aquiline ownership, with a multi-quarter integration.",
+     "metric": "~4,000 employees after XDD",
+     "source_url": "https://complexdiscovery.com/consilio-and-xact-data-discovery-merger-closes/"
+    },
+    {
+     "date": "2021-09-14",
+     "event_type": "add_on",
+     "event": "Acquires Special Counsel's EQ (legal consulting) and D4 (eDiscovery) units from Adecco. The CEO signals more M&A.",
+     "metric": "~300 employees added",
+     "source_url": "https://aceds.org/victoria-hudgins-legaltech-news-consilio-acquires-special-counsels-discovery-consulting-units-eyes-more-mas-on-horizon/"
+    },
+    {
+     "date": "2021-11",
+     "event_type": "recap",
+     "event": "Launches a $370M add-on first-lien term loan to fund M&A commitments.",
+     "metric": "$370M incremental term loan",
+     "source_url": "https://www.spglobal.com/market-intelligence/en/news-insights/articles/2021/11/consilio-launches-370m-add-on-term-loan-for-m-a-commitments-due-nov-23-67644683"
+    },
+    {
+     "date": "2023-08-01",
+     "event_type": "add_on",
+     "event": "Signs to acquire Lawyers On Demand (LOD) from Bowmark Capital, adding flexible legal talent.",
+     "metric": "LOD serves 500+ clients in 25 countries",
+     "source_url": "https://www.williamblair.com/News/Consilio-and-Lawyers-On-Demand-Transaction"
+    }
+   ],
+   "levers_used": [
+    "merger of near-equal peers (Consilio + Advanced Discovery, then XDD)",
+    "capability tuck-ins (DiscoverReady, Special Counsel units, LOD flexible talent)",
+    "integration into one management team and portfolio company",
+    "technology investment",
+    "incremental term-loan tranches to fund M&A",
+    "secondary sale to a larger sponsor with a co-investor"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "employees",
+     "before": 2500,
+     "after": 4000,
+     "unit": "people ('2,500+' to '4,000')",
+     "period": "2018-03 to 2021-09",
+     "source_url": "https://aceds.org/victoria-hudgins-legaltech-news-consilio-acquires-special-counsels-discovery-consulting-units-eyes-more-mas-on-horizon/"
+    },
+    {
+     "kpi": "offices",
+     "before": 41,
+     "after": 45,
+     "unit": "offices (24 Consilio + 17 Advanced Discovery at entry)",
+     "period": "2018-03 to 2021-04",
+     "source_url": "https://www.gipartners.com/news/gi-partners-announces-sale-of-consilio"
+    }
+   ],
+   "what_broad_sky_can_copy": "Consilio scaled fastest by merging with near-equal peers (Advanced Discovery, then XDD) before smaller capability deals, so Punctual Pros could leap in scale by combining with another Authority Brands franchisee or a similar-sized independent in an adjacent market. Consilio funded later add-ons with incremental term-loan tranches, a template for financing Punctual Pros' acquisition pipeline without calling new equity from Broad Sky's ~$335M Fund I. Merging three management teams into one company before the GI exit is the step Punctual Pros needs before any recap: one P&L, one operating cadence and one KPI set.",
+   "case_caveats": [
+    "No revenue, EBITDA or price was disclosed for the 2018 or 2021 transactions.",
+    "entry locations = 41 adds Consilio's 24 locations to Advanced Discovery's 17 offices (16 US + London) and may double-count shared cities.",
+    "The $370M add-on term loan figure comes from S&P LCD headlines found by search (paywalled, 403). Also reported: a $160M add-on in Sept 2021 bringing the term loan to ~$1.17B, which was not opened.",
+    "The DiscoverReady date comes from Law Journal Newsletters (search result), and the Special Counsel deal date (Sept 2021 announcement; Oct 2021 completion per deal databases) from ACEDS."
+   ],
+   "sources": [
+    "https://peprofessional.com/2018/03/gi-partners-makes-big-move-legal-services/",
+    "https://lawjournalnewsletters.com/2018/10/30/breaking-news-consilio-acquires-e-discovery-solutions-provider-discoverready",
+    "https://www.gipartners.com/news/gi-partners-announces-sale-of-consilio",
+    "https://complexdiscovery.com/consilio-and-xact-data-discovery-merger-closes/",
+    "https://aceds.org/victoria-hudgins-legaltech-news-consilio-acquires-special-counsels-discovery-consulting-units-eyes-more-mas-on-horizon/",
+    "https://www.spglobal.com/market-intelligence/en/news-insights/articles/2021/11/consilio-launches-370m-add-on-term-loan-for-m-a-commitments-due-nov-23-67644683",
+    "https://www.williamblair.com/News/Consilio-and-Lawyers-On-Demand-Transaction"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-07",
+   "kind": "case",
+   "company": "Epiq (Epiq Systems + DTI)",
+   "sector": "legal_services",
+   "sector_note": "eDiscovery, class-action and bankruptcy administration, court reporting, legal operations and flexible talent.",
+   "sponsor": "OMERS Private Equity",
+   "co_investors": [
+    "Harvest Partners"
+   ],
+   "entry_date": "2016-09-30",
+   "entry_ev_usd": 1000000000,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": 544200000,
+   "entry_ebitda_usd": null,
+   "entry_locations": null,
+   "entry_technicians_or_staff": 1300,
+   "hold_status": "held",
+   "exit_date": null,
+   "exit_buyer": null,
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "timeline": [
+    {
+     "date": "2015-12-31",
+     "event_type": "kpi_disclosure",
+     "event": "Last public-company year: revenue grows on the April 2015 Iris Data Services acquisition, but the company posts a net loss.",
+     "metric": "total revenue $544.2M (+14.7%); net loss $11.9M; ~1,300 employees",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1027207/000104746916010631/a2227381z10-k.htm"
+    },
+    {
+     "date": "2016-07-27",
+     "event_type": "other",
+     "event": "After activist pressure (P2 Capital, Villere), Epiq agrees to be taken private by OMERS PE and Harvest at $16.50/share and combined with DTI, OMERS' legal process outsourcing company.",
+     "metric": "~$1.0B including assumed debt",
+     "source_url": "https://legaltechnology.com/further-ediscovery-consolidation-as-epiq-combined-with-dti/"
+    },
+    {
+     "date": "2016-09-27",
+     "event_type": "other",
+     "event": "Shareholders approve. Closing expected on or shortly after Sept 30, 2016, followed by the DTI combination.",
+     "metric": "take-private completed",
+     "source_url": "https://www.epiqglobal.com/en-us/resource-center/news/epiq-shareholders-approve-acquisition-by-omers"
+    },
+    {
+     "date": "2020-11-12",
+     "event_type": "add_on",
+     "event": "Acquires Hyperion Global Partners (legal operations and transformation advisory for Am Law 200 and Global 1000 clients).",
+     "metric": "new legal-ops advisory line",
+     "source_url": "https://www.epiqglobal.com/en-gb/resource-center/news/epiq-expands-acquisition-hyperion-global-partners"
+    },
+    {
+     "date": "2021-12-01",
+     "event_type": "add_on",
+     "event": "Acquires Simplex Services (Canadian alternative legal services provider, founded by ex-GE executives) after launching Epiq Counsel in the US in Jan 2021.",
+     "metric": "Canada expansion of flexible talent",
+     "source_url": "https://complexdiscovery.com/epiq-acquires-simplex/"
+    },
+    {
+     "date": "2022-03-15",
+     "event_type": "add_on",
+     "event": "Acquires Fireman & Company (knowledge-management and AI consulting; serves more than half of the Am Law 100).",
+     "metric": "adds KM/AI consulting",
+     "source_url": "https://www.lawnext.com/2022/03/epiq-acquires-legal-industry-management-consulting-firm-fireman-company.html"
+    },
+    {
+     "date": "2026-07-09",
+     "event_type": "add_on",
+     "event": "Acquires Tenor Legal (flexible in-house talent for Fortune 500 legal departments) into Epiq Counsel.",
+     "metric": "Epiq Counsel roster >1,000 legal professionals",
+     "source_url": "https://legaltechnology.com/epiq-acquires-tenor-legal-for-talent-solutions/"
+    }
+   ],
+   "levers_used": [
+    "activist-driven take-private",
+    "merger with the sponsor's existing company (DTI) for scale",
+    "capability tuck-ins selling into the same law-firm and legal-department buyers (advisory, KM/AI, flexible talent)",
+    "geographic expansion (Canada; Epiq Counsel in US, UK, Canada, Australia, HK, Singapore)",
+    "long hold (10 years and counting)"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "employees",
+     "before": 1300,
+     "after": 6282,
+     "unit": "people (Epiq standalone 2015 to current self-reported profile)",
+     "period": "2015-12 to 2026",
+     "source_url": "https://builtin.com/company/epiq"
+    }
+   ],
+   "what_broad_sky_can_copy": "Epiq's sponsor immediately merged the take-private with a company it already owned (DTI), which is the logic for Broad Sky pairing Punctual Pros with any future home-services or commercial-HVAC asset rather than running them separately. Epiq then added advisory, KM/AI and flexible-talent businesses that sell to the same clients, so Punctual Pros' tuck-ins should favor capabilities its existing households and builders already buy (generators, water, IAQ, electrical upgrades) over pure territory. The 10-year hold shows that a patient owner can keep compounding a services company through add-ons, so a buy-and-hold path for Punctual Pros is worth modeling against the 4-year flip.",
+   "case_caveats": [
+    "The employee 'after' figure (6,282) is from Epiq's Built In employer profile, which is self-reported and undated, not a filing. It includes DTI and all acquisitions.",
+    "OMERS/Harvest have not disclosed revenue or EBITDA since 2016. Do not infer growth from headcount alone.",
+    "Tenor Legal was announced 2026-07-09 (ediscoverytoday.com and legaltechnology.com). An earlier search summary misdated it to 2022."
+   ],
+   "sources": [
+    "https://www.sec.gov/Archives/edgar/data/1027207/000104746916010631/a2227381z10-k.htm",
+    "https://legaltechnology.com/further-ediscovery-consolidation-as-epiq-combined-with-dti/",
+    "https://www.epiqglobal.com/en-sg/resource-center/news/epiq-acquired-by-omers-and-harvest",
+    "https://www.epiqglobal.com/en-us/resource-center/news/epiq-shareholders-approve-acquisition-by-omers",
+    "https://www.epiqglobal.com/en-gb/resource-center/news/epiq-expands-acquisition-hyperion-global-partners",
+    "https://complexdiscovery.com/epiq-acquires-simplex/",
+    "https://www.lawnext.com/2022/03/epiq-acquires-legal-industry-management-consulting-firm-fireman-company.html",
+    "https://legaltechnology.com/epiq-acquires-tenor-legal-for-talent-solutions/",
+    "https://ediscoverytoday.com/2026/07/09/epiq-acquires-tenor-legal-expanding-flexible-legal-talent-solutions/",
+    "https://builtin.com/company/epiq"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-08",
+   "kind": "case",
+   "company": "Harbor Global (HBR Consulting + LAC Group + Wilson Allen)",
+   "sector": "legal_services",
+   "sector_note": "Strategy, legal technology, operations and research services for law firms and law departments. It competes for Frontline's Am Law buyer.",
+   "sponsor": "Renovus Capital Partners",
+   "co_investors": [
+    "BayPine LP (majority from June 2025)"
+   ],
+   "entry_date": "2022-07",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": null,
+   "entry_technicians_or_staff": 340,
+   "hold_status": "recap",
+   "exit_date": "2025-06-04",
+   "exit_buyer": "BayPine LP (majority recap; Renovus remains a significant investor)",
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "timeline": [
+    {
+     "date": "2022-07",
+     "event_type": "add_on",
+     "event": "Renovus-backed LAC Group merges with Wilson Allen (legal business intelligence).",
+     "metric": "Wilson Allen 120+ and LAC 220+ employees",
+     "source_url": "https://www.consulting.us/news/8409/hbr-consulting-sells-advisory-practice-to-renovus-capital-partners"
+    },
+    {
+     "date": "2022-11-10",
+     "event_type": "add_on",
+     "event": "Renovus carves out HBR Consulting's advisory business. HBR spins its information and managed-services business out separately.",
+     "metric": "HBR ~360 employees on LinkedIn at sale",
+     "source_url": "https://www.consulting.us/news/8409/hbr-consulting-sells-advisory-practice-to-renovus-capital-partners"
+    },
+    {
+     "date": "2023-05-15",
+     "event_type": "leadership",
+     "event": "HBR, LAC Group and Wilson Allen name one combined executive team (CEO Matt Sunderman) and plan a unified brand later in 2023.",
+     "metric": ">600 employees; serves >80% of Global 200 law firms and ~half of the Fortune 500",
+     "source_url": "https://www.consulting.us/news/9135/hbr-consulting-lac-group-and-wilson-allen-name-executive-team"
+    },
+    {
+     "date": "2023-10",
+     "event_type": "add_on",
+     "event": "Acquires Stout's legal management consulting business.",
+     "metric": "add-on",
+     "source_url": "https://legaltechnology.com/breaking-news-harbor-acquires-pinnacle/"
+    },
+    {
+     "date": "2023",
+     "event_type": "brand",
+     "event": "Relaunches as one brand, Harbor, also folding in earlier tuck-ins Aurora North, Younts Consulting and KP Labs.",
+     "metric": "650+ strategists, technologists and experts",
+     "source_url": "https://harborglobal.com/articles/hbr-consulting-lac-group-and-wilson-allen-relaunch-as-harbor"
+    },
+    {
+     "date": "2024-02-01",
+     "event_type": "add_on",
+     "event": "Acquires Pinnacle (UK legal-tech consulting: data migration, integrations, PitchPerfect proposal automation).",
+     "metric": "~800 combined employees; 110+ Pinnacle staff",
+     "source_url": "https://legaltechnology.com/breaking-news-harbor-acquires-pinnacle/"
+    },
+    {
+     "date": "2025-06-04",
+     "event_type": "recap",
+     "event": "BayPine takes a majority stake to drive digital innovation, with Renovus and management rolling.",
+     "metric": "majority recap",
+     "source_url": "https://www.privsource.com/acquisitions/deal/ZoS0d8"
+    }
+   ],
+   "levers_used": [
+    "carve-outs of non-core units from larger firms (HBR advisory, Stout legal consulting)",
+    "merger of three mid-size specialists",
+    "unified brand within ~12-18 months",
+    "tuck-ins for technology capability (Pinnacle, KP Labs)",
+    "majority recap to a larger sponsor after ~3 years with sponsor rollover"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "employees",
+     "before": 340,
+     "after": 800,
+     "unit": "people ('120+' + '220+' to '~800')",
+     "period": "2022-07 to 2024-02",
+     "source_url": "https://legaltechnology.com/breaking-news-harbor-acquires-pinnacle/"
+    },
+    {
+     "kpi": "employees (combined three firms)",
+     "before": 600,
+     "after": 650,
+     "unit": "people ('>600' to '650+')",
+     "period": "2023-05 to 2023 relaunch",
+     "source_url": "https://www.consulting.us/news/9135/hbr-consulting-lac-group-and-wilson-allen-name-executive-team"
+    }
+   ],
+   "what_broad_sky_can_copy": "Harbor went from a two-company merger to a BayPine majority recap in under three years by buying carve-outs that larger owners did not want, merging them, and putting everything under one brand within about 18 months. For Punctual Pros, the parallel targets are residential service departments that commercial mechanical contractors, utilities or home-warranty companies want to shed, along with unifying acquired shops under one brand fast. The BayPine deal, where Renovus rolled equity, is a model for a partial Punctual Pros recap that returns capital while keeping Broad Sky in the upside.",
+   "case_caveats": [
+    "No financials or valuation were disclosed. The ~900 headcount at the BayPine deal appears in search-indexed text of Harbor's release, but the page could not be opened (fetch blocked), so it is not used.",
+    "The relaunch date is given only as 2023 (after the May 2023 leadership announcement). Aurora North, Younts and KP Labs deal dates were not found.",
+    "The LAC/Wilson Allen merger date (July 2022) comes from consulting.us and legaltechnology.com coverage."
+   ],
+   "sources": [
+    "https://www.consulting.us/news/8409/hbr-consulting-sells-advisory-practice-to-renovus-capital-partners",
+    "https://legaltechnology.com/exclusive-wilson-allen-merges-with-lac-group-backed-by-renovus-capital/",
+    "https://www.consulting.us/news/9135/hbr-consulting-lac-group-and-wilson-allen-name-executive-team",
+    "https://harborglobal.com/articles/hbr-consulting-lac-group-and-wilson-allen-relaunch-as-harbor",
+    "https://legaltechnology.com/breaking-news-harbor-acquires-pinnacle/",
+    "https://www.privsource.com/acquisitions/deal/ZoS0d8",
+    "https://harborglobal.com/news-releases/harbor-receives-majority-investment-from-baypine-to-drive-digital-innovation-across-legal-sector",
+    "https://www.lw.com/en/news/latham-advises-on-financing-for-baypine-majority-investment-in-harbor"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-09",
+   "kind": "case",
+   "company": "VWR International",
+   "sector": "lab_distribution",
+   "sector_note": "Lab supply distribution (consumables, chemicals, equipment, private label). The closest scaled analog for Thomas Scientific, with three sponsor cycles.",
+   "sponsor": "Madison Dearborn Partners (2007-2017); previously Clayton, Dubilier & Rice (2004-2007)",
+   "co_investors": [],
+   "entry_date": "2007-05-02",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": 3200000000,
+   "entry_ebitda_usd": null,
+   "entry_locations": null,
+   "entry_technicians_or_staff": 6000,
+   "hold_status": "sold",
+   "exit_date": "2017-11",
+   "exit_buyer": "Avantor (New Mountain Capital-controlled), after an Oct 2014 IPO in which MDP kept control",
+   "exit_ev_usd": 6400000000,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": 4514200000,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "timeline": [
+    {
+     "date": "2004-04",
+     "event_type": "other",
+     "event": "CD&R buys VWR from Merck KGaA.",
+     "metric": "$1.65B",
+     "source_url": "https://www.cdr.com/news/clayton-dubilier-rice-announces-agreement-to-sell-vwr-international-to-madison-dearborn"
+    },
+    {
+     "date": "2007-05-02",
+     "event_type": "exit",
+     "event": "CD&R agrees to sell VWR to Madison Dearborn, citing new talent, a disciplined cash-flow focus and significant operational restructurings in key markets.",
+     "metric": "EBITDA up >60% under CD&R; 2006 revenue >$3.2B; 6,000+ employees",
+     "source_url": "https://www.cdr.com/news/clayton-dubilier-rice-announces-agreement-to-sell-vwr-international-to-madison-dearborn"
+    },
+    {
+     "date": "2007-06-30",
+     "event_type": "add_on",
+     "event": "Under MDP, VWR begins a tuck-in program and acquires and integrates 34 businesses through mid-2014.",
+     "metric": "34 acquisitions; >$500M invested",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0001412232/000119312514362870/d743251d424b4.htm"
+    },
+    {
+     "date": "2013-12-31",
+     "event_type": "kpi_disclosure",
+     "event": "Pre-IPO scorecard: growth in sales and margin since 2006.",
+     "metric": "sales $4,187.8M; Adj. EBITDA $418.5M; Adj. EBITDA margin 7.2% to 10.0%",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0001412232/000119312514362870/d743251d424b4.htm"
+    },
+    {
+     "date": "2014-10",
+     "event_type": "exit",
+     "event": "IPO at $21.00/share (25,532,000 shares, ~$536M gross). MDP keeps a controlling interest. E-commerce is ~50% of orders, and two offshore captive service centers employ 800.",
+     "metric": "~$536M gross IPO proceeds",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0001412232/000119312514362870/d743251d424b4.htm"
+    },
+    {
+     "date": "2016-12-31",
+     "event_type": "kpi_disclosure",
+     "event": "Last full year as a public company.",
+     "metric": "sales $4,514.2M; private label ~19% of sales; >50% of orders via e-commerce; ~18,000 orders/day; 10,200+ employees",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0001412232/000141223217000008/a2016q4form10-k.htm"
+    },
+    {
+     "date": "2017-05-05",
+     "event_type": "exit",
+     "event": "Avantor agrees to buy VWR at $33.25/share.",
+     "metric": "~$6.4B enterprise value",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1412232/000119312517160892/d360368dex991.htm"
+    },
+    {
+     "date": "2017-11",
+     "event_type": "exit",
+     "event": "Avantor completes the VWR acquisition.",
+     "metric": "closed Nov 2017",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000119312519032089/d698870ds1.htm"
+    }
+   ],
+   "levers_used": [
+    "margin over volume: private label for higher margin",
+    "e-commerce adoption (~50% of orders by 2014)",
+    "offshore captive shared-service centers (800 associates)",
+    "34 tuck-in acquisitions (>$500M)",
+    "operational restructuring and cash-flow discipline (CD&R era)",
+    "IPO as a partial exit, then sale to a strategic/sponsor combo"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Adjusted EBITDA margin",
+     "before": 7.2,
+     "after": 10.0,
+     "unit": "% of sales",
+     "period": "2006 to 2013",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0001412232/000119312514362870/d743251d424b4.htm"
+    },
+    {
+     "kpi": "gross margin",
+     "before": 27.1,
+     "after": 28.6,
+     "unit": "% of sales",
+     "period": "2006 to 2013",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0001412232/000119312514362870/d743251d424b4.htm"
+    },
+    {
+     "kpi": "net sales",
+     "before": 3200000000,
+     "after": 4514200000,
+     "unit": "USD ('>$3.2B' 2006 to 2016)",
+     "period": "2006 to 2016",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0001412232/000141223217000008/a2016q4form10-k.htm"
+    },
+    {
+     "kpi": "Adjusted EBITDA CAGR vs sales CAGR",
+     "before": 3.7,
+     "after": 8.6,
+     "unit": "% CAGR (sales vs Adj. EBITDA)",
+     "period": "2006 to 2013",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0001412232/000119312514362870/d743251d424b4.htm"
+    },
+    {
+     "kpi": "employees",
+     "before": 6000,
+     "after": 10200,
+     "unit": "people",
+     "period": "2007 to 2016",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0001412232/000141223217000008/a2016q4form10-k.htm"
+    }
+   ],
+   "what_broad_sky_can_copy": "VWR's sales grew only 3.7% a year under MDP while Adjusted EBITDA grew 8.6%, because private label, e-commerce and offshore shared services lifted margin, so Punctual Pros should push mix (agreements and own-brand IAQ, filter and water add-ons per call) and online booking. VWR's 34 small tuck-ins at a total of about $500M, all integrated into one back office, favor many small Lancaster, York and Harrisburg shop buys over one large deal. CD&R's '+60% EBITDA in three years' came from new talent and cash-flow discipline, a reminder that the first 100 days at each acquired shop should cover pricing, procurement and cash collection.",
+   "case_caveats": [
+    "MDP's 2007 purchase price was not disclosed. A Financial Times range of $3.5-4B appears in secondary coverage and is not used.",
+    "entry date uses the 2007-05-02 agreement date (closing was expected in Q3 2007).",
+    "Avantor's 2017 deal is a $6.4B EV. The 2016 Adjusted EBITDA level was not extracted from the 10-K (only sales, mix and employee figures were read)."
+   ],
+   "sources": [
+    "https://www.cdr.com/news/clayton-dubilier-rice-announces-agreement-to-sell-vwr-international-to-madison-dearborn",
+    "https://www.sec.gov/Archives/edgar/data/0001300446/000110465907036938/a07-13576_1ex99d1.htm",
+    "https://www.sec.gov/Archives/edgar/data/0001412232/000119312514362870/d743251d424b4.htm",
+    "https://www.sec.gov/Archives/edgar/data/0001412232/000141223217000008/a2016q4form10-k.htm",
+    "https://www.sec.gov/Archives/edgar/data/1412232/000119312517160892/d360368dex991.htm",
+    "https://www.stblaw.com/about-us/news/view/2017/05/05/avantor-to-acquire-vwr-for-$6.4-billion",
+    "https://www.sec.gov/Archives/edgar/data/1722482/000119312519032089/d698870ds1.htm"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-10",
+   "kind": "case",
+   "company": "Avantor (formerly Mallinckrodt Baker)",
+   "sector": "lab_distribution",
+   "sector_note": "High-purity materials plus VWR lab distribution. A carve-out that became the acquirer of a much larger distributor.",
+   "sponsor": "New Mountain Capital",
+   "co_investors": [],
+   "entry_date": "2010-08-27",
+   "entry_ev_usd": 280000000,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": null,
+   "entry_technicians_or_staff": null,
+   "hold_status": "ipo",
+   "exit_date": "2019-05-17",
+   "exit_buyer": "IPO on NYSE (AVTR). New Mountain sold down in secondaries in May, Aug and Nov 2020.",
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": 6040000000,
+   "exit_ebitda_usd": 1030000000,
+   "moic_or_irr_reported": null,
+   "timeline": [
+    {
+     "date": "2010-08-27",
+     "event_type": "other",
+     "event": "New Mountain closes the ~$280M carve-out of Mallinckrodt Baker (J.T.Baker, Mallinckrodt lab chemicals) from Covidien and renames it Avantor Performance Materials.",
+     "metric": "~$280M",
+     "source_url": "https://www.chromatographyonline.com/view/new-mountain-acquires-mallinckrodt-baker"
+    },
+    {
+     "date": "2016-10-07",
+     "event_type": "add_on",
+     "event": "Merges with NuSil Technology (medical/aerospace-grade silicones).",
+     "metric": "add-on (terms undisclosed)",
+     "source_url": "https://www.manufacturingchemist.com/merger-of-avantor-performance-materials-and-nusil-technology-completed--121909"
+    },
+    {
+     "date": "2017-05-05",
+     "event_type": "add_on",
+     "event": "Agrees to acquire VWR for ~$6.4B EV, a transformational deal many times Avantor's size.",
+     "metric": "~$6.4B EV",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1412232/000119312517160892/d360368dex991.htm"
+    },
+    {
+     "date": "2018-09-30",
+     "event_type": "kpi_disclosure",
+     "event": "S-1 shows scale after VWR: ~12,000 associates, >6M products, 240,000+ customer locations, ~85% recurring revenue and ~45% of orders online.",
+     "metric": "9M 2018 net sales $4,390.4M vs $517.7M 9M 2017; 9M 2018 Adj. EBITDA $710.0M",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000119312519032089/d698870ds1.htm"
+    },
+    {
+     "date": "2019-05-17",
+     "event_type": "exit",
+     "event": "IPO at $14 (207M shares, $2.9B) plus a $900M mandatory convertible preferred to pay down debt.",
+     "metric": "$2.9B common + $0.9B preferred",
+     "source_url": "https://www.renaissancecapital.com/IPO-Center/News/63244/Avantor-prices-IPO-at-$14-the-low-end-of-the-revised-range"
+    },
+    {
+     "date": "2019-12-31",
+     "event_type": "kpi_disclosure",
+     "event": "First full year public. Deleveraging is on track.",
+     "metric": "net sales $6.04B (5.1% organic); Adj. EBITDA $1.03B (+9.1%); net leverage 7.0x to 4.6x",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000172248220000024/a2019q4earningsreleaseex991.htm"
+    },
+    {
+     "date": "2020-05-26",
+     "event_type": "exit",
+     "event": "First New Mountain secondary sale; further offerings follow in Aug and Nov 2020.",
+     "metric": "$840.9M (May 2020)",
+     "source_url": "https://stblaw.com/about-us/news/view/2020/05/26/avantor-completes-$840.9-million-secondary-common-stock-offering"
+    }
+   ],
+   "levers_used": [
+    "corporate carve-out at a low entry price",
+    "rename and standalone build-out",
+    "capability add-on (NuSil)",
+    "transformational acquisition of a much larger distributor (VWR)",
+    "IPO with mandatory convertible to deleverage",
+    "recurring-revenue and e-commerce framing to support the multiple",
+    "staged secondary sell-downs"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "net sales",
+     "before": 517700000,
+     "after": 4390400000,
+     "unit": "USD (nine months)",
+     "period": "9M 2017 to 9M 2018",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000119312519032089/d698870ds1.htm"
+    },
+    {
+     "kpi": "adjusted net leverage",
+     "before": 7.0,
+     "after": 4.6,
+     "unit": "x Adj. EBITDA",
+     "period": "2019-01-01 to 2019-12-31",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000172248220000024/a2019q4earningsreleaseex991.htm"
+    },
+    {
+     "kpi": "Adjusted EBITDA",
+     "before": 710000000,
+     "after": 1030000000,
+     "unit": "USD (9M 2018 to FY2019)",
+     "period": "2018 to 2019",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000172248220000024/a2019q4earningsreleaseex991.htm"
+    }
+   ],
+   "what_broad_sky_can_copy": "New Mountain turned a $280M carve-out into the buyer of a $6.4B distributor, a reminder that Punctual Pros, once it has clean systems and financing, can be the acquirer of a larger regional rival rather than only a buyer of small shops. Avantor's IPO story leaned on '85% recurring revenue' and '45% of orders online', so Punctual Pros should measure and grow the share of revenue from agreements and repeat customers and the share of jobs booked digitally, because those numbers drive the exit multiple. The fast deleveraging from 7.0x to 4.6x shows why a deal-funded leverage spike needs a dated paydown plan from free cash flow.",
+   "case_caveats": [
+    "Avantor's own 2010 revenue and EBITDA were not disclosed in the sources read.",
+    "The 9M 2017 vs 9M 2018 jump mostly reflects consolidating VWR (closed Nov 2017) and is not organic growth.",
+    "The Aug and Nov 2020 secondary sizes come from search summaries of Avantor releases. Only the May 2020 $840.9M figure was confirmed on the Simpson Thacher page."
+   ],
+   "sources": [
+    "https://www.chromatographyonline.com/view/new-mountain-acquires-mallinckrodt-baker",
+    "https://www.labmanager.com/mallinckrodt-baker-acquired-by-new-mountain-capital-19399",
+    "https://www.manufacturingchemist.com/merger-of-avantor-performance-materials-and-nusil-technology-completed--121909",
+    "https://www.sec.gov/Archives/edgar/data/1412232/000119312517160892/d360368dex991.htm",
+    "https://www.sec.gov/Archives/edgar/data/1722482/000119312519032089/d698870ds1.htm",
+    "https://www.renaissancecapital.com/IPO-Center/News/63244/Avantor-prices-IPO-at-$14-the-low-end-of-the-revised-range",
+    "https://www.sec.gov/Archives/edgar/data/1722482/000172248220000024/a2019q4earningsreleaseex991.htm",
+    "https://stblaw.com/about-us/news/view/2020/05/26/avantor-completes-$840.9-million-secondary-common-stock-offering",
+    "https://www.stocktitan.net/news/AVTR/avantor-r-announces-secondary-offering-of-71-339-001-shares-of-xebyetqm52n9.html"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-11",
+   "kind": "case",
+   "company": "Fisher Scientific International (THL recap, then Thermo Fisher merger benchmark)",
+   "sector": "lab_distribution",
+   "sector_note": "Lab supply distribution with proprietary products. The 2006 merger with Thermo Electron is the scale benchmark for Thomas Scientific.",
+   "sponsor": "Thomas H. Lee Company",
+   "co_investors": [
+    "management and other institutional investors in the 1998 recap"
+   ],
+   "entry_date": "1998-01-21",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": 2175300000,
+   "entry_ebitda_usd": null,
+   "entry_locations": null,
+   "entry_technicians_or_staff": 7300,
+   "hold_status": "sold",
+   "exit_date": null,
+   "exit_buyer": "Public-market sell-downs (THL ~76% before the April 2001 offering, ~15% by March 2003). The company later merged with Thermo Electron (closed 2006-11-09).",
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": 5579400000,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "timeline": [
+    {
+     "date": "1998-01-21",
+     "event_type": "recap",
+     "event": "THL's FSI Merger Corp completes a leveraged recapitalization: ~87% of shares cashed out at $9.65 and a public stub retained.",
+     "metric": "~$955.0M cash to holders; long-term debt $267.8M (1997) to $1,022.0M (1998)",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0000880430/000095013599001734/0000950135-99-001734.txt"
+    },
+    {
+     "date": "1998-12-31",
+     "event_type": "kpi_disclosure",
+     "event": "First year post-recap. Restructuring charges include closing logistics and customer-service centers (1997 plan). Fishersci.com has carried the Fisher Catalog online since 1995.",
+     "metric": "1998 sales $2,252.3M; ~7,300 employees; 260,000+ products online",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0000880430/000095013599001734/0000950135-99-001734.txt"
+    },
+    {
+     "date": "2001-04-05",
+     "event_type": "recap",
+     "event": "Follow-on offering of 12M shares (11M primary, 1M secondary) to delever. Fisher cites e-commerce, proprietary plus 6,000-vendor sourcing, ~25,000 shipments/day and 95% of US orders shipped within 24 hours.",
+     "metric": "THL stake 76.4% to 60.3%; 2000 sales $2,622.3M; 27 acquisitions since 1991",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0000880430/000091205701507167/a2044481zs-3.txt"
+    },
+    {
+     "date": "2003-03-14",
+     "event_type": "exit",
+     "event": "Proxy shows THL entities down to 15.14%. THL board representatives plan to resign, and the THL management agreement is terminated in 2003.",
+     "metric": "THL 15.14%",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0000880430/000095015203004102/l98117adef14a.htm"
+    },
+    {
+     "date": "2004-03-17",
+     "event_type": "add_on",
+     "event": "Fisher agrees to a stock merger with Apogent Technologies (closed Aug 2004) to raise its proprietary-product mix.",
+     "metric": "$3.7B; synergies ~$55M in 2005, up to $100M annualized by end-2006; proprietary products 50% to ~60% of sales",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/880430/000095013504001340/b49883f1e425.htm"
+    },
+    {
+     "date": "2006-02-07",
+     "event_type": "kpi_disclosure",
+     "event": "Record 2005 results.",
+     "metric": "2005 sales $5,579.4M (+20.6%); adj. operating income $734.8M; operating cash flow $612.0M",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0000880430/000095013506000555/b58977fsexv99w1.htm"
+    },
+    {
+     "date": "2006-11-09",
+     "event_type": "exit",
+     "event": "Thermo Electron and Fisher complete their merger, forming Thermo Fisher Scientific.",
+     "metric": "~$9B combined revenue; 30,000 employees",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/97745/000095012306014144/y27121exv99w1.htm"
+    }
+   ],
+   "levers_used": [
+    "leveraged recapitalization with a public stub",
+    "logistics and customer-service center consolidation",
+    "early e-commerce catalog",
+    "proprietary/own-brand products for margin",
+    "serial acquisitions (27 by 2001), then a large merger (Apogent) with quantified synergies",
+    "staged public sell-down by the sponsor",
+    "strategic merger as the endgame"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "net sales",
+     "before": 2175300000,
+     "after": 5579400000,
+     "unit": "USD",
+     "period": "1997 to 2005",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0000880430/000095013506000555/b58977fsexv99w1.htm"
+    },
+    {
+     "kpi": "THL ownership",
+     "before": 76.4,
+     "after": 15.14,
+     "unit": "% of common stock",
+     "period": "2001-04 to 2003-03",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0000880430/000095015203004102/l98117adef14a.htm"
+    },
+    {
+     "kpi": "proprietary products share of sales",
+     "before": 50,
+     "after": 60,
+     "unit": "% (target with Apogent)",
+     "period": "2004 to post-merger target",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/880430/000095013504001340/b49883f1e425.htm"
+    }
+   ],
+   "what_broad_sky_can_copy": "Fisher's post-recap growth plan paired a service promise (95% of US orders shipped within 24 hours) with own-brand margin (proprietary products from 50% to ~60%), and Punctual Pros' versions are a guaranteed same-day or next-day window and branded maintenance plans and accessories. THL consolidated logistics and customer-service centers early, which supports collapsing acquired shops' call desks and warehouses into one Punctual Pros hub. THL's staged sell-down while management kept compounding is a structure Broad Sky could offer Punctual Pros' leadership through a minority recap.",
+   "case_caveats": [
+    "The 1998 enterprise value and EBITDA are not given here. $955.0M is the cash paid to holders for ~87% of shares, not EV.",
+    "THL's final exit date was not confirmed. Only ownership snapshots (76.4% before the April 2001 offering, 60.3% after, 15.14% at March 2003) were read.",
+    "The Thermo deal is a benchmark, not a THL exit. Its $10.6B stock value appears in secondary sources but was not in the SEC release read, so exit EV is null."
+   ],
+   "sources": [
+    "https://www.sec.gov/Archives/edgar/data/0000880430/000095013599001734/0000950135-99-001734.txt",
+    "https://www.sec.gov/Archives/edgar/data/0000880430/000091205701507167/a2044481zs-3.txt",
+    "https://www.sec.gov/Archives/edgar/data/0000880430/000095015203004102/l98117adef14a.htm",
+    "https://www.sec.gov/Archives/edgar/data/880430/000095013504001340/b49883f1e425.htm",
+    "https://www.sec.gov/Archives/edgar/data/0000880430/000095013506000555/b58977fsexv99w1.htm",
+    "https://www.sec.gov/Archives/edgar/data/97745/000095012306014144/y27121exv99w1.htm"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-12",
+   "kind": "case",
+   "company": "Stagwell Inc. (MDC Partners + Stagwell Marketing Group)",
+   "sector": "agency",
+   "sector_note": "Marketing and communications holding company. An agency-sector analog for BPI, with a turnaround via sponsor capital plus an operator CEO.",
+   "sponsor": "The Stagwell Group (Mark Penn)",
+   "co_investors": [
+    "public shareholders"
+   ],
+   "entry_date": "2019-03-15",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": 1476000000,
+   "entry_ebitda_usd": null,
+   "entry_locations": null,
+   "entry_technicians_or_staff": 6024,
+   "hold_status": "held",
+   "exit_date": null,
+   "exit_buyer": null,
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": 2841216000,
+   "exit_ebitda_usd": 411000000,
+   "moic_or_irr_reported": null,
+   "timeline": [
+    {
+     "date": "2018-12-31",
+     "event_type": "kpi_disclosure",
+     "event": "MDC before Stagwell: revenue declining, a net loss and heavy debt.",
+     "metric": "revenue $1.48B (2017 $1.51B); net loss; $954.6M debt; 6,024 employees",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/876883/000087688319000004/mdca-20181231x10k.htm"
+    },
+    {
+     "date": "2019-03-15",
+     "event_type": "leadership",
+     "event": "Stagwell invests $100M ($50M common + $50M convertible preferred), and Mark Penn becomes CEO, ending a strategic review begun in Sept 2018.",
+     "metric": "$100M; new CEO",
+     "source_url": "https://www.thedrum.com/news/2019/03/15/stagwell-group-invests-100m-mdc-partners-mark-penn-takes-ceo-role"
+    },
+    {
+     "date": "2021-08-02",
+     "event_type": "add_on",
+     "event": "MDC combines with Stagwell Marketing Group to form Stagwell Inc. (Nasdaq: STGW).",
+     "metric": "pro forma 2021 revenue $2.135-2.180B; Adj. EBITDA $372-387M; ~10,000 people; 30+ countries; $30M synergies",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/876883/000110465921098992/tm2123756d1_ex99-1.htm"
+    },
+    {
+     "date": "2025-02-27",
+     "event_type": "kpi_disclosure",
+     "event": "FY2024 results. LTM net new business sets a record for the eighth straight quarter.",
+     "metric": "revenue $2.8B (+12%); net revenue $2.3B (+7%); Adj. EBITDA $411M (18% margin); LTM net new business $382M",
+     "source_url": "https://www.stagwellglobal.com/stagwell-inc-nasdaq-stgw-reports-results-for-the-three-and-twelve-months-ended-december-31-2024/"
+    }
+   ],
+   "levers_used": [
+    "rescue capital (common + convertible preferred) with an operator CEO",
+    "merge the sponsor's own agency group into the listed company",
+    "synergy program ($30M target)",
+    "new-business engine tracked as a quarterly KPI",
+    "digital, data and technology services emphasis"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "revenue",
+     "before": 1476000000,
+     "after": 2841216000,
+     "unit": "USD (MDC standalone 2018 to Stagwell 2024; perimeter changed)",
+     "period": "2018 to 2024",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/876883/000087688325000009/stgw-20241231.htm"
+    },
+    {
+     "kpi": "Adjusted EBITDA",
+     "before": 372000000,
+     "after": 411000000,
+     "unit": "USD (2021 pro forma guidance low end to 2024 actual)",
+     "period": "2021 to 2024",
+     "source_url": "https://www.stagwellglobal.com/stagwell-inc-nasdaq-stgw-reports-results-for-the-three-and-twelve-months-ended-december-31-2024/"
+    }
+   ],
+   "what_broad_sky_can_copy": "Stagwell's turnaround combined capital, an operator CEO and one growth engine with 'net new business' reported every quarter, so Punctual Pros should report one demand KPI (booked jobs and new agreements per week) across all territories and acquired brands. Merging Stagwell's agencies into MDC with a stated $30M synergy target is the model for a dated synergy plan (procurement, fleet, insurance, marketing spend) for each Punctual Pros add-on. One centralized marketing and AI-driven demand engine for all acquired shops, rather than one agency per shop, is a place where Broad Sky's BPI expertise transfers directly.",
+   "case_caveats": [
+    "Revenue before and after are not like-for-like: the 2024 figure includes the Stagwell Marketing Group merged in 2021.",
+    "MDC's 2018 Adjusted EBITDA was not read from the 10-K. EBITDA 'before' uses 2021 pro forma guidance, not a pre-Stagwell figure."
+   ],
+   "sources": [
+    "https://www.sec.gov/Archives/edgar/data/876883/000087688319000004/mdca-20181231x10k.htm",
+    "https://www.thedrum.com/news/2019/03/15/stagwell-group-invests-100m-mdc-partners-mark-penn-takes-ceo-role",
+    "https://www.sec.gov/Archives/edgar/data/876883/000110465921098992/tm2123756d1_ex99-1.htm",
+    "https://www.stagwellglobal.com/stagwell-inc-nasdaq-stgw-reports-results-for-the-three-and-twelve-months-ended-december-31-2024/",
+    "https://www.sec.gov/Archives/edgar/data/876883/000087688325000009/stgw-20241231.htm"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-13",
+   "kind": "case",
+   "company": "FGS Global",
+   "sector": "agency",
+   "sector_note": "Strategic communications and public-affairs advisory (Finsbury, Glover Park, Hering Schuppener, Sard Verbinnen). An agency analog for BPI and a people-business valuation reference.",
+   "sponsor": "KKR",
+   "co_investors": [
+    "FGS employee shareholders",
+    "WPP (seller of its ~50% stake in 2024)"
+   ],
+   "entry_date": "2023-04-11",
+   "entry_ev_usd": 1425000000,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": 27,
+   "entry_technicians_or_staff": 1300,
+   "hold_status": "held",
+   "exit_date": null,
+   "exit_buyer": null,
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "timeline": [
+    {
+     "date": "2021",
+     "event_type": "add_on",
+     "event": "Finsbury, The Glover Park Group and Hering Schuppener merge under WPP, then acquire Sard Verbinnen.",
+     "metric": "4 firms combined",
+     "source_url": "https://www.investegate.co.uk/announcement/rns/wpp--wpp/wpp-to-sell-its-majority-stake-in-fgs-global-/8353113"
+    },
+    {
+     "date": "2023-04-11",
+     "event_type": "other",
+     "event": "KKR makes a growth investment (~30% minority) as Golden Gate exits. WPP keeps majority.",
+     "metric": "valuation $1.425B; 1,300 experts; 27 offices",
+     "source_url": "https://www.mediapost.com/publications/article/384243/None"
+    },
+    {
+     "date": "2024-08-07",
+     "event_type": "exit",
+     "event": "WPP agrees to sell its ~50% stake to KKR (Kite Bidco), taking KKR to control.",
+     "metric": "EV $1.7B; $775M cash to WPP; 2023 net sales $465M; headline EBITDA $90M; ~1,400 staff; 30 locations",
+     "source_url": "https://www.investegate.co.uk/announcement/rns/wpp--wpp/wpp-to-sell-its-majority-stake-in-fgs-global-/8353113"
+    }
+   ],
+   "levers_used": [
+    "merger of premium boutiques under one brand",
+    "acquisition of a US leader (Sard Verbinnen)",
+    "minority-then-control sponsor entry",
+    "employee equity ownership retained alongside the sponsor"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "valuation (EV)",
+     "before": 1425000000,
+     "after": 1700000000,
+     "unit": "USD",
+     "period": "2023-04 to 2024-08",
+     "source_url": "https://www.investegate.co.uk/announcement/rns/wpp--wpp/wpp-to-sell-its-majority-stake-in-fgs-global-/8353113"
+    },
+    {
+     "kpi": "professionals",
+     "before": 1300,
+     "after": 1400,
+     "unit": "people",
+     "period": "2023-04 to 2024-08",
+     "source_url": "https://www.investegate.co.uk/announcement/rns/wpp--wpp/wpp-to-sell-its-majority-stake-in-fgs-global-/8353113"
+    },
+    {
+     "kpi": "offices",
+     "before": 27,
+     "after": 30,
+     "unit": "locations",
+     "period": "2023-04 to 2024-08",
+     "source_url": "https://www.investegate.co.uk/announcement/rns/wpp--wpp/wpp-to-sell-its-majority-stake-in-fgs-global-/8353113"
+    }
+   ],
+   "what_broad_sky_can_copy": "KKR paid $1.7B EV against $90M of 2023 headline EBITDA (about 19x, analyst arithmetic) for a people business in which senior staff own equity, so Punctual Pros should give lead technicians and general managers an equity or phantom-equity pool that vests through the exit. FGS's minority-then-control path (KKR at ~30% in 2023, control in 2024) is a structure Broad Sky can offer founders of larger HVAC or plumbing targets who will not sell 100% up front. Merging four boutiques under one brand while keeping senior relationships is the plan for moving acquired shop brands onto Punctual Pros without losing their local reputations.",
+   "case_caveats": [
+    "The ~19x is an analyst calculation ($1.7B EV / $90M 2023 headline EBITDA per WPP's RNS). Neither KKR nor WPP stated a multiple, so entry EBITDA multiple is left null.",
+    "entry EV records the April 2023 KKR minority valuation ($1.425B, per MediaPost). The 2024 control transaction was at $1.7B EV.",
+    "MediaPost dates the KKR minority announcement 2023-04-11. WPP's 2024 RNS describes it as July 2023, which is likely the completion date."
+   ],
+   "sources": [
+    "https://www.mediapost.com/publications/article/384243/None",
+    "https://www.businesswire.com/news/home/20230411005543/en",
+    "https://www.investegate.co.uk/announcement/rns/wpp--wpp/wpp-to-sell-its-majority-stake-in-fgs-global-/8353113",
+    "https://www.sullcrom.com/About/News-and-Events/Highlights/2024/August/S-C-Advises-FGS-Global-in-Acquisition-by-KKR-Valued-at-1-7-Billion"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-14",
+   "kind": "case",
+   "company": "Teneo",
+   "sector": "agency",
+   "sector_note": "CEO advisory: strategic communications, management consulting, restructuring and political risk.",
+   "sponsor": "CVC Capital Partners",
+   "co_investors": [
+    "BC Partners (prior ~50% owner from 2015)",
+    "LGT Capital Partners (2025 investment)"
+   ],
+   "entry_date": "2019-06-11",
+   "entry_ev_usd": 700000000,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": 19,
+   "entry_technicians_or_staff": null,
+   "hold_status": "recap",
+   "exit_date": "2025-08-04",
+   "exit_buyer": "LGT Capital Partners (new investment at ~$2.3B valuation)",
+   "exit_ev_usd": 2300000000,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": "Revenue 'more than doubled' since the 2019 CVC deal (City A.M.)",
+   "timeline": [
+    {
+     "date": "2015",
+     "event_type": "other",
+     "event": "BC Partners acquires a roughly 50% stake.",
+     "metric": "~50% stake",
+     "source_url": "https://www.mediamergers.co.uk/declan-kelly-led-pr-firm-sells-majority-stake-for-350m/"
+    },
+    {
+     "date": "2019-06-11",
+     "event_type": "other",
+     "event": "CVC takes majority control, buying BC Partners' stake plus more, for more than $350M.",
+     "metric": "valuation >$700M; 19 locations",
+     "source_url": "https://www.mediamergers.co.uk/declan-kelly-led-pr-firm-sells-majority-stake-for-350m/"
+    },
+    {
+     "date": "2021-02-16",
+     "event_type": "add_on",
+     "event": "Acquires Deloitte UK's Restructuring Services business, funded by CVC incremental equity, and launches a global restructuring line.",
+     "metric": "250+ people incl. 27 partners; Teneo to 1,100+ employees (600+ UK)",
+     "source_url": "https://cvc.com/media/news/2021/2021-02-16-teneo-extends-global-presence-with-acquisition-of-deloittes-uk-restructuring-services-business"
+    },
+    {
+     "date": "2023-01-10",
+     "event_type": "add_on",
+     "event": "Acquires Tulchan Communications (London/Singapore financial PR).",
+     "metric": "~£65M reported; 70+ professionals",
+     "source_url": "https://www.consultancy.uk/news/33232/teneo-acquires-financial-communications-firm-tulchan"
+    },
+    {
+     "date": "2025-08-04",
+     "event_type": "recap",
+     "event": "LGT Capital Partners invests at a ~$2.3B (£1.73bn) valuation. Revenue has more than doubled since 2019.",
+     "metric": "~$2.3B valuation; 40+ offices",
+     "source_url": "https://www.cityam.com/?p=2353419"
+    }
+   ],
+   "levers_used": [
+    "sponsor follow-on equity to fund a transformational lift-out (Deloitte UK restructuring)",
+    "new counter-cyclical service line (restructuring)",
+    "premium boutique add-on (Tulchan)",
+    "office expansion (19 to 40+)",
+    "recap/minority sale to a new investor rather than a full exit"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "valuation",
+     "before": 700000000,
+     "after": 2300000000,
+     "unit": "USD",
+     "period": "2019-06 to 2025-08",
+     "source_url": "https://www.cityam.com/?p=2353419"
+    },
+    {
+     "kpi": "offices",
+     "before": 19,
+     "after": 40,
+     "unit": "locations ('19' to 'over 40')",
+     "period": "2019-06 to 2025-08",
+     "source_url": "https://www.cityam.com/?p=2353419"
+    },
+    {
+     "kpi": "revenue index",
+     "before": 1.0,
+     "after": 2.0,
+     "unit": "x 2019 revenue ('more than doubled')",
+     "period": "2019 to 2025",
+     "source_url": "https://www.cityam.com/?p=2353419"
+    }
+   ],
+   "what_broad_sky_can_copy": "Teneo's biggest step was a lift-out funded by CVC follow-on equity, buying a whole 250-person Deloitte team and a new service line overnight, and Punctual Pros can do the same by lifting out intact crews from competitors or utility home-services programs that are exiting residential work. Restructuring gave Teneo revenue that holds up in downturns, and Punctual Pros' equivalent is non-discretionary emergency repair and replacement, so after-hours no-heat/no-cool response should be staffed as a protected line. The 2025 LGT recap at roughly 3x the 2019 valuation shows the growth story can be re-priced through a partial sale without a full exit.",
+   "case_caveats": [
+    "CVC's '$350M' and '>$700M' come from Media Mergers. City A.M. cites $750M for 2019. No revenue or EBITDA levels were disclosed.",
+    "The 2025 LGT deal is a new investment and revaluation. The source does not say whether CVC fully exited.",
+    "PwC Australia restructuring is mentioned in City A.M. as a Teneo acquisition, but its date was not confirmed, so it is omitted from the timeline."
+   ],
+   "sources": [
+    "https://www.mediamergers.co.uk/declan-kelly-led-pr-firm-sells-majority-stake-for-350m/",
+    "https://cvc.com/media/news/2021/2021-02-16-teneo-extends-global-presence-with-acquisition-of-deloittes-uk-restructuring-services-business",
+    "https://www.consultancy.uk/news/33232/teneo-acquires-financial-communications-firm-tulchan",
+    "https://www.odwyerpr.com/story/public/19004/2023-01-10/teneo-adds-tulchan-communications.html",
+    "https://www.cityam.com/?p=2353419"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-15",
+   "kind": "case",
+   "company": "Vuori",
+   "sector": "consumer",
+   "sector_note": "Premium activewear: a DTC brand that added wholesale and owned stores. Consumer analog for Fair Harbor.",
+   "sponsor": "General Atlantic",
+   "co_investors": [
+    "Stripes",
+    "SoftBank Vision Fund 2 (2021)",
+    "Norwest Venture Partners (2019)"
+   ],
+   "entry_date": "2024-11-08",
+   "entry_ev_usd": 5500000000,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": 70,
+   "entry_technicians_or_staff": null,
+   "hold_status": "held",
+   "exit_date": null,
+   "exit_buyer": null,
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "timeline": [
+    {
+     "date": "2019-08-16",
+     "event_type": "other",
+     "event": "Norwest Venture Partners takes a minority stake, and Jon Kossow joins the board. Vuori is profitable and sold through DTC plus REI, Nordstrom and Equinox.",
+     "metric": "minority growth equity",
+     "source_url": "https://fashionunited.com/news/business/norwest-venture-partners-invests-in-vuori/2019081629476"
+    },
+    {
+     "date": "2021",
+     "event_type": "other",
+     "event": "SoftBank Vision Fund 2 invests $400M.",
+     "metric": "valuation $4B",
+     "source_url": "https://www.retail-insight-network.com/news/vuori-investment-apparel-market"
+    },
+    {
+     "date": "2024-11-08",
+     "event_type": "other",
+     "event": "$825M secondary tender led by General Atlantic and Stripes. Plan: 100 US stores by 2026, ~50 international locations over 5 years, London flagship.",
+     "metric": "valuation $5.5B; ~70 US locations",
+     "source_url": "https://insider.fitt.co/vuori-raises-825m-hits-5-5b-valuation/"
+    },
+    {
+     "date": "2025-07",
+     "event_type": "brand",
+     "event": "International push: first Asia stores (Seoul via franchise partner, Beijing), e-commerce live in 11 more countries, ex-Fabletics executive named Global President.",
+     "metric": ">100 stores globally by end-2025; 15 outside US by 2026; 18+ countries",
+     "source_url": "https://fashionunited.com/news/retail/vuori-accelerates-global-expansion-in-china-and-south-korea/2025072267262"
+    }
+   ],
+   "levers_used": [
+    "profitable growth before taking large capital",
+    "minority/secondary rounds (founder keeps control)",
+    "DTC to wholesale to owned retail (omnichannel)",
+    "international expansion via franchise partners and localized e-commerce",
+    "senior hires from scaled peers (Fabletics)"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "valuation",
+     "before": 4000000000,
+     "after": 5500000000,
+     "unit": "USD",
+     "period": "2021 to 2024-11",
+     "source_url": "https://www.retail-insight-network.com/news/vuori-investment-apparel-market"
+    },
+    {
+     "kpi": "physical stores",
+     "before": 70,
+     "after": 100,
+     "unit": "stores (~70 US to >100 global target by end-2025)",
+     "period": "2024-11 to 2025-12 (plan)",
+     "source_url": "https://fashionunited.com/news/retail/vuori-accelerates-global-expansion-in-china-and-south-korea/2025072267262"
+    }
+   ],
+   "what_broad_sky_can_copy": "Vuori stayed profitable and used minority and secondary rounds to give early holders liquidity while keeping the founder culture, a structure Punctual Pros can offer owners of larger targets (partial liquidity instead of a full buyout). Vuori opened stores only after demand was proven online and through partners, so Punctual Pros should add branches or territories only where call volume and online-booking data already show unmet demand. Its use of a franchise partner to enter Seoul mirrors how Punctual Pros can reach new markets through Authority Brands' franchise system instead of building every branch from scratch.",
+   "case_caveats": [
+    "Vuori is private and discloses no revenue or EBITDA. A ~$1.0B 2024 revenue figure appears only in unsourced blog estimates and is not used.",
+    "General Atlantic and Stripes led a secondary tender, so their entry is a revaluation, not primary capital. The 2021 SoftBank round month (Oct 2021) comes from search summaries, and the round was opened only at year level.",
+    "Fair Harbor is the Broad Sky consumer company. Vuori's 'what Broad Sky can copy' is written for Punctual Pros, per the schema."
+   ],
+   "sources": [
+    "https://fashionunited.com/news/business/norwest-venture-partners-invests-in-vuori/2019081629476",
+    "https://www.sdbj.com/news/2019/aug/21/vuori-gets-minority-investment/",
+    "https://www.retail-insight-network.com/news/vuori-investment-apparel-market",
+    "https://insider.fitt.co/vuori-raises-825m-hits-5-5b-valuation/",
+    "https://fashionunited.com/news/retail/vuori-accelerates-global-expansion-in-china-and-south-korea/2025072267262"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-16",
+   "kind": "case",
+   "company": "Chubbies (inside Solo Brands)",
+   "sector": "consumer",
+   "sector_note": "DTC men's shorts, swim and lifestyle apparel, the closest brand analog to Fair Harbor, owned by a public multi-brand holding company.",
+   "sponsor": "Solo Brands, Inc. (strategic acquirer; public from Oct 2021)",
+   "co_investors": [
+    "Chubbies sellers (received $29.1M of Solo Brands Class B units)"
+   ],
+   "entry_date": "2021-09-01",
+   "entry_ev_usd": 129500000,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": 5,
+   "entry_technicians_or_staff": null,
+   "hold_status": "held",
+   "exit_date": null,
+   "exit_buyer": null,
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "timeline": [
+    {
+     "date": "2021-09-01",
+     "event_type": "other",
+     "event": "Solo Brands acquires 100% of Chubbies.",
+     "metric": "$100.4M cash + $29.1M Class B units = ~$129.5M; goodwill $73.1M; intangibles $47.8M",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1870600/000187060022000025/dtc-20220331.htm"
+    },
+    {
+     "date": "2021-12-31",
+     "event_type": "kpi_disclosure",
+     "event": "Chubbies sells mainly online with five owned retail stores.",
+     "metric": "5 Chubbies stores",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1870600/000187060022000009/dtc-20211231.htm"
+    },
+    {
+     "date": "2024-12-31",
+     "event_type": "kpi_disclosure",
+     "event": "Growth driven by retail partners.",
+     "metric": "net sales $112.7M (2023 $101.6M); DTC $57.8M, retail $54.9M; Adj. EBITDA $15.8M (14.0%)",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1870600/000187060025000029/dtc-20241231.htm"
+    },
+    {
+     "date": "2025-04-22",
+     "event_type": "other",
+     "event": "The parent's distress: NYSE halts Solo Brands stock for 'abnormally low' price. The company appeals, refinances, completes a reverse split and restructures other brands.",
+     "metric": "parent FY2025 net sales -30.4%",
+     "source_url": "https://www.globenewswire.com/news-release/2025/05/06/3075591/0/en/Solo-Brands-Inc-Appeals-NYSE-Delisting-Determination.html"
+    },
+    {
+     "date": "2026-03-19",
+     "event_type": "kpi_disclosure",
+     "event": "FY2025 results: Chubbies keeps growing while the parent shrinks. Q4 softens on lower retail replenishment. A women's swim line, 'Cheekies', is planned for 2026.",
+     "metric": "net sales $122.9M (+9.1%); Adj. EBITDA $22.4M (18.2% margin)",
+     "source_url": "https://investors.solobrands.com/news/news-details/2026/Solo-Brands-Inc--Announces-Fiscal-2025-Fourth-Quarter-and-Full-Year-Results/default.aspx"
+    }
+   ],
+   "levers_used": [
+    "wholesale/retail strategic partnerships (retail ~half of sales by 2024)",
+    "margin expansion (14.0% to 18.2% Adj. EBITDA margin)",
+    "brand extension into adjacent categories (women's swim)",
+    "brand autonomy inside a holding company"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "net sales",
+     "before": 101600000,
+     "after": 122900000,
+     "unit": "USD",
+     "period": "FY2023 to FY2025",
+     "source_url": "https://investors.solobrands.com/news/news-details/2026/Solo-Brands-Inc--Announces-Fiscal-2025-Fourth-Quarter-and-Full-Year-Results/default.aspx"
+    },
+    {
+     "kpi": "Adjusted EBITDA margin",
+     "before": 14.0,
+     "after": 18.2,
+     "unit": "%",
+     "period": "FY2024 to FY2025",
+     "source_url": "https://investors.solobrands.com/news/news-details/2026/Solo-Brands-Inc--Announces-Fiscal-2025-Fourth-Quarter-and-Full-Year-Results/default.aspx"
+    },
+    {
+     "kpi": "Adjusted EBITDA",
+     "before": 15800000,
+     "after": 22400000,
+     "unit": "USD",
+     "period": "FY2024 to FY2025",
+     "source_url": "https://investors.solobrands.com/news/news-details/2026/Solo-Brands-Inc--Announces-Fiscal-2025-Fourth-Quarter-and-Full-Year-Results/default.aspx"
+    }
+   ],
+   "what_broad_sky_can_copy": "Chubbies grew sales and lifted Adjusted EBITDA margin from 14.0% to 18.2% in FY2025 while its parent's sales fell 30%, so Punctual Pros' brand, local leadership and technician culture should be protected as Broad Sky layers on shared services. About half of Chubbies' 2024 sales came through retail partners, and the Punctual Pros equivalent is referral partnerships with homebuilders, realtors, property managers and home-warranty firms that send recurring jobs. The parent's distress shows that holding-company overhead and debt can sink a good brand, so acquisition leverage at Punctual Pros should be sized to Punctual Pros' own cash flow.",
+   "case_caveats": [
+    "Chubbies' revenue at acquisition was not disclosed in the filings read. A search summary cited '$113M revenue, $16M Adj. EBITDA' without a clear period, so it is not used.",
+    "The Solo Brands sponsor history (pre-IPO private equity) was not verified, so sponsor is recorded as the strategic acquirer.",
+    "entry EV = total purchase consideration ($100.4M cash + $29.1M units) from the Q1 2022 10-Q acquisition note."
+   ],
+   "sources": [
+    "https://www.sec.gov/Archives/edgar/data/1870600/000187060022000025/dtc-20220331.htm",
+    "https://www.sec.gov/Archives/edgar/data/1870600/000187060022000009/dtc-20211231.htm",
+    "https://www.sec.gov/Archives/edgar/data/1870600/000187060025000029/dtc-20241231.htm",
+    "https://www.globenewswire.com/news-release/2025/05/06/3075591/0/en/Solo-Brands-Inc-Appeals-NYSE-Delisting-Determination.html",
+    "https://investors.solobrands.com/news/news-details/2026/Solo-Brands-Inc--Announces-Fiscal-2025-Fourth-Quarter-and-Full-Year-Results/default.aspx"
+   ],
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cx-17",
+   "kind": "case",
+   "company": "Allbirds (cautionary case)",
+   "sector": "consumer",
+   "sector_note": "A venture-backed DTC footwear brand that went public in 2021 and sold its assets in 2026. It is a cautionary analog for scaling footprint ahead of unit economics.",
+   "sponsor": "Venture-backed pre-IPO; public company (Nasdaq: BIRD) from Nov 2021",
+   "co_investors": [],
+   "entry_date": "2021-11-03",
+   "entry_ev_usd": 2150000000,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": 277500000,
+   "entry_ebitda_usd": -11700000,
+   "entry_locations": 35,
+   "entry_technicians_or_staff": null,
+   "hold_status": "sold",
+   "exit_date": "2026-03-30",
+   "exit_buyer": "American Exchange Group (asset purchase of IP and certain assets; agreement signed, close expected Q2 2026)",
+   "exit_ev_usd": 39000000,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": "Asset sale at ~$39M vs ~$2.15B IPO valuation (~98% value destruction)",
+   "timeline": [
+    {
+     "date": "2021-11-03",
+     "event_type": "exit",
+     "event": "IPO at $15. Shares close at $28.64 on day one.",
+     "metric": "valuation ~$2.15B (per World Footwear); >$300M raised",
+     "source_url": "https://www.worldfootwear.com/news/allbirds-valued-at-215-billion-us-dollars/7151.html"
+    },
+    {
+     "date": "2021-12-31",
+     "event_type": "kpi_disclosure",
+     "event": "Peak-growth year: 35 stores across 8 countries.",
+     "metric": "net revenue $277.5M (+27%); gross margin 52.9%; Adj. EBITDA loss $11.7M",
+     "source_url": "https://www.stocktitan.net/news/BIRD/allbirds-reports-fourth-quarter-and-full-year-2021-financial-vqg42xdxaogp.html"
+    },
+    {
+     "date": "2023-09",
+     "event_type": "other",
+     "event": "Begins moving international markets to third-party distributors (Canada, South Korea), followed by Japan, Australasia and China in 2024 and Europe in July 2025.",
+     "metric": "distributor model",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1653909/000162828026022192/bird-20251231.htm"
+    },
+    {
+     "date": "2024-12-31",
+     "event_type": "kpi_disclosure",
+     "event": "Revenue falls on lower DTC units, distributor transitions and store closures.",
+     "metric": "net revenue $189.8M (-25.3%); net loss $93.3M",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1653909/000162828025012130/bird-20241231.htm"
+    },
+    {
+     "date": "2025-12-31",
+     "event_type": "kpi_disclosure",
+     "event": "Shrinks further: closes 10 stores in 2025 and all remaining US full-price stores in Q1 2026.",
+     "metric": "23 stores; 362 employees; net loss $77.3M",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1653909/000162828026022192/bird-20251231.htm"
+    },
+    {
+     "date": "2026-03-30",
+     "event_type": "exit",
+     "event": "Agrees to sell its IP and certain assets to American Exchange Group, with a wind-down distribution to stockholders expected in Q3 2026.",
+     "metric": "~$39M transaction value",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1653909/000162828026022181/allbirdsprojectarisepressr.htm"
+    }
+   ],
+   "levers_used": [
+    "(negative) rapid store and international roll-out ahead of proven unit economics",
+    "(negative) product/category expansion that diluted the core",
+    "(remediation) store closures, distributor model abroad, cost cuts",
+    "(outcome) strategic alternatives leading to an asset sale"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "net revenue",
+     "before": 277500000,
+     "after": 189800000,
+     "unit": "USD",
+     "period": "FY2021 to FY2024",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1653909/000162828025012130/bird-20241231.htm"
+    },
+    {
+     "kpi": "company-operated stores",
+     "before": 35,
+     "after": 23,
+     "unit": "stores",
+     "period": "2021-12 to 2025-12",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1653909/000162828026022192/bird-20251231.htm"
+    },
+    {
+     "kpi": "equity/transaction value",
+     "before": 2150000000,
+     "after": 39000000,
+     "unit": "USD",
+     "period": "2021-11 IPO to 2026-03 asset sale",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1653909/000162828026022181/allbirdsprojectarisepressr.htm"
+    }
+   ],
+   "what_broad_sky_can_copy": "Allbirds grew stores and its international footprint while still unprofitable, then had to unwind them, and its value fell from a ~$2.15B IPO valuation to a ~$39M asset sale. Punctual Pros should open or buy a territory only when existing branches hit target technician utilization, close rates and contribution margin, and should track contribution by territory and acquired shop every month. Broad Sky should underwrite add-ons on current cash flow rather than projected growth and set a pre-agreed trigger to fold or merge an underperforming branch, because premium valuations collapse quickly when growth stalls.",
+   "case_caveats": [
+    "Allbirds was never PE-controlled. It is included as the cautionary consumer case the brief asked for.",
+    "The IPO valuation ($2.15B) is World Footwear's figure. Other outlets report ~$4.1B on the first-day close.",
+    "FY2025 net revenue was not extracted. The company cancelled its Q4/FY2025 earnings release after announcing the asset sale.",
+    "The 2021 figures come from Allbirds' Q4/FY2021 release as carried by StockTitan. The 10-K (store count) was read directly."
+   ],
+   "sources": [
+    "https://www.worldfootwear.com/news/allbirds-valued-at-215-billion-us-dollars/7151.html",
+    "https://www.stocktitan.net/news/BIRD/allbirds-reports-fourth-quarter-and-full-year-2021-financial-vqg42xdxaogp.html",
+    "https://www.sec.gov/Archives/edgar/data/1653909/000165390922000016/bird-20211231.htm",
+    "https://www.sec.gov/Archives/edgar/data/1653909/000162828025012130/bird-20241231.htm",
+    "https://www.sec.gov/Archives/edgar/data/1653909/000162828026022192/bird-20251231.htm",
+    "https://www.sec.gov/Archives/edgar/data/1653909/000162828026022181/allbirdsprojectarisepressr.htm"
+   ],
+   "retrieved": "2026-10-06"
+  }
+ ]
+}

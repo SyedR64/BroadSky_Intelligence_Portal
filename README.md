@@ -1,6 +1,6 @@
 # Broad Sky Operating Intelligence
 
-A static operating-intelligence site for the **Broad Sky Partners Portfolio Resource Group (PRG)**. It turns public and licensed data into revenue, M&A and operating actions for six portfolio platforms, and pairs each platform with a concept website and a named "OS" tech-enablement thesis. Every view starts with a one-line "so what" and KPIs, then shows the evidence (map, table or chart), then the action list. Every number carries a source; estimates are labelled "est." and mock data "illustrative".
+A static operating-intelligence site for the **Broad Sky Partners Portfolio Resource Group (PRG)**. It turns public and licensed data into revenue, M&A and operating actions for six portfolio companies, and pairs each company with a concept website and a named "OS" tech-enablement thesis. Every view starts with a one-line "so what" and KPIs, then shows the evidence (map, table or chart), then the action list. Every number carries a source; estimates are labelled "est." and mock data "illustrative".
 
 - **Stack:** vanilla ES modules, no build step, GitHub Pages (`.nojekyll`). Leaflet for maps, inline SVG charts, MapLibre + deck.gl for the 3D theater.
 - **Shared runtime:** `assets/core.js` (data loaders, formatting, UI kit, maps, charts, live feeds, tour, app shell), `assets/chat.js` (the assistant), `assets/components.js` (targets / filings / opportunity cards).
@@ -10,15 +10,15 @@ A static operating-intelligence site for the **Broad Sky Partners Portfolio Reso
 
 | Path | What it is |
 |---|---|
-| `index.html` | Landing page: "Hello, Broad Sky." with the inline assistant, six example prompts, product tour, live evidence counts, the six platforms, the OS program and the briefing video. |
+| `index.html` | Landing page: "Hello, Broad Sky." with the inline assistant, six example prompts, product tour, live evidence counts, the six companies, the OS program and the briefing video. |
 | `app.html` | The portal (hash routes `app.html#/<module>/<view>`, ⌘K search, inspector, narrated tour). |
 | `redesigns/index.html` | Gallery of the six concept websites and the OS program, with the design principles behind them. |
-| `redesigns/punctual-pros/` | Concept site · `serviceos.html` (ServiceOS) · `nationwide.html` (nationwide playbook) · `ads.html` (growth marketing and sample ads) |
-| `redesigns/cet/` | Concept site · `gridos.html` (GridOS) · `playbook.html` |
-| `redesigns/frontline/` | Concept site · `firmos.html` (FirmOS) · `playbook.html` |
-| `redesigns/thomas-scientific/` | Concept site · `labos.html` (LabOS) · `playbook.html` |
-| `redesigns/bpi/` | Concept site · `signalos.html` (SignalOS) · `playbook.html` |
-| `redesigns/fair-harbor/` | Concept site · `harboros.html` (HarborOS) · `playbook.html` |
+| `redesigns/punctual-pros/` | Concept site · `serviceos.html` (ServiceOS) · `nationwide.html` (nationwide plan) · `ads.html` (growth marketing and sample ads) |
+| `redesigns/cet/` | Concept site · `gridos.html` (GridOS) · growth plan (`growth-plan.html`) |
+| `redesigns/frontline/` | Concept site · `firmos.html` (FirmOS) · growth plan (`growth-plan.html`) |
+| `redesigns/thomas-scientific/` | Concept site · `labos.html` (LabOS) · growth plan (`growth-plan.html`) |
+| `redesigns/bpi/` | Concept site · `signalos.html` (SignalOS) · growth plan (`growth-plan.html`) |
+| `redesigns/fair-harbor/` | Concept site · `harboros.html` (HarborOS) · growth plan (`growth-plan.html`) |
 | `redesigns/ai-agents.html`, `redesigns/voice-ai.html` | Cross-portfolio agentic-layer program and the 24/7 voice-AI model |
 | `theater.html` | Full-screen 3D theater (also in the portal at `#/theater/play`) |
 | `briefing/` | Rendered briefing (`broad_sky_briefing.mp4`), 29-second intro, executive memo (HTML + PDF), shot lists |
@@ -36,8 +36,8 @@ Every concept page carries the same dismissible banner ("Concept redesign propos
 | Portfolio | Thomas Scientific (`ts`) | overview, accounts, sites, targets, filings | 27k scored lab and hospital sites, parent-account plays, distributor add-ons, credit file |
 | Portfolio | Bully Pulpit International (`bpi`) | overview, opportunities, benchmarks, filings | Growth plays, agency comps, filings |
 | Portfolio | Fair Harbor (`fh`) | overview, opportunities, benchmarks, filings, market | Capital-light growth, apparel comps, Manhattan home-sales market, filings |
-| Intelligence | Acquisition engine (`ma`) | overview, pipeline, theses, rivals, valuation, whitespace | Cross-platform add-on pipeline, theses joined to county home sales, stressed rivals, multiple arbitrage |
-| Intelligence | PE landscape (`pe`) | landscape, deals, heatmap, platforms | 35 competing sponsors, disclosed deals, rival presence by portfolio county |
+| Intelligence | Acquisition engine (`ma`) | overview, pipeline, theses, rivals, valuation, whitespace | Portfolio-wide add-on pipeline, theses joined to county home sales, stressed rivals, multiple arbitrage |
+| Intelligence | PE landscape (`pe`) | landscape, deals, heatmap, companies | 35 competing sponsors, disclosed deals, rival presence by portfolio county |
 | Intelligence | Filings & financials (`fin`) | portfolio, deal, explorer, comps, rivals, methods | Form D/ADV capital, triangulated financials, deal math, 31 public comps, data-gaps register |
 | Intelligence | **Tech enablement (`techos`)** | overview, evidence, roadmap, calculator | The six OS theses (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS): KPIs moved, est. investment and EBITDA impact, valuation-premium evidence, 12–24 month roadmap, equity-value calculator |
 | Briefing | 3D theater (`theater`) | play | GPU-rendered scenes over the portfolio datasets |
@@ -147,15 +147,15 @@ python3 scripts/make_briefing.py                         # → briefing/broad_sk
 **This portal holds public and licensed research data. Verify before use.** Figures come from public records (SEC, state and county assessor and recorder files, federal APIs), licensed sources (for example ZoomInfo) and analyst estimates. Private-company revenue, EBITDA, leverage and valuations are **estimates** triangulated from public filings, not company-reported numbers. Property records lag their sources by weeks to months, and assessor layers carry only each parcel's last sale. Nothing here is investment advice. Confirm any number with the primary source (links are in every inspector and footer) before it goes into a decision, a model or an outside communication. Owner names shown in property records come from public assessor rolls; use them only for aggregate market analysis or lawful business outreach.
 
 
-## Playbooks & programs (added Oct 6 2026)
+## Growth plans & programs (added Oct 6, 2026)
 
 | Page | What it is | Data |
 |---|---|---|
-| `redesigns/punctual-pros/nationwide.html` | The Tyler-facing "From Lancaster to national" playbook: Smith + Howard template, four phases, levers, AI agents, pro programs, financing, returns | `data/research/pp_nationwide.json` |
+| `redesigns/punctual-pros/nationwide.html` | The "From Lancaster to national" growth plan: Smith + Howard template, four phases, levers, AI agents, pro programs, financing, returns | `data/research/pp_nationwide.json` |
 | `redesigns/punctual-pros/ads.html` | Growth marketing & sample ads: CTV platforms, benchmarks, creatives, three media plans, calculator; rendered spots in `briefing/ads/` (`scripts/make_ads.py`) | `data/research/pp_ads.json` |
-| `redesigns/voice-ai.html` | 24/7 voice AI as the growth engine: economics, EliseAI-style reference platforms, ASR/LLM stack, sample calls, governance | `data/research/voice_ai.json` |
+| `redesigns/voice-ai.html` | 24/7 voice AI as the growth engine: economics, reference voice-AI platforms, ASR/LLM stack, sample calls, governance | `data/research/voice_ai.json` |
 | `redesigns/ai-agents.html` | The agentic layer: 45 agents across six operating systems, patterns, rollout waves, governance | `data/research/ai_agents_portfolio.json` |
-| `redesigns/<slug>/playbook.html` | Value-creation playbooks for CET, Frontline, Thomas Scientific, BPI, Fair Harbor | `data/research/<co>_playbook.json` |
+| `redesigns/<slug>/growth-plan.html` | Growth plans for CET, Frontline, Thomas Scientific, BPI, Fair Harbor | `data/research/<co>_playbook.json` |
 | `theater.html` / `app.html#/theater/play` | WebGL 3D theater (MapLibre GL + deck.gl): six fly-through scenes over real data | sales, opportunities, targets, live NWS |
 | `briefing/Broad_Sky_Operating_Intelligence_Memo.pdf` | Six-page executive memo (`briefing/executive_memo.html`, printed with headless Chrome) | all research metas |
 | `briefing/broad_sky_intro.mp4` | Cinematic product-intro film (`scripts/make_cinematic.py`: Playwright recording + title cards + narration + synthesized music) | `briefing/cinematic_shots_master.json` |

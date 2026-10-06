@@ -2,9 +2,9 @@
   "meta": {
     "dataset": "BSP add-on M&A target screen — Frontline Managed Services & Thomas Scientific",
     "generated": "2026-09-24",
-    "method": "Seeded with ZoomInfo find_similar_companies for both platforms (results were dominated by large-cap IT services and life-science majors, so used only for competitor context), then built long-lists from web research (WebSearch, legal-industry directories such as ALA/Legaltech Hub, company websites) and ZoomInfo search_companies by domain for headcount/revenue/IDs. Each candidate was verified by fetching its website or a press/directory page; candidates that could not be retrieved were dropped. Fit scores are analyst judgments on five 1-5 dimensions weighted capability 30%, customer overlap 25%, scale 15%, ownership readiness 15%, geography 15%, scaled to 0-100.",
+    "method": "Seeded with ZoomInfo similar-company search for both companies (results were dominated by large-cap IT services and life-science majors, so used only for competitor context), then built long-lists from web research (WebSearch, legal-industry directories such as ALA/Legaltech Hub, company websites) and ZoomInfo company search by domain for headcount/revenue/IDs. Each candidate was verified by fetching its website or a press/directory page; candidates that could not be retrieved were dropped. Fit scores are analyst judgments on five 1-5 dimensions weighted capability 30%, customer overlap 25%, scale 15%, ownership readiness 15%, geography 15%, scaled to 0-100.",
     "sources_summary": [
-      "ZoomInfo MCP (search_companies, find_similar_companies)",
+      "ZoomInfo MCP (company search, similar-company search)",
       "Company websites (fetched)",
       "PR Newswire / GlobeNewswire / BusinessWire press releases",
       "ChannelE2E, Consulting.us, Law360 Pulse, LawSites (LawNext), Legal IT Insider",
@@ -14,15 +14,15 @@
     ],
     "caveats": [
       "ZoomInfo revenue figures are modeled estimates and can diverge sharply from reality (e.g., Helm360 $116.5M, Midland $147.4M, ZAGENO possibly GMV); treat as directional only.",
-      "ZoomInfo enrich_companies returned 'limit exceeded', so founded year/ownership came from websites where stated; otherwise null.",
+      "ZoomInfo company enrichment returned 'limit exceeded', so founded year/ownership came from websites where stated; otherwise null.",
       "Ownership 'not disclosed' means no sponsor was found on the retrieved pages — it does not confirm independence.",
       "The session's WebSearch budget ran out mid-screen, and several distributor sites (e.g., Neta Scientific, LabChem, LabRepco, Spectrum Chemical, RPI, EquipNet, Hazmasters, Oakwood Chemical) blocked automated fetches. They were left out for lack of a retrieved source, not because they fit poorly; worth checking by hand.",
-      "lat/lon are approximate city centroids (geo_precision 'city') unless marked 'address'; hq_address is given where the company publishes it.",
-      "Element Technologies (New Charter Technologies), Cedarlane and LabChem (TCP Analytical) are already inside consolidators; they are listed as competitors, or scored low on ownership_readiness, rather than treated as actionable targets.",
+      "lat/lon are approximate city centroids (location precision 'city') unless marked 'address'; HQ address is given where the company publishes it.",
+      "Element Technologies (New Charter Technologies), Cedarlane and LabChem (TCP Analytical) are already inside consolidators; they are listed as competitors, or scored low on ownership readiness, rather than treated as actionable targets.",
       "Smith + Howard is excluded (BSP exit to TPG Growth, closed Aug 6 2026).",
       "Public strategic comps (Avantor/VWR, Thermo Fisher/Fisher Scientific, Transcat) are not profiled here because no source page was retrieved for them in this run.",
       "Verified 2026-09-24: sampled 25, confirmed 25, removed 0",
-      "Verifier corrections 2026-09-24: fl-06 Affinity Consulting HQ changed from Columbus OH to Largo FL (address given on the ALA listing source; the company site does not state an HQ); fl-22 founded_year set to 1996 (site: supporting Toronto since 1996); ts-24 founded_year set to 1900 (site: name known since 1900); hq_address filled from fetched company pages for fl-01, fl-22, ts-04, ts-05, ts-09, ts-13, ts-23, ts-24. Not confirmed from sources: ZAGENO (ts-17) Cambridge MA HQ and DOT Scientific (ts-21) Burton MI location, because both sites render with JavaScript (business descriptions and DOT's woman-owned status were confirmed). ZAGENO is venture-backed rather than independent."
+      "Verifier corrections 2026-09-24: fl-06 Affinity Consulting HQ changed from Columbus OH to Largo FL (address given on the ALA listing source; the company site does not state an HQ); fl-22 founded year set to 1996 (site: supporting Toronto since 1996); ts-24 founded year set to 1900 (site: name known since 1900); HQ address filled from fetched company pages for fl-01, fl-22, ts-04, ts-05, ts-09, ts-13, ts-23, ts-24. Not confirmed from sources: ZAGENO (ts-17) Cambridge MA HQ and DOT Scientific (ts-21) Burton MI location, because both sites render with JavaScript (business descriptions and DOT's woman-owned status were confirmed). ZAGENO is venture-backed rather than independent."
     ],
     "item_count": 48,
     "platform_counts": {
@@ -197,7 +197,7 @@
           "Day Associates (MA, Aug 2 2023)",
           "Arrowhead Forensics (Lenexa KS, Oct 2023 per Tracxn)"
         ],
-        "observation": "No acquisition since late 2023 was found in public sources as of Jul 2026 (Tracxn). The platform's add-on pattern: regional life-science and cleanroom distributors.",
+        "observation": "No acquisition since late 2023 was found in public sources as of Jul 2026 (Tracxn). The company's add-on pattern: regional life-science and cleanroom distributors.",
         "sources": [
           "https://harveyllc.com/harvey-company-initiates-fourth-deal-thomas-scientific/",
           "https://www.prnewswire.com/news-releases/thomas-scientific-expands-distribution-and-sales-capabilities-with-the-acquisition-of-quintana-supply-301891643.html",
@@ -308,7 +308,7 @@
       "employees": 60,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 12564000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private, independent (no sponsor disclosed)",
       "offerings": [
         "Managed IT for law firms (Innovative Managed Solution, launched May 2025)",
@@ -360,7 +360,7 @@
       "employees": 155,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 21531000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Managed IT services",
@@ -414,7 +414,7 @@
       "employees": 299,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 116502000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private; part of CCS Global Tech group (subsidiaries Helm 360 Ltd (UK), Helm Analytics Pvt Ltd (India), Digital Eye 360 LLC)",
       "offerings": [
         "Elite 3E / Elite Enterprise / ProLaw application managed services",
@@ -467,7 +467,7 @@
       "employees": 200,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 48746000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not verified; PitchBook profile exists)",
       "offerings": [
         "Managed & co-managed IT ($150-$300/user/month tiers)",
@@ -519,7 +519,7 @@
       "employees": 24,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 7293000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private, independent",
       "offerings": [
         "Uptime Manage (managed IT for law firms)",
@@ -569,7 +569,7 @@
       "employees": 97,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 8812000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Partner-owned (founders Steve Best, Debbie Foster, Barron Henley, Paul Unger); merged with Lawyerist team 2023",
       "offerings": [
         "Practice/financial management & billing system consulting",
@@ -620,7 +620,7 @@
       "employees": 23,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 3712000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Subsidiary of Business Network Consulting (BNC, founded 1997)",
       "offerings": [
         "Cloud-hosted virtual law office",
@@ -665,7 +665,7 @@
       "employees": 33,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 9018000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Founder-led, woman-owned (founder Gina Buser)",
       "offerings": [
         "Technology training & support for law firms",
@@ -716,7 +716,7 @@
       "employees": 89,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 18835000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Privately owned",
       "offerings": [
         "IT managed services",
@@ -766,7 +766,7 @@
       "employees": 35,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 27560000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Founder-owned (Morris Tabush, Founder & President)",
       "offerings": [
         "Desktop-as-a-Service (Boxtop)",
@@ -815,7 +815,7 @@
       "employees": 92,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 22423000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Subsidiary of New Charter Technologies (MSP roll-up, ~1,300 employees)",
       "offerings": [
         "Managed IT & helpdesk (24/7)",
@@ -864,7 +864,7 @@
       "employees": 105,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 25592000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Partner-owned LLC",
       "offerings": [
         "Law-firm managed IT",
@@ -914,7 +914,7 @@
       "employees": 50,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 12187000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Managed IT for law firms",
@@ -961,7 +961,7 @@
       "employees": 31,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 8019000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Family-owned (Phil Garver, Chairman & Founder; Rachel Garver Kahn, President & CEO)",
       "offerings": [
         "Managed legal billing",
@@ -982,7 +982,7 @@
         "geography": 2
       },
       "risk_flags": [
-        "Tabs3-centric (small-firm) platform",
+        "Tabs3-centric (small-firm) client base",
         "Second-generation family succession dynamics"
       ],
       "zoominfo_id": "15630463",
@@ -1007,7 +1007,7 @@
       "employees": 23,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 7021000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Law-firm IT support & consulting (since 2008)",
@@ -1055,7 +1055,7 @@
       "employees": 15,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 2105000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Founder-owned (Alex Newberry, CEO/Founder)",
       "offerings": [
         "Managed legal billing",
@@ -1104,7 +1104,7 @@
       "employees": 18,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 3863000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "AI time-entry OCG compliance (ALB 1.0/2.0)",
@@ -1152,7 +1152,7 @@
       "employees": 17,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 10332000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Fully managed IT for law firms",
@@ -1249,7 +1249,7 @@
       "employees": 89,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 7439000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Contract abstraction & CLM implementation",
@@ -1297,7 +1297,7 @@
       "employees": 35,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 8531000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Fully managed & co-managed IT",
@@ -1344,7 +1344,7 @@
       "employees": 22,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 5363000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Managed IT for Toronto law firms",
@@ -1391,7 +1391,7 @@
       "employees": 54,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 11343000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Vendor-agnostic managed detection & response (MDR)",
@@ -1436,7 +1436,7 @@
       "employees": 199,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 147391000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Woman-owned, private",
       "offerings": [
         "Full-line lab distribution (chemicals, instrumentation, glassware, plasticware, media, reagents)",
@@ -1484,7 +1484,7 @@
       "employees": 87,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 64438000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Lab equipment",
@@ -1536,7 +1536,7 @@
       "employees": 48,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 15956000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Family-owned",
       "offerings": [
         "PR1MA private-label lab essentials (tubes, reagents, tips)",
@@ -1585,7 +1585,7 @@
       "employees": 73,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 22450000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "100% Canadian-owned, private",
       "offerings": [
         "Analytical instruments & chromatography distribution",
@@ -1597,7 +1597,7 @@
       "customer_segments": [
         "Canadian research, industrial, environmental and life-science labs"
       ],
-      "strategic_rationale": "Platform-quality Canadian entry: equipment distribution plus accredited service/calibration revenue (recurring). Gives Thomas a Canada beachhead and a lab-equipment service capability it lacks.",
+      "strategic_rationale": "Anchor-quality Canadian entry: equipment distribution plus accredited service/calibration revenue (recurring). Gives Thomas a Canada beachhead and a lab-equipment service capability it lacks.",
       "fit_score": 86,
       "fit_breakdown": {
         "capability": 5,
@@ -1632,7 +1632,7 @@
       "employees": 135,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 99989000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Cleanroom gloves",
@@ -1683,7 +1683,7 @@
       "employees": 140,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 70663000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private; describes itself as a family business",
       "offerings": [
         "10,000+ chemicals: acids, bases, buffers",
@@ -1733,7 +1733,7 @@
       "employees": 27,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 8340000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private; Certified Women Business Enterprise",
       "offerings": [
         "Lab supplies distribution (Andwin Scientific)",
@@ -1784,7 +1784,7 @@
       "employees": 100,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 21112000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership/investors not disclosed)",
       "offerings": [
         "Lab essentials (pipette tips, serological pipettes)",
@@ -1832,7 +1832,7 @@
       "employees": 18,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 5148000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Family-operated (Kolhede family)",
       "offerings": [
         "Independent lab-equipment distribution (ULT freezers, cryo storage, biosafety cabinets, centrifuges, environmental chambers, water purification, sterilizers, lab furniture)",
@@ -1880,7 +1880,7 @@
       "employees": 22,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 6205000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Lab equipment & instruments",
@@ -1931,7 +1931,7 @@
       "employees": 118,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 21069000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Woman-owned, private",
       "offerings": [
         "Cleanroom mopping systems",
@@ -1982,7 +1982,7 @@
       "employees": 108,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 25873000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Acids, bases, buffers",
@@ -2029,7 +2029,7 @@
       "employees": 113,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 6554000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Standardized solutions",
@@ -2076,7 +2076,7 @@
       "employees": 30,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 6029000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Biological buffers",
@@ -2123,7 +2123,7 @@
       "employees": 19,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 5055000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Woman-owned small business (SBA WOSB)",
       "offerings": [
         "E-commerce lab chemicals",
@@ -2173,7 +2173,7 @@
       "employees": 96,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 20165000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (investors not disclosed on site)",
       "offerings": [
         "Lab inventory management software",
@@ -2197,7 +2197,7 @@
       },
       "risk_flags": [
         "Venture-style economics; marketplace margin",
-        "Channel conflict with other distributors on platform"
+        "Channel conflict with other distributors on the marketplace"
       ],
       "zoominfo_id": "346572125",
       "sources": [
@@ -2221,7 +2221,7 @@
       "employees": 130,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 96286000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (investors not disclosed on site)",
       "offerings": [
         "Multi-supplier life-science marketplace",
@@ -2265,7 +2265,7 @@
       "employees": 27,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 4287000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Ultrasonic cleaners (benchtop & industrial)",
@@ -2314,7 +2314,7 @@
       "employees": 20,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 4795000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Pre-owned life-science equipment sales",
@@ -2362,7 +2362,7 @@
       "employees": 9,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 3828000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Online lab equipment & supplies (Benchmark, Binder, OHAUS, Memmert, Hoefer)",
@@ -2408,7 +2408,7 @@
       "employees": 22,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 4161000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Woman-owned small business",
       "offerings": [
         "General lab supplies & equipment",
@@ -2456,7 +2456,7 @@
       "employees": 327,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 63498000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not verified)",
       "offerings": [
         "Safety products distribution",
@@ -2500,7 +2500,7 @@
       "employees": 54,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 14948000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Test tubes, slides, transfer pipets, pipette tips",
@@ -2547,7 +2547,7 @@
       "employees": 27,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 3552000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Specialty & rare research chemicals"
@@ -2589,7 +2589,7 @@
       "employees": 6,
       "employees_source": "ZoomInfo",
       "revenue_est_usd": 1178000,
-      "revenue_source": "ZoomInfo search_companies estimate (retrieved 2026-09-24)",
+      "revenue_source": "ZoomInfo company search estimate (retrieved 2026-09-24)",
       "ownership": "Private (ownership not disclosed)",
       "offerings": [
         "Cleanroom apparel, gloves, masks",

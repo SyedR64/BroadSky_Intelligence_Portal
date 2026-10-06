@@ -1,69 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-sys-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Broad Sky 3D Theater</title>
-<meta name="description" content="Broad Sky Partners 3D theater: cinematic, GPU-rendered map scenes over the portfolio's real datasets: home sales, expansion arcs, New England wastewater and live NWS alerts.">
+<title>3D theater · Broad Sky</title>
+<meta name="description" content="Cinematic, GPU-rendered map scenes over the portfolio's own data: home sales, expansion paths, New England wastewater plants and live weather alerts.">
+<meta name="theme-color" content="#0a0e14">
 <link rel="icon" href="BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/system.css?v=20261006122625">
 <style>
-  :root { color-scheme: dark; --bg:#05070b; --text:#e8eef6; --dim:rgba(232,238,246,.55); --line:rgba(255,255,255,.1); --brand:#d9622b; }
-  html, body { margin:0; height:100%; background:var(--bg); color:var(--text); font-family:Inter, system-ui, -apple-system, "Segoe UI", sans-serif; overflow:hidden; -webkit-font-smoothing:antialiased; }
-  #stage { position:fixed; inset:0; }
-  .brand { position:fixed; left:clamp(16px,3.2vw,48px); top:18px; z-index:10; display:flex; align-items:center; gap:12px; pointer-events:auto; }
-  .brand img { width:30px; height:30px; border-radius:7px; }
-  .brand .n { font-weight:700; font-size:13.5px; letter-spacing:-.01em; }
-  .brand .s { font:500 10.5px "JetBrains Mono", Menlo, monospace; color:var(--dim); letter-spacing:.14em; text-transform:uppercase; margin-top:2px; }
-  .links { display:flex; gap:6px; margin-left:10px; }
-  .links a, .links button { all:unset; cursor:pointer; font-size:11.5px; color:var(--dim); padding:5px 9px; border:1px solid var(--line); border-radius:999px; background:rgba(8,12,18,.5); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
-  .links a:hover, .links button:hover { color:#fff; border-color:rgba(255,255,255,.25); }
-  .links a:focus-visible, .links button:focus-visible { outline:2px solid var(--brand); }
-  #about { position:fixed; left:clamp(16px,3.2vw,48px); top:64px; z-index:11; width:min(440px, calc(100vw - 32px)); padding:16px 18px; border-radius:12px; background:rgba(8,12,18,.9); border:1px solid var(--line); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); font-size:12.5px; line-height:1.55; color:rgba(232,238,246,.86); box-shadow:0 20px 50px rgba(0,0,0,.5); }
-  #about[hidden] { display:none; }
-  #about h3 { margin:0 0 8px; font-size:14px; color:#fff; }
-  #about ol { margin:8px 0; padding-left:18px; }
-  #about li { margin:2px 0; }
-  #about .k { font:500 10.5px "JetBrains Mono", Menlo, monospace; color:var(--dim); margin-top:10px; }
-  /* the engine's status pill sits top-left; move it under the brand bar on this page */
-  .bsp-theater .bt-status { top:62px !important; left:clamp(16px,3.2vw,48px) !important; }
-  @media (max-width:760px) { .links { display:none; } .brand { top:12px; } .bsp-theater .bt-rail { top:60px !important; } .bsp-theater .bt-status { top:auto !important; bottom:12px; } }
+  /* page layout only: full-bleed WebGL stage under the minimal transparent frame (UNIFIED.md §9) */
+  html, body { height: 100%; overflow: hidden; background: var(--sys-bg); }
+  #stage { position: fixed; inset: 0; }
+  /* engine chrome that sits top-right / top-left clears the frame bar and the Ask button */
+  .bsp-theater .bt-rail { top: calc(var(--sys-top-h) + 8px) !important; }
+  .bsp-theater .bt-status { top: calc(var(--sys-top-h) + 8px) !important; }
+  .bsp-theater .bt-rail .th-about { border-top: 1px solid var(--sys-line); border-radius: 0 0 8px 8px; margin-top: 2px; padding-top: 8px; }
+  #about { position: fixed; left: clamp(16px, 3.2vw, 48px); top: calc(var(--sys-top-h) + 8px); z-index: 11; width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - var(--sys-top-h) - 24px); overflow: auto; padding: var(--sys-sp-4) var(--sys-sp-5); border: 1px solid var(--sys-line-2); border-radius: var(--sys-r); background: color-mix(in srgb, var(--sys-surface) 94%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: var(--sys-sh-3); font-size: var(--sys-fs-sm); line-height: 1.55; color: var(--sys-ink-2); }
+  /* map attribution and engine controls use the system font (the vendor CSS ships Helvetica Neue) */
+  .bsp-theater .maplibregl-ctrl, .bsp-theater .maplibregl-ctrl-attrib, .bsp-theater .maplibregl-ctrl-attrib a, .bsp-theater .maplibregl-popup, .bsp-theater .deck-tooltip, .bsp-theater button { font-family: var(--sys-font); }
+  #about[hidden] { display: none; }
+  #about .th-about-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+  #about h2 { margin: 0; font-size: 15px; font-weight: 700; color: var(--sys-ink); }
+  #about ol { margin: 8px 0; padding-left: 18px; }
+  #about li { margin: 2px 0; }
+  #about li b { color: var(--sys-ink); }
+  #about .sys-src { margin-top: 10px; }
+  #about-x { width: 30px; height: 30px; border: 0; border-radius: var(--sys-r-pill); background: var(--sys-bg-3); color: var(--sys-ink); font-size: 16px; line-height: 1; cursor: pointer; }
+  @media (max-width: 760px) {
+    .bsp-theater .bt-rail { top: calc(var(--sys-top-h) + 4px) !important; }
+    .bsp-theater .bt-status { top: auto !important; }
+    .bsp-theater .bt-rail .th-about { border-top: 0; margin-top: 0; padding-top: 5px; }
+    .bsp-theater .bt-rail .bt-ctl { order: 2; }
+    #about { left: 12px; right: 12px; width: auto; top: auto; bottom: 12px; max-height: 70dvh; }
+  }
 </style>
 </head>
 <body>
+<h1 class="sys-h1 sys-sr">3D theater: the Broad Sky portfolio on one map</h1>
 <div id="stage"></div>
-<header class="brand">
-  <img src="BSP_Logo.png" alt="">
-  <div><div class="n">Broad Sky Partners</div><div class="s">Operating Intelligence · 3D theater</div></div>
-  <nav class="links"><a href="app.html#/theater/play">Open in portal</a><button id="about-btn" aria-expanded="false" aria-controls="about">About</button></nav>
-</header>
-<aside id="about" hidden>
-  <h3>Concept: the portfolio as a film</h3>
-  Six scenes render the portal's own datasets on the GPU, over vector tiles with 3D terrain. Each scene answers one question a partner would ask:
+<aside id="about" hidden aria-labelledby="about-h">
+  <div class="th-about-head"><h2 id="about-h">The portfolio as a film</h2><button id="about-x" type="button" aria-label="Close about panel">×</button></div>
+  <p>Six scenes render the portal's own data on the GPU, over vector tiles with 3D terrain. Each scene answers one question a partner would ask:</p>
   <ol>
-    <li><b>Portfolio</b>: where the platforms sit and how big each footprint is.</li>
+    <li><b>Portfolio</b>: where the portfolio companies sit and how big each footprint is.</li>
     <li><b>Where the homes trade</b>: every recorded home sale in the Punctual Pros territory, with the newest 90 days pulsing.</li>
     <li><b>Nationwide</b>: the phased path from East Hempfield to the Sun Belt, plus screened add-on targets.</li>
     <li><b>New England grid</b>: CET opportunities and the wastewater plants Horton opens up.</li>
-    <li><b>Storm</b>: live NWS alerts over the territory and the hubs that staff to them.</li>
+    <li><b>Storm</b>: live National Weather Service alerts over the territory and the hubs that staff to them.</li>
     <li><b>Close</b>: every layer at once.</li>
   </ol>
-  Hover a column, disc or marker for details. Figures are labelled "est." where they are estimates. Public and licensed data: verify before use.
-  <div class="k">← → change scene · space play / pause · ?scene=S3&amp;autoplay=0 deep-links a scene</div>
-  <div class="k">MapLibre GL · deck.gl · OpenFreeMap / OpenMapTiles · AWS Terrain Tiles · api.weather.gov</div>
+  <p>Hover a column, disc or marker for details. Estimates are marked est.; verify public and licensed data before use.</p>
+  <p class="sys-src"><b>Keys:</b> <kbd class="sys-kbd">←</kbd> <kbd class="sys-kbd">→</kbd> change scene · <kbd class="sys-kbd">Space</kbd> play or pause</p>
+  <p class="sys-src"><b>Source:</b> Punctual Pros deed records (PA and NJ), CET opportunity radar, CET wastewater-plant targets, National Weather Service alerts (live). Maps: MapLibre GL, deck.gl, OpenFreeMap and OpenMapTiles, AWS Terrain Tiles.</p>
 </aside>
 <script type="module">
-  import { Theater } from './assets/theater.js?v=20261006090506';
+  import { Frame } from './assets/frame.js?v=20261006122625';
+  import { Theater } from './assets/theater.js?v=20261006122625';
+  Frame.mount({ variant: 'minimal', theme: 'dark' });
   const qp = new URLSearchParams(location.search);
   const autoplay = qp.get('autoplay') !== '0';
-  Theater.mount(document.getElementById('stage'), {
+  const stage = document.getElementById('stage');
+  const about = document.getElementById('about');
+  let aboutBtn = null;
+  const setAbout = open => { about.hidden = !open; aboutBtn?.setAttribute('aria-expanded', String(open)); if (open) document.getElementById('about-x').focus(); };
+  document.getElementById('about-x').onclick = () => { setAbout(false); aboutBtn?.focus(); };
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !about.hidden) { setAbout(false); aboutBtn?.focus(); } });
+  // The About toggle lives in the engine's scene rail (UNIFIED.md §9); add it once the rail exists.
+  const addAbout = () => {
+    const rail = stage.querySelector('.bt-rail');
+    if (!rail || rail.querySelector('.th-about')) return !!rail;
+    aboutBtn = document.createElement('button');
+    aboutBtn.type = 'button'; aboutBtn.className = 'th-about';
+    aboutBtn.setAttribute('aria-controls', 'about'); aboutBtn.setAttribute('aria-expanded', 'false');
+    aboutBtn.innerHTML = '<span class="n">i</span><span class="t">About this film</span>';
+    aboutBtn.title = 'About this film';
+    aboutBtn.onclick = () => setAbout(about.hidden);
+    rail.appendChild(aboutBtn);
+    return true;
+  };
+  const mo = new MutationObserver(() => { if (addAbout()) mo.disconnect(); });
+  mo.observe(stage, { childList: true, subtree: true });
+  Theater.mount(stage, {
     autoplay, scene: qp.get('scene') || 'S1', forceFallback: qp.get('fallback') === '1',
     onScene: id => { const u = new URL(location.href); u.searchParams.set('scene', id); history.replaceState(null, '', u); },
   });
-  const btn = document.getElementById('about-btn'), about = document.getElementById('about');
-  btn.onclick = () => { about.hidden = !about.hidden; btn.setAttribute('aria-expanded', String(!about.hidden)); };
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') { about.hidden = true; btn.setAttribute('aria-expanded', 'false'); } });
+  addAbout();
 </script>
 </body>
 </html>

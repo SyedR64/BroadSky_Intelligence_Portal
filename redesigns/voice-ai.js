@@ -1,6 +1,8 @@
-/* 24/7 Voice AI — the growth engine. Renders data/research/voice_ai.json into the page.
-   No framework, no build step. Every dollar figure is an estimate and is labelled so. */
-import { Data } from '../assets/core.js?v=20261006090506';
+/* 24/7 Voice AI — the growth engine. Renders the voice AI research dataset into the page.
+   No framework, no build step. Markup uses the shared sys- components (assets/system.css, UNIFIED.md);
+   every dollar figure is an estimate and carries the est. badge; dataset text passes through plain(). */
+import { Data } from '../assets/core.js?v=20261006122625';
+import { humanizeText } from '../assets/frame.js?v=20261006122625';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -12,11 +14,36 @@ const srcLink = (u, label) => u ? `<a href="${esc(u)}" target="_blank" rel="noop
 const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch { /* private mode */ } } };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const mmss = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+const EST = '<span class="sys-est">est.</span>';
 
-const CO = {
-  pp: { name: 'Punctual Pros', hex: '#e0592a' }, cet: { name: 'CET', hex: '#2a78d6' }, fl: { name: 'Frontline', hex: '#7c5cd6' },
-  ts: { name: 'Thomas Scientific', hex: '#0c8a63' }, bpi: { name: 'BPI', hex: '#c2386f' }, fh: { name: 'Fair Harbor', hex: '#1593a8' },
+/* Plain English for dataset text: tool names, arrows, control ids and dataset names never reach the reader. */
+const TOOL_WORDS = {
+  customer_lookup: 'customer lookup', check_capacity: 'capacity check', book_job: 'booking', send_payment_link: 'payment link by text',
+  page_on_call: 'paging the on-call technician', transfer_to_human: 'warm transfer to a person', log_disposition: 'outcome logging',
 };
+const FIXES = [
+  [/\bthe repo's ai_agents_portfolio governance \(gov-0?(\d+)\)/g, "the portfolio AI-agent plan (control $1)"],
+  [/\bgov-0?(\d+)\b/g, 'control $1'],
+  [/\bitems say so via retrieval_status\b/g, 'each item notes how its figure was retrieved'],
+  [/\s*-(?:>|&gt;)\s*/g, ' → '],
+  [/(\d|\))\s+x\s+(?=[\d$(]|[a-z])/g, '$1 × '],
+  [/^\s*[:;,]\s*/, ''],
+  [/\bPP's\b/g, "Punctual Pros'"],
+  [/\bPP\b/g, 'Punctual Pros'],
+];
+const plain = s => {
+  let t = String(s ?? '');
+  for (const [rx, to] of FIXES) t = t.replace(rx, to);
+  t = t.replace(/\b(customer_lookup|check_capacity|book_job|send_payment_link|page_on_call|transfer_to_human|log_disposition)\b/g, m => TOOL_WORDS[m]);
+  return humanizeText(t);
+};
+/* Dataset text that lost words upstream (empty parentheses, dangling commas) is not shown. */
+const broken = s => /\(\s|\s[,;]|\bnot ;|\bpost- |\bthe \.|\bthe \?/.test(String(s || ''));
+const RETRIEVAL = { fetched: 'page read Oct 2026', search_snippet: 'search result, Oct 2026', repo_dataset: 'portfolio dataset' };
+const cap = s => String(s || '').replace(/^\w/, c => c.toUpperCase());
+
+/* Portfolio order (UNIFIED §6); colour comes from data-co, never from here. */
+const CO = { pp: { name: 'Punctual Pros' }, cet: { name: 'CET' }, fl: { name: 'Frontline' }, ts: { name: 'Thomas Scientific' }, bpi: { name: 'BPI' }, fh: { name: 'Fair Harbor' } };
 
 /* Hourly call shape (relative intensity by local hour). Staffed hours 8:00-16:59 are normalised to the
    model's 88% daytime share, the other 15 hours to the 12% after-hours share (weekends folded in). */
@@ -37,12 +64,12 @@ function hourly(m) {
 function hero(meta) {
   const m = meta.pp_revenue_model;
   const k = [
-    [money(m.recovered_revenue_annual_usd), 'Revenue recovered a year from calls that go unanswered today', 'inbound · after-hours + overflow'],
-    [money(m.outbound_renewal_uplift_usd), 'Membership renewal uplift a year from consented outbound calls', `${(6000).toLocaleString()} members × 8-pt lift (assumption)`],
-    [money(m.total_est_usd), `Total a year, about ${Math.round(m.share_of_pp_revenue * 1000) / 10}% of Punctual Pros revenue`, 'before speed-to-lead, Spanish, no-shows'],
-    [`${(m.missed_share * 100).toFixed(1)}%`, `of ~${m.inbound_calls_per_month.toLocaleString()} inbound calls a month missed today`, `range ${m.missed_share_range.map(x => Math.round(x * 100) + '%').join('–')}`],
+    ['Recovered revenue a year', money(m.recovered_revenue_annual_usd), 'From calls that go unanswered today, after hours and in daytime overflow'],
+    ['Renewal uplift a year', money(m.outbound_renewal_uplift_usd), `${(6000).toLocaleString()} members × an 8-point lift from outbound reminder calls (assumption)`],
+    ['Total a year', money(m.total_est_usd), `About ${Math.round(m.share_of_pp_revenue * 1000) / 10}% of Punctual Pros revenue, before speed-to-lead, the Spanish line and no-shows`],
+    ['Calls missed today', `${(m.missed_share * 100).toFixed(1)}%`, `Of about ${m.inbound_calls_per_month.toLocaleString()} inbound calls a month (range ${m.missed_share_range.map(x => Math.round(x * 100) + '%').join('–')})`],
   ];
-  $('#kpis').innerHTML = k.map(([v, l, s]) => `<div class="kpi"><div class="kpi-v">${esc(v)}</div><div class="kpi-l">${esc(l)}</div><div class="kpi-s"><span class="est" style="margin:0 4px 0 0">est.</span>${esc(s)}</div></div>`).join('');
+  $('#kpis').innerHTML = k.map(([l, v, s]) => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${esc(l)}</span><span class="sys-kpi-value">${esc(v)}${EST}</span><span class="sys-kpi-sub">${esc(s)}</span></div>`).join('');
   $('#wave').innerHTML = Array.from({ length: 36 }, (_, i) => `<span style="--h:${30 + Math.round(60 * Math.abs(Math.sin(i * 1.7)))}%;animation-delay:${(i % 9) * -0.13}s"></span>`).join('');
   clock(m);
 }
@@ -50,7 +77,7 @@ function hero(meta) {
 function clock(m) {
   const c = m.missed_revenue_counter; const rows = hourly(m);
   const how = $('#clock-how');
-  how.innerHTML = `<code>${esc(usd(c.annual_usd))} a year ÷ seconds in a year = $${c.per_second_usd} a second</code>, counted from January 1 in your time zone. The annual figure is the revenue the AI layer is modelled to recover: <code>${esc(m.recovered_revenue_formula)}</code>. This is a modelled estimate for Punctual Pros, not a measured loss. Calibrate it against ServiceTitan call tracking in week 1.`;
+  how.innerHTML = `<b class="sys-num">${esc(usd(c.annual_usd))} a year ÷ seconds in a year = $${c.per_second_usd} a second</b>, counted from January 1 in your time zone. The annual figure is the revenue the AI layer is modelled to recover: <span class="sys-num">${esc(plain(m.recovered_revenue_formula))}</span>. This is a modelled estimate for Punctual Pros, not a measured loss. Calibrate it against ServiceTitan call tracking in week one.`;
   $('#clock-why').onclick = e => { const open = how.hidden; how.hidden = !open; e.currentTarget.setAttribute('aria-expanded', String(open)); };
   $('#clock-day').textContent = c.missed_calls_per_day.toFixed(0);
   const v = $('#clock-v'), today = $('#clock-today'), t = $('#cc-time');
@@ -73,21 +100,22 @@ function clock(m) {
 /* ── 2. 24-hour strip ─────────────────────────────────────────────────── */
 function timeline(meta) {
   const m = meta.pp_revenue_model; const rows = hourly(m);
-  const COL = { csr: 'var(--csr)', miss: 'var(--miss)', ai: 'var(--ai)' };
+  const COL = { csr: 'var(--vai-csr)', miss: 'var(--vai-miss)', ai: 'var(--vai-ai)' };
   let mode = 'today';
   let W, H, iw, ih, bw, narrow; const L = 30, R = 6, T = 16, B = 28;
+  const lab = h => new Date(2026, 0, 1, h).toLocaleTimeString('en-US', { hour: 'numeric' });
   const max = Math.ceil(Math.max(...rows.map(r => r.calls)) / 2) * 2;
   const y = v => T + ih - v / max * ih;
   const size = () => { W = Math.max(300, Math.round($('#tl-chart').clientWidth || 960)); narrow = W < 600; H = narrow ? 220 : 250; iw = W - L - R; ih = H - T - B; bw = iw / 24; };
   const legend = () => { $('#tl-legend').innerHTML = (mode === 'today'
-    ? [['csr', 'Answered by CSR / answering service'], ['miss', 'Missed or abandoned']]
-    : [['csr', 'Answered by CSR'], ['ai', 'Answered by AI agent'], ['miss', 'Still lost (hang-ups, non-leads)']]).map(([k, l]) => `<span><i style="background:${COL[k]}"></i>${esc(l)}</span>`).join(''); };
+    ? [['csr', 'Answered by a rep or answering service'], ['miss', 'Missed or abandoned']]
+    : [['csr', 'Answered by a rep'], ['ai', 'Answered by the AI agent'], ['miss', 'Still lost (hang-ups, non-leads)']]).map(([k, l]) => `<span><i style="background:${COL[k]}"></i>${esc(l)}</span>`).join(''); };
   const draw = () => {
     size(); let g = '';
     // after-hours bands
-    g += `<rect x="${L}" y="${T}" width="${bw * 8}" height="${ih}" fill="#0f1424" opacity=".045"/><rect x="${L + bw * 17}" y="${T}" width="${bw * 7}" height="${ih}" fill="#0f1424" opacity=".045"/>`;
+    g += `<rect class="band" x="${L}" y="${T}" width="${bw * 8}" height="${ih}"/><rect class="band" x="${L + bw * 17}" y="${T}" width="${bw * 7}" height="${ih}"/>`;
     g += `<text class="lab" x="${L + 6}" y="${T + 12}">${narrow ? 'After' : 'After hours'}</text><text class="lab" x="${L + bw * 8 + 6}" y="${T + 12}">${narrow ? 'Staffed' : 'Staffed 8 a.m.–5 p.m.'}</text><text class="lab" x="${L + bw * 17 + 6}" y="${T + 12}">${narrow ? 'After' : 'After hours'}</text>`;
-    for (let v = 0; v <= max; v += max / 4) g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="#e5e2da" stroke-width="1"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${Math.round(v)}</text>`;
+    for (let v = 0; v <= max; v += max / 4) g += `<line class="grid" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${Math.round(v)}</text>`;
     rows.forEach((r, i) => {
       const gap = narrow ? 1 : 3; const x = L + i * bw + gap, w = bw - gap * 2; const rr = Math.min(3, w / 2);
       const segs = mode === 'today'
@@ -100,32 +128,31 @@ function timeline(meta) {
         base += v;
       });
       if (i % (narrow ? 6 : 3) === 0) g += `<text x="${L + i * bw + bw / 2}" y="${H - 10}" text-anchor="middle">${i === 0 ? '12a' : i < 12 ? i + 'a' : i === 12 ? '12p' : (i - 12) + 'p'}</text>`;
-      g += `<rect class="hit" data-i="${i}" x="${L + i * bw}" y="${T}" width="${bw}" height="${ih}" fill="transparent" style="cursor:pointer"><title>${r.h}:00</title></rect>`;
+      g += `<rect class="hit" data-i="${i}" x="${L + i * bw}" y="${T}" width="${bw}" height="${ih}" fill="transparent" style="cursor:pointer"><title>${lab(r.h)}</title></rect>`;
     });
     $('#tl-chart').innerHTML = `<svg class="tl-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Calls by hour of day, ${mode === 'today' ? 'today' : 'with 24/7 voice AI'}">${g}</svg>`;
     $$('#tl-chart .hit').forEach(el => { const show = () => read(+el.dataset.i); el.addEventListener('mouseenter', show); el.addEventListener('click', show); });
     legend(); summary();
   };
-  const lab = h => new Date(2026, 0, 1, h).toLocaleTimeString('en-US', { hour: 'numeric' });
   const read = i => { const r = rows[i];
-    $('#tl-read').innerHTML = `<b>${lab(r.h)}–${lab((r.h + 1) % 24)}</b> · ${r.staffed ? 'staffed' : 'after hours'} · <b>${r.calls.toFixed(1)}</b> calls/day · ` + (mode === 'today'
-      ? `<b style="color:var(--miss)">${r.missed.toFixed(2)}</b> missed (${r.staffed ? '12% daytime' : '35% after-hours'} rate)`
-      : `<b style="color:var(--ai)">${(r.staffed ? r.recovered : r.calls - r.residual).toFixed(2)}</b> answered by AI · <b>${r.residual.toFixed(2)}</b> still lost`); };
+    $('#tl-read').innerHTML = `<b>${lab(r.h)}–${lab((r.h + 1) % 24)}</b> · ${r.staffed ? 'staffed' : 'after hours'} · <b class="sys-num">${r.calls.toFixed(1)}</b> calls a day · ` + (mode === 'today'
+      ? `<b class="sys-num">${r.missed.toFixed(2)}</b> missed (${r.staffed ? '12% daytime' : '35% after-hours'} rate)`
+      : `<b class="sys-num">${(r.staffed ? r.recovered : r.calls - r.residual).toFixed(2)}</b> answered by AI · <b class="sys-num">${r.residual.toFixed(2)}</b> still lost`) + EST; };
   const summary = () => {
     const sum = k => rows.reduce((a, r) => a + r[k], 0); const calls = sum('calls'), missed = sum('missed'), rec = sum('recovered');
     const ah = rows.filter(r => !r.staffed).reduce((a, r) => a + r.missed, 0);
     const jobs = rec * m.booking_rate * m.incrementality;
     const tiles = mode === 'today'
-      ? [[calls.toFixed(0), 'inbound calls a day'], [missed.toFixed(1), 'calls missed a day'], [ah.toFixed(1), 'of those after hours'], [usd(m.missed_revenue_counter.per_day_usd), 'job revenue lost a day']]
-      : [[calls.toFixed(0), 'inbound calls a day'], [(missed - rec).toFixed(1), 'calls still lost a day'], [jobs.toFixed(1), 'incremental jobs booked a day'], [usd(jobs * m.avg_ticket), 'job revenue recovered a day']];
-    $('#tl-sum').innerHTML = tiles.map(([v, l]) => `<div><b>${esc(v)}<span class="est">est.</span></b><span>${esc(l)}</span></div>`).join('');
+      ? [[calls.toFixed(0), 'Inbound calls a day'], [missed.toFixed(1), 'Calls missed a day'], [ah.toFixed(1), 'Of those, after hours'], [usd(m.missed_revenue_counter.per_day_usd), 'Job revenue lost a day']]
+      : [[calls.toFixed(0), 'Inbound calls a day'], [(missed - rec).toFixed(1), 'Calls still lost a day'], [jobs.toFixed(1), 'Extra jobs booked a day'], [usd(jobs * m.avg_ticket), 'Job revenue recovered a day']];
+    $('#tl-sum').innerHTML = tiles.map(([v, l]) => `<div class="sys-kpi"><span class="sys-kpi-label">${esc(l)}</span><span class="sys-kpi-value">${esc(v)}${EST}</span></div>`).join('');
   };
   let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { const w = $('#tl-chart').clientWidth; if (Math.abs(w - W) > 8) draw(); }, 150); });
   $$('[data-tl]').forEach(b => b.onclick = () => { mode = b.dataset.tl; $$('[data-tl]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); draw(); });
   $('#tl-assume').innerHTML = [
     `Volume: ${m.inbound_calls_per_month.toLocaleString()} inbound calls a month ÷ 30.42 days ≈ ${(m.inbound_calls_per_month / 30.42).toFixed(0)} a day, backed out of the ~$22M revenue estimate (call volume is not public).`,
     `Split: 12% of calls arrive outside staffed hours (ServiceTitan 2025 HVAC data runs from 9.8% in October to 14.1% in June). Weekend calls are folded into the after-hours hours, and the hourly shape inside each block is illustrative.`,
-    `Missed today: 35% of after-hours calls (ServiceTitan: trades lose 30–40%) and 12% of daytime calls (assumption for a staffed CSR team, well below Invoca's 35% industry rate). Blended rate ${(m.missed_share * 100).toFixed(1)}%.`,
+    `Missed today: 35% of after-hours calls (ServiceTitan: trades lose 30–40%) and 12% of daytime calls (assumption for a staffed team of reps, well below Invoca's 35% industry rate). Blended rate ${(m.missed_share * 100).toFixed(1)}%.`,
     `With AI: ${Math.round(m.recovered_share_with_ai * 100)}% of would-be-missed calls are recovered. The rest hang up on hearing an assistant or are spam, vendors or wrong numbers. Jobs = recovered × ${m.booking_rate} booked × ${m.incrementality} incremental × $${m.avg_ticket.toLocaleString()} ticket.`,
   ].map(x => `<li>${esc(x)}</li>`).join('');
   if (new URLSearchParams(location.search).get('tl') === 'ai') $('[data-tl="ai"]').click(); else draw();
@@ -133,33 +160,34 @@ function timeline(meta) {
 }
 
 /* ── 3. Call demo ─────────────────────────────────────────────────────── */
-const TOOLS = {
+/* The call log reads like a dispatcher's notes, not code: [turn, what the agent did, result]. */
+const LOG = {
   'call-pp-noheat': [
-    [0, 'call.answer', 'brand=One Hour · after_hours=true', 'ring 1 · disclosure + recording notice'],
-    [4, 'customer_lookup', 'phone=caller_id', 'Jordan Miller · 412 Maple Ave, Lititz 17543'],
-    [6, 'equipment_on_file', 'location_id', 'gas furnace 2011 · tune-up Mar'],
-    [8, 'check_capacity', 'zip=17543, job=no_heat, priority=infant', 'on-call Marcus · 3:15–4:15 a.m.'],
-    [10, 'book_job + page_on_call', 'trade=hvac, priority=P1', 'job booked · tech acknowledged'],
-    [10, 'send_sms', 'confirmation + after-hours fee terms', 'delivered'],
-    [13, 'log_disposition', 'booked · recording_notice ✓ · ai_disclosed ✓', 'written to job record'],
+    [0, 'Answered on ring one as One Hour, after hours', 'Said it is the virtual assistant'],
+    [4, 'Looked up the customer from caller ID', 'Jordan Miller, 412 Maple Ave, Lititz 17543'],
+    [6, 'Checked the equipment on file', 'Gas furnace from 2011, tuned up in March'],
+    [8, 'Checked on-call capacity for a priority no-heat job (infant in the home)', 'Marcus is on call, 3:15–4:15 a.m.'],
+    [10, 'Booked the job and paged the on-call technician', 'Job booked; technician acknowledged'],
+    [10, 'Texted a confirmation with the after-hours fee terms', 'Delivered'],
+    [13, 'Logged the outcome on the job', 'Booked; greeting check passed'],
   ],
   'call-pp-storm': [
-    [0, 'queue_status', 'line=Ben Franklin', 'all CSRs busy · NWS flash-flood warning → overflow on ring 3'],
-    [6, 'zip_check', 'zip=17552 (Mount Joy)', 'in service area (pp_zips)'],
-    [8, 'check_capacity', 'job=active_water, triage=storm', '1–2 p.m. today · pump on truck'],
-    [10, 'add_job_note', 'water-heater safety check', 'saved'],
-    [12, 'book_job + send_sms', 'mobile …4417', 'booked ahead of non-urgent calls'],
-    [14, 'log_disposition', 'booked · storm_mode · recording_notice ✓', 'written to job record'],
+    [0, 'Picked up the Ben Franklin overflow on ring three', 'Every rep busy; flash-flood warning in effect'],
+    [6, 'Checked the ZIP code', '17552 (Mount Joy) is in the service area'],
+    [8, 'Checked storm capacity for active water', '1–2 p.m. today, pump on the truck'],
+    [10, 'Added a note to the job', 'Water-heater safety check'],
+    [12, 'Booked the job and texted a confirmation', 'Sent to the mobile ending 4417; booked ahead of non-urgent calls'],
+    [14, 'Logged the outcome on the job', 'Booked in storm mode'],
   ],
   'call-pp-renewal': [
-    [0, 'consent_check', 'member · outbound', 'TCPA consent on file · within 8 a.m.–9 p.m.'],
-    [0, 'customer_lookup', 'member_id', 'Linda Hoover · renews Oct 31'],
-    [2, 'log_ai_disclosure', 'asked "is this a robot?"', 'answered truthfully · human offered'],
-    [6, 'invoice_history', 'last 12 months', 'Jan igniter repair · member discount applied'],
-    [8, 'send_payment_link', 'card on file · no card data in voice', 'SMS sent'],
-    [8, 'check_capacity', 'job=furnace_tune_up', 'Tue Oct 13 8–9 a.m. · Thu Oct 15 1–2 p.m.'],
-    [10, 'book_job', 'tune-up · Tue Oct 13 8–9 a.m.', 'booked · renewal accepted'],
-    [13, 'log_disposition', 'renewed + booked · consent source logged', 'written to member record'],
+    [0, 'Checked the member record before dialing', 'Asked for reminder calls; inside calling hours, 8 a.m.–9 p.m.'],
+    [0, 'Looked up the member', 'Linda Hoover, membership renews Oct 31'],
+    [2, 'Answered the "is this a robot?" question', 'Said it is an AI assistant and offered a person'],
+    [6, 'Pulled the last 12 months of invoices', 'January igniter repair, member discount applied'],
+    [8, 'Texted a payment link', 'Card stays on file; no card details spoken'],
+    [8, 'Checked tune-up capacity', 'Tue Oct 13, 8–9 a.m. or Thu Oct 15, 1–2 p.m.'],
+    [10, 'Booked the tune-up', 'Tue Oct 13, 8–9 a.m.; renewal accepted'],
+    [13, 'Logged the outcome on the member record', 'Renewed and booked'],
   ],
 };
 const BLURB = { 'call-pp-noheat': 'After hours · inbound', 'call-pp-storm': 'Storm overflow · inbound', 'call-pp-renewal': 'Membership · outbound' };
@@ -171,26 +199,26 @@ function demo(calls) {
   const pickVoice = () => { if (!synth) return; const vs = synth.getVoices() || []; voice = vs.find(v => /^en[-_]US$/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang)) || null; };
   if (synth) { pickVoice(); try { synth.addEventListener('voiceschanged', pickVoice); } catch { synth.onvoiceschanged = pickVoice; } }
   const note = $('#voice-note');
-  note.textContent = synth ? 'Agent lines are spoken by your browser\'s built-in en-US voice. Turn Voice off for a text-only run. Sample calls are illustrative scripts with fictional customers.' : 'Your browser does not support speech synthesis, so the demo runs text-only. Sample calls are illustrative scripts with fictional customers.';
+  note.innerHTML = (synth ? 'Agent lines are spoken by your browser\'s built-in US English voice. Turn the voice off for a text-only run.' : 'Your browser cannot speak the agent\'s lines, so the demo runs as text.') + ' Sample calls are scripted with fictional customers<span class="sys-est sys-est--illus">illustrative</span>';
   if (!synth) { $('#pl-voice').setAttribute('aria-pressed', 'false'); $('#pl-voice').textContent = 'Text only'; $('#pl-voice').disabled = true; S.voiceOn = false; }
 
-  $('#calls').innerHTML = calls.map((c, i) => `<button type="button" class="callbtn" data-c="${esc(c.id)}" aria-pressed="${i === 0}"><small>${esc(BLURB[c.id] || c.company)}</small><b>${esc(c.title)}</b><span>${esc(c.brand)} · books in ${mmss(c.time_to_book_seconds)}</span></button>`).join('');
-  $$('#calls .callbtn').forEach(b => b.onclick = () => select(b.dataset.c));
+  $('#calls').innerHTML = calls.map((c, i) => `<button type="button" class="vai-callbtn" data-c="${esc(c.id)}" aria-pressed="${i === 0}"><span class="sys-card-label">${esc(BLURB[c.id] || CO[c.company]?.name || 'Sample call')}</span><b>${esc(plain(c.title))}</b><span>${esc(c.brand)} · books in ${mmss(c.time_to_book_seconds)}</span></button>`).join('');
+  $$('#calls .vai-callbtn').forEach(b => b.onclick = () => select(b.dataset.c));
 
   const words = s => s.split(/\s+/).length;
   const thread = $('#thread'), tools = $('#tools'), clockEl = $('#pl-clock'), playBtn = $('#pl-play');
   const setPlay = on => { S.playing = on; playBtn.querySelector('span').textContent = on ? 'Stop' : 'Play'; playBtn.querySelector('svg').innerHTML = on ? '<rect x="2" y="2" width="8" height="8" rx="1" fill="currentColor"/>' : '<path d="M2 1l9 5-9 5z" fill="currentColor"/>'; };
   const stop = () => { S.token++; if (synth) synth.cancel(); setPlay(false); };
   const reset = () => {
-    const c = S.call; $('#pl-title').innerHTML = `<b>${esc(c.title)}</b><span>${esc(c.brand)} · ${c.lines.length} turns · scripted</span>`;
-    thread.innerHTML = `<div class="empty"><b>Press Play</b>The agent answers on ring one. Agent lines are read aloud and caller lines type in as the call runs.</div>`;
+    const c = S.call; $('#pl-title').innerHTML = `<b>${esc(plain(c.title))}</b><span>${esc(c.brand)} · ${c.lines.length} turns · scripted</span>`;
+    thread.innerHTML = `<div class="vai-empty"><b>Press Play</b>The agent answers on ring one. Agent lines are read aloud and caller lines type in as the call runs.</div>`;
     tools.innerHTML = ''; clockEl.textContent = '0:00';
   };
-  const select = id => { stop(); S.call = calls.find(c => c.id === id) || calls[0]; $$('#calls .callbtn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c === S.call.id))); reset(); };
+  const select = id => { stop(); S.call = calls.find(c => c.id === id) || calls[0]; $$('#calls .vai-callbtn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c === S.call.id))); reset(); };
   const simTimes = c => { const tot = c.lines.reduce((a, l) => a + words(l.text), 0); let acc = 0; return c.lines.map(l => (acc += words(l.text)) / tot * c.time_to_book_seconds); };
-  const addTools = (i, c) => (TOOLS[c.id] || []).filter(t => t[0] === i).forEach(([, n, a, r]) => tools.insertAdjacentHTML('beforeend', `<div class="tool"><b>${esc(n)}</b>(${esc(a)})<br><i>→ ${esc(r)}</i></div>`));
-  const bubble = l => { const d = document.createElement('div'); d.className = `msg ${l.speaker === 'Agent' ? 'agent' : 'caller'}`; d.innerHTML = `<span class="who">${l.speaker === 'Agent' ? 'AI agent' : 'Caller'}</span><span class="tx"></span>`; thread.appendChild(d); thread.scrollTop = thread.scrollHeight; return d; };
-  const outcome = c => { thread.insertAdjacentHTML('beforeend', `<div class="outcome" role="status"><b class="big">Booked in ${mmss(c.time_to_book_seconds)}</b>${esc(c.outcome)}<div style="margin-top:6px;font-size:12px;opacity:.8">Today, without the agent, this call ${c.id === 'call-pp-renewal' ? 'would depend on a CSR finding time to dial the member list.' : c.id === 'call-pp-storm' ? 'rings out while every CSR is on another storm call.' : 'goes to voicemail or an answering service that takes a message.'}</div></div>`); thread.scrollTop = thread.scrollHeight; };
+  const addTools = (i, c) => (LOG[c.id] || []).filter(t => t[0] === i).forEach(([, did, res]) => tools.insertAdjacentHTML('beforeend', `<li class="vai-step"><b>${esc(did)}</b><span>${esc(res)}</span></li>`));
+  const bubble = l => { const d = document.createElement('div'); d.className = `vai-msg ${l.speaker === 'Agent' ? 'agent' : 'caller'}`; d.innerHTML = `<span class="who">${l.speaker === 'Agent' ? 'AI agent' : 'Caller'}</span><span class="tx"></span>`; thread.appendChild(d); thread.scrollTop = thread.scrollHeight; return d; };
+  const outcome = c => { thread.insertAdjacentHTML('beforeend', `<div class="sys-note sys-note--good vai-outcome" role="status"><div><b class="big sys-num">Booked in ${mmss(c.time_to_book_seconds)}</b>${esc(plain(c.outcome))}<p class="vai-outcome-today">Today, without the agent, this call ${c.id === 'call-pp-renewal' ? 'would depend on a CSR finding time to dial the member list.' : c.id === 'call-pp-storm' ? 'rings out while every CSR is on another storm call.' : 'goes to voicemail or an answering service that takes a message.'}</p></div></div>`); thread.scrollTop = thread.scrollHeight; };
   const speak = (text, tok) => new Promise(res => {
     const est = Math.max(1400, words(text) * 360);
     if (!synth || !S.voiceOn) { setTimeout(res, est * 0.55); return; }
@@ -217,7 +245,7 @@ function demo(calls) {
     if (tok !== S.token) return;
     addTools(c.lines.length, c); outcome(c); setPlay(false);
   }
-  const player = $('.player');
+  const player = $('.vai-player');
   const showAll = () => { stop(); player.classList.add('noanim'); const c = S.call; thread.innerHTML = ''; tools.innerHTML = '';
     c.lines.forEach((l, i) => { addTools(i, c); bubble(l).querySelector('.tx').textContent = l.text; });
     addTools(c.lines.length, c); outcome(c); clockEl.textContent = mmss(c.time_to_book_seconds); thread.scrollTop = 0; };
@@ -250,7 +278,7 @@ function calculator(meta, items) {
     { id: 'calls', l: 'Inbound calls a month', min: 500, max: 15000, step: 1, v: m.inbound_calls_per_month, f: v => Math.round(v).toLocaleString(), n: 'Backed out of the ~$22M revenue estimate. Replace with ServiceTitan call tracking.' },
     { id: 'missed', l: 'Missed or abandoned today', min: 5, max: 40, step: 0.01, v: (0.12 * 0.35 + 0.88 * 0.12) * 100, f: v => (+(+v).toFixed(2)) + '%', n: 'Blend: 12% of calls after hours × 35% lost + 88% daytime × 12% missed = 14.76%. Invoca\'s industry rate is about 35%.' },
     { id: 'recov', l: 'Recovered by the AI agent', min: 40, max: 100, step: 1, v: m.recovered_share_with_ai * 100, f: v => Math.round(v) + '%', n: 'The rest hang up on hearing an assistant or are spam, vendors or wrong numbers.' },
-    { id: 'book', l: 'Booking rate on recovered calls', min: 20, max: 90, step: 1, v: m.booking_rate * 100, f: v => Math.round(v) + '%', n: 'Invoca 45%. ServiceTitan AI reports 70% (90% when capacity is open). Typical human CSR: 42%.' },
+    { id: 'book', l: 'Booking rate on recovered calls', min: 20, max: 90, step: 1, v: m.booking_rate * 100, f: v => Math.round(v) + '%', n: 'Invoca 45%. ServiceTitan AI reports 70% (90% when capacity is open). A typical human rep books 42%.' },
     { id: 'inc', l: 'Incrementality', min: 20, max: 100, step: 1, v: m.incrementality * 100, f: v => Math.round(v) + '%', n: 'Share of booked jobs that would not have come back anyway.' },
     { id: 'ticket', l: 'Average ticket', min: 300, max: 2500, step: 1, v: m.avg_ticket, f: v => usd(v), n: 'Housecall Pro HVAC repair $1,205 × 0.85 for plumbing and electrical mix.' },
     { g: 'Outbound renewals' },
@@ -272,11 +300,11 @@ function calculator(meta, items) {
     { l: 'Half the members (3,000)', set: { members: 3000 } },
   ];
   const DEF = Object.fromEntries(F.filter(f => f.id && f.type !== 'select').map(f => [f.id, f.v]));
-  $('#fields').innerHTML = F.map(f => f.g ? `<div class="grp">${esc(f.g)}</div>` : f.type === 'select'
-    ? `<div class="field"><label for="in-vendor">${esc(f.l)}</label><output></output><select id="in-vendor">${VENDORS.map(v => `<option value="${v.id}">${esc(v.label)}</option>`).join('')}</select><small>Public pricing from vendor pages, retrieved 2026-10-06. Trades-native pricing is not published.</small></div>`
-    : `<div class="field"><label for="in-${f.id}">${esc(f.l)}</label><output id="o-${f.id}" for="in-${f.id}"></output><input type="range" id="in-${f.id}" min="${f.min}" max="${f.max}" step="${f.step}" value="${f.v}"><small>${esc(f.n)}</small></div>`).join('');
-  $('#presets').innerHTML = PRESETS.map((p, i) => `<button type="button" class="chip" data-p="${i}" aria-pressed="${i === 0}">${esc(p.l)}</button>`).join('');
-  $$('#presets .chip').forEach(b => b.onclick = () => { const p = PRESETS[+b.dataset.p]; Object.entries({ ...DEF, ...p.set }).forEach(([k, v]) => { const el = $('#in-' + k); if (el) el.value = v; }); $$('#presets .chip').forEach(x => x.setAttribute('aria-pressed', String(x === b))); calc(); });
+  $('#fields').innerHTML = F.map(f => f.g ? `<p class="sys-card-label vai-grp">${esc(f.g)}</p>` : f.type === 'select'
+    ? `<div class="vai-field"><label for="in-vendor">${esc(f.l)}</label><output></output><select id="in-vendor">${VENDORS.map(v => `<option value="${v.id}">${esc(v.label)}</option>`).join('')}</select><small>Public pricing from vendor pages, retrieved October 2026. Trades-native pricing is not published.</small></div>`
+    : `<div class="vai-field"><label for="in-${f.id}">${esc(f.l)}</label><output id="o-${f.id}" for="in-${f.id}"></output><input type="range" id="in-${f.id}" min="${f.min}" max="${f.max}" step="${f.step}" value="${f.v}"><small>${esc(f.n)}</small></div>`).join('');
+  $('#presets').innerHTML = PRESETS.map((p, i) => `<button type="button" class="sys-chip" data-p="${i}" aria-pressed="${i === 0}">${esc(p.l)}</button>`).join('');
+  $$('#presets .sys-chip').forEach(b => b.onclick = () => { const p = PRESETS[+b.dataset.p]; Object.entries({ ...DEF, ...p.set }).forEach(([k, v]) => { const el = $('#in-' + k); if (el) el.value = v; }); $$('#presets .sys-chip').forEach(x => x.setAttribute('aria-pressed', String(x === b))); calc(); });
   const val = id => +$('#in-' + id).value;
   function calc() {
     F.filter(f => f.id && f.f).forEach(f => { $('#o-' + f.id).textContent = f.f(val(f.id)); });
@@ -285,7 +313,7 @@ function calculator(meta, items) {
     const inRevM = jobsM * ticket; const renewY = val('members') * val('lift') / 100 * val('mval');
     const revM = inRevM + renewY / 12, revY = revM * 12;
     const v = VENDORS.find(x => x.id === $('#in-vendor').value) || VENDORS[0];
-    const outboundM = val('members') * 2 / 12; // two consented touches per member a year (renewal + tune-up)
+    const outboundM = val('members') * 2 / 12; // two reminder calls per member a year (renewal + tune-up)
     const handledM = calls * val('cover') / 100 + outboundM;
     const perCall = v.perCall ?? v.perMin * val('mins');
     const costM = handledM * perCall, costY = costM * 12;
@@ -293,26 +321,26 @@ function calculator(meta, items) {
     const roi = costY > 0 ? revY / costY : Infinity;
     const W = x => Math.max(1.5, Math.min(100, x / calls * 100));
     $('#calc-out').innerHTML = `
-      <div class="out-cap">Recovered revenue a year <span class="est" style="background:rgba(255,209,102,.16);color:#ffd166">est.</span></div>
-      <div class="out-big">${usd(revY)}</div>
-      <div style="font-size:13px;color:#aeb6cf">${usd(revM)} a month · inbound ${usd(inRevM * 12)} + renewals ${usd(renewY)}</div>
-      <div class="out-grid">
-        <div><b>${Math.round(jobsM * 12).toLocaleString()}</b><span>incremental jobs a year</span></div>
-        <div><b>${usd(costY)}</b><span>vendor cost a year · ${Math.round(handledM).toLocaleString()} calls/mo × $${perCall.toFixed(2)}</span></div>
-        <div><b>${isFinite(payback) ? (payback < 1 ? '< 1 month' : payback.toFixed(1) + ' months') : 'n/a'}</b><span>payback on ${usd(val('setup'))} setup at ${val('margin')}% margin</span></div>
-        <div><b>${isFinite(roi) ? Math.round(roi) + '×' : '—'}</b><span>recovered revenue per $1 of vendor cost (${revY ? (costY / revY * 100).toFixed(1) : 0}% of revenue)</span></div>
+      <p class="sys-card-label">Recovered revenue a year${EST}</p>
+      <p class="vai-out-big sys-num">${usd(revY)}</p>
+      <p class="vai-out-sub">${usd(revM)} a month · inbound ${usd(inRevM * 12)} + renewals ${usd(renewY)}</p>
+      <div class="vai-out-grid">
+        <div><b class="sys-num">${Math.round(jobsM * 12).toLocaleString()}</b><span>extra jobs a year</span></div>
+        <div><b class="sys-num">${usd(costY)}</b><span>vendor cost a year · ${Math.round(handledM).toLocaleString()} calls a month × $${perCall.toFixed(2)}</span></div>
+        <div><b class="sys-num">${isFinite(payback) ? (payback < 1 ? '< 1 month' : payback.toFixed(1) + ' months') : '—'}</b><span>payback on ${usd(val('setup'))} setup at ${val('margin')}% margin</span></div>
+        <div><b class="sys-num">${isFinite(roi) ? Math.round(roi) + '×' : '—'}</b><span>recovered revenue per $1 of vendor cost (${revY ? (costY / revY * 100).toFixed(1) : 0}% of revenue)</span></div>
       </div>
-      <div class="funnel" aria-label="Monthly inbound funnel">
-        <div class="fn"><span>Inbound calls</span><div class="track"><div class="fill" style="width:100%"></div></div><b>${Math.round(calls).toLocaleString()}</b></div>
-        <div class="fn"><span>Missed today</span><div class="track"><div class="fill m" style="width:${W(missedM)}%"></div></div><b>${Math.round(missedM).toLocaleString()}</b></div>
-        <div class="fn"><span>Recovered by AI</span><div class="track"><div class="fill" style="width:${W(recM)}%"></div></div><b>${Math.round(recM).toLocaleString()}</b></div>
-        <div class="fn"><span>Booked</span><div class="track"><div class="fill" style="width:${W(bookedM)}%"></div></div><b>${Math.round(bookedM).toLocaleString()}</b></div>
-        <div class="fn"><span>Incremental jobs</span><div class="track"><div class="fill" style="width:${W(jobsM)}%"></div></div><b>${Math.round(jobsM).toLocaleString()}</b></div>
+      <div class="vai-funnel" aria-label="Monthly inbound funnel">
+        <div class="vai-fn"><span>Inbound calls</span><div class="track"><div class="fill" style="width:100%"></div></div><b>${Math.round(calls).toLocaleString()}</b></div>
+        <div class="vai-fn"><span>Missed today</span><div class="track"><div class="fill m" style="width:${W(missedM)}%"></div></div><b>${Math.round(missedM).toLocaleString()}</b></div>
+        <div class="vai-fn"><span>Recovered by AI</span><div class="track"><div class="fill" style="width:${W(recM)}%"></div></div><b>${Math.round(recM).toLocaleString()}</b></div>
+        <div class="vai-fn"><span>Booked</span><div class="track"><div class="fill" style="width:${W(bookedM)}%"></div></div><b>${Math.round(bookedM).toLocaleString()}</b></div>
+        <div class="vai-fn"><span>Incremental jobs</span><div class="track"><div class="fill" style="width:${W(jobsM)}%"></div></div><b>${Math.round(jobsM).toLocaleString()}</b></div>
       </div>
-      <div class="formula">${Math.round(calls).toLocaleString()} × 12 × ${+missed.toFixed(4)} missed × ${recov.toFixed(2)} recovered × ${book.toFixed(2)} booked × ${inc.toFixed(2)} incremental × ${usd(ticket)} = ${usd(inRevM * 12)}<br>+ ${Math.round(val('members')).toLocaleString()} members × ${(val('lift') / 100).toFixed(3)} lift × ${usd(val('mval'))} = ${usd(renewY)}</div>
-      <p style="font-size:11.5px;color:#8f98b3;margin-top:12px">Outbound cost assumes two consented calls per member a year. The model leaves out speed-to-lead, unsold-estimate follow-up, no-show reduction, the Spanish line and CSR labor savings. These are valued separately in the catalog.</p>`;
+      <p class="vai-formula sys-num">${Math.round(calls).toLocaleString()} × 12 × ${+missed.toFixed(4)} missed × ${recov.toFixed(2)} recovered × ${book.toFixed(2)} booked × ${inc.toFixed(2)} incremental × ${usd(ticket)} = ${usd(inRevM * 12)}<br>+ ${Math.round(val('members')).toLocaleString()} members × ${(val('lift') / 100).toFixed(3)} lift × ${usd(val('mval'))} = ${usd(renewY)}</p>
+      <p class="vai-out-note">Outbound cost assumes two reminder calls per member a year. The model leaves out speed-to-lead, unsold-estimate follow-up, no-show reduction, the Spanish line and CSR labor savings. These are valued separately in the catalog.</p>`;
   }
-  $$('#calc input, #calc select').forEach(el => el.addEventListener('input', () => { $$('#presets .chip').forEach(x => x.setAttribute('aria-pressed', 'false')); calc(); }));
+  $$('#calc input, #calc select').forEach(el => el.addEventListener('input', () => { $$('#presets .sys-chip').forEach(x => x.setAttribute('aria-pressed', 'false')); calc(); }));
   calc();
 }
 
@@ -321,21 +349,21 @@ function useCases(items) {
   const ucs = items.filter(i => i.kind === 'use_case');
   const cos = ['all', ...Object.keys(CO).filter(k => ucs.some(u => u.company === k))];
   let cur = store.get('vai-co') || 'all'; if (!cos.includes(cur)) cur = 'all';
-  $('#uc-filters').innerHTML = cos.map(c => `<button type="button" class="chip" data-co="${c}">${c === 'all' ? 'All companies' : esc(CO[c].name)} <span class="muted">${c === 'all' ? ucs.length : ucs.filter(u => u.company === c).length}</span></button>`).join('') + '<span class="sum" id="uc-sum"></span>';
+  $('#uc-filters').innerHTML = `<div class="sys-chips">${cos.map(c => `<button type="button" class="sys-chip" data-c="${c}"${c === 'all' ? '' : ` data-co="${c}"`}>${c === 'all' ? 'All companies' : esc(CO[c].name)} <span class="sys-muted sys-num">${c === 'all' ? ucs.length : ucs.filter(u => u.company === c).length}</span></button>`).join('')}</div><p class="vai-sum" id="uc-sum"></p>`;
   const render = () => {
     const list = ucs.filter(u => cur === 'all' || u.company === cur);
-    $$('#uc-filters .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.co === cur)));
-    $('#uc-sum').innerHTML = `${list.length} lines · <b class="mono">${money(list.reduce((a, u) => a + (u.est_annual_value_usd || 0), 0))}</b> a year <span class="est">est.</span>`;
-    $('#uc-grid').innerHTML = list.map(u => `<article class="card uc">
-      <div class="uc-top"><span class="co-dot"><span class="dot" style="background:${CO[u.company].hex}"></span>${esc(CO[u.company].name)}</span><span class="tag ${u.direction === 'inbound' ? 'in' : 'out'}">${esc(u.direction)}</span><span class="tag">${u.weeks_to_deploy} wks to deploy</span></div>
-      <h3>${esc(u.name)}</h3>
-      <dl><div><dt>Trigger</dt><dd>${esc(u.trigger)}</dd></div><div><dt>Human handoff</dt><dd>${esc(u.handoff_rule)}</dd></div>
-      <div><dt>KPIs</dt><dd class="kpi-chips">${(u.kpis || []).map(k => `<span>${esc(k)}</span>`).join('')}</dd></div></dl>
-      <details><summary>Call flow and risks</summary><ol>${(u.flow || []).map(f => `<li>${esc(f)}</li>`).join('')}</ol>${u.risk_notes ? `<p style="margin-top:6px"><b>Risk:</b> ${esc(u.risk_notes)}</p>` : ''}<p class="f">${esc(u.value_formula)}</p><p class="src">Evidence: ${srcLink(u.source_url)}</p></details>
-      <div class="uc-val"><b>${money(u.est_annual_value_usd)}<span class="est">${esc(u.value_label === 'assumption' ? 'est.' : u.value_label)}</span></b><span>a year</span></div>
+    $$('#uc-filters .sys-chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c === cur)));
+    $('#uc-sum').innerHTML = `${list.length} lines · <b class="sys-num">${money(list.reduce((a, u) => a + (u.est_annual_value_usd || 0), 0))}</b> a year${EST}`;
+    $('#uc-grid').innerHTML = list.map(u => `<article class="sys-card vai-uc" data-co="${esc(u.company)}">
+      <div class="vai-uc-top"><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>${esc(CO[u.company].name)}</span><span class="vai-tag vai-tag--${u.direction === 'inbound' ? 'in' : 'out'}">${esc(cap(u.direction))}</span><span class="vai-tag">${u.weeks_to_deploy} weeks to deploy</span></div>
+      <h3 class="sys-card-title">${esc(plain(u.name))}</h3>
+      <dl class="vai-dl"><div><dt>Trigger</dt><dd>${esc(plain(u.trigger))}</dd></div><div><dt>Human handoff</dt><dd>${esc(plain(u.handoff_rule))}</dd></div>
+      <div><dt>KPIs</dt><dd class="vai-kpi-chips">${(u.kpis || []).map(k => `<span>${esc(plain(k))}</span>`).join('')}</dd></div></dl>
+      <details class="vai-details"><summary>Call flow and risks</summary><ol>${(u.flow || []).map(f => `<li>${esc(plain(f))}</li>`).join('')}</ol>${u.risk_notes && !broken(u.risk_notes) ? `<p><b>Risk:</b> ${esc(plain(u.risk_notes))}</p>` : ''}<p class="vai-formula-lite sys-num">${esc(plain(u.value_formula))}</p><p class="sys-src"><b>Evidence:</b> ${srcLink(u.source_url)}</p></details>
+      <div class="sys-card-foot"><span><b class="sys-num vai-uc-v">${money(u.est_annual_value_usd)}</b>${EST}</span><span class="sys-muted">a year</span></div>
     </article>`).join('');
   };
-  $$('#uc-filters .chip').forEach(b => b.onclick = () => { cur = b.dataset.co; store.set('vai-co', cur); render(); });
+  $$('#uc-filters .sys-chip').forEach(b => b.onclick = () => { cur = b.dataset.c; store.set('vai-co', cur); render(); });
   render();
 }
 
@@ -346,83 +374,95 @@ function vendors(items) {
     ['Weeks 1–6 · pilot', 'Trades-native answering', 'Run a two-week bake-off between ServiceTitan\'s Voice Agent (native dispatch board and Adaptive Capacity, 70% booking reported) and Avoca (ServiceTitan-certified, H.L. Bowman runs 70% of calls through it). Start on the after-hours line of one brand.'],
     ['Months 3–12 · portfolio engine', 'Own the stack', 'Build the shared engine on Twilio, Deepgram, Claude and ElevenLabs or Cartesia, orchestrated by Vapi, Retell or LiveKit, at about $0.12 a minute. One engine serves per-company agents: CET emergency lines, the Frontline desk, Thomas Scientific reorders.'],
     ['Benchmarks, not picks', 'Price ceilings and specialists', 'Smith.ai ($1.67–$3 a call) and Goodcall set the price ceiling for bought answering. Hatch (now Yelp) covers speed-to-lead texting. Rilla coaches in-home sales and does not answer calls.'],
-  ].map(([lbl, h, p]) => `<div class="card"><div class="lbl">${esc(lbl)}</div><h3>${esc(h)}</h3><p>${esc(p)}</p><p class="src" style="margin-top:8px">Analyst recommendation · not vendor-endorsed</p></div>`).join('');
+  ].map(([lbl, h, p]) => `<div class="sys-card"><span class="sys-card-label">${esc(lbl)}</span><h3 class="sys-card-title">${esc(h)}</h3><p class="sys-card-body">${esc(p)}</p><p class="sys-src">Analyst recommendation, not vendor-endorsed.</p></div>`).join('');
   const types = ['all', ...new Set(vs.map(v => v.type))];
   let cur = 'all';
-  $('#v-filters').innerHTML = types.map(t => `<button type="button" class="chip" data-t="${t}">${t === 'all' ? 'All types' : esc(t)} <span class="muted">${t === 'all' ? vs.length : vs.filter(v => v.type === t).length}</span></button>`).join('');
+  $('#v-filters').innerHTML = `<div class="sys-chips">${types.map(t => `<button type="button" class="sys-chip" data-t="${t}">${t === 'all' ? 'All types' : esc(cap(t))} <span class="sys-muted sys-num">${t === 'all' ? vs.length : vs.filter(v => v.type === t).length}</span></button>`).join('')}</div>`;
   const render = () => {
-    $$('#v-filters .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === cur)));
+    $$('#v-filters .sys-chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === cur)));
     $('#v-table tbody').innerHTML = vs.filter(v => cur === 'all' || v.type === cur).map(v => `<tr>
-      <td><b>${esc(v.vendor)}</b><span class="s">${srcLink(v.source_url)} · ${esc(v.retrieval_status)}</span></td>
-      <td><span class="vtype">${esc(v.type)}</span></td>
-      <td style="min-width:200px">${esc(v.pricing_note || '—')}</td>
-      <td style="min-width:160px">${esc((v.integrations || []).join(', '))}</td>
-      <td style="min-width:150px">${esc(v.languages || '—')}${v.latency_note ? `<span class="s">${esc(v.latency_note)}</span>` : ''}</td>
-      <td style="min-width:260px">${esc(v.notable_customers_or_cases || '—')}</td></tr>`).join('');
+      <td><b>${esc(v.vendor)}</b><span class="vai-s">${srcLink(v.source_url)} · ${esc(RETRIEVAL[v.retrieval_status] || 'source page')}</span></td>
+      <td><span class="vai-tag">${esc(cap(v.type))}</span></td>
+      <td class="w-200">${esc(plain(v.pricing_note) || '—')}</td>
+      <td class="w-160">${esc((v.integrations || []).join(', ') || '—')}</td>
+      <td class="w-150">${esc(plain(v.languages) || '—')}${v.latency_note ? `<span class="vai-s">${esc(plain(v.latency_note))}</span>` : ''}</td>
+      <td class="w-260">${esc(plain(v.notable_customers_or_cases) || '—')}</td></tr>`).join('');
   };
-  $$('#v-filters .chip').forEach(b => b.onclick = () => { cur = b.dataset.t; render(); });
+  $$('#v-filters .sys-chip').forEach(b => b.onclick = () => { cur = b.dataset.t; render(); });
   render();
 }
 
-/* ── 6b. Reference platforms + architecture + stack ───────────────────── */
+/* ── 6b. Reference platforms + pipeline + stack ───────────────────────── */
+/* Pipeline tools in plain English everywhere; the function names never reach visible text. */
+const TOOL_INFO = {
+  customer_lookup: ['Look up the customer', 'Customer, location and equipment from ServiceTitan, by phone or address'],
+  check_capacity: ['Check capacity', 'Open windows for the ZIP code, job type and priority'],
+  book_job: ['Book the job', 'A job number on the dispatch board'],
+  send_payment_link: ['Text a payment link', 'A secure link by text; no card details are spoken'],
+  page_on_call: ['Page the on-call technician', 'An acknowledgement from the technician'],
+  transfer_to_human: ['Hand off to a person', 'A warm transfer with a spoken and written summary'],
+  log_disposition: ['Log the outcome', 'Outcome and notes on the call record'],
+};
+const toolName = t => String(t).split(/\(|\s/)[0];
 function playbook(items) {
   const refs = items.filter(i => i.kind === 'reference_platform');
-  const card = (r, feature) => `<article class="card ref ${feature ? 'feature' : ''}">
-    <div><h3>${esc(r.company)}</h3><div class="meta">${esc(r.hq)} · ${esc(r.sector)}</div>
-      <div class="chs" style="margin-top:8px">${(r.channels || []).map(c => `<span class="tag">${esc(c)}</span>`).join('')}</div>
-      ${feature ? `<div class="k" style="margin-top:12px">Funding</div><p>${esc(r.funding_note)}</p>` : ''}</div>
-    <div><div class="k">What it automates</div><p>${esc(r.what_it_automates)}</p><div class="k" style="margin-top:8px">Published outcomes <span class="est">vendor-reported</span></div><p>${esc(r.published_outcomes)}</p></div>
-    <div style="display:flex;flex-direction:column;gap:8px"><div class="k">What to borrow for home services</div><p class="borrow">${esc(r.what_to_borrow_for_home_services)}</p>${feature ? '' : `<p class="src">${esc(r.funding_note || '')}</p>`}<p class="src">${srcLink(r.source_url)}</p></div>
+  const card = (r, feature) => `<article class="sys-card vai-ref${feature ? ' sys-card--feature vai-ref--feature' : ''}">
+    <div class="vai-ref-col"><h3 class="sys-card-title">${esc(r.company)}</h3><p class="vai-ref-meta">${esc(plain(r.hq))} · ${esc(plain(r.sector))}</p>
+      <div class="sys-chips vai-ref-chs">${(r.channels || []).map(c => `<span class="sys-chip">${esc(cap(plain(c)))}</span>`).join('')}</div>
+      ${feature ? `<p class="sys-card-label">Funding</p><p class="sys-card-body">${esc(plain(r.funding_note))}</p>` : ''}</div>
+    <div class="vai-ref-col"><p class="sys-card-label">What it automates</p><p class="sys-card-body">${esc(plain(r.what_it_automates))}</p><p class="sys-card-label">Published outcomes<span class="sys-est sys-est--illus">vendor-reported</span></p><p class="sys-card-body">${esc(plain(r.published_outcomes))}</p></div>
+    <div class="vai-ref-col"><p class="sys-card-label">What to borrow for home services</p><p class="vai-borrow">${esc(plain(r.what_to_borrow_for_home_services))}</p>${feature ? '' : `<p class="sys-src">${esc(plain(r.funding_note || ''))}</p>`}<p class="sys-src"><b>Source:</b> ${srcLink(r.source_url)}</p></div>
   </article>`;
   $('#refs').innerHTML = refs.map((r, i) => card(r, i === 0 && /elise/i.test(r.company))).join('');
 
   const a = items.find(i => i.kind === 'architecture'); if (!a) return;
   const lb = a.latency_budget; const P = a.pipeline;
-  $('#arch-sub').textContent = `${a.name}. Component targets follow Twilio's latency guide: ${lb.platform_turn_gap_target_ms.toLocaleString()} ms platform turn gap (upper ${lb.platform_upper_ms.toLocaleString()}), ${lb.mouth_to_ear_target_ms.toLocaleString()} ms mouth-to-ear (upper ${lb.mouth_to_ear_upper_ms.toLocaleString()}). People leave about ${lb.human_benchmark_ms} ms between turns.`;
-  const ms = h => typeof h.budget_ms === 'number' ? `${h.budget_ms} ms <small>/ ${h.upper_ms} upper</small>` : '~230 ms <small>network/PSTN</small>';
-  const icons = {
-    caller: '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15 15 0 006.6 6.6l2.2-2.2a1 1 0 011-.25 11.4 11.4 0 003.6.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1z" fill="#3b4fd8"/></svg>',
-  };
-  $('#pipe').innerHTML = `<div class="hop caller"><div class="hop-box">${icons.caller}<div class="hop-n">00</div><h4>Caller</h4><p>Dials a brand tracking number at 2 a.m. or during a storm. Every turn gap above about 1.4 s feels broken.</p><span class="ms">${lb.human_benchmark_ms} ms <small>human gap</small></span></div></div>` +
-    P.map((h, i) => `<div class="hop"><div class="hop-box"><div class="hop-n">0${i + 1}</div><h4>${esc(h.hop.replace(/^\w/, c => c.toUpperCase()))}</h4><p>${esc(h.what)}</p><span class="ms">${ms(h)}</span>${h.tools ? `<div class="tools">${h.tools.map(t => `<code>${esc(t.split(' -> ')[0])}</code>`).join('')}</div>` : ''}</div></div>`).join('');
-  $('#handoff').innerHTML = `<div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2" fill="none" stroke="#e0592a" stroke-width="2"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5" fill="none" stroke="#e0592a" stroke-width="2"/><path d="M15 9h6m-2.5-2.5L21 9l-2.5 2.5" fill="none" stroke="#e0592a" stroke-width="2" stroke-linecap="round"/></svg></div><div><b>Human handoff path: LLM → transfer_to_human</b><p>${esc(a.human_handoff)}</p><p style="margin-top:6px"><b style="display:inline;font-size:13px">Logging and QA:</b> ${esc(a.logging_qa)}</p></div>`;
-  const segs = [['Telephony / network', 230, '#1f2c8f', 'Network'], ['Streaming ASR', P[1].budget_ms, '#3b4fd8', 'ASR'], ['LLM first token', P[2].budget_ms, '#6f7fe6', 'LLM'], ['TTS first byte', P[3].budget_ms, '#a7b1f2', 'TTS']];
+  $('#arch-sub').textContent = `${plain(a.name)}. Targets follow Twilio's latency guide: a ${lb.platform_turn_gap_target_ms.toLocaleString()} ms platform turn gap (upper limit ${lb.platform_upper_ms.toLocaleString()} ms) and ${lb.mouth_to_ear_target_ms.toLocaleString()} ms mouth to ear (upper limit ${lb.mouth_to_ear_upper_ms.toLocaleString()} ms). People leave about ${lb.human_benchmark_ms} ms between turns.`;
+  const ms = h => typeof h.budget_ms === 'number' ? `${h.budget_ms} ms <small>/ ${h.upper_ms} upper</small>` : '~230 ms <small>network</small>';
+  const icon = '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15 15 0 006.6 6.6l2.2-2.2a1 1 0 011-.25 11.4 11.4 0 003.6.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1z" fill="currentColor"/></svg>';
+  $('#pipe').innerHTML = `<div class="vai-hop vai-hop--caller"><div class="vai-hop-box">${icon}<span class="vai-hop-n sys-num">00</span><h4>Caller</h4><p>Dials a brand tracking number at 2 a.m. or during a storm. Every turn gap above about 1.4 seconds feels broken.</p><span class="vai-ms sys-num">${lb.human_benchmark_ms} ms <small>human gap</small></span></div></div>` +
+    P.map((h, i) => `<div class="vai-hop"><div class="vai-hop-box"><span class="vai-hop-n sys-num">0${i + 1}</span><h4>${esc(cap(plain(h.hop)))}</h4><p>${esc(plain(h.what))}</p><span class="vai-ms sys-num">${ms(h)}</span>${h.tools ? `<ul class="vai-hop-tools">${h.tools.map(t => `<li>${esc(TOOL_INFO[toolName(t)]?.[0] || plain(toolName(t)))}</li>`).join('')}</ul>` : ''}</div></div>`).join('');
+  $('#handoff').innerHTML = `<svg class="sys-note-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 9h6m-2.5-2.5L21 9l-2.5 2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><div><b>Human handoff: the agent hands the caller to a person</b><p>${esc(plain(a.human_handoff))}</p><p><b>Logging and QA.</b> ${esc(plain(a.logging_qa))}</p></div>`;
+  const segs = [['Telephony and network', 230, 1, 'Network'], ['Streaming speech recognition', P[1].budget_ms, 2, 'Speech'], ['Language model first token', P[2].budget_ms, 3, 'Model'], ['Voice first byte', P[3].budget_ms, 4, 'Voice']];
   const tot = segs.reduce((x, s) => x + s[1], 0);
-  $('#budget').innerHTML = `<div class="k" style="font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:8px">Latency budget per turn (targets)</div>
-    <div class="budget-bar" role="img" aria-label="Latency budget: ${segs.map(s => s[0] + ' ' + s[1] + ' ms').join(', ')}">${segs.map(s => `<div style="flex:${s[1]};background:${s[2]};${s[2] === '#a7b1f2' ? 'color:#17205c' : ''}" title="${esc(s[0])}: ${s[1]} ms">${esc(s[3])} ${s[1]}</div>`).join('')}</div>
-    <div class="budget-meta"><span>Sum of hop targets <b>${tot.toLocaleString()} ms</b> against <b>${lb.mouth_to_ear_target_ms.toLocaleString()} ms</b> mouth-to-ear target and <b>${lb.mouth_to_ear_upper_ms.toLocaleString()} ms</b> upper limit</span><span>${esc(lb.tool_call_rule)}</span></div>`;
+  $('#budget').innerHTML = `<p class="sys-card-label">Latency budget per turn (targets)</p>
+    <div class="vai-budget-bar" role="img" aria-label="Latency budget: ${segs.map(s => s[0] + ' ' + s[1] + ' ms').join(', ')}">${segs.map(s => `<div class="b${s[2]}" style="flex:${s[1]}" title="${esc(s[0])}: ${s[1]} ms">${esc(s[3])} ${s[1]}</div>`).join('')}</div>
+    <div class="vai-budget-meta"><span>Sum of hop targets <b class="sys-num">${tot.toLocaleString()} ms</b> against a <b class="sys-num">${lb.mouth_to_ear_target_ms.toLocaleString()} ms</b> mouth-to-ear target and a <b class="sys-num">${lb.mouth_to_ear_upper_ms.toLocaleString()} ms</b> upper limit</span><span>${esc(plain(lb.tool_call_rule))}</span></div>`;
   const cb = a.est_cost_breakdown_per_minute || {};
-  const nice = { telephony_inbound: 'Telephony (inbound)', recording: 'Recording', asr_deepgram_nova3: 'ASR · Deepgram Nova-3', llm_estimate: 'LLM (est.)', tts_estimate: 'TTS (est.)', orchestration_vapi: 'Orchestration · Vapi' };
-  $('#costrow').innerHTML = Object.entries(cb).map(([k, v]) => `<div><b>$${v}</b>${esc(nice[k] || k)} /min</div>`).join('') +
-    `<p style="grid-column:1/-1;font-size:12.5px;color:var(--ink2);margin-top:4px"><b class="mono">$${a.est_cost_per_minute_usd}/min</b> all-in <span class="est">est.</span> · ${esc(a.est_cost_note)} ${srcLink(a.source_url, 'Twilio latency guide')}</p>`;
+  const nice = { telephony_inbound: 'Telephony (inbound)', recording: 'Recording', asr_deepgram_nova3: 'Speech recognition · Deepgram Nova-3', llm_estimate: 'Language model', tts_estimate: 'Voice', orchestration_vapi: 'Orchestration · Vapi' };
+  $('#costrow').innerHTML = Object.entries(cb).map(([k, v]) => `<div><b class="sys-num">$${v}${/estimate/.test(k) ? EST : ''}</b><span>${esc(nice[k] || plain(k))} a minute</span></div>`).join('') +
+    `<p class="vai-cost-tot"><b class="sys-num">$${a.est_cost_per_minute_usd} a minute</b> all-in${EST} · ${esc(plain(a.est_cost_note))} ${srcLink(a.source_url, 'Twilio latency guide')}</p>`;
 
   const order = ['telephony', 'asr', 'llm', 'tts', 'orchestration'];
-  const LAYER = { telephony: 'Telephony', asr: 'ASR', llm: 'LLM', tts: 'TTS', orchestration: 'Orchestration' };
+  const LAYER = { telephony: 'Telephony', asr: 'Speech recognition', llm: 'Language model', tts: 'Voice', orchestration: 'Orchestration' };
   const st = items.filter(i => i.kind === 'asr_stack').sort((x, y) => order.indexOf(x.layer) - order.indexOf(y.layer));
-  $('#stack-table tbody').innerHTML = st.map(s => `<tr><td><span class="vtype">${esc(LAYER[s.layer] || s.layer)}</span></td><td><b>${esc(s.product)}</b><span class="s">${srcLink(s.source_url)}</span></td><td style="min-width:220px">${esc(s.accuracy_or_latency_note || '—')}</td><td style="min-width:200px">${esc(s.pricing_note || 'Not published')}</td><td style="min-width:260px">${esc(s.why_it_matters_for_a_dispatch_call)}</td></tr>`).join('');
+  const llmHop = P.find(h => h.tools) || { tools: [] };
+  $('#stack-table tbody').innerHTML = st.map(s => `<tr><td><span class="vai-tag">${esc(LAYER[s.layer] || cap(s.layer))}</span></td><td><b>${esc(s.product)}</b><span class="vai-s">${srcLink(s.source_url)}</span></td><td class="w-220">${esc(plain(s.accuracy_or_latency_note) || '—')}</td><td class="w-200">${esc(plain(s.pricing_note) || 'Not published')}</td><td class="w-260">${esc(plain(s.why_it_matters_for_a_dispatch_call))}</td></tr>`).join('') +
+    `<tr class="vai-tr-group"><th colspan="5" scope="rowgroup">Agent tools the language model can call</th></tr>` +
+    llmHop.tools.map(t => { const n = toolName(t); const [what, ret] = TOOL_INFO[n] || [plain(n), '']; return `<tr><td><span class="vai-tag">Tool</span></td><td><b>${esc(what)}</b></td><td colspan="2" class="w-220">${esc(ret || '—')}</td><td class="w-260">Called by the language model during the turn; slow calls get a spoken filler so the gap stays under 1.4 seconds.</td></tr>`; }).join('');
 }
 
 /* ── 7. Governance ────────────────────────────────────────────────────── */
 function governance(items) {
-  $('#gov').innerHTML = items.filter(i => i.kind === 'governance').map(g => `<article class="card gv">
-    <h3>${esc(g.topic)}</h3>
-    <div class="pol"><b>Portfolio policy</b>${esc(g.policy_for_portfolio)}</div>
-    <p>${esc(g.finding)}</p>
-    <div class="kpi-chips">${(g.company_applies || []).map(c => `<span><span class="dot" style="background:${CO[c]?.hex || '#999'};width:7px;height:7px;margin-right:4px"></span>${esc(CO[c]?.name || c)}</span>`).join('')}</div>
-    <p class="src">Source: ${srcLink(g.source_url)} · ${esc(g.retrieval_status)} · not legal advice</p></article>`).join('');
+  $('#gov').innerHTML = items.filter(i => i.kind === 'governance').map(g => `<article class="sys-card vai-gv">
+    <h3 class="sys-card-title">${esc(plain(g.topic))}</h3>
+    <div class="sys-note sys-note--good"><div><b>Portfolio policy.</b> ${esc(plain(g.policy_for_portfolio))}</div></div>
+    <p class="sys-card-body">${esc(plain(g.finding))}</p>
+    <div class="sys-chips">${(g.company_applies || []).filter(c => CO[c]).map(c => `<span class="sys-chip" data-co="${c}">${esc(CO[c].name)}</span>`).join('')}</div>
+    <p class="sys-src"><b>Source:</b> ${srcLink(g.source_url)} · ${esc(RETRIEVAL[g.retrieval_status] || 'source page')}</p></article>`).join('');
 }
 
 /* ── 8. Rollout ───────────────────────────────────────────────────────── */
 const WEEKS = [
-  ['Calibrate & choose', ['Pull ServiceTitan call tracking (missed and abandoned by hour), booking-rate reports and the membership export', 'Replace every model assumption on this page', 'Consent audit of the member list', 'Vendor bake-off: ServiceTitan Voice Agent vs Avoca'], 'Baseline signed off by PP ops and finance'],
-  ['Build & test', ['Brand personas for One Hour, Ben Franklin and Mister Sparky', 'Safety screen, fee wording and disclosures scripted', 'Tools wired: lookup, capacity, booking, SMS, paging', 'A 100-call test suite: gas smell, CO alarm, Spanish speakers, angry callers'], '100% disclosures and zero wrong safety instructions'],
-  ['After-hours line live', ['Shadow mode for 3 nights, then live on one brand, then all brands', 'On-call manager warm transfer within 60 s', 'Daily transcript review'], 'After-hours booking rate at or above the answering-service baseline; escalations ≤20%'],
-  ['Overflow & speed-to-lead', ['Daytime overflow on ring 3', 'NWS warnings switch on storm triage', 'Web form and LSA leads called back in under 60 s'], 'Abandon rate down with CSR occupancy steady'],
-  ['Consented outbound', ['Day-before confirmations and ETA line', 'Membership renewal and fall tune-up campaign, only to members with consent on file', 'Do-not-call honored on first request'], 'Opt-outs and complaints under the agreed threshold'],
-  ['Spanish line & PRG readout', ['Spanish line for Lancaster City', 'Automated scoring of 100% of transcripts plus human review of a weighted 5% sample', 'Scorecard to the PRG', 'Go or no-go for Horvath NJ and the CET emergency line'], 'Booked revenue per inbound call above baseline'],
+  ['Calibrate and choose', ['Pull ServiceTitan call tracking (missed and abandoned by hour), booking-rate reports and the membership export', 'Replace every model assumption on this page', 'Clean the member contact list', 'Vendor bake-off: ServiceTitan Voice Agent vs Avoca'], 'Baseline signed off by Punctual Pros operations and finance'],
+  ['Build and test', ['Brand personas for One Hour, Ben Franklin and Mister Sparky', 'Safety screen, fee wording and greeting scripted', 'Tools wired: lookup, capacity, booking, SMS, paging', 'A 100-call test suite: gas smell, CO alarm, Spanish speakers, angry callers'], 'Greeting correct on 100% of test calls and zero wrong safety instructions'],
+  ['After-hours line live', ['Shadow mode for three nights, then live on one brand, then all brands', 'Warm transfer to the on-call manager within 60 seconds', 'Daily transcript review'], 'After-hours booking rate at or above the answering-service baseline; escalations at or under 20%'],
+  ['Overflow and speed-to-lead', ['Daytime overflow on ring three', 'National Weather Service warnings switch on storm triage', 'Web-form and Local Services leads called back in under 60 seconds'], 'Abandon rate down with rep occupancy steady'],
+  ['Member outbound', ['Day-before confirmations and ETA line', 'Membership renewal and fall tune-up campaign for members who asked for reminders', 'Anyone who asks to stop is taken off the list at once'], 'Stop requests and complaints under the agreed threshold'],
+  ['Spanish line and readout', ['Spanish line for Lancaster City', 'Automated scoring of 100% of transcripts plus human review of a weighted 5% sample', 'Scorecard to the Portfolio Resource Group', 'Go or no-go for Horvath NJ and the CET emergency line'], 'Booked revenue per inbound call above baseline'],
 ];
 function rollout() {
-  $('#weeks').innerHTML = WEEKS.map(([h, list, gate], i) => `<article class="card wk"><div class="wk-n">WEEK ${i + 1}</div><div class="prog" aria-hidden="true"><i style="width:${(i + 1) / 6 * 100}%"></i></div><h3>${esc(h)}</h3><ul>${list.map(x => `<li>${esc(x)}</li>`).join('')}</ul><div class="gate"><b>Gate</b>${esc(gate)}</div></article>`).join('');
+  $('#weeks').innerHTML = WEEKS.map(([h, list, gate], i) => `<article class="sys-card vai-wk"><span class="sys-card-label">Week ${i + 1}</span><div class="vai-prog" aria-hidden="true"><i style="width:${(i + 1) / 6 * 100}%"></i></div><h3 class="sys-card-title">${esc(h)}</h3><ul class="sys-card-list">${list.map(x => `<li>${esc(x)}</li>`).join('')}</ul><p class="vai-gate"><b>Gate</b>${esc(gate)}</p></article>`).join('');
 }
 
 /* ── Chat FAQ ─────────────────────────────────────────────────────────── */
@@ -430,28 +470,23 @@ function faq(meta, items) {
   const m = meta.pp_revenue_model; const a = items.find(i => i.kind === 'architecture'); const s = m.sensitivity;
   const ucs = items.filter(i => i.kind === 'use_case');
   return [
-    { q: 'How much revenue does 24/7 voice AI recover?', href: '#calculator', a: `<p>For Punctual Pros the conservative model recovers about <b>${money(m.recovered_revenue_annual_usd)} a year</b> (est.) from calls that go unanswered today. Consented outbound renewals add <b>${money(m.outbound_renewal_uplift_usd)}</b>, for a total of <b>${money(m.total_est_usd)}</b>, or about ${(m.share_of_pp_revenue * 100).toFixed(1)}% of revenue.</p><p><small>${esc(m.recovered_revenue_formula)}</small></p><p>Sensitivity: at Invoca's 35% miss rate it is ${money(s['missed_share_0.35_invoca_industry'])}; at ServiceTitan's 70% AI booking rate, ${money(s['booking_0.70_servicetitan_ai'])}; if every booking is incremental, ${money(s['incrementality_1.0'])}. Try your own inputs in the <a href="#calculator">calculator</a>.</p>` },
-    { q: 'Play the after-hours no-heat call', href: '#play-noheat', a: `<p>It is 2:10 a.m. in Lititz, PA, the furnace has quit and there is a baby in the house. The One Hour AI dispatcher discloses that it is an AI and that the call is recorded, runs the gas and CO safety screen, finds the customer in ServiceTitan, marks the job priority and books the on-call technician for 3:15–4:15 a.m. in about <b>1:35</b>.</p><p><a href="#play-noheat">▶ Play the call</a> (your browser reads the agent's lines aloud).</p>` },
+    { q: 'How much revenue does 24/7 voice AI recover?', href: '#calculator', a: `<p>For Punctual Pros the conservative model recovers about <b>${money(m.recovered_revenue_annual_usd)} a year</b> (est.) from calls that go unanswered today. Consented outbound renewals add <b>${money(m.outbound_renewal_uplift_usd)}</b>, for a total of <b>${money(m.total_est_usd)}</b>, or about ${(m.share_of_pp_revenue * 100).toFixed(1)}% of revenue.</p><p><small>${esc(plain(m.recovered_revenue_formula))}</small></p><p>Sensitivity: at Invoca's 35% miss rate it is ${money(s['missed_share_0.35_invoca_industry'])}; at ServiceTitan's 70% AI booking rate, ${money(s['booking_0.70_servicetitan_ai'])}; if every booking is incremental, ${money(s['incrementality_1.0'])}. Try your own inputs in the <a href="#calculator">calculator</a>.</p>` },
+    { q: 'Play the after-hours no-heat call', href: '#play-noheat', a: `<p>It is 2:10 a.m. in Lititz, PA, the furnace has quit and there is a baby in the house. The One Hour AI dispatcher says it is the virtual assistant, runs the gas and CO safety screen, finds the customer in ServiceTitan, marks the job priority and books the on-call technician for 3:15–4:15 a.m. in about <b>1:35</b>.</p><p><a href="#play-noheat">▶ Play the call</a> (your browser reads the agent's lines aloud).</p>` },
     { q: 'Which vendor should Punctual Pros pick?', href: '#vendors', a: `<p><b>Pilot on a trades-native product, then own the engine.</b></p><ul><li><b>Weeks 1–6:</b> a bake-off between ServiceTitan's Voice Agent (native dispatch and capacity, 70% booking reported) and Avoca (ServiceTitan-certified, H.L. Bowman runs 70% of its calls through it) on one brand's after-hours line.</li><li><b>Months 3–12:</b> a shared portfolio engine built on Twilio, Deepgram, Claude and ElevenLabs or Cartesia via Vapi, Retell or LiveKit, at about $${a?.est_cost_per_minute_usd ?? 0.12} a minute, which is ~$0.46 for a 4-minute call against $1.67–$3 a call bought.</li></ul><p><small>Analyst recommendation; vendor outcomes are self-reported.</small></p>` },
-    { q: 'What does a voice AI call cost per minute?', href: '#playbook', a: `<p>A self-built cascaded stack runs about <b>$${a?.est_cost_per_minute_usd}/min</b> (est.): telephony $0.0085, recording $0.0025, Deepgram ASR $0.0048, LLM ~$0.03, TTS ~$0.02 and Vapi orchestration $0.05. ${esc(a?.est_cost_note || '')}</p>` },
-    { q: 'Is AI calling legal under the TCPA? Do we need consent?', href: '#governance', a: `<p>Since February 2024 the FCC treats AI voices as "artificial" under the TCPA. Outbound AI calls therefore need prior express consent, and written consent if the call is telemarketing. Inbound answering is not a TCPA call by Punctual Pros. Policy: call only members with documented consent, log the consent source, and honor opt-outs immediately. Not legal advice.</p>` },
-    { q: 'Do we need consent to record calls in Pennsylvania, New Jersey or Massachusetts?', href: '#governance', a: `<p>Pennsylvania requires consent from all parties, and Massachusetts bars secret recording. New Jersey requires only one party's consent. The portfolio applies the strictest rule everywhere, so every call opens with a recording notice in the greeting.</p>` },
-    { q: 'Must the agent disclose it is an AI?', href: '#governance', a: `<p>Yes. The agent says it is the virtual assistant in its first sentence, answers "are you a robot?" truthfully every time and offers a person. That goes beyond current US rules (California AB 2905, Utah SB 226 and the pending FCC NPRM).</p>` },
+    { q: 'What does a voice AI call cost per minute?', href: '#pipeline', a: `<p>A self-built cascaded stack runs about <b>$${a?.est_cost_per_minute_usd}/min</b> (est.): telephony $0.0085, recording $0.0025, Deepgram ASR $0.0048, LLM ~$0.03, TTS ~$0.02 and Vapi orchestration $0.05. ${esc(plain(a?.est_cost_note || ''))}</p>` },
     { q: 'What is the 6-week rollout?', href: '#rollout', a: `<ol>${WEEKS.map(([h, , g]) => `<li><b>${esc(h)}</b> (gate: ${esc(g)})</li>`).join('')}</ol>` },
-    { q: 'How fast does a voice agent need to respond? Latency budget', href: '#playbook', a: `<p>People leave about 200 ms between turns. The budget per turn is telephony ~230 ms, streaming ASR 350 ms, LLM first token 375 ms and TTS 100 ms, against a 1,115 ms mouth-to-ear target and a 1,400 ms upper limit. Tool calls slower than ~700 ms get a spoken filler.</p>` },
-    { q: 'What happens when the caller wants a human? Handoff and escalation', href: '#playbook', a: `<p>${esc(a?.human_handoff || '')}</p>` },
-    { q: 'What is the EliseAI playbook for home services?', href: '#playbook', a: `<p>EliseAI (NYC) runs one AI assistant across voice, SMS, email and chat for about one in six US apartments. It raised $350M at a $4B valuation in September 2026. The lesson for Punctual Pros is to run the same assistant on every channel at every hour, book into live capacity, and measure booked jobs and after-hours share rather than call-center savings.</p>` },
-    { q: 'What is the missed-call revenue clock?', href: '#top', a: `<p>The hero clock adds about <b>$${m.missed_revenue_counter.per_second_usd}</b> a second (${usd(m.missed_revenue_counter.annual_usd)} a year ÷ seconds in a year), counted from January 1. That is about ${m.missed_revenue_counter.missed_calls_per_day} missed calls a day. It is a modelled estimate for Punctual Pros, not a measured loss.</p>` },
-    { q: 'Which other portfolio companies can use voice AI?', href: '#usecases', a: `<ul>${ucs.filter(u => u.company !== 'pp').map(u => `<li><b>${esc(CO[u.company].name)}</b>: ${esc(u.name)} (${money(u.est_annual_value_usd)}/yr est.)</li>`).join('')}</ul>` },
+    { q: 'How fast does a voice agent need to respond? Latency budget', href: '#pipeline', a: `<p>People leave about 200 ms between turns. The budget per turn is telephony ~230 ms, streaming ASR 350 ms, LLM first token 375 ms and TTS 100 ms, against a 1,115 ms mouth-to-ear target and a 1,400 ms upper limit. Tool calls slower than ~700 ms get a spoken filler.</p>` },
+    { q: 'What happens when the caller wants a human? Handoff and escalation', href: '#pipeline', a: `<p>${esc(plain(a?.human_handoff || ''))}</p>` },
+    { q: 'How does the EliseAI model apply to home services?', href: '#pipeline', a: `<p>EliseAI (New York) runs one AI assistant across voice, SMS, email and chat for about one in six US apartments. It raised $350M at a $4B valuation in September 2026. The lesson for Punctual Pros is to run the same assistant on every channel at every hour, book into live capacity, and measure booked jobs and after-hours share rather than call-center savings.</p>` },
+    { q: 'What is the missed-call revenue clock?', href: '#main', a: `<p>The hero clock adds about <b>$${m.missed_revenue_counter.per_second_usd}</b> a second (${usd(m.missed_revenue_counter.annual_usd)} a year ÷ seconds in a year), counted from January 1. That is about ${m.missed_revenue_counter.missed_calls_per_day} missed calls a day. It is a modelled estimate for Punctual Pros, not a measured loss.</p>` },
+    { q: 'Which other portfolio companies can use voice AI?', href: '#usecases', a: `<ul>${ucs.filter(u => u.company !== 'pp').map(u => `<li><b>${esc(CO[u.company].name)}</b>: ${esc(plain(u.name))} (${money(u.est_annual_value_usd)} a year, est.)</li>`).join('')}</ul>` },
   ];
 }
 
 /* ── Boot ─────────────────────────────────────────────────────────────── */
 export async function boot() {
-  const ban = $('#concept');
-  if (store.get('vai-banner') === 'x') ban.remove(); else $('.concept-x', ban).onclick = () => { ban.remove(); store.set('vai-banner', 'x'); };
   const d = await Data.research('research/voice_ai');
-  if (!d?.meta) { $('#kpis').innerHTML = '<p class="muted">The voice AI dataset could not be loaded.</p>'; return { faq: [] }; }
+  if (!d?.meta) { $('#kpis').innerHTML = '<p class="sys-muted">The voice AI research could not be loaded.</p>'; return { faq: [] }; }
   const { meta, items } = d;
   const run = (name, fn) => { try { fn(); } catch (e) { console.warn(`voice-ai: ${name} failed`, e); } };
   run('hero', () => hero(meta));
@@ -463,6 +498,6 @@ export async function boot() {
   run('playbook', () => playbook(items));
   run('governance', () => governance(items));
   run('rollout', rollout);
-  $('#caveats').innerHTML = '<li style="list-style:none;margin-left:-18px"><b>Caveats from the dataset</b></li>' + (meta.caveats || []).map(c => `<li>${esc(c)}</li>`).join('');
+  $('#caveats').innerHTML = (meta.caveats || []).filter(c => !broken(c)).map(c => `<li>${esc(plain(c))}</li>`).join('');
   return { faq: faq(meta, items) };
 }

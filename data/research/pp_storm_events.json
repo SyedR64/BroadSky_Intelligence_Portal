@@ -3,7 +3,7 @@
   "dataset": "Punctual Pros territory — NOAA NCEI Storm Events history (Central PA + SE PA + Jersey Shore), 2019–2026 YTD",
   "generated": "2026-09-24",
   "portfolio_company": "Punctual Pros (Broad Sky Partners) incl. Horvath Home Services (Ocean/Monmouth NJ)",
-  "method": "Downloaded NOAA NCEI Storm Events Database bulk \"details\" CSVs (v1.0) for data years 2019–2026 from the NCEI FTP mirror and parsed them with python3. Rows were filtered to STATE in (PENNSYLVANIA, NEW JERSEY) and to the 15 territory counties; NWS forecast-zone names (CZ_TYPE=Z, e.g. \"EASTERN MONMOUTH\", \"WESTERN OCEAN\", \"EASTERN CHESTER\") were mapped to their parent county by stripping directional prefixes. Items aggregate one row per (county, state, year, month, event_type); damage strings (K/M/B) were converted to USD; injuries and deaths are direct+indirect. Seasonality uses full years 2019–2025 only; 2026 is partial (file c20260918, NCEI lags ~2–4 months).",
+  "method": "Downloaded NOAA NCEI Storm Events Database bulk \"details\" CSVs (v1.0) for data years 2019–2026 from the NCEI FTP mirror and parsed them with python3. Rows were filtered to STATE in (PENNSYLVANIA, NEW JERSEY) and to the 15 territory counties; NWS forecast-zone names (zone type Z, e.g. \"EASTERN MONMOUTH\", \"WESTERN OCEAN\", \"EASTERN CHESTER\") were mapped to their parent county by stripping directional prefixes. Items aggregate one row per (county, state, year, month, event type); damage strings (K/M/B) were converted to USD; injuries and deaths are direct+indirect. Seasonality uses full years 2019–2025 only; 2026 is partial (file c20260918, NCEI lags ~2–4 months).",
   "territory_counties": {
    "PA_core": [
     "Adams",
@@ -60,15 +60,15 @@
   ],
   "caveats": [
    "Storm Events is an NWS-reported dataset of significant/damaging weather; it is not a complete record of every hot or cold day. Temperature-driven HVAC demand should be modeled from daily station data (see pp_demand_model.json), not event counts alone.",
-   "Zone-based event types (Heat, Excessive Heat, Winter Storm, Winter Weather, Cold/Wind Chill, High Wind, Strong Wind, Coastal Flood, Tropical Storm) are logged per NWS forecast zone; counties split into two zones (Chester, Montgomery, Monmouth, Ocean, Atlantic, Burlington) can show two rows for one meteorological event — use episode_count to de-duplicate.",
+   "Zone-based event types (Heat, Excessive Heat, Winter Storm, Winter Weather, Cold/Wind Chill, High Wind, Strong Wind, Coastal Flood, Tropical Storm) are logged per NWS forecast zone; counties split into two zones (Chester, Montgomery, Monmouth, Ocean, Atlantic, Burlington) can show two rows for one meteorological event — use episode count to de-duplicate.",
    "Property damage estimates are NWS/partner estimates, frequently 0 or missing for heat/cold/winter events; totals understate economic impact.",
    "2026 data are partial (through the NCEI file generated 2026-09-18, typically covering events ~through May–June 2026).",
    "NJ Cumberland County and PA Bucks County were excluded (not in the specified territory) even though their names match or appear in zone examples.",
-   "Companion file /Users/syed/BSP/data/research/pp_demand_model.json holds the weather-to-service-call demand model, NWS alert playbook, NWS zone/UGC/FIPS codes and weather hub points.",
-   "Verified 2026-09-24: sampled 30, confirmed 30, removed 0 (independent re-download of all 8 NCEI bulk CSVs and full recomputation reproduced all 1,575 rows exactly — event/episode counts, damage, injuries/deaths, magnitudes, zone/county splits, sample event IDs; all 40 notable_events matched source rows)"
+   "Companion file /Users/syed/BSP/data/research/pp_demand_model.json holds the weather-to-service-call demand model, NWS alert response plan, NWS zone/UGC/FIPS codes and weather hub points.",
+   "Verified 2026-09-24: sampled 30, confirmed 30, removed 0 (independent re-download of all 8 NCEI bulk CSVs and full recomputation reproduced all 1,575 rows exactly — event/episode counts, damage, injuries/deaths, magnitudes, zone/county splits, sample event IDs; all 40 notable events matched source rows)"
   ],
   "item_count": 1575,
-  "item_grain": "county x state x year x month x event_type",
+  "item_grain": "county x state x year x month x event type",
   "notable_events": [
    {
     "event_id": 981414,

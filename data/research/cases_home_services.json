@@ -1,0 +1,1989 @@
+{
+ "meta": {
+  "dataset": "cases_home_services",
+  "title": "How sponsors built residential HVAC/plumbing/electrical companies: chronological case studies for Punctual Pros",
+  "generated": "2026-10-06",
+  "method": "Chronologies were rebuilt from sponsor and company press releases (Investcorp, Leonard Green, Trivest, OMERS, Odyssey, CenterOak via Private Equity Wire, Morgan Stanley, Goldman Sachs, Apollo, Alpine, Altas, Apax, BCI, Charlesbank, GI Partners, Sun Capital), trade press (ACHR News, Contracting Business, PHCPPros, Franchise Times, Franchising.com, OCBJ, Philadelphia Inquirer, PE Hub, SFNet, Mergermarket), SEC filings (Chemed 10-K FY2025 and 1996 Schedule 14D-9; Frontdoor 10-K FY2025 and XBRL; ServiceMaster 8-K; BDC 10-Q schedules of investments) and vendor case studies (ServiceTitan, Rilla). Pages were fetched 2026-10-06; BDC loan marks were reused from data/research/rival_filings.json (read 2026-09-24). Cases are sorted by the entry date of the first sponsor in each chain, and timelines are chronological. Unknown values are null; derived numbers are labelled 'derived' in the KPI unit or data notes.",
+  "caveats": [
+   "The prompt suggested Champions Group was a Bregal Sagemount company; sources show the chain was CenterOak Partners -> Odyssey Investment Partners (Jan 2021) -> Blackstone (Feb 2026). Horizon Services was Sun Capital (2017) -> New Mountain Capital (2019), not Bregal. Service Experts went Lennox -> American Capital (2013) -> Enercare (2016) -> Brookfield Infrastructure (2018). ARS went CI Capital -> Charlesbank (2014) -> GI Partners majority (2020). Heartland went North Branch (2017) -> The Jordan Company (2020).",
+   "Almost no sponsor discloses entry/exit EV, EBITDA or MOIC. Reported valuations (Champions ~$2.5B / ~18.5x; Sila ~$1.7B / ~17x; Apex ~$10B EV / ~$500M EBITDA; TurnPoint ~$1B) are press estimates citing people familiar with the deals, not confirmed terms.",
+   "Apex's ~$500M EBITDA and ~$2B / >20% stake were read from a search-index excerpt of Modern Distribution Management, because a direct fetch returned 403; the official Apollo release discloses revenue ($3B+) but no EBITDA or price.",
+   "TurnPoint's add-on count under Trivest differs between Trivest's own pages (16 vs 18). The ~$1B valuation and the post-2020 claims (21 acquisitions in 2021, EBITDA doubled) come from a secondary Substack analysis.",
+   "No Moody's/KBRA reports with revenue/EBITDA for Wrench or Apex were publicly retrievable. Credit evidence is limited to BDC schedules of investments and trade-press refinancing reports.",
+   "Roto-Rooter (Chemed) and Frontdoor are public benchmarks, not sponsor cases; Frontdoor subcontracts the work, so its margins are an upper bound for an operator like Punctual Pros.",
+   "Vendor case studies (ServiceTitan on Any Hour; Rilla on TurnPoint's Total Comfort) are selected customers, not controlled studies.",
+   "'what Broad Sky can copy' text is analyst recommendation, not company guidance. Punctual Pros metrics (members, close rate, booked-online share) are not public and must come from PP's ServiceTitan."
+  ],
+  "item_count": 17,
+  "status_counts": {
+   "sold": 9,
+   "held": 4,
+   "recap": 3,
+   "ipo": 1
+  },
+  "narrative": "Across 17 companies, the sponsors that sold for more did the same few things in roughly the same order. First, hire a professional CEO and integrator early (Trivest's Kurt Bratton at TurnPoint, Investcorp's Ken Haines at Wrench, Alpine's AJ Brown at Apex). Second, add one company roughly every quarter, then accelerate (Apex did 46 add-ons in 2023 and 60 in 2025). Third, put every brand on one system (CenterOak's single IT system at Service Champions; ServiceTitan at Wrench, Any Hour and across Authority Brands since 2024). Fourth, build recurring membership revenue: Champions went from ~40,000 to ~150,000 members (about 83 per technician) and sold to Blackstone at a reported ~18.5x, and Frontdoor keeps 84% of customers on auto-pay. Fifth, own the technician pipeline (Horizon's training center, Apex's academies and 8,000+ technicians supported, Sila's 2026 academy purchase). Chains like Alpine -> Investcorp -> LGP (Wrench), Dubin Clark -> MSCP -> Goldman (Sila) and CenterOak -> Odyssey -> Blackstone (Champions) show that each buyer paid for a bigger, more digital, more recurring portfolio company. The failures are just as instructive: Horizon (lender-owned by 2026), Any Hour (PIK, marked 89) and TurnPoint (PIK, CEO change) grew brand counts faster than they integrated them. For Punctual Pros the sequence is: integrator COO, a contiguous add-on cadence (Horvath first), ServiceTitan-based reporting and online booking, members-per-technician as the north-star metric, and a Lancaster academy, with moderate leverage."
+ },
+ "items": [
+  {
+   "id": "case-rr",
+   "kind": "case",
+   "company": "Roto-Rooter (Chemed Corporation segment)",
+   "sector": "residential_home_services",
+   "sponsor": "Chemed Corporation (public strategic owner; benchmark, not a PE case)",
+   "co_investors": [],
+   "entry_date": "1996-08-27",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": 179772000,
+   "entry_ebitda_usd": null,
+   "entry_locations": null,
+   "entry_technicians_or_staff": null,
+   "hold_status": "held",
+   "exit_date": null,
+   "exit_buyer": null,
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": 899877000,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "current_owner": "Chemed Corporation (NYSE: CHE)",
+   "timeline": [
+    {
+     "date": "1996-08-27",
+     "event_type": "other",
+     "event": "Chemed (already owner of ~58%) tenders for the ~42% of Roto-Rooter Inc. it did not own at $41.00 per share; the price was 17.8x Roto-Rooter's estimated 1996 earnings. Roto-Rooter was then the largest US sewer/drain cleaner, running company-owned and franchised operations (first franchise 1936).",
+     "metric": "FY1995 revenue $179.8M; 17.8x est. 1996 earnings (P/E, not EBITDA)",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/755548/0000950152-96-004346.txt"
+    },
+    {
+     "date": "2019",
+     "event_type": "add_on",
+     "event": "Roto-Rooter buys back franchise territories; $59.2M of the 2019 purchase price was allocated to reacquired franchise rights.",
+     "metric": "$59.2M reacquired franchise rights (2019 acquisitions)",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/19584/000156276226000020/che-20251231x10k.htm"
+    },
+    {
+     "date": "2023",
+     "event_type": "add_on",
+     "event": "Continues converting franchises to company-owned branches: South Carolina ($0.3M) and Georgia ($3.7M).",
+     "metric": "2 franchise buy-ins",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/19584/000156276226000020/che-20251231x10k.htm"
+    },
+    {
+     "date": "2024",
+     "event_type": "add_on",
+     "event": "Buys franchises in New Jersey ($5.8M), Texas ($1.5M) and Kentucky ($5.1M).",
+     "metric": "3 franchise buy-ins, $12.4M",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/19584/000156276226000020/che-20251231x10k.htm"
+    },
+    {
+     "date": "2025-12-31",
+     "event_type": "kpi_disclosure",
+     "event": "FY2025 Roto-Rooter net revenue $899.9M (FY2024 $900.3M; FY2023 $949.4M). Chemed advertising expense (mostly pay-per-click and cost-per-call internet leads) rose to $83.1M from $72.2M in 2023. Implicit price concessions/credit memos rose 41.8% to $38.0M. 2025 plumbing growth came from a 3.6% higher job count offset by a 2.9% fall in price/mix.",
+     "metric": "net revenue $899.9M; ad spend $83.1M",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/19584/000156276226000020/che-20251231x10k.htm"
+    },
+    {
+     "date": "2026-02-25",
+     "event_type": "kpi_disclosure",
+     "event": "Q4 2025: Roto-Rooter revenue $220.6M (-3.7%), Adjusted EBITDA $47.5M (-21.1%), margin 21.5%; residential revenue -3.1%, commercial +1.6%. 2026 guidance: revenue +3.0-3.5%, Adjusted EBITDA margin 22.5-23.0%.",
+     "metric": "Q4 2025 Adj. EBITDA margin 21.5%",
+     "source_url": "https://finviz.com/news/322470/chemed-reports-fourth-quarter-2025-results"
+    }
+   ],
+   "levers_used": [
+    "add_on (franchise buy-ins)",
+    "marketing (pay-per-click / cost-per-call lead buying)",
+    "brand",
+    "pricing"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Revenue",
+     "before": 179772000,
+     "after": 899877000,
+     "unit": "USD",
+     "period": "FY1995 -> FY2025 (FY1995 total company; FY2025 segment net revenue)",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/19584/000156276226000020/che-20251231x10k.htm"
+    },
+    {
+     "kpi": "Advertising expense (Chemed consolidated, mostly Roto-Rooter)",
+     "before": 72200000,
+     "after": 83100000,
+     "unit": "USD",
+     "period": "FY2023 -> FY2025",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/19584/000156276226000020/che-20251231x10k.htm"
+    },
+    {
+     "kpi": "Segment net revenue",
+     "before": 949352000,
+     "after": 899877000,
+     "unit": "USD",
+     "period": "FY2023 -> FY2025",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/19584/000156276226000020/che-20251231x10k.htm"
+    }
+   ],
+   "what_broad_sky_can_copy": "Roto-Rooter has spent 30 years buying back its own franchisees, so for Punctual Pros the parallel move is buying neighbouring One Hour, Ben Franklin and Mister Sparky territories inside the Authority system, as it did with Horvath. Roto-Rooter's 2023-2025 numbers are also a warning: Chemed's ad spend rose about $11M while segment revenue fell about $50M and price concessions jumped 42%, so PP should track cost per booked job and not just lead volume. That argues for owned demand (memberships, reviews, repeat customers) over rented demand (pay-per-click and cost-per-call leads).",
+   "sources": [
+    "https://www.sec.gov/Archives/edgar/data/755548/0000950152-96-004346.txt",
+    "https://www.sec.gov/Archives/edgar/data/19584/000156276226000020/che-20251231x10k.htm",
+    "https://finviz.com/news/322470/chemed-reports-fourth-quarter-2025-results"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "Public benchmark, not a sponsor case. FY2025 segment Adjusted EBITDA was not read directly from the 10-K, so exit EBITDA is null. FY1995 revenue is Roto-Rooter Inc. consolidated (it included equipment sales to franchisees)."
+  },
+  {
+   "id": "case-se",
+   "kind": "case",
+   "company": "Service Experts Heating & Air Conditioning",
+   "sector": "residential_home_services",
+   "sponsor": "American Capital (2013-2016) -> Enercare (2016-2018) -> Brookfield Infrastructure (2018-)",
+   "co_investors": [],
+   "entry_date": "2013-03-22",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": "100+ branches (US & Canada)",
+   "entry_technicians_or_staff": null,
+   "hold_status": "sold",
+   "exit_date": "2016-05-11",
+   "exit_buyer": "Enercare Inc. (later acquired by Brookfield Infrastructure, 2018)",
+   "exit_ev_usd": 340750000,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "current_owner": "Brookfield Infrastructure",
+   "timeline": [
+    {
+     "date": "2013-03-22",
+     "event_type": "leadership",
+     "event": "Lennox divests Service Experts to American Capital. Scott Boxer returns as CEO with ~10% ownership. The plan: a 'leaner, flatter' organisation, a restored legacy local brand name on each branch instead of one uniform brand, and a target of 6-7% annual organic growth.",
+     "metric": "100+ branches; CEO owns ~10%",
+     "source_url": "https://achrnews.com/articles/123085-service-experts-welcomes-new-ownership"
+    },
+    {
+     "date": "2013-03-22",
+     "event_type": "brand",
+     "event": "Moves from one uniform 'Service Experts' name back to co-branding branches with their 40-60-year-old legacy local names.",
+     "metric": "legacy co-branding restored",
+     "source_url": "https://achrnews.com/articles/123085-service-experts-welcomes-new-ownership"
+    },
+    {
+     "date": "2016-03-08",
+     "event_type": "exit",
+     "event": "Enercare agrees to buy Service Experts (SEHAC Holdings) for US$340.75M. Service Experts then had 90 locations in 29 US states and 3 Canadian provinces.",
+     "metric": "EV US$340.75M; 90 locations",
+     "source_url": "https://achrnews.com/articles/131978-service-experts-to-be-acquired-by-enercare"
+    },
+    {
+     "date": "2016-05-11",
+     "event_type": "exit",
+     "event": "Enercare completes the acquisition.",
+     "metric": "closed",
+     "source_url": "https://www.torys.com/en/work/2016/03/9c5c9b02-b2d3-413d-8f92-e8ae78c7abbd"
+    },
+    {
+     "date": "2026-08-10",
+     "event_type": "kpi_disclosure",
+     "event": "Under Brookfield, Service Experts (nearly US$1B revenue, 75+ corporate locations, 31 states) switches its main growth engine from M&A to franchising: 5 franchisees across 16 territories so far, ~15 expected by year-end across ~30 territories, then ~20 new franchisees a year. More than 50% of installs go through the 'Advantage' equipment-leasing subscription.",
+     "metric": "revenue ~US$1B; >50% of installs on leasing",
+     "source_url": "https://ionanalytics.com/insights/mergermarket/brookfield-backed-service-experts-shifts-to-franchise-strategy-as-growth-driver-after-years-of-ma-executives/"
+    }
+   ],
+   "levers_used": [
+    "leadership",
+    "brand",
+    "recap",
+    "membership_program (Advantage equipment-leasing subscription)",
+    "franchising"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Locations",
+     "before": "100+",
+     "after": "75+ corporate (plus franchise territories)",
+     "unit": "count",
+     "period": "2013 -> 2026",
+     "source_url": "https://ionanalytics.com/insights/mergermarket/brookfield-backed-service-experts-shifts-to-franchise-strategy-as-growth-driver-after-years-of-ma-executives/"
+    },
+    {
+     "kpi": "Share of installs on recurring leasing (Advantage)",
+     "before": null,
+     "after": ">50%",
+     "unit": "% of installs",
+     "period": "as of 2026-08",
+     "source_url": "https://ionanalytics.com/insights/mergermarket/brookfield-backed-service-experts-shifts-to-franchise-strategy-as-growth-driver-after-years-of-ma-executives/"
+    }
+   ],
+   "what_broad_sky_can_copy": "Service Experts doubled down on local brand equity (restoring legacy names) while centralising the back office, and that is the model for keeping Horvath's NJ name alive under Punctual Pros. Its leasing program, which carries over half of installs, shows that a financed or subscription offer can turn one-off replacement sales into recurring revenue that buyers value; PP should test an equipment-as-a-service offer on Lancaster replacements. Brookfield's shift from M&A to franchising also confirms that the franchise model PP already sits inside is scalable.",
+   "sources": [
+    "https://achrnews.com/articles/123085-service-experts-welcomes-new-ownership",
+    "https://achrnews.com/articles/131978-service-experts-to-be-acquired-by-enercare",
+    "https://www.torys.com/en/work/2016/03/9c5c9b02-b2d3-413d-8f92-e8ae78c7abbd",
+    "https://ionanalytics.com/insights/mergermarket/brookfield-backed-service-experts-shifts-to-franchise-strategy-as-growth-driver-after-years-of-ma-executives/"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "American Capital's 2013 purchase price and Service Experts' revenue at either transaction were not disclosed in the sources read. The 2018 Brookfield-Enercare deal is a parent-level transaction; its date and terms were not re-verified in this pass. The 2026 revenue (~US$1B) and franchise figures come from a Mergermarket interview."
+  },
+  {
+   "id": "case-nb",
+   "kind": "case",
+   "company": "Neighborly (fka Dwyer Group) - Mr. Rooter, Aire Serv, Mr. Electric and 25+ other brands",
+   "sector": "franchisor",
+   "sponsor": "The Riverside Company (2014-2018) -> Harvest Partners (2018-2021) -> KKR (2021-)",
+   "co_investors": [],
+   "entry_date": "2014",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": null,
+   "entry_technicians_or_staff": null,
+   "hold_status": "sold",
+   "exit_date": "2018-06-04",
+   "exit_buyer": "Harvest Partners (then KKR in 2021)",
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": "Riverside 2014-2018: enterprise value 'tripled' (per Dwyer Group release)",
+   "current_owner": "KKR",
+   "timeline": [
+    {
+     "date": "2014",
+     "event_type": "other",
+     "event": "Riverside reacquires Dwyer Group (it had first taken Dwyer private in 2003).",
+     "metric": "second Riverside hold",
+     "source_url": "https://www.kwtx.com/2021/07/08/neighborly-wacos-former-dwyer-group-changes-hands-again"
+    },
+    {
+     "date": "2014-2018",
+     "event_type": "add_on",
+     "event": "During Riverside's second hold: 11 add-on acquisitions, corporate team up 35%, enterprise value tripled.",
+     "metric": "11 add-ons; EV ~3x",
+     "source_url": "https://www.franchising.com/news/20180604_dwyer_groupreg_acquired_by_harvest_partners.html"
+    },
+    {
+     "date": "2018-06-04",
+     "event_type": "exit",
+     "event": "Harvest Partners buys Dwyer Group (operating as Neighborly), the fourth and largest PE deal in its history.",
+     "metric": "20 brands; 3,200+ franchisees; ~$1.7B system revenue",
+     "source_url": "https://www.franchising.com/news/20180604_dwyer_groupreg_acquired_by_harvest_partners.html"
+    },
+    {
+     "date": "2021-07-08",
+     "event_type": "exit",
+     "event": "KKR agrees to buy Neighborly from Harvest Partners.",
+     "metric": "28 brands; 4,800+ franchises; 10M+ customers",
+     "source_url": "https://www.franchising.com/news/20210708_kkr_to_acquire_home_services_platform_neighborly.html"
+    },
+    {
+     "date": "2021-07-08",
+     "event_type": "kpi_disclosure",
+     "event": "Systemwide sales about $3B at the KKR deal, roughly double since Harvest's 2018 entry.",
+     "metric": "~$3B systemwide sales",
+     "source_url": "https://www.franchisetimes.com/franchise_mergers_and_acquisitions/kkr-makes-winning-bid-for-home-services-franchisor-neighborly/article_00a6419e-e015-11eb-849a-9fe8f7c8cea4.html"
+    },
+    {
+     "date": "2024-02-19",
+     "event_type": "kpi_disclosure",
+     "event": "Neighborly passes $4B systemwide sales in 2023 with 5,500 franchises, a record 468 new franchises sold and 'strong same-store sales growth'; PE sponsors invested $400M+ in Neighborly franchisees in 2023.",
+     "metric": "$4B system sales; 468 new franchises",
+     "source_url": "https://www.franchise.org/?p=52480"
+    }
+   ],
+   "levers_used": [
+    "add_on (new franchise brands)",
+    "franchise development",
+    "brand (Neighborly umbrella)",
+    "recap"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Systemwide sales",
+     "before": 1700000000,
+     "after": 4000000000,
+     "unit": "USD",
+     "period": "2018 (Harvest entry) -> 2023",
+     "source_url": "https://www.franchise.org/?p=52480"
+    },
+    {
+     "kpi": "Franchise locations",
+     "before": 3200,
+     "after": 5500,
+     "unit": "count",
+     "period": "2018 -> 2023",
+     "source_url": "https://www.franchise.org/?p=52480"
+    },
+    {
+     "kpi": "Brands",
+     "before": 20,
+     "after": "30+",
+     "unit": "count",
+     "period": "2018 -> 2023",
+     "source_url": "https://www.franchise.org/?p=52480"
+    }
+   ],
+   "what_broad_sky_can_copy": "Neighborly shows that franchisor groups compound through new-brand M&A plus record franchise sales, and that PE-backed multi-unit franchisees (who put in $400M+ in 2023) are now the main buyers of territories. Punctual Pros is exactly that kind of sponsor-backed multi-unit franchisee, so Broad Sky can position it as the preferred consolidator of Authority trade territories from PA to the Carolinas. It should also borrow Neighborly's cross-brand referral idea and sell One Hour, Ben Franklin and Mister Sparky as one membership to the same household.",
+   "sources": [
+    "https://www.kwtx.com/2021/07/08/neighborly-wacos-former-dwyer-group-changes-hands-again",
+    "https://www.franchising.com/news/20180604_dwyer_groupreg_acquired_by_harvest_partners.html",
+    "https://www.franchising.com/news/20210708_kkr_to_acquire_home_services_platform_neighborly.html",
+    "https://www.franchisetimes.com/franchise_mergers_and_acquisitions/kkr-makes-winning-bid-for-home-services-franchisor-neighborly/article_00a6419e-e015-11eb-849a-9fe8f7c8cea4.html",
+    "https://www.franchise.org/?p=52480"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "No valuation disclosed for 2014, 2018 or 2021. The franchising.com Harvest release cites ~$1.7B at entry, while Franchise Times implies ~$1.5B ('doubled' to $3B); the primary release figure is used."
+  },
+  {
+   "id": "case-ars",
+   "kind": "case",
+   "company": "American Residential Services (ARS / Rescue Rooter)",
+   "sector": "residential_home_services",
+   "sponsor": "CI Capital Partners & Royal Palm (pre-2014) -> Charlesbank Capital Partners (2014-2020) -> GI Partners majority with Charlesbank reinvesting (2020-)",
+   "co_investors": [
+    "Charlesbank Capital Partners (rolled/reinvested 2020)",
+    "management"
+   ],
+   "entry_date": "2014-05-06",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": "60+ locally managed branches in 21 states",
+   "entry_technicians_or_staff": "~4,500 trained technicians",
+   "hold_status": "sold",
+   "exit_date": "2020-09-15",
+   "exit_buyer": "GI Partners (majority); Charlesbank and management reinvested",
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "current_owner": "GI Partners (majority), Charlesbank, management",
+   "timeline": [
+    {
+     "date": "2014-05-06",
+     "event_type": "leadership",
+     "event": "Charlesbank buys ARS from CI Capital and Royal Palm. Management (CEO Don Karnes, President/COO Dave Slott) had already done 20+ acquisitions under CI Capital.",
+     "metric": "60+ branches, 21 states, ~4,500 technicians",
+     "source_url": "https://principiumgroup.com/?p=4106"
+    },
+    {
+     "date": "2014-2020",
+     "event_type": "add_on",
+     "event": "Under Charlesbank, ARS adds local brands (e.g., A.J. Perri, RighTime) to run 30+ local brands alongside the national ARS and Rescue Rooter brands.",
+     "metric": "30+ local brands by 2020",
+     "source_url": "https://www.gipartners.com/news/gi-partners-joins-charlesbank-capital-partners-to-accelerate-growth-at-american-residential-services"
+    },
+    {
+     "date": "2020",
+     "event_type": "recap",
+     "event": "Charlesbank describes the deal as an exit to a financial sponsor with a simultaneous new investment.",
+     "metric": "exit + rollover",
+     "source_url": "https://www.charlesbank.com/portfolio/companies/american-residential-services/"
+    },
+    {
+     "date": "2020-09-15",
+     "event_type": "exit",
+     "event": "GI Partners takes a majority; Charlesbank exits but reinvests, and management reinvests a significant share of proceeds. CEO Dave Slott targets faster organic growth and M&A.",
+     "metric": "70+ service centers, 23 states, ~6,500 employees",
+     "source_url": "https://www.gipartners.com/news/gi-partners-joins-charlesbank-capital-partners-to-accelerate-growth-at-american-residential-services"
+    }
+   ],
+   "levers_used": [
+    "add_on",
+    "brand (national + local dual-brand)",
+    "leadership",
+    "recap (sponsor rolls into next owner)"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Branches / service centers",
+     "before": "60+",
+     "after": "70+",
+     "unit": "count",
+     "period": "2014 -> 2020",
+     "source_url": "https://www.gipartners.com/news/gi-partners-joins-charlesbank-capital-partners-to-accelerate-growth-at-american-residential-services"
+    },
+    {
+     "kpi": "States",
+     "before": 21,
+     "after": 23,
+     "unit": "count",
+     "period": "2014 -> 2020",
+     "source_url": "https://www.gipartners.com/news/gi-partners-joins-charlesbank-capital-partners-to-accelerate-growth-at-american-residential-services"
+    },
+    {
+     "kpi": "Workforce",
+     "before": "~4,500 technicians",
+     "after": "~6,500 employees",
+     "unit": "people (not like-for-like)",
+     "period": "2014 -> 2020",
+     "source_url": "https://www.gipartners.com/news/gi-partners-joins-charlesbank-capital-partners-to-accelerate-growth-at-american-residential-services"
+    }
+   ],
+   "what_broad_sky_can_copy": "ARS runs a dual-brand model (a national ARS / Rescue Rooter name plus 30+ local brands), the same structure Punctual Pros has with Authority's national brands and local names like Horvath. Charlesbank's 2020 exit, in which the seller and management both reinvested, is a template for a partial liquidity event at Punctual Pros that keeps the team in. ARS's 20+ acquisitions under CI Capital also show that one management team can run a repeatable integration plan across several sponsors.",
+   "sources": [
+    "https://principiumgroup.com/?p=4106",
+    "https://www.gipartners.com/news/gi-partners-joins-charlesbank-capital-partners-to-accelerate-growth-at-american-residential-services",
+    "https://www.charlesbank.com/portfolio/companies/american-residential-services/"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "No revenue, EBITDA or valuation was disclosed for either transaction. The 2014 workforce is stated as technicians and the 2020 figure as total employees, so they are not like-for-like."
+  },
+  {
+   "id": "case-wr",
+   "kind": "case",
+   "company": "Wrench Group (Coolray, Berkeys, Abacus, Parker & Sons, Morris-Jenkins and others)",
+   "sector": "residential_home_services",
+   "sponsor": "Alpine Investors (predecessor build, to 2016) -> Investcorp (2016-2019) -> Leonard Green & Partners (2019-; TSG Consumer & Oak Hill minority from 2022)",
+   "co_investors": [
+    "TSG Consumer Partners (2022)",
+    "Oak Hill Capital (2022)"
+   ],
+   "entry_date": "2016",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": 150000000,
+   "entry_ebitda_usd": null,
+   "entry_locations": "4 markets (Atlanta, Dallas, Houston, Phoenix)",
+   "entry_technicians_or_staff": null,
+   "hold_status": "sold",
+   "exit_date": "2019-04-08",
+   "exit_buyer": "Leonard Green & Partners",
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "current_owner": "Leonard Green & Partners (majority), TSG Consumer Partners, Oak Hill Capital",
+   "timeline": [
+    {
+     "date": "2016",
+     "event_type": "exit",
+     "event": "Alpine Investors sells its HVAC/plumbing build-up (Atlanta, Dallas, Houston, Phoenix), by then over $150M revenue, to Investcorp; it becomes Wrench Group. Alpine later reuses this plan for Apex.",
+     "metric": "revenue >$150M at Investcorp entry",
+     "source_url": "https://achrnews.com/articles/141669-alpine-launches-apex-service-partners-with-acquisition-of-frank-gay-services"
+    },
+    {
+     "date": "2016",
+     "event_type": "leadership",
+     "event": "Investcorp forms Wrench from four local leaders (Coolray, Berkeys, Abacus, Parker & Sons), elevates Ken Haines to CEO and builds an executive team over the field operations.",
+     "metric": "4 companies",
+     "source_url": "https://www.investcorp.com/investcorp-announces-sale-of-the-wrench-group/"
+    },
+    {
+     "date": "2016-2019",
+     "event_type": "add_on",
+     "event": "Investcorp completes four add-ons (Denver, Sarasota, Tampa) and expands into adjacent home services.",
+     "metric": "4 add-ons; 4 -> 7 markets",
+     "source_url": "https://www.investcorp.com/investcorp-announces-sale-of-the-wrench-group/"
+    },
+    {
+     "date": "2019-04-08",
+     "event_type": "exit",
+     "event": "Investcorp agrees to sell Wrench to Leonard Green & Partners; terms not disclosed. Wrench then served 325,000+ customers in 7 metros.",
+     "metric": "7 markets; 325,000+ customers",
+     "source_url": "https://www.leonardgreen.com/investcorp-announces-sale-of-the-wrench-group-to-leonard-green/"
+    },
+    {
+     "date": "2019-04-23",
+     "event_type": "other",
+     "event": "LGP's Wrench Coinvest LLC Form D/A confirms the co-invest vehicle.",
+     "metric": "Form D",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1772582/000177258219000002/primary_doc.xml"
+    },
+    {
+     "date": "2021-10",
+     "event_type": "recap",
+     "event": "S&P LCD headline: details emerge on a $70M incremental second-lien facility for Wrench (article paywalled; purpose not confirmed).",
+     "metric": "$70M incremental 2L (headline only)",
+     "source_url": "https://www.spglobal.com/market-intelligence/en/news-insights/articles/2021/10/details-emerge-on-wrench-group-s-70m-incremental-2nd-lien-facility-67204059"
+    },
+    {
+     "date": "2022-11-09",
+     "event_type": "recap",
+     "event": "TSG Consumer and Oak Hill take a significant minority stake to 'advance Wrench Group's digital transformation and disciplined M&A strategy'; LGP stays the majority owner.",
+     "metric": "5,800+ staff; 1.75M+ customers/yr; 24 markets; 13 states; 16 brands",
+     "source_url": "https://www.leonardgreen.com/tsg-consumer-partners-oak-hill-partner-with-leonard-green-and-management-to-enhance-wrench-groups-next-phase-of-growth/"
+    },
+    {
+     "date": "2025-05-19",
+     "event_type": "leadership",
+     "event": "Dennis Laliberte (ex-Parker & Sons VP, ~18 years at ARS) is promoted to COO, succeeding Paul Smith (COO since 2019).",
+     "metric": "27 markets; 14 states; 7,400+ team; 2.5M+ customers/yr",
+     "source_url": "https://www.wrenchgroup.com/articles/wrench-group-announces-the-promotion-of-dennis-laliberte-to-chief-operating-officer"
+    },
+    {
+     "date": "2025-09-15",
+     "event_type": "recap",
+     "event": "$1.3B private-credit refinancing (term loan, delayed-draw term loan and revolver) at SOFR+475, led by Blue Owl and Oak Hill Advisors, replaces the Jefferies-arranged bank debt.",
+     "metric": "$1.3B; S+475",
+     "source_url": "https://www.sfnet.com/home/chapters/canada/news-detail/2025/09/15/blue-owl-oak-hill-lead-$1.3-billion-debt-refinancing-for-wrench-group"
+    },
+    {
+     "date": "2025-12-04",
+     "event_type": "tech_rollout",
+     "event": "ServiceTitan's CEO says on the Q3 FY2026 call that Wrench has ServiceTitan at the core of its operations; CIO David Fitzinger says 99% of locations use Scheduling Pro (online booking) and Wrench has moved from a horizontal marketing platform to Marketing Pro, with AI being deployed for customer experience.",
+     "metric": "99% of locations on Scheduling Pro",
+     "source_url": "https://www.marketbeat.com/earnings/reports/2025-12-4-servicetitan-inc-stock/"
+    },
+    {
+     "date": "2026-06-30",
+     "event_type": "kpi_disclosure",
+     "event": "Lenders mark Wrench's first-lien term loan at ~99.5% of par (OHA private credit fund 10-Q).",
+     "metric": "FV/par ~99.5%",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1901164/000190116426000022/oha-20260630.htm"
+    },
+    {
+     "date": "2026-09-24",
+     "event_type": "kpi_disclosure",
+     "event": "Website scale: 24 brands, 26 markets, 15 states, 7,400+ team members, 5,500+ service vehicles, 2.5M+ customers a year.",
+     "metric": "5,500+ trucks",
+     "source_url": "https://www.wrenchgroup.com"
+    }
+   ],
+   "levers_used": [
+    "add_on",
+    "leadership",
+    "tech_rollout (ServiceTitan, Scheduling Pro, Marketing Pro)",
+    "marketing",
+    "recap",
+    "fleet"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Markets",
+     "before": 4,
+     "after": 27,
+     "unit": "count",
+     "period": "2016 -> 2025",
+     "source_url": "https://www.wrenchgroup.com/articles/wrench-group-announces-the-promotion-of-dennis-laliberte-to-chief-operating-officer"
+    },
+    {
+     "kpi": "Customers served per year",
+     "before": "325,000+ (2019)",
+     "after": "2.5M+",
+     "unit": "customers",
+     "period": "2019 -> 2025",
+     "source_url": "https://www.wrenchgroup.com/articles/wrench-group-announces-the-promotion-of-dennis-laliberte-to-chief-operating-officer"
+    },
+    {
+     "kpi": "Team members",
+     "before": "5,800+",
+     "after": "7,400+",
+     "unit": "people",
+     "period": "2022 -> 2025",
+     "source_url": "https://www.wrenchgroup.com/articles/wrench-group-announces-the-promotion-of-dennis-laliberte-to-chief-operating-officer"
+    },
+    {
+     "kpi": "Locations using online self-scheduling",
+     "before": null,
+     "after": "99%",
+     "unit": "% of locations",
+     "period": "as of 2025-12",
+     "source_url": "https://www.marketbeat.com/earnings/reports/2025-12-4-servicetitan-inc-stock/"
+    }
+   ],
+   "what_broad_sky_can_copy": "Wrench's 2022 minority recap was explicitly priced on 'digital transformation', and by 2025 99% of its locations take online bookings through ServiceTitan Scheduling Pro; Punctual Pros should turn on online booking for every territory and report the booked-online share to Broad Sky monthly. Wrench also brought in operators from ARS and Parker & Sons as COO and regional leaders, so PP should hire a COO-calibre integrator before its third or fourth add-on rather than after. Finally, Wrench's three-owner chain (Alpine to Investcorp to LGP) shows that each buyer paid for a bigger, more digital company, which is the exit story Broad Sky should build.",
+   "sources": [
+    "https://achrnews.com/articles/141669-alpine-launches-apex-service-partners-with-acquisition-of-frank-gay-services",
+    "https://www.investcorp.com/investcorp-announces-sale-of-the-wrench-group/",
+    "https://www.leonardgreen.com/investcorp-announces-sale-of-the-wrench-group-to-leonard-green/",
+    "https://www.sec.gov/Archives/edgar/data/1772582/000177258219000002/primary_doc.xml",
+    "https://www.spglobal.com/market-intelligence/en/news-insights/articles/2021/10/details-emerge-on-wrench-group-s-70m-incremental-2nd-lien-facility-67204059",
+    "https://www.leonardgreen.com/tsg-consumer-partners-oak-hill-partner-with-leonard-green-and-management-to-enhance-wrench-groups-next-phase-of-growth/",
+    "https://www.wrenchgroup.com/articles/wrench-group-announces-the-promotion-of-dennis-laliberte-to-chief-operating-officer",
+    "https://www.sfnet.com/home/chapters/canada/news-detail/2025/09/15/blue-owl-oak-hill-lead-$1.3-billion-debt-refinancing-for-wrench-group",
+    "https://www.marketbeat.com/earnings/reports/2025-12-4-servicetitan-inc-stock/",
+    "https://www.sec.gov/Archives/edgar/data/1901164/000190116426000022/oha-20260630.htm",
+    "https://www.wrenchgroup.com"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "No transaction values or EBITDA were disclosed. entry revenue ($150M) is Alpine's 'over $150 million' description of the predecessor portfolio company at its 2016 sale to Investcorp. The Oct 2021 Morris-Jenkins add-on appears only in secondary sources and is not in the timeline."
+  },
+  {
+   "id": "case-tp",
+   "kind": "case",
+   "company": "TurnPoint Services",
+   "sector": "residential_home_services",
+   "sponsor": "Trivest Partners (2016-2020) -> OMERS Private Equity (2020-)",
+   "co_investors": [],
+   "entry_date": "2016",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": "1 (Dauenhauer Heating & Air, Louisville KY)",
+   "entry_technicians_or_staff": "160 employees",
+   "hold_status": "sold",
+   "exit_date": "2020-11-17",
+   "exit_buyer": "OMERS Private Equity",
+   "exit_ev_usd": 1000000000,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": "Trivest: 'largest multiple of invested capital in Trivest history' (number not disclosed); revenue up nearly 10x over the hold",
+   "current_owner": "OMERS Private Equity",
+   "timeline": [
+    {
+     "date": "2016",
+     "event_type": "other",
+     "event": "Trivest Fund V invests in Dauenhauer Heating & Air (Louisville, KY; heritage to 1958) to found TurnPoint.",
+     "metric": "160 employees",
+     "source_url": "https://www.trivest.com/trivest-announces-sale-of-turnpoint-services/"
+    },
+    {
+     "date": "2016-2020",
+     "event_type": "leadership",
+     "event": "Trivest recruits CEO Kurt Bratton and a 'best-in-class' management team, using its 'Path to 3x' value-creation plan and Topgrading-style hiring.",
+     "metric": "CEO hired",
+     "source_url": "https://www.trivest.com/trivest-announces-sale-of-turnpoint-services/"
+    },
+    {
+     "date": "2016-2020",
+     "event_type": "brand",
+     "event": "Builds one corporate identity (TurnPoint) and customer promise ('We Turn Bad Days Into Good Ones') while keeping local brands.",
+     "metric": "unified promise",
+     "source_url": "https://www.trivest.com/trivest-announces-sale-of-turnpoint-services/"
+    },
+    {
+     "date": "2016-2020",
+     "event_type": "add_on",
+     "event": "Completes 16 add-ons (Trivest's sale release; its Buyouts-award page says 18), about one a quarter, across the Southeast and Midwest; e.g., Corley (Greenville SC, Dec 2019) and Sunny Service (Jan 2020).",
+     "metric": "16-18 add-ons; 13 states",
+     "source_url": "https://www.trivest.com/turnpoint-wins-buyouts-2020-middle-market-deal-of-the-year/"
+    },
+    {
+     "date": "2020-11-17",
+     "event_type": "exit",
+     "event": "OMERS Private Equity buys TurnPoint. At the deal: 17 brands, 720+ technicians, 290,000+ service jobs a year. OMERS cites TurnPoint's technology integration for service delivery as a key attraction.",
+     "metric": "17 brands; 720+ technicians",
+     "source_url": "https://www.omers.com/news/omers-private-equity-further-expands-us-portfolio-through-acquisition-of-turnpoint-services"
+    },
+    {
+     "date": "2021",
+     "event_type": "add_on",
+     "event": "Under OMERS, 21 acquisitions in 2021 and a corporate team grown from 12 to 75 (secondary analysis).",
+     "metric": "21 add-ons in 2021",
+     "source_url": "https://capitalandclarity.substack.com/p/turnpoint-services-turning-local"
+    },
+    {
+     "date": "2023-2025",
+     "event_type": "training_academy",
+     "event": "Total Comfort, a TurnPoint brand, rolls out Rilla AI ride-along sales coaching: team-wide close rate +9%, and one consultant went from 23% to 42% in four months (vendor case study).",
+     "metric": "close rate +9%",
+     "source_url": "https://www.rilla.com/customer-stories/total-comfort"
+    },
+    {
+     "date": "2025",
+     "event_type": "call_center",
+     "event": "TurnPoint is named as a customer of Avoca, an AI agent that answers and books calls.",
+     "metric": "AI CSR deployed",
+     "source_url": "https://pulse2.com/avoca-125-million-raised-at-1-billion-valuation-to-power-services-economy-with-ai/"
+    },
+    {
+     "date": "2026-03-02",
+     "event_type": "leadership",
+     "event": "Greg Bochicchio (ex-CEO of Marmic Fire & Safety) replaces founding CEO Kurt Bratton, citing AI adoption and increased competition. TurnPoint now has 65 brands, 100 locations and 6,000+ employees on a 'center of excellence' model.",
+     "metric": "65 brands; 100 locations; 6,000+ employees",
+     "source_url": "https://www.globenewswire.com/de/news-release/2026/03/02/3247772/0/en/TurnPoint-Services-Appoints-Greg-Bochicchio-as-Chief-Executive-Officer.html"
+    },
+    {
+     "date": "2026-06-30",
+     "event_type": "recap",
+     "event": "Lender marks show stress: spread raised from S+500 to S+550 with 2.8% PIK, loan marked at ~94% of par (FS KKR 10-Q).",
+     "metric": "mark ~94; PIK",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1422183/000162828026053783/fsk-20260630.htm"
+    }
+   ],
+   "levers_used": [
+    "add_on",
+    "leadership",
+    "brand",
+    "tech_rollout",
+    "training_academy (sales coaching)",
+    "call_center (AI answering)",
+    "recap"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Employees",
+     "before": 160,
+     "after": "~2,000",
+     "unit": "people",
+     "period": "2016 -> 2020 (Trivest hold)",
+     "source_url": "https://www.trivest.com/trivest-announces-sale-of-turnpoint-services/"
+    },
+    {
+     "kpi": "Revenue",
+     "before": null,
+     "after": "~10x entry",
+     "unit": "multiple of entry revenue",
+     "period": "2016 -> 2020",
+     "source_url": "https://www.trivest.com/trivest-announces-sale-of-turnpoint-services/"
+    },
+    {
+     "kpi": "Brands",
+     "before": 17,
+     "after": 65,
+     "unit": "count",
+     "period": "2020 (OMERS entry) -> 2026",
+     "source_url": "https://www.globenewswire.com/de/news-release/2026/03/02/3247772/0/en/TurnPoint-Services-Appoints-Greg-Bochicchio-as-Chief-Executive-Officer.html"
+    },
+    {
+     "kpi": "Employees",
+     "before": "~2,000",
+     "after": "6,000+",
+     "unit": "people",
+     "period": "2020 -> 2026",
+     "source_url": "https://www.globenewswire.com/de/news-release/2026/03/02/3247772/0/en/TurnPoint-Services-Appoints-Greg-Bochicchio-as-Chief-Executive-Officer.html"
+    },
+    {
+     "kpi": "Close rate (Total Comfort, relative lift)",
+     "before": 0,
+     "after": 9,
+     "unit": "% relative lift",
+     "period": "pre vs post Rilla",
+     "source_url": "https://www.rilla.com/customer-stories/total-comfort"
+    }
+   ],
+   "what_broad_sky_can_copy": "Trivest turned one Louisville HVAC shop into a roughly $1B portfolio company in four years by hiring a professional CEO early, adding a company about every quarter and putting all the brands behind one customer promise; Broad Sky can run the same cadence from Lancaster with Horvath as add-on #1. The OMERS chapter is the warning: brand count went from 17 to 65, but by 2026 the loan carried PIK interest and the founding CEO had been replaced, so PP's add-on pace should be capped by integration capacity and organic same-store growth. TurnPoint's cheapest wins (Rilla coaching lifting close rates 9% and AI call answering) are tools PP can deploy at a $22M scale within a quarter.",
+   "sources": [
+    "https://www.trivest.com/trivest-announces-sale-of-turnpoint-services/",
+    "https://www.omers.com/news/omers-private-equity-further-expands-us-portfolio-through-acquisition-of-turnpoint-services",
+    "https://www.trivest.com/turnpoint-wins-buyouts-2020-middle-market-deal-of-the-year/",
+    "https://capitalandclarity.substack.com/p/turnpoint-services-turning-local",
+    "https://www.globenewswire.com/de/news-release/2026/03/02/3247772/0/en/TurnPoint-Services-Appoints-Greg-Bochicchio-as-Chief-Executive-Officer.html",
+    "https://www.rilla.com/customer-stories/total-comfort",
+    "https://pulse2.com/avoca-125-million-raised-at-1-billion-valuation-to-power-services-economy-with-ai/",
+    "https://www.sec.gov/Archives/edgar/data/1422183/000162828026053783/fsk-20260630.htm"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "exit EV ($1B) comes from a secondary Substack analysis (capitalandclarity) and the portal's PE landscape dataset; neither Trivest nor OMERS disclosed terms, so treat it as reported, not confirmed. Add-on count is 16 per Trivest's sale release and 18 per its Buyouts-award page. The 2021 '21 acquisitions' and 'EBITDA doubled' claims are from the same secondary source."
+  },
+  {
+   "id": "case-hl",
+   "kind": "case",
+   "company": "Heartland Home Services (Midwest)",
+   "sector": "residential_home_services",
+   "sponsor": "North Branch Capital (2017-2020) -> The Jordan Company (2020-)",
+   "co_investors": [
+    "Midwest Mezzanine (sub debt, 2020)"
+   ],
+   "entry_date": "2017",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": null,
+   "entry_technicians_or_staff": null,
+   "hold_status": "sold",
+   "exit_date": "2020-12-15",
+   "exit_buyer": "The Jordan Company (TJC)",
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "current_owner": "The Jordan Company",
+   "timeline": [
+    {
+     "date": "2017",
+     "event_type": "other",
+     "event": "Heartland Home Services (Macomb, MI) is founded in 2017 as a buy-and-build; North Branch Capital is the sponsor (search summaries put its majority entry in Nov 2017, but no primary release was found).",
+     "metric": "portfolio company founded",
+     "source_url": "https://www.heartlandhomeservices.com"
+    },
+    {
+     "date": "2020-08-01",
+     "event_type": "add_on",
+     "event": "North Branch adds Blind & Sons LLC (combining Blind & Sons and Superior Drainage; NE Ohio HVAC, plumbing, electrical, drainage) to Heartland, with Midwest Mezzanine providing subordinated debt and equity co-investment.",
+     "metric": "add-on; mezz-funded",
+     "source_url": "https://www.privsource.com/acquisitions/deal/e4Sre7"
+    },
+    {
+     "date": "2020-10-12",
+     "event_type": "add_on",
+     "event": "PE Hub reports the Blind & Sons / Superior Drainage deal, adding drain/sewer to the HVAC base.",
+     "metric": "2 Ohio brands",
+     "source_url": "https://pehub.com/pe-backed-heartland-buys-two-ohio-home-services-firms"
+    },
+    {
+     "date": "2020-12-15",
+     "event_type": "exit",
+     "event": "The Jordan Company buys Heartland; Carlyle Direct Lending leads senior, unitranche and junior debt. Heartland is described as the Midwest's leading non-discretionary HVAC replacement/maintenance, plumbing and electrical provider.",
+     "metric": "9 brands; 5 states",
+     "source_url": "https://carlyle.com/ja/node/33151"
+    },
+    {
+     "date": "2021-01-06",
+     "event_type": "exit",
+     "event": "PE Hub reports North Branch's sale to TJC.",
+     "metric": "exit confirmed",
+     "source_url": "https://www.pehub.com/north-branch-sells-heartland-home-services-to-tjc/"
+    },
+    {
+     "date": "2026-06-30",
+     "event_type": "recap",
+     "event": "First-lien loans mature 2026-12-15 and still price at SOFR+575-675, marked ~97-98% of par: a refinancing or sale is imminent.",
+     "metric": "maturity Dec 2026",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1572694/000119312526338331/gsbd-20260630.htm"
+    },
+    {
+     "date": "2026-09-24",
+     "event_type": "kpi_disclosure",
+     "event": "Website: founded 2017, 'over 25' brands.",
+     "metric": "25+ brands",
+     "source_url": "https://www.heartlandhomeservices.com"
+    }
+   ],
+   "levers_used": [
+    "add_on",
+    "recap"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Brands",
+     "before": 9,
+     "after": "25+",
+     "unit": "count",
+     "period": "2020 (TJC entry) -> 2026",
+     "source_url": "https://www.heartlandhomeservices.com"
+    }
+   ],
+   "what_broad_sky_can_copy": "Heartland shows that a lower-middle-market sponsor (North Branch) can sell a three-year-old, nine-brand Midwest portfolio company to an upper-middle-market sponsor (TJC), which is the same up-market handoff Broad Sky would run with Punctual Pros. Adding drain/sewer brands (Blind & Sons, Superior Drainage) right before exit broadened the service mix, a cheap way for PP to raise the share of non-discretionary repair revenue that buyers pay for. Heartland's 2026 maturity wall is also a reminder to refinance at least 18 months before maturity.",
+   "sources": [
+    "https://www.privsource.com/acquisitions/deal/e4Sre7",
+    "https://pehub.com/pe-backed-heartland-buys-two-ohio-home-services-firms",
+    "https://carlyle.com/ja/node/33151",
+    "https://www.pehub.com/north-branch-sells-heartland-home-services-to-tjc/",
+    "https://www.sec.gov/Archives/edgar/data/1572694/000119312526338331/gsbd-20260630.htm",
+    "https://www.heartlandhomeservices.com"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "Entry and exit values, revenue and EBITDA were not disclosed. North Branch's Nov 2017 majority entry appears only in search summaries (no primary release found), so entry date is the 2017 founding year. The Blind & Sons add-on is dated 2020-08-01 by PrivSource and 2020-10-12 by PE Hub. 2026 loan data were read on 2026-09-24 (rival filings rival-024)."
+  },
+  {
+   "id": "case-hz",
+   "kind": "case",
+   "company": "Horizon Services (DE/PA/NJ/MD/CT)",
+   "sector": "residential_home_services",
+   "sponsor": "Sun Capital Partners (2017-2019) -> New Mountain Capital (2019-; lenders now hold equity)",
+   "co_investors": [],
+   "entry_date": "2017-03-07",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": 152000000,
+   "entry_ebitda_usd": null,
+   "entry_locations": "6 operating locations",
+   "entry_technicians_or_staff": "645 employees (Inquirer); 500+ HVAC professionals (Sun release)",
+   "hold_status": "sold",
+   "exit_date": "2019-11-13",
+   "exit_buyer": "New Mountain Capital",
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "current_owner": "New Mountain Capital / lenders (Blue Owl, Crescent hold equity)",
+   "timeline": [
+    {
+     "date": "2016-05",
+     "event_type": "add_on",
+     "event": "Before PE, Horizon buys HARP (Hartford, CT).",
+     "metric": "pre-PE add-on",
+     "source_url": "https://suncappart.com/2017/03/07/affiliate-of-sun-capital-partners-acquires-hvac-installation-and-service-business-horizon-services-inc/"
+    },
+    {
+     "date": "2017-03-07",
+     "event_type": "other",
+     "event": "Sun Capital buys Horizon; the founders keep a significant stake. Revenue had been 'tripling about every three years', with a $500M goal. Horizon runs its own training facility in a converted warehouse, and 40 of 64 managers 'started with a van'.",
+     "metric": "revenue $152M; 645 employees",
+     "source_url": "https://www.inquirer.com/philly/business/Why-Horizon-partners-cut-a-deal-with-private-equity.html"
+    },
+    {
+     "date": "2017-03-07",
+     "event_type": "training_academy",
+     "event": "In-house training center and promote-from-the-van culture are cited as differentiators.",
+     "metric": "40 of 64 managers promoted from technician",
+     "source_url": "https://www.inquirer.com/philly/business/Why-Horizon-partners-cut-a-deal-with-private-equity.html"
+    },
+    {
+     "date": "2019-11-13",
+     "event_type": "exit",
+     "event": "New Mountain Capital buys Horizon from Sun Capital; founder Dave Geiger stays.",
+     "metric": "~1,400 employees",
+     "source_url": "https://www.privsource.com/acquisitions/deal/rJSvoa"
+    },
+    {
+     "date": "2026-06-30",
+     "event_type": "recap",
+     "event": "Lender-supported: Blue Owl holds ~$211M of first-lien debt at SOFR+325 cash + 375 PIK, marked ~92.5% of par.",
+     "metric": "$211M at OBDC; PIK 3.75%",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1655888/000165588826000056/obdc-20260630.htm"
+    },
+    {
+     "date": "2026-06-30",
+     "event_type": "recap",
+     "event": "Crescent Capital BDC holds common equity at a markdown alongside a PIK unitranche, consistent with a debt-for-equity restructuring.",
+     "metric": "lender-held equity",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1633336/000119312526342351/ccap-20260630.htm"
+    }
+   ],
+   "levers_used": [
+    "training_academy",
+    "add_on",
+    "marketing",
+    "recap"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Employees",
+     "before": 645,
+     "after": "~1,400",
+     "unit": "people",
+     "period": "2017 -> 2019",
+     "source_url": "https://www.privsource.com/acquisitions/deal/rJSvoa"
+    },
+    {
+     "kpi": "First-lien loan mark",
+     "before": null,
+     "after": 92.5,
+     "unit": "% of par",
+     "period": "as of 2026-06-30",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1655888/000165588826000056/obdc-20260630.htm"
+    }
+   ],
+   "what_broad_sky_can_copy": "Horizon is the closest-geography cautionary tale: a fast-growing DE/PA/NJ brand that doubled headcount in two years under Sun, was sold on to New Mountain, and by 2026 was paying interest in kind and partly owned by its lenders. For Punctual Pros, the lessons are to keep leverage moderate (well below the large-cap ~5-6x that unitranche lenders offer), to fund growth from same-store service and membership gains rather than mostly new-construction or volume chasing, and to integrate any South Jersey or Delaware Horizon brands only if they become available cheaply. Horizon's in-house training center and promote-from-the-van culture are still worth copying, since they solved technician supply.",
+   "sources": [
+    "https://suncappart.com/2017/03/07/affiliate-of-sun-capital-partners-acquires-hvac-installation-and-service-business-horizon-services-inc/",
+    "https://www.inquirer.com/philly/business/Why-Horizon-partners-cut-a-deal-with-private-equity.html",
+    "https://www.privsource.com/acquisitions/deal/rJSvoa",
+    "https://www.sec.gov/Archives/edgar/data/1655888/000165588826000056/obdc-20260630.htm",
+    "https://www.sec.gov/Archives/edgar/data/1633336/000119312526342351/ccap-20260630.htm"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "Sun's entry price and New Mountain's 2019 price were not disclosed. Revenue at 2017 ($152M) is the Philadelphia Inquirer's figure for the prior year. The 2026 lender data come from BDC 10-Qs read on 2026-09-24 (see rival filings rival-021/022). The leverage guidance in 'what Broad Sky can copy' is analyst judgment."
+  },
+  {
+   "id": "case-ab",
+   "kind": "case",
+   "company": "Authority Brands (One Hour Heating & Air, Benjamin Franklin Plumbing, Mister Sparky; Punctual Pros' franchisor)",
+   "sector": "franchisor",
+   "sponsor": "PNC Riverarch Capital (pre-2018) -> Apax Partners (2018-; Apax X majority from 2022) with BCI minority (2022-)",
+   "co_investors": [
+    "British Columbia Investment Management Corp. (BCI), 2022"
+   ],
+   "entry_date": "2018-09-21",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": "300+ franchises (2 franchisors: The Cleaning Authority, Homewatch CareGivers)",
+   "entry_technicians_or_staff": null,
+   "hold_status": "recap",
+   "exit_date": "2022-09-22",
+   "exit_buyer": "BCI (minority) alongside Apax X (continuing majority); Apax IX sold its stake",
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": "Apax Global Alpha: deal priced at ~7% uplift to last unaffected valuation (MOIC not disclosed)",
+   "current_owner": "Apax Partners (majority), BCI (minority)",
+   "timeline": [
+    {
+     "date": "2018-09-21",
+     "event_type": "other",
+     "event": "Apax funds buy Authority Brands from PNC Riverarch; it then owns two franchisors (The Cleaning Authority, Homewatch CareGivers) with 300+ franchises.",
+     "metric": "2 franchisors; 300+ franchises",
+     "source_url": "https://www.privateequitywire.co.uk/funds-advised-apax-partners-acquire-authority-brands/"
+    },
+    {
+     "date": "2019-02-22",
+     "event_type": "add_on",
+     "event": "Buys Clockwork Inc. (One Hour Heating & Air, Benjamin Franklin Plumbing, Mister Sparky) for $300M (700+ territories), doubling system revenue to over $1B. This is the system Punctual Pros operates in.",
+     "metric": "$300M; system revenue >$1B",
+     "source_url": "https://www.franchisetimes.com/franchise_news/another-acquisition-adds-new-group-to-authority-brands/article_24f69cd6-8632-5780-87a1-e24bb96d9fa4.html"
+    },
+    {
+     "date": "2022-09-20",
+     "event_type": "recap",
+     "event": "BCI takes a significant minority stake; Apax X stays majority. Authority now has 12 franchisors and ~860 franchise owners. Stated next levers: M&A in new verticals, franchise development, technology transformation, international expansion.",
+     "metric": "12 franchisors; ~860 owners",
+     "source_url": "https://kyodonewsprwire.jp/release/202209216933"
+    },
+    {
+     "date": "2022-09-22",
+     "event_type": "recap",
+     "event": "Apax IX sells its stake at ~7% uplift to its last unaffected valuation (AGA look-through ~EUR47M).",
+     "metric": "+7% vs last mark",
+     "source_url": "https://www.investegate.co.uk/announcement/rns/apax-global-alpha-limited--apax/apax-ix-agrees-to-sell-stake-in-authority-brands/7419184"
+    },
+    {
+     "date": "2024-09-17",
+     "event_type": "tech_rollout",
+     "event": "ServiceTitan becomes the primary portfolio company across all Benjamin Franklin, Mister Sparky and One Hour locations (2,000+ territories, 1,000+ franchise owners), giving one CRM.",
+     "metric": "ServiceTitan system-wide",
+     "source_url": "https://www.silicon.co.uk/press-release/servicetitan-announces-partnership-with-authority-brands"
+    },
+    {
+     "date": "2026-02-02",
+     "event_type": "leadership",
+     "event": "Under CEO Jay Caiafa, Authority appoints Ryan Bowes Chief Growth & Transformation Officer over franchise development, call center operations and BuyMax procurement. Authority reports 15 brands, $2B+ system sales, 2,700+ territories and 1,000+ owners.",
+     "metric": "15 brands; $2B+ system sales",
+     "source_url": "https://www.franchise.org/2026/02/authority-brands-appoints-ryan-bowes-as-chief-growth-and-transformation-officer-advancing-the-home-services-franchisors-next-phase-of-growth/"
+    }
+   ],
+   "levers_used": [
+    "add_on (franchisor M&A)",
+    "tech_rollout (ServiceTitan system-wide)",
+    "call_center (franchisor-run)",
+    "pricing/procurement (BuyMax)",
+    "recap",
+    "franchise development"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Franchisors / brands",
+     "before": 2,
+     "after": 15,
+     "unit": "count",
+     "period": "2018 -> 2026",
+     "source_url": "https://www.franchise.org/2026/02/authority-brands-appoints-ryan-bowes-as-chief-growth-and-transformation-officer-advancing-the-home-services-franchisors-next-phase-of-growth/"
+    },
+    {
+     "kpi": "System revenue / sales",
+     "before": "<$0.5B (implied: Clockwork doubled it to >$1B)",
+     "after": "$2B+",
+     "unit": "USD",
+     "period": "2018 -> 2026",
+     "source_url": "https://www.franchise.org/2026/02/authority-brands-appoints-ryan-bowes-as-chief-growth-and-transformation-officer-advancing-the-home-services-franchisors-next-phase-of-growth/"
+    },
+    {
+     "kpi": "Franchise owners",
+     "before": "~860 (2022)",
+     "after": "1,000+",
+     "unit": "count",
+     "period": "2022 -> 2026",
+     "source_url": "https://www.franchise.org/2026/02/authority-brands-appoints-ryan-bowes-as-chief-growth-and-transformation-officer-advancing-the-home-services-franchisors-next-phase-of-growth/"
+    }
+   ],
+   "what_broad_sky_can_copy": "Because Authority made ServiceTitan the mandatory system-wide portfolio company in 2024 and runs a central call center and BuyMax procurement, Punctual Pros should use those shared services fully rather than build duplicates. Its capital and attention should go to what the franchisor does not provide: local membership density, technician recruiting and acquiring neighbouring franchise territories. Apax's 2-to-15-brand build also means the franchisor itself is a likely future buyer or partner for a scaled multi-territory operator, so Broad Sky should keep PP's data (bookings, memberships, close rates) benchmarked against system averages to show it is a top-decile franchisee.",
+   "sources": [
+    "https://www.privateequitywire.co.uk/funds-advised-apax-partners-acquire-authority-brands/",
+    "https://www.franchisetimes.com/franchise_news/another-acquisition-adds-new-group-to-authority-brands/article_24f69cd6-8632-5780-87a1-e24bb96d9fa4.html",
+    "https://kyodonewsprwire.jp/release/202209216933",
+    "https://www.investegate.co.uk/announcement/rns/apax-global-alpha-limited--apax/apax-ix-agrees-to-sell-stake-in-authority-brands/7419184",
+    "https://www.silicon.co.uk/press-release/servicetitan-announces-partnership-with-authority-brands",
+    "https://www.franchise.org/2026/02/authority-brands-appoints-ryan-bowes-as-chief-growth-and-transformation-officer-advancing-the-home-services-franchisors-next-phase-of-growth/"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "No EV or EBITDA was disclosed. The pre-2019 system revenue is implied only by the CEO's statement that Clockwork would 'double our overall system revenue to over $1 billion'. Jay Caiafa's start date as CEO was not stated in the Feb 2026 release; Craig Donaldson was CEO in 2022-2024."
+  },
+  {
+   "id": "case-fd",
+   "kind": "case",
+   "company": "Frontdoor, Inc. (American Home Shield, 2-10 HBW)",
+   "sector": "residential_home_services",
+   "sponsor": "Public (spun off from ServiceMaster 2018-10-01); benchmark for membership/subscription economics",
+   "co_investors": [],
+   "entry_date": "2018-10-01",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": 1258000000,
+   "entry_ebitda_usd": null,
+   "entry_locations": null,
+   "entry_technicians_or_staff": null,
+   "hold_status": "ipo",
+   "exit_date": null,
+   "exit_buyer": null,
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": 2093000000,
+   "exit_ebitda_usd": 553000000,
+   "moic_or_irr_reported": null,
+   "current_owner": "Public (Nasdaq: FTDR)",
+   "timeline": [
+    {
+     "date": "2018-10-01",
+     "event_type": "other",
+     "event": "ServiceMaster completes the spin-off of Frontdoor (American Home Shield) to shareholders; it lists on Nasdaq as FTDR.",
+     "metric": "FY2018 revenue $1,258M",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/0001428875/000110465918059549/a18-35089_1ex99d1.htm"
+    },
+    {
+     "date": "2024-12-19",
+     "event_type": "add_on",
+     "event": "Buys 2-10 Home Buyers Warranty (new-home builder warranties).",
+     "metric": "2-10 HBW acquisition",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1727263/000119312526076548/ftdr-20251231.htm"
+    },
+    {
+     "date": "2025-12-31",
+     "event_type": "membership_program",
+     "event": "FY2025: ~2.1M active home warranties; 76% of revenue from renewals; 84% of customers on monthly auto-pay (auto-pay customers renew more often); customers average almost two claims a year.",
+     "metric": "76% renewal revenue; 84% auto-pay",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1727263/000119312526076548/ftdr-20251231.htm"
+    },
+    {
+     "date": "2025-12-31",
+     "event_type": "pricing",
+     "event": "Uses dynamic pricing in the renewal and DTC channels, adjusting plan prices by contractor-network strength and home characteristics.",
+     "metric": "dynamic pricing",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1727263/000119312526076548/ftdr-20251231.htm"
+    },
+    {
+     "date": "2025-12-31",
+     "event_type": "other",
+     "event": "~4,200 preferred contractors complete ~84% of service requests; a 'New HVAC' upgrade program sells discounted replacements to members.",
+     "metric": "84% of jobs to preferred contractors",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1727263/000119312526076548/ftdr-20251231.htm"
+    },
+    {
+     "date": "2025-12-31",
+     "event_type": "kpi_disclosure",
+     "event": "FY2025 revenue $2,093M, net income $255M, Adjusted EBITDA $553M; 7% revenue CAGR 2020-2025.",
+     "metric": "Adj. EBITDA margin ~26% (derived)",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1727263/000119312526076548/ftdr-20251231.htm"
+    }
+   ],
+   "levers_used": [
+    "membership_program",
+    "pricing (dynamic)",
+    "add_on",
+    "marketing (DTC)"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Revenue",
+     "before": 1258000000,
+     "after": 2093000000,
+     "unit": "USD",
+     "period": "FY2018 -> FY2025",
+     "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001727263.json"
+    },
+    {
+     "kpi": "Share of revenue from renewals",
+     "before": 78,
+     "after": 76,
+     "unit": "%",
+     "period": "FY2024 -> FY2025",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1727263/000119312526076548/ftdr-20251231.htm"
+    }
+   ],
+   "what_broad_sky_can_copy": "Frontdoor's 84% auto-pay figure is the single most transferable lever: Punctual Pros should move every maintenance-plan member to monthly auto-pay, since Frontdoor finds those customers renew more. Its 'New HVAC' upgrade program, which markets replacements to existing members, is the model for turning PP's tune-up base into replacement leads. Dynamic renewal pricing by ZIP and home age shows how far PP's membership price can rise above the flat franchise default.",
+   "sources": [
+    "https://www.sec.gov/Archives/edgar/data/0001428875/000110465918059549/a18-35089_1ex99d1.htm",
+    "https://data.sec.gov/api/xbrl/companyfacts/CIK0001727263.json",
+    "https://www.sec.gov/Archives/edgar/data/1727263/000119312526076548/ftdr-20251231.htm"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "Public benchmark. Frontdoor subcontracts the work and does not employ technicians, so its margins are an upper bound for an operator like PP. The ~26% Adjusted EBITDA margin is derived ($553M / $2,093M)."
+  },
+  {
+   "id": "case-ap",
+   "kind": "case",
+   "company": "Apex Service Partners",
+   "sector": "residential_home_services",
+   "sponsor": "Alpine Investors (2019-; Fund VII -> 2023 single-asset continuation vehicle)",
+   "co_investors": [
+    "2023 CV LPs: Blackstone Strategic Partners, HarbourVest, Lexington, Pantheon",
+    "Apollo Funds (minority, 2026)"
+   ],
+   "entry_date": "2019-07-30",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": "2 founding companies (Frank Gay Services, Orlando; Best Home Services, Naples FL)",
+   "entry_technicians_or_staff": null,
+   "hold_status": "recap",
+   "exit_date": "2026-05-28",
+   "exit_buyer": "Apollo Funds (minority, >20% for ~$2B, reported)",
+   "exit_ev_usd": 10000000000,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": 3000000000,
+   "exit_ebitda_usd": 500000000,
+   "moic_or_irr_reported": null,
+   "current_owner": "Alpine Investors (control) with Apollo minority",
+   "timeline": [
+    {
+     "date": "2019-07-30",
+     "event_type": "leadership",
+     "event": "Alpine launches Apex with Frank Gay Services and Best Home Services, commits at least $100M of equity over five years, and installs AJ Brown (CEO, an ex-Alpine portfolio CFO) and Will Matson (CFO/M&A). Explicitly reuses the plan Alpine used for the predecessor of Wrench Group.",
+     "metric": "$100M+ equity commitment",
+     "source_url": "https://achrnews.com/articles/141669-alpine-launches-apex-service-partners-with-acquisition-of-frank-gay-services"
+    },
+    {
+     "date": "2023",
+     "event_type": "add_on",
+     "event": "Apex acquires 46 businesses in 2023.",
+     "metric": "46 add-ons in one year",
+     "source_url": "https://alpineinvestors.com/story/2023-year-in-review/"
+    },
+    {
+     "date": "2023-10-25",
+     "event_type": "recap",
+     "event": "Alpine closes a $3.4B single-asset GP-led continuation vehicle for Apex, one of the largest of its kind; Alpine Investors IX co-invests $450M alongside.",
+     "metric": "$3.4B CV + $450M Fund IX; 8,000+ employees",
+     "source_url": "https://www.privateequitywire.co.uk/alpine-investors-closes-3-4bn-single-asset-continuation-transaction/"
+    },
+    {
+     "date": "2024-09",
+     "event_type": "recap",
+     "event": "Refinances into a first-lien term loan at SOFR+500 maturing 2030, with delayed-draw term loans for acquisitions.",
+     "metric": "S+500",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/2012839/000162828026056657/ebdc-20260630.htm"
+    },
+    {
+     "date": "2025",
+     "event_type": "add_on",
+     "event": "Completes 60 add-ons across 5 regions.",
+     "metric": "60 add-ons in one year",
+     "source_url": "https://alpineinvestors.com/update/2025-year-in-review/"
+    },
+    {
+     "date": "2025-11",
+     "event_type": "recap",
+     "event": "Adds a cheaper incremental delayed-draw term loan at SOFR+475 to keep funding M&A.",
+     "metric": "DDTL S+475",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/2012839/000162828026056657/ebdc-20260630.htm"
+    },
+    {
+     "date": "2026-05-28",
+     "event_type": "recap",
+     "event": "Apollo Funds agree to a minority investment; Alpine also invests more. Apex has 75 local brands in 46 states, 13,000+ employees, 16M+ homes served, 8,000+ technicians supported through talent programs, 300+ operating leaders trained, $3B+ revenue; 65% of senior leaders are military veterans.",
+     "metric": "75 brands; $3B+ revenue",
+     "source_url": "https://www.apollo.com/wealth/insights-news/pressreleases/2026/05/apex-service-partners-and-alpine-investors-announce-strategic-mi"
+    },
+    {
+     "date": "2026-05-28",
+     "event_type": "kpi_disclosure",
+     "event": "Trade press: Apollo pays ~$2B for more than 20% at ~$10B EV; Apex generates ~$500M EBITDA from 150+ locations.",
+     "metric": "~$10B EV; ~$500M EBITDA",
+     "source_url": "https://www.mdm.com/news/top-distributor-sectors/contractor/hvac-electrical-plumbing-service-platform-apex-nets-2b-investment-from-apollo/"
+    }
+   ],
+   "levers_used": [
+    "add_on (very high cadence)",
+    "leadership (CEO-in-training, veteran hiring)",
+    "training_academy",
+    "recap (continuation vehicle, minority sale)",
+    "tech_rollout"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Brands / founding companies",
+     "before": 2,
+     "after": 75,
+     "unit": "count",
+     "period": "2019 -> 2026",
+     "source_url": "https://www.apollo.com/wealth/insights-news/pressreleases/2026/05/apex-service-partners-and-alpine-investors-announce-strategic-mi"
+    },
+    {
+     "kpi": "Employees",
+     "before": "8,000+ (2023)",
+     "after": "13,000+",
+     "unit": "people",
+     "period": "2023 -> 2026",
+     "source_url": "https://www.apollo.com/wealth/insights-news/pressreleases/2026/05/apex-service-partners-and-alpine-investors-announce-strategic-mi"
+    },
+    {
+     "kpi": "Revenue",
+     "before": null,
+     "after": "$3B+",
+     "unit": "USD",
+     "period": "2026",
+     "source_url": "https://www.apollo.com/wealth/insights-news/pressreleases/2026/05/apex-service-partners-and-alpine-investors-announce-strategic-mi"
+    },
+    {
+     "kpi": "Annual add-ons",
+     "before": 46,
+     "after": 60,
+     "unit": "acquisitions per year",
+     "period": "2023 -> 2025",
+     "source_url": "https://alpineinvestors.com/update/2025-year-in-review/"
+    }
+   ],
+   "what_broad_sky_can_copy": "Apex grew from two Florida companies to a $3B+, ~$10B-valuation portfolio company in seven years by pairing a dedicated M&A engine (one co-CEO came from M&A/CFO) with an internal pipeline of operating leaders (300+ trained) and technicians (8,000+ supported). Punctual Pros can copy both halves at small scale: a named head of M&A/integration and a Lancaster earn-while-you-learn academy (Thaddeus Stevens and PA apprenticeship) that feeds every add-on. Apex's military-veteran hiring (65% of senior leaders) is a cheap, proven leadership-recruiting channel for PP's GM and ops-manager roles.",
+   "sources": [
+    "https://achrnews.com/articles/141669-alpine-launches-apex-service-partners-with-acquisition-of-frank-gay-services",
+    "https://alpineinvestors.com/story/2023-year-in-review/",
+    "https://www.privateequitywire.co.uk/alpine-investors-closes-3-4bn-single-asset-continuation-transaction/",
+    "https://www.sec.gov/Archives/edgar/data/2012839/000162828026056657/ebdc-20260630.htm",
+    "https://alpineinvestors.com/update/2025-year-in-review/",
+    "https://www.apollo.com/wealth/insights-news/pressreleases/2026/05/apex-service-partners-and-alpine-investors-announce-strategic-mi",
+    "https://www.contractingbusiness.com/industry-news/news/55382112/apex-service-partners-secures-apollo-investment-to-support-growth",
+    "https://www.mdm.com/news/top-distributor-sectors/contractor/hvac-electrical-plumbing-service-platform-apex-nets-2b-investment-from-apollo/",
+    "https://www.privateequitywire.co.uk/alpine-backed-apex-service-partners-eyes-10bn-valuation-in-minority-stake-sale/"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "exit EV ($10B), exit EBITDA ($500M) and the ~$2B / >20% stake come from Modern Distribution Management and Private Equity Wire (citing Reuters). The MDM page returned 403 to a direct fetch, so the figures were read from its search-index excerpt, which says '$500 of EBITDA' (read as $500M). The official Apollo/Apex release discloses no terms. The implied ~20x EV/EBITDA is derived, so exit EBITDA multiple is null. The 2024 refinancing and Nov 2025 DDTL come from BDC filings read 2026-09-24 (rival filings rival-018)."
+  },
+  {
+   "id": "case-rw",
+   "kind": "case",
+   "company": "Redwood Services",
+   "sector": "residential_home_services",
+   "sponsor": "Union Main Group (founding backer, 2020-) -> Altas Partners (majority, 2025-)",
+   "co_investors": [
+    "Union Main Group (retained significant stake)"
+   ],
+   "entry_date": "2020",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": null,
+   "entry_technicians_or_staff": null,
+   "hold_status": "recap",
+   "exit_date": "2025-05-08",
+   "exit_buyer": "Altas Partners (majority)",
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": 500000000,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "current_owner": "Altas Partners (majority), Union Main Group",
+   "timeline": [
+    {
+     "date": "2020",
+     "event_type": "other",
+     "event": "Union Main Group founds Redwood (Memphis) as a partnership portfolio company for 100% residential, service-focused HVAC/plumbing/electrical companies; Richard Lewis is founder-CEO.",
+     "metric": "founded",
+     "source_url": "https://www.altas.com/news/redwood-services-announces-strategic-investment-from-altas-partners"
+    },
+    {
+     "date": "2025-05-08",
+     "event_type": "recap",
+     "event": "Altas Partners makes a strategic (majority) investment; Union Main stays. Redwood then supports 19 companies with 2,500+ employees and $500M+ revenue, offering 'world-class resources, coaching and strategic partnerships'.",
+     "metric": "19 companies; $500M+ revenue",
+     "source_url": "https://www.altas.com/news/redwood-services-announces-strategic-investment-from-altas-partners"
+    },
+    {
+     "date": "2025-06",
+     "event_type": "recap",
+     "event": "New first-lien facility at a tight SOFR+425 (maturity 2032), marked ~99% of par.",
+     "metric": "S+425",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/2040278/000100371526003067/primary_doc.xml"
+    },
+    {
+     "date": "2026-05-04",
+     "event_type": "add_on",
+     "event": "Acquires the Sierra portfolio company (Las Vegas, Tucson, Denver, Boise; 5 companies): ~400 FTEs, 40,000+ households a year, $100M+ 2025 revenue, 19,000+ active membership agreements. The Sierra leader joins as SVP of operations to run integration.",
+     "metric": "+$100M revenue; +19,000 members",
+     "source_url": "https://www.contractingbusiness.com/industry-news/news/55375131/redwood-services-acquires-sierra-platform-adding-400-employees-40000-hvac-customers"
+    }
+   ],
+   "levers_used": [
+    "add_on (multi-brand group purchase)",
+    "membership_program",
+    "training_academy (coaching)",
+    "recap"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Revenue",
+     "before": null,
+     "after": "$500M+",
+     "unit": "USD",
+     "period": "2020 founding -> 2025",
+     "source_url": "https://www.altas.com/news/redwood-services-announces-strategic-investment-from-altas-partners"
+    },
+    {
+     "kpi": "Members per household served (Sierra)",
+     "before": null,
+     "after": 0.475,
+     "unit": "memberships / households served annually (derived 19,000 / 40,000)",
+     "period": "2026 acquisition",
+     "source_url": "https://www.contractingbusiness.com/industry-news/news/55375131/redwood-services-acquires-sierra-platform-adding-400-employees-40000-hvac-customers"
+    }
+   ],
+   "what_broad_sky_can_copy": "Redwood reached $500M+ revenue in five years by partnering only with 100% residential, service-led contractors and coaching them, which is the filter Broad Sky should use when screening PP add-ons in Central PA and NJ. The Sierra deal brought ~19,000 memberships against ~40,000 households served (about 0.48 members per household served); PP should measure the same ratio and treat roughly 0.4-0.5 as the target for acquired brands. Its 2026 purchase of a whole multi-brand group also shows a second path for PP: buy a small multi-brand group and keep its leader as an integrator.",
+   "sources": [
+    "https://www.altas.com/news/redwood-services-announces-strategic-investment-from-altas-partners",
+    "https://www.sec.gov/Archives/edgar/data/2040278/000100371526003067/primary_doc.xml",
+    "https://www.contractingbusiness.com/industry-news/news/55375131/redwood-services-acquires-sierra-platform-adding-400-employees-40000-hvac-customers"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "Altas did not disclose deal value; the portal's PE landscape cites a reported ~$1.1B valuation that was not re-verified, so exit EV is null. The members-per-household ratio is derived. The 2025 facility data were read 2026-09-24 (rival filings rival-026)."
+  },
+  {
+   "id": "case-ch",
+   "kind": "case",
+   "company": "Champions Group (fka Service Champions)",
+   "sector": "residential_home_services",
+   "sponsor": "CenterOak Partners (Fund I, to Jan 2021) -> Odyssey Investment Partners (2021-2026) -> Blackstone BXPE (2026-)",
+   "co_investors": [
+    "Odyssey and management retain significant minority (2026)"
+   ],
+   "entry_date": "2021-01-06",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": "6 trade names in CA/AZ/NV",
+   "entry_technicians_or_staff": "850+ technicians",
+   "hold_status": "sold",
+   "exit_date": "2026-02-17",
+   "exit_buyer": "Blackstone (perpetual private equity strategy, BXPE)",
+   "exit_ev_usd": 2500000000,
+   "exit_multiple_ebitda": 18.5,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": "CenterOak: sale took Fund I (US$420M) above 1.0x DPI; Odyssey MOIC not disclosed",
+   "current_owner": "Blackstone (majority), Odyssey & management (minority)",
+   "timeline": [
+    {
+     "date": "2020-02-14",
+     "event_type": "add_on",
+     "event": "Under CenterOak, Service Champions buys Bell Brothers (Sacramento), its third add-on, reaching 40,000+ residential service agreements; the Bell founders become shareholders.",
+     "metric": "40,000+ service agreements",
+     "source_url": "https://www.privateequitywire.co.uk/centeroaks-service-champions-acquires-bell-brothers-plumbing-heating-and-air/"
+    },
+    {
+     "date": "2021-01-04",
+     "event_type": "exit",
+     "event": "CenterOak sells to Odyssey. Under CenterOak: 8 new markets, 60,000+ club members, 850+ technicians, 275,000+ jobs a year, consolidated supply chain and purchasing, a single IT system across the company, harmonised best practices.",
+     "metric": "60,000+ members; single IT system",
+     "source_url": "https://www.privateequitywire.co.uk/centeroak-partners-sells-service-champions/"
+    },
+    {
+     "date": "2021-01-06",
+     "event_type": "other",
+     "event": "Odyssey buys Service Champions (Service Champions, Moore Home Services, Bell Brothers, ASI, Adeedo!, ProSkill); founder-CEO Leland Smith keeps significant equity. Plan: organic expansion plus acquisitions, and roll out operational best practices across all brands.",
+     "metric": "850+ technicians",
+     "source_url": "https://www.odysseyinvestment.com/news/odyssey-investment-partners-acquires-service-champions"
+    },
+    {
+     "date": "2023-08-29",
+     "event_type": "brand",
+     "event": "Rebrands the parent as Champions Group Holdings to reflect scale: 19 brands, 2,400+ employees, 7 states (AZ, CA, CO, NV, OH, TX, WA).",
+     "metric": "19 brands; 2,400+ employees",
+     "source_url": "https://www.odysseyinvestment.com/news/rapidly-growing-service-champions-rebrands-identity-as-champions-group-holdings"
+    },
+    {
+     "date": "2025",
+     "event_type": "add_on",
+     "event": "Adds Bee's Plumbing (Seattle, its second Seattle-area deal) and McAfee Heating & Air (Dayton, OH); CEO Frank DiMarco is 'pushing toward $1 billion' in sales.",
+     "metric": "20+ brands",
+     "source_url": "https://www.ocbj.com/oc-500/2025/oc500-2025-frank-dimarco/"
+    },
+    {
+     "date": "2026-02-17",
+     "event_type": "exit",
+     "event": "Blackstone agrees to buy Champions from Odyssey; Odyssey and management keep a significant minority. Champions has 1,800+ field technicians and ~150,000 active members.",
+     "metric": "1,800+ technicians; ~150,000 members",
+     "source_url": "https://www.contractingbusiness.com/industry-events/news/55358855/blackstone-to-acquire-champions-group-residential-services-platform"
+    },
+    {
+     "date": "2026-02-19",
+     "event_type": "kpi_disclosure",
+     "event": "Bloomberg (via OCBJ) values the deal at ~$2.5B; Bloomberg-cited press puts it at ~18.5x trailing EBITDA.",
+     "metric": "~$2.5B; ~18.5x",
+     "source_url": "https://www.ocbj.com/services/blackstone-buys-majority-stake-in-irvines-champions-group/"
+    }
+   ],
+   "levers_used": [
+    "membership_program",
+    "add_on",
+    "tech_rollout (single IT system)",
+    "pricing/procurement (consolidated purchasing)",
+    "brand",
+    "leadership"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Active members / service agreements",
+     "before": 40000,
+     "after": 150000,
+     "unit": "members",
+     "period": "2020-02 -> 2026-02",
+     "source_url": "https://www.contractingbusiness.com/industry-events/news/55358855/blackstone-to-acquire-champions-group-residential-services-platform"
+    },
+    {
+     "kpi": "Field technicians",
+     "before": 850,
+     "after": 1800,
+     "unit": "technicians",
+     "period": "2021-01 -> 2026-02",
+     "source_url": "https://www.contractingbusiness.com/industry-events/news/55358855/blackstone-to-acquire-champions-group-residential-services-platform"
+    },
+    {
+     "kpi": "Members per technician",
+     "before": 70.6,
+     "after": 83.3,
+     "unit": "members per technician (derived)",
+     "period": "2021 -> 2026",
+     "source_url": "https://www.contractingbusiness.com/industry-events/news/55358855/blackstone-to-acquire-champions-group-residential-services-platform"
+    },
+    {
+     "kpi": "Brands",
+     "before": 6,
+     "after": "20+",
+     "unit": "count",
+     "period": "2021 -> 2025",
+     "source_url": "https://www.ocbj.com/oc-500/2025/oc500-2025-frank-dimarco/"
+    }
+   ],
+   "what_broad_sky_can_copy": "Champions is the clearest proof that membership density drives the exit multiple: members grew from ~40,000 (2020) to ~150,000 (2026), or about 83 per technician, and Blackstone paid a reported ~18.5x. Punctual Pros should make 'active members per technician' its north-star metric, offer a membership on every service call, and target 60-80 per tech within three years. CenterOak's earlier moves (one IT system across brands and consolidated purchasing before the sale) are the pre-exit housekeeping PP should finish before Broad Sky runs a process.",
+   "sources": [
+    "https://www.privateequitywire.co.uk/centeroaks-service-champions-acquires-bell-brothers-plumbing-heating-and-air/",
+    "https://www.privateequitywire.co.uk/centeroak-partners-sells-service-champions/",
+    "https://www.odysseyinvestment.com/news/odyssey-investment-partners-acquires-service-champions",
+    "https://www.odysseyinvestment.com/news/rapidly-growing-service-champions-rebrands-identity-as-champions-group-holdings",
+    "https://www.ocbj.com/oc-500/2025/oc500-2025-frank-dimarco/",
+    "https://www.contractingbusiness.com/industry-events/news/55358855/blackstone-to-acquire-champions-group-residential-services-platform",
+    "https://www.ocbj.com/services/blackstone-buys-majority-stake-in-irvines-champions-group/",
+    "https://www.servicemag.org/news/blackstone-champions-group-acquisition-2-5-billion"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "CenterOak's entry date is not in the sources read. The 2020 figure counts 'residential service agreements' and the 2021/2026 figures count 'club members' / 'active members', which are treated as comparable. EV and 18.5x are press estimates (Bloomberg); Blackstone did not disclose terms. Members-per-tech values are derived, and an upper bound because technicians are stated as 'more than'."
+  },
+  {
+   "id": "case-th",
+   "kind": "case",
+   "company": "Threshold Brands (Plumbing Paramedics, Heating + Air Paramedics, MaidPro, Pestmaster and others)",
+   "sector": "franchisor",
+   "sponsor": "The Riverside Company (2020/2021-)",
+   "co_investors": [],
+   "entry_date": "2021-04-27",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": "~355 franchised units across 5 franchisors (MaidPro 270, Pestmaster 35, USA Insulation 50; FlyFoe and Men in Kilts not counted)",
+   "entry_technicians_or_staff": null,
+   "hold_status": "held",
+   "exit_date": null,
+   "exit_buyer": null,
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "current_owner": "The Riverside Company",
+   "timeline": [
+    {
+     "date": "2021-04-27",
+     "event_type": "other",
+     "event": "Riverside launches Threshold Brands as an umbrella for five trade-services franchisors bought over eight months (MaidPro, FlyFoe, Men in Kilts, Pestmaster, USA Insulation) and says it is 'firmly in buy mode'.",
+     "metric": "5 franchisors",
+     "source_url": "https://www.franchisetimes.com/franchise_mergers_and_acquisitions/riversides-threshold-to-target-trade-services-franchises/article_e9535de2-a784-11eb-a225-6313e9083818.html"
+    },
+    {
+     "date": "2021-07-01",
+     "event_type": "add_on",
+     "event": "Adds Plumbing Heating Paramedics (Indianapolis, founded 2011) as the sixth brand, entering plumbing/HVAC franchising.",
+     "metric": "6th brand; plumbing/HVAC entry",
+     "source_url": "https://www.privateequitywire.co.uk/riverside-makes-php-investment/"
+    },
+    {
+     "date": "2023-05-30",
+     "event_type": "add_on",
+     "event": "Adds Mold Medics (IAQ/mold/radon) and markets it to existing franchisees as a second line. The portfolio then has 9 brands and 500+ units.",
+     "metric": "500+ units",
+     "source_url": "https://1851franchise.com/threshold-brands-expands-portfolio-with-acquisition-of-indoor-air-quality-franchise-mold-medics-2722509"
+    }
+   ],
+   "levers_used": [
+    "add_on (franchisor M&A)",
+    "franchise development",
+    "cross-selling to existing franchisees"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Franchise brands",
+     "before": 5,
+     "after": 9,
+     "unit": "count",
+     "period": "2021-04 -> 2023-05",
+     "source_url": "https://1851franchise.com/threshold-brands-expands-portfolio-with-acquisition-of-indoor-air-quality-franchise-mold-medics-2722509"
+    },
+    {
+     "kpi": "Units",
+     "before": "~355 (three brands only)",
+     "after": "500+",
+     "unit": "count",
+     "period": "2021 -> 2023",
+     "source_url": "https://1851franchise.com/threshold-brands-expands-portfolio-with-acquisition-of-indoor-air-quality-franchise-mold-medics-2722509"
+    }
+   ],
+   "what_broad_sky_can_copy": "Threshold's main lever is selling an adjacent service line (Mold Medics IAQ) to franchisees who already own trucks and customers, and Punctual Pros can do the same by adding IAQ, water treatment or drain/sewer as a second ticket on existing One Hour and Ben Franklin calls. It also shows that mid-market sponsors are building competing plumbing/HVAC franchise systems (Plumbing Paramedics), which strengthens PP's bargaining position when renewing or expanding Authority territories. The case is thin on KPIs, so use it for the cross-sell idea, not for benchmarks.",
+   "sources": [
+    "https://www.franchisetimes.com/franchise_mergers_and_acquisitions/riversides-threshold-to-target-trade-services-franchises/article_e9535de2-a784-11eb-a225-6313e9083818.html",
+    "https://www.privateequitywire.co.uk/riverside-makes-php-investment/",
+    "https://1851franchise.com/threshold-brands-expands-portfolio-with-acquisition-of-indoor-air-quality-franchise-mold-medics-2722509"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "No financials disclosed. FlyFoe and Men in Kilts units were not stated, so the entry unit count is partial. Later add-ons (Sir Grout 2021, Miracle Method 2023) appear only in search summaries and are not in the timeline."
+  },
+  {
+   "id": "case-si",
+   "kind": "case",
+   "company": "Sila Services (King of Prussia, PA)",
+   "sector": "residential_home_services",
+   "sponsor": "Dubin Clark & Co. (to 2021) -> Morgan Stanley Capital Partners (2021-2024) -> Goldman Sachs Alternatives (majority, 2024-)",
+   "co_investors": [
+    "Management (significant minority, 2024)"
+   ],
+   "entry_date": "2021-05-21",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": "Multi-brand Northeast/Mid-Atlantic company (count not disclosed)",
+   "entry_technicians_or_staff": "96 jobs reported at the original Sila Heating & Air opco (2020 PPP)",
+   "hold_status": "sold",
+   "exit_date": "2024-11-12",
+   "exit_buyer": "Goldman Sachs Alternatives (private equity, majority)",
+   "exit_ev_usd": 1700000000,
+   "exit_multiple_ebitda": 17,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "current_owner": "Goldman Sachs Alternatives (majority), management",
+   "timeline": [
+    {
+     "date": "2020-04-06",
+     "event_type": "kpi_disclosure",
+     "event": "PPP loan to the original Sila Heating & Air Conditioning opco: $1.53M, 96 jobs reported (implies roughly $7.4M payroll).",
+     "metric": "96 jobs",
+     "source_url": "https://data.sba.gov/dataset/ppp-foia"
+    },
+    {
+     "date": "2021-05-21",
+     "event_type": "leadership",
+     "event": "MSCP completes its investment from Dubin Clark, backing CEO Lou Pellegrini and founder Jack Rothacker, with a plan to add brands under the Sila umbrella using MSCP's operational-excellence and add-on experience.",
+     "metric": "entry",
+     "source_url": "https://www.morganstanley.com/im/en-us/capital-seeker/about-us/news-and-insights/press-release/ms-capital-partners-completes-investment-sila-hvac.html"
+    },
+    {
+     "date": "2024-02-16",
+     "event_type": "add_on",
+     "event": "Buys ECS Comfort (Palmyra, PA; Lebanon, Dauphin and Lancaster counties; 9 employees), directly in Punctual Pros' backyard. CEO Jason Rabbino plans plumbing, electrical and solar cross-sell.",
+     "metric": "25 brands; 32 markets",
+     "source_url": "https://lebtown.com/2024/02/16/sila-services-acquires-palmyra-hvac-company-ecs-comfort-heating-cooling/"
+    },
+    {
+     "date": "2024-04-19",
+     "event_type": "add_on",
+     "event": "Adds Glasco (CT), Essential Power Systems (NY) and T-Mark (Buffalo).",
+     "metric": "28 brands; 35 locations",
+     "source_url": "https://www.contractingbusiness.com/industry-news/article/55017792/sila-services-llc-expands-hvac-holdings-in-eastern-us"
+    },
+    {
+     "date": "2024-11-11",
+     "event_type": "kpi_disclosure",
+     "event": "Reported price ~$1.7B, ~17x LTM EBITDA of just under $100M including pending acquisitions (~20x excluding them).",
+     "metric": "~$1.7B; ~17x",
+     "source_url": "https://homepros.beehiiv.com/p/goldman-sachs-private-equity-arm-to-acquire-sila-services"
+    },
+    {
+     "date": "2024-11-12",
+     "event_type": "exit",
+     "event": "Goldman Sachs Alternatives agrees to buy a majority; management keeps a significant minority. GS cites 'consistently strong organic growth, strategic M&A and significant portfolio company capability building'.",
+     "metric": "30+ brands",
+     "source_url": "https://am.gs.com/en-us/institutions/news/press-release/2024/sila-services-investment"
+    },
+    {
+     "date": "2025",
+     "event_type": "add_on",
+     "event": "Under GS: Sullivan Super Service (Pittsburgh, Jan), Delco Storm & Sewer (Delaware County PA, May), Live Free (NH, New England entry, Jun), Oxford Plumbing & Heating (Chester County PA, Oct).",
+     "metric": "4+ add-ons",
+     "source_url": "https://www.privsource.com/acquisitions/hvac-mechanical/state/pennsylvania"
+    },
+    {
+     "date": "2025-06",
+     "event_type": "add_on",
+     "event": "Live Free Heating/Cooling/Electric (NH) adds New England.",
+     "metric": "New England entry",
+     "source_url": "https://hvacinsider.com/sila-services-expands-new-england-presence-with-acquisition-of-live-free-heating-cooling-electric-in-new-hampshire/"
+    },
+    {
+     "date": "2026-01-14",
+     "event_type": "training_academy",
+     "event": "Buys NEOH (Ohio; 5 brands) including Trade Masters Academy, a technician training school; CEO says the deal lets Sila 'invest in training'.",
+     "metric": "5 brands + academy",
+     "source_url": "https://pulse2.com/sila-services-expands-midwest-footprint-with-strategic-ohio-multi-brand-acquisition"
+    },
+    {
+     "date": "2026-09-24",
+     "event_type": "kpi_disclosure",
+     "event": "Website: 40+ brands, 2,500+ team members, 1M+ customers served.",
+     "metric": "40+ brands",
+     "source_url": "https://www.silaservices.com"
+    }
+   ],
+   "levers_used": [
+    "add_on",
+    "leadership",
+    "training_academy",
+    "service-line cross-sell (plumbing, electrical, water, IAQ, solar)",
+    "recap"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Brands",
+     "before": 25,
+     "after": "40+",
+     "unit": "count",
+     "period": "2024-02 -> 2026",
+     "source_url": "https://www.silaservices.com"
+    },
+    {
+     "kpi": "LTM EBITDA",
+     "before": null,
+     "after": "just under $100M (incl. pending acquisitions)",
+     "unit": "USD",
+     "period": "at 2024 sale",
+     "source_url": "https://homepros.beehiiv.com/p/goldman-sachs-private-equity-arm-to-acquire-sila-services"
+    },
+    {
+     "kpi": "Employees (original opco vs portfolio company)",
+     "before": 96,
+     "after": "2,500+",
+     "unit": "people",
+     "period": "2020 -> 2026",
+     "source_url": "https://www.silaservices.com"
+    }
+   ],
+   "what_broad_sky_can_copy": "Sila is PP's most direct analog: a Philadelphia-area HVAC company that MSCP turned into a ~$100M-EBITDA, 30-brand portfolio company in 3.5 years and sold at a reported ~17x, and it is already buying in Lancaster County (ECS Comfort, 2024). Broad Sky should treat Sila as both a competing buyer for Central PA tuck-ins and the most likely strategic buyer of a scaled Punctual Pros. Its cross-sell list (plumbing, electrical, water treatment, IAQ, solar) and its 2026 purchase of a training academy show the two levers PP should copy first: add service lines to each acquired HVAC brand, and own the technician pipeline.",
+   "sources": [
+    "https://data.sba.gov/dataset/ppp-foia",
+    "https://www.morganstanley.com/im/en-us/capital-seeker/about-us/news-and-insights/press-release/ms-capital-partners-completes-investment-sila-hvac.html",
+    "https://lebtown.com/2024/02/16/sila-services-acquires-palmyra-hvac-company-ecs-comfort-heating-cooling/",
+    "https://www.contractingbusiness.com/industry-news/article/55017792/sila-services-llc-expands-hvac-holdings-in-eastern-us",
+    "https://am.gs.com/en-us/institutions/news/press-release/2024/sila-services-investment",
+    "https://homepros.beehiiv.com/p/goldman-sachs-private-equity-arm-to-acquire-sila-services",
+    "https://www.privsource.com/acquisitions/hvac-mechanical/state/pennsylvania",
+    "https://hvacinsider.com/sila-services-expands-new-england-presence-with-acquisition-of-live-free-heating-cooling-electric-in-new-hampshire/",
+    "https://pulse2.com/sila-services-expands-midwest-footprint-with-strategic-ohio-multi-brand-acquisition",
+    "https://www.silaservices.com"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "EV and multiple are press estimates from people familiar with the deal (HomePros); GS and MSCP did not disclose terms. MSCP's entry price and revenue were not disclosed. The 2025 add-on list comes from PrivSource's PA tracker (also in the PE landscape Sila entry). The PPP payroll figure is derived (loan / 2.5 x 12)."
+  },
+  {
+   "id": "case-ah",
+   "kind": "case",
+   "company": "Any Hour Group (Orem, UT)",
+   "sector": "residential_home_services",
+   "sponsor": "Knox Lane (2021-)",
+   "co_investors": [],
+   "entry_date": "2021-07-01",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": "Salt Lake City region",
+   "entry_technicians_or_staff": "300+ employees and technicians (2021)",
+   "hold_status": "held",
+   "exit_date": null,
+   "exit_buyer": null,
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "current_owner": "Knox Lane",
+   "timeline": [
+    {
+     "date": "2018",
+     "event_type": "kpi_disclosure",
+     "event": "Founder-owned Any Hour grows revenue from $10.8M (2013) to $37.2M (2018), almost 400%, targeting 20-30% a year.",
+     "metric": "$10.8M -> $37.2M",
+     "source_url": "https://www.servicetitan.com/blog/success-story-lincoln-walpole"
+    },
+    {
+     "date": "2020-05",
+     "event_type": "tech_rollout",
+     "event": "Moves onto ServiceTitan (onboarded virtually, 'no revenue loss'); uses tags for opportunities, ~40 scheduled daily reports (revenue, margin, job costing, call metrics) and the dispatch board; opex as a share of revenue falls after implementation.",
+     "metric": "~40 daily reports",
+     "source_url": "https://www.servicetitan.com/blog/success-story-lincoln-walpole"
+    },
+    {
+     "date": "2021-07-01",
+     "event_type": "other",
+     "event": "Knox Lane makes a growth investment to form Any Hour Group; Varagon arranges the senior credit facility.",
+     "metric": "300+ employees",
+     "source_url": "https://www.sfnet.com/home/chapters/canada/news-detail/2021/07/26/varagon-capital-partners-supports-knox-lanes-investment-in-any-hour-services"
+    },
+    {
+     "date": "2022-07-06",
+     "event_type": "add_on",
+     "event": "Partners with Magic Electric, Perfect Plumbing Heating & Air and Strongbuilt USA (ID, AZ, NM). Each keeps its brand and management but uses Any Hour's digital marketing, recruiting, training and operations.",
+     "metric": "+3",
+     "source_url": "https://www.privsource.com/acquisitions/deal/B6SOxA"
+    },
+    {
+     "date": "2022-09-20",
+     "event_type": "add_on",
+     "event": "Adds Grapids, Precision Plumbing Heating Cooling & Electrical, Chandler Air and All Hours Air (CO, NV, AZ, Midwest).",
+     "metric": "+4",
+     "source_url": "https://www.privsource.com/acquisitions/deal/q5SdDV"
+    },
+    {
+     "date": "2023-01-18",
+     "event_type": "add_on",
+     "event": "Seven partnerships at once (3 Mountains, Connors, EJ Plumbing, Oak Island, Pacific Aire, We Care, Wizard), entering CA, OR and MN.",
+     "metric": "+7",
+     "source_url": "https://www.contractormag.com/plumbing/residential-plumbing/article/21258262/any-hour-group-grows-home-services-leadership-with-seven-new-partnerships"
+    },
+    {
+     "date": "2023-07-26",
+     "event_type": "add_on",
+     "event": "Adds Black Diamond Experts and Bumble Breeze (UT, NV).",
+     "metric": "+2",
+     "source_url": "https://www.privsource.com/acquisitions/deal/EMSo6X"
+    },
+    {
+     "date": "2025-11-24",
+     "event_type": "add_on",
+     "event": "Adds Lee's Plumbing (northern UT / southern ID). AHG now has 25+ locations in 10 states and offers employee share ownership; CEO Mike Irby.",
+     "metric": "25+ locations; 10 states",
+     "source_url": "https://www.prnewswire.com/news-releases/any-hour-group-expands-into-northern-utah-with-the-acquisition-of-lees-plumbing-inc-302624185.html"
+    },
+    {
+     "date": "2026-06-30",
+     "event_type": "recap",
+     "event": "Lender stress: term loan at SOFR+575 including 3.25% PIK, marked ~89% of par (Jefferies Credit Partners BDC).",
+     "metric": "mark ~89; PIK",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1959604/000119312526345216/ck0001959604-20260630.htm"
+    }
+   ],
+   "levers_used": [
+    "tech_rollout (ServiceTitan)",
+    "add_on (16 partnerships in ~13 months)",
+    "marketing (central digital)",
+    "training_academy",
+    "employee ownership"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "Revenue",
+     "before": 10800000,
+     "after": 37200000,
+     "unit": "USD",
+     "period": "2013 -> 2018 (pre-PE)",
+     "source_url": "https://www.servicetitan.com/blog/success-story-lincoln-walpole"
+    },
+    {
+     "kpi": "Locations",
+     "before": "Salt Lake City region (2021)",
+     "after": "25+ in 10 states",
+     "unit": "count",
+     "period": "2021 -> 2025",
+     "source_url": "https://www.prnewswire.com/news-releases/any-hour-group-expands-into-northern-utah-with-the-acquisition-of-lees-plumbing-inc-302624185.html"
+    },
+    {
+     "kpi": "Term loan mark",
+     "before": null,
+     "after": 89.2,
+     "unit": "% of par",
+     "period": "as of 2026-06-30",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1959604/000119312526345216/ck0001959604-20260630.htm"
+    }
+   ],
+   "what_broad_sky_can_copy": "Any Hour's pre-PE story (ServiceTitan reporting discipline and roughly 30% annual organic growth) is what made it investable, and Punctual Pros should run the same ~40 scheduled ServiceTitan reports so Broad Sky can see job-costing and call metrics weekly. The PE chapter is the cautionary half: 16 partnerships across 7+ new states in 13 months (2022-2023) was followed by a PIK loan marked at 89, which is evidence that geographic sprawl outran integration. Punctual Pros should add brands contiguous to Lancaster and the Horvath NJ market before jumping regions.",
+   "sources": [
+    "https://www.servicetitan.com/blog/success-story-lincoln-walpole",
+    "https://www.privsource.com/acquisitions/deal/e4SA80",
+    "https://www.sfnet.com/home/chapters/canada/news-detail/2021/07/26/varagon-capital-partners-supports-knox-lanes-investment-in-any-hour-services",
+    "https://www.privsource.com/acquisitions/deal/B6SOxA",
+    "https://www.privsource.com/acquisitions/deal/q5SdDV",
+    "https://www.contractormag.com/plumbing/residential-plumbing/article/21258262/any-hour-group-grows-home-services-leadership-with-seven-new-partnerships",
+    "https://www.privsource.com/acquisitions/deal/EMSo6X",
+    "https://www.prnewswire.com/news-releases/any-hour-group-expands-into-northern-utah-with-the-acquisition-of-lees-plumbing-inc-302624185.html",
+    "https://www.sec.gov/Archives/edgar/data/1959604/000119312526345216/ck0001959604-20260630.htm"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "Knox Lane's entry value and revenue at entry were not disclosed. The 2018 revenue and ServiceTitan details are from a ServiceTitan customer story (vendor-published). The 2026 loan data were read 2026-09-24 (rival filings rival-019). Linking the PIK to the sprawl is analyst inference."
+  },
+  {
+   "id": "case-lg",
+   "kind": "case",
+   "company": "Legacy Service Partners (Tampa)",
+   "sector": "residential_home_services",
+   "sponsor": "Founders with WP Global / ZBS (2021) -> Gridiron Capital (2023-)",
+   "co_investors": [
+    "WP Global Partners (2023 investment, per CB Insights)"
+   ],
+   "entry_date": "2023-01-18",
+   "entry_ev_usd": null,
+   "entry_multiple_ebitda": null,
+   "entry_revenue_usd": null,
+   "entry_ebitda_usd": null,
+   "entry_locations": "28 brands in 16 states",
+   "entry_technicians_or_staff": null,
+   "hold_status": "held",
+   "exit_date": null,
+   "exit_buyer": null,
+   "exit_ev_usd": null,
+   "exit_multiple_ebitda": null,
+   "exit_revenue_usd": null,
+   "exit_ebitda_usd": null,
+   "moic_or_irr_reported": null,
+   "current_owner": "Gridiron Capital",
+   "timeline": [
+    {
+     "date": "2023-01-18",
+     "event_type": "leadership",
+     "event": "Gridiron makes a growth investment in Legacy (founded 2021 by Jake Sloane, Frank Zhang and CEO Rob Millock) and plans to build scalable operating templates through Gridiron's 'Centers of Excellence'. Churchill leads the debt with JPMorgan, Audax, Hamilton Lane and Jefferies.",
+     "metric": "28 brands; 16 states",
+     "source_url": "https://www.sfnet.com/home/chapters/canada/news-detail/2023/01/18/gridiron-capital-partners-with-legacy-service-partners"
+    },
+    {
+     "date": "2023-06-08",
+     "event_type": "add_on",
+     "event": "Adds McVay Plumbing Heating & Cooling and Mister Sewer (Pittsburgh) and Gator Drain (Cape Coral, FL). Legacy provides back-end finance, HR, marketing and business-development support.",
+     "metric": "+3 (2 in PA)",
+     "source_url": "https://www.phcppros.com/articles/17656-legacy-service-partners-expands-network-with-three-new-partnerships-in-pennsylvania-and-florida"
+    },
+    {
+     "date": "2026-02-17",
+     "event_type": "recap",
+     "event": "Repriced/added first-lien term loan at SOFR+450 (2031 maturity), marked ~99% of par; lender schedules show 11+ facility amendments, i.e., frequent incremental add-on funding.",
+     "metric": "S+450; 11th amendment",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1633858/000119312526348682/ck0001633858-20260630.htm"
+    },
+    {
+     "date": "2026-09-24",
+     "event_type": "kpi_disclosure",
+     "event": "Website: 22+ partnerships, 19 states, 200,000+ customers a year; HL Bowman (PA) appears in the partner roster; support across marketing, finance, technology and sales.",
+     "metric": "200,000+ customers/yr",
+     "source_url": "https://www.legacyservicepartners.com"
+    }
+   ],
+   "levers_used": [
+    "add_on",
+    "leadership (Centers of Excellence)",
+    "marketing",
+    "tech_rollout"
+   ],
+   "kpi_before_after": [
+    {
+     "kpi": "States",
+     "before": 16,
+     "after": 19,
+     "unit": "count",
+     "period": "2023 -> 2026",
+     "source_url": "https://www.legacyservicepartners.com"
+    }
+   ],
+   "what_broad_sky_can_copy": "Legacy is a direct Central-PA competitor (HL Bowman appears in its partner roster), so Broad Sky should expect it in every Harrisburg, York and Reading auction and pre-empt with founder relationships. Its pitch to founders (keep your name and your leadership, get back-office finance, HR and marketing) is what PP must match or beat, and PP's edge is the Authority national brand and call-center stack. Gridiron's 'Centers of Excellence' model (one owner per function across all brands) is a low-cost structure PP can copy with two or three add-ons.",
+   "sources": [
+    "https://www.sfnet.com/home/chapters/canada/news-detail/2023/01/18/gridiron-capital-partners-with-legacy-service-partners",
+    "https://www.phcppros.com/articles/17656-legacy-service-partners-expands-network-with-three-new-partnerships-in-pennsylvania-and-florida",
+    "https://www.sec.gov/Archives/edgar/data/1633858/000119312526348682/ck0001633858-20260630.htm",
+    "https://www.legacyservicepartners.com"
+   ],
+   "retrieved": "2026-10-06",
+   "data_notes": "No financials disclosed. Brand count is 28 (2023 release) but the 2026 website shows '22+ partnerships' (partnerships can hold several brands). The HL Bowman link is a logo on Legacy's site; no acquisition date or release was found. The 2026 loan data were read 2026-09-24 (rival filings rival-027)."
+  }
+ ]
+}

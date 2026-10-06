@@ -1,0 +1,40 @@
+{
+ "generated": "2026-10-06",
+ "rules": [
+  {
+   "from": "playbook",
+   "to": "growth plan",
+   "note": "'Nationwide playbook' → 'Nationwide plan'; 'value-creation playbook' → 'growth plan'; file names unchanged"
+  },
+  {
+   "from": "platform (PE sense)",
+   "to": "portfolio company / company",
+   "note": "'six platforms' → 'six companies'; 'platform theses' → 'company theses'; 'rival platforms' → 'rival companies'; 'platforms screened' → 'companies screened'; keep tech-product sense (CTV platform, voice-AI platform, reference platforms)"
+  },
+  {
+   "from": "Tyler, …",
+   "to": "(remove salutation)",
+   "note": "product voice; memo TO: line excepted"
+  },
+  {
+   "from": "brand names in design rationale (Stripe, Ramp, Linear, Vanta, Mercury, Hebbia, Vuori, Chubbies, Outerknown, Allbirds, McMaster-Carr, Parker & Sons, Frank Gay, Sila, Any Hour, Wrench, Fisher, Avantor, Edelman, FGS, Penta, Precision, Sciens, Ameresco, Shermco, Kraft Kennedy, Harbor, ITS, Calibre)",
+   "to": "principle-only language",
+   "note": "rationale sections only; competitor/PE data may still name companies"
+  },
+  {
+   "from": "legal-compliance content (wiretap, recording consent, TCPA, FCC rulings)",
+   "to": "operational guardrails only",
+   "note": ""
+  },
+  {
+   "from": "mono chips in colored blocks / gray-highlighted subheadings",
+   "to": "plain text in system note style",
+   "note": "e.g. nationwide.css .tl-m"
+  },
+  {
+   "from": "any author name other than Syed Rahman",
+   "to": "Syed Rahman",
+   "note": "and no emails anywhere"
+  }
+ ]
+}

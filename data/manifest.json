@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-24",
+ "generated": "2026-10-06",
  "datasets": [
   {
    "file": "cet_ne_counties.json",
@@ -253,6 +253,49 @@
     "coverage",
     "max_cms_allowed",
     "commercial_priority_label_v3c"
+   ]
+  },
+  {
+   "file": "national_counties.json",
+   "rows": 3144,
+   "bytes": 588403,
+   "source": "Census Gazetteer 2023, ACS 2023 5-yr, PEP V2024, Census BPS 2024/2025/2026 YTD, Redfin county tracker, NOAA nClimDiv 1991-2020 county HDD/CDD normals, CBP 2022 (NAICS 238210/238220), Authority Brands public locators",
+   "note": "National county base table (50 states + DC, CT planning regions) for home-services expansion scoring; columnar; see meta.sources/formulas/coverage. Built by scripts/build_national_counties.py.",
+   "fields": [
+    "fips",
+    "state",
+    "county_name",
+    "lat",
+    "lon",
+    "land_sqmi",
+    "population",
+    "pop_est_2024",
+    "pop_growth_2020_2024",
+    "housing_units",
+    "owner_occupied_share",
+    "median_year_built",
+    "pre1980_share",
+    "median_household_income",
+    "heating_fuel_oil_propane_share",
+    "heating_electric_share",
+    "permits_units_2024",
+    "permits_units_2025ytd",
+    "permits_1unit_2025",
+    "permits_units_2026ytd",
+    "permits_per_1k_hu_2025",
+    "home_sales_12m",
+    "median_sale_price",
+    "median_dom",
+    "hdd_normal_1991_2020",
+    "cdd_normal_1991_2020",
+    "cdd_hdd_proxy",
+    "estab_238220_plumbing_hvac",
+    "estab_238210_electrical",
+    "hvac_plumbing_electrical_establishments",
+    "ab_onehour",
+    "ab_benfranklin",
+    "ab_mistersparky",
+    "authority_brands_presence"
    ]
   }
  ]

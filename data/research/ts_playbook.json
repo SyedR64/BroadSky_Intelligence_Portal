@@ -1,17 +1,17 @@
 {
  "meta": {
   "dataset": "ts_playbook",
-  "title": "Thomas Scientific: the value-creation playbook",
+  "title": "Thomas Scientific: the growth plan",
   "generated": "2026-10-06",
-  "subject": "Thomas Scientific (Swedesboro NJ; Broad Sky Partners platform since Jan 2022)",
-  "thesis": "From distributor to lab-supply-chain platform: target-account selling into diagnostics labs and hospital systems (27.5k scored sites), e-commerce/punchout penetration, VMI, private label, cold chain, cannabis/cleanroom verticals; add-ons in regional distributors and specialty consumables; AI agents for quoting, search, forecasting and account health; an inside-sales academy.",
-  "method": "Expansion-phase data_points are computed from repo datasets: data/ts_sites.json (27,503 sites, aggregated by region only: counts by vertical, priority label and archetype, and summed 2023 CMS allowed amounts), data/ts_parents.json (top 500 parents), data/research/ma_targets_fl_ts.json (25 thomas_scientific targets, ZoomInfo revenue estimates), thomas_filings (capital structure and estimates), public_comps (lab-distribution medians), pe_landscape (Calibre, Sterling), bsp_firm (Smith + Howard timeline and Thomas add-ons) and serviceos_evidence (LabOS KPI benchmarks kb-ts-1..3, ve-06, ra-ts). External evidence was gathered on 2026-10-06 by web search and direct fetches of SEC filings (Avantor FY2025 10-K, VWR FY2014 10-K), state/federal pages (NJDOL), banker reports (Houlihan Lokey) and vendor case studies. Growth-lever and KPI targets are benchmarks or labelled assumptions; the kpi_roadmap is an analyst assumption anchored to the thomas_filings estimate_table.",
+  "subject": "Thomas Scientific (Swedesboro NJ; Broad Sky Partners portfolio company since Jan 2022)",
+  "thesis": "From distributor to lab-supply-chain portfolio company: target-account selling into diagnostics labs and hospital systems (27.5k scored sites), e-commerce/punchout penetration, VMI, private label, cold chain, cannabis/cleanroom verticals; add-ons in regional distributors and specialty consumables; AI agents for quoting, search, forecasting and account health; an inside-sales academy.",
+  "method": "Expansion-phase data points are computed from repo datasets: data/ts_sites.json (27,503 sites, aggregated by region only: counts by vertical, priority label and archetype, and summed 2023 CMS allowed amounts), data/ts_parents.json (top 500 parents), data/research/ma_targets_fl_ts.json (25 Thomas Scientific targets, ZoomInfo revenue estimates), Thomas Scientific filings (capital structure and estimates), public comparables (lab-distribution medians), PE landscape (Calibre, Sterling), Broad Sky firm profile (Smith + Howard timeline and Thomas add-ons) and ServiceOS evidence (LabOS KPI benchmarks kb-ts-1..3, ve-06, ra-ts). External evidence was gathered on 2026-10-06 by web search and direct fetches of SEC filings (Avantor FY2025 10-K, VWR FY2014 10-K), state/federal pages (NJDOL), banker reports (Houlihan Lokey) and vendor case studies. Growth-lever and KPI targets are benchmarks or labelled assumptions; the KPI roadmap is an analyst assumption anchored to the Thomas Scientific filings estimate table.",
   "caveats": [
    "Thomas Scientific is a stressed credit: first-lien loan at 88.3% of par (Jun-2026), maturity 2027-12-14, common equity marked near zero, est. leverage 7-10x. Every lever is sequenced behind liquidity and refinancing.",
-   "Company revenue, EBITDA and headcount are low-confidence analyst estimates (thomas_filings), not company disclosures; the kpi_roadmap inherits that uncertainty.",
-   "data/research/market_evidence.json and a kpi_targets dataset were not present in the repo at build time; KPI targets use serviceos_evidence kpi_benchmark items (kb-ts-*) and external sources, labelled as assumptions.",
-   "ts_sites scores are from a legacy targeting tool (NPPES, CMS 2023, CLIA, Hospital Compare); site counts are aggregated by region only, and the CMS allowed amount is Medicare billing, not lab-supply spend.",
-   "Vendor case studies (InstaLILY, Conexiom, Algolia, Conga/PROS, HighRadius, Flagship VMI) are self-reported and unaudited; treat them as upper bounds. weeks_to_deploy values are analyst estimates.",
+   "Company revenue, EBITDA and headcount are low-confidence analyst estimates (Thomas Scientific filings), not company disclosures; the KPI roadmap inherits that uncertainty.",
+   "data/research/market_evidence.json and a KPI targets dataset were not present in the repo at build time; KPI targets use ServiceOS evidence KPI benchmark items (kb-ts-*) and external sources, labelled as assumptions.",
+   "Thomas lab-site list scores are from a legacy targeting tool (NPPES, CMS 2023, CLIA, Hospital Compare); site counts are aggregated by region only, and the CMS allowed amount is Medicare billing, not lab-supply spend.",
+   "Vendor case studies (InstaLILY, Conexiom, Algolia, Conga/PROS, HighRadius, Flagship VMI) are self-reported and unaudited; treat them as upper bounds. weeks to deploy values are analyst estimates.",
    "Market-size figures for cleanroom, cannabis testing and healthcare cold chain come from market-research firms whose forecasts vary widely.",
    "The McKinsey forecasting figures and the Antylia/GTCR details come from search-engine extracts because the primary pages blocked automated fetches.",
    "ZoomInfo revenue estimates for add-on targets are modeled and can be far off."
@@ -26,10 +26,10 @@
    "financing": 5
   },
   "narrative": [
-   "Tyler, the honest starting point is that Thomas is Fund I's largest and most stressed position: lenders mark the first-lien loan at 88% of par, the common is marked near zero, and the loan matures in December 2027.",
-   "So this playbook puts cash and refinancing first and growth second, but the growth story is what earns the refinancing.",
+   "the honest starting point is that Thomas is Fund I's largest and most stressed position: lenders mark the first-lien loan at 88% of par, the common is marked near zero, and the loan matures in December 2027.",
+   "So this plan puts cash and refinancing first and growth second, but the growth story is what earns the refinancing.",
    "Smith + Howard shows the shape: a regional leader that grew from about 100 to 800 people, 1 to 11 locations and nearly 4x revenue through nine add-ons, specialist capabilities and technology investment.",
-   "For Thomas the equivalent is not 4x revenue; it is turning a 125-year-old distributor into a lab supply-chain platform that buyers value above a commodity distributor.",
+   "For Thomas the equivalent is not 4x revenue; it is turning a 125-year-old distributor into a lab supply-chain portfolio company that buyers value above a commodity distributor.",
    "The demand map already exists: 27,503 scored lab, pathology and hospital sites, 713 rated Pursue and 2,317 Nurture, and the top 500 parent organizations account for 832 of the scored sites.",
    "An inside-sales academy on Grainger's model, with 4 weeks of training and then a 100-account book, would need about 30 books to cover every Pursue and Nurture site.",
    "Digital is table stakes: Avantor does about 80% of transactions online, and Grainger's ePro channels are about 40% of connected orders, growing far faster than rep-led sales.",
@@ -46,7 +46,7 @@
     "ebitda_usd": 30000000,
     "headcount": 470,
     "locations_or_accounts": "9 distribution centers; named coverage of Pursue/Nurture sites unknown (baseline)",
-    "note": "Midpoints of thomas_filings estimates: revenue $250-320M, EBITDA $25-35M; headcount ~400 (ZoomInfo) + ~70 from tuck-ins. All low confidence."
+    "note": "Midpoints of Thomas Scientific filings estimates: revenue $250-320M, EBITDA $25-35M; headcount ~400 (ZoomInfo) + ~70 from tuck-ins. All low confidence."
    },
    {
     "month": 12,
@@ -73,7 +73,7 @@
     "note": "~4% organic growth plus a second ~$15M tuck-in; ~12% EBITDA margin. At est. $260M debt this is ~6.1x, inside the 5.25-6.25x unitranche band. Assumption, not a forecast."
    }
   ],
-  "kpi_roadmap_label": "est. — analyst assumptions anchored to thomas_filings estimate_table (revenue $250-320M, EBITDA $25-35M); not company guidance",
+  "kpi_roadmap_label": "est. — analyst assumptions anchored to Thomas Scientific filings estimate table (revenue $250-320M, EBITDA $25-35M); not company guidance",
   "related_datasets": [
    "ts_sites",
    "ts_parents",
@@ -90,11 +90,11 @@
    "id": "tpl-01",
    "kind": "template",
    "template": "Smith + Howard",
-   "move": "Platform entry: buy a respected regional leader, then fund the build",
+   "move": "Entry: buy a respected regional leader, then fund the build",
    "date": "2022-11-15",
-   "what_happened": "Broad Sky made a strategic platform investment in Smith + Howard, then a single-office Atlanta CPA firm of about 100 professionals.",
+   "what_happened": "Broad Sky made a strategic anchor investment in Smith + Howard, then a single-office Atlanta CPA firm of about 100 professionals.",
    "metric": "~100 professionals, 1 office at entry",
-   "ts_translation": "Thomas is already the platform (founded 1900, 9 distribution centers). The analogous step is to re-underwrite it as a platform: name the 27.5k-site target universe, fund the commercial engine, and stop treating it as a stand-alone distributor.",
+   "ts_translation": "Thomas is already the anchor company (founded 1900, 9 distribution centers). The analogous step is to re-underwrite it as a growth company: name the 27.5k-site target universe, fund the commercial engine, and stop treating it as a stand-alone distributor.",
    "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
    "retrieved": "2026-09-24",
    "confidence": "high"
@@ -146,7 +146,7 @@
    "date": "2024-12-09 to 2026-01-13",
    "what_happened": "Fahrenheit Advisors (Richmond), Smith Kesler (Carolinas), Horton Lee & Burnett (Birmingham) and Bauknight Pietras & Stormer (South Carolina) built a Southeast cluster, roughly one deal every four months.",
    "metric": "4 Southeast add-ons in ~13 months",
-   "ts_translation": "Thomas has made no acquisition since Oct 2023. Restart a disciplined cadence of one $5-25M tuck-in every 4-6 months once liquidity allows; regional distributors trade near 0.8x sales (Denville precedent), well below platform value.",
+   "ts_translation": "Thomas has made no acquisition since Oct 2023. Restart a disciplined cadence of one $5-25M tuck-in every 4-6 months once liquidity allows; regional distributors trade near 0.8x sales (Denville precedent), well below company value.",
    "source_url": "https://www.smith-howard.com/smith-howard-expands-southeastern-u-s-presence-with-acquisition-of-horton-lee-burnett/",
    "retrieved": "2026-09-24",
    "confidence": "high"
@@ -159,7 +159,7 @@
    "date": "2026-02-01",
    "what_happened": "Geels Norton (cyber/SOC) joined Smith + Howard; the CEO credits investments in leadership, technology, AI-enabled capabilities and an offshore delivery center in India for the transformation.",
    "metric": "India delivery center + AI-enabled capabilities",
-   "ts_translation": "Thomas analog: AI agents for quoting, order entry, search and collections (see ai_agent items) and a shared-service back office, aimed at lowering cost-to-serve on ~$700 average orders.",
+   "ts_translation": "Thomas analog: AI agents for quoting, order entry, search and collections (see AI-agent items) and a shared-service back office, aimed at lowering cost-to-serve on ~$700 average orders.",
    "source_url": "https://www.financialcontent.com/article/bizwire-2026-8-6-broad-sky-partners-completes-sale-of-smith-howard-to-tpg",
    "confidence": "high",
    "retrieved": "2026-10-06"
@@ -172,7 +172,7 @@
    "date": "2026-08-06",
    "what_happened": "Broad Sky sold Smith + Howard to TPG Growth after 3.5 years: ~100 -> ~800 professionals, 1 -> 11 locations (Southeast US + India), 9 acquisitions, nearly 4x revenue.",
    "metric": "~4x revenue; ~8x headcount; 9 add-ons; 3.5-year hold",
-   "ts_translation": "The Thomas version of \"national scale\" is not 4x revenue; it is a re-rated, refinanced platform with clean cash interest coverage and a visible digital/private-label margin story before the Dec-2027 loan maturity.",
+   "ts_translation": "The Thomas version of \"national scale\" is not 4x revenue; it is a re-rated, refinanced portfolio company with clean cash interest coverage and a visible digital/private-label margin story before the Dec-2027 loan maturity.",
    "source_url": "https://www.financialcontent.com/article/bizwire-2026-8-6-broad-sky-partners-completes-sale-of-smith-howard-to-tpg",
    "confidence": "high",
    "retrieved": "2026-10-06"
@@ -197,7 +197,7 @@
    "template": "Analog: Calibre Scientific (StoneCalibre), 2018-",
    "move": "Buy-and-build of lab distributors plus proprietary manufacturing and service",
    "date": "2018-01-01 to 2024-10",
-   "what_happened": "StoneCalibre launched Calibre Scientific on Jan 1 2018 and lists ~40+ acquisitions through Oct 2024 (pe_landscape counts 64+), organized into Calibre Scientific (proprietary products), Calibre Lab (distribution) and Calibre Tec (service).",
+   "what_happened": "StoneCalibre launched Calibre Scientific on Jan 1 2018 and lists ~40+ acquisitions through Oct 2024 (PE landscape counts 64+), organized into Calibre Scientific (proprietary products), Calibre Lab (distribution) and Calibre Tec (service).",
    "metric": "~40+ acquisitions in ~7 years; 3 divisions",
    "ts_translation": "Calibre is the most active bidder for the same U.S. chromatography, consumables and glassware add-ons. Its three-division model (own brand + distribution + service) is the shape Thomas should copy, and its European focus leaves U.S. regional distributors open.",
    "source_url": "https://www.stonecalibre.com/portfolio-1/calibre-scientific",
@@ -435,7 +435,7 @@
    "baseline": null,
    "target": 3030,
    "unit": "sites under named rep or digital coverage (Pursue + Nurture)",
-   "evidence": "ts_sites scores 27,503 lab/hospital/pathology sites: 713 Pursue, 2,317 Nurture. The top 500 parent organizations own 832 sites. Thomas's current coverage of these sites is not known (baseline null). Avantor fields ~3,400 sales staff incl. 170+ specialists against 300,000+ customer locations.",
+   "evidence": "Thomas lab-site list scores 27,503 lab/hospital/pathology sites: 713 Pursue, 2,317 Nurture. The top 500 parent organizations own 832 sites. Thomas's current coverage of these sites is not known (baseline null). Avantor fields ~3,400 sales staff incl. 170+ specialists against 300,000+ customer locations.",
    "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000162828026007118/avtr-20251231.htm",
    "dataset_ref": "data/ts_sites.json, data/ts_parents.json",
    "confidence": "medium",
@@ -510,7 +510,7 @@
    "baseline": null,
    "target": 7.3,
    "unit": "% market CAGR 2024-2029 (market growth to ride)",
-   "evidence": "Technavio forecasts cleanroom consumables growing by $7.18B at a 7.3% CAGR 2024-2029, versus a 1.5% median latest-year growth for listed lab distributors (public_comps). Thomas already owns NCI, Quintana, Day and American Cleanstat in this niche; Valutek ($100M ZoomInfo est.) and Micronova are scored targets.",
+   "evidence": "Technavio forecasts cleanroom consumables growing by $7.18B at a 7.3% CAGR 2024-2029, versus a 1.5% median latest-year growth for listed lab distributors (public comparables). Thomas already owns NCI, Quintana, Day and American Cleanstat in this niche; Valutek ($100M ZoomInfo est.) and Micronova are scored targets.",
    "source_url": "https://www.technavio.com/report/global-cleanroom-consumables-market-2014-2018",
    "confidence": "medium",
    "note": "Market-research estimate; forecasts differ (4.6-7.3% CAGR).",
@@ -573,7 +573,7 @@
    "weeks_to_deploy": 8,
    "source_url": "https://instalily.ai/case-studies/quoting-speed",
    "confidence": "medium",
-   "note": "Vendor case study; weeks_to_deploy is an estimate.",
+   "note": "Vendor case study; weeks to deploy is an estimate.",
    "retrieved": "2026-10-06"
   },
   {
@@ -633,7 +633,7 @@
    "weeks_to_deploy": 12,
    "source_url": "https://www.mckinsey.com/capabilities/operations/our-insights/ai-driven-operations-forecasting-in-data-light-environments",
    "confidence": "medium",
-   "note": "McKinsey page blocked automated fetch; figures from search-engine extracts of the article. Netstock pricing from serviceos_evidence vs-ts-3.",
+   "note": "McKinsey page blocked automated fetch; figures from search-engine extracts of the article. Netstock pricing from ServiceOS evidence vs-ts-3.",
    "retrieved": "2026-10-06"
   },
   {
@@ -654,7 +654,7 @@
    "weeks_to_deploy": 10,
    "source_url": "https://venturebeat.com/ai/proton-ai-raises-20m-to-optimize-wholesale-distributors-sales-operations",
    "confidence": "medium",
-   "note": "Proton's published uplift figures (e.g., 8% revenue per rep) could not be fetched from a primary page; metric_value left null.",
+   "note": "Proton's published uplift figures (e.g., 8% revenue per rep) could not be fetched from a primary page; metric value left null.",
    "retrieved": "2026-10-06"
   },
   {
@@ -813,7 +813,7 @@
    "kind": "financing",
    "instrument": "Apollo/MidCap first-lien unitranche (TL + DDTL + revolver)",
    "facts": "Closed 2021-12-14 at L+625 (1% floor), maturity 2027-12-14. MFIC Jun-2026: term loan par $32.85M marked at 88.3% of par; revolver $2.35M drawn, $0.74M undrawn; total facility est. $180-300M.",
-   "implication": "The maturity is 14 months away and the loan trades as distressed. Any playbook must first secure an amend-and-extend or refinancing.",
+   "implication": "The maturity is 14 months away and the loan trades as distressed. Any growth plan must first secure an amend-and-extend or refinancing.",
    "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000119312526335848/mfic-20260630.htm",
    "retrieved": "2026-09-24",
    "confidence": "high"
@@ -853,7 +853,7 @@
    "kind": "financing",
    "instrument": "Add-on valuation norms (tuck-in purchase multiples)",
    "facts": "Denville Scientific (2018) was bought for ~$20M on ~$25M revenue (~0.8x sales, ~35% gross margin). GF Data: average LMM purchase multiple 7.2x TTM adjusted EBITDA in 2025.",
-   "implication": "Small regional distributors bought at 5-7x and folded into a platform valued higher add value through multiple arbitrage, but only once the platform can fund them.",
+   "implication": "Small regional distributors bought at 5-7x and folded into a company valued higher add value through multiple arbitrage, but only once the company can fund them.",
    "source_url": "https://www.sec.gov/Archives/edgar/data/1123494/000117184318000685/exh_992.htm",
    "retrieved": "2026-09-24",
    "confidence": "medium",

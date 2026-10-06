@@ -1,331 +1,328 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Thomas Scientific — Lab supplies, one search away (concept)</title>
-<meta name="description" content="Concept redesign of Thomas Scientific: search-first lab supply distribution for research, biopharma, clinical diagnostics, cleanroom and cannabis-testing labs, powered by LabOS.">
-<meta name="theme-color" content="#0c1a2a">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thomas Scientific · Broad Sky</title>
+<meta name="description" content="Concept website for Thomas Scientific: search-first lab supply distribution for research, biopharma, clinical, cleanroom and cannabis-testing labs, powered by LabOS.">
+<meta name="theme-color" content="#fbfaf7">
+<link rel="icon" href="../../BSP_Logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230c1a2a'/%3E%3Cpath d='M9 9h14M16 9v6.5l-5.6 8.3A1.6 1.6 0 0 0 11.7 26h8.6a1.6 1.6 0 0 0 1.3-2.2L16 15.5' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../assets/system.css?v=20261006122625">
+<link rel="stylesheet" href="site.css?v=20261006122625">
 </head>
-<body class="ts">
-<a class="skip" href="#main">Skip to content</a>
-
-<div class="util" role="navigation" aria-label="Account shortcuts">
-  <div class="wrap util-in">
-    <span class="util-l"><span class="pulse" aria-hidden="true"></span>Since 1900 · Swedesboro, NJ<span class="hide-m"> · National distribution network</span></span>
-    <span class="util-r">
-      <a href="#quickorder">Quick order</a><a href="#faq">Order status</a><a href="#faq">CoA &amp; SDS</a><a href="labos.html" class="util-os">Powered by <b>LabOS</b></a>
-    </span>
-  </div>
-</div>
-
-<header class="hdr" id="top">
-  <div class="wrap hdr-in">
-    <a class="brand" href="#top" aria-label="Thomas Scientific home"><span class="logo" data-logo></span><span class="wm">Thomas<b>Scientific</b></span></a>
-    <form class="hsearch" role="search" data-search="hdr" autocomplete="off">
-      <label class="sr" for="q-hdr">Search products</label>
-      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input id="q-hdr" type="search" placeholder="Search products, CAS or catalog #" aria-autocomplete="list" aria-controls="res-hdr">
-      <div class="results" id="res-hdr" role="listbox" hidden></div>
-    </form>
-    <nav class="hnav" aria-label="Primary">
-      <a href="#categories">Products</a><a href="#verticals">Industries</a><a href="#services">Services</a><a href="#reps">Find your team</a><a href="playbook.html">Playbook</a><a href="labos.html" class="nav-os">LabOS<span>new</span></a>
-    </nav>
-    <button class="cart-btn" data-cart-open aria-label="Open quote cart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6.2"/><circle cx="10" cy="20.5" r="1.2"/><circle cx="17.5" cy="20.5" r="1.2"/></svg><span class="cart-l">Quote</span><span class="cart-n" data-cart-n>0</span></button>
-    <button class="menu-btn" aria-label="Open menu" aria-expanded="false" data-menu><span></span><span></span></button>
-  </div>
-</header>
-
+<body data-co="ts">
 <main id="main">
-<!-- ═══ Hero ═══ -->
-<section class="hero" aria-labelledby="hero-h">
-  <div class="hero-grid" aria-hidden="true"></div>
-  <div class="wrap hero-in">
-    <div class="hero-copy">
-      <p class="eyebrow"><span class="dot"></span>Lab supply distribution for research, biopharma, clinical &amp; cleanroom</p>
-      <h1 id="hero-h">Every lab supply,<br><span class="hl">one search away.</span></h1>
-      <p class="lede">Consumables, equipment, chemicals and cleanroom supplies, with vendor-managed inventory, punchout and kitting built in. Search by keyword, CAS number or catalog number.</p>
-      <form class="bigsearch" role="search" data-search="hero" autocomplete="off">
-        <label class="sr" for="q-hero">Search the catalog</label>
-        <select aria-label="Category" data-scope><option value="">All categories</option></select>
-        <input id="q-hero" type="search" placeholder="Try “10 mL serological pipette” or “67-56-1”" aria-autocomplete="list" aria-controls="res-hero">
-        <button type="submit" class="btn btn-primary">Search</button>
-        <div class="results" id="res-hero" role="listbox" hidden></div>
-      </form>
-      <div class="trend" aria-label="Popular searches"><span>Popular:</span>
-        <button data-q="nitrile gloves">Nitrile gloves</button><button data-q="filter tips 200">Filter tips 200 µL</button><button data-q="67-56-1">Methanol HPLC</button><button data-q="iso 5 wipes">ISO 5 wipes</button><button data-q="-80 freezer">−80 °C freezer</button>
+<nav class="sys-subnav" aria-label="On this page">
+  <div class="sys-subnav-in">
+    <a class="sys-subnav-title" href="#main">Thomas Scientific</a>
+    <div class="sys-subnav-links"><a href="#categories">Catalog</a><a href="#finder">Finder</a><a href="#services">Services</a><a href="#verticals">Industries</a><a href="#reps">Your team</a><a href="#labos">LabOS</a><a href="#faq">Questions</a></div>
+    <div class="sys-subnav-actions"><a class="sys-btn sys-btn--co sys-btn--sm" href="#quote">Request a quote</a></div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="sys-hero" aria-labelledby="hero-h">
+  <div class="sys-wrap">
+    <div class="ts-hero-grid">
+      <div>
+        <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Thomas Scientific</b> · lab supply since 1900 · Swedesboro, NJ</p>
+        <h1 id="hero-h" class="sys-h1">Every lab supply, <span class="sys-grad-text">one search away.</span></h1>
+        <p class="sys-lead">Consumables, equipment, chemicals and cleanroom supplies, with vendor-managed inventory, punchout and kitting built in. Search by keyword, CAS number or catalog number.</p>
+        <form class="ts-bigsearch" role="search" data-search="hero" autocomplete="off">
+          <label class="sys-sr" for="q-hero">Search the catalog</label>
+          <select aria-label="Category" data-scope><option value="">All categories</option></select>
+          <input id="q-hero" type="search" placeholder="Try “10 mL serological pipette” or “67-56-1”" aria-autocomplete="list" aria-controls="res-hero">
+          <button type="submit" class="sys-btn sys-btn--co">Search</button>
+          <div class="ts-results" id="res-hero" role="listbox" hidden></div>
+        </form>
+        <div class="ts-trend sys-chips" aria-label="Popular searches"><span class="sys-card-label">Popular</span>
+          <button class="sys-chip" type="button" data-q="nitrile gloves">Nitrile gloves</button><button class="sys-chip" type="button" data-q="filter tips 200">Filter tips 200 µL</button><button class="sys-chip" type="button" data-q="67-56-1">Methanol HPLC</button><button class="sys-chip" type="button" data-q="iso 5 wipes">ISO 5 wipes</button><button class="sys-chip" type="button" data-q="-80 freezer">−80 °C freezer</button>
+        </div>
+        <div class="sys-actions"><a class="sys-btn sys-btn--primary sys-btn--lg" href="#quote">Request a quote</a><a class="sys-btn sys-btn--secondary sys-btn--lg" href="labos.html">Powered by LabOS →</a></div>
       </div>
-      <div class="hero-cta"><a class="btn btn-dark" href="#quote">Request a quote</a><a class="btn btn-ghost" href="labos.html"><span class="os-dot"></span>Powered by LabOS →</a></div>
-    </div>
-    <aside class="qo card" id="quickorder" aria-labelledby="qo-h">
-      <div class="qo-head"><h2 id="qo-h">Quick order</h2><span class="tag">Reorder in seconds</span></div>
-      <p class="qo-sub">Paste catalog numbers and quantities, one per line.</p>
-      <label class="sr" for="qo-text">Catalog numbers and quantities</label>
-      <textarea id="qo-text" rows="5" spellcheck="false">TS-1105-10, 4
+      <aside class="sys-card ts-qo" id="quickorder" aria-labelledby="qo-h">
+        <div class="ts-qo-head"><h2 id="qo-h" class="sys-card-title">Quick order</h2><button class="ts-cart" type="button" data-cart-open aria-label="Open quote cart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6.2"/><circle cx="10" cy="20.5" r="1.2"/><circle cx="17.5" cy="20.5" r="1.2"/></svg><span class="ts-cart-l">Quote cart</span><span class="ts-cart-n" data-cart-n>0</span></button></div>
+        <p class="sys-card-body">Paste catalog numbers and quantities, one per line.</p>
+        <label class="sys-sr" for="qo-text">Catalog numbers and quantities</label>
+        <textarea id="qo-text" rows="5" spellcheck="false" data-raw>TS-1105-10, 4
 TS-2210-200, 10
 TS-S001-NG, 2
 TS-C056-4L, 1</textarea>
-      <div class="qo-parse" data-qo-parse aria-live="polite"></div>
-      <button class="btn btn-primary w100" data-qo-add>Add lines to quote cart</button>
-      <p class="qo-foot">Catalog numbers in this concept are illustrative. <a href="#services">Punchout from Coupa, Ariba or Jaggaer →</a></p>
-    </aside>
-  </div>
-  <div class="wrap">
-    <dl class="stats" data-reveal>
-      <div><dt>Founded</dt><dd class="mono">1900</dd><span>125+ years supplying American labs</span></div>
-      <div><dt>US lab sites mapped</dt><dd class="mono" data-stat="sites">27,503</dd><span>LabOS account intelligence · <i data-stat="parents">20,001</i> organizations</span></div>
-      <div><dt>End markets</dt><dd class="mono">6</dd><span>Research · biopharma · clinical · cleanroom · cannabis · forensics</span></div>
-      <div><dt>Regional teams added since 2022</dt><dd class="mono">4</dd><span>NCI · Quintana Supply · Day Associates · Arrowhead</span></div>
-    </dl>
-  </div>
-</section>
-
-<!-- ═══ Trust strip ═══ -->
-<section class="trust" aria-label="Who we serve">
-  <div class="wrap trust-in">
-    <span class="trust-l">Trusted by labs across</span>
-    <ul><li>Academic medical centers</li><li>Clinical reference labs</li><li>Biopharma &amp; CDMOs</li><li>Medical device</li><li>Semiconductor cleanrooms</li><li>State crime labs</li><li>Cannabis testing</li></ul>
-  </div>
-</section>
-
-<!-- ═══ Categories (periodic table) ═══ -->
-<section class="sec" id="categories" aria-labelledby="cat-h">
-  <div class="wrap">
-    <div class="sec-head" data-reveal>
-      <p class="kicker">01 · Browse the catalog</p>
-      <h2 id="cat-h">The whole lab, in six elements.</h2>
-      <p>Start from a category, or skip straight to the shelf. Every line shows availability before you click.</p>
+        <div class="ts-qo-parse" data-qo-parse aria-live="polite"></div>
+        <button class="sys-btn sys-btn--secondary sys-btn--block" type="button" data-qo-add>Add lines to quote cart</button>
+        <p class="sys-src">Catalog numbers in this concept are <span class="sys-est sys-est--illus">illustrative</span> <a href="#services">Punchout from Coupa, Ariba or Jaggaer →</a></p>
+      </aside>
     </div>
-    <div class="ptable" data-ptable role="list"></div>
-    <div class="shelf" data-shelf hidden aria-live="polite"></div>
+    <div class="sys-kpis" role="list">
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Founded</span><span class="sys-kpi-value">1900</span><span class="sys-kpi-sub">125+ years supplying American labs</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">US lab sites mapped</span><span class="sys-kpi-value" data-stat="sites">27,503</span><span class="sys-kpi-sub">LabOS account intelligence · <span data-stat="parents">20,001</span> organizations</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">End markets</span><span class="sys-kpi-value">6</span><span class="sys-kpi-sub">Research, biopharma, clinical, cleanroom, cannabis, forensics</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Teams added since 2022</span><span class="sys-kpi-value">4</span><span class="sys-kpi-sub">NCI, Quintana Supply, Day Associates, Arrowhead</span></div>
+    </div>
+    <p class="sys-src"><b>Source:</b> Thomas Scientific lab sites (CMS, CLIA and NPPES registries) and the Broad Sky firm profile, Oct 2026.</p>
+    <div class="ts-trust" aria-label="Who we serve"><span class="sys-card-label">Serving labs across</span>
+      <ul class="sys-chips"><li class="sys-chip">Academic medical centers</li><li class="sys-chip">Clinical reference labs</li><li class="sys-chip">Biopharma and CDMOs</li><li class="sys-chip">Medical device</li><li class="sys-chip">Semiconductor cleanrooms</li><li class="sys-chip">State crime labs</li><li class="sys-chip">Cannabis testing</li></ul>
+    </div>
   </div>
 </section>
 
-<!-- ═══ Category finder ═══ -->
-<section class="sec sec-alt" id="finder" aria-labelledby="fd-h">
-  <div class="wrap finder">
-    <div class="sec-head" data-reveal>
-      <p class="kicker">02 · Product category finder</p>
-      <h2 id="fd-h">Tell us about your lab. Get a starter list.</h2>
-      <p>Three questions, no sign-in. The list maps your workflow to categories, products and the service that keeps them stocked.</p>
+<!-- Categories -->
+<section class="sys-section" id="categories" aria-labelledby="cat-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head" data-reveal>
+      <p class="sys-kicker">01 · Browse the catalog</p>
+      <h2 id="cat-h" class="sys-h2">The whole lab, in six elements.</h2>
+      <p class="sys-lead">Start from a category, or skip straight to the shelf. Every line shows availability before you click.</p>
     </div>
-    <div class="fd-grid">
-      <div class="fd-q card" data-finder>
-        <fieldset><legend><span>1</span>What kind of lab?</legend><div class="pills" data-f="vert"></div></fieldset>
-        <fieldset><legend><span>2</span>Main workflow</legend><div class="pills" data-f="flow"></div></fieldset>
-        <fieldset><legend><span>3</span>Must-haves</legend><div class="pills" data-f="need"></div></fieldset>
+    <div class="ts-ptable" data-ptable role="list"></div>
+    <div class="ts-shelf" data-shelf hidden aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- Category finder -->
+<section class="sys-section sys-section--alt" id="finder" aria-labelledby="fd-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head" data-reveal>
+      <p class="sys-kicker">02 · Product category finder</p>
+      <h2 id="fd-h" class="sys-h2">Tell us about your lab. Get a starter list.</h2>
+      <p class="sys-lead">Three questions, no sign-in. The list maps your workflow to categories, products and the service that keeps them stocked.</p>
+    </div>
+    <div class="ts-fd-grid">
+      <div class="sys-card ts-fd-q" data-finder>
+        <fieldset><legend><span>1</span>What kind of lab?</legend><div class="sys-chips" data-f="vert"></div></fieldset>
+        <fieldset><legend><span>2</span>Main workflow</legend><div class="sys-chips" data-f="flow"></div></fieldset>
+        <fieldset><legend><span>3</span>Must-haves</legend><div class="sys-chips" data-f="need"></div></fieldset>
       </div>
-      <div class="fd-out card" data-finder-out aria-live="polite"></div>
+      <div class="sys-card ts-fd-out" data-finder-out aria-live="polite"></div>
     </div>
   </div>
 </section>
 
-<!-- ═══ Services ═══ -->
-<section class="sec" id="services" aria-labelledby="sv-h">
-  <div class="wrap">
-    <div class="sec-head" data-reveal>
-      <p class="kicker">03 · Supply-chain services</p>
-      <h2 id="sv-h">We stock the stockroom, so your scientists don't.</h2>
-      <p>Distribution is the product; these services are why labs consolidate with us.</p>
+<!-- Services -->
+<section class="sys-section" id="services" aria-labelledby="sv-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head" data-reveal>
+      <p class="sys-kicker">03 · Supply-chain services</p>
+      <h2 id="sv-h" class="sys-h2">We stock the stockroom, so your scientists don't.</h2>
+      <p class="sys-lead">Distribution is the product; these services are why labs consolidate with us.</p>
     </div>
-    <div class="sv-wrap">
-      <div class="sv-grid" data-services></div>
-      <figure class="vmi card" data-reveal aria-labelledby="vmi-cap">
-        <svg viewBox="0 0 360 300" role="img" aria-label="Vendor-managed inventory loop: count, forecast, replenish, put away, report">
-          <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" fill="var(--brand)"/></marker></defs>
-          <circle cx="180" cy="150" r="98" fill="none" stroke="var(--line-2)" stroke-dasharray="3 6"/>
-          <path d="M180 52a98 98 0 0 1 93 67" fill="none" stroke="var(--brand)" stroke-width="2.5" marker-end="url(#ah)"/>
-          <path d="M276 175a98 98 0 0 1-56 64" fill="none" stroke="var(--brand)" stroke-width="2.5" marker-end="url(#ah)"/>
-          <path d="M140 240a98 98 0 0 1-56-64" fill="none" stroke="var(--brand)" stroke-width="2.5" marker-end="url(#ah)"/>
-          <path d="M83 120a98 98 0 0 1 60-63" fill="none" stroke="var(--brand)" stroke-width="2.5" marker-end="url(#ah)"/>
-          <g class="vmi-n"><rect x="135" y="30" width="90" height="34" rx="17"/><text x="180" y="52">Count</text></g>
-          <g class="vmi-n"><rect x="250" y="130" width="100" height="34" rx="17"/><text x="300" y="152">Forecast</text></g>
-          <g class="vmi-n"><rect x="170" y="236" width="104" height="34" rx="17"/><text x="222" y="258">Replenish</text></g>
-          <g class="vmi-n"><rect x="10" y="130" width="100" height="34" rx="17"/><text x="60" y="152">Put away</text></g>
-          <circle cx="180" cy="150" r="46" fill="var(--brand-tint)"/><text x="180" y="146" class="vmi-c">VMI</text><text x="180" y="164" class="vmi-s">min / max owned by us</text>
+    <div class="ts-sv-wrap">
+      <div class="sys-grid sys-grid--3" data-services></div>
+      <figure class="sys-card ts-vmi" data-reveal aria-labelledby="vmi-cap">
+        <svg viewBox="0 0 360 300" role="img" aria-label="Vendor-managed inventory loop: count, forecast, replenish, put away">
+          <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" class="ts-vmi-ah"/></marker></defs>
+          <circle cx="180" cy="150" r="98" class="ts-vmi-ring"/>
+          <path d="M180 52a98 98 0 0 1 93 67" class="ts-vmi-arc" marker-end="url(#ah)"/>
+          <path d="M276 175a98 98 0 0 1-56 64" class="ts-vmi-arc" marker-end="url(#ah)"/>
+          <path d="M140 240a98 98 0 0 1-56-64" class="ts-vmi-arc" marker-end="url(#ah)"/>
+          <path d="M83 120a98 98 0 0 1 60-63" class="ts-vmi-arc" marker-end="url(#ah)"/>
+          <g class="ts-vmi-n"><rect x="135" y="30" width="90" height="34" rx="17"/><text x="180" y="52">Count</text></g>
+          <g class="ts-vmi-n"><rect x="250" y="130" width="100" height="34" rx="17"/><text x="300" y="152">Forecast</text></g>
+          <g class="ts-vmi-n"><rect x="170" y="236" width="104" height="34" rx="17"/><text x="222" y="258">Replenish</text></g>
+          <g class="ts-vmi-n"><rect x="10" y="130" width="100" height="34" rx="17"/><text x="60" y="152">Put away</text></g>
+          <circle cx="180" cy="150" r="46" class="ts-vmi-core"/><text x="180" y="146" class="ts-vmi-c">VMI</text><text x="180" y="164" class="ts-vmi-s">min / max owned by us</text>
         </svg>
-        <figcaption id="vmi-cap">Vendor-managed inventory: we count, forecast and replenish your stockrooms on a fixed cadence and report usage monthly. Your scientists stop placing reorders.</figcaption>
+        <figcaption id="vmi-cap" class="sys-card-body">Vendor-managed inventory: we count, forecast and replenish your stockrooms on a fixed cadence and report usage monthly. Your scientists stop placing reorders.</figcaption>
       </figure>
     </div>
   </div>
 </section>
 
-<!-- ═══ Verticals ═══ -->
-<section class="sec sec-alt" id="verticals" aria-labelledby="vt-h">
-  <div class="wrap">
-    <div class="sec-head" data-reveal>
-      <p class="kicker">04 · Industries</p>
-      <h2 id="vt-h">Built for regulated, repeat-order labs.</h2>
-      <p>Same catalog, different jobs to be done. Each industry gets its own lists, documents and service model.</p>
+<!-- Verticals -->
+<section class="sys-section sys-section--alt" id="verticals" aria-labelledby="vt-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head" data-reveal>
+      <p class="sys-kicker">04 · Industries</p>
+      <h2 id="vt-h" class="sys-h2">Built for regulated, repeat-order labs.</h2>
+      <p class="sys-lead">Same catalog, different jobs to be done. Each industry gets its own lists, documents and service model.</p>
     </div>
-    <div class="vt-grid" data-verticals></div>
+    <div class="sys-grid sys-grid--3" data-verticals></div>
   </div>
 </section>
 
-<!-- ═══ Heritage ═══ -->
-<section class="heritage" id="heritage" aria-labelledby="hr-h">
-  <div class="wrap hr-in">
-    <div class="hr-big" data-reveal><span class="mono">125</span><sup>+</sup><p>years of keeping American laboratories supplied</p></div>
+<!-- Heritage (dark band) -->
+<section class="sys-section ts-heritage" id="heritage" data-sys-theme="dark" data-co="ts" aria-labelledby="hr-h">
+  <div class="sys-wrap ts-hr-in">
+    <div class="ts-hr-big" data-reveal><span class="sys-num">125</span><sup>+</sup><p>years of keeping American laboratories supplied</p></div>
     <div>
-      <h2 id="hr-h">Since 1900. Still adding to the bench.</h2>
-      <ol class="tl">
-        <li><b class="mono">1900</b><span>Thomas Scientific is founded and begins supplying laboratory apparatus and reagents.</span></li>
-        <li><b class="mono">2017–21</b><span>National roll-up of specialty distributors, including Denville Scientific, builds eight distribution centers.</span></li>
-        <li><b class="mono">Jan 2022</b><span>Broad Sky Partners becomes the majority investor; first Broad Sky platform.</span></li>
-        <li><b class="mono">Aug 2022</b><span>North Central Instruments (Brooklyn Park, MN) adds microscopy, equipment and the Midwest.</span></li>
-        <li><b class="mono">2023</b><span>Quintana Supply and Day Associates (MA) add Northeast cleanroom depth; Arrowhead Forensics (KS) adds kitting and public safety.</span></li>
-        <li class="now"><b class="mono">Next</b><span>LabOS: every reorder digital, every account visible. <a href="labos.html">See the plan →</a></span></li>
-      </ol>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ Rep match ═══ -->
-<section class="sec" id="reps" aria-labelledby="rp-h">
-  <div class="wrap">
-    <div class="sec-head" data-reveal>
-      <p class="kicker">05 · Find your lab team</p>
-      <h2 id="rp-h">Pick your state. Meet your team.</h2>
-      <p>Shading shows US lab sites mapped by LabOS account intelligence, in aggregate. Click a state or use the selector.</p>
-    </div>
-    <div class="rp-grid">
-      <div class="card rp-map">
-        <div class="rp-tools"><label for="rp-state">State</label><select id="rp-state" data-rp-select></select><span class="rp-legend" data-rp-legend aria-hidden="true"></span></div>
-        <div class="tilemap" data-tilemap role="group" aria-label="US states, shaded by mapped lab sites"></div>
-        <div class="rp-regions" data-rp-regions></div>
-        <p class="src">Source: LabOS lab-site map (ts_sites, <span data-stat="sites">27,503</span> sites from CMS, CLIA and NPPES registries), aggregated by state. No customer names are shown.</p>
+      <div class="sys-section-head">
+        <p class="sys-kicker">05 · Our history</p>
+        <h2 id="hr-h" class="sys-h2">Since 1900. Still adding to the bench.</h2>
       </div>
-      <div class="card rp-out" data-rp-out aria-live="polite"></div>
+      <ol class="ts-tl">
+        <li><b class="sys-num">1900</b><span>Thomas Scientific is founded and begins supplying laboratory apparatus and reagents.</span></li>
+        <li><b class="sys-num">2017–21</b><span>National roll-up of specialty distributors, including Denville Scientific, builds eight distribution centers.</span></li>
+        <li><b class="sys-num">Jan 2022</b><span>Broad Sky Partners becomes the majority investor; first Broad Sky portfolio company.</span></li>
+        <li><b class="sys-num">Aug 2022</b><span>North Central Instruments (Brooklyn Park, MN) adds microscopy, equipment and the Midwest.</span></li>
+        <li><b class="sys-num">2023</b><span>Quintana Supply and Day Associates (MA) add Northeast cleanroom depth; Arrowhead Forensics (KS) adds kitting and public safety.</span></li>
+        <li class="now"><b class="sys-num">Next</b><span>LabOS: every reorder digital, every account visible. <a href="labos.html">See the LabOS plan →</a></span></li>
+      </ol>
+      <p class="sys-src"><b>Source:</b> Broad Sky firm profile and company releases, Oct 2026.</p>
     </div>
   </div>
 </section>
 
-<!-- ═══ LabOS teaser ═══ -->
-<section class="ostease" id="labos" aria-labelledby="os-h">
-  <div class="wrap os-in">
-    <div class="os-copy" data-reveal>
-      <p class="kicker light">06 · Powered by LabOS</p>
-      <h2 id="os-h">The operating system behind every order.</h2>
-      <p>LabOS connects search, punchout, vendor-managed inventory and account health into one layer, so reorders happen in your procurement system and your stockroom never runs dry.</p>
-      <ul class="os-list">
+<!-- Rep match -->
+<section class="sys-section" id="reps" aria-labelledby="rp-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head" data-reveal>
+      <p class="sys-kicker">06 · Find your lab team</p>
+      <h2 id="rp-h" class="sys-h2">Pick your state. Meet your team.</h2>
+      <p class="sys-lead">Shading shows US lab sites mapped by LabOS account intelligence, in aggregate. Pick a state on the map or in the list.</p>
+    </div>
+    <div class="ts-rp-grid">
+      <div class="sys-card ts-rp-map">
+        <div class="ts-rp-tools"><label for="rp-state">State</label><select id="rp-state" data-rp-select></select><span class="ts-rp-legend" data-rp-legend aria-hidden="true"></span></div>
+        <div class="ts-tilemap" data-tilemap role="group" aria-label="US states, shaded by mapped lab sites"></div>
+        <div class="ts-rp-regions" data-rp-regions></div>
+        <p class="sys-src"><b>Source:</b> Thomas Scientific lab sites (<span data-stat="sites">27,503</span> sites from CMS, CLIA and NPPES registries), aggregated by state, Oct 2026. No customer names are shown.</p>
+      </div>
+      <div class="sys-card ts-rp-out" data-rp-out aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- LabOS teaser (dark band) -->
+<section class="sys-section ts-ostease" id="labos" data-sys-theme="dark" data-co="ts" aria-labelledby="os-h">
+  <div class="sys-wrap ts-os-in">
+    <div data-reveal>
+      <div class="sys-section-head">
+        <p class="sys-kicker">07 · Powered by LabOS</p>
+        <h2 id="os-h" class="sys-h2">The operating system behind every order.</h2>
+        <p class="sys-lead">LabOS connects search, punchout, vendor-managed inventory and account health into one layer, so reorders happen in your procurement system and your stockroom never runs dry.</p>
+      </div>
+      <ul class="sys-card-list ts-os-list">
         <li><b>AI product search</b> understands specs, CAS numbers and competitor part numbers</li>
-        <li><b>Punchout &amp; B2B commerce</b> with your contract pricing inside Coupa, Ariba or Jaggaer</li>
-        <li><b>VMI dashboards</b> with days-of-cover and auto-replenishment</li>
+        <li><b>Punchout and B2B commerce</b> with your contract pricing inside Coupa, Ariba or Jaggaer</li>
+        <li><b>VMI dashboards</b> with days of cover and automatic replenishment</li>
         <li><b>Spend consolidation</b> reports that show savings across suppliers</li>
       </ul>
-      <a class="btn btn-signal" href="labos.html">Explore LabOS →</a>
+      <div class="sys-actions"><a class="sys-btn sys-btn--primary" href="labos.html">Explore LabOS →</a></div>
     </div>
-    <div class="os-mock" aria-hidden="true">
-      <div class="mock-bar"><i></i><i></i><i></i><span>labos · QC Microbiology · Stockroom B</span><em class="mock-ill">illustrative</em></div>
-      <div class="mock-body">
-        <div class="mock-kpis"><div><small>Days of cover</small><b class="mono">18.4</b></div><div><small>Lines below min</small><b class="mono amber">3</b></div><div><small>Next auto-PO</small><b class="mono">Thu</b></div></div>
-        <div class="mock-rows">
+    <div class="ts-os-mock" aria-hidden="true">
+      <div class="ts-mock-bar"><i></i><i></i><i></i><span>LabOS · QC Microbiology · Stockroom B</span><span class="sys-est sys-est--illus">illustrative</span></div>
+      <div class="ts-mock-body">
+        <div class="ts-mock-kpis"><div><small>Days of cover</small><b class="sys-num">18.4</b></div><div><small>Lines below min</small><b class="sys-num ts-warn">3</b></div><div><small>Next auto-PO</small><b class="sys-num">Thu</b></div></div>
+        <div class="ts-mock-rows">
           <div><span>Serological pipette, 10 mL</span><i style="--w:82%"></i><em>ok</em></div>
           <div><span>Filter tips, 200 µL</span><i style="--w:34%" class="warn"></i><em class="w">reorder</em></div>
           <div><span>Petri dish, 100 mm</span><i style="--w:66%"></i><em>ok</em></div>
           <div><span>Nitrile gloves, M</span><i style="--w:21%" class="crit"></i><em class="c">critical</em></div>
           <div><span>Sterile 70% IPA spray</span><i style="--w:58%"></i><em>ok</em></div>
         </div>
-        <div class="mock-po"><span>Auto-replenishment PO drafted · 3 lines</span><b>Approve in Coupa</b></div>
+        <div class="ts-mock-po"><span>Auto-replenishment PO drafted · 3 lines</span><b>Approve in Coupa</b></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ Case studies ═══ -->
-<section class="sec" id="cases" aria-labelledby="cs-h">
-  <div class="wrap">
-    <div class="sec-head" data-reveal>
-      <p class="kicker">07 · Results <span class="illus">Illustrative</span></p>
-      <h2 id="cs-h">What consolidation looks like.</h2>
-      <p>Composite scenarios that show how the service model works. The figures are illustrative, not client results.</p>
+<!-- Case studies -->
+<section class="sys-section" id="cases" aria-labelledby="cs-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head" data-reveal>
+      <p class="sys-kicker">08 · Results</p>
+      <h2 id="cs-h" class="sys-h2">What consolidation looks like.</h2>
+      <p class="sys-lead">Composite scenarios that show how the service model works. The figures are <span class="sys-est sys-est--illus">illustrative</span> and are not client results.</p>
     </div>
-    <div class="cs-grid">
-      <article class="card cs" data-reveal><span class="cs-tag">Clinical reference lab · 14 sites</span><h3>One standing-order program for collection kits across every draw site.</h3><div class="cs-m"><div><b class="mono">0</b><span>kit stock-outs in 6 months</span></div><div><b class="mono">−38%</b><span>POs per month</span></div></div><p class="cs-q">“Our draw sites stopped calling us about kits. That was the whole goal.” <span>Lab operations director (composite)</span></p></article>
-      <article class="card cs" data-reveal><span class="cs-tag">CDMO · GMP fill-finish</span><h3>Gowning-room VMI with sterile garments and ISO 5 wipes on consignment.</h3><div class="cs-m"><div><b class="mono">2 hrs</b><span>saved per shift on counts</span></div><div><b class="mono">9 → 3</b><span>cleanroom suppliers</span></div></div><p class="cs-q">“Audits got easier because every lot and CoA sits on one statement.” <span>QA manager (composite)</span></p></article>
-      <article class="card cs" data-reveal><span class="cs-tag">University core facility</span><h3>Punchout into the university's procurement system with department budgets.</h3><div class="cs-m"><div><b class="mono">71%</b><span>of orders via punchout</span></div><div><b class="mono">1.6 days</b><span>faster PO-to-dock</span></div></div><p class="cs-q">“PIs order from the system they already use, and finance sees every dollar.” <span>Core facility manager (composite)</span></p></article>
+    <div class="sys-grid sys-grid--3">
+      <article class="sys-card ts-cs" data-reveal><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Clinical reference lab · 14 sites</span><h3 class="sys-card-title">One standing-order program for collection kits across every draw site.</h3><div class="ts-cs-m"><div><b class="sys-num">0</b><span>kit stock-outs in 6 months</span></div><div><b class="sys-num">−38%</b><span>POs per month</span></div></div><p class="ts-cs-q">“Our draw sites stopped calling us about kits. That was the whole goal.” <span>Lab operations director (composite)</span></p></article>
+      <article class="sys-card ts-cs" data-reveal><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>CDMO · GMP fill-finish</span><h3 class="sys-card-title">Gowning-room VMI with sterile garments and ISO 5 wipes on consignment.</h3><div class="ts-cs-m"><div><b class="sys-num">2 hrs</b><span>saved per shift on counts</span></div><div><b class="sys-num">9 → 3</b><span>cleanroom suppliers</span></div></div><p class="ts-cs-q">“Audits got easier because every lot and CoA sits on one statement.” <span>QA manager (composite)</span></p></article>
+      <article class="sys-card ts-cs" data-reveal><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>University core facility</span><h3 class="sys-card-title">Punchout into the university's procurement system with department budgets.</h3><div class="ts-cs-m"><div><b class="sys-num">71%</b><span>of orders via punchout</span></div><div><b class="sys-num">1.6 days</b><span>faster PO-to-dock</span></div></div><p class="ts-cs-q">“PIs order from the system they already use, and finance sees every dollar.” <span>Core facility manager (composite)</span></p></article>
     </div>
+    <p class="sys-src"><b>Source:</b> composite scenarios built for this concept; figures are illustrative.</p>
   </div>
 </section>
 
-<!-- ═══ Design rationale (for the PRG) ═══ -->
-<section class="sec rationale" id="rationale" aria-labelledby="dr-h">
-  <div class="wrap">
-    <details class="dr" open>
-      <summary><span class="kicker">For Tyler &amp; the Portfolio Resource Group</span><h2 id="dr-h">Design rationale</h2><span class="dr-t">What we borrowed, why it converts, and which KPI it should move</span></summary>
-      <div class="dr-body">
-        <p class="dr-lede">Thomas Scientific sits in a low-growth, scale-margin category: public lab and healthcare distributors grew a median <b>1.5%</b> in their latest year at a <b>5.0%</b> median operating margin (public_comps, SEC filings). Volume will not carry the equity story, so this site is designed to cut <b>cost-to-serve</b> and win <b>share of wallet</b>: search first, reorder in two clicks, and turn every visit into a quote, a punchout connection or a VMI conversation.</p>
-        <div class="dr-grid" data-refs></div>
-        <div class="dr-kpis" data-dr-kpis></div>
-        <p class="src">References from data/research/design_refs.json (sites reviewed 2026-10-06). Benchmarks from data/research/serviceos_evidence.json and public_comps.json. Peer brands are named as inspiration only.</p>
+<!-- Design rationale -->
+<section class="sys-section sys-section--alt" id="rationale" aria-labelledby="dr-h">
+  <div class="sys-wrap">
+    <div class="sys-section-head" data-reveal>
+      <p class="sys-kicker">For the Portfolio Resource Group</p>
+      <h2 id="dr-h" class="sys-h2">Design rationale</h2>
+      <p class="sys-lead">The principles behind the site, why each one converts, and which KPI it should move.</p>
+    </div>
+    <details class="sys-card sys-card--feature ts-dr" open>
+      <summary><span class="sys-card-title">Principles and the KPIs they should move</span></summary>
+      <div class="ts-dr-body">
+        <p class="ts-dr-lede">Thomas Scientific sits in a low-growth, scale-margin category: public lab and healthcare distributors grew a median <b>1.5%</b> in their latest year at a <b>5.0%</b> median operating margin (public comparables, SEC filings). Volume will not carry the equity story, so this site is designed to cut <b>cost-to-serve</b> and win <b>share of wallet</b>: search first, reorder in two clicks, and turn every visit into a quote, a punchout connection or a VMI conversation.</p>
+        <div class="sys-grid sys-grid--2" data-refs></div>
+        <div class="ts-dr-kpis" data-dr-kpis></div>
+        <p class="sys-src"><b>Source:</b> design review of lab and industrial supply sites (Oct 2026); OS program evidence and public comparables (SEC filings).</p>
       </div>
     </details>
   </div>
 </section>
 
-<!-- ═══ FAQ ═══ -->
-<section class="sec sec-alt" id="faq" aria-labelledby="fq-h">
-  <div class="wrap faq-in">
-    <div class="sec-head" data-reveal>
-      <p class="kicker">08 · Questions</p>
-      <h2 id="fq-h">Answers, before you call.</h2>
-      <p>Still stuck? The assistant in the corner searches the catalog and these answers for you.</p>
+<!-- FAQ -->
+<section class="sys-section" id="faq" aria-labelledby="fq-h">
+  <div class="sys-wrap ts-faq-in">
+    <div class="sys-section-head" data-reveal>
+      <p class="sys-kicker">09 · Questions</p>
+      <h2 id="fq-h" class="sys-h2">Answers, before you call.</h2>
+      <p class="sys-lead">Still stuck? The assistant (Ask, top right) searches the catalog and these answers for you.</p>
     </div>
-    <div class="faq" data-faq></div>
+    <div class="ts-faq" data-faq></div>
   </div>
 </section>
 
-<!-- ═══ Quote CTA ═══ -->
-<section class="sec quote" id="quote" aria-labelledby="qt-h">
-  <div class="wrap qt-in">
-    <div class="qt-copy">
-      <p class="kicker light">Request a quote</p>
-      <h2 id="qt-h">Send the list. Get contract pricing back.</h2>
-      <p>Paste a bill of materials, add lines from the catalog, or tell us about a new lab build-out. A specialist from your regional team replies with pricing, availability and substitutes.</p>
-      <ul class="qt-points"><li>Concept target: reply the same business day</li><li>Contract pricing for standing accounts</li><li>Punchout and VMI set up in the same conversation</li></ul>
+<!-- Quote -->
+<section class="sys-section sys-section--alt" id="quote" aria-labelledby="qt-h">
+  <div class="sys-wrap ts-qt-in">
+    <div>
+      <div class="sys-section-head">
+        <p class="sys-kicker">10 · Request a quote</p>
+        <h2 id="qt-h" class="sys-h2">Send the list. Get contract pricing back.</h2>
+        <p class="sys-lead">Paste a bill of materials, add lines from the catalog, or tell us about a new lab build-out. A specialist from your regional team replies with pricing, availability and substitutes.</p>
+      </div>
+      <ul class="sys-card-list ts-qt-points"><li>Concept target: reply the same business day</li><li>Contract pricing for standing accounts</li><li>Punchout and VMI set up in the same conversation</li></ul>
     </div>
-    <form class="card qt-form" data-quote novalidate>
-      <div class="qt-cart" data-qt-cart></div>
-      <div class="row2"><label>Name<input name="name" required autocomplete="name"></label><label>Work email<input name="email" type="email" required autocomplete="email"></label></div>
-      <div class="row2"><label>Organization<input name="org" autocomplete="organization"></label><label>State<select name="state" data-qt-state></select></label></div>
+    <form class="sys-card ts-qt-form" data-quote novalidate>
+      <div class="ts-qt-cart" data-qt-cart></div>
+      <div class="ts-row2"><label>Name<input name="name" required autocomplete="name"></label><label>Work email<input name="email" type="email" required autocomplete="email"></label></div>
+      <div class="ts-row2"><label>Organization<input name="org" autocomplete="organization"></label><label>State<select name="state" data-qt-state></select></label></div>
       <label>What do you need?<textarea name="need" rows="4" placeholder="e.g. 40 cases of 10 mL serological pipettes per quarter, plus a gowning-room VMI pilot"></textarea></label>
-      <button class="btn btn-primary w100" type="submit">Request quote</button>
-      <p class="qt-note">Concept form: nothing is sent. In production this routes to the regional team for your state.</p>
+      <button class="sys-btn sys-btn--primary sys-btn--block" type="submit">Request quote</button>
+      <p class="sys-src">Concept form: nothing is sent. In production this routes to the regional team for your state.</p>
     </form>
+  </div>
+</section>
+
+<!-- Closing CTA -->
+<section class="sys-cta" aria-labelledby="cta-h">
+  <div class="sys-wrap">
+    <div class="sys-cta-in">
+      <div class="sys-cta-copy">
+        <h2 id="cta-h">See the plan behind the storefront.</h2>
+        <p>LabOS is the operating layer that makes this site work; the plan sequences it with cash, coverage and add-ons through the 2027 refinancing.</p>
+      </div>
+      <div class="sys-actions">
+        <a class="sys-btn sys-btn--accent sys-btn--lg" href="labos.html">Open LabOS</a>
+        <a class="sys-btn sys-btn--secondary sys-btn--lg" href="growth-plan.html">Read the plan</a>
+      </div>
+    </div>
   </div>
 </section>
 </main>
 
-<footer class="ftr" id="footer">
-  <div class="wrap ftr-in">
-    <div class="ftr-brand"><a class="brand" href="#top"><span class="logo" data-logo></span><span class="wm">Thomas<b>Scientific</b></span></a><p>Lab supply distribution since 1900. Swedesboro, New Jersey.</p><p class="ftr-os"><a href="labos.html">Powered by LabOS →</a></p></div>
-    <div><h3>Shop</h3><a href="#categories">All categories</a><a href="#quickorder">Quick order</a><a href="#finder">Category finder</a><a href="#quote">Request a quote</a></div>
-    <div><h3>Services</h3><a href="#services">Vendor-managed inventory</a><a href="#services">Punchout &amp; eProcurement</a><a href="#services">Kitting</a><a href="#reps">Find your team</a></div>
-    <div><h3>Company</h3><a href="#heritage">Our history</a><a href="#verticals">Industries</a><a href="#faq">Careers</a><a href="#quote">Contact</a></div>
-    <div><h3>Concept</h3><a href="labos.html">LabOS product page</a><a href="../index.html">All site concepts</a><a href="../../">Broad Sky landing</a><a href="../../app.html#/ts/overview">Portal: Thomas Scientific</a><a href="../../app.html#/techos/overview">Portal: tech enablement</a></div>
-  </div>
-  <div class="wrap ftr-legal"><span>Concept redesign by Syed Rahman for the Broad Sky Portfolio Resource Group. Not an official Thomas Scientific site; products, catalog numbers and case studies are illustrative.</span><a href="#rationale">Design rationale</a></div>
-<p class="bsp-disclaimer" style="box-sizing:border-box;max-width:1200px;margin:0 auto;padding:12px 20px 18px;font-size:12px;line-height:1.55">Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.</p>
-</footer>
-
-<aside class="drawer" data-drawer aria-label="Quote cart" aria-hidden="true">
-  <div class="drawer-in">
-    <div class="drawer-h"><h2>Quote cart</h2><button data-cart-close aria-label="Close quote cart">✕</button></div>
-    <div class="drawer-b" data-cart-list></div>
-    <div class="drawer-f"><a class="btn btn-primary w100" href="#quote" data-cart-quote>Request quote for these lines</a><p>Pricing returns from your regional team. Illustrative catalog.</p></div>
+<aside class="ts-drawer" data-drawer aria-label="Quote cart" aria-hidden="true">
+  <div class="ts-drawer-in">
+    <div class="ts-drawer-h"><h2 class="sys-card-title">Quote cart</h2><button type="button" data-cart-close aria-label="Close quote cart">✕</button></div>
+    <div class="ts-drawer-b" data-cart-list></div>
+    <div class="ts-drawer-f"><a class="sys-btn sys-btn--primary sys-btn--block" href="#quote" data-cart-quote>Request quote for these lines</a><p class="sys-src">Pricing returns from your regional team. Catalog numbers are illustrative.</p></div>
   </div>
 </aside>
-<div class="scrim" data-scrim hidden></div>
+<div class="ts-scrim" data-scrim hidden></div>
 
 <script type="module">
-import { Data } from '../../assets/core.js?v=20261006090506';
-import { Chat } from '../../assets/chat.js?v=20261006090506';
-import { init } from './site.js';
-init({ Data, Chat });
+import { Frame } from '../../assets/frame.js?v=20261006122625';
+import { Data } from '../../assets/core.js?v=20261006122625';
+import { Chat } from '../../assets/chat.js?v=20261006122625';
+import { init } from './site.js?v=20261006122625';
+const frame = Frame.mount({});
+init({ Data, Chat, Frame, frame });
 </script>
 </body>
 </html>

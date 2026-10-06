@@ -44,7 +44,7 @@
 .m-techos .os-glyph{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:var(--cc);background:color-mix(in srgb,var(--cc) 14%,transparent);border:1px solid color-mix(in srgb,var(--cc) 35%,transparent);flex-shrink:0}
 .m-techos .os-name{font-size:16px;font-weight:700;letter-spacing:-.02em}
 .m-techos .os-co{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.m-techos .os-turns{font-size:11.5px;font-weight:700;color:var(--cc);background:color-mix(in srgb,var(--cc) 12%,transparent);border-radius:20px;padding:3px 9px;white-space:nowrap}
+.m-techos .os-turns{font-size:12.5px;font-weight:600;font-family:inherit;color:var(--cc);white-space:nowrap}
 .m-techos .os-promise{font-size:12.5px;line-height:1.5;color:var(--text-2);min-height:37px}
 .m-techos .os-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--border);border-radius:8px;overflow:hidden}
 .m-techos .os-stats>div{padding:7px 8px;border-right:1px solid var(--border);min-width:0}

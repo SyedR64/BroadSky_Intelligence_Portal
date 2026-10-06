@@ -1,7 +1,6 @@
 /* Fair Harbor concept — shared pieces for index.html and harboros.html:
    SVG product art, the illustrative fit model, chat FAQ/suggestions/intents, banner + nav behaviour. */
 
-export const V = '20261006065503';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export { esc };
 
@@ -153,18 +152,20 @@ export const INTENTS = [
   { id: 'fh_bottles', rx: [/bottles?|plastic|recycl/i], run: async () => ({ html: '<p>Each pair of core trunks turns roughly <b>11 recycled plastic bottles</b> into fabric. Across the brand, Fair Harbor reports <b>27M+ bottles</b> recycled. The live counter on the home page shows our illustrative running total and the formula behind it.</p>', links: ['<a class="ch-link" href="./#impact">See the bottle counter →</a>'] }) },
 ];
 
-/* ── Banner + nav behaviour shared by both pages ───────────────────────── */
+/* ── Shared page behaviour (the frame itself comes from assets/frame.js) ── */
+let FR = null;
+export function setFrame(f) { FR = f || window.BSPFrame || null; }
+/** Plain English from dataset strings: file paths become human dataset names, record ids are dropped. */
+const ID_RX = /\b(?:fh|kb|ra|ve|vs|gl|lever|tpl|agent|fin|ref|rival|ph|tp|bsp|cat|risk|ask|tal|ai)-(?:[a-z]+-)*(?:[a-z0-9]*\d[a-z0-9]*\b|\*)(?:,?\.\.\d+)?|\bra-(?:bpi|fh|pp|cet|fl|ts)\b|\s?\bmeta\.[a-z_]+/g;
+export function plain(str) {
+  let t = String(str ?? '');
+  t = t.replace(/(?:data\/(?:research\/|sales\/)?)?([a-z][a-z0-9]*(?:_[a-z0-9]+)+)\.(?:json|csv|geojson)/g, (m, id) => id === 'serviceos_evidence' ? 'OS program evidence' : FR ? FR.label(id) : id.replace(/_/g, ' '));
+  t = t.replace(ID_RX, '').replace(/\(\s*[;,·]\s*/g, '(').replace(/\s*[;,·]\s*\)/g, ')').replace(/\(\s*[,;·\s]*\)/g, '').replace(/\s+([,.;)])/g, '$1').replace(/ {2,}/g, ' ');
+  t = FR ? FR.humanizeText(t) : t;
+  return t.replace(/ServiceOS evidence/g, 'OS program evidence').replace(/\s*\(\s*[,;·\s]*\)/g, '').trim();
+}
+export const ep = v => esc(plain(v));
 export function chrome() {
-  const b = document.querySelector('.concept');
-  try { if (b && localStorage.getItem('fh-concept-hide') === '1') b.hidden = true; } catch { }
-  document.querySelector('.concept-x')?.addEventListener('click', () => { b.hidden = true; try { localStorage.setItem('fh-concept-hide', '1'); } catch { } });
-  const t = document.querySelector('.nav-toggle'), m = document.querySelector('.nav-links');
-  t?.addEventListener('click', () => { const o = t.getAttribute('aria-expanded') === 'true'; t.setAttribute('aria-expanded', String(!o)); m.classList.toggle('open', !o); });
-  m?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { t?.setAttribute('aria-expanded', 'false'); m.classList.remove('open'); }));
-  const head = document.querySelector('.site-head');
-  const onScroll = () => head?.classList.toggle('scrolled', window.scrollY > 24);
-  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
-  // gentle reveal
   if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
     document.querySelectorAll('[data-reveal]').forEach(el => { el.classList.add('rvl'); io.observe(el); });
