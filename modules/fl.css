@@ -36,3 +36,14 @@
 .m-fl .m-fl-tg td{max-width:210px}
 .m-fl .m-fl-fil .tbl td.num{white-space:normal;max-width:220px;text-align:left}
 .m-fl .m-fl-fil .tbl td{max-width:320px}
+.m-fl .est,#inspector .est{font-style:italic;color:var(--text-2)}
+.m-fl .m-fl-cl{font-size:11px;color:var(--muted);white-space:nowrap}
+.m-fl .m-fl-div{display:flex;flex-direction:column;gap:4px}
+.m-fl .m-fl-div .r{display:flex;align-items:center;gap:8px}
+.m-fl .m-fl-div .l{width:44px;flex-shrink:0;font-size:12px;color:var(--text-2)}
+.m-fl .m-fl-div .t{position:relative;flex:1;height:10px;background:var(--surface-3);border-radius:3px}
+.m-fl .m-fl-div .t .z{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--dim)}
+.m-fl .m-fl-div .t .b{position:absolute;top:0;height:100%;background:#4c8dff;border-radius:2px}
+.m-fl .m-fl-div .t .b.neg{background:var(--red)}
+.m-fl .m-fl-div .v{width:64px;text-align:right;flex-shrink:0;font-family:var(--mono);font-size:12px}
+.m-fl .m-fl-div .v.neg{color:var(--red)}

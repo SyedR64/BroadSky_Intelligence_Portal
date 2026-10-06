@@ -3,46 +3,374 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Broad Sky — Operating Intelligence</title>
-<meta name="description" content="Broad Sky Partners portfolio operating-intelligence portal: territory analytics, opportunity radar, M&A targets, PE landscape and filings intelligence.">
+<title>Broad Sky Operating Intelligence</title>
+<meta name="description" content="Operating intelligence for the Broad Sky Partners portfolio: ask a question in plain English and get the answer, the evidence and the portal view for six platforms, plus six website concepts and the OS tech-enablement program.">
+<meta name="theme-color" content="#fbfaf7">
 <link rel="icon" href="BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<link rel="stylesheet" href="assets/app.css?v=20260924203049">
+<link rel="stylesheet" href="assets/landing.css?v=20261006085442">
+<link rel="modulepreload" href="assets/chat.js?v=20261006085442">
 </head>
-<body>
-<div id="app">
-  <aside id="rail">
-    <div class="rail-logo">
-      <img src="BSP_Logo.png" alt="Broad Sky Partners">
-      <div><div class="name">Broad Sky Partners</div><div class="sub">Operating Intelligence</div></div>
-    </div>
-    <nav class="rail-nav" aria-label="Modules"></nav>
-    <div class="rail-foot"><b>Portfolio Resource Group</b> · working draft<br>Prepared by Syed Rizvi · Sept 2026<br>11 modules · 6 platforms · 38 datasets<br><span class="dim">Public + licensed data · verify before use</span></div>
-  </aside>
-  <main id="main">
-    <header id="topbar">
-      <div class="crumb"></div>
-      <div class="view-tabs"></div>
-      <div class="top-right">
-        <button id="search-btn" class="search-btn">⌕ Search everything <kbd>⌘K</kbd></button>
-        <span class="live-pill" title="Live feeds: NWS alerts, Open-Meteo"><span class="pulse"></span><span id="clock">—</span></span>
-        <button id="tour-btn" class="icon-btn" title="Play briefing">▶</button>
-        <button id="insp-btn" class="icon-btn" title="Inspector">☰</button>
-        <button id="theme-btn" class="icon-btn" title="Toggle theme">◐</button>
-      </div>
-    </header>
-    <section id="content"></section>
-  </main>
-  <aside id="inspector"></aside>
+<body data-page="landing">
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="announce" role="region" aria-label="Announcement">
+  <a href="redesigns/"><span class="announce-tag">New</span> Six portfolio website concepts and the OS program are live <span aria-hidden="true">→</span></a>
 </div>
+
+<header class="nav" id="top">
+  <div class="nav-in">
+    <a class="brand" href="./" aria-label="Broad Sky Operating Intelligence, home">
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="#0e2236"/><g stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"><path d="M10.5 15.5 15 29l6-5.5L27 12.5l3 15.5"/><path d="M17 8.5 27 26"/></g><g fill="#fff"><circle cx="10.5" cy="15.5" r="3"/><circle cx="17" cy="8.5" r="1.8"/><circle cx="27" cy="12.5" r="2.6"/><circle cx="15" cy="29" r="1.8"/><circle cx="21" cy="23.5" r="1.6"/><circle cx="30" cy="28" r="1.8"/><circle cx="33" cy="17" r=".9"/><circle cx="7" cy="23" r=".9"/><circle cx="25" cy="33" r=".9"/></g></svg>
+      <span class="brand-name">Broad Sky<span class="brand-sub">Operating Intelligence</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="app.html">Portal</a>
+      <a href="redesigns/">Site concepts</a>
+      <a href="#os">OS program</a><a href="#playbooks">Playbooks</a>
+      <a href="#briefing">Briefing</a>
+      <a href="https://github.com/SyedR64/BroadSky_Intelligence_Portal" rel="noopener">GitHub</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="pill pill-ink" href="app.html">Open the portal</a>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-sheet"><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="nav-sheet" id="nav-sheet" hidden>
+    <a href="app.html">Portal <span>13 modules</span></a>
+    <a href="redesigns/">Site concepts <span>6 sites</span></a>
+    <a href="#os">OS program <span>6 products</span></a>
+    <a href="#briefing">Briefing <span>3 min 54 s</span></a>
+    <a href="https://github.com/SyedR64/BroadSky_Intelligence_Portal" rel="noopener">GitHub <span>source</span></a>
+  </div>
+</header>
+
+<main id="main">
+  <!-- ═══ Hero ═══ -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="wrap hero-in">
+      <p class="eyebrow-live"><span class="live-dot" aria-hidden="true"></span><span class="hide-sm">Portfolio Resource Group</span><span class="sep hide-sm" aria-hidden="true">·</span><span><b data-stat="datasets">49</b> verified datasets</span><span class="sep" aria-hidden="true">·</span><span>6 platforms</span></p>
+      <h1 id="hero-title" class="hero-title">Hello, <span class="grad">Broad&nbsp;Sky.</span></h1>
+      <p class="hero-sub">Whatever you need from the portfolio, start here.</p>
+      <div id="hero-chat" class="hero-chat">
+        <div class="chat-skeleton" aria-hidden="true">
+          <div class="sk-box"><span>Ask the portfolio… e.g. “Show me how to take Punctual Pros nationwide”</span><i></i></div>
+          <div class="sk-chips"><i></i><i></i><i></i><i></i></div>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <a class="pill pill-ink" href="app.html">Open the portal <span aria-hidden="true">→</span></a>
+        <a class="pill pill-ghost" href="#briefing" data-play="briefing"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor"/></svg>Watch the 4-minute briefing</a>
+      </div>
+      <p class="hero-note"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 2.5 3.8v3.9c0 3.2 2.3 6 5.5 6.8 3.2-.8 5.5-3.6 5.5-6.8V3.8z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="m5.6 8 1.7 1.7 3.2-3.4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg><span>Internal working draft for the Broad Sky Partners PRG · public-record and licensed data · every number sourced, estimates labelled <i>est.</i></span></p>
+    </div>
+  </section>
+
+  <!-- ═══ What it answers ═══ -->
+  <div class="hero-counter" id="hero-counter" aria-label="Revenue left on the table (estimate)"></div>
+<section class="section answers" id="answers" aria-labelledby="answers-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">What it answers</p>
+        <h2 id="answers-title">Ask like an operator. Land in the right view.</h2>
+        <p class="lede">Each question runs against the portal's own datasets, answers in seconds, and hands you the module where the work continues. Pick the seat you sit in.</p>
+      </div>
+      <div class="ask-grid">
+        <article class="ask-card" style="--c:#f5b73d">
+          <p class="ask-role">Deal team</p>
+          <p class="ask-q">“Show the top add-on targets for CET in Connecticut”</p>
+          <p class="ask-meta">48 screened CET targets · fit score · sources</p>
+          <div class="ask-foot"><button class="ask-btn" data-ask="Show the top add-on targets for CET in Connecticut">Ask</button><a href="app.html#/cet/targets">Add-on targets <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="ask-card" style="--c:#f08a3c">
+          <p class="ask-role">Operating partner</p>
+          <p class="ask-q">“What is the storm impact on Punctual Pros this week?”</p>
+          <p class="ask-meta">Live NWS alerts · Open-Meteo 7-day · demand model</p>
+          <div class="ask-foot"><button class="ask-btn" data-ask="What is the storm impact on Punctual Pros this week?">Ask</button><a href="app.html#/pp/weather">Weather &amp; demand <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="ask-card" style="--c:#4c8dff">
+          <p class="ask-role">Business development</p>
+          <p class="ask-q">“Which wastewater plants should Horton call first?”</p>
+          <p class="ask-meta">183 CT–MA–RI plants · funded SRF projects · Horton fit</p>
+          <div class="ask-foot"><button class="ask-btn" data-ask="Which wastewater plants should Horton call first?">Ask</button><a href="app.html#/cet/wastewater">Wastewater accounts <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="ask-card" style="--c:#8bd3ff">
+          <p class="ask-role">CFO &amp; finance</p>
+          <p class="ask-q">“Estimate Punctual Pros revenue from public filings”</p>
+          <p class="ask-meta">Form D · PPP · FDD Item 19 · triangulated, labelled est.</p>
+          <div class="ask-foot"><button class="ask-btn" data-ask="Estimate Punctual Pros revenue from public filings">Ask</button><a href="app.html#/fin/portfolio">Filings &amp; financials <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="ask-card" style="--c:#c9a0ff">
+          <p class="ask-role">Investment committee</p>
+          <p class="ask-q">“Who competes with Broad Sky for home-services deals?”</p>
+          <p class="ask-meta">35 sponsors · fund history · 2025–26 deals</p>
+          <div class="ask-foot"><button class="ask-btn" data-ask="Who competes with Broad Sky for home-services deals?">Ask</button><a href="app.html#/pe/landscape">PE landscape <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="ask-card" style="--c:#2ecc8f">
+          <p class="ask-role">Growth marketing</p>
+          <p class="ask-q">“How many new-mover leads are in Lancaster County?”</p>
+          <p class="ask-meta">County deed records · lead score · mail-ready list</p>
+          <div class="ask-foot"><button class="ask-btn" data-ask="How many new-mover leads are in Lancaster County?">Ask</button><a href="app.html#/pp/movers">New movers <span aria-hidden="true">→</span></a></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Numbers strip ═══ -->
+  <section class="numbers" id="numbers" aria-labelledby="numbers-title">
+    <div class="wrap">
+      <div class="numbers-head">
+        <h2 id="numbers-title">The evidence base, counted live</h2>
+        <p class="numbers-src" id="numbers-src">Counts are read from the data files themselves when this section loads.</p>
+      </div>
+      <dl class="stat-grid">
+        <div class="stat"><dt>Datasets</dt><dd><span class="stat-n" data-stat="datasets" data-fallback="49">49</span><span class="stat-sub" data-sub="datasets">9 core tables · 30 research files · 10 deed files</span></dd></div>
+        <div class="stat"><dt>Home sales &amp; deeds</dt><dd><span class="stat-n" data-stat="sales" data-fallback="163738">163,738</span><span class="stat-sub" data-sub="sales">property transfers across 37 counties</span></dd></div>
+        <div class="stat"><dt>Opportunities</dt><dd><span class="stat-n" data-stat="opps" data-fallback="160">160</span><span class="stat-sub" data-sub="opps">bids, RFPs, programs, growth plays</span></dd></div>
+        <div class="stat"><dt>Add-on targets</dt><dd><span class="stat-n" data-stat="targets" data-fallback="157">157</span><span class="stat-sub" data-sub="targets">screened for CET, PP, FL and TS</span></dd></div>
+        <div class="stat"><dt>PE sponsors</dt><dd><span class="stat-n" data-stat="sponsors" data-fallback="35">35</span><span class="stat-sub" data-sub="sponsors">profiled with funds and deals</span></dd></div>
+        <div class="stat"><dt>Lab sites</dt><dd><span class="stat-n" data-stat="sites" data-fallback="27503">27,503</span><span class="stat-sub" data-sub="sites">scored for Thomas Scientific</span></dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ═══ Product tour ═══ -->
+  <section class="section tour" id="tour" aria-labelledby="tour-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">Product tour</p>
+        <h2 id="tour-title">One operating picture, four ways in.</h2>
+        <p class="lede">Every view leads with the answer in one line, then the evidence, then the action list. Maps, tables and the assistant read from the same verified files.</p>
+      </div>
+      <div class="tour-grid">
+        <ol class="tour-steps" role="tablist" aria-label="Product tour steps">
+          <li><button role="tab" id="tt-0" aria-selected="true" aria-controls="tour-stage" data-step="0"><span class="tn">01</span><span class="tt"><b>Command Center</b><span>Six platforms, live NWS alerts and this week's signals on one map.</span></span><i class="tbar" aria-hidden="true"></i></button></li>
+          <li><button role="tab" id="tt-1" aria-selected="false" aria-controls="tour-stage" data-step="1"><span class="tn">02</span><span class="tt"><b>Weather &amp; demand</b><span>A service-call pressure index that turns the forecast into technician staffing.</span></span><i class="tbar" aria-hidden="true"></i></button></li>
+          <li><button role="tab" id="tt-2" aria-selected="false" aria-controls="tour-stage" data-step="2"><span class="tn">03</span><span class="tt"><b>Wastewater accounts</b><span>183 treatment plants ranked for Horton's cross-sell, with funded projects.</span></span><i class="tbar" aria-hidden="true"></i></button></li>
+          <li><button role="tab" id="tt-3" aria-selected="false" aria-controls="tour-stage" data-step="3"><span class="tn">04</span><span class="tt"><b>Acquisition engine</b><span>157 add-on targets screened across four platforms and mapped.</span></span><i class="tbar" aria-hidden="true"></i></button></li>
+        </ol>
+        <div class="tour-stage" id="tour-stage" role="tabpanel" aria-labelledby="tt-0">
+          <div class="browser">
+            <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser-url">app.html<b id="tour-url">#/home/overview</b></span></div>
+            <div class="browser-view">
+              <img class="shot on" src="assets/img/portal_home_overview.jpg" alt="Command Center: portfolio map of the Northeast with platform headquarters, KPI cards and the platform list" width="1400" height="875" loading="lazy" decoding="async">
+              <img class="shot" data-src="assets/img/portal_pp_weather.jpg" alt="Punctual Pros weather and demand: service-call pressure heatgrid by hub and day with live alerts" width="1400" height="875" decoding="async">
+              <img class="shot" data-src="assets/img/portal_cet_wastewater.jpg" alt="CET wastewater accounts: map of treatment plants sized by design flow with a ranked priority list" width="1400" height="875" decoding="async">
+              <img class="shot" data-src="assets/img/portal_ma_overview.jpg" alt="Acquisition engine: map of add-on targets by platform with this quarter's top ten" width="1400" height="875" decoding="async">
+            </div>
+          </div>
+          <div class="tour-chat" aria-live="polite">
+            <p class="tc-q" id="tour-q">What does the portfolio look like this week?</p>
+            <p class="tc-a" id="tour-a"><b>6 platforms</b>, 23 add-ons and one realized exit. 86 CET opportunities, 157 add-on targets and live NWS alerts for PA, NJ, MA and CT on one map.</p>
+            <p class="tc-src">Sample answer · portal snapshot, Oct 2026</p>
+          </div>
+          <a class="tour-open" id="tour-open" href="app.html#/home/overview">Open this view <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Platforms ═══ -->
+  <section class="section platforms" id="platforms" aria-labelledby="platforms-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">The portfolio</p>
+        <h2 id="platforms-title">Six platforms. One place to run them from.</h2>
+        <p class="lede">Each platform has a portal module built around the decisions its operators make every week, and a concept website that shows what a modern front door could look like.</p>
+      </div>
+      <div class="plat-grid">
+        <article class="plat" style="--c:#4c8dff">
+          <div class="plat-top"><span class="plat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 2 5 13.5h6L10 22l9-12h-6.5z"/></svg></span><span class="plat-since">Since Feb 2025</span></div>
+          <h3>Commonwealth Electrical Technologies</h3>
+          <p class="plat-what">Electrical and energy infrastructure across New England, from Worcester and Taunton, MA.</p>
+          <ul class="plat-facts"><li>Licensed in all 6 New England states</li><li>NuWave Energy Solutions · Norwell, MA</li><li>Horton Electrical Services · Canton, CT: wastewater, pump stations, solar, generators</li><li>~280 staff pro forma</li></ul>
+          <div class="plat-links"><a href="app.html#/cet/overview">Portal module <span aria-hidden="true">→</span></a><a href="redesigns/cet/">Site concept <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="plat" style="--c:#f08a3c">
+          <div class="plat-top"><span class="plat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 11 12 3.5 21 11"/><path d="M5.5 9.5V20h13V9.5"/><path d="M12 11.5v4.2"/><circle cx="12" cy="16.8" r="1.6"/></svg></span><span class="plat-since">Since Apr 2024</span></div>
+          <h3>Punctual Pros</h3>
+          <p class="plat-what">Residential HVAC, plumbing and electrical from East Hempfield (Lancaster), PA.</p>
+          <ul class="plat-facts"><li>One Hour Heating &amp; Air · Benjamin Franklin Plumbing · Mister Sparky</li><li>~240 Central PA zips</li><li>Horvath Home Services · Ocean &amp; Monmouth, NJ</li><li>~$22M revenue (est.)</li></ul>
+          <div class="plat-links"><a href="app.html#/pp/overview">Portal module <span aria-hidden="true">→</span></a><a href="redesigns/punctual-pros/">Site concept <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="plat" style="--c:#9d7bff">
+          <div class="plat-top"><span class="plat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.8 4.5 5.7v5.8c0 4.6 3.2 8.6 7.5 9.7 4.3-1.1 7.5-5.1 7.5-9.7V5.7z"/><path d="m8.7 12 2.3 2.3 4.4-4.6"/></svg></span><span class="plat-since">Since Dec 2024</span></div>
+          <h3>Frontline Managed Services</h3>
+          <p class="plat-what">Managed IT, service desk, cybersecurity and revenue cycle for law firms, from St. Louis.</p>
+          <ul class="plat-facts"><li>800+ law firms</li><li>More than half of the AM Law 200</li><li>Toledo · Honolulu · NYC · Toronto · London · Hyderabad · Goa · Cape Town</li></ul>
+          <div class="plat-links"><a href="app.html#/fl/overview">Portal module <span aria-hidden="true">→</span></a><a href="redesigns/frontline/">Site concept <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="plat" style="--c:#2ecc8f">
+          <div class="plat-top"><span class="plat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9.5 3h5M10 3v6.2L4.8 18.4A1.8 1.8 0 0 0 6.4 21h11.2a1.8 1.8 0 0 0 1.6-2.6L14 9.2V3"/><path d="M7.4 14.5h9.2"/></svg></span><span class="plat-since">Since Jan 2022</span></div>
+          <h3>Thomas Scientific</h3>
+          <p class="plat-what">Lab supply distribution since 1900, from Swedesboro, NJ.</p>
+          <ul class="plat-facts"><li>Research · biopharma · clinical diagnostics</li><li>Cleanroom and cannabis testing labs</li><li>27k lab and hospital sites scored</li></ul>
+          <div class="plat-links"><a href="app.html#/ts/overview">Portal module <span aria-hidden="true">→</span></a><a href="redesigns/thomas-scientific/">Site concept <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="plat" style="--c:#e05c8a">
+          <div class="plat-top"><span class="plat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10v4h3l6 4.5V5.5L7 10z"/><path d="M16.5 8.8a4.5 4.5 0 0 1 0 6.4M19 6.3a8 8 0 0 1 0 11.4"/></svg></span><span class="plat-since">Since Apr 2023</span></div>
+          <h3>Bully Pulpit International</h3>
+          <p class="plat-what">Strategic communications, public affairs and digital, founded by Andrew Bleeker.</p>
+          <ul class="plat-facts"><li>Washington DC · NYC · SF · Chicago · Europe</li><li>Add-ons incl. BOLDT, Message House, Propper Daley</li></ul>
+          <div class="plat-links"><a href="app.html#/bpi/overview">Portal module <span aria-hidden="true">→</span></a><a href="redesigns/bpi/">Site concept <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="plat" style="--c:#3fd0e0">
+          <div class="plat-top"><span class="plat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2.5 15c2 0 2-1.6 4-1.6s2 1.6 4 1.6 2-1.6 4-1.6 2 1.6 4 1.6 2-1.6 3-1.6"/><path d="M2.5 19.5c2 0 2-1.6 4-1.6s2 1.6 4 1.6 2-1.6 4-1.6 2 1.6 4 1.6 2-1.6 3-1.6"/><circle cx="16.5" cy="7" r="3"/></svg></span><span class="plat-since">Since Mar 2022</span></div>
+          <h3>Fair Harbor</h3>
+          <p class="plat-what">Sustainable beachwear made from recycled plastic bottles, from New York.</p>
+          <ul class="plat-facts"><li>Founders Jake &amp; Caroline Danehy</li><li>Certified B Corp</li><li>DTC plus specialty and department-store wholesale</li></ul>
+          <div class="plat-links"><a href="app.html#/fh/overview">Portal module <span aria-hidden="true">→</span></a><a href="redesigns/fair-harbor/">Site concept <span aria-hidden="true">→</span></a></div>
+        </article>
+      </div>
+      <p class="plat-note">Smith + Howard, Broad Sky's first exit (to TPG, Aug 2026), is not tracked here.</p>
+    </div>
+  </section>
+
+  <!-- ═══ OS program ═══ -->
+  <section class="section os" id="os" aria-labelledby="os-title">
+    <div class="wrap">
+      <div class="sec-head on-dark">
+        <p class="kicker">The OS program</p>
+        <h2 id="os-title">Turn each service into a system a buyer will pay for.</h2>
+        <p class="lede">Banker data put project-heavy services businesses at 5–6x EBITDA and repeatable, tech-enabled ones at 10x and above. Each platform gets a named operating system, assembled mostly from proven vendors plus the portal's own data layer, aimed at the few KPIs that move that multiple.</p>
+      </div>
+      <div class="os-sum" role="list">
+        <div role="listitem"><b>$6.0–12.4M</b><span>total investment, est.</span></div>
+        <div role="listitem"><b>0.5–5 pts</b><span>EBITDA margin, est.</span></div>
+        <div role="listitem"><b>0.5–2.5x</b><span>EBITDA multiple, est.</span></div>
+        <div role="listitem"><b>4–18 mo</b><span>time to value</span></div>
+      </div>
+      <div class="os-grid">
+        <article class="osc" style="--c:#f08a3c">
+          <header><span class="os-name">ServiceOS</span><span class="os-co">Punctual Pros</span></header>
+          <p class="os-promise">Every call booked, every truck full: weather-driven dispatch, AI call answering, a membership engine and new-mover automation.</p>
+          <ul class="os-kpis"><li>Call booking rate</li><li>Average ticket</li><li>Members per tech</li></ul>
+          <dl class="os-math"><div><dt>Invest</dt><dd>$0.4–0.9M</dd></div><div><dt>EBITDA</dt><dd>+$0.3–1.1M</dd></div><div><dt>Multiple</dt><dd>+1.0–2.5x</dd></div><div><dt>Value in</dt><dd>6–12 mo</dd></div></dl>
+          <div class="os-links"><a href="redesigns/punctual-pros/serviceos.html">Product page &amp; demo <span aria-hidden="true">→</span></a><button class="os-ask" data-ask="What is ServiceOS and why does it raise valuation for Punctual Pros?">Ask</button></div>
+        </article>
+        <article class="osc" style="--c:#4c8dff">
+          <header><span class="os-name">GridOS</span><span class="os-co">CET</span></header>
+          <p class="os-promise">From bid radar to recurring O&amp;M: estimating, crew scheduling, solar fleet monitoring and wastewater SCADA service contracts across New England.</p>
+          <ul class="os-kpis"><li>Hard-bid win rate</li><li>Non-productive field time</li><li>Solar fleet availability</li></ul>
+          <dl class="os-math"><div><dt>Invest</dt><dd>$0.8–1.8M</dd></div><div><dt>EBITDA</dt><dd>+$0.6–2.6M</dd></div><div><dt>Multiple</dt><dd>+0.5–1.5x</dd></div><div><dt>Value in</dt><dd>9–15 mo</dd></div></dl>
+          <div class="os-links"><a href="redesigns/cet/gridos.html">Product page &amp; demo <span aria-hidden="true">→</span></a><button class="os-ask" data-ask="What is GridOS and why does it raise valuation for CET?">Ask</button></div>
+        </article>
+        <article class="osc" style="--c:#9d7bff">
+          <header><span class="os-name">FirmOS</span><span class="os-co">Frontline</span></header>
+          <p class="os-promise">An AI Tier-0 service desk, a security score for every firm, and LEDES eBilling with A/R automation, sold as one law-firm platform.</p>
+          <ul class="os-kpis"><li>eBilling rejection rate</li><li>Days invoice to paid</li><li>First-level resolution</li></ul>
+          <dl class="os-math"><div><dt>Invest</dt><dd>$1.5–3.0M</dd></div><div><dt>EBITDA</dt><dd>+$1.5–4.2M</dd></div><div><dt>Multiple</dt><dd>+0.5–1.5x</dd></div><div><dt>Value in</dt><dd>6–12 mo</dd></div></dl>
+          <div class="os-links"><a href="redesigns/frontline/firmos.html">Product page &amp; demo <span aria-hidden="true">→</span></a><button class="os-ask" data-ask="What is FirmOS and why does it raise valuation for Frontline?">Ask</button></div>
+        </article>
+        <article class="osc" style="--c:#2ecc8f">
+          <header><span class="os-name">LabOS</span><span class="os-co">Thomas Scientific</span></header>
+          <p class="os-promise">Punchout ordering, vendor-managed inventory, AI product search and account-health scoring that lower cost-to-serve on every order.</p>
+          <ul class="os-kpis"><li>Digital transaction share</li><li>Punchout / EDI share</li><li>Digital vs rep-led growth</li></ul>
+          <dl class="os-math"><div><dt>Invest</dt><dd>$2.0–4.0M</dd></div><div><dt>EBITDA</dt><dd>+$1.3–4.8M</dd></div><div><dt>Multiple</dt><dd>+0.5–1.0x</dd></div><div><dt>Value in</dt><dd>9–18 mo</dd></div></dl>
+          <div class="os-links"><a href="redesigns/thomas-scientific/labos.html">Product page &amp; demo <span aria-hidden="true">→</span></a><button class="os-ask" data-ask="What is LabOS and why does it raise valuation for Thomas Scientific?">Ask</button></div>
+        </article>
+        <article class="osc" style="--c:#e05c8a">
+          <header><span class="os-name">SignalOS</span><span class="os-co">BPI</span></header>
+          <p class="os-promise">Real-time narrative monitoring and synthetic-audience message testing, packaged as always-on subscriptions that smooth the election cycle.</p>
+          <ul class="os-kpis"><li>Retainer share of revenue</li><li>Adj. EBITDA margin</li><li>AI-assisted content</li></ul>
+          <dl class="os-math"><div><dt>Invest</dt><dd>$1.0–2.0M</dd></div><div><dt>EBITDA</dt><dd>+$0.9–3.8M</dd></div><div><dt>Multiple</dt><dd>+0.5–2.0x</dd></div><div><dt>Value in</dt><dd>6–12 mo</dd></div></dl>
+          <div class="os-links"><a href="redesigns/bpi/signalos.html">Product page &amp; demo <span aria-hidden="true">→</span></a><button class="os-ask" data-ask="What is SignalOS and why does it raise valuation for BPI?">Ask</button></div>
+        </article>
+        <article class="osc" style="--c:#3fd0e0">
+          <header><span class="os-name">HarborOS</span><span class="os-co">Fair Harbor</span></header>
+          <p class="os-promise">AI fit and size, replenishment reminders, a wholesale portal and inventory forecasting for a seasonal line.</p>
+          <ul class="os-kpis"><li>Online return rate</li><li>Repeat purchase rate</li><li>EBITDA margin</li></ul>
+          <dl class="os-math"><div><dt>Invest</dt><dd>$0.3–0.7M</dd></div><div><dt>EBITDA</dt><dd>+$0.4–1.8M</dd></div><div><dt>Multiple</dt><dd>+0.2–0.5x rev.</dd></div><div><dt>Value in</dt><dd>4–9 mo</dd></div></dl>
+          <div class="os-links"><a href="redesigns/fair-harbor/harboros.html">Product page &amp; demo <span aria-hidden="true">→</span></a><button class="os-ask" data-ask="What is HarborOS and why does it raise valuation for Fair Harbor?">Ask</button></div>
+        </article>
+      </div>
+      <div class="os-foot">
+        <p>All ranges are analyst assumptions (est.), not forecasts or company guidance. Source: <code>serviceos_evidence.json</code> (26 valuation data points, 28 vendor-stack entries, 20 KPI benchmarks) and <code>public_comps.json</code>.</p>
+        <a class="pill pill-light" href="app.html#/techos/overview">Open the tech-enablement module <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Briefing ═══ -->
+  
+<section class="section playbooks" id="playbooks" aria-labelledby="playbooks-title">
+  <div class="pb-wrap">
+    <p class="pb-kicker">Playbooks &amp; programs</p>
+    <h2 id="playbooks-title" class="pb-h2">How each platform gets to the next multiple.</h2>
+    <p class="pb-lead">Tyler-facing value-creation playbooks for every company, the AI and voice programs that run across them, the ad program, and the memo that ties it together. Every figure is sourced or labelled as an estimate.</p>
+    <div class="pb-grid"><a class="pb-card" href="redesigns/punctual-pros/nationwide.html" style="--pbc:#f08a3c"><span class="pb-bar"></span><span class="pb-t">Punctual Pros · Nationwide playbook</span><span class="pb-s">From Lancaster to national in four phases: tuck-ins, AI agents, programs for the pros, returns.</span><span class="pb-go">Open →</span></a><a class="pb-card" href="redesigns/voice-ai.html" style="--pbc:#6366f1"><span class="pb-bar"></span><span class="pb-t">24/7 Voice AI · the growth engine</span><span class="pb-s">Answer every call, book into dispatch, work outbound. Modelled revenue, vendors, a playable 2 a.m. call.</span><span class="pb-go">Open →</span></a><a class="pb-card" href="redesigns/ai-agents.html" style="--pbc:#0ea5e9"><span class="pb-bar"></span><span class="pb-t">AI agents across the portfolio</span><span class="pb-s">45 agents, six operating systems, rollout waves, governance and est. annual value.</span><span class="pb-go">Open →</span></a><a class="pb-card" href="redesigns/punctual-pros/ads.html" style="--pbc:#ef4444"><span class="pb-bar"></span><span class="pb-t">Growth marketing & sample ads</span><span class="pb-s">Cheap connected-TV flights on storm alerts, Local Services Ads, new-mover mail; sourced media plan.</span><span class="pb-go">Open →</span></a><a class="pb-card" href="redesigns/cet/playbook.html" style="--pbc:#4c8dff"><span class="pb-bar"></span><span class="pb-t">CET playbook</span><span class="pb-s">New England electrical platform to Northeast infrastructure platform; Horton wastewater pipeline.</span><span class="pb-go">Open →</span></a><a class="pb-card" href="redesigns/frontline/playbook.html" style="--pbc:#9d7bff"><span class="pb-bar"></span><span class="pb-t">Frontline playbook</span><span class="pb-s">AM Law dominance to the mid-market and international; FirmOS, offshore delivery, eBilling.</span><span class="pb-go">Open →</span></a><a class="pb-card" href="redesigns/thomas-scientific/playbook.html" style="--pbc:#2ecc8f"><span class="pb-bar"></span><span class="pb-t">Thomas Scientific playbook</span><span class="pb-s">Distributor to lab-supply-chain platform; target-account selling into 27k scored sites.</span><span class="pb-go">Open →</span></a><a class="pb-card" href="redesigns/bpi/playbook.html" style="--pbc:#e05c8a"><span class="pb-bar"></span><span class="pb-t">BPI playbook</span><span class="pb-s">Agency to productized communications platform; SignalOS retainers; international add-ons.</span><span class="pb-go">Open →</span></a><a class="pb-card" href="redesigns/fair-harbor/playbook.html" style="--pbc:#3fd0e0"><span class="pb-bar"></span><span class="pb-t">Fair Harbor playbook</span><span class="pb-s">DTC swim brand to year-round sustainable lifestyle brand; HarborOS retention engine.</span><span class="pb-go">Open →</span></a><a class="pb-card" href="theater.html" style="--pbc:#06b6d4"><span class="pb-bar"></span><span class="pb-t">3D theater</span><span class="pb-s">WebGL fly-through: 76k home sales in 3D, expansion arcs, New England opportunity columns, live storms.</span><span class="pb-go">Open →</span></a><a class="pb-card" href="briefing/Broad_Sky_Operating_Intelligence_Memo.pdf" style="--pbc:#111827"><span class="pb-bar"></span><span class="pb-t">Executive memo (PDF)</span><span class="pb-s">Six pages for Tyler and the PRG: what the data says and what we should do next, footnoted to filings.</span><span class="pb-go">Open →</span></a><a class="pb-card" href="app.html" style="--pbc:#d9622b"><span class="pb-bar"></span><span class="pb-t">Operating-intelligence portal</span><span class="pb-s">Twelve modules, 57 views, 49 verified datasets, live weather, add-on screens, PE landscape.</span><span class="pb-go">Open →</span></a></div>
+  </div>
+</section>
+<section class="section briefing" id="briefing" aria-labelledby="briefing-title">
+    <div class="wrap brief-grid">
+      <div class="brief-copy">
+        <p class="kicker">The briefing</p>
+        <h2 id="briefing-title">The whole portfolio in under four minutes.</h2>
+        <p class="lede">A narrated walk through every module: where demand is coming from, which bids and targets matter this quarter, and what each platform should do next.</p>
+        <ul class="brief-meta">
+          <li><b>3:54</b><span>minutes</span></li>
+          <li><b>35</b><span>chapters</span></li>
+          <li><b>1080p</b><span>rendered from the live portal</span></li>
+        </ul>
+        <div class="brief-switch" role="group" aria-label="Choose a video">
+          <button class="on" data-video="briefing/broad_sky_briefing.mp4" data-poster="briefing/poster.jpg" aria-pressed="true">Full briefing</button>
+          <button data-video="briefing/broad_sky_intro.mp4" data-poster="briefing/intro_poster.jpg" aria-pressed="false">29-second intro</button>
+        </div>
+        <a class="textlink" href="app.html#/briefing/play">Play the interactive tour in the portal <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="video-frame">
+        <video id="brief-video" controls playsinline preload="none" data-poster="briefing/poster.jpg" aria-label="Broad Sky Operating Intelligence briefing video">
+          <source src="briefing/broad_sky_briefing.mp4" type="video/mp4">
+          Your browser does not play MP4 video. <a href="briefing/broad_sky_briefing.mp4">Download the briefing</a>.
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Closing band ═══ -->
+  <section class="closer" aria-labelledby="closer-title">
+    <div class="wrap closer-in">
+      <h2 id="closer-title">Start with a question.</h2>
+      <p>The portal does the lookup. You make the call.</p>
+      <div class="closer-actions">
+        <a class="pill pill-grad" href="#hero-chat" data-focus-chat>Ask the portfolio</a>
+        <a class="pill pill-ink" href="app.html">Open the portal</a>
+        <a class="pill pill-ghost" href="redesigns/">Browse site concepts</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot" aria-labelledby="foot-title">
+  <div class="wrap foot-grid">
+    <div class="foot-brand">
+      <p id="foot-title" class="foot-h">Built for the Portfolio Resource Group</p>
+      <p>Prepared by Syed Rizvi for Broad Sky Partners, 34 E 51st Street, New York. A working draft that turns public-record and licensed data into revenue, M&amp;A and operating actions for six platforms.</p>
+    </div>
+    <nav class="foot-col" aria-label="Product"><p class="foot-h">Product</p><a href="app.html">Portal</a><a href="app.html#/home/overview">Command Center</a><a href="app.html#/ma/overview">Acquisition engine</a><a href="app.html#/techos/overview">Tech enablement</a></nav>
+    <nav class="foot-col" aria-label="Concepts"><p class="foot-h">Concepts</p><a href="redesigns/">Site gallery</a><a href="#os">OS program</a><a href="#briefing">Briefing</a><a href="https://github.com/SyedR64/BroadSky_Intelligence_Portal" rel="noopener">GitHub</a></nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.</p>
+    <p class="mono">v2 · Oct 2026</p>
+  </div>
+</footer>
+
 <script type="module">
-  import { App } from './assets/core.js?v=20260924203049';
-  import { modules } from './modules/registry.js?v=20260924203049';
-  for (const m of modules) App.register(m);
-  App.start();
+  import { Landing } from './assets/landing.js?v=20261006085442';
+  Landing.init();
 </script>
+<script type="module">
+  import { Chat } from './assets/chat.js?v=20261006085442';
+  import { Landing } from './assets/landing.js?v=20261006085442';
+  const host = document.querySelector('#hero-chat');
+  host.querySelector('.chat-skeleton')?.remove();
+  const chat = Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline', theme: 'light' });
+  Landing.attachChat(chat);
+</script>
+<script type="module">import { Counter } from './assets/counter.js?v=20261006085442'; const el = document.getElementById('hero-counter'); if (el) Counter.mount(el, { theme: 'light', caption: 'Revenue left on the table across the portfolio since you opened this page' });</script>
 </body>
 </html>

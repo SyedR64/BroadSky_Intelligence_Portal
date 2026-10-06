@@ -1,0 +1,68 @@
+/* BPI concept — shared page chrome: banner, nav, reveal, office clocks, chat widget. */
+import { Chat } from '../../assets/chat.js?v=20261006085442';
+
+export const OFFICES = [
+  { c: 'Washington, DC', tz: 'America/New_York', g: 'Americas', note: 'Headquarters · 1445 New York Ave NW', lat: 38.9, lon: -77.03, hq: 1 },
+  { c: 'New York', tz: 'America/New_York', g: 'Americas', note: 'Corporate affairs, campaigns, paid media', lat: 40.71, lon: -74.0 },
+  { c: 'Chicago', tz: 'America/Chicago', g: 'Americas', note: 'Campaigns and digital', lat: 41.88, lon: -87.63 },
+  { c: 'San Francisco', tz: 'America/Los_Angeles', g: 'Americas', note: 'Technology and AI policy clients', lat: 37.77, lon: -122.42 },
+  { c: 'Los Angeles', tz: 'America/Los_Angeles', g: 'Americas', note: 'Culture-first impact and entertainment', lat: 34.05, lon: -118.24 },
+  { c: 'Boston', tz: 'America/New_York', g: 'Americas', note: 'Northeast corporate affairs, life sciences (Aug 2026)', lat: 42.36, lon: -71.06 },
+  { c: 'London', tz: 'Europe/London', g: 'Europe', note: 'Second-largest hub · Seven Hills, Message House', lat: 51.51, lon: -0.13 },
+  { c: 'Brussels', tz: 'Europe/Brussels', g: 'Europe', note: 'EU public affairs', lat: 50.85, lon: 4.35 },
+  { c: 'Berlin', tz: 'Europe/Berlin', g: 'Europe', note: 'Third-largest market · 365 Sherpas BPI', lat: 52.52, lon: 13.4 },
+  { c: 'Oslo', tz: 'Europe/Oslo', g: 'Europe', note: 'Nordic public affairs (via BOLDT)', lat: 59.91, lon: 10.75 },
+  { c: 'Zurich / Geneva', tz: 'Europe/Zurich', g: 'Europe', note: 'Swiss and international organizations', lat: 47.37, lon: 8.54 },
+  { c: 'Sydney', tz: 'Australia/Sydney', g: 'Alliance', note: 'Mandala Partners strategic alliance (Nov 2025)', lat: -33.87, lon: 151.21, alliance: 1 },
+];
+export const timeIn = tz => { try { return new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: tz }).format(new Date()); } catch { return '--:--'; } };
+export const isOpen = tz => { try { const p = new Intl.DateTimeFormat('en-US', { hour: 'numeric', hour12: false, weekday: 'short', timeZone: tz }).formatToParts(new Date()); const h = +p.find(x => x.type === 'hour').value, d = p.find(x => x.type === 'weekday').value; return !['Sat', 'Sun'].includes(d) && h >= 8 && h < 19; } catch { return false; } };
+
+export const FAQ = [
+  { q: 'What does BPI do?', a: '<p>BPI is a strategic communications and public affairs firm for companies, causes and campaigns. Six practices work as one team: <b>public affairs, corporate reputation, campaigns, research &amp; analytics, digital &amp; paid media, and AI communications</b>, with named offerings in litigation and regulatory risk, sports, and culture-first impact.</p>', href: 'index.html#services' },
+  { q: 'Which offices do you have?', a: '<p>Washington, DC (headquarters), New York, Chicago, San Francisco, Los Angeles and Boston in the US; London, Brussels, Berlin, Oslo and Zurich/Geneva in Europe; and Asia-Pacific coverage through the Mandala Partners alliance in Australia.</p>', href: 'index.html#offices' },
+  { q: 'What is SignalOS?', a: '<p><b>SignalOS</b> is the proposed intelligence layer under every BPI retainer: always-on narrative monitoring, synthetic-audience message testing validated with live panels, a compliance-gated content studio and outcome dashboards. It turns monitoring and measurement into a subscription rather than a line item.</p>', href: 'signalos.html' },
+  { q: 'How do retainers and pricing work?', a: '<p>Most corporate and public-affairs work runs on monthly retainers; campaigns and research studies are scoped as projects. The concept introduces three productized tiers (Monitor, Advise, Command) so clients can buy intelligence, counsel and execution in predictable bundles. Tier prices on the SignalOS page are illustrative.</p>', href: 'signalos.html#tiers' },
+  { q: 'How fast can you respond in a crisis?', a: '<p>Under the proposed SignalOS retainers, alerts reach the account team with a draft holding statement attached, and the response SLA is 2 hours on Monitor and 30 minutes on Advise and Command, with US and European teams covering the clock. Every draft still goes through human and legal sign-off.</p>', href: 'signalos.html#demo' },
+  { q: 'Can you test our message before we launch it?', a: '<p>Yes. Message House, the elite-audience research group BPI acquired in Nov 2024, tests messages with policymakers, investors and other hard-to-reach audiences across EMEA. SignalOS adds synthetic pre-tests that narrow options in hours before live fieldwork confirms the finalists.</p>', href: 'signalos.html#demo' },
+  { q: 'Do you work in Brussels and Berlin?', a: '<p>Yes. BPI added BOLDT (Brussels, Berlin, London, Oslo, Zurich) in Dec 2023, Seven Hills and Message House in London in Nov 2024, and 365 Sherpas in Berlin in May 2026, making Germany its third-largest market. One retainer can cover Washington, Brussels and Berlin.</p>', href: 'index.html#offices' },
+  { q: 'What is AI communications?', a: '<p>Counsel and tooling for the AI era: AI policy and governance positioning, deepfake and misinformation response, and AI-assisted content with compliance checkpoints. BPI’s 2026 Reputation Resilience Index (18,000+ adults, 4 markets, 170 companies) found <b>81%</b> of adults say AI makes it too easy to spread false rumors about companies.</p>', href: 'index.html#monitor' },
+  { q: 'Do you work with sports organizations?', a: '<p>Yes. BPI formalized a sports offering in Oct 2024 and scaled it with the May 2025 acquisition of Agado Communications, whose founder Mark Jones leads BPI’s sports strategy and growth.</p>', href: 'index.html#services' },
+  { q: 'Do you handle litigation and regulatory risk?', a: '<p>Yes. In Mar 2026 BPI launched a litigation communications, oversight and regulatory-risk offering led by partner Elizabeth E. Alexander, covering congressional oversight, investigations and enforcement actions.</p>', href: 'index.html#services' },
+  { q: 'Who leads BPI?', a: '<p>Andrew Bleeker is CEO and Ben LaBolt has been President since Apr 2025. Broad Sky Partners made a majority investment in Apr 2023; Svoboda Capital Partners remains an investor.</p>', href: 'index.html#people' },
+  { q: 'Are you hiring?', a: '<p>The concept careers section lists illustrative openings across public affairs, research, SignalOS data engineering and corporate affairs in Washington, New York, London, Berlin and Chicago.</p>', href: 'index.html#careers' },
+  { q: 'How do I start a conversation?', a: '<p>Use the contact form: pick a topic (public affairs, reputation, campaign, research, crisis or a SignalOS briefing) and the right partner follows up. In this concept the form does not send data.</p>', href: 'index.html#contact' },
+];
+export const SUGGESTIONS = ['What is SignalOS?', 'How do retainers and pricing work?', 'Do you work in Brussels and Berlin?', 'Can you test our message before we launch it?', 'How fast can you respond in a crisis?', 'Are you hiring?'];
+
+export function chrome() {
+  document.documentElement.classList.remove('no-js');
+  // concept banner
+  const ban = document.querySelector('.concept');
+  try { if (ban && sessionStorage.getItem('bpi-concept-x') === '1') ban.remove(); } catch { }
+  ban?.querySelector('.x')?.addEventListener('click', () => { ban.remove(); try { sessionStorage.setItem('bpi-concept-x', '1'); } catch { } });
+  // nav
+  const nav = document.querySelector('.nav');
+  const onScroll = () => nav?.classList.toggle('scrolled', scrollY > 8); addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  const burger = nav?.querySelector('.burger');
+  burger?.addEventListener('click', () => { const o = nav.classList.toggle('open'); burger.setAttribute('aria-expanded', String(o)); });
+  nav?.querySelectorAll('.sheet a').forEach(a => a.addEventListener('click', () => { nav.classList.remove('open'); burger?.setAttribute('aria-expanded', 'false'); }));
+  addEventListener('keydown', e => { if (e.key === 'Escape' && nav?.classList.contains('open')) { nav.classList.remove('open'); burger?.setAttribute('aria-expanded', 'false'); burger?.focus(); } });
+  // reveal
+  const rv = document.querySelectorAll('.rv');
+  if ('IntersectionObserver' in window) { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' }); rv.forEach(el => io.observe(el)); }
+  else rv.forEach(el => el.classList.add('in'));
+  if (innerWidth < 700) document.querySelectorAll('details.rat[open]').forEach(d => d.removeAttribute('open'));
+  document.querySelectorAll('[data-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
+}
+
+export function mountChat(extraSuggestions) {
+  try {
+    return Chat.mount(null, { persona: 'bpi', mode: 'floating', theme: 'light', color: '#2b2bff', faq: FAQ, suggestions: extraSuggestions || SUGGESTIONS,
+      greeting: 'Hi, I’m the BPI desk. Ask about our services, offices, how retainers work, crisis response, or SignalOS, our intelligence layer.' });
+  } catch (e) { console.warn('chat unavailable', e); return null; }
+}
+
+export function faqHTML(list = FAQ) {
+  return list.map((f, i) => `<details${i === 0 ? ' open' : ''}><summary>${f.q}</summary><div class="ans">${f.a}</div></details>`).join('');
+}

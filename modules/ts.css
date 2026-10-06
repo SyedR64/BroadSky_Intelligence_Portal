@@ -57,3 +57,13 @@
 .m-ts #fil-table .tbl td:nth-child(4){white-space:normal;min-width:120px;max-width:170px}
 .m-ts #fil-table .tbl td:nth-child(5){white-space:normal;min-width:260px;max-width:340px;overflow-wrap:anywhere}
 .m-ts #fil-table .tbl td:nth-child(5) span{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+/* coverage bridge + share-of-wallet tables */
+.m-ts table.bridge{width:100%;border-collapse:collapse;font-size:11.5px}
+.m-ts table.bridge th{font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);text-align:right;padding:3px 4px;border-bottom:1px solid var(--hair)}
+.m-ts table.bridge th:first-child{text-align:left}
+.m-ts table.bridge td{padding:5px 4px;border-top:1px solid var(--hair);color:var(--text-2);text-align:right;font-family:var(--mono);white-space:nowrap;vertical-align:top}
+.m-ts table.bridge td:first-child{text-align:left;font-family:inherit;white-space:normal;color:var(--text)}
+.m-ts table.bridge tr.tot td{border-top:1px solid var(--border-2);font-weight:600;color:var(--text)}
+.m-ts table.wallet td:first-child a{font-weight:600}
+.m-ts .heat th,.m-ts .heat td{padding:6px 3px}
+.m-ts .heat td.nowrap{padding-right:6px}

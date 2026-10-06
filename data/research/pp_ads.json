@@ -1,0 +1,3367 @@
+{
+ "meta": {
+  "dataset": "Punctual Pros advertising program - cheap CTV, LSA, new-mover mail and weather-triggered creative (with Fair Harbor DTC appendix)",
+  "generated": "2026-10-06",
+  "portfolio_company": "Punctual Pros (Broad Sky Partners) incl. Horvath Home Services (Ocean/Monmouth NJ); appendix: Fair Harbor",
+  "method": "CTV platform terms, benchmarks and franchisor brand promises were fetched from the cited pages on 2026-10-06 (WebFetch/curl); where a page returned 403 or was gated, the figure comes from the search-engine result for that URL and the item is marked retrieval_status='search_snippet'. Territory facts were computed from repo data: pp_zips (248 flagged zips, 1,001,408 housing units, 61 Tier-I zips with 336,002 units), data/sales deed feeds (trailing-12-month arm's-length residential sales by county; 33% of Lancaster/York/Cumberland/Dauphin residential sales are pre-1980 homes), pp_storm_events (NOAA monthly event counts) and pp_demand_model (NWS playbooks). Media plans are computed in code from the benchmark items with explicit formulas in each plan's 'model' field; every output is an estimate. Creative is original sample copy written to each brand's published guarantee language.",
+  "territory_facts": {
+   "pa_core_zips": 248,
+   "pa_core_housing_units": 1001408,
+   "pa_core_owner_occupied": 675738,
+   "pa_tier1_zips": 61,
+   "pa_tier1_housing_units": 336002,
+   "pa_older_stock_share_hu_weighted": 0.578,
+   "pa_core_new_movers_per_month_est": 2300,
+   "nj_ocean_monmouth_housing_units": 555012,
+   "nj_new_movers_per_month_est": 1150,
+   "noaa_pa_core_events_by_month_2019_2025": {
+    "Jan": 72,
+    "Feb": 92,
+    "Mar": 63,
+    "Apr": 121,
+    "May": 242,
+    "Jun": 332,
+    "Jul": 522,
+    "Aug": 242,
+    "Sep": 100,
+    "Oct": 24,
+    "Nov": 37,
+    "Dec": 51
+   },
+   "notes": "Dauphin (85 sales) and Franklin (0 in trailing 12 months) are under-counted in the deed feed, so 2,300/month is a floor-adjusted estimate (~24.9k counted + ~3k gap)/12."
+  },
+  "caveats": [
+   "No public home-services CTV cost-per-site-visit or CPL benchmark was found; the $12 cost per visit is an assumption anchored on DTC case studies and must be replaced by the week-8 read.",
+   "Mail lead rate (1.0% per piece) is deliberately below ANA prospect response (4-5%) and vendor new-mover claims (4.9%); treat both as upper bounds.",
+   "SearchLight and LocaliQ disagree on search CPL ($104 blended Jan 2026 vs $128 HVAC Apr 2024-Mar 2025) because of different samples and lead definitions; plans use SearchLight because it also reports book rates and closed revenue.",
+   "Mister Sparky's national guarantee ('the repair is free') differs from the Lancaster location page ('we'll pay you back'); creative uses the safe line until PP confirms.",
+   "All offers are illustrative; prices, discounts and membership terms must come from PP's price book and Authority Brands' marketing standards. Multi-brand ads need franchisor approval (assumption about franchise agreement terms).",
+   "Amazon Sponsored TV self-serve is limited to Amazon Brand Registry sellers; Spectrum Reach's footprint likely excludes PP territories (Comcast and Altice/Optimum are the incumbents) - both kept for completeness, flagged low fit.",
+   "CPM ranges for Disney, Roku, Samsung, Tubi and Paramount come from third-party guides, not the platforms; zip targeting on Roku self-serve and MNTN was not confirmed on the pages read.",
+   "Trade mix (50/35/15) and 40% gross margin are planning assumptions; replace with ServiceTitan actuals."
+  ],
+  "sources_summary": [
+   "https://achrnews.com/articles/145497-hvac-contractors-must-be-quick-to-follow-up-on-leads-to-get-the-sale",
+   "https://advertising.amazon.com/library/guides/sponsored-tv",
+   "https://adwave.com/resources/average-ctv-cpm-q2-2026",
+   "https://adwave.com/resources/samsung-tv-plus",
+   "https://adwave.com/resources/tubi",
+   "https://comcastadvertising.com/markets/harrisburg/",
+   "https://directmail.io/blog/new-mover-direct-mail-playbook",
+   "https://fitsmallbusiness.com/radio-advertising-costs/",
+   "https://help.vibe.co/en/articles/6134952-budget-and-pricing",
+   "https://keynes.com/hulu-advertising-specs/",
+   "https://localiq.com/blog/home-services-search-advertising-benchmarks/",
+   "https://mountain.com/case-studies/dtc-lingerie-brand-drives-profitable-growth-with-performance-tv/",
+   "https://mountain.com/case-studies/style-meet-ctv-j-lindeberg-and-maison-mrkt-exceed-roas-goal-by-9x-with-mntn/",
+   "https://mountain.com/case-studies/tuckernuck-celebrates-a-304-yoy-increase-in-q4-conversion-rate-with-performance-tv/",
+   "https://mountain.com/mntn-at-a-glance/",
+   "https://novadata.io/resources/news/amazon-streaming-tv-ads-self-service-all-sellers",
+   "https://ottverse.com/paramount-advertising-unveils-new-self-service-platform-for-small-businesses/",
+   "https://ppc.land/ctvs-98-completion-rate-is-automatic-not-earned-lake-warns-buyers/",
+   "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/",
+   "https://searchlightdigital.io/what-is-a-good-cost-per-lead-for-hvac-google-ads/",
+   "https://spectrumreach.com/adportal",
+   "https://support.google.com/google-ads/answer/9163453?hl=en",
+   "https://tvtechnology.com/news/spectrum-reach-becomes-a-local-reseller-for-amazon-ads",
+   "https://v2.4over4.com/guide/eddm-pricing-explained",
+   "https://vibe.co/llms.txt",
+   "https://www.4over4.com/statistics/vehicle-wrap-advertising-effectiveness-data",
+   "https://www.ahs.com/home-matters/homebuyer-hub-resources-and-guides/home-maintenance-issues-statistics/",
+   "https://www.applausehq.com/blog/hvac-membership-programs",
+   "https://www.attnagency.com/blog/ctv-creative-production-guide",
+   "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees",
+   "https://www.brightlocal.com/research/local-consumer-review-survey-2025/",
+   "https://www.disneycampaignmanager.com/resources/product-updates/faq/getting-started/",
+   "https://www.emarketer.com/content/mntn-goes-public--highlighting-rising-ctv-demand-smbs",
+   "https://www.g2.com/products/mntn-performance-tv/pricing",
+   "https://www.housecallpro.com/resources/hvac-industry-trends/",
+   "https://www.ispot.tv/ad/b7Kx/fair-harbor-clothing-the-horror",
+   "https://www.mediapost.com/publications/article/412351/iab-forecast-ctv-ad-spend-up-138-social-media.html",
+   "https://www.mistersparky.com/about-us/our-guarantee/",
+   "https://www.mistersparky.com/lancaster/",
+   "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+   "https://www.piworld.com/post/revisiting-response-rates-why-direct-mails-roi-keeps-rising",
+   "https://www.servicetitan.com/blog/data-call-booking-rates",
+   "https://www.triplewhale.com/reports-guides/fashion-industry-benchmarks-2025",
+   "https://www.universalads.com/article/advertise-on-tv-without-a-big-budget",
+   "https://www.usehatchapp.com/blog/hvac-speed-to-lead-response-rates",
+   "https://www.vibe.co/blog/roku-advertising-cost",
+   "https://www.vibe.co/blog/whats-new/how-much-does-it-cost-to-run-a-ctv-campaign",
+   "https://www.webfx.com/blog/home-services/seasonal-search-trends/",
+   "https://www.wordstream.com/blog/facebook-ads-benchmarks-2025"
+  ],
+  "strategy_summary": "Punctual Pros sells three franchise brands whose core promise is punctuality, so the advertising program should sell the promise (One Hour's 'Always On Time... Or You Don't Pay A Dime!', Ben Franklin's $5-a-minute guarantee, Mister Sparky's 'America's On-Time Electrician') rather than invent new claims. Google Local Services Ads are the cheapest high-intent leads in the category ($39-57 per lead at a ~44% book rate, SearchLight Feb 2026), so LSA is the always-on base and is managed through reviews and fast answer rates rather than bids. Self-serve CTV has dropped to $50-$500 minimums and roughly $15-40 CPMs with zip targeting (Vibe, Disney Campaign Manager, Universal Ads, YouTube on TV screens), which lets a ~$22M franchisee buy TV in its ~240 zips without paying for the whole Harrisburg or Philadelphia DMA. CTV's job is to make the brand familiar before the furnace fails and to lift branded search and LSA conversion, so it is judged on cost per booked job and geo-holdout lift, not completion rate (which is ~94-99% by construction). New-mover direct mail is the highest-intent prospect list a home-services company can get: the repo's deed feed shows ~2,300 arm's-length residential sales a month in the PA core and ~1,150 on the Jersey Shore, each a household that must pick an HVAC, plumbing and electrical provider within months. One in three of those PA buyers bought a pre-1980 home, which drives the Ben Franklin and Mister Sparky older-home inspection offers and the CTV zip weighting toward older housing stock (pp_zips old_housing_share). The weather index ties it together: NWS alerts for PP's zones (pp_demand_model playbooks) trigger budget multipliers and creative swaps 12-36 hours before demand spikes, so spend lands when calls are about to rise rather than after phones are already full. The same deed feed becomes the CTV and Meta audience (address-matched households) and the mail list, so one new mover sees a coordinated welcome across mailbox, TV and phone, measured against a random holdout. Test first with an 8-week, $50k/month Central PA pilot: LSA profile and review clean-up, a zip-level CTV geo holdout in the 61 Tier-I zips, and a mail-versus-holdout new-mover drip, all on unique call-tracking numbers in ServiceTitan. If measured cost per booked job beats the modelled ~$185-200 blended, scale to the Jersey Shore (zip-only CTV) and then a regional Mid-Atlantic program, which also leaves a documented, attributed customer-acquisition engine for the exit data room.",
+  "strategy_sentences": [
+   "Punctual Pros sells three franchise brands whose core promise is punctuality, so the advertising program should sell the promise (One Hour's 'Always On Time... Or You Don't Pay A Dime!', Ben Franklin's $5-a-minute guarantee, Mister Sparky's 'America's On-Time Electrician') rather than invent new claims.",
+   "Google Local Services Ads are the cheapest high-intent leads in the category ($39-57 per lead at a ~44% book rate, SearchLight Feb 2026), so LSA is the always-on base and is managed through reviews and fast answer rates rather than bids.",
+   "Self-serve CTV has dropped to $50-$500 minimums and roughly $15-40 CPMs with zip targeting (Vibe, Disney Campaign Manager, Universal Ads, YouTube on TV screens), which lets a ~$22M franchisee buy TV in its ~240 zips without paying for the whole Harrisburg or Philadelphia DMA.",
+   "CTV's job is to make the brand familiar before the furnace fails and to lift branded search and LSA conversion, so it is judged on cost per booked job and geo-holdout lift, not completion rate (which is ~94-99% by construction).",
+   "New-mover direct mail is the highest-intent prospect list a home-services company can get: the repo's deed feed shows ~2,300 arm's-length residential sales a month in the PA core and ~1,150 on the Jersey Shore, each a household that must pick an HVAC, plumbing and electrical provider within months.",
+   "One in three of those PA buyers bought a pre-1980 home, which drives the Ben Franklin and Mister Sparky older-home inspection offers and the CTV zip weighting toward older housing stock (pp_zips old_housing_share).",
+   "The weather index ties it together: NWS alerts for PP's zones (pp_demand_model playbooks) trigger budget multipliers and creative swaps 12-36 hours before demand spikes, so spend lands when calls are about to rise rather than after phones are already full.",
+   "The same deed feed becomes the CTV and Meta audience (address-matched households) and the mail list, so one new mover sees a coordinated welcome across mailbox, TV and phone, measured against a random holdout.",
+   "Test first with an 8-week, $50k/month Central PA pilot: LSA profile and review clean-up, a zip-level CTV geo holdout in the 61 Tier-I zips, and a mail-versus-holdout new-mover drip, all on unique call-tracking numbers in ServiceTitan.",
+   "If measured cost per booked job beats the modelled ~$185-200 blended, scale to the Jersey Shore (zip-only CTV) and then a regional Mid-Atlantic program, which also leaves a documented, attributed customer-acquisition engine for the exit data room."
+  ],
+  "test_plan": [
+   {
+    "week": 1,
+    "focus": "Foundations",
+    "actions": [
+     "Unique tracking numbers + UTMs + QR codes per channel/creative in ServiceTitan",
+     "Site pixel (Vibe/Universal Ads/Google)",
+     "LSA profiles audited: photos, bios (cr_lsa_copy), review-request SMS live",
+     "Randomize 15% of Tier-I zips and 10% of new movers as holdouts"
+    ],
+    "budget_usd": 8000
+   },
+   {
+    "week": 2,
+    "focus": "Launch A/B 1 - CTV creative",
+    "actions": [
+     "CTV A: 'Storm Ready' :15 vs B: 'We Watch the Clock' :30 (cut to :15) - 50/50 by zip cluster",
+     "Mail drop 1 (postcard #1) to last 30 days of deeds; A: offer = welcome checkup, B: offer = first month membership free"
+    ],
+    "budget_usd": 12500
+   },
+   {
+    "week": 3,
+    "focus": "Speed-to-lead",
+    "actions": [
+     "A/B: <60-second automated text reply (Hatch-style 7-touch cadence) vs current process on LSA + form leads",
+     "Mid-test check on CTV frequency (cap 3/week)"
+    ],
+    "budget_usd": 12500
+   },
+   {
+    "week": 4,
+    "focus": "Read 1",
+    "actions": [
+     "Read booked jobs per 10k HU exposed vs holdout (directional)",
+     "Shift 20% of CTV budget to the winning cut",
+     "Postcard #2 to pre-1980 non-responders"
+    ],
+    "budget_usd": 12500
+   },
+   {
+    "week": 5,
+    "focus": "Weather trigger test",
+    "actions": [
+     "Turn on NWS trigger rules for half the counties (alternate by county); other half flat pacing",
+     "Frozen-pipe vertical on Meta during any Extreme Cold Warning"
+    ],
+    "budget_usd": 12500
+   },
+   {
+    "week": 6,
+    "focus": "Vendor A/B",
+    "actions": [
+     "Split CTV: Vibe vs Disney Campaign Manager (or YouTube TV screens) on matched zip clusters",
+     "Branded search impression share check (CTV halo)"
+    ],
+    "budget_usd": 12500
+   },
+   {
+    "week": 7,
+    "focus": "Membership",
+    "actions": [
+     "'Members skip the line' vertical to members due for renewal: A with tech mention at visit vs B with tech mention + automated follow-up",
+     "Mail drop 3"
+    ],
+    "budget_usd": 12500
+   },
+   {
+    "week": 8,
+    "focus": "Final read + decision",
+    "actions": [
+     "Geo-holdout lift for CTV and mail (booked jobs, revenue)",
+     "Cost per booked job by channel vs model (LSA ~$117, search ~$249, CTV ~$416 est.)",
+     "Go / no-go for Phase 2 and budget re-split"
+    ],
+    "budget_usd": 12500
+   }
+  ],
+  "item_count": 64,
+  "counts_by_kind": {
+   "ctv_platform": 12,
+   "benchmark": 26,
+   "creative": 15,
+   "media_plan": 3,
+   "fh_appendix": 6,
+   "spot_render": 2
+  }
+ },
+ "items": [
+  {
+   "id": "ctv_vibe",
+   "platform": "Vibe.co (self-serve CTV; Hulu, Paramount+, Peacock, Disney+ direct + 500+ apps incl. Tubi, Pluto, Roku)",
+   "minimum_spend_usd": 50,
+   "minimum_unit": "per strategy (daily or lifetime budget)",
+   "cpm_range_usd": [
+    15,
+    35
+   ],
+   "targeting": [
+    "zip",
+    "dma",
+    "household",
+    "retargeting",
+    "lookalike"
+   ],
+   "creative_specs": {
+    "durations_s": [
+     15,
+     30
+    ],
+    "resolution": "1920x1080 preferred (1280x720 accepted on Hulu), 16:9, 23.98/29.97 fps, .mp4/.mov H.264 or ProRes mezzanine 15-60 Mbps",
+    "loudness": "-24 LKFS +/-2 dB integrated (US CALM Act / ATSC A/85 practice); some platforms quote -23 LUFS +/-2",
+    "safe_area": "keep text/logo/QR inside central 90% of frame",
+    "source_urls": [
+     "https://keynes.com/hulu-advertising-specs/",
+     "https://www.attnagency.com/blog/ctv-creative-production-guide"
+    ],
+    "in_platform": "Vibe Studio AI turns existing footage into CTV-ready :15/:30 spots"
+   },
+   "measurement": [
+    "site visits (pixel)",
+    "conversion tracking",
+    "incremental lift via Haus integration",
+    "GA4 / Triple Whale / Northbeam integrations",
+    "QR (bring your own UTM)"
+   ],
+   "self_serve": true,
+   "fit_for_pp": "high",
+   "notes": "Best first test: no platform fee, $50 floor, CRM-list upload (PP customers / ServiceTitan export for exclusion or lookalike), website retargeting onto the TV. Geo to Tier-I zips. CPM quoted $15-35 on llms.txt; blog says $10-70 with ~$30 average for narrow targeting. Zip targeting is standard in the UI but not stated on the pages read; confirm in account.",
+   "source_url": "https://help.vibe.co/en/articles/6134952-budget-and-pricing",
+   "source_urls": [
+    "https://help.vibe.co/en/articles/6134952-budget-and-pricing",
+    "https://vibe.co/llms.txt",
+    "https://www.vibe.co/blog/whats-new/how-much-does-it-cost-to-run-a-ctv-campaign"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched",
+   "kind": "ctv_platform"
+  },
+  {
+   "id": "ctv_mntn",
+   "platform": "MNTN Performance TV (self-serve CTV, 96% SMB customer base)",
+   "minimum_spend_usd": null,
+   "minimum_unit": "no published minimum; vendor/partner materials cite ~$1k-$2k/month starts, typical spend far higher",
+   "cpm_range_usd": null,
+   "targeting": [
+    "household",
+    "retargeting",
+    "lookalike"
+   ],
+   "creative_specs": {
+    "durations_s": [
+     15,
+     30
+    ],
+    "resolution": "1920x1080 preferred (1280x720 accepted on Hulu), 16:9, 23.98/29.97 fps, .mp4/.mov H.264 or ProRes mezzanine 15-60 Mbps",
+    "loudness": "-24 LKFS +/-2 dB integrated (US CALM Act / ATSC A/85 practice); some platforms quote -23 LUFS +/-2",
+    "safe_area": "keep text/logo/QR inside central 90% of frame",
+    "source_urls": [
+     "https://keynes.com/hulu-advertising-specs/",
+     "https://www.attnagency.com/blog/ctv-creative-production-guide"
+    ],
+    "in_platform": "QuickFrame AI video generation; Creative-as-a-Subscription bundles custom spots with media"
+   },
+   "measurement": [
+    "Verified Visits (site visits, last-touch)",
+    "user-set attribution windows",
+    "incrementality reporting",
+    "GA / Rockerbox integration"
+   ],
+   "self_serve": true,
+   "fit_for_pp": "medium",
+   "notes": "Dynamic CPM (MNTN keeps a percentage, no separate fee). Strong retargeting-to-TV and site-visit attribution; geo/zip controls not stated on the at-a-glance page. Better fit once PP has a site pixel and wants a second CTV vendor for a holdout comparison. Minimum/CPM not published (G2 page notes no public rates).",
+   "source_url": "https://mountain.com/mntn-at-a-glance/",
+   "source_urls": [
+    "https://mountain.com/mntn-at-a-glance/",
+    "https://www.g2.com/products/mntn-performance-tv/pricing",
+    "https://www.emarketer.com/content/mntn-goes-public--highlighting-rising-ctv-demand-smbs"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched",
+   "kind": "ctv_platform"
+  },
+  {
+   "id": "ctv_universal_ads",
+   "platform": "Comcast Universal Ads (self-serve; NBCU/Peacock, Roku, Paramount, WBD, DirecTV and other premium streamers)",
+   "minimum_spend_usd": 100,
+   "minimum_unit": "per campaign; no minimum commitment or agency fee",
+   "cpm_range_usd": null,
+   "targeting": [
+    "zip",
+    "dma",
+    "household"
+   ],
+   "creative_specs": {
+    "durations_s": [
+     15,
+     30
+    ],
+    "resolution": "1920x1080 preferred (1280x720 accepted on Hulu), 16:9, 23.98/29.97 fps, .mp4/.mov H.264 or ProRes mezzanine 15-60 Mbps",
+    "loudness": "-24 LKFS +/-2 dB integrated (US CALM Act / ATSC A/85 practice); some platforms quote -23 LUFS +/-2",
+    "safe_area": "keep text/logo/QR inside central 90% of frame",
+    "source_urls": [
+     "https://keynes.com/hulu-advertising-specs/",
+     "https://www.attnagency.com/blog/ctv-creative-production-guide"
+    ],
+    "in_platform": "AI Video Generator; managed creative partners Creatify, Lemonlight, Waymark"
+   },
+   "measurement": [
+    "Universal Ads Pixel: reach, delivery, conversions",
+    "site visits"
+   ],
+   "self_serve": true,
+   "fit_for_pp": "high",
+   "notes": "Zip + custom customer lists (include/exclude) + household income. Vendor guidance: run 4-6 weeks reaching the audience 3x/week. Comcast is the incumbent cable operator across most of PP's Central PA footprint, so pair with Comcast Advertising local zones if linear is ever tested.",
+   "source_url": "https://www.universalads.com/article/advertise-on-tv-without-a-big-budget",
+   "source_urls": [
+    "https://www.universalads.com/article/advertise-on-tv-without-a-big-budget"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched",
+   "kind": "ctv_platform"
+  },
+  {
+   "id": "ctv_comcast_local",
+   "platform": "Comcast Advertising (fka Effectv) - Harrisburg market, local TV + streaming, managed",
+   "minimum_spend_usd": null,
+   "minimum_unit": "not published; contact sales",
+   "cpm_range_usd": null,
+   "targeting": [
+    "zip",
+    "dma",
+    "household"
+   ],
+   "creative_specs": {
+    "durations_s": [
+     15,
+     30
+    ],
+    "resolution": "1920x1080 preferred (1280x720 accepted on Hulu), 16:9, 23.98/29.97 fps, .mp4/.mov H.264 or ProRes mezzanine 15-60 Mbps",
+    "loudness": "-24 LKFS +/-2 dB integrated (US CALM Act / ATSC A/85 practice); some platforms quote -23 LUFS +/-2",
+    "safe_area": "keep text/logo/QR inside central 90% of frame",
+    "source_urls": [
+     "https://keynes.com/hulu-advertising-specs/",
+     "https://www.attnagency.com/blog/ctv-creative-production-guide"
+    ]
+   },
+   "measurement": [
+    "campaign reporting (linear + streaming)",
+    "site visits via pixel on request"
+   ],
+   "self_serve": false,
+   "fit_for_pp": "medium",
+   "notes": "Page claims potential reach of up to 8 in 10 Harrisburg households and lets you buy all of Harrisburg or any of the market's 10 zones (zone = cable headend area). Use for a storm-season linear+streaming flight only after self-serve CTV proves cost per booked job; NJ shore cable is split between Comcast and Altice/Optimum.",
+   "source_url": "https://comcastadvertising.com/markets/harrisburg/",
+   "source_urls": [
+    "https://comcastadvertising.com/markets/harrisburg/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched",
+   "kind": "ctv_platform"
+  },
+  {
+   "id": "ctv_disney_hulu",
+   "platform": "Disney Campaign Manager (fka Hulu Ad Manager; Hulu + Disney streaming, self-serve)",
+   "minimum_spend_usd": 500,
+   "minimum_unit": "per campaign",
+   "cpm_range_usd": [
+    25,
+    40
+   ],
+   "targeting": [
+    "zip",
+    "dma",
+    "household"
+   ],
+   "creative_specs": {
+    "durations_s": [
+     15,
+     30
+    ],
+    "resolution": "1920x1080 preferred (1280x720 accepted on Hulu), 16:9, 23.98/29.97 fps, .mp4/.mov H.264 or ProRes mezzanine 15-60 Mbps",
+    "loudness": "-24 LKFS +/-2 dB integrated (US CALM Act / ATSC A/85 practice); some platforms quote -23 LUFS +/-2",
+    "safe_area": "keep text/logo/QR inside central 90% of frame",
+    "source_urls": [
+     "https://keynes.com/hulu-advertising-specs/",
+     "https://www.attnagency.com/blog/ctv-creative-production-guide"
+    ],
+    "platform_note": "Hulu: :15-:30 only, 16:9, 1920x1080 preferred, 15-60 Mbps, 48 kHz stereo"
+   },
+   "measurement": [
+    "dashboard impressions/budget/status in near real time",
+    "site visits via own pixel/UTM",
+    "QR on end card"
+   ],
+   "self_serve": true,
+   "fit_for_pp": "high",
+   "notes": "Zip, age, gender, interests and genre targeting. CPM range $25-40 from third-party reviews (not on the Disney page); narrow zip+demo stacks push CPM up, so keep zip-only for reach.",
+   "source_url": "https://www.disneycampaignmanager.com/resources/product-updates/faq/getting-started/",
+   "source_urls": [
+    "https://www.disneycampaignmanager.com/resources/product-updates/faq/getting-started/",
+    "https://keynes.com/hulu-advertising-specs/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched",
+   "kind": "ctv_platform"
+  },
+  {
+   "id": "ctv_roku",
+   "platform": "Roku Ads Manager (self-serve; The Roku Channel + Roku inventory)",
+   "minimum_spend_usd": 500,
+   "minimum_unit": "typical starting campaign (no official published minimum per review)",
+   "cpm_range_usd": [
+    20,
+    60
+   ],
+   "targeting": [
+    "dma",
+    "household",
+    "retargeting"
+   ],
+   "creative_specs": {
+    "durations_s": [
+     15,
+     30
+    ],
+    "resolution": "1920x1080 preferred (1280x720 accepted on Hulu), 16:9, 23.98/29.97 fps, .mp4/.mov H.264 or ProRes mezzanine 15-60 Mbps",
+    "loudness": "-24 LKFS +/-2 dB integrated (US CALM Act / ATSC A/85 practice); some platforms quote -23 LUFS +/-2",
+    "safe_area": "keep text/logo/QR inside central 90% of frame",
+    "source_urls": [
+     "https://keynes.com/hulu-advertising-specs/",
+     "https://www.attnagency.com/blog/ctv-creative-production-guide"
+    ],
+    "platform_note": ":15/:30/:60; Roku accepts files <1 GB, 30 fps max"
+   },
+   "measurement": [
+    "dashboard delivery",
+    "site visits / conversions via Roku pixel"
+   ],
+   "self_serve": true,
+   "fit_for_pp": "medium",
+   "notes": "Geo granularity at DMA is the commonly cited floor for self-serve; that wastes spend outside ~240 zips (Harrisburg-Lancaster-Lebanon-York DMA ~2.1M people). Use Roku inventory through Vibe/Universal Ads with zip targeting instead unless Roku confirms zip in-account.",
+   "source_url": "https://www.vibe.co/blog/roku-advertising-cost",
+   "source_urls": [
+    "https://www.vibe.co/blog/roku-advertising-cost"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched",
+   "kind": "ctv_platform"
+  },
+  {
+   "id": "ctv_amazon",
+   "platform": "Amazon Ads streaming TV (Prime Video, Fire TV, Twitch) - Sponsored TV self-serve or Amazon DSP / reseller",
+   "minimum_spend_usd": 0,
+   "minimum_unit": "Sponsored TV: no minimum (Amazon suggests $150/day test); Sponsored TV self-serve is gated to Amazon Brand Registry sellers",
+   "cpm_range_usd": [
+    10,
+    25
+   ],
+   "targeting": [
+    "household",
+    "lookalike",
+    "retargeting"
+   ],
+   "creative_specs": {
+    "durations_s": [
+     6,
+     15,
+     30,
+     45
+    ],
+    "resolution": "1920x1080 preferred (1280x720 accepted on Hulu), 16:9, 23.98/29.97 fps, .mp4/.mov H.264 or ProRes mezzanine 15-60 Mbps",
+    "loudness": "-24 LKFS +/-2 dB integrated (US CALM Act / ATSC A/85 practice); some platforms quote -23 LUFS +/-2",
+    "safe_area": "keep text/logo/QR inside central 90% of frame",
+    "source_urls": [
+     "https://keynes.com/hulu-advertising-specs/",
+     "https://www.attnagency.com/blog/ctv-creative-production-guide"
+    ],
+    "platform_note": "logo in first 3 s; minimal on-screen text, VO-led"
+   },
+   "measurement": [
+    "impressions, branded search lift",
+    "Amazon Marketing Cloud cross-media attribution",
+    "household reach (2026)"
+   ],
+   "self_serve": true,
+   "fit_for_pp": "low",
+   "notes": "Sponsored TV is built for Amazon sellers (in-market/content-interest segments; no zip targeting in the pages read). A home-services franchisee would buy Prime Video through Amazon DSP (managed) or a local reseller such as Spectrum Reach (Charter resells Amazon Ads to local SMBs, Sept 2024). Low fit for Phase 1.",
+   "source_url": "https://advertising.amazon.com/library/guides/sponsored-tv",
+   "source_urls": [
+    "https://advertising.amazon.com/library/guides/sponsored-tv",
+    "https://novadata.io/resources/news/amazon-streaming-tv-ads-self-service-all-sellers",
+    "https://tvtechnology.com/news/spectrum-reach-becomes-a-local-reseller-for-amazon-ads"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched",
+   "kind": "ctv_platform"
+  },
+  {
+   "id": "ctv_spectrum_reach",
+   "platform": "Spectrum Reach Ad Portal (Charter; local TV + streaming + resold Amazon Ads)",
+   "minimum_spend_usd": null,
+   "minimum_unit": "self-serve Ad Portal; third-party summaries cite starts near $50",
+   "cpm_range_usd": null,
+   "targeting": [
+    "zip",
+    "dma",
+    "household"
+   ],
+   "creative_specs": {
+    "durations_s": [
+     15,
+     30
+    ],
+    "resolution": "1920x1080 preferred (1280x720 accepted on Hulu), 16:9, 23.98/29.97 fps, .mp4/.mov H.264 or ProRes mezzanine 15-60 Mbps",
+    "loudness": "-24 LKFS +/-2 dB integrated (US CALM Act / ATSC A/85 practice); some platforms quote -23 LUFS +/-2",
+    "safe_area": "keep text/logo/QR inside central 90% of frame",
+    "source_urls": [
+     "https://keynes.com/hulu-advertising-specs/",
+     "https://www.attnagency.com/blog/ctv-creative-production-guide"
+    ]
+   },
+   "measurement": [
+    "portal reporting",
+    "site visits"
+   ],
+   "self_serve": true,
+   "fit_for_pp": "low",
+   "notes": "Sells across 'their service areas'. Charter/Spectrum is not the incumbent cable operator in Harrisburg-Lancaster or the Ocean/Monmouth shore (Comcast and Altice/Optimum are), so confirm footprint before buying; listed because the brief named it. Portal page could not be parsed (content truncated) - minimum is from a search summary.",
+   "source_url": "https://tvtechnology.com/news/spectrum-reach-becomes-a-local-reseller-for-amazon-ads",
+   "source_urls": [
+    "https://tvtechnology.com/news/spectrum-reach-becomes-a-local-reseller-for-amazon-ads",
+    "https://spectrumreach.com/adportal"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched",
+   "kind": "ctv_platform"
+  },
+  {
+   "id": "ctv_samsung",
+   "platform": "Samsung Ads (Samsung TV Plus, Samsung DSP with ACR viewing data)",
+   "minimum_spend_usd": null,
+   "minimum_unit": "Samsung DSP minimum varies; resellers (e.g., Adwave) start at $50",
+   "cpm_range_usd": [
+    25,
+    40
+   ],
+   "targeting": [
+    "zip",
+    "dma",
+    "household",
+    "retargeting"
+   ],
+   "creative_specs": {
+    "durations_s": [
+     15,
+     30
+    ],
+    "resolution": "1920x1080 preferred (1280x720 accepted on Hulu), 16:9, 23.98/29.97 fps, .mp4/.mov H.264 or ProRes mezzanine 15-60 Mbps",
+    "loudness": "-24 LKFS +/-2 dB integrated (US CALM Act / ATSC A/85 practice); some platforms quote -23 LUFS +/-2",
+    "safe_area": "keep text/logo/QR inside central 90% of frame",
+    "source_urls": [
+     "https://keynes.com/hulu-advertising-specs/",
+     "https://www.attnagency.com/blog/ctv-creative-production-guide"
+    ]
+   },
+   "measurement": [
+    "ACR-based exposure / conquest",
+    "site visits via reseller pixel"
+   ],
+   "self_serve": true,
+   "fit_for_pp": "medium",
+   "notes": "ACR data lets you retarget households that saw competitor or local-news TV ads (e.g., Haller, Brubaker) - a later-phase conquest test. Zip available per reseller guide; Samsung DSP CPM $25-40.",
+   "source_url": "https://adwave.com/resources/samsung-tv-plus",
+   "source_urls": [
+    "https://adwave.com/resources/samsung-tv-plus"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched",
+   "kind": "ctv_platform"
+  },
+  {
+   "id": "ctv_youtube",
+   "platform": "YouTube on TV screens (Google Ads Video / Demand Gen, TV screens device type)",
+   "minimum_spend_usd": null,
+   "minimum_unit": "no platform minimum in Google Ads (daily budget you set)",
+   "cpm_range_usd": null,
+   "targeting": [
+    "zip",
+    "dma",
+    "retargeting",
+    "lookalike"
+   ],
+   "creative_specs": {
+    "durations_s": [
+     15,
+     30
+    ],
+    "resolution": "1920x1080 preferred (1280x720 accepted on Hulu), 16:9, 23.98/29.97 fps, .mp4/.mov H.264 or ProRes mezzanine 15-60 Mbps",
+    "loudness": "-24 LKFS +/-2 dB integrated (US CALM Act / ATSC A/85 practice); some platforms quote -23 LUFS +/-2",
+    "safe_area": "keep text/logo/QR inside central 90% of frame",
+    "source_urls": [
+     "https://keynes.com/hulu-advertising-specs/",
+     "https://www.attnagency.com/blog/ctv-creative-production-guide"
+    ],
+    "platform_note": "upload to YouTube; :15 non-skippable or skippable in-stream; vertical cut not served on TV"
+   },
+   "measurement": [
+    "Google Ads conversions and GA4 site visits",
+    "brand lift studies (spend thresholds)",
+    "device-level reporting for TV screens"
+   ],
+   "self_serve": true,
+   "fit_for_pp": "high",
+   "notes": "Same Google Ads account as LSA/search, so one conversion setup and zip/radius geo. TV screens became a separate device type with bid adjustments; Google cites Ipsos lab lifts of 47% ad recall and 35% purchase intent for YouTube ads on TV. CPM not on the page read; plan $15-25.",
+   "source_url": "https://support.google.com/google-ads/answer/9163453?hl=en",
+   "source_urls": [
+    "https://support.google.com/google-ads/answer/9163453?hl=en"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched",
+   "kind": "ctv_platform"
+  },
+  {
+   "id": "ctv_tubi",
+   "platform": "Tubi Self-Serve (Fox; built on Universal Ads technology, launched May 2025)",
+   "minimum_spend_usd": null,
+   "minimum_unit": "not published for self-serve; resellers start ~$30/day",
+   "cpm_range_usd": [
+    15,
+    25
+   ],
+   "targeting": [
+    "zip",
+    "dma",
+    "household"
+   ],
+   "creative_specs": {
+    "durations_s": [
+     15,
+     30
+    ],
+    "resolution": "1920x1080 preferred (1280x720 accepted on Hulu), 16:9, 23.98/29.97 fps, .mp4/.mov H.264 or ProRes mezzanine 15-60 Mbps",
+    "loudness": "-24 LKFS +/-2 dB integrated (US CALM Act / ATSC A/85 practice); some platforms quote -23 LUFS +/-2",
+    "safe_area": "keep text/logo/QR inside central 90% of frame",
+    "source_urls": [
+     "https://keynes.com/hulu-advertising-specs/",
+     "https://www.attnagency.com/blog/ctv-creative-production-guide"
+    ],
+    "platform_note": "non-skippable, full-screen, sound-on :15/:30 pre/mid-roll"
+   },
+   "measurement": [
+    "platform reporting",
+    "site visits via pixel"
+   ],
+   "self_serve": true,
+   "fit_for_pp": "medium",
+   "notes": "FAST inventory = lowest CPMs; audience skews younger (~34%+ 18-34) and lower-income, so use for frequency in older-housing zips rather than as the primary reach line.",
+   "source_url": "https://adwave.com/resources/tubi",
+   "source_urls": [
+    "https://adwave.com/resources/tubi"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched",
+   "kind": "ctv_platform"
+  },
+  {
+   "id": "ctv_paramount",
+   "platform": "Paramount Ads Manager (self-serve; Paramount+ and Pluto TV)",
+   "minimum_spend_usd": 500,
+   "minimum_unit": "per campaign (launch coverage)",
+   "cpm_range_usd": [
+    15,
+    25
+   ],
+   "targeting": [
+    "zip",
+    "dma"
+   ],
+   "creative_specs": {
+    "durations_s": [
+     15,
+     30
+    ],
+    "resolution": "1920x1080 preferred (1280x720 accepted on Hulu), 16:9, 23.98/29.97 fps, .mp4/.mov H.264 or ProRes mezzanine 15-60 Mbps",
+    "loudness": "-24 LKFS +/-2 dB integrated (US CALM Act / ATSC A/85 practice); some platforms quote -23 LUFS +/-2",
+    "safe_area": "keep text/logo/QR inside central 90% of frame",
+    "source_urls": [
+     "https://keynes.com/hulu-advertising-specs/",
+     "https://www.attnagency.com/blog/ctv-creative-production-guide"
+    ],
+    "in_platform": "Waymark gen-AI :15/:30 spot builder; Spaceback converts social assets into TV units"
+   },
+   "measurement": [
+    "reporting and attribution suite"
+   ],
+   "self_serve": true,
+   "fit_for_pp": "medium",
+   "notes": "Launched officially July 2024 after beta; geography, demographics and genre targeting. CPM range is a planning estimate for Pluto/FAST tier ($15-25) from the CTV CPM tier table; Paramount+ is premium tier.",
+   "source_url": "https://ottverse.com/paramount-advertising-unveils-new-self-service-platform-for-small-businesses/",
+   "source_urls": [
+    "https://ottverse.com/paramount-advertising-unveils-new-self-service-platform-for-small-businesses/",
+    "https://adwave.com/resources/average-ctv-cpm-q2-2026"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched",
+   "kind": "ctv_platform"
+  },
+  {
+   "id": "bm_lsa_cpl_hvac",
+   "kind": "benchmark",
+   "metric": "Google Local Services Ads cost per lead",
+   "value": 51,
+   "unit": "usd_per_lead",
+   "channel": "google_lsa",
+   "trade": "HVAC",
+   "context": "SearchLight Digital, Feb 1-28 2026, 409 HVAC accounts; book rate 44.0%, avg ticket $2,110, closed ROAS 9.55x",
+   "source_url": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/",
+   "source_urls": [
+    "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_lsa_cpl_plumbing",
+   "kind": "benchmark",
+   "metric": "Google Local Services Ads cost per lead",
+   "value": 57,
+   "unit": "usd_per_lead",
+   "channel": "google_lsa",
+   "trade": "Plumbing",
+   "context": "SearchLight Digital, Feb 2026, 230 accounts; book rate 44.5%, avg ticket $1,714, ROAS 6.85x (drain/sewer $59 CPL)",
+   "source_url": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/",
+   "source_urls": [
+    "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_lsa_cpl_electrical",
+   "kind": "benchmark",
+   "metric": "Google Local Services Ads cost per lead",
+   "value": 39,
+   "unit": "usd_per_lead",
+   "channel": "google_lsa",
+   "trade": "Electrical",
+   "context": "SearchLight Digital, Feb 2026, 112 accounts; book rate 43.4%, avg ticket $1,434, ROAS 8.52x",
+   "source_url": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/",
+   "source_urls": [
+    "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_lsa_book_rate",
+   "kind": "benchmark",
+   "metric": "LSA lead-to-booked-job rate (blended)",
+   "value": 0.439,
+   "unit": "share",
+   "channel": "google_lsa",
+   "trade": "All",
+   "context": "SearchLight, Feb 2026, 888 accounts, 126,650 leads, $6.72M spend; implies $233 cost per paying customer vs $472 for Google Ads",
+   "source_url": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/",
+   "source_urls": [
+    "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_ticket_hvac_lsa",
+   "kind": "benchmark",
+   "metric": "Average ticket of LSA-sourced jobs",
+   "value": 2110,
+   "unit": "usd",
+   "channel": "google_lsa",
+   "trade": "HVAC",
+   "context": "SearchLight Feb 2026 closed revenue / jobs; includes replacements, so above repair-only tickets",
+   "source_url": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/",
+   "source_urls": [
+    "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_ticket_plumbing_lsa",
+   "kind": "benchmark",
+   "metric": "Average ticket of LSA-sourced jobs",
+   "value": 1714,
+   "unit": "usd",
+   "channel": "google_lsa",
+   "trade": "Plumbing",
+   "context": "SearchLight Feb 2026",
+   "source_url": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/",
+   "source_urls": [
+    "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_ticket_electrical_lsa",
+   "kind": "benchmark",
+   "metric": "Average ticket of LSA-sourced jobs",
+   "value": 1434,
+   "unit": "usd",
+   "channel": "google_lsa",
+   "trade": "Electrical",
+   "context": "SearchLight Feb 2026",
+   "source_url": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/",
+   "source_urls": [
+    "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_ticket_hvac_repair",
+   "kind": "benchmark",
+   "metric": "Average HVAC repair revenue per job",
+   "value": 1205,
+   "unit": "usd",
+   "channel": "all",
+   "trade": "HVAC",
+   "context": "Housecall Pro platform data, ~2M tagged jobs, 2025 (2021: $818); Q4 2025 repair tickets 26% below 2023 peak",
+   "source_url": "https://www.housecallpro.com/resources/hvac-industry-trends/",
+   "source_urls": [
+    "https://www.housecallpro.com/resources/hvac-industry-trends/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_gads_hvac_cpl",
+   "kind": "benchmark",
+   "metric": "Google Ads (search + PMax) cost per lead, blended",
+   "value": 104,
+   "unit": "usd_per_lead",
+   "channel": "paid_search",
+   "trade": "HVAC/Plumbing",
+   "context": "SearchLight Jan 2026, 816 contractors, $14.88M spend: branded $34, Performance Max $72, non-branded $149; blended book rate 41.7%, cost per customer $472",
+   "breakdown": {
+    "branded": 34,
+    "performance_max": 72,
+    "non_branded": 149,
+    "book_rate_blended": 0.417,
+    "cost_per_customer": 472
+   },
+   "source_url": "https://searchlightdigital.io/what-is-a-good-cost-per-lead-for-hvac-google-ads/",
+   "source_urls": [
+    "https://searchlightdigital.io/what-is-a-good-cost-per-lead-for-hvac-google-ads/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_localiq_search",
+   "kind": "benchmark",
+   "metric": "Google search ads cost per lead (LocaliQ 2025)",
+   "value": {
+    "HVAC": 127.74,
+    "Plumbing": 129.02,
+    "Electricians": 93.69,
+    "Home services avg": 90.92
+   },
+   "unit": "usd_per_lead",
+   "channel": "paid_search",
+   "trade": "HVAC/Plumbing/Electrical",
+   "context": "LocaliQ, Apr 2024-Mar 2025, 3,000+ home-services campaigns; HVAC CPC $9.68, CVR 6.56%; plumbing CPC $10.49, CVR 7.63%; electricians CPC $12.18, CVR 9.08%",
+   "source_url": "https://localiq.com/blog/home-services-search-advertising-benchmarks/",
+   "source_urls": [
+    "https://localiq.com/blog/home-services-search-advertising-benchmarks/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_meta_cpl_home",
+   "kind": "benchmark",
+   "metric": "Meta (Facebook) lead-campaign cost per lead, Home & Home Improvement",
+   "value": 41.26,
+   "unit": "usd_per_lead",
+   "channel": "meta",
+   "trade": "Home services (proxy)",
+   "context": "WordStream 2025 Facebook benchmarks; leads CVR 5.22% (-36% YoY), CTR 1.94%. Form leads are lower intent than calls; plan a lower booking rate.",
+   "source_url": "https://www.wordstream.com/blog/facebook-ads-benchmarks-2025",
+   "source_urls": [
+    "https://www.wordstream.com/blog/facebook-ads-benchmarks-2025"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "search_snippet"
+  },
+  {
+   "id": "bm_ctv_cpm",
+   "kind": "benchmark",
+   "metric": "Connected TV CPM, blended market average",
+   "value": 26,
+   "unit": "usd_cpm",
+   "channel": "ctv",
+   "trade": "All",
+   "context": "eMarketer via Adwave Q2 2026: typical $25-35; FAST $15-25, premium $25-45, addressable/1P-targeted $45-85",
+   "range": [
+    15,
+    85
+   ],
+   "source_url": "https://adwave.com/resources/average-ctv-cpm-q2-2026",
+   "source_urls": [
+    "https://adwave.com/resources/average-ctv-cpm-q2-2026"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_ctv_vcr",
+   "kind": "benchmark",
+   "metric": "CTV video completion rate",
+   "value": 0.94,
+   "unit": "share",
+   "channel": "ctv",
+   "trade": "All",
+   "context": "FreeWheel/VAB 94% for long-form premium; practitioners report 98-99.99% because CTV is non-skippable - completion is a format artifact, not a KPI. Optimize to cost per site visit and cost per booked job instead.",
+   "range": [
+    0.94,
+    0.9999
+   ],
+   "source_url": "https://ppc.land/ctvs-98-completion-rate-is-automatic-not-earned-lake-warns-buyers/",
+   "source_urls": [
+    "https://ppc.land/ctvs-98-completion-rate-is-automatic-not-earned-lake-warns-buyers/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_ctv_cost_per_visit",
+   "kind": "benchmark",
+   "metric": "CTV cost per site visit (Performance TV case study)",
+   "value": 6.73,
+   "unit": "usd_per_visit",
+   "channel": "ctv",
+   "trade": "DTC (non home-services proxy)",
+   "context": "MNTN DTC lingerie brand: 2.3x ROAS, $6.73 cost per site visit. No public home-services CTV cost-per-visit benchmark was found; media plans assume $12 for zip-narrow local targeting (labelled assumption).",
+   "source_url": "https://mountain.com/case-studies/dtc-lingerie-brand-drives-profitable-growth-with-performance-tv/",
+   "source_urls": [
+    "https://mountain.com/case-studies/dtc-lingerie-brand-drives-profitable-growth-with-performance-tv/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_ctv_spend_growth",
+   "kind": "benchmark",
+   "metric": "US CTV ad spend growth 2026 (buy-side forecast)",
+   "value": 0.138,
+   "unit": "share_yoy",
+   "channel": "ctv",
+   "trade": "All",
+   "context": "IAB 2026 Outlook, survey of 205 buy-side executives, published Jan 28 2026",
+   "source_url": "https://www.mediapost.com/publications/article/412351/iab-forecast-ctv-ad-spend-up-138-social-media.html",
+   "source_urls": [
+    "https://www.mediapost.com/publications/article/412351/iab-forecast-ctv-ad-spend-up-138-social-media.html"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_dm_response_ana",
+   "kind": "benchmark",
+   "metric": "Direct mail response rate",
+   "value": {
+    "house_list": [
+     0.05,
+     0.09
+    ],
+    "prospect_list": [
+     0.04,
+     0.05
+    ]
+   },
+   "unit": "share",
+   "channel": "direct_mail",
+   "trade": "All",
+   "context": "ANA 2024 Response Rate Report as summarized by Printing Impressions; DM median ROI 112% vs paid search 93%",
+   "source_url": "https://www.piworld.com/post/revisiting-response-rates-why-direct-mails-roi-keeps-rising",
+   "source_urls": [
+    "https://www.piworld.com/post/revisiting-response-rates-why-direct-mails-roi-keeps-rising"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_newmover_response",
+   "kind": "benchmark",
+   "metric": "New-mover direct mail response rate",
+   "value": 0.049,
+   "unit": "share",
+   "channel": "direct_mail_new_mover",
+   "trade": "All",
+   "context": "Vendor claim (directmail.io): 4.9% average; new movers ~5x more likely to respond in first 6 months, ~3-4x for home services. Treat as optimistic; plans use 1.0% lead rate per piece.",
+   "source_url": "https://directmail.io/blog/new-mover-direct-mail-playbook",
+   "source_urls": [
+    "https://directmail.io/blog/new-mover-direct-mail-playbook"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "search_snippet"
+  },
+  {
+   "id": "bm_postage_eddm",
+   "kind": "benchmark",
+   "metric": "USPS EDDM Retail postage per piece",
+   "value": 0.26,
+   "unit": "usd_per_piece",
+   "channel": "direct_mail",
+   "trade": "All",
+   "context": "Effective July 12 2026 (4.8% average Mailing Services increase); addressed new-mover lists use Marketing Mail rates plus list/data and print, so plans assume $0.75 all-in per addressed postcard",
+   "source_url": "https://v2.4over4.com/guide/eddm-pricing-explained",
+   "source_urls": [
+    "https://v2.4over4.com/guide/eddm-pricing-explained"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_booking_rate_st",
+   "kind": "benchmark",
+   "metric": "Inbound call booking rate (typical shop)",
+   "value": 0.42,
+   "unit": "share",
+   "channel": "call_center",
+   "trade": "All",
+   "context": "ServiceTitan, June 2022, 3,000+ trade businesses: HVAC 38%, plumbing 43%, electrical 41%; 25+ tech shops 59%; top performers 77-90%",
+   "by_trade": {
+    "HVAC": 0.38,
+    "Plumbing": 0.43,
+    "Electrical": 0.41
+   },
+   "source_url": "https://www.servicetitan.com/blog/data-call-booking-rates",
+   "source_urls": [
+    "https://www.servicetitan.com/blog/data-call-booking-rates"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_speed_to_lead",
+   "kind": "benchmark",
+   "metric": "Speed-to-lead text campaign response rate",
+   "value": 0.6,
+   "unit": "share",
+   "channel": "lead_follow_up",
+   "trade": "HVAC",
+   "context": "Hatch, 132,188 HVAC campaigns (Dec 2024): avg 60%, best 89.86% (7 messages: 5 texts + 2 emails over 5 days), worst 8.56%; 88% of humans take >5 min to reply. Modernize/Hatch webinar: 7x more likely to set an appointment if contacted in the first hour.",
+   "source_url": "https://www.usehatchapp.com/blog/hvac-speed-to-lead-response-rates",
+   "source_urls": [
+    "https://www.usehatchapp.com/blog/hvac-speed-to-lead-response-rates",
+    "https://achrnews.com/articles/145497-hvac-contractors-must-be-quick-to-follow-up-on-leads-to-get-the-sale"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_membership_conversion",
+   "kind": "benchmark",
+   "metric": "Maintenance-plan conversion from service calls (target)",
+   "value": 0.25,
+   "unit": "share",
+   "channel": "membership",
+   "trade": "HVAC",
+   "context": "Applause HQ synthesis (citing Contracting Business, SmartAC): minimum 25% target, top performers 70%+ with maintenance techs; member retention 80%+; typical price $15-30/month",
+   "renewal_rate": 0.8,
+   "price_usd_month": [
+    15,
+    30
+   ],
+   "source_url": "https://www.applausehq.com/blog/hvac-membership-programs",
+   "source_urls": [
+    "https://www.applausehq.com/blog/hvac-membership-programs"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_seasonality_search",
+   "kind": "benchmark",
+   "metric": "Search-volume seasonality by query (US)",
+   "value": {
+    "ac_repair": {
+     "peak": "Jul",
+     "peak_volume": 91690,
+     "valley": "Feb",
+     "variance": 2.66
+    },
+    "furnace_repair": {
+     "peak": "Jan",
+     "peak_volume": 62392,
+     "valley": "May",
+     "variance": 1.37
+    },
+    "heating_system_repair": {
+     "peak": "Oct",
+     "valley": "Jan",
+     "variance": 5.94
+    },
+    "emergency_plumber": {
+     "peak": "Jul",
+     "valley": "Apr",
+     "variance": 1.91
+    },
+    "frozen_pipe_repair": {
+     "peak": "Jan",
+     "valley": "Aug",
+     "variance": 6.09
+    },
+    "electrician_near_me": {
+     "peak": "Jul",
+     "valley": "Mar",
+     "variance": 0.26
+    }
+   },
+   "unit": "monthly_searches",
+   "channel": "paid_search",
+   "trade": "All",
+   "context": "WebFX (Dec 2025) using Ahrefs Keywords Explorer, ~2023-2024 US data. Note 'heating system repair' peaks in October (pre-season), furnace repair in January (failures).",
+   "source_url": "https://www.webfx.com/blog/home-services/seasonal-search-trends/",
+   "source_urls": [
+    "https://www.webfx.com/blog/home-services/seasonal-search-trends/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_reviews",
+   "kind": "benchmark",
+   "metric": "Consumers who never read online reviews of local businesses",
+   "value": 0.04,
+   "unit": "share",
+   "channel": "reviews",
+   "trade": "All",
+   "context": "BrightLocal Local Consumer Review Survey 2025 (Jan 29 2025): 84% use Google for reviews; 74% check 2+ review sites; trades are expected to request reviews within 3 days-1 week",
+   "google_share": 0.84,
+   "source_url": "https://www.brightlocal.com/research/local-consumer-review-survey-2025/",
+   "source_urls": [
+    "https://www.brightlocal.com/research/local-consumer-review-survey-2025/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_radio_spot",
+   "kind": "benchmark",
+   "metric": "Radio 30-second spot cost, mid-size market",
+   "value": 194,
+   "unit": "usd_per_spot",
+   "channel": "radio",
+   "trade": "All",
+   "context": "FitSmallBusiness (Jun 2025): mid-size example (Denver) $194 per :30; production $350-$3,500; weekly spend $200-$5,000",
+   "source_url": "https://fitsmallbusiness.com/radio-advertising-costs/",
+   "source_urls": [
+    "https://fitsmallbusiness.com/radio-advertising-costs/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_vehicle_wrap",
+   "kind": "benchmark",
+   "metric": "Vehicle wrap daily impressions (urban)",
+   "value": 70000,
+   "unit": "impressions_per_day_max",
+   "channel": "truck_wrap",
+   "trade": "All",
+   "context": "4over4 statistics page: up to 70,000 daily impressions per vehicle (upper bound; rural Central PA routes will be far lower)",
+   "source_url": "https://www.4over4.com/statistics/vehicle-wrap-advertising-effectiveness-data",
+   "source_urls": [
+    "https://www.4over4.com/statistics/vehicle-wrap-advertising-effectiveness-data"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "bm_hvac_call_incidence",
+   "kind": "benchmark",
+   "metric": "Homeowners who called an HVAC technician in the past year",
+   "value": 0.26,
+   "unit": "share",
+   "channel": "demand",
+   "trade": "HVAC",
+   "context": "American Home Shield survey (Nov 2024, n=993) - the baseline used in the repo's pp_demand_model",
+   "source_url": "https://www.ahs.com/home-matters/homebuyer-hub-resources-and-guides/home-maintenance-issues-statistics/",
+   "source_urls": [
+    "https://www.ahs.com/home-matters/homebuyer-hub-resources-and-guides/home-maintenance-issues-statistics/"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_ctv15_storm_ready",
+   "format": "ctv15",
+   "title": "Storm Ready (One Hour)",
+   "audience": "Storm/cold-snap zone homeowners in Tier-I zips; triggered 12-36 h before NWS Extreme Cold or Winter Storm warnings",
+   "hook": "Your furnace doesn't know a storm is coming. We do.",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "Night exterior, Central PA farmhouse-style home, snow starting under a porch light; radar sweep overlay",
+     "voiceover": "Your furnace doesn't know a storm is coming.",
+     "on_screen_text": "Winter Storm Warning tonight"
+    },
+    {
+     "t_sec": 4,
+     "visual": "Branded van pulling into a lit driveway at dusk, tech checking a tablet with a dispatch map",
+     "voiceover": "We do. Our techs are staged before it hits.",
+     "on_screen_text": "Crews pre-positioned"
+    },
+    {
+     "t_sec": 9,
+     "visual": "Warm living room, family on sofa, thermostat reading 70",
+     "voiceover": "One Hour Heating & Air Conditioning. Always On Time... Or You Don't Pay A Dime!",
+     "on_screen_text": "Always On Time... Or You Don't Pay A Dime!®"
+    },
+    {
+     "t_sec": 13,
+     "visual": "End card: logo, QR, tracking number, 'Service-call fee waived if late. Details at onehourheatandair.com/southeast-pa'",
+     "voiceover": "",
+     "on_screen_text": "Book now - scan or call"
+    }
+   ],
+   "cta": "Scan the QR or call to book a no-heat visit before the storm",
+   "offer": "Priority booking for members; illustrative non-member offer: service-call fee waived for online bookings during the warning window (confirm with PP price book)",
+   "brand_rules": {
+    "brand": "One Hour Heating & Air Conditioning®",
+    "promise_exact": "Always On Time... Or You Don't Pay A Dime!®",
+    "promise_terms": "Technician arrives within the customer-selected window or the service call is free (SE PA guarantees page). Also: 100% Satisfaction Guarantee on materials, labor and craftsmanship up to two years; StraightForward Pricing®.",
+    "do": [
+     "Use the full registered name on first mention and on the end card",
+     "Quote the promise verbatim with ®",
+     "Super 'Service-call fee waived if late; see onehourheatandair.com/southeast-pa for details' when the promise is spoken"
+    ],
+    "dont": [
+     "Paraphrase to 'on time or it's free' (it is the service call, not the repair)",
+     "Imply 24/7 or same-day unless the location offers it"
+    ],
+    "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+   },
+   "production_cost_estimate_usd": 4000,
+   "notes": "Shot once as a library: night/snow, day/rain and heat-dome variants with the same structure so the trigger engine swaps the cut. Cost = 1-day local shoot amortized over 3 variants; AI-builder route (Vibe Studio/Waymark) ~$0-500 using existing van/tech footage.",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+   "source_urls": [
+    "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_ctv15_new_home",
+   "format": "ctv15",
+   "title": "New Home, New Comfort (One Hour)",
+   "audience": "New movers: households in PP zips whose deed recorded in the last 90 days (deed feed in data/sales), CRM-matched where the platform allows; plus all homeowners in high-turnover zips",
+   "hook": "New house? Meet its furnace.",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "Moving boxes in a hallway, couple opening the basement door, flashlight on an old furnace",
+     "voiceover": "New house? Meet its furnace.",
+     "on_screen_text": "Just moved in?"
+    },
+    {
+     "t_sec": 3,
+     "visual": "Tech in shoe covers introduces himself at the door, checks a watch, smiles",
+     "voiceover": "One Hour Heating & Air Conditioning will check it out, on time.",
+     "on_screen_text": "Welcome tune-up"
+    },
+    {
+     "t_sec": 9,
+     "visual": "Tech showing the couple a filter and tablet checklist",
+     "voiceover": "So your first winter here is a warm one.",
+     "on_screen_text": "Know your system before winter"
+    },
+    {
+     "t_sec": 13,
+     "visual": "End card with QR 'welcome' landing page and tracking number",
+     "voiceover": "",
+     "on_screen_text": "Scan to book your welcome visit"
+    }
+   ],
+   "cta": "Scan to claim the new-neighbor welcome tune-up",
+   "offer": "Illustrative: new-homeowner tune-up at member price + first month of membership free (confirm pricing)",
+   "brand_rules": {
+    "brand": "One Hour Heating & Air Conditioning®",
+    "promise_exact": "Always On Time... Or You Don't Pay A Dime!®",
+    "promise_terms": "Technician arrives within the customer-selected window or the service call is free (SE PA guarantees page). Also: 100% Satisfaction Guarantee on materials, labor and craftsmanship up to two years; StraightForward Pricing®.",
+    "do": [
+     "Use the full registered name on first mention and on the end card",
+     "Quote the promise verbatim with ®",
+     "Super 'Service-call fee waived if late; see onehourheatandair.com/southeast-pa for details' when the promise is spoken"
+    ],
+    "dont": [
+     "Paraphrase to 'on time or it's free' (it is the service call, not the repair)",
+     "Imply 24/7 or same-day unless the location offers it"
+    ],
+    "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+   },
+   "production_cost_estimate_usd": 3500,
+   "notes": "Pairs with the two new-mover postcards (same offer code) so mail + CTV exposure can be read together by matched households.",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+   "source_urls": [
+    "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_ctv30_on_time",
+   "format": "ctv30",
+   "title": "We Watch the Clock So You Don't Have To (One Hour)",
+   "audience": "All homeowners in Tier-I/II zips, Oct-Feb and Jun-Aug flights; frequency cap 3/week",
+   "hook": "Ever taken a whole day off for a four-hour window?",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "Office worker at desk staring at a phone reading 'Your technician will arrive between 8 and 12'",
+     "voiceover": "Ever taken a whole day off for a four-hour window?",
+     "on_screen_text": ""
+    },
+    {
+     "t_sec": 6,
+     "visual": "Clock on kitchen wall; cut to same person at home, van arriving exactly as the clock hits the window",
+     "voiceover": "At One Hour Heating & Air Conditioning, you pick the window and we show up in it.",
+     "on_screen_text": "You choose the window"
+    },
+    {
+     "t_sec": 13,
+     "visual": "Tech explains two repair options on a tablet with prices",
+     "voiceover": "Upfront options, upfront prices, before any work starts.",
+     "on_screen_text": "StraightForward Pricing®"
+    },
+    {
+     "t_sec": 20,
+     "visual": "Lancaster County neighborhood b-roll, local landmarks (non-trademarked: farmland, row homes, Susquehanna)",
+     "voiceover": "Your neighbors across Central Pennsylvania already know the promise:",
+     "on_screen_text": "Serving Lancaster, York, Harrisburg, Reading & more"
+    },
+    {
+     "t_sec": 25,
+     "visual": "End card with promise, QR, tracking number, legal super",
+     "voiceover": "Always On Time... Or You Don't Pay A Dime!",
+     "on_screen_text": "Always On Time... Or You Don't Pay A Dime!®  Service-call fee waived if late."
+    }
+   ],
+   "cta": "Book online and pick your window",
+   "offer": "None (brand + promise); test variant adds membership offer at :25",
+   "brand_rules": {
+    "brand": "One Hour Heating & Air Conditioning®",
+    "promise_exact": "Always On Time... Or You Don't Pay A Dime!®",
+    "promise_terms": "Technician arrives within the customer-selected window or the service call is free (SE PA guarantees page). Also: 100% Satisfaction Guarantee on materials, labor and craftsmanship up to two years; StraightForward Pricing®.",
+    "do": [
+     "Use the full registered name on first mention and on the end card",
+     "Quote the promise verbatim with ®",
+     "Super 'Service-call fee waived if late; see onehourheatandair.com/southeast-pa for details' when the promise is spoken"
+    ],
+    "dont": [
+     "Paraphrase to 'on time or it's free' (it is the service call, not the repair)",
+     "Imply 24/7 or same-day unless the location offers it"
+    ],
+    "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+   },
+   "production_cost_estimate_usd": 12000,
+   "notes": "Hero brand spot; one 2-day shoot with local techs (not actors) also yields the :15 cut-downs and vertical cuts. Cost range $8k-20k for local crew; template/AI build ~$1k.",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+   "source_urls": [
+    "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_ctv30_ben_franklin",
+   "format": "ctv30",
+   "title": "Old House, Old Pipes (Benjamin Franklin Plumbing)",
+   "audience": "Pre-1980 housing zips (pp_zips old_housing_share; ~58% of territory housing units are older stock) and deed-feed buyers of pre-1980 homes",
+   "hook": "Your house has character. So do its pipes.",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "Stone farmhouse / brick rowhome exterior, then a basement with galvanized pipe and a slow drip",
+     "voiceover": "Your house has character. So do its pipes.",
+     "on_screen_text": "Built before 1980?"
+    },
+    {
+     "t_sec": 6,
+     "visual": "Plumber arrives, clock shows on time, puts on shoe covers",
+     "voiceover": "Benjamin Franklin Plumbing shows up on time. If there's any delay, it's you we pay.",
+     "on_screen_text": "If There's Any Delay, It's You We Pay™"
+    },
+    {
+     "t_sec": 14,
+     "visual": "Camera inspection of a sewer line on a tablet; homeowner nods",
+     "voiceover": "We'll inspect the old lines and give you options before anything breaks.",
+     "on_screen_text": "Whole-home plumbing inspection"
+    },
+    {
+     "t_sec": 22,
+     "visual": "Super with exact terms",
+     "voiceover": "Five dollars for every minute we're late, up to three hundred.",
+     "on_screen_text": "$5 for every minute we're late ($300 maximum)"
+    },
+    {
+     "t_sec": 27,
+     "visual": "End card QR + tracking number",
+     "voiceover": "Benjamin Franklin Plumbing.",
+     "on_screen_text": "Scan to book an inspection"
+    }
+   ],
+   "cta": "Book a whole-home plumbing inspection",
+   "offer": "Illustrative: inspection credit toward any repair over a threshold (confirm)",
+   "brand_rules": {
+    "brand": "Benjamin Franklin Plumbing®",
+    "promise_exact": "If There's Any Delay, It's You We Pay™",
+    "promise_terms": "'If we're not on time, we pay you $5 for every minute that we're late ($300 maximum).' 100% satisfaction guarantee; UWIN guarantee (background checks, drug testing).",
+    "do": [
+     "State '$5 a minute, up to $300' exactly when the promise is quantified",
+     "Use 'The Punctual Plumber' only if Authority Brands approves for the local market"
+    ],
+    "dont": [
+     "Round up the cap or drop the $300 maximum"
+    ],
+    "source_url": "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees"
+   },
+   "production_cost_estimate_usd": 10000,
+   "notes": "Freeze-season variant swaps the inspection for frozen-pipe prevention and runs on NWS Extreme Cold Warning triggers (pp_demand_model playbook_extreme_cold_warning: plumbing multiplier 1.8-3.0x, assumption).",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees",
+   "source_urls": [
+    "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_ctv30_mister_sparky",
+   "format": "ctv30",
+   "title": "Flicker (Mister Sparky)",
+   "audience": "Pre-1980 homes, recent buyers and storm/outage zips (thunderstorm wind is 1,204 of NOAA events in the PA core, 2019-2025, peaking in July)",
+   "hook": "That flicker isn't a ghost.",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "Dim living room, lights flicker during a thunderstorm; dog looks up",
+     "voiceover": "That flicker isn't a ghost.",
+     "on_screen_text": ""
+    },
+    {
+     "t_sec": 5,
+     "visual": "Electrician opening an old fuse/split-bus panel with a flashlight",
+     "voiceover": "In older homes it can mean a panel working too hard.",
+     "on_screen_text": "Older panel? Get it checked"
+    },
+    {
+     "t_sec": 12,
+     "visual": "Whole-home surge protector being installed; generator inlet",
+     "voiceover": "Mister Sparky checks panels, adds surge protection and gets you storm-ready.",
+     "on_screen_text": "Panel | Surge | Generator hookups"
+    },
+    {
+     "t_sec": 21,
+     "visual": "Electrician arriving as the doorbell camera timestamp matches the appointment",
+     "voiceover": "On time, the way it should be.",
+     "on_screen_text": "America's On-Time Electrician®"
+    },
+    {
+     "t_sec": 26,
+     "visual": "End card QR + tracking number",
+     "voiceover": "Mister Sparky. America's On-Time Electrician.",
+     "on_screen_text": "Scan to book a safety inspection"
+    }
+   ],
+   "cta": "Book an electrical safety inspection",
+   "offer": "Illustrative: safety inspection with surge-protector quote (confirm)",
+   "brand_rules": {
+    "brand": "Mister Sparky®",
+    "promise_exact": "America's On-Time Electrician®",
+    "promise_terms": "National page: \"We're On Time, You'll See, Or The Repair Is Free!\"™. The Lancaster location page says only 'we'll even pay you back if we aren't on time for your appointment' and 'If no repair is made, service fee may apply.' The two differ.",
+    "do": [
+     "Use 'America's On-Time Electrician®' as the safe line",
+     "Use the Lancaster wording for the remedy until franchise ops confirm the national 'repair is free' guarantee applies in PP territories"
+    ],
+    "dont": [
+     "Run 'the repair is free' in PP markets before written confirmation"
+    ],
+    "source_url": "https://www.mistersparky.com/about-us/our-guarantee/",
+    "source_urls": [
+     "https://www.mistersparky.com/about-us/our-guarantee/",
+     "https://www.mistersparky.com/lancaster/"
+    ]
+   },
+   "production_cost_estimate_usd": 10000,
+   "notes": "Deliberately avoids 'or the repair is free' until PP confirms which guarantee applies (Lancaster page wording differs from national).",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.mistersparky.com/about-us/our-guarantee/",
+   "source_urls": [
+    "https://www.mistersparky.com/about-us/our-guarantee/"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_ctv15_shore_ac",
+   "format": "ctv15",
+   "title": "Shore-Ready AC (One Hour, Toms River)",
+   "audience": "Phase 2: Ocean/Monmouth zips only (Horvath), May-Aug; second homes and new buyers",
+   "hook": "Summer at the shore starts with cold air.",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "Bright beach-town street, condenser fan spinning beside a cedar-shake home",
+     "voiceover": "Summer at the shore starts with cold air.",
+     "on_screen_text": "Heat advisory? We're ready."
+    },
+    {
+     "t_sec": 5,
+     "visual": "Tech rinsing salt off a condenser coil",
+     "voiceover": "Salt air is tough on AC. One Hour Heating & Air Conditioning keeps it running.",
+     "on_screen_text": "Coastal AC tune-up"
+    },
+    {
+     "t_sec": 11,
+     "visual": "End card with promise, QR, NJ tracking number",
+     "voiceover": "Always On Time... Or You Don't Pay A Dime!",
+     "on_screen_text": "Always On Time... Or You Don't Pay A Dime!®"
+    }
+   ],
+   "cta": "Scan to book a coastal tune-up",
+   "offer": "Illustrative pre-season tune-up price (confirm with Toms River location)",
+   "brand_rules": {
+    "brand": "One Hour Heating & Air Conditioning®",
+    "promise_exact": "Always On Time... Or You Don't Pay A Dime!®",
+    "promise_terms": "Technician arrives within the customer-selected window or the service call is free (SE PA guarantees page). Also: 100% Satisfaction Guarantee on materials, labor and craftsmanship up to two years; StraightForward Pricing®.",
+    "do": [
+     "Use the full registered name on first mention and on the end card",
+     "Quote the promise verbatim with ®",
+     "Super 'Service-call fee waived if late; see onehourheatandair.com/southeast-pa for details' when the promise is spoken"
+    ],
+    "dont": [
+     "Paraphrase to 'on time or it's free' (it is the service call, not the repair)",
+     "Imply 24/7 or same-day unless the location offers it"
+    ],
+    "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+    "local_note": "Use the Toms River location's guarantee page wording; confirm it matches SE PA."
+   },
+   "production_cost_estimate_usd": 2500,
+   "notes": "Zip-targeted only (Philadelphia/NY DMA buys would waste >90% of impressions).",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+   "source_urls": [
+    "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_social_vertical_freeze",
+   "format": "social_vertical",
+   "title": "60-Second Frozen-Pipe Prevention (Ben Franklin, 9:16)",
+   "audience": "Meta/Instagram/TikTok/YouTube Shorts, territory zips; boosted when NWS Extreme Cold Warning issues",
+   "hook": "It's going to be 5°F tonight. Do these 3 things.",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "Plumber talking to camera in a basement, frost on the window",
+     "voiceover": "It's going to be five degrees tonight. Do these three things.",
+     "on_screen_text": "5°F tonight? Do this"
+    },
+    {
+     "t_sec": 4,
+     "visual": "Hand opens a sink cabinet",
+     "voiceover": "Open the cabinets on outside walls.",
+     "on_screen_text": "1. Open cabinets"
+    },
+    {
+     "t_sec": 8,
+     "visual": "Faucet dripping",
+     "voiceover": "Let the faucet drip.",
+     "on_screen_text": "2. Drip faucets"
+    },
+    {
+     "t_sec": 11,
+     "visual": "Hose disconnected from a spigot",
+     "voiceover": "Disconnect the hose.",
+     "on_screen_text": "3. Unhook hoses"
+    },
+    {
+     "t_sec": 14,
+     "visual": "Plumber smiles; brand card",
+     "voiceover": "Pipe still froze? Benjamin Franklin Plumbing. If there's any delay, it's you we pay.",
+     "on_screen_text": "Tap to book"
+    }
+   ],
+   "cta": "Tap to book / call",
+   "offer": "None (utility content earns reach); retarget engagers with the inspection offer",
+   "brand_rules": {
+    "brand": "Benjamin Franklin Plumbing®",
+    "promise_exact": "If There's Any Delay, It's You We Pay™",
+    "promise_terms": "'If we're not on time, we pay you $5 for every minute that we're late ($300 maximum).' 100% satisfaction guarantee; UWIN guarantee (background checks, drug testing).",
+    "do": [
+     "State '$5 a minute, up to $300' exactly when the promise is quantified",
+     "Use 'The Punctual Plumber' only if Authority Brands approves for the local market"
+    ],
+    "dont": [
+     "Round up the cap or drop the $300 maximum"
+    ],
+    "source_url": "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees"
+   },
+   "production_cost_estimate_usd": 600,
+   "notes": "Advice mirrors the IBHS-based actions already in pp_demand_model playbook_extreme_cold_warning. Variants: AC 'three things before you call' (Jul), panel-flicker (Mister Sparky, storm season).",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees",
+   "source_urls": [
+    "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_social_vertical_member",
+   "format": "social_vertical",
+   "title": "Members Skip the Line (membership renewal, 9:16)",
+   "audience": "Existing members 60 days before renewal (CRM custom audience) + one-time customers from the last 18 months",
+   "hook": "When it's 95° and everyone's AC breaks, members go first.",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "Phone showing a full dispatch board; red 'heat advisory' banner",
+     "voiceover": "When it's ninety-five and everyone's AC breaks...",
+     "on_screen_text": "Heat wave = full schedules"
+    },
+    {
+     "t_sec": 4,
+     "visual": "Member card appears; tech arrives",
+     "voiceover": "...members go first.",
+     "on_screen_text": "Members get priority"
+    },
+    {
+     "t_sec": 7,
+     "visual": "Checklist animation: 2 tune-ups, priority service, repair discount (per plan)",
+     "voiceover": "Two tune-ups a year and priority scheduling.",
+     "on_screen_text": "Renew in 30 seconds"
+    },
+    {
+     "t_sec": 11,
+     "visual": "Brand card",
+     "voiceover": "Renew today.",
+     "on_screen_text": "Tap to renew"
+    }
+   ],
+   "cta": "Tap to renew",
+   "offer": "Plan benefits exactly as in PP's current membership terms (do not invent discounts)",
+   "brand_rules": {
+    "brand": "One Hour Heating & Air Conditioning®",
+    "promise_exact": "Always On Time... Or You Don't Pay A Dime!®",
+    "promise_terms": "Technician arrives within the customer-selected window or the service call is free (SE PA guarantees page). Also: 100% Satisfaction Guarantee on materials, labor and craftsmanship up to two years; StraightForward Pricing®.",
+    "do": [
+     "Use the full registered name on first mention and on the end card",
+     "Quote the promise verbatim with ®",
+     "Super 'Service-call fee waived if late; see onehourheatandair.com/southeast-pa for details' when the promise is spoken"
+    ],
+    "dont": [
+     "Paraphrase to 'on time or it's free' (it is the service call, not the repair)",
+     "Imply 24/7 or same-day unless the location offers it"
+    ],
+    "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+   },
+   "production_cost_estimate_usd": 400,
+   "notes": "Benchmark: renewal 80%+ target, 25% service-call-to-member conversion minimum (Applause HQ synthesis).",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+   "source_urls": [
+    "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_display_300x250",
+   "format": "display_300x250",
+   "title": "Storm-trigger display set (3 frames, 300x250)",
+   "audience": "Google Display / programmatic retargeting of site visitors and CTV-exposed households; geo = territory zips",
+   "hook": "Storm tonight. Crews ready.",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "Frame 1: navy night sky, snow icon, live NWS headline token {alert}",
+     "voiceover": "",
+     "on_screen_text": "{Winter Storm Warning} tonight"
+    },
+    {
+     "t_sec": 2,
+     "visual": "Frame 2: van + clock icon",
+     "voiceover": "",
+     "on_screen_text": "Techs staged in {county} County"
+    },
+    {
+     "t_sec": 4,
+     "visual": "Frame 3: brand lockup + button",
+     "voiceover": "",
+     "on_screen_text": "Always On Time... Or You Don't Pay A Dime!®  [Book now]"
+    }
+   ],
+   "cta": "Book now",
+   "offer": "None",
+   "brand_rules": {
+    "brand": "One Hour Heating & Air Conditioning®",
+    "promise_exact": "Always On Time... Or You Don't Pay A Dime!®",
+    "promise_terms": "Technician arrives within the customer-selected window or the service call is free (SE PA guarantees page). Also: 100% Satisfaction Guarantee on materials, labor and craftsmanship up to two years; StraightForward Pricing®.",
+    "do": [
+     "Use the full registered name on first mention and on the end card",
+     "Quote the promise verbatim with ®",
+     "Super 'Service-call fee waived if late; see onehourheatandair.com/southeast-pa for details' when the promise is spoken"
+    ],
+    "dont": [
+     "Paraphrase to 'on time or it's free' (it is the service call, not the repair)",
+     "Imply 24/7 or same-day unless the location offers it"
+    ],
+    "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+   },
+   "production_cost_estimate_usd": 300,
+   "notes": "Dynamic tokens filled from the portal's Live.nwsAlerts feed; default copy when no alert: 'Heat or cold, we're on time.' Under 150 KB, 15 s max animation.",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+   "source_urls": [
+    "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_mail_newmover_1",
+   "format": "direct_mail_postcard",
+   "title": "New-mover postcard #1 - Welcome (6x11, day 7 after deed)",
+   "audience": "Residential arm's-length deed transfers in PP zips (deed feed data/sales/pp_sales_*); ~2,300 PA-core buyers/month est.",
+   "hook": "Welcome to the neighborhood. Let's meet your new furnace.",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "FRONT: illustrated front porch with moving boxes and a 'Welcome home' doormat; brand bar",
+     "voiceover": "",
+     "on_screen_text": "Welcome to {muni}! Let's meet your new home's heating, plumbing & electrical."
+    },
+    {
+     "t_sec": 0,
+     "visual": "BACK left: 3 checkboxes - furnace/AC tune-up, water heater flush & age check, electrical panel safety look",
+     "voiceover": "",
+     "on_screen_text": "Your new-home checkup: know the age and condition of every system before winter."
+    },
+    {
+     "t_sec": 0,
+     "visual": "BACK right: offer box, QR to /welcome?c=NM1, tracking number, expiry 60 days, promise line",
+     "voiceover": "",
+     "on_screen_text": "New-neighbor offer: {offer}. Scan or call {tracking#}. Always On Time... Or You Don't Pay A Dime!®"
+    }
+   ],
+   "cta": "Scan or call to book the new-home checkup",
+   "offer": "Illustrative: discounted multi-system checkup + first month of membership free; expires 60 days after mail date",
+   "brand_rules": [
+    {
+     "brand": "One Hour Heating & Air Conditioning®",
+     "promise_exact": "Always On Time... Or You Don't Pay A Dime!®",
+     "promise_terms": "Technician arrives within the customer-selected window or the service call is free (SE PA guarantees page). Also: 100% Satisfaction Guarantee on materials, labor and craftsmanship up to two years; StraightForward Pricing®.",
+     "do": [
+      "Use the full registered name on first mention and on the end card",
+      "Quote the promise verbatim with ®",
+      "Super 'Service-call fee waived if late; see onehourheatandair.com/southeast-pa for details' when the promise is spoken"
+     ],
+     "dont": [
+      "Paraphrase to 'on time or it's free' (it is the service call, not the repair)",
+      "Imply 24/7 or same-day unless the location offers it"
+     ],
+     "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+    },
+    {
+     "rule": "Punctual Pros is the operating company, not a consumer brand. Lead every consumer ad with one franchise brand; multi-brand ('your One Hour, Ben Franklin and Mister Sparky team') spots, shared phone numbers and shared offers need Authority Brands brand-standards approval (assumption: standard franchise-agreement control of marks - confirm).",
+     "phone": "Use a distinct call-tracking number per channel and creative (e.g., CTV-15A, MAIL-NM1) that forwards to the brand line; do not print the main brand number on tests."
+    }
+   ],
+   "production_cost_estimate_usd": 1500,
+   "notes": "Mail cost model $0.75/piece all-in (assumption: postage near the $0.26 EDDM floor to Marketing Mail commercial rates + print + data). Personalize {muni} and system age from year_built when available. Multi-brand checkup needs Authority Brands approval; fallback = One Hour-only version.",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+   "source_urls": [
+    "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_mail_newmover_2",
+   "format": "direct_mail_postcard",
+   "title": "New-mover postcard #2 - Older-home safety (6x9, day 45; pre-1980 homes)",
+   "audience": "Deed-feed buyers where year_built < 1980 (~1 in 3 PA residential sales in the feed) who did not respond to #1",
+   "hook": "Your home was built in {year_built}. Its wiring might be too.",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "FRONT: vintage blueprint style with the house's build year large",
+     "voiceover": "",
+     "on_screen_text": "Built in {year_built}? Some things deserve a second look."
+    },
+    {
+     "t_sec": 0,
+     "visual": "BACK: checklist - panel & breakers, ungrounded outlets, galvanized pipes, water heater age; Mister Sparky + Ben Franklin promise lines",
+     "voiceover": "",
+     "on_screen_text": "Older-home safety inspection. America's On-Time Electrician®. If There's Any Delay, It's You We Pay™ ($5/min late, $300 max)."
+    },
+    {
+     "t_sec": 0,
+     "visual": "BACK: QR /older-home?c=NM2, tracking number, expiry",
+     "voiceover": "",
+     "on_screen_text": "Scan or call {tracking#} - offer ends {date}"
+    }
+   ],
+   "cta": "Book the older-home safety inspection",
+   "offer": "Illustrative inspection price with credit toward repairs (confirm)",
+   "brand_rules": [
+    {
+     "brand": "Mister Sparky®",
+     "promise_exact": "America's On-Time Electrician®",
+     "promise_terms": "National page: \"We're On Time, You'll See, Or The Repair Is Free!\"™. The Lancaster location page says only 'we'll even pay you back if we aren't on time for your appointment' and 'If no repair is made, service fee may apply.' The two differ.",
+     "do": [
+      "Use 'America's On-Time Electrician®' as the safe line",
+      "Use the Lancaster wording for the remedy until franchise ops confirm the national 'repair is free' guarantee applies in PP territories"
+     ],
+     "dont": [
+      "Run 'the repair is free' in PP markets before written confirmation"
+     ],
+     "source_url": "https://www.mistersparky.com/about-us/our-guarantee/",
+     "source_urls": [
+      "https://www.mistersparky.com/about-us/our-guarantee/",
+      "https://www.mistersparky.com/lancaster/"
+     ]
+    },
+    {
+     "brand": "Benjamin Franklin Plumbing®",
+     "promise_exact": "If There's Any Delay, It's You We Pay™",
+     "promise_terms": "'If we're not on time, we pay you $5 for every minute that we're late ($300 maximum).' 100% satisfaction guarantee; UWIN guarantee (background checks, drug testing).",
+     "do": [
+      "State '$5 a minute, up to $300' exactly when the promise is quantified",
+      "Use 'The Punctual Plumber' only if Authority Brands approves for the local market"
+     ],
+     "dont": [
+      "Round up the cap or drop the $300 maximum"
+     ],
+     "source_url": "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees"
+    },
+    {
+     "rule": "Punctual Pros is the operating company, not a consumer brand. Lead every consumer ad with one franchise brand; multi-brand ('your One Hour, Ben Franklin and Mister Sparky team') spots, shared phone numbers and shared offers need Authority Brands brand-standards approval (assumption: standard franchise-agreement control of marks - confirm).",
+     "phone": "Use a distinct call-tracking number per channel and creative (e.g., CTV-15A, MAIL-NM1) that forwards to the brand line; do not print the main brand number on tests."
+    }
+   ],
+   "production_cost_estimate_usd": 1200,
+   "notes": "Pre-1980 share computed from the repo deed feed: 5,669 of 17,099 Lancaster/York/Cumberland/Dauphin residential sales (33%). Suppress addresses already in ServiceTitan.",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.mistersparky.com/about-us/our-guarantee/",
+   "source_urls": [
+    "https://www.mistersparky.com/about-us/our-guarantee/",
+    "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_lsa_copy",
+   "format": "lsa_copy",
+   "title": "LSA profile + review-request copy set (three brands)",
+   "audience": "Google Local Services Ads searchers in PP zips",
+   "hook": "Google-guaranteed, on-time, local.",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "LSA business bio (One Hour, <=750 chars)",
+     "voiceover": "",
+     "on_screen_text": "One Hour Heating & Air Conditioning® of Southeast PA keeps Lancaster, York, Harrisburg and Reading-area homes comfortable year-round. You pick the arrival window; if we're late, the service-call fee is waived - Always On Time... Or You Don't Pay A Dime!® Upfront StraightForward Pricing®, background-checked technicians and a 100% Satisfaction Guarantee. Furnace and heat-pump repair, AC repair, tune-ups and replacements."
+    },
+    {
+     "t_sec": 0,
+     "visual": "LSA business bio (Ben Franklin)",
+     "voiceover": "",
+     "on_screen_text": "Benjamin Franklin Plumbing® of Lancaster - the punctual plumber. If we're late, we pay you $5 for every minute ($300 maximum). Drains, water heaters, sewer lines, frozen and burst pipes, whole-home inspections for older homes."
+    },
+    {
+     "t_sec": 0,
+     "visual": "LSA business bio (Mister Sparky)",
+     "voiceover": "",
+     "on_screen_text": "Mister Sparky® of Lancaster - America's On-Time Electrician®. Panel upgrades, surge protection, generator hookups, EV chargers, lighting and safety inspections for older homes."
+    },
+    {
+     "t_sec": 0,
+     "visual": "Review-request SMS (sent within 24 h of job close)",
+     "voiceover": "",
+     "on_screen_text": "Thanks for having {tech} out today! Was he on time? A quick Google review helps your neighbors find us: {link}"
+    }
+   ],
+   "cta": "Call / message from LSA",
+   "offer": "None (LSA ranks on reviews, responsiveness, proximity)",
+   "brand_rules": [
+    {
+     "brand": "One Hour Heating & Air Conditioning®",
+     "promise_exact": "Always On Time... Or You Don't Pay A Dime!®",
+     "promise_terms": "Technician arrives within the customer-selected window or the service call is free (SE PA guarantees page). Also: 100% Satisfaction Guarantee on materials, labor and craftsmanship up to two years; StraightForward Pricing®.",
+     "do": [
+      "Use the full registered name on first mention and on the end card",
+      "Quote the promise verbatim with ®",
+      "Super 'Service-call fee waived if late; see onehourheatandair.com/southeast-pa for details' when the promise is spoken"
+     ],
+     "dont": [
+      "Paraphrase to 'on time or it's free' (it is the service call, not the repair)",
+      "Imply 24/7 or same-day unless the location offers it"
+     ],
+     "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+    },
+    {
+     "brand": "Benjamin Franklin Plumbing®",
+     "promise_exact": "If There's Any Delay, It's You We Pay™",
+     "promise_terms": "'If we're not on time, we pay you $5 for every minute that we're late ($300 maximum).' 100% satisfaction guarantee; UWIN guarantee (background checks, drug testing).",
+     "do": [
+      "State '$5 a minute, up to $300' exactly when the promise is quantified",
+      "Use 'The Punctual Plumber' only if Authority Brands approves for the local market"
+     ],
+     "dont": [
+      "Round up the cap or drop the $300 maximum"
+     ],
+     "source_url": "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees"
+    },
+    {
+     "brand": "Mister Sparky®",
+     "promise_exact": "America's On-Time Electrician®",
+     "promise_terms": "National page: \"We're On Time, You'll See, Or The Repair Is Free!\"™. The Lancaster location page says only 'we'll even pay you back if we aren't on time for your appointment' and 'If no repair is made, service fee may apply.' The two differ.",
+     "do": [
+      "Use 'America's On-Time Electrician®' as the safe line",
+      "Use the Lancaster wording for the remedy until franchise ops confirm the national 'repair is free' guarantee applies in PP territories"
+     ],
+     "dont": [
+      "Run 'the repair is free' in PP markets before written confirmation"
+     ],
+     "source_url": "https://www.mistersparky.com/about-us/our-guarantee/",
+     "source_urls": [
+      "https://www.mistersparky.com/about-us/our-guarantee/",
+      "https://www.mistersparky.com/lancaster/"
+     ]
+    }
+   ],
+   "production_cost_estimate_usd": 0,
+   "notes": "LSA economics (SearchLight Feb 2026): $39-57 CPL, ~44% book rate. Ranking levers are review count/rating and answer rate, so pair with Hatch-style <5-minute text follow-up (avg 60% response, best 89.86%).",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+   "source_urls": [
+    "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+    "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees",
+    "https://www.mistersparky.com/about-us/our-guarantee/"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_radio30",
+   "format": "radio30",
+   "title": "The Clock (radio :30, One Hour)",
+   "audience": "Phase 3 test: drive-time on Harrisburg/Lancaster stations during first cold snap (Oct-Nov) and heat (Jul)",
+   "hook": "SFX: ticking clock",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "SFX: loud ticking clock",
+     "voiceover": "That's the sound of you waiting for a repair guy.",
+     "on_screen_text": ""
+    },
+    {
+     "t_sec": 5,
+     "visual": "SFX: ticking stops, doorbell",
+     "voiceover": "And that's One Hour Heating & Air Conditioning, right on time.",
+     "on_screen_text": ""
+    },
+    {
+     "t_sec": 10,
+     "visual": "",
+     "voiceover": "You choose the arrival window. If we're late, you don't pay the service-call fee. It's our promise: Always On Time... Or You Don't Pay A Dime.",
+     "on_screen_text": ""
+    },
+    {
+     "t_sec": 20,
+     "visual": "",
+     "voiceover": "Furnace acting up before the first cold snap? Book online at onehourheatandair.com slash southeast-pa, or call {tracking#}.",
+     "on_screen_text": ""
+    },
+    {
+     "t_sec": 27,
+     "visual": "",
+     "voiceover": "One Hour Heating and Air Conditioning. Serving Central Pennsylvania.",
+     "on_screen_text": ""
+    }
+   ],
+   "cta": "Book online or call the tracking number",
+   "offer": "None",
+   "brand_rules": {
+    "brand": "One Hour Heating & Air Conditioning®",
+    "promise_exact": "Always On Time... Or You Don't Pay A Dime!®",
+    "promise_terms": "Technician arrives within the customer-selected window or the service call is free (SE PA guarantees page). Also: 100% Satisfaction Guarantee on materials, labor and craftsmanship up to two years; StraightForward Pricing®.",
+    "do": [
+     "Use the full registered name on first mention and on the end card",
+     "Quote the promise verbatim with ®",
+     "Super 'Service-call fee waived if late; see onehourheatandair.com/southeast-pa for details' when the promise is spoken"
+    ],
+    "dont": [
+     "Paraphrase to 'on time or it's free' (it is the service call, not the repair)",
+     "Imply 24/7 or same-day unless the location offers it"
+    ],
+    "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+   },
+   "production_cost_estimate_usd": 900,
+   "notes": "Mid-market :30 ~$194/spot (FitSmallBusiness example); production $350-3,500. Radio is Phase 3 only, measured with a unique number + vanity URL; stop if cost per booked job > 2x LSA.",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+   "source_urls": [
+    "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_yard_sign",
+   "format": "yard_sign",
+   "title": "Job-site yard sign lines (18x24 corrugated)",
+   "audience": "Neighbors of active jobs (installs, panel upgrades, repipes); left 7 days with homeowner permission",
+   "hook": "Your neighbors' {system} - done on time.",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "Line A (One Hour)",
+     "voiceover": "",
+     "on_screen_text": "New comfort installed today - on time. One Hour Heating & Air Conditioning®  Scan for your neighbor price"
+    },
+    {
+     "t_sec": 0,
+     "visual": "Line B (Ben Franklin)",
+     "voiceover": "",
+     "on_screen_text": "Your neighbor's plumber showed up on time. Benjamin Franklin Plumbing®"
+    },
+    {
+     "t_sec": 0,
+     "visual": "Line C (Mister Sparky)",
+     "voiceover": "",
+     "on_screen_text": "Panel upgraded. Lights steady. Mister Sparky® - America's On-Time Electrician®"
+    }
+   ],
+   "cta": "Scan QR (geo-coded per sign) for a neighbor offer",
+   "offer": "Illustrative neighbor-referral credit (confirm)",
+   "brand_rules": [
+    {
+     "brand": "One Hour Heating & Air Conditioning®",
+     "promise_exact": "Always On Time... Or You Don't Pay A Dime!®",
+     "promise_terms": "Technician arrives within the customer-selected window or the service call is free (SE PA guarantees page). Also: 100% Satisfaction Guarantee on materials, labor and craftsmanship up to two years; StraightForward Pricing®.",
+     "do": [
+      "Use the full registered name on first mention and on the end card",
+      "Quote the promise verbatim with ®",
+      "Super 'Service-call fee waived if late; see onehourheatandair.com/southeast-pa for details' when the promise is spoken"
+     ],
+     "dont": [
+      "Paraphrase to 'on time or it's free' (it is the service call, not the repair)",
+      "Imply 24/7 or same-day unless the location offers it"
+     ],
+     "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+    },
+    {
+     "brand": "Benjamin Franklin Plumbing®",
+     "promise_exact": "If There's Any Delay, It's You We Pay™",
+     "promise_terms": "'If we're not on time, we pay you $5 for every minute that we're late ($300 maximum).' 100% satisfaction guarantee; UWIN guarantee (background checks, drug testing).",
+     "do": [
+      "State '$5 a minute, up to $300' exactly when the promise is quantified",
+      "Use 'The Punctual Plumber' only if Authority Brands approves for the local market"
+     ],
+     "dont": [
+      "Round up the cap or drop the $300 maximum"
+     ],
+     "source_url": "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees"
+    },
+    {
+     "brand": "Mister Sparky®",
+     "promise_exact": "America's On-Time Electrician®",
+     "promise_terms": "National page: \"We're On Time, You'll See, Or The Repair Is Free!\"™. The Lancaster location page says only 'we'll even pay you back if we aren't on time for your appointment' and 'If no repair is made, service fee may apply.' The two differ.",
+     "do": [
+      "Use 'America's On-Time Electrician®' as the safe line",
+      "Use the Lancaster wording for the remedy until franchise ops confirm the national 'repair is free' guarantee applies in PP territories"
+     ],
+     "dont": [
+      "Run 'the repair is free' in PP markets before written confirmation"
+     ],
+     "source_url": "https://www.mistersparky.com/about-us/our-guarantee/",
+     "source_urls": [
+      "https://www.mistersparky.com/about-us/our-guarantee/",
+      "https://www.mistersparky.com/lancaster/"
+     ]
+    }
+   ],
+   "production_cost_estimate_usd": 900,
+   "notes": "~100 signs x ~$9. Each QR carries the job zip so the portal can map sign-sourced leads; check HOA/municipal sign rules.",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+   "source_urls": [
+    "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+    "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees",
+    "https://www.mistersparky.com/about-us/our-guarantee/"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "kind": "creative",
+   "id": "cr_truck_wrap",
+   "format": "truck_wrap",
+   "title": "Fleet wrap lines (van side + rear doors)",
+   "audience": "Every road in ~240 zips; vans are the highest-frequency local medium PP already owns",
+   "hook": "Rear doors: 'If I'm late, you don't pay.'",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "One Hour van side",
+     "voiceover": "",
+     "on_screen_text": "Always On Time... Or You Don't Pay A Dime!®  onehourheatandair.com/southeast-pa"
+    },
+    {
+     "t_sec": 0,
+     "visual": "One Hour rear doors",
+     "voiceover": "",
+     "on_screen_text": "Running late? Not us. Scan to book."
+    },
+    {
+     "t_sec": 0,
+     "visual": "Ben Franklin rear doors",
+     "voiceover": "",
+     "on_screen_text": "Late? We pay you $5 a minute. (Up to $300.)"
+    },
+    {
+     "t_sec": 0,
+     "visual": "Mister Sparky rear doors",
+     "voiceover": "",
+     "on_screen_text": "America's On-Time Electrician® - and I'm on my way to your neighbor."
+    }
+   ],
+   "cta": "Scan rear-door QR (per-van code)",
+   "offer": "None",
+   "brand_rules": [
+    {
+     "brand": "One Hour Heating & Air Conditioning®",
+     "promise_exact": "Always On Time... Or You Don't Pay A Dime!®",
+     "promise_terms": "Technician arrives within the customer-selected window or the service call is free (SE PA guarantees page). Also: 100% Satisfaction Guarantee on materials, labor and craftsmanship up to two years; StraightForward Pricing®.",
+     "do": [
+      "Use the full registered name on first mention and on the end card",
+      "Quote the promise verbatim with ®",
+      "Super 'Service-call fee waived if late; see onehourheatandair.com/southeast-pa for details' when the promise is spoken"
+     ],
+     "dont": [
+      "Paraphrase to 'on time or it's free' (it is the service call, not the repair)",
+      "Imply 24/7 or same-day unless the location offers it"
+     ],
+     "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees"
+    },
+    {
+     "brand": "Benjamin Franklin Plumbing®",
+     "promise_exact": "If There's Any Delay, It's You We Pay™",
+     "promise_terms": "'If we're not on time, we pay you $5 for every minute that we're late ($300 maximum).' 100% satisfaction guarantee; UWIN guarantee (background checks, drug testing).",
+     "do": [
+      "State '$5 a minute, up to $300' exactly when the promise is quantified",
+      "Use 'The Punctual Plumber' only if Authority Brands approves for the local market"
+     ],
+     "dont": [
+      "Round up the cap or drop the $300 maximum"
+     ],
+     "source_url": "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees"
+    },
+    {
+     "brand": "Mister Sparky®",
+     "promise_exact": "America's On-Time Electrician®",
+     "promise_terms": "National page: \"We're On Time, You'll See, Or The Repair Is Free!\"™. The Lancaster location page says only 'we'll even pay you back if we aren't on time for your appointment' and 'If no repair is made, service fee may apply.' The two differ.",
+     "do": [
+      "Use 'America's On-Time Electrician®' as the safe line",
+      "Use the Lancaster wording for the remedy until franchise ops confirm the national 'repair is free' guarantee applies in PP territories"
+     ],
+     "dont": [
+      "Run 'the repair is free' in PP markets before written confirmation"
+     ],
+     "source_url": "https://www.mistersparky.com/about-us/our-guarantee/",
+     "source_urls": [
+      "https://www.mistersparky.com/about-us/our-guarantee/",
+      "https://www.mistersparky.com/lancaster/"
+     ]
+    }
+   ],
+   "production_cost_estimate_usd": 600,
+   "notes": "Rear-door decal refresh only (~$150-250/van est.); full wraps follow Authority Brands vehicle standards. 'Up to 70,000 daily impressions' is an urban upper bound - Central PA will be lower.",
+   "retrieved": "2026-10-06",
+   "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+   "source_urls": [
+    "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+    "https://www.benjaminfranklinplumbing.com/lancaster/about-us/our-guarantees",
+    "https://www.mistersparky.com/about-us/our-guarantee/"
+   ],
+   "source_note": "Brand promise language verified on the franchisor/location guarantee page(s); creative copy is original sample work.",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "mp_phase1_central_pa",
+   "kind": "media_plan",
+   "phase": "Phase 1 - Central PA (Harrisburg-Lancaster-Lebanon-York DMA + Reading/Berks)",
+   "months": [
+    "2026-11",
+    "2026-12",
+    "2027-01",
+    "2027-02",
+    "2027-03",
+    "2027-04"
+   ],
+   "geo": {
+    "zips": "~240 PP zips (248 flagged in pp_zips across 9 counties); CTV never bought at DMA level",
+    "counties": [
+     "Lancaster",
+     "York",
+     "Dauphin",
+     "Cumberland",
+     "Berks",
+     "Lebanon",
+     "Franklin",
+     "Adams",
+     "Perry"
+    ]
+   },
+   "monthly_budget_usd": 50000,
+   "channel_mix": [
+    {
+     "channel": "google_lsa",
+     "share_pct": 30.0,
+     "monthly_usd": 15000,
+     "cpm_or_cpl_usd": 51.3,
+     "metric": "CPL",
+     "est_impressions": null,
+     "formula": "leads = usd/CPL; jobs = leads x 0.439",
+     "assumption_source": [
+      "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     ],
+     "est_leads": 292.4,
+     "est_booked_jobs": 128.4,
+     "avg_ticket_usd": 1870.0,
+     "est_revenue_usd": 240038,
+     "targeting_note": "3 LSA profiles (One Hour SE PA, Ben Franklin Lancaster, Mister Sparky Lancaster); bid to max leads; dispute bad leads weekly"
+    },
+    {
+     "channel": "ctv_zip_targeted",
+     "share_pct": 30.0,
+     "monthly_usd": 15000,
+     "cpm_or_cpl_usd": 30,
+     "metric": "CPM",
+     "est_impressions": 500000,
+     "est_site_visits": 1250,
+     "formula": "imps = usd/CPM x 1000; visits = usd/cost_per_visit; leads = visits x visit_to_lead; jobs = leads x book_rate",
+     "assumption_source": [
+      "https://adwave.com/resources/average-ctv-cpm-q2-2026",
+      "https://mountain.com/case-studies/dtc-lingerie-brand-drives-profitable-growth-with-performance-tv/",
+      "https://localiq.com/blog/home-services-search-advertising-benchmarks/"
+     ],
+     "est_leads": 82.0,
+     "est_booked_jobs": 36.0,
+     "avg_ticket_usd": 1870.0,
+     "est_revenue_usd": 67316,
+     "targeting_note": "Vibe (primary) + Disney Campaign Manager + YouTube TV screens; 61 Tier-I zips (336k housing units) first, Tier-II rotation; CRM exclusion of members"
+    },
+    {
+     "channel": "paid_search_pmax",
+     "share_pct": 15.0,
+     "monthly_usd": 7500,
+     "cpm_or_cpl_usd": 104,
+     "metric": "CPL",
+     "est_impressions": null,
+     "formula": "leads = usd/$104; jobs = leads x 0.417",
+     "assumption_source": [
+      "https://searchlightdigital.io/what-is-a-good-cost-per-lead-for-hvac-google-ads/",
+      "https://localiq.com/blog/home-services-search-advertising-benchmarks/"
+     ],
+     "est_leads": 72.1,
+     "est_booked_jobs": 30.1,
+     "avg_ticket_usd": 1870.0,
+     "est_revenue_usd": 56235,
+     "targeting_note": "Branded + PMax; non-branded only for 'furnace repair'/'no heat'/'frozen pipe' clusters"
+    },
+    {
+     "channel": "new_mover_mail",
+     "share_pct": 15.0,
+     "monthly_usd": 7500,
+     "cpm_or_cpl_usd": 75.0,
+     "metric": "CPL (implied)",
+     "est_impressions": 10000,
+     "est_pieces": 10000,
+     "formula": "pieces = usd/$0.75; leads = pieces x 1.0%; jobs = leads x 0.44; ticket = 0.7x150 + 0.3x1205",
+     "assumption_source": [
+      "https://www.piworld.com/post/revisiting-response-rates-why-direct-mails-roi-keeps-rising",
+      "https://directmail.io/blog/new-mover-direct-mail-playbook",
+      "https://v2.4over4.com/guide/eddm-pricing-explained",
+      "https://www.housecallpro.com/resources/hvac-industry-trends/"
+     ],
+     "est_leads": 100.0,
+     "est_booked_jobs": 44.0,
+     "avg_ticket_usd": 466.0,
+     "est_revenue_usd": 20504,
+     "targeting_note": "Deed feed: ~2,300 PA-core residential buyers/month est. (trailing-12-month arm's-length sales in data/sales, Dauphin/Franklin under-counted) x 3 touches (~6,900 pieces); the remaining ~3,100 pieces/month go to pre-1980 homes in high-turnover Tier-I zips"
+    },
+    {
+     "channel": "meta_social",
+     "share_pct": 10.0,
+     "monthly_usd": 5000,
+     "cpm_or_cpl_usd": 41.26,
+     "metric": "CPL",
+     "est_impressions": null,
+     "formula": "leads = usd/$41.26; jobs = leads x 0.25 (assumption)",
+     "assumption_source": [
+      "https://www.wordstream.com/blog/facebook-ads-benchmarks-2025",
+      "https://www.housecallpro.com/resources/hvac-industry-trends/"
+     ],
+     "est_leads": 121.2,
+     "est_booked_jobs": 30.3,
+     "avg_ticket_usd": 1205,
+     "est_revenue_usd": 36506,
+     "targeting_note": "Retargeting site visitors + CTV-exposed households; frozen-pipe and membership verticals"
+    }
+   ],
+   "totals_est": {
+    "leads": 668,
+    "booked_jobs": 269,
+    "revenue_usd": 420599,
+    "blended_cpl_usd": 74.88
+   },
+   "household_reach_est": {
+    "ctv_households_per_month": 83333,
+    "universe_housing_units": 1001408,
+    "share_of_universe": 0.083,
+    "formula": "CTV impressions / frequency"
+   },
+   "frequency": {
+    "ctv_target_per_month": 6,
+    "cap": "3 per household per week; 1 per day on FAST apps",
+    "mail": "3-touch drip per new mover (day 7, 45, 90)"
+   },
+   "flighting": {
+    "always_on": "LSA + branded search + new-mover drip every week",
+    "storm_triggers": "When api.weather.gov issues Extreme Cold / Winter Storm / Ice Storm warnings for PP zones (pp_demand_model playbooks; HVAC/plumbing multipliers 1.8-3.0x, assumption): +50% CTV for 72 h with 'Storm Ready' cut, raise LSA weekly cap, push frozen-pipe vertical; 1-3 days after a hard freeze switch to Ben Franklin thaw-surge creative",
+    "heat_triggers": "Excessive Heat / Heat Advisory (summer continuation): 'Members skip the line' + AC creative; NOAA shows July is the PA-core storm peak (522 events 2019-2025, mostly thunderstorm wind) -> Mister Sparky surge/outage creative",
+    "shoulder_seasons": "Sep-Oct ('heating system repair' searches peak in October) and Apr-May: tune-up + membership offers, CTV weight -30%, mail weight +25%",
+    "new_mover_drip": "Deed recorded -> postcard #1 at day 7, CTV household match from day 7-60 where platform supports address match, postcard #2 (pre-1980 homes) at day 45, membership email/SMS at day 90 if booked"
+   },
+   "measurement_plan": [
+    "Unique call-tracking numbers per channel/creative and UTM + QR per spot (ServiceTitan call attribution)",
+    "CTV: platform site-visit attribution (7-day view window) plus geo holdout - 15% of Tier-I zips held dark for 8 weeks; read lift in booked jobs per 10k housing units vs matched controls",
+    "Mail: matched-back to ServiceTitan by address (response = any booking within 90 days of drop) vs 10% random holdout of new movers",
+    "LSA/search: booked jobs and revenue by lead (SearchLight-style closed ROAS), weekly",
+    "Primary KPI: cost per booked job and revenue per $; completion rate is NOT a KPI (non-skippable)"
+   ],
+   "expected_cpa_usd": 186.01,
+   "expected_revenue_usd": 420599,
+   "model": {
+    "label": "est. - every output is modelled from benchmarks and labelled assumptions; recalibrate monthly against ServiceTitan",
+    "formulas": {
+     "booked_jobs": "sum over channels of leads x book_rate",
+     "expected_revenue_usd": "sum over channels of booked_jobs x avg_ticket (channel-specific)",
+     "expected_cpa_usd": "monthly_budget / booked_jobs",
+     "gross_profit_usd": "expected_revenue x gross_margin (0.40)",
+     "roas": "expected_revenue / monthly_budget",
+     "membership_adds": "booked_jobs x 0.60 new-customer share (assumption) x 0.25 attach",
+     "membership_annual_value_usd": "membership_adds x $20 x 12"
+    },
+    "outputs": {
+     "roas": 8.41,
+     "gross_profit_usd": 168240,
+     "gross_profit_per_ad_dollar": 3.36,
+     "membership_adds_per_month": 40.3,
+     "membership_annual_value_usd": 9677
+    },
+    "assumptions": {
+     "trade_mix": {
+      "value": {
+       "HVAC": 0.5,
+       "Plumbing": 0.35,
+       "Electrical": 0.15
+      },
+      "source": "assumption - replace with PP ServiceTitan job mix"
+     },
+     "lsa_cpl_usd": {
+      "value": 51.3,
+      "formula": "sum(mix[t] x SearchLight LSA CPL[t]) = 0.50x51 + 0.35x57 + 0.15x39",
+      "source": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     },
+     "lsa_book_rate": {
+      "value": 0.439,
+      "source": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     },
+     "avg_ticket_usd": {
+      "value": 1870.0,
+      "formula": "sum(mix[t] x SearchLight LSA ticket[t]) = 0.50x2110 + 0.35x1714 + 0.15x1434",
+      "source": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     },
+     "search_cpl_usd": {
+      "value": 104,
+      "source": "https://searchlightdigital.io/what-is-a-good-cost-per-lead-for-hvac-google-ads/"
+     },
+     "search_book_rate": {
+      "value": 0.417,
+      "source": "https://searchlightdigital.io/what-is-a-good-cost-per-lead-for-hvac-google-ads/"
+     },
+     "ctv_cpm_usd": {
+      "value": 30,
+      "basis": "eMarketer blended $26 + zip-targeting premium; Vibe $15-35, Disney $25-40",
+      "source": "https://adwave.com/resources/average-ctv-cpm-q2-2026"
+     },
+     "ctv_cost_per_visit_usd": {
+      "value": 12,
+      "basis": "assumption: ~1.8x MNTN DTC case ($6.73) because zip-narrow local audiences and lower purchase frequency",
+      "source": "https://mountain.com/case-studies/dtc-lingerie-brand-drives-profitable-growth-with-performance-tv/"
+     },
+     "visit_to_lead": {
+      "value": 0.0656,
+      "basis": "LocaliQ 2025 HVAC search conversion rate used as landing-page proxy",
+      "source": "https://localiq.com/blog/home-services-search-advertising-benchmarks/"
+     },
+     "ctv_frequency_per_month": {
+      "value": 6,
+      "basis": "assumption; Universal Ads recommends ~3x/week during 4-6 week flights - we cap lower to stretch reach",
+      "source": "https://www.universalads.com/article/advertise-on-tv-without-a-big-budget"
+     },
+     "mail_cost_per_piece_usd": {
+      "value": 0.75,
+      "basis": "assumption: postage ($0.26 EDDM floor; addressed Marketing Mail higher) + 6x11 print + new-mover data",
+      "source": "https://v2.4over4.com/guide/eddm-pricing-explained"
+     },
+     "mail_lead_rate_per_piece": {
+      "value": 0.01,
+      "basis": "assumption: ~1/4 of ANA prospect response (4-5%) and of vendor new-mover claim (4.9%) because a 'response' is not a booked-able lead",
+      "source": "https://www.piworld.com/post/revisiting-response-rates-why-direct-mails-roi-keeps-rising"
+     },
+     "mail_book_rate": {
+      "value": 0.44,
+      "basis": "LSA blended book rate as proxy",
+      "source": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     },
+     "mail_avg_ticket_usd": {
+      "value": 466.0,
+      "formula": "0.70 x $150 checkup (assumption) + 0.30 x $1,205 HVAC repair (Housecall Pro 2025)",
+      "source": "https://www.housecallpro.com/resources/hvac-industry-trends/"
+     },
+     "meta_cpl_usd": {
+      "value": 41.26,
+      "source": "https://www.wordstream.com/blog/facebook-ads-benchmarks-2025"
+     },
+     "meta_book_rate": {
+      "value": 0.25,
+      "basis": "assumption: form leads ~half LSA intent"
+     },
+     "meta_avg_ticket_usd": {
+      "value": 1205,
+      "source": "https://www.housecallpro.com/resources/hvac-industry-trends/"
+     },
+     "radio_cpl_usd": {
+      "value": 175,
+      "basis": "assumption: between non-branded search ($149) and CTV-implied CPL; $194/spot mid-market",
+      "source": "https://fitsmallbusiness.com/radio-advertising-costs/"
+     },
+     "gross_margin": {
+      "value": 0.4,
+      "basis": "Applause HQ: transactional repairs 35-45% GM (assumption for payback math)",
+      "source": "https://www.applausehq.com/blog/hvac-membership-programs"
+     },
+     "membership_attach": {
+      "value": 0.25,
+      "source": "https://www.applausehq.com/blog/hvac-membership-programs"
+     },
+     "membership_price_usd_month": {
+      "value": 20,
+      "basis": "midpoint of $15-30/month typical range",
+      "source": "https://www.applausehq.com/blog/hvac-membership-programs"
+     }
+    }
+   },
+   "payback_note": "est. Each month's $50,000 buys ~269 booked jobs and ~$420,599 revenue (ROAS 8.4x); at 40% gross margin that is ~$168,240 gross profit, so media pays back inside the month on a gross-profit basis if book rates hold. LSA lead volume will cap out in mild weeks - unspent LSA rolls to CTV/mail. Membership adds (~40/month, ~$9,677/yr recurring) are upside not counted in ROAS. Highest risk: CTV cost per visit (no public home-services benchmark) and mail lead rate - both are assumptions to be replaced by week-8 test reads.",
+   "retrieved": "2026-10-06",
+   "source_url": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "mp_phase2_jersey_shore",
+   "kind": "media_plan",
+   "phase": "Phase 2 - Jersey Shore (Horvath Home Services, Ocean + Monmouth; Philadelphia/New York DMA spill - zip-targeted CTV only)",
+   "months": [
+    "2027-03",
+    "2027-04",
+    "2027-05",
+    "2027-06",
+    "2027-07",
+    "2027-08"
+   ],
+   "geo": {
+    "zips": "Horvath service zips in Ocean and Monmouth counties",
+    "counties": [
+     "Ocean",
+     "Monmouth"
+    ]
+   },
+   "monthly_budget_usd": 15000,
+   "channel_mix": [
+    {
+     "channel": "ctv_zip_targeted",
+     "share_pct": 35.0,
+     "monthly_usd": 5250,
+     "cpm_or_cpl_usd": 30,
+     "metric": "CPM",
+     "est_impressions": 175000,
+     "est_site_visits": 438,
+     "formula": "imps = usd/CPM x 1000; visits = usd/cost_per_visit; leads = visits x visit_to_lead; jobs = leads x book_rate",
+     "assumption_source": [
+      "https://adwave.com/resources/average-ctv-cpm-q2-2026",
+      "https://mountain.com/case-studies/dtc-lingerie-brand-drives-profitable-growth-with-performance-tv/",
+      "https://localiq.com/blog/home-services-search-advertising-benchmarks/"
+     ],
+     "est_leads": 28.7,
+     "est_booked_jobs": 12.6,
+     "avg_ticket_usd": 1870.0,
+     "est_revenue_usd": 23561,
+     "targeting_note": "Zip-only (Ocean/Monmouth Horvath zips); never DMA - the NY and Philadelphia DMAs would put >90% of impressions outside the service area"
+    },
+    {
+     "channel": "google_lsa",
+     "share_pct": 35.0,
+     "monthly_usd": 5250,
+     "cpm_or_cpl_usd": 51.3,
+     "metric": "CPL",
+     "est_impressions": null,
+     "formula": "leads = usd/CPL; jobs = leads x 0.439",
+     "assumption_source": [
+      "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     ],
+     "est_leads": 102.3,
+     "est_booked_jobs": 44.9,
+     "avg_ticket_usd": 1870.0,
+     "est_revenue_usd": 84013,
+     "targeting_note": "One Hour Toms River, Ben Franklin Ocean County, Mister Sparky Ocean County LSA profiles"
+    },
+    {
+     "channel": "new_mover_mail",
+     "share_pct": 20.0,
+     "monthly_usd": 3000,
+     "cpm_or_cpl_usd": 75.0,
+     "metric": "CPL (implied)",
+     "est_impressions": 4000,
+     "est_pieces": 4000,
+     "formula": "pieces = usd/$0.75; leads = pieces x 1.0%; jobs = leads x 0.44; ticket = 0.7x150 + 0.3x1205",
+     "assumption_source": [
+      "https://www.piworld.com/post/revisiting-response-rates-why-direct-mails-roi-keeps-rising",
+      "https://directmail.io/blog/new-mover-direct-mail-playbook",
+      "https://v2.4over4.com/guide/eddm-pricing-explained",
+      "https://www.housecallpro.com/resources/hvac-industry-trends/"
+     ],
+     "est_leads": 40.0,
+     "est_booked_jobs": 17.6,
+     "avg_ticket_usd": 466.0,
+     "est_revenue_usd": 8202,
+     "targeting_note": "NJ SR1A deed feed: ~10,900 arm's-length residential sales in ~9.5 months (Sep 2025-Jun 2026) -> ~1,150/month x 3 touches"
+    },
+    {
+     "channel": "paid_search_pmax",
+     "share_pct": 10.0,
+     "monthly_usd": 1500,
+     "cpm_or_cpl_usd": 104,
+     "metric": "CPL",
+     "est_impressions": null,
+     "formula": "leads = usd/$104; jobs = leads x 0.417",
+     "assumption_source": [
+      "https://searchlightdigital.io/what-is-a-good-cost-per-lead-for-hvac-google-ads/",
+      "https://localiq.com/blog/home-services-search-advertising-benchmarks/"
+     ],
+     "est_leads": 14.4,
+     "est_booked_jobs": 6.0,
+     "avg_ticket_usd": 1870.0,
+     "est_revenue_usd": 11247,
+     "targeting_note": "Branded + 'AC repair' cluster May-Aug"
+    }
+   ],
+   "totals_est": {
+    "leads": 185,
+    "booked_jobs": 81,
+    "revenue_usd": 127023,
+    "blended_cpl_usd": 80.91
+   },
+   "household_reach_est": {
+    "ctv_households_per_month": 29167,
+    "universe_housing_units": 555012,
+    "share_of_universe": 0.053,
+    "formula": "CTV impressions / frequency"
+   },
+   "frequency": {
+    "ctv_target_per_month": 6,
+    "cap": "3 per household per week; 1 per day on FAST apps",
+    "mail": "3-touch drip per new mover (day 7, 45, 90)"
+   },
+   "flighting": {
+    "always_on": "LSA + branded search + new-mover drip",
+    "storm_triggers": "Tropical Storm / Coastal Flood / High Wind warnings (Ocean/Monmouth zones) -> Mister Sparky generator/surge creative; Heat Advisory -> 'Shore-Ready AC'",
+    "shoulder_seasons": "Mar-Apr pre-season AC tune-ups for second homes before Memorial Day; Sep winterization for seasonal homes",
+    "new_mover_drip": "Same 3-touch drip; second-home buyers flagged by out-of-area mailing address get a 'seasonal home check' variant"
+   },
+   "measurement_plan": [
+    "Same tracking architecture as Phase 1; geo holdout of 4-5 Horvath zips",
+    "Compare cost per booked job vs Phase 1 to decide whether shore CTV scales",
+    "Watch AC ticket mix (shore jobs skew to cooling)"
+   ],
+   "expected_cpa_usd": 184.96,
+   "expected_revenue_usd": 127023,
+   "model": {
+    "label": "est. - every output is modelled from benchmarks and labelled assumptions; recalibrate monthly against ServiceTitan",
+    "formulas": {
+     "booked_jobs": "sum over channels of leads x book_rate",
+     "expected_revenue_usd": "sum over channels of booked_jobs x avg_ticket (channel-specific)",
+     "expected_cpa_usd": "monthly_budget / booked_jobs",
+     "gross_profit_usd": "expected_revenue x gross_margin (0.40)",
+     "roas": "expected_revenue / monthly_budget",
+     "membership_adds": "booked_jobs x 0.60 new-customer share (assumption) x 0.25 attach",
+     "membership_annual_value_usd": "membership_adds x $20 x 12"
+    },
+    "outputs": {
+     "roas": 8.47,
+     "gross_profit_usd": 50809,
+     "gross_profit_per_ad_dollar": 3.39,
+     "membership_adds_per_month": 12.2,
+     "membership_annual_value_usd": 2920
+    },
+    "assumptions": {
+     "trade_mix": {
+      "value": {
+       "HVAC": 0.5,
+       "Plumbing": 0.35,
+       "Electrical": 0.15
+      },
+      "source": "assumption - replace with PP ServiceTitan job mix"
+     },
+     "lsa_cpl_usd": {
+      "value": 51.3,
+      "formula": "sum(mix[t] x SearchLight LSA CPL[t]) = 0.50x51 + 0.35x57 + 0.15x39",
+      "source": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     },
+     "lsa_book_rate": {
+      "value": 0.439,
+      "source": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     },
+     "avg_ticket_usd": {
+      "value": 1870.0,
+      "formula": "sum(mix[t] x SearchLight LSA ticket[t]) = 0.50x2110 + 0.35x1714 + 0.15x1434",
+      "source": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     },
+     "search_cpl_usd": {
+      "value": 104,
+      "source": "https://searchlightdigital.io/what-is-a-good-cost-per-lead-for-hvac-google-ads/"
+     },
+     "search_book_rate": {
+      "value": 0.417,
+      "source": "https://searchlightdigital.io/what-is-a-good-cost-per-lead-for-hvac-google-ads/"
+     },
+     "ctv_cpm_usd": {
+      "value": 30,
+      "basis": "eMarketer blended $26 + zip-targeting premium; Vibe $15-35, Disney $25-40",
+      "source": "https://adwave.com/resources/average-ctv-cpm-q2-2026"
+     },
+     "ctv_cost_per_visit_usd": {
+      "value": 12,
+      "basis": "assumption: ~1.8x MNTN DTC case ($6.73) because zip-narrow local audiences and lower purchase frequency",
+      "source": "https://mountain.com/case-studies/dtc-lingerie-brand-drives-profitable-growth-with-performance-tv/"
+     },
+     "visit_to_lead": {
+      "value": 0.0656,
+      "basis": "LocaliQ 2025 HVAC search conversion rate used as landing-page proxy",
+      "source": "https://localiq.com/blog/home-services-search-advertising-benchmarks/"
+     },
+     "ctv_frequency_per_month": {
+      "value": 6,
+      "basis": "assumption; Universal Ads recommends ~3x/week during 4-6 week flights - we cap lower to stretch reach",
+      "source": "https://www.universalads.com/article/advertise-on-tv-without-a-big-budget"
+     },
+     "mail_cost_per_piece_usd": {
+      "value": 0.75,
+      "basis": "assumption: postage ($0.26 EDDM floor; addressed Marketing Mail higher) + 6x11 print + new-mover data",
+      "source": "https://v2.4over4.com/guide/eddm-pricing-explained"
+     },
+     "mail_lead_rate_per_piece": {
+      "value": 0.01,
+      "basis": "assumption: ~1/4 of ANA prospect response (4-5%) and of vendor new-mover claim (4.9%) because a 'response' is not a booked-able lead",
+      "source": "https://www.piworld.com/post/revisiting-response-rates-why-direct-mails-roi-keeps-rising"
+     },
+     "mail_book_rate": {
+      "value": 0.44,
+      "basis": "LSA blended book rate as proxy",
+      "source": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     },
+     "mail_avg_ticket_usd": {
+      "value": 466.0,
+      "formula": "0.70 x $150 checkup (assumption) + 0.30 x $1,205 HVAC repair (Housecall Pro 2025)",
+      "source": "https://www.housecallpro.com/resources/hvac-industry-trends/"
+     },
+     "meta_cpl_usd": {
+      "value": 41.26,
+      "source": "https://www.wordstream.com/blog/facebook-ads-benchmarks-2025"
+     },
+     "meta_book_rate": {
+      "value": 0.25,
+      "basis": "assumption: form leads ~half LSA intent"
+     },
+     "meta_avg_ticket_usd": {
+      "value": 1205,
+      "source": "https://www.housecallpro.com/resources/hvac-industry-trends/"
+     },
+     "radio_cpl_usd": {
+      "value": 175,
+      "basis": "assumption: between non-branded search ($149) and CTV-implied CPL; $194/spot mid-market",
+      "source": "https://fitsmallbusiness.com/radio-advertising-costs/"
+     },
+     "gross_margin": {
+      "value": 0.4,
+      "basis": "Applause HQ: transactional repairs 35-45% GM (assumption for payback math)",
+      "source": "https://www.applausehq.com/blog/hvac-membership-programs"
+     },
+     "membership_attach": {
+      "value": 0.25,
+      "source": "https://www.applausehq.com/blog/hvac-membership-programs"
+     },
+     "membership_price_usd_month": {
+      "value": 20,
+      "basis": "midpoint of $15-30/month typical range",
+      "source": "https://www.applausehq.com/blog/hvac-membership-programs"
+     }
+    }
+   },
+   "payback_note": "est. Each month's $15,000 buys ~81 booked jobs and ~$127,023 revenue (ROAS 8.5x); at 40% gross margin that is ~$50,809 gross profit, so media pays back inside the month on a gross-profit basis if book rates hold. Smaller budget; CTV share is higher because the shore has no efficient linear option. Membership adds (~12/month, ~$2,920/yr recurring) are upside not counted in ROAS. Highest risk: CTV cost per visit (no public home-services benchmark) and mail lead rate - both are assumptions to be replaced by week-8 test reads.",
+   "retrieved": "2026-10-06",
+   "source_url": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "mp_phase3_mid_atlantic",
+   "kind": "media_plan",
+   "phase": "Phase 3 - Regional Mid-Atlantic (PA + NJ + add-on territories as M&A closes)",
+   "months": [
+    "2027-09",
+    "2027-10",
+    "2027-11",
+    "2027-12",
+    "2028-01",
+    "2028-02",
+    "2028-03",
+    "2028-04",
+    "2028-05",
+    "2028-06",
+    "2028-07",
+    "2028-08"
+   ],
+   "geo": {
+    "zips": "All PP + Horvath + add-on zips; still zip-targeted (no DMA-wide CTV)",
+    "states": [
+     "PA",
+     "NJ",
+     "MD/DE (pending add-ons)"
+    ]
+   },
+   "monthly_budget_usd": 100000,
+   "channel_mix": [
+    {
+     "channel": "google_lsa",
+     "share_pct": 25.0,
+     "monthly_usd": 25000,
+     "cpm_or_cpl_usd": 51.3,
+     "metric": "CPL",
+     "est_impressions": null,
+     "formula": "leads = usd/CPL; jobs = leads x 0.439",
+     "assumption_source": [
+      "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     ],
+     "est_leads": 487.3,
+     "est_booked_jobs": 213.9,
+     "avg_ticket_usd": 1870.0,
+     "est_revenue_usd": 400063,
+     "targeting_note": "All brand x territory LSA profiles incl. add-ons"
+    },
+    {
+     "channel": "ctv_zip_targeted",
+     "share_pct": 30.0,
+     "monthly_usd": 30000,
+     "cpm_or_cpl_usd": 30,
+     "metric": "CPM",
+     "est_impressions": 1000000,
+     "est_site_visits": 2500,
+     "formula": "imps = usd/CPM x 1000; visits = usd/cost_per_visit; leads = visits x visit_to_lead; jobs = leads x book_rate",
+     "assumption_source": [
+      "https://adwave.com/resources/average-ctv-cpm-q2-2026",
+      "https://mountain.com/case-studies/dtc-lingerie-brand-drives-profitable-growth-with-performance-tv/",
+      "https://localiq.com/blog/home-services-search-advertising-benchmarks/"
+     ],
+     "est_leads": 164.0,
+     "est_booked_jobs": 72.0,
+     "avg_ticket_usd": 1870.0,
+     "est_revenue_usd": 134633,
+     "targeting_note": "Two CTV vendors with alternating geo holdouts (e.g., Vibe vs MNTN or Universal Ads), YouTube TV screens; Samsung ACR conquest of competitor-ad viewers as a 10% sub-test"
+    },
+    {
+     "channel": "paid_search_pmax",
+     "share_pct": 15.0,
+     "monthly_usd": 15000,
+     "cpm_or_cpl_usd": 104,
+     "metric": "CPL",
+     "est_impressions": null,
+     "formula": "leads = usd/$104; jobs = leads x 0.417",
+     "assumption_source": [
+      "https://searchlightdigital.io/what-is-a-good-cost-per-lead-for-hvac-google-ads/",
+      "https://localiq.com/blog/home-services-search-advertising-benchmarks/"
+     ],
+     "est_leads": 144.2,
+     "est_booked_jobs": 60.1,
+     "avg_ticket_usd": 1870.0,
+     "est_revenue_usd": 112470,
+     "targeting_note": "Consolidated account per brand with territory geos"
+    },
+    {
+     "channel": "new_mover_mail",
+     "share_pct": 15.0,
+     "monthly_usd": 15000,
+     "cpm_or_cpl_usd": 75.0,
+     "metric": "CPL (implied)",
+     "est_impressions": 20000,
+     "est_pieces": 20000,
+     "formula": "pieces = usd/$0.75; leads = pieces x 1.0%; jobs = leads x 0.44; ticket = 0.7x150 + 0.3x1205",
+     "assumption_source": [
+      "https://www.piworld.com/post/revisiting-response-rates-why-direct-mails-roi-keeps-rising",
+      "https://directmail.io/blog/new-mover-direct-mail-playbook",
+      "https://v2.4over4.com/guide/eddm-pricing-explained",
+      "https://www.housecallpro.com/resources/hvac-industry-trends/"
+     ],
+     "est_leads": 200.0,
+     "est_booked_jobs": 88.0,
+     "avg_ticket_usd": 466.0,
+     "est_revenue_usd": 41008,
+     "targeting_note": "Deed feeds for all PA + NJ counties (+ MD/DE add-ons when acquired)"
+    },
+    {
+     "channel": "meta_social",
+     "share_pct": 10.0,
+     "monthly_usd": 10000,
+     "cpm_or_cpl_usd": 41.26,
+     "metric": "CPL",
+     "est_impressions": null,
+     "formula": "leads = usd/$41.26; jobs = leads x 0.25 (assumption)",
+     "assumption_source": [
+      "https://www.wordstream.com/blog/facebook-ads-benchmarks-2025",
+      "https://www.housecallpro.com/resources/hvac-industry-trends/"
+     ],
+     "est_leads": 242.4,
+     "est_booked_jobs": 60.6,
+     "avg_ticket_usd": 1205,
+     "est_revenue_usd": 73013,
+     "targeting_note": "Retargeting + membership renewal"
+    },
+    {
+     "channel": "radio",
+     "share_pct": 5.0,
+     "monthly_usd": 5000,
+     "cpm_or_cpl_usd": 175,
+     "metric": "CPL (assumed)",
+     "est_impressions": null,
+     "est_spots": 26,
+     "formula": "spots = usd/$194; leads = usd/$175 (assumption); jobs = leads x 0.439",
+     "assumption_source": [
+      "https://fitsmallbusiness.com/radio-advertising-costs/"
+     ],
+     "est_leads": 28.6,
+     "est_booked_jobs": 12.5,
+     "avg_ticket_usd": 1870.0,
+     "est_revenue_usd": 23455,
+     "targeting_note": "Drive-time test in Harrisburg/Lancaster during first cold snap and July heat; stop if CPA > 2x LSA"
+    }
+   ],
+   "totals_est": {
+    "leads": 1266,
+    "booked_jobs": 507,
+    "revenue_usd": 784642,
+    "blended_cpl_usd": 78.96
+   },
+   "household_reach_est": {
+    "ctv_households_per_month": 166667,
+    "universe_housing_units": 1556420,
+    "share_of_universe": 0.107,
+    "formula": "CTV impressions / frequency"
+   },
+   "frequency": {
+    "ctv_target_per_month": 6,
+    "cap": "3 per household per week; 1 per day on FAST apps",
+    "mail": "3-touch drip per new mover (day 7, 45, 90)"
+   },
+   "flighting": {
+    "always_on": "LSA + search + mail drip + CTV base weight",
+    "storm_triggers": "Automated rules engine: NWS alert -> budget multipliers by county from pp_demand_model; creative swap within 2 h",
+    "shoulder_seasons": "Membership drive months (Apr, Sep-Oct) with 'members skip the line' + renewal verticals",
+    "new_mover_drip": "Expanded to add-on territories within 30 days of close (rebrand + deed feed onboarding playbook)"
+   },
+   "measurement_plan": [
+    "Quarterly geo-holdout incrementality per channel; MMM-lite regression of weekly booked jobs on spend by county with weather controls (HDD/CDD from the repo's NOAA hubs)",
+    "Platform-level: cost per booked job, revenue per $, membership attach by source",
+    "Exit-readiness: a documented, attributed customer-acquisition engine (CAC by channel, payback) for the data room"
+   ],
+   "expected_cpa_usd": 197.2,
+   "expected_revenue_usd": 784642,
+   "model": {
+    "label": "est. - every output is modelled from benchmarks and labelled assumptions; recalibrate monthly against ServiceTitan",
+    "formulas": {
+     "booked_jobs": "sum over channels of leads x book_rate",
+     "expected_revenue_usd": "sum over channels of booked_jobs x avg_ticket (channel-specific)",
+     "expected_cpa_usd": "monthly_budget / booked_jobs",
+     "gross_profit_usd": "expected_revenue x gross_margin (0.40)",
+     "roas": "expected_revenue / monthly_budget",
+     "membership_adds": "booked_jobs x 0.60 new-customer share (assumption) x 0.25 attach",
+     "membership_annual_value_usd": "membership_adds x $20 x 12"
+    },
+    "outputs": {
+     "roas": 7.85,
+     "gross_profit_usd": 313857,
+     "gross_profit_per_ad_dollar": 3.14,
+     "membership_adds_per_month": 76.1,
+     "membership_annual_value_usd": 18256
+    },
+    "assumptions": {
+     "trade_mix": {
+      "value": {
+       "HVAC": 0.5,
+       "Plumbing": 0.35,
+       "Electrical": 0.15
+      },
+      "source": "assumption - replace with PP ServiceTitan job mix"
+     },
+     "lsa_cpl_usd": {
+      "value": 51.3,
+      "formula": "sum(mix[t] x SearchLight LSA CPL[t]) = 0.50x51 + 0.35x57 + 0.15x39",
+      "source": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     },
+     "lsa_book_rate": {
+      "value": 0.439,
+      "source": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     },
+     "avg_ticket_usd": {
+      "value": 1870.0,
+      "formula": "sum(mix[t] x SearchLight LSA ticket[t]) = 0.50x2110 + 0.35x1714 + 0.15x1434",
+      "source": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     },
+     "search_cpl_usd": {
+      "value": 104,
+      "source": "https://searchlightdigital.io/what-is-a-good-cost-per-lead-for-hvac-google-ads/"
+     },
+     "search_book_rate": {
+      "value": 0.417,
+      "source": "https://searchlightdigital.io/what-is-a-good-cost-per-lead-for-hvac-google-ads/"
+     },
+     "ctv_cpm_usd": {
+      "value": 30,
+      "basis": "eMarketer blended $26 + zip-targeting premium; Vibe $15-35, Disney $25-40",
+      "source": "https://adwave.com/resources/average-ctv-cpm-q2-2026"
+     },
+     "ctv_cost_per_visit_usd": {
+      "value": 12,
+      "basis": "assumption: ~1.8x MNTN DTC case ($6.73) because zip-narrow local audiences and lower purchase frequency",
+      "source": "https://mountain.com/case-studies/dtc-lingerie-brand-drives-profitable-growth-with-performance-tv/"
+     },
+     "visit_to_lead": {
+      "value": 0.0656,
+      "basis": "LocaliQ 2025 HVAC search conversion rate used as landing-page proxy",
+      "source": "https://localiq.com/blog/home-services-search-advertising-benchmarks/"
+     },
+     "ctv_frequency_per_month": {
+      "value": 6,
+      "basis": "assumption; Universal Ads recommends ~3x/week during 4-6 week flights - we cap lower to stretch reach",
+      "source": "https://www.universalads.com/article/advertise-on-tv-without-a-big-budget"
+     },
+     "mail_cost_per_piece_usd": {
+      "value": 0.75,
+      "basis": "assumption: postage ($0.26 EDDM floor; addressed Marketing Mail higher) + 6x11 print + new-mover data",
+      "source": "https://v2.4over4.com/guide/eddm-pricing-explained"
+     },
+     "mail_lead_rate_per_piece": {
+      "value": 0.01,
+      "basis": "assumption: ~1/4 of ANA prospect response (4-5%) and of vendor new-mover claim (4.9%) because a 'response' is not a booked-able lead",
+      "source": "https://www.piworld.com/post/revisiting-response-rates-why-direct-mails-roi-keeps-rising"
+     },
+     "mail_book_rate": {
+      "value": 0.44,
+      "basis": "LSA blended book rate as proxy",
+      "source": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/"
+     },
+     "mail_avg_ticket_usd": {
+      "value": 466.0,
+      "formula": "0.70 x $150 checkup (assumption) + 0.30 x $1,205 HVAC repair (Housecall Pro 2025)",
+      "source": "https://www.housecallpro.com/resources/hvac-industry-trends/"
+     },
+     "meta_cpl_usd": {
+      "value": 41.26,
+      "source": "https://www.wordstream.com/blog/facebook-ads-benchmarks-2025"
+     },
+     "meta_book_rate": {
+      "value": 0.25,
+      "basis": "assumption: form leads ~half LSA intent"
+     },
+     "meta_avg_ticket_usd": {
+      "value": 1205,
+      "source": "https://www.housecallpro.com/resources/hvac-industry-trends/"
+     },
+     "radio_cpl_usd": {
+      "value": 175,
+      "basis": "assumption: between non-branded search ($149) and CTV-implied CPL; $194/spot mid-market",
+      "source": "https://fitsmallbusiness.com/radio-advertising-costs/"
+     },
+     "gross_margin": {
+      "value": 0.4,
+      "basis": "Applause HQ: transactional repairs 35-45% GM (assumption for payback math)",
+      "source": "https://www.applausehq.com/blog/hvac-membership-programs"
+     },
+     "membership_attach": {
+      "value": 0.25,
+      "source": "https://www.applausehq.com/blog/hvac-membership-programs"
+     },
+     "membership_price_usd_month": {
+      "value": 20,
+      "basis": "midpoint of $15-30/month typical range",
+      "source": "https://www.applausehq.com/blog/hvac-membership-programs"
+     }
+    }
+   },
+   "payback_note": "est. Each month's $100,000 buys ~507 booked jobs and ~$784,642 revenue (ROAS 7.8x); at 40% gross margin that is ~$313,857 gross profit, so media pays back inside the month on a gross-profit basis if book rates hold. Scale only channels whose Phase 1-2 measured cost per booked job beats the plan by >=20%. Membership adds (~76/month, ~$18,256/yr recurring) are upside not counted in ROAS. Highest risk: CTV cost per visit (no public home-services benchmark) and mail lead rate - both are assumptions to be replaced by week-8 test reads.",
+   "retrieved": "2026-10-06",
+   "source_url": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "fh_ctv30_bottle_to_boardshort",
+   "kind": "fh_appendix",
+   "type": "ctv_spot",
+   "format": "ctv30",
+   "title": "Bottle to Boardshort",
+   "audience": "Lookalikes of FH purchasers (Shopify customer list upload to Vibe/MNTN), coastal + lake-region zips, Apr-Jul",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "Plastic bottle tumbling in surf, Fire Island light",
+     "voiceover": "This bottle washed up on a beach.",
+     "on_screen_text": ""
+    },
+    {
+     "t_sec": 6,
+     "visual": "Stylized process: bottle -> flake -> yarn -> fabric (animated, no factory claims beyond FH's published ones)",
+     "voiceover": "We turn bottles like it into the most comfortable trunks you'll ever wear.",
+     "on_screen_text": "Made from recycled plastic bottles"
+    },
+    {
+     "t_sec": 16,
+     "visual": "Friends jumping off a dock; close-up of the soft liner",
+     "voiceover": "No mesh. No chafe. Just summer.",
+     "on_screen_text": "Soft, non-mesh liner"
+    },
+    {
+     "t_sec": 24,
+     "visual": "End card with QR to a landing page and Fair Harbor logo",
+     "voiceover": "Fair Harbor. Scan to shop.",
+     "on_screen_text": "Scan to shop - fairharborclothing.com"
+    }
+   ],
+   "notes": "Claims limited to what FH publishes (recycled bottles, non-mesh liner, B Corp). Re-cut existing lifestyle footage via Vibe Studio / QuickFrame to keep production < $5k.",
+   "production_cost_estimate_usd": 5000,
+   "source_url": "https://www.ispot.tv/ad/b7Kx/fair-harbor-clothing-the-horror",
+   "source_urls": [
+    "https://www.ispot.tv/ad/b7Kx/fair-harbor-clothing-the-horror"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "fh_ctv15_captain_returns",
+   "kind": "fh_appendix",
+   "type": "ctv_spot",
+   "format": "ctv15",
+   "title": "The Captain Returns (retargeting cut)",
+   "audience": "Site visitors and cart abandoners matched to CTV households (retargeting), 7-day window",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "The sea-captain character from FH's 2022 national spot squints at the camera",
+     "voiceover": "You left your trunks in the cart. The sea does not forgive.",
+     "on_screen_text": ""
+    },
+    {
+     "t_sec": 7,
+     "visual": "Product hero, liner close-up",
+     "voiceover": "Fair Harbor. The world's most comfortable swimwear.",
+     "on_screen_text": "Still in your cart"
+    },
+    {
+     "t_sec": 12,
+     "visual": "QR end card",
+     "voiceover": "Scan to finish your order.",
+     "on_screen_text": "Scan to check out"
+    }
+   ],
+   "notes": "Reuses an owned character ('Sea Captain: The Horror', iSpot, published Feb 2022; tagline 'World's Most Comfortable Swimwear'). Confirm talent and usage rights before reuse.",
+   "production_cost_estimate_usd": 2500,
+   "source_url": "https://www.ispot.tv/ad/b7Kx/fair-harbor-clothing-the-horror",
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "fh_vertical_meta_tiktok",
+   "kind": "fh_appendix",
+   "type": "social_vertical",
+   "format": "social_vertical",
+   "title": "The Chafe Test (9:16, Meta Reels / TikTok / Shorts)",
+   "audience": "Prospecting broad + Advantage+; creator whitelisting",
+   "script": [
+    {
+     "t_sec": 0,
+     "visual": "Creator in old mesh-lined trunks running on sand, wincing",
+     "voiceover": "Mesh liner, mile one.",
+     "on_screen_text": "Mesh liner vs. Fair Harbor"
+    },
+    {
+     "t_sec": 3,
+     "visual": "Same creator in FH, running easily",
+     "voiceover": "Fair Harbor liner, mile one... and mile five.",
+     "on_screen_text": "Soft liner. Zero chafe."
+    },
+    {
+     "t_sec": 8,
+     "visual": "Hand holding a bottle next to trunks",
+     "voiceover": "And they're made from recycled bottles.",
+     "on_screen_text": "Made from recycled plastic"
+    },
+    {
+     "t_sec": 12,
+     "visual": "Product carousel",
+     "voiceover": "Link's right there.",
+     "on_screen_text": "Shop now"
+    }
+   ],
+   "notes": "Benchmarks for planning: Triple Whale Apparel & Accessories median CPA $36.76 (2025, Meta); keep CTV and Meta in one MMM/incrementality read (Haus or Triple Whale) rather than platform ROAS.",
+   "production_cost_estimate_usd": 1500,
+   "source_url": "https://www.triplewhale.com/reports-guides/fashion-industry-benchmarks-2025",
+   "retrieved": "2026-10-06",
+   "retrieval_status": "search_snippet"
+  },
+  {
+   "id": "fh_wholesale_coop",
+   "kind": "fh_appendix",
+   "type": "wholesale_coop",
+   "title": "Stockist co-op: 'Find it near you' CTV + retailer geo-fence",
+   "audience": "Households within ~10 miles of FH wholesale doors (Nordstrom, Saks and ~250 specialty retailers per 2022 brand data) in Apr-Jun sell-in window",
+   "mechanics": [
+    "FH funds 50-70% of a zip-targeted CTV flight around each key stockist's doors; retailer contributes co-op/MDF or display placement (terms to negotiate)",
+    "End card: 'Now at {retailer}, {town}' with QR to a store-locator page; same creative runs on Universal Ads/Vibe with zip lists per door",
+    "Read: retailer sell-through in exposed vs holdout door clusters (geo holdout), plus DTC lift in the same zips",
+    "Give retailers the read-out - turns marketing spend into a wholesale-account retention tool"
+   ],
+   "notes": "Wholesale footprint is from the repo's bsp_firm profile (2022 figures); refresh the door list before planning.",
+   "source_url": "https://www.universalads.com/article/advertise-on-tv-without-a-big-budget",
+   "source_urls": [
+    "https://www.universalads.com/article/advertise-on-tv-without-a-big-budget",
+    "https://vibe.co/llms.txt"
+   ],
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "fh_ctv_benchmarks",
+   "kind": "fh_appendix",
+   "type": "benchmarks",
+   "title": "DTC apparel CTV benchmarks",
+   "benchmarks": [
+    {
+     "metric": "CTV CPM (blended market)",
+     "value": 26,
+     "unit": "usd_cpm",
+     "range": [
+      15,
+      45
+     ],
+     "source_url": "https://adwave.com/resources/average-ctv-cpm-q2-2026"
+    },
+    {
+     "metric": "ROAS, DTC lingerie brand on MNTN",
+     "value": 2.3,
+     "unit": "x",
+     "cost_per_site_visit_usd": 6.73,
+     "source_url": "https://mountain.com/case-studies/dtc-lingerie-brand-drives-profitable-growth-with-performance-tv/"
+    },
+    {
+     "metric": "Tuckernuck (apparel) Q4 2022 on MNTN",
+     "value": {
+      "conversion_rate_yoy": 3.04,
+      "roas_q3_to_q4": 0.56,
+      "cost_per_visit_change": -0.25
+     },
+     "unit": "relative change",
+     "source_url": "https://mountain.com/case-studies/tuckernuck-celebrates-a-304-yoy-increase-in-q4-conversion-rate-with-performance-tv/"
+    },
+    {
+     "metric": "J.LINDEBERG / Maison MRKT on MNTN: ROAS vs goal",
+     "value": 9,
+     "unit": "x goal",
+     "source_url": "https://mountain.com/case-studies/style-meet-ctv-j-lindeberg-and-maison-mrkt-exceed-roas-goal-by-9x-with-mntn/"
+    },
+    {
+     "metric": "Meta Apparel & Accessories median CPA (2025)",
+     "value": 36.76,
+     "unit": "usd",
+     "source_url": "https://www.triplewhale.com/reports-guides/fashion-industry-benchmarks-2025",
+     "retrieval_status": "search_snippet"
+    }
+   ],
+   "planning_range": {
+    "ctv_roas": [
+     1.5,
+     3.0
+    ],
+    "basis": "est. - case studies are vendor-selected winners; plan at the low end and require a geo holdout"
+   },
+   "source_url": "https://mountain.com/case-studies/dtc-lingerie-brand-drives-profitable-growth-with-performance-tv/",
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "fh_test_plan",
+   "kind": "fh_appendix",
+   "type": "test_plan",
+   "title": "FH 6-week CTV pilot",
+   "plan": {
+    "budget_usd": 30000,
+    "weeks": 6,
+    "split": "Vibe 60% (prospecting lookalikes + retargeting) / MNTN 40% (Verified Visits)",
+    "holdout": "20% of top-50 DTC zips dark",
+    "kpis": [
+     "new-customer CPA vs Meta",
+     "incremental DTC revenue in exposed zips",
+     "branded search lift"
+    ],
+    "stop_rule": "pause if blended new-customer CPA > 1.5x Meta after week 4"
+   },
+   "source_url": "https://help.vibe.co/en/articles/6134952-budget-and-pricing",
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "spot_storm_ready",
+   "kind": "spot_render",
+   "title": "Storm Ready",
+   "voice_text": "When the forecast turns, our crews are already rolling. One Hour Heating and Air Conditioning stages technicians before the storm hits, so your heat stays on. Always on time, or you don't pay a dime.",
+   "music_mood": "low tense synth pulse resolving to warm acoustic swell",
+   "scenes": [
+    {
+     "duration_s": 3,
+     "headline": "Storm warning tonight",
+     "sub": "NWS alert for your county, live from the weather feed",
+     "style": "storm",
+     "cta": false
+    },
+    {
+     "duration_s": 4,
+     "headline": "Crews already staged",
+     "sub": "Technicians pre-positioned before the first flakes fall",
+     "style": "night",
+     "cta": false
+    },
+    {
+     "duration_s": 4,
+     "headline": "Your heat stays on",
+     "sub": "Warm living room, steady seventy degrees, nobody waiting",
+     "style": "home",
+     "cta": false
+    },
+    {
+     "duration_s": 4,
+     "headline": "Book before it hits",
+     "sub": "Always On Time... Or You Don't Pay A Dime!",
+     "style": "brand",
+     "cta": true
+    }
+   ],
+   "brand_rules_ref": "one_hour",
+   "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  },
+  {
+   "id": "spot_new_home",
+   "kind": "spot_render",
+   "title": "New Home, New Comfort",
+   "voice_text": "New house? Meet its furnace. One Hour Heating and Air Conditioning will check every system on time, so your first winter here is a warm one. Scan to book your welcome visit.",
+   "music_mood": "light upbeat acoustic guitar, hopeful",
+   "scenes": [
+    {
+     "duration_s": 3,
+     "headline": "Just moved in?",
+     "sub": "Boxes everywhere and a furnace you have never met",
+     "style": "home",
+     "cta": false
+    },
+    {
+     "duration_s": 4,
+     "headline": "Meet your new systems",
+     "sub": "Heating, cooling and water heater checked in one visit",
+     "style": "sun",
+     "cta": false
+    },
+    {
+     "duration_s": 4,
+     "headline": "On time, every time",
+     "sub": "You pick the window and we arrive in it",
+     "style": "home",
+     "cta": false
+    },
+    {
+     "duration_s": 4,
+     "headline": "Scan for welcome visit",
+     "sub": "New-neighbor tune-up offer for recent Central PA buyers",
+     "style": "brand",
+     "cta": true
+    }
+   ],
+   "brand_rules_ref": "one_hour",
+   "source_url": "https://www.onehourheatandair.com/southeast-pa/about-us/our-guarantees",
+   "retrieved": "2026-10-06",
+   "retrieval_status": "fetched"
+  }
+ ]
+}

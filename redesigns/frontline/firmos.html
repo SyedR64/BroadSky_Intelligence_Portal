@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FirmOS by Frontline: the law firm's operating system (concept)</title>
+<meta name="description" content="Concept: FirmOS unifies an AI Tier-0 service desk, a live security score, LEDES eBilling pre-flight and A/R automation, and a client portal for law firms. Includes the value-creation math for Broad Sky.">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%234b3bff'/%3E%3Cpath d='M11 9.5h11M11 9.5v13M11 16h7.5' stroke='%23fff' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css?v=4">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-desk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0116 0v2"/><path d="M4 14h3v5H5.5A1.5 1.5 0 014 17.5zM20 14h-3v5h1.5a1.5 1.5 0 001.5-1.5z"/><path d="M17 19c0 1.4-1.8 2-4 2"/></symbol>
+<symbol id="i-server" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4" width="17" height="6.5" rx="1.6"/><rect x="3.5" y="13.5" width="17" height="6.5" rx="1.6"/><path d="M7.5 7.25h.01M7.5 16.75h.01M11 7.25h6M11 16.75h6"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.4 8.2-8 9-4.6-.8-8-4-8-9V6z"/><path d="M8.8 12.2l2.2 2.2 4.3-4.4"/></symbol>
+<symbol id="i-invoice" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V11M10 20V5M16 20v-6M21 20H3"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 018 0v3"/></symbol>
+<symbol id="i-portal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 8.5h18M8 21h8M12 17v4"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+<symbol id="i-cash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.8"/><path d="M6 9.5v.01M18 14.5v.01"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5"/><path d="M16 4.8a3.5 3.5 0 010 6.4M18.5 14.8c1.6.8 2.7 2.6 3 5.2"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0119 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+<symbol id="i-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h11v17.5L12 17l-5.5 4z"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-flow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="6" r="2.5"/><circle cx="18.5" cy="18" r="2.5"/><path d="M8 6h5a3 3 0 013 3v6.5"/></symbol>
+<symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L10 14M21 3l-7 18-4-7-7-4z"/></symbol>
+<symbol id="i-logo" viewBox="0 0 32 32"><defs><linearGradient id="lg-fl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4b3bff"/><stop offset="1" stop-color="#9b5cff"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#lg-fl)"/><path d="M11 9.5h11M11 9.5v13M11 16h7.5" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="22.5" cy="22" r="2.2" fill="#7cf0c0"/></symbol>
+</defs></svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="concept" id="concept" role="region" aria-label="Concept notice">
+  <div class="wrap">
+    <span class="tag">Concept</span>
+    <span class="msg">Concept redesign proposed by Syed Rizvi for the Broad Sky Portfolio Resource Group — not an official site.</span>
+    <span class="links"><a href="../../app.html">Portal</a><a href="../index.html">Site concepts</a><a href="../../#os">OS program</a><a href="../../#briefing">Briefing</a></span>
+    <button class="x" id="concept-x" aria-label="Dismiss concept notice"><svg width="14" height="14"><use href="#i-x"/></svg></button>
+  </div>
+</div>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="Frontline Managed Services home"><svg><use href="#i-logo"/></svg><span>Frontline<small>FirmOS</small></span></a>
+    <nav aria-label="FirmOS">
+      <ul id="nav-menu">
+        <li><a href="#modules">Modules</a></li>
+        <li><a href="#demo">Tier-0 demo</a></li>
+        <li><a href="#score">Score card</a></li>
+        <li><a href="#ebilling">eBilling</a></li>
+        <li><a href="#portal">Portal</a></li>
+        <li><a href="#growth">Growth</a></li>
+        <li><a class="os" href="#value">Value math <span class="new">PRG</span></a></li>
+      </ul>
+    </nav>
+    <div class="cta">
+      <a class="btn btn-s btn-sm" href="index.html">Frontline site</a>
+      <a class="btn btn-p btn-sm" href="index.html#contact"><span class="hide-m">Request a demo</span><span class="show-m">Demo</span></a>
+    </div>
+    <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu"><span></span></button>
+  </div>
+</header>
+
+<main id="main">
+<!-- ═══ HERO ═══ -->
+<section class="os-hero" aria-labelledby="os-hero-h">
+  <div class="wrap">
+    <span class="logo-os"><i>OS</i>FirmOS <span style="color:var(--mute);font-weight:500">by Frontline</span></span>
+    <h1 id="os-hero-h">One operating system for the firm's <span class="grad">desk, security and cash.</span></h1>
+    <p class="lede">FirmOS puts a law firm's service desk, security posture and revenue cycle on one data layer. AI resolves the routine work at Tier-0, analysts handle the judgment calls, and partners see every number in one portal.</p>
+    <div class="actions">
+      <a class="btn btn-p" href="#demo">Run the live demo <svg><use href="#i-arrow"/></svg></a>
+      <a class="btn btn-s" href="#value">See the value-creation math</a>
+    </div>
+    <div class="hk" id="hero-kpis">
+      <div class="card c"><div class="lab">Net first-level resolution</div><div class="val"><s>74%</s><svg><use href="#i-arrow"/></svg>90%</div><div class="src">MetricNet benchmark → analyst target <span class="est">est.</span></div></div>
+      <div class="card c"><div class="lab">eBilling invoice rejection rate</div><div class="val"><s>18%</s><svg><use href="#i-arrow"/></svg>11%</div><div class="src">Elite research, 2025 vs 2024 <span class="est">est.</span></div></div>
+      <div class="card c"><div class="lab">Days from invoice to payment</div><div class="val"><s>62</s><svg><use href="#i-arrow"/></svg>50</div><div class="src">Elite eBillingHub customers <span class="est">est.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MODULES ═══ -->
+<section class="alt" id="modules" aria-labelledby="mod-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">What it is</span>
+      <h2 id="mod-h">Six modules on one data layer.</h2>
+      <p class="lede">FirmOS builds on HELIX, the AI-optimized desk Frontline launched at ILTACON in August 2025, and on the PSA, RMM and eBilling tools Frontline already runs. It adds the layer that connects them and shows the results to the client.</p>
+    </div>
+    <div class="mods">
+      <article class="card mod rv"><span class="ico"><svg><use href="#i-spark"/></svg></span><h3>Tier-0 AI desk</h3><p>Resolves password, MFA, access, DMS and printer requests in seconds. It answers from each firm's runbooks and hands off to a human with full context.</p><span class="tag">Moves: first-level resolution · cost per ticket</span></article>
+      <article class="card mod rv"><span class="ico"><svg><use href="#i-shield"/></svg></span><h3>Posture</h3><p>Continuous control monitoring that produces a live security score and client-ready evidence for outside counsel guidelines and cyber insurers.</p><span class="tag">Moves: security attach · renewal rate</span></article>
+      <article class="card mod rv"><span class="ico"><svg><use href="#i-invoice"/></svg></span><h3>LEDES pre-flight</h3><p>Checks every invoice line against the client's billing guidelines, UTBMS codes and rate caps before it reaches the client's e-billing portal.</p><span class="tag">Moves: rejection rate · realization</span></article>
+      <article class="card mod rv"><span class="ico"><svg><use href="#i-cash"/></svg></span><h3>Collect</h3><p>Ranks A/R by risk, drafts appeals for rejected lines, and automates cash application across bank, billing system and portal.</p><span class="tag">Moves: days to pay · write-offs</span></article>
+      <article class="card mod rv"><span class="ico"><svg><use href="#i-portal"/></svg></span><h3>Client portal</h3><p>Tickets, SLAs, security posture and the billing pipeline in one view built for the firm's COO, CIO and CFO.</p><span class="tag">Moves: self-serve rate · NPS</span></article>
+      <article class="card mod rv"><span class="ico"><svg><use href="#i-chart"/></svg></span><h3>Insight</h3><p>Quarterly review packs assembled from the data, plus early warnings when a client's usage or sentiment points to churn risk.</p><span class="tag">Moves: gross churn &lt;10% · upsell</span></article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DEMO: TIER-0 ═══ -->
+<section id="demo" aria-labelledby="demo-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Interactive demo · Tier-0 deflection simulator</span>
+      <h2 id="demo-h">Watch the desk sort itself.</h2>
+      <p class="lede">Tickets arrive in the mix a law firm generates. Turn on the FirmOS capabilities and watch work move from Level 2 to Level 1, and from Level 1 to Tier-0 automation. The economics update at Frontline scale.</p>
+    </div>
+    <div class="demo rv">
+      <div class="demo-bar"><span class="lights"><i></i><i></i><i></i></span><span class="ttl">firmos / service-desk / live-routing</span><span class="r"><span class="chip-live"><span class="dot pulse"></span>Simulating</span><button class="btn btn-s btn-sm" id="sim-pause" type="button">Pause</button></span></div>
+      <div class="demo-in">
+        <div class="side">
+          <div class="field"><label for="d-kb">Runbook &amp; knowledge coverage <output id="o-kb"></output></label><input type="range" id="d-kb" min="0" max="100" step="5" value="55"><small>Share of each firm's procedures written as machine-readable runbooks.</small></div>
+          <div class="controls" id="d-toggles">
+            <label class="ctl"><span class="t">Identity automation<small>Resets, MFA and unlocks via Rewst workflows</small></span><input type="checkbox" data-k="id" checked></label>
+            <label class="ctl"><span class="t">DMS &amp; practice-app connectors<small>iManage / NetDocuments access, Elite / Aderant sync</small></span><input type="checkbox" data-k="dms" checked></label>
+            <label class="ctl"><span class="t">Joiner–mover–leaver flows<small>Onboarding and departures end to end</small></span><input type="checkbox" data-k="jml"></label>
+            <label class="ctl"><span class="t">Analyst copilot<small>Suggested fixes for Level 1 analysts</small></span><input type="checkbox" data-k="cop"></label>
+          </div>
+          <div class="field"><label for="d-vol">Tickets per year <output id="o-vol"></output></label><input type="range" id="d-vol" min="500000" max="3000000" step="100000" value="1500000"><small>Frontline handled 1.5M tickets in one year in 2019 (company history, <span class="mono">fl-010</span>).</small></div>
+          <div class="field"><label for="d-cf">Frontline cost vs NA benchmark <output id="o-cf"></output></label><input type="range" id="d-cf" min="20" max="100" step="5" value="35"><small>Offshore-weighted delivery lowers cost per ticket. Assumption <span class="est">est.</span></small></div>
+          <div class="field"><label for="d-ret">Savings retained as margin <output id="o-ret"></output></label><input type="range" id="d-ret" min="20" max="100" step="5" value="60"><small>The rest is shared with clients through price or scope. Assumption <span class="est">est.</span></small></div>
+        </div>
+        <div class="main">
+          <div class="mstat">
+            <div class="c"><span>Tier-0 deflection</span><b id="s-def">—</b><small id="s-def-d"></small></div>
+            <div class="c"><span>Net first-level resolution</span><b id="s-flr">—</b><small>baseline 74%</small></div>
+            <div class="c"><span>Blended cost / ticket</span><b id="s-cpt">—</b><small id="s-cpt-d"></small></div>
+            <div class="c"><span>EBITDA impact / yr</span><b id="s-ebitda">—</b><small id="s-ebitda-d" style="color:var(--warn)">est.</small></div>
+          </div>
+          <div class="lanes">
+            <div class="lane"><h5>TIER-0 · AI <span id="n-t0">0</span></h5><div id="lane-t0"></div></div>
+            <div class="lane"><h5>LEVEL 1 <span id="n-l1">0</span></h5><div id="lane-l1"></div></div>
+            <div class="lane"><h5>LEVEL 2+ <span id="n-l2">0</span></h5><div id="lane-l2"></div></div>
+          </div>
+          <div class="card" style="margin-top:12px;padding:14px 16px"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline"><b style="color:var(--ink);font-size:13.5px">Routing by request type</b><span class="src"><span style="color:#4b3bff">■</span> Tier-0 &nbsp;<span style="color:#7cd9b4">■</span> Level 1 &nbsp;<span style="color:#f6b65b">■</span> Level 2+ &nbsp;· share of volume</span></div><div id="d-mix" class="bars"></div></div>
+          <p class="src" style="margin-top:14px">Cost per ticket $22 (Level 1) and $62 (Level 2), MetricNet via HDI (<a href="https://www.thinkhdi.com/~/media/HDICorp/Files/Library-Archive/Insider%20Articles/First%20Level%20Resolution.pdf" target="_blank" rel="noopener">source</a>; <span class="mono">kb-fl-3</span>, 2011 data, directional). Baseline net FLR 74% (same source). The ticket mix, automation rates and Tier-0 cost of $3 are illustrative assumptions. Outputs are <span class="est">est.</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SCORE CARD ═══ -->
+<section class="alt" id="score" aria-labelledby="score-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Firm security score card</span>
+      <h2 id="score-h">A security score the client's auditor can read.</h2>
+      <p class="lede">If you took the self-assessment on the Frontline site, your answers are loaded here. Click any control to change its status. The score, grade and NIST CSF 2.0 function view update instantly, the way they would from live telemetry.</p>
+    </div>
+    <div class="demo rv">
+      <div class="demo-bar"><span class="lights"><i></i><i></i><i></i></span><span class="ttl" id="sc-ttl">firmos / posture / sample-firm</span><span class="r"><span class="chip-live"><span class="dot"></span><span id="sc-upd">Updated 3 min ago</span></span></span></div>
+      <div class="demo-in sc">
+        <div class="side" style="justify-items:center;text-align:center">
+          <div class="ring" id="sc-ring"></div>
+          <div><span class="tier" id="sc-tier"></span></div>
+          <div style="width:100%"><div class="src" style="text-align:left;margin-bottom:6px">Six-month trend <span class="ill">illustrative</span></div><svg id="sc-spark" viewBox="0 0 280 60" style="width:100%;height:60px" aria-hidden="true"></svg></div>
+          <div style="width:100%" id="sc-func"></div>
+          <button class="btn btn-d" type="button" id="sc-pack" style="width:100%"><svg><use href="#i-doc"/></svg>Generate client evidence pack</button>
+          <p class="src" id="sc-pack-out" aria-live="polite" style="margin:0"></p>
+        </div>
+        <div class="main">
+          <div class="controls" id="sc-list"></div>
+          <p class="src" style="margin-top:12px" id="sc-src">Weights match the Frontline self-assessment. Mapping is at the NIST CSF 2.0 function level. Sample answers are used when no self-assessment is stored in this browser.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ EBILLING ═══ -->
+<section id="ebilling" aria-labelledby="eb-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">LEDES eBilling &amp; A/R automation</span>
+      <h2 id="eb-h">Catch the rejection before the client's portal does.</h2>
+      <p class="lede">Law firms saw e-billing rejection rates rise from 11% to 18% in 2025 as clients put AI to work on invoice review (Elite research). FirmOS runs the client's guidelines first, fixes what it can, routes the rest to the right timekeeper, and then works the appeal and the cash.</p>
+    </div>
+    <div class="flow rv" aria-label="eBilling flow">
+      <div class="fstep"><svg><use href="#i-clock"/></svg><b>Time entry</b>Elite · Aderant</div>
+      <div class="fstep"><svg><use href="#i-users"/></svg><b>Pre-bill review</b>Billing partner</div>
+      <div class="fstep os"><svg><use href="#i-doc"/></svg><b>LEDES build</b>1998B / 2000</div>
+      <div class="fstep os"><svg><use href="#i-shield"/></svg><b>Pre-flight</b>Guidelines · UTBMS</div>
+      <div class="fstep"><svg><use href="#i-send"/></svg><b>Submit</b>Client portal</div>
+      <div class="fstep os"><svg><use href="#i-flow"/></svg><b>Appeal</b>Auto-drafted</div>
+      <div class="fstep os"><svg><use href="#i-cash"/></svg><b>Collect</b>Cash applied</div>
+    </div>
+    <div class="card panel rv">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><div><h3>Pre-flight on a sample invoice</h3><div class="sub">LEDES 1998B · fictional matter and timekeepers · <span class="ill">illustrative</span></div></div><span style="display:flex;gap:8px"><button class="btn btn-s btn-sm" id="lf-run" type="button">Re-run pre-flight</button><button class="btn btn-p btn-sm" id="lf-fix" type="button" disabled>Apply auto-fixes</button></span></div>
+      <div class="pf-grid">
+        <div class="ledes" id="lf-code" tabindex="0" aria-label="Sample LEDES invoice lines"></div>
+        <div class="checks-out" id="lf-checks" aria-live="polite"></div>
+      </div>
+    </div>
+    <div class="card panel rv" style="margin-top:20px">
+      <div class="grid2" style="align-items:start">
+        <div>
+          <h3>Realization math</h3>
+          <div class="sub">One firm's e-billed fees. Benchmarks from Elite research; everything else is an editable assumption.</div>
+          <div style="display:grid;gap:16px;margin-top:18px">
+            <div class="field"><label for="e-fees">Fees billed through e-billing portals <output id="o-fees"></output></label><input type="range" id="e-fees" min="10" max="800" step="10" value="150"><small>A 300-attorney insurance-defense or corporate firm might e-bill $100–200M a year. Illustrative.</small></div>
+            <div class="field"><label for="e-wo">Share of rejected value written off <output id="o-wo"></output></label><input type="range" id="e-wo" min="2" max="40" step="1" value="15"><small>After appeals and rebills. Assumption <span class="est">est.</span></small></div>
+            <div class="field"><label for="e-coc">Cost of capital <output id="o-coc"></output></label><input type="range" id="e-coc" min="3" max="14" step="0.5" value="8"></div>
+          </div>
+        </div>
+        <div>
+          <div class="math" id="e-math"></div>
+          <p class="src" style="margin-top:12px">Rejection rate 18% → 11% (<span class="mono">kb-fl-1</span>) and days to pay 62 → 50 (<span class="mono">kb-fl-2</span>), <a href="https://www.elite.com/insights/news/new-elite-research-law-firms-see-64-climb-in-rejection-rates-as-client-ai-billing-scrutiny-advances" target="_blank" rel="noopener">Elite research</a>. Rates are applied to invoice value as a simplification. All outputs <span class="est">est.</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CLIENT PORTAL ═══ -->
+<section class="alt" id="portal" aria-labelledby="pt-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Client portal</span>
+      <h2 id="pt-h">The COO, the CIO and the CFO, on one screen.</h2>
+      <p class="lede">The portal is where FirmOS proves its value every month. It cuts ticket cost through self-serve, shortens quarterly reviews, and gives the client a reason to renew. Click through the tabs.</p>
+    </div>
+    <div class="demo rv">
+      <div class="demo-bar"><span class="lights"><i></i><i></i><i></i></span><span class="ttl">portal.frontline / hartwell-pryce</span><span class="r"><span class="ill">Fictional client · illustrative data</span></span></div>
+      <div class="portal">
+        <div class="pnav" role="tablist" aria-label="Portal sections">
+          <div class="fb"><svg width="22" height="22"><use href="#i-logo"/></svg>Hartwell &amp; Pryce</div>
+          <button role="tab" aria-selected="true" data-t="ov"><svg><use href="#i-chart"/></svg>Overview</button>
+          <button role="tab" aria-selected="false" data-t="tk"><svg><use href="#i-desk"/></svg>Tickets</button>
+          <button role="tab" aria-selected="false" data-t="sc"><svg><use href="#i-shield"/></svg>Security</button>
+          <button role="tab" aria-selected="false" data-t="bl"><svg><use href="#i-invoice"/></svg>Billing</button>
+        </div>
+        <div class="pmain" id="pmain" role="tabpanel"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GROWTH ═══ -->
+<section id="growth" aria-labelledby="gr-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Growth motion · mid-size firms</span>
+      <h2 id="gr-h">The next 900 clients have 40 to 350 attorneys.</h2>
+      <p class="lede">Frontline already serves more than half of the AM Law 200. The growth runway is mid-size firms that need enterprise-grade security and billing operations but have no CIO bench. FirmOS's free posture score is the way in: assessment first, then the bundle.</p>
+    </div>
+    <div class="mstat rv" id="g-kpis"></div>
+    <div class="grid2" style="margin-top:20px">
+      <div class="card panel rv"><h3>Attorneys by metro</h3><div class="sub" id="g-metro-sub">Researched firms beyond AM Law 200 coverage</div><div class="bars" id="g-metro"></div></div>
+      <div class="card panel rv"><h3>Recommended first offer</h3><div class="sub">From each firm's size, client base and signals</div><div class="bars" id="g-offer"></div><h3 style="margin-top:24px">Firm size bands</h3><div class="bars" id="g-size"></div></div>
+    </div>
+    <div class="grid2" style="margin-top:20px">
+      <div class="card panel rv">
+        <h3>Top-fit targets</h3><div class="sub">Ranked by the research fit score: size, insurance-defense eBilling intensity, offices, signals, proximity to a Frontline hub</div>
+        <div class="ptable-wrap" style="margin-top:14px"><table class="ptable" id="g-top"></table></div>
+      </div>
+      <div class="card panel rv">
+        <h3>Pipeline math</h3><div class="sub">What the researched universe is worth if FirmOS converts part of it</div>
+        <div style="display:grid;gap:16px;margin:18px 0">
+          <div class="field"><label for="g-acv">Bundle ACV per attorney <output id="o-acv"></output></label><input type="range" id="g-acv" min="1500" max="8000" step="250" value="3500"><small>Managed IT + desk + security + RCM. Single-line offers are weighted lower. Assumption <span class="est">est.</span></small></div>
+          <div class="field"><label for="g-win">Win rate over 3 years <output id="o-win"></output></label><input type="range" id="g-win" min="5" max="40" step="1" value="15"></div>
+          <div class="field"><label for="g-mar">Contribution margin on new ARR <output id="o-mar"></output></label><input type="range" id="g-mar" min="10" max="40" step="1" value="22"></div>
+        </div>
+        <div class="math" id="g-math"></div>
+      </div>
+    </div>
+    <p class="src" style="margin-top:14px" id="g-src">Source: <span class="mono">data/research/fl_midsize_firms.json</span>.</p>
+  </div>
+</section>
+
+<!-- ═══ VALUE ═══ -->
+<section class="alt" id="value" aria-labelledby="val-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Value-creation math · for the Broad Sky PRG</span>
+      <h2 id="val-h">Defend the premium, then add to it.</h2>
+      <p class="lede" id="val-lede">Broad Sky's entry multiple is estimated at 12–15x, already a premium for a vertical-specialist MSP. FirmOS has to protect that premium at exit and add a measured amount on top. Every input below starts from the evidence file, and every output is an estimate.</p>
+    </div>
+    <div class="grid2">
+      <div class="card panel rv">
+        <h3>Assumptions</h3><div class="sub">Defaults from <span class="mono">ra-fl</span> (roadmap assumption) and <span class="mono">frontline_filings</span>. Drag to stress-test.</div>
+        <div style="display:grid;gap:16px;margin-top:18px" id="v-in">
+          <div class="field"><label for="v-rev">Revenue base <output id="o-rev"></output></label><input type="range" id="v-rev" min="100" max="140" step="5" value="120"><small>2025 run-rate est. $100–140M (low confidence)</small></div>
+          <div class="field"><label for="v-ebitda">Adj. EBITDA before FirmOS <output id="o-ebitda"></output></label><input type="range" id="v-ebitda" min="16" max="20" step="0.5" value="18"><small>$16–20M at close (medium confidence)</small></div>
+          <div class="field"><label for="v-up">EBITDA uplift, % of revenue <output id="o-up"></output></label><input type="range" id="v-up" min="0.5" max="3.5" step="0.1" value="2.2"><small>ra-fl range 1.5–3.0%</small></div>
+          <div class="field"><label for="v-mult">Exit multiple without FirmOS <output id="o-mult"></output></label><input type="range" id="v-mult" min="9" max="15" step="0.5" value="12"><small>Entry est. 12–15x; private MSP median 8.9x, 10–11.2x at $100M+ deal size (Aventis)</small></div>
+          <div class="field"><label for="v-exp">Multiple expansion from FirmOS <output id="o-exp"></output></label><input type="range" id="v-exp" min="0" max="2" step="0.1" value="1.0"><small>ra-fl 0.5–1.5 turns; capped well below the 3.0-turn typical-to-premium spread</small></div>
+          <div class="field"><label for="v-inv">Investment <output id="o-inv"></output></label><input type="range" id="v-inv" min="1" max="4" step="0.25" value="2.25"><small>ra-fl $1.5–3.0M over the build, 6–12 months to value</small></div>
+        </div>
+      </div>
+      <div class="card panel rv">
+        <h3>Exit enterprise value bridge</h3><div class="sub">Base case versus FirmOS case <span class="est">est.</span></div>
+        <svg id="v-water" class="water" viewBox="0 0 560 280" role="img" aria-label="Enterprise value bridge"></svg>
+        <div class="math" id="v-math" style="margin-top:12px"></div>
+        <div class="ptable-wrap" style="margin-top:16px"><table class="ptable" id="v-scen"></table></div>
+      </div>
+    </div>
+    <div class="card panel rv" style="margin-top:20px">
+      <div class="grid2" style="align-items:start">
+        <div><h3>Public comps: EBITDA margin</h3><div class="sub">Legal / BPO / managed-services peers, latest fiscal year (SEC XBRL), versus Frontline est. 13–18%</div><div class="bars" id="v-comps"></div></div>
+        <div><div class="math"><div class="ln tot"><span>Read-across<small>The est. Frontline margin sits mid-pack. Adding the ra-fl 1.5–3.0 pts would put it at or above the top of the listed peers. That is the profile buyers pay a premium for.</small></span><b>13–18% → 15–21%</b></div></div><p class="src" id="v-comps-src" style="margin-top:12px"></p></div>
+      </div>
+    </div>
+    <div class="card panel rv" style="margin-top:20px"><h3>Evidence behind the multiple</h3><div class="sub">From <span class="mono">serviceos_evidence.json</span>, items that apply to Frontline</div><div id="v-ev" class="ev-grid"></div></div>
+  </div>
+</section>
+
+<!-- ═══ STACK ═══ -->
+<section id="stack" aria-labelledby="st-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Build vs buy</span>
+      <h2 id="st-h">Buy the plumbing. Build the layer clients see.</h2>
+      <p class="lede">Commodity capabilities come from proven vendors Frontline can price today. The proprietary layer is the data model, the Tier-0 agent on top of HELIX, the scoring and the portal. That layer is what a buyer will diligence.</p>
+    </div>
+    <div class="card stack-wrap rv" style="overflow:hidden"><table class="stack-tbl" id="stack-tbl"></table></div>
+  </div>
+</section>
+
+<!-- ═══ ROADMAP ═══ -->
+<section class="alt" id="roadmap" aria-labelledby="rm-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">12-month roadmap</span>
+      <h2 id="rm-h">Value in two quarters, platform in four.</h2>
+      <p class="lede">The plan is sequenced so the first EBITDA comes from the desk, which is fast and measurable. The second comes from the revenue cycle. The growth motion starts once the posture score is live in the portal.</p>
+    </div>
+    <div class="gantt-wrap rv"><div class="gantt" id="gantt"></div></div>
+  </div>
+</section>
+
+<!-- ═══ RISKS ═══ -->
+<section id="risks" aria-labelledby="rk-h">
+  <div class="wrap faq">
+    <div>
+      <span class="eyebrow">Risks</span>
+      <h2 id="rk-h">What could go wrong, and the control for each.</h2>
+      <p class="lede">Law firms buy on trust. Each risk below has a named mitigation that ships with the module, not after it.</p>
+    </div>
+    <div id="risk-list"></div>
+  </div>
+</section>
+
+<!-- ═══ WHY A BUYER PAYS ═══ -->
+<section class="dark" id="exit" aria-labelledby="ex-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Why a buyer pays for this at exit</span>
+      <h2 id="ex-h">Proprietary operating data is what turns a services company into a platform.</h2>
+    </div>
+    <div class="buyer">
+      <div class="c rv"><b>Margin a buyer can underwrite</b><p>Tier-0 deflection and Level 1 resolution are measured per ticket, per client, every month. The EBITDA bridge is auditable, not an add-back.</p></div>
+      <div class="c rv"><b>Retention with evidence</b><p>Posture scores and quarterly review packs give clients a reason to renew. Gross churn held under 10% is the threshold MSP buyers watch (Aventis).</p></div>
+      <div class="c rv"><b>A repeatable growth engine</b><p>An assessment-led motion into 143 researched mid-size firms, with fit scores, shows organic growth that doesn't depend on M&amp;A.</p></div>
+      <div class="c rv"><b>Security and RCM attach</b><p>Security is the top revenue line for high-margin MSPs (Kaseya 2025). Revenue-cycle services are legal-specific and hard for generalist MSPs to copy.</p></div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:36px"><a class="btn btn-p" href="../../app.html#/techos/overview">Open the tech-enablement view in the portal <svg><use href="#i-arrow"/></svg></a><a class="btn btn-s" href="index.html">Back to the Frontline site</a></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <a class="brand" href="index.html"><svg width="30" height="30"><use href="#i-logo"/></svg><span>Frontline<small>FirmOS</small></span></a>
+        <p style="margin:16px 0 0;max-width:360px">FirmOS is a concept operating layer for Frontline Managed Services, written for the Broad Sky Partners Portfolio Resource Group. Every figure on this page is labelled with its source or marked est. / illustrative.</p>
+      </div>
+      <div><h4>FirmOS</h4><ul><li><a href="#demo">Tier-0 demo</a></li><li><a href="#score">Score card</a></li><li><a href="#ebilling">eBilling</a></li><li><a href="#portal">Client portal</a></li></ul></div>
+      <div><h4>For the PRG</h4><ul><li><a href="#value">Value-creation math</a></li><li><a href="#stack">Build vs buy</a></li><li><a href="#roadmap">Roadmap</a></li><li><a href="../../app.html#/techos/overview">Portal: tech enablement</a></li></ul></div>
+      <div><h4>Concept</h4><ul><li><a href="index.html">Frontline site</a></li><li><a href="index.html#rationale">Design rationale</a></li><li><a href="../index.html">All six concepts</a></li><li><a href="../../">Broad Sky OI</a></li></ul></div>
+    </div>
+    <div class="legal"><span>Concept by Syed Rizvi for the Broad Sky Partners Portfolio Resource Group. Not affiliated with or endorsed by Frontline Managed Services.</span><span>Evidence: serviceos_evidence.json · fl_midsize_firms.json · frontline_filings.json · public_comps.json</span></div>
+  </div>
+<p class="bsp-disclaimer" style="box-sizing:border-box;max-width:1200px;margin:0 auto;padding:12px 20px 18px;font-size:12px;line-height:1.55">Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.</p>
+</footer>
+
+<script type="module">
+  import { Chat } from '../../assets/chat.js?v=20261006085442';
+  import { Data, Fmt, esc } from '../../assets/core.js?v=20261006085442';
+  import { common } from './site.js?v=4';
+  import { firmos } from './firmos.js?v=4';
+  common({ Chat, page: 'os', suggestions: ['What is FirmOS?', 'How do you handle eBilling, rejections and A/R?', 'Request a security assessment', 'How do you protect client confidentiality with offshore delivery and AI?', 'What is included in the 24/7 service desk?'] });
+  firmos({ Data, Fmt, esc });
+</script>
+</body>
+</html>

@@ -1,0 +1,1143 @@
+{
+ "meta": {
+  "dataset": "bpi_playbook",
+  "title": "Bully Pulpit International: the value-creation playbook",
+  "subject": "Bully Pulpit International (BPI), a Broad Sky Partners platform since 2023-04-27",
+  "generated": "2026-10-06",
+  "thesis": "From agency to productized communications platform: AI-era corporate reputation, public affairs for regulated sectors (energy, AI, health), international expansion through European add-ons, and retainers over projects. Add-ons are specialist shops; AI agents cover narrative monitoring, drafting with compliance and audience testing; talent is built on a senior advisor bench.",
+  "method": "Built on 2026-10-06 from the repo datasets bpi_filings (estimate_table, FEC/Companies House/Form D items), bsp_firm (bsp-bpi add_ons, timeline, bpi_opportunities), public_comps (communications_agencies benchmarks), pe_landscape (sponsors overlapping BPI), serviceos_evidence (ra-bpi, kb-bpi-*, ve-20..23, vs-bpi-*) and rival_filings (FGS, Precision Strategies, Stagwell). Added web research fetched 2026-10-06: Broad Sky Smith + Howard exit release, Canaccord/O'Dwyer's/PrivSource for Penta, Wikipedia/WPP 6-K for FGS, CVC for Teneo, BPI releases, Forrester TEI pages (Writer, Quid, Microsoft), EY/Aaru, Muck Rack via GlobeNewswire, Quorum, Davis+Gilbert 2025 PDF (text-extracted) and the IPA Agency Census 2025. Expansion-phase data_points are computed in code from the repo datasets (cadences, ratios, sums of opportunity ceilings). kpi_targets and kpi_roadmap are explicit analyst assumptions anchored to the bpi_filings midpoints.",
+  "caveats": [
+   "BPI revenue, EBITDA, headcount and debt are low-confidence analyst estimates from bpi_filings, not company disclosures. Every kpi_target and kpi_roadmap figure is an assumption (label est.).",
+   "FEC figures are gross political billings, mostly pass-through media, not BPI revenue. The 2022 figure ($3.1M) comes from bpi_filings meta.financial_picture because the item-level cycle series was removed in verification.",
+   "Penta revenue ($100M+, about half from AI/data) is per Axios (Aug 2025), captured from a search-result extract. Axios returned HTTP 403 on direct fetch, and the O'Dwyer's and Canaccord pages confirm the deal but not revenue.",
+   "Teneo ~$700M valuation comes from press summaries (PRovoke/Holmes Report via search). The CVC release confirms 800+ staff, 19 offices and 9 acquisitions since 2015 but not the price.",
+   "AI-agent metrics are vendor-commissioned (Forrester TEI for Writer, Quid, Microsoft) or vendor case studies (Aaru/EY, Quorum). They are self-selected upper bounds. The Writer study also shows clients cutting agency scope by 50%, a substitution risk for BPI.",
+   "Federal opportunity total ($250M) sums ceilings/values as parsed from bpi_opportunities and is dominated by the NASA recompete ($202.6M base plus all options). Eligibility and set-aside status are unverified.",
+   "International revenue share (~15-20% today) is an analyst estimate from UK Companies House staff counts and an assumed GBP/USD of 1.27. Germany and Nordics revenue is not public.",
+   "pp_nationwide.json (the named structural template) was not present in the repo at build time, so field conventions follow assets/chat.js expansionPlan(). talent_program replaces pro_program and phases carry kpi_targets with headcount/locations instead of technicians/territories.",
+   "Smith + Howard and BPI add-on cadences are computed from first-close/announcement dates and count Seven Hills and Message House as two add-ons."
+  ],
+  "item_count": 53,
+  "item_counts": {
+   "template": 18,
+   "expansion_phase": 4,
+   "growth_lever": 10,
+   "ai_agent": 9,
+   "talent_program": 6,
+   "financing": 6
+  },
+  "narrative": "Tyler, BPI is already running the Smith + Howard play, just across the Atlantic instead of the Southeast: six add-ons since April 2023 (about 2.0 a year versus Smith + Howard's 2.4), London as its #2 hub and Germany as its #3 market. Smith + Howard went from about 100 people in one Atlanta office to about 800 across 11 locations, with 9 add-ons and nearly 4x revenue, then sold to TPG Growth in August 2026; the lesson is to densify, buy specialist shops and give the buyer a clean, scaled story. BPI's version starts from a larger base: an estimated $85-125M of net revenue, roughly $17-28M of adjusted EBITDA and about 400 people; those are low-confidence estimates from filings, not company figures. The biggest value gap is cyclicality; federal political billings swung from $3.1M in 2022 to $115.3M in 2024, and Stagwell's comparable segment fell 16.5% organically in the year after the election. So phase one productizes the core; SignalOS packages narrative monitoring, synthetic message testing and outcome dashboards into always-on retainers, sold first through the 2026 Reputation Resilience Index briefings, where 81% of adults say AI makes false rumors too easy to spread. Phase two builds named practices where regulation guarantees recurring work (AI and tech policy, energy and critical minerals, health in Boston, and litigation and oversight), plus a federal capture team for about $250M of tracked agency communications recompetes where BPI has no prime awards today. Phase three is the transatlantic version of regional-to-national; one retainer should cover Washington, Brussels, Berlin and London, built with 2-3 specialist tuck-ins a year funded under the existing PineBridge facility, whose UK collateral package is already in place. The analogs show the exit path; Penta was built from a data asset, added Hume Brophy in Europe and sold to Shamrock in 2025 with reportedly half of its $100M+ revenue from AI and data; FGS fused US public affairs with UK and German corporate affairs and reached a $1.7B enterprise value with KKR. The AI agents we would deploy first are a narrative early-warning monitor, a compliance-gated drafting agent and a synthetic-audience tester; each is backed by vendor evidence such as 85% faster review cycles (Writer) and a 0.90 survey correlation in one day (Aaru for EY), which we treat as upper bounds. Talent is the moat; the senior bench of LaBolt, Gibbs, Alexander and Whiting, partner equity on the FGS model, founder-to-practice-leader paths for acquired firms, and compensation held under 60% of net revenue are what keep the people the revenue walks out with. Our assumption-based roadmap takes revenue from about $105M to about $160M and EBITDA from about $22M to about $38M over 36 months, with headcount from about 400 to about 560 and recurring revenue at about 55%. At the 10-13x sponsor-exit range we estimate (PPHC trades at about 8.4x as the public floor), that implies roughly $384-499M of enterprise value after the 2028 cycle; that is an analyst scenario to pressure-test, not a forecast.",
+  "narrative_sentences": [
+   "Tyler, BPI is already running the Smith + Howard play, just across the Atlantic instead of the Southeast: six add-ons since April 2023 (about 2.0 a year versus Smith + Howard's 2.4), London as its #2 hub and Germany as its #3 market.",
+   "Smith + Howard went from about 100 people in one Atlanta office to about 800 across 11 locations, with 9 add-ons and nearly 4x revenue, then sold to TPG Growth in August 2026; the lesson is to densify, buy specialist shops and give the buyer a clean, scaled story.",
+   "BPI's version starts from a larger base: an estimated $85-125M of net revenue, roughly $17-28M of adjusted EBITDA and about 400 people; those are low-confidence estimates from filings, not company figures.",
+   "The biggest value gap is cyclicality; federal political billings swung from $3.1M in 2022 to $115.3M in 2024, and Stagwell's comparable segment fell 16.5% organically in the year after the election.",
+   "So phase one productizes the core; SignalOS packages narrative monitoring, synthetic message testing and outcome dashboards into always-on retainers, sold first through the 2026 Reputation Resilience Index briefings, where 81% of adults say AI makes false rumors too easy to spread.",
+   "Phase two builds named practices where regulation guarantees recurring work (AI and tech policy, energy and critical minerals, health in Boston, and litigation and oversight), plus a federal capture team for about $250M of tracked agency communications recompetes where BPI has no prime awards today.",
+   "Phase three is the transatlantic version of regional-to-national; one retainer should cover Washington, Brussels, Berlin and London, built with 2-3 specialist tuck-ins a year funded under the existing PineBridge facility, whose UK collateral package is already in place.",
+   "The analogs show the exit path; Penta was built from a data asset, added Hume Brophy in Europe and sold to Shamrock in 2025 with reportedly half of its $100M+ revenue from AI and data; FGS fused US public affairs with UK and German corporate affairs and reached a $1.7B enterprise value with KKR.",
+   "The AI agents we would deploy first are a narrative early-warning monitor, a compliance-gated drafting agent and a synthetic-audience tester; each is backed by vendor evidence such as 85% faster review cycles (Writer) and a 0.90 survey correlation in one day (Aaru for EY), which we treat as upper bounds.",
+   "Talent is the moat; the senior bench of LaBolt, Gibbs, Alexander and Whiting, partner equity on the FGS model, founder-to-practice-leader paths for acquired firms, and compensation held under 60% of net revenue are what keep the people the revenue walks out with.",
+   "Our assumption-based roadmap takes revenue from about $105M to about $160M and EBITDA from about $22M to about $38M over 36 months, with headcount from about 400 to about 560 and recurring revenue at about 55%.",
+   "At the 10-13x sponsor-exit range we estimate (PPHC trades at about 8.4x as the public floor), that implies roughly $384-499M of enterprise value after the 2028 cycle; that is an analyst scenario to pressure-test, not a forecast."
+  ],
+  "kpi_roadmap": [
+   {
+    "month": 0,
+    "date": "2026-10",
+    "revenue_usd": 105000000.0,
+    "ebitda_usd": 22000000.0,
+    "headcount": 400,
+    "locations_or_accounts": 15,
+    "note": "Anchor: bpi_filings FY2025 net revenue $85-125M (midpoint $105M), adj. EBITDA 18-24% (21% = ~$22M), headcount ~375-425, 14 offices (Mar 2025) + Boston. Low confidence."
+   },
+   {
+    "month": 12,
+    "date": "2027-10",
+    "revenue_usd": 121000000.0,
+    "ebitda_usd": 26600000.0,
+    "headcount": 450,
+    "locations_or_accounts": 16,
+    "note": "~6% organic (PPHC 6.2%) + ~$10M from 2 tuck-ins; SignalOS retainers launched; margin 22%. Post-midterm advocacy dip absorbed. est."
+   },
+   {
+    "month": 24,
+    "date": "2028-10",
+    "revenue_usd": 142000000.0,
+    "ebitda_usd": 32700000.0,
+    "headcount": 510,
+    "locations_or_accounts": 18,
+    "note": "2028 presidential-cycle uplift + 2-3 specialist add-ons (Paris/Brussels, health or energy policy); margin 23%. est."
+   },
+   {
+    "month": 36,
+    "date": "2029-10",
+    "revenue_usd": 160000000.0,
+    "ebitda_usd": 38400000.0,
+    "headcount": 560,
+    "locations_or_accounts": 19,
+    "note": "Off-year test passed with ~55% recurring revenue; margin at PPHC level 24%; revenue/FTE ~$286K. At 10-13x, EV ~$384-499M vs est. entry EV $150-220M. est."
+   }
+  ],
+  "kpi_roadmap_label": "est. - analyst assumptions anchored to bpi_filings estimate_table midpoints; not a forecast or company guidance",
+  "anchors": {
+   "fy2025_net_revenue_usd_range": [
+    85000000.0,
+    125000000.0
+   ],
+   "fy2025_adj_ebitda_usd_range": [
+    17000000.0,
+    28000000.0
+   ],
+   "headcount_range": [
+    375,
+    425
+   ],
+   "entry_equity_usd": 90000000.0,
+   "entry_ev_usd_range": [
+    150000000.0,
+    220000000.0
+   ],
+   "senior_debt_usd_range_est": [
+    60000000.0,
+    110000000.0
+   ],
+   "source": "data/research/bpi_filings.json meta.estimate_table"
+  },
+  "consumers": [
+   "assets/chat.js (bpi playbook intent, if added)",
+   "redesigns/bpi/* playbook page"
+  ]
+ },
+ "items": [
+  {
+   "id": "tpl-sh-01",
+   "kind": "template",
+   "date": "2022-11-15",
+   "company": "Smith + Howard",
+   "event": "Broad Sky makes a strategic platform investment in Smith + Howard",
+   "location": "Atlanta, GA",
+   "metric": "~100 professionals, 1 office",
+   "stage": "entry",
+   "lesson_for_bpi": "A founder-led regional professional-services firm with a strong brand is the base; BPI (200+ staff, Apr 2023) started about twice as large.",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-sh-02",
+   "kind": "template",
+   "date": "2023-08-15",
+   "company": "Smith + Howard",
+   "event": "Merges with Market Street Partners",
+   "location": "Chattanooga, TN",
+   "metric": "first tuck-in, 9 months after entry",
+   "stage": "densify",
+   "lesson_for_bpi": "First add-on lands in under a year and in an adjacent metro. BPI did the same with BOLDT (Dec 2023, 7.5 months after entry).",
+   "source_url": "https://www.smith-howard.com/smith-howard-and-market-street-partners-join-forces/",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-sh-03",
+   "kind": "template",
+   "date": "2024-01-31",
+   "company": "Smith + Howard",
+   "event": "Acquires JMM CPAs (benefit-plan audit specialist)",
+   "location": "Chicago, IL",
+   "metric": "specialist practice, out-of-region",
+   "stage": "specialist_add_on",
+   "lesson_for_bpi": "A specialist shop bought for capability, not geography. The BPI equivalents are Message House (message testing) and Agado (sports).",
+   "source_url": "https://www.smith-howard.com/smith-howard-announces-expansion-of-benefit-plan-audit-practice/",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-sh-04",
+   "kind": "template",
+   "date": "2024-04-30",
+   "company": "Smith + Howard",
+   "event": "Acquires VIP Search / VIP Solutions (talent and staffing advisory)",
+   "location": "Dallas, TX",
+   "metric": "adjacent service line",
+   "stage": "adjacent_service",
+   "lesson_for_bpi": "Adjacent services raise wallet share per client. For BPI that means litigation and oversight communications (Mar 2026) and insights.",
+   "source_url": "https://www.smith-howard.com/smith-howard-acquires-vip-search-and-vip-solutions-businesses/",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-sh-05",
+   "kind": "template",
+   "date": "2024-12-09",
+   "company": "Smith + Howard",
+   "event": "Signs agreement to acquire Fahrenheit Advisors",
+   "location": "Richmond, VA",
+   "metric": "new state",
+   "stage": "regional_to_national",
+   "lesson_for_bpi": "The regional-to-multi-state step. BPI's version is transatlantic: London became the #2 hub (Nov 2024).",
+   "source_url": "https://www.smith-howard.com/smith-howard-acquires-fahrenheit-advisors/",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-sh-06",
+   "kind": "template",
+   "date": "2025-01-31",
+   "company": "Smith + Howard",
+   "event": "Acquires Smith Kesler & Co.",
+   "location": "Carolinas",
+   "metric": "new state",
+   "stage": "regional_to_national",
+   "lesson_for_bpi": "Back-to-back closes six weeks apart show an integration machine. BPI's cadence peaked at Propper Daley (Mar 2025) followed by Agado (May 2025).",
+   "source_url": "https://www.smith-howard.com/smith-howard-acquires-smith-kesler-and-co/",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-sh-07",
+   "kind": "template",
+   "date": "2025-09-03",
+   "company": "Smith + Howard",
+   "event": "Acquires Horton, Lee & Burnett",
+   "location": "Birmingham, AL",
+   "metric": "Southeast density",
+   "stage": "densify",
+   "lesson_for_bpi": "Density in the home region keeps going even after the firm goes national.",
+   "source_url": "https://www.smith-howard.com/smith-howard-expands-southeastern-u-s-presence-with-acquisition-of-horton-lee-burnett/",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-sh-08",
+   "kind": "template",
+   "date": "2026-01-13",
+   "company": "Smith + Howard",
+   "event": "Acquires Bauknight Pietras & Stormer",
+   "location": "South Carolina",
+   "metric": "advisory capability",
+   "stage": "specialist_add_on",
+   "lesson_for_bpi": "Later add-ons buy higher-margin advisory capability.",
+   "source_url": "https://www.smith-howard.com/smith-howard-acquires-bps-expanding-presence-in-south-carolina-and-strengthening-southeast-advisory-capabilities/",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-sh-09",
+   "kind": "template",
+   "date": "2026-02-01",
+   "company": "Smith + Howard",
+   "event": "Geels Norton joins (cyber-risk audit / SOC)",
+   "location": "United States",
+   "metric": "tech-enabled specialist, add-on #9",
+   "stage": "specialist_add_on",
+   "lesson_for_bpi": "The last add-on before the sale is a tech-enabled specialty that sharpens the growth story. BPI's analogue would be a narrative-intelligence or data shop.",
+   "source_url": "https://www.smith-howard.com/smith-howard-welcomes-geels-norton-expanding-cyber-risk-audit-and-advisory-capabilities/",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-sh-10",
+   "kind": "template",
+   "date": "2026-06-09",
+   "company": "Smith + Howard",
+   "event": "TPG signs definitive agreement to invest via TPG Growth",
+   "location": "Atlanta, GA",
+   "metric": "signed ~3.6 years after entry",
+   "stage": "exit",
+   "lesson_for_bpi": "The exit buyer is a larger growth sponsor that pays for a scaled, multi-office platform.",
+   "source_url": "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-sh-11",
+   "kind": "template",
+   "date": "2026-08-06",
+   "company": "Smith + Howard",
+   "event": "Broad Sky completes sale of Smith + Howard to TPG (first exit)",
+   "location": "11 locations across the Southeast US and India",
+   "metric": "~100 to ~800 professionals; 9 add-ons; ~4x revenue; ~3.5-year hold",
+   "stage": "exit",
+   "lesson_for_bpi": "The full arc: 8x people, about 4x revenue, 9 add-ons in about 3.7 years (about 2.42 per year). BPI has done 6 add-ons in about 3 years (about 1.99 per year).",
+   "source_url": "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/",
+   "retrieved": "2026-10-06",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-penta-01",
+   "kind": "template",
+   "date": "2020",
+   "company": "Penta Group (analog)",
+   "event": "Falfurrias acquires Ballast Research, the seed of Penta",
+   "location": "Washington, DC",
+   "metric": "platform seed (data/research firm)",
+   "stage": "analog_entry",
+   "lesson_for_bpi": "Same vertical, same DC base. The roll-up began with a research/data asset, not an agency.",
+   "source_url": "https://www.canaccordgenuity.com/capital-markets/transactions/2025/august/penta_aug2025",
+   "retrieved": "2026-10-06",
+   "confidence": "medium"
+  },
+  {
+   "id": "tpl-penta-02",
+   "kind": "template",
+   "date": "2023-01-10",
+   "company": "Penta Group (analog)",
+   "event": "Penta acquires Hume Brophy (global public affairs, ~100 professionals)",
+   "location": "United Kingdom / Europe",
+   "metric": "~100 professionals added; energy, transport, agribusiness, financial services",
+   "stage": "international",
+   "lesson_for_bpi": "A European public-affairs add-on bought for its regulated-sector practices, the same play as BPI's BOLDT and 365 Sherpas.",
+   "source_url": "https://www.privsource.com/acquisitions/deal/WNS2Aa",
+   "retrieved": "2026-10-06",
+   "confidence": "medium"
+  },
+  {
+   "id": "tpl-penta-03",
+   "kind": "template",
+   "date": "2025-08-07",
+   "company": "Penta Group (analog)",
+   "event": "Shamrock Capital acquires Penta from Falfurrias (terms undisclosed)",
+   "location": "DC; NY; SF; London; Brussels; Paris; Dublin; Hong Kong",
+   "metric": "reported $100M+ revenue, about half from proprietary AI/data/predictive analytics (Axios)",
+   "stage": "analog_exit",
+   "lesson_for_bpi": "This is the closest exit comp for BPI's thesis. A data- and AI-heavy public-affairs platform at about $100M revenue sold to a sector specialist sponsor about 5 years after the seed deal.",
+   "source_url": "https://www.odwyerpr.com/story/public/23404/2025-08-07/shamrock-capital-acquires-penta-group.html",
+   "retrieved": "2026-10-06",
+   "confidence": "medium"
+  },
+  {
+   "id": "tpl-fgs-01",
+   "kind": "template",
+   "date": "2021-01",
+   "company": "FGS Global (analog)",
+   "event": "Finsbury, Glover Park and Hering Schuppener merge (Finsbury Glover Hering)",
+   "location": "London / Washington / Germany",
+   "metric": "~700 consultants, 18 offices",
+   "stage": "international",
+   "lesson_for_bpi": "The transatlantic strategic-comms model: US public affairs plus UK financial PR plus German corporate affairs. BPI is assembling the same triangle (DC, London, Berlin).",
+   "source_url": "https://en.wikipedia.org/wiki/FGS_Global",
+   "retrieved": "2026-10-06",
+   "confidence": "medium"
+  },
+  {
+   "id": "tpl-fgs-02",
+   "kind": "template",
+   "date": "2021-12",
+   "company": "FGS Global (analog)",
+   "event": "Adds Sard Verbinnen, rebrands FGS Global",
+   "location": "New York + 25 offices",
+   "metric": "1,000+ employees",
+   "stage": "scale",
+   "lesson_for_bpi": "Scale plus a premium brand. Valued at $917M (Oct 2021).",
+   "source_url": "https://en.wikipedia.org/wiki/FGS_Global",
+   "retrieved": "2026-10-06",
+   "confidence": "medium"
+  },
+  {
+   "id": "tpl-fgs-03",
+   "kind": "template",
+   "date": "2024-08-07",
+   "company": "FGS Global (analog)",
+   "event": "WPP sells its ~50% stake to KKR at a $1.7B enterprise value",
+   "location": "Global",
+   "metric": "$1.7B EV; 1,400+ experts; 1,600+ clients",
+   "stage": "analog_exit",
+   "lesson_for_bpi": "This is the ceiling valuation for scaled strategic comms. KKR then funded add-ons with a DDTL (rival-047).",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/806968/000165495424010059/a4670z.htm",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-teneo-01",
+   "kind": "template",
+   "date": "2019-06-07",
+   "company": "Teneo (analog)",
+   "event": "CVC Fund VII partners with Teneo (replacing BC Partners)",
+   "location": "19 offices, 12 countries",
+   "metric": "800+ employees; headcount more than tripled and 9 acquisitions since 2015",
+   "stage": "analog_exit",
+   "lesson_for_bpi": "The sponsor-to-sponsor pass in CEO advisory and comms: 9 acquisitions and 3x headcount in about 4 years earned a second-sponsor deal, reported at about $700M.",
+   "source_url": "https://www.cvc.com/media/news/2019/2019-06-07-teneo-announces-partnership-with-cvc/",
+   "retrieved": "2026-10-06",
+   "confidence": "high"
+  },
+  {
+   "id": "phase-1",
+   "kind": "expansion_phase",
+   "phase": "Productize the core: SignalOS + retainer conversion",
+   "months": "0-12 (Oct 2026 - Sep 2027)",
+   "geography": [
+    "Washington DC",
+    "New York",
+    "San Francisco",
+    "Chicago",
+    "Los Angeles",
+    "Boston"
+   ],
+   "thesis": "Take BPI out of the election cycle. Package narrative monitoring, message testing and measurement as always-on retainers sold to the corporate clients reached through the 2026 Reputation Resilience Index briefings, before the post-midterm advocacy dip hits fee income.",
+   "data_points": [
+    {
+     "label": "Federal political gross billings, 2024 cycle",
+     "value": 115309926,
+     "unit": "USD",
+     "source": "bpi_filings bpi-007"
+    },
+    {
+     "label": "Same, 2022 off-cycle (per financial_picture)",
+     "value": 3100000.0,
+     "unit": "USD",
+     "source": "bpi_filings meta.financial_picture"
+    },
+    {
+     "label": "Peak/trough ratio of federal political billings",
+     "value": 37.2,
+     "unit": "x",
+     "source": "derived from bpi_filings"
+    },
+    {
+     "label": "Stagwell Communications organic net-revenue change FY2025 (post-election)",
+     "value": -16.5,
+     "unit": "%",
+     "source": "rival_filings rival-009"
+    },
+    {
+     "label": "PR firms that are mostly retainer-based",
+     "value": 66,
+     "unit": "%",
+     "source": "serviceos_evidence kb-bpi-2 (Davis+Gilbert 2025)"
+    },
+    {
+     "label": "SignalOS investment (est.)",
+     "value": [
+      1000000,
+      2000000
+     ],
+     "unit": "USD range",
+     "source": "serviceos_evidence ra-bpi"
+    },
+    {
+     "label": "SignalOS EBITDA impact (est.)",
+     "value": [
+      850000.0,
+      3750000.0
+     ],
+     "unit": "USD range",
+     "source": "serviceos_evidence ra-bpi"
+    },
+    {
+     "label": "Reputation Resilience Index coverage",
+     "value": 170,
+     "unit": "companies (18,000+ adults, 4 markets)",
+     "source": "bsp_firm bpi_opportunities bpi-opp-07"
+    }
+   ],
+   "kpi_targets": {
+    "revenue_usd": 121000000.0,
+    "ebitda_usd": 26600000.0,
+    "headcount": 450,
+    "locations": 16,
+    "recurring_share_pct": 45,
+    "label": "est. - analyst assumption"
+   },
+   "source_urls": [
+    "https://bpigroup.com/bpis-2026-reputation-resilience-index-finds-ai-is-accelerating-reputation-risk-across-industries/",
+    "https://www.sec.gov/Archives/edgar/data/876883/000087688326000010/stgw-20251231.htm",
+    "https://www.dglaw.com/wp-content/uploads/2025/10/DavisGilbert-2025-Public-Relations-Industry-Trends-Report.pdf",
+    "https://api.open.fec.gov/v1/schedules/schedule_b/by_recipient/?recipient_name=bully%20pulpit&cycle=2024"
+   ],
+   "source_url": "https://bpigroup.com/bpis-2026-reputation-resilience-index-finds-ai-is-accelerating-reputation-risk-across-industries/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "phase-2",
+   "kind": "expansion_phase",
+   "phase": "Regulated-sector practices: energy, AI, health + federal communications",
+   "months": "6-24 (Apr 2027 - Sep 2028)",
+   "geography": [
+    "Washington DC",
+    "Boston",
+    "Brussels",
+    "Berlin",
+    "Sydney (Mandala alliance)"
+   ],
+   "thesis": "Build named practices where regulation creates recurring mandates: AI and tech policy, energy and critical minerals, health and life sciences (Boston, through the Whiting hire), plus litigation and oversight work. Add a federal-communications capture team to compete for agency recompetes, where BPI has $0 of federal prime awards today.",
+   "data_points": [
+    {
+     "label": "Federal comms recompetes/RFPs tracked",
+     "value": 6,
+     "unit": "opportunities",
+     "source": "bsp_firm bpi_opportunities"
+    },
+    {
+     "label": "Combined ceiling/value of tracked federal opportunities",
+     "value": 250486000,
+     "unit": "USD",
+     "source": "derived from bsp_firm bpi_opportunities (NASA $202.6M ceiling dominates)"
+    },
+    {
+     "label": "BPI federal prime contracts to date",
+     "value": 0,
+     "unit": "USD",
+     "source": "bpi_filings bpi-010 (USASpending)"
+    },
+    {
+     "label": "Adults saying AI makes it too easy to spread false rumors about companies",
+     "value": 81,
+     "unit": "%",
+     "source": "BPI 2026 Reputation Resilience Index"
+    },
+    {
+     "label": "New practices launched since 2025",
+     "value": 2,
+     "unit": "practices (sports via Agado; litigation/oversight Mar 2026)",
+     "source": "bsp_firm bpi_opportunities bpi-opp-08, bpi-opp-12"
+    }
+   ],
+   "kpi_targets": {
+    "revenue_usd": 135000000.0,
+    "ebitda_usd": 30400000.0,
+    "headcount": 490,
+    "locations": 17,
+    "recurring_share_pct": 50,
+    "label": "est. - analyst assumption (midpoint between month 12 and 24 roadmap)"
+   },
+   "source_urls": [
+    "https://www.usaspending.gov/award/CONT_AWD_80KSC023CA006_8000_-NONE-_-NONE-",
+    "https://bpigroup.com/bully-pulpit-international-names-elizabeth-e-alexander-as-partner-to-lead-new-offering-in-litigation-communications-oversight-and-regulatory-risk/",
+    "https://bpigroup.com/bpi-group-and-mandala-partners-announce-strategic-alliance-to-combine-data-communications-and-marketing-to-deliver-best-in-class-policy-campaigns/",
+    "https://bpigroup.com/bpi-names-dave-whiting-partner-expanding-senior-leadership-and-boston-presence/"
+   ],
+   "source_url": "https://www.usaspending.gov/award/CONT_AWD_80KSC023CA006_8000_-NONE-_-NONE-",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "phase-3",
+   "kind": "expansion_phase",
+   "phase": "Transatlantic corporate affairs: Europe density + specialist tuck-ins",
+   "months": "12-30 (Oct 2027 - Mar 2029)",
+   "geography": [
+    "London",
+    "Berlin",
+    "Brussels",
+    "Paris",
+    "Oslo",
+    "Zurich/Geneva"
+   ],
+   "thesis": "Do the Smith + Howard regional-to-national move transatlantically. Densify London (the #2 hub) and Germany (the #3 market), then add Paris and a Brussels EU-affairs specialist so one retainer can cover Washington, Brussels and Berlin. Keep buying about 2-3 specialist shops a year (data/insights, health, energy, AI policy) rather than generalist agencies.",
+   "data_points": [
+    {
+     "label": "Add-ons completed since entry",
+     "value": 6,
+     "unit": "add-ons (BOLDT, Seven Hills, Message House, Propper Daley, Agado, 365 Sherpas)",
+     "source": "bsp_firm bsp-bpi.add_ons"
+    },
+    {
+     "label": "BPI add-on cadence",
+     "value": 1.99,
+     "unit": "add-ons per year",
+     "source": "derived (6 add-ons, 2023-04-27 to 2026-05-05)"
+    },
+    {
+     "label": "Smith + Howard add-on cadence",
+     "value": 2.42,
+     "unit": "add-ons per year",
+     "source": "derived (9 add-ons, 2022-11-15 to 2026-08-06)"
+    },
+    {
+     "label": "UK acquired staff (Seven Hills 41 + Message House 16)",
+     "value": 57,
+     "unit": "FTE",
+     "source": "bpi_filings bpi-012, bpi-013 (Companies House)"
+    },
+    {
+     "label": "UK platform revenue (est.)",
+     "value": [
+      10160000,
+      15240000
+     ],
+     "unit": "USD range (GBP 8-12M at an assumed 1.27)",
+     "source": "bpi_filings estimate_table"
+    },
+    {
+     "label": "PE sponsors overlapping BPI in pe_landscape",
+     "value": 8,
+     "unit": "firms (high threat: MidOcean Partners, CIVC Partners)",
+     "source": "pe_landscape"
+    }
+   ],
+   "kpi_targets": {
+    "revenue_usd": 150000000.0,
+    "ebitda_usd": 35000000.0,
+    "headcount": 530,
+    "locations": 18,
+    "international_share_pct": 30,
+    "label": "est. - analyst assumption"
+   },
+   "source_urls": [
+    "https://bpigroup.com/bpi-strengthens-transatlantic-corporate-affairs-offer-with-acquisition-of-365-sherpas/",
+    "https://bpigroup.com/bpi-expands-uk-presence-and-insights-practice-with-acquisitions-of-seven-hills-and-message-house/",
+    "https://find-and-update.company-information.service.gov.uk/company/07078911/filing-history",
+    "https://www.privsource.com/acquisitions/deal/WNS2Aa"
+   ],
+   "source_url": "https://bpigroup.com/bpi-strengthens-transatlantic-corporate-affairs-offer-with-acquisition-of-365-sherpas/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "phase-4",
+   "kind": "expansion_phase",
+   "phase": "Exit-ready platform: recurring, data-led, past the 2028 cycle",
+   "months": "24-36 (Oct 2028 - Sep 2029)",
+   "geography": [
+    "US (6 hubs)",
+    "UK",
+    "Germany",
+    "Brussels",
+    "Nordics/Switzerland",
+    "APAC via Mandala"
+   ],
+   "thesis": "Show buyers two things: off-year resilience after the 2028 election, and productized revenue they can underwrite. Position against the Penta (Shamrock, 2025), FGS (KKR, $1.7B EV) and Teneo (CVC) exits, with PPHC's public multiple as the floor.",
+   "data_points": [
+    {
+     "label": "PPHC EV / 2025 adj. EBITDA (public floor)",
+     "value": 8.4,
+     "unit": "x",
+     "source": "bpi_filings bpi-022"
+    },
+    {
+     "label": "Estimated sponsor-exit range for scaled BPI",
+     "value": [
+      10,
+      13
+     ],
+     "unit": "x EBITDA (est.)",
+     "source": "serviceos_evidence ve-22"
+    },
+    {
+     "label": "PPHC adj. EBITDA margin 2025",
+     "value": 24.3,
+     "unit": "%",
+     "source": "bpi_filings bpi-022"
+    },
+    {
+     "label": "Agency holding-co median revenue per employee",
+     "value": 190892,
+     "unit": "USD",
+     "source": "public_comps sector_benchmarks.communications_agencies"
+    },
+    {
+     "label": "Agency holding-co median latest revenue growth",
+     "value": 0.3,
+     "unit": "%",
+     "source": "public_comps"
+    },
+    {
+     "label": "Tech-enabled multiple premium credited to SignalOS (est.)",
+     "value": [
+      0.5,
+      2.0
+     ],
+     "unit": "turns EV/EBITDA",
+     "source": "serviceos_evidence ra-bpi"
+    },
+    {
+     "label": "FGS Global enterprise value (KKR)",
+     "value": 1700000000.0,
+     "unit": "USD",
+     "source": "rival_filings rival-046"
+    }
+   ],
+   "kpi_targets": {
+    "revenue_usd": 160000000.0,
+    "ebitda_usd": 38400000.0,
+    "headcount": 560,
+    "locations": 19,
+    "recurring_share_pct": 55,
+    "implied_ev_usd": [
+     384000000.0,
+     499000000.0
+    ],
+    "label": "est. - analyst assumption; EV = EBITDA x 10-13x"
+   },
+   "source_urls": [
+    "https://www.sec.gov/Archives/edgar/data/1903508/000162828026022359/pphc-20251231.htm",
+    "https://www.sec.gov/Archives/edgar/data/806968/000165495424010059/a4670z.htm",
+    "https://www.odwyerpr.com/story/public/23404/2025-08-07/shamrock-capital-acquires-penta-group.html",
+    "https://data.sec.gov/api/xbrl/companyfacts/CIK0000876883.json"
+   ],
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1903508/000162828026022359/pphc-20251231.htm",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "lever-01",
+   "kind": "growth_lever",
+   "lever": "Adjusted EBITDA margin to the public-affairs peer level",
+   "baseline": 21,
+   "target": 24.3,
+   "unit": "% of net revenue",
+   "evidence": "BPI est. 18-24% (midpoint 21%, low confidence); PPHC 24.3% adj. EBITDA margin FY2025; SignalOS credited +1-3 pts (est.).",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1903508/000162828026022359/pphc-20251231.htm",
+   "confidence": "high for target, low for baseline",
+   "label": "baseline/target est. where marked",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "lever-02",
+   "kind": "growth_lever",
+   "lever": "Retainer / recurring share of net revenue",
+   "baseline": null,
+   "target": 55,
+   "unit": "% of net revenue (target est.)",
+   "evidence": "BPI mix undisclosed; political/campaign work is project-heavy. Davis+Gilbert 2025: 66% of PR firms are mostly retainer-based, 22% balanced, 9% mostly project. Target is an analyst assumption.",
+   "source_url": "https://www.dglaw.com/wp-content/uploads/2025/10/DavisGilbert-2025-Public-Relations-Industry-Trends-Report.pdf",
+   "confidence": "medium",
+   "label": "baseline/target est. where marked",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "lever-03",
+   "kind": "growth_lever",
+   "lever": "Off-year fee resilience (election-cycle drag)",
+   "baseline": -16.5,
+   "target": -5,
+   "unit": "% organic net-revenue change in the post-election year",
+   "evidence": "Peer baseline: Stagwell Communications (SKDK et al.) -16.5% organic in FY2025, including a $62.7M advocacy decline. BPI federal political billings went from $115.3M (2024) to $3.1M (2022 off-cycle). Target assumes corporate and international retainers absorb the swing.",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/876883/000087688326000010/stgw-20251231.htm",
+   "confidence": "high for baseline, est. target",
+   "label": "baseline/target est. where marked",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "lever-04",
+   "kind": "growth_lever",
+   "lever": "Net revenue per FTE",
+   "baseline": 262500,
+   "target": 285000,
+   "unit": "USD per FTE",
+   "evidence": "Baseline = $105M midpoint / ~400 FTE (bpi_filings ranges $85-125M, 375-425). Listed agency median is $190,892 (public_comps). Target sits inside the $240-340K public-affairs band, through AI-assisted delivery and pricing.",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1903508/000162828026022359/pphc-20251231.htm",
+   "confidence": "low",
+   "label": "baseline/target est. where marked",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "lever-05",
+   "kind": "growth_lever",
+   "lever": "International share of net revenue",
+   "baseline": 17,
+   "target": 30,
+   "unit": "% of net revenue (est.)",
+   "evidence": "UK platform est. GBP 8-12M (~$10-15M) plus BOLDT/365 Sherpas Germany (#3 market) plus Brussels/Oslo/Zurich gives an est. ~15-20% today (analyst). FGS and Penta both monetize transatlantic coordination.",
+   "source_url": "https://bpigroup.com/bpi-strengthens-transatlantic-corporate-affairs-offer-with-acquisition-of-365-sherpas/",
+   "confidence": "low",
+   "label": "baseline/target est. where marked",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "lever-06",
+   "kind": "growth_lever",
+   "lever": "Specialist add-on cadence",
+   "baseline": 1.99,
+   "target": 2.5,
+   "unit": "add-ons per year",
+   "evidence": "BPI: 6 add-ons in about 36 months. Smith + Howard: 9 add-ons in about 3.7 years (about 2.4 per year). Teneo: 9 acquisitions 2015-2019 before the CVC deal.",
+   "source_url": "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/",
+   "confidence": "high",
+   "label": "baseline/target est. where marked",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "lever-07",
+   "kind": "growth_lever",
+   "lever": "Federal communications contract wins",
+   "baseline": 0,
+   "target": 1,
+   "unit": "prime awards (cumulative, est.)",
+   "evidence": "BPI has $0 federal prime contracts (USASpending). There are 6 tracked recompetes with about $250M combined value/ceiling (NASA agencywide comms $202.6M ceiling; DOL Job Corps $24.2M; DOE SEOSS orders). Teaming is likely needed.",
+   "source_url": "https://www.usaspending.gov/award/CONT_AWD_80KSC023CA006_8000_-NONE-_-NONE-",
+   "confidence": "medium",
+   "label": "baseline/target est. where marked",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "lever-08",
+   "kind": "growth_lever",
+   "lever": "SignalOS subscription revenue (monitoring + testing + measurement)",
+   "baseline": 0,
+   "target": 5000000,
+   "unit": "USD ARR (est.)",
+   "evidence": "Stagwell's productized Marketing Cloud grew net revenue 230% in FY2025. Penta reportedly earns about half of its $100M+ revenue from proprietary AI/data. Target is about 3-4% of month-36 revenue (analyst).",
+   "source_url": "https://www.stagwellglobal.com/stagwell-inc-nasdaq-stgw-reports-results-for-the-three-and-twelve-months-ended-december-31-2025/",
+   "confidence": "medium",
+   "label": "baseline/target est. where marked",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "lever-09",
+   "kind": "growth_lever",
+   "lever": "Compensation-to-net-revenue ratio",
+   "baseline": null,
+   "target": 58,
+   "unit": "% of net revenue",
+   "evidence": "Davis+Gilbert 2025: 37% of firms spend >60% of net revenue on compensation. Firms growing revenue/profit >10% hold the ratio under 60%. AI drafting and shared delivery centres keep BPI under the line.",
+   "source_url": "https://www.dglaw.com/wp-content/uploads/2025/10/DavisGilbert-2025-Public-Relations-Industry-Trends-Report.pdf",
+   "confidence": "medium",
+   "label": "baseline/target est. where marked",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "lever-10",
+   "kind": "growth_lever",
+   "lever": "Organic growth across offices (cross-sell)",
+   "baseline": null,
+   "target": 7,
+   "unit": "% organic net-revenue growth (non-election years)",
+   "evidence": "PPHC grew 6.2% organically in 2025 and Publicis +5.6%, while the agency holding-co median was +0.3%. Cross-selling US clients into London/Berlin and EU clients into DC drives the target.",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1903508/000162828026022359/pphc-20251231.htm",
+   "confidence": "medium",
+   "label": "baseline/target est. where marked",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "agent-01",
+   "kind": "ai_agent",
+   "agent": "Narrative early-warning monitor",
+   "job_to_be_done": "Detect emerging attacks (AI-job-cut and \"greedflation\" narratives, deepfakes) across news, social and video, and alert the account team with a draft holding statement.",
+   "who_it_helps": "Account leads, crisis teams, client comms chiefs",
+   "vendor_examples": [
+    "Zignal Labs",
+    "Brandwatch",
+    "Meltwater"
+   ],
+   "metric_claim": "81% of adults across US/UK/FR/DE say AI makes it too easy to spread false rumors about companies; only 15% feel able to detect AI-generated content (BPI index).",
+   "metric_value": 81,
+   "metric_unit": "% agreeing",
+   "cost_model": {
+    "model": "SaaS licence + analyst seats",
+    "examples": "Zignal from $49,500/yr (Capterra); Brandwatch ~$800-3,000+/mo; Meltwater median ~$25K/yr (third-party)"
+   },
+   "weeks_to_deploy": "6-10",
+   "source_url": "https://bpigroup.com/bpis-2026-reputation-resilience-index-finds-ai-is-accelerating-reputation-risk-across-industries/",
+   "confidence": "medium",
+   "note": "Vendor-commissioned or self-reported figures; treat as upper bounds. weeks_to_deploy is an analyst estimate.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "agent-02",
+   "kind": "ai_agent",
+   "agent": "Compliance-gated drafting agent",
+   "job_to_be_done": "Draft statements, op-eds, Hill letters and social copy in each client's voice, with claims checks, regulated-sector disclosures (health, energy, financial) and legal sign-off routing built in.",
+   "who_it_helps": "Account staff, client legal/compliance reviewers",
+   "vendor_examples": [
+    "Writer",
+    "Jasper",
+    "Microsoft 365 Copilot"
+   ],
+   "metric_claim": "Forrester TEI (commissioned by Writer): 85% faster stakeholder/SME review cycles, 333% ROI, payback under 6 months. The same study reports a 50% cut in external agency scope, a threat as well as a tool.",
+   "metric_value": 85,
+   "metric_unit": "% faster review cycles",
+   "cost_model": {
+    "model": "per-seat SaaS + implementation",
+    "examples": "Jasper Pro $59/seat/mo (annual); Writer enterprise custom"
+   },
+   "weeks_to_deploy": "6-12",
+   "source_url": "https://writer.com/blog/forrester-tei-findings/",
+   "confidence": "medium",
+   "note": "Vendor-commissioned or self-reported figures; treat as upper bounds. weeks_to_deploy is an analyst estimate.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "agent-03",
+   "kind": "ai_agent",
+   "agent": "Synthetic-audience message tester",
+   "job_to_be_done": "Pre-test messages against simulated policymaker, investor and voter segments in hours, then validate the finalists with Message House's live elite-audience panels.",
+   "who_it_helps": "Message House insights team, campaign strategists, clients",
+   "vendor_examples": [
+    "Aaru",
+    "Message House (in-house)"
+   ],
+   "metric_claim": "EY recreated its 2025 Global Wealth survey (3,600 investors, 6 months of fieldwork) with Aaru simulation in one day, with a 0.90 median correlation across 53 questions.",
+   "metric_value": 0.9,
+   "metric_unit": "median correlation vs live survey",
+   "cost_model": {
+    "model": "per-study / platform licence",
+    "examples": "not public; replaces part of 7-figure fieldwork per EY"
+   },
+   "weeks_to_deploy": "8-12",
+   "source_url": "https://www.ey.com/en_us/insights/wealth-asset-management/how-ai-simulation-accelerates-growth-in-wealth-and-asset-management",
+   "confidence": "medium",
+   "note": "Vendor-commissioned or self-reported figures; treat as upper bounds. weeks_to_deploy is an analyst estimate.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "agent-04",
+   "kind": "ai_agent",
+   "agent": "Policy & regulatory radar",
+   "job_to_be_done": "Track bills, rulemakings and EU acts (AI Act, energy, health) and summarize impacts per client. Generate grassroots outreach variants.",
+   "who_it_helps": "Public-affairs teams in DC, Brussels, Berlin; trade-association clients",
+   "vendor_examples": [
+    "Quorum Copilot",
+    "FiscalNote",
+    "Plural Policy"
+   ],
+   "metric_claim": "Quorum Copilot summarizes bills and auto-generates up to 300 message variants for grassroots outreach to lawmakers (vendor claim; no time-saved figure published).",
+   "metric_value": 300,
+   "metric_unit": "message variants per campaign",
+   "cost_model": {
+    "model": "SaaS licence per seat/state coverage",
+    "examples": "pricing not public"
+   },
+   "weeks_to_deploy": "4-8",
+   "source_url": "https://www.quorum.us/company-news/new-ai-tools-enhance-legislative-insights-workflows/",
+   "confidence": "medium",
+   "note": "Vendor-commissioned or self-reported figures; treat as upper bounds. weeks_to_deploy is an analyst estimate.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "agent-05",
+   "kind": "ai_agent",
+   "agent": "Journalist-matching & pitch agent",
+   "job_to_be_done": "Rank reporters by recent coverage, draft personalized pitches and track responses for earned-media programmes in all 6 countries.",
+   "who_it_helps": "Media relations staff, junior account teams",
+   "vendor_examples": [
+    "Muck Rack",
+    "Cision",
+    "Meltwater"
+   ],
+   "metric_claim": "Muck Rack State of PR 2025 (n=911): 72% cite low journalist response rates as a barrier and only 11% fully customize each pitch. 77% already use AI tools.",
+   "metric_value": 72,
+   "metric_unit": "% citing low response rates",
+   "cost_model": {
+    "model": "per-seat SaaS",
+    "examples": "pricing not public"
+   },
+   "weeks_to_deploy": "4-6",
+   "source_url": "https://www.globenewswire.com/news-release/2025/08/14/3133712/0/en/New-Muck-Rack-Study-AI-and-Automation-Are-Top-Priorities-for-PR-Professionals.html",
+   "confidence": "medium",
+   "note": "Vendor-commissioned or self-reported figures; treat as upper bounds. weeks_to_deploy is an analyst estimate.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "agent-06",
+   "kind": "ai_agent",
+   "agent": "Research & insights synthesis agent",
+   "job_to_be_done": "Turn listening data, polling and earnings/regulatory text into weekly client briefings and Reputation Resilience Index updates.",
+   "who_it_helps": "Insights team, partners preparing client briefings",
+   "vendor_examples": [
+    "Quid",
+    "Brandwatch",
+    "Message House"
+   ],
+   "metric_claim": "Forrester TEI (commissioned by Quid): research processes up to 50% faster, 314% ROI, payback under 6 months, commissioned studies of $30-50K retired.",
+   "metric_value": 50,
+   "metric_unit": "% faster time-to-insight",
+   "cost_model": {
+    "model": "SaaS licence + services",
+    "examples": "composite 3-yr licence/services PV $820,661 (Forrester)"
+   },
+   "weeks_to_deploy": "6-10",
+   "source_url": "https://tei.forrester.com/go/quid/quidtei/",
+   "confidence": "medium",
+   "note": "Vendor-commissioned or self-reported figures; treat as upper bounds. weeks_to_deploy is an analyst estimate.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "agent-07",
+   "kind": "ai_agent",
+   "agent": "Knowledge & meeting copilot",
+   "job_to_be_done": "Capture client calls, produce action memos and searchable account histories. Onboard acquired teams (BOLDT, 365 Sherpas, Agado) onto one knowledge base.",
+   "who_it_helps": "All staff; integration of acquired firms",
+   "vendor_examples": [
+    "Microsoft 365 Copilot",
+    "Otter",
+    "Fireflies"
+   ],
+   "metric_claim": "Forrester projected TEI for Microsoft 365 Copilot (SMB, up to 300 staff): 132-353% ROI over 3 years, 25% faster new-hire onboarding, 20% lower operating costs (projected, vendor-commissioned).",
+   "metric_value": 25,
+   "metric_unit": "% faster onboarding",
+   "cost_model": {
+    "model": "per-seat add-on",
+    "examples": "M365 Copilot per-user licence (list price, check current)"
+   },
+   "weeks_to_deploy": "2-6",
+   "source_url": "https://www.microsoft.com/en-us/microsoft-365/blog/2024/10/17/microsoft-365-copilot-drove-up-to-353-roi-for-small-and-medium-businesses-new-study/",
+   "confidence": "medium",
+   "note": "Vendor-commissioned or self-reported figures; treat as upper bounds. weeks_to_deploy is an analyst estimate.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "agent-08",
+   "kind": "ai_agent",
+   "agent": "Outcome measurement & client-dashboard agent",
+   "job_to_be_done": "Auto-build retainer scorecards (share of voice, narrative sentiment, policy outcomes, paid-media lift) so renewals are sold on results.",
+   "who_it_helps": "Clients, account leads, CFO (renewal and pricing)",
+   "vendor_examples": [
+    "Brandwatch",
+    "Meltwater",
+    "Stagwell Marketing Cloud (benchmark)"
+   ],
+   "metric_claim": "Muck Rack 2025: 67% of PR pros say producing measurable results is the way to raise PR's perceived value. Stagwell's productized Marketing Cloud grew 230% in FY2025.",
+   "metric_value": 67,
+   "metric_unit": "% of PR pros",
+   "cost_model": {
+    "model": "built on monitoring licences + BI layer",
+    "examples": "covered in SignalOS budget $1-2M (est.)"
+   },
+   "weeks_to_deploy": "8-12",
+   "source_url": "https://www.globenewswire.com/news-release/2025/08/14/3133712/0/en/New-Muck-Rack-Study-AI-and-Automation-Are-Top-Priorities-for-PR-Professionals.html",
+   "confidence": "medium",
+   "note": "Vendor-commissioned or self-reported figures; treat as upper bounds. weeks_to_deploy is an analyst estimate.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "agent-09",
+   "kind": "ai_agent",
+   "agent": "Scope & over-servicing guard",
+   "job_to_be_done": "Compare hours burned with retainer scope weekly, flag over-servicing and draft change orders, protecting margin as the retainer share rises.",
+   "who_it_helps": "Finance, account directors",
+   "vendor_examples": [
+    "Productive.io",
+    "Harvest + AI layer",
+    "Workday/Kantata"
+   ],
+   "metric_claim": "Davis+Gilbert 2025: with two-thirds of work on retainers, ill-defined scopes and over-servicing hit profitability; 37% of firms spend more than 60% of net revenue on compensation.",
+   "metric_value": 37,
+   "metric_unit": "% of firms with comp >60% of net revenue",
+   "cost_model": {
+    "model": "PSA SaaS per seat",
+    "examples": "pricing varies"
+   },
+   "weeks_to_deploy": "6-10",
+   "source_url": "https://www.dglaw.com/wp-content/uploads/2025/10/DavisGilbert-2025-Public-Relations-Industry-Trends-Report.pdf",
+   "confidence": "medium",
+   "note": "Vendor-commissioned or self-reported figures; treat as upper bounds. weeks_to_deploy is an analyst estimate.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "talent-01",
+   "kind": "talent_program",
+   "program": "Senior advisor & partner bench",
+   "who_it_helps": "Clients buying board-level counsel; new-business teams",
+   "evidence": "BPI has added former-administration and big-agency seniors: Ben LaBolt (ex-White House Comms Director) back as President (Apr 2025); Robert Gibbs senior advisor since Jul 2024; Elizabeth E. Alexander (ex-FTI, ex-federal prosecutor) leads litigation/oversight (Mar 2026); Dave Whiting (ran Weber Shandwick's 80-person Boston office) Partner (Aug 2026).",
+   "metric": "Senior hires per year; revenue originated per partner",
+   "source_url": "https://bpigroup.com/former-white-house-communications-director-ben-labolt-returns-to-bpi-as-president/",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "talent-02",
+   "kind": "talent_program",
+   "program": "Partner equity / topco co-invest pool",
+   "who_it_helps": "Partners and acquired founders",
+   "evidence": "FGS Global repeatedly sells small Topco blocks to dozens of partners (57 investors in the Dec 2025 offering), a retention tool BPI must match when recruiting from FGS, Teneo or Brunswick.",
+   "metric": "Partner regretted attrition (target <5%/yr, est.)",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1894552/000189455226000002/primary_doc.xml",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "talent-03",
+   "kind": "talent_program",
+   "program": "Founder-to-practice-leader path for acquired firms",
+   "who_it_helps": "Acquired founders (Agado, Seven Hills, 365 Sherpas)",
+   "evidence": "BPI keeps founders in visible roles (Agado founder Mark Jones leads the sports offering; Seven Hills co-founder Michael Hayman). The Smith + Howard and Teneo playbooks relied on retained acquired leaders across 9 add-ons each.",
+   "metric": "Founder retention through earn-out end",
+   "source_url": "https://bpigroup.com/bpi-acquires-agado-communications-appoints-mark-jones-to-lead-sports-offering-strategy-and-growth/",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "talent-04",
+   "kind": "talent_program",
+   "program": "AI-fluency academy for early-career staff",
+   "who_it_helps": "Associates and account executives",
+   "evidence": "IPA Agency Census 2025: member-agency headcount fell 6.8% and turnover rose. The IPA warns the steep fall in entry-level roles threatens future capability as AI reshapes skills. Muck Rack: 77% of PR pros already use AI tools.",
+   "metric": "% of staff certified on SignalOS workflows; junior retention",
+   "source_url": "https://ipa.co.uk/knowledge/publications-reports/agency-census-2025/",
+   "confidence": "medium",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "talent-05",
+   "kind": "talent_program",
+   "program": "Transatlantic secondment & mobility",
+   "who_it_helps": "Mid-level staff in DC, London, Berlin, Brussels",
+   "evidence": "London is BPI's #2 location (~70 staff), Germany #3 market. Jo-ann Robertson was named President, Europe (commenced Mar 2026). Rotations spread the integrated model across 6 countries and support cross-border retainers.",
+   "metric": "Staff on cross-office accounts; international revenue share",
+   "source_url": "https://bpigroup.com/bpi-expands-uk-presence-and-insights-practice-with-acquisitions-of-seven-hills-and-message-house/",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "talent-06",
+   "kind": "talent_program",
+   "program": "Compensation-ratio discipline with performance pay",
+   "who_it_helps": "All staff; CFO",
+   "evidence": "Davis+Gilbert 2025: high-growth firms keep compensation below 60% of net revenue. Top cost actions were managing out weaker performers (51%) and adding freelancers (46%).",
+   "metric": "Comp / net revenue <60%",
+   "source_url": "https://www.dglaw.com/wp-content/uploads/2025/10/DavisGilbert-2025-Public-Relations-Industry-Trends-Report.pdf",
+   "confidence": "medium",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "fin-01",
+   "kind": "financing",
+   "source_of_funds": "Sponsor equity (BSP-BPI Holdings LLC)",
+   "amount_or_range": "$90.0M sold to 6 investors, first sale 2023-04-20",
+   "evidence": "Form D signed by Tyler Zachem. About 27% of the $335M Fund I, so likely includes LP co-invest. Implied entry EV $150-220M (est.).",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1976569/000197656923000001/primary_doc.xml",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "fin-02",
+   "kind": "financing",
+   "source_of_funds": "Senior secured credit facility (PineBridge Private Credit agent; Alter Domus collateral agent)",
+   "amount_or_range": "Principal undisclosed; est. $60-110M at 3.5-5.0x of $17-25M EBITDA",
+   "evidence": "Credit and Guaranty Agreement dated 7 Dec 2023, amended 29 Oct 2024 (the day the UK add-ons closed). This is the M&A funding line. Likely lender vehicle is PineBridge Private Credit III (~$1.0B; inference).",
+   "source_url": "https://find-and-update.company-information.service.gov.uk/company/07078911/filing-history",
+   "confidence": "high for existence, low for size",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "fin-03",
+   "kind": "financing",
+   "source_of_funds": "UK guarantor/debenture package",
+   "amount_or_range": "All-asset fixed + floating charges over 4 UK entities (Jan 2025)",
+   "evidence": "Bully Pulpit Limited, Seven Hills, Message House Holdings and Message House Ltd granted debentures to Alter Domus. International add-ons are brought into the collateral pool, so future EU tuck-ins can be financed the same way.",
+   "source_url": "https://find-and-update.company-information.service.gov.uk/company/07078911/charges",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "fin-04",
+   "kind": "financing",
+   "source_of_funds": "Sector leverage norm: strategic-comms unitranche pricing",
+   "amount_or_range": "FGS Global first-lien TL at SOFR+450 (Apollo BDC holds $61.8M par, mark 98.7); Precision Strategies TL at SOFR+500 with 1% floor (Mar 2026)",
+   "evidence": "These are comparable private-credit terms for comms/public-affairs credits. A delayed-draw term loan for acquisitions (FGS has one) is the template for funding BPI's 2-3 tuck-ins a year.",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1837532/000119312526341358/ck0001837532-20260630.htm",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "fin-05",
+   "kind": "financing",
+   "source_of_funds": "Sector leverage norm: lower-middle-market multiple of EBITDA",
+   "amount_or_range": "3.5-5.0x total leverage (est.); PPHC net debt $26.6M on $45.4M adj. EBITDA (~0.6x)",
+   "evidence": "The public peer runs low leverage, while the sponsor-backed peers (FGS, Precision) use unitranche. At month 36 (est. $38M EBITDA), 4.0x would support about $150M of debt capacity for a recap or to fund M&A ahead of exit.",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1903508/000162828026022359/pphc-20251231.htm",
+   "confidence": "medium",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "fin-06",
+   "kind": "financing",
+   "source_of_funds": "Founder rollover / earn-outs on add-ons",
+   "amount_or_range": "Terms undisclosed for all 6 add-ons",
+   "evidence": "Deal terms for BOLDT, Seven Hills, Message House, Propper Daley, Agado and 365 Sherpas are not public (bpi_filings data_gaps). Message House brought GBP 1.8M of cash at acquisition, partly self-funding.",
+   "source_url": "https://find-and-update.company-information.service.gov.uk/company/08597751/filing-history",
+   "confidence": "medium",
+   "retrieved": "2026-10-06"
+  }
+ ]
+}

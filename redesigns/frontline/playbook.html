@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Frontline Playbook — value creation for Broad Sky</title>
+<meta name="description" content="Frontline Managed Services: the value-creation playbook. How Broad Sky grows Frontline from the AM Law core into the US mid-market, revenue-cycle services and the UK and Canada, following the Smith + Howard template.">
+<meta name="theme-color" content="#0b0b1e">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<link rel="stylesheet" href="playbook.css?v=20261006083916">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b0b1e'/%3E%3Cpath d='M10 23V9h11M10 16h8' stroke='%238f86ff' stroke-width='3.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="concept" id="concept" role="note">
+  <div class="wrap concept-in">
+    <span class="concept-tag">Concept</span>
+    <p>Concept redesign proposed by Syed Rizvi for the Broad Sky Portfolio Resource Group — not an official site. <a href="../../app.html">Portal</a> · <a href="../index.html">Site concepts</a> · <a href="../../#os">OS program</a> · <a href="../../#briefing">Briefing</a></p>
+    <button class="concept-x" type="button" aria-label="Dismiss concept banner">&times;</button>
+  </div>
+</div>
+
+<header class="nav" id="top">
+  <div class="wrap nav-in">
+    <a class="brand" href="index.html" aria-label="Frontline Managed Services concept site">
+      <svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><rect width="36" height="36" rx="10" fill="#0b0b1e"/><path d="M11 26V10h13M11 18h9" stroke="#8f86ff" stroke-width="3.2" fill="none" stroke-linecap="round"/><circle cx="26" cy="25" r="3" fill="#0e9f6e"/></svg>
+      <span><b>Frontline</b><small>Value-creation playbook</small></span>
+    </a>
+    <nav class="nav-links" aria-label="Playbook sections">
+      <a href="#template">Template</a>
+      <a href="#map">Phases</a>
+      <a href="#levers">Levers</a>
+      <a href="#agents">AI agents</a>
+      <a href="#talent">Talent</a>
+      <a href="#addons">Add-ons</a>
+      <a href="#returns">Returns</a>
+      <a href="#risks">Risks</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="pill ghost" href="firmos.html">FirmOS</a>
+      <button class="pill solid" type="button" id="ask-btn">Ask the playbook</button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-h">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="wrap hero-in">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="dot"></span>Value-creation playbook · for Tyler Zachem &amp; the PRG · Oct 2026</p>
+      <h1 id="hero-h">From half the AM Law 200 to a <em>global legal-operations platform.</em></h1>
+      <p class="lede">Frontline already has what Smith + Howard spent its hold building: national reach, an offshore delivery base and about half the AM Law 200. If entry was in the 12-15x EBITDA range that public filings imply, the return has to come from EBITDA growth rather than multiple expansion. The plan is to earn more from each firm, move into the mid-market, roll up revenue-cycle services, then enter the UK and Canada by acquiring local providers.</p>
+      <div class="hero-actions">
+        <a class="pill solid lg" href="#map">Walk the four phases</a>
+        <a class="pill ghost lg" href="#returns">See the returns math</a>
+      </div>
+    </div>
+    <aside class="kpi-card" aria-labelledby="kpi-h">
+      <div class="kpi-card-h"><h2 id="kpi-h">Today → month 36</h2><span class="est">est.</span></div>
+      <div class="kpis" id="kpis" aria-live="polite"></div>
+      <p class="kpi-note">Today = Oct 2026 run-rate. Month 36 = plan. All figures are analyst assumptions anchored to Form D filings, UK Companies House accounts and press releases, not company guidance.</p>
+    </aside>
+  </div>
+  <div class="wrap hero-strip" id="hero-strip" aria-label="Plan at a glance"></div>
+  <div class="wrap decision-wrap">
+    <section class="decision" id="decision" aria-labelledby="dec-h">
+      <div class="dec-head">
+        <p class="kicker">The decision for the PRG</p>
+        <h2 id="dec-h">Three approvals, and what they buy</h2>
+      </div>
+      <ol class="dec-asks" id="dec-asks"></ol>
+      <div class="dec-ret" id="dec-ret" aria-live="polite"></div>
+    </section>
+  </div>
+</section>
+
+<!-- 01 TEMPLATE -->
+<section class="sec" id="template" aria-labelledby="tpl-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">01 · The template</p>
+      <h2 id="tpl-h">Smith + Howard is the Broad Sky playbook that already paid out. Here is how Frontline runs it from a bigger base.</h2>
+      <p class="sub">Each step is dated and sourced. The right-hand panel compares Smith + Howard with this plan, measure by measure. <span class="muted" id="tpl-caveat"></span></p>
+    </div>
+    <div class="tpl-grid">
+      <div>
+        <div class="seg" role="tablist" aria-label="Template filter" id="tpl-seg">
+          <button type="button" role="tab" aria-selected="true" data-f="sh">Smith + Howard (9 moves)</button>
+          <button type="button" role="tab" aria-selected="false" data-f="all">+ legal-services analogs</button>
+        </div>
+        <ol class="timeline" id="timeline"></ol>
+        <button type="button" class="pill ghost tl-more" id="tl-more" aria-expanded="false" aria-controls="timeline">Show all 9 moves</button>
+      </div>
+      <aside class="compare" id="compare" aria-label="Smith + Howard vs Frontline plan"></aside>
+    </div>
+  </div>
+</section>
+
+<!-- 02 MAP -->
+<section class="sec sec-tint" id="map" aria-labelledby="map-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">02 · Where we go, in order</p>
+      <h2 id="map-h">Four overlapping phases, from the AM Law core to London and Toronto.</h2>
+      <p class="sub">Every point comes from the portal's datasets: AM Law prospects grouped by headquarters city, the 143-firm mid-size screen, the add-on targets, Frontline's own offices and competing sponsors. Pick a phase or press play.</p>
+    </div>
+    <div class="phase-bar" role="tablist" aria-label="Expansion phases" id="phase-bar"></div>
+    <div class="map-grid">
+      <div class="map-wrap">
+        <div id="leaf" class="leaf" role="img" aria-label="Map of Frontline offices, AM Law and mid-size law-firm prospects, add-on targets and competing sponsors by phase"></div>
+        <div class="map-legend" id="map-legend"></div>
+      </div>
+      <aside class="phase-panel" id="phase-panel" aria-live="polite"></aside>
+    </div>
+  </div>
+</section>
+
+<!-- 03 LEVERS -->
+<section class="sec" id="levers" aria-labelledby="lev-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">03 · Organic levers</p>
+      <h2 id="lev-h">Eight numbers the operating team moves, each with a baseline and a target.</h2>
+      <p class="sub">Baselines come from industry benchmarks where Frontline's own figure is not public. Those gaps are flagged, and closing them belongs in the first 30 days of the operating review.</p>
+    </div>
+    <div class="levers" id="lever-grid"></div>
+  </div>
+</section>
+
+<!-- 04 AGENTS -->
+<section class="sec sec-ink" id="agents" aria-labelledby="ag-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">04 · The AI layer</p>
+      <h2 id="ag-h">Ten AI agents on the HELIX desk and the revenue cycle.</h2>
+      <p class="sub">Each agent names its vendors, a published result and a pilot timeline. Use the filter to see who each one helps. Vendor case studies are directional upper bounds.</p>
+    </div>
+    <div class="seg seg-dark" role="tablist" aria-label="Filter agents by who they help" id="ag-seg"></div>
+    <div class="ag-grid">
+      <div class="runway" id="runway" aria-label="Pilot runway in weeks"></div>
+      <div class="agents" id="agent-grid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 TALENT -->
+<section class="sec" id="talent" aria-labelledby="tal-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">05 · Talent</p>
+      <h2 id="tal-h">Nine offices, three of them offshore. Give that base a leader and a career ladder.</h2>
+      <p class="sub">Smith + Howard named a Director of Operations for India with a go-to-market and integration mandate. Frontline's Hyderabad, Goa and Cape Town hubs are larger, and they need the same.</p>
+    </div>
+    <div class="footprint" id="footprint" aria-label="Frontline delivery footprint"></div>
+    <div class="programs" id="programs"></div>
+  </div>
+</section>
+
+<!-- 06 ADD-ONS -->
+<section class="sec sec-tint" id="addons" aria-labelledby="ad-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">06 · The add-on machine</p>
+      <h2 id="ad-h">23 screened targets, in four lanes, at two to three deals a year.</h2>
+      <p class="sub" id="ad-sub">Ranked from the portal's add-on screen. Fit score out of 100 weights capability 30%, customer overlap 25%, scale 15%, ownership readiness 15% and geography 15%. ZoomInfo revenue figures are modelled and directional.</p>
+    </div>
+    <div class="seg" role="tablist" aria-label="Filter targets by lane" id="lane-seg"></div>
+    <div class="ad-grid">
+      <div class="targets" id="targets"></div>
+      <div class="ad-side">
+        <div class="card pad" id="lanes"></div>
+        <div class="card pad" id="hundred"></div>
+        <div class="card pad" id="rivals"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 RETURNS -->
+<section class="sec" id="returns" aria-labelledby="ret-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">07 · Financing &amp; returns</p>
+      <h2 id="ret-h">How the plan is funded, and what Frontline is worth at month 36.</h2>
+      <p class="sub">The plan defends the multiple and grows EBITDA, then tests the result against a 2.5x / 20% hurdle. Every figure is labelled <span class="est">est.</span>. Set the entry multiple to the real figure and move the sliders to stress the exit.</p>
+    </div>
+    <div class="fin-grid" id="fin-grid"></div>
+    <div class="ret-grid">
+      <div class="card pad">
+        <div class="card-h"><h3>36-month KPI roadmap</h3><span class="est">est.</span></div>
+        <div id="road-chart" class="road-chart"></div>
+        <div id="road-table" class="tbl-wrap"></div>
+      </div>
+      <div class="card pad">
+        <div class="card-h"><h3>Value bridge: today → month 36</h3><span class="est">est.</span></div>
+        <div class="bridge-ctl">
+          <label>Entry multiple (est.) <output id="en-out">13.5x</output><input type="range" id="en" min="10" max="16" step="0.5" value="13.5" aria-describedby="bridge-note"></label>
+          <label>Base exit multiple <output id="mx-out">12.0x</output><input type="range" id="mx" min="9" max="15" step="0.5" value="12"></label>
+          <label>FirmOS premium <output id="os-out">1.0 turns</output><input type="range" id="os" min="0" max="1.5" step="0.25" value="1"></label>
+        </div>
+        <div id="bridge" class="bridge"></div>
+        <p class="fine" id="bridge-note"></p>
+      </div>
+    </div>
+    <div class="card pad os-case" id="os-case"></div>
+  </div>
+</section>
+
+<!-- 08 RISKS & ASKS -->
+<section class="sec sec-tint" id="risks" aria-labelledby="risk-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">08 · Eyes open</p>
+      <h2 id="risk-h">What could go wrong, and what we need from the PRG.</h2>
+    </div>
+    <div class="risk-grid">
+      <div class="card pad"><h3 class="h3i"><span class="ic warn" aria-hidden="true">!</span>Risks and mitigations</h3><ul class="risk-list" id="risk-list"></ul></div>
+      <div class="card pad"><h3 class="h3i"><span class="ic ok" aria-hidden="true">&#10003;</span>Asks of the Portfolio Resource Group</h3><ol class="ask-list" id="ask-list"></ol></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" aria-labelledby="cta-h">
+  <div class="wrap cta-in">
+    <div>
+      <h2 id="cta-h">See the parts working.</h2>
+      <p>The operating system, the new website and the live portal views behind this plan.</p>
+    </div>
+    <div class="cta-links">
+      <a class="cta-card" href="firmos.html"><b>FirmOS</b><span>Security score, service-desk deflection and the valuation math</span></a>
+      <a class="cta-card" href="index.html"><b>The new website</b><span>Security self-assessment, outcome stats and the Frontline advisor</span></a>
+      <a class="cta-card" href="../../app.html#/fl/overview"><b>Frontline in the portal</b><span>AM Law prospects, mid-size screen, filings and targets</span></a>
+      <a class="cta-card" href="../../app.html#/techos/overview"><b>Tech enablement</b><span>All six OS theses with the multiple-expansion calculator</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- DESIGN RATIONALE -->
+<section class="sec rationale" id="rationale" aria-labelledby="rat-h">
+  <div class="wrap">
+    <details class="drawer" id="rat-drawer">
+      <summary><span><b id="rat-h">Design rationale</b> · why this page looks and reads the way it does</span><span class="chev" aria-hidden="true"></span></summary>
+      <div class="drawer-body">
+        <div class="rat-grid">
+          <div><h4>Stripe and Ramp product pages</h4><p>Borrowed: a hero that leads with KPIs, and one violet accent on a calm ink-and-paper canvas. The four numbers Tyler gets asked about (revenue, EBITDA, people, law-firm clients) are on the first screen, so the page works as a 30-second read before an IC or lender call. KPI moved: time to an IC-ready plan.</p></div>
+          <div><h4>The Smith + Howard exit release</h4><p>Borrowed: the entry → exit framing on a dated, sourced timeline. Following the structure of a Broad Sky playbook that has already exited makes the Frontline plan easier to trust for the PRG, the lenders (NXT, Audax) and a future buyer. KPI moved: confidence in the add-on budget and the co-invest ask.</p></div>
+          <div><h4>Legal-ops peers (Consilio, Integreon, Clio)</h4><p>Borrowed: a sober navy palette, a monospaced data voice and maps that show coverage. A buyer of a legal-operations platform wants to see density, recurring revenue and an international leg, not a list of logos. KPIs moved: add-ons closed a year, international revenue share, recurring mix.</p></div>
+          <div><h4>A conversational front door</h4><p>The "Ask the playbook" assistant answers from the same datasets as the page. Tyler or an LP can ask "which targets come first?" mid-meeting instead of scrolling. KPI moved: time to answer in a live discussion.</p></div>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <details class="srcs" id="srcs"><summary>Method, sources &amp; caveats</summary><div id="src-body"></div></details>
+    <div class="foot-row">
+      <p>Concept page by Syed Rizvi for the Broad Sky Partners Portfolio Resource Group. It is not an official Frontline Managed Services or Broad Sky site. Brand names appear for reference only. Figures marked est. are analyst assumptions.</p>
+      <p><a href="../../app.html#/fl/overview">Frontline in the portal</a> · <a href="../../app.html#/techos/overview">Tech enablement</a> · <a href="../../">Broad Sky Operating Intelligence</a></p>
+    </div>
+  </div>
+<p class="bsp-disclaimer" style="box-sizing:border-box;max-width:1200px;margin:0 auto;padding:12px 20px 18px;font-size:12px;line-height:1.55">Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.</p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script type="module">
+import { Data, Fmt, esc } from '../../assets/core.js?v=20261006085442';
+import { Chat } from '../../assets/chat.js?v=20261006085442';
+import { boot } from './playbook.js?v=20261006083916';
+boot({ Data, Fmt, esc, Chat });
+</script>
+</body>
+</html>

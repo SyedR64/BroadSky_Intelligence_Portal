@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ServiceOS — the operating system behind Punctual Pros (concept)</title>
+<meta name="description" content="ServiceOS: weather-aware capacity, live dispatch, AI after-hours booking, membership and new-mover automation for Punctual Pros. Concept product page with value-creation math for the Broad Sky PRG.">
+<meta name="theme-color" content="#0d1521">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f26b1d'/%3E%3Cstop offset='1' stop-color='%23ffc23d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Crect x='10' y='10' width='12' height='12' rx='2.5' fill='none' stroke='%230d1521' stroke-width='2.6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./os.css?v=20261006083000">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 2.5V6M15 2.5V6M9 18v3.5M15 18v3.5M2.5 9H6M2.5 15H6M18 9h3.5M18 15h3.5"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4.5 17.5a8.5 8.5 0 1 1 15 0"/><path d="M12 13.5l4-4.5"/><circle cx="12" cy="13.5" r="1.4"/></symbol>
+  <symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9 4v16M15 4v16M5.5 8h1.5M11 8h1.5M11 11h1.5M17 8h1.5"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 4.5h16v11.5H9.5L4 20.5v-16z"/><path d="M8 9h8M8 12h5"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 12.3V4.2a.7.7 0 0 1 .7-.7h8.1l8.4 8.4-8.8 8.8-8.4-8.4z"/><circle cx="8" cy="8" r="1.6"/></symbol>
+  <symbol id="i-loop" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.7 5.6L4 15.5M4 20v-4.5h4.5"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7v9.2a.8.8 0 0 1-.8.8H15v-6H9v6H4.3a.8.8 0 0 1-.8-.8V11z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17l-5.7 3.1 1.2-6.3L2.9 9.4l6.3-.8z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.4 4.4L19 7.4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5-12-7.5z"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.2 2.5 4.8 13.6h6.6l-1 7.9 8.8-11.6h-6.7l.7-7.4z"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16M8 16v-4M12 16V8M16 16v-6"/></symbol>
+</svg>
+
+<div class="concept" id="concept" role="region" aria-label="Concept notice">
+  <div class="wrap">
+    <p><span class="tag">Concept</span><b>Concept redesign proposed by Syed Rizvi for the Broad Sky Portfolio Resource Group — not an official site.</b></p>
+    <nav aria-label="Concept links"><a href="../../app.html">Portal</a><a href="../index.html">Site concepts</a><a href="../../#os">OS program</a><a href="../../#briefing">Briefing</a></nav>
+    <button class="x" type="button" aria-label="Dismiss concept notice" data-dismiss><svg class="ico"><use href="#i-x"/></svg></button>
+  </div>
+</div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="mk"><svg class="ico"><use href="#i-chip"/></svg></span><b>ServiceOS</b><small>for Punctual Pros</small></a>
+    <nav aria-label="Primary">
+      <a href="#modules">Modules</a><a href="#demo">Live demo</a><a href="#value">Value math</a><a class="opt" href="#stack">Stack</a><a class="opt" href="#roadmap">Roadmap</a><a class="opt" href="#risks">Risks</a>
+    </nav>
+    <div class="cta"><a class="btn btn-line btn-sm" href="./index.html">← PP site</a><a class="btn btn-o btn-sm" href="../../app.html#/techos/overview">Open in portal</a></div>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero" id="top" aria-labelledby="h1">
+  <div class="wrap">
+    <span class="pill"><b>SERVICEOS</b>Tech-enablement thesis · Punctual Pros · Broad Sky Partners</span>
+    <h1 id="h1">Every truck in the right driveway <span>before the phone rings.</span></h1>
+    <p class="lede">ServiceOS is the operating layer for a 25-territory home-services franchisee: it forecasts call volume from the weather, books every call 24/7, routes the closest qualified tech, and turns one-time repairs into recurring members. Off-the-shelf where the market is mature, built where Broad Sky has the data edge.</p>
+    <div class="row"><a class="btn btn-o" href="#demo">Try the live demo <svg class="ico"><use href="#i-arrow"/></svg></a><a class="btn btn-line" href="#value">See the value math</a></div>
+    <div class="kpis" id="kpis">
+      <div class="kpi"><div class="l">Inbound call booking rate</div><div class="v"><span class="from">38%</span><span class="arrow">→</span>59%</div><div class="s">HVAC avg vs 25+ tech shops · <a href="https://www.servicetitan.com/blog/data-call-booking-rates" target="_blank" rel="noopener">ServiceTitan</a> · target est.</div></div>
+      <div class="kpi"><div class="l">Average ticket growth / yr</div><div class="v"><span class="from">8%</span><span class="arrow">→</span>14%</div><div class="s">Non-users vs digital pricebook adopters · <a href="https://www.servicetitan.com/coronavirus/pricebook-pro-users-seeing-stronger-ticket-sizes-in-2020" target="_blank" rel="noopener">ServiceTitan</a> (vendor data, low conf.)</div></div>
+      <div class="kpi"><div class="l">Active members per tech</div><div class="v">~83</div><div class="s">Champions Group density (150K members / 1,800+ techs, derived) · <a href="https://www.servicemag.org/news/blackstone-champions-group-acquisition-2-5-billion" target="_blank" rel="noopener">ServiceMag</a></div></div>
+      <div class="kpi"><div class="l">EBITDA impact <span class="est">est.</span></div><div class="v" id="kpi-ebitda">$0.3–1.1M</div><div class="s">2–4 pts of margin on ~$22M revenue (est.) · serviceos_evidence ra-pp</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="modules" aria-labelledby="mod-h">
+  <div class="wrap">
+    <div class="sh rv"><p class="kick">What it is</p><h2 class="t" id="mod-h">Seven modules on one data spine.</h2><p>The field-service system of record (ServiceTitan) is the spine. Every module reads from it and writes back to it, so the board, the members and the numbers in the data room stay in sync.</p></div>
+    <div class="mods">
+      <a class="mod feature rv" href="#demo" data-tab="pci"><span class="ic"><svg class="ico"><use href="#i-gauge"/></svg></span><span class="tag">Build · BSP data edge</span><h3>Service-Call Pressure Index</h3><p>A 7-day forecast of call volume by hub and trade, from live weather and NWS alerts run through PP's weather-to-demand multipliers. Staffing, on-call and parts staging follow the index, not gut feel.</p><span class="moves">Moves: booked calls in peak weeks · overtime · same-day capacity</span></a>
+      <a class="mod rv" href="#demo" data-tab="board"><span class="ic"><svg class="ico"><use href="#i-board"/></svg></span><span class="tag">Buy · ServiceTitan</span><h3>Dispatch board</h3><p>One board across Lancaster, York, Harrisburg and the Jersey Shore. Auto-assign by skill, distance and membership priority.</p><span class="moves">Moves: jobs / tech / day · on-time %</span></a>
+      <a class="mod rv" href="#demo" data-tab="ai"><span class="ic"><svg class="ico"><use href="#i-msg"/></svg></span><span class="tag">Rent · Avoca</span><h3>AI dispatcher</h3><p>Answers every call at 2 a.m., quotes member pricing and books a real slot straight onto the board.</p><span class="moves">Moves: booking rate 38% → 59%</span></a>
+      <a class="mod rv" href="#membership"><span class="ic"><svg class="ico"><use href="#i-loop"/></svg></span><span class="tag">Buy + build</span><h3>Comfort Club engine</h3><p>Attach at every call, auto-book the two tune-ups, renew by text, flag churn risk before the renewal date.</p><span class="moves">Moves: members / tech → 83</span></a>
+      <a class="mod rv" href="#movers"><span class="ic"><svg class="ico"><use href="#i-home"/></svg></span><span class="tag">Build · deed feeds</span><h3>New-mover autopilot</h3><p>County deed transfers → score → welcome mailer → opt-in call. New owners book within 90 days or not at all.</p><span class="moves">Moves: new-customer CAC · first-year members</span></a>
+      <a class="mod rv" href="#stack"><span class="ic"><svg class="ico"><use href="#i-tag"/></svg></span><span class="tag">Buy · Profit Rhino + Rilla</span><h3>In-home sales</h3><p>Good / better / best on a tablet, financing at the kitchen table, and AI ride-along coaching on every replacement call.</p><span class="moves">Moves: avg ticket +6 pts · close rate +9% rel.</span></a>
+      <a class="mod rv" href="#stack"><span class="ic"><svg class="ico"><use href="#i-star"/></svg></span><span class="tag">Buy · Podium</span><h3>Reviews &amp; payments</h3><p>Text-to-pay at job close, review request in the same thread, two-way SMS inbox for the CSR team.</p><span class="moves">Moves: review velocity · DSO</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="sec paper" id="demo" aria-labelledby="demo-h">
+  <div class="wrap">
+    <div class="sh rv"><p class="kick">Interactive demo</p><h2 class="t" id="demo-h">Run a day at Punctual Pros.</h2><p>Live weather, real ZIP coverage and the portal's demand model. Jobs, names and technicians are illustrative.</p></div>
+    <div class="demo rv">
+      <div class="demo-bar">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <div class="tabs" role="tablist" aria-label="Demo views">
+          <button role="tab" id="tab-board" aria-controls="pane-board" aria-selected="true" data-tab="board"><svg class="ico"><use href="#i-board"/></svg>Dispatch board</button>
+          <button role="tab" id="tab-pci" aria-controls="pane-pci" aria-selected="false" data-tab="pci"><svg class="ico"><use href="#i-gauge"/></svg>Pressure Index</button>
+          <button role="tab" id="tab-ai" aria-controls="pane-ai" aria-selected="false" data-tab="ai"><svg class="ico"><use href="#i-msg"/></svg>AI dispatcher</button>
+        </div>
+        <span class="live" id="demo-live">LIVE WEATHER</span>
+      </div>
+      <div class="pane" id="pane-board" role="tabpanel" aria-labelledby="tab-board">
+        <div class="board-top">
+          <div class="board-kpis" id="board-kpis"></div>
+          <div class="chips" id="hub-chips" role="group" aria-label="Filter by hub"></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn btn-o btn-sm" type="button" id="auto"><svg class="ico"><use href="#i-bolt"/></svg>Auto-dispatch unassigned</button><button class="btn btn-ghost btn-sm" type="button" id="tick">Advance clock +30 min</button><button class="btn btn-ghost btn-sm" type="button" id="reset">Reset</button><span id="clock" class="mono" style="margin-left:auto;align-self:center;font-size:13px;color:var(--mute)"></span></div>
+        <div class="board-wrap">
+          <div class="cols" id="cols"></div>
+          <aside class="detail" id="detail" aria-live="polite"></aside>
+        </div>
+        <p class="srcs">12 illustrative jobs on real ZIPs from the portal coverage model (pp_zips). Assignment logic: same trade → same hub → lowest load → member priority. <span class="ill">Illustrative</span></p>
+      </div>
+      <div class="pane" id="pane-pci" role="tabpanel" aria-labelledby="tab-pci" hidden>
+        <div class="chips" id="pci-scen" role="group" aria-label="Weather scenario" style="margin-bottom:14px"></div>
+        <div class="pci-top">
+          <div style="min-width:0">
+            <div style="overflow-x:auto"><table class="heat" id="heat" aria-label="Service-Call Pressure Index by hub and day"><tbody><tr><td><div style="height:240px;border-radius:12px;background:var(--soft)"></div></td></tr></tbody></table></div>
+            <div class="scale"><span>100 = a normal day</span><i style="background:#eef3ea"></i>&lt;105<i style="background:#fff1d6"></i>105–125<i style="background:#ffd3ae"></i>125–150<i style="background:#ff9f73"></i>150–200<i style="background:#e8551a"></i>200+</div>
+            <div class="cap" id="cap"></div>
+            <div class="slider" style="margin-top:14px"><label for="share">PP share of market calls (parameter) <output id="o-share">4%</output></label><input type="range" id="share" min="1" max="12" step="0.5" value="3"></div>
+          </div>
+          <aside class="drv" id="drv" aria-live="polite"></aside>
+        </div>
+        <p class="srcs" id="pci-src">Index = Σ trade baseline × weather multiplier ÷ Σ baseline × 100. Baselines (HVAC 10, plumbing 16, electrical 7 calls/day per 10K households) and multiplier midpoints from <b>pp_demand_model</b> (ServiceTitan heat-wave study, AHS, Consumer Reports, NWS criteria; most cold/plumbing/electrical magnitudes are labelled assumptions). Forecast: Open-Meteo via <code>Live.forecast</code>; replays use the Open-Meteo archive (<code>Live.history</code>). Households: ACS occupied units (pp_market). PP share and calls per tech-day are <span class="est">est.</span> parameters.</p>
+      </div>
+      <div class="pane" id="pane-ai" role="tabpanel" aria-labelledby="tab-ai" hidden>
+        <div class="ai">
+          <div class="phone">
+            <div class="phone-h"><span class="rec" aria-hidden="true"></span><b>Inbound call · 2:07 AM</b><span style="color:var(--mute)">· (732) ••• ••41 · Toms River</span><button class="btn btn-ghost btn-sm" type="button" id="replay" style="margin-left:auto"><svg class="ico"><use href="#i-play"/></svg>Replay</button></div>
+            <div class="msgs" id="msgs" aria-live="polite"></div>
+          </div>
+          <div>
+            <h3 style="margin:0 0 10px;font-size:15px">What ServiceOS did, in order</h3>
+            <ol class="acts" id="acts"></ol>
+            <p class="srcs">Transcript is a scripted mock <span class="ill">Illustrative</span>. Coverage check and tonight's low are live (pp_zips, Open-Meteo). Production vendor: Avoca (AI CSR, books into ServiceTitan); vendor-reported booking lift is unaudited.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="membership" aria-labelledby="mem-h">
+  <div class="wrap">
+    <div class="sh rv"><p class="kick">Membership economics</p><h2 class="t" id="mem-h">Members are the recurring revenue a buyer capitalises.</h2><p>Frontdoor, a membership-model comp, runs a ~24% EBITDA margin against a 15% residential median. Champions Group sold at ~18.5x with about 83 members per technician. This is the operator's view of the Comfort Club book.</p></div>
+    <div class="two">
+      <div class="panel rv">
+        <h3>Inputs</h3><p class="hint">Defaults are illustrative. PP's real member count is a data gap (pull from ServiceTitan).</p>
+        <div class="sliders">
+          <div class="slider"><label for="m-mem">Active members <output id="o-mem"></output></label><input type="range" id="m-mem" min="500" max="12000" step="100" value="4000"></div>
+          <div class="slider"><label for="m-tech">Field technicians <output id="o-tech"></output></label><input type="range" id="m-tech" min="20" max="120" step="1" value="60"></div>
+          <div class="slider"><label for="m-price">Plan price / month <output id="o-price"></output></label><input type="range" id="m-price" min="9.95" max="34.95" step="1" value="19.95"></div>
+          <div class="slider"><label for="m-churn">Annual churn <output id="o-churn"></output></label><input type="range" id="m-churn" min="5" max="40" step="1" value="20"></div>
+          <div class="slider"><label for="m-pull">Repair gross profit pulled through per member / yr <output id="o-pull"></output></label><input type="range" id="m-pull" min="0" max="400" step="10" value="150"></div>
+          <div class="slider"><label for="m-mult">EV / EBITDA multiple applied <output id="o-mult"></output></label><input type="range" id="m-mult" min="5" max="12" step="0.1" value="6.8"></div>
+        </div>
+      </div>
+      <div class="panel rv">
+        <h3>Outputs</h3><p class="hint">Cost to serve: 2 tune-ups × $70 labor and parts per member (est.).</p>
+        <div class="outs" id="m-outs"></div>
+        <div class="gauge"><div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin-bottom:8px"><span>Members per technician</span><span class="mono" id="m-den"></span></div><div class="track"><div class="fill" id="m-fill"></div><div class="mark" style="left:calc(83 / 120 * 100%)" title="Champions benchmark"></div></div><div class="lab"><span>0</span><span class="bm" style="left:calc(83 / 120 * 100%)">▲ Champions ~83</span><span>120</span></div></div>
+        <button class="btn btn-ink btn-sm" type="button" id="m-ret" style="margin-top:16px">Apply +5 pts retention</button>
+        <p class="srcs">Sources: kb-pp-3 (Champions density, derived) · ve-11 Frontdoor FY2025 10-K margin · ve-24 Bain/HBR (+5 pts retention → +25–95% profit) · multiple default = Capstone/IMAP typical 6.8x (ve-06). All outputs <span class="est">est.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec paper" id="movers" aria-labelledby="mov-h">
+  <div class="wrap">
+    <div class="sh rv"><p class="kick">New-mover autopilot</p><h2 class="t" id="mov-h">Every deed is a first service call waiting to happen.</h2><p>New owners pick their HVAC, plumbing and electrical company in the first 90 days. ServiceOS reads county deed feeds, scores each transfer, mails a welcome kit, and calls only those who opt in.</p></div>
+    <div class="flow rv" id="flow">
+      <div class="st"><span class="n">01 · Deed feed</span><h4>County transfers</h4><div class="v num" id="f1">—</div><p>15 county feeds, Sep 2025 → Sep 2026 (NJ through Jun 2026)</p><div class="loadbar"><i id="lb"></i></div></div>
+      <div class="st"><span class="n">02 · Filter</span><h4>Residential, PP counties</h4><div class="v num" id="f2">—</div><p>9 core PA counties + Ocean &amp; Monmouth</p></div>
+      <div class="st"><span class="n">03 · Score ≥ 65</span><h4>Likely owner-occupant, in territory</h4><div class="v num" id="f3">—</div><p>Core ZIP +30 · pre-1980 home +25 · $150K–1.5M +20 · builder / non-arms-length −30</p></div>
+      <div class="st"><span class="n">04 · Mail</span><h4>Welcome kits / month</h4><div class="v num" id="f4">—</div><p>Mailed within 30 days of the deed date</p></div>
+      <div class="st hot"><span class="n">05 · Call</span><h4>Booked first visits / month</h4><div class="v num" id="f5">—</div><p id="f5s">Opt-in calls only (TCPA) <span class="est">est.</span></p></div>
+    </div>
+    <div class="two" style="margin-top:18px">
+      <div class="panel rv">
+        <h3>Assumptions</h3><p class="hint">Conversion rates are analyst assumptions until PP's own campaign data exists.</p>
+        <div class="sliders">
+          <div class="slider"><label for="n-resp">Mail → booked first visit <output id="o-resp"></output></label><input type="range" id="n-resp" min="0.5" max="8" step="0.5" value="3"></div>
+          <div class="slider"><label for="n-ticket">First-visit ticket <output id="o-ticket"></output></label><input type="range" id="n-ticket" min="150" max="900" step="10" value="385"></div>
+          <div class="slider"><label for="n-attach">Membership attach on first visit <output id="o-attach"></output></label><input type="range" id="n-attach" min="10" max="60" step="1" value="35"></div>
+        </div>
+        <div class="outs" style="margin-top:16px" id="n-outs"></div>
+      </div>
+      <div class="panel rv">
+        <h3>Scored movers by county</h3><p class="hint" id="n-hint">Loading deed feeds when this section scrolls into view…</p>
+        <div class="cty" id="n-cty"></div>
+        <p class="srcs" id="n-src">Sources: county ArcGIS parcel/sales services (Lancaster, York, Dauphin, Cumberland, Berks, Lebanon, Franklin, Adams, Perry) and NJ Division of Taxation SR1A (Ocean, Monmouth) via data/sales/pp_sales_*. Dauphin coverage is partial in the source feed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec ink" id="value" aria-labelledby="val-h">
+  <div class="wrap">
+    <div class="sh rv"><p class="kick">Value-creation math</p><h2 class="t" id="val-h">$0.4–0.9M in, a multiple-point re-rate out.</h2><p>Revenue and EBITDA are estimates from public filings (pp_filings). Only 1.0–2.5 turns are credited to tech enablement because the 17–18.5x Champions and Sila prints are driven by scale. Every number below is labelled est. with its source.</p></div>
+    <div class="val">
+      <div class="panel rv">
+        <h3>Assumptions <span class="est">est.</span></h3>
+        <div class="sliders" style="margin-top:14px">
+          <div class="slider"><label for="v-rev">FY2025 pro forma revenue <output id="o-rev"></output></label><input type="range" id="v-rev" min="16" max="28" step="0.5" value="22"><span class="src">pp_filings: ~$22M, range $16–28M (low–medium confidence)</span></div>
+          <div class="slider"><label for="v-ebitda">Current adj. EBITDA <output id="o-ebitda"></output></label><input type="range" id="v-ebitda" min="1.8" max="3.1" step="0.1" value="2.6"><span class="src">pp_filings: ~$1.8–3.1M, central ~$2.6M (low confidence)</span></div>
+          <div class="slider"><label for="v-pts">Margin uplift from ServiceOS <output id="o-pts"></output></label><input type="range" id="v-pts" min="2" max="4" step="0.25" value="3"><span class="src">ra-pp: 2–4 pts (booking rate, ticket, membership)</span></div>
+          <div class="slider"><label for="v-mult">Entry-style multiple today <output id="o-mult2"></output></label><input type="range" id="v-mult" min="6" max="10" step="0.1" value="6.8"><span class="src">ve-06 Capstone/IMAP typical 6.8x · premium 9.8x</span></div>
+          <div class="slider"><label for="v-turns">Turns credited to tech enablement <output id="o-turns"></output></label><input type="range" id="v-turns" min="1" max="2.5" step="0.1" value="1.5"><span class="src">ra-pp: 1.0–2.5 turns · ve-05 PKF 5–6x vs 10x+</span></div>
+          <div class="slider"><label for="v-inv">ServiceOS investment <output id="o-inv"></output></label><input type="range" id="v-inv" min="0.4" max="0.9" step="0.05" value="0.65"><span class="src">ra-pp: $0.4–0.9M software + implementation; 6–12 months to value</span></div>
+        </div>
+      </div>
+      <div class="panel rv">
+        <h3>Enterprise value bridge <span class="est">est.</span></h3>
+        <div id="wf" style="margin-top:10px"></div>
+        <div class="res" id="v-res"></div>
+        <p class="srcs">Bridge: EV today = EBITDA × multiple → + EBITDA uplift at today's multiple → + re-rating on the new EBITDA → − investment. Franchise royalties (~7.2–7.5% of revenue) cap margin upside (pp_filings). Analyst assumption, not a forecast or company guidance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="evidence" aria-labelledby="ev-h">
+  <div class="wrap">
+    <div class="sh rv"><p class="kick">Evidence</p><h2 class="t" id="ev-h">Why the market pays for this.</h2><p>Valuation evidence for residential home services from serviceos_evidence.json, with source, date and confidence.</p></div>
+    <div class="tw rv"><table class="t" aria-label="Valuation evidence"><thead><tr><th style="width:40%">Evidence</th><th style="width:22%">Metric</th><th>Date</th><th>Confidence</th><th style="width:20%">Source</th></tr></thead><tbody id="ev-body"><tr><td colspan="5">Loading…</td></tr></tbody></table></div>
+  </div>
+</section>
+
+<section class="sec paper" id="stack" aria-labelledby="stk-h">
+  <div class="wrap">
+    <div class="sh rv"><p class="kick">Build vs buy</p><h2 class="t" id="stk-h">Rent the front office. Build the data edge.</h2><p>Mature categories (FSM, AI CSR, pricebook, reviews) are bought. The two modules that depend on Broad Sky's own datasets, the Pressure Index and the new-mover autopilot, are built once in the portal and reused across platforms.</p></div>
+    <div class="tw rv"><table class="t" aria-label="ServiceOS stack"><thead><tr><th style="width:16%">Layer</th><th style="width:22%">Vendor / owner</th><th>Decision</th><th style="width:30%">What it does</th><th style="width:24%">Pricing</th></tr></thead><tbody id="stk-body"><tr><td colspan="5">Loading…</td></tr></tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="roadmap" aria-labelledby="rm-h">
+  <div class="wrap">
+    <div class="sh rv"><p class="kick">12-month roadmap</p><h2 class="t" id="rm-h">Value in two quarters, all of it in four.</h2><p>Sequenced so the cheapest, fastest lever (booking rate) pays for the rest. Each workstream has a KPI gate before the next dollar is spent.</p></div>
+    <div class="gantt rv"><div class="g-in" id="gantt"></div></div>
+  </div>
+</section>
+
+<section class="sec paper" id="risks" aria-labelledby="rk-h">
+  <div class="wrap">
+    <div class="sh rv"><p class="kick">Risks</p><h2 class="t" id="rk-h">What could go wrong, and the mitigation.</h2></div>
+    <div class="grid3" id="risk-grid"></div>
+  </div>
+</section>
+
+<section class="sec ink" id="exit" aria-labelledby="ex-h">
+  <div class="wrap">
+    <div class="sh rv"><p class="kick">At exit</p><h2 class="t" id="ex-h">Why a buyer pays for ServiceOS.</h2><p>PKF's valuation grid prices home-services businesses on a handful of rows. ServiceOS moves four of them at once, and leaves a data room that proves it.</p></div>
+    <div class="buyer">
+      <div class="bcard rv"><div class="row">PKF row · In-house capabilities &amp; innovation</div><h4>A platform, not a franchisee</h4><p>A documented operating system that onboards an add-on in 60 days is what turns a 25-territory operator into a buy-and-build platform for the next sponsor.</p><div class="move"><i>Undifferentiated</i> → Value-enhancing</div></div>
+      <div class="bcard rv"><div class="row">PKF row · Customer retention</div><h4>Members with a renewal history</h4><p>Cohort tables of members, renewals and churn by hub replace "we think retention is good." Recurring revenue gets capitalised; one-off repairs don't.</p><div class="move"><i>Low retention</i> → High retention</div></div>
+      <div class="bcard rv"><div class="row">PKF row · Business mix</div><h4>Service-led, not project-led</h4><p>Membership, tune-ups and repairs grow as a share of revenue versus lumpy replacements and new construction.</p><div class="move"><i>Project-heavy (5–6x)</i> → Repeatable service (10x+)</div></div>
+      <div class="bcard rv"><div class="row">PKF row · Earnings visibility</div><h4>A forecast you can underwrite</h4><p>The Pressure Index plus member book give a 7-day and 12-month demand view backed by NWS and ACS data, and a back-test against PP's own call history.</p><div class="move"><i>Low visibility</i> → High visibility</div></div>
+    </div>
+    <p class="srcs" style="margin-top:18px">PKF O'Connor Davies, U.S. HVAC M&amp;A Industry Update, Summer 2026 (ve-05). Capstone/IMAP 2026 survey (ve-06).</p>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="row">
+      <div style="max-width:380px"><a class="brand" href="#top"><span class="mk"><svg class="ico"><use href="#i-chip"/></svg></span><b>ServiceOS</b></a><p style="margin:14px 0 0">A tech-enablement thesis for Punctual Pros, prepared for the Broad Sky Portfolio Resource Group. One of six portfolio "OS" programs.</p></div>
+      <div><h4>Portal</h4><ul><li><a href="../../app.html#/techos/overview">Tech enablement overview</a></li><li><a href="../../app.html#/pp/overview">Punctual Pros module</a></li><li><a href="../../app.html#/pp/weather">PP weather &amp; demand</a></li></ul></div>
+      <div><h4>Concepts</h4><ul><li><a href="./index.html">Punctual Pros site</a></li><li><a href="../index.html">All six concepts</a></li><li><a href="../../">BSP landing</a></li></ul></div>
+    </div>
+    <div class="legal">Concept by Syed Rizvi — not an official Punctual Pros or Broad Sky Partners page. Figures labelled est. are analyst assumptions; illustrative items are mock data. Vendor names are cited as market options, not endorsements.</div>
+  </div>
+<p class="bsp-disclaimer" style="box-sizing:border-box;max-width:1200px;margin:0 auto;padding:12px 20px 18px;font-size:12px;line-height:1.55">Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.</p>
+</footer>
+
+<script type="module">
+  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261006085442';
+  import { Chat } from '../../assets/chat.js?v=20261006085442';
+  import { init } from './os.js?v=20261006083000';
+  init({ Data, Fmt, Live, Chat, esc });
+</script>
+</body>
+</html>

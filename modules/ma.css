@@ -98,3 +98,30 @@
 .m-ma .intens .chip{white-space:normal;max-width:100%;height:auto;line-height:1.3}
 @media (max-width:1280px){.m-ma .grid.ma-theses{grid-template-columns:1fr}}
 .m-ma-insp .chip{white-space:normal;height:auto;max-width:100%;line-height:1.3;text-align:left}
+/* S+H benchmark panel (overview) */
+.m-ma .ma-sh{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.35fr);gap:18px;align-items:start}
+.m-ma #ma-sh-tbl .tbl td,.m-ma #ma-sh-tbl .tbl th{padding-left:7px;padding-right:7px}
+.m-ma .ma-sh-leg{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:11px;color:var(--text-2);margin-top:6px}
+.m-ma .ma-sh-leg span{display:inline-flex;align-items:center;gap:5px}
+.m-ma .ma-sh-leg i{display:inline-block;width:12px;height:2px;border-radius:1px}
+@media (max-width:1180px){.m-ma .ma-sh{grid-template-columns:minmax(0,1fr)}}
+/* Affiliation hold-outs */
+.m-ma .ma-top .it.ma-affil{background:color-mix(in srgb,var(--red) 6%,var(--surface))}
+.m-ma .ma-top .it.ma-affil .rk{color:var(--red);font-weight:700}
+.m-ma .mini tr.ma-affil-row td{background:color-mix(in srgb,var(--red) 6%,transparent);white-space:normal}
+.m-ma .mini tr.ma-affil-row .flags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+/* Deal-stage form (inspector) */
+.m-ma-insp.ma-stage{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.m-ma-insp.ma-stage label{display:flex;flex-direction:column;gap:4px;font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.m-ma-insp.ma-stage select,.m-ma-insp.ma-stage input{width:100%;min-width:0;font-size:12px;text-transform:none;letter-spacing:0}
+.m-ma-insp.ma-stage .small{grid-column:1/-1}
+.m-ma .calc .soft{font-weight:400}
+.m-ma #ma-tg .tbl td:nth-child(7){max-width:150px}
+.m-ma #ma-tg .tbl td.wrap{min-width:170px;max-width:210px}
+.m-ma #ma-tg .tbl td:nth-child(6) .chip{max-width:120px;overflow:hidden;text-overflow:ellipsis}
+.m-ma #ma-tg .tbl td:nth-child(2){max-width:190px}
+.m-ma #ma-tg .tbl td:nth-child(3){max-width:120px}
+.m-ma #ma-tg .tbl td:nth-child(8){white-space:normal;min-width:120px;max-width:150px}
+.m-ma #ma-tg .tbl td:nth-child(9){white-space:normal;max-width:120px}
+.m-ma #ma-tg .tbl td.wrap{min-width:160px;max-width:200px}
+.m-ma .mini tr.ma-affil-row .chip{white-space:normal;height:auto;max-width:100%;line-height:1.3;text-align:left}

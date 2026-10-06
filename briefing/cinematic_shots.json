@@ -1,0 +1,155 @@
+[
+ {
+  "id": "t_open",
+  "url": "index.html",
+  "action": "static",
+  "action_args": {},
+  "duration_s": 7.7,
+  "title_card": {
+   "kicker": "Broad Sky Partners · Portfolio Resource Group",
+   "headline": "One operating picture for six platforms.",
+   "duration_s": 2.5
+  },
+  "narration": "Tyler, this is Broad Sky Operating Intelligence: one working system for six platforms, on verified data."
+ },
+ {
+  "id": "landing_chat",
+  "url": "index.html",
+  "action": "type_chat",
+  "action_args": {
+   "text": "Show me how to take Punctual Pros nationwide",
+   "delay": 38,
+   "read_ms": 1800
+  },
+  "duration_s": 9.5,
+  "title_card": null,
+  "narration": "Ask it what you would ask an associate: how do we take Punctual Pros nationwide? It answers from filings, deed records and add-on screens."
+ },
+ {
+  "id": "pp_weather",
+  "url": "app.html#/pp/weather",
+  "action": "static",
+  "action_args": {},
+  "duration_s": 6.1,
+  "title_card": null,
+  "narration": "For Punctual Pros, the live forecast becomes a staffing plan for each hub before the calls arrive."
+ },
+ {
+  "id": "cet_wastewater",
+  "url": "app.html#/cet/wastewater",
+  "action": "static",
+  "action_args": {},
+  "duration_s": 7.9,
+  "title_card": null,
+  "narration": "For CET, 183 treatment plants are ranked for Horton, and 157 add-on targets are screened."
+ },
+ {
+  "id": "os_program",
+  "url": "index.html#os",
+  "action": "hover_cards",
+  "action_args": {
+   "selector": ".osc",
+   "count": 6,
+   "each_ms": 1100
+  },
+  "duration_s": 7.6,
+  "title_card": null,
+  "narration": "The bigger question is value at exit. Each platform gets an operating system aimed at the KPIs that move its multiple."
+ },
+ {
+  "id": "serviceos_demo",
+  "url": "redesigns/punctual-pros/serviceos.html",
+  "action": "click_tab",
+  "action_args": {
+   "selectors": [
+    "#tab-board",
+    "#tab-pci",
+    "#tab-ai"
+   ],
+   "each_ms": 1700
+  },
+  "duration_s": 6.5,
+  "title_card": null,
+  "narration": "ServiceOS gives Punctual Pros weather-driven dispatch, AI call answering and a membership engine."
+ },
+ {
+  "id": "gridos_demo",
+  "url": "redesigns/cet/gridos.html",
+  "action": "click_tab",
+  "action_args": {
+   "selectors": [
+    "#tab-bids",
+    "#tab-ww"
+   ],
+   "each_ms": 1800
+  },
+  "duration_s": 5.0,
+  "title_card": null,
+  "narration": "GridOS moves CET from bid radar to recurring maintenance contracts."
+ },
+ {
+  "id": "firmos_score",
+  "url": "redesigns/frontline/firmos.html",
+  "action": "scroll",
+  "action_args": {
+   "to": 3300,
+   "ms": 3800
+  },
+  "duration_s": 5.1,
+  "title_card": null,
+  "narration": "FirmOS gives every Frontline law firm a security score and cleaner eBilling."
+ },
+ {
+  "id": "labos_demo",
+  "url": "redesigns/thomas-scientific/labos.html",
+  "action": "scroll",
+  "action_args": {
+   "to": 1800,
+   "ms": 3200
+  },
+  "duration_s": 6.7,
+  "title_card": null,
+  "narration": "LabOS lowers Thomas Scientific's cost to serve on every order, through punchout and account-health scoring."
+ },
+ {
+  "id": "techos_overview",
+  "url": "app.html#/techos/overview",
+  "action": "hover_cards",
+  "action_args": {
+   "selector": ".os-card",
+   "count": 6,
+   "each_ms": 900
+  },
+  "duration_s": 7.6,
+  "title_card": null,
+  "narration": "SignalOS and HarborOS complete the set: an estimated six to twelve million dollars of investment across all six."
+ },
+ {
+  "id": "techos_calculator",
+  "url": "app.html#/techos/overview",
+  "action": "click_tab",
+  "action_args": {
+   "selector": ".view-tab:nth-child(4)",
+   "each_ms": 4200
+  },
+  "duration_s": 7.4,
+  "title_card": null,
+  "narration": "The calculator turns EBITDA uplift and multiple expansion into equity value, every assumption labelled."
+ },
+ {
+  "id": "t_close",
+  "url": "index.html",
+  "action": "static",
+  "action_args": {
+   "to": 7300,
+   "ms": 2500
+  },
+  "duration_s": 7.8,
+  "title_card": {
+   "kicker": "Recommended next step",
+   "headline": "Start with ServiceOS. A 90-day pilot plan at the next PRG meeting.",
+   "duration_s": 2.5
+  },
+  "narration": "Our recommendation: start with ServiceOS at Punctual Pros, with a ninety-day pilot plan at the next PRG meeting."
+ }
+]

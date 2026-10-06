@@ -1,0 +1,1106 @@
+{
+ "meta": {
+  "dataset": "cet_playbook",
+  "title": "Commonwealth Electrical Technologies: the value-creation playbook (New England electrical/energy platform to Northeast infrastructure platform)",
+  "generated": "2026-10-06",
+  "method": "Template events reuse Broad Sky, Smith + Howard and trade-press sources (Accounting Today, CPA Practice Advisor), checked 2026-10-06 against data/research/pp_nationwide.json and bsp_firm.json timeline. Vertical analogs (Pfingsten NEC Group, Ridgemont Crete United, Kohlberg Loenbro, IES Holdings) come from PE Hub, PrivSource and SEC 8-K pages. AI-agent, talent and growth-lever evidence comes from vendor case studies (Togal, Trimble Document Crunch, Bridgit, Procore, Newmetrix, Samotics, ServiceTitan), government sources (BLS OOH, DOL, mass.gov, CT DRS, EPA CWNS, NREL, ISO-NE, PJM) and banker/legal commentary (Taft, Capstone/IMAP, PKF, GF Data via Gulfstar). Expansion-phase data_points were computed with python3 from repo datasets: cet_opportunities (86 items), cet_wwtp_targets (183), ma_targets_cet (48 + pe_backed_competitors), cet_ne_counties (67), cet_filings (estimate_table), pe_landscape (overlap_with_bsp contains cet), serviceos_evidence (kpi_benchmark kb-cet-*, roadmap_assumption ra-cet) and bsp_firm. kpi_targets and kpi_roadmap are explicit analyst assumptions anchored to cet_filings pro forma estimates.",
+  "caveats": [
+   "All CET revenue, EBITDA, headcount and margin baselines are low-confidence analyst estimates from cet_filings (PPP payroll, revenue per employee, comp margins). None is disclosed by CET or Broad Sky. kpi_roadmap and kpi_targets are labelled assumptions, not guidance.",
+   "Management guidance (bsp_firm thesis; Tyler's feedback) is no NYC expansion and a New England focus. The requested NY/NJ/PA leg is therefore Phase 4, a gated board option that explicitly excludes NYC. The repo has no NY/NJ/PA electrical target or opportunity dataset, so Phase 4 data_points are market-level only.",
+   "Smith + Howard add-on count: BSP's release says nine; named transactions reconcile to nine only if VIP Search and VIP Solutions count separately (see pp_nationwide caveats). Smith + Howard's \"Horton, Lee & Burnett\" add-on is unrelated to Horton Electrical Services.",
+   "Several sources returned HTTP 403 or timed out on direct fetch (PE Hub/Pfingsten, BusinessNC/Crete United, WaterMagazine/Samotics, ForConstructionPros/Newmetrix, Nasdaq/Procore, ecmag). Their claims were taken from search-engine extracts of those pages on 2026-10-06 and should be spot-checked before external use.",
+   "AI-agent metrics are vendor case studies or vendor claims for selected customers (Togal, Document Crunch, Bridgit, Newmetrix, Samotics, ServiceTitan), not controlled studies. Several come from general contractors or residential trades and are extrapolated to an electrical subcontractor. The Samotics figure is in GBP for a UK utility.",
+   "The FMI Capital Advisors 9-11x vs 6.5-8.5x recurring-service multiple claim is second-hand (quoted in a ServiceTitan blog, mechanical-contractor benchmarks) and was not read in the FMI original.",
+   "cet_opportunities est_value_usd is populated for only 43 of 86 items and reflects total project or program cost, not CET's electrical scope. WWTP project values are applicant estimates on draft/final SRF lists, not awards. Maine, NH and VT plants are not in cet_wwtp_targets.",
+   "ma_targets_cet revenue is ZoomInfo modeled; several figures conflict with headcount (e.g., JM Electrical $91M with 74 staff). Ownership is unknown for 26 of 48 targets.",
+   "CET appears as non-union on OSHA records (entity identity not independently confirmed). Union/merit-shop status of add-ons will constrain which apprenticeship lane and which public/utility work each crew can take.",
+   "Bonding/surety capacity, debt terms and DCAMM certification are not public (cet_filings data_gaps). The financing items infer structure; they do not report it."
+  ],
+  "item_count": 46,
+  "item_counts_by_kind": {
+   "template": 12,
+   "expansion_phase": 4,
+   "growth_lever": 10,
+   "ai_agent": 9,
+   "talent_program": 6,
+   "financing": 5
+  },
+  "narrative": "Tyler, CET can follow the Smith + Howard path: Broad Sky took a ~100-person, one-office Atlanta firm to ~800 people, 11 locations, nine add-ons and nearly 4x revenue in 3.5 years before selling to TPG. CET starts from a larger base, roughly 260-290 people, $65-100M of pro forma revenue and $6-11M of EBITDA after NuWave and Horton (low-confidence estimates from public filings), so the goal is ~3x in 36 months rather than 4x. Horton is the Market Street moment: the first adjacent-state add-on, which nearly doubles the workforce and brings Connecticut wastewater relationships. Phase 1 makes MA and CT one company and points Horton at 62 funded or requested plant and pump-station projects across CT, MA and RI, led by New Haven, Hartford and Norwalk. Phase 2 uses CET's existing six-state licensing to buy founder-owned firms in RI, NH, ME and VT from a 48-company screen with a ~$15.1M median, before Pfingsten's NEC Group, Ridgemont's Crete United or other sponsor platforms get there. Phase 3 is where the multiple moves: SCADA and pump-station monitoring, solar and storage O&M, EV depot charging and NuWave efficiency turn one-off bids into recurring contracts, the service mix that PKF and Capstone price 3 or more turns above project-heavy contractors. Data-center electrical is a real upside in PJM (~30 GW of new load by 2030) but a thin one in New England, where ISO-NE says data-center growth has lagged other regions. Phase 4 into Upstate NY, New Jersey and eastern Pennsylvania stays a gated option outside New York City, consistent with management's New England focus, and opens only if month-24 targets are met. Nine AI agents do the delivery work: takeoff (~76% faster in a Togal test), bid-radar triage toward 30% win rates, contract review (~75% faster), crew scheduling, safety, solar and pump-station monitoring, field documentation and 24/7 dispatch. The constraint is licensed electricians, so the people plan pairs IEC merit-shop and IBEW-lane apprenticeships with MA and CT tax credits, a fast track to the journeyman license and broad-based equity for foremen. Financing follows the Horton precedent of delayed-draw debt plus seller rollover, with co-invest for the larger add-on wave; GF Data puts lower-middle-market total leverage around 4.0x. Every revenue, margin and headcount target here is a labelled assumption anchored to filings-based estimates, and should be replaced with CET's actuals in the first 30 days.",
+  "kpi_roadmap": [
+   {
+    "month": 0,
+    "revenue_usd": 80000000,
+    "ebitda_usd": 8000000,
+    "headcount": 275,
+    "locations_or_accounts": 4,
+    "note": "ASSUMPTION. Oct 2026 pro forma run-rate inside cet_filings range ($65-100M revenue, $6-11M EBITDA, 260-290 staff); 10% margin = midpoint of 8-12%; locations = Worcester, Taunton, Norwell MA, Canton CT."
+   },
+   {
+    "month": 12,
+    "revenue_usd": 115000000,
+    "ebitda_usd": 12100000,
+    "headcount": 390,
+    "locations_or_accounts": 7,
+    "note": "ASSUMPTION. Phase 1: ~8% organic (bid selectivity, Horton cross-sell) plus 2 tuck-ins (~$29M acquired revenue at the ~$15M target-screen median); margin ~10.5%."
+   },
+   {
+    "month": 24,
+    "revenue_usd": 170000000,
+    "ebitda_usd": 19500000,
+    "headcount": 560,
+    "locations_or_accounts": 10,
+    "note": "ASSUMPTION. Phase 2 RI/NH/ME/VT add-ons (3-4 deals) plus Phase 3 recurring O&M lines; margin ~11.5%; also the Phase 4 gate test."
+   },
+   {
+    "month": 36,
+    "revenue_usd": 240000000,
+    "ebitda_usd": 30000000,
+    "headcount": 780,
+    "locations_or_accounts": 13,
+    "note": "ASSUMPTION. ~3x month-0 revenue (Smith + Howard did ~4x in 3.5 years); margin 12.5%, just under IES ~12.8%; at most one Phase 4 anchor; ~25% recurring service mix."
+   }
+  ],
+  "anchors": {
+   "pro_forma_revenue_range_usd": [
+    65000000,
+    100000000
+   ],
+   "pro_forma_ebitda_range_usd": [
+    6000000,
+    11000000
+   ],
+   "pro_forma_headcount_range": [
+    260,
+    290
+   ],
+   "cet_standalone_2025_revenue_est_usd": [
+    35000000,
+    55000000
+   ],
+   "horton_revenue_est_usd": [
+    25000000,
+    40000000
+   ],
+   "nuwave_revenue_est_usd": [
+    2000000,
+    10000000
+   ],
+   "co_invest_mark": "1.13x gross ($8.504M on $7.5M)",
+   "source": "data/research/cet_filings.json meta.estimate_table"
+  },
+  "market_evidence": {
+   "clean_water_need_us": {
+    "value_usd": 630100000000,
+    "horizon": "20 years",
+    "source_url": "https://www.epa.gov/system/files/documents/2024-05/2022-cwns-summary.pdf"
+   },
+   "iso_ne_energy_growth_2026_2035_pct": {
+    "value": 9,
+    "note": "New England has not seen the data-center growth of other regions",
+    "source_url": "https://www.iso-ne.com/about/where-we-are-going/regional-electricity-outlook/celt-report/"
+   },
+   "pjm_data_center_growth_2025_2030_gw": {
+    "value": 30,
+    "peak_2025_gw": 160,
+    "peak_2046_gw": 253,
+    "source_url": "https://insidelines.pjm.com/pjms-updated-20-year-forecast-continues-to-see-significant-long-term-load-growth/"
+   },
+   "ct_energy_storage_solutions_goal_mw": {
+    "value": 580,
+    "source_url": "https://portal.ct.gov/pura/electric/office-of-technical-and-regulatory-analysis/clean-energy-programs/energy-storage-solutions-program"
+   },
+   "ma_smart3_py2025_mw": {
+    "value": 900,
+    "ma_storage_target_2030_gw": 5,
+    "source_url": "https://www.solarpowerworldonline.com/2025/09/massachusetts-issues-final-smart-3-0-solar-regulations-sets-incentive-capacity-for-2025/"
+   },
+   "eversource_ma_ev_phase2_usd": {
+    "value": 188000000,
+    "ports": "150 DCFC + 8,200+ L2",
+    "source_url": "https://www.mass.gov/info-details/electric-vehicle-charging"
+   },
+   "mass_save_2025_2027_usd": {
+    "value": 4500000000,
+    "source_url": "https://www.wbur.org/news/2025/02/28/mass-save-dpu-three-year-plan-approved-energy-costs"
+   },
+   "electrician_labor_us": {
+    "growth_2024_34_pct": 9,
+    "annual_openings": 81000,
+    "median_pay_usd_2024": 62350,
+    "source_url": "https://www.bls.gov/ooh/construction-and-extraction/electricians.htm"
+   },
+   "construction_worker_gap_2026": {
+    "value": 499000,
+    "source_url": "https://www.abc.org/wfshortage"
+   },
+   "electrical_contractor_ma_deals": {
+    "2024": 140,
+    "2025": 99,
+    "financial_buyer_share": "~2/3 since 2020",
+    "source_url": "https://www.ecmweb.com/members/latest-news/article/55366163/electrical-contractor-ma-dips-in-2025"
+   },
+   "lmm_leverage_h1_2025": {
+    "total_debt_x": 4.0,
+    "senior_debt_x": 3.1,
+    "business_services_multiple_x": 7.5,
+    "source_url": "https://gulfstargroup.com/middle-market-commentary-first-half-2025/"
+   }
+  }
+ },
+ "items": [
+  {
+   "id": "cp-tpl-01",
+   "kind": "template",
+   "date": "2022-11-15",
+   "event": "Broad Sky makes a strategic platform investment in Smith + Howard, a single-office Atlanta accounting firm, with a stated plan to add advisory services, widen the footprint and speed up technology through M&A. CET parallel: Feb 2025 platform entry into a ~140-person Worcester electrical contractor with the same buy-and-build mandate.",
+   "company": "Smith + Howard",
+   "location": "Atlanta, GA",
+   "metric": "~100 professionals, 1 office at entry",
+   "cet_move": "Platform entry (CET, Feb 2025)",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tpl-02",
+   "kind": "template",
+   "date": "2023-08-17",
+   "event": "Add-on 1, Market Street Partners (Chattanooga): first move outside the home state, into an adjacent state, about 9 months after entry. CET parallel: Horton (Canton CT, Sep 2026) is the first add-on outside Massachusetts and nearly doubles the workforce.",
+   "company": "Market Street Partners",
+   "location": "Chattanooga, TN",
+   "metric": "First out-of-state office ~9 months after entry",
+   "cet_move": "Horton Electrical Services = adjacent-state anchor (CT)",
+   "source_url": "https://www.accountingtoday.com/news/smith-howard-acquires-market-street-partners",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tpl-03",
+   "kind": "template",
+   "date": "2024-01-31",
+   "event": "Add-on 2, JMM CPAs: buys a specialist service line (employee benefit plan audit) instead of geography. CET parallel: NuWave (design/build energy conservation, Oct 2025) and Horton (wastewater/pump-station electrical) are capability buys that open new recurring work.",
+   "company": "JMM CPAs",
+   "location": "Chicago, IL",
+   "metric": "Service-line add-on (EBP audit) with a national footprint",
+   "cet_move": "Capability add-ons: NuWave (efficiency), Horton (water/wastewater)",
+   "source_url": "https://www.smith-howard.com/smith-howard-announces-expansion-of-benefit-plan-audit-practice/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tpl-04",
+   "kind": "template",
+   "date": "2025-01-31",
+   "event": "Add-on 6, Smith Kesler & Co.: a construction-focused audit and tax firm, which took Smith + Howard into the Carolinas. It shows the second-ring state entry pattern: buy a respected local name and keep the brand and leaders.",
+   "company": "Smith Kesler & Co.",
+   "location": "South Carolina",
+   "metric": "Entry into a new state via a 50-year-old local firm",
+   "cet_move": "Phase 2 tuck-ins in RI / NH / ME / VT keep local brands and license holders",
+   "source_url": "https://www.cpapracticeadvisor.com/2025/02/11/smith-howard-adds-smith-kesler-co-in-south-carolina/155885/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tpl-05",
+   "kind": "template",
+   "date": "2026-01-13",
+   "event": "Add-on 8, Bauknight Pietras & Stormer: by this point Smith + Howard had >600 employees, >45 partners and 10 offices and ranked No. 85 on Accounting Today's Top 100. Densifying a state already entered (South Carolina) followed the first foothold.",
+   "company": "Bauknight Pietras & Stormer (BPS)",
+   "location": "Columbia, SC",
+   "metric": ">600 employees, 10 offices at the 8th add-on",
+   "cet_move": "Densify CT after Horton (e.g., CTEC Solar, D/E/F Services, Delmar) before stretching further",
+   "source_url": "https://www.accountingtoday.com/news/smith-howard-buys-bauknight-pietras-stormer",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tpl-06",
+   "kind": "template",
+   "date": "2026-02-03",
+   "event": "Add-on 9, Geels Norton: a cyber-risk / SOC audit capability. Smith + Howard also built AI-enabled capabilities and an offshore delivery center in India to scale delivery without growing headcount in step with revenue.",
+   "company": "Geels Norton",
+   "location": "Southeast US",
+   "metric": "9th add-on; tech/AI capability added before exit",
+   "cet_move": "GridOS AI agents (estimating, bid triage, scheduling, O&M monitoring) as the delivery-leverage layer",
+   "source_url": "https://www.smith-howard.com/smith-howard-welcomes-geels-norton-expanding-cyber-risk-audit-and-advisory-capabilities/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tpl-07",
+   "kind": "template",
+   "date": "2026-08-06",
+   "event": "Broad Sky completes the sale of Smith + Howard to TPG (via TPG Growth), its first exit. Over 3.5 years: ~100 to ~800 professionals (8x), 1 office to 11 locations across the Southeast and India, 9 add-ons, nearly 4x revenue.",
+   "company": "Smith + Howard",
+   "location": "Atlanta, GA",
+   "metric": "~4x revenue, 8x headcount, 1 to 11 locations in 3.5 years",
+   "cet_move": "Exit benchmark: ~3x revenue in 36 months (kpi_roadmap) is the CET analog",
+   "source_url": "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tpl-08",
+   "kind": "template",
+   "date": "2021-10-06",
+   "event": "Vertical analog 1 (same region, same trade): Pfingsten closes a platform investment in New England Electrical Contracting (Kingston MA; utility, EV charging and 5G electrical services). The founder kept significant equity, and the stated plan was geographic expansion plus add-ons.",
+   "company": "New England Electrical Contracting (NEC Group) / Pfingsten",
+   "location": "Kingston, MA",
+   "metric": "Platform plus 3 New England add-ons within ~13 months",
+   "cet_move": "Closest New England electrical buy-and-build comparable; also a competitor for the same targets",
+   "source_url": "https://www.pehub.com/pfingsten-invests-in-new-england-electrical-contracting/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tpl-09",
+   "kind": "template",
+   "date": "2022-10-31",
+   "event": "NEC Group crosses into Connecticut by acquiring Eastern Communications (Bloomfield CT), its third add-on since Pfingsten took majority in Oct 2021. A later partnership with Molicom (Plaistow NH) added New Hampshire. The pattern is MA base to CT to NH through service-line tuck-ins.",
+   "company": "Eastern Communications / Molicom (NEC Group)",
+   "location": "Bloomfield, CT; Plaistow, NH",
+   "metric": "3 add-ons in ~13 months; MA to CT to NH",
+   "cet_move": "Same MA to CT to NH route CET needs; shows the add-on cadence is achievable regionally",
+   "source_url": "https://www.privsource.com/acquisitions/deal/EMSjVe",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tpl-10",
+   "kind": "template",
+   "date": "2025-06",
+   "event": "Vertical analog 2 (MEP partner network): Ridgemont-backed Crete United (formerly Crete Mechanical Group; HVAC, electrical, plumbing and building automation) adds CAM H.V.A.C. & Construction in Smithfield RI as its first Rhode Island partner. It had already bought Reilly Electrical (South Easton MA, 2022) and C&C Service (Stamford CT, 2023). It reports 40 partner businesses and ~$680M revenue after adding 8 partners in 2025.",
+   "company": "Crete United (Ridgemont Equity Partners)",
+   "location": "Charlotte, NC; New England partners in MA / CT / RI",
+   "metric": "40 businesses, ~$680M revenue, 8 partners added in 2025",
+   "cet_move": "Partner-network model (founders keep brand and equity) and a direct competitor ~10 miles from CET Taunton",
+   "source_url": "https://www.privsource.com/acquisitions/deal/gaSyOJ",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tpl-11",
+   "kind": "template",
+   "date": "2025-12-11",
+   "event": "Vertical analog 3 (data-center electrical): Kohlberg takes a majority stake in Loenbro, with Braemont and management retaining equity, to push into data-center and mission-critical electrical. Loenbro had added Stewart Electric (data-center electrical) in Apr 2025, then bought Prism Electric (TX/OK; ~2,500 employees) after the Kohlberg deal.",
+   "company": "Loenbro (Kohlberg & Company)",
+   "location": "US (national)",
+   "metric": "Sponsor-to-sponsor recap; data-center electrical add-ons in 2025-2026",
+   "cet_move": "Evidence that mission-critical / data-center electrical capability is what upmarket buyers pay for at exit",
+   "source_url": "https://www.privsource.com/acquisitions/deal/kohlberg-acquires-majority-stake-in-loenbro-with-braemont-and-management-retaining-equity-O3SNok",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tpl-12",
+   "kind": "template",
+   "date": "2025-09",
+   "event": "Public-comp analog: IES Holdings FY2025 (Sep-25) Communications segment revenue was $1.14B, up 47% on data-center demand, and Commercial & Industrial revenue was $427.7M, up 16%. IES keeps buying regional electrical and communications businesses (e.g., Gulf Island, ~$143M net of cash, closed Jan 2026). Group revenue/employee is ~$328k and approximate EBITDA margin ~12.8% (cet_filings cet-022).",
+   "company": "IES Holdings (NASDAQ: IESC)",
+   "location": "Houston, TX",
+   "metric": "Comms +47% to $1.14B on data-center demand; ~12.8% EBITDA margin",
+   "cet_move": "Margin ceiling for kpi_roadmap (12.5% at month 36) and the data-center growth reference",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1048268/000104826825000175/q42025pressrelease-sep.htm",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-phase-1",
+   "kind": "expansion_phase",
+   "phase": "Phase 1 - Integrate Horton and densify the MA + CT core",
+   "months": "0-12",
+   "geography": [
+    "Worcester, Middlesex, Norfolk, Bristol, Plymouth counties MA",
+    "Hartford, New Haven, Fairfield, Litchfield counties CT (Horton base, Canton CT)"
+   ],
+   "thesis": "Make the two-state core one operating company before buying more geography. Put Horton (100+ field staff, 20 managers) and NuWave on one estimating, scheduling and safety stack. Point Horton's CT wastewater crews at the funded Clean Water Fund pipeline and cross-sell CET generator/controls and NuWave aeration-efficiency work into each plant. Close 1-2 MA tuck-ins from the top of the target screen that add medium-voltage, generator or SCADA capacity near Worcester/Taunton. This mirrors Smith + Howard's first year: build the operating system, then add the first bolt-on.",
+   "data_points": {
+    "opportunities_by_state": {
+     "MA": {
+      "opportunities": 25,
+      "est_value_usd_m": 176.0,
+      "fit_ge_75": 12,
+      "open_now": 13
+     },
+     "CT": {
+      "opportunities": 27,
+      "est_value_usd_m": 733.4,
+      "fit_ge_75": 18,
+      "open_now": 5
+     }
+    },
+    "wwtp_by_state": {
+     "MA": {
+      "facilities": 96,
+      "pipeline_value_usd_m": 1630.9,
+      "plant_or_pump_station_projects_funded_or_requested": 22,
+      "those_projects_value_usd_m": 1305.2,
+      "horton_fit_ge_80": 5
+     },
+     "CT": {
+      "facilities": 68,
+      "pipeline_value_usd_m": 1184.4,
+      "plant_or_pump_station_projects_funded_or_requested": 25,
+      "those_projects_value_usd_m": 798.2,
+      "horton_fit_ge_80": 10
+     }
+    },
+    "wwtp_priority_top_10": [
+     "1. New Haven East Shore STP (CT, fit 98)",
+     "2. Hartford WPCF (CT, fit 96)",
+     "3. Norwalk WPCF (CT, fit 95)",
+     "4. MWRA Deer Island Treatment Plant (MA, fit 94)",
+     "5. Bridgeport Westside WPCA (CT, fit 93)",
+     "6. Danbury WPCF (CT, fit 93)",
+     "7. Mattabassett District Cromwell (CT, fit 91)",
+     "8. NBC - Field's Point WWTF (RI, fit 90)",
+     "9. Haverhill WPAF (MA, fit 89)",
+     "10. Bristol Water Reclamation Facility (CT, fit 88)"
+    ],
+    "ma_targets_by_state": {
+     "MA": {
+      "targets": 24,
+      "zoominfo_revenue_usd_m": 451.0,
+      "employees": 1777,
+      "fit_ge_70": 11,
+      "founder_or_family_owned": 12
+     },
+     "CT": {
+      "targets": 9,
+      "zoominfo_revenue_usd_m": 169.9,
+      "employees": 808,
+      "fit_ge_70": 1,
+      "founder_or_family_owned": 6
+     }
+    },
+    "top_ma_ct_targets": [
+     "McDonald Electrical Corporation (Hingham MA; fit 83; ~96 staff; electrical construction, medium voltage)",
+     "K.M. Kelly, Inc. (Rochdale (Leicester) MA; fit 83; ~67 staff; medium/high-voltage cabling & terminations, substations/transformers/MCCs/VFDs)",
+     "Energy Electric (Foxborough MA; fit 81; ~150 staff; commercial & industrial electrical, design/build & engineering)",
+     "Coghlin Electrical Contractors, Inc. (Worcester MA; fit 79; ~33 staff; electrical construction, medium-voltage power systems)",
+     "FM Generator, Inc. (Canton MA; fit 78; ~75 staff; standby generator sales & installation, generator service & maintenance contracts)",
+     "Murphy Electric & Industrial Control (Pembroke MA; fit 78; ~55 staff; commercial electrical construction, industrial control systems)"
+    ],
+    "county_fit_top": [
+     "Middlesex MA (Tier 1, fit 98.5)",
+     "Worcester MA (Tier 2, fit 57.1)",
+     "Norfolk MA (Tier 2, fit 53.3)",
+     "Essex MA (Tier 2, fit 51.4)"
+    ],
+    "platform_baseline": "~260-290 employees, $65-100M revenue, $6-11M EBITDA pro forma (cet_filings estimate_table, low confidence)",
+    "datasets": [
+     "cet_opportunities",
+     "cet_wwtp_targets",
+     "ma_targets_cet",
+     "cet_ne_counties",
+     "cet_filings"
+    ]
+   },
+   "market_evidence": [
+    "EPA 2022 Clean Watersheds Needs Survey: $630.1B of US clean-water infrastructure need over 20 years, up 73% vs 2012.",
+    "Taft (2026): buyers look for top customer <~20% and recurring revenue of roughly 25% of the business before paying a premium.",
+    "Electrical-contractor M&A fell to 99 deals in 2025 from 140 in 2024; financial buyers made ~2/3 of deals (Cascade Partners via EC&M)."
+   ],
+   "kpi_targets": {
+    "revenue_usd": 115000000,
+    "ebitda_usd": 12100000,
+    "headcount": 390,
+    "locations": 7,
+    "basis": "ASSUMPTION, anchored to cet_filings pro forma $65-100M revenue / $6-11M EBITDA; see meta.kpi_roadmap month 12"
+   },
+   "source_urls": [
+    "https://portal.ct.gov/-/media/deep/water/municipal_wastewater/final-priority-list-fy26-27.pdf",
+    "https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/",
+    "https://www.epa.gov/system/files/documents/2024-05/2022-cwns-summary.pdf",
+    "https://www.taftlaw.com/news-events/law-bulletins/electrical-contractors-enter-a-premium-ma-window/",
+    "https://www.ecmweb.com/members/latest-news/article/55366163/electrical-contractor-ma-dips-in-2025"
+   ],
+   "source_url": "https://portal.ct.gov/-/media/deep/water/municipal_wastewater/final-priority-list-fy26-27.pdf",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-phase-2",
+   "kind": "expansion_phase",
+   "phase": "Phase 2 - Complete the six-state New England footprint (RI, NH, ME, VT)",
+   "months": "9-24",
+   "geography": [
+    "Providence / Kent RI",
+    "Rockingham / Hillsborough NH",
+    "Cumberland / Kennebec / Androscoggin ME",
+    "Chittenden / Rutland / Washington VT"
+   ],
+   "thesis": "CET is already licensed in all six New England states, but its crews and offices sit in MA and CT. Buy founder-owned, licensed local firms in RI, NH, ME and VT with SCADA, substation, generator or line-work capability, keep their brands and license holders, and route their bids through the shared GridOS bid board. Maine and Vermont SRF wastewater lists plus NEVI awards provide the first backlog. The screen has no RI/NH/ME/VT target scoring >= 70, so Phase 2 also needs a deeper, outreach-led sourcing pass (owner-succession calls, NECA/IEC chapter introductions). This is Smith + Howard's Carolinas move: enter a new state through a respected local name, then densify.",
+   "data_points": {
+    "opportunities_by_state": {
+     "RI": {
+      "opportunities": 4,
+      "est_value_usd_m": 10.0,
+      "fit_ge_75": 1,
+      "open_now": 3
+     },
+     "NH": {
+      "opportunities": 5,
+      "est_value_usd_m": 49.0,
+      "fit_ge_75": 2,
+      "open_now": 3
+     },
+     "ME": {
+      "opportunities": 16,
+      "est_value_usd_m": 305.9,
+      "fit_ge_75": 4,
+      "open_now": 5
+     },
+     "VT": {
+      "opportunities": 9,
+      "est_value_usd_m": 73.7,
+      "fit_ge_75": 0,
+      "open_now": 2
+     }
+    },
+    "wwtp_rhode_island": {
+     "facilities": 19,
+     "pipeline_value_usd_m": 714.8,
+     "plant_or_pump_station_projects_funded_or_requested": 15,
+     "those_projects_value_usd_m": 278.4,
+     "horton_fit_ge_80": 3
+    },
+    "ma_targets_by_state": {
+     "RI": {
+      "targets": 2,
+      "zoominfo_revenue_usd_m": 51.0,
+      "employees": 211,
+      "fit_ge_70": 0,
+      "founder_or_family_owned": 0
+     },
+     "NH": {
+      "targets": 4,
+      "zoominfo_revenue_usd_m": 76.9,
+      "employees": 244,
+      "fit_ge_70": 0,
+      "founder_or_family_owned": 0
+     },
+     "ME": {
+      "targets": 3,
+      "zoominfo_revenue_usd_m": 35.4,
+      "employees": 137,
+      "fit_ge_70": 0,
+      "founder_or_family_owned": 2
+     },
+     "VT": {
+      "targets": 6,
+      "zoominfo_revenue_usd_m": 86.2,
+      "employees": 395,
+      "fit_ge_70": 0,
+      "founder_or_family_owned": 2
+     },
+     "CT": {
+      "targets": 9,
+      "zoominfo_revenue_usd_m": 169.9,
+      "employees": 808,
+      "fit_ge_70": 1,
+      "founder_or_family_owned": 6
+     }
+    },
+    "top_second_ring_targets": [
+     "Arden Engineering Constructors, LLC (Pawtucket RI; fit 67; ~128 staff; mechanical/HVAC contracting, electrical contracting (Nolin Electric))",
+     "Coutts Brothers, Inc. (Gardiner ME; fit 62; ~31 staff; overhead distribution line work, transmission services)",
+     "Longchamps Electric (Manchester NH; fit 61; ~105 staff; commercial/educational/industrial electrical, fire alarm & security)",
+     "Electrical Installations, LLC (EII) (Moultonborough NH; fit 61; ~31 staff; water/wastewater control systems, SCADA automation)",
+     "Rossi Electric (Cranston RI; fit 58; ~83 staff; commercial electrical construction, maintenance services)",
+     "Racette Electric Inc. (Pittsford VT; fit 56; ~25 staff; substation construction, control-house wiring)",
+     "Midway Utility Contractors, LLC (Seabrook NH; fit 52; ~70 staff; underground utility construction, natural gas main & service installation)",
+     "Control Technologies, Inc. (CTI) (Williston VT; fit 52; ~153 staff; building automation & controls, HVAC controls)"
+    ],
+    "ct_densify_targets_after_horton": [
+     "CTEC Solar (C-TEC Solar, LLC) (Bloomfield CT; fit 75; ~70 staff; commercial & utility-scale solar EPC, solar-plus-storage)",
+     "Automated Building Systems, Inc. (ABS) (Glastonbury CT; fit 69; ~207 staff; building automation & integration (Alerton dealer), EV charging)",
+     "D/E/F Services Group, Ltd. (Jewett City (Griswold) CT; fit 65; ~64 staff; electrical, mechanical/HVAC)",
+     "Dinto Electrical Group (Paul Dinto Electrical Contractors, Inc.) (Middlebury CT; fit 63; ~141 staff; electrical construction, telecommunications)"
+    ],
+    "second_ring_targets_fit_ge_70": 0,
+    "target_screen_median_revenue_usd": 15117500.0,
+    "target_screen_median_employees": 71.0,
+    "pe_backed_competitors_in_new_england": 15,
+    "county_fit_top": [
+     "Providence RI (Tier 3, fit 49.0)",
+     "Cumberland ME (Tier 3, fit 44.9)",
+     "Rockingham NH (Tier 3, fit 41.1)",
+     "Hillsborough NH (Tier 3, fit 38.9)"
+    ],
+    "datasets": [
+     "cet_opportunities",
+     "cet_wwtp_targets (RI only; ME/NH/VT plants not screened)",
+     "ma_targets_cet",
+     "cet_ne_counties"
+    ]
+   },
+   "market_evidence": [
+    "15 New England electrical/energy firms are already owned by sponsors or strategics (ma_targets_cet pe_backed_competitors), including NEC Group (Pfingsten), RELCO (Crete United/Ridgemont) and PEC of CT (Alaris).",
+    "Crete United added its first Rhode Island partner in June 2025, so sponsor competition for RI/CT targets is live.",
+    "ABC estimates the US construction industry needs ~499,000 net new workers in 2026; buying licensed crews is faster than recruiting them."
+   ],
+   "kpi_targets": {
+    "revenue_usd": 170000000,
+    "ebitda_usd": 19500000,
+    "headcount": 560,
+    "locations": 10,
+    "basis": "ASSUMPTION; meta.kpi_roadmap month 24 (Phases 1-3 combined)"
+   },
+   "source_urls": [
+    "https://www.maine.gov/dep/water/grants/SRF/cwsrf/Documents/Final%20IUP%20FFY%202026.pdf",
+    "https://www.privsource.com/acquisitions/deal/gaSyOJ",
+    "https://www.abc.org/wfshortage",
+    "https://www.neifund.org/commonwealth-electrical-technologies-llc/"
+   ],
+   "source_url": "https://www.privsource.com/acquisitions/deal/gaSyOJ",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-phase-3",
+   "kind": "expansion_phase",
+   "phase": "Phase 3 - Capability verticals that recur: water/wastewater O&M, solar + storage, EV fleet depots, data-center electrical, NuWave efficiency",
+   "months": "12-30",
+   "geography": [
+    "New England-wide; data-center work concentrated in Suffolk/Middlesex MA and Hartford/Fairfield CT"
+   ],
+   "thesis": "Shift the mix from one-off hard-bid construction to repeatable service and O&M contracts. That mix is what moves a contractor from the 5-6x project-heavy band toward the 10x+ service band. Offer four productized lines: (1) SCADA/pump-station monitoring for the WWTPs Horton wires; (2) solar + storage EPC and O&M with uptime guarantees, using the CT Energy Storage Solutions and MA SMART 3.0 programs; (3) EV fleet-depot make-ready and charger O&M, building on the MassCEC on-street charging prime role; (4) NuWave aeration, lighting and controls efficiency projects funded through Mass Save. Data-center electrical is an option, not the core: ISO-NE reports little data-center load in New England.",
+   "data_points": {
+    "opportunity_value_by_capability_usd_m": {
+     "wastewater": {
+      "opportunities": 32,
+      "est_value_usd_m": 919.1
+     },
+     "generator": {
+      "opportunities": 32,
+      "est_value_usd_m": 577.5
+     },
+     "controls": {
+      "opportunities": 37,
+      "est_value_usd_m": 991.8
+     },
+     "energy_efficiency": {
+      "opportunities": 12,
+      "est_value_usd_m": 402.3
+     },
+     "solar": {
+      "opportunities": 10,
+      "est_value_usd_m": 132.1
+     },
+     "storage": {
+      "opportunities": 8,
+      "est_value_usd_m": 3.0
+     },
+     "ev_charging": {
+      "opportunities": 10,
+      "est_value_usd_m": 10.0
+     },
+     "utility": {
+      "opportunities": 14,
+      "est_value_usd_m": 42.2
+     }
+    },
+    "wwtp_cross_sell_flags": {
+     "solar": 155,
+     "storage": 47,
+     "generator": 99,
+     "efficiency": 176,
+     "ev": 18
+    },
+    "wwtp_facilities_screened": 183,
+    "county_data_center_proxy_top": [
+     "Suffolk MA (95)",
+     "Middlesex MA (90)",
+     "Hartford CT (88)",
+     "Fairfield CT (85)",
+     "Providence RI (78)"
+    ],
+    "county_ev_infrastructure_top": [
+     "Suffolk MA (95)",
+     "Middlesex MA (92)",
+     "Fairfield CT (90)",
+     "Norfolk MA (88)",
+     "Hartford CT (85)"
+    ],
+    "masscec_on_street_charging": "15 installation + 25 feasibility municipalities; up to ~450 Level-2 ports (cet_filings cet-018)",
+    "gridos_roadmap_assumption": "GridOS investment $0.8-1.8M; 1.0-2.5 pts EBITDA margin; 0.5-1.5 turns multiple (serviceos_evidence ra-cet, est.)",
+    "datasets": [
+     "cet_opportunities",
+     "cet_wwtp_targets",
+     "cet_ne_counties",
+     "cet_filings",
+     "serviceos_evidence"
+    ]
+   },
+   "market_evidence": [
+    "ISO-NE CELT 2026: energy use +9% 2026-2035; New England \"has not yet seen the same growth in data centers as other regions\".",
+    "CT Energy Storage Solutions: 9-year program targeting 580 MW of distributed batteries; 140 MW moved from residential to C&I on demand.",
+    "MA SMART 3.0 effective Sep 12 2025: 900 MW for program year 2025, storage adders; state target 5 GW of storage by 2030.",
+    "Eversource MA Phase II EV program: ~$188M through 2026 for 150 DCFC and 8,200+ Level-2 ports.",
+    "Mass Save 2025-2027 plan approved at $4.5B.",
+    "NREL PV fleet: P90 availability 94.7% vs P50 99.1%, the uptime gap an O&M contract can close."
+   ],
+   "kpi_targets": {
+    "recurring_service_share_pct": 25,
+    "managed_ev_ports": 450,
+    "solar_availability_pct": 99.1,
+    "basis": "ASSUMPTION; Taft ~25% recurring threshold, MassCEC port ceiling, NREL P50"
+   },
+   "source_urls": [
+    "https://www.iso-ne.com/about/where-we-are-going/regional-electricity-outlook/celt-report/",
+    "https://portal.ct.gov/pura/electric/office-of-technical-and-regulatory-analysis/clean-energy-programs/energy-storage-solutions-program",
+    "https://www.solarpowerworldonline.com/2025/09/massachusetts-issues-final-smart-3-0-solar-regulations-sets-incentive-capacity-for-2025/",
+    "https://www.mass.gov/info-details/electric-vehicle-charging",
+    "https://www.wbur.org/news/2025/02/28/mass-save-dpu-three-year-plan-approved-energy-costs",
+    "https://research-hub.nrel.gov/en/publications/advancing-our-understanding-of-system-availability-through-the-pv/",
+    "https://www.masscec.com/street-charging-solutions",
+    "https://www.pkfod.com/wp-content/uploads/2026/08/US-HVAC-MA-Industry-Update-Summer-2026-PDF.pdf"
+   ],
+   "source_url": "https://www.iso-ne.com/about/where-we-are-going/regional-electricity-outlook/celt-report/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-phase-4",
+   "kind": "expansion_phase",
+   "phase": "Phase 4 (gated option) - Northeast + Mid-Atlantic infrastructure: Upstate / Hudson Valley NY, northern and central NJ, eastern PA (excludes NYC)",
+   "months": "24-36+",
+   "geography": [
+    "Capital Region and Hudson Valley NY (not NYC; per Tyler/CEO guidance)",
+    "Northern and central NJ water/wastewater utilities and PSE&G-zone data centers",
+    "Lehigh Valley and southeastern PA (PJM data-center corridor)"
+   ],
+   "thesis": "This phase is a board-level option, not a commitment. Management guidance is no NYC expansion and a New England focus, so Phase 4 opens only if Phases 1-3 hit the month-24 KPIs and a water/wastewater or mission-critical electrical target appears in NY/NJ/PA outside the five boroughs. The pull is demand: PJM forecasts ~30 GW of data-center load growth between 2025 and 2030, and NJ/PA wastewater needs are large. Entry would be one anchor add-on with its own licenses and union/merit-shop status, like Smith + Howard's Texas/Virginia moves. Broad Sky's NJ/PA presence (Thomas Scientific in Swedesboro NJ, Punctual Pros in Lancaster PA) gives local network but no electrical synergy.",
+   "data_points": {
+    "repo_coverage": "No NY/NJ/PA electrical target screen or opportunity radar exists in the repo yet (ma_targets_cet and cet_opportunities cover New England only). Data gap; build before opening this gate.",
+    "pe_sponsors_with_cet_overlap": 16,
+    "pe_sponsors_with_cet_overlap_high_threat": [
+     "MidOcean Partners",
+     "Alpine Investors",
+     "Huron Capital",
+     "CIVC Partners",
+     "Kohlberg & Company"
+    ],
+    "nearby_sponsor_moves": [
+     "Huron Capital: Albireo Energy acquired PASCO Building Automation (Upstate NY), Jun 2026",
+     "Kohlberg: Loenbro recap Dec 2025 (data-center electrical)",
+     "Crete United: C&C Service, Stamford CT (Nov 2023)"
+    ],
+    "gate_criteria_assumption": {
+     "month_24_revenue_usd": 170000000,
+     "month_24_ebitda_margin_pct": 11.5,
+     "net_leverage_max_x": 4.5,
+     "recurring_share_min_pct": 20
+    },
+    "datasets": [
+     "pe_landscape",
+     "bsp_firm",
+     "ma_targets_cet (gap)",
+     "cet_opportunities (gap)"
+    ]
+   },
+   "market_evidence": [
+    "PJM 2026 load forecast: summer peak from 160 GW (2025) to 253 GW (2046); ~30 GW of data-center growth 2025-2030 in requests analysed.",
+    "PSE&G (NJ) reported 39 data-center sites with 394 MW of 2025 summer peak.",
+    "EPA CWNS 2022: $630.1B national clean-water need; NY/NJ/PA are among the largest state need totals (state split not pulled here)."
+   ],
+   "kpi_targets": {
+    "revenue_usd": 240000000,
+    "ebitda_usd": 30000000,
+    "headcount": 780,
+    "locations": 13,
+    "basis": "ASSUMPTION; meta.kpi_roadmap month 36 assumes Phase 4 contributes at most one anchor add-on"
+   },
+   "source_urls": [
+    "https://insidelines.pjm.com/pjms-updated-20-year-forecast-continues-to-see-significant-long-term-load-growth/",
+    "https://www.pjm.com/-/media/DotCom/planning/res-adeq/load-forecast/pseg-documentation.pdf",
+    "https://www.epa.gov/system/files/documents/2024-05/2022-cwns-summary.pdf",
+    "https://broadskypartners.com/investments/commonwealth-electrical-technologies/"
+   ],
+   "source_url": "https://insidelines.pjm.com/pjms-updated-20-year-forecast-continues-to-see-significant-long-term-load-growth/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-lev-01",
+   "kind": "growth_lever",
+   "lever": "Bid selectivity (GridOS bid board + go/no-go scoring)",
+   "baseline": 15,
+   "target": 30,
+   "unit": "% of bids won",
+   "evidence": "Public hard-bid work wins 10-20% (midpoint 15%); negotiated/selective work wins 30-50%. GridOS scores the 86 radar items (27 with fit >= 80) so estimators bid fewer, better-fit jobs.",
+   "source_url": "https://www.constructconnect.com/blog/bid-hit-ratio-commercial-gcs-2026",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-lev-02",
+   "kind": "growth_lever",
+   "lever": "Recurring service / O&M share of revenue",
+   "baseline": null,
+   "target": 25,
+   "unit": "% of revenue",
+   "evidence": "Buyers start paying for recurring revenue at roughly 25% of the business (Taft). ServiceTitan cites FMI Capital Advisors (mechanical benchmarks): platforms with >40% recurring service command 9-11x adj. EBITDA vs ~6.5-8.5x below that. CET's current recurring share is not public (baseline null).",
+   "source_url": "https://www.taftlaw.com/news-events/law-bulletins/electrical-contractors-enter-a-premium-ma-window/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-lev-03",
+   "kind": "growth_lever",
+   "lever": "Solar + storage fleet availability under O&M contract",
+   "baseline": 94.7,
+   "target": 99.1,
+   "unit": "% monthly availability",
+   "evidence": "NREL PV Fleet study (1,128 systems): 90% of systems were available >= 94.7% (P90); median 99.1% (P50). Monitoring plus truck-roll dispatch lets NuWave/Horton sell uptime guarantees.",
+   "source_url": "https://research-hub.nrel.gov/en/publications/advancing-our-understanding-of-system-availability-through-the-pv/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-lev-04",
+   "kind": "growth_lever",
+   "lever": "Non-productive project time (searching for data, rework, conflict)",
+   "baseline": 35,
+   "target": 28,
+   "unit": "% of working time",
+   "evidence": "FMI/PlanGrid (n=600) found 35% of construction professionals' time goes to non-optimal activities (~$177B/yr industry-wide). Target 28% is an ASSUMPTION (a ~20% relative cut from Procore + field agents), to be reset after a CET time study.",
+   "source_url": "https://www.constructiondive.com/news/industry-could-be-overspending-177b-per-year-study-finds/529450/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-lev-05",
+   "kind": "growth_lever",
+   "lever": "Horton capture of funded/requested CT-MA-RI plant and pump-station projects",
+   "baseline": null,
+   "target": 30,
+   "unit": "% of eligible projects where CET/Horton bids electrical",
+   "evidence": "cet_wwtp_targets lists 62 plant/pump-station projects (funded or requested) worth $2381.8M of total project cost across CT, MA and RI. Target is an ASSUMPTION; electrical is typically a minority share of total project cost.",
+   "source_url": "https://portal.ct.gov/-/media/deep/water/municipal_wastewater/final-priority-list-fy26-27.pdf",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "cp-lev-06",
+   "kind": "growth_lever",
+   "lever": "NuWave efficiency attach on Horton/CET wastewater accounts",
+   "baseline": 0,
+   "target": 20,
+   "unit": "WWTP accounts with a NuWave efficiency project",
+   "evidence": "176 of 183 screened WWTPs carry an efficiency cross-sell flag (aeration/blower/UV/HVAC or >= 1 MGD). Aeration is usually a plant's largest electric load. Mass Save's 2025-2027 plan is funded at $4.5B. Target is an ASSUMPTION.",
+   "source_url": "https://www.wbur.org/news/2025/02/28/mass-save-dpu-three-year-plan-approved-energy-costs",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-lev-07",
+   "kind": "growth_lever",
+   "lever": "Field labor utilization (crew scheduling across MA/CT)",
+   "baseline": null,
+   "target": 5,
+   "unit": "percentage-point utilization gain",
+   "evidence": "Bridgit case study: for Skiles Group a 1-point utilization gain is worth ~$85K a year and 5 points ~$425K. Applied to ~275 CET staff, the dollar value would be larger (ASSUMPTION; CET baseline utilization not public).",
+   "source_url": "https://gobridgit.com/case-studies/how-skiles-group-is-improving-workforce-visibility-and-efficiency-with-bridgit-bench/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-lev-08",
+   "kind": "growth_lever",
+   "lever": "EBITDA margin",
+   "baseline": 10.0,
+   "target": 12.8,
+   "unit": "% of revenue",
+   "evidence": "cet_filings estimates CET at 8-12% EBITDA margin (midpoint 10%), benchmarked to Limbach ~10.4% and IES ~12.8% (FY2025 XBRL). Target = IES level, reached through bid selectivity, recurring O&M mix and shared back office.",
+   "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001048268.json",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "cp-lev-09",
+   "kind": "growth_lever",
+   "lever": "EV charging ports under management (CSMS + O&M)",
+   "baseline": 0,
+   "target": 450,
+   "unit": "Level-2 ports",
+   "evidence": "MassCEC On-Street Charging: CET leads the vendor team for 15 installation municipalities, up to 3 sites each and 4-10 ports per site, so up to ~450 ports. Eversource MA Phase II (~$188M) funds 8,200+ L2 and 150 DCFC ports through 2026. A per-port subscription turns installs into recurring revenue.",
+   "source_url": "https://www.masscec.com/street-charging-solutions",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "cp-lev-10",
+   "kind": "growth_lever",
+   "lever": "Exit multiple (quality premium)",
+   "baseline": 6.8,
+   "target": 8.3,
+   "unit": "x EV/EBITDA",
+   "evidence": "Capstone/IMAP expect typical middle-market deals at 6.8x and premium deals at 9.8x in 2026 (a 3-turn spread). serviceos_evidence allows CET 0.5-1.5 turns from tech-enabled, recurring earnings; target = baseline + 1.5 turns (ASSUMPTION). PKF: project-heavy firms 5-6x vs 10x+ for repeatable service.",
+   "source_url": "https://finviz.com/news/344863/capstone-partners-reports-middle-market-ma-valuations-prove-resilient-despite-macroeconomic-disruption-as-confidence-builds-entering-2026",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-ai-01",
+   "kind": "ai_agent",
+   "agent": "Estimating & takeoff agent",
+   "job_to_be_done": "Read drawing sets, count fixtures, devices and panels, trace conduit/wire runs and push quantities into the electrical estimate (Accubid) so estimators review rather than count.",
+   "who_it_helps": "estimator",
+   "vendor_examples": [
+    "Togal.AI",
+    "Trimble Accubid Anywhere",
+    "Kreo"
+   ],
+   "metric_claim": "University of Kansas test cited by Togal: a takeoff took 37 minutes in Togal vs 2 h 35 min in On-Screen Takeoff (~76% less time). Vendor-published.",
+   "metric_value": 76,
+   "metric_unit": "% less takeoff time",
+   "cost_model": "Togal Growth plan $299/user/month billed yearly; Business plan custom for 4+ users; Accubid quote-based",
+   "weeks_to_deploy": 6,
+   "source_url": "https://www.togal.ai/blog/togal-ai-saves-time-on-takeoffs",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-ai-02",
+   "kind": "ai_agent",
+   "agent": "Bid-radar triage agent (GridOS bid board)",
+   "job_to_be_done": "Scan state SRF lists, BidNet/Bonfire portals, NEVI calls and USAspending every day; score each item on capability, distance from crews, scope clarity and timing; and send a go/no-go brief to the estimating lead.",
+   "who_it_helps": "business development / estimating lead",
+   "vendor_examples": [
+    "GridOS on cet_opportunities (Broad Sky data layer)",
+    "ConstructConnect",
+    "Autodesk BuildingConnected",
+    "Dodge"
+   ],
+   "metric_claim": "Hard-bid public work wins 10-20%; negotiated/selective work wins 30-50%. The agent moves the bid mix toward selective, repeat-owner work.",
+   "metric_value": 30,
+   "metric_unit": "% target bid win rate (vs 10-20% hard-bid)",
+   "cost_model": "Internal build on existing portal data (~$0.1-0.2M, ASSUMPTION) plus bid-data subscriptions (ConstructConnect/Dodge quote-based)",
+   "weeks_to_deploy": 4,
+   "source_url": "https://www.constructconnect.com/blog/bid-hit-ratio-commercial-gcs-2026",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-ai-03",
+   "kind": "ai_agent",
+   "agent": "Contract, spec & bid-risk review agent",
+   "job_to_be_done": "Read GC subcontracts, specs and municipal front-end documents; flag flow-downs, liquidated damages, prevailing-wage and Buy-American terms; and draft exclusions before CET signs.",
+   "who_it_helps": "project manager / CFO",
+   "vendor_examples": [
+    "Document Crunch (Trimble)",
+    "Procore Helix"
+   ],
+   "metric_claim": "Ben Hur Construction: an estimate review that took eight hours now takes about one. Hill & Wilkinson: 75% faster document reviews.",
+   "metric_value": 75,
+   "metric_unit": "% faster document review",
+   "cost_model": "Annual SaaS, quote-based",
+   "weeks_to_deploy": 4,
+   "source_url": "https://www.trimble.com/en/products/document-crunch",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-ai-04",
+   "kind": "ai_agent",
+   "agent": "Crew scheduling & workforce-planning agent",
+   "job_to_be_done": "Match licensed journeymen, apprentices and foremen to jobs across Worcester, Taunton, Norwell and Canton CT by license, certification, distance and backlog; flag over- and under-staffed weeks 8-12 weeks out.",
+   "who_it_helps": "operations manager / field crews",
+   "vendor_examples": [
+    "Bridgit Bench",
+    "Procore Workforce Planning",
+    "ServiceTitan Dispatch Pro (service side)"
+   ],
+   "metric_claim": "Bridgit: for Skiles Group a 1-point gain in workforce utilization is worth ~$85K a year (5 points ~$425K); other customers cut planning time 50-70%.",
+   "metric_value": 85000,
+   "metric_unit": "USD per year per 1-pt utilization gain (Skiles Group)",
+   "cost_model": "Per-seat / per-company annual SaaS, quote-based",
+   "weeks_to_deploy": 6,
+   "source_url": "https://gobridgit.com/case-studies/how-skiles-group-is-improving-workforce-visibility-and-efficiency-with-bridgit-bench/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-ai-05",
+   "kind": "ai_agent",
+   "agent": "Safety & compliance agent",
+   "job_to_be_done": "Score every active jobsite weekly from observations, photos and inspection data; flag fall-protection and energized-work risk; and keep OSHA logs, NFPA 70E training and license renewals current across six states.",
+   "who_it_helps": "safety director / foremen",
+   "vendor_examples": [
+    "Newmetrix (Oracle Construction Intelligence Cloud)",
+    "Procore Safety",
+    "SafetyCulture"
+   ],
+   "metric_claim": "Newmetrix claims to predict which 20% of projects will have 80% of incidents in the following week, using computer vision on site photos (hard hats, fall risk, guardrails, ladders).",
+   "metric_value": 80,
+   "metric_unit": "% of next-week incidents concentrated in flagged 20% of projects (vendor claim)",
+   "cost_model": "Enterprise SaaS, quote-based",
+   "weeks_to_deploy": 8,
+   "source_url": "https://www.forconstructionpros.com/equipment/equipment-technology/software-solutions/article/22908537/oracle-embeds-newmetrix-safety-risk-ai-in-oracle-construction-intelligence-cloud",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-ai-06",
+   "kind": "ai_agent",
+   "agent": "Solar / storage O&M monitoring agent",
+   "job_to_be_done": "Watch inverter, meter and battery telemetry; spot underperformance against irradiance; open a ticket and dispatch the nearest NuWave/Horton technician before the owner notices.",
+   "who_it_helps": "O&M customers / service technicians",
+   "vendor_examples": [
+    "AlsoEnergy PowerTrack (Stem)",
+    "Power Factors",
+    "Inductive Automation Ignition"
+   ],
+   "metric_claim": "NREL PV fleet data: P90 systems are available 94.7% vs a 99.1% median, about 4.4 points of recoverable uptime per underperforming site.",
+   "metric_value": 4.4,
+   "metric_unit": "percentage points of availability (P90 to P50)",
+   "cost_model": "Multi-year SaaS by portfolio size (AlsoEnergy custom); recovered via O&M contract fees",
+   "weeks_to_deploy": 8,
+   "source_url": "https://research-hub.nrel.gov/en/publications/advancing-our-understanding-of-system-availability-through-the-pv/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-ai-07",
+   "kind": "ai_agent",
+   "agent": "Pump-station & WWTP predictive-maintenance agent",
+   "job_to_be_done": "Run electrical-signature and SCADA analytics on pumps, blowers and motor control centers Horton installs; predict failures weeks ahead; and sell it as a monitored service contract to the municipality.",
+   "who_it_helps": "municipal WPCA operators / Horton service techs",
+   "vendor_examples": [
+    "Samotics",
+    "Inductive Automation Ignition",
+    "Xylem Vue"
+   ],
+   "metric_claim": "Anglian Water (UK) extended its Samotics condition-monitoring framework; the AI electrical-signature analysis from the motor control cabinet is reported to have prevented about GBP 886,800 in costs through early fault detection.",
+   "metric_value": 886800,
+   "metric_unit": "GBP of costs avoided (one utility, reported)",
+   "cost_model": "Per-asset monitoring subscription; Ignition is a perpetual server license with unlimited tags",
+   "weeks_to_deploy": 10,
+   "source_url": "https://www.watermagazine.co.uk/2026/09/15/anglian-water-extends-samotics-condition-monitoring-framework/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-ai-08",
+   "kind": "ai_agent",
+   "agent": "RFI, submittal & daily-log agent",
+   "job_to_be_done": "Draft RFIs from drawing conflicts, assemble submittal packages, and write the daily log from foreman voice notes and photos, so project managers spend less of the 35% \"non-optimal\" time searching for information.",
+   "who_it_helps": "project managers / foremen",
+   "vendor_examples": [
+    "Procore Agents (RFI Creation Agent, Daily Log Agent, Agent Builder)",
+    "Autodesk Construction Cloud"
+   ],
+   "metric_claim": "Procore says its RFI Creation Agent cuts the time to get critical answers \"from days to seconds\"; Agent Builder is in open beta for all customers (Groundbreak, Oct 2025).",
+   "metric_value": null,
+   "metric_unit": null,
+   "cost_model": "Included with / priced on Procore Annual Construction Volume (third-party estimate $15-30K/yr for $10-50M ACV)",
+   "weeks_to_deploy": 4,
+   "source_url": "https://www.nasdaq.com/press-release/procore-advances-future-construction-new-ai-innovations-groundbreak-2025-2025-10-15",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-ai-09",
+   "kind": "ai_agent",
+   "agent": "24/7 emergency-service dispatcher (voice AI)",
+   "job_to_be_done": "Answer Horton's and CET's 24/7 emergency lines (generator failures, pump-station alarms, outages), triage, page the on-call electrician and log the call in the service system.",
+   "who_it_helps": "customers / on-call technicians",
+   "vendor_examples": [
+    "ServiceTitan AI Voice Agent",
+    "Avoca"
+   ],
+   "metric_claim": "ServiceTitan reports its AI voice agents book 70% of calls overall (90% capacity-adjusted). Benchmarked in residential trades; commercial emergency use is an extrapolation.",
+   "metric_value": 70,
+   "metric_unit": "% of calls booked",
+   "cost_model": "Per-call usage fee on top of FSM subscription",
+   "weeks_to_deploy": 3,
+   "source_url": "https://www.servicetitan.com/features/pro/voice-agent",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tal-01",
+   "kind": "talent_program",
+   "program": "Merit-shop registered apprenticeship through IEC New England (CET + Horton as sponsors)",
+   "who_it_helps": "apprentices / non-union field crews",
+   "evidence": "CET's OSHA records list it as non-union. IEC New England runs a nationally approved 4-year program in Rocky Hill CT (720 classroom hours; apprentices earn 8,000 OJT hours with their employer), 15 minutes from Horton's base.",
+   "metric": "720 classroom hours + 8,000 OJT hours",
+   "metric_value": 720,
+   "metric_unit": "classroom hours (4 years)",
+   "source_url": "https://www.iecne.org/apprenticeship/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tal-02",
+   "kind": "talent_program",
+   "program": "IBEW/NECA JATC pipeline for union-required utility and public work (dual-track via union add-ons)",
+   "who_it_helps": "union electricians / utility & public-owner customers",
+   "evidence": "IBEW Local 103 and NECA Greater Boston reopened their Dorchester JATC after a $10M renovation; about 2,000 apprentices train there (10,000 OJT + 1,000 classroom hours). Targets such as McDonald Electrical (ANJ union division) give CET a union lane without converting the merit shop. Google is funding the Electrical Training Alliance ($15M) to train 100,000 workers and 30,000 new apprentices.",
+   "metric": "~2,000 apprentices at one Boston JATC",
+   "metric_value": 2000,
+   "metric_unit": "apprentices (Local 103 JATC)",
+   "source_url": "https://dotnews.com/node/195931",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tal-03",
+   "kind": "talent_program",
+   "program": "Apprenticeship tax-credit capture (MA RATC + CT construction-trades credit)",
+   "who_it_helps": "CFO / apprentices",
+   "evidence": "MA Registered Apprenticeship Tax Credit: 50% of apprentice wages up to $4,800 per apprentice per year, up to $100,000 per employer, refundable; $988,800 went to 50 employers for 206 apprentices in 2025. CT construction-trades credit: lesser of $2/hour, 50% of wages or $4,000 per apprentice.",
+   "metric": "Up to $4,800 per MA apprentice per year",
+   "metric_value": 4800,
+   "metric_unit": "USD per apprentice per year (MA)",
+   "source_url": "https://www.mass.gov/how-to/apply-for-a-registered-apprentice-tax-credit",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tal-04",
+   "kind": "talent_program",
+   "program": "Licensed-journeyman fast track (8,000 hours + 600 classroom hours in MA)",
+   "who_it_helps": "apprentices / project managers needing licensed supervision",
+   "evidence": "Massachusetts requires 8,000 supervised hours over >= 4 years plus 600 classroom hours for the journeyman (Class B) exam. BLS projects 9% electrician growth (2024-34) and ~81,000 openings a year; DOL reports ~93% of apprenticeship completers stay employed. Paying for exam prep and tracking hours shortens time-to-license and retention risk.",
+   "metric": "~81,000 US electrician openings per year",
+   "metric_value": 81000,
+   "metric_unit": "openings per year (BLS 2024-34)",
+   "source_url": "https://www.bls.gov/ooh/construction-and-extraction/electricians.htm",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tal-05",
+   "kind": "talent_program",
+   "program": "Broad-based equity for licensed electricians and foremen (retention)",
+   "who_it_helps": "licensed electricians / foremen / Horton managers",
+   "evidence": "KKR's C.H.I. Overhead Doors gave all employees equity; at the 2022 sale to Nucor, hourly workers and drivers received ~$175K on average. Ownership Works reports most participating companies see lower turnover. With ~260-290 staff and a 3-4 year hold, a pool tied to the kpi_roadmap is a retention tool where licensed electricians are scarce (ABC: ~499K net new construction workers needed in 2026).",
+   "metric": "~$175K average payout per hourly employee (C.H.I.)",
+   "metric_value": 175000,
+   "metric_unit": "USD average payout (C.H.I. exit)",
+   "source_url": "https://www.businesswire.com/news/home/20220516005324/en/KKR-and-C.H.I.-Employees-Prove-%E2%80%98Ownership-Works%E2%80%99-With-Sale-of-C.H.I.-Overhead-Doors-to-Nucor",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-tal-06",
+   "kind": "talent_program",
+   "program": "Horton 100-day integration and key-manager retention program",
+   "who_it_helps": "Horton's 20 managers and 100+ field staff / municipal customers",
+   "evidence": "McKinsey found ~70% of mergers miss their revenue-synergy targets, often from disruption and departures. Horton is third-generation (founded 1976, led by Warren Horton) and holds the CT wastewater relationships, so the plan keeps the brand and on-call 24/7 crews, sets retention agreements for named managers, and integrates estimating, safety and payroll first and the field last.",
+   "metric": "~70% of mergers miss revenue-synergy targets",
+   "metric_value": 70,
+   "metric_unit": "% of mergers missing revenue synergies",
+   "source_url": "https://www.mckinsey.com/capabilities/strategy-and-corporate-finance/our-insights/where-mergers-go-wrong",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-fin-01",
+   "kind": "financing",
+   "source_of_funds": "Sponsor equity + co-invest precedent",
+   "amount_or_range": "$7.5M single-LP co-invest (Feb 2025); total Broad Sky equity in CET est. $25-45M",
+   "evidence": "Form D for BSP-CET Co-Invest LLC: $7.5M sold to one investor, first sale 2025-02-05. Broad Sky's Mar 2026 Form ADV marks it at $8.504M (1.13x gross). The flagship fund reports $335M sold. A Phase 2 add-on wave can reuse the co-invest route instead of drawing only on the fund.",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/2056574/000205657425000001/xslFormDX01/primary_doc.xml",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "cp-fin-02",
+   "kind": "financing",
+   "source_of_funds": "Senior debt / delayed-draw term loan for add-ons",
+   "amount_or_range": "Est. $25-55M pro forma after Horton (3.5-5.5x on $6-11M EBITDA); lender not disclosed",
+   "evidence": "cet_filings found no BDC, lender press or UCC record naming CET, so the facility probably sits with a bank or a non-SEC-reporting lender. GF Data, lower middle market H1 2025: average total debt 4.0x TTM EBITDA, senior 3.1x, equity 57.3% of capital; business services priced at 7.5x. At month-24 EBITDA of ~$19.5M (ASSUMPTION), 4.0x supports ~$78M of debt capacity.",
+   "source_url": "https://gulfstargroup.com/middle-market-commentary-first-half-2025/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "cp-fin-03",
+   "kind": "financing",
+   "source_of_funds": "Seller rollover and deferred consideration (Horton precedent)",
+   "amount_or_range": "Not disclosed; Horton funded without a new Broad Sky Form D",
+   "evidence": "The Horton acquisition vehicle was registered in CT with the CET LLC as principal, and no new Form D followed. cet_filings infers debt or delayed-draw plus seller rollover. Founder rollover also aligns sellers like Warren Horton through integration, as Pfingsten did with NEC's founder.",
+   "source_url": "https://data.ct.gov/resource/n7gp-d28j.json?accountnumber=3518996",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "cp-fin-04",
+   "kind": "financing",
+   "source_of_funds": "Customer-side financing that funds NuWave / efficiency projects",
+   "amount_or_range": "Project-level (NEIF commercial loans; Mass Save incentives)",
+   "evidence": "CET is an approved contractor for National Energy Improvement Fund commercial energy finance across all six New England states. That lets customers finance efficiency and solar work off CET's balance sheet. Mass Save's $4.5B 2025-2027 plan and CT's storage incentives reduce the customer's net cost further.",
+   "source_url": "https://www.neifund.org/commonwealth-electrical-technologies-llc/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "cp-fin-05",
+   "kind": "financing",
+   "source_of_funds": "Operating cash flow and working capital discipline (pre-deal balance-sheet evidence)",
+   "amount_or_range": "PPP-implied 2019 payroll $9.9M (CET) and $3.1M (Horton); both PPP loans fully forgiven",
+   "evidence": "CET's $2.062M PPP loan (121 jobs) and Horton's $646K loan (42 jobs) were fully forgiven, and CET ranked #32 of 285 MA electrical contractors by PPP size. Local bank relationships (Webster Five, Collinsville/Northwest Community Bank) are candidates for equipment lines and surety introductions; bonding capacity (DCAMM certification) is an unverified data gap for public wastewater bids.",
+   "source_url": "https://data.sba.gov/sites/default/files/distribution/SBA-OCA-2022-07-001/public_150k_plus_240930.csv",
+   "retrieved": "2026-09-24"
+  }
+ ]
+}

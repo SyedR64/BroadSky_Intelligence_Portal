@@ -1,0 +1,196 @@
+[
+ {
+  "id": "t_open",
+  "url": "index.html",
+  "action": "static",
+  "duration_s": 4,
+  "settle_ms": 2500,
+  "title_card": {
+   "kicker": "Broad Sky Partners \u00b7 Portfolio Resource Group",
+   "headline": "What if every portfolio company ran on the same intelligence?",
+   "duration_s": 4,
+   "size": 88
+  },
+  "narration": "Tyler, this is a working system, not a deck. Six platforms, one portal, and every datapoint tied to an action."
+ },
+ {
+  "id": "landing_chat",
+  "url": "index.html",
+  "action": "type_chat",
+  "action_args": {
+   "text": "Show me how to take Punctual Pros nationwide",
+   "delay": 38,
+   "read_ms": 2200,
+   "scroll_ms": 9000
+  },
+  "duration_s": 17,
+  "settle_ms": 2500,
+  "title_card": null,
+  "narration": "Ask it the question you would ask an associate. It answers from verified data: filings, deed records, add-on screens, and the Smith and Howard template you already proved."
+ },
+ {
+  "id": "nationwide",
+  "url": "redesigns/punctual-pros/nationwide.html",
+  "action": "scroll",
+  "action_args": {
+   "to": 2600,
+   "ms": 9000
+  },
+  "duration_s": 11,
+  "settle_ms": 2500,
+  "title_card": {
+   "kicker": "Punctual Pros",
+   "headline": "From Lancaster to national, in four phases.",
+   "duration_s": 3.2
+  },
+  "narration": "Densify the core, tuck in franchisees across four states, build the Mid-Atlantic platform, then consolidate inside the Authority Brands network."
+ },
+ {
+  "id": "theater_homes",
+  "url": "theater.html?scene=S2&autoplay=0",
+  "action": "theater",
+  "action_args": {
+   "scene": "S2",
+   "play": false,
+   "max_wait_ms": 100000,
+   "extra_ms": 3000
+  },
+  "duration_s": 9,
+  "settle_ms": 3000,
+  "title_card": null,
+  "narration": "Seventy-seven thousand home sales, rendered live. Every bar is a household that just inherited a furnace it has never met."
+ },
+ {
+  "id": "theater_arcs",
+  "url": "theater.html?scene=S3&autoplay=0",
+  "action": "theater",
+  "action_args": {
+   "scene": "S3",
+   "play": false,
+   "max_wait_ms": 100000,
+   "extra_ms": 3000
+  },
+  "duration_s": 8,
+  "settle_ms": 3000,
+  "title_card": null,
+  "narration": "The expansion arcs are the add-on screen on a map: sixty-one targets, scored and sourced."
+ },
+ {
+  "id": "weather",
+  "url": "app.html#/pp/weather",
+  "action": "static",
+  "action_args": {
+   "to": 700,
+   "ms": 4000
+  },
+  "duration_s": 8,
+  "settle_ms": 3000,
+  "title_card": null,
+  "narration": "Live National Weather Service alerts become a staffing plan: how many technicians, which hub, which day."
+ },
+ {
+  "id": "voice",
+  "url": "redesigns/voice-ai.html",
+  "action": "scroll",
+  "action_args": {
+   "to": 1800,
+   "ms": 7000
+  },
+  "duration_s": 10,
+  "settle_ms": 2500,
+  "title_card": {
+   "kicker": "The growth engine",
+   "headline": "Answer every call. Twenty-four seven.",
+   "duration_s": 3
+  },
+  "narration": "A voice agent answers every call in two rings, books into dispatch, and works outbound on renewals. Unanswered calls stop being lost revenue."
+ },
+ {
+  "id": "ads",
+  "url": "redesigns/punctual-pros/ads.html",
+  "action": "scroll",
+  "action_args": {
+   "to": 1600,
+   "ms": 7000
+  },
+  "duration_s": 9,
+  "settle_ms": 2500,
+  "title_card": null,
+  "narration": "Cheap connected-TV flights that switch on with storm alerts, Local Services Ads for intent, and new-mover postcards from the deed feed, all with sourced costs."
+ },
+ {
+  "id": "cet",
+  "url": "app.html#/cet/wastewater",
+  "action": "static",
+  "action_args": {
+   "to": 500,
+   "ms": 4000
+  },
+  "duration_s": 8,
+  "settle_ms": 3000,
+  "title_card": {
+   "kicker": "Commonwealth Electrical",
+   "headline": "Horton's first calls, ranked.",
+   "duration_s": 3
+  },
+  "narration": "For CET, one hundred eighty-three treatment plants ranked by fit, with funded projects, so Horton knows who to call on Monday."
+ },
+ {
+  "id": "os",
+  "url": "redesigns/punctual-pros/serviceos.html",
+  "action": "scroll",
+  "action_args": {
+   "to": 1400,
+   "ms": 6000
+  },
+  "duration_s": 8,
+  "settle_ms": 2500,
+  "title_card": {
+   "kicker": "Tech enablement",
+   "headline": "ServiceOS. GridOS. FirmOS. LabOS.",
+   "duration_s": 3
+  },
+  "narration": "Each platform gets an operating system: the integration spine for every tuck-in, and the story a buyer pays a tech-enabled multiple for."
+ },
+ {
+  "id": "ma",
+  "url": "app.html#/ma/overview",
+  "action": "static",
+  "action_args": {
+   "to": 600,
+   "ms": 4000
+  },
+  "duration_s": 7,
+  "settle_ms": 3000,
+  "title_card": null,
+  "narration": "One hundred fifty-seven add-on targets, thirty-five competing sponsors, and public-comp benchmarks, in one acquisition engine."
+ },
+ {
+  "id": "sites",
+  "url": "redesigns/index.html",
+  "action": "scroll",
+  "action_args": {
+   "to": 1500,
+   "ms": 6000
+  },
+  "duration_s": 8,
+  "settle_ms": 2500,
+  "title_card": null,
+  "narration": "Six website concepts, each with its own assistant, show what every company looks like when it is built to convert."
+ },
+ {
+  "id": "close",
+  "url": "index.html",
+  "action": "static",
+  "duration_s": 5,
+  "settle_ms": 2500,
+  "title_card": {
+   "kicker": "Syed Rizvi \u00b7 for the Portfolio Resource Group",
+   "headline": "Let's put this to work inside the portfolio.",
+   "duration_s": 5,
+   "size": 84,
+   "foot": "syedr64.github.io/BroadSky_Intelligence_Portal"
+  },
+  "narration": "I built this to show how I would work inside the PRG. I would like to put it to work with you."
+ }
+]

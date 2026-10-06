@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Punctual Pros — Heating, Cooling, Plumbing &amp; Electrical | Central PA &amp; Jersey Shore (concept)</title>
+<meta name="description" content="Concept redesign for Punctual Pros: One Hour Heating & Air, Benjamin Franklin Plumbing and Mister Sparky across Central Pennsylvania and the Jersey Shore. On time, upfront pricing, Comfort Club membership.">
+<meta name="theme-color" content="#13202f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23f26b1d'/%3E%3Ccircle cx='16' cy='17.5' r='9' fill='none' stroke='white' stroke-width='2.6'/%3E%3Cpath d='M12 17.6l2.8 2.8 5.4-5.6' fill='none' stroke='white' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<link rel="stylesheet" href="./site.css?v=20261006083000">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 2.6c.6 3.2 4.9 5.6 4.9 10.4a4.9 4.9 0 0 1-9.8 0c0-2.1 1-3.7 2.3-4.7.1 1.9.9 3.1 2.1 3.4-.6-3.4.1-6.2.5-9.1z"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 2.5v19M3.8 7.2l16.4 9.6M20.2 7.2 3.8 16.8M9.5 4l2.5 2.4L14.5 4M9.5 20l2.5-2.4 2.5 2.4M4.6 10.7l3.3-.9-.9-3.3M19.4 13.3l-3.3.9.9 3.3M4.6 13.3l3.3.9-.9 3.3M19.4 10.7l-3.3-.9.9-3.3"/></symbol>
+  <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3s6.2 6.6 6.2 11.1a6.2 6.2 0 0 1-12.4 0C5.8 9.6 12 3 12 3z"/><path d="M9 14.5a3 3 0 0 0 3 3"/></symbol>
+  <symbol id="i-drain" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8 9.5h8M7 12h10M8 14.5h8"/></symbol>
+  <symbol id="i-tank" viewBox="0 0 24 24"><rect x="6.5" y="2.8" width="11" height="16.5" rx="3.5"/><path d="M9 21.2h6M12 14.6a1.9 1.9 0 0 0 1.9-1.9c0-1.2-1.9-3-1.9-3s-1.9 1.8-1.9 3a1.9 1.9 0 0 0 1.9 1.9z"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.2 2.5 4.8 13.6h6.6l-1 7.9 8.8-11.6h-6.7l.7-7.4z"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5.2 3.8h3.6l1.9 4.8-2.4 1.5a11.4 11.4 0 0 0 5.6 5.6l1.5-2.4 4.8 1.9v3.6a2 2 0 0 1-2.1 2A16.4 16.4 0 0 1 3.2 5.9a2 2 0 0 1 2-2.1z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.4 4.4L19 7.4"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17l-5.7 3.1 1.2-6.3L2.9 9.4l6.3-.8z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.2s-7-6.2-7-11.6a7 7 0 0 1 14 0c0 5.4-7 11.6-7 11.6z"/><circle cx="12" cy="9.6" r="2.6"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.6-3.4 8.3-8 9-4.6-.7-8-4.4-8-9V6l8-3z"/><path d="M8.6 12l2.4 2.4 4.4-4.8"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 12.3V4.2a.7.7 0 0 1 .7-.7h8.1l8.4 8.4-8.8 8.8-8.4-8.4z"/><circle cx="8" cy="8" r="1.6"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.6"/><path d="M2.5 20.5a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M21.5 20.5a6.5 6.5 0 0 0-3.9-6"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7v9.2a.8.8 0 0 1-.8.8H15v-6H9v6H4.3a.8.8 0 0 1-.8-.8V11z"/></symbol>
+  <symbol id="i-storm" viewBox="0 0 24 24"><path d="M7 16.5A5 5 0 1 1 7.9 6.6 6 6 0 0 1 19 9a4 4 0 0 1-1 7.9"/><path d="M13 12.5 10 17h4l-3 4.5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M2.5 12h2M19.5 12h2M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a5 5 0 1 1 .9-9.9A6 6 0 0 1 19 11a3.8 3.8 0 0 1-.6 7.5H7z"/></symbol>
+  <symbol id="i-rain" viewBox="0 0 24 24"><path d="M7 14.5a5 5 0 1 1 .9-9.9A6 6 0 0 1 19 7a3.8 3.8 0 0 1-.6 7.5"/><path d="M8 17.5l-1 2.5M12 17.5l-1 2.5M16 17.5l-1 2.5"/></symbol>
+  <symbol id="i-snowc" viewBox="0 0 24 24"><path d="M7 14.5a5 5 0 1 1 .9-9.9A6 6 0 0 1 19 7a3.8 3.8 0 0 1-.6 7.5"/><path d="M8 18h.01M12 20h.01M16 18h.01M10 16h.01M14 16h.01" stroke-width="2.6"/></symbol>
+  <symbol id="i-wind" viewBox="0 0 24 24"><path d="M3 8.5h11a3 3 0 1 0-3-3M3 12.5h16a3 3 0 1 1-3 3M3 16.5h7"/></symbol>
+  <symbol id="i-brief" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2.2"/><path d="M9 7V5.2A1.7 1.7 0 0 1 10.7 3.5h2.6A1.7 1.7 0 0 1 15 5.2V7M3 12.5h18M10.5 12.5v2h3v-2"/></symbol>
+  <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 2.5V6M15 2.5V6M9 18v3.5M15 18v3.5M2.5 9H6M2.5 15H6M18 9h3.5M18 15h3.5"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 4.5h16v11.5H9.5L4 20.5v-16z"/><path d="M8 9h8M8 12h5"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H16a3 3 0 0 0 0-6H8a3 3 0 0 1 0-6h7.5"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.6"/><path d="M2.5 10h19M6 15h4"/></symbol>
+  <symbol id="i-grad" viewBox="0 0 24 24"><path d="M2 9.5 12 4.5l10 5-10 5-10-5z"/><path d="M6 11.6v4.9c3.2 2.2 8.8 2.2 12 0v-4.9M22 9.5V15"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4.5 17.5a8.5 8.5 0 1 1 15 0"/><path d="M12 13.5l4-4.5"/><circle cx="12" cy="13.5" r="1.4"/></symbol>
+</svg>
+
+<div class="concept" id="concept" role="region" aria-label="Concept notice">
+  <div class="wrap">
+    <p><span class="tag">Concept</span><b>Concept redesign proposed by Syed Rizvi for the Broad Sky Portfolio Resource Group — not an official site.</b></p>
+    <nav aria-label="Concept links"><a href="../../app.html">Portal</a><a href="../index.html">Site concepts</a><a href="../../#os">OS program</a><a href="../../#briefing">Briefing</a></nav>
+    <button class="x" type="button" aria-label="Dismiss concept notice" data-dismiss><svg class="ico"><use href="#i-x"/></svg></button>
+  </div>
+</div>
+
+<div class="stormbar" id="stormbar" data-level="load" role="status" aria-live="polite">
+  <div class="wrap">
+    <span class="pulse" aria-hidden="true"></span>
+    <span class="lbl">Storm readiness</span>
+    <span class="msg" id="storm-msg">Checking live National Weather Service alerts for our 11 counties…</span>
+    <span class="src" id="storm-src">NWS · live</span>
+  </div>
+</div>
+
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Punctual Pros home">
+      <span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="13.2" r="7.8" stroke="#fff" stroke-width="2.2"/><path d="M12 2.6v2.6M9.6 2.6h4.8" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><path d="M8.6 13.3l2.3 2.3 4.6-4.8" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="logo-word"><strong>Punctual Pros</strong><small>Est. 1958 · PA &amp; NJ</small></span>
+    </a>
+    <button class="geo" type="button" id="geo" aria-label="Change region"><svg class="ico"><use href="#i-pin"/></svg><span id="geo-lbl">Central PA</span><svg class="ico" style="width:12px;height:12px;color:var(--mute)"><use href="#i-arrow"/></svg></button>
+    <nav class="nav" aria-label="Primary">
+      <a href="#services">Services</a>
+      <a href="#club" class="keep">Comfort Club</a>
+      <a href="#coverage">Service area</a>
+      <a href="#financing">Financing</a>
+      <a href="#careers">Careers</a>
+      <a href="./nationwide.html">Nationwide plan</a>
+      <a href="./ads.html">Sample ads</a>
+      <a href="./serviceos.html" class="os">ServiceOS <i>NEW</i></a>
+    </nav>
+    <div class="hdr-cta">
+      <a class="phone" href="tel:+17175550123" data-phone-link><svg class="ico"><use href="#i-phone"/></svg><span><span data-phone>(717) 555-0123</span><small>24/7 · real people</small></span></a>
+      <a class="btn btn-primary" href="#book">Book now</a>
+      <button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mnav"><svg class="ico"><use href="#i-menu"/></svg></button>
+    </div>
+  </div>
+</header>
+<nav class="mnav" id="mnav" aria-label="Mobile">
+  <a href="#services">Services <span>→</span></a>
+  <a href="#club">Comfort Club <span>→</span></a>
+  <a href="#coverage">Service area <span>→</span></a>
+  <a href="#financing">Financing &amp; rebates <span>→</span></a>
+  <a href="#careers">Careers <span>→</span></a>
+  <a href="./serviceos.html">ServiceOS — how we run <span>→</span></a>
+  <a href="#rationale">Design rationale (PRG) <span>→</span></a>
+</nav>
+
+<main id="main">
+<!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+<section class="hero" id="top" aria-labelledby="hero-h">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow" id="region-sub">Lancaster · York · Harrisburg · Reading</span>
+      <h1 id="hero-h">Comfort, fixed <em>on time.<svg viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 10c60-7 170-9 294-4" fill="none" stroke="#ffc23d" stroke-width="5" stroke-linecap="round"/></svg></em></h1>
+      <p class="lede">Heating, cooling, plumbing and electrical from <b>One Hour Heating &amp; Air</b>, <b>Benjamin Franklin Plumbing</b> and <b>Mister Sparky</b> — one team, one number, an upfront price before any work starts. If we're late, you get paid for the wait.</p>
+      <a class="os-chip" href="./serviceos.html"><b>SERVICEOS</b>Live tech tracking, text updates and weather-ready dispatch <svg class="ico"><use href="#i-arrow"/></svg></a>
+
+      <div class="book" id="book" aria-labelledby="book-h">
+        <div class="book-form">
+          <div class="book-h"><h2 id="book-h">Book a visit in 30 seconds</h2><span class="live" id="slots-live">Slots open today</span></div>
+          <fieldset class="trades">
+            <legend>What needs attention?</legend>
+            <div class="trade" data-t="hvac"><input type="radio" name="trade" id="t-hvac" value="Heating &amp; Air" checked><label for="t-hvac"><svg class="ico"><use href="#i-flame"/></svg>Heating &amp; Air</label></div>
+            <div class="trade" data-t="plumb"><input type="radio" name="trade" id="t-plumb" value="Plumbing"><label for="t-plumb"><svg class="ico"><use href="#i-drop"/></svg>Plumbing</label></div>
+            <div class="trade" data-t="elec"><input type="radio" name="trade" id="t-elec" value="Electrical"><label for="t-elec"><svg class="ico"><use href="#i-bolt"/></svg>Electrical</label></div>
+            <div class="trade" data-t="any"><input type="radio" name="trade" id="t-any" value="Not sure"><label for="t-any"><svg class="ico"><use href="#i-home"/></svg>Not sure</label></div>
+          </fieldset>
+          <div class="book-row">
+            <div class="field"><svg class="ico"><use href="#i-pin"/></svg><label class="sr-only" for="hero-zip">Your ZIP code</label><input id="hero-zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="Your ZIP code" aria-describedby="hero-zipmsg"></div>
+            <button class="btn btn-primary btn-lg" type="button" id="book-go">Check times <svg class="ico"><use href="#i-arrow"/></svg></button>
+          </div>
+          <p class="zipmsg" id="hero-zipmsg" aria-live="polite"><span class="dot"></span><span>We serve 248 ZIP codes in Central PA plus Ocean &amp; Monmouth, NJ.</span></p>
+          <div class="slots" id="slots" role="group" aria-label="Arrival windows"></div>
+          <div class="book-foot"><svg class="ico"><use href="#i-shield"/></svg>Upfront price before work · licensed &amp; background-checked techs · no obligation</div>
+        </div>
+        <div class="book-done" id="book-done" tabindex="-1">
+          <span class="eyebrow">You're on the board</span>
+          <h3 id="done-h">Heating &amp; Air · Today 2–4 PM</h3>
+          <ol>
+            <li>A text confirms your window and the technician's name and photo.</li>
+            <li>When they're on the way you get a live ETA link — no waiting by the window.</li>
+            <li>They diagnose, then show good / better / best options with the price before any work.</li>
+          </ol>
+          <p class="note">Concept demo — no request was sent. In production this writes straight into the ServiceOS dispatch board.</p>
+          <button class="btn btn-ghost" type="button" id="book-again" style="margin-top:12px">Book another visit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="art" aria-hidden="true">
+      <div class="art-bg"></div>
+      <svg class="house" viewBox="0 0 500 440" fill="none">
+        <ellipse cx="250" cy="404" rx="240" ry="14" fill="#13202f" opacity=".12"/>
+        <circle cx="38" cy="372" r="30" fill="#5fb383"/><circle cx="70" cy="384" r="22" fill="#4ea474"/>
+        <rect x="70" y="170" width="330" height="232" rx="6" fill="#fffaf2" stroke="#13202f" stroke-width="4"/>
+        <path d="M44 184 235 58l191 126" fill="#13202f"/><path d="M44 184 235 58l191 126" stroke="#13202f" stroke-width="8" stroke-linejoin="round"/>
+        <rect x="318" y="86" width="30" height="58" fill="#263a50"/>
+        <path d="M70 290h330" stroke="#13202f" stroke-width="4"/>
+        <!-- upstairs -->
+        <rect x="98" y="198" width="78" height="62" rx="6" fill="#cfe4ff" stroke="#13202f" stroke-width="3.5"/><path d="M137 198v62M98 229h78" stroke="#13202f" stroke-width="3"/>
+        <rect x="204" y="214" width="22" height="30" rx="5" fill="#fff" stroke="#13202f" stroke-width="3"/><circle cx="215" cy="226" r="5" fill="#f26b1d"/>
+        <rect x="262" y="186" width="96" height="10" rx="5" fill="#263a50"/>
+        <path class="air" d="M276 200c10 10-10 16 0 26s-10 16 0 26" stroke="#2b7de9" stroke-width="4" stroke-linecap="round"/>
+        <path class="air" d="M310 200c10 10-10 16 0 26s-10 16 0 26" stroke="#2b7de9" stroke-width="4" stroke-linecap="round" style="animation-delay:-.5s"/>
+        <path class="air" d="M344 200c10 10-10 16 0 26s-10 16 0 26" stroke="#2b7de9" stroke-width="4" stroke-linecap="round" style="animation-delay:-1s"/>
+        <!-- downstairs -->
+        <rect x="92" y="330" width="94" height="22" rx="10" fill="#d4560b"/><rect x="88" y="344" width="102" height="32" rx="10" fill="#f26b1d"/><path d="M96 376v14M182 376v14" stroke="#13202f" stroke-width="4" stroke-linecap="round"/>
+        <rect x="206" y="314" width="44" height="88" rx="4" fill="#ffc23d" stroke="#13202f" stroke-width="3.5"/><circle cx="240" cy="360" r="3.5" fill="#13202f"/>
+        <rect x="266" y="318" width="34" height="48" rx="5" fill="#263a50"/><path d="M273 328h20M273 337h20M273 346h20M273 355h20" stroke="#8fa0b3" stroke-width="3" stroke-linecap="round"/>
+        <path class="spark" d="M308 318l-8 13h8l-6 12" stroke="#ffc23d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="318" y="316" width="44" height="80" rx="12" fill="#eef2f7" stroke="#13202f" stroke-width="3.5"/><path d="M340 352c4 4 4 9 0 12-4-3-4-8 0-12z" fill="#f26b1d"/>
+        <path d="M330 316v-20h22v20" stroke="#13202f" stroke-width="3.5"/>
+        <path class="drop" d="M372 300c4 6 6 9 6 12a6 6 0 0 1-12 0c0-3 2-6 6-12z" fill="#2b7de9"/>
+        <!-- condenser -->
+        <rect x="408" y="334" width="72" height="66" rx="10" fill="#eef2f7" stroke="#13202f" stroke-width="3.5"/>
+        <circle cx="444" cy="367" r="22" fill="#fff" stroke="#13202f" stroke-width="3"/>
+        <g class="fan"><path d="M444 367l0-17M444 367l15 9M444 367l-15 9" stroke="#13202f" stroke-width="4" stroke-linecap="round"/></g>
+        <path d="M400 372h8" stroke="#13202f" stroke-width="4"/>
+      </svg>
+      <div class="float f-ontime"><span class="ck"><svg class="ico"><use href="#i-check"/></svg></span><div><div class="k">Arrived</div><div class="v">1:52 PM · window 2–4</div></div></div>
+      <div class="float f-eta"><div class="k">Technician en route</div><div class="who"><span class="av">DM</span><div><div class="v" style="margin:0">Dani M. · HVAC</div><div style="color:var(--mute);font-size:12px">11 min away · Mount Joy</div></div></div><div class="bar"><i></i></div></div>
+      <div class="float f-club"><div class="k">Comfort Club · this year</div><div class="v" id="float-save">$432 saved</div><div style="color:var(--mute);font-size:12px;margin-top:4px">2 tune-ups · no after-hours fees</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="trust" aria-label="Why homeowners choose Punctual Pros">
+  <div class="wrap">
+    <div class="t"><span class="big">4.9</span><div><div class="stars" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><div class="lab">Average Google rating <span class="ill">illustrative</span></div></div></div>
+    <div class="t"><span class="ic"><svg class="ico"><use href="#i-clock"/></svg></span><div class="lab"><b>Since 1958</b>Founded in Lancaster as The Rohrer Company</div></div>
+    <div class="t"><span class="ic"><svg class="ico"><use href="#i-pin"/></svg></span><div class="lab"><b>25 territories</b>One Hour, Ben Franklin &amp; Mister Sparky (2026 FDDs)</div></div>
+    <div class="t"><span class="ic"><svg class="ico"><use href="#i-home"/></svg></span><div class="lab"><b id="trust-homes">~1.0M homes</b>in our Central PA service ZIPs</div></div>
+    <div class="t"><span class="ic"><svg class="ico"><use href="#i-shield"/></svg></span><div class="lab"><b>Upfront pricing</b>Know the price before we start</div></div>
+  </div>
+</section>
+
+<!-- ── Services ──────────────────────────────────────────────────────────── -->
+<section class="sec" id="services" aria-labelledby="svc-h">
+  <div class="wrap">
+    <div class="sec-h rv">
+      <div><p class="kicker">Three trusted brands · one team</p><h2 class="t" id="svc-h">Whatever broke, one call fixes it.</h2><p class="sub">Every technician carries a digital flat-rate pricebook, so you see good, better and best options with the price, before anything is touched.</p></div>
+      <a class="btn btn-dark" href="#book">Book any service <svg class="ico"><use href="#i-arrow"/></svg></a>
+    </div>
+    <div class="svc-grid">
+      <a class="svc rv" href="#book" data-trade="t-hvac" style="--c:var(--heat)"><span class="brand">One Hour Heating &amp; Air</span><span class="ic"><svg class="ico"><use href="#i-flame"/></svg></span><h3>Heating</h3><p>No heat at 2 a.m. is our specialty. Furnaces, boilers and heat pumps, repaired or replaced.</p><ul><li>Furnace &amp; boiler repair</li><li>Heat-pump installs with utility rebates</li><li>Fall safety tune-up &amp; CO check</li></ul><span class="go">Book heating <span class="price">Diagnostic from $89*</span><svg class="ico"><use href="#i-arrow"/></svg></span></a>
+      <a class="svc rv" href="#book" data-trade="t-hvac" style="--c:var(--cool)"><span class="brand">One Hour Heating &amp; Air</span><span class="ic"><svg class="ico"><use href="#i-snow"/></svg></span><h3>Cooling</h3><p>Central air, ductless mini-splits and indoor air quality, sized for your home rather than guessed.</p><ul><li>AC repair &amp; same-week replacement</li><li>Ductless mini-splits for additions</li><li>Filtration, humidity &amp; UV air</li></ul><span class="go">Book cooling <span class="price">Diagnostic from $89*</span><svg class="ico"><use href="#i-arrow"/></svg></span></a>
+      <a class="svc rv" href="#book" data-trade="t-plumb" style="--c:var(--plumb)"><span class="brand">Benjamin Franklin Plumbing</span><span class="ic"><svg class="ico"><use href="#i-drop"/></svg></span><h3>Plumbing</h3><p>Leaks, fixtures, repipes and gas lines. Our plumbers wear shoe covers and leave the bathroom cleaner than they found it.</p><ul><li>Leak detection &amp; repair</li><li>Fixtures, toilets &amp; disposals</li><li>Repiping &amp; gas lines</li></ul><span class="go">Book plumbing <span class="price">Upfront flat rate*</span><svg class="ico"><use href="#i-arrow"/></svg></span></a>
+      <a class="svc rv" href="#book" data-trade="t-plumb" style="--c:#0f6f97"><span class="brand">Benjamin Franklin Plumbing</span><span class="ic"><svg class="ico"><use href="#i-drain"/></svg></span><h3>Drains &amp; sewer</h3><p>Before a heavy rain, not after. Camera inspections, hydro-jetting and sump pumps with battery backup.</p><ul><li>Drain cleaning &amp; hydro-jetting</li><li>Sewer camera inspection</li><li>Sump pumps &amp; backup batteries</li></ul><span class="go">Book drain service <span class="price">Upfront flat rate*</span><svg class="ico"><use href="#i-arrow"/></svg></span></a>
+      <a class="svc rv" href="#book" data-trade="t-plumb" style="--c:var(--orange)"><span class="brand">Benjamin Franklin Plumbing</span><span class="ic"><svg class="ico"><use href="#i-tank"/></svg></span><h3>Water heaters</h3><p>Cold shower this morning? Most tank replacements are done the same day, and we haul the old one away.</p><ul><li>Same-day tank replacement</li><li>Tankless &amp; heat-pump water heaters</li><li>Flush &amp; anode service</li></ul><span class="go">Book water heater <span class="price">Upfront flat rate*</span><svg class="ico"><use href="#i-arrow"/></svg></span></a>
+      <a class="svc rv" href="#book" data-trade="t-elec" style="--c:var(--elec)"><span class="brand">Mister Sparky</span><span class="ic"><svg class="ico"><use href="#i-bolt"/></svg></span><h3>Electrical &amp; generators</h3><p>Panels, EV chargers and whole-home generators, so the next outage is just a flicker.</p><ul><li>Panel upgrades &amp; surge protection</li><li>Level 2 EV chargers</li><li>Whole-home standby generators</li></ul><span class="go">Book an electrician <span class="price">Upfront flat rate*</span><svg class="ico"><use href="#i-arrow"/></svg></span></a>
+    </div>
+    <p class="src">* Prices shown are illustrative for this concept. Real pricing would be set by the operator in the ServiceOS pricebook.</p>
+  </div>
+</section>
+
+<!-- ── Storm readiness (live) ────────────────────────────────────────────── -->
+<section class="sec alt" id="storm" aria-labelledby="storm-h">
+  <div class="wrap">
+    <div class="sec-h rv">
+      <div><p class="kicker">Live · National Weather Service + Open-Meteo</p><h2 class="t" id="storm-h">Storm readiness for your street.</h2><p class="sub">We watch the same alerts and forecasts our dispatchers use to stage crews before a freeze, heat wave or nor'easter. Here is what the next seven days mean for your home.</p></div>
+    </div>
+    <div class="storm-grid">
+      <div class="card rv">
+        <div class="card-h"><h3>7-day home-risk forecast</h3><div class="seg" id="hub-seg" role="group" aria-label="Choose area"><button type="button" aria-pressed="true" data-hub="lancaster">Lancaster</button><button type="button" aria-pressed="false" data-hub="york">York</button><button type="button" aria-pressed="false" data-hub="harrisburg">Harrisburg</button><button type="button" aria-pressed="false" data-hub="toms">Toms River</button></div></div>
+        <div class="days" id="days"><div class="skel" style="height:150px;grid-column:1/-1"></div></div>
+        <ul class="checklist" id="todo"></ul>
+        <p class="src" id="fc-src">Forecast: Open-Meteo (NOAA GFS/HRRR blend). Risk thresholds: Punctual Pros weather-to-demand model (NWS / Consumer Reports criteria).</p>
+      </div>
+      <div class="card rv">
+        <div class="card-h"><h3>Active alerts in our 11 counties</h3><span class="meta" id="alert-meta">—</span></div>
+        <div class="alerts" id="alerts"><div class="skel" style="height:64px"></div><div class="skel" style="height:64px"></div></div>
+        <p class="src">Source: <a href="https://api.weather.gov/alerts/active?area=PA" target="_blank" rel="noopener">api.weather.gov</a> active alerts for PA and NJ, matched to NWS zone codes for Lancaster, York, Dauphin, Cumberland, Berks, Lebanon, Franklin, Adams, Perry, Ocean and Monmouth.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Coverage ──────────────────────────────────────────────────────────── -->
+<section class="sec" id="coverage" aria-labelledby="cov-h">
+  <div class="wrap">
+    <div class="sec-h rv">
+      <div><p class="kicker">Service area</p><h2 class="t" id="cov-h">Do we serve you? Find out in five digits.</h2><p class="sub">Nine Central Pennsylvania counties from our East Hempfield headquarters, and the Jersey Shore through Horvath Home Services, a Punctual Pros company since 2024.</p></div>
+    </div>
+    <div class="cov">
+      <div class="cov-panel">
+        <div class="card rv">
+          <div class="zipbig"><div class="field"><svg class="ico"><use href="#i-pin"/></svg><label class="sr-only" for="cov-zip">ZIP code</label><input id="cov-zip" inputmode="numeric" maxlength="5" placeholder="17601" autocomplete="postal-code"></div><button class="btn btn-dark btn-lg" type="button" id="cov-go">Check</button></div>
+          <div class="quick" style="margin-top:10px" aria-label="Try a ZIP"><button type="button" data-zip="17601">17601 Lancaster</button><button type="button" data-zip="17402">17402 York</button><button type="button" data-zip="08753">08753 Toms River</button><button type="button" data-zip="19103">19103 Philadelphia</button></div>
+          <div class="zipres" id="zipres" style="margin-top:14px" aria-live="polite"><h4>Enter your ZIP</h4><p style="margin:4px 0 0;color:var(--mute);font-size:14px">We'll tell you if you're in our core area, which shop serves you, and how fast we can usually get there.</p></div>
+        </div>
+        <div class="cov-stats rv">
+          <div class="stat"><div class="v num" id="st-zips">248</div><div class="l">Core PA ZIP codes</div></div>
+          <div class="stat"><div class="v num" id="st-nj">78</div><div class="l">Jersey Shore ZIPs (Horvath)</div></div>
+          <div class="stat"><div class="v num" id="st-hh">1.56M</div><div class="l">Housing units covered</div></div>
+        </div>
+      </div>
+      <div class="mapbox rv" role="region" aria-label="Map of the Punctual Pros service area">
+        <div id="map"></div>
+        <div class="map-legend"><span><i style="background:#f26b1d"></i>Core service ZIP (PA)</span><span><i style="background:#2b5fab"></i>Horvath Home Services (NJ)</span><span><i style="background:#c9bba6"></i>By appointment (adjacent)</span><span><i style="background:#13202f;border:2px solid #ffc23d"></i>Shop / dispatch hub</span></div>
+      </div>
+    </div>
+    <p class="src">Coverage from the BSP portal ZIP model (pp_zips: ACS housing, service-territory and adjacency flags; 3,691 ZIPs scored). Ocean &amp; Monmouth ZIPs mapped to Horvath Home Services. Map tiles © Esri.</p>
+  </div>
+</section>
+
+<!-- ── Comfort Club ──────────────────────────────────────────────────────── -->
+<section class="sec alt" id="club" aria-labelledby="club-h">
+  <div class="wrap">
+    <div class="sec-h rv">
+      <div><p class="kicker">Comfort Club membership</p><h2 class="t" id="club-h">Pay a little monthly. Skip the 2 a.m. surprise.</h2><p class="sub">Two tune-ups a year catch most failures before they happen. Members also get front-of-line scheduling, no after-hours fees and member pricing on every repair.</p></div>
+      <span class="chip-ill">Pricing illustrative</span>
+    </div>
+    <div class="club">
+      <div>
+        <div class="tiers" role="group" aria-label="Choose a plan">
+          <button class="tier rv" type="button" data-plan="comfort" aria-pressed="true"><h3>Comfort</h3><div class="pr">$14.95<small>/mo</small></div><div class="per">Heating &amp; cooling</div><ul><li><svg class="ico"><use href="#i-check"/></svg>2 HVAC tune-ups a year</li><li><svg class="ico"><use href="#i-check"/></svg>15% off repairs</li><li><svg class="ico"><use href="#i-check"/></svg>No diagnostic or after-hours fees</li><li><svg class="ico"><use href="#i-check"/></svg>Priority scheduling</li></ul></button>
+          <button class="tier rv" type="button" data-plan="total" aria-pressed="false"><span class="pop">Most popular</span><h3>Total Home</h3><div class="pr">$24.95<small>/mo</small></div><div class="per">HVAC + plumbing + electrical</div><ul><li><svg class="ico"><use href="#i-check"/></svg>Everything in Comfort</li><li><svg class="ico"><use href="#i-check"/></svg>Annual plumbing inspection</li><li><svg class="ico"><use href="#i-check"/></svg>Annual electrical safety check</li><li><svg class="ico"><use href="#i-check"/></svg>20% off repairs · 2-yr repair warranty</li></ul></button>
+        </div>
+        <div class="card rv" style="margin-top:14px;display:flex;gap:14px;align-items:center">
+          <span class="ic" style="width:44px;height:44px;border-radius:14px;background:var(--orange-l);color:var(--orange-d);display:grid;place-items:center;flex:none"><svg class="ico"><use href="#i-msg"/></svg></span>
+          <p style="margin:0;font-size:14.5px;color:var(--ink-3)"><b style="color:var(--ink)">Renewals take care of themselves.</b> ServiceOS books your spring and fall tune-ups automatically and texts you two windows to pick from.</p>
+        </div>
+      </div>
+      <div class="calc rv" aria-labelledby="calc-h">
+        <h3 id="calc-h">What would you save?</h3>
+        <p class="hint">Move the sliders to match your home.</p>
+        <div class="ctrl"><label for="c-sys">Heating / cooling systems <output id="o-sys">1</output></label><input type="range" id="c-sys" min="1" max="3" step="1" value="1"></div>
+        <div class="ctrl"><label for="c-visits">Repair visits in a typical year <output id="o-visits">2</output></label><input type="range" id="c-visits" min="0" max="5" step="1" value="2"></div>
+        <div class="ctrl"><label for="c-ticket">Average repair bill <output id="o-ticket">$420</output></label><input type="range" id="c-ticket" min="150" max="1500" step="10" value="420"></div>
+        <div class="out"><div><div class="save-l">Estimated net savings per year</div><div class="save num" id="c-save">$432</div></div><a class="btn btn-primary" href="#book">Join &amp; book</a></div>
+        <div class="stack" id="c-stack" aria-hidden="true"></div>
+        <div class="brk" id="c-brk"></div>
+        <p class="fine">Illustrative math: tune-up value $129 per system per visit, diagnostic $89 waived, after-hours fee $99 waived on 1 in 4 visits, member discount on the repair bill, minus the annual plan price. Final pricing is set by the operator.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Financing + rebates ───────────────────────────────────────────────── -->
+<section class="sec" id="financing" aria-labelledby="fin-h">
+  <div class="wrap">
+    <div class="sec-h rv">
+      <div><p class="kicker">Financing &amp; rebates</p><h2 class="t" id="fin-h">A new system for less than your phone bill.</h2><p class="sub">Spread a replacement over 5 to 10 years and stack the utility rebates we file for you. These are the live programs in our counties.</p></div>
+    </div>
+    <div class="fin">
+      <div class="card rv light">
+        <div class="card-h"><h3>Monthly payment estimator</h3><span class="chip-ill">Illustrative terms</span></div>
+        <div class="ctrl"><label for="f-price" style="color:var(--ink-3)">Project price <output id="o-price" style="color:var(--ink)">$11,500</output></label><input type="range" id="f-price" min="3000" max="25000" step="250" value="11500"></div>
+        <div class="ctrl"><span style="font-size:13.5px;color:var(--ink-3)">Term</span><div class="seg" id="f-term" role="group" aria-label="Loan term"><button type="button" data-v="60" aria-pressed="false">5 yrs</button><button type="button" data-v="84" aria-pressed="false">7 yrs</button><button type="button" data-v="120" aria-pressed="true">10 yrs</button></div></div>
+        <div class="ctrl"><span style="font-size:13.5px;color:var(--ink-3)">APR</span><div class="seg" id="f-apr" role="group" aria-label="APR"><button type="button" data-v="5.99" aria-pressed="false">5.99%</button><button type="button" data-v="7.99" aria-pressed="true">7.99%</button><button type="button" data-v="9.99" aria-pressed="false">9.99%</button></div></div>
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:18px;padding-top:18px;border-top:1px solid var(--line)">
+          <div><div style="font-size:13px;color:var(--mute);margin-bottom:6px">Estimated payment</div><div class="pay" id="f-pay">$139<small>/mo</small></div></div>
+          <div style="text-align:right;font-size:13px;color:var(--mute)" id="f-tot">—</div>
+        </div>
+        <a class="btn btn-primary" href="#book" style="width:100%;margin-top:16px">Get a free replacement estimate</a>
+        <p class="src">Subject to credit approval through a lending partner. Terms shown are examples, not an offer.</p>
+      </div>
+      <div class="card rv" id="rebates">
+        <div class="card-h"><h3>Rebates &amp; programs in our area</h3><div class="seg" id="reb-seg" role="group" aria-label="Filter by state"><button type="button" data-st="PA" aria-pressed="true">PA</button><button type="button" data-st="NJ" aria-pressed="false">NJ</button><button type="button" data-st="ALL" aria-pressed="false">All</button></div></div>
+        <div class="reb-list" id="reb-list"><div class="skel" style="height:70px"></div><div class="skel" style="height:70px"></div><div class="skel" style="height:70px"></div></div>
+        <p class="src" id="reb-src">Source: BSP portal market dataset (pp_market, utility and agency program pages, retrieved Sept 2026).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ServiceOS strip ───────────────────────────────────────────────────── -->
+<section class="sec" id="os" aria-labelledby="os-h" style="padding-top:0">
+  <div class="wrap">
+    <div class="osband rv">
+      <div class="grid">
+        <div>
+          <span class="badge"><svg class="ico" style="width:16px;height:16px"><use href="#i-chip"/></svg>Powered by ServiceOS</span>
+          <h2 id="os-h">The reason we're on time is software.</h2>
+          <p>ServiceOS is the operating system behind every Punctual Pros visit. It forecasts call volume from the weather, routes the closest qualified tech, answers the phone at 2 a.m., and keeps your membership on schedule.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-primary" href="./serviceos.html">See ServiceOS <svg class="ico"><use href="#i-arrow"/></svg></a><a class="btn btn-ghost" href="./serviceos.html#demo" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.25)">Try the dispatch demo</a></div>
+        </div>
+        <div class="os-feats">
+          <div class="os-f"><svg class="ico"><use href="#i-route"/></svg><h4>Live ETA, like a ride-share</h4><p>Tech photo, name and a map link the moment they head your way.</p></div>
+          <div class="os-f"><svg class="ico"><use href="#i-gauge"/></svg><h4>Weather-ready dispatch</h4><p>The Service-Call Pressure Index stages crews before a cold snap hits.</p></div>
+          <div class="os-f"><svg class="ico"><use href="#i-msg"/></svg><h4>Answers at 2 a.m.</h4><p>An AI dispatcher books real slots after hours and hands off to on-call staff.</p></div>
+          <div class="os-f"><svg class="ico"><use href="#i-tag"/></svg><h4>Price before work</h4><p>Good, better and best options on a tablet, with financing and rebates built in.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Reviews ───────────────────────────────────────────────────────────── -->
+<section class="sec alt" id="reviews" aria-labelledby="rev-h">
+  <div class="wrap">
+    <div class="sec-h rv">
+      <div><p class="kicker">What neighbors say</p><h2 class="t" id="rev-h">On time is the first thing they mention.</h2></div>
+      <span class="chip-ill">Illustrative reviews</span>
+    </div>
+    <div class="quotes">
+      <figure class="q rv"><div class="stars" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"Furnace quit on the first cold night. I booked online at 9 p.m., got a text with the tech's photo, and he was in my basement by 8:15 the next morning."</blockquote><footer><span class="av" style="background:#e4553a">KS</span><div>Karen S.<small>Mount Joy, PA · Heating</small></div></footer></figure>
+      <figure class="q rv"><div class="stars" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"Three options with prices on an iPad before he touched anything. We went with the middle one and the rebate paperwork was already filled in."</blockquote><footer><span class="av" style="background:#1f8fd6">DR</span><div>David R.<small>Camp Hill, PA · Water heater</small></div></footer></figure>
+      <figure class="q rv"><div class="stars" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"After the last nor'easter half the street lost power. Our generator kicked on, and they'd already checked it at our spring visit."</blockquote><footer><span class="av" style="background:#d99a00">MT</span><div>Maria T.<small>Toms River, NJ · Generator</small></div></footer></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ── Careers ───────────────────────────────────────────────────────────── -->
+<section class="sec" id="careers" aria-labelledby="car-h">
+  <div class="wrap">
+    <div class="sec-h rv">
+      <div><p class="kicker">Careers · technician pipeline</p><h2 class="t" id="car-h">Build a career with a toolbox and a future.</h2><p class="sub">Paid training from day one, a company truck, and a clear path from apprentice to lead technician. We hire from Thaddeus Stevens and the trade schools down the road, and we keep our people.</p></div>
+      <a class="btn btn-dark" href="#careers-apply" id="apply-btn">Apply in 60 seconds <svg class="ico"><use href="#i-arrow"/></svg></a>
+    </div>
+    <div class="careers">
+      <div class="card rv">
+        <div class="card-h"><h3>Your path at Punctual Pros</h3><span class="chip-ill">Timeline illustrative</span></div>
+        <div class="ladder">
+          <div class="rung"><span class="n">01</span><div><h4>Apprentice</h4><p>Paid classroom + ride-alongs. We cover tools and certifications (EPA 608, NATE).</p></div><span class="when">Month 0</span></div>
+          <div class="rung"><span class="n">02</span><div><h4>Service technician</h4><p>Your own truck and territory. ServiceOS routes you close to home.</p></div><span class="when">Year 1–2</span></div>
+          <div class="rung"><span class="n">03</span><div><h4>Lead technician</h4><p>Mentor apprentices, take on installs and the hardest diagnostics.</p></div><span class="when">Year 3–4</span></div>
+          <div class="rung"><span class="n">04</span><div><h4>Comfort advisor or field supervisor</h4><p>Lead in-home design consults, or run a crew and a hub.</p></div><span class="when">Year 5+</span></div>
+        </div>
+      </div>
+      <div class="card rv">
+        <div class="card-h"><h3>Pay that beats the market</h3><span class="meta" id="wage-meta">HVAC technicians · annual</span></div>
+        <div class="wage" id="wage"><div class="skel" style="height:160px"></div></div>
+        <div class="pipe" id="pipe"></div>
+        <p class="src" id="wage-src">Sources: BLS OEWS May 2025 MSA medians; Punctual Pros posting on HVACJobsHQ; LancasterOnline; PA DEP (via pp_market).</p>
+      </div>
+    </div>
+    <div class="partner rv" id="partner">
+      <span class="ic"><svg class="ico" style="width:26px;height:26px"><use href="#i-brief"/></svg></span>
+      <div><h3>Own a home-services company in PA, NJ, MD or DE?</h3><p>Horvath Home Services joined us in 2024 and kept its name, its people and its 20-year reputation. If you're thinking about what's next, we'd like to talk, confidentially.</p></div>
+      <a class="btn btn-ghost" href="#contact">Partner with us</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ───────────────────────────────────────────────────────────────── -->
+<section class="sec alt" id="faq" aria-labelledby="faq-h">
+  <div class="wrap faq">
+    <div class="rv">
+      <p class="kicker">FAQ</p><h2 class="t" id="faq-h">Good questions. Straight answers.</h2>
+      <p class="sub" style="color:var(--ink-3);font-size:17px;margin-top:14px">Can't find yours? Ask our assistant in the corner. It checks your ZIP, the live weather and our programs in real time.</p>
+    </div>
+    <div class="faq-list rv" id="faq-list"></div>
+  </div>
+</section>
+
+<!-- ── Design rationale (for the PRG) ────────────────────────────────────── -->
+<section class="sec rat" id="rationale" aria-labelledby="rat-h">
+  <div class="wrap">
+    <div class="sec-h rv">
+      <div><p class="kicker">Design rationale · for Tyler &amp; the Portfolio Resource Group</p><h2 class="t" id="rat-h">What we borrowed, and the number each piece should move.</h2><p class="sub">Every element on this page is taken from a PE-backed residential platform that has already proven it. Below are the four references, the specific element we used, and the KPI it is meant to move.</p></div>
+    </div>
+    <div class="ref-grid" id="ref-grid"></div>
+    <div class="score-wrap rv">
+      <table class="score" aria-label="KPI scoreboard">
+        <thead><tr><th>KPI</th><th>Benchmark today</th><th>Target</th><th>Page element that moves it</th><th>Source</th></tr></thead>
+        <tbody id="score-body"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── Final CTA ─────────────────────────────────────────────────────────── -->
+<section class="sec final" id="contact" aria-labelledby="final-h">
+  <div class="wrap">
+    <p class="kicker">Available 24/7 · 365</p>
+    <h2 id="final-h">Something's not right at home? We're on our way.</h2>
+    <p>Book online in under a minute or call. A real person answers day and night.</p>
+    <div class="row"><a class="btn btn-primary btn-lg" href="#book">Book now</a><a class="btn btn-ghost btn-lg" href="tel:+17175550123" data-phone-link><svg class="ico"><use href="#i-phone"/></svg><span data-phone>(717) 555-0123</span></a></div>
+  </div>
+</section>
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <a class="logo" href="#top"><span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="13.2" r="7.8" stroke="#fff" stroke-width="2.2"/><path d="M12 2.6v2.6M9.6 2.6h4.8" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><path d="M8.6 13.3l2.3 2.3 4.6-4.8" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="logo-word"><strong>Punctual Pros</strong><small>Est. 1958 · East Hempfield, PA</small></span></a>
+        <p style="margin:16px 0 0;max-width:340px">Independently owned and operated franchisee of One Hour Heating &amp; Air Conditioning®, Benjamin Franklin Plumbing® and Mister Sparky®. Jersey Shore service by Horvath Home Services.</p>
+      </div>
+      <div><h4>Services</h4><ul><li><a href="#services">Heating &amp; cooling</a></li><li><a href="#services">Plumbing &amp; drains</a></li><li><a href="#services">Water heaters</a></li><li><a href="#services">Electrical &amp; generators</a></li></ul></div>
+      <div><h4>Counties</h4><ul><li>Lancaster · York · Dauphin</li><li>Cumberland · Berks · Lebanon</li><li>Franklin · Adams · Perry</li><li>Ocean · Monmouth (NJ)</li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="#club">Comfort Club</a></li><li><a href="#careers">Careers</a></li><li><a href="#partner">Partner with us</a></li><li><a href="./serviceos.html">ServiceOS</a></li></ul></div>
+      <div><h4>Broad Sky concept</h4><ul><li><a href="../../">BSP landing</a></li><li><a href="../index.html">All site concepts</a></li><li><a href="../../app.html#/pp/overview">Portal: Punctual Pros</a></li><li><a href="#rationale">Design rationale</a></li></ul></div>
+    </div>
+    <div class="legal"><span>© 2026 Punctual Pros (concept). Not an official website. Phone numbers, prices, reviews and ratings are illustrative.</span><span class="lic">PA HIC # PA000000 · NJ HIC # 13VH00000000 (placeholders)</span></div>
+  </div>
+<p class="bsp-disclaimer" style="box-sizing:border-box;max-width:1200px;margin:0 auto;padding:12px 20px 18px;font-size:12px;line-height:1.55">Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.</p>
+</footer>
+
+<div class="actionbar" role="region" aria-label="Quick actions"><a class="btn btn-ghost" href="tel:+17175550123" data-phone-link><svg class="ico"><use href="#i-phone"/></svg>Call</a><a class="btn btn-primary" href="#book">Book now</a></div>
+
+<script type="module">
+  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261006085442';
+  import { Chat } from '../../assets/chat.js?v=20261006085442';
+  import { init } from './site.js?v=20261006083000';
+  init({ Data, Fmt, Live, Chat, esc });
+</script>
+</body>
+</html>

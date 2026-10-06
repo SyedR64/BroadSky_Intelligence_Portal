@@ -1,0 +1,865 @@
+{
+ "meta": {
+  "dataset": "ts_playbook",
+  "title": "Thomas Scientific: the value-creation playbook",
+  "generated": "2026-10-06",
+  "subject": "Thomas Scientific (Swedesboro NJ; Broad Sky Partners platform since Jan 2022)",
+  "thesis": "From distributor to lab-supply-chain platform: target-account selling into diagnostics labs and hospital systems (27.5k scored sites), e-commerce/punchout penetration, VMI, private label, cold chain, cannabis/cleanroom verticals; add-ons in regional distributors and specialty consumables; AI agents for quoting, search, forecasting and account health; an inside-sales academy.",
+  "method": "Expansion-phase data_points are computed from repo datasets: data/ts_sites.json (27,503 sites, aggregated by region only: counts by vertical, priority label and archetype, and summed 2023 CMS allowed amounts), data/ts_parents.json (top 500 parents), data/research/ma_targets_fl_ts.json (25 thomas_scientific targets, ZoomInfo revenue estimates), thomas_filings (capital structure and estimates), public_comps (lab-distribution medians), pe_landscape (Calibre, Sterling), bsp_firm (Smith + Howard timeline and Thomas add-ons) and serviceos_evidence (LabOS KPI benchmarks kb-ts-1..3, ve-06, ra-ts). External evidence was gathered on 2026-10-06 by web search and direct fetches of SEC filings (Avantor FY2025 10-K, VWR FY2014 10-K), state/federal pages (NJDOL), banker reports (Houlihan Lokey) and vendor case studies. Growth-lever and KPI targets are benchmarks or labelled assumptions; the kpi_roadmap is an analyst assumption anchored to the thomas_filings estimate_table.",
+  "caveats": [
+   "Thomas Scientific is a stressed credit: first-lien loan at 88.3% of par (Jun-2026), maturity 2027-12-14, common equity marked near zero, est. leverage 7-10x. Every lever is sequenced behind liquidity and refinancing.",
+   "Company revenue, EBITDA and headcount are low-confidence analyst estimates (thomas_filings), not company disclosures; the kpi_roadmap inherits that uncertainty.",
+   "data/research/market_evidence.json and a kpi_targets dataset were not present in the repo at build time; KPI targets use serviceos_evidence kpi_benchmark items (kb-ts-*) and external sources, labelled as assumptions.",
+   "ts_sites scores are from a legacy targeting tool (NPPES, CMS 2023, CLIA, Hospital Compare); site counts are aggregated by region only, and the CMS allowed amount is Medicare billing, not lab-supply spend.",
+   "Vendor case studies (InstaLILY, Conexiom, Algolia, Conga/PROS, HighRadius, Flagship VMI) are self-reported and unaudited; treat them as upper bounds. weeks_to_deploy values are analyst estimates.",
+   "Market-size figures for cleanroom, cannabis testing and healthcare cold chain come from market-research firms whose forecasts vary widely.",
+   "The McKinsey forecasting figures and the Antylia/GTCR details come from search-engine extracts because the primary pages blocked automated fetches.",
+   "ZoomInfo revenue estimates for add-on targets are modeled and can be far off."
+  ],
+  "item_count": 43,
+  "item_counts": {
+   "template": 9,
+   "expansion_phase": 4,
+   "growth_lever": 10,
+   "ai_agent": 9,
+   "talent_program": 6,
+   "financing": 5
+  },
+  "narrative": [
+   "Tyler, the honest starting point is that Thomas is Fund I's largest and most stressed position: lenders mark the first-lien loan at 88% of par, the common is marked near zero, and the loan matures in December 2027.",
+   "So this playbook puts cash and refinancing first and growth second, but the growth story is what earns the refinancing.",
+   "Smith + Howard shows the shape: a regional leader that grew from about 100 to 800 people, 1 to 11 locations and nearly 4x revenue through nine add-ons, specialist capabilities and technology investment.",
+   "For Thomas the equivalent is not 4x revenue; it is turning a 125-year-old distributor into a lab supply-chain platform that buyers value above a commodity distributor.",
+   "The demand map already exists: 27,503 scored lab, pathology and hospital sites, 713 rated Pursue and 2,317 Nurture, and the top 500 parent organizations account for 832 of the scored sites.",
+   "An inside-sales academy on Grainger's model, with 4 weeks of training and then a 100-account book, would need about 30 books to cover every Pursue and Nurture site.",
+   "Digital is table stakes: Avantor does about 80% of transactions online, and Grainger's ePro channels are about 40% of connected orders, growing far faster than rep-led sales.",
+   "Margin has to come from mix: private label was 19% of VWR's sales at higher margins, AI pricing tools have added about 120 basis points at large distributors, and VMI makes accounts sticky.",
+   "Cleanroom, cannabis-testing, cold-chain and forensics programs add faster-growing niches on top of a lab-distribution market growing about 1.5% a year.",
+   "AI agents for quoting, order entry, search, forecasting, collections and account health are cheap relative to the cash they release; each day of DSO is worth about $0.8M.",
+   "Add-ons restart only when funded: one $15-25M regional or specialty distributor a year (Midland, MIDSCI, Capitol, Valutek, Genesee), competing mainly against Calibre Scientific.",
+   "On our assumptions EBITDA moves from about $30M to about $42.5M in 36 months, which brings leverage back near 6x and inside today's unitranche market, the bar for an amend-and-extend, recap or sale."
+  ],
+  "kpi_roadmap": [
+   {
+    "month": 0,
+    "revenue_usd": 285000000,
+    "ebitda_usd": 30000000,
+    "headcount": 470,
+    "locations_or_accounts": "9 distribution centers; named coverage of Pursue/Nurture sites unknown (baseline)",
+    "note": "Midpoints of thomas_filings estimates: revenue $250-320M, EBITDA $25-35M; headcount ~400 (ZoomInfo) + ~70 from tuck-ins. All low confidence."
+   },
+   {
+    "month": 12,
+    "revenue_usd": 294000000,
+    "ebitda_usd": 32500000,
+    "headcount": 480,
+    "locations_or_accounts": "9 DCs; ~1,000 Pursue/Nurture sites under named coverage",
+    "note": "Assumes ~3% organic growth (above the 1.5% lab-distribution median) and +60 bps margin from pricing, collections and order automation. No acquisitions while the refinancing is open."
+   },
+   {
+    "month": 24,
+    "revenue_usd": 325000000,
+    "ebitda_usd": 37500000,
+    "headcount": 530,
+    "locations_or_accounts": "10 DCs (one Midwest/Texas tuck-in, ~$20M revenue); ~2,000 sites covered",
+    "note": "~3.5% organic growth plus one ~$20M tuck-in at about 0.8x sales; margin ~11.5% from private label and digital mix."
+   },
+   {
+    "month": 36,
+    "revenue_usd": 355000000,
+    "ebitda_usd": 42500000,
+    "headcount": 560,
+    "locations_or_accounts": "11 DCs (adds a West Coast cleanroom or life-science tuck-in); ~3,000 sites (all Pursue + Nurture) covered",
+    "note": "~4% organic growth plus a second ~$15M tuck-in; ~12% EBITDA margin. At est. $260M debt this is ~6.1x, inside the 5.25-6.25x unitranche band. Assumption, not a forecast."
+   }
+  ],
+  "kpi_roadmap_label": "est. — analyst assumptions anchored to thomas_filings estimate_table (revenue $250-320M, EBITDA $25-35M); not company guidance",
+  "related_datasets": [
+   "ts_sites",
+   "ts_parents",
+   "ma_targets_fl_ts",
+   "thomas_filings",
+   "public_comps",
+   "pe_landscape",
+   "bsp_firm",
+   "serviceos_evidence"
+  ]
+ },
+ "items": [
+  {
+   "id": "tpl-01",
+   "kind": "template",
+   "template": "Smith + Howard",
+   "move": "Platform entry: buy a respected regional leader, then fund the build",
+   "date": "2022-11-15",
+   "what_happened": "Broad Sky made a strategic platform investment in Smith + Howard, then a single-office Atlanta CPA firm of about 100 professionals.",
+   "metric": "~100 professionals, 1 office at entry",
+   "ts_translation": "Thomas is already the platform (founded 1900, 9 distribution centers). The analogous step is to re-underwrite it as a platform: name the 27.5k-site target universe, fund the commercial engine, and stop treating it as a stand-alone distributor.",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-02",
+   "kind": "template",
+   "template": "Smith + Howard",
+   "move": "First geographic hop by merger with a like-minded regional firm",
+   "date": "2023-08-15",
+   "what_happened": "Smith + Howard joined forces with Market Street Partners (Chattanooga), its first move outside Atlanta.",
+   "metric": "1 -> 2 metros",
+   "ts_translation": "Thomas already did this with NCI (Minneapolis, 2022) and Arrowhead (Lenexa KS, 2023). The next hop should follow target-account density: Texas, Oklahoma, Louisiana and Arkansas (5,766 scored sites) and the West (5,786) have no Thomas stocking point except the Carlyle-era E&K (Santa Clara) and American Cleanstat (Irvine).",
+   "source_url": "https://www.smith-howard.com/smith-howard-and-market-street-partners-join-forces/",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-03",
+   "kind": "template",
+   "template": "Smith + Howard",
+   "move": "Buy a specialist capability, not just revenue",
+   "date": "2024-01-31",
+   "what_happened": "Smith + Howard acquired JMM CPAs (Chicago) to expand its benefit-plan audit practice, a specialty service line it could sell across the whole client base.",
+   "metric": "New specialty practice line",
+   "ts_translation": "For Thomas the specialist buys are cleanroom/controlled-environment consumables (Valutek, Micronova), reagents and buffers (RICCA, Boston BioProducts) and private-label lab essentials (MIDSCI PR1MA, Genesee): each adds a margin-accretive line that sells into all nine DCs.",
+   "source_url": "https://www.smith-howard.com/smith-howard-announces-expansion-of-benefit-plan-audit-practice/",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-04",
+   "kind": "template",
+   "template": "Smith + Howard",
+   "move": "Add an adjacent service that deepens client relationships",
+   "date": "2024-04-30",
+   "what_happened": "Smith + Howard acquired VIP Search / VIP Solutions (Dallas), adding recruiting and outsourced accounting services next to audit and tax.",
+   "metric": "New adjacent service revenue",
+   "ts_translation": "Thomas analog: onsite services (VMI, stockroom management, equipment tracking). Avantor runs ~2,000 service associates side by side with customers; that service layer is what makes a distributor sticky.",
+   "source_url": "https://www.smith-howard.com/smith-howard-acquires-vip-search-and-vip-solutions-businesses/",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-05",
+   "kind": "template",
+   "template": "Smith + Howard",
+   "move": "Densify one region with a cadence of tuck-ins",
+   "date": "2024-12-09 to 2026-01-13",
+   "what_happened": "Fahrenheit Advisors (Richmond), Smith Kesler (Carolinas), Horton Lee & Burnett (Birmingham) and Bauknight Pietras & Stormer (South Carolina) built a Southeast cluster, roughly one deal every four months.",
+   "metric": "4 Southeast add-ons in ~13 months",
+   "ts_translation": "Thomas has made no acquisition since Oct 2023. Restart a disciplined cadence of one $5-25M tuck-in every 4-6 months once liquidity allows; regional distributors trade near 0.8x sales (Denville precedent), well below platform value.",
+   "source_url": "https://www.smith-howard.com/smith-howard-expands-southeastern-u-s-presence-with-acquisition-of-horton-lee-burnett/",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "tpl-06",
+   "kind": "template",
+   "template": "Smith + Howard",
+   "move": "Invest in technology, AI and an offshore delivery center",
+   "date": "2026-02-01",
+   "what_happened": "Geels Norton (cyber/SOC) joined Smith + Howard; the CEO credits investments in leadership, technology, AI-enabled capabilities and an offshore delivery center in India for the transformation.",
+   "metric": "India delivery center + AI-enabled capabilities",
+   "ts_translation": "Thomas analog: AI agents for quoting, order entry, search and collections (see ai_agent items) and a shared-service back office, aimed at lowering cost-to-serve on ~$700 average orders.",
+   "source_url": "https://www.financialcontent.com/article/bizwire-2026-8-6-broad-sky-partners-completes-sale-of-smith-howard-to-tpg",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tpl-07",
+   "kind": "template",
+   "template": "Smith + Howard",
+   "move": "Exit to an upmarket growth buyer at national scale",
+   "date": "2026-08-06",
+   "what_happened": "Broad Sky sold Smith + Howard to TPG Growth after 3.5 years: ~100 -> ~800 professionals, 1 -> 11 locations (Southeast US + India), 9 acquisitions, nearly 4x revenue.",
+   "metric": "~4x revenue; ~8x headcount; 9 add-ons; 3.5-year hold",
+   "ts_translation": "The Thomas version of \"national scale\" is not 4x revenue; it is a re-rated, refinanced platform with clean cash interest coverage and a visible digital/private-label margin story before the Dec-2027 loan maturity.",
+   "source_url": "https://www.financialcontent.com/article/bizwire-2026-8-6-broad-sky-partners-completes-sale-of-smith-howard-to-tpg",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tpl-08",
+   "kind": "template",
+   "template": "Analog: Antylia Scientific (Cole-Parmer), GTCR 2014-2025",
+   "move": "Carve-out lab-products distributor rebuilt through 15 add-ons and a portfolio sale",
+   "date": "2014 to 2025-05-28",
+   "what_happened": "GTCR bought Cole-Parmer in a 2014 carve-out from Thermo Fisher, made 15 add-on acquisitions, sold the Masterflex bioprocessing unit to Avantor for $2.9B (2021), and sold the remaining Antylia Scientific to Brookfield and CDPQ for ~$1.34B (2025).",
+   "metric": "15 add-ons; $2.9B partial sale + ~$1.34B exit",
+   "ts_translation": "Closest same-vertical precedent: value came from proprietary/manufactured lines and selective divestiture, not from distribution volume alone. Thomas should identify which lines (cleanroom, forensics, private label) could be valued separately.",
+   "source_url": "https://www.canadianlawyermag.com/cl-plus/deals/3027",
+   "confidence": "medium",
+   "note": "Figures from search-engine extract of the deal note and corroborating trackers (PrivSource, AlternativesWatch $1.34B); GTCR release itself not fetched.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tpl-09",
+   "kind": "template",
+   "template": "Analog: Calibre Scientific (StoneCalibre), 2018-",
+   "move": "Buy-and-build of lab distributors plus proprietary manufacturing and service",
+   "date": "2018-01-01 to 2024-10",
+   "what_happened": "StoneCalibre launched Calibre Scientific on Jan 1 2018 and lists ~40+ acquisitions through Oct 2024 (pe_landscape counts 64+), organized into Calibre Scientific (proprietary products), Calibre Lab (distribution) and Calibre Tec (service).",
+   "metric": "~40+ acquisitions in ~7 years; 3 divisions",
+   "ts_translation": "Calibre is the most active bidder for the same U.S. chromatography, consumables and glassware add-ons. Its three-division model (own brand + distribution + service) is the shape Thomas should copy, and its European focus leaves U.S. regional distributors open.",
+   "source_url": "https://www.stonecalibre.com/portfolio-1/calibre-scientific",
+   "confidence": "medium",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ph-1",
+   "kind": "expansion_phase",
+   "phase": 1,
+   "name": "Stabilize the core and buy time",
+   "months": [
+    0,
+    6
+   ],
+   "geography": "Northeast / Mid-Atlantic core (NJ, PA, NY, DE, MD, MA, CT, RI, NH, VT, ME) served from Swedesboro NJ and the Massachusetts cleanroom hubs (Denville/Holliston, Quintana/Haverhill, Day/Dracut)",
+   "thesis": "Thomas is a stressed credit (est. EBITDA $25-35M, leverage 7-10x, first-lien loan marked at 88.3% of par, maturity 2027-12-14). The first six months are about cash: price discipline, working capital, and a named-account program in the home region, so the lender conversation in 2027 is about growth rather than survival.",
+   "data_points": {
+    "ts_sites_total": 3502,
+    "ts_sites_pursue": 111,
+    "ts_sites_nurture": 325,
+    "ts_sites_diagnostics_lab": 2413,
+    "ts_sites_pathology": 423,
+    "ts_sites_hospital_or_academic": 481,
+    "ts_sites_oncology": 154,
+    "ts_sites_multisite_or_national_network": 1009,
+    "distinct_parent_orgs": 2661,
+    "cms_allowed_2023_usd_m": 1319.6,
+    "top500_parents_with_sites_in_region": 86,
+    "top500_parent_sites_in_region": 139,
+    "ma_targets_count": 6,
+    "ma_targets_rev_est_usd_m": 130.8,
+    "ma_targets_top": [
+     "Globe Scientific (Mahwah, NJ; fit 74; ZoomInfo rev est $14.9M)",
+     "Boston BioProducts (Ashland, MA; fit 73; ZoomInfo rev est $6.0M)",
+     "Krackeler Scientific, Inc. (Albany, NY; fit 68; ZoomInfo rev est $6.2M)",
+     "ZAGENO (Cambridge, MA; fit 67; ZoomInfo rev est $96.3M)"
+    ],
+    "loan_fv_pct_par_2026_06": 88.3,
+    "loan_maturity": "2027-12-14",
+    "loan_pricing": "SOFR+640 cash (Jun-2026)",
+    "current_revenue_est_usd_m": "250-320 (low confidence)",
+    "current_ebitda_est_usd_m": "25-35 (low confidence)",
+    "lab_distribution_median_ebitda_margin_pct": 7.3,
+    "kpi_target_assumptions": {
+     "price_realization_bps": "+50 to +120 (Conga/PROS distributor case = 120 bps; assumption)",
+     "dso_days": "-5 to -10 (HighRadius DXP case = -20; assumption)"
+    }
+   },
+   "source_urls": [
+    "https://www.sec.gov/Archives/edgar/data/1278752/000119312526335848/mfic-20260630.htm",
+    "https://www.sec.gov/Archives/edgar/data/1901071/000190107124000001/xslFormDX01/primary_doc.xml",
+    "https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners/medicare-physician-other-practitioners-by-provider",
+    "https://npiregistry.cms.hhs.gov/",
+    "https://www.globescientific.com",
+    "https://cdn.hl.com/pdf/2025/us-private-credit-market-newsletter-oct-2025.pdf"
+   ],
+   "retrieved": "2026-10-06",
+   "confidence": "medium",
+   "label": "est. — analyst plan, not company guidance",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000119312526335848/mfic-20260630.htm"
+  },
+  {
+   "id": "ph-2",
+   "kind": "expansion_phase",
+   "phase": 2,
+   "name": "Target-account selling into diagnostics labs and health systems",
+   "months": [
+    6,
+    18
+   ],
+   "geography": "National program, led from the Midwest and South Central hubs (NCI Minneapolis MN, Arrowhead Lenexa KS) into IL, OH, MI, MO, TX, OK, LA",
+   "thesis": "Convert the 27,503-site scored universe into a covered book: 713 \"Pursue\" and 2,317 \"Nurture\" sites, starting with the 500 top parent organizations (832 sites). Pair an inside-sales academy with punchout/e-commerce so reps own accounts and the long tail self-serves. Add one Midwest/Texas regional distributor to put stock near Texas, the largest site cluster.",
+   "data_points": {
+    "ts_sites_total": 10636,
+    "ts_sites_pursue": 283,
+    "ts_sites_nurture": 781,
+    "ts_sites_diagnostics_lab": 7312,
+    "ts_sites_pathology": 700,
+    "ts_sites_hospital_or_academic": 2371,
+    "ts_sites_oncology": 236,
+    "ts_sites_multisite_or_national_network": 2995,
+    "distinct_parent_orgs": 7928,
+    "cms_allowed_2023_usd_m": 2582.9,
+    "top500_parents_with_sites_in_region": 200,
+    "top500_parent_sites_in_region": 312,
+    "ma_targets_count": 10,
+    "ma_targets_rev_est_usd_m": 345.6,
+    "ma_targets_top": [
+     "Midland Scientific, Inc. (MSI) (La Vista, NE; fit 92; ZoomInfo rev est $147.4M)",
+     "Capitol Scientific (Austin, TX; fit 91; ZoomInfo rev est $64.4M)",
+     "MIDSCI (Fenton, MO; fit 91; ZoomInfo rev est $16.0M)",
+     "GFS Chemicals (Powell, OH; fit 77; ZoomInfo rev est $70.7M)"
+    ],
+    "national_sites_total": 27503,
+    "national_pursue": 713,
+    "national_nurture": 2317,
+    "top500_parents": 500,
+    "top500_parent_sites": 832,
+    "top500_parents_with_5plus_sites": 29,
+    "largest_parents": [
+     "UNILAB CORPORATION (41 sites, CA)",
+     "SONORA QUEST LABORATORIES LLC (23 sites, AZ)",
+     "DIAGNOSTIC LABORATORY OF OKLAHOMA LLC (18 sites, OK)",
+     "BTDI JV, LLP (18 sites, TX)"
+    ],
+    "kpi_target_assumptions": {
+     "digital_share_of_transactions_pct": "target 80 (Avantor FY2025; serviceos kb-ts-1)",
+     "eprocurement_share_pct": "target 40 (Grainger; kb-ts-2)"
+    }
+   },
+   "source_urls": [
+    "https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners/medicare-physician-other-practitioners-by-provider",
+    "https://npiregistry.cms.hhs.gov/",
+    "https://www.midlandsci.com",
+    "http://midsci.com/",
+    "https://www.capitolscientific.com/",
+    "https://www.sec.gov/Archives/edgar/data/1722482/000162828026007118/avtr-20251231.htm",
+    "https://www.digitalcommerce360.com/2026/02/03/grainger-ai-data-digital-sales-q4-2025/"
+   ],
+   "retrieved": "2026-10-06",
+   "confidence": "medium",
+   "label": "est. — analyst plan, not company guidance",
+   "source_url": "https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners/medicare-physician-other-practitioners-by-provider"
+  },
+  {
+   "id": "ph-3",
+   "kind": "expansion_phase",
+   "phase": 3,
+   "name": "West Coast density plus cleanroom and semiconductor vertical",
+   "months": [
+    12,
+    30
+   ],
+   "geography": "West (CA, AZ, WA, OR, CO, NV, UT) anchored on E&K Scientific (Santa Clara CA) and American Cleanstat (Irvine CA)",
+   "thesis": "The West holds 175 Pursue sites (California alone has 126, the most of any state) and $2.36B of 2023 Medicare-allowed amounts at scored sites, and Arizona/California/Texas fab and biopharma builds drive cleanroom consumables. Add a cleanroom specialist (Valutek AZ or Micronova CA) and a West Coast life-science distributor (Genesee, Andwin) and push private label into the combined line card.",
+   "data_points": {
+    "ts_sites_total": 5786,
+    "ts_sites_pursue": 175,
+    "ts_sites_nurture": 477,
+    "ts_sites_diagnostics_lab": 4426,
+    "ts_sites_pathology": 420,
+    "ts_sites_hospital_or_academic": 495,
+    "ts_sites_oncology": 421,
+    "ts_sites_multisite_or_national_network": 1884,
+    "distinct_parent_orgs": 3886,
+    "cms_allowed_2023_usd_m": 2360.2,
+    "top500_parents_with_sites_in_region": 126,
+    "top500_parent_sites_in_region": 331,
+    "ma_targets_count": 7,
+    "ma_targets_rev_est_usd_m": 180.6,
+    "ma_targets_top": [
+     "Valutek (Phoenix, AZ; fit 91; ZoomInfo rev est $100.0M)",
+     "Andwin Corporation (Andwin Scientific / Andwin Clinical) (Simi Valley, CA; fit 85; ZoomInfo rev est $8.3M)",
+     "Genesee Scientific (El Cajon, CA; fit 82; ZoomInfo rev est $21.1M)",
+     "Micronova Manufacturing (Torrance, CA; fit 79; ZoomInfo rev est $21.1M)"
+    ],
+    "cleanroom_market_note": "Technavio: +$7.18B, 7.3% CAGR 2024-2029 (market estimate)",
+    "kpi_target_assumptions": {
+     "private_label_share_of_sales_pct": "target 15-20 (VWR 19% in 2014; assumption)"
+    }
+   },
+   "source_urls": [
+    "https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners/medicare-physician-other-practitioners-by-provider",
+    "https://npiregistry.cms.hhs.gov/",
+    "https://www.valutek.com/",
+    "https://www.micronova-mfg.com/",
+    "https://www.geneseesci.com/about-us",
+    "https://www.technavio.com/report/global-cleanroom-consumables-market-2014-2018"
+   ],
+   "retrieved": "2026-10-06",
+   "confidence": "medium",
+   "label": "est. — analyst plan, not company guidance",
+   "source_url": "https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners/medicare-physician-other-practitioners-by-provider"
+  },
+  {
+   "id": "ph-4",
+   "kind": "expansion_phase",
+   "phase": 4,
+   "name": "Southeast fill-in, specialty verticals and exit readiness",
+   "months": [
+    24,
+    36
+   ],
+   "geography": "Southeast (FL, GA, NC, SC, VA, TN, AL) from Phenix Research (Candler NC), plus national cannabis-testing, cold-chain and forensics programs; optional Canada via Mandel Scientific",
+   "thesis": "Fill the Southeast (6,098 scored sites, 143 Pursue) and scale specialty programs (cannabis testing labs, cold-chain consumables, forensics/federal) that carry better margins than commodity lab supply. By month 36 the company should show three years of digital-share, private-label and EBITDA progress to support a refinancing or sale.",
+   "data_points": {
+    "ts_sites_total": 6098,
+    "ts_sites_pursue": 143,
+    "ts_sites_nurture": 475,
+    "ts_sites_diagnostics_lab": 4752,
+    "ts_sites_pathology": 643,
+    "ts_sites_hospital_or_academic": 594,
+    "ts_sites_oncology": 104,
+    "ts_sites_multisite_or_national_network": 1573,
+    "distinct_parent_orgs": 4601,
+    "cms_allowed_2023_usd_m": 1329.3,
+    "top500_parents_with_sites_in_region": 102,
+    "top500_parent_sites_in_region": 189,
+    "ma_targets_count": 2,
+    "ma_targets_rev_est_usd_m": 85.9,
+    "ma_targets_top": [
+     "Mandel Scientific (Guelph, ON; fit 86; ZoomInfo rev est $22.4M)",
+     "Levitt-Safety (Oakville, ON; fit 61; ZoomInfo rev est $63.5M)"
+    ],
+    "federal_revenue_fy2025_usd": 8298735,
+    "cannabis_creditor_signal": "Thomas listed as trade creditor in Cannabist Co. bankruptcy (D. Del. 2026)",
+    "sponsor_competitors": [
+     "StoneCalibre - Calibre Scientific",
+     "Sterling Investment Partners"
+    ],
+    "typical_vs_premium_multiple_x": [
+     6.8,
+     9.8
+    ]
+   },
+   "source_urls": [
+    "https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners/medicare-physician-other-practitioners-by-provider",
+    "https://npiregistry.cms.hhs.gov/",
+    "https://www.usaspending.gov/recipient/57b253c2-516a-d9e3-a34d-f6c43264d885-C/all",
+    "https://www.courtlistener.com/?q=%22Thomas+Scientific%22&type=r",
+    "https://www.imarcgroup.com/united-states-cannabis-testing-market",
+    "https://finviz.com/news/344863/capstone-partners-reports-middle-market-ma-valuations-prove-resilient-despite-macroeconomic-disruption-as-confidence-builds-entering-2026",
+    "https://www.mandel.ca/"
+   ],
+   "retrieved": "2026-10-06",
+   "confidence": "medium",
+   "label": "est. — analyst plan, not company guidance",
+   "source_url": "https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners/medicare-physician-other-practitioners-by-provider"
+  },
+  {
+   "id": "gl-01",
+   "kind": "growth_lever",
+   "lever": "Named-account coverage of scored diagnostics labs and health systems",
+   "baseline": null,
+   "target": 3030,
+   "unit": "sites under named rep or digital coverage (Pursue + Nurture)",
+   "evidence": "ts_sites scores 27,503 lab/hospital/pathology sites: 713 Pursue, 2,317 Nurture. The top 500 parent organizations own 832 sites. Thomas's current coverage of these sites is not known (baseline null). Avantor fields ~3,400 sales staff incl. 170+ specialists against 300,000+ customer locations.",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000162828026007118/avtr-20251231.htm",
+   "dataset_ref": "data/ts_sites.json, data/ts_parents.json",
+   "confidence": "medium",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "gl-02",
+   "kind": "growth_lever",
+   "lever": "E-commerce share of transactions",
+   "baseline": null,
+   "target": 80,
+   "unit": "% of transactions via digital channels",
+   "evidence": "Avantor FY2025 10-K: \"approximately 80% of our transactions came from our digital channels\". VWR's FY2014 10-K said over half of orders came from e-commerce, so the leader moved from ~50% to ~80% in a decade. Thomas digital share is undisclosed.",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000162828026007118/avtr-20251231.htm",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "gl-03",
+   "kind": "growth_lever",
+   "lever": "Punchout / eProcurement penetration of contract accounts",
+   "baseline": null,
+   "target": 40,
+   "unit": "% of connected orders via eProcurement",
+   "evidence": "Grainger (Q4 2025): ePro is \"closer to 40%\" of connected ordering, and most contract customers use both ePro and KeepStock, making relationships \"stickier\". Digital Endless Assortment grew ~15.6% vs ~2.1% for rep-led High-Touch in 2025.",
+   "source_url": "https://www.digitalcommerce360.com/2026/02/03/grainger-ai-data-digital-sales-q4-2025/",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "gl-04",
+   "kind": "growth_lever",
+   "lever": "Vendor-managed inventory (VMI) and onsite stockroom services",
+   "baseline": null,
+   "target": 34,
+   "unit": "% reduction in customer lab inventory (value delivered to customer)",
+   "evidence": "A bioscience VMI program on the 225 most-used consumables cut inventory 34%, excess work 44% and returned 52 hrs/month to scientists. Avantor runs ~2,000 onsite service associates handling procurement, stockroom and equipment tracking; Fisher Scientific runs Unity Lab Services VMI.",
+   "source_url": "https://flagshipinc.com/bioscience-vendor-managed-inventory-solutions/",
+   "confidence": "medium",
+   "note": "Vendor case study; self-reported.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "gl-05",
+   "kind": "growth_lever",
+   "lever": "Private-label mix",
+   "baseline": null,
+   "target": 19,
+   "unit": "% of net sales from private label",
+   "evidence": "VWR FY2014 10-K: private label ~19% of net sales and \"generally provide us higher margins\". Denville (Thomas's 2018 private-label-heavy add-on) ran ~34.8% gross margin. Avantor FY2025: proprietary materials & consumables $3.45B vs third-party $3.10B.",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1412232/000141223215000006/a2014form10-kc.htm",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "gl-06",
+   "kind": "growth_lever",
+   "lever": "Price optimization and deviation control",
+   "baseline": null,
+   "target": 120,
+   "unit": "bps gross-margin uplift",
+   "evidence": "Conga (formerly PROS) case: a Fortune 500 distributor ($7.2B revenue, ~2M SKUs) gained 120 bps of margin since Apr 2021 when a 50 bp decline had been projected; sales override rates fell from 60-70%. On Thomas's est. $285M revenue, 50-120 bps is ~$1.4-3.4M EBITDA.",
+   "source_url": "https://conga.com/resources/blog/how-conga-helped-fortune-500-distributor-optimize-pricing-seven-billion-revenue",
+   "confidence": "medium",
+   "note": "Vendor case study.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "gl-07",
+   "kind": "growth_lever",
+   "lever": "Cleanroom / controlled-environment consumables vertical",
+   "baseline": null,
+   "target": 7.3,
+   "unit": "% market CAGR 2024-2029 (market growth to ride)",
+   "evidence": "Technavio forecasts cleanroom consumables growing by $7.18B at a 7.3% CAGR 2024-2029, versus a 1.5% median latest-year growth for listed lab distributors (public_comps). Thomas already owns NCI, Quintana, Day and American Cleanstat in this niche; Valutek ($100M ZoomInfo est.) and Micronova are scored targets.",
+   "source_url": "https://www.technavio.com/report/global-cleanroom-consumables-market-2014-2018",
+   "confidence": "medium",
+   "note": "Market-research estimate; forecasts differ (4.6-7.3% CAGR).",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "gl-08",
+   "kind": "growth_lever",
+   "lever": "Cannabis and hemp testing-lab vertical",
+   "baseline": null,
+   "target": 10.3,
+   "unit": "% U.S. market CAGR 2025-2033",
+   "evidence": "IMARC: U.S. cannabis testing market $391.1M (2024) to $942.9M by 2033 (10.3% CAGR). Thomas already sells into the segment (listed as a trade creditor in the 2026 Cannabist Co. bankruptcy), so credit screening must come with the push.",
+   "source_url": "https://www.imarcgroup.com/united-states-cannabis-testing-market",
+   "confidence": "low",
+   "note": "Market-research estimate; credit risk in cannabis operators is high.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "gl-09",
+   "kind": "growth_lever",
+   "lever": "Cold-chain consumables and temperature-controlled delivery",
+   "baseline": null,
+   "target": 9.07,
+   "unit": "% CAGR, healthcare logistics (cold chain fastest-growing segment)",
+   "evidence": "Healthcare logistics valued at $96.15B in 2025, growing 9.07% a year, with cold chain the fastest-growing segment as biologics, mRNA and cell therapies scale. Thomas would sell validated shippers, dry ice, ULT storage and monitoring into the same diagnostics and biopharma accounts.",
+   "source_url": "https://www.healthcarepackaging.com/logistics/temp-control-cold-chain/article/22967515/global-healthcare-logistics-market-to-exceed-250-billion-by-2035-driven-by-biopharma-and-cold-chain-demand",
+   "confidence": "low",
+   "note": "Market-research estimate.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "gl-10",
+   "kind": "growth_lever",
+   "lever": "Federal and forensics channel (DLA ECAT, NIH/CDC BPAs, ATF)",
+   "baseline": 8298735,
+   "target": 10000000,
+   "unit": "USD federal obligations per fiscal year (target is an assumption)",
+   "evidence": "USASpending: Thomas federal obligations were $8.30M in FY2025 (vs $84-91M in COVID years); vehicles include DLA ECAT, NIH and CDC BPAs and a 2026 ATF forensic-imaging BPA that came with Arrowhead Forensics.",
+   "source_url": "https://www.usaspending.gov/recipient/57b253c2-516a-d9e3-a34d-f6c43264d885-C/all",
+   "retrieved": "2026-09-24",
+   "confidence": "high",
+   "note": "Target $10M is an analyst assumption."
+  },
+  {
+   "kind": "ai_agent",
+   "id": "ai-01",
+   "agent": "Quote agent",
+   "job_to_be_done": "Read inbound RFQ emails and web forms, match line items to the catalog, pull contract pricing and return a quote within the hour; escalate the hard ones to inside sales.",
+   "who_it_helps": "Inside sales reps and customer service",
+   "vendor_examples": [
+    "InstaLILY",
+    "Salesforce Agentforce",
+    "Microsoft Copilot Studio"
+   ],
+   "metric_claim": "A national industrial-automation distributor's agents answered 6,000+ emails and returned ~1,500 quotes in the first month, unlocking 10,000+ hours a year; win probability falls sharply after the first hour.",
+   "metric_value": 10000,
+   "metric_unit": "hours/year freed",
+   "cost_model": "Quote-based enterprise subscription (not published)",
+   "weeks_to_deploy": 8,
+   "source_url": "https://instalily.ai/case-studies/quoting-speed",
+   "confidence": "medium",
+   "note": "Vendor case study; weeks_to_deploy is an estimate.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "kind": "ai_agent",
+   "id": "ai-02",
+   "agent": "Order-entry agent",
+   "job_to_be_done": "Turn emailed/PDF purchase orders into ERP sales orders without keying.",
+   "who_it_helps": "Customer service reps; customers waiting on confirmations",
+   "vendor_examples": [
+    "Conexiom"
+   ],
+   "metric_claim": "ADI Global eliminated manual processing of 1,700 orders/day and saved 142 hours/day for 600+ inside sales reps.",
+   "metric_value": 142,
+   "metric_unit": "staff hours saved per day",
+   "cost_model": "Annual subscription priced on document/order volume (quote-based)",
+   "weeks_to_deploy": 10,
+   "source_url": "https://conexiom.com/resource-center/case-study-adi-global",
+   "confidence": "medium",
+   "note": "Vendor case study.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "kind": "ai_agent",
+   "id": "ai-03",
+   "agent": "Product search and substitution agent",
+   "job_to_be_done": "Typo-tolerant search over CAS numbers, part numbers and specs; suggest in-stock or private-label equivalents.",
+   "who_it_helps": "Scientists and buyers ordering online; reps answering \"do you have an equivalent?\"",
+   "vendor_examples": [
+    "Algolia",
+    "Coveo",
+    "Constructor"
+   ],
+   "metric_claim": "Swedol (B2B distributor) saw a 22% higher conversion rate, 26% more time on site and 7.5% more searches after moving to Algolia.",
+   "metric_value": 22,
+   "metric_unit": "% conversion-rate lift",
+   "cost_model": "Usage-based: Algolia Grow plan 10,000 searches/month free, then $0.50 per 1,000 requests",
+   "weeks_to_deploy": 6,
+   "source_url": "https://www.algolia.com/files/live/sites/www/files/Customer%20stories/EN/CaseStudy_swedol.pdf",
+   "confidence": "medium",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "kind": "ai_agent",
+   "id": "ai-04",
+   "agent": "Demand-forecasting and replenishment agent",
+   "job_to_be_done": "Forecast SKU x DC demand, set reorder points, flag excess and slow stock across nine DCs and VMI sites.",
+   "who_it_helps": "Purchasing, DC managers, finance (working capital)",
+   "vendor_examples": [
+    "Netstock",
+    "Blue Yonder",
+    "o9"
+   ],
+   "metric_claim": "McKinsey: AI-driven forecasting can cut forecast error 20-50% and lost sales from stockouts by up to 65%.",
+   "metric_value": 50,
+   "metric_unit": "% forecast-error reduction (upper bound)",
+   "cost_model": "Netstock from about $400-900/month (third-party listing); enterprise suites quote-based",
+   "weeks_to_deploy": 12,
+   "source_url": "https://www.mckinsey.com/capabilities/operations/our-insights/ai-driven-operations-forecasting-in-data-light-environments",
+   "confidence": "medium",
+   "note": "McKinsey page blocked automated fetch; figures from search-engine extracts of the article. Netstock pricing from serviceos_evidence vs-ts-3.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "kind": "ai_agent",
+   "id": "ai-05",
+   "agent": "Account-health agent",
+   "job_to_be_done": "Score every account for churn risk and wallet-share gap; tell reps whom to call and what to pitch.",
+   "who_it_helps": "Account managers and inside sales; sales leadership",
+   "vendor_examples": [
+    "Proton.ai",
+    "Gainsight",
+    "Salesforce Einstein"
+   ],
+   "metric_claim": "Proton.ai computes a score from churn likelihood and wallet-share opportunity and recommends next-best products and contacts for distributor reps.",
+   "metric_value": null,
+   "metric_unit": null,
+   "cost_model": "Per-seat SaaS (quote-based)",
+   "weeks_to_deploy": 10,
+   "source_url": "https://venturebeat.com/ai/proton-ai-raises-20m-to-optimize-wholesale-distributors-sales-operations",
+   "confidence": "medium",
+   "note": "Proton's published uplift figures (e.g., 8% revenue per rep) could not be fetched from a primary page; metric_value left null.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "kind": "ai_agent",
+   "id": "ai-06",
+   "agent": "Pricing-guidance agent",
+   "job_to_be_done": "Recommend deal prices by customer, SKU and cost change; stop below-floor quotes.",
+   "who_it_helps": "Reps, pricing team, CFO",
+   "vendor_examples": [
+    "Conga (PROS)",
+    "Zilliant",
+    "Vendavo"
+   ],
+   "metric_claim": "A Fortune 500 distributor gained 120 bps of margin with AI pricing guidance covering 75% of business.",
+   "metric_value": 120,
+   "metric_unit": "bps margin uplift",
+   "cost_model": "Enterprise subscription (quote-based)",
+   "weeks_to_deploy": 16,
+   "source_url": "https://conga.com/resources/blog/how-conga-helped-fortune-500-distributor-optimize-pricing-seven-billion-revenue",
+   "confidence": "medium",
+   "note": "Vendor case study.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "kind": "ai_agent",
+   "id": "ai-07",
+   "agent": "Collections and cash-application agent",
+   "job_to_be_done": "Prioritize past-due accounts, send dunning, match remittances to invoices.",
+   "who_it_helps": "AR/credit team; treasury (liquidity before the 2027 maturity)",
+   "vendor_examples": [
+    "HighRadius",
+    "Billtrust",
+    "Esker"
+   ],
+   "metric_claim": "Industrial distributor DXP cut DSO by 20 days, raised collector productivity 40% and added $20M of cash flow across 15,000+ customers.",
+   "metric_value": 20,
+   "metric_unit": "days DSO reduction",
+   "cost_model": "Enterprise subscription (quote-based)",
+   "weeks_to_deploy": 12,
+   "source_url": "https://www.highradius.com/resources/value-creation/dxp-collections/",
+   "confidence": "medium",
+   "note": "Vendor case study. On ~$285M revenue, each day of DSO is ~$0.8M of cash.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "kind": "ai_agent",
+   "id": "ai-08",
+   "agent": "Rep copilot (account insights and coaching)",
+   "job_to_be_done": "Surface account insights, new contacts and coaching moments for each rep.",
+   "who_it_helps": "Inside-sales academy graduates; sales managers",
+   "vendor_examples": [
+    "Grainger SellerInsights (in-house)",
+    "Gong",
+    "Salesforce"
+   ],
+   "metric_claim": "Grainger's SellerInsights uses AI to deliver actionable insights, identify new customer contacts and strengthen coaching; digital channels grew ~15.6% vs ~2.1% rep-led in 2025.",
+   "metric_value": null,
+   "metric_unit": null,
+   "cost_model": "Per-seat SaaS (Gong/Salesforce quote-based)",
+   "weeks_to_deploy": 8,
+   "source_url": "https://www.digitalcommerce360.com/2026/02/03/grainger-ai-data-digital-sales-q4-2025/",
+   "confidence": "medium",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "kind": "ai_agent",
+   "id": "ai-09",
+   "agent": "Self-serve buying assistant",
+   "job_to_be_done": "Answer product, availability and order-status questions on the website and in punchout, 24/7.",
+   "who_it_helps": "Buyers who prefer not to call a rep; customer service",
+   "vendor_examples": [
+    "Salesforce Agentforce",
+    "Zendesk AI",
+    "Intercom Fin"
+   ],
+   "metric_claim": "Gartner (Aug-Sep 2025, n=646): 67% of B2B buyers prefer a rep-free buying experience and 45% used AI during a recent purchase.",
+   "metric_value": 67,
+   "metric_unit": "% of B2B buyers preferring rep-free",
+   "cost_model": "Per-resolution or per-seat pricing (vendor-specific)",
+   "weeks_to_deploy": 6,
+   "source_url": "https://distributionstrategy.com/2026/03/most-b2b-buyers-prefer-rep-free-purchasing-as-ai-reshapes-sales/",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tp-01",
+   "kind": "talent_program",
+   "program": "Inside-sales academy (4 weeks, then a 100-account book)",
+   "who_it_helps": "New inside sales hires; target-account program capacity",
+   "evidence": "Grainger runs a 4-week paid Inside Sales Academy; graduates receive a book of 100+ mid-size accounts in 1-2 industries. For Thomas, 713 Pursue + 2,317 Nurture sites is ~30 books of 100.",
+   "metric": "~30 rep books of 100 accounts to cover Pursue + Nurture sites",
+   "source_url": "https://www.themuse.com/jobs/grainger/inside-sales-associate-3cbc00",
+   "confidence": "medium",
+   "note": "Job-posting source.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tp-02",
+   "kind": "talent_program",
+   "program": "Structured onboarding and ramp redesign",
+   "who_it_helps": "Sales managers; new reps",
+   "evidence": "Distribution Strategy (Mike Kunkle): structured onboarding cut ramp time 23-52% across four companies and lifted sales per rep 48% in the 90 days after onboarding.",
+   "metric": "Ramp time -23% to -52%",
+   "source_url": "https://distributionstrategy.com/2025/12/sales-onboarding-that-works-how-distributors-can-ramp-new-reps-faster-and-better-2/",
+   "confidence": "low",
+   "note": "Consultant-reported results; companies not named.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tp-03",
+   "kind": "talent_program",
+   "program": "Registered apprenticeship for warehouse, cold-chain and VMI technicians (NJ)",
+   "who_it_helps": "Swedesboro DC and onsite VMI staff; hiring cost",
+   "evidence": "NJDOL GAINS grants reimburse up to 50% of a new apprentice's wages, max $12,000 per apprentice over 52 weeks ($9M awarded Aug 2026). DOL cites ~$1.47 return per $1 employers spend on apprenticeship.",
+   "metric": "Up to $12,000 wage reimbursement per apprentice",
+   "source_url": "https://nj.gov/labor/lwdhome/press/2026/20260824_GAINS.shtml",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tp-04",
+   "kind": "talent_program",
+   "program": "Onsite services corps (VMI and stockroom specialists)",
+   "who_it_helps": "Key accounts (hospital labs, biopharma); account retention",
+   "evidence": "Avantor's ~2,000 service associates work side by side with customers on procurement, logistics, inventory and stockroom management, chemical and equipment tracking.",
+   "metric": "Onsite headcount per covered key account (assumption: 1 per $3-5M of account revenue)",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000162828026007118/avtr-20251231.htm",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tp-05",
+   "kind": "talent_program",
+   "program": "Product-specialist bench (cleanroom, histology/microscopy, forensics, cold chain)",
+   "who_it_helps": "Generalist reps on technical deals; acquired-company specialists",
+   "evidence": "Avantor runs ~3,400 sales and sales-support staff including 170+ specialists (~5%) selected for product knowledge. Thomas already acquired specialist teams (NCI microscopy/histology, Quintana/Day cleanroom, Arrowhead forensics).",
+   "metric": "~1 specialist per 20 sales staff",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1722482/000162828026007118/avtr-20251231.htm",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tp-06",
+   "kind": "talent_program",
+   "program": "AI-augmented customer-service desk",
+   "who_it_helps": "CSRs moving from keying orders to selling",
+   "evidence": "After automating 1,700 orders/day, ADI Global's 600+ inside sales reps got 142 hours/day back to spend with customers.",
+   "metric": "Hours per day shifted from order entry to customer contact",
+   "source_url": "https://conexiom.com/resource-center/case-study-adi-global",
+   "confidence": "medium",
+   "note": "Vendor case study.",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "fin-01",
+   "kind": "financing",
+   "instrument": "Apollo/MidCap first-lien unitranche (TL + DDTL + revolver)",
+   "facts": "Closed 2021-12-14 at L+625 (1% floor), maturity 2027-12-14. MFIC Jun-2026: term loan par $32.85M marked at 88.3% of par; revolver $2.35M drawn, $0.74M undrawn; total facility est. $180-300M.",
+   "implication": "The maturity is 14 months away and the loan trades as distressed. Any playbook must first secure an amend-and-extend or refinancing.",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000119312526335848/mfic-20260630.htm",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "fin-02",
+   "kind": "financing",
+   "instrument": "Coupon history: PIK amendment and return to cash pay",
+   "facts": "Q4-2024 amendment converted part of the coupon to PIK (SOFR+340 cash + 4.50% PIK); principal accreted ~4.4% in 2025; Q1-2026 the loan returned to all-cash SOFR+640.",
+   "implication": "Cash interest coverage is est. ~1.0-1.3x. Working-capital release (DSO, inventory) is the fastest internal source of cash.",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000095017025026688/mfic-20241231.htm",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "fin-03",
+   "kind": "financing",
+   "instrument": "Sponsor equity: BSP-TS, LP and preferred top-ups",
+   "facts": "BSP-TS, LP raised $236.1M at close (Dec 2021), $257.1M cumulative by Jan 2024 (+$21.0M), with preferred units ranking above common; common equity is marked near zero (Barings co-invest stake $6.9K on ~$5M).",
+   "implication": "New money is likely to come as preferred or structured equity. Add-ons in the next 12 months must be small, cash-light (earn-outs, seller notes, rollover equity) or funded with new capital.",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1901071/000190107124000001/xslFormDX01/primary_doc.xml",
+   "retrieved": "2026-09-24",
+   "confidence": "high"
+  },
+  {
+   "id": "fin-04",
+   "kind": "financing",
+   "instrument": "Sector leverage norms for a refinancing",
+   "facts": "Houlihan Lokey (Oct 2025) new-issue private credit for $20-100M EBITDA borrowers: unitranche 5.25x-6.25x at S+450-525, first lien 3.75x-4.75x; median net total leverage ~4.7x (Sep-2025).",
+   "implication": "At est. $25-35M EBITDA a market unitranche supports ~$130-220M of debt against est. $210-310M outstanding. Closing that gap needs EBITDA growth to ~$40-45M, equity paydown, or a lender-led solution.",
+   "source_url": "https://cdn.hl.com/pdf/2025/us-private-credit-market-newsletter-oct-2025.pdf",
+   "confidence": "high",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "fin-05",
+   "kind": "financing",
+   "instrument": "Add-on valuation norms (tuck-in purchase multiples)",
+   "facts": "Denville Scientific (2018) was bought for ~$20M on ~$25M revenue (~0.8x sales, ~35% gross margin). GF Data: average LMM purchase multiple 7.2x TTM adjusted EBITDA in 2025.",
+   "implication": "Small regional distributors bought at 5-7x and folded into a platform valued higher add value through multiple arbitrage, but only once the platform can fund them.",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1123494/000117184318000685/exh_992.htm",
+   "retrieved": "2026-09-24",
+   "confidence": "medium",
+   "related_urls": [
+    "https://www.acg.org/news-trends/news/gf-data-releases-q4-2025-ma-and-leverage-reports"
+   ]
+  }
+ ]
+}

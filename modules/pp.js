@@ -2,7 +2,7 @@
    Punctual Pros — residential HVAC · plumbing · electrical (Central PA + Jersey Shore)
    Views: overview · weather & demand · new-mover marketing · territory · market · targets · filings
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, renderFilings } from '../assets/components.js?v=20260924203049';
+import { renderTargets, renderFilings } from '../assets/components.js?v=20261006085442';
 
 const PP = '#f08a3c';
 const HQ = { lat: 40.0629, lon: -76.37, label: 'PP HQ · East Hempfield' };
@@ -11,6 +11,9 @@ const CORE = ['Lancaster', 'York', 'Dauphin', 'Cumberland', 'Berks', 'Lebanon', 
 const NJ_H = ['Ocean', 'Monmouth'];
 const NJ_ALL = ['Ocean', 'Monmouth', 'Atlantic', 'Burlington'];
 const JOBS_PER_TECH = 6;
+const AVG_TICKET = 400;           // blended residential repair ticket, $350–450 range (assumption; replace with ServiceTitan avg invoice)
+const FALLBACK_REV = 22e6;         // FY2025 pro forma revenue est. (pp_filings estimate_table) when the dataset is missing
+const shTxt = v => `${(v * 100).toFixed(v < 0.1 && Math.round(v * 1000) % 10 ? 1 : 0)}%`;
 const TRADES = ['HVAC', 'Plumbing', 'Electrical'];
 const TRADE_RGB = { HVAC: '240,138,60', Plumbing: '76,141,255', Electrical: '245,183,61' };
 const TRADE_HEX = { HVAC: '#f08a3c', Plumbing: '#4c8dff', Electrical: '#f5b73d' };
@@ -55,10 +58,12 @@ const pctTxt = v => v == null || !fin(v) ? '—' : `${Math.round(v * 100)}%`;
 const tierChip = (esc, t) => { const n = { 'Tier I': 1, 'Tier II': 2, 'Tier III': 3 }[t] || 4; return t ? `<span class="chip t${n}"><i class="cdot"></i>${esc(t)}</span>` : '—'; };
 const statusChip = (fmt, s) => fmt.chip(STATUS[s]?.label || s, STATUS[s]?.color);
 const basisConf = b => { const s = String(b || '').toLowerCase(); return s.startsWith('sourced') ? ['high', 'var(--green)'] : s.startsWith('derived') ? ['medium', 'var(--amber)'] : ['low · assumption', 'var(--dim)']; };
+/* targets trading under the portfolio company's own name (e.g. 'The Punctual Pros NJ') may already be affiliated → never ranked as cold targets */
+const nameConflict = t => /punctual\s*pros/i.test(String(t?.company || ''));
 const pick = (o, ...ks) => { for (const k of ks) if (o && o[k] != null && o[k] !== '') return o[k]; return null; };
 
 function css() {
-  if (!document.getElementById('css-pp')) { const l = document.createElement('link'); l.id = 'css-pp'; l.rel = 'stylesheet'; l.href = 'modules/pp.css?v=20260924203049'; document.head.appendChild(l); }
+  if (!document.getElementById('css-pp')) { const l = document.createElement('link'); l.id = 'css-pp'; l.rel = 'stylesheet'; l.href = 'modules/pp.css?v=20261006085442'; document.head.appendChild(l); }
 }
 
 /* ── shared data ──────────────────────────────────────────────────────── */
@@ -235,7 +240,10 @@ async function overview(ctx) {
   const servedCounties = new Set([...CORE, ...NJ_H]);
   const s90 = (sales90 || []).filter(s => num(s.price) >= 10000 && servedCounties.has(cty(s.county)));
   const win = meta?.sales_layer; const winTxt = win ? `${dfull(fmt, win.window_start)} – ${dfull(fmt, win.window_end)}` : 'Jan–Apr 2026';
-  const targets = ma?.items || []; const top = (ma?.meta?.ranked_top_10 || [])[0];
+  const snapAge = daysSince(win?.window_end || '2026-04-10'); const snapStale = snapAge != null && snapAge > 45;
+  const snapChip = snapAge == null ? '' : fmt.chip(snapStale ? `stale · ${snapAge} d old` : `${snapAge} d old`, snapStale ? 'var(--red)' : 'var(--green)');
+  const targets = ma?.items || []; const byIdT = new Map(targets.map(t => [t.id, t])); const top = (ma?.meta?.ranked_top_10 || []).find(r => !nameConflict(r) && !nameConflict(byIdT.get(r.id)));
+  const conflicts = targets.filter(nameConflict);
   const pbs = (model?.items || []).filter(i => i.component === 'event_playbook');
   const epsYr = sum(pbs, p => p.local_history?.avg_episodes_per_year);
   const peCount = (ma?.meta?.pe_backed_competitors || []).filter(p => !/^Other|franchisor/i.test(p.platform || '')).length;
@@ -248,23 +256,23 @@ async function overview(ctx) {
   const kpis = alerts => ui.kpis([
     { label: 'Core territory zips', value: fmt.num(terr.length), sub: `9 PA counties · +${horv.length} Horvath NJ zips`, color: 'var(--c-pp)' },
     { label: 'Housing units served', value: fmt.compact(huTerr + huH), sub: `${fmt.compact(huTerr)} PA core · ${fmt.compact(huH)} Ocean/Monmouth`, color: 'var(--c-pp)' },
-    { label: 'Home sales (90-day layer)', value: fmt.num(s90.length), sub: `≥$10K deeds · served counties · ${esc(winTxt)}`, color: 'var(--green)' },
+    { label: 'Home sales · Q1-2026 snapshot', value: fmt.num(s90.length), sub: `≥$10K deeds · served counties · ${esc(winTxt)} ${snapChip}`, color: snapStale ? 'var(--red)' : 'var(--green)' },
     { label: 'Live NWS alerts in territory', value: alerts == null ? '…' : fmt.num(alerts.alerts.length), sub: alerts == null ? 'querying api.weather.gov' : alerts.failed ? 'feed unavailable' : `${alerts.alerts.filter(a => /Extreme|Severe/.test(a.severity)).length} severe/extreme · PA + NJ`, color: alerts?.alerts?.some(a => /Extreme|Severe/.test(a.severity)) ? 'var(--red)' : 'var(--amber)' },
     { label: 'Tier-I expansion zips (adjacent)', value: fmt.num(adjT1.length), sub: `${fmt.compact(huAdjT1)} housing units next door`, color: 'var(--green)' },
-    { label: 'Add-on targets screened', value: ma ? fmt.num(targets.length) : '—', sub: top ? `#1 ${esc(String(top.company).split(/[,(]/)[0].trim())} · fit ${top.fit_score}` : 'ma_targets_pp', color: 'var(--c-ma)' },
+    { label: 'Add-on targets screened', value: ma ? fmt.num(targets.length - conflicts.length) : '—', sub: top ? `#1 ${esc(String(top.company).split(/[,(]/)[0].trim())} · fit ${top.fit_score}${conflicts.length ? ` · ${conflicts.length} held for affiliation check` : ''}` : 'ma_targets_pp', color: 'var(--c-ma)' },
   ]);
 
   const levers = [
-    { n: fmt.num(s90.length), u: 'movers / 90d', t: 'New-mover marketing', d: `Every closed sale is a home that needs a tune-up, inspection or plan. Score and mail each served-county buyer within 30 days of closing; 12-month county deed files loaded in the New-mover view.`, h: '#/pp/movers' },
-    { n: model ? fmt.num(Math.round(epsYr)) : '—', u: 'alert episodes / yr', t: 'Weather-driven capacity', d: `${model ? `Territory averages ~${Math.round(epsYr)} NWS warning episodes a year (Storm Events 2019–25).` : 'Episode frequency pending pp_demand_model.'} Convert maintenance slots to repair capacity when the pressure index clears 120 and pre-stage parts.`, h: '#/pp/weather' },
+    { n: fmt.num(s90.length), u: 'sales · Q1-26 snapshot', t: 'New-mover marketing', d: `Every closed sale is a home that needs a tune-up, inspection or plan — mail within 60 days of closing. This snapshot ends ${esc(dfull(fmt, win?.window_end || '2026-04-10'))}${snapAge != null ? ` (${snapAge} days old${snapStale ? ', stale' : ''})` : ''}: work the mail-ready list in the New-mover view and refresh the deed pull to the trailing 90 days.`, h: '#/pp/movers' },
+    { n: model ? fmt.num(Math.round(epsYr)) : '—', u: 'warning-type episodes / yr', t: 'Weather-driven capacity', d: `${model ? `Territory averages ~${Math.round(epsYr)} episodes a year of the ${pbs.length} NWS warning types in the playbook (Storm Events 2019–25; the Weather view’s higher all-event episode count also includes non-playbook event types).` : 'Episode frequency pending pp_demand_model.'} Convert maintenance slots to repair capacity when the pressure index clears 120 and pre-stage parts.`, h: '#/pp/weather' },
     { n: fmt.num(adjT1.length), u: 'Tier-I zips', t: 'Contiguous expansion', d: `${fmt.compact(huAdjT1)} housing units in adjacent Tier-I zips (Schuylkill, Chester, Montgomery, northern MD) can be served from existing hubs with route density.`, h: '#/pp/territory' },
-    { n: top ? String(top.fit_score) : '—', u: 'top fit score', t: 'Tuck-in M&A', d: top ? `${esc(top.company)} leads a ${targets.length}-company screen; Authority Brands franchisees in West Chester, Wilmington and South Jersey are same-playbook tuck-ins.` : 'Target screen pending.', h: '#/pp/targets' },
+    { n: top ? String(top.fit_score) : '—', u: 'top fit score', t: 'Tuck-in M&A', d: top ? `${esc(top.company)} leads a ${targets.length - conflicts.length}-company screen; Authority Brands franchisees in West Chester, Bucks County and Monmouth are same-playbook tuck-ins.${conflicts.length ? ` ${conflicts.length === 1 ? 'One South Jersey franchisee' : `${conflicts.length} franchisees`} trading as “The Punctual Pros” ${conflicts.length === 1 ? 'is' : 'are'} held out until affiliation is verified.` : ''}` : 'Target screen pending.', h: '#/pp/targets' },
     { n: ma ? fmt.num(peCount) : '—', u: 'PE platforms', t: 'Competitive defense', d: `Sila (ECS Comfort, Palmyra) and HomeX (Haller, Lititz) are consolidating inside the core; protect membership base and technician bench.`, h: '#/pp/market' },
   ];
 
   el.innerHTML = `<div class="m-pp">${ui.pageHead({
     title: 'Punctual Pros — operating picture',
-    sub: `<b>So what:</b> PP serves ~${fmt.compact(huTerr + huH)} housing units across ${terr.length} Central PA zips and the Horvath Jersey Shore footprint; the fastest levers are new-mover capture (${fmt.num(s90.length)} served-county sales in the 90-day layer alone), weather-driven surge staffing, and ${adjT1.length} Tier-I zips directly adjacent to today’s routes.`,
+    sub: `<b>So what:</b> PP serves ~${fmt.compact(huTerr + huH)} housing units across ${terr.length} Central PA zips and the Horvath Jersey Shore footprint; the fastest levers are new-mover capture (${fmt.num(s90.length)} served-county sales in a single quarter, Q1 2026), weather-driven surge staffing, and ${adjT1.length} Tier-I zips directly adjacent to today’s routes.`,
     chips: `${fmt.chip('One Hour · Benjamin Franklin · Mister Sparky', 'var(--c-pp)')}${fmt.chip('Horvath Home Services (Dec 2024)', 'var(--amber)')}${fmt.chip('HQ East Hempfield, Lancaster Co.')}`,
     actions: `<a class="btn" href="#/pp/weather">Weather & demand</a><a class="btn" href="#/pp/movers">New movers</a>`,
   })}
@@ -341,10 +349,17 @@ function openZip(ctx, z) {
 /* ═══ 2. WEATHER & DEMAND ═════════════════════════════════════════════════ */
 async function weather(ctx) {
   const { el, ui, fmt, data, live, charts, inspector, esc } = ctx; css();
-  const [model, storms, Z] = await Promise.all([data.research('pp_demand_model'), data.research('pp_storm_events'), loadZips(data)]);
+  const [model, storms, Z, filings] = await Promise.all([data.research('pp_demand_model'), data.research('pp_storm_events'), loadZips(data), data.research('pp_filings').catch(() => null)]);
   const P = modelParams(model);
   const hubs = hubList(model, Z);
-  const state = { trade: 'HVAC', share: 0.10 };
+  /* calibrate PP share so annual baseline calls × avg ticket ≈ revenue estimate (pp_filings) */
+  const revRow = (filings?.meta?.estimate_table || []).find(e => /pro forma total revenue/i.test(e.metric || '')) || (filings?.meta?.estimate_table || []).find(e => /revenue/i.test(e.metric || '') && !/\d{4} revenue,/i.test(e.metric || ''));
+  const revM = revRow ? Number((String(revRow.estimate).match(/\$\s*([\d.]+)\s*M/i) || [])[1]) : NaN;
+  const REV = fin(revM) && revM > 1 ? revM * 1e6 : FALLBACK_REV;
+  const mktCallsDay = sum(hubs, h => sum(TRADES, t => P.base[t] * h.hu / 1e4));
+  const calShare = mktCallsDay > 0 ? Math.min(0.2, Math.max(0.01, Math.round(REV / AVG_TICKET / 365 / mktCallsDay * 200) / 200)) : 0.03;
+  const shareOpts = [...new Set([calShare, 0.05, 0.10, 0.15].map(v => +v.toFixed(3)))].sort((a, b) => a - b);
+  const state = { trade: 'HVAC', share: calShare };
   const mMeta = model?.meta || {};
   const modelSrc = ui.source('pp_demand_model (AHS, ServiceTitan, NWS, NCEI GHCN-Daily)', 'https://www.servicetitan.com/blog/hvac-revenue-heat-waves', mMeta.generated);
 
@@ -360,7 +375,7 @@ async function weather(ctx) {
     ${ui.panel({ title: 'Live NWS alerts touching the territory', sub: 'PA + NJ feeds filtered to 15 territory counties by UGC zone/county code and FIPS', body: `<div id="wx-alerts">${ui.loading('Querying api.weather.gov…')}</div>`, scroll: true, foot: ui.source('National Weather Service alerts API', 'https://api.weather.gov/alerts/active?area=PA', 'live') })}
   </div>
   <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Staffing implication · expected PP calls by trade', sub: 'Market calls × PP share (assumption) → techs = ⌈calls ÷ 6 jobs per tech-day⌉', actions: '<div id="wx-share"></div>', body: `<div id="wx-staff">${ui.loading()}</div>`, foot: `${modelSrc}<span class="dim">Households = housing units of served zips (ACS), Perry rolled into Harrisburg hub</span>` })}
+    ${ui.panel({ title: 'Staffing implication · expected PP calls by trade', sub: 'Market calls × PP share (default calibrated to revenue est.) → techs = ⌈calls ÷ 6 jobs per tech-day⌉', actions: '<div id="wx-share"></div>', body: `<div id="wx-staff">${ui.loading()}</div>`, foot: `${modelSrc}<span class="dim">Households = housing units of served zips (ACS), Perry rolled into Harrisburg hub</span>` })}
     ${ui.panel({ title: 'Hub conditions · next 7 days', sub: 'Extremes driving the index · served housing units per hub', body: `<div id="wx-hubs">${ui.loading()}</div>`, foot: ui.source('Open-Meteo · pp_zips housing units', SRC.meteo, 'live') })}
   </div>
   <div class="pp-sec">Historical storm exposure · NOAA Storm Events 2019–2026 YTD</div>
@@ -414,12 +429,17 @@ async function weather(ctx) {
     });
     return rows;
   };
+  const xcheck = () => {
+    const yrCalls = mktCallsDay * state.share * 365; const impl = yrCalls * AVG_TICKET; const ratio = impl / REV;
+    const c = ratio > 1.5 || ratio < 0.67 ? 'var(--red)' : ratio > 1.15 || ratio < 0.87 ? 'var(--amber)' : 'var(--green)';
+    return `<div class="pp-xcheck small mt-8" style="--cc:${c}"><b>Revenue cross-check:</b> ${shTxt(state.share)} share → ~${fmt.compact(yrCalls)} baseline calls / yr × $${AVG_TICKET} avg ticket (assumption, $350–450 range) = <b>${fmt.money(impl)}</b> vs. <b>${fmt.money(REV)}</b> FY2025 pro forma revenue est.${revRow ? ` (pp_filings, ${esc(revRow.confidence || 'n/a')} confidence)` : ' (fallback)'} → ${fmt.chip(`${ratio.toFixed(1)}× revenue`, c)}${ratio > 1.15 ? ' — this share overstates PP volume; use it as an upside sensitivity only.' : ratio < 0.87 ? ' — understates PP volume.' : ' — consistent with the revenue estimate.'} Weather-day surge calls come on top of this baseline.</div>`;
+  };
   const drawStaff = () => {
     const rows = staffCalc();
     root.querySelector('#wx-staff').innerHTML = stackBars(rows.map(r => dlab(r.date)), TRADES.map(t => ({ name: t, color: TRADE_HEX[t], values: rows.map(r => r[t]) })), { baseline: rows[0]?.base }) +
-      `<div class="pp-legend">${TRADES.map(t => `<span><i style="background:${TRADE_HEX[t]}"></i>${t}</span>`).join('')}<span class="dim">dashed = baseline-day calls (${fmt.num(rows[0]?.base)}) at ${Math.round(state.share * 100)}% share</span></div>
+      `<div class="pp-legend">${TRADES.map(t => `<span><i style="background:${TRADE_HEX[t]}"></i>${t}</span>`).join('')}<span class="dim">dashed = baseline-day calls (${fmt.num(rows[0]?.base)}) at ${shTxt(state.share)} share</span></div>${xcheck()}
       <div class="tbl-wrap mt-8"><table class="tbl"><thead><tr><th>Day</th>${TRADES.map(t => `<th class="num">${t}</th>`).join('')}<th class="num">PP calls</th><th class="num">vs base</th><th class="num">Techs</th><th class="num">Surge</th><th>Top driver</th></tr></thead><tbody>${rows.map(r => `<tr><td class="nowrap">${esc(dlab(r.date))}</td>${TRADES.map(t => `<td class="num">${fmt.num(r[t])}</td>`).join('')}<td class="num"><b>${fmt.num(r.total)}</b></td><td class="num" style="color:${r.total > r.base * 1.02 ? 'var(--amber)' : 'var(--muted)'}">${r.total >= r.base ? '+' : ''}${fmt.num((r.total / r.base - 1) * 100, 0)}%</td><td class="num">${fmt.num(r.techs)}</td><td class="num" style="color:${r.surge > 0 ? 'var(--red)' : 'var(--muted)'}">${r.surge > 0 ? '+' : ''}${fmt.num(r.surge)}</td><td class="small text-2" title="${esc(r.driver)}">${esc(r.driver)}</td></tr>`).join('')}</tbody></table></div>
-      <div class="note mt-8">Market-wide calls use model baselines (HVAC ${P.base.HVAC} · Plumbing ${P.base.Plumbing} · Electrical ${P.base.Electrical} per 10k households/day) × served housing units × daily multiplier. <b>PP share (${Math.round(state.share * 100)}%) and ${JOBS_PER_TECH} jobs per tech-day are assumptions</b> — replace with ServiceTitan booked-call history to calibrate. Excludes planned maintenance (schedulable).</div>`;
+      <div class="note mt-8">Market-wide calls use model baselines (HVAC ${P.base.HVAC} · Plumbing ${P.base.Plumbing} · Electrical ${P.base.Electrical} per 10k households/day) × served housing units × daily multiplier. <b>PP share (${shTxt(state.share)}), $${AVG_TICKET} average ticket and ${JOBS_PER_TECH} jobs per tech-day are assumptions</b> — the default share is back-solved from the revenue estimate; replace with ServiceTitan booked-call history to calibrate. Excludes planned maintenance (schedulable).</div>`;
     return rows;
   };
   const drawAll = () => {
@@ -433,13 +453,13 @@ async function weather(ctx) {
     root.querySelector('#wx-kpis').innerHTML = ui.kpis([
       { label: 'Territory alerts (live)', value: AR.failed ? 'n/a' : fmt.num(AR.alerts.length), sub: AR.failed ? 'NWS feed unavailable' : `${sev} severe · ${AR.alerts.filter(a => a.pb).length} with playbook`, color: sev ? 'var(--red)' : AR.alerts.length ? 'var(--amber)' : 'var(--green)' },
       k('HVAC'), k('Plumbing'), k('Electrical'),
-      { label: 'Peak-day PP calls (est.)', value: fmt.num(pday?.total), sub: `${esc(dlab(pday?.date))} · ${pday && pday.total >= pday.base ? '+' : ''}${fmt.num(pday ? (pday.total / pday.base - 1) * 100 : 0, 0)}% vs baseline · ${Math.round(state.share * 100)}% share`, color: 'var(--c-pp)' },
+      { label: 'Peak-day PP calls (est.)', value: fmt.num(pday?.total), sub: `${esc(dlab(pday?.date))} · ${pday && pday.total >= pday.base ? '+' : ''}${fmt.num(pday ? (pday.total / pday.base - 1) * 100 : 0, 0)}% vs baseline · ${shTxt(state.share)} share (est.)`, color: 'var(--c-pp)' },
       { label: 'Surge techs, peak day', value: `${pday?.surge > 0 ? '+' : ''}${fmt.num(pday?.surge)}`, sub: `${fmt.num(pday?.techs)} vs ${fmt.num(pday?.baseTechs)} base · 6 jobs/tech (assum.)`, color: pday?.surge > 0 ? 'var(--red)' : 'var(--green)' },
     ]);
     const hot = TRADES.filter(t => pk[t].v >= 1.1).sort((a, b) => pk[b].v - pk[a].v);
     root.querySelector('#wx-sowhat').innerHTML = `<b>So what:</b> ${hot.length ? `${hot.map(t => `${t} pressure peaks at <b>${Math.round(pk[t].v * 100)}</b> (${esc(pk[t].hub)}, ${esc(dlab(pk[t].date))})`).join('; ')} — ${pday?.surge > 0 ? `plan <b>+${pday.surge} techs</b> on ${esc(dlab(pday.date))} and convert maintenance slots to repair capacity` : 'absorbable within current capacity'}.` : 'a quiet week — no hub clears 110 on any trade; keep maintenance and membership tune-ups on the board and push new-mover campaigns.'} ${AR.failed ? 'NWS alert feed unavailable.' : AR.alerts.length ? `${AR.alerts.length} live NWS alert${AR.alerts.length > 1 ? 's' : ''} touch the territory${sev ? ` (${sev} severe)` : ''}.` : 'No active NWS alerts in territory.'}`;
   };
-  ui.seg(root.querySelector('#wx-share'), [0.05, 0.10, 0.15, 0.20].map(v => ({ value: String(v), label: `${Math.round(v * 100)}% share` })), String(state.share), v => { state.share = Number(v); drawAll(); });
+  ui.seg(root.querySelector('#wx-share'), shareOpts.map(v => ({ value: String(v), label: `${shTxt(v)}${v === calShare ? ' · calibrated' : ''}` })), String(state.share), v => { state.share = Number(v); drawAll(); });
 
   // hub conditions table
   const hubRows = grid.map(g => {
@@ -467,7 +487,7 @@ async function weather(ctx) {
         { label: 'Pressure index', html: charts.hbar(TRADES.map(t => ({ label: t, value: Math.round(c.idx[t] * 100), color: TRADE_HEX[t] })), { max: Math.max(150, ...TRADES.map(t => c.idx[t] * 100)), fmt: v => v, labelW: 80 }) },
         { label: 'Weather', html: ui.kv({ 'High / low': `${fin(num(d.tmax)) ? Math.round(d.tmax) : '—'}°F / ${fin(num(d.tmin)) ? Math.round(d.tmin) : '—'}°F`, Precipitation: `${fin(num(d.precip)) ? Number(d.precip).toFixed(2) : '—'} in${d.pop != null ? ` · ${d.pop}% chance` : ''}`, 'Peak gust': `${fin(num(d.gust)) ? Math.round(d.gust) : '—'} mph`, Snow: `${fin(num(d.snow)) ? Number(d.snow).toFixed(1) : '0'} in`, Condition: esc(live.wmo(d.code)) }) },
         { label: 'Active drivers', html: TRADES.some(t => c.drv[t].length) ? `<div class="col gap-4">${TRADES.flatMap(t => c.drv[t].map(x => `<div class="row small"><span class="chip" style="--cc:${TRADE_HEX[t]}">${t}</span><span class="num">×${x.m.toFixed(2)}</span><span class="text-2">${esc(x.l)}</span></div>`)).join('')}</div>` : '<div class="small dim">No driver above threshold — baseline day.</div>' },
-        { label: 'Expected market calls (all providers)', html: ui.kv(Object.fromEntries([...TRADES.map(t => [t, `${fmt.num(calls[t])} <span class="dim">(base ${fmt.num(P.base[t] * g.hub.hu / 1e4)})</span>`]), ['Served units', fmt.num(g.hub.hu)], [`PP @ ${Math.round(state.share * 100)}% share`, `${fmt.num(sum(TRADES, t => calls[t]) * state.share)} calls → ${Math.ceil(sum(TRADES, t => calls[t]) * state.share / JOBS_PER_TECH)} techs`]])) },
+        { label: 'Expected market calls (all providers)', html: ui.kv(Object.fromEntries([...TRADES.map(t => [t, `${fmt.num(calls[t])} <span class="dim">(base ${fmt.num(P.base[t] * g.hub.hu / 1e4)})</span>`]), ['Served units', fmt.num(g.hub.hu)], [`PP @ ${shTxt(state.share)} share (est.)`, `${fmt.num(sum(TRADES, t => calls[t]) * state.share)} calls → ${Math.ceil(sum(TRADES, t => calls[t]) * state.share / JOBS_PER_TECH)} techs`]])) },
         { label: 'Next action', html: `<div class="small text-2">${Math.max(...TRADES.map(t => c.idx[t])) >= 1.2 ? 'Pull maintenance visits forward/back out of this day, extend dispatch hours, pre-stage parts for the driving trade and open CSR overflow.' : Math.max(...TRADES.map(t => c.idx[t])) > 1.0001 ? 'Hold 10–15% of slots open for same-day demand in the driving trade.' : 'Normal schedule; use capacity for maintenance and membership visits.'}</div>` },
         { label: 'Sources', html: `<div class="small col gap-4">${fmt.link(SRC.meteo, 'Open-Meteo forecast (hub point)')}${g.hub.src ? fmt.link(g.hub.src, `NWS point metadata${g.hub.grid ? ' · ' + g.hub.grid : ''}`) : ''}<span class="dim">Climatology station: ${esc(g.hub.station || '—')}</span></div>` },
       ],
@@ -524,7 +544,7 @@ function renderHistory(ctx, box, storms) {
   const cTypes = types.filter(t => cRows.some(c => c.t[t])).slice(0, 10);
   box.innerHTML = `<div class="grid grid-2">
     ${ui.panel({ title: 'Seasonality · events by month', sub: `Top event types, all 15 counties, ${esc(m.seasonality_basis || '2019–2025')} · July is the convective peak, Jan–Feb the freeze/winter peak`, body: charts.heatgrid(types, months, types.map(t => seas[t].monthly_event_counts || []), { color: '240,138,60', fmt: v => v || '' }), foot: src })}
-    ${ui.panel({ title: 'Annual event totals', sub: `Avg ${fmt.num(avgEv)} events / ${fmt.num(avgEp)} episodes per full year · busiest ${esc(maxY || '—')} · ${yrs.some(y => at[y].partial_year) ? `${esc(yrs.find(y => at[y].partial_year))} is partial (NCEI lag)` : ''}`, body: charts.line([{ name: 'Events', color: '#f08a3c', points: yrs.map(y => [y + (at[y].partial_year ? '*' : ''), at[y].event_count]) }, { name: 'Episodes', color: '#4c8dff', points: yrs.map(y => [y + (at[y].partial_year ? '*' : ''), at[y].episode_count]) }], { h: 200, area: true }) + `<div class="pp-legend"><span><i style="background:#f08a3c"></i>Event reports</span><span><i style="background:#4c8dff"></i>Distinct episodes</span><span class="dim">* partial year</span></div><div class="tbl-wrap mt-8"><table class="tbl"><thead><tr><th>Year</th><th class="num">Events</th><th class="num">Episodes</th><th class="num">Property damage</th><th class="num">Deaths</th></tr></thead><tbody>${yrs.map(y => `<tr><td>${esc(y)}${at[y].partial_year ? ' <span class="dim">(partial)</span>' : ''}</td><td class="num">${fmt.num(at[y].event_count)}</td><td class="num">${fmt.num(at[y].episode_count)}</td><td class="num">${fmt.money(at[y].total_damage_property_usd)}</td><td class="num">${fmt.num(at[y].deaths)}</td></tr>`).join('')}</tbody></table></div>`, foot: src })}
+    ${ui.panel({ title: 'Annual event totals', sub: `Avg ${fmt.num(avgEv)} events / ${fmt.num(avgEp)} episodes per full year (all Storm Events types, territory counties; the overview’s lower figure counts playbook warning types only) · busiest ${esc(maxY || '—')} · ${yrs.some(y => at[y].partial_year) ? `${esc(yrs.find(y => at[y].partial_year))} is partial (NCEI lag)` : ''}`, body: charts.line([{ name: 'Events', color: '#f08a3c', points: yrs.map(y => [y + (at[y].partial_year ? '*' : ''), at[y].event_count]) }, { name: 'Episodes', color: '#4c8dff', points: yrs.map(y => [y + (at[y].partial_year ? '*' : ''), at[y].episode_count]) }], { h: 200, area: true }) + `<div class="pp-legend"><span><i style="background:#f08a3c"></i>Event reports</span><span><i style="background:#4c8dff"></i>Distinct episodes</span><span class="dim">* partial year</span></div><div class="tbl-wrap mt-8"><table class="tbl"><thead><tr><th>Year</th><th class="num">Events</th><th class="num">Episodes</th><th class="num">Property damage</th><th class="num">Deaths</th></tr></thead><tbody>${yrs.map(y => `<tr><td>${esc(y)}${at[y].partial_year ? ' <span class="dim">(partial)</span>' : ''}</td><td class="num">${fmt.num(at[y].event_count)}</td><td class="num">${fmt.num(at[y].episode_count)}</td><td class="num">${fmt.money(at[y].total_damage_property_usd)}</td><td class="num">${fmt.num(at[y].deaths)}</td></tr>`).join('')}</tbody></table></div>`, foot: src })}
   </div>
   <div class="mt-12">${ui.panel({ title: 'Notable events', sub: 'Largest damage / casualty events in territory counties · click for NWS narrative', body: '<div id="wx-notable"></div>', foot: src })}</div>
   <div class="mt-12">${ui.panel({ title: 'County × event type · distinct episodes 2019–2025', sub: 'Episodes de-duplicate zone-split counties · core PA first, then Horvath NJ, then adjacent', body: charts.heatgrid(cRows.map(c => `${c.county} ${c.state} · ${c.tier === 'core' ? 'core' : c.tier === 'horvath_nj' ? 'Horvath' : 'adj.'}`), cTypes, cRows.map(c => cTypes.map(t => c.t[t] || null)), { color: '76,141,255', fmt: v => v ?? '' }), foot: src })}</div>`;
@@ -644,13 +664,30 @@ async function movers(ctx) {
   const lastDate = all.reduce((m, r) => r.sale_date > m ? r.sale_date : m, '');
   const winFrom = all.filter(r => r.served).reduce((m, r) => !m || r.sale_date < m ? r.sale_date : m, '');
   const nServedAll = all.filter(r => r.served).length;
+  const SV = all.filter(r => r.served); const ageN = (lo, hi) => SV.filter(r => r.days != null && r.days > lo && r.days <= hi).length;
+  const n60 = ageN(-1, 60), n90 = ageN(-1, 90), n61_180 = ageN(60, 180), nAged = ageN(180, 1e9), medAge = median(SV.map(r => r.days));
+  const DEF_DAYS = '90'; const initDays = ['30', '60', '90', '180', '365', ''].includes(params.days) ? params.days : DEF_DAYS;
+  // coverage table (all served + adjacent counties, plus any served county with no records)
+  const cyear = new Date();
+  const covRows = [...LD.cov.values()].map(c => {
+    const m = LD.covMeta.get(`${c.county}|${c.state}`); const lag = c.last ? Math.floor((cyear - Date.parse(noon(c.last))) / dayMs) : null;
+    const foot = CORE.includes(c.county) && c.state === 'PA' ? 'PP core' : NJ_H.includes(c.county) && c.state === 'NJ' ? 'Horvath NJ' : 'Adjacent';
+    const status = (c.raw - c.legacyRaw) < 500 && foot !== 'Adjacent' ? 'partial' : lag != null && lag > 150 ? 'stale' : lag != null && lag > 60 ? 'lagging' : 'current';
+    return { county: c.county, state: c.state, foot, raw: c.raw, leads: c.leads, legacy: c.legacy, first: c.first, last: c.last, lag, status, source: m?.source || [...c.sources][0] || '', url: m?.source_url || [...c.urls][0] || null };
+  });
+  for (const cn of [...CORE.map(c => [c, 'PA']), ...NJ_H.map(c => [c, 'NJ'])]) if (!covRows.some(r => r.county === cn[0] && r.state === cn[1])) covRows.push({ county: cn[0], state: cn[1], foot: cn[1] === 'NJ' ? 'Horvath NJ' : 'PP core', raw: 0, leads: 0, status: 'missing', source: 'no file', url: null });
+  const stC = { current: 'var(--green)', lagging: 'var(--amber)', stale: 'var(--red)', partial: 'var(--red)', missing: 'var(--red)' };
+  const fo = { 'PP core': 0, 'Horvath NJ': 1, Adjacent: 2 };
+  covRows.sort((a, b) => fo[a.foot] - fo[b.foot] || b.leads - a.leads);
+  const gaps = covRows.filter(r => r.foot !== 'Adjacent' && r.status !== 'current');
 
   root.innerHTML = `${ui.pageHead({
     title: 'New-mover marketing',
-    sub: `<b>So what:</b> ${fmt.num(nServedAll)} market-rate home sales (${esc(dfull(fmt, winFrom))} – ${esc(dfull(fmt, lastDate))}, county files) sit inside PP/Horvath zips — every one is a household that just inherited an unknown HVAC system, water heater and panel. Mail within 60 days of closing, lead with the offer that fits the house, and route the top-scored ${fmt.num(all.filter(r => r.served && r.score >= 75).length)} to outbound calls.`,
+    sub: `<b>So what:</b> of ${fmt.num(nServedAll)} in-footprint home sales on file (${esc(dfull(fmt, winFrom))} – ${esc(dfull(fmt, lastDate))}, county files), only <b>${fmt.num(n60)}</b> closed in the last 60 days and <b>${fmt.num(n90)}</b> in the last 90 — that is the mail-ready list (default filter: sold ≤90 days). Median lead age is ${fmt.num(medAge)} days, so the remaining ${fmt.num(nServedAll - n90)} are aged: use a neighbor / membership offer, never “welcome home” copy. ${gaps.length ? `Fresh leads cannot come from ${gaps.map(g => `${esc(g.county)}${g.last ? ` (latest ${esc(dfull(fmt, g.last))})` : ''}`).join(', ')} until those files are refreshed.` : ''}`,
     chips: `${fmt.chip(`${fmt.num(all.length)} residential sales ≥$10K`, 'var(--c-pp)')}${fmt.chip(`${LD.cov.size} counties`, 'var(--accent)')}${fmt.chip(`latest ${dfull(fmt, lastDate)}`)}`,
-    actions: `<button class="btn brand" id="mv-mail">⇩ Mailing list CSV</button>`,
+    actions: `<button class="btn brand" id="mv-mail" title="Exports the filtered list (default: sold ≤90 days)">⇩ Mailing list CSV · filtered</button>`,
   })}
+  <div class="pp-fresh small"><b>Lead age · in-footprint</b>${fmt.chip(`≤60 d · ${fmt.num(n60)}`, 'var(--green)')}${fmt.chip(`61–90 d · ${fmt.num(n90 - n60)}`, 'var(--accent)')}${fmt.chip(`91–180 d · ${fmt.num(n61_180 - (n90 - n60))}`, 'var(--amber)')}${fmt.chip(`>180 d (aged) · ${fmt.num(nAged)}`, 'var(--red)')}<span class="dim">as of ${esc(dfull(fmt, new Date().toISOString().slice(0, 10)))} · county recording lag 2–4 months</span></div>
   <div id="mv-filters"></div>
   <div id="mv-kpis"></div>
   <div class="grid grid-main mt-12">
@@ -693,7 +730,7 @@ async function movers(ctx) {
     { key: 'q', label: 'Search address, town, zip…', type: 'search' },
     { key: 'county', label: 'County', options: counties, value: initCounty },
     { key: 'band', label: 'Price', options: ['<$200K', '$200–350K', '$350–600K', '$600K+'] },
-    { key: 'days', label: 'Sold within', options: [{ value: '30', label: '30 days' }, { value: '60', label: '60 days' }, { value: '90', label: '90 days' }, { value: '180', label: '180 days' }, { value: '365', label: '12 months' }] },
+    { key: 'days', label: 'Sold within', value: initDays, options: [{ value: '30', label: '30 days' }, { value: '60', label: '60 days' }, { value: '90', label: '90 days' }, { value: '180', label: '180 days' }, { value: '365', label: '12 months' }] },
     { key: 'kind', label: 'Type', options: [{ value: 'resale', label: 'Resale' }, { value: 'builder', label: 'Builder / new construction' }] },
     { key: 'offer', label: 'Offer', options: Object.keys(OFFER_C) },
     { key: 'served', label: 'In-footprint only', type: 'toggle', value: false },
@@ -709,7 +746,7 @@ async function movers(ctx) {
       { label: 'Leads (filtered)', value: fmt.num(cur.length), sub: `${fmt.num(cur.filter(r => r.score >= 75).length)} scored ≥75`, color: 'var(--c-pp)' },
       { label: 'In PP / Horvath footprint', value: fmt.num(served.length), sub: `${cur.length ? Math.round(served.length / cur.length * 100) : 0}% of filtered`, color: 'var(--green)' },
       { label: 'Avg sale price', value: fmt.money(avg(cur, r => r.price)), sub: `median ${fmt.money(median(cur.map(r => r.price)))}`, color: 'var(--accent)' },
-      { label: 'Median days since sale', value: fmt.num(median(cur.map(r => r.days))), sub: `${fmt.num(cur.filter(r => r.days <= 60).length)} within 60 days`, color: 'var(--amber)' },
+      { label: 'Median days since sale', value: fmt.num(median(cur.map(r => r.days))), sub: `${fmt.num(cur.filter(r => r.days <= 60).length)} ≤60 d · ${fmt.num(cur.filter(r => r.days > 180).length)} aged >180 d`, color: median(cur.map(r => r.days)) > 90 ? 'var(--red)' : 'var(--amber)' },
       { label: 'Addressable HVAC replacements', value: fmt.num(addr), sub: 'est. · homes >25 yrs (year built or zip older-stock share)', color: 'var(--red)' },
       { label: 'New-construction buyers', value: fmt.num(cur.filter(r => r.builder).length), sub: 'maintenance-plan offer', color: 'var(--green)' },
     ]);
@@ -728,13 +765,13 @@ async function movers(ctx) {
   function campaignRows(kind) { return cur.filter(r => r.offer === kind); }
   function drawCampaigns() {
     const C = [
-      { k: 'Welcome tune-up', t: 'Welcome tune-up', d: 'Resale buyers in post-1980 stock: first-visit tune-up + membership enrollment inside 30 days of closing.', when: 'Mail at day 7–21 after sale' },
+      { k: 'Welcome tune-up', t: 'Welcome tune-up', d: 'Resale buyers in post-1980 stock: first-visit tune-up + membership enrollment, mailed as soon as the deed records (target ≤60 days after closing).', when: 'Mail on record; ≤60 d after sale' },
       { k: 'Safety inspection (pre-1980)', t: 'Panel & plumbing safety inspection', d: 'Pre-1980 homes (year built, else zip older-stock ≥70%): panel/aluminum-wiring, water-heater and sewer-line inspection; Mister Sparky + Ben Franklin cross-sell.', when: 'Mail at day 14; call top scores' },
       { k: 'Maintenance plan (new build)', t: 'New-construction maintenance plan', d: 'Builder sales and year-built ≥ sale year − 1: warranty-safe maintenance plan and IAQ/water-treatment add-ons.', when: 'Mail at day 30–60' },
     ];
     root.querySelector('#mv-camp').innerHTML = C.map(c => {
-      const rows = campaignRows(c.k); const inF = rows.filter(r => r.served).length;
-      return `<div class="pp-camp" style="--cc:${OFFER_C[c.k]}"><div class="top"><b>${esc(c.t)}</b><span class="big">${fmt.num(inF)}</span></div><div class="small text-2 mt-8">${esc(c.d)}</div><div class="meta">${fmt.chip(`${fmt.num(rows.length)} filtered · ${fmt.num(inF)} in footprint`)}${fmt.chip(`median ${fmt.money(median(rows.map(r => r.price)))}`)}${fmt.chip(`${fmt.num(inF * 0.02)}–${fmt.num(inF * 0.04)} responses (illustrative)`, 'var(--dim)')}<span class="small dim">${esc(c.when)}</span><button class="btn xs" data-camp="${esc(c.k)}" style="margin-left:auto">⇩ list</button></div></div>`;
+      const rows = campaignRows(c.k); const inF = rows.filter(r => r.served).length; const aged = rows.filter(r => r.served && r.days > 90).length;
+      return `<div class="pp-camp" style="--cc:${OFFER_C[c.k]}"><div class="top"><b>${esc(c.t)}</b><span class="big">${fmt.num(inF)}</span></div><div class="small text-2 mt-8">${esc(c.d)}</div><div class="meta">${fmt.chip(`${fmt.num(rows.length)} filtered · ${fmt.num(inF)} in footprint`)}${fmt.chip(`median ${fmt.money(median(rows.map(r => r.price)))}`)}${fmt.chip(`${fmt.num(inF * 0.02)}–${fmt.num(inF * 0.04)} responses (illustrative)`, 'var(--dim)')}${aged ? fmt.chip(`${fmt.num(aged)} aged >90 d · not “welcome” copy`, 'var(--red)') : ''}<span class="small dim">${esc(c.when)}</span><button class="btn xs" data-camp="${esc(c.k)}" style="margin-left:auto">⇩ list</button></div></div>`;
     }).join('');
     root.querySelectorAll('[data-camp]').forEach(b => b.onclick = () => exportMail(campaignRows(b.dataset.camp).filter(r => r.served), `pp_campaign_${b.dataset.camp.split(' ')[0].toLowerCase()}`));
   }
@@ -744,7 +781,7 @@ async function movers(ctx) {
     root.querySelector('#mv-month').innerHTML = ks.length ? charts.bar(ks.map(k => ({ label: new Date(k + '-15T12:00:00').toLocaleDateString('en-US', { month: 'short' }) + " '" + k.slice(2, 4), value: m.get(k) })), { h: 150, color: PP, fmt: fmt.compact }) : ui.empty('No leads');
   }
   function exportMail(rows, name) {
-    ui.exportCSV(rows.slice().sort((a, b) => b.score - a.score).map(r => ({ addr: r.addr, muni: r.muni, zip: r.zip, county: r.county, state: r.state, sale_date: r.sale_date, price: r.price, score: r.score, suggested_offer: r.offer, addressee: r.buyer || 'Current Resident' })), ['addr', 'muni', 'zip', 'county', 'state', 'sale_date', 'price', 'score', 'suggested_offer', 'addressee'].map(key => ({ key })), name);
+    ui.exportCSV(rows.slice().sort((a, b) => b.score - a.score).map(r => ({ addr: r.addr, muni: r.muni, zip: r.zip, county: r.county, state: r.state, sale_date: r.sale_date, price: r.price, days_since_sale: r.days, freshness: r.days <= 60 ? 'mail-ready (<=60d)' : r.days <= 90 ? 'mail-ready (61-90d)' : r.days <= 180 ? 'late (91-180d)' : 'aged (>180d) - neighbor/membership offer', score: r.score, suggested_offer: r.offer, addressee: r.buyer || 'Current Resident' })), ['addr', 'muni', 'zip', 'county', 'state', 'sale_date', 'days_since_sale', 'freshness', 'price', 'score', 'suggested_offer', 'addressee'].map(key => ({ key })), name);
   }
   root.querySelector('#mv-mail').onclick = () => exportMail(cur, 'pp_mailing_list');
 
@@ -764,20 +801,7 @@ async function movers(ctx) {
     });
   }
 
-  // coverage table (all served + adjacent counties, plus any served county with no records)
-  const cyear = new Date();
-  const covRows = [...LD.cov.values()].map(c => {
-    const m = LD.covMeta.get(`${c.county}|${c.state}`); const lag = c.last ? Math.floor((cyear - Date.parse(noon(c.last))) / dayMs) : null;
-    const foot = CORE.includes(c.county) && c.state === 'PA' ? 'PP core' : NJ_H.includes(c.county) && c.state === 'NJ' ? 'Horvath NJ' : 'Adjacent';
-    const status = (c.raw - c.legacyRaw) < 500 && foot !== 'Adjacent' ? 'partial' : lag != null && lag > 150 ? 'stale' : lag != null && lag > 60 ? 'lagging' : 'current';
-    return { county: c.county, state: c.state, foot, raw: c.raw, leads: c.leads, legacy: c.legacy, first: c.first, last: c.last, lag, status, source: m?.source || [...c.sources][0] || '', url: m?.source_url || [...c.urls][0] || null };
-  });
-  for (const cn of [...CORE.map(c => [c, 'PA']), ...NJ_H.map(c => [c, 'NJ'])]) if (!covRows.some(r => r.county === cn[0] && r.state === cn[1])) covRows.push({ county: cn[0], state: cn[1], foot: cn[1] === 'NJ' ? 'Horvath NJ' : 'PP core', raw: 0, leads: 0, status: 'missing', source: 'no file', url: null });
-  const stC = { current: 'var(--green)', lagging: 'var(--amber)', stale: 'var(--red)', partial: 'var(--red)', missing: 'var(--red)' };
-  const fo = { 'PP core': 0, 'Horvath NJ': 1, Adjacent: 2 };
-  covRows.sort((a, b) => fo[a.foot] - fo[b.foot] || b.leads - a.leads);
-  const gaps = covRows.filter(r => r.foot !== 'Adjacent' && r.status !== 'current');
-  root.querySelector('#mv-cov').innerHTML = `${gaps.length ? ui.note(`<b>Coverage gaps in served counties:</b> ${gaps.map(g => `${esc(g.county)} (${esc(g.status)}${g.last ? `, latest ${esc(dfull(fmt, g.last))}` : ''})`).join(' · ')}. Dauphin is partly back-filled by the legacy 90-day deed layer; next pulls: Dauphin Recorder of Deeds bulk export or a licensed feed (ATTOM/CoreLogic), Franklin CAMA refresh, NJ SR1A monthly refresh.`, 'warn') : ''}<div id="mv-cov-t" class="mt-8 pp-cov"></div>`;
+  root.querySelector('#mv-cov').innerHTML = `${gaps.length ? ui.note(`<b>Coverage gaps in served counties:</b> ${gaps.map(g => `${esc(g.county)} (${esc(g.status)}${g.last ? `, latest ${esc(dfull(fmt, g.last))}` : ''})`).join(' · ')}. Dauphin is only partly back-filled by the legacy 90-day deed layer, which itself ends Apr 10, 2026. <b>Next pulls:</b> refresh the deed layer to the trailing 90 days; Dauphin Recorder of Deeds bulk export or a licensed feed (ATTOM/CoreLogic); Franklin CAMA refresh; NJ SR1A monthly refresh (runs 3–4 months behind).`, 'warn') : ''}<div id="mv-cov-t" class="mt-8 pp-cov"></div>`;
   ui.table(root.querySelector('#mv-cov-t'), {
     columns: [
       { key: 'county', label: 'County', fmt: (v, r) => `<b>${esc(v)}</b> <span class="dim">${esc(r.state)}</span>` },
@@ -1087,18 +1111,23 @@ async function targets(ctx) {
   const { el, ui, fmt, data, maps, esc, inspector, app } = ctx; css();
   const ma = await data.research('ma_targets_pp');
   if (!ma) { el.innerHTML = `<div class="m-pp">${ui.pageHead({ title: 'Add-on targets', sub: 'Punctual Pros tuck-in screen' })}${ui.note('Research dataset not yet available (ma_targets_pp).', 'warn')}</div>`; return; }
-  const items = ma.items || []; const m = ma.meta || {};
-  const top = m.ranked_top_10 || []; const byId = new Map(items.map(t => [t.id, t]));
+  const all = ma.items || []; const m = ma.meta || {}; const byId = new Map(all.map(t => [t.id, t]));
+  /* name-collision guard: a company trading as "The Punctual Pros" may already be a BSP affiliate → hold out of every ranking until verified */
+  const conflicts = all.filter(nameConflict); const items = all.filter(t => !nameConflict(t)); const okId = new Set(items.map(t => t.id));
+  const top0 = (m.ranked_top_10 || []).filter(r => okId.has(r.id) && !nameConflict(r));
+  const backfill = items.filter(t => !top0.some(r => r.id === t.id)).sort((a, b) => b.fit_score - a.fit_score).slice(0, Math.max(0, Math.min(10, (m.ranked_top_10 || []).length) - top0.length))
+    .map(t => ({ id: t.id, company: t.company, fit_score: t.fit_score, why: t.strategic_rationale, backfill: true }));
+  const top = [...top0, ...backfill].map((r, i) => ({ ...r, rank: i + 1 }));
   const t1 = items.filter(t => t.fit_score >= 80), near = items.filter(t => t.distance_mi_from_lancaster <= 60 || t.distance_mi_from_toms_river <= 40);
   const fam = items.filter(t => /family|founder/.test(t.ownership || ''));
   const franchisees = items.filter(t => /franchisee/.test(t.ownership || ''));
   el.innerHTML = `<div class="m-pp">${ui.pageHead({
     title: 'Add-on targets',
-    sub: `<b>So what:</b> ${t1.length} of ${items.length} screened companies score Tier 1 (≥80). ${top[0] ? `${esc(top[0].company)} (fit ${top[0].fit_score}) is the highest-density tuck-in; ` : ''}${franchisees.length} Authority Brands franchisees can fold in with no rebrand, and ${fam.length} family/founder-owned independents are the succession pipeline.`,
-    chips: `${fmt.chip(`${items.length} companies`, 'var(--c-pp)')}${fmt.chip(`PA ${items.filter(t => t.state === 'PA').length} · NJ ${items.filter(t => t.state === 'NJ').length} · MD ${items.filter(t => t.state === 'MD').length} · DE ${items.filter(t => t.state === 'DE').length}`)}${fmt.chip(`screened ${m.generated || ''}`)}`,
+    sub: `<b>So what:</b> ${t1.length} of ${items.length} screened companies score Tier 1 (≥80)${conflicts.length ? ` after holding out ${conflicts.length} that trade${conflicts.length === 1 ? 's' : ''} under the Punctual Pros name (affiliation unverified)` : ''}. ${top[0] ? `${esc(top[0].company)} (fit ${top[0].fit_score}) is the highest-density tuck-in; ` : ''}${franchisees.length} Authority Brands franchisees can fold in with no rebrand, and ${fam.length} family/founder-owned independents are the succession pipeline.`,
+    chips: `${fmt.chip(`${items.length} companies`, 'var(--c-pp)')}${fmt.chip(`PA ${items.filter(t => t.state === 'PA').length} · NJ ${items.filter(t => t.state === 'NJ').length} · MD ${items.filter(t => t.state === 'MD').length} · DE ${items.filter(t => t.state === 'DE').length}`)}${fmt.chip(`screened ${m.generated || ''}`)}${conflicts.length ? fmt.chip(`${conflicts.length} held · name conflict`, 'var(--red)') : ''}`,
   })}
   ${ui.kpis([
-    { label: 'Targets screened', value: fmt.num(items.length), sub: `${fmt.num(m.excluded_pe_or_strategic_owned?.length || 0)} PE/strategic-owned excluded`, color: 'var(--c-pp)' },
+    { label: 'Targets screened', value: fmt.num(items.length), sub: `${fmt.num(m.excluded_pe_or_strategic_owned?.length || 0)} PE/strategic-owned excluded${conflicts.length ? ` · ${conflicts.length} held for affiliation check` : ''}`, color: 'var(--c-pp)' },
     { label: 'Tier 1 (fit ≥80)', value: fmt.num(t1.length), sub: `${fmt.num(items.filter(t => t.fit_score >= 65 && t.fit_score < 80).length)} Tier 2`, color: 'var(--green)' },
     { label: 'Within route reach', value: fmt.num(near.length), sub: '≤60 mi Lancaster or ≤40 mi Toms River', color: 'var(--accent)' },
     { label: 'Authority franchisees', value: fmt.num(franchisees.length), sub: 'same brands · no rebrand', color: 'var(--c-pp)' },
@@ -1106,10 +1135,11 @@ async function targets(ctx) {
     { label: 'Median distance · Lancaster', value: `${fmt.num(median(items.map(t => t.distance_mi_from_lancaster)))} mi`, sub: 'straight-line, city centroids', color: 'var(--dim)' },
   ])}
   <div class="grid grid-3 mt-12">
-    ${ui.panel({ title: 'Ranked top 10', sub: 'Analyst ranking · click for profile', body: `<div class="pp-top10">${top.map(t => `<div class="r" data-id="${esc(t.id)}"><span class="rk">#${t.rank}</span><div class="grow"><b class="small">${esc(t.company)}</b><div class="small text-2">${esc(String(t.why || '').slice(0, 170))}</div></div>${fmt.score(t.fit_score)}</div>`).join('') || ui.empty('No ranking')}</div>`, scroll: true, foot: ui.source('ma_targets_pp ranked_top_10', null, m.generated) })}
+    ${ui.panel({ title: 'Ranked top 10', sub: `Analyst ranking · click for profile${conflicts.length ? ' · name-conflict rows removed and re-ranked' : ''}`, body: `<div class="pp-top10">${top.map(t => `<div class="r" data-id="${esc(t.id)}"><span class="rk">#${t.rank}</span><div class="grow"><b class="small">${esc(t.company)}</b>${t.backfill ? ` ${fmt.chip('next by fit score', 'var(--dim)')}` : ''}<div class="small text-2">${esc(String(t.why || '').slice(0, 170))}</div></div>${fmt.score(t.fit_score)}</div>`).join('') || ui.empty('No ranking')}</div>`, scroll: true, foot: ui.source(`ma_targets_pp ranked_top_10${backfill.length ? ` (+${backfill.length} back-filled by fit score)` : ''}`, null, m.generated) })}
     ${ui.panel({ title: 'Target map', sub: 'Fit tier · Tier 1 green · Tier 2 blue · Tier 3+ amber', body: `<div class="map tall" id="tg-map" style="min-height:520px"></div>`, flush: true, foot: ui.source('ZoomInfo search · company sites · Authority directories', null, m.generated) })}
     ${ui.panel({ title: 'PE-backed competitors (rival bidders)', sub: 'Who else is buying in PA / NJ / MD / DE', body: `<div class="col gap-8">${(m.pe_backed_competitors || []).filter(p => !/^Other/i.test(p.platform)).map(p => `<div class="row" style="align-items:flex-start"><span class="chip" style="--cc:${/^High/i.test(p.threat || '') ? 'var(--red)' : /^Medium/i.test(p.threat || '') ? 'var(--amber)' : 'var(--muted)'};flex-shrink:0">${esc(String(p.threat || '—').split(':')[0].split(' ')[0])}</span><div class="grow"><b class="small">${esc(p.platform)}</b><div class="small text-2">${esc(String(p.sponsor || 'sponsor n/a').split(/[;(]/)[0])}${p.regional_holdings?.length ? ` · ${esc(p.regional_holdings.slice(0, 2).join(', '))}` : ''}</div></div></div>`).join('')}</div>`, scroll: true, foot: ui.source('Sponsor press releases · roll-up trackers', null, m.generated) })}
   </div>
+  ${conflicts.length ? `<div class="mt-12">${ui.panel({ title: 'Verify affiliation — held out of ranking', sub: 'Trades under the portfolio company’s own name: either already part of the Punctual Pros / Authority network (owned or related party) or a brand conflict. PP team to confirm status (owned · related · independent) before any outreach.', body: `<div class="pp-affil">${conflicts.map(t => `<div class="r" data-id="${esc(t.id)}">${fmt.score(t.fit_score)}<div class="grow"><b class="small">${esc(t.company)}</b> ${fmt.chip('name conflict — verify', 'var(--red)')} ${fmt.chip('affiliation: unverified', 'var(--amber)')}<div class="small text-2">${esc(t.hq_city || '')}, ${esc(t.state || '')} · ${esc(t.brands_or_franchise || '')}</div><div class="flags">${(t.risk_flags || []).map(r => fmt.chip(r, /collision|affiliat|conflict/i.test(r) ? 'var(--red)' : 'var(--amber)')).join('')}</div></div></div>`).join('')}</div>`, foot: ui.source('ma_targets_pp risk_flags · PitchBook profile', 'https://pitchbook.com/profiles/company/593145-91', m.generated), accent: true })}</div>` : ''}
   <div class="mt-12">${ui.panel({ title: 'Target screen', sub: `Fit rubric: ${esc(Object.keys(m.scoring_rubric || {}).map(k => k.replace(/_/g, ' ')).join(' · '))} (20 pts each)`, body: '<div id="tg-screen"></div>', foot: ui.source('ma_targets_pp', null, m.generated) })}</div>
   ${(m.caveats || []).length ? `<div class="mt-12">${ui.note(`<b>Caveats:</b> ${(m.caveats || []).slice(0, 3).map(c => esc(c)).join(' ')}`, 'warn')}</div>` : ''}
   </div>`;
@@ -1124,20 +1154,22 @@ async function targets(ctx) {
   const map = maps.create(root.querySelector('#tg-map'), { center: [40.0, -75.9], zoom: 7 });
   const tc = s => s >= 80 ? '#2ecc8f' : s >= 65 ? '#4c8dff' : '#f5b73d';
   maps.points(map, items.filter(t => fin(t.lat)), { color: t => tc(t.fit_score), radius: t => Math.max(4, (t.fit_score - 40) / 6), cluster: false, popup: t => `<b>${esc(t.company)}</b><br>${esc(t.hq_city)}, ${esc(t.state)} · fit ${t.fit_score}<br><span class="muted">${esc(t.ownership || '')}</span>`, onClick: openT });
+  if (conflicts.some(t => fin(t.lat))) maps.points(map, conflicts.filter(t => fin(t.lat)), { color: '#ff5c5c', radius: 5, cluster: false, popup: t => `<b>${esc(t.company)}</b><br>${esc(t.hq_city)}, ${esc(t.state)}<br><b style="color:#ff5c5c">Name conflict — verify affiliation</b>`, onClick: openT });
   maps.marker(map, HQ.lat, HQ.lon, { color: '#ffffff', label: 'PP HQ' });
   maps.marker(map, HORVATH.lat, HORVATH.lon, { color: '#f5b73d', label: 'Horvath' });
   maps.circle(map, HQ.lat, HQ.lon, 60 * 1609, { color: '#f08a3c', fill: .03, dash: '4 4' });
-  maps.legend(map, [{ color: '#2ecc8f', label: 'Tier 1 (≥80)' }, { color: '#4c8dff', label: 'Tier 2 (65–79)' }, { color: '#f5b73d', label: 'Tier 3+ (<65)' }, { color: '#f08a3c', label: '60 mi from HQ', ring: true }], 'Fit');
+  maps.legend(map, [{ color: '#2ecc8f', label: 'Tier 1 (≥80)' }, { color: '#4c8dff', label: 'Tier 2 (65–79)' }, { color: '#f5b73d', label: 'Tier 3+ (<65)' }, { color: '#f08a3c', label: '60 mi from HQ', ring: true }, ...(conflicts.length ? [{ color: '#ff5c5c', label: 'Name conflict · verify' }] : [])], 'Fit');
   maps.fitPoints(map, items.filter(t => fin(t.lat)).map(t => [t.lat, t.lon]), 8);
-  root.querySelectorAll('.pp-top10 .r').forEach(r => r.onclick = () => { const t = byId.get(r.dataset.id); if (t) openT(t); });
+  root.querySelectorAll('.pp-top10 .r, .pp-affil .r').forEach(r => r.onclick = () => { const t = byId.get(r.dataset.id); if (t) openT(t); });
   function openT(t) {
-    const fb = t.fit_breakdown || {};
-    inspector.open({ title: esc(t.company), sub: `${esc(t.hq_city || '')}, ${esc(t.state || '')} · fit ${t.fit_score}`, color: tc(t.fit_score), sections: [
+    const fb = t.fit_breakdown || {}; const nc = nameConflict(t);
+    inspector.open({ title: esc(t.company), sub: `${esc(t.hq_city || '')}, ${esc(t.state || '')} · fit ${t.fit_score}${nc ? ' · held out of ranking' : ''}`, color: nc ? 'var(--red)' : tc(t.fit_score), sections: [
+      nc ? { label: 'Affiliation', html: `<div class="row gap-8 wrap">${fmt.chip('name conflict — verify', 'var(--red)')}${fmt.chip('status: unverified (owned · related · independent?)', 'var(--amber)')}</div><div class="small text-2 mt-8">Trades as “The Punctual Pros”. Confirm with PP management and the Authority Brands franchise register whether this is an existing network entity before it re-enters the ranking.</div>` } : null,
       { label: 'Fit breakdown', html: Object.keys(fb).length ? ctx.charts.hbar(Object.entries(fb).map(([k, v]) => ({ label: k.replace(/_/g, ' '), value: v })), { max: 20, fmt: v => v, labelW: 130, color: PP }) : '—' },
       { label: 'Profile', html: ui.kv({ Founded: t.founded_year != null ? esc(t.founded_year) : null, Ownership: esc(t.ownership || ''), 'Ownership notes': esc(t.ownership_notes || ''), Brands: esc(t.brands_or_franchise || ''), Trades: t.trades || [], 'Mi from Lancaster': t.distance_mi_from_lancaster, 'Mi from Toms River': t.distance_mi_from_toms_river, Reviews: t.review_count ? `${fmt.num(t.review_count)} · ${esc(t.review_rating || '')}★` : null, Website: t.website ? fmt.link(t.website) : null }) },
       { label: 'Strategic rationale', html: `<div class="small text-2">${esc(t.strategic_rationale || '')}</div>` },
       t.risk_flags?.length ? { label: 'Risk flags', html: t.risk_flags.map(r => fmt.chip(r, 'var(--amber)')).join(' ') } : null,
-      { label: 'Next action', html: `<div class="small text-2">Log in pipeline → PRG-led owner outreach → request 3-yr P&L, membership count and tech roster → indicative value at sector multiple (see Filings & financials).${/franchisee/.test(t.ownership || '') ? ' Confirm Authority Brands transfer approval path.' : ''}</div>` },
+      { label: 'Next action', html: nc ? `<div class="small text-2"><b>Do not contact yet.</b> PP CEO to confirm ownership / related-party status; if independent, resolve the trade-name overlap first, then re-score.</div>` : `<div class="small text-2">Log in pipeline → PRG-led owner outreach → request 3-yr P&L, membership count and tech roster → indicative value at sector multiple (see Filings & financials).${/franchisee/.test(t.ownership || '') ? ' Confirm Authority Brands transfer approval path.' : ''}</div>` },
       { label: 'Sources', html: `<div class="small col gap-4">${(t.sources || []).map(s => fmt.link(s)).join('') || '—'}</div><div class="dim small mt-8">Retrieved ${esc(t.retrieved || '')}</div>` },
     ].filter(Boolean), actions: t.website ? [{ label: 'Website ↗', href: t.website }] : [] });
   }
@@ -1176,6 +1208,6 @@ export default {
     { order: 300, hash: '#/pp/overview', caption: '<b>Punctual Pros.</b> ~1.6M housing units: 248 Central PA zips plus Horvath on the Jersey Shore — three levers: new movers, weather surge, adjacent zips.', narration: 'Punctual Pros serves Central Pennsylvania and the Jersey Shore. The levers: new movers, weather staffing and adjacent zips.', duration: 7500 },
     { order: 310, hash: '#/pp/weather', caption: '<b>Weather → calls → techs.</b> Live NWS alerts and 7-day hub forecasts become a Service-Call Pressure Index per trade and a surge-staffing number.', narration: 'Live alerts and forecasts become a service-call pressure index, and from there, how many extra technicians to schedule.', duration: 7500 },
     { order: 320, hash: '#/pp/movers', caption: '<b>Every home sale is a lead.</b> 12 months of county deed records, scored 0–100, with the right offer for each house and a mailing list ready to export.', narration: 'Every closed home sale in the footprint becomes a scored new-mover lead, with the right offer attached.', duration: 7000 },
-    { order: 330, hash: '#/pp/targets', caption: '<b>Tuck-ins.</b> 61 screened HVAC/plumbing/electrical operators — Authority Brands franchisees and family-owned independents — against the PE platforms bidding for them.', narration: 'Sixty-one screened tuck-ins, led by same-brand franchisees, set against the private-equity platforms competing for them.', duration: 6500 },
+    { order: 330, hash: '#/pp/targets', caption: '<b>Tuck-ins.</b> 60 ranked HVAC/plumbing/electrical operators — Authority Brands franchisees and family-owned independents — against the PE platforms bidding for them; one name-conflict held for affiliation check.', narration: 'Sixty ranked tuck-ins, led by same-brand franchisees, set against the private-equity platforms competing for them.', duration: 6500 },
   ],
 };

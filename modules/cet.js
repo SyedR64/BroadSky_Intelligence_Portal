@@ -2,7 +2,7 @@
    CET — Commonwealth Electrical Technologies (Worcester + Taunton MA; NuWave, Norwell MA;
    Horton Electrical Services, CT). New England only — NYC analysis archived (CEO guidance).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, renderFilings, opportunityCard, fitTierOf } from '../assets/components.js?v=20260924203049';
+import { renderTargets, renderFilings, opportunityCard, fitTierOf } from '../assets/components.js?v=20261006085442';
 
 const COLOR = 'var(--c-cet)';
 const HEX = { cet: '#4c8dff', cyan: '#3fd0e0', amber: '#f5b73d', green: '#2ecc8f', purple: '#9d7bff', blue: '#4c8dff', muted: '#8b98a8', red: '#ff5c5c', orange: '#f08a3c', dim: '#5b6b7f', pink: '#e05c8a', sky: '#8ab4ff' };
@@ -25,7 +25,7 @@ const SRC = {
 };
 
 /* ── helpers ────────────────────────────────────────────────────────────── */
-function ensureCss() { if (!document.getElementById('css-cet')) { const l = document.createElement('link'); l.id = 'css-cet'; l.rel = 'stylesheet'; l.href = 'modules/cet.css?v=20260924203049'; document.head.appendChild(l); } }
+function ensureCss() { if (!document.getElementById('css-cet')) { const l = document.createElement('link'); l.id = 'css-cet'; l.rel = 'stylesheet'; l.href = 'modules/cet.css?v=20261006085442'; document.head.appendChild(l); } }
 const safe = p => Promise.resolve(p).catch(e => { console.warn(e?.message || String(e)); return null; });
 const sum = (a, f) => a.reduce((s, x) => s + (Number(f(x)) || 0), 0);
 const median = a => { const v = a.filter(x => x != null && !isNaN(x)).sort((x, y) => x - y); if (!v.length) return null; const m = v.length >> 1; return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };
@@ -35,6 +35,36 @@ const mdy = s => { const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(s || ''); ret
 const addDays = (iso, n) => { const d = new Date(iso); if (isNaN(d)) return null; d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
 const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const actionsList = (items, esc) => `<div class="actions-list">${items.map((a, i) => `<div class="act"><span class="n">${i + 1}</span><div>${a}</div></div>`).join('')}</div>`;
+/* bid-slate helpers: owner verification, due-day chips */
+const UNVERIFIED_RE = /locked on BidNet|\bverify\b|confirm owner/i;
+const isUnverified = o => UNVERIFIED_RE.test(o.owner_or_agency || '');
+const dueChip = (d, fmt) => d === 0 ? fmt.chip('due today · go/no-go', 'var(--red)') : d < 0 ? fmt.chip(`${-d}d ago`, 'var(--dim)') : fmt.chip(`${d}d left`, d <= 14 ? 'var(--red)' : d <= 45 ? 'var(--amber)' : 'var(--green)');
+/* county data gap: the legacy pull has no population / establishment / permit inputs (all of CT) */
+const GAP_HEX = '#7a8696';
+const isGap = c => !c.total_establishments;
+const tierOfC = c => isGap(c) ? 'Insufficient data' : c.cet_fit_tier;
+/* per-viewer bid tracking (browser storage only; exported with the radar CSV) */
+const BID_KEY = 'cet-bid-status-v1';
+const BID_STATUSES = ['Go', 'No-go', 'Submitted', 'Lost', 'Won'];
+const BID_COLOR = { Go: 'var(--green)', 'No-go': 'var(--dim)', Submitted: 'var(--accent)', Lost: 'var(--red)', Won: 'var(--purple)' };
+const BID_CLOSED = new Set(['Submitted', 'Lost', 'Won']);
+const bidRead = () => { try { return JSON.parse(localStorage.getItem(BID_KEY) || '{}') || {}; } catch { return {}; } };
+const bidSet = (id, patch) => { const m = bidRead(); const v = { ...(m[id] || {}), ...patch, updated: new Date().toISOString().slice(0, 10) }; if (!v.status && !v.owner) delete m[id]; else m[id] = v; try { localStorage.setItem(BID_KEY, JSON.stringify(m)); return true; } catch { return false; } };
+/* research top-10 actions are dated text: find m/d deadlines and re-check them against today */
+function actionDates(text, gen) {
+  const base = new Date(gen || Date.now()); const ok = !isNaN(base); const y = ok ? base.getFullYear() : new Date().getFullYear();
+  const out = []; const re = /\b(1[0-2]|0?[1-9])\/([12]\d|3[01]|0?[1-9])\b(?!\/)/g; let m;
+  while ((m = re.exec(text))) { let d = new Date(y, Number(m[1]) - 1, Number(m[2])); if (ok && d < base - 120 * DAY) d = new Date(y + 1, Number(m[1]) - 1, Number(m[2])); out.push({ tok: m[0], iso: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` }); }
+  return out;
+}
+function topActions(ctx, list, gen) {
+  const { fmt, esc } = ctx;
+  const rows = list.map((a, i) => { const ds = actionDates(a, gen).map(x => ({ ...x, d: fmt.days(x.iso) })).filter(x => x.d != null); const up = ds.filter(x => x.d >= 0); return { a, ds, lapsed: ds.length > 0 && !up.length, i }; });
+  rows.sort((p, q) => (p.lapsed - q.lapsed) || p.i - q.i);
+  const chip = x => x.d < 0 ? fmt.chip(`${x.tok} passed`, 'var(--dim)') : x.d === 0 ? fmt.chip(`${x.tok} due today · go/no-go`, 'var(--red)') : fmt.chip(`${x.tok} · ${x.d}d left`, x.d <= 7 ? 'var(--red)' : x.d <= 30 ? 'var(--amber)' : 'var(--green)');
+  const html = `<div class="actions-list">${rows.map((r, k) => `<div class="act${r.lapsed ? ' lapsed' : ''}"><span class="n">${k + 1}</span><div>${bold1(r.a, esc)}${r.ds.length ? `<div class="dl">${r.lapsed ? fmt.chip('lapsed: all deadlines passed', 'var(--dim)') : ''}${r.ds.map(chip).join('')}</div>` : ''}</div></div>`).join('')}</div>`;
+  return { html, lapsed: rows.filter(r => r.lapsed).length, live: rows.filter(r => r.ds.some(x => x.d >= 0 && x.d <= 7)).length };
+}
 const bold1 = (s, esc) => { const t = String(s || '').replace(/^\s*\d+\.\s*/, ''); const i = t.indexOf(':'); return i > 0 && i < 110 ? `<b>${esc(t.slice(0, i))}</b>${esc(t.slice(i))}` : esc(t); };
 
 function hortonNode(filings) {
@@ -105,9 +135,10 @@ const crewFor = o => (o.state === 'CT' || o._cap?.k === 'wastewater') ? 'Horton 
 function nextAction(o, fmt) {
   const d = o._days;
   if (o._src === 'development') return o.stage === 'aggregate' ? 'County permit aggregate: use as a demand signal for crew planning; there is no single owner to pursue.' : `Identify the GC and electrical engineer of record from the filing; offer design-assist electrical plus a NuWave efficiency package before trade bids are let. Lead: ${crewFor(o)}.`;
+  if (isUnverified(o) && (d == null || d >= 0)) return `Verify the issuing owner first (the BidNet listing hides it); only then assign an estimator.${d === 0 ? ' Due today: go/no-go now.' : ''} Lead: ${crewFor(o)}.`;
   if (o.stage === 'expired') return 'Past due: request the bid tabulation / award notice for pricing intelligence and put the owner on the rebid calendar.';
   switch (o.type) {
-    case 'rfp': case 'legacy rfp': return d != null && d >= 0 ? `Go/no-go by ${fmt.dateShort(addDays(o.due_date, -7))}: pull bid documents, confirm prequalification (DCAMM / MassDOT / CT DAS) and bonding, assign an estimator. Lead: ${crewFor(o)}.` : `Confirm status with the owner; if still open, assign an estimator. Lead: ${crewFor(o)}.`;
+    case 'rfp': case 'legacy rfp': return d === 0 ? `Due today: go/no-go decision now; submit only if bid documents and bonding are already in hand. Lead: ${crewFor(o)}.` : d != null && d >= 0 ? `Go/no-go by ${fmt.dateShort(addDays(o.due_date, -7))}: pull bid documents, confirm prequalification (DCAMM / MassDOT / CT DAS) and bonding, assign an estimator. Lead: ${crewFor(o)}.` : `Confirm status with the owner; if still open, assign an estimator. Lead: ${crewFor(o)}.`;
     case 'capital_plan': return `Meet the engineer of record while in design to shape electrical / I&C specs; secure preferred-subcontractor status with likely GCs before bid. Lead: ${crewFor(o)}.`;
     case 'award': return 'Contact the awardee / GC for electrical subcontract or O&M scope; if self-performed, log as competitor intelligence.';
     case 'program': return 'Register / qualify as a program vendor or installer; package a repeatable offer and target list against the program criteria.';
@@ -128,15 +159,26 @@ function openOpp(ctx, o, extra = {}) {
       { label: 'Competitors noted', html: (o.competitors_noted || []).length ? `<div class="row wrap gap-4">${o.competitors_noted.map(t => fmt.chip(t, 'var(--red)')).join('')}</div>` : '<span class="dim small">None noted in source</span>' },
       { label: 'Source', html: `<div class="small">${o.source_url ? fmt.link(o.source_url, o.source_name || o.source_url) : esc(o.source_name || '—')}</div>${o.retrieved ? `<div class="dim small mt-8">Retrieved ${esc(o.retrieved)}</div>` : ''}` },
       { label: 'Next action', html: `<div class="small text-2">${esc(nextAction(o, fmt))}</div>` },
+      extra.onBid ? { label: 'Bid status', html: bidCtl(ctx, o) } : null,
     ].filter(Boolean),
     actions: [o.source_url ? { label: 'Open source ↗', href: o.source_url } : null, ...(extra.actions || [])].filter(Boolean),
   });
+  if (extra.onBid) bindBidCtl(ctx, o, extra.onBid);
+}
+function bidCtl(ctx, o) {
+  const { esc } = ctx; const b = bidRead()[o.id] || {};
+  return `<div class="m-cet"><div class="bid-ctl" data-bid="${esc(o.id)}"><div class="row wrap gap-4">${BID_STATUSES.map(s => `<button class="btn sm ${b.status === s ? 'active' : ''}" data-s="${esc(s)}">${esc(s)}</button>`).join('')}<button class="btn sm" data-s="">Clear</button></div><label class="own">Estimator / owner<input type="text" data-owner maxlength="60" value="${esc(b.owner || '')}" placeholder="e.g. estimator name · office"></label><div class="dim small">Saved in this browser only${b.updated ? ` · updated ${esc(b.updated)}` : ''}. Export the radar CSV to share status with the team.</div></div></div>`;
+}
+function bindBidCtl(ctx, o, onBid) {
+  const box = document.querySelector('#inspector .bid-ctl'); if (!box) return;
+  box.querySelectorAll('button[data-s]').forEach(btn => btn.onclick = () => { if (!bidSet(o.id, { status: btn.dataset.s || null })) return ctx.ui.toast('Browser storage is unavailable, so status was not saved'); box.querySelectorAll('button[data-s]').forEach(x => x.classList.toggle('active', !!btn.dataset.s && x === btn)); ctx.ui.toast(btn.dataset.s ? `Marked ${btn.dataset.s}` : 'Status cleared'); onBid(); });
+  const inp = box.querySelector('input[data-owner]'); if (inp) inp.onchange = () => { bidSet(o.id, { owner: inp.value.trim() || null }); onBid(); };
 }
 function indexEntities(ctx, { opp, wwtp, counties }) {
   const { app } = ctx; const items = [];
   for (const o of (opp?.items || []).slice(0, 200)) items.push({ label: o.title, sub: `CET opportunity · ${o.owner_or_agency || ''} · ${o.state}`, href: `#/cet/opportunities?id=${encodeURIComponent(o.id)}`, kind: 'Opportunity', color: HEX.cet });
   for (const w of (wwtp?.items || []).slice(0, 200)) items.push({ label: w.facility_name, sub: `CET/Horton WWTP · ${w.town}, ${w.state}`, href: `#/cet/wastewater?id=${encodeURIComponent(w.id)}`, kind: 'WWTP', color: HEX.cyan });
-  for (const c of counties || []) items.push({ label: `${c.county_name} County, ${c.state}`, sub: `CET territory · ${c.cet_fit_tier} · fit ${c.cet_fit_score}`, href: `#/cet/territory?fips=${c.fips}`, kind: 'County', color: HEX.cet });
+  for (const c of counties || []) items.push({ label: `${c.county_name} County, ${c.state}`, sub: isGap(c) ? 'CET territory · insufficient data (not scored)' : `CET territory · ${c.cet_fit_tier} · fit ${c.cet_fit_score}`, href: `#/cet/territory?fips=${c.fips}`, kind: 'County', color: HEX.cet });
   app.index(items);
 }
 /* fit after Leaflet has measured its container (maps.create invalidates at 60ms) */
@@ -155,35 +197,53 @@ async function overview(ctx) {
   const legacyDue = (rfps || []).map(r => ({ title: String(r.title || '').replace(/\s+/g, ' '), owner_or_agency: r.agency, state: r.state, due_date: mdy(r.due_date), _src: 'legacy', id: 'leg-' + r.id }));
   const dueSoon = [...items.filter(o => o.stage !== 'awarded'), ...legacyDue].map(o => ({ ...o, _d: fmt.days(o.due_date) })).filter(o => o._d != null && o._d >= 0 && o._d <= 60).sort((a, b) => a._d - b._d);
   const funded = plants.filter(p => /_funded$/.test(p.project_class)); const fundedPipe = sum(funded, p => p.pipeline_value_usd);
-  const t1 = cnt.filter(c => c.cet_fit_tier === 'Tier 1'), t2 = cnt.filter(c => c.cet_fit_tier === 'Tier 2');
+  const t1 = cnt.filter(c => tierOfC(c) === 'Tier 1'), t2 = cnt.filter(c => tierOfC(c) === 'Tier 2'), cGap = cnt.filter(isGap);
   const horton = hortonNode(filings);
   const cetFirm = (firm?.items || []).find(p => /Commonwealth/i.test(p.company || ''));
-  const byState = STATES.map(s => ({ s, n: items.filter(o => o.state === s).length, v: sum(items.filter(o => o.state === s), o => o.est_value_usd) }));
+  // split the valued universe by stage: only "open" items can be bid today
+  const stageOf = st => { const xs = items.filter(o => o.stage === st); const v = xs.filter(o => o.est_value_usd); return { n: xs.length, nv: v.length, v: sum(v, o => o.est_value_usd) }; };
+  const planned = stageOf('planned'), awarded = stageOf('awarded'), recurring = stageOf('recurring');
+  const openLive = items.filter(o => o.stage === 'open' && (o.due_date == null || (fmt.days(o.due_date) ?? 0) >= 0));
+  const openPast = items.filter(o => o.stage === 'open').length - openLive.length;
+  const openVal = sum(openLive, o => o.est_value_usd), openValN = openLive.filter(o => o.est_value_usd).length;
+  const bigPlan = items.filter(o => o.stage === 'planned' && o.est_value_usd).sort((a, b) => b.est_value_usd - a.est_value_usd)[0];
+  const STK = ['open', 'planned', 'awarded', 'recurring'];
+  const byState = STATES.map(s => { const os = items.filter(o => o.state === s); return { s, n: os.length, nOpen: os.filter(o => o.stage === 'open').length, v: sum(os, o => o.est_value_usd), seg: STK.map(st => ({ st, v: sum(os.filter(o => o.stage === st), o => o.est_value_usd) })) }; });
+  const maxSt = Math.max(1, ...byState.map(x => x.v));
+  // bid slate: verified owners with >=5 days first (ranked by fit), then go/no-go-now items, then owner-unverified listings
+  const slateGood = dueSoon.filter(o => !isUnverified(o) && o._d >= 5).sort((a, b) => (b.fit_score ?? 0) - (a.fit_score ?? 0) || a._d - b._d);
+  const slateNow = dueSoon.filter(o => !isUnverified(o) && o._d < 5).sort((a, b) => a._d - b._d || (b.fit_score ?? 0) - (a.fit_score ?? 0));
+  const slateUnv = dueSoon.filter(isUnverified).sort((a, b) => a._d - b._d);
+  const slate = [...slateGood, ...slateNow, ...slateUnv];
+  const slateRow = (o, i) => `<div class="it" data-i="${i}"><div class="grow"><div class="t ellipsis">${esc(o.title)}</div><div class="s ellipsis">${esc(isUnverified(o) ? 'Owner not verified (BidNet listing locked)' : o.owner_or_agency || '')} · ${esc(o.state || '')}${o.fit_score != null ? ` · fit ${esc(o.fit_score)}` : ''}${o._src === 'legacy' ? ' · legacy feed' : ''}</div></div><div class="r">${dueChip(o._d, fmt)}<div class="dim small" style="margin-top:3px">${fmt.dateShort(o.due_date)}</div></div></div>`;
+  let si = 0; const grp = (label, xs) => xs.length ? `<div class="grp">${label} <span class="dim">(${xs.length})</span></div>${xs.map(o => slateRow(o, si++)).join('')}` : '';
+  const acts = opp?.meta?.top_10_actions?.length ? topActions(ctx, opp.meta.top_10_actions, opp.meta.generated) : null;
+  const actAge = opp?.meta?.generated ? -fmt.days(opp.meta.generated) : null;
 
   el.innerHTML = wrap(ui.pageHead({
     title: 'Commonwealth Electrical Technologies (CET)',
-    sub: opp ? `<b>So what:</b> CET works only in New England and has <b>${fmt.money(totalVal)}</b> of sourced, est. electrical / wastewater / energy pipeline across all six states. ${wwtp ? `Horton turns <b>${funded.length}</b> funded CT–MA–RI plant projects (${fmt.money(fundedPipe)} pipeline) into work CET can prime.` : 'Horton adds CT wastewater and pump-station references (plant-level research pending).'} Priorities: win the <b>${dueSoon.length}</b> bids due in the next 60 days, get in front of the engineers on funded plants, and cross-sell NuWave efficiency and solar into every Horton account.` : 'Electrical, solar, EV and energy-efficiency contractor · Worcester + Taunton MA · NuWave (Norwell MA) · Horton (CT)',
+    sub: opp ? `<b>So what:</b> CET has <b>${fmt.num(openLive.length)} open, biddable solicitations</b> in New England today, <b>${fmt.num(dueSoon.length)}</b> due in the next 60 days (${fmt.num(slateGood.length)} with a verified owner and at least 5 days left). Only ${fmt.num(openValN)} of the ${fmt.num(openLive.length)} states a value (${fmt.money(openVal)}); the rest need estimator sizing. Behind them sits a <b>${fmt.money(totalVal)} capital-program universe (est.), not a bid pipeline</b>: ${fmt.money(planned.v)} of planned capital work in ${fmt.num(planned.n)} projects, typically 12–36 months from bid${bigPlan ? ` (${esc(bigPlan.title.split(' - ')[0].slice(0, 48))} alone is ${Math.round(bigPlan.est_value_usd / totalVal * 100)}%)` : ''}, and ${fmt.money(awarded.v)} already awarded, where CET can only win sub-tier scope. ${wwtp ? `Horton turns <b>${funded.length}</b> funded CT–MA–RI plant projects (${fmt.money(fundedPipe)} pipeline, est.) into work CET can prime.` : 'Horton adds CT wastewater and pump-station references (plant-level research pending).'}` : 'Electrical, solar, EV and energy-efficiency contractor · Worcester + Taunton MA · NuWave (Norwell MA) · Horton (CT)',
     chips: `${fmt.chip('Licensed in all 6 New England states', COLOR)}${fmt.chip('Platform since Feb 2025', 'var(--c-bsp)')}${fmt.chip('Add-ons: NuWave (Oct 2025) · Horton (Sept 2026)', 'var(--purple)')}${fmt.chip('No NYC expansion (CEO guidance)', 'var(--dim)')}`,
     actions: `<a class="btn" href="#/cet/opportunities">Opportunity radar →</a><a class="btn" href="#/cet/wastewater">Horton cross-sell →</a>`,
   }) +
   (opp ? '' : ui.note('Research dataset <b>cet_opportunities</b> is not available yet — pipeline KPIs are partial.', 'warn')) +
   (wwtp ? '' : ui.note('Research dataset <b>cet_wwtp_targets</b> is not available yet — wastewater KPIs and map layer are omitted.', 'warn')) +
   ui.kpis([
-    { label: 'Opportunities tracked', value: fmt.num(items.length), sub: `sourced · ${fmt.num((rfps || []).length)} legacy RFPs + 90-day dev feed on radar`, color: COLOR },
-    { label: 'Est. pipeline value', value: fmt.money(totalVal), sub: `est. · ${valued.length} of ${items.length} opportunities valued`, color: HEX.green },
-    { label: 'Bids due ≤60 days', value: fmt.num(dueSoon.length), sub: dueSoon[0] ? `next: ${fmt.dateShort(dueSoon[0].due_date)} (${dueSoon[0]._d}d)` : 'none open', color: dueSoon.length ? HEX.amber : HEX.muted },
+    { label: 'Open & biddable', value: fmt.num(openLive.length), sub: `${fmt.money(openVal)} stated (${openValN} of ${openLive.length} valued) · ${openPast} open-stage past due · ${items.length} tracked`, color: HEX.green },
+    { label: 'Bids due ≤60 days', value: fmt.num(dueSoon.length), sub: `${slateGood.length} verified, ≥5d left · ${slateNow.length} go/no-go now · ${slateUnv.length} owner unverified`, color: dueSoon.length ? HEX.amber : HEX.muted },
+    { label: 'Capital program universe', value: fmt.money(totalVal), sub: `est., not biddable today · planned ${fmt.money(planned.v)} (${planned.n}) · awarded ${fmt.money(awarded.v)} (${awarded.n}, sub-tier only)`, color: HEX.sky },
     { label: 'Funded WWTP accounts', value: wwtp ? fmt.num(funded.length) : '—', sub: wwtp ? `${fmt.money(fundedPipe)} pipeline (est.) · of ${fmt.num(plants.length)} plants` : 'dataset pending', color: HEX.cyan },
-    { label: 'Tier-1 counties', value: fmt.num(t1.length), sub: `${esc(t1.map(c => `${c.county_name} ${c.state}`).join(', ') || '—')} · ${t2.length} Tier-2`, color: HEX.cet },
+    { label: 'Tier-1 counties', value: fmt.num(t1.length), sub: `${esc(t1.map(c => `${c.county_name} ${c.state}`).join(', ') || '—')} · ${t2.length} Tier-2${cGap.length ? ` · ${cGap.length} CT counties unscored (data gap)` : ''}`, color: HEX.cet },
     { label: 'Add-on targets screened', value: fmt.num(targets?.items?.length || 0), sub: targets ? `top: ${esc(targets.meta?.ranked_top_10?.[0]?.company || '—')}` : 'dataset pending', color: 'var(--c-ma)' },
   ]) +
   `<div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Operating footprint', sub: 'CET nodes, Horton, county fit tiers and funded wastewater plants (Horton cross-sell anchors)', body: `<div class="map tall" id="cet-ov-map"></div>`, flush: true, foot: `${ui.source('CET / Broad Sky press releases', 'https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/', 'Sept 2026')} ${ui.source(SRC.wwtp[0], SRC.wwtp[1], wwtp?.meta?.generated)}` })}
-    ${ui.panel({ title: 'Top 10 actions', sub: 'From the opportunity research — what the CET team should do next', body: opp?.meta?.top_10_actions?.length ? actionsList(opp.meta.top_10_actions.map(a => bold1(a, esc)), esc) : ui.note('Top actions will populate from cet_opportunities.', 'warn'), scroll: true, accent: true, foot: ui.source(SRC.opp[0], SRC.opp[1], opp?.meta?.generated) })}
+    ${ui.panel({ title: 'Top 10 actions', sub: acts ? `Research list of ${esc(fmt.dateShort(opp.meta.generated))}${actAge != null ? ` (${actAge} days old)` : ''}. Deadlines re-checked against today: ${acts.live} with a deadline within 7 days; ${acts.lapsed} lapsed, moved to the bottom.` : 'From the opportunity research', body: acts ? acts.html : ui.note('Top actions will populate from cet_opportunities.', 'warn'), scroll: true, accent: true, foot: ui.source(SRC.opp[0], SRC.opp[1], opp?.meta?.generated) })}
   </div>
   <div class="grid grid-3 mt-12">
     ${ui.panel({ title: 'Platform build', sub: 'Broad Sky entry and add-ons', body: `<div id="cet-tl"></div>`, foot: ui.source('Broad Sky / CET press releases', 'https://broadskypartners.com/news/', firm?.meta?.generated) })}
-    ${ui.panel({ title: 'Bid slate · next 60 days', sub: `${dueSoon.length} solicitations with a due date · click to open on the radar`, body: dueSoon.length ? `<div class="mini-list" id="cet-due">${dueSoon.slice(0, 9).map((o, i) => `<div class="it" data-i="${i}"><div class="grow"><div class="t ellipsis">${esc(o.title)}</div><div class="s ellipsis">${esc(o.owner_or_agency || '')} · ${esc(o.state || '')}${o._src === 'legacy' ? ' · legacy feed' : ''}</div></div><div class="r">${fmt.chip(`${o._d}d`, o._d <= 14 ? 'var(--red)' : 'var(--amber)')}<div class="dim small mt-8" style="margin-top:3px">${fmt.dateShort(o.due_date)}</div></div></div>`).join('')}</div>${dueSoon.length > 9 ? `<div class="more">+${dueSoon.length - 9} more on the radar</div>` : ''}` : ui.empty('No open bids due in the next 60 days'), scroll: true, foot: ui.source('BidNet / owner portals / COMMBUYS', null, opp?.meta?.generated) })}
-    ${ui.panel({ title: 'Sourced pipeline by state', sub: 'Est. value of sourced opportunities (count in label)', body: `${charts.hbar(byState.map(s => ({ label: `${s.s} · ${s.n} opps`, value: s.v, color: s.s === 'CT' ? HEX.cyan : HEX.cet })), { fmt: v => fmt.money(v), labelW: 96 })}<div class="row wrap gap-4 mt-12">${Object.entries(opp?.meta?.coverage_by_stage || {}).map(([k, v]) => fmt.chip(`${k} ${v}`, STAGE_COLOR[k])).join('')}</div><div class="bar-caption">Values are requested / estimated amounts, not bid values; ${items.length - valued.length} opportunities have no stated value.</div>`, foot: ui.source(SRC.opp[0], SRC.opp[1], opp?.meta?.generated) })}
+    ${ui.panel({ title: 'Bid slate · next 60 days', sub: `${dueSoon.length} solicitations · verified owners with ≥5 days left first, ranked by fit · click to open on the radar`, body: slate.length ? `<div class="mini-list" id="cet-due">${grp('Biddable · ≥5 days left · by fit', slateGood)}${grp('Go/no-go now · under 5 days', slateNow)}${grp('Needs owner verification', slateUnv)}</div>` : ui.empty('No open bids due in the next 60 days'), scroll: true, foot: ui.source('BidNet / owner portals / COMMBUYS', null, opp?.meta?.generated) })}
+    ${ui.panel({ title: 'Capital program universe by state', sub: 'Est. stated value by stage · only open items can be bid today', body: `<div class="stk">${byState.map(x => `<div class="stk-row"><div class="stk-l">${esc(x.s)} <span class="dim">${x.nOpen} open / ${x.n}</span></div><div class="stk-bar">${x.seg.filter(g => g.v > 0).map(g => `<i style="width:${(g.v / maxSt * 100).toFixed(2)}%;background:${STAGE_COLOR[g.st]}" title="${esc(g.st)}: ${fmt.money(g.v)}"></i>`).join('')}</div><div class="stk-v">${fmt.money(x.v)}</div></div>`).join('')}</div><div class="row wrap gap-4 mt-12">${STK.map(k => { const z = k === 'open' ? { n: items.filter(o => o.stage === 'open').length, v: sum(items.filter(o => o.stage === 'open'), o => o.est_value_usd) } : stageOf(k); return fmt.chip(`${k} ${z.n} · ${fmt.money(z.v)}`, STAGE_COLOR[k]); }).join('')}</div><div class="bar-caption">Requested / estimated amounts (est.), not bid values. Planned = capital plans and SRF lists (bid windows typically 12–36 months out); awarded = sub-tier or O&amp;M upside only. ${items.length - valued.length} of ${items.length} items state no value.</div>`, foot: ui.source(SRC.opp[0], SRC.opp[1], opp?.meta?.generated) })}
   </div>
   <div class="archived">${fmt.chip('Archived')}<span>NYC pipeline (${fmt.num(nyc?.total || 0)} leads) archived. Per CEO guidance, CET is not expanding into New York City, so NYC is excluded from every view.</span></div>`);
 
@@ -196,16 +256,16 @@ async function overview(ctx) {
   ];
   if (!ons.length) tl.splice(1, 0, { date: '2025-10-07', color: HEX.purple, html: '<b>NuWave Energy Solutions</b> · Norwell, MA' }, { date: '2026-09-15', color: HEX.cyan, html: `<b>Horton Electrical Services</b> · ${esc(horton.town)}` });
   el.querySelector('#cet-tl').innerHTML = ui.timeline(tl);
-  el.querySelectorAll('#cet-due .it').forEach(n => n.onclick = () => { const o = dueSoon[Number(n.dataset.i)]; app.go('cet', 'opportunities', { id: o.id }); });
+  el.querySelectorAll('#cet-due .it').forEach(n => n.onclick = () => { const o = slate[Number(n.dataset.i)]; app.go('cet', 'opportunities', { id: o.id }); });
 
   // map
   const map = maps.create(el.querySelector('#cet-ov-map'), { center: [42.6, -71.2], zoom: 7 });
   const cpts = cnt.map(c => { const fb = c.centroid_lat == null && c.state === 'CT' ? CT_CENTROIDS[c.county_name] : null; return { ...c, lat: c.centroid_lat ?? fb?.[0], lon: c.centroid_lng ?? fb?.[1], _fb: !!fb }; }).filter(c => c.lat != null);
-  const tierHex = t => t === 'Tier 1' ? HEX.green : t === 'Tier 2' ? HEX.cet : '#34465e';
-  maps.points(map, cpts, { color: r => tierHex(r.cet_fit_tier), radius: r => r.cet_fit_tier === 'Tier 1' ? 16 : r.cet_fit_tier === 'Tier 2' ? 12 : 4 + Math.sqrt(r.cet_fit_score || 0) * 1.3, cluster: false, opacity: .45, stroke: '#0a0e14', popup: r => `<b>${esc(r.county_name)} County, ${esc(r.state)}</b><br>CET fit ${esc(r.cet_fit_score)} · ${esc(r.cet_fit_tier)} (rank ${esc(r.rank)})<br><span class="muted">${esc((r.fit_drivers || []).join(' · '))}</span>${r._fb ? '<br><span class="muted">Centroid approximated (CT)</span>' : ''}<br><a href="#/cet/territory?fips=${esc(r.fips)}">Open in Territory →</a>` });
+  const tierHex = t => t === 'Tier 1' ? HEX.green : t === 'Tier 2' ? HEX.cet : t === 'Insufficient data' ? GAP_HEX : '#34465e';
+  maps.points(map, cpts, { color: r => tierHex(tierOfC(r)), radius: r => isGap(r) ? 9 : r.cet_fit_tier === 'Tier 1' ? 16 : r.cet_fit_tier === 'Tier 2' ? 12 : 4 + Math.sqrt(r.cet_fit_score || 0) * 1.3, cluster: false, opacity: .45, stroke: '#0a0e14', popup: r => `<b>${esc(r.county_name)} County, ${esc(r.state)}</b><br>${isGap(r) ? 'Insufficient data: not scored (legacy pull has no population, establishment or permit inputs)' : `CET fit ${esc(r.cet_fit_score)} · ${esc(r.cet_fit_tier)} (rank ${esc(r.rank)})`}<br><span class="muted">${esc((r.fit_drivers || []).join(' · '))}</span>${r._fb ? '<br><span class="muted">Centroid approximated (CT)</span>' : ''}<br><a href="#/cet/territory?fips=${esc(r.fips)}">Open in Territory →</a>` });
   maps.points(map, funded, { color: HEX.cyan, radius: r => Math.min(11, 4 + Math.sqrt(r.design_flow_mgd || 1)), cluster: false, opacity: .9, popup: r => `<b>${esc(r.facility_name)}</b><br>${esc(r.town)}, ${esc(r.state)} · ${fmt.num(r.design_flow_mgd, 1)} MGD<br>${esc(r.recent_or_planned_project || '')}<br>${fmt.money(r.pipeline_value_usd)} pipeline<br><a href="#/cet/wastewater?id=${esc(r.id)}">Open account →</a>` });
   addNodes(ctx, map, horton);
-  maps.legend(map, [{ color: HEX.cet, label: 'CET / NuWave node' }, { color: HEX.cyan, label: 'Horton + funded WWTP project' }, { color: HEX.green, label: 'Tier-1 county' }, { color: HEX.cet, label: 'Tier-2 county' }, { color: '#34465e', label: 'Tier-3 county (size = fit)' }], 'Footprint');
+  maps.legend(map, [{ color: HEX.cet, label: 'CET / NuWave node' }, { color: HEX.cyan, label: 'Horton + funded WWTP project' }, { color: HEX.green, label: 'Tier-1 county' }, { color: HEX.cet, label: 'Tier-2 county' }, { color: '#34465e', label: 'Tier-3 county (size = fit)' }, { color: GAP_HEX, label: 'CT county: insufficient data' }], 'Footprint');
   maps.overlay(map, `<b>Licensed in all six New England states</b><div class="row wrap gap-4 mt-8">${STATES.map(s => fmt.chip(s, COLOR)).join('')}</div><div class="dim small mt-8">Horton: ${esc(horton.town)}</div>`);
   fitLater(map, NE_BOUNDS);
   indexEntities(ctx, { opp, wwtp, counties: cnt });
@@ -221,7 +281,8 @@ async function opportunities(ctx) {
   const uniq = f => [...new Set(all.map(f).flat().filter(Boolean))].sort();
   el.innerHTML = `<div class="m-cet split">
     <div class="side">
-      <div class="side-head"><div class="grow"><h1>Opportunity radar</h1><div class="sub"><b>So what:</b> one ranked New England list covering ${fmt.num(opp?.items?.length || 0)} sourced opportunities, ${fmt.num((rfps || []).length)} legacy COMMBUYS RFPs and ${fmt.num((dev || []).length)} development filings. Filter to a capability and a due window, then take each card's next action.</div></div><button class="btn sm" id="op-csv">⇩ CSV</button></div>
+      <div class="side-head"><div class="grow"><h1>Opportunity radar</h1><div class="sub"><b>So what:</b> one New England list covering ${fmt.num(opp?.items?.length || 0)} sourced opportunities, ${fmt.num((rfps || []).length)} legacy COMMBUYS RFPs and ${fmt.num((dev || []).length)} development filings. Bids due within 14 days are pinned to the top; mark each Go / No-go / Submitted and assign an estimator so Monday's open list is clear.</div></div><button class="btn sm" id="op-csv">⇩ CSV</button></div>
+      <div class="seg-row"><span class="dim small">Sort</span><div id="op-sort"></div></div>
       ${opp ? '' : ui.note('Research dataset <b>cet_opportunities</b> is not available yet — showing legacy feeds only.', 'warn')}
       <div id="op-kpis"></div><div id="op-f"></div><div id="op-cards"></div>
       <div class="src-line mt-12">Sources: ${esc(SRC.opp[0])} · COMMBUYS legacy feed · Boston/Cambridge permits, USASpending, Census BPS (dev feed) · retrieved ${esc(opp?.meta?.generated || '')}</div>
@@ -233,22 +294,25 @@ async function opportunities(ctx) {
   addNodes(ctx, map, hortonNode(await data.research('cet_filings')));
   maps.legend(map, CAPS.map(c => ({ color: c.color, label: c.label })), 'Primary capability');
   const overlay = maps.overlay(map, '');
-  let layer = null, rows = [];
+  let layer = null, rows = [], sortBy = ['due', 'fit', 'value'].includes(params.sort) ? params.sort : 'due';
+  const byFit = (a, b) => (b.fit_score ?? -1) - (a.fit_score ?? -1) || (b.est_value_usd || 0) - (a.est_value_usd || 0);
+  const soon = o => o._days != null && o._days >= 0 && o._days <= 14;
+  const SORTS = { due: (a, b) => (soon(b) - soon(a)) || (soon(a) ? a._days - b._days || (isUnverified(a) - isUnverified(b)) || byFit(a, b) : byFit(a, b)), fit: byFit, value: (a, b) => (b.est_value_usd || 0) - (a.est_value_usd || 0) || byFit(a, b) };
   const rad = o => o.est_value_usd ? Math.min(17, 4 + 2.3 * Math.log10(Math.max(1, o.est_value_usd / 1e5))) : 4;
-  const open = o => { openOpp(ctx, o, { actions: [{ id: 'op-zoom', label: 'Zoom map', onClick: () => o.lat != null && map.setView([o.lat, o.lon], 11) }] }); const c = el.querySelector(`#op-cards .card[data-id="${CSS.escape(o.id)}"]`); if (c) { el.querySelectorAll('#op-cards .card').forEach(x => x.classList.toggle('selected', x === c)); c.scrollIntoView({ block: 'nearest' }); } };
+  const open = o => { openOpp(ctx, o, { onBid: () => apply(f.state), actions: [{ id: 'op-zoom', label: 'Zoom map', onClick: () => o.lat != null && map.setView([o.lat, o.lon], 11) }] }); const c = el.querySelector(`#op-cards .card[data-id="${CSS.escape(o.id)}"]`); if (c) { el.querySelectorAll('#op-cards .card').forEach(x => x.classList.toggle('selected', x === c)); c.scrollIntoView({ block: 'nearest' }); } };
   const apply = st => {
-    const q = (st.q || '').toLowerCase();
-    rows = all.filter(o => (!st.state || o.state === st.state) && (!st.type || o.type === st.type) && (!st.cap || (o.capability_match || []).includes(st.cap)) && (!st.stage || o.stage === st.stage) && (!st.src || o._src === st.src)
+    const q = (st.q || '').toLowerCase(); const bids = bidRead(); const bs = o => bids[o.id]?.status || '';
+    rows = all.filter(o => (!st.bid || (st.bid === 'Untracked' ? !bs(o) : bs(o) === st.bid)) && (!st.hidesub || st.bid || !BID_CLOSED.has(bs(o))) && (!st.state || o.state === st.state) && (!st.type || o.type === st.type) && (!st.cap || (o.capability_match || []).includes(st.cap)) && (!st.stage || o.stage === st.stage) && (!st.src || o._src === st.src)
       && (!st.due || (o._days != null && o._days >= 0 && o._days <= Number(st.due))) && (!st.hide || (!(o._days != null && o._days < 0 && o.stage !== 'awarded') && o.stage !== 'expired' && (o.stage !== 'aggregate' || st.stage === 'aggregate')))
       && (!q || `${o.title} ${o.owner_or_agency} ${o.city} ${o.county} ${(o.scope_tags || []).join(' ')}`.toLowerCase().includes(q)))
-      .sort((a, b) => (b.fit_score ?? -1) - (a.fit_score ?? -1) || (b.est_value_usd || 0) - (a.est_value_usd || 0));
+      .sort(SORTS[sortBy]);
     f.setCount(`${rows.length} / ${all.length}`);
-    const due30 = rows.filter(o => o._days != null && o._days >= 0 && o._days <= 30).length;
-    el.querySelector('#op-kpis').innerHTML = ui.kpis([{ label: 'In view', value: fmt.num(rows.length), color: COLOR }, { label: 'Sourced est. value', value: fmt.money(sum(rows.filter(o => o._src !== 'development'), o => o.est_value_usd)), color: HEX.green }, { label: 'Due ≤30d', value: fmt.num(due30), color: due30 ? HEX.amber : HEX.muted }]);
+    const due14 = rows.filter(soon).length, openN = rows.filter(o => o.stage === 'open' && !(o._days != null && o._days < 0)).length, tracked = rows.filter(o => bs(o)).length;
+    el.querySelector('#op-kpis').innerHTML = ui.kpis([{ label: 'In view', value: fmt.num(rows.length), sub: `${tracked} with bid status`, color: COLOR }, { label: 'Open & biddable', value: fmt.num(openN), sub: `stage open, not past due · ${rows.filter(o => o._src === 'legacy' && o.stage === 'open').length} legacy feed`, color: HEX.green }, { label: 'Due ≤14d', value: fmt.num(due14), sub: `${rows.filter(o => o._days === 0).length} due today`, color: due14 ? HEX.red : HEX.muted }]);
     const top = rows.slice(0, 120);
-    const cards = top.map(o => { const c = opportunityCard(ctx, o, o._cap.color); if (o._src !== 'research') c.chips += fmt.chip(o._src === 'legacy' ? 'legacy rfp' : 'dev feed', 'var(--dim)'); if (o.stage) c.chips += fmt.chip(o.stage, STAGE_COLOR[o.stage]); return c; });
+    const cards = top.map(o => { const c = opportunityCard(ctx, o, o._cap.color); const b = bids[o.id]; if (o._days === 0 && o.stage !== 'expired') c.chips = fmt.chip('due today · go/no-go', 'var(--red)') + c.chips; if (b?.status) c.chips = fmt.chip(b.status, BID_COLOR[b.status]) + c.chips; if (b?.owner) c.chips += fmt.chip(`owner: ${b.owner}`, 'var(--accent)'); if (isUnverified(o)) c.chips += fmt.chip('owner unverified', 'var(--amber)'); if (o._src !== 'research') c.chips += fmt.chip(o._src === 'legacy' ? 'legacy rfp' : 'dev feed', 'var(--dim)'); if (o.stage) c.chips += fmt.chip(o.stage, STAGE_COLOR[o.stage]); return c; });
     const box = el.querySelector('#op-cards');
-    box.innerHTML = rows.length ? ui.cards(cards) + (rows.length > top.length ? `<div class="more">Showing top ${top.length} of ${fmt.num(rows.length)} by fit — refine filters or export CSV for all.</div>` : '') : ui.empty('No opportunities match these filters');
+    box.innerHTML = rows.length ? ui.cards(cards) + (rows.length > top.length ? `<div class="more">Showing the first ${top.length} of ${fmt.num(rows.length)} (sorted by ${sortBy === 'due' ? 'due ≤14 days, then fit' : sortBy}). Refine filters or export CSV for all.</div>` : '') : ui.empty('No opportunities match these filters');
     ui.bindCards(box, top, o => open(o));
     if (layer) layer.remove();
     layer = maps.points(map, rows, { color: o => o._cap.color, radius: rad, cluster: false, opacity: .8, onClick: open, popup: o => `<b>${esc(o.title)}</b><br>${esc(o.owner_or_agency || '')} · ${esc(o.city || '')}, ${esc(o.state || '')}<br>${o.est_value_usd ? fmt.money(o.est_value_usd) + ' est. · ' : ''}fit ${esc(o.fit_score ?? '—')}` });
@@ -263,10 +327,13 @@ async function opportunities(ctx) {
     { key: 'stage', label: 'Stage', options: uniq(o => o.stage) },
     { key: 'due', label: 'Due', options: [{ value: '30', label: '≤30 days' }, { value: '60', label: '≤60 days' }, { value: '90', label: '≤90 days' }], value: params.due || '' },
     { key: 'src', label: 'Source', options: [{ value: 'research', label: 'Sourced research' }, { value: 'legacy', label: 'Legacy RFP feed' }, { value: 'development', label: 'Development feed' }] },
+    { key: 'bid', label: 'Bid status', options: ['Untracked', ...BID_STATUSES] },
     { key: 'hide', label: 'Hide past-due & county aggregates', type: 'toggle', value: !params.id },
+    { key: 'hidesub', label: 'Hide submitted / lost / won', type: 'toggle', value: true },
   ], apply);
+  ui.seg(el.querySelector('#op-sort'), [{ value: 'due', label: 'Due ≤14d first' }, { value: 'fit', label: 'Fit' }, { value: 'value', label: 'Value' }], sortBy, v => { sortBy = v; apply(f.state); });
   apply(f.state);
-  el.querySelector('#op-csv').onclick = () => ui.exportCSV(rows.map(o => ({ ...o, capability: o._cap.label, source_dataset: o._src, next_action: nextAction(o, fmt) })), ['id', 'source_dataset', 'type', 'stage', 'title', 'owner_or_agency', 'city', 'county', 'state', 'lat', 'lon', 'posted_date', 'due_date', 'est_value_usd', 'fit_score', 'capability', 'capability_match', 'scope_tags', 'competitors_noted', 'fit_rationale', 'next_action', 'source_name', 'source_url'].map(k => ({ key: k })), 'cet_opportunity_radar');
+  el.querySelector('#op-csv').onclick = () => { const bids = bidRead(); ui.exportCSV(rows.map(o => ({ ...o, capability: o._cap.label, source_dataset: o._src, next_action: nextAction(o, fmt), days_left: o._days, bid_status: bids[o.id]?.status || '', bid_owner: bids[o.id]?.owner || '', owner_verified: isUnverified(o) ? 'no' : 'yes' })), ['id', 'source_dataset', 'type', 'stage', 'bid_status', 'bid_owner', 'days_left', 'owner_verified', 'title', 'owner_or_agency', 'city', 'county', 'state', 'lat', 'lon', 'posted_date', 'due_date', 'est_value_usd', 'fit_score', 'capability', 'capability_match', 'scope_tags', 'competitors_noted', 'fit_rationale', 'next_action', 'source_name', 'source_url'].map(k => ({ key: k })), 'cet_opportunity_radar'); };
   if (params.id) { const o = all.find(x => x.id === params.id); if (o) { open(o); if (o.lat != null) setTimeout(() => map.getContainer().isConnected && map.setView([o.lat, o.lon], 10), 200); } }
   indexEntities(ctx, { opp, wwtp });
   return () => map.remove();
@@ -404,59 +471,66 @@ async function territory(ctx) {
   if (!counties) { el.innerHTML = wrap(ui.pageHead({ title: 'Territory fit' }) + ui.note('County table <b>cet_ne_counties</b> is not available.', 'warn')); return; }
   const key = (c, s) => `${String(c || '').toLowerCase()}|${s}`;
   const oppBy = groupBy(opp?.items || [], o => key(o.county, o.state)); const ww = groupBy(wwtp?.items || [], w => key(w.county, w.state));
-  const C = counties.map(c => { const fb = c.centroid_lat == null && c.state === 'CT' ? CT_CENTROIDS[c.county_name] : null; const os = oppBy.get(key(c.county_name, c.state)) || []; const ws = ww.get(key(c.county_name, c.state)) || []; return { ...c, lat: c.centroid_lat ?? fb?.[0] ?? null, lon: c.centroid_lng ?? fb?.[1] ?? null, _fb: !!fb, _gap: !c.total_establishments, _opps: os.length, _oppVal: sum(os, o => o.est_value_usd), _wwtp: ws.length, _wwPipe: sum(ws, w => w.pipeline_value_usd), _wwFunded: ws.filter(w => /_funded$/.test(w.project_class)).length, _oppList: os, _wwList: ws }; });
-  const t1 = C.filter(c => c.cet_fit_tier === 'Tier 1'), t2 = C.filter(c => c.cet_fit_tier === 'Tier 2'); const gaps = C.filter(c => c._gap);
-  const byState = STATES.map(s => { const cs = C.filter(c => c.state === s); return { label: s, value: cs.length ? sum(cs, c => c.cet_fit_score) / cs.length : 0, max: Math.max(0, ...cs.map(c => c.cet_fit_score || 0)), n: cs.length }; });
+  const C = counties.map(c => { const fb = c.centroid_lat == null && c.state === 'CT' ? CT_CENTROIDS[c.county_name] : null; const os = oppBy.get(key(c.county_name, c.state)) || []; const ws = ww.get(key(c.county_name, c.state)) || []; return { ...c, lat: c.centroid_lat ?? fb?.[0] ?? null, lon: c.centroid_lng ?? fb?.[1] ?? null, _fb: !!fb, _gap: isGap(c), _tier: tierOfC(c), _score: isGap(c) ? null : c.cet_fit_score, _opps: os.length, _oppVal: sum(os, o => o.est_value_usd), _wwtp: ws.length, _wwPipe: sum(ws, w => w.pipeline_value_usd), _wwFunded: ws.filter(w => /_funded$/.test(w.project_class)).length, _oppList: os, _wwList: ws }; });
+  // CT rows have no population / establishment / permit inputs: show them as "Insufficient data" and rank only scored counties
+  C.filter(c => !c._gap).sort((a, b) => b.cet_fit_score - a.cet_fit_score).forEach((c, i) => { c._rank = i + 1; });
+  const scored = C.filter(c => !c._gap);
+  const t1 = C.filter(c => c._tier === 'Tier 1'), t2 = C.filter(c => c._tier === 'Tier 2'), t3 = C.filter(c => c._tier === 'Tier 3'); const gaps = C.filter(c => c._gap);
+  const byState = STATES.map(s => { const cs = C.filter(c => c.state === s && !c._gap); return { label: s, value: cs.length ? sum(cs, c => c.cet_fit_score) / cs.length : 0, max: Math.max(0, ...cs.map(c => c.cet_fit_score || 0)), n: cs.length }; });
   const understated = C.filter(c => c._gap && (c._wwPipe > 0 || c._opps > 0)).sort((a, b) => b._wwPipe - a._wwPipe);
-  const tierHex = t => t === 'Tier 1' ? HEX.green : t === 'Tier 2' ? HEX.cet : HEX.amber;
+  const oppItems = opp?.items || []; const oppTot = sum(oppItems, o => o.est_value_usd);
+  const stOpp = STATES.map(s => ({ s, n: oppItems.filter(o => o.state === s).length, v: sum(oppItems.filter(o => o.state === s), o => o.est_value_usd) })).sort((a, b) => b.v - a.v);
+  const ctOpp = stOpp.find(x => x.s === 'CT') || { n: 0, v: 0 }; const ctWw = sum(C.filter(c => c.state === 'CT'), c => c._wwPipe);
+  const gapStates = [...new Set(gaps.map(c => c.state))].join(', ');
+  const tierHex = t => t === 'Tier 1' ? HEX.green : t === 'Tier 2' ? HEX.cet : t === 'Insufficient data' ? GAP_HEX : HEX.amber;
   el.innerHTML = wrap(ui.pageHead({
     title: 'Territory fit: 67 New England counties',
-    sub: `<b>So what:</b> demand is concentrated in eastern MA. ${esc(t1.map(c => c.county_name + ' ' + c.state).join(', '))} is the only Tier-1 county, and ${esc(t2.map(c => c.county_name).join(', '))} are Tier 2, all within about an hour of Worcester or Taunton. The legacy model has no establishment data for ${gaps.length} counties (all of CT), so it understates Horton's CT home market; the ${fmt.money(sum(understated, c => c._wwPipe))} of CT wastewater pipeline shows the real demand.`,
-    chips: `${fmt.chip(`${t1.length} Tier 1`, 'var(--green)')}${fmt.chip(`${t2.length} Tier 2`, 'var(--accent)')}${fmt.chip(`${C.length - t1.length - t2.length} Tier 3`, 'var(--amber)')}${fmt.chip(`${gaps.length} with data gaps`, 'var(--red)')}`,
+    sub: `<b>So what:</b> among the ${scored.length} scored counties, demand concentrates in eastern MA: ${esc(t1.map(c => c.county_name + ' ' + c.state).join(', '))} is the only Tier-1 county, and ${esc(t2.map(c => c.county_name).join(', '))} are Tier 2, all within about an hour of Worcester or Taunton. <b>${gaps.length} ${esc(gapStates)} counties are not scored</b>: the legacy pull has no population, establishment or permit inputs for them, so they show as insufficient data rather than Tier 3. That is Horton's home market, and it holds <b>${fmt.money(ctOpp.v)}</b> of sourced opportunity value (${ctOpp.n} items${oppTot ? `, ${Math.round(ctOpp.v / oppTot * 100)}% of the est. total` : ''}${stOpp[0]?.s === 'CT' ? ', the largest of any state' : ''}) plus ${fmt.money(ctWw)} of WWTP pipeline (est.).`,
+    chips: `${fmt.chip(`${t1.length} Tier 1`, 'var(--green)')}${fmt.chip(`${t2.length} Tier 2`, 'var(--accent)')}${fmt.chip(`${t3.length} Tier 3`, 'var(--amber)')}${fmt.chip(`${gaps.length} insufficient data (${gapStates})`, GAP_HEX)}`,
   }) +
   ui.kpis([
-    { label: 'Counties scored', value: fmt.num(C.length), sub: '6 states · New England only', color: COLOR },
+    { label: 'Counties scored', value: `${fmt.num(scored.length)} / ${fmt.num(C.length)}`, sub: `6 states · ${gaps.length} unscored (data gap)`, color: COLOR },
     { label: 'Tier-1 / Tier-2', value: `${t1.length} / ${t2.length}`, sub: esc([...t1, ...t2].map(c => c.county_name).join(' · ')), color: HEX.green },
-    { label: 'Top fit score', value: fmt.num(Math.max(...C.map(c => c.cet_fit_score || 0)), 1), sub: esc(`${C.slice().sort((a, b) => b.cet_fit_score - a.cet_fit_score)[0]?.county_name || ''} (index, 0–100)`), color: HEX.cet },
+    { label: 'Top fit score', value: fmt.num(Math.max(...scored.map(c => c.cet_fit_score || 0)), 1), sub: esc(`${scored.slice().sort((a, b) => b.cet_fit_score - a.cet_fit_score)[0]?.county_name || ''} (index, 0–100)`), color: HEX.cet },
     { label: 'Establishments (scored)', value: fmt.compact(sum(C, c => c.total_establishments)), sub: `${fmt.compact(sum(C, c => c.construction_establishments))} construction`, color: HEX.purple },
     { label: 'Counties w/ sourced opps', value: fmt.num(C.filter(c => c._opps).length), sub: `${fmt.num(C.filter(c => c._wwtp).length)} with WWTP accounts`, color: HEX.cyan },
-    { label: 'Data gaps', value: fmt.num(gaps.length), sub: 'CT: no CBP / permit inputs in legacy pull', color: HEX.red },
+    { label: `${gapStates || 'CT'} · insufficient data`, value: fmt.num(gaps.length), sub: `${fmt.money(ctOpp.v)} sourced opps + ${fmt.money(ctWw)} WWTP pipeline (est.)`, color: GAP_HEX },
   ]) +
   `<div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'County fit map', sub: 'Colour = tier · size = establishments · CT centroids approximated', body: `<div class="map tall" id="tr-map"></div>`, flush: true, foot: ui.source(SRC.counties[0], null, 'legacy 2026') })}
+    ${ui.panel({ title: 'County fit map', sub: 'Colour = tier (grey = insufficient data) · size = establishments · CT centroids approximated', body: `<div class="map tall" id="tr-map"></div>`, flush: true, foot: ui.source(SRC.counties[0], null, 'legacy 2026') })}
     <div class="col gap-12">
-      ${ui.panel({ title: 'Average fit by state', sub: 'Mean county fit index (bar) · max in label', body: charts.bar(byState.map(s => ({ label: `${s.label} (${fmt.num(s.max, 0)})`, value: s.value, color: s.label === 'CT' ? HEX.cyan : HEX.cet })), { h: 170, fmt: v => fmt.num(v, 0) }), foot: ui.source(SRC.counties[0]) })}
-      ${ui.panel({ title: 'How the score works', body: ui.note(`<b>CET fit index (0–100, legacy model).</b> Counties are scored on commercial establishment density, healthcare and manufacturing establishment counts, 90-day commercial permit volume and value, a data-center proxy score and an EV-infrastructure score, then indexed to the top county (Middlesex MA ≈ 98.5). Tiers: Tier 1 ≥ 60, Tier 2 50–60, Tier 3 below 50. Weights were not documented in the legacy tool, so treat scores as relative. <b>CT counties have zero establishment and permit inputs</b> (a data gap, not a lack of demand) and score on the DC/EV proxies only. Read them together with the WWTP and opportunity columns.`, 'warn') + `<div class="legend-inline"><span><i style="background:${HEX.green}"></i>Tier 1</span><span><i style="background:${HEX.cet}"></i>Tier 2</span><span><i style="background:${HEX.amber}"></i>Tier 3</span></div>` })}
+      ${ui.panel({ title: 'Average fit by state', sub: 'Mean fit index of scored counties (bar) · max in label', body: charts.bar(byState.map(s => ({ label: s.n ? `${s.label} (${fmt.num(s.max, 0)})` : `${s.label} (n/a)`, value: s.value, color: s.n ? HEX.cet : GAP_HEX })), { h: 170, fmt: v => v ? fmt.num(v, 0) : 'n/a' }), foot: ui.source(SRC.counties[0]) })}
+      ${ui.panel({ title: 'How the score works', body: ui.note(`<b>CET fit index (0–100, legacy model).</b> Counties are scored on commercial establishment density, healthcare and manufacturing establishment counts, 90-day commercial permit volume and value, a data-center proxy score and an EV-infrastructure score, then indexed to the top county (Middlesex MA ≈ 98.5). Tiers: Tier 1 ≥ 60, Tier 2 50–60, Tier 3 below 50. Weights were not documented in the legacy tool, so treat scores as relative. <b>CT counties have no population, establishment or permit inputs</b> (a data gap, not a lack of demand). Their legacy scores (4.8–18.1) come from the data-center and EV proxies alone, so they are shown as <b>Insufficient data</b>, excluded from the tier counts and ranks, and should be read through the WWTP and opportunity columns until ACS / CBP inputs are backfilled (2022 CT planning-region crosswalk).`, 'warn') + `<div class="legend-inline"><span><i style="background:${HEX.green}"></i>Tier 1</span><span><i style="background:${HEX.cet}"></i>Tier 2</span><span><i style="background:${HEX.amber}"></i>Tier 3</span><span><i style="background:${GAP_HEX}"></i>Insufficient data</span></div>` })}
     </div>
   </div>
   <div class="mt-12" id="tr-f"></div><div id="tr-table"></div>
   <div class="mt-12">${ui.panel({ title: 'Action list', sub: 'Where to add crews, sellers and add-ons', accent: true, body: actionsList([
     `<b>Defend and deepen ${esc(t1[0]?.county_name || 'Middlesex')} ${esc(t1[0]?.state || 'MA')}.</b> It is the highest-fit county (${esc(fmt.num(t1[0]?.cet_fit_score, 1))}), with ${fmt.num(t1[0]?.commercial_permits_90d_proxy)} commercial permits and $${fmt.num(t1[0]?.permit_total_value_90d_m, 1)}M of permitted value in 90 days. Assign a dedicated estimator for lab, healthcare and data-center electrical work.`,
     `<b>Tier-2 ring (${esc(t2.map(c => c.county_name).join(', '))}).</b> All are within an hour of Worcester or Taunton. Staff them from existing offices before opening any new branch.`,
-    `<b>Re-score Connecticut.</b> Load CBP establishment and permit data for the ${gaps.length} CT counties. ${esc(understated.slice(0, 3).map(c => `${c.county_name} (${fmt.money(c._wwPipe)} WWTP pipeline)`).join(', '))} are underweighted even though they are Horton's home market.`,
+    `<b>Score Connecticut.</b> Backfill ACS population and CBP establishment / permit inputs for the ${gaps.length} CT counties (via the 2022 planning-region-to-county crosswalk) and re-run the tiers. Until then, plan CT from Horton's pipeline: ${esc(understated.slice(0, 3).map(c => `${c.county_name} (${fmt.money(c._wwPipe)} WWTP pipeline)`).join(', '))}.`,
     `<b>Northern New England through programs, not branches.</b> ME, NH and VT are Tier 3 (rural). Work them through CWSRF-funded pump stations and NEVI / efficiency programs and mobilize crews per project.`,
   ], esc) })}</div>`);
 
   const map = maps.create(el.querySelector('#tr-map'), { center: [43.2, -71.0], zoom: 7 });
-  maps.points(map, C.filter(c => c.lat != null), { color: c => tierHex(c.cet_fit_tier), radius: c => Math.max(5, Math.min(22, 4 + Math.sqrt(c.total_establishments || 0) / 10)), cluster: false, opacity: .6, onClick: c => openCounty(c), popup: c => `<b>${esc(c.county_name)} County, ${esc(c.state)}</b><br>Fit ${esc(c.cet_fit_score)} · ${esc(c.cet_fit_tier)} · rank ${esc(c.rank)}<br>${fmt.num(c.total_establishments)} establishments${c._fb ? '<br><span class="muted">Centroid approximated</span>' : ''}` });
+  maps.points(map, C.filter(c => c.lat != null), { color: c => tierHex(c._tier), radius: c => c._gap ? 9 : Math.max(5, Math.min(22, 4 + Math.sqrt(c.total_establishments || 0) / 10)), cluster: false, opacity: .6, onClick: c => openCounty(c), popup: c => `<b>${esc(c.county_name)} County, ${esc(c.state)}</b><br>${c._gap ? `Insufficient data (not scored) · ${fmt.money(c._wwPipe)} WWTP pipeline · ${c._opps} sourced opps` : `Fit ${esc(c.cet_fit_score)} · ${esc(c.cet_fit_tier)} · rank ${esc(c._rank)}<br>${fmt.num(c.total_establishments)} establishments`}${c._fb ? '<br><span class="muted">Centroid approximated</span>' : ''}` });
   addNodes(ctx, map, hortonNode(filings));
-  maps.legend(map, [{ color: HEX.green, label: 'Tier 1' }, { color: HEX.cet, label: 'Tier 2' }, { color: HEX.amber, label: 'Tier 3' }], 'CET fit tier');
+  maps.legend(map, [{ color: HEX.green, label: 'Tier 1' }, { color: HEX.cet, label: 'Tier 2' }, { color: HEX.amber, label: 'Tier 3' }, { color: GAP_HEX, label: 'Insufficient data (CT)' }], 'CET fit tier');
   fitLater(map, NE_BOUNDS);
   function openCounty(c) {
-    inspector.open({ title: `${esc(c.county_name)} County, ${esc(c.state)}`, sub: `CET fit ${esc(c.cet_fit_score)} · ${esc(c.cet_fit_tier)} · rank ${esc(c.rank)} of ${C.length}`, color: tierHex(c.cet_fit_tier), sections: [
-      { label: 'Fit inputs', html: ui.kv({ Population: fmt.num(c.population), Households: fmt.num(c.households), 'Median HH income': c.median_household_income ? fmt.moneyFull(c.median_household_income) : null, Establishments: fmt.num(c.total_establishments), Construction: fmt.num(c.construction_establishments), Manufacturing: fmt.num(c.manufacturing_establishments), Healthcare: fmt.num(c.healthcare_establishments), 'Commercial permits (90d)': fmt.num(c.commercial_permits_90d_proxy), 'Permit value (90d)': `$${fmt.num(c.permit_total_value_90d_m, 1)}M`, 'Data-center proxy': fmt.num(c.data_center_proxy_score), 'EV infrastructure': fmt.num(c.ev_infrastructure_score), FIPS: esc(c.fips) }) + (c._gap ? ui.note('Legacy pull has no establishment/permit inputs for this county — score understated.', 'warn') : '') },
+    inspector.open({ title: `${esc(c.county_name)} County, ${esc(c.state)}`, sub: c._gap ? `Insufficient data: not scored (partial legacy score ${esc(c.cet_fit_score)} from DC/EV proxies only)` : `CET fit ${esc(c.cet_fit_score)} · ${esc(c.cet_fit_tier)} · rank ${esc(c._rank)} of ${scored.length} scored`, color: tierHex(c._tier), sections: [
+      { label: 'Fit inputs', html: ui.kv({ Population: fmt.num(c.population), Households: fmt.num(c.households), 'Median HH income': c.median_household_income ? fmt.moneyFull(c.median_household_income) : null, Establishments: fmt.num(c.total_establishments), Construction: fmt.num(c.construction_establishments), Manufacturing: fmt.num(c.manufacturing_establishments), Healthcare: fmt.num(c.healthcare_establishments), 'Commercial permits (90d)': fmt.num(c.commercial_permits_90d_proxy), 'Permit value (90d)': `$${fmt.num(c.permit_total_value_90d_m, 1)}M`, 'Data-center proxy': fmt.num(c.data_center_proxy_score), 'EV infrastructure': fmt.num(c.ev_infrastructure_score), FIPS: esc(c.fips) }) + (c._gap ? ui.note('The legacy pull has no population, establishment or permit inputs for this county, so it is not tiered. Use the WWTP and opportunity sections below as the demand read.', 'warn') : '') },
       { label: 'Fit drivers', html: `<div class="row wrap gap-4">${(c.fit_drivers || []).map(d => fmt.chip(d, COLOR)).join('')}</div>${c.notes ? `<div class="small text-2 mt-8">${esc(c.notes)}</div>` : ''}` },
       { label: `Sourced opportunities (${c._opps})`, html: c._opps ? `<div class="m-cet"><div class="mini-list">${c._oppList.slice(0, 6).map(o => `<a class="it" href="#/cet/opportunities?id=${encodeURIComponent(o.id)}" style="color:inherit;text-decoration:none"><div class="grow"><div class="t ellipsis">${esc(o.title)}</div><div class="s">${esc(o.type)} · ${esc(o.stage)}</div></div><div class="r">${fmt.money(o.est_value_usd)}</div></a>`).join('')}</div></div>` : '<span class="dim small">None in current research</span>' },
       { label: `WWTP accounts (${c._wwtp})`, html: c._wwtp ? `<div class="small text-2">${fmt.num(c._wwFunded)} funded · ${fmt.money(c._wwPipe)} pipeline (est.)</div><div class="m-cet"><div class="mini-list">${c._wwList.slice().sort((a, b) => (b.horton_fit || 0) - (a.horton_fit || 0)).slice(0, 5).map(w => `<a class="it" href="#/cet/wastewater?id=${encodeURIComponent(w.id)}" style="color:inherit;text-decoration:none"><div class="grow"><div class="t ellipsis">${esc(w.facility_name)}</div><div class="s">${esc(w.town)} · ${fmt.num(w.design_flow_mgd, 1)} MGD</div></div><div class="r">${esc(w.horton_fit)}</div></a>`).join('')}</div></div>` : '<span class="dim small">No WWTP accounts (CT/MA/RI only)</span>' },
-      { label: 'Next action', html: `<div class="small text-2">${esc(c.cet_fit_tier === 'Tier 1' ? 'Dedicated estimator + key-account seller; target lab, healthcare and data-center electrical packages; track permits weekly.' : c.cet_fit_tier === 'Tier 2' ? 'Cover from the nearest CET office; build a GC relationship list and bid every electrical package over $250k.' : c._gap && c._wwPipe ? 'Horton-led: work funded WWTP and pump-station projects first; re-score the county once CBP data is loaded.' : 'Program-led coverage: pursue SRF-funded municipal and NEVI / efficiency program work; mobilize crews per project.')}</div>` },
+      { label: 'Next action', html: `<div class="small text-2">${esc(c._gap ? 'Horton-led: work funded WWTP and pump-station projects and open CT bids first; backfill ACS / CBP inputs and re-score the county.' : c.cet_fit_tier === 'Tier 1' ? 'Dedicated estimator + key-account seller; target lab, healthcare and data-center electrical packages; track permits weekly.' : c.cet_fit_tier === 'Tier 2' ? 'Cover from the nearest CET office; build a GC relationship list and bid every electrical package over $250k.' : c._gap && c._wwPipe ? 'Horton-led: work funded WWTP and pump-station projects first; re-score the county once CBP data is loaded.' : 'Program-led coverage: pursue SRF-funded municipal and NEVI / efficiency program work; mobilize crews per project.')}</div>` },
       { label: 'Source', html: `<div class="small dim">${esc(SRC.counties[0])}; opportunity & WWTP joins by county name.</div>` },
     ], actions: [{ id: 'tr-zoom', label: 'Zoom map', onClick: () => c.lat != null && map.setView([c.lat, c.lon], 9) }] });
   }
   const columns = [
-    { key: 'rank', label: '#', num: true, width: '44px' },
-    { key: 'county_name', label: 'County', fmt: (v, r) => `<b>${esc(v)}</b>, ${esc(r.state)}${r._gap ? ' ' + fmt.chip('data gap', 'var(--red)') : ''}` },
-    { key: 'cet_fit_score', label: 'Fit', num: true, fmt: v => fmt.score(v) },
-    { key: 'cet_fit_tier', label: 'Tier', fmt: v => fmt.tier(v) },
+    { key: '_rank', label: '#', num: true, width: '44px', fmt: v => v != null ? fmt.num(v) : '<span class="dim">—</span>' },
+    { key: 'county_name', label: 'County', fmt: (v, r) => `<b>${esc(v)}</b>, ${esc(r.state)}` },
+    { key: '_score', label: 'Fit', num: true, fmt: v => v != null ? fmt.score(v) : '<span class="dim">n/a</span>' },
+    { key: '_tier', label: 'Tier', fmt: v => v === 'Insufficient data' ? fmt.chip('Insufficient data', GAP_HEX) : fmt.tier(v) },
     { key: 'total_establishments', label: 'Estab.', num: true, fmt: v => fmt.num(v) },
     { key: 'construction_establishments', label: 'Constr.', num: true, fmt: v => fmt.num(v) },
     { key: 'manufacturing_establishments', label: 'Mfg', num: true, fmt: v => fmt.num(v) },
@@ -468,8 +542,8 @@ async function territory(ctx) {
     { key: 'fit_drivers', label: 'Fit drivers', wrap: true, fmt: v => `<span class="cs">${(v || []).slice(0, 3).map(d => fmt.chip(d)).join('')}</span>` },
   ];
   let tbl;
-  const apply = st => { const q = (st.q || '').toLowerCase(); const rows = C.filter(c => (!st.state || c.state === st.state) && (!st.tier || c.cet_fit_tier === st.tier) && (!q || `${c.county_name} ${c.notes} ${(c.fit_drivers || []).join(' ')}`.toLowerCase().includes(q))); f.setCount(`${rows.length} / ${C.length}`); tbl ? tbl.update(rows) : (tbl = ui.table(el.querySelector('#tr-table'), { columns, rows, pageSize: 25, sortKey: 'cet_fit_score', exportName: 'cet_county_fit', onRow: c => { openCounty(c); if (c.lat != null) map.setView([c.lat, c.lon], 9); } })); };
-  const f = ui.filters(el.querySelector('#tr-f'), [{ key: 'q', label: 'Search county, driver…', type: 'search' }, { key: 'state', label: 'State', options: STATES }, { key: 'tier', label: 'Tier', options: ['Tier 1', 'Tier 2', 'Tier 3'] }], apply);
+  const apply = st => { const q = (st.q || '').toLowerCase(); const rows = C.filter(c => (!st.state || c.state === st.state) && (!st.tier || c._tier === st.tier) && (!q || `${c.county_name} ${c.notes} ${(c.fit_drivers || []).join(' ')}`.toLowerCase().includes(q))); f.setCount(`${rows.length} / ${C.length}`); tbl ? tbl.update(rows) : (tbl = ui.table(el.querySelector('#tr-table'), { columns, rows, pageSize: 25, sortKey: '_score', exportName: 'cet_county_fit', onRow: c => { openCounty(c); if (c.lat != null) map.setView([c.lat, c.lon], 9); } })); };
+  const f = ui.filters(el.querySelector('#tr-f'), [{ key: 'q', label: 'Search county, driver…', type: 'search' }, { key: 'state', label: 'State', options: STATES }, { key: 'tier', label: 'Tier', options: ['Tier 1', 'Tier 2', 'Tier 3', 'Insufficient data'] }], apply);
   apply(f.state);
   if (params.fips) { const c = C.find(x => x.fips === params.fips); if (c) { openCounty(c); if (c.lat != null) setTimeout(() => map.getContainer().isConnected && map.setView([c.lat, c.lon], 9), 200); } }
   indexEntities(ctx, { counties });
@@ -482,13 +556,18 @@ const SEGS = [{ value: 'ci', label: 'Commercial & industrial' }, { value: 'res',
 const USE_HEX = { commercial: HEX.cet, industrial: HEX.purple, mixed: HEX.cyan, residential: HEX.amber, land: HEX.green, other: HEX.muted };
 const ENTITY_RE = /\b(LLC|L\.L\.C|INC|CORP|CORPORATION|CO|COMPANY|TRUST|TRUSTEE|TR|LP|LLP|LTD|REALTY|PROPERTIES|PROPERTY|HOLDINGS|PARTNERS|ASSOC|ASSOCIATES|BANK|DEVELOPMENT|GROUP|FUND|VENTURES|ENTERPRISES|CITY|TOWN|AUTHORITY|UNIVERSITY|CHURCH)\b/i;
 let _xfer = null;
+const INDIV = 'Individual (name withheld)';
 async function loadTransfers(data) {
   if (_xfer) return _xfer;
   // transfer files carry the non-residential rows; the home-sale (residential) rows live in separate cet_home_sales_* files
   const [ma, ct, hma, hct] = await Promise.all([safe(data.load('sales/cet_transfers_ma')), safe(data.load('sales/cet_transfers_ct_ri')), safe(data.load('sales/cet_home_sales_ma')), safe(data.load('sales/cet_home_sales_ct_ri'))]);
   const sets = [ma, ct, hma, hct].filter(s => s && Array.isArray(s.items));
   const rows = [];
-  for (const s of sets) for (const r of s.items) { const t = Date.parse(r.sale_date); if (isNaN(t)) continue; r._t = t; r._seg = SEG_OF[r.use_type] || 'other'; r._entity = ENTITY_RE.test(r.buyer || ''); rows.push(r); }
+  for (const s of sets) for (const r of s.items) { const t = Date.parse(r.sale_date); if (isNaN(t)) continue; r._t = t; r._seg = SEG_OF[r.use_type] || 'other'; r._entity = ENTITY_RE.test(r.buyer || '');
+    // privacy: individuals' names are not retained in the view, inspector or exports (consistent with BPI / FH)
+    if (r.buyer && !r._entity) { r._indiv = true; r.buyer = INDIV; }
+    if (r.seller && !ENTITY_RE.test(r.seller)) r.seller = INDIV;
+    rows.push(r); }
   rows.sort((a, b) => b._t - a._t);
   const out = { ma, ct, hma, hct, rows, loaded: [ma, ct].filter(s => s && Array.isArray(s.items)).length };
   if (sets.length) _xfer = out;
@@ -551,11 +630,15 @@ async function transfers(ctx) {
   }
   const homeTotal = homeFromMeta ? sum(homeByCounty, h => h.n) : resAll.length;
   const homeEst = homeByCounty.some(h => /^est\./.test(h.basis || ''));
+  const ciAll = R.filter(r => r._seg === 'ci'), ciEnt = ciAll.filter(r => r._entity).length;
+  const latestT = Math.max(0, ...R.filter(r => r._seg !== 'res').map(r => r._t));
+  const latestLbl = latestT ? new Date(latestT).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }) : '—';
+  const lagD = latestT ? Math.round((Date.now() - latestT) / DAY) : null;
   let seg = params.seg || 'ci', town = null, rollBy = 'n', filtered = [], layer = null, tbl, ttbl;
   el.innerHTML = wrap(ui.pageHead({
     title: 'Property transfers: new owner = retrofit trigger',
-    sub: `<b>So what:</b> every commercial or industrial sale in CET's MA, CT and RI counties brings a new owner who will set a capital plan, the best moment to sell lighting and controls retrofits, service upgrades, EV charging and solar. This view ranks ${fmt.num(R.filter(r => r._seg === 'ci').length)} C&I transfers into an outreach list. Per your request it also covers <b>${fmt.num(homeTotal)} home sales</b> in the same counties, summarized by county below${homeFromMeta ? ' (counts from dataset metadata; residential rows are not in the published files)' : ''}.`,
-    chips: `${fmt.chip(`${fmt.num(R.length)} recorded transfers`, COLOR)}${fmt.chip(`${fmt.num(new Set(R.map(r => r.county + r.state)).size)} counties`, 'var(--accent)')}${fmt.chip('MA · CT · RI', 'var(--dim)')}${X.loaded < 2 ? fmt.chip('one dataset missing', 'var(--red)') : ''}`,
+    sub: `<b>So what:</b> every commercial or industrial sale in CET's MA, CT and RI counties brings a new owner who will set a capital plan within 6–12 months, the best moment to sell lighting and controls retrofits, service upgrades, EV charging and solar. ${fmt.num(ciAll.length)} C&I transfers are on file; the outreach list defaults to the <b>${fmt.num(ciEnt)} bought by entities</b>, and individual owners' names are withheld. The view also summarizes <b>${fmt.num(homeTotal)} home sales</b> in the same counties as a residential demand signal${homeFromMeta ? ' (counts from dataset metadata; residential rows are not in the published files)' : ''}. Records run through <b>${esc(latestLbl)}</b>, so the latest months are still being recorded.`,
+    chips: `${fmt.chip(`Data through ${latestLbl}${lagD != null ? ` · ${lagD}d old` : ''}`, lagD != null && lagD > 60 ? 'var(--amber)' : 'var(--green)')}${fmt.chip(`${fmt.num(R.length)} recorded transfers`, COLOR)}${fmt.chip(`${fmt.num(new Set(R.map(r => r.county + r.state)).size)} counties`, 'var(--accent)')}${fmt.chip('MA · CT · RI', 'var(--dim)')}${X.loaded < 2 ? fmt.chip('one dataset missing', 'var(--red)') : ''}`,
     actions: `<button class="btn primary" id="tx-out">⇩ New-owner outreach list</button>`,
   }) +
   `<div class="seg-row"><div id="tx-seg"></div><span id="tx-town"></span></div>
@@ -569,7 +652,7 @@ async function transfers(ctx) {
     ${ui.panel({ title: 'Home sales by county', sub: homeFromMeta ? 'Residential sale counts for every county covered for CET, from the dataset metadata' : 'Residential sales over $1K in every county covered for CET (all months in the files)', body: `${homeFromMeta ? `<div style="padding:10px 12px 0">${ui.note(`Residential rows are not in the published transfer files (compacted for page size), so this table shows the <b>record counts the source pull reported</b>.${homeEst ? ' MA counts are exact per county; CT/RI counties are <b>est.</b>: the CT/RI residential total is allocated by each county&#39;s share of the rows removed from the file (residential + land under $500K).' : ''} Medians and $ volume need the full residential extract.`, 'warn')}</div>` : ''}<div id="tx-home"></div>`, flush: true, foot: ui.source('MassGIS L3 (last sale), CT OPM / CAMA, Cranston RI parcels · sales/cet_home_sales_ma, cet_home_sales_ct_ri', null, X.hct?.meta?.generated || X.hma?.meta?.generated || '2026-09-24') })}
     ${ui.panel({ title: 'Monthly volume in filter', sub: 'Transfers per month over the Months-back window (latest months still being recorded)', body: `<div id="tx-month"></div><div class="bar-caption">The source windows differ: MA non-residential from Sept 2024, MA residential from Sept 2025, CT OPM through Sept 2025 then CT CAMA (last sale only). Month-to-month steps reflect those windows, not the market.</div>` })}
   </div>
-  <h3 class="mt-16 mb-8">Transfers in filter · click a row for the retrofit play</h3><div id="tx-table"></div>
+  <h3 class="mt-16 mb-8">Transfers in filter · click a row for the retrofit play <span class="dim small" style="font-weight:400">· records through ${esc(latestLbl)} · individual names withheld</span></h3><div id="tx-table"></div>
   <div class="mt-12">${ui.panel({ title: 'Coverage & caveats', sub: 'Per-county source windows, plus what could not be pulled', body: `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>County</th><th>Source</th><th class="num">From</th><th class="num">To</th><th class="num">Records</th></tr></thead><tbody>${coverage.map(c => `<tr><td>${esc(c.county)}, ${esc(c.state)}</td><td class="wrap small">${esc(c.source || '')}</td><td class="num">${esc(c.date_from || '')}</td><td class="num">${esc(c.date_to || '')}</td><td class="num">${fmt.num(c.count)}</td></tr>`).join('')}</tbody></table></div><ul class="prose small mt-12">${metas.flatMap(m => (m.caveats || []).slice(0, 3)).map(c => `<li>${esc(c)}</li>`).join('')}</ul><div class="small dim mt-8">Not pulled: ${esc(metas.flatMap(m => (m.failed_sources || []).map(f => f.source)).join(' · ') || '—')}</div>` })}</div>`);
 
   const segOpts = homeFromMeta ? SEGS.filter(x => x.value !== 'res') : SEGS; if (!segOpts.some(x => x.value === seg)) seg = 'ci';
@@ -603,15 +686,17 @@ async function transfers(ctx) {
   const cutoff = m => m ? Date.now() - Number(m) * 30.44 * DAY : 0;
   function apply(st) {
     const cut = cutoff(st.months), minP = Number(st.minp || 0), q = (st.q || '').toLowerCase();
+    const buyerOk = r => r._seg === 'res' || !st.buyer || (st.buyer === 'ent' ? r._entity : !r._indiv);
     const base = r => (!st.state || r.state === st.state) && (!st.county || `${r.county}|${r.state}` === st.county) && r._t >= cut && (r.price || 0) >= minP && (!town || (r.muni === town.muni && r.state === town.state));
-    filtered = R.filter(r => base(r) && (seg === 'all' || r._seg === seg) && (!st.use || r.use_type === st.use) && (!st.ent || r._entity) && (!q || `${r.addr} ${r.buyer} ${r.muni}`.toLowerCase().includes(q)));
+    filtered = R.filter(r => base(r) && (seg === 'all' || r._seg === seg) && (!st.use || r.use_type === st.use) && buyerOk(r) && (!q || `${r.addr} ${r.buyer} ${r.muni}`.toLowerCase().includes(q)));
+    const hiddenBuyer = st.buyer && seg !== 'res' ? R.filter(r => base(r) && (seg === 'all' || r._seg === seg) && (!st.use || r.use_type === st.use) && !buyerOk(r) && (!q || `${r.addr} ${r.buyer} ${r.muni}`.toLowerCase().includes(q))).length : 0;
     const homes = R.filter(r => base(r) && r._seg === 'res' && (r.price || 0) > 1000);
     f.setCount(`${fmt.num(filtered.length)} / ${fmt.num(R.length)}`);
     const vol = sum(filtered, r => r.price), ent = filtered.filter(r => r._entity).length, old = filtered.filter(r => r.year_built && r.year_built < 1990).length;
     const towns = groupBy(filtered, r => `${r.muni}|${r.state}`); const topTown = [...towns].sort((a, b) => b[1].length - a[1].length)[0];
     const segLabel = SEGS.find(s => s.value === seg)?.label || 'All';
     el.querySelector('#tx-kpis').innerHTML = ui.kpis([
-      { label: `${segLabel}`, value: fmt.num(filtered.length), sub: `${fmt.num(ent)} to entity buyers (${filtered.length ? Math.round(ent / filtered.length * 100) : 0}%)`, color: COLOR },
+      { label: `${segLabel}`, value: fmt.num(filtered.length), sub: hiddenBuyer ? `${fmt.num(hiddenBuyer)} hidden by Buyer filter (individuals / unnamed CT OPM records)` : `${fmt.num(ent)} to entity buyers (${filtered.length ? Math.round(ent / filtered.length * 100) : 0}%)`, color: COLOR },
       { label: 'Transfer $ volume', value: fmt.money(vol), sub: `median ${fmt.money(median(filtered.map(r => r.price)))}`, color: HEX.green },
       { label: 'Pre-1990 buildings', value: fmt.num(old), sub: 'older electrical, likely retrofit need', color: HEX.amber },
       homeFromMeta ? { label: 'Home sales (all CET counties)', value: fmt.num(homeTotal), sub: 'count from dataset metadata', color: HEX.orange } : { label: 'Home sales (same area/window)', value: fmt.num(homes.length), sub: `median ${fmt.money(median(homes.map(r => r.price)))}`, color: HEX.orange },
@@ -647,7 +732,7 @@ async function transfers(ctx) {
     { key: 'use', label: 'Use type', options: [...new Set(R.map(r => r.use_type))].filter(Boolean).sort() },
     { key: 'minp', label: 'Min price', value: '1001', options: [{ value: '1001', label: '> $1K (excl. nominal)' }, { value: '100000', label: '≥ $100K' }, { value: '500000', label: '≥ $500K' }, { value: '1000000', label: '≥ $1M' }, { value: '5000000', label: '≥ $5M' }] },
     { key: 'months', label: 'Months back', value: '12', options: [{ value: '3', label: '3' }, { value: '6', label: '6' }, { value: '12', label: '12' }, { value: '24', label: '24' }] },
-    { key: 'ent', label: 'Entity buyers only', type: 'toggle', value: false },
+    { key: 'buyer', label: 'Buyer', value: 'ent', options: [{ value: 'ent', label: 'Entity buyers only' }, { value: 'noind', label: 'Entities + unnamed records' }] },
   ], apply);
   apply(f.state);
   el.querySelector('#tx-out').onclick = () => {

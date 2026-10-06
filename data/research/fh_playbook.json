@@ -1,0 +1,1064 @@
+{
+ "meta": {
+  "dataset": "fh_playbook",
+  "title": "Fair Harbor: the value-creation playbook",
+  "generated": "2026-10-06",
+  "subject": "Fair Harbor Clothing PBC (Broad Sky Partners portfolio, entry Mar 2022)",
+  "thesis": "From DTC swim brand to year-round sustainable lifestyle brand: category extension, wholesale door growth, retention/membership, international; AI agents for fit/size, CX and demand planning; 3PL and returns talent/ops; capital-light financing.",
+  "method": "Built on 2026-10-06 from the portal's verified datasets (data/research/fairharbor_filings.json, bsp_firm.json bsp-fh item, timeline and fh_opportunities, rival_filings.json Chubbies items, public_comps.json apparel_dtc benchmarks, pe_landscape.json fair_harbor heatmap, serviceos_evidence.json HarborOS items) plus new web research (search and direct fetches) on vendor claims, analog brands, returns/3PL benchmarks and lending norms. data/research/pp_nationwide.json was not present, so item shape follows serviceos_evidence conventions (kind, id, source_url, retrieved, est. labels). Computed data points (markdown share, non-swim share, Chubbies channel mix and growth, B2B SKU count, ABL capacity, leverage capacity) are calculated in the build script from those datasets; the KPI roadmap and all targets are explicit analyst assumptions anchored to the filings estimate_table.",
+  "caveats": [
+   "Fair Harbor has never disclosed revenue, EBITDA or debt; the $27M revenue and 6% EBITDA baseline are midpoints of low-confidence estimates ($20-35M; 0-12%).",
+   "Vendor metrics (Bold Metrics, Gorgias, Loop, Global-e, Meta, ShipBob, Happy Returns, Metyis) are self-reported, self-selected and unaudited; treat them as upper bounds.",
+   "The McKinsey forecasting figure (20-50% fewer errors, up to 65% fewer lost sales) was confirmed via HubSpot's citation of the McKinsey article; the McKinsey page itself timed out on direct fetch.",
+   "Faherty's ~$250M figure comes from a Guy Raz newsletter describing it as a '$250 million lifestyle brand'; it is not an audited revenue number.",
+   "Door counts date from the 2022 release (~250 specialty plus Nordstrom and Saks); the current stockist list is not public, so the door baseline may be stale.",
+   "Weeks-to-deploy, ABL inputs (58% gross margin, 2.5x turns, 40% wholesale, 45-day DSO) and every kpi_target are analyst assumptions labelled est.",
+   "Middle-market leverage (3.8x) is an all-sector figure; no consumer-apparel-specific LMM leverage figure was verified.",
+   "The current lender after the Dec 2025 eCapital lien release is unknown.",
+   "Smith + Howard is used only as a template (exited Aug 2026); it is not an active platform."
+  ],
+  "item_count": 46,
+  "item_counts": {
+   "template": 9,
+   "expansion_phase": 4,
+   "growth_lever": 12,
+   "ai_agent": 9,
+   "talent_program": 6,
+   "financing": 6
+  },
+  "narrative": [
+   "Tyler, Fair Harbor is our only consumer brand and, about 4.5 years in, it is still a ~$27M business (est. range $20-35M) with low single-digit EBITDA and no add-ons.",
+   "The good news is the shift to a year-round lifestyle brand has already happened on the shelf: 64.0% of the 372 live products are non-swim, and golf, kids, collegiate and B2B custom launched in 2025-2026.",
+   "The bad news is margin: 38.5% of live variants are marked down, women's was cleared at ~70% off, and swim is the most-returned category at Shopify brands (21.6%).",
+   "So the first six months are about fixing the base (markdown discipline, fit and returns, and buying to forecast) before we pay for growth.",
+   "Chubbies is the proof case for the next step: at $122.9M it takes 51.9% of sales from wholesale and retail, that channel grew 16.3% last year, and its DTC fell 20.8% in Q2 2026.",
+   "Our plan is to take Fair Harbor from ~250 specialty doors to ~520 over 36 months through golf pro shops, campus bookstores and coastal specialty, using commissioned reps rather than new owned stores.",
+   "Retention is the cheapest growth: repeat-purchase benchmarks are 20-30%, and Klaviyo flows earn about 41% of email revenue from 5% of sends.",
+   "HarborOS, at an est. $0.3-0.7M, puts nine agents on that work (fit, CX, returns-to-exchange, demand planning, markdowns, lifecycle, paid media, cross-border and wholesale reorders); vendor claims include 60% ticket automation and 17% fewer fit returns.",
+   "International starts in month 30 as merchant-of-record DTC into Canada, the UK and Australia, following Vuori's e-commerce-first launch, because the store ships only to the US today.",
+   "We should stay capital-light: the unsold ~$6M of the 2022 equity sleeve and an ABL of roughly $3.4-4.6M cover the plan, and Solo Brands' delisting shows what term debt does to a swim brand.",
+   "The roadmap assumes revenue grows from ~$27M to ~$40M and EBITDA from ~$1.6M to ~$5.2M by month 36. That is still below Chubbies' 18% margin, and every figure is an analyst assumption, not company data.",
+   "The Smith + Howard lesson applies: buyers paid for a scaled, legible platform, so the exit story is wholesale breadth, repeat-customer economics and margin, and the logical buyers are strategics and brand owners."
+  ],
+  "kpi_roadmap": [
+   {
+    "month": 0,
+    "revenue_usd": 27000000,
+    "ebitda_usd": 1620000,
+    "ebitda_margin_pct": 6.0,
+    "headcount": 60,
+    "revenue_per_employee_usd": 450000,
+    "locations_or_accounts": 254,
+    "locations_or_accounts_basis": "wholesale doors + 2 owned stores",
+    "note": "Baseline = fairharbor_filings estimate_table point (2025 net revenue ~$27M, range $20-35M; EBITDA 0-12%, midpoint 6%); headcount 40-80 midpoint; ~250 specialty doors + Nordstrom + Saks (2022 release) + 2 owned stores. All low confidence.",
+    "label": "est. analyst assumption anchored to data/research/fairharbor_filings.json; not company guidance"
+   },
+   {
+    "month": 12,
+    "revenue_usd": 30500000,
+    "ebitda_usd": 2440000,
+    "ebitda_margin_pct": 8.0,
+    "headcount": 62,
+    "revenue_per_employee_usd": 491935,
+    "locations_or_accounts": 332,
+    "locations_or_accounts_basis": "wholesale doors + 2 owned stores",
+    "note": "est. Markdown discipline, fit/returns agents and Klaviyo flows; revenue +13% (Chubbies retail/wholesale grew 16.3% in FY2025 while its DTC grew 2.3%); ~80 net new specialty/golf/collegiate doors; no new owned stores.",
+    "label": "est. analyst assumption anchored to data/research/fairharbor_filings.json; not company guidance"
+   },
+   {
+    "month": 24,
+    "revenue_usd": 35000000,
+    "ebitda_usd": 3675000,
+    "ebitda_margin_pct": 10.5,
+    "headcount": 66,
+    "revenue_per_employee_usd": 530303,
+    "locations_or_accounts": 422,
+    "locations_or_accounts_basis": "wholesale doors + 2 owned stores",
+    "note": "est. Year-round assortment, B2B custom and collegiate licensing scale; wholesale ~45-50% of sales (Chubbies 51.9%); margin still below Chubbies' 18.2% segment EBITDA.",
+    "label": "est. analyst assumption anchored to data/research/fairharbor_filings.json; not company guidance"
+   },
+   {
+    "month": 36,
+    "revenue_usd": 40000000,
+    "ebitda_usd": 5200000,
+    "ebitda_margin_pct": 13.0,
+    "headcount": 70,
+    "revenue_per_employee_usd": 571429,
+    "locations_or_accounts": 522,
+    "locations_or_accounts_basis": "wholesale doors + 2 owned stores",
+    "note": "est. Canada/UK/Australia DTC live via a merchant-of-record partner (~5% of sales); EBITDA margin 13% vs apparel/DTC comp median 5.7% and LULU 24.4%; revenue CAGR 14.0% over 36 months.",
+    "label": "est. analyst assumption anchored to data/research/fairharbor_filings.json; not company guidance"
+   }
+  ],
+  "kpi_roadmap_label": "est. analyst assumptions anchored to fairharbor_filings estimate_table; not forecasts or company guidance",
+  "baseline_anchors": {
+   "revenue_2025_est_usd": [
+    20000000,
+    35000000
+   ],
+   "revenue_point_usd": 27000000,
+   "ebitda_margin_est_pct": [
+    0,
+    12
+   ],
+   "headcount_est": [
+    40,
+    80
+   ],
+   "entry_ev_est_usd": [
+    40000000,
+    90000000
+   ],
+   "source": "data/research/fairharbor_filings.json estimate_table"
+  },
+  "consumers": [
+   "redesigns/* Fair Harbor playbook page",
+   "HarborOS page",
+   "portal chat (assets/chat.js)"
+  ]
+ },
+ "items": [
+  {
+   "id": "tpl-sh-1",
+   "kind": "template",
+   "entity": "Smith + Howard",
+   "move": "Platform entry: founder-led regional leader, first institutional capital",
+   "what_they_did": "Broad Sky made a strategic platform investment in Smith + Howard (Atlanta, ~100 professionals, one office) in Nov 2022.",
+   "fair_harbor_translation": "Fair Harbor is the same set-up in consumer: a founder-led brand taking its first institutional capital ($30.7M Form D, Mar 2022). The S+H lesson is that the entry thesis named the adjacent services up front; Fair Harbor's equivalent is a named category-and-channel map (year-round apparel, golf, collegiate, B2B, international).",
+   "key_figures": {
+    "entry_professionals": 100,
+    "entry_offices": 1,
+    "entry_date": "2022-11-15"
+   },
+   "confidence": "high",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "tpl-sh-2",
+   "kind": "template",
+   "entity": "Smith + Howard",
+   "move": "First adjacent-market step: merge with a like-minded firm next door",
+   "what_they_did": "Merged with Market Street Partners (Chattanooga) in Aug 2023, its first move beyond Atlanta.",
+   "fair_harbor_translation": "For Fair Harbor the 'next city' is the next door type: green-grass golf pro shops via FootJoy (18 collab SKUs) and sporting-goods doors like Scheels, before any new owned store.",
+   "key_figures": {
+    "date": "2023-08-15",
+    "market": "Chattanooga, TN"
+   },
+   "confidence": "high",
+   "source_url": "https://www.smith-howard.com/smith-howard-and-market-street-partners-join-forces/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "tpl-sh-3",
+   "kind": "template",
+   "entity": "Smith + Howard",
+   "move": "Capability add-ons that widen the menu sold to existing clients",
+   "what_they_did": "Added benefit-plan audit (JMM CPAs, Chicago, Jan 2024) and executive search (VIP Search/VIP Solutions, Dallas, Apr 2024).",
+   "fair_harbor_translation": "Category extension is Fair Harbor's version: 372 live products, 64.0% of them non-swim, plus kids (51) and B2B custom (88 SKUs). Every new category should be sold first to the existing customer file and the existing door list.",
+   "key_figures": {
+    "add_ons": [
+     "JMM CPAs (2024-01-31)",
+     "VIP Search / VIP Solutions (2024-04-30)"
+    ]
+   },
+   "confidence": "high",
+   "source_url": "https://www.smith-howard.com/smith-howard-acquires-vip-search-and-vip-solutions-businesses/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "tpl-sh-4",
+   "kind": "template",
+   "entity": "Smith + Howard",
+   "move": "Density in a chosen region, deal after deal",
+   "what_they_did": "Fahrenheit Advisors (Richmond, Dec 2024), Smith Kesler (Carolinas, Jan 2025), Horton Lee & Burnett (Birmingham, Sep 2025), Bauknight Pietras & Stormer (SC, Jan 2026).",
+   "fair_harbor_translation": "Fair Harbor should build door density in its proven coastal and golf geographies (Northeast, Florida, the Carolinas) before spreading thin, so reps, trunk shows and co-op marketing are shared across doors.",
+   "key_figures": {
+    "add_ons_2024_2026": 4,
+    "region": "US Southeast"
+   },
+   "confidence": "high",
+   "source_url": "https://www.smith-howard.com/smith-howard-expands-southeastern-u-s-presence-with-acquisition-of-horton-lee-burnett/",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "tpl-sh-5",
+   "kind": "template",
+   "entity": "Smith + Howard",
+   "move": "Technology, AI and offshore delivery as the margin engine",
+   "what_they_did": "Per the exit release, Broad Sky invested in leadership, technology, AI-enabled capabilities and an offshore delivery centre in India; Geels Norton (cyber, Feb 2026) added a tech-heavy service line.",
+   "fair_harbor_translation": "HarborOS is the consumer equivalent: fit/size, CX, returns-to-exchange and demand-planning agents on Shopify/Klaviyo, sized at $0.3-0.7M for 2-5 points of EBITDA margin (serviceos_evidence ra-fh, est.).",
+   "key_figures": {
+    "levers": [
+     "leadership",
+     "technology",
+     "AI-enabled services",
+     "offshore delivery centre (India)"
+    ]
+   },
+   "confidence": "high",
+   "source_url": "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tpl-sh-6",
+   "kind": "template",
+   "entity": "Smith + Howard",
+   "move": "The exit: a scaled, buyer-legible platform sold to a growth investor",
+   "what_they_did": "Sold to TPG (TPG Growth), closed Aug 6 2026 after ~3.5 years: ~100 to ~800 professionals, 1 to 11 Southeast locations plus India, 9 add-ons, nearly 4x revenue.",
+   "fair_harbor_translation": "Fair Harbor is ~4.5 years into its hold with no add-ons (FH-16). The S+H template says the exit story must be a scaled platform with visible recurring earnings; for a brand that means wholesale breadth, repeat-customer economics and margin, not just top-line.",
+   "key_figures": {
+    "professionals_entry": 100,
+    "professionals_exit": 800,
+    "locations_exit": 11,
+    "add_ons": 9,
+    "revenue_multiple_of_entry": 4.0,
+    "hold_years": 3.5
+   },
+   "confidence": "high",
+   "source_url": "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tpl-an-chubbies",
+   "kind": "template",
+   "entity": "Chubbies (Solo Brands)",
+   "move": "Vertical analog 1: men's swim/lifestyle brand that grew through wholesale",
+   "what_they_did": "Chubbies reached $122.9M FY2025 sales with 51.9% from retail and wholesale (that channel +16.3% vs DTC +2.3%), a 18.2% segment EBITDA margin and 11 stores; Solo Brands paid $129.5M in Sept 2021 funded by a $100M term loan. In Q2 2026 its DTC fell 20.8% while wholesale held.",
+   "fair_harbor_translation": "This is the clearest proof that wholesale breadth, not DTC alone, carries a men's swim brand past $100M; and that a leveraged owner (Solo was delisted in July 2026 with ~$249M debt) can damage a good brand. It is also a possible add-on or door-share opportunity if Chubbies is sold.",
+   "key_figures": {
+    "net_sales_fy2025_usd": 122943000,
+    "wholesale_retail_share_pct": 51.9,
+    "segment_ebitda_margin_pct": 18.2,
+    "acq_price_usd": 129500000,
+    "acq_term_loan_usd": 100000000,
+    "q2_2026_dtc_change_pct": -20.8,
+    "staff_2020": 90
+   },
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1870600/000187060026000044/dtc-20260630.htm",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "tpl-an-vuori",
+   "kind": "template",
+   "entity": "Vuori",
+   "move": "Vertical analog 2: DTC apparel brand that went omnichannel and international",
+   "what_they_did": "Vuori sold through Nordstrom and REI, raised $400M at a $4B valuation (SoftBank, Oct 2021) to fund ~100 US stores, and in Mar 2022 launched e-commerce in the UK, France, Germany, Ireland, Netherlands, Australia and Canada with wholesale partners (Selfridges, Cotswold Outdoor, Bever) and a UK distribution hub.",
+   "fair_harbor_translation": "International should start as localized DTC in English-speaking coastal markets with a merchant-of-record partner and a few premium wholesale partners, as Vuori did, not with owned stores.",
+   "key_figures": {
+    "international_markets_2022": 7,
+    "valuation_usd_2021": 4000000000,
+    "us_store_plan": 100
+   },
+   "confidence": "medium",
+   "source_url": "https://mr-mag.com/activewear-brand-vuori-expands-to-seven-international-markets/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tpl-an-faherty",
+   "kind": "template",
+   "entity": "Faherty Brand",
+   "move": "Vertical analog 3: beach-born lifestyle brand built on all three channels",
+   "what_they_did": "Faherty (founded 2013, beach-inspired) launched DTC, wholesale and retail almost at once and reached a ~$250M lifestyle brand with nearly 80 stores; Bloomberg reported in Nov 2023 that the family explored selling a minority stake.",
+   "fair_harbor_translation": "The closest positioning analog to Fair Harbor (coastal, year-round lifestyle). It shows the ceiling of the category, but its store-heavy route is capital-intensive; Fair Harbor should borrow the specialty-door relationships and year-round assortment, not the 80-store fleet.",
+   "key_figures": {
+    "brand_value_or_revenue_usd": 250000000,
+    "stores": 80,
+    "founded": 2013
+   },
+   "confidence": "medium",
+   "source_url": "https://guyraz.substack.com/p/why-ignoring-conventional-wisdom",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ph-1",
+   "kind": "expansion_phase",
+   "phase": 1,
+   "name": "Fix the base: markdowns, returns and inventory",
+   "months": {
+    "start": 0,
+    "end": 6
+   },
+   "geography": [
+    "United States DTC (97.2% of web traffic is US)",
+    "New York HQ (520 Broadway)",
+    "Owned stores: SoHo NYC, Palm Beach Gardens FL"
+   ],
+   "thesis": "Margin before growth. 38.5% of live variants carried markdowns in Sept 2026 and the women's line was cleared at ~70% off; swim returns run ~21.6% at Shopify brands. Fix price, fit and buys before spending on doors.",
+   "data_points": {
+    "live_products": 372,
+    "variants": 2382,
+    "variants_marked_down": 918,
+    "markdown_share_pct": 38.5,
+    "womens_clearance_discount_pct": 70,
+    "swim_return_rate_benchmark_pct": 21.6,
+    "new_products_2024_2025_2026": [
+     72,
+     149,
+     151
+    ],
+    "ebitda_margin_est_range_pct": [
+     0,
+     12
+    ],
+    "apparel_comp_median_ebitda_margin_pct": 5.7
+   },
+   "data_point_sources": [
+    "data/research/fairharbor_filings.json",
+    "data/research/bsp_firm.json (bsp-fh, fh_opportunities)",
+    "data/research/rival_filings.json",
+    "data/research/public_comps.json",
+    "data/research/serviceos_evidence.json",
+    "data/research/pe_landscape.json"
+   ],
+   "kpi_targets": {
+    "markdown_share_pct": {
+     "baseline": 38.5,
+     "target": 30.0
+    },
+    "swim_return_rate_pct": {
+     "baseline": 21.6,
+     "target": 19.5
+    },
+    "ebitda_margin_pct": {
+     "baseline": 6.0,
+     "target": 7.0
+    },
+    "harboros_spend_usd": {
+     "baseline": 0,
+     "target": [
+      300000,
+      700000
+     ]
+    }
+   },
+   "kpi_targets_label": "est. analyst assumptions, not company guidance",
+   "source_urls": [
+    "https://fairharborclothing.com/products.json",
+    "https://www.loopreturns.com/report/2024-benchmark-report/",
+    "http://web.archive.org/web/20251214140820/https://www.fairharborclothing.com/pages/womens-update"
+   ],
+   "source_url": "https://fairharborclothing.com/products.json",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ph-2",
+   "kind": "expansion_phase",
+   "phase": 2,
+   "name": "Year-round lifestyle brand in more doors",
+   "months": {
+    "start": 6,
+    "end": 18
+   },
+   "geography": [
+    "Northeast and Florida coastal specialty doors",
+    "Green-grass golf pro shops (FootJoy collab)",
+    "Midwest sporting goods (Scheels)",
+    "Campus bookstores (Michigan, Syracuse, Purdue, Colgate, Fairfield)"
+   ],
+   "thesis": "Turn a swim brand into a 12-month lifestyle brand sold through specialty and golf doors. 64.0% of live products are already non-swim; Chubbies shows wholesale can be ~half of sales and is growing faster than DTC.",
+   "data_points": {
+    "nonswim_product_share_pct": 64.0,
+    "swim_products": 134,
+    "kids_products": 51,
+    "golf_shop_products": 59,
+    "footjoy_collab_products": 18,
+    "collegiate_products": 39,
+    "collegiate_schools": 5,
+    "specialty_doors_2022": 250,
+    "chubbies_wholesale_share_pct": 51.9,
+    "chubbies_wholesale_growth_pct": 16.3,
+    "chubbies_dtc_growth_pct": 2.3
+   },
+   "data_point_sources": [
+    "data/research/fairharbor_filings.json",
+    "data/research/bsp_firm.json (bsp-fh, fh_opportunities)",
+    "data/research/rival_filings.json",
+    "data/research/public_comps.json",
+    "data/research/serviceos_evidence.json",
+    "data/research/pe_landscape.json"
+   ],
+   "kpi_targets": {
+    "wholesale_doors": {
+     "baseline": 252,
+     "target": 360
+    },
+    "wholesale_share_of_revenue_pct": {
+     "baseline": 40,
+     "target": 45
+    },
+    "collegiate_schools": {
+     "baseline": 5,
+     "target": 15
+    },
+    "revenue_usd": {
+     "baseline": 27000000,
+     "target": 32000000
+    }
+   },
+   "kpi_targets_label": "est. analyst assumptions, not company guidance",
+   "source_urls": [
+    "https://www.fairharborclothing.com/collections/footjoy-x-fair-harbor",
+    "https://www.fairharborclothing.com/collections/collegiate-collection",
+    "https://www.sec.gov/Archives/edgar/data/1870600/000187060026000044/dtc-20260630.htm",
+    "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners"
+   ],
+   "source_url": "https://www.fairharborclothing.com/collections/footjoy-x-fair-harbor",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ph-3",
+   "kind": "expansion_phase",
+   "phase": 3,
+   "name": "Retention, membership and B2B custom",
+   "months": {
+    "start": 18,
+    "end": 30
+   },
+   "geography": [
+    "United States national (DTC customer file)",
+    "Corporate, club and hospitality accounts (B2B custom)"
+   ],
+   "thesis": "Earn more from customers already won. Repeat-purchase benchmarks are 20-30%, Klaviyo flows earn ~41% of email revenue from 5.3% of sends, and Bain finds +5 points of retention lifts profit 25-95%. The B2B custom program (88 SKUs, launched Mar 2026) is a lower-CAC channel.",
+   "data_points": {
+    "repeat_rate_benchmark_pct": [
+     20,
+     30
+    ],
+    "klaviyo_flow_revenue_share_pct": 41,
+    "klaviyo_flow_send_share_pct": 5.3,
+    "bain_retention_profit_lift_pct": [
+     25,
+     95
+    ],
+    "b2b_custom_skus": 88,
+    "custom_embroidery_products": 58,
+    "site_pages_per_visit": 6.31,
+    "top_age_band": "45-54"
+   },
+   "data_point_sources": [
+    "data/research/fairharbor_filings.json",
+    "data/research/bsp_firm.json (bsp-fh, fh_opportunities)",
+    "data/research/rival_filings.json",
+    "data/research/public_comps.json",
+    "data/research/serviceos_evidence.json",
+    "data/research/pe_landscape.json"
+   ],
+   "kpi_targets": {
+    "repeat_purchase_rate_pct": {
+     "baseline": 20,
+     "target": 28
+    },
+    "b2b_and_licensing_share_of_revenue_pct": {
+     "baseline": null,
+     "target": 8
+    },
+    "ebitda_margin_pct": {
+     "baseline": 8.0,
+     "target": 11.0
+    }
+   },
+   "kpi_targets_label": "est. analyst assumptions, not company guidance",
+   "source_urls": [
+    "https://www.klaviyo.com/products/email-marketing/benchmarks",
+    "https://hbr.org/2014/10/the-value-of-keeping-the-right-customers",
+    "https://www.fairharborclothing.com/collections/b2b-custom-apparel"
+   ],
+   "source_url": "https://www.klaviyo.com/products/email-marketing/benchmarks",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ph-4",
+   "kind": "expansion_phase",
+   "phase": 4,
+   "name": "International DTC and exit readiness",
+   "months": {
+    "start": 30,
+    "end": 36
+   },
+   "geography": [
+    "Canada",
+    "United Kingdom",
+    "Australia"
+   ],
+   "thesis": "Open cross-border DTC where coastal lifestyle sells, through a merchant-of-record partner, then take a wholesale-heavy, margin-positive brand to market. Today the store ships only to the US. Exit buyers will be strategics and brand owners; Chubbies sold at ~$129.5M and Fair Harbor's entry EV was an estimated $40-90M.",
+   "data_points": {
+    "ships_to_countries_today": [
+     "US"
+    ],
+    "us_traffic_share_pct": 97.19,
+    "vuori_intl_markets_2022": 7,
+    "global_e_case_conversion_uplift_pct": 35,
+    "chubbies_acq_price_usd": 129500000,
+    "entry_ev_est_usd": [
+     40000000,
+     90000000
+    ],
+    "entry_ev_to_revenue_est": [
+     1.3,
+     2.5
+    ],
+    "harboros_multiple_credit_x_revenue": [
+     0.2,
+     0.5
+    ],
+    "implied_exit_ev_usd_at_m36": [
+     52000000,
+     100000000
+    ]
+   },
+   "data_point_sources": [
+    "data/research/fairharbor_filings.json",
+    "data/research/bsp_firm.json (bsp-fh, fh_opportunities)",
+    "data/research/rival_filings.json",
+    "data/research/public_comps.json",
+    "data/research/serviceos_evidence.json",
+    "data/research/pe_landscape.json"
+   ],
+   "kpi_targets": {
+    "international_share_of_revenue_pct": {
+     "baseline": 0,
+     "target": 5
+    },
+    "revenue_usd": {
+     "baseline": 35000000,
+     "target": 40000000
+    },
+    "ebitda_margin_pct": {
+     "baseline": 11.0,
+     "target": 13.0
+    }
+   },
+   "kpi_targets_label": "est. analyst assumptions, not company guidance",
+   "source_urls": [
+    "https://fairharborclothing.com/meta.json",
+    "https://www.global-e.com/en/success-stories/the-mountain/",
+    "https://www.sec.gov/Archives/edgar/data/1870600/000187060022000009/dtc-20211231.htm"
+   ],
+   "source_url": "https://fairharborclothing.com/meta.json",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "gl-01",
+   "kind": "growth_lever",
+   "lever": "Wholesale door count",
+   "baseline": 252,
+   "target": 420,
+   "unit": "doors (month 24)",
+   "evidence": "~250 specialty doors plus Nordstrom and Saks at entry (2022); Scheels added 2023; current stockist list not public.",
+   "label": "target is an est. analyst assumption",
+   "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "gl-02",
+   "kind": "growth_lever",
+   "lever": "Wholesale and retail share of revenue",
+   "baseline": 40,
+   "target": 50,
+   "unit": "% of net revenue",
+   "evidence": "Fair Harbor est. 35-45% non-DTC (filings); Chubbies at 51.9% in FY2025, with that channel up 16.3% while DTC grew 2.3%.",
+   "label": "target is an est. analyst assumption",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1870600/000187060026000044/dtc-20260630.htm",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "gl-03",
+   "kind": "growth_lever",
+   "lever": "Markdown share of live variants",
+   "baseline": 38.5,
+   "target": 25,
+   "unit": "% of variants below compare-at price",
+   "evidence": "918 of 2382 variants marked down on the live Shopify catalog (Sept 2026).",
+   "label": "target is an est. analyst assumption",
+   "source_url": "https://fairharborclothing.com/products.json",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "gl-04",
+   "kind": "growth_lever",
+   "lever": "Swim return rate",
+   "baseline": 21.6,
+   "target": 18.5,
+   "unit": "% of online swim sales returned",
+   "evidence": "Loop's Winter 2024 benchmark (22M returns, 4,000+ Shopify brands) puts swimwear highest at 21.6%; Bold Metrics reports 17-18% fewer fit-related returns for shoppers who follow its size advice.",
+   "label": "target is an est. analyst assumption",
+   "source_url": "https://www.loopreturns.com/report/2024-benchmark-report/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "gl-05",
+   "kind": "growth_lever",
+   "lever": "Repeat purchase rate",
+   "baseline": 20,
+   "target": 30,
+   "unit": "% of customers buying more than once",
+   "evidence": "Klaviyo: a good repeat purchase rate is 20-30% (Fair Harbor actual not disclosed).",
+   "label": "target is an est. analyst assumption",
+   "source_url": "https://klaviyo.com/glossary/what-is-a-good-repeat-purchase-rate",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "gl-06",
+   "kind": "growth_lever",
+   "lever": "Automated flow share of email revenue",
+   "baseline": null,
+   "target": 41,
+   "unit": "% of email revenue",
+   "evidence": "Klaviyo benchmark: flows earn nearly 41% of email revenue from 5.3% of sends; Fair Harbor's current split is not public.",
+   "label": "target is an est. analyst assumption",
+   "source_url": "https://www.klaviyo.com/products/email-marketing/benchmarks",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "gl-07",
+   "kind": "growth_lever",
+   "lever": "Non-swim (year-round) share of assortment",
+   "baseline": 64.0,
+   "target": 70,
+   "unit": "% of live products",
+   "evidence": "238 of 372 live products are non-swim; kids line 51 products; women's withdrawn Dec 2025.",
+   "label": "target is an est. analyst assumption",
+   "source_url": "https://fairharborclothing.com/products.json",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "gl-08",
+   "kind": "growth_lever",
+   "lever": "International share of revenue",
+   "baseline": 0,
+   "target": 5,
+   "unit": "% of net revenue (month 36)",
+   "evidence": "Store ships only to the US; 97.2% of web traffic is US. Vuori launched 7 international markets via e-commerce first.",
+   "label": "target is an est. analyst assumption",
+   "source_url": "https://fairharborclothing.com/meta.json",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "gl-09",
+   "kind": "growth_lever",
+   "lever": "B2B custom and licensing share of revenue",
+   "baseline": null,
+   "target": 8,
+   "unit": "% of net revenue",
+   "evidence": "B2B custom program launched Mar 2026 (88 SKUs); collegiate licensing (5 schools, 39 products) and FootJoy collab (18 products) in 2026.",
+   "label": "target is an est. analyst assumption",
+   "source_url": "https://www.fairharborclothing.com/collections/b2b-custom-apparel",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "gl-10",
+   "kind": "growth_lever",
+   "lever": "Collegiate schools licensed",
+   "baseline": 5,
+   "target": 25,
+   "unit": "schools",
+   "evidence": "Collegiate collection launched Jul-Aug 2026 with Michigan, Syracuse, Purdue, Colgate and Fairfield.",
+   "label": "target is an est. analyst assumption",
+   "source_url": "https://www.fairharborclothing.com/collections/collegiate-collection",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "gl-11",
+   "kind": "growth_lever",
+   "lever": "Paid social efficiency (ROAS)",
+   "baseline": null,
+   "target": 32,
+   "unit": "% ROAS improvement vs business-as-usual",
+   "evidence": "Meta reports users of Advantage+ shopping campaigns saw a 32% increase in ROAS and 17% lower CPA (user-reported). Chubbies spent 10.1% of sales on marketing in FY2025.",
+   "label": "target is an est. analyst assumption",
+   "source_url": "https://developers.facebook.com/blog/post/2024/10/31/advantage-plus-shopping-campaigns-automated-ecommerce-advertising/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "gl-12",
+   "kind": "growth_lever",
+   "lever": "EBITDA margin",
+   "baseline": 6.0,
+   "target": 13.0,
+   "unit": "% of revenue (month 36)",
+   "evidence": "Fair Harbor est. 0-12% (midpoint 6%); apparel/DTC comp median 5.7%; Chubbies 18.2%; LULU 24.4% is the ceiling.",
+   "label": "target is an est. analyst assumption",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1397187/000139718726000020/lulu-20260201.htm",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "ai-01",
+   "kind": "ai_agent",
+   "agent": "Fit and size advisor",
+   "job_to_be_done": "Recommend the right size on every PDP and in chat to cut fit returns and size bracketing",
+   "who_it_helps": "DTC shoppers, CX team, margin",
+   "vendor_examples": [
+    "Bold Metrics",
+    "True Fit"
+   ],
+   "metric_claim": "Bold Metrics reports a 17% average reduction in fit-related returns (18% for shoppers who follow the recommended size) and +22% order value (vendor claims).",
+   "metric_value": 17,
+   "metric_unit": "% fewer fit-related returns",
+   "cost_model": "Enterprise SaaS, pricing not published",
+   "weeks_to_deploy": [
+    6,
+    10
+   ],
+   "weeks_to_deploy_label": "est. analyst assumption",
+   "claim_type": "vendor or research claim, unaudited; treat as upper bound",
+   "source_url": "https://boldmetrics.com/capabilities/returns",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ai-02",
+   "kind": "ai_agent",
+   "agent": "CX resolution agent",
+   "job_to_be_done": "Answer WISMO, sizing, returns and order-edit tickets end to end, 24/7, with peak-season surge capacity",
+   "who_it_helps": "Customers, CX team (absorbs the May-July swim peak without temp hires)",
+   "vendor_examples": [
+    "Gorgias AI Agent",
+    "Sierra",
+    "Siena AI"
+   ],
+   "metric_claim": "Gorgias says its AI Agent resolves up to 60% of customer conversations automatically; billed only on full resolutions.",
+   "metric_value": 60,
+   "metric_unit": "% of conversations resolved without a human (vendor 'up to')",
+   "cost_model": "$0.90 per resolved conversation (annual) or $1.00 (monthly), Gorgias",
+   "weeks_to_deploy": [
+    3,
+    5
+   ],
+   "weeks_to_deploy_label": "est. analyst assumption",
+   "claim_type": "vendor or research claim, unaudited; treat as upper bound",
+   "source_url": "https://gorgias.com/llm-info",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ai-03",
+   "kind": "ai_agent",
+   "agent": "Returns-to-exchange agent",
+   "job_to_be_done": "Steer each return to an exchange or store credit, flag fraud, and route boxes to the cheapest path",
+   "who_it_helps": "Finance (retained revenue), ops, customers",
+   "vendor_examples": [
+    "Loop Returns",
+    "Happy Returns (UPS)",
+    "Redo"
+   ],
+   "metric_claim": "Loop's Winter 2024 benchmark (22M returns, 4,000+ Shopify brands): swimwear has the highest return rate at 21.6%; Rothy's retained 50.5% of returned revenue annually.",
+   "metric_value": 50.5,
+   "metric_unit": "% of returned revenue retained (Rothy's case study)",
+   "cost_model": "Subscription plus per-return fees; not published",
+   "weeks_to_deploy": [
+    4,
+    6
+   ],
+   "weeks_to_deploy_label": "est. analyst assumption",
+   "claim_type": "vendor or research claim, unaudited; treat as upper bound",
+   "source_url": "https://www.loopreturns.com/report/2024-benchmark-report/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ai-04",
+   "kind": "ai_agent",
+   "agent": "Demand planning agent",
+   "job_to_be_done": "Forecast SKU x size x color demand for a seasonal swim line and draft POs and reorders",
+   "who_it_helps": "Merchandising/planning, finance (cash in inventory)",
+   "vendor_examples": [
+    "Inventory Planner (Sage)",
+    "Toolio",
+    "Onebeat"
+   ],
+   "metric_claim": "McKinsey research: AI-driven forecasting reduces errors by 20-50%, translating into up to 65% fewer lost sales due to stockouts.",
+   "metric_value": 65,
+   "metric_unit": "% fewer lost sales from stockouts (upper bound)",
+   "cost_model": "Inventory Planner Essentials $119.99/month; higher tiers quote-based by GMV/SKU",
+   "weeks_to_deploy": [
+    6,
+    10
+   ],
+   "weeks_to_deploy_label": "est. analyst assumption",
+   "claim_type": "vendor or research claim, unaudited; treat as upper bound",
+   "source_url": "https://www.mckinsey.com/capabilities/operations/our-insights/ai-driven-operations-forecasting-in-data-light-environments",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ai-05",
+   "kind": "ai_agent",
+   "agent": "Markdown and pricing agent",
+   "job_to_be_done": "Set targeted, SKU-level end-of-season discounts instead of sitewide sales",
+   "who_it_helps": "Merchandising, finance (gross margin)",
+   "vendor_examples": [
+    "Competera",
+    "invent.ai",
+    "Metyis"
+   ],
+   "metric_claim": "Metyis reports markdown optimisation achieved up to 4% uplift in gross margins and up to 10% higher sell-out in luxury and premium apparel.",
+   "metric_value": 4,
+   "metric_unit": "% gross margin uplift (upper bound)",
+   "cost_model": "Enterprise SaaS or project fee; not published",
+   "weeks_to_deploy": [
+    8,
+    12
+   ],
+   "weeks_to_deploy_label": "est. analyst assumption",
+   "claim_type": "vendor or research claim, unaudited; treat as upper bound",
+   "source_url": "https://metyis.com/impact/our-insights/ai-powered-markdown-optimisation-for-fashion",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ai-06",
+   "kind": "ai_agent",
+   "agent": "Lifecycle and retention agent",
+   "job_to_be_done": "Build and tune post-purchase, replenishment, back-in-stock, golf/collegiate and win-back flows per segment",
+   "who_it_helps": "Growth marketing, repeat customers",
+   "vendor_examples": [
+    "Klaviyo (AI flows and segments)",
+    "Attentive"
+   ],
+   "metric_claim": "Klaviyo benchmark: flows generate nearly 41% of email revenue from 5.3% of sends, with revenue per recipient ~18x campaigns.",
+   "metric_value": 41,
+   "metric_unit": "% of email revenue from automated flows",
+   "cost_model": "Klaviyo priced by active profiles (about $150/month at 10,000 profiles; higher at Fair Harbor scale)",
+   "weeks_to_deploy": [
+    2,
+    4
+   ],
+   "weeks_to_deploy_label": "est. analyst assumption",
+   "claim_type": "vendor or research claim, unaudited; treat as upper bound",
+   "source_url": "https://www.klaviyo.com/products/email-marketing/benchmarks",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ai-07",
+   "kind": "ai_agent",
+   "agent": "Paid media and creative agent",
+   "job_to_be_done": "Run always-on prospecting with automated audience, budget and creative rotation; generate seasonal creative variants",
+   "who_it_helps": "Growth marketing (CAC), finance",
+   "vendor_examples": [
+    "Meta Advantage+ shopping campaigns",
+    "Google Performance Max"
+   ],
+   "metric_claim": "Meta reports existing users of Advantage+ shopping campaigns saw a 32% increase in ROAS and a 17% decrease in CPA.",
+   "metric_value": 32,
+   "metric_unit": "% ROAS increase (user-reported)",
+   "cost_model": "No platform fee beyond media spend; creative tooling extra",
+   "weeks_to_deploy": [
+    2,
+    4
+   ],
+   "weeks_to_deploy_label": "est. analyst assumption",
+   "claim_type": "vendor or research claim, unaudited; treat as upper bound",
+   "source_url": "https://developers.facebook.com/blog/post/2024/10/31/advantage-plus-shopping-campaigns-automated-ecommerce-advertising/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ai-08",
+   "kind": "ai_agent",
+   "agent": "Cross-border localization agent",
+   "job_to_be_done": "Localize prices, duties, payments and shipping for Canada, UK and Australia DTC",
+   "who_it_helps": "International shoppers, finance (landed-cost certainty)",
+   "vendor_examples": [
+    "Global-e",
+    "Shopify Markets"
+   ],
+   "metric_claim": "Global-e case study (The Mountain, eco artwear apparel): +35% YoY e-commerce conversion and +128% international orders within 3 months.",
+   "metric_value": 35,
+   "metric_unit": "% YoY conversion uplift (vendor case study)",
+   "cost_model": "Merchant-of-record fee as % of international GMV; not published",
+   "weeks_to_deploy": [
+    8,
+    12
+   ],
+   "weeks_to_deploy_label": "est. analyst assumption",
+   "claim_type": "vendor or research claim, unaudited; treat as upper bound",
+   "source_url": "https://www.global-e.com/en/success-stories/the-mountain/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "ai-09",
+   "kind": "ai_agent",
+   "agent": "Wholesale reorder agent",
+   "job_to_be_done": "Push digital line sheets, suggest reorders from sell-through, and take pre-books for specialty, golf and campus doors",
+   "who_it_helps": "Wholesale team, independent reps, store buyers",
+   "vendor_examples": [
+    "NuORDER (Lightspeed)",
+    "JOOR",
+    "Shopify B2B"
+   ],
+   "metric_claim": "No independent metric verified; NuORDER is quote-based with a third-party listed starting price of about $7,000.",
+   "metric_value": null,
+   "metric_unit": null,
+   "cost_model": "Quote-based; ~$7,000 starting price (third-party listing)",
+   "weeks_to_deploy": [
+    6,
+    10
+   ],
+   "weeks_to_deploy_label": "est. analyst assumption",
+   "claim_type": "vendor or research claim, unaudited; treat as upper bound",
+   "source_url": "https://www.capterra.co.uk/software/135545/nuorder",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tp-01",
+   "kind": "talent_program",
+   "program": "3PL and WMS consolidation",
+   "who_it_helps": "Ops team, CX (fewer WISMO tickets), finance",
+   "evidence": "ShipBob case study: apparel brand Elwood Clothing saves $200,000 a year on shipping and runs 3,500+ SKUs, peaking at 70,000 orders a month, on ShipBob WMS.",
+   "metric": "$200K/yr shipping savings at a comparable apparel brand (vendor case study)",
+   "source_url": "https://shipbob.com/?p=35934",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tp-02",
+   "kind": "talent_program",
+   "program": "Box-free returns network",
+   "who_it_helps": "Customers, returns ops, finance",
+   "evidence": "UPS bought Happy Returns (Oct 2023); aggregation saves merchants as much as 40% on return fees, with 12,000+ US drop-off locations.",
+   "metric": "up to 40% lower return-handling cost",
+   "source_url": "https://pymnts.com/news/retail/2023/ups-expands-reverse-logistics-footprint-with-acquisition-of-happy-returns",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tp-03",
+   "kind": "talent_program",
+   "program": "Wholesale key-account lead plus independent rep network",
+   "who_it_helps": "Specialty, golf and campus buyers; Fair Harbor wholesale P&L",
+   "evidence": "Independent apparel reps are paid on commission (listed at 10-15% for premium and golf apparel), so door growth is a variable cost; Fair Harbor's board already includes retail operators (ex-J.Crew president Tracy Gardner, Silvia Mazzucchelli, Jennifer Olsen).",
+   "metric": "commission 10-15% of wholesale sales (job listings)",
+   "source_url": "https://salesfolks.com/job/independent-fashion-apparel-sales-representative-1099-15-commission",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tp-04",
+   "kind": "talent_program",
+   "program": "AI-first CX pod with seasonal flex",
+   "who_it_helps": "CX agents (move to VIP, B2B and wholesale support), customers",
+   "evidence": "Gorgias AI Agent resolves up to 60% of conversations at $0.90 per resolution, so a small permanent pod can cover the swim peak.",
+   "metric": "up to 60% of tickets auto-resolved (vendor)",
+   "source_url": "https://gorgias.com/llm-info",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tp-05",
+   "kind": "talent_program",
+   "program": "Planning and merchandising function",
+   "who_it_helps": "Merch, design, finance",
+   "evidence": "Hire a head of planning who owns open-to-buy with AI forecasting; McKinsey reports 20-50% fewer forecast errors. Addresses the 38.5% markdown share and the women's write-down.",
+   "metric": "20-50% forecast-error reduction (McKinsey)",
+   "source_url": "https://www.mckinsey.com/capabilities/operations/our-insights/ai-driven-operations-forecasting-in-data-light-environments",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "tp-06",
+   "kind": "talent_program",
+   "program": "Lean corporate team benchmark (PRG operating cadence)",
+   "who_it_helps": "Management, board, Broad Sky PRG",
+   "evidence": "Chubbies ran with 90 staff and ~$7.5M payroll in 2020 (PPP) and grew to $122.9M of sales by 2025; Fair Harbor's 2026 headcount is est. 40-80. Hold corporate headcount near 70 through month 36 while revenue grows ~48%.",
+   "metric": "revenue per employee $450K to $571K (est.) vs apparel comp median $421K",
+   "source_url": "https://data.sba.gov/dataset/ppp-foia",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "fin-01",
+   "kind": "financing",
+   "instrument": "Sponsor equity at entry (Form D)",
+   "description": "$30.7M of primary equity sold to 24 investors on 2022-03-15, $6.0M of $36.7M authorized still unsold; about 9.2% of Fund I's $335M. No proceeds to officers.",
+   "key_figures": {
+    "sold_usd": 30734684,
+    "authorized_usd": 36734657,
+    "remaining_usd": 5999973,
+    "pct_of_fund_i": 9.2
+   },
+   "implication": "The unsold ~$6.0M sleeve is the natural source for the $0.3-0.7M HarborOS build and any small brand tuck-in; no new sponsor cheque is needed for the plan.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1920023/000192002322000001/primary_doc.xml",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "fin-02",
+   "kind": "financing",
+   "instrument": "Asset-based revolver history and likely refinancing",
+   "description": "USPTO records show ABL security interests on the core mark from Merchant Financial (2020-2021) and Gerber Finance/eCapital (2021, released 2025-12-11); the core marks were assigned to Fair Harbor Clothing Topco LLC the same day.",
+   "key_figures": {
+    "lenders": [
+     "Merchant Financial (2020-11 to 2021-09)",
+     "Gerber Finance / eCapital ABL (2021-08 to 2025-12-11)"
+    ],
+    "ip_holdco": "Fair Harbor Clothing Topco LLC (Jersey City)",
+    "release_and_assignment_date": "2025-12-11"
+   },
+   "implication": "Same-day lien release and IP move to a Topco usually mean a new lender or a restructured collateral package. Diligence should confirm the current facility, covenants and whether store leases sit inside the borrowing base.",
+   "confidence": "high",
+   "source_url": "https://tmsearch.uspto.gov/search/search-information",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "fin-03",
+   "kind": "financing",
+   "instrument": "Sector norm: ABL advance rates",
+   "description": "Lenders typically advance 50-75% against inventory and 85-90% against receivables (U.S. Bank).",
+   "key_figures": {
+    "inventory_advance_pct": [
+     50,
+     75
+    ],
+    "receivables_advance_pct": [
+     85,
+     90
+    ],
+    "est_inventory_usd": 4536000,
+    "est_wholesale_ar_usd": 1331507,
+    "est_borrowing_base_usd": [
+     3399781,
+     4600356
+    ],
+    "assumptions": "est.: revenue $27M, gross margin 58% (Chubbies FY2025 57.9%), 2.5x inventory turns, 40% wholesale, 45-day DSO"
+   },
+   "implication": "An ABL sized to Fair Harbor's working capital is roughly $3.4-4.6M (est.), enough to fund the seasonal swim build and wholesale receivables without term debt.",
+   "confidence": "medium",
+   "source_url": "https://www.usbank.com/financialiq/plan-your-growth/loans/collateral-options-for-ABL-whats-eligible-whats-not.html",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "fin-04",
+   "kind": "financing",
+   "instrument": "Sector norm: middle-market LBO leverage",
+   "description": "Middle-market debt/EBITDA averaged 3.8x year-to-date Q3 2025, down from 4.0x in H1 2025 (Mercer Capital).",
+   "key_figures": {
+    "debt_to_ebitda_x": 3.8,
+    "implied_term_debt_capacity_usd_at_m0": 6156000,
+    "implied_term_debt_capacity_usd_at_m36": 19760000
+   },
+   "implication": "At est. EBITDA of ~$1.6M today the market norm implies only ~$6M of term debt, and a cyclical, weather-exposed brand should run well below the norm. Recommendation: stay capital-light (ABL only) until EBITDA clears ~$4-5M.",
+   "confidence": "medium",
+   "source_url": "https://www.mercercapital.com/insights/newsletters/middle-market-transaction-update-newsletter/middle-market-transaction-update-winter-2025/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "fin-05",
+   "kind": "financing",
+   "instrument": "Cautionary precedent: leveraged owner of the closest rival",
+   "description": "Solo Brands funded the $129.5M Chubbies purchase with a $100M term loan (Sept 2021); Solo was removed from the NYSE in July 2026 carrying ~$249M of long-term debt.",
+   "key_figures": {
+    "chubbies_price_usd": 129500000,
+    "term_loan_usd": 100000000,
+    "solo_long_term_debt_2026_06_30_usd": 249246000
+   },
+   "implication": "Debt, not the brand, is what broke the Chubbies owner. It also creates an opening: Chubbies or its doors could come loose, and Fair Harbor's light balance sheet makes it a credible buyer or partner.",
+   "confidence": "high",
+   "source_url": "https://www.sec.gov/Archives/edgar/data/1870600/000087666126000606/primary_doc.xml",
+   "retrieved": "2026-09-24"
+  },
+  {
+   "id": "fin-06",
+   "kind": "financing",
+   "instrument": "Legacy government debt",
+   "description": "COVID EIDL of $150,000 (30-year direct loan) taken May 2020; PPP of $16,994 in Apr 2020.",
+   "key_figures": {
+    "eidl_usd": 150000,
+    "ppp_usd": 16993.85
+   },
+   "implication": "Immaterial today; payoff status not public. Confirm it was repaid at the 2022 close.",
+   "confidence": "high",
+   "source_url": "https://www.usaspending.gov/award/ASST_NON_5364327806_073",
+   "retrieved": "2026-09-24"
+  }
+ ]
+}

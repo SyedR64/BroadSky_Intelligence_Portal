@@ -52,3 +52,12 @@
 .m-pp #pp-fil .tbl tr:has(> td:nth-child(7)) > td:nth-child(3){white-space:normal;min-width:200px;max-width:300px}
 .m-pp #pp-fil .tbl tr:has(> td:nth-child(7)) > td:nth-child(4){white-space:normal;max-width:130px}
 .m-pp #pp-fil .tbl tr:has(> td:nth-child(7)) > td:nth-child(5){white-space:normal;min-width:260px;max-width:420px}
+/* weather: revenue cross-check under the staffing chart */
+.m-pp .pp-xcheck{border:1px solid var(--border);border-left:3px solid var(--cc);border-radius:8px;padding:8px 10px;background:var(--surface-2);color:var(--text-2);line-height:1.5}
+/* movers: lead-freshness strip */
+.m-pp .pp-fresh{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+/* targets: name-conflict / affiliation bucket */
+.m-pp .pp-affil .r{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.m-pp .pp-affil .r:last-child{border-bottom:0}
+.m-pp .pp-affil .flags{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.m-pp .pp-affil .flags .chip{white-space:normal;height:auto;line-height:1.35;padding-top:3px;padding-bottom:3px}

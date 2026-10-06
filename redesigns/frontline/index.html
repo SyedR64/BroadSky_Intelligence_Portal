@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Frontline Managed Services — IT, security and revenue cycle for law firms (concept)</title>
+<meta name="description" content="Concept redesign: Frontline runs the 24/7 service desk, infrastructure, cybersecurity and eBilling for 900+ law firms, including more than half of the AM Law 200.">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%234b3bff'/%3E%3Cpath d='M11 9.5h11M11 9.5v13M11 16h7.5' stroke='%23fff' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css?v=4">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-desk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0116 0v2"/><path d="M4 14h3v5H5.5A1.5 1.5 0 014 17.5zM20 14h-3v5h1.5a1.5 1.5 0 001.5-1.5z"/><path d="M17 19c0 1.4-1.8 2-4 2"/></symbol>
+<symbol id="i-server" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4" width="17" height="6.5" rx="1.6"/><rect x="3.5" y="13.5" width="17" height="6.5" rx="1.6"/><path d="M7.5 7.25h.01M7.5 16.75h.01M11 7.25h6M11 16.75h6"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.4 8.2-8 9-4.6-.8-8-4-8-9V6z"/><path d="M8.8 12.2l2.2 2.2 4.3-4.4"/></symbol>
+<symbol id="i-invoice" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V11M10 20V5M16 20v-6M21 20H3"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 018 0v3"/></symbol>
+<symbol id="i-portal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 8.5h18M8 21h8M12 17v4"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+<symbol id="i-cash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.8"/><path d="M6 9.5v.01M18 14.5v.01"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5"/><path d="M16 4.8a3.5 3.5 0 010 6.4M18.5 14.8c1.6.8 2.7 2.6 3 5.2"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0119 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+<symbol id="i-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h11v17.5L12 17l-5.5 4z"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-flow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="6" r="2.5"/><circle cx="18.5" cy="18" r="2.5"/><path d="M8 6h5a3 3 0 013 3v6.5"/></symbol>
+<symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L10 14M21 3l-7 18-4-7-7-4z"/></symbol>
+<symbol id="i-logo" viewBox="0 0 32 32"><defs><linearGradient id="lg-fl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4b3bff"/><stop offset="1" stop-color="#9b5cff"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#lg-fl)"/><path d="M11 9.5h11M11 9.5v13M11 16h7.5" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="22.5" cy="22" r="2.2" fill="#7cf0c0"/></symbol>
+</defs></svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="concept" id="concept" role="region" aria-label="Concept notice">
+  <div class="wrap">
+    <span class="tag">Concept</span>
+    <span class="msg">Concept redesign proposed by Syed Rizvi for the Broad Sky Portfolio Resource Group — not an official site.</span>
+    <span class="links"><a href="../../app.html">Portal</a><a href="../index.html">Site concepts</a><a href="../../#os">OS program</a><a href="../../#briefing">Briefing</a></span>
+    <button class="x" id="concept-x" aria-label="Dismiss concept notice"><svg width="14" height="14"><use href="#i-x"/></svg></button>
+  </div>
+</div>
+
+<div class="util">
+  <div class="wrap">
+    <span class="live"><span class="dot pulse"></span><span><b style="color:var(--ink)">Service desk staffed 24/7/365</b><span class="hide-m"> · <span id="hubs-on">—</span> hubs in business hours right now</span></span></span>
+    <span class="sp"></span>
+    <a class="hide-m" href="firmos.html#portal"><svg width="14" height="14"><use href="#i-portal"/></svg>Client portal</a>
+    <a class="hide-m" href="#contact"><svg width="14" height="14"><use href="#i-desk"/></svg>Get support</a>
+    <a href="#contact"><svg width="14" height="14"><use href="#i-send"/></svg>Talk to sales</a>
+  </div>
+</div>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Frontline Managed Services home"><svg><use href="#i-logo"/></svg><span>Frontline<small>Managed Services</small></span></a>
+    <nav aria-label="Primary">
+      <ul id="nav-menu">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#assessment">Security</a></li>
+        <li><a href="#roi">ROI</a></li>
+        <li><a href="#global">Global delivery</a></li>
+        <li><a href="#insights">Insights</a></li>
+        <li><a href="playbook.html">Playbook</a></li>
+        <li><a class="os" href="firmos.html">FirmOS <span class="new">NEW</span></a></li>
+      </ul>
+    </nav>
+    <div class="cta">
+      <a class="btn btn-s btn-sm" href="#assessment">Security check</a>
+      <a class="btn btn-p btn-sm" href="#contact"><span class="hide-m">Request an assessment</span><span class="show-m">Assessment</span></a>
+    </div>
+    <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu"><span></span></button>
+  </div>
+</header>
+
+<main id="main">
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="top" aria-labelledby="hero-h">
+  <div class="wrap">
+    <div>
+      <a class="pill" href="firmos.html"><span class="k">FirmOS</span><span>Powered by FirmOS<span class="hide-m">: AI Tier-0 desk, live security score, eBilling pre-flight</span></span> <svg width="14" height="14"><use href="#i-arrow"/></svg></a>
+      <h1 id="hero-h">Your firm bills hours.<br><span class="grad">We protect every one.</span></h1>
+      <p class="lede">The 24/7 service desk, infrastructure, cybersecurity and eBilling for 900+ law firms, including more than half of the AM Law 200. One accountable partner, built only for legal.</p>
+      <div class="actions">
+        <a class="btn btn-p" href="#contact">Request an assessment <svg><use href="#i-arrow"/></svg></a>
+        <a class="btn btn-s" href="#assessment">Score your security in 2 minutes</a>
+      </div>
+      <div class="assure" aria-label="Assurances">
+        <span class="badge"><svg><use href="#i-check"/></svg>Law firms only, since 1987</span>
+        <span class="badge"><svg><use href="#i-check"/></svg>24/7/365 follow-the-sun</span>
+        <span class="badge"><svg><use href="#i-check"/></svg>Co-managed or fully managed</span>
+      </div>
+    </div>
+    <div class="hero-vis">
+      <div class="float f2"><span>eBilling rejections</span><b id="f-rej">9.6%</b><span style="color:var(--ok);font-weight:600">vs 18% industry ↓</span></div>
+      <div class="card console" role="img" aria-label="Illustrative FirmOS client console showing a security posture score of 87, service desk activity and eBilling metrics">
+        <div class="top">
+          <svg width="22" height="22"><use href="#i-logo"/></svg>
+          <div><div class="t">Firm health</div><div class="s">Hartwell &amp; Pryce LLP · fictional client</div></div>
+          <span class="chip-live"><span class="dot"></span><span id="upd" class="hide-m">Updated 2 min ago</span><span class="show-m">Live</span></span>
+        </div>
+        <div class="body">
+          <div class="ring" id="hero-ring"></div>
+          <div class="rows">
+            <div class="row"><span class="ic"><svg><use href="#i-desk"/></svg></span><span class="l"><b>Service desk</b>Tickets this week</span><span class="n" id="h-tk">412<small>38% Tier-0</small></span></div>
+            <div class="row"><span class="ic"><svg><use href="#i-shield"/></svg></span><span class="l"><b>Endpoints protected</b>EDR + MDR coverage</span><span class="n">1,284<small>99.5%</small></span></div>
+            <div class="row"><span class="ic"><svg><use href="#i-invoice"/></svg></span><span class="l"><b>eBilling</b>LEDES · 31 client portals</span><span class="n">2,906<small>96% first-pass</small></span></div>
+          </div>
+        </div>
+        <div class="feed" id="hero-feed" aria-hidden="true"></div>
+      </div>
+      <div class="float f1"><span>Avg. time to resolve, Tier-0</span><b>38 sec</b></div>
+      <p class="console-cap">Illustrative FirmOS client view · not Frontline actuals</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TRUST ═══ -->
+<section class="trust" aria-label="Proof">
+  <div class="wrap">
+    <div class="box rv">
+      <p class="stmt">Trusted by <em>more than 50%</em> of the AM Law 200.<small>Client names withheld by design. Law firms rarely name their IT providers, and Frontline doesn't either.</small></p>
+      <div class="facts">
+        <div class="fact"><b data-count="900" data-suffix="+">900+</b><span>law firms served</span><i>Jun 2026 release</i></div>
+        <div class="fact"><b data-count="28" data-suffix="%">28%</b><span>of the AM Law 50</span><i>Jun 2026 release</i></div>
+        <div class="fact"><b data-count="36" data-prefix="#">#36</b><span>MSP 501 rank, top legal-only MSP</span><i>Channel Futures 2026</i></div>
+        <div class="fact"><b data-count="1100" data-prefix="~">~1,100</b><span>people in 9 hubs, 4 continents</span><i>Jan 2026</i></div>
+      </div>
+    </div>
+    <div class="frameworks rv" aria-label="Control frameworks">
+      <span class="lab">Controls mapped to</span>
+      <span class="badge"><svg><use href="#i-shield"/></svg>SOC 2</span>
+      <span class="badge"><svg><use href="#i-shield"/></svg>ISO/IEC 27001</span>
+      <span class="badge"><svg><use href="#i-shield"/></svg>NIST CSF 2.0</span>
+      <span class="badge"><svg><use href="#i-shield"/></svg>ABA Formal Op. 477R &amp; 483</span>
+      <span class="badge"><svg><use href="#i-shield"/></svg>Outside counsel guidelines</span>
+      <span class="badge"><svg><use href="#i-shield"/></svg>GDPR · POPIA · DPDP</span>
+      <span class="src" style="width:100%;text-align:center;margin-top:6px">Concept trust panel: frameworks shown as mapped controls. Certification status would be confirmed by Frontline before publishing.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SERVICES ═══ -->
+<section id="services" aria-labelledby="svc-h">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">One partner, four disciplines</span>
+      <h2 id="svc-h">Everything between the attorney and the invoice.</h2>
+      <p class="lede">Most firms buy IT, security and billing operations from three vendors that never speak to each other. Frontline runs all four as one service, with one team and one set of metrics.</p>
+    </div>
+    <div class="svc-grid">
+      <article class="card svc rv">
+        <span class="num">01</span>
+        <span class="ico"><svg><use href="#i-desk"/></svg></span>
+        <h3>24/7 legal service desk</h3>
+        <p>Analysts who know iManage, NetDocuments, Elite and Aderant, answering in seconds at 3 a.m. before a filing deadline. The desk runs on HELIX, Frontline's AI-optimized service desk launched at ILTACON 2025.</p>
+        <ul><li>Attorney white-glove and VIP lines</li><li>DMS, time entry and practice apps</li><li>Onboarding, moves and departures</li><li>Trial and deal-room support</li></ul>
+        <div class="out"><b>20M+</b> tickets resolved for law firms since 1998</div>
+      </article>
+      <article class="card svc rv">
+        <span class="num">02</span>
+        <span class="ico"><svg><use href="#i-server"/></svg></span>
+        <h3>Infrastructure &amp; cloud</h3>
+        <p>Network, Microsoft 365, Azure and hybrid DMS hosting, monitored and patched around the clock. Run it fully managed, or co-managed alongside your own IT team.</p>
+        <ul><li>24/7 monitoring and patching</li><li>Microsoft 365 and Azure operations</li><li>Backup and disaster recovery</li><li>Office openings and mergers</li></ul>
+        <div class="out"><b>Co-managed</b> option for firms with in-house IT</div>
+      </article>
+      <article class="card svc rv">
+        <span class="num">03</span>
+        <span class="ico"><svg><use href="#i-shield"/></svg></span>
+        <h3>Cybersecurity</h3>
+        <p>Managed detection and response, email security, vulnerability management and the evidence your clients' security questionnaires and outside counsel guidelines demand.</p>
+        <ul><li>EDR / MDR, 24/7 SOC</li><li>Phishing defense and training</li><li>Client audit and OCG evidence packs</li><li>Incident response and tabletop drills</li></ul>
+        <div class="out"><b>Live</b> posture score in every client portal</div>
+      </article>
+      <article class="card svc rv">
+        <span class="num">04</span>
+        <span class="ico"><svg><use href="#i-invoice"/></svg></span>
+        <h3>Revenue cycle: eBilling, A/R, accounting</h3>
+        <p>LEDES invoice preparation and submission across client portals, rejection appeals, collections follow-up and, since November 2025, accounting. Billing operations started here in 1987.</p>
+        <ul><li>LEDES 1998B / 2000 submission</li><li>Guideline pre-flight and appeals</li><li>A/R follow-up and cash application</li><li>Intake, conflicts and analytics</li></ul>
+        <div class="out"><b>18% → 11%</b> rejection target <span class="est">est.</span></div>
+      </article>
+    </div>
+    <div class="steps rv" aria-label="How engagements start">
+      <div class="step"><span class="k">STEP 1 · WEEKS 1–3</span><h4>Assess</h4><p>Security posture, service desk baseline and billing leakage review. You get a scored report even if you never sign.</p></div>
+      <div class="step"><span class="k">STEP 2 · DAYS 30–90</span><h4>Transition</h4><p>Runbook-driven cutover with your incumbent, parallel-run on the desk, and zero-downtime DMS and billing handoffs.</p></div>
+      <div class="step"><span class="k">STEP 3 · ONGOING</span><h4>Run &amp; improve</h4><p>Monthly scorecards in the client portal. Quarterly reviews built on evidence, not anecdotes.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECURITY ASSESSMENT ═══ -->
+<section class="alt" id="assessment" aria-labelledby="as-h">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Security self-assessment</span>
+      <h2 id="as-h">Would your firm pass its next client security audit?</h2>
+      <p class="lede">Ten questions drawn from the controls that law-firm clients and cyber insurers ask about most. You get a posture score and your three biggest gaps right away. Nothing leaves your browser.</p>
+    </div>
+    <div class="card tool rv">
+      <div class="q-side">
+        <div class="qhead"><span><b id="q-count">0</b> of 10 answered<b id="q-live" style="color:var(--accent-ink)"></b></span><span style="display:flex;gap:8px"><button class="btn btn-s btn-sm" id="q-sample" type="button">Try a sample firm</button><button class="btn btn-s btn-sm" id="q-reset" type="button">Reset</button></span></div>
+        <div class="prog" aria-hidden="true"><i id="q-prog" style="width:0"></i></div>
+        <ol class="qs" id="qs"></ol>
+      </div>
+      <div class="r-side" aria-live="polite">
+        <div class="score-wrap">
+          <span class="eyebrow" style="color:var(--mute)">Your posture score</span>
+          <div class="ring" id="as-ring" style="margin-top:14px"></div>
+          <span class="tier t-none" id="as-tier">Answer to see your tier</span>
+          <div class="gaps" id="as-gaps"></div>
+          <div class="as-empty" id="as-empty"><div><svg><use href="#i-shield"/></svg><span><b>Posture score, 0–100</b>Weighted by how often clients and carriers ask about each control</span></div><div><svg><use href="#i-bolt"/></svg><span><b>Your three biggest gaps</b>Ranked by points at stake, each with the fix</span></div><div><svg><use href="#i-portal"/></svg><span><b>Carries into FirmOS</b>Your answers pre-fill the full score card</span></div></div>
+          <div class="r-cta">
+            <a class="btn btn-p" href="firmos.html#score" id="as-os">Open full score card in FirmOS <svg><use href="#i-arrow"/></svg></a>
+            <a class="btn btn-s" href="#contact" data-prefill="security">Get an expert review</a>
+          </div>
+          <p class="src" style="margin-top:14px">Weights reflect Frontline concept guidance, not an industry standard. The score is a conversation starter, not an audit.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ OUTCOMES + ROI ═══ -->
+<section id="roi" aria-labelledby="roi-h">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Service desk ROI</span>
+      <h2 id="roi-h">Every ticket costs your firm billable time.</h2>
+      <p class="lede">Move the sliders to match your firm. The model counts the attorney hours returned when Tier-0 automation resolves routine requests in seconds, and the desk cost it removes.</p>
+    </div>
+    <div class="card roi rv">
+      <div class="in" id="roi-in">
+        <div class="field"><label for="r-att">Attorneys <output id="o-att"></output></label><input type="range" id="r-att" min="25" max="2500" step="25" value="300"><small>Users supported are typically about 2× the attorney count.</small></div>
+        <div class="field"><label for="r-tpa">Tickets per attorney per month <output id="o-tpa"></output></label><input type="range" id="r-tpa" min="0.5" max="5" step="0.1" value="1.8"><small>Includes tickets raised by assistants on an attorney's behalf. Illustrative default.</small></div>
+        <div class="field"><label for="r-def">Tier-0 deflection <output id="o-def"></output></label><input type="range" id="r-def" min="0" max="60" step="1" value="30"><small>Share of tickets resolved by automation without an analyst: password resets, MFA, access requests, printer queues.</small></div>
+        <div class="field"><label for="r-min">Attorney minutes lost per ticket <output id="o-min"></output></label><input type="range" id="r-min" min="5" max="45" step="1" value="14"><small>Wait plus context-switch time. Tier-0 resolves in about 1 minute.</small></div>
+        <div class="field"><label for="r-rate">Average standard rate <output id="o-rate"></output></label><input type="range" id="r-rate" min="200" max="1500" step="25" value="650"><small>Blended partner and associate rate.</small></div>
+      </div>
+      <div class="out" aria-live="polite">
+        <span class="eyebrow">Annual value returned</span>
+        <div class="big" id="roi-big">—</div>
+        <div class="big-l">billable time recovered plus desk cost avoided, per year</div>
+        <div class="kv">
+          <div><b id="k-tk">—</b><span>tickets a year</span></div>
+          <div><b id="k-df">—</b><span>resolved at Tier-0</span></div>
+          <div><b id="k-hr">—</b><span>attorney hours returned</span></div>
+          <div><b id="k-cs">—</b><span>desk cost avoided</span></div>
+        </div>
+        <div class="route" aria-label="Ticket routing">
+          <div class="bar"><i id="b-t0" style="background:#8a7bff"></i><i id="b-l1" style="background:#7cf0c0"></i><i id="b-l2" style="background:#f6b65b"></i></div>
+          <div class="leg"><span><i style="background:#8a7bff"></i>Tier-0 automation <b id="l-t0" class="mono"></b></span><span><i style="background:#7cf0c0"></i>Level 1 <b id="l-l1" class="mono"></b></span><span><i style="background:#f6b65b"></i>Level 2+ <b id="l-l2" class="mono"></b></span></div>
+        </div>
+        <p class="src">Cost per ticket: $22 at Level 1 vs $62 at Level 2 (MetricNet via HDI, <a href="https://www.thinkhdi.com/~/media/HDICorp/Files/Library-Archive/Insider%20Articles/First%20Level%20Resolution.pdf" target="_blank" rel="noopener">source</a>; 2011 data, directional). Tier-0 cost of $3 per ticket, a 26% Level 2 share and time values are illustrative assumptions. All outputs are <span class="est">est.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GLOBAL DELIVERY ═══ -->
+<section class="alt" id="global" aria-labelledby="gl-h">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Global delivery</span>
+      <h2 id="gl-h">Nine hubs. The sun never sets on your service desk.</h2>
+      <p class="lede">Follow-the-sun coverage from St. Louis to Cape Town means a partner in London and an associate in Honolulu reach the same desk, with the same context, at any hour.</p>
+    </div>
+    <div class="globe rv">
+      <div class="mapbox"><div id="fl-map" role="img" aria-label="Map of Frontline's nine delivery hubs"></div><div class="overlay"><b id="on-count">—</b> of 9 hubs in local business hours · desk staffed 24/7</div></div>
+      <div class="card hubs">
+        <div class="hd"><b>Live hub clock</b><span>Local time · green = in business hours</span></div>
+        <div id="hub-list"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FIRMOS TEASER ═══ -->
+<section class="dark" id="firmos" aria-labelledby="os-h">
+  <div class="wrap os-grid">
+    <div class="rv">
+      <span class="eyebrow">Introducing FirmOS</span>
+      <h2 id="os-h">The operating system behind every Frontline client.</h2>
+      <p class="lede">FirmOS puts the service desk, the security posture and the revenue cycle on one data layer. AI handles Tier-0 so analysts can focus on the work that needs judgment, and the client portal shows every metric as it happens.</p>
+      <div class="os-kpis" id="os-kpis">
+        <div class="os-kpi"><span class="l">Net first-level resolution<small>MetricNet benchmark → analyst target</small></span><span class="v"><s>74%</s> → <b>90%</b></span></div>
+        <div class="os-kpi"><span class="l">eBilling rejection rate<small>Elite research, 2024 vs 2025</small></span><span class="v"><s>18%</s> → <b>11%</b></span></div>
+        <div class="os-kpi"><span class="l">Days from invoice to payment<small>Elite eBillingHub customers</small></span><span class="v"><s>62</s> → <b>50</b></span></div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:28px"><a class="btn btn-p" href="firmos.html">Explore FirmOS <svg><use href="#i-arrow"/></svg></a><a class="btn btn-s" href="firmos.html#demo">Try the deflection demo</a></div>
+    </div>
+    <div class="os-mods rv">
+      <div class="os-mod"><svg><use href="#i-spark"/></svg><b>Tier-0 AI desk</b><span>Resolves password, MFA, access and DMS requests in seconds, grounded in each firm's runbooks.</span></div>
+      <div class="os-mod"><svg><use href="#i-shield"/></svg><b>Posture score</b><span>Continuous control monitoring that turns into client-ready audit evidence.</span></div>
+      <div class="os-mod"><svg><use href="#i-invoice"/></svg><b>LEDES pre-flight</b><span>Catches guideline violations before the client's portal does.</span></div>
+      <div class="os-mod"><svg><use href="#i-cash"/></svg><b>Collect</b><span>A/R prioritization, appeal drafting and cash-application automation.</span></div>
+      <div class="os-mod"><svg><use href="#i-portal"/></svg><b>Client portal</b><span>Tickets, SLAs, security and billing in one view for the COO and CFO.</span></div>
+      <div class="os-mod"><svg><use href="#i-chart"/></svg><b>Insight</b><span>Quarterly review packs and early renewal-risk signals.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CASES ═══ -->
+<section id="cases" aria-labelledby="cs-h">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Outcomes</span>
+      <h2 id="cs-h">What changes in the first year.</h2>
+      <p class="lede">Three engagement patterns we see across firm sizes. They are composites written for this concept and labelled <span class="ill">illustrative</span>, because law-firm clients are not named.</p>
+    </div>
+    <div class="cases">
+      <article class="card case rv">
+        <div class="who"><span>AM Law 100 · 1,100 attorneys · 14 offices</span><span class="ill">Illustrative</span></div>
+        <h3>One desk for 14 offices, with 31% of tickets resolved before an analyst sees them</h3>
+        <p>The firm consolidated three regional help desks onto Frontline's follow-the-sun desk, and Tier-0 automation took on resets, access and DMS requests.</p>
+        <div class="met"><div><b>31%</b><span>Tier-0 resolution</span></div><div><b>−42%</b><span>mean time to resolve</span></div></div>
+      </article>
+      <article class="card case rv">
+        <div class="who"><span>Insurance defense · 180 attorneys</span><span class="ill">Illustrative</span></div>
+        <h3>Carrier invoice rejections cut by a third in two billing cycles</h3>
+        <p>LEDES pre-flight flagged block billing, task-code gaps and rate-cap breaches before submission, and an appeals queue recovered the rest.</p>
+        <div class="met"><div><b>17→11%</b><span>rejection rate</span></div><div><b>−9 days</b><span>invoice to payment</span></div></div>
+      </article>
+      <article class="card case rv">
+        <div class="who"><span>Regional firm · post-merger · 240 attorneys</span><span class="ill">Illustrative</span></div>
+        <h3>Two IT estates became one in 90 days, without a missed filing</h3>
+        <p>A co-managed model kept the in-house team on strategy while Frontline ran identity, DMS migration and the desk through the cutover.</p>
+        <div class="met"><div><b>90</b><span>days to one estate</span></div><div><b>62→88</b><span>posture score</span></div></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ INSIGHTS ═══ -->
+<section class="alt" id="insights" aria-labelledby="in-h">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Insights</span>
+      <h2 id="in-h">For the people who run the firm.</h2>
+      <p class="lede">Bulletins, benchmarks and guides for COOs, CIOs and CFOs. Save pieces to read later, or share them with the partner who asked the question.</p>
+    </div>
+    <div class="filters" role="toolbar" aria-label="Filter insights" id="in-filters"></div>
+    <div class="ins" id="in-grid"></div>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section id="faq" aria-labelledby="faq-h">
+  <div class="wrap faq">
+    <div class="rv">
+      <span class="eyebrow">FAQ</span>
+      <h2 id="faq-h">Questions procurement will ask.</h2>
+      <p class="lede">Can't find yours? Ask the Frontline advisor in the corner. It answers from the same material.</p>
+    </div>
+    <div id="faq-list" class="rv"></div>
+  </div>
+</section>
+
+<!-- ═══ CONTACT ═══ -->
+<section class="alt" id="contact" aria-labelledby="ct-h">
+  <div class="wrap contact">
+    <div class="rv">
+      <span class="eyebrow">Request an assessment</span>
+      <h2 id="ct-h">See your firm the way a client's auditor will.</h2>
+      <p class="lede">In three weeks you get a scored assessment of security posture, service desk performance and billing leakage, and a fixed-price proposal. Keep the report either way.</p>
+      <ul>
+        <li><svg><use href="#i-shield"/></svg><span>Security posture scored against the controls clients and insurers ask about</span></li>
+        <li><svg><use href="#i-desk"/></svg><span>Service desk baseline: volume, first-level resolution, attorney wait time</span></li>
+        <li><svg><use href="#i-invoice"/></svg><span>eBilling leakage: rejections, appeals, days to pay</span></li>
+        <li><svg><use href="#i-clock"/></svg><span>A senior consultant replies within one business day</span></li>
+      </ul>
+    </div>
+    <form class="card lead rv" id="lead" novalidate>
+      <div><label for="f-name">Full name</label><input id="f-name" name="name" autocomplete="name" required></div>
+      <div><label for="f-email">Work email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
+      <div><label for="f-firm">Firm</label><input id="f-firm" name="firm" autocomplete="organization" required></div>
+      <div><label for="f-size">Attorneys</label><select id="f-size" name="size"><option>Under 50</option><option>50–149</option><option selected>150–349</option><option>350–999</option><option>1,000+</option></select></div>
+      <div class="full"><label>What should we look at?</label>
+        <div class="checks">
+          <label><input type="checkbox" name="i" value="security">Security posture</label>
+          <label><input type="checkbox" name="i" value="desk">Service desk</label>
+          <label><input type="checkbox" name="i" value="infra">Infrastructure &amp; cloud</label>
+          <label><input type="checkbox" name="i" value="ebilling">eBilling &amp; A/R</label>
+          <label><input type="checkbox" name="i" value="comanaged">Co-managed IT</label>
+        </div>
+      </div>
+      <div class="full"><label for="f-note">Anything we should know? <span style="color:var(--mute);font-weight:400">(optional)</span></label><textarea id="f-note" name="note" placeholder="Upcoming client audit, a merger, renewal date with your current provider…"></textarea></div>
+      <div class="full" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><button class="btn btn-p" type="submit">Request my assessment <svg><use href="#i-arrow"/></svg></button><span class="src">Concept form: nothing is sent or stored.</span></div>
+      <div class="form-done" id="lead-done" hidden></div>
+    </form>
+  </div>
+</section>
+
+<!-- ═══ DESIGN RATIONALE ═══ -->
+<section class="why" id="rationale" aria-labelledby="why-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="note">For Tyler Zachem &amp; the Broad Sky PRG</span>
+      <h2 id="why-h">Design rationale</h2>
+      <p class="lede">Frontline sells to law-firm COOs, CIOs and CFOs who buy through security reviews and multi-stakeholder committees. The site works as a trust center, a self-serve calculator and an editorial brand, in that order. Every element below is borrowed from a live reference site reviewed on 2026-10-06, and each one is tied to a KPI.</p>
+    </div>
+    <div class="refs" id="refs"></div>
+    <div class="kpi-row">
+      <div class="kpi-m"><b>Assessment requests / month</b><span>Primary conversion. Self-assessment completions should convert to requests at 8–12% <span class="est">est.</span></span></div>
+      <div class="kpi-m"><b>Security-review cycle time</b><span>Trust panel plus advisor Q&amp;A should cut days from questionnaire to signature.</span></div>
+      <div class="kpi-m"><b>Portal self-serve rate</b><span>Utility-bar portal links move existing clients to self-serve, lowering cost per ticket.</span></div>
+      <div class="kpi-m"><b>Cross-sell attach</b><span>Showing IT, security and RCM as one service lifts multi-line clients, the base for a platform multiple.</span></div>
+    </div>
+    <p class="src" style="margin-top:20px">Source: <span class="mono">data/research/design_refs.json</span> (entries with applies_to = fl). Facts on this page: <span class="mono">frontline_filings.json</span> (fl-008, fl-009, fl-010, fl-011) and <span class="mono">bsp_firm.json</span>. Benchmarks: <span class="mono">serviceos_evidence.json</span>.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <a class="brand" href="#top"><svg width="30" height="30"><use href="#i-logo"/></svg><span>Frontline<small>Managed Services</small></span></a>
+        <p style="margin:16px 0 0;max-width:340px">Managed IT, cybersecurity and revenue-cycle services for law firms. Headquartered in St. Louis, with hubs in Toledo, Honolulu, New York, Toronto, London, Hyderabad, Goa and Cape Town.</p>
+      </div>
+      <div><h4>Services</h4><ul><li><a href="#services">24/7 service desk</a></li><li><a href="#services">Infrastructure &amp; cloud</a></li><li><a href="#services">Cybersecurity</a></li><li><a href="#services">eBilling &amp; A/R</a></li></ul></div>
+      <div><h4>Platform</h4><ul><li><a href="firmos.html">FirmOS</a></li><li><a href="firmos.html#demo">Deflection demo</a></li><li><a href="firmos.html#portal">Client portal</a></li><li><a href="#assessment">Security check</a></li></ul></div>
+      <div><h4>Concept</h4><ul><li><a href="#rationale">Design rationale</a></li><li><a href="../index.html">All six concepts</a></li><li><a href="../../app.html#/fl/overview">Frontline in the portal</a></li><li><a href="../../">Broad Sky OI</a></li></ul></div>
+    </div>
+    <div class="legal"><span>Concept redesign by Syed Rizvi for the Broad Sky Partners Portfolio Resource Group. Not affiliated with or endorsed by Frontline Managed Services.</span><span>Facts sourced Sept–Oct 2026 · illustrative figures labelled</span></div>
+  </div>
+<p class="bsp-disclaimer" style="box-sizing:border-box;max-width:1200px;margin:0 auto;padding:12px 20px 18px;font-size:12px;line-height:1.55">Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.</p>
+</footer>
+
+<script type="module">
+  import { Chat } from '../../assets/chat.js?v=20261006085442';
+  import { Data, Fmt, esc } from '../../assets/core.js?v=20261006085442';
+  import { common, home } from './site.js?v=4';
+  common({ Chat, Data, Fmt, esc, page: 'home' });
+  home({ Data, Fmt, esc });
+</script>
+</body>
+</html>

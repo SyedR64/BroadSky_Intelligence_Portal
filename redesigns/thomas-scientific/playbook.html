@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thomas Scientific: the value-creation playbook</title>
+<meta name="description" content="How Broad Sky turns Thomas Scientific from a stressed 125-year-old distributor into a refinanceable lab supply-chain platform: cash first, then target-account selling, digital, private label, specialty verticals and a funded add-on machine.">
+<meta name="theme-color" content="#0b1d2c">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<link rel="stylesheet" href="playbook.css?v=20261006c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1d2c'/%3E%3Cpath d='M12 7h8M14 7v7l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V7' stroke='%2312b886' stroke-width='2.4' fill='none' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="concept" id="concept" role="note">
+  <div class="wrap concept-in">
+    <span class="concept-tag">Concept</span>
+    <p>Concept redesign proposed by Syed Rizvi for the Broad Sky Portfolio Resource Group — not an official site. <a href="../../app.html">Portal</a> · <a href="../index.html">Site concepts</a> · <a href="../../#os">OS program</a> · <a href="../../#briefing">Briefing</a></p>
+    <button class="concept-x" type="button" aria-label="Dismiss concept banner">&times;</button>
+  </div>
+</div>
+
+<header class="nav" id="top">
+  <div class="wrap nav-in">
+    <a class="brand" href="index.html" aria-label="Thomas Scientific concept site">
+      <svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><rect width="36" height="36" rx="10" fill="#0b1d2c"/><path d="M14 8h8M16 8v8l-6 10a2 2 0 001.8 3h12.4a2 2 0 001.8-3l-6-10V8" stroke="#12b886" stroke-width="2.4" fill="none" stroke-linejoin="round"/><path d="M12.5 23h11" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+      <span><b>Thomas Scientific</b><small>Value-creation playbook</small></span>
+    </a>
+    <nav class="nav-links" aria-label="Playbook sections">
+      <a href="#template">Template</a>
+      <a href="#map">Map</a>
+      <a href="#levers">Levers</a>
+      <a href="#agents">AI agents</a>
+      <a href="#talent">Talent</a>
+      <a href="#addons">Add-ons</a>
+      <a href="#returns">Returns</a>
+      <a href="#risks">Risks</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="pill ghost" href="labos.html">LabOS</a>
+      <a class="pill solid" href="#returns">The math</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-h">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="wrap hero-in">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="dot"></span><span id="eyebrow-t">Value-creation playbook · for Tyler Zachem &amp; the PRG · Oct 2026</span></p>
+      <div class="view-sw" role="group" aria-label="Choose a reading view"><span>Reading as</span><button type="button" data-view="dt" aria-pressed="true">Deal team &amp; lenders</button><button type="button" data-view="mgmt" aria-pressed="false">Thomas management</button></div>
+      <h1 id="hero-h">From distributor to <em>lab supply-chain platform.</em></h1>
+      <p class="lede" id="hero-lede">Thomas is Broad Sky's first deal (BSP-TS, LP, closed Dec 2021) and its most stressed position. The plan puts cash and the December 2027 maturity first and growth second, but the growth story is what earns the refinancing: target-account selling into 27,503 scored labs and health-system sites, digital and punchout ordering, private label, specialty verticals, AI agents that release cash, and two tuck-ins that happen only once they are funded.</p>
+      <div class="kpis" id="kpis" aria-live="polite"></div>
+      <p class="kpi-note">Today = Oct 2026 midpoint estimates. Month 36 = plan. All figures marked <span class="est">est.</span> are outside-in analyst assumptions built from SEC filings (lender marks, Form D) and ZoomInfo: revenue $250–320M, EBITDA $25–35M, low confidence. They are not company guidance and every one needs management validation.</p>
+    </div>
+    <aside class="clock card" aria-labelledby="clock-h">
+      <div class="clock-top">
+        <p class="kicker-sm">The clock</p>
+        <h2 id="clock-h">First-lien maturity</h2>
+        <div class="count" id="count"><b>—</b><span>days to 14 Dec 2027</span></div>
+      </div>
+      <div class="clock-mid dt-only">
+        <div class="card-h"><h3>Lender mark, % of par</h3><span class="mono" id="mark-last">—</span></div>
+        <div id="spark" class="spark" role="img" aria-label="Term-loan fair value as a percentage of par, by quarter"></div>
+        <p class="fine" id="spark-note">MFIC 10-Q / 10-K schedules of investments.</p>
+      </div>
+      <div class="clock-bot" id="gap"></div>
+    </aside>
+  </div>
+  <div class="wrap hero-strip" id="hero-strip" aria-label="Plan at a glance"></div>
+</section>
+
+<!-- TEMPLATE -->
+<section class="sec" id="template" aria-labelledby="tpl-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">01 · The template</p>
+      <h2 id="tpl-h">Smith + Howard went from one office to a TPG exit. Thomas runs a different version of the same play.</h2>
+      <p class="sub">Each Smith + Howard move is dated and sourced; next to it is what that move means for a 125-year-old lab distributor. The Thomas version of "national scale" is not 4x revenue. It is an amend-and-extend by the December 2027 maturity, then a refinanceable, re-rated platform by month 36 (Oct 2029).</p>
+    </div>
+    <div class="vs" id="vs" aria-label="Smith + Howard versus this plan"></div>
+    <div class="tpl-grid">
+      <ol class="timeline" id="timeline"></ol>
+      <aside class="analogs" id="analogs" aria-label="Same-vertical analogs"></aside>
+    </div>
+  </div>
+</section>
+
+<!-- MAP -->
+<section class="sec sec-tint" id="map" aria-labelledby="map-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">02 · Where, in order</p>
+      <h2 id="map-h">Four phases across 27,503 scored lab and hospital sites.</h2>
+      <p class="sub">Bubbles aggregate the scored-site universe by state (site count, Pursue and Nurture labels; no account names). Squares are Thomas locations; rings are the 25 screened add-on targets. Pick a phase, or press play.</p>
+    </div>
+    <div class="phase-bar" role="tablist" aria-label="Expansion phases" id="phase-bar"></div>
+    <div class="map-grid">
+      <div class="map-wrap">
+        <div id="leaf" class="leaf" role="img" aria-label="Map of scored lab sites by state, Thomas Scientific locations and add-on targets, coloured by expansion phase"></div>
+        <div class="map-legend" id="map-legend"></div>
+        <div class="map-status" id="map-status">Loading 27,503 sites…</div>
+      </div>
+      <aside class="phase-panel card" id="phase-panel" aria-live="polite"></aside>
+    </div>
+  </div>
+</section>
+
+<!-- LEVERS -->
+<section class="sec" id="levers" aria-labelledby="lev-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">03 · Eight levers</p>
+      <h2 id="lev-h">Margin comes from mix, coverage and cash, not from a market growing 1.5% a year.</h2>
+      <p class="sub">Each lever has a sourced benchmark and a target. Where Thomas's own baseline is not disclosed the bar shows a hatched gap: those are the first 30 days of diligence.</p>
+    </div>
+    <div class="levers" id="lever-grid"></div>
+    <p class="also" id="also"></p>
+  </div>
+</section>
+
+<!-- AGENTS -->
+<section class="sec sec-ink" id="agents" aria-labelledby="ag-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">04 · The AI layer</p>
+      <h2 id="ag-h">Nine agents that sell, key, search, forecast and collect.</h2>
+      <p class="sub">Named vendors, a published result each and weeks to deploy. Collections and pricing go first because each day of DSO is worth about $0.8M before the refinancing.</p>
+    </div>
+    <div class="seg seg-dark" role="tablist" aria-label="Filter agents by who they help" id="ag-seg"></div>
+    <div class="ag-grid">
+      <div class="runway card-dark" id="runway" aria-label="Deployment runway in weeks"></div>
+      <div class="agents" id="agent-grid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- TALENT -->
+<section class="sec" id="talent" aria-labelledby="tal-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">05 · Talent</p>
+      <h2 id="tal-h">Thirty account books, a specialist bench and an onsite corps.</h2>
+      <p class="sub">The target-account program is a people program first: a Grainger-style inside-sales academy, faster ramps, apprenticeships for the DCs and VMI sites, and AI that moves customer-service reps from keying orders to selling.</p>
+    </div>
+    <div class="tal-grid">
+      <div class="card pad books" id="books"></div>
+      <div class="programs" id="programs"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ADD-ONS -->
+<section class="sec sec-tint" id="addons" aria-labelledby="ad-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">06 · The add-on machine</p>
+      <h2 id="ad-h">Two funded tuck-ins in 36 months, none while the refinancing is open, against Calibre for the same targets.</h2>
+      <p class="sub" id="ad-sub">Ranked from the portal's add-on screen (fit score out of 100). Revenue figures are ZoomInfo modelled estimates and can be far off.</p>
+    </div>
+    <div class="machine" id="machine"></div>
+    <div class="ad-grid">
+      <div class="targets" id="targets"></div>
+      <aside class="ad-side">
+        <div class="card pad" id="arb"></div>
+        <div class="card pad" id="rivals"></div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- RETURNS -->
+<section class="sec" id="returns" aria-labelledby="ret-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">07 · Financing &amp; returns</p>
+      <h2 id="ret-h">Two steps: an amend-and-extend in 2027 sized on ~$33M of EBITDA, then a refinancing or sale near 6x at month 36.</h2>
+      <p class="sub" id="ret-sub">The loan matures 14 Dec 2027, month 14 of the plan. Month 36 (Oct 2029) comes after it, so the growth case cannot be the refinancing case: the 2027 deal is sized on the EBITDA Thomas can show by then, and the gap is closed with cash levers plus sponsor preferred, paydown or lender terms. Every forward number is labelled <span class="est">est.</span></p>
+    </div>
+    <div class="fin-grid dt-only" id="fin-grid"></div>
+    <div class="ret-grid">
+      <div class="card pad">
+        <div class="card-h"><h3>36-month KPI roadmap</h3><span class="est">est.</span></div>
+        <div id="road-chart" class="road-chart"></div>
+      </div>
+      <div class="card pad">
+        <div class="card-h"><h3>Refinancing capacity vs debt</h3><span class="est">est.</span></div>
+        <div id="refi" class="refi"></div>
+        <p class="fine" id="refi-note"></p>
+      </div>
+    </div>
+    <div class="card pad cash-card" id="cash-card">
+      <div class="card-h"><h3>Sources and uses of cash, months 0–36</h3><span class="est">est.</span></div>
+      <div id="cash" class="cash"></div>
+    </div>
+    <div class="card pad road-card">
+      <div class="card-h"><h3>KPI roadmap detail</h3><span class="est">est.</span></div>
+      <div id="road-table" class="tbl-wrap"></div>
+    </div>
+    <div class="card pad bridge-card dt-only">
+      <div class="card-h"><h3>Multiple-expansion case: today → month 36</h3><span class="est">est.</span></div>
+      <div class="bridge-ctl">
+        <label>Base EV / EBITDA <output id="mx-out">7.0x</output><input type="range" id="mx" min="6" max="10" step="0.1" value="7"></label>
+        <label>LabOS premium <output id="os-out">0.75 turns</output><input type="range" id="os" min="0" max="1" step="0.05" value="0.75"></label>
+        <label>Debt at month 36 <output id="dbt-out">$260M</output><input type="range" id="dbt" min="210" max="320" step="5" value="260"></label>
+        <label>Preferred ahead of common <output id="pf-out">$25M</output><input type="range" id="pf" min="0" max="80" step="1" value="25"></label>
+      </div>
+      <div class="bridge-row">
+        <div id="bridge" class="bridge" role="img" aria-label="Enterprise value bridge"></div>
+        <div id="eq" class="eq"></div>
+      </div>
+      <div id="recov" class="recov"></div>
+      <p class="fine" id="bridge-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- RISKS & ASKS -->
+<section class="sec sec-tint" id="risks" aria-labelledby="risk-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">08 · Eyes open</p>
+      <h2 id="risk-h">The first meeting, what could go wrong, and who does what.</h2>
+    </div>
+    <div class="card pad fm" id="first-meeting" aria-labelledby="fm-h"></div>
+    <div class="risk-grid">
+      <div class="card pad"><h3 class="h3i"><span class="ic warn" aria-hidden="true">!</span>Risks and mitigations</h3><ul class="risk-list" id="risk-list"></ul></div>
+      <div class="card pad"><h3 class="h3i"><span class="ic ok" aria-hidden="true">&#10003;</span><span id="ask-h">Asks of the deal team, the PRG and management</span></h3><ol class="ask-list" id="ask-list"></ol><div class="ninety" id="ninety"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" aria-labelledby="cta-h">
+  <div class="wrap cta-in">
+    <div>
+      <h2 id="cta-h">See the parts working.</h2>
+      <p>The operating system, the new website and the live portal views behind this plan.</p>
+    </div>
+    <div class="cta-links">
+      <a class="cta-card" href="labos.html"><b>LabOS</b><span>Account health, punchout and the valuation math</span></a>
+      <a class="cta-card" href="index.html"><b>The new website</b><span>Category finder, account-rep match, punchout</span></a>
+      <a class="cta-card" href="../../app.html#/ts/overview"><b>Thomas in the portal</b><span>Overview, parent accounts, site explorer</span></a>
+      <a class="cta-card" href="../../app.html#/ts/targets"><b>Add-on targets</b><span>All 25 screened targets with sources</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- RATIONALE -->
+<section class="sec rationale" id="rationale" aria-labelledby="rat-h">
+  <div class="wrap">
+    <details class="drawer" id="rat-drawer">
+      <summary><span><b id="rat-h">Design rationale</b> · why this page looks and reads the way it does</span><span class="chev" aria-hidden="true"></span></summary>
+      <div class="drawer-body">
+        <div class="rat-grid">
+          <div><h4>Credit memo first, growth deck second</h4><p>Borrowed from lender and restructuring memos: the maturity countdown and loan-mark sparkline sit in the first screen. Thomas's story only works if the reader sees that every lever is sequenced behind liquidity. KPI moved: quality of the 2027 amend-and-extend conversation.</p></div>
+          <div><h4>Avantor and Grainger investor materials</h4><p>Borrowed: digital share, ePro share and specialist ratios as headline metrics. They are the numbers a strategic or sponsor buyer will benchmark Thomas against, so the plan reports in the same units. KPIs moved: digital share of transactions, private-label mix.</p></div>
+          <div><h4>Stripe / Ramp product pages</h4><p>Borrowed: KPI-first hero, one accent colour on a calm canvas, crisp cards and interactive sliders. A PRG partner can pressure-test the multiple, premium and debt assumptions live in an IC or lender meeting instead of asking for a new model.</p></div>
+          <div><h4>The Smith + Howard exit release</h4><p>Borrowed: the dated entry-to-exit timeline. Mapping each move onto Thomas shows where the analogy holds (specialist add-ons, tech and offshore) and where it does not (4x revenue), which makes the plan more credible, not less.</p></div>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <details class="srcs" id="srcs"><summary>Method, sources &amp; caveats</summary><div id="src-body"></div></details>
+    <div class="foot-row">
+      <p>Concept page by Syed Rizvi for the Broad Sky Partners Portfolio Resource Group. Not an official Thomas Scientific or Broad Sky site. Brand names appear for reference only. Figures marked est. are analyst assumptions; no customer or account names are shown.</p>
+      <p><a href="../../app.html#/techos/overview">Tech enablement in the portal</a> · <a href="../../app.html#/ts/overview">Thomas in the portal</a> · <a href="../../">Broad Sky Operating Intelligence</a></p>
+    </div>
+  </div>
+<p class="bsp-disclaimer" style="box-sizing:border-box;max-width:1200px;margin:0 auto;padding:12px 20px 18px;font-size:12px;line-height:1.55">Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.</p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script type="module">
+import { Data, Fmt, esc } from '../../assets/core.js?v=20261006085442';
+import { Chat } from '../../assets/chat.js?v=20261006085442';
+import { boot } from './playbook.js?v=20261006c';
+boot({ Data, Fmt, esc, Chat });
+</script>
+</body>
+</html>

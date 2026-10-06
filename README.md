@@ -1,28 +1,59 @@
 # Broad Sky Operating Intelligence
 
-A static, single-page portal for the **Broad Sky Partners Portfolio Resource Group**. It turns public and licensed data into revenue, M&A and operating actions for each portfolio company. Every view starts with a one-line "so what" and KPIs, then shows the evidence (map, table or chart), then the action list. Every number carries a source, and estimates are labelled "est.".
+A static operating-intelligence site for the **Broad Sky Partners Portfolio Resource Group (PRG)**. It turns public and licensed data into revenue, M&A and operating actions for six portfolio platforms, and pairs each platform with a concept website and a named "OS" tech-enablement thesis. Every view starts with a one-line "so what" and KPIs, then shows the evidence (map, table or chart), then the action list. Every number carries a source; estimates are labelled "est." and mock data "illustrative".
 
-- **Stack:** vanilla ES modules, no build step. Leaflet for maps, inline SVG charts. Runs on GitHub Pages (`.nojekyll`).
-- **Entry point:** `index.html` loads `assets/core.js` (the runtime: data, formatting, UI, maps, charts, live feeds, tour, app shell) and `modules/registry.js` (the module list, in rail order).
-- **Build contract for module authors:** `CONTRACT.md`.
+- **Stack:** vanilla ES modules, no build step, GitHub Pages (`.nojekyll`). Leaflet for maps, inline SVG charts, MapLibre + deck.gl for the 3D theater.
+- **Shared runtime:** `assets/core.js` (data loaders, formatting, UI kit, maps, charts, live feeds, tour, app shell), `assets/chat.js` (the assistant), `assets/components.js` (targets / filings / opportunity cards).
+- **Contracts:** `CONTRACT.md` (portal modules) and `CONTRACT_SITES.md` (landing, concept sites, OS pages).
 
-## Module map
+## Site map
+
+| Path | What it is |
+|---|---|
+| `index.html` | Landing page: "Hello, Broad Sky." with the inline assistant, six example prompts, product tour, live evidence counts, the six platforms, the OS program and the briefing video. |
+| `app.html` | The portal (hash routes `app.html#/<module>/<view>`, ⌘K search, inspector, narrated tour). |
+| `redesigns/index.html` | Gallery of the six concept websites and the OS program, with the design principles behind them. |
+| `redesigns/punctual-pros/` | Concept site · `serviceos.html` (ServiceOS) · `nationwide.html` (nationwide playbook) · `ads.html` (growth marketing and sample ads) |
+| `redesigns/cet/` | Concept site · `gridos.html` (GridOS) · `playbook.html` |
+| `redesigns/frontline/` | Concept site · `firmos.html` (FirmOS) · `playbook.html` |
+| `redesigns/thomas-scientific/` | Concept site · `labos.html` (LabOS) · `playbook.html` |
+| `redesigns/bpi/` | Concept site · `signalos.html` (SignalOS) · `playbook.html` |
+| `redesigns/fair-harbor/` | Concept site · `harboros.html` (HarborOS) · `playbook.html` |
+| `redesigns/ai-agents.html`, `redesigns/voice-ai.html` | Cross-portfolio agentic-layer program and the 24/7 voice-AI model |
+| `theater.html` | Full-screen 3D theater (also in the portal at `#/theater/play`) |
+| `briefing/` | Rendered briefing (`broad_sky_briefing.mp4`), 29-second intro, executive memo (HTML + PDF), shot lists |
+
+Every concept page carries the same dismissible banner ("Concept redesign proposed by Syed Rizvi for the Broad Sky Portfolio Resource Group — not an official site.") with the shared navigation **Portal · Site concepts · OS program · Briefing**, the floating assistant, and the same footer disclaimer as the landing page. All internal links are relative, so the site works from any GitHub Pages sub-path.
+
+## Module map (portal)
 
 | Rail group | Module (`#/id`) | Views | What it answers |
 |---|---|---|---|
-| Command | Command Center (`home`) | overview, firm | Portfolio footprint, live NWS alerts, signals this week (bids due, top add-ons, rival deals), Broad Sky timeline, **data coverage** for every dataset |
-| Portfolio | Commonwealth Electrical, CET (`cet`) | overview, opportunities, wastewater, territory, transfers, targets, filings | New England bid radar, Horton wastewater cross-sell, county fit, new-owner retrofit triggers plus **home sales by county**, add-on screen |
-| Portfolio | Punctual Pros (`pp`) | overview, weather, movers, territory, market, targets, filings | Weather-driven staffing, **new-mover leads from home sales**, adjacent-zip expansion, franchise market, tuck-ins |
+| Command | Command Center (`home`) | overview, firm | Portfolio footprint, value and exit readiness, live NWS alerts, signals this week, Broad Sky timeline, data coverage |
+| Portfolio | Commonwealth Electrical, CET (`cet`) | overview, opportunities, wastewater, territory, transfers, targets, filings | New England bid radar, Horton wastewater cross-sell, county fit, new-owner retrofit triggers, add-on screen |
+| Portfolio | Punctual Pros (`pp`) | overview, weather, movers, territory, market, targets, filings | Weather-driven staffing, new-mover leads from home sales, adjacent-zip expansion, franchise market, tuck-ins |
 | Portfolio | Frontline Managed Services (`fl`) | overview, amlaw, midsize, targets, filings | AM Law account plan, mid-size firm pipeline, legal-IT add-ons, deal math |
-| Portfolio | Thomas Scientific (`ts`) | overview, accounts, sites, targets, filings | 27k scored lab/hospital sites, parent-account plays, distributor add-ons, credit file |
-| Portfolio | Bully Pulpit International (`bpi`) | overview, opportunities, benchmarks, market, filings | Growth plays, agency comps, DC home-sales market, filings |
-| Portfolio | Fair Harbor (`fh`) | overview, opportunities, benchmarks, market, filings | Capital-light growth, apparel comps, Manhattan home-sales market, filings |
+| Portfolio | Thomas Scientific (`ts`) | overview, accounts, sites, targets, filings | 27k scored lab and hospital sites, parent-account plays, distributor add-ons, credit file |
+| Portfolio | Bully Pulpit International (`bpi`) | overview, opportunities, benchmarks, filings | Growth plays, agency comps, filings |
+| Portfolio | Fair Harbor (`fh`) | overview, opportunities, benchmarks, filings, market | Capital-light growth, apparel comps, Manhattan home-sales market, filings |
 | Intelligence | Acquisition engine (`ma`) | overview, pipeline, theses, rivals, valuation, whitespace | Cross-platform add-on pipeline, theses joined to county home sales, stressed rivals, multiple arbitrage |
-| Intelligence | PE landscape (`pe`) | landscape, deals, heatmap, platforms | 35 competing sponsors, disclosed deals, rival presence × home-sales turnover by portfolio county |
-| Intelligence | Filings & financials (`fin`) | portfolio, explorer, comps, rivals, methods | Form D/ADV capital, triangulated financials, 31 public comps, data gaps register |
-| Briefing | Briefing & video (`briefing`) | play | Narrated 4-minute tour (35 steps, ~600 words) and rendered MP4 |
+| Intelligence | PE landscape (`pe`) | landscape, deals, heatmap, platforms | 35 competing sponsors, disclosed deals, rival presence by portfolio county |
+| Intelligence | Filings & financials (`fin`) | portfolio, deal, explorer, comps, rivals, methods | Form D/ADV capital, triangulated financials, deal math, 31 public comps, data-gaps register |
+| Intelligence | **Tech enablement (`techos`)** | overview, evidence, roadmap, calculator | The six OS theses (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS): KPIs moved, est. investment and EBITDA impact, valuation-premium evidence, 12–24 month roadmap, equity-value calculator |
+| Briefing | 3D theater (`theater`) | play | GPU-rendered scenes over the portfolio datasets |
+| Briefing | Briefing & video (`briefing`) | play | Narrated tour and rendered MP4 |
 
-The tour is assembled from each module's `tour` array (3–5 steps each). Each step has an optional numeric `order`; `Tour.register` in `assets/core.js` keeps the steps sorted by it, in the order home → cet → pp → fl → ts → bpi → fh → ma → pe → fin → briefing.
+The tour is assembled from each module's `tour` array (3–5 steps each), sorted by each step's optional `order` in `Tour.register` (`assets/core.js`).
+
+## The assistant (`assets/chat.js`)
+
+One widget serves the landing page (inline, persona `portal`), the portal and every concept page (floating launcher, personas `portal`, `pp`, `cet`, `fl`, `ts`, `bpi`, `fh`). It answers in three tiers, each grounded in the repo's own data:
+
+1. **Grounded intents (no key, no backend).** Regex-matched intents run against the datasets directly: zip coverage (`Do you serve 17601?`), live NWS storms and the demand model, CET bids due and programs, Horton wastewater targets, add-on targets, PE competitors, filings estimates, new-mover counts, the OS theses, the Punctual Pros nationwide plan, voice AI, AI agents, sample ads and portal navigation. Answers carry numbers, sources and a link into the right portal view.
+2. **Retrieval fallback.** If no intent matches, the question is scored against an index built from the portal's view catalogue, the `meta` summaries of the research files (financial pictures, theses, top actions) and the page's own FAQ entries; the best matches are returned with links.
+3. **Optional bring-your-own Claude key.** The settings dialog accepts an Anthropic API key. It is stored **only in this browser's `localStorage`** (`bsp-anthropic-key`, plus model and mode) and is sent only to `api.anthropic.com` via the official SDK. With a key, free-form questions stream from Claude, grounded with the same retrieved context; "always" mode routes intent questions to Claude as well. Remove the key from the same dialog. Nothing is stored server-side, and the site works fully without a key.
+
+Sites extend a persona through `Chat.mount(null, { persona, mode: 'floating', faq, suggestions })`; `scripts/chat_test.html?q=…&p=…` mounts the inline widget and auto-asks a question for testing.
 
 ## Data provenance
 
@@ -68,18 +99,26 @@ Frontline (St. Louis, MO) has no home-sales file. Missouri does not disclose sal
 
 Live feeds are fetched in the browser: NWS alerts (`api.weather.gov`), Open-Meteo forecasts and history.
 
-## Run locally
+## Run and test locally
 
 ```sh
 cd /path/to/BSP
 python3 -m http.server 8765 --bind 127.0.0.1
-open http://127.0.0.1:8765/            # or any route, e.g. #/cet/transfers
+open http://127.0.0.1:8765/                       # landing
+open http://127.0.0.1:8765/app.html#/techos/overview
+open http://127.0.0.1:8765/redesigns/             # concept gallery
 ```
 
-To smoke-test a route headlessly (prints console errors and saves a screenshot):
-`scripts/check_page.sh "#/pp/weather" /tmp/pp_weather.png [width] [height]`.
+Headless smoke test (prints console errors and saves a screenshot; paths without `#` load as-is, `#/…` routes load in `app.html`):
 
-Before each deploy, run `scripts/bump_version.sh` to stamp a new cache-busting `?v=` on the module imports.
+```sh
+scripts/check_page.sh "#/pp/weather" /tmp/pp_weather.png            # portal route, 1600×1000
+scripts/check_page.sh "redesigns/cet/gridos.html" /tmp/g.png 390 844 # page at phone width
+```
+
+To list every portal route, open `scripts/export_routes.html` (or dump it headlessly with `--dump-dom`) and run `check_page.sh` on each. Test the assistant with `scripts/chat_test.html?q=Do%20you%20serve%2017601%3F&p=pp`.
+
+Before each deploy, run `scripts/bump_version.sh`. It stamps one cache-busting `?v=` on the shared imports in `index.html`, `app.html`, `theater.html`, `scripts/chat_test.html`, `modules/*.js`, `assets/*.js`, every `redesigns/**/*.html` and the concept sites' own JS imports of `../../assets/*`. Concept-site CSS/JS (`site.css`, `os.js`, …) carry their own `?v=` stamps.
 
 ## Rebuild data
 
@@ -106,3 +145,19 @@ python3 scripts/make_briefing.py                         # → briefing/broad_sk
 ## Disclaimer
 
 **This portal holds public and licensed research data. Verify before use.** Figures come from public records (SEC, state and county assessor and recorder files, federal APIs), licensed sources (for example ZoomInfo) and analyst estimates. Private-company revenue, EBITDA, leverage and valuations are **estimates** triangulated from public filings, not company-reported numbers. Property records lag their sources by weeks to months, and assessor layers carry only each parcel's last sale. Nothing here is investment advice. Confirm any number with the primary source (links are in every inspector and footer) before it goes into a decision, a model or an outside communication. Owner names shown in property records come from public assessor rolls; use them only for aggregate market analysis or lawful business outreach.
+
+
+## Playbooks & programs (added Oct 6 2026)
+
+| Page | What it is | Data |
+|---|---|---|
+| `redesigns/punctual-pros/nationwide.html` | The Tyler-facing "From Lancaster to national" playbook: Smith + Howard template, four phases, levers, AI agents, pro programs, financing, returns | `data/research/pp_nationwide.json` |
+| `redesigns/punctual-pros/ads.html` | Growth marketing & sample ads: CTV platforms, benchmarks, creatives, three media plans, calculator; rendered spots in `briefing/ads/` (`scripts/make_ads.py`) | `data/research/pp_ads.json` |
+| `redesigns/voice-ai.html` | 24/7 voice AI as the growth engine: economics, EliseAI-style reference platforms, ASR/LLM stack, sample calls, governance | `data/research/voice_ai.json` |
+| `redesigns/ai-agents.html` | The agentic layer: 45 agents across six operating systems, patterns, rollout waves, governance | `data/research/ai_agents_portfolio.json` |
+| `redesigns/<slug>/playbook.html` | Value-creation playbooks for CET, Frontline, Thomas Scientific, BPI, Fair Harbor | `data/research/<co>_playbook.json` |
+| `theater.html` / `app.html#/theater/play` | WebGL 3D theater (MapLibre GL + deck.gl): six fly-through scenes over real data | sales, opportunities, targets, live NWS |
+| `briefing/Broad_Sky_Operating_Intelligence_Memo.pdf` | Six-page executive memo (`briefing/executive_memo.html`, printed with headless Chrome) | all research metas |
+| `briefing/broad_sky_intro.mp4` | Cinematic product-intro film (`scripts/make_cinematic.py`: Playwright recording + title cards + narration + synthesized music) | `briefing/cinematic_shots_master.json` |
+
+The live **"revenue left on the table" counter** (`assets/counter.js`) sums sourced, annualized opportunity values (missed calls without 24/7 voice coverage, uncaptured new-mover and storm demand, open CET bids at a 10% win rate) and divides by seconds per year. It is a way to feel the cost of waiting, labelled est., with the components one click away.

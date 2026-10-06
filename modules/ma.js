@@ -3,7 +3,7 @@
    Datasets: research/ma_targets_cet, ma_targets_pp, ma_targets_fl_ts, rival_filings,
              public_comps, pe_landscape, bsp_firm; sales/* (property transfers, lazy, theses view).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, fitTierOf } from '../assets/components.js?v=20260924203049';
+import { renderTargets, fitTierOf } from '../assets/components.js?v=20261006085442';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 const PLAT = {
@@ -88,15 +88,41 @@ const pctOf = (n, d) => d ? Math.round((n / d) * 100) : 0;
 const titleCase = s => String(s || '').replace(/_/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
 const ownerClass = s => { const x = String(s || '').toLowerCase().replace(/no sponsor disclosed|no pe affiliation/g, ''); if (!x.trim()) return 'Unverified'; if (/subsidiary|part of|venture-backed|pe-backed|private equity|backed by|\bpe\b/.test(x)) return 'Sponsor / corporate'; if (/founder|family/.test(x)) return 'Founder / family'; if (/unknown|unverified|not disclosed|not verified/.test(x)) return 'Unverified'; if (/esop|employee-owned/.test(x)) return 'ESOP'; if (/franchisee/.test(x)) return 'Franchisee'; return 'Private independent'; };
 const OWNER_COLOR = { 'Founder / family': 'var(--green)', 'Private independent': 'var(--accent)', Franchisee: 'var(--cyan)', ESOP: 'var(--amber)', Unverified: 'var(--dim)', 'Sponsor / corporate': 'var(--red)' };
-const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20260924203049'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261006085442'; document.head.appendChild(l); } };
 const shortList = a => { const v = (Array.isArray(a) ? a : [a]).filter(Boolean).map(x => { const y = String(x).replace(/\s*\(.*?\)\s*/g, ' ').replace(/_/g, ' ').trim(); return y.length > 26 ? y.slice(0, 25).trim() + '…' : y; }); return v.length > 2 ? [...v.slice(0, 2), `+${v.length - 2}`] : v; };
 const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
 const pctTxt = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;
 const multTxt = (fmt, v) => v == null || isNaN(v) ? '—' : `${fmt.num(v, 1)}x`;
 
+/* Name-collision guard: a target trading under a BSP portfolio company's own name (e.g. "PHE, Inc. d/b/a The Punctual Pros NJ")
+   may already be an affiliate or related party. It is held out of every ranking until the platform confirms its status. */
+const affilFlag = t => /punctual\s*pros/i.test(String(t?.company || '')) || (t?.risk_flags || []).some(r => /name collision|already affiliated/i.test(r));
+const affilNote = t => (t.risk_flags || []).find(r => /name collision|affiliat/i.test(r)) || 'Trades under a BSP portfolio company’s name; confirm it is not already affiliated before outreach';
+/* Leadership guard: Frontline's CEO changed in Jan 2026 (Tim Britt succeeded Seelin Naidoo, who moved to the board; bsp_firm, frontline_filings).
+   Screen text written earlier attributes criteria to "CEO Seelin Naidoo"; restate it so it is not presented as current leadership's view. */
+const ceoFix = s => s == null ? s : String(s)
+  .replace(/Frontline CEO Seelin Naidoo['’]s stated expansion geographies(?:\s*\(California, Texas\))?/g, 'Frontline’s stated priority geographies (CA, TX; set under former CEO Naidoo, to be re-confirmed with CEO Tim Britt)')
+  .replace(/(?:Frontline )?CEO Seelin Naidoo(?:['’]s)?/g, m => /['’]s$/.test(m) ? 'former CEO Seelin Naidoo’s (pre-Jan 2026; re-confirm with CEO Tim Britt)' : 'Former CEO Seelin Naidoo (pre-Jan 2026; re-confirm with CEO Tim Britt)');
+/* Route reach — ONE definition for density vs new-hub (PP and CET). Distances are straight-line (the datasets carry no drive times);
+   30 mi straight-line ≈ 45 drive-minutes on Central-PA / Shore roads and matches the PP rubric's top density band (≤30 mi from a PP node). */
+const ROUTE_REACH_MI = 30;
+const PP_NODES = [['Lancaster', 40.06, -76.37], ['Harrisburg', 40.2732, -76.8867], ['York', 39.9626, -76.7277], ['Toms River', 39.9537, -74.1979]];
+const REACH_TXT = { pp: `≤${ROUTE_REACH_MI} mi straight-line (≈45 drive-min) of Lancaster, Harrisburg, York or Toms River`, cet: `≤${ROUTE_REACH_MI} mi straight-line (≈45 drive-min) of Worcester, Taunton or Norwell` };
+const miles = (la1, lo1, la2, lo2) => { const r = Math.PI / 180, h = Math.sin((la2 - la1) * r / 2) ** 2 + Math.cos(la1 * r) * Math.cos(la2 * r) * Math.sin((lo2 - lo1) * r / 2) ** 2; return 2 * 3958.8 * Math.asin(Math.sqrt(h)); };
+function reachOf(t, p) {
+  let node = null, mi = null;
+  if (p === 'pp') {
+    if (t.lat != null && t.lon != null) for (const [n, la, lo] of PP_NODES) { const d = miles(t.lat, t.lon, la, lo); if (mi == null || d < mi) { mi = d; node = n; } }
+    else { const a = num(t.distance_mi_from_lancaster), c = num(t.distance_mi_from_toms_river); if (a != null || c != null) { if (c == null || (a != null && a <= c)) { mi = a; node = 'Lancaster'; } else { mi = c; node = 'Toms River'; } } }
+  } else if (p === 'cet') { mi = num(t.nearest_cet_node_miles); node = t.nearest_cet_node || null; }
+  else return { reach: null, node: null, mi: null };
+  return { reach: mi == null ? null : mi <= ROUTE_REACH_MI ? 'Density tuck-in' : 'New-hub anchor', node, mi: mi == null ? null : Math.round(mi) };
+}
+const REACH_COLOR = { 'Density tuck-in': 'var(--green)', 'New-hub anchor': 'var(--accent)' };
+
 function normT(t, p) {
-  const fit = num(t.fit_score);
-  return { ...t, _p: p, platform: PLAT[p].label, fit_score: fit, employees: num(t.employees), revenue_est_usd: num(t.revenue_est_usd), _tier: fitTierOf(fit || 0), _state: t.state || t.hq_state || '', _owner: ownerClass(t.ownership) };
+  const fit = num(t.fit_score); const rc = reachOf(t, p);
+  return { ...t, strategic_rationale: ceoFix(t.strategic_rationale), _p: p, platform: PLAT[p].label, fit_score: fit, employees: num(t.employees), revenue_est_usd: num(t.revenue_est_usd), _tier: fitTierOf(fit || 0), _state: t.state || t.hq_state || '', _owner: ownerClass(t.ownership), _affil: affilFlag(t), _reach: rc.reach, _node: rc.node, _nodeMi: rc.mi };
 }
 
 /* One shared load for every view (research() caches per file; this caches the derived bundle). */
@@ -120,7 +146,10 @@ function loadBundle(data) {
   _bundle.then(b => { if (b.missing.length) _bundle = null; }).catch(() => { _bundle = null; });
   return _bundle;
 }
-const rankedFor = (b, p) => (p === 'cet' ? b.cet?.meta?.ranked_top_10 : p === 'pp' ? b.pp?.meta?.ranked_top_10 : p === 'fl' ? b.flts?.meta?.frontline?.ranked_top_8 : b.flts?.meta?.thomas_scientific?.ranked_top_8) || [];
+const rankedRaw = (b, p) => (p === 'cet' ? b.cet?.meta?.ranked_top_10 : p === 'pp' ? b.pp?.meta?.ranked_top_10 : p === 'fl' ? b.flts?.meta?.frontline?.ranked_top_8 : b.flts?.meta?.thomas_scientific?.ranked_top_8) || [];
+/* Ranked shortlist with affiliation-flagged names held out and ranks re-numbered (the screen authors' list is otherwise kept as-is). */
+const rankedFor = (b, p) => rankedRaw(b, p).filter(r => !affilFlag(r) && !b.byId.get(r.id)?._affil).map((r, i) => ({ ...r, rank: i + 1, why: ceoFix(r.why) }));
+const affilFor = (b, p) => b.targets.filter(t => t._affil && (!p || t._p === p));
 const metaFor = (b, p) => (p === 'cet' ? b.cet?.meta : p === 'pp' ? b.pp?.meta : b.flts?.meta) || null;
 function competitorsFor(b, p) {
   const src = p === 'cet' ? b.cet?.meta?.pe_backed_competitors : p === 'pp' ? b.pp?.meta?.pe_backed_competitors : p === 'fl' ? b.flts?.meta?.frontline?.pe_backed_competitors : b.flts?.meta?.thomas_scientific?.pe_backed_competitors;
@@ -131,7 +160,7 @@ const sourceFoot = (ui, meta, label) => meta ? ui.source(label || meta.dataset |
 const nextActionFor = p => ({
   cet: 'Warm introduction through CET leadership (or the NuWave/Horton networks) → confirm ownership and succession intent → request 3-yr P&L, backlog, bonding capacity, union status and licences → indicative bid inside the LMM multiple band (see Valuation).',
   pp: 'PRG-led owner outreach (for Authority Brands franchisees, open the territory-transfer path with the franchisor) → request 3-yr P&L, membership count, technician roster and call-centre metrics → indicative bid inside the LMM multiple band.',
-  fl: 'Approach on Frontline’s stated tuck-in criteria (~$5M revenue / $1–2M EBITDA) → review law-firm client list overlap, contract terms and SOC 2 posture → indicative bid; plan service-desk (HELIX) migration.',
+  fl: 'Re-confirm tuck-in criteria with CEO Tim Britt (the ~$5M revenue / $1–2M EBITDA profile was stated under former CEO Naidoo) → approach → review law-firm client list overlap, contract terms and SOC 2 posture → indicative bid; plan service-desk (HELIX) migration.',
   ts: 'Line-card overlap analysis versus the Thomas catalogue → supplier change-of-control consents → request customer concentration and gross margin by line → indicative bid ahead of Calibre Scientific.',
 })[p];
 
@@ -141,14 +170,15 @@ function openTarget(ctx, t) {
   const fb = Object.entries(t.fit_breakdown || {}).map(([k, v]) => { const m = mx[k] || (t._p === 'fl' || t._p === 'ts' ? 5 : 20); return { label: `${titleCase(k)} (${num(v) ?? '—'}/${m})`, value: Math.round(((num(v) || 0) / m) * 100) }; });
   inspector.open({
     title: esc(t.company), color: P.color,
-    sub: `${esc(t.hq_city || '')}${t.hq_city ? ', ' : ''}${esc(t._state)} · ${esc(P.long)} add-on candidate · ${esc(t._tier)}`,
+    sub: `${esc(t.hq_city || '')}${t.hq_city ? ', ' : ''}${esc(t._state)} · ${esc(P.long)} add-on candidate · ${esc(t._tier)}${t._affil ? ' · held out: verify affiliation' : ''}`,
     sections: [
+      t._affil ? { label: 'Verify affiliation · do not contact yet', html: `<div class="m-ma-insp">${ui.note(`<b>${esc(affilNote(t))}.</b> Held out of every ranking. ${esc(P.label)} leadership to confirm status (owned · related party · independent); if independent, resolve the trade-name overlap, then re-score.`, 'warn')}</div>` } : null,
       { label: 'Fit', html: `<div class="kpi" style="--kc:${P.color}"><div class="label">Fit score (${esc(P.label)} rubric)</div><div class="value">${fmt.num(t.fit_score)}</div><div class="sub">${esc(t._tier)} · rubrics differ by platform</div></div>${fb.length ? `<div class="mt-8">${charts.hbar(fb, { max: 100, fmt: v => `${v}%`, labelW: 170, color: P.color })}</div>` : ''}` },
-      { label: 'Profile', html: '<div class="m-ma-insp">' + ui.kv({ Founded: t.founded_year, Employees: t.employees != null ? fmt.num(t.employees) : null, 'Revenue (est.)': t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)} <span class="dim small">ZoomInfo modeled</span>` : null, Ownership: t.ownership ? `${esc(t.ownership)}${t.ownership_notes ? `<div class="dim small">${esc(clip(t.ownership_notes, 200))}</div>` : ''}` : null, Brands: t.brands_or_franchise ? esc(t.brands_or_franchise) : null, 'Specialties / trades': t.specialties || t.trades || t.offerings, 'End markets': t.end_markets || t.customer_segments, 'Nearest CET node': t.nearest_cet_node ? `${esc(t.nearest_cet_node)} · ${fmt.num(t.nearest_cet_node_miles)} mi` : null, 'Distance (Lancaster / Toms River)': t.distance_mi_from_lancaster != null ? `${fmt.num(t.distance_mi_from_lancaster)} / ${fmt.num(t.distance_mi_from_toms_river)} mi` : null, Reviews: t.review_count ? `${fmt.num(t.review_count)}${t.review_rating ? ` · ${esc(t.review_rating)}★` : ''}` : null, Website: t.website ? fmt.link(t.website) : null }) + '</div>' },
+      { label: 'Profile', html: '<div class="m-ma-insp">' + ui.kv({ Founded: t.founded_year, Employees: t.employees != null ? fmt.num(t.employees) : null, 'Revenue (est.)': t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)} <span class="dim small">ZoomInfo modeled</span>` : null, Ownership: t.ownership ? `${esc(t.ownership)}${t.ownership_notes ? `<div class="dim small">${esc(clip(t.ownership_notes, 200))}</div>` : ''}` : null, Brands: t.brands_or_franchise ? esc(t.brands_or_franchise) : null, 'Specialties / trades': t.specialties || t.trades || t.offerings, 'End markets': t.end_markets || t.customer_segments, 'Route reach': t._reach ? `${fmt.chip(t._reach, REACH_COLOR[t._reach])} <span class="dim small">${fmt.num(t._nodeMi)} mi from ${esc(t._node || 'nearest node')} · straight-line; reach = ${esc(REACH_TXT[t._p])}</span>` : null, 'Nearest CET node': t.nearest_cet_node ? `${esc(t.nearest_cet_node)} · ${fmt.num(t.nearest_cet_node_miles)} mi` : null, 'Distance (Lancaster / Toms River)': t.distance_mi_from_lancaster != null ? `${fmt.num(t.distance_mi_from_lancaster)} / ${fmt.num(t.distance_mi_from_toms_river)} mi` : null, Reviews: t.review_count ? `${fmt.num(t.review_count)}${t.review_rating ? ` · ${esc(t.review_rating)}★` : ''}` : null, Website: t.website ? fmt.link(t.website) : null }) + '</div>' },
       { label: 'Strategic rationale', html: `<div class="small text-2">${esc(t.strategic_rationale || '—')}</div>` },
       t.risk_flags?.length ? { label: 'Risk flags', html: `<div class="m-ma-insp row wrap gap-4">${t.risk_flags.map(r => fmt.chip(r, 'var(--amber)')).join(' ')}</div>` } : null,
       { label: 'Sources', html: `<div class="col gap-4 small">${(t.sources || []).map(s => `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(fmt.host(s) || s)}</a>`).join('') || '—'}</div><div class="dim small mt-8">Retrieved ${esc(t.retrieved || '—')} · ${esc(t.revenue_source || 'revenue source n/a')}</div>` },
-      { label: 'Next action', html: `<div class="small text-2">${esc(nextActionFor(t._p))}</div>` },
+      { label: 'Next action', html: `<div class="small text-2">${esc(t._affil ? `Do not contact. ${P.label} CEO to confirm ownership / related-party status first; only if independent, re-score and log in the pipeline.` : nextActionFor(t._p))}</div>` },
     ].filter(Boolean),
     actions: [t.website ? { label: 'Website ↗', href: t.website } : null, { id: 'pipe', label: 'Open in pipeline', onClick: () => app.go('ma', 'pipeline', { platform: t._p, q: t.company }) }, { id: 'mod', label: `${esc(P.label)} module`, onClick: () => app.go(P.module) }].filter(Boolean),
   });
@@ -156,7 +186,7 @@ function openTarget(ctx, t) {
 
 /* Interleave each platform's ranked list: every #1, then every #2, … (rubrics are not comparable across platforms). */
 function topTen(b) {
-  const lists = PKEYS.map(p => { const ranked = rankedFor(b, p).map(r => b.byId.get(r.id)).filter(Boolean); const rest = b.targets.filter(t => t._p === p && !ranked.includes(t)).sort((x, y) => (y.fit_score || 0) - (x.fit_score || 0)); return [...ranked, ...rest]; });
+  const lists = PKEYS.map(p => { const ranked = rankedFor(b, p).map(r => b.byId.get(r.id)).filter(Boolean); const rest = b.targets.filter(t => t._p === p && !t._affil && !ranked.includes(t)).sort((x, y) => (y.fit_score || 0) - (x.fit_score || 0)); return [...ranked, ...rest]; });
   const out = [];
   for (let r = 0; out.length < 10 && r < 20; r++) {
     const tier = lists.map((l, i) => ({ t: l[r], p: PKEYS[i] })).filter(x => x.t).sort((x, y) => (y.t.fit_score || 0) - (x.t.fit_score || 0));
@@ -164,7 +194,7 @@ function topTen(b) {
   }
   return out;
 }
-const whyFor = (b, t) => { const r = rankedFor(b, t._p).find(x => x.id === t.id); return r?.why || clip(t.strategic_rationale, 190); };
+const whyFor = (b, t) => { const r = rankedFor(b, t._p).find(x => x.id === t.id); return r?.why || clip(t.strategic_rationale, 250); };
 
 /* ── Rival parsing ───────────────────────────────────────────────────────── */
 function buildRivals(rf) {
@@ -254,15 +284,16 @@ async function overview(ctx) {
   ui.kpis([
     { label: 'Targets screened', value: fmt.num(T.length), sub: PKEYS.map(p => `${PLAT[p].key.toUpperCase()} ${byP[p].length}`).join(' · '), color: 'var(--c-ma)' },
     { label: 'Tier-1 targets', value: fmt.num(t1.length), sub: `fit ≥80 · ${fmt.num(t2.length)} more at Tier 2`, color: 'var(--green)' },
-    { label: 'Platforms screened', value: `${PKEYS.length}<small>of ${firmItems.filter(i => i.status === 'held').length || 6} held</small>`, sub: 'BPI and Fair Harbor not yet screened', color: 'var(--c-bsp)' },
+    { label: 'Platforms screened', value: `${PKEYS.length}<small>of ${firmItems.filter(i => i.status === 'held').length || 6} held</small>`, sub: `BPI (${(firmItems.find(i => i.id === 'bsp-bpi')?.add_ons || []).length || 6} add-ons, most acquisitive) and Fair Harbor not yet screened`, color: 'var(--c-bsp)' },
     { label: 'Median target size', value: fmt.money(medRev), sub: `revenue est. (n=${nRev}) · ${fmt.num(medEmp)} staff median`, color: 'var(--accent)' },
     { label: 'Rival platforms tracked', value: fmt.num(rivals.length), sub: `${peBacked} PE-backed · ${stressed.length} with credit stress or refi due`, color: 'var(--red)' },
     { label: 'BSP add-ons completed', value: fmt.num(stats.add_ons), sub: named != null ? `${named} identified by name · ${stats.platforms || 7} platforms` : 'stated by BSP · firm dataset pending', color: 'var(--c-bsp)' },
   ]) +
   `<div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Where the targets are', cls: 'ma-fill', sub: 'Every screened add-on by platform (size = fit tier); rings are BSP platform HQs. Click a point to inspect.', body: `<div class="map" id="ma-map"></div>`, flush: true, foot: ui.source('ZoomInfo search + company websites (ma_targets_*); BSP firm profile', null, b.cet?.meta?.generated) })}
-    ${ui.panel({ title: 'This quarter’s top 10', sub: 'Each platform’s #1 pick, then its #2, and so on (rubrics are not comparable across platforms)', body: `<div class="ma-top" id="ma-top10"></div>`, scroll: true, foot: `<span class="src">Ranking: platform shortlists (ranked_top_10 / ranked_top_8) · reasons from screen authors</span>` })}
+    ${ui.panel({ title: 'This quarter’s top 10', sub: 'Each platform’s #1 pick, then its #2, and so on (rubrics are not comparable across platforms). Names that collide with a BSP company are held out.', body: `<div class="ma-top" id="ma-top10"></div><div id="ma-affil"></div>`, scroll: true, foot: `<span class="src">Ranking: platform shortlists (ranked_top_10 / ranked_top_8), affiliation-flagged names removed and ranks re-numbered · reasons from screen authors</span>` })}
   </div>
+  <div class="mt-12">${ui.panel({ title: 'Smith + Howard benchmark · add-on pace and headcount since BSP entry', sub: 'Cumulative dated add-ons by years since BSP’s investment, each held platform against the S+H trajectory (entry Nov 2022 → TPG exit Aug 2026)', accent: true, body: `<div class="ma-sh"><div><div id="ma-sh-chart"></div><div class="ma-sh-leg" id="ma-sh-leg"></div></div><div><div id="ma-sh-tbl"></div><div class="h-note mt-8" id="ma-sh-read"></div></div></div>`, foot: ui.source('bsp_firm (portfolio add-ons, timeline, employees_est); S+H headcount and ~4x revenue from the BSP exit release', 'https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/', b.firm?.meta?.generated) })}</div>
   <div class="grid grid-3 mt-12">
     ${ui.panel({ title: 'Screening funnel · platform × fit tier', sub: 'Targets per fit tier (T1 ≥80, T2 65–79, T3 50–64, T4 <50). Listed = on the screen authors’ ranked shortlist; Owner = confirmed founder/family owner.', body: `<div id="ma-heat"></div><div class="th-h mt-12">Conversion across all platforms</div><div id="ma-funnel"></div><div class="th-h mt-12">Read-out <span class="analyst">Analyst view</span></div><ul class="bul" id="ma-readout"></ul>`, foot: ui.source('ma_targets_cet · ma_targets_pp · ma_targets_fl_ts', null, b.pp?.meta?.generated) })}
     ${ui.panel({ title: 'BSP add-on track record', sub: `${stats.add_ons} add-ons stated by BSP${named != null ? ` · ${named} identified by name` : ''}`, body: `<div id="ma-cadence"></div><div id="ma-byplat" class="mt-8"></div><div class="th-h mt-12">Timeline</div><div id="ma-tl" style="max-height:230px;overflow:auto"></div>`, foot: ui.source('Broad Sky & portfolio press releases (bsp_firm)', 'https://broadskypartners.com/news/', b.firm?.meta?.generated) })}
@@ -273,6 +304,11 @@ async function overview(ctx) {
   const top = topTen(b);
   el.querySelector('#ma-top10').innerHTML = top.map((x, i) => { const t = x.t, P = PLAT[x.p]; return `<div class="it" data-id="${esc(t.id)}" style="--cc:${P.color}"><div class="rk">${i + 1}</div><div class="grow"><div class="nm">${esc(t.company)}</div><div class="why">${esc(whyFor(b, t))}</div><div class="meta">${fmt.chip(P.label, P.color)}${fmt.chip(`#${x.rank} in ${P.label} list`)}${t.revenue_est_usd ? fmt.chip(`${fmt.money(t.revenue_est_usd)} est.`) : ''}${t.employees ? fmt.chip(`${fmt.num(t.employees)} staff`) : ''}${fmt.chip(t._owner, OWNER_COLOR[t._owner])}${fmt.chip(`${t.hq_city || ''}${t.hq_city ? ', ' : ''}${t._state}`)}</div></div><div class="sc">${fmt.score(t.fit_score)}</div></div>`; }).join('');
   el.querySelectorAll('#ma-top10 .it').forEach(n => n.onclick = () => openTarget(ctx, b.byId.get(n.dataset.id)));
+  // Affiliation bucket: names that collide with a BSP company are shown with their risk flags inline, never ranked.
+  const affT = affilFor(b);
+  el.querySelector('#ma-affil').innerHTML = affT.length ? `<div class="th-h mt-12">Verify affiliation · held out of ranking (${affT.length})</div>${affT.map(t => `<div class="it ma-affil" data-id="${esc(t.id)}" style="--cc:var(--red)"><div class="rk">!</div><div class="grow"><div class="nm">${esc(t.company)}</div><div class="meta">${fmt.chip(PLAT[t._p].label, PLAT[t._p].color)}${fmt.chip('name collision · verify', 'var(--red)')}${(t.risk_flags || []).map(r => fmt.chip(clip(r, 90), /collision|affiliat/i.test(r) ? 'var(--red)' : 'var(--amber)')).join('')}</div></div><div class="sc">${fmt.score(t.fit_score)}</div></div>`).join('')}` : '';
+  el.querySelectorAll('#ma-affil .it').forEach(n => n.onclick = () => openTarget(ctx, b.byId.get(n.dataset.id)));
+  shBenchmark(ctx, el, b);
 
   // Heat grid + funnel
   const cols = ['T1', 'T2', 'T3', 'T4', 'Listed', 'Owner'];
@@ -281,7 +317,7 @@ async function overview(ctx) {
   const sl = T.filter(t => shortlistIds.has(t.id));
   el.querySelector('#ma-funnel').innerHTML = charts.hbar([
     { label: 'Screened', value: T.length }, { label: 'Tier 1–2 (fit ≥65)', value: T.filter(t => (t.fit_score || 0) >= 65).length }, { label: 'Tier 1 (fit ≥80)', value: t1.length },
-    { label: 'Shortlisted (ranked)', value: sl.length }, { label: 'Shortlisted + owner-ready', value: sl.filter(t => t._owner === 'Founder / family').length },
+    { label: 'Shortlisted (ranked)', value: sl.length }, { label: 'Shortlisted + founder/family', value: sl.filter(t => t._owner === 'Founder / family').length },
   ], { labelW: 160, color: 'var(--c-ma)', fmt: v => fmt.num(v) });
 
   const shareT12 = p => pctOf(t12By[p], byP[p].length), shareOwn = p => pctOf(byP[p].filter(t => t._owner === 'Founder / family').length, byP[p].length);
@@ -306,7 +342,7 @@ async function overview(ctx) {
   const prg = b.firm?.firm?.prg; const prgLead = (prg?.members || [])[0];
   el.querySelector('#ma-steps').innerHTML = [
     { n: '01', t: 'Sourcing', d: 'ZoomInfo pulls, franchise directories and web verification; fit rubric per platform', k: `${fmt.num(T.length)} screened` },
-    { n: '02', t: 'PRG outreach', d: `Portfolio Resource Group${prgLead ? ` (${prgLead.name})` : ''} plus platform CEO warm intros; founder/family owners first`, k: `${fmt.num(sl.filter(t => t._owner === 'Founder / family').length)} owner-ready` },
+    { n: '02', t: 'PRG outreach', d: `Portfolio Resource Group${prgLead ? ` (${prgLead.name})` : ''} plus platform CEO warm intros; founder/family owners first`, k: `${fmt.num(sl.filter(t => t._owner === 'Founder / family').length)} founder/family-owned` },
     { n: '03', t: 'Diligence', d: '3-yr P&L, QoE, customer concentration, licensing/labour; price inside the LMM band', k: `${fmt.num(t1.length)} Tier-1` },
     { n: '04', t: 'Integration', d: '100-day plan: brand and dispatch (PP), crews and licences (CET), service desk (FL), line cards and ERP (TS)', k: `${fmt.num(stats.add_ons)} done` },
   ].map(s => `<div class="step"><div class="n">${s.n}</div><div class="t">${esc(s.t)}</div><div class="d">${esc(s.d)}</div><div class="k">${esc(s.k)}</div></div>`).join('');
@@ -314,8 +350,9 @@ async function overview(ctx) {
   const acts = [];
   if (byP.pp.length) acts.push(`<b>Punctual Pros:</b> open owner conversations with ${best('pp').map(esc).join(' and ')} before an auction; the PE landscape rates residential services “${esc(heat.punctual_pros?.intensity || 'very high')}” intensity, with Sila and Legacy buying in PP’s counties.`);
   if (byP.cet.length) acts.push(`<b>CET:</b> prioritise ${best('cet').map(esc).join(' and ')} (Eastern MA density) and CT capability near Horton while Kohlberg and Huron electrical platforms are still outside New England.`);
-  if (byP.fl.length) acts.push(`<b>Frontline:</b> approach ${best('fl').map(esc).join(' and ')}. They match the CEO’s stated geographies and ~$5M-revenue tuck-in profile.`);
+  if (byP.fl.length) acts.push(`<b>Frontline:</b> approach ${best('fl').map(esc).join(' and ')}. They match Frontline’s stated priority geographies and ~$5M-revenue tuck-in profile (set under former CEO Naidoo; re-confirm both with Tim Britt, CEO since Jan 2026).`);
   if (byP.ts.length) acts.push(`<b>Thomas Scientific:</b> bid for ${best('ts').map(esc).join(' and ')} ahead of Calibre Scientific, the most active lab-distribution consolidator.`);
+  if (affT.length) acts.push(`<b>Verify affiliation:</b> ${affT.map(t => esc(clip(t.company.replace(/\s*\(.*\)$/, ''), 50))).join(', ')} trade${affT.length === 1 ? 's' : ''} under a BSP company’s name. Confirm ownership with platform leadership before anyone calls; held out of all rankings.`);
   if (stressed.length) acts.push(`<b>Watch-list:</b> ${stressed.slice(0, 4).map(r => esc(r.name)).join(', ')} show PIK interest, sub-95 lender marks or near-term maturities. They are more likely to sell assets than to bid.`);
   el.querySelector('#ma-acts').innerHTML = acts.map(a => `<li><span>${a}</span></li>`).join('');
 
@@ -329,53 +366,160 @@ async function overview(ctx) {
   return () => map.remove();
 }
 
+/* Smith + Howard benchmark: add-on pace and headcount by years since BSP entry, S+H against each held platform. */
+const HEADCOUNT = { // parsed from bsp_firm employees_est (estimates); S+H from the BSP exit release
+  sh: { from: 100, to: 800, note: '~100 → ~800 professionals at exit (BSP release)' },
+  'bsp-cet': { from: 140, to: 260, note: '~140 (Oct 2025) → ~260+ with Horton’s 120+ staff (Sep 2026)' },
+  'bsp-pp': { from: 113, to: null, note: '~113 at acquisition; current headcount not disclosed' },
+  'bsp-fl': { from: 1000, to: 1100, note: '~1,000 at investment → ~1,100 (Jan 2026)' },
+  'bsp-bpi': { from: 200, to: 250, note: '200+ at entry (Apr 2023), plus 50+ from BOLDT and later deals' },
+};
+const SHORT = { 'bsp-cet': 'CET', 'bsp-pp': 'Punctual Pros', 'bsp-fl': 'Frontline', 'bsp-ts': 'Thomas Scientific', 'bsp-bpi': 'BPI', 'bsp-fh': 'Fair Harbor' };
+function shBenchmark(ctx, el, b) {
+  const { ui, fmt, esc, charts } = ctx;
+  const cEl = el.querySelector('#ma-sh-chart'), tEl = el.querySelector('#ma-sh-tbl'), rEl = el.querySelector('#ma-sh-read'), lEl = el.querySelector('#ma-sh-leg');
+  if (!cEl) return;
+  if (!b.firm) { cEl.innerHTML = ui.empty('Firm dataset (bsp_firm) not available'); return; }
+  const day = d => { const s = String(d || ''); return new Date(/^\d{4}-\d{2}$/.test(s) ? `${s}-01` : s); };
+  const yrs = (a, z) => (day(z) - day(a)) / (365.25 * 864e5);
+  const tl = b.firm.timeline || [];
+  const isSH = e => /Smith/i.test(e.company || '');
+  const shEntry = tl.find(e => e.type === 'platform' && isSH(e))?.date || '2022-11-15';
+  const shExit = tl.filter(e => e.type === 'exit' && isSH(e)).map(e => e.date).sort().pop() || '2026-08-06';
+  const shAdds = tl.filter(e => e.type === 'add_on' && isSH(e)).map(e => yrs(shEntry, e.date)).sort((x, y) => x - y);
+  const shStated = 9, shHeld = yrs(shEntry, shExit);
+  const shAt = y => shAdds.filter(x => x <= y + 1e-9).length;
+  const now = new Date().toISOString().slice(0, 10);
+  const hc = h => h ? `${h.from ? fmt.num(h.from) : '—'} → ${h.to ? fmt.num(h.to) : 'n/d'}` : 'not disclosed';
+  const plats = (b.firm.items || []).filter(i => i.status === 'held' && i.entry_date).map(i => {
+    const held = yrs(i.entry_date, now); const adds = i.add_ons || []; const dated = adds.filter(a => a.date).map(a => yrs(i.entry_date, a.date)).sort((x, y) => x - y);
+    const stated = adds.length, same = shAt(held), h = HEADCOUNT[i.id];
+    return { id: i.id, name: SHORT[i.id] || i.company.replace(/\s*\(.*\)$/, ''), color: hexFor(i.company), entry: String(i.entry_date).slice(0, 7), held, stated, dated, named: adds.filter(a => !/unidentified/i.test(a.name || '')).length, pace: held > 0 ? stated / held : null, same, gap: stated - same, hc: hc(h), hcNote: h?.note || 'not disclosed', growth: h?.from && h?.to ? h.to / h.from : null };
+  });
+  const sh = { id: 'sh', name: 'Smith + Howard (exited)', color: hexFor('Smith'), entry: shEntry.slice(0, 7), held: shHeld, stated: shStated, dated: shAdds, named: shAdds.length, pace: shStated / shHeld, same: null, gap: null, hc: hc(HEADCOUNT.sh), hcNote: HEADCOUNT.sh.note, growth: 8, _sh: true };
+  const maxY = Math.ceil(Math.max(shHeld, ...plats.map(p => p.held)) * 2) / 2;
+  const steps = []; for (let y = 0; y <= maxY + 1e-9; y += 0.5) steps.push(y);
+  // Half-year steps; the step that contains "today" (or the S+H exit) carries everything closed to date.
+  const series = [sh, ...plats].map(r => ({ name: r.name, color: r.color, points: steps.map(y => [y, y - 0.5 < r.held ? r.dated.filter(x => x <= Math.min(y, r.held) + 1e-9).length : null]) }));
+  cEl.innerHTML = charts.line(series, { h: 210, fmt: v => fmt.num(v, 0), xLabels: steps.map(y => Number.isInteger(y) ? `Yr ${y}` : '') });
+  lEl.innerHTML = [sh, ...plats].map(r => `<span><i style="background:${r.color}${r._sh ? ';height:3px' : ''}"></i>${esc(r.name)}</span>`).join('') + '<span class="dim">x = years since BSP entry · y = cumulative dated add-ons</span>';
+  ui.table(tEl, { rows: [sh, ...plats], pageSize: 10, sortKey: 'pace', exportName: 'ma_sh_benchmark', rowKey: r => r.id,
+    columns: [
+      { key: 'name', label: 'Platform', fmt: (v, r) => `<span style="color:${r.color};font-weight:600">${esc(v)}</span><div class="dim small">entry ${esc(r.entry)}</div>` },
+      { key: 'held', label: 'Yrs', num: true, fmt: v => fmt.num(v, 1) },
+      { key: 'stated', label: 'Add-ons', num: true, fmt: (v, r) => `${fmt.num(v)}${r.named < v ? `<span class="dim small"> (${r.named} named)</span>` : ''}` },
+      { key: 'pace', label: '/ yr', num: true, fmt: v => v == null ? '—' : fmt.num(v, 1) },
+      { key: 'same', label: 'S+H same age', num: true, fmt: v => v == null ? '<span class="dim">—</span>' : fmt.num(v) },
+      { key: 'gap', label: 'Gap', num: true, fmt: v => v == null ? '<span class="dim">—</span>' : `<span style="color:${v >= 0 ? 'var(--green)' : 'var(--red)'}">${v > 0 ? '+' : ''}${fmt.num(v)}</span>` },
+      { key: 'hc', label: 'Staff (est.)', fmt: (v, r) => `<span class="small" title="${esc(r.hcNote)}">${esc(v)}</span>` },
+      { key: 'growth', label: 'Growth', num: true, fmt: v => v == null ? '<span class="dim">n/d</span>' : `${fmt.num(v, 1)}x` },
+    ] });
+  const ahead = plats.filter(p => p.gap >= 0 && p.stated > 0).sort((x, y) => y.pace - x.pace), behind = plats.filter(p => p.gap < 0 && p.stated > 0).sort((x, y) => y.pace - x.pace), none = plats.filter(p => !p.stated);
+  const nm = p => `${esc(p.name)} (${p.stated} in ${fmt.num(p.held, 1)} yrs vs S+H ${p.same})`;
+  rEl.innerHTML = `<b>So what:</b> S+H closed ${shStated} add-ons in ${fmt.num(shHeld, 1)} years (${fmt.num(shStated / shHeld, 1)} a year) and grew headcount about 8x. ${ahead.length ? `On or ahead of that pace at the same age: ${ahead.map(nm).join('; ')}.` : 'No current platform is on the S+H pace at the same age.'} ${behind.length ? `Closest: ${behind.slice(0, 2).map(nm).join('; ')}${behind.length > 2 ? `; then ${andList(behind.slice(2).map(p => esc(p.name)))}` : ''}.` : ''} ${none.length ? `${andList(none.map(p => esc(p.name)))} ${none.length === 1 ? 'has' : 'have'} no add-on yet, so ${none.length === 1 ? 'it is' : 'they are'} the biggest gap to the playbook${none.some(p => p.id === 'bsp-fl') ? `; Frontline already has a ${b.targets.filter(t => t._p === 'fl').length}-target screen in Pipeline` : ''}.` : ''} Headcount is from press releases (est.); revenue by year is not disclosed for current platforms. <span class="analyst">Analyst view</span>`;
+}
+
 /* ═══ View 2: Pipeline ════════════════════════════════════════════════════ */
+/* Deal-stage tracker: stage, deal owner and next-step date per target. The portal is a static site with no shared
+   store, so entries are kept in this browser (localStorage) and the ⇩ Tracker CSV is the hand-off to the team. */
+const STAGES = ['Screened', 'Contacted', 'Meeting', 'NDA', 'IOI', 'Pass'];
+const STAGE_COLOR = { Screened: 'var(--dim)', Contacted: 'var(--accent)', Meeting: 'var(--cyan)', NDA: 'var(--purple)', IOI: 'var(--green)', Pass: 'var(--red)' };
+const STAGE_KEY = 'bsp.ma.pipeline.v1';
+const stageStore = {
+  read() { try { const o = JSON.parse(localStorage.getItem(STAGE_KEY) || '{}'); return o && typeof o === 'object' ? o : {}; } catch { return {}; } },
+  write(o) { try { localStorage.setItem(STAGE_KEY, JSON.stringify(o)); return true; } catch { return false; } },
+};
+const stageOf = (S, id) => S[id] || { stage: 'Screened', owner: '', next: '' };
+const todayISO = () => new Date().toISOString().slice(0, 10);
+function stageCell(fmt, esc, st) {
+  const late = st.next && st.next < todayISO() && !['Screened', 'Pass'].includes(st.stage);
+  return `${fmt.chip(st.stage, STAGE_COLOR[st.stage])}${st.owner || st.next ? `<div class="dim small">${esc(st.owner || '')}${st.owner && st.next ? ' · ' : ''}${st.next ? `<span style="${late ? 'color:var(--red)' : ''}">${esc(st.next)}${late ? ' overdue' : ''}</span>` : ''}</div>` : ''}`;
+}
+
 async function pipeline(ctx) {
   const { el, ui, fmt, esc, app, params } = ctx; injectCss();
   const b = await loadBundle(ctx.data);
   const sel = PKEYS.includes(params.platform) ? params.platform : 'all';
   const q = String(params.q || '').trim();
-  let rows = b.targets.filter(t => sel === 'all' || t._p === sel);
-  if (q) rows = rows.filter(t => String(t.company).toLowerCase().includes(q.toLowerCase()));
+  const showPass = params.pass === '1';
+  const S = stageStore.read();
+  let base = b.targets.filter(t => sel === 'all' || t._p === sel);
+  if (q) base = base.filter(t => String(t.company).toLowerCase().includes(q.toLowerCase()));
+  const passed = base.filter(t => stageOf(S, t.id).stage === 'Pass');
+  const rows = showPass || q ? base : base.filter(t => stageOf(S, t.id).stage !== 'Pass');
   const t1 = rows.filter(t => t._tier === 'Tier 1').length, t2 = rows.filter(t => t._tier === 'Tier 2').length;
   const ff = rows.filter(t => t._owner === 'Founder / family').length;
   const states = new Set(rows.map(t => t._state).filter(Boolean));
   const P = sel === 'all' ? null : PLAT[sel];
   const meta = sel === 'all' ? null : metaFor(b, sel);
   const topState = topN(countBy(rows, t => t._state), 3).map(([s, n]) => `${s} ${n}`).join(', ');
+  const inPlay = rows.filter(t => !['Screened', 'Pass'].includes(stageOf(S, t.id).stage));
+  const overdue = inPlay.filter(t => { const n = stageOf(S, t.id).next; return n && n < todayISO(); }).length;
+  const byStage = countBy(inPlay, t => stageOf(S, t.id).stage);
+  const affN = rows.filter(t => t._affil).length;
+  const dens = rows.filter(t => !t._affil && t._reach === 'Density tuck-in').length, hub = rows.filter(t => !t._affil && t._reach === 'New-hub anchor').length;
+  const passParams = { ...(sel !== 'all' ? { platform: sel } : {}), ...(q ? { q } : {}), ...(showPass ? {} : { pass: '1' }) };
   el.innerHTML = `<div class="m-ma">` + ui.pageHead({
     title: `Add-on pipeline${P ? ` · ${esc(P.label)}` : ''}`,
-    sub: rows.length ? `<b>${fmt.num(rows.length)} target${rows.length === 1 ? '' : 's'}${q ? ` matching “${esc(q)}”` : P ? '' : ' across all four platforms'}; ${fmt.num(t1)} Tier-1 and ${fmt.num(t2)} Tier-2.</b> ${rows.length > 1 ? `Most are in ${esc(topState)}, and` : `HQ state: ${esc(topState)};`} ${pctOf(ff, rows.length)}% have a confirmed founder or family owner. Sort or filter the table, then click a row for the fit breakdown, sources and next action.` : 'No targets match the current filter.',
-    chips: `${fmt.chip('Fit rubric differs by platform; bars shown as % of each dimension’s maximum')}${fmt.chip('Revenue = ZoomInfo modeled est.', 'var(--amber)')}`,
-    actions: `<a class="btn" href="#/ma/theses">Platform theses →</a>`,
+    sub: rows.length ? `<b>${fmt.num(rows.length)} target${rows.length === 1 ? '' : 's'}${q ? ` matching “${esc(q)}”` : P ? '' : ' across all four platforms'}; ${fmt.num(t1)} Tier-1 and ${fmt.num(t2)} Tier-2${inPlay.length ? `; ${fmt.num(inPlay.length)} in play` : ''}.</b> ${rows.length > 1 ? `Most are in ${esc(topState)}, and` : `HQ state: ${esc(topState)};`} ${pctOf(ff, rows.length)}% have a confirmed founder or family owner (ownership, not proof of intent to sell). ${dens + hub ? `${fmt.num(dens)} are density tuck-ins and ${fmt.num(hub)} would be new-hub anchors (reach = ${ROUTE_REACH_MI} mi straight-line, ≈45 drive-min, of a platform node). ` : ''}${affN ? `${affN} target${affN === 1 ? '' : 's'} trade${affN === 1 ? 's' : ''} under a BSP company’s name: verify affiliation before any contact. ` : ''}Click a row to set stage, owner and next-step date.` : 'No targets match the current filter.',
+    chips: `${fmt.chip('Fit rubric differs by platform; bars shown as % of each dimension’s maximum')}${fmt.chip('Revenue = ZoomInfo modeled est.', 'var(--amber)')}${passed.length && !showPass && !q ? fmt.chip(`${passed.length} passed · hidden`, 'var(--red)') : ''}`,
+    actions: `<button class="btn" id="ma-trk-csv">⇩ Tracker CSV</button><a class="btn" href="#/ma/theses">Platform theses →</a>`,
   }) + missingNote(ui, esc, b) +
   ui.kpis([
-    { label: 'Targets in view', value: fmt.num(rows.length), sub: sel === 'all' ? `of ${fmt.num(b.targets.length)} screened` : `${esc(P.long)} screen`, color: P?.color || 'var(--c-ma)' },
+    { label: 'Targets in view', value: fmt.num(rows.length), sub: `${sel === 'all' ? `of ${fmt.num(b.targets.length)} screened` : `${esc(P.long)} screen`} · ${fmt.num(states.size)} states/countries`, color: P?.color || 'var(--c-ma)' },
     { label: 'Tier 1 / Tier 2', value: `${fmt.num(t1)}<small>/ ${fmt.num(t2)}</small>`, sub: 'fit ≥80 / 65–79', color: 'var(--green)' },
     { label: 'Median fit', value: fmt.num(median(rows.map(t => t.fit_score))), sub: 'platform rubric, 0–100', color: 'var(--accent)' },
-    { label: 'Median revenue (est.)', value: fmt.money(median(rows.map(t => t.revenue_est_usd))), sub: `median staff ${fmt.num(median(rows.map(t => t.employees)))}`, color: 'var(--c-ma)' },
-    { label: 'Owner-ready', value: `${pctOf(ff, rows.length)}%`, sub: `${fmt.num(ff)} founder/family-owned`, color: 'var(--green)' },
-    { label: 'States / countries', value: fmt.num(states.size), sub: esc(topState || '—'), color: 'var(--c-bsp)' },
+    { label: 'Median revenue (est.)', value: fmt.money(median(rows.map(t => t.revenue_est_usd))), sub: `median staff ${fmt.num(median(rows.map(t => t.employees)))} · ZoomInfo modeled`, color: 'var(--c-ma)' },
+    { label: 'Founder/family-owned', value: `${pctOf(ff, rows.length)}%`, sub: `${fmt.num(ff)} confirmed · ${esc(topState || '—')}`, color: 'var(--green)' },
+    { label: 'In play', value: fmt.num(inPlay.length), sub: inPlay.length ? `${STAGES.filter(s => byStage[s]).map(s => `${s} ${byStage[s]}`).join(' · ')}${overdue ? ` · ${overdue} overdue` : ''}` : 'set stage in the row inspector', color: overdue ? 'var(--red)' : 'var(--cyan)' },
   ]) +
-  `<div class="ma-seg-row mt-12"><span class="lbl">Platform</span><div id="ma-seg"></div>${q ? `<span class="chip" style="--cc:var(--c-ma)">Search: ${esc(q)}</span><a class="btn xs" href="#/ma/pipeline${sel !== 'all' ? `?platform=${sel}` : ''}">Clear ✕</a>` : ''}</div>
+  `<div class="ma-seg-row mt-12"><span class="lbl">Platform</span><div id="ma-seg"></div>${q ? `<span class="chip" style="--cc:var(--c-ma)">Search: ${esc(q)}</span><a class="btn xs" href="#/ma/pipeline${sel !== 'all' ? `?platform=${sel}` : ''}">Clear ✕</a>` : ''}${!q ? `<button class="btn xs ${showPass ? 'active' : ''}" id="ma-pass" aria-pressed="${showPass}">${showPass ? 'Hide' : 'Show'} passed (${passed.length})</button>` : ''}</div>
   <div id="ma-tg"></div>
-  <div class="src-line mt-8">${sel === 'all' ? 'Sources: ma_targets_cet, ma_targets_pp, ma_targets_fl_ts (ZoomInfo search_companies, franchise directories, company websites)' : esc(clip(meta?.method || '', 320))} · generated ${esc(meta?.generated || b.pp?.meta?.generated || '—')}</div>
+  <div class="src-line mt-8">${sel === 'all' ? 'Sources: ma_targets_cet, ma_targets_pp, ma_targets_fl_ts (ZoomInfo search_companies, franchise directories, company websites)' : esc(clip(ceoFix(meta?.method || ''), 320))} · generated ${esc(meta?.generated || b.pp?.meta?.generated || '—')} · stages saved in this browser</div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'How to work this list', sub: 'Recommended sequence for deal teams', body: `<ol class="acts"><li><span><b>Filter to Tier 1–2 and owner-ready</b> (Ownership = founder/family) for PRG outreach this quarter.</span></li><li><span><b>Export the shortlist</b> (⇩ CSV) into the deal pipeline tracker with owner, platform and next step.</span></li><li><span><b>Check risk flags</b> in the inspector. ZoomInfo revenue is modeled, so confirm size in the first call.</span></li><li><span><b>Price it</b> using the Valuation benchmarks tab: LMM entry multiple versus platform multiple.</span></li></ol>` })}
-    ${ui.panel({ title: 'Data caveats', sub: 'From the screen authors — read before outreach', body: `<ul class="bul">${(sel === 'all' ? [b.cet?.meta, b.pp?.meta, b.flts?.meta] : [meta]).filter(Boolean).flatMap(m => (m.caveats || []).slice(0, sel === 'all' ? 2 : 5)).map(c => `<li>${esc(clip(c, 260))}</li>`).join('') || '<li>—</li>'}</ul>` })}
+    ${ui.panel({ title: 'How to work this list', sub: 'Recommended sequence for deal teams', body: `<ol class="acts"><li><span><b>Filter to Tier 1–2 and founder/family-owned</b> for PRG outreach this quarter; density tuck-ins first, new-hub anchors only with a branch plan.</span></li><li><span><b>Set stage, owner and next-step date</b> in the row inspector (Screened → Contacted → Meeting → NDA → IOI, or Pass). Passed targets drop out of the default view.</span></li><li><span><b>Share the tracker</b> with ⇩ Tracker CSV; stages are kept in this browser only.</span></li><li><span><b>Check risk flags</b> in the inspector. ZoomInfo revenue is modeled, so confirm size in the first call. Never contact a target flagged “verify affiliation”.</span></li><li><span><b>Price it</b> on the Valuation tab: the calculator defaults to the platform’s median target EBITDA.</span></li></ol>` })}
+    ${ui.panel({ title: 'Data caveats', sub: 'From the screen authors — read before outreach', body: `<ul class="bul">${(sel === 'all' ? [b.cet?.meta, b.pp?.meta, b.flts?.meta] : [meta]).filter(Boolean).flatMap(m => (m.caveats || []).slice(0, sel === 'all' ? 2 : 5)).map(c => `<li>${esc(clip(ceoFix(c), 260))}</li>`).join('') || '<li>—</li>'}</ul>` })}
   </div></div>`;
-  ui.seg(el.querySelector('#ma-seg'), [{ value: 'all', label: `All (${b.targets.length})` }, ...PKEYS.map(p => ({ value: p, label: `${PLAT[p].label} (${b.targets.filter(t => t._p === p).length})` }))], sel, v => app.go('ma', 'pipeline', v === 'all' ? undefined : { platform: v }));
+  ui.seg(el.querySelector('#ma-seg'), [{ value: 'all', label: `All (${b.targets.length})` }, ...PKEYS.map(p => ({ value: p, label: `${PLAT[p].label} (${b.targets.filter(t => t._p === p).length})` }))], sel, v => app.go('ma', 'pipeline', { ...(v === 'all' ? {} : { platform: v }), ...(showPass ? { pass: '1' } : {}) }));
+  const pb = el.querySelector('#ma-pass'); if (pb) pb.onclick = () => app.go('ma', 'pipeline', passParams);
+  el.querySelector('#ma-trk-csv').onclick = () => {
+    const ids = new Set([...rows.map(t => t.id), ...Object.keys(S)]);
+    const out = b.targets.filter(t => ids.has(t.id)).map(t => { const st = stageOf(S, t.id); return { platform: PLAT[t._p].label, company: t.company, hq: `${t.hq_city || ''}${t.hq_city ? ', ' : ''}${t._state}`, fit_score: t.fit_score, tier: t._tier, route_reach: t._reach ? `${t._reach} (${t._nodeMi} mi ${t._node})` : '', ownership: t._owner, revenue_est_usd: t.revenue_est_usd, verify_affiliation: t._affil ? 'YES' : '', stage: st.stage, deal_owner: st.owner || '', next_step_date: st.next || '', stage_updated: st.updated || '', website: t.website || '' }; });
+    ui.exportCSV(out, null, `ma_deal_tracker_${sel}`);
+  };
   const host = el.querySelector('#ma-tg');
   if (!b.targets.length) { host.innerHTML = ui.note('Target screens are not yet available.', 'warn'); return; }
   // Normalise fit_breakdown to % of each dimension's maximum so the shared inspector bars are comparable across rubrics.
   // Ownership is normalised to 6 classes (raw text restored in the inspector); long FL/TS offering strings are shortened for the table.
-  const items = rows.map(t => { const mx = DIM_MAX[t._p] || {}; const fb = {}; for (const [k, v] of Object.entries(t.fit_breakdown || {})) { const m = mx[k] || 20; fb[`${k} (${v}/${m})`] = Math.round(((num(v) || 0) / m) * 100); } return { ...t, fit_breakdown: fb, ownership: t._owner, _ownRaw: t.ownership, specialties: shortList(t.specialties || t.trades || t.offerings || []), strategic_rationale: clip(t.strategic_rationale, 95), _why: t.strategic_rationale }; });
+  // Affiliation-flagged names carry the flag inline (brand line and Why column) so the warning is visible without opening the row.
+  const items = rows.map(t => { const mx = DIM_MAX[t._p] || {}; const fb = {}; for (const [k, v] of Object.entries(t.fit_breakdown || {})) { const m = mx[k] || 20; fb[`${k} (${v}/${m})`] = Math.round(((num(v) || 0) / m) * 100); } const st = stageOf(S, t.id);
+    return { ...t, fit_breakdown: fb, ownership: t._owner, _ownRaw: t.ownership, specialties: shortList(t.specialties || t.trades || t.offerings || []), brands_or_franchise: t._affil ? `⚠ VERIFY AFFILIATION · ${clip(affilNote(t), 110)}` : t.brands_or_franchise, strategic_rationale: t._affil ? `⚠ Held out of ranking: ${clip(affilNote(t), 120)}` : clip(t.strategic_rationale, 95), _why: t.strategic_rationale, route_reach: t._reach ? `${t._reach} (${t._nodeMi} mi ${t._node})` : '', stage: st.stage, deal_owner: st.owner || '', next_date: st.next || '' }; });
   const byName = new Map(rows.map(t => [esc(t.company), t]));
-  // Wrap the inspector so the shared renderTargets panel gains raw ownership detail and a platform-specific next action.
-  const insp = { ...ctx.inspector, open: cfg => { const t = byName.get(cfg.title); if (t) { cfg = { ...cfg, sections: cfg.sections.map(sec => sec.label === 'Strategic rationale' ? { label: sec.label, html: `<div class="small text-2">${esc(t.strategic_rationale || '—')}</div>` } : sec.label === 'Next action' ? { label: 'Next action', html: `<div class="small text-2">${esc(nextActionFor(t._p))}</div>` } : sec) }; const i = cfg.sections.findIndex(sec => sec.label === 'Profile'); cfg.sections.splice(i + 1, 0, { label: 'Ownership detail', html: `<div class="small text-2">${esc(t.ownership || '—')}${t.ownership_notes ? ` · ${esc(t.ownership_notes)}` : ''}</div>` }); } ctx.inspector.open(cfg); } };
-  renderTargets({ ...ctx, inspector: insp }, host, { items, color: P?.color || 'var(--c-ma)', platformLabel: P ? P.label : 'Cross-portfolio', exportName: `ma_pipeline_${sel}`, pageSize: 40,
-    extraColumns: [{ key: 'platform', label: 'Platform', fmt: (v, r) => fmt.chip(v, PLAT[r._p]?.color) }] });
-  if (q && rows.length === 1) openTarget(ctx, rows[0]);
+  const bindStage = t => {
+    const box = [...document.querySelectorAll('#inspector [data-stage-for]')].find(n => n.dataset.stageFor === t.id); if (!box) return;
+    const save = () => {
+      const v = Object.fromEntries([...box.querySelectorAll('[data-f]')].map(n => [n.dataset.f, String(n.value || '').trim().slice(0, 60)]));
+      if (v.stage === 'Screened' && !v.owner && !v.next) delete S[t.id]; else S[t.id] = { stage: STAGES.includes(v.stage) ? v.stage : 'Screened', owner: v.owner, next: /^\d{4}-\d{2}-\d{2}$/.test(v.next) ? v.next : '', updated: todayISO() };
+      const ok = stageStore.write(S);
+      host.querySelectorAll('[data-stage-cell]').forEach(n => { if (n.dataset.stageCell === t.id) n.innerHTML = stageCell(fmt, esc, stageOf(S, t.id)); });
+      ui.toast(ok ? `${t.company.slice(0, 40)}: ${stageOf(S, t.id).stage}` : 'Could not save (browser storage blocked); use ⇩ Tracker CSV');
+    };
+    box.querySelectorAll('[data-f]').forEach(n => n.addEventListener('change', save));
+  };
+  // Wrap the inspector so the shared renderTargets panel gains the deal-stage form, raw ownership detail, the affiliation warning and a platform-specific next action.
+  const insp = { ...ctx.inspector, open: cfg => { const t = byName.get(cfg.title); if (t) { const st = stageOf(S, t.id);
+    cfg = { ...cfg, sections: cfg.sections.map(sec => sec.label === 'Strategic rationale' ? { label: sec.label, html: `<div class="small text-2">${esc(t.strategic_rationale || '—')}</div>` } : sec.label === 'Next action' ? { label: 'Next action', html: `<div class="small text-2">${esc(t._affil ? `Do not contact. ${PLAT[t._p].label} CEO to confirm ownership / related-party status first; only if independent, re-score and set a stage.` : nextActionFor(t._p))}</div>` } : sec) };
+    const i = cfg.sections.findIndex(sec => sec.label === 'Profile');
+    cfg.sections.splice(i + 1, 0, { label: 'Ownership detail', html: `<div class="small text-2">${esc(t.ownership || '—')}${t.ownership_notes ? ` · ${esc(t.ownership_notes)}` : ''}</div>` }, t._reach ? { label: 'Route reach', html: `<div class="small text-2">${fmt.chip(t._reach, REACH_COLOR[t._reach])} ${fmt.num(t._nodeMi)} mi from ${esc(t._node || 'nearest node')} (straight-line). Reach = ${esc(REACH_TXT[t._p])}.</div>` } : null);
+    cfg.sections = cfg.sections.filter(Boolean);
+    cfg.sections.unshift({ label: 'Deal stage', html: `<div class="m-ma-insp ma-stage" data-stage-for="${esc(t.id)}"><label>Stage<select data-f="stage">${STAGES.map(s => `<option ${s === st.stage ? 'selected' : ''}>${s}</option>`).join('')}</select></label><label>Deal owner<input data-f="owner" type="text" maxlength="60" placeholder="e.g. PRG lead" value="${esc(st.owner || '')}"></label><label>Next step<input data-f="next" type="date" value="${esc(st.next || '')}"></label><div class="dim small">Saved in this browser${st.updated ? ` · last update ${esc(st.updated)}` : ''} · share with ⇩ Tracker CSV</div></div>` });
+    if (t._affil) cfg.sections.unshift({ label: 'Verify affiliation · do not contact yet', html: ui.note(`<b>${esc(affilNote(t))}.</b> Held out of every ranking until ${esc(PLAT[t._p].label)} leadership confirms status (owned · related party · independent).`, 'warn') });
+  } ctx.inspector.open(cfg); if (t) bindStage(t); } };
+  // Platform + route reach share one column (reach applies to PP and CET only) to keep the table inside the panel.
+  const extra = [{ key: 'platform', label: 'Platform · reach', fmt: (v, r) => `${fmt.chip(v, PLAT[r._p]?.color)}${r._reach ? `<div class="small" style="margin-top:3px"><span style="color:${REACH_COLOR[r._reach]}">${r._reach === 'Density tuck-in' ? 'Density' : 'New hub'}</span> <span class="dim">· ${fmt.num(r._nodeMi)} mi ${esc(r._node || '')}</span></div>` : ''}` }];
+  extra.push({ key: 'stage', label: 'Stage', fmt: (v, r) => `<span data-stage-cell="${esc(r.id)}">${stageCell(fmt, esc, stageOf(S, r.id))}</span>` });
+  renderTargets({ ...ctx, inspector: insp }, host, { items, color: P?.color || 'var(--c-ma)', platformLabel: P ? P.label : 'Cross-portfolio', exportName: `ma_pipeline_${sel}`, pageSize: 40, extraColumns: extra });
+  if (q && rows.length === 1) host.querySelector('#tg-table tbody tr[data-i]')?.click(); // opens the stage-aware inspector
 }
 
 /* ═══ View 3: Platform theses ═════════════════════════════════════════════ */
@@ -388,37 +532,37 @@ function thesisStats(b, p) {
   return {
     T, n, t1: T.filter(t => t._tier === 'Tier 1').length, t2: T.filter(t => t._tier === 'Tier 2').length, medEmp: median(T.map(t => t.employees)), medRev: median(T.map(t => t.revenue_est_usd)),
     ff: own['Founder / family'] || 0, unv: own.Unverified || 0, own, states: topN(countBy(T, t => t._state), 6), dimAvg,
-    risks: topN(countBy(T.flatMap(t => t.risk_flags || []), x => x), 4), top5: T.slice().sort((x, y) => (y.fit_score || 0) - (x.fit_score || 0)).slice(0, 5),
+    risks: topN(countBy(T.flatMap(t => t.risk_flags || []), x => x), 4), top5: T.filter(t => !t._affil).sort((x, y) => (y.fit_score || 0) - (x.fit_score || 0)).slice(0, 5),
+    affil: T.filter(t => t._affil), dens: T.filter(t => !t._affil && t._reach === 'Density tuck-in').length, hub: T.filter(t => !t._affil && t._reach === 'New-hub anchor').length,
   };
 }
 function thesisText(b, p, s, fmt) {
   const T = s.T, heat = b.pe?.meta?.sector_heatmap || {};
   const stateMix = s.states.map(([k, v]) => `${k} ${v}`).join(', ');
   if (p === 'cet') {
-    const near = T.filter(t => (t.nearest_cet_node_miles ?? 999) <= 30).length; const ct = T.filter(t => t._state === 'CT').length;
-    return `CET’s pool is ${s.n} New England electrical, solar, controls and generator contractors (${stateMix}). ${near} of ${s.n} are within 30 miles of a CET node (Worcester, Taunton, Norwell), and ${ct} are in Connecticut, where Horton (120+ staff, Sept 2026) now gives CET a base. The median target has ${fmt.num(s.medEmp)} staff and ${fmt.money(s.medRev)} of modeled revenue, so these are tuck-ins, not mergers of equals. Ownership is the main risk: ${s.unv} of ${s.n} have unverified ownership and only ${s.ff} are confirmed founder or family-owned. Analyst view: CET should buy capability (W/WW I&C, generators, solar O&M, controls) and Eastern-MA density now. The PE landscape rates the sector “${heat.cet?.intensity || 'medium, rising'}”, and the Kohlberg and Huron electrical platforms have not yet entered New England.`;
+    const ct = T.filter(t => t._state === 'CT').length;
+    return `CET’s pool is ${s.n} New England electrical, solar, controls and generator contractors (${stateMix}). ${s.dens} of ${s.n} are density tuck-ins (${REACH_TXT.cet}); the other ${s.hub} would be new-hub or capability anchors. ${ct} are in Connecticut, where Horton (120+ staff, Sept 2026) now gives CET a base. The median target has ${fmt.num(s.medEmp)} staff and ${fmt.money(s.medRev)} of modeled revenue, so these are tuck-ins, not mergers of equals. Ownership is the main risk: ${s.unv} of ${s.n} have unverified ownership and only ${s.ff} are confirmed founder or family-owned. Analyst view: CET should buy capability (W/WW I&C, generators, solar O&M, controls) and Eastern-MA density now. The PE landscape rates the sector “${heat.cet?.intensity || 'medium, rising'}”, and the Kohlberg and Huron electrical platforms have not yet entered New England.`;
   }
   if (p === 'pp') {
-    const near = T.filter(t => Math.min(t.distance_mi_from_lancaster ?? 999, t.distance_mi_from_toms_river ?? 999) <= 30).length;
     const tri = T.filter(t => ['hvac', 'plumbing', 'electrical'].every(x => (t.trades || []).includes(x))).length;
     const auth = T.filter(t => /One Hour|Benjamin Franklin|Mister Sparky/i.test(`${t.brands_or_franchise || ''} ${t.company}`)).length;
     const rev1k = T.filter(t => (t.review_count || 0) >= 1000).length;
-    return `Punctual Pros has ${s.n} residential HVAC, plumbing and electrical operators screened across PA, NJ, MD and DE (${stateMix}). ${near} of ${s.n} are within 30 miles of Lancaster or Toms River, where they would add route density. ${tri} already run all three trades, ${auth} operate Authority Brands territories that could transfer, and ${rev1k} have 1,000+ reviews. Most are small (median ${fmt.num(s.medEmp)} staff, ${fmt.money(s.medRev)} est. revenue), and ${pctOf(s.ff, s.n)}% are family- or founder-owned, so the likely sellers are owners planning succession. Analyst view: PP has to win proprietary deals before they go to auction. The PE landscape rates the sector “${heat.punctual_pros?.intensity || 'very high'}”, and Sila (Goldman Sachs), Legacy (Gridiron) and Ally (Watchtower) are all buying in its counties.`;
+    return `Punctual Pros has ${s.n} residential HVAC, plumbing and electrical operators screened across PA, NJ, MD and DE (${stateMix}). ${s.dens} are density tuck-ins (${REACH_TXT.pp}) that add route density to existing dispatch; the other ${s.hub} are new-hub anchors, i.e. branch acquisitions that need their own GM, dispatch and marketing plan. ${s.affil.length ? `${s.affil.length} more trade${s.affil.length === 1 ? 's' : ''} under the Punctual Pros name and ${s.affil.length === 1 ? 'is' : 'are'} held out until affiliation is confirmed. ` : ''}${tri} already run all three trades, ${auth} operate Authority Brands territories that could transfer, and ${rev1k} have 1,000+ reviews. Most are small (median ${fmt.num(s.medEmp)} staff, ${fmt.money(s.medRev)} est. revenue), and ${pctOf(s.ff, s.n)}% are family- or founder-owned, so the likely sellers are owners planning succession. Analyst view: PP has to win proprietary deals before they go to auction. The PE landscape rates the sector “${heat.punctual_pros?.intensity || 'very high'}”, and Sila (Goldman Sachs), Legacy (Gridiron) and Ally (Watchtower) are all buying in its counties.`;
   }
   if (p === 'fl') {
     const catx = T.filter(t => ['CA', 'TX'].includes(t._state)).length; const intl = T.filter(t => t.country && t.country !== 'United States').length;
     const bill = T.filter(t => /billing|rcm|revenue|invoice|accounting/i.test((t.offerings || []).join(' '))).length;
     const small = T.filter(t => t.revenue_est_usd != null && t.revenue_est_usd <= 15e6).length;
-    return `Frontline has ${s.n} legal-IT managed-service and law-firm billing/RCM targets (${stateMix}; ${intl} outside the US). ${catx} are in California or Texas, two of the CEO’s stated priority geographies, and ${bill} offer billing, eBilling or RCM services that extend Frontline’s second product line. ${small} of ${s.n} have modeled revenue at or below $15M, which fits the stated tuck-in profile of ~$5M revenue and $1–2M EBITDA. Analyst view: the PE landscape rates the sector “${heat.frontline?.intensity || 'low-medium'}” and finds no sponsor-backed copy of the legal IT + RCM model. The window to lock in law-firm MSP and billing add-ons is open, but it will close once a generalist MSP roll-up (Alpine’s Evergreen) builds a legal vertical.`;
+    return `Frontline has ${s.n} legal-IT managed-service and law-firm billing/RCM targets (${stateMix}; ${intl} outside the US). ${catx} are in California or Texas, two of Frontline’s stated priority geographies (set under former CEO Naidoo; re-confirm with Tim Britt, CEO since Jan 2026), and ${bill} offer billing, eBilling or RCM services that extend Frontline’s second product line. ${small} of ${s.n} have modeled revenue at or below $15M, which fits the previously stated tuck-in profile of ~$5M revenue and $1–2M EBITDA. Analyst view: the PE landscape rates the sector “${heat.frontline?.intensity || 'low-medium'}” and finds no sponsor-backed copy of the legal IT + RCM model. The window to lock in law-firm MSP and billing add-ons is open, but it will close once a generalist MSP roll-up (Alpine’s Evergreen) builds a legal vertical.`;
   }
   const cr = T.filter(t => /cleanroom|controlled/i.test((t.offerings || []).join(' ') + ' ' + (t.strategic_rationale || ''))).length;
   const nonNE = T.filter(t => !['NJ', 'NY', 'PA', 'MA', 'CT'].includes(t._state)).length;
   return `Thomas Scientific has ${s.n} lab-supply, life-science and cleanroom distributors (${stateMix}). ${nonNE} are outside Thomas’s Northeast core and would extend its distribution network, and ${cr} bring cleanroom or controlled-environment lines. The screen found no public Thomas acquisition since late 2023, so the platform’s earlier add-on pace (regional distributors: NCI, Quintana, Day, Arrowhead) has stalled. The median target has ${fmt.num(s.medEmp)} staff and ${fmt.money(s.medRev)} of modeled revenue. Analyst view: restart the programme with exclusive line-card and regional-coverage deals. Calibre Scientific (StoneCalibre) is the main bidder, but its focus is mostly Europe, which leaves room in the US.`;
 }
 const IDEAL = {
-  cet: ['25–400 employees and $8–120M revenue (rubric scale band)', '≤30 mi from Worcester, Taunton or Norwell, or in CT near Horton', 'Capabilities that extend CET lines: solar O&M, EV, energy efficiency, W/WW I&C, generators, controls', 'Founder or family owner with a succession need; labour model compatible with CET’s', 'Licensed in several New England states; recurring service/maintenance mix'],
-  pp: ['Tri-trade HVAC + plumbing + electrical (rubric trade_mix = 20)', '30–150 employees (rubric scale 17–20)', '≤30 mi from a PP node (Lancaster, Harrisburg, Toms River)', 'Founder or multi-generation family owner with long tenure', 'Authority Brands franchisee, or 1,000+ reviews and ready to rebrand'],
-  fl: ['Law-firm-focused MSP or billing/eBilling/RCM provider', 'Tuck-in ~$5M revenue / $1–2M EBITDA; larger targets at $20M+ revenue', 'Priority geographies: California, Texas, Atlanta, South Florida, UK', 'Point solutions, proprietary software or GenAI capability', 'Founder- or partner-owned, with clean SOC 2 / security posture'],
+  cet: ['25–400 employees and $8–120M revenue (rubric scale band)', `Density tuck-in: ${REACH_TXT.cet}; new-hub anchor: CT near Horton`, 'Capabilities that extend CET lines: solar O&M, EV, energy efficiency, W/WW I&C, generators, controls', 'Founder or family owner with a succession need; labour model compatible with CET’s', 'Licensed in several New England states; recurring service/maintenance mix'],
+  pp: ['Tri-trade HVAC + plumbing + electrical (rubric trade_mix = 20)', '30–150 employees (rubric scale 17–20)', `Density tuck-in: ${REACH_TXT.pp}; farther = new-hub anchor (branch plan needed)`, 'Founder or multi-generation family owner with long tenure', 'Authority Brands franchisee, or 1,000+ reviews and ready to rebrand'],
+  fl: ['Law-firm-focused MSP or billing/eBilling/RCM provider', 'Tuck-in ~$5M revenue / $1–2M EBITDA; larger targets at $20M+ revenue', 'Priority geographies: California, Texas, Atlanta, South Florida, UK (stated under former CEO Naidoo; re-confirm with CEO Tim Britt)', 'Point solutions, proprietary software or GenAI capability', 'Founder- or partner-owned, with clean SOC 2 / security posture'],
   ts: ['Regional life-science, clinical or cleanroom distributor', 'Exclusive or hard-to-replicate supplier line cards', 'Geography outside the Northeast core (Midwest, West, Canada)', 'Family or founder owner; 20–150 staff', 'Private-label or kitting capability (margin lever vs 4–5% pure-distributor margins)'],
 };
 const INTEG = {
@@ -457,14 +601,14 @@ function thesisPanel(ctx, b, p, s) {
     title: `${esc(P.long)}`, accent: true, sub: `${fmt.num(s.n)} targets · ${s.t1} Tier 1 · ${s.t2} Tier 2`,
     actions: `<a class="btn xs" href="#/ma/pipeline?platform=${p}">Pipeline →</a>`,
     body: `<div style="--cc:${P.color}">
-      <div class="stat-row">${fmt.chip(`median ${fmt.num(s.medEmp)} staff`)}${fmt.chip(`median ${fmt.money(s.medRev)} rev. est.`)}${fmt.chip(`${pctOf(s.ff, s.n)}% founder/family`, 'var(--green)')}${s.unv ? fmt.chip(`${s.unv} ownership unverified`, 'var(--amber)') : ''}${strongest ? fmt.chip(`strongest: ${titleCase(strongest[0])} ${Math.round(strongest[1] * 100)}%`, P.color) : ''}${weakest ? fmt.chip(`weakest: ${titleCase(weakest[0])} ${Math.round(weakest[1] * 100)}%`, 'var(--amber)') : ''}</div>
+      <div class="stat-row">${fmt.chip(`median ${fmt.num(s.medEmp)} staff`)}${fmt.chip(`median ${fmt.money(s.medRev)} rev. est.`)}${fmt.chip(`${pctOf(s.ff, s.n)}% founder/family`, 'var(--green)')}${s.unv ? fmt.chip(`${s.unv} ownership unverified`, 'var(--amber)') : ''}${s.dens + s.hub ? fmt.chip(`${s.dens} density · ${s.hub} new-hub`, 'var(--accent)') : ''}${s.affil.length ? fmt.chip(`${s.affil.length} held · verify affiliation`, 'var(--red)') : ''}${strongest ? fmt.chip(`strongest: ${titleCase(strongest[0])} ${Math.round(strongest[1] * 100)}%`, P.color) : ''}${weakest ? fmt.chip(`weakest: ${titleCase(weakest[0])} ${Math.round(weakest[1] * 100)}%`, 'var(--amber)') : ''}</div>
       <div class="th-h">Thesis <span class="analyst">Analyst view</span></div>
       <div class="h-note">${esc(thesisText(b, p, s, fmt))}</div>
       <div class="th-two"><div><div class="th-h">Ideal target profile</div><ul class="bul">${IDEAL[p].map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
       <div><div class="th-h">Integration risks</div><ul class="bul">${riskList.slice(0, 6).map(x => `<li>${x}</li>`).join('')}</ul></div></div>
       <div class="th-h">Top 5 by fit</div>
-      <table class="mini"><thead><tr><th>Company</th><th>HQ</th><th class="num">Staff</th><th class="num">Rev. est.</th><th>Owner</th><th class="num">Fit</th></tr></thead><tbody>${s.top5.map(t => `<tr data-tid="${esc(t.id)}"><td class="nm">${esc(t.company)}</td><td>${esc(t.hq_city || '')}${t.hq_city ? ', ' : ''}${esc(t._state)}</td><td class="num">${fmt.num(t.employees)}</td><td class="num">${fmt.money(t.revenue_est_usd)}</td><td>${fmt.chip(t._owner, OWNER_COLOR[t._owner])}</td><td class="num">${fmt.score(t.fit_score)}</td></tr>`).join('')}</tbody></table>
-      <div class="th-h">Screen authors’ ranked shortlist (${ranked.length})</div>
+      <table class="mini"><thead><tr><th>Company</th><th>HQ</th><th class="num">Staff</th><th class="num">Rev. est.</th><th>Owner</th><th class="num">Fit</th></tr></thead><tbody>${s.top5.map(t => `<tr data-tid="${esc(t.id)}"><td class="nm">${esc(t.company)}</td><td>${esc(t.hq_city || '')}${t.hq_city ? ', ' : ''}${esc(t._state)}</td><td class="num">${fmt.num(t.employees)}</td><td class="num">${fmt.money(t.revenue_est_usd)}</td><td>${fmt.chip(t._owner, OWNER_COLOR[t._owner])}</td><td class="num">${fmt.score(t.fit_score)}</td></tr>`).join('')}${s.affil.map(t => `<tr data-tid="${esc(t.id)}" class="ma-affil-row"><td class="nm" colspan="5"><b>Held out · verify affiliation:</b> ${esc(t.company)}<div class="flags">${(t.risk_flags || []).map(r => fmt.chip(r, /collision|affiliat/i.test(r) ? 'var(--red)' : 'var(--amber)')).join('')}</div></td><td class="num">${fmt.score(t.fit_score)}</td></tr>`).join('')}</tbody></table>
+      <div class="th-h">Screen authors’ ranked shortlist (${ranked.length})${rankedRaw(b, p).length > ranked.length ? ` <span class="soft">· ${rankedRaw(b, p).length - ranked.length} held out for affiliation check, re-numbered</span>` : ''}</div>
       ${ranked.length ? `<ol class="shortlist">${ranked.map(r => `<li data-tid="${esc(r.id)}" style="cursor:pointer" title="${esc(r.why || '')}"><span class="r">${esc(r.rank)}</span><span class="ellipsis">${esc(r.company)}</span><span class="s">${esc(r.fit_score ?? '')}</span></li>`).join('')}</ol>` : ui.empty('No ranked list in dataset')}
       <div class="th-h">Competing sponsor-backed buyers (${comps.length})</div>
       <div class="row wrap gap-4">${comps.slice(0, 12).map(c => { const lbl = clip(String(c.name || '').replace(/\s*\(.*?\)/g, ''), 34); const tip = `${c.name} · owner: ${c.owner}${c.note ? ' · ' + clip(c.note, 140) : ''}`; return c.src ? `<a href="${esc(c.src)}" target="_blank" rel="noopener" title="${esc(tip)}">${fmt.chip(lbl, 'var(--red)')}</a>` : `<span title="${esc(tip)}">${fmt.chip(lbl, 'var(--red)')}</span>`; }).join('')}${comps.length > 12 ? `<span class="soft">+${comps.length - 12} more</span>` : ''}${comps.length ? '' : '<span class="soft">None listed</span>'}</div><div class="soft mt-8">Hover a chip for owner and note; click for source.</div>
@@ -662,7 +806,12 @@ async function valuation(ctx) {
   const secRows = Object.entries(sb).map(([k, s]) => ({ id: k, sector: SECTOR_LABEL[k] || titleCase(k), bsp: s.bsp_company, n: s.n, comps: (s.comps || []).join(', '), growth: s.median_revenue_growth_latest_pct, cagr: s.median_revenue_cagr_2023_latest_pct, om: s.median_operating_margin_latest_pct, omAvg: s.median_operating_margin_multiyear_avg_pct, em: s.median_ebitda_margin_latest_pct, rpe: s.median_revenue_per_employee_usd, implies: s.what_this_implies_for_bsp }));
   const hiM = secRows.slice().sort((x, y) => (y.em ?? -99) - (x.em ?? -99))[0], hiG = secRows.slice().sort((x, y) => (y.cagr ?? -99) - (x.cagr ?? -99))[0];
   const evs = b.rivalRows.filter(r => r.ev).sort((x, y) => y.ev - x.ev);
-  const flCrit = b.flts?.meta?.frontline?.platform_context?.stated_criteria;
+  const flRaw = b.flts?.meta?.frontline?.platform_context?.stated_criteria;
+  const flCrit = flRaw ? (/Naidoo/.test(flRaw) ? String(flRaw).replace(/^[^:]*Naidoo[^:]*:\s*/, '') : flRaw) : null;
+  /* Default add-on EBITDA per benchmark sector = median screened target revenue (ZoomInfo est.) for the BSP platform in that sector
+     × an assumed LMM EBITDA margin of 10% (capped at the sector's public median). ≈ $0.7M Punctual Pros, $1.5M CET. */
+  const LMM_MARGIN = 10;
+  const defEbitda = id => { const p = PKEYS.find(k => PLAT[k].bench === id); const s = secRows.find(r => r.id === id); const rev = p ? median(b.targets.filter(t => t._p === p).map(t => t.revenue_est_usd)) : null; const mg = Math.min(LMM_MARGIN, s?.em > 0 ? s.em : LMM_MARGIN); return rev ? { v: Math.max(0.1, Math.round((rev * mg / 100) / 1e5) / 10), p, rev, mg } : { v: 1, p: null, rev: null, mg }; };
   el.innerHTML = `<div class="m-ma">` + ui.pageHead({
     title: 'Valuation benchmarks',
     sub: c ? `<b>Across ${fmt.num(c.items?.length)} listed peers, ${esc(hiG?.sector || '—')} is the growth engine (${pctTxt(fmt, hiG?.cagr)} median 3-yr revenue CAGR), and ${esc(hiM?.sector || '—')} earns the richest margins (${pctTxt(fmt, hiM?.em)} median EBITDA margin).</b> BSP’s edge is multiple arbitrage: buy $1–10M-EBITDA add-ons at lower-middle-market prices and exit an integrated platform that trades nearer to scaled-sponsor or strategic prices. Use the calculator to size a deal.` : 'Public comparables dataset is not yet available.',
@@ -679,12 +828,12 @@ async function valuation(ctx) {
     <div class="col gap-12">${ui.panel({ title: 'Sector medians by BSP platform', sub: 'Click a row for what it implies for the BSP company', body: `<div id="ma-sec"></div>`, flush: false, foot: ui.source('SEC EDGAR XBRL companyfacts (public_comps.meta.sector_benchmarks)', 'https://www.sec.gov/edgar/search/', c?.meta?.generated) })}
     ${ui.panel({ title: 'Margin vs growth regime by sector', sub: 'Median EBITDA margin (latest FY) and median revenue CAGR FY2023 → latest', body: `<div class="th-two"><div><div class="th-h">EBITDA margin</div>${charts.hbar(secRows.map(s => ({ label: s.sector, value: s.em, color: s.em < 0 ? 'var(--red)' : 'var(--green)' })).sort((x, y) => y.value - x.value), { labelW: 150, fmt: v => pctTxt(fmt, v) })}</div><div><div class="th-h">Revenue CAGR</div>${charts.hbar(secRows.map(s => ({ label: s.sector, value: Math.max(0, s.cagr ?? 0), color: 'var(--c-cet)' })).sort((x, y) => y.value - x.value), { labelW: 150, fmt: v => pctTxt(fmt, v) })}</div></div><div class="soft mt-8">Trades (CET, PP) are the growth engine with thin-to-mid margins; lab distribution and agencies are low-growth. ${secRows.some(s => (s.cagr ?? 0) < 0) ? `Negative CAGRs shown as zero: ${esc(secRows.filter(s => (s.cagr ?? 0) < 0).map(s => `${s.sector} ${pctTxt(fmt, s.cagr)}`).join(', '))}.` : ''}</div>`, foot: ui.source('public_comps', null, c?.meta?.generated) })}</div>
     ${ui.panel({ title: 'Implied value calculator', sub: 'Size an add-on and the value created by rolling it into a platform', accent: true, body: `<div class="calc">
-        <label>Add-on EBITDA ($M)<input type="number" id="c-ebitda" value="10" min="0.5" max="500" step="0.5"></label>
+        <label>Add-on EBITDA ($M)<input type="number" id="c-ebitda" value="1" min="0.1" max="500" step="0.1"><span class="soft" id="c-ebitda-note"></span></label>
         <label>Benchmark sector<select id="c-sector">${secRows.map(s => `<option value="${esc(s.id)}">${esc(s.sector)}</option>`).join('')}</select></label>
         <label>Entry multiple <span class="v" id="c-mult-v">7.0x</span><input type="range" id="c-mult" min="5" max="12" step="0.5" value="7"></label>
         <label>Platform exit multiple <span class="v" id="c-exit-v">10.0x</span><input type="range" id="c-exit" min="8" max="14" step="0.5" value="10"></label>
       </div><div class="calc-out" id="c-out"></div><div class="mt-12" id="c-chart"></div>
-      ${ui.note('<b>Analyst assumption:</b> private lower-middle-market add-ons typically trade at about 5–9x EBITDA, below public comps and scaled sponsor platforms. The exit multiple is illustrative, not a forecast. Implied revenue uses the sector’s public median EBITDA margin, which LMM targets rarely reach.', 'warn')}`, foot: `<span class="src">Illustrative · not investment advice${flCrit ? ` · Frontline stated tuck-in criteria: ${esc(clip(flCrit, 120))}` : ''}</span>` })}
+      ${ui.note('<b>Analyst assumption:</b> private lower-middle-market add-ons typically trade at about 5–9x EBITDA, below public comps and scaled sponsor platforms. The exit multiple is illustrative, not a forecast. Implied revenue assumes a 10% LMM EBITDA margin, capped at the sector’s public median (LMM targets rarely reach public margins). The default EBITDA is the BSP platform’s median screened target in that sector.', 'warn')}`, foot: `<span class="src">Illustrative · not investment advice${flCrit ? ` · Frontline tuck-in criteria (Mergermarket; stated under former CEO Naidoo, re-confirm with CEO Tim Britt): ${esc(clip(flCrit, 150))}` : ''}</span>` })}
   </div>
   <div class="mt-12">${ui.panel({ title: 'All public comparables', sub: 'Sortable · click for fiscal-year detail and the 10-K', body: `<div id="ma-comps"></div>`, foot: ui.source('SEC EDGAR XBRL companyfacts + 10-K / 20-F filings (public_comps)', 'https://www.sec.gov/edgar/search/', c?.meta?.generated) })}</div>
   <div class="grid grid-2 mt-12">
@@ -717,17 +866,21 @@ async function valuation(ctx) {
   // Calculator
   const $e = el.querySelector('#c-ebitda'), $m = el.querySelector('#c-mult'), $x = el.querySelector('#c-exit'), $s = el.querySelector('#c-sector');
   const secPref = secRows.find(s => s.id === 'residential_home_services') || secRows[0]; if (secPref) $s.value = secPref.id;
+  let edited = false;
+  const setDefault = () => { const d = defEbitda($s.value); $e.value = String(d.v); el.querySelector('#c-ebitda-note').textContent = d.p ? `default = ${PLAT[d.p].label} median target ${fmt.money(d.rev)} rev. est. × ${fmt.num(d.mg, 1)}% LMM margin` : 'no BSP target screen in this sector; illustrative $1M'; };
+  $e.addEventListener('input', () => { edited = true; }); $s.addEventListener('change', () => { if (!edited) { setDefault(); calc(); } });
+  if (secPref) setDefault();
   const calc = () => {
     const e = Math.max(0, Number($e.value) || 0) * 1e6, m = Number($m.value), x = Number($x.value); const s = secRows.find(r => r.id === $s.value);
     el.querySelector('#c-mult-v').textContent = `${m.toFixed(1)}x`; el.querySelector('#c-exit-v').textContent = `${x.toFixed(1)}x`;
-    const ev = e * m, rev = s?.em > 0 ? e / (s.em / 100) : null, arb = e * (x - m);
+    const mg = Math.min(LMM_MARGIN, s?.em > 0 ? s.em : LMM_MARGIN); const ev = e * m, rev = mg > 0 ? e / (mg / 100) : null, arb = e * (x - m);
     el.querySelector('#c-out').innerHTML = [
       ui.kpi({ label: 'Enterprise value', value: fmt.money(ev), sub: `${fmt.money(e)} EBITDA × ${m.toFixed(1)}x`, color: 'var(--c-ma)' }),
       ui.kpi({ label: 'LMM band (5–9x)', value: `${fmt.money(e * 5)}–${fmt.money(e * 9)}`, sub: 'analyst assumption', color: 'var(--amber)' }),
-      ui.kpi({ label: 'Implied revenue', value: rev ? fmt.money(rev) : '—', sub: s ? `at ${pctTxt(fmt, s.em)} ${esc(s.sector)} median margin` : '—', color: 'var(--accent)' }),
+      ui.kpi({ label: 'Implied revenue (est.)', value: rev ? fmt.money(rev) : '—', sub: s ? `at ${pctTxt(fmt, mg)} LMM margin (sector public median ${pctTxt(fmt, s.em)})` : '—', color: 'var(--accent)' }),
       ui.kpi({ label: 'Multiple-arbitrage uplift', value: fmt.money(arb), sub: `(${x.toFixed(1)}x − ${m.toFixed(1)}x) × EBITDA · illustrative`, color: arb >= 0 ? 'var(--green)' : 'var(--red)' }),
     ].join('');
-    el.querySelector('#c-chart').innerHTML = `<div class="th-h">Enterprise value by entry multiple</div>${charts.bar([5, 6, 7, 8, 9, 10, 11, 12].map(k => ({ label: `${k}x`, value: e * k, k })), { h: 130, color: 'var(--border-2)', fmt: v => `$${fmt.num(v / 1e6, 0)}M`, highlight: d => d.k === Math.round(m) })}`;
+    el.querySelector('#c-chart').innerHTML = `<div class="th-h">Enterprise value by entry multiple</div>${charts.bar([5, 6, 7, 8, 9, 10, 11, 12].map(k => ({ label: `${k}x`, value: e * k, k })), { h: 130, color: 'var(--border-2)', fmt: v => `$${fmt.num(v / 1e6, e * 12 < 2e7 ? 1 : 0)}M`, highlight: d => d.k === Math.round(m) })}`;
   };
   [$e, $m, $x, $s].forEach(n => n.addEventListener('input', calc)); calc();
 }

@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<script>document.documentElement.classList.add('js')</script>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GridOS — the operating system behind CET (concept)</title>
+<meta name="description" content="GridOS: CET's tech-enablement thesis — bid radar, estimating, field ops, solar fleet and pump-station monitoring, EV network operations and NuWave M&V on one operating layer. Value-creation math with sourced estimates.">
+<meta name="theme-color" content="#070e1b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="gridos.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2322d3ee'/%3E%3Cpath d='M5 17h5l3-8 5 15 3-7h6' fill='none' stroke='%23070e1b' stroke-width='2.6' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body class="os">
+<a class="skip" href="#main">Skip to content</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-mark" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#1d5ff0"/></linearGradient>
+    <symbol id="i-radar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12 18 6"/><circle cx="16" cy="9.5" r="1" fill="currentColor"/></g></symbol>
+    <symbol id="i-calc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01" stroke-width="2.2"/></g></symbol>
+    <symbol id="i-hard" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18M5 17v-3a7 7 0 0 1 14 0v3"/><path d="M10 7.5V5h4v2.5M12 5v5"/></g></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M4 20 6 11h12l2 9z"/><path d="M5 15.5h14M10 11l-.6 9M14 11l.6 9"/><circle cx="12" cy="5" r="1.8"/></g></symbol>
+    <symbol id="i-water" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 3s5.5 6 5.5 10.2a5.5 5.5 0 0 1-11 0C6.5 9 12 3 12 3z"/><path d="M9.5 14.5a2.6 2.6 0 0 0 2.5 2.4"/></g></symbol>
+    <symbol id="i-ev" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="10" height="18" rx="2"/><path d="M4 21h10M14 9h2.5a1.5 1.5 0 0 1 1.5 1.5V16a1.5 1.5 0 0 0 3 0V8l-2-2"/><path d="m9.5 7-2 3.5h3l-2 3.5"/></g></symbol>
+    <symbol id="i-gauge" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3.8 17.5a8.5 8.5 0 1 1 16.4 0"/><path d="m12 13 4.2-4.2"/><circle cx="12" cy="13" r="1.4"/></g></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l2-5 3.5 10 3-7 1.5 2H21"/></g></symbol>
+  </defs>
+</svg>
+
+<div class="concept" id="concept" role="region" aria-label="Concept notice">
+  <div class="wrap">
+    <span class="tag">Concept</span>
+    <span class="msg">Concept redesign proposed by Syed Rizvi for the Broad Sky Portfolio Resource Group — not an official site.</span>
+    <span class="links"><a href="../../app.html">Portal</a><a href="../index.html">Site concepts</a><a href="../../#os">OS program</a><a href="../../#briefing">Briefing</a></span>
+    <button class="x" type="button" aria-label="Dismiss concept notice" data-dismiss>×</button>
+  </div>
+</div>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="GridOS home">
+      <svg class="mk" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="8" fill="url(#g-mark)"/><path d="M6 18h5l3-8 5 15 3-7h6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <span class="wm"><b>GridOS</b><span>by CET · concept</span></span>
+    </a>
+    <nav aria-label="GridOS sections">
+      <ul id="menu">
+        <li><a href="#modules">Modules</a></li>
+        <li><a href="#demo">Live demo</a></li>
+        <li><a href="#value">Value math</a></li>
+        <li><a href="#stack">Build vs buy</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+        <li><a href="#risks">Risks</a></li>
+        <li><a href="index.html">← CET site</a></li>
+      </ul>
+    </nav>
+    <div class="cta">
+      <a class="btn primary sm" href="../../app.html#/techos/overview">Open in the portal</a>
+      <button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<!-- ═════════ HERO ═════════ -->
+<section class="hero gridbg os-hero" id="top" aria-labelledby="hero-h">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Tech-enablement thesis · CET + Horton + NuWave</span>
+      <h1 id="hero-h">Every bid, crew and asset on <span class="grad">one operating layer.</span></h1>
+      <p class="lead">GridOS turns three project shops into one service platform. It finds and scores the work, runs the field, and keeps watch over the pump stations, solar arrays and chargers we leave behind — so more of CET’s revenue repeats every year, and a buyer can see it.</p>
+      <div class="actions">
+        <a class="btn primary" href="#demo">Try the live demo <span class="ar">→</span></a>
+        <a class="btn ghost" href="#value">See the value math</a>
+      </div>
+      <p class="src" style="margin-top:18px">Concept product for the Broad Sky PRG. Demo bid board and wastewater tracker run on real public data; fleet, EV and M&amp;V screens use illustrative sites. Every figure is labelled est. with its source.</p>
+    </div>
+    <aside class="thesis rv" aria-label="GridOS investment summary (estimates)">
+      <div class="th-head"><span>GridOS · investment case</span><span class="label-ill">est.</span></div>
+      <dl id="thesis">
+        <div><dt>EBITDA impact</dt><dd class="num" data-k="ebitda">$0.6–2.6M</dd><span data-k="ebitda-s">1.0–2.5% of revenue</span></div>
+        <div><dt>Multiple expansion</dt><dd class="num" data-k="turns">+0.5–1.5x</dd><span>EV / EBITDA turns</span></div>
+        <div><dt>Investment</dt><dd class="num" data-k="inv">$0.8–1.8M</dd><span>software, integration, PRG time</span></div>
+        <div><dt>Time to value</dt><dd class="num" data-k="ttv">9–15 mo</dd><span>first win-rate &amp; O&amp;M proof points</span></div>
+      </dl>
+      <p class="th-src" data-k="src">Source: serviceos_evidence.json · ra-cet roadmap assumption (analyst estimate, not company guidance).</p>
+    </aside>
+  </div>
+  <div class="wrap kpi3" id="kpi3">
+    <article class="k3 rv"><span class="k">Bid win rate · public hard-bid</span><div class="mv"><b class="num" data-k="b1">15%</b><span class="to">→</span><b class="num tgt" data-k="t1">30%</b></div><p data-k="n1">Hard-bid public work wins 10–20%; selective, repeat-owner bidding wins 30–50%.</p><span class="s" data-k="s1">est. · ConstructConnect / ENR guidance</span></article>
+    <article class="k3 rv"><span class="k">Solar fleet availability · O&amp;M</span><div class="mv"><b class="num" data-k="b3">94.7%</b><span class="to">→</span><b class="num tgt" data-k="t3">99.1%</b></div><p data-k="n3">From the NREL fleet P90 to the P50 monthly availability across 1,128 PV systems.</p><span class="s" data-k="s3">est. · NREL PV Fleet study</span></article>
+    <article class="k3 rv"><span class="k">Field time lost to searching &amp; rework</span><div class="mv"><b class="num" data-k="b2">35%</b><span class="to">→</span><b class="num tgt" data-k="t2">TBD</b></div><p data-k="n2">Industry baseline; target set after a CET time study rather than assumed.</p><span class="s" data-k="s2">est. · FMI / PlanGrid “Construction Disconnected”</span></article>
+  </div>
+</section>
+
+<!-- ═════════ MODULES ═════════ -->
+<section class="sec" id="modules" aria-labelledby="mod-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow"><span class="ix">01</span>What it is</span><h2 id="mod-h">Seven modules. One data layer underneath.</h2></div>
+      <p class="lead">Buy the systems of record, build the layer that connects them. The proprietary part is the data CET already has access to through the Broad Sky portal: every public bid in New England, every treatment plant’s funded projects, every asset we install.</p>
+    </div>
+    <div class="mods">
+      <article class="mod rv"><div class="ic"><svg aria-hidden="true"><use href="#i-radar"/></svg></div><h3>Bid Radar</h3><p>Every public RFP, SRF project and program in six states, scored for fit with a go/no-go rule and a due-date countdown.</p><div class="mk"><span>Moves</span>win rate · bid cost</div><div class="by">Build · portal data</div></article>
+      <article class="mod rv"><div class="ic"><svg aria-hidden="true"><use href="#i-calc"/></svg></div><h3>Estimate</h3><p>One estimating standard across CET and Horton: takeoff, assemblies, supplier pricing and change orders.</p><div class="mk"><span>Moves</span>bid margin · turnaround</div><div class="by">Buy · Trimble Accubid</div></article>
+      <article class="mod rv"><div class="ic"><svg aria-hidden="true"><use href="#i-hard"/></svg></div><h3>Field</h3><p>Drawings, RFIs, submittals and daily logs shared by field, office, GC and owner — one document set per job.</p><div class="mk"><span>Moves</span>non-productive time</div><div class="by">Buy · Procore</div></article>
+      <article class="mod rv"><div class="ic" style="color:var(--amber)"><svg aria-hidden="true"><use href="#i-sun"/></svg></div><h3>Fleet</h3><p>Solar and storage monitoring with alert-to-truck-roll dispatch, so O&amp;M contracts can carry an uptime guarantee.</p><div class="mk"><span>Moves</span>availability · O&amp;M revenue</div><div class="by">Buy · AlsoEnergy PowerTrack</div></article>
+      <article class="mod rv"><div class="ic" style="color:var(--cyan)"><svg aria-hidden="true"><use href="#i-water"/></svg></div><h3>Pump-station SCADA</h3><p>Remote monitoring of municipal pump stations and generators as a recurring Horton service contract.</p><div class="mk"><span>Moves</span>recurring revenue</div><div class="by">Buy · Inductive Automation Ignition</div></article>
+      <article class="mod rv"><div class="ic" style="color:var(--green)"><svg aria-hidden="true"><use href="#i-ev"/></svg></div><h3>Charge</h3><p>OCPP network operations for the chargers CET installs: uptime, sessions, billing and fault tickets.</p><div class="mk"><span>Moves</span>uptime · per-port revenue</div><div class="by">Buy · ChargeLab</div></article>
+      <article class="mod rv"><div class="ic" style="color:var(--violet)"><svg aria-hidden="true"><use href="#i-gauge"/></svg></div><h3>M&amp;V</h3><p>NuWave’s metered savings dashboards: adjusted baseline vs actual, persistence alerts and incentive true-ups.</p><div class="mk"><span>Moves</span>repeat efficiency work</div><div class="by">Build · on metered data</div></article>
+      <article class="mod mod-core rv"><div class="ic"><svg aria-hidden="true"><use href="#i-wave"/></svg></div><h3>GridOS core</h3><p>Shared asset registry, customer record and CET Assure contract engine — the layer every add-on plugs into on day one.</p><div class="mk"><span>Moves</span>integration speed per add-on</div><div class="by">Build · BSP PRG</div></article>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ DEMO ═════════ -->
+<section class="sec demo-sec" id="demo" aria-labelledby="demo-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow"><span class="ix">02</span>Interactive demo</span><h2 id="demo-h">Click through a working GridOS.</h2></div>
+      <p class="lead">The bid board and wastewater tracker run on the portal’s verified datasets. Solar output is modelled from live irradiance; fleet sites, chargers and the M&amp;V project are illustrative.</p>
+    </div>
+    <div class="app" id="app">
+      <div class="app-chrome"><i></i><i></i><i></i><span class="t">gridos.cet · operations</span><span class="clock num" id="clock"></span></div>
+      <div class="app-body">
+        <nav class="app-nav" role="tablist" aria-label="GridOS screens">
+          <button role="tab" id="tab-bids" aria-controls="pane-bids" aria-selected="true"><svg aria-hidden="true"><use href="#i-radar"/></svg><span>Bid board</span><em id="badge-bids">—</em></button>
+          <button role="tab" id="tab-fleet" aria-controls="pane-fleet" aria-selected="false" tabindex="-1"><svg aria-hidden="true"><use href="#i-sun"/></svg><span>Solar fleet</span><em id="badge-fleet">—</em></button>
+          <button role="tab" id="tab-ww" aria-controls="pane-ww" aria-selected="false" tabindex="-1"><svg aria-hidden="true"><use href="#i-water"/></svg><span>Wastewater</span><em id="badge-ww">—</em></button>
+          <button role="tab" id="tab-ev" aria-controls="pane-ev" aria-selected="false" tabindex="-1"><svg aria-hidden="true"><use href="#i-ev"/></svg><span>EV network</span><em id="badge-ev">—</em></button>
+          <button role="tab" id="tab-mv" aria-controls="pane-mv" aria-selected="false" tabindex="-1"><svg aria-hidden="true"><use href="#i-gauge"/></svg><span>NuWave M&amp;V</span><em>12 mo</em></button>
+        </nav>
+        <div class="app-main">
+          <div class="pane" role="tabpanel" id="pane-bids" aria-labelledby="tab-bids"><div class="loading">Loading bid radar…</div></div>
+          <div class="pane" role="tabpanel" id="pane-fleet" aria-labelledby="tab-fleet" hidden></div>
+          <div class="pane" role="tabpanel" id="pane-ww" aria-labelledby="tab-ww" hidden></div>
+          <div class="pane" role="tabpanel" id="pane-ev" aria-labelledby="tab-ev" hidden></div>
+          <div class="pane" role="tabpanel" id="pane-mv" aria-labelledby="tab-mv" hidden></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ VALUE ═════════ -->
+<section class="sec light" id="value" aria-labelledby="val-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow"><span class="ix">03</span>Value-creation math</span><h2 id="val-h">What GridOS is worth at exit.</h2></div>
+      <p class="lead">EBITDA first, re-rating second. Electrical contractors trade on backlog and mix, so we credit only part of the typical-to-premium multiple spread to technology — and underwrite the case on margin.</p>
+    </div>
+    <div class="calc">
+      <div class="calc-in" id="calc-in"></div>
+      <div class="calc-out">
+        <div class="big"><span>Equity value created (est.)</span><b class="num" id="o-total">—</b><em id="o-roi">—</em></div>
+        <div id="waterfall" class="waterfall" aria-label="Enterprise value bridge"></div>
+        <dl class="outs">
+          <div><dt>EBITDA uplift</dt><dd class="num" id="o-up">—</dd></div>
+          <div><dt>Value of uplift at base multiple</dt><dd class="num" id="o-v1">—</dd></div>
+          <div><dt>Value of re-rating on all EBITDA</dt><dd class="num" id="o-v2">—</dd></div>
+          <div><dt>Payback on investment</dt><dd class="num" id="o-pb">—</dd></div>
+        </dl>
+      </div>
+    </div>
+    <div class="scen" id="scen"></div>
+    <p class="src" id="val-src">Sources: ra-cet roadmap assumption (serviceos_evidence.json); CET standalone revenue and margin bands from cet_filings.json estimate_table (low confidence); multiple bands from PKF Summer 2026 HVAC M&amp;A update and Capstone/IMAP 2026 survey. All figures est. — analyst assumptions, not forecasts or company guidance.</p>
+  </div>
+</section>
+
+<!-- ═════════ STACK ═════════ -->
+<section class="sec" id="stack" aria-labelledby="stk-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow"><span class="ix">04</span>Build vs buy</span><h2 id="stk-h">Buy the systems of record. Build the edge.</h2></div>
+      <p class="lead">Every “buy” is a category leader CET’s next owner will recognise. Every “build” sits on data only Broad Sky’s portal has assembled — that is the part a buyer cannot replicate by signing the same contracts.</p>
+    </div>
+    <div class="stack" id="stack-t"></div>
+    <p class="src">Vendor descriptions and pricing notes from serviceos_evidence.json (vendor_stack, company “cet”); third-party pricing estimates may be stale — confirm with vendors before budgeting.</p>
+  </div>
+</section>
+
+<!-- ═════════ ROADMAP ═════════ -->
+<section class="sec" id="roadmap" aria-labelledby="rm-h" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow"><span class="ix">05</span>12-month roadmap</span><h2 id="rm-h">Value before the first anniversary.</h2></div>
+      <p class="lead">Sequenced so each step funds the next: the bid board pays back in bid cost and win rate before the field and monitoring rollouts start.</p>
+    </div>
+    <div class="gantt" id="gantt"></div>
+    <span class="gantt-hint">Swipe the timeline sideways →</span>
+  </div>
+</section>
+
+<!-- ═════════ RISKS ═════════ -->
+<section class="sec light" id="risks" aria-labelledby="rk-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow"><span class="ix">06</span>Risks</span><h2 id="rk-h">What could go wrong — and the hedge.</h2></div>
+      <p class="lead">A tech thesis in a field-services business fails on adoption, not software. Each risk below has an owner and a mitigation built into the roadmap.</p>
+    </div>
+    <div class="risks">
+      <article class="risk"><span class="lv hi">High</span><h3>Field adoption</h3><p>Foremen reject another app; data stays in notebooks and the dashboards go stale.</p><p class="mit"><b>Hedge:</b> mobile-first, one foreman champion per office, daily-log completion tied to job bonuses.</p></article>
+      <article class="risk"><span class="lv hi">High</span><h3>OT cybersecurity</h3><p>Remote access to municipal SCADA widens the attack surface of a water system.</p><p class="mit"><b>Hedge:</b> segmented networks, MFA, no inbound ports, alignment with CISA water-sector guidance; owner sign-off per site.</p></article>
+      <article class="risk"><span class="lv md">Medium</span><h3>Three companies, three systems</h3><p>CET, Horton and NuWave run different job-cost and payroll stacks.</p><p class="mit"><b>Hedge:</b> build the data layer first; defer ERP consolidation past year one.</p></article>
+      <article class="risk"><span class="lv md">Medium</span><h3>Slow municipal contracting</h3><p>Assure and SCADA monitoring contracts move at council speed.</p><p class="mit"><b>Hedge:</b> offer monitoring as a priced O&amp;M option at close-out of SRF-funded projects.</p></article>
+      <article class="risk"><span class="lv md">Medium</span><h3>Over-claiming the multiple</h3><p>Re-rating is the least certain lever; the typical-to-premium spread is only ~3 turns in total.</p><p class="mit"><b>Hedge:</b> underwrite on EBITDA; treat 0.5–1.5 turns as upside, not the base case.</p></article>
+      <article class="risk"><span class="lv lo">Low</span><h3>Vendor lock-in &amp; pricing</h3><p>Volume-based pricing grows with backlog; long monitoring contracts limit switching.</p><p class="mit"><b>Hedge:</b> own the data layer and asset registry; negotiate multi-entity terms as add-ons join.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ EXIT ═════════ -->
+<section class="sec" id="exit" aria-labelledby="ex-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow"><span class="ix">07</span>Why a buyer pays for this</span><h2 id="ex-h">From project contractor to service platform.</h2></div>
+      <p class="lead">At exit, GridOS is the evidence: contracted recurring revenue, visible backlog, and a repeatable way to plug in the next acquisition.</p>
+    </div>
+    <div class="exit" id="exit-cards"></div>
+    <div class="sources"><h4>Evidence file</h4><ol id="sources"></ol></div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <a class="brand" href="#top" aria-label="GridOS"><svg class="mk" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="8" fill="url(#g-mark)"/><path d="M6 18h5l3-8 5 15 3-7h6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/></svg><span class="wm"><b>GridOS</b><span>by CET · concept</span></span></a>
+        <p style="margin-top:16px;max-width:320px">The tech-enablement thesis for Commonwealth Electrical Technologies, Horton Electrical Services and NuWave Energy Solutions.</p>
+      </div>
+      <div><h4>GridOS</h4><ul><li><a href="#modules">Modules</a></li><li><a href="#demo">Live demo</a></li><li><a href="#value">Value math</a></li><li><a href="#roadmap">Roadmap</a></li></ul></div>
+      <div><h4>CET</h4><ul><li><a href="index.html">CET site concept</a></li><li><a href="playbook.html">Value-creation playbook</a></li><li><a href="index.html#contact">Request a quote</a></li></ul></div>
+      <div><h4>Portal</h4><ul><li><a href="../../app.html#/techos/overview">Tech-enablement program</a></li><li><a href="../../app.html#/cet/opportunities">CET opportunity radar</a></li><li><a href="../../app.html#/cet/wastewater">Wastewater accounts</a></li></ul></div>
+      <div><h4>This concept</h4><ul><li><a href="../index.html">All six concepts</a></li><li><a href="../../">Broad Sky OI</a></li></ul></div>
+    </div>
+    <div class="legal"><span>Concept by Syed Rizvi for the Broad Sky Portfolio Resource Group — not an official CET product. Figures marked est. are analyst assumptions; illustrative screens use invented sites.</span><span>© <span id="yr">2026</span></span></div>
+  </div>
+<p class="bsp-disclaimer" style="box-sizing:border-box;max-width:1200px;margin:0 auto;padding:12px 20px 18px;font-size:12px;line-height:1.55">Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.</p>
+</footer>
+
+<script type="module">
+import { Chat } from '../../assets/chat.js?v=20261006085442';
+import { Data, Fmt } from '../../assets/core.js?v=20261006085442';
+import { initOS } from './gridos.js';
+import { FAQ, makeIntents } from './site.js';
+try { initOS({ Data, Fmt }); } catch (e) { console.warn('gridos init', e); }
+Chat.mount(null, { persona: 'cet', mode: 'floating', theme: 'light', faq: FAQ, suggestions: ['What is GridOS?', 'Which CET bids are due in the next 30 days?', 'Which wastewater plants should Horton call first?', 'Which programs can fund our project?', 'What is CET Assure?'], intents: makeIntents(Data, 'index.html'), openOnLoad: /[?&]chat=open/.test(location.search) });
+</script>
+</body>
+</html>

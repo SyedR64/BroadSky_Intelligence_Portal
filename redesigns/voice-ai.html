@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>24/7 Voice AI — the growth engine</title>
+<meta name="description" content="Why 24/7 AI voice coverage is a revenue line for Punctual Pros and the Broad Sky portfolio: missed-call economics, a playable call demo, a recovery calculator, vendors, reference architecture, governance and a 6-week rollout.">
+<meta name="theme-color" content="#f6f5f1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="voice-ai.css?v=2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f1424'/%3E%3Cpath d='M8 16v0M12 12v8M16 8v16M20 12v8M24 15v2' stroke='%238b9cff' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="concept" id="concept" role="note">
+  <div class="wrap concept-in">
+    <span class="concept-tag">Concept</span>
+    <p>Concept redesign proposed by Syed Rizvi for the Broad Sky Portfolio Resource Group — not an official site. <a href="../app.html">Portal</a> · <a href="index.html">Site concepts</a> · <a href="../#os">OS program</a> · <a href="../#briefing">Briefing</a></p>
+    <button class="concept-x" type="button" aria-label="Dismiss concept banner">&times;</button>
+  </div>
+</div>
+
+<header class="nav" id="top">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="24/7 Voice AI, top of page">
+      <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#0f1424"/><path d="M8 16v0M12 12v8M16 8v16M20 12v8M24 15v2" stroke="#8b9cff" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <span><b>24/7 Voice AI</b><small>Broad Sky · PRG</small></span>
+    </a>
+    <nav class="nav-links" aria-label="Page sections">
+      <a href="#day">The day</a>
+      <a href="#demo">Call demo</a>
+      <a href="#calculator">Calculator</a>
+      <a href="#usecases">Use cases</a>
+      <a href="#vendors">Vendors</a>
+      <a href="#playbook">Playbook</a>
+      <a href="#governance">Governance</a>
+      <a href="#rollout">Rollout</a>
+    </nav>
+    <a class="btn btn-dark btn-sm" href="../app.html#/techos/overview">Open portal <span aria-hidden="true">→</span></a>
+  </div>
+</header>
+
+<main id="main">
+<!-- 1 HERO -->
+<section class="hero" aria-labelledby="h-hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Punctual Pros first · then every portfolio company</div>
+      <h1 id="h-hero">24/7 Voice AI:<br><em>the growth engine</em></h1>
+      <p class="lede" id="hero-thesis">Every unanswered call to a home-services company is a buyer with an urgent problem who will call the next number on Google. Phone coverage is a revenue line, not an overhead line.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-accent" href="#demo">Play a 2 a.m. call <span aria-hidden="true">▶</span></a>
+        <a class="btn btn-ghost" href="#calculator">Run the numbers</a>
+      </div>
+      <div class="kpis" id="kpis" aria-label="Headline estimates"></div>
+    </div>
+    <aside class="callcard" aria-label="Missed-call revenue clock">
+      <div class="cc-top"><span class="cc-live"><i></i>Live model</span><span id="cc-time">—</span></div>
+      <div class="cc-who">Incoming · One Hour Heating &amp; Air</div>
+      <div class="cc-sub">After hours · Lititz, PA · answered on ring 1 by the AI dispatcher</div>
+      <div class="wave" aria-hidden="true" id="wave"></div>
+      <div class="cc-steps" aria-hidden="true">
+        <div><b>0:04</b>AI + recording disclosure, safety screen</div>
+        <div><b>0:31</b>customer_lookup → 412 Maple Ave, furnace 2011</div>
+        <div><b>1:12</b>check_capacity → on-call 3:15–4:15 a.m.</div>
+        <div><b>1:35</b>book_job + page_on_call + SMS confirmation</div>
+      </div>
+      <div class="clock">
+        <div class="clock-cap">Missed-call revenue since Jan 1 <a class="est" href="#rationale" title="Modelled estimate for Punctual Pros, not a measured loss">est.</a></div>
+        <div class="clock-v" id="clock-v" aria-live="off">$—</div>
+        <div class="clock-sub">≈ <b id="clock-today">—</b> calls unanswered so far today · <b id="clock-day">—</b>/day · <button class="linkbtn" id="clock-why" aria-expanded="false" aria-controls="clock-how">how is this computed?</button></div>
+        <div class="clock-how" id="clock-how" hidden></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- 2 THE DAY -->
+<section id="day" class="alt" aria-labelledby="h-day">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="n">02</span> A day of calls</div>
+      <h2 id="h-day">The leaks cluster when nobody is at the desk</h2>
+      <p class="lede">About 115 calls a day reach Punctual Pros' brand lines (est.). Here is when they arrive, how many go unanswered today, and what the same day looks like when an AI agent picks up every call on ring one.</p>
+    </div>
+    <div class="vs">
+      <div class="card"><h3><span class="dot" style="background:var(--miss)"></span>What happens today</h3><ul>
+        <li>After 5 p.m. and on weekends, calls go to voicemail or an answering service that takes a message. Trades lose 30–40% of these calls.</li>
+        <li>At lunch and on storm days, CSRs are already on the phone, so about 12% of daytime calls ring out or are abandoned (assumption).</li>
+        <li>The caller hangs up and calls the next company listed on Google.</li></ul></div>
+      <div class="card"><h3><span class="dot" style="background:var(--ai)"></span>With 24/7 voice coverage</h3><ul>
+        <li>Every call is answered on the first ring with the brand greeting, the AI disclosure and the recording notice.</li>
+        <li>The agent runs the safety screen, finds the customer in ServiceTitan, offers open capacity and books the job.</li>
+        <li>CSRs stay on the calls they are already handling. Hazards, VIPs and complaints are warm-transferred with a summary.</li></ul></div>
+    </div>
+    <div class="card tl-card">
+      <div class="tl-bar">
+        <div class="seg" role="group" aria-label="Scenario">
+          <button type="button" data-tl="today" aria-pressed="true">Today</button>
+          <button type="button" data-tl="ai" aria-pressed="false">With 24/7 voice AI</button>
+        </div>
+        <div class="legend" id="tl-legend"></div>
+      </div>
+      <div id="tl-chart"></div>
+      <div class="tl-read" id="tl-read">Hover or tap an hour to see its calls.</div>
+      <div class="tl-sum" id="tl-sum"></div>
+      <details class="assume"><summary>Assumptions behind this strip</summary><ul id="tl-assume"></ul></details>
+    </div>
+  </div>
+</section>
+
+<!-- 3 DEMO -->
+<section id="demo" aria-labelledby="h-demo">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="n">03</span> Simulated calls</div>
+      <h2 id="h-demo">Hear the agent book the job</h2>
+      <p class="lede">Three scripted calls, built on the reference architecture below. Press Play and your browser reads the agent's lines aloud while the caller's lines type in. The right rail shows the tool calls the agent would make.</p>
+    </div>
+    <div class="demo">
+      <div class="calls" id="calls" role="group" aria-label="Choose a call"></div>
+      <div class="player">
+        <div class="pl-main">
+          <div class="pl-head">
+            <div class="pl-title" id="pl-title"><b>—</b><span>—</span></div>
+            <span class="pl-clock" id="pl-clock" aria-label="Simulated call time">0:00</span>
+            <div class="pl-ctrl">
+              <button class="iconbtn play" id="pl-play" type="button"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1l9 5-9 5z" fill="currentColor"/></svg><span>Play</span></button>
+              <button class="iconbtn" id="pl-voice" type="button" aria-pressed="true" title="Toggle spoken agent lines">Voice on</button>
+              <button class="iconbtn" id="pl-all" type="button">Show all</button>
+            </div>
+          </div>
+          <div class="thread" id="thread" aria-live="polite"></div>
+        </div>
+        <aside class="side" aria-label="Agent tool calls">
+          <h4>Tool calls (illustrative)</h4>
+          <div id="tools"></div>
+          <p class="note">Tool names follow the reference pipeline: ServiceTitan lookup, capacity, booking, SMS and paging. Customers, addresses and technicians are fictional.</p>
+        </aside>
+      </div>
+    </div>
+    <p class="voice-note" id="voice-note"></p>
+  </div>
+</section>
+
+<!-- 4 CALCULATOR -->
+<section id="calculator" class="alt" aria-labelledby="h-calc">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="n">04</span> Revenue recovered</div>
+      <h2 id="h-calc">What 24/7 coverage is worth, in your own inputs</h2>
+      <p class="lede">The defaults are the conservative model behind this page. Change any input, or choose a preset to see the published benchmarks instead of the conservative assumptions.</p>
+    </div>
+    <div class="calc">
+      <form class="card calc-in" id="calc" onsubmit="return false" aria-label="Calculator inputs">
+        <div class="presets" id="presets" role="group" aria-label="Presets"></div>
+        <div id="fields"></div>
+      </form>
+      <div class="card calc-out" aria-live="polite" id="calc-out"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 USE CASES -->
+<section id="usecases" aria-labelledby="h-uc">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="n">05</span> Use-case catalog</div>
+      <h2 id="h-uc">One engine, fourteen lines, six companies</h2>
+      <p class="lede">For each line: the direction, what starts the call, when a human takes over, the KPIs, and the estimated annual value with its formula.</p>
+    </div>
+    <div class="filters" id="uc-filters" role="group" aria-label="Filter by company"></div>
+    <div class="uc-grid" id="uc-grid"></div>
+  </div>
+</section>
+
+<!-- 6 VENDORS -->
+<section id="vendors" class="alt" aria-labelledby="h-v">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="n">06</span> Vendors</div>
+      <h2 id="h-v">Buy for the pilot, own the engine for the portfolio</h2>
+      <p class="lede">Fourteen vendors across four categories: trades-specific answering, outbound, coaching and build platforms. Pricing is from public pages, retrieved 2026-10-06.</p>
+    </div>
+    <div class="pick" id="pick"></div>
+    <div class="filters" id="v-filters" role="group" aria-label="Filter vendors by type"></div>
+    <div class="tbl-wrap"><table id="v-table"><caption class="sr">Voice AI vendor comparison</caption><thead><tr><th scope="col">Vendor</th><th scope="col">Type</th><th scope="col">Pricing</th><th scope="col">Integrations</th><th scope="col">Languages · latency</th><th scope="col">Notable cases</th></tr></thead><tbody></tbody></table></div>
+  </div>
+</section>
+
+<!-- 6b ELISE PLAYBOOK -->
+<section id="playbook" aria-labelledby="h-pb">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="n">06b</span> Reference platforms</div>
+      <h2 id="h-pb">The EliseAI playbook, applied to home services</h2>
+      <p class="lede">EliseAI, a New York company, runs leasing for about one in six US apartments with one assistant that covers every channel at every hour. Below are what it and six peers automate, what they have published about results, and what Punctual Pros should borrow from each.</p>
+    </div>
+    <div class="refs" id="refs"></div>
+
+    <div class="card arch" aria-labelledby="h-arch">
+      <div class="eyebrow" style="margin-bottom:8px">Reference call architecture</div>
+      <h3 id="h-arch">A cascaded dispatch pipeline at about 1.1 seconds per turn</h3>
+      <p class="lede" style="font-size:15px;margin-top:8px" id="arch-sub"></p>
+      <div class="pipe" id="pipe"></div>
+      <div class="handoff" id="handoff"></div>
+      <div class="budget" id="budget"></div>
+      <div class="costrow" id="costrow"></div>
+    </div>
+
+    <h3 class="stack-h">ASR, LLM, TTS and orchestration stack</h3>
+    <div class="tbl-wrap"><table id="stack-table"><caption class="sr">Voice AI technical stack options</caption><thead><tr><th scope="col">Layer</th><th scope="col">Product</th><th scope="col">Accuracy · latency</th><th scope="col">Pricing</th><th scope="col">Why it matters on a dispatch call</th></tr></thead><tbody></tbody></table></div>
+  </div>
+</section>
+
+<!-- 7 GOVERNANCE -->
+<section id="governance" class="alt" aria-labelledby="h-gov">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="n">07</span> Governance &amp; compliance</div>
+      <h2 id="h-gov">Disclosed, consented, recorded with notice, 100% scored</h2>
+      <p class="lede">These rules apply on every call and in every state where the portfolio operates. They are a summary for planning, not legal advice. Counsel should review them before the first outbound campaign.</p>
+    </div>
+    <div class="gov" id="gov"></div>
+  </div>
+</section>
+
+<!-- 8 ROLLOUT -->
+<section id="rollout" aria-labelledby="h-ro">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="n">08</span> 6-week rollout</div>
+      <h2 id="h-ro">From calibrated baseline to live lines in six weeks</h2>
+      <p class="lede">This is a proposed plan. Each line goes live only after it passes its gate, and the sequencing follows the deploy times in the use-case catalog.</p>
+    </div>
+    <div class="weeks" id="weeks"></div>
+  </div>
+</section>
+
+<!-- RATIONALE -->
+<section id="rationale" class="alt" aria-labelledby="h-rat">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Design rationale</div>
+      <h2 id="h-rat">Why this page looks and works the way it does</h2>
+      <p class="lede">It is written for Tyler and the PRG. The page has to make the case in 90 seconds and then survive diligence on every input.</p>
+    </div>
+    <div class="rat">
+      <div class="card"><h3>A clock instead of a slide</h3><p>A debt-clock-style counter makes the cost of waiting concrete. It is labelled as a modelled estimate for Punctual Pros, not a measured loss, and its formula is one click away. That framing means the debate is about the inputs, not about the pitch.</p></div>
+      <div class="card"><h3>Hear it before you believe it</h3><p>Partners decide on voice AI by listening to it. The transcript player uses the browser's own speech engine, so the demo runs with no vendor account and no audio files. The tool rail shows that the agent books real jobs and does not just take messages.</p></div>
+      <div class="card"><h3>Benchmarked like EliseAI, built like Twilio</h3><p>The page measures the program the way EliseAI does, by booked jobs and after-hours share rather than call-center cost. It shows the engineering the way Twilio does, with a latency budget for every hop. Those are the two questions a buyer asks at exit.</p></div>
+      <div class="card"><h3>Calculator with presets</h3><p>The conservative model is the default. Presets switch to Invoca's industry miss rate or ServiceTitan's AI booking rate, so the range of outcomes is visible and nobody has to argue about one number.</p></div>
+      <div class="card"><h3>Governance on the page</h3><p>The TCPA, AI-disclosure and all-party recording rules are stated next to the revenue. Diligence will ask about them, and they constrain outbound more than inbound.</p></div>
+      <div class="card"><h3>KPIs this program should move</h3><p>After-hours answer rate and booking rate, overflow abandon rate, time to book, membership renewal rate, the escalation rate (10–20% in month 1, then falling) and booked revenue per inbound call.</p></div>
+    </div>
+    <ul class="caveats" id="caveats"></ul>
+  </div>
+</section>
+
+<!-- 9 CTA -->
+<section class="cta" aria-label="Related pages">
+  <div class="wrap cta-grid">
+    <a href="punctual-pros/nationwide.html#agents"><small>Punctual Pros</small><b>Nationwide plan · agents</b><span>Where the 24/7 dispatcher fits in the national roll-up</span></a>
+    <a href="ai-agents.html"><small>Portfolio</small><b>The agentic layer</b><span>All AI agents across the six platforms</span></a>
+    <a href="punctual-pros/serviceos.html"><small>Product</small><b>ServiceOS</b><span>Dispatch board and capacity index the agent books into</span></a>
+    <a href="../app.html#/pp/weather"><small>Portal</small><b>Storm readiness</b><span>Live NWS alerts that trigger the overflow agent</span></a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <p>Concept by Syed Rizvi for the Broad Sky Portfolio Resource Group. Data: <code>data/research/voice_ai.json</code> (web research, 2026-10-06). All values are estimates; sample calls are fictional.</p>
+    <nav aria-label="Footer"><a href="../app.html#/techos/overview">Portal · Tech enablement</a><a href="index.html">All concepts</a><a href="../index.html">Landing</a><a href="#top">Back to top ↑</a></nav>
+  </div>
+<p class="bsp-disclaimer" style="color:#4b5563;box-sizing:border-box;max-width:1200px;margin:0 auto;padding:12px 20px 18px;font-size:12px;line-height:1.55">Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.</p>
+</footer>
+
+<script type="module">
+import { Chat } from '../assets/chat.js?v=20261006085442';
+import { boot } from './voice-ai.js?v=2';
+const d = await boot().catch(e => { console.warn('voice-ai boot failed', e); return null; });
+try {
+  Chat.mount(null, {
+    persona: 'portal', mode: 'floating', theme: 'light',
+    faq: d?.faq || [],
+    suggestions: ['How much revenue does 24/7 voice AI recover?', 'Play the after-hours no-heat call', 'Which vendor should Punctual Pros pick?', 'What does a voice AI call cost per minute?', 'Is AI calling legal under the TCPA?', 'What is the 6-week rollout?']
+  });
+} catch (e) { console.warn('chat mount failed', e); }
+</script>
+</body>
+</html>

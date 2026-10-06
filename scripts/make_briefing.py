@@ -17,7 +17,7 @@ print(f"{len(steps)} steps")
 segments = []
 for i, s in enumerate(steps):
     png = os.path.join(WORK, f'shot_{i:02d}.png'); aiff = os.path.join(WORK, f'nar_{i:02d}.aiff'); wav = os.path.join(WORK, f'nar_{i:02d}.wav')
-    url = BASE + (s.get('hash') or '#/home/overview')
+    url = BASE + 'app.html' + (s.get('hash') or '#/home/overview')
     # screenshot: give the page time to load data + tiles
     subprocess.run([CHROME, '--headless=new', '--hide-scrollbars', f'--window-size={W},{H}', '--force-device-scale-factor=1', f'--screenshot={png}', '--virtual-time-budget=12000', '--run-all-compositor-stages-before-draw', '--disable-gpu', url], check=True, capture_output=True, timeout=120)
     text = s.get('narration') or s.get('caption', '')

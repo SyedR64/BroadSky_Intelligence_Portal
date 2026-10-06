@@ -14,7 +14,9 @@ export const Data = {
   async load(name) {
     if (_cache.has(name)) return _cache.get(name);
     const p = (async () => {
-      const path = name.includes('/') ? `data/${name}.json` : (await Data._exists(`data/${name}.json`)) ? `data/${name}.json` : `data/research/${name}.json`;
+      // Legacy tables live in data/; everything else (research datasets) lives in data/research/. No probing → no 404 noise.
+      const LEGACY = new Set(['cet_ne_counties', 'cet_ne_development', 'cet_ne_rfps', 'cet_nyc_archive_summary', 'pp_zips', 'pp_meta', 'pp_sales_90d', 'fl_lawfirms', 'ts_sites', 'ts_parents', 'manifest']);
+      const path = name.includes('/') ? `data/${name}.json` : LEGACY.has(name) ? `data/${name}.json` : `data/research/${name}.json`;
       const r = await fetch(BASE + path, { cache: 'force-cache' });
       if (!r.ok) throw new Error(`Dataset ${name} not found (${r.status})`);
       const j = await r.json();
@@ -315,5 +317,5 @@ export const App = {
     App.route();
   },
 };
-// Guard: assets/components.js imports ./core.js without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
+// Guard: assets/components.js imports ./core.js?v=20261006085442 without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
 window.BSP = window.BSP || { Data, Fmt, UI, Maps, Charts, Live, Tour, App, Inspector };
