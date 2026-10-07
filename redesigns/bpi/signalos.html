@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SignalOS · Broad Sky</title>
-<meta name="description" content="SignalOS, the proposed tech-enablement layer for BPI: narrative monitoring, synthetic-audience testing, compliance-gated content and productized retainers, with the value-creation math.">
+<title>SignalOS · BSP Desk</title>
+<meta name="description" content="SignalOS for BPI: narrative monitoring, audience testing, compliance-gated content and productized retainers.">
 <meta name="theme-color" content="#fbfaf7">
 <script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
 <link rel="icon" href="../../BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261006180606">
-<link rel="stylesheet" href="site.css?v=20261006180606">
+<link rel="stylesheet" href="../../assets/system.css?v=20261006224618">
+<link rel="stylesheet" href="site.css?v=20261006224618">
 </head>
 <body data-co="bpi">
 <main id="main">
@@ -27,17 +27,17 @@
   <!-- ── Hero ─────────────────────────────────────────────────────────── -->
   <section class="sys-hero" aria-labelledby="os-h">
     <div class="sys-wrap">
-      <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>SignalOS</b> · the tech-enablement thesis for BPI</p>
+      <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>SignalOS</b> · for BPI</p>
       <h1 class="sys-h1" id="os-h">See the narrative <span class="sys-grad-text">before it’s news.</span></h1>
-      <p class="sys-lead">SignalOS turns what BPI already does best (reading the room, testing the message, proving the result) into an always-on product sold as a retainer. Clients get earlier warning and faster, safer responses. BPI gets recurring revenue that does not wait for an election.</p>
+      <p class="sys-lead">SignalOS turns what BPI does best into an always-on retainer product. Clients get earlier warning; BPI gets revenue that does not wait for an election.</p>
       <div class="sys-actions">
         <a class="sys-btn sys-btn--primary sys-btn--lg" href="#demo">Try the live demo <span aria-hidden="true">↓</span></a>
         <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#math">See the value math</a>
       </div>
       <div class="sys-kpis" role="list">
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Adj. EBITDA margin</span><span class="sys-kpi-value"><span class="from" id="k1-from">21%</span><span id="k1-to">24.3%</span><span class="sys-est">est.</span></span><span class="sys-kpi-sub">BPI est. 18–24% today (midpoint) to the level of PPHC, its closest listed peer.</span></div>
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Exit multiple credited to SignalOS</span><span class="sys-kpi-value"><span id="k2">+0.5–2.0x</span><span class="sys-est">est.</span></span><span class="sys-kpi-sub">Turns of EV/EBITDA, conditional on subscription revenue showing in the numbers.</span></div>
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Recurring SignalOS revenue</span><span class="sys-kpi-value"><span class="from">$0</span>$5M ARR<span class="sys-est">est.</span></span><span class="sys-kpi-sub">Subscription monitoring, testing and measurement by month 36, about 3–4% of revenue.</span></div>
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Adj. EBITDA margin</span><span class="sys-kpi-value"><span class="from" id="k1-from">21%</span><span id="k1-to">24.3%</span><span class="sys-est">est.</span></span><span class="sys-kpi-sub">Today's midpoint to PPHC, the closest listed peer</span></div>
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Exit multiple credited to SignalOS</span><span class="sys-kpi-value"><span id="k2">+0.5–2.0x</span><span class="sys-est">est.</span></span><span class="sys-kpi-sub">Turns of EV/EBITDA, if subscriptions show up</span></div>
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Recurring SignalOS revenue</span><span class="sys-kpi-value"><span class="from">$0</span>$5M ARR<span class="sys-est">est.</span></span><span class="sys-kpi-sub">By month 36, about 3–4% of revenue</span></div>
       </div>
       <p class="sys-src" id="k-src"><b>Source:</b> PPHC FY2025 10-K margin benchmark and BPI public filings (low confidence); multiple credit from the OS program evidence (analyst assumption); recurring revenue from the BPI growth plan (analyst target), Oct 2026.</p>
     </div>
@@ -49,7 +49,7 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Why now</p>
         <h2 class="sys-h2" id="why-h">Break the election cycle.</h2>
-        <p class="sys-lead">Political work made BPI famous, and it is the biggest drag on its valuation: billings spike every four years and fall away in between. Buyers discount earnings they cannot predict. Subscriptions fix that.</p>
+        <p class="sys-lead">Political billings spike every four years, and buyers discount earnings they cannot predict. Subscriptions fix that.</p>
       </div>
       <div class="cyc">
         <div class="sys-card rv"><span class="sys-card-label">Federal political committee payments to BPI, by cycle (gross billings)</span><div id="cyc-chart"></div><p class="sys-src"><b>Source:</b> FEC Schedule B payments by recipient, compiled in BPI public filings (high confidence). Gross media billings, mostly pass-through, not BPI fee revenue. 2026 is year to date.</p></div>
@@ -68,7 +68,7 @@
       <div class="sys-section-head">
         <p class="sys-kicker">What it is</p>
         <h2 class="sys-h2" id="mod-h">Six modules. One subscription.</h2>
-        <p class="sys-lead">Buy the commodity layers from proven vendors, build the parts that make BPI different: the narrative models, the Message House panels, the compliance rules and the client scorecards.</p>
+        <p class="sys-lead">Buy the commodity layers. Build what makes BPI different: narrative models, research panels, review rules and client scorecards.</p>
       </div>
       <div class="sys-grid sys-grid--3">
         <div class="sys-card rv"><span class="bpi-ic bpi-ic--soft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg></span><p class="sys-card-title">Narrative monitor</p><p class="sys-card-body">News, social, video, podcasts and dockets clustered into narratives, scored for sentiment, velocity and synthetic-media risk. Alerts arrive with a draft holding statement.</p><div class="sys-card-foot"><span class="bpi-tag">Buy Meltwater, Brandwatch, Zignal · build models</span></div></div>
@@ -87,7 +87,7 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Interactive demo</p>
         <h2 class="sys-h2" id="demo-h">Monitor. Test. Ship safely.</h2>
-        <p class="sys-lead">Three working mocks of the core loop. Data is illustrative; the workflow, checkpoints and scoring logic are what SignalOS would run for a client.</p>
+        <p class="sys-lead">Three working mocks of the core loop. The data is illustrative; the workflow and scoring are real.</p>
       </div>
       <div class="demo-tabs" role="tablist" aria-label="Demo">
         <button role="tab" id="t-mon" aria-controls="p-mon" aria-selected="true"><span class="n">01</span>Narrative monitor</button>
@@ -140,7 +140,7 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Productized retainers</p>
         <h2 class="sys-h2" id="tier-h">Three tiers. Priced like software.</h2>
-        <p class="sys-lead">Packaging turns bespoke hours into products a client can renew without a new pitch. Prices are illustrative, set against what clients already pay for monitoring tools alone.</p>
+        <p class="sys-lead">Packaging turns bespoke hours into products a client renews without a new pitch. Prices are illustrative.</p>
       </div>
       <div class="sys-grid sys-grid--3 sys-grid--gap-lg">
         <article class="sys-card sys-card--feature tier rv"><span class="sys-card-label">Tier 1<span class="sys-est sys-est--illus">illustrative</span></span><h3 class="sys-h3">Monitor</h3><div class="price">$12K<small> a month</small></div><p class="sys-card-body">Early warning for one company, three issues and two markets.</p><ul class="sys-card-list"><li>Narrative monitor: 3 issues, US plus 1 market</li><li>Alerts with draft holding statements</li><li>Weekly narrative brief</li><li>Quarterly outcome scorecard</li></ul>
@@ -158,9 +158,9 @@
   <section class="sys-section sys-section--alt" id="math" aria-labelledby="math-h">
     <div class="sys-wrap">
       <div class="sys-section-head">
-        <p class="sys-kicker">Value-creation math</p>
+        <p class="sys-kicker">Value math</p>
         <h2 class="sys-h2" id="math-h">$1–2M in. Tens of millions out.</h2>
-        <p class="sys-lead">Two levers: margin (more output per head and subscription revenue on shared licences) and multiple (earnings a buyer can underwrite). Move the sliders; every default comes from the evidence file and every figure is an estimate.</p>
+        <p class="sys-lead">Two levers: margin and multiple. Move the sliders; every default comes from the evidence file.</p>
       </div>
       <div class="calc">
         <div class="sys-card inputs rv">
@@ -198,7 +198,7 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Build vs buy</p>
         <h2 class="sys-h2" id="stack-h">Rent the pipes. Own the judgment.</h2>
-        <p class="sys-lead">Monitoring and drafting are commodities with mature vendors. BPI’s edge is the layer on top: which narratives matter, which audiences decide, and what a client is allowed to say.</p>
+        <p class="sys-lead">Monitoring and drafting are commodities. BPI’s edge is knowing which narratives matter and what a client can say.</p>
       </div>
       <div class="sys-table-wrap rv"><table class="sys-table" id="stack-tbl"><thead><tr><th>Layer</th><th>Vendor or asset</th><th>What it does in SignalOS</th><th>Cost note</th><th>Decision</th></tr></thead><tbody></tbody><caption>Source: OS program evidence (BPI vendor stack, with links to each vendor’s pricing source), Oct 2026. Build rows are this concept’s proposal.</caption></table></div>
     </div>
@@ -210,7 +210,7 @@
       <div class="sys-section-head">
         <p class="sys-kicker">12-month roadmap</p>
         <h2 class="sys-h2" id="road-h">Live in two quarters. Reported in four.</h2>
-        <p class="sys-lead">Sequenced so revenue shows up before the post-midterm advocacy dip: pilot with the corporate clients reached through the 2026 Reputation Resilience Index briefings, then productize and take it to Europe.</p>
+        <p class="sys-lead">Revenue arrives before the post-midterm dip: pilot with corporate clients, then productize and take it to Europe.</p>
       </div>
       <div class="gantt rv" id="gantt"></div>
       <p class="sys-src"><b>Source:</b> 6–12 months to value<span class="sys-est">est.</span> (OS program evidence); phase 1 of the BPI growth plan (Oct 2026 – Sep 2027). Owners are proposed.</p>
@@ -223,7 +223,7 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Risks</p>
         <h2 class="sys-h2" id="risk-h">What could go wrong, and the guardrail.</h2>
-        <p class="sys-lead">Communications firms sell trust. Every SignalOS module keeps a human in the loop, and the commercial risks are managed as deliberately as the technical ones.</p>
+        <p class="sys-lead">Communications firms sell trust. Every SignalOS module keeps a person in the loop.</p>
       </div>
       <div class="sys-grid sys-grid--3">
         <div class="sys-card risk rv"><span class="lv h">High</span><p class="sys-card-title">Revenue stays tied to the election cycle</p><p class="sys-card-body">Subscriptions sold mostly to campaign clients would churn with the cycle.</p><div class="sys-note sys-note--good"><span><b>Guardrail.</b> Sell first to corporate clients from the Reputation Resilience Index briefings; report recurring share monthly.</span></div></div>
@@ -245,10 +245,10 @@
       </div>
       <p class="thesis rv">A BPI whose billings swing 37x between federal cycles is valued like a campaign shop. A BPI with <em>subscription intelligence, visible renewals and transatlantic retainers</em> is valued like the firms its next buyer already knows: PPHC on the floor, FGS and Penta at the top.</p>
       <div class="sys-grid sys-grid--4 exit">
-        <div class="sys-kpi rv"><span class="sys-kpi-label">PPHC, the public floor</span><span class="sys-kpi-value">8.4x<span class="sys-est">est.</span></span><span class="sys-kpi-sub">Closest listed DC public-affairs peer at its Jan 2026 IPO price, with a 24.3% adj. EBITDA margin.</span><p class="sys-src">PPHC 10-K and 424B4 · OS program evidence</p></div>
-        <div class="sys-kpi rv"><span class="sys-kpi-label">Sponsor exit for a scaled BPI</span><span class="sys-kpi-value">10–13x<span class="sys-est">est.</span></span><span class="sys-kpi-sub">The range SignalOS helps BPI reach the top of, by turning fees into subscriptions.</span><p class="sys-src">Analyst estimate · OS program evidence</p></div>
-        <div class="sys-kpi rv"><span class="sys-kpi-label">KKR’s valuation of FGS Global</span><span class="sys-kpi-value">$1.7B</span><span class="sys-kpi-sub">What scaled, premium strategic communications is worth to a large sponsor.</span><p class="sys-src">WPP Form 6-K, Aug 2024</p></div>
-        <div class="sys-kpi rv"><span class="sys-kpi-label">Penta revenue from AI and data</span><span class="sys-kpi-value">~½</span><span class="sys-kpi-sub">Of $100M+ revenue, reported when Shamrock acquired the DC peer in Aug 2025: the closest proof that intelligence products get paid for.</span><p class="sys-src">O’Dwyer’s citing Axios · BPI growth plan</p></div>
+        <div class="sys-kpi rv"><span class="sys-kpi-label">PPHC, the public floor</span><span class="sys-kpi-value">8.4x<span class="sys-est">est.</span></span><span class="sys-kpi-sub">Closest listed peer at its January 2026 IPO</span><p class="sys-src">PPHC 10-K and 424B4 · OS program evidence</p></div>
+        <div class="sys-kpi rv"><span class="sys-kpi-label">Sponsor exit for a scaled BPI</span><span class="sys-kpi-value">10–13x<span class="sys-est">est.</span></span><span class="sys-kpi-sub">SignalOS aims for the top of this range</span><p class="sys-src">Analyst estimate · OS program evidence</p></div>
+        <div class="sys-kpi rv"><span class="sys-kpi-label">KKR’s valuation of FGS Global</span><span class="sys-kpi-value">$1.7B</span><span class="sys-kpi-sub">What scaled, premium communications is worth</span><p class="sys-src">WPP Form 6-K, Aug 2024</p></div>
+        <div class="sys-kpi rv"><span class="sys-kpi-label">Penta revenue from AI and data</span><span class="sys-kpi-value">~½</span><span class="sys-kpi-sub">Of $100M+ revenue, at the August 2025 sale</span><p class="sys-src">O’Dwyer’s citing Axios · BPI growth plan</p></div>
       </div>
     </div>
   </section>
@@ -270,9 +270,9 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261006180606';
+  import { Frame } from '../../assets/frame.js?v=20261006224618';
   Frame.mount({});
 </script>
-<script type="module" src="signalos.js?v=20261006180606"></script>
+<script type="module" src="signalos.js?v=20261006224618"></script>
 </body>
 </html>

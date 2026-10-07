@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Punctual Pros concept site · Broad Sky</title>
-<meta name="description" content="Concept website for Punctual Pros: heating, cooling, plumbing and electrical across Central Pennsylvania and the Jersey Shore, with online booking, live storm readiness and the Comfort Club.">
+<title>Punctual Pros concept site · BSP Desk</title>
+<meta name="description" content="Concept website for Punctual Pros: heating, cooling, plumbing and electrical in Central Pennsylvania and the Jersey Shore.">
 <meta name="theme-color" content="#fbfaf7">
 <script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
 <link rel="icon" href="../../BSP_Logo.png">
@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="../../assets/system.css?v=20261006180606">
-<link rel="stylesheet" href="./site.css?v=20261006180606">
+<link rel="stylesheet" href="../../assets/system.css?v=20261006224618">
+<link rel="stylesheet" href="./site.css?v=20261006224618">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
 </head>
 <body data-co="pp">
@@ -86,7 +86,7 @@
           <button class="sys-chip" type="button" id="geo" aria-label="Switch region between Central PA and the Jersey Shore"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg><span id="geo-lbl">Central PA</span></button>
         </div>
         <h1 class="sys-h1" id="hero-h">Comfort, fixed <span class="sys-grad-text">on time.</span></h1>
-        <p class="sys-lead">Heating, cooling, plumbing and electrical from <b>One Hour Heating &amp; Air</b>, <b>Benjamin Franklin Plumbing</b> and <b>Mister Sparky</b>: one team, one number and an upfront price before any work starts. If we're late, you get paid for the wait.</p>
+        <p class="sys-lead">Heating, cooling, plumbing and electrical from <b>One Hour Heating &amp; Air</b>, <b>Benjamin Franklin Plumbing</b> and <b>Mister Sparky</b>, priced up front. If we're late, we pay you for the wait.</p>
         <div class="sys-note sys-note--info pp-storm" id="stormbar" data-level="load" role="status" aria-live="polite">
           <span class="pp-pulse" aria-hidden="true"></span>
           <span><b>Storm readiness</b><span class="sys-est sys-est--live">live</span> <span id="storm-msg">Checking National Weather Service alerts for our 11 counties…</span> <span class="pp-storm-src" id="storm-src">National Weather Service</span></span>
@@ -200,7 +200,7 @@
     <div class="sys-section-head">
       <p class="sys-kicker">Storm readiness</p>
       <h2 class="sys-h2" id="storm-h">Storm readiness for your street.</h2>
-      <p class="sys-lead">We watch the same National Weather Service alerts and forecasts our dispatchers use to stage crews before a freeze, heat wave or nor'easter. Here is what the next seven days mean for your home.<span class="sys-est sys-est--live">live</span></p>
+      <p class="sys-lead">Our dispatchers stage crews from National Weather Service alerts. Here is what the next seven days mean for your home.<span class="sys-est sys-est--live">live</span></p>
     </div>
     <div class="pp-two pp-two--storm">
       <div class="sys-card">
@@ -244,7 +244,7 @@
         <div class="map-legend"><span><i class="lg-core"></i>Core service ZIP (PA)</span><span><i class="lg-nj"></i>Horvath Home Services (NJ)</span><span><i class="lg-adj"></i>By appointment (adjacent)</span><span><i class="lg-hub"></i>Shop or dispatch hub</span></div>
       </div>
     </div>
-    <p class="sys-src"><b>Source:</b> Punctual Pros ZIP-code model, Broad Sky portal (Census ACS housing counts, service-territory and adjacency flags; 3,691 ZIP codes scored), Sept 2026. Ocean and Monmouth ZIPs are mapped to Horvath Home Services. Map tiles © Esri.</p>
+    <p class="sys-src"><b>Source:</b> Punctual Pros ZIP-code model, BSP portal (Census ACS housing counts, service-territory and adjacency flags; 3,691 ZIP codes scored), Sept 2026. Ocean and Monmouth ZIPs are mapped to Horvath Home Services. Map tiles © Esri.</p>
   </div>
 </section>
 
@@ -254,7 +254,7 @@
     <div class="sys-section-head">
       <p class="sys-kicker">Comfort Club membership</p>
       <h2 class="sys-h2" id="club-h">Pay a little monthly. Skip the 2 a.m. surprise.</h2>
-      <p class="sys-lead">Two tune-ups a year catch most failures before they happen. Members also get front-of-line scheduling, no after-hours fees and member pricing on every repair. Plan prices are illustrative.<span class="sys-est sys-est--illus">illustrative</span></p>
+      <p class="sys-lead">Two tune-ups a year catch most failures early. Members also get priority scheduling, no after-hours fees and member pricing.<span class="sys-est sys-est--illus">illustrative</span></p>
     </div>
     <div class="pp-two">
       <div class="sys-stack">
@@ -303,7 +303,7 @@
       <div class="sys-card" id="rebates">
         <div class="card-h"><h3 class="sys-card-title">Rebates and programs in our area</h3><div class="sys-chips" id="reb-seg" role="group" aria-label="Filter by state"><button class="sys-chip" type="button" data-st="PA" aria-pressed="true">PA</button><button class="sys-chip" type="button" data-st="NJ" aria-pressed="false">NJ</button><button class="sys-chip" type="button" data-st="ALL" aria-pressed="false">All</button></div></div>
         <div class="reb-list" id="reb-list"><div class="skel" style="height:70px"></div><div class="skel" style="height:70px"></div><div class="skel" style="height:70px"></div></div>
-        <p class="sys-src" id="reb-src"><b>Source:</b> Punctual Pros market profile, Broad Sky portal (utility and agency program pages), retrieved Sept 2026.</p>
+        <p class="sys-src" id="reb-src"><b>Source:</b> Punctual Pros market profile, BSP portal (utility and agency program pages), retrieved Sept 2026.</p>
       </div>
     </div>
   </div>
@@ -317,7 +317,7 @@
         <div>
           <p class="sys-kicker">Powered by ServiceOS</p>
           <h2 class="sys-h2" id="os-h">The reason we're on time is software.</h2>
-          <p class="sys-lead">ServiceOS is the operating system behind every Punctual Pros visit. It forecasts call volume from the weather, routes the closest qualified tech, answers the phone at 2 a.m. and keeps your membership on schedule.</p>
+          <p class="sys-lead">ServiceOS runs every Punctual Pros visit. It forecasts calls from the weather, routes the nearest tech and answers the phone overnight.</p>
           <div class="sys-actions"><a class="sys-btn sys-btn--primary" href="./serviceos.html">See ServiceOS <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="sys-btn sys-btn--secondary" href="./serviceos.html#demo">Try the dispatch demo</a></div>
         </div>
         <div class="os-feats">
@@ -354,7 +354,7 @@
       <div>
         <p class="sys-kicker">Careers · technician pipeline</p>
         <h2 class="sys-h2" id="car-h">Build a career with a toolbox and a future.</h2>
-        <p class="sys-lead">Paid training from day one, a company truck and a clear path from apprentice to lead technician. We hire from Thaddeus Stevens and the trade schools down the road, and we keep our people.</p>
+        <p class="sys-lead">Paid training from day one, a company truck and a path from apprentice to lead technician.</p>
       </div>
       <a class="sys-btn sys-btn--secondary" href="#careers" id="apply-btn">Apply in 60 seconds <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
     </div>
@@ -389,7 +389,7 @@
     <div class="sys-section-head">
       <p class="sys-kicker">FAQ</p>
       <h2 class="sys-h2" id="faq-h">Good questions. Straight answers.</h2>
-      <p class="sys-lead">Can't find yours? Press Ask in the top bar. The assistant checks your ZIP, the live weather and our programs in real time.</p>
+      <p class="sys-lead">Can't find yours? Press Ask in the top bar to check your ZIP, the weather and our programs.</p>
     </div>
     <div class="faq-list" id="faq-list"></div>
   </div>
@@ -399,16 +399,16 @@
 <section class="sys-section" id="rationale" data-sys-theme="dark" aria-labelledby="rat-h">
   <div class="sys-wrap">
     <div class="sys-section-head">
-      <p class="sys-kicker">Design rationale · for the Portfolio Resource Group</p>
+      <p class="sys-kicker">Design rationale</p>
       <h2 class="sys-h2" id="rat-h">The principles behind the page, and the number each one should move.</h2>
-      <p class="sys-lead">Every element on this page follows a pattern that has already proven itself in residential services. Below are the principles, the specific elements that carry them, and the KPI each one is meant to move.</p>
+      <p class="sys-lead">Each element follows a pattern proven in residential services, tied to the KPI it should move.</p>
     </div>
     <div class="sys-grid sys-grid--2" id="ref-grid"></div>
     <div class="sys-table-wrap score-wrap">
       <table class="sys-table score">
         <thead><tr><th>KPI</th><th class="sys-n">Benchmark today</th><th class="sys-n">Target</th><th>Page element that moves it</th><th>Source</th></tr></thead>
         <tbody id="score-body"></tbody>
-        <caption>Source: ServiceOS evidence (industry KPI benchmarks), Broad Sky portal research, Oct 2026. Punctual Pros actuals are not public; targets are estimates.</caption>
+        <caption>Source: ServiceOS evidence (industry KPI benchmarks), BSP portal research, Oct 2026. Punctual Pros actuals are not public; targets are estimates.</caption>
       </table>
     </div>
   </div>
@@ -436,10 +436,10 @@
 <div class="actionbar" role="region" aria-label="Quick actions"><a class="sys-btn sys-btn--secondary" href="tel:+17175550123" data-phone-link><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>Call</a><a class="sys-btn sys-btn--primary" href="#book">Book now</a></div>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261006180606';
-  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261006180606';
-  import { Chat } from '../../assets/chat.js?v=20261006180606';
-  import { init } from './site.js?v=20261006180606';
+  import { Frame } from '../../assets/frame.js?v=20261006224618';
+  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261006224618';
+  import { Chat } from '../../assets/chat.js?v=20261006224618';
+  import { init } from './site.js?v=20261006224618';
   const frame = Frame.mount({});
   const chat = init({ Data, Fmt, Live, Chat, esc, Frame });
   if (chat) frame.setChat(chat);

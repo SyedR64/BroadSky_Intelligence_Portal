@@ -72,7 +72,7 @@ curl https://bsp-assistant.<subdomain>.workers.dev/health
 
 curl -N https://bsp-assistant.<subdomain>.workers.dev/chat \
   -H 'Origin: https://syedr64.github.io' -H 'Content-Type: application/json' \
-  -d '{"persona":"portal","question":"What does Broad Sky look for in an add-on?","context":[],"messages":[]}'
+  -d '{"persona":"portal","question":"What does BSP look for in an add-on?","context":[],"messages":[]}'
 # data: {"type":"meta",...}  data: {"type":"text",...}  …  data: {"type":"done",...}
 ```
 

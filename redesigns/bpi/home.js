@@ -1,7 +1,7 @@
 /* BPI concept homepage behaviour. */
-import { Data } from '../../assets/core.js?v=20261006180606';
-import { chrome, mountChat, faqHTML, OFFICES, timeIn, isOpen } from './site.js?v=20261006180606';
-import { mountMonitor, mountPulse } from './monitor.js?v=20261006180606';
+import { Data } from '../../assets/core.js?v=20261006224618';
+import { chrome, mountChat, faqHTML, OFFICES, timeIn, isOpen } from './site.js?v=20261006224618';
+import { mountMonitor, mountPulse } from './monitor.js?v=20261006224618';
 
 const monthYear = d => { const t = new Date(String(d).slice(0, 10) + 'T12:00:00Z'); if (isNaN(t)) return String(d); const m = t.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' }); return `${m === 'Sep' ? 'Sept' : m} ${t.getUTCFullYear()}`; };
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -63,7 +63,7 @@ Data.load('research/bsp_firm').then(d => {
   const b = d?.items?.find(i => i.id === 'bsp-bpi'); if (!b) return;
   const founded = b.key_metrics?.founded; if (founded) document.querySelector('[data-stat="years"]').textContent = new Date().getFullYear() - founded;
   if (Array.isArray(b.add_ons)) document.querySelector('[data-stat="addons"]').textContent = b.add_ons.length;
-  const src = document.getElementById('band-src'); if (src && b.retrieved) src.innerHTML = `<b>Source:</b> BPI press releases and SEC and state filings, compiled in the Broad Sky firm profile (${b.add_ons?.length || 6} add-ons from BOLDT to 365 Sherpas) and BPI public filings, ${esc(monthYear(b.retrieved))}.`;
+  const src = document.getElementById('band-src'); if (src && b.retrieved) src.innerHTML = `<b>Source:</b> BPI press releases and SEC and state filings, compiled in the BSP firm profile (${b.add_ons?.length || 6} add-ons from BOLDT to 365 Sherpas) and BPI public filings, ${esc(monthYear(b.retrieved))}.`;
 }).catch(() => { });
 
 // contact (concept: no network)

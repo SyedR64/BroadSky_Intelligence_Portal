@@ -20,7 +20,7 @@ const clean = s => HZ(String(s ?? '')
   .replace(/weeks_to_deploy, cost_model and all kpi_targets\/talent metric targets/, 'Deployment timelines, cost models and all KPI and talent targets')
   .replace(/kpi_roadmap accounts/g, 'KPI roadmap client counts').replace(/\bkpi_roadmap\b/g, 'the KPI roadmap')
   .replace(/\(pe_landscape: '([^']*)'\)/g, '(private-equity landscape: $1)')
-  .replace(/\bthis file's KPI roadmap\b/g, "this plan's KPI roadmap").replace(/\bBSP-FL Co-Invest\b/g, 'Frontline co-invest vehicle').replace(/\bBSP-FL LP\b/g, "Broad Sky's Frontline fund").replace(/\bBSP-FL\b/g, "Broad Sky's Frontline").replace(/\bBSP\b(?!-)/g, 'Broad Sky').replace(/\brevolver\/DDTL\b/g, 'revolver or delayed-draw loan').replace(/\bDDTL\b/g, 'delayed-draw term loan')
+  .replace(/\bthis file's KPI roadmap\b/g, "this plan's KPI roadmap").replace(/\bBSP-FL Co-Invest\b/g, 'Frontline co-invest vehicle').replace(/\bBSP-FL LP\b/g, "BSP's Frontline fund").replace(/\bBSP-FL\b/g, "BSP's Frontline").replace(/\bBSP\b(?!-)/g, 'BSP').replace(/\brevolver\/DDTL\b/g, 'revolver or delayed-draw loan').replace(/\bDDTL\b/g, 'delayed-draw term loan')
   .replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g, (m, y, mo, d) => `${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+mo - 1] || mo} ${+d}, ${y}`).replace(/\bS\+H\b/g, 'Smith + Howard')
   .replace(/\bAm ?Law\b/g, 'AM Law').replace(/\bAmLaw\b/g, 'AM Law')
   .replace(/Frontline CEO Seelin Naidoo's/g, "former Frontline CEO Seelin Naidoo's")
@@ -172,9 +172,9 @@ function renderStrip(D) {
   const fitHi = D.mid.filter(m => m.frontline_fit_score >= 65).length;
   const att = D.mid.reduce((s, m) => s + (m.attorney_count || 0), 0);
   const cells = [
-    [`${an.amlaw200_share_pct ?? 50}%`, 'of the AM Law 200 served (28% of the AM Law 50)'],
+    [`${an.amlaw200_share_pct ?? 50}%`, 'of the AM Law 200 served'],
     [N(D.law.length), 'AM Law prospects scored for upsell'],
-    [N(D.mid.length), `mid-size firms screened · ${N(att)} attorneys · ${fitHi} fit 65+`],
+    [N(D.mid.length), `mid-size firms screened · ${fitHi} fit 65+`],
     [N(D.tg.length), 'add-on targets in four lanes'],
     [`~${(r1.ebitda_usd / r0.ebitda_usd).toFixed(1)}x`, `EBITDA in 36 months (${M(r0.ebitda_usd)} → ${M(r1.ebitda_usd)})`, true],
   ];
@@ -227,7 +227,7 @@ function renderTemplate(D) {
   const insN = D.mid.filter(isIns).length;
   /* Reconcile dataset prose with the page's own figures. */
   const fix = t => ({ ...t,
-    metric: String(t.metric || '').replace(/\(\+200%\)/, '(~3.1x)').replace(/;?\s*3\.5 years$/, '; 3.5 years per Broad Sky (~3.7 by these dates)'),
+    metric: String(t.metric || '').replace(/\(\+200%\)/, '(~3.1x)').replace(/;?\s*3\.5 years$/, '; 3.5 years per BSP (~3.7 by these dates)'),
     lesson_for_frontline: String(t.lesson_for_frontline || '').replace(/\b\d+ of the 143 mid-size targets are insurance-related/, `${insN} of the 143 mid-size targets are insurance-related`) });
   const KEY = ['fp-tpl-02', 'fp-tpl-07', 'fp-tpl-09'];
   let filt = 'sh', open = false;
@@ -251,13 +251,13 @@ function renderTemplate(D) {
   draw('sh');
   if (more) more.onclick = () => { open = !open; draw(filt); if (!open) $('#template').scrollIntoView({ block: 'start' }); };
   $$('#tpl-seg button').forEach(b => b.onclick = () => { $$('#tpl-seg button').forEach(x => x.setAttribute('aria-selected', x === b)); draw(b.dataset.f); });
-  $('#tpl-caveat').textContent = 'Smith + Howard figures are Broad Sky\'s own claims; Frontline figures are analyst estimates.';
+  $('#tpl-caveat').textContent = 'Smith + Howard figures are BSP\'s own claims; Frontline figures are analyst estimates.';
   const r = D.meta.kpi_roadmap || [], a = r[0] || {}, z = r[r.length - 1] || {}, y2 = r.find(x => x.month === 24);
   const rows = [
     ['Starting point', '1 Atlanta office, ~100 professionals', `National: 9 offices, ~${N(D.meta.anchors?.employees_jan_2026 || 1100)} staff, ${esc(D.meta.anchors?.law_firm_clients || '900+')} clients`],
-    ['Hold or horizon', '~3.7 years (Nov 2022 → Aug 2026; Broad Sky says 3.5)', '36-month plan from Oct 2026; exit modelled Oct 2029'],
+    ['Hold or horizon', '~3.7 years (Nov 2022 → Aug 2026; BSP says 3.5)', '36-month plan from Oct 2026; exit modelled Oct 2029'],
     ['Add-ons', '9 strategic acquisitions', '6+ (≈2-3 a year) for ~$55M acquired revenue'],
-    ['Revenue, full hold', '~4x over the hold (Broad Sky exit release)', `~${(z.revenue_usd / a.revenue_usd).toFixed(2)}x (${M(a.revenue_usd)} → ${M(z.revenue_usd)}) in 36 months<span class="sys-est">est.</span>`],
+    ['Revenue, full hold', '~4x over the hold (BSP exit release)', `~${(z.revenue_usd / a.revenue_usd).toFixed(2)}x (${M(a.revenue_usd)} → ${M(z.revenue_usd)}) in 36 months<span class="sys-est">est.</span>`],
     ['Revenue, 2 years', '$40M → $125M in ~2 yrs, ~3.1x (Sep 2025 release)', `${y2 ? `~${(y2.revenue_usd / a.revenue_usd).toFixed(2)}x (${M(a.revenue_usd)} → ${M(y2.revenue_usd)}) by month 24<span class="sys-est">est.</span>` : '—'}`],
     ['People', '~100 → ~800 (8x)', `${N(a.headcount)} → ${N(z.headcount)}<span class="sys-est">est.</span>`],
     ['Offshore', 'India team 50+ given a director', 'Hyderabad, Goa, Cape Town: name a leader'],
@@ -265,7 +265,7 @@ function renderTemplate(D) {
     ['Buyer story', 'Multi-line, 7-state company (TPG Growth)', 'Legal IT + RCM + cyber + AI, US + UK/Canada'],
   ];
   $('#compare').innerHTML = `<h3 class="sys-card-title">Smith + Howard vs the Frontline plan</h3><p class="sys-card-body">What transfers is the order of moves, not the 4x multiple.</p>
-    <div class="sys-table-wrap"><table class="sys-table cmp"><thead><tr><th>Measure</th><th>Smith + Howard (actual)</th><th>Frontline (plan)</th></tr></thead><tbody>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td class="f">${r[2]}</td></tr>`).join('')}</tbody><caption>Source: Broad Sky and Smith + Howard releases; Frontline growth plan KPI roadmap.</caption></table></div>
+    <div class="sys-table-wrap"><table class="sys-table cmp"><thead><tr><th>Measure</th><th>Smith + Howard (actual)</th><th>Frontline (plan)</th></tr></thead><tbody>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td class="f">${r[2]}</td></tr>`).join('')}</tbody><caption>Source: BSP and Smith + Howard releases; Frontline growth plan KPI roadmap.</caption></table></div>
     <div class="sys-note sys-note--co"><span>The single move most worth copying is <b>Geels Norton</b>: Smith + Howard bought SOC 2 and ISO cyber-assurance capability months before TPG signed. Frontline should own the same capability before any sale process.</span></div>`;
 }
 
@@ -587,7 +587,7 @@ function renderFinance(D) {
     $('#bridge').innerHTML = `<svg viewBox="0 0 ${W2} ${H2}" role="img" aria-label="Enterprise value bridge from today to month 36"><line x1="${p2}" x2="${W2 - p2}" y1="${yy(0)}" y2="${yy(0)}" style="stroke:var(--sys-line-2)"/>${rects}<text x="${p2}" y="${H2 - 4}" font-size="10" style="fill:var(--sys-mute-2)">Today's EV = ${entryX.toFixed(1)}x entry (est.) × ${M(e0)} EBITDA</text></svg>
       <div class="bridge-sum"><div><b>${M(exit)}</b><span>Month-36 EV at ${(bx + ot).toFixed(2).replace(/0$/, '')}x × ${M(e1)}</span></div><div><b>${M(R.eq)}</b><span>Equity value after ~${M(netDebt)} net debt</span></div><div><b>${R.moic.toFixed(1)}x</b><span>Gross MOIC on ~${M(eqIn)} equity · ~${Math.round(R.irr)}% IRR</span></div></div>
       <div class="sys-note ${vd.clears ? 'sys-note--good' : 'sys-note--warn'} bridge-verdict" style="margin-top:12px">${verdictHtml(vd, bx + ot, e1, rev1)}</div>`;
-    $('#bridge-note').textContent = `Illustrative estimate. The entry multiple defaults to ${entryMid.toFixed(1)}x, the midpoint of the 12-15x range implied by public filings; set it to the actual figure. It changes how the bridge splits value, not the month-36 EV or MOIC, which depend on the exit multiple and EBITDA. MSP deal comps run 9.9-11.2x by size (Aventis), and premium middle-market deals price ~3 turns above typical (Capstone/IMAP). Net debt = $90M term loan + ~$25M incremental (midpoint of $15-35M). Equity = $137M from Broad Sky's Frontline fund + $30M co-invest + ~$32.5M top-up (midpoint of $20-45M). Exit at month 36 (Oct 2029); hold ~4.85 years from Dec 2024. Phase 4 runs to month 42 and is sold as the buyer's growth story; only the first UK/Canada add-on is in month-36 EBITDA. Excludes fees, cash build and rollover.`;
+    $('#bridge-note').textContent = `Illustrative estimate. The entry multiple defaults to ${entryMid.toFixed(1)}x, the midpoint of the 12-15x range implied by public filings; set it to the actual figure. It changes how the bridge splits value, not the month-36 EV or MOIC, which depend on the exit multiple and EBITDA. MSP deal comps run 9.9-11.2x by size (Aventis), and premium middle-market deals price ~3 turns above typical (Capstone/IMAP). Net debt = $90M term loan + ~$25M incremental (midpoint of $15-35M). Equity = $137M from BSP's Frontline fund + $30M co-invest + ~$32.5M top-up (midpoint of $20-45M). Exit at month 36 (Oct 2029); hold ~4.85 years from Dec 2024. Phase 4 runs to month 42 and is sold as the buyer's growth story; only the first UK/Canada add-on is in month-36 EBITDA. Excludes fees, cash build and rollover.`;
     drawOs(bx, ot);
   };
   const drawOs = (bx, ot) => {
@@ -621,7 +621,7 @@ function renderRisks() {
     ['Fund a 90-day HELIX Tier-0 pilot', 'Month 0-3', 'Pilot on 3-5 AM Law clients with a control group; target 20% autonomous resolution by month 12 and 30% by month 36.'],
     ['Run a 30-day diligence-gap sprint', 'Month 0-1', 'Client count, churn, recurring mix and revolver or delayed-draw terms; correct the KL Software record (a partnership).'],
     ['Name an offshore delivery leader', 'Quarter 1', 'Hyderabad, Goa and Cape Town under one leader with a go-to-market and integration mandate, as S+H did for India.'],
-    ['Open founder doors through the Broad Sky network', 'Months 3-12', 'Introductions to Kraft Kennedy, Tabush, Innovative Computing Systems, Garver Group and Helm360.'],
+    ['Open founder doors through the BSP network', 'Months 3-12', 'Introductions to Kraft Kennedy, Tabush, Innovative Computing Systems, Garver Group and Helm360.'],
     ['Own a cyber-attestation capability before the sale process', 'By month 18', 'Buy or build SOC 2 / ISO / OCG security attestations (the Geels Norton move); PSM Partners, STS and Lumifi are on the screen.'],
   ];
   $('#ask-list').innerHTML = asks.map(a => `<li><b>${esc(a[0])}</b><span class="when">${esc(a[1])}</span><br><span class="muted">${esc(a[2])}</span></li>`).join('');
@@ -635,7 +635,7 @@ function renderSources(D) {
   const method = String(D.meta.method || '').split(/(?<=\.)\s+(?=Items marked)/)[0].replace(/ was fetched on (\d{4})-(\d{2})-\d{2}/, ' was fetched in Oct $1');
   const gen = /^\d{4}-\d{2}-\d{2}$/.test(D.meta.generated || '') ? Fmt.date(D.meta.generated) : 'Oct 2026';
   $('#src-body').innerHTML = `<p>${esc(method)} Phase figures were computed from the portal's own datasets, listed below. Targets are explicit analyst assumptions.</p><h4>Caveats</h4><ul>${(D.meta.caveats || []).map(c => `<li>${esc(clean(c))}</li>`).join('')}</ul>
-    <h4>Portal datasets used</h4><ul><li>Frontline growth plan (${D.it.length} items, ${esc(gen)})</li><li>AM Law prospect list (${D.law.length} firms, grouped by headquarters city)</li><li>Mid-size law firms research (${D.mid.length} firms)</li><li>Frontline and Thomas Scientific add-on targets (${D.tg.length} Frontline targets)</li><li>Private-equity landscape (${D.rivals.length} overlapping sponsors)</li><li>Broad Sky firm profile, Frontline public filings, public comparables and ServiceOS evidence (valuation and KPI benchmarks)</li></ul>${g}`;
+    <h4>Portal datasets used</h4><ul><li>Frontline growth plan (${D.it.length} items, ${esc(gen)})</li><li>AM Law prospect list (${D.law.length} firms, grouped by headquarters city)</li><li>Mid-size law firms research (${D.mid.length} firms)</li><li>Frontline and Thomas Scientific add-on targets (${D.tg.length} Frontline targets)</li><li>Private-equity landscape (${D.rivals.length} overlapping sponsors)</li><li>BSP firm profile, Frontline public filings, public comparables and ServiceOS evidence (valuation and KPI benchmarks)</li></ul>${g}`;
 }
 
 /* ── chat ──────────────────────────────────────────────────────────────── */
@@ -645,9 +645,9 @@ function mountChat(Chat, D, frame) {
   const top = D.tg.slice(0, 5);
   const ag = [...D.kind('ai_agent')].sort((x, y) => x.weeks_to_deploy - y.weeks_to_deploy).slice(0, 4);
   const faq = [
-    { q: 'What is the Frontline value-creation plan?', href: '#map', a: `<p><b>Earn more from each firm, move into the mid-market, roll up revenue-cycle services, then enter the UK and Canada.</b> Frontline already serves ~50% of the AM Law 200, so the 36-month plan (est.) takes revenue from <b>${M(a.revenue_usd)}</b> to <b>${M(z.revenue_usd)}</b> and adj. EBITDA from <b>${M(a.ebitda_usd)}</b> to <b>${M(z.ebitda_usd)}</b>.</p><ul><li><b>Phase 1 (m0-12):</b> HELIX Tier-0 agent, cyber-posture subscription, legal-AI enablement</li><li><b>Phase 2 (m6-18):</b> 143 mid-size firms + legal-MSP tuck-ins</li><li><b>Phase 3 (m12-30):</b> eBilling/AR roll-up with finance agents</li><li><b>Phase 4 (m24-42):</b> UK and Canada via acquired providers. The exit is modelled at m36, so only the first UK/Canada add-on is in exit EBITDA; the rest is the buyer's growth story.</li></ul>` },
+    { q: 'What is the Frontline growth plan?', href: '#map', a: `<p><b>Earn more from each firm, move into the mid-market, roll up revenue-cycle services, then enter the UK and Canada.</b> Frontline already serves ~50% of the AM Law 200, so the 36-month plan (est.) takes revenue from <b>${M(a.revenue_usd)}</b> to <b>${M(z.revenue_usd)}</b> and adj. EBITDA from <b>${M(a.ebitda_usd)}</b> to <b>${M(z.ebitda_usd)}</b>.</p><ul><li><b>Phase 1 (m0-12):</b> HELIX Tier-0 agent, cyber-posture subscription, legal-AI enablement</li><li><b>Phase 2 (m6-18):</b> 143 mid-size firms + legal-MSP tuck-ins</li><li><b>Phase 3 (m12-30):</b> eBilling/AR roll-up with finance agents</li><li><b>Phase 4 (m24-42):</b> UK and Canada via acquired providers. The exit is modelled at m36, so only the first UK/Canada add-on is in exit EBITDA; the rest is the buyer's growth story.</li></ul>` },
     { q: 'Which add-on targets should Frontline buy first?', href: '#addons', a: `<p>Top of the screen by fit score (out of 100):</p><ul>${top.map(t => `<li><b>${esc(t.company)}</b>: ${esc(LANES[laneOf(t)].name)}, ${esc(t.hq_city)}, fit ${t.fit_score}</li>`).join('')}</ul><p>The plan targets ~$55M of acquired revenue by month 36 at 2-3 deals a year. ZoomInfo revenue figures are modelled and directional.</p>` },
-    { q: 'How is the plan financed and what is it worth at exit?', href: '#returns', a: `<p>Broad Sky put in ~$137M through its Frontline fund + $30M co-invest alongside a <b>$90M NXT/Audax term loan</b>. Add-ons cost an estimated <b>$50-80M</b>, and incremental debt covers only ~$15-35M, so plan a <b>$20-45M co-invest top-up</b>.</p><p>At a 12x base exit multiple + 1 turn FirmOS premium on ${M(z.ebitda_usd)} EBITDA, month-36 EV is ~${M(z.ebitda_usd * 13)} (est.), about ${returnsAt(13, z.ebitda_usd).moic.toFixed(1)}x gross MOIC and ~${Math.round(returnsAt(13, z.ebitda_usd).irr)}% IRR. That is below a 2.5x / 20% hurdle; add-on EBITDA bought at 5-7x and margin to 20%+ close the gap.</p>` },
+    { q: 'How is the plan financed and what is it worth at exit?', href: '#returns', a: `<p>BSP put in ~$137M through its Frontline fund + $30M co-invest alongside a <b>$90M NXT/Audax term loan</b>. Add-ons cost an estimated <b>$50-80M</b>, and incremental debt covers only ~$15-35M, so plan a <b>$20-45M co-invest top-up</b>.</p><p>At a 12x base exit multiple + 1 turn FirmOS premium on ${M(z.ebitda_usd)} EBITDA, month-36 EV is ~${M(z.ebitda_usd * 13)} (est.), about ${returnsAt(13, z.ebitda_usd).moic.toFixed(1)}x gross MOIC and ~${Math.round(returnsAt(13, z.ebitda_usd).irr)}% IRR. That is below a 2.5x / 20% hurdle; add-on EBITDA bought at 5-7x and margin to 20%+ close the gap.</p>` },
     { q: 'Which AI agents deploy first?', href: '#agents', a: `<p>Fastest pilots on Frontline tooling (analyst estimates):</p><ul>${ag.map(x => `<li><b>${esc(x.agent)}</b>: ~${x.weeks_to_deploy} weeks; ${esc(x.metric_claim.split(/(?<=\.)\s+/)[0])}</li>`).join('')}</ul><p>Vendor results are directional upper bounds; HELIX has no published deflection metric yet.</p>` },
     { q: 'How does Frontline compare with Smith + Howard?', href: '#template', a: `<p><b>Smith + Howard</b> went from ~100 professionals and one Atlanta office to ~800 people, 11 locations and 9 acquisitions in about 3.5-3.7 years (~4x revenue over the hold, per BSP), then sold to TPG Growth in Aug 2026.</p><p><b>Frontline</b> starts far bigger (est. ${M(a.revenue_usd)} revenue, ~${N(a.headcount)} people, offshore hubs already in place), so the plan is ~1.65x revenue and ~2x EBITDA in 36 months (est.). What transfers is the order of moves: leadership and tech first, 2-3 add-ons a year, a named offshore leader, and a cyber-attestation capability before the sale (the Geels Norton move).</p>` },
     { q: 'What are the biggest risks?', href: '#risks', a: `<ul><li><b>Estimates, not disclosures:</b> revenue and EBITDA are analyst assumptions; rebase on management accounts in 30 days.</li><li><b>The exit multiple may compress:</b> if entry was ~12-15x (public-filing estimate), it sits above MSP comps (9.9-11.2x), so EBITDA growth must carry the return.</li><li><b>Add-ons outrun the debt:</b> ~$50-80M of spend vs ~$15-35M of incremental debt; pre-clear a $20-45M co-invest top-up.</li><li><b>Consolidators bid up legal MSPs:</b> Alpine, CIVC, EagleTree and others buy in the space.</li><li><b>AI results are vendor claims:</b> run every pilot against a control group.</li></ul>` },
@@ -657,7 +657,7 @@ function mountChat(Chat, D, frame) {
     { q: 'Which operating levers move EBITDA?', href: '#levers', a: `<ul><li>AM Law 200 share of wallet: 50% → 54% (m12) → 60% (m36)</li><li>E-billing rejection rate: 18% → 11% (m30)</li><li>Days from invoice to payment: 62 → 50 (m30)</li><li>Service desk first-level resolution: 74% → 82% (m12) → 90% (m36)</li><li>Tier-0 autonomous resolution: 20% (m12) → 30% (m36)</li><li>Adj. EBITDA margin: ${(a.ebitda_usd / a.revenue_usd * 100).toFixed(1)}% → ${(z.ebitda_usd / z.revenue_usd * 100).toFixed(1)}% (m36)</li></ul><p>Baselines are benchmarks where Frontline's own figure is not public (est.).</p>` },
   ];
   const inst = Chat.mount(null, {
-    persona: 'fl', short_name: 'Frontline', mode: 'floating', theme: 'light', name: 'Frontline growth plan', color: PHASE_COLORS[0], greeting: 'Ask about the Frontline value-creation plan: phases, add-on targets, AI agents, financing or the Smith + Howard template.',
+    persona: 'fl', short_name: 'Frontline', mode: 'floating', theme: 'light', name: 'Frontline growth plan', color: PHASE_COLORS[0], greeting: 'Ask about the Frontline growth plan: phases, add-on targets, AI agents, financing or the Smith + Howard template.',
     placeholder: 'Ask the plan…', faq,
     suggestions: faq.map(f => f.q).concat(['How does Frontline compare with Smith + Howard?', 'What are the biggest risks?']),
   });

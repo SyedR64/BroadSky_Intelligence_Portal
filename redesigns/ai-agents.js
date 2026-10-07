@@ -1,7 +1,7 @@
 /* The agentic layer — renders the portfolio AI-agent plan (plus the tech-enablement evidence for the
    OS EBITDA ranges). No framework, no build step. Markup uses the shared sys- components
    (assets/system.css, UNIFIED.md); company colour comes from data-co, never from literals here. */
-import { humanizeText } from '../assets/frame.js?v=20261006180606';
+import { humanizeText } from '../assets/frame.js?v=20261006224618';
 const ROOT = new URL('../', import.meta.url).href;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -38,7 +38,7 @@ const PLAIN = { cet_opportunities: 'CET bid radar', cet_wwtp_targets: 'CET waste
 /* Controls are numbered by their position in the plan, so references stay consistent if a control is retired. */
 let GOVNUM = {};
 const gnum = n => GOVNUM[+n] ?? +n;
-const deID = s => humanizeText(String(s ?? '').replace(/\s*-(?:>|&gt;)\s*/g, ' → ').replace(/agent est_annual_value_usd/g, 'agent value estimates').replace(/\b(cet_opportunities|cet_wwtp_targets|pp_storm_events|pp_demand_model|est_annual_value_usd|metric_claim)\b/g, m => PLAIN[m]).replace(/\bgov-0?(\d+)\s+to\s+gov-0?(\d+)/g, (m, a, b) => `controls ${gnum(a)}–${gnum(b)}`).replace(/\bgov-0?(\d+)/g, (m, a) => `control ${gnum(a)}`).replace(/\s*\(control (\d+)\)/g, ' (control $1)').replace(/\s*\(PRG\)/g, '').replace(/\bPRG\b/g, 'Portfolio Resource Group').replace(/\bPP's\b/g, "Punctual Pros'").replace(/\bPP\b/g, 'Punctual Pros').replace(/\bTS\b/g, 'Thomas Scientific'));
+const deID = s => humanizeText(String(s ?? '').replace(/\s*-(?:>|&gt;)\s*/g, ' → ').replace(/agent est_annual_value_usd/g, 'agent value estimates').replace(/\b(cet_opportunities|cet_wwtp_targets|pp_storm_events|pp_demand_model|est_annual_value_usd|metric_claim)\b/g, m => PLAIN[m]).replace(/\bgov-0?(\d+)\s+to\s+gov-0?(\d+)/g, (m, a, b) => `controls ${gnum(a)}–${gnum(b)}`).replace(/\bgov-0?(\d+)/g, (m, a) => `control ${gnum(a)}`).replace(/\s*\(control (\d+)\)/g, ' (control $1)').replace(/\s*Portfolio Resource Group \(PRG\)/g, ' PRG').replace(/\bPP's\b/g, "Punctual Pros'").replace(/\bPP\b/g, 'Punctual Pros').replace(/\bTS\b/g, 'Thomas Scientific'));
 
 /* Operational guardrails only: dataset rows that still cite court rulings, statutes or law-firm commentary are
    restated as operating rules with an operational source (vendor documentation), or lose the citation. */
@@ -452,7 +452,7 @@ const STRETCH = 75; // agents using ≥ 75% of the top of their OS case need re-
 function valueChart() {
   const rows = companyRows(); const box = $('#chart'); const tip = $('#tip'); const card = box.closest('.ag-chart-card');
   const hot = rows.filter(r => r.ofTop >= STRETCH).sort((a, b) => b.ofTop - a.ofTop);
-  $('#val-sub').innerHTML = `Bars are each company's agent ceiling, stacked by the kind of value it is. The whisker is the whole OS program's EBITDA case from the tech-enablement evidence file. <b>Agents are part of that case, not on top of it</b>: the same levers (booking rate, ticket size, cost per invoice, returns) drive both, so never add the OS pages to this page. ${hot.length ? `${hot.map(r => esc(CO[r.c].name)).join(', ')} agents alone use ${hot[hot.length - 1].ofTop}–${hot[0].ofTop}% of the top of their OS case and need re-basing first.` : ''}`;
+  $('#val-sub').innerHTML = `Bars are each company's agent ceiling by value type; the whisker is its OS program's EBITDA case. <b>Agents sit inside that case, so never add the two.</b>`;
   $('#chart-legend').innerHTML = VT_ORDER.map(t => `<span><i class="vt-sw" style="background:${VT[t].col}"></i>${esc(VT[t].short)}</span>`).join('') + '<span><i class="lg-rng"></i>OS program EBITDA case (estimated)</span>';
   const draw = () => {
     const W = Math.max(300, box.clientWidth); const small = W < 520;
@@ -536,8 +536,8 @@ function buildBuy() {
   const grp = k => AG.filter(a => decision(a) === k);
   const blurb = {
     buy: ['Vendor-native', 'The agent ships inside the system of record or a category leader (Dispatch Pro, Procore Helix, Gorgias, Rilla, Conexiom). Configure, pilot, measure.'],
-    hybrid: ['Buy the plumbing, build the judgment', 'A vendor handles extraction or transport; the Portfolio Resource Group builds triage, exceptions, disclosure and audit once and reuses it across companies.'],
-    build: ['Built in-house on Claude or OpenAI', 'The agent\'s memory is Broad Sky\'s own data and scoring (bids, storms, grants, dockets). This is the IP a buyer pays for at exit.'],
+    hybrid: ['Buy the plumbing, build the judgment', 'A vendor handles extraction or transport; the PRG builds triage, exceptions, disclosure and audit once and reuses it across companies.'],
+    build: ['Built in-house on Claude or OpenAI', 'The agent\'s memory is BSP\'s own data and scoring (bids, storms, grants, dockets). This is the IP a buyer pays for at exit.'],
   };
   $('#bb-cols').innerHTML = ['buy', 'hybrid', 'build'].map(k => { const g = grp(k); return `<div class="sys-card bb"><div class="bb-h"><span class="dec dec-${k}">${DEC[k]}</span><b class="sys-num">${g.length}</b></div><h3 class="sys-card-title">${blurb[k][0]}</h3><p class="sys-card-body">${blurb[k][1]}</p><p class="bb-val">${money(g.reduce((s, a) => s + a.est_annual_value_usd, 0))} ceiling${EST()} · average ${(g.reduce((s, a) => s + a.weeks_to_deploy, 0) / (g.length || 1)).toFixed(1)} weeks to deploy</p><p class="bb-val">Build ${money(totals(g).build)} · run ${money(totals(g).run)} a year${EST()}</p></div>`; }).join('');
   let tab = 'all';
@@ -602,7 +602,7 @@ function faq() {
     { q: 'Can an agent move money or pay vendors?', a: `<p>No. ${esc(deID(g('gov-08').requirement || ''))}</p>`, href: '#governance' },
     { q: 'Which AI models and vendor data terms are allowed?', a: `<p>${esc(deID(g('gov-04').requirement || ''))}</p>`, href: '#governance' },
     { q: 'What are the kill criteria for an agent?', a: `<p>${esc(deID(g('gov-09').requirement || ''))}</p>`, href: '#governance' },
-    { q: 'Should we build or buy each agent?', a: `<p>${cnt('buy')} buy (vendor-native), ${cnt('hybrid')} hybrid (vendor plumbing plus an in-house judgment layer), ${cnt('build')} built in-house on Claude or OpenAI. Buy when the agent lives inside the system of record; build when its memory is Broad Sky's own data, because that scoring is the IP a buyer pays for.</p>`, href: '#build-buy' },
+    { q: 'Should we build or buy each agent?', a: `<p>${cnt('buy')} buy (vendor-native), ${cnt('hybrid')} hybrid (vendor plumbing plus an in-house judgment layer), ${cnt('build')} built in-house on Claude or OpenAI. Buy when the agent lives inside the system of record; build when its memory is BSP's own data, because that scoring is the IP a buyer pays for.</p>`, href: '#build-buy' },
     { q: 'What are the reusable agent patterns?', a: `<ul>${PAT.map(p => `<li><b>${esc(p.pattern)}</b> — ${AG.filter(a => a.pattern_id === p.id).length} agents</li>`).join('')}</ul>`, href: '#patterns' },
   ];
   for (const c of COS) {

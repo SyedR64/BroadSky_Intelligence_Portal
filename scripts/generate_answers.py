@@ -27,8 +27,8 @@ PER_DATASET = 4000
 MAX_DATASETS = 6
 
 LABELS = {
-    'ai_agents_portfolio': 'Portfolio AI-agent plan', 'bpi_filings': 'BPI public filings', 'bpi_playbook': 'BPI growth plan', 'bsp_firm': 'Broad Sky firm profile',
-    'bsp_methodology': 'Broad Sky acquisition methodology', 'bsp_network': 'Broad Sky professional network', 'cases_cross_sector': 'Cross-sector sponsor case studies',
+    'ai_agents_portfolio': 'Portfolio AI-agent plan', 'bpi_filings': 'BPI public filings', 'bpi_playbook': 'BPI growth plan', 'bsp_firm': 'BSP firm profile',
+    'bsp_methodology': 'BSP acquisition methodology', 'bsp_network': 'BSP professional network', 'cases_cross_sector': 'Cross-sector sponsor case studies',
     'cases_home_services': 'Home-services company case studies', 'cet_filings': 'CET public filings', 'cet_opportunities': 'CET opportunity radar',
     'cet_playbook': 'CET growth plan', 'cet_wwtp_targets': 'CET wastewater-plant targets', 'design_refs': 'Design principles', 'fairharbor_filings': 'Fair Harbor public filings',
     'fh_playbook': 'Fair Harbor growth plan', 'fl_midsize_firms': 'Mid-size law firms', 'fl_playbook': 'Frontline growth plan', 'frontline_filings': 'Frontline public filings',
@@ -178,23 +178,23 @@ def pack_dataset(name):
 def system_prompt(persona):
     today = dt.date.today().strftime('%B %d, %Y')
     if persona in COMPANY:
-        voice = (f"You are writing a reference answer for the customer-facing assistant on a concept website for {COMPANY[persona]}, a Broad Sky Partners portfolio company. "
-                 "Answer the visitor's question helpfully and specifically, in the company's voice, then add a short 'Why this matters for the business' note "
-                 "written as a senior private-equity operating partner would.")
+        voice = (f"You are writing a reference answer for the customer-facing assistant on a concept website for {COMPANY[persona]}, a BSP portfolio company. "
+                 "Answer the visitor's question specifically, in the company's voice, then add one unlabelled sentence on why it matters to the business, "
+                 "as an operating partner would put it.")
     else:
-        voice = ("You are a senior private-equity operating partner at Broad Sky Partners (a New York lower-middle-market firm; portfolio: Commonwealth Electrical "
-                 "Technologies, Punctual Pros, Frontline Managed Services, Thomas Scientific, Bully Pulpit International, Fair Harbor), writing a deep-dive answer "
-                 "for the firm's operating-intelligence portal.")
+        voice = ("You are a private-equity operating partner at BSP (Broad Sky Partners, a New York lower-middle-market firm; portfolio: Commonwealth Electrical "
+                 "Technologies, Punctual Pros, Frontline Managed Services, Thomas Scientific, Bully Pulpit International, Fair Harbor), writing a reference answer "
+                 "for BSP Desk.")
     return (f"{voice}\n\nToday is {today}.\n\nRules:\n"
-            "- Write in markdown: a one-paragraph bottom line first, then short headings, bullets and at most one compact table. 350-700 words.\n"
+            "- Write in markdown: a one- or two-sentence answer first, then short headings, bullets and at most one compact table. 250-450 words; short sentences, no marketing cadence.\n"
             "- Ground every claim in the CONTEXT. Cite datasets by their plain-English name in parentheses, e.g. (Punctual Pros demand model).\n"
             "- Never invent numbers. If a figure is not in the context, say what data would answer it instead of guessing.\n"
             "- Label anything modelled or inferred as an estimate (write 'est.').\n"
             "- No legal or regulatory-compliance advice.\n"
-            "- House style: say 'growth plan' (never 'playbook') and 'portfolio company' for a sponsor's company ('platform' only for software). "
+            "- House style: call the firm BSP; never write a 'So what' label; headings of six words or fewer. Say 'growth plan' (never 'playbook') and 'portfolio company' for a sponsor's company ('platform' only for software). "
             "Write dates in words (Oct 6, 2026). Never print file names or identifiers with underscores. No greetings and no addressing anyone by name. "
             "Do not cite brands as design inspiration.\n"
-            "- End with 2-4 concrete next actions for the operating team.")
+            "- End with 2-4 next actions for the operating team.")
 
 
 def md_inline(s):

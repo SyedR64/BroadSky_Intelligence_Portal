@@ -1,6 +1,6 @@
 # Assistant backend (Cloudflare Worker)
 
-The hosted half of the Broad Sky assistant. It holds the Claude API key so every visitor gets Claude answers grounded in the portal's retrieved context, without bringing their own key. It also stores conversation threads and answer feedback in D1, and enforces per-visitor and daily limits.
+The hosted half of the BSP Desk assistant. It holds the Claude API key so every visitor gets Claude answers grounded in the portal's retrieved context, without bringing their own key. It also stores conversation threads and answer feedback in D1, and enforces per-visitor and daily limits.
 
 Plain JavaScript ES module, no build step. Deployed by `.github/workflows/deploy-worker.yml`; owner setup is in [`../SETUP.md`](../SETUP.md).
 

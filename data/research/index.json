@@ -4,17 +4,17 @@
   {
    "name": "ai_agents_portfolio",
    "folder": "research",
-   "title": "ai_agents_portfolio - portfolio-wide AI-agent program (the agentic layer of every Broad Sky OS)",
+   "title": "ai_agents_portfolio - portfolio-wide AI-agent program (the agentic layer of every BSP OS)",
    "item_count": 61,
-   "bytes": 95775,
+   "bytes": 95617,
    "generated": "2026-10-06"
   },
   {
    "name": "bpi_filings",
    "folder": "research",
-   "title": "BPI (Bully Pulpit International, fka Bully Pulpit Interactive), financial filings and public-record research, part of the Broad Sky Partners portfolio and competitor track",
+   "title": "BPI (Bully Pulpit International, fka Bully Pulpit Interactive), financial filings and public-record research, part of the BSP portfolio and competitor track",
    "item_count": 21,
-   "bytes": 41912,
+   "bytes": 41828,
    "generated": "2026-09-24"
   },
   {
@@ -22,7 +22,7 @@
    "folder": "research",
    "title": "Bully Pulpit International: the growth plan",
    "item_count": 53,
-   "bytes": 58146,
+   "bytes": 57763,
    "generated": "2026-10-06"
   },
   {
@@ -30,7 +30,7 @@
    "folder": "research",
    "title": "bsp_firm",
    "item_count": 6,
-   "bytes": 76192,
+   "bytes": 76112,
    "generated": "2026-09-24",
    "lists": {
     "timeline": 52,
@@ -41,25 +41,25 @@
   {
    "name": "bsp_methodology",
    "folder": "research",
-   "title": "How Broad Sky buys: a reverse-engineered acquisition methodology",
+   "title": "How BSP buys: a reverse-engineered acquisition methodology",
    "item_count": 68,
-   "bytes": 117054,
+   "bytes": 117031,
    "generated": "2026-10-06"
   },
   {
    "name": "bsp_network",
    "folder": "research",
-   "title": "Broad Sky Partners professional network graph (public roles only)",
+   "title": "BSP professional network graph (public roles only)",
    "item_count": 314,
-   "bytes": 157660,
+   "bytes": 156304,
    "generated": "2026-10-06"
   },
   {
    "name": "cases_cross_sector",
    "folder": "research",
-   "title": "Sponsor value-creation case studies outside residential home services: chronological analogs for Punctual Pros and Broad Sky's other sectors",
+   "title": "Sponsor value-creation case studies outside residential home services: chronological analogs for Punctual Pros and BSP's other sectors",
    "item_count": 17,
-   "bytes": 119460,
+   "bytes": 119310,
    "generated": "2026-10-06"
   },
   {
@@ -67,15 +67,15 @@
    "folder": "research",
    "title": "How sponsors built residential HVAC/plumbing/electrical companies: chronological case studies for Punctual Pros",
    "item_count": 17,
-   "bytes": 108255,
+   "bytes": 108177,
    "generated": "2026-10-06"
   },
   {
    "name": "cet_filings",
    "folder": "research",
-   "title": "Commonwealth Electrical Technologies (Broad Sky Partners) – filings & financial research track",
+   "title": "Commonwealth Electrical Technologies (BSP) – filings & financial research track",
    "item_count": 25,
-   "bytes": 50861,
+   "bytes": 50725,
    "generated": "2026-09-24"
   },
   {
@@ -83,7 +83,7 @@
    "folder": "research",
    "title": "CET New England Opportunity Radar",
    "item_count": 86,
-   "bytes": 113101,
+   "bytes": 112976,
    "generated": "2026-09-24"
   },
   {
@@ -91,7 +91,7 @@
    "folder": "research",
    "title": "Commonwealth Electrical Technologies: the growth plan (from New England electrical/energy contractor to Northeast infrastructure company)",
    "item_count": 46,
-   "bytes": 63350,
+   "bytes": 63257,
    "generated": "2026-10-06"
   },
   {
@@ -115,15 +115,15 @@
    "folder": "research",
    "title": "Design references for the BSP landing page and the six portfolio website concepts",
    "item_count": 26,
-   "bytes": 84952,
+   "bytes": 84925,
    "generated": "2026-10-06"
   },
   {
    "name": "fairharbor_filings",
    "folder": "research",
-   "title": "Fair Harbor (Broad Sky Partners portfolio) - public filings and financial research track",
+   "title": "Fair Harbor (BSP portfolio) - public filings and financial research track",
    "item_count": 25,
-   "bytes": 45346,
+   "bytes": 45145,
    "generated": "2026-09-24"
   },
   {
@@ -131,7 +131,7 @@
    "folder": "research",
    "title": "Fair Harbor: the growth plan",
    "item_count": 46,
-   "bytes": 48223,
+   "bytes": 48165,
    "generated": "2026-10-06"
   },
   {
@@ -139,7 +139,7 @@
    "folder": "research",
    "title": "Frontline Managed Services - mid-size US law firm target universe (40-350 attorneys, beyond AM Law 200 coverage)",
    "item_count": 143,
-   "bytes": 278715,
+   "bytes": 278700,
    "generated": "2026-09-24"
   },
   {
@@ -147,7 +147,7 @@
    "folder": "research",
    "title": "Frontline Managed Services: the growth plan - AM Law core to mid-market and international (Smith + Howard template, AI agents, talent, growth levers, expansion phases, financing)",
    "item_count": 49,
-   "bytes": 69557,
+   "bytes": 69449,
    "generated": "2026-10-06"
   },
   {
@@ -155,7 +155,7 @@
    "folder": "research",
    "title": "Frontline Managed Services - filings and financial research track (BSP portfolio), with BSP fund context and competitor credit benchmarks",
    "item_count": 21,
-   "bytes": 39342,
+   "bytes": 39325,
    "generated": "2026-09-24"
   },
   {
@@ -163,7 +163,7 @@
    "folder": "research",
    "title": "CET add-on acquisition target screen (New England electrical, solar, controls, utility, generator, W/WW I&C)",
    "item_count": 48,
-   "bytes": 101687,
+   "bytes": 101672,
    "generated": "2026-09-24"
   },
   {
@@ -171,7 +171,7 @@
    "folder": "research",
    "title": "BSP add-on M&A target screen — Frontline Managed Services & Thomas Scientific",
    "item_count": 48,
-   "bytes": 93991,
+   "bytes": 93973,
    "generated": "2026-09-24"
   },
   {
@@ -179,15 +179,15 @@
    "folder": "research",
    "title": "Punctual Pros add-on acquisition target screen (residential HVAC / plumbing / electrical; Central PA + Jersey Shore + adjacent DE/MD/South Jersey)",
    "item_count": 61,
-   "bytes": 172996,
+   "bytes": 172795,
    "generated": "2026-09-24"
   },
   {
    "name": "pe_landscape",
    "folder": "research",
-   "title": "Private-equity competitive landscape for Broad Sky Partners (LMM business & consumer services)",
+   "title": "Private-equity competitive landscape for BSP (LMM business & consumer services)",
    "item_count": 35,
-   "bytes": 169348,
+   "bytes": 169151,
    "generated": "2026-09-24"
   },
   {
@@ -195,7 +195,7 @@
    "folder": "research",
    "title": "Punctual Pros advertising program - cheap CTV, LSA, new-mover mail and weather-triggered creative (with Fair Harbor DTC appendix)",
    "item_count": 64,
-   "bytes": 150847,
+   "bytes": 150764,
    "generated": "2026-10-06"
   },
   {
@@ -211,7 +211,7 @@
    "folder": "research",
    "title": "Punctual Pros public filings and regulatory data",
    "item_count": 29,
-   "bytes": 57702,
+   "bytes": 57654,
    "generated": "2026-09-24"
   },
   {
@@ -219,15 +219,15 @@
    "folder": "research",
    "title": "Punctual Pros market context: Central Pennsylvania and Jersey Shore (competitors, Authority Brands franchise territories, incentives, county profiles, market signals)",
    "item_count": 177,
-   "bytes": 227220,
+   "bytes": 227196,
    "generated": "2026-09-24"
   },
   {
    "name": "pp_nationwide",
    "folder": "research",
-   "title": "How Broad Sky takes Punctual Pros nationwide: Smith + Howard template, AI agents, pro programs, growth levers, expansion phases, financing",
+   "title": "How BSP takes Punctual Pros nationwide: Smith + Howard template, AI agents, pro programs, growth levers, expansion phases, financing",
    "item_count": 59,
-   "bytes": 58940,
+   "bytes": 59891,
    "generated": "2026-10-06"
   },
   {
@@ -235,7 +235,7 @@
    "folder": "research",
    "title": "Punctual Pros territory — NOAA NCEI Storm Events history (Central PA + SE PA + Jersey Shore), 2019–2026 YTD",
    "item_count": 1575,
-   "bytes": 1630515,
+   "bytes": 1630500,
    "generated": "2026-09-24"
   },
   {
@@ -243,15 +243,15 @@
    "folder": "research",
    "title": "BSP public comparables: FY2023-FY2025 (latest available) SEC XBRL fundamentals for 31 listed peers across all six BSP portfolio sectors",
    "item_count": 31,
-   "bytes": 118842,
+   "bytes": 118735,
    "generated": "2026-09-24"
   },
   {
    "name": "rival_filings",
    "folder": "research",
-   "title": "Rival companies — filings & financial research track (PE-backed and public competitors to Broad Sky Partners portfolio companies)",
+   "title": "Rival companies — filings & financial research track (PE-backed and public competitors to BSP portfolio companies)",
    "item_count": 51,
-   "bytes": 84276,
+   "bytes": 84261,
    "generated": "2026-09-24"
   },
   {
@@ -259,15 +259,15 @@
    "folder": "research",
    "title": "Tech-enablement (\"OS\") value-creation evidence file: ServiceOS (Punctual Pros), GridOS (CET), FirmOS (Frontline), LabOS (Thomas Scientific), SignalOS (BPI), HarborOS (Fair Harbor)",
    "item_count": 80,
-   "bytes": 70947,
+   "bytes": 70880,
    "generated": "2026-10-06"
   },
   {
    "name": "thomas_filings",
    "folder": "research",
-   "title": "Thomas Scientific — filings & financial research track (Broad Sky Partners portfolio)",
+   "title": "Thomas Scientific — filings & financial research track (BSP portfolio)",
    "item_count": 31,
-   "bytes": 47008,
+   "bytes": 46909,
    "generated": "2026-09-24"
   },
   {
@@ -275,7 +275,7 @@
    "folder": "research",
    "title": "Thomas Scientific: the growth plan",
    "item_count": 43,
-   "bytes": 49246,
+   "bytes": 49028,
    "generated": "2026-10-06"
   },
   {
@@ -283,15 +283,15 @@
    "folder": "research",
    "title": "How sponsors created value in home-services and adjacent companies: merged case set, common levers, chronological patterns and a dated Punctual Pros sequence",
    "item_count": 64,
-   "bytes": 429673,
+   "bytes": 429350,
    "generated": "2026-10-06"
   },
   {
    "name": "voice_ai",
    "folder": "research",
-   "title": "Voice-AI as a growth engine: 24/7 voice-agent economics, vendors, use cases, sample calls, reference platforms, technical stack and governance for the Broad Sky Partners portfolio (Punctual Pros focus)",
+   "title": "Voice-AI as a growth engine: 24/7 voice-agent economics, vendors, use cases, sample calls, reference platforms, technical stack and governance for the BSP portfolio (Punctual Pros focus)",
    "item_count": 81,
-   "bytes": 79037,
+   "bytes": 78994,
    "generated": "2026-10-06"
   },
   {
@@ -323,7 +323,7 @@
    "folder": "sales",
    "title": "cet_transfers_ct_ri",
    "item_count": 5816,
-   "bytes": 1394837,
+   "bytes": 1394772,
    "generated": "2026-09-24"
   },
   {
@@ -353,9 +353,9 @@
   {
    "name": "pp_sales_pa_a",
    "folder": "sales",
-   "title": "pp_sales_pa_a - Property transfers (sales) for Lancaster, York, Dauphin, Cumberland Counties, PA (Broad Sky Partners operating-intelligence portal)",
+   "title": "pp_sales_pa_a - Property transfers (sales) for Lancaster, York, Dauphin, Cumberland Counties, PA (BSP Desk)",
    "item_count": 19822,
-   "bytes": 4127371,
+   "bytes": 4127331,
    "generated": "2026-09-24"
   },
   {
@@ -380,7 +380,7 @@
   "research_items": 4663,
   "sales_files": 10,
   "sales_rows": 163738,
-  "bytes": 40520137,
+  "bytes": 40516418,
   "data_from": "2026-09-24",
   "data_to": "2026-10-06"
  }

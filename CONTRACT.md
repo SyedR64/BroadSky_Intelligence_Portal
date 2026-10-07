@@ -1,4 +1,4 @@
-# Broad Sky Operating Intelligence — build contract for module authors
+# BSP Desk — build contract for module authors
 
 Static site (GitHub Pages, no build step, vanilla ES modules). Everything a module needs lives in `assets/core.js`.
 Read this file fully, then read `assets/core.js` and `assets/app.css` before writing a module.
@@ -49,7 +49,7 @@ Every panel that shows data ends with a provenance footer: `foot: ui.source('NOA
 - Notes: `ui.note(html, 'warn'|'brand'|'')`, `ui.empty(msg)`, `ui.loading(msg)`, `ui.toast(msg)`.
 
 ## 4. Design rules (MBB / Palantir standard)
-- Lead every view with the answer: a one-line "So what" in `pageHead.sub` plus 3–6 KPIs. Then evidence (map/table/chart). Then the action list.
+- Lead every view with the answer: one or two sentences (30 words or fewer, no "So what" label) in `pageHead.sub` plus 3–6 KPIs. Then evidence (map/table/chart). Then the action list. Voice rules: `UNIFIED.md` §0.
 - Dense but legible: 12–13px text, mono numerals, no decorative imagery, colour only to encode meaning (tier, severity, module).
 - Every number has units and a source. Estimates are labelled "est." Illustrative numbers are labelled "illustrative".
 - Every list is sortable and exportable (CSV). Every entity opens the inspector with sources (links) and a recommended next action.
@@ -58,7 +58,7 @@ Every panel that shows data ends with a provenance footer: `foot: ui.source('NOA
 - Colours: company tokens `--c-bsp --c-cet --c-pp --c-fl --c-ts --c-bpi --c-fh --c-ma --c-pe --c-fin`; semantic `--green --amber --red --accent --purple --cyan`.
 
 ## 5. Facts (do not contradict; see data/research/bsp_firm.json for more)
-- Broad Sky Partners: NYC LMM PE, CEO/founder Tyler Zachem; 7 companies, 23 add-ons; first exit Smith + Howard → TPG (Aug 2026, ~100→800 professionals, 9 add-ons). Portfolio Resource Group (PRG) led by operators.
+- Broad Sky Partners (BSP; call it BSP in copy): NYC LMM PE, CEO/founder Tyler Zachem; 7 companies, 23 add-ons; first exit Smith + Howard → TPG (Aug 2026, ~100→800 professionals, 9 add-ons). Portfolio Resource Group (PRG) led by operators.
 - CET (Commonwealth Electrical Technologies): Worcester + Taunton MA; NuWave Energy Solutions (Norwell MA, Oct 2025); Horton Electrical Services (CT, Sept 15 2026, 120+ staff, wastewater/pump stations/solar/civil). Licensed in all 6 New England states. **No NYC expansion** (CEO guidance) — NYC analysis archived.
 - Punctual Pros: East Hempfield (Lancaster Co.) PA; One Hour / Benjamin Franklin / Mister Sparky; ~240 zips; Horvath Home Services (Beachwood/Toms River NJ, Dec 2024; Ocean & Monmouth).
 - Frontline Managed Services: St. Louis; 800+ law firms, >50% of AM Law 200; managed IT + revenue cycle.

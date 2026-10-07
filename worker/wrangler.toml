@@ -1,4 +1,4 @@
-# Cloudflare Worker: Broad Sky assistant backend.
+# Cloudflare Worker: BSP Desk assistant backend.
 # The two resource ids below are placeholders. The deploy-worker GitHub Action looks up
 # (or creates) the real D1 database and KV namespace and substitutes their ids at deploy
 # time; it never commits them. For a manual deploy, paste your ids here locally.

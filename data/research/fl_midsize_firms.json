@@ -2,7 +2,7 @@
   "meta": {
     "dataset": "Frontline Managed Services - mid-size US law firm target universe (40-350 attorneys, beyond AM Law 200 coverage)",
     "generated": "2026-09-24",
-    "portfolio_company": "Frontline Managed Services (Broad Sky Partners; St. Louis HQ; managed IT + revenue-cycle/eBilling for law firms)",
+    "portfolio_company": "Frontline Managed Services (BSP; St. Louis HQ; managed IT + revenue-cycle/eBilling for law firms)",
     "method": "Candidate list of ~300 independent mid-size firms in the 16 target metros was built, then every firm website was crawled directly (homepage, about/firm/office/news pages and XML sitemaps via curl, plus WebFetch for bot-blocked sites). Attorney counts were taken verbatim from firm-website statements where available; otherwise approximated from the count of attorney bio URLs in the firm's sitemap (flagged 'approx'). Signals (mergers, office expansions, CIO/CTO roles, eBilling/billing-stack disclosures, data-security incidents) were extracted only from retrieved firm pages. Fit score is a transparent heuristic: size + client base (insurance-defense weighted for carrier eBilling/LEDES intensity) + office footprint + signals + proximity to a Frontline office, minus 3 for approximate counts.",
     "scoring_formula": "35 base; size +8 (<80) / +14 (80-149) / +18 (150-249) / +20 (250-350); client base insurance +12, corporate +6, public +3; offices >=5 +6, 3-4 +3; merger +10; cyber_incident +10; office_expansion +4 each (max 8); ebilling +5; tech_initiative +3; cio_hire +2; Frontline-office metro (NYC, St. Louis, Toledo/Ohio, Honolulu) +5; directory-approx count -3; capped at 95.",
     "sources_summary": [

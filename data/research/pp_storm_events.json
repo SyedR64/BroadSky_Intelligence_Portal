@@ -2,7 +2,7 @@
  "meta": {
   "dataset": "Punctual Pros territory — NOAA NCEI Storm Events history (Central PA + SE PA + Jersey Shore), 2019–2026 YTD",
   "generated": "2026-09-24",
-  "portfolio_company": "Punctual Pros (Broad Sky Partners) incl. Horvath Home Services (Ocean/Monmouth NJ)",
+  "portfolio_company": "Punctual Pros (BSP) incl. Horvath Home Services (Ocean/Monmouth NJ)",
   "method": "Downloaded NOAA NCEI Storm Events Database bulk \"details\" CSVs (v1.0) for data years 2019–2026 from the NCEI FTP mirror and parsed them with python3. Rows were filtered to STATE in (PENNSYLVANIA, NEW JERSEY) and to the 15 territory counties; NWS forecast-zone names (zone type Z, e.g. \"EASTERN MONMOUTH\", \"WESTERN OCEAN\", \"EASTERN CHESTER\") were mapped to their parent county by stripping directional prefixes. Items aggregate one row per (county, state, year, month, event type); damage strings (K/M/B) were converted to USD; injuries and deaths are direct+indirect. Seasonality uses full years 2019–2025 only; 2026 is partial (file c20260918, NCEI lags ~2–4 months).",
   "territory_counties": {
    "PA_core": [

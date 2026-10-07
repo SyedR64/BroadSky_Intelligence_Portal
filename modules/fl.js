@@ -1,8 +1,8 @@
-import * as Copy from './copy.js?v=20261006180606';
+import * as Copy from './copy.js?v=20261006224618';
 /* Frontline Managed Services — legal managed IT, cyber and revenue-cycle services for law firms.
    Views: overview · amlaw · midsize · targets · filings. Data: Frontline law-firm universe, Mid-size law firms,
    Frontline and Thomas Scientific add-on targets (platform==='frontline'), Frontline public filings, Public comparables. */
-import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261006180606';
+import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261006224618';
 
 /* Colours are system tokens (system.css): company accent --co-fl, status --sys-good/info/warn/bad, neutral --sys-mute-2.
    HTML and inline SVG read them as var(); the Leaflet canvas renderer gets a resolved value from tok(). */
@@ -87,7 +87,7 @@ const sum = (a, f) => a.reduce((s, x) => s + (n(f(x)) || 0), 0);
 const median = a => { const v = a.filter(x => x != null).sort((x, y) => x - y); if (!v.length) return null; const m = Math.floor(v.length / 2); return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };
 const countBy = (a, f) => a.reduce((m, x) => { const k = f(x); m[k] = (m[k] || 0) + 1; return m; }, {});
 const pctTxt = (v, d = 1) => v == null || isNaN(v) ? '—' : `${Number(v).toFixed(d)}%`;   // values already in percent units
-const cssOnce = () => { if (!document.getElementById('css-fl')) { const l = document.createElement('link'); l.id = 'css-fl'; l.rel = 'stylesheet'; l.href = 'modules/fl.css?v=20261006180606'; document.head.appendChild(l); } };
+const cssOnce = () => { if (!document.getElementById('css-fl')) { const l = document.createElement('link'); l.id = 'css-fl'; l.rel = 'stylesheet'; l.href = 'modules/fl.css?v=20261006224618'; document.head.appendChild(l); } };
 const root = el => { el.classList.add('m-fl'); return el; };
 const unroot = el => () => el.classList.remove('m-fl');
 /* System-component helpers: status chips, token resolution for the map canvas, lever lists, clickable table rows, heat tables. */
@@ -232,12 +232,12 @@ async function overview(ctx) {
 
   el.innerHTML = ui.pageHead({
     title: 'Frontline Managed Services',
-    sub: `<b>So what:</b> Frontline already serves more than half of the AM Law 200, so most of the ${fmt.num(firms.length)} large firms mapped here are likely existing accounts. Treat this as an account map, not a cold-call list: ${fmt.num(t1.length)} Tier-1 accounts (${fmt.compact(attyT1)} attorneys) and ${fmt.num(rcm.length)} with a cyber or revenue-cycle trigger are where cyber, RCM and AI-desk cross-sell is largest. Match the list to the CRM first, then split it into cross-sell plays and new logos, and move down-market into mid-size firms.`,
-    chips: `${fmt.chip('HQ St. Louis, MO', COLOR)}${fmt.chip('Broad Sky portfolio company since December 2024')}${fmt.chip('800+ law-firm clients (900+ per June 2026 release)')}${fmt.chip('>50% of AM Law 200')}${fmt.chip('~1,100 staff · 11 offices')}${fmt.chip('CEO Tim Britt (January 2026)')}`,
+    sub: `Frontline already serves over half the AM Law 200, so this is an account map. ${fmt.num(t1.length)} Tier-1 accounts and ${fmt.num(rcm.length)} with a cyber or revenue-cycle trigger carry the largest cross-sell.`,
+    chips: `${fmt.chip('HQ St. Louis, MO', COLOR)}${fmt.chip('Held since December 2024')}${fmt.chip('800+ law-firm clients')}${fmt.chip('~1,100 staff · 11 offices')}${fmt.chip('CEO Tim Britt')}`,
     actions: `<a class="sys-btn sys-btn--primary" href="#/fl/amlaw">AM Law account map</a><a class="sys-btn sys-btn--secondary" href="#/fl/targets">Add-on targets</a>`,
   }) +
   ui.kpis([
-    { label: 'Large-firm accounts mapped', value: fmt.num(firms.length), sub: `${BANDS.map(b => `${bandN[b] || 0} ${b}`).join(' · ')} revenue · client status pending CRM`, color: COLOR },
+    { label: 'Large-firm accounts mapped', value: fmt.num(firms.length), sub: `${BANDS.map(b => `${bandN[b] || 0} ${b}`).join(' · ')} revenue`, color: COLOR },
     { label: 'Tier-1 accounts', value: fmt.num(t1.length), sub: `${fmt.num(cyber5T1.length)} with cyber urgency 5/5`, color: 'var(--sys-good)' },
     { label: 'Attorneys addressable', value: fmt.compact(atty), sub: `≈${fmt.compact(atty * 2)} end users incl. staff (est.)`, color: 'var(--sys-info)' },
     { label: 'Mid-size firms screened', value: mid ? fmt.num(midItems.length) : '—', sub: mid ? `${fmt.num(midItems.filter(r => (MS.fit(r) || 0) >= 65).length)} Tier 1–2 fit (≥65)` : 'research pending', color: 'var(--co-fh)' },
@@ -315,8 +315,8 @@ async function amlaw(ctx) {
   const states = [...new Set(firms.map(f => f.hq_state))].sort();
   el.innerHTML = ui.pageHead({
     title: 'AM Law account map',
-    sub: '<b>So what:</b> Frontline already serves more than half of the AM Law 200, so read this as an account map: for a likely client, each firm’s High-fit services are the cross-sell pitch (cyber, revenue cycle, AI desk); for a confirmed non-client, they are the opening offer. Every firm opens a recommended bundle with the rule behind each rating and a next action. Revenue-cycle candidates = cyber urgency ≥4 or an AI program in planning.',
-    chips: `${fmt.chip(`${firms.length} firms${firms.dupes ? ` (${firms.dupes} duplicate entity rows removed)` : ''}`, COLOR)}${fmt.chip(`Revenue reported for ${firms.filter(x => x._rev != null && !x._revIsEst).length} firms; ${firms.filter(x => x._revIsEst).length} estimated`, 'var(--sys-warn)')}${fmt.chip('Client status: pending CRM match')}${fmt.chip('Ranked by revenue; legacy AM Law ranks unverified')}`,
+    sub: 'For a likely client, each firm’s High-fit services are the cross-sell pitch; for a non-client, they are the opening offer. Click a firm for its bundle and next action.',
+    chips: `${fmt.chip(`${firms.length} firms`, COLOR)}${fmt.chip(`${firms.filter(x => x._revIsEst).length} revenues estimated`, 'var(--sys-warn)')}${fmt.chip('Client status pending CRM')}${fmt.chip('Ranked by revenue')}`,
   }) + `<div id="fl-am-kpis"></div><div class="mt-12" id="fl-am-f"></div><div id="fl-am-t"></div>
   <div class="grid grid-3 mt-12">
     ${ui.panel({ title: 'Lead cross-sell offer (filtered)', sub: 'Highest-rated bundle component per firm', body: '<div id="fl-am-lead"></div>', foot: ui.source('Bundle rules on AM Law + analyst scores', null) })}
@@ -390,7 +390,7 @@ async function midsize(ctx) {
   const mid = await data.research('fl_midsize_firms');
   if (!mid || !(mid.items || []).length) {
     const firms = await loadFirms(data); const proxy = firms.filter(f => f.attorney_count <= 350);
-    el.innerHTML = ui.pageHead({ title: 'Mid-size firm targets', sub: '<b>So what:</b> mid-size firms (roughly 40–350 attorneys) are the next growth segment. They are under-served by the big legal MSPs and buy packaged managed IT + cyber. The verified screen is not published yet, so the smallest firms on the large-firm list (≤350 attorneys) serve as a proxy.' }) +
+    el.innerHTML = ui.pageHead({ title: 'Mid-size firm targets', sub: 'Mid-size firms (40–350 attorneys) are the next segment. Until the screen is published, the smallest large-firm accounts serve as a proxy.' }) +
       ui.note('Research dataset <b>Mid-size law firms</b> is not yet available. This view populates automatically (signals, fit score, recommended offer, metro summary, top-20) once the file lands.', 'warn') +
       `<div class="mt-12"></div>` + ui.kpis([{ label: 'Proxy firms (≤350 attorneys)', value: fmt.num(proxy.length), color: COLOR }, { label: 'Attorneys', value: fmt.compact(sum(proxy, f => f.attorney_count)) }, { label: 'AI planning / partial', value: `${proxy.filter(f => f.ai_opportunity_signal === 'planning').length} / ${proxy.filter(f => f.ai_opportunity_signal === 'partial').length}`, color: AI_HEX.planning }, { label: 'Cyber ≥4', value: fmt.num(proxy.filter(f => f._cyber >= 4).length), color: 'var(--sys-bad)' }]) +
       `<div class="mt-12">${ui.panel({ title: 'Proxy list — large-firm accounts with ≤350 attorneys', sub: 'Click for recommended bundle', body: '<div id="fl-ms-proxy"></div>', flush: true, foot: ui.source(...AMLAW_SRC) })}</div>`;
@@ -425,8 +425,8 @@ async function midsize(ctx) {
 
   el.innerHTML = ui.pageHead({
     title: 'Mid-size firm targets',
-    sub: `<b>So what:</b> ${fmt.num(rows.length)} independent mid-size firms (40–350 attorneys) screened across ${metros.length} metros, holding ${fmt.compact(sum(rows, r => r._atty))} attorneys. ${fmt.num(t12.length)} reach Tier 1–2 fit (≥65), and ${fmt.num(ins.length)} have insurance-defense books, where carrier eBilling (LEDES) makes RCM the wedge. Start in <b>${esc(bestSeg?.metro || '—')}</b> (${fmt.num(bestSeg?.firm_count)} firms, avg fit ${fmt.num(bestSeg?.avg_fit_score, 1)}) and lead with <b>${esc(offerTxt(offerCounts[0]?.[0]))}</b>.`,
-    chips: `${fmt.chip(`${metros.length} metros`, COLOR)}${fmt.chip(`${fmt.num(rows.filter(r => r._approx).length)} headcounts approx. (±25%)`, 'var(--sys-warn)')}${(() => { const ex = meta.excluded_absorbed_or_out_of_range || []; const oor = ex.filter(x => /above|cap|am law 200|borderline|out of range/i.test(x.note || '')).length; return fmt.chip(`${ex.length - oor} absorbed by mergers · ${oor} above size range`, 'var(--sys-bad)'); })()}${meta.generated ? fmt.chip(`Screened ${fmt.date(meta.generated)}`) : ''}`,
+    sub: `${fmt.num(t12.length)} of ${fmt.num(rows.length)} mid-size firms reach Tier 1–2 fit. Start in <b>${esc(bestSeg?.metro || '—')}</b> (${fmt.num(bestSeg?.firm_count)} firms) and lead with <b>${esc(offerTxt(offerCounts[0]?.[0]))}</b>.`,
+    chips: `${fmt.chip(`${metros.length} metros`, COLOR)}${fmt.chip(`${fmt.num(rows.filter(r => r._approx).length)} headcounts approx.`, 'var(--sys-warn)')}${(() => { const ex = meta.excluded_absorbed_or_out_of_range || []; const oor = ex.filter(x => /above|cap|am law 200|borderline|out of range/i.test(x.note || '')).length; return fmt.chip(`${ex.length} excluded`, 'var(--sys-bad)'); })()}${meta.generated ? fmt.chip(`Screened ${fmt.date(meta.generated)}`) : ''}`,
   }) + ui.kpis([
     { label: 'Firms screened', value: fmt.num(rows.length), sub: `${metros.length} metros · ${fmt.compact(sum(rows, r => r._atty))} attorneys`, color: COLOR },
     { label: 'Tier 1–2 fit (≥65)', value: fmt.num(t12.length), sub: `${fmt.num(rows.filter(r => (r._fit || 0) >= 80).length)} at ≥80 · median ${fmt.num(median(rows.map(r => r._fit)))}`, color: 'var(--sys-good)' },
@@ -538,8 +538,8 @@ async function targetsView(ctx) {
 
   el.innerHTML = ui.pageHead({
     title: 'Add-on targets',
-    sub: `<b>So what:</b> ${fmt.num(items.length)} legal-IT and revenue-cycle add-on candidates screened. The top 8 average ${fmt.num(avgTop, 0)} fit. ${fmt.num(priGeo.length)} sit in the CEO's stated priority geographies (California, Texas, Atlanta, South Florida, UK), and ${fmt.num(tuck.length)} match the ~$5M-revenue tuck-in profile (ZoomInfo revenue ≤$15M, modelled). Roll-up competition is active: ${fmt.num(comp.length)} sponsor-backed or strategic consolidators are profiled.`,
-    chips: `${fmt.chip('Criteria: tuck-ins ~$5M rev / $1–2M EBITDA; anchor companies $20M+', COLOR)}${fmt.chip('Revenue = ZoomInfo modelled est.', 'var(--sys-warn)')}`,
+    sub: `${fmt.num(priGeo.length)} of ${fmt.num(items.length)} legal-IT and revenue-cycle candidates sit in the CEO's priority regions; ${fmt.num(tuck.length)} fit the ~$5M tuck-in profile. ${fmt.num(comp.length)} consolidators compete for them.`,
+    chips: `${fmt.chip('Tuck-ins ~$5M revenue', COLOR)}${fmt.chip('Revenue modelled est.', 'var(--sys-warn)')}`,
   }) + ui.kpis([
     { label: 'Candidates', value: fmt.num(items.length), sub: `${fmt.num(items.filter(t => t.fit_score >= 80).length)} fit ≥80`, color: 'var(--sys-warn)' },
     { label: 'Top-8 avg fit', value: fmt.num(avgTop, 0), sub: esc(top8[0]?.company || '—'), color: 'var(--sys-good)' },
@@ -601,8 +601,8 @@ async function filings(ctx) {
 
   el.innerHTML = ui.pageHead({
     title: 'Filings and financials',
-    sub: `<b>So what:</b> Broad Sky bought Frontline in December 2024 for an estimated ${esc(est['Transaction enterprise value']?.estimate || '$230–260M')} EV, about 60% equity and a $90M NXT/Audax term loan. That implies ${esc(est['Adjusted EBITDA at close (2024 run-rate)']?.estimate || '$16–20M')} EBITDA at ${esc(est['Entry EV/EBITDA']?.estimate || '12–15x')} (est.). Carlyle AlpInvest's co-invest mark is up ~${fmt.num(k3.markup_vs_cost_2026_06_30_pct ?? 9.5, 1)}% versus cost, and the estimated 13–18% EBITDA margin sits at or just below the BPO public-comp median${bench ? ` (${pctTxt(bench.median_ebitda_margin_latest_pct)})` : ''}.`,
-    chips: `${fmt.chip('Estimates, not audited figures', 'var(--sys-warn)')}${fmt.chip('SEC Form D · N-PORT · UK Companies House', COLOR)}`,
+    sub: `BSP bought Frontline in December 2024 for an estimated ${esc(est['Transaction enterprise value']?.estimate || '$230–260M')} EV, about 60% equity. A co-investor marks it up an est. ~${fmt.num(k3.markup_vs_cost_2026_06_30_pct ?? 9.5, 1)}% on cost.`,
+    chips: `${fmt.chip('Estimates, not audited figures', 'var(--sys-warn)')}${fmt.chip('SEC and UK filings', COLOR)}`,
   }) + (fil ? '' : ui.note('Research dataset <b>Frontline public filings</b> is not available. The KPIs below show the last verified snapshot (Form D / N-PORT, September 2026) and will refresh when the file returns.', 'warn') + '<div class="mt-12"></div>') + ui.kpis([
     { label: 'BSP-FL LP equity (Form D)', value: fmt.money(k1.total_amount_sold_usd ?? 136952357), sub: `${fmt.num(k1.investors ?? 21)} investors · December 2024`, color: COLOR },
     { label: 'Initial term loan', value: fmt.money(k4.group_initial_term_loan_usd ?? 9e7), sub: esc((k4.lenders || ['NXT Capital', 'Audax Private Debt']).join(' + ')), color: 'var(--sys-bad)' },
@@ -683,8 +683,8 @@ export default {
     { id: 'filings', name: 'Filings and financials', icon: '§', render: filings },
   ],
   tour: [
-    { order: 400, hash: '#/fl/overview', caption: '<b>Frontline Managed Services.</b> 147 large law firms mapped against 11 offices. Most are likely existing clients, so growth comes from cross-selling cyber, RCM and AI-desk bundles.', narration: 'Frontline runs IT, security and revenue cycle for over eight hundred law firms; the account map shows where cyber and revenue-cycle cross-sell is largest.', duration: 8500 },
-    { order: 410, hash: '#/fl/amlaw?tier=Tier%201&cyber=5', caption: '<b>Cyber-first cross-sell.</b> Tier-1 accounts scoring 5/5 on cyber urgency. Each firm opens a recommended bundle and a next action.', narration: 'Filter to Tier-one accounts with the highest cyber urgency; each opens a service bundle and a next action.', duration: 7500 },
-    { order: 420, hash: '#/fl/filings', caption: '<b>Deal math from public filings.</b> ~$137M Form D equity plus a $90M term loan implies a ~$230–260M EV. Carlyle\'s co-invest mark is up ~10%.', narration: 'Public filings imply an enterprise value of roughly two hundred thirty to two hundred sixty million dollars.', duration: 7000 },
+    { order: 400, hash: '#/fl/overview', caption: '<b>Frontline Managed Services.</b> 147 large law firms, most likely clients already. Growth is cross-sell: cyber, RCM, AI desk.', narration: 'Frontline serves over eight hundred law firms. The account map shows where cross-sell is largest.', duration: 8500 },
+    { order: 410, hash: '#/fl/amlaw?tier=Tier%201&cyber=5', caption: '<b>Cyber-first cross-sell.</b> Tier-1 accounts at 5/5 cyber urgency, each with a bundle and a next action.', narration: 'Filter to Tier-one accounts with the highest cyber urgency; each opens a service bundle and a next action.', duration: 7500 },
+    { order: 420, hash: '#/fl/filings', caption: '<b>Deal math from filings.</b> ~$137M of equity and a $90M loan imply a ~$230–260M EV.', narration: 'Public filings imply an enterprise value of roughly two hundred thirty to two hundred sixty million dollars.', duration: 7000 },
   ],
 };

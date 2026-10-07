@@ -36,7 +36,7 @@ for i, s in enumerate(steps):
     vf = (f"scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:color=#0a0e14,"
           f"drawbox=x=0:y=ih-{bar}:w=iw:h={bar}:color=#0a0e14@0.86:t=fill,"
           f"drawtext=fontfile=/System/Library/Fonts/Supplemental/Arial.ttf:textfile='{capf}':expansion=none:fontcolor=white:fontsize=30:x=(w-text_w)/2:y=h-{bar}+18:line_spacing=8,"
-          f"drawtext=fontfile=/System/Library/Fonts/Supplemental/Arial.ttf:text='Broad Sky Operating Intelligence  ·  {i+1}/{len(steps)}':fontcolor=#8b98a8:fontsize=20:x=w-text_w-28:y=h-26,"
+          f"drawtext=fontfile=/System/Library/Fonts/Supplemental/Arial.ttf:text='BSP Desk  ·  {i+1}/{len(steps)}':fontcolor=#8b98a8:fontsize=20:x=w-text_w-28:y=h-26,"
           f"fade=t=in:st=0:d=0.35,fps=30,format=yuv420p")
     subprocess.run([FFMPEG, '-y', '-loglevel', 'error', '-loop', '1', '-i', png, '-i', wav, '-t', f'{dur:.2f}', '-vf', vf, '-c:v', 'libx264', '-preset', 'medium', '-crf', '24', '-r', '30', '-c:a', 'aac', '-b:a', '160k', '-shortest', seg], check=True)
     segments.append(seg); print(f"  step {i+1}: {dur:.1f}s  {url}")
@@ -45,7 +45,7 @@ lst = os.path.join(WORK, 'list.txt'); open(lst, 'w').write(''.join(f"file '{s}'\
 video = os.path.join(OUT, 'broad_sky_briefing.mp4')
 subprocess.run([FFMPEG, '-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', lst, '-c', 'copy', '-movflags', '+faststart', video], check=True)
 poster = os.path.join(OUT, 'poster.jpg'); subprocess.run([FFMPEG, '-y', '-loglevel', 'error', '-ss', '2', '-i', video, '-frames:v', '1', '-q:v', '3', poster], check=True)
-total = sum(float(subprocess.run([FFMPEG.replace('ffmpeg', 'ffprobe') if os.path.exists(FFMPEG.replace('ffmpeg', 'ffprobe')) else FFMPEG, '-i', s], capture_output=True, text=True).stderr.split('Duration: ')[1].split(',')[0].split(':')[2]) for s in []) or 0
-json.dump({'video': 'broad_sky_briefing.mp4', 'poster': 'poster.jpg', 'steps': len(steps), 'rendered': time.strftime('%Y-%m-%d %H:%M'), 'duration_label': f'{len(steps)} chapters · {int(sum(1 for _ in segments))} segments'}, open(os.path.join(OUT, 'manifest.json'), 'w'), indent=1)
+total = sum(float(x) * 60 ** k for k, x in enumerate(reversed(subprocess.run([FFMPEG, '-i', video], capture_output=True, text=True).stderr.split('Duration: ')[1].split(',')[0].split(':'))))
+json.dump({'video': 'broad_sky_briefing.mp4', 'poster': 'poster.jpg', 'steps': len(steps), 'rendered': time.strftime('%Y-%m-%d %H:%M'), 'duration_seconds': round(total), 'duration_label': f'{len(steps)} chapters · {int(sum(1 for _ in segments))} segments'}, open(os.path.join(OUT, 'manifest.json'), 'w'), indent=1)
 print('wrote', video, os.path.getsize(video) // 1024, 'KB')
 shutil.rmtree(WORK, ignore_errors=True)

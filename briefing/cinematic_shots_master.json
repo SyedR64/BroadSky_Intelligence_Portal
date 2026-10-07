@@ -6,12 +6,12 @@
   "duration_s": 4,
   "settle_ms": 2500,
   "title_card": {
-   "kicker": "Broad Sky Partners \u00b7 Portfolio Resource Group",
-   "headline": "What if every portfolio company ran on the same intelligence?",
+   "kicker": "BSP \u00b7 Portfolio Resource Group",
+   "headline": "Six companies. Every number tied to a decision.",
    "duration_s": 4,
    "size": 88
   },
-  "narration": "This is a working system, not a deck. Six companies, one portal, and every datapoint tied to an action."
+  "narration": "Six companies, and every number tied to a next step."
  },
  {
   "id": "landing_chat",
@@ -26,7 +26,7 @@
   "duration_s": 17,
   "settle_ms": 2500,
   "title_card": null,
-  "narration": "Ask it the question an operating partner would ask. It answers from verified data: filings, deed records, add-on screens, and the regional-to-national template Broad Sky has already proven."
+  "narration": "Ask an operating partner's question. It answers from filings, deed records and add-on screens."
  },
  {
   "id": "nationwide",
@@ -40,10 +40,10 @@
   "settle_ms": 2500,
   "title_card": {
    "kicker": "Punctual Pros",
-   "headline": "From Lancaster to national, in four phases.",
+   "headline": "Lancaster to national in four phases.",
    "duration_s": 3.2
   },
-  "narration": "Densify the core, tuck in franchisees across four states, build the Mid-Atlantic hub, then consolidate inside the Authority Brands network."
+  "narration": "Densify the core, tuck in franchisees across four states, build a Mid-Atlantic hub, then consolidate."
  },
  {
   "id": "theater_homes",
@@ -58,7 +58,7 @@
   "duration_s": 9,
   "settle_ms": 3000,
   "title_card": null,
-  "narration": "Seventy-seven thousand home sales, rendered live. Every bar is a household that just inherited a furnace it has never met."
+  "narration": "Seventy-seven thousand home sales, each a household that just inherited a furnace."
  },
  {
   "id": "theater_arcs",
@@ -73,7 +73,7 @@
   "duration_s": 8,
   "settle_ms": 3000,
   "title_card": null,
-  "narration": "The expansion arcs are the add-on screen on a map: sixty-one targets, scored and sourced."
+  "narration": "The add-on screen on a map: sixty-one targets, scored and sourced."
  },
  {
   "id": "weather",
@@ -86,7 +86,7 @@
   "duration_s": 8,
   "settle_ms": 3000,
   "title_card": null,
-  "narration": "Live National Weather Service alerts become a staffing plan: how many technicians, which hub, which day."
+  "narration": "Weather Service alerts become a staffing plan: how many technicians, which hub, which day."
  },
  {
   "id": "voice",
@@ -99,11 +99,11 @@
   "duration_s": 10,
   "settle_ms": 2500,
   "title_card": {
-   "kicker": "The growth engine",
-   "headline": "Answer every call. Twenty-four seven.",
+   "kicker": "Punctual Pros",
+   "headline": "Answer every call, day and night.",
    "duration_s": 3
   },
-  "narration": "A voice agent answers every call in two rings, books into dispatch, and works outbound on renewals. Unanswered calls stop being lost revenue."
+  "narration": "A voice agent answers in two rings, books into dispatch and calls members due for renewal."
  },
  {
   "id": "ads",
@@ -116,7 +116,7 @@
   "duration_s": 9,
   "settle_ms": 2500,
   "title_card": null,
-  "narration": "Connected-TV flights that switch on with storm alerts, Local Services Ads for intent, and new-mover postcards from the deed feed, all with sourced costs."
+  "narration": "Connected TV keyed to storm alerts, Local Services Ads and new-mover mail, each with sourced costs."
  },
  {
   "id": "cet",
@@ -133,7 +133,7 @@
    "headline": "Horton's first calls, ranked.",
    "duration_s": 3
   },
-  "narration": "For Commonwealth Electrical, one hundred eighty-three treatment plants ranked by fit, with funded projects, so the Horton team knows who to call on Monday."
+  "narration": "One hundred eighty-three treatment plants, ranked by fit and funding, so Horton knows who to call."
  },
  {
   "id": "os",
@@ -146,11 +146,11 @@
   "duration_s": 8,
   "settle_ms": 2500,
   "title_card": {
-   "kicker": "Tech enablement",
+   "kicker": "Operating systems",
    "headline": "ServiceOS. GridOS. FirmOS. LabOS.",
    "duration_s": 3
   },
-  "narration": "Each company gets an operating system: the integration spine for every tuck-in, and the story a buyer pays a tech-enabled multiple for."
+  "narration": "Each company gets an operating system: the integration spine for tuck-ins and the case for a higher multiple."
  },
  {
   "id": "ma",
@@ -163,7 +163,7 @@
   "duration_s": 7,
   "settle_ms": 3000,
   "title_card": null,
-  "narration": "One hundred fifty-seven add-on targets, thirty-five competing sponsors, and public-comp benchmarks, in one acquisition engine."
+  "narration": "One hundred fifty-seven add-on targets, thirty-five rival sponsors and public comps in one place."
  },
  {
   "id": "sites",
@@ -176,7 +176,7 @@
   "duration_s": 8,
   "settle_ms": 2500,
   "title_card": null,
-  "narration": "Six website concepts, each with its own assistant, show what every company looks like when it is built to convert."
+  "narration": "Six website concepts, each with its own assistant, built to turn visitors into booked jobs."
  },
  {
   "id": "close",
@@ -186,11 +186,11 @@
   "settle_ms": 2500,
   "title_card": {
    "kicker": "Syed Rahman \u00b7 for the Portfolio Resource Group",
-   "headline": "One system for the whole portfolio.",
+   "headline": "BSP Desk",
    "duration_s": 5,
    "size": 84,
    "foot": "syedr64.github.io/BroadSky_Intelligence_Portal"
   },
-  "narration": "Built to show how the Portfolio Resource Group could run on one system. Ready to put to work."
+  "narration": "Built for the Portfolio Resource Group's monthly operating review. Ready to use."
  }
 ]

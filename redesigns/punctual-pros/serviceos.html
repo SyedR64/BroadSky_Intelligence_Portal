@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ServiceOS · Broad Sky</title>
-<meta name="description" content="ServiceOS, the operating system behind Punctual Pros: weather-aware capacity, live dispatch, AI after-hours booking, membership and new-mover automation, with the value-creation math.">
+<title>ServiceOS · BSP Desk</title>
+<meta name="description" content="ServiceOS for Punctual Pros: weather-aware capacity, live dispatch, after-hours AI booking and membership automation.">
 <meta name="theme-color" content="#fbfaf7">
 <script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
 <link rel="icon" href="../../BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261006180606">
-<link rel="stylesheet" href="./os.css?v=20261006180606">
+<link rel="stylesheet" href="../../assets/system.css?v=20261006224618">
+<link rel="stylesheet" href="./os.css?v=20261006224618">
 </head>
 <body data-co="pp">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -47,12 +47,12 @@
   <div class="sys-wrap">
     <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>ServiceOS</b> · for Punctual Pros</p>
     <h1 class="sys-h1" id="h1">Every truck in the right driveway <span class="sys-grad-text">before the phone rings.</span></h1>
-    <p class="sys-lead">ServiceOS is the operating layer for a 25-territory home-services franchisee: it forecasts call volume from the weather, books every call 24/7, routes the closest qualified tech, and turns one-time repairs into recurring members. Off-the-shelf where the market is mature, built where Broad Sky has the data edge.</p>
+    <p class="sys-lead">ServiceOS forecasts calls from the weather, books every call 24/7, routes the nearest tech and turns repairs into members. Bought where the market is mature, built where BSP has data.</p>
     <div class="sys-actions"><a class="sys-btn sys-btn--primary sys-btn--lg" href="#demo">Try the live demo <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="sys-btn sys-btn--secondary sys-btn--lg" href="#value">See the value math</a></div>
     <div class="sys-kpis" id="kpis" role="list">
-      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Inbound call booking rate</span><span class="sys-kpi-value"><span class="from">38%</span><span class="arrow" aria-label="to">→</span>59%<span class="sys-est">est.</span></span><span class="sys-kpi-sub">HVAC average vs shops with 25+ techs (<a href="https://www.servicetitan.com/blog/data-call-booking-rates" target="_blank" rel="noopener">ServiceTitan</a>); target is an estimate</span></div>
-      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Average ticket growth a year</span><span class="sys-kpi-value"><span class="from">8%</span><span class="arrow" aria-label="to">→</span>14%</span><span class="sys-kpi-sub">Non-users vs digital pricebook adopters (<a href="https://www.servicetitan.com/coronavirus/pricebook-pro-users-seeing-stronger-ticket-sizes-in-2020" target="_blank" rel="noopener">ServiceTitan</a> vendor data, low confidence)</span></div>
-      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Active members per tech</span><span class="sys-kpi-value">~83</span><span class="sys-kpi-sub">Champions Group density: 150K members over 1,800+ techs, derived (<a href="https://www.servicemag.org/news/blackstone-champions-group-acquisition-2-5-billion" target="_blank" rel="noopener">ServiceMag</a>)</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Inbound call booking rate</span><span class="sys-kpi-value"><span class="from">38%</span><span class="arrow" aria-label="to">→</span>59%<span class="sys-est">est.</span></span><span class="sys-kpi-sub">HVAC average vs 25+ tech shops (<a href="https://www.servicetitan.com/blog/data-call-booking-rates" target="_blank" rel="noopener">ServiceTitan</a>)</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Average ticket growth a year</span><span class="sys-kpi-value"><span class="from">8%</span><span class="arrow" aria-label="to">→</span>14%</span><span class="sys-kpi-sub">Without vs with digital pricebook (<a href="https://www.servicetitan.com/coronavirus/pricebook-pro-users-seeing-stronger-ticket-sizes-in-2020" target="_blank" rel="noopener">ServiceTitan</a>)</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Active members per tech</span><span class="sys-kpi-value">~83</span><span class="sys-kpi-sub">Champions Group, derived (<a href="https://www.servicemag.org/news/blackstone-champions-group-acquisition-2-5-billion" target="_blank" rel="noopener">ServiceMag</a>)</span></div>
       <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">EBITDA impact</span><span class="sys-kpi-value"><span id="kpi-ebitda">$0.3–1.1M</span><span class="sys-est">est.</span></span><span class="sys-kpi-sub">2–4 points of margin on ~$22M revenue</span></div>
     </div>
     <p class="sys-src"><b>Source:</b> ServiceTitan booking-rate and pricebook studies; ServiceMag on the Blackstone–Champions deal; ServiceOS roadmap assumption and Punctual Pros public filings for the EBITDA range, Oct 2026.</p>
@@ -64,10 +64,10 @@
     <div class="sys-section-head">
       <p class="sys-kicker">What it is</p>
       <h2 class="sys-h2" id="mod-h">Seven modules on one data spine.</h2>
-      <p class="sys-lead">The field-service system of record (ServiceTitan) is the spine. Every module reads from it and writes back to it, so the board, the members and the numbers in the data room stay in sync.</p>
+      <p class="sys-lead">ServiceTitan is the system of record. Every module reads from it and writes back, so the numbers stay in sync.</p>
     </div>
     <div class="mods">
-      <a class="sys-card mod feature" href="#demo" data-tab="pci"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-gauge"/></svg></span><span class="sys-card-label">Build · Broad Sky data edge</span><span class="sys-card-title">Service-Call Pressure Index</span><span class="sys-card-body">A 7-day forecast of call volume by hub and trade, from live weather and National Weather Service alerts run through Punctual Pros' weather-to-demand multipliers. Staffing, on-call and parts staging follow the index, not gut feel.</span><span class="sys-card-foot moves">Moves: booked calls in peak weeks · overtime · same-day capacity</span></a>
+      <a class="sys-card mod feature" href="#demo" data-tab="pci"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-gauge"/></svg></span><span class="sys-card-label">Build · BSP data edge</span><span class="sys-card-title">Service-Call Pressure Index</span><span class="sys-card-body">A 7-day forecast of call volume by hub and trade, from live weather and National Weather Service alerts run through Punctual Pros' weather-to-demand multipliers. Staffing, on-call and parts staging follow the index, not gut feel.</span><span class="sys-card-foot moves">Moves: booked calls in peak weeks · overtime · same-day capacity</span></a>
       <a class="sys-card mod" href="#demo" data-tab="board"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-board"/></svg></span><span class="sys-card-label">Buy · ServiceTitan</span><span class="sys-card-title">Dispatch board</span><span class="sys-card-body">One board across Lancaster, York, Harrisburg and the Jersey Shore. Auto-assign by skill, distance and membership priority.</span><span class="sys-card-foot moves">Moves: jobs per tech per day · on-time rate</span></a>
       <a class="sys-card mod" href="#demo" data-tab="ai"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-msg"/></svg></span><span class="sys-card-label">Rent · Avoca</span><span class="sys-card-title">AI dispatcher</span><span class="sys-card-body">Answers every call at 2 a.m., quotes member pricing and books a real slot straight onto the board.</span><span class="sys-card-foot moves">Moves: booking rate 38% → 59%</span></a>
       <a class="sys-card mod" href="#membership"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-loop"/></svg></span><span class="sys-card-label">Buy and build</span><span class="sys-card-title">Comfort Club engine</span><span class="sys-card-body">Attach at every call, auto-book the two tune-ups, renew by text, flag churn risk before the renewal date.</span><span class="sys-card-foot moves">Moves: members per tech → 83</span></a>
@@ -142,7 +142,7 @@
     <div class="sys-section-head">
       <p class="sys-kicker">Membership economics</p>
       <h2 class="sys-h2" id="mem-h">Members are the recurring revenue a buyer capitalises.</h2>
-      <p class="sys-lead">Frontdoor, a membership-model comparable, runs a ~24% EBITDA margin against a 15% residential median. Champions Group sold at ~18.5x with about 83 members per technician. This is the operator's view of the Comfort Club book.</p>
+      <p class="sys-lead">Frontdoor, a membership comparable, runs a ~24% EBITDA margin against a 15% median. This is the operator's view of the Comfort Club book.</p>
     </div>
     <div class="two">
       <div class="sys-card">
@@ -172,7 +172,7 @@
     <div class="sys-section-head">
       <p class="sys-kicker">New-mover autopilot</p>
       <h2 class="sys-h2" id="mov-h">Every deed is a first service call waiting to happen.</h2>
-      <p class="sys-lead">New owners pick their HVAC, plumbing and electrical company in the first 90 days. ServiceOS reads county deed feeds, scores each transfer, mails a welcome kit, and calls only those who opt in.</p>
+      <p class="sys-lead">New owners pick their trades in the first 90 days. ServiceOS scores each deed transfer, mails a welcome kit and calls only those who opt in.</p>
     </div>
     <div class="flow" id="flow">
       <div class="st"><span class="n">01 · Deed feed</span><h4>County transfers</h4><div class="v" id="f1">—</div><p>15 county feeds, Sept 2025 → Sept 2026 (NJ through June 2026)</p><div class="loadbar"><i id="lb"></i></div></div>
@@ -203,9 +203,9 @@
 <section class="sys-section" id="value" data-sys-theme="dark" aria-labelledby="val-h">
   <div class="sys-wrap">
     <div class="sys-section-head">
-      <p class="sys-kicker">Value-creation math</p>
+      <p class="sys-kicker">Value math</p>
       <h2 class="sys-h2" id="val-h">$0.4–0.9M in, a multiple-point re-rate out.</h2>
-      <p class="sys-lead">Revenue and EBITDA are estimates from public filings. Only 1.0–2.5 turns are credited to tech enablement because the 17–18.5x Champions and Sila prints are driven by scale. Every number below is labelled est. with its source.</p>
+      <p class="sys-lead">Revenue and EBITDA are estimates from public filings. Only 1.0–2.5 turns are credited to tech; the 17–18.5x prints reflect scale.</p>
     </div>
     <div class="val">
       <div class="sys-card">
@@ -238,7 +238,7 @@
       <h2 class="sys-h2" id="ev-h">Why the market pays for this.</h2>
       <p class="sys-lead">Valuation evidence for residential home services, with source, date and confidence.</p>
     </div>
-    <div class="sys-table-wrap tw"><table class="sys-table t" aria-label="Valuation evidence"><thead><tr><th style="width:40%">Evidence</th><th style="width:22%">Metric</th><th>Date</th><th>Confidence</th><th style="width:20%">Source</th></tr></thead><tbody id="ev-body"><tr><td colspan="5">Loading…</td></tr></tbody><caption>Source: ServiceOS evidence, Broad Sky portal research (deal releases, filings and industry surveys), Oct 2026.</caption></table></div>
+    <div class="sys-table-wrap tw"><table class="sys-table t" aria-label="Valuation evidence"><thead><tr><th style="width:40%">Evidence</th><th style="width:22%">Metric</th><th>Date</th><th>Confidence</th><th style="width:20%">Source</th></tr></thead><tbody id="ev-body"><tr><td colspan="5">Loading…</td></tr></tbody><caption>Source: ServiceOS evidence, BSP portal research (deal releases, filings and industry surveys), Oct 2026.</caption></table></div>
   </div>
 </section>
 
@@ -247,9 +247,9 @@
     <div class="sys-section-head">
       <p class="sys-kicker">Build vs buy</p>
       <h2 class="sys-h2" id="stk-h">Rent the front office. Build the data edge.</h2>
-      <p class="sys-lead">Mature categories (field-service software, AI customer service, pricebook, reviews) are bought. The two modules that depend on Broad Sky's own datasets, the Pressure Index and the new-mover autopilot, are built once in the portal and reused across companies.</p>
+      <p class="sys-lead">Mature categories are bought. The two modules that need BSP's own data, the Pressure Index and new-mover outreach, are built once and reused.</p>
     </div>
-    <div class="sys-table-wrap tw"><table class="sys-table t" aria-label="ServiceOS stack"><thead><tr><th style="width:16%">Layer</th><th style="width:22%">Vendor or owner</th><th>Decision</th><th style="width:30%">What it does</th><th style="width:24%">Pricing</th></tr></thead><tbody id="stk-body"><tr><td colspan="5">Loading…</td></tr></tbody><caption>Source: vendor pricing pages and ServiceOS evidence (vendor stack), Broad Sky portal research, Oct 2026.</caption></table></div>
+    <div class="sys-table-wrap tw"><table class="sys-table t" aria-label="ServiceOS stack"><thead><tr><th style="width:16%">Layer</th><th style="width:22%">Vendor or owner</th><th>Decision</th><th style="width:30%">What it does</th><th style="width:24%">Pricing</th></tr></thead><tbody id="stk-body"><tr><td colspan="5">Loading…</td></tr></tbody><caption>Source: vendor pricing pages and ServiceOS evidence (vendor stack), BSP portal research, Oct 2026.</caption></table></div>
   </div>
 </section>
 
@@ -258,7 +258,7 @@
     <div class="sys-section-head">
       <p class="sys-kicker">12-month roadmap</p>
       <h2 class="sys-h2" id="rm-h">Value in two quarters, all of it in four.</h2>
-      <p class="sys-lead">Sequenced so the cheapest, fastest lever (booking rate) pays for the rest. Each workstream has a KPI gate before the next dollar is spent. Owners pair the Broad Sky Portfolio Resource Group (PRG) with Punctual Pros leaders.</p>
+      <p class="sys-lead">The cheapest lever, booking rate, pays for the rest. Each workstream has a KPI gate before the next dollar.</p>
     </div>
     <div class="sys-card gantt"><div class="g-in" id="gantt"></div></div>
   </div>
@@ -279,7 +279,7 @@
     <div class="sys-section-head">
       <p class="sys-kicker">At exit</p>
       <h2 class="sys-h2" id="ex-h">Why a buyer pays for ServiceOS.</h2>
-      <p class="sys-lead">PKF's valuation grid prices home-services businesses on a handful of rows. ServiceOS moves four of them at once, and leaves a data room that proves it.</p>
+      <p class="sys-lead">PKF's valuation grid prices home services on a few rows. ServiceOS moves four of them and leaves the proof.</p>
     </div>
     <div class="sys-grid sys-grid--2">
       <div class="sys-card bcard"><span class="sys-card-label">PKF row · In-house capabilities and innovation</span><span class="sys-card-title">A company, not a franchisee</span><span class="sys-card-body">A documented operating system that onboards an add-on in 60 days is what turns a 25-territory operator into a buy-and-build company for the next sponsor.</span><span class="sys-card-foot move"><i>Undifferentiated</i> → Value-enhancing</span></div>
@@ -308,10 +308,10 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261006180606';
-  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261006180606';
-  import { Chat } from '../../assets/chat.js?v=20261006180606';
-  import { init } from './os.js?v=20261006180606';
+  import { Frame } from '../../assets/frame.js?v=20261006224618';
+  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261006224618';
+  import { Chat } from '../../assets/chat.js?v=20261006224618';
+  import { init } from './os.js?v=20261006224618';
   const frame = Frame.mount({});
   const chat = init({ Data, Fmt, Live, Chat, esc, Frame });
   if (chat) frame.setChat(chat);

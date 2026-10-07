@@ -1,12 +1,12 @@
 {
  "meta": {
   "dataset": "bsp_methodology",
-  "title": "How Broad Sky buys: a reverse-engineered acquisition methodology",
+  "title": "How BSP buys: a reverse-engineered acquisition methodology",
   "author": "Syed Rahman",
   "generated": "2026-10-06",
-  "method": "Deal records rebuild every disclosed Broad Sky transaction (7 companies, the Smith + Howard exit and 21 of 23 add-ons identified by name) from primary press releases fetched 2026-10-06 (Business Wire via FinancialContent mirrors, PR Newswire, bpigroup.com, smith-howard.com, comelectrical.com, broadskypartners.com, Franchise Times, Accounting Today, frontlinems.com, BV and Audax/SFNet releases). They are cross-referenced to the repo's SEC Form D, Form ADV, BDC schedule-of-investments and UK Companies House evidence in Broad Sky firm profile, Thomas Scientific filings, Frontline filings, BPI filings, Punctual Pros filings, CET filings and Fair Harbor filings (retrieved 2026-09-24). quoted rationale strings are copied verbatim from the cited release; size signals marked 'est.' are the repo's labelled estimates, not disclosures. Patterns were inferred by tabulating seller type, advisers, lenders, SPVs, CEO outcomes and add-on timing across the deal records. Criteria weights are analyst inference from those patterns. cadence stats are computed in Python from the deal dates.",
+  "method": "Deal records rebuild every disclosed BSP transaction (7 companies, the Smith + Howard exit and 21 of 23 add-ons identified by name) from primary press releases fetched 2026-10-06 (Business Wire via FinancialContent mirrors, PR Newswire, bpigroup.com, smith-howard.com, comelectrical.com, broadskypartners.com, Franchise Times, Accounting Today, frontlinems.com, BV and Audax/SFNet releases). They are cross-referenced to the repo's SEC Form D, Form ADV, BDC schedule-of-investments and UK Companies House evidence in BSP firm profile, Thomas Scientific filings, Frontline filings, BPI filings, Punctual Pros filings, CET filings and Fair Harbor filings (retrieved 2026-09-24). quoted rationale strings are copied verbatim from the cited release; size signals marked 'est.' are the repo's labelled estimates, not disclosures. Patterns were inferred by tabulating seller type, advisers, lenders, SPVs, CEO outcomes and add-on timing across the deal records. Criteria weights are analyst inference from those patterns. cadence stats are computed in Python from the deal dates.",
   "caveats": [
-   "Weights, strengths and size bands are inferences from public evidence, not Broad Sky's internal screening criteria.",
+   "Weights, strengths and size bands are inferences from public evidence, not BSP's internal screening criteria.",
    "BSP states 23 add-ons; 21 are identified by name here. One Punctual Pros add-on (the BSP portfolio page lists 2) and one Smith + Howard acquisition (the exit release says nine) could not be identified.",
    "Fund I is $335.0M sold per the Apr-2025 Form D/A. The '$137M Fund I' figure in some repo files matches the BSP-FL LP deal vehicle (Frontline), not the main fund.",
    "Smith + Howard is included only as transaction history (portfolio company, add-ons, exit) to read methodology; it is exited and has no opportunity build.",
@@ -28,7 +28,7 @@
    "exits": 1
   },
   "methodology_narrative": [
-   "Broad Sky buys theme-first: every company release frames the deal as the output of a sector thesis the team had already studied, from RJ David's 'over a year' in electrical services before CET to Adam Glucksman's long watch on accounting before Smith + Howard.",
+   "BSP buys theme-first: each deal release frames the company as the output of a sector thesis studied in advance, from RJ David's 'over a year' in electrical services before CET to Adam Glucksman's watch on accounting before Smith + Howard.",
    "Since 2024 the filter has narrowed to essential services. Punctual Pros, Frontline and CET are all non-discretionary, and Fair Harbor remains the only discretionary consumer bet and the only portfolio company besides Frontline with no add-ons.",
    "Anchor acquisitions come from two kinds of seller: sponsor secondaries for the larger checks (Thomas from Carlyle, BPI from Svoboda, Frontline from BV) and founder or partner owners taking first institutional capital for the smaller ones (Fair Harbor, Smith + Howard, Punctual Pros, CET).",
    "In secondaries the outgoing sponsor often rolls a minority (Svoboda at BPI, BV at Frontline), and the inherited CEO is replaced at about 13-15 months (Simmons to Haas at Thomas, Naidoo to Britt at Frontline) while founder CEOs such as Sean Taylor, Matt Buckwalter and John Duquette Jr. stay.",
@@ -118,7 +118,7 @@
    "exit_hold_months": {
     "Smith + Howard": 44.7
    },
-   "basis": "Portfolio company dates are announcement dates from primary releases, except CET, which uses the 2025-02-05 Form D first sale because CET says Broad Sky became majority investor in February 2025 (announced 2025-03-19). Add-on dates are close/effective dates. Add-on rates use BSP's stated counts (23 total; S+H 9, PP 2) over years held to 2026-10-06 (S+H to the 2026-08-06 exit). Months = days/30.4375."
+   "basis": "Portfolio company dates are announcement dates from primary releases, except CET, which uses the 2025-02-05 Form D first sale because CET says BSP became majority investor in February 2025 (announced 2025-03-19). Add-on dates are close/effective dates. Add-on rates use BSP's stated counts (23 total; S+H 9, PP 2) over years held to 2026-10-06 (S+H to the 2026-08-06 exit). Months = days/30.4375."
   },
   "rubric_summary": {
    "weights_pct": {
@@ -165,7 +165,7 @@
    },
    {
     "from": "Capital Constellation (Wafra)",
-    "to": "Broad Sky Partners",
+    "to": "BSP",
     "relation": "Strategic GP investment, Jan 2022",
     "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific"
    },
@@ -463,7 +463,7 @@
    "deal_type": "exit",
    "date": "2026-08-06",
    "seller_type": "pe_sponsor",
-   "seller": "Broad Sky Partners (sale to TPG via TPG Growth; definitive agreement 2026-06-09)",
+   "seller": "BSP (sale to TPG via TPG Growth; definitive agreement 2026-06-09)",
    "buyer_advisor": "Guggenheim Securities (financial to TPG); Weil, Gotshal & Manges (legal to TPG)",
    "seller_advisor": "William Blair (lead financial) and Baird (co-financial) to Smith + Howard and BSP; Morrison Cohen LLP (legal); Levenfeld Pearlstein represented S+H management and partners",
    "lender_or_capital": null,

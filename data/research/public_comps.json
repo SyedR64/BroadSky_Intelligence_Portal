@@ -131,7 +131,7 @@
     "what_this_implies_for_bsp": "Apparel/DTC comps are bifurcated: the median latest-year growth is -1.5% and median operating margin 3.7%, but LULU (19.9%) and CROX (about 25-26% in FY2023-24, before its 2025 impairments) show what brand heat earns, while DLTH, RVLV and BIRD run -2% to 6% or deep losses. Allbirds (revenue down 19.7%, -52% operating margin, headcount 927 to 362 in two years) is the cautionary case for a single-category, DTC-first, sustainability-positioned footwear/apparel brand scaling stores too early. For Fair Harbor, the benchmark is roughly $275k-$500k revenue per employee and a positive high-single-digit EBITDA margin before scaling retail, with wholesale/marketplace mix (as Crocs and Revolve show) preferable to heavy owned-store build-outs."
    }
   },
-  "financial_picture": "Across 31 public peers, the BSP portfolio splits into three economic regimes. (1) Construction and trades (CET / NuWave and Punctual Pros) is the growth engine: commercial electrical/MEP comps compounded revenue at a median 16.8% from FY2023 to FY2025, versus 8.4% for the residential and trade set. The trades still have thin margins, with a median operating margin of 6.4% for commercial electrical, 11.2% approximate EBITDA, and only specialists like FIX (14.4%), IESC (11.4%) and EME (10.1%) at or above 10%, so contractor value creation comes from mix (service, mission-critical) more than price. Residential comps show the split Punctual Pros faces: pure residential installers IBP and TopBuild grew only 1-1.5% in FY2025 at 13-15% operating margins, while the fast growers (FIX, LMB) are leaning on non-residential work. Frontdoor's 24% approximate EBITDA margin on about $1.03M revenue per employee shows the value of a subscription and asset-light contractor-network model in home services. (2) Services and people businesses (Frontline, Smith + Howard, the agency holding) are priced on productivity per head. Offshore BPO earns 12-15% operating margins at only $18k-$35k revenue per employee, while onshore professional services (CBIZ $290k, Kyndryl $210k) earn 3-9%. So a US-heavy legal or accounting company should expect CBIZ-like economics unless it adds offshore leverage. Agencies are ex-growth (median +0.3%, WPP -8.1% in GBP) and consolidating (Omnicom absorbed Interpublic, taking headcount from 74,900 to about 120,000), so a BSP agency asset has to win on specialist growth rather than category tailwind. (3) Product businesses (Thomas Scientific, Fair Harbor) are scale-and-mix stories. Lab distribution grows at a median 1.5% with 4-5% operating margins for pure distributors (HSIC, PDCO), against 17-21% for manufacturers (TMO, TECH), so private-label and proprietary content are the margin lever for Thomas Scientific. Apparel/DTC is the most dispersed sector: LULU earns about 20% operating margin, but Duluth and Allbirds show negative margins and shrinking revenue, and Allbirds went from 927 to 362 employees in two years. For Fair Harbor, capital discipline around retail expansion matters more than top-line speed. Finally, M&A activity among the comps (QXO/TopBuild, the WNS and Patterson take-outs in 2025, Omnicom/Interpublic, Grant Thornton affiliate/CBIZ at $55 cash, Merck KGaA/Bio-Techne) signals active strategic and sponsor demand in four of BSP's six sectors, which supports exit optionality for the portfolio.",
+  "financial_picture": "31 public peers split the BSP portfolio into three economic regimes. (1) Construction and trades (CET, Punctual Pros) lead growth: electrical/MEP comps compounded revenue at 16.8% a year (FY2023-25), versus 8.4% for residential. The trades still have thin margins, with a median operating margin of 6.4% for commercial electrical, 11.2% approximate EBITDA, and only specialists like FIX (14.4%), IESC (11.4%) and EME (10.1%) at or above 10%, so contractor value creation comes from mix (service, mission-critical) more than price. Residential comps show the split Punctual Pros faces: pure residential installers IBP and TopBuild grew only 1-1.5% in FY2025 at 13-15% operating margins, while the fast growers (FIX, LMB) are leaning on non-residential work. Frontdoor's 24% approximate EBITDA margin on about $1.03M revenue per employee shows the value of a subscription and asset-light contractor-network model in home services. (2) Services and people businesses (Frontline, Smith + Howard, the agency holding) are priced on productivity per head. Offshore BPO earns 12-15% operating margins at only $18k-$35k revenue per employee, while onshore professional services (CBIZ $290k, Kyndryl $210k) earn 3-9%. So a US-heavy legal or accounting company should expect CBIZ-like economics unless it adds offshore leverage. Agencies are ex-growth (median +0.3%, WPP -8.1% in GBP) and consolidating (Omnicom absorbed Interpublic, taking headcount from 74,900 to about 120,000), so a BSP agency asset has to win on specialist growth rather than category tailwind. (3) Product businesses (Thomas Scientific, Fair Harbor) are scale-and-mix stories. Lab distribution grows at a median 1.5% with 4-5% operating margins for pure distributors (HSIC, PDCO), against 17-21% for manufacturers (TMO, TECH), so private-label and proprietary content are the margin lever for Thomas Scientific. Apparel/DTC is the most dispersed sector: LULU earns about 20% operating margin, but Duluth and Allbirds show negative margins and shrinking revenue, and Allbirds went from 927 to 362 employees in two years. For Fair Harbor, capital discipline around retail expansion matters more than top-line speed. Finally, M&A activity among the comps (QXO/TopBuild, the WNS and Patterson take-outs in 2025, Omnicom/Interpublic, Grant Thornton affiliate/CBIZ at $55 cash, Merck KGaA/Bio-Techne) signals active strategic and sponsor demand in four of BSP's six sectors, which supports exit optionality for the portfolio.",
   "estimate_table": [
    {
     "metric": "Benchmark revenue per employee, commercial electrical contractor (CET / NuWave)",
@@ -1175,7 +1175,7 @@
    "cik": "0001398659",
    "sector_tag": "legal_bpo_managed_services",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory; Broad Sky sold it in August 2026, so it is kept as a history benchmark only)",
+   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory; BSP sold it in August 2026, so it is kept as a history benchmark only)",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -1265,7 +1265,7 @@
    "cik": "0001297989",
    "sector_tag": "legal_bpo_managed_services",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory; Broad Sky sold it in August 2026, so it is kept as a history benchmark only)",
+   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory; BSP sold it in August 2026, so it is kept as a history benchmark only)",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -1345,7 +1345,7 @@
    "cik": "0001829864",
    "sector_tag": "legal_bpo_managed_services",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory; Broad Sky sold it in August 2026, so it is kept as a history benchmark only)",
+   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory; BSP sold it in August 2026, so it is kept as a history benchmark only)",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -1434,7 +1434,7 @@
    "cik": "0001356570",
    "sector_tag": "legal_bpo_managed_services",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory; Broad Sky sold it in August 2026, so it is kept as a history benchmark only)",
+   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory; BSP sold it in August 2026, so it is kept as a history benchmark only)",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -1518,7 +1518,7 @@
    "secondary_sector_tags": [
     "accounting_advisory (Smith + Howard)"
    ],
-   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory; Broad Sky sold it in August 2026, so it is kept as a history benchmark only)",
+   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory; BSP sold it in August 2026, so it is kept as a history benchmark only)",
    "fiscal_years": [
     {
      "fy": 2023,
@@ -1600,7 +1600,7 @@
    "cik": "0001867072",
    "sector_tag": "legal_bpo_managed_services",
    "secondary_sector_tags": [],
-   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory; Broad Sky sold it in August 2026, so it is kept as a history benchmark only)",
+   "benchmarks_bsp": "Frontline (legal / managed-services company; portal tool \"Frontline Law Firm Target Dashboard\"); CBIZ also benchmarks Smith + Howard (accounting/advisory; BSP sold it in August 2026, so it is kept as a history benchmark only)",
    "fiscal_years": [
     {
      "fy": 2023,

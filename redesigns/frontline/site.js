@@ -48,8 +48,8 @@ export function ring(el, value, { label = 'of 100', color, size = 150, stroke = 
 /* ── Chat FAQ (shared) ───────────────────────────────────────────────────── */
 export const FAQ = [
   { q: 'Do you support AM Law 200 firms?', a: '<p>Yes. Frontline serves <b>900+ law firms</b>, including <b>more than 50% of the AM Law 200</b> and 28% of the AM Law 50 (company release, June 2026). Law firms are the only clients Frontline serves.</p>', href: '#top' },
-  { q: 'What is included in the 24/7 service desk?', a: '<p>A legal-trained desk staffed <b>24/7/365</b> from nine hubs: attorney white-glove and VIP lines, DMS (iManage, NetDocuments), time entry and practice apps, onboarding and departures, trial and deal-room support. It runs on <b>HELIX</b>, Frontline\'s AI-optimized desk (launched at ILTACON, Aug 2025).</p>', href: '#services' },
-  { q: 'How do you handle eBilling, rejections and A/R?', a: '<p>Frontline prepares and submits LEDES invoices to client e-billing portals, checks them against outside counsel guidelines before submission, works the rejection and appeal queue, and follows up on A/R. Accounting was added in Nov 2025. FirmOS targets a return from the 2025 industry rejection rate of <b>18%</b> to <b>11%</b> (Elite research; est.).</p>', href: 'firmos.html#ebilling' },
+  { q: 'What is included in the 24/7 service desk?', a: '<p>A legal-trained desk staffed <b>24/7/365</b> from nine hubs: VIP lines, DMS, time entry, onboarding and trial support. It runs on <b>HELIX</b>, Frontline\'s AI-optimized desk.</p>', href: '#services' },
+  { q: 'How do you handle eBilling, rejections and A/R?', a: '<p>Frontline checks LEDES invoices against outside counsel guidelines, submits them, works rejections and appeals, and follows up on A/R. FirmOS targets a rejection rate of <b>11%</b>, down from <b>18%</b> (est.).</p>', href: 'firmos.html#ebilling' },
   { q: 'What cybersecurity services do you provide?', a: '<p>Managed detection and response with a 24/7 SOC, email and phishing defense, vulnerability and patch management, privileged-access hygiene, incident response and tabletop drills, plus the evidence packs your clients\' security questionnaires and OCGs require.</p>', href: '#assessment' },
   { q: 'How is pricing structured?', a: '<p><b>Concept answer:</b> managed IT and the service desk are scoped as a per-user monthly subscription, and eBilling and A/R are priced on volume. The assessment ends with a fixed proposal, so there are no surprises at renewal.</p>', href: '#contact' },
   { q: 'Which offices do you operate from?', a: '<p>Nine hubs: <b>St. Louis</b> (HQ), Toledo, Honolulu, New York, Toronto, London, Hyderabad, Goa and Cape Town. Together they provide follow-the-sun coverage, so the desk is staffed every hour of every day.</p>', href: '#global' },
@@ -82,7 +82,7 @@ export function common({ Chat, page = 'home', suggestions } = {}) {
   if (Chat) {
     try {
       inst = Chat.mount(null, { persona: 'fl', short_name: 'Frontline', mode: 'floating', theme: 'light', color: ACCENT, name: 'Frontline advisor',
-        greeting: page === 'os' ? 'Ask about FirmOS: the Tier-0 AI desk, the security score card, LEDES pre-flight, the client portal or the value-creation math.' : 'I help law firms scope managed IT, the 24/7 service desk, cybersecurity and eBilling. Ask about coverage, security posture or an assessment.',
+        greeting: page === 'os' ? 'Ask about FirmOS: the Tier-0 AI desk, the security score card, LEDES pre-flight, the client portal or the value math.' : 'I help law firms scope managed IT, the 24/7 service desk, cybersecurity and eBilling. Ask about coverage, security posture or an assessment.',
         faq: FAQ, suggestions: suggestions || SUGGESTIONS });
     } catch (e) { console.warn('chat mount failed', e); }
   }
@@ -200,7 +200,7 @@ function drawMap(el) {
 const INSIGHTS = [
   { cat: 'Revenue cycle', type: 'Report', min: 7, t: 'Rejections jumped from 11% to 18% in 2025. A pre-flight checklist to bring them back.', d: 'Client AI tools now audit every line. These are the five LEDES checks that catch most rejections before submission.', src: 'https://www.elite.com/insights/news/new-elite-research-law-firms-see-64-climb-in-rejection-rates-as-client-ai-billing-scrutiny-advances' },
   { cat: 'Security', type: 'Bulletin', min: 4, t: 'Outside counsel guidelines are the new security questionnaire', d: 'Clients now write MFA, EDR and breach-notice windows into engagement terms. Here is how to keep an evidence library current.' },
-  { cat: 'Service desk', type: 'Guide', min: 6, t: 'What "AI-optimized" should mean on a law-firm service desk', d: 'Tier-0 should handle resets and access requests. Judgment calls should not go to a bot. A field guide to drawing that line.' },
+  { cat: 'Service desk', type: 'Guide', min: 6, t: 'What "AI-optimized" should mean on a law-firm service desk', d: 'Tier-0 handles resets and access requests; judgment calls stay with people. Where to draw the line.' },
   { cat: 'AI', type: 'Guide', min: 8, t: 'Generative AI in the firm: a deployment checklist for IT leaders', d: 'Data boundaries, vendor terms, audit logs and the rollout questions to settle before go-live.' },
   { cat: 'Revenue cycle', type: 'Benchmark', min: 5, t: '62 days to 50: how eBilling automation shortens the cash cycle', d: 'What the fastest-paying firms do differently between invoice approval and cash application.', src: 'https://www.elite.com/insights/news/new-elite-research-law-firms-see-64-climb-in-rejection-rates-as-client-ai-billing-scrutiny-advances' },
   { cat: 'Service desk', type: 'Event', ic: 'i-users', min: 2, t: 'Meet Frontline at ILTACON and ALA', d: 'Tabletop demos, the FirmOS posture score and a CIO roundtable on co-managed IT. Book time with the team.' },
@@ -236,7 +236,7 @@ async function rationale({ Data, esc }) {
   if (!refs.length) { el.innerHTML = '<p class="sys-src">Design reference dataset not available.</p>'; return; }
   const order = ['ref-fl-vantatrust', 'ref-fl-harbor', 'ref-fl-its', 'ref-fl-kraftkennedy'];
   refs.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
-  const clean = t => (window.BSPFrame ? window.BSPFrame.humanizeText(String(t ?? '')) : String(t ?? '')).replace(/\bBSP\b/g, 'Broad Sky');
+  const clean = t => (window.BSPFrame ? window.BSPFrame.humanizeText(String(t ?? '')) : String(t ?? '')).replace(/\bBSP\b/g, 'BSP');
   const PRINCIPLE = { 'ref-fl-vantatrust': 'Prove security continuously, in public', 'ref-fl-harbor': 'One brand over the roll-up', 'ref-fl-its': 'Let prospects build their own business case', 'ref-fl-kraftkennedy': 'Serve existing clients from the top bar' };
   const unbrand = (r, t) => {
     const parts = String(r.name || '').split(/[()]/).map(n => n.trim()).filter(Boolean);
@@ -245,7 +245,7 @@ async function rationale({ Data, esc }) {
     for (const n of names) { const rx = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); s = s.replace(new RegExp(`\\s*\\([^)]*\\b${rx}\\b[^)]*\\)`, 'g'), '').replace(new RegExp(`\\b${rx}(?:'s)?\\b`, 'g'), 'the reference'); }
     return s;
   };
-  el.innerHTML = refs.map(r => `<article class="sys-card ref"><div class="hd"><h3 class="sys-card-title">${esc(PRINCIPLE[r.id] || unbrand(r, r.elements_to_borrow?.[0]?.element))}</h3></div><div class="sys-table-wrap"><table class="sys-table"><thead><tr><th>Element</th><th>What it does for conversion or value</th></tr></thead><tbody>${(r.elements_to_borrow || []).slice(0, 3).map(x => `<tr><td>${esc(unbrand(r, x.element))}</td><td>${esc(unbrand(r, x.what_it_does_for_conversion_or_valuation))}</td></tr>`).join('')}</tbody></table></div>${HERE[r.id] ? `<p class="sys-card-body"><b>Used here:</b> ${esc(HERE[r.id][0])} → <i>${esc(HERE[r.id][1])}</i></p>` : ''}</article>`).join('');
+  el.innerHTML = refs.map(r => `<article class="sys-card ref"><div class="hd"><h3 class="sys-card-title">${esc(PRINCIPLE[r.id] || unbrand(r, r.elements_to_borrow?.[0]?.element))}</h3></div>${HERE[r.id] ? `<p class="sys-card-body">${esc(HERE[r.id][0])}.</p><p class="sys-src">See: ${esc(HERE[r.id][1])}</p>` : ''}</article>`).join('');
 }
 
 function leadForm() {

@@ -1,10 +1,10 @@
 {
   "meta": {
     "dataset": "cet_filings",
-    "title": "Commonwealth Electrical Technologies (Broad Sky Partners) – filings & financial research track",
+    "title": "Commonwealth Electrical Technologies (BSP) – filings & financial research track",
     "subject": {
       "platform": "Commonwealth Electrical Technologies (CET), Worcester & Taunton MA",
-      "sponsor": "Broad Sky Partners (majority investor since Feb 2025; announced 2025-03-19)",
+      "sponsor": "BSP (majority investor since Feb 2025; announced 2025-03-19)",
       "add_ons": [
         "NuWave Energy Solutions (Norwell MA; announced 2025-10-07)",
         "Horton Electrical Services (Canton/Collinsville CT; announced 2026-09-15)"
@@ -63,17 +63,17 @@
       }
     ],
     "caveats": [
-      "All revenue, EBITDA, leverage and valuation figures in estimate table are analyst inferences from payroll, headcount and fund-size proxies. None is disclosed by CET, Broad Sky or any lender.",
+      "All revenue, EBITDA, leverage and valuation figures in estimate table are analyst inferences from payroll, headcount and fund-size proxies. None is disclosed by CET, BSP or any lender.",
       "PPP-implied payroll caps compensation at $100k per employee and reflects 2019/early-2020 conditions (pre-PE, pre-add-ons).",
       "Form ADV gross asset value for the co-invest vehicle may include cash or fee accruals and is a manager mark, not a transaction price.",
       "The EDGAR full-text hit for 'Broad Sky' in Capital Southwest 10-Ks refers to 'Broad Sky Networks, LLC' (an unrelated telecom borrower). 'CET Acquisition CO Inc' (CIK 1416379) is an unrelated 2007 paper Reg D filer.",
       "'Horton Electrical Services, Inc.' (Maryland; DoD 2015 award) and the Horton party in the Center City Healthcare bankruptcy are different entities from the CT Horton acquired by CET.",
       "The OSHA records for 'Commonwealth Electrical Technologies, Inc.' show a Devens MA mailing address and NAICS 237130. The name matches exactly and the sites are in CET's service area, but entity identity was not independently confirmed.",
-      "The relayed user request asks for coverage of the entire Broad Sky portfolio and rivals. This file covers the CET portfolio company (CET, NuWave, Horton) plus CET-relevant rivals and public comps only; other portfolio companies are handled in separate files.",
+      "The relayed user request asks for coverage of the entire BSP portfolio and rivals. This file covers the CET portfolio company (CET, NuWave, Horton) plus CET-relevant rivals and public comps only; other portfolio companies are handled in separate files.",
       "Verified 2026-09-24: sampled 25, confirmed 24, removed 0"
     ],
     "item_count": 25,
-    "financial_picture": "1) Pre-deal scale: CET's April 2020 PPP loan ($2.062M, 121 jobs) implies about $9.9M of annual payroll. At the 30–40% labor-to-revenue ratio typical of commercial electrical contractors, 2019 revenue was roughly $25–33M. 2) By October 2025 CET reported about 140 employees (the brief's ~160 'licensed professionals' may count differently). Applying $250–375k revenue per employee, bracketed by IES Holdings' ~$328k, gives 2025 standalone revenue of about $35–55M (midpoint ~$45M). 3) At the 8–12% EBITDA margins seen at Limbach (~10%) and IES (~13%, high end), CET's standalone EBITDA at entry was probably about $3–6M, a true lower-middle-market company. 4) The equity structure supports that scale. The only co-invest was one LP writing $7.5M (Form D, first sale 2025-02-05), from a ~$335M fund where a typical position is $25–50M. Total equity was therefore likely ~$25–45M. 5) Applying the brief's 3.5–5.5x LMM leverage to $3–6M of EBITDA implies $10–33M of senior debt at close. Entry enterprise value was likely ~$35–75M (~9–12x), but none of the debt is visible. 6) No BDC schedule, lender press release, Form D debt vehicle or credit rating names CET, 'CET Acquisition Holdings, LLC' or Horton. EDGAR full-text search found zero hits and 73 downloaded BDC/credit-fund filings were negative. So the facility most likely sits with a bank or a non-SEC-reporting private lender or SBIC. 7) Broad Sky's March 2026 Form ADV marks the CET co-invest vehicle at $8.504M against $7.5M invested (1.13x gross). That modest markup fits the NuWave tuck-in plus organic growth, not a re-rating. 8) NuWave was tiny at acquisition (PPP: 4 jobs in 2020, founded 2019) and adds engineering/design-build capability, not scale; call it $2–10M of revenue (low confidence). 9) Horton is the transformational add-on. Its 2020 PPP ($646k, 42 jobs, ~$3.1M payroll) has grown to 120+ staff, so revenue is plausibly ~$25–40M today. CET says the deal 'nearly doubles' the workforce. 10) Pro forma for both add-ons, the company is roughly 260–290 employees, $65–100M revenue and $6–11M EBITDA (low confidence). Horton was bought by the CET LLC subsidiary with no new Broad Sky Form D, so it was likely funded with incremental or delayed-draw debt plus seller rollover, pushing leverage toward the upper half of the 3.5–5.5x band. 11) Offsetting positives: a clean OSHA history, no material litigation, full PPP forgiveness, and state-funded program work (MassCEC On-Street Charging prime vendor, CT Clean Water Fund wastewater exposure via Horton). Watch items: a likely related-party lease of Horton's Canton facility (97 River Road CBP, LLC) and a possible Duquette-affiliated mechanical firm (A. Duquette & Son) across the street from CET HQ.",
+    "financial_picture": "1) Pre-deal scale: CET's April 2020 PPP loan ($2.062M, 121 jobs) implies about $9.9M of annual payroll. At the 30–40% labor-to-revenue ratio typical of commercial electrical contractors, 2019 revenue was roughly $25–33M. 2) By October 2025 CET reported about 140 employees (the brief's ~160 'licensed professionals' may count differently). Applying $250–375k revenue per employee, bracketed by IES Holdings' ~$328k, gives 2025 standalone revenue of about $35–55M (midpoint ~$45M). 3) At the 8–12% EBITDA margins seen at Limbach (~10%) and IES (~13%, high end), CET's standalone EBITDA at entry was probably about $3–6M, a true lower-middle-market company. 4) The equity structure supports that scale. The only co-invest was one LP writing $7.5M (Form D, first sale 2025-02-05), from a ~$335M fund where a typical position is $25–50M. Total equity was therefore likely ~$25–45M. 5) Applying the brief's 3.5–5.5x LMM leverage to $3–6M of EBITDA implies $10–33M of senior debt at close. Entry enterprise value was likely ~$35–75M (~9–12x), but none of the debt is visible. 6) No BDC schedule, lender press release, Form D debt vehicle or credit rating names CET, 'CET Acquisition Holdings, LLC' or Horton. EDGAR full-text search found zero hits and 73 downloaded BDC/credit-fund filings were negative. So the facility most likely sits with a bank or a non-SEC-reporting private lender or SBIC. 7) BSP's March 2026 Form ADV marks the CET co-invest vehicle at $8.504M against $7.5M invested (1.13x gross). That modest markup fits the NuWave tuck-in plus organic growth, not a re-rating. 8) NuWave was tiny at acquisition (PPP: 4 jobs in 2020, founded 2019) and adds engineering/design-build capability, not scale; call it $2–10M of revenue (low confidence). 9) Horton is the transformational add-on. Its 2020 PPP ($646k, 42 jobs, ~$3.1M payroll) has grown to 120+ staff, so revenue is plausibly ~$25–40M today. CET says the deal 'nearly doubles' the workforce. 10) Pro forma for both add-ons, the company is roughly 260–290 employees, $65–100M revenue and $6–11M EBITDA (low confidence). Horton was bought by the CET LLC subsidiary with no new BSP Form D, so it was likely funded with incremental or delayed-draw debt plus seller rollover, pushing leverage toward the upper half of the 3.5–5.5x band. 11) Offsetting positives: a clean OSHA history, no material litigation, full PPP forgiveness, and state-funded program work (MassCEC On-Street Charging prime vendor, CT Clean Water Fund wastewater exposure via Horton). Watch items: a likely related-party lease of Horton's Canton facility (97 River Road CBP, LLC) and a possible Duquette-affiliated mechanical firm (A. Duquette & Son) across the street from CET HQ.",
     "estimate_table": [
       {
         "metric": "CET annual payroll, 2019/early 2020",
@@ -106,7 +106,7 @@
         "confidence": "low"
       },
       {
-        "metric": "Broad Sky equity in CET (fund + co-invest)",
+        "metric": "BSP equity in CET (fund + co-invest)",
         "estimate": "$25–45M",
         "basis": "$7.5M single-LP co-invest (Form D); ~$335M fund (typical 8–15% position size)",
         "confidence": "low"
@@ -126,7 +126,7 @@
       {
         "metric": "CET co-invest mark at FYE2025",
         "estimate": "1.13x gross ($8,504,193 GAV on $7.5M)",
-        "basis": "Broad Sky Form ADV Schedule D 7.B.(1) filed 2026-03-31",
+        "basis": "BSP Form ADV Schedule D 7.B.(1) filed 2026-03-31",
         "confidence": "high"
       },
       {
@@ -183,7 +183,7 @@
       "CT DEEP Clean Water Fund project records and municipal WPCA bid tabulations (e.g., Newington, Canton, Hartford-area pump stations) naming Horton as electrical sub or prime with values.",
       "MassCEC Production Tracking System and SMART qualified-units data filtered on installer 'Commonwealth Electrical' (solar capacity installed per year as a revenue proxy).",
       "MassCEC public-records request for the On-Street Charging Solutions vendor contract (CET/Leidos) value.",
-      "Broad Sky's next Form ADV (Mar 2027) for the updated BSP-CET Co-Invest gross asset value; monitor EDGAR for any Form D/A or new co-invest tied to the Horton deal.",
+      "BSP's next Form ADV (Mar 2027) for the updated BSP-CET Co-Invest gross asset value; monitor EDGAR for any Form D/A or new co-invest tied to the Horton deal.",
       "ENR New England 'Top Specialty Contractors' and NECA chapter listings (CET, Horton, Ostrow, Interstate, J&M Brown) for disclosed revenue bands.",
       "Worcester and Canton CT assessor records for 125 Blackstone River Rd and 97 River Rd (ownership, assessed value; possible sale-leasebacks).",
       "SAM.gov entity registrations (UEI, CAGE) for CET LLC and Horton LLC; MA/CT prevailing-wage certified payroll postings on major public jobs."
@@ -192,7 +192,7 @@
   "items": [
     {
       "id": "cet-001",
-      "entity": "BSP-CET Co-Invest LLC (Broad Sky co-invest vehicle for Commonwealth Electrical Technologies)",
+      "entity": "BSP-CET Co-Invest LLC (BSP co-invest vehicle for Commonwealth Electrical Technologies)",
       "category": "sec_form_d",
       "title": "Form D: BSP-CET Co-Invest LLC, $7.5M sold to one investor",
       "filed_or_dated": "2025-02-18 (date of first sale 2025-02-05)",
@@ -207,7 +207,7 @@
         "entity_type": "Delaware LLC, pooled private equity fund, not 40-Act registered",
         "revenue_range": "Decline to Disclose"
       },
-      "what_it_tells_us": "This is the only SEC filing tied directly to the CET deal. It dates the closing to about February 5, 2025, about six weeks before the March 19 announcement. A single $7.5M co-investor sat alongside Broad Sky Partners, LP, so the fund wrote most of the equity check. The co-invest is small next to Broad Sky's Thomas Scientific co-invests (about $35.9M and $59.6M), which points to a much smaller deal.",
+      "what_it_tells_us": "This is the only SEC filing tied directly to the CET deal. It dates the closing to about February 5, 2025, about six weeks before the March 19 announcement. A single $7.5M co-investor sat alongside Broad Sky Partners, LP, so the fund wrote most of the equity check. The co-invest is small next to BSP's Thomas Scientific co-invests (about $35.9M and $59.6M), which points to a much smaller deal.",
       "confidence": "high",
       "source_url": "https://www.sec.gov/Archives/edgar/data/2056574/000205657425000001/xslFormDX01/primary_doc.xml",
       "retrieved": "2026-09-24"
@@ -232,7 +232,7 @@
         "firm_employees": 12,
         "investment_professionals": 10
       },
-      "what_it_tells_us": "At fiscal year-end 2025, Broad Sky reported the CET co-invest vehicle's gross asset value at $8.50M on $7.5M paid in. That is about a 1.13x gross mark roughly 11 months after closing, after the NuWave add-on. It suggests CET was held above cost, but gross asset value can include cash or fee accruals, so it is not a clean read on equity value.",
+      "what_it_tells_us": "At fiscal year-end 2025, BSP reported the CET co-invest vehicle's gross asset value at $8.50M on $7.5M paid in. That is about a 1.13x gross mark roughly 11 months after closing, after the NuWave add-on. It suggests CET was held above cost, but gross asset value can include cash or fee accruals, so it is not a clean read on equity value.",
       "confidence": "high",
       "source_url": "https://reports.adviserinfo.sec.gov/reports/ADV/317966/PDF/317966.pdf",
       "retrieved": "2026-09-24"
@@ -241,7 +241,7 @@
       "id": "cet-003",
       "entity": "Broad Sky Partners, LP (Fund I)",
       "category": "sec_form_d",
-      "title": "Form D and D/A series for Broad Sky's flagship fund (commitments raised over time)",
+      "title": "Form D and D/A series for BSP's flagship fund (commitments raised over time)",
       "filed_or_dated": "2022-03-22; D/A filed 2023-04-20 (signed 2023-04-17), 2024-04-16, 2025-04-30",
       "filer_or_source_agency": "SEC EDGAR (CIK 0001917706)",
       "key_figures": {
@@ -350,7 +350,7 @@
         "lender": "Webster Five Cents Savings Bank (same as CET)",
         "business_type": "Subchapter S Corporation"
       },
-      "what_it_tells_us": "A Duquette-named mechanical contractor sits at 104 Blackstone River Rd, across from CET's 125 Blackstone River Rd, and used the same lender. It may be a family affiliate or related party, but that is unverified. If related, it matters for shared-services or real-estate arrangements and for CET's 'electrical, mechanical and energy' positioning. Whether it was part of the Broad Sky transaction is unknown.",
+      "what_it_tells_us": "A Duquette-named mechanical contractor sits at 104 Blackstone River Rd, across from CET's 125 Blackstone River Rd, and used the same lender. It may be a family affiliate or related party, but that is unverified. If related, it matters for shared-services or real-estate arrangements and for CET's 'electrical, mechanical and energy' positioning. Whether it was part of the BSP transaction is unknown.",
       "confidence": "low",
       "source_url": "https://data.sba.gov/sites/default/files/distribution/SBA-OCA-2022-07-001/public_150k_plus_240930.csv",
       "retrieved": "2026-09-24"
@@ -395,7 +395,7 @@
         ],
         "naics": "238210"
       },
-      "what_it_tells_us": "The legacy S-corp withdrew from CT the day before the new Delaware LLC registered. This fits an asset or LLC-conversion carve-out into the Broad Sky structure (F-reorg/asset step-up), which is common for S-corp targets. CET has been licensed and working in CT since 2008.",
+      "what_it_tells_us": "The legacy S-corp withdrew from CT the day before the new Delaware LLC registered. This fits an asset or LLC-conversion carve-out into the BSP structure (F-reorg/asset step-up), which is common for S-corp targets. CET has been licensed and working in CT since 2008.",
       "confidence": "high",
       "source_url": "https://data.ct.gov/resource/n7gp-d28j.json?accountnumber=1080707",
       "retrieved": "2026-09-24"
@@ -417,7 +417,7 @@
         "legacy_principal": "Warren Horton",
         "address": "97 River Road, Canton CT 06019"
       },
-      "what_it_tells_us": "These filings confirm the September 15, 2026 Horton deal closed into a CET-owned Delaware LLC, a wholly owned subsidiary of CET LLC, with the old Horton LLC merged in. Horton was bought by the CET operating subsidiary rather than a separate Broad Sky vehicle. So it was likely funded with CET-level debt (delayed-draw or incremental term loan) and/or seller rollover, not a new Form D co-invest. No new BSP Form D was found as of 2026-09-24.",
+      "what_it_tells_us": "These filings confirm the September 15, 2026 Horton deal closed into a CET-owned Delaware LLC, a wholly owned subsidiary of CET LLC, with the old Horton LLC merged in. Horton was bought by the CET operating subsidiary rather than a separate BSP vehicle. So it was likely funded with CET-level debt (delayed-draw or incremental term loan) and/or seller rollover, not a new Form D co-invest. No new BSP Form D was found as of 2026-09-24.",
       "confidence": "high",
       "source_url": "https://data.ct.gov/resource/n7gp-d28j.json?accountnumber=3518996",
       "retrieved": "2026-09-24"
@@ -505,7 +505,7 @@
         "union_status": "NonUnion",
         "naics": "238210"
       },
-      "what_it_tells_us": "Horton's record is minor, one fall-protection citation settled informally for $3,126, and not material. Both companies are non-union, which fits Broad Sky's merit-shop roll-up strategy.",
+      "what_it_tells_us": "Horton's record is minor, one fall-protection citation settled informally for $3,126, and not material. Both companies are non-union, which fits BSP's merit-shop roll-up strategy.",
       "confidence": "high",
       "source_url": "https://www.osha.gov/ords/imis/establishment.inspection_detail?id=1662676.015",
       "retrieved": "2026-09-24"
@@ -560,7 +560,7 @@
       "id": "cet-017",
       "entity": "Commonwealth Electrical Technologies / NuWave Energy Solutions",
       "category": "press_financial",
-      "title": "CET acquires NuWave Energy Solutions (first add-on under Broad Sky)",
+      "title": "CET acquires NuWave Energy Solutions (first add-on under BSP)",
       "filed_or_dated": "2025-10-07",
       "filer_or_source_agency": "CET press release; also Electrical Wholesaling, EC&M, PE Hub, CityBiz, WBJ, BBJ",
       "key_figures": {

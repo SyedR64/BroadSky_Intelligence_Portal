@@ -2,7 +2,7 @@
   "meta": {
     "dataset": "CET New England Opportunity Radar",
     "generated": "2026-09-24",
-    "portfolio_company": "Commonwealth Electrical Technologies (CET) - Broad Sky Partners; add-ons NuWave Energy Solutions (Oct 2025) and Horton Electrical Services (Sep 15, 2026)",
+    "portfolio_company": "Commonwealth Electrical Technologies (CET) - BSP; add-ons NuWave Energy Solutions (Oct 2025) and Horton Electrical Services (Sep 15, 2026)",
     "method": "Pulled funded/ranked wastewater and pump-station projects from the CT DEEP Clean Water Fund FY26-27 draft priority list, the Maine DEP FFY2026 CWSRF Intended Use Plan and the Vermont 2026 CWSRF legislative report, then scanned live public solicitations on BidNet Direct (MA, CT, RI, NH, ME, VT), the Vermont Business Registry, municipal Bonfire portals and owner project pages. Federal awards came from the USASpending API (awards search, NAICS 238210/237110/237130/236220, New England place of performance, 2026 start dates). EV, solar and storage programs came from state agency and program-administrator pages. Each item is scored 0-100 on fit with CET's capabilities (with extra weight for Horton's wastewater, pump-station and generator work), distance from Worcester/Taunton/Connecticut crews, how well-defined the scope is, and timing.",
     "sources_summary": [
       "CT DEEP Clean Water Fund Priority List FY2026-2027 (portal.ct.gov)",

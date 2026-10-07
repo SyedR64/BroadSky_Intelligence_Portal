@@ -2,7 +2,7 @@
    (CET growth plan, opportunity radar, wastewater-plant screen, add-on screen, filings review,
    county fit model, sponsor landscape, firm profile, GridOS evidence base, portfolio agent model).
    The page frame (top bar, concept notice, breadcrumb, footer) comes from assets/frame.js. */
-import { humanizeText } from '../../assets/frame.js?v=20261006180606';
+import { humanizeText } from '../../assets/frame.js?v=20261006224618';
 
 const NE = ['MA', 'CT', 'RI', 'NH', 'ME', 'VT'];
 const STATE_NAME = { MA: 'Massachusetts', CT: 'Connecticut', RI: 'Rhode Island', NH: 'New Hampshire', ME: 'Maine', VT: 'Vermont' };
@@ -44,7 +44,7 @@ const PLAIN = [
   [/\s*\((?:meta\.)?kpi_roadmap\)/g, ''], [/\bmeta\.kpi_roadmap\b|\bkpi_roadmap\b/g, 'the 36-month roadmap'], [/\bkpi_targets\b/g, 'the phase targets'],
   [/\bcet_filings\b/g, 'our filings review'], [/\bserviceos_evidence\b/g, 'the GridOS evidence base'], [/\bcet_wwtp_targets\b/g, 'the wastewater screen'],
   [/\bcet_opportunities\b/g, 'the bid radar'], [/\bma_targets_cet\b/g, 'the add-on screen'], [/\bcet_ne_counties\b/g, 'the county screen'],
-  [/\bpe_landscape\b/g, 'the sponsor landscape'], [/\bbsp_firm\b/g, 'the Broad Sky firm profile'], [/\bai_agents_portfolio\b/g, 'the portfolio agent model'], [/\bpp_nationwide\b/g, 'the Punctual Pros research'],
+  [/\bpe_landscape\b/g, 'the sponsor landscape'], [/\bbsp_firm\b/g, 'the BSP firm profile'], [/\bai_agents_portfolio\b/g, 'the portfolio agent model'], [/\bpp_nationwide\b/g, 'the Punctual Pros research'],
   [/\best_value_usd\b/g, 'estimated value'], [/\bpipeline_value_usd\b/g, 'pipeline value'], [/\bproject_value_usd\b/g, 'project value'],
   [/\b(?:meta\.)?estimate_table\b/g, 'estimate table'], [/\bdata_gaps\b/g, 'data gaps'], [/\bdata_points\b/g, 'data points'],
   [/\s+(?:ra-cet|cet-\d{3})\b/g, ''], [/\(baseline null\)/g, '(baseline not public)'], [/\bbaseline null\b/g, 'baseline not public'],
@@ -113,16 +113,16 @@ function kpis() {
   const r = D.road; if (!r.length) return;
   const a = r[0], z = r[r.length - 1];
   const defs = [
-    { l: 'Revenue', k: 'revenue_usd', f: M, n: 'Pro forma run-rate' },
+    { l: 'Revenue', k: 'revenue_usd', f: M, n: 'Pro forma run-rate, month 0 to 36' },
     { l: 'EBITDA', k: 'ebitda_usd', f: M, n: `${(a.ebitda_usd / a.revenue_usd * 100).toFixed(1)}% to ${(z.ebitda_usd / z.revenue_usd * 100).toFixed(1)}% margin` },
     { l: 'People', k: 'headcount', f: N, n: 'Licensed electricians are the constraint' },
-    { l: 'Sites', k: 'locations_or_accounts', f: N, n: `${a.locations_or_accounts} today in 2 states; the plan reaches all 6` },
+    { l: 'Sites', k: 'locations_or_accounts', f: N, n: `${a.locations_or_accounts} today in 2 states; then all 6` },
   ];
   $('#kpis').innerHTML = defs.map(d => { const max = Math.max(...r.map(x => x[d.k] || 0)); return `<div class="sys-kpi" data-co="cet">
     <span class="sys-kpi-label">${d.l}</span>
     <span class="sys-kpi-value"><span class="pb-kfrom">${d.f(a[d.k])} →</span>${d.f(z[d.k])}${EST}<span class="pb-kx">${(z[d.k] / a[d.k]).toFixed(1)}x</span></span>
     <div class="pb-spark" aria-hidden="true">${r.map(x => `<i style="height:${Math.max(8, (x[d.k] / max) * 100)}%" title="Month ${x.month}"></i>`).join('')}</div>
-    <span class="sys-kpi-sub">Months 0, 12, 24 and 36. ${H.esc(d.n)}.</span></div>`; }).join('');
+    <span class="sys-kpi-sub">${H.esc(d.n)}</span></div>`; }).join('');
 }
 
 function strip() {
@@ -134,11 +134,11 @@ function strip() {
   const sp = D.pe.filter(p => (p.overlap_with_bsp || []).includes('cet')); const hi = sp.filter(p => p.threat_level === 'high').length;
   const cells = [
     ['Bid radar', N(D.opp.length), `Bids and programs · ${open} open now`],
-    ['Wastewater projects', N(proj.length), `Funded or requested plant and pump-station projects · ${M(projV)} total project cost*`],
+    ['Wastewater projects', N(proj.length), `Plant and pump-station projects · ${M(projV)}*`],
     ['Add-on targets', N(D.tgt.length), `${fit70} score 70 or more`],
     ['Counties scored', N(D.counties.length), `New England · ${t12} in tiers 1–2`],
-    ['Competing sponsors', N(sp.length), `PE firms chasing similar deals · ${hi} high threat`],
-    ['High-fit bids', N(fit80), 'Radar items scoring 80 or more; first through GridOS go/no-go'],
+    ['Competing sponsors', N(sp.length), `Sponsors chasing similar deals · ${hi} high threat`],
+    ['High-fit bids', N(fit80), 'Radar items scoring 80 or more'],
   ];
   $('#hero-strip').innerHTML = cells.map(([l, b, s]) => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${H.esc(l)}</span><span class="sys-kpi-value">${H.esc(b)}</span><span class="sys-kpi-sub">${H.esc(s)}</span></div>`).join('');
   const sn = $('#strip-note'); if (sn) sn.innerHTML = `<b>Source:</b> CET opportunity radar, wastewater-plant screen, add-on screen, county fit model and sponsor landscape, Sept 2026. *One wastewater measure is used throughout this page: the ${N(proj.length)} plant and pump-station projects that are funded or requested on the CT, MA and RI state lists, at the applicant’s total project cost (${M(projV)}). CET’s electrical scope is typically about 10–20% of that, so the addressable work is roughly ${M(projV * .1)}–${M(projV * .2)}${EST}. Bid-radar values are a separate universe (see the state table).`;
@@ -178,7 +178,7 @@ function template() {
   $('#compare').innerHTML = `<span class="sys-card-label">Template against this plan</span><h3 class="sys-card-title">Smith + Howard and the CET plan</h3><p class="sys-card-body">Smith + Howard facts are sourced. CET figures are labelled assumptions.</p>
     <table class="pb-cmp"><thead><tr><th></th><th>Smith + Howard</th><th>CET plan</th></tr></thead><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody></table>
     <div class="sys-note sys-note--co"><span><b>Why about 3x and not 4x.</b> CET starts about 2.7x larger by headcount than Smith + Howard did. The multiple comes from mix (recurring O&amp;M) and margin (10% to 12.5%), not only from adding sites.</span></div>
-    <div class="sys-note sys-note--info"><span><b>The hold is longer.</b> Smith + Howard took about 3.7 years. CET reaches month 36 about 4.7 years after Broad Sky’s entry, so the returns card in section 07 shows IRR as well as MOIC.</span></div>`;
+    <div class="sys-note sys-note--info"><span><b>The hold is longer.</b> Smith + Howard took about 3.7 years. CET reaches month 36 about 4.7 years after BSP’s entry, so the returns card in section 07 shows IRR as well as MOIC.</span></div>`;
 }
 const fmtDate = s => { if (!s) return ''; const [y, m, d] = String(s).split('-'); const mo = m ? new Date(2000, +m - 1, 1).toLocaleString('en-US', { month: 'short' }) : ''; return [mo, d ? +d : '', y].filter(Boolean).join(' ').replace(/ (\d{4})$/, d ? ', $1' : ' $1'); };
 
@@ -379,7 +379,7 @@ function addons() {
   draw('All');
   $$('button', seg).forEach(b => b.onclick = () => { $$('button', seg).forEach(x => { x.setAttribute('aria-selected', x === b); x.setAttribute('aria-pressed', x === b); }); draw(b.dataset.s); });
   const med = D.pb?.items?.find(x => x.id === 'cp-phase-2')?.data_points?.target_screen_median_revenue_usd;
-  $('#ad-sub').innerHTML = `Ranked from the portal’s add-on screen. Fit is scored out of 100 on capability, geography, scale and ownership readiness. Median target: ${M(med)} revenue${EST}, about 71 staff. Revenue figures are ZoomInfo models and still need checking.`;
+  $('#ad-sub').innerHTML = `Ranked from the portal’s add-on screen, fit out of 100. Median target: ${M(med)} revenue${EST}, about 71 staff.`;
   const maxC = Math.max(...NE.map(s => T.filter(t => t.state === s).length));
   $('#ad-states').innerHTML = `<h3 class="sys-card-title">Targets by state</h3><div class="pb-bars-h">${NE.map(s => { const n = T.filter(t => t.state === s).length, f = T.filter(t => t.state === s && t.fit_score >= 70).length; return `<div class="pb-bh-r"><b>${s}</b><div class="pb-tr"><i class="is-fit" style="width:${(f / maxC) * 100}%"></i><i style="width:${((n - f) / maxC) * 100}%"></i></div><span>${n}</span></div>`; }).join('')}</div><p class="sys-src"><i class="pb-key is-fit"></i>Fit 70 or more <i class="pb-key"></i>Other. Outside MA, only one target scores 70 or more. <b>Source:</b> CET add-on screen, Sept 2026.</p>`;
   const hd = [['Day 0', 'Retention agreements for named managers. The brand, license holders and 24/7 on-call crews stay in place.'], ['Weeks 1–4', 'Estimating moves onto Accubid and the GridOS bid board. The add-on’s bids start going through go/no-go scoring.'], ['Weeks 4–8', 'Safety, payroll, AP and job costing move onto the shared back office. Apprentices enroll in the MA/CT tax credits.'], ['Month 3', 'Crew scheduling moves onto the shared bench, so labor can be lent across MA, CT and new states.'], ['Months 3–6', 'Cross-sell: CET generators and controls, plus NuWave efficiency work, into the add-on’s accounts.'], ['Month 6+', 'Field practices change last. Measure against the lever baselines.']];
@@ -392,7 +392,7 @@ function addons() {
 
 /* ── financing ──────────────────────────────────────────────────────────── */
 const FIN_OVERRIDE = {
-  'cp-fin-01': { source_of_funds: 'Sponsor equity and co-invest', amount_or_range: 'Co-invest vehicle (Form D, Feb 2025)', evidence: 'Broad Sky has already set up a dedicated CET co-invest vehicle alongside the fund. A Phase 2 add-on wave can reuse that route instead of drawing only on the fund.' },
+  'cp-fin-01': { source_of_funds: 'Sponsor equity and co-invest', amount_or_range: 'Co-invest vehicle (Form D, Feb 2025)', evidence: 'BSP has already set up a dedicated CET co-invest vehicle alongside the fund. A Phase 2 add-on wave can reuse that route instead of drawing only on the fund.' },
 };
 function finance() {
   $('#fin-grid').innerHTML = D.K('financing').map(f => ({ ...f, ...(FIN_OVERRIDE[f.id] || {}) })).map((f, k) => `<article class="sys-card pb-fin" data-co="cet"><span class="sys-card-label">Source of funds ${k + 1}</span><h3 class="sys-card-title">${H.esc(f.source_of_funds)}</h3><div class="pb-amt sys-num">${H.esc(f.amount_or_range)}</div><p class="sys-card-body">${H.esc((() => { const ss = String(f.evidence).split('. '); const two = ss.slice(0, 2).join('. '); return (two.length > 260 ? ss[0] : two).replace(/\.$/, ''); })())}.</p><p class="sys-src"><b>Source:</b> ${srcA(f.source_url)}</p></article>`).join('');
@@ -512,7 +512,7 @@ function risks() {
 function sources() {
   const m = D.pb?.meta || {}; const urls = [...new Set(D.items.flatMap(i => [i.source_url, ...(i.source_urls || [])]).filter(Boolean))];
   const byHost = {}; urls.forEach(u => { const h = host(u); (byHost[h] = byHost[h] || []).push(u); });
-  const method = `Template events come from Broad Sky, Smith + Howard and trade-press releases (Accounting Today, CPA Practice Advisor), checked ${fmtDate(m.generated) || '—'}. Vertical analogs (Pfingsten NEC Group, Ridgemont Crete United, Kohlberg Loenbro, IES Holdings) come from PE Hub, PrivSource and SEC 8-K filings. AI-agent, talent and growth-lever evidence comes from vendor case studies, government sources (BLS, DOL, mass.gov, CT DRS, EPA, NREL, ISO-NE, PJM) and banker and legal commentary (Taft, Capstone/IMAP, PKF, GF Data). Phase figures are computed from the portal's research: the bid radar (${D.opp.length} items), the wastewater screen (${D.wwtp.length} plants), the add-on screen (${D.tgt.length} targets), the county fit model (${D.counties.length} counties), our filings review and the GridOS evidence base. Every revenue, EBITDA, headcount and margin target is an analyst assumption anchored to filings-based estimates.`;
+  const method = `Template events come from BSP, Smith + Howard and trade-press releases (Accounting Today, CPA Practice Advisor), checked ${fmtDate(m.generated) || '—'}. Vertical analogs (Pfingsten NEC Group, Ridgemont Crete United, Kohlberg Loenbro, IES Holdings) come from PE Hub, PrivSource and SEC 8-K filings. AI-agent, talent and growth-lever evidence comes from vendor case studies, government sources (BLS, DOL, mass.gov, CT DRS, EPA, NREL, ISO-NE, PJM) and banker and legal commentary (Taft, Capstone/IMAP, PKF, GF Data). Phase figures are computed from the portal's research: the bid radar (${D.opp.length} items), the wastewater screen (${D.wwtp.length} plants), the add-on screen (${D.tgt.length} targets), the county fit model (${D.counties.length} counties), our filings review and the GridOS evidence base. Every revenue, EBITDA, headcount and margin target is an analyst assumption anchored to filings-based estimates.`;
   const caveats = (m.caveats || []).map(c => /NY\/NJ\/PA/.test(c) ? 'Management guidance is a New England focus with no NYC expansion. This plan and every number on this page are New England only. A move into NY, NJ or eastern PA would be a separate board decision and is not modelled.' : String(c).replace(/\b\d{4}-\d{2}-\d{2}\b/g, d => fmtDate(d)));
   $('#src-body').innerHTML = `<p><b>Method.</b> ${H.esc(method)}</p>
     <p><b>Wastewater dollars.</b> The page uses one measure: funded or requested plant and pump-station projects on the CT, MA and RI state lists, at the applicant's total project cost (the first-listed project per plant). The underlying screen also carries a broader "pipeline" total that adds every facility-related line, including collection-system and tributary-town work. It is larger and is not used here. Neither figure is an award or CET's electrical scope.</p>
@@ -526,7 +526,7 @@ function chat() {
   const top = D.tgt.slice().sort((x, y) => y.fit_score - x.fit_score).slice(0, 5);
   const ra = D.sev.find(x => x.id === 'ra-cet');
   const faq = [
-    { q: 'What is the value-creation plan for CET?', href: '#map', a: `<p>CET follows Broad Sky’s Smith + Howard template, aiming for about <b>3x revenue in 36 months</b>: ${M(a.revenue_usd)} → ${M(z.revenue_usd)}, with EBITDA ${M(a.ebitda_usd)} → ${M(z.ebitda_usd)} (est.).</p><ul>${ph.map((p, i) => `<li><b>Phase ${i + 1}</b> (mo ${H.esc(p.months)}): ${H.esc(shortPhase(p.phase))}</li>`).join('')}</ul><p>All figures are analyst assumptions anchored to our filings review, and are New England only.</p>` },
+    { q: 'What is the growth plan for CET?', href: '#map', a: `<p>CET follows BSP’s Smith + Howard template, aiming for about <b>3x revenue in 36 months</b>: ${M(a.revenue_usd)} → ${M(z.revenue_usd)}, with EBITDA ${M(a.ebitda_usd)} → ${M(z.ebitda_usd)} (est.).</p><ul>${ph.map((p, i) => `<li><b>Phase ${i + 1}</b> (mo ${H.esc(p.months)}): ${H.esc(shortPhase(p.phase))}</li>`).join('')}</ul><p>All figures are analyst assumptions anchored to our filings review, and are New England only.</p>` },
     { q: 'Which add-on targets should CET call first?', href: '#addons', a: `<p>Top of the 48-company screen (fit out of 100):</p><ul>${top.map(t => `<li><b>${H.esc(t.company)}</b> (${H.esc(t.hq_city)}, ${t.state}): fit ${t.fit_score}, ~${t.employees ?? '—'} staff, ${H.esc((t.specialties || [])[0] || '')}</li>`).join('')}</ul><p>No target in RI, NH, ME or VT scores ≥ 70 yet, so Phase 2 needs outreach-led sourcing.</p>` },
     { q: 'How does CET earn a higher exit multiple?', href: '#returns', a: `<p>The multiple comes from mix. Moving from one-off hard bids to <b>~25% recurring</b> O&amp;M (SCADA and pump-station monitoring, solar and storage O&amp;M, EV charger management, NuWave efficiency) moves CET toward the premium band. PKF puts project-heavy firms at 5–6x and repeatable service at 10x+. Capstone/IMAP put typical deals at 6.8x and premium deals at 9.8x.</p><p>GridOS (est.): ${ra ? `${M(ra.investment_usd[0])}–${M(ra.investment_usd[1])} investment, ${M(ra.ebitda_impact_usd[0])}–${M(ra.ebitda_impact_usd[1])} EBITDA impact and <b>${ra.multiple_expansion_turns.join('–')} turns</b>` : '0.5–1.5 turns'} of multiple expansion.</p>` },
     { q: 'Will CET expand into New York City?', href: '#risks', a: `<p><b>No.</b> Management guidance is a New England focus with no NYC expansion, and this plan is New England only. Every number on the page, including ${M(z.revenue_usd)} at month 36, comes from the six New England states. Anything beyond would be a separate board decision, not part of this plan.</p>` },

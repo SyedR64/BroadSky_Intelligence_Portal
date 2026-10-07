@@ -1,5 +1,5 @@
 /* Shared, higher-level components used by several modules (targets, filings, opportunities). */
-import { esc } from './core.js?v=20261006180606';
+import { esc } from './core.js?v=20261006224618';
 
 const num = v => (v == null || isNaN(v)) ? null : Number(v);
 const fmtFig = x => x == null ? '—' : typeof x === 'boolean' ? (x ? 'yes' : 'no') : typeof x === 'number' ? x.toLocaleString() : typeof x === 'object' ? (Array.isArray(x) ? x.map(fmtFig).join(', ') : Object.entries(x).map(([k, v]) => `${k} ${fmtFig(v)}`).join('; ')) : String(x);
@@ -60,7 +60,7 @@ export function renderFilings(ctx, el, { data, color, title }) {
   const est = m.estimate_table || [];
   el.innerHTML = `
     <div class="sys-grid grid grid-main">
-      ${ui.panel({ title: 'Financial picture', sub: 'Synthesis from public filings and datasets — estimates, not audited figures', body: `<div class="sys-card-body prose">${esc(m.financial_picture || 'No synthesis available.')}</div>`, accent: true, foot: `<span class="dim">${esc((Array.isArray(m.sources_summary) ? m.sources_summary : []).slice(0, 6).map(x => typeof x === 'string' ? x : (x && (x.source || x.name || x.portal)) || JSON.stringify(x)).join(' · '))}</span>` })}
+      ${ui.panel({ title: 'Financial picture', sub: 'From public filings · estimates, not audited', body: `<div class="sys-card-body prose">${esc(m.financial_picture || 'No synthesis available.')}</div>`, accent: true, foot: `<span class="dim">${esc((Array.isArray(m.sources_summary) ? m.sources_summary : []).slice(0, 6).map(x => typeof x === 'string' ? x : (x && (x.source || x.name || x.portal)) || JSON.stringify(x)).join(' · '))}</span>` })}
       ${ui.panel({ title: 'Estimate table', sub: 'Metric · estimate · basis · confidence', body: est.length ? `<div class="sys-table-wrap tbl-wrap"><table class="sys-table tbl"><thead><tr><th>Metric</th><th>Estimate</th><th>Basis</th><th>Conf.</th></tr></thead><tbody>${est.map(e => `<tr><td class="wrap">${esc(e.metric)}</td><td class="sys-n num wrap">${esc(e.estimate)}</td><td class="wrap small text-2">${esc(e.basis)}</td><td>${fmt.chip(e.confidence, e.confidence === 'high' ? 'var(--green)' : e.confidence === 'medium' ? 'var(--amber)' : 'var(--dim)')}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('No estimates') })}
     </div>
     <div class="mt-12" id="fil-filters"></div><div id="fil-table"></div>

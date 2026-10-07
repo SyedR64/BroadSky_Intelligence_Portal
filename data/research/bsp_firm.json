@@ -416,19 +416,19 @@
     "history": [
       {
         "date": "2014",
-        "event": "Tyler Zachem originally starts Broad Sky Partners (COO Heidi Vanhamme has worked with Zachem since 2014).",
+        "event": "Tyler Zachem originally starts BSP (COO Heidi Vanhamme has worked with Zachem since 2014).",
         "verified": true,
         "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific"
       },
       {
         "date": "2015",
-        "event": "Zachem and team join The Carlyle Group; Carlyle acquires a portion of Broad Sky's investments. Zachem spends 5+ years at Carlyle as Co-Head of Carlyle Global Partners (long-dated strategy) and Co-Chair of the CEOF (U.S. middle market) Investment Committee.",
+        "event": "Zachem and team join The Carlyle Group; Carlyle acquires a portion of BSP's investments. Zachem spends 5+ years at Carlyle as Co-Head of Carlyle Global Partners (long-dated strategy) and Co-Chair of the CEOF (U.S. middle market) Investment Committee.",
         "verified": true,
         "source_url": "https://broadskypartners.com/team/tyler-zachem/"
       },
       {
         "date": "2021-06",
-        "event": "Zachem relaunches Broad Sky Partners as an independent firm with Partners Adam Glucksman, Jodi Kahn and Jonathan Marlow.",
+        "event": "Zachem relaunches BSP as an independent firm with Partners Adam Glucksman, Jodi Kahn and Jonathan Marlow.",
         "verified": true,
         "source_url": "https://broadskypartners.com/team/tyler-zachem/"
       },
@@ -652,7 +652,7 @@
       }
     ],
     "prg": {
-      "description": "Broad Sky's dedicated Portfolio Resource Group is comprised of seasoned executives and experts who work in lockstep with the investment team and company management to plan and execute growth strategies, using a proprietary growth plan (best-practice tools, frameworks and strategies for middle-market priorities). Led by Partner Jodi Kahn.",
+      "description": "BSP's dedicated Portfolio Resource Group is comprised of seasoned executives and experts who work in lockstep with the investment team and company management to plan and execute growth strategies, using a proprietary growth plan (best-practice tools, frameworks and strategies for middle-market priorities). Led by Partner Jodi Kahn.",
       "members": [
         {
           "name": "Jodi Kahn",
@@ -711,7 +711,7 @@
       },
       {
         "name": "Jonathan Marlow",
-        "prior": "Broad Sky Partners, MidOcean, Investcorp"
+        "prior": "BSP, MidOcean, Investcorp"
       },
       {
         "name": "Mike Monahan",
@@ -782,21 +782,21 @@
   "timeline": [
     {
       "date": "2014",
-      "event": "Tyler Zachem founds Broad Sky Partners",
+      "event": "Tyler Zachem founds BSP",
       "type": "firm",
       "company": null,
       "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific"
     },
     {
       "date": "2015",
-      "event": "Zachem's team joins Carlyle; Carlyle acquires a portion of Broad Sky's investments",
+      "event": "Zachem's team joins Carlyle; Carlyle acquires a portion of BSP's investments",
       "type": "firm",
       "company": null,
       "source_url": "https://broadskypartners.com/team/tyler-zachem/"
     },
     {
       "date": "2021-06",
-      "event": "Broad Sky Partners relaunched as independent firm",
+      "event": "BSP relaunched as independent firm",
       "type": "firm",
       "company": null,
       "source_url": "https://broadskypartners.com/team/tyler-zachem/"
@@ -999,7 +999,7 @@
     },
     {
       "date": "2025-02",
-      "event": "Broad Sky becomes majority investor in Commonwealth Electrical Technologies (BSP-CET Co-Invest first sale 2025-02-05)",
+      "event": "BSP becomes majority investor in Commonwealth Electrical Technologies (BSP-CET Co-Invest first sale 2025-02-05)",
       "type": "platform",
       "company": "Commonwealth Electrical Technologies",
       "source_url": "https://comelectrical.com/commonwealth-electrical-technologies-acquires-nuwave-energy-solutions-a-full-service-design-build-energy-conservation-firm/"
@@ -1118,7 +1118,7 @@
     },
     {
       "date": "2026-08-06",
-      "event": "Broad Sky completes sale of Smith + Howard to TPG - first exit (~4x revenue growth)",
+      "event": "BSP completes sale of Smith + Howard to TPG - first exit (~4x revenue growth)",
       "type": "exit",
       "company": "Smith + Howard",
       "source_url": "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/"

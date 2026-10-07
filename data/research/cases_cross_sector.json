@@ -1,10 +1,10 @@
 {
  "meta": {
   "dataset": "cases_cross_sector",
-  "title": "Sponsor value-creation case studies outside residential home services: chronological analogs for Punctual Pros and Broad Sky's other sectors",
+  "title": "Sponsor value-creation case studies outside residential home services: chronological analogs for Punctual Pros and BSP's other sectors",
   "generated": "2026-10-06",
   "author": "Syed Rahman",
-  "scope_note": "17 dated case studies covering Broad Sky's own template (Smith + Howard), Frontline's BV-era assembly, commercial electrical and fire/life-safety companies (Shermco, Sciens, IES), legal-services companies (Consilio, Epiq, Harbor), lab distribution (VWR, Avantor, Fisher/THL with the Thermo merger benchmark), agencies (Stagwell/MDC, FGS Global, Teneo) and consumer brands (Vuori, Chubbies, Allbirds as the cautionary case). Each case lists dated sponsor actions, KPI moves and three or more sentences on what Broad Sky can copy at Punctual Pros.",
+  "scope_note": "17 dated case studies covering BSP's own template (Smith + Howard), Frontline's BV-era assembly, commercial electrical and fire/life-safety companies (Shermco, Sciens, IES), legal-services companies (Consilio, Epiq, Harbor), lab distribution (VWR, Avantor, Fisher/THL with the Thermo merger benchmark), agencies (Stagwell/MDC, FGS Global, Teneo) and consumer brands (Vuori, Chubbies, Allbirds as the cautionary case). Each case lists dated sponsor actions, KPI moves and three or more sentences on what BSP can copy at Punctual Pros.",
   "method": "WebSearch was used for discovery, and WebFetch read sponsor and company press releases, SEC filings (10-K, S-1, 424B4, S-3, DEF 14A, 8-K exhibits, 10-Q), UK Companies House accounts (via data/research/frontline_filings.json) and trade press, all on 2026-10-06. Figures were taken only from pages opened, except where case caveats say a fact came from a search-result summary or deal database (privsource). Smith + Howard's chronology reuses data/research/pp_nationwide.json (pn-tpl-01..14). Frontline debt and timeline facts reuse data/research/frontline_filings.json (fl-005, fl-008, fl-010; retrieved 2026-09-24). IES employee and FY2026 facts reuse data/research/rival_filings.json (rival-001, rival-003). Where no figure was disclosed, the field is null.",
   "item_schema": "kind 'case': id, company, sector, sector_note, sponsor, co_investors, entry_*, hold_status (sold|held|recap|ipo), exit_*, moic_or_irr_reported, timeline[{date, event_type, event, metric, source_url}], levers_used[], kpi_before_after[{kpi, before, after, unit, period, source_url}], what_broad_sky_can_copy, case_caveats[], sources[], retrieved",
   "caveats": [
@@ -13,7 +13,7 @@
    "Perimeters change through M&A: Stagwell, Epiq and Avantor revenue and headcount moves include merged companies and are not organic growth.",
    "Integreon (EagleTree 2021, later sold to ALM) and Calibre Scientific (StoneCalibre) were researched but left out because sources disclosed no dated KPIs beyond deal announcements. Wayne J. Griffin and Rhone were not researched further.",
    "Corrections to the brief: Vuori's 2021 $400M round was led by SoftBank Vision Fund 2, and General Atlantic co-led the Nov 2024 $825M secondary with Stripes. FGS's 2024 control seller was WPP, not a PE sponsor. Teneo's 2019 seller was BC Partners, and CVC was the buyer. Epiq's take-private closed in 2016, and Tenor Legal was acquired in July 2026.",
-   "'what Broad Sky can copy' is written for Punctual Pros (Lancaster PA HVAC/plumbing/electrical, an Authority Brands franchisee). It is the analyst's interpretation, not a sourced claim."
+   "'what BSP can copy' is written for Punctual Pros (Lancaster PA HVAC/plumbing/electrical, an Authority Brands franchisee). It is the analyst's interpretation, not a sourced claim."
   ],
   "cross_case_patterns": [
    "Add-on cadence: Smith + Howard made 9 add-ons in ~3.5 years, Frontline (BV) 4 in ~10 months, Sciens 13 in ~5 years, Shermco 10 named in ~7 years, and VWR 34 in ~7 years. Steady tuck-ins integrated into one back office were the common engine.",
@@ -38,8 +38,8 @@
    "kind": "case",
    "company": "Smith + Howard",
    "sector": "commercial_services",
-   "sector_note": "Atlanta tax, accounting and advisory firm. This is Broad Sky's own house template and first exit; it is not a home-services business.",
-   "sponsor": "Broad Sky Partners",
+   "sector_note": "Atlanta tax, accounting and advisory firm. This is BSP's own house template and first exit; it is not a home-services business.",
+   "sponsor": "BSP",
    "co_investors": [],
    "entry_date": "2022-11-15",
    "entry_ev_usd": null,
@@ -60,7 +60,7 @@
     {
      "date": "2022-11-15",
      "event_type": "other",
-     "event": "Broad Sky makes a strategic anchor investment in Smith + Howard. The stated plan is to add advisory services, widen the geographic footprint and speed up technology through acquisitions.",
+     "event": "BSP makes a strategic anchor investment in Smith + Howard. The stated plan is to add advisory services, widen the geographic footprint and speed up technology through acquisitions.",
      "metric": "~100 professionals in one Atlanta office (per BSP's 2026 exit release)",
      "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment"
     },
@@ -144,7 +144,7 @@
     {
      "date": "2026-08-06",
      "event_type": "exit",
-     "event": "Broad Sky completes the sale to TPG, its first exit.",
+     "event": "BSP completes the sale to TPG, its first exit.",
      "metric": "~100 to ~800 professionals; 1 to 11 locations plus an India delivery center; 9 acquisitions; ~4x revenue",
      "source_url": "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/"
     }
@@ -201,7 +201,7 @@
    ],
    "what_broad_sky_can_copy": "Run the Smith + Howard cadence at Punctual Pros: one tuck-in every 4-5 months, each adding either a new county cluster next to Lancaster (York, Harrisburg/Dauphin, Chester, and NJ via Horvath) or a new service line such as generators, water treatment, or EV-charger and panel upgrades, staying inside Authority Brands territory rules. Copy the India delivery center as one shared call, dispatch, permitting and back-office hub, so each acquired shop drops its own admin cost on day one. Publish KPIs that show the step-change (techs, locations, agreements, revenue) the way Smith + Howard did with 100 to 800 staff and 1 to 11 offices, because that story is what set up the TPG exit.",
    "case_caveats": [
-    "Entry revenue, EV and the exit price were not disclosed. '~4x revenue' is Broad Sky's own claim.",
+    "Entry revenue, EV and the exit price were not disclosed. '~4x revenue' is BSP's own claim.",
     "Add-on numbering counts VIP Search and VIP Solutions separately, which reconciles to BSP's 'nine acquisitions'. BSP's portfolio page lists fewer.",
     "The 2023-2026 dated chronology and source URLs reuse data/research/pp_nationwide.json items pn-tpl-01..14 (retrieved 2026-10-06)."
    ],
@@ -226,7 +226,7 @@
    "kind": "case",
    "company": "Frontline Managed Services (formerly Intelliteach)",
    "sector": "legal_services",
-   "sector_note": "Managed IT, help desk and revenue-cycle/eBilling services for law firms. This case covers the BV Investment Partners era before Broad Sky bought it.",
+   "sector_note": "Managed IT, help desk and revenue-cycle/eBilling services for law firms. This case covers the BV Investment Partners era before BSP bought it.",
    "sponsor": "BV Investment Partners (Fund IX, $750M committed)",
    "co_investors": [],
    "entry_date": "2019-02-01",
@@ -238,7 +238,7 @@
    "entry_technicians_or_staff": null,
    "hold_status": "sold",
    "exit_date": "2024-12-11",
-   "exit_buyer": "Broad Sky Partners (majority; BV kept a minority stake)",
+   "exit_buyer": "BSP (majority; BV kept a minority stake)",
    "exit_ev_usd": null,
    "exit_multiple_ebitda": null,
    "exit_revenue_usd": null,
@@ -325,14 +325,14 @@
     {
      "date": "2024-12-09",
      "event_type": "recap",
-     "event": "New $90M term loan from NXT Capital and Audax Private Debt closes with the Broad Sky transaction.",
+     "event": "New $90M term loan from NXT Capital and Audax Private Debt closes with the BSP transaction.",
      "metric": "$90M initial term loan",
      "source_url": "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history"
     },
     {
      "date": "2024-12-11",
      "event_type": "exit",
-     "event": "Broad Sky Partners invests (majority). BV stays a minority investor.",
+     "event": "BSP invests (majority). BV stays a minority investor.",
      "metric": "800+ law-firm clients incl. >50% of Am Law 200; ~1,000 employees; 9 offices",
      "source_url": "https://markets.financialcontent.com/bpas/article/bizwire-2024-12-11-frontline-managed-services-a-global-leader-in-managed-it-for-the-legal-industry-secures-investment-from-broad-sky-partners-to-fuel-strategic-growth-and-expansion"
     }
@@ -944,7 +944,7 @@
      "source_url": "https://www.gipartners.com/news/gi-partners-announces-sale-of-consilio"
     }
    ],
-   "what_broad_sky_can_copy": "Consilio scaled fastest by merging with near-equal peers (Advanced Discovery, then XDD) before smaller capability deals, so Punctual Pros could leap in scale by combining with another Authority Brands franchisee or a similar-sized independent in an adjacent market. Consilio funded later add-ons with incremental term-loan tranches, a template for financing Punctual Pros' acquisition pipeline without calling new equity from Broad Sky's ~$335M Fund I. Merging three management teams into one company before the GI exit is the step Punctual Pros needs before any recap: one P&L, one operating cadence and one KPI set.",
+   "what_broad_sky_can_copy": "Consilio scaled fastest by merging with near-equal peers (Advanced Discovery, then XDD) before smaller capability deals, so Punctual Pros could leap in scale by combining with another Authority Brands franchisee or a similar-sized independent in an adjacent market. Consilio funded later add-ons with incremental term-loan tranches, a template for financing Punctual Pros' acquisition pipeline without calling new equity from BSP's ~$335M Fund I. Merging three management teams into one company before the GI exit is the step Punctual Pros needs before any recap: one P&L, one operating cadence and one KPI set.",
    "case_caveats": [
     "No revenue, EBITDA or price was disclosed for the 2018 or 2021 transactions.",
     "entry locations = 41 adds Consilio's 24 locations to Advanced Discovery's 17 offices (16 US + London) and may double-count shared cities.",
@@ -1055,7 +1055,7 @@
      "source_url": "https://builtin.com/company/epiq"
     }
    ],
-   "what_broad_sky_can_copy": "Epiq's sponsor immediately merged the take-private with a company it already owned (DTI), which is the logic for Broad Sky pairing Punctual Pros with any future home-services or commercial-HVAC asset rather than running them separately. Epiq then added advisory, KM/AI and flexible-talent businesses that sell to the same clients, so Punctual Pros' tuck-ins should favor capabilities its existing households and builders already buy (generators, water, IAQ, electrical upgrades) over pure territory. The 10-year hold shows that a patient owner can keep compounding a services company through add-ons, so a buy-and-hold path for Punctual Pros is worth modeling against the 4-year flip.",
+   "what_broad_sky_can_copy": "Epiq's sponsor immediately merged the take-private with a company it already owned (DTI), which is the logic for BSP pairing Punctual Pros with any future home-services or commercial-HVAC asset rather than running them separately. Epiq then added advisory, KM/AI and flexible-talent businesses that sell to the same clients, so Punctual Pros' tuck-ins should favor capabilities its existing households and builders already buy (generators, water, IAQ, electrical upgrades) over pure territory. The 10-year hold shows that a patient owner can keep compounding a services company through add-ons, so a buy-and-hold path for Punctual Pros is worth modeling against the 4-year flip.",
    "case_caveats": [
     "The employee 'after' figure (6,282) is from Epiq's Built In employer profile, which is self-reported and undated, not a filing. It includes DTI and all acquisitions.",
     "OMERS/Harvest have not disclosed revenue or EBITDA since 2016. Do not infer growth from headcount alone.",
@@ -1176,7 +1176,7 @@
      "source_url": "https://www.consulting.us/news/9135/hbr-consulting-lac-group-and-wilson-allen-name-executive-team"
     }
    ],
-   "what_broad_sky_can_copy": "Harbor went from a two-company merger to a BayPine majority recap in under three years by buying carve-outs that larger owners did not want, merging them, and putting everything under one brand within about 18 months. For Punctual Pros, the parallel targets are residential service departments that commercial mechanical contractors, utilities or home-warranty companies want to shed, along with unifying acquired shops under one brand fast. The BayPine deal, where Renovus rolled equity, is a model for a partial Punctual Pros recap that returns capital while keeping Broad Sky in the upside.",
+   "what_broad_sky_can_copy": "Harbor went from a two-company merger to a BayPine majority recap in under three years by buying carve-outs that larger owners did not want, merging them, and putting everything under one brand within about 18 months. For Punctual Pros, the parallel targets are residential service departments that commercial mechanical contractors, utilities or home-warranty companies want to shed, along with unifying acquired shops under one brand fast. The BayPine deal, where Renovus rolled equity, is a model for a partial Punctual Pros recap that returns capital while keeping BSP in the upside.",
    "case_caveats": [
     "No financials or valuation were disclosed. The ~900 headcount at the BayPine deal appears in search-indexed text of Harbor's release, but the page could not be opened (fetch blocked), so it is not used.",
     "The relaunch date is given only as 2023 (after the May 2023 leadership announcement). Aurora North, Younts and KP Labs deal dates were not found.",
@@ -1581,7 +1581,7 @@
      "source_url": "https://www.sec.gov/Archives/edgar/data/880430/000095013504001340/b49883f1e425.htm"
     }
    ],
-   "what_broad_sky_can_copy": "Fisher's post-recap growth plan paired a service promise (95% of US orders shipped within 24 hours) with own-brand margin (proprietary products from 50% to ~60%), and Punctual Pros' versions are a guaranteed same-day or next-day window and branded maintenance plans and accessories. THL consolidated logistics and customer-service centers early, which supports collapsing acquired shops' call desks and warehouses into one Punctual Pros hub. THL's staged sell-down while management kept compounding is a structure Broad Sky could offer Punctual Pros' leadership through a minority recap.",
+   "what_broad_sky_can_copy": "Fisher's post-recap growth plan paired a service promise (95% of US orders shipped within 24 hours) with own-brand margin (proprietary products from 50% to ~60%), and Punctual Pros' versions are a guaranteed same-day or next-day window and branded maintenance plans and accessories. THL consolidated logistics and customer-service centers early, which supports collapsing acquired shops' call desks and warehouses into one Punctual Pros hub. THL's staged sell-down while management kept compounding is a structure BSP could offer Punctual Pros' leadership through a minority recap.",
    "case_caveats": [
     "The 1998 enterprise value and EBITDA are not given here. $955.0M is the cash paid to holders for ~87% of shares, not EV.",
     "THL's final exit date was not confirmed. Only ownership snapshots (76.4% before the April 2001 offering, 60.3% after, 15.14% at March 2003) were read.",
@@ -1677,7 +1677,7 @@
      "source_url": "https://www.stagwellglobal.com/stagwell-inc-nasdaq-stgw-reports-results-for-the-three-and-twelve-months-ended-december-31-2024/"
     }
    ],
-   "what_broad_sky_can_copy": "Stagwell's turnaround combined capital, an operator CEO and one growth engine with 'net new business' reported every quarter, so Punctual Pros should report one demand KPI (booked jobs and new agreements per week) across all territories and acquired brands. Merging Stagwell's agencies into MDC with a stated $30M synergy target is the model for a dated synergy plan (procurement, fleet, insurance, marketing spend) for each Punctual Pros add-on. One centralized marketing and AI-driven demand engine for all acquired shops, rather than one agency per shop, is a place where Broad Sky's BPI expertise transfers directly.",
+   "what_broad_sky_can_copy": "Stagwell's turnaround combined capital, an operator CEO and one growth engine with 'net new business' reported every quarter, so Punctual Pros should report one demand KPI (booked jobs and new agreements per week) across all territories and acquired brands. Merging Stagwell's agencies into MDC with a stated $30M synergy target is the model for a dated synergy plan (procurement, fleet, insurance, marketing spend) for each Punctual Pros add-on. One centralized marketing and AI-driven demand engine for all acquired shops, rather than one agency per shop, is a place where BSP's BPI expertise transfers directly.",
    "case_caveats": [
     "Revenue before and after are not like-for-like: the 2024 figure includes the Stagwell Marketing Group merged in 2021.",
     "MDC's 2018 Adjusted EBITDA was not read from the 10-K. EBITDA 'before' uses 2021 pro forma guidance, not a pre-Stagwell figure."
@@ -1772,7 +1772,7 @@
      "source_url": "https://www.investegate.co.uk/announcement/rns/wpp--wpp/wpp-to-sell-its-majority-stake-in-fgs-global-/8353113"
     }
    ],
-   "what_broad_sky_can_copy": "KKR paid $1.7B EV against $90M of 2023 headline EBITDA (about 19x, analyst arithmetic) for a people business in which senior staff own equity, so Punctual Pros should give lead technicians and general managers an equity or phantom-equity pool that vests through the exit. FGS's minority-then-control path (KKR at ~30% in 2023, control in 2024) is a structure Broad Sky can offer founders of larger HVAC or plumbing targets who will not sell 100% up front. Merging four boutiques under one brand while keeping senior relationships is the plan for moving acquired shop brands onto Punctual Pros without losing their local reputations.",
+   "what_broad_sky_can_copy": "KKR paid $1.7B EV against $90M of 2023 headline EBITDA (about 19x, analyst arithmetic) for a people business in which senior staff own equity, so Punctual Pros should give lead technicians and general managers an equity or phantom-equity pool that vests through the exit. FGS's minority-then-control path (KKR at ~30% in 2023, control in 2024) is a structure BSP can offer founders of larger HVAC or plumbing targets who will not sell 100% up front. Merging four boutiques under one brand while keeping senior relationships is the plan for moving acquired shop brands onto Punctual Pros without losing their local reputations.",
    "case_caveats": [
     "The ~19x is an analyst calculation ($1.7B EV / $90M 2023 headline EBITDA per WPP's RNS). Neither KKR nor WPP stated a multiple, so entry EBITDA multiple is left null.",
     "entry EV records the April 2023 KKR minority valuation ($1.425B, per MediaPost). The 2024 control transaction was at $1.7B EV.",
@@ -1983,7 +1983,7 @@
    "case_caveats": [
     "Vuori is private and discloses no revenue or EBITDA. A ~$1.0B 2024 revenue figure appears only in unsourced blog estimates and is not used.",
     "General Atlantic and Stripes led a secondary tender, so their entry is a revaluation, not primary capital. The 2021 SoftBank round month (Oct 2021) comes from search summaries, and the round was opened only at year level.",
-    "Fair Harbor is the Broad Sky consumer company. Vuori's 'what Broad Sky can copy' is written for Punctual Pros, per the schema."
+    "Fair Harbor is the BSP consumer company. Vuori's 'what BSP can copy' is written for Punctual Pros, per the schema."
    ],
    "sources": [
     "https://fashionunited.com/news/business/norwest-venture-partners-invests-in-vuori/2019081629476",
@@ -2088,7 +2088,7 @@
      "source_url": "https://investors.solobrands.com/news/news-details/2026/Solo-Brands-Inc--Announces-Fiscal-2025-Fourth-Quarter-and-Full-Year-Results/default.aspx"
     }
    ],
-   "what_broad_sky_can_copy": "Chubbies grew sales and lifted Adjusted EBITDA margin from 14.0% to 18.2% in FY2025 while its parent's sales fell 30%, so Punctual Pros' brand, local leadership and technician culture should be protected as Broad Sky layers on shared services. About half of Chubbies' 2024 sales came through retail partners, and the Punctual Pros equivalent is referral partnerships with homebuilders, realtors, property managers and home-warranty firms that send recurring jobs. The parent's distress shows that holding-company overhead and debt can sink a good brand, so acquisition leverage at Punctual Pros should be sized to Punctual Pros' own cash flow.",
+   "what_broad_sky_can_copy": "Chubbies grew sales and lifted Adjusted EBITDA margin from 14.0% to 18.2% in FY2025 while its parent's sales fell 30%, so Punctual Pros' brand, local leadership and technician culture should be protected as BSP layers on shared services. About half of Chubbies' 2024 sales came through retail partners, and the Punctual Pros equivalent is referral partnerships with homebuilders, realtors, property managers and home-warranty firms that send recurring jobs. The parent's distress shows that holding-company overhead and debt can sink a good brand, so acquisition leverage at Punctual Pros should be sized to Punctual Pros' own cash flow.",
    "case_caveats": [
     "Chubbies' revenue at acquisition was not disclosed in the filings read. A search summary cited '$113M revenue, $16M Adj. EBITDA' without a clear period, so it is not used.",
     "The Solo Brands sponsor history (pre-IPO private equity) was not verified, so sponsor is recorded as the strategic acquirer.",
@@ -2202,7 +2202,7 @@
      "source_url": "https://www.sec.gov/Archives/edgar/data/1653909/000162828026022181/allbirdsprojectarisepressr.htm"
     }
    ],
-   "what_broad_sky_can_copy": "Allbirds grew stores and its international footprint while still unprofitable, then had to unwind them, and its value fell from a ~$2.15B IPO valuation to a ~$39M asset sale. Punctual Pros should open or buy a territory only when existing branches hit target technician utilization, close rates and contribution margin, and should track contribution by territory and acquired shop every month. Broad Sky should underwrite add-ons on current cash flow rather than projected growth and set a pre-agreed trigger to fold or merge an underperforming branch, because premium valuations collapse quickly when growth stalls.",
+   "what_broad_sky_can_copy": "Allbirds grew stores and its international footprint while still unprofitable, then had to unwind them, and its value fell from a ~$2.15B IPO valuation to a ~$39M asset sale. Punctual Pros should open or buy a territory only when existing branches hit target technician utilization, close rates and contribution margin, and should track contribution by territory and acquired shop every month. BSP should underwrite add-ons on current cash flow rather than projected growth and set a pre-agreed trigger to fold or merge an underperforming branch, because premium valuations collapse quickly when growth stalls.",
    "case_caveats": [
     "Allbirds was never PE-controlled. It is included as the cautionary consumer case the brief asked for.",
     "The IPO valuation ($2.15B) is World Footwear's figure. Other outlets report ~$4.1B on the first-day close.",

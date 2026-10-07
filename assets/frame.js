@@ -1,12 +1,12 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Broad Sky Operating Intelligence · global frame (frame.js)
+   BSP Desk · global frame (frame.js)
    One top bar, one concept banner, one breadcrumb, one footer, one Ask button
    and one copy safety net for every page. Styles live in assets/system.css.
    Spec: UNIFIED.md.
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261006180606';
+       import { Frame } from '../../assets/frame.js?v=20261006224618';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
@@ -43,6 +43,8 @@ const VER = SELF.searchParams.get('v');
 const QV = VER ? `?v=${encodeURIComponent(VER)}` : '';
 const GITHUB = 'https://github.com/SyedR64/BroadSky_Intelligence_Portal';
 const AUTHOR = 'Syed Rahman';
+/** The product name: the one wordmark for the top bar, the mobile sheet and the footer (UNIFIED.md §0). */
+export const PRODUCT = 'BSP Desk';
 const IS_MAC = /mac|iphone|ipad|ipod/i.test((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent);
 
 export const COMPANIES = {
@@ -64,8 +66,8 @@ export const NAV = [
   { id: 'github',    label: 'GitHub',        href: GITHUB, external: true, hint: 'source code' },
 ];
 
-export const BANNER_TEXT = `Concept work by ${AUTHOR} for the Broad Sky Portfolio Resource Group. Not an official company website; estimates are marked est.`;
-export const DISCLAIMER = 'Not an official Broad Sky Partners website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.';
+export const BANNER_TEXT = `Concept work by ${AUTHOR} for the Portfolio Resource Group at Broad Sky Partners (BSP). Not an official company website; estimates are marked est.`;
+export const DISCLAIMER = 'Not an official BSP website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.';
 
 const PAGE_LABELS = { 'index.html': 'Concept site', 'growth-plan.html': 'Growth plan', 'nationwide.html': 'Nationwide plan', 'ads.html': 'Growth marketing', 'voice-ai.html': '24/7 Voice AI', 'ai-agents.html': 'AI agents' };
 const OS_FILES = new Set(Object.values(COMPANIES).map(c => c.osFile));
@@ -127,7 +129,7 @@ function topHTML(o) {
   const kbd = o.hotkey ? `<span class="sys-kbd" aria-hidden="true">${IS_MAC ? '⌘' : 'Ctrl '}${o.hotkey.split('+').pop().toUpperCase()}</span>` : '';
   const cta = o.cta ? `<a class="sys-btn sys-btn--primary sys-btn--sm sys-top-cta" href="${esc(url(o.cta.href))}">${esc(o.cta.label)}</a>` : '';
   return `<div class="sys-top-in">
-    <a class="sys-brand" href="${esc(ROOT)}" aria-label="Broad Sky Operating Intelligence, home">${MARK}<span class="sys-brand-name">Broad Sky<span class="sys-brand-sub">Operating Intelligence</span></span></a>
+    <a class="sys-brand" href="${esc(ROOT)}" aria-label="${esc(PRODUCT)}, home">${MARK}<span class="sys-brand-name">${esc(PRODUCT)}</span></a>
     <nav class="sys-nav" aria-label="Primary">${links}</nav>
     <div class="sys-top-actions">
       <button class="sys-ask" type="button" data-sys-ask aria-label="Ask the assistant${o.hotkey ? ` (${IS_MAC ? 'Command' : 'Control'} ${o.hotkey.split('+').pop().toUpperCase()})` : ''}"><span class="sys-dot" aria-hidden="true"></span>Ask${kbd}</button>
@@ -135,7 +137,7 @@ function topHTML(o) {
       ${cta}
       <button class="sys-menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sys-sheet"><span></span><span></span></button>
     </div>
-    <div class="sys-sheet" id="sys-sheet" hidden>${sheet}${o.cta ? `<a class="sys-btn sys-btn--primary" href="${esc(url(o.cta.href))}">${esc(o.cta.label)}</a>` : ''}</div>
+    <div class="sys-sheet" id="sys-sheet" aria-label="${esc(PRODUCT)} menu" hidden>${sheet}${o.cta ? `<a class="sys-btn sys-btn--primary" href="${esc(url(o.cta.href))}">${esc(o.cta.label)}</a>` : ''}</div>
   </div>`;
 }
 function bannerHTML() {
@@ -156,8 +158,8 @@ function footerHTML() {
   return `<div class="sys-wrap">
     <div class="sys-footer-grid">
       <div class="sys-footer-brand">
-        <a class="sys-brand" href="${esc(ROOT)}">${MARK}<span class="sys-brand-name">Broad Sky<span class="sys-brand-sub">Operating Intelligence</span></span></a>
-        <p>Prepared by ${AUTHOR} for the Broad Sky Partners Portfolio Resource Group. A working draft that turns public-record and licensed data into revenue, acquisition and operating actions for six companies.</p>
+        <a class="sys-brand" href="${esc(ROOT)}" aria-label="${esc(PRODUCT)}, home">${MARK}<span class="sys-brand-name">${esc(PRODUCT)}</span></a>
+        <p>Prepared by ${AUTHOR} for the BSP Portfolio Resource Group. Public data turned into revenue, acquisition and operating actions for six companies.</p>
       </div>
       <nav class="sys-footer-col" aria-label="Portal"><p class="sys-footer-h">Portal</p>${a('app.html', 'Portal home')}${a('app.html#/home/overview', 'Command Center')}${a('app.html#/ma/overview', 'Acquisition engine')}${a('app.html#/techos/overview', 'Tech enablement')}${a('theater.html', '3D theater')}</nav>
       <nav class="sys-footer-col" aria-label="Site concepts"><p class="sys-footer-h">Site concepts</p>${cos}</nav>
@@ -256,7 +258,7 @@ export const LABELS = {
   cet_home_sales_ma: 'CET deed records (MA)', cet_home_sales_ct_ri: 'CET deed records (CT and RI)', cet_transfers_ma: 'CET property transfers (MA)', cet_transfers_ct_ri: 'CET property transfers (CT and RI)',
   ts_sales_gloucester_nj: 'Thomas Scientific deed records (Gloucester County, NJ)', bpi_sales_dc: 'BPI deed records (DC)', fh_sales_nyc: 'Fair Harbor deed records (New York City)',
   // research (data/research/)
-  ai_agents_portfolio: 'Portfolio AI-agent plan', bpi_filings: 'BPI public filings', bpi_playbook: 'BPI growth plan', bsp_firm: 'Broad Sky firm profile',
+  ai_agents_portfolio: 'Portfolio AI-agent plan', bpi_filings: 'BPI public filings', bpi_playbook: 'BPI growth plan', bsp_firm: 'BSP firm profile',
   cet_filings: 'CET public filings', cet_opportunities: 'CET opportunity radar', cet_playbook: 'CET growth plan', cet_wwtp_targets: 'CET wastewater-plant targets',
   design_refs: 'Design principles', fairharbor_filings: 'Fair Harbor public filings', fh_playbook: 'Fair Harbor growth plan', fl_midsize_firms: 'Mid-size law firms',
   fl_playbook: 'Frontline growth plan', frontline_filings: 'Frontline public filings', ma_targets_cet: 'CET add-on targets', ma_targets_fl_ts: 'Frontline and Thomas Scientific add-on targets',
@@ -265,7 +267,7 @@ export const LABELS = {
   public_comps: 'Public comparables', rival_filings: 'Competitor filings', serviceos_evidence: 'ServiceOS evidence', thomas_filings: 'Thomas Scientific public filings',
   ts_playbook: 'Thomas Scientific growth plan', voice_ai: 'Voice AI research',
 };
-const PREFIX = { pp: 'Punctual Pros', cet: 'CET', fl: 'Frontline', ts: 'Thomas Scientific', bpi: 'BPI', fh: 'Fair Harbor', bsp: 'Broad Sky' };
+const PREFIX = { pp: 'Punctual Pros', cet: 'CET', fl: 'Frontline', ts: 'Thomas Scientific', bpi: 'BPI', fh: 'Fair Harbor', bsp: 'BSP' };
 const UPPER = new Set(['sms', 'nws', 'pa', 'nj', 'ct', 'ri', 'ny', 'nyc', 'dc', 'ev', 'ai', 'hvac', 'rfp', 'kpi', 'ebitda', 'crm', 'api', 'id', 'usd', 'os', 'zip', 'fips', 'acs', 'mep', 'roi', 'ltv', 'cac', 'pe', 'ne', 'us', 'url']);
 const RX_SNAKE = /(?<![\w@/.#:=$-])([a-z][a-z0-9]*(?:_[a-z0-9]+)+)(\.(?:json|csv|geojson))?(?![\w@/-]|\.\w)/g;
 const RX_ID = /(?<![\w/.#-])[[(]?(?:ra|ref|kb|vs|ag|op|tg|id)-(?:pp|cet|fl|ts|bpi|fh|bsp)(?:-[a-z0-9]+)*[\])]?(?![\w/-])/g;
@@ -553,6 +555,6 @@ function mount(opts = {}) {
   return state.mounted;
 }
 
-export const Frame = { mount, humanize, humanizeText, label, keyDates, openChat, setTheme, getTheme, toggleTheme, COMPANIES, NAV, LABELS, BANNER_TEXT, DISCLAIMER, ROOT };
+export const Frame = { mount, humanize, humanizeText, label, keyDates, openChat, setTheme, getTheme, toggleTheme, COMPANIES, NAV, LABELS, BANNER_TEXT, DISCLAIMER, PRODUCT, ROOT };
 window.BSPFrame = Frame;
 export default Frame;

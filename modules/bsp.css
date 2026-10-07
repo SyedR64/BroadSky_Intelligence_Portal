@@ -1,4 +1,4 @@
-/* How Broad Sky buys (module 'bsp') — layout only. Every selector is prefixed with .m-bsp (the inspector body
+/* How BSP buys (module 'bsp') — layout only. Every selector is prefixed with .m-bsp (the inspector body
    gets .m-bsp added when this module opens it). Cards, chips, KPIs, tables, inputs and notes are the system
    components (system.css); this file holds the chart and graph geometry, and every value is a --sys-* / --co-*
    token. The network groups use the system palette, so they follow the shared light/dark theme. */

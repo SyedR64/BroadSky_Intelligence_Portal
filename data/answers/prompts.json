@@ -17,18 +17,24 @@
   },
   {
    "slug": "what-is-the-storm-impact-on-punctual-pros-this-week",
-   "question": "What is the storm impact on Punctual Pros this week?",
-   "persona": "portal"
+   "question": "What do this week's storms mean for Punctual Pros?",
+   "persona": "portal",
+   "aliases": [
+    "What is the storm impact on Punctual Pros this week?"
+   ]
   },
   {
    "slug": "who-competes-with-broad-sky-for-home-services-deals",
-   "question": "Who competes with Broad Sky for home-services deals?",
+   "question": "Who competes with BSP for home-services deals?",
    "persona": "portal"
   },
   {
    "slug": "which-cet-bids-are-due-in-the-next-30-days",
-   "question": "Which CET bids are due in the next 30 days?",
-   "persona": "portal"
+   "question": "Which CET bids are due within 30 days?",
+   "persona": "portal",
+   "aliases": [
+    "Which CET bids are due in the next 30 days?"
+   ]
   },
   {
    "slug": "estimate-punctual-pros-revenue-from-public-filings",
@@ -67,12 +73,15 @@
   },
   {
    "slug": "show-me-sample-ctv-ads-and-the-media-plan-for-punctual-pros",
-   "question": "Show me sample CTV ads and the media plan for Punctual Pros",
-   "persona": "portal"
+   "question": "Show sample CTV ads for Punctual Pros",
+   "persona": "portal",
+   "aliases": [
+    "Show me sample CTV ads and the media plan for Punctual Pros"
+   ]
   },
   {
    "slug": "how-does-broad-sky-scale-cet-across-the-northeast",
-   "question": "How does Broad Sky scale CET across the Northeast?",
+   "question": "How does BSP scale CET across the Northeast?",
    "persona": "portal"
   },
   {
@@ -92,18 +101,27 @@
   },
   {
    "slug": "which-ai-agents-create-the-most-value-across-the-portfolio",
-   "question": "Which AI agents create the most value across the portfolio?",
-   "persona": "portal"
+   "question": "Which AI agents create the most value?",
+   "persona": "portal",
+   "aliases": [
+    "Which AI agents create the most value across the portfolio?"
+   ]
   },
   {
    "slug": "how-much-revenue-does-24-7-voice-ai-recover-for-punctual-pro",
-   "question": "How much revenue does 24/7 voice AI recover for Punctual Pros?",
-   "persona": "portal"
+   "question": "How much does voice AI recover for Punctual Pros?",
+   "persona": "portal",
+   "aliases": [
+    "How much revenue does 24/7 voice AI recover for Punctual Pros?"
+   ]
   },
   {
    "slug": "what-did-sponsors-do-with-companies-like-punctual-pros-befor",
-   "question": "What did sponsors do with companies like Punctual Pros before selling them?",
+   "question": "What did sponsors do with companies like Punctual Pros?",
    "persona": "portal",
+   "aliases": [
+    "What did sponsors do with companies like Punctual Pros before selling them?"
+   ],
    "datasets": [
     "value_creation_cases",
     "cases_home_services",
@@ -113,7 +131,7 @@
   },
   {
    "slug": "how-does-broad-sky-actually-buy-companies",
-   "question": "How does Broad Sky actually buy companies?",
+   "question": "How does BSP actually buy companies?",
    "persona": "portal",
    "datasets": [
     "bsp_methodology",

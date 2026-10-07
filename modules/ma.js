@@ -1,10 +1,10 @@
-import * as Copy from './copy.js?v=20261006180606';
+import * as Copy from './copy.js?v=20261006224618';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition engine (M&A) — cross-portfolio buy-and-build intelligence.
    Datasets: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets, Competitor filings,
-             Public comparables, Private-equity landscape, Broad Sky firm profile; sales/* (property transfers, lazy, theses view).
+             Public comparables, Private-equity landscape, BSP firm profile; sales/* (property transfers, lazy, theses view).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, fitTierOf } from '../assets/components.js?v=20261006180606';
+import { renderTargets, fitTierOf } from '../assets/components.js?v=20261006224618';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 const PLAT = {
@@ -92,7 +92,7 @@ const pctOf = (n, d) => d ? Math.round((n / d) * 100) : 0;
 const titleCase = s => String(s || '').replace(/_/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
 const ownerClass = s => { const x = String(s || '').toLowerCase().replace(/no sponsor disclosed|no pe affiliation/g, ''); if (!x.trim()) return 'Unverified'; if (/subsidiary|part of|venture-backed|pe-backed|private equity|backed by|\bpe\b/.test(x)) return 'Sponsor / corporate'; if (/founder|family/.test(x)) return 'Founder / family'; if (/unknown|unverified|not disclosed|not verified/.test(x)) return 'Unverified'; if (/esop|employee-owned/.test(x)) return 'ESOP'; if (/franchisee/.test(x)) return 'Franchisee'; return 'Private independent'; };
 const OWNER_COLOR = { 'Founder / family': 'var(--sys-good)', 'Private independent': 'var(--sys-info)', Franchisee: 'var(--sys-violet)', ESOP: 'var(--sys-warn)', Unverified: 'var(--sys-mute-2)', 'Sponsor / corporate': 'var(--sys-bad)' };
-const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261006180606'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261006224618'; document.head.appendChild(l); } };
 const shortList = a => { const v = (Array.isArray(a) ? a : [a]).filter(Boolean).map(x => { const y = String(x).replace(/\s*\(.*?\)\s*/g, ' ').replace(/_/g, ' ').trim(); return y.length > 26 ? y.slice(0, 25).trim() + '…' : y; }); return v.length > 2 ? [...v.slice(0, 2), `+${v.length - 2}`] : v; };
 const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
 const pctTxt = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;
@@ -281,26 +281,26 @@ async function overview(ctx) {
 
   el.innerHTML = `<div class="m-ma">` + ui.pageHead({
     title: 'Acquisition engine',
-    sub: `<b>${fmt.num(T.length)} add-on targets screened across ${PKEYS.length} companies; ${fmt.num(t1.length)} are Tier-1 (fit ≥80) and ${fmt.num(t1.length + t2.length)} Tier-1/2.</b> The actionable pool is concentrated in ${esc(PLAT[topP[0]].label)} (${t12By[topP[0]]}) and ${esc(PLAT[topP[1]].label)} (${t12By[topP[1]]}). The median target is a ${fmt.money(medRev)}, ${fmt.num(medEmp)}-person business (ZoomInfo estimate), i.e. tuck-in size. ${pctOf(ownerReady, T.length)}% are confirmed founder- or family-owned. BSP has closed ${stats.add_ons} add-ons${named != null ? ` (${named} identified by name)` : ''}.`,
-    chips: `${fmt.chip('Screens generated ' + (b.cet?.meta?.generated || b.pp?.meta?.generated || '—'), 'var(--c-ma)')}${fmt.chip('Fit rubrics differ by company')}${fmt.chip('Revenue = ZoomInfo modeled est.')}`,
+    sub: `<b>${fmt.num(t1.length)} of ${fmt.num(T.length)} screened targets are Tier 1.</b> Most of the actionable pool sits in ${esc(PLAT[topP[0]].label)} and ${esc(PLAT[topP[1]].label)}; the median target is an est. ${fmt.money(medRev)} tuck-in.`,
+    chips: `${fmt.chip('Screened ' + (b.cet?.meta?.generated || b.pp?.meta?.generated || '—'), 'var(--c-ma)')}${fmt.chip('Rubrics differ by company')}${fmt.chip('Revenue modelled est.')}`,
     actions: `<a class="sys-btn sys-btn--secondary btn" href="#/ma/pipeline">Full pipeline →</a><a class="sys-btn sys-btn--secondary btn" href="#/ma/theses">Company theses</a>`,
   }) + missingNote(ui, esc, b) +
   ui.kpis([
     { label: 'Targets screened', value: fmt.num(T.length), sub: PKEYS.map(p => `${PLAT[p].key.toUpperCase()} ${byP[p].length}`).join(' · '), color: 'var(--c-ma)' },
     { label: 'Tier-1 targets', value: fmt.num(t1.length), sub: `fit ≥80 · ${fmt.num(t2.length)} more at Tier 2`, color: 'var(--sys-good)' },
-    { label: 'Companies screened', value: `${PKEYS.length}<small>of ${firmItems.filter(i => i.status === 'held').length || 6} held</small>`, sub: `BPI (${(firmItems.find(i => i.id === 'bsp-bpi')?.add_ons || []).length || 6} add-ons, most acquisitive) and Fair Harbor not yet screened`, color: 'var(--sys-brand)' },
-    { label: 'Median target size', value: fmt.money(medRev), sub: `revenue est. (${nRev} targets) · ${fmt.num(medEmp)} staff median`, color: 'var(--sys-info)' },
-    { label: 'Rival companies tracked', value: fmt.num(rivals.length), sub: `${peBacked} PE-backed · ${stressed.length} with credit stress or refi due`, color: 'var(--sys-bad)' },
-    { label: 'BSP add-ons completed', value: fmt.num(stats.add_ons), sub: named != null ? `${named} identified by name · ${stats.platforms || 7} companies` : 'stated by BSP · firm dataset pending', color: 'var(--sys-brand)' },
+    { label: 'Companies screened', value: `${PKEYS.length}<small>of ${firmItems.filter(i => i.status === 'held').length || 6} held</small>`, sub: `BPI and Fair Harbor not yet screened`, color: 'var(--sys-brand)' },
+    { label: 'Median target size', value: fmt.money(medRev), sub: `revenue est. · ${fmt.num(medEmp)} staff median`, color: 'var(--sys-info)' },
+    { label: 'Rival companies tracked', value: fmt.num(rivals.length), sub: `${peBacked} PE-backed · ${stressed.length} under credit stress`, color: 'var(--sys-bad)' },
+    { label: 'BSP add-ons completed', value: fmt.num(stats.add_ons), sub: named != null ? `${named} identified by name` : 'stated by BSP', color: 'var(--sys-brand)' },
   ]) +
   `<div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Where the targets are', cls: 'ma-fill', sub: 'Every screened add-on by company (size = fit tier); rings are BSP portfolio company HQs. Click a point to inspect.', body: `<div class="map" id="ma-map"></div>`, flush: true, foot: ui.source('ZoomInfo search and company websites (add-on target lists); BSP firm profile', null, b.cet?.meta?.generated) })}
     ${ui.panel({ title: 'This quarter’s top 10', sub: 'Each company’s #1 pick, then its #2, and so on (rubrics are not comparable across companies). Names that collide with a BSP company are held out.', body: `<div class="ma-top" id="ma-top10"></div><div id="ma-affil"></div>`, scroll: true, foot: `<span class="src">Ranking: portfolio company shortlists (top 10 for CET and Punctual Pros, top 8 for Frontline and Thomas Scientific), affiliation-flagged names removed and ranks re-numbered · reasons from screen authors</span>` })}
   </div>
-  <div class="mt-12">${ui.panel({ title: 'Smith + Howard benchmark · add-on pace and headcount since BSP entry', sub: 'Cumulative dated add-ons by years since BSP’s investment, each held portfolio company against the S+H trajectory (entry Nov 2022 → TPG exit Aug 2026)', accent: true, body: `<div class="ma-sh"><div><div id="ma-sh-chart"></div><div class="sys-chips ma-sh-leg" id="ma-sh-leg"></div></div><div><div id="ma-sh-tbl"></div><div class="h-note mt-8" id="ma-sh-read"></div></div></div>`, foot: ui.source('Broad Sky firm profile (portfolio add-ons, timeline, employee estimates); S+H headcount and ~4x revenue from the BSP exit release', 'https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/', b.firm?.meta?.generated) })}</div>
+  <div class="mt-12">${ui.panel({ title: 'Smith + Howard benchmark · add-on pace and headcount since BSP entry', sub: 'Cumulative dated add-ons by years since BSP’s investment, each held portfolio company against the S+H trajectory (entry Nov 2022 → TPG exit Aug 2026)', accent: true, body: `<div class="ma-sh"><div><div id="ma-sh-chart"></div><div class="sys-chips ma-sh-leg" id="ma-sh-leg"></div></div><div><div id="ma-sh-tbl"></div><div class="h-note mt-8" id="ma-sh-read"></div></div></div>`, foot: ui.source('BSP firm profile (portfolio add-ons, timeline, employee estimates); S+H headcount and ~4x revenue from the BSP exit release', 'https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/', b.firm?.meta?.generated) })}</div>
   <div class="grid grid-3 mt-12">
     ${ui.panel({ title: 'Screening funnel · portfolio company × fit tier', sub: 'Targets per fit tier (T1 ≥80, T2 65–79, T3 50–64, T4 <50). Listed = on the screen authors’ ranked shortlist; Owner = confirmed founder/family owner.', body: `<div id="ma-heat"></div><div class="sys-card-label th-h mt-12">Conversion across all companies</div><div id="ma-funnel"></div><div class="sys-card-label th-h mt-12">Read-out <span class="sys-est sys-est--illus analyst">analyst view</span></div><ul class="bul" id="ma-readout"></ul>`, foot: ui.source('CET, Punctual Pros, Frontline and Thomas Scientific add-on targets', null, b.pp?.meta?.generated) })}
-    ${ui.panel({ title: 'BSP add-on track record', sub: `${stats.add_ons} add-ons stated by BSP${named != null ? ` · ${named} identified by name` : ''}`, body: `<div id="ma-cadence"></div><div id="ma-byplat" class="mt-8"></div><div class="sys-card-label th-h mt-12">Timeline</div><div id="ma-tl" style="max-height:230px;overflow:auto"></div>`, foot: ui.source('Broad Sky and portfolio press releases (Broad Sky firm profile)', 'https://broadskypartners.com/news/', b.firm?.meta?.generated) })}
+    ${ui.panel({ title: 'BSP add-on track record', sub: `${stats.add_ons} add-ons stated by BSP${named != null ? ` · ${named} identified by name` : ''}`, body: `<div id="ma-cadence"></div><div id="ma-byplat" class="mt-8"></div><div class="sys-card-label th-h mt-12">Timeline</div><div id="ma-tl" style="max-height:230px;overflow:auto"></div>`, foot: ui.source('BSP and portfolio press releases (BSP firm profile)', 'https://broadskypartners.com/news/', b.firm?.meta?.generated) })}
     ${ui.panel({ title: 'Buy-and-build plan', sub: 'How a target moves from screen to integrated add-on', body: `<div class="sys-grid steps" id="ma-steps"></div><div class="sys-card-label th-h mt-16">Actions this week <span class="sys-est sys-est--illus analyst">analyst view</span></div><ol class="acts" id="ma-acts"></ol>`, foot: ui.source('PRG description from broadskypartners.com; PE landscape implications', null, b.pe?.meta?.generated) })}
   </div></div>`;
 
@@ -371,7 +371,7 @@ async function overview(ctx) {
 }
 
 /* Smith + Howard benchmark: add-on pace and headcount by years since BSP entry, S+H against each held platform. */
-const HEADCOUNT = { // parsed from Broad Sky firm profile employees_est (estimates); S+H from the BSP exit release
+const HEADCOUNT = { // parsed from BSP firm profile employees_est (estimates); S+H from the BSP exit release
   sh: { from: 100, to: 800, note: '~100 → ~800 professionals at exit (BSP release)' },
   'bsp-cet': { from: 140, to: 260, note: '~140 (Oct 2025) → ~260+ with Horton’s 120+ staff (Sep 2026)' },
   'bsp-pp': { from: 113, to: null, note: '~113 at acquisition; current headcount not disclosed' },
@@ -383,7 +383,7 @@ function shBenchmark(ctx, el, b) {
   const { ui, fmt, esc, charts } = ctx;
   const cEl = el.querySelector('#ma-sh-chart'), tEl = el.querySelector('#ma-sh-tbl'), rEl = el.querySelector('#ma-sh-read'), lEl = el.querySelector('#ma-sh-leg');
   if (!cEl) return;
-  if (!b.firm) { cEl.innerHTML = ui.empty('Firm dataset (Broad Sky firm profile) not available'); return; }
+  if (!b.firm) { cEl.innerHTML = ui.empty('Firm dataset (BSP firm profile) not available'); return; }
   const day = d => { const s = String(d || ''); return new Date(/^\d{4}-\d{2}$/.test(s) ? `${s}-01` : s); };
   const yrs = (a, z) => (day(z) - day(a)) / (365.25 * 864e5);
   const tl = b.firm.timeline || [];
@@ -420,7 +420,7 @@ function shBenchmark(ctx, el, b) {
     ] });
   const ahead = plats.filter(p => p.gap >= 0 && p.stated > 0).sort((x, y) => y.pace - x.pace), behind = plats.filter(p => p.gap < 0 && p.stated > 0).sort((x, y) => y.pace - x.pace), none = plats.filter(p => !p.stated);
   const nm = p => `${esc(p.name)} (${p.stated} in ${fmt.num(p.held, 1)} yrs vs S+H ${p.same})`;
-  rEl.innerHTML = `<b>So what:</b> S+H closed ${shStated} add-ons in ${fmt.num(shHeld, 1)} years (${fmt.num(shStated / shHeld, 1)} a year) and grew headcount about 8x. ${ahead.length ? `On or ahead of that pace at the same age: ${ahead.map(nm).join('; ')}.` : 'No current company is on the S+H pace at the same age.'} ${behind.length ? `Closest: ${behind.slice(0, 2).map(nm).join('; ')}${behind.length > 2 ? `; then ${andList(behind.slice(2).map(p => esc(p.name)))}` : ''}.` : ''} ${none.length ? `${andList(none.map(p => esc(p.name)))} ${none.length === 1 ? 'has' : 'have'} no add-on yet, so ${none.length === 1 ? 'it is' : 'they are'} the biggest gap to the plan${none.some(p => p.id === 'bsp-fl') ? `; Frontline already has a ${b.targets.filter(t => t._p === 'fl').length}-target screen in Pipeline` : ''}.` : ''} Headcount is from press releases (est.); revenue by year is not disclosed for current companies. <span class="sys-est sys-est--illus analyst">analyst view</span>`;
+  rEl.innerHTML = `S+H closed ${shStated} add-ons in ${fmt.num(shHeld, 1)} years (${fmt.num(shStated / shHeld, 1)} a year) and grew headcount about 8x. ${ahead.length ? `On or ahead of that pace at the same age: ${ahead.map(nm).join('; ')}.` : 'No current company is on the S+H pace at the same age.'} ${behind.length ? `Closest: ${behind.slice(0, 2).map(nm).join('; ')}${behind.length > 2 ? `; then ${andList(behind.slice(2).map(p => esc(p.name)))}` : ''}.` : ''} ${none.length ? `${andList(none.map(p => esc(p.name)))} ${none.length === 1 ? 'has' : 'have'} no add-on yet, so ${none.length === 1 ? 'it is' : 'they are'} the biggest gap to the plan${none.some(p => p.id === 'bsp-fl') ? `; Frontline already has a ${b.targets.filter(t => t._p === 'fl').length}-target screen in Pipeline` : ''}.` : ''} Headcount is from press releases (est.); revenue by year is not disclosed for current companies. <span class="sys-est sys-est--illus analyst">analyst view</span>`;
 }
 
 /* ═══ View 2: Pipeline ════════════════════════════════════════════════════ */
@@ -465,8 +465,8 @@ async function pipeline(ctx) {
   const passParams = { ...(sel !== 'all' ? { platform: sel } : {}), ...(q ? { q } : {}), ...(showPass ? {} : { pass: '1' }) };
   el.innerHTML = `<div class="m-ma">` + ui.pageHead({
     title: `Add-on pipeline${P ? ` · ${esc(P.label)}` : ''}`,
-    sub: rows.length ? `<b>${fmt.num(rows.length)} target${rows.length === 1 ? '' : 's'}${q ? ` matching “${esc(q)}”` : P ? '' : ' across all four companies'}; ${fmt.num(t1)} Tier-1 and ${fmt.num(t2)} Tier-2${inPlay.length ? `; ${fmt.num(inPlay.length)} in play` : ''}.</b> ${rows.length > 1 ? `Most are in ${esc(topState)}, and` : `HQ state: ${esc(topState)};`} ${pctOf(ff, rows.length)}% have a confirmed founder or family owner (ownership, not proof of intent to sell). ${dens + hub ? `${fmt.num(dens)} are density tuck-ins and ${fmt.num(hub)} would be new-hub anchors (reach = ${ROUTE_REACH_MI} mi straight-line, ≈45 drive-min, of a company node). ` : ''}${affN ? `${affN} target${affN === 1 ? '' : 's'} trade${affN === 1 ? 's' : ''} under a BSP company’s name: verify affiliation before any contact. ` : ''}Click a row to set stage, owner and next-step date.` : 'No targets match the current filter.',
-    chips: `${fmt.chip('Fit rubric differs by company; bars shown as % of each dimension’s maximum')}${fmt.chip('Revenue = ZoomInfo modeled est.', 'var(--sys-warn)')}${passed.length && !showPass && !q ? fmt.chip(`${passed.length} passed · hidden`, 'var(--sys-bad)') : ''}`,
+    sub: rows.length ? `<b>${fmt.num(rows.length)} target${rows.length === 1 ? '' : 's'}${q ? ` matching “${esc(q)}”` : P ? '' : ' across all four companies'}; ${fmt.num(t1)} Tier-1 and ${fmt.num(t2)} Tier-2${inPlay.length ? `; ${fmt.num(inPlay.length)} in play` : ''}.</b> ${pctOf(ff, rows.length)}% have a confirmed founder or family owner. Click a row to set stage and owner.` : 'No targets match the current filter.',
+    chips: `${fmt.chip('Rubrics differ by company')}${fmt.chip('Revenue modelled est.', 'var(--sys-warn)')}${passed.length && !showPass && !q ? fmt.chip(`${passed.length} passed · hidden`, 'var(--sys-bad)') : ''}`,
     actions: `<button class="sys-btn sys-btn--secondary btn" id="ma-trk-csv">⇩ Tracker CSV</button><a class="sys-btn sys-btn--secondary btn" href="#/ma/theses">Company theses →</a>`,
   }) + missingNote(ui, esc, b) +
   ui.kpis([
@@ -585,8 +585,8 @@ async function theses(ctx) {
   const hardest = b.pe?.meta?.sector_heatmap?.punctual_pros?.intensity || 'very high';
   el.innerHTML = `<div class="m-ma">` + ui.pageHead({
     title: 'Company theses',
-    sub: `<b>Four buy-and-build theses, all written from the target pools (${fmt.num(tot)} targets).</b> ${esc(PLAT[best].label)} has the richest actionable pool (${pctOf(S[best].t1 + S[best].t2, S[best].n)}% Tier 1–2). Punctual Pros faces the hardest competition (“${esc(hardest)}” sponsor intensity), and CET has the most open field in New England. Paragraphs marked <span class="sys-est sys-est--illus analyst">analyst view</span> are judgement, not reported fact.`,
-    chips: PKEYS.map(p => fmt.chip(`${PLAT[p].label}: ${S[p].n} targets · ${S[p].t1} T1`, PLAT[p].color)).join(''),
+    sub: `<b>${esc(PLAT[best].label)} has the richest pool (${pctOf(S[best].t1 + S[best].t2, S[best].n)}% Tier 1–2).</b> Punctual Pros faces the hardest competition; CET has the most open field.`,
+    chips: PKEYS.map(p => fmt.chip(`${PLAT[p].key.toUpperCase()} ${S[p].n} · ${S[p].t1} T1`, PLAT[p].color)).join(''),
     actions: `<a class="sys-btn sys-btn--secondary btn" href="#/ma/pipeline">Pipeline →</a>`,
   }) + missingNote(ui, esc, b) +
   `<div class="grid grid-2 ma-theses">${PKEYS.map(p => thesisPanel(ctx, b, p, S[p])).join('')}</div>
@@ -716,7 +716,7 @@ async function housingPanel(ctx, host, b, alive) {
   host.innerHTML = ui.panel({
     title: TITLE, accent: true,
     sub: `${fmt.num(totRes)} home sales and ${fmt.num(totNon)} commercial/industrial transfers across ${counties.length} counties served by ${Object.keys(HP).filter(p => counties.some(c => c.p === p)).length} portfolio companies (${loaded}/${SALES.length} sales files loaded)`,
-    body: `<div class="h-note"><b>So what:</b> ${ppT.length ? `${fmt.num(ppCovered)} of ${fmt.num(ppT.length)} Punctual Pros targets are headquartered in a county with gathered home-sales records. ` : ''}Home turnover (sales per month) is a leading indicator of replacement, repair and new-mover demand. ${dens.length ? `Density plays, meaning high turnover plus Tier 1–2 targets, are strongest in ${dens.slice(0, 3).map(r => esc(cname(r))).join(', ')}.` : ''} ${gaps.length ? `Sourcing gaps, meaning high turnover with no screened target, are ${gaps.slice(0, 3).map(r => esc(cname(r))).join(', ')}: extend the screen there.` : ''} ${hqTxt ? `Portfolio home markets (median home price, sales per month): ${hqTxt}.` : ''} ${missingCos.length ? `No home-sales records yet for ${andList(missingCos.map(p => esc(HP[p].label)))}${missingCos.includes('cet') ? ' (CET pulls hold commercial/industrial transfers only)' : ''}.` : ''} ${pulls.length ? `${pulls.length} counties have no records yet (${pulls.slice(0, 4).map(r => esc(cname(r))).join(', ')}${pulls.length > 4 ? ', …' : ''}), so pull them next.` : ''} <span class="sys-est sys-est--illus analyst">analyst view</span></div><div id="ma-house-tbl"></div>`,
+    body: `<div class="h-note">${ppT.length ? `${fmt.num(ppCovered)} of ${fmt.num(ppT.length)} Punctual Pros targets are headquartered in a county with gathered home-sales records. ` : ''}Home turnover (sales per month) is a leading indicator of replacement, repair and new-mover demand. ${dens.length ? `Density plays, meaning high turnover plus Tier 1–2 targets, are strongest in ${dens.slice(0, 3).map(r => esc(cname(r))).join(', ')}.` : ''} ${gaps.length ? `Sourcing gaps, meaning high turnover with no screened target, are ${gaps.slice(0, 3).map(r => esc(cname(r))).join(', ')}: extend the screen there.` : ''} ${hqTxt ? `Portfolio home markets (median home price, sales per month): ${hqTxt}.` : ''} ${missingCos.length ? `No home-sales records yet for ${andList(missingCos.map(p => esc(HP[p].label)))}${missingCos.includes('cet') ? ' (CET pulls hold commercial/industrial transfers only)' : ''}.` : ''} ${pulls.length ? `${pulls.length} counties have no records yet (${pulls.slice(0, 4).map(r => esc(cname(r))).join(', ')}${pulls.length > 4 ? ', …' : ''}), so pull them next.` : ''} <span class="sys-est sys-est--illus analyst">analyst view</span></div><div id="ma-house-tbl"></div>`,
     foot: `${srcs.map(c => ui.source(`${c.county} ${c.state}: ${layerLabel(c.source)}`, c.source_url, c.date_to)).join('')}<span class="src">CET counties are matched to the nearest county centroid within 45 km (approximate). Records hold each parcel’s last sale. BPI and Fair Harbor rows are HQ-market context (no add-on screen yet).</span>`,
   });
   ctx.ui.table(host.querySelector('#ma-house-tbl'), {
@@ -763,15 +763,15 @@ async function rivalsView(ctx) {
   all.forEach(r => { const w = r.name.toLowerCase().replace(/\(.*?\)/g, '').split(/[^a-z0-9&]+/).map(x => x.replace(/[^a-z0-9]/g, '')).filter(x => x.length > 1).slice(0, 2); const re = w.length === 2 ? new RegExp(`\\b${w[0].replace(/[^a-z0-9]/g, '')}\\b.*\\b${w[1].replace(/[^a-z0-9]/g, '')}\\b`) : null; r.alsoTarget = !!re && targetNames.some(n => re.test(n)); });
   el.innerHTML = `<div class="m-ma">` + ui.pageHead({
     title: 'Rival companies',
-    sub: `<b>${all.length} rival companies tracked through lender filings, 10-Ks and PPP records. ${stressed.length} show credit stress (PIK interest or lender marks below 95) and ${refi.length} have debt maturing by 2027.</b> Stressed rivals are more likely to sell assets than to bid. ${ppR} of the ${all.length} compete with Punctual Pros, the most contested portfolio company, while the healthy, well-financed consolidators (Wrench, Apex, Redwood, Legacy) set add-on pricing.`,
-    chips: `${fmt.chip('Lender marks = one lender’s slice, not the full facility', 'var(--sys-warn)')}${fmt.chip('Estimates labelled est.')}`,
+    sub: `<b>${stressed.length} of ${all.length} rivals show credit stress and ${refi.length} face debt maturing by 2027.</b> Stressed rivals sell rather than bid; the healthy consolidators set add-on prices.`,
+    chips: `${fmt.chip('Marks: one lender’s slice', 'var(--sys-warn)')}${fmt.chip('Estimates labelled est.')}`,
     actions: `<a class="sys-btn sys-btn--secondary btn" href="#/pe">Private equity →</a>`,
   }) +
   ui.kpis([
     { label: 'Rival companies', value: fmt.num(all.length), sub: `${fmt.num(b.rivals.items?.length)} filings parsed`, color: 'var(--sys-bad)' },
     { label: 'PE-backed', value: fmt.num(peN), sub: `${pubN} public strategics · ${all.length - peN - pubN} private/other`, color: 'var(--c-pe)' },
     { label: 'Credit stress', value: fmt.num(stressed.length), sub: esc(stressed.slice(0, 3).map(r => r.name).join(', ') || '—'), color: 'var(--sys-bad)' },
-    { label: 'Refi due ≤2027', value: fmt.num(refi.length), sub: esc(refi.map(r => `${r.name} (${r.maturity})`).slice(0, 2).join(', ') || '—'), color: 'var(--sys-warn)' },
+    { label: 'Refi due ≤2027', value: fmt.num(refi.length), sub: esc(refi.map(r => r.name).slice(0, 2).join(', ') || '—'), color: 'var(--sys-warn)' },
     { label: 'Competing with PP', value: fmt.num(ppR), sub: 'most contested BSP portfolio company', color: 'var(--co-pp)' },
     { label: 'Also on a BSP target list', value: fmt.num(all.filter(r => r.alsoTarget).length), sub: esc(all.filter(r => r.alsoTarget).map(r => r.name).join(', ') || '—'), color: 'var(--sys-good)' },
   ]) +
@@ -841,14 +841,14 @@ async function valuation(ctx) {
   const defEbitda = id => { const p = PKEYS.find(k => PLAT[k].bench === id); const s = secRows.find(r => r.id === id); const rev = p ? median(b.targets.filter(t => t._p === p).map(t => t.revenue_est_usd)) : null; const mg = Math.min(LMM_MARGIN, s?.em > 0 ? s.em : LMM_MARGIN); return rev ? { v: Math.max(0.1, Math.round((rev * mg / 100) / 1e5) / 10), p, rev, mg } : { v: 1, p: null, rev: null, mg }; };
   el.innerHTML = `<div class="m-ma">` + ui.pageHead({
     title: 'Valuation benchmarks',
-    sub: c ? `<b>Across ${fmt.num(c.items?.length)} listed peers, ${esc(hiG?.sector || '—')} is the growth engine (${pctTxt(fmt, hiG?.cagr)} median 3-yr revenue CAGR), and ${esc(hiM?.sector || '—')} earns the richest margins (${pctTxt(fmt, hiM?.em)} median EBITDA margin).</b> BSP’s edge is multiple arbitrage: buy $1–10M-EBITDA add-ons at lower-middle-market prices and exit an integrated portfolio company that trades nearer to scaled-sponsor or strategic prices. Use the calculator to size a deal.` : 'Public comparables dataset is not yet available.',
-    chips: `${fmt.chip('SEC XBRL, FY2023–FY2025', 'var(--sys-info)')}${fmt.chip('EBITDA = op. income + D&A (not adjusted)', 'var(--sys-warn)')}${fmt.chip('LMM 5–9x = analyst assumption', 'var(--c-ma)')}`,
+    sub: c ? `<b>BSP’s edge is multiple arbitrage:</b> buy small add-ons at lower-middle-market prices and sell the combined company nearer scaled-sponsor prices. Use the calculator to size a deal.` : 'Public comparables dataset is not yet available.',
+    chips: `${fmt.chip('SEC XBRL, FY2023–FY2025', 'var(--sys-info)')}${fmt.chip('EBITDA not adjusted', 'var(--sys-warn)')}${fmt.chip('LMM 5–9x assumed', 'var(--c-ma)')}`,
   }) + (c ? '' : ui.note('Research dataset Public comparables is not yet available; the calculator still works.', 'warn') + '<div class="mt-12"></div>') +
   ui.kpis([
     { label: 'Public comps', value: fmt.num(c?.items?.length), sub: `${secRows.length} sectors · 10-K / 20-F`, color: 'var(--sys-info)' },
     { label: 'Richest margins', value: pctTxt(fmt, hiM?.em), sub: `${esc(hiM?.sector || '—')} · median EBITDA margin`, color: 'var(--sys-good)' },
     { label: 'Fastest growth', value: pctTxt(fmt, hiG?.cagr), sub: `${esc(hiG?.sector || '—')} · 3-yr CAGR`, color: 'var(--co-cet)' },
-    { label: 'LMM entry band', value: '5–9x', sub: 'EBITDA, private add-ons (analyst assumption)', color: 'var(--c-ma)' },
+    { label: 'LMM entry band', value: '5–9x', sub: 'EBITDA, private add-ons (assumed)', color: 'var(--c-ma)' },
     { label: 'Largest rival valuation', value: evs[0] ? fmt.money(evs[0].ev) : '—', sub: evs[0] ? `${esc(evs[0].name)} EV (disclosed)` : 'none disclosed', color: 'var(--sys-bad)' },
   ]) +
   `<div class="grid grid-main mt-12">
@@ -942,21 +942,21 @@ async function whitespace(ctx) {
   const allSponsors = new Set(W.flatMap(w => w.sponsors)); const deals = W.reduce((s, w) => s + w.deals, 0);
   el.innerHTML = `<div class="m-ma">` + ui.pageHead({
     title: 'White space',
-    sub: `<b>Top hypothesis: ${esc(topW.name)} (score ${topW.score}/100).</b> ${topW.stated && !topW.held ? `BSP lists “${esc(topW.bspSector)}” as a target sector but holds no portfolio company in it.` : ''} ${topW.sponsors.length} sponsors are building companies there, which shows there will be exit buyers. ${openSectors.length} of BSP’s ${bspSectors.length} stated sectors have no current company (${esc(openSectors.join(', '))}). These are <b>hypotheses to test</b>, not recommendations.`,
-    chips: `${fmt.chip('Analyst hypotheses', 'var(--c-ma)')}${fmt.chip('Evidence: Private-equity landscape companies & 2025–26 deals')}${fmt.chip('BSP stated sectors: broadskypartners.com')}`,
+    sub: `<b>Top hypothesis: ${esc(topW.name)} (${topW.score}/100).</b> ${topW.sponsors.length} sponsors are building there, so exit buyers exist. ${openSectors.length} of BSP’s ${bspSectors.length} stated sectors have no company yet.`,
+    chips: `${fmt.chip('Analyst hypotheses', 'var(--c-ma)')}${fmt.chip('Sponsor deals, 2025–26')}${fmt.chip('BSP stated sectors')}`,
     actions: `<button class="sys-btn sys-btn--secondary btn" id="ma-ws-csv">⇩ CSV</button>`,
   }) +
   ui.kpis([
-    { label: 'Candidate sectors', value: fmt.num(W.length), sub: 'derived from sponsor portfolio company & deal map', color: 'var(--c-ma)' },
+    { label: 'Candidate sectors', value: fmt.num(W.length), sub: 'from the sponsor deal map', color: 'var(--c-ma)' },
     { label: 'Open BSP sectors', value: `${openSectors.length}<small>of ${bspSectors.length}</small>`, sub: 'stated target sectors without a company', color: 'var(--sys-brand)' },
     { label: 'Sponsors active', value: fmt.num(allSponsors.size), sub: `in candidate sectors · of ${b.pe.items?.length} profiled`, color: 'var(--c-pe)' },
     { label: 'Evidence points', value: fmt.num(W.reduce((s, w) => s + w.ev.length, 0)), sub: `${deals} deals in 2025–26`, color: 'var(--sys-info)' },
     { label: 'Top score', value: `${topW.score}<small>/100</small>`, sub: esc(clip(topW.name, 40)), color: 'var(--sys-good)' },
   ]) +
   `<div class="sys-grid ws-grid mt-12" id="ma-ws"></div>
-  <div class="sys-src src-line mt-8">Evidence: Private-equity landscape (sponsor companies and 2025–26 deals), Broad Sky firm profile (stated sectors), Public comparables sector benchmarks · generated ${esc(b.pe?.meta?.generated || '—')} · click a card for evidence links and next action</div>
+  <div class="sys-src src-line mt-8">Evidence: Private-equity landscape (sponsor companies and 2025–26 deals), BSP firm profile (stated sectors), Public comparables sector benchmarks · generated ${esc(b.pe?.meta?.generated || '—')} · click a card for evidence links and next action</div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'How the fit score works', sub: 'Transparent, adjustable. Judgement is labelled.', body: `<ul class="bul"><li><b>Thesis (0–30):</b> 30 if the sector is one of BSP’s stated target sectors with no current company, 20 if it is stated and BSP already has a company there, 10 if it is not stated.</li><li><b>Exit demand (0–25):</b> 5 points per distinct sponsor with a company or 2025–26 deal in the sector (Private-equity landscape).</li><li><b>Room (0–20):</b> 20 minus 5 per “high-threat” sponsor active in the sector (crowding penalty).</li><li><b>Adjacency (0–25):</b> <span class="sys-est sys-est--illus analyst">analyst view</span> how much of the PRG growth plan and customer base of an existing BSP portfolio company carries over.</li></ul>`, foot: ui.source('Private-equity landscape, Broad Sky firm profile (sectors), Public comparables', null, b.pe?.meta?.generated) })}
+    ${ui.panel({ title: 'How the fit score works', sub: 'Transparent, adjustable. Judgement is labelled.', body: `<ul class="bul"><li><b>Thesis (0–30):</b> 30 if the sector is one of BSP’s stated target sectors with no current company, 20 if it is stated and BSP already has a company there, 10 if it is not stated.</li><li><b>Exit demand (0–25):</b> 5 points per distinct sponsor with a company or 2025–26 deal in the sector (Private-equity landscape).</li><li><b>Room (0–20):</b> 20 minus 5 per “high-threat” sponsor active in the sector (crowding penalty).</li><li><b>Adjacency (0–25):</b> <span class="sys-est sys-est--illus analyst">analyst view</span> how much of the PRG growth plan and customer base of an existing BSP portfolio company carries over.</li></ul>`, foot: ui.source('Private-equity landscape, BSP firm profile (sectors), Public comparables', null, b.pe?.meta?.generated) })}
     ${ui.panel({ title: 'Next steps', sub: 'Turn hypotheses into a Fund II sourcing plan', body: `<ol class="acts">${W.slice(0, 3).map(w => `<li><span><b>${esc(w.name)}:</b> ${esc(w.next)}</span></li>`).join('')}<li><span><b>Validate with PRG operators:</b> 30-minute interviews with 2 operators per sector on fragmentation, labour model and pricing power.</span></li><li><span><b>Re-score quarterly</b> as the PE landscape is refreshed. A sponsor entering a sector raises exit demand but reduces room.</span></li></ol>` })}
   </div></div>`;
   const host = el.querySelector('#ma-ws');
@@ -987,7 +987,7 @@ function openWS(ctx, w) {
 export default {
   id: 'ma', name: 'Acquisition engine', tag: 'M&A', color: 'var(--c-ma)', group: 'Intelligence',
   tagline: 'Cross-portfolio buy-and-build engine: screened add-ons, company theses, rival companies, valuation benchmarks and white space',
-  hq: { lat: 40.7536, lon: -73.9832, label: 'Broad Sky Partners, New York, NY' },
+  hq: { lat: 40.7536, lon: -73.9832, label: 'BSP, New York, NY' },
   views: [
     { id: 'overview', name: 'Overview', icon: '◉', render: overview },
     { id: 'pipeline', name: 'Pipeline', icon: '▤', render: pipeline },
@@ -997,8 +997,8 @@ export default {
     { id: 'whitespace', name: 'White space', icon: '✦', render: whitespace },
   ],
   tour: [
-    { order: 800, hash: '#/ma/overview', caption: '<b>Acquisition engine.</b> Every screened add-on across CET, Punctual Pros, Frontline and Thomas Scientific, ranked, with this quarter’s top ten.', narration: 'The acquisition engine ranks every screened add-on across four companies, with this quarter\'s top ten.', duration: 6500 },
-    { order: 810, hash: '#/ma/theses', caption: '<b>Company theses.</b> Each buy-and-build thesis is written from its target pool, and home-sales turnover in every portfolio company’s counties flags density plays and sourcing gaps.', narration: 'Each thesis comes from its own target pool; county home sales show where housing turnover and target density line up.', duration: 8500 },
-    { order: 820, hash: '#/ma/rivals', caption: '<b>Rival companies.</b> Lender filings show which consolidators are stressed (PIK, sub-95 marks) and are likely sellers rather than bidders.', narration: 'Lender filings flag rival consolidators paying interest in kind: likely sellers, not bidders.', duration: 5500 },
+    { order: 800, hash: '#/ma/overview', caption: '<b>Acquisition engine.</b> Every screened add-on across four companies, ranked, with this quarter’s top ten.', narration: 'The acquisition engine ranks every screened add-on across four companies, with this quarter\'s top ten.', duration: 6500 },
+    { order: 810, hash: '#/ma/theses', caption: '<b>Company theses.</b> Each thesis is written from its target pool; county home sales flag density gaps.', narration: 'Each thesis comes from its own target pool. Home sales show where turnover and targets line up.', duration: 8500 },
+    { order: 820, hash: '#/ma/rivals', caption: '<b>Rival companies.</b> Lender filings flag stressed consolidators (PIK, sub-95 marks): likely sellers, not bidders.', narration: 'Lender filings flag rival consolidators paying interest in kind: likely sellers, not bidders.', duration: 5500 },
   ],
 };

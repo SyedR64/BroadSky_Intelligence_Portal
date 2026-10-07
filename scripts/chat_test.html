@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat test · Broad Sky</title>
+<title>Chat test · BSP Desk</title>
 <meta name="description" content="Developer page: the grounded assistant mounted inline, asking one question from the URL (q) and an optional follow-up (f).">
 <meta name="theme-color" content="#fbfaf7">
 <link rel="icon" href="../BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261006180606">
+<link rel="stylesheet" href="../assets/system.css?v=20261006224618">
 <style>#hero-chat{max-width:760px;margin:0 auto}</style>
 </head>
 <body>
@@ -23,7 +23,7 @@
   </div>
 </main>
 <script type="module">
-import { Chat } from '../assets/chat.js?v=20261006180606';
+import { Chat } from '../assets/chat.js?v=20261006224618';
 const qp = new URLSearchParams(location.search);
 const q = qp.get('q') || 'Show me how to take Punctual Pros nationwide';
 window.__w = Chat.mount(document.querySelector('#hero-chat'), { persona: qp.get('p') || 'portal', mode: 'inline', theme: 'light', autoAsk: q });

@@ -49,7 +49,7 @@ export const famOf = t => (EVENT[t] || [null, 'info'])[1];
 
 /** Short, plain-English titles for the Punctual Pros sequence (fallback: the first clause of the action). */
 const STEP_TITLE = {
-  0: 'Broad Sky acquires Punctual Pros', 1: 'ServiceTitan on every location', 2: 'Add-on #1: Horvath Home Services (NJ)',
+  0: 'BSP acquires Punctual Pros', 1: 'ServiceTitan on every location', 2: 'Add-on #1: Horvath Home Services (NJ)',
   3: 'Integration leader and weekly KPI pack', 4: 'One contact center with AI answering', 5: 'Membership relaunch as the north-star metric',
   6: 'Price book and sales coaching', 7: 'Restart tuck-ins: one per quarter', 8: 'Lancaster technician academy', 9: 'Shared back office in Lancaster',
   10: 'Attach adjacent lines to existing visits', 11: 'Fund the program, keep leverage near 3x', 12: 'Exit preparation: audited KPI pack',
@@ -100,7 +100,7 @@ export function parseRefs(s) {
 
 /* ── text cleaning (no internal ids, file names or field names reach the page) ── */
 const ID = String.raw`(?:kb|pn|ve|pp-fil|fl|rival)-[a-z0-9]+(?:-[a-z0-9]+)*`;
-const FIELD = { entry_date: 'entry date', exit_date: 'exit date', entry_ev_usd: 'entry value', exit_ev_usd: 'exit value', entry_multiple_ebitda: 'entry multiple', exit_multiple_ebitda: 'exit multiple', exit_multiple: 'exit multiple', entry_revenue_usd: 'entry revenue', exit_revenue_usd: 'exit revenue', exit_ebitda_usd: 'exit EBITDA', entry_ebitda_usd: 'entry EBITDA', entry_locations: 'entry locations', entry_technicians_or_staff: 'entry staff', what_broad_sky_can_copy: 'what Broad Sky can copy', pe_landscape: 'private-equity landscape', revenue_growth_x: 'The revenue-growth figure', pp_applicability: 'Punctual Pros applicability notes', pp_next_step: 'next steps', punctual_pros_sequence: 'Punctual Pros sequence', months_from_entry: 'months from entry' };
+const FIELD = { entry_date: 'entry date', exit_date: 'exit date', entry_ev_usd: 'entry value', exit_ev_usd: 'exit value', entry_multiple_ebitda: 'entry multiple', exit_multiple_ebitda: 'exit multiple', exit_multiple: 'exit multiple', entry_revenue_usd: 'entry revenue', exit_revenue_usd: 'exit revenue', exit_ebitda_usd: 'exit EBITDA', entry_ebitda_usd: 'entry EBITDA', entry_locations: 'entry locations', entry_technicians_or_staff: 'entry staff', what_broad_sky_can_copy: 'what BSP can copy', pe_landscape: 'private-equity landscape', revenue_growth_x: 'The revenue-growth figure', pp_applicability: 'Punctual Pros applicability notes', pp_next_step: 'next steps', punctual_pros_sequence: 'Punctual Pros sequence', months_from_entry: 'months from entry' };
 const FILE = { rival_filings: 'competitor filings', frontline_filings: 'Frontline public filings', pp_nationwide: 'the nationwide plan', pp_filings: 'Punctual Pros public filings', serviceos_evidence: 'ServiceOS evidence', pe_landscape: 'the private-equity landscape', cases_home_services: 'the home-services case set', cases_cross_sector: 'the cross-sector case set' };
 /* House style: no "platform" in the private-equity sense and no "playbook" in visible copy.
    Tech-sense uses (field-service, booking, marketing, system-wide platform …) are kept. */
@@ -278,7 +278,7 @@ export function build(d) {
   };
   const ppEntry = when(ts.punctual_pros?.entry || '2024-04-03');
   const ppLane = {
-    id: 'pp', short: 'Punctual Pros', chain: 'Broad Sky Partners (2024–)', entry: ppEntry, exit: null, pp: true,
+    id: 'pp', short: 'Punctual Pros', chain: 'BSP (2024–)', entry: ppEntry, exit: null, pp: true,
     events: steps.filter(s => s.done && s.a).map(s => ({ i: s.step, date: s.start, w: s.a, event_type: s.step === 2 ? 'add_on' : s.step === 1 ? 'tech_rollout' : 'other', fam: s.step === 2 ? 'deal' : s.step === 1 ? 'ops' : 'owner', type: s.step === 2 ? 'Add-on' : s.step === 1 ? 'Technology rollout' : 'Sponsor entry', event: s.action, metric: s.title, source_url: (s.xrefs[0] || {}).source_url || null })),
   };
   const xrefIndex = {};
@@ -343,7 +343,7 @@ export function timelineHTML(lanes, { mode = 'calendar', hidden = new Set(), sel
     const hold0 = l.entry ? P(l, l.entry.t) : null;
     const hold1 = l.exit ? P(l, l.exit.t) : (l.pp || l.hold_status === 'held' || l.hold_status === 'recap' || l.hold_status === 'ipo') ? P(l, TODAY.t) : null;
     const holdBar = hold0 != null && hold1 != null && hold1 > hold0 ? `<span class="cs-tl-hold" style="left:${hold0.toFixed(2)}%;width:${(hold1 - hold0).toFixed(2)}%" aria-hidden="true"></span>` : '';
-    const entryMk = l.entry ? `<span class="cs-tl-mark cs-tl-mark--entry" style="left:${P(l, l.entry.t).toFixed(2)}%" title="${esc(`${l.pp ? 'Broad Sky' : 'Sponsor'} entry · ${l.entry.label}`)}"><b>${l.pp ? 'Entry' : 'In'}</b></span>` : '';
+    const entryMk = l.entry ? `<span class="cs-tl-mark cs-tl-mark--entry" style="left:${P(l, l.entry.t).toFixed(2)}%" title="${esc(`${l.pp ? 'BSP' : 'Sponsor'} entry · ${l.entry.label}`)}"><b>${l.pp ? 'Entry' : 'In'}</b></span>` : '';
     const exitMk = l.exit ? `<span class="cs-tl-mark cs-tl-mark--exit" style="left:${P(l, l.exit.t).toFixed(2)}%" title="${esc(`Exit · ${l.exit.label}`)}"><b>Out</b></span>` : '';
     const todayMk = (l.pp || (mode === 'calendar' && !l.exit)) ? `<span class="cs-tl-today" style="left:${P(l, TODAY.t).toFixed(2)}%" title="Today · Oct 2026"></span>` : '';
     const dots = evs.map(({ e, x0, x1, r }) => {
@@ -353,7 +353,7 @@ export function timelineHTML(lanes, { mode = 'calendar', hidden = new Set(), sel
       return `<button type="button" class="cs-tl-ev${range ? ' cs-tl-ev--range' : ''}${e.event_type === 'exit' ? ' cs-tl-ev--exit' : ''}${selected === key ? ' is-sel' : ''}" data-ev="${esc(key)}" style="left:${x0.toFixed(2)}%;top:${16 + r * 17}px;--c:${f.color}${range ? `;width:max(10px,${(x1 - x0).toFixed(2)}%)` : ''}" aria-label="${esc(lab)}" title="${esc(lab.length > 220 ? lab.slice(0, 218) + '…' : lab)}"></button>`;
     }).join('');
     return `<div class="cs-tl-lane${l.pp ? ' cs-tl-lane--pp' : ''}" data-case="${esc(l.id)}">
-      <div class="cs-tl-name"><b>${esc(l.short)}</b><span>${esc(l.pp ? 'Broad Sky Partners · today = month ' + Math.round((TODAY.t - l.entry.t) * 12) : `${(l.chainShort || '').length > 46 ? l.chainShort.slice(0, 44).replace(/\s+\S*$/, '') + '…' : l.chainShort || ''}${l.statusLabel ? ' · ' + l.statusLabel : ''}`)}</span></div>
+      <div class="cs-tl-name"><b>${esc(l.short)}</b><span>${esc(l.pp ? 'BSP · today = month ' + Math.round((TODAY.t - l.entry.t) * 12) : `${(l.chainShort || '').length > 46 ? l.chainShort.slice(0, 44).replace(/\s+\S*$/, '') + '…' : l.chainShort || ''}${l.statusLabel ? ' · ' + l.statusLabel : ''}`)}</span></div>
       <div class="cs-tl-track" style="height:${h}px">${grid}${holdBar}${entryMk}${exitMk}${todayMk}${dots}</div>
     </div>`;
   }).join('');
@@ -431,7 +431,7 @@ export function ganttHTML(model, { root = '', selected = null } = {}) {
   const doneHTML = done.map(s => `<li><button type="button" data-step="${s.step}"><span class="cs-g-n cs-g-n--done">✓</span><span><b>${esc(s.title)}</b><span>${esc(s.a.label)} · hold month ${s.hold_month_start}</span></span></button></li>`).join('');
   return `<div class="cs-g">
     <div class="cs-g-done"><p class="sys-card-label cs-g-h">Already done</p><ol>${doneHTML}</ol></div>
-    <div class="cs-g-fwd"><div class="cs-g-headrow"><p class="sys-card-label cs-g-h">Next 36 months · Oct 2026 – Sept 2029</p><span class="cs-g-key"><i class="cs-g-k cs-g-k--rec"></i>Recommended <i class="cs-g-k cs-g-k--opt"></i>Option <span>Bar text = months of Broad Sky's hold</span></span></div>
+    <div class="cs-g-fwd"><div class="cs-g-headrow"><p class="sys-card-label cs-g-h">Next 36 months · Oct 2026 – Sept 2029</p><span class="cs-g-key"><i class="cs-g-k cs-g-k--rec"></i>Recommended <i class="cs-g-k cs-g-k--opt"></i>Option <span>Bar text = months of BSP's hold</span></span></div>
       <div class="cs-g-axisrow" aria-hidden="true"><span></span><div class="cs-g-axis">${axis}<em style="left:${today.toFixed(2)}%">Today</em></div><span></span></div>
       <ol class="cs-g-rows">${rows}</ol></div>
   </div>`;

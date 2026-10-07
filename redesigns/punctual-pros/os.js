@@ -1,5 +1,5 @@
 /* ServiceOS product page — demo logic. Shared helpers come from ./site.js (same folder). */
-import { FAQ, TERRITORY, HUBS, classifyZip, zipIndex, cleanCity, miles, fillRange, territoryAlerts, alertLevel } from './site.js?v=20261006180606';
+import { FAQ, TERRITORY, HUBS, classifyZip, zipIndex, cleanCity, miles, fillRange, territoryAlerts, alertLevel } from './site.js?v=20261006224618';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -390,8 +390,8 @@ function evidence(ctx) {
     const vs = it.filter(i => i.kind === 'vendor_stack' && i.company === 'pp');
     const dec = v => /Avoca/.test(v) ? 'rent' : 'buy';
     const rows = vs.map(i => `<tr><td><b>${esc(i.category)}</b></td><td><b>${esc(i.vendor)}</b>${i.note ? `<small>${esc(clip(prose(i.note), 130))}</small>` : ''}</td><td><span class="dec ${dec(i.vendor)}">${dec(i.vendor) === 'rent' ? 'Rent (usage)' : 'Buy'}</span></td><td>${esc(prose(i.what_it_does))}</td><td>${esc(clip(prose(i.pricing_note), 150))}<small><a href="${esc(i.source_url)}" target="_blank" rel="noopener">${esc(host(i.source_url))}</a></small></td></tr>`);
-    rows.push(`<tr><td><b>Demand forecasting</b></td><td><b>Pressure Index</b> (Broad Sky portal)<small>Punctual Pros demand model, National Weather Service and Open-Meteo; already prototyped in the portal</small></td><td><span class="dec build">Build</span></td><td>7-day call forecast by hub and trade; drives staffing, on-call and parts staging.</td><td>Internal; free public feeds (Weatherbit optional)<small><a href="../../app.html#/pp/weather">portal view</a></small></td></tr>`);
-    rows.push(`<tr><td><b>Customer acquisition</b></td><td><b>New-mover autopilot</b> (Broad Sky portal)<small>County ArcGIS and NJ SR1A deed feeds</small></td><td><span class="dec build">Build</span></td><td>Deed → score → welcome mail → opt-in call; writes leads into ServiceTitan.</td><td>Internal + print and mail vendor (~$1.10 a kit<span class="sys-est">est.</span>)<small><a href="../../app.html#/pp/movers">portal view</a></small></td></tr>`);
+    rows.push(`<tr><td><b>Demand forecasting</b></td><td><b>Pressure Index</b> (BSP portal)<small>Punctual Pros demand model, National Weather Service and Open-Meteo; already prototyped in the portal</small></td><td><span class="dec build">Build</span></td><td>7-day call forecast by hub and trade; drives staffing, on-call and parts staging.</td><td>Internal; free public feeds (Weatherbit optional)<small><a href="../../app.html#/pp/weather">portal view</a></small></td></tr>`);
+    rows.push(`<tr><td><b>Customer acquisition</b></td><td><b>New-mover autopilot</b> (BSP portal)<small>County ArcGIS and NJ SR1A deed feeds</small></td><td><span class="dec build">Build</span></td><td>Deed → score → welcome mail → opt-in call; writes leads into ServiceTitan.</td><td>Internal + print and mail vendor (~$1.10 a kit<span class="sys-est">est.</span>)<small><a href="../../app.html#/pp/movers">portal view</a></small></td></tr>`);
     $('#stk-body').innerHTML = rows.join('') || '<tr><td colspan="5">Stack dataset not yet available.</td></tr>';
     labelCells($('#ev-body')); labelCells($('#stk-body'));
   });
@@ -439,7 +439,7 @@ export function prose(v) {
     .replace(/(?<![\w@/.#:=$-])([a-z][a-z0-9]*(?:_[a-z0-9]+)+)(?![\w@/-])/g, (m, id) => `the ${dsName(id)} dataset`)
     .replace(/\s*\((?:see\s+)?(?:ve|kb|ra|ref|pn)-[a-z0-9-]+(?:\s*[,;]\s*(?:ve|kb|ra|ref|pn)-[a-z0-9-]+)*\)/gi, '')
     .replace(/\b(?:ve|kb|ra|ref)-(?:pp-)?[0-9a-z]+\b/g, '').replace(/\s*\(Live\.\w+\)/g, '')
-    .replace(/\bmembership-dense platform\b/g, 'membership-dense company').replace(/\b\d{4}-\d{2}-\d{2}\b/g, m => wordDate(m)).replace(/\bBSP\b/g, 'Broad Sky').replace(/\bPP's\b/g, "Punctual Pros'").replace(/\bPP\b/g, 'Punctual Pros').replace(/\bGBB\b/g, 'good-better-best').replace(/\s{2,}/g, ' ').replace(/\s+([.,;)])/g, '$1').trim();
+    .replace(/\bmembership-dense platform\b/g, 'membership-dense company').replace(/\b\d{4}-\d{2}-\d{2}\b/g, m => wordDate(m)).replace(/\bBSP\b/g, 'BSP').replace(/\bPP's\b/g, "Punctual Pros'").replace(/\bPP\b/g, 'Punctual Pros').replace(/\bGBB\b/g, 'good-better-best').replace(/\s{2,}/g, ' ').replace(/\s+([.,;)])/g, '$1').trim();
 }
 function clip(v, n) { const t = String(v == null ? '' : v).trim(); if (t.length <= n) return t; const cut = t.slice(0, n); const sp = cut.lastIndexOf(' '); return (sp > n * 0.6 ? cut.slice(0, sp) : cut).replace(/[\s,;:(\-–]+$/, '') + '…'; }
 

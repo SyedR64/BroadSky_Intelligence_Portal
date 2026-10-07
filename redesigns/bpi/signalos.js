@@ -1,8 +1,8 @@
 /* SignalOS product page: demo tabs, synthetic-audience test, compliance workflow, value math, evidence. */
-import { Data, Fmt } from '../../assets/core.js?v=20261006180606';
-import { chrome, mountChat, plain } from './site.js?v=20261006180606';
-import { mountMonitor, reduceMotion } from './monitor.js?v=20261006180606';
-import { Frame } from '../../assets/frame.js?v=20261006180606';
+import { Data, Fmt } from '../../assets/core.js?v=20261006224618';
+import { chrome, mountChat, plain } from './site.js?v=20261006224618';
+import { mountMonitor, reduceMotion } from './monitor.js?v=20261006224618';
+import { Frame } from '../../assets/frame.js?v=20261006224618';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const $ = (s, r = document) => r.querySelector(s);
@@ -158,7 +158,7 @@ Data.load('research/serviceos_evidence').then(d => {
 (function gantt() {
   const months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
   const rows = [
-    ['Stack and data layer', 'Owner: BPI COO and the Portfolio Resource Group', 1, 2, '', 'Contracts, SSO, client workspaces'],
+    ['Stack and data layer', 'Owner: BPI COO and the PRG', 1, 2, '', 'Contracts, SSO, client workspaces'],
     ['Narrative monitor pilot', 'Owner: Insights lead', 2, 5, 'b', '10 corporate clients from Index briefings'],
     ['Compliance studio', 'Owner: Head of corporate affairs', 3, 6, '', 'Fact bases and legal routing'],
     ['Audience lab', 'Owner: Message House', 4, 8, '', 'Synthetic and live panel loop'],

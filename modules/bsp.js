@@ -1,16 +1,16 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   How Broad Sky buys (module id 'bsp') — the acquisition methodology,
-   reverse-engineered from every disclosed Broad Sky deal, and applied live to
+   How BSP buys (module id 'bsp') — the acquisition methodology,
+   reverse-engineered from every disclosed BSP deal, and applied live to
    the add-on pipelines.
    Views: deals · patterns · rubric · network.
-   Datasets: Broad Sky acquisition methodology, Broad Sky professional network,
+   Datasets: BSP acquisition methodology, BSP professional network,
    Punctual Pros / CET / Frontline and Thomas Scientific add-on target screens.
    ═══════════════════════════════════════════════════════════════════════════ */
-import * as Copy from './copy.js?v=20261006180606';
+import * as Copy from './copy.js?v=20261006224618';
 import {
   loadBundle, isTargetTest, PLATFORMS, PORDER, sellerLabel, DEAL_TYPE, STRENGTH, TESTS, critShort, GROUPS, TYPE_LABEL, REL_LABEL,
   graphSVG, legendHTML, stripSVG, bindGraph, nodeDetail, introFor, firstCallScript, nextFive, fmtMonth, fmtDay, monthsBetween, clip, host, TODAY,
-} from './bsp-lib.js?v=20261006180606';
+} from './bsp-lib.js?v=20261006224618';
 
 const COLOR = 'var(--sys-brand)';
 /* company accents are the system tokens (UNIFIED.md §6); Smith + Howard, exited, reads the neutral mute */
@@ -26,14 +26,14 @@ const coChip = (p, t, tag = 'span', extra = '') => `<${tag} class="sys-chip sys-
 const stChip = (t, st) => `<span class="sys-chip${st ? ` sys-chip--${st}` : ''}">${h(t)}</span>`;
 const EST = Copy.EST;
 const n1 = v => v == null || isNaN(v) ? '—' : Number(v).toFixed(1);
-const SRC_METH = 'Broad Sky acquisition methodology (primary releases, SEC filings)';
-const SRC_NET = 'Broad Sky professional network (public roles only)';
+const SRC_METH = 'BSP acquisition methodology (primary releases, SEC filings)';
+const SRC_NET = 'BSP professional network (public roles only)';
 const SRC_POOLS = 'Add-on target screens: Punctual Pros, CET, Frontline, Thomas Scientific';
 
 /* free text from the deal record in plain English: ISO dates in words ("2027-12-14" → "Dec 14, 2027", "2026-06" → "Jun 2026", "Q4-2024" → "Q4 2024") */
 const words = s => s == null ? s : Copy.text(String(s).replace(/\bQ([1-4])-((?:19|20)\d\d)\b/g, 'Q$1 $2').replace(/\b((?:19|20)\d\d)-(0[1-9]|1[0-2])\b(?!-\d)/g, (m, y, mo) => fmtMonth(`${y}-${mo}-01`)));
 const openInsp = (ctx, opts) => { ctx.inspector.open(opts); document.querySelector('#inspector .insp-body')?.classList.add('m-bsp'); };
-const injectCss = () => { if (!document.getElementById('css-bsp')) { const l = document.createElement('link'); l.id = 'css-bsp'; l.rel = 'stylesheet'; l.href = 'modules/bsp.css?v=20261006180606'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-bsp')) { const l = document.createElement('link'); l.id = 'css-bsp'; l.rel = 'stylesheet'; l.href = 'modules/bsp.css?v=20261006224618'; document.head.appendChild(l); } };
 
 let _b = null;
 function bundle(data) {
@@ -47,7 +47,7 @@ function indexOnce(app, b) {
   if (_indexed) return; _indexed = true;
   app.index([
     ...b.deals.map(d => ({ label: d.company, sub: `${DEAL_TYPE[d.deal_type] || 'Deal'} · ${PLATFORMS[d._p]?.short || ''} · ${fmtMonth(d.date)}`, href: `#/bsp/deals?deal=${encodeURIComponent(d.id)}`, kind: 'Deal', color: PCOL[d._p] })),
-    ...b.scored.ranked.slice(0, 40).map(r => ({ label: r.company, sub: `Broad Sky fit ${r._score} · ${r._plat}`, href: `#/bsp/rubric?t=${encodeURIComponent(r.id)}`, kind: 'Target', color: PCOL[r._p] })),
+    ...b.scored.ranked.slice(0, 40).map(r => ({ label: r.company, sub: `BSP fit ${r._score} · ${r._plat}`, href: `#/bsp/rubric?t=${encodeURIComponent(r.id)}`, kind: 'Target', color: PCOL[r._p] })),
     ...(b.graph?.nodes || []).filter(n => /^p-/.test(n.id)).slice(0, 120).map(n => ({ label: n.name, sub: `${TYPE_LABEL[n.type] || ''} · ${n.title || ''}`, href: `#/bsp/network?node=${encodeURIComponent(n.id)}`, kind: 'Network', color: COLOR })),
   ]);
 }
@@ -86,13 +86,13 @@ function openDeal(ctx, b, d) {
 async function viewDeals(ctx) {
   const { el, ui, fmt, esc, params, app } = ctx; injectCss();
   const b = await bundle(ctx.data);
-  if (!b.meth) { el.innerHTML = ui.note('Research dataset not yet available: Broad Sky acquisition methodology.', 'warn'); return; }
+  if (!b.meth) { el.innerHTML = ui.note('Research dataset not yet available: BSP acquisition methodology.', 'warn'); return; }
   indexOnce(app, b); const c = b.cadence;
   const named = b.deals.filter(d => d.deal_type === 'add_on');
-  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Every deal', sub: `<b>So what:</b> ${c.platforms} anchor acquisitions in ${n1(monthsBetween(b.deals[0].date, b.deals.filter(d => d.deal_type === 'platform').slice(-1)[0].date) / 12)} years, ${c.pePlatforms} bought from other sponsors and the rest from founders, partners or private owners; none of the ${named.length} named add-ons came from a private-equity seller. Read the rationale in each release before you pitch the next one.`, chips: `${fmt.chip('Primary releases and SEC filings')}${fmt.chip('Retrieved Oct 6, 2026')}` })}
+  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Every deal', sub: `${c.platforms} anchor acquisitions in ${n1(monthsBetween(b.deals[0].date, b.deals.filter(d => d.deal_type === 'platform').slice(-1)[0].date) / 12)} years, ${c.pePlatforms} from other sponsors. None of the ${named.length} named add-ons came from a private-equity seller.`, chips: `${fmt.chip('Releases and SEC filings')}${fmt.chip('Retrieved Oct 6, 2026')}` })}
     ${missingNote(ui, b)}
     ${ui.kpis([
-      { label: 'Anchor acquisitions', value: fmt.num(c.platforms), sub: `${c.pePlatforms} sponsor secondaries · ${c.platforms - c.pePlatforms} founder, partner or private sellers` },
+      { label: 'Anchor acquisitions', value: fmt.num(c.platforms), sub: `${c.pePlatforms} from sponsors · ${c.platforms - c.pePlatforms} from founders` },
       { label: 'Add-ons', value: `${fmt.num(c.addonsStated)}`, sub: `${c.addonsNamed} identified by name` },
       { label: 'Add-ons from PE sellers', value: fmt.num(c.peAddons), sub: 'Founder, family, partner or franchisee owners', color: 'var(--sys-good)' },
       { label: 'Months between anchor deals', value: n1(c.medianGap), sub: 'Median, Jan 2022 to Feb 2025' },
@@ -133,13 +133,13 @@ async function viewDeals(ctx) {
 async function viewPatterns(ctx) {
   const { el, ui, fmt, esc, charts, app } = ctx; injectCss();
   const b = await bundle(ctx.data);
-  if (!b.meth) { el.innerHTML = ui.note('Research dataset not yet available: Broad Sky acquisition methodology.', 'warn'); return; }
+  if (!b.meth) { el.innerHTML = ui.note('Research dataset not yet available: BSP acquisition methodology.', 'warn'); return; }
   indexOnce(app, b); const c = b.cadence;
   const strong = b.patterns.filter(p => p.strength === 'strong').length;
   const first = PORDER.map(p => c.firstAddon.find(f => f.p === p)).filter(f => f && f.months != null).map(f => ({ label: PLATFORMS[f.p].short, value: Math.round(f.months * 10) / 10 }));
   const waiting = c.firstAddon.filter(f => f.months == null).map(f => `${PLATFORMS[f.p].short} (${n1(f.sinceMonths)} months, none yet)`);
   const rate = PORDER.map(p => c.rates.find(r => r.p === p)).filter(Boolean).map(r => ({ label: PLATFORMS[r.p].short, value: r.perYear }));
-  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Deal patterns', sub: `<b>So what:</b> ${strong} of ${b.patterns.length} patterns are strong. Broad Sky buys a thesis first, prefers essential services, keeps founder CEOs, lands the first add-on about ${n1(c.medianFirst)} months after the anchor acquisition and finances each company with a different private-credit lender.`, chips: fmt.chip('Inferred from the public deal record') })}
+  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Deal patterns', sub: `${strong} of ${b.patterns.length} patterns are strong. BSP buys a thesis, keeps founder CEOs, adds the first add-on after about ${n1(c.medianFirst)} months and uses a different lender each time.`, chips: fmt.chip('Inferred from deal record') })}
     ${missingNote(ui, b)}
     ${ui.kpis([
       { label: 'Months between anchor deals', value: n1(c.medianGap), sub: `Median; mean ${n1(c.meanGap)} · ${c.gaps.length} intervals` },
@@ -150,10 +150,10 @@ async function viewPatterns(ctx) {
     <div class="mt-12"></div>
     <div class="grid grid-2">
       ${ui.panel({ title: 'Months from company to first add-on', sub: waiting.length ? `Still waiting: ${esc(waiting.join(', '))}` : '', body: charts.hbar(first, { fmt: v => `${n1(v)} mo`, labelW: 130, color: COLOR }), foot: ui.source(SRC_METH, null, 'Oct 2026') })}
-      ${ui.panel({ title: 'Add-ons per company-year', sub: 'Broad Sky’s stated add-on counts over years held (Smith + Howard to its Aug 2026 exit)', body: charts.hbar(rate, { fmt: v => n1(v), labelW: 130, color: COLOR }), foot: ui.source(SRC_METH, null, 'Oct 2026') })}
+      ${ui.panel({ title: 'Add-ons per company-year', sub: 'BSP’s stated add-on counts over years held (Smith + Howard to its Aug 2026 exit)', body: charts.hbar(rate, { fmt: v => n1(v), labelW: 130, color: COLOR }), foot: ui.source(SRC_METH, null, 'Oct 2026') })}
     </div>
     <div class="mt-12"></div>
-    ${ui.panel({ title: 'Patterns', sub: 'Each card names the pattern, how strongly the deal record supports it, and what it means for the next deal. Select an evidence chip to open the deal.', body: `<div class="sys-grid bsp-pats">${b.patterns.map(p => `<article class="sys-card sys-card--flat bsp-pat"><div class="bsp-pat-h">${stChip(STRENGTH[p.strength] || p.strength, STR_ST[p.strength])}<span class="sys-src">${(p.evidence_deal_ids || []).length} deals</span></div><p class="sys-card-body bsp-pat-t">${esc(p.pattern)}</p><p class="sys-card-body bsp-pat-i"><b>For the next deal:</b> ${esc(p.implication_for_next_deals || '—')}</p><div class="sys-chips bsp-ev">${(p.evidence_deal_ids || []).map(id => { const d = b.dealById.get(id); return d ? coChip(d._p, clip(d.company, 28), 'button', ` data-deal="${esc(id)}" data-evb`) : ''; }).join('')}</div><p class="sys-src bsp-pat-s">${(p.source_urls || [p.source_url]).filter(Boolean).slice(0, 3).map(u => fmt.link(u, host(u))).join(' · ')}</p></article>`).join('')}</div>`, foot: ui.source(SRC_METH, null, 'Oct 2026') + '<span>Strength and weights are analyst inference, not Broad Sky’s internal criteria.</span>' })}
+    ${ui.panel({ title: 'Patterns', sub: 'Each card names the pattern, how strongly the deal record supports it, and what it means for the next deal. Select an evidence chip to open the deal.', body: `<div class="sys-grid bsp-pats">${b.patterns.map(p => `<article class="sys-card sys-card--flat bsp-pat"><div class="bsp-pat-h">${stChip(STRENGTH[p.strength] || p.strength, STR_ST[p.strength])}<span class="sys-src">${(p.evidence_deal_ids || []).length} deals</span></div><p class="sys-card-body bsp-pat-t">${esc(p.pattern)}</p><p class="sys-card-body bsp-pat-i"><b>For the next deal:</b> ${esc(p.implication_for_next_deals || '—')}</p><div class="sys-chips bsp-ev">${(p.evidence_deal_ids || []).map(id => { const d = b.dealById.get(id); return d ? coChip(d._p, clip(d.company, 28), 'button', ` data-deal="${esc(id)}" data-evb`) : ''; }).join('')}</div><p class="sys-src bsp-pat-s">${(p.source_urls || [p.source_url]).filter(Boolean).slice(0, 3).map(u => fmt.link(u, host(u))).join(' · ')}</p></article>`).join('')}</div>`, foot: ui.source(SRC_METH, null, 'Oct 2026') + '<span>Strength and weights are analyst inference, not BSP’s internal criteria.</span>' })}
     <div class="mt-12"></div>
     ${ui.panel({ title: 'Where the deals come from', sub: 'Advisers, banks, counsel and relationship channels, with the deals each touched', body: '<div data-ch></div>', foot: ui.source(SRC_METH, null, 'Oct 2026') })}
   </div>`;
@@ -181,11 +181,11 @@ function openTarget(ctx, b, r) {
   const bars = b.criteria.map(c => ({ label: `${critShort(c.id)} · ${c.weight_pct}%${isTargetTest(c.id) ? '' : TESTS[c.id]?.tested ? ' (portfolio company)' : ' (neutral)'}`, value: Math.round((r._crit[c.id] ?? 3) * 20) }));
   openInsp(ctx, {
     title: esc(r.company), color: PCOL[r._p],
-    sub: `${esc(r._plat)} add-on candidate · ${esc([r.hq_city, r.state].filter(Boolean).join(', '))} · ${r._rank ? `#${r._rank} on the Broad Sky rubric` : 'held out of the ranking'}`,
+    sub: `${esc(r._plat)} add-on candidate · ${esc([r.hq_city, r.state].filter(Boolean).join(', '))} · ${r._rank ? `#${r._rank} on the BSP rubric` : 'held out of the ranking'}`,
     sections: [
-      r._affil ? { label: 'Verify affiliation first', html: ui.note('Trades under a Broad Sky portfolio company’s own name. Held out of the ranking until Punctual Pros confirms it is not already affiliated. Do not contact yet.', 'warn') } : null,
-      { label: 'Broad Sky fit', html: `<div class="sys-kpis"><div class="sys-kpi" ${coAttr(r._p)}><div class="sys-kpi-label">Score (inferred rubric)</div><div class="sys-kpi-value">${r._score}</div><div class="sys-kpi-sub">${esc(r._gate)} · built from ${r._tested}% of the rubric weight · full rubric with portfolio company context ${r._full} · company screen fit ${fmt.num(r.fit_score)}</div></div></div><div class="small text-2 mt-8">${esc(r._explain)}</div>` },
-      { label: 'Criterion scores (0–100)', html: charts.hbar(bars, { max: 100, fmt: v => `${v}`, labelW: 190, color: PCOL[r._p] }) + `<div class="dim small mt-4">Company-level criteria are context; neutral criteria are held at 3 of 5 until diligence measures them. Neither is in the Broad Sky fit score.</div>` },
+      r._affil ? { label: 'Verify affiliation first', html: ui.note('Trades under a BSP portfolio company’s own name. Held out of the ranking until Punctual Pros confirms it is not already affiliated. Do not contact yet.', 'warn') } : null,
+      { label: 'BSP fit', html: `<div class="sys-kpis"><div class="sys-kpi" ${coAttr(r._p)}><div class="sys-kpi-label">Score (inferred rubric)</div><div class="sys-kpi-value">${r._score}</div><div class="sys-kpi-sub">${esc(r._gate)} · built from ${r._tested}% of the rubric weight · full rubric with portfolio company context ${r._full} · company screen fit ${fmt.num(r.fit_score)}</div></div></div><div class="small text-2 mt-8">${esc(r._explain)}</div>` },
+      { label: 'Criterion scores (0–100)', html: charts.hbar(bars, { max: 100, fmt: v => `${v}`, labelW: 190, color: PCOL[r._p] }) + `<div class="dim small mt-4">Company-level criteria are context; neutral criteria are held at 3 of 5 until diligence measures them. Neither is in the BSP fit score.</div>` },
       { label: 'What drove each test', html: ui.kv(Object.fromEntries(b.criteria.filter(c => TESTS[c.id]?.tested).map(c => [`${critShort(c.id)}${isTargetTest(c.id) ? '' : ' (portfolio company)'}`, esc(r._why[c.id])]))) },
       intro ? { label: intro.sourced ? `Intro path · ${intro.confidence} confidence` : 'Intro path · default route', html: `<div class="bsp-path">${intro.names.filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i>→</i>')}</div><div class="small text-2 mt-4">${esc(intro.path)}</div>${intro.sourced ? `<div class="dim small mt-4">${fmt.link(intro.source_url, host(intro.source_url))}</div>` : ''}` } : null,
       { label: 'First-call script (draft)', html: `<ol class="bsp-script">${script.map(s => `<li><b>${esc(s.k)}.</b> ${esc(s.t)}</li>`).join('')}</ol>` },
@@ -200,14 +200,14 @@ function openTarget(ctx, b, r) {
 async function viewRubric(ctx) {
   const { el, ui, fmt, esc, params, app } = ctx; injectCss();
   const b = await bundle(ctx.data);
-  if (!b.meth) { el.innerHTML = ui.note('Research dataset not yet available: Broad Sky acquisition methodology.', 'warn'); return; }
+  if (!b.meth) { el.innerHTML = ui.note('Research dataset not yet available: BSP acquisition methodology.', 'warn'); return; }
   indexOnce(app, b);
   const S = b.scored; const all = S.rows; const ranked = S.ranked;
   const pri = ranked.filter(r => r._gate === 'Priority').length, watch = ranked.filter(r => r._gate === 'Watch list').length;
   const tested = b.criteria.filter(c => isTargetTest(c.id)).reduce((a, c) => a + c.weight_pct, 0);
   const platW = b.criteria.filter(c => TESTS[c.id]?.tested === 'platform').reduce((a, c) => a + c.weight_pct, 0);
   const pools = PORDER.filter(p => all.some(r => r._p === p));
-  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Acquisition rubric', sub: `<b>So what:</b> <b>${pri} of ${ranked.length} targets clear the 70-point gate</b>, and ${watch} more sit on the watch list. That is most of the list because the company screens already keep only what Broad Sky buys, so <b>the score is for ordering, not for passing or failing a target</b>. Broad Sky closes about one add-on per company-year, so work the top 15 first: use the Top 15 switch on the table below. The score uses the five criteria the screens can test per target (${tested}% of the rubric weight); essentiality and add-on runway are scored at company level (${platW}%), and recurring revenue, tech upside and bench wait for diligence.`, chips: `${stChip('Weights are inferred, not disclosed', 'warn')}${fmt.chip(`${ranked.length} targets · ${pools.length} companies`)}` })}
+  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Acquisition rubric', sub: `<b>${pri} of ${ranked.length} targets clear the 70-point gate</b>, so the score orders the list rather than filters it. BSP closes about one add-on per company-year: work the top 15 first.`, chips: `${stChip('Weights inferred, not disclosed', 'warn')}${fmt.chip(`${ranked.length} targets · ${pools.length} companies`)}` })}
     ${missingNote(ui, b)}
     ${ui.kpis([
       { label: 'Targets scored', value: fmt.num(ranked.length), sub: `${all.length - ranked.length} held out (affiliation check)` },
@@ -218,16 +218,16 @@ async function viewRubric(ctx) {
     ])}
     <div class="mt-12"></div>
     <div class="grid grid-side">
-      ${ui.panel({ title: 'The inferred screening criteria', sub: 'Weights sum to 100. Each criterion scores 1–5. Broad Sky fit uses the criteria tested per target, renormalised to 0–100.', body: `<div class="bsp-crit">${b.criteria.slice().sort((a, c) => c.weight_pct - a.weight_pct).map(c => `<div class="bsp-cr" data-crit="${esc(c.id)}" role="button" tabindex="0" aria-label="${esc(c.criterion)}, weight ${c.weight_pct}%"><div class="bsp-cr-h"><span class="bsp-cr-n">${esc(c.criterion)}</span><span class="sys-num">${c.weight_pct}%</span></div><div class="bsp-cr-bar" aria-hidden="true"><i style="width:${c.weight_pct / 15 * 100}%"></i></div><div class="bsp-cr-t">${TESTS[c.id]?.tested ? stChip(TESTS[c.id].tested === 'proxy' ? 'In score · tested by proxy' : TESTS[c.id].tested === 'platform' ? 'Portfolio company level · context' : 'In score · tested per target', TESTS[c.id].tested === 'platform' ? 'info' : 'good') : stChip('Diligence item · not scored', '')}</div></div>`).join('')}</div>`, foot: ui.source(SRC_METH, null, 'Oct 2026') })}
-      ${ui.panel({ title: 'Top 15 by Broad Sky fit', sub: 'Across all company screens. Select a row for the criterion breakdown, intro path and first-call script.', body: '<div data-top></div>', foot: ui.source(SRC_POOLS, null, 'Sept 2026') })}
+      ${ui.panel({ title: 'The inferred screening criteria', sub: 'Weights sum to 100. Each criterion scores 1–5. BSP fit uses the criteria tested per target, renormalised to 0–100.', body: `<div class="bsp-crit">${b.criteria.slice().sort((a, c) => c.weight_pct - a.weight_pct).map(c => `<div class="bsp-cr" data-crit="${esc(c.id)}" role="button" tabindex="0" aria-label="${esc(c.criterion)}, weight ${c.weight_pct}%"><div class="bsp-cr-h"><span class="bsp-cr-n">${esc(c.criterion)}</span><span class="sys-num">${c.weight_pct}%</span></div><div class="bsp-cr-bar" aria-hidden="true"><i style="width:${c.weight_pct / 15 * 100}%"></i></div><div class="bsp-cr-t">${TESTS[c.id]?.tested ? stChip(TESTS[c.id].tested === 'proxy' ? 'In score · tested by proxy' : TESTS[c.id].tested === 'platform' ? 'Portfolio company level · context' : 'In score · tested per target', TESTS[c.id].tested === 'platform' ? 'info' : 'good') : stChip('Diligence item · not scored', '')}</div></div>`).join('')}</div>`, foot: ui.source(SRC_METH, null, 'Oct 2026') })}
+      ${ui.panel({ title: 'Top 15 by BSP fit', sub: 'Across all company screens. Select a row for the criterion breakdown, intro path and first-call script.', body: '<div data-top></div>', foot: ui.source(SRC_POOLS, null, 'Sept 2026') })}
     </div>
     <div class="mt-12"></div>
-    ${ui.panel({ title: 'Every target, scored', sub: 'Ranked by Broad Sky fit. Switch to the top 15 for the call list; sort any column; export the scored pipeline to CSV.', body: '<div class="mb-12" data-top15></div><div data-f></div><div data-t></div>', foot: ui.source(SRC_POOLS, null, 'Sept 2026') + `<span>Rubric: ${esc(SRC_METH)}</span>` })}
+    ${ui.panel({ title: 'Every target, scored', sub: 'Ranked by BSP fit. Switch to the top 15 for the call list; sort any column; export the scored pipeline to CSV.', body: '<div class="mb-12" data-top15></div><div data-f></div><div data-t></div>', foot: ui.source(SRC_POOLS, null, 'Sept 2026') + `<span>Rubric: ${esc(SRC_METH)}</span>` })}
   </div>`;
   const root = el.querySelector('.m-bsp');
   root.querySelectorAll('.bsp-cr').forEach(x => x.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); x.onclick(); } });
   root.querySelectorAll('.bsp-cr').forEach(x => x.onclick = () => { const c = b.criteria.find(k => k.id === x.dataset.crit); openInsp(ctx, { title: esc(c.criterion), color: COLOR, sub: `Weight ${c.weight_pct}%`, sections: [
-    { label: 'How Broad Sky’s deals imply it', html: `<div class="small text-2">${esc(c.test)}</div>` },
+    { label: 'How BSP’s deals imply it', html: `<div class="small text-2">${esc(c.test)}</div>` },
     { label: 'Scoring bands', html: ui.kv(Object.fromEntries(Object.entries(c.scoring_bands || {}).sort((a, d) => d[0] - a[0]).map(([k, v]) => [`${k} of 5`, esc(v)]))) },
     { label: 'How the portal tests it', html: `<div class="small text-2">${esc(TESTS[c.id]?.how || '—')}</div>` },
     { label: 'Evidence deals', html: `<div class="sys-chips">${(c.evidence_deal_ids || []).map(id => b.dealById.get(id)).filter(Boolean).map(d => coChip(d._p, d.company)).join('')}</div>` },
@@ -239,7 +239,7 @@ async function viewRubric(ctx) {
     { key: 'company', label: 'Target', fmt: (v, r) => `<b>${esc(v)}</b>${r._affil ? ' ' + stChip('Verify affiliation', 'bad') : ''}`, wrap: true },
     { key: '_plat', label: 'Company', fmt: (v, r) => pChip(fmt, r._p) },
     { key: '_loc', label: 'Location', fmt: v => esc(v || '—') },
-    { key: '_score', label: 'Broad Sky fit', num: true, fmt: (v, r) => fmt.score(v, PCOL[r._p]) },
+    { key: '_score', label: 'BSP fit', num: true, fmt: (v, r) => fmt.score(v, PCOL[r._p]) },
     { key: '_gate', label: 'Gate', fmt: v => stChip(v, GATE_ST[v]) },
     { key: 'fit_score', label: 'Screen fit', num: true, fmt: v => fmt.num(v) },
     { key: '_path', label: 'Intro path', fmt: v => v === 'high' || v === 'medium' || v === 'low' ? `${esc(v.charAt(0).toUpperCase() + v.slice(1))} confidence` : esc(v) },
@@ -253,7 +253,7 @@ async function viewRubric(ctx) {
     { key: 'p', label: 'Company', type: 'select', options: pools.map(p => ({ value: p, label: PLATFORMS[p].short })) },
     { key: 'g', label: 'Gate', type: 'select', options: ['Priority', 'Watch list', 'Pass', 'Held out'] },
   ], st => draw(st));
-  // Top 15 switch: the call list (ranks 1–15 by Broad Sky fit) or every scored target
+  // Top 15 switch: the call list (ranks 1–15 by BSP fit) or every scored target
   let top15 = params.top === '15' || params.top === '1';
   const draw = (st = f.state) => { const q = (st.q || '').toLowerCase(); let r = allRows.filter(x => (!st.p || x._p === st.p) && (!st.g || x._gate === st.g) && (!q || `${x.company} ${x._loc}`.toLowerCase().includes(q))); if (top15) r = r.filter(x => x._rank && x._rank <= 15); tbl.update(r); f.setCount(top15 ? `${r.length} of the top 15` : `${r.length} targets`); };
   ui.seg(root.querySelector('[data-top15]'), [{ value: 'top', label: 'Top 15' }, { value: 'all', label: `All ${allRows.length}` }], top15 ? 'top' : 'all', v => { top15 = v === 'top'; draw(); });
@@ -280,15 +280,15 @@ function openNode(ctx, b, n, ctl) {
 async function viewNetwork(ctx) {
   const { el, ui, fmt, esc, params, app } = ctx; injectCss();
   const b = await bundle(ctx.data);
-  if (!b.graph) { el.innerHTML = ui.note('Research dataset not yet available: Broad Sky professional network.', 'warn'); return; }
+  if (!b.graph) { el.innerHTML = ui.note('Research dataset not yet available: BSP professional network.', 'warn'); return; }
   indexOnce(app, b); const g = b.graph;
   const byG = GROUPS.map(gr => ({ gr, n: g.nodes.filter(n => n._g === gr.id).length }));
   const top = nextFive(b, 8, 3);
   const pathsFor = [...top.map(r => ({ r, ip: introFor(b, r) })), ...g.paths.filter(p => /^next_platform/.test(p.target_ref)).map(p => ({ r: null, ip: { sourced: true, ...p, names: p.path_node_ids.map(id => g.byId.get(id)?.name) } }))];
-  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Deal network', sub: `<b>So what:</b> the firm runs on a Carlyle and MidOcean lineage, a bench of private-credit lenders and specialist sell-side banks. For add-ons, the shortest path is almost always through the portfolio-company CEO, the franchisor or the banker who sold the company.`, chips: `${stChip('Public professional roles only', 'warn')}${fmt.chip(`${g.nodes.length} people and organizations · ${g.edges.length} sourced connections`)}` })}
+  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Deal network', sub: `The firm runs on a Carlyle and MidOcean lineage, private-credit lenders and sell-side banks. For add-ons, go through the company CEO, the franchisor or the selling banker.`, chips: `${stChip('Public roles only', 'warn')}${fmt.chip(`${g.nodes.length} nodes · ${g.edges.length} connections`)}` })}
     ${missingNote(ui, b)}
     ${ui.kpis([
-      { label: 'People and organizations', value: fmt.num(g.nodes.length), sub: `${byG[0].n} Broad Sky team · ${byG[1].n} Executive Board` },
+      { label: 'People and organizations', value: fmt.num(g.nodes.length), sub: `${byG[0].n} BSP team · ${byG[1].n} Executive Board` },
       { label: 'Sourced connections', value: fmt.num(g.edges.length), sub: 'Each with evidence and a source link' },
       { label: 'Intro paths', value: fmt.num(g.paths.length), sub: `${g.paths.filter(p => p.confidence === 'high').length} high confidence · ${g.paths.filter(p => /^next_platform/.test(p.target_ref)).length} next-company themes` },
       { label: 'Advisers, banks and counsel', value: fmt.num(byG[3].n), sub: `${byG[4].n} lenders, LPs and other sponsors` },
@@ -296,7 +296,7 @@ async function viewNetwork(ctx) {
     <div class="mt-12"></div>
     <div class="grid grid-main">
       ${ui.panel({ title: 'Network map', sub: 'Hover to see a node’s connections; select it for role and sources. Search highlights matches.', body: `<div class="sys-filters mb-12"><input type="search" class="sys-input bsp-search" placeholder="Search people, firms, sectors" aria-label="Search the network"><span class="sys-src bsp-hits" aria-live="polite"></span></div><div class="bsp-graph">${graphSVG(g)}</div>${legendHTML()}`, foot: ui.source(SRC_NET, null, 'Oct 2026') + '<span>Intro paths are hypotheses over public connections, not known relationships.</span>' })}
-      ${ui.panel({ title: 'Intro paths for top targets', sub: 'Top Broad Sky fit targets, then next-company themes. Select a path to trace it on the map.', scroll: true, body: `<div class="bsp-paths">${pathsFor.map((x, i) => `<button type="button" class="bsp-pathc" data-i="${i}" ${x.r ? coAttr(x.r._p) : 'data-co=""'}><div class="bsp-pathc-h"><b>${esc(x.r ? x.r.company : x.ip.target)}</b>${x.r ? `<span class="sys-num">${x.r._score}</span>` : ''}</div><div class="bsp-pathc-m">${x.r ? `${esc(x.r._plat)} · ` : 'Next company · '}${x.ip?.sourced ? `${esc(x.ip.confidence)} confidence · ${x.ip.hops} hops` : 'default route, unsourced'}</div><div class="bsp-path">${(x.ip?.names || []).filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i>→</i>')}</div></button>`).join('')}</div>`, foot: ui.source(SRC_NET, null, 'Oct 2026') })}
+      ${ui.panel({ title: 'Intro paths for top targets', sub: 'Top BSP fit targets, then next-company themes. Select a path to trace it on the map.', scroll: true, body: `<div class="bsp-paths">${pathsFor.map((x, i) => `<button type="button" class="bsp-pathc" data-i="${i}" ${x.r ? coAttr(x.r._p) : 'data-co=""'}><div class="bsp-pathc-h"><b>${esc(x.r ? x.r.company : x.ip.target)}</b>${x.r ? `<span class="sys-num">${x.r._score}</span>` : ''}</div><div class="bsp-pathc-m">${x.r ? `${esc(x.r._plat)} · ` : 'Next company · '}${x.ip?.sourced ? `${esc(x.ip.confidence)} confidence · ${x.ip.hops} hops` : 'default route, unsourced'}</div><div class="bsp-path">${(x.ip?.names || []).filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i>→</i>')}</div></button>`).join('')}</div>`, foot: ui.source(SRC_NET, null, 'Oct 2026') })}
     </div>
   </div>`;
   const root = el.querySelector('.m-bsp');
@@ -310,8 +310,8 @@ async function viewNetwork(ctx) {
 }
 
 export default {
-  id: 'bsp', name: 'How Broad Sky buys', tag: 'Method', color: COLOR, group: 'Command',
-  tagline: 'The acquisition methodology reverse-engineered from every disclosed Broad Sky deal, applied live to the add-on pipelines',
+  id: 'bsp', name: 'How BSP buys', tag: 'Method', color: COLOR, group: 'Command',
+  tagline: 'The acquisition methodology reverse-engineered from every disclosed BSP deal, applied live to the add-on pipelines',
   views: [
     { id: 'deals', name: 'Deals', icon: '◆', render: viewDeals },
     { id: 'patterns', name: 'Patterns', icon: '≋', render: viewPatterns },
@@ -319,8 +319,8 @@ export default {
     { id: 'network', name: 'Network', icon: '⬡', render: viewNetwork },
   ],
   tour: [
-    { order: 925, hash: '#/bsp/deals', caption: '<b>How Broad Sky buys.</b> Every disclosed deal on one strip: seven companies, twenty-one named add-ons and the Smith + Howard exit, each with seller, advisers, lenders and co-invest vehicle.', narration: 'How Broad Sky buys. Every disclosed deal on one strip: seven companies, twenty-one named add-ons and the Smith plus Howard exit, each with its seller, advisers, lenders and co-invest vehicle.' },
-    { order: 926, hash: '#/bsp/patterns', caption: '<b>The patterns behind the deals.</b> Thesis first, essential services, founder CEOs stay, first add-on about eight months after the anchor acquisition, a different private-credit lender on every company.', narration: 'The patterns behind the deals. Thesis first, essential services, founder CEOs stay, the first add-on about eight months after the anchor acquisition, and a different private-credit lender on every company.' },
-    { order: 927, hash: '#/bsp/rubric', caption: '<b>The rubric, applied.</b> Ten inferred criteria with weights, run live across every add-on target: the top fifteen, why each scores, the intro path and a first-call script.', narration: 'The rubric, applied. Ten inferred criteria with weights, run live across every add-on target, with the top fifteen, why each scores, the intro path and a first-call script.' },
+    { order: 925, hash: '#/bsp/deals', caption: '<b>How BSP buys.</b> Seven companies, twenty-one named add-ons and one exit, each with seller, advisers and lenders.', narration: 'Every disclosed deal: seven companies, twenty-one named add-ons and one exit, each with seller and lenders.' },
+    { order: 926, hash: '#/bsp/patterns', caption: '<b>Deal patterns.</b> Thesis first, founder CEOs stay, first add-on near month eight, a new lender each time.', narration: 'The patterns: thesis first, founder CEOs stay, first add-on near month eight, a new lender each time.' },
+    { order: 927, hash: '#/bsp/rubric', caption: '<b>The rubric.</b> Ten inferred criteria scored across every target, with the top fifteen and an intro path.', narration: 'The rubric scores every add-on target on ten inferred criteria. Start with the top fifteen.' },
   ],
 };

@@ -31,29 +31,31 @@ OS = {'pp': 'ServiceOS', 'cet': 'GridOS', 'fl': 'FirmOS', 'ts': 'LabOS', 'bpi': 
 
 # Hand-written names and one-line blurbs for known pages (plain English, no identifiers).
 KNOWN = {
-    'index.html': ('Home', 'The landing page: ask the portfolio, the three-step start, the six companies, the OS program and the briefing.'),
-    'app.html': ('Portal', 'The analyst console: every module and view listed below.'),
-    'theater.html': ('3D theater', 'A WebGL fly-through of home sales, expansion arcs, New England opportunities and live storms.'),
+    'index.html': ('Home', 'The landing page: ask a question, start in three steps.'),
+    'app.html': ('Portal', 'Every module and view, listed below.'),
+    'theater.html': ('3D theater', 'A 3D fly-through of home sales, expansion and live storms.'),
     'sitemap.html': ('Sitemap', 'This page.'),
-    'redesigns/index.html': ('Site concepts', 'Six concept websites, the OS program, design principles and the value-creation rationale.'),
-    'redesigns/voice-ai.html': ('24/7 Voice AI', 'Answering every call as a revenue line: missed-call economics, vendors and a playable call.'),
-    'redesigns/ai-agents.html': ('AI agents', '45 agents across six companies: triggers, approvals, rollout waves and estimated value.'),
-    'redesigns/case-studies.html': ('Value-creation case studies', 'How peer sponsors grew comparable companies, in order, with the levers they pulled.'),
-    'redesigns/methodology.html': ('Broad Sky methodology', 'How Broad Sky sources, buys and builds companies, and the network behind it.'),
-    'assistant.html': ('Assistant', 'The full-page portfolio assistant.'),
-    'briefing/executive_memo.html': ('Executive memo', 'Six pages on what the data says and what to do next, footnoted to filings.'),
+    'redesigns/index.html': ('Site concepts', 'Six concept websites and the OS program.'),
+    'redesigns/voice-ai.html': ('24/7 Voice AI', 'Missed-call economics, vendors and a sample call.'),
+    'redesigns/ai-agents.html': ('AI agents', '45 agents across six companies, with rollout and value.'),
+    'redesigns/case-studies.html': ('Value-creation case studies', 'How other sponsors grew similar companies.'),
+    'redesigns/methodology.html': ('BSP methodology', 'How BSP sources, buys and builds companies.'),
+    'assistant.html': ('Assistant', 'BSP Desk, full screen.'),
+    'briefing/executive_memo.html': ('Executive memo', 'Four pages: where the six companies stand and what to do next.'),
 }
 CO_PAGE = {
-    'index.html': ('Concept site', 'A modern front door for the company, wired to portal data.'),
-    'growth-plan.html': ('Growth plan', 'The plan from today to the next multiple, with sourced figures and estimates.'),
-    'nationwide.html': ('Nationwide plan', 'From Lancaster to national in four phases: tuck-ins, AI agents, programs for technicians and returns.'),
-    'ads.html': ('Growth marketing and sample ads', 'Connected TV on storm alerts, Local Services Ads and new-mover mail, with a media plan.'),
+    'index.html': ('Concept site', 'A concept website wired to portal data.'),
+    'growth-plan.html': ('Growth plan', 'From today to the next multiple, with sourced figures.'),
+    'nationwide.html': ('Nationwide plan', 'Lancaster to national in four phases.'),
+    'ads.html': ('Growth marketing and sample ads', 'Connected TV, Local Services Ads and new-mover mail.'),
 }
 FILES = [
-    ('briefing/broad_sky_briefing.mp4', 'Full briefing video', '6 minutes 36 seconds, 52 chapters, 1080p.'),
-    ('briefing/broad_sky_intro.mp4', 'Cinematic film', '2 minutes 22 seconds, rendered from the live pages.'),
-    ('briefing/Broad_Sky_Operating_Intelligence_Memo.pdf', 'Executive memo (PDF)', 'The memo as a printable PDF.'),
+    ('briefing/broad_sky_briefing.mp4', 'Full briefing video', '5 minutes 3 seconds, 52 chapters.'),
+    ('briefing/broad_sky_intro.mp4', 'Cinematic film', '2 minutes 13 seconds.'),
+    ('briefing/BSP_Desk_Memo.pdf', 'Executive memo (PDF)', 'The memo as a printable PDF.'),
 ]
+# Applied before the stylesheets load so a saved dark theme never flashes light (UNIFIED.md §8).
+THEME_JS = '<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage \'bsp-theme\', light by default) before the stylesheets load; the frame\'s top-bar button changes it */(function(){try{var t=localStorage.getItem(\'bsp-theme\');if(t===\'dark\'||t===\'light\'){document.documentElement.setAttribute(\'data-sys-theme\',t);if(t===\'dark\'){var m=document.querySelector(\'meta[name="theme-color"]\');if(m)m.setAttribute(\'content\',\'#0a0e14\')}}}catch(e){}})();</script>'
 SKIP_DIRS = {'legacy', 'scripts', 'node_modules', 'data', '.git', 'assets'}
 
 
@@ -145,7 +147,7 @@ def main():
             fn = p[len(base):]
             used.add(p)
             if fn.lower() == f'{OS[co].lower()}.html':
-                nm, bl = OS[co], f'The {OS[co]} product page, thesis and interactive demo.'
+                nm, bl = OS[co], 'Product page and demo.'
             elif fn in CO_PAGE:
                 nm, bl = CO_PAGE[fn]
             else:
@@ -167,7 +169,7 @@ def main():
             continue
         used.add(p)
         lis.append(item(p, title_of(ROOT / p), desc_of(ROOT / p)))
-    groups.append(('programs', 'Portfolio programs', 'Programs and pages that run across all six companies.', None, lis))
+    groups.append(('programs', 'Portfolio programs', 'Programs that span all six companies.', None, lis))
 
     # 4. portfolio-wide portal modules
     lis = []
@@ -176,7 +178,7 @@ def main():
         if mid in co_ids:
             continue
         lis.append(item(f'app.html#/{mid}/{views[0][0]}' if views else 'app.html', mname, f'{len(views)} view{"s" if len(views) != 1 else ""}.', routes_html(mid, views)))
-    groups.append(('portal', 'Portal: portfolio modules', 'Console modules that span the whole portfolio.', None, lis))
+    groups.append(('portal', 'Portal: portfolio modules', 'Modules that span the portfolio.', None, lis))
 
     # 5. briefing
     lis = []
@@ -218,21 +220,22 @@ def main():
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sitemap · Broad Sky</title>
-<meta name="description" content="Every page of the Broad Sky Operating Intelligence site and every portal view, grouped by company.">
+<title>Sitemap · BSP Desk</title>
+<meta name="description" content="Every page and portal view, grouped by company.">
 <meta name="theme-color" content="#fbfaf7">
+{THEME_JS}
 <meta name="author" content="Syed Rahman">
 <link rel="icon" href="BSP_Logo.png">
 <link rel="apple-touch-icon" href="BSP_Logo.png">
 <link rel="canonical" href="https://syedr64.github.io/BroadSky_Intelligence_Portal/sitemap.html">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Broad Sky Operating Intelligence">
-<meta property="og:title" content="Sitemap · Broad Sky Operating Intelligence">
+<meta property="og:site_name" content="BSP Desk">
+<meta property="og:title" content="Sitemap · BSP Desk">
 <meta property="og:description" content="Every page and portal view, grouped by company.">
 <meta property="og:url" content="https://syedr64.github.io/BroadSky_Intelligence_Portal/sitemap.html">
 <meta property="og:image" content="https://syedr64.github.io/BroadSky_Intelligence_Portal/assets/img/portal_home_overview.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Sitemap · Broad Sky Operating Intelligence">
+<meta name="twitter:title" content="Sitemap · BSP Desk">
 <meta name="twitter:description" content="Every page and portal view, grouped by company.">
 <meta name="twitter:image" content="https://syedr64.github.io/BroadSky_Intelligence_Portal/assets/img/portal_home_overview.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -255,7 +258,7 @@ def main():
     <div class="sys-wrap">
       <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>{n_pages} pages</b> · {n_routes} portal views · {len(mods)} modules</p>
       <h1 id="map-title" class="sys-h1">Every page, <span class="sys-grad-text">one list.</span></h1>
-      <p class="sys-lead">The whole site and every portal view, grouped by company in portfolio order, then the programs and modules that span all six companies.</p>
+      <p class="sys-lead">Every page and portal view, by company, then the portfolio-wide programs and modules.</p>
       <div class="sys-chips" style="margin-top:var(--sys-sp-6)">
         {''.join(f'<a class="sys-chip" data-co="{c[0]}" href="#g-{c[0]}">{esc(SHORT[c[0]])}</a>' for c in CO)}
       </div>
@@ -269,7 +272,7 @@ def main():
       <div class="sys-cta-in">
         <div class="sys-cta-copy">
           <h2 id="cta-title">Not sure where to start?</h2>
-          <p>Ask the portfolio a question and the assistant hands you the right page.</p>
+          <p>Ask a question; the answer links to the right page.</p>
         </div>
         <div class="sys-actions">
           <a class="sys-btn sys-btn--accent sys-btn--lg" href="./#start">Start here</a>

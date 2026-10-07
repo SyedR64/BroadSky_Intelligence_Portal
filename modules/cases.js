@@ -4,8 +4,8 @@
    modelled by ./cases-lib.js (shared with redesigns/case-studies.html).
    Views: timeline · levers · sequence · exits.
    ═══════════════════════════════════════════════════════════════════════════ */
-import * as L from './cases-lib.js?v=20261006180606';
-import * as Copy from './copy.js?v=20261006180606';
+import * as L from './cases-lib.js?v=20261006224618';
+import * as Copy from './copy.js?v=20261006224618';
 
 const COLOR = 'var(--sys-violet)';   // module accent from the brand palette (company accents stay with their companies)
 /* chips: status (.sys-chip--good|warn|bad|info), Punctual Pros (.sys-chip--soft in its accent) or neutral */
@@ -15,7 +15,7 @@ const btn = (ui, size = '') => ui.btnCls('secondary', size);
 /** "2026-10-06" → "Oct 6, 2026" for provenance lines (dates in words). */
 const asOf = s => { const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(String(s || '')); if (!m) return s; const mo = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'][Number(m[2]) - 1]; return m[3] ? `${mo} ${Number(m[3])}, ${m[1]}` : `${mo} ${m[1]}`; };
 const PAGE = 'redesigns/case-studies.html';
-const injectCss = () => { if (!document.getElementById('css-cases')) { const l = document.createElement('link'); l.id = 'css-cases'; l.rel = 'stylesheet'; l.href = 'modules/cases.css?v=20261006180606'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-cases')) { const l = document.createElement('link'); l.id = 'css-cases'; l.rel = 'stylesheet'; l.href = 'modules/cases.css?v=20261006224618'; document.head.appendChild(l); } };
 const esc = L.esc;
 const EST = Copy.EST;
 const ext = (u, t) => u ? `<a href="${esc(u)}" target="_blank" rel="noopener" title="${esc(u)}">${esc(t || L.host(u))} ↗</a>` : '—';
@@ -45,7 +45,7 @@ function kpis(ctx, M) {
     { label: 'Median hold', value: `${st.hold.toFixed(1)} yrs`, sub: `first sponsor, ${st.holdN} cases · ${st.holdHome?.toFixed(1)} in home services` },
     { label: 'Median exit multiple', value: `~${L.xTimes(st.exitMult)}${EST}`, sub: `EBITDA, press-reported, ${st.exitMults.length} cases` },
     { label: 'Median revenue growth', value: `~${L.xTimes(st.growth)}${EST}`, sub: `over the hold, ${st.growthN} sourced pairs` },
-    { label: 'Punctual Pros', value: `month ${st.pp?.hold_month_on_2026_10_06 ?? 30}`, sub: `of Broad Sky's hold · first add-on month ${st.pp?.first_addon_month ?? 8}`, color: 'var(--co-pp)' },
+    { label: 'Punctual Pros', value: `month ${st.pp?.hold_month_on_2026_10_06 ?? 30}`, sub: `of BSP's hold · first add-on month ${st.pp?.first_addon_month ?? 8}`, color: 'var(--co-pp)' },
   ]);
 }
 
@@ -58,7 +58,7 @@ function openCase(ctx, M, c) {
       { label: 'Owners', html: `<div class="small text-2">${esc(c.chain)}</div>` },
       { label: 'Entry and exit', html: ui.kv({ Entry: esc(c.entry?.label || '—'), Exit: c.exit ? `${esc(c.exit.label)} · ${esc(c.buyerShort)}` : esc(c.statusLabel), Hold: c.hold != null ? `${L.yrs(c.hold)}${c.exit ? '' : ' so far'}` : '—', 'Exit value': c.exit_ev_usd ? `${L.usd(c.exit_ev_usd)}${c.evEst ? EST : ''}` : '—', 'Exit multiple': c.exit_multiple_ebitda ? `~${L.xTimes(c.exit_multiple_ebitda)} EBITDA${EST}` : '—', 'Revenue growth': c.growth != null ? `${L.xTimes(c.growth)}${EST}` : '—', Returns: c.moic ? esc(c.moic) : '—', Evidence: `${esc(L.capFirst(c.confidence || ''))}: ${esc(c.basis)}` }) },
       { label: 'Before and after', html: `<div class="m-cases">${L.kpiCardsHTML(c)}</div>` },
-      { label: 'What Broad Sky can copy at Punctual Pros', html: `<div class="m-cases"><p class="sys-note sys-note--co cs-copy" data-co="pp">${esc(c.copy)}</p></div>` },
+      { label: 'What BSP can copy at Punctual Pros', html: `<div class="m-cases"><p class="sys-note sys-note--co cs-copy" data-co="pp">${esc(c.copy)}</p></div>` },
       { label: `Dated events (${c.events.length})`, html: `<div class="col gap-4 small">${c.events.map(e => `<div><span class="sys-num dim">${esc(e.w.label)}</span> · <b>${esc(e.type)}</b> — ${esc(clip(e.event, 160))} ${e.source_url ? ext(e.source_url) : ''}</div>`).join('')}</div>` },
       { label: 'Levers used', html: `<div class="sys-chips">${c.levers.map(l => stChip(l, '')).join('')}</div>` },
       { label: 'Sources', html: `<div class="col gap-4 small">${(c.sources || []).map(u => ext(u)).join('')}</div>` },
@@ -129,8 +129,8 @@ async function timeline(ctx) {
   const opts = L.SECTOR_ORDER.map(s => { const cs = M.cases.filter(c => c.sector === s); return cs.length ? `<optgroup label="${esc(L.SECTOR[s])}">${cs.map(c => `<option value="${esc(c.id)}">${esc(c.short)}</option>`).join('')}</optgroup>` : ''; }).join('');
   el.innerHTML = `<div class="m-cases">${ui.pageHead({
     title: 'Case timelines',
-    sub: `<b>${M.stats.n} sponsor-built companies, ${M.stats.events} dated moves.</b> The winners put an operator team in first, bought the first add-on around month ${M.stats.firstAddon?.median ?? 7}, kept one deal every ~${M.stats.cadence?.median ?? 4.6} months, ran one system and grew members; Punctual Pros is at month ${M.stats.pp?.hold_month_on_2026_10_06 ?? 30}.`,
-    chips: `${ctx.fmt.chip('Sponsor releases, SEC filings, trade press')}${ctx.fmt.chip('Months from sponsor entry')}`,
+    sub: `<b>${M.stats.n} sponsor-built companies, ${M.stats.events} dated moves.</b> Winners bought the first add-on near month ${M.stats.firstAddon?.median ?? 7}, then one every ~${M.stats.cadence?.median ?? 4.6} months. Punctual Pros is at month ${M.stats.pp?.hold_month_on_2026_10_06 ?? 30}.`,
+    chips: `${ctx.fmt.chip('Releases, filings, trade press')}${ctx.fmt.chip('Months from sponsor entry')}`,
     actions: `<a class="${btn(ui)}" href="${PAGE}" target="_blank" rel="noopener">Public page ↗</a>`,
   })}${kpis(ctx, M)}
   <div class="mt-12">${ui.panel({ title: 'Dated events by case', sub: 'Pick a case, compare up to two more, align by months from entry · click a dot for the event', body: `
@@ -162,7 +162,7 @@ async function timeline(ctx) {
     ];
     if (tbl) tbl.update(rows); else tbl = ui.table($('#cs-ev'), { columns: cols, rows, pageSize: 14, sortKey: 't', sortDir: 1, exportName: 'value_creation_events', onRow: r => openEvent(ctx, M, r.id) });
     const c = M.byId[TS.primary];
-    $('#cs-kpi').innerHTML = `<div class="small strong">${esc(c.name)}</div><div class="small dim mt-4">${esc(c.chain)}</div><div class="mt-12">${L.kpiCardsHTML(c)}</div><p class="sys-note sys-note--co cs-copy mt-12" data-co="pp"><b>What Broad Sky can copy.</b> ${esc(c.copy)}</p><div class="mt-12"><button class="${btn(ui, 'sm')}" type="button" id="cs-open">Case detail</button></div>`;
+    $('#cs-kpi').innerHTML = `<div class="small strong">${esc(c.name)}</div><div class="small dim mt-4">${esc(c.chain)}</div><div class="mt-12">${L.kpiCardsHTML(c)}</div><p class="sys-note sys-note--co cs-copy mt-12" data-co="pp"><b>What BSP can copy.</b> ${esc(c.copy)}</p><div class="mt-12"><button class="${btn(ui, 'sm')}" type="button" id="cs-open">Case detail</button></div>`;
     $('#cs-open').onclick = () => openCase(ctx, M, c);
   };
   $('#cs-pick').onchange = ev => { TS.primary = ev.target.value; TS.compare = TS.compare.filter(x => x !== TS.primary); render(); };
@@ -187,14 +187,14 @@ async function levers(ctx) {
   const behind = M.patterns.filter(p => p.tone === 'bad');
   el.innerHTML = `<div class="m-cases">${ui.pageHead({
     title: 'Value-creation levers',
-    sub: `<b>Eighteen levers across ${M.stats.n} cases.</b> The most common is ${esc(L.dash(top.name).replace(/^[A-Z](?=[a-z])/, m => m.toLowerCase()))} (${top.cases.length} cases); operator teams come first (month 0). Punctual Pros trails the cases on ${behind.length ? esc(behind.map(p => L.dash(p.name.split(':').slice(1).join(':').trim() || p.name)).join('; ')) : 'none of the patterns'}.`,
-    chips: `${ctx.fmt.chip('Dated evidence per case')}${ppChip('Analyst applicability for Punctual Pros')}`,
+    sub: `<b>Eighteen levers across ${M.stats.n} cases;</b> the most common is ${esc(L.dash(top.name).split(' (')[0].replace(/^[A-Z](?=[a-z])/, m => m.toLowerCase()))} (${top.cases.length} cases). ${behind.length ? `Punctual Pros trails on ${behind.length} pattern${behind.length === 1 ? '' : 's'}.` : 'Punctual Pros trails on none.'}`,
+    chips: `${ctx.fmt.chip('Dated evidence per case')}${ppChip('Applied to Punctual Pros')}`,
   })}${ui.kpis([
     { label: 'Levers', value: String(M.levers.length), sub: `${M.levers.reduce((a, l) => a + l.evidence.length, 0)} evidence rows` },
     { label: 'Most used', value: String(top.cases.length), sub: clip(L.dash(top.name), 46) },
     { label: 'Earliest', value: early ? `month ${early.range[0]}` : '—', sub: early ? clip(early.name, 46) : '—' },
     { label: 'Patterns', value: String(M.patterns.length), sub: `${M.patterns.filter(p => p.tone === 'good').length} done or clear for Punctual Pros`, color: 'var(--sys-good)' },
-    { label: 'Behind', value: String(behind.length), sub: 'pattern(s) where Punctual Pros trails the cases', color: 'var(--sys-bad)' },
+    { label: 'Behind', value: String(behind.length), sub: 'patterns where Punctual Pros trails', color: 'var(--sys-bad)' },
   ])}
   <div class="mt-12">${ui.panel({ title: 'Lever × case matrix', sub: 'Solid = dated move (more saturated = earlier in the hold) · hollow = used, date not disclosed · click a lever, dot or case', body: '<div id="cs-mx"></div>', foot: SRC(ui, M) })}</div>
   <div class="mt-12">${ui.panel({ title: 'Levers: evidence, timing and Punctual Pros applicability', sub: 'Sortable · click a row for the evidence and supporting views · CSV', body: '<div id="cs-lv"></div>', foot: SRC(ui, M) })}</div>
@@ -229,11 +229,11 @@ async function sequence(ctx) {
   const exitStep = M.steps.find(s => /exit window/i.test(s.title));
   el.innerHTML = `<div class="m-cases">${ui.pageHead({
     title: 'The Punctual Pros sequence',
-    sub: `<b>Three steps done, ${fwd.length} to go, in the order the winning cases used.</b> Next 12 months: ${esc(next12.map(s => /^[A-Z][a-z]/.test(s.title) ? s.title[0].toLowerCase() + s.title.slice(1) : s.title).slice(0, 4).join(', '))}${next12.length > 4 ? ` and ${next12.length - 4} more` : ''}. Steps 3–14 are analyst recommendations, not company plans.`,
-    chips: `${ppChip('Broad Sky entry Apr 2024 is month 0')}${ctx.fmt.chip('Window Oct 2026 – Sept 2029')}`,
+    sub: `<b>Three steps done, ${fwd.length} to go, in the order the winning cases used.</b> Next: ${esc(next12.map(s => /^[A-Z][a-z]/.test(s.title) ? s.title[0].toLowerCase() + s.title.slice(1) : s.title).slice(0, 1).join(''))}. Steps after 3 are recommendations.`,
+    chips: `${ppChip('Entry: April 2024')}${ctx.fmt.chip('To September 2029')}`,
     actions: `<a class="${btn(ui)}" href="${PAGE}#sequence" target="_blank" rel="noopener">Public page ↗</a>`,
   })}${ui.kpis([
-    { label: 'Hold month today', value: String(M.stats.pp?.hold_month_on_2026_10_06 ?? 30), sub: 'Broad Sky entry Apr 3, 2024', color: 'var(--co-pp)' },
+    { label: 'Hold month today', value: String(M.stats.pp?.hold_month_on_2026_10_06 ?? 30), sub: 'BSP entry Apr 3, 2024', color: 'var(--co-pp)' },
     { label: 'Done', value: String(M.steps.filter(s => s.done).length), sub: 'entry · ServiceTitan · Horvath (month 8)', color: 'var(--sys-good)' },
     { label: 'Next 12 months', value: String(next12.length), sub: 'recommended steps starting before Oct 2027' },
     { label: 'Home-services median hold', value: `${M.stats.holdHome?.toFixed(1)} yrs`, sub: `≈ ${L.monthLabel(M.ppLane.entry.t + (M.stats.holdHome || 4))} for Punctual Pros` },
@@ -261,11 +261,11 @@ async function sequence(ctx) {
 async function entryExit(ctx) {
   const { el, ui, esc: e2 } = ctx; injectCss();
   const M = await load(ctx); if (!M) { el.innerHTML = missing(ui); return; }
-  const sold = M.cases.filter(c => c.exit), toSponsor = sold.filter(c => c.hold_status !== 'ipo' && !/^Avantor/i.test(c.buyer || '') && /partners|capital|blackstone|kkr|apollo|goldman|carlyle|omers|tpg|bci|lgt|broad sky|harvest|jordan|altas|stone point|new mountain|investcorp|leonard green|baypine|gi /i.test(c.buyer || ''));
+  const sold = M.cases.filter(c => c.exit), toSponsor = sold.filter(c => c.hold_status !== 'ipo' && !/^Avantor/i.test(c.buyer || '') && /partners|capital|blackstone|kkr|apollo|goldman|carlyle|omers|tpg|bci|lgt|broad sky|bsp\b|harvest|jordan|altas|stone point|new mountain|investcorp|leonard green|baypine|gi /i.test(c.buyer || ''));
   el.innerHTML = `<div class="m-cases">${ui.pageHead({
     title: 'Entry to exit',
-    sub: `<b>Bought small, sold big, usually to a larger sponsor.</b> ${toSponsor.length} of ${sold.length} dated exits went to another financial sponsor, often with the seller rolling equity; median first-sponsor hold ${M.stats.hold.toFixed(1)} years. Disclosed multiples are rare: ~${L.xTimes(M.stats.exitMult)} for scaled home-services companies vs ~6–7x for small deals.`,
-    chips: `${stChip('Press-reported values are estimates', 'warn')}${ctx.fmt.chip('Hold is the first sponsor’s hold in each case')}`,
+    sub: `<b>${toSponsor.length} of ${sold.length} dated exits went to another sponsor</b> after a median ${M.stats.hold.toFixed(1)}-year hold. Scaled home-services companies sold near ~${L.xTimes(M.stats.exitMult)} against ~6–7x for small deals.`,
+    chips: `${stChip('Press-reported values are estimates', 'warn')}${ctx.fmt.chip('First-sponsor hold')}`,
     actions: `<a class="${btn(ui)}" href="${PAGE}#entry-exit" target="_blank" rel="noopener">Public page ↗</a>`,
   })}${kpis(ctx, M)}
   <div class="mt-12" id="cs-flt"></div>
@@ -298,7 +298,7 @@ async function entryExit(ctx) {
 export default {
   id: 'cases', name: 'Value-creation cases', tag: 'Peers', color: COLOR, group: 'Intelligence',
   tagline: 'How sponsors built and sold companies like Punctual Pros: dated case timelines, levers, entry and exit, and the 36-month sequence for Punctual Pros',
-  hq: { lat: 40.7536, lon: -73.9832, label: 'Broad Sky Partners, New York, NY' },
+  hq: { lat: 40.7536, lon: -73.9832, label: 'BSP, New York, NY' },
   views: [
     { id: 'timeline', name: 'Timelines', icon: '⇢', render: timeline },
     { id: 'levers', name: 'Levers', icon: '▦', render: levers },
@@ -306,8 +306,8 @@ export default {
     { id: 'exits', name: 'Entry → exit', icon: '$', render: entryExit },
   ],
   tour: [
-    { order: 930, hash: '#/cases/timeline', caption: '<b>Value-creation cases.</b> Thirty-four sponsor-built companies on one clock: Champions and Sila lined up against Punctual Pros by months from entry.', narration: 'Thirty-four companies that sponsors built and sold, each with dated moves. Lined up by months from entry, Champions and Sila show the sequence, and Punctual Pros sits at month thirty on the same clock.' },
-    { order: 931, hash: '#/cases/levers', caption: '<b>Levers.</b> Eighteen levers by case and timing: operator teams at month zero, the first add-on near month seven, then one deal every four to five months.', narration: 'Eighteen levers, mapped case by case with timing. Operator teams come first, the first add-on lands around month seven, and the best builds keep one deal every four to five months.' },
-    { order: 932, hash: '#/cases/sequence', caption: '<b>The Punctual Pros sequence.</b> Three steps done, twelve recommended over 36 months, each linked to the portal view that supports it.', narration: 'From the patterns comes a dated, thirty-six month sequence for Punctual Pros: integration leader and KPI pack, one contact center, memberships, a quarterly tuck-in cadence and exit preparation.' },
+    { order: 930, hash: '#/cases/timeline', caption: '<b>Sponsor precedents.</b> Thirty-four sponsor-built companies on one clock, with Punctual Pros at month thirty.', narration: 'Thirty-four sponsor-built companies on one clock. Punctual Pros sits at month thirty.' },
+    { order: 931, hash: '#/cases/levers', caption: '<b>Levers.</b> Operator team first, first add-on near month seven, then a deal every four to five months.', narration: 'Operator team first, the first add-on near month seven, then a deal every four to five months.' },
+    { order: 932, hash: '#/cases/sequence', caption: '<b>The Punctual Pros sequence.</b> Three steps done, twelve recommended over 36 months.', narration: 'For Punctual Pros, a thirty-six month sequence: integration leader, one contact center, memberships, steady tuck-ins.' },
   ],
 };

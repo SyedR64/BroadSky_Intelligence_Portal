@@ -1,7 +1,7 @@
 {
   "meta": {
     "dataset": "Punctual Pros public filings and regulatory data",
-    "subject": "Punctual Pros (f/k/a The Rohrer Company; East Hempfield Twp, Lancaster County PA); sponsor Broad Sky Partners (Fund I); add-on Horvath Home Services (Beachwood NJ)",
+    "subject": "Punctual Pros (f/k/a The Rohrer Company; East Hempfield Twp, Lancaster County PA); sponsor BSP (Fund I); add-on Horvath Home Services (Beachwood NJ)",
     "generated": "2026-09-24",
     "item_count": 29,
     "method": "Pulled primary records directly: SEC EDGAR full-text search and Form D XML, SEC IAPD Form ADV PDF, USAspending.gov award API (SBA PPP/EIDL), Minnesota CARDS 2026 FDDs for One Hour, Benjamin Franklin and Mister Sparky (Items 5-7, 19, 20 and franchisee exhibits), Lancaster County and NJOGIS parcel services, OSHA IMIS, BLS QCEW, plus press releases. Sites behind bot checks or CAPTCHAs (PA DOS, PA AG HIC, FederalPay, ProPublica, Wisconsin DFI, FDD aggregators) were not bypassed and are listed as data gaps. Category note: the PGIM 10-Q loan disclosure and the UGI proxy are tagged press (financial) because the category list has no SEC-credit type.",
@@ -126,7 +126,7 @@
       "Sibling research (bsp_firm.json) notes BSP lists 2 Punctual Pros add-ons, but only Horvath is identified publicly."
     ],
     "next_pulls": [
-      "PitchBook / Capital IQ deal profile for Broad Sky-Punctual Pros (2024-04-03): disclosed EV, revenue/EBITDA at entry, debt amount, lender list; also the second add-on name and date.",
+      "PitchBook / Capital IQ deal profile for BSP-Punctual Pros (2024-04-03): disclosed EV, revenue/EBITDA at entry, debt amount, lender list; also the second add-on name and date.",
       "PitchBook LCD / Debtwire / 9fin / Private Credit data (e.g., Lincoln, Houlihan valuation marks): full Punctual Pros Midco facility size, agent, revolver and DDTL sizing, pricing history and marks across all PGIM and other BDC holders.",
       "SBA PPP FOIA CSV (PPP loans over $150k, free from SBA): JobsReported, lender (ServicingLenderName), ForgivenessAmount/Date for Rohrer and Horvath.",
       "PA DOS business and UCC search (manual browser session): formation dates for Punctual Pros Midco, PP OH/Plumbing/Electric LLCs; UCC-1 secured party (agent) and filing date, likely March or April 2024.",
@@ -231,7 +231,7 @@
       "id": "pp-fil-005",
       "category": "sec_form_d",
       "entity": "BSP co-invest vehicles (BSP-TS LP, BSP-TS Co-Invest I/II, BSP-TS Management, BSP-FL LP, BSP-FL Co-Invest, BSP-CET Co-Invest)",
-      "title": "Form D filings for Broad Sky deal-specific co-invest SPVs; no Punctual Pros SPV exists",
+      "title": "Form D filings for BSP deal-specific co-invest SPVs; no Punctual Pros SPV exists",
       "filed_or_dated": "2021-12-28 to 2025-04-30",
       "filer_or_source_agency": "U.S. SEC (EDGAR) entity search 'BSP-'",
       "key_figures": {
@@ -326,7 +326,7 @@
       "id": "pp-fil-009",
       "category": "press_financial",
       "entity": "Broad Sky Partners LLC / Capital Constellation (managed by Wafra Inc.)",
-      "title": "Capital Constellation strategic (GP-stake) investment in Broad Sky, announced with Thomas Scientific acquisition",
+      "title": "Capital Constellation strategic (GP-stake) investment in BSP, announced with Thomas Scientific acquisition",
       "filed_or_dated": "2022-01-27",
       "filer_or_source_agency": "Business Wire (via MarketScreener); also PE Hub",
       "key_figures": {
@@ -792,7 +792,7 @@
     {
       "id": "pp-fil-026",
       "category": "press_financial",
-      "entity": "Punctual Pros / Broad Sky Partners",
+      "entity": "Punctual Pros / BSP",
       "title": "Business Wire: Broad Sky Partners acquires Punctual Pros (terms undisclosed); deal advisors",
       "filed_or_dated": "2024-04-03",
       "filer_or_source_agency": "Business Wire (mirror on FinancialContent); also covered by LNP/LancasterOnline (2024-04-09), CPBJ, PE Hub, Axios Pro Rata, WSJ Pro, PitchBook, S&P, The Deal",

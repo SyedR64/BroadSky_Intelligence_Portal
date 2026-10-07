@@ -1,7 +1,7 @@
-import * as Copy from './copy.js?v=20261006180606';
+import * as Copy from './copy.js?v=20261006224618';
 /* ═══════════════════════════════════════════════════════════════════════════
    Filings & financials — portfolio-wide financial and regulatory intelligence.
-   Broad Sky's own SEC filings (Form D / ADV), each platform's public
+   BSP's own SEC filings (Form D / ADV), each platform's public
    financial picture, rival companies' filings, and public comparables.
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -105,7 +105,7 @@ const clip = (t, n) => { const x = clean(t); if (x.length <= n) return x; const 
 const shortEst = s => String(s || '').replace(/\s*\([^)]*\)/g, '').split(/;\s/)[0].trim();
 
 function injectCss() {
-  if (!document.getElementById('css-fin')) { const l = document.createElement('link'); l.id = 'css-fin'; l.rel = 'stylesheet'; l.href = 'modules/fin.css?v=20261006180606'; document.head.appendChild(l); }
+  if (!document.getElementById('css-fin')) { const l = document.createElement('link'); l.id = 'css-fin'; l.rel = 'stylesheet'; l.href = 'modules/fin.css?v=20261006224618'; document.head.appendChild(l); }
 }
 
 /* ── data layer ─────────────────────────────────────────────────────────── */
@@ -260,23 +260,23 @@ async function portfolioView(ctx) {
 
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Portfolio financial picture',
-    sub: `<b>So what:</b> six companies add up to roughly ${fmt.money(pfRev)} of revenue and ${fmt.money(pfEbitda)} of EBITDA (est., midpoints, current or pro forma)${biggest ? `; ${esc(biggest.co.name)} is the largest at ~${fmt.money(biggest.rev_sort)}` : ''}. Broad Sky Fund I has ${fundSold ? fmt.money(fundSold) : '—'} of commitments (Form D, ${esc(monLabel(capital?.as_of))}) plus ${fmt.money(vehEquity)} raised in deal SPVs. Every figure below comes from public records and is an estimate.`,
-    chips: `${fmt.chip(`${present.length} of ${COS.length} company datasets`, present.length < COS.length ? 'var(--sys-warn)' : 'var(--sys-good)')}${fmt.chip('Estimates, not audited', 'var(--sys-warn)')}${fmt.chip('Operating view: no lender or equity marks', 'var(--sys-good)')}${fmt.chip('As of Sept 2026', 'var(--c-fin)')}`,
+    sub: `Six companies add up to roughly ${fmt.money(pfRev)} of revenue and ${fmt.money(pfEbitda)} of EBITDA (est.)${biggest ? `; ${esc(biggest.co.name)} is the largest` : ''}. Every figure comes from public records.`,
+    chips: `${fmt.chip(`${present.length} of ${COS.length} datasets`, present.length < COS.length ? 'var(--sys-warn)' : 'var(--sys-good)')}${fmt.chip('Estimates, not audited', 'var(--sys-warn)')}${fmt.chip('No lender marks', 'var(--sys-good)')}${fmt.chip('As of Sept 2026', 'var(--c-fin)')}`,
     actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/deal">Deal team view (BSP only) →</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/explorer">Filings explorer</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/methods">Methods & gaps</a>`,
   })}
   ${ui.kpis([
     { label: 'Portfolio revenue (est.)', value: pfRev ? fmt.money(pfRev) : '—', sub: `sum of midpoints · ${snap.filter(r => r.rev && isPF(r.rev)).length} pro forma`, color: 'var(--c-fin)' },
     { label: 'Portfolio EBITDA (est.)', value: pfEbitda ? fmt.money(pfEbitda) : '—', sub: pfRev && pfEbitda ? `~${fmt.num(pfEbitda / pfRev * 100, 0)}% blended margin` : '', color: 'var(--sys-good)' },
     { label: 'Fund I commitments', value: fundSold ? fmt.money(fundSold) : '—', sub: `Form D ${esc(capital?.as_of || '')} · ${fmt.num(capital?.investors)} investors`, color: 'var(--sys-brand)' },
-    { label: 'Deal-SPV equity', value: fmt.money(vehEquity), sub: `${vehicles.length} Form D vehicles · not additive to Fund I`, color: 'var(--sys-brand)' },
+    { label: 'Deal-SPV equity', value: fmt.money(vehEquity), sub: `${vehicles.length} vehicles · not additive to Fund I`, color: 'var(--sys-brand)' },
     { label: 'Filings indexed', value: fmt.num(rows.length), sub: `${fmt.num(companyRows.length)} portfolio · ${D.rival ? `${fmt.num(rows.length - companyRows.length)} rival` : 'Competitor filings pending'}`, color: 'var(--c-fin)' },
     { label: 'Public comps tracked', value: nComps ? fmt.num(nComps) : '—', sub: comps ? `${Object.keys(comps?.meta?.sector_benchmarks || {}).length} sector benchmark sets` : 'Public comparables dataset pending', color: 'var(--c-pe)' },
   ])}
-  ${flSpv && fundSold ? `<div class="mt-8">${ui.note(`<b>Fund I is ${fmt.money(fundSold)}</b> (Broad Sky Partners, LP, Form D amendment ${esc(capital?.as_of || '')}). The ~${fmt.money(flSpv.sold_usd)} figure sometimes quoted as "Fund I" is <b>${esc(flSpv.vehicle)}</b>, the Frontline deal vehicle (Form D ${esc(flSpv.filed || flSpv.first_sale || '')}).`, '')}</div>` : ''}
+  ${flSpv && fundSold ? `<div class="mt-8">${ui.note(`<b>Fund I is ${fmt.money(fundSold)}</b> (Form D amendment ${esc(capital?.as_of || '')}). The ~${fmt.money(flSpv.sold_usd)} figure sometimes quoted as "Fund I" is <b>${esc(flSpv.vehicle)}</b>, the Frontline deal vehicle (Form D ${esc(flSpv.filed || flSpv.first_sale || '')}).`, '')}</div>` : ''}
   <div class="grid grid-main mt-12">
     <div class="col gap-12">
-    ${ui.panel({ title: 'Portfolio snapshot (est.)', sub: 'Best public-record estimate per metric · equity = fund + co-invest estimate, Form D vehicles beneath · PF = pro forma for closed add-ons · dot = confidence (green high · amber medium · grey low) · click a row for detail', body: '<div id="fin-snap"></div>', foot: ui.source('Company public filings (estimate tables) + SEC Form D + Broad Sky firm profile entry dates', 'https://www.sec.gov/cgi-bin/browse-edgar?company=BSP-&type=D', 'Sept 2026') })}
-    ${ui.panel({ title: 'Equity raised by vehicle', sub: 'Latest Form D amount sold. SPVs pool Fund I money with LP co-invest, so bars are not additive to Fund I.', body: `<div id="fin-ledger"></div>`, foot: capital?.source_url ? ui.source('SEC Form D (Broad Sky firm profile ledger)', capital.source_url, capital.as_of) : '' })}
+    ${ui.panel({ title: 'Portfolio snapshot (est.)', sub: 'Best public-record estimate per metric · equity = fund + co-invest estimate, Form D vehicles beneath · PF = pro forma for closed add-ons · dot = confidence (green high · amber medium · grey low) · click a row for detail', body: '<div id="fin-snap"></div>', foot: ui.source('Company public filings (estimate tables) + SEC Form D + BSP firm profile entry dates', 'https://www.sec.gov/cgi-bin/browse-edgar?company=BSP-&type=D', 'Sept 2026') })}
+    ${ui.panel({ title: 'Equity raised by vehicle', sub: 'Latest Form D amount sold. SPVs pool Fund I money with LP co-invest, so bars are not additive to Fund I.', body: `<div id="fin-ledger"></div>`, foot: capital?.source_url ? ui.source('SEC Form D (BSP firm profile ledger)', capital.source_url, capital.as_of) : '' })}
     </div>
     ${ui.panel({ title: 'Signals from the filings', sub: 'High-confidence operating datapoints (scale, people, footprint) per company', body: '<div id="fin-signals"></div>', foot: `${ui.source('Estimate-table rows rated high confidence (operating metrics only)')}${hidden ? ` · <a href="#/fin/deal">${fmt.num(hidden)} valuation, debt and mark rows are in the Deal team view →</a>` : ''}` })}
   </div>
@@ -327,9 +327,9 @@ async function portfolioView(ctx) {
   el.querySelectorAll('[data-co]').forEach(b => b.onclick = () => { const x = cos.find(c => c.co.id === b.dataset.co); openCompany(ctx, x.co, x.d, D); });
 
   // ledger chart (Form D amounts sold are public and already on EDGAR)
-  const led = [...(fundSold ? [{ label: 'Broad Sky Partners, LP (Fund I)', value: fundSold, color: 'var(--sys-brand)' }] : []), ...vehicles.map(v => ({ label: `${v.vehicle}`, value: v.sold_usd, color: (COS.find(c => c.ledger.test(v.company)) || {}).color }))].sort((a, b) => b.value - a.value);
+  const led = [...(fundSold ? [{ label: 'Fund I', value: fundSold, color: 'var(--sys-brand)' }] : []), ...vehicles.map(v => ({ label: `${v.vehicle}`, value: v.sold_usd, color: (COS.find(c => c.ledger.test(v.company)) || {}).color }))].sort((a, b) => b.value - a.value);
   const fhRaise = (capital?.deal_vehicles || []).find(v => /issuer Form D/i.test(v.vehicle));
-  el.querySelector('#fin-ledger').innerHTML = led.length ? `${charts.hbar(led, { fmt: v => fmt.money(v), labelW: 170 })}<div class="sys-chips legend mt-12">${COS.filter(c => vehicles.some(v => c.ledger.test(v.company))).map(c => `<span><i style="background:${c.color}"></i>${esc(c.short)}</span>`).join('')}<span><i style="background:var(--sys-brand)"></i>Fund I</span></div>${fhRaise ? `<div class="small dim mt-8">Fair Harbor: issuer-level Form D ${fmt.money(fhRaise.sold_usd)} sold (${esc(fhRaise.first_sale || '')}) alongside the BSP round — not a BSP vehicle.</div>` : ''}<div class="small dim mt-8">No Punctual Pros SPV exists on EDGAR: PP was funded from Fund I alone.</div>` : ui.note('Broad Sky firm profile ledger not available yet.', 'warn');
+  el.querySelector('#fin-ledger').innerHTML = led.length ? `${charts.hbar(led, { fmt: v => fmt.money(v), labelW: 170 })}<div class="sys-chips legend mt-12">${COS.filter(c => vehicles.some(v => c.ledger.test(v.company))).map(c => `<span><i style="background:${c.color}"></i>${esc(c.short)}</span>`).join('')}<span><i style="background:var(--sys-brand)"></i>Fund I</span></div>${fhRaise ? `<div class="small dim mt-8">Fair Harbor: issuer-level Form D ${fmt.money(fhRaise.sold_usd)} sold (${esc(fhRaise.first_sale || '')}) alongside the BSP round — not a BSP vehicle.</div>` : ''}<div class="small dim mt-8">No Punctual Pros SPV exists on EDGAR: PP was funded from Fund I alone.</div>` : ui.note('BSP firm profile ledger not available yet.', 'warn');
 
   // actions: first queued pull per company that is not about marks or debt
   const acts = [];
@@ -408,7 +408,7 @@ async function dealView(ctx) {
   el.innerHTML = ui.loading('Building the value & exit scoreboard…');
   const D = await loadAll(ctx);
   const { cos, firm, rows } = D;
-  if (!cos.some(x => x.d) || !firm) { el.innerHTML = `<div class="m-fin">${ui.pageHead({ title: 'Deal team · value & exit' })}${ui.note('Company filings or <b>Broad Sky firm profile</b> dataset not yet available.', 'warn')}</div>`; return; }
+  if (!cos.some(x => x.d) || !firm) { el.innerHTML = `<div class="m-fin">${ui.pageHead({ title: 'Deal team · value & exit' })}${ui.note('Company filings or <b>BSP firm profile</b> dataset not yet available.', 'warn')}</div>`; return; }
   const capital = firm?.firm?.capital_raised_sec_form_d;
   const fundSold = capital?.broad_sky_partners_lp_total_sold_usd;
   const gavRow = rows.find(r => r.category === 'form_adv' && flatKF(r.key_figures).some(([k]) => /Broad_Sky_Partners_LP_GAV/i.test(k)));
@@ -442,8 +442,8 @@ async function dealView(ctx) {
 
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Value and exit scoreboard',
-    sub: `<b>So what:</b> ${urgent.length ? `${esc(urgent.map(r => r.co.short).join(' and '))} need${urgent.length === 1 ? 's' : ''} an exit or refinancing decision in the next 12–18 months` : 'No portfolio company is yet in its exit window'}${nextMat ? `; ${esc(nextMat.co.short)}'s debt matures ${esc(nextMat.matLabel)} (${fmt.num(nextMat.mo, 0)} months)` : ''}. Average hold is ${fmt.num(avgHold, 1)} years against the Smith + Howard template exit at ${fmt.num(tplHeld, 1)} years with ${TEMPLATE_EXIT.addOns} add-ons. All values are public-record estimates.`,
-    chips: `${fmt.chip('BSP only · do not forward to portfolio management', 'var(--sys-bad)')}${fmt.chip('Estimates, not audited', 'var(--sys-warn)')}${fmt.chip('As of Sept 2026', 'var(--c-fin)')}`,
+    sub: `${urgent.length ? `${esc(urgent.map(r => r.co.short).join(' and '))} need${urgent.length === 1 ? 's' : ''} an exit or refinancing decision within 12–18 months` : 'No portfolio company is yet in its exit window'}${nextMat ? `; ${esc(nextMat.co.short)}'s debt matures ${esc(nextMat.matLabel)}` : ''}. Smith + Howard exited at ${fmt.num(tplHeld, 1)} years.`,
+    chips: `${fmt.chip('Internal: do not forward', 'var(--sys-bad)')}${fmt.chip('Estimates, not audited', 'var(--sys-warn)')}${fmt.chip('As of Sept 2026', 'var(--c-fin)')}`,
     actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/portfolio">← Operating view</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/methods">Methods & gaps</a>`,
   })}
   ${ui.kpis([
@@ -453,12 +453,12 @@ async function dealView(ctx) {
     { label: 'Lowest lender mark', value: lowMark ? `${fmt.num(lowMark.lm.v, 1)}%` : '—', sub: lowMark ? `${esc(lowMark.co.short)} · % of par · ${esc(fmt.date(lowMark.lm.date))}` : '', color: 'var(--sys-bad)' },
     { label: 'Fund I gross mark', value: fundGav && fundSold ? `${fmt.num(fundGav / fundSold, 2)}x` : '—', sub: fundGav ? `${fmt.money(fundGav)} GAV (ADV) vs ${fmt.money(fundSold)} sold` : 'Form ADV not loaded', color: 'var(--sys-good)' },
   ])}
-  <div class="mt-12">${ui.panel({ title: 'Value & exit scoreboard', sub: 'One row per company · sorted by exit urgency · equity = fund + co-invest estimate · ranges are est. with confidence dot · click a row for the full estimate table and filings', body: '<div id="dl-board"></div>', foot: ui.source('Company public filings (estimate tables, BDC schedules) · Broad Sky firm profile entry dates · SEC Form D / ADV', 'https://www.sec.gov/cgi-bin/browse-edgar?company=BSP-&type=D', 'Sept 2026') })}</div>
+  <div class="mt-12">${ui.panel({ title: 'Value & exit scoreboard', sub: 'One row per company · sorted by exit urgency · equity = fund + co-invest estimate · ranges are est. with confidence dot · click a row for the full estimate table and filings', body: '<div id="dl-board"></div>', foot: ui.source('Company public filings (estimate tables, BDC schedules) · BSP firm profile entry dates · SEC Form D / ADV', 'https://www.sec.gov/cgi-bin/browse-edgar?company=BSP-&type=D', 'Sept 2026') })}</div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Hold period vs the template exit', sub: `Years held to date · Smith + Howard = entry ${esc(monLabel(TEMPLATE_EXIT.entry))} → TPG ${esc(monLabel(TEMPLATE_EXIT.exit))}`, body: '<div id="dl-hold"></div>', foot: ui.source('Broad Sky firm profile: entry dates and timeline', null, firm?.meta?.generated) })}
-    ${ui.panel({ title: 'Lender & sponsor marks', sub: 'Every public mark on a Broad Sky position: BDC loan marks (% of par) and co-investor / ADV equity marks', body: '<div id="dl-marks"></div>', foot: ui.source('BDC 10-Q schedules · Form ADV Schedule D · co-investor N-PORT', null, 'Sept 2026') })}
+    ${ui.panel({ title: 'Hold period vs the template exit', sub: `Years held to date · Smith + Howard = entry ${esc(monLabel(TEMPLATE_EXIT.entry))} → TPG ${esc(monLabel(TEMPLATE_EXIT.exit))}`, body: '<div id="dl-hold"></div>', foot: ui.source('BSP firm profile: entry dates and timeline', null, firm?.meta?.generated) })}
+    ${ui.panel({ title: 'Lender & sponsor marks', sub: 'Every public mark on a BSP position: BDC loan marks (% of par) and co-investor / ADV equity marks', body: '<div id="dl-marks"></div>', foot: ui.source('BDC 10-Q schedules · Form ADV Schedule D · co-investor N-PORT', null, 'Sept 2026') })}
   </div>
-  <div class="mt-12">${ui.panel({ title: 'Broad Sky fund vehicles: every Form D / Form ADV record', sub: 'All SEC Form D and SEC Form ADV items across the company and rival datasets; BSP vehicles flagged. Headline $ = largest amount-sold (or GAV) figure in the record.', body: '<div id="fin-veh"></div>', foot: ui.source('SEC EDGAR Form D / IAPD Form ADV', 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001917706&type=D', 'Sept 2026') })}</div>
+  <div class="mt-12">${ui.panel({ title: 'BSP fund vehicles: every Form D / Form ADV record', sub: 'All SEC Form D and SEC Form ADV items across the company and rival datasets; BSP vehicles flagged. Headline $ = largest amount-sold (or GAV) figure in the record.', body: '<div id="fin-veh"></div>', foot: ui.source('SEC EDGAR Form D / IAPD Form ADV', 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001917706&type=D', 'Sept 2026') })}</div>
   <div class="mt-12">${ui.panel({ title: 'Next actions', sub: 'One decision per company, most urgent first', body: '<div id="dl-acts"></div>', foot: ui.source('Scoreboard above · rule: maturity < 24 months → refinance-or-sell; hold ≥ 4 yrs → exit window; ≥ 3 yrs → exit prep', null, 'Oct 2026') })}</div>
   </div>`;
 
@@ -545,7 +545,7 @@ async function explorerView(ctx) {
 
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Filings explorer',
-    sub: `<b>So what:</b> ${fmt.num(rows.length)} primary records across ${groups.length} datasets — ${fmt.num(Math.round(hi / rows.length * 100))}% rated high confidence. BDC loan schedules and Form D filings carry the hard numbers; PPP, FDD and state filings anchor pre-deal scale. Filter, open a record for its key figures, and export.`,
+    sub: `${fmt.num(rows.length)} primary records, ${fmt.num(Math.round(hi / rows.length * 100))}% high confidence. Lender schedules and Form D filings carry the hard numbers.`,
     chips: missing.length ? fmt.chip(`Pending: ${missing.join(', ')}`, 'var(--sys-warn)') : '',
   })}
   ${ui.kpis([
@@ -633,8 +633,8 @@ async function compsView(ctx) {
 
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Public comparables',
-    sub: `<b>So what:</b> ${esc(sentences(pc.meta?.financial_picture, 2))}`,
-    chips: `${fmt.chip(`${items.length} listed peers`, 'var(--c-fin)')}${fmt.chip('SEC XBRL companyfacts', 'var(--sys-mute)')}${fmt.chip('EBITDA = op. income + D&A (not adjusted)', 'var(--sys-warn)')}`,
+    sub: fastSector ? `Across ${fmt.num(items.length)} public peers, ${esc(SECTORS[fastSector[0]]?.label || fastSector[0])} grows fastest (${sPct(fmt, fastSector[1].median_revenue_growth_latest_pct)} median). Median EBITDA margin is ${pctF(fmt, allM)}.` : `${esc(sentences(pc.meta?.financial_picture, 1))}`,
+    chips: `${fmt.chip(`${items.length} listed peers`, 'var(--c-fin)')}${fmt.chip('SEC XBRL', 'var(--sys-mute)')}${fmt.chip('EBITDA not adjusted', 'var(--sys-warn)')}`,
   })}
   ${ui.kpis([
     { label: 'Comps tracked', value: fmt.num(items.length), sub: `${Object.keys(bm).length} sectors · FY2023–latest`, color: 'var(--c-fin)' },
@@ -813,8 +813,8 @@ async function rivalsView(ctx) {
 
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Rival company financials',
-    sub: `<b>So what:</b> ${esc(sentences(fp[0], 2))}`,
-    chips: `${fmt.chip(`${groups.length} rival companies`, 'var(--c-pe)')}${fmt.chip('BDC marks = one lender slice', 'var(--sys-warn)')}${fmt.chip('Ratings not yet retrieved', 'var(--sys-mute)')}`,
+    sub: `${esc(sentences(fp[0], 2))}`,
+    chips: `${fmt.chip(`${groups.length} rival companies`, 'var(--c-pe)')}${fmt.chip('Marks: one lender slice', 'var(--sys-warn)')}${fmt.chip('Ratings not yet retrieved', 'var(--sys-mute)')}`,
   })}
   ${ui.kpis([
     { label: 'Rival companies', value: fmt.num(groups.length), sub: `${fmt.num(rv.items.length)} filings · ${overlaps.length} BSP sectors`, color: 'var(--c-pe)' },
@@ -881,7 +881,7 @@ async function rivalsView(ctx) {
 
 /* ═══ View 5: Methods & gaps ════════════════════════════════════════════════ */
 const METHODS = [
-  { id: 'formd', title: 'SEC Form D', cats: ['sec_form_d'], formula: 'Equity raised = "Total amount sold" on the vehicle\'s latest Form D / D-A', text: 'Every Broad Sky fund and deal SPV files a Form D under Rule 506(b). Amendments show top-ups; investor counts reveal LP co-invest breadth.', caveat: 'SPVs pool Fund I capital with co-invest, so vehicle amounts are not additive to Fund I and are not enterprise value.' },
+  { id: 'formd', title: 'SEC Form D', cats: ['sec_form_d'], formula: 'Equity raised = "Total amount sold" on the vehicle\'s latest Form D / D-A', text: 'Every BSP fund and deal SPV files a Form D under Rule 506(b). Amendments show top-ups; investor counts reveal LP co-invest breadth.', caveat: 'SPVs pool Fund I capital with co-invest, so vehicle amounts are not additive to Fund I and are not enterprise value.' },
   { id: 'adv', title: 'Form ADV (Schedule D)', cats: ['form_adv'], formula: 'Gross mark ≈ fund gross asset value ÷ Form D amount sold', text: 'The adviser\'s annual ADV amendment lists regulatory AUM, headcount and gross asset value by private fund: the only public read on marks.', caveat: 'GAV is gross of fees and leverage and gives no mark for individual positions.' },
   { id: 'bdc', title: 'BDC schedules of investments', cats: ['bdc_loan_schedule', 'lender_press'], formula: 'Mark = fair value ÷ par · Facility ≈ visible par ÷ typical hold (15–25%)', text: 'BDC 10-Q/10-K and N-PORT holdings disclose par, cost, fair value, spread, PIK and maturity for each borrower, quarter by quarter.', caveat: 'Shows one lender\'s slice only; total facility, leverage and EBITDA are inferred.' },
   { id: 'ppp', title: 'SBA PPP loans', cats: ['sba_ppp'], formula: 'Annual payroll = loan ÷ 2.5 × 12 · Revenue ≈ payroll ÷ 30–40% labor share', text: 'The PPP FOIA file gives loan amount, jobs reported and lender for 2020–21: a clean pre-deal scale anchor for private companies.', caveat: 'Payroll capped at $100k per employee; describes the predecessor company, pre roll-up.' },
@@ -897,7 +897,7 @@ async function methodsView(ctx) {
   injectCss();
   el.innerHTML = ui.loading('Compiling methods, caveats and gaps…');
   const D = await loadAll(ctx);
-  const dsList = [...D.cos.map(x => ({ id: x.co.id, name: x.co.name, short: x.co.short, color: x.co.color, file: x.co.ds, d: x.d })), { id: 'rival', name: 'Rival companies', short: 'Rival', color: RIVAL.color, file: 'rival_filings', d: D.rival }, { id: 'comps', name: 'Public comparables', short: 'Comps', color: 'var(--c-fin)', file: 'public_comps', d: D.comps }, { id: 'firm', name: 'Broad Sky firm', short: 'BSP', color: 'var(--sys-brand)', file: 'bsp_firm', d: D.firm }];
+  const dsList = [...D.cos.map(x => ({ id: x.co.id, name: x.co.name, short: x.co.short, color: x.co.color, file: x.co.ds, d: x.d })), { id: 'rival', name: 'Rival companies', short: 'Rival', color: RIVAL.color, file: 'rival_filings', d: D.rival }, { id: 'comps', name: 'Public comparables', short: 'Comps', color: 'var(--c-fin)', file: 'public_comps', d: D.comps }, { id: 'firm', name: 'BSP firm', short: 'BSP', color: 'var(--sys-brand)', file: 'bsp_firm', d: D.firm }];
   const present = dsList.filter(x => x.d);
   const gaps = [], pulls = [], cav = [];
   for (const x of present) {
@@ -919,7 +919,7 @@ async function methodsView(ctx) {
 
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Methods & gaps',
-    sub: `<b>So what:</b> every figure in this module comes from a public filing and a stated formula; ${fmt.num(Math.round(hi / Math.max(1, D.rows.length) * 100))}% of records are high confidence, but revenue, EBITDA and leverage for private companies remain estimates. ${fmt.num(gaps.length)} open data gaps map to ${fmt.num(pulls.length)} specific next pulls, most of which need a paid data source (PitchBook / Capital IQ) or a manual state-registry search.`,
+    sub: `Every figure comes from a public filing and a stated formula; private-company revenue, EBITDA and leverage stay estimates. ${fmt.num(gaps.length)} data gaps map to ${fmt.num(pulls.length)} next pulls.`,
     chips: `${fmt.chip(`${present.length} / ${dsList.length} datasets loaded`, present.length < dsList.length ? 'var(--sys-warn)' : 'var(--sys-good)')}${fmt.chip('Public records only', 'var(--c-fin)')}`,
   })}
   ${ui.kpis([
@@ -987,8 +987,8 @@ async function methodsView(ctx) {
 
 export default {
   id: 'fin', name: 'Filings', tag: 'SEC', color: 'var(--c-fin)', group: 'Intelligence',
-  tagline: 'Broad Sky\'s own SEC filings, each portfolio company\'s public financial picture, rival companies\' filings and public comparables',
-  hq: { lat: 40.7585, lon: -73.9745, label: 'Broad Sky Partners, 34 E 51st St, New York' },
+  tagline: 'BSP\'s own SEC filings, each portfolio company\'s public financial picture, rival companies\' filings and public comparables',
+  hq: { lat: 40.7585, lon: -73.9745, label: 'BSP, 34 E 51st St, New York' },
   views: [
     { id: 'portfolio', name: 'Portfolio picture', icon: '◉', render: portfolioView },
     { id: 'deal', name: 'Deal team (BSP only)', icon: '◆', render: dealView },
@@ -998,8 +998,8 @@ export default {
     { id: 'methods', name: 'Methods & gaps', icon: '⚙', render: methodsView },
   ],
   tour: [
-    { order: 1000, hash: '#/fin/portfolio', caption: '<b>Filings & financials.</b> Form D and Form ADV give Broad Sky\'s own capital picture; each company\'s revenue, EBITDA and debt are triangulated from public records.', narration: 'Form D and ADV filings show the capital in each deal vehicle; portfolio company financials are triangulated from public records.', duration: 8000 },
+    { order: 1000, hash: '#/fin/portfolio', caption: '<b>Filings and financials.</b> Form D and ADV show the capital; company financials are triangulated from public records.', narration: 'Form D and ADV show the capital. Company financials are triangulated from public records.', duration: 8000 },
     { order: 1010, hash: '#/fin/comps', caption: '<b>Public comparables.</b> 31 listed peers set the margin, growth and revenue-per-employee bar for each portfolio company.', narration: 'Thirty-one listed peers benchmark growth, margin and revenue per employee for every portfolio company.', duration: 6000 },
-    { order: 1020, hash: '#/fin/methods', caption: '<b>Methods & gaps.</b> Every number has a formula and a source; open gaps are queued as specific pulls for PitchBook, Capital IQ and state registries.', narration: 'Every number has a formula and a source, and open gaps are queued as specific data pulls.', duration: 7000 },
+    { order: 1020, hash: '#/fin/methods', caption: '<b>Methods and gaps.</b> Every number has a formula and a source; open gaps are queued as data pulls.', narration: 'Every number has a formula and a source, and open gaps are queued as specific data pulls.', duration: 7000 },
   ],
 };

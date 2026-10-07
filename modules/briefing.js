@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261006180606';
+import * as Copy from './copy.js?v=20261006224618';
 /* Briefing — narrated tour + rendered video + script */
 async function render(ctx) {
   const { el, ui, esc, fmt } = ctx;
@@ -6,8 +6,8 @@ async function render(ctx) {
   let manifest = null; try { const r = await fetch('briefing/manifest.json', { cache: 'no-store' }); if (r.ok) manifest = await r.json(); } catch { }
   const strip = h => String(h || '').replace(/<[^>]+>/g, '');
   const clip = (t, n = 110) => t.length <= n ? t : t.slice(0, t.lastIndexOf(' ', n)).replace(/[\s·,;:.]+$/, '') + '…';
-  const dur = manifest?.duration_seconds ? `${Math.floor(manifest.duration_seconds / 60)} min ${Math.round(manifest.duration_seconds % 60)} s` : '6 min 36 s';
-  el.innerHTML = ui.pageHead({ title: 'Executive briefing', sub: 'A narrated walkthrough of the portal, 6 minutes 36 seconds long: what each company should do next and why. Play it in-app (live data, spoken narration) or watch the rendered video.', actions: `<button type="button" class="${ui.btnCls('primary', '', 'primary')}" id="b-play">▶ Play in-app briefing</button>${manifest?.video ? `<a class="${ui.btnCls('secondary', '')}" href="briefing/${esc(manifest.video)}" download>Download MP4</a>` : ''}` }) +
+  const dur = manifest?.duration_seconds ? `${Math.floor(manifest.duration_seconds / 60)} min ${Math.round(manifest.duration_seconds % 60)} s` : '5 min 4 s';
+  el.innerHTML = ui.pageHead({ title: 'Executive briefing', sub: 'A narrated walkthrough of what each company should do next. Play it in the app or watch the video.', actions: `<button type="button" class="${ui.btnCls('primary', '', 'primary')}" id="b-play">▶ Play in-app briefing</button>${manifest?.video ? `<a class="${ui.btnCls('secondary', '')}" href="briefing/${esc(manifest.video)}" download>Download MP4</a>` : ''}` }) +
   `<div class="grid grid-main">
     ${ui.panel({ title: 'Rendered video', sub: manifest ? `${dur} · ${esc(String(manifest.steps || Tour.steps.length))} chapters${manifest.rendered ? ` · rendered ${esc(fmt.date(String(manifest.rendered).slice(0, 10)))}` : ''}` : 'Video not rendered yet', body: manifest?.video ? `<video controls playsinline preload="metadata" style="display:block;width:100%;aspect-ratio:16/9;border-radius:var(--sys-r-sm);background:var(--sys-bg-3)" poster="briefing/${esc(manifest.poster || '')}"><source src="briefing/${esc(manifest.video)}" type="video/mp4"></video>` : ui.note('The rendered video is not available yet. Play the in-app briefing instead: it runs the same chapters over live data.', 'warn'), foot: ui.source('Narrated tour of this portal, rendered headless from the live views', null, manifest?.rendered ? fmt.date(String(manifest.rendered).slice(0, 10)) : null) })}
     ${ui.panel({ title: 'Chapters', sub: `${Tour.steps.length} steps · choose one to start there`, body: `<ol class="brief-ch" style="list-style:none;display:flex;flex-direction:column;gap:2px">${Tour.steps.map((s, i) => `<li><button type="button" class="${ui.btnCls('ghost', 'sm', 'ghost')}" style="width:100%;justify-content:flex-start;gap:var(--sys-sp-3);height:auto;min-height:36px;padding-block:var(--sys-sp-2);text-align:left;white-space:normal;font-weight:500;line-height:1.4" data-i="${i}"><span class="sys-num sys-muted" style="min-width:24px">${String(i + 1).padStart(2, '0')}</span><span>${esc(clip(strip(s.caption)))}</span></button></li>`).join('')}</ol>`, scroll: true })}
@@ -16,10 +16,10 @@ async function render(ctx) {
   el.querySelector('#b-play').onclick = () => Tour.start(0);
   el.querySelectorAll('[data-i]').forEach(b => b.onclick = () => Tour.start(Number(b.dataset.i)));
 }
-export default { id: 'briefing', name: 'Briefing & video', tag: '6:36', color: 'var(--c-bsp)', group: 'Briefing', views: [{ id: 'play', name: 'Briefing', icon: '▶', render }],
+export default { id: 'briefing', name: 'Briefing & video', tag: '6:42', color: 'var(--c-bsp)', group: 'Briefing', views: [{ id: 'play', name: 'Briefing', icon: '▶', render }],
   tour: [
-    { order: 1100, hash: '#/briefing/play', caption: '<b>Monday priorities.</b> CET: win bids due ≤60 days and cross-sell Horton accounts · Punctual Pros: new-mover capture and weather staffing.', narration: 'To recap: CET wins near-term bids and cross-sells Horton accounts; Punctual Pros captures new movers and staffs to the weather.', duration: 8500 },
-    { order: 1110, hash: '#/briefing/play', caption: '<b>Across the portfolio.</b> Frontline and Thomas sell into ranked account lists · BPI and Fair Harbor pursue sourced growth plays and margin repair · M&A works the top-ten lists.', narration: 'Frontline and Thomas sell into ranked account lists; BPI and Fair Harbor pursue growth plays.', duration: 6500 },
-    { order: 1120, hash: '#/briefing/play', caption: '<b>Public + licensed data · verify before use.</b> Replay this briefing any time from ▶ in the top bar.', narration: 'Everything here is public or licensed research. Verify before use, and replay this briefing any time.', duration: 7000 },
+    { order: 1100, hash: '#/briefing/play', caption: '<b>Monday priorities.</b> CET: win near-term bids, cross-sell Horton · Punctual Pros: capture new movers, staff to weather.', narration: 'To recap: CET wins near-term bids and cross-sells Horton; Punctual Pros captures movers and staffs to weather.', duration: 8500 },
+    { order: 1110, hash: '#/briefing/play', caption: '<b>Across the portfolio.</b> Frontline and Thomas sell into ranked accounts; BPI and Fair Harbor chase sourced growth.', narration: 'Frontline and Thomas sell into ranked account lists; BPI and Fair Harbor pursue growth plays.', duration: 6500 },
+    { order: 1120, hash: '#/briefing/play', caption: '<b>Public and licensed data · verify before use.</b> Replay from ▶ in the top bar.', narration: 'Everything here is public or licensed research. Verify before use.', duration: 7000 },
   ],
 };

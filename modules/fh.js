@@ -1,7 +1,7 @@
-import * as Copy from './copy.js?v=20261006180606';
+import * as Copy from './copy.js?v=20261006224618';
 /* Fair Harbor — sustainable beachwear from recycled plastic (BSP investment, Mar 2022).
    Views: overview · opportunities · benchmarks · filings · NYC context (Manhattan home sales, demoted: context only). Shared helpers are duplicated in bpi.js by design (no cross-module imports). */
-import { renderFilings, opportunityCard } from '../assets/components.js?v=20261006180606';
+import { renderFilings, opportunityCard } from '../assets/components.js?v=20261006224618';
 
 /* ── module config (the only block that differs from bpi.js) ──────────────── */
 const CFG = {
@@ -9,7 +9,7 @@ const CFG = {
   firmId: 'bsp-fh', oppKey: 'fh_opportunities', filings: 'fairharbor_filings', sector: 'apparel_dtc', peKey: 'fair_harbor',
   sectorLabel: 'Apparel/DTC comps', site: 'https://fairharborclothing.com',
   sales: 'sales/fh_sales_nyc', salesArea: 'Manhattan (New York County)', salesShort: 'NYC', center: [40.772, -73.975], zoom: 12, zipAgg: true,
-  soWhat: () => "Fair Harbor is BSP's only consumer brand, 4.5 years into the hold. Revenue and margins are not public, so this page lists hypotheses to confirm with management: FY25 sell-through and markdown mix (38.5% of live variants are marked down), wholesale doors against the 2022 baseline, and the women's relaunch plan. The likely value path is capital-light wholesale, licensing and B2B plus margin repair, not more owned stores.",
+  soWhat: () => "Fair Harbor is BSP's only consumer brand, 4.5 years into the hold. The likely value path is wholesale, licensing and margin repair; 38.5% of live variants are marked down.",
   hq: { label: 'New York, NY', detail: '520 Broadway, New York, NY (NY DOS principal executive office)', alt: 'Form D and PPP filings use the founders\' Larchmont, NY address' },
   signal: (ctx, d) => {
     const it = (d.filings?.items || []).find(i => i.key_figures?.product_type_mix);
@@ -40,14 +40,14 @@ const CFG = {
     'Put the licensing pipeline (collegiate, FootJoy, co-brands) into a royalty P&L line with a 2027 target.',
     'Turn on Shopify Markets for Canada and the UK as a low-capex international test (the store ships only to the US today).',
   ],
-  marketLens: s => `Context only. Manhattan, where Fair Harbor's SoHo store sits, recorded ${s.n} arms-length home sales at a ${s.medTxt} median, ${s.lux} of them above $2M and concentrated in ${s.top.slice(0, 3).join(', ')}. No dataset links these buyers to Fair Harbor's customers, so treat this as a siting hypothesis to test against Shopify customer ZIPs, not as evidence.`,
+  marketLens: s => `Manhattan recorded ${s.n} home sales at a ${s.medTxt} median, ${s.lux} above $2M. Nothing links these buyers to Fair Harbor's customers, so test it against customer ZIPs.`,
   marketActions: s => [
     `Test first: match Shopify and SoHo-store customer ZIPs against these neighborhoods (${s.top.slice(0, 3).join(', ')}). Act only if the overlap is material.`,
     'If the overlap holds: judge any pop-up or partner door in the highest-density ZIPs on sell-through, not traffic.',
     'Better data for this brand: customer-file ZIP density, plus Suffolk County (Hamptons, Fire Island) and Palm Beach County (store 2) sales.',
   ],
   hoodAction: h => h.luxShare >= 15 ? 'Higher $2M+ share: candidate for a SoHo-store event or pop-up test, if customer-ZIP overlap confirms it.' : h.n >= 300 ? 'High turnover: possible new-mover offer test, only if customer-ZIP overlap confirms it.' : 'No action; context only.',
-  filingsSoWhat: "Fair Harbor has not disclosed revenue or EBITDA. The public record confirms $30.7M of primary equity at entry (Form D, Mar 2022), ABL liens on the core trademark (the last released Dec 2025) and no add-ons. The estimate table below is outside-in and mostly low confidence. It is BSP-internal working material: replace it with management's FY25 P&L at the first meeting.",
+  filingsSoWhat: "Fair Harbor has not disclosed revenue or EBITDA; the record confirms $30.7M of entry equity (Form D) and no add-ons. Replace the estimates below with management's FY25 P&L.",
 };
 
 /* ── shared helpers (duplicated in bpi.js) ────────────────────────────────── */
@@ -119,30 +119,30 @@ async function overview(ctx) {
   const doorsIt = fItems.find(i => i.key_figures?.specialty_retail_doors);
   const doors = doorsIt?.key_figures?.specialty_retail_doors || null;
   const nonSwim = k ? (k.active_products - (k.product_type_mix.Swim || 0)) : null;
-  el.innerHTML = ui.pageHead({ title: esc(CFG.name), sub: `<b>So what:</b> ${esc(CFG.soWhat(d))}`,
-    chips: co ? `${fmt.chip(`Broad Sky portfolio company since ${words(co.entry_date)}`, CFG.hex)}${fmt.chip(CFG.hq.label)}${fmt.chip(`${d.addOns} add-ons`)}<span class="sys-chip sys-chip--good">${co.status === 'held' ? 'Held' : esc(co.status)}</span>` : '',
+  el.innerHTML = ui.pageHead({ title: esc(CFG.name), sub: `${esc(CFG.soWhat(d))}`,
+    chips: co ? `${fmt.chip(`Held since ${words(co.entry_date).replace(/ \d{1,2},/, '')}`, CFG.hex)}${fmt.chip(CFG.hq.label)}${fmt.chip(`${d.addOns} add-ons`)}<span class="sys-chip sys-chip--good">${co.status === 'held' ? 'Held' : esc(co.status)}</span>` : '',
     actions: `<a class="sys-btn sys-btn--primary" href="#/${CFG.id}/opportunities">Opportunities</a><a class="sys-btn sys-btn--secondary" href="#/${CFG.id}/filings">Filings</a>` }) +
-  (co ? '' : ui.note('Company record not found in Broad Sky firm profile. Profile panels are empty until it lands.', 'warn')) +
+  (co ? '' : ui.note('Company record not found in BSP firm profile. Profile panels are empty until it lands.', 'warn')) +
   ui.kpis([
     { label: 'Variants marked down', value: k ? `${fmt.num(k.markdown_share_pct, 1)}%` : '—', sub: k ? `${fmt.num(k.variants_marked_down_vs_compare_at)} of ${fmt.num(k.variants)} · public store, ${esc(day(fmt, cat.retrieved))}` : 'catalog snapshot pending', color: 'var(--sys-bad)' },
-    { label: 'Specialty doors (2022)', value: doors ? esc(doors) : '—', sub: '+ Nordstrom, Saks · Scheels 2023 · confirm current count', color: CFG.color },
+    { label: 'Specialty doors (2022)', value: doors ? esc(doors) : '—', sub: 'plus Nordstrom, Saks · confirm today', color: CFG.color },
     { label: 'Non-swim share of catalog', value: k ? `${fmt.num(nonSwim / k.active_products * 100, 1)}%` : '—', sub: k ? `${fmt.num(nonSwim)} of ${fmt.num(k.active_products)} live products · year-round shift` : '', color: 'var(--sys-good)' },
     { label: 'Revenue 2025 (est.)', value: revEst ? kv2(esc, String(revEst.estimate).split(' (')[0]) : '—', sub: revEst ? `outside-in · ${esc(revEst.confidence)} confidence · not disclosed` : 'no estimate in Fair Harbor public filings', color: 'var(--sys-info)' },
-    { label: 'Growth opportunities', value: fmt.num(d.opps.length), sub: `${new Set(d.opps.map(o => o.type)).size} types · sourced · no $ disclosed`, color: 'var(--sys-warn)' },
-    { label: `${CFG.sectorLabel} median growth`, value: pp(fmt, d.bm?.median_revenue_growth_latest_pct, true), sub: `op. margin ${pp(fmt, d.bm?.median_operating_margin_latest_pct)} · ${d.bm?.n ?? '—'} peers · SEC XBRL`, color: 'var(--sys-info)' },
+    { label: 'Growth opportunities', value: fmt.num(d.opps.length), sub: `${new Set(d.opps.map(o => o.type)).size} types · no $ disclosed`, color: 'var(--sys-warn)' },
+    { label: `${CFG.sectorLabel} median growth`, value: pp(fmt, d.bm?.median_revenue_growth_latest_pct, true), sub: `op. margin ${pp(fmt, d.bm?.median_operating_margin_latest_pct)} · ${d.bm?.n ?? '—'} peers`, color: 'var(--sys-info)' },
   ]) +
   `<div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Company profile', sub: esc(co?.sector || ''), body: co ? `<div class="prose small">${esc(co.description)}</div><h4 class="sys-card-label mt-16">Investment thesis</h4><div class="prose small">${esc(co.thesis)}</div><div class="mt-12">${ui.kv({ Leadership: esc(co.ceo), HQ: `${esc(CFG.hq.detail)}<div class="dim small">${esc(CFG.hq.alt)}</div>`, 'BSP entry': `${esc(words(co.entry_date))} · <span class="dim">${esc(co.entry_source)}</span>`, Employees: esc(co.employees_est || '—'), 'Capital / co-investors': esc(co.lenders_or_co_investors || '—'), ...Object.fromEntries(Object.entries(co.key_metrics || {}).map(([k, v]) => [label(k), `<span class="num">${metricFmt(ctx, k, v)}</span>`])) })}</div>` : ui.empty('Profile pending'),
-      foot: co ? `${ui.source('Broad Sky firm profile', co.sources?.[0], co.retrieved)} · ${(co.sources || []).slice(1, 6).map(u => fmt.link(u)).join(' · ')}` : '' })}
+      foot: co ? `${ui.source('BSP firm profile', co.sources?.[0], co.retrieved)} · ${(co.sources || []).slice(1, 6).map(u => fmt.link(u)).join(' · ')}` : '' })}
     ${ui.panel({ title: d.addOns ? 'Add-ons & milestones' : 'Milestones', sub: d.addOns ? `${d.addOns} add-ons since BSP entry` : 'No add-ons yet · organic milestones since BSP entry', scroll: true, body: (() => {
       const ev = [...(co?.add_ons || []).map(a => ({ date: a.date, color: CFG.hex, html: `<b>${esc(a.name)}</b> <span class="dim">(${esc(a.hq || '')})</span><div class="small text-2">${esc(a.note || '')}</div>${a.source_url ? `<a class="small" href="${esc(a.source_url)}" target="_blank" rel="noopener">source ↗</a>` : ''}` })),
         ...d.timeline.filter(t => t.type !== 'add_on').map(t => ({ date: t.date, color: 'var(--sys-mute-2)', html: `${esc(t.event)}${t.source_url ? ` <a class="small" href="${esc(t.source_url)}" target="_blank" rel="noopener">↗</a>` : ''}` }))].sort((a, b) => String(b.date).localeCompare(String(a.date)));
-      return ev.length ? ui.timeline(ev) : ui.empty('No add-ons recorded'); })(), foot: ui.source('Company press releases (Broad Sky firm profile)', CFG.site, d.firm?.meta?.generated) })}
+      return ev.length ? ui.timeline(ev) : ui.empty('No add-ons recorded'); })(), foot: ui.source('Company press releases (BSP firm profile)', CFG.site, d.firm?.meta?.generated) })}
   </div>
   <div class="grid grid-3 mt-12">
     ${ui.panel({ title: 'Growth levers', sub: 'Ranked by value at stake × feasibility (analyst view)', body: leverList(esc, CFG.levers(d)) })}
     ${(() => { const s = CFG.signal(ctx, d); return ui.panel({ title: s.title, sub: s.sub, body: s.body, foot: s.foot }); })()}
-    ${ui.panel({ title: 'First meeting, then 90 days', sub: 'Confirm with management first; owner: BSP deal team + PRG with CEO', accent: true, body: `<h4 class="sys-card-label">Confirm with management</h4><ol class="prose small">${CFG.confirm.map(a => `<li>${esc(a)}</li>`).join('')}</ol><h4 class="sys-card-label mt-16">Then, next 90 days</h4><ol class="prose small">${CFG.actions.map(a => `<li>${esc(a)}</li>`).join('')}</ol>`, foot: ui.source('Synthesis of the Broad Sky firm profile, Fair Harbor public filings, public comparables and the private-equity landscape (analyst view)', null, 'September 24, 2026') })}
+    ${ui.panel({ title: 'First meeting, then 90 days', sub: 'Confirm with management first; owner: BSP deal team + PRG with CEO', accent: true, body: `<h4 class="sys-card-label">Confirm with management</h4><ol class="prose small">${CFG.confirm.map(a => `<li>${esc(a)}</li>`).join('')}</ol><h4 class="sys-card-label mt-16">Then, next 90 days</h4><ol class="prose small">${CFG.actions.map(a => `<li>${esc(a)}</li>`).join('')}</ol>`, foot: ui.source('Synthesis of the BSP firm profile, Fair Harbor public filings, public comparables and the private-equity landscape (analyst view)', null, 'September 24, 2026') })}
   </div>`;
   ctx.app.index([...d.opps.map(o => ({ label: o.title, sub: `${CFG.short} opportunity · ${label(o.type)}`, href: `#/${CFG.id}/opportunities?id=${encodeURIComponent(o.id)}`, kind: 'Opportunity', color: CFG.color })), ...d.rivals.map(r => ({ label: r.firm, sub: `PE competitor to ${CFG.short}`, href: `#/${CFG.id}/benchmarks`, kind: 'PE firm', color: 'var(--sys-mute)' }))]);
 }
@@ -172,7 +172,7 @@ const QUADS = [
 async function opportunities(ctx) {
   const { el, ui, fmt, esc, charts, inspector, params } = ctx;
   const d = await load(ctx);
-  if (!d.firm) { el.innerHTML = ui.pageHead({ title: 'Opportunities' }) + ui.note('Research dataset Broad Sky firm profile not yet available.', 'warn'); return; }
+  if (!d.firm) { el.innerHTML = ui.pageHead({ title: 'Opportunities' }) + ui.note('Research dataset BSP firm profile not yet available.', 'warn'); return; }
   const opps = d.opps.map((o, i) => ({ ...o, _n: i + 1, ...classify(o) })); const types = [...new Set(opps.map(o => o.type))];
   const byType = types.map(t => ({ t, rows: opps.filter(o => o.type === t) })).sort((a, b) => b.rows.length - a.rows.length);
   const top = opps.filter(o => o._value).sort((a, b) => b._value - a._value)[0];
@@ -181,7 +181,7 @@ async function opportunities(ctx) {
   /* 2×2 of system cards: the quadrant colour is the card's accent bar (data-co); each opportunity is a numbered link */
   const quad = x => `<div class="sys-card sys-card--flat" data-co="" style="--co:${x.c}"><h4 class="sys-card-label">${esc(x.t)} · ${q[x.id].length}</h4><div class="dim small">${esc(x.s)}</div><ul class="sys-card-list">${q[x.id].map(o => `<li><a href="#/${CFG.id}/opportunities?id=${encodeURIComponent(o.id)}" class="m-fh-q" data-id="${esc(o.id)}"><span class="num">${o._n}.</span> ${nm(o)}</a></li>`).join('') || '<li class="dim">None</li>'}</ul></div>`;
   const matrix = `<div class="grid grid-2">${quad(QUADS[1])}${quad(QUADS[3])}${quad(QUADS[0])}${quad(QUADS[2])}</div><p class="small muted mt-8">Top row: more capital · bottom row: low capital · left: revenue within 6 months · right: revenue after 6 months.</p>`;
-  el.innerHTML = ui.pageHead({ title: 'Growth opportunities', sub: `<b>So what:</b> ${fmt.num(opps.length)} sourced opportunities across ${types.length} types. ${top ? `The largest headline value is <b>${fmt.money(top._value)}</b> (${esc(top.title)}).` : 'None has a disclosed dollar value, so they are ranked by capital intensity and time to revenue (analyst view).'} ${fmt.num(q.q1.length)} are quick wins on assets already live; the bigger builds (wholesale doors, year-round depth, women's) should be gated on FY25 sell-through data from management and timed to buy windows.`, chips: byType.map(g => fmt.chip(`${label(g.t)} · ${g.rows.length}`)).join('') }) +
+  el.innerHTML = ui.pageHead({ title: 'Growth opportunities', sub: `${fmt.num(q.q1.length)} of ${fmt.num(opps.length)} sourced opportunities are quick wins on live assets. Gate the bigger builds on FY25 sell-through data from management.`, chips: byType.map(g => fmt.chip(`${label(g.t).split(' ').slice(0, 3).join(' ')} · ${g.rows.length}`)).join('') }) +
     ui.kpis([
       { label: 'Opportunities', value: fmt.num(opps.length), sub: `${types.length} types · each with a primary source`, color: CFG.color },
       { label: 'Quick wins', value: fmt.num(q.q1.length), sub: 'low capital, revenue ≤ 6 months (est.)', color: 'var(--sys-good)' },
@@ -191,9 +191,9 @@ async function opportunities(ctx) {
         : [{ label: 'Dollar-sized', value: '0', sub: 'no disclosed $: size in diligence', color: 'var(--sys-mute-2)' }]),
     ]) +
     `<div class="grid grid-main mt-12">
-      ${ui.panel({ title: 'Opportunities by type', sub: 'Click a card for why-now, buy window, source and next action', scroll: true, body: `<div id="op-cards">${byType.map(g => `<h4 class="sys-card-label mt-16 mb-8">${esc(label(g.t))} · ${g.rows.length}</h4>${ui.cards(g.rows.map(o => card(ctx, o)))}`).join('')}</div>`, foot: ui.source('Broad Sky firm profile: ' + CFG.name + ' opportunities', null, d.firm?.meta?.generated) })}
+      ${ui.panel({ title: 'Opportunities by type', sub: 'Click a card for why-now, buy window, source and next action', scroll: true, body: `<div id="op-cards">${byType.map(g => `<h4 class="sys-card-label mt-16 mb-8">${esc(label(g.t))} · ${g.rows.length}</h4>${ui.cards(g.rows.map(o => card(ctx, o)))}`).join('')}</div>`, foot: ui.source('BSP firm profile: ' + CFG.name + ' opportunities', null, d.firm?.meta?.generated) })}
       <div class="col gap-12">
-        ${ui.panel({ title: 'Capital intensity × time to revenue', sub: 'Numbers match the table · click to open · analyst classification (est.)', body: `<div id="op-2x2">${matrix}</div>`, foot: ui.source('Analyst view on Fair Harbor opportunities (Broad Sky firm profile) and Fair Harbor public filings', null, 'October 6, 2026') })}
+        ${ui.panel({ title: 'Capital intensity × time to revenue', sub: 'Numbers match the table · click to open · analyst classification (est.)', body: `<div id="op-2x2">${matrix}</div>`, foot: ui.source('Analyst view on Fair Harbor opportunities (BSP firm profile) and Fair Harbor public filings', null, 'October 6, 2026') })}
         ${ui.panel({ title: 'How to prioritize', accent: true, body: `<ol class="prose small"><li><b>Buy windows first.</b> Wholesale and resort buyers commit Spring/Summer orders months ahead, so door expansion and golf pro-shop items (PGA Show, late Jan) must be in front of buyers this fall and winter or they slip a season.</li><li><b>Then quick wins on live assets</b>: B2B custom, collabs, sustainability credentials and a Shopify Markets test need little capital and can book revenue within two quarters.</li><li><b>Licensing: check the capital need.</b> Confirm royalty minimums and stocked inventory before adding more schools.</li><li><b>Gate the builds</b> (women's relaunch, cold-weather and kids depth) on FY25 sell-through and markdown data from management.</li><li>One owner per card in the BSP value-creation plan; review monthly.</li></ol>` })}
       </div>
     </div>
@@ -240,7 +240,7 @@ async function benchmarks(ctx) {
   if (!d.comps) { el.innerHTML = ui.pageHead({ title: 'Benchmarks' }) + ui.note('Research dataset Public comparables not yet available.', 'warn'); return; }
   const bm = d.bm || {}; const peers = d.peers.slice().sort((a, b) => (b.rev || 0) - (a.rev || 0));
   const est = (d.filings?.meta?.estimate_table || []).filter(e => /revenue|ebitda|headcount|margin/i.test(e.metric) && !/enterprise/i.test(e.metric)).slice(0, 6);
-  el.innerHTML = ui.pageHead({ title: 'Public comparables', sub: `<b>So what:</b> ${esc(CFG.sectorLabel)} (${esc((bm.comps || []).join(', '))}) grew a median ${pp(fmt, bm.median_revenue_growth_latest_pct, true)} last year at a ${pp(fmt, bm.median_operating_margin_latest_pct)} operating margin (${pp(fmt, bm.median_operating_margin_multiyear_avg_pct)} multi-year average). The benchmark ${esc(CFG.short)} should be held to is below.` }) +
+  el.innerHTML = ui.pageHead({ title: 'Public comparables', sub: `${esc(CFG.sectorLabel)} grew a median ${pp(fmt, bm.median_revenue_growth_latest_pct, true)} last year at a ${pp(fmt, bm.median_operating_margin_latest_pct)} operating margin. That is the bar for ${esc(CFG.short)}.` }) +
     ui.kpis([
       { label: 'Comps', value: fmt.num(peers.length), sub: esc(peers.map(p => p.ticker).join(' · ')), color: CFG.color },
       { label: 'Median growth (latest)', value: pp(fmt, bm.median_revenue_growth_latest_pct, true), sub: `CAGR since 2023 ${pp(fmt, bm.median_revenue_cagr_2023_latest_pct, true)}`, color: 'var(--sys-warn)' },
@@ -301,10 +301,10 @@ async function market(ctx) {
   let raw = null; try { raw = await ctx.data.load(CFG.sales); } catch (e) { console.warn(e.message); }
   if (!raw?.items?.length) { el.innerHTML = ui.pageHead({ title: `${esc(CFG.salesArea.replace(/\s*\(.*\)$/, ''))} home sales` }) + ui.note('The Manhattan home-sales dataset is not available yet.', 'warn'); return; }
   const meta = raw.meta || {}; const all = raw.items; const s = salesStats(all, fmt);
-  el.innerHTML = ui.pageHead({ title: `${esc(CFG.salesArea.replace(/\s*\(.*\)$/, ''))} home sales`, sub: `<b>So what:</b> ${esc(CFG.marketLens(s))}`, chips: `${fmt.chip(`${fmt.num(all.length)} recorded sales`, CFG.hex)}${fmt.chip(`${day(fmt, meta.coverage?.date_from)} – ${day(fmt, meta.coverage?.date_to)}`)}${fmt.chip('owner names not retained')}<span class="sys-chip sys-chip--warn">Context only</span>` }) +
+  el.innerHTML = ui.pageHead({ title: `${esc(CFG.salesArea.replace(/\s*\(.*\)$/, ''))} home sales`, sub: `${esc(CFG.marketLens(s))}`, chips: `${fmt.chip(`${fmt.num(all.length)} recorded sales`, CFG.hex)}${fmt.chip(`${day(fmt, meta.coverage?.date_from)} – ${day(fmt, meta.coverage?.date_to)}`.replace(/ \d{1,2},/g, ''))}${fmt.chip('owner names not retained')}<span class="sys-chip sys-chip--warn">Context only</span>` }) +
     `<div class="mb-12">${ui.note('Context only, not an operating metric. No dataset links Manhattan home buyers to Fair Harbor customers, and 12 months of data (September 2025 – August 2026) cannot give a same-period YoY trend, so none is shown.', 'warn')}</div>` +
     ui.kpis([
-      { label: 'Arms-length home sales', value: s.n, sub: `residential, price ≥ $50K · of ${fmt.num(all.length)} recorded transfers`, color: CFG.color },
+      { label: 'Arms-length home sales', value: s.n, sub: `residential, $50K+ · of ${fmt.num(all.length)} transfers`, color: CFG.color },
       { label: 'Median price', value: s.medTxt, sub: 'arms-length residential', color: 'var(--sys-warn)' },
       { label: '$2M+ sales', value: s.lux, sub: `${pp(fmt, s.res.filter(i => i.price >= 2e6).length / Math.max(1, s.res.length) * 100)} of home sales`, color: 'var(--co-bpi)' },
       { label: 'Top $2M+ area', value: kv2(esc, s.top[0] || '—'), sub: `${fmt.num(s.hoodRows.find(h => h.hood === s.top[0])?.lux)} sales ≥ $2M`, color: 'var(--co-fh)' },
@@ -374,7 +374,7 @@ async function filings(ctx) {
   const { el, ui, fmt, esc } = ctx;
   const data = await ctx.data.research(CFG.filings);
   const items = data?.items || [];
-  el.innerHTML = ui.pageHead({ title: 'Filings and financials', sub: data ? `<b>So what:</b> ${esc(CFG.filingsSoWhat || String(data.meta?.financial_picture || '').slice(0, 420))}` : 'Public-record financial picture' }) +
+  el.innerHTML = ui.pageHead({ title: 'Filings and financials', sub: data ? `${esc(CFG.filingsSoWhat || String(data.meta?.financial_picture || '').slice(0, 420))}` : 'Public-record financial picture' }) +
     (data ? ui.kpis([
       { label: 'Records', value: fmt.num(items.length), sub: `${new Set(items.map(i => i.category)).size} categories`, color: CFG.color },
       { label: 'High confidence', value: fmt.num(items.filter(i => i.confidence === 'high').length), sub: 'primary-source pulls', color: 'var(--sys-good)' },
@@ -403,8 +403,8 @@ export default {
     { id: 'market', name: 'NYC context', icon: '⌂', render: market },
   ],
   tour: [
-    { order: 700, hash: '#/fh/overview', caption: '<b>Fair Harbor.</b> 4.5 years into the hold, the first-meeting questions are sell-through, markdown mix (38.5% of live variants) and wholesale doors.', narration: 'For Fair Harbor, the first questions for management are sell-through, markdowns and wholesale doors.', duration: 6000 },
-    { order: 710, hash: '#/fh/opportunities', caption: '<b>9 sourced growth plays</b> ranked by capital intensity and time to revenue: quick wins on live assets, builds gated on sell-through data.', narration: 'Nine sourced growth plays, ranked by capital intensity and time to revenue.', duration: 6000 },
-    { order: 720, hash: '#/fh/filings', caption: '<b>Filings.</b> $30.7M of primary equity at entry is the hard number; revenue and EBITDA are outside-in estimates until management shares FY25.', narration: 'In the filings, the equity check is the hard number; revenue and EBITDA stay estimates until management shares the books.', duration: 7000 },
+    { order: 700, hash: '#/fh/overview', caption: '<b>Fair Harbor.</b> 4.5 years in. First questions: sell-through, markdowns (38.5% of variants), wholesale doors.', narration: 'For Fair Harbor, the first questions for management are sell-through, markdowns and wholesale doors.', duration: 6000 },
+    { order: 710, hash: '#/fh/opportunities', caption: '<b>9 sourced growth plays</b> ranked by capital and time to revenue. Quick wins first; builds wait on sell-through.', narration: 'Nine sourced growth plays, ranked by capital intensity and time to revenue.', duration: 6000 },
+    { order: 720, hash: '#/fh/filings', caption: '<b>Filings.</b> $30.7M of entry equity is the hard number; revenue and EBITDA are estimates.', narration: 'The equity check is the hard number. Revenue and EBITDA stay estimates until management shares the books.', duration: 7000 },
   ],
 };

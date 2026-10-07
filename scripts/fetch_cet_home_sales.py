@@ -12,7 +12,7 @@ from collections import Counter, defaultdict
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, 'data', 'sales')
 TODAY = time.strftime('%Y-%m-%d')
-UA = {'User-Agent': 'Mozilla/5.0 (BSP operating-intelligence research; public records)'}
+UA = {'User-Agent': 'Mozilla/5.0 (BSP Desk research; public records)'}
 
 def http(url, data=None, tries=4):
     for k in range(tries):

@@ -1,12 +1,12 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Broad Sky assistant backend client (ES module, no dependencies).
+   BSP Desk assistant backend client (ES module, no dependencies).
    Talks to the Cloudflare Worker in /worker (see SETUP.md). The Worker URL is
    discovered from assets/runtime.json, which the deploy-worker GitHub Action
    writes after each deploy. When no backend is live every method degrades
    quietly, so the grounded engine in chat.js keeps working on its own.
 
    Usage (from chat.js):
-     const { Backend } = await import('./backend.js?v=20261006180606');
+     const { Backend } = await import('./backend.js?v=20261006224618');
      if (await Backend.discover()) for await (const t of Backend.chat({ persona, messages, context, question })) out += t;
      const pre = await Backend.precomputed(question);   // works without a backend
 

@@ -1,5 +1,5 @@
 /* Thomas Scientific concept site — interactions. Data via the portal's core.js (Data). */
-import { esc, num, CATS, PRODUCTS, STOCK, catById, search, VERTICALS, TILES, STATE_NAMES, REGIONS, regionOf, SITES_FALLBACK, aggregateSites, FAQ, toast, reveal, mountChat } from './shared.js?v=20261006180606';
+import { esc, num, CATS, PRODUCTS, STOCK, catById, search, VERTICALS, TILES, STATE_NAMES, REGIONS, regionOf, SITES_FALLBACK, aggregateSites, FAQ, toast, reveal, mountChat } from './shared.js?v=20261006224618';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -246,7 +246,7 @@ async function wireRationale() {
   refs.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
   const card = (u, els) => `<article class="sys-card ts-ref"><div class="ts-ref-h"><h3 class="sys-card-title">${esc(u.title)}</h3><span class="sys-card-label">Design principle</span></div><p class="sys-card-body">${esc(u.why)}</p><ul class="ts-ref-l">${els.map(e => `<li><b>${esc(e.name)}</b>${e.does ? `<span>${esc(e.does)}</span>` : ''}</li>`).join('')}</ul><div class="sys-card-foot ts-ref-use"><div><small class="sys-card-label">On this page</small><p>${esc(u.where || '')}</p></div><div><small class="sys-card-label">KPI it should move</small><p>${esc(u.kpi || '')}</p></div></div></article>`;
   if (!refs.length) host.innerHTML = order.map(id => card(REF_USE[id], REF_USE[id].el.map(name => ({ name, does: '' })))).join('');
-  else host.innerHTML = refs.map(r => { const u = REF_USE[r.id]; const el = (r.elements_to_borrow || []).slice(0, 2).map((e, k) => ({ name: u.el[k] || refScrub(e.element), does: refScrub(e.what_it_does_for_conversion_or_valuation) })); return card(u, el); }).join('');
+  else host.innerHTML = refs.map(r => { const u = REF_USE[r.id]; const el = (r.elements_to_borrow || []).slice(0, 2).map((e, k) => ({ name: u.el[k] || refScrub(e.element), does: '' })); return card(u, el); }).join('');
   const ev = await DataRef.research('research/serviceos_evidence');
   const it = id => (ev?.items || []).find(x => x.id === id);
   const k1 = it('kb-ts-1'), k2 = it('kb-ts-2'), k3 = it('kb-ts-3');

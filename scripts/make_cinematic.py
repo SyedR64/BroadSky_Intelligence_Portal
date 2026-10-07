@@ -24,7 +24,7 @@ TITLE_HTML = """<!doctype html><html><head><meta charset=utf-8><link href="https
 h1{font-size:{{SIZE}}px;font-weight:800;letter-spacing:-.03em;line-height:1.02;margin:0;max-width:1500px}
 .f{position:absolute;left:160px;bottom:90px;font-size:20px;color:rgba(255,255,255,.55);letter-spacing:.04em}
 .logo{position:absolute;right:160px;bottom:80px;display:flex;align-items:center;gap:14px;font-weight:700;font-size:20px;color:rgba(255,255,255,.85)}.logo img{width:44px;height:44px;border-radius:50%}</style></head>
-<body><div class=bg></div><div class=grid></div><div class=wrap><div class=k>{{KICKER}}</div><h1>{{HEADLINE}}</h1></div><div class=f>{{FOOT}}</div><div class=logo><img src="{{LOGO}}">Broad Sky Operating Intelligence</div></body></html>"""
+<body><div class=bg></div><div class=grid></div><div class=wrap><div class=k>{{KICKER}}</div><h1>{{HEADLINE}}</h1></div><div class=f>{{FOOT}}</div><div class=logo><img src="{{LOGO}}">BSP Desk</div></body></html>"""
 
 def esc(s): return str(s).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
 def dur_wav(p):
@@ -47,7 +47,7 @@ with sync_playwright() as p:
             dur = max(dur, dur_wav(narw) + 0.9)
         # optional title card before the shot
         if s.get('title_card'):
-            tc = s['title_card']; html = TITLE_HTML.replace('{{KICKER}}', esc(tc.get('kicker', ''))).replace('{{HEADLINE}}', esc(tc.get('headline', ''))).replace('{{SIZE}}', str(tc.get('size', 96))).replace('{{FOOT}}', esc(tc.get('foot', 'Prepared for the Broad Sky Portfolio Resource Group'))).replace('{{LOGO}}', BASE + 'BSP_Logo.png')
+            tc = s['title_card']; html = TITLE_HTML.replace('{{KICKER}}', esc(tc.get('kicker', ''))).replace('{{HEADLINE}}', esc(tc.get('headline', ''))).replace('{{SIZE}}', str(tc.get('size', 96))).replace('{{FOOT}}', esc(tc.get('foot', 'Syed Rahman · for the Portfolio Resource Group'))).replace('{{LOGO}}', BASE + 'BSP_Logo.png')
             hp = os.path.join(WORK, f'tc{i:02d}.html'); open(hp, 'w').write(html)
             ctx = browser.new_context(viewport={'width': W, 'height': H}); pg = ctx.new_page(); pg.goto('file://' + hp); pg.wait_for_timeout(900); png = os.path.join(WORK, f'tc{i:02d}.png'); pg.screenshot(path=png); ctx.close()
             tdur = float(tc.get('duration_s', 3.2)); tcv = os.path.join(WORK, f'tc{i:02d}.mp4')

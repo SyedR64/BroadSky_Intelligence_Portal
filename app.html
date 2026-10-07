@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal · Broad Sky</title>
-<meta name="description" content="The Broad Sky portfolio console: territory analytics, opportunity radar, acquisition targets, the private-equity landscape and filings for six companies.">
+<title>Portal · BSP Desk</title>
+<meta name="description" content="The BSP portfolio console: territories, opportunities, add-on targets, sponsors and filings for six companies.">
 <meta name="theme-color" content="#fbfaf7">
 <link rel="icon" href="BSP_Logo.png">
 <script>
@@ -19,8 +19,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<link rel="stylesheet" href="assets/system.css?v=20261006180606">
-<link rel="stylesheet" href="assets/app.css?v=20261006180606">
+<link rel="stylesheet" href="assets/system.css?v=20261006224618">
+<link rel="stylesheet" href="assets/app.css?v=20261006224618">
 <style>
   /* the floating "Ask" launcher sits over the bottom-right corner of the console; keep the last table row
      scrollable clear of it (--launch-clear is measured from the launcher once it mounts; 88px until then) */
@@ -31,7 +31,7 @@
 <div id="app">
   <aside id="rail" aria-label="Portal modules">
     <nav class="rail-nav" aria-label="Modules"></nav>
-    <div class="sys-src rail-foot"><b>Portfolio Resource Group</b> · working draft, October 2026<br><span data-rail-count>16 modules · 6 companies · 56 datasets</span><br><span class="dim">Public and licensed data · verify before use</span></div>
+    <div class="sys-src rail-foot"><b>Portfolio Resource Group</b> · working draft, October 2026 · <span data-rail-count>16 modules · 56 datasets</span></div>
   </aside>
   <main id="main">
     <header id="topbar">
@@ -50,10 +50,10 @@
   <aside id="inspector" class="sys-card" aria-label="Inspector" aria-hidden="true"></aside>
 </div>
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261006180606';
-  import { App } from './assets/core.js?v=20261006180606';
-  import { modules } from './modules/registry.js?v=20261006180606';
-  import { enhance, retitle, viewTitle } from './modules/copy.js?v=20261006180606';
+  import { Frame } from './assets/frame.js?v=20261006224618';
+  import { App } from './assets/core.js?v=20261006224618';
+  import { modules } from './modules/registry.js?v=20261006224618';
+  import { enhance, retitle, viewTitle } from './modules/copy.js?v=20261006224618';
 
   // 1 · shared frame strip above the rail and console (UNIFIED.md §8); the theme is the visitor's saved choice (light by default)
   const frame = Frame.mount({ variant: 'app', theme: document.documentElement.dataset.sysTheme === 'dark' ? 'dark' : 'light' });
@@ -61,7 +61,7 @@
   // 2 · copy safety net after every route render: plain English, est. badges
   const content = document.getElementById('content');
   // one h1 pattern for every view: "<Module name> · <view name in sentence case>" (modules/copy.js VIEW_TITLES)
-  const title = () => { const m = App.current, v = App.view; if (!m || !v) return; retitle(content, m, v); const t = `${viewTitle(m, v)} · Broad Sky`; if (document.title !== t) document.title = t; };
+  const title = () => { const m = App.current, v = App.view; if (!m || !v) return; retitle(content, m, v); const t = `${viewTitle(m, v)} · BSP Desk`; if (document.title !== t) document.title = t; };
   const settle = () => { enhance(content); Frame.humanize(content); Frame.humanize(document.getElementById('topbar')); title(); };
   const route = App.route;
   App.route = async function (...args) { const r = await route.apply(App, args); settle(); return r; };
@@ -79,7 +79,7 @@
   const nCos = modules.filter(m => m.group === 'Portfolio').length;
   const railCount = document.querySelector('[data-rail-count]');
   const DATASETS = { core: 10, research: 36, deeds: 10 };   // data/manifest.json tables · data/research files · data/sales deed files (Oct 6, 2026)
-  const paintCount = core => { railCount.textContent = `${modules.length} modules · ${nCos} companies · ${core + DATASETS.research + DATASETS.deeds} datasets`; railCount.title = `${nViews} views · ${core} core tables, ${DATASETS.research} research files and ${DATASETS.deeds} deed files`; };
+  const paintCount = core => { railCount.textContent = `${modules.length} modules · ${core + DATASETS.research + DATASETS.deeds} datasets`; railCount.title = `${nViews} views across ${nCos} companies · ${core} core tables, ${DATASETS.research} research files and ${DATASETS.deeds} deed files · public and licensed data, verify before use`; };
   paintCount(DATASETS.core);
   const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null);
   Promise.all([getJSON('data/manifest.json'), getJSON('data/research/index.json')]).then(([m, ix]) => {
@@ -95,12 +95,12 @@
     const r = l.getBoundingClientRect(); if (!r.height) return;
     document.documentElement.style.setProperty('--launch-clear', `${Math.max(48, Math.ceil(innerHeight - r.top + 12))}px`);
   };
-  import('./assets/chat.js?v=20261006180606').then(({ Chat }) => {
+  import('./assets/chat.js?v=20261006224618').then(({ Chat }) => {
     frame.setChat(Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'auto' }));
     requestAnimationFrame(launchClear);
     addEventListener('resize', () => requestAnimationFrame(launchClear));
   });
-  import('./assets/counter.js?v=20261006180606').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; document.querySelector('#rail .rail-foot').before(slot); slot.className = 'sys-kpi'; Counter.mount(slot, { theme: document.documentElement.dataset.sysTheme === 'dark' ? 'dark' : 'light', compact: true, baseline: 'today', minDisplay: 100, caption: 'Left on the table so far today' }).then(() => Frame.humanize(slot)); });
+  import('./assets/counter.js?v=20261006224618').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; document.querySelector('#rail .rail-foot').before(slot); slot.className = 'sys-kpi'; Counter.mount(slot, { theme: document.documentElement.dataset.sysTheme === 'dark' ? 'dark' : 'light', compact: true, baseline: 'today', minDisplay: 100, caption: 'Left on the table so far today' }).then(() => Frame.humanize(slot)); });
 </script>
 </body>
 </html>

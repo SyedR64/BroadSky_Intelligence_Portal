@@ -1,7 +1,7 @@
 /* GridOS concept: interactive demo and value math.
    Real data (portal datasets via core.js): CET opportunity radar, CET wastewater-plant screen,
    GridOS evidence base, public comparables. Illustrative: fleet sites, EV ports, the savings project. */
-import { STATES, STAGE, daysTo, money, shortDate, clip, ownerOf, plain, srcName, longDate, EST, ILLUS } from './site.js?v=20261006180606';
+import { STATES, STAGE, daysTo, money, shortDate, clip, ownerOf, plain, srcName, longDate, EST, ILLUS } from './site.js?v=20261006224618';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -236,7 +236,7 @@ function value() {
   let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(draw, 150); });
   $('#calc-in').addEventListener('input', e => { const k = e.target.dataset.k; if (!k) return; S[k] = +e.target.value; const s = SL.find(x => x.k === k); $('#out-' + k).textContent = s.f(S[k]); draw(); });
   draw();
-  $('#scen').innerHTML = [['Low', r0, u0, t0], ['Base', (r0 + r1) / 2, (u0 + u1) / 2, (t0 + t1) / 2], ['High', r1, u1, t1]].map(([nm, rev, u, t]) => { const c = calc({ rev, m: 10, u, M: 10, t, inv: 0 }); return `<div class="sys-kpi"${nm === 'Base' ? ' data-co="cet"' : ''}><span class="sys-kpi-label">${nm} case</span><span class="sys-kpi-value">${fm(c.total)}${EST}</span><span class="sys-kpi-sub">$${n0(rev)}M revenue · +${u.toFixed(2)} pts EBITDA (+${fm(c.up)} a year) · +${t.toFixed(1)}x on a 10x base at a 10% margin</span></div>`; }).join('');
+  $('#scen').innerHTML = [['Low', r0, u0, t0], ['Base', (r0 + r1) / 2, (u0 + u1) / 2, (t0 + t1) / 2], ['High', r1, u1, t1]].map(([nm, rev, u, t]) => { const c = calc({ rev, m: 10, u, M: 10, t, inv: 0 }); return `<div class="sys-kpi"${nm === 'Base' ? ' data-co="cet"' : ''}><span class="sys-kpi-label">${nm} case</span><span class="sys-kpi-value">${fm(c.total)}${EST}</span><span class="sys-kpi-sub">$${n0(rev)}M revenue · +${u.toFixed(2)} pts · +${t.toFixed(1)}x</span></div>`; }).join('');
 }
 
 /* ── Stack, roadmap, exit, sources ────────────────────────────────────────── */
@@ -245,8 +245,8 @@ function stack() {
   const LAYER = { 'Construction project management': 'Field', 'Electrical estimating and takeoff': 'Estimate', 'Solar / storage asset monitoring': 'Fleet', 'SCADA / HMI for pump stations and wastewater': 'Pump-station SCADA', 'EV charging management (CSMS)': 'Charge' };
   const buy = vs.map(v => ({ layer: LAYER[v.category] || v.category, cat: v.category, vendor: v.vendor, url: v.source_url, what: plain(v.what_it_does), price: plain(v.pricing_note), bb: 'Buy' }));
   const build = [
-    { layer: 'Bid radar', cat: 'Opportunity data and go/no-go', vendor: 'GridOS (Broad Sky PRG)', what: 'Public bids, SRF lists and capital plans across six states, scored for fit: the portal’s CET opportunity radar, refreshed weekly.', price: 'PRG plus one analyst; the data is already assembled in the portal', bb: 'Build' },
-    { layer: 'GridOS core', cat: 'Asset register and Assure contracts', vendor: 'GridOS (Broad Sky PRG)', what: 'One record of every pump station, generator, array and charger CET services, linked to contracts, service levels and monitoring feeds.', price: 'Inside the $0.8–1.8M program budget (est.)', bb: 'Build' },
+    { layer: 'Bid radar', cat: 'Opportunity data and go/no-go', vendor: 'GridOS (BSP PRG)', what: 'Public bids, SRF lists and capital plans across six states, scored for fit: the portal’s CET opportunity radar, refreshed weekly.', price: 'PRG plus one analyst; the data is already assembled in the portal', bb: 'Build' },
+    { layer: 'GridOS core', cat: 'Asset register and Assure contracts', vendor: 'GridOS (BSP PRG)', what: 'One record of every pump station, generator, array and charger CET services, linked to contracts, service levels and monitoring feeds.', price: 'Inside the $0.8–1.8M program budget (est.)', bb: 'Build' },
     { layer: 'Measured savings', cat: 'Savings analytics', vendor: 'GridOS (NuWave)', what: 'Adjusted-baseline models on interval meter data, persistence alerts and incentive true-up packs.', price: 'Built on utility interval data; no license', bb: 'Build' },
   ];
   const rows = [...build.slice(0, 1), ...buy, ...build.slice(1)];

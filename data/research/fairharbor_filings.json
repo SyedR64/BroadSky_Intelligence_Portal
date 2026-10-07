@@ -1,29 +1,29 @@
 {
  "meta": {
-  "dataset": "Fair Harbor (Broad Sky Partners portfolio) - public filings and financial research track",
+  "dataset": "Fair Harbor (BSP portfolio) - public filings and financial research track",
   "subject": {
    "company": "Fair Harbor Clothing PBC (f/k/a Fair Harbor Clothing Inc.), Delaware; operating HQ 520 Broadway, New York NY",
    "founders": "Jake Danehy (CEO), Caroline Danehy (CCO)",
-   "sponsor": "Broad Sky Partners (Fund I, $335M); deal lead Jonathan Marlow",
+   "sponsor": "BSP (Fund I, $335M); deal lead Jonathan Marlow",
    "investment_date": "2022-03-15 first sale / announced 2022-03-23",
    "hold_status_2026_09": "held (listed on BSP portfolio page)"
   },
   "scope_note": "Part of the portfolio-wide filings track (all BSP portfolio companies and their rivals). Chubbies (Solo Brands) is included here as the closest public rival benchmark; similar-site peers from Similarweb are Maui and Sons, Vilebrequin, Kenny Flowers and Funky Trunks.",
   "generated": "2026-09-24",
-  "method": "SEC EDGAR full-text search and submissions API (Fair Harbor, Danehy, Broad Sky Partners, Mazzucchelli, Chubbies); EDGAR Form D XML; USAspending.gov award API for SBA PPP/EIDL; NY DOS Public Inquiry API; USPTO tmsearch backend query on owner name; Fair Harbor Shopify products.json/collections.json; Wayback Machine CDX and snapshots for Business Wire, WWD, Inc., B Lab, PitchBook and company pages; CourtListener v4 search API; Similarweb public pages via WebFetch; Solo Brands 10-K text. The WebSearch budget was exhausted before this track began, so discovery relied on direct endpoints and Wayback indexes rather than search engines.",
-  "sources_summary": "13 distinct primary or near-primary sources: SEC EDGAR (Form D x2, VTEX 20-F, Solo Brands 10-Ks), USAspending/SBA, NY DOS, USPTO, B Lab, Inc., Business Wire, WWD, PitchBook, CourtListener, Similarweb, the company Shopify storefront, and the Broad Sky website.",
+  "method": "SEC EDGAR full-text search and submissions API (Fair Harbor, Danehy, BSP, Mazzucchelli, Chubbies); EDGAR Form D XML; USAspending.gov award API for SBA PPP/EIDL; NY DOS Public Inquiry API; USPTO tmsearch backend query on owner name; Fair Harbor Shopify products.json/collections.json; Wayback Machine CDX and snapshots for Business Wire, WWD, Inc., B Lab, PitchBook and company pages; CourtListener v4 search API; Similarweb public pages via WebFetch; Solo Brands 10-K text. The WebSearch budget was exhausted before this track began, so discovery relied on direct endpoints and Wayback indexes rather than search engines.",
+  "sources_summary": "13 distinct primary or near-primary sources: SEC EDGAR (Form D x2, VTEX 20-F, Solo Brands 10-Ks), USAspending/SBA, NY DOS, USPTO, B Lab, Inc., Business Wire, WWD, PitchBook, CourtListener, Similarweb, the company Shopify storefront, and the BSP website.",
   "caveats": [
    "No revenue, EBITDA or debt figure for Fair Harbor has been disclosed publicly; every financial estimate here is inferred.",
    "Inc. 5000 revenue was not shown on the archived profile; the 2020 revenue range is derived from the 11,475% growth rate and Inc's $100K minimum base-year revenue.",
    "PPP jobs-reported, lender and forgiveness fields are not in USAspending; ProPublica and FederalPay returned bot checks or 403s and were not bypassed.",
    "Similarweb public figures are modeled estimates and understate absolute traffic; only the Fair Harbor-to-Chubbies ratio is used, and with low confidence.",
    "Caroline's surname is misspelled 'Danehey' on the Form D; Jake Danehy signed it as President and CEO.",
-   "The Form D shows 24 investors and $30.7M sold but not Broad Sky's ownership percentage; enterprise value is a wide range because of this.",
+   "The Form D shows 24 investors and $30.7M sold but not BSP's ownership percentage; enterprise value is a wide range because of this.",
    "Bankruptcy-docket hits (FH-20) are text matches only; Fair Harbor's role and any claim amounts are unverified.",
    "Funded-debt note from verification: USPTO assignment records show ABL security interests on the core mark from Merchant Financial (2020-2021) and Gerber Finance/eCapital (2021-2025, released 2025-12-11), so the 'no agent-bank lien confirmed' gap and the Funded debt estimate should be read in that light.",
    "Verified 2026-09-24: sampled 25, confirmed 22, removed 0"
   ],
-  "financial_picture": "1) Fair Harbor was bootstrapped from about $24K of first-year sales (2015) and a projected $250K in 2017 to an Inc. 5000 #26 ranking with 11,475% three-year growth, so 2020 revenue was about 116x the 2017 base. That puts 2020 revenue at no less than about $11.6M, and plausibly $17-29M if the 2017 base was $150-250K. 2) Headcount and payroll were tiny: a $16,994 PPP loan implies about $82K of annualized W-2 payroll, and Inc listed 1-10 employees, so the pre-deal model was highly outsourced and founder-run. 3) The Broad Sky deal (March 2022) was Fair Harbor's first institutional capital: $30.73M of primary equity sold to 24 investors (Form D), with $6.0M more authorized. At about 9% of Broad Sky's $335M Fund I, this was a company-sized check. 4) Broad Sky's ownership share is not disclosed. If Broad Sky holds a control stake of 60-80% with light leverage, the implied enterprise value is about $40-90M, or roughly 1.3-2.5x an estimated 2021 revenue of $30-40M. That is below the Chubbies precedent (~$130M, Sept 2021) but fits a brand about a quarter of Chubbies' size. 5) No BDC schedule-of-investments line, lender press release, credit rating or Form D for a debt vehicle mentions Fair Harbor. The capital structure is likely equity-heavy with at most an asset-based revolver for inventory, not a sponsor-style unitranche. 6) The move of the core FAIR HARBOR trademark into Fair Harbor Clothing Topco LLC (Jersey City) fits a PE holdco structure and possibly a lender collateral package; the USPTO assignment record would confirm this. 7) After the deal, management spent capital on category breadth (fleece, flannels, denim, sweaters, polos, kids), two owned stores (SoHo; Palm Beach Gardens by February 2023), B Corp/PBC status (score 94.3) and women's swim. 8) Women's was paused and liquidated at about 70% off by December 2025, and 38.5% of live variants carried markdowns in September 2026. Both point to margin pressure and inventory clean-up in FY2025-FY2026. 9) Newer growth levers are licensing and partnerships (FootJoy, collegiate, HBO's White Lotus, Discovery, Rothy's, Athletic Brewing) and a B2B custom program. These are capital-light and wholesale-like, and they follow the path Chubbies took, where retail and wholesale reached 52% of 2025 sales. 10) Fair Harbor's web traffic is about 20% of Chubbies' (Similarweb, summer 2026). Scaled against Chubbies' $59M DTC, that suggests Fair Harbor web DTC of about $10-12M. With 35-45% wholesale, B2B and stores, total 2025 revenue is plausibly about $20-35M, meaning growth has been modest since 2021. 11) With Chubbies' segment economics as the ceiling (58-60% gross margin, 14-18% segment margin at $113-123M) and Fair Harbor's smaller scale, store leases and 2025 women's write-downs, Fair Harbor's EBITDA is likely low single-digit millions (about $0-4M). 12) At about 4.5 years into the hold with no exit, the likely exit is a strategic sale to a brand-management or outdoor/lifestyle acquirer, where the IP holdco structure and licensing momentum would support value.",
+  "financial_picture": "1) Fair Harbor was bootstrapped from about $24K of first-year sales (2015) and a projected $250K in 2017 to an Inc. 5000 #26 ranking with 11,475% three-year growth, so 2020 revenue was about 116x the 2017 base. That puts 2020 revenue at no less than about $11.6M, and plausibly $17-29M if the 2017 base was $150-250K. 2) Headcount and payroll were tiny: a $16,994 PPP loan implies about $82K of annualized W-2 payroll, and Inc listed 1-10 employees, so the pre-deal model was highly outsourced and founder-run. 3) The BSP deal (March 2022) was Fair Harbor's first institutional capital: $30.73M of primary equity sold to 24 investors (Form D), with $6.0M more authorized. At about 9% of BSP's $335M Fund I, this was a company-sized check. 4) BSP's ownership share is not disclosed. If BSP holds a control stake of 60-80% with light leverage, the implied enterprise value is about $40-90M, or roughly 1.3-2.5x an estimated 2021 revenue of $30-40M. That is below the Chubbies precedent (~$130M, Sept 2021) but fits a brand about a quarter of Chubbies' size. 5) No BDC schedule-of-investments line, lender press release, credit rating or Form D for a debt vehicle mentions Fair Harbor. The capital structure is likely equity-heavy with at most an asset-based revolver for inventory, not a sponsor-style unitranche. 6) The move of the core FAIR HARBOR trademark into Fair Harbor Clothing Topco LLC (Jersey City) fits a PE holdco structure and possibly a lender collateral package; the USPTO assignment record would confirm this. 7) After the deal, management spent capital on category breadth (fleece, flannels, denim, sweaters, polos, kids), two owned stores (SoHo; Palm Beach Gardens by February 2023), B Corp/PBC status (score 94.3) and women's swim. 8) Women's was paused and liquidated at about 70% off by December 2025, and 38.5% of live variants carried markdowns in September 2026. Both point to margin pressure and inventory clean-up in FY2025-FY2026. 9) Newer growth levers are licensing and partnerships (FootJoy, collegiate, HBO's White Lotus, Discovery, Rothy's, Athletic Brewing) and a B2B custom program. These are capital-light and wholesale-like, and they follow the path Chubbies took, where retail and wholesale reached 52% of 2025 sales. 10) Fair Harbor's web traffic is about 20% of Chubbies' (Similarweb, summer 2026). Scaled against Chubbies' $59M DTC, that suggests Fair Harbor web DTC of about $10-12M. With 35-45% wholesale, B2B and stores, total 2025 revenue is plausibly about $20-35M, meaning growth has been modest since 2021. 11) With Chubbies' segment economics as the ceiling (58-60% gross margin, 14-18% segment margin at $113-123M) and Fair Harbor's smaller scale, store leases and 2025 women's write-downs, Fair Harbor's EBITDA is likely low single-digit millions (about $0-4M). 12) At about 4.5 years into the hold with no exit, the likely exit is a strategic sale to a brand-management or outdoor/lifestyle acquirer, where the IP holdco structure and licensing momentum would support value.",
   "estimate_table": [
    {
     "metric": "2020 net revenue",
@@ -38,7 +38,7 @@
     "confidence": "low"
    },
    {
-    "metric": "Broad Sky equity invested",
+    "metric": "BSP equity invested",
     "estimate": "$30.7M primary (up to $36.7M authorized)",
     "basis": "Form D 2022-03-31",
     "confidence": "high"
@@ -109,7 +109,7 @@
    "Nordstrom.com, Scheels.com, REI.com and Dicks brand pages for Fair Harbor product counts as a wholesale-breadth proxy.",
    "PitchBook/Crunchbase profile snippets for deal size or post-money and headcount; LinkedIn company page for current employee count.",
    "CourtListener RECAP: open the J.Crew and EXP OldCo creditor matrices or claims registers to confirm Fair Harbor's claim amounts and relationships.",
-   "Broad Sky Form ADV (Schedule D) for SPV/co-invest vehicles tied to the $6.0M remaining Fair Harbor offering.",
+   "BSP Form ADV (Schedule D) for SPV/co-invest vehicles tied to the $6.0M remaining Fair Harbor offering.",
    "Similarweb and SEMrush monthly history for 2023-2026 to track the DTC traffic trend against Chubbies, Vilebrequin and Maui and Sons."
   ],
   "item_count": 25
@@ -119,7 +119,7 @@
    "id": "FH-01",
    "entity": "Fair Harbor Clothing Inc.",
    "category": "sec_form_d",
-   "title": "Form D (Rule 506(b)) - equity offering at Broad Sky entry",
+   "title": "Form D (Rule 506(b)) - equity offering at BSP entry",
    "filed_or_dated": "2022-03-31 (date of first sale 2022-03-15)",
    "filer_or_source_agency": "SEC EDGAR (CIK 0001920023, accession 0001920023-22-000001)",
    "key_figures": {
@@ -143,7 +143,7 @@
      "Andrew Aicher (Executive Officer)"
     ]
    },
-   "what_it_tells_us": "This is the Broad Sky transaction: $30.7M of new equity sold to 24 accredited investors on 2022-03-15, with $6.0M of the $36.7M authorized still open (a second close, co-invest or rollover sleeve). No proceeds went to officers, so the filing covers only primary equity, not the founders' secondary. It is the only Form D Fair Harbor has filed, so the earlier seed and Kickstarter capital never needed an EDGAR notice.",
+   "what_it_tells_us": "This is the BSP transaction: $30.7M of new equity sold to 24 accredited investors on 2022-03-15, with $6.0M of the $36.7M authorized still open (a second close, co-invest or rollover sleeve). No proceeds went to officers, so the filing covers only primary equity, not the founders' secondary. It is the only Form D Fair Harbor has filed, so the earlier seed and Kickstarter capital never needed an EDGAR notice.",
    "confidence": "high",
    "source_url": "https://www.sec.gov/Archives/edgar/data/1920023/000192002322000001/primary_doc.xml",
    "retrieved": "2026-09-24"
@@ -171,7 +171,7 @@
   },
   {
    "id": "FH-03",
-   "entity": "Fair Harbor / Broad Sky Partners",
+   "entity": "Fair Harbor / BSP",
    "category": "press_financial",
    "title": "Business Wire: 'Fair Harbor Secures Investment from Broad Sky Partners'",
    "filed_or_dated": "2022-03-23",
@@ -269,7 +269,7 @@
     "bottles_per_swim_trunk": 11,
     "hq_at_time": "Brooklyn, NY"
    },
-   "what_it_tells_us": "These numbers anchor the Inc growth math: about $24K in 2015, $100K+ in 2016, and a projected $250K in 2017. Applying the 115.75x Inc multiple to a 2017 base of $150K-$250K gives 2020 revenue of roughly $17-29M. The brand was bootstrapped on grant and Kickstarter money before Broad Sky.",
+   "what_it_tells_us": "These numbers anchor the Inc growth math: about $24K in 2015, $100K+ in 2016, and a projected $250K in 2017. Applying the 115.75x Inc multiple to a 2017 base of $150K-$250K gives 2020 revenue of roughly $17-29M. The brand was bootstrapped on grant and Kickstarter money before BSP.",
    "confidence": "medium",
    "source_url": "http://web.archive.org/web/20201126125948/https://www.inc.com/profile/fair-harbor",
    "retrieved": "2026-09-24"
@@ -309,7 +309,7 @@
     "subsidy_cost_usd": 20430,
     "loan_type": "Direct loan (30-yr COVID EIDL; $150K was the program cap at the time)"
    },
-   "what_it_tells_us": "The company took the maximum COVID EIDL in May 2020, a cheap liquidity buffer while wholesale doors were shut. The balance was probably repaid or refinanced when the Broad Sky equity came in; payoff status is not public.",
+   "what_it_tells_us": "The company took the maximum COVID EIDL in May 2020, a cheap liquidity buffer while wholesale doors were shut. The balance was probably repaid or refinanced when the BSP equity came in; payoff status is not public.",
    "confidence": "high",
    "source_url": "https://www.usaspending.gov/award/ASST_NON_5364327806_073",
    "retrieved": "2026-09-24"
@@ -384,7 +384,7 @@
      "IC24 towels"
     ]
    },
-   "what_it_tells_us": "Just before the Broad Sky close, management filed for a broad lifestyle and hospitality brand: home goods, a hotel and restaurant concept, a 'Fair Peaks' mountain line and a 'Fair Company' umbrella. Almost all of these lapsed, so the post-deal plan narrowed to apparel adjacencies. Only candles, water bottles and towels reached use. [Verified 2026-09-24: TSDR shows FAIR PEAKS (97154583/84) went dead 2023-03-30 and the FAIR HARBOR IC08/IC20/IC43 and THE FAIR COMPANY serials went dead 2025-10-01, not 2023-2024 as first stated.]",
+   "what_it_tells_us": "Just before the BSP close, management filed for a broad lifestyle and hospitality brand: home goods, a hotel and restaurant concept, a 'Fair Peaks' mountain line and a 'Fair Company' umbrella. Almost all of these lapsed, so the post-deal plan narrowed to apparel adjacencies. Only candles, water bottles and towels reached use. [Verified 2026-09-24: TSDR shows FAIR PEAKS (97154583/84) went dead 2023-03-30 and the FAIR HARBOR IC08/IC20/IC43 and THE FAIR COMPANY serials went dead 2025-10-01, not 2023-2024 as first stated.]",
    "confidence": "high",
    "source_url": "https://tmsearch.uspto.gov/search/search-information",
    "retrieved": "2026-09-24"
@@ -416,7 +416,7 @@
     ],
     "pbc_name_change": "Fair Harbor Clothing Inc. to Fair Harbor Clothing PBC executed 2021-04-26, recorded 2021-06-23 (7333/0852)"
    },
-   "what_it_tells_us": "The core IC25 mark was assigned outright to the Delaware Topco LLC in December 2025, the same day the eCapital (formerly Gerber Finance) ABL security interest was released. That pattern fits a refinancing or holdco restructuring in December 2025. The assignment record shows two earlier asset-based lenders against the mark (Merchant Financial 2020-2021; Gerber/eCapital 2021-2025), so the company used ABL facilities both before and after the Broad Sky deal. Any new lender's security interest is not recorded on this mark as of the TSDR pull. The Jersey City address is shared with the NY service-of-process address.",
+   "what_it_tells_us": "The core IC25 mark was assigned outright to the Delaware Topco LLC in December 2025, the same day the eCapital (formerly Gerber Finance) ABL security interest was released. That pattern fits a refinancing or holdco restructuring in December 2025. The assignment record shows two earlier asset-based lenders against the mark (Merchant Financial 2020-2021; Gerber/eCapital 2021-2025), so the company used ABL facilities both before and after the BSP deal. Any new lender's security interest is not recorded on this mark as of the TSDR pull. The Jersey City address is shared with the NY service-of-process address.",
    "confidence": "high",
    "source_url": "https://tsdr.uspto.gov/#caseNumber=86599280&caseType=SERIAL_NO&searchType=statusSearch",
    "retrieved": "2026-09-24"
@@ -439,7 +439,7 @@
     "recycled_bottles_claim": "27 million+",
     "legal_form": "Delaware Public Benefit Corporation (Fair Harbor Clothing PBC)"
    },
-   "what_it_tells_us": "B Corp certification came three months after the Broad Sky close. The PBC conversion predates the deal: USPTO records show the name change from Fair Harbor Clothing Inc. to Fair Harbor Clothing PBC executed 2021-04-26. Certification matches Broad Sky's ESG thesis for the deal (Operating Partner Roberta Bowman). The bottle claim moved only from 26M to 27M between the releases, so it is not useful as a volume tracker.",
+   "what_it_tells_us": "B Corp certification came three months after the BSP close. The PBC conversion predates the deal: USPTO records show the name change from Fair Harbor Clothing Inc. to Fair Harbor Clothing PBC executed 2021-04-26. Certification matches BSP's ESG thesis for the deal (Operating Partner Roberta Bowman). The bottle claim moved only from 26M to 27M between the releases, so it is not useful as a volume tracker.",
    "confidence": "high",
    "source_url": "http://web.archive.org/web/20260313073142/https://www.bcorporation.net/en-us/find-a-b-corp/company/fair-harbor/",
    "retrieved": "2026-09-24"
@@ -643,16 +643,16 @@
      "Former Chairman, Sequential Brands Group"
     ]
    },
-   "what_it_tells_us": "Broad Sky has added an experienced independent consumer-brand director with brand-management and turnaround background (Sequential Brands, TOMS). This is typical of a PE board preparing a brand for scale or exit.",
+   "what_it_tells_us": "BSP has added an experienced independent consumer-brand director with brand-management and turnaround background (Sequential Brands, TOMS). This is typical of a PE board preparing a brand for scale or exit.",
    "confidence": "high",
    "source_url": "https://www.sec.gov/Archives/edgar/data/1793663/000095017025026601/ck0001793663-20241231.htm",
    "retrieved": "2026-09-24"
   },
   {
    "id": "FH-22",
-   "entity": "Broad Sky Partners",
+   "entity": "BSP",
    "category": "other",
-   "title": "Broad Sky portfolio page still lists Fair Harbor as a portfolio company",
+   "title": "BSP portfolio page still lists Fair Harbor as a portfolio company",
    "filed_or_dated": "2026-09-24",
    "filer_or_source_agency": "broadskypartners.com/home/investments",
    "key_figures": {
@@ -667,14 +667,14 @@
     ],
     "exit_announced": false
    },
-   "what_it_tells_us": "Fair Harbor is still held, about 4.5 years into the hold. Smith + Howard was sold to TPG, but Fair Harbor has had no exit press. It remains Broad Sky's only consumer brand in the portfolio.",
+   "what_it_tells_us": "Fair Harbor is still held, about 4.5 years into the hold. Smith + Howard was sold to TPG, but Fair Harbor has had no exit press. It remains BSP's only consumer brand in the portfolio.",
    "confidence": "high",
    "source_url": "https://broadskypartners.com/home/investments/",
    "retrieved": "2026-09-24"
   },
   {
    "id": "FH-23",
-   "entity": "Fair Harbor / Broad Sky",
+   "entity": "Fair Harbor / BSP",
    "category": "press_financial",
    "title": "PitchBook newsletter: 'Broad Sky Partners backs Fair Harbor'",
    "filed_or_dated": "2022-03-24",
@@ -747,7 +747,7 @@
     "term_loan_for_deal_usd_m": 100.0,
     "term_loan_maturity": "2026-09-01"
    },
-   "what_it_tells_us": "This is a precedent for DTC men's swim and lifestyle brands at the 2021 valuation peak: about $130M for Chubbies, which was likely roughly 1-1.5x forward sales. Six months later, near the same peak, Broad Sky put about $30.7M of equity into Fair Harbor, which is consistent with a Fair Harbor enterprise value of perhaps $45-90M.",
+   "what_it_tells_us": "This is a precedent for DTC men's swim and lifestyle brands at the 2021 valuation peak: about $130M for Chubbies, which was likely roughly 1-1.5x forward sales. Six months later, near the same peak, BSP put about $30.7M of equity into Fair Harbor, which is consistent with a Fair Harbor enterprise value of perhaps $45-90M.",
    "confidence": "medium",
    "source_url": "https://www.sec.gov/Archives/edgar/data/1870600/000187060022000009/dtc-20211231.htm",
    "retrieved": "2026-09-24"

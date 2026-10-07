@@ -14,12 +14,12 @@ export const HUBS = [
   { id: 'nj', name: 'Horvath · Beachwood', short: 'Beachwood', lat: 39.9284, lon: -74.2022, pos: 'r' },
 ];
 export const FAQ = [
-  { q: 'What areas do you serve?', a: '<p>Nine Central Pennsylvania counties (Lancaster, York, Dauphin, Cumberland, Berks, Lebanon, Franklin, Adams and Perry) from our East Hempfield headquarters, plus Ocean and Monmouth counties on the Jersey Shore through Horvath Home Services. Type your ZIP in the <a href="#coverage">coverage checker</a> to confirm.</p>', href: '#coverage' },
-  { q: 'How does the on-time guarantee work?', a: '<p>You pick a two-hour arrival window. We text when the technician is on the way, with their name, photo and a live ETA. If we arrive after your window, we pay you for the wait. <i>(Guarantee terms in this concept are illustrative.)</i></p>' },
+  { q: 'What areas do you serve?', a: '<p>Nine Central Pennsylvania counties from our East Hempfield headquarters, plus Ocean and Monmouth counties on the Jersey Shore through Horvath Home Services. Check your ZIP in the <a href="#coverage">coverage checker</a>.</p>', href: '#coverage' },
+  { q: 'How does the on-time guarantee work?', a: '<p>You pick a two-hour window and we text a live ETA when the technician is on the way. If we arrive late, we pay you for the wait. <i>(Terms are illustrative.)</i></p>' },
   { q: 'How much does a service call cost?', a: '<p>We use upfront, flat-rate pricing. The technician diagnoses the problem, then shows good, better and best options with the full price before any work starts. Comfort Club members pay no diagnostic fee. <i>(Prices on this concept site are illustrative.)</i></p>' },
-  { q: 'What is the Comfort Club membership?', a: '<p>A monthly plan with two HVAC tune-ups a year, member discounts on repairs, no diagnostic or after-hours fees and priority scheduling. Total Home adds an annual plumbing inspection and electrical safety check. Use the <a href="#club">savings calculator</a> to see what it is worth for your home.</p>', href: '#club' },
+  { q: 'What is the Comfort Club membership?', a: '<p>A monthly plan with two HVAC tune-ups a year, repair discounts, no diagnostic or after-hours fees and priority scheduling. The <a href="#club">savings calculator</a> shows what it is worth to you.</p>', href: '#club' },
   { q: 'Do you offer financing for a new system?', a: '<p>Yes. Replacements can be spread over 5 to 10 years, subject to credit approval through a lending partner. Try the <a href="#financing">payment estimator</a>. We also file the utility rebates for you.</p>', href: '#financing' },
-  { q: 'What rebates can I get for a heat pump or water heater?', a: '<p>In PA, PPL, FirstEnergy (Met-Ed) and UGI run rebates for heat pumps, furnaces and water heaters. In NJ, NJ Natural Gas SAVEGREEN and JCP&amp;L offer rebates and 0% on-bill repayment. The federal 25C credit ended for equipment installed after Dec 31, 2025. See the <a href="#rebates">live list</a>.</p>', href: '#rebates' },
+  { q: 'What rebates can I get for a heat pump or water heater?', a: '<p>In PA, PPL, FirstEnergy (Met-Ed) and UGI rebate heat pumps, furnaces and water heaters; in NJ, SAVEGREEN and JCP&amp;L do. The federal 25C credit ended on December 31, 2025. See the <a href="#rebates">live list</a>.</p>', href: '#rebates' },
   { q: 'Are you open nights, weekends and holidays?', a: '<p>Yes, 24/7/365 for no-heat, no-cool, leaks, backups and electrical hazards. After hours, our AI dispatcher can book a real slot and page the on-call technician immediately.</p>' },
   { q: 'Which brands are you?', a: '<p>Punctual Pros operates One Hour Heating &amp; Air Conditioning, Benjamin Franklin Plumbing and Mister Sparky franchises across 25 territories in Pennsylvania and New Jersey (2026 franchise disclosure documents). Horvath Home Services joined in December 2024.</p>' },
   { q: 'Do you install generators, EV chargers and panel upgrades?', a: '<p>Yes. Mister Sparky handles panel upgrades, surge protection, Level 2 EV chargers and whole-home standby generators, including permits and utility coordination.</p>' },
@@ -377,12 +377,12 @@ const unbrand = (r, t) => {
 const WHERE = { 'ref-pp-sila': '#partner', 'ref-pp-parker': '#book', 'ref-pp-anyhour': '#coverage', 'ref-pp-frankgay': '#storm' };
 /* Dataset prose uses analyst shorthand; spell the names out for readers. */
 let humanizeText = t => t;
-const plain = t => humanizeText(String(t ?? '')).replace(/\bBSP\b/g, 'Broad Sky').replace(/\bPP's\b/g, "Punctual Pros'").replace(/\bPP\b/g, 'Punctual Pros');
+const plain = t => humanizeText(String(t ?? '')).replace(/\bBSP\b/g, 'BSP').replace(/\bPP's\b/g, "Punctual Pros'").replace(/\bPP\b/g, 'Punctual Pros');
 function rationale(Data, esc) {
   const grid = $('#ref-grid'), body = $('#score-body');
   Promise.all([Data.research('design_refs'), Data.research('serviceos_evidence')]).then(([d, ev]) => {
     const refs = (d?.items || []).filter(i => (Array.isArray(i.applies_to) ? i.applies_to : [i.applies_to]).includes('pp'));
-    grid.innerHTML = refs.length ? refs.map(r => `<article class="sys-card ref"><span class="sys-card-label">Principle</span><h3 class="sys-card-title">${esc(PRINCIPLE[r.id] || plain(unbrand(r, r.elements_to_borrow?.[0]?.element)))}</h3><div class="borrow">${(r.elements_to_borrow || []).slice(0, 2).map(e => `<div><b>${esc(plain(unbrand(r, e.element)))}</b><span>${esc(plain(unbrand(r, e.what_it_does_for_conversion_or_valuation)))}</span></div>`).join('')}</div><span class="sys-card-foot"><a href="${WHERE[r.id] || '#top'}">Moves: ${esc(KPI_MAP[r.id] || 'Booked-call rate')}</a></span></article>`).join('')
+    grid.innerHTML = refs.length ? refs.map(r => `<article class="sys-card ref"><span class="sys-card-label">Principle</span><h3 class="sys-card-title">${esc(PRINCIPLE[r.id] || plain(unbrand(r, r.elements_to_borrow?.[0]?.element)))}</h3><div class="borrow">${(r.elements_to_borrow || []).slice(0, 2).map(e => `<div><b>${esc(plain(unbrand(r, e.element)))}</b></div>`).join('')}</div><span class="sys-card-foot"><a href="${WHERE[r.id] || '#top'}">Moves: ${esc(KPI_MAP[r.id] || 'Booked-call rate')}</a></span></article>`).join('')
       : '<p class="sys-muted">Design reference dataset not yet available.</p>';
     const kb = id => (ev?.items || []).find(i => i.id === id);
     const rows = [

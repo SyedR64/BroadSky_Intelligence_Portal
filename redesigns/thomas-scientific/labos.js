@@ -1,5 +1,5 @@
 /* LabOS product page — demo + value math. Account health uses aggregated portal data (no names). */
-import { esc, num, PRODUCTS, STOCK, catById, search, aggregateSites, SITES_FALLBACK, toast, reveal, mountChat, badgeEst } from './shared.js?v=20261006180606';
+import { esc, num, PRODUCTS, STOCK, catById, search, aggregateSites, SITES_FALLBACK, toast, reveal, mountChat, badgeEst } from './shared.js?v=20261006224618';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const M = v => v == null || isNaN(v) ? '—' : Math.abs(v) >= 1e9 ? `$${(v / 1e9).toFixed(1)}B` : Math.abs(v) >= 1e6 ? `$${(v / 1e6).toFixed(Math.abs(v) >= 1e8 ? 0 : 1)}M` : Math.abs(v) >= 1e3 ? `$${Math.round(v / 1e3)}K` : `$${Math.round(v)}`;
@@ -17,8 +17,8 @@ const ra = () => ev('ra-ts') || RA_FALLBACK;
 function heroKpis() {
   const k1 = ev('kb-ts-1'), k2 = ev('kb-ts-2'), r = ra();
   const items = [
-    { k: 'Digital share of transactions', v: `${k1?.target ?? 80}%`, s: 'Bar set by Avantor FY2025 (~80% of transactions digital). Thomas baseline not disclosed.', src: srcLink(k1?.source_url, 'Avantor 10-K'), bar: k1?.target ?? 80 },
-    { k: 'eProcurement share of connected orders', v: `${k2?.target ?? 40}%`, s: 'Grainger Q4 2025: ePro is close to 40% of connected ordering.', src: srcLink(k2?.source_url, 'Digital Commerce 360'), bar: k2?.target ?? 40 },
+    { k: 'Digital share of transactions', v: `${k1?.target ?? 80}%`, s: 'Avantor FY2025 bar; Thomas baseline not disclosed', src: srcLink(k1?.source_url, 'Avantor 10-K'), bar: k1?.target ?? 80 },
+    { k: 'eProcurement share of connected orders', v: `${k2?.target ?? 40}%`, s: 'Grainger, Q4 2025', src: srcLink(k2?.source_url, 'Digital Commerce 360'), bar: k2?.target ?? 40 },
     { k: 'EBITDA impact', v: `+${r.ebitda_impact_pct_revenue[0]}–${r.ebitda_impact_pct_revenue[1]} pts${EST}`, s: `${M(r.ebitda_impact_usd[0])}–${M(r.ebitda_impact_usd[1])} on ${M(r.revenue_basis_usd[0])}–${M(r.revenue_basis_usd[1])} revenue`, src: 'ServiceOS evidence, LabOS assumption', bar: null },
   ];
   $('[data-os-kpis]').innerHTML = items.map(i => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${esc(i.k)}</span><span class="sys-kpi-value">${i.v}</span>${i.bar != null ? `<i class="ts-osk-bar" style="--w:${i.bar}%"></i>` : '<i class="ts-osk-bar dash"></i>'}<span class="sys-kpi-sub">${esc(i.s)}</span><span class="sys-kpi-sub">Source: ${i.src}</span></div>`).join('');
@@ -291,7 +291,7 @@ function stack() {
   const list = vs.length ? vs : [{ vendor: 'Shopify Plus (or commercetools)', category: 'B2B commerce platform', what_it_does: 'Customer-specific catalogs, contract pricing, quick reorder.', pricing_note: 'From $2,300/month.' }, { vendor: 'Coupa (punchout / supplier network)', category: 'eProcurement connectivity', what_it_does: 'Punchout catalogs and PO/invoice flow.', pricing_note: 'Not published.' }, { vendor: 'Netstock', category: 'Inventory planning', what_it_does: 'Forecasting and replenishment.', pricing_note: '~$400-900/month.' }, { vendor: 'Algolia', category: 'Product search', what_it_does: 'Typo-tolerant, synonym-aware catalog search.', pricing_note: '$0.50 per 1,000 requests.' }];
   const MAP = { 'B2B commerce platform': 'Punchout & B2B commerce', 'eProcurement connectivity': 'Punchout & B2B commerce', 'Inventory planning': 'VMI & replenishment', 'Product search and discovery': 'AI product search' };
   $('[data-stack]').innerHTML = list.map(v => `<article class="sys-card ts-sk" data-reveal><span class="ts-sk-tag">Buy</span><span class="sys-card-label">${esc(v.category)}</span><h3 class="sys-card-title">${esc(v.vendor)}</h3><p class="sys-card-body">${esc(v.what_it_does)}</p><div class="ts-sk-m"><span>Powers</span><b>${esc(MAP[v.category] || 'LabOS')}</b></div><p class="sys-card-body"><b>Pricing:</b> ${esc(v.pricing_note)}</p>${v.note ? `<p class="sys-src">${esc(v.note)}</p>` : ''}${v.source_url ? `<span class="sys-card-foot"><a href="${esc(v.source_url)}" target="_blank" rel="noopener">Pricing source →</a></span>` : ''}</article>`).join('') +
-    `<article class="sys-card ts-sk build" data-co="ts" data-reveal><span class="ts-sk-tag build">Build</span><span class="sys-card-label">Broad Sky data layer</span><h3 class="sys-card-title">Account and site intelligence</h3><p class="sys-card-body">Health scores over ${num(SITES_FALLBACK.total)} lab sites and 500 scored parent organizations, rep routing, supplier-consolidation reviews and the KPI layer (digital share, ePro share, cost-to-serve). Already prototyped in the portal.</p><div class="ts-sk-m"><span>Powers</span><b>Account health · consolidation · copilot</b></div><p class="sys-card-body"><b>Cost:</b> part of the $2–4M program${EST}; no license fee.</p></article>`;
+    `<article class="sys-card ts-sk build" data-co="ts" data-reveal><span class="ts-sk-tag build">Build</span><span class="sys-card-label">BSP data layer</span><h3 class="sys-card-title">Account and site intelligence</h3><p class="sys-card-body">Health scores over ${num(SITES_FALLBACK.total)} lab sites and 500 scored parent organizations, rep routing, supplier-consolidation reviews and the KPI layer (digital share, ePro share, cost-to-serve). Already prototyped in the portal.</p><div class="ts-sk-m"><span>Powers</span><b>Account health · consolidation · copilot</b></div><p class="sys-card-body"><b>Cost:</b> part of the $2–4M program${EST}; no license fee.</p></article>`;
 }
 
 /* ── Roadmap ───────────────────────────────────────────────────────────── */
@@ -310,7 +310,7 @@ function roadmap() {
     ${LANES.map(([n, a, b, d, c]) => `<div class="ts-gt-row"><div class="ts-gt-l"><b>${esc(n)}</b><small>${esc(d)}</small></div><div class="ts-gt-track"><i class="ts-gt-bar ${c}" style="grid-column:${a}/${b + 1}"><span class="sys-num">M${a}–${b}</span></i></div></div>`).join('')}
     <div class="ts-gt-row ts-gt-m"><div class="ts-gt-l"><b>Milestones</b></div><div class="ts-gt-track">${MILES.map(([m, t], i) => `<i class="ts-ms${i % 2 ? ' lo' : ''}" style="grid-column:${m}"><span>${esc(t)}</span></i>`).join('')}</div></div></div>
     <ol class="ts-gt-ml">${MILES.map(([m, t]) => `<li><b class="sys-num">M${m}</b>${esc(t)}</li>`).join('')}</ol>
-    <p class="sys-src">Owners: the Thomas e-commerce lead and VP Sales with the Broad Sky Portfolio Resource Group; spend gated on payback at each phase${EST}</p>`;
+    <p class="sys-src">Owners: the Thomas e-commerce lead and VP Sales with the PRG; spend gated on payback at each phase${EST}</p>`;
 }
 
 /* ── Risks + exit ──────────────────────────────────────────────────────── */

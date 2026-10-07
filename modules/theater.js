@@ -1,10 +1,10 @@
-import * as Copy from './copy.js?v=20261006180606';
+import * as Copy from './copy.js?v=20261006224618';
 /* 3D theater — cinematic GPU map scenes over the portal's datasets (engine: assets/theater.js) */
 const V = new URL(import.meta.url).search; // reuse the registry's ?v= stamp for cache-busting the engine
 
 async function play(ctx) {
   const { el, params, data, live, maps, fmt, esc, app } = ctx;
-  if (!document.getElementById('css-theater')) { const l = document.createElement('link'); l.id = 'css-theater'; l.rel = 'stylesheet'; l.href = `modules/theater.css?v=20261006180606${V}`; document.head.appendChild(l); }
+  if (!document.getElementById('css-theater')) { const l = document.createElement('link'); l.id = 'css-theater'; l.rel = 'stylesheet'; l.href = `modules/theater.css?v=20261006224618${V}`; document.head.appendChild(l); }
   // the view's page heading follows the portal pattern (set by retitle in app.html); it is visually hidden so the
   // engine's per-scene caption stays the visible title (the engine renders it as h2 when the page already has an h1)
   // the stage is a dark band (system.css §2): data-sys-theme="dark" resolves the system tokens to the dark set inside it,
@@ -12,7 +12,7 @@ async function play(ctx) {
   el.innerHTML = `<div class="page-head sys-sr"><h1 class="sys-h1">3D theater · cinematic map scenes</h1></div><div class="m-theater" data-sys-theme="dark" style="position:relative;height:100%;min-height:480px;background:var(--sys-bg)"></div>`;
   const host = el.querySelector('.m-theater');
   let Theater;
-  try { ({ Theater } = await import(`../assets/theater.js?v=20261006180606${V}`)); }
+  try { ({ Theater } = await import(`../assets/theater.js?v=20261006224618${V}`)); }
   catch (e) { host.innerHTML = `<div style="padding:var(--sys-sp-6) var(--sys-gut)">${ctx.ui.note('The 3D theater engine could not load. Check the connection and reload; the same scenes play on the standalone theater page.', 'warn')}</div>`; console.warn('[theater]', e); return; }
   if (!el.isConnected) return;
   const scene = params.scene || 'S1';
@@ -52,7 +52,7 @@ export default {
     { id: 'play', name: 'Theater', icon: '▶', flush: true, render: play },
   ],
   tour: [
-    { order: 150, hash: '#/theater/play?scene=S2&autoplay=0', caption: '<b>3D theater.</b> Every home sale in the Punctual Pros territory, extruded by count and coloured by median price. The newest 90 days pulse: new owners who will need service.', narration: 'The 3D theater renders the data on the GPU. Here, every home sale in the Punctual Pros territory, with the last ninety days pulsing.', duration: 10000 },
-    { order: 151, hash: '#/theater/play?scene=S4&autoplay=0', caption: '<b>New England grid.</b> CET opportunities rise by estimated value; floating discs mark the wastewater plants Horton makes prime-able. Use ← → to change scenes.', narration: 'For CET, opportunities rise by estimated value, and the floating discs mark the wastewater plants Horton opens up.', duration: 10000 },
+    { order: 150, hash: '#/theater/play?scene=S2&autoplay=0', caption: '<b>3D theater.</b> Every home sale in the Punctual Pros territory; the newest 90 days pulse.', narration: 'Every home sale in the Punctual Pros territory, in 3D. The last ninety days pulse.', duration: 10000 },
+    { order: 151, hash: '#/theater/play?scene=S4&autoplay=0', caption: '<b>New England grid.</b> CET opportunities rise by value; discs mark wastewater plants Horton opens up. ← → changes scenes.', narration: 'For CET, opportunities rise by estimated value, and the floating discs mark the wastewater plants Horton opens up.', duration: 10000 },
   ],
 };

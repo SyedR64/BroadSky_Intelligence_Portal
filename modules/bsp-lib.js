@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   How Broad Sky buys · shared logic for the portal module (modules/bsp.js) and
+   How BSP buys · shared logic for the portal module (modules/bsp.js) and
    the methodology page (redesigns/methodology.html). Pure functions only: no
-   DOM framework, no portal runtime. Datasets: Broad Sky acquisition methodology,
-   Broad Sky professional network, Punctual Pros / CET / Frontline and Thomas
+   DOM framework, no portal runtime. Datasets: BSP acquisition methodology,
+   BSP professional network, Punctual Pros / CET / Frontline and Thomas
    Scientific add-on target screens.
    Prepared by Syed Rahman.
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -40,9 +40,9 @@ export const DEAL_TYPE = { platform: 'Anchor', add_on: 'Add-on', exit: 'Exit' };
 export const STRENGTH = { strong: 'Strong', moderate: 'Moderate', weak: 'Weak' };
 
 /* ── Plain-English pass over dataset text (file names and dataset ids → human names) ── */
-const DS_NAMES = { cet_filings: 'CET public filings', bpi_filings: 'BPI public filings', pp_filings: 'Punctual Pros public filings', fairharbor_filings: 'Fair Harbor public filings', thomas_filings: 'Thomas Scientific public filings', frontline_filings: 'Frontline public filings', rival_filings: 'competitor filings', pe_landscape: 'private-equity landscape', ma_targets_pp: 'Punctual Pros add-on screen', ma_targets_cet: 'CET add-on screen', ma_targets_fl_ts: 'Frontline and Thomas Scientific add-on screens', bsp_firm: 'Broad Sky firm profile', bsp_methodology: 'Broad Sky methodology', bsp_network: 'Broad Sky network', pp_market: 'Punctual Pros market model', pp_zips: 'Punctual Pros zip model' };
+const DS_NAMES = { cet_filings: 'CET public filings', bpi_filings: 'BPI public filings', pp_filings: 'Punctual Pros public filings', fairharbor_filings: 'Fair Harbor public filings', thomas_filings: 'Thomas Scientific public filings', frontline_filings: 'Frontline public filings', rival_filings: 'competitor filings', pe_landscape: 'private-equity landscape', ma_targets_pp: 'Punctual Pros add-on screen', ma_targets_cet: 'CET add-on screen', ma_targets_fl_ts: 'Frontline and Thomas Scientific add-on screens', bsp_firm: 'BSP firm profile', bsp_methodology: 'BSP methodology', bsp_network: 'BSP network', pp_market: 'Punctual Pros market model', pp_zips: 'Punctual Pros zip model' };
 export const tx = v => typeof v !== 'string' ? v : v
-  .replace(/\bBSP(?![-\w])/g, 'Broad Sky')
+  .replace(/\bBSP(?![-\w])/g, 'BSP')
   .replace(/\bma_targets_\*(?:\.json)?/g, 'add-on target screens').replace(/\*_filings(?:\.json)?/g, 'company filings')
   .replace(/\b([a-z][a-z0-9]*(?:_[a-z0-9]+)+)\.json(#[\w-]+)?/g, (m, id) => DS_NAMES[id] || id.replace(/_/g, ' '))
   .replace(/\b(ma_targets_(?:pp|cet|fl_ts)|[a-z]+_filings|pe_landscape|bsp_firm)\b/g, m => DS_NAMES[m] || m.replace(/_/g, ' '));
@@ -120,7 +120,7 @@ export const TESTS = {
   'crit-downside': { tested: true, how: 'Risk flags: start at 4 (a 5 needs earnings, leverage and concentration data from diligence), minus 1 per serious flag (union model, acquirer or anti-sale stance, sponsor or ESOP owner, concentration, regulatory), minus 0.5 per business-risk flag (key-person, cyclical or seasonal demand, contested market, non-core revenue) and per data-gap flag. Size and distance flags are not counted twice. Thomas Scientific targets lose 1 more because the company loan is marked near 88% of par.' },
 };
 const ESSENTIAL = { pp: 5, cet: 5, fl: 5, ts: 3 };
-/** Criteria tested per target (the Broad Sky fit score); platform-level and neutral criteria are context only. */
+/** Criteria tested per target (the BSP fit score); platform-level and neutral criteria are context only. */
 export const isTargetTest = id => TESTS[id]?.tested === true || TESTS[id]?.tested === 'proxy';
 const SERIOUS = /union|anti-?pe|stay independent|prefer to stay|itself an acquirer|acquirer|esop|employee-owned|sponsor|private equity|pe-backed|subsidiary|part of|concentration|regulat|litigation|lawsuit|osha|violation|declin|distress|bankrupt|name collision|affiliat/i;
 const MINOR = /transfer approval|consent|rebrand|not (disclosed|verified|public|found|captured|named)|undisclosed|unverified|modeled|modelled|estimate|unknown|no clean record|may be overstated|thin|limited data/i;
@@ -205,7 +205,7 @@ export function scoreTargets(b) {
     r._serious = [...serious, ...biz];
     // untested criteria
     for (const id of ['crit-recurring', 'crit-tech-upside', 'crit-mgmt-culture']) { s[id] = 3; why[id] = 'not tested · neutral'; }
-    // Broad Sky fit = the target-level tests only (owner readiness, size band, adjacency, platform-thesis fit, downside),
+    // BSP fit = the target-level tests only (owner readiness, size band, adjacency, platform-thesis fit, downside),
     // each at its rubric weight, renormalised to 0-100. The full rubric (platform-level essentiality and runway, three
     // criteria held neutral) is kept as context in _full.
     let tot = 0, wsum = 0, ftot = 0, fsum = 0;
@@ -235,7 +235,7 @@ function explain(r, crit, W) {
 
 /* ── Network graph ────────────────────────────────────────────────────────── */
 export const GROUPS = [
-  { id: 1, label: 'Broad Sky team', types: ['firm', 'bsp_team', 'operating_partner'], shape: 'circle' },
+  { id: 1, label: 'BSP team', types: ['firm', 'bsp_team', 'operating_partner'], shape: 'circle' },
   { id: 2, label: 'Executive Board', types: ['executive_board'], shape: 'diamond' },
   { id: 3, label: 'Portfolio companies and leaders', types: ['portfolio_company', 'portfolio_ceo', 'portfolio_board'], shape: 'square' },
   { id: 4, label: 'Advisers, bankers and counsel', types: ['advisor_banker'], shape: 'triangle' },
@@ -244,7 +244,7 @@ export const GROUPS = [
   { id: 7, label: 'Former firms', types: ['former_firm'], shape: 'ring' },
 ];
 const groupOf = type => (GROUPS.find(g => g.types.includes(type)) || GROUPS[6]).id;
-export const TYPE_LABEL = { firm: 'Sponsor (hub)', bsp_team: 'Broad Sky team', operating_partner: 'Operating partner', executive_board: 'Executive Board', portfolio_company: 'Portfolio company', portfolio_ceo: 'Portfolio leader', portfolio_board: 'Portfolio board', advisor_banker: 'Adviser or banker', lender: 'Lender', lp_investor: 'Investor or LP', counterparty_sponsor: 'Other sponsor', franchisor: 'Franchisor', former_firm: 'Former firm', industry_body: 'Industry body' };
+export const TYPE_LABEL = { firm: 'Sponsor (hub)', bsp_team: 'BSP team', operating_partner: 'Operating partner', executive_board: 'Executive Board', portfolio_company: 'Portfolio company', portfolio_ceo: 'Portfolio leader', portfolio_board: 'Portfolio board', advisor_banker: 'Adviser or banker', lender: 'Lender', lp_investor: 'Investor or LP', counterparty_sponsor: 'Other sponsor', franchisor: 'Franchisor', former_firm: 'Former firm', industry_body: 'Industry body' };
 export const REL_LABEL = { works_at: 'works at', board_of: 'board of', advised_deal: 'advised', lent_to: 'lent to', co_invested: 'co-invested in', former_colleague: 'former colleague of', franchisor_of: 'franchisor of', member_of: 'member of', invested_in: 'invested in', acquired: 'acquired' };
 
 export function buildGraph(net) {
@@ -303,7 +303,7 @@ export function graphSVG(g, { labelDeg = 7 } = {}) {
     const lab = n.type === 'firm' || n.type === 'portfolio_company' || n._deg >= labelDeg;
     return `<g class="bn-n bn-g${n._g}${lab ? ' bn-lab' : ''}" data-id="${esc(n.id)}" transform="translate(${p.x} ${p.y})" tabindex="0" role="button" aria-label="${esc(n.name)}, ${esc(TYPE_LABEL[n.type] || '')}"><title>${esc(n.name)} · ${esc(TYPE_LABEL[n.type] || '')}${n.title ? ` · ${esc(n.title)}` : ''}</title><circle class="bn-hit" r="12"/>${shapePath(grp.shape, r)}${lab ? `<text class="bn-t" y="${-r - 5}">${esc(shortName(n))}</text>` : ''}</g>`;
   }).join('');
-  return `<svg class="bn-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Broad Sky professional network: ${g.nodes.length} people and organizations, ${g.edges.length} sourced connections"><g class="bn-edges">${edges}</g><g class="bn-nodes">${nodes}</g></svg>`;
+  return `<svg class="bn-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="BSP professional network: ${g.nodes.length} people and organizations, ${g.edges.length} sourced connections"><g class="bn-edges">${edges}</g><g class="bn-nodes">${nodes}</g></svg>`;
 }
 export const legendHTML = () => `<div class="bn-legend">${GROUPS.map(gr => `<span class="bn-li"><svg viewBox="-9 -9 18 18" width="14" height="14" class="bn-g${gr.id}" aria-hidden="true">${shapePath(gr.shape, 5.5)}</svg>${esc(gr.label)}</span>`).join('')}</div>`;
 
@@ -357,7 +357,7 @@ export function introFor(b, t) {
   const pc = PLATFORMS[t._p]?.node; if (!pc || !g.byId.has(pc)) return null;
   const leader = (g.adj.get(pc) || []).filter(e => e.relation === 'works_at' && e.to === pc && e.current !== false).map(e => g.byId.get(e.from)).find(n => n?.type === 'portfolio_ceo');
   const ids = ['org-bsp', pc, leader?.id].filter(Boolean);
-  return { sourced: false, path_node_ids: ids, names: ids.map(id => g.byId.get(id)?.name), hops: ids.length - 1, confidence: 'unsourced', path: `No sourced intro path yet. Default route: ${leader ? `${leader.name} (${leader.title}) at ${g.byId.get(pc).name}` : g.byId.get(pc).name} makes the owner-to-owner approach, which is how most named Broad Sky add-ons were sourced.` };
+  return { sourced: false, path_node_ids: ids, names: ids.map(id => g.byId.get(id)?.name), hops: ids.length - 1, confidence: 'unsourced', path: `No sourced intro path yet. Default route: ${leader ? `${leader.name} (${leader.title}) at ${g.byId.get(pc).name}` : g.byId.get(pc).name} makes the owner-to-owner approach, which is how most named BSP add-ons were sourced.` };
 }
 
 /* ── Chronological strip (inline SVG) ─────────────────────────────────────── */
@@ -377,7 +377,7 @@ export function stripSVG(b, PCOL) {
       return `<g class="bsp-mk bsp-mk-${d.deal_type}" data-deal="${d.id}" transform="translate(${cx.toFixed(1)} ${y})" style="--pc:${PCOL[p]}" tabindex="0" role="button" aria-label="${lab.replace(/"/g, '')}"><title>${lab.replace(/</g, '')}</title><circle class="bsp-hit" r="11"/>${shape}</g>`; }).join('');
     return `<text class="bsp-lane" x="0" y="${y + 4}">${PLATFORMS[p].short}</text>${span}${marks}`;
   }).join('');
-  return `<svg class="bsp-strip" viewBox="0 0 ${W} ${H}" role="img" aria-label="Every disclosed Broad Sky deal from 2022 to 2026 by company">${yrs}<line class="bsp-today" x1="${today}" x2="${today}" y1="${T - 12}" y2="${H - 22}"/><text class="bsp-ax" x="${today - 4}" y="${T - 14}" text-anchor="end">today</text>${lanes}</svg>
+  return `<svg class="bsp-strip" viewBox="0 0 ${W} ${H}" role="img" aria-label="Every disclosed BSP deal from 2022 to 2026 by company">${yrs}<line class="bsp-today" x1="${today}" x2="${today}" y1="${T - 12}" y2="${H - 22}"/><text class="bsp-ax" x="${today - 4}" y="${T - 14}" text-anchor="end">today</text>${lanes}</svg>
   <div class="bsp-key"><span><svg width="12" height="12" viewBox="-7 -7 14 14"><rect x="-5" y="-5" width="10" height="10" transform="rotate(45)"/></svg>Anchor acquisition</span><span><svg width="12" height="12" viewBox="-7 -7 14 14"><circle r="4.5"/></svg>Add-on</span><span><svg width="12" height="12" viewBox="-7 -7 14 14"><rect x="-5" y="-5" width="10" height="10" rx="2"/></svg>Exit</span><span><i class="bsp-holdkey"></i>Holding period</span></div>`;
 }
 
@@ -395,9 +395,9 @@ export function firstCallScript(b, r) {
   const what = r._p === 'pp' ? 'the leading home-services operator in the Mid-Atlantic' : r._p === 'cet' ? 'the leading electrical and energy services group in New England' : r._p === 'fl' ? 'the managed-IT partner of choice for law firms' : 'the leading independent lab-supply distributor';
   const lines = [
     { k: 'Who calls', t: `${leader ? `${leader.name} of ${P.short}` : `${P.short} leadership`}, with the Portfolio Resource Group${via ? `; ask ${via} for the introduction first` : '; no warm introduction is on file, so the call opens cold'}.` },
-    { k: 'Open', t: `“I lead ${P.short}. We are backed by Broad Sky Partners and building ${what}. I’d like to understand your plans; this is not an offer.”` },
+    { k: 'Open', t: `“I lead ${P.short}. We are backed by BSP and building ${what}. I’d like to understand your plans; this is not an offer.”` },
     { k: 'Why them', t: clip(r.strategic_rationale || '', 240) },
-    { k: 'Ownership', t: `“Where are you on succession? With Broad Sky the founder usually stays, keeps equity and helps lead the next acquisitions.” Tests owner readiness; the screen reads ${r._owner.toLowerCase()}${r.founded_year ? `, founded ${r.founded_year}` : ''}.` },
+    { k: 'Ownership', t: `“Where are you on succession? With BSP the founder usually stays, keeps equity and helps lead the next acquisitions.” Tests owner readiness; the screen reads ${r._owner.toLowerCase()}${r.founded_year ? `, founded ${r.founded_year}` : ''}.` },
     { k: 'Revenue quality', t: '“What share of revenue is repeat, maintenance or contracted?” Recurring revenue is 12% of the rubric and is not in the screen yet.' },
     { k: 'Bench and tools', t: '“Who runs the business day to day besides you, and what software runs dispatch, billing and the customer record?” Bench and tech upside are 14% of the rubric, untested so far.' },
     r._serious?.length ? { k: 'Risk to clear', t: `Raise gently: ${r._serious.map(s => s.replace(/\.$/, '')).join('; ')}.` } : null,
@@ -413,14 +413,14 @@ export function buildFaq(b, base = '') {
   const topPP = b.scored.ranked.find(r => r._p === 'pp'); const ip = topPP ? introFor(b, topPP) : null;
   const n1 = v => v == null ? '—' : v.toFixed(1);
   const faq = [
-    { q: 'What is Broad Sky’s acquisition pattern?', href: base + '#narrative', a: `<p>${esc(nar[0] || '')}</p><ul>${nar.slice(1, 6).map(s => `<li>${esc(s)}</li>`).join('')}</ul><p>Anchor acquisitions come every ${n1(c.medianGap)} months (median) and the first add-on lands ${n1(c.medianFirst)} months after the anchor deal.</p>` },
-    topPP ? { q: 'Who in the network can introduce us to the top Punctual Pros target?', href: base + '#next', a: `<p>The top Punctual Pros target on the Broad Sky rubric is <b>${esc(topPP.company)}</b> (score ${topPP._score} of 100).</p><p>${ip ? `${ip.sourced ? 'Sourced path' : 'Default path'}: ${esc(ip.names.filter(Boolean).join(' → '))}. ${esc(ip.path)}${ip.sourced ? ` Confidence: ${esc(ip.confidence)}.` : ''}` : 'No intro path in the network data.'}</p>` } : null,
-    { q: 'Score the pipeline with the Broad Sky rubric', href: base + '#rubric', a: `<p>Every add-on target in the four company screens was scored on the five Broad Sky criteria the screens can test (owner readiness, size band, adjacency, company-thesis fit and downside), each at its inferred rubric weight. Top five:</p><ol>${top.map(r => `<li><b>${esc(r.company)}</b> · ${esc(r._plat)} · ${r._score} (${esc(r._gate)})</li>`).join('')}</ol><p>Gates: 70+ priority, 55–69 watch list, under 55 pass.</p>` },
+    { q: 'What is BSP’s acquisition pattern?', href: base + '#narrative', a: `<p>${esc(nar[0] || '')}</p><ul>${nar.slice(1, 6).map(s => `<li>${esc(s)}</li>`).join('')}</ul><p>Anchor acquisitions come every ${n1(c.medianGap)} months (median) and the first add-on lands ${n1(c.medianFirst)} months after the anchor deal.</p>` },
+    topPP ? { q: 'Who in the network can introduce us to the top Punctual Pros target?', href: base + '#next', a: `<p>The top Punctual Pros target on the BSP rubric is <b>${esc(topPP.company)}</b> (score ${topPP._score} of 100).</p><p>${ip ? `${ip.sourced ? 'Sourced path' : 'Default path'}: ${esc(ip.names.filter(Boolean).join(' → '))}. ${esc(ip.path)}${ip.sourced ? ` Confidence: ${esc(ip.confidence)}.` : ''}` : 'No intro path in the network data.'}</p>` } : null,
+    { q: 'Score the pipeline with the BSP rubric', href: base + '#rubric', a: `<p>Every add-on target in the four company screens was scored on the five BSP criteria the screens can test (owner readiness, size band, adjacency, company-thesis fit and downside), each at its inferred rubric weight. Top five:</p><ol>${top.map(r => `<li><b>${esc(r.company)}</b> · ${esc(r._plat)} · ${r._score} (${esc(r._gate)})</li>`).join('')}</ol><p>Gates: 70+ priority, 55–69 watch list, under 55 pass.</p>` },
     { q: 'How long until the first add-on after an anchor deal?', href: base + '#cadence', a: `<p>Median ${n1(c.medianFirst)} months: ${c.firstAddon.filter(f => f.months != null).map(f => `${esc(PLATFORMS[f.p]?.short)} ${n1(f.months)}`).join(', ')}. Frontline and Fair Harbor have no add-on yet.</p>` },
-    { q: 'Which banks and lawyers does Broad Sky use?', href: base + '#patterns', a: `<p>${b.channels.filter(s => /buy_side|legal|accounting_ma/.test(s.channel_type)).map(s => `<b>${esc(s.channel)}</b> (${s.deal_count} deal${s.deal_count === 1 ? '' : 's'})`).join(', ')}.</p><p>${esc(b.channels.find(s => s.id === 'src-berenson')?.implication || '')}</p>` },
-    { q: 'How does Broad Sky finance its companies?', href: base + '#patterns', a: `<p>${esc(b.patterns.find(p => p.id === 'pat-private-credit')?.pattern || '')}</p><p>${esc(b.patterns.find(p => p.id === 'pat-spv-coinvest')?.pattern || '')}</p>` },
-    { q: 'Do founder CEOs stay after Broad Sky buys?', href: base + '#patterns', a: `<p>${esc(b.patterns.find(p => p.id === 'pat-ceo-retention')?.pattern || '')}</p>` },
-    { q: 'How big are the deals Broad Sky does?', href: base + '#rubric', a: `<p>${esc(b.meth?.meta?.rubric_summary?.size_band_finding || '')}</p>` },
+    { q: 'Which banks and lawyers does BSP use?', href: base + '#patterns', a: `<p>${b.channels.filter(s => /buy_side|legal|accounting_ma/.test(s.channel_type)).map(s => `<b>${esc(s.channel)}</b> (${s.deal_count} deal${s.deal_count === 1 ? '' : 's'})`).join(', ')}.</p><p>${esc(b.channels.find(s => s.id === 'src-berenson')?.implication || '')}</p>` },
+    { q: 'How does BSP finance its companies?', href: base + '#patterns', a: `<p>${esc(b.patterns.find(p => p.id === 'pat-private-credit')?.pattern || '')}</p><p>${esc(b.patterns.find(p => p.id === 'pat-spv-coinvest')?.pattern || '')}</p>` },
+    { q: 'Do founder CEOs stay after BSP buys?', href: base + '#patterns', a: `<p>${esc(b.patterns.find(p => p.id === 'pat-ceo-retention')?.pattern || '')}</p>` },
+    { q: 'How big are the deals BSP does?', href: base + '#rubric', a: `<p>${esc(b.meth?.meta?.rubric_summary?.size_band_finding || '')}</p>` },
   ];
   return faq.filter(Boolean);
 }

@@ -6,7 +6,7 @@
 import {
   build, esc, clean, when, monthLabel, mLabel, dash, capFirst, median, usd, xTimes, yrs, host, hrefFor, kpiVal,
   FAMILY, SECTOR, SECTOR_ORDER, TODAY, timingText, legendHTML, timelineHTML, matrixHTML, clockHTML, ganttHTML, ladderHTML, ladderRows, growthHTML, kpiCardsHTML, csv, download, eventRows,
-} from '../modules/cases-lib.js?v=20261006180606';
+} from '../modules/cases-lib.js?v=20261006224618';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -40,12 +40,11 @@ export async function boot({ Data }) {
 function hero() {
   const st = M.stats;
   const k = (label, value, sub, co) => `<div class="sys-kpi" role="listitem"${co ? ` data-co="${co}"` : ''}><span class="sys-kpi-label">${esc(label)}</span><span class="sys-kpi-value">${value}</span><span class="sys-kpi-sub">${sub}</span></div>`;
-  const mults = st.exitMults.map(x => M.byId[x.id].short).join(' and ');
   $('#hero-kpis').innerHTML = [
     k('Cases', String(st.n), `${st.nHome} home services, ${st.nCross} adjacent sectors · ${st.yearMin}–${st.yearMax}`),
-    k('Median hold', `${st.hold.toFixed(1)} yrs`, `First sponsor, ${st.holdN} exits · ${st.holdHome?.toFixed(1)} yrs in home services`),
-    k('Median exit multiple', `~${xTimes(st.exitMult)}${EST}<small>n=${st.exitMults.length}</small>`, `EBITDA, press-reported (${esc(mults)}); most sponsors disclose none`),
-    k('Median revenue growth', `~${xTimes(st.growth)}${EST}`, `Across the hold, ${st.growthN} cases with sourced before and after figures`),
+    k('Median hold', `${st.hold.toFixed(1)} yrs`, `First sponsor, ${st.holdN} exits`),
+    k('Median exit multiple', `~${xTimes(st.exitMult)}${EST}<small>n=${st.exitMults.length}</small>`, 'EBITDA, press-reported'),
+    k('Median revenue growth', `~${xTimes(st.growth)}${EST}`, `Across the hold, ${st.growthN} sourced cases`),
   ].join('');
   $('#hero-src').innerHTML = `<b>Source:</b> Value-creation case set: ${st.events} dated events from sponsor and company releases, SEC and Companies House filings and trade press, retrieved ${esc(monthLabel(when(M.retrieved).t))}. Exit multiples and growth are estimates.`;
 
@@ -130,7 +129,7 @@ function renderCasePanel() {
     ${c.moic ? `<p class="cs-moic"><b>Returns on the record:</b> ${esc(c.moic)}</p>` : ''}
     <h4 class="cs-sub">Before and after</h4>
     ${kpiCardsHTML(c)}
-    <div class="sys-note sys-note--co" data-co="pp"><span><b>What Broad Sky can copy at Punctual Pros.</b> ${esc(c.copy)}</span></div>
+    <div class="sys-note sys-note--co" data-co="pp"><span><b>What BSP can copy at Punctual Pros.</b> ${esc(c.copy)}</span></div>
     <h4 class="cs-sub">Levers used</h4>
     <div class="sys-chips cs-lv-chips">${c.levers.map(l => `<span class="sys-chip">${esc(l)}</span>`).join('')}</div>
     <p class="sys-src"><b>Evidence:</b> ${esc(c.basis)}. ${c.sources?.length || 0} sources, retrieved ${esc(when(c.retrieved)?.label || 'Oct 2026')}.</p>
@@ -284,7 +283,7 @@ function renderSequence(scroll) {
 /* ── method and sources ───────────────────────────────────────────────────── */
 function sources() {
   const st = M.stats, c = st.conf || {};
-  $('#method').innerHTML = `<p>${st.nHome} residential home-services and franchisor histories and ${st.nCross} cross-sector analogs (commercial and fire/life-safety services, legal services, lab distribution, agencies and consumer brands) were rebuilt from sponsor and company press releases, SEC filings, UK Companies House accounts, lender filings and trade press. Each case lists dated events, the levers used, before and after KPIs and what Broad Sky can copy.</p>
+  $('#method').innerHTML = `<p>${st.nHome} residential home-services and franchisor histories and ${st.nCross} cross-sector analogs (commercial and fire/life-safety services, legal services, lab distribution, agencies and consumer brands) were rebuilt from sponsor and company press releases, SEC filings, UK Companies House accounts, lender filings and trade press. Each case lists dated events, the levers used, before and after KPIs and what BSP can copy.</p>
     <p>Levers and patterns were derived from the ${st.events} dated events. Timing uses months from the first sponsor's entry; year-only dates count as mid-year. Evidence quality: ${c.high ?? '—'} cases high (filings with disclosed figures), ${c.medium ?? '—'} medium (releases and trade press) and ${c.low ?? '—'} low (few primary sources).</p>
     <p>Unknown values stay blank and show as a dash. Figures from press reports, derived ratios and analyst recommendations carry an est. badge. All pages were retrieved ${esc(when(M.retrieved)?.label || 'Oct 2026')}.</p>`;
   $('#caveats').innerHTML = M.caveats.map(x => `<li>${esc(x)}</li>`).join('');
@@ -316,7 +315,7 @@ function caseAnswer(q) {
   const k = c.kpis.slice(0, 5).map(x => [esc(x.kpi), N(`${esc(kpiVal(x.before))} → ${esc(kpiVal(x.after))}`), esc(x.period || '')]);
   const lead = cut ? `<p>Up to ${esc(cut.w.label)}, when ${esc(cut.event.split(/[;,.]/)[0])}, the owners made ${N(evs.length)} dated moves:</p>` : `<p>${esc(c.chain)}. Entry ${esc(c.entry?.label || '—')}${c.exit ? `; exit ${esc(c.exit.label)} to ${esc(c.buyer)}` : `; ${esc(c.statusLabel.toLowerCase())}`}${c.hold != null ? ` (${yrs(c.hold)})` : ''}.</p>`;
   return {
-    html: `<h4>${esc(c.name)}</h4>${lead}${rows.length ? T(['When', 'What happened', 'Source'], rows) : '<p>No dated events before that point.</p>'}${k.length ? `<h4>Before and after</h4>${T(['KPI', 'Before → after', 'Period'], k)}` : ''}<p><b>What Broad Sky can copy:</b> ${esc(c.copy)}</p>`,
+    html: `<h4>${esc(c.name)}</h4>${lead}${rows.length ? T(['When', 'What happened', 'Source'], rows) : '<p>No dated events before that point.</p>'}${k.length ? `<h4>Before and after</h4>${T(['KPI', 'Before → after', 'Period'], k)}` : ''}<p><b>What BSP can copy:</b> ${esc(c.copy)}</p>`,
     links: [A(`#case=${c.id}`, `Show ${c.short} on the timeline`), A(`${ROOT}app.html#/cases/timeline?case=${c.id}`, 'Open in portal')],
     followups: ['How long did sponsors hold home-services companies?', 'Which levers moved EBITDA fastest?', 'What should Punctual Pros do in the next 12 months?'],
   };
@@ -346,7 +345,7 @@ function seqAnswer(q) {
   const lim = when('2027-10-01').t;
   const st = M.steps.filter(s => !s.done && (!yr || s.a.t < lim));
   return {
-    html: `<h4>What Punctual Pros should do ${yr ? 'in the next 12 months' : 'over the next 36 months'}</h4><p>Punctual Pros is at month ${N(M.stats.pp?.hold_month_on_2026_10_06 ?? 30)} of Broad Sky's hold. Three steps are done (entry, ServiceTitan, Horvath). The rest follow the order the winning cases used:</p>${T(['When', 'Step', 'Benchmark'], st.map(s => [esc(`${mLabel(s.a)} – ${mLabel(s.b)}`), `<b>${esc(s.title)}</b>`, esc(s.bench || '—')]))}<p>These are analyst recommendations, not company plans.</p>`,
+    html: `<h4>What Punctual Pros should do ${yr ? 'in the next 12 months' : 'over the next 36 months'}</h4><p>Punctual Pros is at month ${N(M.stats.pp?.hold_month_on_2026_10_06 ?? 30)} of BSP's hold. Three steps are done (entry, ServiceTitan, Horvath). The rest follow the order the winning cases used:</p>${T(['When', 'Step', 'Benchmark'], st.map(s => [esc(`${mLabel(s.a)} – ${mLabel(s.b)}`), `<b>${esc(s.title)}</b>`, esc(s.bench || '—')]))}<p>These are analyst recommendations, not company plans.</p>`,
     links: [A('#sequence', 'The sequence'), A(`${ROOT}app.html#/cases/sequence`, 'Sequence in the portal'), A('punctual-pros/nationwide.html', 'Nationwide plan')],
     followups: ['Which levers moved EBITDA fastest?', 'How long did sponsors hold home-services companies?'],
   };
@@ -394,7 +393,7 @@ function faq() {
     { q: 'How soon after entry did sponsors buy the first add-on?', a: `<p>A median of ${st.firstAddon?.median} months (n=${st.firstAddon?.n}). Punctual Pros bought Horvath in month ${st.pp?.first_addon_month}.</p>` },
     { q: 'What tuck-in cadence did the winners keep?', a: `<p>About one deal every ${st.cadence?.median} months after the first (n=${st.cadence?.n}).</p>` },
     ch ? { q: 'What did Champions sell for?', a: `<p>Blackstone agreed to buy Champions in Feb 2026 at a reported ~$2.5B, about ${xTimes(ch.exit_multiple_ebitda)} trailing EBITDA (press estimate). Members grew from about 60,000 at the Jan 2021 sale to Odyssey to about 150,000, roughly 71 to 83 per technician.</p>`, href: '#case=case-ch' } : null,
-    sh ? { q: 'What did Broad Sky do with Smith + Howard?', a: `<p>${esc(sh.copy)}</p>`, href: '#case=cx-01' } : null,
+    sh ? { q: 'What did BSP do with Smith + Howard?', a: `<p>${esc(sh.copy)}</p>`, href: '#case=cx-01' } : null,
     { q: 'Which lever did the most cases use?', a: `<p>${esc(lev?.name || '')}: ${lev?.cases.length} of ${st.n} cases. ${esc(lev?.pp || '')}</p>`, href: '#levers' },
     { q: 'Is Punctual Pros behind the cases?', a: `<p>On the first add-on it is in line (month 8 vs a median of about 7). On cadence it is behind: no second add-on appears in public sources since Horvath. It is about 30 months into the hold.</p>`, href: '#patterns' },
     { q: 'Where do the exit multiples come from?', a: '<p>Only two cases carry one: Champions (~18.5x, Bloomberg-cited) and Sila (~17x including pending acquisitions). Both are press estimates. Lower-middle-market benchmarks come from GF Data.</p>', href: '#entry-exit' },

@@ -1,5 +1,5 @@
 /* FirmOS product page: demos and value math. Data via core.js (Data.load('research/...')). */
-import { QUESTIONS, ring, tierOf } from './site.js?v=20261006180606';
+import { QUESTIONS, ring, tierOf } from './site.js?v=20261006224618';
 const CO = 'var(--co)', CO_SOFT = 'color-mix(in srgb,var(--co) 45%,var(--sys-surface))';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -24,7 +24,7 @@ function heroKpis() {
   if (k.some(x => !x)) return; // keep static fallback
   const fmt = (x, v) => x.unit.startsWith('%') ? v + '%' : String(v);
   const lab = { 'kb-fl-3': 'Net first-level resolution', 'kb-fl-1': 'eBilling invoice rejection rate', 'kb-fl-2': 'Days from invoice to payment' };
-  const sub = { 'kb-fl-3': 'MetricNet benchmark → analyst target', 'kb-fl-1': 'Elite research: 2025 rate → 2024 level', 'kb-fl-2': 'Elite eBillingHub customers, pre-2025 → 2025' };
+  const sub = { 'kb-fl-3': 'MetricNet benchmark → analyst target', 'kb-fl-1': 'Elite research, 2025 → 2024 level', 'kb-fl-2': 'Elite eBillingHub customers, pre-2025 → 2025' };
   box.innerHTML = k.map(x => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${lab[x.id]}</span><span class="sys-kpi-value hk-val"><s>${fmt(x, x.baseline)}</s><span class="ar">→</span>${fmt(x, x.target)}<span class="sys-est">est.</span></span><span class="sys-kpi-sub">${sub[x.id]} · ${srcLink(x.id, 'source')}</span></div>`).join('');
 }
 
@@ -251,7 +251,7 @@ function water(svg, steps) {
 function value() {
   const box = $('#v-math'); if (!box) return;
   const ra = ev('ra-fl');
-  if (ra) { $('#val-lede').innerHTML = `Broad Sky's entry multiple is estimated at 12–15x (${srcLink('ve-15', 'Frontline public filings')}), already a premium for a vertical-specialist MSP. FirmOS has to protect that premium at exit and add a measured amount on top. Defaults come from the FirmOS roadmap assumption, an analyst assumption rather than a forecast or company guidance.`; }
+  if (ra) { $('#val-lede').innerHTML = `BSP's entry multiple is an estimated 12–15x (${srcLink('ve-15', 'Frontline public filings')}), already a premium. FirmOS has to protect it and add a measured amount on top.`; }
   const ids = ['rev', 'ebitda', 'up', 'mult', 'exp', 'inv'];
   const fmt = { rev: v => '$' + v + 'M', ebitda: v => '$' + (+v).toFixed(1) + 'M', up: v => (+v).toFixed(1) + '%', mult: v => (+v).toFixed(1) + 'x', exp: v => '+' + (+v).toFixed(1) + 'x', inv: v => '$' + (+v).toFixed(2) + 'M' };
   const calc = (R, E0, u, Mx, x, I) => { const dE = R * u / 100, base = E0 * Mx, fos = (E0 + dE) * (Mx + x); return { dE, base, fos, created: fos - base, margin: dE * Mx, mult: x * (E0 + dE), net: fos - base - I, roi: (fos - base) / I }; };

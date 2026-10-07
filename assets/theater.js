@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Broad Sky Operating Intelligence — 3D theater engine (ES module, no build step)
+   BSP Desk — 3D theater engine (ES module, no build step)
    GPU-rendered, cinematic map presentations over the portal's real datasets.
 
    Stack (CDN only, verified 2026-10-06):
@@ -8,13 +8,13 @@
      Basemap             OpenFreeMap vector styles (key-free): /styles/dark, fallback /styles/positron
      Terrain             AWS Terrarium DEM tiles (CORS-enabled), exaggeration 1.4, plus hillshade
    Usage:
-     import { Theater } from './assets/theater.js?v=20261006180606';
+     import { Theater } from './assets/theater.js?v=20261006224618';
      await Theater.mount(el, { autoplay: true, scene: 'S1', onScene: (id, scene) => {} });
      Theater.play(); Theater.pause(); Theater.goTo('S3'); Theater.destroy();
    window.BSPTheater exposes the same API (plus state()) for automation.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-import { label } from './frame.js?v=20261006180606';
+import { label } from './frame.js?v=20261006224618';
 /* Caption source lines: dataset keys become their readable names (Frame.label); {id, note} adds a note in brackets. */
 const RX_KEY = /^[a-z][a-z0-9]*(?:_[a-z0-9]+)+$/;
 const SRC = (...parts) => [...new Set(parts.map(p => typeof p === 'string' ? (RX_KEY.test(p) ? label(p) : p) : `${label(p.id)} (${p.note})`))].join(' · ');
@@ -124,7 +124,7 @@ const SCENES = [
   { id: 'S1', name: 'Portfolio', color: C.bsp, duration: 15000, labels: 'major',
     layers: ['hq', 'ppCore', 'cetCounties'],
     keys: [{ at: 0, center: [-80.5, 39.6], zoom: 4.75, pitch: 45, bearing: -8 }, { at: 4200, center: [-74.6, 41.2], zoom: 6.15, pitch: 52, bearing: -18, duration: 9000 }],
-    caption: s => ({ kicker: 'Broad Sky Partners · portfolio', title: `${s.holdings === 6 ? 'Six' : s.holdings} companies, one map`, line: `CET across New England, Punctual Pros in Central PA and the Jersey Shore, plus Frontline, Thomas Scientific, BPI and Fair Harbor. Orange hexes: ${num(s.ppCoreZips)} Punctual Pros core zips, raised by housing units. Blue columns: CET county fit across ${num(s.cetCounties)} New England counties.`, src: SRC('bsp_firm', { id: 'pp_zips', note: 'Census ACS' }, 'cet_ne_counties') }),
+    caption: s => ({ kicker: 'BSP · portfolio', title: `${s.holdings === 6 ? 'Six' : s.holdings} companies, one map`, line: `CET across New England, Punctual Pros in Central PA and the Jersey Shore, plus Frontline, Thomas Scientific, BPI and Fair Harbor. Orange hexes: ${num(s.ppCoreZips)} Punctual Pros core zips, raised by housing units. Blue columns: CET county fit across ${num(s.cetCounties)} New England counties.`, src: SRC('bsp_firm', { id: 'pp_zips', note: 'Census ACS' }, 'cet_ne_counties') }),
     legend: () => [['dot', C.pp, 'PP core zips · height = housing units'], ['dot', C.cet, 'CET county fit · height = score'], ['ring', '#ffffff', 'Company headquarters']] },
   { id: 'S2', name: 'Where the homes trade', color: C.pp, duration: 17000, labels: 'pp', needs: 'sales',
     layers: ['hq', 'sales', 'salesNew'],
@@ -156,7 +156,7 @@ const SCENES = [
   { id: 'S6', name: 'Close', color: C.bsp, duration: 15000, labels: 'none',
     layers: ['hq', 'ppCore', 'cetCounties', 'sales', 'arcs', 'destLabels', 'ppTargets', 'cetOpps', 'wwtp', 'alerts', 'hubs'],
     keys: [{ at: 0, center: [-80.6, 38.4], zoom: 4.75, pitch: 56, bearing: -18 }, { at: 3800, center: [-78.4, 39.6], zoom: 5.05, pitch: 62, bearing: 6, duration: 10500 }],
-    caption: s => ({ kicker: 'Broad Sky Partners', title: 'One operating system for the portfolio', line: `${s.platforms} companies to date (${s.holdings} held today) · ${s.addOns} add-ons · ${s.exits} exit. ${s.sales ? num(s.sales.n) + ' home sales, ' : ''}${num(s.cetOpps)} CET opportunities, ${num(s.ppTargets + s.cetTargets)} screened add-on targets and live weather, every layer built from public and licensed data.`, src: 'All portal datasets · verify before use' }),
+    caption: s => ({ kicker: 'BSP', title: 'One operating system for the portfolio', line: `${s.platforms} companies to date (${s.holdings} held today) · ${s.addOns} add-ons · ${s.exits} exit. ${s.sales ? num(s.sales.n) + ' home sales, ' : ''}${num(s.cetOpps)} CET opportunities, ${num(s.ppTargets + s.cetTargets)} screened add-on targets and live weather, every layer built from public and licensed data.`, src: 'All portal datasets · verify before use' }),
     legend: () => [['dot', C.pp, 'Punctual Pros'], ['dot', C.cet, 'CET'], ['line', C.amber, 'Expansion arcs'], ['ring', '#ffffff', 'Headquarters']] },
 ];
 
@@ -362,7 +362,7 @@ class TheaterInstance {
     window.addEventListener('keydown', this._onKey);
     this._syncPlay();
 
-    if (!this.core) this.core = await import('./core.js?v=20261006180606');
+    if (!this.core) this.core = await import('./core.js?v=20261006224618');
     const baseP = loadBase(this.core);
     if (!webglOK() || this.opts.forceFallback) return this._fallback(this.opts.forceFallback ? 'Static fallback requested.' : 'WebGL is not available in this browser, so the 3D theater is showing a static 2D map.', baseP);
     loadCss(LIBS.mlCss, 'maplibre-css');

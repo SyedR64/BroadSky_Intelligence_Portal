@@ -1,8 +1,8 @@
 /* 24/7 Voice AI — the growth engine. Renders the voice AI research dataset into the page.
    No framework, no build step. Markup uses the shared sys- components (assets/system.css, UNIFIED.md);
    every dollar figure is an estimate and carries the est. badge; dataset text passes through plain(). */
-import { Data } from '../assets/core.js?v=20261006180606';
-import { humanizeText } from '../assets/frame.js?v=20261006180606';
+import { Data } from '../assets/core.js?v=20261006224618';
+import { humanizeText } from '../assets/frame.js?v=20261006224618';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -72,10 +72,10 @@ function hourly(m) {
 function hero(meta) {
   const m = meta.pp_revenue_model;
   const k = [
-    ['Recovered revenue a year', money(m.recovered_revenue_annual_usd), 'From calls that go unanswered today, after hours and in daytime overflow'],
-    ['Renewal uplift a year', money(m.outbound_renewal_uplift_usd), `${(6000).toLocaleString()} members × an 8-point lift from outbound reminder calls (assumption)`],
-    ['Total a year', money(m.total_est_usd), `About ${Math.round(m.share_of_pp_revenue * 1000) / 10}% of Punctual Pros revenue, before speed-to-lead, the Spanish line and no-shows`],
-    ['Calls missed today', `${(m.missed_share * 100).toFixed(1)}%`, `Of about ${m.inbound_calls_per_month.toLocaleString()} inbound calls a month (range ${m.missed_share_range.map(x => Math.round(x * 100) + '%').join('–')})`],
+    ['Recovered revenue a year', money(m.recovered_revenue_annual_usd), 'From calls unanswered today'],
+    ['Renewal uplift a year', money(m.outbound_renewal_uplift_usd), `${(6000).toLocaleString()} members × 8-point lift (assumption)`],
+    ['Total a year', money(m.total_est_usd), `About ${Math.round(m.share_of_pp_revenue * 1000) / 10}% of Punctual Pros revenue`],
+    ['Calls missed today', `${(m.missed_share * 100).toFixed(1)}%`, `Of ~${m.inbound_calls_per_month.toLocaleString()} calls a month (${m.missed_share_range.map(x => Math.round(x * 100) + '%').join('–')})`],
   ];
   $('#kpis').innerHTML = k.map(([l, v, s]) => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${esc(l)}</span><span class="sys-kpi-value">${esc(v)}${EST}</span><span class="sys-kpi-sub">${esc(s)}</span></div>`).join('');
   $('#wave').innerHTML = Array.from({ length: 36 }, (_, i) => `<span style="--h:${30 + Math.round(60 * Math.abs(Math.sin(i * 1.7)))}%;animation-delay:${(i % 9) * -0.13}s"></span>`).join('');
@@ -383,9 +383,9 @@ function useCases(items) {
 function vendors(items) {
   const vs = items.filter(i => i.kind === 'vendor');
   $('#pick').innerHTML = [
-    ['Weeks 1–6 · pilot', 'Trades-native answering', 'Run a two-week bake-off between ServiceTitan\'s Voice Agent (native dispatch board and Adaptive Capacity, 70% booking reported) and Avoca (ServiceTitan-certified, H.L. Bowman runs 70% of calls through it). Start on the after-hours line of one brand.'],
-    ['Months 3–12 · portfolio engine', 'Own the stack', 'Build the shared engine on Twilio, Deepgram, Claude and ElevenLabs or Cartesia, orchestrated by Vapi, Retell or LiveKit, at about $0.12 a minute. One engine serves per-company agents: CET emergency lines, the Frontline desk, Thomas Scientific reorders.'],
-    ['Benchmarks, not picks', 'Price ceilings and specialists', 'Smith.ai ($1.67–$3 a call) and Goodcall set the price ceiling for bought answering. Hatch (now Yelp) covers speed-to-lead texting. Rilla coaches in-home sales and does not answer calls.'],
+    ['Weeks 1–6 · pilot', 'Trades-native answering', 'Run a two-week bake-off on one brand\'s after-hours line: ServiceTitan\'s Voice Agent (70% booking reported) against Avoca (ServiceTitan-certified). Keep the one that books more jobs.'],
+    ['Months 3–12 · portfolio engine', 'Own the stack', 'Build one shared engine (Twilio, Deepgram, Claude, ElevenLabs; Vapi or Retell) at about $0.12 a minute. It serves CET emergency lines, the Frontline desk and Thomas Scientific reorders.'],
+    ['Benchmarks, not picks', 'Price ceilings and specialists', 'Smith.ai ($1.67–$3 a call) and Goodcall set the price ceiling for bought answering. Hatch covers speed-to-lead texting and Rilla coaches in-home sales.'],
   ].map(([lbl, h, p]) => `<div class="sys-card"><span class="sys-card-label">${esc(lbl)}</span><h3 class="sys-card-title">${esc(h)}</h3><p class="sys-card-body">${esc(p)}</p><p class="sys-src">Analyst recommendation, not vendor-endorsed.</p></div>`).join('');
   const types = ['all', ...new Set(vs.map(v => v.type))];
   let cur = 'all';
@@ -471,7 +471,7 @@ const WEEKS = [
   ['After-hours line live', ['Shadow mode for three nights, then live on one brand, then all brands', 'Warm transfer to the on-call manager within 60 seconds', 'Daily transcript review'], 'After-hours booking rate at or above the answering-service baseline; escalations at or under 20%'],
   ['Overflow and speed-to-lead', ['Daytime overflow on ring three', 'National Weather Service warnings switch on storm triage', 'Web-form and Local Services leads called back in under 60 seconds'], 'Abandon rate down with rep occupancy steady'],
   ['Member outbound', ['Day-before confirmations and ETA line', 'Membership renewal and fall tune-up campaign for members who asked for reminders', 'Anyone who asks to stop is taken off the list at once'], 'Stop requests and complaints under the agreed threshold'],
-  ['Spanish line and readout', ['Spanish line for Lancaster City', 'Automated scoring of 100% of transcripts plus human review of a weighted 5% sample', 'Scorecard to the Portfolio Resource Group', 'Go or no-go for Horvath NJ and the CET emergency line'], 'Booked revenue per inbound call above baseline'],
+  ['Spanish line and readout', ['Spanish line for Lancaster City', 'Automated scoring of 100% of transcripts plus human review of a weighted 5% sample', 'Scorecard to the PRG', 'Go or no-go for Horvath NJ and the CET emergency line'], 'Booked revenue per inbound call above baseline'],
 ];
 function rollout() {
   $('#weeks').innerHTML = WEEKS.map(([h, list, gate], i) => `<article class="sys-card vai-wk"><span class="sys-card-label">Week ${i + 1}</span><div class="vai-prog" aria-hidden="true"><i style="width:${(i + 1) / 6 * 100}%"></i></div><h3 class="sys-card-title">${esc(h)}</h3><ul class="sys-card-list">${list.map(x => `<li>${esc(x)}</li>`).join('')}</ul><p class="vai-gate"><b>Gate</b>${esc(gate)}</p></article>`).join('');

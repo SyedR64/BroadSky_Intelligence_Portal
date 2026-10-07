@@ -1,5 +1,5 @@
 /* Command Center — portfolio-wide situational awareness */
-import { dataset, srcLabel } from './copy.js?v=20261006180606';
+import { dataset, srcLabel } from './copy.js?v=20261006224618';
 const GROUP_TXT = { research: 'Research', sales: 'Deed records', legacy: 'Core tables' };
 const BASIS_TXT = { live: 'Live count', snapshot: 'Snapshot', 'live (manifest)': 'Live (manifest)' };
 const COS = [
@@ -161,32 +161,32 @@ async function overview(ctx) {
 
   el.innerHTML = ui.pageHead({
     title: 'Command Center',
-    sub: `<b>So what:</b> Broad Sky has ${COS.length} active companies, ${fmt.num(stats.add_ons)} add-ons to date and one realized exit (Smith + Howard → TPG Growth, Aug 2026, after a ${sh ? sh.hold.toFixed(1) : '~3.7'}-year hold). ${inWindow.length ? `${inWindow.map(r => `${esc(r.short)} (${r.hold.toFixed(1)} yrs)`).join(' and ')} ${inWindow.length > 1 ? 'are' : 'is'} already past that hold, so exit readiness is the first agenda item. ` : ''}This week: ${fmt.num(due.length)} CET bids fall due within 60 days, ${fmt.num(targets)} add-on targets are screened, and ${alerts.length ? `${fmt.num(alerts.length)} NWS alert${alerts.length > 1 ? 's' : ''} touch${alerts.length > 1 ? '' : 'es'} operating counties` : 'no NWS alerts touch operating counties'}.`,
-    actions: `<button type="button" class="${ui.btnCls('accent', '')}" id="play-brief">▶ Play the briefing (6 min 36 s)</button><a class="${ui.btnCls('secondary', '')}" href="#/ma">Acquisition engine</a><a class="${ui.btnCls('secondary', '')}" href="#/fin/portfolio">Financial picture</a>`,
+    sub: `${COS.length} companies, ${fmt.num(stats.add_ons)} add-ons and one exit, Smith + Howard after ${sh ? sh.hold.toFixed(1) : '3.7'} years. ${inWindow.length ? `${inWindow.map(r => `${esc(r.short)} (${r.hold.toFixed(1)} yrs)`).join(' and ')} ${inWindow.length > 1 ? 'are' : 'is'} past that hold, so exit readiness comes first.` : `${fmt.num(due.length)} CET bids fall due within 60 days.`}`,
+    actions: `<button type="button" class="${ui.btnCls('accent', '')}" id="play-brief">▶ Play the briefing (6 min 42 s)</button><a class="${ui.btnCls('secondary', '')}" href="#/ma">Acquisition engine</a><a class="${ui.btnCls('secondary', '')}" href="#/fin/portfolio">Financial picture</a>`,
   }) +
   ui.kpis([
     { label: 'Active companies', value: COS.length, sub: `${fmt.num(stats.add_ons)} add-ons · ${fmt.num(stats.exits)} exit (S+H)` },
-    { label: 'Add-ons, current holdings', value: firm ? fmt.num(heldAddons) : '—', sub: firm ? held.filter(r => r.addons).map(r => `${r.short} ${r.addons}`).join(' · ') + (sh ? ` · +${sh.addons} at S+H` : '') : 'dataset pending' },
+    { label: 'Add-ons, current holdings', value: firm ? fmt.num(heldAddons) : '—', sub: firm ? held.filter(r => r.addons).map(r => `${r.short} ${r.addons}`).join(' · ') : 'dataset pending' },
     { label: 'Avg hold, current holdings', value: avgHold != null ? `${avgHold.toFixed(1)} yrs` : '—', sub: inWindow.length ? `${inWindow.map(r => `${r.short} ${r.hold.toFixed(1)}`).join(' · ')} · S+H exited at ${sh ? sh.hold.toFixed(1) : '3.7'}` : '', color: inWindow.length ? 'var(--sys-warn)' : 'var(--sys-good)' },
     { label: 'CET opportunities tracked', value: cetOpp ? fmt.num(opps.length) : '—', sub: cetOpp ? `${fmt.num(due.length)} bids due ≤60 days${due[0] ? ` · next ${fmt.dateShort(due[0].due_date)}` : ''}` : 'dataset pending', color: 'var(--co-cet)' },
     { label: 'M&A targets screened', value: targets ? fmt.num(targets) : '—', sub: `CET ${maCet?.items?.length || 0} · PP ${maPp?.items?.length || 0} · FL+TS ${maFlTs?.items?.length || 0}` },
-    { label: 'PE sponsors profiled', value: pe ? fmt.num(pe.items.length) : '—', sub: pe ? `${fmt.num(pe.items.filter(f => f.threat_level === 'high').length)} high-threat · funds · deals` : 'dataset pending' },
+    { label: 'PE sponsors profiled', value: pe ? fmt.num(pe.items.length) : '—', sub: pe ? `${fmt.num(pe.items.filter(f => f.threat_level === 'high').length)} high-threat` : 'dataset pending' },
   ]) +
-  `<div class="mt-12">${ui.panel({ title: 'Value & exit readiness', sub: 'Per company: hold length, add-ons, exit window and the one next action, then entry value and current scale (est.), debt and public mark signal. Click a row for the basis behind each estimate.', body: `<div class="sys-chips" style="padding:0 var(--pad) var(--sys-sp-4)"><button type="button" class="sys-chip" id="est-toggle" aria-pressed="true"></button></div><div id="vx-tbl"></div>`, flush: true, foot: `${ui.source('Broad Sky firm profile (entry, add-ons) · company filings estimate tables (SEC Form D and ADV, BDC schedules, PPP loans, franchise disclosures)', '#/fin/portfolio', firm?.meta?.generated || 'Sept 2026')} · <span class="sys-muted">est. = triangulated from public filings, not company-reported · dot = confidence (green high · amber medium · grey low)</span>` })}</div>` +
+  `<div class="mt-12">${ui.panel({ title: 'Value & exit readiness', sub: 'Hold, add-ons, exit window and next action per company, then value, debt and marks. Click a row for the basis.', body: `<div class="sys-chips" style="padding:0 var(--pad) var(--sys-sp-4)"><button type="button" class="sys-chip" id="est-toggle" aria-pressed="true"></button></div><div id="vx-tbl"></div>`, flush: true, foot: `${ui.source('BSP firm profile (entry, add-ons) · company filings estimate tables (SEC Form D and ADV, BDC schedules, PPP loans, franchise disclosures)', '#/fin/portfolio', firm?.meta?.generated || 'Sept 2026')} · <span class="sys-muted">est. = triangulated from public filings, not company-reported · dot = confidence (green high · amber medium · grey low)</span>` })}</div>` +
   `<div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Portfolio footprint', sub: `Headquarters, operating footprints and live NWS alerts touching operating counties (${fmt.num(alerts.length)} of ${fmt.num(allAlerts.length)} statewide alerts in PA · NJ · MA · CT)`, body: `<div class="map tall" id="home-map"></div>`, flush: true, foot: ui.source('Company filings & press; NWS alerts API', 'https://api.weather.gov', 'live') })}
     <div class="col gap-12">
-      ${ui.panel({ title: 'Companies', sub: 'Add-ons under Broad Sky with year · click a company to open its module', body: `<div class="sys-grid cards" id="co-cards">${COS.map(c => { const adds = addOnsOf(firm, c.id); const it = firmItem(firm, c.id); return `<div class="sys-card sys-card--link card" data-co="${c.id}" data-id="${c.id}" role="link" tabindex="0" aria-label="Open ${esc(c.name)} module"><div class="sys-card-title t">${esc(c.name)}<span class="sys-num rk">since ${esc(monYr(it?.entry_date || c.entry))}</span></div><div class="sys-card-body s">${esc(c.sector)} · ${esc(c.hq)}</div><div class="sys-chips m">${coChip(c.id, firm ? `${adds.length} add-on${adds.length === 1 ? '' : 's'} under Broad Sky` : 'add-ons pending')}${fmt.chip(c.footprint)}${adds.map(a => a.unid ? stChip(a.name, '') : coChip(c.id, `${a.name}${a.year ? ` · ${a.year}` : ''}`, a.note)).join('')}</div></div>`; }).join('')}</div>`, foot: firm ? ui.source('Broad Sky firm profile: add-ons (press releases; Broad Sky portfolio page)', 'https://broadskypartners.com/', firm.meta?.generated) : '' })}
+      ${ui.panel({ title: 'Companies', sub: 'Add-ons under BSP with year · click a company to open its module', body: `<div class="sys-grid cards" id="co-cards">${COS.map(c => { const adds = addOnsOf(firm, c.id); const it = firmItem(firm, c.id); return `<div class="sys-card sys-card--link card" data-co="${c.id}" data-id="${c.id}" role="link" tabindex="0" aria-label="Open ${esc(c.name)} module"><div class="sys-card-title t">${esc(c.name)}<span class="sys-num rk">since ${esc(monYr(it?.entry_date || c.entry))}</span></div><div class="sys-card-body s">${esc(c.sector)} · ${esc(c.hq)}</div><div class="sys-chips m">${coChip(c.id, firm ? `${adds.length} add-on${adds.length === 1 ? '' : 's'} under BSP` : 'add-ons pending')}${fmt.chip(c.footprint)}${adds.map(a => a.unid ? stChip(a.name, '') : coChip(c.id, `${a.name}${a.year ? ` · ${a.year}` : ''}`, a.note)).join('')}</div></div>`; }).join('')}</div>`, foot: firm ? ui.source('BSP firm profile: add-ons (press releases; BSP portfolio page)', 'https://broadskypartners.com/', firm.meta?.generated) : '' })}
     </div>
   </div>
   <div class="grid grid-3 mt-12">
     ${ui.panel({ title: 'Signals this week', sub: 'Bids due, weather alerts in operating counties, top-ranked add-ons and the latest sponsor deals', body: `<div id="signals">${ui.loading()}</div>`, foot: ui.source('CET opportunity radar · National Weather Service alerts (operating counties) · add-on target lists · Private-equity landscape', null, cetOpp?.meta?.generated || 'Sept 2026') })}
     ${ui.panel({ title: 'Value-creation levers by company', sub: 'Where this portal points each management team', body: `<div class="col gap-12">${COS.map(c => `<div class="row" style="align-items:flex-start">${coChip(c.id, c.short)}<div class="sys-card-body">${esc(c.lever)}</div></div>`).join('')}</div>` })}
-    ${ui.panel({ title: 'Broad Sky timeline', sub: 'Anchor acquisitions, add-ons and exits · newest first', body: `<div id="tl">${ui.loading()}</div>`, scroll: true, foot: firm ? ui.source('Press releases & Broad Sky site', 'https://broadskypartners.com/news/', firm.meta?.generated) : '' })}
+    ${ui.panel({ title: 'BSP timeline', sub: 'Anchor acquisitions, add-ons and exits · newest first', body: `<div id="tl">${ui.loading()}</div>`, scroll: true, foot: firm ? ui.source('Press releases & BSP site', 'https://broadskypartners.com/news/', firm.meta?.generated) : '' })}
   </div>
   <div class="mt-12">${ui.panel({ title: 'Data coverage', sub: `Row counts for ${DATA_FILES.length + (manifest?.datasets?.length || 0)} of the portal's dataset files · home sales in ${fmt.num(homeCounties)} portfolio counties`, body: `<div class="sys-actions" style="margin:0;padding:0 var(--pad) var(--sys-sp-4)"><button type="button" class="${ui.btnCls('secondary', 'sm')}" id="dc-refresh">↻ Refresh live counts</button></div><div id="dc-tbl"></div>`, flush: true, foot: ui.source('Portal dataset manifest, research files and deed records (generation dates)', null, manifest?.generated || '2026-09-24') })}</div>`;
 
-  // value & exit readiness scoreboard (estimates can be hidden before sharing outside Broad Sky)
+  // value & exit readiness scoreboard (estimates can be hidden before sharing outside BSP)
   const estCell = (r, k) => { const x = r.e?.[k]; if (r.status === 'exited') return '<span class="dim small">—</span>'; return x ? `<span class="small" title="${esc(`${x.metric}: ${x.v}`)}">${esc(shortEst(x.v))}</span>${dot(x.conf)}` : '<span class="dim small">n/a</span>'; };
   const baseCols = [
     { key: 'company', label: 'Company', width: '170px', wrap: true, fmt: (v, r) => `<div class="row">${coChip(r.id, r.short)}<span class="strong">${esc(v)}</span></div><div class="small dim mt-8">since ${esc(monYr(r.entry))}${r.exit ? ` · exit ${esc(monYr(r.exit))}` : ''}</div>` },
@@ -220,7 +220,7 @@ async function overview(ctx) {
     const tbl = r.fd?.meta?.estimate_table || [];
     inspector.open({ title: esc(r.company), sub: `Held since ${esc(monYr(r.entry))} · ${r.hold?.toFixed(1)} yrs · ${esc(r.window)}`, color: CO_VAR(r.id), sections: [
       { label: 'Recommended next action', html: `<div class="small">${esc(r.action)}</div>` },
-      { label: 'Add-ons under Broad Sky', html: r.addList.length ? ui.timeline(r.addList.map(a => ({ date: a.year || 'n/d', color: CO_VAR(r.id), html: `${esc(a.name)}${a.hq ? ` <span class="dim">· ${esc(a.hq)}</span>` : ''}${a.src ? ` <a class="dim" href="${esc(a.src)}" target="_blank" rel="noopener">↗</a>` : ''}` }))) : '<div class="small dim">None announced under Broad Sky</div>' },
+      { label: 'Add-ons under BSP', html: r.addList.length ? ui.timeline(r.addList.map(a => ({ date: a.year || 'n/d', color: CO_VAR(r.id), html: `${esc(a.name)}${a.hq ? ` <span class="dim">· ${esc(a.hq)}</span>` : ''}${a.src ? ` <a class="dim" href="${esc(a.src)}" target="_blank" rel="noopener">↗</a>` : ''}` }))) : '<div class="small dim">None announced under BSP</div>' },
       showEst && tbl.length ? { label: `Estimates (BSP-only) · ${tbl.length}`, html: `<div class="col gap-8">${tbl.map(e => `<div><div class="small"><b>${esc(e.metric)}</b>${dot(e.confidence)}</div><div class="small">${esc(e.estimate)}</div>${e.basis ? `<div class="small dim">${esc(e.basis)}</div>` : ''}</div>`).join('')}</div>` } : null,
       !showEst ? { label: 'Estimates', html: '<div class="small dim">Hidden. Use the BSP-only toggle on the scoreboard to show them.</div>' } : null,
       !r.fd ? { label: 'Estimates', html: ui.note(`Research dataset <b>${esc(dataset(EST[r.id].ds))}</b> not yet available`, 'warn') } : null,
@@ -255,7 +255,7 @@ async function overview(ctx) {
 
   // timeline — bsp_firm.timeline, newest first, coloured by company
   const tl = (firm?.timeline || []).filter(t => t.date).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
-  el.querySelector('#tl').innerHTML = tl.length ? ui.timeline(tl.slice(0, 40).map(t => ({ date: t.date, color: tlColor(t.company), html: `${t.company ? `<b>${esc(t.company)}</b> · ` : ''}${esc(cleanEvent(t.event))}${t.source_url ? ` <a class="dim" href="${esc(t.source_url)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` : ''}` }))) : ui.note('Timeline pending: the <b>Broad Sky firm profile</b> research dataset is not available yet.', 'warn');
+  el.querySelector('#tl').innerHTML = tl.length ? ui.timeline(tl.slice(0, 40).map(t => ({ date: t.date, color: tlColor(t.company), html: `${t.company ? `<b>${esc(t.company)}</b> · ` : ''}${esc(cleanEvent(t.event))}${t.source_url ? ` <a class="dim" href="${esc(t.source_url)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` : ''}` }))) : ui.note('Timeline pending: the <b>BSP firm profile</b> research dataset is not available yet.', 'warn');
 
 
   // the company chip already names the company, so the label drops a leading "CET " / "BPI " (sentence case kept)
@@ -309,7 +309,7 @@ async function firmView(ctx) {
   const { el, ui, fmt, data, esc, inspector, app } = ctx;
   const firm = await data.research('bsp_firm');
   if (!el.isConnected) return;
-  if (!firm) { el.innerHTML = ui.pageHead({ title: 'Firm profile' }) + ui.note('Research dataset not yet available: <b>Broad Sky firm profile</b>', 'warn'); return; }
+  if (!firm) { el.innerHTML = ui.pageHead({ title: 'Firm profile' }) + ui.note('Research dataset not yet available: <b>BSP firm profile</b>', 'warn'); return; }
   const f = firm.firm || {};
   const stats = f.stats || { platforms: 7, add_ons: 23, exits: 1, current_holdings: 6 };
   const cap = f.capital_raised_sec_form_d || null;
@@ -321,26 +321,26 @@ async function firmView(ctx) {
   const prg = f.prg && typeof f.prg === 'object' ? f.prg : (typeof f.prg === 'string' ? { description: f.prg, members: [] } : null);
   // History: research notes are rewritten as reader-facing facts (the unverified '$137M Fund I' entry is the Frontline deal vehicle)
   const hist = (Array.isArray(f.history) ? f.history : []).map(h => /^Task brief/i.test(h.event || '')
-    ? { ...h, verified: true, event: `Frontline deal vehicle BSP-FL LP files Form D: ${flSpv ? fmt.money(flSpv.sold_usd) : '$137M'} sold${flCo ? `, plus ${fmt.money(flCo.sold_usd)} through BSP-FL Co-Invest` : ''}. This is deal-level capital, not a fund close; the main fund (Broad Sky Partners, LP) reports ${fund ? fmt.money(fund) : '$335M'} sold.` }
+    ? { ...h, verified: true, event: `Frontline deal vehicle BSP-FL LP files Form D: ${flSpv ? fmt.money(flSpv.sold_usd) : '$137M'} sold${flCo ? `, plus ${fmt.money(flCo.sold_usd)} through BSP-FL Co-Invest` : ''}. This is deal-level capital, not a fund close; the main fund (Fund I) reports ${fund ? fmt.money(fund) : '$335M'} sold.` }
     : { ...h, event: cleanEvent(h.event) });
   const yr = s => String(s || '').slice(0, 4);
 
   el.innerHTML = ui.pageHead({
     title: 'Firm profile',
-    sub: `<b>So what:</b> Fund I (Broad Sky Partners, LP) reports ${fund ? fmt.money(fund) : '—'} sold to ${cap?.investors ?? '—'} investors (SEC Form D, ${cap?.as_of ? esc(monYr(cap.as_of)) : 'Apr 2025'}); deal-level SPVs report ${fmt.money(spvSum)} sold across ${spvs.length} vehicles, pooling Fund I money with LP co-invest (so not additive to the fund), which shows LP appetite to fund larger checks than the fund alone. ${fmt.num(stats.platforms)} companies and ${fmt.num(stats.add_ons)} add-ons since the ${yr(f.relaunched) || '2021'} relaunch; first exit Smith + Howard → TPG Growth${sh ? ` after ${sh.hold.toFixed(1)} years and ${sh.addons} add-ons` : ''}.`,
-    chips: `${fmt.chip(`Founded ${f.founded || 2014} · relaunched ${f.relaunched ? monYr(f.relaunched) : 'Jun 2021'}`, 'var(--sys-brand)')}${fund ? fmt.chip(`Fund I ${fmt.money(fund)} sold · Form D ${cap?.as_of ? monYr(cap.as_of) : ''}`) : ''}${spvSum ? fmt.chip(`Deal SPVs ${fmt.money(spvSum)} sold (${spvs.length}) · incl. Fund I $`) : ''}${fmt.chip(`${stats.platforms} companies · ${stats.add_ons} add-ons`)}${fmt.chip(`${stats.exits} exit · S+H → TPG Growth (Aug 2026)`)}`,
+    sub: `Fund I is ${fund ? fmt.money(fund) : '—'} from ${cap?.investors ?? '—'} investors (Form D); ${spvs.length} deal vehicles add ${fmt.money(spvSum)} with LP co-invest, which shows appetite for larger checks. ${fmt.num(stats.platforms)} companies, ${fmt.num(stats.add_ons)} add-ons, one exit.`,
+    chips: `${fmt.chip(`Relaunched ${f.relaunched ? monYr(f.relaunched) : 'Jun 2021'}`, 'var(--sys-brand)')}${fund ? fmt.chip(`Fund I ${fmt.money(fund)}`) : ''}${spvSum ? fmt.chip(`Deal vehicles ${fmt.money(spvSum)}`) : ''}${fmt.chip(`${stats.platforms} companies · ${stats.add_ons} add-ons`)}${fmt.chip(`Exit: S+H, Aug 2026`)}`,
     actions: `<a class="${ui.btnCls('secondary', '')}" href="#/fin/portfolio">Portfolio financial picture</a><a class="${ui.btnCls('secondary', '')}" href="#/home/overview">Exit readiness</a>`,
   }) +
   ui.kpis([
     { label: 'Fund I sold (Form D)', value: fund ? fmt.money(fund) : '—', sub: `${cap?.investors ?? '—'} investors · ${cap?.as_of ? esc(monYr(cap.as_of)) : ''}` },
-    { label: 'Deal-vehicle capital', value: spvSum ? fmt.money(spvSum) : '—', sub: `${spvs.length} SPVs · pool Fund I + LP co-invest · not additive` },
+    { label: 'Deal-vehicle capital', value: spvSum ? fmt.money(spvSum) : '—', sub: `${spvs.length} vehicles · not additive to Fund I` },
     { label: 'Companies', value: fmt.num(stats.platforms), sub: `${fmt.num(stats.current_holdings ?? 6)} held · ${fmt.num(stats.exits)} exited` },
     { label: 'Add-ons', value: fmt.num(stats.add_ons), sub: sh ? `${sh.addons} at S+H · ${stats.add_ons - sh.addons} in current holdings` : '' },
     { label: 'Investment team', value: fmt.num((f.team || []).length), sub: `${fmt.num(prg?.members?.length || 0)} in the Portfolio Resource Group` },
   ]) +
-  `<div class="mt-12">${ui.panel({ title: 'Companies', sub: 'Every Broad Sky portfolio company including the exit · click a row for thesis, add-ons and sources', body: '<div id="pf-tbl"></div>', flush: true, foot: ui.source('Broad Sky firm profile: current holdings and timeline (Smith + Howard)', 'https://broadskypartners.com/', firm.meta?.generated) })}</div>
+  `<div class="mt-12">${ui.panel({ title: 'Companies', sub: 'Every BSP portfolio company including the exit · click a row for thesis, add-ons and sources', body: '<div id="pf-tbl"></div>', flush: true, foot: ui.source('BSP firm profile: current holdings and timeline (Smith + Howard)', 'https://broadskypartners.com/', firm.meta?.generated) })}</div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'History', sub: 'Founding, Carlyle years, relaunch, fund formation and first exit', scroll: true, body: hist.length ? ui.timeline(hist.map(h => ({ date: h.date, color: h.verified === false ? 'var(--sys-warn)' : 'var(--sys-brand)', html: `${esc(h.event)}${h.verified === false ? ` ${stChip('unverified', 'warn')}` : ''}${h.source_url ? ` <a class="dim" href="${esc(h.source_url)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` : ''}` }))) : ui.note('Firm history pending in Broad Sky firm profile', 'warn'), foot: ui.source('Broad Sky team pages, press releases, SEC EDGAR', 'https://broadskypartners.com/team/', f.retrieved) })}
+    ${ui.panel({ title: 'History', sub: 'Founding, Carlyle years, relaunch, fund formation and first exit', scroll: true, body: hist.length ? ui.timeline(hist.map(h => ({ date: h.date, color: h.verified === false ? 'var(--sys-warn)' : 'var(--sys-brand)', html: `${esc(h.event)}${h.verified === false ? ` ${stChip('unverified', 'warn')}` : ''}${h.source_url ? ` <a class="dim" href="${esc(h.source_url)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` : ''}` }))) : ui.note('Firm history pending in BSP firm profile', 'warn'), foot: ui.source('BSP team pages, press releases, SEC EDGAR', 'https://broadskypartners.com/team/', f.retrieved) })}
     ${ui.panel({ title: 'Team & Portfolio Resource Group', scroll: true, body: `${(f.team || []).length ? `<div class="col gap-8">${f.team.map(t => `<div><div class="row"><span class="strong">${esc(t.name)}</span><span class="muted small">${esc(t.title || '')}</span>${t.source_url ? `<a class="dim small" href="${esc(t.source_url)}" target="_blank" rel="noopener" aria-label="Bio">↗</a>` : ''}</div>${t.prior ? `<div class="small dim">${esc(t.prior)}</div>` : ''}</div>`).join('')}</div>` : ui.note('Team list pending', 'warn')}
       ${prg ? `<h4 class="sys-card-label mt-16">Portfolio Resource Group</h4><div class="small text-2">${esc(prg.description || '')}</div><div class="col gap-8 mt-8">${(prg.members || []).map(m => `<div><div class="row"><span class="strong">${esc(m.name)}</span><span class="muted small">${esc(m.title || '')}</span>${m.source_url ? `<a class="dim small" href="${esc(m.source_url)}" target="_blank" rel="noopener" aria-label="Bio">↗</a>` : ''}</div>${m.prior ? `<div class="small dim">${esc(m.prior)}</div>` : ''}</div>`).join('')}</div>` : ''}
       ${(f.executive_board || []).length ? `<h4 class="sys-card-label mt-16">Executive Board · ${f.executive_board.length}</h4><div class="sys-chips mt-8">${f.executive_board.map(b => `<span class="sys-chip" title="${esc(b.prior || '')}">${esc(b.name)}</span>`).join('')}</div>` : ''}`, foot: ui.source('broadskypartners.com/team and /strategy', prg?.source_url || 'https://broadskypartners.com/team/', f.retrieved) })}
@@ -370,7 +370,7 @@ async function firmView(ctx) {
     inspector.open({ title: esc(p.company), sub: `${esc(p.sector || '')}`, color: r.hex, sections: [
       { label: 'Snapshot', html: ui.kv({ HQ: esc([p.hq_city, p.state].filter(Boolean).join(', ')), Entry: esc(monYr(p.entry_date)), Hold: `${r.hold.toFixed(1)} yrs`, Seller: esc(p.entry_source || ''), CEO: esc(p.ceo || ''), Employees: esc(p.employees_est || '') }) },
       p.thesis ? { label: 'Thesis', html: `<div class="small text-2">${esc(p.thesis)}</div>` } : null,
-      { label: `Add-ons under Broad Sky · ${r.addons}`, html: r.addons ? ui.timeline(addOnsOf(firm, r.id).map(a => ({ date: a.year || 'n/d', color: r.hex, html: `${esc(a.name)}${a.hq ? ` <span class="dim">· ${esc(a.hq)}</span>` : ''}${a.src ? ` <a class="dim" href="${esc(a.src)}" target="_blank" rel="noopener">↗</a>` : ''}` }))) : '<div class="small dim">None announced under Broad Sky</div>' },
+      { label: `Add-ons under BSP · ${r.addons}`, html: r.addons ? ui.timeline(addOnsOf(firm, r.id).map(a => ({ date: a.year || 'n/d', color: r.hex, html: `${esc(a.name)}${a.hq ? ` <span class="dim">· ${esc(a.hq)}</span>` : ''}${a.src ? ` <a class="dim" href="${esc(a.src)}" target="_blank" rel="noopener">↗</a>` : ''}` }))) : '<div class="small dim">None announced under BSP</div>' },
       (p.sources || []).length ? { label: 'Sources', html: `<div class="col gap-4 small">${p.sources.slice(0, 6).map(s => `<a href="${esc(s)}" target="_blank" rel="noopener" class="ellipsis">${esc(srcLabel(s))}</a>`).join('')}</div>` } : null,
       ACTION[r.id] ? { label: 'Next action', html: `<div class="small">${esc(ACTION[r.id])}</div>` } : null,
     ].filter(Boolean), actions: [{ label: 'Open module', href: `#/${r.id}` }] });
@@ -384,7 +384,7 @@ async function firmView(ctx) {
     { key: 'date', label: 'First sale / filed', num: true, fmt: v => `<span class="small">${fmt.date(v)}</span>` },
     { key: 'note', label: 'Note', wrap: true, fmt: v => `<span class="small text-2">${esc(String(v || '').slice(0, 90))}</span>` },
   ] });
-  app.index((f.team || []).map(t => ({ label: t.name, sub: `Broad Sky · ${t.title || ''}`, href: '#/home/firm', kind: 'Person', color: CO_HEX.bsp })));
+  app.index((f.team || []).map(t => ({ label: t.name, sub: `BSP · ${t.title || ''}`, href: '#/home/firm', kind: 'Person', color: CO_HEX.bsp })));
 }
 
 export default {
@@ -392,12 +392,12 @@ export default {
   tagline: 'Portfolio-wide situational awareness',
   views: [
     { id: 'overview', name: 'Overview', icon: '◉', render: overview },
-    { id: 'firm', name: 'Broad Sky profile', icon: '◈', render: firmView },
+    { id: 'firm', name: 'BSP profile', icon: '◈', render: firmView },
   ],
   tour: [
-    { order: 100, hash: '#/home/overview', caption: '<b>Broad Sky Operating Intelligence.</b> Six companies, one portal: every datapoint tied to a revenue, acquisition or operating decision.', narration: 'Welcome to Broad Sky Operating Intelligence: six companies, one portal, and every datapoint tied to an action.', duration: 7000 },
-    { order: 105, hash: '#/home/overview', caption: '<b>Value & exit readiness.</b> Hold length, add-ons, estimated entry value and scale, debt maturity and the exit window for every company, benchmarked to the Smith + Howard exit.', narration: 'The scoreboard shows hold length, add-ons, estimated value and debt, and the exit window for every company, benchmarked against the Smith and Howard exit.', duration: 9000 },
-    { order: 110, hash: '#/home/overview', caption: '<b>This week.</b> Signals pull live bid deadlines, NWS alerts in operating counties, top-ranked add-ons and rival deals; <b>Data coverage</b> lists every dataset behind the portal.', narration: 'Signals pull live bid deadlines, weather alerts in operating counties, top add-ons and rival deals. The coverage table lists every dataset.', duration: 9000 },
-    { order: 120, hash: '#/home/firm', caption: '<b>Broad Sky Partners.</b> Fund I $335M (Form D) · 7 companies · 23 add-ons · first exit: Smith + Howard → TPG Growth (Aug 2026).', narration: 'Broad Sky itself: a three hundred thirty-five million dollar first fund, seven companies, twenty-three add-ons, and a first exit to TPG.', duration: 7000 },
+    { order: 100, hash: '#/home/overview', caption: '<b>BSP Desk.</b> Six companies. Every number is tied to a decision.', narration: 'This is BSP Desk. Six companies, and every number is tied to a decision.', duration: 7000 },
+    { order: 105, hash: '#/home/overview', caption: '<b>Exit readiness.</b> Hold, add-ons, value, debt and exit window per company, against the Smith + Howard exit.', narration: 'The scoreboard shows hold, add-ons, value, debt and exit window, against the Smith and Howard exit.', duration: 9000 },
+    { order: 110, hash: '#/home/overview', caption: '<b>This week.</b> Bid deadlines, weather alerts, top add-ons and rival deals. <b>Data coverage</b> lists every dataset.', narration: 'Signals show bid deadlines, weather alerts, top add-ons and rival deals. Coverage lists every dataset.', duration: 9000 },
+    { order: 120, hash: '#/home/firm', caption: '<b>BSP.</b> Fund I $335M (Form D) · 7 companies · 23 add-ons · first exit: Smith + Howard → TPG Growth (Aug 2026).', narration: 'The firm: a three hundred thirty-five million dollar fund, seven companies, twenty-three add-ons, one exit.', duration: 7000 },
   ],
 };

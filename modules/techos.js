@@ -1,6 +1,6 @@
-import * as Copy from './copy.js?v=20261006180606';
+import * as Copy from './copy.js?v=20261006224618';
 /* ═══════════════════════════════════════════════════════════════════════════
-   Tech enablement — the "OS" program across six Broad Sky platforms.
+   Tech enablement — the "OS" program across six BSP companies.
    ServiceOS (Punctual Pros) · GridOS (CET) · FirmOS (Frontline) · LabOS (Thomas Scientific)
    SignalOS (BPI) · HarborOS (Fair Harbor). Smith + Howard (exited Aug 2026) is excluded.
    Datasets: ServiceOS evidence (valuation_evidence, vendor_stack, kpi_benchmark,
@@ -8,9 +8,9 @@ import * as Copy from './copy.js?v=20261006180606';
              research/*_filings (estimate tables → calculator defaults).
    Every value-creation number here is an analyst estimate (labelled est.).
    ═══════════════════════════════════════════════════════════════════════════ */
-const injectCss = () => { if (!document.getElementById('css-techos')) { const l = document.createElement('link'); l.id = 'css-techos'; l.rel = 'stylesheet'; l.href = 'modules/techos.css?v=20261006180606'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-techos')) { const l = document.createElement('link'); l.id = 'css-techos'; l.rel = 'stylesheet'; l.href = 'modules/techos.css?v=20261006224618'; document.head.appendChild(l); } };
 
-const OUT_LINKS = `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="index.html" title="Broad Sky Operating Intelligence landing page">Landing</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="redesigns/index.html" title="Portfolio site concepts + OS program gallery">Site concepts</a>`;
+const OUT_LINKS = `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="index.html" title="BSP Desk landing page">Landing</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="redesigns/index.html" title="Portfolio site concepts + OS program gallery">Site concepts</a>`;
 /* ── Platform / OS definitions (copy + calculator wiring) ────────────────── */
 const ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
 const ICON = {
@@ -96,7 +96,7 @@ const WS = [
   { id: 'prg-1', k: 'prg', name: 'Portfolio KPI layer: one dictionary, connectors, monthly pack', s: 0, e: 4, owner: 'PRG Data & Technology lead', deps: [], kpi: 'One KPI definition set across six companies', tool: 'Portal data layer', ms: [{ m: 4, t: 'KPI pack v1' }] },
   { id: 'prg-2', k: 'prg', name: 'Vendor master agreements and security review', s: 1, e: 5, owner: 'PRG Procurement + Frontline security', deps: [], kpi: 'Portfolio pricing on shared vendors', tool: 'MSAs' },
   { id: 'prg-3', k: 'prg', name: 'Quarterly OS value audit in the board pack', s: 3, e: 24, owner: 'PRG Operating Partners', deps: ['prg-1'], kpi: 'Each OS KPI vs baseline, signed off quarterly', tool: 'Board pack', ms: [6, 9, 12, 15, 18, 21].map(m => ({ m, t: 'Q audit' })) },
-  { id: 'prg-4', k: 'prg', name: 'Exit data room: 24 months of OS KPI history', s: 18, e: 24, owner: 'PRG + Broad Sky deal team', deps: ['prg-3'], kpi: 'Buyer-verifiable KPI trend lines', tool: 'Data room' },
+  { id: 'prg-4', k: 'prg', name: 'Exit data room: 24 months of OS KPI history', s: 18, e: 24, owner: 'PRG + BSP deal team', deps: ['prg-3'], kpi: 'Buyer-verifiable KPI trend lines', tool: 'Data room' },
 
   { id: 'pp-1', k: 'pp', name: 'FSM audit: pricebook, membership and call data clean-up', s: 0, e: 2, owner: 'PP COO · PRG Residential', deps: ['prg-1'], kpi: 'Baselines for every ServiceOS KPI', tool: 'ServiceTitan' },
   { id: 'pp-2', k: 'pp', name: 'AI call answering + call scoring on the Lancaster queue', s: 1, e: 4, owner: 'PP call-centre manager', deps: ['pp-1'], kpi: 'Booking rate 38% → 59% (kb-pp-1)', tool: 'Avoca', ms: [{ m: 3, t: 'Live for winter peak' }] },
@@ -303,8 +303,8 @@ async function overview(ctx) {
 
   el.innerHTML = `<div class="m-techos">${ui.pageHead({
     title: 'Tech enablement',
-    sub: `<b>So what:</b> six buyer-legible operating systems, one per company, assembled from proven vendors plus the portal’s data layer. Together they need an est. <b>${rangeM(inv)}</b> of spend for <b>${rangeM(imp)}</b> of run-rate EBITDA and <b>+${trim(tLo, 1)}–${trim(tHi, 1)} turns</b> of multiple. The mid case adds ≈<b>${$M(dEV)}</b> of enterprise value; ${escTxt(lead.os)} at ${escTxt(lead.co)} is the largest single prize.`,
-    chips: `${fmt.chip('OS program', 'var(--sys-brand)')}${fmt.chip('est. · analyst assumptions, not guidance', 'var(--sys-warn)')}${b.items.length ? fmt.chip(`${b.items.length} evidence items`, 'var(--sys-brand)') : fmt.chip('built-in snapshot', 'var(--sys-warn)')}${fmt.chip('Smith + Howard excluded (exited Aug 2026)', 'var(--sys-mute-2)')}`,
+    sub: `Six operating systems, one per company, cost an est. <b>${rangeM(inv)}</b> for <b>${rangeM(imp)}</b> of run-rate EBITDA. The mid case adds ≈<b>${$M(dEV)}</b> of value; ${escTxt(lead.os)} at ${escTxt(lead.co)} is the largest.`,
+    chips: `${fmt.chip('OS program', 'var(--sys-brand)')}${fmt.chip('est. · analyst assumptions', 'var(--sys-warn)')}${b.items.length ? fmt.chip(`${b.items.length} evidence items`, 'var(--sys-brand)') : fmt.chip('built-in snapshot', 'var(--sys-warn)')}${fmt.chip('Excludes Smith + Howard', 'var(--sys-mute-2)')}`,
     actions: `${OUT_LINKS}<button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="evidence">Evidence</button><button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="roadmap">Roadmap</button><button class="sys-btn sys-btn--primary sys-btn--sm btn sm primary" data-go="calculator">Open calculator →</button>`,
   })}
   ${missingNote(ui, b)}
@@ -347,7 +347,7 @@ function thesisHtml(b, ve) {
   const nV = b.kinds.vend.length;
   const beats = [
     { k: pkf ? `${trim(pkf.metric_range?.[0] ?? 5, 1)}–6x → ${trim(pkf.metric_value, 0)}x+` : '5–6x → 10x+', h: 'Buyers pay for predictability', d: pkf ? 'PKF’s 2026 HVAC grid puts project-heavy, low-retention firms at 5–6x EBITDA and repeatable-service firms with in-house capabilities at 10x+. Capstone/IMAP see a 3.0-turn spread between typical (6.8x) and premium (9.8x) middle-market deals.' : 'Banker grids price repeatable, visible earnings well above project-heavy work.', src: pkf },
-    { k: nV ? `${nV} vendors` : 'Proven vendors', h: 'Assemble, don’t build', d: 'Each OS is a named, buyer-legible stack of proven vendors (ServiceTitan, Procore, ConnectWise/Kaseya, Shopify Plus, Brandwatch, Klaviyo) plus a thin Broad Sky data layer from this portal. No custom software risk.', src: null },
+    { k: nV ? `${nV} vendors` : 'Proven vendors', h: 'Assemble, don’t build', d: 'Each OS is a named, buyer-legible stack of proven vendors (ServiceTitan, Procore, ConnectWise/Kaseya, Shopify Plus, Brandwatch, Klaviyo) plus a thin BSP data layer from this portal. No custom software risk.', src: null },
     { k: st ? `${st.extra_metrics?.top_quartile_gtv_growth_pct ?? 20}% vs ${st.extra_metrics?.bottom_quartile_gtv_growth_pct ?? 8}%` : '20% vs 8%', h: 'Adoption shows up in growth', d: 'ServiceTitan’s S-1 shows heavy ServiceTitan users growing GTV 20% versus 8% for light users; pricebook adopters grew ticket 14% versus 8%. The KPIs are measurable within two quarters.', src: st },
     { k: `+${trim(0.5, 1)}–2.5x`, h: 'Credit only a fraction', d: `Champions (${ch ? trim(ch.metric_value, 1) : '18.5'}x) and Sila (${sila ? trim(sila.metric_value, 0) : '17'}x) are scale prints. This program credits tech with 0.5–2.5 turns, inside the ${cap ? trim(cap.metric_value, 1) : '3.0'}-turn quality spread.`, src: ch },
   ];
@@ -452,7 +452,7 @@ async function evidence(ctx) {
   const tab = ['val', 'kpi', 'vend'].includes(params.tab) ? params.tab : 'val';
   el.innerHTML = `<div class="m-techos">${ui.pageHead({
     title: 'Valuation evidence',
-    sub: `<b>So what:</b> the market pays up to ~3 turns more for recurring, visible earnings (Capstone 6.8x → 9.8x; PKF 5–6x → 10x+). The 17–18.5x prints are scale, not software, so the OS program credits tech with only <b>0.5–2.5 turns</b>. Every datapoint below is sourced, dated and confidence-rated.`,
+    sub: `Buyers pay up to ~3 turns more for recurring, visible earnings. The 17–18.5x prints reflect scale, so the program credits tech with only <b>0.5–2.5 turns</b>.`,
     chips: `${fmt.chip(`${K.val.length} valuation datapoints`, 'var(--sys-brand)')}${fmt.chip(`${K.kpi.length} KPI benchmarks`, 'var(--sys-brand)')}${fmt.chip(`${K.vend.length} vendors`, 'var(--sys-brand)')}${fmt.chip(`${sources.size} source domains`, 'var(--sys-mute-2)')}`,
     actions: `${OUT_LINKS}<button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="overview">Overview</button><button class="sys-btn sys-btn--primary sys-btn--sm btn sm primary" data-go="calculator">Calculator →</button>`,
   })}
@@ -462,7 +462,7 @@ async function evidence(ctx) {
     { label: 'HVAC banker grid', value: '5–6x → 10x+', sub: 'PKF, Summer 2026', color: 'var(--co-pp)' },
     { label: 'Credited to tech', value: '0.5–2.5x', sub: 'EV/EBITDA turns, by company', color: 'var(--co-fl)' },
     { label: 'High-confidence', value: `${hi} / ${K.val.length}`, sub: 'Valuation datapoints', color: 'var(--sys-good)' },
-    { label: 'Evidence window', value: `${escTxt(dates[0]?.slice(0, 4) || '—')}–${escTxt(dates[dates.length - 1]?.slice(0, 4) || '—')}`, sub: `${dates.filter(d => d >= '2026').length} of ${K.val.length} dated 2026 · newest ${escTxt(dates[dates.length - 1] || '—')}`, color: 'var(--sys-warn)' },
+    { label: 'Evidence window', value: `${escTxt(dates[0]?.slice(0, 4) || '—')}–${escTxt(dates[dates.length - 1]?.slice(0, 4) || '—')}`, sub: `${dates.filter(d => d >= '2026').length} of ${K.val.length} dated 2026`, color: 'var(--sys-warn)' },
   ])}
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'The multiple ladder', sub: 'EV/EBITDA prints and banker bands that frame the OS premium · click a row for the source', body: ladderHtml(b), foot: srcFoot(ui, b) })}
@@ -588,8 +588,8 @@ async function roadmap(ctx) {
   const deps = WS.reduce((s, w) => s + w.deps.length, 0); const sharedDeps = WS.filter(w => w.k !== 'prg' && w.deps.some(d => d.startsWith('prg-'))).length;
   el.innerHTML = `<div class="m-techos">${ui.pageHead({
     title: 'OS roadmap',
-    sub: `<b>So what:</b> every OS shows first value inside ${lastVal} months, starting with HarborOS at month ${firstVal}. The critical date is <b>December 2027</b>: LabOS must hand Thomas Scientific’s lenders a cost-to-serve and digital-mix story before its loan matures. The shared KPI layer (months 0–4) gates four of the six programs.`,
-    chips: `${fmt.chip('Oct 2026 → Sep 2028', 'var(--sys-brand)')}${fmt.chip('Owners are roles, not named individuals', 'var(--sys-mute-2)')}${fmt.chip('est. · planning assumption', 'var(--sys-warn)')}`,
+    sub: `Every OS shows first value within ${lastVal} months. The hard date is <b>December 2027</b>, when Thomas Scientific’s loan matures and LabOS must have landed.`,
+    chips: `${fmt.chip('Oct 2026 → Sep 2028', 'var(--sys-brand)')}${fmt.chip('Owners are roles', 'var(--sys-mute-2)')}${fmt.chip('est. · planning assumption', 'var(--sys-warn)')}`,
     actions: `${OUT_LINKS}<button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="overview">Overview</button><button class="sys-btn sys-btn--primary sys-btn--sm btn sm primary" data-go="calculator">Calculator →</button>`,
   })}
   ${missingNote(ui, b)}
@@ -597,7 +597,7 @@ async function roadmap(ctx) {
     { label: 'Workstreams', value: String(WS.length), sub: `${groups.length - 1} companies + shared PRG layer`, color: 'var(--sys-brand)' },
     { label: 'First value', value: `Month ${firstVal}`, sub: `${monthLabel(firstVal, true)} · HarborOS`, color: 'var(--sys-good)' },
     { label: 'All six live', value: `Month ${lastVal}`, sub: `${monthLabel(lastVal, true)} · LabOS full value`, color: 'var(--sys-warn)' },
-    { label: 'Gated by shared layer', value: String(sharedDeps), sub: `Workstreams waiting on PRG KPI/vendor work · ${deps} hand-offs in all`, color: 'var(--co-fl)' },
+    { label: 'Gated by shared layer', value: String(sharedDeps), sub: `waiting on PRG work · ${deps} hand-offs`, color: 'var(--co-fl)' },
     { label: 'Hard date', value: 'Dec 2027', sub: 'Thomas Scientific loan maturity', color: 'var(--sys-bad)' },
   ])}
   ${ui.panel({ title: 'Program plan', sub: 'Bars = workstreams (label = vendor/tool) · shaded band = time-to-value window from the evidence file · ◆ = milestone · click any bar', cls: 'mt-12', actions: `<div id="tx-rf"></div>`, body: `<div id="tx-gantt"></div>`, flush: true, foot: srcFoot(ui, b, 'analyst roadmap') })}
@@ -692,8 +692,8 @@ async function calculator(ctx) {
   };
   el.innerHTML = `<div class="m-techos">${ui.pageHead({
     title: 'Value-creation calculator',
-    sub: `<b>So what:</b> EBITDA uplift × today’s multiple, plus the re-rating on the new EBITDA, minus what the OS costs. Defaults come from the evidence file and the filings estimate tables; every input is an <b>est.</b> you can move.`,
-    chips: `${fmt.chip('est. · illustrative, not a forecast', 'var(--sys-warn)')}${fmt.chip('Defaults: ServiceOS evidence and company public filings', 'var(--sys-brand)')}`,
+    sub: `EBITDA uplift at today’s multiple, plus the re-rating, minus what the OS costs. Every input is an <b>est.</b> you can move.`,
+    chips: `${fmt.chip('est. · illustrative', 'var(--sys-warn)')}${fmt.chip('Defaults from filings', 'var(--sys-brand)')}`,
     actions: `${OUT_LINKS}<button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="overview">Overview</button><button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="evidence">Evidence</button>`,
   })}
   ${missingNote(ui, b)}
@@ -812,7 +812,7 @@ function formulaHtml(p, s, r) {
 export default {
   id: 'techos', name: 'Tech enablement', tag: 'OS', color: 'var(--sys-brand)', group: 'Intelligence',
   tagline: 'Six buyer-legible operating systems (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS) with sourced valuation evidence, a 24-month roadmap and value-creation math',
-  hq: { lat: 40.7536, lon: -73.9832, label: 'Broad Sky Partners, New York, NY' },
+  hq: { lat: 40.7536, lon: -73.9832, label: 'BSP, New York, NY' },
   views: [
     { id: 'overview', name: 'Overview', icon: '◉', render: overview },
     { id: 'evidence', name: 'Evidence', icon: '§', render: evidence },
@@ -820,9 +820,9 @@ export default {
     { id: 'calculator', name: 'Calculator', icon: '$', render: calculator },
   ],
   tour: [
-    { order: 950, hash: '#/techos/overview', caption: '<b>Tech enablement.</b> One operating system per company (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS), built from proven vendors plus this portal’s data layer.', narration: 'Tech enablement: one operating system per company, built from proven vendors and this portal’s data layer, each tied to the KPIs a buyer pays for.', duration: 8000 },
-    { order: 953, hash: '#/techos/evidence', caption: '<b>Why buyers pay.</b> Banker data put repeatable-service firms at 10x+ versus 5–6x for project-heavy peers; we credit tech with only 0.5–2.5 turns of that spread.', narration: 'Banker data put repeatable, visible earnings at ten times or more, versus five to six for project-heavy work. We credit technology with only part of that spread.', duration: 8500 },
-    { order: 956, hash: '#/techos/roadmap', caption: '<b>24-month roadmap.</b> Every OS shows first value inside 18 months; LabOS must reach Thomas Scientific’s lenders before the December 2027 maturity.', narration: 'Every program shows first value within eighteen months, and LabOS has to land before Thomas Scientific’s December 2027 loan maturity.', duration: 7500 },
-    { order: 959, hash: '#/techos/calculator?co=pp', caption: '<b>Value math.</b> EBITDA uplift × multiple, plus re-rating, minus spend: ServiceOS alone is worth an est. ~$11M of EV in the mid case. Every input is a labelled estimate.', narration: 'The calculator turns margin uplift and re-rating into equity value, net of spend, with every input labelled as an estimate.', duration: 8000 },
+    { order: 950, hash: '#/techos/overview', caption: '<b>Tech enablement.</b> One operating system per company, built from proven vendors and tied to buyer KPIs.', narration: 'One operating system per company, built from proven vendors and tied to the KPIs buyers pay for.', duration: 8000 },
+    { order: 953, hash: '#/techos/evidence', caption: '<b>Why buyers pay.</b> Repeatable earnings trade at 10x+, project work at 5–6x; tech earns 0.5–2.5 turns.', narration: 'Repeatable earnings trade at ten times or more, project work at five to six. Tech earns part.', duration: 8500 },
+    { order: 956, hash: '#/techos/roadmap', caption: '<b>24-month roadmap.</b> First value inside 18 months; LabOS must land before the December 2027 maturity.', narration: 'Every program shows value within eighteen months. LabOS must land before the December 2027 maturity.', duration: 7500 },
+    { order: 959, hash: '#/techos/calculator?co=pp', caption: '<b>Value math.</b> Uplift times multiple, plus re-rating, minus spend: ServiceOS alone adds an est. ~$11M of EV.', narration: 'The calculator turns margin uplift and re-rating into value, net of spend. Every input is an estimate.', duration: 8000 },
   ],
 };

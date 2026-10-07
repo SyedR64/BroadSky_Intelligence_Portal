@@ -5,7 +5,7 @@
          (OMB July 2023 metro crosswalk), data/research/pp_nationwide.json (Punctual Pros phases 1–4).
    All scores are computed client-side from percentile ranks; every score is a modelled estimate.
    ═══════════════════════════════════════════════════════════════════════════ */
-import { EST } from './copy.js?v=20261006180606';
+import { EST } from './copy.js?v=20261006224618';
 
 const COLOR = 'var(--co-pp)';
 /* Colours come from the system palette (assets/system.css): DOM markup uses var(--…) directly; Leaflet's canvas renderer
@@ -396,8 +396,8 @@ async function scorer(ctx) {
     const lead = top[0];
     $('#nx-head').innerHTML = ui.pageHead({
       title: 'National expansion scorer',
-      sub: `<b>So what:</b> ${lead ? `on ${wName()} the strongest county${S.state ? ` in ${esc(STATE_NAMES[S.state])}` : ''} is <b>${esc(lead._name)}</b> (score ${Math.round(lead._score)}${EST})${[stTop.length && !S.state ? `${esc(stTop.slice(0, 3).map(([s, n]) => `${s} ${n}`).join(', '))} lead the top ${Math.min(50, top.length)}` : '', coreMed ? `the Punctual Pros Phase 1 counties sit at a median national rank of #${fmt.num(coreMed)} of ${fmt.num(M.scored.length)}` : ''].filter(Boolean).map(x => '; ' + x).join('')}.` : 'no county passes the current filters.'} Drag the weights to test a different thesis.`,
-      chips: `${fmt.chip(`${fmt.num(M.rows.length)} counties · 50 states + DC`, COLOR)}${fmt.chip(`${fmt.num(full)} with every input`)}${wChip(fmt, esc)}`,
+      sub: `${lead ? `On ${wName()} the strongest county${S.state ? ` in ${esc(STATE_NAMES[S.state])}` : ''} is <b>${esc(lead._name)}</b> (score ${Math.round(lead._score)}${EST})${coreMed ? `; Punctual Pros Phase 1 counties rank #${fmt.num(coreMed)} on median` : ''}.` : 'No county passes the current filters.'} Drag the weights to test another thesis.`,
+      chips: `${fmt.chip(`${fmt.num(M.rows.length)} counties`, COLOR)}${fmt.chip(`${fmt.num(full)} with every input`)}${wChip(fmt, esc)}`,
     });
     const withSales = top.filter(r => fin(r.home_sales_12m));
     $('#nx-kpis').innerHTML = ui.kpis([
@@ -405,8 +405,8 @@ async function scorer(ctx) {
       { label: 'Top 50 · homes', value: fmt.compact(sum(top, r => r.housing_units)), sub: 'housing units, ACS 2019–23' },
       { label: 'Top 50 · home sales', value: fmt.compact(sum(top, r => r.home_sales_12m)), sub: `${esc(V.sales)} · ${withSales.length} of ${top.length} counties report` },
       { label: 'Top 50 · permits', value: fmt.compact(sum(top, r => r.permits_units_2025ytd)), sub: `units permitted in 2025 · ${fmt.compact(sum(top, r => r.permits_units_2026ytd))} in ${esc(V.p26)}` },
-      { label: 'Top 50 · Authority Brands', value: fmt.num(sum(top, r => r.authority_brands_presence)), sub: `offices in ${top.filter(r => r.authority_brands_presence > 0).length} counties: One Hour, Ben Franklin or Mister Sparky (Oct 2026)` },
-      { label: 'Phase 1 median rank', value: coreMed ? `#${fmt.num(coreMed)}` : '—', sub: `Punctual Pros core and ring, ${core.length} counties, of ${fmt.num(M.scored.length)} scored` },
+      { label: 'Top 50 · Authority Brands', value: fmt.num(sum(top, r => r.authority_brands_presence)), sub: `offices in ${top.filter(r => r.authority_brands_presence > 0).length} counties` },
+      { label: 'Phase 1 median rank', value: coreMed ? `#${fmt.num(coreMed)}` : '—', sub: `${core.length} core counties, of ${fmt.num(M.scored.length)}` },
     ]) + `<p class="sys-src">${ui.source(`National county table: ACS 2019–23, Redfin ${V.sales}, Census building permits, Authority Brands location pages`, null, 'Oct 2026')}</p>`;
     $('#nx-note').innerHTML = ui.note(`<b>How the score works.</b> Each input is converted to the county’s percentile among all US counties that report it (contractor density is inverted: fewer contractors per home scores higher). The score is the weighted average of those percentiles on a 0–100 scale; a county missing an input has that weight spread over the rest, and its inspector says so. Scores are model outputs, so every score carries an est. badge. Full formulas, vintages and coverage are on the <a href="#/national/method">Method</a> tab.`, 'brand');
   };
@@ -480,8 +480,8 @@ async function phases(ctx) {
   const p1 = st[0], p4 = st[3];
   el.innerHTML = `<div class="m-national">${ui.pageHead({
     title: 'Punctual Pros phases on the national map',
-    sub: `<b>So what:</b> Phases 1–3 cover ${fmt.num(st[0].n + st[1].n + st[2].n)} Mid-Atlantic counties with ${fmt.compact(st[0].hu + st[1].hu + st[2].hu)} homes and ${fmt.compact(st[0].sales + st[1].sales + st[2].sales)} home sales a year; Phase 4’s Sun Belt and Midwest counties with an Authority Brands office add ${fmt.compact(p4.hu)} homes and ${fmt.num(p4.ab)} tri-brand offices, the pool of multi-territory franchisees to buy. ${p1.score != null && p4.score != null ? `On ${wName()} the Phase 4 pool scores ${Math.round(p4.score)}${EST} against ${Math.round(p1.score)}${EST} for Phase 1.` : ''}`,
-    chips: `${fmt.chip('Phases from the Punctual Pros nationwide plan', COLOR)}${fmt.chip('each county counted once, in its earliest phase')}${wChip(fmt, esc)}`,
+    sub: `Phases 1–3 cover ${fmt.num(st[0].n + st[1].n + st[2].n)} Mid-Atlantic counties with ${fmt.compact(st[0].hu + st[1].hu + st[2].hu)} homes. Phase 4 adds ${fmt.compact(p4.hu)} homes and ${fmt.num(p4.ab)} tri-brand offices: the franchisees to buy.`,
+    chips: `${fmt.chip('From the nationwide plan', COLOR)}${fmt.chip('Each county counted once')}${wChip(fmt, esc)}`,
   })}
   <div class="sys-grid sys-grid--4 m-national-phases">${st.map(s => `<article class="sys-card" data-co="" style="--co:${PHASE_CSS(s.p.n)}"><div class="sys-card-label">Phase ${s.p.n} · months ${esc(String(s.p.months).replace('-', '–'))}</div><h3 class="sys-card-title">${esc(s.p.title)}</h3>
     <dl class="m-national-stats"><div><dt>Counties</dt><dd class="sys-num">${fmt.num(s.n)}</dd></div><div><dt>Homes, ACS 2019–23</dt><dd class="sys-num">${fmt.compact(s.hu)}</dd></div><div><dt>Sales, ${esc(V.sales)}</dt><dd class="sys-num">${fmt.compact(s.sales)}</dd></div><div><dt>Permits 2025</dt><dd class="sys-num">${fmt.compact(s.p25)}</dd></div><div><dt>Permits ${esc(V.p26)}</dt><dd class="sys-num">${fmt.compact(s.p26)}</dd></div><div><dt>Score, home-weighted</dt><dd class="sys-num">${s.score != null ? `${Math.round(s.score)}${EST}` : '—'}</dd></div></dl>
@@ -570,15 +570,15 @@ async function markets(ctx) {
     const min = S.metroMin; const pool = all.filter(m => m.hu >= min).sort((a, b) => b.score - a.score); pool.forEach((m, i) => m._r = i + 1); const top = pool.slice(0, 25);
     $('#mk-head').innerHTML = ui.pageHead({
       title: 'Metro markets',
-      sub: `<b>So what:</b> among ${fmt.num(pool.length)} metros with ${fmt.compact(min)}+ homes, <b>${esc(top[0]?.title || '—')}</b> leads on ${wName()}; the top 25 hold ${fmt.compact(sum(top, m => m.hu))} homes, ${fmt.compact(sum(top, m => m.sales))} sales a year and ${fmt.num(sum(top, m => m.ab))} Authority Brands offices. ${top.filter(m => !m.ab).length} of them have no tri-brand office, so entry there means an independent tuck-in or a new territory.`,
-      chips: `${fmt.chip(`${fmt.num(M.metros.filter(m => m.type === 'metro').length)} metro areas (OMB 2023)`, COLOR)}${wChip(fmt, esc)}`,
+      sub: `<b>${esc(top[0]?.title || '—')}</b> leads ${fmt.num(pool.length)} metros on ${wName()}. ${top.filter(m => !m.ab).length} of the top 25 have no tri-brand office, so entry there means an independent tuck-in.`,
+      chips: `${fmt.chip(`${fmt.num(M.metros.filter(m => m.type === 'metro').length)} metro areas`, COLOR)}${wChip(fmt, esc)}`,
     });
     $('#mk-kpis').innerHTML = ui.kpis([
       { label: 'Metros in pool', value: fmt.num(pool.length), sub: `${fmt.compact(min)}+ housing units` },
       { label: 'Top 25 · homes', value: fmt.compact(sum(top, m => m.hu)), sub: 'ACS 2019–23' },
       { label: 'Top 25 · home sales', value: fmt.compact(sum(top, m => m.sales)), sub: esc(V.sales) },
       { label: 'Top 25 · permits', value: fmt.compact(sum(top, m => m.p25)), sub: `2025 · ${fmt.compact(sum(top, m => m.p26))} in ${esc(V.p26)}` },
-      { label: 'Top 25 · Authority Brands', value: fmt.num(sum(top, m => m.ab)), sub: `offices; ${top.filter(m => m.ab > 0).length} metros have a tri-brand office (Oct 2026)` },
+      { label: 'Top 25 · Authority Brands', value: fmt.num(sum(top, m => m.ab)), sub: `offices in ${top.filter(m => m.ab > 0).length} metros` },
       { label: 'Top 25 · contractors', value: fmt.compact(sum(top, m => m.estab)), sub: 'plumbing, HVAC, electrical (CBP 2022)' },
     ]) + `<p class="sys-src">${ui.source(`OMB 2023 metro delineation · national county table: ACS 2019–23, Redfin ${V.sales}, Census building permits, CBP 2022, Authority Brands location pages`, null, 'Oct 2026')}</p>`;
     if (!table) table = ui.table($('#mk-t'), { columns: cols, rows: top, pageSize: 25, sortKey: '_r', sortDir: 1, rowKey: r => r.id, onRow: openMetro, exportName: 'national_top25_metros' }); else table.update(top);
@@ -627,8 +627,8 @@ async function method(ctx) {
   const covFields = FIELD_ROWS(M).flatMap(([g, fs]) => fs.map(([k, l, , v]) => ({ k, l, v, c: covOf(k) })));
   el.innerHTML = `<div class="m-national">${ui.pageHead({
     title: 'Method, sources and coverage',
-    sub: `<b>So what:</b> every county score is rebuilt in the browser from ${FACTORS.length} public inputs; the weakest coverage is Redfin home sales (${pctTxt(covOf('home_sales_12m'))} of counties, mostly missing in small rural ones), so rural scores lean on the other inputs and say so in the inspector.`,
-    chips: `${fmt.chip(`${fmt.num(M.rows.length)} counties`, COLOR)}${fmt.chip(`table generated ${esc(isoWords(String(meta.generated || '').slice(0, 10)))}`)}${fmt.chip(`${srcRows.length} sources`)}`,
+    sub: `Every county score is rebuilt in the browser from ${FACTORS.length} public inputs. Home sales cover ${pctTxt(covOf('home_sales_12m'))} of counties, so rural scores lean on the rest.`,
+    chips: `${fmt.chip(`${fmt.num(M.rows.length)} counties`, COLOR)}${fmt.chip(`built ${esc(isoWords(String(meta.generated || '').slice(0, 10)))}`)}${fmt.chip(`${srcRows.length} sources`)}`,
   })}
   <div class="grid grid-2">
     ${ui.panel({ title: 'Score formula', sub: 'Score = Σ (weight × percentile) ÷ Σ weights over the inputs a county has, × 100', body: `<div class="sys-table-wrap tbl-wrap"><table class="sys-table tbl"><thead><tr><th>Input</th><th class="sys-n num">Now</th><th class="sys-n num">Default</th><th style="width:52%">Formula</th><th class="sys-n num">Coverage</th></tr></thead><tbody>${FACTORS.map(f => `<tr><td><b>${esc(f.label)}</b><div class="sys-muted small">${esc(f.vint)}</div></td><td class="sys-n num">${S.weights[f.id] || 0}</td><td class="sys-n num">${f.w}</td><td class="wrap small">${esc(FORM[f.id])}</td><td class="sys-n num">${pctTxt(factorCov(f), 1)}</td></tr>`).join('')}</tbody></table></div><div class="sys-card-body mt-12">Percentiles use average ranks for ties across all ${fmt.num(M.rows.length)} counties, so 0.5 is the median US county. Score bands on the maps are national percentiles of the score itself. Metro and phase scores are housing-weighted averages of county scores. Every score is a model output and carries an est. badge.</div>`, foot: ui.source('Analyst model over the national county table', null, 'Oct 2026') })}
@@ -651,8 +651,8 @@ export default {
     { id: 'method', name: 'Method', icon: '▤', render: method },
   ],
   tour: [
-    { order: 940, hash: '#/national/scorer', caption: '<b>National expansion scorer.</b> All 3,144 US counties scored 0–100 on eight weighted signals: housing age, owner share, permits, home-sales velocity, income, climate, contractor density and growth. Drag a weight and the map re-ranks.', narration: 'The national scorer ranks every US county on eight public signals. Change a weight and the map and the top fifty re-rank instantly.', duration: 9000 },
-    { order: 943, hash: '#/national/phases', caption: '<b>Punctual Pros phases, nationally.</b> Phase 1 core and ring, Phase 2 tuck-ins, Phase 3 Mid-Atlantic metros and Phase 4 Sun Belt and Midwest franchise markets, each with homes, home sales and permits.', narration: 'The four Punctual Pros phases sit on the same county scores, each with its homes, home sales and building permits.', duration: 8000 },
-    { order: 946, hash: '#/national/markets', caption: '<b>Top 25 metros.</b> County scores rolled up to OMB metro areas, with the counties inside and the Authority Brands offices already there.', narration: 'County scores roll up to the top twenty-five metro areas, with the Authority Brands offices already in each.', duration: 7000 },
+    { order: 940, hash: '#/national/scorer', caption: '<b>County scorer.</b> All 3,144 US counties scored on eight weighted public signals. Drag a weight to re-rank.', narration: 'Every US county, scored on eight public signals. Change a weight and the map re-ranks.', duration: 9000 },
+    { order: 943, hash: '#/national/phases', caption: '<b>Punctual Pros phases.</b> Core, tuck-ins, Mid-Atlantic metros, then Sun Belt and Midwest franchise markets.', narration: 'The four Punctual Pros phases sit on the same county scores, from core to Sun Belt.', duration: 8000 },
+    { order: 946, hash: '#/national/markets', caption: '<b>Top 25 metros.</b> County scores rolled up to metro areas, with Authority Brands offices marked.', narration: 'County scores roll up to the top twenty-five metro areas, with the Authority Brands offices already in each.', duration: 7000 },
   ],
 };

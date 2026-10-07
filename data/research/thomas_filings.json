@@ -1,9 +1,9 @@
 {
  "meta": {
-  "dataset": "Thomas Scientific — filings & financial research track (Broad Sky Partners portfolio)",
+  "dataset": "Thomas Scientific — filings & financial research track (BSP portfolio)",
   "generated": "2026-09-24",
-  "method": "SEC EDGAR full-text search (efts) for 'Thomas Scientific', 'Thomas Scientific, LLC', 'BSP-TS', 'Broad Sky Partners'. Parsed schedule-of-investments tables from 19 MFIC/Apollo Investment Corp and 4 MAIPL 10-Q/10-K filings (Dec-2021 → Jun-2026). Parsed Form D XML for 5 BSP vehicles and N-PORT XML for the Barings/Cascade fund holding BSP-TS Co-Invest I. Pulled USASpending API (recipient profile, spending over time, awards search, IDVs, subagency). Pulled Harvard Bioscience 8-K pro forma (Denville). Checked CourtListener RECAP search, PR Newswire company newsroom, Carlyle and Broad Sky news pages, ZoomInfo firmographics and Avantor XBRL. The WebSearch budget was exhausted, so discovery relied on direct fetches of known endpoints.",
-  "sources_summary": "SEC: 23 BDC periodic filings, 13 Form D/D-A, ~16 N-PORT, 4 proxies/8-K. Federal: USASpending API. Press: Carlyle release, 6 Thomas Scientific PR Newswire releases, Broad Sky news index. Other: CourtListener, ZoomInfo, SEC XBRL (Avantor).",
+  "method": "SEC EDGAR full-text search (efts) for 'Thomas Scientific', 'Thomas Scientific, LLC', 'BSP-TS', 'Broad Sky Partners'. Parsed schedule-of-investments tables from 19 MFIC/Apollo Investment Corp and 4 MAIPL 10-Q/10-K filings (Dec-2021 → Jun-2026). Parsed Form D XML for 5 BSP vehicles and N-PORT XML for the Barings/Cascade fund holding BSP-TS Co-Invest I. Pulled USASpending API (recipient profile, spending over time, awards search, IDVs, subagency). Pulled Harvard Bioscience 8-K pro forma (Denville). Checked CourtListener RECAP search, PR Newswire company newsroom, Carlyle and BSP news pages, ZoomInfo firmographics and Avantor XBRL. The WebSearch budget was exhausted, so discovery relied on direct fetches of known endpoints.",
+  "sources_summary": "SEC: 23 BDC periodic filings, 13 Form D/D-A, ~16 N-PORT, 4 proxies/8-K. Federal: USASpending API. Press: Carlyle release, 6 Thomas Scientific PR Newswire releases, BSP news index. Other: CourtListener, ZoomInfo, SEC XBRL (Avantor).",
   "caveats": [
    "BDC data shows only Apollo's MFIC and MAIPL slices; total facility size, agent and the other lenders are inferred, not disclosed.",
    "EV, EBITDA and leverage estimates are derived from BDC marks and equity cheques using LMM rules of thumb, not company financials.",
@@ -14,7 +14,7 @@
    "Verified 2026-09-24: sampled 33, confirmed 31, removed 2"
   ],
   "item_count": 31,
-  "financial_picture": "(1) Broad Sky's BSP-TS, LP raised $236.1M of equity at the 2021-12-14 close, later topped up to $257.1M, against a ~$335M Fund I; about $108M of the equity came from co-invest vehicles (Co-Invest I/II, management). That makes Thomas the fund's largest and most concentrated bet. (2) Debt is an Apollo/MidCap unitranche priced at L+625 with a 1% floor, maturing 2027-12-14, including a DDTL and revolver. MFIC's slice is about $35M and MAIPL's about $8M; if Apollo's BDCs hold the typical 15–25% of an Apollo-led deal, the total facility is about $180–300M. (3) At a typical 45–55% equity share, the $236M cheque implies an entry EV of about $430–525M. With about $200–275M of debt at 4.5–5.5x, that implies about $40–55M of LTM EBITDA at entry. That EBITDA was inflated by about $175M of FY2020–21 federal COVID swab and transport-media contracts plus commercial testing demand. (4) Revenue at entry is estimated at $300–400M (ZoomInfo models $300M today; the Carlyle roll-up added about $25M via Denville plus three other add-ons), so entry EBITDA margins were likely a COVID-flattered 12–15%. (5) The loan's pricing history traces performance: a step-down to L+550 in mid-2022 (leverage fell), a step-up to SOFR+640 in 2023, revolver drawn by Q4-2023, then a PIK amendment in Q4-2024 (SOFR+340 cash + 4.50% PIK) that points to cash interest coverage near 1.0–1.3x. (6) Federal revenue fell from $84–91M a year to $6.7–8.3M. Avantor, the closest listed peer, lost 12.8% of revenue from 2022 to 2025. Both are consistent with a 25–40% drop in Thomas's EBITDA from the COVID peak, to about $25–35M. (7) The sponsor put in about $21M of new money (preferred in Dec-2023 and more around the 2024 PIK amendment; MFIC's Jun-2026 SOI relabels these tranches as Class C and Class D units, not new 2026 money). The 2023 add-ons (Quintana, Day, Arrowhead) were small tuck-ins, not transformational. (8) Equity marks show a near-total impairment of the original common: Barings' $5M co-invest stake went from $4.99M to $6.9K, and MFIC's BSP-TS common went from $185K cost to $0. (9) The first-lien loan was carried at 95–97% of par through 2025 and marked down to 88.3% in Q2-2026, with 15 months left to maturity and only $0.74M of MFIC's revolver undrawn. Lenders now see EV at or slightly below total debt. (10) With estimated debt of about $210–310M after PIK accretion and a stressed 7–9x multiple, today's EV is plausibly $200–280M, implying EBITDA of about $25–35M and total leverage of about 7–10x. (11) The main near-term event is the December 2027 maturity: expect an amend-and-extend with more sponsor preferred, a lender-led recap (equitization), or a sale. The Q1-2026 return to all-cash interest may reflect a paydown or new preferred money rather than organic improvement. (12) Portfolio implication: Thomas is Broad Sky Fund I's most impaired and largest exposure, and should be tracked quarterly via MFIC 10-Q marks (next: the 2026-09-30 10-Q, around early November 2026).",
+  "financial_picture": "(1) BSP's BSP-TS, LP raised $236.1M of equity at the 2021-12-14 close, later topped up to $257.1M, against a ~$335M Fund I; about $108M of the equity came from co-invest vehicles (Co-Invest I/II, management). That makes Thomas the fund's largest and most concentrated bet. (2) Debt is an Apollo/MidCap unitranche priced at L+625 with a 1% floor, maturing 2027-12-14, including a DDTL and revolver. MFIC's slice is about $35M and MAIPL's about $8M; if Apollo's BDCs hold the typical 15–25% of an Apollo-led deal, the total facility is about $180–300M. (3) At a typical 45–55% equity share, the $236M cheque implies an entry EV of about $430–525M. With about $200–275M of debt at 4.5–5.5x, that implies about $40–55M of LTM EBITDA at entry. That EBITDA was inflated by about $175M of FY2020–21 federal COVID swab and transport-media contracts plus commercial testing demand. (4) Revenue at entry is estimated at $300–400M (ZoomInfo models $300M today; the Carlyle roll-up added about $25M via Denville plus three other add-ons), so entry EBITDA margins were likely a COVID-flattered 12–15%. (5) The loan's pricing history traces performance: a step-down to L+550 in mid-2022 (leverage fell), a step-up to SOFR+640 in 2023, revolver drawn by Q4-2023, then a PIK amendment in Q4-2024 (SOFR+340 cash + 4.50% PIK) that points to cash interest coverage near 1.0–1.3x. (6) Federal revenue fell from $84–91M a year to $6.7–8.3M. Avantor, the closest listed peer, lost 12.8% of revenue from 2022 to 2025. Both are consistent with a 25–40% drop in Thomas's EBITDA from the COVID peak, to about $25–35M. (7) The sponsor put in about $21M of new money (preferred in Dec-2023 and more around the 2024 PIK amendment; MFIC's Jun-2026 SOI relabels these tranches as Class C and Class D units, not new 2026 money). The 2023 add-ons (Quintana, Day, Arrowhead) were small tuck-ins, not transformational. (8) Equity marks show a near-total impairment of the original common: Barings' $5M co-invest stake went from $4.99M to $6.9K, and MFIC's BSP-TS common went from $185K cost to $0. (9) The first-lien loan was carried at 95–97% of par through 2025 and marked down to 88.3% in Q2-2026, with 15 months left to maturity and only $0.74M of MFIC's revolver undrawn. Lenders now see EV at or slightly below total debt. (10) With estimated debt of about $210–310M after PIK accretion and a stressed 7–9x multiple, today's EV is plausibly $200–280M, implying EBITDA of about $25–35M and total leverage of about 7–10x. (11) The main near-term event is the December 2027 maturity: expect an amend-and-extend with more sponsor preferred, a lender-led recap (equitization), or a sale. The Q1-2026 return to all-cash interest may reflect a paydown or new preferred money rather than organic improvement. (12) Portfolio implication: Thomas is BSP Fund I's most impaired and largest exposure, and should be tracked quarterly via MFIC 10-Q marks (next: the 2026-09-30 10-Q, around early November 2026).",
   "estimate_table": [
    {
     "metric": "Equity invested at close (BSP-TS, LP)",
@@ -100,7 +100,7 @@
    "OSHA/DOL WHD establishment data not queried (DOL enforcement API key required).",
    "No Inc. 5000 or Lab Manager distributor-ranking entry found (web search unavailable).",
    "No disclosed revenue figure ('$X million') found in press; ZoomInfo is modeled.",
-   "The Broad Sky Business Wire release (Capital Constellation terms) could not be read (HTTP 403)."
+   "The BSP Business Wire release (Capital Constellation terms) could not be read (HTTP 403)."
   ],
   "next_pulls": [
    "MFIC 10-Q for 2026-09-30 (expected early Nov 2026): watch the Thomas loan mark (<88%?), non-accrual flag (footnote 14), maturity extension beyond 12/14/27, new preferred classes.",
@@ -132,7 +132,7 @@
     "co_invest_equity": "BSP-TS, LP common, 185 shares, cost $185K",
     "footnote": "(9) co-investment with Apollo affiliates under SEC exemptive order"
    },
-   "what_it_tells_us": "Confirms the Broad Sky buyout financing closed 2021-12-14 with an Apollo/MidCap-affiliated first-lien unitranche (6-year tenor, L+625). MFIC's slice was ~$26.5M funded term loan plus ~$5.3M delayed-draw term loan (DDTL, for add-ons) and a $2.96M revolver; Apollo also co-invested a small $185K in the BSP-TS, LP equity. Apollo appears to be the lead/agent group (co-investment across Apollo affiliates), so the full facility is several times MFIC's hold.",
+   "what_it_tells_us": "Confirms the BSP buyout financing closed 2021-12-14 with an Apollo/MidCap-affiliated first-lien unitranche (6-year tenor, L+625). MFIC's slice was ~$26.5M funded term loan plus ~$5.3M delayed-draw term loan (DDTL, for add-ons) and a $2.96M revolver; Apollo also co-invested a small $185K in the BSP-TS, LP equity. Apollo appears to be the lead/agent group (co-investment across Apollo affiliates), so the full facility is several times MFIC's hold.",
    "confidence": "high",
    "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000127875222000004/ainv2022q310-q.htm",
    "entity": "Thomas Scientific, LLC",
@@ -489,7 +489,7 @@
      "investors_2025": 33
     }
    },
-   "what_it_tells_us": "The co-invest vehicles total about $108M, which suggests the $299–335M Broad Sky flagship fund syndicated a large share of the equity. Co-Invest II's three large LPs ($5M minimum), closing in March 2022 alongside the Capital Constellation announcement, are probably a post-close sell-down to Capital Constellation and similar investors (inference). About $12.5M of management rollover or co-investment from 22–33 holders means management has meaningful stakes.",
+   "what_it_tells_us": "The co-invest vehicles total about $108M, which suggests the $299–335M BSP flagship fund syndicated a large share of the equity. Co-Invest II's three large LPs ($5M minimum), closing in March 2022 alongside the Capital Constellation announcement, are probably a post-close sell-down to Capital Constellation and similar investors (inference). About $12.5M of management rollover or co-investment from 22–33 holders means management has meaningful stakes.",
    "confidence": "high",
    "source_url": "https://www.sec.gov/Archives/edgar/data/1917661/000139834425008284/xslFormDX01/primary_doc.xml",
    "retrieved": "2026-09-24",
@@ -544,9 +544,9 @@
    "id": "ts-16"
   },
   {
-   "entity": "Carlyle / Broad Sky Partners",
+   "entity": "Carlyle / BSP",
    "category": "press_financial",
-   "title": "Carlyle announces sale of Thomas Scientific to Broad Sky Partners",
+   "title": "Carlyle announces sale of Thomas Scientific to BSP",
    "filed_or_dated": "2022-01-27",
    "filer_or_source_agency": "The Carlyle Group press release",
    "key_figures": {
@@ -654,7 +654,7 @@
    "key_figures": {
     "new_ceo": "Stan Haas (ex-COO, ex-Affiliated Distributors COO, ex-VWR)",
     "prior_ceo": "Charles Simmons (6 years; remains on board)",
-    "chair": "Lynn Calpeter (Broad Sky Operating Partner, ex-GE finance)",
+    "chair": "Lynn Calpeter (BSP Operating Partner, ex-GE finance)",
     "acquisitions_under_simmons": 5
    },
    "what_it_tells_us": "A CEO change about 15 months after the buyout, with a sponsor operating partner as chair, is consistent with the sponsor stepping in as performance weakened in 2023. A later release in May 2026 names Adrian Whipple as CFO & COO and does not name Haas; whether Haas is still CEO is unverified.",
@@ -710,7 +710,7 @@
     "recipient_business_types": "Small business; foreign-owned, US-located business; LLC",
     "hq": "1654 High Hill Rd, Swedesboro NJ 08085"
    },
-   "what_it_tells_us": "Federal COVID-testing demand brought about $175M of obligations over FY2020–21, against less than $1M a year before and about $7–8M a year after. That swing inflated the LTM EBITDA Broad Sky bought on in December 2021. The post-2022 federal run-rate of $7–8M (growing about 8–10% a year) is under 3% of estimated revenue.",
+   "what_it_tells_us": "Federal COVID-testing demand brought about $175M of obligations over FY2020–21, against less than $1M a year before and about $7–8M a year after. That swing inflated the LTM EBITDA BSP bought on in December 2021. The post-2022 federal run-rate of $7–8M (growing about 8–10% a year) is under 3% of estimated revenue.",
    "confidence": "high",
    "source_url": "https://www.usaspending.gov/recipient/57b253c2-516a-d9e3-a34d-f6c43264d885-C/all",
    "entity": "Thomas Scientific, LLC",

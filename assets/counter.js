@@ -1,5 +1,5 @@
 /* "Revenue left on the table" clock — a debt-clock style live counter driven by the portal's sourced rates.
-   Usage: import { Counter } from './assets/counter.js?v=20261006180606';
+   Usage: import { Counter } from './assets/counter.js?v=20261006224618';
      Counter.mount(el, { theme:'light'|'dark', caption?: string, compact?: boolean,
                          baseline?: 'load'|'today', minDisplay?: number })
    baseline 'load' (default) counts up from $0 when the page opens; 'today' counts from local midnight
@@ -7,7 +7,7 @@
    baseline 'today') the value shows "—" so a first frame never reads "$1".
    The rate is the sum of annualized, sourced opportunity values (each labelled est.) divided by seconds per year.
    Colours come from system.css tokens, so the clock follows the page's light or dark theme. */
-import { Data, Fmt, esc } from './core.js?v=20261006180606';
+import { Data, Fmt, esc } from './core.js?v=20261006224618';
 const ROOT = new URL('../', import.meta.url).href;
 const YEAR = 365.25 * 24 * 3600;
 /* Readable source names for the breakdown. `src` on each component stays the raw dataset key
@@ -52,8 +52,8 @@ export const Counter = {
     const theme = opts.theme || 'light';
     const today = opts.baseline === 'today';
     const minDisplay = opts.minDisplay ?? (today ? 100 : 0);
-    const caption = opts.caption || (today ? 'Revenue left on the table across the portfolio so far today' : 'Revenue left on the table across the portfolio since you opened this page');
-    el.innerHTML = `<div class="rc ${theme === 'dark' ? 'rc-dark' : ''} ${opts.compact ? 'rc-compact' : ''}"><div class="rc-cap">${esc(caption)}<span class="sys-est rc-badge">est.</span></div><div class="rc-val" aria-live="off">${minDisplay > 0 ? '—' : '$0'}</div><div class="rc-sub">≈ ${esc(Fmt.money(annual))} a year at today's sourced rates · <button type="button" class="rc-why" aria-expanded="false">how is this computed?</button></div><div class="rc-pop" hidden><div class="rc-pop-t">Components (annualized estimates)</div>${comps.map(x => `<div class="rc-row"><span>${esc(x.label)}</span><b>${esc(Fmt.money(x.annual))}</b><a href="${esc(x.href)}">${esc(x.source)}</a></div>`).join('')}<div class="rc-note">The clock divides the annual total by seconds in a year. Every component is an analyst estimate built from sourced benchmarks in this portal; it is a way to feel the cost of waiting, not a forecast.</div></div></div>`;
+    const caption = opts.caption || (today ? 'Revenue left on the table today' : 'Revenue left on the table since you opened this page');
+    el.innerHTML = `<div class="rc ${theme === 'dark' ? 'rc-dark' : ''} ${opts.compact ? 'rc-compact' : ''}"><div class="rc-cap">${esc(caption)}<span class="sys-est rc-badge">est.</span></div><div class="rc-val" aria-live="off">${minDisplay > 0 ? '—' : '$0'}</div><div class="rc-sub">≈ ${esc(Fmt.money(annual))} a year at today's sourced rates · <button type="button" class="rc-why" aria-expanded="false">how is this computed?</button></div><div class="rc-pop" hidden><div class="rc-pop-t">Components (annualized estimates)</div>${comps.map(x => `<div class="rc-row"><span>${esc(x.label)}</span><b>${esc(Fmt.money(x.annual))}</b><a href="${esc(x.href)}">${esc(x.source)}</a></div>`).join('')}<div class="rc-note">The annual total divided by seconds in a year. Each component is an analyst estimate from sourced benchmarks, not a forecast.</div></div></div>`;
     if (!document.getElementById('rc-css')) { const st = document.createElement('style'); st.id = 'rc-css'; st.textContent = CSS; document.head.appendChild(st); }
     const val = el.querySelector('.rc-val'); const pop = el.querySelector('.rc-pop'); const why = el.querySelector('.rc-why');
     why.onclick = () => { pop.hidden = !pop.hidden; why.setAttribute('aria-expanded', String(!pop.hidden)); };

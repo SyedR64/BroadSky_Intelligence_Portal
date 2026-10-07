@@ -16,7 +16,7 @@
 .m-pe .pe-card .m{gap:6px;margin-top:auto}
 .m-pe .pe-card .sys-chip{min-height:26px;padding:0 10px;font-size:var(--sys-fs-xs)}
 
-/* Broad Sky reference: a KPI strip inside the card */
+/* BSP reference: a KPI strip inside the card */
 .m-pe .pe-ref{margin-top:0;box-shadow:none}
 .m-pe .pe-ref .sys-kpi-value{font-size:clamp(20px,1.8vw,26px)}
 .m-pe .pe-cstats{margin-top:0;box-shadow:none}

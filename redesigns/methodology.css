@@ -1,4 +1,4 @@
-/* How Broad Sky buys · page layout only (UNIFIED.md): maps, strips, graph and lists. Colours, type and radii come from system.css tokens.
+/* How BSP buys · page layout only (UNIFIED.md): maps, strips, graph and lists. Colours, type and radii come from system.css tokens.
    The network palette is the validated eight-slot categorical set (first seven slots), paired with a shape per group. */
 .mx{
   --bn-1:#2a78d6; --bn-2:#eb6834; --bn-3:#1baf7a; --bn-4:#c98500; --bn-5:#d55181; --bn-6:#008300; --bn-7:#4a3aa7;

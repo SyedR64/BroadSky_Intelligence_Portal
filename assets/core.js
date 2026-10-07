@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Broad Sky Operating Intelligence — core runtime (ES module, no build step)
+   BSP Desk — core runtime (ES module, no build step)
    Exports: Data, Fmt, UI, Maps, Charts, Live, Tour, App
    ═══════════════════════════════════════════════════════════════════════════ */
 const $ = (s, r = document) => r.querySelector(s);
@@ -537,7 +537,7 @@ export const App = {
     const ctx = { el: content, module: m, view: v, params, data: Data, ui: UI, maps: Maps, charts: Charts, fmt: Fmt, live: Live, inspector: Inspector, app: App, esc, $, $$ };
     try { const un = await v.render(ctx); if (typeof un === 'function') App._unmount = un; }
     catch (e) { console.error(e); content.innerHTML = `<div class="empty">This view failed to render.<br><span class="mono small">${esc(e.message)}</span></div>`; }
-    document.title = `${m.name} · ${v.name} — Broad Sky Intelligence`;
+    document.title = `${m.name} · ${v.name} — BSP Desk`;
   },
   renderRail() {
     const nav = $('#rail .rail-nav'); const groups = [...new Set(App.modules.map(m => m.group || 'Portfolio'))];
@@ -584,5 +584,5 @@ export const App = {
     App.route();
   },
 };
-// Guard: assets/components.js imports ./core.js?v=20261006180606 without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
+// Guard: assets/components.js imports ./core.js?v=20261006224618 without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
 window.BSP = window.BSP || { Data, Fmt, UI, Maps, Charts, Live, Tour, App, Inspector, Theme };

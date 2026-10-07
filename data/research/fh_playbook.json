@@ -3,7 +3,7 @@
   "dataset": "fh_playbook",
   "title": "Fair Harbor: the growth plan",
   "generated": "2026-10-06",
-  "subject": "Fair Harbor Clothing PBC (Broad Sky Partners portfolio, entry Mar 2022)",
+  "subject": "Fair Harbor Clothing PBC (BSP portfolio, entry Mar 2022)",
   "thesis": "From DTC swim brand to year-round sustainable lifestyle brand: category extension, wholesale door growth, retention/membership, international; AI agents for fit/size, CX and demand planning; 3PL and returns talent/ops; capital-light financing.",
   "method": "Built on 2026-10-06 from the portal's verified datasets (data/research/fairharbor_filings.json, bsp_firm.json bsp-fh item, timeline and Fair Harbor opportunities, rival_filings.json Chubbies items, public_comps.json apparel DTC benchmarks, pe_landscape.json Fair Harbor heatmap, serviceos_evidence.json HarborOS items) plus new web research (search and direct fetches) on vendor claims, analog brands, returns/3PL benchmarks and lending norms. data/research/pp_nationwide.json was not present, so item shape follows ServiceOS evidence conventions (kind, id, source URL, retrieved, est. labels). Computed data points (markdown share, non-swim share, Chubbies channel mix and growth, B2B SKU count, ABL capacity, leverage capacity) are calculated in the build script from those datasets; the KPI roadmap and all targets are explicit analyst assumptions anchored to the filings estimate table.",
   "caveats": [
@@ -27,9 +27,9 @@
    "financing": 6
   },
   "narrative": [
-   "Fair Harbor is our only consumer brand and, about 4.5 years in, it is still a ~$27M business (est. range $20-35M) with low single-digit EBITDA and no add-ons.",
-   "The good news is the shift to a year-round lifestyle brand has already happened on the shelf: 64.0% of the 372 live products are non-swim, and golf, kids, collegiate and B2B custom launched in 2025-2026.",
-   "The bad news is margin: 38.5% of live variants are marked down, women's was cleared at ~70% off, and swim is the most-returned category at Shopify brands (21.6%).",
+   "About 4.5 years in, Fair Harbor, BSP's only consumer brand, is still a ~$27M business (est. range $20-35M) with low single-digit EBITDA and no add-ons.",
+   "The shift to a year-round lifestyle brand has already happened on the shelf: 64.0% of the 372 live products are non-swim, and golf, kids, collegiate and B2B custom launched in 2025-2026.",
+   "Margin is the problem: 38.5% of live variants are marked down, women's was cleared at ~70% off, and swim is the most-returned category at Shopify brands (21.6%).",
    "So the first six months are about fixing the base (markdown discipline, fit and returns, and buying to forecast) before we pay for growth.",
    "Chubbies is the proof case for the next step: at $122.9M it takes 51.9% of sales from wholesale and retail, that channel grew 16.3% last year, and its DTC fell 20.8% in Q2 2026.",
    "Our plan is to take Fair Harbor from ~250 specialty doors to ~520 over 36 months through golf pro shops, campus bookstores and coastal specialty, using commissioned reps rather than new owned stores.",
@@ -123,7 +123,7 @@
    "kind": "template",
    "entity": "Smith + Howard",
    "move": "Entry: founder-led regional leader, first institutional capital",
-   "what_they_did": "Broad Sky made a strategic anchor investment in Smith + Howard (Atlanta, ~100 professionals, one office) in Nov 2022.",
+   "what_they_did": "BSP made a strategic anchor investment in Smith + Howard (Atlanta, ~100 professionals, one office) in Nov 2022.",
    "fair_harbor_translation": "Fair Harbor is the same set-up in consumer: a founder-led brand taking its first institutional capital ($30.7M Form D, Mar 2022). The S+H lesson is that the entry thesis named the adjacent services up front; Fair Harbor's equivalent is a named category-and-channel map (year-round apparel, golf, collegiate, B2B, international).",
    "key_figures": {
     "entry_professionals": 100,
@@ -186,7 +186,7 @@
    "kind": "template",
    "entity": "Smith + Howard",
    "move": "Technology, AI and offshore delivery as the margin engine",
-   "what_they_did": "Per the exit release, Broad Sky invested in leadership, technology, AI-enabled capabilities and an offshore delivery centre in India; Geels Norton (cyber, Feb 2026) added a tech-heavy service line.",
+   "what_they_did": "Per the exit release, BSP invested in leadership, technology, AI-enabled capabilities and an offshore delivery centre in India; Geels Norton (cyber, Feb 2026) added a tech-heavy service line.",
    "fair_harbor_translation": "HarborOS is the consumer equivalent: fit/size, CX, returns-to-exchange and demand-planning agents on Shopify/Klaviyo, sized at $0.3-0.7M for 2-5 points of EBITDA margin (ServiceOS evidence ra-fh, est.).",
    "key_figures": {
     "levers": [
@@ -949,7 +949,7 @@
    "id": "tp-06",
    "kind": "talent_program",
    "program": "Lean corporate team benchmark (Portfolio Resource Group operating cadence)",
-   "who_it_helps": "Management, board, Broad Sky Portfolio Resource Group",
+   "who_it_helps": "Management, board, BSP Portfolio Resource Group",
    "evidence": "Chubbies ran with 90 staff and ~$7.5M payroll in 2020 (PPP) and grew to $122.9M of sales by 2025; Fair Harbor's 2026 headcount is est. 40-80. Hold corporate headcount near 70 through month 36 while revenue grows ~48%.",
    "metric": "revenue per employee $450K to $571K (est.) vs apparel comp median $421K",
    "source_url": "https://data.sba.gov/dataset/ppp-foia",

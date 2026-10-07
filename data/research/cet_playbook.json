@@ -3,10 +3,10 @@
   "dataset": "cet_playbook",
   "title": "Commonwealth Electrical Technologies: the growth plan (from New England electrical/energy contractor to Northeast infrastructure company)",
   "generated": "2026-10-06",
-  "method": "Template events reuse Broad Sky, Smith + Howard and trade-press sources (Accounting Today, CPA Practice Advisor), checked 2026-10-06 against data/research/pp_nationwide.json and bsp_firm.json timeline. Vertical analogs (Pfingsten NEC Group, Ridgemont Crete United, Kohlberg Loenbro, IES Holdings) come from PE Hub, PrivSource and SEC 8-K pages. AI-agent, talent and growth-lever evidence comes from vendor case studies (Togal, Trimble Document Crunch, Bridgit, Procore, Newmetrix, Samotics, ServiceTitan), government sources (BLS OOH, DOL, mass.gov, CT DRS, EPA CWNS, NREL, ISO-NE, PJM) and banker/legal commentary (Taft, Capstone/IMAP, PKF, GF Data via Gulfstar). Expansion-phase data points were computed with python3 from repo datasets: CET opportunity radar (86 items), CET wastewater-plant targets (183), CET add-on targets (48 + PE-backed competitor list), CET New England county list (67), CET filings (estimate table), PE landscape (overlap with BSP contains cet), ServiceOS evidence (KPI benchmark kb-cet-*, roadmap assumption ra-cet) and Broad Sky firm profile. KPI targets and KPI roadmap are explicit analyst assumptions anchored to CET filings pro forma estimates.",
+  "method": "Template events reuse BSP, Smith + Howard and trade-press sources (Accounting Today, CPA Practice Advisor), checked 2026-10-06 against data/research/pp_nationwide.json and bsp_firm.json timeline. Vertical analogs (Pfingsten NEC Group, Ridgemont Crete United, Kohlberg Loenbro, IES Holdings) come from PE Hub, PrivSource and SEC 8-K pages. AI-agent, talent and growth-lever evidence comes from vendor case studies (Togal, Trimble Document Crunch, Bridgit, Procore, Newmetrix, Samotics, ServiceTitan), government sources (BLS OOH, DOL, mass.gov, CT DRS, EPA CWNS, NREL, ISO-NE, PJM) and banker/legal commentary (Taft, Capstone/IMAP, PKF, GF Data via Gulfstar). Expansion-phase data points were computed with python3 from repo datasets: CET opportunity radar (86 items), CET wastewater-plant targets (183), CET add-on targets (48 + PE-backed competitor list), CET New England county list (67), CET filings (estimate table), PE landscape (overlap with BSP contains cet), ServiceOS evidence (KPI benchmark kb-cet-*, roadmap assumption ra-cet) and BSP firm profile. KPI targets and KPI roadmap are explicit analyst assumptions anchored to CET filings pro forma estimates.",
   "caveats": [
-   "All CET revenue, EBITDA, headcount and margin baselines are low-confidence analyst estimates from CET filings (PPP payroll, revenue per employee, comp margins). None is disclosed by CET or Broad Sky. KPI roadmap and KPI targets are labelled assumptions, not guidance.",
-   "Management guidance (the Broad Sky firm profile thesis and CEO feedback) is no NYC expansion and a New England focus. The requested NY/NJ/PA leg is therefore Phase 4, a gated board option that explicitly excludes NYC. The repo has no NY/NJ/PA electrical target or opportunity dataset, so Phase 4 data points are market-level only.",
+   "All CET revenue, EBITDA, headcount and margin baselines are low-confidence analyst estimates from CET filings (PPP payroll, revenue per employee, comp margins). None is disclosed by CET or BSP. KPI roadmap and KPI targets are labelled assumptions, not guidance.",
+   "Management guidance (the BSP firm profile thesis and CEO feedback) is no NYC expansion and a New England focus. The requested NY/NJ/PA leg is therefore Phase 4, a gated board option that explicitly excludes NYC. The repo has no NY/NJ/PA electrical target or opportunity dataset, so Phase 4 data points are market-level only.",
    "Smith + Howard add-on count: BSP's release says nine; named transactions reconcile to nine only if VIP Search and VIP Solutions count separately (see Punctual Pros nationwide plan caveats). Smith + Howard's \"Horton, Lee & Burnett\" add-on is unrelated to Horton Electrical Services.",
    "Several sources returned HTTP 403 or timed out on direct fetch (PE Hub/Pfingsten, BusinessNC/Crete United, WaterMagazine/Samotics, ForConstructionPros/Newmetrix, Nasdaq/Procore, ecmag). Their claims were taken from search-engine extracts of those pages on 2026-10-06 and should be spot-checked before external use.",
    "AI-agent metrics are vendor case studies or vendor claims for selected customers (Togal, Document Crunch, Bridgit, Newmetrix, Samotics, ServiceTitan), not controlled studies. Several come from general contractors or residential trades and are extrapolated to an electrical subcontractor. The Samotics figure is in GBP for a UK utility.",
@@ -25,7 +25,7 @@
    "talent_program": 6,
    "financing": 5
   },
-  "narrative": "CET can follow the Smith + Howard path: Broad Sky took a ~100-person, one-office Atlanta firm to ~800 people, 11 locations, nine add-ons and nearly 4x revenue in 3.7 years before selling to TPG. CET starts from a larger base, roughly 260-290 people, $65-100M of pro forma revenue and $6-11M of EBITDA after NuWave and Horton (low-confidence estimates from public filings), so the goal is ~3x in 36 months rather than 4x. Horton is the Market Street moment: the first adjacent-state add-on, which nearly doubles the workforce and brings Connecticut wastewater relationships. Phase 1 makes MA and CT one company and points Horton at 62 funded or requested plant and pump-station projects across CT, MA and RI, led by New Haven, Hartford and Norwalk. Phase 2 uses CET's existing six-state licensing to buy founder-owned firms in RI, NH, ME and VT from a 48-company screen with a ~$15.1M median, before Pfingsten's NEC Group, Ridgemont's Crete United or other sponsor companies get there. Phase 3 is where the multiple moves: SCADA and pump-station monitoring, solar and storage O&M, EV depot charging and NuWave efficiency turn one-off bids into recurring contracts, the service mix that PKF and Capstone price 3 or more turns above project-heavy contractors. Data-center electrical is a real upside in PJM (~30 GW of new load by 2030) but a thin one in New England, where ISO-NE says data-center growth has lagged other regions. Phase 4 into Upstate NY, New Jersey and eastern Pennsylvania stays a gated option outside New York City, consistent with management's New England focus, and opens only if month-24 targets are met. Nine AI agents do the delivery work: takeoff (~76% faster in a Togal test), bid-radar triage toward 30% win rates, contract review (~75% faster), crew scheduling, safety, solar and pump-station monitoring, field documentation and 24/7 dispatch. The constraint is licensed electricians, so the people plan pairs IEC merit-shop and IBEW-lane apprenticeships with MA and CT tax credits, a fast track to the journeyman license and broad-based equity for foremen. Financing follows the Horton precedent of delayed-draw debt plus seller rollover, with co-invest for the larger add-on wave; GF Data puts lower-middle-market total leverage around 4.0x. Every revenue, margin and headcount target here is a labelled assumption anchored to filings-based estimates, and should be replaced with CET's actuals in the first 30 days.",
+  "narrative": "In 3.7 years BSP took Smith + Howard from ~100 people in one Atlanta office to ~800 people, 11 locations, nine add-ons and nearly 4x revenue, then sold to TPG; CET can follow that path. CET starts larger, at roughly 260-290 people, $65-100M of pro forma revenue and $6-11M of EBITDA after NuWave and Horton (low-confidence estimates from public filings), so the goal is ~3x in 36 months. Horton is the Market Street moment: the first adjacent-state add-on, which nearly doubles the workforce and brings Connecticut wastewater relationships. Phase 1 makes MA and CT one company and points Horton at 62 funded or requested plant and pump-station projects across CT, MA and RI, led by New Haven, Hartford and Norwalk. Phase 2 uses CET's existing six-state licensing to buy founder-owned firms in RI, NH, ME and VT from a 48-company screen with a ~$15.1M median, before Pfingsten's NEC Group, Ridgemont's Crete United or other sponsor companies get there. Phase 3 is where the multiple moves: SCADA and pump-station monitoring, solar and storage O&M, EV depot charging and NuWave efficiency turn one-off bids into recurring contracts, the service mix that PKF and Capstone price 3 or more turns above project-heavy contractors. Data-center electrical is a real upside in PJM (~30 GW of new load by 2030) but a thin one in New England, where ISO-NE says data-center growth has lagged other regions. Phase 4 into Upstate NY, New Jersey and eastern Pennsylvania stays a gated option outside New York City, consistent with management's New England focus, and opens only if month-24 targets are met. Nine AI agents do the delivery work: takeoff (~76% faster in a Togal test), bid-radar triage toward 30% win rates, contract review (~75% faster), crew scheduling, safety, solar and pump-station monitoring, field documentation and 24/7 dispatch. The constraint is licensed electricians, so the people plan pairs IEC merit-shop and IBEW-lane apprenticeships with MA and CT tax credits, a fast track to the journeyman license and broad-based equity for foremen. Financing follows the Horton precedent of delayed-draw debt plus seller rollover, with co-invest for the larger add-on wave; GF Data puts lower-middle-market total leverage around 4.0x. Every revenue, margin and headcount target here is a labelled assumption anchored to filings-based estimates, and should be replaced with CET's actuals in the first 30 days.",
   "kpi_roadmap": [
    {
     "month": 0,
@@ -152,7 +152,7 @@
    "id": "cp-tpl-01",
    "kind": "template",
    "date": "2022-11-15",
-   "event": "Broad Sky makes a strategic anchor investment in Smith + Howard, a single-office Atlanta accounting firm, with a stated plan to add advisory services, widen the footprint and speed up technology through M&A. CET parallel: Feb 2025 entry into a ~140-person Worcester electrical contractor with the same buy-and-build mandate.",
+   "event": "BSP makes a strategic anchor investment in Smith + Howard, a single-office Atlanta accounting firm, with a stated plan to add advisory services, widen the footprint and speed up technology through M&A. CET parallel: Feb 2025 entry into a ~140-person Worcester electrical contractor with the same buy-and-build mandate.",
    "company": "Smith + Howard",
    "location": "Atlanta, GA",
    "metric": "~100 professionals, 1 office at entry",
@@ -224,7 +224,7 @@
    "id": "cp-tpl-07",
    "kind": "template",
    "date": "2026-08-06",
-   "event": "Broad Sky completes the sale of Smith + Howard to TPG (via TPG Growth), its first exit. Over 3.7 years: ~100 to ~800 professionals (8x), 1 office to 11 locations across the Southeast and India, 9 add-ons, nearly 4x revenue.",
+   "event": "BSP completes the sale of Smith + Howard to TPG (via TPG Growth), its first exit. Over 3.7 years: ~100 to ~800 professionals (8x), 1 office to 11 locations across the Southeast and India, 9 add-ons, nearly 4x revenue.",
    "company": "Smith + Howard",
    "location": "Atlanta, GA",
    "metric": "~4x revenue, 8x headcount, 1 to 11 locations in 3.7 years",
@@ -656,7 +656,7 @@
     "Northern and central NJ water/wastewater utilities and PSE&G-zone data centers",
     "Lehigh Valley and southeastern PA (PJM data-center corridor)"
    ],
-   "thesis": "This phase is a board-level option, not a commitment. Management guidance is no NYC expansion and a New England focus, so Phase 4 opens only if Phases 1-3 hit the month-24 KPIs and a water/wastewater or mission-critical electrical target appears in NY/NJ/PA outside the five boroughs. The pull is demand: PJM forecasts ~30 GW of data-center load growth between 2025 and 2030, and NJ/PA wastewater needs are large. Entry would be one anchor add-on with its own licenses and union/merit-shop status, like Smith + Howard's Texas/Virginia moves. Broad Sky's NJ/PA presence (Thomas Scientific in Swedesboro NJ, Punctual Pros in Lancaster PA) gives local network but no electrical synergy.",
+   "thesis": "This phase is a board-level option, not a commitment. Management guidance is no NYC expansion and a New England focus, so Phase 4 opens only if Phases 1-3 hit the month-24 KPIs and a water/wastewater or mission-critical electrical target appears in NY/NJ/PA outside the five boroughs. The pull is demand: PJM forecasts ~30 GW of data-center load growth between 2025 and 2030, and NJ/PA wastewater needs are large. Entry would be one anchor add-on with its own licenses and union/merit-shop status, like Smith + Howard's Texas/Virginia moves. BSP's NJ/PA presence (Thomas Scientific in Swedesboro NJ, Punctual Pros in Lancaster PA) gives local network but no electrical synergy.",
    "data_points": {
     "repo_coverage": "No NY/NJ/PA electrical target screen or opportunity radar exists in the repo yet (CET add-on targets and CET opportunity radar cover New England only). Data gap; build before opening this gate.",
     "pe_sponsors_with_cet_overlap": 16,
@@ -842,7 +842,7 @@
    "job_to_be_done": "Scan state SRF lists, BidNet/Bonfire portals, NEVI calls and USAspending every day; score each item on capability, distance from crews, scope clarity and timing; and send a go/no-go brief to the estimating lead.",
    "who_it_helps": "business development / estimating lead",
    "vendor_examples": [
-    "GridOS on CET opportunity radar (Broad Sky data layer)",
+    "GridOS on CET opportunity radar (BSP data layer)",
     "ConstructConnect",
     "Autodesk BuildingConnected",
     "Dodge"
@@ -1061,8 +1061,8 @@
    "id": "cp-fin-01",
    "kind": "financing",
    "source_of_funds": "Sponsor equity + co-invest precedent",
-   "amount_or_range": "$7.5M single-LP co-invest (Feb 2025); total Broad Sky equity in CET est. $25-45M",
-   "evidence": "Form D for BSP-CET Co-Invest LLC: $7.5M sold to one investor, first sale 2025-02-05. Broad Sky's Mar 2026 Form ADV marks it at $8.504M (1.13x gross). The flagship fund reports $335M sold. A Phase 2 add-on wave can reuse the co-invest route instead of drawing only on the fund.",
+   "amount_or_range": "$7.5M single-LP co-invest (Feb 2025); total BSP equity in CET est. $25-45M",
+   "evidence": "Form D for BSP-CET Co-Invest LLC: $7.5M sold to one investor, first sale 2025-02-05. BSP's Mar 2026 Form ADV marks it at $8.504M (1.13x gross). The flagship fund reports $335M sold. A Phase 2 add-on wave can reuse the co-invest route instead of drawing only on the fund.",
    "source_url": "https://www.sec.gov/Archives/edgar/data/2056574/000205657425000001/xslFormDX01/primary_doc.xml",
    "retrieved": "2026-09-24"
   },
@@ -1079,7 +1079,7 @@
    "id": "cp-fin-03",
    "kind": "financing",
    "source_of_funds": "Seller rollover and deferred consideration (Horton precedent)",
-   "amount_or_range": "Not disclosed; Horton funded without a new Broad Sky Form D",
+   "amount_or_range": "Not disclosed; Horton funded without a new BSP Form D",
    "evidence": "The Horton acquisition vehicle was registered in CT with the CET LLC as principal, and no new Form D followed. CET filings infers debt or delayed-draw plus seller rollover. Founder rollover also aligns sellers like Warren Horton through integration, as Pfingsten did with NEC's founder.",
    "source_url": "https://data.ct.gov/resource/n7gp-d28j.json?accountnumber=3518996",
    "retrieved": "2026-09-24"

@@ -1,4 +1,4 @@
--- D1 schema for the Broad Sky assistant backend (database: bsp_assistant).
+-- D1 schema for the BSP Desk assistant backend (database: bsp_assistant).
 -- Idempotent: safe to apply on every deploy.
 
 CREATE TABLE IF NOT EXISTS threads (

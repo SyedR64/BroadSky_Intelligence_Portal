@@ -29,7 +29,7 @@ const tidy = t => !/\s/.test(t) ? t : t
   .replace(/\s*\(deed feed in data\/sales\)/g, ' (county deed feed)').replace(/\(?deed feed data\/sales\/pp_sales_\*\)?/g, 'county deed records')
   .replace(/data\/sales\/pp_sales_[\w*{},|]*(?:\.json)?/g, 'county deed records').replace(/data\/sales\b/g, 'county deed feeds')
   .replace(/(?:data\/)?(?:research\/)?([a-z][a-z0-9]*(?:_[a-z0-9]+)+)\.json/g, (m, id) => (window.BSPFrame?.label?.(id)) || id.replace(/_/g, ' '))
-  .replace(/\bPP's\b/g, "Punctual Pros'").replace(/\bPP’s\b/g, 'Punctual Pros’').replace(/\bPP\b/g, 'Punctual Pros').replace(/\bBSP\b/g, 'Broad Sky')
+  .replace(/\bPP's\b/g, "Punctual Pros'").replace(/\bPP’s\b/g, 'Punctual Pros’').replace(/\bPP\b/g, 'Punctual Pros').replace(/\bBSP\b/g, 'BSP')
   .replace(/\bFH's\b/g, "Fair Harbor's").replace(/\bFH\b/g, 'Fair Harbor').replace(/\bLive\.nwsAlerts\b/g, 'live weather-alert').replace(/\bLive\.\w+/g, 'live')
   .replace(/(^|[\s/(=])([a-z][a-z0-9]*(?:_[a-z0-9]+)+)(?=$|[\s;:),.=/])/g, (m, pre, id) => pre + id.replace(/_/g, ' '));
 function cleanData(v, k) {
@@ -772,7 +772,7 @@ function cyclePhonesIn(root) {
 
 /* ── 9 · sources ─────────────────────────────────────────────────────────── */
 /* Dataset caveats use analyst shorthand; spell names out for readers. */
-const plainAds = t => String(t ?? '').replace(/\bPP's\b/g, "Punctual Pros'").replace(/\bPP\b/g, 'Punctual Pros').replace(/\bBSP\b/g, 'Broad Sky').replace(/\s*\(?retrieval_status='search_snippet'\)?/g, ' (search snippet)');
+const plainAds = t => String(t ?? '').replace(/\bPP's\b/g, "Punctual Pros'").replace(/\bPP\b/g, 'Punctual Pros').replace(/\bBSP\b/g, 'BSP').replace(/\s*\(?retrieval_status='search_snippet'\)?/g, ' (search snippet)');
 /* Readable link text for a source URL: a descriptive slug, else the title of the item that cites it. */
 const SRC_UP = { hvac: 'HVAC', ctv: 'CTV', ctvs: 'CTV’s', dtc: 'DTC', iab: 'IAB', roas: 'ROAS', roi: 'ROI', yoy: 'YoY', eddm: 'EDDM', lsa: 'LSA', smbs: 'SMBs', q2: 'Q2', q4: 'Q4', mntn: 'MNTN', ott: 'OTT', tv: 'TV', tiktok: 'TikTok', youtube: 'YouTube', usps: 'USPS', google: 'Google', amazon: 'Amazon', roku: 'Roku', hulu: 'Hulu', fair: 'Fair', harbor: 'Harbor', spectrum: 'Spectrum', reach: 'Reach', j: 'J.', lindeberg: 'Lindeberg', maison: 'Maison', mrkt: 'MRKT', facebook: 'Facebook' };
 const BRAND_HOSTS = { 'onehourheatandair.com': 'One Hour', 'benjaminfranklinplumbing.com': 'Benjamin Franklin Plumbing', 'mistersparky.com': 'Mister Sparky' };

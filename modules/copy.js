@@ -2,7 +2,7 @@
    record fields, the est. badge, and a post-render pass that turns the console's
    textual "est." markers into .sys-est badges. Module renderers call these at the
    source; Frame.humanize stays the safety net. */
-import { Frame } from '../assets/frame.js?v=20261006180606';
+import { Frame } from '../assets/frame.js?v=20261006224618';
 
 export const EST = '<span class="sys-est">est.</span>';
 export const ILLUS = '<span class="sys-est sys-est--illus">illustrative</span>';
@@ -20,7 +20,7 @@ const SUFFIX = [
   [/_usd_m$/, ' ($M)'], [/_usd_k$/, ' ($K)'], [/_usd_000s$/, ' ($K)'], [/_usd_thousands$/, ' ($K)'], [/_usd_approx$/, ' ($, approx.)'], [/_usd_bn$/, ' ($B)'], [/_usd$/, ' ($)'], [/_gbp$/, ' (£)'], [/_gbp_(\d{4})$/, ' (£, $1)'],
   [/_pct$/, ' (%)'], [/_000s$/, ' (thousands)'], [/_mi$/, ' (miles)'], [/_yrs?$/, ' (years)'], [/_count$/, ' count'],
 ];
-const WORDS = { aum: 'AUM', bsp: 'BSP', usd: 'USD', ebitda: 'EBITDA', ceo: 'CEO', cfo: 'CFO', sba: 'SBA', ppp: 'PPP', sec: 'SEC', adv: 'ADV', nci: 'NCI', fy: 'FY', ma: 'MA', pe: 'PE', bdc: 'BDC', llc: 'LLC', gbp: 'GBP', hq: 'HQ', ev: 'EV', d: 'D', a: 'A', and: 'and', of: 'of', rfp: 'RFP', rfps: 'RFPs', nyc: 'NYC', nj: 'NJ', pa: 'PA', ct: 'CT', ri: 'RI', dc: 'DC', ny: 'NY', de: 'DE', md: 'MD', va: 'VA', mo: 'MO', uk: 'UK', us: 'US', naics: 'NAICS', cbp: 'CBP', llp: 'LLP', inc: 'Inc.', ev: 'EV', o: 'O', m: 'M', coinvest: 'co-invest', l2: 'Level 2', level2: 'Level 2', yr: 'year', yrs: 'years', num: 'number', avg: 'average', qty: 'quantity', pct: '%', ts: 'Thomas Scientific', bsp: 'Broad Sky', pp: 'Punctual Pros', cet: 'CET', fl: 'Frontline', fh: 'Fair Harbor', bpi: 'BPI', id: 'ID', url: 'link', est: 'est.', approx: 'approx.', yoy: 'YoY', ltv: 'LTV', cac: 'CAC', roi: 'ROI', kpi: 'KPI', osha: 'OSHA', dol: 'DOL', ftes: 'FTEs', fte: 'FTE', mw: 'MW', wwtp: 'wastewater plant', gm: 'GM', ar: 'AR' };
+const WORDS = { aum: 'AUM', bsp: 'BSP', usd: 'USD', ebitda: 'EBITDA', ceo: 'CEO', cfo: 'CFO', sba: 'SBA', ppp: 'PPP', sec: 'SEC', adv: 'ADV', nci: 'NCI', fy: 'FY', ma: 'MA', pe: 'PE', bdc: 'BDC', llc: 'LLC', gbp: 'GBP', hq: 'HQ', ev: 'EV', d: 'D', a: 'A', and: 'and', of: 'of', rfp: 'RFP', rfps: 'RFPs', nyc: 'NYC', nj: 'NJ', pa: 'PA', ct: 'CT', ri: 'RI', dc: 'DC', ny: 'NY', de: 'DE', md: 'MD', va: 'VA', mo: 'MO', uk: 'UK', us: 'US', naics: 'NAICS', cbp: 'CBP', llp: 'LLP', inc: 'Inc.', ev: 'EV', o: 'O', m: 'M', coinvest: 'co-invest', l2: 'Level 2', level2: 'Level 2', yr: 'year', yrs: 'years', num: 'number', avg: 'average', qty: 'quantity', pct: '%', ts: 'Thomas Scientific', bsp: 'BSP', pp: 'Punctual Pros', cet: 'CET', fl: 'Frontline', fh: 'Fair Harbor', bpi: 'BPI', id: 'ID', url: 'link', est: 'est.', approx: 'approx.', yoy: 'YoY', ltv: 'LTV', cac: 'CAC', roi: 'ROI', kpi: 'KPI', osha: 'OSHA', dol: 'DOL', ftes: 'FTEs', fte: 'FTE', mw: 'MW', wwtp: 'wastewater plant', gm: 'GM', ar: 'AR' };
 
 /** Dataset id or file name → human name ("pp_sales_pa_a" → "Punctual Pros deed records (PA)"). */
 export function dataset(id) {
@@ -38,8 +38,11 @@ export function field(key) {
   if (MORE[k]) return cap(MORE[k]);
   let unit = '';
   for (const [rx, u] of SUFFIX) { const m = k.match(rx); if (m) { unit = u.replace('$1', m[1] || ''); k = k.replace(rx, ''); break; } }
-  const words = k.split('_').filter(Boolean).map(w => WORDS[w] ?? (/^fy\d{2,4}$/.test(w) ? w.toUpperCase() : w));
-  return cap(Frame.keyDates ? Frame.keyDates(words.join(' ').replace(/\bd and a\b/i, 'D&A')) : words.join(' ').replace(/\bd and a\b/i, 'D&A')) + unit;
+  const words = k.split('_').filter(Boolean).map(w => WORDS[w] ?? (/^fy\d{2,4}$/.test(w) || /^bsp-[a-z]+$/.test(w) ? w.toUpperCase() : w));
+  // SEC entity keys ("Broad_Sky_Partners_LP_GAV_usd", "BSP-TS_Co-Invest_II_GAV_usd") read as the fund, not lower-cased legal names
+  let txt = words.join(' ').replace(/^broad sky partners lp\b/, 'BSP Fund I').replace(/\bco-invest (i{1,3})\b/, (m, r) => `co-invest ${r.toUpperCase()}`).replace(/\blp\b/g, 'LP').replace(/\bgav\b/g, 'GAV');
+  txt = txt.replace(/\bd and a\b/i, 'D&A');
+  return cap(Frame.keyDates ? Frame.keyDates(txt) : txt) + unit;
 }
 const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 
@@ -208,7 +211,7 @@ export const humanize = root => Frame.humanize(root);
    the view's first h1 so every module reads the same way. Proper nouns and
    acronyms keep their case; everything else is lower case after the dot. */
 export const VIEW_TITLES = {
-  'home/overview': 'portfolio overview', 'home/firm': 'Broad Sky profile',
+  'home/overview': 'portfolio overview', 'home/firm': 'BSP profile',
   'bsp/deals': 'deal ledger', 'bsp/patterns': 'deal patterns', 'bsp/rubric': 'acquisition rubric', 'bsp/network': 'deal network',
   'cet/overview': 'operating picture', 'cet/opportunities': 'opportunity radar', 'cet/wastewater': 'wastewater accounts', 'cet/territory': 'territory fit', 'cet/transfers': 'property transfers', 'cet/targets': 'add-on targets', 'cet/filings': 'filings and financials',
   'pp/overview': 'operating picture', 'pp/weather': 'weather and demand', 'pp/movers': 'new-mover marketing', 'pp/territory': 'territory and expansion', 'pp/market': 'market and competitors', 'pp/targets': 'add-on targets', 'pp/filings': 'filings and financials',

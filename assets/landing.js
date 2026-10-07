@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Broad Sky Operating Intelligence — landing page + concept gallery behaviour.
+   BSP Desk — landing page + concept gallery behaviour.
    No framework, no dependency on the portal runtime: the page paints with the
    static counts in index.html, then refreshes them from the dataset index
    (data/research/index.json) and data/manifest.json.
@@ -34,13 +34,13 @@ function loadStats() {
     const gens = [manifest?.generated, ...files.map(f => f.generated)].filter(Boolean).map(s => String(s).slice(0, 10)).sort();
     return {
       datasets: core.length + research.length + sales.length,
-      datasetsSub: `${core.length} core tables · ${research.length} research files · ${sales.length} deed files`,
+      datasetsSub: `${core.length} tables · ${research.length} research · ${sales.length} deed files`,
       sales: sales.reduce((s, x) => s + x.item_count, 0),
-      salesSub: `home sales and commercial deeds in ${sales.length} county files`,
+      salesSub: `home sales and deeds, ${sales.length} county files`,
       opps: opps.radar + opps.rfps + opps.bpi + opps.fh,
-      oppsSub: `CET radar ${opps.radar} · public bids ${opps.rfps} · BPI ${opps.bpi} · Fair Harbor ${opps.fh}`,
+      oppsSub: `CET ${opps.radar + opps.rfps} · BPI ${opps.bpi} · Fair Harbor ${opps.fh}`,
       targets: cnt('ma_targets_cet') + cnt('ma_targets_pp') + cnt('ma_targets_fl_ts'),
-      targetsSub: `CET ${cnt('ma_targets_cet')} · Punctual Pros ${cnt('ma_targets_pp')} · Frontline and Thomas Scientific ${cnt('ma_targets_fl_ts')}`,
+      targetsSub: 'across four companies',
       sponsors: cnt('pe_landscape'),
       sites: rows('ts_sites') || 0,
       genFrom: gens[0], genTo: gens[gens.length - 1],
@@ -67,10 +67,10 @@ function initNumbers() {
       const sub = $(`[data-sub="${k}"]`); if (sub && data[k + 'Sub']) sub.textContent = data[k + 'Sub'];
     }
     const src = $('#numbers-src');
-    if (src) src.innerHTML = `<b>Source:</b> read from the portal's dataset index of core tables, research files and deed files <span class="sys-est sys-est--live">live</span> · data generated ${esc(fmtDate(data.genFrom))} to ${esc(fmtDate(data.genTo))}.`;
+    if (src) src.innerHTML = `<b>Source:</b> the portal's dataset index <span class="sys-est sys-est--live">live</span> · data from ${esc(fmtDate(data.genFrom))} to ${esc(fmtDate(data.genTo))}.`;
   };
   const go = () => loadStats().then(d => { data = d; paint(); $$('.sys-hero [data-stat="datasets"]').forEach(el => { el.textContent = fmtN(d.datasets); }); })
-    .catch(() => { const src = $('#numbers-src'); if (src) src.innerHTML = '<b>Source:</b> counts are the portal snapshot of October 6, 2026; the dataset index is unavailable right now.'; });
+    .catch(() => { const src = $('#numbers-src'); if (src) src.innerHTML = '<b>Source:</b> portal snapshot, October 6, 2026 (index unavailable).'; });
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting && e.intersectionRatio > 0) {
       if (e.target === sec && e.intersectionRatio >= .25) { shown = true; paint(); io.disconnect(); }
@@ -149,7 +149,7 @@ function initSteps() {
 /* ── product tour ──────────────────────────────────────────────────────────── */
 const TOUR = [
   { hash: '#/home/overview', name: 'Command Center', q: 'What does the portfolio look like this week?', a: '<b>6 companies</b>, 23 add-ons and one realized exit. 86 CET opportunities, 157 add-on targets and live weather alerts for PA, NJ, MA and CT on one map.' },
-  { hash: '#/pp/weather', name: 'Punctual Pros / Weather and demand', q: 'What is the storm impact on Punctual Pros this week?', a: 'Plumbing pressure peaks at <b>120</b> in Harrisburg on Monday. Plan <b>+2 technicians</b> and convert maintenance slots to repair capacity.' },
+  { hash: '#/pp/weather', name: 'Punctual Pros / Weather and demand', q: "What do this week's storms mean for Punctual Pros?", a: 'Plumbing pressure peaks at <b>120</b> in Harrisburg on Monday. Plan <b>+2 technicians</b> and convert maintenance slots to repair capacity.' },
   { hash: '#/cet/wastewater', name: 'CET / Wastewater accounts', q: 'Which wastewater plants should Horton call first?', a: '<b>New Haven East Shore</b> (fit 98) and <b>Hartford WPCF</b> (96) lead 183 plants. 25 have funded projects in a <b>$2.4B</b><span class="sys-est">est.</span> pipeline.' },
   { hash: '#/ma/overview', name: 'Acquisition engine', q: 'Where are the best add-on targets?', a: '<b>157 targets</b> screened across four companies, 20 at Tier 1. Top pick: Midland Scientific for Thomas Scientific, fit <b>92</b>.' },
 ];
@@ -234,7 +234,7 @@ function renderBridge(items, live) {
   const lo = items.reduce((s, i) => s + i.ebitda_impact_usd[0], 0), hi = items.reduce((s, i) => s + i.ebitda_impact_usd[1], 0);
   const ilo = items.reduce((s, i) => s + i.investment_usd[0], 0), ihi = items.reduce((s, i) => s + i.investment_usd[1], 0);
   const t = $('#bridge-total'); if (t) t.innerHTML = `Portfolio total: <b>${m$(lo)}–${m$(hi)}</b>${EST} run-rate EBITDA for <b>${m$(ilo)}–${m$(ihi)}</b>${EST} invested`;
-  const s = $('#bridge-src'); if (s) s.innerHTML = `<b>Source:</b> ServiceOS evidence, roadmap assumptions${live ? ' <span class="sys-est sys-est--live">live</span>' : ' (Oct 2026 snapshot)'}. Analyst assumptions, not forecasts or company guidance; revenue bases come from each company's public filings and are low confidence.`;
+  const s = $('#bridge-src'); if (s) s.innerHTML = `<b>Source:</b> ServiceOS evidence and roadmap assumptions${live ? ' <span class="sys-est sys-est--live">live</span>' : ' (October 2026 snapshot)'}. Analyst assumptions, not guidance; revenue bases from public filings are low confidence.`;
 }
 async function initBridge() {
   if (!$('#bridge-bars')) return;
@@ -298,7 +298,7 @@ export const Landing = {
     chat = inst;
     const ta = document.querySelector('#hero-chat textarea');
     const mq = window.matchMedia('(max-width:640px)');
-    if (ta) { const full = ta.placeholder; const set = () => { ta.placeholder = mq.matches ? 'Ask the portfolio anything…' : full; }; set(); mq.addEventListener?.('change', set); }
+    if (ta) { const full = ta.placeholder; const set = () => { ta.placeholder = mq.matches ? 'Ask anything…' : full; }; set(); mq.addEventListener?.('change', set); }
     // a question asked in the hero counts as step 1 of "Start here"
     const form = document.querySelector('#hero-chat');
     form?.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && /nationwide/i.test(e.target.value || '')) markStep('ask'); });

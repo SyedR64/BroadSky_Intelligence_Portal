@@ -1,10 +1,44 @@
 # UNIFIED · the one template for every page
 
-Binding spec for the Broad Sky Operating Intelligence site and portal. Every page — landing, portal, gallery, the six concept sites, the six OS pages, every plan, Voice AI, AI agents, the theater and the memo — uses one frame, one type scale, one spacing rhythm and one voice. If a page needs something this file does not cover, add it to `assets/system.css` as a `.sys-` component and document it here; do not invent it locally.
+Binding spec for the BSP Desk site and portal. Every page — landing, portal, gallery, the six concept sites, the six OS pages, every plan, Voice AI, AI agents, the theater and the memo — uses one frame, one type scale, one spacing rhythm and one voice. If a page needs something this file does not cover, add it to `assets/system.css` as a `.sys-` component and document it here; do not invent it locally.
 
 Author on every page: **Syed Rahman**. No other name, no email, no employer anywhere.
 
 Reference build: `scripts/system_demo.html` (every component, light and dark; `?theme=dark` for a whole dark page).
+
+## 0 · Voice
+
+Short, plain and specific. Say the finding, give the number, stop.
+
+**Product name.** The site is **BSP Desk**. The wordmark is the text "BSP Desk" from `Frame.PRODUCT` (`assets/frame.js`): top bar, mobile sheet and footer, no tagline line under it. Page titles read `<Page> · BSP Desk`; the landing page is just `BSP Desk`. The old product name is retired everywhere (titles, meta, copy, films, memo, scripts, prompts). The repo path `BroadSky_Intelligence_Portal` stays.
+
+**The firm is BSP.** Spell out "Broad Sky Partners (BSP)" at most once per page: the frame's concept banner on concept pages, the memo's "To" line, or the first body mention on other pages. Everywhere else write BSP ("BSP portfolio company", "BSP's first exit"). Keep the legal name only where it is the record: entity names in filings (`Broad Sky Partners, LP`, `Broad Sky Partners LLC`, `BSP-FL LP`), quoted press text and wire headlines. Portfolio Resource Group is spelled out once per page, then PRG.
+
+**No "So what".** Never label a sentence "So what:", "So what —" or "So what." The answer is simply the first sentence.
+
+**Brevity targets.**
+
+| Element | Target |
+|---|---|
+| View and page leads (`pageHead.sub`, `.sys-lead`) | One or two sentences, 30 words or fewer |
+| KPI sub-line (`.sys-kpi-sub`) | 8 words or fewer |
+| Card body | Two sentences |
+| Chip | Four words |
+| Tour step and film narration | 18 words or fewer per step |
+| Assistant answer heading | 6 words or fewer |
+| Meta description | One sentence, about 20 words |
+
+No marketing cadence: no taglines ("one system for the whole portfolio"), no triplets for rhythm, no "not X, but Y" flourishes, no rhetorical questions. Existing rules still hold: no "playbook", no private-equity sense of "platform", no raw identifiers, dates in words, `est.` badges on estimates, no legal-compliance copy, no salutations.
+
+**Before and after.**
+
+| Before | After |
+|---|---|
+| **So what:** the firm runs on a Carlyle and MidOcean lineage, a bench of private-credit lenders and specialist sell-side banks. | The firm runs on a Carlyle and MidOcean lineage, private-credit lenders and specialist sell-side banks. |
+| Six companies, one portal: every datapoint tied to a revenue, acquisition or operating decision. | Six companies. Every number is tied to a decision. |
+| Broad Sky put $90.0M of equity into BPI in April 2023, and Broad Sky's Fund I is $335M. | BSP put $90.0M of equity into BPI in April 2023 (Form D); Fund I is $335M. |
+
+`scripts/apply_voice.py` applies the mechanical part (product name, "So what" labels, Broad Sky → BSP with the legal-name exceptions) and is safe to re-run; dry run by default, `--write` to apply. Brevity is an editing job, not a script.
 
 ---
 
@@ -24,7 +58,7 @@ Retire as pages migrate: `.announce`, `.concept` / `.concept-in` banners, every 
 ```html
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Page name · Broad Sky</title>
+<title>Page name · BSP Desk</title>
 <meta name="description" content="One plain-English sentence.">
 <meta name="theme-color" content="#fbfaf7">          <!-- #0a0e14 on dark pages -->
 <script>/* one theme for the whole site … */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>

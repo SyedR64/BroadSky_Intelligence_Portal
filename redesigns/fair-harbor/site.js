@@ -1,6 +1,6 @@
 /* Fair Harbor concept — home page behaviour. Booted from an inline module in index.html
    (so scripts/bump_version.sh can stamp the shared core/chat imports). */
-import { art, PRODUCTS, COLORS, recommend, FAQ, SUGGESTIONS, INTENTS, chrome, toast, esc, setFrame, ep } from './common.js?v=20261006180606';
+import { art, PRODUCTS, COLORS, recommend, FAQ, SUGGESTIONS, INTENTS, chrome, toast, esc, setFrame, ep } from './common.js?v=20261006224618';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -230,7 +230,6 @@ function rationale(refs, ev, pb) {
   else g.innerHTML = items.map(r => { const h = HERE[r.id] || { title: '', pick: [0], el: [], here: '', kpi: [] }; const els = h.pick.map((i, k) => { const e = r.elements_to_borrow?.[i]; if (!e) return null; const name = h.el[k] || (BRAND.test(e.element) ? '' : e.element); return name ? { name, does: scrub(e.what_it_does_for_conversion_or_valuation) } : null; }).filter(Boolean);
     if (!h.title) return '';
     return `<article class="sys-card"><span class="sys-card-label">Design principle</span><h3 class="sys-card-title">${esc(h.title)}</h3><div class="sys-chips">${h.kpi.map(k => `<span class="sys-chip sys-chip--soft">${esc(k)}</span>`).join('')}</div>
-      ${els.map(e => `<div class="ra-el"><span class="k">Element</span><p><b>${ep(e.name)}.</b> ${ep(e.does)}</p></div>`).join('')}
       <div class="ra-el"><span class="k">On this page</span><p>${esc(h.here)}</p></div></article>`; }).join('');
   // KPI table from serviceos_evidence + fh_playbook
   const E = id => (ev?.items || []).find(i => i.id === id); const P = id => (pb?.items || []).find(i => i.id === id);
@@ -241,7 +240,7 @@ function rationale(refs, ev, pb) {
     ['Repeat purchase rate', k1 ? `${k1.baseline}% (Klaviyo benchmark)` : '20%', k1 ? `${k1.target}% est.` : '30% est.', 'Harbor Again trade-in credit, Harbor Report, replenishment flows (HarborOS)'],
     ['Markdown share of live variants', g3 ? `${g3.baseline}% (catalog, Sept 2026)` : '38.5%', g3 ? `${g3.target}% est.` : '25% est.', 'Content-led email capture instead of a discount modal; full-price hero franchise'],
     ['Wholesale doors', g1 ? `~${g1.baseline} (2022 release)` : '~252', g1 ? `${g1.target} by month 24 est.` : '420 est.', 'Six named channels and a direct path to the wholesale portal'],
-    ['EBITDA margin', '~6% est. (0–12%)', ra ? `+${ra.ebitda_impact_pct_revenue[0]}–${ra.ebitda_impact_pct_revenue[1]} pts est.` : '+2–5 pts est.', 'All of the above, run on HarborOS (see the value-creation math)'],
+    ['EBITDA margin', '~6% est. (0–12%)', ra ? `+${ra.ebitda_impact_pct_revenue[0]}–${ra.ebitda_impact_pct_revenue[1]} pts est.` : '+2–5 pts est.', 'All of the above, run on HarborOS (see the value math)'],
   ];
   const estB = v => esc(v).replace(/\s*est\.\s*/, '<span class="sys-est">est.</span> ').trim();
   $('#ra-kpi').innerHTML = rows.map(r => `<tr><td>${esc(r[0])}</td><td class="sys-n">${estB(r[1])}</td><td class="sys-n">${estB(r[2])}</td><td>${esc(r[3])}</td></tr>`).join('');

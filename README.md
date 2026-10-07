@@ -1,6 +1,6 @@
-# Broad Sky Operating Intelligence
+# BSP Desk
 
-A static operating-intelligence site for the **Broad Sky Partners Portfolio Resource Group (PRG)**. It turns public and licensed data into revenue, M&A and operating actions for six portfolio companies, and pairs each company with a concept website and a named "OS" tech-enablement thesis. Every view starts with a one-line "so what" and KPIs, then shows the evidence (map, table or chart), then the action list. Every number carries a source; estimates are labelled "est." and mock data "illustrative".
+A static site for the Portfolio Resource Group (PRG) at **Broad Sky Partners (BSP)**. It turns public and licensed data into revenue, M&A and operating actions for six portfolio companies, and pairs each company with a concept website and a named "OS" tech-enablement thesis. Every view leads with one short sentence and its KPIs, then the evidence (map, table or chart), then the action list. Every number carries a source; estimates are labelled "est." and mock data "illustrative". Voice rules: `UNIFIED.md` §0.
 
 - **Stack:** vanilla ES modules, no build step, GitHub Pages (`.nojekyll`). Leaflet for maps, inline SVG charts, MapLibre + deck.gl for the 3D theater.
 - **Shared runtime:** `assets/core.js` (data loaders, formatting, UI kit, maps, charts, live feeds, tour, app shell), `assets/chat.js` (the assistant), `assets/components.js` (targets / filings / opportunity cards).
@@ -10,7 +10,7 @@ A static operating-intelligence site for the **Broad Sky Partners Portfolio Reso
 
 | Path | What it is |
 |---|---|
-| `index.html` | Landing page: "Hello, Broad Sky." with the inline assistant, six example prompts, product tour, live evidence counts, the six companies, the OS program and the briefing video. |
+| `index.html` | Landing page: "Hello, BSP." with the inline assistant, six example prompts, product tour, live evidence counts, the six companies, the OS program and the briefing video. |
 | `app.html` | The portal (hash routes `app.html#/<module>/<view>`, ⌘K search, inspector, narrated tour). |
 | `redesigns/index.html` | Gallery of the six concept websites and the OS program, with the design principles behind them. |
 | `redesigns/punctual-pros/` | Concept site · `serviceos.html` (ServiceOS) · `nationwide.html` (nationwide plan) · `ads.html` (growth marketing and sample ads) |
@@ -23,13 +23,13 @@ A static operating-intelligence site for the **Broad Sky Partners Portfolio Reso
 | `theater.html` | Full-screen 3D theater (also in the portal at `#/theater/play`) |
 | `briefing/` | Rendered briefing (`broad_sky_briefing.mp4`), 29-second intro, executive memo (HTML + PDF), shot lists |
 
-Every concept page carries the same dismissible banner ("Concept redesign proposed by Syed Rahman for the Broad Sky Portfolio Resource Group — not an official site.") with the shared navigation **Portal · Site concepts · OS program · Briefing**, the floating assistant, and the same footer disclaimer as the landing page. All internal links are relative, so the site works from any GitHub Pages sub-path.
+Every concept page carries the same dismissible banner ("Concept work by Syed Rahman for the Portfolio Resource Group at Broad Sky Partners (BSP). Not an official company website; estimates are marked est.") with the shared navigation **Portal · Site concepts · OS program · Briefing**, the floating assistant, and the same footer disclaimer as the landing page. All internal links are relative, so the site works from any GitHub Pages sub-path.
 
 ## Module map (portal)
 
 | Rail group | Module (`#/id`) | Views | What it answers |
 |---|---|---|---|
-| Command | Command Center (`home`) | overview, firm | Portfolio footprint, value and exit readiness, live NWS alerts, signals this week, Broad Sky timeline, data coverage |
+| Command | Command Center (`home`) | overview, firm | Portfolio footprint, value and exit readiness, live NWS alerts, signals this week, BSP timeline, data coverage |
 | Portfolio | Commonwealth Electrical, CET (`cet`) | overview, opportunities, wastewater, territory, transfers, targets, filings | New England bid radar, Horton wastewater cross-sell, county fit, new-owner retrofit triggers, add-on screen |
 | Portfolio | Punctual Pros (`pp`) | overview, weather, movers, territory, market, targets, filings | Weather-driven staffing, new-mover leads from home sales, adjacent-zip expansion, franchise market, tuck-ins |
 | Portfolio | Frontline Managed Services (`fl`) | overview, amlaw, midsize, targets, filings | AM Law account plan, mid-size firm pipeline, legal-IT add-ons, deal math |
@@ -157,7 +157,7 @@ python3 scripts/make_briefing.py                         # → briefing/broad_sk
 | `redesigns/ai-agents.html` | The agentic layer: 45 agents across six operating systems, patterns, rollout waves, governance | `data/research/ai_agents_portfolio.json` |
 | `redesigns/<slug>/growth-plan.html` | Growth plans for CET, Frontline, Thomas Scientific, BPI, Fair Harbor | `data/research/<co>_playbook.json` |
 | `theater.html` / `app.html#/theater/play` | WebGL 3D theater (MapLibre GL + deck.gl): six fly-through scenes over real data | sales, opportunities, targets, live NWS |
-| `briefing/Broad_Sky_Operating_Intelligence_Memo.pdf` | Six-page executive memo (`briefing/executive_memo.html`, printed with headless Chrome) | all research metas |
+| `briefing/BSP_Desk_Memo.pdf` | Four-page executive memo (`briefing/executive_memo.html`, printed with headless Chrome) | all research metas |
 | `briefing/broad_sky_intro.mp4` | Cinematic product-intro film (`scripts/make_cinematic.py`: Playwright recording + title cards + narration + synthesized music) | `briefing/cinematic_shots_master.json` |
 
 The live **"revenue left on the table" counter** (`assets/counter.js`) sums sourced, annualized opportunity values (missed calls without 24/7 voice coverage, uncaptured new-mover and storm demand, open CET bids at a 10% win rate) and divides by seconds per year. It is a way to feel the cost of waiting, labelled est., with the components one click away.
