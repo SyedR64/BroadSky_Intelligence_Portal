@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-06",
+ "generated": "2026-10-07",
  "files": [
   {
    "name": "ai_agents_portfolio",
@@ -59,7 +59,7 @@
    "folder": "research",
    "title": "Sponsor value-creation case studies outside residential home services: chronological analogs for Punctual Pros and BSP's other sectors",
    "item_count": 17,
-   "bytes": 119310,
+   "bytes": 119295,
    "generated": "2026-10-06"
   },
   {
@@ -283,7 +283,7 @@
    "folder": "research",
    "title": "How sponsors created value in home-services and adjacent companies: merged case set, common levers, chronological patterns and a dated Punctual Pros sequence",
    "item_count": 64,
-   "bytes": 429350,
+   "bytes": 429320,
    "generated": "2026-10-06"
   },
   {
@@ -380,7 +380,7 @@
   "research_items": 4663,
   "sales_files": 10,
   "sales_rows": 163738,
-  "bytes": 40516418,
+  "bytes": 40516373,
   "data_from": "2026-09-24",
   "data_to": "2026-10-06"
  }

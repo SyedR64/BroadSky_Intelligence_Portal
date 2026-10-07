@@ -3,10 +3,10 @@
   "nws_alerts": {
    "status": "ok",
    "file": "data/live/nws_alerts.json",
-   "fetched_at": "2026-10-06T13:57:04Z",
-   "rows": 12,
-   "bytes": 14754,
-   "seconds": 1.1,
+   "fetched_at": "2026-10-07T16:25:07Z",
+   "rows": 0,
+   "bytes": 659,
+   "seconds": 1.7,
    "source_urls": [
     "https://api.weather.gov/alerts/active?area=PA",
     "https://api.weather.gov/alerts/active?area=NJ",
@@ -22,22 +22,22 @@
   "forecast_hubs": {
    "status": "ok",
    "file": "data/live/forecast_hubs.json",
-   "fetched_at": "2026-10-06T13:57:05Z",
+   "fetched_at": "2026-10-07T16:25:07Z",
    "rows": 10,
-   "bytes": 9183,
-   "seconds": 0.5,
+   "bytes": 11473,
+   "seconds": 0.4,
    "source_urls": [
-    "https://api.open-meteo.com/v1/forecast?latitude=40.0380%2C39.9625%2C40.2663%2C40.2015%2C40.3353%2C40.3757%2C39.9375%2C39.8309%2C39.9528%2C40.2601&longitude=-76.3057%2C-76.7277%2C-76.8861%2C-77.1891%2C-75.9279%2C-76.4626%2C-77.6613%2C-77.2310%2C-74.1967%2C-74.2738&daily=temperature_2m_max%2Ctemperature_2m_min%2Cprecipitation_sum%2Cprecipitation_probability_max%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cweather_code%2Csnowfall_sum&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York&forecast_days=7"
+    "https://api.open-meteo.com/v1/forecast?latitude=40.0380%2C39.9625%2C40.2663%2C40.2015%2C40.3353%2C40.3757%2C39.9375%2C39.8309%2C39.9528%2C40.2601&longitude=-76.3057%2C-76.7277%2C-76.8861%2C-77.1891%2C-75.9279%2C-76.4626%2C-77.6613%2C-77.2310%2C-74.1967%2C-74.2738&daily=temperature_2m_max%2Ctemperature_2m_min%2Cprecipitation_sum%2Cprecipitation_probability_max%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cweather_code%2Csnowfall_sum&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York&forecast_days=7&past_days=2"
    ],
    "title": "Open-Meteo 7-day forecast, Punctual Pros weather hubs"
   },
   "usaspending_trades": {
    "status": "ok",
    "file": "data/live/usaspending_trades.json",
-   "fetched_at": "2026-10-06T13:57:06Z",
+   "fetched_at": "2026-10-07T16:25:10Z",
    "rows": 300,
    "bytes": 122698,
-   "seconds": 1.6,
+   "seconds": 2.7,
    "source_urls": [
     "https://api.usaspending.gov/api/v2/search/spending_by_award/"
    ],
@@ -46,10 +46,10 @@
   "echo_npdes_majors": {
    "status": "ok",
    "file": "data/live/echo_npdes_majors.json",
-   "fetched_at": "2026-10-06T13:57:08Z",
+   "fetched_at": "2026-10-07T16:25:12Z",
    "rows": 175,
    "bytes": 103373,
-   "seconds": 1.5,
+   "seconds": 2.5,
    "source_urls": [
     "https://echodata.epa.gov/echo/cwa_rest_services.get_facilities?output=JSON&p_st=CT&p_sic=4952&p_maj=Y",
     "https://echodata.epa.gov/echo/cwa_rest_services.get_facilities?output=JSON&p_st=MA&p_sic=4952&p_maj=Y",
@@ -60,7 +60,7 @@
   "census_permits": {
    "status": "ok",
    "file": "data/live/census_permits.json",
-   "fetched_at": "2026-10-06T13:57:08Z",
+   "fetched_at": "2026-10-07T16:25:13Z",
    "rows": 157,
    "bytes": 25694,
    "seconds": 0.2,
@@ -70,6 +70,6 @@
    "title": "Census Building Permits Survey, monthly county estimates (current month)"
   }
  },
- "generated_at": "2026-10-06T13:57:08Z",
+ "generated_at": "2026-10-07T16:25:13Z",
  "note": "Nightly snapshots of public live sources (scripts/refresh_live.py). A source with status error keeps its previous file."
 }
