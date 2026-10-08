@@ -1,5 +1,27 @@
 # Turning on the assistant backend
 
+## Quick path: use the Claude API credits with one secret (10 minutes)
+
+This needs no Cloudflare account. It switches on the weekly deep dives, which the assistant serves to every visitor as static answers.
+
+1. Create an API key: [platform.claude.com/settings/keys](https://platform.claude.com/settings/keys) → **Create Key** → name it `bsp-desk` → copy the key once.
+2. Add it as the repository secret `ANTHROPIC_API_KEY`: [github.com/SyedR64/BroadSky_Intelligence_Portal/settings/secrets/actions/new](https://github.com/SyedR64/BroadSky_Intelligence_Portal/settings/secrets/actions/new), or from a terminal (the value is prompted, not echoed):
+
+   ```bash
+   gh secret set ANTHROPIC_API_KEY -R SyedR64/BroadSky_Intelligence_Portal
+   ```
+
+3. Run the first generation now instead of waiting for Monday:
+
+   ```bash
+   gh workflow run generate-answers.yml -R SyedR64/BroadSky_Intelligence_Portal
+   ```
+
+   The action writes `data/answers/*.json`, commits them, and the site picks them up on the next Pages build. Expect about $2 to $4 of credits per full run (33 prompts on Claude Opus 5.5); the weekly run only refreshes answers older than seven days.
+
+The live, streaming assistant for open questions still needs the hosted worker below (a free Cloudflare account plus two more secrets).
+
+
 The site is static (GitHub Pages). The assistant already answers from the portal's own data with no backend. This guide switches on the hosted half: a Cloudflare Worker that holds the Claude API key, streams Claude answers to every visitor, and stores threads and feedback in a D1 database. Plan on about 15 minutes. Nothing here costs money until Claude answers questions.
 
 ## What changes for visitors
