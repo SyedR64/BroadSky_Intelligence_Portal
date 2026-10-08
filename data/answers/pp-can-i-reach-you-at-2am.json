@@ -1,0 +1,39 @@
+{
+ "question": "Can I reach you at 2am?",
+ "persona": "pp",
+ "slug": "pp-can-i-reach-you-at-2am",
+ "model": "claude-opus-5-5",
+ "generated_at": "2026-10-08T16:58:37Z",
+ "html": "<p><strong>This assistant doesn't have our live-answering hours, so it can't promise that a person will pick up at 2am.</strong> If you have an urgent problem, call your local office. The notes below explain what we know about late-night calls.</p>\n<h3>What we can confirm</h3>\n<ul><li>We run One Hour Heating &amp; Air, Ben Franklin Plumbing and Mister Sparky territories: 19 in Pennsylvania and 6 in New Jersey (Punctual Pros public filings).</li><li>Our overnight staffing, on-call rotation and callback times are not in the data this assistant uses. We won't guess them.</li><li>Our own planning model assumes about 35% of after-hours calls go unanswered (est.). That is a planning assumption, not a measured rate (Voice AI research).</li></ul>\n<h3>When late calls come in</h3>\n<p>Late-night calls are a small share of calls, but a steady one. They rise in summer and are lower in October.</p>\n<table><thead><tr><th>Off-hours call pattern (ServiceTitan data)</th><th>Summer</th><th>October 2025</th></tr></thead><tbody><tr><td>All off-hours inbound share, HVAC</td><td>14.1% (June)</td><td>9.8%</td></tr><tr><td>Weekday after-hours share</td><td>9.3%</td><td>6.8%</td></tr><tr><td>Weekend share</td><td>4.9% (August)</td><td>2.95%</td></tr></tbody></table>\n<ul><li>Off-hours calls peak between 5 and 9 pm local time, not overnight (Punctual Pros demand model).</li><li>October is the busiest HVAC month nationally because people start their heating (Punctual Pros demand model).</li></ul>\n<h3>If you call at 2am</h3>\n<ul><li>Call the number for your local brand.</li><li>If no one answers, call back or leave a message with your address and the problem.</li><li>We don't have published callback times, so check again in the morning if you haven't heard from us.</li></ul>\n<p>Every 2am call we miss is a homeowner who calls the next company on Google. Our model puts the after-hours share of recoverable jobs at about $390,000 a year (est.), out of about $1.4M (est.) lost to unanswered calls overall (Voice AI research).</p>\n<h3>Next actions for the operating team</h3>\n<ul><li><strong>Load real hours into this assistant.</strong> Confirm overnight coverage by brand and site, then add it so this answer can give a firm yes or no.</li><li><strong>Measure the missed-call rate.</strong> Pull ServiceTitan or CRM call logs to replace the 35% after-hours assumption and the 14.8% blended missed-call share (est.) with measured rates.</li><li><strong>Pilot AI overflow answering overnight.</strong> Vendor figures show 70% booking overall and 90% when capacity is open. These numbers are self-reported and unaudited, so treat them as ranges. Run a short pilot to get our own figures.</li><li><strong>Staff for heating season now.</strong> It is Oct 8, 2026, and October is the busiest HVAC month (Punctual Pros demand model). Check the on-call rotation before cold snaps arrive.</li></ul>",
+ "markdown": "**This assistant doesn't have our live-answering hours, so it can't promise that a person will pick up at 2am.** If you have an urgent problem, call your local office. The notes below explain what we know about late-night calls.\n\n## What we can confirm\n\n- We run One Hour Heating & Air, Ben Franklin Plumbing and Mister Sparky territories: 19 in Pennsylvania and 6 in New Jersey (Punctual Pros public filings).\n- Our overnight staffing, on-call rotation and callback times are not in the data this assistant uses. We won't guess them.\n- Our own planning model assumes about 35% of after-hours calls go unanswered (est.). That is a planning assumption, not a measured rate (Voice AI research).\n\n## When late calls come in\n\nLate-night calls are a small share of calls, but a steady one. They rise in summer and are lower in October.\n\n| Off-hours call pattern (ServiceTitan data) | Summer | October 2025 |\n|---|---|---|\n| All off-hours inbound share, HVAC | 14.1% (June) | 9.8% |\n| Weekday after-hours share | 9.3% | 6.8% |\n| Weekend share | 4.9% (August) | 2.95% |\n\n- Off-hours calls peak between 5 and 9 pm local time, not overnight (Punctual Pros demand model).\n- October is the busiest HVAC month nationally because people start their heating (Punctual Pros demand model).\n\n## If you call at 2am\n\n- Call the number for your local brand.\n- If no one answers, call back or leave a message with your address and the problem.\n- We don't have published callback times, so check again in the morning if you haven't heard from us.\n\nEvery 2am call we miss is a homeowner who calls the next company on Google. Our model puts the after-hours share of recoverable jobs at about $390,000 a year (est.), out of about $1.4M (est.) lost to unanswered calls overall (Voice AI research).\n\n## Next actions for the operating team\n\n- **Load real hours into this assistant.** Confirm overnight coverage by brand and site, then add it so this answer can give a firm yes or no.\n- **Measure the missed-call rate.** Pull ServiceTitan or CRM call logs to replace the 35% after-hours assumption and the 14.8% blended missed-call share (est.) with measured rates.\n- **Pilot AI overflow answering overnight.** Vendor figures show 70% booking overall and 90% when capacity is open. These numbers are self-reported and unaudited, so treat them as ranges. Run a short pilot to get our own figures.\n- **Staff for heating season now.** It is Oct 8, 2026, and October is the busiest HVAC month (Punctual Pros demand model). Check the on-call rotation before cold snaps arrive.",
+ "sources": [
+  {
+   "name": "Voice AI research",
+   "dataset": "voice_ai",
+   "path": "data/research/voice_ai.json",
+   "as_of": "2026-10-06"
+  },
+  {
+   "name": "Punctual Pros demand model",
+   "dataset": "pp_demand_model",
+   "path": "data/research/pp_demand_model.json",
+   "as_of": "2026-09-24"
+  },
+  {
+   "name": "Punctual Pros market profile",
+   "dataset": "pp_market",
+   "path": "data/research/pp_market.json",
+   "as_of": "2026-09-24"
+  },
+  {
+   "name": "Punctual Pros public filings",
+   "dataset": "pp_filings",
+   "path": "data/research/pp_filings.json",
+   "as_of": "2026-09-24"
+  }
+ ],
+ "usage": {
+  "input_tokens": 7007,
+  "output_tokens": 2025
+ }
+}

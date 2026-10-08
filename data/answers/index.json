@@ -1,6 +1,417 @@
 {
- "generated_at": "2026-10-06T13:51:52Z",
- "count": 0,
+ "generated_at": "2026-10-08T17:02:27Z",
+ "count": 33,
  "note": "Precomputed Claude deep-dives (scripts/generate_answers.py). Fetch data/answers/<slug>.json for the full answer.",
- "items": []
+ "items": [
+  {
+   "slug": "bpi-what-services-does-bpi-offer",
+   "question": "What services does BPI offer?",
+   "persona": "bpi",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T17:02:12Z",
+   "sources": [
+    "BPI growth plan",
+    "BPI public filings"
+   ]
+  },
+  {
+   "slug": "cet-can-you-upgrade-a-wastewater-plant-s-switchgear",
+   "question": "Can you upgrade a wastewater plant's switchgear?",
+   "persona": "cet",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T17:00:10Z",
+   "sources": [
+    "CET wastewater-plant targets",
+    "EPA wastewater-plant compliance (nightly snapshot)",
+    "CET growth plan",
+    "CET public filings"
+   ]
+  },
+  {
+   "slug": "cet-what-incentives-exist-for-commercial-solar-in-massachuse",
+   "question": "What incentives exist for commercial solar in Massachusetts?",
+   "persona": "cet",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:59:48Z",
+   "sources": [
+    "CET opportunity radar",
+    "CET growth plan",
+    "CET public filings"
+   ]
+  },
+  {
+   "slug": "cet-which-ev-charging-programs-are-open-now",
+   "question": "Which EV charging programs are open now?",
+   "persona": "cet",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T17:00:25Z",
+   "sources": [
+    "CET opportunity radar",
+    "CET growth plan",
+    "CET public filings"
+   ]
+  },
+  {
+   "slug": "compare-the-portfolio-to-public-comps",
+   "question": "Compare the portfolio to public comps",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:55:36Z",
+   "sources": [
+    "Public comparables",
+    "ServiceOS evidence",
+    "Portfolio AI-agent plan",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "estimate-punctual-pros-revenue-from-public-filings",
+   "question": "Estimate Punctual Pros revenue from public filings",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:54:34Z",
+   "sources": [
+    "Punctual Pros public filings",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "fh-what-are-the-trunks-made-of",
+   "question": "What are the trunks made of?",
+   "persona": "fh",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T17:02:27Z",
+   "sources": [
+    "Fair Harbor growth plan",
+    "Fair Harbor public filings"
+   ]
+  },
+  {
+   "slug": "fl-how-do-you-handle-ebilling-and-a-r",
+   "question": "How do you handle eBilling and A/R?",
+   "persona": "fl",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T17:01:12Z",
+   "sources": [
+    "Frontline growth plan",
+    "Mid-size law firms",
+    "Frontline public filings"
+   ]
+  },
+  {
+   "slug": "fl-what-is-included-in-the-service-desk",
+   "question": "What is included in the service desk?",
+   "persona": "fl",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T17:00:45Z",
+   "sources": [
+    "Frontline growth plan",
+    "Mid-size law firms",
+    "Frontline public filings"
+   ]
+  },
+  {
+   "slug": "how-does-broad-sky-actually-buy-companies",
+   "question": "How does BSP actually buy companies?",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:57:57Z",
+   "sources": [
+    "BSP acquisition methodology",
+    "BSP firm profile",
+    "Private-equity landscape"
+   ]
+  },
+  {
+   "slug": "how-does-broad-sky-scale-cet-across-the-northeast",
+   "question": "How does BSP scale CET across the Northeast?",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:56:37Z",
+   "sources": [
+    "CET growth plan",
+    "CET opportunity radar",
+    "CET add-on targets",
+    "Census building permits (nightly snapshot)",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "how-many-new-mover-leads-are-in-lancaster-county",
+   "question": "How many new-mover leads are in Lancaster County?",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:55:19Z",
+   "sources": [
+    "Punctual Pros ad plan",
+    "Punctual Pros market profile",
+    "Census building permits (nightly snapshot)",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "how-much-revenue-does-24-7-voice-ai-recover-for-punctual-pro",
+   "question": "How much does voice AI recover for Punctual Pros?",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:57:25Z",
+   "sources": [
+    "Voice AI research",
+    "Punctual Pros demand model",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "open-the-pe-landscape",
+   "question": "Open the PE landscape",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:55:50Z",
+   "sources": [
+    "Private-equity landscape",
+    "Competitor filings",
+    "Home-services company case studies",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "pp-can-i-reach-you-at-2am",
+   "question": "Can I reach you at 2am?",
+   "persona": "pp",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:58:37Z",
+   "sources": [
+    "Voice AI research",
+    "Punctual Pros demand model",
+    "Punctual Pros market profile",
+    "Punctual Pros public filings"
+   ]
+  },
+  {
+   "slug": "pp-is-there-a-storm-coming-this-week",
+   "question": "Is there a storm coming this week?",
+   "persona": "pp",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:59:27Z",
+   "sources": [
+    "National Weather Service alerts (nightly snapshot)",
+    "Open-Meteo 7-day forecast (nightly snapshot)",
+    "Punctual Pros demand model",
+    "Punctual Pros storm events",
+    "Punctual Pros market profile",
+    "Punctual Pros public filings"
+   ]
+  },
+  {
+   "slug": "pp-what-does-the-comfort-club-membership-include",
+   "question": "What does the Comfort Club membership include?",
+   "persona": "pp",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:58:50Z",
+   "sources": [
+    "Punctual Pros market profile",
+    "Punctual Pros nationwide plan",
+    "Punctual Pros public filings"
+   ]
+  },
+  {
+   "slug": "pp-what-rebates-are-available-for-a-heat-pump",
+   "question": "What rebates are available for a heat pump?",
+   "persona": "pp",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:59:06Z",
+   "sources": [
+    "Punctual Pros market profile",
+    "Punctual Pros nationwide plan",
+    "Punctual Pros public filings"
+   ]
+  },
+  {
+   "slug": "show-me-how-to-take-punctual-pros-nationwide",
+   "question": "Show me how to take Punctual Pros nationwide",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:53:12Z",
+   "sources": [
+    "Punctual Pros nationwide plan",
+    "Home-services company case studies",
+    "Punctual Pros add-on targets",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "show-me-sample-ctv-ads-and-the-media-plan-for-punctual-pros",
+   "question": "Show sample CTV ads for Punctual Pros",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:56:21Z",
+   "sources": [
+    "Punctual Pros ad plan",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "show-the-top-add-on-targets-for-cet-in-connecticut",
+   "question": "Show the top add-on targets for CET in Connecticut",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:54:48Z",
+   "sources": [
+    "CET add-on targets",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "ts-do-you-supply-cleanroom-consumables",
+   "question": "Do you supply cleanroom consumables?",
+   "persona": "ts",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T17:01:35Z",
+   "sources": [
+    "Thomas Scientific growth plan",
+    "Thomas Scientific public filings"
+   ]
+  },
+  {
+   "slug": "ts-what-is-vendor-managed-inventory",
+   "question": "What is vendor-managed inventory?",
+   "persona": "ts",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T17:01:55Z",
+   "sources": [
+    "Thomas Scientific growth plan",
+    "Thomas Scientific public filings"
+   ]
+  },
+  {
+   "slug": "what-are-the-tech-enablement-theses-for-every-company",
+   "question": "What are the tech-enablement theses for every company?",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:56:06Z",
+   "sources": [
+    "ServiceOS evidence",
+    "Public comparables",
+    "Portfolio AI-agent plan",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "what-did-sponsors-do-with-companies-like-punctual-pros-befor",
+   "question": "What did sponsors do with companies like Punctual Pros?",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:57:39Z",
+   "sources": [
+    "value creation cases",
+    "Home-services company case studies",
+    "Punctual Pros nationwide plan",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "what-is-serviceos-and-why-does-it-raise-valuation",
+   "question": "What is ServiceOS and why does it raise valuation?",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:55:04Z",
+   "sources": [
+    "ServiceOS evidence",
+    "Public comparables",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "what-is-the-growth-plan-for-frontline",
+   "question": "What is the growth plan for Frontline?",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:56:55Z",
+   "sources": [
+    "Frontline growth plan",
+    "Frontline public filings",
+    "Frontline and Thomas Scientific add-on targets",
+    "Mid-size law firms",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "what-is-the-storm-impact-on-punctual-pros-this-week",
+   "question": "What do this week's storms mean for Punctual Pros?",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:53:47Z",
+   "sources": [
+    "National Weather Service alerts (nightly snapshot)",
+    "Open-Meteo 7-day forecast (nightly snapshot)",
+    "Punctual Pros demand model",
+    "Punctual Pros storm events",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "which-ai-agents-create-the-most-value-across-the-portfolio",
+   "question": "Which AI agents create the most value?",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:57:09Z",
+   "sources": [
+    "Portfolio AI-agent plan",
+    "Voice AI research",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "which-cet-bids-are-due-in-the-next-30-days",
+   "question": "Which CET bids are due within 30 days?",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:54:19Z",
+   "sources": [
+    "New England public bids",
+    "CET opportunity radar",
+    "Federal trade-contractor awards (nightly snapshot)",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "which-counties-nationwide-should-punctual-pros-expand-to-fir",
+   "question": "Which counties nationwide should Punctual Pros expand to first?",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:58:15Z",
+   "sources": [
+    "national counties",
+    "Punctual Pros nationwide plan",
+    "value creation cases",
+    "Punctual Pros add-on targets"
+   ]
+  },
+  {
+   "slug": "which-wastewater-plants-should-horton-call-first",
+   "question": "Which wastewater plants should Horton call first?",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:53:29Z",
+   "sources": [
+    "CET wastewater-plant targets",
+    "EPA wastewater-plant compliance (nightly snapshot)",
+    "CET growth plan",
+    "BSP firm profile"
+   ]
+  },
+  {
+   "slug": "who-competes-with-broad-sky-for-home-services-deals",
+   "question": "Who competes with BSP for home-services deals?",
+   "persona": "portal",
+   "model": "claude-opus-5-5",
+   "generated_at": "2026-10-08T16:54:05Z",
+   "sources": [
+    "Private-equity landscape",
+    "Competitor filings",
+    "Home-services company case studies",
+    "BSP firm profile"
+   ]
+  }
+ ]
 }

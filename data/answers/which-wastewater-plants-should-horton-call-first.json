@@ -1,0 +1,39 @@
+{
+ "question": "Which wastewater plants should Horton call first?",
+ "persona": "portal",
+ "slug": "which-wastewater-plants-should-horton-call-first",
+ "model": "claude-opus-5-5",
+ "generated_at": "2026-10-08T16:53:29Z",
+ "html": "<p>Horton should call New Haven East Shore, Hartford and Norwalk first. All three are Connecticut plants with work already on the state's fundable list, in Horton's home market (CET wastewater-plant targets). MWRA Deer Island and Bridgeport Westside come next.</p>\n<h3>First-call list</h3>\n<table><thead><tr><th>Rank</th><th>Plant</th><th>Fit</th><th>Fundable work</th><th>Requested work</th></tr></thead><tbody><tr><td>1</td><td>New Haven East Shore (40 MGD)</td><td>98</td><td>$82M wet-weather/odor control, FY27</td><td>$19.2M process-air compressors</td></tr><tr><td>2</td><td>Hartford WPCF (60 MGD)</td><td>96</td><td>$24.3M sludge screening/equalization, FY26-27</td><td>$31.6M Island Road, Hog Brook pump stations</td></tr><tr><td>3</td><td>Norwalk WPCF (18 MGD)</td><td>95</td><td>$26M final settling tanks, FY27</td><td>$48M green aeration</td></tr><tr><td>4</td><td>MWRA Deer Island</td><td>94</td><td>$289M Clarifier #2 in the 2026 IUP</td><td>—</td></tr><tr><td>5</td><td>Bridgeport Westside (30 MGD)</td><td>93</td><td>Not shown in the excerpt</td><td>Not shown</td></tr></tbody></table>\n<p>(CET wastewater-plant targets)</p>\n<h3>Why these three lead</h3>\n<ul><li><strong>Funding is real.</strong> CT dollars split into two groups. Table 2 / Category I items are on the fundable list. Table 3 items are only requests eligible for first-come reserves. Each top-three plant has fundable work plus a larger request behind it (CET wastewater-plant targets).</li><li><strong>Norwalk fits the cross-sell.</strong> Aeration is the plant's biggest energy load, so the $48M request pairs Horton electrical with NuWave efficiency.</li><li><strong>Phase 1 of the growth plan names these plants.</strong> It points Horton at 62 funded or requested projects and leads with New Haven, Hartford and Norwalk (CET growth plan).</li></ul>\n<h3>Signals on the next tier</h3>\n<ul><li><strong>Deer Island:</strong> the plant already self-generates 26% of its electricity. The angle is electrical subcontracting plus storage and efficiency, not solar.</li><li><strong>Bridgeport Westside:</strong> EPA shows 12 quarters with noncompliance and 1 with significant noncompliance. Its permit is administratively continued past June 30, 2024, and the last inspection was 683 days ago (EPA wastewater-plant compliance). Read this as a possible sign of capital need (est.), not a confirmed project.</li><li><strong>Permit timing:</strong> Norwalk's permit expired March 31, 2026. New Haven and Hartford permits are administratively continued (EPA wastewater-plant compliance). Renewals can bring scope changes (est.), but the data do not tie any project to them.</li></ul>\n<h3>Gaps to close</h3>\n<ul><li>Pipeline totals by plant. Only Hartford ($105.7M) and Norwalk ($76.5M) are fully visible.</li><li>Bridgeport Westside's project detail, which is cut off in the excerpt.</li><li>Bid and procurement dates for each fundable item. These set the actual call order.</li><li>Any existing Horton relationships with GNHWPCA and MDC.</li></ul>\n<h3>Next actions</h3>\n<ol><li>Confirm the procurement stage and engineer of record for New Haven's $82M, Hartford's $24.3M and Norwalk's $26M projects.</li><li>Pair Horton and NuWave on one Norwalk aeration pitch, with a joint electrical and efficiency scope.</li><li>Pull Bridgeport Westside's full project record and Deer Island's Clarifier #2 subcontracting plan before outreach.</li><li>Map Horton's existing contacts at the top five operators and assign an owner for each call.</li></ol>",
+ "markdown": "Horton should call New Haven East Shore, Hartford and Norwalk first. All three are Connecticut plants with work already on the state's fundable list, in Horton's home market (CET wastewater-plant targets). MWRA Deer Island and Bridgeport Westside come next.\n\n## First-call list\n\n| Rank | Plant | Fit | Fundable work | Requested work |\n|---|---|---|---|---|\n| 1 | New Haven East Shore (40 MGD) | 98 | $82M wet-weather/odor control, FY27 | $19.2M process-air compressors |\n| 2 | Hartford WPCF (60 MGD) | 96 | $24.3M sludge screening/equalization, FY26-27 | $31.6M Island Road, Hog Brook pump stations |\n| 3 | Norwalk WPCF (18 MGD) | 95 | $26M final settling tanks, FY27 | $48M green aeration |\n| 4 | MWRA Deer Island | 94 | $289M Clarifier #2 in the 2026 IUP | — |\n| 5 | Bridgeport Westside (30 MGD) | 93 | Not shown in the excerpt | Not shown |\n\n(CET wastewater-plant targets)\n\n## Why these three lead\n\n- **Funding is real.** CT dollars split into two groups. Table 2 / Category I items are on the fundable list. Table 3 items are only requests eligible for first-come reserves. Each top-three plant has fundable work plus a larger request behind it (CET wastewater-plant targets).\n- **Norwalk fits the cross-sell.** Aeration is the plant's biggest energy load, so the $48M request pairs Horton electrical with NuWave efficiency.\n- **Phase 1 of the growth plan names these plants.** It points Horton at 62 funded or requested projects and leads with New Haven, Hartford and Norwalk (CET growth plan).\n\n## Signals on the next tier\n\n- **Deer Island:** the plant already self-generates 26% of its electricity. The angle is electrical subcontracting plus storage and efficiency, not solar.\n- **Bridgeport Westside:** EPA shows 12 quarters with noncompliance and 1 with significant noncompliance. Its permit is administratively continued past June 30, 2024, and the last inspection was 683 days ago (EPA wastewater-plant compliance). Read this as a possible sign of capital need (est.), not a confirmed project.\n- **Permit timing:** Norwalk's permit expired March 31, 2026. New Haven and Hartford permits are administratively continued (EPA wastewater-plant compliance). Renewals can bring scope changes (est.), but the data do not tie any project to them.\n\n## Gaps to close\n\n- Pipeline totals by plant. Only Hartford ($105.7M) and Norwalk ($76.5M) are fully visible.\n- Bridgeport Westside's project detail, which is cut off in the excerpt.\n- Bid and procurement dates for each fundable item. These set the actual call order.\n- Any existing Horton relationships with GNHWPCA and MDC.\n\n## Next actions\n\n1. Confirm the procurement stage and engineer of record for New Haven's $82M, Hartford's $24.3M and Norwalk's $26M projects.\n2. Pair Horton and NuWave on one Norwalk aeration pitch, with a joint electrical and efficiency scope.\n3. Pull Bridgeport Westside's full project record and Deer Island's Clarifier #2 subcontracting plan before outreach.\n4. Map Horton's existing contacts at the top five operators and assign an owner for each call.",
+ "sources": [
+  {
+   "name": "CET wastewater-plant targets",
+   "dataset": "cet_wwtp_targets",
+   "path": "data/research/cet_wwtp_targets.json",
+   "as_of": "2026-09-24"
+  },
+  {
+   "name": "EPA wastewater-plant compliance (nightly snapshot)",
+   "dataset": "live:echo_npdes_majors",
+   "path": "data/live/echo_npdes_majors.json",
+   "as_of": "2026-10-07T16:25:12Z"
+  },
+  {
+   "name": "CET growth plan",
+   "dataset": "cet_playbook",
+   "path": "data/research/cet_playbook.json",
+   "as_of": "2026-10-06"
+  },
+  {
+   "name": "BSP firm profile",
+   "dataset": "bsp_firm",
+   "path": "data/research/bsp_firm.json",
+   "as_of": "2026-09-24"
+  }
+ ],
+ "usage": {
+  "input_tokens": 7266,
+  "output_tokens": 1844
+ }
+}

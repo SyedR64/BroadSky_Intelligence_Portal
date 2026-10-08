@@ -1,0 +1,51 @@
+{
+ "question": "Is there a storm coming this week?",
+ "persona": "pp",
+ "slug": "pp-is-there-a-storm-coming-this-week",
+ "model": "claude-opus-5-5",
+ "generated_at": "2026-10-08T16:59:27Z",
+ "html": "<h2>No storm is expected through Oct 10, 2026</h2>\n<p>No. As of Oct 8, 2026, there are no active weather alerts in any of our states, and the forecast for our Central PA hubs is dry through Oct 10.</p>\n<h3>Current weather alerts</h3>\n<ul><li>There are zero active alerts in PA, NJ, MA, CT, RI, NH, ME and VT (National Weather Service alerts, snapshot Oct 8, 2026).</li><li>This covers our Central PA core and the Horvath service area in Ocean and Monmouth counties.</li></ul>\n<h3>Forecast for our hubs</h3>\n<p>Here is the outlook for Oct 8–10, 2026 (Open-Meteo 7-day forecast):</p>\n<table><thead><tr><th>Hub</th><th>Highs (°F)</th><th>Lows (°F)</th><th>Peak gust (mph)</th><th>Rain chance</th></tr></thead><tbody><tr><td>Lancaster</td><td>70–75</td><td>45–50</td><td>28</td><td>0%</td></tr><tr><td>York</td><td>71–75</td><td>48–52</td><td>29</td><td>≤1%</td></tr><tr><td>Harrisburg</td><td>70–74</td><td>47–51</td><td>29</td><td>≤1%</td></tr><tr><td>Carlisle</td><td>71–74</td><td>45–52</td><td>30</td><td>≤1%</td></tr><tr><td>Reading</td><td>69–73</td><td>49–52</td><td>25</td><td>0%</td></tr><tr><td>Lebanon</td><td>67–71</td><td>46–49</td><td>28</td><td>0%</td></tr></tbody></table>\n<ul><li>No rain or snow is forecast at any of these hubs.</li><li>Today, Oct 8, is the windiest day, with gusts near 25–30 mph. Winds ease by Oct 10.</li><li>The forecast shows fog in Lebanon today.</li></ul>\n<h3>What the forecast doesn't show</h3>\n<ul><li>The forecast covers 10 hubs, but only six appear in this snapshot. The other four may include our NJ sites. They should be checked before anyone calls the whole footprint clear.</li><li>The days after Oct 10 are cut off in this snapshot, so the weekend beyond Saturday is unconfirmed.</li><li>Wind gusts near 30 mph are below the levels usually tied to outage calls. We have no fitted electrical elasticity yet, so treat that as an est. (Punctual Pros demand model).</li></ul>\n<h3>What drives calls this week</h3>\n<ul><li>With no storm, weather won't push demand this week. The season will.</li><li>October is the busiest HVAC month nationally because of heating start-up (Punctual Pros demand model).</li><li>Cool nights in the 40s fit that pattern. Expect furnace and boiler start-up calls rather than storm repairs (est.).</li></ul>\n<p>A quiet weather week in our peak HVAC month means the call board reflects heating start-up demand on its own. That is the cleanest read we will get on how much the season, rather than the weather, drives revenue.</p>\n<h3>Next actions</h3>\n<ul><li>Pull the four hubs missing from this snapshot, including the NJ sites, and confirm they are also dry and alert-free.</li><li>Re-check the nightly alert and forecast snapshots for Oct 11 onward before setting weekend on-call staffing.</li><li>Staff HVAC dispatch for heating start-up volume, not storm response, through Oct 10.</li><li>Tag this week's booked calls as a no-weather-event baseline in the ServiceTitan export. That helps calibrate the demand model, which needs 12+ months of our own data.</li></ul>",
+ "markdown": "# No storm is expected through Oct 10, 2026\n\nNo. As of Oct 8, 2026, there are no active weather alerts in any of our states, and the forecast for our Central PA hubs is dry through Oct 10.\n\n## Current weather alerts\n\n- There are zero active alerts in PA, NJ, MA, CT, RI, NH, ME and VT (National Weather Service alerts, snapshot Oct 8, 2026).\n- This covers our Central PA core and the Horvath service area in Ocean and Monmouth counties.\n\n## Forecast for our hubs\n\nHere is the outlook for Oct 8–10, 2026 (Open-Meteo 7-day forecast):\n\n| Hub | Highs (°F) | Lows (°F) | Peak gust (mph) | Rain chance |\n|---|---|---|---|---|\n| Lancaster | 70–75 | 45–50 | 28 | 0% |\n| York | 71–75 | 48–52 | 29 | ≤1% |\n| Harrisburg | 70–74 | 47–51 | 29 | ≤1% |\n| Carlisle | 71–74 | 45–52 | 30 | ≤1% |\n| Reading | 69–73 | 49–52 | 25 | 0% |\n| Lebanon | 67–71 | 46–49 | 28 | 0% |\n\n- No rain or snow is forecast at any of these hubs.\n- Today, Oct 8, is the windiest day, with gusts near 25–30 mph. Winds ease by Oct 10.\n- The forecast shows fog in Lebanon today.\n\n## What the forecast doesn't show\n\n- The forecast covers 10 hubs, but only six appear in this snapshot. The other four may include our NJ sites. They should be checked before anyone calls the whole footprint clear.\n- The days after Oct 10 are cut off in this snapshot, so the weekend beyond Saturday is unconfirmed.\n- Wind gusts near 30 mph are below the levels usually tied to outage calls. We have no fitted electrical elasticity yet, so treat that as an est. (Punctual Pros demand model).\n\n## What drives calls this week\n\n- With no storm, weather won't push demand this week. The season will.\n- October is the busiest HVAC month nationally because of heating start-up (Punctual Pros demand model).\n- Cool nights in the 40s fit that pattern. Expect furnace and boiler start-up calls rather than storm repairs (est.).\n\nA quiet weather week in our peak HVAC month means the call board reflects heating start-up demand on its own. That is the cleanest read we will get on how much the season, rather than the weather, drives revenue.\n\n## Next actions\n\n- Pull the four hubs missing from this snapshot, including the NJ sites, and confirm they are also dry and alert-free.\n- Re-check the nightly alert and forecast snapshots for Oct 11 onward before setting weekend on-call staffing.\n- Staff HVAC dispatch for heating start-up volume, not storm response, through Oct 10.\n- Tag this week's booked calls as a no-weather-event baseline in the ServiceTitan export. That helps calibrate the demand model, which needs 12+ months of our own data.",
+ "sources": [
+  {
+   "name": "National Weather Service alerts (nightly snapshot)",
+   "dataset": "live:nws_alerts",
+   "path": "data/live/nws_alerts.json",
+   "as_of": "2026-10-08T16:26:32Z"
+  },
+  {
+   "name": "Open-Meteo 7-day forecast (nightly snapshot)",
+   "dataset": "live:forecast_hubs",
+   "path": "data/live/forecast_hubs.json",
+   "as_of": "2026-10-08T16:26:32Z"
+  },
+  {
+   "name": "Punctual Pros demand model",
+   "dataset": "pp_demand_model",
+   "path": "data/research/pp_demand_model.json",
+   "as_of": "2026-09-24"
+  },
+  {
+   "name": "Punctual Pros storm events",
+   "dataset": "pp_storm_events",
+   "path": "data/research/pp_storm_events.json",
+   "as_of": "2026-09-24"
+  },
+  {
+   "name": "Punctual Pros market profile",
+   "dataset": "pp_market",
+   "path": "data/research/pp_market.json",
+   "as_of": "2026-09-24"
+  },
+  {
+   "name": "Punctual Pros public filings",
+   "dataset": "pp_filings",
+   "path": "data/research/pp_filings.json",
+   "as_of": "2026-09-24"
+  }
+ ],
+ "usage": {
+  "input_tokens": 9831,
+  "output_tokens": 2181
+ }
+}

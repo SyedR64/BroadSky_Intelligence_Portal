@@ -1,0 +1,39 @@
+{
+ "question": "Who competes with BSP for home-services deals?",
+ "persona": "portal",
+ "slug": "who-competes-with-broad-sky-for-home-services-deals",
+ "model": "claude-opus-5-5",
+ "generated_at": "2026-10-08T16:54:05Z",
+ "html": "<h2>Home-Services Deal Competitors</h2>\n<p>Residential services is BSP's most crowded deal market. Well-funded national consolidators set add-on prices, and several sponsor-backed companies are buying in or next to Punctual Pros' Central PA/NJ counties (Private-equity landscape).</p>\n<h3>Local and national bidders</h3>\n<table><thead><tr><th>Tier</th><th>Companies / sponsors</th><th>Credit position</th></tr></thead><tbody><tr><td>PA/NJ, active</td><td>Sila (Goldman Sachs), Legacy Service Partners/HL Bowman (Gridiron), Ally Services (Watchtower), Northwinds (TruArc)</td><td>Legacy borrows at par; Sila looks healthier than most local rivals</td></tr><tr><td>Local operator</td><td>Haller (Lancaster, 254 trucks)</td><td>Described as healthier</td></tr><tr><td>National, scaled</td><td>Apex (Alpine), Wrench (LGP), Redwood (Altas)</td><td>S+425–475, marked at par, delayed-draw lines for acquisitions</td></tr><tr><td>National, stressed</td><td>TurnPoint (OMERS), Any Hour (Knox Lane), Len the Plumber, Horizon</td><td>Part PIK interest, marked 89–94</td></tr><tr><td>Other national</td><td>T3 (Riverside)</td><td>Not reported</td></tr></tbody></table>\n<p>Sources: Private-equity landscape; Competitor filings.</p>\n<h3>Size gap</h3>\n<ul><li>Sila has 2,500+ employees. That implies est. $450–650M revenue (low confidence). Its growth came almost entirely from acquisitions (Competitor filings).</li><li>Wrench is est. $1.5–2.0B revenue (low confidence) (Competitor filings).</li><li>BSP's main fund reports $335M sold. Rival flagships include Gridiron V at $2.1B and Trivest VII at $950M (Private-equity landscape; BSP firm profile).</li><li>MidOcean has the closest sector taxonomy among fund-level peers, including franchise services (Private-equity landscape).</li></ul>\n<h3>Bidders likely to pull back</h3>\n<ul><li>Horizon Services has at least $211M of first-lien debt at Blue Owl. It pays 3.75% PIK, is marked at 92.5, and its lenders hold its common equity (Competitor filings).</li><li>The case studies describe Horizon as lender-owned by 2026 (Home-services company case studies).</li><li>Heartland's debt matures Dec 15, 2026.</li><li>Both companies are more likely to sell assets or restructure than to bid hard for add-ons. Their branches could become targets (est.).</li></ul>\n<h3>How BSP can compete</h3>\n<ul><li>Avoid auctions.</li><li>Use the franchise-system angle: Authority Brands territory rights and brand conversion.</li><li>Run proprietary outreach to shops under $3M EBITDA, which large-cap sponsors skip (Private-equity landscape).</li><li>The landscape does not report win/loss data or add-on multiples by bidder. A log of lost Punctual Pros processes, with price and winning buyer, would show who actually outbids BSP.</li></ul>\n<h3>Next actions</h3>\n<ol><li>Build a target list from Horizon and Heartland branches near Punctual Pros' counties ahead of the Dec 15, 2026 maturity.</li><li>Start a deal log for Punctual Pros add-ons: bidder, price and outcome for every process seen.</li><li>Confirm with Authority Brands which territory rights and conversion economics BSP can offer sellers.</li><li>Map sub-$3M EBITDA HVAC/plumbing shops in Central PA/NJ that Sila, Legacy and Ally have not yet approached.</li></ol>",
+ "markdown": "# Home-Services Deal Competitors\n\nResidential services is BSP's most crowded deal market. Well-funded national consolidators set add-on prices, and several sponsor-backed companies are buying in or next to Punctual Pros' Central PA/NJ counties (Private-equity landscape).\n\n## Local and national bidders\n\n| Tier | Companies / sponsors | Credit position |\n|---|---|---|\n| PA/NJ, active | Sila (Goldman Sachs), Legacy Service Partners/HL Bowman (Gridiron), Ally Services (Watchtower), Northwinds (TruArc) | Legacy borrows at par; Sila looks healthier than most local rivals |\n| Local operator | Haller (Lancaster, 254 trucks) | Described as healthier |\n| National, scaled | Apex (Alpine), Wrench (LGP), Redwood (Altas) | S+425–475, marked at par, delayed-draw lines for acquisitions |\n| National, stressed | TurnPoint (OMERS), Any Hour (Knox Lane), Len the Plumber, Horizon | Part PIK interest, marked 89–94 |\n| Other national | T3 (Riverside) | Not reported |\n\nSources: Private-equity landscape; Competitor filings.\n\n## Size gap\n\n- Sila has 2,500+ employees. That implies est. $450–650M revenue (low confidence). Its growth came almost entirely from acquisitions (Competitor filings).\n- Wrench is est. $1.5–2.0B revenue (low confidence) (Competitor filings).\n- BSP's main fund reports $335M sold. Rival flagships include Gridiron V at $2.1B and Trivest VII at $950M (Private-equity landscape; BSP firm profile).\n- MidOcean has the closest sector taxonomy among fund-level peers, including franchise services (Private-equity landscape).\n\n## Bidders likely to pull back\n\n- Horizon Services has at least $211M of first-lien debt at Blue Owl. It pays 3.75% PIK, is marked at 92.5, and its lenders hold its common equity (Competitor filings).\n- The case studies describe Horizon as lender-owned by 2026 (Home-services company case studies).\n- Heartland's debt matures Dec 15, 2026.\n- Both companies are more likely to sell assets or restructure than to bid hard for add-ons. Their branches could become targets (est.).\n\n## How BSP can compete\n\n- Avoid auctions.\n- Use the franchise-system angle: Authority Brands territory rights and brand conversion.\n- Run proprietary outreach to shops under $3M EBITDA, which large-cap sponsors skip (Private-equity landscape).\n- The landscape does not report win/loss data or add-on multiples by bidder. A log of lost Punctual Pros processes, with price and winning buyer, would show who actually outbids BSP.\n\n## Next actions\n\n1. Build a target list from Horizon and Heartland branches near Punctual Pros' counties ahead of the Dec 15, 2026 maturity.\n2. Start a deal log for Punctual Pros add-ons: bidder, price and outcome for every process seen.\n3. Confirm with Authority Brands which territory rights and conversion economics BSP can offer sellers.\n4. Map sub-$3M EBITDA HVAC/plumbing shops in Central PA/NJ that Sila, Legacy and Ally have not yet approached.",
+ "sources": [
+  {
+   "name": "Private-equity landscape",
+   "dataset": "pe_landscape",
+   "path": "data/research/pe_landscape.json",
+   "as_of": "2026-09-24"
+  },
+  {
+   "name": "Competitor filings",
+   "dataset": "rival_filings",
+   "path": "data/research/rival_filings.json",
+   "as_of": "2026-09-24"
+  },
+  {
+   "name": "Home-services company case studies",
+   "dataset": "cases_home_services",
+   "path": "data/research/cases_home_services.json",
+   "as_of": "2026-10-06"
+  },
+  {
+   "name": "BSP firm profile",
+   "dataset": "bsp_firm",
+   "path": "data/research/bsp_firm.json",
+   "as_of": "2026-09-24"
+  }
+ ],
+ "usage": {
+  "input_tokens": 6988,
+  "output_tokens": 1741
+ }
+}

@@ -1,0 +1,33 @@
+{
+ "question": "What does the Comfort Club membership include?",
+ "persona": "pp",
+ "slug": "pp-what-does-the-comfort-club-membership-include",
+ "model": "claude-opus-5-5",
+ "generated_at": "2026-10-08T16:58:50Z",
+ "html": "<h2>What Comfort Club includes</h2>\n<p>We can't yet confirm what a Comfort Club membership includes. Our current data doesn't list the plan's benefits, visit schedule, discounts or price. Please call your local Punctual Pros office for the current terms before you sign up.</p>\n<h3>What our data does cover</h3>\n<p>The business data tracks membership as a growth measure. It does not describe plan contents.</p>\n<ul><li>Membership is about <strong>6,500 members</strong> today (est.). That is roughly 0.9% of owner-occupied homes in our core service area (Punctual Pros nationwide plan).</li><li>Memberships, along with AI call answering and booking, are expected to drive <strong>10-12% organic growth</strong> in the first year (est.) (Punctual Pros nationwide plan).</li></ul>\n<table><thead><tr><th>Month</th><th>Members (est.)</th><th>Territories (est.)</th></tr></thead><tbody><tr><td>0 (Oct 2026)</td><td>6,500</td><td>25</td></tr><tr><td>12</td><td>11,000</td><td>32</td></tr><tr><td>24</td><td>20,000</td><td>44</td></tr><tr><td>36</td><td>32,000</td><td>58</td></tr></tbody></table>\n<p>All of these figures are planning assumptions, not reported results (Punctual Pros nationwide plan).</p>\n<h3>Data needed to answer</h3>\n<p>These sources would answer the question directly:</p>\n<ul><li>The current Comfort Club terms sheet or member agreement, covering visits per year, trades covered and discounts.</li><li>Pricing by tier and by state, Pennsylvania versus New Jersey.</li><li>How the plan handles oil and propane systems. About 241k core Pennsylvania households heat with these fuels, compared with mostly utility gas in Ocean and Monmouth (Punctual Pros market profile).</li><li>Any membership standards Authority Brands sets across One Hour, Ben Franklin and Mister Sparky.</li></ul>\n<h3>Why the gap matters</h3>\n<p>Our homes are old and mostly owner-occupied. Between 45% and 64% of units were built before 1980 (Punctual Pros market profile). That creates steady demand for tune-ups and repairs. A clearly described plan is how we turn those homeowners into repeat customers.</p>\n<p>Moving membership from about 6,500 to 32,000 households (est.) is one of the few levers in the growth plan that builds recurring revenue rather than buying it, so the offer has to be clear on the website before the AI booking layer can sell it.</p>\n<h3>Next actions</h3>\n<ol><li>Get the current Comfort Club terms and pricing from the Lancaster and Beachwood offices. Load them into the website's answer source.</li><li>Confirm whether the plan differs by brand, trade or fuel type. Pay particular attention to oil and propane homes in Perry, Lebanon and Berks.</li><li>Pull actual member counts and renewal rates. Use them to replace the 6,500-member assumption in the growth plan.</li><li>Write a short member-benefits page and booking script for the 24/7 voice dispatcher, using only the confirmed terms.</li></ol>",
+ "markdown": "# What Comfort Club includes\n\nWe can't yet confirm what a Comfort Club membership includes. Our current data doesn't list the plan's benefits, visit schedule, discounts or price. Please call your local Punctual Pros office for the current terms before you sign up.\n\n## What our data does cover\n\nThe business data tracks membership as a growth measure. It does not describe plan contents.\n\n- Membership is about **6,500 members** today (est.). That is roughly 0.9% of owner-occupied homes in our core service area (Punctual Pros nationwide plan).\n- Memberships, along with AI call answering and booking, are expected to drive **10-12% organic growth** in the first year (est.) (Punctual Pros nationwide plan).\n\n| Month | Members (est.) | Territories (est.) |\n|---|---|---|\n| 0 (Oct 2026) | 6,500 | 25 |\n| 12 | 11,000 | 32 |\n| 24 | 20,000 | 44 |\n| 36 | 32,000 | 58 |\n\nAll of these figures are planning assumptions, not reported results (Punctual Pros nationwide plan).\n\n## Data needed to answer\n\nThese sources would answer the question directly:\n\n- The current Comfort Club terms sheet or member agreement, covering visits per year, trades covered and discounts.\n- Pricing by tier and by state, Pennsylvania versus New Jersey.\n- How the plan handles oil and propane systems. About 241k core Pennsylvania households heat with these fuels, compared with mostly utility gas in Ocean and Monmouth (Punctual Pros market profile).\n- Any membership standards Authority Brands sets across One Hour, Ben Franklin and Mister Sparky.\n\n## Why the gap matters\n\nOur homes are old and mostly owner-occupied. Between 45% and 64% of units were built before 1980 (Punctual Pros market profile). That creates steady demand for tune-ups and repairs. A clearly described plan is how we turn those homeowners into repeat customers.\n\nMoving membership from about 6,500 to 32,000 households (est.) is one of the few levers in the growth plan that builds recurring revenue rather than buying it, so the offer has to be clear on the website before the AI booking layer can sell it.\n\n## Next actions\n\n1. Get the current Comfort Club terms and pricing from the Lancaster and Beachwood offices. Load them into the website's answer source.\n2. Confirm whether the plan differs by brand, trade or fuel type. Pay particular attention to oil and propane homes in Perry, Lebanon and Berks.\n3. Pull actual member counts and renewal rates. Use them to replace the 6,500-member assumption in the growth plan.\n4. Write a short member-benefits page and booking script for the 24/7 voice dispatcher, using only the confirmed terms.",
+ "sources": [
+  {
+   "name": "Punctual Pros market profile",
+   "dataset": "pp_market",
+   "path": "data/research/pp_market.json",
+   "as_of": "2026-09-24"
+  },
+  {
+   "name": "Punctual Pros nationwide plan",
+   "dataset": "pp_nationwide",
+   "path": "data/research/pp_nationwide.json",
+   "as_of": "2026-10-06"
+  },
+  {
+   "name": "Punctual Pros public filings",
+   "dataset": "pp_filings",
+   "path": "data/research/pp_filings.json",
+   "as_of": "2026-09-24"
+  }
+ ],
+ "usage": {
+  "input_tokens": 5583,
+  "output_tokens": 1263
+ }
+}

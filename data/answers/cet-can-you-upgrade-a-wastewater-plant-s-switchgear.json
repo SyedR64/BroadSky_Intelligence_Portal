@@ -1,0 +1,39 @@
+{
+ "question": "Can you upgrade a wastewater plant's switchgear?",
+ "persona": "cet",
+ "slug": "cet-can-you-upgrade-a-wastewater-plant-s-switchgear",
+ "model": "claude-opus-5-5",
+ "generated_at": "2026-10-08T17:00:10Z",
+ "html": "<p>Yes. Electrical work inside wastewater plants is the core of what Horton Electrical Services brings to CET, and we can scope a switchgear upgrade. Our data does not list past switchgear jobs one by one, so we confirm scope plant by plant.</p>\n<h3>Where we work today</h3>\n<ul><li>Horton is our Connecticut add-on, announced Sep 15, 2026. It brings Connecticut wastewater-plant relationships (CET public filings; CET growth plan).</li><li>Our growth plan points Horton at 62 funded or requested plant and pump-station projects across CT, MA and RI (CET growth plan).</li><li>At large plants our role is usually electrical subcontracting. We often pair it with NuWave efficiency work, for example on aeration, which is a plant's biggest energy load (CET wastewater-plant targets).</li></ul>\n<h3>Plants with funded or requested work</h3>\n<table><thead><tr><th>Plant</th><th>Project</th><th>Value</th></tr></thead><tbody><tr><td>New Haven East Shore STP</td><td>Wet-weather and odor-control upgrade; process-air-compressor request</td><td>$82M; $19.2M</td></tr><tr><td>Hartford WPCF</td><td>Sludge screening and equalization</td><td>$24.3M</td></tr><tr><td>Norwalk WPCF</td><td>Final settling tanks; green aeration request</td><td>$26M; $48M</td></tr><tr><td>MWRA Deer Island</td><td>Clarifier #2</td><td>$289M</td></tr></tbody></table>\n<p>(CET wastewater-plant targets)</p>\n<ul><li>These are total project values, not CET's electrical share.</li><li>Our data does not show how much of any project is switchgear.</li></ul>\n<h3>What we confirm before quoting</h3>\n<ul><li>Whether the switchgear sits inside a funded project or would be a standalone job.</li><li>The engineer's specification and bid documents for that plant.</li><li>Plant size and context. Design flow for 175 CT, MA and RI plants is in our nightly snapshot (EPA wastewater-plant compliance).</li></ul>\n<h3>What our data can't answer</h3>\n<ul><li>Price, lead time or crew size for a switchgear job. None of these are in our data. Horton's job records and supplier quotes would answer them.</li><li>Permit or regulatory questions. The plant's engineer or counsel should handle those.</li></ul>\n<p>Each plant electrical job opens the door to the SCADA and pump-station monitoring contracts the growth plan relies on to reach a ~25% recurring service mix by month 36 (est.; CET growth plan).</p>\n<h3>Next actions</h3>\n<ol><li>Pull Horton's job history and list switchgear and electrical-distribution references by plant and year.</li><li>Review New Haven, Hartford and Norwalk bid documents for electrical-distribution scope and the CET share.</li><li>Tag switchgear-related scope across the 183-plant target list (CET wastewater-plant targets).</li><li>Build a standard switchgear capability sheet that covers Horton and NuWave, for plant engineers.</li></ol>",
+ "markdown": "Yes. Electrical work inside wastewater plants is the core of what Horton Electrical Services brings to CET, and we can scope a switchgear upgrade. Our data does not list past switchgear jobs one by one, so we confirm scope plant by plant.\n\n## Where we work today\n\n- Horton is our Connecticut add-on, announced Sep 15, 2026. It brings Connecticut wastewater-plant relationships (CET public filings; CET growth plan).\n- Our growth plan points Horton at 62 funded or requested plant and pump-station projects across CT, MA and RI (CET growth plan).\n- At large plants our role is usually electrical subcontracting. We often pair it with NuWave efficiency work, for example on aeration, which is a plant's biggest energy load (CET wastewater-plant targets).\n\n## Plants with funded or requested work\n\n| Plant | Project | Value |\n|---|---|---|\n| New Haven East Shore STP | Wet-weather and odor-control upgrade; process-air-compressor request | $82M; $19.2M |\n| Hartford WPCF | Sludge screening and equalization | $24.3M |\n| Norwalk WPCF | Final settling tanks; green aeration request | $26M; $48M |\n| MWRA Deer Island | Clarifier #2 | $289M |\n\n(CET wastewater-plant targets)\n\n- These are total project values, not CET's electrical share.\n- Our data does not show how much of any project is switchgear.\n\n## What we confirm before quoting\n\n- Whether the switchgear sits inside a funded project or would be a standalone job.\n- The engineer's specification and bid documents for that plant.\n- Plant size and context. Design flow for 175 CT, MA and RI plants is in our nightly snapshot (EPA wastewater-plant compliance).\n\n## What our data can't answer\n\n- Price, lead time or crew size for a switchgear job. None of these are in our data. Horton's job records and supplier quotes would answer them.\n- Permit or regulatory questions. The plant's engineer or counsel should handle those.\n\nEach plant electrical job opens the door to the SCADA and pump-station monitoring contracts the growth plan relies on to reach a ~25% recurring service mix by month 36 (est.; CET growth plan).\n\n## Next actions\n\n1. Pull Horton's job history and list switchgear and electrical-distribution references by plant and year.\n2. Review New Haven, Hartford and Norwalk bid documents for electrical-distribution scope and the CET share.\n3. Tag switchgear-related scope across the 183-plant target list (CET wastewater-plant targets).\n4. Build a standard switchgear capability sheet that covers Horton and NuWave, for plant engineers.",
+ "sources": [
+  {
+   "name": "CET wastewater-plant targets",
+   "dataset": "cet_wwtp_targets",
+   "path": "data/research/cet_wwtp_targets.json",
+   "as_of": "2026-09-24"
+  },
+  {
+   "name": "EPA wastewater-plant compliance (nightly snapshot)",
+   "dataset": "live:echo_npdes_majors",
+   "path": "data/live/echo_npdes_majors.json",
+   "as_of": "2026-10-07T16:25:12Z"
+  },
+  {
+   "name": "CET growth plan",
+   "dataset": "cet_playbook",
+   "path": "data/research/cet_playbook.json",
+   "as_of": "2026-10-06"
+  },
+  {
+   "name": "CET public filings",
+   "dataset": "cet_filings",
+   "path": "data/research/cet_filings.json",
+   "as_of": "2026-09-24"
+  }
+ ],
+ "usage": {
+  "input_tokens": 7064,
+  "output_tokens": 2279
+ }
+}
