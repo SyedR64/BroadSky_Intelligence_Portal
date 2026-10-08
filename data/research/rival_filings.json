@@ -20,10 +20,10 @@
       "BDC/N-PORT holdings show only one lender's slice of each facility; total facility size, and therefore leverage and EBITDA, cannot be observed directly. Implied EBITDA ranges are analyst estimates.",
       "PPP figures are from 2020–21 and predate most PE roll-ups; they describe the predecessor operating company, not the current company.",
       "PPP-implied payroll = loan/2.5×12 applies the $100k per-employee cap. Loans at the $10M cap (J&M Brown) are lower bounds.",
-      "Web-search budget for this session was exhausted before this track started, so credit-rating press (Moody's/S&P/KBRA), deal press with revenue/EBITDA, Inc. 5000 listings and ownership confirmations could not be pulled. Ownership attributions in the brief (e.g., Bregal Sagemount for Horizon, MSCP for Sila, Genstar for Harbor Global, EagleTree for Integreon, OMERS/Harvest for Epiq, StoneCalibre for Calibre) are NOT verified by this dataset except where an item says so.",
+      "Web-search budget for this session was exhausted before this track started, so credit-rating press (Moody's/S&P/KBRA), deal press with revenue/EBITDA, Inc. 5000 listings and ownership confirmations could not be pulled. Ownership attributions in the brief (e.g., Bregal Sagemount for Horizon, MSCP for Sila, Genstar for Harbor Global, EagleTree for Integreon, OMERS/Harvest for Epiq, StoneCalibre for Calibre) are NOT verified by this data except where an item says so.",
       "Name collisions were screened out: 'Consilio Midco Limited (dba Cyncly)' (software) is not the legal Consilio; 'Redwood Services Group, LLC' (IT services, North Haven PIF) is not Redwood Services, LP (HVAC); 'Frontline Road Safety' is not BSP's Frontline; 'Horizon Services Acquisition, LLC' Form D (Bloomfield Hills MI pooled fund, 2024) could not be linked to Horizon Services and was excluded; sciens.com is an unrelated consulting firm.",
       "Website metrics are company-reported marketing claims and unaudited.",
-      "PPP items (rival-030, 031, 034, 035, 041, 045, 051) were not re-verified on 2026-09-24. Their source URL is the SBA dataset landing page, which lists no loan-level figures, and the CSV was not downloaded.",
+      "PPP items (rival-030, 031, 034, 035, 041, 045, 051) were not re-verified on 2026-09-24. Their source URL is the SBA data landing page, which lists no loan-level figures, and the CSV was not downloaded.",
       "Verified 2026-09-24: sampled 44, confirmed 44, removed 0"
     ],
     "item_count": 51,
@@ -141,7 +141,7 @@
       "Sila Services has no BDC schedule hit under 'Sila Services', 'Sila Holdco' or 'Sila Buyer', so the borrower entity name is unknown.",
       "Apex's total facility size, TurnPoint's full capital structure and the Wrench unitranche total are not observable from single-lender slices.",
       "Techniques C (state registries, UCC liens, OSHA/DOL, CourtListener) were not run in this track.",
-      "Vuori (General Atlantic) and Outerknown: no SEC, PPP or BDC footprint found, so there are no financial data points in this dataset."
+      "Vuori (General Atlantic) and Outerknown: no SEC, PPP or BDC footprint found, so there are no financial data points in this research."
     ],
     "next_pulls": [
       "Raise the web-search limit, then pull Moody's/S&P rating actions and PE Hub/9fin/PRN deal press for Wrench (2025 refi size), Apex (2024 refi size), TurnPoint (amendment/PIK), Consilio and Epiq (term loan sizes, ratings), Kite Bidco/FGS, Calibre, Horizon (restructuring details).",
@@ -1029,7 +1029,7 @@
       ],
       "secondary_url": "https://www.sec.gov/Archives/edgar/data/1920145/000119312526033659/d99038dn148c.htm",
       "verification_notes": [
-        "2026-09-24: website metrics confirmed. The site currently describes Goldman Sachs Alternatives as Sila's private-equity partner, so GS ownership looks current rather than 'prior'. This conflicts with the MSCP attribution noted in the dataset caveats."
+        "2026-09-24: website metrics confirmed. The site currently describes Goldman Sachs Alternatives as Sila's private-equity partner, so GS ownership looks current rather than 'prior'. This conflicts with the MSCP attribution noted in the data caveats."
       ]
     },
     {

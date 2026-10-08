@@ -1,5 +1,5 @@
-import * as Copy from './copy.js?v=20261008151643';
-import * as L from './deal-lib.js?v=20261008151643';
+import * as Copy from './copy.js?v=20261008185332';
+import * as L from './deal-lib.js?v=20261008185332';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition model: a live buyout, DCF, roll-up and sensitivity model with
    spreadsheet-style input cells, presets from the portfolio's own estimates and
@@ -12,7 +12,7 @@ const XLSX_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.m
 const COLOR = 'color-mix(in srgb,var(--sys-good) 72%,var(--sys-ink))';
 const CO_COLOR = { pp: 'var(--co-pp)', cet: 'var(--co-cet)', fl: 'var(--co-fl)', ts: 'var(--co-ts)', bpi: 'var(--co-bpi)', fh: 'var(--co-fh)' };
 const CO_ROUTE = { pp: 'pp', cet: 'cet', fl: 'fl', ts: 'ts' };
-const injectCss = () => { if (!document.getElementById('css-deal')) { const l = document.createElement('link'); l.id = 'css-deal'; l.rel = 'stylesheet'; l.href = 'modules/deal.css?v=20261008151643'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-deal')) { const l = document.createElement('link'); l.id = 'css-deal'; l.rel = 'stylesheet'; l.href = 'modules/deal.css?v=20261008185332'; document.head.appendChild(l); } };
 
 /* ── formatting ──────────────────────────────────────────────────────────── */
 const MINUS = '−';
@@ -37,7 +37,7 @@ async function boot(data) {
   if (!dm) return false;
   DM = dm; INP = Object.fromEntries(dm.meta.inputs.map(i => [i.key, i])); SRC = Object.fromEntries(dm.meta.sources.map(s => [s.id, s]));
   const list = [];
-  for (const it of dm.items.filter(i => i.kind === 'preset')) list.push({ id: it.id, label: it.label, group: it.co ? 'BSP portfolio companies' : 'Market', co: it.co, summary: it.summary, vals: { ...it.inputs }, est: new Set(it.est || []), basis: it.basis || {}, sources: it.source_ids || [] });
+  for (const it of dm.items.filter(i => i.kind === 'preset')) list.push({ id: it.id, label: it.label, group: it.co && it.group !== 'generic' ? 'BSP portfolio companies' : 'Market', generic: it.group === 'generic', co: it.co, summary: it.summary, vals: { ...it.inputs }, est: new Set(it.est || []), basis: it.basis || {}, sources: it.source_ids || [] });
   const parent = Object.fromEntries(list.filter(p => p.co).map(p => [p.co, p]));
   const TD = dm.meta.target_defaults;
   const files = { ma_targets_pp: pp, ma_targets_cet: cet, ma_targets_fl_ts: flts };
@@ -51,7 +51,7 @@ async function boot(data) {
         nd: Math.round(e * TD.lev * 10) / 10, tm: TD.xm, ce: par.vals.ce, cm: par.vals.em, ra: Math.round(e * 100) / 100, rm: TD.em, rx: par.vals.xm, wacc: par.vals.wacc };
       list.push({ id: t.id, label: t.name, group: `Screened add-on targets`, co: sec.co, parent: par.id, summary: `${sec.label} for ${par.label}; fit score ${t.fit} of 100.`, vals,
         est: new Set(['rev', 'mg', 'gr', 'nd', 'ra', 'ce']),
-        basis: { ...TD.basis, rev: `Modelled revenue from the ${par.label} add-on screen (fit score ${t.fit} of 100).`, mg: sec.basis, gr: `Assumed for a ${sec.label.toLowerCase()}.`, ce: `${par.label} EBITDA estimate from public filings.`, cm: `${par.label} entry multiple estimate.`, rx: `${par.label} exit multiple used in its own preset.`, ra: 'This target at the sector margin.' },
+        basis: { ...TD.basis, rev: `Modelled revenue from the ${par.label} add-on screen (fit score ${t.fit} of 100).`, mg: sec.basis, gr: `Assumed for a ${sec.label.toLowerCase()}.`, ce: `${par.label}: EBITDA used in its own preset.`, cm: `${par.label}: entry multiple used in its own preset.`, rx: `${par.label}: exit multiple used in its own preset.`, ra: 'This target at the sector margin.' },
         sources: [...new Set([...TD.source_ids, ...sec.source_ids, 'targets'])] });
     }
   }
@@ -205,7 +205,7 @@ async function frame(ctx, vid, draw, srcIds) {
     { label: 'Acquisition model · discounted cash flow', sub: 'DCF with a football-field valuation range', href: '#/deal/dcf', kind: 'View', color: COLOR },
     { label: 'Acquisition model · roll-up', sub: 'Multiple arbitrage versus operating growth', href: '#/deal/rollup', kind: 'View', color: COLOR },
     { label: 'Acquisition model · sensitivity', sub: 'Two-way tables of annual return and money multiple', href: '#/deal/sensitivity', kind: 'View', color: COLOR },
-    ...PRESETS.filter(p => p.co).map(p => ({ label: `Model a buyout of ${p.label}`, sub: p.summary, href: `#/deal/returns?p=${encodeURIComponent(p.id)}`, kind: 'Model', color: CO_COLOR[p.co] || COLOR })),
+    ...PRESETS.filter(p => p.co && !p.generic && !p.parent).map(p => ({ label: `Model a buyout of ${p.label}`, sub: p.summary, href: `#/deal/returns?p=${encodeURIComponent(p.id)}`, kind: 'Model', color: CO_COLOR[p.co] || COLOR })),
   ]);
 }
 function refreshGrid(ctx, el, vid, schedule) {
@@ -292,7 +292,12 @@ function drawReturns(ctx, out) {
     <tr class="dm-strong"><th scope="row">Total sources</th><td class="sys-n">${cellNum(R.debt0 + R.eq0)}</td></tr></tbody></table></div>
     <p class="sys-src">Add-ons later in the hold cost ${$m(R.addSpend)}: ${pc(p.ad / 100, 0)} borrowed, the rest (${$m(R.addEq)}) new equity.</p>`;
   const bridge = bars(ctx, R.bridge, { total: R.gain, totalLabel: 'Equity gain' });
-  out.innerHTML = kp + ui.panel({ title: 'Year by year', sub: `${$m(p.rev)} of revenue growing ${nf(p.gr, 1)}% a year, ${p.ae > 0 ? `${$m(p.ae)} of add-on EBITDA bought each year to year ${N - 1}` : 'no add-ons'}. Figures in $M.`, body: table, cls: 'mt-12' }) +
+  // multiple expansion is an explicit, optional line: the headline sells at the input exit multiple
+  const gap = r4(p.xm - p.em);
+  const alt = gap === 0 ? L.lbo({ ...p, xm: p.em + 2 }) : L.lbo({ ...p, xm: p.em });
+  const altTxt = (R2, x) => `IRR ${R2.irr == null ? 'n/m' : pc(R2.irr)} and MOIC ${R2.moic == null ? 'n/m' : xm(R2.moic, 2)} at a ${xm(x)} sale`;
+  const expNote = `<p class="sys-src dm-exp">${gap === 0 ? `<b>No multiple expansion assumed:</b> the company sells at the ${xm(p.em)} it was bought for. With +2.0x expansion: ${altTxt(alt, p.em + 2)}.` : `<b>Includes ${gap > 0 ? '+' : MINUS}${xm(Math.abs(gap))} of multiple ${gap > 0 ? 'expansion' : 'contraction'}.</b> Selling at the ${xm(p.em)} entry multiple instead: ${altTxt(alt, p.em)}.`}</p>`;
+  out.innerHTML = kp + expNote + ui.panel({ title: 'Year by year', sub: `${$m(p.rev)} of revenue growing ${nf(p.gr, 1)}% a year, ${p.ae > 0 ? `${$m(p.ae)} of add-on EBITDA bought each year to year ${N - 1}` : 'no add-ons'}. Figures in $M.`, body: table, cls: 'mt-12' }) +
     `<div class="grid grid-2 mt-12">${ui.panel({ title: 'Sources and uses', sub: 'How the purchase is paid for', body: su })}${ui.panel({ title: 'Where the return comes from', sub: 'The equity gain, split into its drivers', body: bridge })}</div>`;
 }
 

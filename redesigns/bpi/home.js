@@ -1,7 +1,7 @@
 /* BPI concept homepage behaviour. */
-import { Data } from '../../assets/core.js?v=20261008151643';
-import { chrome, mountChat, faqHTML, OFFICES, timeIn, isOpen } from './site.js?v=20261008151643';
-import { mountMonitor, mountPulse } from './monitor.js?v=20261008151643';
+import { Data } from '../../assets/core.js?v=20261008185332';
+import { chrome, mountChat, faqHTML, OFFICES, timeIn, isOpen } from './site.js?v=20261008185332';
+import { mountMonitor, mountPulse } from './monitor.js?v=20261008185332';
 
 const monthYear = d => { const t = new Date(String(d).slice(0, 10) + 'T12:00:00Z'); if (isNaN(t)) return String(d); const m = t.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' }); return `${m === 'Sep' ? 'Sept' : m} ${t.getUTCFullYear()}`; };
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

@@ -1,10 +1,10 @@
-import * as Copy from './copy.js?v=20261008151643';
+import * as Copy from './copy.js?v=20261008185332';
 /* ═══════════════════════════════════════════════════════════════════════════
    CET — Commonwealth Electrical Technologies (Worcester + Taunton MA; NuWave, Norwell MA;
    Horton Electrical Services, CT). New England only — NYC analysis archived (CEO guidance).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261008151643';
-import { esc as E } from '../assets/core.js?v=20261008151643';
+import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261008185332';
+import { esc as E } from '../assets/core.js?v=20261008185332';
 
 const COLOR = 'var(--co-cet)';
 /* System palette only (UNIFIED.md §6, §8): company accents for categories, status tokens for status. */
@@ -50,7 +50,7 @@ const SRC = {
 };
 
 /* ── helpers ────────────────────────────────────────────────────────────── */
-function ensureCss() { if (!document.getElementById('css-cet')) { const l = document.createElement('link'); l.id = 'css-cet'; l.rel = 'stylesheet'; l.href = 'modules/cet.css?v=20261008151643'; document.head.appendChild(l); } }
+function ensureCss() { if (!document.getElementById('css-cet')) { const l = document.createElement('link'); l.id = 'css-cet'; l.rel = 'stylesheet'; l.href = 'modules/cet.css?v=20261008185332'; document.head.appendChild(l); } }
 const safe = p => Promise.resolve(p).catch(e => { console.warn(e?.message || String(e)); return null; });
 const sum = (a, f) => a.reduce((s, x) => s + (Number(f(x)) || 0), 0);
 const median = a => { const v = a.filter(x => x != null && !isNaN(x)).sort((x, y) => x - y); if (!v.length) return null; const m = v.length >> 1; return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };
@@ -62,7 +62,7 @@ const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 /* numbered action list: a .sys-card-list with .sys-kbd numbers */
 const actionsList = items => `<ol class="sys-card-list cet-acts">${items.map((a, i) => `<li><span class="sys-kbd">${i + 1}</span><div>${a}</div></li>`).join('')}</ol>`;
 /* bid-slate helpers: owner verification, due-day chips */
-const UNVERIFIED_RE = /locked on BidNet|issuer not named|\bverify\b|confirm owner/i;
+const UNVERIFIED_RE = /locked on BidNet|issuer not named|\(unconfirmed\)|\bverify\b|confirm owner/i;
 const isUnverified = o => UNVERIFIED_RE.test(o.owner_or_agency || '');
 const dueChip = d => d === 0 ? chip('due today · go/no-go', PAL.red) : d < 0 ? chip(`${-d} days ago`) : chip(`${d} days left`, d <= 14 ? PAL.red : d <= 45 ? PAL.amber : PAL.green);
 /* county data gap: the legacy pull has no population / establishment / permit inputs (all of CT) */

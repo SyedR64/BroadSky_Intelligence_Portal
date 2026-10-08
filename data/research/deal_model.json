@@ -438,7 +438,7 @@
     "url": null,
     "retrieved": "2026-09-24",
     "facts": "Sector medians of revenue growth and EBITDA margin used for sector assumptions.",
-    "reused_from": "Public comparables dataset"
+    "reused_from": "Public comparables data"
    },
    {
     "id": "precedents",
@@ -523,7 +523,7 @@
     "gr": 6,
     "dm": 0.5,
     "yrs": 5,
-    "xm": 9.0,
+    "xm": 7.0,
     "ae": 1.0,
     "am": 6.5,
     "ad": 50,
@@ -552,7 +552,7 @@
     "lev": "Between GF Data's 2.9x (Q2 2026) and 4.0x (first half 2025).",
     "ir": "GF Data Q2 2026: senior debt priced at 7.8%.",
     "am": "GF Data: deals under $25M of value average 6.3 to 6.9x.",
-    "xm": "Between the 7.0x average and 10.0x for $100M to $250M deals (GF Data).",
+    "xm": "Equal to the 7.0x entry multiple: no multiple expansion assumed. The returns view shows the result with +2.0x as an option.",
     "yrs": "Median hold of 4.4 years across 21 sponsor cases, rounded up."
    },
    "source_ids": [
@@ -568,7 +568,7 @@
    "group": "portfolio",
    "label": "Punctual Pros",
    "co": "pp",
-   "summary": "Home services in Pennsylvania and New Jersey; filings-based estimates.",
+   "summary": "Home services in Pennsylvania and New Jersey; FY2025 size from public estimates ($22M revenue, $2.6M EBITDA).",
    "inputs": {
     "rev": 22,
     "mg": 11.8,
@@ -615,8 +615,8 @@
     "ce"
    ],
    "basis": {
-    "rev": "FY2025 pro forma revenue about $22M (range $16M to $28M), from franchise disclosures and headcount.",
-    "mg": "Adjusted EBITDA about $2.6M after franchise royalties (8 to 14% margin).",
+    "rev": "FY2025 pro forma revenue about $22M (range $16M to $28M), from franchise disclosures and headcount; the nationwide plan grows this to an October 2026 run-rate of about $24M.",
+    "mg": "Adjusted EBITDA about $2.6M for FY2025 after franchise royalties (8 to 14% margin); about $2.9M on the October 2026 run-rate.",
     "em": "Entry value about $18M to $30M, 7 to 10x estimated EBITDA.",
     "lev": "Senior debt about $10M to $18M, 4 to 5.5x EBITDA.",
     "ir": "PGIM 10-Q, June 2026: SOFR + 5.00% = 8.73%.",
@@ -638,10 +638,10 @@
    "group": "portfolio",
    "label": "CET",
    "co": "cet",
-   "summary": "Commercial electrical in New England; filings-based estimates.",
+   "summary": "Commercial electrical in New England, pro forma with NuWave and Horton; filings-based estimates.",
    "inputs": {
-    "rev": 45,
-    "mg": 10,
+    "rev": 82,
+    "mg": 10.4,
     "em": 10.5,
     "ir": 8.5,
     "gr": 10,
@@ -660,8 +660,8 @@
     "wacc": 12,
     "tg": 3,
     "tm": 10.5,
-    "nd": 20.2,
-    "ce": 4.5,
+    "nd": 40.0,
+    "ce": 8.5,
     "cm": 10.5,
     "n": 4,
     "ra": 1.5,
@@ -686,8 +686,8 @@
     "ce"
    ],
    "basis": {
-    "rev": "2025 standalone revenue $35M to $55M (midpoint about $45M).",
-    "mg": "8 to 12% EBITDA margin, bracketed by Limbach and IES.",
+    "rev": "Pro forma with NuWave and Horton: $65M to $100M of revenue (midpoint about $82M), the estimate the Command Center shows.",
+    "mg": "Pro forma EBITDA $6M to $11M (about $8.5M), roughly a 10% margin, bracketed by Limbach and IES.",
     "em": "Entry value about $35M to $75M, 9 to 12x EBITDA.",
     "lev": "3.5 to 5.5x lower-middle-market leverage; lender not disclosed.",
     "gr": "Listed electrical peers grew 16.8% a year (median); 10% assumed.",
@@ -774,19 +774,19 @@
   {
    "id": "ts",
    "kind": "preset",
-   "group": "portfolio",
-   "label": "Thomas Scientific",
+   "group": "generic",
+   "label": "Lab distributor, $300M revenue",
    "co": "ts",
-   "summary": "Lab supply distribution; filings-based estimates at entry.",
+   "summary": "A national lab-supply distributor of about $300M revenue, bought at the market average and sold at the same multiple.",
    "inputs": {
-    "rev": 350,
-    "mg": 13.6,
+    "rev": 300,
+    "mg": 10,
     "em": 9.0,
-    "ir": 10.1,
+    "ir": 7.8,
     "gr": 2,
     "dm": 0,
     "yrs": 5,
-    "xm": 10,
+    "xm": 9.0,
     "ae": 1.0,
     "am": 6.5,
     "ad": 50,
@@ -798,14 +798,14 @@
     "nwc": 10,
     "wacc": 12,
     "tg": 3,
-    "tm": 10,
-    "nd": 238.0,
-    "ce": 47.6,
+    "tm": 9.0,
+    "nd": 135.0,
+    "ce": 30.0,
     "cm": 9.0,
     "n": 4,
     "ra": 3.0,
     "rm": 6.5,
-    "rx": 10,
+    "rx": 9.0,
     "ic": 0.3,
     "syn": 10,
     "lev": 4.5
@@ -813,31 +813,26 @@
    "est": [
     "rev",
     "mg",
-    "em",
-    "lev",
     "gr",
-    "xm",
-    "ae",
-    "ra",
-    "nd",
-    "ce"
+    "ce",
+    "nd"
    ],
    "basis": {
-    "rev": "Revenue at entry $300M to $400M.",
-    "mg": "Entry EBITDA $40M to $55M, lifted by pandemic testing demand.",
-    "em": "Entry value $430M to $525M, about 10x EBITDA.",
-    "lev": "One term loan of about $200M to $275M, 4.5 to 5.5x.",
-    "ir": "MFIC 10-Q, June 2026: SOFR + 6.40%, about 10.1%.",
+    "rev": "A national lab-supply distributor of about $300M revenue.",
+    "mg": "About 10% EBITDA margin, in line with listed lab-distribution peers after freight and rebates.",
+    "em": "Market average for a deal of this size (GF Data).",
+    "lev": "Lower-middle-market leverage of 4.5x.",
+    "ir": "GF Data Q2 2026: senior debt priced at 7.8%.",
     "gr": "Listed lab-distribution peers grew 2.0% a year (median).",
     "xm": "Equal to the entry multiple: no re-rating assumed.",
-    "ae": "Recent add-ons (Quintana, Day, Arrowhead) were small tuck-ins."
+    "ae": "Small tuck-ins of regional distributors."
    },
    "source_ids": [
-    "ts-filings",
+    "gf-q2-2026",
     "public-comps",
     "gf-q4-2025"
    ],
-   "note": "Size from public estimates (est.); deal terms use the market benchmarks, so the return is forward-looking for a deal of this size, not a verdict on the original entry price."
+   "note": "A generic company of this size and sector, not a portfolio company; deal terms use the market benchmarks."
   },
   {
    "id": "bpi",
@@ -845,10 +840,10 @@
    "group": "portfolio",
    "label": "BPI",
    "co": "bpi",
-   "summary": "Communications and public affairs; filings-based estimates.",
+   "summary": "Communications and public affairs, FY2025 size; filings-based estimates.",
    "inputs": {
-    "rev": 76,
-    "mg": 21,
+    "rev": 105,
+    "mg": 21.4,
     "em": 9.0,
     "ir": 8.5,
     "gr": 3,
@@ -867,8 +862,8 @@
     "wacc": 12,
     "tg": 3,
     "tm": 10,
-    "nd": 63.8,
-    "ce": 15.96,
+    "nd": 85.0,
+    "ce": 22.5,
     "cm": 9.0,
     "n": 4,
     "ra": 1.0,
@@ -894,8 +889,8 @@
     "ce"
    ],
    "basis": {
-    "rev": "Net revenue implied by $16M of EBITDA at a 21% margin (2022 to 2023).",
-    "mg": "18 to 24% of net revenue, below listed peers at 24 to 33%.",
+    "rev": "FY2025 net revenue $85M to $125M (midpoint about $105M), the estimate the Command Center shows.",
+    "mg": "FY2025 adjusted EBITDA $17M to $28M (about $22.5M), 18 to 24% of net revenue, below listed peers at 24 to 33%.",
     "em": "Entry value $150M to $220M, about 10 to 13x EBITDA.",
     "lev": "3.5 to 5.0x; the credit agreement followed the close by seven months.",
     "gr": "Listed agency peers grew 2.8% a year (median).",
@@ -913,7 +908,7 @@
    "group": "portfolio",
    "label": "Fair Harbor",
    "co": "fh",
-   "summary": "Consumer apparel brand; priced on revenue, so EBITDA multiples run high.",
+   "summary": "Consumer apparel brand, size at entry (2021); priced on revenue, so EBITDA multiples run high.",
    "inputs": {
     "rev": 35,
     "mg": 12,

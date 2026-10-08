@@ -1,14 +1,14 @@
-import * as Copy from './copy.js?v=20261008151643';
+import * as Copy from './copy.js?v=20261008185332';
 /* ═══════════════════════════════════════════════════════════════════════════
    Tech enablement — the "OS" program across six BSP companies.
    ServiceOS (Punctual Pros) · GridOS (CET) · FirmOS (Frontline) · LabOS (Thomas Scientific)
    SignalOS (BPI) · HarborOS (Fair Harbor). Smith + Howard (exited Aug 2026) is excluded.
-   Datasets: ServiceOS evidence (valuation_evidence, vendor_stack, kpi_benchmark,
+   Datasets: OS program evidence (valuation_evidence, vendor_stack, kpi_benchmark,
              roadmap_assumption), Public comparables (sector medians),
              research/*_filings (estimate tables → calculator defaults).
    Every value-creation number here is an analyst estimate (labelled est.).
    ═══════════════════════════════════════════════════════════════════════════ */
-const injectCss = () => { if (!document.getElementById('css-techos')) { const l = document.createElement('link'); l.id = 'css-techos'; l.rel = 'stylesheet'; l.href = 'modules/techos.css?v=20261008151643'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-techos')) { const l = document.createElement('link'); l.id = 'css-techos'; l.rel = 'stylesheet'; l.href = 'modules/techos.css?v=20261008185332'; document.head.appendChild(l); } };
 
 const OUT_LINKS = `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="index.html" title="BSP Desk landing page">Landing</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="redesigns/index.html" title="Portfolio site concepts + OS program gallery">Site concepts</a>`;
 /* ── Platform / OS definitions (copy + calculator wiring) ────────────────── */
@@ -49,7 +49,7 @@ const OS = {
     sub: 'Managed IT, cyber & revenue cycle for 800+ law firms',
     promise: 'Resolve tickets at Level 1, get law firms paid faster, and sell security as a measured service.',
     pick: { rev: [/^Revenue \(2025/i, 0], ebitda: [/^Adjusted EBITDA at close/i, 0], debt: [/^Senior debt at close/i, 0] },
-    mult: { v: 13.5, basis: 'Midpoint of the 12–15x entry estimate (ServiceOS evidence; Frontline public filings).' },
+    mult: { v: 13.5, basis: 'Midpoint of the 12–15x entry estimate (OS program evidence; Frontline public filings).' },
     owner: 'PRG Operating Partner · Business services', lead: 'Frontline CTO',
     next: 'Choose the PSA of record (ConnectWise vs Kaseya 365); baseline Level-1 resolution and e-billing rejection rates on the top 50 law-firm clients; price a compliance tier backed by automated evidence collection.',
     fb: { inv: [1500000, 3000000], ttv: [6, 12], pts: [1.5, 3], turns: [0.5, 1.5], rev: [100e6, 140e6], ebitda: 18e6, debt: 90e6 },
@@ -69,7 +69,7 @@ const OS = {
     sub: 'Bully Pulpit International · strategic comms & public affairs',
     promise: 'Turn campaign-cycle monitoring into an always-on subscription with its own revenue line.',
     pick: { rev: [/^Net \(fee\) revenue FY2025/i, 0], ebitda: [/^Adj\. EBITDA FY2025/i, 0], debt: [/^Senior secured debt/i, 0] },
-    mult: { v: 10.0, basis: 'PPHC trades ~8.4x; a scaled sponsor exit is est. 10–13x (ServiceOS evidence); entry est. ~10–13x (BPI public filings).' },
+    mult: { v: 10.0, basis: 'PPHC trades ~8.4x; a scaled sponsor exit is est. 10–13x (OS program evidence); entry est. ~10–13x (BPI public filings).' },
     owner: 'PRG Operating Partner · Business services', lead: 'BPI COO',
     next: 'Convert two post-midterm campaign clients to an always-on monitoring retainer by Q1 2027 and report subscription revenue as its own line.',
     fb: { inv: [1000000, 2000000], ttv: [6, 12], pts: [1, 3], turns: [0.5, 2], rev: [85e6, 125e6], ebitda: 22.5e6, debt: 85e6 },
@@ -234,7 +234,7 @@ function buildPlat(k, kinds, fil, comps, byId, ev) {
   return p;
 }
 const missingNote = (ui, b) => b.missing.length ? ui.note(`Research dataset${b.missing.length > 1 ? 's' : ''} not yet available: <b>${b.missing.map(escTxt).join(', ')}</b>. ${b.missing.includes('serviceos_evidence') ? 'Showing the October 2026 baseline of the OS assumptions; evidence links, vendor stacks and KPI benchmarks are hidden until the file is restored.' : 'Calculator defaults fall back to the roadmap assumption ranges.'}`, 'warn') + '<div class="mt-12"></div>' : '';
-const srcFoot = (ui, b, extra) => ui.source(`ServiceOS evidence${extra ? ' + ' + Copy.text(extra) : ''} · analyst assumptions (est.)`, null, b.ev?.meta?.generated || 'Oct 2026');
+const srcFoot = (ui, b, extra) => ui.source(`OS program evidence${extra ? ' + ' + Copy.text(extra) : ''} · analyst assumptions (est.)`, null, b.ev?.meta?.generated || 'Oct 2026');
 
 /* ── Inspectors ──────────────────────────────────────────────────────────── */
 function openOS(ctx, b, p) {
@@ -425,7 +425,7 @@ function bridgeHtml(P) {
 function limitsHtml(b, prem) {
   const cav = b.ev?.meta?.caveats || [];
   return `<div class="tx-limits">${prem?.what_it_does_not_support ? `<div class="q">${escTxt(prem.what_it_does_not_support)}</div>` : ''}
-    <ul>${cav.slice(0, 6).map(c => `<li>${escTxt(c)}</li>`).join('') || '<li>Evidence caveats load with ServiceOS evidence.</li>'}</ul></div>`;
+    <ul>${cav.slice(0, 6).map(c => `<li>${escTxt(c)}</li>`).join('') || '<li>Evidence caveats load with OS program evidence.</li>'}</ul></div>`;
 }
 
 /* ══ View: Evidence ═════════════════════════════════════════════════════════ */

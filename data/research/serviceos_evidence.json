@@ -3,7 +3,7 @@
   "dataset": "Tech-enablement (\"OS\") value-creation evidence file: ServiceOS (Punctual Pros), GridOS (CET), FirmOS (Frontline), LabOS (Thomas Scientific), SignalOS (BPI), HarborOS (Fair Harbor)",
   "generated": "2026-10-06",
   "scope_note": "Six active BSP portfolio companies. Smith + Howard (exited to TPG, Aug 2026) is excluded. CET guidance: no NYC expansion; GridOS is New England only.",
-  "method": "Web research on 2026-10-06 (search plus direct fetches of press releases, SEC filings, banker reports and vendor pages), combined with existing verified portal datasets (public comparables, Punctual Pros market research, Punctual Pros filings, CET filings, Frontline filings, Thomas Scientific filings, BPI filings, rival filings, Fair Harbor filings). Each valuation evidence item states its number and source; derived arithmetic (e.g., members per technician, implied EV/revenue) is labelled \"derived\". KPI benchmark baselines and targets come from sourced benchmarks; where a company actual is not public, baseline or target is null. roadmap assumption items are explicit analyst assumptions (labelled est.) tied by evidence links to items in this file; USD EBITDA impact = low/high revenue estimate x low/high margin points.",
+  "method": "Web research on 2026-10-06 (search plus direct fetches of press releases, SEC filings, banker reports and vendor pages), combined with existing verified portal sources (public comparables, Punctual Pros market research, Punctual Pros filings, CET filings, Frontline filings, Thomas Scientific filings, BPI filings, rival filings, Fair Harbor filings). Each valuation evidence item states its number and source; derived arithmetic (e.g., members per technician, implied EV/revenue) is labelled \"derived\". KPI benchmark baselines and targets come from sourced benchmarks; where a company actual is not public, baseline or target is null. roadmap assumption items are explicit analyst assumptions (labelled est.) tied by evidence links to items in this file; USD EBITDA impact = low/high revenue estimate x low/high margin points.",
   "item_counts": {
    "valuation_evidence": 26,
    "vendor_stack": 28,
@@ -14,7 +14,7 @@
    "Reported deal multiples (Champions 18.5x, Sila ~17x) are press estimates from people familiar with the deals; sponsors did not disclose terms.",
    "Multiples for scaled roll-ups mostly reflect scale, density and M&A runway, not technology alone. This file credits only a fraction of the typical-to-premium spread to tech enablement.",
    "Vendor case studies (ServiceTitan Pricebook Pro, Rilla, Avoca, True Fit, Bold Metrics, Rewst) are self-reported, self-selected and unaudited; treat them as upper bounds.",
-   "Portfolio company revenue/EBITDA figures are low-confidence analyst estimates from the portal filings datasets, not company disclosures.",
+   "Portfolio company revenue/EBITDA figures are low-confidence analyst estimates from the portal filings sources, not company disclosures.",
    "Vendor pricing marked third-party comes from pricing-guide sites and may be stale; confirm with vendors before budgeting.",
    "MetricNet first-level-resolution and cost-per-ticket figures date from 2011 and are directional only.",
    "The ServiceTitan TitanAdvisor quartile figure (20% vs 8%) was taken from S-1 search extraction; the direct fetch confirmed other S-1 figures but not this one.",
@@ -299,7 +299,7 @@
    "id": "ve-11",
    "kind": "valuation_evidence",
    "title": "Membership-model comp: Frontdoor earns 24.2% EBITDA margin vs 15.1% residential median",
-   "claim": "Frontdoor (home-service plans, a subscription/membership model) posted FY2025 revenue of $2.09B (+13.6%) at an approximate EBITDA margin of 24.2%, versus a 15.1% median for the five residential home-services public comps in the portal dataset.",
+   "claim": "Frontdoor (home-service plans, a subscription/membership model) posted FY2025 revenue of $2.09B (+13.6%) at an approximate EBITDA margin of 24.2%, versus a 15.1% median for the five residential home-services public comps in the portal data.",
    "metric_value": 24.2,
    "metric_unit": "% EBITDA margin (approx., unadjusted)",
    "applies_to": [
@@ -493,7 +493,7 @@
    "id": "ve-21",
    "kind": "valuation_evidence",
    "title": "Publicis (data/tech-led) grew 5.6% organically in 2025 while WPP shrank",
-   "claim": "Publicis Groupe reported 2025 net revenue of EUR 14.547B, +5.6% organic, with an 18.2% operating margin, crediting Epsilon-powered connected media and AI products; WPP's FY2025 revenue fell 8.1% in the portal's public-comps dataset.",
+   "claim": "Publicis Groupe reported 2025 net revenue of EUR 14.547B, +5.6% organic, with an 18.2% operating margin, crediting Epsilon-powered connected media and AI products; WPP's FY2025 revenue fell 8.1% in the portal's public-comps data.",
    "metric_value": 5.6,
    "metric_unit": "% organic net revenue growth (Publicis FY2025)",
    "applies_to": [
@@ -1371,7 +1371,7 @@
    ],
    "revenue_source": "data/research/thomas_filings.json estimate table (current revenue $250-320M, low confidence)",
    "current_ebitda_estimate": "$25-35M (low confidence)",
-   "rationale": "Thomas Scientific is the stressed asset (est. revenue $250-320M, EBITDA $25-35M, leverage 7-10x, sponsor equity marked near zero), so LabOS is an EBITDA and cash program first: digital ordering lowers cost-to-serve and wins long-tail share (Grainger digital +15.6% vs rep-led ~2%; Avantor ~80% digital transactions). Each 0.5 pt of margin on ~$250-320M is ~$1.3-1.6M. Multiple expansion is capped at 0.5-1.0 turns because lab distributors trade on scale and the capital structure dominates exit value; the December 2027 loan maturity sets the timeline.",
+   "rationale": "Thomas Scientific carries est. 7-10x leverage (est. revenue $250-320M, EBITDA $25-35M) and a December 2027 maturity, so LabOS is an EBITDA and cash program first: digital ordering lowers cost-to-serve and wins long-tail share (Grainger digital +15.6% vs rep-led ~2%; Avantor ~80% digital transactions). Each 0.5 pt of margin on ~$250-320M is ~$1.3-1.6M. Multiple expansion is capped at 0.5-1.0 turns because lab distributors trade on scale and the capital structure dominates exit value; the December 2027 loan maturity sets the timeline.",
    "evidence_ids": [
     "ve-18",
     "ve-19",

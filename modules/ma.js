@@ -1,10 +1,10 @@
-import * as Copy from './copy.js?v=20261008151643';
+import * as Copy from './copy.js?v=20261008185332';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition engine (M&A) — cross-portfolio buy-and-build intelligence.
    Datasets: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets, Competitor filings,
              Public comparables, Private-equity landscape, BSP firm profile; sales/* (property transfers, lazy, theses view).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, fitTierOf } from '../assets/components.js?v=20261008151643';
+import { renderTargets, fitTierOf } from '../assets/components.js?v=20261008185332';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 const PLAT = {
@@ -92,7 +92,7 @@ const pctOf = (n, d) => d ? Math.round((n / d) * 100) : 0;
 const titleCase = s => String(s || '').replace(/_/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
 const ownerClass = s => { const x = String(s || '').toLowerCase().replace(/no sponsor disclosed|no pe affiliation/g, ''); if (!x.trim()) return 'Unverified'; if (/subsidiary|part of|venture-backed|pe-backed|private equity|backed by|\bpe\b/.test(x)) return 'Sponsor / corporate'; if (/founder|family/.test(x)) return 'Founder / family'; if (/unknown|unverified|not disclosed|not verified/.test(x)) return 'Unverified'; if (/esop|employee-owned/.test(x)) return 'ESOP'; if (/franchisee/.test(x)) return 'Franchisee'; return 'Private independent'; };
 const OWNER_COLOR = { 'Founder / family': 'var(--sys-good)', 'Private independent': 'var(--sys-info)', Franchisee: 'var(--sys-violet)', ESOP: 'var(--sys-warn)', Unverified: 'var(--sys-mute-2)', 'Sponsor / corporate': 'var(--sys-bad)' };
-const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261008151643'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261008185332'; document.head.appendChild(l); } };
 const shortList = a => { const v = (Array.isArray(a) ? a : [a]).filter(Boolean).map(x => { const y = String(x).replace(/\s*\(.*?\)\s*/g, ' ').replace(/_/g, ' ').trim(); return y.length > 26 ? y.slice(0, 25).trim() + '…' : y; }); return v.length > 2 ? [...v.slice(0, 2), `+${v.length - 2}`] : v; };
 const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
 const pctTxt = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;
@@ -964,8 +964,8 @@ async function whitespace(ctx) {
     return `<div class="sys-card sys-card--link ws" tabindex="0" role="button" data-co="" data-id="${esc(w.id)}" style="--co:${P ? P.color : 'var(--sys-brand)'};--sc:${sc}"><div class="hd"><span class="sys-card-label rk">#${i + 1}</span><h3 class="sys-card-title">${esc(w.name)}</h3><div class="sys-kpi-value scbig">${w.score}<small>fit / 100</small></div></div>
       <div class="sys-chips">${w.stated ? fmt.chip(w.held ? `BSP sector · ${w.held} held` : 'BSP sector · no portfolio company', w.held ? 'var(--sys-info)' : 'var(--sys-good)') : fmt.chip('Outside stated sectors', 'var(--sys-mute-2)')}${P ? fmt.chip(`adjacent: ${P.label}`, P.color) : fmt.chip('adjacent: S+H template', 'var(--sys-brand)')}${fmt.chip(`${w.sponsors.length} sponsors`, 'var(--c-pe)')}${w.high.length ? fmt.chip(`${w.high.length} high-threat`, 'var(--sys-bad)') : ''}</div>
       <div class="sys-card-body rat">${esc(w.why)}</div>
-      <div class="ev"><b>Evidence:</b> ${w.ev.slice(0, 4).map(e => `${esc(e.name)} <span class="dim">(${esc(e.firm.replace(/ - .*$/, ''))})</span>`).join(' · ') || 'no sponsor activity found in dataset'}${w.ev.length > 4 ? ` · +${w.ev.length - 4} more` : ''}</div>
-      ${w.benchRow ? `<div class="ev"><b>Nearest public benchmark:</b> ${esc(SECTOR_LABEL[w.bench])}: ${pctTxt(fmt, w.benchRow.median_ebitda_margin_latest_pct)} EBITDA margin, ${pctTxt(fmt, w.benchRow.median_revenue_cagr_2023_latest_pct)} CAGR</div>` : `<div class="ev"><b>Public benchmark:</b> <span class="dim">no listed comp in dataset (next pull)</span></div>`}
+      <div class="ev"><b>Evidence:</b> ${w.ev.slice(0, 4).map(e => `${esc(e.name)} <span class="dim">(${esc(e.firm.replace(/ - .*$/, ''))})</span>`).join(' · ') || 'no sponsor activity found'}${w.ev.length > 4 ? ` · +${w.ev.length - 4} more` : ''}</div>
+      ${w.benchRow ? `<div class="ev"><b>Nearest public benchmark:</b> ${esc(SECTOR_LABEL[w.bench])}: ${pctTxt(fmt, w.benchRow.median_ebitda_margin_latest_pct)} EBITDA margin, ${pctTxt(fmt, w.benchRow.median_revenue_cagr_2023_latest_pct)} CAGR</div>` : `<div class="ev"><b>Public benchmark:</b> <span class="dim">no listed comparable yet (next pull)</span></div>`}
       <div class="bd">${w.parts.map(([l, v, m]) => `<div>${esc(l)} <span>${v}/${m}</span><i><b style="width:${(v / m) * 100}%"></b></i></div>`).join('')}</div></div>`; }).join('');
   host.querySelectorAll('.ws').forEach(n => n.onclick = () => { const w = W.find(x => x.id === n.dataset.id); host.querySelectorAll('.ws').forEach(x => x.style.outline = x === n ? '1px solid var(--c-ma)' : ''); openWS(ctx, w); });
   el.querySelector('#ma-ws-csv').onclick = () => ui.exportCSV(W.map((w, i) => ({ rank: i + 1, sector: w.name, score: w.score, thesis: w.parts[0][1], exit_demand: w.parts[1][1], room: w.parts[2][1], adjacency: w.parts[3][1], bsp_sector: w.bspSector, held_by: w.held || '', adjacent_platform: w.adj ? PLAT[w.adj].label : 'S+H template', sponsors: w.sponsors.length, high_threat_sponsors: w.high.length, evidence: w.ev.map(e => `${e.name} (${e.firm})`), next_step: w.next })), null, 'ma_whitespace_hypotheses');

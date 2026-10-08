@@ -59,7 +59,7 @@
    "US Census county FIPS codes"
   ],
   "caveats": [
-   "Storm Events is an NWS-reported dataset of significant/damaging weather; it is not a complete record of every hot or cold day. Temperature-driven HVAC demand should be modeled from daily station data (see pp_demand_model.json), not event counts alone.",
+   "Storm Events is an NWS-reported data of significant/damaging weather; it is not a complete record of every hot or cold day. Temperature-driven HVAC demand should be modeled from daily station data (see pp_demand_model.json), not event counts alone.",
    "Zone-based event types (Heat, Excessive Heat, Winter Storm, Winter Weather, Cold/Wind Chill, High Wind, Strong Wind, Coastal Flood, Tropical Storm) are logged per NWS forecast zone; counties split into two zones (Chester, Montgomery, Monmouth, Ocean, Atlantic, Burlington) can show two rows for one meteorological event — use episode count to de-duplicate.",
    "Property damage estimates are NWS/partner estimates, frequently 0 or missing for heat/cold/winter events; totals understate economic impact.",
    "2026 data are partial (through the NCEI file generated 2026-09-18, typically covering events ~through May–June 2026).",

@@ -4,7 +4,7 @@
   "title": "BSP professional network graph (public roles only)",
   "author": "Syed Rahman",
   "generated": "2026-10-06",
-  "method": "Nodes and edges built from broadskypartners.com (team, bios, strategy, deal pages), deal press releases (Business Wire via FinancialContent mirrors, PR Newswire, CPA Practice Advisor, Pulse 2.0, MR Magazine), company newsrooms, SEC filings (Form D, Form ADV, BDC 10-Q/N-PORT/N-CSR schedules of investments), UK Companies House accounts and charges, USPTO assignment records, and franchise trade press (ACHR News, Apax, IFA, CleanFax, Citybiz). Existing repo datasets (BSP firm profile, filings datasets, add-on target lists) were reused with their original source URLs and retrieval dates; new facts were fetched 2026-10-06. Edges carry one-sentence evidence and the source that supports it. Intro paths are analyst constructions over sourced nodes and edges; confidence reflects proximity (same franchise system or same seller-banker = high/medium; geography-only = low).",
+  "method": "Nodes and edges built from broadskypartners.com (team, bios, strategy, deal pages), deal press releases (Business Wire via FinancialContent mirrors, PR Newswire, CPA Practice Advisor, Pulse 2.0, MR Magazine), company newsrooms, SEC filings (Form D, Form ADV, BDC 10-Q/N-PORT/N-CSR schedules of investments), UK Companies House accounts and charges, USPTO assignment records, and franchise trade press (ACHR News, Apax, IFA, CleanFax, Citybiz). Existing repo sources (BSP firm profile, filings sources, add-on target lists) were reused with their original source URLs and retrieval dates; new facts were fetched 2026-10-06. Edges carry one-sentence evidence and the source that supports it. Intro paths are analyst constructions over sourced nodes and edges; confidence reflects proximity (same franchise system or same seller-banker = high/medium; geography-only = low).",
   "schema": {
    "node": "{id, kind:'node', type, name, org, title, sector_tags[], relevance_to_pipeline, source_url, retrieved}",
    "edge": "{id, kind:'edge', from, to, relation, evidence, date, source_url, retrieved, current?}",
@@ -249,7 +249,7 @@
      "p-simmons"
     ],
     "hops": 3,
-    "path": "Distribution-veteran path: Stan Haas (30+ years in scientific distribution) and Executive Board member Charles Simmons (TS CEO 2017-2023, oversaw its pre-2023 acquisition program) reach regional distributor owners. Note: TS equity is marked near zero, so add-on capacity is constrained.",
+    "path": "Distribution-veteran path: Stan Haas (30+ years in scientific distribution) and Executive Board member Charles Simmons (TS CEO 2017-2023, oversaw its pre-2023 acquisition program) reach regional distributor owners. Note: TS add-on capacity depends on the December 2027 refinancing.",
     "confidence": "medium",
     "confidence_score": 0.45,
     "source_url": "https://www.thomassci.com/blog/_/haas-ceo",

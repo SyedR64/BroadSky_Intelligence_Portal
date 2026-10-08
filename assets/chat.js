@@ -12,7 +12,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261008151643';
+import { Data, Fmt, Live, esc } from './core.js?v=20261008185332';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -48,7 +48,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261008151643';
+const BACKEND_JS = './backend.js?v=20261008185332';
 let BE = null, BE_P = null;
 function backend() {
   if (!BE_P) BE_P = import(BACKEND_JS).then(async m => {
@@ -149,10 +149,17 @@ async function wastewater(q = '') {
 }
 async function cetDue(days = 30) {
   const d = await Data.research('cet_opportunities'); const legacy = await Data.load('cet_ne_rfps').catch(() => []);
-  const all = [...(d?.items || []).map(o => ({ t: o.title, who: o.owner_or_agency, st: o.state, due: o.due_date, fit: o.fit_score, v: o.est_value_usd })), ...legacy.map(o => ({ t: o.title, who: o.agency, st: o.state, due: o.due_date && new Date(o.due_date), fit: null, v: o.estimated_value_m ? o.estimated_value_m * 1e6 : null }))];
-  progress(`Filtering ${all.length} opportunities by due date`);
-  const soon = all.filter(o => { const k = Fmt.days(o.due instanceof Date ? o.due.toISOString().slice(0, 10) : o.due); return k != null && k >= 0 && k <= days; }).sort((a, b) => new Date(a.due) - new Date(b.due));
-  return { html: `<h4>CET bids due within ${days} days</h4>${soon.length ? tbl(['Due', 'Opportunity', 'Owner', 'Fit'], soon.slice(0, 10).map(o => [esc(Fmt.dateShort(o.due)), `<b>${esc(o.t)}</b> <span class="ch-badge">${esc(o.st || '')}</span>`, esc(o.who || ''), o.fit ?? '—'])) : '<p>No bids close in that window.</p>'}<p>${n(all.length)} opportunities tracked across the six New England states (the radar plus public bids).</p>`, links: [app('#/cet/opportunities', 'Opportunity radar')], followups: ['Top 10 actions for CET this month?', 'Which wastewater plants should Horton call first?'] };
+  const radar = d?.items || [];
+  // trade bids only: an energy developer's lease/PPA solicitation or a grant program is not electrical work CET would bid
+  const NOT_TRADE = /developer rfp|lease\/ppa|power purchase/i;
+  const iso = v => v instanceof Date ? v.toISOString().slice(0, 10) : v;
+  const all = [...radar.filter(o => o.type === 'rfp' && o.stage !== 'awarded' && !NOT_TRADE.test(o.title || '')).map(o => ({ t: o.title, who: o.owner_or_agency, st: o.state, due: o.due_date, fit: o.fit_score, v: o.est_value_usd })), ...legacy.map(o => ({ t: o.title, who: o.agency, st: o.state, due: o.due_date && new Date(o.due_date), fit: null, v: o.estimated_value_m ? o.estimated_value_m * 1e6 : null }))];
+  progress(`Filtering ${all.length} open bids by due date`);
+  const afterClose = new Date().getHours() >= 17;   // a bid due today drops off after close of business
+  const soon = all.map(o => ({ ...o, k: Fmt.days(iso(o.due)) })).filter(o => o.k != null && o.k <= days && (o.k > 0 || (o.k === 0 && !afterClose))).sort((a, b) => a.k - b.k || (b.fit || 0) - (a.fit || 0));
+  const today = soon.filter(o => o.k === 0).length;
+  const dueCell = o => o.k === 0 ? '<b>Due today</b>' : esc(Fmt.dateShort(iso(o.due)));
+  return { html: `<h4>CET bids due within ${days} days</h4>${soon.length ? `<p>All ${n(soon.length)} open bids due in the next ${days} days, soonest first${today ? `; ${n(today)} close today` : ''}.</p>${tbl(['Due', 'Opportunity', 'Owner', 'Fit'], soon.map(o => [dueCell(o), `<b>${esc(o.t)}</b> <span class="ch-badge">${esc(o.st || '')}</span>`, esc(o.who || ''), o.fit ?? '—']))}` : '<p>No bids close in that window.</p>'}<p>The radar tracks ${n(radar.length)} sourced opportunities across the six New England states, plus ${n(legacy.length)} older public bids.</p>`, links: [app('#/cet/opportunities', 'Opportunity radar')], followups: ['Top 10 actions for CET this month?', 'Which wastewater plants should Horton call first?'] };
 }
 async function addons(q) {
   const co = coOf(q) || 'pp'; const file = { pp: 'ma_targets_pp', cet: 'ma_targets_cet', fl: 'ma_targets_fl_ts', ts: 'ma_targets_fl_ts' }[co]; if (!file) return { html: `<p>Add-on screens exist for Punctual Pros, CET, Frontline and Thomas Scientific.</p>`, links: [app('#/ma/pipeline', 'Acquisition engine')] };
@@ -411,10 +418,10 @@ async function addonHistory(q) {
 }
 /** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
 async function dealModel(q) {
-  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261008151643').catch(() => null)]);
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261008185332').catch(() => null)]);
   if (!d || !L) return null;
   const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
-  const P = pre.find(i => i.co === co) || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
+  const P = pre.find(i => i.co === co && i.group !== 'generic') || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
   const v = { ...d.meta.base, ...P.inputs }, hurdle = (d.meta.hurdle?.irr_pct || 20) / 100;
   const R = L.lbo(v), max = L.solveEntry(v, hurdle);
   const pct = x => x == null ? 'n/m' : `${(x * 100).toFixed(1)}%`, mult = x => x == null ? 'n/m' : `${x.toFixed(1)}x`;
@@ -681,7 +688,7 @@ const SRC = {
   pp_storm_events: ['Punctual Pros storm history', 'NOAA storm events recorded in the territory counties', '#/pp/weather'],
   pp_ads: ['Punctual Pros ad plan', 'Media plan, connected-TV platform costs and sample creatives', RD + 'punctual-pros/ads.html'],
   deal_model: ['Acquisition model assumptions', 'Deal benchmarks, portfolio presets and model assumptions', '#/deal/returns'],
-  serviceos_evidence: ['ServiceOS evidence', 'Evidence for tech-enabled multiples and the roadmap assumptions', RD + 'punctual-pros/serviceos.html'],
+  serviceos_evidence: ['OS program evidence', 'Evidence for tech-enabled multiples and the roadmap assumptions', RD + 'punctual-pros/serviceos.html'],
   voice_ai: ['Voice AI research', 'Missed-call economics, vendors, use cases and guardrails', RD + 'voice-ai.html'],
   ai_agents_portfolio: ['Portfolio AI-agent plan', 'Agents by company with triggers, annual value and time to deploy', RD + 'ai-agents.html'],
   cet_opportunities: ['CET opportunity radar', 'New England bids, capital plans, programs and federal awards', '#/cet/opportunities'],
@@ -962,7 +969,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261008151643'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261008185332'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };

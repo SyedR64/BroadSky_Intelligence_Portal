@@ -2,7 +2,7 @@
    record fields, the est. badge, and a post-render pass that turns the console's
    textual "est." markers into .sys-est badges. Module renderers call these at the
    source; Frame.humanize stays the safety net. */
-import { Frame } from '../assets/frame.js?v=20261008151643';
+import { Frame } from '../assets/frame.js?v=20261008185332';
 
 export const EST = '<span class="sys-est">est.</span>';
 export const ILLUS = '<span class="sys-est sys-est--illus">illustrative</span>';
@@ -302,7 +302,7 @@ export const VIEW_TITLES = {
   'national/scorer': 'county scorer', 'national/phases': 'Punctual Pros phases on the national map', 'national/markets': 'metro markets', 'national/method': 'method, sources and coverage',
   'fin/portfolio': 'portfolio financial picture', 'fin/deal': 'value and exit scoreboard', 'fin/explorer': 'filings explorer', 'fin/comps': 'public comparables', 'fin/rivals': 'rival company financials', 'fin/methods': 'methods and gaps',
   'techos/overview': 'program overview', 'techos/evidence': 'valuation evidence', 'techos/roadmap': 'OS roadmap', 'techos/calculator': 'value-creation calculator',
-  'theater/play': 'cinematic map scenes', 'briefing/play': 'executive briefing',
+  'theater/play': 'cinematic map scenes', 'briefing/play': 'chapters and video briefing',
 };
 const KEEP_CASE = /^(?:[A-Z]{2,}|AM|OS|Broad|Punctual|Manhattan|New|Thomas|Frontline|Fair)\b/;
 /** Sentence-case a view name: first letter lower unless it starts with an acronym or a proper noun. */

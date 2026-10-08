@@ -1,11 +1,11 @@
-import * as Copy from './copy.js?v=20261008151643';
+import * as Copy from './copy.js?v=20261008185332';
 /* Thomas Scientific — target-account intelligence, add-on screen and financial picture.
    Data: Thomas Scientific lab sites (27.5K scored sites, columnar) is the single source for every site and account number:
    parent accounts are rolled up from it, so the overview and the account list always agree.
    Thomas Scientific parent accounts (legacy top-500 account plan) only flags plan membership. Frontline and Thomas Scientific add-on targets,
    Thomas Scientific public filings, Public comparables. Lender marks and sponsor equity marks sit behind the
    BSP-only deal-team toggle on the Financials view (#/ts/filings?deal=1), never on company-facing views. */
-import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261008151643';
+import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261008185332';
 
 /* Colours are system tokens (system.css); tok() resolves one for the Leaflet canvas renderer. */
 const C = 'var(--co-ts)', HEX = 'var(--co-ts)';
@@ -69,7 +69,7 @@ const PLAYS = {
 };
 const playFor = a => PLAYS[a] || { motion: 'Qualify', play: 'Qualify buying centre and current distributor before assigning a motion.', owner: 'Inside sales' };
 
-function injectCss() { if (!document.getElementById('css-ts')) { const l = document.createElement('link'); l.id = 'css-ts'; l.rel = 'stylesheet'; l.href = 'modules/ts.css?v=20261008151643'; document.head.appendChild(l); } }
+function injectCss() { if (!document.getElementById('css-ts')) { const l = document.createElement('link'); l.id = 'css-ts'; l.rel = 'stylesheet'; l.href = 'modules/ts.css?v=20261008185332'; document.head.appendChild(l); } }
 
 /* ── Aggregation (computed once per session, reused by every view) ───────────── */
 let AGG = null;
@@ -362,7 +362,7 @@ async function accounts(ctx) {
       { label: 'Multi-state', value: fmt.num(rows.filter(p => p._nstates > 1).length), sub: 'network-agreement candidates', color: 'var(--co-fh)' },
       { label: 'Medicare 2023 allowed', value: fmt.money(cms), sub: `all sites · Pursue ${fmt.money(pcms)}`, color: 'var(--sys-info)' },
       { label: 'Avg commercial score', value: rows.length ? fmt.num(rows.reduce((s, p) => s + (p.commercial_score_v3c || 0), 0) / rows.length, 1) : '—', sub: 'best site, 0–100', color: 'var(--sys-good)' },
-      { label: 'Thomas customers', value: '—', sub: 'CRM match pending · not in dataset', color: 'var(--sys-mute-2)' },
+      { label: 'Thomas customers', value: '—', sub: 'CRM match pending · not public', color: 'var(--sys-mute-2)' },
     ]);
     const am = new Map(); rows.forEach(p => am.set(p._arch, (am.get(p._arch) || 0) + 1));
     el.querySelector('#ac-arch').innerHTML = rows.length ? charts.hbar(sortedEntries(am).map(([k, v]) => ({ label: k, value: v, color: HEX })), { fmt: v => fmt.num(v), labelW: 190 }) : ui.empty('No accounts match');
@@ -509,16 +509,16 @@ async function filings(ctx) {
   const bspAddons = (fil?.items || []).filter(i => /BSP-era add-on/i.test(i.title || ''));
   const nAdd = Math.max(0, ...bspAddons.map(i => { const m = String(i.title || '').match(/#(\d+)(?:[–-](\d+))?/); return m ? Number(m[2] || m[1]) : 0; })) || null;
   const matDays = cr?.maturity && DATE.test(cr.maturity) ? (() => { const [y, m, d] = cr.maturity.split('-').map(Number); const n = new Date(); return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(n.getFullYear(), n.getMonth(), n.getDate())) / 864e5); })() : null; // calendar days, no UTC/DST drift
-  const toggle = deal ? '<a class="sys-btn sys-btn--secondary" href="#/ts/filings">← Company view</a>' : '<a class="sys-btn sys-btn--secondary" href="#/ts/filings?deal=1" title="Lender marks, sponsor equity and implied leverage: BSP deal team only">Deal team view (BSP only)</a>';
+  const toggle = deal ? '<a class="sys-btn sys-btn--secondary" href="#/ts/filings">← Company view</a>' : '<a class="sys-btn sys-btn--secondary" href="#/ts/filings?deal=1" title="What lenders’ and funds’ public filings show, each with its filing and date">Lender filings view</a>';
   const fedNow = String(fed?.estimate || '').replace(/\s*\(.*$/, '');
   const sub = deal
-    ? (cr?.last ? `Lenders mark the loan at ${fmt.num(cr.last[1].pct, 1)}% of par and the equity at ${esc(eqv?.estimate || '≈0')}, with maturity ${esc(fmt.date(dfix(cr.maturity)))}. The plan has to grow gross profit in target accounts.` : 'Credit and equity marks for Thomas Scientific from public filings.')
+    ? (cr?.last ? `What lenders' public filings show: MFIC's 10-Q carries the loan at ${fmt.num(cr.last[1].pct, 1)}% of par as of ${esc(fmt.date(dfix(cr.last[0])))}, and the loan matures ${esc(fmt.date(dfix(cr.maturity)))}. The refinancing plan comes first.` : 'What lenders\' public filings show for Thomas Scientific.')
     : `Thomas is a ${esc(rev?.estimate || 'n/a')} (est.) distributor whose COVID federal revenue has normalized. Peers grew ${pctTxt(fmt, labB?.median_revenue_growth_latest_pct)} last year, so growth must come from share of wallet.`;
-  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: deal ? 'Credit and equity marks' : 'Public filings', sub, actions: fil ? toggle : '', chips: deal ? `<span class="sys-chip sys-chip--bad">BSP internal · do not forward</span>${fmt.chip('SEC EDGAR · BDC schedules', C)}${fmt.chip('Form D')}${fmt.chip('Estimates are labelled est.', 'var(--sys-warn)')}` : `${fmt.chip('USASpending', C)}${fmt.chip('SEC XBRL peers')}${fmt.chip('Company releases')}${fmt.chip('Estimates are labelled est.', 'var(--sys-warn)')}` })}
-  ${deal ? '<div class="mb-12">' + ui.note('<b>BSP deal team only.</b> This view shows lender marks, sponsor equity marks and implied EV / leverage from public BDC and N-PORT filings. Do not forward to Thomas Scientific management; use the company view for operating discussions.', 'warn') + '</div>' : ''}
+  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: deal ? 'What lenders\' public filings show' : 'Public filings', sub, actions: fil ? toggle : '', chips: deal ? `${fmt.chip('SEC EDGAR · BDC schedules', C)}${fmt.chip('Form D')}${fmt.chip('Estimates are labelled est.', 'var(--sys-warn)')}` : `${fmt.chip('USASpending', C)}${fmt.chip('SEC XBRL peers')}${fmt.chip('Company releases')}${fmt.chip('Estimates are labelled est.', 'var(--sys-warn)')}` })}
+  ${deal ? '<div class="mb-12">' + ui.note('<b>Public filings only.</b> Each number here comes from a lender’s or fund’s SEC filing (BDC 10-Q and 10-K schedules, N-PORT, Form D), with the filing and date shown. Lenders value loans for their own books; these are not company figures.', 'info') + '</div>' : ''}
   ${!cr ? ui.note('Thomas Scientific filings dataset not yet available (Thomas Scientific public filings).', 'warn') : deal ? ui.kpis([
     { label: 'Sponsor equity raised', value: fmt.money(cr.formD?.v), sub: `Form D · BSP-TS, LP`, color: 'var(--sys-brand)' },
-    { label: 'Loan mark (MFIC)', value: `${fmt.num(cr.last?.[1].pct, 1)}%`, sub: `of par · ${esc(fmt.date(dfix(cr.last?.[0] || '')))}`, color: (cr.last?.[1].pct || 100) < 95 ? 'var(--sys-bad)' : 'var(--sys-good)' },
+    { label: 'Loan value in MFIC’s 10-Q', value: `${fmt.num(cr.last?.[1].pct, 1)}%`, sub: `of par · ${esc(fmt.date(dfix(cr.last?.[0] || '')))}`, color: 'var(--sys-info)' },
     { label: 'Maturity', value: esc(fmt.date(dfix(cr.maturity))), sub: matDays != null ? `${fmt.num(matDays)} days · refinancing window` : '', color: matDays != null && matDays < 540 ? 'var(--sys-warn)' : 'var(--sys-info)' },
     { label: 'Revenue (est.)', value: esc(rev?.estimate || '—'), sub: `${esc(rev?.confidence || '')} confidence · CY2025/26`, color: C },
     { label: 'EBITDA (est.)', value: esc(ebitda?.estimate || '—'), sub: `${esc(ebitda?.confidence || '')} confidence · ${esc(lev?.estimate || '')} leverage`, color: 'var(--sys-warn)' },
@@ -532,8 +532,8 @@ async function filings(ctx) {
     { label: 'Peer median growth', value: pctTxt(fmt, labB?.median_revenue_growth_latest_pct), sub: `listed lab distributors · op. margin ${pctTxt(fmt, labB?.median_operating_margin_latest_pct)}`, color: 'var(--sys-good)' },
   ])}
   ${cr && deal ? `<div class="grid grid-3 mt-12">
-    ${ui.panel({ title: 'Term-loan discount to par', sub: '100 − fair value as % of par, from Apollo BDC schedules · higher = worse', body: loanChart(ctx, cr), foot: ui.source('MFIC & MAIPL 10-Q/10-K via SEC EDGAR', 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001278752', fil.meta?.generated) })}
-    ${ui.panel({ title: 'Sponsor equity mark', sub: 'N-PORT fair value of a ~$5M LP stake in BSP-TS Co-Invest I', body: cr.equity.length ? charts.line([{ name: 'Fair value', color: 'var(--sys-bad)', points: cr.equity.map(p => [qtr(p.date), p.v]) }], { h: 170, fmt: v => fmt.money(v), area: true }) + `<div class="small text-2 mt-8">From ${fmt.money(cr.equity[0].v)} (${esc(fmt.date(dfix(cr.equity[0].date)))}) to ${fmt.money(cr.equity[cr.equity.length - 1].v)} (${esc(fmt.date(dfix(cr.equity[cr.equity.length - 1].date)))}): equity is marked at roughly zero.</div>` : ui.empty('No equity marks in dataset'), foot: ui.source('Barings / Cascade N-PORT via SEC EDGAR', 'https://www.sec.gov/edgar/search/', fil.meta?.generated) })}
+    ${ui.panel({ title: 'Term loan in lenders’ filings', sub: '100 − fair value as % of par, from Apollo BDC 10-Q and 10-K schedules, by quarter', body: loanChart(ctx, cr), foot: ui.source('MFIC & MAIPL 10-Q/10-K via SEC EDGAR', 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001278752', fil.meta?.generated) })}
+    ${ui.panel({ title: 'Co-invest stake in a fund’s filings', sub: 'N-PORT fair value of a ~$5M LP stake in BSP-TS Co-Invest I, by quarter', body: cr.equity.length ? charts.line([{ name: 'Fair value', color: 'var(--sys-info)', points: cr.equity.map(p => [qtr(p.date), p.v]) }], { h: 170, fmt: v => fmt.money(v), area: true }) + `<div class="small text-2 mt-8">From ${fmt.money(cr.equity[0].v)} (${esc(fmt.date(dfix(cr.equity[0].date)))}) to ${fmt.money(cr.equity[cr.equity.length - 1].v)} (${esc(fmt.date(dfix(cr.equity[cr.equity.length - 1].date)))}): the fund’s latest filing carries the stake near zero.</div>` : ui.empty('No equity marks in dataset'), foot: ui.source('Barings / Cascade N-PORT via SEC EDGAR', 'https://www.sec.gov/edgar/search/', fil.meta?.generated) })}
     ${fedPanel(ctx, cr, fil)}
   </div>` : cr ? `<div class="grid grid-2 mt-12">
     ${fedPanel(ctx, cr, fil)}

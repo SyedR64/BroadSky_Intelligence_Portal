@@ -1,7 +1,7 @@
-import * as Copy from './copy.js?v=20261008151643';
+import * as Copy from './copy.js?v=20261008185332';
 /* Fair Harbor — sustainable beachwear from recycled plastic (BSP investment, Mar 2022).
    Views: overview · opportunities · benchmarks · filings · NYC context (Manhattan home sales, demoted: context only). Shared helpers are duplicated in bpi.js by design (no cross-module imports). */
-import { renderFilings, opportunityCard } from '../assets/components.js?v=20261008151643';
+import { renderFilings, opportunityCard } from '../assets/components.js?v=20261008185332';
 
 /* ── module config (the only block that differs from bpi.js) ──────────────── */
 const CFG = {
@@ -302,7 +302,7 @@ async function market(ctx) {
   if (!raw?.items?.length) { el.innerHTML = ui.pageHead({ title: `${esc(CFG.salesArea.replace(/\s*\(.*\)$/, ''))} home sales` }) + ui.note('The Manhattan home-sales dataset is not available yet.', 'warn'); return; }
   const meta = raw.meta || {}; const all = raw.items; const s = salesStats(all, fmt);
   el.innerHTML = ui.pageHead({ title: `${esc(CFG.salesArea.replace(/\s*\(.*\)$/, ''))} home sales`, sub: `${esc(CFG.marketLens(s))}`, chips: `${fmt.chip(`${fmt.num(all.length)} recorded sales`, CFG.hex)}${fmt.chip(`${day(fmt, meta.coverage?.date_from)} – ${day(fmt, meta.coverage?.date_to)}`.replace(/ \d{1,2},/g, ''))}${fmt.chip('owner names not retained')}<span class="sys-chip sys-chip--warn">Context only</span>` }) +
-    `<div class="mb-12">${ui.note('Context only, not an operating metric. No dataset links Manhattan home buyers to Fair Harbor customers, and 12 months of data (September 2025 – August 2026) cannot give a same-period YoY trend, so none is shown.', 'warn')}</div>` +
+    `<div class="mb-12">${ui.note('Context only, not an operating metric. No public data links Manhattan home buyers to Fair Harbor customers, and 12 months of data (September 2025 – August 2026) cannot give a same-period YoY trend, so none is shown.', 'warn')}</div>` +
     ui.kpis([
       { label: 'Arms-length home sales', value: s.n, sub: `residential, $50K+ · of ${fmt.num(all.length)} transfers`, color: CFG.color },
       { label: 'Median price', value: s.medTxt, sub: 'arms-length residential', color: 'var(--sys-warn)' },

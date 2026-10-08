@@ -1780,7 +1780,7 @@
     "https://www.sec.gov/Archives/edgar/data/1422183/000162828026053783/fsk-20260630.htm"
    ],
    "retrieved": "2026-10-06",
-   "data_notes": "exit EV ($1B) comes from a secondary Substack analysis (capitalandclarity) and the portal's PE landscape dataset; neither Trivest nor OMERS disclosed terms, so treat it as reported, not confirmed. Add-on count is 16 per Trivest's sale release and 18 per its Buyouts-award page. The 2021 '21 acquisitions' and 'EBITDA doubled' claims are from the same secondary source.",
+   "data_notes": "exit EV ($1B) comes from a secondary Substack analysis (capitalandclarity) and the portal's PE landscape data; neither Trivest nor OMERS disclosed terms, so treat it as reported, not confirmed. Add-on count is 16 per Trivest's sale release and 18 per its Buyouts-award page. The 2021 '21 acquisitions' and 'EBITDA doubled' claims are from the same secondary source.",
    "source_file": "cases_home_services.json",
    "confidence": "medium",
    "confidence_basis": "Trivest/OMERS releases and BDC 10-Q are primary, but the ~$1B EV and 2021 add-on count come from a secondary Substack analysis; close-rate lift is a vendor case study",
@@ -6472,7 +6472,7 @@
     },
     {
      "ref": "ve-11",
-     "fact": "Frontdoor (home-service plans, a subscription/membership model) posted FY2025 revenue of $2.09B (+13.6%) at an approximate EBITDA margin of 24.2%, versus a 15.1% median for the five residential home-services public comps in the portal dataset.",
+     "fact": "Frontdoor (home-service plans, a subscription/membership model) posted FY2025 revenue of $2.09B (+13.6%) at an approximate EBITDA margin of 24.2%, versus a 15.1% median for the five residential home-services public comps in the portal data.",
      "source_url": "https://www.sec.gov/Archives/edgar/data/1727263/000119312526076548/ftdr-20251231.htm",
      "retrieved": "2026-10-06"
     },
@@ -8090,7 +8090,7 @@
     "start": 12,
     "end": 60
    },
-   "description": "Membership growth is the slowest lever and was disclosed at each transaction. Champions went from 40,000+ service agreements (Feb 2020) to 60,000+ members (Jan 2021) to ~150,000 (Feb 2026), about 20% a year from 2021 (derived), lifting members per technician from ~71 to ~83 while technicians doubled. Redwood paid for a company with ~0.48 memberships per household served a year. No case in this dataset gives a sourced \"share of customers on a membership\" threshold (for example 20%), so the metric to track is members per technician.",
+   "description": "Membership growth is the slowest lever and was disclosed at each transaction. Champions went from 40,000+ service agreements (Feb 2020) to 60,000+ members (Jan 2021) to ~150,000 (Feb 2026), about 20% a year from 2021 (derived), lifting members per technician from ~71 to ~83 while technicians doubled. Redwood paid for a company with ~0.48 memberships per household served a year. No case in this research gives a sourced \"share of customers on a membership\" threshold (for example 20%), so the metric to track is members per technician.",
    "evidence": [
     {
      "case": "case-ch",

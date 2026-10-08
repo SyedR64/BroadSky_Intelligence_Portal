@@ -1,7 +1,7 @@
 /* The agentic layer — renders the portfolio AI-agent plan (plus the tech-enablement evidence for the
    OS EBITDA ranges). No framework, no build step. Markup uses the shared sys- components
    (assets/system.css, UNIFIED.md); company colour comes from data-co, never from literals here. */
-import { humanizeText } from '../assets/frame.js?v=20261008151643';
+import { humanizeText } from '../assets/frame.js?v=20261008185332';
 const ROOT = new URL('../', import.meta.url).href;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -106,7 +106,7 @@ const CASH = {
   'ag-ts-07': { usd: 3 * 285e6 / 365, how: '3 days of DSO on ~$285M revenue' },
   'ag-fh-04': { usd: 8e6 * 0.08, how: '8% less excess on ~$8M inventory' },
 };
-/* Re-sequencing: TS is the stressed asset; its inventory agent must land before the Dec-2027 maturity. */
+/* Re-sequencing: TS has the Dec-2027 maturity; its inventory agent must land before the Dec-2027 maturity. */
 const RESEQ = { 'ag-ts-05': { from: 4, to: 2, why: 'Moved from wave 4 to wave 2. Thomas Scientific’s loan matures in December 2027; in wave 4 (Q4-27 to Q1-28) the inventory release would land after the refinancing.' } };
 /* Revised wave gates. The dataset gated wave 1 on controls 1–5 only, although three wave-1 agents talk to customers. */
 const GATE_FIX = {
@@ -497,7 +497,7 @@ function valueChart() {
   $('#reality').innerHTML = rows.slice().sort((a, b) => (b.ofTop || 0) - (a.ofTop || 0)).map(r => `<div class="rc${r.ofTop >= STRETCH ? ' hot' : ''}"><span>${dot(r.c)}${esc(CO[r.c].name)}</span><span class="rc-bar"><i style="width:${Math.min(100, r.ofTop || 0)}%"></i></span><span>${r.ofTop ?? '—'}%</span></div>`).join('') + `<p class="vn-foot">Agent ceiling as a share of the top of each OS program's EBITDA case. Above ${STRETCH}% leaves almost nothing for the rest of the OS (systems, pricing, data), so re-base on measured baselines before using either number.</p>`;
   // Thomas Scientific: cash before EBITDA.
   const cashAg = AG.filter(a => E[a.id].cash).sort((a, b) => E[b.id].cash - E[a.id].cash); const tsCash = sumBy(cashAg.filter(a => a.company === 'ts'), a => E[a.id].cash);
-  $('#ts-cash').innerHTML = `<p>Thomas Scientific is the stressed asset: est. 7–10x leverage, sponsor equity marked near zero and a loan maturing in <b>December 2027</b> (tech-enablement evidence file). For a refinancing, one-time cash matters more than run-rate EBITDA, and the annual values hide it.</p>
+  $('#ts-cash').innerHTML = `<p>Thomas Scientific carries est. 7–10x leverage and a loan maturing in <b>December 2027</b> (tech-enablement evidence file). For a refinancing, one-time cash matters more than run-rate EBITDA, and the annual values hide it.</p>
     <ul class="cash-list">${cashAg.filter(a => a.company === 'ts').map(a => { const W = WAVES.find(w => w.wave === a.wave); const [s, e] = W.months.split('-').map(Number); return `<li><span class="cl-n">${dot(a.company)}${esc(a.agent)}</span><span class="cl-v"><b>${money(E[a.id].cash)}</b> cash once · books ${money(a.est_annual_value_usd)} a year · ${qRange(s, e)}</span></li>`; }).join('')}</ul>
     <p class="vn-foot">${money(tsCash)} of Thomas cash starts landing in ${qOf(3)} and is fully released by ${cashBy('ts')} if both agents hit target, ahead of the December 2027 maturity; the inventory agent was moved up from wave 4 for this reason. Elsewhere, Fair Harbor's size-curve agent frees about ${money(E['ag-fh-04']?.cash || 0)} of inventory; Punctual Pros has no working-capital agent.</p>`;
   const WR = waveRows(); const mx = Math.max(...WR.map(r => r.T.ceil));
@@ -561,7 +561,7 @@ function companies() {
       <div class="co-h"><div><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>${esc(C.os)}</span><h3 class="sys-card-title">${esc(C.full)}</h3></div><button type="button" class="ag-linkbtn" data-filter="${c}">Filter catalog</button></div>
       <div class="co-stats"><div><span>Agents</span><b>${ags.length}</b></div><div><span>Ceiling a year</span><b>${money(v)}${EST()}</b></div><div><span>Net, mid case</span><b>${money(totals(ags).net)}${EST()}</b></div></div>
       ${(() => { const r = companyRows().find(z => z.c === c); return `<p class="co-note${r.ofTop >= STRETCH ? ' hot' : ''}">${r.ebPct != null ? `${r.ebPct}% of current adj. EBITDA${c === 'cet' ? ' (CET standalone)' : ''} · ` : ''}${r.ofTop != null ? `${r.ofTop}% of the OS case top` : ''}${r.ofTop >= STRETCH ? ' · re\u2011base first' : ''}</p>`; })()}
-      ${c === 'ts' ? `<p class="co-note hot">Stressed asset, loan matures Dec 2027: cash agents first (${money(sumBy(ags, a => E[a.id].cash))} one-time cash by ${cashBy('ts')}).</p>` : ''}
+      ${c === 'ts' ? `<p class="co-note hot">Loan matures Dec 2027: cash agents first (${money(sumBy(ags, a => E[a.id].cash))} one-time cash by ${cashBy('ts')}).</p>` : ''}
       <p class="co-top"><b>Biggest:</b> ${esc(ags[0]?.agent || '')} (${money(ags[0]?.est_annual_value_usd)}). ${w1.length ? (w1.length === 1 && w1[0] === ags[0]?.agent ? 'Ships in wave 1.' : `<b>Wave 1:</b> ${esc(w1.join(', '))}.`) : ''}</p>
       <div class="co-links">
         <a href="${C.slug}/${C.osf}">${esc(C.os)} page <span>→</span></a>
@@ -597,7 +597,7 @@ function faq() {
     { q: 'Which agents go live in wave 1?', a: `<p>${esc(w1.q)} (months ${esc(w1.w.months)}). Gate: controls 1–${gnum(5)} at every company, control ${gnum(7)} for Frontline, 8-week baselines, ${w1.eng} agent engineers.</p>${li(w1.ags)}`, href: '#rollout' },
     { q: 'Which agents pay back fastest?', a: `<p>Payback = est. build cost ÷ monthly risk-adjusted value net of run cost:</p><ul>${pay.map(a => `<li><b>${esc(a.agent)}</b> (${esc(CO[a.company].name)}) — ${pbTxt(E[a.id].payback)}, build ${money(E[a.id].build)}</li>`).join('')}</ul>`, href: '#catalog' },
     { q: 'What is the rollout plan and timeline for the agents?', a: `<ul>${WR.map(r => `<li><b>Wave ${r.w.wave}</b> (${esc(r.q)}): ${r.ags.length} agents, ${money(r.T.ceil)} ceiling, ${r.eng} engineers</li>`).join('')}</ul><p>Agents ramp over two quarters after go-live, so the full ceiling arrives after month 18. Thomas Scientific's inventory agent moved to wave 2, ahead of its December 2027 loan maturity.</p>`, href: '#rollout' },
-    { q: 'What about Thomas Scientific’s debt maturity?', a: `<p>Thomas is the stressed asset (est. 7–10x leverage, loan maturing December 2027). Its collections and inventory agents both run in wave 2 and release about ${money(sumBy(AG.filter(a => a.company === 'ts'), a => E[a.id].cash))} of one-time cash by ${cashBy('ts')}, which matters more for a refinancing than their ${money(sumBy(AG.filter(a => a.company === 'ts' && E[a.id].cash), a => a.est_annual_value_usd))} of annual value.</p>`, href: '#value' },
+    { q: 'What about Thomas Scientific’s debt maturity?', a: `<p>Thomas carries est. 7–10x leverage and a loan maturing December 2027. Its collections and inventory agents both run in wave 2 and release about ${money(sumBy(AG.filter(a => a.company === 'ts'), a => E[a.id].cash))} of one-time cash by ${cashBy('ts')}, which matters more for a refinancing than their ${money(sumBy(AG.filter(a => a.company === 'ts' && E[a.id].cash), a => a.est_annual_value_usd))} of annual value.</p>`, href: '#value' },
     { q: 'Who approves what an agent does?', a: `<p>${esc(deID(g('gov-02').requirement || ''))}</p>`, href: '#governance' },
     { q: 'Can an agent move money or pay vendors?', a: `<p>No. ${esc(deID(g('gov-08').requirement || ''))}</p>`, href: '#governance' },
     { q: 'Which AI models and vendor data terms are allowed?', a: `<p>${esc(deID(g('gov-04').requirement || ''))}</p>`, href: '#governance' },

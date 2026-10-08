@@ -6,7 +6,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261008151643';
+       import { Frame } from '../../assets/frame.js?v=20261008185332';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
@@ -252,9 +252,9 @@ export const LABELS = {
   // portal datasets (data/)
   cet_ne_counties: 'CET New England county scores', cet_ne_development: 'New England development activity', cet_ne_rfps: 'New England public bids',
   cet_nyc_archive_summary: 'CET legacy archive summary', fl_lawfirms: 'Frontline law-firm universe', pp_meta: 'Punctual Pros territory profile',
-  pp_sales_90d: 'Punctual Pros home sales (last 90 days)', pp_zips: 'Punctual Pros ZIP-code model', ts_parents: 'Thomas Scientific parent accounts', ts_sites: 'Thomas Scientific lab sites',
+  pp_sales_90d: 'Punctual Pros home sales, January to April 2026', pp_zips: 'Punctual Pros ZIP-code model', ts_parents: 'Thomas Scientific parent accounts', ts_sites: 'Thomas Scientific lab sites',
   // deed records (data/sales/)
-  pp_sales_pa_a: 'Punctual Pros deed records (PA)', pp_sales_pa_b: 'Punctual Pros deed records (PA)', pp_sales_nj: 'Punctual Pros deed records (NJ)',
+  pp_sales_pa_a: 'Punctual Pros deed records (Lancaster, York, Dauphin, Cumberland)', pp_sales_pa_b: 'Punctual Pros deed records (Berks, Lebanon, Franklin, Adams, Perry, Chester, Montgomery)', pp_sales_nj: 'Punctual Pros deed records (NJ)',
   cet_home_sales_ma: 'CET deed records (MA)', cet_home_sales_ct_ri: 'CET deed records (CT and RI)', cet_transfers_ma: 'CET property transfers (MA)', cet_transfers_ct_ri: 'CET property transfers (CT and RI)',
   ts_sales_gloucester_nj: 'Thomas Scientific deed records (Gloucester County, NJ)', bpi_sales_dc: 'BPI deed records (DC)', fh_sales_nyc: 'Fair Harbor deed records (New York City)',
   // research (data/research/)
@@ -264,7 +264,7 @@ export const LABELS = {
   fl_playbook: 'Frontline growth plan', frontline_filings: 'Frontline public filings', ma_targets_cet: 'CET add-on targets', ma_targets_fl_ts: 'Frontline and Thomas Scientific add-on targets',
   ma_targets_pp: 'Punctual Pros add-on targets', pe_landscape: 'Private-equity landscape', pp_ads: 'Punctual Pros ad plan', pp_demand_model: 'Punctual Pros demand model',
   pp_filings: 'Punctual Pros public filings', pp_market: 'Punctual Pros market profile', pp_nationwide: 'Punctual Pros nationwide plan', pp_storm_events: 'Punctual Pros storm events',
-  public_comps: 'Public comparables', rival_filings: 'Competitor filings', serviceos_evidence: 'ServiceOS evidence', thomas_filings: 'Thomas Scientific public filings',
+  public_comps: 'Public comparables', rival_filings: 'Competitor filings', serviceos_evidence: 'OS program evidence', thomas_filings: 'Thomas Scientific public filings',
   ts_playbook: 'Thomas Scientific growth plan', voice_ai: 'Voice AI research',
 };
 const PREFIX = { pp: 'Punctual Pros', cet: 'CET', fl: 'Frontline', ts: 'Thomas Scientific', bpi: 'BPI', fh: 'Fair Harbor', bsp: 'BSP' };

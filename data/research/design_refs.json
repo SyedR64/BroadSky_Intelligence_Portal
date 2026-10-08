@@ -280,7 +280,7 @@
     },
     {
      "element": "Changelog / 'Now' section",
-     "what_it_does_for_conversion_or_valuation": "Signals momentum, which raises trust and repeat visits. A 'What's new in the portal' strip (new datasets, new modules, dates) tells the Portfolio Resource Group the tool is maintained."
+     "what_it_does_for_conversion_or_valuation": "Signals momentum, which raises trust and repeat visits. A 'What's new in the portal' strip (new sources, new modules, dates) tells the Portfolio Resource Group the tool is maintained."
     },
     {
      "element": "Closing band that repeats the three entry points",
@@ -309,7 +309,7 @@
    "elements_to_borrow": [
     {
      "element": "Matrix demo of documents x questions",
-     "what_it_does_for_conversion_or_valuation": "Shows rigor on real filings. The portal's equivalent is a grid of portfolio companies x datasets (filings, opportunities, targets, comps) that links into modules."
+     "what_it_does_for_conversion_or_valuation": "Shows rigor on real filings. The portal's equivalent is a grid of portfolio companies x sources (filings, opportunities, targets, comps) that links into modules."
     },
     {
      "element": "Solutions split by user (Investing / Banking / Legal / Corporate)",
@@ -317,7 +317,7 @@
     },
     {
      "element": "Security and compliance badge row",
-     "what_it_does_for_conversion_or_valuation": "Lowers perceived risk for institutional buyers. On the portal, a provenance row ('22 verified datasets · every number sourced · estimates labelled') plays the same role."
+     "what_it_does_for_conversion_or_valuation": "Lowers perceived risk for institutional buyers. On the portal, a provenance row ('22 verified sources · every number sourced · estimates labelled') plays the same role."
     },
     {
      "element": "Serif display and sans body pairing",
@@ -354,7 +354,7 @@
     },
     {
      "element": "Four-figure stat band",
-     "what_it_does_for_conversion_or_valuation": "Scannable scale proof. Mirror it with datasets, home sales, opportunities and add-on targets computed at load."
+     "what_it_does_for_conversion_or_valuation": "Scannable scale proof. Mirror it with sources, home sales, opportunities and add-on targets computed at load."
     },
     {
      "element": "Segment menu that names a 'VC Funds / portfolio companies' use case",

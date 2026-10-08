@@ -32,7 +32,7 @@
    "County household counts were not embedded: the Census ACS API now requires a key; the portal should join ACS B11001 households by county FIPS code.",
    "Climatology station proxies: Carlisle/Lebanon use Harrisburg Intl; Chambersburg/Gettysburg use York Airport; Toms River uses Atlantic City Intl (Lakehurst NAS daily record too sparse); Freehold COOP station has no wind-gust data.",
    "NWS local warning criteria for CTP (State College) and PHI (Mt Holly) were not retrievable; LWX (Sterling) criteria are used as the regional reference for heat/wind thresholds.",
-   "Companion dataset /Users/syed/BSP/data/research/pp_storm_events.json holds the county-month storm history this model references."
+   "Companion data /Users/syed/BSP/data/research/pp_storm_events.json holds the county-month storm history this model references."
   ],
   "item_count": 54,
   "component_counts": {
@@ -373,7 +373,7 @@
     }
    ],
    "basis": "assumption",
-   "rationale": "No public dataset quantifies no-heat call elasticity; tiers mirror the cooling side and the AHS finding that 7% of households were uncomfortably cold in the prior winter. Samsara documents that a ~10F seasonal drop triggers heating-system service spikes.",
+   "rationale": "No public data quantifies no-heat call elasticity; tiers mirror the cooling side and the AHS finding that 7% of households were uncomfortably cold in the prior winter. Samsara documents that a ~10F seasonal drop triggers heating-system service spikes.",
    "local_frequency": {
     "USW00054737": {
      "hub": "Lancaster",

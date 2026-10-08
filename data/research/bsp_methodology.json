@@ -39,7 +39,7 @@
    "Each company is financed with a private-credit unitranche from a different direct lender (Apollo/MidCap at Thomas, PineBridge at BPI, PGIM at Punctual Pros, NXT and Audax at Frontline), with delayed-draw or amendment capacity sized for the add-on program.",
    "Larger companies get a deal-named co-invest SPV (BSP-TS, BSP-BPI Holdings, BSP-FL, BSP-CET). Against a $335M Fund I, a company needing more than about $40M of equity depends on co-investors such as Carlyle AlpInvest.",
    "Smith + Howard is the template so far: about 100 professionals grew to about 800 through 9 add-ons and a tech, AI and offshore build-out, and the firm was sold to TPG Growth after 3.7 years with William Blair and Baird running the process.",
-   "The lesson from Thomas Scientific (PIK amendment, loan marked at 88% of par) is to avoid peak-earnings, fully levered entries. For the next deals the implied rubric favors $3-20M EBITDA essential-services leaders in fragmented regional markets with a founder CEO who will stay and run M&A, a warm first add-on, and a credible tech-enablement story."
+   "Thomas Scientific shows the value of leaving room in the debt for add-ons and a refinancing. For the next deals the implied rubric favors $3-20M EBITDA essential-services leaders in fragmented regional markets with a founder CEO who will stay and run M&A, a warm first add-on, and a credible tech-enablement story."
   ],
   "cadence_stats": {
    "platform_dates_used": {
@@ -237,7 +237,7 @@
    "seller": "The Carlyle Group (owner since 2017)",
    "buyer_advisor": "Berenson & Co. (financial); Morrison Cohen LLP (legal)",
    "seller_advisor": "Jefferies (lead) and Baird (financial); Latham & Watkins (legal) for Carlyle",
-   "lender_or_capital": "Apollo/MidCap unitranche (MFIC + MidCap Apollo Institutional Private Lending): term loan + DDTL + revolver at LIBOR+625, 1% floor, maturing 2027-12-14; later PIK amendment (Q4-2024) and loan marked ~88% of par at 2026-06-30. Firm-level: Capital Constellation (Wafra-managed) strategic GP investment announced same day.",
+   "lender_or_capital": "Apollo/MidCap unitranche (MFIC + MidCap Apollo Institutional Private Lending): term loan, delayed-draw term loan and revolver maturing in December 2027. Later loan terms, with the filing and date for each, are in the Thomas Scientific filings view. Firm-level: Capital Constellation (Wafra-managed) strategic GP investment announced same day.",
    "co_invest_vehicle": {
     "vehicles": [
      {
@@ -1172,7 +1172,7 @@
     "deal-fl"
    ],
    "strength": "strong",
-   "implication_for_next_deals": "Size the add-on delayed-draw line at close. Thomas's PIK amendment and 88%-of-par mark show the cost of entering at peak earnings with full leverage.",
+   "implication_for_next_deals": "Size the add-on delayed-draw line at close and leave room in the debt for a refinancing, as Thomas Scientific's December 2027 maturity shows.",
    "source_urls": [
     "https://www.sec.gov/Archives/edgar/data/1278752/000127875222000004/ainv2022q310-q.htm",
     "https://www.sec.gov/Archives/edgar/data/1278752/000095017023003448/mfic-20221231.htm",
@@ -1288,7 +1288,7 @@
   {
    "id": "pat-check-size-downshift",
    "kind": "pattern",
-   "pattern": "After the first deal, check sizes moved down market. Thomas used ~$236M of equity at close (with co-invest) and is now the stressed position (PIK amendment, loan at 88% of par, common marked near zero). Later checks were smaller: Fair Harbor $30.7M, BPI $90M, Punctual Pros an estimated $8-15M, CET an estimated $25-45M. The exception is Frontline at $137M+$30M, a high-recurring-revenue asset.",
+   "pattern": "After the first deal, check sizes moved down market. Thomas used ~$236M of equity at close (with co-invest); its loan matures in December 2027. Later checks were smaller: Fair Harbor $30.7M, BPI $90M, Punctual Pros an estimated $8-15M, CET an estimated $25-45M. The exception is Frontline at $137M+$30M, a high-recurring-revenue asset.",
    "evidence_deal_ids": [
     "deal-ts",
     "deal-fh",

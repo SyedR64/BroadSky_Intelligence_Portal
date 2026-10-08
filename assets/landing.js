@@ -25,7 +25,7 @@ function loadStats() {
     const files = Array.isArray(index?.files) ? index.files : null;
     if (!files || !files.length) throw new Error('dataset index unavailable');
     const F = Object.fromEntries(files.map(f => [`${f.folder}/${f.name}`, f]));
-    const research = files.filter(f => f.folder === 'research'), sales = files.filter(f => f.folder === 'sales' && f.item_count != null);
+    const sales = files.filter(f => f.folder === 'sales' && f.item_count != null);
     const core = manifest?.datasets || [];
     const rows = n => core.find(d => d.file === `${n}.json`)?.rows;
     const cnt = n => F[`research/${n}`]?.item_count || 0;
@@ -33,12 +33,12 @@ function loadStats() {
     const opps = { radar: cnt('cet_opportunities'), rfps: rows('cet_ne_rfps') || 0, bpi: firm.bpi_opportunities || 0, fh: firm.fh_opportunities || 0 };
     const gens = [manifest?.generated, ...files.map(f => f.generated)].filter(Boolean).map(s => String(s).slice(0, 10)).sort();
     return {
-      datasets: core.length + research.length + sales.length,
-      datasetsSub: `${core.length} tables · ${research.length} research · ${sales.length} deed files`,
+      filings: ['pp_filings', 'cet_filings', 'frontline_filings', 'thomas_filings', 'bpi_filings', 'fairharbor_filings', 'rival_filings'].reduce((s, n) => s + cnt(n), 0),
+      filingsSub: 'SEC, lender and state records',
       sales: sales.reduce((s, x) => s + x.item_count, 0),
-      salesSub: `home sales and deeds, ${sales.length} county files`,
+      salesSub: 'from county recorder deed records',
       opps: opps.radar + opps.rfps + opps.bpi + opps.fh,
-      oppsSub: `CET ${opps.radar + opps.rfps} · BPI ${opps.bpi} · Fair Harbor ${opps.fh}`,
+      oppsSub: `CET ${fmtN(opps.radar)} sourced + ${fmtN(opps.rfps)} older public bids · BPI ${opps.bpi} · Fair Harbor ${opps.fh}`,
       targets: cnt('ma_targets_cet') + cnt('ma_targets_pp') + cnt('ma_targets_fl_ts'),
       targetsSub: 'across four companies',
       sponsors: cnt('pe_landscape'),
@@ -61,16 +61,16 @@ function initNumbers() {
   let shown = false, data = null;
   const paint = () => {
     if (!shown || !data) return;
-    for (const k of ['datasets', 'sales', 'opps', 'targets', 'sponsors', 'sites']) {
+    for (const k of ['filings', 'sales', 'opps', 'targets', 'sponsors', 'sites']) {
       if (!data[k]) continue;
       $$(`[data-stat="${k}"]`).forEach(el => el.closest('#numbers') ? countUp(el, data[k]) : (el.textContent = fmtN(data[k])));
       const sub = $(`[data-sub="${k}"]`); if (sub && data[k + 'Sub']) sub.textContent = data[k + 'Sub'];
     }
     const src = $('#numbers-src');
-    if (src) src.innerHTML = `<b>Source:</b> the portal's dataset index <span class="sys-est sys-est--live">live</span> · data from ${esc(fmtDate(data.genFrom))} to ${esc(fmtDate(data.genTo))}.`;
+    if (src) src.innerHTML = `<b>Source:</b> public filings, bid boards, county deed records and press <span class="sys-est sys-est--live">live</span> · data from ${esc(fmtDate(data.genFrom))} to ${esc(fmtDate(data.genTo))}.`;
   };
-  const go = () => loadStats().then(d => { data = d; paint(); $$('.sys-hero [data-stat="datasets"]').forEach(el => { el.textContent = fmtN(d.datasets); }); })
-    .catch(() => { const src = $('#numbers-src'); if (src) src.innerHTML = '<b>Source:</b> portal snapshot, October 6, 2026 (index unavailable).'; });
+  const go = () => loadStats().then(d => { data = d; paint(); })
+    .catch(() => { const src = $('#numbers-src'); if (src) src.innerHTML = '<b>Source:</b> public filings, bid boards, county deed records and press, as of October 6, 2026.'; });
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting && e.intersectionRatio > 0) {
       if (e.target === sec && e.intersectionRatio >= .25) { shown = true; paint(); io.disconnect(); }
@@ -222,7 +222,8 @@ const OS_FALLBACK = [
   { company: 'fh', os_name: 'HarborOS', ebitda_impact_usd: [400000, 1750000], multiple_expansion_turns: [0.2, 0.5], investment_usd: [300000, 700000] },
 ];
 const CO_NAME = { pp: 'Punctual Pros', cet: 'CET', fl: 'Frontline', ts: 'Thomas Scientific', bpi: 'BPI', fh: 'Fair Harbor' };
-const m$ = v => `$${(v / 1e6).toFixed(1)}M`;
+/* half-up to one decimal, so $0.85M reads $0.9M everywhere (cards, chart and memo agree) */
+const m$ = v => `$${(Math.round(v / 1e5) / 10).toFixed(1)}M`;
 const EST = '<span class="sys-est">est.</span>';
 
 function renderBridge(items, live) {
@@ -234,7 +235,7 @@ function renderBridge(items, live) {
   const lo = items.reduce((s, i) => s + i.ebitda_impact_usd[0], 0), hi = items.reduce((s, i) => s + i.ebitda_impact_usd[1], 0);
   const ilo = items.reduce((s, i) => s + i.investment_usd[0], 0), ihi = items.reduce((s, i) => s + i.investment_usd[1], 0);
   const t = $('#bridge-total'); if (t) t.innerHTML = `Portfolio total: <b>${m$(lo)}–${m$(hi)}</b>${EST} run-rate EBITDA for <b>${m$(ilo)}–${m$(ihi)}</b>${EST} invested`;
-  const s = $('#bridge-src'); if (s) s.innerHTML = `<b>Source:</b> ServiceOS evidence and roadmap assumptions${live ? ' <span class="sys-est sys-est--live">live</span>' : ' (October 2026 snapshot)'}. Analyst assumptions, not guidance; revenue bases from public filings are low confidence.`;
+  const s = $('#bridge-src'); if (s) s.innerHTML = `<b>Source:</b> OS program estimates: vendor case studies, PKF, Capstone/IMAP, October 2026. Analyst assumptions, not guidance. Revenue bases from public filings are low confidence.`;
 }
 async function initBridge() {
   if (!$('#bridge-bars')) return;
@@ -252,7 +253,7 @@ async function initPrinciples() {
   try {
     const r = await fetch(ROOT + 'data/research/design_refs.json', { cache: 'force-cache' }); if (!r.ok) return;
     const d = await r.json(); const n = d.items?.length; const gen = fmtDate(d.meta?.generated);
-    if (n && gen) src.innerHTML = `<b>Source:</b> design references, ${n} reference homepages reviewed and rendered on ${esc(gen)}.`;
+    if (n && gen) src.innerHTML = `<b>Source:</b> design references, ${n} reference homepages reviewed and captured on ${esc(gen)}.`;
   } catch { /* static line stays */ }
 }
 function initPreviews() {

@@ -763,7 +763,7 @@
     "https://www.sec.gov/Archives/edgar/data/1422183/000162828026053783/fsk-20260630.htm"
    ],
    "retrieved": "2026-10-06",
-   "data_notes": "exit EV ($1B) comes from a secondary Substack analysis (capitalandclarity) and the portal's PE landscape dataset; neither Trivest nor OMERS disclosed terms, so treat it as reported, not confirmed. Add-on count is 16 per Trivest's sale release and 18 per its Buyouts-award page. The 2021 '21 acquisitions' and 'EBITDA doubled' claims are from the same secondary source."
+   "data_notes": "exit EV ($1B) comes from a secondary Substack analysis (capitalandclarity) and the portal's PE landscape data; neither Trivest nor OMERS disclosed terms, so treat it as reported, not confirmed. Add-on count is 16 per Trivest's sale release and 18 per its Buyouts-award page. The 2021 '21 acquisitions' and 'EBITDA doubled' claims are from the same secondary source."
   },
   {
    "id": "case-hl",

@@ -1,5 +1,5 @@
 /* LabOS product page — demo + value math. Account health uses aggregated portal data (no names). */
-import { esc, num, PRODUCTS, STOCK, catById, search, aggregateSites, SITES_FALLBACK, toast, reveal, mountChat, badgeEst } from './shared.js?v=20261008151643';
+import { esc, num, PRODUCTS, STOCK, catById, search, aggregateSites, SITES_FALLBACK, toast, reveal, mountChat, badgeEst } from './shared.js?v=20261008185332';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const M = v => v == null || isNaN(v) ? '—' : Math.abs(v) >= 1e9 ? `$${(v / 1e9).toFixed(1)}B` : Math.abs(v) >= 1e6 ? `$${(v / 1e6).toFixed(Math.abs(v) >= 1e8 ? 0 : 1)}M` : Math.abs(v) >= 1e3 ? `$${Math.round(v / 1e3)}K` : `$${Math.round(v)}`;
@@ -9,7 +9,7 @@ let Data, EV = null, COMPS = null;
 const ev = id => (EV?.items || []).find(x => x.id === id);
 const srcLink = (u, t) => u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>` : esc(t);
 
-/* fallbacks mirror the LabOS assumption in the ServiceOS evidence file so the page never renders empty */
+/* fallbacks mirror the LabOS assumption in the OS program evidence file so the page never renders empty */
 const RA_FALLBACK = { investment_usd: [2e6, 4e6], time_to_value_months: [9, 18], ebitda_impact_pct_revenue: [.5, 1.5], ebitda_impact_usd: [1.25e6, 4.8e6], multiple_expansion_turns: [.5, 1], revenue_basis_usd: [250e6, 320e6], current_ebitda_estimate: '$25-35M (low confidence)', revenue_source: 'Thomas Scientific public filings, estimate table', label: 'Analyst assumption, not a forecast or company guidance' };
 const ra = () => ev('ra-ts') || RA_FALLBACK;
 
@@ -19,7 +19,7 @@ function heroKpis() {
   const items = [
     { k: 'Digital share of transactions', v: `${k1?.target ?? 80}%`, s: 'Avantor FY2025 bar; Thomas baseline not disclosed', src: srcLink(k1?.source_url, 'Avantor 10-K'), bar: k1?.target ?? 80 },
     { k: 'eProcurement share of connected orders', v: `${k2?.target ?? 40}%`, s: 'Grainger, Q4 2025', src: srcLink(k2?.source_url, 'Digital Commerce 360'), bar: k2?.target ?? 40 },
-    { k: 'EBITDA impact', v: `+${r.ebitda_impact_pct_revenue[0]}–${r.ebitda_impact_pct_revenue[1]} pts${EST}`, s: `${M(r.ebitda_impact_usd[0])}–${M(r.ebitda_impact_usd[1])} on ${M(r.revenue_basis_usd[0])}–${M(r.revenue_basis_usd[1])} revenue`, src: 'ServiceOS evidence, LabOS assumption', bar: null },
+    { k: 'EBITDA impact', v: `+${r.ebitda_impact_pct_revenue[0]}–${r.ebitda_impact_pct_revenue[1]} pts${EST}`, s: `${M(r.ebitda_impact_usd[0])}–${M(r.ebitda_impact_usd[1])} on ${M(r.revenue_basis_usd[0])}–${M(r.revenue_basis_usd[1])} revenue`, src: 'OS program evidence, LabOS assumption', bar: null },
   ];
   $('[data-os-kpis]').innerHTML = items.map(i => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${esc(i.k)}</span><span class="sys-kpi-value">${i.v}</span>${i.bar != null ? `<i class="ts-osk-bar" style="--w:${i.bar}%"></i>` : '<i class="ts-osk-bar dash"></i>'}<span class="sys-kpi-sub">${esc(i.s)}</span><span class="sys-kpi-sub">Source: ${i.src}</span></div>`).join('');
 }
@@ -143,7 +143,7 @@ function demoSearch() {
     <form class="ts-as-box" data-as><label class="sys-sr" for="as-q">Describe what you need</label><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4z"/></svg><input id="as-q" value="${esc(EXAMPLES[0])}" autocomplete="off"><button class="sys-btn sys-btn--primary sys-btn--sm">Search</button></form>
     <div class="sys-chips ts-as-ex">${EXAMPLES.map(x => `<button type="button" class="sys-chip" data-ex="${esc(x)}">${esc(x)}</button>`).join('')}</div>
     <div data-as-out aria-live="polite"></div>
-    <p class="sys-src"><b>Source:</b> sample screen over the illustrative concept catalog; contract prices are illustrative. In production the ranking layer is a hosted search service (Algolia in the ServiceOS evidence) over the product catalog, with CAS and cross-reference synonyms.</p></div>`;
+    <p class="sys-src"><b>Source:</b> sample screen over the illustrative concept catalog; contract prices are illustrative. In production the ranking layer is a hosted search service (Algolia in the OS program evidence) over the product catalog, with CAS and cross-reference synonyms.</p></div>`;
   const run = () => {
     const q = $('#as-q').value.trim(); const t0 = performance.now();
     const tags = parseQuery(q);
@@ -276,13 +276,13 @@ function value() {
         <div class="ts-vb"><span>Investment</span><i style="--w:${inv / mx * 100}%" class="c"></i><b class="sys-num">${M(inv)}</b></div>
       </div>
       <dl class="ts-vo-kv"><div><dt>Run-rate EBITDA uplift</dt><dd class="sys-num">${M(up)}</dd></div><div><dt>Pro forma EBITDA</dt><dd class="sys-num">${M(base + up)}</dd></div><div><dt>Share of value from EBITDA</dt><dd class="sys-num">${tot ? Math.round(evUp / tot * 100) : 0}%</dd></div></dl>
-      <p class="ts-vo-note">Formula: (revenue × margin pts) × (exit multiple + re-rating) + re-rating × current EBITDA. The ServiceOS evidence rates the multiple case <b>weak</b> and the EBITDA case <b>medium</b> for Thomas Scientific: capital structure and refinancing timing dominate exit value, so LabOS is underwritten on EBITDA and cash, and the re-rating slider is upside, not the plan.</p>`;
+      <p class="ts-vo-note">Formula: (revenue × margin pts) × (exit multiple + re-rating) + re-rating × current EBITDA. The OS program evidence rates the multiple case <b>weak</b> and the EBITDA case <b>medium</b> for Thomas Scientific: capital structure and refinancing timing dominate exit value, so LabOS is underwritten on EBITDA and cash, and the re-rating slider is upside, not the plan.</p>`;
   };
   $('[data-calc]').oninput = (e => { const s = e.target.closest('[data-c]'); if (!s) return; const k = s.dataset.c; I[k] = +s.value; $(`[data-cv="${k}"]`).textContent = F.find(f => f[0] === k)[5](I[k]); draw(); });
   $('[data-reset]').onclick = () => value();
   draw();
   const rows = [['Investment', `${M(r.investment_usd[0])}–${M(r.investment_usd[1])}`], ['Time to value', `${r.time_to_value_months[0]}–${r.time_to_value_months[1]} months`], ['EBITDA impact', `+${r.ebitda_impact_pct_revenue[0]}–${r.ebitda_impact_pct_revenue[1]} pts · ${M(r.ebitda_impact_usd[0])}–${M(r.ebitda_impact_usd[1])}`], ['Multiple expansion', `${r.multiple_expansion_turns[0]}–${r.multiple_expansion_turns[1]}x EV/EBITDA`], ['Current EBITDA', r.current_ebitda_estimate], ['Premium ceiling', `${v06?.metric_range?.[0] ?? 6.8}x typical vs ${v06?.metric_range?.[1] ?? 9.8}x premium (${v06?.metric_value ?? 3}-turn spread)`]];
-  $('[data-range]').innerHTML = `<h3 class="sys-card-title">LabOS assumption in the ServiceOS evidence ${EST}</h3><div class="ts-rg-t">${rows.map(([k, v]) => `<div><small>${k}</small><b class="sys-num">${esc(v)}</b></div>`).join('')}</div><p class="sys-src"><b>Source:</b> ServiceOS evidence, LabOS assumption (an analyst assumption, not a forecast or company guidance). Revenue basis: Thomas Scientific public filings, estimate table. Premium spread: ${v06 ? srcLink(v06.source_url, v06.source_name) : 'Capstone/IMAP survey'}.</p>`;
+  $('[data-range]').innerHTML = `<h3 class="sys-card-title">LabOS assumption in the OS program evidence ${EST}</h3><div class="ts-rg-t">${rows.map(([k, v]) => `<div><small>${k}</small><b class="sys-num">${esc(v)}</b></div>`).join('')}</div><p class="sys-src"><b>Source:</b> OS program evidence, LabOS assumption (an analyst assumption, not a forecast or company guidance). Revenue basis: Thomas Scientific public filings, estimate table. Premium spread: ${v06 ? srcLink(v06.source_url, v06.source_name) : 'Capstone/IMAP survey'}.</p>`;
 }
 
 /* ── Stack ─────────────────────────────────────────────────────────────── */

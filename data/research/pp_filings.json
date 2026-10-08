@@ -122,7 +122,7 @@
       "Lancaster County GIS shows a 2022-03-11 sale/deed date for 516 Running Pump Rd (deed ref 6669035, $1.5M), but no mortgage or lease memorandum was retrieved. 518 Running Pump Rd (PP Electric address) did not return a separate parcel.",
       "DOL Wage & Hour enforcement (API key required), PACER federal litigation and Lancaster County Prothonotary civil dockets were not searched. Census CBP API now requires a key (BLS QCEW used instead).",
       "'Broad Sky Networks LLC' in Capital Southwest filings is an unrelated company (false positive).",
-      "User deed dataset: prices are 0 for Ocean, Chester, York and Monmouth; York rows lack dates; zip is blank for many non-Lancaster records, so territory counts understate true volume.",
+      "User deed data: prices are 0 for Ocean, Chester, York and Monmouth; York rows lack dates; zip is blank for many non-Lancaster records, so territory counts understate true volume.",
       "Sibling research (bsp_firm.json) notes BSP lists 2 Punctual Pros add-ons, but only Horvath is identified publicly."
     ],
     "next_pulls": [
@@ -924,7 +924,7 @@
         "builder_grantor_records": 74,
         "data_quality": "prices missing (0) for Ocean, Chester, York, Monmouth; York rows lack dates"
       },
-      "what_it_tells_us": "The 248 modeled PA territory zips see ~2,100 meaningful sales per quarter (~8,500 a year). Each is a new owner who typically has inspection-driven HVAC, water-heater, panel and plumbing work in the first 12-24 months. Capturing 5% would add ~425 new customer relationships a year, meaningful against a ~$22M revenue base, and would make the deed feed a practical marketing portal. Ocean County, where Horvath operates, shows the heaviest transfer volume (3,190 in 90 days), so it deserves priority targeting once price and zip fields are backfilled.",
+      "what_it_tells_us": "The 248 modeled PA territory zips see ~2,100 meaningful sales per quarter (~8,500 a year). Each is a new owner who typically has inspection-driven HVAC, water-heater, panel and plumbing work in the first 12-24 months. Capturing 5% would add ~425 new customer relationships a year, meaningful against a ~$22M revenue base, and would make the deed records a working marketing list. Ocean County, where Horvath operates, shows the heaviest transfer volume (3,190 in 90 days), so it deserves priority targeting once price and zip fields are backfilled.",
       "confidence": "medium",
       "source_url": "file:///Users/syed/BSP/data/pp_sales_90d.json",
       "retrieved": "2026-09-24"

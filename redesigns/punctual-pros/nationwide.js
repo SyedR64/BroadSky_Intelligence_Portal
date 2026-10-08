@@ -45,7 +45,7 @@ const ORG_G = 0.12, FEES = 0.03;
 const BENCH = {
   'pn-lev-05': l => [fmtVal(l.baseline, '%'), 'of US homes have a home standby generator (Generac). That is the attach headroom, not a Punctual Pros baseline.'],
   'pn-lev-06': l => [fmtVal(l.target, '%'), 'higher spend from customers who finance (published benchmark). Punctual Pros\' financing attach rate is not public.'],
-  'pn-lev-07': l => [comma(l.baseline), 'home sales in 90 days (Jan to Apr 2026) in core ZIPs, from the Lancaster, Dauphin and York deed records only. A floor: Redfin counts ~26,900 sales a year across all 9 core counties.'],
+  'pn-lev-07': l => [comma(l.baseline), 'recorded transfers in 90 days (January to April 2026, priced or not) in the 248 core ZIPs, from the Lancaster, Dauphin and York deed records. A floor: Redfin counts ~26,900 sales a year across all 9 core counties.'],
   'pn-lev-08': l => [`+${fmtVal(l.baseline, '%')} calls · +${fmtVal(l.target, '%')} revenue`, 'during a heat wave (ServiceTitan data). The surge a storm plan captures, not a company baseline.'],
 };
 const isBench = l => l.value_kind === 'benchmark' || !!BENCH[l.id];
@@ -125,13 +125,15 @@ function spark(vals, color = 'var(--co)') {
 function hero() {
   const r = S.road; if (r.length < 2) return;
   const a = r[0], z = r[r.length - 1];
+  // today = the October 2026 run-rate; the FY2025 estimate ($22M, $2.6M) is what the portal's Command Center shows
+  const FY25 = { revenue_usd: 22e6, ebitda_usd: 2.6e6 };
   const K = [['Revenue', 'revenue_usd', usd], ['Adj. EBITDA', 'ebitda_usd', usd], ['Technicians', 'technicians', comma], ['Territories', 'territories', comma]];
-  $('#kpis').innerHTML = K.map(([l, k, f]) => `<div class="sys-kpi"><span class="sys-kpi-label">${l} · month ${z.month}</span><span class="sys-kpi-value">${f(z[k])}<span class="sys-est">est.</span></span>${spark(r.map(x => x[k]))}<span class="sys-kpi-sub">${f(a[k])} today · <b>${(z[k] / a[k]).toFixed(1)}x</b> in ${z.month} months</span></div>`).join('');
+  $('#kpis').innerHTML = K.map(([l, k, f]) => `<div class="sys-kpi"><span class="sys-kpi-label">${l} · month ${z.month}</span><span class="sys-kpi-value">${f(z[k])}<span class="sys-est">est.</span></span>${spark(r.map(x => x[k]))}<span class="sys-kpi-sub">${f(a[k])} today${FY25[k] ? ` (FY2025 ${f(FY25[k])}, grown ~8%)` : ''} · <b>${(z[k] / a[k]).toFixed(1)}x</b> in ${z.month} months</span></div>`).join('');
   const p1 = S.K('expansion_phase')[0]?.data_points || {}, p4 = S.K('expansion_phase')[3]?.data_points || {};
   const p2 = S.K('expansion_phase')[1]?.data_points || {};
   const strip = [
     [comma(p1.core_zips), 'Core ZIP codes', `${comma((p1.core_housing_units || 0) / 1e6, 1)}M homes today`],
-    [comma(p1.adjacent_tier1_zips_total), 'Tier-1 ZIPs next door', 'Opportunity-score Tier 1 in the Phase 1 ring'],
+    [comma(p1.adjacent_tier1_zips_total), 'Tier 1 ZIPs next door', 'Priority Tier 1 in the Phase 1 ring'],
     [comma((S.ma?.items || []).length), 'Add-on targets screened', 'PA, NJ, MD, DE and NY'],
     [comma(p4.fdd_system_outlets_end_2025?.total), 'Tri-brand outlets', 'One Hour, Ben Franklin, Mister Sparky nationally'],
     [comma(p2.pe_sponsors_overlapping_punctual_pros), 'PE sponsors', 'Chasing the same founders'],
@@ -166,7 +168,7 @@ function template() {
   const rows = [
     ['Start', 'One Atlanta office, ~100 professionals (Nov 2022)', `Lancaster HQ + Horvath (NJ), ${esc(an.staff_est || '~130–150')} staff, ${comma(an.territories)} territories`],
     ['Revenue', '<b>$53.2M</b> FY23 → <b>~$175M</b> expected 2026', `<b>${usd(a.revenue_usd)}</b> today (FY25 ~${usd(an.fy2025_revenue_est_usd)}) → <b>${usd(z.revenue_usd)}</b> month ${z.month} <span class="sys-est">est.</span>`],
-    ['Add-ons', '<b>9</b> in about 3.7 years', '<b>1</b> so far (Horvath, Dec 2024) → 2 in year 1, then a steady cadence'],
+    ['Add-ons', '<b>9</b> in about 3.7 years', '<b>2</b> per BSP’s site: Horvath (Dec 2024) and one unnamed → 2 more in year 1, then a steady cadence'],
     ['People', '<b>~100 → ~800</b> professionals', `<b>${comma(a.technicians)} → ${comma(z.technicians)}</b> technicians <span class="sys-est">est.</span>`],
     ['Footprint', '1 office → 11 locations, 7 states + India', '9 PA counties + 2 NJ → PA, NJ, MD, DE, southern NY → national'],
     ['Exit', 'TPG Growth, closed Aug 6 2026 (~4x revenue)', `~${(z.revenue_usd / a.revenue_usd).toFixed(1)}x today's revenue, sold into GF Data's 10x EBITDA tier`],
@@ -206,8 +208,8 @@ async function buildMap(Data) {
   const ncRows = Array.isArray(nc) ? nc : nc?.items || [];
   M.nc = new Map(ncRows.map(r => [`${r.state}|${r.county_name}`, r]));
   const core = zips.filter(z => z.service_territory_flag === 1 && z.lat != null);
-  const adjT1 = zips.filter(z => z.adjacent_to_service_territory === 1 && z.service_territory_flag !== 1 && z.opportunity_tier_v3 === 'Tier 1' && z.lat != null);
-  const ncT1 = zips.filter(z => z.service_territory_flag !== 1 && z.adjacent_to_service_territory !== 1 && z.opportunity_tier_v3 === 'Tier 1' && z.lat != null);
+  const adjT1 = zips.filter(z => z.adjacent_to_service_territory === 1 && z.service_territory_flag !== 1 && z.practical_priority_tier === 'Tier I' && z.lat != null);
+  const ncT1 = zips.filter(z => z.service_territory_flag !== 1 && z.adjacent_to_service_territory !== 1 && z.practical_priority_tier === 'Tier I' && z.lat != null);
   const horv = zips.filter(z => z.state === 'NJ' && /^(Ocean|Monmouth) County$/.test(z.county || '') && z.lat != null);
   const rad = z => 2.6 + Math.min(4.2, Math.sqrt(z.housing_units || 0) / 42);
   const zpop = z => `<div class="pp-pop"><b>${esc(z.zip)} · ${esc(z.city || '')}</b><small>${esc(z.county || '')}, ${esc(z.state)} · ${comma(z.housing_units)} homes · ${esc(z.opportunity_tier_v3 || '—')}${z.practical_priority_label ? ' · ' + esc(z.practical_priority_label) : ''}</small></div>`;
@@ -263,8 +265,8 @@ async function buildMap(Data) {
   M.legend = {
     core: '<span><i style="background:#f26b1d"></i>Core zips (' + core.length + ')</span>',
     horv: '<span><i style="background:#fff;box-shadow:0 0 0 1.6px #f26b1d"></i>Horvath NJ (Ocean, Monmouth)</span>',
-    adj: '<span><i style="background:#f5a524"></i>Tier-1 adjacent zips (' + adjT1.length + ')</span>',
-    nc: '<span><i style="background:#f5a524;opacity:.4"></i>Other Tier-1 zips (' + ncT1.length + ')</span>',
+    adj: '<span><i style="background:#f5a524"></i>Tier 1 adjacent zips (' + adjT1.length + ')</span>',
+    nc: '<span><i style="background:#f5a524;opacity:.4"></i>Other Tier 1 zips (' + ncT1.length + ')</span>',
     tg: Object.keys(STATE_C).filter(s => G.tState[s] || S.top.some(t => t.state === s)).map(s => `<span><i style="background:${STATE_C[s]}"></i>${s} targets</span>`).join(''),
     top: '<span><i style="background:#0b1f3a;border-radius:50% 50% 50% 0"></i>Top-10 ranked</span>',
     verify: S.verify.length ? '<span><i style="background:#fff;border:2px dashed #d6453d;box-shadow:none"></i>Verify ownership first</span>' : '',
@@ -319,13 +321,13 @@ function phasePanel(p) {
   let body = '';
   const hasCt = M.nc?.size > 0;   // the county table below repeats the county and metro lists, so the panel keeps only the headline stats
   if (p === '1') {
-    body = `<div class="stats">${stat(comma(d.core_zips), 'core zips (9 PA counties)')}${stat(comma((d.core_housing_units || 0) / 1e6, 2) + 'M', 'housing units in the core')}${stat(comma(d.adjacent_tier1_zips_total), `Tier-1 adjacent zips (${Object.entries(d.adjacent_tier1_zips_by_state || {}).map(([s, n]) => `${s} ${n}`).join(' · ')})`)}${stat(comma(d.pa_addon_targets), `PA add-on targets, ${comma(d.pa_addon_targets_fit70plus)} with fit 70+`)}</div>${hasCt ? '' : list('Core zips by county', Object.entries(d.core_zips_by_county || {}).slice(0, 5).map(([c, n]) => [c.replace(' County', ''), n]))}${hasCt ? '' : list('Next ring: Tier-1 zips by county', (d.adjacent_tier1_top_counties || []).slice(0, 5).map(s => { const m = /^(.*) \((\d+)\)$/.exec(s); return m ? [m[1].replace(' County', ''), m[2]] : [s, '']; }))}`;
+    body = `<div class="stats">${stat(comma(d.core_zips), 'core zips (9 PA counties)')}${stat(comma((d.core_housing_units || 0) / 1e6, 2) + 'M', 'housing units in the core')}${stat(comma(d.adjacent_tier1_zips_total), `Tier 1 adjacent zips (${Object.entries(d.adjacent_tier1_zips_by_state || {}).map(([s, n]) => `${s} ${n}`).join(' · ')})`)}${stat(comma(d.pa_addon_targets), `PA add-on targets, ${comma(d.pa_addon_targets_fit70plus)} with fit 70+`)}</div>${hasCt ? '' : list('Core zips by county', Object.entries(d.core_zips_by_county || {}).slice(0, 5).map(([c, n]) => [c.replace(' County', ''), n]))}${hasCt ? '' : list('Next ring: Tier 1 zips by county', (d.adjacent_tier1_top_counties || []).slice(0, 5).map(s => { const m = /^(.*) \((\d+)\)$/.exec(s); return m ? [m[1].replace(' County', ''), m[2]] : [s, '']; }))}`;
   } else if (p === '2') {
     const notPP = Object.values(d.authority_territories_not_pp_by_state || {}).reduce((a, b) => a + b, 0);
     body = `<div class="stats">${stat(comma(d.authority_territories_mapped), 'Authority territories mapped (PA/NJ/MD/DE)')}${stat(comma(notPP), 'of them not owned by Punctual Pros')}${stat(comma(Object.entries(d.addon_targets_by_state || {}).filter(([s]) => s !== 'PA').reduce((a, [, n]) => a + n, 0)), 'NJ, MD and DE add-on targets')}${stat(comma(d.pe_sponsors_overlapping_punctual_pros), `PE sponsors in the same market (${comma(d.pe_sponsor_threat_mix?.high)} high threat)`)}</div>${hasCt ? '' : list('Metros in this phase · housing units', (d.metros || []).map(m => [m.metro.replace(/\s*\(.*\)/, ''), usd(m.housing_units).replace('$', '')]))}`;
   } else if (p === '3') {
     const hu = (d.metros || []).reduce((a, m) => a + (m.housing_units || 0), 0);
-    body = `<div class="stats">${stat(comma((d.metros || []).length + 1), 'metro anchors (incl. Richmond)')}${stat(comma(hu / 1e6, 1) + 'M', 'housing units in the 4 modeled metros')}${stat(comma(d.md_tier1_zips_noncore), 'Tier-1 zips in Maryland')}${stat(comma(d.authority_territories_md_not_pp), 'MD Authority territories, none owned by PP')}</div>${hasCt ? '' : list('Metro · Tier-1 zips · homes', (d.metros || []).map(m => [`${m.metro.replace(/\s*\(.*\)/, '')} (${m.tier1_zips})`, usd(m.housing_units).replace('$', '')]))}<p class="sys-src">Pittsburgh: ${esc(prose(d.fdd_other_pa_one_hour_franchisees) || '—')}. Richmond needs a separate ZIP pull (VA is not in the model).</p>`;
+    body = `<div class="stats">${stat(comma((d.metros || []).length + 1), 'metro anchors (incl. Richmond)')}${stat(comma(hu / 1e6, 1) + 'M', 'housing units in the 4 modeled metros')}${stat(comma(d.md_tier1_zips_noncore), 'Tier 1 zips in Maryland')}${stat(comma(d.authority_territories_md_not_pp), 'MD Authority territories, none owned by PP')}</div>${hasCt ? '' : list('Metro · Tier 1 zips · homes', (d.metros || []).map(m => [`${m.metro.replace(/\s*\(.*\)/, '')} (${m.tier1_zips})`, usd(m.housing_units).replace('$', '')]))}<p class="sys-src">Pittsburgh: ${esc(prose(d.fdd_other_pa_one_hour_franchisees) || '—')}. Richmond needs a separate ZIP pull (VA is not in the model).</p>`;
   } else if (p === '4') {
     const o = d.fdd_system_outlets_end_2025 || {}, lg = d.largest_franchisee_revenue_usd || {};
     body = `<div class="stats">${stat(comma(o.total), 'One Hour + Ben Franklin + Mister Sparky outlets')}${stat(comma(d.fdd_franchisees_end_2025), 'franchisees in the tri-brand system')}${stat(usd(d.fdd_reported_gross_revenue_fy2025_usd), 'reported system revenue FY2025')}${stat(comma(d.pp_share_of_tri_brand_outlets_pct, 2) + '%', 'Punctual Pros share of outlets today')}</div>${list('Largest single franchisee (FDD Item 19)', [['Mister Sparky', usd(lg.mister_sparky)], ['One Hour', usd(lg.one_hour)], ['Ben Franklin', usd(lg.ben_franklin)]])}<p class="sys-src">Arcs show the priority regions named in the thesis (Sun Belt, Midwest). They are illustrative, not specific targets.<span class="sys-est sys-est--illus">illustrative</span></p>`;
@@ -346,7 +348,7 @@ function phaseGroups(p) {
     const core = Object.keys(d(1).core_zips_by_county || {}).map(c => ['PA', c]);
     const ringTxt = String((ph[0]?.geography || []).find(g => /adjacent ring/i.test(g)) || '').replace(/^adjacent ring:\s*/i, '');
     const ring = ringTxt.split(';').flatMap(part => { const m = /^(.*)\s(PA|MD|NJ|DE|NY)$/.exec(part.trim()); if (!m) return []; return m[1].split(',').map(n => [m[2], n.trim().replace(/\s*Co\.$/, '').replace(/\s*County$/, '') + ' County']); });
-    return [['Core: the 9 counties served today', core], ['Adjacent ring: Tier-1 ZIPs next door', ring]];
+    return [['Core: the 9 counties served today', core], ['Adjacent ring: Tier 1 ZIPs next door', ring]];
   }
   if (p === '2') return [...(d(2).metros || []).map(m => [m.metro, (m.counties || []).map(c => [m.state, c])]), ['Delaware', DE_COUNTIES.map(c => ['DE', c])]];
   if (p === '3') return [...(d(3).metros || []).map(m => [m.metro, (m.counties || []).map(c => [m.state, c])]), ['Richmond, VA (not yet in the ZIP model)', RIC_COUNTIES.map(c => ['VA', c])]];
@@ -601,7 +603,7 @@ function sources() {
   const sourcing = String(m.method || '').split(/\s*Expansion-phase/)[0].replace(/, fetched (\d{4}-\d{2}-\d{2})/, (x, d) => `, read ${shortDate(d)}`).replace(/\bfetched\b/g, 'read');
   const method = `${esc(prose(sourcing))} Expansion-phase figures come from the portal's own data: the Punctual Pros ZIP-code model, its add-on targets and the Authority Brands territory map. They also use the private-equity landscape and Punctual Pros public filings (franchise disclosure, PGIM 10-Q, Form D and ADV). KPI targets and the 36-month roadmap are analyst assumptions based on the FY2025 estimates in those filings.`;
   const caveats = (m.caveats || []).filter(c => !/^(The user's request|Per earlier user guidance)/i.test(c)).map(c => prose(c).replace(/Confirm which company .*$/, '').replace(/\bor null\b/g, 'or shown as —'));
-  $('#src-body').innerHTML = `<p><b>Method.</b> ${method}</p><p><b>Data.</b> Punctual Pros nationwide plan (${S.items.length} sourced items from ${urls.size} distinct sources, compiled ${gen}), Punctual Pros add-on targets, ServiceOS evidence and the Punctual Pros ZIP-code model, all in the BSP portal.</p><p><b>Caveats</b></p><ul>${caveats.map(c => `<li>${esc(c)}</li>`).join('')}</ul>`;
+  $('#src-body').innerHTML = `<p><b>Method.</b> ${method}</p><p><b>Data.</b> Punctual Pros nationwide plan (${S.items.length} sourced items from ${urls.size} distinct sources, compiled ${gen}), Punctual Pros add-on targets, OS program evidence and the Punctual Pros ZIP-code model, all in the BSP portal.</p><p><b>Caveats</b></p><ul>${caveats.map(c => `<li>${esc(c)}</li>`).join('')}</ul>`;
 }
 
 /* ── chat: autocomplete prompts + data-computed answers ─────────────────── */
@@ -624,7 +626,7 @@ function chatIntents() {
   const ph = S.K('expansion_phase');
   const phaseAns = n => { const x = ph[n - 1]; if (!x) return null; const d = x.data_points || {}; let extra = '';
     if (n === 1) extra = T(['County', 'Core zips'], Object.entries(d.core_zips_by_county || {}).slice(0, 6).map(([c, v]) => [esc(c), N(v)]));
-    if (n === 2 || n === 3) extra = T(['Metro', 'Tier-1 zips', 'Homes'], (d.metros || []).map(m => [esc(m.metro), N(m.tier1_zips), N(comma(m.housing_units))]));
+    if (n === 2 || n === 3) extra = T(['Metro', 'Tier 1 zips', 'Homes'], (d.metros || []).map(m => [esc(m.metro), N(m.tier1_zips), N(comma(m.housing_units))]));
     if (n === 4) extra = `<p>${N(comma(d.fdd_system_outlets_end_2025?.total))} tri-brand outlets, ${N(d.fdd_franchisees_end_2025)} franchisees, ${N(usd(d.fdd_reported_gross_revenue_fy2025_usd))} reported revenue; Punctual Pros holds ${N(d.pp_share_of_tri_brand_outlets_pct + '%')} of outlets today.</p>`;
     return { html: `<h4>${esc(x.phase)} <span class="ch-badge">months ${esc(x.months)}</span></h4><p>${esc(x.thesis)}</p>${extra}`, links: [A(`#phase-${n}`, `Show Phase ${n} on the map`)], followups: [n < 4 ? `What happens in Phase ${n + 1}?` : 'What is the multiple-expansion case?', 'What are the top tuck-in targets?'] }; };
   const whoOf = q => /office|back.?office|admin|dispatch|permit|invoice|\bap\b/i.test(q) ? 'office' : /technician|\btechs?\b|truck|field|plumbers?|electricians?|installers?|hvac|contractors?|(?<!punctual )pros\b/i.test(q) ? 'technician' : /customer|homeowner|caller|calls?\b/i.test(q) ? 'customer' : /owner|recruit|retention|member/i.test(q) ? 'owner' : null;
@@ -655,7 +657,7 @@ function chatIntents() {
     { id: 'nw_risk', rx: [/risks?|downside|go wrong|worr|concern/i], run: async () => ({ html: `<h4>Biggest risks</h4><ul>${$$('#risk-list li').map(li => `<li>${li.innerHTML.replace(/<em>/, '<br><i>').replace(/<\/em>/, '</i>')}</li>`).join('')}</ul>`, links: [A('#risks', 'Risks & asks')], followups: ['What do we need from the PRG?'] }) },
     { id: 'nw_prg', rx: [/\bprg\b|need from|resource group|\basks?\b|next steps?|what do (you|we) need/i], run: async () => ({ html: `<h4>What we need from the PRG</h4><ol>${$$('#ask-list li').map(li => `<li><b>${esc(li.querySelector('b')?.textContent)}</b> (${esc(li.querySelector('.who')?.textContent)}): ${esc(li.querySelector('span:last-child')?.textContent)}</li>`).join('')}</ol>`, links: [A('#risks', 'Risks & asks')], followups: ['What are the biggest risks?', 'Which AI agents pay back fastest?'] }) },
     { id: 'nw_where', rx: [/count(y|ies)|\bfirst\b|where|which (markets|metros|cities|states)|\bmap\b|geograph|new jersey|maryland|delaware|pittsburgh|baltimore|philadelphia|richmond/i], run: async q => { const d1 = ph[0]?.data_points || {}, d2 = ph[1]?.data_points || {};
-      return { html: `<h4>Which counties come first</h4><p><b>Phase 1 (months 0–12): win the 9 counties we already serve.</b> ${N(d1.core_zips)} core zips, ${N(comma(d1.core_housing_units))} homes, ${N(d1.core_go_now_zips)} "go now" zips.</p>${T(['Core county', 'Zips'], Object.entries(d1.core_zips_by_county || {}).slice(0, 5).map(([c, n]) => [esc(c), N(n)]))}<p><b>Then the adjacent ring:</b> ${N(d1.adjacent_tier1_zips_total)} Tier-1 zips (${Object.entries(d1.adjacent_tier1_zips_by_state || {}).map(([s, n]) => `${s} ${n}`).join(', ')}), led by ${esc((d1.adjacent_tier1_top_counties || []).slice(0, 5).join(', '))}.</p><p><b>Phase 2 (months 9–24):</b> ${esc((d2.metros || []).map(m => m.metro.replace(/\s*\(.*\)/, '')).join(', '))} and Delaware.</p>${(() => { const st = stateOf(q); if (!st || st === 'PA') return ''; const t = S.screen.filter(x => x.state === st).sort((a, b) => (b.fit_score || 0) - (a.fit_score || 0)); return `<p><b>In ${esc(st)}:</b> ${t.length} screened add-on targets${t.length ? `, led by ${t.slice(0, 3).map(x => `${esc(x.company.replace(/\s*\(.*\)/, ''))} (${N(x.fit_score ?? '—')})`).join(', ')}` : ''}.</p>`; })()}`, links: [A('#phase-1', 'Show Phase 1 on the map'), portal('#/pp/territory', 'Territory & expansion')], followups: ['What happens in Phase 2?', 'What are the top tuck-in targets?'] }; } },
+      return { html: `<h4>Which counties come first</h4><p><b>Phase 1 (months 0–12): win the 9 counties we already serve.</b> ${N(d1.core_zips)} core zips, ${N(comma(d1.core_housing_units))} homes, ${N(d1.core_go_now_zips)} "go now" zips.</p>${T(['Core county', 'Zips'], Object.entries(d1.core_zips_by_county || {}).slice(0, 5).map(([c, n]) => [esc(c), N(n)]))}<p><b>Then the adjacent ring:</b> ${N(d1.adjacent_tier1_zips_total)} Tier 1 zips (${Object.entries(d1.adjacent_tier1_zips_by_state || {}).map(([s, n]) => `${s} ${n}`).join(', ')}), led by ${esc((d1.adjacent_tier1_top_counties || []).slice(0, 5).join(', '))}.</p><p><b>Phase 2 (months 9–24):</b> ${esc((d2.metros || []).map(m => m.metro.replace(/\s*\(.*\)/, '')).join(', '))} and Delaware.</p>${(() => { const st = stateOf(q); if (!st || st === 'PA') return ''; const t = S.screen.filter(x => x.state === st).sort((a, b) => (b.fit_score || 0) - (a.fit_score || 0)); return `<p><b>In ${esc(st)}:</b> ${t.length} screened add-on targets${t.length ? `, led by ${t.slice(0, 3).map(x => `${esc(x.company.replace(/\s*\(.*\)/, ''))} (${N(x.fit_score ?? '—')})`).join(', ')}` : ''}.</p>`; })()}`, links: [A('#phase-1', 'Show Phase 1 on the map'), portal('#/pp/territory', 'Territory & expansion')], followups: ['What happens in Phase 2?', 'What are the top tuck-in targets?'] }; } },
     { id: 'nw_overview', rx: [/nationwide|national|expan|scale|playbook|thesis|summary|overview|one minute|\bplan\b|grow/i], run: async () => ({ html: `<h4>Punctual Pros, Lancaster to national</h4><p>${esc(String(S.nw?.meta?.narrative || '').split('. ').slice(0, 3).join('. '))}.</p><ul>${ph.map((x, i) => `<li><b>Phase ${i + 1}</b> (${esc(x.months)} mo): ${esc(x.phase.replace(/^Phase \d+\s*-\s*/, ''))}</li>`).join('')}</ul><p>Plan: ${N(usd(S.road[0]?.revenue_usd))} → ${N(usd(S.road[S.road.length - 1]?.revenue_usd))} revenue and ${N(S.road[0]?.technicians)} → ${N(S.road[S.road.length - 1]?.technicians)} technicians in 36 months <span class="ch-badge">est.</span></p>`, links: [A('#template', 'The template'), A('#map', 'Phased map'), A('#agents', 'AI agents')], followups: ['Which counties come first?', 'Which AI agents pay back fastest?', 'How does Smith + Howard compare?'] }) },
   ];
 }

@@ -5,11 +5,11 @@
   "generated": "2026-10-06",
   "subject": "Thomas Scientific (Swedesboro NJ; BSP portfolio company since Jan 2022)",
   "thesis": "From distributor to lab-supply-chain company: target-account selling into 27.5k scored lab and hospital sites, punchout ordering, VMI, private label and specialty verticals; regional add-ons; AI agents for quoting, forecasting and account health.",
-  "method": "Expansion-phase data points are computed from repo datasets: data/ts_sites.json (27,503 sites, aggregated by region only: counts by vertical, priority label and archetype, and summed 2023 CMS allowed amounts), data/ts_parents.json (top 500 parents), data/research/ma_targets_fl_ts.json (25 Thomas Scientific targets, ZoomInfo revenue estimates), Thomas Scientific filings (capital structure and estimates), public comparables (lab-distribution medians), PE landscape (Calibre, Sterling), BSP firm profile (Smith + Howard timeline and Thomas add-ons) and ServiceOS evidence (LabOS KPI benchmarks kb-ts-1..3, ve-06, ra-ts). External evidence was gathered on 2026-10-06 by web search and direct fetches of SEC filings (Avantor FY2025 10-K, VWR FY2014 10-K), state/federal pages (NJDOL), banker reports (Houlihan Lokey) and vendor case studies. Growth-lever and KPI targets are benchmarks or labelled assumptions; the KPI roadmap is an analyst assumption anchored to the Thomas Scientific filings estimate table.",
+  "method": "Expansion-phase data points are computed from repo sources: data/ts_sites.json (27,503 sites, aggregated by region only: counts by vertical, priority label and archetype, and summed 2023 CMS allowed amounts), data/ts_parents.json (top 500 parents), data/research/ma_targets_fl_ts.json (25 Thomas Scientific targets, ZoomInfo revenue estimates), Thomas Scientific filings (capital structure and estimates), public comparables (lab-distribution medians), PE landscape (Calibre, Sterling), BSP firm profile (Smith + Howard timeline and Thomas add-ons) and ServiceOS evidence (LabOS KPI benchmarks kb-ts-1..3, ve-06, ra-ts). External evidence was gathered on 2026-10-06 by web search and direct fetches of SEC filings (Avantor FY2025 10-K, VWR FY2014 10-K), state/federal pages (NJDOL), banker reports (Houlihan Lokey) and vendor case studies. Growth-lever and KPI targets are benchmarks or labelled assumptions; the KPI roadmap is an analyst assumption anchored to the Thomas Scientific filings estimate table.",
   "caveats": [
-   "Thomas Scientific is a stressed credit: first-lien loan at 88.3% of par (Jun-2026), maturity 2027-12-14, common equity marked near zero, est. leverage 7-10x. Every lever is sequenced behind liquidity and refinancing.",
+   "Thomas Scientific's first-lien loan matures December 14, 2027 (88.3% of par in the lender's June 2026 10-Q); est. leverage 7-10x. Every lever is sequenced behind liquidity and refinancing.",
    "Company revenue, EBITDA and headcount are low-confidence analyst estimates (Thomas Scientific filings), not company disclosures; the KPI roadmap inherits that uncertainty.",
-   "data/research/market_evidence.json and a KPI targets dataset were not present in the repo at build time; KPI targets use ServiceOS evidence KPI benchmark items (kb-ts-*) and external sources, labelled as assumptions.",
+   "data/research/market_evidence.json and a KPI targets data were not present in the repo at build time; KPI targets use ServiceOS evidence KPI benchmark items (kb-ts-*) and external sources, labelled as assumptions.",
    "Thomas lab-site list scores are from a legacy targeting tool (NPPES, CMS 2023, CLIA, Hospital Compare); site counts are aggregated by region only, and the CMS allowed amount is Medicare billing, not lab-supply spend.",
    "Vendor case studies (InstaLILY, Conexiom, Algolia, Conga/PROS, HighRadius, Flagship VMI) are self-reported and unaudited; treat them as upper bounds. weeks to deploy values are analyst estimates.",
    "Market-size figures for cleanroom, cannabis testing and healthcare cold chain come from market-research firms whose forecasts vary widely.",
@@ -26,7 +26,7 @@
    "financing": 5
   },
   "narrative": [
-   "Thomas is Fund I's largest and most stressed position: lenders mark the first-lien loan at 88% of par, the common near zero, and the loan matures in December 2027.",
+   "Thomas is BSP's first deal; its first-lien loan matures in December 2027 (88% of par in the lender's June 2026 10-Q).",
    "This plan puts cash and refinancing first and growth second; the growth story is what earns the refinancing.",
    "Smith + Howard shows the shape: a regional leader that grew from about 100 to 800 people, 1 to 11 locations and nearly 4x revenue through nine add-ons, specialist capabilities and technology investment.",
    "For Thomas the equivalent is not 4x revenue; it is turning a 125-year-old distributor into a lab supply-chain portfolio company that buyers value above a commodity distributor.",
@@ -214,7 +214,7 @@
     6
    ],
    "geography": "Northeast / Mid-Atlantic core (NJ, PA, NY, DE, MD, MA, CT, RI, NH, VT, ME) served from Swedesboro NJ and the Massachusetts cleanroom hubs (Denville/Holliston, Quintana/Haverhill, Day/Dracut)",
-   "thesis": "Thomas is a stressed credit (est. EBITDA $25-35M, leverage 7-10x, first-lien loan marked at 88.3% of par, maturity 2027-12-14). The first six months are about cash: price discipline, working capital, and a named-account program in the home region, so the lender conversation in 2027 is about growth rather than survival.",
+   "thesis": "Thomas carries est. 7-10x leverage (est. EBITDA $25-35M, leverage 7-10x, first-lien loan marked at 88.3% of par, maturity 2027-12-14). The first six months are about cash: price discipline, working capital, and a named-account program in the home region, so the lender conversation in 2027 is about growth rather than survival.",
    "data_points": {
     "ts_sites_total": 3502,
     "ts_sites_pursue": 111,
@@ -812,8 +812,8 @@
    "id": "fin-01",
    "kind": "financing",
    "instrument": "Apollo/MidCap first-lien unitranche (TL + DDTL + revolver)",
-   "facts": "Closed 2021-12-14 at L+625 (1% floor), maturity 2027-12-14. MFIC Jun-2026: term loan par $32.85M marked at 88.3% of par; revolver $2.35M drawn, $0.74M undrawn; total facility est. $180-300M.",
-   "implication": "The maturity is 14 months away and the loan trades as distressed. Any growth plan must first secure an amend-and-extend or refinancing.",
+   "facts": "Closed 2021-12-14; maturity 2027-12-14. MFIC Jun-2026: term loan par $32.85M marked at 88.3% of par; revolver $2.35M drawn, $0.74M undrawn; total facility est. $180-300M.",
+   "implication": "The maturity is 14 months away. Any growth plan must first secure an amend-and-extend or refinancing.",
    "source_url": "https://www.sec.gov/Archives/edgar/data/1278752/000119312526335848/mfic-20260630.htm",
    "retrieved": "2026-09-24",
    "confidence": "high"
@@ -832,7 +832,7 @@
    "id": "fin-03",
    "kind": "financing",
    "instrument": "Sponsor equity: BSP-TS, LP and preferred top-ups",
-   "facts": "BSP-TS, LP raised $236.1M at close (Dec 2021), $257.1M cumulative by Jan 2024 (+$21.0M), with preferred units ranking above common; common equity is marked near zero (Barings co-invest stake $6.9K on ~$5M).",
+   "facts": "BSP-TS, LP raised $236.1M at close (Dec 2021), $257.1M cumulative by Jan 2024 (+$21.0M), with preferred units ranking above common.",
    "implication": "New money is likely to come as preferred or structured equity. Add-ons in the next 12 months must be small, cash-light (earn-outs, seller notes, rollover equity) or funded with new capital.",
    "source_url": "https://www.sec.gov/Archives/edgar/data/1901071/000190107124000001/xslFormDX01/primary_doc.xml",
    "retrieved": "2026-09-24",

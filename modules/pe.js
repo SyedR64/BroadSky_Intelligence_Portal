@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261008151643';
+import * as Copy from './copy.js?v=20261008185332';
 /* PE landscape — history, trajectory, deal flow and buy-and-build benchmarks for the sponsors competing with BSP.
    Data: Private-equity landscape (35 firms), BSP firm profile (BSP reference), Competitor filings (financials of rival companies),
    sales/* (home-sale turnover in the counties each platform serves: PP PA/NJ, CET MA/CT/RI, BPI DC, Fair Harbor NYC). */
@@ -100,7 +100,7 @@ async function load(ctx) {
   return _bundle;
 }
 
-function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261008151643'; document.head.appendChild(l); } }
+function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261008185332'; document.head.appendChild(l); } }
 function missing(ctx, title) { ctx.el.innerHTML = ctx.ui.pageHead({ title, sub: 'Competitive intelligence on the private-equity sponsors bidding against BSP.' }) + ctx.ui.note('Research dataset <b>Private-equity landscape</b> is not yet available (still being verified). This view will populate automatically once it is published.', 'warn'); }
 const srcFoot = (ctx, meta, extra) => ctx.ui.source(SRC_PE.text, null, meta?.generated) + (extra ? ` <span class="dim">· ${extra}</span>` : '');
 
@@ -554,7 +554,7 @@ async function platforms(ctx) {
     { h: `Punctual Pros is out-paced ${ppPace && bspPP ? `${fmt.num(ppPace / Math.max(.1, bspPP.velocity), 0)}×` : ''} by residential consolidators`, b: `Residential rivals with disclosed counts run at a median ${fmt.num(ppPace, 1)} add-ons/yr (${ppR.map(p => esc(p.name)).join(', ')}) vs Punctual Pros at ${bspPP ? fmt.num(bspPP.velocity, 1) : '—'}/yr. Stand up a funded tuck-in program (target 3–4/yr) aimed at founder-owned PA/NJ shops below the size large sponsors chase.`, k: 'punctual_pros' },
     { h: 'CET should compound before institutional electrical companies arrive', b: `Kohlberg's Loenbro and Huron's Criticore are adding ${fmt.num(median(withVel.filter(p => p._bucket === 'cet').map(p => p._velocity)), 1)}/yr outside New England; CET is at ${bspCET ? fmt.num(bspCET.velocity, 1) : '—'}/yr. Pre-build a pipeline of New England electrical/wastewater targets (see Acquisition engine).`, k: 'cet' },
     { h: 'Smith + Howard proves the model — replicate its cadence', b: `S+H added 9 firms in ~${fmt.num(bspPlats.find(p => /smith/i.test(p.name))?.years || 3.7, 1)} years (${fmt.num(bspPlats.find(p => /smith/i.test(p.name))?.velocity || 2.4, 1)}/yr) and sold to TPG Growth. Use it as the Fund II proof point and as the template for BPI and Thomas Scientific add-on programs.`, k: null },
-    { h: 'Exit buyers are paying for scale', b: `${exits.length} rival company exits in the dataset went to ${[...new Set(exits.map(p => p.exit_buyer).filter(Boolean))].slice(0, 5).map(esc).join(', ')}. Build companies to the size these buyers underwrite.`, k: null },
+    { h: 'Exit buyers are paying for scale', b: `${exits.length} rival company exits on record went to ${[...new Set(exits.map(p => p.exit_buyer).filter(Boolean))].slice(0, 5).map(esc).join(', ')}. Build companies to the size these buyers underwrite.`, k: null },
   ];
   el.querySelector('#pe-pact').innerHTML = acts.map((a, i) => `<div class="pe-act"><div class="n">${String(i + 1).padStart(2, '0')}</div><div><div class="h">${a.h}</div><div class="b">${a.b}</div>${a.k ? `<div class="sys-chips c">${fmt.chip(sec(a.k).label, sec(a.k).color)}<a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/${sec(a.k).mod}">Open ${esc(sec(a.k).short)} →</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/ma">Targets →</a></div>` : ''}</div></div>`).join('');
 

@@ -636,7 +636,7 @@ function renderSources(D) {
   const method = String(D.meta.method || '').split(/(?<=\.)\s+(?=Items marked)/)[0].replace(/ was fetched on (\d{4})-(\d{2})-\d{2}/, ' was read in October $1');
   const gen = /^\d{4}-\d{2}-\d{2}$/.test(D.meta.generated || '') ? Fmt.date(D.meta.generated) : 'Oct 2026';
   $('#src-body').innerHTML = `<p>${esc(method)} Phase figures were computed from the portal's own data, listed below. Targets are explicit analyst assumptions.</p><h4>Caveats</h4><ul>${(D.meta.caveats || []).map(c => `<li>${esc(clean(c))}</li>`).join('')}</ul>
-    <h4>Portal data used</h4><ul><li>Frontline growth plan (${D.it.length} items, ${esc(gen)})</li><li>AM Law prospect list (${D.law.length} firms, grouped by headquarters city)</li><li>Mid-size law firms research (${D.mid.length} firms)</li><li>Frontline and Thomas Scientific add-on targets (${D.tg.length} Frontline targets)</li><li>Private-equity landscape (${D.rivals.length} overlapping sponsors)</li><li>BSP firm profile, Frontline public filings, public comparables and ServiceOS evidence (valuation and KPI benchmarks)</li></ul>${g}`;
+    <h4>Portal data used</h4><ul><li>Frontline growth plan (${D.it.length} items, ${esc(gen)})</li><li>AM Law prospect list (${D.law.length} firms, grouped by headquarters city)</li><li>Mid-size law firms research (${D.mid.length} firms)</li><li>Frontline and Thomas Scientific add-on targets (${D.tg.length} Frontline targets)</li><li>Private-equity landscape (${D.rivals.length} overlapping sponsors)</li><li>BSP firm profile, Frontline public filings, public comparables and OS program evidence (valuation and KPI benchmarks)</li></ul>${g}`;
 }
 
 /* ── chat ──────────────────────────────────────────────────────────────── */

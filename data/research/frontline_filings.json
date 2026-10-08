@@ -406,7 +406,7 @@
       "category": "sba_ppp",
       "title": "SBA PPP FOIA (loans >$150K) - no matching loan found",
       "filed_or_dated": "PPP rounds 2020-2021",
-      "filer_or_source_agency": "SBA PPP FOIA PPP loans over $150k dataset (968,524 rows scanned)",
+      "filer_or_source_agency": "SBA PPP FOIA PPP loans over $150k data (968,524 rows scanned)",
       "key_figures": {
         "matches": 0,
         "names_searched": [

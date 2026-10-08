@@ -6,11 +6,11 @@
    Datasets: BSP acquisition methodology, BSP professional network,
    Punctual Pros / CET / Frontline and Thomas Scientific add-on target screens.
    ═══════════════════════════════════════════════════════════════════════════ */
-import * as Copy from './copy.js?v=20261008151643';
+import * as Copy from './copy.js?v=20261008185332';
 import {
   loadBundle, isTargetTest, PLATFORMS, PORDER, sellerLabel, DEAL_TYPE, STRENGTH, TESTS, critShort, GROUPS, TYPE_LABEL, REL_LABEL,
   graphSVG, legendHTML, stripSVG, bindGraph, nodeDetail, introFor, firstCallScript, nextFive, fmtMonth, fmtDay, monthsBetween, clip, host, TODAY,
-} from './bsp-lib.js?v=20261008151643';
+} from './bsp-lib.js?v=20261008185332';
 
 const COLOR = 'var(--sys-brand)';
 /* company accents are the system tokens (UNIFIED.md §6); Smith + Howard, exited, reads the neutral mute */
@@ -33,7 +33,7 @@ const SRC_POOLS = 'Add-on target screens: Punctual Pros, CET, Frontline, Thomas 
 /* free text from the deal record in plain English: ISO dates in words ("2027-12-14" → "Dec 14, 2027", "2026-06" → "Jun 2026", "Q4-2024" → "Q4 2024") */
 const words = s => s == null ? s : Copy.text(String(s).replace(/\bQ([1-4])-((?:19|20)\d\d)\b/g, 'Q$1 $2').replace(/\b((?:19|20)\d\d)-(0[1-9]|1[0-2])\b(?!-\d)/g, (m, y, mo) => fmtMonth(`${y}-${mo}-01`)));
 const openInsp = (ctx, opts) => { ctx.inspector.open(opts); document.querySelector('#inspector .insp-body')?.classList.add('m-bsp'); };
-const injectCss = () => { if (!document.getElementById('css-bsp')) { const l = document.createElement('link'); l.id = 'css-bsp'; l.rel = 'stylesheet'; l.href = 'modules/bsp.css?v=20261008151643'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-bsp')) { const l = document.createElement('link'); l.id = 'css-bsp'; l.rel = 'stylesheet'; l.href = 'modules/bsp.css?v=20261008185332'; document.head.appendChild(l); } };
 
 let _b = null;
 function bundle(data) {
@@ -89,10 +89,11 @@ async function viewDeals(ctx) {
   if (!b.meth) { el.innerHTML = ui.note('Research dataset not yet available: BSP acquisition methodology.', 'warn'); return; }
   indexOnce(app, b); const c = b.cadence;
   const named = b.deals.filter(d => d.deal_type === 'add_on');
-  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Every deal', sub: `${c.platforms} anchor acquisitions in ${n1(monthsBetween(b.deals[0].date, b.deals.filter(d => d.deal_type === 'platform').slice(-1)[0].date) / 12)} years, ${c.pePlatforms} from other sponsors. None of the ${named.length} named add-ons came from a private-equity seller.`, chips: `${fmt.chip('Releases and SEC filings')}${fmt.chip('Retrieved Oct 6, 2026')}` })}
+  const disclosed = named.filter(d => d.seller_type), anchors = b.deals.filter(d => d.deal_type === 'platform'), anchorsUndisclosed = anchors.filter(d => !d.seller_type).length;
+  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Every deal', sub: `${c.platforms} anchor acquisitions in ${n1(monthsBetween(b.deals[0].date, b.deals.filter(d => d.deal_type === 'platform').slice(-1)[0].date) / 12)} years, ${c.pePlatforms} from other sponsors. None of the ${disclosed.length} add-ons with a disclosed seller came from a private-equity seller.`, chips: `${fmt.chip('Releases and SEC filings')}${fmt.chip('Retrieved Oct 6, 2026')}` })}
     ${missingNote(ui, b)}
     ${ui.kpis([
-      { label: 'Anchor acquisitions', value: fmt.num(c.platforms), sub: `${c.pePlatforms} from sponsors · ${c.platforms - c.pePlatforms} from founders` },
+      { label: 'Anchor acquisitions', value: fmt.num(c.platforms), sub: `${c.pePlatforms} from sponsors · ${anchors.length - c.pePlatforms - anchorsUndisclosed} from founders, partners or franchisees${anchorsUndisclosed ? ` · ${anchorsUndisclosed} undisclosed` : ''}` },
       { label: 'Add-ons', value: `${fmt.num(c.addonsStated)}`, sub: `${c.addonsNamed} identified by name` },
       { label: 'Add-ons from PE sellers', value: fmt.num(c.peAddons), sub: 'Founder, family, partner or franchisee owners', color: 'var(--sys-good)' },
       { label: 'Months between anchor deals', value: n1(c.medianGap), sub: 'Median, Jan 2022 to Feb 2025' },

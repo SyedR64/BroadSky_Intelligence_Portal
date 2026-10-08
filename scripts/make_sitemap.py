@@ -256,7 +256,7 @@ def main():
 
   <section class="sys-hero" id="top" aria-labelledby="map-title">
     <div class="sys-wrap">
-      <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>{n_pages} pages</b> · {n_routes} portal views · {len(mods)} modules</p>
+      <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Every page</b> and every portal view, in one place</p>
       <h1 id="map-title" class="sys-h1">Every page, <span class="sys-grad-text">one list.</span></h1>
       <p class="sys-lead">Every page and portal view, by company, then the programs and modules that span the portfolio.</p>
       <div class="sys-chips" style="margin-top:var(--sys-sp-6)">

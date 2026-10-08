@@ -95,8 +95,8 @@
    "USPTO assignment reel/frame (the conveyance type for the Topco assignment and any security interest) was not retrieved because the assignment API was unreachable.",
    "Trade press with revenue (Modern Retail, Glossy, Forbes 30 Under 30, Business of Fashion): the WebSearch budget was exhausted and Wayback CDX found no archived fair-harbor URLs on those domains, so no revenue quote was obtained.",
    "Current door counts at Nordstrom, REI, Dick's, Huckberry and Scheels were not verified.",
-   "1% for the Planet membership was not verified (directory is JS-rendered).",
-   "Owned store count in 2026 was not verified (store-locator is JS-rendered).",
+   "1% for the Planet membership was not verified (directory loads only in a browser).",
+   "Owned store count in 2026 was not verified (store locator loads only in a browser).",
    "OSHA/DOL WHD establishment searches were not performed; they are low relevance for an outsourced-manufacturing apparel brand.",
    "No add-on acquisitions were found for 2022-2026."
   ],
@@ -105,7 +105,7 @@
    "USPTO Assignment Center: search reel/frame for reg 4994440 / serial 86599280 to identify conveyance (assignment vs security interest) and any lender.",
    "Delaware Division of Corporations: status and formation date for 'Fair Harbor Clothing Topco LLC' and 'Fair Harbor Clothing PBC'.",
    "NY UCC e-filing (ucc-efiling.dos.ny.gov) and Delaware UCC-11: debtor 'Fair Harbor Clothing' to find the ABL agent.",
-   "Wayback: fairharborclothing.com/pages/all-locations and store-locator JSON (Storemapper/Stockist feed) for stockist and store counts.",
+   "Wayback: fairharborclothing.com/pages/all-locations and store-locator feed (Storemapper/Stockist feed) for stockist and store counts.",
    "Nordstrom.com, Scheels.com, REI.com and Dicks brand pages for Fair Harbor product counts as a wholesale-breadth proxy.",
    "PitchBook/Crunchbase profile snippets for deal size or post-money and headcount; LinkedIn company page for current employee count.",
    "CourtListener RECAP: open the J.Crew and EXP OldCo creditor matrices or claims registers to confirm Fair Harbor's claim amounts and relationships.",
@@ -450,7 +450,7 @@
    "category": "other",
    "title": "Live Shopify catalog snapshot (products.json / collections.json)",
    "filed_or_dated": "2026-09-24",
-   "filer_or_source_agency": "fairharborclothing.com public Shopify endpoints",
+   "filer_or_source_agency": "fairharborclothing.com public Shopify store data",
    "key_figures": {
     "active_products": 372,
     "variants": 2382,
@@ -545,7 +545,7 @@
    "key_figures": {
     "store_1": "SoHo, NYC (store-page-prince-st / soho pages, 2022)",
     "store_2": "11701 Lake Victoria Gardens Ave #7105, Palm Beach Gardens, FL 33410 ('the second Fair Harbor retail store')",
-    "current_store_count": "not verified (store-locator is JS-rendered)"
+    "current_store_count": "not verified (store locator loads only in a browser)"
    },
    "what_it_tells_us": "The 2022 promise to 'launch at retail' produced a small owned-store fleet: two stores by early 2023, compared with the eleven Chubbies retail stores disclosed in the Solo Brands FY2025 10-K. Store leases add fixed cost and lease liabilities, which matter for EBITDA and covenant definitions.",
    "confidence": "medium",

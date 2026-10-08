@@ -4,8 +4,8 @@
    modelled by ./cases-lib.js (shared with redesigns/case-studies.html).
    Views: timeline · levers · sequence · exits.
    ═══════════════════════════════════════════════════════════════════════════ */
-import * as L from './cases-lib.js?v=20261008151643';
-import * as Copy from './copy.js?v=20261008151643';
+import * as L from './cases-lib.js?v=20261008185332';
+import * as Copy from './copy.js?v=20261008185332';
 
 const COLOR = 'var(--sys-violet)';   // module accent from the brand palette (company accents stay with their companies)
 /* chips: status (.sys-chip--good|warn|bad|info), Punctual Pros (.sys-chip--soft in its accent) or neutral */
@@ -15,7 +15,7 @@ const btn = (ui, size = '') => ui.btnCls('secondary', size);
 /** "2026-10-06" → "Oct 6, 2026" for provenance lines (dates in words). */
 const asOf = s => { const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(String(s || '')); if (!m) return s; const mo = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'][Number(m[2]) - 1]; return m[3] ? `${mo} ${Number(m[3])}, ${m[1]}` : `${mo} ${m[1]}`; };
 const PAGE = 'redesigns/case-studies.html';
-const injectCss = () => { if (!document.getElementById('css-cases')) { const l = document.createElement('link'); l.id = 'css-cases'; l.rel = 'stylesheet'; l.href = 'modules/cases.css?v=20261008151643'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-cases')) { const l = document.createElement('link'); l.id = 'css-cases'; l.rel = 'stylesheet'; l.href = 'modules/cases.css?v=20261008185332'; document.head.appendChild(l); } };
 const esc = L.esc;
 const EST = Copy.EST;
 const ext = (u, t) => u ? `<a href="${esc(u)}" target="_blank" rel="noopener" title="${esc(u)}">${esc(t || L.host(u))} ↗</a>` : '—';
@@ -239,7 +239,7 @@ async function sequence(ctx) {
     { label: 'Home-services median hold', value: `${M.stats.holdHome?.toFixed(1)} yrs`, sub: `≈ ${L.monthLabel(M.ppLane.entry.t + (M.stats.holdHome || 4))} for Punctual Pros` },
     { label: 'Exit window', value: exitStep ? `${L.mLabel(exitStep.a)}` : '—', sub: exitStep ? `option, to ${L.mLabel(exitStep.b)}` : '' },
   ])}
-  <div class="mt-12">${ui.panel({ title: '36-month plan', sub: 'Bars = recommended window (text = hold months) · dashed = option · click a step for the action, benchmark, precedent cases and supporting views', body: '<div id="cs-g"></div>', foot: ui.source('Value-creation case set (Punctual Pros sequence), Punctual Pros public filings, ServiceOS evidence, nationwide plan', null, asOf(M.retrieved)) })}</div>
+  <div class="mt-12">${ui.panel({ title: '36-month plan', sub: 'Bars = recommended window (text = hold months) · dashed = option · click a step for the action, benchmark, precedent cases and supporting views', body: '<div id="cs-g"></div>', foot: ui.source('Value-creation case set (Punctual Pros sequence), Punctual Pros public filings, OS program evidence, nationwide plan', null, asOf(M.retrieved)) })}</div>
   <div class="mt-12">${ui.panel({ title: 'Steps', sub: 'Sortable · CSV · click for detail', body: '<div id="cs-st"></div>', foot: SRC(ui, M) })}</div></div>`;
   const $ = s => el.querySelector(s);
   $('#cs-g').innerHTML = L.ganttHTML(M, { root: '', selected: ctx.params.step != null ? Number(ctx.params.step) : null });

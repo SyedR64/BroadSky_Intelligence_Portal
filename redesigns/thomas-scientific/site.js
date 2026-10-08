@@ -1,5 +1,5 @@
 /* Thomas Scientific concept site — interactions. Data via the portal's core.js (Data). */
-import { esc, num, CATS, PRODUCTS, STOCK, catById, search, VERTICALS, TILES, STATE_NAMES, REGIONS, regionOf, SITES_FALLBACK, aggregateSites, FAQ, toast, reveal, mountChat } from './shared.js?v=20261008151643';
+import { esc, num, CATS, PRODUCTS, STOCK, catById, search, VERTICALS, TILES, STATE_NAMES, REGIONS, regionOf, SITES_FALLBACK, aggregateSites, FAQ, toast, reveal, mountChat } from './shared.js?v=20261008185332';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -256,7 +256,7 @@ async function wireRationale() {
     { v: k3 ? `${k3.target}% vs ${k3.baseline}%` : '15.6% vs 2.1%', l: 'Digital vs rep-led channel growth', s: 'Grainger FY2025', u: k3?.source_url },
     { v: '< 30 s', l: 'Time-to-SKU target for this design', s: 'Design target', u: null, est: true },
   ];
-  $('[data-dr-kpis]').innerHTML = `<h3 class="sys-h3">KPIs this site is built to move</h3><div class="sys-grid sys-grid--4">${kp.map(k => `<div class="sys-kpi" data-co="ts"><span class="sys-kpi-label">${esc(k.l)}</span><span class="sys-kpi-value">${esc(k.v)}${k.est ? '<span class="sys-est">est.</span>' : ''}</span><span class="sys-kpi-sub">${k.u ? `<a href="${esc(k.u)}" target="_blank" rel="noopener">${esc(k.s)}</a>` : esc(k.s)}</span></div>`).join('')}</div><p class="sys-src">Thomas Scientific's own digital share is not disclosed (a data gap in the ServiceOS evidence); LabOS instruments it from day one.</p>`;
+  $('[data-dr-kpis]').innerHTML = `<h3 class="sys-h3">KPIs this site is built to move</h3><div class="sys-grid sys-grid--4">${kp.map(k => `<div class="sys-kpi" data-co="ts"><span class="sys-kpi-label">${esc(k.l)}</span><span class="sys-kpi-value">${esc(k.v)}${k.est ? '<span class="sys-est">est.</span>' : ''}</span><span class="sys-kpi-sub">${k.u ? `<a href="${esc(k.u)}" target="_blank" rel="noopener">${esc(k.s)}</a>` : esc(k.s)}</span></div>`).join('')}</div><p class="sys-src">Thomas Scientific's own digital share is not disclosed (a data gap in the OS program evidence); LabOS instruments it from day one.</p>`;
 }
 
 /* ── FAQ, quote form, nav ───────────────────────────────────────────────── */

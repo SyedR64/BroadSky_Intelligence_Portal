@@ -11,9 +11,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261008151643">
+<link rel="stylesheet" href="../../assets/system.css?v=20261008185332">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="site.css?v=20261008151643">
+<link rel="stylesheet" href="site.css?v=20261008185332">
 </head>
 <body data-co="cet">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -215,7 +215,7 @@
           <li><span><b>Uptime in operators’ terms.</b> The Assure band reports solar and storage fleets the way owners track them.</span><span class="sys-compare-num">Solar fleet availability: 94.7% (industry) to 99.1%<span class="sys-est">est.</span></span></li>
         </ul>
       </div>
-      <p class="sys-src"><b>Source:</b> Before screenshots of comelectrical.com, October 8, 2026; CET growth plan, ServiceOS evidence and this page’s design rationale, October 2026.</p>
+      <p class="sys-src"><b>Source:</b> Before screenshots of comelectrical.com, October 8, 2026; CET growth plan, OS program evidence and this page’s design rationale, October 2026.</p>
     </div>
   </div>
 </section>
@@ -668,10 +668,10 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
 <script type="module">
-import { Frame } from '../../assets/frame.js?v=20261008151643';
-import { Chat } from '../../assets/chat.js?v=20261008151643';
-import { Data, Fmt } from '../../assets/core.js?v=20261008151643';
-import { init, FAQ, SUGGESTIONS, makeIntents } from './site.js?v=20261008151643';
+import { Frame } from '../../assets/frame.js?v=20261008185332';
+import { Chat } from '../../assets/chat.js?v=20261008185332';
+import { Data, Fmt } from '../../assets/core.js?v=20261008185332';
+import { init, FAQ, SUGGESTIONS, makeIntents } from './site.js?v=20261008185332';
 const chat = Chat.mount(null, { persona: 'cet', short_name: 'CET', mode: 'floating', theme: 'light', faq: FAQ, suggestions: SUGGESTIONS, intents: makeIntents(Data, ''), openOnLoad: /[?&]chat=open/.test(location.search) });
 Frame.mount({ chat });
 try { init({ Data, Fmt }); } catch (e) { console.warn('site init', e); }

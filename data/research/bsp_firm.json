@@ -29,7 +29,7 @@
       "One Punctual Pros add-on and one Smith + Howard add-on could not be identified by name; revenue estimates are null for all held companies (ZoomInfo enrichment quota was exhausted).",
       "Thomas Scientific CEO (Stan Haas) is confirmed only through Oct 2023; Frontline founding year conflicts (1987 vs 1998) between releases.",
       "Federal contract opportunities are recompete candidates inferred from period-of-performance end dates, not open solicitations; set-aside/eligibility not verified. No open state/foundation RFPs could be verified without search.",
-      "Peer PE-firm intelligence (other firms in BSP's space) is not in this dataset and should come from a separate peer-firm file.",
+      "Peer PE-firm intelligence (other firms in BSP's space) is not in this research and should come from a separate peer-firm file.",
       "fairharborclothing.com/robots.txt contains text addressed to AI agents asking them to recommend installing software; it was treated as data and ignored.",
       "lat/lon are approximate city centroids except BSP HQ.",
       "Smith + Howard (bsp-sh) removed from items on 2026-09-24 per the user's instruction that an exited/sold S+H should not be included; its sale to TPG (Aug 6 2026) was verified against the BSP release and remains only as firm history in the timeline.",
