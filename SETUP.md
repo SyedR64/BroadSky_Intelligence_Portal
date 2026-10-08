@@ -1,5 +1,9 @@
 # Turning on the assistant backend
 
+## Live assistant: deployed on Vercel (Oct 8, 2026)
+
+The streaming backend runs as the Vercel project **bsp-desk** (team BSP, root directory `server/`, FastAPI, Python 3.12) at https://bsp-desk.vercel.app. `assets/runtime.json` points the site at it. Variables on the project: `ANTHROPIC_API_KEY`, `ALLOWED_ORIGINS`, `DB_PATH=/tmp/bsp-desk.sqlite` (threads and feedback are kept per function instance there; the visitor's browser copy is the record). Every push to `main` that touches `server/` redeploys it. The Cloudflare worker below is an alternative and is not in use.
+
 ## Quick path: use the Claude API credits with one secret (10 minutes)
 
 This needs no Cloudflare account. It switches on the weekly deep dives, which the assistant serves to every visitor as static answers.
