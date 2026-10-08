@@ -2,7 +2,7 @@
    record fields, the est. badge, and a post-render pass that turns the console's
    textual "est." markers into .sys-est badges. Module renderers call these at the
    source; Frame.humanize stays the safety net. */
-import { Frame } from '../assets/frame.js?v=20261008192305';
+import { Frame } from '../assets/frame.js?v=20261008192515';
 
 export const EST = '<span class="sys-est">est.</span>';
 export const ILLUS = '<span class="sys-est sys-est--illus">illustrative</span>';
@@ -312,7 +312,7 @@ export const viewTitle = (m, v) => `${m.name} · ${VIEW_TITLES[`${m.id}/${v.id}`
 /** Rewrite the first h1 under root to the shared pattern (idempotent; safe inside a MutationObserver). */
 export function retitle(root, m, v) {
   if (!root || !m || !v) return;
-  const h = root.querySelector('.page-head h1, .side-head h1'); // the 3D theater's h1 is a per-scene caption, not a page title: left alone
+  const h = root.querySelector('.page-head h1, .side-head h1'); // the 3D map's h1 is a per-scene caption, not a page title: left alone
   if (!h) return;
   const want = viewTitle(m, v);
   if (h.textContent !== want) { h.textContent = want; h.dataset.viewTitle = '1'; }

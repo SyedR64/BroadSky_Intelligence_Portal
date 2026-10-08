@@ -6,7 +6,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261008192305';
+       import { Frame } from '../../assets/frame.js?v=20261008192515';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
@@ -19,7 +19,7 @@
      theme    'light'|'dark'                       fallback when the visitor has no saved choice (default 'light').
                                                     The visitor's choice (localStorage 'bsp-theme', set by the top-bar
                                                     theme button on every page) always wins, except on a 'minimal'
-                                                    page that passes theme: 'dark' (the 3D theater stage), which stays dark.
+                                                    page that passes theme: 'dark' (the 3D map stage), which stays dark.
      variant  'default'|'app'|'minimal'            (app: strip above the console; minimal: transparent, no footer)
      banner   true|false                           (default: true on concept pages under redesigns/<company>/)
      crumb    false | [{ label, href? }, …]        (default: auto for pages under redesigns/)
@@ -157,9 +157,9 @@ function footerHTML() {
     <div class="sys-footer-grid">
       <div class="sys-footer-brand">
         <a class="sys-brand" href="${esc(ROOT)}" aria-label="${esc(PRODUCT)}, home">${MARK}<span class="sys-brand-name">${esc(PRODUCT)}</span></a>
-        <p>Prepared by ${AUTHOR} for the BSP Portfolio Resource Group. Public data, turned into next steps for six portfolio companies.</p>
+        <p>Made by ${AUTHOR} for Broad Sky's Portfolio Resource Group. Public information about six companies, turned into clear next steps.</p>
       </div>
-      <nav class="sys-footer-col" aria-label="Portal"><p class="sys-footer-h">Portal</p>${a('app.html', 'Portal home')}${a('app.html#/home/overview', 'Command Center')}${a('app.html#/ma/overview', 'Acquisition engine')}${a('app.html#/techos/overview', 'Tech enablement')}${a('theater.html', '3D theater')}</nav>
+      <nav class="sys-footer-col" aria-label="Portal"><p class="sys-footer-h">Portal</p>${a('app.html', 'Portal home')}${a('app.html#/home/overview', 'Command Center')}${a('app.html#/ma/overview', 'Acquisition engine')}${a('app.html#/techos/overview', 'Tech enablement')}${a('theater.html', '3D map')}</nav>
       <nav class="sys-footer-col" aria-label="Site concepts"><p class="sys-footer-h">Site concepts</p>${cos}</nav>
       <nav class="sys-footer-col" aria-label="Programs"><p class="sys-footer-h">Programs</p>${a('redesigns/#os', 'OS program')}${a('redesigns/#growth-plans', 'Growth plans')}${a('redesigns/voice-ai.html', '24/7 Voice AI')}${a('redesigns/ai-agents.html', 'AI agents')}</nav>
       <nav class="sys-footer-col" aria-label="Briefing"><p class="sys-footer-h">Briefing</p>${a('#briefing', 'Video briefing')}${a('briefing/executive_memo.html', 'Executive memo')}</nav>
@@ -437,7 +437,7 @@ function mount(opts = {}) {
   };
   o.nav = navFor(opts.nav !== undefined ? opts.nav : (variant === 'app' ? APP_NAV : null));
   state.persona = opts.persona || o.co || 'portal';
-  // theme: the visitor's saved choice wins; a 'minimal' page that asks for dark (the 3D theater) stays dark
+  // theme: the visitor's saved choice wins; a 'minimal' page that asks for dark (the 3D map) stays dark
   themeLocked = variant === 'minimal' && opts.theme === 'dark';
   o.themeToggle = !themeLocked && opts.themeToggle !== false;
   applyTheme(themeLocked ? 'dark' : (savedTheme() || (opts.theme === 'dark' ? 'dark' : 'light')));

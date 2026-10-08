@@ -4,8 +4,8 @@
    modelled by ./cases-lib.js (shared with redesigns/case-studies.html).
    Views: timeline · levers · sequence · exits.
    ═══════════════════════════════════════════════════════════════════════════ */
-import * as L from './cases-lib.js?v=20261008192305';
-import * as Copy from './copy.js?v=20261008192305';
+import * as L from './cases-lib.js?v=20261008192515';
+import * as Copy from './copy.js?v=20261008192515';
 
 const COLOR = 'var(--sys-violet)';   // module accent from the brand palette (company accents stay with their companies)
 /* chips: status (.sys-chip--good|warn|bad|info), Punctual Pros (.sys-chip--soft in its accent) or neutral */
@@ -15,7 +15,7 @@ const btn = (ui, size = '') => ui.btnCls('secondary', size);
 /** "2026-10-06" → "Oct 6, 2026" for provenance lines (dates in words). */
 const asOf = s => { const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(String(s || '')); if (!m) return s; const mo = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'][Number(m[2]) - 1]; return m[3] ? `${mo} ${Number(m[3])}, ${m[1]}` : `${mo} ${m[1]}`; };
 const PAGE = 'redesigns/case-studies.html';
-const injectCss = () => { if (!document.getElementById('css-cases')) { const l = document.createElement('link'); l.id = 'css-cases'; l.rel = 'stylesheet'; l.href = 'modules/cases.css?v=20261008192305'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-cases')) { const l = document.createElement('link'); l.id = 'css-cases'; l.rel = 'stylesheet'; l.href = 'modules/cases.css?v=20261008192515'; document.head.appendChild(l); } };
 const esc = L.esc;
 const EST = Copy.EST;
 const ext = (u, t) => u ? `<a href="${esc(u)}" target="_blank" rel="noopener" title="${esc(u)}">${esc(t || L.host(u))} ↗</a>` : '—';

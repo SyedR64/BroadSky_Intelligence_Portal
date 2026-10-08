@@ -12,7 +12,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261008192305';
+import { Data, Fmt, Live, esc } from './core.js?v=20261008192515';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -48,7 +48,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261008192305';
+const BACKEND_JS = './backend.js?v=20261008192515';
 let BE = null, BE_P = null;
 function backend() {
   if (!BE_P) BE_P = import(BACKEND_JS).then(async m => {
@@ -222,7 +222,7 @@ async function comps(q) {
   const rows = Object.entries(sb).slice(0, 8).map(([k, v]) => [esc(SECTOR[k] || srcLabel(k)), pct(v.median_revenue_growth_latest_pct ?? v.median_revenue_growth_pct ?? v.median_growth ?? v.growth), pct(v.median_operating_margin_latest_pct ?? v.median_operating_margin_pct ?? v.median_operating_margin ?? v.operating_margin), esc(String(v.median_revenue_per_employee_usd ? Fmt.money(v.median_revenue_per_employee_usd) : v.revenue_per_employee ?? '—'))]);
   return { html: `<h4>Public comparables by sector</h4>${tbl(['Sector', 'Growth', 'Op. margin', 'Rev/employee'], rows)}<p>${esc(sentences(d.meta?.financial_picture, 2))}.</p>`, links: [app('#/fin/comps', 'Fundamentals · public comparables'), app('#/ma/valuation', 'Valuation benchmarks')], followups: ['What multiple would a tuck-in trade at?', 'Estimate Punctual Pros revenue from filings'] };
 }
-const NAV = [[/weather|storm|forecast/i, '#/pp/weather', 'Weather & demand'], [/mover|lead|mailing|home sales/i, '#/pp/movers', 'New-mover marketing'], [/wastewater|horton/i, '#/cet/wastewater', 'Wastewater accounts'], [/radar|opportunit|rfp|bid/i, '#/cet/opportunities', 'Opportunity radar'], [/pipeline|acquisition|add-?on|m&a/i, '#/ma/pipeline', 'Acquisition engine'], [/landscape|competitor|sponsor|pe firm/i, '#/pe/landscape', 'Private equity'], [/filing|financial|sec|form d/i, '#/fin/portfolio', 'Fundamentals'], [/comps|comparable|valuation|multiple/i, '#/fin/comps', 'Fundamentals · public comparables'], [/law ?firm|am ?law/i, '#/fl/amlaw', 'AM Law 200 targets'], [/lab|site explorer|hospital/i, '#/ts/sites', 'Site explorer'], [/briefing|video|tour/i, '#/briefing/play', 'Narrated tour'], [/tech|serviceos|gridos|os\b/i, '#/techos/overview', 'Tech enablement'], [/3d|theater|theatre|cinematic|fly.?through|webgl|globe/i, '#/theater/play', '3D theater'], [/case(s| stud)|value.?creation|timeline|exits?\b/i, '#/cases/timeline', 'Sponsor precedents'], [/how broad sky buys|deal patterns|rubric|methodolog|network|deals?\b/i, '#/bsp/deals', 'How BSP buys'], [/national|scorer|county scores?|nationwide/i, '#/national/scorer', 'US expansion']];
+const NAV = [[/weather|storm|forecast/i, '#/pp/weather', 'Weather & demand'], [/mover|lead|mailing|home sales/i, '#/pp/movers', 'New-mover marketing'], [/wastewater|horton/i, '#/cet/wastewater', 'Wastewater accounts'], [/radar|opportunit|rfp|bid/i, '#/cet/opportunities', 'Opportunity radar'], [/pipeline|acquisition|add-?on|m&a/i, '#/ma/pipeline', 'Acquisition engine'], [/landscape|competitor|sponsor|pe firm/i, '#/pe/landscape', 'Private equity'], [/filing|financial|sec|form d/i, '#/fin/portfolio', 'Fundamentals'], [/comps|comparable|valuation|multiple/i, '#/fin/comps', 'Fundamentals · public comparables'], [/law ?firm|am ?law/i, '#/fl/amlaw', 'AM Law 200 targets'], [/lab|site explorer|hospital/i, '#/ts/sites', 'Site explorer'], [/briefing|video|tour/i, '#/briefing/play', 'Narrated tour'], [/tech|serviceos|gridos|os\b/i, '#/techos/overview', 'Tech enablement'], [/3d|theater|theatre|cinematic|fly.?through|webgl|globe/i, '#/theater/play', '3D map'], [/case(s| stud)|value.?creation|timeline|exits?\b/i, '#/cases/timeline', 'Sponsor precedents'], [/how broad sky buys|deal patterns|rubric|methodolog|network|deals?\b/i, '#/bsp/deals', 'How BSP buys'], [/national|scorer|county scores?|nationwide/i, '#/national/scorer', 'US expansion']];
 function navigate(q) { const hit = NAV.find(([rx]) => rx.test(q)); if (!hit) return null; return { html: `<p>Opening <b>${esc(hit[2])}</b>.</p>`, links: [app(hit[1], hit[2])], go: APP + hit[1] }; }
 
 async function nationwideSub(q) {
@@ -418,7 +418,7 @@ async function addonHistory(q) {
 }
 /** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
 async function dealModel(q) {
-  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261008192305').catch(() => null)]);
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261008192515').catch(() => null)]);
   if (!d || !L) return null;
   const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
   const P = pre.find(i => i.co === co && i.group !== 'generic') || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
@@ -588,7 +588,7 @@ const STATIC_DOCS = [
   { t: 'Fundamentals', s: 'Form D, Form ADV, BDC loan schedules, PPP, FDD Item 19, public comps, rival financials', h: '#/fin/portfolio' },
   { t: 'Tech enablement program', s: 'ServiceOS GridOS FirmOS LabOS SignalOS HarborOS theses, valuation impact, roadmaps', h: '#/techos/overview' },
   { t: 'Narrated tour', s: 'narrated tour, executive video', h: '#/briefing/play' },
-  { t: '3D theater', s: 'WebGL fly-through: home-sales hexagons, nationwide expansion arcs, New England opportunity columns, live storm polygons', h: '#/theater/play' },
+  { t: '3D map', s: 'WebGL fly-through: home-sales hexagons, nationwide expansion arcs, New England opportunity columns, live storm polygons', h: '#/theater/play' },
 ];
 let _index = null;
 async function buildIndex(persona) {
@@ -969,7 +969,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261008192305'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261008192515'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };

@@ -17,7 +17,7 @@ Concept by Syed Rahman for the Portfolio Resource Group at Broad Sky Partners (B
 
 Every view leads with one short sentence and its KPIs, then the evidence (map, table or chart), then the action list. Voice rules: `UNIFIED.md` §0.
 
-- **Stack:** vanilla ES modules, no build step, GitHub Pages (`.nojekyll`). Leaflet for maps, inline SVG charts, MapLibre + deck.gl for the 3D theater.
+- **Stack:** vanilla ES modules, no build step, GitHub Pages (`.nojekyll`). Leaflet for maps, inline SVG charts, MapLibre + deck.gl for the 3D map.
 - **Shared runtime:** `assets/core.js` (data loaders, formatting, UI kit, maps, charts, live feeds, tour, app shell), `assets/chat.js` (the assistant), `assets/components.js` (targets / filings / opportunity cards).
 - **Contracts:** `CONTRACT.md` (portal modules) and `CONTRACT_SITES.md` (landing, concept sites, OS pages).
 
@@ -35,7 +35,7 @@ Every view leads with one short sentence and its KPIs, then the evidence (map, t
 | `redesigns/bpi/` | Concept site · `signalos.html` (SignalOS) · growth plan (`growth-plan.html`) |
 | `redesigns/fair-harbor/` | Concept site · `harboros.html` (HarborOS) · growth plan (`growth-plan.html`) |
 | `redesigns/ai-agents.html`, `redesigns/voice-ai.html` | Cross-portfolio agentic-layer program and the 24/7 voice-AI model |
-| `theater.html` | Full-screen 3D theater (also in the portal at `#/theater/play`) |
+| `theater.html` | Full-screen 3D map (also in the portal at `#/theater/play`) |
 | `briefing/` | Rendered briefing (`broad_sky_briefing.mp4`), 29-second intro, executive memo (HTML + PDF), shot lists |
 
 Every concept page carries the same dismissible banner ("Concept work by Syed Rahman for the Portfolio Resource Group at Broad Sky Partners (BSP). Not an official company website; estimates are marked est.") with the shared navigation **Portal · Site concepts · OS program · Briefing**, the floating assistant, and the same footer disclaimer as the landing page. All internal links are relative, so the site works from any GitHub Pages sub-path.
@@ -55,7 +55,7 @@ Every concept page carries the same dismissible banner ("Concept work by Syed Ra
 | Intelligence | PE landscape (`pe`) | landscape, deals, heatmap, companies | 35 competing sponsors, disclosed deals, rival presence by portfolio county |
 | Intelligence | Filings & financials (`fin`) | portfolio, deal, explorer, comps, rivals, methods | Form D/ADV capital, triangulated financials, deal math, 31 public comps, data-gaps register |
 | Intelligence | **Tech enablement (`techos`)** | overview, evidence, roadmap, calculator | The six OS theses (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS): KPIs moved, est. investment and EBITDA impact, valuation-premium evidence, 12–24 month roadmap, equity-value calculator |
-| Briefing | 3D theater (`theater`) | play | GPU-rendered scenes over the portfolio datasets |
+| Briefing | 3D map (`theater`) | play | GPU-rendered scenes over the portfolio datasets |
 | Briefing | Briefing & video (`briefing`) | play | Narrated tour and rendered MP4 |
 
 The tour is assembled from each module's `tour` array (3–5 steps each), sorted by each step's optional `order` in `Tour.register` (`assets/core.js`).
@@ -171,7 +171,7 @@ python3 scripts/make_briefing.py                         # → briefing/broad_sk
 | `redesigns/voice-ai.html` | 24/7 voice AI as the growth engine: economics, reference voice-AI platforms, ASR/LLM stack, sample calls, governance | `data/research/voice_ai.json` |
 | `redesigns/ai-agents.html` | The agentic layer: 45 agents across six operating systems, patterns, rollout waves, governance | `data/research/ai_agents_portfolio.json` |
 | `redesigns/<slug>/growth-plan.html` | Growth plans for CET, Frontline, Thomas Scientific, BPI, Fair Harbor | `data/research/<co>_playbook.json` |
-| `theater.html` / `app.html#/theater/play` | WebGL 3D theater (MapLibre GL + deck.gl): six fly-through scenes over real data | sales, opportunities, targets, live NWS |
+| `theater.html` / `app.html#/theater/play` | WebGL 3D map (MapLibre GL + deck.gl): six fly-through scenes over real data | sales, opportunities, targets, live NWS |
 | `briefing/BSP_Desk_Memo.pdf` | Four-page executive memo (`briefing/executive_memo.html`, printed with headless Chrome) | all research metas |
 | `briefing/broad_sky_intro.mp4` | Cinematic product-intro film (`scripts/make_cinematic.py`: Playwright recording + title cards + narration + synthesized music) | `briefing/cinematic_shots_master.json` |
 

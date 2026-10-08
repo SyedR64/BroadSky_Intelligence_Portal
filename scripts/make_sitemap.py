@@ -33,7 +33,7 @@ OS = {'pp': 'ServiceOS', 'cet': 'GridOS', 'fl': 'FirmOS', 'ts': 'LabOS', 'bpi': 
 KNOWN = {
     'index.html': ('Home', 'The landing page: ask a question, start in three steps.'),
     'app.html': ('Portal', 'Every module and view, listed below.'),
-    'theater.html': ('3D theater', 'A 3D fly-through of home sales, expansion and live storms.'),
+    'theater.html': ('3D map', 'A 3D fly-through of home sales, expansion and live storms.'),
     'sitemap.html': ('Sitemap', 'This page.'),
     'redesigns/index.html': ('Site concepts', 'Six concept websites and the OS program.'),
     'redesigns/voice-ai.html': ('24/7 Voice AI', 'What missed calls cost, the vendors and a sample call.'),
@@ -133,7 +133,7 @@ def main():
     # 1. start
     start = [p for p in ['index.html', 'app.html', 'theater.html', 'sitemap.html', 'assistant.html'] if p in all_pages]
     lis = [item(p if p != 'index.html' else './', *KNOWN[p]) for p in start]
-    groups.append(('start', 'Start', 'The front door, the portal and the 3D theater.', None, lis))
+    groups.append(('start', 'Start', 'The front door, the portal and the 3D map.', None, lis))
 
     # 2. companies
     used = set(start)

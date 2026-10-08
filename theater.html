@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3D theater · BSP Desk</title>
+<title>3D map · BSP Desk</title>
 <meta name="description" content="Map scenes over the portfolio's own data: home sales, expansion paths, wastewater plants and live weather alerts.">
 <meta name="theme-color" content="#0a0e14">
 <link rel="icon" href="BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/system.css?v=20261008192305">
+<link rel="stylesheet" href="assets/system.css?v=20261008192515">
 <style>
   /* page layout only: full-bleed WebGL stage under the minimal transparent frame (UNIFIED.md §9) */
   html, body { height: 100%; overflow: hidden; background: var(--sys-bg); }
@@ -39,7 +39,7 @@
 </style>
 </head>
 <body>
-<h1 class="sys-h1 sys-sr">3D theater: the BSP portfolio on one map</h1>
+<h1 class="sys-h1 sys-sr">3D map: the BSP portfolio on one map</h1>
 <div id="stage"></div>
 <aside id="about" class="sys-card" hidden aria-labelledby="about-h">
   <div class="th-about-head"><h2 class="sys-card-title" id="about-h">The portfolio as a film</h2><button id="about-x" class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon" type="button" aria-label="Close about panel"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></button></div>
@@ -59,8 +59,8 @@
   <p class="sys-src"><b>Source:</b> Punctual Pros deed records (PA and NJ), CET opportunity radar, CET wastewater-plant targets, National Weather Service alerts (live). Maps: MapLibre GL, deck.gl, OpenFreeMap and OpenMapTiles, AWS Terrain Tiles.</p>
 </aside>
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261008192305';
-  import { Theater } from './assets/theater.js?v=20261008192305';
+  import { Frame } from './assets/frame.js?v=20261008192515';
+  import { Theater } from './assets/theater.js?v=20261008192515';
   Frame.mount({ variant: 'minimal', theme: 'dark' });
   const qp = new URLSearchParams(location.search);
   const autoplay = qp.get('autoplay') !== '0';
