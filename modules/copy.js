@@ -2,7 +2,7 @@
    record fields, the est. badge, and a post-render pass that turns the console's
    textual "est." markers into .sys-est badges. Module renderers call these at the
    source; Frame.humanize stays the safety net. */
-import { Frame } from '../assets/frame.js?v=20261008134553';
+import { Frame } from '../assets/frame.js?v=20261008145402';
 
 export const EST = '<span class="sys-est">est.</span>';
 export const ILLUS = '<span class="sys-est sys-est--illus">illustrative</span>';
@@ -53,6 +53,14 @@ export const fields = obj => Object.fromEntries(Object.entries(obj || {}).map(([
 const RX_MAIL = /\s*\(?\b[\w.+-]+@[\w-]+(?:\.[\w-]+)+\b\)?/g;
 export const noEmail = s => typeof s === 'string' ? s.replace(RX_MAIL, '').replace(/ {2,}/g, ' ').replace(/ +([,.;:)])/g, '$1') : s;
 
+/** Loan shorthand in lender-filing prose → words a general reader can follow ("S+425–475, marked at par"). */
+export const credit = s => typeof s !== 'string' ? s : s
+  .replace(/\bS\+(\d)(\d{2})\s*[–-]\s*(\d)(\d{2})\b/g, 'SOFR + $1.$2–$3.$4%')
+  .replace(/\bS\+(\d)(\d{2})\b/g, 'SOFR + $1.$2%')
+  .replace(/\bS\+(\d+(?:\.\d+)?)%/g, 'SOFR + $1%')
+  .replace(/\bmarked at par\b/g, 'valued by lenders at full face value')
+  .replace(/\bsub-(\d{2}) marks\b/g, 'lender marks below $1% of face value');
+
 /** Clean a free-text string (source summaries, notes) of ids, file names, paths and null artefacts. */
 export function text(s) {
   if (s == null) return '';
@@ -72,7 +80,12 @@ export function text(s) {
     .replace(/\bn=(\d+)/g, 'n = $1')
     .replace(/\{([a-z_, ]+)\}/g, (m, l) => l.split(/,\s*/).map(field).join(', ').toLowerCase())
     .replace(/\b([a-z][a-z0-9]*(?:_[a-z0-9]+)+)\b/g, (m, id) => (MORE[id] || Frame.LABELS[id]) ? dataset(id) : field(id).replace(/^./, c => c.toLowerCase()))
-    .replace(/\(null\)/g, '').replace(/\bnull\b/g, 'blank');
+    .replace(/\(null\)/g, '').replace(/\bnull\b/g, 'blank')
+    // research notes about access keys read as plain access limits for a visitor
+    .replace(/\(?(?:a |an )?(?:registered )?API key required\)?/gi, m => m.startsWith('(') ? '(registration required)' : 'registration required')
+    .replace(/\bwith (?:a |an )?(?:registered )?API key\b/gi, 'with registered access')
+    .replace(/\bAPI now requires a key\b/gi, 'now requires registration')
+    .replace(/\bAPI key\b/gi, 'registered access');
   return Frame.humanizeText(t).replace(/ {2,}/g, ' ').replace(/ +([,.;:)])/g, '$1');
 }
 
@@ -105,12 +118,15 @@ export function enhance(root) {
   if (!root || !root.querySelectorAll) return;
   alias(root);
   spellPRG(root);
+  gloss(root);
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   const hits = [];
   for (let t = walker.nextNode(); t; t = walker.nextNode()) {
     let v = t.nodeValue;
     // statistics shorthand in data-sourced prose ("n=21") reads as words, never key=value (UNIFIED.md §7)
     if (v && v.indexOf('n=') >= 0 && RX_NEQ.test(v) && !t.parentElement?.closest(SKIP)) v = t.nodeValue = v.replace(RX_NEQ_G, 'n = $1');
+    // loan shorthand from lender filings ("S+425", "marked at par") reads as words
+    if (v && (v.indexOf('S+') >= 0 || v.indexOf('at par') >= 0 || v.indexOf(' marks') >= 0) && !t.parentElement?.closest(SKIP)) { const c = credit(v); if (c !== v) v = t.nodeValue = c; }
     if (!v || v.indexOf('st.') < 0 || !RX_EST.test(v)) continue;
     const p = t.parentElement;
     if (!p || p.closest(SKIP)) continue;
@@ -130,6 +146,65 @@ export function enhance(root) {
       } else frag.appendChild(document.createTextNode(part));
     }
     t.replaceWith(frag);
+  }
+}
+
+/** Content rule: a non-specialist reader gets a short definition the first time a finance or industry term appears
+    in a view (#content) or in the inspector. [pattern, gloss, already-explained test]. The gloss lands after the first
+    match in running text (never in a heading, label, chip, button or link); a view that already spells the term out
+    is left alone, which also keeps the pass idempotent under the MutationObserver. */
+const GLOSS = [
+  [/\bunitranche\b/i, 'a single term loan that blends senior and junior debt', /single term loan that blends/i],
+  [/\bPIK\b/, 'payment in kind: interest added to the loan instead of paid in cash', /payment[- ]in[- ]kind/i],
+  [/\bdelayed-draw(?: term loans?| loans?| lines?| debt| capacity)?/i, 'credit the company draws later, as add-ons close', /credit the company draws later/i],
+  [/\bNPDES\b/, 'the federal permit to discharge treated water', /permit to discharge treated water/i],
+  [/\bSRF\b/, 'state revolving fund: low-cost state loans for water projects', /state revolving fund/i],
+  [/\bWWTP\b/, 'wastewater treatment plant', /wastewater treatment plant/i],
+  [/\bFSM\b/, 'field service management software', /field service management/i],
+  [/\bMOIC\b/, 'multiple on invested capital: dollars back per dollar invested', /multiple on invested capital/i],
+  [/\bIRR\b/, 'internal rate of return: the yearly return on the money invested', /internal rate of return/i],
+  [/\bCTV\b/, 'connected TV: ads on streaming services', /connected TV/i],
+  [/\bLSA\b/, 'Google Local Services Ads', /Local Services Ads/i],
+  [/\bASR\b/, 'automatic speech recognition', /speech recognition/i],
+  [/\bBDCs?\b/, 'business development company: a listed private-credit fund that reports its loans', /business development compan/i],
+  [/\bRCM\b/, 'revenue-cycle management: billing and collections', /revenue[- ]cycle management/i],
+  [/\bMSPs?\b/, 'managed IT service provider', /managed IT service provider/i],
+  [/\bLMM\b/, 'lower middle market: companies with roughly $5–25M of EBITDA', /lower[- ]middle[- ]market/i],
+  [/\bSPVs?\b/, 'a fund vehicle set up for one deal', /vehicle set up for one deal/i],
+  [/\bGAV\b/, 'gross asset value', /gross asset value/i],
+  [/\bDTC\b/, 'direct-to-consumer', /direct[- ]to[- ]consumer/i],
+  [/\bAOV\b/, 'average order value', /average order value/i],
+  [/\bGPO\b/, 'group purchasing organization', /group purchasing organi/i],
+  [/\bNWS\b/, 'National Weather Service', /National Weather Service/i],
+  [/\bACS\b/, 'the Census Bureau’s American Community Survey', /American Community Survey/i],
+  [/\bCBP\b(?! LLC|,)/, 'Census County Business Patterns', /County Business Patterns/i],
+];
+const NO_GLOSS = SKIP_SEL => `${SKIP_SEL},a,button,label,th,h1,h2,h3,h4,.sys-chip,.chip,.sys-kpi,.sys-card-label,.sys-kicker,.sys-kbd,.view-tab,.sys-src,.leaflet-container,[data-no-gloss]`;
+function gloss(root) {
+  const scope = (root.closest && root.closest('#content, #inspector')) || null;
+  if (!scope) return;
+  const all = scope.textContent || '';
+  const todo = GLOSS.filter(([rx, , done]) => rx.test(all) && !done.test(all));
+  if (!todo.length) return;
+  const skip = NO_GLOSS(SKIP);
+  const open = str => (str.match(/\(/g) || []).length > (str.match(/\)/g) || []).length;
+  for (const [rx, def] of todo) {
+    const g = new RegExp(rx.source, rx.flags.includes('g') ? rx.flags : rx.flags + 'g');
+    const w = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT);
+    let done = false;
+    for (let t = w.nextNode(); t && !done; t = w.nextNode()) {
+      const v = t.nodeValue || ''; if (!rx.test(v)) continue;
+      const p = t.parentElement; if (!p || p.closest(skip)) continue;
+      for (const m of v.matchAll(g)) {
+        const end = m.index + m[0].length;
+        // an existing parenthesis right after the term is usually its own explanation: leave the view alone
+        if (/^\s*\(/.test(v.slice(end))) { done = true; break; }
+        // never nest a gloss inside someone else's parenthesis; try the next use instead
+        if (open(v.slice(0, m.index))) continue;
+        t.nodeValue = `${v.slice(0, end)} (${def})${v.slice(end)}`;
+        done = true; break;
+      }
+    }
   }
 }
 
@@ -186,6 +261,7 @@ export function filings(d) {
     estimate_table: Array.isArray(m.estimate_table) ? m.estimate_table.map(e => ({ ...e, metric: text(e.metric), estimate: text(e.estimate), basis: text(e.basis) })) : m.estimate_table,
   };
   const items = (d.items || []).map(i => ({ ...i,
+    source_url: /^file:|^\/Users\//i.test(String(i.source_url || '')) ? null : i.source_url,
     category: category(i.category), title: text(i.title), entity: text(i.entity), what_it_tells_us: text(i.what_it_tells_us), filer_or_source_agency: text(i.filer_or_source_agency),
     key_figures: i.key_figures && typeof i.key_figures === 'object' ? cleanVal('', i.key_figures) : (typeof i.key_figures === 'string' ? text(i.key_figures) : i.key_figures),
   }));
@@ -213,13 +289,14 @@ export const humanize = root => Frame.humanize(root);
 export const VIEW_TITLES = {
   'home/overview': 'portfolio overview', 'home/firm': 'BSP profile',
   'bsp/deals': 'deal ledger', 'bsp/patterns': 'deal patterns', 'bsp/rubric': 'acquisition rubric', 'bsp/network': 'deal network',
-  'cet/overview': 'operating picture', 'cet/opportunities': 'opportunity radar', 'cet/wastewater': 'wastewater accounts', 'cet/territory': 'territory fit', 'cet/transfers': 'property transfers', 'cet/targets': 'add-on targets', 'cet/filings': 'filings and financials',
-  'pp/overview': 'operating picture', 'pp/weather': 'weather and demand', 'pp/movers': 'new-mover marketing', 'pp/territory': 'territory and expansion', 'pp/market': 'market and competitors', 'pp/targets': 'add-on targets', 'pp/filings': 'filings and financials',
-  'fl/overview': 'operating picture', 'fl/amlaw': 'AM Law account map', 'fl/midsize': 'mid-size firm targets', 'fl/targets': 'add-on targets', 'fl/filings': 'filings and financials',
-  'ts/overview': 'operating picture', 'ts/accounts': 'accounts', 'ts/sites': 'site explorer', 'ts/targets': 'add-on targets', 'ts/filings': 'filings and financials',
-  'bpi/overview': 'operating picture', 'bpi/opportunities': 'growth opportunities', 'bpi/benchmarks': 'public-affairs comparables', 'bpi/filings': 'filings and financials',
-  'fh/overview': 'operating picture', 'fh/opportunities': 'growth opportunities', 'fh/benchmarks': 'public comparables', 'fh/filings': 'filings and financials', 'fh/market': 'Manhattan home sales',
+  'cet/overview': 'operating picture', 'cet/opportunities': 'opportunity radar', 'cet/wastewater': 'wastewater accounts', 'cet/territory': 'territory fit', 'cet/transfers': 'property transfers', 'cet/targets': 'add-on targets', 'cet/filings': 'public filings',
+  'pp/overview': 'operating picture', 'pp/weather': 'weather and demand', 'pp/movers': 'new-mover marketing', 'pp/territory': 'territory and expansion', 'pp/market': 'market and competitors', 'pp/targets': 'add-on targets', 'pp/filings': 'public filings',
+  'fl/overview': 'operating picture', 'fl/amlaw': 'AM Law account map', 'fl/midsize': 'mid-size firm targets', 'fl/targets': 'add-on targets', 'fl/filings': 'public filings',
+  'ts/overview': 'operating picture', 'ts/accounts': 'accounts', 'ts/sites': 'site explorer', 'ts/targets': 'add-on targets', 'ts/filings': 'public filings',
+  'bpi/overview': 'operating picture', 'bpi/opportunities': 'growth opportunities', 'bpi/benchmarks': 'public-affairs comparables', 'bpi/filings': 'public filings',
+  'fh/overview': 'operating picture', 'fh/opportunities': 'growth opportunities', 'fh/benchmarks': 'public comparables', 'fh/filings': 'public filings', 'fh/market': 'Manhattan home sales',
   'ma/overview': 'cross-portfolio overview', 'ma/pipeline': 'add-on pipeline', 'ma/theses': 'company theses', 'ma/rivals': 'rival companies', 'ma/valuation': 'valuation benchmarks', 'ma/whitespace': 'white space',
+  'deal/returns': 'buyout returns', 'deal/dcf': 'discounted cash flow', 'deal/rollup': 'buy-and-build roll-up', 'deal/sensitivity': 'sensitivity tables',
   'cases/timeline': 'case timelines', 'cases/levers': 'value-creation levers', 'cases/sequence': 'the Punctual Pros sequence', 'cases/exits': 'entry to exit',
   'pe/landscape': 'sponsor landscape', 'pe/deals': 'deal flow, 2025 to 2026', 'pe/heatmap': 'sector heatmap', 'pe/comparables': 'portfolio company comparables',
   'national/scorer': 'county scorer', 'national/phases': 'Punctual Pros phases on the national map', 'national/markets': 'metro markets', 'national/method': 'method, sources and coverage',

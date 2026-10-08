@@ -1,8 +1,8 @@
 /* 24/7 Voice AI — the growth engine. Renders the voice AI research dataset into the page.
    No framework, no build step. Markup uses the shared sys- components (assets/system.css, UNIFIED.md);
    every dollar figure is an estimate and carries the est. badge; dataset text passes through plain(). */
-import { Data } from '../assets/core.js?v=20261008134553';
-import { humanizeText } from '../assets/frame.js?v=20261008134553';
+import { Data } from '../assets/core.js?v=20261008145402';
+import { humanizeText } from '../assets/frame.js?v=20261008145402';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -30,6 +30,13 @@ const FIXES = [
   [/^\s*[:;,]\s*/, ''],
   [/\bdisclosure given\b/g, 'virtual-assistant greeting given'],
   [/\bPP's\b/g, "Punctual Pros'"],
+  [/\bJSON-schema functions\b/g, 'structured functions'],
+  [/\bnot fetchable\b/g, 'not readable'],
+  [/\bfetched\b/g, 'read'],
+  [/\bdatasets?\b/g, 'data'],
+  [/\bdeployments\b/g, 'live agents'],
+  [/\bpre-deployment\b/g, 'pre-launch'],
+  [/\bdeployment\b/g, 'rollout'],
   [/\bPP\b/g, 'Punctual Pros'],
 ];
 const plain = s => {
@@ -47,7 +54,7 @@ const UC_SRC = {
   'uc-cet-storm-pm': ['https://www.weather.gov/documentation/services-web-api', 'National Weather Service alerts API'],
   'uc-bpi-pressline': null,
 };
-const RETRIEVAL = { fetched: 'page read Oct 2026', search_snippet: 'search result, Oct 2026', repo_dataset: 'portfolio dataset' };
+const RETRIEVAL = { fetched: 'page read Oct 2026', search_snippet: 'search result, Oct 2026', repo_dataset: 'portfolio data' };
 const cap = s => String(s || '').replace(/^\w/, c => c.toUpperCase());
 
 /* Portfolio order (UNIFIED §6); colour comes from data-co, never from here. */
@@ -367,7 +374,7 @@ function useCases(items) {
     $$('#uc-filters .sys-chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c === cur)));
     $('#uc-sum').innerHTML = `${list.length} lines · <b class="sys-num">${money(list.reduce((a, u) => a + (u.est_annual_value_usd || 0), 0))}</b> a year${EST}`;
     $('#uc-grid').innerHTML = list.map(u => `<article class="sys-card vai-uc" data-co="${esc(u.company)}">
-      <div class="vai-uc-top"><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>${esc(CO[u.company].name)}</span><span class="vai-tag vai-tag--${u.direction === 'inbound' ? 'in' : 'out'}">${esc(cap(u.direction))}</span><span class="vai-tag">${u.weeks_to_deploy} weeks to deploy</span></div>
+      <div class="vai-uc-top"><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>${esc(CO[u.company].name)}</span><span class="vai-tag vai-tag--${u.direction === 'inbound' ? 'in' : 'out'}">${esc(cap(u.direction))}</span><span class="vai-tag">${u.weeks_to_deploy} weeks to go live</span></div>
       <h3 class="sys-card-title">${esc(plain(u.name))}</h3>
       <dl class="vai-dl"><div><dt>Trigger</dt><dd>${esc(plain(u.trigger))}</dd></div><div><dt>Human handoff</dt><dd>${esc(plain(u.handoff_rule))}</dd></div>
       <div><dt>KPIs</dt><dd class="vai-kpi-chips">${(u.kpis || []).map(k => `<span>${esc(plain(k))}</span>`).join('')}</dd></div></dl>

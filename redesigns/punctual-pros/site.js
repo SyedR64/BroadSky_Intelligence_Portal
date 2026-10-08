@@ -266,7 +266,7 @@ function rebates(Data, esc) {
     items = (d?.items || []).filter(i => i.kind === 'incentive');
     const rank = i => /expired|ended|closed|lapsed/i.test(i.status || '') ? 3 : /not launched|pending|paused|waitlist/i.test(i.status || '') ? 2 : /active|open/i.test(i.status || '') ? 0 : 1;
     items.sort((a, b) => (rank(a) - rank(b)) || ((b.amount_max || 0) - (a.amount_max || 0)));
-    if (!items.length) { el.innerHTML = '<p class="sys-muted">Rebate dataset not yet available.</p>'; return; }
+    if (!items.length) { el.innerHTML = '<p class="sys-muted">Rebate data is not available right now.</p>'; return; }
     render();
   });
 }
@@ -383,7 +383,7 @@ function rationale(Data, esc) {
   Promise.all([Data.research('design_refs'), Data.research('serviceos_evidence')]).then(([d, ev]) => {
     const refs = (d?.items || []).filter(i => (Array.isArray(i.applies_to) ? i.applies_to : [i.applies_to]).includes('pp'));
     grid.innerHTML = refs.length ? refs.map(r => `<article class="sys-card ref"><span class="sys-card-label">Principle</span><h3 class="sys-card-title">${esc(PRINCIPLE[r.id] || plain(unbrand(r, r.elements_to_borrow?.[0]?.element)))}</h3><div class="borrow">${(r.elements_to_borrow || []).slice(0, 2).map(e => `<div><b>${esc(plain(unbrand(r, e.element)))}</b></div>`).join('')}</div><span class="sys-card-foot"><a href="${WHERE[r.id] || '#top'}">Moves: ${esc(KPI_MAP[r.id] || 'Booked-call rate')}</a></span></article>`).join('')
-      : '<p class="sys-muted">Design reference dataset not yet available.</p>';
+      : '<p class="sys-muted">Design references are not available right now.</p>';
     const kb = id => (ev?.items || []).find(i => i.id === id);
     const rows = [
       ['Inbound call booking rate (HVAC)', kb('kb-pp-1'), v => `${v.baseline}%`, v => `${v.target}%`, 'Sticky phone + Book now, 30-second booking card, after-hours AI dispatcher'],

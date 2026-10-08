@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="../../assets/system.css?v=20261008134553">
-<link rel="stylesheet" href="./nationwide.css?v=20261008134553">
+<link rel="stylesheet" href="../../assets/system.css?v=20261008145402">
+<link rel="stylesheet" href="./nationwide.css?v=20261008145402">
 </head>
 <body data-co="pp">
 
@@ -36,6 +36,7 @@
         <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Growth plan</b> · October 2026</p>
         <h1 class="sys-h1" id="hero-h">From Lancaster to <span class="sys-grad-text">national.</span></h1>
         <p class="sys-lead" id="hero-lede">BSP took Smith + Howard from one office to 11 locations and ~4x revenue in 3.7 years. Punctual Pros can do the same, from Central PA across the Mid-Atlantic.</p>
+<p class="sys-src page-terms"><b>Terms:</b> TEV: total enterprise value. FDD: franchise disclosure document. LSA: Google Local Services Ads. CSR: customer service rep. AP/AR: bills paid and bills collected. SOFR: the benchmark rate loans are priced over.</p>
         <div class="sys-actions">
           <a class="sys-btn sys-btn--primary sys-btn--lg" href="#returns">See the returns</a>
           <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#template">Read the template</a>
@@ -45,7 +46,7 @@
       </div>
       <aside class="sys-card sys-card--feature" id="ask" aria-labelledby="ask-h">
         <span class="sys-card-label">Ask the plan</span>
-        <h2 class="sys-card-title" id="ask-h">Questions, answered from the cited datasets</h2>
+        <h2 class="sys-card-title" id="ask-h">Questions, answered from the cited sources</h2>
         <p class="sys-card-body">Start typing. Autocomplete suggests questions; <kbd>Tab</kbd> completes, <kbd>Enter</kbd> asks.</p>
         <div id="hero-chat"></div>
       </aside>
@@ -115,11 +116,11 @@
     <div class="sys-section-head">
       <p class="sys-kicker">04 · The AI layer</p>
       <h2 class="sys-h2" id="ag-h">AI agents for the office, the truck and the customer.</h2>
-      <p class="sys-lead">Eleven agents from named vendors, each with a published benchmark and weeks to deploy. Fastest payback goes live first.</p>
+      <p class="sys-lead">Eleven agents from named vendors, each with a published benchmark and weeks to go live. Fastest payback goes live first.</p>
     </div>
     <div class="sys-chips seg" role="group" aria-label="Filter agents by who they help" id="ag-seg"></div>
     <div class="ag-grid">
-      <div class="sys-card runway" id="runway" aria-label="Deployment runway in weeks"></div>
+      <div class="sys-card runway" id="runway" aria-label="Weeks to go live, by agent"></div>
       <div class="agents" id="agent-grid"></div>
     </div>
     <p class="sys-src"><b>Source:</b> vendor case studies and published benchmarks collected in the Punctual Pros nationwide plan, Oct 2026. Results are vendor-reported; treat them as upper bounds.</p>
@@ -250,10 +251,10 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261008134553';
-  import { Data, Fmt, esc } from '../../assets/core.js?v=20261008134553';
-  import { Chat } from '../../assets/chat.js?v=20261008134553';
-  import { boot } from './nationwide.js?v=20261008134553';
+  import { Frame } from '../../assets/frame.js?v=20261008145402';
+  import { Data, Fmt, esc } from '../../assets/core.js?v=20261008145402';
+  import { Chat } from '../../assets/chat.js?v=20261008145402';
+  import { boot } from './nationwide.js?v=20261008145402';
   const frame = Frame.mount({});
   boot({ Data, Fmt, esc, Chat, onChat: inst => frame.setChat(inst) });
 </script>

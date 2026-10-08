@@ -2,7 +2,7 @@
    (CET growth plan, opportunity radar, wastewater-plant screen, add-on screen, filings review,
    county fit model, sponsor landscape, firm profile, GridOS evidence base, portfolio agent model).
    The page frame (top bar, concept notice, breadcrumb, footer) comes from assets/frame.js. */
-import { humanizeText } from '../../assets/frame.js?v=20261008134553';
+import { humanizeText } from '../../assets/frame.js?v=20261008145402';
 
 const NE = ['MA', 'CT', 'RI', 'NH', 'ME', 'VT'];
 const STATE_NAME = { MA: 'Massachusetts', CT: 'Connecticut', RI: 'Rhode Island', NH: 'New Hampshire', ME: 'Maine', VT: 'Vermont' };
@@ -327,7 +327,7 @@ function agents() {
   $('#agent-grid').innerHTML = ag.map(a => `<article class="sys-card pb-agent" data-id="${a.id}"><span class="sys-card-label">${H.esc(a.who_it_helps)}</span><h3 class="sys-card-title">${H.esc(a.agent)}</h3><p class="sys-card-body">${H.esc(a.job_to_be_done)}</p>
     ${a.metric_value == null ? '<div class="pb-metric"><span class="sys-chip">Qualitative vendor claim</span></div>' : `<div class="pb-metric"><b class="sys-num">${fmtM(a)}</b><span>${H.esc(String(a.metric_unit || '').replace(/^% /, '').replace(/^USD /, '').replace(/^GBP /, '').replace(/^percentage points /, ''))}</span></div>`}
     <p class="pb-claim">${H.esc(a.metric_claim)}</p>
-    <div class="sys-chips pb-meta"><span class="sys-chip sys-chip--soft">${a.weeks_to_deploy ?? '—'} weeks to deploy</span>${(a.vendor_examples || []).slice(0, 2).map(v => `<span class="sys-chip">${H.esc(v)}</span>`).join('')}</div>
+    <div class="sys-chips pb-meta"><span class="sys-chip sys-chip--soft">${a.weeks_to_deploy ?? '—'} weeks to go live</span>${(a.vendor_examples || []).slice(0, 2).map(v => `<span class="sys-chip">${H.esc(v)}</span>`).join('')}</div>
     <p class="sys-src">${H.esc(a.cost_model || '')} · ${srcA(a.source_url)}</p></article>`).join('');
   const sorted = ag.slice().sort((a, b) => (a.weeks_to_deploy || 99) - (b.weeks_to_deploy || 99));
   const maxW = Math.max(...ag.map(a => a.weeks_to_deploy || 0), 10);

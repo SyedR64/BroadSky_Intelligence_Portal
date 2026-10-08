@@ -3,20 +3,23 @@
    • Deterministic intents answer from the portal's own datasets (no backend, no key).
    • Retrieval fallback searches an index built from research metadata.
    • Hosted backend (assets/backend.js, discovered on first use): precomputed Claude deep
-     dives, hosted Claude for open questions, "Synthesize with Claude" on grounded answers,
+     dives, hosted Claude for open questions, "Expand with Claude" on grounded answers,
      feedback and saved threads. Everything degrades to the grounded engine when it is off.
-   • Fallback only when no backend is live: bring-your-own Anthropic key (stored only in
-     this browser) upgrades free-form questions to Claude with the same retrieved context.
+   • Visitors see plain labels ("From the portfolio data", "Claude", "Prepared answer") and an
+     "About this assistant" note. The key/model dialog (bring-your-own Anthropic key, stored
+     only in this browser) opens only with ?dev=1, or from About when no hosted backend is live.
    Usage:  import { Chat } from '/assets/chat.js';
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261008134553';
+import { Data, Fmt, Live, esc } from './core.js?v=20261008145402';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
 const MODEL_DEFAULT = 'claude-opus-5-5';
 const KEY_LS = 'bsp-anthropic-key', MODEL_LS = 'bsp-anthropic-model', MODE_LS = 'bsp-chat-llm';
+/** Owner tools (key/model dialog, slash-command menu, key hints) appear only with ?dev=1 in the page URL. */
+const DEV = (() => { try { return new URLSearchParams(location.search).get('dev') === '1'; } catch { return false; } })();
 const $ = (s, r = document) => r.querySelector(s);
 const link = (href, label) => `<a class="ch-link" href="${esc(href)}">${esc(label)} →</a>`;
 const app = (hash, label) => link(APP + hash, label);
@@ -45,7 +48,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261008134553';
+const BACKEND_JS = './backend.js?v=20261008145402';
 let BE = null, BE_P = null;
 function backend() {
   if (!BE_P) BE_P = import(BACKEND_JS).then(async m => {
@@ -80,7 +83,7 @@ function terms(v) {
 async function expansionPlan() {
   const [zips, ma, mkt, pe, fil, nw, ev] = await Promise.all([Data.load('pp_zips'), Data.research('ma_targets_pp'), Data.research('pp_market'), Data.research('pe_landscape'), Data.research('pp_filings'), Data.research('pp_nationwide'), Data.research('serviceos_evidence')]);
   const core = zips.filter(z => z.service_territory_flag === 1), adj = zips.filter(z => z.adjacent_to_service_territory === 1 && z.service_territory_flag !== 1);
-  progress(`Computing from ${core.length} core zips`);
+  progress(`Working from ${core.length} core ZIP codes`);
   const hh = core.reduce((a, z) => a + (z.housing_units || 0), 0);
   const t1adj = adj.filter(z => /^Tier (1|I)$/.test(String(z.practical_priority_tier || '')) || /Go now/i.test(String(z.practical_priority_label || '')));
   const byState = {}; for (const z of t1adj) byState[z.state] = (byState[z.state] || 0) + 1;
@@ -94,7 +97,7 @@ async function expansionPlan() {
   const road = nw?.meta?.kpi_roadmap || []; const assume = (ev?.items || []).find(i => i.kind === 'roadmap_assumption' && (i.company === 'pp' || /punctual/i.test(i.company || '')));
   const sh = tmpl.length ? `<h4>Template: Smith + Howard</h4><p>${esc(sentences(nw?.meta?.narrative, 2))}.</p>${tbl(['When', 'Move', 'Where'], tmpl.slice(0, 8).map(t => [esc(when(t.date)), `<b>${esc(t.event)}</b>${t.metric ? ` <span class="ch-badge">${esc(t.metric)}</span>` : ''}`, esc(t.location || '')]))}<p>Same motion for Punctual Pros: densify, tuck in, regional hub, national — with ServiceOS as the integration spine instead of an accounting practice-management stack.</p>` : `<h4>Template: Smith + Howard</h4><p>One Atlanta office and ~100 professionals at entry; nine add-ons later it was 11 locations across the Southeast plus India, ~800 people and roughly 4× revenue, sold to TPG Growth in August 2026. Punctual Pros runs the same motion in home services.</p>`;
   const ph = phases.length ? phases.map((p, i) => `<h4>Phase ${i + 1}${phaseMonths(p) ? ` <span class="ch-badge">${esc(phaseMonths(p))}</span>` : ''}</h4><p><b>${esc(phaseName(p))}.</b> ${esc(p.thesis || '')}${p.geography?.length ? ` <span style="color:var(--ch-mute)">(${esc((Array.isArray(p.geography) ? p.geography : [p.geography]).slice(0, 6).join(', '))})</span>` : ''}</p>${p.kpi_targets ? `<p class="ch-num">Targets: ${['revenue_usd', 'ebitda_usd', 'technicians', 'territories', 'members'].filter(k => p.kpi_targets[k] != null).map(k => `${({ revenue_usd: 'Revenue', ebitda_usd: 'EBITDA', technicians: 'Technicians', territories: 'Territories', members: 'Members' })[k]} ${/usd/.test(k) ? Fmt.money(p.kpi_targets[k]) : Fmt.num(p.kpi_targets[k])}`).join(' · ')} <span class="ch-badge ch-est">est.</span></p>` : ''}`).join('') :
-    `<h4>Phase 1 · Densify (0–12 mo)</h4><p>${n(t1adj.length)} Tier-1 adjacent zips sit just outside the footprint${Object.keys(byState).length ? ` (${Object.entries(byState).map(([s, c]) => `${s} ${c}`).join(', ')})` : ''}: win them with the new-mover engine and weather-driven capacity, not new branches.</p><h4>Phase 2 · Mid-Atlantic tuck-ins (6–24 mo)</h4><p>${n(tgt.length)} screened add-ons${Object.keys(tgtByState).length ? ` (${Object.entries(tgtByState).sort((a, b) => b[1] - a[1]).map(([s, c]) => `${s} ${c}`).join(', ')})` : ''}; top: ${tgt.slice(0, 3).map(t => `<b>${esc(t.company)}</b> (${esc(t.state || '')}, fit ${t.fit_score})`).join('; ')}.</p><h4>Phase 3 · Mid-Atlantic hub (18–36 mo)</h4><p>Consolidate franchisees along I-81/I-95 (Baltimore–DC, Richmond, Philadelphia suburbs, Pittsburgh). ${rivals.length ? `${n(rivals.length)} sponsors already compete here, so speed and operator credibility beat price.` : ''}</p><h4>Phase 4 · National (36+ mo)</h4><p>Preferred consolidator inside the Authority Brands network (1,000+ owners, 15 brands); ServiceOS is the spine every acquired shop plugs into.</p>`;
+    `<h4>Phase 1 · Densify (0–12 mo)</h4><p>${n(t1adj.length)} Tier-1 adjacent ZIP codes sit just outside the footprint${Object.keys(byState).length ? ` (${Object.entries(byState).map(([s, c]) => `${s} ${c}`).join(', ')})` : ''}: win them with the new-mover engine and weather-driven capacity, not new branches.</p><h4>Phase 2 · Mid-Atlantic tuck-ins (6–24 mo)</h4><p>${n(tgt.length)} screened add-ons${Object.keys(tgtByState).length ? ` (${Object.entries(tgtByState).sort((a, b) => b[1] - a[1]).map(([s, c]) => `${s} ${c}`).join(', ')})` : ''}; top: ${tgt.slice(0, 3).map(t => `<b>${esc(t.company)}</b> (${esc(t.state || '')}, fit ${t.fit_score})`).join('; ')}.</p><h4>Phase 3 · Mid-Atlantic hub (18–36 mo)</h4><p>Consolidate franchisees along I-81/I-95 (Baltimore–DC, Richmond, Philadelphia suburbs, Pittsburgh). ${rivals.length ? `${n(rivals.length)} sponsors already compete here, so speed and operator credibility beat price.` : ''}</p><h4>Phase 4 · National (36+ mo)</h4><p>Preferred consolidator inside the Authority Brands network (1,000+ owners, 15 brands); ServiceOS is the spine every acquired shop plugs into.</p>`;
   const lv = (levers.length ? levers : [{ lever: 'Website & online booking', baseline: null, target: null, evidence: 'Conversion-first site, instant booking, reviews' }, { lever: 'Comfort Club memberships', evidence: 'Recurring revenue, higher retention, cheaper demand in shoulder seasons' }, { lever: 'New-mover marketing', evidence: 'Deed feed → scored mailing within 30 days of closing' }, { lever: 'Storm & weather plan', evidence: 'Pre-positioned crews and inventory ahead of NWS alerts' }, { lever: 'IAQ, water-treatment & generator attach', evidence: 'Higher ticket on every visit' }, { lever: 'Consumer financing attach', evidence: 'Replacement close-rate lift' }, { lever: 'Dynamic price-book', evidence: 'Margin discipline across trades' }, { lever: 'Tuck-in machine on ServiceOS', evidence: '100-day integration plan' }]).slice(0, 8);
   const levHtml = `<h4>Eight operating levers</h4>${tbl(['Lever', 'Baseline → target', 'Evidence'], lv.map(l => [`<b>${esc(l.lever)}</b>`, l.baseline != null || l.target != null ? `<span class="ch-num">${esc(bt(l.baseline))} → ${esc(bt(l.target))}${l.unit ? ' ' + esc(l.unit) : ''}</span>` : '—', `<span style="color:var(--ch-fg2)">${esc(clip(l.evidence || '', 110))}</span>`]))}`;
   const agHtml = agents.length ? `<h4>AI agents for office and field</h4>${tbl(['Agent', 'Helps', 'What it does', 'Metric'], agents.slice(0, 8).map(a => [`<b>${esc(a.agent)}</b><br><span style="color:var(--ch-mute)">${esc((a.vendor_examples || []).slice(0, 2).join(', '))}</span>`, esc(a.who_it_helps || ''), esc(clip(a.job_to_be_done || '', 90)), esc(clip(a.metric_claim || '', 90))]))}` : `<h4>AI agents for office and field</h4><ul><li><b>24/7 AI dispatcher</b> — answers and books every call, recovers missed calls by text</li><li><b>Technician copilot</b> — voice diagnostics, parts lookup, option-sheet guidance on site</li><li><b>Estimator & proposal agent</b> — good/better/best in minutes</li><li><b>Route & schedule optimizer</b> — fed by the weather pressure index</li><li><b>Membership renewal, reviews, AP/AR and permit agents</b> — back-office cost out</li></ul>`;
@@ -102,7 +105,7 @@ async function expansionPlan() {
   const finHtml = fin.length ? `<h4>Financing</h4><ul>${fin.slice(0, 4).map(f => `<li><b>${esc(f.source_of_funds)}</b> — ${esc(f.amount_or_range || '')}${f.evidence ? `: ${esc(clip(f.evidence, 110))}` : ''}</li>`).join('')}</ul>` : '';
   const roadHtml = road.length ? `<h4>36-month roadmap <span class="ch-badge">analyst assumptions</span></h4>${tbl(['Month', 'Revenue', 'EBITDA', 'Techs', 'Territories', 'Members'], road.map(r => [r.month, r.revenue_usd ? money(r.revenue_usd) : '—', r.ebitda_usd ? money(r.ebitda_usd) : '—', r.technicians ?? '—', r.territories ?? '—', r.members ?? '—']))}${assume ? `<p>Multiple expansion case: ${esc(String(assume.multiple_expansion_range || assume.multiple_expansion || '').toString())} ${esc(clip(assume.rationale || '', 160))}</p>` : ''}` : '';
   return {
-    html: `<h4>How BSP takes Punctual Pros nationwide</h4><p><b>Where it stands.</b> ${n(core.length)} core zips in ${TERRITORY_PA.length} Central-PA counties (${n(hh)} housing units) plus Ocean &amp; Monmouth NJ via Horvath. Public filings imply FY2025 revenue of ${esc(rev?.estimate || '~$22M')}${ebitda ? ` and adjusted EBITDA of ${esc(ebitda.estimate)}` : ''} (analyst estimates), with an undrawn delayed-draw line already earmarked for acquisitions.</p>${sh}${ph}${levHtml}${agHtml}${prHtml}${finHtml}${roadHtml}<h4>Exit thesis</h4><p>A multi-state, membership-heavy, AI-run home-services company on one operating system is what a strategic or the next sponsor pays a tech-enabled multiple for — the same arc that took Smith + Howard from a regional firm to a TPG exit.</p><div class="ch-src">Sources: ${cite('pp_nationwide')} (press, franchise disclosures, BLS and ACCA, vendor data), ${cite('pp_zips')}, ${cite('ma_targets_pp')}, ${cite('pe_landscape')}, ${cite('pp_filings')} and ${cite('serviceos_evidence')}. Figures labelled est. are analyst assumptions.</div>`,
+    html: `<h4>How BSP takes Punctual Pros nationwide</h4><p><b>Where it stands.</b> ${n(core.length)} core ZIP codes in ${TERRITORY_PA.length} Central-PA counties (${n(hh)} housing units) plus Ocean &amp; Monmouth NJ via Horvath. Public filings imply FY2025 revenue of ${esc(rev?.estimate || '~$22M')}${ebitda ? ` and adjusted EBITDA of ${esc(ebitda.estimate)}` : ''} (analyst estimates), with an undrawn delayed-draw line already earmarked for acquisitions.</p>${sh}${ph}${levHtml}${agHtml}${prHtml}${finHtml}${roadHtml}<h4>Exit thesis</h4><p>A multi-state, membership-heavy, AI-run home-services company on one operating system is what a strategic or the next sponsor pays a tech-enabled multiple for — the same arc that took Smith + Howard from a regional firm to a TPG exit.</p><div class="ch-src">Sources: ${cite('pp_nationwide')} (press, franchise disclosures, BLS and ACCA, vendor data), ${cite('pp_zips')}, ${cite('ma_targets_pp')}, ${cite('pe_landscape')}, ${cite('pp_filings')} and ${cite('serviceos_evidence')}. Figures labelled est. are analyst assumptions.</div>`,
     links: [link(ROOT + 'redesigns/punctual-pros/nationwide.html', 'Open the Nationwide plan'), link(ROOT + 'redesigns/punctual-pros/serviceos.html', 'ServiceOS'), app('#/pp/territory', 'Territory & expansion'), app('#/ma/pipeline?platform=pp', 'Add-on pipeline'), app('#/pe/landscape', 'Private equity'), app('#/pp/filings', 'Filings & estimates')],
     followups: ['Which AI agents pay back fastest?', 'Which counties come first?', 'How does Smith + Howard compare?', 'What does ServiceOS do for valuation?'],
   };
@@ -218,14 +221,14 @@ function navigate(q) { const hit = NAV.find(([rx]) => rx.test(q)); if (!hit) ret
 async function nationwideSub(q) {
   const nw = await Data.research('pp_nationwide'); if (!nw) return expansionPlan();
   const items = nw.items || [];
-  if (/agent|ai\b|automation|efficien/i.test(q)) { const a = items.filter(i => i.kind === 'ai_agent').sort((x, y) => (x.weeks_to_deploy || 99) - (y.weeks_to_deploy || 99)); progress(`Ranking ${a.length} agents by time to deploy`); return { html: `<h4>AI agents by payback</h4>${tbl(['Agent', 'Helps', 'Deploy', 'Evidence'], a.slice(0, 10).map(x => [`<b>${esc(x.agent)}</b><br><span style="color:var(--ch-mute)">${esc((x.vendor_examples || []).slice(0, 2).join(', '))}</span>`, esc(x.who_it_helps || ''), x.weeks_to_deploy ? `${x.weeks_to_deploy} wks` : '—', esc(clip(x.metric_claim || '', 120))]))}<div class="ch-src">${esc(String((nw.meta?.caveats || []).find(c => /vendor|case stud/i.test(c)) || ''))}</div>`, links: [link(ROOT + 'redesigns/punctual-pros/nationwide.html#agents', 'AI agents in the nationwide plan'), link(ROOT + 'redesigns/punctual-pros/serviceos.html', 'ServiceOS')], followups: ['Which programs help the technicians?', 'Show me how to take Punctual Pros nationwide'] }; }
+  if (/agent|ai\b|automation|efficien/i.test(q)) { const a = items.filter(i => i.kind === 'ai_agent').sort((x, y) => (x.weeks_to_deploy || 99) - (y.weeks_to_deploy || 99)); progress(`Ranking ${a.length} agents by time to deploy`); return { html: `<h4>AI agents by payback</h4>${tbl(['Agent', 'Helps', 'Time to launch', 'Evidence'], a.slice(0, 10).map(x => [`<b>${esc(x.agent)}</b><br><span style="color:var(--ch-mute)">${esc((x.vendor_examples || []).slice(0, 2).join(', '))}</span>`, esc(x.who_it_helps || ''), x.weeks_to_deploy ? `${x.weeks_to_deploy} wks` : '—', esc(clip(x.metric_claim || '', 120))]))}<div class="ch-src">${esc(String((nw.meta?.caveats || []).find(c => /vendor|case stud/i.test(c)) || ''))}</div>`, links: [link(ROOT + 'redesigns/punctual-pros/nationwide.html#agents', 'AI agents in the nationwide plan'), link(ROOT + 'redesigns/punctual-pros/serviceos.html', 'ServiceOS')], followups: ['Which programs help the technicians?', 'Show me how to take Punctual Pros nationwide'] }; }
   if (/pro(s|gram)|technician|tech(s)?\b|contractor|hvac people|trade/i.test(q)) { const p = items.filter(i => i.kind === 'pro_program'); return { html: `<h4>Programs for the pros</h4><ul>${p.map(x => `<li><b>${esc(x.program)}</b> (${esc(x.who_it_helps || '')}) — ${esc(clip(x.evidence || '', 160))}</li>`).join('')}</ul>`, links: [link(ROOT + 'redesigns/punctual-pros/nationwide.html#pros', 'Helping the pros')], followups: ['Which AI agents pay back fastest?', 'Which counties come first?'] }; }
   if (/smith|howard|template|compare|analog/i.test(q)) { const t = items.filter(i => i.kind === 'template').sort((x, y) => String(x.date).localeCompare(String(y.date))); return { html: `<h4>Smith + Howard vs Punctual Pros</h4>${tbl(['When', 'Smith + Howard move', 'Where'], t.slice(0, 12).map(x => [`<span style="white-space:nowrap">${esc(when(x.date))}</span>`, `<b>${esc(x.event)}</b>${x.metric ? ` <span class="ch-badge">${esc(x.metric)}</span>` : ''}`, esc(x.location || '')]))}<p>${esc(String(nw.meta?.narrative || '').split('. ').slice(2, 5).join('. '))}.</p>`, links: [link(ROOT + 'redesigns/punctual-pros/nationwide.html#template', 'The template'), app('#/home/firm', 'BSP profile')], followups: ['Show me how to take Punctual Pros nationwide'] }; }
   if (/count(y|ies)|first|where|phase/i.test(q)) { const ph = items.filter(i => i.kind === 'expansion_phase'); return { html: `<h4>Where first — the four phases</h4>${ph.map((p, i) => `<p><b>Phase ${i + 1} · ${esc(phaseName(p))}</b>${phaseMonths(p) ? ` <span class="ch-badge">${esc(phaseMonths(p))}</span>` : ''}<br>${esc(clip(p.thesis || '', 220))}<br><span style="color:var(--ch-mute)">${esc((Array.isArray(p.geography) ? p.geography : [p.geography || '']).join(', '))}</span></p>`).join('')}`, links: [link(ROOT + 'redesigns/punctual-pros/nationwide.html#map', 'Phased map'), app('#/pp/territory', 'Territory & expansion')], followups: ['Which AI agents pay back fastest?'] }; }
   return expansionPlan();
 }
 async function adsProgram(q) {
-  const d = await Data.research('pp_ads'); if (!d) return { html: `<h4>Growth marketing for Punctual Pros</h4><p>Cheap connected-TV flights triggered by NWS alerts, Google Local Services Ads for intent, and new-mover postcards from the deed feed. The sourced media plan, CTV platform comparison and sample creatives are being compiled.</p>`, links: [link(ROOT + 'redesigns/punctual-pros/ads.html', 'Sample ads & media plan')] };
+  const d = await Data.research('pp_ads'); if (!d) return { html: `<h4>Growth marketing for Punctual Pros</h4><p>Cheap connected-TV flights triggered by NWS alerts, Google Local Services Ads for people already searching, and postcards to new homeowners from county deed records. The sourced media plan, CTV platform comparison and sample creatives are being compiled.</p>`, links: [link(ROOT + 'redesigns/punctual-pros/ads.html', 'Sample ads & media plan')] };
   const it = d.items || []; const K = k => it.filter(i => i.kind === k);
   const plan = K('media_plan')[0]; const plat = K('ctv_platform').slice().sort((a, b) => (a.minimum_spend_usd ?? 1e9) - (b.minimum_spend_usd ?? 1e9)); const cr = K('creative');
   const ctv = cr.filter(c => /ctv/.test(c.format || ''));
@@ -255,7 +258,7 @@ async function aiAgents(q) {
   a = a.slice().sort((x, y) => (y.est_annual_value_usd || 0) - (x.est_annual_value_usd || 0));
   progress(`Ranking ${a.length} agents by annual value`);
   const tot = a.reduce((s, x) => s + (x.est_annual_value_usd || 0), 0);
-  return { html: `<h4>AI agents${co ? ` for ${esc(COS_S[co])}` : ', portfolio-wide'}</h4><p>${esc(sentences(d.meta?.program_summary, 2))}. ${n(a.length)} agents, est. annual value ${money(tot)} <span class="ch-badge">assumption</span>.</p>${tbl(['Agent', 'Layer', 'Trigger → job', 'Est. value/yr', 'Deploy'], a.slice(0, 10).map(x => [`<b>${esc(x.agent)}</b>${co ? '' : `<br><span style="color:var(--ch-mute)">${esc(COS[x.company] || x.company)}</span>`}`, esc(x.layer || ''), esc(`${x.trigger || ''} → ${clip(x.job_to_be_done, 70)}`), x.est_annual_value_usd ? money(x.est_annual_value_usd) : '—', x.weeks_to_deploy ? `${x.weeks_to_deploy} wks` : '—']))}<div class="ch-src">Vendors and metrics carry sources on the AI agents page; human-in-the-loop gates listed per agent.</div>`, links: [link(ROOT + 'redesigns/ai-agents.html', 'The agentic layer'), app('#/techos/overview', 'Tech enablement')], followups: ['Which AI agents pay back fastest?', 'What are the tech-enablement theses for every company?'] };
+  return { html: `<h4>AI agents${co ? ` for ${esc(COS_S[co])}` : ', portfolio-wide'}</h4><p>${esc(sentences(d.meta?.program_summary, 2))}. ${n(a.length)} agents, est. annual value ${money(tot)} <span class="ch-badge">assumption</span>.</p>${tbl(['Agent', 'Layer', 'Trigger → job', 'Est. value/yr', 'Time to launch'], a.slice(0, 10).map(x => [`<b>${esc(x.agent)}</b>${co ? '' : `<br><span style="color:var(--ch-mute)">${esc(COS[x.company] || x.company)}</span>`}`, esc(x.layer || ''), esc(`${x.trigger || ''} → ${clip(x.job_to_be_done, 70)}`), x.est_annual_value_usd ? money(x.est_annual_value_usd) : '—', x.weeks_to_deploy ? `${x.weeks_to_deploy} wks` : '—']))}<div class="ch-src">Vendors and metrics carry sources on the AI agents page; human-in-the-loop gates listed per agent.</div>`, links: [link(ROOT + 'redesigns/ai-agents.html', 'The agentic layer'), app('#/techos/overview', 'Tech enablement')], followups: ['Which AI agents pay back fastest?', 'What are the tech-enablement theses for every company?'] };
 }
 async function voiceAI(q) {
   const [v, nw] = await Promise.all([Data.research('voice_ai'), Data.research('pp_nationwide')]); const co = coOf(q);
@@ -263,11 +266,11 @@ async function voiceAI(q) {
   const it = v.items || []; const K = k => it.filter(i => i.kind === k); const m = v.meta?.pp_revenue_model || {};
   let uc = K('use_case'); if (co) uc = uc.filter(u => u.company === co); uc = uc.slice().sort((a, b) => (b.est_annual_value_usd || 0) - (a.est_annual_value_usd || 0));
   const met = K('metric').filter(x => !co || (x.company_applies || []).includes(co)).slice(0, 6); const ven = K('vendor').filter(x => x.type === 'answering' || x.type === 'outbound').slice(0, 5);
-  return { html: `<h4>24/7 voice AI${co ? ` for ${esc(COS_S[co])}` : ''}</h4><p>${esc((Array.isArray(v.meta?.thesis) ? v.meta.thesis.slice(0, 3).join(' ') : String(v.meta?.thesis || '').split('. ').slice(0, 3).join('. ')).replace(/\.\s*$/, ''))}.</p>${m.total_est_usd ? `<p class="ch-num">Punctual Pros: ${n(m.inbound_calls_per_month)} calls/mo · ${share(m.missed_share)} missed today → ${share(m.recovered_share_with_ai)} of those recovered × ${share(m.booking_rate)} booked × ${money(m.avg_ticket)} ticket ≈ ${money(m.recovered_revenue_annual_usd)}/yr recovered + ${money(m.outbound_renewal_uplift_usd)} outbound = <b>${money(m.total_est_usd)}/yr</b> <span class="ch-badge">assumption</span></p>` : ''}${met.length ? `<h4>What the data says</h4><ul>${met.map(x => `<li><b>${/^share$|^fraction$/i.test(x.unit || '') && Number(x.value) <= 1 ? share(x.value) : `${esc(String(x.value))}${x.unit ? ' ' + esc(x.unit) : ''}`}</b> — ${esc(x.metric)} <span style="color:var(--ch-mute)">(${esc(Fmt.host(x.source_url))})</span></li>`).join('')}</ul>` : ''}${uc.length ? `<h4>Use cases</h4>${tbl(['Use case', 'Dir.', 'Trigger → handoff', 'Est. value/yr', 'Deploy'], uc.slice(0, 8).map(u => [`<b>${esc(u.name)}</b>${co ? '' : `<br><span style="color:var(--ch-mute)">${esc(COS[u.company] || u.company)}</span>`}`, esc(u.direction || ''), esc(`${clip(u.trigger, 50)} → ${clip(u.handoff_rule, 50)}`), u.est_annual_value_usd ? money(u.est_annual_value_usd) : '—', u.weeks_to_deploy ? `${u.weeks_to_deploy} wks` : '—']))}` : ''}${ven.length ? `<h4>Vendors</h4><ul>${ven.map(x => `<li><b>${esc(x.vendor)}</b> — ${esc(clip(x.pricing_note || '', 90))}</li>`).join('')}</ul>` : ''}<div class="ch-src">Sources on the Voice AI page; guardrails: the agent says it is an AI, hands off to a person on request, and every call is QA-sampled.</div>`, links: [link(ROOT + 'redesigns/voice-ai.html', 'Open Voice AI: play a sample call'), link(ROOT + 'redesigns/ai-agents.html', 'All AI agents'), app('#/pp/weather', 'Storm-day volume')], followups: ['Play the after-hours no-heat call', 'Which AI agents pay back fastest?', 'Show me how to take Punctual Pros nationwide'] };
+  return { html: `<h4>24/7 voice AI${co ? ` for ${esc(COS_S[co])}` : ''}</h4><p>${esc((Array.isArray(v.meta?.thesis) ? v.meta.thesis.slice(0, 3).join(' ') : String(v.meta?.thesis || '').split('. ').slice(0, 3).join('. ')).replace(/\.\s*$/, ''))}.</p>${m.total_est_usd ? `<p class="ch-num">Punctual Pros: ${n(m.inbound_calls_per_month)} calls/mo · ${share(m.missed_share)} missed today → ${share(m.recovered_share_with_ai)} of those recovered × ${share(m.booking_rate)} booked × ${money(m.avg_ticket)} ticket ≈ ${money(m.recovered_revenue_annual_usd)}/yr recovered + ${money(m.outbound_renewal_uplift_usd)} outbound = <b>${money(m.total_est_usd)}/yr</b> <span class="ch-badge">assumption</span></p>` : ''}${met.length ? `<h4>What the data says</h4><ul>${met.map(x => `<li><b>${/^share$|^fraction$/i.test(x.unit || '') && Number(x.value) <= 1 ? share(x.value) : `${esc(String(x.value))}${x.unit ? ' ' + esc(x.unit) : ''}`}</b> — ${esc(x.metric)} <span style="color:var(--ch-mute)">(${esc(Fmt.host(x.source_url))})</span></li>`).join('')}</ul>` : ''}${uc.length ? `<h4>Use cases</h4>${tbl(['Use case', 'Direction', 'Trigger → handoff', 'Est. value/yr', 'Time to launch'], uc.slice(0, 8).map(u => [`<b>${esc(u.name)}</b>${co ? '' : `<br><span style="color:var(--ch-mute)">${esc(COS[u.company] || u.company)}</span>`}`, esc(u.direction || ''), esc(`${clip(u.trigger, 50)} → ${clip(u.handoff_rule, 50)}`), u.est_annual_value_usd ? money(u.est_annual_value_usd) : '—', u.weeks_to_deploy ? `${u.weeks_to_deploy} wks` : '—']))}` : ''}${ven.length ? `<h4>Vendors</h4><ul>${ven.map(x => `<li><b>${esc(x.vendor)}</b> — ${esc(clip(x.pricing_note || '', 90))}</li>`).join('')}</ul>` : ''}<div class="ch-src">Sources on the Voice AI page; guardrails: the agent says it is an AI, hands off to a person on request, and every call is QA-sampled.</div>`, links: [link(ROOT + 'redesigns/voice-ai.html', 'Open Voice AI: play a sample call'), link(ROOT + 'redesigns/ai-agents.html', 'All AI agents'), app('#/pp/weather', 'Storm-day volume')], followups: ['Play the after-hours no-heat call', 'Which AI agents pay back fastest?', 'Show me how to take Punctual Pros nationwide'] };
 }
 /* ── Value-creation cases, how BSP buys, national county scorer (tolerant of files still being produced) ── */
 const NEW_FOLLOW = { cases: 'What did sponsors do with companies like Punctual Pros?', buys: 'How does BSP actually buy companies?', national: 'Which counties nationwide should Punctual Pros expand to first?' };
-const pending = (title, what, links, followups) => ({ html: `<h4>${esc(title)}</h4><p>${esc(what)} The dataset is still being compiled, so this answer will fill in once it lands; the page below shows the work so far.</p>`, links, followups });
+const pending = (title, what, links, followups) => ({ html: `<h4>${esc(title)}</h4><p>${esc(what)} The full analysis is on the page below.</p>`, links, followups });
 const casesLinks = () => [app('#/cases/timeline', 'Sponsor precedents'), link(ROOT + 'redesigns/case-studies.html', 'Case studies page'), link(ROOT + 'redesigns/punctual-pros/nationwide.html', 'Nationwide plan')];
 async function valueCases(q = '') {
   const d = await Data.research('value_creation_cases');
@@ -406,6 +409,21 @@ async function addonHistory(q) {
   return { html: `<h4>${co ? `${esc(COS_S[co])}: add-ons so far` : 'Every add-on BSP has closed'}</h4><p>${co ? `${n(deals.length)} disclosed add-on${deals.length === 1 ? '' : 's'}.` : `${n(st.add_ons || 23)} add-ons across ${n(st.platforms || 7)} companies since the 2021 relaunch; ${n(deals.length)} are disclosed by name (${Object.entries(byCo).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${esc(k.replace(/^Commonwealth Electrical Technologies$/, 'CET'))} ${v}`).join(', ')}).`} The first add-on typically lands six to nine months after BSP buys the company.</p>${deals.length ? tbl(['Closed', 'Add-on', 'Added to', 'What it brought'], deals.slice(-12).reverse().map(x => [`<span class="ch-num" style="white-space:nowrap">${esc(when(x.date))}</span>`, `<b>${esc(x.company)}</b>`, esc(String(x.platform || '').replace(/^Commonwealth Electrical Technologies$/, 'CET')), esc(clip(x.structure_notes || x.sector || '', 110))])) : `<p>No add-on has closed yet.</p>`}<div class="ch-src">Sources: ${cite('bsp_methodology')} and ${cite('bsp_firm')}.</div>`,
     links: [app('#/bsp/deals', 'Every BSP deal'), app('#/ma/pipeline', 'Add-on pipeline')], followups: ['How does BSP actually buy companies?', 'What did the Horvath acquisition add to Punctual Pros?', 'What do NuWave and Horton add to CET?'] };
 }
+/** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
+async function dealModel(q) {
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261008145402').catch(() => null)]);
+  if (!d || !L) return null;
+  const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
+  const P = pre.find(i => i.co === co) || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
+  const v = { ...d.meta.base, ...P.inputs }, hurdle = (d.meta.hurdle?.irr_pct || 20) / 100;
+  const R = L.lbo(v), max = L.solveEntry(v, hurdle);
+  const pct = x => x == null ? 'n/m' : `${(x * 100).toFixed(1)}%`, mult = x => x == null ? 'n/m' : `${x.toFixed(1)}x`;
+  const est = P.co ? ' <span class="sys-est">est.</span>' : '';
+  const hash = `#/deal/returns?p=${encodeURIComponent(P.id)}`;
+  return { html: `<h4>What to pay for ${P.co ? esc(COS_S[P.co] || P.label) : 'a typical tuck-in'}</h4><p>${P.co ? `Using public-filing estimates for ${esc(COS_S[P.co] || P.label)}` : 'For a typical lower-middle-market deal'} ($${n(v.rev, 0)}M revenue, ${n(v.mg, 0)}% EBITDA margin${est}), buying at <b>${mult(v.em)}</b> EBITDA and selling at <b>${mult(v.xm)}</b> after ${n(v.yrs, 0)} years returns <b>${pct(R.irr)} a year</b> (${R.moic == null ? 'n/m' : R.moic.toFixed(2) + 'x'} the money).</p><p>The most a buyer can pay and still earn <b>${Math.round(hurdle * 100)}% a year</b> is about <b>${mult(max)} EBITDA</b>, all else equal.</p><p>The acquisition model lets you change any assumption, see the DCF and roll-up views, and download a live Excel file.</p>`,
+    links: [app(hash, 'Open the acquisition model'), app('#/deal/sensitivity', 'Sensitivity tables'), app('#/ma/valuation', 'Valuation benchmarks')],
+    followups: ['What are typical EBITDA multiples in the lower middle market?', 'Show the top add-on targets for Punctual Pros', 'How does Broad Sky buy companies?'] };
+}
 async function valuation(q) {
   const d = await Data.research('serviceos_evidence'); if (!d) return comps(q);
   const ms = d.meta?.multiple_premium_summary || {}; const co = coOf(q);
@@ -509,6 +527,7 @@ const PORTAL_INTENTS = [
   { id: 'profile', rx: [PROFILE_RX], run: profile },
   { id: 'addon_history', rx: [/(horvath|nuwave|horton(?!,? lee)|boldt|seven hills|message house|propper daley|agado|sherpas|quintana|day associates|arrowhead|north central)\b.*\b(add|adds|added|bring|brings|brought|acqui|deal|buy|bought|close|closed)|\b(what|why) (did|does|do) .*(horvath|nuwave|horton(?!,? lee))\b(?!.*\bcall)|(add-?ons?|acquisitions?) (has|have|did) (broad sky|bsp|they|we|\w+(?: \w+)?) (closed|done|made|completed)|how many (add-?ons|acquisitions)|add-?on (history|track record)|add-?ons? (so far|to date)/i], run: addonHistory },
   { id: 'sizes', rx: [/(largest|biggest|smallest) (portfolio )?compan(y|ies)|(largest|biggest|smallest) .*by (revenue|size|ebitda)|(rank|ranked|ranking|sort) .*(compan(y|ies)|portfolio) by (revenue|size|ebitda)|(portfolio|companies) by (revenue|size|ebitda)|which (portfolio )?company (is|has) the (most|highest|largest|biggest) (revenue|sales|ebitda)/i], run: sizes },
+  { id: 'model', rx: [/\b(irr|moic|lbo|dcf|discounted cash flow|underwrit\w*|acquisition model|returns? model|buyout model|sensitivity tables?)\b|how much (could|can|should|would) (we|bsp|broad sky|a buyer|you) pay(?! (a |our |the )?(tech|staff|employee|worker|people|install))|what (could|can|should|would) (we|bsp|broad sky|a buyer) pay|(still|and) (earn|make|get|hit) (a )?\d+ ?%/i], run: dealModel },
   { id: 'valuation', rx: [/\bmultiples?\b|trades? at\b|turns? of ebitda|ev ?\/ ?ebitda|exit multiple|worth at exit/i], run: valuation },
   { id: 'cet_counties', rx: [/\bcount(y|ies)\b.*(\bcet\b|commonwealth|new england|electrical)|(\bcet\b|commonwealth|new england).*\bcount(y|ies)\b/i], run: cetCounties },
   { id: 'transfers', rx: [/changed hands|property transfers?|(commercial|industrial) (buildings?|propert(y|ies)|real estate|sales)|buildings? (sold|that sold|changed)/i], run: cetTransfers },
@@ -547,7 +566,7 @@ const STATIC_DOCS = [
   { t: 'CET property transfers', s: 'commercial and industrial buildings that changed hands in MA CT RI, retrofit triggers, home sales by county', h: '#/cet/transfers' },
   { t: 'Punctual Pros weather & demand', s: 'service-call pressure index, live alerts, 7-day forecast, staffing implication, storm history', h: '#/pp/weather' },
   { t: 'Punctual Pros new-mover marketing', s: 'home sales lead list, lead score, campaigns, mailing list export', h: '#/pp/movers' },
-  { t: 'Punctual Pros territory & expansion', s: 'core zips, adjacent ring, priority tiers, county rollup', h: '#/pp/territory' },
+  { t: 'Punctual Pros territory & expansion', s: 'core ZIP codes, adjacent ring, priority tiers, county rollup', h: '#/pp/territory' },
   { t: 'Punctual Pros market & competitors', s: 'competitors, franchise territories, rebates and incentives, county profiles, heating fuel mix', h: '#/pp/market' },
   { t: 'Frontline AM Law 200 targets', s: 'law firms scored for managed IT, cyber urgency, AI signal, revenue cycle', h: '#/fl/amlaw' },
   { t: 'Frontline mid-size firm targets', s: 'mid-size law firms with cyber incidents, mergers, CIO hires', h: '#/fl/midsize' },
@@ -612,8 +631,8 @@ const mdBase = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^#{2,
 
 /* ── Personas ─────────────────────────────────────────────────────────────── */
 export const PERSONAS = {
-  portal: { name: 'BSP Desk', short: 'the desk', initials: 'BD', greeting: 'Ask about the six portfolio companies. Answers come from the portal\'s verified datasets.', placeholder: 'Ask anything, e.g. "Show me how to take Punctual Pros nationwide"', color: '#d9622b',
-    suggestions: ['Show me how to take Punctual Pros nationwide', 'Which wastewater plants should Horton call first?', "What do this week's storms mean for Punctual Pros?", 'Who competes with BSP for home-services deals?', 'Which CET bids are due within 30 days?', 'Which counties nationwide should Punctual Pros expand to first?', 'What did sponsors do with companies like Punctual Pros?', 'How does BSP actually buy companies?', 'Estimate Punctual Pros revenue from public filings', 'Show the top add-on targets for CET in Connecticut', 'What is ServiceOS and why does it raise valuation?', 'How many new-mover leads are in Lancaster County?', 'Compare the portfolio to public comps', 'Open the private-equity sponsor landscape', 'What are the tech-enablement theses for every company?', 'Show sample CTV ads for Punctual Pros', 'How does BSP scale CET across the Northeast?', 'What is the growth plan for Frontline?', 'Which AI agents create the most value?', 'How much does voice AI recover for Punctual Pros?'],
+  portal: { name: 'BSP Desk', short: 'the desk', initials: 'BD', greeting: 'Ask about the six portfolio companies. Every answer shows where its numbers come from.', placeholder: 'Ask anything, e.g. "Show me how to take Punctual Pros nationwide"', color: '#d9622b',
+    suggestions: ['Show me how to take Punctual Pros nationwide', 'Which wastewater plants should Horton call first?', "What do this week's storms mean for Punctual Pros?", 'Who competes with BSP for home-services deals?', 'Which CET bids are due within 30 days?', 'Which counties nationwide should Punctual Pros expand to first?', 'What did sponsors do with companies like Punctual Pros?', 'How does BSP actually buy companies?', 'Estimate Punctual Pros revenue from public filings', 'Show the top add-on targets for CET in Connecticut', "How does tech enablement raise Punctual Pros' value?", 'How many new-mover leads are in Lancaster County?', "How do the portfolio's valuations compare with public peers?", 'Which private-equity rivals are most active in our sectors?', 'Which portfolio company is largest by revenue?', 'What would a TV ad campaign for Punctual Pros look like?', 'How does BSP scale CET across the Northeast?', 'What is the growth plan for Frontline?', 'Which AI agents create the most value?', 'How much revenue do missed calls cost Punctual Pros?'],
     intents: PORTAL_INTENTS, faq: [] },
 };
 /** Customer-facing site personas are extended by each redesign (faq/suggestions/intents via mount options). */
@@ -661,6 +680,7 @@ const SRC = {
   pp_demand_model: ['Punctual Pros demand model', 'Weather-to-service-call elasticities and storm response plans', '#/pp/weather'],
   pp_storm_events: ['Punctual Pros storm history', 'NOAA storm events recorded in the territory counties', '#/pp/weather'],
   pp_ads: ['Punctual Pros ad plan', 'Media plan, connected-TV platform costs and sample creatives', RD + 'punctual-pros/ads.html'],
+  deal_model: ['Acquisition model assumptions', 'Deal benchmarks, portfolio presets and model assumptions', '#/deal/returns'],
   serviceos_evidence: ['ServiceOS evidence', 'Evidence for tech-enabled multiples and the roadmap assumptions', RD + 'punctual-pros/serviceos.html'],
   voice_ai: ['Voice AI research', 'Missed-call economics, vendors, use cases and guardrails', RD + 'voice-ai.html'],
   ai_agents_portfolio: ['Portfolio AI-agent plan', 'Agents by company with triggers, annual value and time to deploy', RD + 'ai-agents.html'],
@@ -746,7 +766,7 @@ function polishAnswer(root, sources) {
     const rows = [...t.querySelectorAll('tbody tr')]; if (rows.length) t.querySelectorAll('thead th').forEach((th, c) => { if (rows.every(r => r.children[c]?.classList.contains('n'))) th.classList.add('n'); });
   });
   const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);   // house terminology on every visible string
-  for (let t = tw.nextNode(); t; t = tw.nextNode()) { if (/playbook|platform/i.test(t.nodeValue)) t.nodeValue = terms(t.nodeValue); if (/[.…]\./.test(t.nodeValue)) t.nodeValue = t.nodeValue.replace(/(?<!\.)\.\.(?!\.)/g, '.').replace(/…\./g, '…'); if (/\b(?:19|20)\d\d-[01]\d-[0-3]\d\b/.test(t.nodeValue) && !t.parentElement?.closest('a, code')) t.nodeValue = t.nodeValue.replace(/(?<![\w/.-])((?:19|20)\d\d)-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])(?![\w/-])/g, (m, y, mo, d) => `${MON[+mo - 1]} ${+d}, ${y}`); if (/\d\/\d{1,2}\/(?:19|20)\d\d/.test(t.nodeValue)) t.nodeValue = t.nodeValue.replace(/(?<![\w/.-])(1[0-2]|0?[1-9])\/(3[01]|[12]\d|0?[1-9])\/((?:19|20)\d\d)(?![\w/-])/g, (m, mo, d, y) => `${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+mo - 1]} ${+d}, ${y}`); }
+  for (let t = tw.nextNode(); t; t = tw.nextNode()) { if (/playbook|platform/i.test(t.nodeValue)) t.nodeValue = terms(t.nodeValue); if (/\bzips\b/.test(t.nodeValue)) t.nodeValue = t.nodeValue.replace(/\bzips\b/g, 'ZIP codes'); if (/[.…]\./.test(t.nodeValue)) t.nodeValue = t.nodeValue.replace(/(?<!\.)\.\.(?!\.)/g, '.').replace(/…\./g, '…'); if (/\b(?:19|20)\d\d-[01]\d-[0-3]\d\b/.test(t.nodeValue) && !t.parentElement?.closest('a, code')) t.nodeValue = t.nodeValue.replace(/(?<![\w/.-])((?:19|20)\d\d)-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])(?![\w/-])/g, (m, y, mo, d) => `${MON[+mo - 1]} ${+d}, ${y}`); if (/\d\/\d{1,2}\/(?:19|20)\d\d/.test(t.nodeValue)) t.nodeValue = t.nodeValue.replace(/(?<![\w/.-])(1[0-2]|0?[1-9])\/(3[01]|[12]\d|0?[1-9])\/((?:19|20)\d\d)(?![\w/-])/g, (m, mo, d, y) => `${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+mo - 1]} ${+d}, ${y}`); }
   const idx = new Map(sources.map((s, i) => [s.key, i]));
   root.querySelectorAll('[data-cite]').forEach(el => { const key = srcKey(el.dataset.cite); el.removeAttribute('data-cite'); if (!SRC[key]) return; let i = idx.get(key); if (i == null) { sources.push(srcOf(key)); i = sources.length - 1; idx.set(key, i); } el.after(refEl(i, sources[i])); });
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); const nodes = [];
@@ -808,11 +828,23 @@ function resolveFollowUp(q, ctx) {
 /* ── Presentation helpers ─────────────────────────────────────────────────── */
 const MODEL_NAMES = { 'claude-opus-5-5': 'Claude Opus 5.5', 'claude-sonnet-5-5': 'Claude Sonnet 5.5', 'claude-haiku-4-5': 'Claude Haiku 4.5' };
 const modelName = id => MODEL_NAMES[id] || String(id || '').replace(/^claude-/, 'Claude ').replace(/-(\d+)-(\d+)$/, ' $1.$2').replace(/\b[a-z]/g, c => c.toUpperCase());
-const GROUNDED = () => `Grounded · ${DATASETS} datasets`;
-const hostedLabel = m => `${modelName(m || BE?.model || MODEL_DEFAULT)} · hosted`;
-const keyLabel = m => `${modelName(m || LLM.model())} · your key`;
-/** Header engine: hosted Claude when the backend is live, else your key, else the grounded engine. */
-const engineLabel = () => hosted() ? hostedLabel() : LLM.key() ? keyLabel() : GROUNDED();
+/* Engine labels are plain words for visitors; the detail (model, dataset count, date) lives in the tooltip. */
+const GROUNDED = () => 'From the portfolio data';
+const CLAUDE = 'Claude', PREPARED = 'Prepared answer';
+const hostedLabel = () => CLAUDE;
+const keyLabel = () => CLAUDE;
+const groundedTip = () => `Answered directly from ${DATASETS} portfolio datasets`;
+const claudeTip = m => `Written by ${modelName(m || BE?.model || LLM.model() || MODEL_DEFAULT)} from the portfolio data`;
+/** Label, tooltip and style for an answer's engine chip; also reads labels saved by older versions. */
+function engineInfo(e, tip) {
+  const t = String(e || '');
+  if (/^(deep dive|prepared)/i.test(t)) return { label: PREPARED, tip: tip || 'Prepared in advance by Claude from the portfolio data', llm: true };
+  if (/hosted|your key|^claude/i.test(t)) return { label: CLAUDE, tip: tip || claudeTip(), llm: true };
+  return { label: GROUNDED(), tip: tip || groundedTip(), llm: false };
+}
+/** Header engine: Claude when the hosted backend (or, in dev, your key) is live, else the portfolio data. */
+const engineLabel = () => hosted() || LLM.key() ? CLAUDE : GROUNDED();
+const engineTip = () => hosted() || LLM.key() ? `Portfolio questions are answered from the data; open questions go to ${modelName(hosted() ? BE.model || MODEL_DEFAULT : LLM.model())}` : groundedTip();
 const reduced = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const now = () => performance.now();
@@ -879,12 +911,12 @@ class Status {
     this.timer = setTimeout(() => this.tick(), 240);
   }
   async settle(max = 650) { const end = now() + max; while (this.timer && now() < end) await sleep(30); }
-  finish(n, label = 'Answered', engine = '') { clearTimeout(this.timer); this.timer = 0; this.done = true; this.meta = { label, elapsed: (now() - this.t0) / 1000, n, engine: engine || undefined, steps: this.steps.map(s => ({ t: s.t, at: Math.round(s.at) })) }; Status.render(this.el, this.meta); return this.meta; }
+  finish(n, label = 'Answered', engine = '', tip = '') { clearTimeout(this.timer); this.timer = 0; this.done = true; this.meta = { label, elapsed: (now() - this.t0) / 1000, n, engine: engine || undefined, tip: tip || undefined, steps: this.steps.map(s => ({ t: s.t, at: Math.round(s.at) })) }; Status.render(this.el, this.meta); return this.meta; }
   static render(el, m) {
     if (!m) { el.hidden = true; return; }
     const secs = m.elapsed < 10 ? m.elapsed.toFixed(1) : Math.round(m.elapsed);
     el.hidden = false;
-    el.innerHTML = `<button type="button" class="ch-st-done" data-a="steps" aria-expanded="false">${m.label === 'Stopped' ? I.stop : I.check}<span>${esc(m.label)} in ${secs} s · ${m.n ? `${m.n} source${m.n === 1 ? '' : 's'}` : 'no sources'}</span>${I.chev}</button>${m.engine ? `<span class="ch-eng${/hosted|your key|deep dive/i.test(m.engine) ? ' llm' : ''}">${/hosted|your key|deep dive/i.test(m.engine) ? I.spark : I.db}<span>${esc(m.engine)}</span></span>` : ''}<ol class="ch-steps" hidden>${(m.steps || []).map(s => `<li><span class="ch-num">${s.at < 1000 ? `${s.at} ms` : `${(s.at / 1000).toFixed(1)} s`}</span>${esc(s.t)}</li>`).join('')}</ol>`;
+    el.innerHTML = `<button type="button" class="ch-st-done" data-a="steps" aria-expanded="false">${m.label === 'Stopped' ? I.stop : I.check}<span>${esc(m.label)} in ${secs} s · ${m.n ? `${m.n} source${m.n === 1 ? '' : 's'}` : 'no sources'}</span>${I.chev}</button>${m.engine ? (e => `<span class="ch-eng${e.llm ? ' llm' : ''}" title="${esc(e.tip)}">${e.llm ? I.spark : I.db}<span>${esc(e.label)}</span></span>`)(engineInfo(m.engine, m.tip)) : ''}<ol class="ch-steps" hidden>${(m.steps || []).map(s => `<li><span class="ch-num">${s.at < 1000 ? `${s.at} ms` : `${(s.at / 1000).toFixed(1)} s`}</span>${esc(s.t)}</li>`).join('')}</ol>`;
   }
 }
 
@@ -930,7 +962,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261008134553'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261008145402'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };
@@ -985,21 +1017,25 @@ class Widget {
   loadExtra() { const id = this.id; siteIntents(id).then(x => { if (this.id === id) this.extra = x; }).catch(() => { }); }
   fullHref() { return `${ROOT}assistant.html?persona=${encodeURIComponent(this.id)}${this.lastQ ? `&q=${encodeURIComponent(this.lastQ)}` : ''}`; }
   avatar(cls = '') { return `<span class="ch-avatar ${cls}" aria-hidden="true">${esc(this.persona.initials || 'AI')}</span>`; }
-  engineHTML() { return `<button type="button" class="ch-engine" data-a="settings" aria-label="${esc(engineLabel())}. Open assistant settings">${hosted() || LLM.key() ? I.spark : I.db}<span class="ch-engine-t">${esc(engineLabel())}</span>${I.gear}</button>`; }
-  privacy() { return hosted() ? `Answers use ${DATASETS} datasets; open questions go to hosted Claude.` : LLM.key() ? `Open questions go to Anthropic with your key; nothing else leaves.` : `Runs in your browser on ${DATASETS} datasets. Nothing leaves this page.`; }
-  footHTML() { return `${DATASETS} datasets · in your browser · ${hosted() ? `hosted ${esc(modelName(BE.model || MODEL_DEFAULT))} for open questions` : '<a href="#" data-a="settings">add a Claude key</a> for open questions'}`; }
+  engineHTML() { return `<button type="button" class="ch-engine" data-a="settings" title="${esc(engineTip())}" aria-label="${esc(engineLabel())}. About this assistant">${hosted() || LLM.key() ? I.spark : I.db}<span class="ch-engine-t">${esc(engineLabel())}</span>${I.gear}</button>`; }
+  /** One plain sentence: where answers come from and where chats are kept. */
+  privacy() {
+    const chats = stored() ? 'chats are saved for later' : 'chats stay in this browser';
+    return hosted() || LLM.key() ? `Answers come from the portfolio data, with Claude for open questions; ${chats}.` : `Answers come from the portfolio data; ${chats}.`;
+  }
+  footHTML() { return `${esc(this.privacy())}${DEV && !hosted() && !LLM.key() ? ' <a href="#" data-a="settings" data-adv="1">Add a Claude key</a>' : ''}`; }
   /** Backend discovery finished (or settings changed): update engine chips, privacy lines and synthesis actions in place. */
   refreshEngine() {
     const r = this.root;
     r.querySelectorAll('.ch-engine').forEach(b => b.replaceWith(Object.assign(document.createElement('div'), { innerHTML: this.engineHTML() }).firstElementChild));
     const ft = r.querySelector('.ch-compose .ch-foot span'); if (ft) ft.innerHTML = this.footHTML();
-    const foot = r.querySelector('.ch-dock .ch-foot span'); if (foot) foot.textContent = `${this.privacy()} ${this.threadNote()}`;
+    const foot = r.querySelector('.ch-dock .ch-foot span'); if (foot) foot.textContent = this.privacy();
     const pv = r.querySelector('.ch-privacy span'); if (pv) pv.textContent = this.privacy();
     this.msgs.querySelectorAll('.ch-turn.bot').forEach(t => { const bar = t.querySelector('.ch-actions'); if (t._rec && bar && this.canSynth(t._rec) && !bar.querySelector('[data-act="synth"]')) bar.insertAdjacentHTML('beforeend', this.synthBtnHTML()); });
   }
-  threadNote() { return stored() ? 'Chats save here and to the backend.' : 'Chats stay in this browser.'; }
+  threadNote() { return stored() ? 'They are saved so you can come back to them.' : 'They stay in this browser.'; }
   canSynth(rec) { return hosted() && rec?.kind === 'grounded' && !rec.synth; }
-  synthBtnHTML() { return `<button type="button" class="ch-synth-btn" data-act="synth" aria-label="Synthesize this answer with Claude">${I.spark}<span>Synthesize with Claude</span></button>`; }
+  synthBtnHTML() { return `<button type="button" class="ch-synth-btn" data-act="synth" aria-label="Expand this answer with Claude">${I.spark}<span>Expand with Claude</span></button>`; }
 
   headHTML() {
     return `<div class="ch-head">${this.avatar()}<div class="ch-head-t"><div class="ch-title">${esc(this.persona.name)}</div><div class="ch-sub"><span class="ch-dot" aria-hidden="true"></span><span class="ch-state">${this.busy ? 'Working' : 'Online'}</span>${this.engineHTML()}</div></div><div class="ch-ib"><button type="button" data-a="new" aria-label="New chat" data-tip="New chat">${I.compose}</button><a data-a="expand" href="${esc(this.fullHref())}" aria-label="Open full assistant" data-tip="Open full assistant">${I.expand}</a><button type="button" data-a="close" aria-label="Close assistant" data-tip="Close">${I.x}</button></div></div>`;
@@ -1010,7 +1046,7 @@ class Widget {
   chipsHTML() { const own = this.ownSuggestions(); return `<div class="ch-chips">${(own || uniq(this.persona.suggestions).slice(0, 5)).map(s => `<button type="button" class="ch-chip" data-prompt="${esc(s)}">${esc(s)}</button>`).join('')}</div>`; }
   composeHTML() {
     const mic = ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) ? `<button type="button" class="ch-btn mic" aria-label="Dictate a question" data-tip="Dictate">${I.mic}</button>` : '';
-    return `<div class="ch-compose"><div class="ch-ac" role="listbox" aria-label="Suggestions" hidden></div><div class="ch-box"><textarea rows="1" placeholder="${esc(this.persona.placeholder || 'Ask anything…')}" aria-label="Message ${esc(this.persona.name)}" enterkeyhint="send"></textarea><div class="ch-tools"><button type="button" class="ch-btn attach" aria-disabled="true" aria-label="Attach files (coming later)" data-tip="Attachments are coming later">${I.clip}</button><span class="ch-kb" aria-hidden="true"><kbd>/</kbd> commands · <kbd>↑</kbd> last prompt</span><span class="ch-sp"></span>${mic}<button type="button" class="ch-btn send" aria-label="Send" disabled><span class="i-send">${I.send}</span><span class="i-stop">${I.stop}</span></button></div></div>${this.mode === 'inline' ? `<div class="ch-foot">${I.lock}<span>${this.footHTML()}</span></div>` : ''}</div>`;
+    return `<div class="ch-compose"><div class="ch-ac" role="listbox" aria-label="Suggestions" hidden></div><div class="ch-box"><textarea rows="1" placeholder="${esc(this.persona.placeholder || 'Ask anything…')}" aria-label="Message ${esc(this.persona.name)}" enterkeyhint="send"></textarea><div class="ch-tools"><span class="ch-sp"></span>${mic}<button type="button" class="ch-btn send" aria-label="Send" disabled><span class="i-send">${I.send}</span><span class="i-stop">${I.stop}</span></button></div></div>${this.mode === 'inline' ? `<div class="ch-foot">${I.lock}<span>${this.footHTML()}</span></div>` : ''}</div>`;
   }
   emptyHTML() {
     const full = this.mode === 'full'; const by = {};
@@ -1086,7 +1122,7 @@ class Widget {
 <div class="ch-scrim" data-a="menu" aria-hidden="true"></div>
 <div class="ch-main"><header class="ch-top"><button type="button" class="ch-ib-b ch-only-m" data-a="menu" aria-label="Open sidebar">${I.menu}</button><div class="ch-top-t">${this.avatar('sm')}<span class="ch-top-n">${esc(this.persona.name)}</span></div><span class="ch-sp"></span>${this.engineHTML()}<button type="button" class="ch-ib-b" data-a="theme" aria-label="Switch theme" data-tip="Theme"></button></header>
 <div class="ch-body"><button type="button" class="ch-jump" data-a="jump" aria-label="Jump to latest" hidden>${I.arrowDown}</button></div>
-<div class="ch-dock">${this.composeHTML()}<p class="ch-foot">${I.lock}<span>${esc(this.privacy())} ${esc(this.threadNote())}</span></p></div></div></div>`;
+<div class="ch-dock">${this.composeHTML()}<p class="ch-foot">${I.lock}<span>${esc(this.privacy())}</span></p></div></div></div>`;
     $('.ch-body', this.root).prepend(this.msgs);
     this.applyTheme(); this.bindComposer(); this.showEmpty(); this.renderThreads();
     document.addEventListener('keydown', e => {
@@ -1108,7 +1144,7 @@ class Widget {
     const tt = r.querySelector('.ch-top-t'); if (tt) tt.innerHTML = `${this.avatar('sm')}<span class="ch-top-n">${esc(this.persona.name)}</span>`;
     r.querySelectorAll('.ch-pp').forEach(b => b.setAttribute('aria-pressed', b.dataset.persona === this.id));
     const ta = r.querySelector('textarea'); if (ta) { ta.placeholder = this.persona.placeholder || 'Ask anything…'; ta.setAttribute('aria-label', `Message ${this.persona.name}`); }
-    const foot = r.querySelector('.ch-dock .ch-foot span'); if (foot) foot.textContent = `${this.privacy()} ${this.threadNote()}`;
+    const foot = r.querySelector('.ch-dock .ch-foot span'); if (foot) foot.textContent = this.privacy();
     const ft = r.querySelector('.ch-compose .ch-foot span'); if (ft) ft.innerHTML = this.footHTML();
     if (this.msgs.querySelector('.ch-empty')) this.showEmpty();
     if (this.mode === 'floating' && !this.open) this.renderLauncher();
@@ -1116,10 +1152,10 @@ class Widget {
   }
   /** The dataset count arrived from the manifest: update every rendered mention in place. */
   syncCount(old) {
-    const rx = new RegExp(`\\b${old}(?= (verified )?datasets)`, 'g');
+    const rx = new RegExp(`\\b${old}(?= (verified |portfolio )?datasets)`, 'g');
     const w = document.createTreeWalker(this.root, NodeFilter.SHOW_TEXT);
     for (let n = w.nextNode(); n; n = w.nextNode()) if (rx.test(n.nodeValue)) { rx.lastIndex = 0; n.nodeValue = n.nodeValue.replace(rx, String(DATASETS)); }
-    this.root.querySelectorAll('[aria-label]').forEach(e => { const v = e.getAttribute('aria-label'); if (rx.test(v)) { rx.lastIndex = 0; e.setAttribute('aria-label', v.replace(rx, String(DATASETS))); } });
+    for (const attr of ['aria-label', 'title']) this.root.querySelectorAll(`[${attr}]`).forEach(e => { const v = e.getAttribute(attr); if (rx.test(v)) { rx.lastIndex = 0; e.setAttribute(attr, v.replace(rx, String(DATASETS))); } });
   }
   updateExpand() { this.root.querySelectorAll('[data-a="expand"]').forEach(a => { a.href = this.fullHref(); }); }
   focus() { const ta = this.root.querySelector('textarea'); if (!ta) return; if (this.mode === 'inline') ta.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' }); ta.focus({ preventScroll: this.mode === 'inline' }); }
@@ -1136,7 +1172,7 @@ class Widget {
     const pick = i => { const it = items[i]; if (!it) return; ac.hidden = true; if (kind === 'cmd') { ta.value = ''; grow(); this.command(it.text); } else { ta.value = it.text; grow(); this.submit(); } };
     const showAc = () => {
       const q = ta.value.trim().toLowerCase(); if (!q) { ac.hidden = true; return; }
-      if (q.startsWith('/')) { kind = 'cmd'; const c = q.split(/\s/)[0]; items = COMMANDS.filter(x => x[0].startsWith(c)).map(x => ({ text: x[0], sub: x[1] })); idx = Math.max(0, items.findIndex(x => x.text === c)); }
+      if (q.startsWith('/')) { if (!DEV) { ac.hidden = true; idx = -1; items = []; return; } kind = 'cmd'; const c = q.split(/\s/)[0]; items = COMMANDS.filter(x => x[0].startsWith(c)).map(x => ({ text: x[0], sub: x[1] })); idx = Math.max(0, items.findIndex(x => x.text === c)); }
       else { kind = 'q'; const words = q.split(/\s+/); items = uniq(this.persona.suggestions).filter(s => { const l = s.toLowerCase(); return l.startsWith(q) || words.every(w => l.includes(w)); }).slice(0, 6).map(s => ({ text: s })); idx = 0; }
       if (!items.length) { ac.hidden = true; idx = -1; return; }
       ac.innerHTML = `<p class="ch-ac-h">${kind === 'cmd' ? 'Commands' : 'Suggestions'}</p>` + items.map((it, i) => { const k = it.text.toLowerCase().indexOf(q); const h = k >= 0 ? esc(it.text.slice(0, k)) + '<b>' + esc(it.text.slice(k, k + q.length)) + '</b>' + esc(it.text.slice(k + q.length)) : esc(it.text); return `<div role="option" data-i="${i}" aria-selected="false">${kind === 'cmd' ? I.slash : I.search}<span class="ch-ac-t">${h}${it.sub ? `<small>${esc(it.sub)}</small>` : ''}</span>${i === 0 ? '<span class="k">Tab</span>' : ''}</div>`; }).join('');
@@ -1226,7 +1262,7 @@ class Widget {
       const match = s => intents.find(i => (i.rx || []).some(rx => rx.test(s)));
       let hit = match(q), eq = q, fu = null;
       if (!hit) { fu = resolveFollowUp(q, this.ctx); if (fu) { eq = fu.q; hit = match(eq); this.note(turn, fu); } }
-      st.push(`Searching ${DATASETS} datasets`);
+      st.push('Searching the portfolio data');
       if (hit && LLM.key() && LLM.always()) await beP;   // "always use Claude" applies to the personal key only when no backend is live
       // Writing-style requests (notes, memos, comparisons, opinions) go to hosted Claude with retrieved context, even when a data keyword matches.
       const generative = GENERATIVE_RX.test(q) && !/^(open|show|which|how many|list|where|when|who)\b/i.test(q.trim());
@@ -1240,7 +1276,7 @@ class Widget {
         const rec = { kind: 'grounded', q, eq: eq !== q ? eq : undefined, note: fu?.from, html: res.html, links: res.links || [], followups: res.followups || [], sources: tr.list(), intent: hit.id, engine: GROUNDED() };
         await st.settle();
         if (ctl.stopped) return this.stopped(turn, st, q);
-        this.prepare(body, rec); rec.meta = st.finish(rec.sources.length, 'Answered', rec.engine);
+        this.prepare(body, rec); rec.meta = st.finish(rec.sources.length, 'Answered', rec.engine, groundedTip());
         await this.present(turn, rec, ctl, st.t0);
         this.ctx = { q: eq, intent: hit.id, co: coOf(eq) || (COS[this.id] ? this.id : null) || CO_DEFAULT[hit.id] || (/pay ?back|fastest/i.test(eq) ? 'pp' : null) || this.ctx?.co || null, st: stateOf(eq) || (hit.id === 'national' ? stateAny(eq) : null) };
         if (res.go && this.mode === 'inline' && !ctl.stopped) setTimeout(() => { location.href = res.go; }, 900);
@@ -1265,42 +1301,42 @@ class Widget {
       } else if (LLM.key()) {
         const r = await this.claude(q, turn, st, docs, sources, sIdx, ctl, 'key'); if (r.rec) return r.rec;
         if (ctl.stopped) return this.stopped(turn, st, q);
-        warn = `<p class="ch-warn">Claude request failed: ${esc(r.error)}. Showing grounded results instead.</p>`;
+        warn = `<p class="ch-warn">Claude didn't answer (${esc(r.error)}), so here is the closest material from the portfolio data.</p>`;
       }
       const faq = docs.find(d => d.faq);
       const qt = tok(eq), hay = new Set(tok(docs.map(d => `${d.t} ${d.s}`).join(' ')));
       const cover = qt.length ? qt.filter(w => hay.has(w) || (w.length > 4 && [...hay].some(x => x.startsWith(w.slice(0, -1))))).length / qt.length : 0;
-      const offerKey = !BE?.endpoint && !LLM.key();
-      const keyHint = offerKey ? `<p class="ch-hint">For questions outside the portfolio data, <a href="#" data-a="settings">add a Claude key</a> and Claude answers with this context.</p>` : '';
+      const offerKey = DEV && !BE?.endpoint && !LLM.key();
+      const keyHint = offerKey ? `<p class="ch-hint">For questions outside the portfolio data, <a href="#" data-a="settings" data-adv="1">add a Claude key</a> and Claude answers with this context.</p>` : '';
       const intro = cover >= 0.75 ? '<p>Here is what the portal has on that:</p>' : `<p>The portal's datasets don't answer that directly. The closest material:</p>`;
-      const html = warn + (docs.length ? (faq ? faq.html : `${intro}<ul>${docs.map((d, i) => `<li><b>${esc(sources[sIdx[i]].label)}</b> <span class="ch-ref" data-src="${sIdx[i]}">${sIdx[i] + 1}</span> — ${esc(clip(terms(d.s), 180))}</li>`).join('')}</ul>${cover < 0.75 ? keyHint : ''}`) : `<p>I couldn't find that in the portal's datasets.${offerKey ? ' Try one of these, or <a href="#" data-a="settings">add a Claude key</a> for open questions.' : ' Try one of these.'}</p>`);
+      const html = warn + (docs.length ? (faq ? faq.html : `${intro}<ul>${docs.map((d, i) => `<li><b>${esc(sources[sIdx[i]].label)}</b> <span class="ch-ref" data-src="${sIdx[i]}">${sIdx[i] + 1}</span> — ${esc(clip(terms(d.s), 180))}</li>`).join('')}</ul>${cover < 0.75 ? keyHint : ''}`) : `<p>I couldn't find that in the portal's datasets.${offerKey ? ' Try one of these, or <a href="#" data-a="settings" data-adv="1">add a Claude key</a> for open questions.' : ' Try one of these.'}</p>`);
       const rec = { kind: 'retrieval', q, eq: eq !== q ? eq : undefined, note: fu?.from, html, links: sources.filter(s => s.href).slice(0, 3).map(s => link(s.href, s.label)), followups: uniq(this.persona.suggestions).filter(s => !sameQ(s, q) && !sameQ(s, eq)).slice(0, docs.length ? 2 : 3), sources: docs.length ? sources : [], engine: GROUNDED() };
       await st.settle();
       if (ctl.stopped) return this.stopped(turn, st, q);
-      this.prepare(body, rec); rec.meta = st.finish(rec.sources.length, 'Answered', rec.engine);
+      this.prepare(body, rec); rec.meta = st.finish(rec.sources.length, 'Answered', rec.engine, groundedTip());
       await this.present(turn, rec, ctl, st.t0);
       this.ctx = { q: eq, intent: null, co: coOf(eq) || this.ctx?.co || (COS[this.id] ? this.id : null), st: stateOf(eq) };
       return rec;
     } catch (e) {
       console.warn('chat failed', e);
-      const rec = { kind: 'error', q, html: `<p>Something went wrong: ${esc(e?.message || e)}</p>`, links: [], followups: [], sources: [] };
+      const rec = { kind: 'error', q, html: '<p>Something went wrong with that answer. Please try again.</p>', links: [], followups: [], sources: [] };
       this.prepare(body, rec); rec.meta = st.finish(0, 'Failed'); this.renderAfter(turn, rec); return rec;
     } finally { TRACK = null; ACTIVE = prev; this.ctl = null; this.msgs.setAttribute('aria-busy', 'false'); this.setBusy(false); }
   }
   /** Serve a precomputed Claude deep dive (data/answers) with its own sources and a dated badge. */
   async deepDive(q, eq, fu, turn, st, pre, ctl) {
-    TRACK = null; st.push('Opening a precomputed deep dive');
+    TRACK = null; st.push('Opening a prepared answer');
     const sources = (pre.sources || []).map(x => {
       const key = x.dataset ? srcKey(x.dataset) : null; const known = key && SRC[key];
       const base = known ? srcOf(key) : { key: null, label: terms(x.name), desc: '', href: null, kind: 'dataset', at: Date.now() };
       return { ...base, label: base.label || terms(x.name), kind: 'dataset', asOf: x.as_of ? String(x.as_of).slice(0, 10) : base.asOf || AS_OF_DEFAULT };
     });
     const when = pre.generated_at ? Fmt.date(String(pre.generated_at).slice(0, 10)) : '';
-    const engine = `Deep dive · ${modelName(pre.model || MODEL_DEFAULT)}${when ? ` · generated ${when}` : ''}`;
+    const engine = PREPARED, tip = `Prepared in advance by ${modelName(pre.model || MODEL_DEFAULT)} from the portfolio data${when ? ` on ${when}` : ''}`;
     const rec = { kind: 'deep', q, eq: eq !== q ? eq : undefined, note: fu?.from, html: pre.html, links: sources.filter(s => s.href).slice(0, 3).map(s => link(s.href, s.label)), followups: uniq(this.persona.suggestions).filter(s => !sameQ(s, q) && !sameQ(s, eq) && !sameQ(s, pre.question)).slice(0, 3), sources, engine, model: pre.model || null };
     await st.settle();
     if (ctl.stopped) return this.stopped(turn, st, q);
-    this.prepare(turn.querySelector('.ch-answer'), rec); rec.meta = st.finish(rec.sources.length, 'Answered', engine);
+    this.prepare(turn.querySelector('.ch-answer'), rec); rec.meta = st.finish(rec.sources.length, 'Answered', engine, tip);
     await this.present(turn, rec, ctl, st.t0);
     this.ctx = { q: eq, intent: null, co: coOf(eq) || this.ctx?.co || (COS[this.id] ? this.id : null), st: stateOf(eq) };
     return rec;
@@ -1330,10 +1366,10 @@ class Widget {
     let model = isHosted ? (BE.model || MODEL_DEFAULT) : LLM.model();
     const refOf = n => (n >= 1 && n <= sIdx.length ? sIdx[n - 1] : null);
     const hist = this.history.slice(0, -1).map(h => ({ role: h.role, content: h.text }));
-    st.push(`Asking ${modelName(model)}${isHosted ? ' (hosted)' : ''} with ${docs.length} grounded source${docs.length === 1 ? '' : 's'}`);
+    st.push(docs.length ? `Asking Claude with ${docs.length} source${docs.length === 1 ? '' : 's'} from the portfolio data` : 'Asking Claude');
     let stream;
     if (isHosted) {
-      stream = BE.chat({ persona: this.id, messages: hist, question: q, context: docs.map((d, i) => ({ title: sources[sIdx[i]]?.label || d.t, text: terms(d.s), href: d.href || '' })), onEvent: ev => { if (ev.type === 'meta' && ev.model) { if (ev.fallback) st.push(`Continuing on ${modelName(ev.model)}`); model = ev.model; } else if (ev.type === 'done' && ev.model) model = ev.model; } });
+      stream = BE.chat({ persona: this.id, messages: hist, question: q, context: docs.map((d, i) => ({ title: sources[sIdx[i]]?.label || d.t, text: terms(d.s), href: d.href || '' })), onEvent: ev => { if (ev.type === 'meta' && ev.model) { if (ev.fallback) st.push('Switching to a backup Claude model'); model = ev.model; } else if (ev.type === 'done' && ev.model) model = ev.model; } });
     } else {
       const ctxText = docs.map((d, i) => `[${i + 1}] ${sources[sIdx[i]]?.label || d.t}: ${terms(d.s)}`).join('\n');
       const sys = `You are ${this.persona.name}, an assistant embedded in ${this.id === 'portal' ? "BSP Desk, the portal of BSP (a private-equity firm in New York; portfolio: Commonwealth Electrical Technologies, Punctual Pros, Frontline Managed Services, Thomas Scientific, Bully Pulpit International, Fair Harbor)" : `the website of ${this.persona.name.replace(/ (assistant|desk|advisor|concierge|helper)$/i, '')}`}. Answer briefly in markdown (headings of six words or fewer, bullets, bold numbers). Ground every claim in the numbered context below and cite it inline as [1], [2]; if the context does not cover it, say so and point to the most relevant portal view. Say "growth plan" rather than "playbook", and "portfolio company" rather than "platform" for a sponsor's company ("platform" is fine for software). Never print dataset identifiers or underscores; use the plain-English names in the context. Write dates in words (Oct 6, 2026). No greetings or addressing anyone by name. Label estimates "est.". Today is ${new Date().toDateString()}.\n\nCONTEXT:\n${ctxText}`;
@@ -1352,17 +1388,17 @@ class Widget {
     if (!acc) { body.innerHTML = ''; this.msgs.setAttribute('aria-busy', 'false'); return { error: ctl.stopped ? 'Stopped.' : err || 'Claude returned an empty answer.' }; }
     const engine = isHosted ? hostedLabel(model) : keyLabel(model);
     const rec = { kind: 'claude', via, q, html: mdLite(terms(acc), refOf) + (ctl.stopped ? '<p class="ch-stopped">Stopped.</p>' : '') + (err && !ctl.stopped ? `<p class="ch-warn">${esc(err)}</p>` : ''), links: sources.filter(s => s.href).slice(0, 3).map(s => link(s.href, s.label)), followups: [], sources, model, engine };
-    this.prepare(body, rec); rec.meta = st.finish(rec.sources.length, ctl.stopped ? 'Stopped' : 'Answered', engine);
+    this.prepare(body, rec); rec.meta = st.finish(rec.sources.length, ctl.stopped ? 'Stopped' : 'Answered', engine, claudeTip(model));
     this.renderAfter(turn, rec); this.msgs.setAttribute('aria-busy', 'false');
     this.ctx = { q, intent: null, co: coOf(q) || this.ctx?.co || null, st: stateOf(q) };
     return { rec };
   }
-  /** "Synthesize with Claude": a short hosted synthesis grounded on a grounded answer's text and its citations. */
+  /** "Expand with Claude": a short hosted synthesis grounded on a grounded answer's text and its citations. */
   async synth(turn, rec, btn) {
     if (this.busy || !hosted() || rec.synth) return;
     const box = turn.querySelector('.ch-synth'); if (!box) return;
     const S = rec.sources || []; let model = BE.model || MODEL_DEFAULT;
-    box.hidden = false; box.innerHTML = this.synthHead(model) + '<div class="ch-synth-body"><p class="ch-synth-wait"><span class="ch-spin" aria-hidden="true"></span>Synthesizing from this answer and its sources…</p></div>';
+    box.hidden = false; box.innerHTML = this.synthHead(model) + '<div class="ch-synth-body"><p class="ch-synth-wait"><span class="ch-spin" aria-hidden="true"></span>Expanding on this answer and its sources…</p></div>';
     const out = box.querySelector('.ch-synth-body'); btn.disabled = true; btn.setAttribute('aria-busy', 'true');
     this.setBusy(true); const ctl = this.ctl = { stopped: false }; this.msgs.setAttribute('aria-busy', 'true');
     const question = rec.eq || rec.q || '';
@@ -1379,7 +1415,7 @@ class Widget {
     } catch (e) { err = e?.message || String(e); }
     finally { caret.remove(); this.ctl = null; this.setBusy(false); this.msgs.setAttribute('aria-busy', 'false'); btn.removeAttribute('aria-busy'); }
     if (!acc) {
-      out.innerHTML = ctl.stopped ? '<p class="ch-stopped">Stopped before the synthesis started.</p>' : `<p class="ch-warn">${esc(err || 'No synthesis came back.')} The grounded answer above still stands.</p>`;
+      out.innerHTML = ctl.stopped ? '<p class="ch-stopped">Stopped before the synthesis started.</p>' : `<p class="ch-warn">${esc(err || 'Claude did not send anything back.')} The answer above still stands.</p>`;
       btn.disabled = false; return;
     }
     out.innerHTML = mdLite(terms(acc), refOf) + (ctl.stopped ? '<p class="ch-stopped">Stopped.</p>' : '') + (err && !ctl.stopped ? `<p class="ch-warn">${esc(err)}</p>` : '');
@@ -1387,7 +1423,7 @@ class Widget {
     rec.synth = { html: out.innerHTML, model }; btn.remove();
     if (this.thread) { const i = [...this.msgs.querySelectorAll('.ch-turn.bot')].indexOf(turn); const bots = this.thread.turns.filter(t => t.role === 'assistant'); if (bots[i]?.rec) { bots[i].rec.synth = rec.synth; this.persistThread(); } }
   }
-  synthHead(model) { return `<div class="ch-synth-h">${I.spark}<span>Claude synthesis</span><span class="ch-eng llm">${esc(hostedLabel(model))}</span></div>`; }
+  synthHead(model) { return `<div class="ch-synth-h" title="${esc(claudeTip(model))}">${I.spark}<span>Expanded with Claude</span></div>`; }
   citeHTML(s, i) { const tag = s.href ? 'a' : 'span'; return `<${tag} class="ch-cite" data-src="${i}" ${s.href ? `href="${esc(s.href)}"` : 'tabindex="0"'} aria-label="Source ${i + 1}: ${esc(s.label)}"><span class="n">${i + 1}</span><span class="t">${esc(s.label)}</span></${tag}>`; }
   fbKey(rec) { return hash(`${this.id}|${rec.q}|${String(rec.html).slice(0, 400)}`); }
   renderAfter(turn, rec) {
@@ -1420,7 +1456,7 @@ class Widget {
     if (a === 'open') return;   // plain link
     e.preventDefault();
     if (a === 'copy') {
-      const txt = plain(rec.html) + (rec.synth?.html ? `\n\nClaude synthesis\n${plain(rec.synth.html)}` : '') + (rec.sources?.length ? `\n\nSources\n${rec.sources.map((s, i) => `[${i + 1}] ${s.label}${s.href ? ` — ${s.href}` : ''}`).join('\n')}` : '');
+      const txt = plain(rec.html) + (rec.synth?.html ? `\n\nExpanded with Claude\n${plain(rec.synth.html)}` : '') + (rec.sources?.length ? `\n\nSources\n${rec.sources.map((s, i) => `[${i + 1}] ${s.label}${s.href ? ` — ${s.href}` : ''}`).join('\n')}` : '');
       let ok = false; try { await navigator.clipboard.writeText(txt); ok = true; } catch { const t = document.createElement('textarea'); t.value = txt; t.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(t); t.select(); try { ok = document.execCommand('copy'); } catch { ok = false; } t.remove(); }
       btn.innerHTML = ok ? I.check : I.copy; btn.dataset.tip = ok ? 'Copied' : 'Copy failed'; btn.classList.add('tip-on');
       setTimeout(() => { btn.innerHTML = I.copy; btn.dataset.tip = 'Copy'; btn.classList.remove('tip-on'); }, 1600);
@@ -1489,7 +1525,7 @@ class Widget {
     e.preventDefault();
     if (a === 'close') this.togglePanel(false);
     else if (a === 'new') this.newChat();
-    else if (a === 'settings') this.settings(t);
+    else if (a === 'settings') this.settings(t, t.dataset.adv === '1');
     else if (a === 'jump') this.msgs.scrollTo({ top: this.msgs.scrollHeight, behavior: reduced() ? 'auto' : 'smooth' });
     else if (a === 'steps') { const ol = t.parentElement?.querySelector('.ch-steps'); if (!ol) return; ol.hidden = !ol.hidden; t.setAttribute('aria-expanded', String(!ol.hidden)); }
     else if (a === 'sources') { const d = t.closest('.ch-after')?.querySelector('.ch-sources'); if (d) { d.open = true; d.querySelector('summary')?.focus(); } }
@@ -1530,7 +1566,7 @@ class Widget {
   }
   renderThreads() {
     const box = this.root.querySelector('.ch-threads'); if (!box) return; const list = this.threads();
-    box.innerHTML = list.length ? list.map(t => { const p = PERSONAS[t.persona] || SITE_BASE[t.persona]; return `<div class="ch-th${this.thread?.id === t.id ? ' on' : ''}"><button type="button" class="ch-th-b" data-thread="${esc(t.id)}" ${this.thread?.id === t.id ? 'aria-current="true"' : ''}><span class="ch-th-t">${esc(t.title)}</span><span class="ch-th-m">${esc(p?.initials === 'BS' ? 'Portfolio' : p?.short || (p?.name || '').split(' ')[0] || 'Chat')} · ${ago(t.updated || t.created)}</span></button><button type="button" class="ch-th-x" data-del-thread="${esc(t.id)}" aria-label="Delete chat: ${esc(t.title)}" data-tip="Delete">${I.trash}</button></div>`; }).join('') : `<p class="ch-th-empty">Your chats appear here. ${esc(this.threadNote().replace(/^Chats are/, 'They are'))}</p>`;
+    box.innerHTML = list.length ? list.map(t => { const p = PERSONAS[t.persona] || SITE_BASE[t.persona]; return `<div class="ch-th${this.thread?.id === t.id ? ' on' : ''}"><button type="button" class="ch-th-b" data-thread="${esc(t.id)}" ${this.thread?.id === t.id ? 'aria-current="true"' : ''}><span class="ch-th-t">${esc(t.title)}</span><span class="ch-th-m">${esc(p?.initials === 'BS' ? 'Portfolio' : p?.short || (p?.name || '').split(' ')[0] || 'Chat')} · ${ago(t.updated || t.created)}</span></button><button type="button" class="ch-th-x" data-del-thread="${esc(t.id)}" aria-label="Delete chat: ${esc(t.title)}" data-tip="Delete">${I.trash}</button></div>`; }).join('') : `<p class="ch-th-empty">Your chats appear here. ${esc(this.threadNote())}</p>`;
   }
   openThread(id) {
     const t = this.threads().find(x => x.id === id); if (!t) return;
@@ -1553,14 +1589,37 @@ class Widget {
   deleteThread(id) { lsSet(TH_LS, this.threads().filter(t => t.id !== id)); if (this.thread?.id === id) this.newChat(); else this.renderThreads(); }
 
   /* ── settings ── */
-  settings(trigger) {
+  /** The gear: a plain "About this assistant" note for visitors. The key/model dialog opens only with ?dev=1,
+      never for visitors, even when the hosted backend is down. */
+  async settings(trigger, advanced = false) {
+    await backend();
+    if (DEV) return this.advancedSettings(trigger);
+    return this.about(trigger);
+  }
+  modal(trigger, html, label) {
     const back = trigger || document.activeElement;
+    this.root.ownerDocument.querySelectorAll('.ch-modal').forEach(x => x.remove());
     const m = document.createElement('div'); m.className = `ch ch-modal ${this.isDark() ? 'ch-dark' : ''}`; m.style.setProperty('--ch-accent', this.persona.color || '#d9622b');
-    m.innerHTML = `<div class="ch-card" role="dialog" aria-modal="true" aria-labelledby="ch-set-h"><div class="ch-card-h"><h3 id="ch-set-h">Assistant settings</h3><button type="button" class="ch-ib-b" data-x="cancel" aria-label="Close settings">${I.x}</button></div><p>${hosted() ? `Hosted Claude (${esc(modelName(BE.model || MODEL_DEFAULT))}) answers open questions and can synthesize grounded answers. No key needed; a personal key is used only if the backend is down.` : 'Grounded answers need no key. Add an Anthropic key for open questions. It stays in this browser and goes only to api.anthropic.com.'}</p><label for="ch-key">API key</label><input type="password" id="ch-key" placeholder="sk-ant-…" autocomplete="off" value="${esc(LLM.key())}"><label for="ch-model">Model</label><select id="ch-model">${Object.keys(MODEL_NAMES).map(x => `<option value="${x}" ${LLM.model() === x ? 'selected' : ''}>${MODEL_NAMES[x]}</option>`).join('')}</select><label for="ch-mode">When to use your key</label><select id="ch-mode"><option value="fallback" ${!LLM.always() ? 'selected' : ''}>Only when no grounded answer exists</option><option value="always" ${LLM.always() ? 'selected' : ''}>Always (grounded with portal context)</option></select><div class="row"><button type="button" class="btn" data-x="clear">Remove key</button><span class="ch-sp"></span><button type="button" class="btn" data-x="cancel">Cancel</button><button type="button" class="btn pri" data-x="save">Save</button></div></div>`;
+    m.innerHTML = `<div class="ch-card" role="dialog" aria-modal="true" aria-labelledby="${label}">${html}</div>`;
     document.body.appendChild(m);
     const close = () => { m.remove(); this.refreshChrome(); const t = back?.isConnected ? back : this.root.querySelector('.ch-engine') || this.root.querySelector('textarea'); try { t?.focus?.(); } catch { /* gone */ } };
     m.addEventListener('click', e => { if (e.target === m) close(); });
     m.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } if (e.key === 'Tab') { const f = [...m.querySelectorAll('input,select,button')]; const i = f.indexOf(document.activeElement); if (e.shiftKey && i <= 0) { e.preventDefault(); f.at(-1).focus(); } else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); } } });
+    return { m, close };
+  }
+  about(trigger) {
+    const live = hosted();
+    const adv = '';   // visitors never see the key dialog; owners open it with ?dev=1
+    const { m, close } = this.modal(trigger, `<div class="ch-card-h"><h3 id="ch-about-h">About this assistant</h3><button type="button" class="ch-ib-b" data-x="close" aria-label="Close">${I.x}</button></div>
+<p>BSP Desk answers questions about the six portfolio companies. Questions about the portfolio are answered straight from the data behind this site, and every answer lists its sources.</p>
+<p>${live ? 'Open questions, and the <b>Expand with Claude</b> button, use Claude, which writes from the same data.' : 'Open questions get the closest material from the site, with links to the full pages.'}</p>
+<p>${stored() ? 'Your chats are saved so you can come back to them.' : 'Your chats stay in this browser.'}</p>
+<div class="row">${adv}<span class="ch-sp"></span><button type="button" class="btn pri" data-x="close">Done</button></div>`, 'ch-about-h');
+    m.querySelectorAll('[data-x]').forEach(b => { b.onclick = () => { if (b.dataset.x === 'advanced') { m.remove(); this.advancedSettings(trigger); } else close(); }; });
+    m.querySelector('.btn.pri')?.focus();
+  }
+  advancedSettings(trigger) {
+    const { m, close } = this.modal(trigger, `<div class="ch-card-h"><h3 id="ch-set-h">Advanced settings</h3><button type="button" class="ch-ib-b" data-x="cancel" aria-label="Close settings">${I.x}</button></div><p>${hosted() ? `Hosted Claude (${esc(modelName(BE.model || MODEL_DEFAULT))}) answers open questions and can expand answers. No key needed; a personal key is used only if the hosted service is down.` : 'Answers from the portfolio data need no key. Add an Anthropic key for open questions. It stays in this browser and goes only to Anthropic.'}</p><label for="ch-key">Anthropic key</label><input type="password" id="ch-key" placeholder="sk-ant-…" autocomplete="off" value="${esc(LLM.key())}"><label for="ch-model">Model</label><select id="ch-model">${Object.keys(MODEL_NAMES).map(x => `<option value="${x}" ${LLM.model() === x ? 'selected' : ''}>${MODEL_NAMES[x]}</option>`).join('')}</select><label for="ch-mode">When to use your key</label><select id="ch-mode"><option value="fallback" ${!LLM.always() ? 'selected' : ''}>Only when the portfolio data has no answer</option><option value="always" ${LLM.always() ? 'selected' : ''}>Always (with the portfolio data as context)</option></select><div class="row"><button type="button" class="btn" data-x="clear">Remove key</button><span class="ch-sp"></span><button type="button" class="btn" data-x="cancel">Cancel</button><button type="button" class="btn pri" data-x="save">Save</button></div>`, 'ch-set-h');
     m.querySelectorAll('[data-x]').forEach(b => { b.onclick = () => { const x = b.dataset.x; try { if (x === 'save') { localStorage.setItem(KEY_LS, $('#ch-key', m).value.trim()); localStorage.setItem(MODEL_LS, $('#ch-model', m).value); localStorage.setItem(MODE_LS, $('#ch-mode', m).value); } if (x === 'clear') localStorage.removeItem(KEY_LS); } catch { /* storage blocked */ } close(); }; });
     $('#ch-key', m).focus();
   }

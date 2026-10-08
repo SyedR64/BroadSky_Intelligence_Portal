@@ -4,7 +4,7 @@ import {
   loadBundle, esc, PLATFORMS, PORDER, sellerLabel, DEAL_TYPE, STRENGTH, TESTS, isTargetTest, critShort, TYPE_LABEL,
   stripSVG, graphSVG, legendHTML, bindGraph, nodeDetail, introFor, nextFive, firstCallScript, buildFaq,
   fmtMonth, fmtDay, monthsBetween, clip, host, estHTML,
-} from '../modules/bsp-lib.js?v=20261008134553';
+} from '../modules/bsp-lib.js?v=20261008145402';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -24,7 +24,7 @@ const GATE_CLS = { Priority: 'good', 'Watch list': 'warn', Pass: 'mute', 'Held o
 
 export async function boot() {
   const b = await loadBundle(n => fetch(`../data/research/${n}.json`, { cache: 'force-cache' }).then(r => r.ok ? r.json() : null).catch(() => null));
-  if (!b.meth) { $('#kpis').innerHTML = '<div class="sys-note sys-note--warn"><span>The methodology dataset is not available yet.</span></div>'; return null; }
+  if (!b.meth) { $('#kpis').innerHTML = '<div class="sys-note sys-note--warn"><span>The method data is not available right now.</span></div>'; return null; }
   renderKpis(b); renderNarrative(b); renderDeals(b); renderPatterns(b); renderRubric(b); renderCadence(b); renderNetwork(b); renderNext(b);
   return { faq: buildFaq(b, ''), intents: intents(b) };
 }
@@ -148,7 +148,7 @@ function renderCadence(b) {
 
 /* ── network ── */
 function renderNetwork(b) {
-  const g = b.graph; if (!g) { $('#graph').innerHTML = '<div class="sys-note sys-note--warn"><span>The network dataset is not available yet.</span></div>'; return; }
+  const g = b.graph; if (!g) { $('#graph').innerHTML = '<div class="sys-note sys-note--warn"><span>The network data is not available right now.</span></div>'; return; }
   $('#graph').innerHTML = graphSVG(g); $('#legend').innerHTML = legendHTML();
   const node = $('#node');
   const showNode = n => {

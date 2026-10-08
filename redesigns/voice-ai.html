@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261008134553">
-<link rel="stylesheet" href="voice-ai.css?v=20261008134553">
+<link rel="stylesheet" href="../assets/system.css?v=20261008145402">
+<link rel="stylesheet" href="voice-ai.css?v=20261008145402">
 </head>
 <body>
 <main id="main">
@@ -40,6 +40,7 @@
         <p class="sys-eyebrow"><b>Growth plan</b> · October 2026</p>
         <h1 id="h-hero" class="sys-h1">24/7 Voice AI: <span class="sys-grad-text">the growth engine</span></h1>
         <p class="sys-lead" id="hero-thesis">An unanswered call to a home-services company is a buyer who rings the next number on Google. Answering every call is revenue.</p>
+<p class="sys-src page-terms"><b>Terms:</b> CSR: customer service rep. CRM: the customer system. LSA: Google Local Services Ads. ASR: speech-to-text. SIP: the standard that connects phone lines to software. CSAT: customer satisfaction score.</p>
         <div class="sys-actions">
           <a class="sys-btn sys-btn--accent sys-btn--lg" href="#demo">Play a 2 a.m. call <span aria-hidden="true">▶</span></a>
           <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#calculator">Run the numbers</a>
@@ -307,9 +308,9 @@
 </main>
 
 <script type="module">
-import { Frame } from '../assets/frame.js?v=20261008134553';
-import { Chat } from '../assets/chat.js?v=20261008134553';
-import { boot } from './voice-ai.js?v=20261008134553';
+import { Frame } from '../assets/frame.js?v=20261008145402';
+import { Chat } from '../assets/chat.js?v=20261008145402';
+import { boot } from './voice-ai.js?v=20261008145402';
 const frame = Frame.mount({ banner: true });
 const d = await boot().catch(e => { console.warn('voice-ai boot failed', e); return null; });
 try {

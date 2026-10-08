@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261008134553">
-<link rel="stylesheet" href="./os.css?v=20261008134553">
+<link rel="stylesheet" href="../../assets/system.css?v=20261008145402">
+<link rel="stylesheet" href="./os.css?v=20261008145402">
 </head>
 <body data-co="pp">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -48,6 +48,7 @@
     <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>ServiceOS</b> · for Punctual Pros</p>
     <h1 class="sys-h1" id="h1">Every truck in the right driveway <span class="sys-grad-text">before the phone rings.</span></h1>
     <p class="sys-lead">ServiceOS forecasts calls from the weather, books every call 24/7, routes the nearest tech and turns repairs into members. Bought where the market is mature, built where BSP has data.</p>
+<p class="sys-src page-terms"><b>Terms:</b> CSR: customer service rep. FSM: field-service management software. CRM: the customer system. LTM: last twelve months.</p>
     <div class="sys-actions"><a class="sys-btn sys-btn--primary sys-btn--lg" href="#demo">Try the live demo <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="sys-btn sys-btn--secondary sys-btn--lg" href="#value">See the value math</a></div>
     <div class="sys-kpis" id="kpis" role="list">
       <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Inbound call booking rate</span><span class="sys-kpi-value"><span class="from">38%</span><span class="arrow" aria-label="to">→</span>59%<span class="sys-est">est.</span></span><span class="sys-kpi-sub">HVAC average vs 25+ tech shops (<a href="https://www.servicetitan.com/blog/data-call-booking-rates" target="_blank" rel="noopener">ServiceTitan</a>)</span></div>
@@ -129,7 +130,7 @@
           <div>
             <h3 class="sys-card-title acts-h">What ServiceOS did, in order</h3>
             <ol class="acts" id="acts"></ol>
-            <p class="sys-src">The transcript is a scripted mock.<span class="sys-est sys-est--illus">illustrative</span> The coverage check and tonight's low are live (Punctual Pros ZIP-code model, Open-Meteo). Production vendor: Avoca (AI customer service that books into ServiceTitan); the vendor-reported booking lift is unaudited.</p>
+            <p class="sys-src">The transcript is a scripted sample.<span class="sys-est sys-est--illus">illustrative</span> The coverage check and tonight's low are live (Punctual Pros ZIP-code model, Open-Meteo). Production vendor: Avoca (AI customer service that books into ServiceTitan); the vendor-reported booking lift is unaudited.</p>
           </div>
         </div>
       </div>
@@ -308,10 +309,10 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261008134553';
-  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261008134553';
-  import { Chat } from '../../assets/chat.js?v=20261008134553';
-  import { init } from './os.js?v=20261008134553';
+  import { Frame } from '../../assets/frame.js?v=20261008145402';
+  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261008145402';
+  import { Chat } from '../../assets/chat.js?v=20261008145402';
+  import { init } from './os.js?v=20261008145402';
   const frame = Frame.mount({});
   const chat = init({ Data, Fmt, Live, Chat, esc, Frame });
   if (chat) frame.setChat(chat);

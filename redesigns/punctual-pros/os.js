@@ -1,5 +1,5 @@
 /* ServiceOS product page — demo logic. Shared helpers come from ./site.js (same folder). */
-import { FAQ, TERRITORY, HUBS, classifyZip, zipIndex, cleanCity, miles, fillRange, territoryAlerts, alertLevel } from './site.js?v=20261008134553';
+import { FAQ, TERRITORY, HUBS, classifyZip, zipIndex, cleanCity, miles, fillRange, territoryAlerts, alertLevel } from './site.js?v=20261008145402';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -386,13 +386,13 @@ function evidence(ctx) {
     const it = d?.items || [];
     const host = u => { try { return new URL(u).hostname.replace('www.', ''); } catch { return 'source'; } };
     const ve = it.filter(i => i.kind === 'valuation_evidence' && (i.applies_to || []).includes('pp'));
-    $('#ev-body').innerHTML = ve.length ? ve.map(i => `<tr><td><b>${esc(prose(i.title))}</b><small>${esc(clip(prose(i.note || i.claim), 170))}</small></td><td class="sys-n">${i.metric_value != null ? esc(i.metric_value >= 1e8 ? '$' + (i.metric_value / 1e9).toFixed(1) + 'B' : String(i.metric_value)) : '—'}<small>${esc(clip(prose(i.metric_unit), 64))}</small></td><td class="sys-n" style="white-space:nowrap">${esc(wordDate(i.date))}</td><td><span class="conf ${esc(String(i.confidence || '').toLowerCase())}">${esc(String(i.confidence || '—').toLowerCase())}</span></td><td><a href="${esc(i.source_url)}" target="_blank" rel="noopener">${esc(host(i.source_url))}</a><small>${esc(clip(prose(i.source_name), 64))}</small></td></tr>`).join('') : '<tr><td colspan="5">Evidence dataset not yet available.</td></tr>';
+    $('#ev-body').innerHTML = ve.length ? ve.map(i => `<tr><td><b>${esc(prose(i.title))}</b><small>${esc(clip(prose(i.note || i.claim), 170))}</small></td><td class="sys-n">${i.metric_value != null ? esc(i.metric_value >= 1e8 ? '$' + (i.metric_value / 1e9).toFixed(1) + 'B' : String(i.metric_value)) : '—'}<small>${esc(clip(prose(i.metric_unit), 64))}</small></td><td class="sys-n" style="white-space:nowrap">${esc(wordDate(i.date))}</td><td><span class="conf ${esc(String(i.confidence || '').toLowerCase())}">${esc(String(i.confidence || '—').toLowerCase())}</span></td><td><a href="${esc(i.source_url)}" target="_blank" rel="noopener">${esc(host(i.source_url))}</a><small>${esc(clip(prose(i.source_name), 64))}</small></td></tr>`).join('') : '<tr><td colspan="5">Evidence is not available right now.</td></tr>';
     const vs = it.filter(i => i.kind === 'vendor_stack' && i.company === 'pp');
     const dec = v => /Avoca/.test(v) ? 'rent' : 'buy';
     const rows = vs.map(i => `<tr><td><b>${esc(i.category)}</b></td><td><b>${esc(i.vendor)}</b>${i.note ? `<small>${esc(clip(prose(i.note), 130))}</small>` : ''}</td><td><span class="dec ${dec(i.vendor)}">${dec(i.vendor) === 'rent' ? 'Rent (usage)' : 'Buy'}</span></td><td>${esc(prose(i.what_it_does))}</td><td>${esc(clip(prose(i.pricing_note), 150))}<small><a href="${esc(i.source_url)}" target="_blank" rel="noopener">${esc(host(i.source_url))}</a></small></td></tr>`);
     rows.push(`<tr><td><b>Demand forecasting</b></td><td><b>Pressure Index</b> (BSP portal)<small>Punctual Pros demand model, National Weather Service and Open-Meteo; already prototyped in the portal</small></td><td><span class="dec build">Build</span></td><td>7-day call forecast by hub and trade; drives staffing, on-call and parts staging.</td><td>Internal; free public feeds (Weatherbit optional)<small><a href="../../app.html#/pp/weather">portal view</a></small></td></tr>`);
     rows.push(`<tr><td><b>Customer acquisition</b></td><td><b>New-mover autopilot</b> (BSP portal)<small>County ArcGIS and NJ SR1A deed feeds</small></td><td><span class="dec build">Build</span></td><td>Deed → score → welcome mail → opt-in call; writes leads into ServiceTitan.</td><td>Internal + print and mail vendor (~$1.10 a kit<span class="sys-est">est.</span>)<small><a href="../../app.html#/pp/movers">portal view</a></small></td></tr>`);
-    $('#stk-body').innerHTML = rows.join('') || '<tr><td colspan="5">Stack dataset not yet available.</td></tr>';
+    $('#stk-body').innerHTML = rows.join('') || '<tr><td colspan="5">Stack details are not available right now.</td></tr>';
     labelCells($('#ev-body')); labelCells($('#stk-body'));
   });
 }
@@ -434,9 +434,10 @@ let frameLabel = null;
 const dsName = id => (frameLabel && frameLabel(id)) || String(id).replace(/_/g, ' ');
 export function prose(v) {
   return String(v == null ? '' : v)
+    .replace(/\bOur fetch of\b/g, 'Our read of').replace(/\bheadless\/composable builds\b/g, 'custom storefronts')
     .replace(/\s*Also in data\/[\w/.-]+?\.(?:json|csv)\.?/g, '')
-    .replace(/(?:data\/)?(?:research\/|sales\/)?([a-z][a-z0-9]*(?:_[a-z0-9]+)+)\.(?:json|csv)/g, (m, id) => `the ${dsName(id)} dataset`)
-    .replace(/(?<![\w@/.#:=$-])([a-z][a-z0-9]*(?:_[a-z0-9]+)+)(?![\w@/-])/g, (m, id) => `the ${dsName(id)} dataset`)
+    .replace(/(?:data\/)?(?:research\/|sales\/)?([a-z][a-z0-9]*(?:_[a-z0-9]+)+)\.(?:json|csv)/g, (m, id) => `the ${dsName(id)} data`)
+    .replace(/(?<![\w@/.#:=$-])([a-z][a-z0-9]*(?:_[a-z0-9]+)+)(?![\w@/-])/g, (m, id) => `the ${dsName(id)} data`)
     .replace(/\s*\((?:see\s+)?(?:ve|kb|ra|ref|pn)-[a-z0-9-]+(?:\s*[,;]\s*(?:ve|kb|ra|ref|pn)-[a-z0-9-]+)*\)/gi, '')
     .replace(/\b(?:ve|kb|ra|ref)-(?:pp-)?[0-9a-z]+\b/g, '').replace(/\s*\(Live\.\w+\)/g, '')
     .replace(/\bmembership-dense platform\b/g, 'membership-dense company').replace(/\b\d{4}-\d{2}-\d{2}\b/g, m => wordDate(m)).replace(/\bBSP\b/g, 'BSP').replace(/\bPP's\b/g, "Punctual Pros'").replace(/\bPP\b/g, 'Punctual Pros').replace(/\bGBB\b/g, 'good-better-best').replace(/\s{2,}/g, ' ').replace(/\s+([.,;)])/g, '$1').trim();

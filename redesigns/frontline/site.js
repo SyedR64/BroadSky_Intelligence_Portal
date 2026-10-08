@@ -14,7 +14,7 @@ const num = n => Math.round(n).toLocaleString('en-US');
 /* ── Security posture questions (shared with FirmOS score card) ─────────── */
 export const QUESTIONS = [
   { id: 'mfa', w: 12, q: 'MFA is enforced for every attorney and staff account', d: 'Including email, VPN, remote desktop and the DMS', fix: 'Enforce phishing-resistant MFA and conditional access', svc: 'Cybersecurity' },
-  { id: 'edr', w: 12, q: 'Every endpoint runs EDR with 24/7 managed detection and response', d: 'A human analyst can isolate a laptop at 2 a.m.', fix: 'Deploy EDR with a 24/7 SOC behind it', svc: 'Cybersecurity · MDR' },
+  { id: 'edr', w: 12, q: 'Every endpoint runs EDR with 24/7 managed detection and response', d: 'A human analyst can isolate a laptop at 2 a.m.', fix: 'Install EDR with a 24/7 SOC behind it', svc: 'Cybersecurity · MDR' },
   { id: 'bak', w: 12, q: 'Backups of the DMS and billing system are immutable and restore-tested', d: 'iManage or NetDocuments, Elite or Aderant, tested in the last 6 months', fix: 'Add immutable copies and a quarterly restore test', svc: 'Infrastructure' },
   { id: 'mail', w: 10, q: 'Email is filtered for phishing and DMARC is set to quarantine or reject', d: 'Wire-fraud and business-email-compromise defense', fix: 'Move DMARC to enforcement and add impersonation filtering', svc: 'Cybersecurity' },
   { id: 'patch', w: 10, q: 'Critical patches are applied within 14 days', d: 'Operating systems, browsers, VPN appliances, practice apps', fix: 'Set a 14-day critical patch SLA with monthly reporting', svc: 'Infrastructure' },
@@ -201,7 +201,7 @@ const INSIGHTS = [
   { cat: 'Revenue cycle', type: 'Report', min: 7, t: 'Rejections jumped from 11% to 18% in 2025. A pre-flight checklist to bring them back.', d: 'Client AI tools now audit every line. These are the five LEDES checks that catch most rejections before submission.', src: 'https://www.elite.com/insights/news/new-elite-research-law-firms-see-64-climb-in-rejection-rates-as-client-ai-billing-scrutiny-advances' },
   { cat: 'Security', type: 'Bulletin', min: 4, t: 'Outside counsel guidelines are the new security questionnaire', d: 'Clients now write MFA, EDR and breach-notice windows into engagement terms. Here is how to keep an evidence library current.' },
   { cat: 'Service desk', type: 'Guide', min: 6, t: 'What "AI-optimized" should mean on a law-firm service desk', d: 'Tier-0 handles resets and access requests; judgment calls stay with people. Where to draw the line.' },
-  { cat: 'AI', type: 'Guide', min: 8, t: 'Generative AI in the firm: a deployment checklist for IT leaders', d: 'Data boundaries, vendor terms, audit logs and the rollout questions to settle before go-live.' },
+  { cat: 'AI', type: 'Guide', min: 8, t: 'Generative AI in the firm: a rollout checklist for IT leaders', d: 'Data boundaries, vendor terms, audit logs and the rollout questions to settle before go-live.' },
   { cat: 'Revenue cycle', type: 'Benchmark', min: 5, t: '62 days to 50: how eBilling automation shortens the cash cycle', d: 'What the fastest-paying firms do differently between invoice approval and cash application.', src: 'https://www.elite.com/insights/news/new-elite-research-law-firms-see-64-climb-in-rejection-rates-as-client-ai-billing-scrutiny-advances' },
   { cat: 'Service desk', type: 'Event', ic: 'i-users', min: 2, t: 'Meet Frontline at ILTACON and ALA', d: 'Tabletop demos, the FirmOS posture score and a CIO roundtable on co-managed IT. Book time with the team.' },
 ];
@@ -230,10 +230,10 @@ function faqList(esc) {
 
 async function rationale({ Data, esc }) {
   const el = $('#refs'); if (!el) return;
-  const HERE = { 'ref-fl-vantatrust': ['Trust panel with mapped frameworks, "Updated X min ago" live chips, advisor chat over FAQ', 'Trust strip, hero console, chat'], 'ref-fl-harbor': ['One editorial brand over IT + security + RCM; filterable insights with type labels and bookmarks', 'Services, Insights'], 'ref-fl-its': ['ROI calculator and self-assessment; one clear sales call to action; 3-step engagement', 'Assessment, ROI, steps'], 'ref-fl-kraftkennedy': ['Client-portal links; events and security bulletins as content', 'Hero, Insights'] };
+  const HERE = { 'ref-fl-vantatrust': ['Trust panel with mapped frameworks, "Updated X min ago" live chips, advisor chat over FAQ', 'Trust strip, live status panel, chat'], 'ref-fl-harbor': ['One editorial brand over IT + security + RCM; filterable insights with type labels and bookmarks', 'Services, Insights'], 'ref-fl-its': ['ROI calculator and self-assessment; one clear sales call to action; 3-step engagement', 'Assessment, ROI, steps'], 'ref-fl-kraftkennedy': ['Client-portal links; events and security bulletins as content', 'Hero, Insights'] };
   let refs = [];
   try { const d = await Data.load('research/design_refs'); refs = (d?.items || []).filter(r => [].concat(r.applies_to || []).includes('fl')); } catch (e) { console.debug(e); }
-  if (!refs.length) { el.innerHTML = '<p class="sys-src">Design reference dataset not available.</p>'; return; }
+  if (!refs.length) { el.innerHTML = '<p class="sys-src">Design references are not available right now.</p>'; return; }
   const order = ['ref-fl-vantatrust', 'ref-fl-harbor', 'ref-fl-its', 'ref-fl-kraftkennedy'];
   refs.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
   const clean = t => (window.BSPFrame ? window.BSPFrame.humanizeText(String(t ?? '')) : String(t ?? '')).replace(/\bBSP\b/g, 'BSP');

@@ -11,9 +11,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261008134553">
-<link rel="stylesheet" href="site.css?v=20261008134553">
-<link rel="stylesheet" href="harboros.css?v=20261008134553">
+<link rel="stylesheet" href="../../assets/system.css?v=20261008145402">
+<link rel="stylesheet" href="site.css?v=20261008145402">
+<link rel="stylesheet" href="harboros.css?v=20261008145402">
 </head>
 <body data-co="fh">
 <main id="main">
@@ -31,6 +31,7 @@
       <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>HarborOS</b> · for Fair Harbor</p>
       <h1 class="sys-h1" id="hx-h">The operating system for a brand people <span class="sys-grad-text">buy twice.</span></h1>
       <p class="sys-lead">Fit and size, replenishment, a wholesale portal, forecasting and traceability on one data layer. Fewer returns, more second orders, smarter buys.</p>
+<p class="sys-src page-terms"><b>Terms:</b> AOV: average order value. GMV: gross merchandise value. NRF: National Retail Federation.</p>
       <div class="sys-actions">
         <a class="sys-btn sys-btn--primary sys-btn--lg" href="#demo">Try the live demo <span aria-hidden="true">→</span></a>
         <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#math">See the value math</a>
@@ -64,7 +65,7 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Interactive demo</p>
         <h2 class="sys-h2" id="demo-h">Click through HarborOS.</h2>
-        <p class="sys-lead">A working mock that computes in your browser. Shopper and product figures are illustrative.</p>
+        <p class="sys-lead">A working demo that calculates as you click. Shopper and product figures are illustrative.</p>
       </div>
       <div class="hx-app">
         <div class="hx-bar"><i></i><i></i><i></i><span class="hx-url">HarborOS · <b id="hx-route">Fit and size</b></span><span class="hx-live"><span class="sys-est sys-est--illus">illustrative</span></span></div>
@@ -189,10 +190,10 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261008134553';
-  import { Chat } from '../../assets/chat.js?v=20261008134553';
-  import { Data } from '../../assets/core.js?v=20261008134553';
-  import { boot } from './harboros.js?v=20261008134553';
+  import { Frame } from '../../assets/frame.js?v=20261008145402';
+  import { Chat } from '../../assets/chat.js?v=20261008145402';
+  import { Data } from '../../assets/core.js?v=20261008145402';
+  import { boot } from './harboros.js?v=20261008145402';
   Frame.mount({});
   boot({ Chat, Data, Frame }).catch(e => console.error('HarborOS concept failed to boot', e));
 </script>

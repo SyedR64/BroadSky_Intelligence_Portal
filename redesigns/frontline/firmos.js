@@ -1,5 +1,5 @@
 /* FirmOS product page: demos and value math. Data via core.js (Data.load('research/...')). */
-import { QUESTIONS, ring, tierOf } from './site.js?v=20261008134553';
+import { QUESTIONS, ring, tierOf } from './site.js?v=20261008145402';
 const CO = 'var(--co)', CO_SOFT = 'color-mix(in srgb,var(--co) 45%,var(--sys-surface))';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -206,7 +206,7 @@ async function growth(Data) {
   const k = $('#g-kpis'); if (!k) return;
   let d = null; try { d = await Data.load('research/fl_midsize_firms'); } catch (e) { console.debug(e); }
   const items = d?.items || [];
-  if (!items.length) { k.innerHTML = '<p class="sys-src">Mid-size firm research dataset not available.</p>'; return; }
+  if (!items.length) { k.innerHTML = '<p class="sys-src">Mid-size firm research is not available right now.</p>'; return; }
   const att = items.reduce((s, x) => s + (x.attorney_count || 0), 0); const metros = new Set(items.map(x => x.metro));
   const sorted = items.map(x => x.attorney_count || 0).sort((a, b) => a - b); const med = sorted[Math.floor(sorted.length / 2)];
   const sig = items.filter(x => (x.signals || []).length).length; const ins = items.filter(x => /insurance/i.test(x.client_base || '')).length;
@@ -275,7 +275,7 @@ async function comps(Data) {
   const el = $('#v-comps'); if (!el) return;
   let d = null; try { d = await Data.load('research/public_comps'); } catch (e) { console.debug(e); }
   const rows = (d?.items || []).filter(x => x.sector_tag === 'legal_bpo_managed_services' && x.ebitda_margin_latest_pct != null).sort((a, b) => b.ebitda_margin_latest_pct - a.ebitda_margin_latest_pct);
-  if (!rows.length) { el.innerHTML = '<p class="sys-src">Public comparables dataset not available.</p>'; return; }
+  if (!rows.length) { el.innerHTML = '<p class="sys-src">Public comparables are not available right now.</p>'; return; }
   const data = rows.map(x => [`${x.ticker} · FY${x.latest_fy}`, x.ebitda_margin_latest_pct, CO_SOFT]);
   data.splice(data.findIndex(r => r[1] < 15.5), 0, ['Frontline (midpoint)', 15.5, CO]);
   bars(el, data, { fmt: v => v.toFixed(1) + '%', max: 20, labelW: 150 });

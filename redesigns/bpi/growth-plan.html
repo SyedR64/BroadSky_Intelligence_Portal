@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="../../assets/system.css?v=20261008134553">
-<link rel="stylesheet" href="growth-plan.css?v=20261008134553">
+<link rel="stylesheet" href="../../assets/system.css?v=20261008145402">
+<link rel="stylesheet" href="growth-plan.css?v=20261008145402">
 </head>
 <body data-co="bpi">
 <main id="main">
@@ -32,6 +32,7 @@
           <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Growth plan</b> · October 2026</p>
           <h1 class="sys-h1" id="hero-h">From campaign agency to <span class="sys-grad-text">transatlantic intelligence firm.</span></h1>
           <p class="sys-lead" id="thesis">BPI is running the Smith + Howard play across the Atlantic. How a campaign agency becomes a retainer-led firm, and six decisions for the next 90 days.</p>
+<p class="sys-src page-terms"><b>Terms:</b> BPI: Bully Pulpit International. PR: public relations. FEC: Federal Election Commission. IRR: internal rate of return. MOIC: multiple on invested capital. SOFR: the benchmark rate loans are priced over.</p>
           <div class="sys-actions">
             <a class="sys-btn sys-btn--primary sys-btn--lg" href="#map-sec">See the four phases</a>
             <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#returns">Returns case</a>
@@ -109,7 +110,7 @@
       <div class="sys-section-head">
         <p class="sys-kicker">04 · AI-agent catalog</p>
         <h2 class="sys-h2" id="h-agents">Nine agents. Three ship first.</h2>
-        <p class="sys-lead">Vendor metrics are upper bounds and deploy weeks are estimates. The three starred agents form the core of SignalOS.</p>
+        <p class="sys-lead">Vendor metrics are upper bounds. Weeks to go live are estimates. The three starred agents form the core of SignalOS.</p>
       </div>
       <div class="sys-chips seg" role="group" aria-label="Who it helps" id="agent-filter"></div>
       <div class="sys-grid sys-grid--3 agents" id="agent-grid"></div>
@@ -249,10 +250,10 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261008134553';
-  import { Data } from '../../assets/core.js?v=20261008134553';
-  import { Chat } from '../../assets/chat.js?v=20261008134553';
-  import { init } from './growth-plan.js?v=20261008134553';
+  import { Frame } from '../../assets/frame.js?v=20261008145402';
+  import { Data } from '../../assets/core.js?v=20261008145402';
+  import { Chat } from '../../assets/chat.js?v=20261008145402';
+  import { init } from './growth-plan.js?v=20261008145402';
   Frame.mount({});
   init({ Data, Chat, Frame });
 </script>

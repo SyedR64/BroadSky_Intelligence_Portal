@@ -111,6 +111,14 @@
    "generated": "2026-10-06"
   },
   {
+   "name": "deal_model",
+   "folder": "research",
+   "title": "Acquisition model: default assumptions, benchmarks and presets",
+   "item_count": 24,
+   "bytes": 30768,
+   "generated": "2026-10-08"
+  },
+  {
    "name": "design_refs",
    "folder": "research",
    "title": "Design references for the BSP landing page and the six portfolio website concepts",
@@ -211,7 +219,7 @@
    "folder": "research",
    "title": "Punctual Pros public filings and regulatory data",
    "item_count": 29,
-   "bytes": 57654,
+   "bytes": 57655,
    "generated": "2026-09-24"
   },
   {
@@ -227,7 +235,7 @@
    "folder": "research",
    "title": "How BSP takes Punctual Pros nationwide: Smith + Howard template, AI agents, pro programs, growth levers, expansion phases, financing",
    "item_count": 59,
-   "bytes": 59891,
+   "bytes": 59836,
    "generated": "2026-10-06"
   },
   {
@@ -376,12 +384,12 @@
   }
  ],
  "totals": {
-  "research_files": 36,
-  "research_items": 4663,
+  "research_files": 37,
+  "research_items": 4687,
   "sales_files": 10,
   "sales_rows": 163738,
-  "bytes": 40516373,
+  "bytes": 40547087,
   "data_from": "2026-09-24",
-  "data_to": "2026-10-06"
+  "data_to": "2026-10-08"
  }
 }

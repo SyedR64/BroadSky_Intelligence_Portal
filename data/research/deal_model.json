@@ -1,0 +1,1184 @@
+{
+ "meta": {
+  "dataset": "deal_model",
+  "title": "Acquisition model: default assumptions, benchmarks and presets",
+  "generated": "2026-10-08",
+  "author": "Syed Rahman",
+  "method": "Benchmarks reuse source entries already cited in the Punctual Pros, CET, Frontline and Thomas Scientific growth plans and the sponsor precedents. Portfolio presets take the midpoints of each company's filings estimate table. Add-on presets read the target screens at load time and apply the sector margin below. Rows marked as assumptions have no market source.",
+  "caveats": [
+   "Presets are estimates from public filings, not BSP's actual terms.",
+   "Market multiples are averages; any single deal can differ widely.",
+   "Press-reported exit multiples (Sila, Champions) are estimates from people familiar with the deals."
+  ],
+  "inputs": [
+   {
+    "key": "rev",
+    "label": "Revenue today",
+    "unit": "$M",
+    "min": 0.1,
+    "max": 5000,
+    "step": 1,
+    "group": "deal",
+    "gloss": "Annual sales of the company being bought."
+   },
+   {
+    "key": "mg",
+    "label": "EBITDA margin",
+    "unit": "%",
+    "min": -20,
+    "max": 60,
+    "step": 0.5,
+    "group": "deal",
+    "gloss": "Profit before interest, tax and depreciation, as a share of revenue."
+   },
+   {
+    "key": "em",
+    "label": "Entry multiple",
+    "unit": "x",
+    "min": 1,
+    "max": 40,
+    "step": 0.5,
+    "group": "deal",
+    "gloss": "Price paid, as a multiple of EBITDA."
+   },
+   {
+    "key": "lev",
+    "label": "Debt at entry",
+    "unit": "x",
+    "min": 0,
+    "max": 8,
+    "step": 0.25,
+    "group": "deal",
+    "gloss": "Borrowing, as a multiple of EBITDA."
+   },
+   {
+    "key": "ir",
+    "label": "Interest rate",
+    "unit": "%",
+    "min": 0,
+    "max": 25,
+    "step": 0.25,
+    "group": "deal",
+    "gloss": "Annual interest on the debt."
+   },
+   {
+    "key": "gr",
+    "label": "Revenue growth",
+    "unit": "% a year",
+    "min": -30,
+    "max": 60,
+    "step": 1,
+    "group": "plan",
+    "gloss": "Organic growth, before add-ons."
+   },
+   {
+    "key": "dm",
+    "label": "Margin change",
+    "unit": "pts a year",
+    "min": -5,
+    "max": 5,
+    "step": 0.25,
+    "group": "plan",
+    "gloss": "How much the EBITDA margin moves each year."
+   },
+   {
+    "key": "yrs",
+    "label": "Exit year",
+    "unit": "years",
+    "min": 2,
+    "max": 7,
+    "step": 1,
+    "group": "plan",
+    "gloss": "How long the fund owns the company."
+   },
+   {
+    "key": "xm",
+    "label": "Exit multiple",
+    "unit": "x",
+    "min": 1,
+    "max": 40,
+    "step": 0.5,
+    "group": "plan",
+    "gloss": "Sale price, as a multiple of EBITDA in the exit year."
+   },
+   {
+    "key": "ae",
+    "label": "Add-on EBITDA bought",
+    "unit": "$M a year",
+    "min": 0,
+    "max": 500,
+    "step": 0.5,
+    "group": "plan",
+    "gloss": "EBITDA of the smaller companies bought each year until exit."
+   },
+   {
+    "key": "am",
+    "label": "Add-on multiple",
+    "unit": "x",
+    "min": 1,
+    "max": 30,
+    "step": 0.5,
+    "group": "plan",
+    "gloss": "Price paid for add-ons, as a multiple of their EBITDA."
+   },
+   {
+    "key": "ad",
+    "label": "Add-ons paid with debt",
+    "unit": "%",
+    "min": 0,
+    "max": 100,
+    "step": 5,
+    "group": "plan",
+    "gloss": "Share of each add-on price that is borrowed; the rest is new equity."
+   },
+   {
+    "key": "cc",
+    "label": "Cash conversion",
+    "unit": "% of EBITDA",
+    "min": 0,
+    "max": 100,
+    "step": 5,
+    "group": "plan",
+    "gloss": "EBITDA left after tax, capital spending and working capital, before interest."
+   },
+   {
+    "key": "fee",
+    "label": "Deal fees",
+    "unit": "% of price",
+    "min": 0,
+    "max": 10,
+    "step": 0.5,
+    "group": "plan",
+    "gloss": "Bankers, lawyers and financing costs at entry."
+   },
+   {
+    "key": "tax",
+    "label": "Tax rate",
+    "unit": "%",
+    "min": 0,
+    "max": 50,
+    "step": 1,
+    "group": "dcf",
+    "gloss": "Tax on operating profit."
+   },
+   {
+    "key": "da",
+    "label": "Depreciation",
+    "unit": "% of revenue",
+    "min": 0,
+    "max": 20,
+    "step": 0.5,
+    "group": "dcf",
+    "gloss": "Wear on equipment and vehicles, a non-cash cost."
+   },
+   {
+    "key": "cx",
+    "label": "Capital spending",
+    "unit": "% of revenue",
+    "min": 0,
+    "max": 30,
+    "step": 0.5,
+    "group": "dcf",
+    "gloss": "Trucks, tools, systems and buildings."
+   },
+   {
+    "key": "nwc",
+    "label": "Working capital",
+    "unit": "% of new revenue",
+    "min": 0,
+    "max": 50,
+    "step": 1,
+    "group": "dcf",
+    "gloss": "Cash tied up in receivables and stock as sales grow."
+   },
+   {
+    "key": "wacc",
+    "label": "Discount rate (WACC)",
+    "unit": "%",
+    "min": 3,
+    "max": 30,
+    "step": 0.5,
+    "group": "dcf",
+    "gloss": "The return investors and lenders require, blended."
+   },
+   {
+    "key": "tg",
+    "label": "Long-run growth",
+    "unit": "%",
+    "min": -2,
+    "max": 6,
+    "step": 0.5,
+    "group": "dcf",
+    "gloss": "Growth after year 5, forever."
+   },
+   {
+    "key": "tm",
+    "label": "Year-5 sale multiple",
+    "unit": "x",
+    "min": 1,
+    "max": 40,
+    "step": 0.5,
+    "group": "dcf",
+    "gloss": "Cross-check: value in year 5 as a multiple of EBITDA."
+   },
+   {
+    "key": "nd",
+    "label": "Net debt today",
+    "unit": "$M",
+    "min": -1000,
+    "max": 5000,
+    "step": 1,
+    "group": "dcf",
+    "gloss": "Debt minus cash; subtracted to get the value of the shares."
+   },
+   {
+    "key": "ce",
+    "label": "Company EBITDA",
+    "unit": "$M",
+    "min": 0.1,
+    "max": 1000,
+    "step": 0.5,
+    "group": "rollup",
+    "gloss": "EBITDA of the company that does the buying."
+   },
+   {
+    "key": "cm",
+    "label": "Company multiple paid",
+    "unit": "x",
+    "min": 1,
+    "max": 40,
+    "step": 0.5,
+    "group": "rollup",
+    "gloss": "Price paid for that company, as a multiple of EBITDA."
+   },
+   {
+    "key": "n",
+    "label": "Number of add-ons",
+    "unit": "deals",
+    "min": 0,
+    "max": 12,
+    "step": 1,
+    "group": "rollup",
+    "gloss": "Smaller companies bought and merged in."
+   },
+   {
+    "key": "ra",
+    "label": "EBITDA per add-on",
+    "unit": "$M",
+    "min": 0,
+    "max": 200,
+    "step": 0.25,
+    "group": "rollup",
+    "gloss": "Typical size of each add-on."
+   },
+   {
+    "key": "rm",
+    "label": "Add-on multiple paid",
+    "unit": "x",
+    "min": 1,
+    "max": 30,
+    "step": 0.5,
+    "group": "rollup",
+    "gloss": "Smaller companies usually sell for less."
+   },
+   {
+    "key": "rx",
+    "label": "Exit multiple",
+    "unit": "x",
+    "min": 1,
+    "max": 40,
+    "step": 0.5,
+    "group": "rollup",
+    "gloss": "Sale price of the combined company, as a multiple of EBITDA."
+   },
+   {
+    "key": "ic",
+    "label": "Integration cost",
+    "unit": "$M per add-on",
+    "min": 0,
+    "max": 50,
+    "step": 0.1,
+    "group": "rollup",
+    "gloss": "One-off cost to merge systems, brands and teams."
+   },
+   {
+    "key": "syn",
+    "label": "Synergies",
+    "unit": "% of add-on EBITDA",
+    "min": 0,
+    "max": 50,
+    "step": 1,
+    "group": "rollup",
+    "gloss": "Extra EBITDA from shared buying, dispatch and back office."
+   }
+  ],
+  "base": {
+   "rev": 50,
+   "mg": 12,
+   "em": 7.0,
+   "lev": 3.5,
+   "ir": 7.8,
+   "gr": 6,
+   "dm": 0.5,
+   "yrs": 5,
+   "xm": 9.0,
+   "ae": 1.0,
+   "am": 6.5,
+   "ad": 50,
+   "cc": 50,
+   "fee": 3,
+   "tax": 25,
+   "da": 2,
+   "cx": 2.5,
+   "nwc": 10,
+   "wacc": 12,
+   "tg": 3,
+   "tm": 9.0,
+   "nd": 21,
+   "ce": 6,
+   "cm": 7.0,
+   "n": 4,
+   "ra": 1.5,
+   "rm": 6.5,
+   "rx": 9.0,
+   "ic": 0.3,
+   "syn": 10
+  },
+  "target_defaults": {
+   "em": 6.5,
+   "lev": 3.0,
+   "ir": 7.8,
+   "dm": 0,
+   "ae": 0,
+   "xm": 6.5,
+   "n": 1,
+   "basis": {
+    "em": "GF Data: deals under $25M of value average 6.3 to 6.9x.",
+    "lev": "GF Data Q2 2026: 2.9x total debt for initial buyouts.",
+    "ir": "GF Data Q2 2026: senior debt priced at 7.8%.",
+    "xm": "Sold at the price paid: no re-rating. The roll-up view shows the gain from merging it into the BSP company."
+   },
+   "source_ids": [
+    "gf-h1-2025",
+    "gf-q2-2026"
+   ]
+  },
+  "hurdle": {
+   "irr_pct": 20,
+   "moic_x": 2.5
+  },
+  "sources": [
+   {
+    "id": "gf-q2-2026",
+    "label": "GF Data, Q2 2026 middle-market report (via ACG)",
+    "url": "https://www.acg.org/news-trends/news/gf-data-reports-show-steady-middle-market-deal-flow-amid-more-selective",
+    "retrieved": "2026-10-06",
+    "facts": "Initial buyouts: 7.0x average valuation (trailing adjusted EBITDA), 2.9x total debt, senior debt priced at 7.8%.",
+    "reused_from": "Punctual Pros nationwide plan (financing evidence)"
+   },
+   {
+    "id": "gf-h1-2025",
+    "label": "GF Data, first half 2025 report (via Middle Market Growth)",
+    "url": "https://middlemarketgrowth.org/gf-data-report-h1-2025/",
+    "retrieved": "2026-10-06",
+    "facts": "Deals under $25M of enterprise value averaged 6.3 to 6.9x EBITDA; $100M to $250M deals averaged 10.0x.",
+    "reused_from": "Punctual Pros nationwide plan (financing evidence)"
+   },
+   {
+    "id": "gf-gulfstar-2025",
+    "label": "GF Data, first half 2025, summarised by Gulfstar",
+    "url": "https://gulfstargroup.com/middle-market-commentary-first-half-2025/",
+    "retrieved": "2026-10-06",
+    "facts": "Average total debt 4.0x EBITDA (senior 3.1x); equity 57.3% of capital; business services priced at 7.5x.",
+    "reused_from": "CET and Frontline growth plans (financing evidence)"
+   },
+   {
+    "id": "gf-q4-2025",
+    "label": "GF Data, Q4 2025 report (via ACG)",
+    "url": "https://www.acg.org/news-trends/news/gf-data-releases-q4-2025-ma-and-leverage-reports",
+    "retrieved": "2026-09-24",
+    "facts": "Average lower-middle-market purchase multiple of 7.2x trailing adjusted EBITDA in 2025.",
+    "reused_from": "Thomas Scientific growth plan (add-on valuation norms)"
+   },
+   {
+    "id": "capstone-2026",
+    "label": "Capstone Partners and IMAP, middle-market valuations outlook for 2026",
+    "url": "https://finviz.com/news/344863/capstone-partners-reports-middle-market-ma-valuations-prove-resilient-despite-macroeconomic-disruption-as-confidence-builds-entering-2026",
+    "retrieved": "2026-10-06",
+    "facts": "Typical middle-market deals at 6.8x EBITDA and premium deals at 9.8x in 2026, a three-turn spread.",
+    "reused_from": "CET and Frontline growth plans"
+   },
+   {
+    "id": "pkf-hvac-2026",
+    "label": "PKF Investment Banking, US HVAC M&A update, summer 2026",
+    "url": "https://www.pkfod.com/wp-content/uploads/2026/08/US-HVAC-MA-Industry-Update-Summer-2026-PDF.pdf",
+    "retrieved": "2026-10-06",
+    "facts": "Service-heavy HVAC businesses trade above 10x EBITDA; project-heavy, low-retention firms at 5.0 to 6.0x.",
+    "reused_from": "Sponsor precedents (valuation evidence)"
+   },
+   {
+    "id": "champions-2026",
+    "label": "Orange County Business Journal on Blackstone and Champions Group, February 2026",
+    "url": "https://www.ocbj.com/services/blackstone-buys-majority-stake-in-irvines-champions-group/",
+    "retrieved": "2026-10-06",
+    "facts": "About $2.5B, reported at about 18.5x trailing EBITDA (press estimate).",
+    "reused_from": "Sponsor precedents (Champions Group)"
+   },
+   {
+    "id": "sila-2024",
+    "label": "HomePros on Goldman Sachs and Sila Services, November 2024",
+    "url": "https://homepros.beehiiv.com/p/goldman-sachs-private-equity-arm-to-acquire-sila-services",
+    "retrieved": "2026-10-06",
+    "facts": "About $1.7B, about 17x trailing EBITDA including pending acquisitions (press estimate).",
+    "reused_from": "Sponsor precedents (Sila Services)"
+   },
+   {
+    "id": "public-comps",
+    "label": "Public comparables: SEC XBRL filings for 31 listed peers",
+    "url": null,
+    "retrieved": "2026-09-24",
+    "facts": "Sector medians of revenue growth and EBITDA margin used for sector assumptions.",
+    "reused_from": "Public comparables dataset"
+   },
+   {
+    "id": "precedents",
+    "label": "Sponsor precedents: 34 home-services and cross-sector cases",
+    "url": null,
+    "retrieved": "2026-10-06",
+    "facts": "Median hold 4.4 years across 21 sponsor cases (4.0 years for residential and franchise cases).",
+    "reused_from": "Value-creation case set (timing statistics)"
+   },
+   {
+    "id": "pp-filings",
+    "label": "Punctual Pros public filings (Form D, PPP, franchise disclosure, PGIM 10-Q)",
+    "url": "https://www.sec.gov/Archives/edgar/data/1923622/000119312526349252/ck0001923622-20260630.htm",
+    "retrieved": "2026-09-24",
+    "facts": "FY2025 revenue about $22M; adjusted EBITDA about $2.6M; senior loan at SOFR + 5.00% (8.73%); entry value about $18M to $30M.",
+    "reused_from": "Punctual Pros filings estimate table"
+   },
+   {
+    "id": "cet-filings",
+    "label": "CET public filings (Form D, PPP, press releases)",
+    "url": "https://www.sec.gov/Archives/edgar/data/2056574/000205657425000001/xslFormDX01/primary_doc.xml",
+    "retrieved": "2026-09-24",
+    "facts": "2025 standalone revenue $35M to $55M; EBITDA at entry $3M to $6M; entry value about 9 to 12x.",
+    "reused_from": "CET filings estimate table"
+   },
+   {
+    "id": "fl-filings",
+    "label": "Frontline public filings (Form D, UK Companies House accounts)",
+    "url": "https://find-and-update.company-information.service.gov.uk/company/07039190/filing-history",
+    "retrieved": "2026-09-24",
+    "facts": "$90M term loan; adjusted EBITDA at close $16M to $20M; entry 12 to 15x; revenue $100M to $140M.",
+    "reused_from": "Frontline filings estimate table"
+   },
+   {
+    "id": "ts-filings",
+    "label": "Thomas Scientific public filings (Form D, MFIC 10-Q schedules)",
+    "url": "https://www.sec.gov/Archives/edgar/data/1278752/000119312526335848/mfic-20260630.htm",
+    "retrieved": "2026-09-24",
+    "facts": "Entry value $430M to $525M; entry EBITDA $40M to $55M; revenue at entry $300M to $400M; loan at SOFR + 6.40%.",
+    "reused_from": "Thomas Scientific filings estimate table"
+   },
+   {
+    "id": "bpi-filings",
+    "label": "BPI public filings (Form D, credit agreement, FEC records)",
+    "url": "https://www.sec.gov/Archives/edgar/data/1976569/000197656923000001/primary_doc.xml",
+    "retrieved": "2026-09-24",
+    "facts": "$90.0M of equity in April 2023; entry value $150M to $220M, about 10 to 13x EBITDA of $14M to $18M.",
+    "reused_from": "BPI filings estimate table"
+   },
+   {
+    "id": "fh-filings",
+    "label": "Fair Harbor public filings (Form D, Inc. 5000, PPP)",
+    "url": "https://www.sec.gov/Archives/edgar/data/1920023/000192002322000001/primary_doc.xml",
+    "retrieved": "2026-09-24",
+    "facts": "$30.7M of equity in March 2022; entry value $40M to $90M, about 1.3 to 2.5x 2021 revenue of $30M to $40M.",
+    "reused_from": "Fair Harbor filings estimate table"
+   },
+   {
+    "id": "targets",
+    "label": "Add-on target screens (ZoomInfo modelled revenue, company websites)",
+    "url": null,
+    "retrieved": "2026-09-24",
+    "facts": "Revenue estimates and fit scores for 157 screened add-on targets.",
+    "reused_from": "Add-on target lists"
+   }
+  ]
+ },
+ "items": [
+  {
+   "id": "typical",
+   "kind": "preset",
+   "group": "generic",
+   "label": "Typical lower-middle-market deal",
+   "co": null,
+   "summary": "A $50M-revenue services company bought at the GF Data average.",
+   "inputs": {
+    "rev": 50,
+    "mg": 12,
+    "em": 7.0,
+    "lev": 3.5,
+    "ir": 7.8,
+    "gr": 6,
+    "dm": 0.5,
+    "yrs": 5,
+    "xm": 9.0,
+    "ae": 1.0,
+    "am": 6.5,
+    "ad": 50,
+    "cc": 50,
+    "fee": 3,
+    "tax": 25,
+    "da": 2,
+    "cx": 2.5,
+    "nwc": 10,
+    "wacc": 12,
+    "tg": 3,
+    "tm": 9.0,
+    "nd": 21.0,
+    "ce": 6.0,
+    "cm": 7.0,
+    "n": 4,
+    "ra": 1.5,
+    "rm": 6.5,
+    "rx": 9.0,
+    "ic": 0.3,
+    "syn": 10
+   },
+   "est": [],
+   "basis": {
+    "em": "GF Data Q2 2026: 7.0x average for initial buyouts.",
+    "lev": "Between GF Data's 2.9x (Q2 2026) and 4.0x (first half 2025).",
+    "ir": "GF Data Q2 2026: senior debt priced at 7.8%.",
+    "am": "GF Data: deals under $25M of value average 6.3 to 6.9x.",
+    "xm": "Between the 7.0x average and 10.0x for $100M to $250M deals (GF Data).",
+    "yrs": "Median hold of 4.4 years across 21 sponsor cases, rounded up."
+   },
+   "source_ids": [
+    "gf-q2-2026",
+    "gf-h1-2025",
+    "gf-gulfstar-2025",
+    "precedents"
+   ]
+  },
+  {
+   "id": "pp",
+   "kind": "preset",
+   "group": "portfolio",
+   "label": "Punctual Pros",
+   "co": "pp",
+   "summary": "Home services in Pennsylvania and New Jersey; filings-based estimates.",
+   "inputs": {
+    "rev": 22,
+    "mg": 11.8,
+    "em": 8.5,
+    "ir": 8.73,
+    "gr": 8,
+    "dm": 0.5,
+    "yrs": 5,
+    "xm": 10,
+    "ae": 0.5,
+    "am": 6.5,
+    "ad": 50,
+    "cc": 50,
+    "fee": 3,
+    "tax": 25,
+    "da": 2,
+    "cx": 2.5,
+    "nwc": 10,
+    "wacc": 12,
+    "tg": 3,
+    "tm": 10,
+    "nd": 11.7,
+    "ce": 2.6,
+    "cm": 8.5,
+    "n": 4,
+    "ra": 1.0,
+    "rm": 6.5,
+    "rx": 10,
+    "ic": 0.3,
+    "syn": 10,
+    "lev": 5.0
+   },
+   "est": [
+    "rev",
+    "mg",
+    "em",
+    "lev",
+    "gr",
+    "dm",
+    "xm",
+    "ae",
+    "ra",
+    "nd",
+    "ce"
+   ],
+   "basis": {
+    "rev": "FY2025 pro forma revenue about $22M (range $16M to $28M), from franchise disclosures and headcount.",
+    "mg": "Adjusted EBITDA about $2.6M after franchise royalties (8 to 14% margin).",
+    "em": "Entry value about $18M to $30M, 7 to 10x estimated EBITDA.",
+    "lev": "Senior debt about $10M to $18M, 4 to 5.5x EBITDA.",
+    "ir": "PGIM 10-Q, June 2026: SOFR + 5.00% = 8.73%.",
+    "gr": "2025 same-store sales rose 8.4% to 14.3% across the three brands.",
+    "xm": "PKF: service-heavy HVAC trades above 10x.",
+    "ae": "About one small tuck-in a year, the size of the Horvath deal.",
+    "ra": "Screened Punctual Pros targets have about $6M to $15M of revenue."
+   },
+   "source_ids": [
+    "pp-filings",
+    "pkf-hvac-2026",
+    "gf-h1-2025"
+   ],
+   "note": "Size from public estimates (est.); deal terms use the market benchmarks, so the return is forward-looking for a deal of this size, not a verdict on the original entry price."
+  },
+  {
+   "id": "cet",
+   "kind": "preset",
+   "group": "portfolio",
+   "label": "CET",
+   "co": "cet",
+   "summary": "Commercial electrical in New England; filings-based estimates.",
+   "inputs": {
+    "rev": 45,
+    "mg": 10,
+    "em": 10.5,
+    "ir": 8.5,
+    "gr": 10,
+    "dm": 0.5,
+    "yrs": 5,
+    "xm": 10.5,
+    "ae": 2.0,
+    "am": 6.5,
+    "ad": 50,
+    "cc": 50,
+    "fee": 3,
+    "tax": 25,
+    "da": 2,
+    "cx": 2.5,
+    "nwc": 10,
+    "wacc": 12,
+    "tg": 3,
+    "tm": 10.5,
+    "nd": 20.2,
+    "ce": 4.5,
+    "cm": 10.5,
+    "n": 4,
+    "ra": 1.5,
+    "rm": 6.5,
+    "rx": 10.5,
+    "ic": 0.3,
+    "syn": 10,
+    "lev": 4.5
+   },
+   "est": [
+    "rev",
+    "mg",
+    "em",
+    "lev",
+    "ir",
+    "gr",
+    "dm",
+    "xm",
+    "ae",
+    "ra",
+    "nd",
+    "ce"
+   ],
+   "basis": {
+    "rev": "2025 standalone revenue $35M to $55M (midpoint about $45M).",
+    "mg": "8 to 12% EBITDA margin, bracketed by Limbach and IES.",
+    "em": "Entry value about $35M to $75M, 9 to 12x EBITDA.",
+    "lev": "3.5 to 5.5x lower-middle-market leverage; lender not disclosed.",
+    "gr": "Listed electrical peers grew 16.8% a year (median); 10% assumed.",
+    "xm": "Equal to the entry multiple: no re-rating assumed.",
+    "ae": "Horton-sized add-ons ($25M to $40M revenue) every 18 to 24 months."
+   },
+   "source_ids": [
+    "cet-filings",
+    "public-comps",
+    "gf-h1-2025"
+   ],
+   "note": "Size from public estimates (est.); deal terms use the market benchmarks, so the return is forward-looking for a deal of this size, not a verdict on the original entry price."
+  },
+  {
+   "id": "fl",
+   "kind": "preset",
+   "group": "portfolio",
+   "label": "Frontline",
+   "co": "fl",
+   "summary": "Legal IT managed services; filings-based estimates.",
+   "inputs": {
+    "rev": 120,
+    "mg": 15,
+    "em": 13.5,
+    "ir": 9.0,
+    "gr": 10,
+    "dm": 0.5,
+    "yrs": 5,
+    "xm": 12,
+    "ae": 1.5,
+    "am": 7.0,
+    "ad": 50,
+    "cc": 50,
+    "fee": 3,
+    "tax": 25,
+    "da": 2,
+    "cx": 2.5,
+    "nwc": 10,
+    "wacc": 12,
+    "tg": 3,
+    "tm": 12,
+    "nd": 90.0,
+    "ce": 18.0,
+    "cm": 13.5,
+    "n": 4,
+    "ra": 1.5,
+    "rm": 7.0,
+    "rx": 12,
+    "ic": 0.3,
+    "syn": 10,
+    "lev": 5.0
+   },
+   "est": [
+    "rev",
+    "mg",
+    "em",
+    "lev",
+    "ir",
+    "gr",
+    "dm",
+    "xm",
+    "ae",
+    "am",
+    "ra",
+    "nd",
+    "ce"
+   ],
+   "basis": {
+    "rev": "Revenue run-rate $100M to $140M (about 1,100 staff).",
+    "mg": "EBITDA at close $16M to $20M, a 13 to 18% margin.",
+    "em": "Transaction value $230M to $260M, 12 to 15x EBITDA.",
+    "lev": "$90M term loan against $16M to $20M of EBITDA.",
+    "ir": "Comparable Audax loans price at SOFR + 4.75 to 5.50%.",
+    "gr": "Listed managed-services peers grew 9.8% a year (median).",
+    "xm": "Capstone: premium deals sit about 3 turns above typical; 12x defends most of the premium."
+   },
+   "source_ids": [
+    "fl-filings",
+    "public-comps",
+    "capstone-2026"
+   ],
+   "note": "Size from public estimates (est.); deal terms use the market benchmarks, so the return is forward-looking for a deal of this size, not a verdict on the original entry price."
+  },
+  {
+   "id": "ts",
+   "kind": "preset",
+   "group": "portfolio",
+   "label": "Thomas Scientific",
+   "co": "ts",
+   "summary": "Lab supply distribution; filings-based estimates at entry.",
+   "inputs": {
+    "rev": 350,
+    "mg": 13.6,
+    "em": 9.0,
+    "ir": 10.1,
+    "gr": 2,
+    "dm": 0,
+    "yrs": 5,
+    "xm": 10,
+    "ae": 1.0,
+    "am": 6.5,
+    "ad": 50,
+    "cc": 50,
+    "fee": 3,
+    "tax": 25,
+    "da": 2,
+    "cx": 2.5,
+    "nwc": 10,
+    "wacc": 12,
+    "tg": 3,
+    "tm": 10,
+    "nd": 238.0,
+    "ce": 47.6,
+    "cm": 9.0,
+    "n": 4,
+    "ra": 3.0,
+    "rm": 6.5,
+    "rx": 10,
+    "ic": 0.3,
+    "syn": 10,
+    "lev": 4.5
+   },
+   "est": [
+    "rev",
+    "mg",
+    "em",
+    "lev",
+    "gr",
+    "xm",
+    "ae",
+    "ra",
+    "nd",
+    "ce"
+   ],
+   "basis": {
+    "rev": "Revenue at entry $300M to $400M.",
+    "mg": "Entry EBITDA $40M to $55M, lifted by pandemic testing demand.",
+    "em": "Entry value $430M to $525M, about 10x EBITDA.",
+    "lev": "One term loan of about $200M to $275M, 4.5 to 5.5x.",
+    "ir": "MFIC 10-Q, June 2026: SOFR + 6.40%, about 10.1%.",
+    "gr": "Listed lab-distribution peers grew 2.0% a year (median).",
+    "xm": "Equal to the entry multiple: no re-rating assumed.",
+    "ae": "Recent add-ons (Quintana, Day, Arrowhead) were small tuck-ins."
+   },
+   "source_ids": [
+    "ts-filings",
+    "public-comps",
+    "gf-q4-2025"
+   ],
+   "note": "Size from public estimates (est.); deal terms use the market benchmarks, so the return is forward-looking for a deal of this size, not a verdict on the original entry price."
+  },
+  {
+   "id": "bpi",
+   "kind": "preset",
+   "group": "portfolio",
+   "label": "BPI",
+   "co": "bpi",
+   "summary": "Communications and public affairs; filings-based estimates.",
+   "inputs": {
+    "rev": 76,
+    "mg": 21,
+    "em": 9.0,
+    "ir": 8.5,
+    "gr": 3,
+    "dm": 0.5,
+    "yrs": 5,
+    "xm": 10,
+    "ae": 1.0,
+    "am": 7.0,
+    "ad": 50,
+    "cc": 50,
+    "fee": 3,
+    "tax": 25,
+    "da": 2,
+    "cx": 2.5,
+    "nwc": 10,
+    "wacc": 12,
+    "tg": 3,
+    "tm": 10,
+    "nd": 63.8,
+    "ce": 15.96,
+    "cm": 9.0,
+    "n": 4,
+    "ra": 1.0,
+    "rm": 7.0,
+    "rx": 10,
+    "ic": 0.3,
+    "syn": 10,
+    "lev": 4.0
+   },
+   "est": [
+    "rev",
+    "mg",
+    "em",
+    "lev",
+    "ir",
+    "gr",
+    "dm",
+    "xm",
+    "ae",
+    "am",
+    "ra",
+    "nd",
+    "ce"
+   ],
+   "basis": {
+    "rev": "Net revenue implied by $16M of EBITDA at a 21% margin (2022 to 2023).",
+    "mg": "18 to 24% of net revenue, below listed peers at 24 to 33%.",
+    "em": "Entry value $150M to $220M, about 10 to 13x EBITDA.",
+    "lev": "3.5 to 5.0x; the credit agreement followed the close by seven months.",
+    "gr": "Listed agency peers grew 2.8% a year (median).",
+    "xm": "Listed peer PPHC trades near 8.4x; 10x assumed for a private premium."
+   },
+   "source_ids": [
+    "bpi-filings",
+    "public-comps"
+   ],
+   "note": "Size from public estimates (est.); deal terms use the market benchmarks, so the return is forward-looking for a deal of this size, not a verdict on the original entry price."
+  },
+  {
+   "id": "fh",
+   "kind": "preset",
+   "group": "portfolio",
+   "label": "Fair Harbor",
+   "co": "fh",
+   "summary": "Consumer apparel brand; priced on revenue, so EBITDA multiples run high.",
+   "inputs": {
+    "rev": 35,
+    "mg": 12,
+    "em": 9.0,
+    "ir": 8.0,
+    "gr": 5,
+    "dm": 0,
+    "yrs": 5,
+    "xm": 12,
+    "ae": 0,
+    "am": 6.5,
+    "ad": 50,
+    "cc": 50,
+    "fee": 3,
+    "tax": 25,
+    "da": 2,
+    "cx": 2.5,
+    "nwc": 10,
+    "wacc": 13,
+    "tg": 3,
+    "tm": 12,
+    "nd": 4.2,
+    "ce": 4.2,
+    "cm": 9.0,
+    "n": 2,
+    "ra": 0.5,
+    "rm": 6.5,
+    "rx": 12,
+    "ic": 0.3,
+    "syn": 10,
+    "lev": 1.0
+   },
+   "est": [
+    "rev",
+    "mg",
+    "em",
+    "lev",
+    "gr",
+    "xm",
+    "ra",
+    "nd",
+    "ce"
+   ],
+   "basis": {
+    "rev": "2021 revenue $30M to $40M before the BSP deal.",
+    "mg": "Assumed; listed apparel peers earn 6 to 18%.",
+    "em": "Entry value $40M to $90M, about 1.9x revenue, so about 15.5x a 12% margin.",
+    "lev": "No term loan found; at most a small inventory credit line.",
+    "gr": "Listed apparel peers grew 1.0% a year (median); 5% assumed for a younger brand.",
+    "xm": "Assumed: a mature brand is usually worth less per dollar of EBITDA."
+   },
+   "source_ids": [
+    "fh-filings",
+    "public-comps"
+   ],
+   "note": "Size from public estimates (est.); deal terms use the market benchmarks, so the return is forward-looking for a deal of this size, not a verdict on the original entry price."
+  },
+  {
+   "id": "sector-pp",
+   "kind": "sector",
+   "co": "pp",
+   "label": "Home-services tuck-in",
+   "target_file": "ma_targets_pp",
+   "margin_pct": 12,
+   "growth_pct": 5,
+   "basis": "Listed residential peers earn 15.1% EBITDA margins; Punctual Pros itself about 8 to 14%. Small independents assumed at 12%.",
+   "source_ids": [
+    "public-comps",
+    "pp-filings"
+   ]
+  },
+  {
+   "id": "sector-cet",
+   "kind": "sector",
+   "co": "cet",
+   "label": "Electrical contractor tuck-in",
+   "target_file": "ma_targets_cet",
+   "margin_pct": 10,
+   "growth_pct": 6,
+   "basis": "Listed electrical peers earn 11.2% EBITDA margins (median); 10% assumed for a private contractor.",
+   "source_ids": [
+    "public-comps",
+    "cet-filings"
+   ]
+  },
+  {
+   "id": "sector-fl",
+   "kind": "sector",
+   "co": "fl",
+   "label": "Legal IT services tuck-in",
+   "target_file": "ma_targets_fl_ts",
+   "margin_pct": 15,
+   "growth_pct": 8,
+   "basis": "Listed managed-services peers earn 16.9% EBITDA margins (median); 15% assumed.",
+   "source_ids": [
+    "public-comps",
+    "fl-filings"
+   ]
+  },
+  {
+   "id": "sector-ts",
+   "kind": "sector",
+   "co": "ts",
+   "label": "Lab distribution tuck-in",
+   "target_file": "ma_targets_fl_ts",
+   "margin_pct": 8,
+   "growth_pct": 2,
+   "basis": "Listed lab-distribution peers earn 7.3% EBITDA margins (median); 8% assumed.",
+   "source_ids": [
+    "public-comps",
+    "ts-filings"
+   ]
+  },
+  {
+   "id": "b-entry-avg",
+   "kind": "benchmark",
+   "metric": "Average buyout multiple",
+   "value": 7.0,
+   "unit": "x EBITDA",
+   "note": "Initial buyouts, Q2 2026.",
+   "source_ids": [
+    "gf-q2-2026"
+   ]
+  },
+  {
+   "id": "b-entry-2025",
+   "kind": "benchmark",
+   "metric": "Average lower-middle-market purchase multiple, 2025",
+   "value": 7.2,
+   "unit": "x EBITDA",
+   "note": "Full year 2025.",
+   "source_ids": [
+    "gf-q4-2025"
+   ]
+  },
+  {
+   "id": "b-small",
+   "kind": "benchmark",
+   "metric": "Deals under $25M of value",
+   "low": 6.3,
+   "high": 6.9,
+   "unit": "x EBITDA",
+   "note": "First half 2025; the typical add-on price.",
+   "source_ids": [
+    "gf-h1-2025"
+   ]
+  },
+  {
+   "id": "b-large",
+   "kind": "benchmark",
+   "metric": "Deals of $100M to $250M",
+   "value": 10.0,
+   "unit": "x EBITDA",
+   "note": "First half 2025; what a scaled company can sell for.",
+   "source_ids": [
+    "gf-h1-2025"
+   ]
+  },
+  {
+   "id": "b-bizsvc",
+   "kind": "benchmark",
+   "metric": "Business services",
+   "value": 7.5,
+   "unit": "x EBITDA",
+   "note": "First half 2025.",
+   "source_ids": [
+    "gf-gulfstar-2025"
+   ]
+  },
+  {
+   "id": "b-typ-prem",
+   "kind": "benchmark",
+   "metric": "Typical versus premium deals",
+   "low": 6.8,
+   "high": 9.8,
+   "unit": "x EBITDA",
+   "note": "2026 outlook.",
+   "source_ids": [
+    "capstone-2026"
+   ]
+  },
+  {
+   "id": "b-hvac",
+   "kind": "benchmark",
+   "metric": "HVAC services: project-heavy versus service-heavy",
+   "low": 5.0,
+   "high": 10.0,
+   "unit": "x EBITDA",
+   "note": "Service-heavy firms trade above 10x.",
+   "source_ids": [
+    "pkf-hvac-2026"
+   ]
+  },
+  {
+   "id": "b-scaled",
+   "kind": "benchmark",
+   "metric": "Scaled residential services exits",
+   "low": 17.0,
+   "high": 18.5,
+   "unit": "x EBITDA",
+   "note": "Sila (2024) and Champions (2026); press estimates.",
+   "source_ids": [
+    "sila-2024",
+    "champions-2026"
+   ]
+  },
+  {
+   "id": "b-lev-2026",
+   "kind": "benchmark",
+   "metric": "Total debt at buyout, Q2 2026",
+   "value": 2.9,
+   "unit": "x EBITDA",
+   "note": "Down from 3.4x.",
+   "source_ids": [
+    "gf-q2-2026"
+   ]
+  },
+  {
+   "id": "b-lev-2025",
+   "kind": "benchmark",
+   "metric": "Total debt, first half 2025",
+   "value": 4.0,
+   "unit": "x EBITDA",
+   "note": "Senior debt 3.1x; equity 57.3% of capital.",
+   "source_ids": [
+    "gf-gulfstar-2025"
+   ]
+  },
+  {
+   "id": "b-rate",
+   "kind": "benchmark",
+   "metric": "Senior debt pricing, Q2 2026",
+   "value": 7.8,
+   "unit": "%",
+   "note": "All-in interest rate.",
+   "source_ids": [
+    "gf-q2-2026"
+   ]
+  },
+  {
+   "id": "b-hold",
+   "kind": "benchmark",
+   "metric": "Median hold period",
+   "value": 4.4,
+   "unit": "years",
+   "note": "21 sponsor cases; 4.0 years for residential and franchise cases.",
+   "source_ids": [
+    "precedents"
+   ]
+  },
+  {
+   "id": "assumptions",
+   "kind": "assumptions",
+   "label": "Analyst assumptions without a market source",
+   "items": {
+    "cc": "Half of EBITDA reaches debt repayment after tax, capital spending and working capital.",
+    "fee": "3% of price for bankers, lawyers and financing.",
+    "ad": "Half of each add-on paid with debt, half with new fund equity.",
+    "tax": "25% combined federal and state rate on operating profit.",
+    "wacc": "12% blended required return for a lower-middle-market company.",
+    "tg": "3% long-run growth, about the rate of nominal GDP.",
+    "ic": "$0.3M per add-on to merge systems, brands and teams.",
+    "syn": "10% of add-on EBITDA from shared purchasing and dispatch.",
+    "hurdle": "20% annual return (2.5x money multiple) used to colour the sensitivity tables."
+   }
+  }
+ ]
+}

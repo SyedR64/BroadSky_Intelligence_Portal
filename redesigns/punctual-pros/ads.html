@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="../../assets/system.css?v=20261008134553">
-<link rel="stylesheet" href="./ads.css?v=20261008134553">
+<link rel="stylesheet" href="../../assets/system.css?v=20261008145402">
+<link rel="stylesheet" href="./ads.css?v=20261008145402">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
 </head>
 <body data-co="pp">
@@ -37,6 +37,7 @@
         <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Growth marketing</b> · October 2026</p>
         <h1 class="sys-h1" id="hero-h">ZIP-targeted TV, <span class="sys-grad-text">not the whole market.</span></h1>
         <p class="sys-lead" id="thesis-lede">Sell the on-time promise the three brands already own. Local Services Ads are the base; ZIP-targeted TV, new-mover mail and weather triggers build on it.</p>
+<p class="sys-src page-terms"><b>Terms:</b> LSA: Google Local Services Ads. CTV: connected TV. VO: voiceover. ROAS: return on ad spend. DMA: a TV market area. NWS: National Weather Service.</p>
         <div class="sys-actions">
           <a class="sys-btn sys-btn--primary sys-btn--lg" href="#calc">Run the numbers</a>
           <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#ctv">Watch the sample spots</a>
@@ -88,7 +89,7 @@
     </nav>
 
     <h3 class="h3" id="ctv">Connected-TV spots <span class="tag">storyboards</span></h3>
-    <p class="sub">Each card is a shootable storyboard: the scene strip shows on-screen text, the line under each frame is the voiceover. Two cuts are already rendered as animatics; <b>Play sample</b> streams them.</p>
+    <p class="sub">Each card is a shootable storyboard: the scene strip shows on-screen text, the line under each frame is the voiceover. Two cuts are already made as animatics; <b>Play sample</b> streams them.</p>
     <div id="ctv-list" class="ctv-list"><div class="loading">Loading creatives…</div></div>
 
     <div class="duo">
@@ -252,7 +253,7 @@
   <div class="sys-wrap">
     <div class="sys-section-head">
       <p class="sys-kicker">Sources and caveats</p>
-      <h2 class="sys-h2" id="src-h">Every number traces to a page or a portal dataset.</h2>
+      <h2 class="sys-h2" id="src-h">Every number traces to a source page or to portal data.</h2>
     </div>
     <div id="sources-body"></div>
   </div>
@@ -278,10 +279,10 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261008134553';
-  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261008134553';
-  import { Chat } from '../../assets/chat.js?v=20261008134553';
-  import { init } from './ads.js?v=20261008134553';
+  import { Frame } from '../../assets/frame.js?v=20261008145402';
+  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261008145402';
+  import { Chat } from '../../assets/chat.js?v=20261008145402';
+  import { init } from './ads.js?v=20261008145402';
   const frame = Frame.mount({});
   init({ Chat, Data, Fmt, Live, esc }).then(chat => { if (chat) frame.setChat(chat); }).catch(e => console.warn('ads init', e));
 </script>

@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261008134553">
-<link rel="stylesheet" href="gridos.css?v=20261008134553">
+<link rel="stylesheet" href="../../assets/system.css?v=20261008145402">
+<link rel="stylesheet" href="gridos.css?v=20261008145402">
 </head>
 <body data-co="cet">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -47,6 +47,7 @@
         <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>GridOS</b> · for CET</p>
         <h1 id="hero-h" class="sys-h1">Every bid, crew and asset on <span class="sys-grad-text">one operating layer.</span></h1>
         <p class="sys-lead">GridOS turns three project shops into one service company. It finds the work, runs the field and monitors what CET installs, so more revenue repeats.</p>
+<p class="sys-src page-terms"><b>Terms:</b> SCADA: the control software that runs plants and pump stations. WPCA: a town water pollution control authority. SRF: state revolving fund for water projects. O&amp;M: operations and maintenance. NEVI: the federal EV-charger program.</p>
         <div class="sys-actions">
           <a class="sys-btn sys-btn--primary sys-btn--lg" href="#demo">Try the live demo <span aria-hidden="true">→</span></a>
           <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#value">See the value math</a>
@@ -235,11 +236,11 @@
 </main>
 
 <script type="module">
-import { Frame } from '../../assets/frame.js?v=20261008134553';
-import { Chat } from '../../assets/chat.js?v=20261008134553';
-import { Data, Fmt } from '../../assets/core.js?v=20261008134553';
-import { initOS } from './gridos.js?v=20261008134553';
-import { FAQ, makeIntents } from './site.js?v=20261008134553';
+import { Frame } from '../../assets/frame.js?v=20261008145402';
+import { Chat } from '../../assets/chat.js?v=20261008145402';
+import { Data, Fmt } from '../../assets/core.js?v=20261008145402';
+import { initOS } from './gridos.js?v=20261008145402';
+import { FAQ, makeIntents } from './site.js?v=20261008145402';
 const chat = Chat.mount(null, { persona: 'cet', short_name: 'CET', mode: 'floating', theme: 'light', faq: FAQ, suggestions: ['What is GridOS?', 'Which CET bids are due in the next 30 days?', 'Which wastewater plants should Horton call first?', 'Which programs can fund our project?', 'What is CET Assure?'], intents: makeIntents(Data, 'index.html'), openOnLoad: /[?&]chat=open/.test(location.search) });
 Frame.mount({ chat });
 try { initOS({ Data, Fmt }); } catch (e) { console.warn('gridos init', e); }

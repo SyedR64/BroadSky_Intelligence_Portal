@@ -11,9 +11,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261008134553">
+<link rel="stylesheet" href="../../assets/system.css?v=20261008145402">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="growth-plan.css?v=20261008134553">
+<link rel="stylesheet" href="growth-plan.css?v=20261008145402">
 </head>
 <body data-co="cet">
 <main id="main">
@@ -35,6 +35,7 @@
         <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Growth plan</b> · October 2026</p>
         <h1 id="hero-h" class="sys-h1">Two states today. <span class="sys-grad-text">Six-state grid</span> by month 36.</h1>
         <p class="sys-lead" id="hero-lede">About 3x revenue in 36 months: make MA and CT one company, fill in the other four New England states and shift the mix toward recurring O&amp;M.</p>
+<p class="sys-src page-terms"><b>Terms:</b> CET: Commonwealth Electrical Technologies. O&amp;M: operations and maintenance. SRF: state revolving fund for water projects. WWTP: wastewater treatment plant. IBEW and NECA: the electricians' union and its contractor association. IRR: internal rate of return.</p>
         <div class="sys-actions">
           <a class="sys-btn sys-btn--primary sys-btn--lg" href="#map">See the three phases</a>
           <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#returns">Jump to returns</a>
@@ -112,11 +113,11 @@
     <div class="sys-section-head">
       <p class="sys-kicker">04 · The AI layer (GridOS)</p>
       <h2 id="ag-h" class="sys-h2">Nine agents for the estimators, the crews and the plant operators.</h2>
-      <p class="sys-lead">Each agent has a named vendor, a published result and a deploy time. The runway shows go-live order.</p>
+      <p class="sys-lead">Each agent has a named vendor, a published result and a time to go live. The runway shows the order.</p>
     </div>
     <div class="sys-chips pb-seg" role="tablist" aria-label="Filter agents by who they help" id="ag-seg"></div>
     <div class="pb-ag-grid">
-      <div class="sys-card pb-runway" id="runway" aria-label="Deployment runway in weeks"></div>
+      <div class="sys-card pb-runway" id="runway" aria-label="Weeks to go live, by agent"></div>
       <div class="sys-grid sys-grid--3 pb-agents" id="agent-grid"></div>
     </div>
   </div>
@@ -212,7 +213,7 @@
       <h2 id="meth-h" class="sys-h2">Sources, caveats and why the page looks this way.</h2>
     </div>
     <div class="sys-stack">
-      <details class="sys-card pb-drawer" id="srcs"><summary><span><b>Method, sources and caveats</b> <span class="pb-muted">every dataset and link behind the numbers</span></span><span class="pb-chev" aria-hidden="true"></span></summary><div class="pb-drawer-body sys-prose pb-src-body" id="src-body"></div></details>
+      <details class="sys-card pb-drawer" id="srcs"><summary><span><b>Method, sources and caveats</b> <span class="pb-muted">every source and link behind the numbers</span></span><span class="pb-chev" aria-hidden="true"></span></summary><div class="pb-drawer-body sys-prose pb-src-body" id="src-body"></div></details>
       <details class="sys-card pb-drawer" id="rat-drawer">
         <summary><span><b id="rationale">Design rationale</b></span><span class="pb-chev" aria-hidden="true"></span></summary>
         <div class="pb-drawer-body">
@@ -248,10 +249,10 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script type="module">
-import { Frame } from '../../assets/frame.js?v=20261008134553';
-import { Data, Fmt, esc } from '../../assets/core.js?v=20261008134553';
-import { Chat } from '../../assets/chat.js?v=20261008134553';
-import { boot } from './growth-plan.js?v=20261008134553';
+import { Frame } from '../../assets/frame.js?v=20261008145402';
+import { Data, Fmt, esc } from '../../assets/core.js?v=20261008145402';
+import { Chat } from '../../assets/chat.js?v=20261008145402';
+import { boot } from './growth-plan.js?v=20261008145402';
 const frame = Frame.mount({});
 boot({ Data, Fmt, esc, Chat, frame });
 </script>

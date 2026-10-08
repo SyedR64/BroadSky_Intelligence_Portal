@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="../../assets/system.css?v=20261008134553">
-<link rel="stylesheet" href="growth-plan.css?v=20261008134553">
+<link rel="stylesheet" href="../../assets/system.css?v=20261008145402">
+<link rel="stylesheet" href="growth-plan.css?v=20261008145402">
 </head>
 <body data-co="ts">
 <main id="main">
@@ -34,6 +34,7 @@
         <h1 id="hero-h" class="sys-h1">From distributor to <span class="sys-grad-text">lab supply-chain partner.</span></h1>
         <div class="pb-view-sw" role="group" aria-label="Choose a reading view"><span>Reading as</span><button type="button" data-view="dt" aria-pressed="true">Deal team and lenders</button><button type="button" data-view="mgmt" aria-pressed="false">Thomas management</button></div>
         <p class="sys-lead" id="hero-lede">BSP's first deal and its most stressed position. Cash and the December 2027 maturity come first; target-account selling, digital ordering and private label earn the refinancing.</p>
+<p class="sys-src page-terms"><b>Terms:</b> DSO: days customers take to pay. ERP: the accounting and order system. CRM: the customer and sales system. SOFR: the benchmark rate loans are priced over. CAGR: compound annual growth rate.</p>
         <div class="sys-actions"><a class="sys-btn sys-btn--primary sys-btn--lg" href="#returns">See the financing math</a><a class="sys-btn sys-btn--secondary sys-btn--lg" href="labos.html">Open LabOS →</a></div>
       </div>
       <aside class="sys-card pb-clock" aria-labelledby="clock-h">
@@ -111,11 +112,11 @@
     <div class="sys-section-head">
       <p class="sys-kicker">04 · The AI layer</p>
       <h2 id="ag-h" class="sys-h2">Nine agents that sell, key, search, forecast and collect.</h2>
-      <p class="sys-lead">Named vendors, a published result each and weeks to deploy. Collections and pricing go first because each day of DSO is worth about $0.8M before the refinancing.</p>
+      <p class="sys-lead">Named vendors, a published result each and weeks to go live. Collections and pricing go first because each day of DSO is worth about $0.8M before the refinancing.</p>
     </div>
     <div class="sys-chips pb-seg" role="tablist" aria-label="Filter agents by who they help" id="ag-seg"></div>
     <div class="pb-ag-grid">
-      <div class="sys-card pb-runway" id="runway" aria-label="Deployment runway in weeks"></div>
+      <div class="sys-card pb-runway" id="runway" aria-label="Weeks to go live, by agent"></div>
       <div class="sys-grid sys-grid--3" id="agent-grid"></div>
     </div>
   </div>
@@ -222,7 +223,7 @@
     <div class="sys-section-head">
       <p class="sys-kicker">09 · Method</p>
       <h2 id="rat-h" class="sys-h2">How this page was built, and what sits behind it.</h2>
-      <p class="sys-lead">The design choices, then every dataset and link the numbers come from.</p>
+      <p class="sys-lead">The design choices, then every source and link the numbers come from.</p>
     </div>
     <details class="sys-card pb-drawer" id="rat-drawer">
       <summary><span><b>Design rationale</b></span><span class="pb-chev" aria-hidden="true"></span></summary>
@@ -234,7 +235,7 @@
       </div>
     </details>
     <details class="sys-card pb-drawer" id="srcs">
-      <summary><span><b>Method, sources and caveats</b> · every dataset and link behind this page</span><span class="pb-chev" aria-hidden="true"></span></summary>
+      <summary><span><b>Method, sources and caveats</b> · every source and link behind this page</span><span class="pb-chev" aria-hidden="true"></span></summary>
       <div class="pb-drawer-body" id="src-body"></div>
     </details>
   </div>
@@ -260,10 +261,10 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script type="module">
-import { Frame } from '../../assets/frame.js?v=20261008134553';
-import { Data, Fmt, esc } from '../../assets/core.js?v=20261008134553';
-import { Chat } from '../../assets/chat.js?v=20261008134553';
-import { boot } from './growth-plan.js?v=20261008134553';
+import { Frame } from '../../assets/frame.js?v=20261008145402';
+import { Data, Fmt, esc } from '../../assets/core.js?v=20261008145402';
+import { Chat } from '../../assets/chat.js?v=20261008145402';
+import { boot } from './growth-plan.js?v=20261008145402';
 const frame = Frame.mount({});
 boot({ Data, Fmt, esc, Chat, Frame, frame });
 </script>

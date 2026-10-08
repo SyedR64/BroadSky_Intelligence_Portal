@@ -22,7 +22,7 @@ if m:
 CO = [  # portfolio order is fixed: PP, CET, Frontline, Thomas Scientific, BPI, Fair Harbor
     ('pp', 'punctual-pros', 'Punctual Pros', 'Residential HVAC, plumbing and electrical, Central PA and the Jersey Shore'),
     ('cet', 'cet', 'Commonwealth Electrical Technologies', 'Electrical and energy infrastructure across New England'),
-    ('fl', 'frontline', 'Frontline Managed Services', 'Managed IT, security and revenue cycle for law firms'),
+    ('fl', 'frontline', 'Frontline Managed Services', 'Managed IT, security and billing services for law firms'),
     ('ts', 'thomas-scientific', 'Thomas Scientific', 'Lab supply distribution'),
     ('bpi', 'bpi', 'Bully Pulpit International', 'Strategic communications and public affairs'),
     ('fh', 'fair-harbor', 'Fair Harbor', 'Sustainable beachwear'),
@@ -36,16 +36,16 @@ KNOWN = {
     'theater.html': ('3D theater', 'A 3D fly-through of home sales, expansion and live storms.'),
     'sitemap.html': ('Sitemap', 'This page.'),
     'redesigns/index.html': ('Site concepts', 'Six concept websites and the OS program.'),
-    'redesigns/voice-ai.html': ('24/7 Voice AI', 'Missed-call economics, vendors and a sample call.'),
+    'redesigns/voice-ai.html': ('24/7 Voice AI', 'What missed calls cost, the vendors and a sample call.'),
     'redesigns/ai-agents.html': ('AI agents', '45 agents across six companies, with rollout and value.'),
-    'redesigns/case-studies.html': ('Value-creation case studies', 'How other sponsors grew similar companies.'),
-    'redesigns/methodology.html': ('BSP methodology', 'How BSP sources, buys and builds companies.'),
-    'assistant.html': ('Assistant', 'BSP Desk, full screen.'),
+    'redesigns/case-studies.html': ('Sponsor case studies', 'How other sponsors grew companies like these.'),
+    'redesigns/methodology.html': ('How BSP buys', 'How BSP finds, buys and grows companies.'),
+    'assistant.html': ('Assistant', 'The BSP Desk assistant, full screen.'),
     'briefing/executive_memo.html': ('Executive memo', 'Four pages: where the six companies stand and what to do next.'),
 }
 CO_PAGE = {
-    'index.html': ('Concept site', 'A concept website wired to portal data.'),
-    'growth-plan.html': ('Growth plan', 'From today to the next multiple, with sourced figures.'),
+    'index.html': ('Concept site', 'A concept website that uses the portal data.'),
+    'growth-plan.html': ('Growth plan', 'The steps from today to a higher exit value, with sources.'),
     'nationwide.html': ('Nationwide plan', 'Lancaster to national in four phases.'),
     'ads.html': ('Growth marketing and sample ads', 'Connected TV, Local Services Ads and new-mover mail.'),
 }
@@ -258,7 +258,7 @@ def main():
     <div class="sys-wrap">
       <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>{n_pages} pages</b> · {n_routes} portal views · {len(mods)} modules</p>
       <h1 id="map-title" class="sys-h1">Every page, <span class="sys-grad-text">one list.</span></h1>
-      <p class="sys-lead">Every page and portal view, by company, then the portfolio-wide programs and modules.</p>
+      <p class="sys-lead">Every page and portal view, by company, then the programs and modules that span the portfolio.</p>
       <div class="sys-chips" style="margin-top:var(--sys-sp-6)">
         {''.join(f'<a class="sys-chip" data-co="{c[0]}" href="#g-{c[0]}">{esc(SHORT[c[0]])}</a>' for c in CO)}
       </div>

@@ -6,7 +6,7 @@
    quietly, so the grounded engine in chat.js keeps working on its own.
 
    Usage (from chat.js):
-     const { Backend } = await import('./backend.js?v=20261008134553');
+     const { Backend } = await import('./backend.js?v=20261008145402');
      if (await Backend.discover()) for await (const t of Backend.chat({ persona, messages, context, question })) out += t;
      const pre = await Backend.precomputed(question);   // works without a backend
 
@@ -57,21 +57,21 @@ function humanize(status, body = {}, retryHeader = 0) {
   const retryAfter = Number(body.retryAfter || retryHeader) || 0;
   const code = body.error || 'http_' + status;
   const opt = { code, status, retryAfter, scope: body.scope || '' };
-  if (status === 429 && code === 'daily_cap') return new BackendError('Today\'s Claude budget for this site is used up, so answers come from the portal\'s own data until it resets at midnight UTC.', opt);
-  if (status === 429 && body.scope === 'upstream') return new BackendError('Claude is busy right now. Try again in a minute; the grounded answer is shown meanwhile.', opt);
-  if (status === 429) return new BackendError(`You've asked a lot of questions in a short time. Claude will be available again in ${minutes(retryAfter || 60)}; grounded answers still work.`, opt);
+  if (status === 429 && code === 'daily_cap') return new BackendError('Claude has reached today\'s limit for this site, so answers come from the portfolio data until tomorrow.', opt);
+  if (status === 429 && body.scope === 'upstream') return new BackendError('Claude is busy right now. Try again in a minute.', opt);
+  if (status === 429) return new BackendError(`You've asked a lot of questions in a short time. Claude will be available again in ${minutes(retryAfter || 60)}; answers from the portfolio data still work.`, opt);
   if (status === 413) return new BackendError(body.message || 'That question is too long. Try a shorter one.', opt);
-  if (status === 400) return new BackendError(body.message || 'The assistant could not read that request.', opt);
-  if (status === 403) return new BackendError('This page is not allowed to use the assistant backend.', opt);
+  if (status === 400) return new BackendError(body.message || 'The assistant could not read that question.', opt);
+  if (status === 403) return new BackendError('Claude is not available on this page.', opt);
   if (status === 404) return new BackendError(body.message || 'Not found.', opt);
-  if (status === 502 && code === 'backend_auth') return new BackendError('Claude is not connected to the backend yet; answers come from the portal\'s own data.', opt);
-  if (status === 503 && (code === 'no_model_key' || code === 'no_database')) return new BackendError(body.message || 'That part of the backend is not configured yet.', opt);
-  if (status >= 500) return new BackendError('Claude is temporarily unavailable. Try again shortly; the grounded answer is shown meanwhile.', opt);
-  return new BackendError(body.message || 'The assistant backend returned an error.', opt);
+  if (status === 502 && code === 'backend_auth') return new BackendError('Claude is not available right now; answers come from the portfolio data.', opt);
+  if (status === 503 && (code === 'no_model_key' || code === 'no_database')) return new BackendError('That feature is not available right now.', opt);
+  if (status >= 500) return new BackendError('Claude is temporarily unavailable. Try again shortly.', opt);
+  return new BackendError(body.message || 'Claude could not answer that just now.', opt);
 }
 function networkError(e) {
-  if (e && (e.name === 'TimeoutError' || e.message === 'timeout')) return new BackendError('The assistant backend took too long to respond. Try again in a moment.', { code: 'timeout' });
-  return new BackendError('Could not reach the assistant backend. Check your connection; grounded answers still work offline.', { code: 'network' });
+  if (e && (e.name === 'TimeoutError' || e.message === 'timeout')) return new BackendError('Claude took too long to respond. Try again in a moment.', { code: 'timeout' });
+  return new BackendError('Could not reach Claude. Check your connection; answers from the portfolio data still work.', { code: 'network' });
 }
 async function errorFrom(res) {
   let body = {}; try { body = await res.json(); } catch { /* not JSON */ }
@@ -168,8 +168,8 @@ export const Backend = {
     const q = String(question || '').trim();
     if (!q) throw new BackendError('Ask a question first.', { code: 'missing_question' });
     if (q.length > MAX_QUESTION_CHARS) throw new BackendError(`Questions are limited to ${MAX_QUESTION_CHARS.toLocaleString('en-US')} characters. Try a shorter one.`, { code: 'question_too_long' });
-    if (!(await this.discover())) throw new BackendError('The Claude backend is not switched on for this site yet, so answers come from the portal\'s own data.', { code: 'offline' });
-    if (!this.llm) throw new BackendError('Claude is not connected to the backend yet; answers come from the portal\'s own data.', { code: 'no_model_key' });
+    if (!(await this.discover())) throw new BackendError('Claude is not available right now, so answers come from the portfolio data.', { code: 'offline' });
+    if (!this.llm) throw new BackendError('Claude is not available right now; answers come from the portfolio data.', { code: 'no_model_key' });
 
     // Fit retrieved context into the Worker's 12k-character budget, best sources first.
     const ctxOut = []; let used = 0;

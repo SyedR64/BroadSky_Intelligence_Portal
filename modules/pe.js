@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261008134553';
+import * as Copy from './copy.js?v=20261008145402';
 /* PE landscape — history, trajectory, deal flow and buy-and-build benchmarks for the sponsors competing with BSP.
    Data: Private-equity landscape (35 firms), BSP firm profile (BSP reference), Competitor filings (financials of rival companies),
    sales/* (home-sale turnover in the counties each platform serves: PP PA/NJ, CET MA/CT/RI, BPI DC, Fair Harbor NYC). */
@@ -100,7 +100,7 @@ async function load(ctx) {
   return _bundle;
 }
 
-function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261008134553'; document.head.appendChild(l); } }
+function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261008145402'; document.head.appendChild(l); } }
 function missing(ctx, title) { ctx.el.innerHTML = ctx.ui.pageHead({ title, sub: 'Competitive intelligence on the private-equity sponsors bidding against BSP.' }) + ctx.ui.note('Research dataset <b>Private-equity landscape</b> is not yet available (still being verified). This view will populate automatically once it is published.', 'warn'); }
 const srcFoot = (ctx, meta, extra) => ctx.ui.source(SRC_PE.text, null, meta?.generated) + (extra ? ` <span class="dim">· ${extra}</span>` : '');
 
@@ -138,7 +138,7 @@ function openFirm(ctx, f, B) {
   inspector.open({
     title: esc(f.firm), sub: `${esc(f.hq || 'HQ n/d')}${f.founded ? ` · founded ${esc(f.founded)}` : ''} · ${esc(THREAT[f.threat_level]?.label || '')}`, color: THREAT[f.threat_level]?.color || 'var(--c-pe)',
     sections: [
-      { label: 'Snapshot', html: `<div class="row wrap mb-8">${threatChip(ctx, f.threat_level)}${fmt.chip(COMPETES[f.competes_for] || f.competes_for || 'n/d', 'var(--c-pe)')}${overlapChips(ctx, f._overlap)}</div>` + ui.kv({ AUM: f.aum_usd ? fmt.money(f.aum_usd) : null, 'Latest fund': f._fundName ? `${esc(f._fundName)}${f._fundYear ? ` (${f._fundYear})` : ''} · ${money(ctx, f._fund)}` : null, 'vs BSP Fund I': f._fund ? `<span class="num">${fmt.num(f._fund / B.bspRef.fund, 1)}×</span>` : null, 'Equity check': range(ctx, f.check_size_usd), 'EV range': range(ctx, f.enterprise_value_usd), 'Typical EBITDA': range(ctx, f.typical_ebitda_usd), Website: f.website ? fmt.link(f.website) : null }) },
+      { label: 'At a glance', html: `<div class="row wrap mb-8">${threatChip(ctx, f.threat_level)}${fmt.chip(COMPETES[f.competes_for] || f.competes_for || 'n/d', 'var(--c-pe)')}${overlapChips(ctx, f._overlap)}</div>` + ui.kv({ AUM: f.aum_usd ? fmt.money(f.aum_usd) : null, 'Latest fund': f._fundName ? `${esc(f._fundName)}${f._fundYear ? ` (${f._fundYear})` : ''} · ${money(ctx, f._fund)}` : null, 'vs BSP Fund I': f._fund ? `<span class="num">${fmt.num(f._fund / B.bspRef.fund, 1)}×</span>` : null, 'Equity check': range(ctx, f.check_size_usd), 'EV range': range(ctx, f.enterprise_value_usd), 'Typical EBITDA': range(ctx, f.typical_ebitda_usd), Website: f.website ? fmt.link(f.website) : null }) },
       { label: 'Why it matters to BSP', html: `<div class="m-pe"><div class="pe-txt">${esc(f.threat_rationale || '—')}</div></div>` },
       { label: 'Recommended next action', html: `<div class="m-pe"><div class="pe-next">${esc(nextAction(f))}</div></div>` },
       { label: 'Strategy', html: `<div class="m-pe"><div class="pe-txt">${esc(f.strategy || '—')}</div>${(f.sectors || []).length ? `<div class="row wrap mt-8">${f.sectors.slice(0, 8).map(s => fmt.chip(s)).join('')}</div>` : ''}</div>` },

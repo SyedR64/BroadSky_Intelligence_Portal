@@ -1,7 +1,7 @@
 /* Command Center — portfolio-wide situational awareness */
-import { dataset, srcLabel } from './copy.js?v=20261008134553';
-const GROUP_TXT = { research: 'Research', sales: 'Deed records', legacy: 'Core tables' };
-const BASIS_TXT = { live: 'Live count', snapshot: 'Snapshot', 'live (manifest)': 'Live (manifest)' };
+import { dataset, srcLabel } from './copy.js?v=20261008145402';
+const GROUP_TXT = { research: 'Research', sales: 'Deed records', legacy: 'Core table' };
+const BASIS_TXT = { live: 'Checked today', snapshot: 'Last update', 'live (manifest)': 'Last update', missing: 'Unavailable' };
 const COS = [
   { id: 'cet', name: 'Commonwealth Electrical (CET)', short: 'CET', color: 'var(--co-cet)', hex: '#4c8dff', sector: 'Commercial electrical · solar · energy', hq: 'Worcester, MA', lat: 42.2626, lon: -71.8023, entry: '2025-02', footprint: 'Licensed in all 6 New England states', lever: 'Cross-sell Horton wastewater accounts into solar, storage & efficiency; win municipal/utility programs' },
   { id: 'pp', name: 'Punctual Pros', short: 'PP', color: 'var(--co-pp)', hex: '#f08a3c', sector: 'Residential HVAC · plumbing · electrical', hq: 'East Hempfield, PA', lat: 40.0629, lon: -76.3700, entry: '2024-04', footprint: '248 Central PA zips + Ocean/Monmouth NJ', lever: 'New-mover marketing, weather-driven capacity planning, tuck-in franchisees in adjacent counties' },
@@ -88,7 +88,7 @@ const ACTION = {
   cet: 'Run Horton + NuWave under one reporting line and report pro forma EBITDA quarterly; line up the next New England tuck-in (wastewater / solar O&M).',
   pp: 'Name and close the second add-on; use the PGIM delayed-draw term loan (~$1.4M unfunded) for adjacent-county franchise tuck-ins.',
   fl: 'Close the first BSP-era add-on (legal MSP or eBilling) and grow mid-size-firm accounts to build the earnings story.',
-  ts: 'Get ahead of the Dec 2027 unitranche maturity (extend or refinance) and rebuild normalized EBITDA before any sale process.',
+  ts: 'Extend or refinance the loan due in December 2027, and rebuild normalized EBITDA before any sale.',
   bpi: 'Integrate the six add-ons into one reporting line and benchmark against listed peers (PPHC ~8.4x EBITDA) ahead of a 2027–28 process.',
   fh: 'At 4.5 years with no add-ons, decide the exit route: wholesale-door and category growth to a sponsor, or a strategic sale.',
 };
@@ -166,11 +166,11 @@ async function overview(ctx) {
   }) +
   ui.kpis([
     { label: 'Active companies', value: COS.length, sub: `${fmt.num(stats.add_ons)} add-ons · ${fmt.num(stats.exits)} exit (S+H)` },
-    { label: 'Add-ons, current holdings', value: firm ? fmt.num(heldAddons) : '—', sub: firm ? held.filter(r => r.addons).map(r => `${r.short} ${r.addons}`).join(' · ') : 'dataset pending' },
+    { label: 'Add-ons, current holdings', value: firm ? fmt.num(heldAddons) : '—', sub: firm ? held.filter(r => r.addons).map(r => `${r.short} ${r.addons}`).join(' · ') : 'not available' },
     { label: 'Avg hold, current holdings', value: avgHold != null ? `${avgHold.toFixed(1)} yrs` : '—', sub: inWindow.length ? `${inWindow.map(r => `${r.short} ${r.hold.toFixed(1)}`).join(' · ')} · S+H exited at ${sh ? sh.hold.toFixed(1) : '3.7'}` : '', color: inWindow.length ? 'var(--sys-warn)' : 'var(--sys-good)' },
-    { label: 'CET opportunities tracked', value: cetOpp ? fmt.num(opps.length) : '—', sub: cetOpp ? `${fmt.num(due.length)} bids due ≤60 days${due[0] ? ` · next ${fmt.dateShort(due[0].due_date)}` : ''}` : 'dataset pending', color: 'var(--co-cet)' },
+    { label: 'CET opportunities tracked', value: cetOpp ? fmt.num(opps.length) : '—', sub: cetOpp ? `${fmt.num(due.length)} bids due ≤60 days${due[0] ? ` · next ${fmt.dateShort(due[0].due_date)}` : ''}` : 'not available', color: 'var(--co-cet)' },
     { label: 'M&A targets screened', value: targets ? fmt.num(targets) : '—', sub: `CET ${maCet?.items?.length || 0} · PP ${maPp?.items?.length || 0} · FL+TS ${maFlTs?.items?.length || 0}` },
-    { label: 'PE sponsors profiled', value: pe ? fmt.num(pe.items.length) : '—', sub: pe ? `${fmt.num(pe.items.filter(f => f.threat_level === 'high').length)} high-threat` : 'dataset pending' },
+    { label: 'PE sponsors profiled', value: pe ? fmt.num(pe.items.length) : '—', sub: pe ? `${fmt.num(pe.items.filter(f => f.threat_level === 'high').length)} high-threat` : 'not available' },
   ]) +
   `<div class="mt-12">${ui.panel({ title: 'Value & exit readiness', sub: 'Hold, add-ons, exit window and next action per company, then value, debt and marks. Click a row for the basis.', body: `<div class="sys-chips" style="padding:0 var(--pad) var(--sys-sp-4)"><button type="button" class="sys-chip" id="est-toggle" aria-pressed="true"></button></div><div id="vx-tbl"></div>`, flush: true, foot: `${ui.source('BSP firm profile (entry, add-ons) · company filings estimate tables (SEC Form D and ADV, BDC schedules, PPP loans, franchise disclosures)', '#/fin/portfolio', firm?.meta?.generated || 'Sept 2026')} · <span class="sys-muted">est. = triangulated from public filings, not company-reported · dot = confidence (green high · amber medium · grey low)</span>` })}</div>` +
   `<div class="grid grid-main mt-12">
@@ -184,7 +184,7 @@ async function overview(ctx) {
     ${ui.panel({ title: 'Value-creation levers by company', sub: 'Where this portal points each management team', body: `<div class="col gap-12">${COS.map(c => `<div class="row" style="align-items:flex-start">${coChip(c.id, c.short)}<div class="sys-card-body">${esc(c.lever)}</div></div>`).join('')}</div>` })}
     ${ui.panel({ title: 'BSP timeline', sub: 'Anchor acquisitions, add-ons and exits · newest first', body: `<div id="tl">${ui.loading()}</div>`, scroll: true, foot: firm ? ui.source('Press releases & BSP site', 'https://broadskypartners.com/news/', firm.meta?.generated) : '' })}
   </div>
-  <div class="mt-12">${ui.panel({ title: 'Data coverage', sub: `Row counts for ${DATA_FILES.length + (manifest?.datasets?.length || 0)} of the portal's dataset files · home sales in ${fmt.num(homeCounties)} portfolio counties`, body: `<div class="sys-actions" style="margin:0;padding:0 var(--pad) var(--sys-sp-4)"><button type="button" class="${ui.btnCls('secondary', 'sm')}" id="dc-refresh">↻ Refresh live counts</button></div><div id="dc-tbl"></div>`, flush: true, foot: ui.source('Portal dataset manifest, research files and deed records (generation dates)', null, manifest?.generated || '2026-09-24') })}</div>`;
+  <div class="mt-12">${ui.panel({ title: 'Data sources', sub: `The main datasets behind this portal, including home sales in ${fmt.num(homeCounties)} portfolio counties. Click a row for details.`, body: `<div class="sys-actions" style="margin:0;padding:0 var(--pad) var(--sys-sp-4)"><button type="button" class="${ui.btnCls('secondary', 'sm')}" id="dc-refresh">↻ Recount records</button></div><div id="dc-tbl"></div>`, flush: true, foot: ui.source('Research files, county deed records and core tables', null, manifest?.generated || '2026-09-24') })}</div>`;
 
   // value & exit readiness scoreboard (estimates can be hidden before sharing outside BSP)
   const estCell = (r, k) => { const x = r.e?.[k]; if (r.status === 'exited') return '<span class="dim small">—</span>'; return x ? `<span class="small" title="${esc(`${x.metric}: ${x.v}`)}">${esc(shortEst(x.v))}</span>${dot(x.conf)}` : '<span class="dim small">n/a</span>'; };
@@ -208,7 +208,7 @@ async function overview(ctx) {
   const vxEl = el.querySelector('#vx-tbl'), tgl = el.querySelector('#est-toggle');
   let showEst = getShowEst(), vx = null;
   const drawVx = () => {
-    tgl.textContent = showEst ? 'BSP-only: estimates shown · hide' : 'Estimates hidden · show (BSP-only)'; tgl.setAttribute('aria-pressed', String(showEst));
+    tgl.textContent = showEst ? 'Hide estimates' : 'Show estimates'; tgl.setAttribute('aria-pressed', String(showEst));
     vx = ui.table(vxEl, { columns: [...baseCols, ...tailCols, ...(showEst ? estCols : [])], rows: board, pageSize: 10, sortKey: '_wk', exportName: showEst ? 'bsp_value_exit_readiness_EST_bsp_only' : 'bsp_value_exit_readiness', onRow: openVx });
   };
   const openVx = r => {
@@ -221,9 +221,9 @@ async function overview(ctx) {
     inspector.open({ title: esc(r.company), sub: `Held since ${esc(monYr(r.entry))} · ${r.hold?.toFixed(1)} yrs · ${esc(r.window)}`, color: CO_VAR(r.id), sections: [
       { label: 'Recommended next action', html: `<div class="small">${esc(r.action)}</div>` },
       { label: 'Add-ons under BSP', html: r.addList.length ? ui.timeline(r.addList.map(a => ({ date: a.year || 'n/d', color: CO_VAR(r.id), html: `${esc(a.name)}${a.hq ? ` <span class="dim">· ${esc(a.hq)}</span>` : ''}${a.src ? ` <a class="dim" href="${esc(a.src)}" target="_blank" rel="noopener">↗</a>` : ''}` }))) : '<div class="small dim">None announced under BSP</div>' },
-      showEst && tbl.length ? { label: `Estimates (BSP-only) · ${tbl.length}`, html: `<div class="col gap-8">${tbl.map(e => `<div><div class="small"><b>${esc(e.metric)}</b>${dot(e.confidence)}</div><div class="small">${esc(e.estimate)}</div>${e.basis ? `<div class="small dim">${esc(e.basis)}</div>` : ''}</div>`).join('')}</div>` } : null,
-      !showEst ? { label: 'Estimates', html: '<div class="small dim">Hidden. Use the BSP-only toggle on the scoreboard to show them.</div>' } : null,
-      !r.fd ? { label: 'Estimates', html: ui.note(`Research dataset <b>${esc(dataset(EST[r.id].ds))}</b> not yet available`, 'warn') } : null,
+      showEst && tbl.length ? { label: `Estimates · ${tbl.length}`, html: `<div class="col gap-8">${tbl.map(e => `<div><div class="small"><b>${esc(e.metric)}</b>${dot(e.confidence)}</div><div class="small">${esc(e.estimate)}</div>${e.basis ? `<div class="small dim">${esc(e.basis)}</div>` : ''}</div>`).join('')}</div>` } : null,
+      !showEst ? { label: 'Estimates', html: '<div class="small dim">Hidden. Choose Show estimates above the table to see them.</div>' } : null,
+      !r.fd ? { label: 'Estimates', html: ui.note(`<b>${esc(dataset(EST[r.id].ds))}</b> is not available yet`, 'warn') } : null,
     ].filter(Boolean), actions: [{ label: 'Financial picture', href: `#/fin/portfolio` }, { label: `Open ${r.short} module`, href: `#/${r.id}` }] });
   };
   tgl.onclick = () => { showEst = !showEst; setShowEst(showEst); drawVx(); };
@@ -255,7 +255,7 @@ async function overview(ctx) {
 
   // timeline — bsp_firm.timeline, newest first, coloured by company
   const tl = (firm?.timeline || []).filter(t => t.date).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
-  el.querySelector('#tl').innerHTML = tl.length ? ui.timeline(tl.slice(0, 40).map(t => ({ date: t.date, color: tlColor(t.company), html: `${t.company ? `<b>${esc(t.company)}</b> · ` : ''}${esc(cleanEvent(t.event))}${t.source_url ? ` <a class="dim" href="${esc(t.source_url)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` : ''}` }))) : ui.note('Timeline pending: the <b>BSP firm profile</b> research dataset is not available yet.', 'warn');
+  el.querySelector('#tl').innerHTML = tl.length ? ui.timeline(tl.slice(0, 40).map(t => ({ date: t.date, color: tlColor(t.company), html: `${t.company ? `<b>${esc(t.company)}</b> · ` : ''}${esc(cleanEvent(t.event))}${t.source_url ? ` <a class="dim" href="${esc(t.source_url)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` : ''}` }))) : ui.note('The BSP timeline is not available yet.', 'warn');
 
 
   // the company chip already names the company, so the label drops a leading "CET " / "BPI " (sentence case kept)
@@ -269,18 +269,17 @@ async function overview(ctx) {
   ];
   const cols = [
     { key: 'n', label: 'Dataset', fmt: (v, r) => `<div class="row">${coChip(r.co, CO_SHORT[r.co] || 'BSP')}<span>${esc(dsLabel(v, r.co))}</span></div>` },
-    { key: 'g', label: 'Group', fmt: v => `<span class="dim small">${esc(GROUP_TXT[v] || v)}</span>` },
-    { key: 'rows', label: 'Rows', num: true, fmt: v => v == null ? '—' : fmt.num(v) },
+    { key: 'g', label: 'Type', fmt: v => `<span class="dim small">${esc(GROUP_TXT[v] || v)}</span>` },
+    { key: 'rows', label: 'Records', num: true, fmt: v => v == null ? '—' : fmt.num(v) },
     { key: 'res', label: 'Home sales', num: true, fmt: v => v ? fmt.num(v) : '<span class="dim">—</span>' },
     { key: 'counties', label: 'Counties', num: true, title: r => (r.countyList || []).join(', '), fmt: v => v ? fmt.num(v) : '<span class="dim">—</span>' },
-    { key: 'gen', label: 'Generated', num: true, fmt: v => `<span class="small">${fmt.date(v)}</span>` },
-    { key: 'basis', label: 'Count basis', fmt: v => `<span class="dim small">${esc(BASIS_TXT[v] || v)}</span>` },
+    { key: 'gen', label: 'Updated', num: true, fmt: v => `<span class="small">${fmt.date(v)}</span>` },
   ];
-  const openDs = r => ctx.inspector.open({ title: esc(dataset(r.n)), sub: `${esc(r.g === 'sales' ? 'Property sales' : r.g === 'research' ? 'Research' : 'Core')} dataset · ${esc(CO_SHORT[r.co] || 'BSP')}`, color: CO_VAR(r.co), sections: [
-    { label: 'Inventory', html: ui.kv({ Dataset: esc(dataset(r.n)), Rows: r.rows == null ? '—' : fmt.num(r.rows), 'Home sales': r.res ? fmt.num(r.res) : null, Generated: fmt.date(r.gen), 'Count basis': esc(BASIS_TXT[r.basis] || r.basis) }) },
+  const openDs = r => ctx.inspector.open({ title: esc(dataset(r.n)), sub: `${esc(r.g === 'sales' ? 'Property sales' : r.g === 'research' ? 'Research' : 'Core')} data · ${esc(CO_SHORT[r.co] || 'BSP')}`, color: CO_VAR(r.co), sections: [
+    { label: 'What it holds', html: ui.kv({ Dataset: esc(dataset(r.n)), Records: r.rows == null ? '—' : fmt.num(r.rows), 'Home sales': r.res ? fmt.num(r.res) : null, Updated: fmt.date(r.gen) }) },
     r.countyList?.length ? { label: 'Counties covered', html: `<div class="small text-2">${r.countyList.map(esc).join(' · ')}</div>` } : null,
     r.src ? { label: 'Source', html: `<div class="small text-2">${esc(r.src)}</div>` } : null,
-    { label: 'Next action', html: `<div class="small text-2">${r.g === 'sales' ? 'Re-pull quarterly (the county sales scripts for CET and Thomas Scientific, the county layers for Punctual Pros) and check the newest sale date against the source lag noted in the dataset caveats.' : 'Rebuild the dataset or re-run the research pull, then confirm its generated date moves forward.'}</div>` },
+    { label: 'How it stays current', html: `<div class="small text-2">${r.g === 'sales' ? 'Updated each quarter from the county recorder. The newest sales lag the recording office by a few weeks.' : 'Updated when the research is refreshed. The date shows the latest refresh.'}</div>` },
   ].filter(Boolean) });
   const dt = ui.table(el.querySelector('#dc-tbl'), { columns: cols, rows, pageSize: 12, sortKey: 'res', exportName: 'bsp_data_coverage', onRow: openDs });
   el.querySelector('#dc-refresh').onclick = async ev => {
@@ -291,7 +290,7 @@ async function overview(ctx) {
       catch { return { ...r, basis: 'missing' }; }
     }));
     if (!el.isConnected) return;
-    dt.update(out); b.textContent = '✓ Live counts'; ui.toast(`Recounted ${out.filter(r => r.basis === 'live').length} datasets`);
+    dt.update(out); b.textContent = '✓ Recounted'; ui.toast(`Recounted ${out.filter(r => r.basis === 'live').length} datasets`);
   };
 
   // territory layers + alert polygons (after the synchronous UI is wired)
@@ -327,7 +326,7 @@ async function firmView(ctx) {
 
   el.innerHTML = ui.pageHead({
     title: 'Firm profile',
-    sub: `Fund I is ${fund ? fmt.money(fund) : '—'} from ${cap?.investors ?? '—'} investors (Form D); ${spvs.length} deal vehicles add ${fmt.money(spvSum)} with LP co-invest, which shows appetite for larger checks. ${fmt.num(stats.platforms)} companies, ${fmt.num(stats.add_ons)} add-ons, one exit.`,
+    sub: `Fund I is ${fund ? fmt.money(fund) : '—'} from ${cap?.investors ?? '—'} investors. ${spvs.length} single-deal vehicles add ${fmt.money(spvSum)} of co-investment, so investors back larger checks. ${fmt.num(stats.platforms)} companies, ${fmt.num(stats.add_ons)} add-ons, one exit.`,
     chips: `${fmt.chip(`Relaunched ${f.relaunched ? monYr(f.relaunched) : 'Jun 2021'}`, 'var(--sys-brand)')}${fund ? fmt.chip(`Fund I ${fmt.money(fund)}`) : ''}${spvSum ? fmt.chip(`Deal vehicles ${fmt.money(spvSum)}`) : ''}${fmt.chip(`${stats.platforms} companies · ${stats.add_ons} add-ons`)}${fmt.chip(`Exit: S+H, Aug 2026`)}`,
     actions: `<a class="${ui.btnCls('secondary', '')}" href="#/fin/portfolio">Portfolio financial picture</a><a class="${ui.btnCls('secondary', '')}" href="#/home/overview">Exit readiness</a>`,
   }) +
@@ -368,7 +367,7 @@ async function firmView(ctx) {
     ], actions: [{ label: 'BSP sale release ↗', href: r.sh.src }] });
     const p = r.p;
     inspector.open({ title: esc(p.company), sub: `${esc(p.sector || '')}`, color: r.hex, sections: [
-      { label: 'Snapshot', html: ui.kv({ HQ: esc([p.hq_city, p.state].filter(Boolean).join(', ')), Entry: esc(monYr(p.entry_date)), Hold: `${r.hold.toFixed(1)} yrs`, Seller: esc(p.entry_source || ''), CEO: esc(p.ceo || ''), Employees: esc(p.employees_est || '') }) },
+      { label: 'At a glance', html: ui.kv({ HQ: esc([p.hq_city, p.state].filter(Boolean).join(', ')), Entry: esc(monYr(p.entry_date)), Hold: `${r.hold.toFixed(1)} yrs`, Seller: esc(p.entry_source || ''), CEO: esc(p.ceo || ''), Employees: esc(p.employees_est || '') }) },
       p.thesis ? { label: 'Thesis', html: `<div class="small text-2">${esc(p.thesis)}</div>` } : null,
       { label: `Add-ons under BSP · ${r.addons}`, html: r.addons ? ui.timeline(addOnsOf(firm, r.id).map(a => ({ date: a.year || 'n/d', color: r.hex, html: `${esc(a.name)}${a.hq ? ` <span class="dim">· ${esc(a.hq)}</span>` : ''}${a.src ? ` <a class="dim" href="${esc(a.src)}" target="_blank" rel="noopener">↗</a>` : ''}` }))) : '<div class="small dim">None announced under BSP</div>' },
       (p.sources || []).length ? { label: 'Sources', html: `<div class="col gap-4 small">${p.sources.slice(0, 6).map(s => `<a href="${esc(s)}" target="_blank" rel="noopener" class="ellipsis">${esc(srcLabel(s))}</a>`).join('')}</div>` } : null,
@@ -397,7 +396,7 @@ export default {
   tour: [
     { order: 100, hash: '#/home/overview', caption: '<b>BSP Desk.</b> Six companies. Every number is tied to a decision.', narration: 'This is BSP Desk. Six companies, and every number is tied to a decision.', duration: 7000 },
     { order: 105, hash: '#/home/overview', caption: '<b>Exit readiness.</b> Hold, add-ons, value, debt and exit window per company, against the Smith + Howard exit.', narration: 'The scoreboard shows hold, add-ons, value, debt and exit window, against the Smith and Howard exit.', duration: 9000 },
-    { order: 110, hash: '#/home/overview', caption: '<b>This week.</b> Bid deadlines, weather alerts, top add-ons and rival deals. <b>Data coverage</b> lists every dataset.', narration: 'Signals show bid deadlines, weather alerts, top add-ons and rival deals. Coverage lists every dataset.', duration: 9000 },
-    { order: 120, hash: '#/home/firm', caption: '<b>BSP.</b> Fund I $335M (Form D) · 7 companies · 23 add-ons · first exit: Smith + Howard → TPG Growth (Aug 2026).', narration: 'The firm: a three hundred thirty-five million dollar fund, seven companies, twenty-three add-ons, one exit.', duration: 7000 },
+    { order: 110, hash: '#/home/overview', caption: '<b>This week.</b> Bid deadlines, weather alerts, top add-ons and rival deals. <b>Data sources</b> lists every dataset.', narration: 'Signals show bid deadlines, weather alerts, top add-ons and rival deals. Data sources lists every dataset.', duration: 9000 },
+    { order: 120, hash: '#/home/firm', caption: '<b>BSP.</b> A $335M Fund I, 7 companies, 23 add-ons and one exit: Smith + Howard, sold August 2026.', narration: 'The firm: a three hundred thirty-five million dollar fund, seven companies, twenty-three add-ons, one exit.', duration: 7000 },
   ],
 };

@@ -1,7 +1,7 @@
-import * as Copy from './copy.js?v=20261008134553';
+import * as Copy from './copy.js?v=20261008145402';
 /* Fair Harbor — sustainable beachwear from recycled plastic (BSP investment, Mar 2022).
    Views: overview · opportunities · benchmarks · filings · NYC context (Manhattan home sales, demoted: context only). Shared helpers are duplicated in bpi.js by design (no cross-module imports). */
-import { renderFilings, opportunityCard } from '../assets/components.js?v=20261008134553';
+import { renderFilings, opportunityCard } from '../assets/components.js?v=20261008145402';
 
 /* ── module config (the only block that differs from bpi.js) ──────────────── */
 const CFG = {
@@ -13,9 +13,9 @@ const CFG = {
   hq: { label: 'New York, NY', detail: '520 Broadway, New York, NY (NY DOS principal executive office)', alt: 'Form D and PPP filings use the founders\' Larchmont, NY address' },
   signal: (ctx, d) => {
     const it = (d.filings?.items || []).find(i => i.key_figures?.product_type_mix);
-    if (!it) return { title: 'Catalog health', body: ctx.ui.note('Catalog snapshot not in Fair Harbor public filings yet.', 'warn') };
+    if (!it) return { title: 'Catalog health', body: ctx.ui.note('Catalog data is not in the Fair Harbor filings yet.', 'warn') };
     const k = it.key_figures;
-    return { title: 'Catalog health (live Shopify snapshot)', sub: `${ctx.fmt.num(k.active_products)} active products · ${ctx.fmt.num(k.variants)} variants · median price $${ctx.fmt.num(k.median_variant_price_usd)}`,
+    return { title: 'Catalog health (live store data)', sub: `${ctx.fmt.num(k.active_products)} active products · ${ctx.fmt.num(k.variants)} variants · median price $${ctx.fmt.num(k.median_variant_price_usd)}`,
       body: `${ctx.ui.kpis([{ label: 'Marked down', value: `${ctx.fmt.num(k.markdown_share_pct, 1)}%`, sub: `${ctx.fmt.num(k.variants_marked_down_vs_compare_at)} of ${ctx.fmt.num(k.variants)} variants`, color: 'var(--sys-bad)' }])}<div class="mt-16">${ctx.charts.hbar(Object.entries(k.product_type_mix).map(([l, v]) => ({ label: l, value: v, color: /swim|rash|short/i.test(l) ? CFG.hex : 'var(--sys-mute-2)' })), { fmt: v => ctx.fmt.num(v), labelW: 120 })}</div><div class="small text-2 mt-8">Swim and summer items (teal) are ~${ctx.fmt.num(((k.product_type_mix.Swim || 0) + (k.product_type_mix.Shorts || 0) + (k.product_type_mix.Rashguard || 0)) / k.active_products * 100)}% of the catalog. Women's products live: ${ctx.fmt.num(k.womens_products)}. "Marked down" = variant price below its compare-at price on the public store.</div><div class="small mt-8"><b>Question for management:</b> is this planned end-of-season clearance or carry-over inventory? Ask for Summer 2026 sell-through and markdown dollars by category.</div>`,
       foot: ctx.ui.source('Fair Harbor Shopify product catalogue (Fair Harbor public filings)', it.source_url, it.retrieved) };
   },
@@ -124,7 +124,7 @@ async function overview(ctx) {
     actions: `<a class="sys-btn sys-btn--primary" href="#/${CFG.id}/opportunities">Opportunities</a><a class="sys-btn sys-btn--secondary" href="#/${CFG.id}/filings">Filings</a>` }) +
   (co ? '' : ui.note('Company record not found in BSP firm profile. Profile panels are empty until it lands.', 'warn')) +
   ui.kpis([
-    { label: 'Variants marked down', value: k ? `${fmt.num(k.markdown_share_pct, 1)}%` : '—', sub: k ? `${fmt.num(k.variants_marked_down_vs_compare_at)} of ${fmt.num(k.variants)} · public store, ${esc(day(fmt, cat.retrieved))}` : 'catalog snapshot pending', color: 'var(--sys-bad)' },
+    { label: 'Variants marked down', value: k ? `${fmt.num(k.markdown_share_pct, 1)}%` : '—', sub: k ? `${fmt.num(k.variants_marked_down_vs_compare_at)} of ${fmt.num(k.variants)} · public store, ${esc(day(fmt, cat.retrieved))}` : 'catalog data pending', color: 'var(--sys-bad)' },
     { label: 'Specialty doors (2022)', value: doors ? esc(doors) : '—', sub: 'plus Nordstrom, Saks · confirm today', color: CFG.color },
     { label: 'Non-swim share of catalog', value: k ? `${fmt.num(nonSwim / k.active_products * 100, 1)}%` : '—', sub: k ? `${fmt.num(nonSwim)} of ${fmt.num(k.active_products)} live products · year-round shift` : '', color: 'var(--sys-good)' },
     { label: 'Revenue 2025 (est.)', value: revEst ? kv2(esc, String(revEst.estimate).split(' (')[0]) : '—', sub: revEst ? `outside-in · ${esc(revEst.confidence)} confidence · not disclosed` : 'no estimate in Fair Harbor public filings', color: 'var(--sys-info)' },
@@ -374,7 +374,7 @@ async function filings(ctx) {
   const { el, ui, fmt, esc } = ctx;
   const data = await ctx.data.research(CFG.filings);
   const items = data?.items || [];
-  el.innerHTML = ui.pageHead({ title: 'Filings and financials', sub: data ? `${esc(CFG.filingsSoWhat || String(data.meta?.financial_picture || '').slice(0, 420))}` : 'Public-record financial picture' }) +
+  el.innerHTML = ui.pageHead({ title: 'Public filings', sub: data ? `${esc(CFG.filingsSoWhat || String(data.meta?.financial_picture || '').slice(0, 420))}` : 'Public-record financial picture' }) +
     (data ? ui.kpis([
       { label: 'Records', value: fmt.num(items.length), sub: `${new Set(items.map(i => i.category)).size} categories`, color: CFG.color },
       { label: 'High confidence', value: fmt.num(items.filter(i => i.confidence === 'high').length), sub: 'primary-source pulls', color: 'var(--sys-good)' },
@@ -396,11 +396,11 @@ export default {
   tagline: CFG.id === 'bpi' ? 'Strategic communications & public affairs, DC-headquartered, transatlantic' : 'Sustainable beachwear from recycled plastic: DTC, wholesale and two owned stores',
   hq: CFG.id === 'bpi' ? { lat: 38.9072, lon: -77.0369, label: 'Washington, DC' } : { lat: 40.7128, lon: -74.006, label: 'New York, NY' },
   views: [
-    { id: 'overview', name: 'Overview', icon: '◉', render: overview },
-    { id: 'opportunities', name: 'Opportunities', icon: '◆', render: opportunities },
-    { id: 'benchmarks', name: 'Benchmarks', icon: '▤', render: benchmarks },
-    { id: 'filings', name: 'Filings and financials', icon: '§', render: filings },
-    { id: 'market', name: 'NYC context', icon: '⌂', render: market },
+    { id: 'overview', name: 'Operating picture', icon: '◉', render: overview },
+    { id: 'opportunities', name: 'Growth opportunities', icon: '◆', render: opportunities },
+    { id: 'benchmarks', name: 'Comparables', icon: '▤', render: benchmarks },
+    { id: 'filings', name: 'Public filings', icon: '§', render: filings },
+    { id: 'market', name: 'Manhattan home sales', icon: '⌂', render: market },
   ],
   tour: [
     { order: 700, hash: '#/fh/overview', caption: '<b>Fair Harbor.</b> 4.5 years in. First questions: sell-through, markdowns (38.5% of variants), wholesale doors.', narration: 'For Fair Harbor, the first questions for management are sell-through, markdowns and wholesale doors.', duration: 6000 },

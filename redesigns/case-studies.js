@@ -6,7 +6,7 @@
 import {
   build, esc, clean, when, monthLabel, mLabel, dash, capFirst, median, usd, xTimes, yrs, host, hrefFor, kpiVal,
   FAMILY, SECTOR, SECTOR_ORDER, TODAY, timingText, legendHTML, timelineHTML, matrixHTML, clockHTML, ganttHTML, ladderHTML, ladderRows, growthHTML, kpiCardsHTML, csv, download, eventRows,
-} from '../modules/cases-lib.js?v=20261008134553';
+} from '../modules/cases-lib.js?v=20261008145402';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -24,7 +24,7 @@ export async function boot({ Data }) {
   const d = await Data.research('value_creation_cases');
   M = build(d);
   if (!M) {
-    const warn = '<div class="sys-note sys-note--warn"><span><b>Dataset not available.</b> The value-creation case set could not be loaded, so this section is empty.</span></div>';
+    const warn = '<div class="sys-note sys-note--warn"><span><b>Data not available.</b> The value-creation cases could not be loaded, so this section is empty.</span></div>';
     ['#hero-kpis', '#tl', '#ee-table', '#matrix', '#clock', '#gantt'].forEach(s => { const el = $(s); if (el) el.outerHTML = warn; });
     return { faq: [], intents: [] };
   }

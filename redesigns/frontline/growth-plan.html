@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261008134553">
-<link rel="stylesheet" href="growth-plan.css?v=20261008134553">
+<link rel="stylesheet" href="../../assets/system.css?v=20261008145402">
+<link rel="stylesheet" href="growth-plan.css?v=20261008145402">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 </head>
 <body data-co="fl">
@@ -35,6 +35,7 @@
           <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Growth plan</b> · October 2026</p>
           <h1 id="hero-title" class="sys-h1">From half the AM Law 200 to a <span class="sys-grad-text">global legal-operations company.</span></h1>
           <p class="sys-lead">At a 12–15x entry, the return must come from EBITDA growth: more from each firm, the mid-market, revenue-cycle add-ons, then the UK and Canada.</p>
+<p class="sys-src page-terms"><b>Terms:</b> EBITDA: operating profit before interest, tax, depreciation and amortization. SOC: security operations center. AR: accounts receivable. OCG: outside counsel guidelines. DMS: document management system. IRR: internal rate of return.</p>
           <div class="sys-actions">
             <a class="sys-btn sys-btn--primary sys-btn--lg" href="#map">Walk the four phases</a>
             <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#returns">See the returns math</a>
@@ -235,7 +236,7 @@
         </div>
       </details>
       <details class="sys-card drawer" id="srcs">
-        <summary><span><b>Method, sources and caveats</b> · every dataset and link behind this page</span><span class="chev" aria-hidden="true"></span></summary>
+        <summary><span><b>Method, sources and caveats</b> · every source and link behind this page</span><span class="chev" aria-hidden="true"></span></summary>
         <div class="drawer-body sys-prose" id="src-body" style="max-width:none;font-size:14px"></div>
       </details>
     </div>
@@ -261,10 +262,10 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261008134553';
-  import { Chat } from '../../assets/chat.js?v=20261008134553';
-  import { Data, Fmt, esc } from '../../assets/core.js?v=20261008134553';
-  import { boot } from './growth-plan.js?v=20261008134553';
+  import { Frame } from '../../assets/frame.js?v=20261008145402';
+  import { Chat } from '../../assets/chat.js?v=20261008145402';
+  import { Data, Fmt, esc } from '../../assets/core.js?v=20261008145402';
+  import { boot } from './growth-plan.js?v=20261008145402';
   const frame = Frame.mount({});
   boot({ Data, Fmt, esc, Chat, frame });
 </script>

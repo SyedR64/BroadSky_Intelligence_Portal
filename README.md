@@ -1,6 +1,21 @@
 # BSP Desk
 
-A static site for the Portfolio Resource Group (PRG) at **Broad Sky Partners (BSP)**. It turns public and licensed data into revenue, M&A and operating actions for six portfolio companies, and pairs each company with a concept website and a named "OS" tech-enablement thesis. Every view leads with one short sentence and its KPIs, then the evidence (map, table or chart), then the action list. Every number carries a source; estimates are labelled "est." and mock data "illustrative". Voice rules: `UNIFIED.md` §0.
+BSP Desk is a concept workspace for the Portfolio Resource Group (PRG) at **Broad Sky Partners (BSP)**. It turns public data into growth, add-on and operating ideas for six portfolio companies. Each company also gets a concept website and an "OS": a bundle of proven software and AI tools. Every number carries a source. Estimates are marked est.; sample figures are marked illustrative.
+
+**Live site:** https://syedr64.github.io/BroadSky_Intelligence_Portal/
+
+Concept by Syed Rahman for the Portfolio Resource Group at Broad Sky Partners (BSP). Not an official company site.
+
+**Where to start**
+
+- **Landing page:** a short tour, the six companies and an assistant you can ask in plain English.
+- **Portal:** maps, add-on screens, filings and the private-equity landscape, one view per question.
+- **Site concepts:** a new website and an OS for each company, plus a growth plan.
+- **Executive memo:** where the six companies stand and what to do in the first 90 days.
+
+## For developers
+
+Every view leads with one short sentence and its KPIs, then the evidence (map, table or chart), then the action list. Voice rules: `UNIFIED.md` §0.
 
 - **Stack:** vanilla ES modules, no build step, GitHub Pages (`.nojekyll`). Leaflet for maps, inline SVG charts, MapLibre + deck.gl for the 3D theater.
 - **Shared runtime:** `assets/core.js` (data loaders, formatting, UI kit, maps, charts, live feeds, tour, app shell), `assets/chat.js` (the assistant), `assets/components.js` (targets / filings / opportunity cards).

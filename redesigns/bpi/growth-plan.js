@@ -142,7 +142,7 @@ function renderTemplate(pb, firm) {
   el.innerHTML = svg(W, H, g, 'Swimlane timeline: Smith + Howard add-ons and exit versus BPI add-ons to date and planned tuck-ins, by months since entry');
   const shRate = (shAdds.length + 1) / monthsBetween(shEntry, shExit) * 12; // exit release counts 9 add-ons
   const bRate = bAdds.length / monthsBetween(bEntry, bAdds[bAdds.length - 1]?.date || TODAY) * 12;
-  $('#swim-src').innerHTML = `Filled dots are closed add-ons (BPI's "2" is Seven Hills + Message House, closed together). Hollow dashed dots are planned tuck-ins at 2.5 a year ${est}. Smith + Howard: 8 dated add-ons in the dataset, 9 per the exit release. <b>Source:</b> ${src('https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/', 'BSP exit release')}, ${src('https://bpigroup.com/bpi-strengthens-transatlantic-corporate-affairs-offer-with-acquisition-of-365-sherpas/', 'BPI releases')}, BSP firm profile.`;
+  $('#swim-src').innerHTML = `Filled dots are closed add-ons (BPI's "2" is Seven Hills + Message House, closed together). Hollow dashed dots are planned tuck-ins at 2.5 a year ${est}. Smith + Howard: 8 dated add-ons in the portal data, 9 per the exit release. <b>Source:</b> ${src('https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/', 'BSP exit release')}, ${src('https://bpigroup.com/bpi-strengthens-transatlantic-corporate-affairs-offer-with-acquisition-of-365-sherpas/', 'BPI releases')}, BSP firm profile.`;
   const rows = [
     ['Entry', '<b>~100 professionals</b>, 1 Atlanta office (Nov 2022)', `<b>200+ staff</b>, DC-led, $90M equity (Apr 2023)`],
     ['Scale', '<b>~800</b> people, 11 locations at exit', `<b>~400</b> today → <b>~560</b> at month 36 ${est}; 15 → 19 offices`],
@@ -293,7 +293,7 @@ function renderAgents(pb) {
     <p class="sys-card-body" style="font-size:12.5px">${ep(a.metric_claim)}</p>
     <div class="row">${(a.vendor_examples || []).map(v => `<span class="tag">${esc(v)}</span>`).join('')}</div>
     <div class="sys-card-foot"><span><b>Helps:</b> ${ep(a.who_it_helps)}</span></div>
-    <p class="sys-src">${ep(a.cost_model?.model || '')}${a.cost_model?.examples ? ` · ${ep(a.cost_model.examples)}` : ''} · deploy ${esc(a.weeks_to_deploy)} wks ${est} · ${src(a.source_url)}</p></article>`).join('');
+    <p class="sys-src">${ep(a.cost_model?.model || '')}${a.cost_model?.examples ? ` · ${ep(a.cost_model.examples)}` : ''} · live in ${esc(a.weeks_to_deploy)} wks ${est} · ${src(a.source_url)}</p></article>`).join('');
   f.onclick = e => { const b = e.target.closest('button'); if (!b) return; $$('button', f).forEach(x => x.setAttribute('aria-pressed', String(x === b))); const rx = AGENT_FILTERS.find(x => x[0] === b.dataset.k)[2]; $$('.agent').forEach(c => c.classList.toggle('dim', !!rx && !rx.test(c.dataset.who))); };
 }
 
@@ -459,7 +459,7 @@ function renderRisksAsks(pb) {
     'The $250M federal opportunity total sums contract ceilings and is dominated by the NASA recompete ($202.6M with all options). Eligibility and set-aside status are unverified.',
     'International revenue share (~15–20% today) is an analyst estimate from UK Companies House staff counts at an assumed GBP/USD of 1.27. Germany and Nordics revenue is not public.',
   ];
-  $('#caveats').innerHTML = CAVEATS.map(c => `<li>${esc(c)}</li>`).join('') + '<li><b>Sources:</b> BPI public filings (Form D, FEC, Companies House), the BSP firm profile, public comparables, the private-equity landscape, OS program evidence and competitor filings (FGS, Precision Strategies, Stagwell), plus public releases and research fetched in Oct 2026. <b>Method:</b> phase data points are computed from those sources (add-on cadences, ratios, sums of contract ceilings); KPI targets and the 36-month roadmap are analyst assumptions anchored to the midpoints of the public-filings estimates.</li>';
+  $('#caveats').innerHTML = CAVEATS.map(c => `<li>${esc(c)}</li>`).join('') + '<li><b>Sources:</b> BPI public filings (Form D, FEC, Companies House), the BSP firm profile, public comparables, the private-equity landscape, OS program evidence and competitor filings (FGS, Precision Strategies, Stagwell), plus public releases and research read in October 2026. <b>Method:</b> phase data points are computed from those sources (add-on cadences, ratios, sums of contract ceilings); KPI targets and the 36-month roadmap are analyst assumptions anchored to the midpoints of the public-filings estimates.</li>';
   const gd = new Date(String(pb.meta.generated || '2026-10-06').slice(0, 10) + 'T12:00:00Z'); $('#gen').textContent = isNaN(gd) ? '6 Oct 2026' : gd.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 }
 
@@ -473,7 +473,7 @@ function mountChat(Chat, pb) {
     { q: 'What is the BPI growth plan?', a: `<p><b>Thesis:</b> turn BPI from a campaign-heavy agency into a productized, transatlantic communications company.</p><ol><li><b>P1 (0–12 mo):</b> SignalOS retainers to take the business out of the election cycle.</li><li><b>P2 (6–24):</b> regulated-sector practices (AI, energy, health) and a federal capture team.</li><li><b>P3 (12–30):</b> Europe density (London, Berlin, Brussels, Paris) and 2–3 specialist tuck-ins a year.</li><li><b>P4 (24–36):</b> exit-ready: 55% recurring, through the 2028 off-year test.</li></ol><p>Revenue ${M(a.revenue_usd)} → ${M(z.revenue_usd)}, EBITDA ${M(a.ebitda_usd)} → ${M(z.ebitda_usd)} <i>(est.)</i>.</p>`, href: '#map-sec' },
     { q: 'How does BPI compare with Smith + Howard?', a: '<p>Smith + Howard went from ~100 to ~800 people, made 9 add-ons in ~3.7 years (~2.4 a year), grew revenue ~4x and sold to <b>TPG Growth</b> in Aug 2026. BPI has made <b>6 add-ons</b> since Apr 2023 (~2.0 a year) and is making the same regional-to-national move across the Atlantic: London is its #2 hub and Germany its #3 market. The plan targets 2.5 a year of specialist shops.</p>', href: '#template' },
     { q: 'What returns could BPI generate at exit?', a: ret, href: '#returns' },
-    { q: 'Which AI agents should BPI deploy first?', a: '<p>Three form the SignalOS core: <b>narrative early-warning monitor</b> (6–10 wks), <b>compliance-gated drafting agent</b> (Writer TEI: 85% faster review cycles) and <b>synthetic-audience message tester</b> (Aaru for EY: 0.90 correlation in one day). Then come the policy radar, journalist matching, insights synthesis, the meeting copilot, outcome dashboards and a scope guard. Vendor figures are upper bounds.</p>', href: '#agents' },
+    { q: 'Which AI agents should BPI start with?', a: '<p>Three form the SignalOS core: <b>narrative early-warning monitor</b> (6–10 wks), <b>compliance-gated drafting agent</b> (Writer TEI: 85% faster review cycles) and <b>synthetic-audience message tester</b> (Aaru for EY: 0.90 correlation in one day). Then come the policy radar, journalist matching, insights synthesis, the meeting copilot, outcome dashboards and a scope guard. Vendor figures are upper bounds.</p>', href: '#agents' },
   ];
   try { const chat = Chat.mount(null, { persona: 'bpi', short_name: 'BPI', mode: 'floating', theme: 'light', faq, suggestions: faq.map(f => f.q) }); FR?.mount({}).setChat(chat); } catch (e) { console.warn('chat mount failed', e); }
 }
@@ -492,7 +492,7 @@ export async function init({ Data, Chat, Frame }) {
   FR = Frame || window.BSPFrame || null;
   const [pb, firm, filings, pe, ev] = await Promise.all(['bpi_playbook', 'bsp_firm', 'bpi_filings', 'pe_landscape', 'serviceos_evidence'].map(n => Data.research('research/' + n)));
   mountChat(Chat, pb);
-  if (!pb) { $('#main').insertAdjacentHTML('afterbegin', '<div class="sys-wrap"><p class="sys-note sys-note--warn" style="margin-top:24px">The BPI growth plan dataset could not be loaded. Serve the repo root and reload.</p></div>'); reveal(); return; }
+  if (!pb) { $('#main').insertAdjacentHTML('afterbegin', '<div class="sys-wrap"><p class="sys-note sys-note--warn" style="margin-top:24px">The BPI growth plan could not be loaded. Reload the page to try again.</p></div>'); reveal(); return; }
   const run = (name, fn) => { try { fn(); } catch (e) { console.warn(`${name} failed`, e); } };
   run('kpis', () => renderKpis(pb));
   run('template', () => renderTemplate(pb, firm));

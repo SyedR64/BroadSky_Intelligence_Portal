@@ -11,9 +11,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261008134553">
-<link rel="stylesheet" href="../modules/cases.css?v=20261008134553">
-<link rel="stylesheet" href="case-studies.css?v=20261008134553">
+<link rel="stylesheet" href="../assets/system.css?v=20261008145402">
+<link rel="stylesheet" href="../modules/cases.css?v=20261008145402">
+<link rel="stylesheet" href="case-studies.css?v=20261008145402">
 </head>
 <body>
 <main id="main">
@@ -33,6 +33,7 @@
       <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Precedents</b> · October 2026</p>
       <h1 class="sys-h1" id="hero-h">How sponsors built and sold companies like <span class="sys-grad-text">Punctual Pros.</span></h1>
       <p class="sys-lead" id="hero-lead">Thirty-four companies, 1996 to 2026: what each owner did, in what order, and what the next buyer paid. Punctual Pros is about 30 months in.</p>
+<p class="sys-src page-terms"><b>Terms:</b> MOIC: multiple on invested capital. LTM: last twelve months. PIK: interest paid in more debt instead of cash.</p>
       <div class="sys-actions">
         <a class="sys-btn sys-btn--accent sys-btn--lg" href="#timeline">Explore the timelines</a>
         <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#sequence">See the Punctual Pros sequence</a>
@@ -193,10 +194,10 @@
 </main>
 
 <script type="module">
-import { Frame } from '../assets/frame.js?v=20261008134553';
-import { Data } from '../assets/core.js?v=20261008134553';
-import { Chat } from '../assets/chat.js?v=20261008134553';
-import { boot } from './case-studies.js?v=20261008134553';
+import { Frame } from '../assets/frame.js?v=20261008145402';
+import { Data } from '../assets/core.js?v=20261008145402';
+import { Chat } from '../assets/chat.js?v=20261008145402';
+import { boot } from './case-studies.js?v=20261008145402';
 const frame = Frame.mount({ active: 'playbooks', banner: true, crumb: [{ label: 'Home', href: './' }, { label: 'Growth plans', href: 'redesigns/#growth-plans' }, { label: 'Value-creation cases' }] });
 const res = await boot({ Data }).catch(e => { console.warn('case studies boot failed', e); return null; });
 try {

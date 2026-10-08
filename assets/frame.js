@@ -6,7 +6,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261008134553';
+       import { Frame } from '../../assets/frame.js?v=20261008145402';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
@@ -66,8 +66,8 @@ export const NAV = [
   { id: 'github',    label: 'GitHub',        href: GITHUB, external: true, hint: 'source code' },
 ];
 
-export const BANNER_TEXT = `Concept work by ${AUTHOR} for the Portfolio Resource Group at Broad Sky Partners (BSP). Not an official company website; estimates are marked est.`;
-export const DISCLAIMER = 'Not an official BSP website and not affiliated with or endorsed by any portfolio company. Data comes from public records, company releases and licensed sources as of the dates shown in each dataset; estimates are labelled est. and illustrative figures are labelled illustrative. Verify before use. Company names belong to their owners.';
+export const BANNER_TEXT = `A concept by ${AUTHOR} for the Portfolio Resource Group at Broad Sky Partners (BSP). This is not the company's official website. Estimates are marked est.`;
+export const DISCLAIMER = 'Not an official BSP website, and not endorsed by any portfolio company. Figures come from public records, company releases and licensed sources, as of the dates shown. Estimates are marked est.; illustrative figures are marked illustrative. Company names belong to their owners.';
 
 const PAGE_LABELS = { 'index.html': 'Concept site', 'growth-plan.html': 'Growth plan', 'nationwide.html': 'Nationwide plan', 'ads.html': 'Growth marketing', 'voice-ai.html': '24/7 Voice AI', 'ai-agents.html': 'AI agents' };
 const OS_FILES = new Set(Object.values(COMPANIES).map(c => c.osFile));
@@ -159,14 +159,14 @@ function footerHTML() {
     <div class="sys-footer-grid">
       <div class="sys-footer-brand">
         <a class="sys-brand" href="${esc(ROOT)}" aria-label="${esc(PRODUCT)}, home">${MARK}<span class="sys-brand-name">${esc(PRODUCT)}</span></a>
-        <p>Prepared by ${AUTHOR} for the BSP Portfolio Resource Group. Public data turned into revenue, acquisition and operating actions for six companies.</p>
+        <p>Prepared by ${AUTHOR} for the BSP Portfolio Resource Group. Public data, turned into next steps for six portfolio companies.</p>
       </div>
       <nav class="sys-footer-col" aria-label="Portal"><p class="sys-footer-h">Portal</p>${a('app.html', 'Portal home')}${a('app.html#/home/overview', 'Command Center')}${a('app.html#/ma/overview', 'Acquisition engine')}${a('app.html#/techos/overview', 'Tech enablement')}${a('theater.html', '3D theater')}</nav>
       <nav class="sys-footer-col" aria-label="Site concepts"><p class="sys-footer-h">Site concepts</p>${cos}</nav>
       <nav class="sys-footer-col" aria-label="Programs"><p class="sys-footer-h">Programs</p>${a('redesigns/#os', 'OS program')}${a('redesigns/#growth-plans', 'Growth plans')}${a('redesigns/voice-ai.html', '24/7 Voice AI')}${a('redesigns/ai-agents.html', 'AI agents')}</nav>
       <nav class="sys-footer-col" aria-label="Briefing"><p class="sys-footer-h">Briefing</p>${a('#briefing', 'Video briefing')}${a('briefing/executive_memo.html', 'Executive memo')}${a(GITHUB, 'GitHub', ' rel="noopener" target="_blank"')}</nav>
     </div>
-    <div class="sys-footer-legal"><p>${esc(DISCLAIMER)}</p><p class="sys-mono">Prepared by ${AUTHOR} · v2 · Oct 2026</p></div>
+    <div class="sys-footer-legal"><p>${esc(DISCLAIMER)}</p><p class="sys-mono">Prepared by ${AUTHOR} · October 2026</p></div>
   </div>`;
 }
 

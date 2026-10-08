@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261008134553">
-<link rel="stylesheet" href="methodology.css?v=20261008134553">
+<link rel="stylesheet" href="../assets/system.css?v=20261008145402">
+<link rel="stylesheet" href="methodology.css?v=20261008145402">
 </head>
 <body>
 <main id="main" class="mx">
@@ -39,6 +39,7 @@
       <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Methodology</b> · October 2026</p>
       <h1 id="h-hero" class="sys-h1">How BSP buys: <span class="sys-grad-text">the methodology, reverse-engineered</span></h1>
       <p class="sys-lead">Every disclosed BSP deal since 2022: who sold, who advised, who lent and how fast the add-ons came. The patterns become a rubric that scores every add-on target.</p>
+<p class="sys-src page-terms"><b>Terms:</b> Form ADV: the filing every investment adviser makes with the SEC (Securities and Exchange Commission). PIK: interest paid in more debt instead of cash.</p>
       <div class="sys-actions">
         <a class="sys-btn sys-btn--accent sys-btn--lg" href="#next">See the next five</a>
         <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#rubric">Score the pipeline</a>
@@ -189,9 +190,9 @@
 </main>
 
 <script type="module">
-import { Frame } from '../assets/frame.js?v=20261008134553';
-import { Chat } from '../assets/chat.js?v=20261008134553';
-import { boot } from './methodology.js?v=20261008134553';
+import { Frame } from '../assets/frame.js?v=20261008145402';
+import { Chat } from '../assets/chat.js?v=20261008145402';
+import { boot } from './methodology.js?v=20261008145402';
 const frame = Frame.mount({ banner: true, active: 'playbooks', crumb: [{ label: 'Home', href: './' }, { label: 'Growth plans', href: 'redesigns/#growth-plans' }, { label: 'How BSP buys' }] });
 const d = await boot().catch(e => { console.warn('methodology boot failed', e); return null; });
 try {

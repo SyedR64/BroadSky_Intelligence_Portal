@@ -1,5 +1,5 @@
 /* LabOS product page — demo + value math. Account health uses aggregated portal data (no names). */
-import { esc, num, PRODUCTS, STOCK, catById, search, aggregateSites, SITES_FALLBACK, toast, reveal, mountChat, badgeEst } from './shared.js?v=20261008134553';
+import { esc, num, PRODUCTS, STOCK, catById, search, aggregateSites, SITES_FALLBACK, toast, reveal, mountChat, badgeEst } from './shared.js?v=20261008145402';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const M = v => v == null || isNaN(v) ? '—' : Math.abs(v) >= 1e9 ? `$${(v / 1e9).toFixed(1)}B` : Math.abs(v) >= 1e6 ? `$${(v / 1e6).toFixed(Math.abs(v) >= 1e8 ? 0 : 1)}M` : Math.abs(v) >= 1e3 ? `$${Math.round(v / 1e3)}K` : `$${Math.round(v)}`;
@@ -62,7 +62,7 @@ async function demoHealth() {
   const el = $('[data-panel="health"]');
   el.innerHTML = `<div class="ts-loading"><i></i>Loading 500 parent accounts…</div>`;
   let P;
-  try { P = await Data.load('ts_parents'); } catch (e) { el.innerHTML = `<p class="ts-sm">Account dataset unavailable right now.</p>`; return; }
+  try { P = await Data.load('ts_parents'); } catch (e) { el.innerHTML = `<p class="ts-sm">Account data is not available right now.</p>`; return; }
   P = P.map((p, i) => ({ id: `Account ${String(i + 1).padStart(3, '0')}`, vert: p.vert, sites: p.sites || 1, states: (p.states || []).length || 1, cov: String(p.coverage || '').split('|').filter(Boolean).length, band: p.cms_band, score: p.score, vol: p.max_cms_allowed || 0 }));
   const lv = P.map(p => Math.log10(Math.max(1, p.vol))), lmin = Math.min(...lv), lmax = Math.max(...lv);
   const smin = Math.min(...P.map(p => p.score)), smax = Math.max(...P.map(p => p.score));
@@ -143,7 +143,7 @@ function demoSearch() {
     <form class="ts-as-box" data-as><label class="sys-sr" for="as-q">Describe what you need</label><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4z"/></svg><input id="as-q" value="${esc(EXAMPLES[0])}" autocomplete="off"><button class="sys-btn sys-btn--primary sys-btn--sm">Search</button></form>
     <div class="sys-chips ts-as-ex">${EXAMPLES.map(x => `<button type="button" class="sys-chip" data-ex="${esc(x)}">${esc(x)}</button>`).join('')}</div>
     <div data-as-out aria-live="polite"></div>
-    <p class="sys-src"><b>Source:</b> mock-up over the illustrative concept catalog; contract prices are illustrative. In production the ranking layer is a hosted search service (Algolia in the ServiceOS evidence) over the product catalog, with CAS and cross-reference synonyms.</p></div>`;
+    <p class="sys-src"><b>Source:</b> sample screen over the illustrative concept catalog; contract prices are illustrative. In production the ranking layer is a hosted search service (Algolia in the ServiceOS evidence) over the product catalog, with CAS and cross-reference synonyms.</p></div>`;
   const run = () => {
     const q = $('#as-q').value.trim(); const t0 = performance.now();
     const tags = parseQuery(q);
@@ -174,7 +174,7 @@ function demoVmi() {
   el.innerHTML = `<div class="ts-vm-top"><div><h3>QC Microbiology · Stockroom B ${ILL}</h3><p class="ts-sm">8 VMI lines · counted by scan on Mon/Thu · supplier lead time per line</p></div>
     <div class="ts-vm-ctl"><label>Service level<select data-sl>${Object.keys(Z).map(k => `<option ${+k === sl ? 'selected' : ''} value="${k}">${k}%</option>`).join('')}</select></label><label>Review cycle<select data-rv><option value="3">3 days</option><option value="7" selected>7 days</option><option value="14">14 days</option></select></label></div></div>
     <div class="ts-vm-kpis" data-vm-kpis></div>
-    <div class="ts-vm-grid"><div class="sys-table-wrap"><table class="sys-table ts-tbl-sm ts-vm-t"><thead><tr><th>Line</th><th class="sys-n">On hand</th><th class="sys-n">Reorder pt</th><th>Days of cover</th><th>Status</th></tr></thead><tbody data-vm-rows></tbody><caption>Source: illustrative stockroom; usage and stock levels are mock data.</caption></table></div>
+    <div class="ts-vm-grid"><div class="sys-table-wrap"><table class="sys-table ts-tbl-sm ts-vm-t"><thead><tr><th>Line</th><th class="sys-n">On hand</th><th class="sys-n">Reorder pt</th><th>Days of cover</th><th>Status</th></tr></thead><tbody data-vm-rows></tbody><caption>Source: illustrative stockroom; usage and stock levels are illustrative.</caption></table></div>
     <div class="sys-card"><div data-vm-chart></div><button type="button" class="sys-btn sys-btn--primary sys-btn--sm sys-btn--block" data-po>Draft replenishment PO</button><div data-po-out></div></div></div>
     <p class="sys-src"><b>Method:</b> reorder point = daily usage × lead time + z × σ × √lead time (z from service level); order-up-to = reorder point + usage × review cycle. Usage and stock levels are illustrative.</p>`;
   const calc = () => VMI_SKUS.map(([id, name, uom, mu, sd, L, oh, cost]) => { const ss = Z[sl] * sd * Math.sqrt(L); const rop = mu * L + ss; const max = rop + mu * review; const st = oh <= ss ? 'crit' : oh <= rop ? 'warn' : 'ok'; return { id, name, uom, mu, sd, L, oh, cost, ss, rop, max, st, doc: oh / mu, q: Math.max(0, Math.ceil(max - oh)) }; });
@@ -229,7 +229,7 @@ function demoSpend() {
       ${stack(before, 'Today')}${stack(after, 'Consolidated')}
       <div class="ts-sp-lg"><span><i class="ts"></i>Thomas Scientific</span><span><i class="o0"></i>Other suppliers</span><span><i class="oem"></i>OEM direct</span><span><i class="sav"></i>Savings</span></div>
       <p class="ts-sp-note">Thomas revenue gained: <b class="sys-num">${M(tsAfter - tsBefore)}</b>/yr from one account ${ILL}. The review itself is the sales motion: the customer sees the savings, the rep sees the share-of-wallet gap.</p>
-      <p class="sys-src"><b>Source:</b> illustrative customer; every supplier and spend figure is mock data.</p>`;
+      <p class="sys-src"><b>Source:</b> illustrative customer; every supplier and spend figure is illustrative.</p>`;
   };
   el.addEventListener('input', e => { const r = e.target.closest('[data-k]'); if (!r) return; st[r.dataset.k] = +r.value; $(`[data-v="${r.dataset.k}"]`, el).textContent = r.dataset.k === 'po' ? `$${r.value}` : `${r.value}%`; draw(); });
   draw();
@@ -290,7 +290,7 @@ function stack() {
   const vs = (EV?.items || []).filter(i => i.kind === 'vendor_stack' && i.company === 'ts');
   const list = vs.length ? vs : [{ vendor: 'Shopify Plus (or commercetools)', category: 'B2B commerce platform', what_it_does: 'Customer-specific catalogs, contract pricing, quick reorder.', pricing_note: 'From $2,300/month.' }, { vendor: 'Coupa (punchout / supplier network)', category: 'eProcurement connectivity', what_it_does: 'Punchout catalogs and PO/invoice flow.', pricing_note: 'Not published.' }, { vendor: 'Netstock', category: 'Inventory planning', what_it_does: 'Forecasting and replenishment.', pricing_note: '~$400-900/month.' }, { vendor: 'Algolia', category: 'Product search', what_it_does: 'Typo-tolerant, synonym-aware catalog search.', pricing_note: '$0.50 per 1,000 requests.' }];
   const MAP = { 'B2B commerce platform': 'Punchout & B2B commerce', 'eProcurement connectivity': 'Punchout & B2B commerce', 'Inventory planning': 'VMI & replenishment', 'Product search and discovery': 'AI product search' };
-  $('[data-stack]').innerHTML = list.map(v => `<article class="sys-card ts-sk" data-reveal><span class="ts-sk-tag">Buy</span><span class="sys-card-label">${esc(v.category)}</span><h3 class="sys-card-title">${esc(v.vendor)}</h3><p class="sys-card-body">${esc(v.what_it_does)}</p><div class="ts-sk-m"><span>Powers</span><b>${esc(MAP[v.category] || 'LabOS')}</b></div><p class="sys-card-body"><b>Pricing:</b> ${esc(v.pricing_note)}</p>${v.note ? `<p class="sys-src">${esc(v.note)}</p>` : ''}${v.source_url ? `<span class="sys-card-foot"><a href="${esc(v.source_url)}" target="_blank" rel="noopener">Pricing source →</a></span>` : ''}</article>`).join('') +
+  $('[data-stack]').innerHTML = list.map(v => `<article class="sys-card ts-sk" data-reveal><span class="ts-sk-tag">Buy</span><span class="sys-card-label">${esc(v.category)}</span><h3 class="sys-card-title">${esc(v.vendor)}</h3><p class="sys-card-body">${esc(String(v.what_it_does || '').replace(/\bheadless\/composable builds\b/g, 'custom storefronts'))}</p><div class="ts-sk-m"><span>Powers</span><b>${esc(MAP[v.category] || 'LabOS')}</b></div><p class="sys-card-body"><b>Pricing:</b> ${esc(v.pricing_note)}</p>${v.note ? `<p class="sys-src">${esc(v.note)}</p>` : ''}${v.source_url ? `<span class="sys-card-foot"><a href="${esc(v.source_url)}" target="_blank" rel="noopener">Pricing source →</a></span>` : ''}</article>`).join('') +
     `<article class="sys-card ts-sk build" data-co="ts" data-reveal><span class="ts-sk-tag build">Build</span><span class="sys-card-label">BSP data layer</span><h3 class="sys-card-title">Account and site intelligence</h3><p class="sys-card-body">Health scores over ${num(SITES_FALLBACK.total)} lab sites and 500 scored parent organizations, rep routing, supplier-consolidation reviews and the KPI layer (digital share, ePro share, cost-to-serve). Already prototyped in the portal.</p><div class="ts-sk-m"><span>Powers</span><b>Account health · consolidation · copilot</b></div><p class="sys-card-body"><b>Cost:</b> part of the $2–4M program${EST}; no license fee.</p></article>`;
 }
 

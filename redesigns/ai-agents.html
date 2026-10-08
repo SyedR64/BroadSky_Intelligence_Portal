@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261008134553">
-<link rel="stylesheet" href="ai-agents.css?v=20261008134553">
+<link rel="stylesheet" href="../assets/system.css?v=20261008145402">
+<link rel="stylesheet" href="ai-agents.css?v=20261008145402">
 </head>
 <body>
 <main id="main">
@@ -40,6 +40,7 @@
         <p class="sys-eyebrow"><b>Growth plan</b> · <span id="hero-date">October 2026</span></p>
         <h1 id="hero-h" class="sys-h1">The <span class="sys-grad-text">agentic layer</span>.</h1>
         <p class="sys-lead"><b id="hero-count">45</b> AI agents across BSP's six companies. Each starts on an event and names the person who approves its work.</p>
+<p class="sys-src page-terms"><b>Terms:</b> ERP: the accounting and order system. CRM: the customer and sales system. O&amp;M: operations and maintenance. DSO: days customers take to pay. RFQ: request for quote.</p>
         <div class="sys-card ag-total">
           <div class="ag-total-top">
             <p class="ag-total-num"><span class="sys-num" id="hero-total">$12.7M</span><span class="sys-est">est. ceiling</span></p>
@@ -117,7 +118,7 @@
       <div class="sys-section-head">
         <p class="sys-kicker">02 · Agent catalog</p>
         <h2 id="cat-h" class="sys-h2">Every agent, its trigger, and who signs off</h2>
-        <p class="sys-lead">Filter by company, layer and deploy speed. Select a card for its job, gate, cost, evidence and risks.</p>
+        <p class="sys-lead">Filter by company, layer and time to go live. Select a card for its job, gate, cost, evidence and risks.</p>
       </div>
       <div class="sys-card ag-filters" role="group" aria-label="Catalog filters">
         <div class="f-row">
@@ -129,10 +130,10 @@
           <div class="sys-chips ag-chips" id="f-layer"></div>
         </div>
         <div class="f-row f-row-split">
-          <label class="f-range"><span class="f-lbl">Deploys in ≤ <b id="f-wk-out">12</b> weeks</span>
+          <label class="f-range"><span class="f-lbl">Live in ≤ <b id="f-wk-out">12</b> weeks</span>
             <input type="range" id="f-wk" min="4" max="12" step="2" value="12" aria-describedby="f-wk-out"></label>
           <label class="f-sel"><span class="f-lbl">Sort</span>
-            <select id="f-sort"><option value="value">Value ceiling (est.)</option><option value="net">Risk-adjusted net (est.)</option><option value="payback">Payback (est.)</option><option value="perweek">Value per deploy-week</option><option value="weeks">Fastest to deploy</option><option value="wave">Rollout wave</option></select></label>
+            <select id="f-sort"><option value="value">Value ceiling (est.)</option><option value="net">Risk-adjusted net (est.)</option><option value="payback">Payback (est.)</option><option value="perweek">Value per week to go live</option><option value="weeks">Fastest to go live</option><option value="wave">Rollout wave</option></select></label>
           <label class="f-search"><span class="sys-sr">Search agents</span>
             <input type="search" id="f-q" placeholder="Search agents, tools, vendors…" autocomplete="off"></label>
         </div>
@@ -273,7 +274,7 @@
         <article class="sys-card"><h3 class="sys-card-title">One system, not a feature dump</h3><p class="sys-card-body">Give every agent the same anatomy: trigger, agent, approver. Forty-five then scan as one system.</p><p class="sys-card-foot">KPI: time to approve a wave; agents stopped vs shipped per quarter.</p></article>
         <article class="sys-card"><h3 class="sys-card-title">Controls up front</h3><p class="sys-card-body">Show the controls, owners and evidence before anyone asks for them.</p><p class="sys-card-foot">KPI: diligence questions answered from the page; tier-3 incidents (target 0).</p></article>
         <article class="sys-card"><h3 class="sys-card-title">Lead with the number</h3><p class="sys-card-body">One headline figure, with its cost and risk-adjusted net beside it. Every figure stays an estimate until measured.</p><p class="sys-card-foot">KPI: share of the $12.7M ceiling re-based on measured baselines; capacity value counted only with a hiring plan.</p></article>
-        <article class="sys-card"><h3 class="sys-card-title">Institutional tone, sources on every claim</h3><p class="sys-card-body">Sober type and a source on every claim. It should read as a memo, not a pitch.</p><p class="sys-card-foot" id="kpi-effect">KPI: agents backed by an effect from a comparable deployment (target 45 of 45 via pilots).</p></article>
+        <article class="sys-card"><h3 class="sys-card-title">Institutional tone, sources on every claim</h3><p class="sys-card-body">Sober type and a source on every claim. It should read as a memo, not a pitch.</p><p class="sys-card-foot" id="kpi-effect">KPI: agents backed by a measured result at a comparable company (target 45 of 45 via pilots).</p></article>
       </div>
     </div>
   </section>
@@ -295,9 +296,9 @@
 </main>
 
 <script type="module">
-import { Frame } from '../assets/frame.js?v=20261008134553';
-import { Chat } from '../assets/chat.js?v=20261008134553';
-import { boot } from './ai-agents.js?v=20261008134553';
+import { Frame } from '../assets/frame.js?v=20261008145402';
+import { Chat } from '../assets/chat.js?v=20261008145402';
+import { boot } from './ai-agents.js?v=20261008145402';
 const frame = Frame.mount({ banner: true });
 const d = await boot().catch(e => { console.warn('agentic layer boot failed', e); return null; });
 try {

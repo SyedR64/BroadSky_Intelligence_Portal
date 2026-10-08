@@ -165,6 +165,9 @@ Chat: pages keep mounting their own floating widget (`Chat.mount(null, { persona
 6. Author line: "Prepared by Syed Rahman". The footer already carries it with the disclaimer; do not repeat it elsewhere except the memo's title block.
 7. Concept notice wording comes only from the frame (`Frame.BANNER_TEXT`); pages never write their own.
 8. Link text says where it goes ("Wastewater accounts →"), never "click here". External links open in a new tab with `rel="noopener"`.
+9. **Visitor-ready, never developer-facing.** Nothing a visitor sees mentions keys, model pickers, slash commands, dataset ids, the repo, builds, deploys, scripts, manifests, row counts, version strings or a "working draft". Data dates read as plain sentences ("Updated October 8, 2026"); a data inventory is titled "Data sources" with Records and Updated columns. Estimates stay visible behind a "Show estimates" / "Hide estimates" toggle, never a "BSP-only" label.
+10. **Define a term on first use in a view.** `modules/copy.js` `gloss()` adds a short definition in parentheses after the first use of unitranche, PIK, delayed-draw, NPDES, SRF, WWTP, FSM, MOIC, IRR, CTV, LSA, ASR, BDC, RCM, MSP, LMM, SPV, GAV, DTC, AOV, GPO and NWS in running text of `#content` (and separately in `#inspector`). It never touches headings, labels, KPI tiles, chips, buttons or links, never nests inside another parenthesis, and skips a view that already spells the term out. Loan shorthand from lender filings ("S+425–475", "marked at par") is rewritten in words by `Copy.credit`. PRG and EBITDA need no gloss for this audience.
+11. **Same words for the same thing.** Company modules use the tab names Operating picture, Add-on targets, Growth opportunities, Comparables and Public filings; the matching h1 reads "<Company> · operating picture | add-on targets | public filings". A company's ranked levers panel is "Growth levers"; the full target table is "Full screen"; the redesign pages are "Growth plan".
 
 ## 8 · `app.html` (portal console: the website, with a rail)
 
@@ -202,6 +205,7 @@ The portal is not a separate product skin. A visitor moving between `index.html`
 **Bespoke blocks in a module** use the same vocabulary, never new colours: a block is `<section class="sys-card">` with `<h3 class="sys-card-title">`, `<div class="sys-card-body">` and a `<p class="sys-src">` source line; a figure is `<div class="sys-kpi"><div class="sys-kpi-label">…</div><div class="sys-kpi-value">…</div><div class="sys-kpi-sub">…</div></div>` inside `.sys-kpis`; status is `.sys-chip--good/--warn/--bad/--info`; an accent is `data-co="<company>"` (or `data-co="" style="--co:var(--c-…)"`). Hand-written `.panel/.kpi/.btn/.chip/.tbl/.note` still work: `modules/copy.js` adds the matching `.sys-` class after every render and `app.css` aliases the old child classes to the same tokens.
 
 - Module renderers write human labels (`Frame.label`) and `.sys-est` badges; `humanize: 'observe'` catches anything that slips through on re-render.
+- Rail footer: "Prepared by Syed Rahman · October 2026 · N modules · N datasets" (the counts come from the registry and the data index at load).
 
 ## 9 · `theater.html` (minimal transparent frame)
 

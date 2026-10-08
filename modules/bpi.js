@@ -1,8 +1,8 @@
-import * as Copy from './copy.js?v=20261008134553';
+import * as Copy from './copy.js?v=20261008145402';
 /* Bully Pulpit International — strategic communications & public affairs (BSP majority, Apr 2023).
    Views: overview · opportunities · benchmarks · filings. The DC home-sales view was dropped (Oct 2026 review: not decision-grade for a public-affairs agency).
    Helpers were originally duplicated from fh.js (no cross-module imports); this file no longer mirrors fh.js line for line. */
-import { renderFilings, opportunityCard } from '../assets/components.js?v=20261008134553';
+import { renderFilings, opportunityCard } from '../assets/components.js?v=20261008145402';
 
 /* ── module config (the only block that differs from fh.js) ──────────────── */
 const CFG = {
@@ -271,7 +271,7 @@ async function filings(ctx) {
   const { el, ui, fmt, esc } = ctx;
   const data = await ctx.data.research(CFG.filings);
   const items = data?.items || [];
-  el.innerHTML = ui.pageHead({ title: 'Filings and financials', sub: data ? `${esc(CFG.filingsSoWhat || String(data.meta?.financial_picture || '').slice(0, 420))}` : 'Public-record financial picture' }) +
+  el.innerHTML = ui.pageHead({ title: 'Public filings', sub: data ? `${esc(CFG.filingsSoWhat || String(data.meta?.financial_picture || '').slice(0, 420))}` : 'Public-record financial picture' }) +
     (data ? ui.kpis([
       { label: 'Records', value: fmt.num(items.length), sub: `${new Set(items.map(i => i.category)).size} categories`, color: CFG.color },
       { label: 'High confidence', value: fmt.num(items.filter(i => i.confidence === 'high').length), sub: 'primary-source pulls', color: 'var(--sys-good)' },
@@ -293,10 +293,10 @@ export default {
   tagline: CFG.id === 'bpi' ? 'Strategic communications & public affairs, DC-headquartered, transatlantic' : 'Sustainable beachwear from recycled plastic: DTC, wholesale and two owned stores',
   hq: CFG.id === 'bpi' ? { lat: 38.9072, lon: -77.0369, label: 'Washington, DC' } : { lat: 40.7128, lon: -74.006, label: 'New York, NY' },
   views: [
-    { id: 'overview', name: 'Overview', icon: '◉', render: overview },
-    { id: 'opportunities', name: 'Opportunities', icon: '◆', render: opportunities },
-    { id: 'benchmarks', name: 'Benchmarks', icon: '▤', render: benchmarks },
-    { id: 'filings', name: 'Filings and financials', icon: '§', render: filings },
+    { id: 'overview', name: 'Operating picture', icon: '◉', render: overview },
+    { id: 'opportunities', name: 'Growth opportunities', icon: '◆', render: opportunities },
+    { id: 'benchmarks', name: 'Comparables', icon: '▤', render: benchmarks },
+    { id: 'filings', name: 'Public filings', icon: '§', render: filings },
   ],
   tour: [
     { order: 600, hash: '#/bpi/overview', caption: '<b>Bully Pulpit International.</b> A ~400-person public-affairs firm built on 6 add-ons since April 2023.', narration: 'Bully Pulpit is a roughly four-hundred-person transatlantic public-affairs firm, built on six add-ons since April 2023.', duration: 7000 },

@@ -10,14 +10,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=block" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261008134553">
+<link rel="stylesheet" href="../assets/system.css?v=20261008145402">
 <style>
 :root{
   --navy:#0B1F3A; --navy-2:#1C3558; --ink:#1A2230; --muted:#5B6576; --rule:#D5DAE2; --soft:#F3F5F8;
   --accent:#E2662A; --accent-soft:#FCEEE6; --bg:#FFFFFF;
 }
 @page{ size: Letter; margin: 0.45in 0.5in 0.5in 0.5in;
-  @bottom-left{ content:"BSP Desk \2014  Confidential \2014  prepared from public records; est. = analyst estimate"; font:500 7pt Inter, sans-serif; color:#5B6576; }
+  @bottom-left{ content:"BSP Desk \2014  Concept memo \2014  prepared from public records; est. = analyst estimate"; font:500 7pt Inter, sans-serif; color:#5B6576; }
   @bottom-right{ content:"Page " counter(page) " of " counter(pages); font:600 7pt Inter, sans-serif; color:#0B1F3A; }
 }
 *{ box-sizing:border-box; }
@@ -91,7 +91,7 @@ ol.plan{ margin:0; padding-left:17px; } ol.plan li{ margin:0 0 2px; } ol.plan li
 <body data-sys-print="own">
 <main class="sheet">
 
-<div class="brandbar"><div class="word">BSP Desk &middot; memo</div><div class="cls">Confidential &middot; Internal use</div></div>
+<div class="brandbar"><div class="word">BSP Desk &middot; memo</div><div class="cls">Concept memo &middot; Public sources</div></div>
 
 <div class="title">
   <div class="kicker">Portfolio review &middot; October 2026</div>
@@ -101,8 +101,14 @@ ol.plan{ margin:0; padding-left:17px; } ol.plan li{ margin:0 0 2px; } ol.plan li
   <b>To</b><div>Broad Sky Partners (BSP) leadership and the Portfolio Resource Group (PRG)</div>
   <b>From</b><div>Syed Rahman</div>
   <b>Date</b><div>October 6, 2026</div>
-  <b>Basis</b><div>30 datasets, 3,262 sourced records (public filings only)</div>
+  <b>Basis</b><div>3,262 sourced records from 30 public data collections</div>
 </div>
+
+<section aria-labelledby="wti-h">
+<h2 id="wti-h">What this is</h2>
+<p>This memo reviews BSP's six portfolio companies using public records only. It shows where each company stands, where profit can grow fastest and what to do in the first 90 days. Figures not found in public filings are analyst estimates, marked est., to be checked against company actuals.</p>
+<p class="small"><b>Terms:</b> EBITDA is operating profit before interest, tax, depreciation and amortization. EV is enterprise value. A &ldquo;turn&rdquo; is one times EBITDA added to the sale price. DSO (days sales outstanding) is how long customers take to pay. Each OS (operating system) is a bundle of software and AI tools for one company. PP is Punctual Pros.</p>
+</section>
 
 <!-- 1 -->
 <section>
@@ -182,7 +188,7 @@ ol.plan{ margin:0; padding-left:17px; } ol.plan li{ margin:0 0 2px; } ol.plan li
   </ol>
   <div class="row2">
     <div><h4>Top add-on targets</h4>Lancaster Plumbing (fit 84), West Chester tri-brand (82), C&amp;C Air (82).<sup class="fn">13</sup></div>
-    <div><h4>Multiple arbitrage</h4>Tuck-ins price at 6.3&ndash;6.9x; a $100&ndash;250M-TEV company at ~10.0x (GF Data).<sup class="fn">25</sup></div>
+    <div><h4>Multiple arbitrage</h4>Tuck-ins price at 6.3&ndash;6.9x; a company worth $100&ndash;250M (total enterprise value) at ~10.0x (GF Data).<sup class="fn">25</sup></div>
   </div>
   <div class="os"><span class="tag">ServiceOS</span>ServiceTitan plus voice, dispatch, pricebook and membership agents. <b>Est. $0.4&ndash;0.9M; +2&ndash;4 pts; +1.0&ndash;2.5 turns. Strongest evidence of the six.</b><sup class="fn">7</sup></div>
 </div>
@@ -229,7 +235,7 @@ ol.plan{ margin:0; padding-left:17px; } ol.plan li{ margin:0 0 2px; } ol.plan li
   </div>
   <ol class="find">
     <li>Fund I's largest bet: $257.1M of equity raised by January 2024.<sup class="fn">19</sup></li>
-    <li>Sponsor common marked near zero; loan at 88.3% after a PIK amendment.<sup class="fn">19</sup></li>
+    <li>Sponsor common marked near zero; loan at 88.3% after an amendment that lets interest be paid in more debt (PIK).<sup class="fn">19</sup></li>
     <li>Federal revenue fell from $84&ndash;91M a year to $7&ndash;8.5M.<sup class="fn">19</sup></li>
     <li>27,503 lab sites scored: 713 Pursue, 2,317 Nurture.<sup class="fn">20</sup></li>
     <li>Each day of DSO is worth ~$0.8M of cash.<sup class="fn">7,20</sup></li>
@@ -300,7 +306,7 @@ ol.plan{ margin:0; padding-left:17px; } ol.plan li{ margin:0 0 2px; } ol.plan li
 <!-- 8 -->
 <section>
 <h2><span class="n">8</span>Punctual Pros nationwide plan</h2>
-<p>Repeat the Horvath deal along I-81 and I-95 and become the consolidator inside the One Hour / Ben Franklin / Mister Sparky system (1,066 outlets; PP holds ~2.3%).<sup class="fn">25</sup></p>
+<p>Repeat the Horvath deal along I-81 and I-95. Become the main buyer inside the One Hour, Ben Franklin and Mister Sparky franchise system (1,066 outlets; Punctual Pros holds ~2.3%).<sup class="fn">25</sup></p>
 <div class="tbl-wrap"><table>
 <thead><tr><th>Phase (months)</th><th>Move</th><th class="num">Revenue</th><th class="num">EBITDA</th><th class="num">Techs</th><th class="num">Territories</th><th class="num">Members</th></tr></thead>
 <tbody>
@@ -313,7 +319,7 @@ ol.plan{ margin:0; padding-left:17px; } ol.plan li{ margin:0 0 2px; } ol.plan li
 <div class="grid2">
 <div><h4>AI agents (11)</h4>
 <ul class="tight">
-<li>24/7 AI dispatcher: 70% booking versus ~42% for a typical CSR.</li>
+<li>24/7 AI dispatcher: 70% booking versus ~42% for a typical call-center rep.</li>
 <li>AI estimator recovered $1.2M of unsold estimates at a ~$20M peer.</li>
 <li>Plus dispatch, renewal, review, AP/AR, permit and recruiting agents.</li>
 </ul></div>
@@ -355,10 +361,10 @@ ol.plan{ margin:0; padding-left:17px; } ol.plan li{ margin:0 0 2px; } ol.plan li
 <div>
 <ul class="tight">
 <li>Sell the brands' existing promises, such as One Hour's on-time guarantee.</li>
-<li>Local Services Ads as the base: $39&ndash;57 per lead, ~44% booked.</li>
-<li>Zip-targeted connected TV, judged on cost per booked job and holdout lift.</li>
+<li>Google Local Services Ads (LSA) as the base: $39&ndash;57 per lead, ~44% booked.</li>
+<li>ZIP-targeted connected TV (CTV), judged on cost per booked job and holdout lift.</li>
 <li>New-mover mail to ~2,300 PA and ~1,150 NJ deed transfers a month.</li>
-<li>NWS alerts raise budgets 12&ndash;36 hours before demand spikes.<sup class="fn">27</sup></li>
+<li>National Weather Service (NWS) alerts raise budgets 12&ndash;36 hours before demand spikes.<sup class="fn">27</sup></li>
 </ul>
 </div>
 <div>
@@ -398,7 +404,7 @@ ol.plan{ margin:0; padding-left:17px; } ol.plan li{ margin:0 0 2px; } ol.plan li
 <li><span class="when">Days 1&ndash;45</span>Open a Thomas Scientific refinancing workstream and 13-week cash flow.</li>
 <li><span class="when">Days 1&ndash;60</span>Run the CET + Horton 100-day plan with one bid desk.</li>
 <li><span class="when">Days 15&ndash;75</span>Launch the PP voice agent and ads pilot; read at week 8.</li>
-<li><span class="when">Days 1&ndash;90</span>Approach top PP and CET targets off-auction; aim for one LOI.</li>
+<li><span class="when">Days 1&ndash;90</span>Approach top PP and CET targets off-auction; aim for one signed letter of intent.</li>
 <li><span class="when">Days 1&ndash;60</span>Close Frontline's client-count and churn gaps; size a co-invest top-up.</li>
 <li><span class="when">Days 1&ndash;30</span>Put AI controls and KPI baselines in place before agents ship.</li>
 <li><span class="when">Days 30&ndash;90</span>Pilot SignalOS retainers with three BPI corporate clients.</li>
@@ -411,7 +417,7 @@ ol.plan{ margin:0; padding-left:17px; } ol.plan li{ margin:0 0 2px; } ol.plan li
 <section>
 <h2><span class="n">13</span>Appendix: data and caveats</h2>
 <div class="tbl-wrap"><table>
-<thead><tr><th style="width:22%">Dataset group</th><th style="width:38%">Files (records)</th><th style="width:26%">Primary sources</th><th style="width:14%">Confidence</th></tr></thead>
+<thead><tr><th style="width:22%">Data group</th><th style="width:38%">Files (records)</th><th style="width:26%">Primary sources</th><th style="width:14%">Confidence</th></tr></thead>
 <tbody>
 <tr><td><b>Filings and estimates</b></td><td>CET (25), PP (29), Frontline (21), Thomas (31), BPI (21), Fair Harbor (25), rivals (51), comps (31)</td><td>SEC, BDC filings, PPP, FDDs, FEC</td><td>High for filed facts; low for derived</td></tr>
 <tr><td><b>Growth plans</b></td><td>CET (46), Frontline (49), Thomas (43), BPI (53), Fair Harbor (46), PP nationwide (59)</td><td>Filings plus market evidence</td><td>Roadmaps are assumptions</td></tr>

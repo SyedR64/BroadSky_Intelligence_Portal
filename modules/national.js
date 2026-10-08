@@ -5,7 +5,7 @@
          (OMB July 2023 metro crosswalk), data/research/pp_nationwide.json (Punctual Pros phases 1–4).
    All scores are computed client-side from percentile ranks; every score is a modelled estimate.
    ═══════════════════════════════════════════════════════════════════════════ */
-import { EST } from './copy.js?v=20261008134553';
+import { EST } from './copy.js?v=20261008145402';
 
 const COLOR = 'var(--co-pp)';
 /* Colours come from the system palette (assets/system.css): DOM markup uses var(--…) directly; Leaflet's canvas renderer
@@ -338,7 +338,7 @@ async function scorer(ctx) {
     <div id="nx-kpis"></div>
     <div class="mt-12" id="nx-why"></div>
     <div class="grid grid-side mt-12">
-      ${ui.panel({ title: 'Weights', sub: 'Relative weights · the score renormalises over the inputs each county has', actions: `<button type="button" class="${ui.btnCls('secondary', 'sm')}" id="nx-reset">Reset</button>`, body: `<div class="sys-chips m-national-presets" id="nx-presets" role="group" aria-label="Weight presets"></div><div class="m-national-sliders" id="nx-sl"></div>`, foot: ui.source(`ACS 2019–23 · PEP V2024 · Census building permits 2025 and ${V.p26} · Redfin ${V.sales} · NOAA 1991–2020 normals · CBP 2022`, null, 'Oct 2026') })}
+      ${ui.panel({ title: 'Weights', sub: 'Relative weights · a county missing an input is scored on the rest', actions: `<button type="button" class="${ui.btnCls('secondary', 'sm')}" id="nx-reset">Reset</button>`, body: `<div class="sys-chips m-national-presets" id="nx-presets" role="group" aria-label="Weight presets"></div><div class="m-national-sliders" id="nx-sl"></div>`, foot: ui.source(`ACS 2019–23 · PEP V2024 · Census building permits 2025 and ${V.p26} · Redfin ${V.sales} · NOAA 1991–2020 normals · CBP 2022`, null, 'Oct 2026') })}
       ${ui.panel({ title: 'County score map', sub: 'Colour = score band (national percentile) · size = housing units (ACS 2019–23) · click a county', actions: `<div id="nx-mode"></div>`, body: `<div class="map tall m-national-map" id="nx-map"></div>`, flush: true, foot: ui.source('National county table: Census, Redfin, NOAA, CBP · OMB metro crosswalk', 'https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2023_Gazetteer/', 'Oct 2026') })}
     </div>
     <div class="mt-12">${ui.panel({ title: 'Top 50 counties', sub: `Ranked by score on current weights · homes and income ACS 2019–23 · sales ${esc(V.sales)} · permits 2025 and pace ${esc(V.p26)} vs US · Authority Brands offices Oct 2026 · click a row for every input and its source`, actions: `<button type="button" class="${ui.btnCls('secondary', 'sm')}" id="nx-all">Download all 3,144 counties (CSV)</button>`, body: `<div id="nx-f"></div><div id="nx-t"></div>`, foot: ui.source(`ACS 2019–23 · Redfin ${V.sales} · Census building permits · CBP 2022 · Authority Brands location pages`, null, 'Oct 2026') })}</div>
@@ -627,8 +627,8 @@ async function method(ctx) {
   const covFields = FIELD_ROWS(M).flatMap(([g, fs]) => fs.map(([k, l, , v]) => ({ k, l, v, c: covOf(k) })));
   el.innerHTML = `<div class="m-national">${ui.pageHead({
     title: 'Method, sources and coverage',
-    sub: `Every county score is rebuilt in the browser from ${FACTORS.length} public inputs. Home sales cover ${pctTxt(covOf('home_sales_12m'))} of counties, so rural scores lean on the rest.`,
-    chips: `${fmt.chip(`${fmt.num(M.rows.length)} counties`, COLOR)}${fmt.chip(`built ${esc(isoWords(String(meta.generated || '').slice(0, 10)))}`)}${fmt.chip(`${srcRows.length} sources`)}`,
+    sub: `Every county score is calculated from ${FACTORS.length} public inputs. Home sales cover ${pctTxt(covOf('home_sales_12m'))} of counties, so rural scores lean on the rest.`,
+    chips: `${fmt.chip(`${fmt.num(M.rows.length)} counties`, COLOR)}${fmt.chip(`Updated ${esc(isoWords(String(meta.generated || '').slice(0, 10)))}`)}${fmt.chip(`${srcRows.length} sources`)}`,
   })}
   <div class="grid grid-2">
     ${ui.panel({ title: 'Score formula', sub: 'Score = Σ (weight × percentile) ÷ Σ weights over the inputs a county has, × 100', body: `<div class="sys-table-wrap tbl-wrap"><table class="sys-table tbl"><thead><tr><th>Input</th><th class="sys-n num">Now</th><th class="sys-n num">Default</th><th style="width:52%">Formula</th><th class="sys-n num">Coverage</th></tr></thead><tbody>${FACTORS.map(f => `<tr><td><b>${esc(f.label)}</b><div class="sys-muted small">${esc(f.vint)}</div></td><td class="sys-n num">${S.weights[f.id] || 0}</td><td class="sys-n num">${f.w}</td><td class="wrap small">${esc(FORM[f.id])}</td><td class="sys-n num">${pctTxt(factorCov(f), 1)}</td></tr>`).join('')}</tbody></table></div><div class="sys-card-body mt-12">Percentiles use average ranks for ties across all ${fmt.num(M.rows.length)} counties, so 0.5 is the median US county. Score bands on the maps are national percentiles of the score itself. Metro and phase scores are housing-weighted averages of county scores. Every score is a model output and carries an est. badge.</div>`, foot: ui.source('Analyst model over the national county table', null, 'Oct 2026') })}

@@ -1,7 +1,7 @@
 /* Fair Harbor — growth plan (concept page). Reads the portal's research datasets; no shared code is modified. */
-import { Data } from '../../assets/core.js?v=20261008134553';
-import { Chat } from '../../assets/chat.js?v=20261008134553';
-import { Frame } from '../../assets/frame.js?v=20261008134553';
+import { Data } from '../../assets/core.js?v=20261008145402';
+import { Chat } from '../../assets/chat.js?v=20261008145402';
+import { Frame } from '../../assets/frame.js?v=20261008145402';
 
 const $ = (s, r = document) => r.querySelector(s);
 const tkn = (n, fb) => { try { return getComputedStyle(document.body).getPropertyValue(n).trim() || fb; } catch { return fb; } };
@@ -386,7 +386,7 @@ function mountChat(ctx) {
     faq.push({ q: 'What is the Fair Harbor growth thesis?', href: 'growth-plan.html#template', a: `<p><b>${esc(pb.meta.thesis)}</b></p><ul>${ph.map(p => `<li><b>Phase ${p.phase} (months ${p.months.start}–${p.months.end}):</b> ${esc(p.name)}</li>`).join('')}</ul><p>The Smith + Howard lesson: buyers pay for a scaled, legible company, so the exit story is wholesale breadth, repeat-customer economics and margin. <span class="ch-badge">est.</span></p>` });
     faq.push({ q: 'What are the month-36 KPI targets for Fair Harbor?', href: 'growth-plan.html#financing', a: `<p>Analyst assumptions, not company guidance:</p><table><thead><tr><th>KPI</th><th>Today</th><th>Month 36</th></tr></thead><tbody><tr><td>Revenue</td><td class="n">${money(m0.revenue_usd, 0)}</td><td class="n">${money(m36.revenue_usd, 0)}</td></tr><tr><td>EBITDA</td><td class="n">${money(m0.ebitda_usd)} (${m0.ebitda_margin_pct}%)</td><td class="n">${money(m36.ebitda_usd)} (${m36.ebitda_margin_pct}%)</td></tr><tr><td>Doors + stores</td><td class="n">${m0.locations_or_accounts}</td><td class="n">${m36.locations_or_accounts}</td></tr><tr><td>Revenue / employee</td><td class="n">${money(m0.revenue_per_employee_usd)}</td><td class="n">${money(m36.revenue_per_employee_usd)}</td></tr></tbody></table>` });
     faq.push({ q: 'How is the Fair Harbor plan financed?', href: 'growth-plan.html#financing', a: `<p>Capital-light. Operating cash or ABL headroom funds HarborOS (${ra ? range(ra.investment_usd, v => money(v)) : '$0.3–0.7M'} est.), with a small sponsor follow-on as the backstop, and an ABL of roughly <b>$3.4–4.6M</b> (est.) carries the seasonal swim build and wholesale receivables. No term debt until EBITDA clears ~$4–5M: Solo Brands' $100M Chubbies term loan is the cautionary precedent.</p><p>The 2022 Form D ($30.7M sold of $36.7M offered) is history, not available capital.</p>` });
-    faq.push({ q: 'Which AI agents does HarborOS deploy for Fair Harbor?', href: 'growth-plan.html#agents', a: `<p>${ag.length} agents, an est. ${ra ? range(ra.investment_usd, v => money(v)) : '$0.3–0.7M'} build (vendor claims are upper bounds):</p><ul>${ag.map(a => `<li><b>${esc(a.agent)}</b> — ${esc(clean(a.who_it_helps))}; ${a.weeks_to_deploy ? `${a.weeks_to_deploy[0]}–${a.weeks_to_deploy[1]} weeks` : ''}</li>`).join('')}</ul>` });
+    faq.push({ q: 'Which AI agents does HarborOS run for Fair Harbor?', href: 'growth-plan.html#agents', a: `<p>${ag.length} agents, an est. ${ra ? range(ra.investment_usd, v => money(v)) : '$0.3–0.7M'} build (vendor claims are upper bounds):</p><ul>${ag.map(a => `<li><b>${esc(a.agent)}</b> — ${esc(clean(a.who_it_helps))}; ${a.weeks_to_deploy ? `${a.weeks_to_deploy[0]}–${a.weeks_to_deploy[1]} weeks` : ''}</li>`).join('')}</ul>` });
   }
   try {
     Frame.mount({}).setChat(Chat.mount(null, { persona: 'fh', short_name: 'Fair Harbor', mode: 'floating', theme: 'light', name: 'Fair Harbor helper', faq, suggestions: faq.map(f => f.q) }));

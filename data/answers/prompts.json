@@ -48,8 +48,11 @@
   },
   {
    "slug": "what-is-serviceos-and-why-does-it-raise-valuation",
-   "question": "What is ServiceOS and why does it raise valuation?",
-   "persona": "portal"
+   "question": "How does tech enablement raise Punctual Pros' value?",
+   "persona": "portal",
+   "aliases": [
+    "What is ServiceOS and why does it raise valuation?"
+   ]
   },
   {
    "slug": "how-many-new-mover-leads-are-in-lancaster-county",
@@ -58,13 +61,20 @@
   },
   {
    "slug": "compare-the-portfolio-to-public-comps",
-   "question": "Compare the portfolio to public comps",
-   "persona": "portal"
+   "question": "How do the portfolio's valuations compare with public peers?",
+   "persona": "portal",
+   "aliases": [
+    "Compare the portfolio to public comps"
+   ]
   },
   {
    "slug": "open-the-pe-landscape",
-   "question": "Open the PE landscape",
-   "persona": "portal"
+   "question": "Which private-equity rivals are most active in our sectors?",
+   "persona": "portal",
+   "aliases": [
+    "Open the PE landscape",
+    "Open the private-equity sponsor landscape"
+   ]
   },
   {
    "slug": "what-are-the-tech-enablement-theses-for-every-company",
@@ -73,9 +83,10 @@
   },
   {
    "slug": "show-me-sample-ctv-ads-and-the-media-plan-for-punctual-pros",
-   "question": "Show sample CTV ads for Punctual Pros",
+   "question": "What would a TV ad campaign for Punctual Pros look like?",
    "persona": "portal",
    "aliases": [
+    "Show sample CTV ads for Punctual Pros",
     "Show me sample CTV ads and the media plan for Punctual Pros"
    ]
   },
@@ -88,9 +99,6 @@
    "slug": "what-is-the-growth-plan-for-frontline",
    "question": "What is the growth plan for Frontline?",
    "persona": "portal",
-   "aliases": [
-    "What is the growth plan for Frontline?"
-   ],
    "datasets": [
     "fl_playbook",
     "frontline_filings",
@@ -109,9 +117,10 @@
   },
   {
    "slug": "how-much-revenue-does-24-7-voice-ai-recover-for-punctual-pro",
-   "question": "How much does voice AI recover for Punctual Pros?",
+   "question": "How much revenue do missed calls cost Punctual Pros?",
    "persona": "portal",
    "aliases": [
+    "How much does voice AI recover for Punctual Pros?",
     "How much revenue does 24/7 voice AI recover for Punctual Pros?"
    ]
   },
