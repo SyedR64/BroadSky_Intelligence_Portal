@@ -1,7 +1,7 @@
 /* CET concept site: interactions and data-powered sections.
    Data comes from the portal's verified datasets via core.js (Data.research).
    The page frame (top bar, concept notice, breadcrumb, footer) comes from assets/frame.js. */
-import { humanizeText } from '../../assets/frame.js?v=20261008145402';
+import { humanizeText } from '../../assets/frame.js?v=20261008151643';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];

@@ -409,6 +409,46 @@ button.sys-chip:hover,a.sys-chip:hover{border-color:var(--sys-ink);color:var(--s
 .sys-prose code{font:500 .86em var(--sys-mono);background:var(--sys-bg-3);padding:.1em .4em;border-radius:var(--sys-r-xs)}
 .sys-prose hr{border:0;height:1px;background:var(--sys-line);margin:2em 0}
 
+/* ── 6n · before and after compare (concept pages; UNIFIED.md §3) ─────────── */
+/* Two columns (Before: the site today, After: the concept), each shot in a
+   device frame that scrolls. A radio pair switches desktop and phone with no
+   script; the hidden shots stay unloaded (loading="lazy").                    */
+.sys-compare-seg{display:inline-flex;gap:2px;max-width:calc(100% - 64px);margin:0 0 var(--sys-sp-5);padding:3px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-pill);background:var(--sys-surface);box-shadow:var(--sys-sh-1);min-inline-size:0}
+.sys-compare-seg input{position:absolute;width:1px;height:1px;margin:0;opacity:0;pointer-events:none}
+.sys-compare-seg label{display:inline-flex;align-items:center;min-height:36px;padding:0 16px;border-radius:var(--sys-r-pill);font:600 13.5px/1 var(--sys-font);color:var(--sys-ink-2);cursor:pointer;white-space:nowrap;transition:background var(--sys-t),color var(--sys-t)}
+.sys-compare-seg input:checked+label{background:var(--sys-ink);color:var(--sys-on-ink)}
+.sys-compare-seg input:focus-visible+label{outline:2px solid var(--sys-focus);outline-offset:2px}
+.sys-compare-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sys-sp-6) var(--sys-sp-5)}
+.sys-compare-col{display:flex;flex-direction:column;gap:var(--sys-sp-3);min-width:0;margin:0}
+.sys-compare-tag{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font:600 var(--sys-fs-2xs)/1.2 var(--sys-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sys-mute)}
+.sys-compare-tag b{padding:5px 10px;border-radius:var(--sys-r-pill);background:var(--sys-bg-3);color:var(--sys-ink);font-weight:600}
+.sys-compare-col--after .sys-compare-tag b{background:var(--co-soft);color:var(--co-ink)}
+.sys-compare-dev{position:relative;overflow:hidden;border:1px solid var(--sys-line-2);border-radius:12px;background:var(--sys-surface);box-shadow:var(--sys-sh-2)}
+.sys-compare-bar{display:flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-bottom:1px solid var(--sys-line);background:var(--sys-bg-2);font:500 11.5px/1 var(--sys-mono);color:var(--sys-mute)}
+.sys-compare-bar i{flex-shrink:0;width:9px;height:9px;border-radius:50%;background:var(--sys-line-2)}
+.sys-compare-bar span{min-width:0;margin-left:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sys-compare-screen{aspect-ratio:var(--sys-compare-ratio,16/10);overflow-x:hidden;overflow-y:auto;background:var(--sys-bg-2)}
+.sys-compare-screen img{display:block;width:100%;max-width:100%;height:auto}
+.sys-compare-dev--phone{display:none;width:min(100%,264px);margin:0 auto;padding:9px;border-color:#0c1320;border-radius:38px;background:#0c1320}
+.sys-compare-dev--phone .sys-compare-screen{--sys-compare-ratio:390/844;border-radius:29px}
+[data-sys-theme="dark"] .sys-compare-dev--phone{border-color:var(--sys-line-2)}
+.sys-compare:has(input[value="phone"]:checked) .sys-compare-dev--desktop:not(.sys-compare-dev--keep){display:none}
+.sys-compare:has(input[value="phone"]:checked) .sys-compare-dev--phone{display:block}
+.sys-compare-phone-note{display:none}
+.sys-compare:has(input[value="phone"]:checked) .sys-compare-phone-note{display:block}
+.sys-compare-cap{font-size:13.5px;line-height:1.5;color:var(--sys-mute)}
+.sys-compare-cap b{color:var(--sys-ink-2);font-weight:600}
+.sys-compare-changes{margin-top:var(--sys-sp-7)}
+.sys-compare-list{list-style:none;display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sys-sp-3);margin:var(--sys-sp-4) 0 0;padding:0}
+.sys-compare-list li{position:relative;display:flex;flex-direction:column;gap:6px;min-width:0;padding:14px 16px 14px 32px;border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface);font-size:14.5px;line-height:1.55;color:var(--sys-ink-2)}
+.sys-compare-list li::before{content:"";position:absolute;left:14px;top:21px;width:7px;height:7px;border-radius:2px;background:var(--co)}
+.sys-compare-list b{color:var(--sys-ink);font-weight:600}
+.sys-compare-num{font:600 13px/1.45 var(--sys-mono);font-variant-numeric:tabular-nums;color:var(--sys-ink)}
+@media (min-width:720px){
+  .sys-compare-grid,.sys-compare-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sys-compare-seg{max-width:none}
+}
+
 /* ── 7a · layout: portal console (app.html) ───────────────────────────────── */
 /* Frame strip sits above the rail; the console grid takes the remaining height. */
 body[data-sys-layout="app"]{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}

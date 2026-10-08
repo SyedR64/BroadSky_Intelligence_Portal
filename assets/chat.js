@@ -12,7 +12,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261008145402';
+import { Data, Fmt, Live, esc } from './core.js?v=20261008151643';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -48,7 +48,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261008145402';
+const BACKEND_JS = './backend.js?v=20261008151643';
 let BE = null, BE_P = null;
 function backend() {
   if (!BE_P) BE_P = import(BACKEND_JS).then(async m => {
@@ -411,7 +411,7 @@ async function addonHistory(q) {
 }
 /** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
 async function dealModel(q) {
-  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261008145402').catch(() => null)]);
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261008151643').catch(() => null)]);
   if (!d || !L) return null;
   const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
   const P = pre.find(i => i.co === co) || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
@@ -962,7 +962,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261008145402'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261008151643'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };

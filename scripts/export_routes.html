@@ -1,4 +1,4 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>Route export</title></head><body><pre id="out"></pre><script type="module">
-import { modules } from '../modules/registry.js?v=20261008145402';
+import { modules } from '../modules/registry.js?v=20261008151643';
 document.getElementById('out').textContent = JSON.stringify(modules.flatMap(m => m.views.map(v => `#/${m.id}/${v.id}`)));
 </script></body></html>
