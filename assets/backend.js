@@ -6,7 +6,7 @@
    quietly, so the grounded engine in chat.js keeps working on its own.
 
    Usage (from chat.js):
-     const { Backend } = await import('./backend.js?v=20261008185332');
+     const { Backend } = await import('./backend.js?v=20261008192305');
      if (await Backend.discover()) for await (const t of Backend.chat({ persona, messages, context, question })) out += t;
      const pre = await Backend.precomputed(question);   // works without a backend
 

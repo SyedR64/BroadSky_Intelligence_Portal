@@ -1,7 +1,7 @@
 /* The agentic layer — renders the portfolio AI-agent plan (plus the tech-enablement evidence for the
    OS EBITDA ranges). No framework, no build step. Markup uses the shared sys- components
    (assets/system.css, UNIFIED.md); company colour comes from data-co, never from literals here. */
-import { humanizeText } from '../assets/frame.js?v=20261008185332';
+import { humanizeText } from '../assets/frame.js?v=20261008192305';
 const ROOT = new URL('../', import.meta.url).href;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];

@@ -6,7 +6,7 @@
 import {
   build, esc, clean, when, monthLabel, mLabel, dash, capFirst, median, usd, xTimes, yrs, host, hrefFor, kpiVal,
   FAMILY, SECTOR, SECTOR_ORDER, TODAY, timingText, legendHTML, timelineHTML, matrixHTML, clockHTML, ganttHTML, ladderHTML, ladderRows, growthHTML, kpiCardsHTML, csv, download, eventRows,
-} from '../modules/cases-lib.js?v=20261008185332';
+} from '../modules/cases-lib.js?v=20261008192305';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];

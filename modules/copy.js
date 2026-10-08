@@ -2,7 +2,7 @@
    record fields, the est. badge, and a post-render pass that turns the console's
    textual "est." markers into .sys-est badges. Module renderers call these at the
    source; Frame.humanize stays the safety net. */
-import { Frame } from '../assets/frame.js?v=20261008185332';
+import { Frame } from '../assets/frame.js?v=20261008192305';
 
 export const EST = '<span class="sys-est">est.</span>';
 export const ILLUS = '<span class="sys-est sys-est--illus">illustrative</span>';

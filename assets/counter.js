@@ -1,5 +1,5 @@
 /* "Revenue left on the table" clock — a debt-clock style live counter driven by the portal's sourced rates.
-   Usage: import { Counter } from './assets/counter.js?v=20261008185332';
+   Usage: import { Counter } from './assets/counter.js?v=20261008192305';
      Counter.mount(el, { theme:'light'|'dark', caption?: string, compact?: boolean,
                          baseline?: 'load'|'today', minDisplay?: number })
    baseline 'load' (default) counts up from $0 when the page opens; 'today' counts from local midnight
@@ -7,7 +7,7 @@
    baseline 'today') the value shows "—" so a first frame never reads "$1".
    The rate is the sum of annualized, sourced opportunity values (each labelled est.) divided by seconds per year.
    Colours come from system.css tokens, so the clock follows the page's light or dark theme. */
-import { Data, Fmt, esc } from './core.js?v=20261008185332';
+import { Data, Fmt, esc } from './core.js?v=20261008192305';
 const ROOT = new URL('../', import.meta.url).href;
 const YEAR = 365.25 * 24 * 3600;
 /* Readable source names for the breakdown. `src` on each component stays the raw dataset key

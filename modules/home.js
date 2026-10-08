@@ -1,5 +1,5 @@
 /* Command Center — portfolio-wide situational awareness */
-import { dataset, srcLabel } from './copy.js?v=20261008185332';
+import { dataset, srcLabel } from './copy.js?v=20261008192305';
 const GROUP_TXT = { research: 'Research', sales: 'Deed records', legacy: 'Reference table' };
 const BASIS_TXT = { live: 'Checked today', snapshot: 'Last update', 'live (manifest)': 'Last update', missing: 'Unavailable' };
 const COS = [

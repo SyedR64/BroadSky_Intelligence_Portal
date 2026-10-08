@@ -1,5 +1,5 @@
 /* HarborOS concept page — booted from an inline module in harboros.html. */
-import { art, PRODUCTS, COLORS, recommend, SIZES, FAQ, INTENTS, chrome, toast, esc, fmtMoney, setFrame, plain, ep } from './common.js?v=20261008185332';
+import { art, PRODUCTS, COLORS, recommend, SIZES, FAQ, INTENTS, chrome, toast, esc, fmtMoney, setFrame, plain, ep } from './common.js?v=20261008192305';
 /* Chart colours come from the system tokens (read once; SVG attributes need concrete values). */
 const tok = (n, fb) => { try { return getComputedStyle(document.body).getPropertyValue(n).trim() || fb; } catch { return fb; } };
 const T = { co: tok('--co', '#3fd0e0'), ink: tok('--sys-ink', '#0c1320'), mute: tok('--sys-mute', '#5f6774'), mute2: tok('--sys-mute-2', '#9aa1ab'), line: tok('--sys-line', '#e8e5de'), bad: tok('--sys-bad', '#c62828'), warn: tok('--sys-warn', '#b45309'), orange: tok('--sys-orange', '#f2832f'), good: tok('--sys-good', '#15803d') };

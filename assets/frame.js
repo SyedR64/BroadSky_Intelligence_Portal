@@ -6,7 +6,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261008185332';
+       import { Frame } from '../../assets/frame.js?v=20261008192305';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
@@ -41,7 +41,6 @@ const SELF = new URL(import.meta.url);
 const ROOT = new URL('../', SELF).href;                 // site root from any page depth
 const VER = SELF.searchParams.get('v');
 const QV = VER ? `?v=${encodeURIComponent(VER)}` : '';
-const GITHUB = 'https://github.com/SyedR64/BroadSky_Intelligence_Portal';
 const AUTHOR = 'Syed Rahman';
 /** The product name: the one wordmark for the top bar, the mobile sheet and the footer (UNIFIED.md §0). */
 export const PRODUCT = 'BSP Desk';
@@ -63,7 +62,6 @@ export const NAV = [
   { id: 'os',        label: 'OS program',    href: 'redesigns/#os',        hint: 'six products' },
   { id: 'playbooks', label: 'Growth plans',  href: 'redesigns/#growth-plans', hint: 'value creation' },
   { id: 'briefing',  label: 'Briefing',      href: '#briefing',            hint: 'video and memo' },
-  { id: 'github',    label: 'GitHub',        href: GITHUB, external: true, hint: 'source code' },
 ];
 
 export const BANNER_TEXT = `A concept by ${AUTHOR} for the Portfolio Resource Group at Broad Sky Partners (BSP). This is not the company's official website. Estimates are marked est.`;
@@ -164,7 +162,7 @@ function footerHTML() {
       <nav class="sys-footer-col" aria-label="Portal"><p class="sys-footer-h">Portal</p>${a('app.html', 'Portal home')}${a('app.html#/home/overview', 'Command Center')}${a('app.html#/ma/overview', 'Acquisition engine')}${a('app.html#/techos/overview', 'Tech enablement')}${a('theater.html', '3D theater')}</nav>
       <nav class="sys-footer-col" aria-label="Site concepts"><p class="sys-footer-h">Site concepts</p>${cos}</nav>
       <nav class="sys-footer-col" aria-label="Programs"><p class="sys-footer-h">Programs</p>${a('redesigns/#os', 'OS program')}${a('redesigns/#growth-plans', 'Growth plans')}${a('redesigns/voice-ai.html', '24/7 Voice AI')}${a('redesigns/ai-agents.html', 'AI agents')}</nav>
-      <nav class="sys-footer-col" aria-label="Briefing"><p class="sys-footer-h">Briefing</p>${a('#briefing', 'Video briefing')}${a('briefing/executive_memo.html', 'Executive memo')}${a(GITHUB, 'GitHub', ' rel="noopener" target="_blank"')}</nav>
+      <nav class="sys-footer-col" aria-label="Briefing"><p class="sys-footer-h">Briefing</p>${a('#briefing', 'Video briefing')}${a('briefing/executive_memo.html', 'Executive memo')}</nav>
     </div>
     <div class="sys-footer-legal"><p>${esc(DISCLAIMER)}</p><p class="sys-mono">Prepared by ${AUTHOR} · October 2026</p></div>
   </div>`;

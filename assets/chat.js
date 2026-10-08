@@ -12,7 +12,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261008185332';
+import { Data, Fmt, Live, esc } from './core.js?v=20261008192305';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -48,7 +48,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261008185332';
+const BACKEND_JS = './backend.js?v=20261008192305';
 let BE = null, BE_P = null;
 function backend() {
   if (!BE_P) BE_P = import(BACKEND_JS).then(async m => {
@@ -418,7 +418,7 @@ async function addonHistory(q) {
 }
 /** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
 async function dealModel(q) {
-  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261008185332').catch(() => null)]);
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261008192305').catch(() => null)]);
   if (!d || !L) return null;
   const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
   const P = pre.find(i => i.co === co && i.group !== 'generic') || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
@@ -638,17 +638,17 @@ const mdBase = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^#{2,
 
 /* ── Personas ─────────────────────────────────────────────────────────────── */
 export const PERSONAS = {
-  portal: { name: 'BSP Desk', short: 'the desk', initials: 'BD', greeting: 'Ask about the six portfolio companies. Every answer shows where its numbers come from.', placeholder: 'Ask anything, e.g. "Show me how to take Punctual Pros nationwide"', color: '#d9622b',
+  portal: { name: 'BSP Desk', short: 'the desk', initials: 'BSP', greeting: 'Ask about the six portfolio companies. Every answer shows where its numbers come from.', placeholder: 'Ask anything, e.g. "Show me how to take Punctual Pros nationwide"', color: '#d9622b',
     suggestions: ['Show me how to take Punctual Pros nationwide', 'Which wastewater plants should Horton call first?', "What do this week's storms mean for Punctual Pros?", 'Who competes with BSP for home-services deals?', 'Which CET bids are due within 30 days?', 'Which counties nationwide should Punctual Pros expand to first?', 'What did sponsors do with companies like Punctual Pros?', 'How does BSP actually buy companies?', 'Estimate Punctual Pros revenue from public filings', 'Show the top add-on targets for CET in Connecticut', "How does tech enablement raise Punctual Pros' value?", 'How many new-mover leads are in Lancaster County?', "How do the portfolio's valuations compare with public peers?", 'Which private-equity rivals are most active in our sectors?', 'Which portfolio company is largest by revenue?', 'What would a TV ad campaign for Punctual Pros look like?', 'How does BSP scale CET across the Northeast?', 'What is the growth plan for Frontline?', 'Which AI agents create the most value?', 'How much revenue do missed calls cost Punctual Pros?'],
     intents: PORTAL_INTENTS, faq: [] },
 };
 /** Customer-facing site personas are extended by each redesign (faq/suggestions/intents via mount options). */
 const SITE_BASE = {
   pp: { name: 'Punctual Pros assistant', short: 'Punctual Pros', initials: 'PP', color: '#f08a3c', greeting: 'Hi! I can check whether we serve your address, book a visit, explain memberships and rebates, or tell you what this week\'s weather means for your home.', placeholder: 'Ask about service, coverage, pricing…', suggestions: ['Do you serve 17601?', 'Book a tune-up', 'Can I reach you at 2am?', 'What does the Comfort Club membership include?', 'What rebates are available for a heat pump?', 'Is there a storm coming this week?', 'My AC stopped working'] },
-  cet: { name: 'CET project desk', short: 'CET', initials: 'CE', color: '#4c8dff', greeting: 'Ask about electrical construction, solar and storage, EV charging, wastewater and pump-station work (Horton), or energy-efficiency programs (NuWave) anywhere in New England.', placeholder: 'Ask about capabilities, states served, programs…', suggestions: ['Do you work in Connecticut?', 'What incentives exist for commercial solar in Massachusetts?', 'Can you upgrade a wastewater plant\'s switchgear?', 'Request a design-build estimate', 'Which EV charging programs are open now?'] },
+  cet: { name: 'CET project desk', short: 'CET', initials: 'CET', color: '#4c8dff', greeting: 'Ask about electrical construction, solar and storage, EV charging, wastewater and pump-station work (Horton), or energy-efficiency programs (NuWave) anywhere in New England.', placeholder: 'Ask about capabilities, states served, programs…', suggestions: ['Do you work in Connecticut?', 'What incentives exist for commercial solar in Massachusetts?', 'Can you upgrade a wastewater plant\'s switchgear?', 'Request a design-build estimate', 'Which EV charging programs are open now?'] },
   fl: { name: 'Frontline advisor', short: 'Frontline', initials: 'FL', color: '#9d7bff', greeting: 'I help law firms scope managed IT, service desk, cybersecurity and revenue-cycle support. Ask about coverage, security posture or a quick assessment.', placeholder: 'Ask about managed IT for law firms…', suggestions: ['Do you support AM Law 200 firms?', 'What is included in the service desk?', 'How do you handle eBilling and A/R?', 'Request a security assessment', 'Which offices do you operate from?'] },
   ts: { name: 'Thomas Scientific concierge', short: 'Thomas Scientific', initials: 'TS', color: '#2ecc8f', greeting: 'Find products, categories and services for research, clinical, biopharma and cleanroom labs, or reach an account representative.', placeholder: 'Search products or ask about services…', suggestions: ['Do you supply cleanroom consumables?', 'Set up a punchout catalog', 'Who is my account rep?', 'Do you serve cannabis testing labs?', 'What is vendor-managed inventory?'] },
-  bpi: { name: 'BPI desk', short: 'BPI', initials: 'BP', color: '#e05c8a', greeting: 'Ask about public affairs, corporate reputation, campaigns, research and AI-era communications work.', placeholder: 'Ask about services or case studies…', suggestions: ['What services does BPI offer?', 'Can you run a corporate reputation campaign?', 'Which offices do you have?', 'Start a conversation with the team'] },
+  bpi: { name: 'BPI desk', short: 'BPI', initials: 'BPI', color: '#e05c8a', greeting: 'Ask about public affairs, corporate reputation, campaigns, research and AI-era communications work.', placeholder: 'Ask about services or case studies…', suggestions: ['What services does BPI offer?', 'Can you run a corporate reputation campaign?', 'Which offices do you have?', 'Start a conversation with the team'] },
   fh: { name: 'Fair Harbor helper', short: 'Fair Harbor', initials: 'FH', color: '#3fd0e0', greeting: 'Sizing, fabric, shipping, returns, sustainability and wholesale questions, answered.', placeholder: 'Ask about sizing, shipping, fabric…', suggestions: ['How do the swim trunks fit?', 'What are the trunks made of?', 'What is the return policy?', 'Do you sell wholesale?'] },
 };
 async function siteIntents(co) {
@@ -969,7 +969,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261008185332'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261008192305'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };
@@ -1023,7 +1023,7 @@ class Widget {
   setAccent() { this.root.style.setProperty('--ch-accent', this.persona.color || '#d9622b'); }
   loadExtra() { const id = this.id; siteIntents(id).then(x => { if (this.id === id) this.extra = x; }).catch(() => { }); }
   fullHref() { return `${ROOT}assistant.html?persona=${encodeURIComponent(this.id)}${this.lastQ ? `&q=${encodeURIComponent(this.lastQ)}` : ''}`; }
-  avatar(cls = '') { return `<span class="ch-avatar ${cls}" aria-hidden="true">${esc(this.persona.initials || 'AI')}</span>`; }
+  avatar(cls = '') { const ini = this.persona.initials || 'AI'; return `<span class="ch-avatar ${cls}${ini.length > 2 ? ' ch-avatar--3' : ''}" aria-hidden="true">${esc(ini)}</span>`; }
   engineHTML() { return `<button type="button" class="ch-engine" data-a="settings" title="${esc(engineTip())}" aria-label="${esc(engineLabel())}. About this assistant">${hosted() || LLM.key() ? I.spark : I.db}<span class="ch-engine-t">${esc(engineLabel())}</span>${I.gear}</button>`; }
   /** One plain sentence: where answers come from and where chats are kept. */
   privacy() {
@@ -1072,7 +1072,7 @@ class Widget {
 
   renderLauncher() {
     if (this._tuck) setTimeout(this._tuck, 0);
-    const who = this.persona.short || (this.persona.initials === 'BD' ? 'the desk' : String(this.persona.name || 'us').split(' ')[0]);
+    const who = this.persona.short || (this.persona.initials === 'BSP' ? 'the desk' : String(this.persona.name || 'us').split(' ')[0]);
     this.root.innerHTML = `<button type="button" class="ch-launch" aria-label="Ask ${esc(who)} (opens the ${esc(this.persona.name)} chat)" aria-haspopup="dialog"><span class="ch-launch-av" aria-hidden="true">${I.spark}</span><span>Ask ${esc(who)}</span><span class="ch-dot" aria-hidden="true"></span></button>`;
   }
   /* Phones (<=560px): the launcher steps aside while it would sit on top of a page button or link,
@@ -1119,7 +1119,7 @@ class Widget {
     this.bindComposer();
   }
   renderFull() {
-    const per = id => { const p = PERSONAS[id] || SITE_BASE[id]; return `<button type="button" class="ch-pp" data-persona="${id}" aria-pressed="${id === this.id}" style="--pc:${esc(p.color || '#d9622b')}"><span class="ch-avatar xs" aria-hidden="true">${esc(p.initials)}</span><span>${esc(p.name)}</span></button>`; };
+    const per = id => { const p = PERSONAS[id] || SITE_BASE[id]; return `<button type="button" class="ch-pp" data-persona="${id}" aria-pressed="${id === this.id}" style="--pc:${esc(p.color || '#d9622b')}"><span class="ch-avatar xs${(p.initials||'').length > 2 ? ' ch-avatar--3' : ''}" aria-hidden="true">${esc(p.initials)}</span><span>${esc(p.name)}</span></button>`; };
     this.root.innerHTML = `<div class="ch-app">
 <aside class="ch-side" aria-label="Chats"><div class="ch-side-top"><a class="ch-brand" href="${ROOT}"><img src="${ROOT}BSP_Logo.png" alt="" width="28" height="28"><span><b>BSP Desk</b><small>Assistant</small></span></a><button type="button" class="ch-ib-b ch-only-m" data-a="menu" aria-label="Close sidebar">${I.x}</button></div>
 <button type="button" class="ch-newchat" data-a="new">${I.compose}<span>New chat</span><kbd>${MOD}⇧O</kbd></button>
