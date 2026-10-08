@@ -11,7 +11,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261006224618';
+import { Data, Fmt, Live, esc } from './core.js?v=20261008134553';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -45,7 +45,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261006224618';
+const BACKEND_JS = './backend.js?v=20261008134553';
 let BE = null, BE_P = null;
 function backend() {
   if (!BE_P) BE_P = import(BACKEND_JS).then(async m => {
@@ -58,6 +58,7 @@ function backend() {
 }
 /** Hosted Claude is live (endpoint answered /health with a model key). */
 const hosted = () => !!(BE?.endpoint && BE.llm);
+const GENERATIVE_RX = /^(write|draft|compose|summari[sz]e|explain|compare|rewrite|translate|brainstorm|outline|pitch|prepare|suggest|recommend|critique|review|assess)\b|\b(note|memo|email|letter|script|talking points|bullet points|one-pager|agenda|pros and cons|trade-?offs)\b|\b(what do you think|should (we|bsp|the prg)|how would you|in your view)\b/i;
 /** Backend storage (feedback, threads) is live. */
 const stored = () => !!(BE?.endpoint && BE.db);
 
@@ -534,7 +535,7 @@ const PORTAL_INTENTS = [
   { id: 'movers', rx: [/new.?mover|home sales|deed|leads? in|mailing|just (bought|sold)|recent(ly)? (sold|bought)/i], run: movers },
   { id: 'os', rx: [/serviceos|gridos|firmos|labos|signalos|harboros|tech.?enable|tech.?forward|operating system|\bos\b/i], run: osConcept },
   { id: 'comps', rx: [/comps?\b|comparable|multiple|public (peer|compan)|trades? at|benchmark/i], run: comps },
-  { id: 'portfolio', rx: [/portfolio|which companies|who is broad sky|what is broad sky|about broad sky|platforms|portfolio compan/i], run: portfolio },
+  { id: 'portfolio', rx: [/\bportfolio\b(?!\s+resource)|which companies|who is broad sky|what is broad sky|about broad sky|platforms|portfolio compan/i], run: portfolio },
   { id: 'nav', rx: [/^(open|show|go to|take me to|navigate)\b/i], run: navigate },
 ];
 
@@ -929,7 +930,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261006224618'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261008134553'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };
@@ -1227,7 +1228,10 @@ class Widget {
       if (!hit) { fu = resolveFollowUp(q, this.ctx); if (fu) { eq = fu.q; hit = match(eq); this.note(turn, fu); } }
       st.push(`Searching ${DATASETS} datasets`);
       if (hit && LLM.key() && LLM.always()) await beP;   // "always use Claude" applies to the personal key only when no backend is live
-      const skipIntent = !!(LLM.key() && LLM.always() && !hosted());
+      // Writing-style requests (notes, memos, comparisons, opinions) go to hosted Claude with retrieved context, even when a data keyword matches.
+      const generative = GENERATIVE_RX.test(q) && !/^(open|show|which|how many|list|where|when|who)\b/i.test(q.trim());
+      if (generative) await beP;
+      const skipIntent = !!(LLM.key() && LLM.always() && !hosted()) || (generative && hosted());
       let res = null;
       if (hit && !skipIntent) { try { res = await hit.run(eq, { progress: t => st.push(t), persona: this.persona, history: this.history, context: this.ctx }); } catch (e) { console.warn('intent failed', hit.id, e); res = null; } }
       if (ctl.stopped) return this.stopped(turn, st, q);

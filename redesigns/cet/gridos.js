@@ -1,7 +1,7 @@
 /* GridOS concept: interactive demo and value math.
    Real data (portal datasets via core.js): CET opportunity radar, CET wastewater-plant screen,
    GridOS evidence base, public comparables. Illustrative: fleet sites, EV ports, the savings project. */
-import { STATES, STAGE, daysTo, money, shortDate, clip, ownerOf, plain, srcName, longDate, EST, ILLUS } from './site.js?v=20261006224618';
+import { STATES, STAGE, daysTo, money, shortDate, clip, ownerOf, plain, srcName, longDate, EST, ILLUS } from './site.js?v=20261008134553';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
