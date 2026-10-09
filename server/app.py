@@ -679,6 +679,11 @@ QUERY_HINTS = [   # words a visitor uses for BSP and its leaders, added to the f
 ]
 
 
+PINNED = [   # (question pattern, the canonical page every such question should see first)
+    (QUERY_HINTS[1][0], 'https://broadskypartners.com/team/'),   # who leads BSP: the firm's own team page
+]
+
+
 def retrieval_query(persona, question):
     q = question
     if persona == 'portal':
@@ -698,6 +703,11 @@ def retrieve_initial(kb, inp, sources):
             q = prev[-1][-400:] + '\n' + q
         try:
             hits = kb.search(q, k=AGENT['retrieve'], company=company_hint(inp['persona'], inp['question']))
+            if inp['persona'] == 'portal':
+                for rx, url in PINNED:
+                    pin = kb.pinned(url, q) if rx.search(inp['question']) else None
+                    if pin and all(h['chunk_id'] != pin['chunk_id'] for h in hits):
+                        hits = [pin] + hits[:AGENT['retrieve'] - 1]
         except Exception:
             log.exception('knowledge search failed')
             hits = []
