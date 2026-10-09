@@ -5,7 +5,7 @@
    quietly, so the grounded engine in chat.js keeps working on its own.
 
    Usage (from chat.js):
-     const { Backend } = await import('./backend.js?v=20261009070649');
+     const { Backend } = await import('./backend.js?v=20261009155255');
      if (await Backend.discover()) for await (const t of Backend.chat({ persona, messages, context, question })) out += t;
      const pre = await Backend.precomputed(question);   // works without a backend
 
@@ -16,7 +16,7 @@
 const RUNTIME_URL = new URL('./runtime.json', import.meta.url).href;
 const ANSWERS_URL = new URL('../data/answers/index.json', import.meta.url).href;
 const OVERRIDE_LS = 'bsp-backend-endpoint';
-const HEALTH_TIMEOUT_MS = 2500, JSON_TIMEOUT_MS = 8000, FIRST_BYTE_TIMEOUT_MS = 30000;
+const HEALTH_TIMEOUT_MS = 6000, JSON_TIMEOUT_MS = 8000, FIRST_BYTE_TIMEOUT_MS = 30000;   // a cold start of the backend takes a few seconds
 const MAX_CONTEXT_CHARS = 12000, MAX_QUESTION_CHARS = 2000, MAX_HISTORY = 12;
 
 /** Error with a sentence that can be shown to a visitor as-is (`message`). */

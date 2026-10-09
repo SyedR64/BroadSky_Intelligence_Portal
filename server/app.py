@@ -34,7 +34,6 @@ import time
 from datetime import datetime, timedelta, timezone
 from urllib.parse import unquote
 
-import anthropic
 import anyio
 from fastapi import FastAPI, Request
 from starlette.background import BackgroundTask
@@ -43,6 +42,16 @@ from starlette.responses import Response, StreamingResponse
 
 import dealmath
 import knowledge
+
+anthropic = None   # the Anthropic SDK, imported on the first /chat: it takes over a second to import, and /health must answer fast on a cold start
+
+
+def sdk():
+    global anthropic
+    if anthropic is None:
+        import anthropic as _anthropic
+        anthropic = _anthropic
+    return anthropic
 
 VERSION = '2.0.0'
 DEFAULT_MODEL = 'claude-opus-5-5'
@@ -764,6 +773,7 @@ _client = {'client': None, 'key': None, 'base': None}
 
 
 def claude_client():
+    sdk()
     key, base = api_key(), anthropic_base_url()
     if _client['client'] is None or _client['key'] != key or _client['base'] != base:
         _client['client'] = anthropic.AsyncAnthropic(api_key=key, base_url=base, max_retries=1,
@@ -1209,7 +1219,7 @@ async def router(request: Request, rest: str = ''):
     try:
         if method == 'GET':
             if path in ('/', '/health'):
-                kb = knowledge.get_kb()
+                kb = knowledge.loaded_kb()   # never loads it here: /health answers in milliseconds even on a cold start
                 return json_response({'ok': True, 'model': env('MODEL') or DEFAULT_MODEL, 'version': VERSION, 'db': await db_ok(), 'llm': bool(api_key()), 'kv': True,
                                       'kb': {'docs': len(kb.docs), 'chunks': int(len(kb.chunk_ids)), 'built_at': kb.info.get('built_at')} if kb is not None else False}, 200, cors)
             if path == '/stats':

@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261009070649">
-<link rel="stylesheet" href="./os.css?v=20261009070649">
+<link rel="stylesheet" href="../../assets/system.css?v=20261009155255">
+<link rel="stylesheet" href="./os.css?v=20261009155255">
 </head>
 <body data-co="pp">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -309,10 +309,10 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261009070649';
-  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261009070649';
-  import { Chat } from '../../assets/chat.js?v=20261009070649';
-  import { init } from './os.js?v=20261009070649';
+  import { Frame } from '../../assets/frame.js?v=20261009155255';
+  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261009155255';
+  import { Chat } from '../../assets/chat.js?v=20261009155255';
+  import { init } from './os.js?v=20261009155255';
   const frame = Frame.mount({});
   const chat = init({ Data, Fmt, Live, Chat, esc, Frame });
   if (chat) frame.setChat(chat);
