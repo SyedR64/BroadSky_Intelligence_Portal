@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261009182014">
+<link rel="stylesheet" href="../assets/system.css?v=20261009184141">
 <style>
   /* demo-only helpers (not part of the system) */
   .demo-sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px}
@@ -257,7 +257,7 @@
   const raw = 'Calls routed with book_job + page_on_call.\nCoverage from pp_sales_pa_a.json and cet_wwtp_targets (null).\nAgent ra-pp booked 41 jobs · null · in Lancaster.\nMedian household income: NaN%';
   document.querySelectorAll('#hz-out').forEach(el => { el.textContent = raw; });
   const theme = new URLSearchParams(location.search).get('theme') === 'dark' ? 'dark' : undefined;
-  const { Frame } = await import('../assets/frame.js?v=20261009182014');
+  const { Frame } = await import('../assets/frame.js?v=20261009184141');
   Frame.mount({
     co: null, theme, persona: 'portal', banner: true, crumbAside: 'Concept · Oct 2026',
     crumb: [{ label: 'Home', href: './' }, { label: 'Site concepts', href: 'redesigns/' }, { label: 'Punctual Pros', co: 'pp', href: 'redesigns/punctual-pros/' }, { label: 'Design system' }],

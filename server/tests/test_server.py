@@ -6,10 +6,13 @@ on free ports with throwaway SQLite files, and stop them afterwards.
   cd server && python3 -m pytest -q tests
 """
 
+import csv
 import json
 import os
 import re
 import sqlite3
+import subprocess
+import sys
 import time
 import uuid
 
@@ -20,6 +23,8 @@ import procs
 
 GH = 'https://syedr64.github.io'
 EVIL = 'https://evil.example'
+BLOB_TOKEN = 'vercel_blob_rw_teststore_notarealsecret'   # only ever sent to the local mock
+EXPORT = os.path.join(os.path.dirname(procs.SERVER_DIR), 'scripts', 'export_chats.py')
 
 
 @pytest.fixture(scope='session')
@@ -30,7 +35,8 @@ def env(tmp_path_factory):
     started = [mock]
     try:
         ports = {k: procs.free_port() for k in ('main', 'capped', 'nokey')}
-        main = procs.start_server(ports['main'], str(d / 'main.log'), str(d / 'main.db'), mport, RL_PER_10MIN=5, UPSTREAM_TOTAL_TIMEOUT=3)
+        main = procs.start_server(ports['main'], str(d / 'main.log'), str(d / 'main.db'), mport, RL_PER_10MIN=5, UPSTREAM_TOTAL_TIMEOUT=3,
+                                  BLOB_READ_WRITE_TOKEN=BLOB_TOKEN, VERCEL_BLOB_API_URL=f'http://127.0.0.1:{mport}/blob')
         started.append(main)
         capped = procs.start_server(ports['capped'], str(d / 'capped.log'), str(d / 'capped.db'), mport, DAILY_CAP=1)
         started.append(capped)
@@ -87,7 +93,7 @@ def test_health_shape(env):
         r = httpx.get(env['main'] + path, headers={'Origin': GH})
         assert r.status_code == 200
         j = r.json()
-        assert {k: j[k] for k in ('ok', 'model', 'version', 'db', 'llm', 'kv')} == {'ok': True, 'model': 'claude-opus-5-5', 'version': '2.0.0', 'db': True, 'llm': True, 'kv': True}
+        assert {k: j[k] for k in ('ok', 'model', 'version', 'db', 'llm', 'kv', 'log')} == {'ok': True, 'model': 'claude-opus-5-5', 'version': '2.0.0', 'db': True, 'llm': True, 'kv': True, 'log': True}
         assert j['kb']['docs'] > 100 and j['kb']['chunks'] > j['kb']['docs'] and j['kb']['built_at']
         assert r.headers['access-control-allow-origin'] == GH
         assert r.headers['cache-control'] == 'no-store'
@@ -95,7 +101,7 @@ def test_health_shape(env):
 
 def test_missing_key_health_and_chat(env):
     h = httpx.get(env['nokey'] + '/health').json()
-    assert h['ok'] is True and h['llm'] is False
+    assert h['ok'] is True and h['llm'] is False and h['log'] is False   # no store token: the chat log is off
     status, headers, body = chat(env['nokey'], 'Anything?')
     assert status == 503
     assert body['ok'] is False and body['error'] == 'no_model_key'
@@ -462,6 +468,113 @@ def test_stats_counts(env):
     assert s['today']['requests'] == req and s['today']['tokens_out'] > 0 and s['today']['tokens_in'] > 0
     if threads:
         assert s['messages'] >= 1
+
+
+# ── chat log (Vercel Blob, mocked) ───────────────────────────────────────────
+def logged(env, question, prefix='chats/', wait=6.0):
+    """The stored records whose question is `question`, as [(pathname, {'headers', 'record'})]."""
+    deadline = time.time() + wait
+    while True:
+        stored = httpx.get(env['mock'] + '/_blobs').json()
+        hits = [(k, {'headers': v['headers'], 'record': json.loads(v['body'])}) for k, v in stored.items() if k.startswith(prefix) and json.loads(v['body']).get('question') == question]
+        if hits or time.time() > deadline:
+            return hits
+        time.sleep(0.1)
+
+
+def test_chat_log_keeps_question_answer_and_reasoning(env):
+    q = 'What will lenders ask about roll-up debt? ' + uuid.uuid4().hex[:6]
+    hist = [{'role': 'user', 'content': 'Earlier question'}, {'role': 'assistant', 'content': 'Earlier answer'}]
+    _, _, events = chat(env['main'], q, page='/app.html#/briefing', messages=hist)
+    hits = logged(env, q)
+    assert len(hits) == 1
+    path, b = hits[0]
+    assert re.match(r'^chats/\d{4}/\d{2}/\d{2}/\d{6}-[0-9a-f]{10}\.json$', path)
+    assert b['headers'] == {'x-api-version': '12', 'x-vercel-blob-access': 'private', 'x-add-random-suffix': '0', 'x-content-type': 'application/json', 'x-vercel-blob-store-id': 'teststore'}
+    r = b['record']
+    assert (r['source'], r['persona'], r['page'], r['origin'], r['effort']) == ('server', 'portal', '/app.html#/briefing', GH, 'high')
+    assert re.match(r'^v-[0-9a-f]{16}$', r['visitor']) and '203.0.113' not in json.dumps(r)   # a hashed visitor id, never the address
+    assert r['history'] == hist
+    assert r['answer'] == ''.join(e['text'] for e in events if e['type'] == 'text')
+    assert r['thinking'] == 'SECRET-THINKING: weigh lender questions.'
+    assert 'Thinking it through' in r['steps'] and r['sources'][0]['n'] == 1 and set(r['sources'][0]) == {'n', 'title', 'url', 'kind'}
+    assert (r['outcome'], r['error'], r['model'], r['stop_reason'], r['agent_steps'], r['tokens']) == ('answered', None, 'claude-opus-5-5', 'end_turn', 1, {'in': 3120, 'out': 640})
+    assert re.match(r'^[0-9a-f]{10}$', r['id']) and r['at'].endswith('Z') and r['seconds'] >= 0
+
+
+def test_chat_log_keeps_failed_and_abandoned_answers(env):
+    q = 'No [mock:refusal] ' + uuid.uuid4().hex[:6]
+    chat(env['main'], q)
+    assert logged(env, q)[0][1]['record']['outcome'] == 'refused'
+    q = 'Busy [mock:overloaded] ' + uuid.uuid4().hex[:6]
+    chat(env['main'], q)
+    r = logged(env, q)[0][1]['record']
+    assert r['outcome'] == 'error' and r['error']['code'] == 'upstream_unavailable' and r['answer']   # the partial answer is kept
+    q = 'Long one [mock:slow] ' + uuid.uuid4().hex[:6]
+    with httpx.stream('POST', env['main'] + '/chat', headers=hdrs(visitor=ip()), json={'question': q}, timeout=30) as resp:
+        got = 0
+        for line in resp.iter_lines():
+            if line.startswith('data:') and '"text"' in line:
+                got += 1
+                if got == 2:
+                    break
+    r = logged(env, q)[0][1]['record']
+    assert r['outcome'] == 'left early' and r['answer']
+
+
+def test_browser_answers_and_ratings_are_logged(env):
+    q = 'Which company has the most technicians? ' + uuid.uuid4().hex[:6]
+    r = httpx.post(env['main'] + '/log', headers=hdrs(visitor=ip()), json={
+        'persona': 'PP', 'question': q, 'read_as': 'technicians by company', 'kind': 'grounded', 'intent': 'techs', 'engine': 'From the portfolio data',
+        'answer': 'Punctual Pros [1]\n- 120 technicians', 'sources': [{'label': 'Technicians', 'href': 'app.html#/pp'}, 'junk', {'href': 'x'}], 'seconds': 1.234,
+        'page': '/redesigns/punctualpros/', 'extra': 'dropped'})
+    assert (r.status_code, r.json()) == (202, {'ok': True, 'saved': True})
+    rec = logged(env, q)[0][1]['record']
+    assert {k: rec[k] for k in ('source', 'persona', 'page', 'read_as', 'kind', 'intent', 'engine', 'answer', 'sources', 'outcome', 'seconds', 'origin')} == {
+        'source': 'browser', 'persona': 'pp', 'page': '/redesigns/punctualpros/', 'read_as': 'technicians by company', 'kind': 'grounded', 'intent': 'techs',
+        'engine': 'From the portfolio data', 'answer': 'Punctual Pros [1]\n- 120 technicians', 'sources': [{'title': 'Technicians', 'url': 'app.html#/pp'}],
+        'outcome': 'answered', 'seconds': 1.2, 'origin': GH}
+    assert 'extra' not in rec and rec['visitor'].startswith('v-')
+    r = httpx.post(env['main'] + '/log', headers=hdrs(visitor=ip()), json={'question': 'Stopped one ' + q, 'kind': 'stopped', 'seconds': 'soon'})
+    rec = logged(env, 'Stopped one ' + q)[0][1]['record']
+    assert (rec['outcome'], rec['seconds'], rec['persona']) == ('stopped', None, 'portal')
+    r = httpx.post(env['main'] + '/log', headers=hdrs(visitor=ip()), json={'answer': 'no question'})
+    assert (r.status_code, r.json()['error']) == (400, 'missing_question')
+    assert httpx.post(env['main'] + '/log', headers=hdrs(EVIL, visitor=ip()), json={'question': 'x'}).status_code == 403
+    r = httpx.post(env['nokey'] + '/log', headers=hdrs(visitor=ip()), json={'question': 'x'})
+    assert (r.status_code, r.json()) == (202, {'ok': True, 'saved': False})   # no store: accepted, nothing kept
+    r = httpx.post(env['main'] + '/feedback', headers=hdrs(visitor=ip()), json={'thread_id': 't-1', 'message_id': 'm-9', 'rating': -1, 'question': q, 'answer_excerpt': '<p>Too vague</p>'})
+    assert r.status_code == 201 and isinstance(r.json()['id'], int)
+    rat = logged(env, q, prefix='ratings/')[0][1]['record']
+    assert {k: rat[k] for k in ('rating', 'thread_id', 'message_id', 'answer_excerpt', 'origin')} == {'rating': -1, 'thread_id': 't-1', 'message_id': 'm-9', 'answer_excerpt': 'Too vague', 'origin': GH}
+
+
+def test_export_script_downloads_and_flattens(env, tmp_path):
+    tag = uuid.uuid4().hex[:6]
+    chat(env['main'], 'Export check ' + tag)
+    for i in range(2):   # more than one listing page (the mock pages two at a time)
+        httpx.post(env['main'] + '/log', headers=hdrs(visitor=ip()), json={'question': f'Local {i} {tag}', 'kind': 'retrieval', 'answer': 'From the data'})
+    httpx.post(env['main'] + '/feedback', headers=hdrs(visitor=ip()), json={'rating': 1, 'question': 'Export check ' + tag})
+    assert logged(env, 'Export check ' + tag, prefix='ratings/')
+    out = tmp_path / 'logs'
+    run_env = {**os.environ, 'BLOB_READ_WRITE_TOKEN': BLOB_TOKEN, 'VERCEL_BLOB_API_URL': env['mock'] + '/blob'}
+    p = subprocess.run([sys.executable, EXPORT, '--out', str(out)], env=run_env, capture_output=True, text=True, timeout=60)
+    assert p.returncode == 0, p.stderr
+    assert BLOB_TOKEN not in p.stdout + p.stderr
+    rows = [json.loads(line) for line in open(out / 'chats.jsonl')]
+    assert {'Export check ' + tag, f'Local 0 {tag}', f'Local 1 {tag}'} <= {r['question'] for r in rows}
+    with open(out / 'chats.csv', newline='') as f:
+        row = next(r for r in csv.DictReader(f) if r['question'] == 'Export check ' + tag)
+    assert (row['source'], row['outcome'], row['tokens_in'], row['history_turns']) == ('server', 'answered', '3120', '0')
+    assert row['answer'].startswith('**Short answer:**') and row['thinking'].startswith('SECRET-THINKING') and ' → ' in row['steps']
+    with open(out / 'ratings.csv', newline='') as f:
+        assert any(r['question'] == 'Export check ' + tag and r['rating'] == '1' for r in csv.DictReader(f))
+    again = subprocess.run([sys.executable, EXPORT, '--out', str(out)], env=run_env, capture_output=True, text=True, timeout=60)
+    assert again.returncode == 0 and '(0 new)' in again.stdout   # files already downloaded are skipped
+    future = subprocess.run([sys.executable, EXPORT, '--out', str(tmp_path / 'none'), '--since', '2999-01-01'], env=run_env, capture_output=True, text=True, timeout=60)
+    assert future.returncode == 0 and 'chats: 0 records' in future.stdout
+    bad = subprocess.run([sys.executable, EXPORT, '--out', str(tmp_path / 'bad')], env={**run_env, 'BLOB_READ_WRITE_TOKEN': 'wrong'}, capture_output=True, text=True, timeout=60)
+    assert bad.returncode != 0 and 'answered 403' in bad.stderr
 
 
 def test_unknown_routes_and_methods(env):

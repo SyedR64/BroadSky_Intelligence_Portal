@@ -5,7 +5,7 @@
    quietly, so the grounded engine in chat.js keeps working on its own.
 
    Usage (from chat.js):
-     const { Backend } = await import('./backend.js?v=20261009182014');
+     const { Backend } = await import('./backend.js?v=20261009184141');
      if (await Backend.discover()) for await (const t of Backend.chat({ persona, messages, context, question })) out += t;
      const pre = await Backend.precomputed(question);   // works without a backend
 
@@ -31,6 +31,7 @@ const trimSlash = s => String(s || '').trim().replace(/\/+$/, '');
 const validEndpoint = s => /^https?:\/\/[^\s/]+(\/[^\s]*)?$/i.test(trimSlash(s));
 const minutes = s => { const m = Math.ceil((Number(s) || 0) / 60); return m <= 1 ? 'a minute' : m >= 90 ? `${Math.round(m / 60)} hours` : `${m} minutes`; };
 const stripTags = s => String(s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+const pagePath = () => { try { return (location.pathname + location.hash).slice(0, 500); } catch { return ''; } };
 
 function override() {
   try {
@@ -122,7 +123,7 @@ export const Backend = {
   async discover({ force = false } = {}) {
     if (this._discovery && !force) return this._discovery;
     this._discovery = (async () => {
-      this.endpoint = null; this.llm = false; this.db = false; this.health = null;
+      this.endpoint = null; this.llm = false; this.db = false; this.logs = false; this.health = null;
       let base = override();
       if (base === 'off') return null;
       if (!base) {
@@ -139,7 +140,7 @@ export const Backend = {
         if (!res.ok) return null;
         const h = await res.json();
         if (!h || h.ok !== true) return null;
-        Object.assign(this, { endpoint: base, health: h, llm: h.llm !== false, model: h.model || null, version: h.version || null, db: !!h.db });
+        Object.assign(this, { endpoint: base, health: h, llm: h.llm !== false, model: h.model || null, version: h.version || null, db: !!h.db, logs: !!h.log });
         return base;
       } catch { return null; }
     })();
@@ -199,7 +200,7 @@ export const Backend = {
     try {
       res = await fetch(this.endpoint + '/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
-        body: JSON.stringify({ persona, messages: hist, context: ctxOut, question: q, ...(retrieve ? {} : { retrieve: false }) }), signal: ctrl.signal,
+        body: JSON.stringify({ persona, messages: hist, context: ctxOut, question: q, page: pagePath(), ...(retrieve ? {} : { retrieve: false }) }), signal: ctrl.signal,
       });
     } catch (e) {
       if (this._ctrl === ctrl) this._ctrl = null;
@@ -260,6 +261,13 @@ export const Backend = {
   async feedback(payload = {}) {
     const r = await this._json('POST', '/feedback', { ...payload, answer_excerpt: stripTags(payload.answer_excerpt || '').slice(0, 1000) });
     return r || { ok: false, offline: true };
+  },
+
+  /** Adds an answer the browser built itself (portfolio data, a prepared deep dive, a fallback) to the chat log; the
+   *  server logs its own answers. {persona, question, answer, kind, intent, engine, sources:[{label, href}], seconds}. Best-effort. */
+  async log(payload = {}) {
+    if (!(await this.discover()) || !this.logs) return null;
+    return this._json('POST', '/log', { ...payload, page: pagePath(), answer: String(payload.answer || '').slice(0, 40000) }).catch(() => null);
   },
 
   /** Upserts a thread. {thread_id, persona, title, messages_json: array | JSON string}. Resolves {ok, thread_id} or {ok:false, offline:true}. */

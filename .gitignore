@@ -12,3 +12,8 @@ scripts/_*.html
 # fetch cache of scripts/build_corpus.py
 .cache/
 __pycache__/
+
+# the assistant chat log, downloaded by scripts/export_chats.py (visitors' questions: never commit)
+chat-logs/
+.env.local
+server/.env.local
