@@ -25,7 +25,7 @@ Every view leads with one short sentence and its KPIs, then the evidence (map, t
 
 | Path | What it is |
 |---|---|
-| `index.html` | Landing page: "Hello, BSP." with the inline assistant, six example prompts, product tour, live evidence counts, the six companies, the OS program and the briefing video. |
+| `index.html` | Landing page: "Welcome to Broad Sky." with the inline assistant, three things to try, the product tour, the six companies, the OS program and the briefing video. |
 | `app.html` | The portal (hash routes `app.html#/<module>/<view>`, ⌘K search, inspector, narrated tour). |
 | `redesigns/index.html` | Gallery of the six concept websites and the OS program, with the design principles behind them. |
 | `redesigns/punctual-pros/` | Concept site · `serviceos.html` (ServiceOS) · `nationwide.html` (nationwide plan) · `ads.html` (growth marketing and sample ads) |
@@ -44,14 +44,16 @@ Every concept page carries the same dismissible banner ("Concept work by Syed Ra
 
 | Rail group | Module (`#/id`) | Views | What it answers |
 |---|---|---|---|
-| Command | Command Center (`home`) | overview, firm | Portfolio footprint, value and exit readiness, live NWS alerts, signals this week, BSP timeline, data coverage |
+| Command | Command Center (`home`) | overview, firm | Portfolio footprint, value and exit readiness, signals this week (bids, market moves, weather alerts, add-ons, sponsor deals), BSP timeline, data coverage |
+| Command | Local signals (`signals`) | overview, levers, readings | The local and market forces that move each company's sales and margins, weather as one of them: a force × company matrix, each force's reason, live reading, direction and move, every lever sized in dollars (est., assumptions shown), and the public readings behind them (rates, credit, housing by county, input costs, tariffs, labor, NIH awards, federal buying, rule-making) |
 | Portfolio | Commonwealth Electrical, CET (`cet`) | overview, opportunities, wastewater, territory, transfers, targets, filings | New England bid radar, Horton wastewater cross-sell, county fit, new-owner retrofit triggers, add-on screen |
-| Portfolio | Punctual Pros (`pp`) | overview, weather, movers, territory, market, targets, filings | Weather-driven staffing, new-mover leads from home sales, adjacent-zip expansion, franchise market, tuck-ins |
+| Portfolio | Punctual Pros (`pp`) | overview, weather, movers, territory, market, targets, filings | Weather-driven staffing (one local force; the rest are in Local signals), new-mover leads from home sales, adjacent-zip expansion, franchise market, tuck-ins |
 | Portfolio | Frontline Managed Services (`fl`) | overview, amlaw, midsize, targets, filings | AM Law account plan, mid-size firm pipeline, legal-IT add-ons, deal math |
 | Portfolio | Thomas Scientific (`ts`) | overview, accounts, sites, targets, filings | 27k scored lab and hospital sites, parent-account plays, distributor add-ons, credit file |
 | Portfolio | Bully Pulpit International (`bpi`) | overview, opportunities, benchmarks, filings | Growth plays, agency comps, filings |
 | Portfolio | Fair Harbor (`fh`) | overview, opportunities, benchmarks, filings, market | Capital-light growth, apparel comps, Manhattan home-sales market, filings |
-| Intelligence | Acquisition engine (`ma`) | overview, pipeline, theses, rivals, valuation, whitespace | Portfolio-wide add-on pipeline, theses joined to county home sales, stressed rivals, multiple arbitrage |
+| Intelligence | Acquisition engine (`ma`) | overview, pipeline, theses, rivals, valuation, whitespace | Portfolio-wide add-on pipeline, theses joined to county home sales, stressed rivals, multiple arbitrage. Every target and rival profile carries its deal math (revenue, EBITDA, likely price, debt, equity check, return), a "How we estimated this" disclosure (method, inputs, source, confidence, as-of date) and a "Model this deal" link into the acquisition model |
+| Intelligence | Acquisition model (`deal`) | returns, dcf, rollup, sensitivity | Live buyout, DCF, buy-and-build and sensitivity model with spreadsheet inputs; presets for the portfolio and every screened add-on (`#/deal/returns?p=<target id>`); rival scenarios via share links (`?p=typical&…&for=<name>`); financing terms next to their market benchmarks; Excel download with live formulas. Shared math in `modules/deal-lib.js` (`targetVals`, `priceBand`, `dealSummary` keep the engine, the model and the landing page on the same numbers) |
 | Intelligence | PE landscape (`pe`) | landscape, deals, heatmap, companies | 35 competing sponsors, disclosed deals, rival presence by portfolio county |
 | Intelligence | Filings & financials (`fin`) | portfolio, deal, explorer, comps, rivals, methods | Form D/ADV capital, triangulated financials, deal math, 31 public comps, data-gaps register |
 | Intelligence | **Tech enablement (`techos`)** | overview, evidence, roadmap, calculator | The six OS theses (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS): KPIs moved, est. investment and EBITDA impact, valuation-premium evidence, 12–24 month roadmap, equity-value calculator |
@@ -62,11 +64,12 @@ The tour is assembled from each module's `tour` array (3–5 steps each), sorted
 
 ## The assistant (`assets/chat.js`)
 
-One widget serves the landing page (inline, persona `portal`), the portal and every concept page (floating launcher, personas `portal`, `pp`, `cet`, `fl`, `ts`, `bpi`, `fh`). It answers in three tiers, each grounded in the repo's own data:
+One widget serves the landing page (inline, persona `portal`), the portal and every concept page (floating launcher, personas `portal`, `pp`, `cet`, `fl`, `ts`, `bpi`, `fh`). It answers in tiers, each grounded in sourced data:
 
 1. **Grounded intents (no key, no backend).** Regex-matched intents run against the datasets directly: zip coverage (`Do you serve 17601?`), live NWS storms and the demand model, CET bids due and programs, Horton wastewater targets, add-on targets, PE competitors, filings estimates, new-mover counts, the OS theses, the Punctual Pros nationwide plan, voice AI, AI agents, sample ads and portal navigation. Answers carry numbers, sources and a link into the right portal view.
 2. **Retrieval fallback.** If no intent matches, the question is scored against an index built from the portal's view catalogue, the `meta` summaries of the research files (financial pictures, theses, top actions) and the page's own FAQ entries; the best matches are returned with links.
-3. **Optional bring-your-own Claude key.** The settings dialog accepts an Anthropic API key. It is stored **only in this browser's `localStorage`** (`bsp-anthropic-key`, plus model and mode) and is sent only to `api.anthropic.com` via the official SDK. With a key, free-form questions stream from Claude, grounded with the same retrieved context; "always" mode routes intent questions to Claude as well. Remove the key from the same dialog. Nothing is stored server-side, and the site works fully without a key.
+3. **Hosted Claude with a knowledge base.** Open questions go to the assistant backend (`server/`, live on Vercel). Claude works there as a research agent over a knowledge base built by `scripts/build_corpus.py`: BSP's own website (team biographies, strategy, investments, news), every page the research cites (press releases, SEC filings, trade press), the portfolio companies' sites, news coverage and the portal's own pages and research. The knowledge base is one SQLite file with a keyword index and a meaning index. Claude can search it again, read whole sources and run the acquisition model (the same maths as the portal's model) before it writes a cited answer; BSP Desk can also search the web. The answer streams with numbered sources and live progress lines. Details: `server/README.md`.
+4. **Developer key (only with `?dev=1`).** Without a hosted backend, the settings dialog accepts an Anthropic API key kept only in this browser's `localStorage` and sent only to `api.anthropic.com`.
 
 Sites extend a persona through `Chat.mount(null, { persona, mode: 'floating', faq, suggestions })`; `scripts/chat_test.html?q=…&p=…` mounts the inline widget and auto-asks a question for testing.
 
@@ -113,6 +116,22 @@ Frontline (St. Louis, MO) has no home-sales file. Missouri does not disclose sal
 | `rival_filings`, `public_comps` | SEC BDC 10-Q/10-K schedules, N-PORT, SEC XBRL companyfacts (31 listed peers) |
 
 Live feeds are fetched in the browser: NWS alerts (`api.weather.gov`), Open-Meteo forecasts and history.
+
+### Nightly snapshots (`data/live/`, written by `scripts/refresh_live.py`)
+
+| File | What it holds | Source (keyless) |
+|---|---|---|
+| `nws_alerts`, `forecast_hubs` | Active weather alerts in 8 states; 7-day forecasts for the Punctual Pros hubs (browser fallback) | National Weather Service; Open-Meteo |
+| `usaspending_trades` | Largest 2026 federal contracts to electrical and HVAC contractors, 8 states | USASpending |
+| `echo_npdes_majors` | Large municipal wastewater plants in CT, MA, RI with compliance status | EPA ECHO |
+| `census_permits` | Newest monthly county building-permit counts, 8 states | Census Building Permits Survey |
+| `fred_signals` | Rates, credit spreads, home sales and prices, equipment, copper, transformer, fuel and power prices, trade labor and pay, state unemployment, legal, hospital, apparel and consumer demand, corporate profits; customs duties | FRED CSV downloads (Freddie Mac, BLS, Census, FHFA, EIA, BEA, University of Michigan and others); US Treasury fiscal data |
+| `housing_counties` | New listings, homes under contract, days on market and list prices in the portfolio's counties, newest month | Realtor.com county inventory data |
+| `nih_awards` | NIH award dollars and counts, year to date vs the same days last year, 8 research states; largest funded institutions | NIH RePORTER |
+| `federal_buying` | Monthly federal contract dollars for lab supplies, PR and advertising, northeastern electrical and HVAC trades | USASpending |
+| `policy_activity` | Federal rules, proposed rules and presidential documents, year to date vs last year (all agencies, EPA, Energy, HHS) | Federal Register |
+
+Each source is fetched on its own; a failed source keeps its previous file and `data/live/manifest.json` records every status, row count and fetch time. The Local signals view reads these files plus the county table (`data/national_counties.json`) and the revenue points in each company's filings estimate table.
 
 ## Run and test locally
 
@@ -175,4 +194,4 @@ python3 scripts/make_briefing.py                         # → briefing/broad_sk
 | `briefing/BSP_Desk_Memo.pdf` | Four-page executive memo (`briefing/executive_memo.html`, printed with headless Chrome) | all research metas |
 | `briefing/broad_sky_intro.mp4` | Cinematic product-intro film (`scripts/make_cinematic.py`: Playwright recording + title cards + narration + synthesized music) | `briefing/cinematic_shots_master.json` |
 
-The live **"revenue left on the table" counter** (`assets/counter.js`) sums sourced, annualized opportunity values (missed calls without 24/7 voice coverage, uncaptured new-mover and storm demand, open CET bids at a 10% win rate) and divides by seconds per year. It is a way to feel the cost of waiting, labelled est., with the components one click away.
+The live **"revenue left on the table" counter** (`assets/counter.js`) adds up the extra sales a year (revenue, not profit, each labelled est.) from 24 levers across all six companies and divides by seconds per year (about $13.5M a year with today's data). One click opens the levers, grouped by company: what is missed today, the fix, the value and the page that backs it. Sources are read at runtime: the Voice AI use cases (Punctual Pros calls, renewals, quotes, no-shows and Spanish line; CET, Frontline and BPI after-hours lines), the Punctual Pros Phase 1 ad plan (monthly sales x 12), open CET bids that list a value (at a 10% win rate) and the AI agents that add sales (the sales behind each estimate, counted at half, as on the AI agents page). Nothing is counted twice: the Punctual Pros agents for missed calls, renewals, storm surges and new-homeowner mail, the speed-to-lead callback, and the CET bid-scoring and storm-crew agents are left out because other rows already count that work. Cost savings, add-on deals and growth-plan targets are not included.

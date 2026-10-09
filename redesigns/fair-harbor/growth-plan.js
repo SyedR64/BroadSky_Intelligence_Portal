@@ -1,7 +1,7 @@
 /* Fair Harbor — growth plan (concept page). Reads the portal's research datasets; no shared code is modified. */
-import { Data } from '../../assets/core.js?v=20261008192515';
-import { Chat } from '../../assets/chat.js?v=20261008192515';
-import { Frame } from '../../assets/frame.js?v=20261008192515';
+import { Data } from '../../assets/core.js?v=20261009070649';
+import { Chat } from '../../assets/chat.js?v=20261009070649';
+import { Frame } from '../../assets/frame.js?v=20261009070649';
 
 const $ = (s, r = document) => r.querySelector(s);
 const tkn = (n, fb) => { try { return getComputedStyle(document.body).getPropertyValue(n).trim() || fb; } catch { return fb; } };
