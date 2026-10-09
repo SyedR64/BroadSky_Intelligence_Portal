@@ -1,8 +1,8 @@
 # Turning on the assistant backend
 
-## The site: hosted on Vercel at bspdesk.vercel.app
+## The site: hosted on Vercel at broadsky-desk.vercel.app
 
-The site itself is a second Vercel project, **bspdesk**, built from this same repository with no build step, so every push to `main` publishes it. To create it once: in Vercel, **Add New → Project**, import this repository, set the project name to `bspdesk`, keep **Root Directory** at the repository root (`./`), set **Framework Preset** to **Other**, leave the build command and output directory empty, and deploy. The backend always accepts requests from `https://bspdesk.vercel.app` and from GitHub Pages (`SITE_ORIGINS` in `server/app.py`), so the assistant works there with no variable change. GitHub Pages stays on: `assets/frame.js` and the memo forward any `syedr64.github.io/BroadSky_Intelligence_Portal/…` link to the same page on the new address. For a custom domain, add it under the project's **Domains** and update `HOME` in `assets/frame.js`, `SITE_ORIGINS` and the canonical links.
+The site itself is a second Vercel project, **broadsky-desk** (team BSP), built from this same repository at the repository root with no framework and no build step, so every push to `main` publishes it. Its address is `broadsky-desk.vercel.app`; the project's first name, `bspdesk.vercel.app`, still answers and forwards there. The backend always accepts requests from `https://broadsky-desk.vercel.app` and from GitHub Pages (`SITE_ORIGINS` in `server/app.py`), so the assistant works there with no variable change. GitHub Pages stays on: `assets/frame.js` and the memo forward any `syedr64.github.io/BroadSky_Intelligence_Portal/…` link to the same page on the new address. For a custom domain, add it under the project's **Domains** and update `HOME` in `assets/frame.js`, `SITE_ORIGINS` and the canonical links.
 
 ## Live assistant: deployed on Vercel (Oct 8, 2026)
 
