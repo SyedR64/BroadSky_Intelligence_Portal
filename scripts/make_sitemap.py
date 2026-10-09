@@ -31,7 +31,7 @@ OS = {'pp': 'ServiceOS', 'cet': 'GridOS', 'fl': 'FirmOS', 'ts': 'LabOS', 'bpi': 
 
 # Hand-written names and one-line blurbs for known pages (plain English, no identifiers).
 KNOWN = {
-    'index.html': ('Home', 'The landing page: ask a question, start in three steps.'),
+    'index.html': ('Home', 'The landing page: ask a question, then three things to try.'),
     'app.html': ('Portal', 'Every module and view, listed below.'),
     'theater.html': ('3D map', 'A 3D fly-through of home sales, expansion and live storms.'),
     'sitemap.html': ('Sitemap', 'This page.'),
