@@ -1,5 +1,5 @@
-import * as Copy from './copy.js?v=20261008192515';
-import * as L from './deal-lib.js?v=20261008192515';
+import * as Copy from './copy.js?v=20261009070649';
+import * as L from './deal-lib.js?v=20261009070649';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition model: a live buyout, DCF, roll-up and sensitivity model with
    spreadsheet-style input cells, presets from the portfolio's own estimates and
@@ -12,7 +12,7 @@ const XLSX_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.m
 const COLOR = 'color-mix(in srgb,var(--sys-good) 72%,var(--sys-ink))';
 const CO_COLOR = { pp: 'var(--co-pp)', cet: 'var(--co-cet)', fl: 'var(--co-fl)', ts: 'var(--co-ts)', bpi: 'var(--co-bpi)', fh: 'var(--co-fh)' };
 const CO_ROUTE = { pp: 'pp', cet: 'cet', fl: 'fl', ts: 'ts' };
-const injectCss = () => { if (!document.getElementById('css-deal')) { const l = document.createElement('link'); l.id = 'css-deal'; l.rel = 'stylesheet'; l.href = 'modules/deal.css?v=20261008192515'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-deal')) { const l = document.createElement('link'); l.id = 'css-deal'; l.rel = 'stylesheet'; l.href = 'modules/deal.css?v=20261009070649'; document.head.appendChild(l); } };
 
 /* ── formatting ──────────────────────────────────────────────────────────── */
 const MINUS = '−';
@@ -45,13 +45,17 @@ async function boot(data) {
     const f = files[sec.target_file]; const par = parent[sec.co]; if (!f || !par) continue;
     const pool = (f.items || []).filter(t => sec.co === 'fl' ? t.platform === 'frontline' : sec.co === 'ts' ? t.platform === 'thomas_scientific' : true).filter(t => !affil(t));
     TARGETS[sec.co] = pool.filter(t => +t.revenue_est_usd > 0).sort((a, b) => (b.fit_score || 0) - (a.fit_score || 0)).map(t => ({ id: t.id, name: shortName(t.company), rev: t.revenue_est_usd / 1e6, ebitda: t.revenue_est_usd / 1e6 * sec.margin_pct / 100, fit: t.fit_score, state: t.state || '', margin: sec.margin_pct }));
-    for (const t of TARGETS[sec.co].slice(0, 3)) {
-      const rev = Math.round(t.rev * 10) / 10, e = rev * sec.margin_pct / 100;
-      const vals = { ...dm.meta.base, rev, mg: sec.margin_pct, gr: sec.growth_pct, em: TD.em, lev: TD.lev, ir: TD.ir, dm: TD.dm, ae: TD.ae, xm: TD.xm, am: TD.em, n: TD.n,
-        nd: Math.round(e * TD.lev * 10) / 10, tm: TD.xm, ce: par.vals.ce, cm: par.vals.em, ra: Math.round(e * 100) / 100, rm: TD.em, rx: par.vals.xm, wacc: par.vals.wacc };
-      list.push({ id: t.id, label: t.name, group: `Screened add-on targets`, co: sec.co, parent: par.id, summary: `${sec.label} for ${par.label}; fit score ${t.fit} of 100.`, vals,
+    /* Every screened target gets a preset, so any profile in the acquisition engine opens here prefilled; the picker lists the
+       top three by fit (as before) plus whichever target is open. A target with no revenue on record is sized at the median. */
+    const listed = TARGETS[sec.co].slice(0, 3), listedIds = new Set(listed.map(t => t.id));
+    const revs = TARGETS[sec.co].map(t => t.rev).sort((a, b) => a - b), medRev = revs.length ? (revs.length % 2 ? revs[(revs.length - 1) / 2] : (revs[revs.length / 2 - 1] + revs[revs.length / 2]) / 2) : null;
+    const rest = pool.filter(t => !listedIds.has(t.id)).sort((a, b) => (b.fit_score || 0) - (a.fit_score || 0)).map(t => ({ id: t.id, name: shortName(t.company), rev: +t.revenue_est_usd > 0 ? t.revenue_est_usd / 1e6 : null, fit: t.fit_score }));
+    for (const t of [...listed, ...rest]) {
+      const sized = !(t.rev > 0); if (sized && medRev == null) continue;
+      const vals = L.targetVals(dm.meta.base, TD, sec, par.vals, sized ? medRev : t.rev);
+      list.push({ id: t.id, label: t.name, group: `Screened add-on targets`, co: sec.co, parent: par.id, hidden: !listedIds.has(t.id), summary: `${sec.label} for ${par.label}; fit score ${t.fit} of 100.${sized ? ' No revenue on record, so it is sized at the median screened target.' : ''}`, vals,
         est: new Set(['rev', 'mg', 'gr', 'nd', 'ra', 'ce']),
-        basis: { ...TD.basis, rev: `Modelled revenue from the ${par.label} add-on screen (fit score ${t.fit} of 100).`, mg: sec.basis, gr: `Assumed for a ${sec.label.toLowerCase()}.`, ce: `${par.label}: EBITDA used in its own preset.`, cm: `${par.label}: entry multiple used in its own preset.`, rx: `${par.label}: exit multiple used in its own preset.`, ra: 'This target at the sector margin.' },
+        basis: { ...TD.basis, rev: sized ? `No revenue on record for this company; sized at the median screened ${par.label} target ($${nf(medRev, 1)}M).` : `Modelled revenue from the ${par.label} add-on screen (fit score ${t.fit} of 100).`, mg: sec.basis, gr: `Assumed for a ${sec.label.toLowerCase()}.`, ce: `${par.label}: EBITDA used in its own preset.`, cm: `${par.label}: entry multiple used in its own preset.`, rx: `${par.label}: exit multiple used in its own preset.`, ra: 'This target at the sector margin.' },
         sources: [...new Set([...TD.source_ids, ...sec.source_ids, 'targets'])] });
     }
   }
@@ -61,17 +65,24 @@ async function boot(data) {
 
 const keys = () => DM.meta.inputs.map(i => i.key);
 const preset = () => BYID.get(S.preset) || PRESETS[0];
-const isEst = k => { const p = preset(); return p.est.has(k) && r4(S.vals[k]) === r4(p.vals[k]); };
+/* A scenario opened from the acquisition engine (a rival company, built with L.encode from its estimates) carries a
+   display name in `for`; the inputs it set count as est. until someone types over them. */
+const isEst = k => { const p = preset(); if (S.forVals && S.forVals[k] != null && r4(S.vals[k]) === r4(S.forVals[k])) return true; return p.est.has(k) && r4(S.vals[k]) === r4(p.vals[k]); };
 function setPreset(id) { const p = BYID.get(id) || PRESETS[0]; S = { preset: p.id, vals: { ...p.vals } }; }
 function fromParams(params) {
   const known = keys().some(k => params[k] != null) || params.p;
-  if (known) { setPreset(params.p && BYID.has(params.p) ? params.p : (S?.preset || 'typical')); Object.assign(S.vals, sanitize(L.decode(params, keys()))); }
+  if (known) {
+    setPreset(params.p && BYID.has(params.p) ? params.p : (S?.preset || 'typical'));
+    const d = sanitize(L.decode(params, keys())); Object.assign(S.vals, d);
+    const f = String(params.for || '').replace(/[<>]/g, '').trim().slice(0, 80);
+    if (f) { S.for = f; S.forVals = d; }
+  }
   else if (!S) setPreset('typical');
 }
 function clampKey(k, v) { const m = INP[k]; if (!m || !fin(v)) return null; let x = Math.min(m.max, Math.max(m.min, v)); if (L.INT.has(k)) x = Math.round(x); return x; }
 function sanitize(o) { const out = {}; for (const [k, v] of Object.entries(o)) { const c = clampKey(k, v); if (c != null) out[k] = c; } return out; }
 function syncHash(ctx) {
-  const q = L.encode(S, preset().vals); const h = `#/deal/${ctx.view.id}?${q}`;
+  const q = L.encode(S, preset().vals) + (S.for ? `&for=${encodeURIComponent(S.for)}` : ''); const h = `#/deal/${ctx.view.id}?${q}`;
   if (location.hash !== h) history.replaceState(null, '', h);
 }
 
@@ -92,7 +103,7 @@ const HOWTO = {
 function toolbar(ctx) {
   const { esc, ui } = ctx;
   const groups = [...new Set(PRESETS.map(p => p.group))];
-  const opts = groups.map(g => `<optgroup label="${esc(g)}">${PRESETS.filter(p => p.group === g).map(p => `<option value="${esc(p.id)}"${p.id === S.preset ? ' selected' : ''}>${esc(p.label)}${p.group.startsWith('Screened') ? ` (for ${esc(BYID.get(p.parent)?.label || '')})` : ''}</option>`).join('')}</optgroup>`).join('');
+  const opts = groups.map(g => `<optgroup label="${esc(g)}">${PRESETS.filter(p => p.group === g && (!p.hidden || p.id === S.preset)).map(p => `<option value="${esc(p.id)}"${p.id === S.preset ? ' selected' : ''}>${esc(p.label)}${p.group.startsWith('Screened') ? ` (for ${esc(BYID.get(p.parent)?.label || '')})` : ''}</option>`).join('')}</optgroup>`).join('');
   return `<div class="dm-bar">
     <label class="sys-field dm-pick"><span class="sys-field-label">Start from</span><select class="sys-input" id="dm-preset" aria-label="Start from a preset">${opts}</select></label>
     <div class="dm-btns">
@@ -104,7 +115,14 @@ function toolbar(ctx) {
   </div>
   <p class="dm-preset-sum sys-src" id="dm-sum"></p>`;
 }
-const presetSummary = () => { const p = preset(); const ests = p.est.size; return `${p.summary}${ests ? ' Cells tagged est. are estimates, not BSP figures.' : ''}`; };
+/* Summary line under the picker (HTML, escaped): a screened target links back to its profile, where each estimate
+   shows how it was built; a scenario opened for a rival names it. */
+const presetSummary = esc => {
+  const p = preset();
+  if (S.for) return `Scenario for <b>${esc(S.for)}</b>, built from the acquisition engine's estimates on top of a typical lower-middle-market deal. Cells tagged est. are estimates, not reported figures. <a href="#/ma/rivals">Rival profiles →</a>`;
+  const back = p.parent && CO_ROUTE[p.co] ? ` <a href="#/ma/pipeline?platform=${encodeURIComponent(p.co)}&amp;id=${encodeURIComponent(p.id)}">How these figures were estimated →</a>` : '';
+  return `${esc(p.summary)}${p.est.size ? ' Cells tagged est. are estimates, not BSP figures.' : ''}${back}`;
+};
 
 function sourceLine(ctx, ids) {
   const { esc } = ctx;
@@ -113,12 +131,29 @@ function sourceLine(ctx, ids) {
   return `<p class="sys-src dm-src">Sources: ${parts.join(' · ')}. Presets are estimates from public filings and screens, not BSP's terms. Model by Syed Rahman.</p>`;
 }
 
+/* ── market benchmark per input ──────────────────────────────────────────
+   Each price and financing default sits next to the market figure it was set from (deal_model benchmark items, values
+   read from the data); inputs with no market source say so, so nobody mistakes an assumption for a benchmark. */
+const MKT = { em: ['b-entry-avg', 'b-small'], am: ['b-small'], rm: ['b-small'], cm: ['b-entry-avg'], lev: ['b-lev-2026', 'b-lev-2025'], ir: ['b-rate'], xm: ['b-typ-prem', 'b-large'], rx: ['b-typ-prem', 'b-large'], tm: ['b-typ-prem'], yrs: ['b-hold'] };
+const MKT_WORDS = { 'b-entry-avg': 'average buyout, Q2 2026', 'b-small': 'deals under $25M, first half 2025', 'b-lev-2026': 'total debt, Q2 2026', 'b-lev-2025': 'total debt, first half 2025', 'b-rate': 'senior debt, Q2 2026', 'b-typ-prem': 'typical to premium deals, 2026', 'b-large': 'deals of $100M to $250M, first half 2025', 'b-hold': 'median hold' };
+const bench = id => DM.items.find(i => i.kind === 'benchmark' && i.id === id) || null;
+const bval = b => b.value != null ? (b.unit === '%' ? `${nf(b.value, 1)}%` : b.unit === 'years' ? `${nf(b.value, 1)} years` : `${nf(b.value, 1)}x`) : `${nf(b.low, 1)}–${nf(b.high, 1)}x`;
+const srcShort = id => { const s = SRC[id]; return s ? s.label.split(/[,:]/)[0].trim() : ''; };
+function mkt(k) {
+  const bs = (MKT[k] || []).map(bench).filter(Boolean);
+  if (bs.length) return { text: bs.map(b => `${bval(b)} ${MKT_WORDS[b.id] || b.metric.toLowerCase()} (${srcShort(b.source_ids[0])})`).join('; '), bs };
+  const a = DM.items.find(i => i.kind === 'assumptions')?.items?.[k];
+  return a ? { text: '', assumed: a } : null;
+}
+/* under each input: the first benchmark only (the formula bar and the financing table give them all) */
+const mktLine = (esc, k) => { const m = mkt(k); if (!m) return ''; if (m.assumed) return '<span class="dm-mkt dm-mkt--a">No market source: analyst assumption</span>'; const b = m.bs[0]; return `<span class="dm-mkt">Market: ${esc(`${bval(b)} ${MKT_WORDS[b.id] || b.metric.toLowerCase()} (${srcShort(b.source_ids[0])})`)}</span>`; };
+
 /* ── the spreadsheet grid ───────────────────────────────────────────────── */
 function gridHtml(ctx, sections) {
   const { esc } = ctx;
   let i = 0;
   const rows = sections.map(([title, ks]) => `<tbody><tr class="dm-sec"><th colspan="4" scope="colgroup">${esc(title)}</th></tr>${ks.map(k => { const m = INP[k]; const idx = i++;
-    return `<tr data-k="${k}"><th scope="row"><label for="dm-in-${k}"><span class="dm-name">${esc(m.label)}</span><span class="dm-gloss">${esc(m.gloss)}</span></label></th>
+    return `<tr data-k="${k}"><th scope="row"><label for="dm-in-${k}"><span class="dm-name">${esc(m.label)}</span><span class="dm-gloss">${esc(m.gloss)}</span>${mktLine(esc, k)}</label></th>
       <td class="dm-v"><input id="dm-in-${k}" class="dm-cell" data-k="${k}" data-i="${idx}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="${esc(trim(S.vals[k]))}" aria-describedby="dm-fx"></td>
       <td class="dm-u">${esc(m.unit)}</td><td class="dm-f">${isEst(k) ? '<span class="sys-est">est.</span>' : ''}</td></tr>`; }).join('')}</tbody>`).join('');
   return `<div class="dm-fx" id="dm-fx" aria-live="polite"><span class="dm-fx-k">Cell</span><span class="dm-fx-t">Choose a cell to see what it means and where the number comes from.</span></div>
@@ -132,8 +167,9 @@ function bindGrid(ctx, host, onChange) {
   let committed = {};
   const showFx = inp => {
     const k = inp.dataset.k, m = INP[k], p = preset();
-    const basis = p.basis?.[k] || DM.items.find(i => i.kind === 'assumptions')?.items?.[k] || '';
-    fx.innerHTML = `<span class="dm-fx-k">${ctx.esc(m.label)}</span><span class="dm-fx-t">${ctx.esc(basis || m.gloss)}${isEst(k) ? ' <span class="sys-est">est.</span>' : ''}</span>`;
+    const basis = forBasis(k) || p.basis?.[k] || DM.items.find(i => i.kind === 'assumptions')?.items?.[k] || '';
+    const mk = mkt(k);
+    fx.innerHTML = `<span class="dm-fx-k">${ctx.esc(m.label)}</span><span class="dm-fx-t">${ctx.esc(basis || m.gloss)}${isEst(k) ? ' <span class="sys-est">est.</span>' : ''}${mk && !mk.assumed ? ` <span class="dm-mkt">Market: ${ctx.esc(mk.text)}.</span>` : ''}</span>`;
   };
   const parse = s => { const t = String(s).replace(/[−–]/g, '-').replace(/[^0-9.\-]/g, ''); if (!t || t === '-' || t === '.') return null; const v = parseFloat(t); return isFinite(v) ? v : null; };
   const flag = k => { const td = host.querySelector(`tr[data-k="${k}"] .dm-f`); if (td) td.innerHTML = isEst(k) ? '<span class="sys-est">est.</span>' : ''; };
@@ -163,11 +199,13 @@ function bindGrid(ctx, host, onChange) {
 }
 
 /* ── view scaffolding ───────────────────────────────────────────────────── */
+/* Price and financing sit together so every term of the purchase (multiple, debt, rate, fees, how add-ons are paid) is one block. */
+const DEAL_GRID = [['The company', ['rev', 'mg', 'gr', 'dm']], ['Price and financing', ['em', 'lev', 'ir', 'fee', 'ad']], ['The plan', ['yrs', 'xm', 'ae', 'am', 'cc']]];
 const GRIDS = {
-  returns: [['The deal', ['rev', 'mg', 'em', 'lev', 'ir']], ['The plan', ['gr', 'dm', 'yrs', 'xm', 'ae', 'am', 'ad', 'cc', 'fee']]],
+  returns: DEAL_GRID,
   dcf: [['The company', ['rev', 'mg', 'gr', 'dm']], ['The valuation', ['tax', 'da', 'cx', 'nwc', 'wacc', 'tg', 'tm', 'nd']]],
   rollup: [['The roll-up', ['ce', 'cm', 'n', 'ra', 'rm', 'rx', 'ic', 'syn']], ['Shared with returns', ['gr', 'yrs']]],
-  sensitivity: [['The deal', ['rev', 'mg', 'em', 'lev', 'ir']], ['The plan', ['gr', 'dm', 'yrs', 'xm', 'ae', 'am', 'ad', 'cc', 'fee']]],
+  sensitivity: DEAL_GRID,
 };
 const TITLES = { returns: 'Buyout returns', dcf: 'Discounted cash flow', rollup: 'Buy-and-build roll-up', sensitivity: 'Sensitivity tables' };
 
@@ -188,7 +226,7 @@ async function frame(ctx, vid, draw, srcIds) {
     <div id="dm-srcline"></div></div>`;
   const out = el.querySelector('#dm-out');
   const sum = el.querySelector('#dm-sum');
-  const paint = () => { sum.textContent = presetSummary(); draw(out); el.querySelector('#dm-srcline').innerHTML = sourceLine(ctx, [...srcIds(), ...preset().sources]); syncHash(ctx); };
+  const paint = () => { sum.innerHTML = presetSummary(ctx.esc); draw(out); el.querySelector('#dm-srcline').innerHTML = sourceLine(ctx, [...srcIds(), ...preset().sources]); syncHash(ctx); };
   let raf = 0; const schedule = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; if (el.isConnected) paint(); }); };
   bindGrid(ctx, el.querySelector('.dm-inputs'), schedule);
   paint();
@@ -233,8 +271,12 @@ function loadXlsx() {
   return _xlsx;
 }
 const stamp = () => new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
-const fileBase = () => `BSP Desk acquisition model - ${preset().label.replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim()}`;
-const exportState = () => ({ label: preset().label, vals: { ...S.vals }, est: new Set(keys().filter(isEst)), basis: preset().basis, inputs: DM.meta.inputs });
+const fileBase = () => `BSP Desk acquisition model - ${(S.for || preset().label).replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim()}`;
+/* Workbook basis column: the preset's own note first, else the market benchmark, else the analyst assumption, so every
+   price and financing input in the Excel file says where its number comes from. */
+const forBasis = k => S?.for && S.forVals?.[k] != null ? `Set from the acquisition engine's estimates for ${S.for}; see its profile for how each was built.` : '';
+const basisAll = () => { const out = {}; for (const k of keys()) { const m = mkt(k); if (m?.assumed) out[k] = `Analyst assumption: ${m.assumed}`; else if (m) out[k] = `Market: ${m.text}.`; } const all = { ...out, ...preset().basis }; for (const k of keys()) { const f = forBasis(k); if (f) all[k] = f; } return all; };
+const exportState = () => ({ label: S.for ? `${S.for} (scenario)` : preset().label, vals: { ...S.vals }, est: new Set(keys().filter(isEst)), basis: basisAll(), inputs: DM.meta.inputs });
 function saveBlob(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
 async function downloadXlsx(ctx, btn) {
   const label = btn.textContent; btn.disabled = true; btn.textContent = 'Preparing…';
@@ -298,7 +340,33 @@ function drawReturns(ctx, out) {
   const altTxt = (R2, x) => `IRR ${R2.irr == null ? 'n/m' : pc(R2.irr)} and MOIC ${R2.moic == null ? 'n/m' : xm(R2.moic, 2)} at a ${xm(x)} sale`;
   const expNote = `<p class="sys-src dm-exp">${gap === 0 ? `<b>No multiple expansion assumed:</b> the company sells at the ${xm(p.em)} it was bought for. With +2.0x expansion: ${altTxt(alt, p.em + 2)}.` : `<b>Includes ${gap > 0 ? '+' : MINUS}${xm(Math.abs(gap))} of multiple ${gap > 0 ? 'expansion' : 'contraction'}.</b> Selling at the ${xm(p.em)} entry multiple instead: ${altTxt(alt, p.em)}.`}</p>`;
   out.innerHTML = kp + expNote + ui.panel({ title: 'Year by year', sub: `${$m(p.rev)} of revenue growing ${nf(p.gr, 1)}% a year, ${p.ae > 0 ? `${$m(p.ae)} of add-on EBITDA bought each year to year ${N - 1}` : 'no add-ons'}. Figures in $M.`, body: table, cls: 'mt-12' }) +
+    ui.panel({ title: 'Financing terms', sub: 'Each term of the purchase, next to the market figure it was set from', body: financingHtml(ctx, p, R), cls: 'mt-12' }) +
     `<div class="grid grid-2 mt-12">${ui.panel({ title: 'Sources and uses', sub: 'How the purchase is paid for', body: su })}${ui.panel({ title: 'Where the return comes from', sub: 'The equity gain, split into its drivers', body: bridge })}</div>`;
+}
+/* Financing terms: every input behind the purchase, what it comes to in dollars, and its market benchmark with a link.
+   Rows with no market source are labelled as analyst assumptions; the last rows are credit checks derived from the model. */
+function financingHtml(ctx, p, R) {
+  const { esc } = ctx; const N = R.N;
+  const link = id => { const s = SRC[id]; return s ? (s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(srcShort(id))}</a>` : esc(srcShort(id))) : ''; };
+  const srcOnce = ids => { const seen = new Set(); return ids.filter(id => { const k = srcShort(id); if (seen.has(k)) return false; seen.add(k); return true; }); };
+  const market = k => { const m = mkt(k); if (!m) return ['—', '']; if (m.assumed) return [`<b>No market source.</b> <span class="dm-gloss dm-inl">Analyst assumption: ${esc(m.assumed)}</span>`, '']; return [m.bs.map(b => `${bval(b)} <span class="dm-gloss dm-inl">${esc(MKT_WORDS[b.id] || b.metric)}</span>`).join('<br>'), srcOnce(m.bs.map(b => b.source_ids[0])).map(link).join(', ')]; };
+  const eqShare = R.ev0 + R.fees > 0 ? R.eq0 / (R.ev0 + R.fees) : null;
+  const gulf = bench('b-lev-2025'), eqMkt = String(gulf?.note || '').match(/equity\s+([\d.]+)%/i);
+  const row = (term, deal, [mk, src], cls = '') => `<tr${cls ? ` class="${cls}"` : ''}><th scope="row">${esc(term)}</th><td class="sys-n dm-fdeal">${deal}</td><td class="dm-fmkt">${mk}</td><td class="dm-fsrc">${src ? `<span class="dm-fsrc-l">Source: </span>${src}` : ''}</td></tr>`;
+  const cover = R.int[1] > 0 ? R.ebitda[1] / R.int[1] : null;
+  const exitLev = R.ebitda[N] > 0 ? R.nd[N] / R.ebitda[N] : null;
+  return `<div class="sys-table-wrap"><table class="sys-table dm-fin"><caption class="sys-sr">Financing terms with market benchmarks</caption><colgroup><col class="dm-c1"><col class="dm-c2"><col class="dm-c3"><col class="dm-c4"></colgroup><thead><tr><th scope="col">Term</th><th scope="col" class="sys-n">This deal</th><th scope="col">Market</th><th scope="col">Source</th></tr></thead><tbody>
+    ${row('Purchase price', `${xm(p.em)} EBITDA<br><b>${$m(R.ev0)}</b>`, market('em'))}
+    ${row('Debt at entry', `${xm(p.lev)} EBITDA<br><b>${$m(R.debt0)}</b>`, market('lev'))}
+    ${row('Interest rate', `${nf(p.ir, 2)}% a year<br><b>${$m(R.int[1])}</b> in year 1`, market('ir'))}
+    ${row('Equity check', `${eqShare == null ? 'n/m' : pc(eqShare, 0)} of the cost<br><b>${$m(R.eq0)}</b>`, eqMkt ? [`${nf(+eqMkt[1], 1)}% <span class="dm-gloss dm-inl">equity share of capital, first half 2025</span>`, link(gulf.source_ids[0])] : ['—', ''])}
+    ${row('Deal fees', `${nf(p.fee, 1)}% of price<br><b>${$m(R.fees)}</b>`, market('fee'))}
+    ${row('Add-ons paid with debt', `${nf(p.ad, 0)}% of each price`, market('ad'))}
+    ${row('Debt repayment', `${nf(p.cc, 0)}% of EBITDA, less interest`, market('cc'))}
+    ${row('Interest cover, year 1', cover == null ? 'n/m' : xm(cover), ['EBITDA divided by interest', 'From the model'], 'dm-derived')}
+    ${row(`Net debt / EBITDA, year ${N}`, exitLev == null ? 'n/m' : xm(exitLev), ['Leverage left at the sale', 'From the model'], 'dm-derived')}
+  </tbody></table></div>
+  <p class="sys-src">One debt layer, repaid from cash each year. Seller notes and earn-outs are not modelled: the full price is paid at closing with the debt and equity above.</p>`;
 }
 
 /* ── DCF ────────────────────────────────────────────────────────────────── */

@@ -27,9 +27,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/system.css?v=20261008192515">
-<link rel="stylesheet" href="assets/landing-page.css?v=20261008192515">
-<link rel="modulepreload" href="assets/chat.js?v=20261008192515">
+<link rel="stylesheet" href="assets/system.css?v=20261009070649">
+<link rel="stylesheet" href="assets/landing-page.css?v=20261009070649">
+<link rel="modulepreload" href="assets/chat.js?v=20261009070649">
 </head>
 <body data-page="landing">
 <main id="main">
@@ -85,6 +85,79 @@
           <div class="sys-card-foot"><button class="sys-btn sys-btn--secondary sys-btn--sm" type="button" data-play="film" data-step-go="film">Play the film</button></div>
         </li>
       </ol>
+    </div>
+  </section>
+
+  <!-- ═══ Acquisition engine: the deal math, in house (figures refreshed from the same data by assets/landing.js) ═══ -->
+  <section class="sys-section lp-deals" id="deals" data-sys-theme="dark" aria-labelledby="deals-title">
+    <div class="sys-wrap">
+      <div class="sys-section-head sys-section-head--row">
+        <div>
+          <p class="sys-kicker">Acquisition engine</p>
+          <h2 id="deals-title" class="sys-h2">Do the deal math in house.</h2>
+          <p class="sys-lead">Screen add-ons and rival sponsors with sourced estimates, then price, finance and model each deal. Every estimate shows how it was built.</p>
+        </div>
+        <a class="sys-link" href="app.html#/ma/overview">Open the acquisition engine <span aria-hidden="true">→</span></a>
+      </div>
+      <ol class="sys-grid sys-grid--3 lp-list lp-deal-steps">
+        <li class="sys-card sys-card--feature">
+          <span class="sys-card-label"><span class="lp-step-n" aria-hidden="true">1</span>Screen</span>
+          <h3 class="sys-card-title">Find and size targets</h3>
+          <p class="sys-card-body"><span data-stat="targets">157</span> add-on targets and <span data-stat="sponsors">35</span> rival sponsors. Each target gets staff, revenue, EBITDA and a likely price, all <span class="sys-est">est.</span>, with its source and a confidence.</p>
+        </li>
+        <li class="sys-card sys-card--feature">
+          <span class="sys-card-label"><span class="lp-step-n" aria-hidden="true">2</span>Price and finance</span>
+          <h3 class="sys-card-title">Set price, debt and equity</h3>
+          <p class="sys-card-body">The likely price comes from what deals of that size fetch today. Debt, interest and fees start at current market averages, each with its source.</p>
+        </li>
+        <li class="sys-card sys-card--feature">
+          <span class="sys-card-label"><span class="lp-step-n" aria-hidden="true">3</span>Model</span>
+          <h3 class="sys-card-title">Run the numbers</h3>
+          <p class="sys-card-body">Returns, DCF, buy-and-build and sensitivity tables on one live model. Download it to Excel with working formulas.</p>
+        </li>
+      </ol>
+      <div class="sys-grid sys-grid--2 lp-deal-ex">
+        <article class="sys-card lp-deal" data-co="cet" data-deal="cet-t01">
+          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>CET add-on · fit <span data-f="fit">83</span> of 100</span>
+          <h3 class="sys-card-title">McDonald Electrical Corporation</h3>
+          <p class="sys-card-body">Electrical contractor in Hingham, MA. Founder-owned, <span data-f="staff">96</span> staff.</p>
+          <dl class="lp-math lp-deal-math" data-f="math"><div><dt>Revenue</dt><dd>$18.4M<span class="sys-est">est.</span></dd></div><div><dt>EBITDA</dt><dd>$1.8M<span class="sys-est">est.</span></dd></div><div><dt>Likely price</dt><dd>$11.6M–$12.7M<span class="sys-est">est.</span></dd></div><div><dt>Debt</dt><dd>$5.5M<span class="sys-est">est.</span></dd></div><div><dt>Equity check</dt><dd>$6.8M<span class="sys-est">est.</span></dd></div><div><dt>Return a year</dt><dd>16.1%<span class="sys-est">est.</span></dd></div></dl>
+          <details class="lp-how">
+            <summary>How we estimated this</summary>
+            <ol class="lp-list" data-f="how">
+              <li><b>Staff: 96.</b> From a company database search (ZoomInfo). <i>Medium confidence.</i></li>
+              <li><b>Revenue: $18.4M <span class="sys-est">est.</span></b> Modelled by ZoomInfo, not reported. Check: 96 staff × $406K revenue per employee at listed electrical contractors = $39.0M ceiling; the estimate is 47% of that rate. <i>Medium confidence.</i></li>
+              <li><b>EBITDA: $1.8M <span class="sys-est">est.</span></b> Revenue × 10%. Listed electrical peers earn 11.2% EBITDA margins (median); 10% assumed for a private contractor. <i>Low confidence.</i></li>
+              <li><b>Likely price: $11.6M–$12.7M <span class="sys-est">est.</span></b> EBITDA × 6.3x to 6.9x, the average for deals under $25M of value (GF Data). The model starts at 6.5x: $12.0M. <i>Low confidence.</i></li>
+              <li><b>Financing: $5.5M debt, $6.8M equity <span class="sys-est">est.</span></b> Debt of 3.0x EBITDA at 7.8%, the current market averages (GF Data), plus 3% deal fees. <i>Market average.</i></li>
+              <li><b>Return: 16.1% a year <span class="sys-est">est.</span></b> Sold at the same 6.5x after 5 years, before any gain from merging into CET. <i>Low confidence.</i></li>
+            </ol>
+          </details>
+          <div class="sys-card-foot"><a class="sys-btn sys-btn--primary sys-btn--sm" href="app.html#/deal/returns?p=cet-t01">Model this deal <span aria-hidden="true">→</span></a><a href="app.html#/ma/pipeline?platform=cet&amp;id=cet-t01">Full profile <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="sys-card lp-deal" data-co="pp" data-deal="pp-t11">
+          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Punctual Pros add-on · fit <span data-f="fit">84</span> of 100</span>
+          <h3 class="sys-card-title">Lancaster Plumbing, Heating, Cooling &amp; Electrical</h3>
+          <p class="sys-card-body">Home services in East Petersburg, PA. Family-owned, <span data-f="staff">27</span> staff.</p>
+          <dl class="lp-math lp-deal-math" data-f="math"><div><dt>Revenue</dt><dd>$7.0M<span class="sys-est">est.</span></dd></div><div><dt>EBITDA</dt><dd>$840K<span class="sys-est">est.</span></dd></div><div><dt>Likely price</dt><dd>$5.3M–$5.8M<span class="sys-est">est.</span></dd></div><div><dt>Debt</dt><dd>$2.5M<span class="sys-est">est.</span></dd></div><div><dt>Equity check</dt><dd>$3.1M<span class="sys-est">est.</span></dd></div><div><dt>Return a year</dt><dd>14.6%<span class="sys-est">est.</span></dd></div></dl>
+          <details class="lp-how">
+            <summary>How we estimated this</summary>
+            <ol class="lp-list" data-f="how">
+              <li><b>Staff: 27.</b> From a company database search (ZoomInfo). <i>Medium confidence.</i></li>
+              <li><b>Revenue: $7.0M <span class="sys-est">est.</span></b> Modelled by ZoomInfo, not reported. Check: 27 staff × $401K revenue per employee at listed residential-services companies = $10.8M ceiling; the estimate is 65% of that rate. <i>Medium confidence.</i></li>
+              <li><b>EBITDA: $840K <span class="sys-est">est.</span></b> Revenue × 12%. Listed residential peers earn 15.1% EBITDA margins; Punctual Pros itself about 8 to 14%. Small independents assumed at 12%. <i>Low confidence.</i></li>
+              <li><b>Likely price: $5.3M–$5.8M <span class="sys-est">est.</span></b> EBITDA × 6.3x to 6.9x, the average for deals under $25M of value (GF Data). The model starts at 6.5x: $5.5M. <i>Low confidence.</i></li>
+              <li><b>Financing: $2.5M debt, $3.1M equity <span class="sys-est">est.</span></b> Debt of 3.0x EBITDA at 7.8%, the current market averages (GF Data), plus 3% deal fees. <i>Market average.</i></li>
+              <li><b>Return: 14.6% a year <span class="sys-est">est.</span></b> Sold at the same 6.5x after 5 years, before any gain from merging into Punctual Pros. <i>Low confidence.</i></li>
+            </ol>
+          </details>
+          <div class="sys-card-foot"><a class="sys-btn sys-btn--primary sys-btn--sm" href="app.html#/deal/returns?p=pp-t11">Model this deal <span aria-hidden="true">→</span></a><a href="app.html#/ma/pipeline?platform=pp&amp;id=pp-t11">Full profile <span aria-hidden="true">→</span></a></div>
+        </article>
+      </div>
+      <div class="lp-deal-foot">
+        <p class="sys-src" id="deals-src"><b>Source:</b> add-on screens (ZoomInfo, company websites), September 24, 2026; listed-peer filings (SEC); deal multiples and debt terms (GF Data), retrieved October 6, 2026. Estimates, not company-reported figures.</p>
+        <a class="sys-btn sys-btn--secondary" href="app.html#/deal/returns?p=typical">Open the acquisition model <span aria-hidden="true">→</span></a>
+      </div>
     </div>
   </section>
 
@@ -400,21 +473,21 @@
 </main>
 
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261008192515';
-  import { Landing } from './assets/landing.js?v=20261008192515';
+  import { Frame } from './assets/frame.js?v=20261009070649';
+  import { Landing } from './assets/landing.js?v=20261009070649';
   Frame.mount({ crumb: false });
   Landing.init();
 </script>
 <script type="module">
-  import { Chat } from './assets/chat.js?v=20261008192515';
-  import { Landing } from './assets/landing.js?v=20261008192515';
+  import { Chat } from './assets/chat.js?v=20261009070649';
+  import { Landing } from './assets/landing.js?v=20261009070649';
   const host = document.querySelector('#hero-chat');
   host.querySelector('.lp-skeleton')?.remove();
   const chat = Chat.mount(host, { persona: 'portal', mode: 'inline', theme: 'light' });
   Landing.attachChat(chat);
 </script>
 <script type="module">
-  import { Counter } from './assets/counter.js?v=20261008192515';
+  import { Counter } from './assets/counter.js?v=20261009070649';
   const el = document.getElementById('hero-counter');
   // baseline 'today' counts from local midnight; below minDisplay the clock shows "—" so a first frame never reads "$1"
   if (el) Counter.mount(el, { theme: 'light', baseline: 'today', minDisplay: 100, caption: 'What BSP is leaving on the table by not hiring Syed · so far today' })

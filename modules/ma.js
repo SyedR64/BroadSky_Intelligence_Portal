@@ -1,10 +1,11 @@
-import * as Copy from './copy.js?v=20261008192515';
+import * as Copy from './copy.js?v=20261009070649';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition engine (M&A) — cross-portfolio buy-and-build intelligence.
    Datasets: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets, Competitor filings,
              Public comparables, Private-equity landscape, BSP firm profile; sales/* (property transfers, lazy, theses view).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, fitTierOf } from '../assets/components.js?v=20261008192515';
+import { renderTargets, fitTierOf } from '../assets/components.js?v=20261009070649';
+import * as DL from './deal-lib.js?v=20261009070649';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 const PLAT = {
@@ -92,7 +93,7 @@ const pctOf = (n, d) => d ? Math.round((n / d) * 100) : 0;
 const titleCase = s => String(s || '').replace(/_/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
 const ownerClass = s => { const x = String(s || '').toLowerCase().replace(/no sponsor disclosed|no pe affiliation/g, ''); if (!x.trim()) return 'Unverified'; if (/subsidiary|part of|venture-backed|pe-backed|private equity|backed by|\bpe\b/.test(x)) return 'Sponsor / corporate'; if (/founder|family/.test(x)) return 'Founder / family'; if (/unknown|unverified|not disclosed|not verified/.test(x)) return 'Unverified'; if (/esop|employee-owned/.test(x)) return 'ESOP'; if (/franchisee/.test(x)) return 'Franchisee'; return 'Private independent'; };
 const OWNER_COLOR = { 'Founder / family': 'var(--sys-good)', 'Private independent': 'var(--sys-info)', Franchisee: 'var(--sys-violet)', ESOP: 'var(--sys-warn)', Unverified: 'var(--sys-mute-2)', 'Sponsor / corporate': 'var(--sys-bad)' };
-const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261008192515'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261009070649'; document.head.appendChild(l); } };
 const shortList = a => { const v = (Array.isArray(a) ? a : [a]).filter(Boolean).map(x => { const y = String(x).replace(/\s*\(.*?\)\s*/g, ' ').replace(/_/g, ' ').trim(); return y.length > 26 ? y.slice(0, 25).trim() + '…' : y; }); return v.length > 2 ? [...v.slice(0, 2), `+${v.length - 2}`] : v; };
 const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
 const pctTxt = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;
@@ -130,24 +131,25 @@ function normT(t, p) {
 }
 
 /* One shared load for every view (research() caches per file; this caches the derived bundle). */
-let _bundle = null;
+let _bundle = null, _last = null;
 function loadBundle(data) {
   if (_bundle) return _bundle;
   _bundle = (async () => {
     const names = ['ma_targets_cet', 'ma_targets_pp', 'ma_targets_fl_ts', 'rival_filings', 'public_comps', 'pe_landscape', 'bsp_firm'];
-    const res = await Promise.all(names.map(n => data.research(n)));
+    // the acquisition model's assumptions ride along (deal math in every profile) but never count as a missing screen
+    const [res, dm] = await Promise.all([Promise.all(names.map(n => data.research(n))), data.research('deal_model').catch(() => null)]);
     const [cet, pp, flts, rivals, comps, pe, firm] = res;
     const missing = names.filter((n, i) => !res[i]);
     const targets = [];
     (cet?.items || []).forEach(t => targets.push(normT(t, 'cet')));
     (pp?.items || []).forEach(t => targets.push(normT(t, 'pp')));
     (flts?.items || []).forEach(t => targets.push(normT(t, t.platform === 'frontline' ? 'fl' : 'ts')));
-    const b = { cet, pp, flts, rivals, comps, pe, firm, missing, targets };
+    const b = { cet, pp, flts, rivals, comps, pe, firm, dm, missing, targets };
     b.byId = new Map(targets.map(t => [t.id, t]));
     b.rivalRows = rivals ? buildRivals(rivals) : [];
     return b;
   })();
-  _bundle.then(b => { if (b.missing.length) _bundle = null; }).catch(() => { _bundle = null; });
+  _bundle.then(b => { _last = b; if (b.missing.length) _bundle = null; }).catch(() => { _bundle = null; });
   return _bundle;
 }
 const rankedRaw = (b, p) => (p === 'cet' ? b.cet?.meta?.ranked_top_10 : p === 'pp' ? b.pp?.meta?.ranked_top_10 : p === 'fl' ? b.flts?.meta?.frontline?.ranked_top_8 : b.flts?.meta?.thomas_scientific?.ranked_top_8) || [];
@@ -168,8 +170,95 @@ const nextActionFor = p => ({
   ts: 'Line-card overlap analysis versus the Thomas catalogue → supplier change-of-control consents → request customer concentration and gross margin by line → indicative bid ahead of Calibre Scientific.',
 })[p];
 
+/* ── Deal math and "How we estimated this" ──────────────────────────────────────────────────────────────────────
+   Each target's figures are built in plain steps: staff (company database, checked against the company's own site), revenue
+   (the vendor's modelled figure, checked against staff × listed-peer revenue per employee), EBITDA (revenue × the acquisition
+   model's sector margin), a likely price (EBITDA × the multiple deals of that size fetch) and financing (the model's market
+   defaults). targetVals / priceBand / dealSummary come from deal-lib, so "Model this deal" opens the model on the same numbers.
+   Confidence: high = a figure stated by the company and confirmed by a second source; medium = one sourced figure that passes
+   a cross-check; low = modelled from an assumption (margin, multiple) or failing its cross-check. */
+const CONF_COLOR = { high: 'var(--sys-good)', medium: 'var(--sys-warn)', low: 'var(--sys-bad)', market: 'var(--sys-info)' };
+const CONF_RULE = 'High: stated by the company and confirmed by a second source. Medium: one sourced figure that passes a cross-check. Low: modelled from an assumption, or fails its check.';
+const PEER_WORDS = { cet: 'listed electrical contractors', pp: 'listed residential-services companies', fl: 'listed legal and managed-services firms', ts: 'listed lab distributors' };
+const dmSector = (b, p) => (b.dm?.items || []).find(i => i.kind === 'sector' && i.co === p) || null;
+const dmParent = (b, p) => (b.dm?.items || []).find(i => i.kind === 'preset' && i.co === p) || null;
+const dmSource = (b, id) => (b.dm?.meta?.sources || []).find(s => s.id === id) || null;
+const money$M = (fmt, v) => v == null || !isFinite(v) ? '—' : fmt.money(v * 1e6);
+const pct1 = v => v == null || !isFinite(v) ? 'n/m' : `${(v * 100).toFixed(1)}%`;
+const mult1 = v => v == null || !isFinite(v) ? 'n/m' : `${Number(v).toFixed(1)}x`;
+const noRetrieved = s => String(s || '').replace(/\s*\((?:retrieved|as of)[^)]*\)/i, '').replace(/\s*(?:modell?ed\s+)?estimate\b/i, '').trim();
+/** Estimates for one screened target, or null when the acquisition model's assumptions are not loaded. */
+function estimateFor(b, t) {
+  if (!b || !t) return null;
+  const p = t._p, dm = b.dm, sec = dmSector(b, p), par = dmParent(b, p);
+  if (!dm || !sec || !par) return null;
+  const sized = !(t.revenue_est_usd > 0);
+  // a target with no revenue on record is sized at the median screened target, exactly as the model's preset does
+  const revM = sized ? median(b.targets.filter(x => x._p === p && !x._affil && x.revenue_est_usd > 0).map(x => x.revenue_est_usd / 1e6)) : t.revenue_est_usd / 1e6;
+  if (revM == null) return null;
+  const vals = DL.targetVals(dm.meta.base, dm.meta.target_defaults, sec, par.inputs, revM);
+  const S = DL.dealSummary(vals);
+  const band = DL.priceBand(S.ebitda, vals.em, dm.items.filter(i => i.kind === 'benchmark'));
+  const peer = b.comps?.meta?.sector_benchmarks?.[PLAT[p].bench] || null;
+  const rpe = num(peer?.median_revenue_per_employee_usd);
+  const emp = t.employees;
+  const ceiling = emp && rpe ? emp * rpe / 1e6 : null;
+  const ratio = !sized && ceiling ? revM / ceiling : null;
+  const stated = num(String(t.employees_note || '').replace(/,/g, '').match(/(\d+)/)?.[1]);
+  const empConf = emp == null ? null : stated && Math.abs(stated - emp) / emp <= 0.15 ? 'high' : 'medium';
+  const revConf = sized ? 'low' : ratio != null && ratio >= 0.25 && ratio <= 1 ? 'medium' : 'low';
+  return { p, sec, par, sized, revM, vals, S, band, peer, rpe, emp, ceiling, ratio, empConf, revConf, td: dm.meta.target_defaults,
+    hash: t._affil ? null : `#/deal/returns?p=${encodeURIComponent(t.id)}`, rollHash: t._affil ? null : `#/deal/rollup?p=${encodeURIComponent(t.id)}` };
+}
+const confChip = (esc, c) => c ? `<span class="ma-conf" style="--cc:${CONF_COLOR[c]}">${esc(c === 'market' ? 'market average' : `${c} confidence`)}</span>` : '';
+const srcLabel = s => s.label.split('(')[0].split(':')[0].trim();
+const srcLinks = (b, esc, ids) => [...new Set(ids)].map(id => dmSource(b, id)).filter(Boolean).map(s => s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(srcLabel(s))}</a>` : esc(srcLabel(s))).join(' · ');
+/** "How we estimated this": a disclosure with one row per estimate (value, method and inputs, source, confidence, as-of date). */
+function howHtml(ctx, b, t, E, open = false) {
+  const { esc, fmt } = ctx; const P = PLAT[t._p]; const td = E.td; const S = E.S; const v = E.vals;
+  const asOf = dayWords(t.retrieved || b[t._p === 'fl' || t._p === 'ts' ? 'flts' : t._p]?.meta?.generated);
+  const mktDate = dayWords((b.dm?.meta?.sources || []).find(s => s.id === 'gf-q2-2026')?.retrieved);
+  const empSrc = t.employees_source || 'company database search (ZoomInfo)';
+  const rows = [
+    { k: 'Staff', v: E.emp != null ? fmt.num(E.emp) : 'not on record', conf: E.empConf,
+      how: E.emp != null ? `Headcount from the ${esc(Copy.text(empSrc))}${t.employees_note ? `; ${esc(Copy.text(t.employees_note))}` : ''}.` : 'No headcount on record. Confirm it in the first call.', src: '' },
+    { k: 'Revenue', v: `${money$M(fmt, E.revM)}${Copy.EST}`, conf: E.revConf,
+      how: E.sized ? `No revenue on record. Sized at the median screened ${esc(P.label)} target, so treat it as a placeholder.`
+        : `Modelled by ${esc(noRetrieved(Copy.text(t.revenue_source || 'the company database')))}, not reported by the company.${E.ceiling ? ` Check: ${fmt.num(E.emp)} staff × ${fmt.money(E.rpe)} revenue per employee at ${fmt.num(E.peer?.n)} ${esc(PEER_WORDS[t._p])} = ${money$M(fmt, E.ceiling)} ceiling. The modelled figure is ${fmt.money(E.revM * 1e6 / E.emp)} per employee, ${Math.round(E.ratio * 100)}% of the peer rate${E.ratio > 1 ? ', above the ceiling, so treat it as high' : E.ratio < 0.25 ? ', far below it, so confirm size early' : ', inside the ceiling'}.` : ' No headcount to cross-check it against.'}`,
+      src: E.ceiling ? 'SEC filings of listed peers' : '' },
+    { k: 'EBITDA', v: `${money$M(fmt, S.ebitda)}${Copy.EST}`, conf: 'low', how: `Revenue × ${fmt.num(E.sec.margin_pct)}% margin. ${esc(E.sec.basis)}`, src: srcLinks(b, esc, E.sec.source_ids || []) },
+    E.band ? { k: 'Likely price', v: `${money$M(fmt, E.band.lo)}–${money$M(fmt, E.band.hi)}${Copy.EST}`, conf: 'low',
+      how: `EBITDA × ${mult1(E.band.mLo)} to ${mult1(E.band.mHi)}, the ${esc(E.band.label)}. The model starts at ${mult1(v.em)}: ${money$M(fmt, S.price)}${E.band.inBand ? '' : ', below this band, so raise the entry multiple to test it'}.`, src: srcLinks(b, esc, E.band.source_ids) } : null,
+    { k: 'Financing', v: `${money$M(fmt, S.debt)} debt · ${money$M(fmt, S.equity)} equity${Copy.EST}`, conf: 'market',
+      how: `Debt of ${mult1(td.lev)} EBITDA at ${fmt.num(td.ir, 1)}% interest, the current market averages; ${fmt.num(v.fee, 0)}% deal fees (analyst assumption). The equity check is ${S.eqShare == null ? 'n/m' : `${Math.round(S.eqShare * 100)}%`} of the cost.`, src: srcLinks(b, esc, td.source_ids || []) },
+    { k: 'Return', v: `${pct1(S.irr)} a year${Copy.EST}`, conf: 'low',
+      how: `Sold at the same ${mult1(v.xm)} after ${S.years} years, growing ${fmt.num(v.gr)}% a year: ${S.moic == null ? 'n/m' : `${S.moic.toFixed(2)}x`} the money. No gain from merging into ${esc(P.label)} is counted; the roll-up view adds it.`, src: '' },
+  ].filter(Boolean);
+  const tsrc = (t.sources || []).slice(0, 4).map(s => `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(fmt.host(s) || 'source')}</a>`).join(' · ');
+  return `<details class="ma-how"${open ? ' open' : ''}><summary>How we estimated this</summary>
+    <ol class="ma-how-steps">${rows.map(r => `<li><div class="ma-how-h"><span class="ma-how-k">${esc(r.k)}</span><span class="ma-how-v">${r.v}</span>${confChip(esc, r.conf)}</div><div class="ma-how-t">${r.how}</div>${r.src ? `<div class="ma-how-s">Source: ${r.src}</div>` : ''}</li>`).join('')}</ol>
+    <div class="ma-how-foot">Screen as of ${esc(asOf)}; market figures retrieved ${esc(mktDate)}.${tsrc ? ` Company sources: ${tsrc}.` : ''} ${esc(CONF_RULE)} <a href="#/fin/methods">Methods and data gaps →</a></div>
+  </details>`;
+}
+/** Inspector section: the deal math at the model's defaults, the disclosure and the links into the acquisition model. */
+function dealSection(ctx, b, t) {
+  const { esc, fmt, ui } = ctx; const E = estimateFor(b, t); const P = PLAT[t._p];
+  if (!E) return null;
+  if (t._affil) return { label: 'Deal math', html: `<div class="m-ma-insp">${ui.note('Not modelled until affiliation is confirmed.', 'warn')}</div>` };
+  const S = E.S;
+  return { label: 'Deal math', html: `<div class="m-ma-insp ma-dealsec">${ui.kv({
+      'Revenue': `${money$M(fmt, E.revM)}${Copy.EST}${E.sized ? ' <span class="dim small">placeholder: median screened target</span>' : ''}`,
+      'EBITDA': `${money$M(fmt, S.ebitda)}${Copy.EST} <span class="dim small">at a ${fmt.num(E.sec.margin_pct)}% margin</span>`,
+      'Likely price': E.band ? `${money$M(fmt, E.band.lo)}–${money$M(fmt, E.band.hi)}${Copy.EST} <span class="dim small">${mult1(E.band.mLo)} to ${mult1(E.band.mHi)}</span>` : null,
+      'Model price': `${money$M(fmt, S.price)}${Copy.EST} <span class="dim small">at ${mult1(E.vals.em)}</span>`,
+      'Debt and equity': `${money$M(fmt, S.debt)} debt${Copy.EST} <span class="dim small">${mult1(E.td.lev)} at ${fmt.num(E.td.ir, 1)}%</span> · ${money$M(fmt, S.equity)} equity${Copy.EST}`,
+      'Return': `${pct1(S.irr)} a year${Copy.EST} <span class="dim small">${S.moic == null ? '' : `${S.moic.toFixed(2)}x in ${S.years} years, sold at ${mult1(E.vals.xm)}`}</span>`,
+    })}${howHtml(ctx, b, t, E)}<div class="ma-deal-ft"><a class="sys-btn sys-btn--primary sys-btn--sm" href="${esc(E.hash)}">Model this deal →</a><a class="sys-btn sys-btn--secondary sys-btn--sm" href="${esc(E.rollHash)}">Roll it into ${esc(P.label)}</a></div></div>` };
+}
+const modelAction = (ctx, b, t) => { const E = !t._affil && estimateFor(b, t); return E ? { id: 'model', label: 'Model this deal', onClick: () => { location.hash = E.hash; } } : null; };
+
 /* Target inspector (used everywhere except the renderTargets table, which has its own). */
-function openTarget(ctx, t) {
+function openTarget(ctx, t, _b = _last) {
   const { ui, fmt, inspector, esc, charts, app } = ctx; const P = PLAT[t._p]; const mx = DIM_MAX[t._p] || {};
   const fb = Object.entries(t.fit_breakdown || {}).map(([k, v]) => { const m = mx[k] || (t._p === 'fl' || t._p === 'ts' ? 5 : 20); return { label: `${titleCase(k)} (${num(v) ?? '—'}/${m})`, value: Math.round(((num(v) || 0) / m) * 100) }; });
   inspector.open({
@@ -179,12 +268,13 @@ function openTarget(ctx, t) {
       t._affil ? { label: 'Verify affiliation · do not contact yet', html: `<div class="m-ma-insp">${ui.note(`<b>${esc(affilNote(t))}.</b> Held out of every ranking. ${esc(P.label)} leadership to confirm status (owned · related party · independent); if independent, resolve the trade-name overlap, then re-score.`, 'warn')}</div>` } : null,
       { label: 'Fit', html: `<div class="sys-kpi kpi" data-co="" style="--co:${P.color}"><div class="sys-kpi-label">Fit score (${esc(P.label)} rubric)</div><div class="sys-kpi-value">${fmt.num(t.fit_score)}</div><div class="sys-kpi-sub">${esc(t._tier)} · rubrics differ by company</div></div>${fb.length ? `<div class="mt-8">${charts.hbar(fb, { max: 100, fmt: v => `${v}%`, labelW: 170, color: P.color })}</div>` : ''}` },
       { label: 'Profile', html: '<div class="m-ma-insp">' + ui.kv({ Founded: t.founded_year, Employees: t.employees != null ? fmt.num(t.employees) : null, 'Revenue (est.)': t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)} <span class="dim small">ZoomInfo modeled</span>` : null, Ownership: t.ownership ? `${esc(t.ownership)}${t.ownership_notes ? `<div class="dim small">${esc(clip(t.ownership_notes, 200))}</div>` : ''}` : null, Brands: t.brands_or_franchise ? esc(t.brands_or_franchise) : null, 'Specialties / trades': t.specialties || t.trades || t.offerings, 'End markets': t.end_markets || t.customer_segments, 'Route reach': t._reach ? `${fmt.chip(t._reach, REACH_COLOR[t._reach])} <span class="dim small">${fmt.num(t._nodeMi)} mi from ${esc(t._node || 'nearest node')} · straight-line; reach = ${esc(REACH_TXT[t._p])}</span>` : null, 'Nearest CET node': t.nearest_cet_node ? `${esc(t.nearest_cet_node)} · ${fmt.num(t.nearest_cet_node_miles)} mi` : null, 'Distance (Lancaster / Toms River)': t.distance_mi_from_lancaster != null ? `${fmt.num(t.distance_mi_from_lancaster)} / ${fmt.num(t.distance_mi_from_toms_river)} mi` : null, Reviews: t.review_count ? `${fmt.num(t.review_count)}${t.review_rating ? ` · ${esc(t.review_rating)}★` : ''}` : null, Website: t.website ? fmt.link(t.website) : null }) + '</div>' },
+      dealSection(ctx, _b, t),
       { label: 'Strategic rationale', html: `<div class="small text-2">${esc(t.strategic_rationale || '—')}</div>` },
       t.risk_flags?.length ? { label: 'Risk flags', html: `<div class="m-ma-insp row wrap gap-4">${t.risk_flags.map(r => fmt.chip(r, 'var(--sys-warn)')).join(' ')}</div>` } : null,
       { label: 'Sources', html: `<div class="col gap-4 small">${(t.sources || []).map(s => `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(fmt.host(s) || s)}</a>`).join('') || '—'}</div><div class="dim small mt-8">Retrieved ${esc(t.retrieved || '—')} · ${esc(Copy.text(t.revenue_source || 'revenue source not stated'))}</div>` },
       { label: 'Next action', html: `<div class="small text-2">${esc(t._affil ? `Do not contact. ${P.label} CEO to confirm ownership / related-party status first; only if independent, re-score and log in the pipeline.` : nextActionFor(t._p))}</div>` },
     ].filter(Boolean),
-    actions: [t.website ? { label: 'Website ↗', href: t.website } : null, { id: 'pipe', label: 'Open in pipeline', onClick: () => app.go('ma', 'pipeline', { platform: t._p, q: t.company }) }, { id: 'mod', label: `${esc(P.label)} module`, onClick: () => app.go(P.module) }].filter(Boolean),
+    actions: [modelAction(ctx, _b, t), t.website ? { label: 'Website ↗', href: t.website } : null, { id: 'pipe', label: 'Open in pipeline', onClick: () => app.go('ma', 'pipeline', { platform: t._p, id: t.id }) }, { id: 'mod', label: `${esc(P.label)} module`, onClick: () => app.go(P.module) }].filter(Boolean),
   });
 }
 
@@ -255,6 +345,42 @@ const shortSpread = s => { if (!s) return '—'; const x = String(s).replace(/\b
 const SIGNAL_COLOR = { Stressed: 'var(--sys-bad)', 'Refi due': 'var(--sys-warn)', Performing: 'var(--sys-good)', 'Public — reported': 'var(--sys-info)', 'No lender data': 'var(--sys-mute-2)' };
 const INTENSITY_COLOR = s => /very high/i.test(s) ? 'var(--sys-bad)' : /^high/i.test(s) ? 'var(--sys-orange)' : /medium/i.test(s) && !/low/i.test(s) ? 'var(--sys-warn)' : /low-medium/i.test(s) ? 'var(--sys-info)' : 'var(--sys-mute-2)';
 
+/* "From screen to price": each company's top-ranked add-on with a revenue estimate, priced, financed and modelled, with the
+   working behind every figure one click away. Leads the overview so the deal math is the first thing a deal team sees. */
+function dealDeskHtml(ctx, b) {
+  const { ui, fmt, esc } = ctx;
+  const best = p => b.targets.filter(t => t._p === p && !t._affil && t.revenue_est_usd > 0).sort((x, y) => (y.fit_score || 0) - (x.fit_score || 0))[0];
+  const picks = PKEYS.map(p => rankedFor(b, p).map(r => b.byId.get(r.id)).find(t => t && !t._affil && t.revenue_est_usd > 0) || best(p)).filter(Boolean).map(t => ({ t, E: estimateFor(b, t) })).filter(x => x.E);
+  if (!picks.length) return '';
+  const flow = [
+    ['Screen', `${fmt.num(b.targets.length)} add-ons and ${fmt.num(b.rivalRows.length)} rival companies, with sources`],
+    ['Estimate', 'Staff, revenue and EBITDA, each cross-checked and given a confidence'],
+    ['Price and finance', 'A likely price from current deal multiples, then debt, rate and equity check'],
+    ['Model', 'Returns, DCF, buy-and-build and sensitivity, downloadable to Excel'],
+  ];
+  const card = ({ t, E }) => { const P = PLAT[t._p], S = E.S;
+    return `<article class="sys-card ma-deal" data-co="" style="--co:${P.color}">
+      <div class="ma-deal-hd">${fmt.chip(`${P.label} add-on`, P.color)}<span class="ma-deal-fit">fit ${fmt.num(t.fit_score)}</span></div>
+      <h3 class="sys-card-title ma-deal-nm">${esc(t.company)}</h3>
+      <div class="ma-deal-sub">${esc(t.hq_city || '')}${t.hq_city ? ', ' : ''}${esc(t._state)}${E.emp != null ? ` · ${fmt.num(E.emp)} staff` : ''} · ${esc(t._owner.toLowerCase())}</div>
+      <dl class="ma-dl">
+        <div><dt>Revenue</dt><dd>${money$M(fmt, E.revM)}${Copy.EST}</dd></div>
+        <div><dt>EBITDA</dt><dd>${money$M(fmt, S.ebitda)}${Copy.EST}</dd></div>
+        <div><dt>Likely price</dt><dd>${E.band ? `${money$M(fmt, E.band.lo)}–${money$M(fmt, E.band.hi)}` : money$M(fmt, S.price)}${Copy.EST}</dd></div>
+        <div><dt>Debt</dt><dd>${money$M(fmt, S.debt)}${Copy.EST}</dd></div>
+        <div><dt>Equity check</dt><dd>${money$M(fmt, S.equity)}${Copy.EST}</dd></div>
+        <div><dt>Return a year</dt><dd>${pct1(S.irr)}${Copy.EST}</dd></div>
+      </dl>
+      ${howHtml(ctx, b, t, E)}
+      <div class="ma-deal-ft"><a class="sys-btn sys-btn--primary sys-btn--sm" href="${esc(E.hash)}">Model this deal →</a><button type="button" class="sys-btn sys-btn--secondary sys-btn--sm" data-desk="${esc(t.id)}">Profile</button></div>
+    </article>`; };
+  return `<div class="mt-12">${ui.panel({ title: 'From screen to price', accent: true,
+    sub: 'Each company’s top-ranked add-on with a revenue estimate, priced and financed at today’s market averages. Every figure shows how it was built.',
+    actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn" href="#/ma/pipeline">Price any target →</a>`,
+    body: `<ol class="ma-flow">${flow.map(([h, d], i) => `<li><span class="ma-flow-n sys-num">${i + 1}</span><div><b>${esc(h)}</b><span>${esc(d)}</span></div></li>`).join('')}</ol><div class="ma-deals">${picks.map(card).join('')}</div>`,
+    foot: `${ui.source('Add-on screens (ZoomInfo, company websites); listed peers (SEC filings); deal multiples and debt terms (GF Data, Capstone)', null, b.dm?.meta?.generated)}<span class="src">Return a year: sold at the price paid after five years, before any gain from merging (see the roll-up view).</span>` })}</div>`;
+}
+
 /* ═══ View 1: Overview ════════════════════════════════════════════════════ */
 async function overview(ctx) {
   const { el, ui, fmt, maps, charts, esc, app } = ctx; injectCss();
@@ -283,7 +409,7 @@ async function overview(ctx) {
     title: 'Acquisition engine',
     sub: `<b>${fmt.num(t1.length)} of ${fmt.num(T.length)} screened targets are Tier 1.</b> Most of the actionable pool sits in ${esc(PLAT[topP[0]].label)} and ${esc(PLAT[topP[1]].label)}; the median target is an est. ${fmt.money(medRev)} tuck-in.`,
     chips: `${fmt.chip('Screened ' + (b.cet?.meta?.generated || b.pp?.meta?.generated || '—'), 'var(--c-ma)')}${fmt.chip('Rubrics differ by company')}${fmt.chip('Revenue modelled est.')}`,
-    actions: `<a class="sys-btn sys-btn--secondary btn" href="#/ma/pipeline">Full pipeline →</a><a class="sys-btn sys-btn--secondary btn" href="#/ma/theses">Company theses</a>`,
+    actions: `<a class="sys-btn sys-btn--primary btn" href="#/deal/returns?p=typical">Acquisition model →</a><a class="sys-btn sys-btn--secondary btn" href="#/ma/pipeline">Full pipeline →</a><a class="sys-btn sys-btn--secondary btn" href="#/ma/theses">Company theses</a>`,
   }) + missingNote(ui, esc, b) +
   ui.kpis([
     { label: 'Targets screened', value: fmt.num(T.length), sub: PKEYS.map(p => `${PLAT[p].key.toUpperCase()} ${byP[p].length}`).join(' · '), color: 'var(--c-ma)' },
@@ -292,7 +418,7 @@ async function overview(ctx) {
     { label: 'Median target size', value: fmt.money(medRev), sub: `revenue est. · ${fmt.num(medEmp)} staff median`, color: 'var(--sys-info)' },
     { label: 'Rival companies tracked', value: fmt.num(rivals.length), sub: `${peBacked} PE-backed · ${stressed.length} under credit stress`, color: 'var(--sys-bad)' },
     { label: 'BSP add-ons completed', value: fmt.num(stats.add_ons), sub: named != null ? `${named} identified by name` : 'stated by BSP', color: 'var(--sys-brand)' },
-  ]) +
+  ]) + dealDeskHtml(ctx, b) +
   `<div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Where the targets are', cls: 'ma-fill', sub: 'Every screened add-on by company (size = fit tier); rings are BSP portfolio company HQs. Click a point to inspect.', body: `<div class="map" id="ma-map"></div>`, flush: true, foot: ui.source('ZoomInfo search and company websites (add-on target lists); BSP firm profile', null, b.cet?.meta?.generated) })}
     ${ui.panel({ title: 'This quarter’s top 10', sub: 'Each company’s #1 pick, then its #2, and so on (rubrics are not comparable across companies). Names that collide with a BSP company are held out.', body: `<div class="ma-top" id="ma-top10"></div><div id="ma-affil"></div>`, scroll: true, foot: `<span class="src">Ranking: portfolio company shortlists (top 10 for CET and Punctual Pros, top 8 for Frontline and Thomas Scientific), affiliation-flagged names removed and ranks re-numbered · reasons from screen authors</span>` })}
@@ -306,8 +432,9 @@ async function overview(ctx) {
 
   // Top 10
   const top = topTen(b);
-  el.querySelector('#ma-top10').innerHTML = top.map((x, i) => { const t = x.t, P = PLAT[x.p]; return `<div class="sys-card sys-card--link it" tabindex="0" role="button" data-co="" data-id="${esc(t.id)}" style="--co:${P.color}"><div class="rk sys-num">${i + 1}</div><div class="grow"><div class="sys-card-title nm">${esc(t.company)}</div><div class="sys-card-body why">${esc(whyFor(b, t))}</div><div class="sys-chips meta">${fmt.chip(P.label, P.color)}${fmt.chip(`#${x.rank} in ${P.label} list`)}${t.revenue_est_usd ? fmt.chip(`${fmt.money(t.revenue_est_usd)} est.`) : ''}${t.employees ? fmt.chip(`${fmt.num(t.employees)} staff`) : ''}${fmt.chip(t._owner, OWNER_COLOR[t._owner])}${fmt.chip(`${t.hq_city || ''}${t.hq_city ? ', ' : ''}${t._state}`)}</div></div><div class="sc">${fmt.score(t.fit_score)}</div></div>`; }).join('');
-  el.querySelectorAll('#ma-top10 .it').forEach(n => n.onclick = () => openTarget(ctx, b.byId.get(n.dataset.id)));
+  el.querySelector('#ma-top10').innerHTML = top.map((x, i) => { const t = x.t, P = PLAT[x.p]; return `<div class="sys-card sys-card--link it" tabindex="0" role="button" data-co="" data-id="${esc(t.id)}" style="--co:${P.color}"><div class="rk sys-num">${i + 1}</div><div class="grow"><div class="sys-card-title nm">${esc(t.company)}</div><div class="sys-card-body why">${esc(whyFor(b, t))}</div><div class="sys-chips meta">${fmt.chip(P.label, P.color)}${fmt.chip(`#${x.rank} in ${P.label} list`)}${t.revenue_est_usd ? fmt.chip(`${fmt.money(t.revenue_est_usd)} est.`) : ''}${(E => E && t.revenue_est_usd ? fmt.chip(E.band ? `likely price ${money$M(fmt, E.band.lo)}–${money$M(fmt, E.band.hi)} est.` : `price ${money$M(fmt, E.S.price)} est.`, 'var(--c-ma)') : '')(estimateFor(b, t))}${t.employees ? fmt.chip(`${fmt.num(t.employees)} staff`) : ''}${fmt.chip(t._owner, OWNER_COLOR[t._owner])}${fmt.chip(`${t.hq_city || ''}${t.hq_city ? ', ' : ''}${t._state}`)}</div></div><div class="sc">${fmt.score(t.fit_score)}</div></div>`; }).join('');
+  el.querySelectorAll('#ma-top10 .it').forEach(n => n.onclick = () => openTarget(ctx, b.byId.get(n.dataset.id), b));
+  el.querySelectorAll('[data-desk]').forEach(n => n.onclick = () => openTarget(ctx, b.byId.get(n.dataset.desk), b));
   // Affiliation bucket: names that collide with a BSP company are shown with their risk flags inline, never ranked.
   const affT = affilFor(b);
   el.querySelector('#ma-affil').innerHTML = affT.length ? `<div class="sys-card-label th-h mt-12">Verify affiliation · held out of ranking (${affT.length})</div>${affT.map(t => `<div class="sys-card sys-card--link it ma-affil" tabindex="0" role="button" data-co="" data-id="${esc(t.id)}" style="--co:var(--sys-bad)"><div class="rk sys-num">!</div><div class="grow"><div class="sys-card-title nm">${esc(t.company)}</div><div class="sys-chips meta">${fmt.chip(PLAT[t._p].label, PLAT[t._p].color)}${fmt.chip('name collision · verify', 'var(--sys-bad)')}${(t.risk_flags || []).map(r => fmt.chip(clip(r, 90), /collision|affiliat/i.test(r) ? 'var(--sys-bad)' : 'var(--sys-warn)')).join('')}</div></div><div class="sc">${fmt.score(t.fit_score)}</div></div>`).join('')}` : '';
@@ -443,12 +570,14 @@ function stageCell(fmt, esc, st) {
 async function pipeline(ctx) {
   const { el, ui, fmt, esc, app, params } = ctx; injectCss();
   const b = await loadBundle(ctx.data);
-  const sel = PKEYS.includes(params.platform) ? params.platform : 'all';
-  const q = String(params.q || '').trim();
+  const idT = params.id ? b.byId.get(params.id) : null; // a single target opened from a profile link or the model
+  const sel = PKEYS.includes(params.platform) ? params.platform : idT ? idT._p : 'all';
+  const q = idT ? String(idT.company) : String(params.q || '').trim();
   const showPass = params.pass === '1';
   const S = stageStore.read();
   let base = b.targets.filter(t => sel === 'all' || t._p === sel);
-  if (q) base = base.filter(t => String(t.company).toLowerCase().includes(q.toLowerCase()));
+  if (idT) base = base.filter(t => t.id === idT.id);
+  else if (q) base = base.filter(t => String(t.company).toLowerCase().includes(q.toLowerCase()));
   const passed = base.filter(t => stageOf(S, t.id).stage === 'Pass');
   const rows = showPass || q ? base : base.filter(t => stageOf(S, t.id).stage !== 'Pass');
   const t1 = rows.filter(t => t._tier === 'Tier 1').length, t2 = rows.filter(t => t._tier === 'Tier 2').length;
@@ -481,7 +610,7 @@ async function pipeline(ctx) {
   <div id="ma-tg"></div>
   <div class="sys-src src-line mt-8">${sel === 'all' ? 'Sources: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets (ZoomInfo company search, franchise directories, company websites)' : esc(clip(ceoFix(meta?.method || ''), 320))} · generated ${esc(meta?.generated || b.pp?.meta?.generated || '—')} · stages saved in this browser</div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'How to work this list', sub: 'Recommended sequence for deal teams', body: `<ol class="acts"><li><span><b>Filter to Tier 1–2 and founder/family-owned</b> for PRG outreach this quarter; density tuck-ins first, new-hub anchors only with a branch plan.</span></li><li><span><b>Set stage, owner and next-step date</b> in the row inspector (Screened → Contacted → Meeting → NDA → IOI, or Pass). Passed targets drop out of the default view.</span></li><li><span><b>Share the tracker</b> with ⇩ Tracker CSV; stages are kept in this browser only.</span></li><li><span><b>Check risk flags</b> in the inspector. ZoomInfo revenue is modeled, so confirm size in the first call. Never contact a target flagged “verify affiliation”.</span></li><li><span><b>Price it</b> on the Valuation tab: the calculator defaults to the company’s median target EBITDA.</span></li></ol>` })}
+    ${ui.panel({ title: 'How to work this list', sub: 'Recommended sequence for deal teams', body: `<ol class="acts"><li><span><b>Filter to Tier 1–2 and founder/family-owned</b> for PRG outreach this quarter; density tuck-ins first, new-hub anchors only with a branch plan.</span></li><li><span><b>Set stage, owner and next-step date</b> in the row inspector (Screened → Contacted → Meeting → NDA → IOI, or Pass). Passed targets drop out of the default view.</span></li><li><span><b>Share the tracker</b> with ⇩ Tracker CSV; stages are kept in this browser only.</span></li><li><span><b>Check risk flags</b> in the inspector. ZoomInfo revenue is modeled, so confirm size in the first call. Never contact a target flagged “verify affiliation”.</span></li><li><span><b>Price it</b> in the row inspector: Deal math shows the likely price, debt, equity check and return, and how each was estimated. Model this deal opens the full model, ready to download to Excel.</span></li></ol>` })}
     ${ui.panel({ title: 'Data caveats', sub: 'From the screen authors — read before outreach', body: `<ul class="bul">${(sel === 'all' ? [b.cet?.meta, b.pp?.meta, b.flts?.meta] : [meta]).filter(Boolean).flatMap(m => (m.caveats || []).slice(0, sel === 'all' ? 2 : 5)).map(c => `<li>${esc(clip(ceoFix(c), 260))}</li>`).join('') || '<li>—</li>'}</ul>` })}
   </div></div>`;
   ui.seg(el.querySelector('#ma-seg'), [{ value: 'all', label: `All (${b.targets.length})` }, ...PKEYS.map(p => ({ value: p, label: `${PLAT[p].label} (${b.targets.filter(t => t._p === p).length})` }))], sel, v => app.go('ma', 'pipeline', { ...(v === 'all' ? {} : { platform: v }), ...(showPass ? { pass: '1' } : {}) }));
@@ -497,7 +626,7 @@ async function pipeline(ctx) {
   // Ownership is normalised to 6 classes (raw text restored in the inspector); long FL/TS offering strings are shortened for the table.
   // Affiliation-flagged names carry the flag inline (brand line and Why column) so the warning is visible without opening the row.
   const items = rows.map(t => { const mx = DIM_MAX[t._p] || {}; const fb = {}; for (const [k, v] of Object.entries(t.fit_breakdown || {})) { const m = mx[k] || 20; fb[`${k} (${v}/${m})`] = Math.round(((num(v) || 0) / m) * 100); } const st = stageOf(S, t.id);
-    return { ...t, fit_breakdown: fb, ownership: t._owner, _ownRaw: t.ownership, specialties: shortList(t.specialties || t.trades || t.offerings || []), brands_or_franchise: t._affil ? `⚠ VERIFY AFFILIATION · ${clip(affilNote(t), 110)}` : t.brands_or_franchise, strategic_rationale: t._affil ? `⚠ Held out of ranking: ${clip(affilNote(t), 120)}` : clip(t.strategic_rationale, 95), _why: t.strategic_rationale, route_reach: t._reach ? `${t._reach} (${t._nodeMi} mi ${t._node})` : '', stage: st.stage, deal_owner: st.owner || '', next_date: st.next || '' }; });
+    return { ...t, fit_breakdown: fb, ownership: t._owner, _ownRaw: t.ownership, specialties: shortList(t.specialties || t.trades || t.offerings || []), brands_or_franchise: t._affil ? `⚠ VERIFY AFFILIATION · ${clip(affilNote(t), 110)}` : t.brands_or_franchise, strategic_rationale: t._affil ? `⚠ Held out of ranking: ${clip(affilNote(t), 120)}` : clip(t.strategic_rationale, 95), _why: t.strategic_rationale, route_reach: t._reach ? `${t._reach} (${t._nodeMi} mi ${t._node})` : '', stage: st.stage, deal_owner: st.owner || '', next_date: st.next || '', ...(E => ({ _price: E ? E.S.price : null, _sized: !!E?.sized }))(t._affil ? null : estimateFor(b, t)) }; });
   const byName = new Map(rows.map(t => [esc(t.company), t]));
   const bindStage = t => {
     const box = [...document.querySelectorAll('#inspector [data-stage-for]')].find(n => n.dataset.stageFor === t.id); if (!box) return;
@@ -514,14 +643,18 @@ async function pipeline(ctx) {
   const insp = { ...ctx.inspector, open: cfg => { const t = byName.get(cfg.title); if (t) { const st = stageOf(S, t.id);
     cfg = { ...cfg, sections: cfg.sections.map(sec => sec.label === 'Strategic rationale' ? { label: sec.label, html: `<div class="small text-2">${esc(t.strategic_rationale || '—')}</div>` } : sec.label === 'Next action' ? { label: 'Next action', html: `<div class="small text-2">${esc(t._affil ? `Do not contact. ${PLAT[t._p].label} CEO to confirm ownership / related-party status first; only if independent, re-score and set a stage.` : nextActionFor(t._p))}</div>` } : sec) };
     const i = cfg.sections.findIndex(sec => sec.label === 'Profile');
-    cfg.sections.splice(i + 1, 0, { label: 'Ownership detail', html: `<div class="small text-2">${esc(t.ownership || '—')}${t.ownership_notes ? ` · ${esc(t.ownership_notes)}` : ''}</div>` }, t._reach ? { label: 'Route reach', html: `<div class="small text-2">${fmt.chip(t._reach, REACH_COLOR[t._reach])} ${fmt.num(t._nodeMi)} mi from ${esc(t._node || 'nearest node')} (straight-line). Reach = ${esc(REACH_TXT[t._p])}.</div>` } : null);
+    cfg.sections.splice(i + 1, 0, { label: 'Ownership detail', html: `<div class="small text-2">${esc(t.ownership || '—')}${t.ownership_notes ? ` · ${esc(t.ownership_notes)}` : ''}</div>` }, t._reach ? { label: 'Route reach', html: `<div class="small text-2">${fmt.chip(t._reach, REACH_COLOR[t._reach])} ${fmt.num(t._nodeMi)} mi from ${esc(t._node || 'nearest node')} (straight-line). Reach = ${esc(REACH_TXT[t._p])}.</div>` } : null, dealSection(ctx, b, t));
     cfg.sections = cfg.sections.filter(Boolean);
+    cfg.actions = [modelAction(ctx, b, t), ...(cfg.actions || [])].filter(Boolean);
     cfg.sections.unshift({ label: 'Deal stage', html: `<div class="m-ma-insp ma-stage" data-stage-for="${esc(t.id)}"><label>Stage<select data-f="stage">${STAGES.map(s => `<option ${s === st.stage ? 'selected' : ''}>${s}</option>`).join('')}</select></label><label>Deal owner<input data-f="owner" type="text" maxlength="60" placeholder="e.g. PRG lead" value="${esc(st.owner || '')}"></label><label>Next step<input data-f="next" type="date" value="${esc(st.next || '')}"></label><div class="dim small">Saved in this browser${st.updated ? ` · last update ${esc(st.updated)}` : ''} · share with ⇩ Tracker CSV</div></div>` });
     if (t._affil) cfg.sections.unshift({ label: 'Verify affiliation · do not contact yet', html: ui.note(`<b>${esc(affilNote(t))}.</b> Held out of every ranking until ${esc(PLAT[t._p].label)} leadership confirms status (owned · related party · independent).`, 'warn') });
   } ctx.inspector.open(cfg); if (t) bindStage(t); } };
   // Platform + route reach share one column (reach applies to PP and CET only) to keep the table inside the panel.
   const extra = [{ key: 'platform', label: 'Portfolio company · reach', fmt: (v, r) => `${fmt.chip(v, PLAT[r._p]?.color)}${r._reach ? `<div class="small" style="margin-top:var(--sys-sp-1)"><span class="sys-dot" style="--co:${REACH_COLOR[r._reach]}" aria-hidden="true"></span> ${r._reach === 'Density tuck-in' ? 'Density' : 'New hub'} <span class="dim">· ${fmt.num(r._nodeMi)} mi ${esc(r._node || '')}</span></div>` : ''}` }];
   extra.push({ key: 'stage', label: 'Stage', fmt: (v, r) => `<span data-stage-cell="${esc(r.id)}">${stageCell(fmt, esc, stageOf(S, r.id))}</span>` });
+  // the price the acquisition model opens at (EBITDA at the sector margin × its entry multiple), first of the extra columns so it
+  // sits near revenue; the row opens the full working
+  extra.unshift({ key: '_price', label: 'Model price est.', num: true, fmt: (v, r) => v == null ? '<span class="dim">—</span>' : `${fmt.money(v * 1e6)}${r._sized ? '<span class="dim small"> sized</span>' : ''}` });
   renderTargets({ ...ctx, inspector: insp }, host, { items: Copy.targets(items), color: P?.color || 'var(--c-ma)', platformLabel: P ? P.label : 'Cross-portfolio', exportName: `ma_pipeline_${sel}`, pageSize: 40, extraColumns: extra });
   if (q && rows.length === 1) host.querySelector('#tg-table tbody tr[data-i]')?.click(); // opens the stage-aware inspector
 }
@@ -765,7 +898,7 @@ async function rivalsView(ctx) {
     title: 'Rival companies',
     sub: `<b>${stressed.length} of ${all.length} rivals show credit stress and ${refi.length} face debt maturing by 2027.</b> Stressed rivals sell rather than bid; the healthy consolidators set add-on prices.`,
     chips: `${fmt.chip('Marks: one lender’s slice', 'var(--sys-warn)')}${fmt.chip('Estimates labelled est.')}`,
-    actions: `<a class="sys-btn sys-btn--secondary btn" href="#/pe">Private equity →</a>`,
+    actions: `<a class="sys-btn sys-btn--secondary btn" href="#/pe">Private equity →</a><a class="sys-btn sys-btn--secondary btn" href="#/fin/methods">Methods and gaps</a>`,
   }) +
   ui.kpis([
     { label: 'Rival companies', value: fmt.num(all.length), sub: `${fmt.num(b.rivals.items?.length)} filings parsed`, color: 'var(--sys-bad)' },
@@ -780,7 +913,7 @@ async function rivalsView(ctx) {
   <div class="sys-src src-line mt-8">Sources: SEC EDGAR BDC schedules of investments (10-Q/10-K, N-PORT), issuer 10-Ks, Form D and SBA PPP FOIA (Competitor filings, ${esc(fmt.num(b.rivals.items?.length))} filings) · estimates labelled est. · generated ${esc(m.generated || '—')}</div>
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Competitive intensity by sector', sub: 'Private-equity heat map: most active sponsors per BSP company sector. Click a row for detail.', body: `<div class="intens" id="ma-heatrows"></div>`, foot: ui.source('Private-equity landscape: sector heatmap', null, b.pe?.meta?.generated) })}
-    ${ui.panel({ title: 'What the filings say', sub: 'Synthesis by the research team (competitor filings)', body: `<div class="fp">${(Array.isArray(m.financial_picture) ? m.financial_picture : [m.financial_picture]).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join('')}</div><div class="sys-card-label th-h">Where to look next</div><ul class="bul">${(m.next_pulls || []).slice(0, 5).map(x => `<li>${esc(x)}</li>`).join('')}</ul>`, scroll: true, foot: ui.source('SEC EDGAR (BDC 10-Q/10-K, N-PORT, 10-K, Form D), SBA PPP FOIA', 'https://efts.sec.gov/LATEST/search-index', m.generated) })}
+    ${ui.panel({ title: 'What the filings say', sub: 'Synthesis by the research team (competitor filings)', body: `<div class="fp">${(Array.isArray(m.financial_picture) ? m.financial_picture : [m.financial_picture]).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join('')}</div><div class="sys-card-label th-h">How rival figures are built</div><ul class="bul"><li><b>Lender filings.</b> Funds that lend to rivals list each loan, its size, its rate and what they think it is worth, which shows debt, stress and when it falls due.</li><li><b>Loan records.</b> Payroll in pandemic-era loan records, divided by the share of revenue spent on labour, gives a revenue range.</li><li><b>Annual reports.</b> Listed rivals report revenue, profit and headcount.</li><li><b>Headcount.</b> For private rivals, staff × typical revenue per employee, with the range stated. Each estimate carries its confidence; open a rival to see the working.</li></ul><div class="sys-card-label th-h">Where to look next</div><ul class="bul">${(m.next_pulls || []).slice(0, 5).map(x => `<li>${esc(x)}</li>`).join('')}</ul>`, scroll: true, foot: ui.source('SEC EDGAR (BDC 10-Q/10-K, N-PORT, 10-K, Form D), SBA PPP FOIA', 'https://efts.sec.gov/LATEST/search-index', m.generated) })}
   </div></div>`;
   ui.seg(el.querySelector('#ma-rseg'), [{ value: 'all', label: `All (${all.length})` }, ...Object.entries(OVERLAP).map(([k, o]) => ({ value: k, label: `${o.label} (${all.filter(r => r.overlapList.includes(k)).length})` }))], sel, v => app.go('ma', 'rivals', v === 'all' ? undefined : { o: v }));
   const columns = [
@@ -807,20 +940,66 @@ async function rivalsView(ctx) {
   app.index(all.map(r => ({ label: r.name, sub: `Rival company · ${r.owner}`, href: `#/ma/rivals?r=${r.id}`, kind: 'Rival', color: 'var(--sys-bad)' })));
   if (params.r) { const r = all.find(x => x.id === params.r); if (r) { tbl.select(r.id); openRival(ctx, b, r, peName); } }
 }
+/* A rival has no model preset, so "Model this deal" is a scenario link written with deal-lib's encode(): the typical
+   lower-middle-market deal with this rival's own figures laid over it (revenue, margin, price multiple and debt where the
+   filings give them; the model's market defaults where they do not). `for` names the rival on the model page. */
+function rivalScenario(b, r) {
+  const dm = b.dm, typ = (dm?.items || []).find(i => i.kind === 'preset' && i.id === 'typical');
+  if (!typ) return null;
+  const base = { ...dm.meta.base, ...typ.inputs }, lim = Object.fromEntries((dm.meta.inputs || []).map(i => [i.key, i]));
+  const secP = r.overlapList.map(o => OVERLAP[o]?.p).find(Boolean), sec = secP ? dmSector(b, secP) : null;
+  const revEst = r.rev ? r.rev / 1e6 : r.estRev ? parseRange(r.estRev.estimate) / 1e6 : null;
+  const ebEst = r.estEbitda ? parseRange(r.estEbitda.estimate) / 1e6 : null;
+  const why = {}; let rev = revEst, mg;
+  if (rev && ebEst) { mg = ebEst / rev * 100; why.mg = 'EBITDA estimate divided by revenue'; }
+  else if (rev && r.type === 'Public strategic' && r.margin > 0) { mg = r.margin; why.mg = `${r.marginNote || 'operating margin'}, reported (EBITDA runs a little higher)`; }
+  else if (rev) { mg = sec ? sec.margin_pct : base.mg; why.mg = sec ? `the model’s ${sec.label.toLowerCase()} margin` : 'the typical deal margin'; }
+  else if (ebEst) { mg = sec ? sec.margin_pct : base.mg; rev = ebEst / (mg / 100); why.rev = `backed out of the EBITDA estimate at a ${mg}% margin`; }
+  else return { none: 'The filings give no revenue or EBITDA figure to build a model on yet.' };
+  if (rev > lim.rev.max) return { none: 'Too large for this model (revenue above $5B); use it as a price benchmark instead.' };
+  const e = rev * mg / 100;
+  let em = typ.inputs.em; why.em = 'the average buyout multiple (GF Data)';
+  if (r.ev && e > 0) { em = r.ev / 1e6 / e; why.em = 'disclosed enterprise value divided by EBITDA'; }
+  else if (r.price && e > 0) { em = r.price / 1e6 / e; why.em = 'estimated deal price divided by EBITDA'; }
+  const debt = r.maxPar != null ? r.maxPar : r.ltd;
+  let lev = typ.inputs.lev; why.lev = 'typical deal debt (GF Data range)';
+  if (debt != null && e > 0) { lev = debt / 1e6 / e; why.lev = r.maxPar != null ? 'largest visible loan divided by EBITDA (one lender’s share, so a floor)' : 'reported long-term debt divided by EBITDA'; }
+  const clampK = (k, x) => Math.min(lim[k].max, Math.max(lim[k].min, x));
+  const vals = { ...typ.inputs, rev: Math.round(clampK('rev', rev) * 10) / 10, mg: Math.round(clampK('mg', mg) * 10) / 10, em: Math.round(clampK('em', em) * 10) / 10, lev: Math.round(clampK('lev', lev) * 100) / 100 };
+  vals.nd = Math.round(vals.rev * vals.mg / 100 * vals.lev * 10) / 10;
+  const hash = `#/deal/returns?${DL.encode({ preset: 'typical', vals }, typ.inputs)}&for=${encodeURIComponent(r.name)}`;
+  return { vals, hash, why, S: DL.dealSummary(vals), revSrc: r.rev ? `reported for FY${r.revFy}` : r.estRev ? 'analyst estimate' : null };
+}
+/** How a rival's figures were built: the analyst estimates with their basis and confidence, the reported and lender figures, then the model inputs. */
+function rivalHowHtml(ctx, b, r, M) {
+  const { esc, fmt } = ctx; const m = b.rivals?.meta || {};
+  const rows = [];
+  if (r.rev) rows.push({ k: `Revenue, FY${r.revFy}`, v: fmt.money(r.rev), how: 'Reported in the company’s annual report (SEC filing).', conf: 'high' });
+  if (r.margin != null) rows.push({ k: 'Operating margin', v: pctTxt(fmt, r.margin), how: `${esc(r.marginNote || 'Reported')}, from the filings.`, conf: r.type === 'Public strategic' ? 'high' : 'medium' });
+  for (const e of r.estRows || []) rows.push({ k: Copy.text(e.metric).replace(new RegExp(`^${(r.est || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*`, 'i'), '').replace(/^./, c => c.toUpperCase()) || e.metric, v: `${esc(e.estimate)}${Copy.EST}`, how: esc(Copy.text(e.basis)), conf: e.confidence });
+  if (r.maxPar) rows.push({ k: 'Largest visible loan', v: fmt.money(r.maxPar), how: `From lender filings (fund schedules of investments)${r.minMark != null ? `; lenders value it at ${fmt.num(r.minMark, 1)}% of face value` : ''}${r.spread ? `; priced at ${esc(Copy.credit(String(r.spread)))}` : ''}${r.maturity ? `; due ${esc(dayWords(r.maturity))}` : ''}. One lender’s share, so total debt is at least this.`, conf: 'high' });
+  if (M?.vals) rows.push({ k: 'Model inputs', v: `${money$M(fmt, M.vals.rev)} revenue · ${fmt.num(M.vals.mg, 1)}% margin${Copy.EST}`, how: `Revenue ${esc(M.why.rev || M.revSrc || 'from the estimate above')}; margin from ${esc(M.why.mg)}; price at ${mult1(M.vals.em)} from ${esc(M.why.em)}; debt at ${mult1(M.vals.lev)} from ${esc(M.why.lev)}. At these inputs the price is ${money$M(fmt, M.S.price)} and the equity check ${money$M(fmt, M.S.equity)}.`, conf: 'low' });
+  if (!rows.length) return '';
+  return `<details class="ma-how"><summary>How we estimated this</summary>
+    <ol class="ma-how-steps">${rows.map(x => `<li><div class="ma-how-h"><span class="ma-how-k">${esc(x.k)}</span><span class="ma-how-v">${x.v}</span>${confChip(esc, x.conf)}</div><div class="ma-how-t">${x.how}</div></li>`).join('')}</ol>
+    <div class="ma-how-foot">Latest filing ${esc(dayWords(r.latest))}; rival research as of ${esc(dayWords(m.generated))}. Methods: lender schedules of investments and fund holdings, loan records, annual reports and company headcount × revenue per employee. ${esc(CONF_RULE)} <a href="#/fin/rivals">Rival filings</a> · <a href="#/fin/methods">Methods and data gaps →</a></div>
+  </details>`;
+}
 function openRival(ctx, b, r, peName) {
   const { ui, fmt, esc, inspector, app } = ctx;
   const pe = r.pe ? (b.pe?.items || []).find(f => f.id === r.pe) : null;
+  const M = rivalScenario(b, r);
   const kfHtml = (kf, prefix) => Object.entries(kf || {}).filter(([k]) => !prefix || k.startsWith(prefix + '_')).slice(0, 12).map(([k, v]) => `${esc(Copy.field(prefix ? k.slice(prefix.length + 1) : k))}: ${esc(typeof v === 'number' ? v.toLocaleString('en-US') : Array.isArray(v) ? v.join(', ') : Copy.text(v))}`).join(' · ');
   inspector.open({
     title: esc(r.name), color: 'var(--sys-bad)', sub: `${esc(r.owner)} · ${esc(r.type)} · ${esc(r.signal)}`,
     sections: [
       { label: 'At a glance', html: ui.kv({ 'Competes with': r.overlapList.map(o => OVERLAP[o]?.label || o), Revenue: r.rev ? `${fmt.money(r.rev)} (FY${r.revFy}, reported)` : r.estRev ? `${esc(r.estRev.estimate)} est. <span class="dim small">${esc(r.estRev.basis)}</span>` : null, 'Operating margin': r.margin != null ? `${pctTxt(fmt, r.margin)} <span class="dim small">${esc(r.marginNote)}</span>` : null, 'EBITDA (est.)': r.estEbitda ? `${esc(r.estEbitda.estimate)} <span class="dim small">${esc(r.estEbitda.basis)}</span>` : null, 'Largest visible loan': r.maxPar ? fmt.money(r.maxPar) : null, 'Long-term debt': r.ltd ? fmt.money(r.ltd) : null, 'Lender marks': r.minMark != null ? `${fmt.num(r.minMark, 1)}${r.maxMark !== r.minMark ? `–${fmt.num(r.maxMark, 1)}` : ''} (% of par)` : null, Pricing: r.spread ? esc(r.spread) + (r.pik ? ' · PIK' : '') : null, 'Earliest maturity': r.maturity ? esc(r.maturity) : null, Valuation: r.ev ? `${fmt.money(r.ev)} EV` : r.price ? `${fmt.money(r.price)} deal est.` : null }) },
+      { label: 'Deal math', html: `<div class="m-ma-insp ma-dealsec">${M?.vals ? ui.kv({ 'Revenue': `${money$M(fmt, M.vals.rev)}${Copy.EST} <span class="dim small">${esc(M.why.rev || M.revSrc || '')}</span>`, 'EBITDA': `${money$M(fmt, M.S.ebitda)}${Copy.EST} <span class="dim small">${fmt.num(M.vals.mg, 1)}% margin</span>`, 'Price': `${money$M(fmt, M.S.price)}${Copy.EST} <span class="dim small">at ${mult1(M.vals.em)}</span>`, 'Debt and equity': `${money$M(fmt, M.S.debt)} debt${Copy.EST} <span class="dim small">${mult1(M.vals.lev)} EBITDA</span> · ${money$M(fmt, M.S.equity)} equity${Copy.EST}` }) : `<div class="small text-2">${esc(M?.none || 'The acquisition model’s assumptions are not loaded.')}</div>`}${rivalHowHtml(ctx, b, r, M)}${M?.hash ? `<div class="ma-deal-ft"><a class="sys-btn sys-btn--primary sys-btn--sm" href="${esc(M.hash)}">Model this deal →</a></div>` : ''}</div>` },
       pe ? { label: `Sponsor · ${pe.firm}`, html: `<div class="small text-2">${esc(clip(pe.threat_rationale || pe.strategy || '', 300))}</div><div class="mt-8">${fmt.chip(`threat ${pe.threat_level}`, pe.threat_level === 'high' ? 'var(--sys-bad)' : 'var(--sys-warn)')} ${fmt.chip(`competes for ${pe.competes_for}`)}</div>` } : null,
       { label: `Filings (${r.items.length})`, html: `<div class="m-ma-insp">${r.items.map(({ it, multi }) => `<div class="it"><div class="t">${esc(Copy.text(it.title))}</div><div class="d">${esc(it.filed_or_dated)} · ${esc(Copy.text(it.filer_or_source_agency || ''))} · ${esc(Copy.category(it.category))} · conf. ${esc(it.confidence)}</div><div class="w">${esc(Copy.text(it.what_it_tells_us || ''))}</div><div class="kf">${kfHtml(it.key_figures, multi ? r.prefix : null)}</div>${it.source_url ? `<div class="kf"><a href="${esc(it.source_url)}" target="_blank" rel="noopener">${esc(fmt.host(it.source_url) || 'source')} ↗</a></div>` : ''}</div>`).join('')}</div>` },
-      r.estRows?.length ? { label: 'Analyst estimates', html: `<ul class="bul m-ma-insp">${r.estRows.map(e => `<li><b>${esc(e.metric)}</b>: ${esc(e.estimate)} <span class="dim">(${esc(e.confidence)})</span></li>`).join('')}</ul>` } : null,
       { label: 'Next action', html: `<div class="small text-2">${esc(r.signal === 'Stressed' ? 'Likely seller rather than bidder: map its branches in BSP portfolio company counties and approach its lenders or sponsor about carve-outs of non-core regions.' : r.signal === 'Refi due' ? 'Refinancing due soon: watch for a sale process or asset disposals; prepare a carve-out bid for overlapping branches.' : r.type === 'Public strategic' ? 'Use as a margin/scale benchmark and a potential exit buyer; track its M&A for price discovery.' : r.alsoTarget ? 'Also on a BSP target list: treat as a possible acquisition, not only a competitor.' : 'Well-financed bidder: avoid auctions it will contest; win proprietary deals on speed and operating credibility.')}</div>` },
     ].filter(Boolean),
-    actions: [{ id: 'pe', label: 'Private equity', onClick: () => app.go('pe') }],
+    actions: [M?.hash ? { id: 'model', label: 'Model this deal', onClick: () => { location.hash = M.hash; } } : null, { id: 'pe', label: 'Private equity', onClick: () => app.go('pe') }].filter(Boolean),
   });
 }
 
@@ -854,7 +1033,7 @@ async function valuation(ctx) {
   `<div class="grid grid-main mt-12">
     <div class="col gap-12">${ui.panel({ title: 'Sector medians by BSP portfolio company', sub: 'Click a row for what it implies for the BSP company', body: `<div id="ma-sec"></div>`, flush: false, foot: ui.source('SEC EDGAR XBRL company facts (public comparables, sector benchmarks)', 'https://www.sec.gov/edgar/search/', c?.meta?.generated) })}
     ${ui.panel({ title: 'Margin vs growth regime by sector', sub: 'Median EBITDA margin (latest FY) and median revenue CAGR FY2023 → latest', body: `<div class="th-two"><div><div class="sys-card-label th-h">EBITDA margin</div>${charts.hbar(secRows.map(s => ({ label: s.sector, value: s.em, color: s.em < 0 ? 'var(--sys-bad)' : 'var(--sys-good)' })).sort((x, y) => y.value - x.value), { labelW: 150, fmt: v => pctTxt(fmt, v) })}</div><div><div class="sys-card-label th-h">Revenue CAGR</div>${charts.hbar(secRows.map(s => ({ label: s.sector, value: Math.max(0, s.cagr ?? 0), color: 'var(--co-cet)' })).sort((x, y) => y.value - x.value), { labelW: 150, fmt: v => pctTxt(fmt, v) })}</div></div><div class="soft mt-8">Trades (CET, PP) are the growth engine with thin-to-mid margins; lab distribution and agencies are low-growth. ${secRows.some(s => (s.cagr ?? 0) < 0) ? `Negative CAGRs shown as zero: ${esc(secRows.filter(s => (s.cagr ?? 0) < 0).map(s => `${s.sector} ${pctTxt(fmt, s.cagr)}`).join(', '))}.` : ''}</div>`, foot: ui.source('Public comparables', null, c?.meta?.generated) })}</div>
-    ${ui.panel({ title: 'Implied value calculator', sub: 'Size an add-on and the value created by rolling it into a company', accent: true, body: `<div class="calc">
+    ${ui.panel({ title: 'Implied value calculator', sub: 'Size an add-on and the value created by rolling it into a company', accent: true, actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn" href="#/deal/rollup?p=typical">Full model →</a>`, body: `<div class="calc">
         <label>Add-on EBITDA ($M)<input type="number" id="c-ebitda" value="1" min="0.1" max="500" step="0.1"><span class="soft" id="c-ebitda-note"></span></label>
         <label>Benchmark sector<select id="c-sector">${secRows.map(s => `<option value="${esc(s.id)}">${esc(s.sector)}</option>`).join('')}</select></label>
         <label>Entry multiple <span class="v" id="c-mult-v">7.0x</span><input type="range" id="c-mult" min="5" max="12" step="0.5" value="7"></label>

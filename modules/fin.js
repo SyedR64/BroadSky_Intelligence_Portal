@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261008192515';
+import * as Copy from './copy.js?v=20261009070649';
 /* ═══════════════════════════════════════════════════════════════════════════
    Filings & financials — portfolio-wide financial and regulatory intelligence.
    BSP's own SEC filings (Form D / ADV), each platform's public
@@ -105,7 +105,7 @@ const clip = (t, n) => { const x = clean(t); if (x.length <= n) return x; const 
 const shortEst = s => String(s || '').replace(/\s*\([^)]*\)/g, '').split(/;\s/)[0].trim();
 
 function injectCss() {
-  if (!document.getElementById('css-fin')) { const l = document.createElement('link'); l.id = 'css-fin'; l.rel = 'stylesheet'; l.href = 'modules/fin.css?v=20261008192515'; document.head.appendChild(l); }
+  if (!document.getElementById('css-fin')) { const l = document.createElement('link'); l.id = 'css-fin'; l.rel = 'stylesheet'; l.href = 'modules/fin.css?v=20261009070649'; document.head.appendChild(l); }
 }
 
 /* ── data layer ─────────────────────────────────────────────────────────── */
@@ -816,6 +816,7 @@ async function rivalsView(ctx) {
     title: 'Rival company financials',
     sub: `${esc(Copy.credit(sentences(fp[0], 2)))}`,
     chips: `${fmt.chip(`${groups.length} rival companies`, 'var(--c-pe)')}${fmt.chip('Marks: one lender slice', 'var(--sys-warn)')}${fmt.chip('Ratings not yet retrieved', 'var(--sys-mute)')}`,
+    actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/ma/rivals">Rival profiles and deal math →</a>`,
   })}
   ${ui.kpis([
     { label: 'Rival companies', value: fmt.num(groups.length), sub: `${fmt.num(rv.items.length)} filings · ${overlaps.length} BSP sectors`, color: 'var(--c-pe)' },
@@ -922,6 +923,7 @@ async function methodsView(ctx) {
     title: 'Methods & gaps',
     sub: `Every figure comes from a public filing and a stated formula; private-company revenue, EBITDA and leverage stay estimates. ${fmt.num(gaps.length)} data gaps map to ${fmt.num(pulls.length)} next pulls.`,
     chips: `${fmt.chip(`${present.length} of ${dsList.length} sources`, present.length < dsList.length ? 'var(--sys-warn)' : 'var(--sys-good)')}${fmt.chip('Public records only', 'var(--c-fin)')}`,
+    actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/ma/overview">Acquisition engine →</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/deal/returns?p=typical">Acquisition model</a>`,
   })}
   ${ui.kpis([
     { label: 'Sources', value: `${present.length}/${dsList.length}`, sub: dsList.filter(x => !x.d).map(x => x.short).join(', ') ? `pending: ${esc(dsList.filter(x => !x.d).map(x => x.short).join(', '))}` : 'all loaded', color: present.length < dsList.length ? 'var(--sys-warn)' : 'var(--sys-good)' },
