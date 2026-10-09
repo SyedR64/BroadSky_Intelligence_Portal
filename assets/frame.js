@@ -7,7 +7,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261009173940';
+       import { Frame } from '../../assets/frame.js?v=20261009175029';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
@@ -40,9 +40,9 @@
      humanize true|'observe'|false                 (default 'observe': one pass now, then on DOM changes)
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* The site lives at bspdesk.vercel.app. Old GitHub Pages links forward there, keeping the page, query and portal view. */
-export const HOME = 'https://bspdesk.vercel.app/';
-if (location.hostname === 'syedr64.github.io') location.replace(HOME + location.pathname.replace(/^\/BroadSky_Intelligence_Portal\/?/, '') + location.search + location.hash);
+/* The site lives at broadsky-desk.vercel.app. Older addresses (GitHub Pages, the project's first Vercel name) forward there, keeping the page, query and portal view. */
+export const HOME = 'https://broadsky-desk.vercel.app/';
+if (location.hostname === 'syedr64.github.io' || location.hostname === 'bspdesk.vercel.app') location.replace(HOME + location.pathname.replace(/^\/BroadSky_Intelligence_Portal\/?/, '') + location.search + location.hash);
 
 const SELF = new URL(import.meta.url);
 const ROOT = new URL('../', SELF).href;                 // site root from any page depth

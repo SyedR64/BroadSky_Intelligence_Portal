@@ -360,7 +360,7 @@ def test_cors_preflight_and_origin_rules(env):
     assert r.headers['access-control-allow-methods'] == 'GET, POST, OPTIONS'
     assert r.headers['access-control-allow-headers'] == 'Content-Type, Accept'
     assert r.headers['access-control-max-age'] == '86400'
-    for o in ('http://127.0.0.1:8765', 'http://localhost:8765', 'https://bspdesk.vercel.app'):
+    for o in ('http://127.0.0.1:8765', 'http://localhost:8765', 'https://broadsky-desk.vercel.app'):
         assert httpx.options(base + '/chat', headers={'Origin': o, **pre}).status_code == 204
     r = httpx.options(base + '/chat', headers={'Origin': EVIL, **pre})
     assert r.status_code == 403 and 'access-control-allow-origin' not in r.headers

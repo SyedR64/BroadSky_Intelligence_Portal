@@ -584,5 +584,5 @@ export const App = {
     App.route();
   },
 };
-// Guard: assets/components.js imports ./core.js?v=20261009173940 without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
+// Guard: assets/components.js imports ./core.js?v=20261009175029 without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
 window.BSP = window.BSP || { Data, Fmt, UI, Maps, Charts, Live, Tour, App, Inspector, Theme };

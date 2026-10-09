@@ -2,7 +2,7 @@
 
 BSP Desk is a concept workspace for the Portfolio Resource Group (PRG) at **Broad Sky Partners (BSP)**. It turns public data into growth, add-on and operating ideas for six portfolio companies. Each company also gets a concept website and an "OS": a bundle of proven software and AI tools. Every number carries a source. Estimates are marked est.; sample figures are marked illustrative.
 
-**Live site:** https://bspdesk.vercel.app/ (the old GitHub Pages address forwards there)
+**Live site:** https://broadsky-desk.vercel.app/ (the old GitHub Pages address forwards there)
 
 Concept by Syed Rahman for the Portfolio Resource Group at Broad Sky Partners (BSP). Not an official company site.
 

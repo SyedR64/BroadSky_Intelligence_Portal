@@ -2,7 +2,7 @@
    (CET growth plan, opportunity radar, wastewater-plant screen, add-on screen, filings review,
    county fit model, sponsor landscape, firm profile, GridOS evidence base, portfolio agent model).
    The page frame (top bar, concept notice, breadcrumb, footer) comes from assets/frame.js. */
-import { humanizeText } from '../../assets/frame.js?v=20261009173940';
+import { humanizeText } from '../../assets/frame.js?v=20261009175029';
 
 const NE = ['MA', 'CT', 'RI', 'NH', 'ME', 'VT'];
 const STATE_NAME = { MA: 'Massachusetts', CT: 'Connecticut', RI: 'Rhode Island', NH: 'New Hampshire', ME: 'Maine', VT: 'Vermont' };
