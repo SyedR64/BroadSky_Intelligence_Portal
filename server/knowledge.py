@@ -194,5 +194,10 @@ def get_kb():
     return _kb['kb']
 
 
+def loaded_kb():
+    """The knowledge base if it is already open, else None (does not open it)."""
+    return _kb['kb']
+
+
 def kb_error():
     return _kb['error']
