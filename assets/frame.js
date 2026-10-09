@@ -7,7 +7,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261009185324';
+       import { Frame } from '../../assets/frame.js?v=20261009190627';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
@@ -42,7 +42,7 @@
 
 /* The site lives at broadsky-agent.vercel.app. Older addresses (GitHub Pages and the project's earlier Vercel names) forward there, keeping the page, query and portal view. */
 export const HOME = 'https://broadsky-agent.vercel.app/';
-if (['syedr64.github.io', 'bspdesk.vercel.app', 'broadsky-desk.vercel.app'].includes(location.hostname)) location.replace(HOME + location.pathname.replace(/^\/BroadSky_Intelligence_Portal\/?/, '') + location.search + location.hash);
+if (['syedr64.github.io', 'bspdesk.vercel.app', 'broadsky-desk.vercel.app'].includes(location.hostname)) location.replace(HOME + location.pathname.replace(/^\/(BroadSky_Intelligence_Portal\/?)?/, '') + location.search + location.hash);
 
 const SELF = new URL(import.meta.url);
 const ROOT = new URL('../', SELF).href;                 // site root from any page depth

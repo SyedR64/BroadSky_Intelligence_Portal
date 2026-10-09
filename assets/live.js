@@ -1,6 +1,6 @@
 /* Live2 — read the nightly snapshots written by scripts/refresh_live.py (data/live/<name>.json).
    Use when a live browser-side API call fails:
-     import { Live2 } from '../assets/live.js?v=20261009185324';
+     import { Live2 } from '../assets/live.js?v=20261009190627';
      const alerts = await Live2.fallback(() => ctx.live.nwsAlerts('PA'), 'nws_alerts', s => s.items.filter(a => a.state === 'PA'));
    Snapshots: nws_alerts, forecast_hubs, usaspending_trades, echo_npdes_majors, census_permits, manifest. */
 const BASE = new URL('.', import.meta.url).href.replace(/assets\/$/, '');

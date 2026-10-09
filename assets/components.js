@@ -1,5 +1,5 @@
 /* Shared, higher-level components used by several modules (targets, filings, opportunities). */
-import { esc } from './core.js?v=20261009185324';
+import { esc } from './core.js?v=20261009190627';
 
 const num = v => (v == null || isNaN(v)) ? null : Number(v);
 const fmtFig = x => x == null ? '—' : typeof x === 'boolean' ? (x ? 'yes' : 'no') : typeof x === 'number' ? x.toLocaleString() : typeof x === 'object' ? (Array.isArray(x) ? x.map(fmtFig).join(', ') : Object.entries(x).map(([k, v]) => `${k} ${fmtFig(v)}`).join('; ')) : String(x);
