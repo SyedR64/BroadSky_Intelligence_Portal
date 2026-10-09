@@ -143,6 +143,21 @@ class KnowledgeBase:
                 o['text'] = text_of.get(o['chunk_id'], '')
         return out
 
+    def pinned(self, url, text):
+        """The passage of the document at url that best matches text (most query words), as a search hit; None if absent."""
+        if not hasattr(self, '_by_url'):
+            self._by_url = {d['url'].rstrip('/'): i for i, d in self.docs.items()}
+        doc_id = self._by_url.get(url.rstrip('/'))
+        if doc_id is None:
+            return None
+        words = {w for w in TOKEN_RX.findall(text.lower()) if w not in STOP}
+        with self.lock:
+            rows = self.con.execute('SELECT id, text FROM chunks WHERE doc_id = ? ORDER BY ord', (doc_id,)).fetchall()
+        if not rows:
+            return None
+        cid, chunk = max(rows, key=lambda r: (sum(1 for w in words if w in r[1].lower()), len(r[1])))
+        return {'chunk_id': cid, 'doc': self.docs[doc_id], 'score': 1.0, 'text': chunk}
+
     def document(self, doc_id, max_chars=9000):
         """The document's text (its chunks in order), clipped to max_chars."""
         doc = self.docs.get(doc_id)

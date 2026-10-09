@@ -281,7 +281,28 @@ def firm_page_text(r):
     visible page (minus header, footer and navigation) when it says noticeably more."""
     text = extract(r)[1]
     full = strip_tags(re.sub(r'<(header|footer|nav)[\s\S]*?</\1>', ' ', r['body'], flags=re.I))
-    return full if len(full) > 1.3 * len(text) else text
+    text = compact_lines(full if len(full) > 1.3 * len(text) else text)
+    # the site's menu ("Strategy · Investments · Team · ESG · Contact · LP Login") leads every page; it is not content
+    return re.sub(r'^(?:(?:Broad Sky Partners|Strategy|Investments|Team|ESG|Contact|LP Login)(?:\s*·\s*|\s+|$))+', '', text).strip()
+
+
+def compact_lines(text):
+    """Runs of short lines (a roster of names and titles) joined as 'Tyler Zachem · CEO and Partner · …', so a whole roster
+    stays in one passage instead of spreading thin across several."""
+    out, run = [], []
+    for ln in (l.strip() for l in text.split('\n')):
+        if not ln:
+            continue
+        if len(ln) <= 60:
+            run.append(ln)
+            continue
+        if run:
+            out.append(' · '.join(run))
+            run = []
+        out.append(ln)
+    if run:
+        out.append(' · '.join(run))
+    return '\n\n'.join(out)
 
 
 def src_firm(F):
@@ -316,12 +337,15 @@ def src_firm(F):
             if typ == 'team':
                 title = f'{title}, Broad Sky Partners' if title else title
             body = '\n'.join(filter(None, [text] + extra))
-            if len(body) < 40:
-                pg = F.get(it.get('link'))
+            if len(body) < 40:   # short bios (executive board) live only in the page layout
+                pg = F.get(it.get('link'), max_age_days=1)
                 if pg['ok']:
-                    body = extract(pg)[1] or body
+                    body = re.sub(r'\s*·?\s*Back to team\s*$', '', firm_page_text(pg)) or body
+            # Section pages, bios and investment pages are kept current, so they carry their last update; news posts keep their publish date.
+            section = re.search(r'broadskypartners\.com/(|team|strategy|news|esg|contact|home/investments)/?$', it.get('link') or '')
+            when = it.get('modified') or it.get('date') if typ != 'pages' or section else it.get('date')
             if body:
-                out.append(doc('firm', kind, title, it.get('link'), body, publisher='Broad Sky Partners', date=it.get('date'), key=f'firm-{typ}-{it.get("id")}'))
+                out.append(doc('firm', kind, title, it.get('link'), body, publisher='Broad Sky Partners', date=when, key=f'firm-{typ}-{it.get("id")}'))
     for page in ('https://broadskypartners.com/', 'https://broadskypartners.com/team/', 'https://broadskypartners.com/home/investments/',
                  'https://broadskypartners.com/strategy/', 'https://broadskypartners.com/news/'):
         r = F.get(page, max_age_days=1)
