@@ -167,6 +167,35 @@ export function football(p, srcs) {
   return { rows: out, price: e0 * p.em, e0 };
 }
 
+/* ── Screened add-on targets: one rule for the model's add-on presets, the acquisition engine and the landing page,
+   so a target's price, debt and return read the same everywhere. Additive helpers; lbo() and the input keys are unchanged.
+   base = deal_model meta.base, td = meta.target_defaults, sec = a deal_model sector item, parent = the portfolio
+   company preset's inputs, revM = the target's revenue in $M. ── */
+export function targetVals(base, td, sec, parent, revM) {
+  const rev = Math.round(revM * 10) / 10, e = rev * sec.margin_pct / 100;
+  return { ...base, rev, mg: sec.margin_pct, gr: sec.growth_pct, em: td.em, lev: td.lev, ir: td.ir, dm: td.dm, ae: td.ae, xm: td.xm, am: td.em, n: td.n,
+    nd: Math.round(e * td.lev * 10) / 10, tm: td.xm, ce: parent.ce, cm: parent.em, ra: Math.round(e * 100) / 100, rm: td.em, rx: parent.xm, wacc: parent.wacc };
+}
+/* The multiple range that deals of this size fetch, read from the deal_model benchmark items (bench). The band is
+   picked by the price at the model's entry multiple: under $25M, $25M to $100M, or larger. e = EBITDA in $M. */
+export function priceBand(e, em, bench) {
+  const B = id => (bench || []).find(b => b.id === id) || null;
+  const ev = e * em, small = B('b-small'), mid = B('b-typ-prem'), avg = B('b-entry-avg'), big = B('b-large');
+  let lo, hi, ids, label;
+  if (ev < 25 && small) { lo = small.low; hi = small.high; ids = [small]; label = 'average for deals under $25M of value'; }
+  else if (ev < 100 && mid) { lo = mid.low; hi = mid.high; ids = [mid]; label = 'typical to premium middle-market deals'; }
+  else if (avg && big) { lo = avg.value; hi = big.value; ids = [avg, big]; label = 'average buyout to deals of $100M to $250M'; }
+  else return null;
+  return { mLo: lo, mHi: hi, lo: e * lo, hi: e * hi, label, source_ids: [...new Set(ids.flatMap(b => b.source_ids || []))], inBand: em >= lo - 1e-9 && em <= hi + 1e-9 };
+}
+/* Headline deal math for one set of inputs ($M): price, fees, debt, equity check and the return if sold at the exit
+   multiple after the hold. Every figure comes from lbo(), so it matches the returns view to the cent. */
+export function dealSummary(p) {
+  const R = lbo(p);
+  return { ebitda: R.ebitda[0], price: R.ev0, fees: R.fees, debt: R.debt0, equity: R.eq0, cost: R.ev0 + R.fees, eqShare: R.ev0 + R.fees > 0 ? R.eq0 / (R.ev0 + R.fees) : null,
+    cover: R.int[1] > 0 ? R.ebitda[1] / R.int[1] : null, irr: R.irr, moic: R.moic, years: R.N, exitEV: R.exitEV };
+}
+
 /* ── Share link: preset id plus only the inputs that differ from it ── */
 const r4 = v => Math.round(v * 10000) / 10000;
 export function encode(state, presetVals) {

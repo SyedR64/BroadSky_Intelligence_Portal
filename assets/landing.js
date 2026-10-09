@@ -86,6 +86,54 @@ function initNumbers() {
   io2.observe(sec);
 }
 
+/* ── acquisition engine: the two worked examples ───────────────────────────────
+   The cards paint with the figures written in index.html, then recompute them from the same files and the same deal-lib
+   functions the portal uses (targetVals, priceBand, dealSummary), so the landing page and the acquisition engine agree. */
+const money = n => { if (n == null || !isFinite(n)) return '—'; const a = Math.abs(n); return '$' + (a >= 1e9 ? (n / 1e9).toFixed(1) + 'B' : a >= 1e6 ? (n / 1e6).toFixed(a >= 1e8 ? 0 : 1) + 'M' : a >= 1e3 ? (n / 1e3).toFixed(a >= 1e5 ? 0 : 1) + 'K' : String(Math.round(n))); };
+const M$ = v => money(v * 1e6);
+const x1 = v => `${Number(v).toFixed(1)}x`;
+const EST_B = '<span class="sys-est">est.</span>';
+const DEAL_PEER = { cet: ['commercial_electrical_energy', 'listed electrical contractors'], pp: ['residential_home_services', 'listed residential-services companies'], fl: ['legal_bpo_managed_services', 'listed legal and managed-services firms'], ts: ['lab_distribution', 'listed lab distributors'] };
+const DEAL_CO = { cet: 'CET', pp: 'Punctual Pros', fl: 'Frontline', ts: 'Thomas Scientific' };
+function initDeals() {
+  const cards = $$('[data-deal]'); if (!cards.length) return;
+  let done = false;
+  const run = async () => {
+    if (done) return; done = true;
+    const get = url => fetch(ROOT + url, { cache: 'force-cache' }).then(r => r.ok ? r.json() : null).catch(() => null);
+    const [dm, cet, pp, flts, comps, L] = await Promise.all(['deal_model', 'ma_targets_cet', 'ma_targets_pp', 'ma_targets_fl_ts', 'public_comps'].map(n => get(`data/research/${n}.json`)).concat(import(ROOT + 'modules/deal-lib.js?v=20261009070649').catch(() => null)));
+    if (!dm?.meta || !L?.targetVals) return;
+    const all = [...(cet?.items || []).map(t => ({ ...t, _p: 'cet' })), ...(pp?.items || []).map(t => ({ ...t, _p: 'pp' })), ...(flts?.items || []).map(t => ({ ...t, _p: t.platform === 'frontline' ? 'fl' : 'ts' }))];
+    for (const card of cards) {
+      try {
+        const t = all.find(x => x.id === card.dataset.deal); if (!t || !(t.revenue_est_usd > 0)) continue;
+        const sec = dm.items.find(i => i.kind === 'sector' && i.co === t._p), par = dm.items.find(i => i.kind === 'preset' && i.co === t._p); if (!sec || !par) continue;
+        const td = dm.meta.target_defaults, revM = t.revenue_est_usd / 1e6;
+        const v = L.targetVals(dm.meta.base, td, sec, par.inputs, revM), S = L.dealSummary(v);
+        const band = L.priceBand(S.ebitda, v.em, dm.items.filter(i => i.kind === 'benchmark'));
+        const peer = comps?.meta?.sector_benchmarks?.[DEAL_PEER[t._p][0]], rpe = peer?.median_revenue_per_employee_usd, emp = t.employees;
+        const ceil = emp && rpe ? emp * rpe / 1e6 : null, ratio = ceil ? revM / ceil : null;
+        const revConf = ratio != null && ratio >= 0.25 && ratio <= 1 ? 'Medium' : 'Low';
+        const irr = S.irr == null ? 'n/m' : `${(S.irr * 100).toFixed(1)}%`;
+        const price = band ? `${M$(band.lo)}–${M$(band.hi)}` : M$(S.price);
+        const set = (f, html) => { const el = $(`[data-f="${f}"]`, card); if (el) el.innerHTML = html; };
+        set('fit', esc(t.fit_score)); if (emp) set('staff', esc(fmtN(emp)));
+        set('math', [['Revenue', M$(revM)], ['EBITDA', M$(S.ebitda)], ['Likely price', price], ['Debt', M$(S.debt)], ['Equity check', M$(S.equity)], ['Return a year', irr]].map(([k, x]) => `<div><dt>${k}</dt><dd>${esc(x)}${EST_B}</dd></div>`).join(''));
+        set('how', [
+          emp ? `<b>Staff: ${esc(fmtN(emp))}.</b> From a company database search (ZoomInfo). <i>Medium confidence.</i>` : '',
+          `<b>Revenue: ${esc(M$(revM))} ${EST_B}</b> Modelled by ZoomInfo, not reported.${ceil ? ` Check: ${esc(fmtN(emp))} staff × ${esc(money(rpe))} revenue per employee at ${esc(DEAL_PEER[t._p][1])} = ${esc(M$(ceil))} ceiling; the estimate is ${Math.round(ratio * 100)}% of that rate.` : ''} <i>${revConf} confidence.</i>`,
+          `<b>EBITDA: ${esc(M$(S.ebitda))} ${EST_B}</b> Revenue × ${esc(sec.margin_pct)}%. ${esc(sec.basis)} <i>Low confidence.</i>`,
+          band ? `<b>Likely price: ${esc(price)} ${EST_B}</b> EBITDA × ${x1(band.mLo)} to ${x1(band.mHi)}, the ${esc(band.label)} (GF Data). The model starts at ${x1(v.em)}: ${esc(M$(S.price))}. <i>Low confidence.</i>` : '',
+          `<b>Financing: ${esc(M$(S.debt))} debt, ${esc(M$(S.equity))} equity ${EST_B}</b> Debt of ${x1(td.lev)} EBITDA at ${esc(td.ir)}%, the current market averages (GF Data), plus ${esc(v.fee)}% deal fees. <i>Market average.</i>`,
+          `<b>Return: ${esc(irr)} a year ${EST_B}</b> Sold at the same ${x1(v.xm)} after ${S.years} years, before any gain from merging into ${esc(DEAL_CO[t._p])}. <i>Low confidence.</i>`,
+        ].filter(Boolean).map(h => `<li>${h}</li>`).join(''));
+      } catch { /* keep the figures written in the page */ }
+    }
+  };
+  const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); run(); } }, { rootMargin: '700px 0px' });
+  cards.forEach(c => io.observe(c));
+}
+
 /* ── reveal on scroll ──────────────────────────────────────────────────────── */
 function initReveal(sel) {
   if (reduced() || !('IntersectionObserver' in window)) return;
@@ -292,7 +340,7 @@ function initPreviews() {
 const REVEAL = '.sys-section .sys-grid > *, .sys-section .sys-kpis, .lp-stage, .lp-video, .lp-bridge, .lp-pr, .sys-cta-in';
 export const Landing = {
   init() {
-    initAsk(); initSteps(); initNumbers(); initTour(); initBriefing();
+    initAsk(); initSteps(); initNumbers(); initDeals(); initTour(); initBriefing();
     initReveal(REVEAL);
   },
   attachChat(inst) {

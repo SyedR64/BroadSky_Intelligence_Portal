@@ -135,3 +135,34 @@
   .m-deal .dm-yt th,.m-deal .dm-yt td{padding:7px 8px}
 }
 @media (max-width:560px){.m-deal .dm-right .sys-kpis>:nth-child(3):last-child{grid-column:span 2}}
+
+/* market benchmark under each price and financing input, and in the formula bar */
+.m-deal .dm-mkt{display:block;margin-top:3px;font:500 var(--sys-fs-xs)/1.35 var(--sys-font);letter-spacing:0;text-transform:none;color:var(--sys-info-ink);white-space:normal}
+.m-deal .dm-mkt--a{color:var(--sys-mute)}
+.m-deal .dm-fx .dm-mkt{display:inline;margin:0}
+
+/* financing terms table: term, this deal, market benchmark, source (fixed columns; stacks into cards on phones) */
+.m-deal .dm-fin{table-layout:fixed;width:100%}
+.m-deal .dm-fin .dm-c1{width:23%}.m-deal .dm-fin .dm-c2{width:22%}.m-deal .dm-fin .dm-c3{width:41%}.m-deal .dm-fin .dm-c4{width:14%}
+.m-deal .dm-fin th,.m-deal .dm-fin td{padding:8px 10px;vertical-align:top;white-space:normal;overflow-wrap:break-word}
+.m-deal .dm-fin tbody th[scope="row"]{position:static;background:transparent;font:600 var(--sys-fs-sm)/1.35 var(--sys-font);letter-spacing:0;text-transform:none;color:var(--sys-ink)}
+.m-deal .dm-fin td{font-size:var(--sys-fs-sm);line-height:1.45;color:var(--sys-ink-2)}
+.m-deal .dm-fin td.dm-fdeal{white-space:normal}
+.m-deal .dm-fin td.dm-fdeal b{color:var(--sys-ink)}
+.m-deal .dm-fin td.dm-fsrc{font-size:var(--sys-fs-xs);color:var(--sys-mute)}
+.m-deal .dm-fin .dm-fsrc-l{display:none}
+.m-deal .dm-fin tr.dm-derived th,.m-deal .dm-fin tr.dm-derived td{background:var(--sys-bg-2)}
+@media (max-width:700px){
+  .m-deal .dm-fin thead,.m-deal .dm-fin colgroup{display:none}
+  .m-deal .dm-fin,.m-deal .dm-fin tbody{display:block;width:100%}
+  .m-deal .dm-fin tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto);gap:2px var(--sys-sp-3);padding:10px 12px;border-bottom:1px solid var(--sys-line)}
+  .m-deal .dm-fin th,.m-deal .dm-fin td{padding:0;border:0}
+  .m-deal .dm-fin td.dm-fdeal{text-align:right}
+  .m-deal .dm-fin td.dm-fmkt,.m-deal .dm-fin td.dm-fsrc{grid-column:1/-1}
+  .m-deal .dm-fin td.dm-fmkt{margin-top:4px}
+  .m-deal .dm-fin .dm-fsrc-l{display:inline}
+  .m-deal .dm-fin td.dm-fsrc:empty{display:none}
+  .m-deal .dm-fin td.dm-fdeal{max-width:58vw}
+  .m-deal .dm-fin tr.dm-derived{background:var(--sys-bg-2)}
+  .m-deal .dm-fin tr.dm-derived th,.m-deal .dm-fin tr.dm-derived td{background:transparent}
+}
