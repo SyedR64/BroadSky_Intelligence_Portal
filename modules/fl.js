@@ -1,8 +1,8 @@
-import * as Copy from './copy.js?v=20261009155255';
+import * as Copy from './copy.js?v=20261009161812';
 /* Frontline Managed Services — legal managed IT, cyber and revenue-cycle services for law firms.
    Views: overview · amlaw · midsize · targets · filings. Data: Frontline law-firm universe, Mid-size law firms,
    Frontline and Thomas Scientific add-on targets (platform==='frontline'), Frontline public filings, Public comparables. */
-import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261009155255';
+import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261009161812';
 
 /* Colours are system tokens (system.css): company accent --co-fl, status --sys-good/info/warn/bad, neutral --sys-mute-2.
    HTML and inline SVG read them as var(); the Leaflet canvas renderer gets a resolved value from tok(). */
@@ -87,7 +87,7 @@ const sum = (a, f) => a.reduce((s, x) => s + (n(f(x)) || 0), 0);
 const median = a => { const v = a.filter(x => x != null).sort((x, y) => x - y); if (!v.length) return null; const m = Math.floor(v.length / 2); return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };
 const countBy = (a, f) => a.reduce((m, x) => { const k = f(x); m[k] = (m[k] || 0) + 1; return m; }, {});
 const pctTxt = (v, d = 1) => v == null || isNaN(v) ? '—' : `${Number(v).toFixed(d)}%`;   // values already in percent units
-const cssOnce = () => { if (!document.getElementById('css-fl')) { const l = document.createElement('link'); l.id = 'css-fl'; l.rel = 'stylesheet'; l.href = 'modules/fl.css?v=20261009155255'; document.head.appendChild(l); } };
+const cssOnce = () => { if (!document.getElementById('css-fl')) { const l = document.createElement('link'); l.id = 'css-fl'; l.rel = 'stylesheet'; l.href = 'modules/fl.css?v=20261009161812'; document.head.appendChild(l); } };
 const root = el => { el.classList.add('m-fl'); return el; };
 const unroot = el => () => el.classList.remove('m-fl');
 /* System-component helpers: status chips, token resolution for the map canvas, lever lists, clickable table rows, heat tables. */

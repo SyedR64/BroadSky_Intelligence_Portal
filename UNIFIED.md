@@ -12,7 +12,7 @@ Short, plain and specific. Say the finding, give the number, stop.
 
 **Product name.** The site is **BSP Desk**. The wordmark is the text "BSP Desk" from `Frame.PRODUCT` (`assets/frame.js`): top bar, mobile sheet and footer, no tagline line under it. Page titles read `<Page> · BSP Desk`; the landing page is just `BSP Desk`. The old product name is retired everywhere (titles, meta, copy, films, memo, scripts, prompts). The repo path `BroadSky_Intelligence_Portal` stays.
 
-**The firm is BSP.** Spell out "Broad Sky Partners (BSP)" at most once per page: the frame's concept banner on concept pages, the memo's "To" line, or the first body mention on other pages. Everywhere else write BSP ("BSP portfolio company", "BSP's first exit"). Keep the legal name only where it is the record: entity names in filings (`Broad Sky Partners, LP`, `Broad Sky Partners LLC`, `BSP-FL LP`), quoted press text and wire headlines. Portfolio Resource Group is spelled out once per page, then PRG.
+**The firm is BSP.** Spell out "Broad Sky Partners (BSP)" at most once per page: the frame's concept notice on concept pages, the memo's "To" line, or the first body mention on other pages. Everywhere else write BSP ("BSP portfolio company", "BSP's first exit"). Keep the legal name only where it is the record: entity names in filings (`Broad Sky Partners, LP`, `Broad Sky Partners LLC`, `BSP-FL LP`), quoted press text and wire headlines. Portfolio Resource Group is spelled out once per page, then PRG.
 
 **No "So what".** Never label a sentence "So what:", "So what —" or "So what." The answer is simply the first sentence.
 
@@ -47,7 +47,7 @@ No marketing cadence: no taglines ("one system for the whole portfolio"), no tri
 | File | Role |
 |---|---|
 | `assets/system.css` | Tokens (`--sys-*`, `--co-*`), frame, scaffolding, components, dark variant, print. The only shared stylesheet. |
-| `assets/frame.js` | `Frame.mount(opts)` injects top bar, concept banner, breadcrumb, footer, Ask button, hotkey, sub-nav scroll-spy and the copy safety net. Also exports `humanize`, `humanizeText`, `label`, `LABELS`, `COMPANIES`. |
+| `assets/frame.js` | `Frame.mount(opts)` injects top bar, concept tag, breadcrumb (folded into the page's sub-nav when it has one), footer, Ask button, hotkey, sub-nav scroll-spy and the copy safety net. Also exports `humanize`, `humanizeText`, `label`, `LABELS`, `COMPANIES`. |
 | `assets/chat.js` / `chat.css` | Grounded assistant. Opened by the frame's Ask button; pages still mount it with their persona. |
 | page CSS (`site.css`, `growth-plan.css`, `app.css` …) | Page-specific layout only (maps, demos, charts). No colours, fonts, radii, header, banner or footer. Read tokens with `var(--sys-…)`. |
 
@@ -85,11 +85,12 @@ Use the same `?v=` stamp on `system.css`, `frame.js` and `chat.js` (`scripts/bum
 
 ```
 body[data-co?]                          ← company pages only: pp | cet | fl | ts | bpi | fh
-  header.sys-top                        ← injected: brand · Portal · Site concepts · OS program · Growth plans · Briefing · GitHub · Ask
-  div.sys-banner                        ← injected on concept pages, identical wording everywhere, dismissible
-  nav.sys-crumb                         ← injected: Home / Site concepts / ● Company / Page
+  header.sys-top                        ← injected: brand · Portal · Concepts · Briefing · Ask · theme
+  nav.sys-crumb                         ← injected only on a page without a sub-nav: Home / Concepts / ● Company / Page, concept tag at the right
   main#main
-    nav.sys-subnav                      ← optional: page name + section anchors + one local CTA (replaces private headers)
+    nav.sys-subnav                      ← the page bar: parent / ● page name, at most five section anchors, the concept tag
+                                          (span.sys-concept, injected on concept pages) and one button. The frame adds the parent
+                                          (a.sys-subnav-up) and the tag, so a page has two bars: the top bar and this one.
     section.sys-hero                    ← .sys-eyebrow → h1.sys-h1 → p.sys-lead → .sys-actions → .sys-kpis (optional)
     section.sys-section (repeat)        ← .sys-section-head (.sys-kicker, h2.sys-h2, p.sys-lead) → content → p.sys-src
     section.sys-cta                     ← one closing call to action
@@ -134,11 +135,11 @@ Buttons: one `.sys-btn--primary` per view region; `--secondary` beside it; `--gh
 | Page | Call | Persona | Notes |
 |---|---|---|---|
 | `index.html` (landing) | `Frame.mount({ crumb: false })` | portal | Inline hero chat stays; Ask scrolls to it and focuses it. Hero uses `.sys-h1--display`. Remove `.announce` and `.nav`. |
-| `redesigns/index.html` | `Frame.mount({})` | portal | Active = Site concepts. No banner (gallery is ours, not a company mock). |
-| `redesigns/<co>/index.html` | `Frame.mount({})` | auto = company | Banner + crumb `Home / Site concepts / ● Company` automatic. Old `.concept` bar and private header removed; section links move to `.sys-subnav`. |
-| `redesigns/<co>/<os>.html` | `Frame.mount({})` | company | Active = OS program; crumb ends with the OS name (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS). |
-| `redesigns/<co>/growth-plan.html`, `punctual-pros/nationwide.html`, `ads.html` | `Frame.mount({})` | company | Active = Growth plans. |
-| `redesigns/voice-ai.html`, `ai-agents.html` | `Frame.mount({ banner: true })` | portal | Crumb `Home / Growth plans / Page`. |
+| `redesigns/index.html` | `Frame.mount({})` | portal | Active = Concepts. No concept tag (gallery is ours, not a company mock). |
+| `redesigns/<co>/index.html` | `Frame.mount({})` | auto = company | Concept tag + `Concepts / ● Company` in the page bar, automatic. Old `.concept` bar and private header removed; section links move to `.sys-subnav`. |
+| `redesigns/<co>/<os>.html` | `Frame.mount({})` | company | Active = Concepts; the page bar reads `Company / ● OS name` (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS). |
+| `redesigns/<co>/growth-plan.html`, `punctual-pros/nationwide.html`, `ads.html` | `Frame.mount({})` | company | Active = Concepts; the page bar reads `Company / ● Growth plan`. |
+| `redesigns/voice-ai.html`, `ai-agents.html` | `Frame.mount({ banner: true })` | portal | Page bar `Growth plans / ● Page`. |
 | `app.html` | `Frame.mount({ variant: 'app', theme })` (the saved `bsp-theme`, light by default) | portal | See §8. Hotkey ⌘J (⌘K stays the portal search). The app variant sets `nav: { briefing: 'app.html#/briefing/play' }` itself. |
 | `theater.html` | `Frame.mount({ variant: 'minimal', theme: 'dark' })` | portal | See §9. |
 | `briefing/executive_memo.html` | no mount | — | See §10. |
@@ -149,7 +150,7 @@ Chat: pages keep mounting their own floating widget (`Chat.mount(null, { persona
 
 ## 6 · Accent rules
 
-- **Brand gradient** (`--sys-grad`, orange → violet): kicker rule, active top-bar link underline, banner tag, `.sys-btn--accent`, and at most one `.sys-grad-text` phrase in the page `h1`. Nowhere else.
+- **Brand gradient** (`--sys-grad`, orange → violet): kicker rule, active top-bar link underline, `.sys-btn--accent`, and at most one `.sys-grad-text` phrase in the page `h1`. Nowhere else.
 - **Company accent** (`--co-pp` #f08a3c, `--co-cet` #4c8dff, `--co-fl` #9d7bff, `--co-ts` #2ecc8f, `--co-bpi` #e05c8a, `--co-fh` #3fd0e0): set `data-co` on `<body>` for a company page, or on a single card, chip, KPI or crumb item on portfolio-wide pages. Allowed on: dots, card top bars, KPI top borders, list bullets, kicker rule, crumb dot, sub-nav dot and active pill (`--co-soft` / `--co-ink`), `.sys-note--co`, `.sys-btn--co`, hero glow. Not allowed on: body text, headings, section backgrounds, large fills, table text. Text in an accent uses `--co-ink`, never the raw `--co`.
 - One company per card. Portfolio pages show each company only in its own colour; the order is always PP, CET, Frontline, Thomas Scientific, BPI, Fair Harbor.
 - Status colours (`--sys-good|warn|bad|info`) mean status only: deltas, notes, est./illustrative/live badges.
@@ -219,7 +220,7 @@ The portal is not a separate product skin. A visitor moving between `index.html`
 
 ## 11 · Mobile
 
-Mobile-first. The top bar collapses to brand + Ask + menu at ≤960px (the sheet lists every primary link with a hint); the crumb drops "Home" at ≤560px; the concept banner is one line at ≤560px (truncated, with a "More" toggle that expands it in place), so top bar + banner + crumb stay under 160px (56 + 36 + 41 at 390px); the floating chat launcher is an icon-only 44px circle anchored bottom-right inside the safe-area insets at ≤560px and the full "Ask …" pill from 561px up, and it steps aside (fades out, `.ch-launch--tuck`) while it would sit on a page button or link, coming back as soon as the user scrolls past it; the footer carries extra bottom padding so the launcher never sits on its last line; the sub-nav scrolls horizontally with a fade; grids are one column below 720px (KPI strips two columns); hero and CTA buttons stack. Nothing may scroll the page horizontally at 390px — wide tables scroll inside `.sys-table-wrap`, maps and charts size to their container.
+Mobile-first. The top bar collapses to brand + Ask + menu at ≤960px (the sheet lists every primary link with a hint); a page shows two bars at most (top bar + page bar, 56 + 48px); at ≤560px the page bar's parent becomes a back arrow and the concept tag reads just "Concept"; the floating chat launcher is an icon-only 44px circle anchored bottom-right inside the safe-area insets at ≤560px and the full "Ask …" pill from 561px up, and it steps aside (fades out, `.ch-launch--tuck`) while it would sit on a page button or link, coming back as soon as the user scrolls past it; the footer carries extra bottom padding so the launcher never sits on its last line; the sub-nav scrolls horizontally with a fade; grids are one column below 720px (KPI strips two columns); hero and CTA buttons stack. Nothing may scroll the page horizontally at 390px — wide tables scroll inside `.sys-table-wrap`, maps and charts size to their container.
 
 ## 12 · Checklist (every page must pass all twelve)
 

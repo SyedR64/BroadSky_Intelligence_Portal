@@ -1,19 +1,20 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    BSP Desk · global frame (frame.js)
-   One top bar, one concept banner, one breadcrumb, one footer, one Ask button
-   and one copy safety net for every page. Styles live in assets/system.css.
+   One top bar, one page bar (the page's own sub-nav, with the breadcrumb and the
+   concept tag folded in), one footer, one Ask button and one copy safety net
+   for every page. Styles live in assets/system.css.
    Spec: UNIFIED.md.
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261009155255';
+       import { Frame } from '../../assets/frame.js?v=20261009161812';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
      Frame.mount({ variant: 'minimal', theme: 'dark' });   // theater.html
 
    Options (all optional):
-     active   'home'|'portal'|'concepts'|'os'|'playbooks'|'briefing'  (auto from URL)
+     active   'home'|'portal'|'concepts'|'os'|'playbooks'|'briefing'  (auto from URL; 'os' and 'playbooks' mark Concepts)
      co       'pp'|'cet'|'fl'|'ts'|'bpi'|'fh'   company accent + crumb  (auto from URL)
      persona  chat persona for the Ask button      (default: co, else 'portal')
      theme    'light'|'dark'                       fallback when the visitor has no saved choice (default 'light').
@@ -21,8 +22,10 @@
                                                     theme button on every page) always wins, except on a 'minimal'
                                                     page that passes theme: 'dark' (the 3D map stage), which stays dark.
      variant  'default'|'app'|'minimal'            (app: strip above the console; minimal: transparent, no footer)
-     banner   true|false                           (default: true on concept pages under redesigns/<company>/)
-     crumb    false | [{ label, href? }, …]        (default: auto for pages under redesigns/)
+     banner   true|false                           concept tag in the page bar (default: true on concept pages under redesigns/<company>/)
+     crumb    false | [{ label, href? }, …]        (default: auto for pages under redesigns/). On a page with a
+                                                    sub-nav (.sys-subnav) the parent shows before its title; otherwise
+                                                    the crumb is its own row.
      crumbAside  short text at the right of the crumb row, e.g. 'Concept · Oct 2026'
      cta      { label, href }                      small primary button in the top bar
      nav      { <nav id>: href | { href?, label?, hint? } }   per-page override of primary links,
@@ -57,14 +60,15 @@ export const COMPANIES = {
 const CO_ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
 
 export const NAV = [
-  { id: 'portal',    label: 'Portal',        href: 'app.html',             hint: 'analyst console' },
-  { id: 'concepts',  label: 'Site concepts', href: 'redesigns/',           hint: 'six websites' },
-  { id: 'os',        label: 'OS program',    href: 'redesigns/#os',        hint: 'six products' },
-  { id: 'playbooks', label: 'Growth plans',  href: 'redesigns/#growth-plans', hint: 'value creation' },
-  { id: 'briefing',  label: 'Briefing',      href: '#briefing',            hint: 'video and memo' },
+  { id: 'portal',    label: 'Portal',   href: 'app.html',   hint: 'analyst console' },
+  { id: 'concepts',  label: 'Concepts', href: 'redesigns/', hint: 'websites, OS and growth plans' },
+  { id: 'briefing',  label: 'Briefing', href: '#briefing',  hint: 'video and memo' },
 ];
+/** Pages under these old top-bar entries now mark Concepts. */
+const NAV_PARENT = { os: 'concepts', playbooks: 'concepts' };
 
 export const BANNER_TEXT = `A concept by ${AUTHOR} for the Portfolio Resource Group at Broad Sky Partners (BSP). This is not the company's official website. Estimates are marked est.`;
+const TAG_SHORT = 'not the official site';
 export const DISCLAIMER = 'Not an official BSP website, and not endorsed by any portfolio company. Figures come from public records, company releases and licensed sources, as of the dates shown. Estimates are marked est.; illustrative figures are marked illustrative. Company names belong to their owners.';
 
 const PAGE_LABELS = { 'index.html': 'Concept site', 'growth-plan.html': 'Growth plan', 'nationwide.html': 'Nationwide plan', 'ads.html': 'Growth marketing', 'voice-ai.html': '24/7 Voice AI', 'ai-agents.html': 'AI agents' };
@@ -81,10 +85,6 @@ const url = href => {
   if (/^[a-z]+:|^\/\//i.test(href)) return href;
   if (href.startsWith('#')) return ROOT + href;       // '#briefing' → landing page anchor
   return new URL(href, ROOT).href;
-};
-const store = {
-  get(k) { try { return sessionStorage.getItem(k); } catch { return null; } },
-  set(k, v) { try { sessionStorage.setItem(k, v); } catch { /* storage blocked */ } },
 };
 
 /* ── page detection ───────────────────────────────────────────────────────── */
@@ -113,7 +113,7 @@ function autoCrumb(w) {
     return items;
   }
   const c = COMPANIES[w.co];
-  items.push({ label: 'Site concepts', href: 'redesigns/' });
+  items.push({ label: 'Concepts', href: 'redesigns/' });
   const label = OS_FILES.has(w.file) ? c.os : (PAGE_LABELS[w.file] || 'Page');
   if (w.file === 'index.html') items.push({ label: c.short, co: w.co });
   else items.push({ label: c.short, co: w.co, href: `redesigns/${c.slug}/` }, { label });
@@ -124,13 +124,13 @@ function autoCrumb(w) {
 function topHTML(o) {
   const links = o.nav.map(n => `<a data-nav="${esc(n.id)}" href="${esc(url(n.href))}"${n.external ? ' rel="noopener" target="_blank"' : ''}${n.id === o.active ? ' aria-current="page"' : ''}>${esc(n.label)}${n.external ? EXT : ''}</a>`).join('');
   const sheet = o.nav.map(n => `<a data-nav="${esc(n.id)}" href="${esc(url(n.href))}"${n.external ? ' rel="noopener" target="_blank"' : ''}${n.id === o.active ? ' aria-current="page"' : ''}>${esc(n.label)} <span>${esc(n.hint)}</span></a>`).join('');
-  const kbd = o.hotkey ? `<span class="sys-kbd" aria-hidden="true">${IS_MAC ? '⌘' : 'Ctrl '}${o.hotkey.split('+').pop().toUpperCase()}</span>` : '';
+  const keyName = o.hotkey ? `${IS_MAC ? '⌘' : 'Ctrl '}${o.hotkey.split('+').pop().toUpperCase()}` : '';
   const cta = o.cta ? `<a class="sys-btn sys-btn--primary sys-btn--sm sys-top-cta" href="${esc(url(o.cta.href))}">${esc(o.cta.label)}</a>` : '';
   return `<div class="sys-top-in">
     <a class="sys-brand" href="${esc(ROOT)}" aria-label="${esc(PRODUCT)}, home">${MARK}<span class="sys-brand-name">${esc(PRODUCT)}</span></a>
     <nav class="sys-nav" aria-label="Primary">${links}</nav>
     <div class="sys-top-actions">
-      <button class="sys-ask" type="button" data-sys-ask aria-label="Ask the assistant${o.hotkey ? ` (${IS_MAC ? 'Command' : 'Control'} ${o.hotkey.split('+').pop().toUpperCase()})` : ''}"><span class="sys-dot" aria-hidden="true"></span>Ask${kbd}</button>
+      <button class="sys-ask" type="button" data-sys-ask aria-label="Ask the assistant${o.hotkey ? ` (${IS_MAC ? 'Command' : 'Control'} ${o.hotkey.split('+').pop().toUpperCase()})` : ''}"${keyName ? ` title="Ask the assistant (${keyName})"` : ''}><span class="sys-dot" aria-hidden="true"></span>Ask</button>
       ${o.themeToggle ? `<button class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon sys-theme" type="button" data-sys-theme-toggle aria-label="Switch to dark theme" title="Switch to dark theme"></button>` : ''}
       ${cta}
       <button class="sys-menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sys-sheet"><span></span><span></span></button>
@@ -138,17 +138,37 @@ function topHTML(o) {
     <div class="sys-sheet" id="sys-sheet" aria-label="${esc(PRODUCT)} menu" hidden>${sheet}${o.cta ? `<a class="sys-btn sys-btn--primary" href="${esc(url(o.cta.href))}">${esc(o.cta.label)}</a>` : ''}</div>
   </div>`;
 }
-function bannerHTML() {
-  return `<div class="sys-banner-in"><span class="sys-banner-tag">Concept</span><p id="sys-banner-text">${esc(BANNER_TEXT)}</p><button class="sys-banner-more" type="button" aria-expanded="false" aria-controls="sys-banner-text">More</button><button class="sys-banner-x" type="button" aria-label="Dismiss concept notice">×</button></div>`;
+/** The concept notice: a small tag that stays in the page bar (the full sentence is its tooltip and is read by screen readers). */
+function conceptTagHTML() {
+  return `<span class="sys-concept" title="${esc(BANNER_TEXT)}"><b aria-hidden="true">Concept</b><span class="sys-concept-more" aria-hidden="true">· ${esc(TAG_SHORT)}</span><span class="sys-vh">${esc(BANNER_TEXT)}</span></span>`;
 }
-function crumbHTML(items, aside) {
+/** Fold the breadcrumb's parent and the concept tag into the page's own sub-nav, so the page has one bar under the top bar. */
+function foldIntoSubnav(sub, items, tag) {
+  const inner = sub.querySelector('.sys-subnav-in') || sub;
+  const title = inner.querySelector('.sys-subnav-title');
+  const parent = items && items.length > 2 ? items[items.length - 2] : null;   // nearest parent; 'Home' is the logo
+  if (parent && parent.href && title && !inner.querySelector('.sys-subnav-up')) {
+    const up = document.createElement('a');
+    up.className = 'sys-subnav-up'; up.href = url(parent.href);
+    if (parent.co) up.dataset.co = parent.co;
+    up.textContent = parent.label;
+    title.before(up);
+    title.classList.add('sys-subnav-title--child');
+  }
+  if (tag && !inner.querySelector('.sys-concept')) {
+    const links = inner.querySelector('.sys-subnav-links');
+    const holder = document.createElement('span'); holder.innerHTML = conceptTagHTML();
+    (links ? links.after.bind(links) : inner.append.bind(inner))(holder.firstElementChild);
+  }
+}
+function crumbHTML(items, aside, tag) {
   const li = items.map((it, i) => {
     const last = i === items.length - 1;
     const co = it.co ? ` data-co="${esc(it.co)}"` : '';
     const inner = it.href && !last ? `<a href="${esc(url(it.href))}"${co}>${esc(it.label)}</a>` : `<span${co}${last ? ' aria-current="page"' : ''}>${esc(it.label)}</span>`;
     return `<li>${inner}</li>`;
   }).join('');
-  return `<div class="sys-crumb-in"><ol>${li}</ol>${aside ? `<span class="sys-crumb-aside">${esc(aside)}</span>` : ''}</div>`;
+  return `<div class="sys-crumb-in"><ol>${li}</ol>${aside ? `<span class="sys-crumb-aside">${esc(aside)}</span>` : ''}${tag ? conceptTagHTML() : ''}</div>`;
 }
 function footerHTML() {
   const a = (href, label, extra = '') => `<a href="${esc(url(href))}"${extra}>${esc(label)}</a>`;
@@ -430,7 +450,7 @@ function mount(opts = {}) {
   const w = where();
   const variant = opts.variant || 'default';
   const o = {
-    active: opts.active || w.active,
+    active: NAV_PARENT[opts.active || w.active] || opts.active || w.active,
     co: opts.co !== undefined ? opts.co : w.co,
     hotkey: opts.hotkey !== undefined ? opts.hotkey : (variant === 'app' ? 'mod+j' : 'mod+k'),
     cta: opts.cta || null,
@@ -455,20 +475,15 @@ function mount(opts = {}) {
   top.innerHTML = topHTML(o);
   frag.appendChild(top);
 
-  const wantBanner = opts.banner !== undefined ? opts.banner : w.concept;
-  let banner = null;
-  if (wantBanner && variant !== 'minimal') {
-    banner = document.createElement('aside');   // top-level complementary landmark, so the notice sits inside a landmark
-    banner.className = 'sys-banner'; banner.setAttribute('aria-label', 'Concept notice');
-    banner.innerHTML = bannerHTML();
-    if (store.get('sys-banner-off') === '1') banner.hidden = true;
-    frag.appendChild(banner);
-  }
+  // one page bar: the page's sub-nav carries the crumb's parent and the concept tag; without a sub-nav they share one crumb row
+  const tag = (opts.banner !== undefined ? opts.banner : w.concept) && variant !== 'minimal';
   const items = opts.crumb === false ? null : (Array.isArray(opts.crumb) ? opts.crumb : (variant === 'default' ? autoCrumb(w) : null));
-  if (items && items.length) {
+  const sub = variant === 'default' ? document.querySelector('.sys-subnav') : null;
+  if (sub) foldIntoSubnav(sub, items, tag);
+  else if ((items && items.length) || tag) {
     const nav = document.createElement('nav');
     nav.className = 'sys-crumb'; nav.setAttribute('aria-label', 'Breadcrumb');
-    nav.innerHTML = crumbHTML(items, opts.crumbAside);
+    nav.innerHTML = crumbHTML(items || [], opts.crumbAside, tag);
     frag.appendChild(nav);
   }
   body.insertBefore(frag, body.firstChild);
@@ -505,15 +520,6 @@ function mount(opts = {}) {
   document.addEventListener('click', e => { if (!sheet.hidden && !top.contains(e.target)) setSheet(false); });
   matchMedia('(min-width: 961px)').addEventListener?.('change', ev => { if (ev.matches) setSheet(false); });
 
-  // banner dismiss + "More" (the banner is one line at ≤560px)
-  banner?.querySelector('.sys-banner-x').addEventListener('click', () => { banner.hidden = true; store.set('sys-banner-off', '1'); });
-  banner?.querySelector('.sys-banner-more').addEventListener('click', e => {
-    const open = !banner.classList.contains('sys-banner--open');
-    banner.classList.toggle('sys-banner--open', open);
-    e.currentTarget.setAttribute('aria-expanded', String(open));
-    e.currentTarget.textContent = open ? 'Less' : 'More';
-  });
-
   // primary nav current state follows hash routes (e.g. app.html#/briefing/play)
   if (o.nav.some(n => hashRoute(n.href))) { syncCurrent(top, o.nav, o.active); window.addEventListener('hashchange', () => syncCurrent(top, o.nav, o.active)); }
 
@@ -549,7 +555,7 @@ function mount(opts = {}) {
   let rz = 0; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => scrollAccess(body), 200); });
   window.addEventListener('load', () => scrollAccess(body), { once: true });
 
-  state.mounted = { top, banner, footer, root: ROOT, page: w, nav: o.nav, openChat, humanize, setTheme, getTheme, toggleTheme, setChat: inst => { state.chat = inst; } };
+  state.mounted = { top, banner: null, footer, root: ROOT, page: w, nav: o.nav, openChat, humanize, setTheme, getTheme, toggleTheme, setChat: inst => { state.chat = inst; } };
   return state.mounted;
 }
 

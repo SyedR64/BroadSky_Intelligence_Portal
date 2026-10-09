@@ -192,7 +192,9 @@ def main():
     n_pages = len(all_pages)
     n_routes = sum(len(m[2]) for m in mods)
     SHORT = {'start': 'Start', 'pp': 'Punctual Pros', 'cet': 'CET', 'fl': 'Frontline', 'ts': 'Thomas Scientific', 'bpi': 'BPI', 'fh': 'Fair Harbor', 'programs': 'Programs', 'portal': 'Portal modules', 'briefing': 'Briefing'}
-    sub = ''.join(f'<a href="#g-{g[0]}">{esc(SHORT.get(g[0], g[1]))}</a>' for g in groups)
+    # page bar: five links at most; the six company groups share one "Companies" link to the first of them
+    BAR = {'start': 'Start', 'pp': 'Companies', 'programs': 'Programs', 'portal': 'Portal', 'briefing': 'Briefing'}
+    sub = ''.join(f'<a href="#g-{g[0]}">{esc(BAR[g[0]])}</a>' for g in groups if g[0] in BAR)
 
     KICK = {'start': 'Overview', 'pp': 'Home services', 'cet': 'Electrical and energy', 'fl': 'Legal IT', 'ts': 'Lab supply', 'bpi': 'Communications', 'fh': 'Consumer', 'programs': 'Across the portfolio', 'portal': 'Portal', 'briefing': 'Briefing'}
 

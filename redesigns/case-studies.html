@@ -11,9 +11,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261009155255">
-<link rel="stylesheet" href="../modules/cases.css?v=20261009155255">
-<link rel="stylesheet" href="case-studies.css?v=20261009155255">
+<link rel="stylesheet" href="../assets/system.css?v=20261009161812">
+<link rel="stylesheet" href="../modules/cases.css?v=20261009161812">
+<link rel="stylesheet" href="case-studies.css?v=20261009161812">
 </head>
 <body>
 <main id="main">
@@ -21,7 +21,11 @@
     <div class="sys-subnav-in">
       <a class="sys-subnav-title" href="#top">Value-creation cases</a>
       <div class="sys-subnav-links">
-        <a href="#timeline">Timelines</a><a href="#entry-exit">Entry to exit</a><a href="#levers">Levers</a><a href="#patterns">Patterns</a><a href="#sequence">Punctual Pros sequence</a><a href="#sources">Sources</a>
+        <a href="#timeline">Timelines</a>
+        <a href="#entry-exit">Entry to exit</a>
+        <a href="#levers">Levers</a>
+        <a href="#patterns">Patterns</a>
+        <a href="#sources">Sources</a>
       </div>
       <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../app.html#/cases/timeline">Open in portal</a></div>
     </div>
@@ -194,10 +198,10 @@
 </main>
 
 <script type="module">
-import { Frame } from '../assets/frame.js?v=20261009155255';
-import { Data } from '../assets/core.js?v=20261009155255';
-import { Chat } from '../assets/chat.js?v=20261009155255';
-import { boot } from './case-studies.js?v=20261009155255';
+import { Frame } from '../assets/frame.js?v=20261009161812';
+import { Data } from '../assets/core.js?v=20261009161812';
+import { Chat } from '../assets/chat.js?v=20261009161812';
+import { boot } from './case-studies.js?v=20261009161812';
 const frame = Frame.mount({ active: 'playbooks', banner: true, crumb: [{ label: 'Home', href: './' }, { label: 'Growth plans', href: 'redesigns/#growth-plans' }, { label: 'Value-creation cases' }] });
 const res = await boot({ Data }).catch(e => { console.warn('case studies boot failed', e); return null; });
 try {

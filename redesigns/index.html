@@ -27,24 +27,24 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261009155255">
-<link rel="stylesheet" href="gallery.css?v=20261009155255">
+<link rel="stylesheet" href="../assets/system.css?v=20261009161812">
+<link rel="stylesheet" href="gallery.css?v=20261009161812">
 </head>
 <body data-page="gallery">
 <main id="main">
   <nav class="sys-subnav" aria-label="On this page">
     <div class="sys-subnav-in">
-      <a class="sys-subnav-title" href="#top">Site concepts</a>
-      <div class="sys-subnav-links"><a href="#before-after">Before and after</a><a href="#concepts">Concepts</a><a href="#os">OS program</a><a href="#growth-plans">Growth plans</a><a href="#principles-sec">Principles</a><a href="#why">Rationale</a></div>
+      <a class="sys-subnav-title" href="#top">Concepts</a>
+      <div class="sys-subnav-links"><a href="#before-after">Before and after</a><a href="#concepts">Concepts</a><a href="#os">OS program</a><a href="#growth-plans">Growth plans</a></div>
       <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../app.html">Open in portal</a></div>
     </div>
   </nav>
 
   <section class="sys-hero" id="top" aria-labelledby="g-title">
     <div class="sys-wrap">
-      <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Concept work</b><span class="lp-hide-sm"> · Portfolio Resource Group (PRG)</span> · October 2026</p>
-      <h1 id="g-title" class="sys-h1">Six front doors. <span class="sys-grad-text">Six operating systems.</span></h1>
-      <p class="sys-lead">A website and an operating system for each BSP portfolio company, built on portal data.</p>
+      <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Concept work</b> · October 2026</p>
+      <h1 id="g-title" class="sys-h1">Every BSP company, <span class="sys-grad-text">redesigned.</span></h1>
+      <p class="sys-lead">A new website for each portfolio company, with the software and growth plan behind it. All built on portal data.</p>
       <div class="sys-actions">
         <a class="sys-btn sys-btn--primary sys-btn--lg" href="#concepts">See the concepts <span aria-hidden="true">↓</span></a>
         <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#why">Why it raises value</a>
@@ -59,7 +59,7 @@
     <div class="sys-wrap">
       <div class="sys-section-head">
         <p class="sys-kicker">Before and after</p>
-        <h2 id="ba-title" class="sys-h2">Six sites, before and after.</h2>
+        <h2 id="ba-title" class="sys-h2">Today&rsquo;s site next to the concept.</h2>
         <p class="sys-lead">Each company&rsquo;s site as captured on October 8, 2026, next to its concept. Open one to compare desktop and phone.</p>
       </div>
       <div class="sys-grid sys-grid--2 sys-grid--gap-lg">
@@ -133,7 +133,7 @@
       <div class="sys-section-head sys-section-head--row">
         <div>
           <p class="sys-kicker">The concepts</p>
-          <h2 id="concepts-title" class="sys-h2">Same discipline, six distinct brands.</h2>
+          <h2 id="concepts-title" class="sys-h2">Same rules, each company&rsquo;s own brand.</h2>
           <p class="sys-lead">Each site keeps its brand and adds one section wired to portal data. Hover a frame or tap Live preview to load it.</p>
         </div>
         <button class="sys-btn sys-btn--secondary" type="button" id="live-all">Load all live previews</button>
@@ -438,9 +438,9 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../assets/frame.js?v=20261009155255';
-  import { Chat } from '../assets/chat.js?v=20261009155255';
-  import { Gallery } from '../assets/landing.js?v=20261009155255';
+  import { Frame } from '../assets/frame.js?v=20261009161812';
+  import { Chat } from '../assets/chat.js?v=20261009161812';
+  import { Gallery } from '../assets/landing.js?v=20261009161812';
   const chat = Chat.mount(null, { persona: 'portal', short_name: 'the desk', mode: 'floating', theme: 'light' });
   Frame.mount({ crumb: [{ label: 'Home', href: './' }, { label: 'Site concepts' }], chat });
   Gallery.init();

@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261009155255">
-<link rel="stylesheet" href="gridos.css?v=20261009155255">
+<link rel="stylesheet" href="../../assets/system.css?v=20261009161812">
+<link rel="stylesheet" href="gridos.css?v=20261009161812">
 </head>
 <body data-co="cet">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -33,7 +33,11 @@
   <div class="sys-subnav-in">
     <a class="sys-subnav-title" href="#top">GridOS</a>
     <div class="sys-subnav-links">
-      <a href="#modules">Modules</a><a href="#demo">Live demo</a><a href="#value">Value math</a><a href="#stack">Build or buy</a><a href="#roadmap">Roadmap</a><a href="#risks">Risks</a><a href="#exit">Exit case</a>
+      <a href="#modules">Modules</a>
+      <a href="#demo">Live demo</a>
+      <a href="#value">Value math</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#exit">Exit case</a>
     </div>
     <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../../app.html#/techos/overview">Open in portal</a></div>
   </div>
@@ -236,11 +240,11 @@
 </main>
 
 <script type="module">
-import { Frame } from '../../assets/frame.js?v=20261009155255';
-import { Chat } from '../../assets/chat.js?v=20261009155255';
-import { Data, Fmt } from '../../assets/core.js?v=20261009155255';
-import { initOS } from './gridos.js?v=20261009155255';
-import { FAQ, makeIntents } from './site.js?v=20261009155255';
+import { Frame } from '../../assets/frame.js?v=20261009161812';
+import { Chat } from '../../assets/chat.js?v=20261009161812';
+import { Data, Fmt } from '../../assets/core.js?v=20261009161812';
+import { initOS } from './gridos.js?v=20261009161812';
+import { FAQ, makeIntents } from './site.js?v=20261009161812';
 const chat = Chat.mount(null, { persona: 'cet', short_name: 'CET', mode: 'floating', theme: 'light', faq: FAQ, suggestions: ['What is GridOS?', 'Which CET bids are due in the next 30 days?', 'Which wastewater plants should Horton call first?', 'Which programs can fund our project?', 'What is CET Assure?'], intents: makeIntents(Data, 'index.html'), openOnLoad: /[?&]chat=open/.test(location.search) });
 Frame.mount({ chat });
 try { initOS({ Data, Fmt }); } catch (e) { console.warn('gridos init', e); }

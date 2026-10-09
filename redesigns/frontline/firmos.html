@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261009155255">
-<link rel="stylesheet" href="site.css?v=20261009155255">
+<link rel="stylesheet" href="../../assets/system.css?v=20261009161812">
+<link rel="stylesheet" href="site.css?v=20261009161812">
 </head>
 <body data-co="fl">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -44,7 +44,11 @@
     <div class="sys-subnav-in">
       <a class="sys-subnav-title" href="#top">FirmOS</a>
       <div class="sys-subnav-links">
-        <a href="#modules">Modules</a><a href="#demo">Tier-0 demo</a><a href="#score">Score card</a><a href="#ebilling">eBilling</a><a href="#portal">Portal</a><a href="#growth">Growth</a><a href="#value">Value math</a><a href="#stack">Build vs buy</a><a href="#roadmap">Roadmap</a><a href="#risks">Risks</a>
+        <a href="#modules">Modules</a>
+        <a href="#demo">Demo</a>
+        <a href="#value">Value math</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#risks">Risks</a>
       </div>
       <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../../app.html#/techos/overview">Open in portal</a></div>
     </div>
@@ -56,7 +60,7 @@
       <div class="fl-hero-grid">
         <div>
           <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>FirmOS</b> · for Frontline</p>
-          <h1 id="hero-title" class="sys-h1">One operating system for the firm's <span class="sys-grad-text">desk, security and cash.</span></h1>
+          <h1 id="hero-title" class="sys-h1">The firm's desk, security and cash, <span class="sys-grad-text">in one place.</span></h1>
           <p class="sys-lead">FirmOS puts a law firm's service desk, security and revenue cycle on one data layer. AI resolves routine work; analysts take the judgment calls.</p>
 <p class="sys-src page-terms"><b>Terms:</b> MFA: multi-factor sign-in. EDR: endpoint detection and response. SOC: security operations center. DMS: document management system. LEDES: the standard format for law-firm e-bills. RCM: revenue-cycle management.</p>
           <div class="sys-actions">
@@ -385,11 +389,11 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261009155255';
-  import { Chat } from '../../assets/chat.js?v=20261009155255';
-  import { Data, Fmt, esc } from '../../assets/core.js?v=20261009155255';
-  import { common } from './site.js?v=20261009155255';
-  import { firmos } from './firmos.js?v=20261009155255';
+  import { Frame } from '../../assets/frame.js?v=20261009161812';
+  import { Chat } from '../../assets/chat.js?v=20261009161812';
+  import { Data, Fmt, esc } from '../../assets/core.js?v=20261009161812';
+  import { common } from './site.js?v=20261009161812';
+  import { firmos } from './firmos.js?v=20261009161812';
   const frame = Frame.mount({});
   frame.setChat(common({ Chat, page: 'os', suggestions: ['What is FirmOS?', 'How do you handle eBilling, rejections and A/R?', 'Request a security assessment', 'How do you protect client confidentiality with offshore delivery and AI?', 'What is included in the 24/7 service desk?'] }));
   firmos({ Data, Fmt, esc });
