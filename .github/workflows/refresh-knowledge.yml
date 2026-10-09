@@ -55,17 +55,23 @@ jobs:
           CORPUS_DEFAULT_CHROMIUM: '1'
         run: python3 scripts/build_corpus.py ${ONLY:+--only "$ONLY"}
 
-      - name: Check it answers a known question
+      - name: Check it answers known questions
         working-directory: server
         run: |
+          pip install -r requirements.txt
           python3 - <<'EOF'
-          import knowledge
+          # The same first retrieval a visitor's question gets (app.retrieve_initial), for questions with known sources.
+          import app, knowledge
           kb = knowledge.KnowledgeBase()
-          hits = kb.search('Who is the CEO of Broad Sky Partners?', k=5)
           print(kb.stats())
-          for h in hits:
-              print(round(h['score'], 4), h['doc']['title'], h['doc']['url'])
-          assert any('tyler-zachem' in h['doc']['url'] for h in hits), 'the CEO biography should rank in the top five'
+          cases = {'Who runs Broad Sky Partners?': ('broadskypartners.com/team',), 'Who is the CEO of BSP?': ('broadskypartners.com/team',),
+                   'When did Broad Sky acquire Punctual Pros?': ('punctual',), 'Who bought Smith + Howard?': ('smith-howard', 'tpg')}
+          for q, want in cases.items():
+              S = app.Sources()
+              app.retrieve_initial(kb, {'question': q, 'messages': [{'role': 'user', 'content': q}], 'context': [], 'persona': 'portal', 'retrieve': True}, S)
+              urls = [x['url'].lower() for x in S.items]
+              print(q, urls)
+              assert any(w in u for u in urls for w in want), f'expected a source matching {want} for {q!r}'
           EOF
 
       - name: Commit if changed

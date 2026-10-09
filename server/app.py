@@ -674,9 +674,15 @@ def company_hint(persona, question):
 
 QUERY_HINTS = [   # words a visitor uses for BSP and its leaders, added to the first search (Claude's own searches are already specific)
     (re.compile(r"\b(the|our|this) (firm|fund|sponsor|pe firm)\b|\b(we|us|our)\b", re.I), 'Broad Sky Partners'),
-    (re.compile(r'\bwho (runs|leads|heads|manages|founded|started|owns|is in charge)\b|\b(leadership|leaders?|management team|executives?|founders?|in charge)\b', re.I),
+    (re.compile(r'\bwho (runs|leads|heads|manages|founded|started|owns|is in charge)\b|\b(leadership|leaders?|management team|executives?|founders?|in charge|'
+                r'ceo|chief executive|vice chair|chair(man|woman)?|managing directors?|operating partners?|partners (at|of|in)|investment team|team members?)\b', re.I),
      'CEO chief executive founder partner team'),
 ]
+
+
+def about_bsp(question):
+    """True when a question is about the firm itself, not one of its portfolio companies ("Who is the CEO of CET?")."""
+    return not any(rx.search(question) for rx in COMPANY_RX.values())
 
 
 PINNED = [   # (question pattern, the canonical page every such question should see first)
@@ -686,7 +692,7 @@ PINNED = [   # (question pattern, the canonical page every such question should 
 
 def retrieval_query(persona, question):
     q = question
-    if persona == 'portal':
+    if persona == 'portal' and about_bsp(question):
         q += ''.join(' ' + extra for rx, extra in QUERY_HINTS if rx.search(question))
     return q
 
@@ -703,7 +709,7 @@ def retrieve_initial(kb, inp, sources):
             q = prev[-1][-400:] + '\n' + q
         try:
             hits = kb.search(q, k=AGENT['retrieve'], company=company_hint(inp['persona'], inp['question']))
-            if inp['persona'] == 'portal':
+            if inp['persona'] == 'portal' and about_bsp(inp['question']):
                 for rx, url in PINNED:
                     pin = kb.pinned(url, q) if rx.search(inp['question']) else None
                     if pin and all(h['chunk_id'] != pin['chunk_id'] for h in hits):
