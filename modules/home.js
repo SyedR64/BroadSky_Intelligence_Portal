@@ -1,10 +1,10 @@
 /* Command Center — portfolio-wide situational awareness */
-import { dataset, srcLabel } from './copy.js?v=20261008192515';
+import { dataset, srcLabel } from './copy.js?v=20261009070649';
 const GROUP_TXT = { research: 'Research', sales: 'Deed records', legacy: 'Reference table' };
 const BASIS_TXT = { live: 'Checked today', snapshot: 'Last update', 'live (manifest)': 'Last update', missing: 'Unavailable' };
 const COS = [
   { id: 'cet', name: 'Commonwealth Electrical (CET)', short: 'CET', color: 'var(--co-cet)', hex: '#4c8dff', sector: 'Commercial electrical · solar · energy', hq: 'Worcester, MA', lat: 42.2626, lon: -71.8023, entry: '2025-02', footprint: 'Licensed in all 6 New England states', lever: 'Cross-sell Horton wastewater accounts into solar, storage & efficiency; win municipal/utility programs' },
-  { id: 'pp', name: 'Punctual Pros', short: 'PP', color: 'var(--co-pp)', hex: '#f08a3c', sector: 'Residential HVAC · plumbing · electrical', hq: 'East Hempfield, PA', lat: 40.0629, lon: -76.3700, entry: '2024-04', footprint: '248 Central PA zips + Ocean/Monmouth NJ', lever: 'New-mover marketing, weather-driven capacity planning, tuck-in franchisees in adjacent counties' },
+  { id: 'pp', name: 'Punctual Pros', short: 'PP', color: 'var(--co-pp)', hex: '#f08a3c', sector: 'Residential HVAC · plumbing · electrical', hq: 'East Hempfield, PA', lat: 40.0629, lon: -76.3700, entry: '2024-04', footprint: '248 Central PA zips + Ocean/Monmouth NJ', lever: 'New-mover marketing, technician hiring and pay, capacity planning for weather and demand swings, tuck-in franchisees in adjacent counties' },
   { id: 'fl', name: 'Frontline Managed Services', short: 'FL', color: 'var(--co-fl)', hex: '#9d7bff', sector: 'Legal managed IT · revenue cycle', hq: 'St. Louis, MO', lat: 38.6270, lon: -90.1994, entry: '2024-12', footprint: '800+ law firms · >50% of AM Law 200', lever: 'Expand into mid-size firms; bundle cyber + eBilling; add-on legal MSPs' },
   { id: 'ts', name: 'Thomas Scientific', short: 'TS', color: 'var(--co-ts)', hex: '#2ecc8f', sector: 'Lab supply distribution', hq: 'Swedesboro, NJ', lat: 39.7476, lon: -75.3105, entry: '2022-01', footprint: 'National · 27k scored lab/hospital sites', lever: 'Target-account selling into diagnostics labs & hospital systems; regional distributor roll-ups' },
   { id: 'bpi', name: 'Bully Pulpit International', short: 'BPI', color: 'var(--co-bpi)', hex: '#e05c8a', sector: 'Communications · public affairs', hq: 'Washington, DC', lat: 38.9072, lon: -77.0369, entry: '2023-04', footprint: 'DC · NYC · SF · Chicago · Europe', lever: 'Corporate reputation & AI-era comms demand; public-sector RFPs' },
@@ -132,12 +132,13 @@ function buildScoreboard(firm, fins) {
 
 async function overview(ctx) {
   const { el, ui, fmt, data, maps, live, esc, app, inspector } = ctx;
-  const [firm, rfps, zips, maCet, maPp, maFlTs, pe, cetOpp, manifest, ppModel, alertsPA, alertsNJ, alertsMA, alertsCT, ...finList] = await Promise.all([
+  const [firm, rfps, zips, maCet, maPp, maFlTs, pe, cetOpp, manifest, ppModel, alertsPA, alertsNJ, alertsMA, alertsCT, fredSnap, ...finList] = await Promise.all([
     data.research('bsp_firm'), data.load('cet_ne_rfps').catch(() => []), data.load('pp_zips').catch(() => []),
     data.research('ma_targets_cet'), data.research('ma_targets_pp'), data.research('ma_targets_fl_ts'), data.research('pe_landscape'), data.research('cet_opportunities'),
     fetch('data/manifest.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null),
     data.research('pp_demand_model'),
     live.nwsAlerts('PA').catch(() => []), live.nwsAlerts('NJ').catch(() => []), live.nwsAlerts('MA').catch(() => []), live.nwsAlerts('CT').catch(() => []),
+    Promise.resolve(live.snapshot ? live.snapshot('fred_signals') : null).catch(() => null),
     ...COS.map(c => data.research(EST[c.id].ds)),
   ]);
   if (!el.isConnected) return;
@@ -166,7 +167,7 @@ async function overview(ctx) {
   el.innerHTML = ui.pageHead({
     title: 'Command Center',
     sub: `${COS.length} companies, ${fmt.num(stats.add_ons)} add-ons and one exit, Smith + Howard after ${sh ? sh.hold.toFixed(1) : '3.7'} years. ${inWindow.length ? `${inWindow.map(r => `${esc(LONG[r.id] || r.company)} (${r.hold.toFixed(1)} years)`).join(' and ')} ${inWindow.length > 1 ? 'are' : 'is'} past that hold, so exit readiness comes first.` : `${fmt.num(due.length)} CET bids fall due within 60 days.`}`,
-    actions: `<button type="button" class="${ui.btnCls('accent', '')}" id="play-brief">▶ Narrated tour (6 min 42 s)</button><a class="${ui.btnCls('secondary', '')}" href="#/ma">Acquisition engine</a><a class="${ui.btnCls('secondary', '')}" href="#/fin/portfolio">Financial picture</a>`,
+    actions: `<button type="button" class="${ui.btnCls('accent', '')}" id="play-brief">▶ Narrated tour (6 min 42 s)</button><a class="${ui.btnCls('secondary', '')}" href="#/signals/overview">What moves sales</a><a class="${ui.btnCls('secondary', '')}" href="#/ma">Acquisition engine</a><a class="${ui.btnCls('secondary', '')}" href="#/fin/portfolio">Financial picture</a>`,
   }) +
   ui.kpis([
     { label: 'Active companies', value: COS.length, sub: `${fmt.num(stats.add_ons)} add-ons · ${fmt.num(stats.exits)} exit (Smith + Howard)` },
@@ -184,7 +185,7 @@ async function overview(ctx) {
     </div>
   </div>
   <div class="grid grid-3 mt-12">
-    ${ui.panel({ title: 'Signals this week', sub: 'Bids due, weather alerts in operating counties, top-ranked add-ons and the latest sponsor deals', body: `<div id="signals">${ui.loading()}</div>`, foot: ui.source('CET opportunity radar · National Weather Service alerts (operating counties) · add-on target lists · Private-equity landscape', null, cetOpp?.meta?.generated || 'Sept 2026') })}
+    ${ui.panel({ title: 'Signals this week', sub: 'Bids due, market moves, weather alerts in operating counties, top-ranked add-ons and the latest sponsor deals', body: `<div id="signals">${ui.loading()}</div>`, foot: ui.source('CET opportunity radar · Local signals (FRED, US Treasury) · National Weather Service alerts (operating counties) · add-on target lists · Private-equity landscape', '#/signals/readings', cetOpp?.meta?.generated || 'Sept 2026') })}
     ${ui.panel({ title: 'Value-creation levers by company', sub: 'Where this portal points each management team', body: `<div class="col gap-12">${COS.map(c => `<div class="row" style="align-items:flex-start">${coChip(c.id, c.short)}<div class="sys-card-body">${esc(c.lever)}</div></div>`).join('')}</div>` })}
     ${ui.panel({ title: 'BSP timeline', sub: 'Anchor acquisitions, add-ons and exits · newest first', body: `<div id="tl">${ui.loading()}</div>`, scroll: true, foot: firm ? ui.source('Press releases & BSP site', 'https://broadskypartners.com/news/', firm.meta?.generated) : '' })}
   </div>
@@ -248,6 +249,13 @@ async function overview(ctx) {
   // signals — all from real fields: cet_opportunities.due_date, territory-filtered NWS alerts, ma_targets meta.ranked_top_10 / ranked_top_8, pe_landscape items[].deals_2025_2026
   const sig = [];
   due.slice(0, 3).forEach(o => sig.push({ co: 'cet', t: `CET bid due ${fmt.dateShort(o.due_date)} (${o._d}d)`, s: `${o.owner_or_agency || ''}${o.state ? ` (${o.state})` : ''} — ${o.title || ''}`, h: '#/cet/opportunities' }));
+  // market moves: the two local and market readings (nightly snapshot) that moved most in a year, each tied to the company it hits
+  const MOVES = [['GASDESW', 'ts', 'Diesel', 'freight cost on every delivery'], ['PCOPPUSDM', 'cet', 'Copper', 'material cost on fixed-price bids'], ['APU000072511', 'pp', 'Heating oil', 'more heat-pump conversion leads'],
+    ['MORTGAGE30US', 'pp', 'Mortgage rate', 'fewer home sales, fewer new-mover leads'], ['CES2000000003', 'pp', 'Construction pay', 'technician pay pressure'], ['UMCSENT', 'fh', 'Consumer sentiment', 'shoppers more cautious on apparel']];
+  const fredById = new Map((fredSnap?.items || []).map(x => [x.id, x]));
+  const moveSize = x => x.chg_kind === 'pts' ? Math.abs(x.chg) / 4 : Math.abs(x.chg);   // 1 point of a rate ranks like a 25% price move
+  MOVES.map(([id, co, label, why]) => ({ x: fredById.get(id), co, label, why })).filter(m => m.x && m.x.chg != null).sort((a, b) => moveSize(b.x) - moveSize(a.x)).slice(0, 2)
+    .forEach(m => { const d = m.x.chg_kind === 'pts' ? `${m.x.chg >= 0 ? '+' : '−'}${Math.abs(m.x.chg).toFixed(2)} pts` : `${m.x.chg >= 0 ? '+' : '−'}${Math.abs(m.x.chg * 100).toFixed(0)}%`; sig.push({ co: m.co, t: `${m.label} ${d} in a year · ${CO_SHORT[m.co]}`, s: `${m.why} (as of ${m.x.freq === 'monthly' ? monYr(m.x.date) : fmt.date(m.x.date)})`, h: `#/signals/overview?co=${m.co}` }); });
   const sigAlerts = (sevAlerts.length ? sevAlerts : alerts).slice(0, 2);
   if (sigAlerts.length) sigAlerts.forEach(a => { const cos = [...new Set(a.hits.map(h => h.co))]; sig.push({ st: /Extreme|Severe/.test(a.severity) ? 'bad' : 'warn', t: `${a.event} · ${cos.map(c => CO_SHORT[c]).join('+')}`, s: `${a.hits.map(h => `${h.county} ${h.state}`).join(', ')} — ${a.headline || a.areaDesc || ''}`, h: cos.includes('pp') ? '#/pp/weather' : '#/cet/overview' }); });
   else sig.push({ st: 'good', t: 'Weather · clear', s: `No active NWS alerts touch PP's 15 territory counties or CET's operating counties (${fmt.num(allAlerts.length)} statewide alerts in PA/NJ/MA/CT filtered out)`, h: '#/pp/weather' });
@@ -255,7 +263,7 @@ async function overview(ctx) {
   ranked.forEach(([lab, p, list]) => { const t = (list || [])[0]; if (t && t.company) sig.push({ co: p, t: `${lab} add-on #${t.rank ?? 1} · fit ${t.fit_score ?? '—'}`, s: `${t.company}${t.why ? ` — ${t.why}` : ''}`, h: `#/ma/pipeline?platform=${p}&q=${encodeURIComponent(String(t.company).split(/[,(/]/)[0].trim())}` }); });
   const deals = (pe?.items || []).flatMap(f => (f.deals_2025_2026 || []).map(d => ({ ...d, firm: f.firm }))).filter(d => d.date).sort((a, b) => String(b.date).localeCompare(String(a.date)));
   deals.slice(0, 2).forEach(d => sig.push({ st: '', t: `PE deal · ${fmt.dateShort(d.date)}`, s: `${d.firm} → ${d.company}${d.type ? ` (${({ platform: 'anchor', add_on: 'add-on', exit: 'exit' })[d.type] || String(d.type).replace(/_/g, '-')})` : ''}${d.sector ? ` · ${d.sector}` : ''}`, h: '#/pe/deals' }));
-  el.querySelector('#signals').innerHTML = sig.length ? `<div class="col gap-8">${sig.slice(0, 11).map(s => `<div class="row"><a class="sys-chip${s.co ? ' sys-chip--soft' : s.st ? ` sys-chip--${s.st}` : ''}" ${s.co ? coAttr(s.co) : ''} style="flex-shrink:0" href="${esc(s.h)}">${esc(s.t)}</a><span class="small text-2 ellipsis" title="${esc(s.s)}">${esc(s.s)}</span></div>`).join('')}</div>` : ui.empty('No signals');
+  el.querySelector('#signals').innerHTML = sig.length ? `<div class="col gap-8">${sig.slice(0, 13).map(s => `<div class="row"><a class="sys-chip${s.co ? ' sys-chip--soft' : s.st ? ` sys-chip--${s.st}` : ''}" ${s.co ? coAttr(s.co) : ''} style="flex-shrink:0" href="${esc(s.h)}">${esc(s.t)}</a><span class="small text-2 ellipsis" title="${esc(s.s)}">${esc(s.s)}</span></div>`).join('')}</div>` : ui.empty('No signals');
 
   // timeline — bsp_firm.timeline, newest first, coloured by company
   const tl = (firm?.timeline || []).filter(t => t.date).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
@@ -389,7 +397,7 @@ export default {
   tour: [
     { order: 100, hash: '#/home/overview', caption: '<b>BSP Desk.</b> Six companies. Every number is tied to a decision.', narration: 'This is BSP Desk. Six companies, and every number is tied to a decision.', duration: 7000 },
     { order: 105, hash: '#/home/overview', caption: '<b>Exit readiness.</b> Hold, add-ons, value, debt and exit window per company, against the Smith + Howard exit.', narration: 'The scoreboard shows hold, add-ons, value, debt and exit window, against the Smith and Howard exit.', duration: 9000 },
-    { order: 110, hash: '#/home/overview', caption: '<b>This week.</b> Bid deadlines, weather alerts, top add-ons and rival deals. <b>Data sources</b> lists every source.', narration: 'Signals show bid deadlines, weather alerts, top add-ons and rival deals. Data sources lists every source.', duration: 9000 },
+    { order: 110, hash: '#/home/overview', caption: '<b>This week.</b> Bid deadlines, market moves, weather alerts, top add-ons and rival deals. <b>Data sources</b> lists every source.', narration: 'Signals show bid deadlines, market moves, weather alerts, add-ons and rival deals. Data sources lists every source.', duration: 9000 },
     { order: 120, hash: '#/home/firm', caption: '<b>BSP.</b> A $335M Fund I, 7 companies, 23 add-ons and one exit: Smith + Howard, sold August 2026.', narration: 'The firm: a three hundred thirty-five million dollar fund, seven companies, twenty-three add-ons, one exit.', duration: 7000 },
   ],
 };

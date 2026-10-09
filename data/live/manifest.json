@@ -71,8 +71,83 @@
     "https://www2.census.gov/econ/bps/County/co2608c.txt"
    ],
    "title": "Census Building Permits Survey, monthly county estimates (current month)"
+  },
+  "fred_signals": {
+   "status": "ok",
+   "file": "data/live/fred_signals.json",
+   "fetched_at": "2026-10-09T06:19:09Z",
+   "rows": 38,
+   "bytes": 29843,
+   "seconds": 53.4,
+   "source_urls": [
+    "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE30US",
+    "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2",
+    "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DPRIME",
+    "https://fred.stlouisfed.org/graph/fredgraph.csv?id=EXHOSLUSM495S",
+    "https://fred.stlouisfed.org/graph/fredgraph.csv?id=HOUST",
+    "https://fred.stlouisfed.org/graph/fredgraph.csv?id=TLNRESCONS",
+    "https://fred.stlouisfed.org/graph/fredgraph.csv?id=PASTHPI",
+    "https://fred.stlouisfed.org/graph/fredgraph.csv?id=NJSTHPI",
+    "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MASTHPI",
+    "https://fred.stlouisfed.org/graph/fredgraph.csv?id=CTSTHPI"
+   ],
+   "title": "FRED economic series behind the local signals view, plus Treasury customs duties"
+  },
+  "housing_counties": {
+   "status": "ok",
+   "file": "data/live/housing_counties.json",
+   "fetched_at": "2026-10-09T06:06:49Z",
+   "rows": 38,
+   "bytes": 12149,
+   "seconds": 0.7,
+   "source_urls": [
+    "https://econdata.s3-us-west-2.amazonaws.com/Reports/Core/RDC_Inventory_Core_Metrics_County.csv",
+    "https://www.realtor.com/research/data/"
+   ],
+   "title": "Realtor.com county housing inventory, portfolio counties (newest month)"
+  },
+  "nih_awards": {
+   "status": "ok",
+   "file": "data/live/nih_awards.json",
+   "fetched_at": "2026-10-09T06:08:58Z",
+   "rows": 8,
+   "bytes": 4056,
+   "seconds": 129.7,
+   "source_urls": [
+    "https://api.reporter.nih.gov/v2/projects/search",
+    "https://reporter.nih.gov/"
+   ],
+   "title": "NIH research awards, year to date vs the same window last year, 8 research states"
+  },
+  "federal_buying": {
+   "status": "ok",
+   "file": "data/live/federal_buying.json",
+   "fetched_at": "2026-10-09T06:09:11Z",
+   "rows": 3,
+   "bytes": 2906,
+   "seconds": 12.6,
+   "source_urls": [
+    "https://api.usaspending.gov/api/v2/search/spending_over_time/",
+    "https://www.usaspending.gov/search"
+   ],
+   "title": "Federal contract obligations by month for portfolio-relevant buying lines"
+  },
+  "policy_activity": {
+   "status": "ok",
+   "file": "data/live/policy_activity.json",
+   "fetched_at": "2026-10-09T06:09:16Z",
+   "rows": 4,
+   "bytes": 1918,
+   "seconds": 5.2,
+   "source_urls": [
+    "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-09",
+    "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-09&conditions%5Bagencies%5D%5B%5D=environmental-protection-agency",
+    "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-09&conditions%5Bagencies%5D%5B%5D=energy-department",
+    "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-09&conditions%5Bagencies%5D%5B%5D=health-and-human-services-department"
+   ],
+   "title": "Federal Register rules and proposed rules, year to date vs last year"
   }
  },
- "generated_at": "2026-10-08T16:29:58Z",
+ "generated_at": "2026-10-09T06:19:09Z",
  "note": "Nightly snapshots of public live sources (scripts/refresh_live.py). A source with status error keeps its previous file."
 }

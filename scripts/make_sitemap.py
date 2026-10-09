@@ -33,7 +33,7 @@ OS = {'pp': 'ServiceOS', 'cet': 'GridOS', 'fl': 'FirmOS', 'ts': 'LabOS', 'bpi': 
 KNOWN = {
     'index.html': ('Home', 'The landing page: ask a question, then three things to try.'),
     'app.html': ('Portal', 'Every module and view, listed below.'),
-    'theater.html': ('3D map', 'A 3D fly-through of home sales, expansion and live storms.'),
+    'theater.html': ('3D map', 'A 3D fly-through of home sales, bids, add-on targets and live weather alerts.'),
     'sitemap.html': ('Sitemap', 'This page.'),
     'redesigns/index.html': ('Site concepts', 'Six concept websites and the OS program.'),
     'redesigns/voice-ai.html': ('24/7 Voice AI', 'What missed calls cost, the vendors and a sample call.'),
