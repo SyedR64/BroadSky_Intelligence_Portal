@@ -71,7 +71,7 @@ Error codes match the Worker: `no_model_key`, `rate_limited`, `daily_cap`, `upst
 | `WEB_SEARCH` | `on` | `off` removes web search from BSP Desk (it is never offered to the concept-site assistants) |
 | `DAILY_CAP` | `400` | Total `/chat` requests per UTC day across all visitors. `0` switches Claude off. |
 | `RL_PER_10MIN` | `30` | `/chat` requests per visitor in any 10-minute window |
-| `ALLOWED_ORIGINS` | `https://syedr64.github.io,http://127.0.0.1:8765,http://localhost:8765` | Comma-separated |
+| `ALLOWED_ORIGINS` | `https://bspdesk.vercel.app,https://syedr64.github.io,http://127.0.0.1:8765,http://localhost:8765` | Comma-separated. The site's own addresses (`SITE_ORIGINS`: bspdesk.vercel.app and GitHub Pages) are always allowed. |
 | `DB_PATH` | `$RAILWAY_VOLUME_MOUNT_PATH/bsp_assistant.db` if a volume is attached, else `data/bsp_assistant.db` next to `app.py` | The folder is created if it is missing |
 | `UPSTREAM_TOTAL_TIMEOUT` | `150` | Seconds per answer, tool calls included |
 | `FAKE_ANTHROPIC_URL` | (unset) | **Tests only.** Sends Claude calls to a local mock instead of api.anthropic.com. |

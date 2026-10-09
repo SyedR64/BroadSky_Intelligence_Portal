@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/system.css?v=20261009165425">
+<link rel="stylesheet" href="assets/system.css?v=20261009173940">
 <style>
   /* page layout only: full-bleed WebGL stage under the minimal transparent frame (UNIFIED.md §9) */
   html, body { height: 100%; overflow: hidden; background: var(--sys-bg); }
@@ -59,8 +59,8 @@
   <p class="sys-src"><b>Source:</b> Punctual Pros deed records (PA and NJ), CET opportunity radar, CET wastewater-plant targets, National Weather Service alerts (live). Maps: MapLibre GL, deck.gl, OpenFreeMap and OpenMapTiles, AWS Terrain Tiles.</p>
 </aside>
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261009165425';
-  import { Theater } from './assets/theater.js?v=20261009165425';
+  import { Frame } from './assets/frame.js?v=20261009173940';
+  import { Theater } from './assets/theater.js?v=20261009173940';
   Frame.mount({ variant: 'minimal', theme: 'dark' });
   const qp = new URLSearchParams(location.search);
   const autoplay = qp.get('autoplay') !== '0';

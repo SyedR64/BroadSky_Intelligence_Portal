@@ -1,5 +1,5 @@
 /* ServiceOS product page — demo logic. Shared helpers come from ./site.js (same folder). */
-import { FAQ, TERRITORY, HUBS, classifyZip, zipIndex, cleanCity, miles, fillRange, territoryAlerts, alertLevel } from './site.js?v=20261009165425';
+import { FAQ, TERRITORY, HUBS, classifyZip, zipIndex, cleanCity, miles, fillRange, territoryAlerts, alertLevel } from './site.js?v=20261009173940';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));

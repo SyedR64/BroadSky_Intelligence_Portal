@@ -1,5 +1,9 @@
 # Turning on the assistant backend
 
+## The site: hosted on Vercel at bspdesk.vercel.app
+
+The site itself is a second Vercel project, **bspdesk**, built from this same repository with no build step, so every push to `main` publishes it. To create it once: in Vercel, **Add New → Project**, import this repository, set the project name to `bspdesk`, keep **Root Directory** at the repository root (`./`), set **Framework Preset** to **Other**, leave the build command and output directory empty, and deploy. The backend always accepts requests from `https://bspdesk.vercel.app` and from GitHub Pages (`SITE_ORIGINS` in `server/app.py`), so the assistant works there with no variable change. GitHub Pages stays on: `assets/frame.js` and the memo forward any `syedr64.github.io/BroadSky_Intelligence_Portal/…` link to the same page on the new address. For a custom domain, add it under the project's **Domains** and update `HOME` in `assets/frame.js`, `SITE_ORIGINS` and the canonical links.
+
 ## Live assistant: deployed on Vercel (Oct 8, 2026)
 
 The streaming backend runs as the Vercel project **bsp-desk** (team BSP, root directory `server/`, FastAPI, Python 3.12) at https://bsp-desk.vercel.app. `assets/runtime.json` points the site at it. Variables on the project: `ANTHROPIC_API_KEY`, `ALLOWED_ORIGINS`, `DB_PATH=/tmp/bsp-desk.sqlite` (threads and feedback are kept per function instance there; the visitor's browser copy is the record). Every push to `main` that touches `server/` redeploys it. The Cloudflare worker below is an alternative and is not in use.
