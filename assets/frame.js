@@ -7,7 +7,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261009190627';
+       import { Frame } from '../../assets/frame.js?v=20261009192122';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
@@ -64,6 +64,7 @@ export const COMPANIES = {
 const CO_ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
 
 export const NAV = [
+  { id: 'home',      label: 'Home',     href: './',         hint: 'start here' },
   { id: 'portal',    label: 'Portal',   href: 'app.html',   hint: 'analyst console' },
   { id: 'concepts',  label: 'Concepts', href: 'redesigns/', hint: 'websites, OS and growth plans' },
   { id: 'briefing',  label: 'Briefing', href: '#briefing',  hint: 'video and memo' },
@@ -96,7 +97,7 @@ function where() {
   const rel = href.startsWith(ROOT) ? href.slice(ROOT.length) : location.pathname.replace(/^\/+/, '');
   const parts = rel.split('/').filter(Boolean);
   const file = rel.endsWith('/') || !parts.length ? 'index.html' : parts[parts.length - 1];
-  let active = 'home', co = null;
+  let active = parts.length === 0 || rel === 'index.html' ? 'home' : null, co = null;   // Home marks only the landing page
   if (parts[0] === 'redesigns') {
     const slugCo = CO_ORDER.find(k => COMPANIES[k].slug === parts[1]);
     if (slugCo) co = slugCo;
