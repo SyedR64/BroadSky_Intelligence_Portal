@@ -1,5 +1,5 @@
 /* LabOS product page — demo + value math. Account health uses aggregated portal data (no names). */
-import { esc, num, PRODUCTS, STOCK, catById, search, aggregateSites, SITES_FALLBACK, toast, reveal, mountChat, badgeEst } from './shared.js?v=20261009184141';
+import { esc, num, PRODUCTS, STOCK, catById, search, aggregateSites, SITES_FALLBACK, toast, reveal, mountChat, badgeEst } from './shared.js?v=20261009185324';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const M = v => v == null || isNaN(v) ? '—' : Math.abs(v) >= 1e9 ? `$${(v / 1e9).toFixed(1)}B` : Math.abs(v) >= 1e6 ? `$${(v / 1e6).toFixed(Math.abs(v) >= 1e8 ? 0 : 1)}M` : Math.abs(v) >= 1e3 ? `$${Math.round(v / 1e3)}K` : `$${Math.round(v)}`;

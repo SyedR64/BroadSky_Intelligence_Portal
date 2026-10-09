@@ -1,10 +1,10 @@
-import * as Copy from './copy.js?v=20261009184141';
+import * as Copy from './copy.js?v=20261009185324';
 /* 3D map — cinematic GPU map scenes over the portal's datasets (engine: assets/theater.js) */
 const V = new URL(import.meta.url).search; // reuse the registry's ?v= stamp for cache-busting the engine
 
 async function play(ctx) {
   const { el, params, data, live, maps, fmt, esc, app } = ctx;
-  if (!document.getElementById('css-theater')) { const l = document.createElement('link'); l.id = 'css-theater'; l.rel = 'stylesheet'; l.href = `modules/theater.css?v=20261009184141${V}`; document.head.appendChild(l); }
+  if (!document.getElementById('css-theater')) { const l = document.createElement('link'); l.id = 'css-theater'; l.rel = 'stylesheet'; l.href = `modules/theater.css?v=20261009185324${V}`; document.head.appendChild(l); }
   // the view's page heading follows the portal pattern (set by retitle in app.html); it is visually hidden so the
   // engine's per-scene caption stays the visible title (the engine renders it as h2 when the page already has an h1)
   // the stage is a dark band (system.css §2): data-sys-theme="dark" resolves the system tokens to the dark set inside it,
@@ -12,7 +12,7 @@ async function play(ctx) {
   el.innerHTML = `<div class="page-head sys-sr"><h1 class="sys-h1">3D map · cinematic map scenes</h1></div><div class="m-theater" data-sys-theme="dark" style="position:relative;height:100%;min-height:480px;background:var(--sys-bg)"></div>`;
   const host = el.querySelector('.m-theater');
   let Theater;
-  try { ({ Theater } = await import(`../assets/theater.js?v=20261009184141${V}`)); }
+  try { ({ Theater } = await import(`../assets/theater.js?v=20261009185324${V}`)); }
   catch (e) { host.innerHTML = `<div style="padding:var(--sys-sp-6) var(--sys-gut)">${ctx.ui.note('The 3D map engine could not load. Check the connection and reload; the same scenes play on the standalone theater page.', 'warn')}</div>`; console.warn('[theater]', e); return; }
   if (!el.isConnected) return;
   const scene = params.scene || 'S1';

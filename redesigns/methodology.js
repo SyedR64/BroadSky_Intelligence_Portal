@@ -4,7 +4,7 @@ import {
   loadBundle, esc, PLATFORMS, PORDER, sellerLabel, DEAL_TYPE, STRENGTH, TESTS, isTargetTest, critShort, TYPE_LABEL,
   stripSVG, graphSVG, legendHTML, bindGraph, nodeDetail, introFor, nextFive, firstCallScript, buildFaq,
   fmtMonth, fmtDay, monthsBetween, clip, host, estHTML,
-} from '../modules/bsp-lib.js?v=20261009184141';
+} from '../modules/bsp-lib.js?v=20261009185324';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];

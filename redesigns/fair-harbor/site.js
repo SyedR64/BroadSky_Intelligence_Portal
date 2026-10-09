@@ -1,6 +1,6 @@
 /* Fair Harbor concept — home page behaviour. Booted from an inline module in index.html
    (so scripts/bump_version.sh can stamp the shared core/chat imports). */
-import { art, PRODUCTS, COLORS, recommend, FAQ, SUGGESTIONS, INTENTS, chrome, toast, esc, setFrame, ep } from './common.js?v=20261009184141';
+import { art, PRODUCTS, COLORS, recommend, FAQ, SUGGESTIONS, INTENTS, chrome, toast, esc, setFrame, ep } from './common.js?v=20261009185324';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));

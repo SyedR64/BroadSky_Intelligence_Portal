@@ -101,7 +101,7 @@ function initDeals() {
   const run = async () => {
     if (done) return; done = true;
     const get = url => fetch(ROOT + url, { cache: 'force-cache' }).then(r => r.ok ? r.json() : null).catch(() => null);
-    const [dm, cet, pp, flts, comps, L] = await Promise.all(['deal_model', 'ma_targets_cet', 'ma_targets_pp', 'ma_targets_fl_ts', 'public_comps'].map(n => get(`data/research/${n}.json`)).concat(import(ROOT + 'modules/deal-lib.js?v=20261009184141').catch(() => null)));
+    const [dm, cet, pp, flts, comps, L] = await Promise.all(['deal_model', 'ma_targets_cet', 'ma_targets_pp', 'ma_targets_fl_ts', 'public_comps'].map(n => get(`data/research/${n}.json`)).concat(import(ROOT + 'modules/deal-lib.js?v=20261009185324').catch(() => null)));
     if (!dm?.meta || !L?.targetVals) return;
     const all = [...(cet?.items || []).map(t => ({ ...t, _p: 'cet' })), ...(pp?.items || []).map(t => ({ ...t, _p: 'pp' })), ...(flts?.items || []).map(t => ({ ...t, _p: t.platform === 'frontline' ? 'fl' : 'ts' }))];
     for (const card of cards) {

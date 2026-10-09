@@ -19,7 +19,7 @@ const DEFAULT_MODEL = 'claude-opus-5-5';
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_VERSION = '2023-06-01';
 const FALLBACK_BETA = 'server-side-fallback-2026-07-01';   // with body "fallbacks": "default"
-const DEFAULT_ORIGINS = ['https://broadsky-desk.vercel.app', 'https://syedr64.github.io', 'http://127.0.0.1:8765'];
+const DEFAULT_ORIGINS = ['https://broadsky-agent.vercel.app', 'https://broadsky-desk.vercel.app', 'https://syedr64.github.io', 'http://127.0.0.1:8765'];
 
 const LIMITS = {
   body: 131072,          // bytes per request body
