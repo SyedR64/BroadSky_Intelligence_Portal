@@ -1,0 +1,64 @@
+/* Local signals (.m-signals): layout only. Cards, KPI tiles, chips, tables and notes are the system components;
+   this file sizes the force matrix, the action list and the small reading rows with --sys-* tokens, so both themes
+   follow system.css. No colour, radius, shadow or font of its own. */
+.m-signals .sg-mwrap{border:0;border-radius:0;box-shadow:none}
+.m-signals .sg-matrix th,.m-signals .sg-matrix td{padding:8px 10px;text-align:center;vertical-align:middle}
+.m-signals .sg-matrix th{white-space:normal;min-width:84px;line-height:1.35}
+.m-signals .sg-matrix th:first-child,.m-signals .sg-matrix td:first-child{position:sticky;left:0;z-index:1;text-align:left;background:var(--sys-surface);min-width:130px;font-size:var(--sys-fs-sm)}
+.m-signals .sg-matrix th:first-child{background:var(--sys-bg-2)}
+.m-signals .sg-matrix tbody tr:hover td:first-child{background:var(--sys-surface-2)}
+.m-signals .sg-matrix .sys-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--co);vertical-align:1px}
+.m-signals .sg-cell{min-height:26px;padding:0 10px;font-size:var(--sys-fs-xs)}
+.m-signals .sg-cell.hi{font-weight:700}
+.m-signals .sg-cell .w{font-size:8px;line-height:1}
+.m-signals .sg-none{color:var(--sys-mute-2)}
+.m-signals .sg-legend{margin:0;padding:var(--sys-sp-3) var(--pad,16px);border-top:1px solid var(--sys-line)}
+.m-signals .sg-legend .w{font-size:8px;vertical-align:1px}
+
+.m-signals .sg-actions{list-style:none;margin:0;padding:0;display:grid;gap:var(--sys-sp-3)}
+.m-signals .sg-actions li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:var(--sys-sp-2);padding-bottom:var(--sys-sp-3);border-bottom:1px solid var(--sys-line)}
+.m-signals .sg-actions li:last-child{border-bottom:0;padding-bottom:0}
+.m-signals .sg-actions .n{font:700 var(--sys-fs-sm)/1.9 var(--sys-mono);color:var(--sys-mute)}
+.m-signals .sg-actions .sys-chip{min-height:24px;padding:0 9px;font-size:var(--sys-fs-xs)}
+.m-signals .sg-more{margin-top:4px;padding:0;border:0;background:none;font-size:var(--sys-fs-xs);font-weight:600;color:var(--sys-ink-2);text-decoration:underline;text-decoration-color:var(--sys-line-2);text-underline-offset:3px;cursor:pointer}
+.m-signals .sg-more:hover{color:var(--sys-ink);text-decoration-color:currentColor}
+
+.m-signals .sg-co-lead{margin:0;padding:var(--sys-sp-3) var(--pad,16px);font-size:var(--sys-fs-sm);color:var(--sys-ink-2);border-bottom:1px solid var(--sys-line)}
+.m-signals .sg-why{margin-top:2px;max-width:40ch;font-size:var(--sys-fs-xs);line-height:1.45;color:var(--sys-ink-2);white-space:normal}
+.m-signals .sg-src{margin-top:2px;font-size:var(--sys-fs-2xs);line-height:1.4;color:var(--sys-mute)}
+.m-signals .sg-src a{color:inherit;text-decoration:underline;text-decoration-color:var(--sys-line-2);text-underline-offset:2px}
+.m-signals .sg-pos{color:var(--sys-good-ink);font-weight:600}
+.m-signals .sg-neg{color:var(--sys-bad-ink);font-weight:600}
+.m-signals .sg-read td{padding:9px 12px}
+.m-signals .sg-read td:first-child a{color:var(--sys-ink);text-decoration:none}
+.m-signals .sg-read td:first-child a:hover{text-decoration:underline}
+.m-signals .sg-spark{width:104px}
+.m-signals .sg-spark svg{display:block}
+.m-signals .panel-head .actions .seg{flex-wrap:wrap;justify-content:flex-end}
+.m-signals .panel-head .actions .sys-chip{min-height:28px;padding:0 10px;font-size:var(--sys-fs-xs)}
+
+@media (max-width:900px){
+  .m-signals .panel-head{flex-wrap:wrap}
+  .m-signals .panel-head .actions{width:100%}
+  .m-signals .panel-head .actions .seg{justify-content:flex-start}
+}
+@media (max-width:560px){
+  .m-signals .sg-matrix th,.m-signals .sg-matrix td{padding:6px 6px}
+  .m-signals .sg-matrix th{min-width:74px;font-size:var(--sys-fs-2xs)}
+  .m-signals .sg-matrix th:first-child,.m-signals .sg-matrix td:first-child{min-width:104px;font-size:var(--sys-fs-xs)}
+  .m-signals .sg-cell{padding:0 7px}
+  .m-signals .sg-spark{width:72px}
+  .m-signals #rd-tbl th:nth-child(4),.m-signals #rd-tbl td:nth-child(4),.m-signals #rd-tbl th:nth-child(5),.m-signals #rd-tbl td:nth-child(5){display:none}
+  .m-signals #rd-tbl td,.m-signals #rd-tbl th{padding-left:10px;padding-right:10px}
+}
+.m-signals .sg-kpi-of{font-size:var(--sys-fs-sm);font-weight:500;color:var(--sys-mute);letter-spacing:0}
+@media (min-width:1100px){.m-signals .sg-actions{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--sys-sp-6)}.m-signals .sg-actions li:nth-last-child(2):nth-child(odd){border-bottom:0;padding-bottom:0}}
+/* phone: forces as cards */
+.m-signals .sg-cards{list-style:none;margin:0;padding:0}
+.m-signals .sg-cards li+li{border-top:1px solid var(--sys-line)}
+.m-signals .sg-card{display:flex;flex-direction:column;gap:6px;width:100%;padding:var(--sys-sp-4) var(--pad,16px);border:0;background:none;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.m-signals .sg-card:hover,.m-signals .sg-card:focus-visible{background:var(--sys-surface-2)}
+.m-signals .sg-card .sys-chip{min-height:24px;padding:0 9px;font-size:var(--sys-fs-xs)}
+.m-signals .sg-card .sg-why{max-width:none}
+.m-signals .sg-card-read{display:block;padding:8px 10px;border-radius:var(--sys-r-sm);background:var(--sys-bg-2)}
+.m-signals .kpi .spark{position:static;margin-top:6px}

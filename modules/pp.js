@@ -1,10 +1,10 @@
-import * as Copy from './copy.js?v=20261008192515';
+import * as Copy from './copy.js?v=20261009070649';
 /* ═══════════════════════════════════════════════════════════════════════════
    Punctual Pros — residential HVAC · plumbing · electrical (Central PA + Jersey Shore)
    Views: overview · weather & demand · new-mover marketing · territory · market · targets · filings
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, renderFilings } from '../assets/components.js?v=20261008192515';
-import { esc as E } from '../assets/core.js?v=20261008192515';
+import { renderTargets, renderFilings } from '../assets/components.js?v=20261009070649';
+import { esc as E } from '../assets/core.js?v=20261009070649';
 
 /* System palette only (UNIFIED.md §6, §8): company accents for categories, status tokens for status. */
 const PAL = { pp: 'var(--co-pp)', cet: 'var(--co-cet)', amber: 'var(--sys-warn)', green: 'var(--sys-good)', red: 'var(--sys-bad)', sky: 'var(--sys-info)', purple: 'var(--co-fl)', cyan: 'var(--co-fh)', ts: 'var(--co-ts)', muted: 'var(--sys-mute)', dim: 'var(--sys-mute-2)' };
@@ -100,7 +100,7 @@ const nameConflict = t => /punctual\s*pros/i.test(String(t?.company || ''));
 const pick = (o, ...ks) => { for (const k of ks) if (o && o[k] != null && o[k] !== '') return o[k]; return null; };
 
 function css() {
-  if (!document.getElementById('css-pp')) { const l = document.createElement('link'); l.id = 'css-pp'; l.rel = 'stylesheet'; l.href = 'modules/pp.css?v=20261008192515'; document.head.appendChild(l); }
+  if (!document.getElementById('css-pp')) { const l = document.createElement('link'); l.id = 'css-pp'; l.rel = 'stylesheet'; l.href = 'modules/pp.css?v=20261009070649'; document.head.appendChild(l); }
 }
 
 /* ── shared data ──────────────────────────────────────────────────────── */
@@ -420,6 +420,7 @@ async function weather(ctx) {
   })}
   ${model ? '' : ui.note('Demand model dataset <b>Punctual Pros demand model</b> is not available — using fallback hubs (Lancaster, York, Harrisburg, Reading, Chambersburg, Toms River) and default baselines (HVAC 10 · Plumbing 16 · Electrical 7 calls/day per 10k households).', 'warn')}
   <div id="wx-kpis">${ui.kpis([{ label: 'Territory alerts (live)', value: '…' }, { label: 'Peak HVAC pressure', value: '…' }, { label: 'Peak plumbing pressure', value: '…' }, { label: 'Peak electrical pressure', value: '…' }, { label: 'Peak-day PP calls (est.)', value: '…' }, { label: 'Surge techs, peak day', value: '…' }])}</div>
+  <div class="mt-12">${ui.note('Weather is one local force among many. Home sales, technician pay, equipment and fuel prices and mortgage rates move calls and margins too. <a href="#/signals/overview?co=pp">See what moves Punctual Pros sales →</a>', '')}</div>
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Service-Call Pressure Index · hubs × days', sub: '100 = baseline day for the trade · first 2 columns observed, then 7-day forecast · click a cell for drivers', actions: '<div id="wx-trade"></div>', body: `<div id="wx-heat">${ui.loading(`Fetching Open-Meteo forecasts for ${hubs.length} hubs…`)}</div><div id="wx-heat-leg"></div>`, foot: `${`${ui.source('Open-Meteo forecast API', SRC.meteo)} ${Copy.LIVE}`} ${modelSrc}` })}
     ${ui.panel({ title: 'Live NWS alerts touching the territory', sub: 'Pennsylvania and New Jersey alerts, filtered to the 15 counties PP serves', body: `<div id="wx-alerts">${ui.loading('Checking National Weather Service alerts…')}</div>`, scroll: true, foot: `${ui.source('National Weather Service alerts API', 'https://api.weather.gov/alerts/active?area=PA')} ${Copy.LIVE}` })}
