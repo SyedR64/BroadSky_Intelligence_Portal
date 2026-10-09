@@ -4,6 +4,8 @@
 
 The streaming backend runs as the Vercel project **bsp-desk** (team BSP, root directory `server/`, FastAPI, Python 3.12) at https://bsp-desk.vercel.app. `assets/runtime.json` points the site at it. Variables on the project: `ANTHROPIC_API_KEY`, `ALLOWED_ORIGINS`, `DB_PATH=/tmp/bsp-desk.sqlite` (threads and feedback are kept per function instance there; the visitor's browser copy is the record). Every push to `main` that touches `server/` redeploys it. The Cloudflare worker below is an alternative and is not in use.
 
+Claude answers from the knowledge base in `server/knowledge/`: BSP's website, press releases, SEC filings, news, the portfolio companies' sites and the portal's own research, searched by keyword and by meaning. It can search again, read whole sources and run the acquisition model before it answers (details in `server/README.md`). The **Refresh assistant knowledge** workflow rebuilds that knowledge base on the 1st of each month and commits it, which redeploys the backend; run it from Actions any time to pick up news sooner. Optional variables: `WEB_SEARCH=off` turns off web search, `DAILY_CAP` (default 400 questions a day) bounds spend, `MODEL=claude-sonnet-5-5` halves the cost per answer.
+
 ## Quick path: use the Claude API credits with one secret (10 minutes)
 
 This needs no Cloudflare account. It switches on the weekly deep dives, which the assistant serves to every visitor as static answers.
@@ -142,10 +144,11 @@ Answers younger than 7 days are skipped unless `force` is set. A full run of 30 
 
 | Workflow | When | What it does | Secrets |
 |---|---|---|---|
-| `refresh-data.yml` | daily 09:10 UTC, or on demand | `scripts/refresh_live.py` snapshots NWS alerts, Open-Meteo forecasts, USASpending awards, EPA ECHO wastewater permittees and Census building permits into `data/live/` (a failed source keeps its previous file; `data/live/manifest.json` records each status), regenerates `data/research/README.md`, and commits if anything changed | none |
+| `refresh-data.yml` | daily 09:10 UTC, or on demand | `scripts/refresh_live.py` snapshots NWS alerts, Open-Meteo forecasts, USASpending awards and monthly federal buying, EPA ECHO wastewater permittees, Census building permits, FRED economic series and Treasury customs duties, Realtor.com county housing, NIH RePORTER awards and Federal Register rule counts into `data/live/` (about 4 minutes; NIH paging is the slow part) (a failed source keeps its previous file; `data/live/manifest.json` records each status), regenerates `data/research/README.md`, and commits if anything changed | none |
 | `pages-check.yml` | every push and pull request to `main` | serves the repo and loads every page and app route in headless Chromium with `scripts/ci_check.py`; fails on console errors or same-origin 404s; the summary is on the run page | none |
 | `deploy-worker.yml` | pushes to `main` that touch `worker/`, or on demand | the backend deploy described above | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ANTHROPIC_API_KEY` |
 | `generate-answers.yml` | Mondays 10:00 UTC, or on demand | the deep-dives above | `ANTHROPIC_API_KEY` |
+| `refresh-knowledge.yml` | the 1st of each month 10:25 UTC, or on demand | rebuilds the assistant's knowledge base with `scripts/build_corpus.py` (BSP's website, cited sources, company sites, news, the portal's pages and research), checks it and commits `server/knowledge/`, which redeploys the backend | none |
 
 Commits made by these workflows use the built-in `GITHUB_TOKEN`, which does not start other workflows, so each committing workflow also asks GitHub Pages to rebuild (best effort). If a data commit ever fails to appear on the site, re-run the latest **pages-build-deployment** run under Actions, or push any commit.
 
