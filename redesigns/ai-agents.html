@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261009155255">
-<link rel="stylesheet" href="ai-agents.css?v=20261009155255">
+<link rel="stylesheet" href="../assets/system.css?v=20261009161812">
+<link rel="stylesheet" href="ai-agents.css?v=20261009161812">
 </head>
 <body>
 <main id="main">
@@ -22,11 +22,8 @@
       <div class="sys-subnav-links">
         <a href="#economics">Economics</a>
         <a href="#catalog">Catalog</a>
-        <a href="#patterns">Patterns</a>
         <a href="#rollout">Rollout</a>
         <a href="#value">Value</a>
-        <a href="#governance">Governance</a>
-        <a href="#build-buy">Build vs buy</a>
         <a href="#companies">Companies</a>
       </div>
       <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../app.html#/techos/overview">Open in portal</a></div>
@@ -296,9 +293,9 @@
 </main>
 
 <script type="module">
-import { Frame } from '../assets/frame.js?v=20261009155255';
-import { Chat } from '../assets/chat.js?v=20261009155255';
-import { boot } from './ai-agents.js?v=20261009155255';
+import { Frame } from '../assets/frame.js?v=20261009161812';
+import { Chat } from '../assets/chat.js?v=20261009161812';
+import { boot } from './ai-agents.js?v=20261009161812';
 const frame = Frame.mount({ banner: true });
 const d = await boot().catch(e => { console.warn('agentic layer boot failed', e); return null; });
 try {

@@ -11,17 +11,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261009155255">
-<link rel="stylesheet" href="growth-plan.css?v=20261009155255">
+<link rel="stylesheet" href="../../assets/system.css?v=20261009161812">
+<link rel="stylesheet" href="growth-plan.css?v=20261009161812">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 </head>
 <body data-co="fl">
 <main id="main">
   <nav class="sys-subnav" aria-label="On this page">
     <div class="sys-subnav-in">
-      <a class="sys-subnav-title" href="#top">Frontline growth plan</a>
+      <a class="sys-subnav-title" href="#top">Growth plan</a>
       <div class="sys-subnav-links">
-        <a href="#decision">Decision</a><a href="#template">Template</a><a href="#map">Phases</a><a href="#levers">Levers</a><a href="#agents">AI agents</a><a href="#talent">Talent</a><a href="#addons">Add-ons</a><a href="#returns">Returns</a><a href="#risks">Risks</a><a href="#sources">Sources</a><a href="firmos.html">FirmOS</a>
+        <a href="#decision">Decision</a>
+        <a href="#map">Phases</a>
+        <a href="#levers">Levers</a>
+        <a href="#addons">Add-ons</a>
+        <a href="#returns">Returns</a>
       </div>
       <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../../app.html#/fl/overview">Open in portal</a></div>
     </div>
@@ -262,10 +266,10 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261009155255';
-  import { Chat } from '../../assets/chat.js?v=20261009155255';
-  import { Data, Fmt, esc } from '../../assets/core.js?v=20261009155255';
-  import { boot } from './growth-plan.js?v=20261009155255';
+  import { Frame } from '../../assets/frame.js?v=20261009161812';
+  import { Chat } from '../../assets/chat.js?v=20261009161812';
+  import { Data, Fmt, esc } from '../../assets/core.js?v=20261009161812';
+  import { boot } from './growth-plan.js?v=20261009161812';
   const frame = Frame.mount({});
   boot({ Data, Fmt, esc, Chat, frame });
 </script>

@@ -7,8 +7,8 @@
    The JSON inside <pre id="out"> is {modules:[{id,name,views:[...]}], steps:[{order,hash,caption,narration,duration}]} */
 const out = document.getElementById('out');
 try {
-  const { Tour } = await import('../assets/core.js?v=20261009155255');
-  const { modules } = await import('../modules/registry.js?v=20261009155255');
+  const { Tour } = await import('../assets/core.js?v=20261009161812');
+  const { modules } = await import('../modules/registry.js?v=20261009161812');
   for (const m of modules) if (Array.isArray(m.tour) && m.tour.length) Tour.register(m.tour.map(s => ({ ...s, module: m.id })));
   const strip = h => String(h || '').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
   const steps = Tour.steps.map((s, i) => ({ index: i + 1, order: s.order ?? null, module: s.module, hash: s.hash, caption: strip(s.caption), caption_html: s.caption, narration: s.narration || strip(s.caption), duration: s.duration || 9000 }));

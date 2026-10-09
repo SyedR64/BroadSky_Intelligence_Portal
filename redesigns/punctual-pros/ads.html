@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="../../assets/system.css?v=20261009155255">
-<link rel="stylesheet" href="./ads.css?v=20261009155255">
+<link rel="stylesheet" href="../../assets/system.css?v=20261009161812">
+<link rel="stylesheet" href="./ads.css?v=20261009161812">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
 </head>
 <body data-co="pp">
@@ -23,9 +23,13 @@
   <div class="sys-subnav-in">
     <a class="sys-subnav-title" href="#thesis">Growth marketing</a>
     <div class="sys-subnav-links">
-      <a href="#baseline">Baseline</a><a href="#creatives">Sample ads</a><a href="#targeting">Targeting</a><a href="#plan">Media plan</a><a href="#calc">Calculator</a><a href="#platforms">CTV platforms</a><a href="#test">Test plan</a><a href="#fh">Fair Harbor</a><a href="#sources">Sources</a>
+      <a href="#baseline">Baseline</a>
+      <a href="#creatives">Sample ads</a>
+      <a href="#targeting">Targeting</a>
+      <a href="#plan">Media plan</a>
+      <a href="#calc">Calculator</a>
     </div>
-    <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../../app.html#/pp/movers">Open in portal</a><a class="sys-btn sys-btn--primary sys-btn--sm" href="#calc">Run the numbers</a></div>
+    <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../../app.html#/pp/movers">Open in portal</a></div>
   </div>
 </nav>
 
@@ -279,10 +283,10 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261009155255';
-  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261009155255';
-  import { Chat } from '../../assets/chat.js?v=20261009155255';
-  import { init } from './ads.js?v=20261009155255';
+  import { Frame } from '../../assets/frame.js?v=20261009161812';
+  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261009161812';
+  import { Chat } from '../../assets/chat.js?v=20261009161812';
+  import { init } from './ads.js?v=20261009161812';
   const frame = Frame.mount({});
   init({ Chat, Data, Fmt, Live, esc }).then(chat => { if (chat) frame.setChat(chat); }).catch(e => console.warn('ads init', e));
 </script>
