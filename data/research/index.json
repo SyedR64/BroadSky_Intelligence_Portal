@@ -1,12 +1,12 @@
 {
- "generated": "2026-10-08",
+ "generated": "2026-10-09",
  "files": [
   {
    "name": "ai_agents_portfolio",
    "folder": "research",
    "title": "ai_agents_portfolio - portfolio-wide AI-agent program (the agentic layer of every BSP OS)",
    "item_count": 61,
-   "bytes": 95617,
+   "bytes": 95612,
    "generated": "2026-10-06"
   },
   {
@@ -14,7 +14,7 @@
    "folder": "research",
    "title": "BPI (Bully Pulpit International, fka Bully Pulpit Interactive), financial filings and public-record research, part of the BSP portfolio and competitor track",
    "item_count": 21,
-   "bytes": 41828,
+   "bytes": 41826,
    "generated": "2026-09-24"
   },
   {
@@ -22,7 +22,7 @@
    "folder": "research",
    "title": "Bully Pulpit International: the growth plan",
    "item_count": 53,
-   "bytes": 57763,
+   "bytes": 57761,
    "generated": "2026-10-06"
   },
   {
@@ -30,7 +30,7 @@
    "folder": "research",
    "title": "bsp_firm",
    "item_count": 6,
-   "bytes": 76112,
+   "bytes": 76113,
    "generated": "2026-09-24",
    "lists": {
     "timeline": 52,
@@ -43,7 +43,7 @@
    "folder": "research",
    "title": "How BSP buys: a reverse-engineered acquisition methodology",
    "item_count": 68,
-   "bytes": 117031,
+   "bytes": 116954,
    "generated": "2026-10-06"
   },
   {
@@ -51,7 +51,7 @@
    "folder": "research",
    "title": "BSP professional network graph (public roles only)",
    "item_count": 314,
-   "bytes": 156304,
+   "bytes": 156297,
    "generated": "2026-10-06"
   },
   {
@@ -67,7 +67,7 @@
    "folder": "research",
    "title": "How sponsors built residential HVAC/plumbing/electrical companies: chronological case studies for Punctual Pros",
    "item_count": 17,
-   "bytes": 108177,
+   "bytes": 108174,
    "generated": "2026-10-06"
   },
   {
@@ -83,7 +83,7 @@
    "folder": "research",
    "title": "CET New England Opportunity Radar",
    "item_count": 86,
-   "bytes": 112976,
+   "bytes": 112836,
    "generated": "2026-09-24"
   },
   {
@@ -91,7 +91,7 @@
    "folder": "research",
    "title": "Commonwealth Electrical Technologies: the growth plan (from New England electrical/energy contractor to Northeast infrastructure company)",
    "item_count": 46,
-   "bytes": 63257,
+   "bytes": 63253,
    "generated": "2026-10-06"
   },
   {
@@ -115,7 +115,7 @@
    "folder": "research",
    "title": "Acquisition model: default assumptions, benchmarks and presets",
    "item_count": 24,
-   "bytes": 30768,
+   "bytes": 31305,
    "generated": "2026-10-08"
   },
   {
@@ -123,7 +123,7 @@
    "folder": "research",
    "title": "Design references for the BSP landing page and the six portfolio website concepts",
    "item_count": 26,
-   "bytes": 84925,
+   "bytes": 84921,
    "generated": "2026-10-06"
   },
   {
@@ -131,7 +131,7 @@
    "folder": "research",
    "title": "Fair Harbor (BSP portfolio) - public filings and financial research track",
    "item_count": 25,
-   "bytes": 45145,
+   "bytes": 45173,
    "generated": "2026-09-24"
   },
   {
@@ -139,7 +139,7 @@
    "folder": "research",
    "title": "Fair Harbor: the growth plan",
    "item_count": 46,
-   "bytes": 48165,
+   "bytes": 48163,
    "generated": "2026-10-06"
   },
   {
@@ -147,7 +147,7 @@
    "folder": "research",
    "title": "Frontline Managed Services - mid-size US law firm target universe (40-350 attorneys, beyond AM Law 200 coverage)",
    "item_count": 143,
-   "bytes": 278700,
+   "bytes": 278694,
    "generated": "2026-09-24"
   },
   {
@@ -155,7 +155,7 @@
    "folder": "research",
    "title": "Frontline Managed Services: the growth plan - AM Law core to mid-market and international (Smith + Howard template, AI agents, talent, growth levers, expansion phases, financing)",
    "item_count": 49,
-   "bytes": 69449,
+   "bytes": 69443,
    "generated": "2026-10-06"
   },
   {
@@ -163,7 +163,7 @@
    "folder": "research",
    "title": "Frontline Managed Services - filings and financial research track (BSP portfolio), with BSP fund context and competitor credit benchmarks",
    "item_count": 21,
-   "bytes": 39325,
+   "bytes": 39322,
    "generated": "2026-09-24"
   },
   {
@@ -187,7 +187,7 @@
    "folder": "research",
    "title": "Punctual Pros add-on acquisition target screen (residential HVAC / plumbing / electrical; Central PA + Jersey Shore + adjacent DE/MD/South Jersey)",
    "item_count": 61,
-   "bytes": 172795,
+   "bytes": 172792,
    "generated": "2026-09-24"
   },
   {
@@ -195,7 +195,7 @@
    "folder": "research",
    "title": "Private-equity competitive landscape for BSP (LMM business & consumer services)",
    "item_count": 35,
-   "bytes": 169151,
+   "bytes": 169152,
    "generated": "2026-09-24"
   },
   {
@@ -211,7 +211,7 @@
    "folder": "research",
    "title": "Punctual Pros weather-to-service-call demand model (HVAC / plumbing / electrical), NWS alert response plan, territory zone codes and weather hubs",
    "item_count": 54,
-   "bytes": 93475,
+   "bytes": 93469,
    "generated": "2026-09-24"
   },
   {
@@ -219,7 +219,7 @@
    "folder": "research",
    "title": "Punctual Pros public filings and regulatory data",
    "item_count": 29,
-   "bytes": 57655,
+   "bytes": 57651,
    "generated": "2026-09-24"
   },
   {
@@ -227,7 +227,7 @@
    "folder": "research",
    "title": "Punctual Pros market context: Central Pennsylvania and Jersey Shore (competitors, Authority Brands franchise territories, incentives, county profiles, market signals)",
    "item_count": 177,
-   "bytes": 227196,
+   "bytes": 227205,
    "generated": "2026-09-24"
   },
   {
@@ -235,7 +235,7 @@
    "folder": "research",
    "title": "How BSP takes Punctual Pros nationwide: Smith + Howard template, AI agents, pro programs, growth levers, expansion phases, financing",
    "item_count": 59,
-   "bytes": 59836,
+   "bytes": 59883,
    "generated": "2026-10-06"
   },
   {
@@ -243,7 +243,7 @@
    "folder": "research",
    "title": "Punctual Pros territory — NOAA NCEI Storm Events history (Central PA + SE PA + Jersey Shore), 2019–2026 YTD",
    "item_count": 1575,
-   "bytes": 1630500,
+   "bytes": 1630497,
    "generated": "2026-09-24"
   },
   {
@@ -259,7 +259,7 @@
    "folder": "research",
    "title": "Rival companies — filings & financial research track (PE-backed and public competitors to BSP portfolio companies)",
    "item_count": 51,
-   "bytes": 84261,
+   "bytes": 84253,
    "generated": "2026-09-24"
   },
   {
@@ -267,7 +267,7 @@
    "folder": "research",
    "title": "Tech-enablement (\"OS\") value-creation evidence file: ServiceOS (Punctual Pros), GridOS (CET), FirmOS (Frontline), LabOS (Thomas Scientific), SignalOS (BPI), HarborOS (Fair Harbor)",
    "item_count": 80,
-   "bytes": 70880,
+   "bytes": 70858,
    "generated": "2026-10-06"
   },
   {
@@ -283,7 +283,7 @@
    "folder": "research",
    "title": "Thomas Scientific: the growth plan",
    "item_count": 43,
-   "bytes": 49028,
+   "bytes": 48828,
    "generated": "2026-10-06"
   },
   {
@@ -291,7 +291,7 @@
    "folder": "research",
    "title": "How sponsors created value in home-services and adjacent companies: merged case set, common levers, chronological patterns and a dated Punctual Pros sequence",
    "item_count": 64,
-   "bytes": 429320,
+   "bytes": 429315,
    "generated": "2026-10-06"
   },
   {
@@ -299,7 +299,7 @@
    "folder": "research",
    "title": "Voice-AI as a growth engine: 24/7 voice-agent economics, vendors, use cases, sample calls, reference platforms, technical stack and governance for the BSP portfolio (Punctual Pros focus)",
    "item_count": 81,
-   "bytes": 78994,
+   "bytes": 78986,
    "generated": "2026-10-06"
   },
   {
@@ -353,7 +353,7 @@
   {
    "name": "pp_sales_nj",
    "folder": "sales",
-   "title": "BSP property-transfer data - New Jersey Jersey Shore ring (Ocean, Monmouth, Atlantic, Burlington)",
+   "title": "BSP property-transfer dataset - New Jersey Jersey Shore ring (Ocean, Monmouth, Atlantic, Burlington)",
    "item_count": 25486,
    "bytes": 4114559,
    "generated": "2026-09-24"
@@ -388,7 +388,7 @@
   "research_items": 4687,
   "sales_files": 10,
   "sales_rows": 163738,
-  "bytes": 40547087,
+  "bytes": 40547190,
   "data_from": "2026-09-24",
   "data_to": "2026-10-08"
  }

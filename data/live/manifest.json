@@ -3,7 +3,7 @@
   "nws_alerts": {
    "status": "ok",
    "file": "data/live/nws_alerts.json",
-   "fetched_at": "2026-10-08T16:26:32Z",
+   "fetched_at": "2026-10-09T16:09:38Z",
    "rows": 0,
    "bytes": 659,
    "seconds": 1.4,
@@ -22,10 +22,10 @@
   "forecast_hubs": {
    "status": "ok",
    "file": "data/live/forecast_hubs.json",
-   "fetched_at": "2026-10-08T16:26:32Z",
+   "fetched_at": "2026-10-09T16:09:38Z",
    "rows": 10,
-   "bytes": 11472,
-   "seconds": 0.2,
+   "bytes": 11494,
+   "seconds": 0.4,
    "source_urls": [
     "https://api.open-meteo.com/v1/forecast?latitude=40.0380%2C39.9625%2C40.2663%2C40.2015%2C40.3353%2C40.3757%2C39.9375%2C39.8309%2C39.9528%2C40.2601&longitude=-76.3057%2C-76.7277%2C-76.8861%2C-77.1891%2C-75.9279%2C-76.4626%2C-77.6613%2C-77.2310%2C-74.1967%2C-74.2738&daily=temperature_2m_max%2Ctemperature_2m_min%2Cprecipitation_sum%2Cprecipitation_probability_max%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cweather_code%2Csnowfall_sum&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York&forecast_days=7&past_days=2"
    ],
@@ -34,36 +34,33 @@
   "usaspending_trades": {
    "status": "ok",
    "file": "data/live/usaspending_trades.json",
-   "fetched_at": "2026-10-08T16:26:35Z",
+   "fetched_at": "2026-10-09T16:09:44Z",
    "rows": 300,
-   "bytes": 122889,
-   "seconds": 3.7,
+   "bytes": 122877,
+   "seconds": 5.1,
    "source_urls": [
     "https://api.usaspending.gov/api/v2/search/spending_by_award/"
    ],
    "title": "Federal contract awards to electrical (238210) and plumbing/HVAC (238220) contractors"
   },
   "echo_npdes_majors": {
-   "status": "error",
+   "status": "ok",
    "file": "data/live/echo_npdes_majors.json",
-   "fetched_at": "2026-10-07T16:25:12Z",
+   "fetched_at": "2026-10-09T16:09:45Z",
    "rows": 175,
    "bytes": 103373,
-   "seconds": 2.5,
+   "seconds": 1.5,
    "source_urls": [
     "https://echodata.epa.gov/echo/cwa_rest_services.get_facilities?output=JSON&p_st=CT&p_sic=4952&p_maj=Y",
     "https://echodata.epa.gov/echo/cwa_rest_services.get_facilities?output=JSON&p_st=MA&p_sic=4952&p_maj=Y",
     "https://echodata.epa.gov/echo/cwa_rest_services.get_facilities?output=JSON&p_st=RI&p_sic=4952&p_maj=Y"
    ],
-   "title": "EPA ECHO: major municipal wastewater (SIC 4952) NPDES permittees, CT/MA/RI",
-   "error": "https://echodata.epa.gov/echo/cwa_rest_services.get_qid?output=JSON&qid=116&pageno=1&qcolumns=1%2C2%2C4%2C5%2C12%2C26%2C27%2C28%2C29%2C53%2C61%2C62%2C67%2C68%2C99%2C100%2C101%2C103%2C105%2C116%2C123%2C194: The read operation timed out",
-   "attempted_at": "2026-10-08T16:29:58Z",
-   "last_ok_at": "2026-10-07T16:25:12Z"
+   "title": "EPA ECHO: major municipal wastewater (SIC 4952) NPDES permittees, CT/MA/RI"
   },
   "census_permits": {
    "status": "ok",
    "file": "data/live/census_permits.json",
-   "fetched_at": "2026-10-08T16:29:58Z",
+   "fetched_at": "2026-10-09T16:09:45Z",
    "rows": 157,
    "bytes": 25694,
    "seconds": 0.2,
@@ -75,10 +72,10 @@
   "fred_signals": {
    "status": "ok",
    "file": "data/live/fred_signals.json",
-   "fetched_at": "2026-10-09T06:19:09Z",
+   "fetched_at": "2026-10-09T16:10:32Z",
    "rows": 38,
    "bytes": 29843,
-   "seconds": 53.4,
+   "seconds": 46.3,
    "source_urls": [
     "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE30US",
     "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2",
@@ -96,10 +93,10 @@
   "housing_counties": {
    "status": "ok",
    "file": "data/live/housing_counties.json",
-   "fetched_at": "2026-10-09T06:06:49Z",
+   "fetched_at": "2026-10-09T16:10:32Z",
    "rows": 38,
    "bytes": 12149,
-   "seconds": 0.7,
+   "seconds": 0.9,
    "source_urls": [
     "https://econdata.s3-us-west-2.amazonaws.com/Reports/Core/RDC_Inventory_Core_Metrics_County.csv",
     "https://www.realtor.com/research/data/"
@@ -109,10 +106,10 @@
   "nih_awards": {
    "status": "ok",
    "file": "data/live/nih_awards.json",
-   "fetched_at": "2026-10-09T06:08:58Z",
+   "fetched_at": "2026-10-09T16:11:57Z",
    "rows": 8,
    "bytes": 4056,
-   "seconds": 129.7,
+   "seconds": 84.8,
    "source_urls": [
     "https://api.reporter.nih.gov/v2/projects/search",
     "https://reporter.nih.gov/"
@@ -122,10 +119,10 @@
   "federal_buying": {
    "status": "ok",
    "file": "data/live/federal_buying.json",
-   "fetched_at": "2026-10-09T06:09:11Z",
+   "fetched_at": "2026-10-09T16:12:06Z",
    "rows": 3,
    "bytes": 2906,
-   "seconds": 12.6,
+   "seconds": 8.4,
    "source_urls": [
     "https://api.usaspending.gov/api/v2/search/spending_over_time/",
     "https://www.usaspending.gov/search"
@@ -135,10 +132,10 @@
   "policy_activity": {
    "status": "ok",
    "file": "data/live/policy_activity.json",
-   "fetched_at": "2026-10-09T06:09:16Z",
+   "fetched_at": "2026-10-09T16:12:10Z",
    "rows": 4,
    "bytes": 1918,
-   "seconds": 5.2,
+   "seconds": 4.3,
    "source_urls": [
     "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-09",
     "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-09&conditions%5Bagencies%5D%5B%5D=environmental-protection-agency",
@@ -148,6 +145,6 @@
    "title": "Federal Register rules and proposed rules, year to date vs last year"
   }
  },
- "generated_at": "2026-10-09T06:19:09Z",
+ "generated_at": "2026-10-09T16:12:10Z",
  "note": "Nightly snapshots of public live sources (scripts/refresh_live.py). A source with status error keeps its previous file."
 }
