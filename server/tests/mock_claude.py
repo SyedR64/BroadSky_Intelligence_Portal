@@ -17,6 +17,11 @@ Markers in the last user message switch behaviour:
   [mock:fallback]    a "fallback" content block mid-answer, then more text from the fallback model
   [mock:slowheaders] waits 30 s before sending any response headers (for the header timeout)
   [mock:garbage]     malformed events (non-JSON data, wrong field types) between valid ones
+  [mock:tool]        first call asks for search_knowledge; the call after the tool result answers
+  [mock:read]        first call asks for read_source [1];  [mock:deal] first call asks for deal_model (CET, entry 9.5x)
+  [mock:loop]        asks for search_knowledge on every call until the request sets tool_choice "none"
+  [mock:cite]        the answer's text block carries a web-search citation
+  [mock:noweb]       HTTP 400 naming web_search when the web search tool is offered (tests the retry)
 GET /_requests returns the recorded requests (headers of interest + JSON body); DELETE clears them.
 GET /_events returns stream outcomes ("complete" or "client_closed" with the delta count).
 """
@@ -88,7 +93,7 @@ class Handler(BaseHTTPRequestHandler):
         hdr = {k: self.headers.get(k) for k in ('x-api-key', 'anthropic-version', 'anthropic-beta', 'content-type')}
         with _lock:
             REQUESTS.append({'path': self.path, 'headers': {k: (('set' if v else None) if k == 'x-api-key' else v) for k, v in hdr.items()}, 'body': body})
-        if self.path != '/v1/messages':
+        if self.path.split('?')[0] != '/v1/messages':   # the SDK's beta calls add ?beta=true
             return self._json(404, {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'Not found'}})
         if not hdr['x-api-key']:
             return self._json(401, {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'x-api-key header is required'}})
@@ -105,9 +110,62 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(529, {'type': 'error', 'error': {'type': 'overloaded_error', 'message': 'Overloaded'}})
         if '[mock:slowheaders]' in last:
             time.sleep(30)
+        if '[mock:noweb]' in last and any(t.get('type', '').startswith('web_search') for t in body.get('tools') or []):
+            return self._json(400, {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'web_search is not enabled for this organization'}})
         if '[mock:nobeta]' in last and hdr['anthropic-beta']:
             return self._json(400, {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Unexpected value for anthropic-beta header'}})
+        tool = self.wants_tool(body, msgs)
+        if tool:
+            return self.tool_call(body, *tool)
         self.stream(body, last)
+
+    @staticmethod
+    def wants_tool(body, msgs):
+        allm = json.dumps(msgs)
+        tail = msgs[-1].get('content') if msgs else ''
+        after_tool = isinstance(tail, list) and any(isinstance(b, dict) and b.get('type') == 'tool_result' for b in tail)
+        if (body.get('tool_choice') or {}).get('type') == 'none':
+            return None
+        if '[mock:loop]' in allm:
+            return 'search_knowledge', {'query': 'loop again'}
+        if after_tool:
+            return None
+        if '[mock:tool]' in allm:
+            return 'search_knowledge', {'query': 'Tyler Zachem chief executive', 'company': 'bsp'}
+        if '[mock:read]' in allm:
+            return 'read_source', {'source': 1}
+        if '[mock:deal]' in allm:
+            return 'deal_model', {'preset': 'cet', 'overrides': {'em': 9.5}}
+        return None
+
+    def tool_call(self, body, name, args):
+        """A step that ends in one tool call: thinking, then a tool_use block streamed as input_json_delta fragments."""
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/event-stream')
+        self.send_header('Connection', 'close')
+        self.end_headers()
+        self.close_connection = True
+
+        def ev(name_, obj):
+            self.wfile.write(f'event: {name_}\ndata: {json.dumps(obj)}\n\n'.encode())
+            self.wfile.flush()
+        try:
+            ev('message_start', {'type': 'message_start', 'message': {'id': 'msg_tool', 'type': 'message', 'role': 'assistant', 'model': body.get('model'), 'content': [], 'stop_reason': None, 'usage': {'input_tokens': 2000, 'output_tokens': 1}}})
+            ev('content_block_start', {'type': 'content_block_start', 'index': 0, 'content_block': {'type': 'thinking', 'thinking': '', 'signature': ''}})
+            ev('content_block_delta', {'type': 'content_block_delta', 'index': 0, 'delta': {'type': 'signature_delta', 'signature': 'sig-mock'}})
+            ev('content_block_stop', {'type': 'content_block_stop', 'index': 0})
+            ev('content_block_start', {'type': 'content_block_start', 'index': 1, 'content_block': {'type': 'tool_use', 'id': 'toolu_mock_%d' % len(REQUESTS), 'name': name, 'input': {}}})
+            raw = json.dumps(args)
+            for k in range(0, len(raw), 7):
+                ev('content_block_delta', {'type': 'content_block_delta', 'index': 1, 'delta': {'type': 'input_json_delta', 'partial_json': raw[k:k + 7]}})
+            ev('content_block_stop', {'type': 'content_block_stop', 'index': 1})
+            ev('message_delta', {'type': 'message_delta', 'delta': {'stop_reason': 'tool_use', 'stop_sequence': None}, 'usage': {'output_tokens': 50}})
+            ev('message_stop', {'type': 'message_stop'})
+            with _lock:
+                EVENTS.append({'outcome': 'tool_call', 'tool': name})
+        except (BrokenPipeError, ConnectionResetError):
+            with _lock:
+                EVENTS.append({'outcome': 'client_closed', 'deltas': 0})
 
     def stream(self, body, last):
         model = body.get('model') or 'claude-opus-5-5'
@@ -158,6 +216,8 @@ class Handler(BaseHTTPRequestHandler):
                 ev('content_block_delta', {'type': 'content_block_delta', 'index': idx, 'delta': {'type': 'text_delta', 'text': w}})
                 sent += 1
                 time.sleep(delay)
+            if '[mock:cite]' in last:
+                ev('content_block_delta', {'type': 'content_block_delta', 'index': 1, 'delta': {'type': 'citations_delta', 'citation': {'type': 'web_search_result_location', 'url': 'https://www.example.com/news/bsp', 'title': 'Example news', 'cited_text': 'BSP', 'encrypted_index': 'x'}}})
             ev('content_block_stop', {'type': 'content_block_stop', 'index': 1})
             stop = 'refusal' if '[mock:refusal]' in last else 'end_turn'
             ev('message_delta', {'type': 'message_delta', 'delta': {'stop_reason': stop, 'stop_sequence': None}, 'usage': {'output_tokens': 640}})

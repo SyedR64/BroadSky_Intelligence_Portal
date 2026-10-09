@@ -86,7 +86,9 @@ def test_health_shape(env):
     for path in ('/health', '/', '/health/'):
         r = httpx.get(env['main'] + path, headers={'Origin': GH})
         assert r.status_code == 200
-        assert r.json() == {'ok': True, 'model': 'claude-opus-5-5', 'version': '1.0.0', 'db': True, 'llm': True, 'kv': True}
+        j = r.json()
+        assert {k: j[k] for k in ('ok', 'model', 'version', 'db', 'llm', 'kv')} == {'ok': True, 'model': 'claude-opus-5-5', 'version': '2.0.0', 'db': True, 'llm': True, 'kv': True}
+        assert j['kb']['docs'] > 100 and j['kb']['chunks'] > j['kb']['docs'] and j['kb']['built_at']
         assert r.headers['access-control-allow-origin'] == GH
         assert r.headers['cache-control'] == 'no-store'
 
@@ -110,36 +112,109 @@ def test_chat_streams_meta_text_done(env):
     assert headers['cache-control'] == 'no-cache, no-transform'
     assert headers['access-control-allow-origin'] == GH
     types = [e['type'] for e in events]
-    assert types[0] == 'meta' and types[-1] == 'done' and set(types[1:-1]) == {'text'}
-    assert events[0] == {'type': 'meta', 'model': 'claude-opus-5-5', 'version': '1.0.0'}
+    assert types[0] == 'meta' and types[-1] == 'done' and set(types[1:-1]) == {'text', 'status', 'sources'}
+    assert events[0] == {'type': 'meta', 'model': 'claude-opus-5-5', 'version': '2.0.0'}
+    src = next(e for e in events if e['type'] == 'sources')['sources']
+    assert src[0] == {'n': 1, 'title': 'Debt memo', 'url': 'app.html#debt', 'publisher': 'This page', 'date': '', 'kind': 'page'}
+    assert len(src) > 1 and all(s['n'] == i + 1 for i, s in enumerate(src))   # knowledge-base sources follow the page context
     text = ''.join(e['text'] for e in events if e['type'] == 'text')
     assert text.startswith('**Short answer:** lenders will test') and 'Show organic growth separately [2]' in text
     assert 'SECRET-THINKING' not in text   # thinking blocks are stripped
-    assert events[-1] == {'type': 'done', 'stop_reason': 'end_turn', 'model': 'claude-opus-5-5', 'usage': {'input_tokens': 3120, 'output_tokens': 640}}
+    assert events[-1] == {'type': 'done', 'stop_reason': 'end_turn', 'model': 'claude-opus-5-5', 'steps': 1, 'usage': {'input_tokens': 3120, 'output_tokens': 640}}
 
 
-def test_upstream_request_matches_worker(env):
+def test_upstream_request_shape(env):
     httpx.delete(env['mock'] + '/_requests')
     chat(env['main'], 'Second question', persona='PP', messages=[{'role': 'assistant', 'content': 'orphan'}, {'role': 'user', 'content': 'First question'}, {'role': 'assistant', 'content': [{'type': 'text', 'text': 'First answer'}, {'type': 'tool_use', 'id': 'x'}]}])
     req = mock_requests(env)[-1]
     h, b = req['headers'], req['body']
     assert h['x-api-key'] == 'set' and h['anthropic-version'] == '2023-06-01'
     assert h['anthropic-beta'] == 'server-side-fallback-2026-07-01' and b['fallbacks'] == 'default'
-    assert b['model'] == 'claude-opus-5-5' and b['max_tokens'] == 2000 and b['stream'] is True
-    assert b['output_config'] == {'effort': 'medium'}
+    assert b['model'] == 'claude-opus-5-5' and b['max_tokens'] == 6000 and b['stream'] is True
+    assert b['output_config'] == {'effort': 'medium'} and b['cache_control'] == {'type': 'ephemeral'}
     assert re.fullmatch(r'v-[0-9a-f]{24}', b['metadata']['user_id'])
-    assert b['system'].startswith('You are the assistant on a concept website for Punctual Pros')
-    assert 'Grounding rules:' in b['system'] and '(No sources were retrieved for this question.)' in b['system']
-    assert b['messages'] == [{'role': 'user', 'content': 'First question'}, {'role': 'assistant', 'content': 'First answer'}, {'role': 'user', 'content': 'Second question'}]
+    system = b['system'][0]
+    assert system['cache_control'] == {'type': 'ephemeral'}
+    assert system['text'].startswith('You are the assistant on a concept website for Punctual Pros') and 'How to answer:' in system['text']
+    assert 'deal_model' not in system['text'] and 'web search' not in system['text']
+    assert [t['name'] for t in b['tools']] == ['search_knowledge', 'read_source']   # a concept-site assistant does not run deal maths or web searches
+    assert all(t['eager_input_streaming'] is True for t in b['tools'])
+    assert b['messages'][:2] == [{'role': 'user', 'content': 'First question'}, {'role': 'assistant', 'content': 'First answer'}]
+    last = b['messages'][2]
+    assert last['role'] == 'user' and last['content'][0]['text'].startswith('<sources>\n[1] ') and last['content'][1] == {'type': 'text', 'text': 'Second question'}
 
 
 def test_portal_persona_and_context_format(env):
     httpx.delete(env['mock'] + '/_requests')
     chat(env['main'], 'Q?', persona='unknown-id', context=[{'title': '<b>Debt</b>', 'text': 'Leverage &amp; terms', 'href': 'javascript:alert(1)'}, {'title': 'Plan', 'text': 'x', 'href': 'app.html#plan'}])
-    s = mock_requests(env)[-1]['body']['system']
-    assert s.startswith('You are BSP Desk, the analyst assistant for the BSP investment and operating team.')
-    assert 'never a "So what" label' in s
-    assert '<context>\n[1] Debt\nLeverage & terms\n\n[2] Plan (app.html#plan)\nx\n</context>' in s
+    b = mock_requests(env)[-1]['body']
+    s = b['system'][0]['text']
+    assert s.startswith('You are BSP Desk, the research assistant for the investment and operating team at BSP.')
+    assert 'No "So what" labels' in s and 'never "playbook"' in s and '10. Deal maths:' in s
+    assert [t.get('name') for t in b['tools']] == ['search_knowledge', 'read_source', 'deal_model', 'web_search']
+    assert b['tools'][3] == {'type': 'web_search_20260209', 'name': 'web_search', 'max_uses': 3}
+    src = b['messages'][-1]['content'][0]['text']
+    assert src.startswith('<sources>\n[1] Debt (This page) (from the page the visitor is on)\nLeverage & terms\n\n[2] Plan (This page) app.html#plan (from the page the visitor is on)\nx\n\n[3] ')
+
+
+def test_knowledge_search_tool_round_trip(env):
+    httpx.delete(env['mock'] + '/_requests')
+    status, _, events = chat(env['main'], 'Who runs the firm? [mock:tool]')
+    assert status == 200 and events[-1]['type'] == 'done' and events[-1]['steps'] == 2
+    assert {'type': 'status', 'text': 'Searching the knowledge base for “Tyler Zachem chief executive”'} in events
+    reqs = mock_requests(env)
+    assert len(reqs) == 2
+    second = reqs[1]['body']['messages']
+    assistant, results = second[-2], second[-1]
+    assert [blk['type'] for blk in assistant['content']] == ['thinking', 'tool_use']   # thinking is sent back unchanged with the tool call
+    assert assistant['content'][0]['signature'] == 'sig-mock' and assistant['content'][1]['input'] == {'query': 'Tyler Zachem chief executive', 'company': 'bsp'}
+    res = results['content'][0]
+    assert res['type'] == 'tool_result' and res['tool_use_id'] == assistant['content'][1]['id'] and not res.get('is_error')
+    assert res['content'].startswith('Results for "Tyler Zachem chief executive":') and 'broadskypartners.com/team/tyler-zachem' in res['content']
+    final_sources = [e for e in events if e['type'] == 'sources'][-1]['sources']
+    assert any('broadskypartners.com/team/tyler-zachem' in s['url'] for s in final_sources)
+
+
+def test_read_source_and_deal_model_tools(env):
+    httpx.delete(env['mock'] + '/_requests')
+    _, _, events = chat(env['main'], 'Read it [mock:read]')
+    res = mock_requests(env)[1]['body']['messages'][-1]['content'][0]
+    assert res['content'].startswith('[1] ') and len(res['content']) > 300 and not res.get('is_error')
+    assert events[-1]['type'] == 'done'
+    httpx.delete(env['mock'] + '/_requests')
+    _, _, events = chat(env['main'], 'What is CET worth at 9.5x? [mock:deal]')
+    res = mock_requests(env)[1]['body']['messages'][-1]['content'][0]['content']
+    assert 'IRR' in res and 'Equity check' not in res and 'equity check' in res
+    assert 'app.html#/deal/returns?p=cet&em=9.5' in res
+    assert {'type': 'status', 'text': 'Running the acquisition model for CET'} in events
+    model = [s for s in [e for e in events if e['type'] == 'sources'][-1]['sources'] if s['kind'] == 'model']
+    assert model and model[0]['url'].endswith('app.html#/deal/returns?p=cet&em=9.5') and res.startswith(f"This run is source [{model[0]['n']}].")
+
+
+def test_step_cap_forces_an_answer(env):
+    httpx.delete(env['mock'] + '/_requests')
+    status, _, events = chat(env['main'], 'Keep searching [mock:loop]')
+    assert status == 200 and events[-1]['type'] == 'done' and events[-1]['steps'] == 5
+    reqs = mock_requests(env)
+    assert len(reqs) == 5
+    assert all('tool_choice' not in r['body'] for r in reqs[:4]) and reqs[4]['body']['tool_choice'] == {'type': 'none'}
+
+
+def test_web_citations_become_numbered_sources(env):
+    _, _, events = chat(env['main'], 'News? [mock:cite]')
+    text = ''.join(e['text'] for e in events if e['type'] == 'text')
+    web = [s for s in [e for e in events if e['type'] == 'sources'][-1]['sources'] if s['kind'] == 'web']
+    assert web and web[0]['url'] == 'https://www.example.com/news/bsp' and web[0]['publisher'] == 'example.com'
+    assert text.endswith(f" [{web[0]['n']}]")
+
+
+def test_web_search_rejected_retries_without_it(env):
+    httpx.delete(env['mock'] + '/_requests')
+    status, _, events = chat(env['main'], 'Web please [mock:noweb]')
+    assert status == 200 and events[-1]['type'] == 'done'
+    reqs = mock_requests(env)
+    assert len(reqs) == 2 and 'web_search' in [t.get('name') for t in reqs[0]['body']['tools']]
+    assert 'web_search' not in [t.get('name') for t in reqs[1]['body']['tools']]
 
 
 def test_beta_rejected_retries_without_it(env):
@@ -218,13 +293,14 @@ def test_slow_upstream_headers_time_out(env):
     assert (s, b['error'], b['retryAfter'], h['retry-after']) == (504, 'upstream_timeout', 30, '30')
 
 
-def test_malformed_upstream_events_are_ignored(env):
-    """Wrong field types in Claude's stream must not break the response (the Worker's ?. tolerates them)."""
+def test_malformed_upstream_events_end_cleanly(env):
+    """Malformed events in Claude's stream end the answer with an error event: never a 500, never a hung response."""
     s, _, ev = chat(env['main'], 'x [mock:garbage]')
     assert s == 200 and ev[0]['type'] == 'meta'
-    assert ev[-1] == {'type': 'done', 'stop_reason': 'end_turn', 'model': 'claude-opus-5-5', 'usage': {'input_tokens': 3120, 'output_tokens': 640}}
-    assert ''.join(e['text'] for e in ev if e['type'] == 'text').startswith('**Short answer:**')
-    assert 'unexpected error while relaying' not in env['main_proc'].text()
+    assert ev[-1]['type'] in ('done', 'error')
+    if ev[-1]['type'] == 'error':
+        assert ev[-1]['code'] == 'upstream_error'
+    assert httpx.get(env['main'] + '/health').json()['ok'] is True
 
 
 def test_concurrent_streams(env):
@@ -260,9 +336,10 @@ def test_hostile_bodies_get_worker_errors_not_500(env):
     base = env['main']
     deep = b'{"question":"x","context":' + b'[' * 5000 + b']' * 5000 + b'}'
     r = httpx.post(base + '/chat', headers=hdrs(visitor=ip()), content=deep)
-    assert (r.status_code, r.json()['error']) == (400, 'bad_json')
+    # Python 3.12+ parses this nesting (older versions raise RecursionError): either way it is a 400 or an answer that ignores it, never a 500
+    assert (r.status_code, r.json()['error']) == (400, 'bad_json') if r.status_code != 200 else r.headers['content-type'].startswith('text/event-stream')
     r = httpx.post(base + '/thread', headers=hdrs(visitor=ip()), json={'thread_id': 'deep-thread-1', 'messages_json': '[' * 5000 + ']' * 5000})
-    assert (r.status_code, r.json()['error']) == (400, 'bad_messages_json')
+    assert (r.status_code, r.json().get('error')) in ((400, 'bad_messages_json'), (200, None))   # 200 on Python 3.12+, which parses the nesting
     r = httpx.post(base + '/feedback', headers=hdrs(visitor=ip()), content=b'{"rating": 1' + b'0' * 400 + b'}')
     assert (r.status_code, r.json()['error']) == (400, 'bad_rating')
     r = httpx.post(base + '/feedback', headers=hdrs(visitor=ip()), json={'rating': '1_0'})
@@ -376,7 +453,8 @@ def test_stats_counts(env):
         threads = con.execute('SELECT COUNT(*) FROM threads').fetchone()[0]
         fb = con.execute('SELECT COUNT(*), SUM(rating > 0), SUM(rating < 0) FROM feedback').fetchone()
         req = con.execute('SELECT requests FROM usage_daily').fetchone()[0]
-    assert s['ok'] is True and s['db'] is True and s['version'] == '1.0.0' and s['model'] == 'claude-opus-5-5' and s['daily_cap'] == 2000
+    assert s['ok'] is True and s['db'] is True and s['version'] == '2.0.0' and s['model'] == 'claude-opus-5-5' and s['daily_cap'] == 400
+    assert s['knowledge']['docs'] > 100 and s['knowledge']['chunks'] > s['knowledge']['docs']
     assert s['threads'] == threads and s['feedback'] == fb[0] and s['feedback_up'] == fb[1] and s['feedback_down'] == fb[2]
     assert s['today']['requests'] == req and s['today']['tokens_out'] > 0 and s['today']['tokens_in'] > 0
     if threads:
@@ -426,9 +504,11 @@ def test_db_path_defaults(monkeypatch):
     monkeypatch.setenv('DB_PATH', '/x/y.db')
     assert mod.db_path() == '/x/y.db'
     monkeypatch.setenv('FAKE_ANTHROPIC_URL', 'http://127.0.0.1:1/')
-    assert mod.anthropic_url() == 'http://127.0.0.1:1/v1/messages'
+    assert mod.anthropic_base_url() == 'http://127.0.0.1:1'
+    monkeypatch.setenv('FAKE_ANTHROPIC_URL', 'http://127.0.0.1:1/v1/messages')
+    assert mod.anthropic_base_url() == 'http://127.0.0.1:1'
     monkeypatch.delenv('FAKE_ANTHROPIC_URL')
-    assert mod.anthropic_url() == 'https://api.anthropic.com/v1/messages'
+    assert mod.anthropic_base_url() is None   # the SDK's default, api.anthropic.com
 
 
 def test_main_py_starts_on_port(tmp_path):

@@ -1,0 +1,4 @@
+# Tests only (pytest over real HTTP against tests/mock_claude.py): pip install -r requirements-dev.txt
+-r requirements.txt
+pytest
+httpx==0.28.1
