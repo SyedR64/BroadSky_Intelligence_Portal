@@ -1,5 +1,5 @@
 /* "Revenue left on the table" clock — a debt-clock style live counter driven by the portal's sourced rates.
-   Usage: import { Counter } from './assets/counter.js?v=20261009175029';
+   Usage: import { Counter } from './assets/counter.js?v=20261009181341';
      Counter.mount(el, { theme:'light'|'dark', caption?: string, compact?: boolean,
                          baseline?: 'load'|'today', minDisplay?: number })
    baseline 'load' (default) counts up from $0 when the page opens; 'today' counts from local midnight
@@ -13,7 +13,7 @@
    Each lever is read at runtime; a lever whose data is missing is skipped. "How" lines quote formula inputs and
    are shown only while the formula still contains them (otherwise a generic line is shown).
    Colours come from system.css tokens, so the clock follows the page's light or dark theme. */
-import { Data, Fmt, esc } from './core.js?v=20261009175029';
+import { Data, Fmt, esc } from './core.js?v=20261009181341';
 const ROOT = new URL('../', import.meta.url).href;
 const YEAR = 365.25 * 24 * 3600;
 const AGENT_SHARE = 0.5;      // revenue-lift and new-product agents count at 50%, the same haircut as redesigns/ai-agents.js

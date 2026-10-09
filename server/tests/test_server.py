@@ -112,14 +112,15 @@ def test_chat_streams_meta_text_done(env):
     assert headers['cache-control'] == 'no-cache, no-transform'
     assert headers['access-control-allow-origin'] == GH
     types = [e['type'] for e in events]
-    assert types[0] == 'meta' and types[-1] == 'done' and set(types[1:-1]) == {'text', 'status', 'sources'}
+    assert types[0] == 'meta' and types[-1] == 'done' and set(types[1:-1]) == {'text', 'status', 'thinking', 'sources'}
     assert events[0] == {'type': 'meta', 'model': 'claude-opus-5-5', 'version': '2.0.0'}
     src = next(e for e in events if e['type'] == 'sources')['sources']
     assert src[0] == {'n': 1, 'title': 'Debt memo', 'url': 'app.html#debt', 'publisher': 'This page', 'date': '', 'kind': 'page'}
     assert len(src) > 1 and all(s['n'] == i + 1 for i, s in enumerate(src))   # knowledge-base sources follow the page context
     text = ''.join(e['text'] for e in events if e['type'] == 'text')
     assert text.startswith('**Short answer:** lenders will test') and 'Show organic growth separately [2]' in text
-    assert 'SECRET-THINKING' not in text   # thinking blocks are stripped
+    assert 'SECRET-THINKING' not in text   # thinking never mixes into the answer text …
+    assert ''.join(e['text'] for e in events if e['type'] == 'thinking') == 'SECRET-THINKING: weigh lender questions.'   # … it comes as its own events
     assert events[-1] == {'type': 'done', 'stop_reason': 'end_turn', 'model': 'claude-opus-5-5', 'steps': 1, 'usage': {'input_tokens': 3120, 'output_tokens': 640}}
 
 
@@ -130,8 +131,9 @@ def test_upstream_request_shape(env):
     h, b = req['headers'], req['body']
     assert h['x-api-key'] == 'set' and h['anthropic-version'] == '2023-06-01'
     assert h['anthropic-beta'] == 'server-side-fallback-2026-07-01' and b['fallbacks'] == 'default'
-    assert b['model'] == 'claude-opus-5-5' and b['max_tokens'] == 6000 and b['stream'] is True
-    assert b['output_config'] == {'effort': 'medium'} and b['cache_control'] == {'type': 'ephemeral'}
+    assert b['model'] == 'claude-opus-5-5' and b['max_tokens'] == 16000 and b['stream'] is True
+    assert b['output_config'] == {'effort': 'medium'} and b['cache_control'] == {'type': 'ephemeral'}   # a concept-site assistant stays quick
+    assert b['thinking'] == {'type': 'adaptive', 'display': 'summarized'}
     assert re.fullmatch(r'v-[0-9a-f]{24}', b['metadata']['user_id'])
     system = b['system'][0]
     assert system['cache_control'] == {'type': 'ephemeral'}
@@ -149,8 +151,9 @@ def test_portal_persona_and_context_format(env):
     chat(env['main'], 'Q?', persona='unknown-id', context=[{'title': '<b>Debt</b>', 'text': 'Leverage &amp; terms', 'href': 'javascript:alert(1)'}, {'title': 'Plan', 'text': 'x', 'href': 'app.html#plan'}])
     b = mock_requests(env)[-1]['body']
     s = b['system'][0]['text']
-    assert s.startswith('You are BSP Desk, the research assistant for the investment and operating team at BSP.')
-    assert 'No "So what" labels' in s and 'never "playbook"' in s and '10. Deal maths:' in s
+    assert s.startswith("You are BSP Desk, the in-house analyst on Broad Sky's desk") and 'Say "we" and "our" for BSP' in s
+    assert 'No "So what" labels' in s and 'never "playbook"' in s and '10. Deal maths:' in s and '11. Strategy and deal questions' in s
+    assert b['output_config'] == {'effort': 'high'}   # the portal's research assistant works harder
     assert [t.get('name') for t in b['tools']] == ['search_knowledge', 'read_source', 'deal_model', 'web_search']
     assert b['tools'][3] == {'type': 'web_search_20260209', 'name': 'web_search', 'max_uses': 3}
     src = b['messages'][-1]['content'][0]['text']
@@ -194,10 +197,10 @@ def test_read_source_and_deal_model_tools(env):
 def test_step_cap_forces_an_answer(env):
     httpx.delete(env['mock'] + '/_requests')
     status, _, events = chat(env['main'], 'Keep searching [mock:loop]')
-    assert status == 200 and events[-1]['type'] == 'done' and events[-1]['steps'] == 5
+    assert status == 200 and events[-1]['type'] == 'done' and events[-1]['steps'] == 6
     reqs = mock_requests(env)
-    assert len(reqs) == 5
-    assert all('tool_choice' not in r['body'] for r in reqs[:4]) and reqs[4]['body']['tool_choice'] == {'type': 'none'}
+    assert len(reqs) == 6
+    assert all('tool_choice' not in r['body'] for r in reqs[:5]) and reqs[5]['body']['tool_choice'] == {'type': 'none'}
 
 
 def test_web_citations_become_numbered_sources(env):
@@ -237,9 +240,9 @@ def test_fallback_announced_and_text_kept(env):
 
 def test_refusal_and_overloaded_error_events(env):
     _, _, ev = chat(env['main'], 'No [mock:refusal]')
-    assert ev[-1] == {'type': 'error', 'code': 'refusal', 'message': 'Claude declined to answer this one.'}
+    assert ev[-1] == {'type': 'error', 'code': 'refusal', 'message': 'The assistant declined to answer this one.'}
     _, _, ev = chat(env['main'], 'Busy [mock:overloaded]')
-    assert ev[-1] == {'type': 'error', 'code': 'upstream_unavailable', 'message': 'Claude is overloaded right now. Try again shortly.'}
+    assert ev[-1] == {'type': 'error', 'code': 'upstream_unavailable', 'message': 'The assistant is overloaded right now. Try again shortly.'}
     assert not any(e['type'] == 'done' for e in ev)
 
 
@@ -403,7 +406,7 @@ def test_daily_cap(env):
     assert s == 200 and ev[-1]['type'] == 'done'
     s, h, b = chat(env['capped'], 'second of the day')
     assert s == 429
-    assert b == {'ok': False, 'error': 'daily_cap', 'message': "Today's Claude budget for this site is used up. It resets at midnight UTC.", 'retryAfter': b['retryAfter'], 'scope': 'global'}
+    assert b == {'ok': False, 'error': 'daily_cap', 'message': "Today's research budget for this site is used up. It resets at midnight UTC.", 'retryAfter': b['retryAfter'], 'scope': 'global'}
     assert 60 <= b['retryAfter'] <= 86400 and h['retry-after'] == str(b['retryAfter'])
     st = httpx.get(env['capped'] + '/stats').json()
     assert st['daily_cap'] == 1 and st['today']['requests'] == 2

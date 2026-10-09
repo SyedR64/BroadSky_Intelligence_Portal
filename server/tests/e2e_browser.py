@@ -64,7 +64,7 @@ def main():
             wait_answer(page)
             labels = page.eval_on_selector_all('.ch-eng, .ch-engine-t', 'els => els.map(e => e.textContent.trim())')
             answer = page.inner_text('.ch-turn.bot .ch-answer')
-            check('health discovery shows the Claude engine', any(l.strip() == 'Claude' for l in labels), '; '.join(labels))
+            check('health discovery shows the deep-research engine', any(l.strip() == 'Deep research' for l in labels), '; '.join(labels))
             check('streamed text renders in the answer', 'Short answer' in answer and 'covenant headroom' in answer and 'SECRET-THINKING' not in answer, answer[:90].replace('\n', ' '))
             check('/chat answered 200 text/event-stream', chat_res and chat_res[0].status == 200 and chat_res[0].headers.get('content-type', '').startswith('text/event-stream'))
 
@@ -144,7 +144,7 @@ def main():
             labels5 = p5.eval_on_selector_all('.ch-eng, .ch-engine-t', 'els => els.map(e => e.textContent.trim())')
             check('missing key: /health llm false', h.get('ok') is True and h.get('llm') is False, json.dumps(h))
             check('missing key: /chat clear error', raw['status'] == 503 and raw['body'].get('error') == 'no_model_key', f"{raw['status']} {raw['body'].get('message')} | client: {client_err}")
-            check('missing key: page falls back to grounded answers', not any(l.strip() == 'Claude' for l in labels5), '; '.join(labels5))
+            check('missing key: page falls back to grounded answers', not any(l.strip() == 'Deep research' for l in labels5), '; '.join(labels5))
             p5.close()
             browser.close()
     finally:

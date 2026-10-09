@@ -102,6 +102,20 @@
 .ch-st-done:hover{background:var(--ch-bg3);color:var(--ch-fg2)}
 .ch-st-done>svg:first-child{color:var(--ch-good)}
 .ch-st-done[aria-expanded="true"]>svg:last-child{transform:rotate(180deg)}
+.ch-think{margin:2px 0 10px;border:1px solid var(--ch-line);border-radius:12px;background:var(--ch-bg2)}
+.ch-think>summary{display:flex;align-items:center;gap:6px;min-height:30px;padding:4px 10px;list-style:none;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ch-mute)}
+.ch-think>summary::-webkit-details-marker{display:none}
+.ch-think>summary:hover{color:var(--ch-fg2)}
+.ch-think[open]>summary>svg{transform:rotate(180deg)}
+.ch-think-dots::after{content:"";display:inline-block;width:1.2em;text-align:left;animation:ch-think-dots 1.2s steps(4,end) infinite}
+@keyframes ch-think-dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+.ch-think-b{max-height:240px;overflow:auto;padding:0 12px 10px;border-top:1px solid var(--ch-line);font-size:12.5px;line-height:1.55;color:var(--ch-mute)}
+.ch-think-t>:first-child{margin-top:8px}
+.ch-think-t p{margin:6px 0}
+.ch-think-t strong,.ch-think-t b{color:var(--ch-fg2)}
+.ch-think-step{margin:8px 0 2px;padding-left:16px;position:relative;font:500 11.5px/1.45 var(--ch-mono);color:var(--ch-fg2)}
+.ch-think-step::before{content:"→";position:absolute;left:0;color:var(--ch-brand)}
+@media (prefers-reduced-motion:reduce){.ch-think-dots::after{animation:none;content:"…"}}
 .ch-steps{list-style:none;margin:4px 0 10px;padding:6px 0 6px 12px;border-left:2px solid var(--ch-line);font-size:12px;color:var(--ch-mute)}
 .ch-steps li{display:flex;gap:10px;padding:2px 0}
 .ch-steps .ch-num{width:58px;flex:none;color:var(--ch-mute2)}

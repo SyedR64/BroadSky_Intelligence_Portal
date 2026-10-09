@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261009175029">
-<link rel="stylesheet" href="voice-ai.css?v=20261009175029">
+<link rel="stylesheet" href="../assets/system.css?v=20261009181341">
+<link rel="stylesheet" href="voice-ai.css?v=20261009181341">
 </head>
 <body>
 <main id="main">
@@ -305,9 +305,9 @@
 </main>
 
 <script type="module">
-import { Frame } from '../assets/frame.js?v=20261009175029';
-import { Chat } from '../assets/chat.js?v=20261009175029';
-import { boot } from './voice-ai.js?v=20261009175029';
+import { Frame } from '../assets/frame.js?v=20261009181341';
+import { Chat } from '../assets/chat.js?v=20261009181341';
+import { boot } from './voice-ai.js?v=20261009181341';
 const frame = Frame.mount({ banner: true });
 const d = await boot().catch(e => { console.warn('voice-ai boot failed', e); return null; });
 try {
