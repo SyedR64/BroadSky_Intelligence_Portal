@@ -8,7 +8,7 @@
    read live with the snapshot as fallback) and from the repo's own tables (national_counties, company filings
    estimate tables, fl_lawfirms, ma_targets_pp, cet_opportunities). Every estimate is labelled est. and shows its
    assumption; a missing snapshot leaves its factors as "not available" instead of failing the view. */
-import * as Copy from './copy.js?v=20261009161812';
+import * as Copy from './copy.js?v=20261009165425';
 
 const injectCss = () => { if (document.getElementById('css-signals')) return; const l = document.createElement('link'); l.id = 'css-signals'; l.rel = 'stylesheet'; l.href = new URL('./signals.css', import.meta.url).href; document.head.appendChild(l); };
 const COUNTIES_URL = new URL('../data/national_counties.json', import.meta.url).href;
@@ -31,7 +31,7 @@ const W_TXT = { 3: 'High', 2: 'Medium', 1: 'Low' };
 const URL_ = {
   realtor: 'https://www.realtor.com/research/data/', acs: 'https://www.census.gov/programs-surveys/acs', pep: 'https://www.census.gov/programs-surveys/popest.html',
   cbp: 'https://www.census.gov/programs-surveys/cbp.html', redfin: 'https://www.redfin.com/news/data-center/', nws: 'https://www.weather.gov/alerts',
-  epaRef: 'https://www.epa.gov/climate-hfcs-reduction', irs25c: 'https://www.irs.gov/credits-deductions/energy-efficient-home-improvement-credit',
+  epaTT: 'https://www.federalregister.gov/documents/2026/05/26/2026-10387/phasedown-of-hydrofluorocarbons-reconsideration-of-certain-regulatory-requirements-promulgated-under', irs25c: 'https://www.irs.gov/credits-deductions/energy-efficient-home-improvement-credit',
   obbba: 'https://www.congress.gov/bill/119th-congress/house-bill/1', masssave: 'https://www.masssave.com/', echo: 'https://echo.epa.gov/',
   usa: 'https://www.usaspending.gov/search', nih: 'https://reporter.nih.gov/', fr: 'https://www.federalregister.gov/', fec: 'https://www.fec.gov/',
   amlaw: 'https://www.law.com/americanlawyer/rankings/', fred: 'https://fred.stlouisfed.org/',
@@ -188,7 +188,7 @@ function buildFactors(D) {
     sens: sens(`Each 5% rise in equipment cost ≈ ${smoney(-R.pp * 0.4 * 0.45 * 0.05)} margin a year if not passed on`, -R.pp * 0.4 * 0.45 * 0.05, eq?.chg != null ? `Today's ${chg(eq)} ≈ ${smoney(-R.pp * 0.4 * 0.45 * eq.chg)} margin a year if not passed on` : null, eq?.chg != null ? -R.pp * 0.4 * 0.45 * eq.chg : null, 'margin',
       `Revenue ${D.revTxt.pp}; replacements about 40% of revenue; equipment about 45% of a replacement ticket (assumptions).`) });
   add({ id: 'pp-refrig', co: 'pp', cat: 'policy', w: 2, name: 'Refrigerant rules', why: 'New systems must use newer refrigerants, which raises prices and pushes old units out.',
-    read: { v: 'New installs use the newer refrigerants', d: 'Older-type stock could be installed only through 2025 · refrigerant supply cut 40% now, 70% from 2029', date: 'Oct 2026', src: 'EPA refrigerant rules', url: URL_.epaRef, dir: 1 },
+    read: { v: 'New systems use the newer refrigerants', d: 'Units built before 2025 with the old refrigerant can still be installed (rule eased May 26, 2026) · old refrigerant supply cut 40% now, 70% from 2029', date: 'Oct 2026', src: 'EPA rule, Federal Register', url: URL_.epaTT, dir: 1 },
     lever: 'Quote replacements to owners of old R-22 and R-410A systems before repair refrigerant costs more.' });
   add({ id: 'pp-credit', co: 'pp', cat: 'policy', w: 2, name: 'Heat-pump incentives', why: 'Rebates make heat pumps cheaper for owners, and the federal credit has ended.',
     read: { v: 'Federal heat-pump tax credit ended', d: 'Not available for systems installed after Dec 31, 2025 · utility rebates in PA and NJ continue', date: 'Oct 2026', src: 'IRS energy credit page', url: URL_.irs25c, dir: -1 },
@@ -247,7 +247,7 @@ function buildFactors(D) {
     sens: sens(`Each 1% rise in electrician pay ≈ ${smoney(-R.cet * 0.4 * 0.01)} margin a year`, -R.cet * 0.4 * 0.01, cw?.chg != null ? `Today's ${chg(cw)} ≈ ${smoney(-R.cet * 0.4 * cw.chg)} margin a year` : null, cw?.chg != null ? -R.cet * 0.4 * cw.chg : null, 'margin',
       `Revenue ${D.revTxt.cet}; field labor about 40% of revenue (assumption); pay change is US construction pay.`) });
   add({ id: 'cet-solar', co: 'cet', cat: 'policy', w: 2, name: 'Solar and charger credits', why: 'Federal solar and EV-charger credits are ending, which pulls work forward and then leaves a gap.',
-    read: { v: 'Federal solar and charger credits are ending', d: 'Solar projects must start by Jul 4, 2026 or run by Dec 31, 2027 · charger credit ended Jun 30, 2026', date: 'Oct 2026', src: 'Federal tax law of July 2025', url: URL_.obbba, dir: -1 },
+    read: { v: 'Charger credit has ended; solar credit closes after 2027', d: 'Solar projects not started by Jul 4, 2026 must be running by Dec 31, 2027 · charger credit ended Jun 30, 2026', date: 'Oct 2026', src: 'Federal tax law of July 2025', url: URL_.obbba, dir: -1 },
     lever: 'Finish projects that still qualify; steer new sales to storage, efficiency and wastewater work.' });
   add({ id: 'cet-utility', co: 'cet', cat: 'public', w: 2, name: 'Utility efficiency programs', why: 'Utility programs pay for the lighting, controls and heat-pump work NuWave sells.',
     read: { v: 'Mass Save and Energize CT plans run through 2027', d: 'Rebates for lighting, controls and heat pumps', date: 'Oct 2026', src: 'Mass Save', url: URL_.masssave, dir: 1 },

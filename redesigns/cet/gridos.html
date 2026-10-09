@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261009161812">
-<link rel="stylesheet" href="gridos.css?v=20261009161812">
+<link rel="stylesheet" href="../../assets/system.css?v=20261009165425">
+<link rel="stylesheet" href="gridos.css?v=20261009165425">
 </head>
 <body data-co="cet">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -240,11 +240,11 @@
 </main>
 
 <script type="module">
-import { Frame } from '../../assets/frame.js?v=20261009161812';
-import { Chat } from '../../assets/chat.js?v=20261009161812';
-import { Data, Fmt } from '../../assets/core.js?v=20261009161812';
-import { initOS } from './gridos.js?v=20261009161812';
-import { FAQ, makeIntents } from './site.js?v=20261009161812';
+import { Frame } from '../../assets/frame.js?v=20261009165425';
+import { Chat } from '../../assets/chat.js?v=20261009165425';
+import { Data, Fmt } from '../../assets/core.js?v=20261009165425';
+import { initOS } from './gridos.js?v=20261009165425';
+import { FAQ, makeIntents } from './site.js?v=20261009165425';
 const chat = Chat.mount(null, { persona: 'cet', short_name: 'CET', mode: 'floating', theme: 'light', faq: FAQ, suggestions: ['What is GridOS?', 'Which CET bids are due in the next 30 days?', 'Which wastewater plants should Horton call first?', 'Which programs can fund our project?', 'What is CET Assure?'], intents: makeIntents(Data, 'index.html'), openOnLoad: /[?&]chat=open/.test(location.search) });
 Frame.mount({ chat });
 try { initOS({ Data, Fmt }); } catch (e) { console.warn('gridos init', e); }

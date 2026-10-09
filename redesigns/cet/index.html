@@ -11,9 +11,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261009161812">
+<link rel="stylesheet" href="../../assets/system.css?v=20261009165425">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="site.css?v=20261009161812">
+<link rel="stylesheet" href="site.css?v=20261009165425">
 </head>
 <body data-co="cet">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -671,10 +671,10 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
 <script type="module">
-import { Frame } from '../../assets/frame.js?v=20261009161812';
-import { Chat } from '../../assets/chat.js?v=20261009161812';
-import { Data, Fmt } from '../../assets/core.js?v=20261009161812';
-import { init, FAQ, SUGGESTIONS, makeIntents } from './site.js?v=20261009161812';
+import { Frame } from '../../assets/frame.js?v=20261009165425';
+import { Chat } from '../../assets/chat.js?v=20261009165425';
+import { Data, Fmt } from '../../assets/core.js?v=20261009165425';
+import { init, FAQ, SUGGESTIONS, makeIntents } from './site.js?v=20261009165425';
 const chat = Chat.mount(null, { persona: 'cet', short_name: 'CET', mode: 'floating', theme: 'light', faq: FAQ, suggestions: SUGGESTIONS, intents: makeIntents(Data, ''), openOnLoad: /[?&]chat=open/.test(location.search) });
 Frame.mount({ chat });
 try { init({ Data, Fmt }); } catch (e) { console.warn('site init', e); }
