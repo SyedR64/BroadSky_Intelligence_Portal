@@ -85,7 +85,7 @@ Use the same `?v=` stamp on `system.css`, `frame.js` and `chat.js` (`scripts/bum
 
 ```
 body[data-co?]                          ← company pages only: pp | cet | fl | ts | bpi | fh
-  header.sys-top                        ← injected: brand · Portal · Concepts · Briefing · Ask · theme
+  header.sys-top                        ← injected: brand · Home · Portal · Concepts · Briefing · Ask · theme
   nav.sys-crumb                         ← injected only on a page without a sub-nav: Home / Concepts / ● Company / Page, concept tag at the right
   main#main
     nav.sys-subnav                      ← the page bar: parent / ● page name, at most five section anchors, the concept tag

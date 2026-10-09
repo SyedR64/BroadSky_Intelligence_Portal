@@ -1,8 +1,8 @@
 /* SignalOS product page: demo tabs, synthetic-audience test, compliance workflow, value math, evidence. */
-import { Data, Fmt } from '../../assets/core.js?v=20261009190627';
-import { chrome, mountChat, plain } from './site.js?v=20261009190627';
-import { mountMonitor, reduceMotion } from './monitor.js?v=20261009190627';
-import { Frame } from '../../assets/frame.js?v=20261009190627';
+import { Data, Fmt } from '../../assets/core.js?v=20261009192122';
+import { chrome, mountChat, plain } from './site.js?v=20261009192122';
+import { mountMonitor, reduceMotion } from './monitor.js?v=20261009192122';
+import { Frame } from '../../assets/frame.js?v=20261009192122';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const $ = (s, r = document) => r.querySelector(s);
