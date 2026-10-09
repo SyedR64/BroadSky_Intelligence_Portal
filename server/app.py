@@ -57,7 +57,8 @@ VERSION = '2.0.0'
 DEFAULT_MODEL = 'claude-opus-5-5'
 FALLBACK_BETA = 'server-side-fallback-2026-07-01'   # with "fallbacks": "default"
 WEB_SEARCH_TOOL = {'type': 'web_search_20260209', 'name': 'web_search', 'max_uses': 3}
-DEFAULT_ORIGINS = ['https://syedr64.github.io', 'http://127.0.0.1:8765', 'http://localhost:8765']
+SITE_ORIGINS = ['https://bspdesk.vercel.app', 'https://syedr64.github.io']   # the site's own addresses: always allowed
+DEFAULT_ORIGINS = [*SITE_ORIGINS, 'http://127.0.0.1:8765', 'http://localhost:8765']
 
 LIMITS = {
     'body': 131072,          # bytes per request body
@@ -313,7 +314,8 @@ class HttpError(Exception):
 def allowed_origins():
     raw = env('ALLOWED_ORIGINS') or ''
     lst = raw.split(',') if raw.strip() else DEFAULT_ORIGINS
-    return [re.sub(r'/$', '', s.strip()) for s in lst if s.strip()]
+    out = [re.sub(r'/$', '', s.strip()) for s in lst if s.strip()]
+    return out + [o for o in SITE_ORIGINS if o not in out]
 
 
 def cors_for(origin):

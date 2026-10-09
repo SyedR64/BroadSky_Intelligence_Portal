@@ -1,5 +1,5 @@
 /* Thomas Scientific concept site — interactions. Data via the portal's core.js (Data). */
-import { esc, num, CATS, PRODUCTS, STOCK, catById, search, VERTICALS, TILES, STATE_NAMES, REGIONS, regionOf, SITES_FALLBACK, aggregateSites, FAQ, toast, reveal, mountChat } from './shared.js?v=20261009165425';
+import { esc, num, CATS, PRODUCTS, STOCK, catById, search, VERTICALS, TILES, STATE_NAMES, REGIONS, regionOf, SITES_FALLBACK, aggregateSites, FAQ, toast, reveal, mountChat } from './shared.js?v=20261009173940';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
