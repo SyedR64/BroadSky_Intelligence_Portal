@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="../../assets/system.css?v=20261009185324">
-<link rel="stylesheet" href="./nationwide.css?v=20261009185324">
+<link rel="stylesheet" href="../../assets/system.css?v=20261009190627">
+<link rel="stylesheet" href="./nationwide.css?v=20261009190627">
 </head>
 <body data-co="pp">
 
@@ -255,10 +255,10 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261009185324';
-  import { Data, Fmt, esc } from '../../assets/core.js?v=20261009185324';
-  import { Chat } from '../../assets/chat.js?v=20261009185324';
-  import { boot } from './nationwide.js?v=20261009185324';
+  import { Frame } from '../../assets/frame.js?v=20261009190627';
+  import { Data, Fmt, esc } from '../../assets/core.js?v=20261009190627';
+  import { Chat } from '../../assets/chat.js?v=20261009190627';
+  import { boot } from './nationwide.js?v=20261009190627';
   const frame = Frame.mount({});
   boot({ Data, Fmt, esc, Chat, onChat: inst => frame.setChat(inst) });
 </script>
