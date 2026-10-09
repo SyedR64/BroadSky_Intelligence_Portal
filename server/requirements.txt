@@ -1,7 +1,9 @@
-# BSP Desk assistant backend (server/app.py). Pinned; Python 3.9+.
+# BSP Desk assistant backend (server/app.py). Pinned; Python 3.10+ (Vercel and Railway run 3.12).
 fastapi==0.128.8
 starlette==0.49.3
 uvicorn==0.39.0
-httpx==0.28.1
 anyio==4.12.1
 pydantic==2.13.5
+anthropic==1.12.1
+numpy==2.5.3
+tokenizers==0.23.2

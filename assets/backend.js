@@ -1,12 +1,11 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    BSP Desk assistant backend client (ES module, no dependencies).
-   Talks to the Cloudflare Worker in /worker (see SETUP.md). The Worker URL is
-   discovered from assets/runtime.json, which the deploy-worker GitHub Action
-   writes after each deploy. When no backend is live every method degrades
+   Talks to the hosted assistant (server/, on Vercel; see SETUP.md). Its URL is
+   read from assets/runtime.json. When no backend is live every method degrades
    quietly, so the grounded engine in chat.js keeps working on its own.
 
    Usage (from chat.js):
-     const { Backend } = await import('./backend.js?v=20261008192515');
+     const { Backend } = await import('./backend.js?v=20261009070649');
      if (await Backend.discover()) for await (const t of Backend.chat({ persona, messages, context, question })) out += t;
      const pre = await Backend.precomputed(question);   // works without a backend
 
@@ -159,12 +158,13 @@ export const Backend = {
    * Streams answer text from POST /chat.
    *   for await (const chunk of Backend.chat({ persona, messages, context, question })) …
    * messages: [{role:'user'|'assistant', content}] (prior turns); context: [{title, text, href}].
-   * onEvent(ev) receives {type:'meta'|'done', …}; a second 'meta' with fallback:true names the
+   * onEvent(ev) receives {type:'meta'|'status'|'sources'|'done', …}: 'status' is a progress line, 'sources' the
+   * numbered sources the answer cites as [n] (sent again whenever the list grows). A second 'meta' with fallback:true names the
    * fallback model that took over (text already received stays valid). A 'reset' event, if a
    * future Worker sends one, means discard the text received so far. Throws BackendError with a
    * visitor-facing message; ends quietly when Backend.abort() is called.
    */
-  async *chat({ persona = 'portal', messages = [], context = [], question = '', onEvent = null, signal = null } = {}) {
+  async *chat({ persona = 'portal', messages = [], context = [], question = '', retrieve = true, onEvent = null, signal = null } = {}) {
     const q = String(question || '').trim();
     if (!q) throw new BackendError('Ask a question first.', { code: 'missing_question' });
     if (q.length > MAX_QUESTION_CHARS) throw new BackendError(`Questions are limited to ${MAX_QUESTION_CHARS.toLocaleString('en-US')} characters. Try a shorter one.`, { code: 'question_too_long' });
@@ -198,7 +198,7 @@ export const Backend = {
     try {
       res = await fetch(this.endpoint + '/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
-        body: JSON.stringify({ persona, messages: hist, context: ctxOut, question: q }), signal: ctrl.signal,
+        body: JSON.stringify({ persona, messages: hist, context: ctxOut, question: q, ...(retrieve ? {} : { retrieve: false }) }), signal: ctrl.signal,
       });
     } catch (e) {
       if (this._ctrl === ctrl) this._ctrl = null;
@@ -229,7 +229,7 @@ export const Backend = {
           let ev; try { ev = JSON.parse(data); } catch { continue; }
           if (ev.type === 'text' && ev.text) yield ev.text;
           else if (ev.type === 'meta') { if (ev.model) this.model = ev.model; emit(ev); }
-          else if (ev.type === 'reset') { emit(ev); }
+          else if (ev.type === 'reset' || ev.type === 'sources' || ev.type === 'status') { emit(ev); }
           else if (ev.type === 'done') { this.last = { model: ev.model || this.model, stop_reason: ev.stop_reason || null, usage: ev.usage || null }; finished = true; emit(ev); }
           else if (ev.type === 'error') {
             finished = true;

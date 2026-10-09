@@ -1,0 +1,85 @@
+# Rebuilds the assistant's knowledge base (server/knowledge/: corpus.jsonl, kb.sqlite, deal_presets.json) with
+# scripts/build_corpus.py and commits it when it changed. A push to main that touches server/ redeploys the
+# assistant on Vercel, so the live assistant picks up the new knowledge base by itself. No secrets needed.
+name: Refresh assistant knowledge
+
+on:
+  schedule:
+    - cron: '25 10 1 * *'   # monthly, the 1st at 10:25 UTC
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'Sources to collect again, comma-separated (firm, cited, companies, news, wiki, portal). Blank collects all.'
+        required: false
+        default: ''
+
+env:
+  NOREPLY_DOMAIN: users.noreply.github.com
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-commit
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: .github/workflows/refresh-knowledge.yml
+
+      - name: Install build tools
+        run: |
+          pip install trafilatura==2.3.1 model2vec==0.9.0 tokenizers==0.23.2 numpy==2.5.3 pypdf==6.17.0 playwright==1.56.0
+          python -m playwright install --with-deps chromium
+
+      # Fetched pages are reused between runs: news feeds and BSP's site are fetched again every run,
+      # company sites monthly and other cited pages after six months (see Fetcher.get in the script).
+      - uses: actions/cache@v4
+        with:
+          path: .cache/corpus
+          key: corpus-pages-${{ github.run_id }}
+          restore-keys: corpus-pages-
+
+      - name: Build the knowledge base
+        env:
+          ONLY: ${{ github.event.inputs.only }}
+          CORPUS_DEFAULT_CHROMIUM: '1'
+        run: python3 scripts/build_corpus.py ${ONLY:+--only "$ONLY"}
+
+      - name: Check it answers a known question
+        working-directory: server
+        run: |
+          python3 - <<'EOF'
+          import knowledge
+          kb = knowledge.KnowledgeBase()
+          hits = kb.search('Who is the CEO of Broad Sky Partners?', k=5)
+          print(kb.stats())
+          for h in hits:
+              print(round(h['score'], 4), h['doc']['title'], h['doc']['url'])
+          assert any('tyler-zachem' in h['doc']['url'] for h in hits), 'the CEO biography should rank in the top five'
+          EOF
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@${NOREPLY_DOMAIN}"   # GitHub's standard bot identity
+          git add server/knowledge
+          if git diff --cached --quiet; then
+            echo "Knowledge base unchanged."
+            exit 0
+          fi
+          git commit -m "Assistant knowledge refresh $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0
+            sleep $((i * 5))
+          done
+          exit 1

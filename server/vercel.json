@@ -3,7 +3,7 @@
   "functions": {
     "app.py": {
       "maxDuration": 300,
-      "excludeFiles": "{tests/**,.pytest_cache/**,data/**,README.md,railway.json}"
+      "excludeFiles": "{tests/**,.pytest_cache/**,data/**,knowledge/corpus.jsonl,README.md,railway.json,requirements-dev.txt}"
     }
   }
 }

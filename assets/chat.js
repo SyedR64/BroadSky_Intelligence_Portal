@@ -12,10 +12,12 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261008192515';
+import { Data, Fmt, Live, esc } from './core.js?v=20261009070649';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
+const LOGO = new URL('./img/bsp-mark.png', import.meta.url).href;  // the BSP mark, used as BSP Desk's avatar and launcher
+const SITE = 'https://syedr64.github.io/BroadSky_Intelligence_Portal/';   // the knowledge base names portal pages by their public address
 const MODEL_DEFAULT = 'claude-opus-5-5';
 const KEY_LS = 'bsp-anthropic-key', MODEL_LS = 'bsp-anthropic-model', MODE_LS = 'bsp-chat-llm';
 /** Owner tools (key/model dialog, slash-command menu, key hints) appear only with ?dev=1 in the page URL. */
@@ -48,7 +50,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261008192515';
+const BACKEND_JS = './backend.js?v=20261009070649';
 let BE = null, BE_P = null;
 function backend() {
   if (!BE_P) BE_P = import(BACKEND_JS).then(async m => {
@@ -418,7 +420,7 @@ async function addonHistory(q) {
 }
 /** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
 async function dealModel(q) {
-  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261008192515').catch(() => null)]);
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261009070649').catch(() => null)]);
   if (!d || !L) return null;
   const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
   const P = pre.find(i => i.co === co && i.group !== 'generic') || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
@@ -638,8 +640,8 @@ const mdBase = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^#{2,
 
 /* ── Personas ─────────────────────────────────────────────────────────────── */
 export const PERSONAS = {
-  portal: { name: 'BSP Desk', short: 'the desk', initials: 'BSP', greeting: 'Ask about the six portfolio companies. Every answer shows where its numbers come from.', placeholder: 'Ask anything, e.g. "Show me how to take Punctual Pros nationwide"', color: '#d9622b',
-    suggestions: ['Show me how to take Punctual Pros nationwide', 'Which wastewater plants should Horton call first?', "What do this week's storms mean for Punctual Pros?", 'Who competes with BSP for home-services deals?', 'Which CET bids are due within 30 days?', 'Which counties nationwide should Punctual Pros expand to first?', 'What did sponsors do with companies like Punctual Pros?', 'How does BSP actually buy companies?', 'Estimate Punctual Pros revenue from public filings', 'Show the top add-on targets for CET in Connecticut', "How does tech enablement raise Punctual Pros' value?", 'How many new-mover leads are in Lancaster County?', "How do the portfolio's valuations compare with public peers?", 'Which private-equity rivals are most active in our sectors?', 'Which portfolio company is largest by revenue?', 'What would a TV ad campaign for Punctual Pros look like?', 'How does BSP scale CET across the Northeast?', 'What is the growth plan for Frontline?', 'Which AI agents create the most value?', 'How much revenue do missed calls cost Punctual Pros?'],
+  portal: { name: 'BSP Desk', short: 'the desk', initials: 'BSP', logo: true, greeting: 'Ask about BSP, its people, the six portfolio companies or a deal. Every answer shows its sources.', placeholder: 'Ask anything, e.g. "Show me how to take Punctual Pros nationwide"', color: '#d9622b',
+    suggestions: ['Who leads BSP, and what did they do before?', 'What could BSP pay for CET and still earn 25% a year?', 'Show me how to take Punctual Pros nationwide', 'Which wastewater plants should Horton call first?', "What do this week's storms mean for Punctual Pros?", 'Who competes with BSP for home-services deals?', 'Which CET bids are due within 30 days?', 'Which counties nationwide should Punctual Pros expand to first?', 'What did sponsors do with companies like Punctual Pros?', 'How does BSP actually buy companies?', 'Estimate Punctual Pros revenue from public filings', 'Show the top add-on targets for CET in Connecticut', "How does tech enablement raise Punctual Pros' value?", 'How many new-mover leads are in Lancaster County?', "How do the portfolio's valuations compare with public peers?", 'Which private-equity rivals are most active in our sectors?', 'Which portfolio company is largest by revenue?', 'What would a TV ad campaign for Punctual Pros look like?', 'How does BSP scale CET across the Northeast?', 'What is the growth plan for Frontline?', 'Which AI agents create the most value?', 'How much revenue do missed calls cost Punctual Pros?'],
     intents: PORTAL_INTENTS, faq: [] },
 };
 /** Customer-facing site personas are extended by each redesign (faq/suggestions/intents via mount options). */
@@ -741,8 +743,19 @@ const SPECIAL = { pmax: 'PMax', ebitda: 'EBITDA', usd: 'USD' };
 const srcKey = k => String(k || '').replace(/^\.\//, '').replace(/^sales\//, '').replace(/\.json$/, '');
 function srcLabel(key) { key = srcKey(key); if (SRC[key]) return SRC[key][0]; const w = key.split('_').filter(Boolean).map((b, i) => i === 0 && PREFIX[b] ? PREFIX[b] : UPPER.has(b) ? b.toUpperCase() : SPECIAL[b] || b).join(' '); return w.charAt(0).toUpperCase() + w.slice(1); }
 function srcOf(key) { key = srcKey(key); const r = SRC[key] || []; const live = key.startsWith('live:'); return { key, label: srcLabel(key), desc: r[1] || '', href: srcHref(r[2]), kind: live ? 'live' : 'dataset', asOf: live ? 'live' : ASOF.get(key) || (FRESH.has(key) ? '2026-10-06' : AS_OF_DEFAULT), at: Date.now() }; }
-const asOfText = s => s.kind === 'live' ? `Live · fetched ${new Date(s.at || Date.now()).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}` : s.kind === 'page' ? 'Portal view' : `As of ${Fmt.date(s.asOf || AS_OF_DEFAULT)}`;
-const kindText = s => s.kind === 'live' ? 'Live feed' : s.kind === 'page' ? 'Page' : s.kind === 'insight' ? 'Dataset insight' : 'Dataset';
+const KIND_TEXT = { live: 'Live feed', page: 'Page', insight: 'Dataset insight', firm: 'BSP website', press: 'Press release', filing: 'SEC filing', news: 'News', company: 'Company website', web: 'Public source', model: 'Acquisition model' };
+const DATED = new Set(['firm', 'press', 'filing', 'news', 'company', 'web']);
+const asOfText = s => s.kind === 'live' ? `Live · fetched ${new Date(s.at || Date.now()).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}` : s.kind === 'page' ? 'Portal view' : s.kind === 'model' ? 'Run for this answer' : DATED.has(s.kind) ? (s.asOf ? `Dated ${Fmt.date(s.asOf)}` : 'Public page') : `As of ${Fmt.date(s.asOf || AS_OF_DEFAULT)}`;
+const kindText = s => KIND_TEXT[s.kind] || 'Dataset';
+/* A source from the hosted knowledge base, in the shape the source list and popovers use. */
+const HOSTED_FIRST = new Set(['model']);   // intents the hosted assistant answers better (it has the deal-model tool); the intent stays the offline answer
+const SRV_KIND = { page: 'page', 'portal-view': 'page', 'site-page': 'page', answer: 'page', research: 'dataset', model: 'model', firm: 'firm', 'firm-team': 'firm', 'firm-investment': 'firm', 'press-release': 'press', filing: 'filing', company: 'company', article: 'news', headline: 'news', reference: 'web', web: 'web' };
+function srvSource(s) {
+  const url = String(s?.url || ''), href = url.startsWith(SITE) ? ROOT + url.slice(SITE.length) : url;
+  const kind = SRV_KIND[s?.kind] || 'web';
+  const desc = kind === 'page' || kind === 'dataset' ? '' : String(s?.publisher || '');
+  return { key: null, label: terms(String(s?.title || 'Source')), desc, href: href || null, kind, asOf: s?.date ? String(s.date).slice(0, 10) : null, at: Date.now() };
+}
 
 /** Record which datasets and live feeds an answer actually reads (wraps Data.load / Live once, transparently). */
 let TRACK = null;
@@ -851,7 +864,7 @@ function engineInfo(e, tip) {
 }
 /** Header engine: Claude when the hosted backend (or, in dev, your key) is live, else the portfolio data. */
 const engineLabel = () => hosted() || LLM.key() ? CLAUDE : GROUNDED();
-const engineTip = () => hosted() || LLM.key() ? `Portfolio questions are answered from the data; open questions go to ${modelName(hosted() ? BE.model || MODEL_DEFAULT : LLM.model())}` : groundedTip();
+const engineTip = () => hosted() ? `${modelName(BE.model || MODEL_DEFAULT)} searches a library of BSP's website, press releases, filings, news, the companies' own sites and the portal's research, and can run the acquisition model` : LLM.key() ? `Portfolio questions are answered from the data; open questions go to ${modelName(LLM.model())}` : groundedTip();
 const reduced = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const now = () => performance.now();
@@ -969,7 +982,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261008192515'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261009070649'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };
@@ -1023,12 +1036,12 @@ class Widget {
   setAccent() { this.root.style.setProperty('--ch-accent', this.persona.color || '#d9622b'); }
   loadExtra() { const id = this.id; siteIntents(id).then(x => { if (this.id === id) this.extra = x; }).catch(() => { }); }
   fullHref() { return `${ROOT}assistant.html?persona=${encodeURIComponent(this.id)}${this.lastQ ? `&q=${encodeURIComponent(this.lastQ)}` : ''}`; }
-  avatar(cls = '') { const ini = this.persona.initials || 'AI'; return `<span class="ch-avatar ${cls}${ini.length > 2 ? ' ch-avatar--3' : ''}" aria-hidden="true">${esc(ini)}</span>`; }
+  avatar(cls = '') { if (this.persona.logo) return `<span class="ch-avatar ch-avatar--logo ${cls}" aria-hidden="true"><img src="${LOGO}" alt="" width="44" height="44" decoding="async"></span>`; const ini = this.persona.initials || 'AI'; return `<span class="ch-avatar ${cls}${ini.length > 2 ? ' ch-avatar--3' : ''}" aria-hidden="true">${esc(ini)}</span>`; }
   engineHTML() { return `<button type="button" class="ch-engine" data-a="settings" title="${esc(engineTip())}" aria-label="${esc(engineLabel())}. About this assistant">${hosted() || LLM.key() ? I.spark : I.db}<span class="ch-engine-t">${esc(engineLabel())}</span>${I.gear}</button>`; }
   /** One plain sentence: where answers come from and where chats are kept. */
   privacy() {
     const chats = stored() ? 'chats are saved for later' : 'chats stay in this browser';
-    return hosted() || LLM.key() ? `Answers come from the portfolio data, with Claude for open questions; ${chats}.` : `Answers come from the portfolio data; ${chats}.`;
+    return hosted() ? `Claude answers from a library of public sources and the portal's research, with every source shown; ${chats}.` : LLM.key() ? `Answers come from the portfolio data, with Claude for open questions; ${chats}.` : `Answers come from the portfolio data; ${chats}.`;
   }
   footHTML() { return `${esc(this.privacy())}${DEV && !hosted() && !LLM.key() ? ' <a href="#" data-a="settings" data-adv="1">Add a Claude key</a>' : ''}`; }
   /** Backend discovery finished (or settings changed): update engine chips, privacy lines and synthesis actions in place. */
@@ -1073,7 +1086,7 @@ class Widget {
   renderLauncher() {
     if (this._tuck) setTimeout(this._tuck, 0);
     const who = this.persona.short || (this.persona.initials === 'BSP' ? 'the desk' : String(this.persona.name || 'us').split(' ')[0]);
-    this.root.innerHTML = `<button type="button" class="ch-launch" aria-label="Ask ${esc(who)} (opens the ${esc(this.persona.name)} chat)" aria-haspopup="dialog"><span class="ch-launch-av" aria-hidden="true">${I.spark}</span><span>Ask ${esc(who)}</span><span class="ch-dot" aria-hidden="true"></span></button>`;
+    this.root.innerHTML = `<button type="button" class="ch-launch" aria-label="Ask ${esc(who)} (opens the ${esc(this.persona.name)} chat)" aria-haspopup="dialog"><span class="ch-launch-av${this.persona.logo ? ' ch-launch-av--logo' : ''}" aria-hidden="true">${this.persona.logo ? `<img src="${LOGO}" alt="" width="34" height="34" decoding="async">` : I.spark}</span><span>Ask ${esc(who)}</span><span class="ch-dot" aria-hidden="true"></span></button>`;
   }
   /* Phones (<=560px): the launcher steps aside while it would sit on top of a page button or link,
      and comes back once the user scrolls past it. Sampled with elementsFromPoint, throttled to one frame. */
@@ -1119,7 +1132,7 @@ class Widget {
     this.bindComposer();
   }
   renderFull() {
-    const per = id => { const p = PERSONAS[id] || SITE_BASE[id]; return `<button type="button" class="ch-pp" data-persona="${id}" aria-pressed="${id === this.id}" style="--pc:${esc(p.color || '#d9622b')}"><span class="ch-avatar xs${(p.initials||'').length > 2 ? ' ch-avatar--3' : ''}" aria-hidden="true">${esc(p.initials)}</span><span>${esc(p.name)}</span></button>`; };
+    const per = id => { const p = PERSONAS[id] || SITE_BASE[id]; return `<button type="button" class="ch-pp" data-persona="${id}" aria-pressed="${id === this.id}" style="--pc:${esc(p.color || '#d9622b')}">${p.logo ? `<span class="ch-avatar ch-avatar--logo xs" aria-hidden="true"><img src="${LOGO}" alt="" width="22" height="22" decoding="async"></span>` : `<span class="ch-avatar xs${(p.initials||'').length > 2 ? ' ch-avatar--3' : ''}" aria-hidden="true">${esc(p.initials)}</span>`}<span>${esc(p.name)}</span></button>`; };
     this.root.innerHTML = `<div class="ch-app">
 <aside class="ch-side" aria-label="Chats"><div class="ch-side-top"><a class="ch-brand" href="${ROOT}"><img src="${ROOT}BSP_Logo.png" alt="" width="28" height="28"><span><b>BSP Desk</b><small>Assistant</small></span></a><button type="button" class="ch-ib-b ch-only-m" data-a="menu" aria-label="Close sidebar">${I.x}</button></div>
 <button type="button" class="ch-newchat" data-a="new">${I.compose}<span>New chat</span><kbd>${MOD}⇧O</kbd></button>
@@ -1273,8 +1286,10 @@ class Widget {
       if (hit && LLM.key() && LLM.always()) await beP;   // "always use Claude" applies to the personal key only when no backend is live
       // Writing-style requests (notes, memos, comparisons, opinions) go to hosted Claude with retrieved context, even when a data keyword matches.
       const generative = GENERATIVE_RX.test(q) && !/^(open|show|which|how many|list|where|when|who)\b/i.test(q.trim());
-      if (generative) await beP;
-      const skipIntent = !!(LLM.key() && LLM.always() && !hosted()) || (generative && hosted());
+      // Deal maths goes to the hosted assistant when it is live: it runs the same acquisition model with each target's own estimates.
+      const hostedFirst = !!hit && HOSTED_FIRST.has(hit.id);
+      if (generative || hostedFirst) await beP;
+      const skipIntent = !!(LLM.key() && LLM.always() && !hosted()) || ((generative || hostedFirst) && hosted());
       let res = null;
       if (hit && !skipIntent) { try { res = await hit.run(eq, { progress: t => st.push(t), persona: this.persona, history: this.history, context: this.ctx }); } catch (e) { console.warn('intent failed', hit.id, e); res = null; } }
       if (ctl.stopped) return this.stopped(turn, st, q);
@@ -1297,15 +1312,17 @@ class Widget {
         if (ctl.stopped) return this.stopped(turn, st, q);
         if (pre) return await this.deepDive(q, eq, fu, turn, st, pre, ctl);
       }
+      let warn = '';
+      if (hosted()) {   // the hosted assistant searches its own knowledge base; the local datasets are the fallback
+        TRACK = null;
+        const r = await this.claude(q, turn, st, [], [], [], ctl, 'hosted'); if (r.rec) return r.rec;
+        if (ctl.stopped) return this.stopped(turn, st, q);
+        warn = `<p class="ch-warn">${esc(r.error)}</p>`;
+      }
       const docs = await retrieve(eq, this.persona); TRACK = null;
       if (ctl.stopped) return this.stopped(turn, st, q);
       const sources = [], sIdx = docs.map(d => { const s = this.docSource(d); let k = sources.findIndex(x => x.label === s.label && x.href === s.href); if (k < 0) { sources.push(s); k = sources.length - 1; } return k; });
-      let warn = '';
-      if (hosted()) {
-        const r = await this.claude(q, turn, st, docs, sources, sIdx, ctl, 'hosted'); if (r.rec) return r.rec;
-        if (ctl.stopped) return this.stopped(turn, st, q);
-        warn = `<p class="ch-warn">${esc(r.error)}</p>`;
-      } else if (LLM.key()) {
+      if (!hosted() && LLM.key()) {
         const r = await this.claude(q, turn, st, docs, sources, sIdx, ctl, 'key'); if (r.rec) return r.rec;
         if (ctl.stopped) return this.stopped(turn, st, q);
         warn = `<p class="ch-warn">Claude didn't answer (${esc(r.error)}), so here is the closest material from the portfolio data.</p>`;
@@ -1371,19 +1388,25 @@ class Widget {
   async claude(q, turn, st, docs, sources, sIdx, ctl, via) {
     const body = turn.querySelector('.ch-answer'); const isHosted = via === 'hosted';
     let model = isHosted ? (BE.model || MODEL_DEFAULT) : LLM.model();
-    const refOf = n => (n >= 1 && n <= sIdx.length ? sIdx[n - 1] : null);
+    let srv = false;   // true once the hosted assistant sends its own numbered sources
+    const refOf = n => srv ? (n >= 1 && n <= sources.length ? n - 1 : null) : (n >= 1 && n <= sIdx.length ? sIdx[n - 1] : null);
     const hist = this.history.slice(0, -1).map(h => ({ role: h.role, content: h.text }));
-    st.push(docs.length ? `Asking Claude with ${docs.length} source${docs.length === 1 ? '' : 's'} from the portfolio data` : 'Asking Claude');
-    let stream;
+    st.push(isHosted && !docs.length ? 'Searching the knowledge base' : docs.length ? `Asking Claude with ${docs.length} source${docs.length === 1 ? '' : 's'} from the portfolio data` : 'Asking Claude');
+    let stream, started = false;
     if (isHosted) {
-      stream = BE.chat({ persona: this.id, messages: hist, question: q, context: docs.map((d, i) => ({ title: sources[sIdx[i]]?.label || d.t, text: terms(d.s), href: d.href || '' })), onEvent: ev => { if (ev.type === 'meta' && ev.model) { if (ev.fallback) st.push('Switching to a backup Claude model'); model = ev.model; } else if (ev.type === 'done' && ev.model) model = ev.model; } });
+      stream = BE.chat({ persona: this.id, messages: hist, question: q, context: docs.map((d, i) => ({ title: sources[sIdx[i]]?.label || d.t, text: terms(d.s), href: d.href || '' })), onEvent: ev => {
+        if (ev.type === 'meta' && ev.model) { if (ev.fallback) st.push('Switching to a backup Claude model'); model = ev.model; }
+        else if (ev.type === 'done' && ev.model) model = ev.model;
+        else if (ev.type === 'sources' && Array.isArray(ev.sources)) { srv = true; sources.length = 0; for (const s of ev.sources) sources.push(srvSource(s)); }
+        else if (ev.type === 'status' && ev.text && !started) st.push(String(ev.text));
+      } });
     } else {
       const ctxText = docs.map((d, i) => `[${i + 1}] ${sources[sIdx[i]]?.label || d.t}: ${terms(d.s)}`).join('\n');
       const sys = `You are ${this.persona.name}, an assistant embedded in ${this.id === 'portal' ? "BSP Desk, the portal of BSP (a private-equity firm in New York; portfolio: Commonwealth Electrical Technologies, Punctual Pros, Frontline Managed Services, Thomas Scientific, Bully Pulpit International, Fair Harbor)" : `the website of ${this.persona.name.replace(/ (assistant|desk|advisor|concierge|helper)$/i, '')}`}. Answer briefly in markdown (headings of six words or fewer, bullets, bold numbers). Ground every claim in the numbered context below and cite it inline as [1], [2]; if the context does not cover it, say so and point to the most relevant portal view. Say "growth plan" rather than "playbook", and "portfolio company" rather than "platform" for a sponsor's company ("platform" is fine for software). Never print dataset identifiers or underscores; use the plain-English names in the context. Write dates in words (Oct 6, 2026). No greetings or addressing anyone by name. Label estimates "est.". Today is ${new Date().toDateString()}.\n\nCONTEXT:\n${ctxText}`;
       stream = LLM.stream(sys, hist, q);
     }
     const caret = document.createElement('span'); caret.className = 'ch-caret'; caret.setAttribute('aria-hidden', 'true');
-    let acc = '', started = false, err = ''; this.msgs.setAttribute('aria-busy', 'true'); turn.classList.add('ch-streaming');
+    let acc = '', err = ''; this.msgs.setAttribute('aria-busy', 'true'); turn.classList.add('ch-streaming');
     try {
       for await (const t of stream) {
         if (!started) { started = true; st.push('Writing the answer'); }
@@ -1415,7 +1438,7 @@ class Widget {
     const caret = document.createElement('span'); caret.className = 'ch-caret'; caret.setAttribute('aria-hidden', 'true');
     let acc = '', err = '';
     try {
-      for await (const t of BE.chat({ persona: this.id, messages: [], context, question: ask, onEvent: ev => { if (ev.type === 'meta' && ev.model) model = ev.model; } })) {
+      for await (const t of BE.chat({ persona: this.id, messages: [], context, question: ask, retrieve: false, onEvent: ev => { if (ev.type === 'meta' && ev.model) model = ev.model; } })) {
         acc += t; out.innerHTML = mdLite(terms(acc), refOf); (out.lastElementChild || out).appendChild(caret);
         if (ctl.stopped) break;
       }
