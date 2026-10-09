@@ -7,7 +7,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261009175029';
+       import { Frame } from '../../assets/frame.js?v=20261009181341';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
@@ -71,9 +71,8 @@ export const NAV = [
 /** Pages under these old top-bar entries now mark Concepts. */
 const NAV_PARENT = { os: 'concepts', playbooks: 'concepts' };
 
-export const BANNER_TEXT = `A concept by ${AUTHOR} for the Portfolio Resource Group at Broad Sky Partners (BSP). This is not the company's official website. Estimates are marked est.`;
-const TAG_SHORT = 'not the official site';
-export const DISCLAIMER = 'Not an official BSP website, and not endorsed by any portfolio company. Figures come from public records, company releases and licensed sources, as of the dates shown. Estimates are marked est.; illustrative figures are marked illustrative. Company names belong to their owners.';
+export const BANNER_TEXT = `A concept by ${AUTHOR} for Broad Sky Partners (BSP), not the company's official website.`;
+export const DISCLAIMER = 'Not an official BSP or portfolio-company website.';
 
 const PAGE_LABELS = { 'index.html': 'Concept site', 'growth-plan.html': 'Growth plan', 'nationwide.html': 'Nationwide plan', 'ads.html': 'Growth marketing', 'voice-ai.html': '24/7 Voice AI', 'ai-agents.html': 'AI agents' };
 const OS_FILES = new Set(Object.values(COMPANIES).map(c => c.osFile));
@@ -144,7 +143,7 @@ function topHTML(o) {
 }
 /** The concept notice: a small tag that stays in the page bar (the full sentence is its tooltip and is read by screen readers). */
 function conceptTagHTML() {
-  return `<span class="sys-concept" title="${esc(BANNER_TEXT)}"><b aria-hidden="true">Concept</b><span class="sys-concept-more" aria-hidden="true">· ${esc(TAG_SHORT)}</span><span class="sys-vh">${esc(BANNER_TEXT)}</span></span>`;
+  return `<span class="sys-concept" title="${esc(BANNER_TEXT)}"><b aria-hidden="true">Concept</b><span class="sys-vh">${esc(BANNER_TEXT)}</span></span>`;
 }
 /** Fold the breadcrumb's parent and the concept tag into the page's own sub-nav, so the page has one bar under the top bar. */
 function foldIntoSubnav(sub, items, tag) {

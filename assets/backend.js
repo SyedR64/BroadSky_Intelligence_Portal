@@ -5,7 +5,7 @@
    quietly, so the grounded engine in chat.js keeps working on its own.
 
    Usage (from chat.js):
-     const { Backend } = await import('./backend.js?v=20261009175029');
+     const { Backend } = await import('./backend.js?v=20261009181341');
      if (await Backend.discover()) for await (const t of Backend.chat({ persona, messages, context, question })) out += t;
      const pre = await Backend.precomputed(question);   // works without a backend
 
@@ -56,21 +56,21 @@ function humanize(status, body = {}, retryHeader = 0) {
   const retryAfter = Number(body.retryAfter || retryHeader) || 0;
   const code = body.error || 'http_' + status;
   const opt = { code, status, retryAfter, scope: body.scope || '' };
-  if (status === 429 && code === 'daily_cap') return new BackendError('Claude has reached today\'s limit for this site, so answers come from the portfolio data until tomorrow.', opt);
-  if (status === 429 && body.scope === 'upstream') return new BackendError('Claude is busy right now. Try again in a minute.', opt);
-  if (status === 429) return new BackendError(`You've asked a lot of questions in a short time. Claude will be available again in ${minutes(retryAfter || 60)}; answers from the portfolio data still work.`, opt);
+  if (status === 429 && code === 'daily_cap') return new BackendError('Deep research has reached today\'s limit for this site, so answers come from the portfolio data until tomorrow.', opt);
+  if (status === 429 && body.scope === 'upstream') return new BackendError('The assistant is busy right now. Try again in a minute.', opt);
+  if (status === 429) return new BackendError(`You've asked a lot of questions in a short time. Deep research will be available again in ${minutes(retryAfter || 60)}; answers from the portfolio data still work.`, opt);
   if (status === 413) return new BackendError(body.message || 'That question is too long. Try a shorter one.', opt);
   if (status === 400) return new BackendError(body.message || 'The assistant could not read that question.', opt);
-  if (status === 403) return new BackendError('Claude is not available on this page.', opt);
+  if (status === 403) return new BackendError('Deep research is not available on this page.', opt);
   if (status === 404) return new BackendError(body.message || 'Not found.', opt);
-  if (status === 502 && code === 'backend_auth') return new BackendError('Claude is not available right now; answers come from the portfolio data.', opt);
+  if (status === 502 && code === 'backend_auth') return new BackendError('Deep research is not available right now; answers come from the portfolio data.', opt);
   if (status === 503 && (code === 'no_model_key' || code === 'no_database')) return new BackendError('That feature is not available right now.', opt);
-  if (status >= 500) return new BackendError('Claude is temporarily unavailable. Try again shortly.', opt);
-  return new BackendError(body.message || 'Claude could not answer that just now.', opt);
+  if (status >= 500) return new BackendError('The assistant is temporarily unavailable. Try again shortly.', opt);
+  return new BackendError(body.message || 'The assistant could not answer that just now.', opt);
 }
 function networkError(e) {
-  if (e && (e.name === 'TimeoutError' || e.message === 'timeout')) return new BackendError('Claude took too long to respond. Try again in a moment.', { code: 'timeout' });
-  return new BackendError('Could not reach Claude. Check your connection; answers from the portfolio data still work.', { code: 'network' });
+  if (e && (e.name === 'TimeoutError' || e.message === 'timeout')) return new BackendError('The assistant took too long to respond. Try again in a moment.', { code: 'timeout' });
+  return new BackendError('Could not reach the assistant. Check your connection; answers from the portfolio data still work.', { code: 'network' });
 }
 async function errorFrom(res) {
   let body = {}; try { body = await res.json(); } catch { /* not JSON */ }
@@ -158,7 +158,8 @@ export const Backend = {
    * Streams answer text from POST /chat.
    *   for await (const chunk of Backend.chat({ persona, messages, context, question })) …
    * messages: [{role:'user'|'assistant', content}] (prior turns); context: [{title, text, href}].
-   * onEvent(ev) receives {type:'meta'|'status'|'sources'|'done', …}: 'status' is a progress line, 'sources' the
+   * onEvent(ev) receives {type:'meta'|'status'|'thinking'|'sources'|'done', …}: 'status' is a progress line, 'thinking' a piece
+   * of Claude's summarized reasoning (shown apart from the answer), 'sources' the
    * numbered sources the answer cites as [n] (sent again whenever the list grows). A second 'meta' with fallback:true names the
    * fallback model that took over (text already received stays valid). A 'reset' event, if a
    * future Worker sends one, means discard the text received so far. Throws BackendError with a
@@ -168,8 +169,8 @@ export const Backend = {
     const q = String(question || '').trim();
     if (!q) throw new BackendError('Ask a question first.', { code: 'missing_question' });
     if (q.length > MAX_QUESTION_CHARS) throw new BackendError(`Questions are limited to ${MAX_QUESTION_CHARS.toLocaleString('en-US')} characters. Try a shorter one.`, { code: 'question_too_long' });
-    if (!(await this.discover())) throw new BackendError('Claude is not available right now, so answers come from the portfolio data.', { code: 'offline' });
-    if (!this.llm) throw new BackendError('Claude is not available right now; answers come from the portfolio data.', { code: 'no_model_key' });
+    if (!(await this.discover())) throw new BackendError('Deep research is not available right now, so answers come from the portfolio data.', { code: 'offline' });
+    if (!this.llm) throw new BackendError('Deep research is not available right now; answers come from the portfolio data.', { code: 'no_model_key' });
 
     // Fit retrieved context into the Worker's 12k-character budget, best sources first.
     const ctxOut = []; let used = 0;
@@ -229,11 +230,11 @@ export const Backend = {
           let ev; try { ev = JSON.parse(data); } catch { continue; }
           if (ev.type === 'text' && ev.text) yield ev.text;
           else if (ev.type === 'meta') { if (ev.model) this.model = ev.model; emit(ev); }
-          else if (ev.type === 'reset' || ev.type === 'sources' || ev.type === 'status') { emit(ev); }
+          else if (ev.type === 'reset' || ev.type === 'sources' || ev.type === 'status' || ev.type === 'thinking') { emit(ev); }
           else if (ev.type === 'done') { this.last = { model: ev.model || this.model, stop_reason: ev.stop_reason || null, usage: ev.usage || null }; finished = true; emit(ev); }
           else if (ev.type === 'error') {
             finished = true;
-            const msg = ev.code === 'refusal' ? 'Claude declined to answer this one, so the grounded answer is shown instead.' : (ev.message || 'The answer stream was interrupted. Try again.');
+            const msg = ev.code === 'refusal' ? 'The assistant declined to answer this one, so the grounded answer is shown instead.' : (ev.message || 'The answer stream was interrupted. Try again.');
             throw new BackendError(msg, { code: ev.code || 'stream_error', status: 200 });
           }
         }

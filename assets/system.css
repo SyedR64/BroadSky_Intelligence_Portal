@@ -504,7 +504,6 @@ body[data-sys-layout="app"] .sys-btn[aria-pressed="true"]{background:var(--sys-i
 }
 @media (max-width:1180px){
   .sys-brand-sub{display:none}
-  .sys-concept-more{display:none}
   .sys-top-in{gap:var(--sys-sp-4)}
   .sys-nav a{padding:0 9px}
 }
