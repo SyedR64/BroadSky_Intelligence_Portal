@@ -1,5 +1,5 @@
 /* FirmOS product page: demos and value math. Data via core.js (Data.load('research/...')). */
-import { QUESTIONS, ring, tierOf } from './site.js?v=20261009181341';
+import { QUESTIONS, ring, tierOf } from './site.js?v=20261009182014';
 const CO = 'var(--co)', CO_SOFT = 'color-mix(in srgb,var(--co) 45%,var(--sys-surface))';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));

@@ -16,7 +16,7 @@ from urllib.parse import urlencode
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PRESETS_PATH = os.path.join(HERE, 'knowledge', 'deal_presets.json')
-SITE = 'https://syedr64.github.io/BroadSky_Intelligence_Portal/'
+SITE = 'https://broadsky-desk.vercel.app/'
 H = 7            # model horizon in years (exit year 2 to 7)
 DCF_YEARS = 5
 
