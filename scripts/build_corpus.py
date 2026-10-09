@@ -344,6 +344,8 @@ def src_firm(F):
             # Section pages, bios and investment pages are kept current, so they carry their last update; news posts keep their publish date.
             section = re.search(r'broadskypartners\.com/(|team|strategy|news|esg|contact|home/investments)/?$', it.get('link') or '')
             when = it.get('modified') or it.get('date') if typ != 'pages' or section else it.get('date')
+            if typ == 'team' and len(body) < 200:
+                continue   # a one-line bio (an executive board member's other jobs) adds nothing the team page roster lacks, and outranks real bios
             if body:
                 out.append(doc('firm', kind, title, it.get('link'), body, publisher='Broad Sky Partners', date=when, key=f'firm-{typ}-{it.get("id")}'))
     for page in ('https://broadskypartners.com/', 'https://broadskypartners.com/team/', 'https://broadskypartners.com/home/investments/',
