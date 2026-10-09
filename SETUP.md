@@ -1,8 +1,8 @@
 # Turning on the assistant backend
 
-## The site: hosted on Vercel at broadsky-desk.vercel.app
+## The site: hosted on Vercel at broadsky-agent.vercel.app
 
-The site itself is a second Vercel project, **broadsky-desk** (team BSP), built from this same repository at the repository root with no framework and no build step, so every push to `main` publishes it. Its address is `broadsky-desk.vercel.app`; the project's first name, `bspdesk.vercel.app`, still answers and forwards there. The backend always accepts requests from `https://broadsky-desk.vercel.app` and from GitHub Pages (`SITE_ORIGINS` in `server/app.py`), so the assistant works there with no variable change. GitHub Pages stays on: `assets/frame.js` and the memo forward any `syedr64.github.io/BroadSky_Intelligence_Portal/…` link to the same page on the new address. For a custom domain, add it under the project's **Domains** and update `HOME` in `assets/frame.js`, `SITE_ORIGINS` and the canonical links.
+The site itself is a second Vercel project, **broadsky-desk** (team BSP), built from this same repository at the repository root with no framework and no build step, so every push to `main` publishes it. Its address is `broadsky-agent.vercel.app`; the project's earlier names, `broadsky-desk.vercel.app` and `bspdesk.vercel.app`, still answer and forward there. The backend always accepts requests from `https://broadsky-agent.vercel.app`, `https://broadsky-desk.vercel.app` and GitHub Pages (`SITE_ORIGINS` in `server/app.py`), so the assistant works there with no variable change. GitHub Pages stays on: `assets/frame.js` and the memo forward any `syedr64.github.io/BroadSky_Intelligence_Portal/…` link to the same page on the new address. For a custom domain (one without `.vercel.app`, bought from a registrar or under the team's **Domains**), add it to the project and update `HOME` in `assets/frame.js`, the memo's forward script, `SITE_NOW` in `assets/chat.js`, `SITE` in `server/dealmath.py`, `SITE_ORIGINS` and the canonical links.
 
 ## Live assistant: deployed on Vercel (Oct 8, 2026)
 

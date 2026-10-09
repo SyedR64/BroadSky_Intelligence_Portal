@@ -10,26 +10,26 @@
 <meta name="author" content="Syed Rahman">
 <link rel="icon" href="BSP_Logo.png">
 <link rel="apple-touch-icon" href="BSP_Logo.png">
-<link rel="canonical" href="https://broadsky-desk.vercel.app/">
+<link rel="canonical" href="https://broadsky-agent.vercel.app/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BSP Desk">
 <meta property="og:title" content="BSP Desk">
 <meta property="og:description" content="Ask about six BSP portfolio companies in plain English, with evidence and the portal view.">
-<meta property="og:url" content="https://broadsky-desk.vercel.app/">
-<meta property="og:image" content="https://broadsky-desk.vercel.app/assets/img/portal_home_overview.jpg">
+<meta property="og:url" content="https://broadsky-agent.vercel.app/">
+<meta property="og:image" content="https://broadsky-agent.vercel.app/assets/img/portal_home_overview.jpg">
 <meta property="og:image:width" content="1400">
 <meta property="og:image:height" content="875">
 <meta property="og:image:alt" content="The Command Center: a portfolio map of the Northeast with company headquarters and KPI cards">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="BSP Desk">
 <meta name="twitter:description" content="Ask about six BSP portfolio companies in plain English, with evidence and the portal view.">
-<meta name="twitter:image" content="https://broadsky-desk.vercel.app/assets/img/portal_home_overview.jpg">
+<meta name="twitter:image" content="https://broadsky-agent.vercel.app/assets/img/portal_home_overview.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/system.css?v=20261009184141">
-<link rel="stylesheet" href="assets/landing-page.css?v=20261009184141">
-<link rel="modulepreload" href="assets/chat.js?v=20261009184141">
+<link rel="stylesheet" href="assets/system.css?v=20261009185324">
+<link rel="stylesheet" href="assets/landing-page.css?v=20261009185324">
+<link rel="modulepreload" href="assets/chat.js?v=20261009185324">
 </head>
 <body data-page="landing">
 <main id="main">
@@ -473,21 +473,21 @@
 </main>
 
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261009184141';
-  import { Landing } from './assets/landing.js?v=20261009184141';
+  import { Frame } from './assets/frame.js?v=20261009185324';
+  import { Landing } from './assets/landing.js?v=20261009185324';
   Frame.mount({ crumb: false });
   Landing.init();
 </script>
 <script type="module">
-  import { Chat } from './assets/chat.js?v=20261009184141';
-  import { Landing } from './assets/landing.js?v=20261009184141';
+  import { Chat } from './assets/chat.js?v=20261009185324';
+  import { Landing } from './assets/landing.js?v=20261009185324';
   const host = document.querySelector('#hero-chat');
   host.querySelector('.lp-skeleton')?.remove();
   const chat = Chat.mount(host, { persona: 'portal', mode: 'inline', theme: 'light' });
   Landing.attachChat(chat);
 </script>
 <script type="module">
-  import { Counter } from './assets/counter.js?v=20261009184141';
+  import { Counter } from './assets/counter.js?v=20261009185324';
   const el = document.getElementById('hero-counter');
   // baseline 'today' counts from local midnight; below minDisplay the clock shows "—" so a first frame never reads "$1"
   if (el) Counter.mount(el, { theme: 'light', baseline: 'today', minDisplay: 100, caption: 'What BSP is leaving on the table by not hiring Syed · so far today' })

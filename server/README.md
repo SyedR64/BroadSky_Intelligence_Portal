@@ -73,7 +73,7 @@ Error codes match the Worker: `no_model_key`, `rate_limited`, `daily_cap`, `upst
 | `WEB_SEARCH` | `on` | `off` removes web search from BSP Desk (it is never offered to the concept-site assistants) |
 | `DAILY_CAP` | `400` | Total `/chat` requests per UTC day across all visitors. `0` switches Claude off. |
 | `RL_PER_10MIN` | `30` | `/chat` requests per visitor in any 10-minute window |
-| `ALLOWED_ORIGINS` | `https://broadsky-desk.vercel.app,https://syedr64.github.io,http://127.0.0.1:8765,http://localhost:8765` | Comma-separated. The site's own addresses (`SITE_ORIGINS`: broadsky-desk.vercel.app and GitHub Pages) are always allowed. |
+| `ALLOWED_ORIGINS` | `https://broadsky-agent.vercel.app,https://broadsky-desk.vercel.app,https://syedr64.github.io,http://127.0.0.1:8765,http://localhost:8765` | Comma-separated. The site's own addresses (`SITE_ORIGINS`: broadsky-agent.vercel.app, its earlier name broadsky-desk.vercel.app, and GitHub Pages) are always allowed. |
 | `DB_PATH` | `$RAILWAY_VOLUME_MOUNT_PATH/bsp_assistant.db` if a volume is attached, else `data/bsp_assistant.db` next to `app.py` | The folder is created if it is missing |
 | `UPSTREAM_TOTAL_TIMEOUT` | `150` | Seconds per answer, tool calls included |
 | `BLOB_READ_WRITE_TOKEN` | (unset) | **Secret.** Vercel adds it when a Blob store is connected to the project (here: the private store `bsp-desk-chats`). With it, every question and answer is saved to the store; without it the chat log is off. |

@@ -12,7 +12,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261009184141';
+import { Data, Fmt, Live, esc } from './core.js?v=20261009185324';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -21,7 +21,8 @@ const LOGO = new URL('./img/bsp-mark.png', import.meta.url).href;  // the BSP ma
 const LOGOS = Object.fromEntries(['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'].map(k => [k, new URL(`./img/logos/${k}.png`, import.meta.url).href]));
 const logoOf = id => LOGOS[id] || LOGO;
 const SITE = 'https://syedr64.github.io/BroadSky_Intelligence_Portal/';   // the knowledge base names portal pages by their public address
-const SITE_NOW = 'https://broadsky-desk.vercel.app/';   // the site's own address, used in acquisition-model links
+const SITE_NOW = ['https://broadsky-agent.vercel.app/', 'https://broadsky-desk.vercel.app/'];   // the site's own address (and its earlier one), used in acquisition-model links
+const ownPath = u => { for (const p of [SITE, ...SITE_NOW]) if (u.startsWith(p)) return u.slice(p.length); return null; };   // a link into this site → its path, else null
 const MODEL_DEFAULT = 'claude-opus-5-5';
 const KEY_LS = 'bsp-anthropic-key', MODEL_LS = 'bsp-anthropic-model', MODE_LS = 'bsp-chat-llm';
 /** Owner tools (key/model dialog, slash-command menu, key hints) appear only with ?dev=1 in the page URL. */
@@ -54,7 +55,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261009184141';
+const BACKEND_JS = './backend.js?v=20261009185324';
 let BE = null, BE_P = null, BE_RETRY = 0;
 function backend() {
   // The check on page load can land on a cold start and miss: when the backend looked offline, check again (at most every 15 s).
@@ -429,7 +430,7 @@ async function addonHistory(q) {
 }
 /** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
 async function dealModel(q) {
-  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261009184141').catch(() => null)]);
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261009185324').catch(() => null)]);
   if (!d || !L) return null;
   const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
   const P = pre.find(i => i.co === co && i.group !== 'generic') || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
@@ -645,7 +646,7 @@ const LLM = {
 /** Minimal markdown → HTML for streamed Claude text; `refOf(n)` maps an inline [n] to a source index (or null to drop it). */
 const mdLite = (s, refOf) => mdBase(s).replace(/ ?\[(\d{1,2}(?:\s*,\s*\d{1,2})*)\]/g, (m, list) => { if (!refOf) return m; const out = list.split(/\s*,\s*/).map(Number).map(refOf).filter(k => k != null); return out.length ? uniq(out).map(k => `<span class="ch-ref" data-src="${k}">${k + 1}</span>`).join('') : ''; });
 /** [text](https://…) links in answers: links into this site open in place, others in a new tab (http and https only). */
-const mdLink = s => s.replace(/\[([^\]\n]{1,200})\]\((https?:\/\/[^\s()<>"]+)\)/g, (m, t, u) => { const own = u.startsWith(SITE) || u.startsWith(SITE_NOW); const href = u.startsWith(SITE) ? ROOT + u.slice(SITE.length) : u.startsWith(SITE_NOW) ? ROOT + u.slice(SITE_NOW.length) : u; return `<a href="${href}"${own ? '' : ' target="_blank" rel="noopener"'}>${t}</a>`; });
+const mdLink = s => s.replace(/\[([^\]\n]{1,200})\]\((https?:\/\/[^\s()<>"]+)\)/g, (m, t, u) => { const p = ownPath(u), own = p !== null; const href = own ? ROOT + p : u; return `<a href="${href}"${own ? '' : ' target="_blank" rel="noopener"'}>${t}</a>`; });
 const mdBase = s => mdLink(esc(s)).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^#{2,4} (.+)$/gm, '<h4>$1</h4>').replace(/^\s*[-•*] (.+)$/gm, '<li>$1</li>').replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m.replace(/\n/g, '')}</ul>\n\n`).replace(/(<\/h4>)\n*/g, '$1\n\n')
   .split(/\n{2,}/).map(b => b.trim()).filter(Boolean).map(b => /^<(h4|ul)>[\s\S]*<\/(h4|ul)>$/.test(b) ? b : `<p>${b.replace(/\n/g, '<br>')}</p>`).join('');
 
@@ -762,7 +763,7 @@ const kindText = s => KIND_TEXT[s.kind] || 'Dataset';
 const HOSTED_FIRST = new Set(['model']);   // intents the hosted assistant answers better (it has the deal-model tool); the intent stays the offline answer
 const SRV_KIND = { page: 'page', 'portal-view': 'page', 'site-page': 'page', answer: 'page', research: 'dataset', model: 'model', firm: 'firm', 'firm-team': 'firm', 'firm-investment': 'firm', 'press-release': 'press', filing: 'filing', company: 'company', article: 'news', headline: 'news', reference: 'web', web: 'web' };
 function srvSource(s) {
-  const url = String(s?.url || ''), href = url.startsWith(SITE) ? ROOT + url.slice(SITE.length) : url.startsWith(SITE_NOW) ? ROOT + url.slice(SITE_NOW.length) : url;
+  const url = String(s?.url || ''), p = ownPath(url), href = p !== null ? ROOT + p : url;
   const kind = SRV_KIND[s?.kind] || 'web';
   const desc = kind === 'page' || kind === 'dataset' ? '' : String(s?.publisher || '');
   return { key: null, label: terms(String(s?.title || 'Source')), desc, href: href || null, kind, asOf: s?.date ? String(s.date).slice(0, 10) : null, at: Date.now() };
@@ -1024,7 +1025,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261009184141'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261009185324'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };

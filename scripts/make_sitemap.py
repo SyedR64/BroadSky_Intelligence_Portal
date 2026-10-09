@@ -229,17 +229,17 @@ def main():
 <meta name="author" content="Syed Rahman">
 <link rel="icon" href="BSP_Logo.png">
 <link rel="apple-touch-icon" href="BSP_Logo.png">
-<link rel="canonical" href="https://broadsky-desk.vercel.app/sitemap.html">
+<link rel="canonical" href="https://broadsky-agent.vercel.app/sitemap.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BSP Desk">
 <meta property="og:title" content="Sitemap · BSP Desk">
 <meta property="og:description" content="Every page and portal view, grouped by company.">
-<meta property="og:url" content="https://broadsky-desk.vercel.app/sitemap.html">
-<meta property="og:image" content="https://broadsky-desk.vercel.app/assets/img/portal_home_overview.jpg">
+<meta property="og:url" content="https://broadsky-agent.vercel.app/sitemap.html">
+<meta property="og:image" content="https://broadsky-agent.vercel.app/assets/img/portal_home_overview.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Sitemap · BSP Desk">
 <meta name="twitter:description" content="Every page and portal view, grouped by company.">
-<meta name="twitter:image" content="https://broadsky-desk.vercel.app/assets/img/portal_home_overview.jpg">
+<meta name="twitter:image" content="https://broadsky-agent.vercel.app/assets/img/portal_home_overview.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
