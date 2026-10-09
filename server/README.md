@@ -38,6 +38,7 @@ A search runs both and merges the two rankings, so "who runs the firm" finds the
 | `app.py` | Routes, validation, rate limits, the research loop and its streaming relay, SQLite storage (FastAPI, uvicorn, the Anthropic Python SDK) |
 | `knowledge.py` | Opens `knowledge/kb.sqlite` and runs the hybrid search |
 | `dealmath.py` | The acquisition model (port of `modules/deal-lib.js`) and the `deal_model` tool |
+| `chatlog.py` | The chat log: one JSON file per question and answer (and per rating) in a private Vercel Blob store |
 | `knowledge/` | `kb.sqlite` (the index), `deal_presets.json` (the model's presets), `corpus.jsonl` (readable copy of every document), all built by `scripts/build_corpus.py` |
 | `main.py` | Zero-config start for Railway: Railpack runs `python main.py` when it finds this file |
 | `requirements.txt` | Pinned dependencies (Python 3.10 or newer; `.python-version` asks for 3.12). `requirements-dev.txt` adds the test tools. |
@@ -50,9 +51,10 @@ These are the same endpoints as the Worker. CORS only allows the origins in `ALL
 
 | Method and path | Returns |
 |---|---|
-| `GET /health` (also `/`) | `{ok, model, version, db, llm, kv, kb}`. `llm` is false when no Claude key is set; `kv` is always true because rate limits are kept in memory; `kb` gives the knowledge base's document and passage counts and build time (false if it could not open). |
-| `POST /chat` | `text/event-stream` of `data: {"type": "meta" \| "status" \| "sources" \| "text" \| "done" \| "error", ...}`, or a JSON error. Body: `{persona, question, messages, context, retrieve}`; `context` items become the first numbered sources, and `retrieve: false` skips the knowledge-base search (used by "Expand with Claude"). |
-| `POST /feedback` | `201 {ok, id}` |
+| `GET /health` (also `/`) | `{ok, model, version, db, llm, kv, log, kb}`. `llm` is false when no Claude key is set; `kv` is always true because rate limits are kept in memory; `log` says whether the chat log is on; `kb` gives the knowledge base's document and passage counts and build time (false if it could not open). |
+| `POST /chat` | `text/event-stream` of `data: {"type": "meta" \| "status" \| "thinking" \| "sources" \| "text" \| "done" \| "error", ...}`, or a JSON error. Body: `{persona, question, messages, context, retrieve, page}`; `context` items become the first numbered sources, and `retrieve: false` skips the knowledge-base search (used by "Expand with Claude"). |
+| `POST /feedback` | `201 {ok, id}` (the rating also goes to the chat log) |
+| `POST /log` | `202 {ok, saved}`. An answer the browser built itself (portfolio data, a prepared deep dive, a fallback) for the chat log: `{persona, question, answer, kind, intent, engine, sources, seconds, page}`. Shares the save rate limit with `/feedback` and `/thread`. |
 | `POST /thread` | `{ok, thread_id, updated_at}` (insert, or update if the thread exists) |
 | `GET /thread/:id` | `{ok, thread_id, persona, title, messages, created_at, updated_at}` |
 | `GET /stats` | `{threads, messages, feedback, feedback_up, feedback_down, today:{requests, tokens_in, tokens_out}, daily_cap, model}` |
@@ -74,7 +76,10 @@ Error codes match the Worker: `no_model_key`, `rate_limited`, `daily_cap`, `upst
 | `ALLOWED_ORIGINS` | `https://broadsky-desk.vercel.app,https://syedr64.github.io,http://127.0.0.1:8765,http://localhost:8765` | Comma-separated. The site's own addresses (`SITE_ORIGINS`: broadsky-desk.vercel.app and GitHub Pages) are always allowed. |
 | `DB_PATH` | `$RAILWAY_VOLUME_MOUNT_PATH/bsp_assistant.db` if a volume is attached, else `data/bsp_assistant.db` next to `app.py` | The folder is created if it is missing |
 | `UPSTREAM_TOTAL_TIMEOUT` | `150` | Seconds per answer, tool calls included |
+| `BLOB_READ_WRITE_TOKEN` | (unset) | **Secret.** Vercel adds it when a Blob store is connected to the project (here: the private store `bsp-desk-chats`). With it, every question and answer is saved to the store; without it the chat log is off. |
+| `CHAT_LOG` | `on` | `off` stops the chat log while keeping the store connected |
 | `FAKE_ANTHROPIC_URL` | (unset) | **Tests only.** Sends Claude calls to a local mock instead of api.anthropic.com. |
+| `VERCEL_BLOB_API_URL` | `https://vercel.com/api/blob` | **Tests only.** Points the chat log at the mock store. |
 
 Visitors are identified by a salted SHA-256 hash of their IP address, never the raw IP. The IP is read from `X-Real-IP` (which Railway's edge sets), then the last hop of `X-Forwarded-For`, then the socket address. Per-visitor limits are kept in memory, so they reset when the server restarts. The daily cap is stored in SQLite, so it survives restarts as long as the database is on a volume.
 
@@ -96,12 +101,28 @@ python3 tests/mock_claude.py --port 8799 &
 FAKE_ANTHROPIC_URL=http://127.0.0.1:8799 ANTHROPIC_API_KEY=test-not-a-real-key python3 -m uvicorn app:app --port 8787
 ```
 
+## Chat log
+
+Every question and answer is saved for later analysis in the private Vercel Blob store **bsp-desk-chats** (team BSP, connected to this project), one JSON file each:
+
+- `chats/YYYY/MM/DD/HHMMSS-<id>.json`: the question, earlier turns, the page it was asked on, the answer as shown, the reasoning summary, the progress steps, the numbered sources, how it ended (`answered`, `error`, `refused`, `left early`, `stopped`), the model, tokens and seconds. `source` is `server` for the research agent's answers and `browser` for answers the page built from the portfolio data or a prepared deep dive (those arrive on `POST /log`, with the intent that answered).
+- `ratings/YYYY/MM/DD/HHMMSS-<id>.json`: each thumbs up or down, with the question and an excerpt of the answer.
+
+Visitors appear only as a hashed id (`visitor`), never by address. The server writes after the answer's last event and before the stream closes; a slow or missing store only skips the record. To browse: Vercel dashboard → Storage → bsp-desk-chats → Browser. To analyze, download everything into one file with `scripts/export_chats.py` (standard library only):
+
+```bash
+BLOB_READ_WRITE_TOKEN=… python3 scripts/export_chats.py                       # writes chat-logs/chats.csv, chats.jsonl, ratings.csv, ratings.jsonl
+python3 scripts/export_chats.py --env-file server/.env.local --since 2026-10-01  # after `vercel env pull .env.local` in server/
+```
+
+The token is on the store's **.env.local** tab in the dashboard. `chat-logs/` is ignored by git: the logs hold visitors' questions and stay off the public repository. Re-running only downloads new files.
+
 ## Tests
 
 ```bash
 cd server
 python3 -m pytest -q tests          # starts its own mock and servers on free ports; covers the tool loop, sources and limits
-python3 tests/e2e_browser.py        # 16 browser checks with the real site in headless Chromium (needs Playwright)
+python3 tests/e2e_browser.py        # 18 browser checks with the real site in headless Chromium (needs Playwright)
 ```
 
 ## Deploy on Railway

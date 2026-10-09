@@ -24,6 +24,11 @@ Markers in the last user message switch behaviour:
   [mock:noweb]       HTTP 400 naming web_search when the web search tool is offered (tests the retry)
 GET /_requests returns the recorded requests (headers of interest + JSON body); DELETE clears them.
 GET /_events returns stream outcomes ("complete" or "client_closed" with the delta count).
+
+It also stands in for the Vercel Blob API used by the chat log (VERCEL_BLOB_API_URL=http://127.0.0.1:8799/blob):
+  PUT /blob/?pathname=…   stores the body (needs a Bearer token and x-vercel-blob-access: private)
+  GET /blob/?prefix=…     lists stored files ({blobs, cursor, hasMore}, two per page so paging is exercised)
+  GET /blobfile/<path>    serves a stored file;  GET /_blobs returns everything stored with its request headers
 """
 
 import argparse
@@ -32,6 +37,7 @@ import sys
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import parse_qs, urlsplit
 
 ANSWER = ('**Short answer:** lenders will test whether the add-on pipeline can carry the debt. '
           'They usually ask three things [1]:\n\n- How much EBITDA comes from acquired versus organic growth\n'
@@ -40,6 +46,7 @@ ANSWER = ('**Short answer:** lenders will test whether the add-on pipeline can c
 
 _lock = threading.Lock()
 REQUESTS, EVENTS = [], []
+BLOBS = {}   # pathname -> {'body': text, 'headers': {...}}
 
 
 def words(text):
@@ -68,7 +75,43 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def blob_auth(self):
+        return (self.headers.get('authorization') or '').startswith('Bearer vercel_blob_rw_')
+
+    def do_PUT(self):
+        u = urlsplit(self.path)
+        body = self.rfile.read(int(self.headers.get('Content-Length') or 0)).decode('utf-8')
+        if u.path.rstrip('/') != '/blob' or not self.blob_auth():
+            return self._json(403, {'error': {'code': 'forbidden', 'message': 'no'}})
+        name = parse_qs(u.query).get('pathname', [''])[0]
+        hdr = {k: self.headers.get(k) for k in ('x-api-version', 'x-vercel-blob-access', 'x-add-random-suffix', 'x-content-type', 'x-vercel-blob-store-id')}
+        with _lock:
+            BLOBS[name] = {'body': body, 'headers': hdr}
+        host = f'http://{self.headers.get("host")}'
+        return self._json(200, {'url': f'{host}/blobfile/{name}', 'downloadUrl': f'{host}/blobfile/{name}?download=1', 'pathname': name, 'contentType': 'application/json'})
+
     def do_GET(self):
+        u = urlsplit(self.path)
+        if u.path.rstrip('/') == '/blob':
+            if not self.blob_auth():
+                return self._json(403, {'error': {'code': 'forbidden', 'message': 'no'}})
+            qs = parse_qs(u.query)
+            prefix, start = qs.get('prefix', [''])[0], int(qs.get('cursor', ['0'])[0])
+            with _lock:
+                names = sorted(n for n in BLOBS if n.startswith(prefix))
+            page = names[start:start + 2]
+            host = f'http://{self.headers.get("host")}'
+            return self._json(200, {'blobs': [{'url': f'{host}/blobfile/{n}', 'downloadUrl': f'{host}/blobfile/{n}?download=1', 'pathname': n, 'size': len(BLOBS[n]['body']), 'uploadedAt': '2026-10-09T12:00:00.000Z'} for n in page],
+                                    'cursor': str(start + 2) if start + 2 < len(names) else None, 'hasMore': start + 2 < len(names)})
+        if u.path.startswith('/blobfile/'):
+            if not self.blob_auth():
+                return self._json(403, {'error': {'code': 'forbidden', 'message': 'private'}})
+            with _lock:
+                b = BLOBS.get(u.path[len('/blobfile/'):])
+            return self._json(200, json.loads(b['body'])) if b else self._json(404, {'error': {'code': 'not_found'}})
+        if self.path == '/_blobs':
+            with _lock:
+                return self._json(200, BLOBS)
         if self.path == '/_requests':
             with _lock:
                 return self._json(200, REQUESTS[-50:])
@@ -81,6 +124,7 @@ class Handler(BaseHTTPRequestHandler):
         with _lock:
             REQUESTS.clear()
             EVENTS.clear()
+            BLOBS.clear()
         return self._json(200, {'ok': True})
 
     def do_POST(self):

@@ -45,7 +45,7 @@ def main():
     started = []
     try:
         started.append(procs.start_mock(8799, os.path.join(tmp, 'mock.log')))
-        main_srv = procs.start_server(8787, os.path.join(tmp, 'server.log'), db, 8799)
+        main_srv = procs.start_server(8787, os.path.join(tmp, 'server.log'), db, 8799, BLOB_READ_WRITE_TOKEN='vercel_blob_rw_e2estore_notarealsecret', VERCEL_BLOB_API_URL='http://127.0.0.1:8799/blob')
         started.append(main_srv)
         started.append(procs.start_server(8788, os.path.join(tmp, 'capped.log'), os.path.join(tmp, 'capped.db'), 8799, DAILY_CAP=0))
         started.append(procs.start_server(8789, os.path.join(tmp, 'nokey.log'), os.path.join(tmp, 'nokey.db'), 8799, key=None))
@@ -67,6 +67,13 @@ def main():
             check('health discovery shows the deep-research engine', any(l.strip() == 'Deep research' for l in labels), '; '.join(labels))
             check('streamed text renders in the answer', 'Short answer' in answer and 'covenant headroom' in answer and 'SECRET-THINKING' not in answer, answer[:90].replace('\n', ' '))
             check('/chat answered 200 text/event-stream', chat_res and chat_res[0].status == 200 and chat_res[0].headers.get('content-type', '').startswith('text/event-stream'))
+
+            # 1b. The chat log: the research agent's answer is saved on the server, with the page it was asked on.
+            import httpx
+            stored = [json.loads(v['body']) for k, v in httpx.get('http://127.0.0.1:8799/_blobs').json().items() if k.startswith('chats/')]
+            srv = [r for r in stored if r.get('question') == OPEN_Q and r.get('source') == 'server']
+            check('chat log keeps the hosted answer', srv and 'covenant headroom' in srv[0]['answer'] and srv[0]['thinking'] and 'chat_test.html' in srv[0]['page'] and srv[0]['outcome'] == 'answered',
+                  json.dumps({k: srv[0][k] for k in ('page', 'outcome', 'model', 'tokens')}) if srv else f'{len(stored)} records')
 
             # 2. Feedback from the answer's thumbs-up lands in SQLite.
             with page.expect_response(lambda r: r.url.endswith('/feedback')) as fr:
@@ -106,6 +113,20 @@ def main():
 
             # 5. /stats counts through the client.
             stats = p3.evaluate("async () => { const { Backend } = await import('/assets/backend.js'); return await Backend.stats(); }")
+            # 5b. An answer built in the browser (portfolio data) reaches the chat log through POST /log.
+            p6 = ctx.new_page()
+            grounded_q = 'Which is the largest portfolio company by revenue?'
+            with p6.expect_response(lambda r: r.url.endswith('/log'), timeout=30000) as lr:
+                p6.goto(page_url('http://127.0.0.1:8787', grounded_q))
+            t0 = time.time()
+            local = []
+            while time.time() - t0 < 5 and not local:
+                local = [json.loads(v['body']) for k, v in httpx.get('http://127.0.0.1:8799/_blobs').json().items() if k.startswith('chats/') and json.loads(v['body']).get('question') == grounded_q]
+                time.sleep(0.1)
+            rec = local[0] if local else {}
+            check('chat log keeps answers built in the browser', lr.value.status == 202 and rec.get('source') == 'browser' and rec.get('kind') == 'grounded' and rec.get('intent') == 'sizes' and len(rec.get('answer', '')) > 40 and '\n' in rec.get('answer', ''),
+                  json.dumps({k: rec.get(k) for k in ('kind', 'intent', 'engine', 'seconds')}) + ' ' + rec.get('answer', '')[:60].replace('\n', ' / '))
+            p6.close()
             check('/stats returns counts', stats and stats['threads'] >= 1 and stats['feedback'] >= 1 and stats['today']['requests'] >= 3, json.dumps({k: stats[k] for k in ('threads', 'messages', 'feedback', 'feedback_up', 'today')}))
             p3.close()
 
@@ -117,7 +138,6 @@ def main():
             bad = other.evaluate("""async () => { try { const r = await fetch('http://127.0.0.1:8787/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: 'x' }) }); return 'status ' + r.status; } catch (e) { return 'blocked: ' + e.message; } }""")
             check('CORS preflight fails for another origin (127.0.0.1:8766)', bad.startswith('blocked'), bad)
             other.close()
-            import httpx
             r = httpx.options('http://127.0.0.1:8787/chat', headers={'Origin': 'https://syedr64.github.io', 'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Headers': 'content-type'})
             r2 = httpx.options('http://127.0.0.1:8787/chat', headers={'Origin': 'https://example.com', 'Access-Control-Request-Method': 'POST'})
             check('preflight: GitHub Pages origin 204, other origin 403', r.status_code == 204 and r.headers.get('access-control-allow-origin') == 'https://syedr64.github.io' and r2.status_code == 403, f'{r.status_code} / {r2.status_code}')

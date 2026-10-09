@@ -5,14 +5,16 @@ Holds the Claude API key server-side. Every question is answered by Claude worki
 agent over the knowledge base in knowledge/kb.sqlite (see knowledge.py and scripts/build_corpus.py): the
 server retrieves the best sources for the question, then Claude can search again, read whole sources and
 run the acquisition model (dealmath.py) before it writes a cited answer. Threads and feedback go to SQLite;
-visitors are rate-limited in memory and the whole site is capped per UTC day.
+visitors are rate-limited in memory and the whole site is capped per UTC day. Every question and answer is also
+saved to a private Vercel Blob store for later analysis (chatlog.py).
 
 Routes (JSON unless noted; CORS limited to ALLOWED_ORIGINS):
-  GET  /health          {ok, model, version, db, llm, kv, kb}
+  GET  /health          {ok, model, version, db, llm, kv, log, kb}
   POST /chat            {persona, messages, context, question} -> text/event-stream
                         data: {"type":"meta"|"status"|"thinking"|"sources"|"text"|"done"|"error", ...}
                         ("thinking" carries Claude's summarized reasoning, shown apart from the answer)
   POST /feedback        {thread_id, message_id, rating, question, answer_excerpt}
+  POST /log             {persona, question, answer, kind, …}  answers the browser built itself, for the chat log
   POST /thread          {thread_id, persona, title, messages_json}  (upsert)
   GET  /thread/:id
   GET  /stats           {threads, messages, feedback, ...}
@@ -41,6 +43,7 @@ from starlette.background import BackgroundTask
 from starlette.concurrency import run_in_threadpool
 from starlette.responses import Response, StreamingResponse
 
+import chatlog
 import dealmath
 import knowledge
 
@@ -556,7 +559,8 @@ def validate_chat(body):
     messages = clean_history(raw_msgs, question)
     if sum(len(m['content']) for m in messages) > LIMITS['historyChars'] + LIMITS['question']:
         raise HttpError(413, 'history_too_long', 'This conversation is too long. Start a new thread.')
-    return {'persona': persona, 'question': question, 'context': context, 'messages': messages, 'retrieve': body.get('retrieve') is not False}
+    page = strip_html(body['page'])[:LIMITS['href']] if is_str(body.get('page')) else ''
+    return {'persona': persona, 'question': question, 'context': context, 'messages': messages, 'retrieve': body.get('retrieve') is not False, 'page': page}
 
 
 def text_of(content):
@@ -861,6 +865,7 @@ async def open_stream(base, opts, final, deadline):
 
 
 async def handle_chat(request, cors):
+    t0 = time.monotonic()
     if not api_key():
         raise HttpError(503, 'no_model_key', 'Deep research is not configured on this backend yet. Grounded answers still work.')
     inp = validate_chat(await read_json(request))
@@ -894,7 +899,8 @@ async def handle_chat(request, cors):
     opts = {'effort': effort, 'fallback': True, 'web': 'web' in tools_on, 'thinking': (env('SHOW_THINKING') or 'on').strip().lower() not in ('off', '0', 'false', 'no')}
     deadline = asyncio.get_running_loop().time() + total_timeout()
     first = await open_stream(base, opts, False, deadline)       # upstream HTTP errors still become JSON errors with status codes
-    ctx = {'kb': kb, 'persona': inp['persona'], 'base': base, 'opts': opts, 'sources': sources, 'deadline': deadline, 'vkey': key, 'first': first}
+    ctx = {'kb': kb, 'persona': inp['persona'], 'base': base, 'opts': opts, 'sources': sources, 'deadline': deadline, 'vkey': key, 'first': first,
+           'inp': inp, 'origin': request.headers.get('origin') or '', 't0': t0}
     headers = {**cors, 'Cache-Control': 'no-cache, no-transform', 'X-Accel-Buffering': 'no'}
     return StreamingResponse(relay(ctx), status_code=200, headers=headers, media_type='text/event-stream')
 
@@ -903,11 +909,41 @@ def sse(obj):
     return ('data: ' + dumps(obj) + '\n\n').encode('utf-8')
 
 
+def note(st, o):
+    """Keep what the visitor was shown, for the chat log."""
+    t = o.get('type')
+    if t == 'text':
+        st['answer'].append(o['text'])
+    elif t == 'thinking':
+        st['thinking'].append(o['text'])
+    elif t == 'status':
+        st['notes'].append(o['text'])
+    elif t == 'error':
+        st['error'] = {'code': o.get('code'), 'message': o.get('message')}
+    elif t == 'meta' and o.get('fallback'):
+        st['fallback'] = o.get('model')
+
+
+def chat_record(ctx, st, finished):
+    inp = ctx['inp']
+    outcome = 'answered' if st['done'] else ('refused' if (st['error'] or {}).get('code') == 'refusal' else 'error') if st['error'] else 'left early' if not finished else 'incomplete'
+    return {
+        'source': 'server', 'persona': inp['persona'], 'page': inp.get('page', ''), 'origin': ctx['origin'], 'visitor': 'v-' + ctx['vkey'][:16],
+        'question': inp['question'], 'history': inp['messages'][:-1], 'page_context': [c['title'] for c in inp['context']],
+        'answer': chatlog.clip(''.join(st['answer'])), 'thinking': chatlog.clip(''.join(st['thinking'])), 'steps': st['notes'][:60],
+        'sources': [{k: s[k] for k in ('n', 'title', 'url', 'kind')} for s in ctx['sources'].items],
+        'outcome': outcome, 'error': st['error'], 'model': st['model'] or ctx['base']['model'], 'fallback_model': st['fallback'],
+        'stop_reason': st['stop'], 'agent_steps': st['steps'], 'effort': ctx['opts'].get('effort'),
+        'tokens': {'in': st['tin'], 'out': st['tout']}, 'seconds': round(time.monotonic() - ctx['t0'], 1),
+    }
+
+
 async def relay(ctx):
     """The response body: events from the agent, with ": ping" comments while it thinks or searches (they keep proxies
     from closing a quiet connection; the client ignores them). Leaving the page cancels the agent and its Claude stream."""
     q = asyncio.Queue()
-    st = {'model': None, 'stop': None, 'tin': 0, 'tout': 0, 'sent_text': False, 'failed': False, 'chunks': 0, 'steps': 0, 'done': False}
+    st = {'model': None, 'stop': None, 'tin': 0, 'tout': 0, 'sent_text': False, 'failed': False, 'chunks': 0, 'steps': 0, 'done': False,
+          'answer': [], 'thinking': [], 'notes': [], 'error': None, 'fallback': None}
     task = asyncio.create_task(run_agent(ctx, q, st))
     finished = False
     try:
@@ -932,6 +968,8 @@ async def relay(ctx):
                 await run_in_threadpool(record_tokens, st['tin'], st['tout'])
             except Exception:
                 pass
+            if chatlog.enabled():   # after the last event, before the stream closes: a serverless instance may stop once it does
+                await chatlog.save('chats', chat_record(ctx, st, finished))
         if finished:
             log.info('chat %s: %s stop=%s steps=%d sources=%d tokens in=%d out=%d', ctx['vkey'][:8], st['model'], st['stop'], st['steps'], len(ctx['sources'].items), st['tin'], st['tout'])
 
@@ -958,16 +996,20 @@ async def run_agent(ctx, q, st):
     """Claude's research loop: stream a step, run the tools it asked for, repeat; the last step must answer."""
     loop = asyncio.get_running_loop()
     base, opts, sources, deadline = ctx['base'], ctx['opts'], ctx['sources'], ctx['deadline']
-    put = q.put_nowait
+    def put(o):   # every event the visitor receives is also noted for the chat log
+        if o is not None:
+            note(st, o)
+            o = sse(o)
+        q.put_nowait(o)
     stream = ctx['first']
     sent_sources = 0
-    put(sse({'type': 'meta', 'model': base['model'], 'version': VERSION}))
+    put({'type': 'meta', 'model': base['model'], 'version': VERSION})
     if sources.items:
-        put(sse(sources.event()))
+        put(sources.event())
         sent_sources = len(sources.items)
         kb_n = sum(1 for s in sources.items if s['kind'] != 'page')
         if kb_n:
-            put(sse({'type': 'status', 'text': f'Found {kb_n} source{"s" if kb_n != 1 else ""} in the knowledge base'}))
+            put({'type': 'status', 'text': f'Found {kb_n} source{"s" if kb_n != 1 else ""} in the knowledge base'})
     json_retries = 0
     try:
         for step in range(AGENT['steps']):
@@ -978,7 +1020,7 @@ async def run_agent(ctx, q, st):
                     stream = await open_stream(base, opts, final, deadline)
                 except HttpError as e:
                     st['failed'] = True
-                    put(sse({'type': 'error', 'code': e.code, 'message': e.message}))
+                    put({'type': 'error', 'code': e.code, 'message': e.message})
                     return
             announced_thinking, tool_open = False, False
             try:
@@ -995,7 +1037,7 @@ async def run_agent(ctx, q, st):
                     if t == 'message_start':
                         m = getattr(ev.message, 'model', None)
                         if is_str(m) and m and m != (st['model'] or base['model']):   # a fallback model took over before any output
-                            put(sse({'type': 'meta', 'model': m, 'fallback': True, 'midstream': st['sent_text']}))
+                            put({'type': 'meta', 'model': m, 'fallback': True, 'midstream': st['sent_text']})
                         if is_str(m) and m:
                             st['model'] = m
                     elif t == 'content_block_start':
@@ -1003,22 +1045,22 @@ async def run_agent(ctx, q, st):
                         if bt == 'fallback':
                             to = getattr(getattr(ev.content_block, 'to', None), 'model', None)
                             st['model'] = to if is_str(to) and to else st['model']
-                            put(sse({'type': 'meta', 'model': st['model'], 'fallback': True, 'midstream': st['sent_text']}))
+                            put({'type': 'meta', 'model': st['model'], 'fallback': True, 'midstream': st['sent_text']})
                         elif bt == 'thinking' and not announced_thinking and not st['sent_text']:
                             announced_thinking = True
-                            put(sse({'type': 'status', 'text': 'Thinking it through'}))
+                            put({'type': 'status', 'text': 'Thinking it through'})
                         elif bt == 'web_search_tool_result':
-                            put(sse({'type': 'status', 'text': 'Reading web results'}))
+                            put({'type': 'status', 'text': 'Reading web results'})
                         elif bt == 'tool_use':
                             tool_open = True
                     elif t == 'thinking':   # summarized reasoning: shown in its own panel, never mixed into the answer
                         if is_str(getattr(ev, 'thinking', None)) and ev.thinking:
-                            put(sse({'type': 'thinking', 'text': ev.thinking}))
+                            put({'type': 'thinking', 'text': ev.thinking})
                     elif t == 'text':
                         if is_str(ev.text) and ev.text:
                             st['sent_text'] = True
                             st['chunks'] += 1
-                            put(sse({'type': 'text', 'text': ev.text}))
+                            put({'type': 'text', 'text': ev.text})
                     elif t == 'content_block_stop':
                         b = ev.content_block
                         bt = getattr(b, 'type', '')
@@ -1031,12 +1073,12 @@ async def run_agent(ctx, q, st):
                                     if f'[{n}]' not in marks:
                                         marks.append(f'[{n}]')
                             if marks:
-                                put(sse({'type': 'text', 'text': ' ' + ''.join(marks)}))
+                                put({'type': 'text', 'text': ' ' + ''.join(marks)})
                         elif bt in ('tool_use', 'server_tool_use'):
                             tool_open = False
-                            put(sse({'type': 'status', 'text': tool_status(b, sources)}))
+                            put({'type': 'status', 'text': tool_status(b, sources)})
                     if len(sources.items) > sent_sources:
-                        put(sse(sources.event()))
+                        put(sources.event())
                         sent_sources = len(sources.items)
                 msg = await stream.get_final_message()
             except ValueError:
@@ -1061,7 +1103,7 @@ async def run_agent(ctx, q, st):
             st['stop'] = msg.stop_reason
             if msg.stop_reason == 'refusal':
                 st['failed'] = True
-                put(sse({'type': 'error', 'code': 'refusal', 'message': 'The assistant declined to answer this one.'}))
+                put({'type': 'error', 'code': 'refusal', 'message': 'The assistant declined to answer this one.'})
                 return
             if msg.stop_reason == 'pause_turn':   # a server tool (web search) paused the turn: send it back to continue
                 base['messages'].append({'role': 'assistant', 'content': echo_content(msg.content)})
@@ -1093,26 +1135,26 @@ async def run_agent(ctx, q, st):
             base['messages'].append({'role': 'assistant', 'content': echo_content(msg.content)})
             base['messages'].append({'role': 'user', 'content': results})
             if len(sources.items) > sent_sources:
-                put(sse(sources.event()))
+                put(sources.event())
                 sent_sources = len(sources.items)
         st['done'] = True
-        put(sse({'type': 'done', 'stop_reason': st['stop'], 'model': st['model'], 'steps': st['steps'], 'usage': {'input_tokens': st['tin'], 'output_tokens': st['tout']}}))
+        put({'type': 'done', 'stop_reason': st['stop'], 'model': st['model'], 'steps': st['steps'], 'usage': {'input_tokens': st['tin'], 'output_tokens': st['tout']}})
     except asyncio.TimeoutError:
         st['failed'] = True
         log.warning('chat %s: the answer hit the %.0f s cap; closed upstream', ctx['vkey'][:8], total_timeout())
-        put(sse({'type': 'error', 'code': 'upstream_timeout', 'message': 'The assistant took too long to finish this answer. Try again in a minute.'}))
+        put({'type': 'error', 'code': 'upstream_timeout', 'message': 'The assistant took too long to finish this answer. Try again in a minute.'})
     except asyncio.CancelledError:
         raise
     except anthropic.APIStatusError as e:
         st['failed'] = True
         overloaded = e.status_code == 529 or 'overloaded' in str(getattr(e, 'message', '')).lower()
-        put(sse({'type': 'error', 'code': 'upstream_unavailable' if overloaded else 'upstream_error', 'message': 'The assistant is overloaded right now. Try again shortly.' if overloaded else 'The answer stream was interrupted.'}))
+        put({'type': 'error', 'code': 'upstream_unavailable' if overloaded else 'upstream_error', 'message': 'The assistant is overloaded right now. Try again shortly.' if overloaded else 'The answer stream was interrupted.'})
     except Exception as e:   # broken stream, malformed upstream events or anything unexpected: tell the visitor
         st['failed'] = True
         overloaded = 'overloaded' in str(e).lower()
         if not isinstance(e, (anthropic.APIConnectionError, ValueError)):
             log.exception('chat %s: unexpected error in the answer loop', ctx['vkey'][:8])
-        put(sse({'type': 'error', 'code': 'upstream_unavailable' if overloaded else 'upstream_error', 'message': 'The assistant is overloaded right now. Try again shortly.' if overloaded else 'The answer stream was interrupted.'}))
+        put({'type': 'error', 'code': 'upstream_unavailable' if overloaded else 'upstream_error', 'message': 'The assistant is overloaded right now. Try again shortly.' if overloaded else 'The answer stream was interrupted.'})
     finally:
         if stream is not None:
             with anyio.CancelScope(shield=True):
@@ -1134,7 +1176,32 @@ def handle_feedback_sync(b):
     excerpt = strip_html(b.get('answer_excerpt') if is_str(b.get('answer_excerpt')) else '')[:LIMITS['excerpt']]
     with _db_lock, _connect() as con:
         cur = con.execute('INSERT INTO feedback (thread_id, message_id, rating, question, answer_excerpt, created_at) VALUES (?, ?, ?, ?, ?, ?)', (thread, msg, int(rating), question, excerpt, now_iso()))
-        return {'ok': True, 'id': cur.lastrowid}
+        return {'ok': True, 'id': cur.lastrowid}, {'thread_id': thread, 'message_id': msg, 'rating': int(rating), 'question': question, 'answer_excerpt': excerpt}
+
+
+LOG_KINDS = {'grounded', 'deep', 'retrieval', 'dataset', 'insight', 'page', 'static', 'error', 'stopped', 'claude'}
+
+
+def browser_record(b, origin, vkey):
+    """POST /log: an answer the browser built itself (portfolio data, a prepared deep dive, a fallback), for the chat log."""
+    def text(k, n):
+        return b[k].strip()[:n] if is_str(b.get(k)) else ''
+    question = text('question', LIMITS['question'])
+    if not question:
+        raise HttpError(400, 'missing_question', 'Ask a question.')
+    kind = b.get('kind') if b.get('kind') in LOG_KINDS else 'other'
+    sources = []
+    for x in (b.get('sources') if isinstance(b.get('sources'), list) else [])[:30]:
+        if isinstance(x, dict) and is_str(x.get('label')):
+            sources.append({'title': x['label'][:LIMITS['title']], 'url': x['href'][:LIMITS['href']] if is_str(x.get('href')) else ''})
+    secs = js_number(b.get('seconds'))
+    return {
+        'source': 'browser', 'persona': text('persona', LIMITS['persona']).lower() or 'portal', 'page': text('page', LIMITS['href']), 'origin': origin,
+        'visitor': 'v-' + vkey[:16], 'question': question, 'read_as': text('read_as', LIMITS['question']), 'kind': kind,
+        'intent': text('intent', 64), 'engine': text('engine', 120), 'answer': chatlog.clip(text('answer', chatlog.MAX_TEXT + 1)), 'sources': sources,
+        'outcome': {'stopped': 'stopped', 'error': 'error'}.get(kind, 'answered'), 'note': text('note', 600),
+        'seconds': round(min(max(secs, 0), 3600), 1) if math.isfinite(secs) else None,
+    }
 
 
 def handle_thread_save_sync(b):
@@ -1218,13 +1285,15 @@ async def lifespan(_app):
         log.error('knowledge base unavailable: %s', knowledge.kb_error())
     if env('FAKE_ANTHROPIC_URL'):
         log.warning('FAKE_ANTHROPIC_URL is set: Claude calls go to %s (testing only)', anthropic_base_url())
-    log.info('BSP Desk backend %s: model %s, Claude key %s, origins %s', VERSION, model_name(), 'set' if api_key() else 'MISSING', ', '.join(allowed_origins()))
+    log.info('BSP Desk backend %s: model %s, Claude key %s, chat log %s, origins %s', VERSION, model_name(), 'set' if api_key() else 'MISSING',
+             'on' if chatlog.enabled() else 'off', ', '.join(allowed_origins()))
     try:
         yield
     finally:
         if _client['client'] is not None:
             await _client['client'].close()
             _client['client'] = None
+        await chatlog.close()
 
 
 app = FastAPI(title='BSP Desk assistant backend', version=VERSION, docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
@@ -1246,7 +1315,7 @@ async def router(request: Request, rest: str = ''):
         if method == 'GET':
             if path in ('/', '/health'):
                 kb = knowledge.loaded_kb()   # never loads it here: /health answers in milliseconds even on a cold start
-                return json_response({'ok': True, 'model': env('MODEL') or DEFAULT_MODEL, 'version': VERSION, 'db': await db_ok(), 'llm': bool(api_key()), 'kv': True,
+                return json_response({'ok': True, 'model': env('MODEL') or DEFAULT_MODEL, 'version': VERSION, 'db': await db_ok(), 'llm': bool(api_key()), 'kv': True, 'log': chatlog.enabled(),
                                       'kb': {'docs': len(kb.docs), 'chunks': int(len(kb.chunk_ids)), 'built_at': kb.info.get('built_at')} if kb is not None else False}, 200, cors)
             if path == '/stats':
                 stats = await run_in_threadpool(handle_stats_sync)
@@ -1265,12 +1334,21 @@ async def router(request: Request, rest: str = ''):
                 raise HttpError(403, 'origin_not_allowed', 'This origin is not allowed to use the assistant backend.')
             if path == '/chat':
                 return await handle_chat(request, cors)
+            if path == '/log':
+                key = ip_key(client_ip(request))
+                limit_writes(key)
+                rec = browser_record(await read_json(request), request.headers.get('origin') or '', key)
+                saved = await chatlog.save('chats', rec) if chatlog.enabled() else None
+                return json_response({'ok': True, 'saved': bool(saved)}, 202, cors)
             if path in ('/feedback', '/thread'):
                 require_db()
                 limit_writes(ip_key(client_ip(request)))
                 b = await read_json(request)
                 if path == '/feedback':
-                    return json_response(await run_in_threadpool(handle_feedback_sync, b), 201, cors)
+                    out, rec = await run_in_threadpool(handle_feedback_sync, b)
+                    if chatlog.enabled():
+                        await chatlog.save('ratings', {**rec, 'origin': request.headers.get('origin') or ''})
+                    return json_response(out, 201, cors)
                 return json_response(await run_in_threadpool(handle_thread_save_sync, b), 200, cors)
             raise HttpError(404, 'not_found', 'Unknown route.')
         raise HttpError(405, 'method_not_allowed', 'Use GET or POST.')

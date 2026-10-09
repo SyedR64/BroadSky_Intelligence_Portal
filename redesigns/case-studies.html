@@ -11,9 +11,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261009182014">
-<link rel="stylesheet" href="../modules/cases.css?v=20261009182014">
-<link rel="stylesheet" href="case-studies.css?v=20261009182014">
+<link rel="stylesheet" href="../assets/system.css?v=20261009184141">
+<link rel="stylesheet" href="../modules/cases.css?v=20261009184141">
+<link rel="stylesheet" href="case-studies.css?v=20261009184141">
 </head>
 <body>
 <main id="main">
@@ -198,10 +198,10 @@
 </main>
 
 <script type="module">
-import { Frame } from '../assets/frame.js?v=20261009182014';
-import { Data } from '../assets/core.js?v=20261009182014';
-import { Chat } from '../assets/chat.js?v=20261009182014';
-import { boot } from './case-studies.js?v=20261009182014';
+import { Frame } from '../assets/frame.js?v=20261009184141';
+import { Data } from '../assets/core.js?v=20261009184141';
+import { Chat } from '../assets/chat.js?v=20261009184141';
+import { boot } from './case-studies.js?v=20261009184141';
 const frame = Frame.mount({ active: 'playbooks', banner: true, crumb: [{ label: 'Home', href: './' }, { label: 'Growth plans', href: 'redesigns/#growth-plans' }, { label: 'Value-creation cases' }] });
 const res = await boot({ Data }).catch(e => { console.warn('case studies boot failed', e); return null; });
 try {

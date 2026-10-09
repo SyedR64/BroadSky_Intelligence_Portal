@@ -8,7 +8,7 @@
    read live with the snapshot as fallback) and from the repo's own tables (national_counties, company filings
    estimate tables, fl_lawfirms, ma_targets_pp, cet_opportunities). Every estimate is labelled est. and shows its
    assumption; a missing snapshot leaves its factors as "not available" instead of failing the view. */
-import * as Copy from './copy.js?v=20261009182014';
+import * as Copy from './copy.js?v=20261009184141';
 
 const injectCss = () => { if (document.getElementById('css-signals')) return; const l = document.createElement('link'); l.id = 'css-signals'; l.rel = 'stylesheet'; l.href = new URL('./signals.css', import.meta.url).href; document.head.appendChild(l); };
 const COUNTIES_URL = new URL('../data/national_counties.json', import.meta.url).href;

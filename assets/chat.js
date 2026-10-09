@@ -12,7 +12,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261009182014';
+import { Data, Fmt, Live, esc } from './core.js?v=20261009184141';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -54,7 +54,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261009182014';
+const BACKEND_JS = './backend.js?v=20261009184141';
 let BE = null, BE_P = null, BE_RETRY = 0;
 function backend() {
   // The check on page load can land on a cold start and miss: when the backend looked offline, check again (at most every 15 s).
@@ -429,7 +429,7 @@ async function addonHistory(q) {
 }
 /** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
 async function dealModel(q) {
-  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261009182014').catch(() => null)]);
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261009184141').catch(() => null)]);
   if (!d || !L) return null;
   const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
   const P = pre.find(i => i.co === co && i.group !== 'generic') || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
@@ -923,6 +923,8 @@ const FB_LS = 'bsp-chat-feedback', TH_LS = 'bsp-assistant-threads', THEME_KEY = 
 const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } };
 const hash = s => { let h = 2166136261; for (const c of String(s)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); };
+/** Answer text for the chat log: paragraphs and list items on their own lines, citations kept as [n]. */
+const logText = html => { const d = document.createElement('div'); d.innerHTML = String(html || '').replace(/<li\b[^>]*>/gi, m => m + '- ').replace(/<\/(p|li|h\d|tr|div|ul|ol|table)>|<br\s*\/?>/gi, m => m + '\n'); d.querySelectorAll('.ch-ref').forEach(r => r.replaceWith(`[${r.textContent.trim()}]`)); return (d.textContent || '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim(); };
 const plain = html => { const d = document.createElement('div'); d.innerHTML = html; d.querySelectorAll('.ch-ref').forEach(r => r.remove()); return (d.innerText || d.textContent || '').replace(/\n{3,}/g, '\n\n').trim(); };
 const ago = t => { const s = (Date.now() - t) / 1000; return s < 60 ? 'now' : s < 3600 ? `${Math.floor(s / 60)}m` : s < 86400 ? `${Math.floor(s / 3600)}h` : `${Math.floor(s / 86400)}d`; };
 function resolvePersona(id, opts = {}) {
@@ -1022,7 +1024,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261009182014'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261009184141'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };
@@ -1304,8 +1306,14 @@ class Widget {
     if (this.msgs.querySelectorAll('.ch-turn.user').length > 1 || this.mode !== 'inline') turn.style.minHeight = Math.max(0, this.msgs.clientHeight - u.offsetHeight - 56) + 'px';
     this.msgs.scrollTo({ top: Math.max(0, u.offsetTop - 14), behavior: reduced() ? 'auto' : 'smooth' });
     const rec = await this.answer(q, turn);
-    if (rec) { this.history.push({ role: 'assistant', html: rec.html, text: plain(rec.html) }); this.saveTurn(q, rec); }
+    if (rec) { this.history.push({ role: 'assistant', html: rec.html, text: plain(rec.html) }); this.saveTurn(q, rec); this.logAnswer(q, rec); }
     return rec;
+  }
+  /** Answers built in the browser go to the chat log; the hosted research agent logs its own on the server. */
+  logAnswer(q, rec) {
+    if (rec.kind === 'claude' && rec.via === 'hosted') return;
+    backend().then(B => B?.log?.({ persona: this.id, question: q, read_as: rec.eq || '', kind: rec.kind, intent: rec.intent || '', engine: rec.engine || '', note: rec.note || '',
+      answer: logText(rec.html), sources: (rec.sources || []).slice(0, 30).map(s => ({ label: String(s.label || ''), href: s.href || '' })), seconds: rec.meta?.elapsed ?? null })).catch(() => {});
   }
   note(turn, fu) { const n = turn.querySelector('.ch-note'); n.hidden = false; n.innerHTML = `<span aria-hidden="true">↳</span> Continuing from “${esc(fu.from)}” <span class="ch-note-q">· read as “${esc(fu.q)}”</span>`; }
   /** The answer pipeline: intent → (follow-up resolution) → retrieval → optional Claude. Returns a serialisable record. */
@@ -1683,6 +1691,7 @@ class Widget {
     const { m, close } = this.modal(trigger, `<div class="ch-card-h"><h3 id="ch-about-h">About this assistant</h3><button type="button" class="ch-ib-b" data-x="close" aria-label="Close">${I.x}</button></div>
 <p>BSP Desk answers questions about the six portfolio companies. Questions about the portfolio are answered straight from the data behind this site, and every answer lists its sources.</p>
 <p>${live ? 'Open questions, and the <b>Go deeper</b> button, get a research pass: the assistant searches the library, reads the sources, runs the acquisition model when a price matters, and shows its thinking.' : 'Open questions get the closest material from the site, with links to the full pages.'}</p>
+${BE?.logs ? '<p class="ch-muted">Questions and answers are kept, without names or addresses, to improve the assistant.</p>' : ''}
 <div class="row">${adv}<span class="ch-sp"></span><button type="button" class="btn pri" data-x="close">Done</button></div>`, 'ch-about-h');
     m.querySelectorAll('[data-x]').forEach(b => { b.onclick = () => { if (b.dataset.x === 'advanced') { m.remove(); this.advancedSettings(trigger); } else close(); }; });
     m.querySelector('.btn.pri')?.focus();
