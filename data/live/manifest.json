@@ -3,10 +3,10 @@
   "nws_alerts": {
    "status": "ok",
    "file": "data/live/nws_alerts.json",
-   "fetched_at": "2026-10-09T16:09:38Z",
-   "rows": 0,
-   "bytes": 659,
-   "seconds": 1.4,
+   "fetched_at": "2026-10-10T15:20:49Z",
+   "rows": 7,
+   "bytes": 8423,
+   "seconds": 1.7,
    "source_urls": [
     "https://api.weather.gov/alerts/active?area=PA",
     "https://api.weather.gov/alerts/active?area=NJ",
@@ -22,10 +22,10 @@
   "forecast_hubs": {
    "status": "ok",
    "file": "data/live/forecast_hubs.json",
-   "fetched_at": "2026-10-09T16:09:38Z",
+   "fetched_at": "2026-10-10T15:20:50Z",
    "rows": 10,
-   "bytes": 11494,
-   "seconds": 0.4,
+   "bytes": 11520,
+   "seconds": 0.6,
    "source_urls": [
     "https://api.open-meteo.com/v1/forecast?latitude=40.0380%2C39.9625%2C40.2663%2C40.2015%2C40.3353%2C40.3757%2C39.9375%2C39.8309%2C39.9528%2C40.2601&longitude=-76.3057%2C-76.7277%2C-76.8861%2C-77.1891%2C-75.9279%2C-76.4626%2C-77.6613%2C-77.2310%2C-74.1967%2C-74.2738&daily=temperature_2m_max%2Ctemperature_2m_min%2Cprecipitation_sum%2Cprecipitation_probability_max%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cweather_code%2Csnowfall_sum&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York&forecast_days=7&past_days=2"
    ],
@@ -34,10 +34,10 @@
   "usaspending_trades": {
    "status": "ok",
    "file": "data/live/usaspending_trades.json",
-   "fetched_at": "2026-10-09T16:09:44Z",
+   "fetched_at": "2026-10-10T15:21:00Z",
    "rows": 300,
-   "bytes": 122877,
-   "seconds": 5.1,
+   "bytes": 122878,
+   "seconds": 10.1,
    "source_urls": [
     "https://api.usaspending.gov/api/v2/search/spending_by_award/"
    ],
@@ -46,10 +46,10 @@
   "echo_npdes_majors": {
    "status": "ok",
    "file": "data/live/echo_npdes_majors.json",
-   "fetched_at": "2026-10-09T16:09:45Z",
+   "fetched_at": "2026-10-10T15:21:03Z",
    "rows": 175,
    "bytes": 103373,
-   "seconds": 1.5,
+   "seconds": 3.6,
    "source_urls": [
     "https://echodata.epa.gov/echo/cwa_rest_services.get_facilities?output=JSON&p_st=CT&p_sic=4952&p_maj=Y",
     "https://echodata.epa.gov/echo/cwa_rest_services.get_facilities?output=JSON&p_st=MA&p_sic=4952&p_maj=Y",
@@ -60,10 +60,10 @@
   "census_permits": {
    "status": "ok",
    "file": "data/live/census_permits.json",
-   "fetched_at": "2026-10-09T16:09:45Z",
+   "fetched_at": "2026-10-10T15:21:04Z",
    "rows": 157,
    "bytes": 25694,
-   "seconds": 0.2,
+   "seconds": 0.5,
    "source_urls": [
     "https://www2.census.gov/econ/bps/County/co2608c.txt"
    ],
@@ -72,10 +72,10 @@
   "fred_signals": {
    "status": "ok",
    "file": "data/live/fred_signals.json",
-   "fetched_at": "2026-10-09T16:10:32Z",
+   "fetched_at": "2026-10-10T15:21:50Z",
    "rows": 38,
    "bytes": 29843,
-   "seconds": 46.3,
+   "seconds": 45.9,
    "source_urls": [
     "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE30US",
     "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2",
@@ -93,10 +93,10 @@
   "housing_counties": {
    "status": "ok",
    "file": "data/live/housing_counties.json",
-   "fetched_at": "2026-10-09T16:10:32Z",
+   "fetched_at": "2026-10-10T15:21:50Z",
    "rows": 38,
    "bytes": 12149,
-   "seconds": 0.9,
+   "seconds": 0.5,
    "source_urls": [
     "https://econdata.s3-us-west-2.amazonaws.com/Reports/Core/RDC_Inventory_Core_Metrics_County.csv",
     "https://www.realtor.com/research/data/"
@@ -106,10 +106,10 @@
   "nih_awards": {
    "status": "ok",
    "file": "data/live/nih_awards.json",
-   "fetched_at": "2026-10-09T16:11:57Z",
+   "fetched_at": "2026-10-10T15:23:58Z",
    "rows": 8,
    "bytes": 4056,
-   "seconds": 84.8,
+   "seconds": 127.8,
    "source_urls": [
     "https://api.reporter.nih.gov/v2/projects/search",
     "https://reporter.nih.gov/"
@@ -119,10 +119,10 @@
   "federal_buying": {
    "status": "ok",
    "file": "data/live/federal_buying.json",
-   "fetched_at": "2026-10-09T16:12:06Z",
+   "fetched_at": "2026-10-10T15:24:02Z",
    "rows": 3,
    "bytes": 2906,
-   "seconds": 8.4,
+   "seconds": 3.8,
    "source_urls": [
     "https://api.usaspending.gov/api/v2/search/spending_over_time/",
     "https://www.usaspending.gov/search"
@@ -132,19 +132,19 @@
   "policy_activity": {
    "status": "ok",
    "file": "data/live/policy_activity.json",
-   "fetched_at": "2026-10-09T16:12:10Z",
+   "fetched_at": "2026-10-10T15:24:07Z",
    "rows": 4,
    "bytes": 1918,
-   "seconds": 4.3,
+   "seconds": 5.6,
    "source_urls": [
-    "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-09",
-    "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-09&conditions%5Bagencies%5D%5B%5D=environmental-protection-agency",
-    "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-09&conditions%5Bagencies%5D%5B%5D=energy-department",
-    "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-09&conditions%5Bagencies%5D%5B%5D=health-and-human-services-department"
+    "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-10",
+    "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-10&conditions%5Bagencies%5D%5B%5D=environmental-protection-agency",
+    "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-10&conditions%5Bagencies%5D%5B%5D=energy-department",
+    "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-10-10&conditions%5Bagencies%5D%5B%5D=health-and-human-services-department"
    ],
    "title": "Federal Register rules and proposed rules, year to date vs last year"
   }
  },
- "generated_at": "2026-10-09T16:12:10Z",
+ "generated_at": "2026-10-10T15:24:07Z",
  "note": "Nightly snapshots of public live sources (scripts/refresh_live.py). A source with status error keeps its previous file."
 }
