@@ -176,6 +176,8 @@ python3 scripts/make_briefing.py                         # → briefing/broad_sk
 
 `make_briefing.py` needs Google Chrome, macOS `say` and `imageio-ffmpeg` (`pip install imageio-ffmpeg`). The Briefing module plays the MP4 once `briefing/manifest.json` exists. It can always play the live, narrated in-app tour.
 
+When only the site has changed, `python3 scripts/rerender_films.py` (both films, or `briefing` / `intro`) re-records the pictures of both films from the served site on any machine with Playwright and ffmpeg. It keeps each film's original soundtrack, so the narration and music stay the same, and holds every chapter and shot at its old length so the voice stays in sync. Changing the narration text still needs the two scripts above on a Mac.
+
 ## Disclaimer
 
 **This portal holds public and licensed research data. Verify before use.** Figures come from public records (SEC, state and county assessor and recorder files, federal APIs), licensed sources (for example ZoomInfo) and analyst estimates. Private-company revenue, EBITDA, leverage and valuations are **estimates** triangulated from public filings, not company-reported numbers. Property records lag their sources by weeks to months, and assessor layers carry only each parcel's last sale. Nothing here is investment advice. Confirm any number with the primary source (links are in every inspector and footer) before it goes into a decision, a model or an outside communication. Owner names shown in property records come from public assessor rolls; use them only for aggregate market analysis or lawful business outreach.
