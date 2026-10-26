@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-19T16:50:13Z",
+ "generated_at": "2026-10-26T16:21:19Z",
  "count": 33,
  "note": "Precomputed Claude deep-dives (scripts/generate_answers.py). Fetch data/answers/<slug>.json for the full answer.",
  "items": [
