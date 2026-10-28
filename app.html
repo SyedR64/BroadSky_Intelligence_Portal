@@ -19,8 +19,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<link rel="stylesheet" href="assets/system.css?v=20261009190627">
-<link rel="stylesheet" href="assets/app.css?v=20261009190627">
+<link rel="stylesheet" href="assets/system.css?v=20261009192122">
+<link rel="stylesheet" href="assets/app.css?v=20261009192122">
 <style>
   /* the floating "Ask" launcher sits over the bottom-right corner of the console; keep the last table row
      scrollable clear of it (--launch-clear is measured from the launcher once it mounts; 88px until then) */
@@ -50,10 +50,10 @@
   <aside id="inspector" class="sys-card" aria-label="Inspector" aria-hidden="true"></aside>
 </div>
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261009190627';
-  import { App } from './assets/core.js?v=20261009190627';
-  import { modules } from './modules/registry.js?v=20261009190627';
-  import { enhance, retitle, viewTitle } from './modules/copy.js?v=20261009190627';
+  import { Frame } from './assets/frame.js?v=20261009192122';
+  import { App } from './assets/core.js?v=20261009192122';
+  import { modules } from './modules/registry.js?v=20261009192122';
+  import { enhance, retitle, viewTitle } from './modules/copy.js?v=20261009192122';
 
   // 1 · shared frame strip above the rail and console (UNIFIED.md §8); the theme is the visitor's saved choice (light by default)
   const frame = Frame.mount({ variant: 'app', theme: document.documentElement.dataset.sysTheme === 'dark' ? 'dark' : 'light' });
@@ -95,12 +95,12 @@
     const r = l.getBoundingClientRect(); if (!r.height) return;
     document.documentElement.style.setProperty('--launch-clear', `${Math.max(48, Math.ceil(innerHeight - r.top + 12))}px`);
   };
-  import('./assets/chat.js?v=20261009190627').then(({ Chat }) => {
+  import('./assets/chat.js?v=20261009192122').then(({ Chat }) => {
     frame.setChat(Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'auto' }));
     requestAnimationFrame(launchClear);
     addEventListener('resize', () => requestAnimationFrame(launchClear));
   });
-  import('./assets/counter.js?v=20261009190627').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; document.querySelector('#rail .rail-foot').before(slot); slot.className = 'sys-kpi'; Counter.mount(slot, { theme: document.documentElement.dataset.sysTheme === 'dark' ? 'dark' : 'light', compact: true, baseline: 'today', minDisplay: 100, caption: 'Left on the table by not hiring Syed · so far today' }).then(() => Frame.humanize(slot)); });
+  import('./assets/counter.js?v=20261009192122').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; document.querySelector('#rail .rail-foot').before(slot); slot.className = 'sys-kpi'; Counter.mount(slot, { theme: document.documentElement.dataset.sysTheme === 'dark' ? 'dark' : 'light', compact: true, baseline: 'today', minDisplay: 100, caption: 'Left on the table by not hiring Syed · so far today' }).then(() => Frame.humanize(slot)); });
 </script>
 </body>
 </html>
