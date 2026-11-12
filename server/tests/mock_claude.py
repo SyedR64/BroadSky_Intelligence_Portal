@@ -19,6 +19,8 @@ Markers in the last user message switch behaviour:
   [mock:garbage]     malformed events (non-JSON data, wrong field types) between valid ones
   [mock:tool]        first call asks for search_knowledge; the call after the tool result answers
   [mock:read]        first call asks for read_source [1];  [mock:deal] first call asks for deal_model (CET, entry 9.5x)
+  [mock:homes]       first call asks for new_homeowners (Ocean County, latest month, 5 rows)
+  [mock:brief]       first call asks for property_brief (a Pennsylvania address, so no live lookup is made)
   [mock:loop]        asks for search_knowledge on every call until the request sets tool_choice "none"
   [mock:cite]        the answer's text block carries a web-search citation
   [mock:noweb]       HTTP 400 naming web_search when the web search tool is offered (tests the retry)
@@ -180,6 +182,10 @@ class Handler(BaseHTTPRequestHandler):
             return 'read_source', {'source': 1}
         if '[mock:deal]' in allm:
             return 'deal_model', {'preset': 'cet', 'overrides': {'em': 9.5}}
+        if '[mock:homes]' in allm:
+            return 'new_homeowners', {'county': 'Ocean', 'period': 'latest', 'limit': 5}
+        if '[mock:brief]' in allm:
+            return 'property_brief', {'address': '1800 Lambs Gap Road', 'municipality': 'Hampden Township', 'state': 'PA'}
         return None
 
     def tool_call(self, body, name, args):

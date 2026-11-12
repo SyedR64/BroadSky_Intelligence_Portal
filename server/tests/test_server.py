@@ -93,7 +93,8 @@ def test_health_shape(env):
         r = httpx.get(env['main'] + path, headers={'Origin': GH})
         assert r.status_code == 200
         j = r.json()
-        assert {k: j[k] for k in ('ok', 'model', 'version', 'db', 'llm', 'kv', 'log')} == {'ok': True, 'model': 'claude-opus-5-5', 'version': '2.0.0', 'db': True, 'llm': True, 'kv': True, 'log': True}
+        assert {k: j[k] for k in ('ok', 'model', 'version', 'db', 'llm', 'kv', 'log')} == {'ok': True, 'model': 'claude-opus-5-5', 'version': '2.1.0', 'db': True, 'llm': True, 'kv': True, 'log': True}
+        assert j['homes']['sales'] > 50000 and j['homes']['market_homes'] > 0 and j['homes']['built_at'] and re.fullmatch(r'\d{4}-\d{2}', j['homes']['through']['NJ']['full_month'])
         assert j['kb']['docs'] > 100 and j['kb']['chunks'] > j['kb']['docs'] and j['kb']['built_at']
         assert r.headers['access-control-allow-origin'] == GH
         assert r.headers['cache-control'] == 'no-store'
@@ -119,7 +120,7 @@ def test_chat_streams_meta_text_done(env):
     assert headers['access-control-allow-origin'] == GH
     types = [e['type'] for e in events]
     assert types[0] == 'meta' and types[-1] == 'done' and set(types[1:-1]) == {'text', 'status', 'thinking', 'sources'}
-    assert events[0] == {'type': 'meta', 'model': 'claude-opus-5-5', 'version': '2.0.0'}
+    assert events[0] == {'type': 'meta', 'model': 'claude-opus-5-5', 'version': '2.1.0'}
     src = next(e for e in events if e['type'] == 'sources')['sources']
     assert src[0] == {'n': 1, 'title': 'Debt memo', 'url': 'app.html#debt', 'publisher': 'This page', 'date': '', 'kind': 'page'}
     assert len(src) > 1 and all(s['n'] == i + 1 for i, s in enumerate(src))   # knowledge-base sources follow the page context
@@ -144,8 +145,8 @@ def test_upstream_request_shape(env):
     system = b['system'][0]
     assert system['cache_control'] == {'type': 'ephemeral'}
     assert system['text'].startswith('You are the assistant on a concept website for Punctual Pros') and 'How to answer:' in system['text']
-    assert 'deal_model' not in system['text'] and 'web search' not in system['text']
-    assert [t['name'] for t in b['tools']] == ['search_knowledge', 'read_source']   # a concept-site assistant does not run deal maths or web searches
+    assert 'deal_model' not in system['text'] and 'web search' not in system['text'] and 'new_homeowners' not in system['text'] and 'property_brief' not in system['text']
+    assert [t['name'] for t in b['tools']] == ['search_knowledge', 'read_source']   # a concept-site assistant does not run deal maths, web searches or home-records lookups
     assert all(t['eager_input_streaming'] is True for t in b['tools'])
     assert b['messages'][:2] == [{'role': 'user', 'content': 'First question'}, {'role': 'assistant', 'content': 'First answer'}]
     last = b['messages'][2]
@@ -160,8 +161,10 @@ def test_portal_persona_and_context_format(env):
     assert s.startswith("You are BSP Desk, the in-house analyst on Broad Sky's desk") and 'Say "we" and "our" for BSP' in s
     assert 'No "So what" labels' in s and 'never "playbook"' in s and '10. Deal maths:' in s and '11. Strategy and deal questions' in s
     assert b['output_config'] == {'effort': 'high'}   # the portal's research assistant works harder
-    assert [t.get('name') for t in b['tools']] == ['search_knowledge', 'read_source', 'deal_model', 'web_search']
-    assert b['tools'][3] == {'type': 'web_search_20260209', 'name': 'web_search', 'max_uses': 3}
+    assert [t.get('name') for t in b['tools']] == ['search_knowledge', 'read_source', 'deal_model', 'new_homeowners', 'property_brief', 'web_search']
+    assert '12. Home-sales records' in s and 'Never give owner, buyer or seller names' in s and 'no record holds that' in s
+    assert all(t['eager_input_streaming'] is True for t in b['tools'][:5]) and 'never returned' in b['tools'][3]['description']
+    assert b['tools'][5] == {'type': 'web_search_20260209', 'name': 'web_search', 'max_uses': 3}
     src = b['messages'][-1]['content'][0]['text']
     assert src.startswith('<sources>\n[1] Debt (This page) (from the page the visitor is on)\nLeverage & terms\n\n[2] Plan (This page) app.html#plan (from the page the visitor is on)\nx\n\n[3] ')
 
@@ -198,6 +201,50 @@ def test_read_source_and_deal_model_tools(env):
     assert {'type': 'status', 'text': 'Running the acquisition model for CET'} in events
     model = [s for s in [e for e in events if e['type'] == 'sources'][-1]['sources'] if s['kind'] == 'model']
     assert model and model[0]['url'].endswith('app.html#/deal/returns?p=cet&em=9.5') and res.startswith(f"This run is source [{model[0]['n']}].")
+
+
+def test_home_records_tools(env):
+    """BSP Desk can list new homeowners and brief one address; both results reach the model with numbered sources."""
+    httpx.delete(env['mock'] + '/_requests')
+    status, _, events = chat(env['main'], "Who should we send this month's new-homeowner promotion to in Ocean County? [mock:homes]")
+    assert status == 200 and events[-1]['type'] == 'done' and events[-1]['steps'] == 2
+    assert {'type': 'status', 'text': 'Looking up new homeowners in Ocean County'} in events
+    assert ''.join(e['text'] for e in events if e['type'] == 'text').startswith('**Short answer:**')
+    reqs = mock_requests(env)
+    res = reqs[1]['body']['messages'][-1]['content'][0]
+    assert res['type'] == 'tool_result' and not res.get('is_error') and len(res['content']) < 7000
+    text = res['content']
+    final = [e for e in events if e['type'] == 'sources'][-1]['sources']
+    data = [s for s in final if s['kind'] == 'data']
+    assert data and data[0]['title'].startswith('New Jersey home sales file') and data[0]['publisher'] == 'NJ Division of Taxation' and data[0]['date']
+    assert text.startswith(f"Sources for this result (cite them as [n]):\n[{data[0]['n']}] New Jersey home sales file")
+    assert 'NEW HOMEOWNERS: ' in text and 'Ocean' in text and 'Data through' in text and 'not sales made this month' in text
+    assert 'Owner names are not held' in text and 'Ranking rule' in text and re.search(r'\n1\. .+ \| built \d{4} \| sold ', text)
+    assert not re.search(r'\b(buyer|seller|grantee|grantor)\b\s*:', text, re.I)
+
+    httpx.delete(env['mock'] + '/_requests')
+    status, _, events = chat(env['main'], 'I got a call from 1800 Lambs Gap Road in Hampden Township, tell me what you know about the structure and what we can offer [mock:brief]')
+    assert status == 200 and events[-1]['type'] == 'done' and events[-1]['steps'] == 2
+    assert {'type': 'status', 'text': 'Building a property brief for 1800 Lambs Gap Road'} in events
+    res = mock_requests(env)[1]['body']['messages'][-1]['content'][0]
+    text = res['content']
+    final = [e for e in events if e['type'] == 'sources'][-1]['sources']
+    data = [s for s in final if s['kind'] == 'data']
+    assert data and not res.get('is_error') and text.startswith(f"Sources for this result (cite them as [n]):\n[{data[0]['n']}] ")
+    assert 'PROPERTY BRIEF: 1800 LAMBS GAP' in text and '[recorded: ' in text and '[inferred' in text
+    assert 'What to check on arrival' in text and 'Possible offers' in text and 'Evidence:' in text and 'no public permit feed' in text
+
+
+def test_home_records_tools_stay_off_the_concept_sites(env):
+    for persona in ('pp', 'cet', 'fl', 'ts', 'bpi', 'fh'):
+        httpx.delete(env['mock'] + '/_requests')
+        status, _, events = chat(env['main'], 'New homeowners in Ocean County? [mock:homes]', persona=persona)
+        reqs = mock_requests(env)
+        assert [t['name'] for t in reqs[0]['body']['tools']] == ['search_knowledge', 'read_source']
+        assert 'Home-sales records' not in reqs[0]['body']['system'][0]['text']
+        res = reqs[1]['body']['messages'][-1]['content'][0]   # a call the model was never offered is refused, not run
+        assert res['is_error'] is True and res['content'] == 'Unknown tool new_homeowners.'
+        assert status == 200 and events[-1]['type'] == 'done' and not any(s['kind'] == 'data' for e in events if e['type'] == 'sources' for s in e['sources'])
 
 
 def test_step_cap_forces_an_answer(env):
@@ -462,8 +509,9 @@ def test_stats_counts(env):
         threads = con.execute('SELECT COUNT(*) FROM threads').fetchone()[0]
         fb = con.execute('SELECT COUNT(*), SUM(rating > 0), SUM(rating < 0) FROM feedback').fetchone()
         req = con.execute('SELECT requests FROM usage_daily').fetchone()[0]
-    assert s['ok'] is True and s['db'] is True and s['version'] == '2.0.0' and s['model'] == 'claude-opus-5-5' and s['daily_cap'] == 400
+    assert s['ok'] is True and s['db'] is True and s['version'] == '2.1.0' and s['model'] == 'claude-opus-5-5' and s['daily_cap'] == 400
     assert s['knowledge']['docs'] > 100 and s['knowledge']['chunks'] > s['knowledge']['docs']
+    assert s['homes']['sales'] > 50000 and set(s['homes']['through']) == {'NJ', 'PA'}
     assert s['threads'] == threads and s['feedback'] == fb[0] and s['feedback_up'] == fb[1] and s['feedback_down'] == fb[2]
     assert s['today']['requests'] == req and s['today']['tokens_out'] > 0 and s['today']['tokens_in'] > 0
     if threads:

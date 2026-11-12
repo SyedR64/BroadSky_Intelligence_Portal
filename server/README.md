@@ -10,7 +10,9 @@ This is the hosted part of the BSP Desk assistant: a small Python web service, f
    - `read_source`: read a whole source when an excerpt is cut off;
    - `deal_model`: run the acquisition model (`dealmath.py`, a line-for-line port of `modules/deal-lib.js`, so the numbers match the portal and its Excel download) for price, financing, returns, a DCF and what a buyer can pay, and return a link that opens the same scenario in the portal.
 
-   For BSP Desk only, Claude also has Anthropic's web search for public facts the knowledge base does not hold.
+   For BSP Desk only, Claude also has Anthropic's web search for public facts the knowledge base does not hold, and two home-records tools for the Punctual Pros territory (see [Home-sales records](#home-sales-records)):
+   - `new_homeowners`: recent home buyers by county, town or ZIP code, ranked for the new-homeowner promotion;
+   - `property_brief`: what the public record says about one address, what to check on arrival and which offers are worth raising.
 3. **Answer.** Claude writes a short answer that cites its sources as `[1]`, `[2]`. The stream tells the site what is happening (`status`), which numbered sources the answer can cite (`sources`, sent again when the list grows) and then the text.
 
 The last step always answers, and the whole answer is capped at `UPSTREAM_TOTAL_TIMEOUT` seconds. While Claude thinks or a tool runs, the stream carries `: ping` comment lines. The client ignores them, and they stop proxies from closing a quiet connection.
@@ -33,11 +35,45 @@ Each document is cut into passages of about 1,100 characters. Each passage is in
 
 A search runs both and merges the two rankings, so "who runs the firm" finds the CEO's biography even though the words differ. `knowledge/corpus.jsonl` is the readable copy of everything the assistant knows, one document per line; the server does not load it.
 
+## Home-sales records
+
+`knowledge/homes.sqlite` holds one row per recorded sale in the Punctual Pros territory: 77,249 sales in four New Jersey and eleven Pennsylvania counties, 61,817 of them market sales of homes. `property.py` reads it for the two BSP Desk tools. The concept-site assistants never get these tools.
+
+**Rebuild.** Run this from the repo root after the home-sales files in `data/sales/` change, then commit the new file. It needs only the Python standard library and takes about a second.
+
+```bash
+python3 scripts/build_homes_db.py     # reads data/sales/pp_sales_nj.json, pp_sales_pa_a.json and pp_sales_pa_b.json
+```
+
+**Sources.** All public.
+
+- New Jersey: the Division of Taxation's statewide sales file, for Atlantic, Burlington, Monmouth and Ocean counties.
+- Pennsylvania: each county's open parcel or assessment data (Adams, Berks, Chester, Cumberland, Dauphin, Franklin, Lancaster, Lebanon, Montgomery, Perry and York).
+- For a New Jersey address, `property_brief` also asks two state services live: the NJ Office of GIS parcel and tax list, and the Department of Community Affairs construction permit data on data.nj.gov. Each call has a 3 s timeout and one retry. If a service does not answer, the brief says it could not be checked and carries on.
+- Pennsylvania has no public permit feed, so a Pennsylvania brief uses the sale record only. County assessor websites and listing sites are never fetched.
+
+**No names.** The build step drops buyer and seller names, so the database has no owner column and no answer can name an owner. Mail is addressed to "New homeowner". The source files' QA notes quote sample records with owner names, so those notes are not copied either. The build stops without writing a file if a buyer or seller name from the source rows turns up in the notes or source list it keeps.
+
+**The lag.** Public sale records run behind. In this build the New Jersey file ends in June 2026 and its newest full month is May 2026; Pennsylvania's newest full month is July 2026. The files were pulled on Sep 24, 2026, so the gap to today is the publisher's lag plus the age of this copy. Every list and every brief states the date the sales reach and the date the records were pulled. A brief also says that a purchase after that date is not in the data yet, and a brief with no sale on record asks when the caller bought. A request for a month the data has not reached says so and gives the newest full month. A period that cannot be read says so too. The assistant is told never to present recorded sales as this month's.
+
+**One brief, one lot.** A condo building, or a street the county records without house numbers, puts many lots under one address. A brief never merges them: it lists the lots and asks for the unit. With the unit in the address ("4901 Harbor Beach Blvd Unit A7") it briefs the lot whose state unit code matches.
+
+**Permits.** The lookup asks for the block and lot as written and in the zero-padded forms some towns file. A town with no rows in the feed at all (Lakehurst and Pine Beach, as of Nov 12, 2026) gets "does not report", not "no permit on record".
+
+**What a brief can and cannot say.** Every fact is tagged recorded (with its source and date) or inferred. Offers are leads with their evidence: a permit that is not on record is not proof that no work was done. No record says where pipes, the panel or the water heater are, so the brief never does.
+
+| Setting | Default | Notes |
+|---|---|---|
+| `HOMES_DB_PATH` | `knowledge/homes.sqlite` | Another database file |
+| `PROPERTY_LIVE` | `on` | `off` skips the two live New Jersey lookups (the tests set it) |
+| `PROPERTY_LIVE_TIMEOUT` | `3` | Seconds per attempt for a live lookup |
+
 | File | Purpose |
 |---|---|
 | `app.py` | Routes, validation, rate limits, the research loop and its streaming relay, SQLite storage (FastAPI, uvicorn, the Anthropic Python SDK) |
 | `knowledge.py` | Opens `knowledge/kb.sqlite` and runs the hybrid search |
 | `dealmath.py` | The acquisition model (port of `modules/deal-lib.js`) and the `deal_model` tool |
+| `property.py` | The home-sales records and the `new_homeowners` and `property_brief` tools (reads `knowledge/homes.sqlite`, built by `scripts/build_homes_db.py`) |
 | `chatlog.py` | The chat log: one JSON file per question and answer (and per rating) in a private Vercel Blob store |
 | `knowledge/` | `kb.sqlite` (the index), `deal_presets.json` (the model's presets), `corpus.jsonl` (readable copy of every document), all built by `scripts/build_corpus.py` |
 | `main.py` | Zero-config start for Railway: Railpack runs `python main.py` when it finds this file |
@@ -51,13 +87,13 @@ These are the same endpoints as the Worker. CORS only allows the origins in `ALL
 
 | Method and path | Returns |
 |---|---|
-| `GET /health` (also `/`) | `{ok, model, version, db, llm, kv, log, kb}`. `llm` is false when no Claude key is set; `kv` is always true because rate limits are kept in memory; `log` says whether the chat log is on; `kb` gives the knowledge base's document and passage counts and build time (false if it could not open). |
+| `GET /health` (also `/`) | `{ok, model, version, db, llm, kv, log, kb, homes}`. `llm` is false when no Claude key is set; `kv` is always true because rate limits are kept in memory; `log` says whether the chat log is on; `kb` gives the knowledge base's document and passage counts and build time (false if it could not open); `homes` gives the home-sales row counts, build time and data-through dates per state (false if the file is missing). |
 | `POST /chat` | `text/event-stream` of `data: {"type": "meta" \| "status" \| "thinking" \| "sources" \| "text" \| "done" \| "error", ...}`, or a JSON error. Body: `{persona, question, messages, context, retrieve, page}`; `context` items become the first numbered sources, and `retrieve: false` skips the knowledge-base search (used by "Expand with Claude"). |
 | `POST /feedback` | `201 {ok, id}` (the rating also goes to the chat log) |
 | `POST /log` | `202 {ok, saved}`. An answer the browser built itself (portfolio data, a prepared deep dive, a fallback) for the chat log: `{persona, question, answer, kind, intent, engine, sources, seconds, page}`. Shares the save rate limit with `/feedback` and `/thread`. |
 | `POST /thread` | `{ok, thread_id, updated_at}` (insert, or update if the thread exists) |
 | `GET /thread/:id` | `{ok, thread_id, persona, title, messages, created_at, updated_at}` |
-| `GET /stats` | `{threads, messages, feedback, feedback_up, feedback_down, today:{requests, tokens_in, tokens_out}, daily_cap, model}` |
+| `GET /stats` | `{threads, messages, feedback, feedback_up, feedback_down, today:{requests, tokens_in, tokens_out}, daily_cap, model, knowledge, homes}` |
 
 Error codes match the Worker: `no_model_key`, `rate_limited`, `daily_cap`, `upstream_busy`, `backend_auth`, `upstream_unavailable`, `upstream_timeout`, `refusal`, and the rest. A 400 from Claude that names an optional feature (web search, the server-side fallback beta, effort) is retried once without it.
 
@@ -101,6 +137,8 @@ python3 tests/mock_claude.py --port 8799 &
 FAKE_ANTHROPIC_URL=http://127.0.0.1:8799 ANTHROPIC_API_KEY=test-not-a-real-key python3 -m uvicorn app:app --port 8787
 ```
 
+The mock calls a tool when the question carries a marker: `[mock:homes]` runs `new_homeowners` for Ocean County and `[mock:brief]` runs `property_brief` for a Pennsylvania address. The markers are listed at the top of `tests/mock_claude.py`.
+
 ## Chat log
 
 Every question and answer is saved for later analysis in the private Vercel Blob store **bsp-desk-chats** (team BSP, connected to this project), one JSON file each:
@@ -121,7 +159,7 @@ The token is on the store's **.env.local** tab in the dashboard. `chat-logs/` is
 
 ```bash
 cd server
-python3 -m pytest -q tests          # starts its own mock and servers on free ports; covers the tool loop, sources and limits
+python3 -m pytest -q tests          # starts its own mock and servers on free ports; covers the tool loop, sources and limits, and the home-records tools (test_property.py)
 python3 tests/e2e_browser.py        # 18 browser checks with the real site in headless Chromium (needs Playwright)
 ```
 

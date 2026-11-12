@@ -66,6 +66,7 @@ def start_server(port, log_path, db_path, mock_port=None, key=TEST_KEY, **extra_
     env = {k: v for k, v in os.environ.items() if k not in ('ANTHROPIC_API_KEY', 'FAKE_ANTHROPIC_URL', 'DB_PATH', 'DAILY_CAP', 'RL_PER_10MIN', 'ALLOWED_ORIGINS', 'MODEL', 'EFFORT', 'UPSTREAM_TOTAL_TIMEOUT', 'RAILWAY_VOLUME_MOUNT_PATH', 'BLOB_READ_WRITE_TOKEN', 'VERCEL_BLOB_API_URL', 'CHAT_LOG')}
     env['DB_PATH'] = db_path
     env['PYTHONUNBUFFERED'] = '1'
+    env['PROPERTY_LIVE'] = 'off'   # the property brief makes no live lookups in tests
     if mock_port:
         env['FAKE_ANTHROPIC_URL'] = f'http://127.0.0.1:{mock_port}'
     if key:

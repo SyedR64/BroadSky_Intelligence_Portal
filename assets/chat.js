@@ -12,7 +12,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261009190627';
+import { Data, Fmt, Live, esc } from './core.js?v=20261112181124';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -55,7 +55,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261009190627';
+const BACKEND_JS = './backend.js?v=20261112181124';
 let BE = null, BE_P = null, BE_RETRY = 0;
 function backend() {
   // The check on page load can land on a cold start and miss: when the backend looked offline, check again (at most every 15 s).
@@ -430,7 +430,7 @@ async function addonHistory(q) {
 }
 /** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
 async function dealModel(q) {
-  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261009190627').catch(() => null)]);
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261112181124').catch(() => null)]);
   if (!d || !L) return null;
   const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
   const P = pre.find(i => i.co === co && i.group !== 'generic') || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
@@ -542,8 +542,31 @@ async function tsAccounts(q) {
 }
 const NE_ST = new Set(['MA', 'CT', 'RI', 'NH', 'VT', 'ME']);
 const PROFILE_RX = new RegExp(`^(?:what (?:does|do) (?:the company )?(?:${CO_NAME_RX})(?: actually| really)? do|who (?:is|are) (?:${CO_NAME_RX})|tell me (?:more )?about (?:${CO_NAME_RX})|(?:give me )?(?:an? )?(?:quick )?(?:overview|profile|snapshot|primer) (?:of|on) (?:${CO_NAME_RX})|describe (?:${CO_NAME_RX})|what is (?:${CO_NAME_RX})\\s*\\??$|(?:${CO_NAME_RX}) (?:at a glance|overview|profile)\\s*\\??$)`, 'i');
+/* Home-sales lookups (the new-homeowner list, a brief on one address) run on the hosted assistant, which holds the public records.
+   Without it the honest answer is a short one: these two never guess from the summary data in the browser. */
+/* The list intent needs the people (new homeowners, recent buyers) and a cue that a list or a send is wanted. A general question about
+   new homeowners, or a memo about the mailer, is left to the other intents and to retrieval. */
+const HOMEOWNER_NOUN_RX = /new[- ]?home[- ]?(owner|buyer)s?|recent(ly)? (home ?)?buyers?\b|\b(new|recent) (owners?|buyers?|movers?)\b/i;
+const HOMEOWNER_CUE_RX = /\bwho (should|do we|to|gets?|will|can we)\b|\b(lists?|mailers?|mailings?|mail|postcards?|promo(tion)?s?|welcome offers?|send|target|door[- ]?knock(ing)?|canvass(ing)?|outreach)\b|\bwhich (addresses|homes|houses|buyers|homeowners)\b|^\s*(show|list|give|get|pull|find|build|rank)\b/i;
+const HOMEOWNERS_RX = { test: s => (HOMEOWNER_NOUN_RX.test(s) && HOMEOWNER_CUE_RX.test(s) && !/^\s*(draft|write|prepare)\b.*\b(memo|email|note|deck|slide|summary|script)\b/i.test(s)) || /\bhome ?owners? (promo(tion)?|mailer|mailing|offer|list)\b/i.test(s) && !/^\s*(draft|write|prepare)\b/i.test(s) };
+/* A street address: a house number, one to four words, then a street suffix. Counts read like addresses ("top 10 targets in CT",
+   "within 50 miles of our place"), so a number that follows a counting word or is followed by a counted noun is not a house number,
+   and the short suffixes that are also common words or state codes (ct, way, pl, place, run, row, sq) must end the address. */
+const STREET_ANY_RX = /\b\d{1,6}[a-z]? (?:[a-z0-9.'-]+ ){1,4}(?:(st|street|ave|avenue|rd|road|dr|drive|ln|lane|court|blvd|boulevard|ter|terrace|pike|hwy|highway|cir|circle|trl|trail|pkwy|parkway|square)|(ct|way|pl|place|run|row|sq))\b/ig;
+const NOT_HOUSE_NO_RX = /\b(top|which|within|first|next|last|under|than|least|most|these|those|nearly|another)\s*$/i;
+const COUNTED_RX = /^\d+[a-z]? (?:[\w-]+ )?(miles?|mi|km|minutes?|hours?|days?|weeks?|months?|years?|percent|targets|homes|houses|customers|accounts|calls|leads|jobs|techs|technicians|counties|companies|brands|firms|sites|stores|locations|markets|states|deals|people|households) \S+ \S/i;
+const STREET_RX = { test: s => { s = String(s || ''); for (const m of s.matchAll(STREET_ANY_RX)) { if (NOT_HOUSE_NO_RX.test(s.slice(0, m.index)) || COUNTED_RX.test(m[0])) continue;   /* "12 Miles Rd" stays an address: the counted noun must be followed by more words */ if (m[2] && !/^\s*(?:$|[,.;?!#]|(?:in|unit|apt|nj|pa|new jersey|pennsylvania)\b)/i.test(s.slice(m.index + m[0].length))) continue; return true; } return false; } };
+const BRIEF_RX = { test: s => /\bproperty brief\b/i.test(s) || (STREET_RX.test(s) && /\b(call(ed|er|s)?|lead|booking|visit|job|customer|structure|house|home|property|built|permits?|offer|know about|brief)\b/i.test(s)) || /\b(got|had|have|took|received) a (call|lead|booking|request) (from|at|for) (a |the )?(house|home|address|property)\b/i.test(s) };
+function homeownersOffline() {
+  return { html: `<h4>New-homeowner list</h4><p>I can't build this list right now. It comes from the research assistant, which reads the public home-sales records address by address, and I can't reach it.</p><p>The new-mover view shows the same recorded sales by county and town. Those records run months behind, so check the data-through date before calling any sale "this month".</p>`, links: [app('#/pp/movers', 'Open new-mover marketing')], followups: [] };
+}
+function briefOffline() {
+  return { html: `<h4>Property brief</h4><p>I can't brief this address right now. The brief comes from the research assistant, which looks the address up in public sale records and, in New Jersey, the state parcel list and permit feed. I can't reach it, and I won't guess at a house.</p><p>Ask again in a minute.</p>`, links: [], followups: [] };
+}
 const PORTAL_INTENTS = [
   { id: 'profile', rx: [PROFILE_RX], run: profile },
+  { id: 'brief', rx: [BRIEF_RX], run: briefOffline },
+  { id: 'homeowners', rx: [HOMEOWNERS_RX], run: homeownersOffline },
   { id: 'addon_history', rx: [/(horvath|nuwave|horton(?!,? lee)|boldt|seven hills|message house|propper daley|agado|sherpas|quintana|day associates|arrowhead|north central)\b.*\b(add|adds|added|bring|brings|brought|acqui|deal|buy|bought|close|closed)|\b(what|why) (did|does|do) .*(horvath|nuwave|horton(?!,? lee))\b(?!.*\bcall)|(add-?ons?|acquisitions?) (has|have|did) (broad sky|bsp|they|we|\w+(?: \w+)?) (closed|done|made|completed)|how many (add-?ons|acquisitions)|add-?on (history|track record)|add-?ons? (so far|to date)/i], run: addonHistory },
   { id: 'sizes', rx: [/(largest|biggest|smallest) (portfolio )?compan(y|ies)|(largest|biggest|smallest) .*by (revenue|size|ebitda)|(rank|ranked|ranking|sort) .*(compan(y|ies)|portfolio) by (revenue|size|ebitda)|(portfolio|companies) by (revenue|size|ebitda)|which (portfolio )?company (is|has) the (most|highest|largest|biggest) (revenue|sales|ebitda)/i], run: sizes },
   { id: 'model', rx: [/\b(irr|moic|lbo|dcf|discounted cash flow|underwrit\w*|acquisition model|returns? model|buyout model|sensitivity tables?)\b|how much (could|can|should|would) (we|bsp|broad sky|a buyer|you) pay(?! (a |our |the )?(tech|staff|employee|worker|people|install))|what (could|can|should|would) (we|bsp|broad sky|a buyer) pay|(still|and) (earn|make|get|hit) (a )?\d+ ?%/i], run: dealModel },
@@ -653,7 +676,7 @@ const mdBase = s => mdLink(esc(s)).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replac
 /* ── Personas ─────────────────────────────────────────────────────────────── */
 export const PERSONAS = {
   portal: { name: 'BSP Desk', short: 'the desk', initials: 'BSP', logo: true, greeting: "I'm the analyst on the BSP Desk. I know our six companies, their markets and the add-on pipeline, and I can price a deal while we talk. What are we working on?", placeholder: 'Ask anything, e.g. "Show me how to take Punctual Pros nationwide"', color: '#d9622b',
-    suggestions: ['Who leads BSP, and what did they do before?', 'What could BSP pay for CET and still earn 25% a year?', 'Show me how to take Punctual Pros nationwide', 'Which wastewater plants should Horton call first?', "What do this week's storms mean for Punctual Pros?", 'Who competes with BSP for home-services deals?', 'Which CET bids are due within 30 days?', 'Which counties nationwide should Punctual Pros expand to first?', 'What did sponsors do with companies like Punctual Pros?', 'How does BSP actually buy companies?', 'Estimate Punctual Pros revenue from public filings', 'Show the top add-on targets for CET in Connecticut', "How does tech enablement raise Punctual Pros' value?", 'How many new-mover leads are in Lancaster County?', "How do the portfolio's valuations compare with public peers?", 'Which private-equity rivals are most active in our sectors?', 'Which portfolio company is largest by revenue?', 'What would a TV ad campaign for Punctual Pros look like?', 'How does BSP scale CET across the Northeast?', 'What is the growth plan for Frontline?', 'Which AI agents create the most value?', 'How much revenue do missed calls cost Punctual Pros?'],
+    suggestions: ['Who leads BSP, and what did they do before?', 'What could BSP pay for CET and still earn 25% a year?', 'Show me how to take Punctual Pros nationwide', 'Which wastewater plants should Horton call first?', "What do this week's storms mean for Punctual Pros?", 'Who competes with BSP for home-services deals?', 'Which CET bids are due within 30 days?', 'Which counties nationwide should Punctual Pros expand to first?', 'What did sponsors do with companies like Punctual Pros?', 'How does BSP actually buy companies?', 'Estimate Punctual Pros revenue from public filings', 'Show the top add-on targets for CET in Connecticut', "How does tech enablement raise Punctual Pros' value?", "Who should get this month's new-homeowner mailer in Ocean County?", 'How many new-mover leads are in Lancaster County?', "How do the portfolio's valuations compare with public peers?", 'Which private-equity rivals are most active in our sectors?', 'Which portfolio company is largest by revenue?', 'What would a TV ad campaign for Punctual Pros look like?', 'How does BSP scale CET across the Northeast?', 'What is the growth plan for Frontline?', 'Which AI agents create the most value?', 'How much revenue do missed calls cost Punctual Pros?'],
     intents: PORTAL_INTENTS, faq: [] },
 };
 /** Customer-facing site personas are extended by each redesign (faq/suggestions/intents via mount options). */
@@ -755,13 +778,14 @@ const SPECIAL = { pmax: 'PMax', ebitda: 'EBITDA', usd: 'USD' };
 const srcKey = k => String(k || '').replace(/^\.\//, '').replace(/^sales\//, '').replace(/\.json$/, '');
 function srcLabel(key) { key = srcKey(key); if (SRC[key]) return SRC[key][0]; const w = key.split('_').filter(Boolean).map((b, i) => i === 0 && PREFIX[b] ? PREFIX[b] : UPPER.has(b) ? b.toUpperCase() : SPECIAL[b] || b).join(' '); return w.charAt(0).toUpperCase() + w.slice(1); }
 function srcOf(key) { key = srcKey(key); const r = SRC[key] || []; const live = key.startsWith('live:'); return { key, label: srcLabel(key), desc: r[1] || '', href: srcHref(r[2]), kind: live ? 'live' : 'dataset', asOf: live ? 'live' : ASOF.get(key) || (FRESH.has(key) ? '2026-10-06' : AS_OF_DEFAULT), at: Date.now() }; }
-const KIND_TEXT = { live: 'Live feed', page: 'Page', insight: 'Dataset insight', firm: 'BSP website', press: 'Press release', filing: 'SEC filing', news: 'News', company: 'Company website', web: 'Public source', model: 'Acquisition model' };
-const DATED = new Set(['firm', 'press', 'filing', 'news', 'company', 'web']);
+const KIND_TEXT = { live: 'Live feed', page: 'Page', insight: 'Dataset insight', firm: 'BSP website', press: 'Press release', filing: 'SEC filing', news: 'News', company: 'Company website', web: 'Public source', model: 'Acquisition model', records: 'Public records' };
+const DATED = new Set(['firm', 'press', 'filing', 'news', 'company', 'web', 'records']);
 const asOfText = s => s.kind === 'live' ? `Live · fetched ${new Date(s.at || Date.now()).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}` : s.kind === 'page' ? 'Portal view' : s.kind === 'model' ? 'Run for this answer' : DATED.has(s.kind) ? (s.asOf ? `Dated ${Fmt.date(s.asOf)}` : 'Public page') : `As of ${Fmt.date(s.asOf || AS_OF_DEFAULT)}`;
 const kindText = s => KIND_TEXT[s.kind] || 'Dataset';
 /* A source from the hosted knowledge base, in the shape the source list and popovers use. */
-const HOSTED_FIRST = new Set(['model']);   // intents the hosted assistant answers better (it has the deal-model tool); the intent stays the offline answer
-const SRV_KIND = { page: 'page', 'portal-view': 'page', 'site-page': 'page', answer: 'page', research: 'dataset', model: 'model', firm: 'firm', 'firm-team': 'firm', 'firm-investment': 'firm', 'press-release': 'press', filing: 'filing', company: 'company', article: 'news', headline: 'news', reference: 'web', web: 'web' };
+const HOSTED_FIRST = new Set(['model', 'homeowners', 'brief']);   // intents the hosted assistant answers better (it has the deal-model and home-records tools); the intent stays the offline answer
+const LIVE_ONLY = new Set(['homeowners', 'brief']);   // answered from live records only: never from a prepared answer or the closest dataset
+const SRV_KIND = { page: 'page', 'portal-view': 'page', 'site-page': 'page', answer: 'page', research: 'dataset', model: 'model', firm: 'firm', 'firm-team': 'firm', 'firm-investment': 'firm', 'press-release': 'press', filing: 'filing', company: 'company', article: 'news', headline: 'news', reference: 'web', web: 'web', data: 'records' };
 function srvSource(s) {
   const url = String(s?.url || ''), p = ownPath(url), href = p !== null ? ROOT + p : url;
   const kind = SRV_KIND[s?.kind] || 'web';
@@ -916,7 +940,7 @@ const GROUPS = [
   ['acquire', 'Acquire', svg('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>', 16), /add-?on|target|acqui|tuck|compet|rival|sponsor|landscape|\bpe\b|deals?\b|who else|\bbuy\b/i],
   ['operate', 'Operate', svg('<path d="M13 2 3 14h9l-1 8 10-12h-9Z"/>', 16), /storm|weather|wastewater|\bbids?\b|agent|voice|\bai\b|serviceos|gridos|\bos\b|book|schedule|dispatch|service desk|punchout|inventory|stopped|reach you|support|ebilling|security|tune-?up|engineer|switchgear|tech-?enable/i],
   ['finance', 'Finance', svg('<path d="M3 3v18h18"/><path d="M7 15v2"/><path d="M11 11v6"/><path d="M15 7v10"/><path d="M19 4v13"/>', 16), /revenue|filings?|ebitda|comps?\b|valuation|multiple|cost|price|pricing|rebate|incentive|financ|membership|return|payback|worth|recover|program/i],
-  ['market', 'Market', svg('<path d="m3 11 15-6v14L3 13Z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>', 16), /\bads?\b|ctv|media|new-?mover|leads?\b|market|campaign|reputation|brand|wholesale|sell|fit|sizing|made of|shipping|return policy/i],
+  ['market', 'Market', svg('<path d="m3 11 15-6v14L3 13Z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>', 16), /\bads?\b|ctv|media|new-?mover|new-?homeowner|leads?\b|market|campaign|reputation|brand|wholesale|sell|fit|sizing|made of|shipping|return policy/i],
 ];
 const groupOf = s => (GROUPS.find(g => g[3].test(s)) || GROUPS[2])[0];
 const COMMANDS = [['/portal', 'BSP Desk', 'portal'], ['/pp', 'Punctual Pros assistant', 'pp'], ['/cet', 'CET project desk', 'cet'], ['/fl', 'Frontline advisor', 'fl'], ['/ts', 'Thomas Scientific concierge', 'ts'], ['/bpi', 'BPI desk', 'bpi'], ['/fh', 'Fair Harbor helper', 'fh'], ['/new', 'Start a new chat'], ['/clear', 'Clear this conversation'], ['/key', 'Model key and settings']];
@@ -1025,7 +1049,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261009190627'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261112181124'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };
@@ -1356,7 +1380,7 @@ class Widget {
       const B = await beP;
       if (ctl.stopped) return this.stopped(turn, st, q);
       if (B) {
-        let pre = null; try { pre = await B.precomputed(eq); } catch (e) { console.debug('deep dives unavailable', e?.message || e); }
+        let pre = null; try { pre = hit && LIVE_ONLY.has(hit.id) ? null : await B.precomputed(eq); } catch (e) { console.debug('deep dives unavailable', e?.message || e); }
         if (ctl.stopped) return this.stopped(turn, st, q);
         if (pre) return await this.deepDive(q, eq, fu, turn, st, pre, ctl);
       }
@@ -1366,6 +1390,16 @@ class Widget {
         const r = await this.claude(q, turn, st, [], [], [], ctl, 'hosted'); if (r.rec) return r.rec;
         if (ctl.stopped) return this.stopped(turn, st, q);
         warn = `<p class="ch-warn">${esc(r.error)}</p>`;
+      }
+      if (hit && LIVE_ONLY.has(hit.id)) {   // the hosted assistant did not answer: say so plainly instead of showing the closest dataset
+        const off = await hit.run(eq, {});
+        const rec = { kind: 'grounded', q, eq: eq !== q ? eq : undefined, note: fu?.from, html: warn + off.html, links: off.links || [], followups: [], sources: [], intent: hit.id, engine: GROUNDED() };
+        await st.settle();
+        if (ctl.stopped) return this.stopped(turn, st, q);
+        this.prepare(body, rec); rec.meta = st.finish(0, 'Answered', rec.engine, groundedTip());
+        await this.present(turn, rec, ctl, st.t0);
+        this.ctx = { q: eq, intent: hit.id, co: 'pp', st: stateOf(eq) };
+        return rec;
       }
       const docs = await retrieve(eq, this.persona); TRACK = null;
       if (ctl.stopped) return this.stopped(turn, st, q);

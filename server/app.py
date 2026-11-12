@@ -4,12 +4,13 @@ BSP Desk assistant backend (FastAPI + uvicorn), first written as a port of worke
 Holds the Claude API key server-side. Every question is answered by Claude working as a small research
 agent over the knowledge base in knowledge/kb.sqlite (see knowledge.py and scripts/build_corpus.py): the
 server retrieves the best sources for the question, then Claude can search again, read whole sources and
-run the acquisition model (dealmath.py) before it writes a cited answer. Threads and feedback go to SQLite;
+run the acquisition model (dealmath.py) before it writes a cited answer. BSP Desk can also look up public home-sales
+records for the Punctual Pros territory (property.py: the new-homeowner list and a property brief for one address). Threads and feedback go to SQLite;
 visitors are rate-limited in memory and the whole site is capped per UTC day. Every question and answer is also
 saved to a private Vercel Blob store for later analysis (chatlog.py).
 
 Routes (JSON unless noted; CORS limited to ALLOWED_ORIGINS):
-  GET  /health          {ok, model, version, db, llm, kv, log, kb}
+  GET  /health          {ok, model, version, db, llm, kv, log, kb, homes}
   POST /chat            {persona, messages, context, question} -> text/event-stream
                         data: {"type":"meta"|"status"|"thinking"|"sources"|"text"|"done"|"error", ...}
                         ("thinking" carries Claude's summarized reasoning, shown apart from the answer)
@@ -46,6 +47,7 @@ from starlette.responses import Response, StreamingResponse
 import chatlog
 import dealmath
 import knowledge
+import property as homes   # never a bare `import property`: that would shadow the built-in in this module
 
 anthropic = None   # the Anthropic SDK, imported on the first /chat: it takes over a second to import, and /health must answer fast on a cold start
 
@@ -57,7 +59,7 @@ def sdk():
         anthropic = _anthropic
     return anthropic
 
-VERSION = '2.0.0'
+VERSION = '2.1.0'
 DEFAULT_MODEL = 'claude-opus-5-5'
 FALLBACK_BETA = 'server-side-fallback-2026-07-01'   # with "fallbacks": "default"
 WEB_SEARCH_TOOL = {'type': 'web_search_20260209', 'name': 'web_search', 'max_uses': 3}
@@ -105,7 +107,7 @@ PORTAL_BRIEF = ('Broad Sky Partners (BSP) is a New York private-equity firm that
                 'distribution), Bully Pulpit International (public affairs and communications) and Fair Harbor (apparel). BSP sold Smith + Howard '
                 '(accounting and advisory) to TPG in August 2026.')
 PERSONAS = {
-    'portal': {'name': 'BSP Desk', 'company': None, 'tools': ('search', 'read', 'deal', 'web'),
+    'portal': {'name': 'BSP Desk', 'company': None, 'tools': ('search', 'read', 'deal', 'homes', 'web'),
                'role': f'You are BSP Desk, the in-house analyst on Broad Sky\'s desk: part deal associate, part operating partner, working for the investment '
                        f'team and the Portfolio Resource Group. You know the firm the way someone in its New York office would: thematic investing in '
                        f'middle-market consumer and business services, backing founder-led companies, and the integrated investor-operator model, where '
@@ -153,6 +155,14 @@ RESEARCH_RULE = ('11. Strategy and deal questions (what a move, an add-on or a h
                  'rival buyers; comparable deals and how other sponsors played it; and the risks. Search the knowledge base once for each side the '
                  'sources so far do not cover (the web for recent market facts), run deal_model when a price or return matters, then answer with the '
                  'call, the evidence from each side, and what would change the call.')
+HOMES_RULE = ('12. Home-sales records (Punctual Pros territory): for "who should get the new-homeowner promotion", new buyers or recent '
+              'home sales in a county, town or ZIP code, call new_homeowners. For a call from a street address ("what do we know about the house and what '
+              'can we offer"), call property_brief with the address and the town. Always state the data-through date and the source lag, and name the '
+              'month the list covers: never call recorded sales "this month\'s" unless the data reaches this month. Keep every fact labelled recorded '
+              '(with its source and date) or inferred, as the tool returns it. Present offers as leads to check on the visit, each with its evidence, '
+              'and say that no permit on record is not proof that no work was done. Never give owner, buyer or seller names: mail goes to '
+              '"New homeowner". Never say where pipes, the panel, the water heater or other equipment are located: no record holds that. Cite the '
+              'tool\'s sources as [n]. These answers may run to 400 words, and a list of addresses may run longer.')
 # Same tables as worker/schema.sql (idempotent; applied on every start).
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS threads (
@@ -649,6 +659,8 @@ def build_system(persona, tools_on):
         rules += '\n' + DEAL_RULE
     if persona == 'portal' or persona not in PERSONAS:
         rules += '\n' + RESEARCH_RULE
+    if 'homes' in tools_on:
+        rules += '\n' + HOMES_RULE
     d = datetime.now(timezone.utc)
     return [{'type': 'text', 'text': f"{p['role']}\n\n{rules}\n\nToday is {d.strftime('%b')} {d.day}, {d.year}.", 'cache_control': {'type': 'ephemeral'}}]
 
@@ -879,10 +891,13 @@ async def handle_chat(request, cors):
     tools_on = [t for t in ('search', 'read') if t in allowed and kb is not None]
     if 'deal' in allowed and dealmath.presets()['presets']:
         tools_on.append('deal')
+    if 'homes' in allowed and await run_in_threadpool(homes.ready):
+        tools_on.append('homes')
     if 'web' in allowed and (env('WEB_SEARCH') or 'on').strip().lower() not in ('off', '0', 'false', 'no'):
         tools_on.append('web')
     tools = ([SEARCH_TOOL] if 'search' in tools_on else []) + ([READ_TOOL] if 'read' in tools_on else []) + \
-            ([{**dealmath.tool_definition(), 'eager_input_streaming': True}] if 'deal' in tools_on else []) + ([WEB_SEARCH_TOOL] if 'web' in tools_on else [])
+            ([{**dealmath.tool_definition(), 'eager_input_streaming': True}] if 'deal' in tools_on else []) + \
+            ([{**t, 'eager_input_streaming': True} for t in homes.tool_definitions()] if 'homes' in tools_on else []) + ([WEB_SEARCH_TOOL] if 'web' in tools_on else [])
 
     sources = Sources()
     sources_block = await run_in_threadpool(retrieve_initial, kb, inp, sources)
@@ -900,7 +915,7 @@ async def handle_chat(request, cors):
     deadline = asyncio.get_running_loop().time() + total_timeout()
     first = await open_stream(base, opts, False, deadline)       # upstream HTTP errors still become JSON errors with status codes
     ctx = {'kb': kb, 'persona': inp['persona'], 'base': base, 'opts': opts, 'sources': sources, 'deadline': deadline, 'vkey': key, 'first': first,
-           'inp': inp, 'origin': request.headers.get('origin') or '', 't0': t0}
+           'inp': inp, 'origin': request.headers.get('origin') or '', 't0': t0, 'homes_on': 'homes' in tools_on}
     headers = {**cors, 'Cache-Control': 'no-cache, no-transform', 'X-Accel-Buffering': 'no'}
     return StreamingResponse(relay(ctx), status_code=200, headers=headers, media_type='text/event-stream')
 
@@ -974,7 +989,39 @@ async def relay(ctx):
             log.info('chat %s: %s stop=%s steps=%d sources=%d tokens in=%d out=%d', ctx['vkey'][:8], st['model'], st['stop'], st['steps'], len(ctx['sources'].items), st['tin'], st['tout'])
 
 
-TOOL_STATUS = {'search_knowledge': 'Searching the knowledge base', 'read_source': 'Reading a source', 'deal_model': 'Running the acquisition model'}
+TOOL_STATUS = {'search_knowledge': 'Searching the knowledge base', 'read_source': 'Reading a source', 'deal_model': 'Running the acquisition model',
+               'new_homeowners': 'Looking up new homeowners', 'property_brief': 'Building a property brief'}
+
+
+def plain_words(v, n=60):
+    """A visitor-supplied value, safe to repeat in a progress line."""
+    return re.sub(r'[^\w .,#&\'/-]+', ' ', v).strip()[:n].strip() if is_str(v) else ''
+
+
+def homes_area(args):
+    """The place a new_homeowners call covers, in plain words ("Ocean County", "Toms River", "ZIP 08753", "New Jersey")."""
+    a = {**(args.get('area') if isinstance(args.get('area'), dict) else {}), **args}
+    muni = plain_words(a.get('municipality') or a.get('town') or a.get('city') or a.get('muni'))
+    county = plain_words(a.get('county'))
+    if muni:
+        return muni
+    if county:
+        return county if re.search(r'\bcounty$', county, re.I) else county + ' County'
+    if plain_words(a.get('zip'), 10):
+        return 'ZIP ' + plain_words(a.get('zip'), 10)
+    return {'NJ': 'New Jersey', 'PA': 'Pennsylvania'}.get(str(a.get('state') or '').strip().upper(), '')
+
+
+def run_homes(name, args, sources):
+    """Run a home-records tool and number its sources so the answer can cite them as [n]."""
+    text, srcs = (homes.run_new_homeowners if name == 'new_homeowners' else homes.run_property_brief)(args)
+    marks = []
+    for s in srcs or []:
+        n = sources.add(f"homes:{s.get('title')}|{s.get('url')}", s.get('title'), s.get('url'), s.get('publisher'), s.get('date'), s.get('kind') or 'data')
+        marks.append(sources.header(n))
+    if marks:
+        text = 'Sources for this result (cite them as [n]):\n' + '\n'.join(marks) + '\n\n' + text
+    return text, not homes.ready()
 
 
 def tool_status(block, sources):
@@ -987,6 +1034,12 @@ def tool_status(block, sources):
     if name == 'deal_model':
         p = dealmath.find_preset(args.get('preset')) if is_str(args.get('preset')) else None
         return f"Running the acquisition model for {p['label']}" if p else 'Running the acquisition model'
+    if name == 'new_homeowners':
+        area = homes_area(args)
+        return f'Looking up new homeowners in {area}' if area else 'Looking up new homeowners across the Punctual Pros territory'
+    if name == 'property_brief':
+        addr = plain_words(args.get('address'))
+        return f'Building a property brief for {addr}' if addr else 'Building a property brief'
     if name == 'web_search' and is_str(args.get('query')):
         return f'Searching the web for “{args["query"][:80]}”'
     return TOOL_STATUS.get(name, 'Working')
@@ -1126,6 +1179,8 @@ async def run_agent(ctx, q, st):
                             p = dealmath.find_preset(args.get('preset')) or {'label': 'Scenario'}
                             n = sources.add(f'model:{link}', f"Acquisition model: {p['label']}", link, 'BSP Desk acquisition model', today(), 'model')
                             text = f'This run is source [{n}].\n' + text
+                    elif b.name in ('new_homeowners', 'property_brief') and ctx['homes_on']:   # BSP Desk only
+                        text, err = await run_in_threadpool(run_homes, b.name, args, sources)
                     else:
                         text, err = f'Unknown tool {b.name}.', True
                 except Exception:
@@ -1244,10 +1299,20 @@ def handle_thread_get_sync(tid):
     return {'ok': True, 'thread_id': row['id'], 'persona': row['persona'], 'title': row['title'], 'messages': messages, 'created_at': row['created_at'], 'updated_at': row['updated_at']}
 
 
+def homes_summary():
+    """The home-sales database for /health and /stats: row counts, build time and the newest full month per state (False if it could not open)."""
+    i = homes.info()
+    if not i:
+        return False
+    states = (i.get('coverage') or {}).get('state') or {}
+    return {'sales': i.get('rows'), 'market_homes': i.get('market_homes'), 'built_at': i.get('built_at'),
+            'through': {st: {'latest_sale': c.get('latest_sale'), 'full_month': c.get('dense_month')} for st, c in states.items()}}
+
+
 def handle_stats_sync():
     kb = knowledge.get_kb()
     base = {'ok': True, 'version': VERSION, 'model': env('MODEL') or DEFAULT_MODEL, 'daily_cap': int_var(env('DAILY_CAP'), DAILY_CAP_DEFAULT), 'generated_at': now_iso(),
-            'knowledge': kb.stats() if kb is not None else None}
+            'knowledge': kb.stats() if kb is not None else None, 'homes': homes_summary()}
     if not _db_state['ready']:
         return {**base, 'db': False}
     day = today()
@@ -1283,6 +1348,11 @@ async def lifespan(_app):
         log.info('knowledge base ready: %d documents, %d chunks, built %s', len(kb.docs), len(kb.chunk_ids), kb.info.get('built_at'))
     else:
         log.error('knowledge base unavailable: %s', knowledge.kb_error())
+    hs = await run_in_threadpool(homes_summary)   # opened once per process, so /health and the first lookup do not wait for it
+    if hs:
+        log.info('home-sales records ready: %s sales, built %s', hs['sales'], hs['built_at'])
+    else:
+        log.warning('home-sales records unavailable: the new-homeowner and property-brief tools are off')
     if env('FAKE_ANTHROPIC_URL'):
         log.warning('FAKE_ANTHROPIC_URL is set: Claude calls go to %s (testing only)', anthropic_base_url())
     log.info('BSP Desk backend %s: model %s, Claude key %s, chat log %s, origins %s', VERSION, model_name(), 'set' if api_key() else 'MISSING',
@@ -1316,7 +1386,8 @@ async def router(request: Request, rest: str = ''):
             if path in ('/', '/health'):
                 kb = knowledge.loaded_kb()   # never loads it here: /health answers in milliseconds even on a cold start
                 return json_response({'ok': True, 'model': env('MODEL') or DEFAULT_MODEL, 'version': VERSION, 'db': await db_ok(), 'llm': bool(api_key()), 'kv': True, 'log': chatlog.enabled(),
-                                      'kb': {'docs': len(kb.docs), 'chunks': int(len(kb.chunk_ids)), 'built_at': kb.info.get('built_at')} if kb is not None else False}, 200, cors)
+                                      'kb': {'docs': len(kb.docs), 'chunks': int(len(kb.chunk_ids)), 'built_at': kb.info.get('built_at')} if kb is not None else False,
+                                      'homes': await run_in_threadpool(homes_summary)}, 200, cors)
             if path == '/stats':
                 stats = await run_in_threadpool(handle_stats_sync)
                 return json_response(stats, 200, cors, {'Cache-Control': 'public, max-age=60'} if stats.get('db') else None)
