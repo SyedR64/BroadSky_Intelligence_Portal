@@ -5,6 +5,8 @@
    • Hosted backend (assets/backend.js, discovered on first use): precomputed Claude deep
      dives, hosted Claude for open questions, "Expand with Claude" on grounded answers,
      feedback and saved threads. Everything degrades to the grounded engine when it is off.
+   • A docked assistant (mode 'floating') sends the hosted assistant what is on screen behind it (viewContext); questions about the
+     view ("what does this mean", "what am I looking at") go to the hosted assistant first.
    • Visitors see plain labels ("From the portfolio data", "Deep research", "Prepared answer") and an
      "About this assistant" note. The key/model dialog (bring-your-own Anthropic key, stored
      only in this browser) opens only with ?dev=1, or from About when no hosted backend is live.
@@ -12,7 +14,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261112194607';
+import { Data, Fmt, Live, esc } from './core.js?v=20261112225245';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -55,7 +57,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261112194607';
+const BACKEND_JS = './backend.js?v=20261112225245';
 let BE = null, BE_P = null, BE_RETRY = 0;
 function backend() {
   // The check on page load can land on a cold start and miss: when the backend looked offline, check again (at most every 15 s).
@@ -74,6 +76,64 @@ function backend() {
 /** Hosted Claude is live (endpoint answered /health with a model key). */
 const hosted = () => !!(BE?.endpoint && BE.llm);
 const GENERATIVE_RX = /^(write|draft|compose|summari[sz]e|explain|compare|rewrite|translate|brainstorm|outline|pitch|prepare|suggest|recommend|critique|review|assess)\b|\b(note|memo|email|letter|script|talking points|bullet points|one-pager|agenda|pros and cons|trade-?offs)\b|\b(what do you think|should (we|bsp|the prg)|how would you|in your view)\b/i;
+/* ── Questions about what is on screen, and what the screen says ──────────── */
+const SCREEN_NOUN = '(?:maps?|charts?|graphs?|views?|pages?|screens?|scenes?|pictures?|tables?|panels?|cards?|dashboards?|legends?|layers?|numbers?|figures?|kpis?|tiles?|columns?|hex(?:es|agons?)?|dots?|discs?|rings?|arcs?|lines?|bars?|colou?rs?|heights?|shading|badges?|chips?|alerts?|polygons?|shapes?)';
+const MAP_NOUN = '(?:maps?|charts?|graphs?|views?|pages?|screens?|scenes?|legends?|layers?|columns?|hex(?:es|agons?)?|dots?|discs?|rings?|arcs?|colou?rs?|heights?|shading|polygons?|shapes?)';
+/** "What does this mean", "what am I looking at", "explain this map", "why is Lancaster highlighted": the visitor is asking about the view
+    in front of them. These go to the research assistant with the view's own text; a grounded intent is only the fallback. */
+const ON_SCREEN = `(?:here|on (?:the|this|my) ${SCREEN_NOUN}|in (?:the|this) ${SCREEN_NOUN})`;
+const VIEW_RX = new RegExp([
+  // "what does this mean" must end there or point at the screen: "what does this mean for add-on targets in NJ" is a follow-up, not a view question
+  `\\bwhat (?:does|do|did|is|are|might|could) (?:this|that|it|these|those|all (?:of )?(?:this|that))(?: all)? (?:mean|show|tell|say|represent|imply|signify|indicate)(?: me| us)?(?:\\s*[?.!]*$| ${ON_SCREEN}\\b)`,
+  `\\bwhat (?:does|do|is|are) (?:this|that|these|those) ${SCREEN_NOUN}\\b.{0,40}\\b(?:mean|means|show|shows|showing|tell|telling|say|saying|represent|represents)\\b`,
+  `\\bwhat (?:does|do|is|are) the ${MAP_NOUN}\\b.{0,30}\\b(?:mean|means|show|shows|showing|represent|represents)\\b`,
+  "\\bwhat (?:am i|are we|i'?m|we'?re) (?:seeing|looking at|viewing|watching)\\b",
+  "\\b(?:that|what|which) (?:i'?m|i am|we'?re|we are) (?:seeing|looking at|viewing|watching)\\b",
+  `\\b(?:explain|interpret|decode|describe|unpack|walk me through|talk me through|make sense of|help me (?:read|understand)|how (?:do|should) (?:i|we) read) (?:this|that|these|those) ${SCREEN_NOUN}\\b`,
+  `\\b(?:explain|interpret|decode|walk me through|make sense of|help me (?:read|understand)|how (?:do|should) (?:i|we) read) the ${MAP_NOUN}\\b`,
+  "\\b(?:explain|interpret|unpack|make sense of) (?:this|that|what i'?m seeing|what'?s on (?:the |my )?screen)(?: to me| for me| please)?\\s*[?.!]*$",
+  // the colour or state must end the question: "why are add-on targets in red states cheaper" is not about the screen
+  `\\bwhy (?:is|are) .{1,60}\\b(?:highlighted|flagged|flashing|pulsing|glowing|shaded|lit up|colou?red(?: [a-z]+)?|red|orange|amber|yellow|green|blue|purple|taller)(?: ${ON_SCREEN})?\\s*[?.!]*$`,
+  `\\bwhat'?s on (?:this|the|my) (?:screen|page|map|view)\\b`,
+  `\\bwhat'?s (?:this|that)(?: ${SCREEN_NOUN})?(?: showing| telling me| about| for| here)?\\s*[?.!]*$`,
+].join('|'), 'i');
+const VIEW_CHARS = 3600;   // about 900 tokens: the view's own words and figures, never its tables
+/** What the visitor has on screen behind a docked assistant: view title, headline, lead, status chips, KPI tiles, notes, section titles
+    and whatever the view reports about itself (window.BSPView.describe, e.g. the 3D map's scene and live alerts). Read from the DOM at
+    ask time, so it is always the view as shown. Plain text; no table rows, form values or query strings. Returns null off a page. */
+function viewContext() {
+  try {
+    const root = document.getElementById('content') || document.querySelector('main') || document.body; if (!root) return null;
+    const txt = el => String(el?.innerText ?? el?.textContent ?? '').replace(/\s+/g, ' ').trim();
+    const all = (sel, k) => [...root.querySelectorAll(sel)].filter(e => !e.closest('.ch, [hidden], .leaflet-container')).slice(0, k);
+    const page = String(document.title || '').replace(/\s*·\s*BSP Desk\s*$/, '').trim();
+    let own = null; try { own = window.BSPView?.describe?.() || null; } catch { own = null; }
+    const h1 = txt(all('h1', 1)[0]);
+    const headline = clip(own?.headline || h1 || page, 160);
+    const lead = clip(own?.lead || txt(all('.sys-lead', 1)[0]) || document.querySelector('meta[name="description"]')?.content || '', 520);
+    const chips = uniq(all('.page-head .sys-chip', 6).map(txt).filter(Boolean)).map(c => clip(c, 60));
+    const figures = all('.sys-kpi', 10).map(k => { const l = txt(k.querySelector('.sys-kpi-label')), v = txt(k.querySelector('.sys-kpi-value')), sub = txt(k.querySelector('.sys-kpi-sub')); return l && v ? `${clip(l, 60)}: ${clip(v, 40)}${sub ? ` (${clip(sub, 90)})` : ''}` : ''; }).filter(Boolean);
+    const notes = uniq(all('.sys-note', 3).map(txt).filter(Boolean)).map(t => clip(t, 220));
+    const sections = uniq(all('.sys-card-title, .sys-h2', 12).map(txt).filter(Boolean)).map(t => clip(t, 70));
+    const where = (() => { try { const base = new URL(ROOT).pathname, path = location.pathname; return (path.startsWith(base) ? path.slice(base.length) : '') + location.hash.split('?')[0]; } catch { return ''; } })();   // path from the site root, so the link names the same page from anywhere
+    const lines = [`The visitor is looking at: ${page || headline}${own?.kicker ? ` (${own.kicker})` : ''}.`];
+    if (headline) lines.push(`Headline on screen: ${headline}`);
+    if (lead) lines.push(`Text under it: ${lead}`);
+    if (chips.length) lines.push(`Status: ${chips.join(' · ')}`);
+    if (figures.length) lines.push(`Figures on screen: ${figures.join('; ')}`);
+    if (notes.length) lines.push(`Notes on screen: ${notes.join(' | ')}`);
+    for (const l of own?.lines || []) lines.push(clip(l, 420));
+    if (own?.source) lines.push(`Source line on screen: ${clip(own.source, 200)}`);
+    if (sections.length && !own) lines.push(`Sections on the page: ${sections.join('; ')}`);
+    let text = lines.map(l => (/[.!?…:;]$/.test(l) ? l : l + '.')).join('\n'); if (text.length > VIEW_CHARS) text = text.slice(0, VIEW_CHARS - 2).replace(/\s+\S*$/, '') + ' …';
+    if (!headline && !lead && !figures.length) return null;
+    return { title: clip(`This view: ${headline && headline !== page && page ? `${page} · ${headline}` : headline || page}`, 190), text, href: /^(?:[\w-]+\/)*[\w-]+\.html/.test(where) ? (where.split('#')[0].includes('/') ? './' : '') + where.slice(0, 300) : '', headline, lead, figures, notes };
+  } catch (e) { console.debug('view context unavailable', e?.message || e); return null; }
+}
+/** The offline stand-in when nobody can interpret the view: what the view itself says, word for word. */
+function viewSummary(v) {
+  return { html: `<h4>On this view</h4><p><b>${esc(v.headline)}</b>${v.lead ? `<br>${esc(v.lead)}` : ''}</p>${v.figures?.length ? `<ul>${v.figures.slice(0, 6).map(f => `<li>${esc(f)}</li>`).join('')}</ul>` : ''}${v.notes?.length ? `<p>${esc(v.notes[0])}</p>` : ''}`, links: [], followups: [] };
+}
 /** Backend storage (feedback, threads) is live. */
 const stored = () => !!(BE?.endpoint && BE.db);
 
@@ -146,6 +206,61 @@ async function weatherImpact() {
   const planRows = plans.map(p => [`<b>${esc(p.nws_event)}</b>`, esc(mult(p)), esc(clip(String(p.lead_time || '—').replace(/>=/g, '≥').replace(/<=/g, '≤'), 70)), esc(clip((p.actions || []).slice(0, 2).join('; ').replace(/>=/g, '≥').replace(/<=/g, '≤'), 150))]);
   const planHtml = planRows.length ? `<h4>${live.length ? 'Response plan for this week' : 'Seasonal response plan'} <span class="ch-badge">analyst assumptions</span></h4>${live.length ? '' : '<p>No trigger in the live alerts or the 7-day forecast, so these are the plans most likely to be needed this season.</p>'}${tbl(['If the Weather Service issues', 'Expected calls', 'Lead time', 'First moves'], planRows)}` : '';
   return { html: `<h4>Weather → service-call pressure (live)</h4><p>${n(alerts.length)} active NWS alerts touch the Punctual Pros territory right now${alerts.length ? ':' : '.'}</p>${alerts.length ? tbl(['Alert', 'Counties', 'Call multiplier'], rows) : ''}<h4>Next 7 days by hub</h4>${tbl(['Hub', 'Range', 'Trigger days', 'Implication'], fcRows)}${planHtml}<div class="ch-src">Sources: NWS alerts API, Open-Meteo forecast, ${cite('pp_demand_model')} (ServiceTitan heat-wave elasticities, NOAA storm events).</div>`, links: [app('#/pp/weather', 'Open Weather & demand')], followups: ['Show the storm history for Ocean County', 'How many techs on the peak day?'] };
+}
+/* Counties the portal watches for weather: the same lists as the What-moves-sales view (modules/signals.js). */
+const WX_PP_FIPS = ['42071', '42133', '42043', '42041', '42011', '42075', '42055', '42001', '42099', '42029', '42091', '34029', '34025', '34001', '34005'];
+const WX_CET_FIPS = ['25027', '25005', '25023', '25017', '25021', '25009', '25025', '25013', '25015', '44007', '09001', '09003', '09005', '09007', '09009', '09011', '09013', '09015'];   // NWS still codes Connecticut by its old counties
+const WX_RX = /\b(weather|storms?|heat ?waves?|cold snaps?|hurricanes?|snow(?:storms?|fall)?|flash floods?|flooding|tornado(?:es)?|blizzards?|nor'?easters?|nws|freeze warnings?|hard freeze)\b/i;
+/* "Can Thomas Scientific weather tariffs?", "a perfect storm", "money flooding in": weather words that are not about the sky. */
+const WX_VERB_RX = /\bweather(?:ed|s)\b|\bweathering (?!the weather)|\bto weather (?!alerts?|forecasts?|data|events?|risks?|conditions|patterns)\w|\bweather (?:a|an|this|that|any|another|it|through|the (?:downturn|recession|cycle|slowdown|storm|crisis))\b/i;
+const WX_AFTER_NOUN = '(?:alerts?|forecasts?|impacts?|risks?|events?|warnings?|data|conditions|patterns|exposure|outlook|picture|reports?|updates?|feeds?|layers?|views?|pages?|maps?|scenes?|related|driven|is|was|are|and|or|in|for|on|at|across|to|affects?|matters?|hurts?|hits?|helps?|means?|moves?|drives?|changes?|lifts?|looks?|does|do|did|has|have|will|would|could|can|might|today|tomorrow|now)';
+const WX_VERB_AFTER_SUBJECT_RX = new RegExp(`\\b(?:can|could|will|would|did|does|do|should|might|may|must|helps?|helped|lets?)\\b[^?.!]*?\\b(?!(?:can|could|will|would|did|does|do|should|might|may|must|the|this|that|these|those|our|your|its|their|a|an|any|some|no|of|on|about|for|in|by|with|from|and|or|what|which|how|severe|bad|extreme|cold|hot|warm|wet|dry|winter|summer|spring|fall|autumn|live|local|current|more|less|much|is|are|was)\\b)[\\w'’+&-]+ weather (?!${WX_AFTER_NOUN}\\b)\\w`, 'i');
+const WX_IDIOM_RX = /\bperfect storm\b|\bby storm\b|\bbrainstorm|\bstorm(?:ed|ing)? (?:in|into|out|off|ahead|back)\b|\bflood(?:ed|ing|s)? (?:in\b|into|the market|the zone|of (?:deals|capital|money|bids|leads|calls|orders|applications))|\bsnow(?:ed)? (?:job|under)\b|\bsnowball/i;
+const WX_PP_RX = /punctual|\bpp\b|horvath|one hour|ben(jamin)? franklin|mister sparky/i;
+/* Punctual Pros by content, without the name: its service calls, its technicians, its territory. These stay with the Punctual Pros weather answer. */
+const WX_PP_CUE_RX = new RegExp(`service.?calls?|call (?:volume|pressure|multiplier)|\\btech(?:s|nicians?)\\b|\\bdispatch|\\b(?:the|our|its) territory\\b|central pa\\b|jersey shore|\\b(?:pa|nj)\\b|pennsylvania|new jersey|\\b(?:${[...TERRITORY_PA, ...TERRITORY_NJ].join('|').replace('York', '(?<!new )York')})\\b(?: county)?|toms river|harrisburg|hvac|plumb`, 'i');
+const WX_OTHER_CO_RX = /frontline|thomas scientific|\bts\b|bully pulpit|\bbpi\b|fair harbor|swim/i;   // companies with no weather alerts in the portal: left to the research assistant
+const WX_SCOPE_RX = /\bportfolio\b|\b(?:all|every|each|our|which|any) (?:six |6 |of (?:the|our) )?(?:portfolio )?compan(?:y|ies)\b|\bbsp\b|broad sky|\bcet\b|commonwealth|new england/i;
+const WX_NAV_RX = /^\s*(?:open|go to|take me to|navigate)\b|^\s*show\b.*\b(?:views?|pages?|maps?|scenes?|history|tabs?|screens?)\b/i;
+/** A question about the weather itself, for the companies the portal watches alerts for. */
+const isWx = s => WX_RX.test(s) && !WX_VERB_RX.test(s) && !WX_VERB_AFTER_SUBJECT_RX.test(s) && !WX_IDIOM_RX.test(s) && !WX_OTHER_CO_RX.test(s);
+/** Weather for the portfolio or CET. Punctual Pros questions (by name or by content) keep their own answer, and bids, plants, add-on
+    targets and home sales that merely mention a storm keep theirs. */
+const WX_DEFER = ['wastewater', 'cet_due', 'addons', 'movers'];
+const wxScoped = s => isWx(s) && WX_SCOPE_RX.test(s) && !WX_PP_RX.test(s) && !WX_PP_CUE_RX.test(s) && !WX_NAV_RX.test(s) && !PORTAL_INTENTS.some(i => WX_DEFER.includes(i.id) && i.rx.some(rx => rx.test(s)));
+/** Any other weather question: the last grounded intent before the overview and navigation, so every specific intent wins. */
+const wxOther = s => isWx(s) && !WX_PP_RX.test(s) && !WX_PP_CUE_RX.test(s) && !/^\s*(?:open|show|go to|take me to|navigate)\b/i.test(s);
+/** Weather for the whole portfolio: live NWS alerts against the two footprints the portal watches (Punctual Pros and CET). */
+async function weatherPortfolio(q = '') {
+  const states = ['PA', 'NJ', 'MA', 'CT', 'RI'];
+  const [lists, model] = await Promise.all([Promise.all(states.map(s => Live.nwsAlerts(s).catch(() => null))), Data.research('pp_demand_model')]);
+  const down = states.filter((s, i) => !lists[i]);
+  const seen = new Set(), all = [];
+  for (const a of lists.flat()) if (a && !seen.has(a.id)) { seen.add(a.id); all.push(a); }
+  progress(`Screening ${all.length} live alerts against ${WX_PP_FIPS.length + WX_CET_FIPS.length} operating counties`);
+  const snap = lists.find(l => l?._snapshot)?._snapshot;
+  const touch = fips => all.filter(a => (a.fips || []).some(f => fips.includes(String(f).slice(-5))));
+  const sevRank = a => (/Extreme/.test(a.severity) ? 0 : /Severe/.test(a.severity) ? 1 : /Moderate/.test(a.severity) ? 2 : 3);
+  const pp = touch(WX_PP_FIPS).sort((a, b) => sevRank(a) - sevRank(b)), cet = touch(WX_CET_FIPS).sort((a, b) => sevRank(a) - sevRank(b));
+  const severe = l => l.filter(a => /Extreme|Severe/.test(a.severity)).length;
+  const play = (model?.items || []).filter(i => i.component === 'event_playbook');
+  const planFor = ev => { const e = String(ev || '').toLowerCase(); return play.find(x => [x.nws_event, ...(x.aliases_and_related || [])].filter(Boolean).map(nm => String(nm).replace(/\s*\(.*\)\s*$/, '').toLowerCase()).some(nm => nm && e.includes(nm))); };
+  const mult = p => Object.entries(p?.expected_call_volume_multiplier || {}).map(([t, r]) => `${t} ${Array.isArray(r) ? (r[0] === r[1] ? r[0] : `${r[0]}–${r[1]}`) : r}×`).join(' · ');
+  const names = l => l.length ? uniq(l.map(a => a.event)).slice(0, 3).map(e => { const k = l.filter(a => a.event === e); return `${esc(e)}${k.length > 1 ? ` ×${k.length}` : ''}`; }).join(', ') : 'None';
+  const where = l => uniq(l.flatMap(a => a.areas || []).filter(Boolean)).slice(0, 4).map(x => esc(x)).join(', ');
+  const ppPlan = pp.map(a => planFor(a.event)).find(Boolean);
+  const rowPP = [`<b>Punctual Pros</b><br><span style="color:var(--ch-mute)">${WX_PP_FIPS.length} counties, Central PA and the Jersey Shore</span>`, `<span class="ch-num">${pp.length}</span>${severe(pp) ? ` <span class="ch-badge">${severe(pp)} severe</span>` : ''}`, `${names(pp)}${pp.length && where(pp) ? `<br><span style="color:var(--ch-mute)">${where(pp)}</span>` : ''}`, ppPlan ? `Calls: ${esc(mult(ppPlan))} <span class="ch-badge ch-est">est.</span>` : pp.length ? 'No call multiplier for this alert type.' : 'Baseline staffing.'];
+  const rowCET = [`<b>CET</b><br><span style="color:var(--ch-mute)">Operating counties in MA, CT and RI</span>`, `<span class="ch-num">${cet.length}</span>${severe(cet) ? ` <span class="ch-badge">${severe(cet)} severe</span>` : ''}`, `${names(cet)}${cet.length && where(cet) ? `<br><span style="color:var(--ch-mute)">${where(cet)}</span>` : ''}`, cet.length ? 'Storms drive emergency work on pump stations and generators.' : 'Nothing active.'];
+  const rows = coOf(q) === 'cet' && !WX_PP_RX.test(q) ? [rowCET, rowPP] : [rowPP, rowCET];
+  const total = pp.length + cet.length, sv = severe(pp) + severe(cet);
+  const head = total ? `${n(total)} live National Weather Service alert${total === 1 ? '' : 's'} touch${total === 1 ? 'es' : ''} their counties right now${sv ? `, ${n(sv)} severe or extreme` : ', none severe'}.` : 'No live National Weather Service alert touches their counties right now.';
+  const stale = snap?.fetched_at ? `<p>The live feed did not answer, so these are the alerts saved on ${esc(Fmt.date(String(snap.fetched_at).slice(0, 10)))}.</p>` : '';
+  const gap = down.length ? `<p>No alert data for ${esc(down.join(', '))} right now.</p>` : '';
+  return {
+    html: `<h4>Weather across the portfolio</h4><p>The portal tracks live weather alerts for two companies: Punctual Pros, where storms lift service calls, and CET, where storms bring emergency work on pump stations and generators. ${head}</p>${tbl(['Company', 'Alerts now', 'What is active', 'What it means'], rows)}${stale}${gap}<p>Fair Harbor's swim sales also move with spring weather, a seasonal effect with no alerts behind it. No weather alerts are tracked for Frontline, Thomas Scientific or BPI.</p><p>The 3D map's storm scene draws every alert in Pennsylvania and New Jersey, not only the ${n(pp.length)} in Punctual Pros counties.</p><div class="ch-src">Sources: National Weather Service alerts (live), ${cite('pp_demand_model')} (call multipliers are analyst assumptions).</div>`,
+    links: [app('#/pp/weather', 'Weather and demand'), app('#/signals/overview', 'What moves sales'), app('#/theater/play?scene=S5', 'Storm scene on the 3D map')],
+    followups: ["What do this week's storms mean for Punctual Pros?", 'How many techs on the peak day?'],
+  };
 }
 async function wastewater(q = '') {
   const d = await Data.research('cet_wwtp_targets'); if (!d) return null;
@@ -430,7 +545,7 @@ async function addonHistory(q) {
 }
 /** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
 async function dealModel(q) {
-  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261112194607').catch(() => null)]);
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261112225245').catch(() => null)]);
   if (!d || !L) return null;
   const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
   const P = pre.find(i => i.co === co && i.group !== 'generic') || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
@@ -563,6 +678,28 @@ function homeownersOffline() {
 function briefOffline() {
   return { html: `<h4>Property brief</h4><p>I can't brief this address right now. The brief comes from the research assistant, which looks the address up in public sale records and, in New Jersey, the state parcel list and permit feed. I can't reach it, and I won't guess at a house.</p><p>Ask again in a minute.</p>`, links: [], followups: [] };
 }
+/** The portfolio overview answers "what is the portfolio" and "which companies does BSP own", not every sentence with the word in it. */
+const FIRM_RX = "(?:bsp|broad sky(?: partners)?|we|they|the firm|the fund|you)";
+const OWNED_NOUN = "(?:compan(?:y|ies)|businesses|investments|holdings|platforms?)";   // "platforms" is matched in questions only; answers say "companies"
+const THE_PF = "(?:the|our|your|bsp'?s|broad sky'?s|the bsp|the broad sky)(?: current)? portfolio";
+const PORTFOLIO_RX = new RegExp([
+  `\\b(?:what(?:'s| is| are)|who(?:'s| is| are)|which ${OWNED_NOUN} (?:is|are)) in ${THE_PF}\\b`,
+  `\\b(?:what(?:'s| is| are)|who(?:'s| is| are)|which are) (?:the |our |your |bsp'?s |broad sky'?s |the bsp |the broad sky )?(?:six |6 |seven |7 |current )?portfolio(?: ${OWNED_NOUN})?\\s*[?.!]*$`,
+  `\\b(?:which|what|how many) (?:portfolio )?${OWNED_NOUN} (?:does|do|did|has|have) ${FIRM_RX} (?:own|owns|owned|hold|holds|held|have|has|back|backed|control|invested in|invest in|bought|buy|acquired)\\b`,
+  `\\b(?:which|what|how many) (?:portfolio )?${OWNED_NOUN} (?:is|are|sit|sits|make up|form|comprise|belong to) (?:in |part of )?${THE_PF}\\b`,
+  `\\bhow many (?:portfolio )?${OWNED_NOUN} (?:is|are) (?:there )?in (?:the|our) portfolio\\b`,
+  `\\bhow many portfolio ${OWNED_NOUN}(?: are there| in total)?\\s*[?.!]*$`,
+  `\\bhow many ${OWNED_NOUN} (?:are there|in total)\\s*[?.!]*$`,
+  `\\b(?:six|6|seven|7) or (?:six|6|seven|7) (?:portfolio )?${OWNED_NOUN}\\b`,
+  `\\bwhat (?:does|do) ${FIRM_RX} (?:own|hold)\\b`,
+  `\\bwhat does ${THE_PF} look like\\b`,
+  "\\b(?:show|list|give|see|open|name|describe|summari[sz]e|tell me about|walk me through|run ?down of|overview of|snapshot of|summary of)(?: me| us)?(?: all| each| every| the| our| your| bsp(?:'?s)?| broad sky(?:'?s)?| of)*(?: current| whole| entire| full)? portfolio(?: compan(?:y|ies))?(?: today| now| at a glance)?\\s*[?.!]*$",
+  "\\bportfolio (?:overview|summary|snapshot|rundown|list|at a glance)\\b",
+  "^(?:the |our |your |bsp'?s? |broad sky'?s? )*(?:current )?portfolio(?: compan(?:y|ies))?\\s*[?.!]*$",
+  "\\bwho (?:is|are) (?:broad sky|bsp)(?: partners)?\\s*[?.!]*$",
+  "\\bwhat (?:is|does) (?:broad sky|bsp)(?: partners)?(?: do| own| invest in)?\\s*[?.!]*$",
+  "\\b(?:about|overview of|profile of) (?:broad sky|bsp)(?: partners)?\\s*[?.!]*$",
+].join('|'), 'i');
 const PORTAL_INTENTS = [
   { id: 'profile', rx: [PROFILE_RX], run: profile },
   { id: 'brief', rx: [BRIEF_RX], run: briefOffline },
@@ -587,6 +724,7 @@ const PORTAL_INTENTS = [
   { id: 'ads', rx: [/\bads?\b|advertis|ctv|connected.?tv|tv commercials?|commercials\b|media plan|marketing (plan|spend|budget)|campaign/i], run: adsProgram },
   { id: 'nationwide_sub', rx: [/(which|what) (ai )?agents? pay|agents? .*(payback|fastest|first)|which (counties|markets|cities) (come )?first|help(ing)? the (pros|technicians|contractors)|programs? .*(technician|pros)|smith \+? ?howard|how does smith/i], run: nationwideSub },
   { id: 'expansion', rx: [/(nationwide|national|expand|scale|grow|take .* (further|beyond)|roll-?up).*(punctual|pros|hvac|home service)|(punctual|pros).*(nationwide|national|expand|scale)/i], run: expansionPlan },
+  { id: 'weather_all', rx: [{ test: wxScoped }], run: weatherPortfolio },   // weather for the portfolio, CET or every company
   { id: 'weather', rx: [/(weather|storm|forecast|heat ?wave|freeze|hurricane|snow).*(punctual|service call|demand|impact|this week|territory)|(punctual|pros).*(weather|storm|forecast)/i, /storm (impact|outlook)|service.?call pressure/i], run: weatherImpact },
   { id: 'wastewater', rx: [/wastewater|treatment plant|horton.*(call|target|account|first)|pump station/i], run: wastewater },
   { id: 'cet_due', rx: [/(bids?|rfps?|opportunit).*(due|closing|next \d+ days|this month|soon)|cet.*(bid|rfp|opportunit)/i], run: q => cetDue(Number((q.match(/(\d+) ?days/) || [])[1]) || 30) },
@@ -596,7 +734,8 @@ const PORTAL_INTENTS = [
   { id: 'movers', rx: [/new.?mover|home sales|deed|leads? in|mailing|just (bought|sold)|recent(ly)? (sold|bought)/i], run: movers },
   { id: 'os', rx: [/serviceos|gridos|firmos|labos|signalos|harboros|tech.?enable|tech.?forward|operating system|\bos\b/i], run: osConcept },
   { id: 'comps', rx: [/comps?\b|comparable|multiple|public (peer|compan)|trades? at|benchmark/i], run: comps },
-  { id: 'portfolio', rx: [/\bportfolio\b(?!\s+resource)|which companies|who is broad sky|what is broad sky|about broad sky|platforms|portfolio compan/i], run: portfolio },
+  { id: 'weather_all', rx: [{ test: wxOther }], run: weatherPortfolio },   // any other weather question no specific intent took
+  { id: 'portfolio', rx: [PORTFOLIO_RX], run: portfolio },
   { id: 'nav', rx: [/^(open|show|go to|take me to|navigate)\b/i], run: navigate },
 ];
 
@@ -787,7 +926,7 @@ const HOSTED_FIRST = new Set(['model', 'homeowners', 'brief']);   // intents the
 const LIVE_ONLY = new Set(['homeowners', 'brief']);   // answered from live records only: never from a prepared answer or the closest dataset
 const SRV_KIND = { page: 'page', 'portal-view': 'page', 'site-page': 'page', answer: 'page', research: 'dataset', model: 'model', firm: 'firm', 'firm-team': 'firm', 'firm-investment': 'firm', 'press-release': 'press', filing: 'filing', company: 'company', article: 'news', headline: 'news', reference: 'web', web: 'web', data: 'records' };
 function srvSource(s) {
-  const url = String(s?.url || ''), p = ownPath(url), href = p !== null ? ROOT + p : url;
+  const url = String(s?.url || ''), p = ownPath(url) ?? (/^(?:\.\/)?(?:[\w-]+\/)*[\w-]+\.html/.test(url) ? url.replace(/^\.\//, '') : null), href = p !== null ? ROOT + p : url;   // a page of this site, named from the site root, opens from any page depth
   const kind = SRV_KIND[s?.kind] || 'web';
   const desc = kind === 'page' || kind === 'dataset' ? '' : String(s?.publisher || '');
   return { key: null, label: terms(String(s?.title || 'Source')), desc, href: href || null, kind, asOf: s?.date ? String(s.date).slice(0, 10) : null, at: Date.now() };
@@ -1045,11 +1184,20 @@ function reveal(root, ctl) {
 export const Chat = {
   /** mode: 'inline' (hero), 'floating' (launcher + panel) or 'full' (assistant.html). Options are unchanged from v1, plus
       short_name: the short label for the launcher ("Ask {short_name}"); defaults to the persona's own short name. */
+  /** Where a question would go, without asking it: { intent, to: 'hosted' | 'grounded' | 'open', why }. `hosted` says whether the research
+      assistant is live (default true). 'open' means no grounded intent: a prepared answer, then the research assistant, then the closest data. */
+  route(q, { persona = 'portal', hosted: on = true, ctx = null, view = true } = {}) {
+    const r = routeOf(String(q || ''), (PERSONAS[persona] || PERSONAS.portal).intents || [], ctx, view);
+    const why = r.aboutView ? 'view' : r.hostedFirst ? 'tool' : r.generative ? 'writing' : r.hit ? 'intent' : 'none';
+    return { intent: r.hit?.id || null, to: r.toHosted && on ? 'hosted' : r.hit ? 'grounded' : 'open', why };
+  },
+  /** The text a docked assistant sends about the page behind it ({title, text, href} or null). */
+  viewContext,
   mount(el, opts = {}) {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261112194607'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261112225245'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };
@@ -1059,6 +1207,20 @@ const PERSONA_ORDER = ['portal', 'pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
 const uniq = a => [...new Set(a)];
 const normQ = s => String(s || '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
 const sameQ = (a, b) => !!a && !!b && normQ(a) === normQ(b);
+
+/** One routing decision for a question: the grounded intent it matches (after follow-up resolution) and whether it belongs to the
+    research assistant first (writing requests, deal maths and home records, questions about the view on screen). */
+function routeOf(q, intents, ctx, hasView = true) {
+  const match = s => intents.find(i => (i.rx || []).some(rx => rx.test(s)));
+  const aboutView = hasView && VIEW_RX.test(q);   // only a docked assistant has a view to be asked about; elsewhere the question takes its usual route
+  let hit = match(q), eq = q, fu = null;
+  if (!hit && !aboutView) { fu = resolveFollowUp(q, ctx); if (fu) { eq = fu.q; hit = match(eq); } }
+  // Writing-style requests (notes, memos, comparisons, opinions) go to hosted Claude with retrieved context, even when a data keyword matches.
+  const generative = GENERATIVE_RX.test(q) && !/^(open|show|which|how many|list|where|when|who)\b/i.test(q.trim());
+  // Deal maths goes to the hosted assistant when it is live: it runs the same acquisition model with each target's own estimates.
+  const hostedFirst = !!hit && HOSTED_FIRST.has(hit.id);
+  return { hit, eq, fu, aboutView, generative, hostedFirst, toHosted: generative || hostedFirst || aboutView };
+}
 
 class Widget {
   constructor(el, persona, personaId, opts) {
@@ -1351,23 +1513,22 @@ class Widget {
     const beP = backend();   // discovery runs alongside the grounded engine; it never blocks an intent answer
     try {
       const intents = [...(this.extra || []), ...(this.persona.intents || [])];
-      const match = s => intents.find(i => (i.rx || []).some(rx => rx.test(s)));
-      let hit = match(q), eq = q, fu = null;
-      if (!hit) { fu = resolveFollowUp(q, this.ctx); if (fu) { eq = fu.q; hit = match(eq); this.note(turn, fu); } }
-      st.push('Searching the portfolio data');
+      // A docked assistant reads the page behind it at ask time; the research assistant gets it with every question.
+      const view = this.mode === 'floating' ? viewContext() : null;
+      const { hit, eq, fu, aboutView, toHosted } = routeOf(q, intents, this.ctx, !!view);
+      if (fu) this.note(turn, fu);
+      st.push(aboutView && view ? 'Reading this view' : 'Searching the portfolio data');
       if (hit && LLM.key() && LLM.always()) await beP;   // "always use Claude" applies to the personal key only when no backend is live
-      // Writing-style requests (notes, memos, comparisons, opinions) go to hosted Claude with retrieved context, even when a data keyword matches.
-      const generative = GENERATIVE_RX.test(q) && !/^(open|show|which|how many|list|where|when|who)\b/i.test(q.trim());
-      // Deal maths goes to the hosted assistant when it is live: it runs the same acquisition model with each target's own estimates.
-      const hostedFirst = !!hit && HOSTED_FIRST.has(hit.id);
-      if (generative || hostedFirst) await beP;
-      const skipIntent = !!(LLM.key() && LLM.always() && !hosted()) || ((generative || hostedFirst) && hosted());
+      if (toHosted) await beP;
+      const skipIntent = !!(LLM.key() && LLM.always() && !hosted()) || (toHosted && hosted());
+      // A question about the view that the research assistant cannot take gets the closest grounded answer, and says so first.
+      const viewNote = (tried, own) => `<p class="ch-hint">${tried ? "So I can't read this view for you right now." : "The research assistant is offline, so I can't read this view for you."} ${own ? 'This is what the view itself says.' : 'This is the closest answer from the portfolio data.'}</p>`;
       let res = null;
       if (hit && !skipIntent) { try { res = await hit.run(eq, { progress: t => st.push(t), persona: this.persona, history: this.history, context: this.ctx }); } catch (e) { console.warn('intent failed', hit.id, e); res = null; } }
       if (ctl.stopped) return this.stopped(turn, st, q);
       if (res) {
         TRACK = null;
-        const rec = { kind: 'grounded', q, eq: eq !== q ? eq : undefined, note: fu?.from, html: res.html, links: res.links || [], followups: res.followups || [], sources: tr.list(), intent: hit.id, engine: GROUNDED() };
+        const rec = { kind: 'grounded', q, eq: eq !== q ? eq : undefined, note: fu?.from, html: (aboutView ? viewNote(false, false) : '') + res.html, links: res.links || [], followups: res.followups || [], sources: tr.list(), intent: hit.id, engine: GROUNDED() };
         await st.settle();
         if (ctl.stopped) return this.stopped(turn, st, q);
         this.prepare(body, rec); rec.meta = st.finish(rec.sources.length, 'Answered', rec.engine, groundedTip());
@@ -1380,14 +1541,14 @@ class Widget {
       const B = await beP;
       if (ctl.stopped) return this.stopped(turn, st, q);
       if (B) {
-        let pre = null; try { pre = hit && LIVE_ONLY.has(hit.id) ? null : await B.precomputed(eq); } catch (e) { console.debug('deep dives unavailable', e?.message || e); }
+        let pre = null; try { pre = aboutView || (hit && LIVE_ONLY.has(hit.id)) ? null : await B.precomputed(eq); } catch (e) { console.debug('deep dives unavailable', e?.message || e); }   // a prepared answer cannot know what is on screen
         if (ctl.stopped) return this.stopped(turn, st, q);
         if (pre) return await this.deepDive(q, eq, fu, turn, st, pre, ctl);
       }
       let warn = '';
       if (hosted()) {   // the hosted assistant searches its own knowledge base; the local datasets are the fallback
         TRACK = null;
-        const r = await this.claude(q, turn, st, [], [], [], ctl, 'hosted'); if (r.rec) return r.rec;
+        const r = await this.claude(q, turn, st, [], [], [], ctl, 'hosted', view); if (r.rec) return r.rec;
         if (ctl.stopped) return this.stopped(turn, st, q);
         warn = `<p class="ch-warn">${esc(r.error)}</p>`;
       }
@@ -1401,11 +1562,27 @@ class Widget {
         this.ctx = { q: eq, intent: hit.id, co: 'pp', st: stateOf(eq) };
         return rec;
       }
+      if (aboutView && (hit || (view && !LLM.key()))) {   // nobody could read the view: the closest grounded answer, or the view's own words, labelled as such
+        let off = null; TRACK = tr;
+        if (hit) { try { off = await hit.run(eq, { progress: t => st.push(t), persona: this.persona, history: this.history, context: this.ctx }); } catch (e) { console.warn('intent failed', hit.id, e); } }
+        TRACK = null;
+        const own = !off && !!view; if (own) off = viewSummary(view);
+        if (ctl.stopped) return this.stopped(turn, st, q);
+        if (off) {
+          const rec = { kind: 'grounded', q, html: warn + viewNote(!!warn, own) + off.html, links: off.links || [], followups: off.followups || [], sources: own ? [] : tr.list(), intent: own ? 'view' : hit.id, engine: GROUNDED() };
+          await st.settle();
+          if (ctl.stopped) return this.stopped(turn, st, q);
+          this.prepare(body, rec); rec.meta = st.finish(rec.sources.length, 'Answered', rec.engine, groundedTip());
+          await this.present(turn, rec, ctl, st.t0);
+          this.ctx = { q: eq, intent: own ? null : hit.id, co: coOf(eq) || this.ctx?.co || null, st: stateOf(eq) };
+          return rec;
+        }
+      }
       const docs = await retrieve(eq, this.persona); TRACK = null;
       if (ctl.stopped) return this.stopped(turn, st, q);
       const sources = [], sIdx = docs.map(d => { const s = this.docSource(d); let k = sources.findIndex(x => x.label === s.label && x.href === s.href); if (k < 0) { sources.push(s); k = sources.length - 1; } return k; });
       if (!hosted() && LLM.key()) {
-        const r = await this.claude(q, turn, st, docs, sources, sIdx, ctl, 'key'); if (r.rec) return r.rec;
+        const r = await this.claude(q, turn, st, docs, sources, sIdx, ctl, 'key', view); if (r.rec) return r.rec;
         if (ctl.stopped) return this.stopped(turn, st, q);
         warn = `<p class="ch-warn">Deep research didn't answer (${esc(r.error)}), so here is the closest I've got from our data.</p>`;
       }
@@ -1414,7 +1591,7 @@ class Widget {
       const cover = qt.length ? qt.filter(w => hay.has(w) || (w.length > 4 && [...hay].some(x => x.startsWith(w.slice(0, -1))))).length / qt.length : 0;
       const offerKey = DEV && !BE?.endpoint && !LLM.key();
       const keyHint = offerKey ? `<p class="ch-hint">For questions outside the portfolio data, <a href="#" data-a="settings" data-adv="1">add a model key</a> and the assistant answers with this context.</p>` : '';
-      const intro = cover >= 0.75 ? '<p>Here is what we have on that in the portal:</p>' : `<p>I don't have a direct answer in our data, but this is the closest I've got:</p>`;
+      const intro = cover >= 0.75 && !aboutView ? '<p>Here is what we have on that in the portal:</p>' : `<p>I don't have a direct answer in our data, but this is the closest I've got:</p>`;
       const html = warn + (docs.length ? (faq ? faq.html : `${intro}<ul>${docs.map((d, i) => `<li><b>${esc(sources[sIdx[i]].label)}</b> <span class="ch-ref" data-src="${sIdx[i]}">${sIdx[i] + 1}</span> — ${esc(clip(terms(d.s), 180))}</li>`).join('')}</ul>${cover < 0.75 ? keyHint : ''}`) : `<p>I couldn't find that in the portal's datasets.${offerKey ? ' Try one of these, or <a href="#" data-a="settings" data-adv="1">add a model key</a> for open questions.' : ' Try one of these.'}</p>`);
       const rec = { kind: 'retrieval', q, eq: eq !== q ? eq : undefined, note: fu?.from, html, links: sources.filter(s => s.href).slice(0, 3).map(s => link(s.href, s.label)), followups: uniq(this.persona.suggestions).filter(s => !sameQ(s, q) && !sameQ(s, eq)).slice(0, docs.length ? 2 : 3), sources: docs.length ? sources : [], engine: GROUNDED() };
       await st.settle();
@@ -1467,7 +1644,7 @@ class Widget {
     this.renderAfter(turn, rec); this.msgs.setAttribute('aria-busy', 'false');
   }
   /** Stream an open question from Claude, hosted (via: 'hosted') or with the visitor's key (via: 'key'), grounded on retrieved docs. */
-  async claude(q, turn, st, docs, sources, sIdx, ctl, via) {
+  async claude(q, turn, st, docs, sources, sIdx, ctl, via, view = null) {
     const body = turn.querySelector('.ch-answer'); const isHosted = via === 'hosted';
     let model = isHosted ? (BE.model || MODEL_DEFAULT) : LLM.model();
     let srv = false;   // true once the hosted assistant sends its own numbered sources
@@ -1476,7 +1653,8 @@ class Widget {
     st.push(isHosted && !docs.length ? 'Searching the knowledge base' : docs.length ? `Researching with ${docs.length} source${docs.length === 1 ? '' : 's'} from the portfolio data` : 'Researching');
     let stream, started = false; const think = new Think(turn);
     if (isHosted) {
-      stream = BE.chat({ persona: this.id, messages: hist, question: q, context: docs.map((d, i) => ({ title: sources[sIdx[i]]?.label || d.t, text: terms(d.s), href: d.href || '' })), onEvent: ev => {
+      // The page behind a docked assistant goes first: the server numbers it [1] and labels it as the page the visitor is on.
+      stream = BE.chat({ persona: this.id, messages: hist, question: q, context: [...(view ? [{ title: view.title, text: view.text, href: view.href }] : []), ...docs.map((d, i) => ({ title: sources[sIdx[i]]?.label || d.t, text: terms(d.s), href: d.href || '' }))], onEvent: ev => {
         if (ev.type === 'meta' && ev.model) { if (ev.fallback) st.push('Switching to a backup model'); model = ev.model; }
         else if (ev.type === 'done' && ev.model) model = ev.model;
         else if (ev.type === 'sources' && Array.isArray(ev.sources)) { srv = true; sources.length = 0; for (const s of ev.sources) sources.push(srvSource(s)); }
@@ -1485,7 +1663,7 @@ class Widget {
       } });
     } else {
       const ctxText = docs.map((d, i) => `[${i + 1}] ${sources[sIdx[i]]?.label || d.t}: ${terms(d.s)}`).join('\n');
-      const sys = `You are ${this.persona.name}, an assistant embedded in ${this.id === 'portal' ? "BSP Desk, the portal of BSP (a private-equity firm in New York; portfolio: Commonwealth Electrical Technologies, Punctual Pros, Frontline Managed Services, Thomas Scientific, Bully Pulpit International, Fair Harbor)" : `the website of ${this.persona.name.replace(/ (assistant|desk|advisor|concierge|helper)$/i, '')}`}. Answer briefly in markdown (headings of six words or fewer, bullets, bold numbers). Ground every claim in the numbered context below and cite it inline as [1], [2]; if the context does not cover it, say so and point to the most relevant portal view. Say "growth plan" rather than "playbook", and "portfolio company" rather than "platform" for a sponsor's company ("platform" is fine for software). Never print dataset identifiers or underscores; use the plain-English names in the context. Write dates in words (Oct 6, 2026). No greetings or addressing anyone by name. Label estimates "est.". Today is ${new Date().toDateString()}.\n\nCONTEXT:\n${ctxText}`;
+      const sys = `You are ${this.persona.name}, an assistant embedded in ${this.id === 'portal' ? "BSP Desk, the portal of BSP (a private-equity firm in New York; portfolio: Commonwealth Electrical Technologies, Punctual Pros, Frontline Managed Services, Thomas Scientific, Bully Pulpit International, Fair Harbor)" : `the website of ${this.persona.name.replace(/ (assistant|desk|advisor|concierge|helper)$/i, '')}`}. Answer briefly in markdown (headings of six words or fewer, bullets, bold numbers). Ground every claim in the numbered context below and cite it inline as [1], [2]; if the context does not cover it, say so and point to the most relevant portal view. Say "growth plan" rather than "playbook", and "portfolio company" rather than "platform" for a sponsor's company ("platform" is fine for software). Never print dataset identifiers or underscores; use the plain-English names in the context. Write dates in words (Oct 6, 2026). No greetings or addressing anyone by name. Label estimates "est.". Today is ${new Date().toDateString()}.\n\nCONTEXT:\n${ctxText}${view ? `\n\nON SCREEN (the page the visitor is looking at; answer questions about "this" or "what I'm seeing" from it, without a citation number):\n${view.text}` : ''}`;
       stream = LLM.stream(sys, hist, q);
     }
     const caret = document.createElement('span'); caret.className = 'ch-caret'; caret.setAttribute('aria-hidden', 'true');

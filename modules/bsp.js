@@ -6,11 +6,11 @@
    Datasets: BSP acquisition methodology, BSP professional network,
    Punctual Pros / CET / Frontline and Thomas Scientific add-on target screens.
    ═══════════════════════════════════════════════════════════════════════════ */
-import * as Copy from './copy.js?v=20261112194607';
+import * as Copy from './copy.js?v=20261112225245';
 import {
   loadBundle, isTargetTest, PLATFORMS, PORDER, sellerLabel, DEAL_TYPE, STRENGTH, TESTS, critShort, GROUPS, TYPE_LABEL, REL_LABEL,
   graphSVG, legendHTML, stripSVG, bindGraph, nodeDetail, introFor, firstCallScript, nextFive, fmtMonth, fmtDay, monthsBetween, clip, host, TODAY,
-} from './bsp-lib.js?v=20261112194607';
+} from './bsp-lib.js?v=20261112225245';
 
 const COLOR = 'var(--sys-brand)';
 /* company accents are the system tokens (UNIFIED.md §6); Smith + Howard, exited, reads the neutral mute */
@@ -33,7 +33,7 @@ const SRC_POOLS = 'Add-on target screens: Punctual Pros, CET, Frontline, Thomas 
 /* free text from the deal record in plain English: ISO dates in words ("2027-12-14" → "Dec 14, 2027", "2026-06" → "Jun 2026", "Q4-2024" → "Q4 2024") */
 const words = s => s == null ? s : Copy.text(String(s).replace(/\bQ([1-4])-((?:19|20)\d\d)\b/g, 'Q$1 $2').replace(/\b((?:19|20)\d\d)-(0[1-9]|1[0-2])\b(?!-\d)/g, (m, y, mo) => fmtMonth(`${y}-${mo}-01`)));
 const openInsp = (ctx, opts) => { ctx.inspector.open(opts); document.querySelector('#inspector .insp-body')?.classList.add('m-bsp'); };
-const injectCss = () => { if (!document.getElementById('css-bsp')) { const l = document.createElement('link'); l.id = 'css-bsp'; l.rel = 'stylesheet'; l.href = 'modules/bsp.css?v=20261112194607'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-bsp')) { const l = document.createElement('link'); l.id = 'css-bsp'; l.rel = 'stylesheet'; l.href = 'modules/bsp.css?v=20261112225245'; document.head.appendChild(l); } };
 
 let _b = null;
 function bundle(data) {
@@ -320,7 +320,7 @@ export default {
     { id: 'network', name: 'Network', icon: '⬡', render: viewNetwork },
   ],
   tour: [
-    { order: 925, hash: '#/bsp/deals', caption: '<b>How BSP buys.</b> Seven companies, twenty-one named add-ons and one exit, each with seller, advisers and lenders.', narration: 'Every disclosed deal: seven companies, twenty-one named add-ons and one exit, each with seller and lenders.' },
+    { order: 925, hash: '#/bsp/deals', caption: '<b>How BSP buys.</b> Seven companies bought, twenty-one named add-ons and one exit, each with seller, advisers and lenders.', narration: 'Every disclosed deal: seven companies bought, twenty-one named add-ons and one exit, each with seller and lenders.' },
     { order: 926, hash: '#/bsp/patterns', caption: '<b>Deal patterns.</b> Thesis first, founder CEOs stay, first add-on near month eight, a new lender each time.', narration: 'The patterns: thesis first, founder CEOs stay, first add-on near month eight, a new lender each time.' },
     { order: 927, hash: '#/bsp/rubric', caption: '<b>The rubric.</b> Ten inferred criteria scored across every target, with the top fifteen and an intro path.', narration: 'The rubric scores every add-on target on ten inferred criteria. Start with the top fifteen.' },
   ],

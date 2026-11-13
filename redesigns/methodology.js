@@ -4,7 +4,7 @@ import {
   loadBundle, esc, PLATFORMS, PORDER, sellerLabel, DEAL_TYPE, STRENGTH, TESTS, isTargetTest, critShort, TYPE_LABEL,
   stripSVG, graphSVG, legendHTML, bindGraph, nodeDetail, introFor, nextFive, firstCallScript, buildFaq,
   fmtMonth, fmtDay, monthsBetween, clip, host, estHTML,
-} from '../modules/bsp-lib.js?v=20261112194607';
+} from '../modules/bsp-lib.js?v=20261112225245';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -34,7 +34,7 @@ function renderKpis(b) {
   const c = b.cadence;
   const k = (label, value, sub) => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${esc(label)}</span><span class="sys-kpi-value">${value}</span><span class="sys-kpi-sub">${sub}</span></div>`;
   $('#kpis').innerHTML = [
-    k('Companies', c.platforms, `${c.pePlatforms} from sponsors, ${c.platforms - c.pePlatforms} from founders`),
+    k('Companies bought', c.platforms, `${c.pePlatforms} from sponsors, ${c.platforms - c.pePlatforms} from founders`),
     k('Add-ons', c.addonsStated ?? '—', `${c.addonsNamed} named; none from a sponsor`),
     k('Months between companies', n1(c.medianGap), 'Median, Jan 2022 to Feb 2025'),
     k('Months to first add-on', n1(c.medianFirst), 'Median across five companies'),

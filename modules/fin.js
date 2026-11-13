@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261112194607';
+import * as Copy from './copy.js?v=20261112225245';
 /* ═══════════════════════════════════════════════════════════════════════════
    Filings & financials — portfolio-wide financial and regulatory intelligence.
    BSP's own SEC filings (Form D / ADV), each platform's public
@@ -105,7 +105,7 @@ const clip = (t, n) => { const x = clean(t); if (x.length <= n) return x; const 
 const shortEst = s => String(s || '').replace(/\s*\([^)]*\)/g, '').split(/;\s/)[0].trim();
 
 function injectCss() {
-  if (!document.getElementById('css-fin')) { const l = document.createElement('link'); l.id = 'css-fin'; l.rel = 'stylesheet'; l.href = 'modules/fin.css?v=20261112194607'; document.head.appendChild(l); }
+  if (!document.getElementById('css-fin')) { const l = document.createElement('link'); l.id = 'css-fin'; l.rel = 'stylesheet'; l.href = 'modules/fin.css?v=20261112225245'; document.head.appendChild(l); }
 }
 
 /* ── data layer ─────────────────────────────────────────────────────────── */
@@ -972,7 +972,7 @@ async function methodsView(ctx) {
   el.querySelector('#mt-cv').innerHTML = cav.length ? `<div>${cav.slice(0, 60).map(c => `<div class="sig">${fmt.chip(Copy.dataset(c.ds), c.color)}<div class="t" style="color:var(--sys-ink-2)">${esc(Copy.text(c.text))}</div></div>`).join('')}</div>` : ui.empty('No caveats recorded');
 
   el.querySelector('#mt-acts').innerHTML = actionList(ctx, [
-    { chip: 'Paid', color: 'var(--sys-brand)', text: 'License a PitchBook / Capital IQ seat for the PRG finance workstream: deal records for 7 companies and 23 add-ons close the largest share of gaps.' },
+    { chip: 'Paid', color: 'var(--sys-brand)', text: 'License a PitchBook / Capital IQ seat for the PRG finance workstream: deal records for the seven companies BSP has owned and their 23 add-ons close the largest share of gaps.' },
     { chip: 'UCC', color: 'var(--sys-warn)', text: 'Run manual SOS / UCC searches (MA, CT, PA, NJ, DE, MO) to name agent banks for CET, Punctual Pros and Frontline.' },
     { chip: 'BDC', color: 'var(--co-ts)', text: 'Refresh BDC schedules after the Sept 30 quarter-end 10-Qs (early Nov 2026): Thomas Scientific and rival marks first.' },
     { chip: 'FH', color: 'var(--co-fh)', text: D.cos.find(x => x.co.id === 'fh')?.d ? 'Review the Fair Harbor filings track against the apparel DTC comps.' : 'Complete the Fair Harbor filings track (Fair Harbor public filings) so all six companies are covered.' },

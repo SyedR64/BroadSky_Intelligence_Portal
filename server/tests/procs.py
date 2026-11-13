@@ -74,3 +74,21 @@ def start_server(port, log_path, db_path, mock_port=None, key=TEST_KEY, **extra_
     env.update({k: str(v) for k, v in extra_env.items()})
     args = [sys.executable, '-m', 'uvicorn', 'app:app', '--host', '127.0.0.1', '--port', str(port)]
     return Proc(args, log_path, env=env, cwd=SERVER_DIR, ready_url=f'http://127.0.0.1:{port}/health')
+
+
+_STATIC = """
+import functools, http.server, sys
+class S(http.server.ThreadingHTTPServer):
+    request_queue_size = 256   # a page pulls dozens of modules at once; the default backlog of 5 resets connections
+    daemon_threads = True
+class H(http.server.SimpleHTTPRequestHandler):
+    protocol_version = 'HTTP/1.0'
+    def log_message(self, *a):
+        pass
+S(('127.0.0.1', int(sys.argv[1])), functools.partial(H, directory=sys.argv[2])).serve_forever()
+"""
+
+
+def start_static(port, log_path, root, ready_path='/'):
+    """A threaded static file server with a deep accept queue, for browser tests."""
+    return Proc([sys.executable, '-c', _STATIC, str(port), root], log_path, ready_url=f'http://127.0.0.1:{port}{ready_path}')

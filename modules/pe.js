@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261112194607';
+import * as Copy from './copy.js?v=20261112225245';
 /* PE landscape — history, trajectory, deal flow and buy-and-build benchmarks for the sponsors competing with BSP.
    Data: Private-equity landscape (35 firms), BSP firm profile (BSP reference), Competitor filings (financials of rival companies),
    sales/* (home-sale turnover in the counties each platform serves: PP PA/NJ, CET MA/CT/RI, BPI DC, Fair Harbor NYC). */
@@ -100,7 +100,7 @@ async function load(ctx) {
   return _bundle;
 }
 
-function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261112194607'; document.head.appendChild(l); } }
+function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261112225245'; document.head.appendChild(l); } }
 function missing(ctx, title) { ctx.el.innerHTML = ctx.ui.pageHead({ title, sub: 'Competitive intelligence on the private-equity sponsors bidding against BSP.' }) + ctx.ui.note('Research dataset <b>Private-equity landscape</b> is not yet available (still being verified). This view will populate automatically once it is published.', 'warn'); }
 const srcFoot = (ctx, meta, extra) => ctx.ui.source(SRC_PE.text, null, meta?.generated) + (extra ? ` <span class="dim">· ${extra}</span>` : '');
 
@@ -210,7 +210,7 @@ async function landscape(ctx) {
     { label: 'Latest-fund capital', value: fmt.money(capital), sub: `${funds.length} rival funds · Fund I ranks #${rank}`, color: 'var(--c-pe)' },
     { label: 'Deals 2025–26', value: fmt.num(B.deals.length), sub: `${B.deals.filter(d => d.type === 'add_on').length} add-ons · ${B.deals.filter(d => d.type === 'exit').length} exits (disclosed)`, color: 'var(--sys-info)' },
     { label: 'Rival companies in BSP sectors', value: fmt.num(overlapPlats.length), sub: `held, of ${fmt.num(B.plats.length)} companies tracked`, color: 'var(--sys-warn)' },
-  ]) + (B.bsp ? '' : `<div class="mt-12">${ui.note('Research dataset <b>BSP firm profile</b> is not available — the BSP reference uses the published facts (7 companies, 23 add-ons, 1 exit).', 'warn')}</div>`) + `
+  ]) + (B.bsp ? '' : `<div class="mt-12">${ui.note('Research dataset <b>BSP firm profile</b> is not available — the BSP reference uses the published facts (six companies today, seven since launch; 23 add-ons, 1 exit).', 'warn')}</div>`) + `
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'BSP reference — scale vs peers', sub: 'The yardstick for every card below', accent: true, body: `<div class="sys-kpis pe-ref">
         <div class="sys-kpi pe-stat"><div class="sys-kpi-label l">Fund I</div><div class="sys-kpi-value v">${fmt.money(bspRef.fund)}</div><div class="sys-kpi-sub s" title="Broad Sky Partners, LP total sold per SEC Form D${bspRef.investors ? ` (${bspRef.investors} investors)` : ''}">Form D, ${esc(bspRef.fundClose)}${bspRef.spvTotal ? ` · +${fmt.money(bspRef.spvTotal)} deal SPVs` : ''}</div></div>
@@ -525,7 +525,7 @@ async function platforms(ctx) {
     { label: 'In BSP sectors', value: fmt.num(inB.length), sub: `${fmt.num(inB.filter(p => p._bucket === 'punctual_pros').length)} residential services`, color: 'var(--sys-warn)' },
     { label: 'Disclosed add-on counts', value: fmt.num(withAdd.length), sub: `${fmt.num(withAdd.reduce((s, p) => s + p.add_ons_count, 0))} add-ons in total`, color: 'var(--sys-info)' },
     { label: 'Rival median pace', value: `${fmt.num(rivMed, 1)}<small>/yr</small>`, sub: `${withVel.length} companies with an entry year`, color: 'var(--sys-bad)' },
-    { label: 'BSP median pace', value: `${fmt.num(bspMed, 1)}<small>/yr</small>`, sub: `${bspTotal} add-ons across ${bspPlats.length} portfolio compan${bspPlats.length === 1 ? 'y' : 'ies'}`, color: 'var(--sys-brand)' },
+    { label: 'BSP median pace', value: `${fmt.num(bspMed, 1)}<small>/yr</small>`, sub: `${bspTotal} add-ons, ${bspPlats.length} compan${bspPlats.length === 1 ? 'y' : 'ies'} owned since launch`, color: 'var(--sys-brand)' },
   ]) + (B.bsp ? '' : `<div class="mt-12">${ui.note('Research dataset <b>BSP firm profile</b> is not available — the BSP benchmark falls back to Smith + Howard only (published exit facts); BSP pace is not representative until the BSP firm profile is restored.', 'warn')}</div>`) + `
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Add-on velocity — rivals vs BSP', sub: 'Disclosed add-ons ÷ years held (mid-year entry assumed where month unknown) · BSP companies marked ▶', actions: `<div id="pe-vseg"></div>`, body: `<div id="pe-vel"></div>`, foot: srcFoot(ctx, meta, 'add-on counts mix lifetime and single-year figures — indicative') + ` · ${ui.source('BSP firm profile', 'https://broadskypartners.com/news/', B.bsp?.meta?.generated)}` })}

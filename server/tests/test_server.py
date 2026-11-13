@@ -167,6 +167,8 @@ def test_portal_persona_and_context_format(env):
     assert b['tools'][5] == {'type': 'web_search_20260209', 'name': 'web_search', 'max_uses': 3}
     src = b['messages'][-1]['content'][0]['text']
     assert src.startswith('<sources>\n[1] Debt (This page) (from the page the visitor is on)\nLeverage & terms\n\n[2] Plan (This page) app.html#plan (from the page the visitor is on)\nx\n\n[3] ')
+    # the rule that makes a question about "this view" get answered from the page context, in the same words the sources block uses
+    assert '1a. A source marked "(from the page the visitor is on)"' in s and 'answer from that source first' in s and 'Do not answer with a general overview instead.' in s
 
 
 def test_knowledge_search_tool_round_trip(env):

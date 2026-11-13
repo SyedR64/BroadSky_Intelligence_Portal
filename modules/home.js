@@ -1,5 +1,5 @@
 /* Command Center — portfolio-wide situational awareness */
-import { dataset, srcLabel } from './copy.js?v=20261112194607';
+import { dataset, srcLabel } from './copy.js?v=20261112225245';
 const GROUP_TXT = { research: 'Research', sales: 'Deed records', legacy: 'Reference table' };
 const BASIS_TXT = { live: 'Checked today', snapshot: 'Last update', 'live (manifest)': 'Last update', missing: 'Unavailable' };
 const COS = [
@@ -330,8 +330,8 @@ async function firmView(ctx) {
 
   el.innerHTML = ui.pageHead({
     title: 'Firm profile',
-    sub: `Fund I is ${fund ? fmt.money(fund) : '—'} from ${cap?.investors ?? '—'} investors. ${spvs.length} single-deal vehicles add ${fmt.money(spvSum)} of co-investment, so investors back larger checks. ${fmt.num(stats.platforms)} companies, ${fmt.num(stats.add_ons)} add-ons, one exit.`,
-    chips: `${fmt.chip(`Relaunched ${f.relaunched ? monYr(f.relaunched) : 'Jun 2021'}`, 'var(--sys-brand)')}${fund ? fmt.chip(`Fund I ${fmt.money(fund)}`) : ''}${spvSum ? fmt.chip(`Deal vehicles ${fmt.money(spvSum)}`) : ''}${fmt.chip(`${stats.platforms} companies · ${stats.add_ons} add-ons`)}${fmt.chip(`Exit: S+H, Aug 2026`)}`,
+    sub: `Fund I is ${fund ? fmt.money(fund) : '—'} from ${cap?.investors ?? '—'} investors. ${spvs.length} single-deal vehicles add ${fmt.money(spvSum)} of co-investment, so investors back larger checks. ${fmt.num(stats.current_holdings ?? 6)} companies today, ${fmt.num(stats.platforms)} since launch. ${fmt.num(stats.add_ons)} add-ons, one exit.`,
+    chips: `${fmt.chip(`Relaunched ${f.relaunched ? monYr(f.relaunched) : 'Jun 2021'}`, 'var(--sys-brand)')}${fund ? fmt.chip(`Fund I ${fmt.money(fund)}`) : ''}${spvSum ? fmt.chip(`Deal vehicles ${fmt.money(spvSum)}`) : ''}${fmt.chip(`${stats.current_holdings ?? 6} held · ${stats.platforms} since launch · ${stats.add_ons} add-ons`)}${fmt.chip(`Exit: S+H, Aug 2026`)}`,
     actions: `<a class="${ui.btnCls('secondary', '')}" href="#/fin/portfolio">Portfolio financial picture</a><a class="${ui.btnCls('secondary', '')}" href="#/home/overview">Exit readiness</a>`,
   }) +
   ui.kpis([
@@ -401,6 +401,6 @@ export default {
     { order: 100, hash: '#/home/overview', caption: '<b>BSP Desk.</b> Six companies. Every number is tied to a decision.', narration: 'This is BSP Desk. Six companies, and every number is tied to a decision.', duration: 7000 },
     { order: 105, hash: '#/home/overview', caption: '<b>Exit readiness.</b> Hold, add-ons, value, debt and exit window per company, against the Smith + Howard exit.', narration: 'The scoreboard shows hold, add-ons, value, debt and exit window, against the Smith and Howard exit.', duration: 9000 },
     { order: 110, hash: '#/home/overview', caption: '<b>This week.</b> Bid deadlines, market moves, weather alerts, top add-ons and rival deals. <b>Data sources</b> lists every source.', narration: 'Signals show bid deadlines, market moves, weather alerts, add-ons and rival deals. Data sources lists every source.', duration: 9000 },
-    { order: 120, hash: '#/home/firm', caption: '<b>BSP.</b> A $335M Fund I, 7 companies, 23 add-ons and one exit: Smith + Howard, sold August 2026.', narration: 'The firm: a three hundred thirty-five million dollar fund, seven companies, twenty-three add-ons, one exit.', duration: 7000 },
+    { order: 120, hash: '#/home/firm', caption: '<b>BSP.</b> A $335M Fund I, six companies today, 23 add-ons, one exit: Smith + Howard, sold August 2026.', narration: 'The firm: a three hundred thirty-five million dollar fund, six companies today, twenty-three add-ons, one exit.', duration: 7000 },
   ],
 };

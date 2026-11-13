@@ -48,7 +48,7 @@ No marketing cadence: no taglines ("one system for the whole portfolio"), no tri
 |---|---|
 | `assets/system.css` | Tokens (`--sys-*`, `--co-*`), frame, scaffolding, components, dark variant, print. The only shared stylesheet. |
 | `assets/frame.js` | `Frame.mount(opts)` injects top bar, concept tag, breadcrumb (folded into the page's sub-nav when it has one), footer, Ask button, hotkey, sub-nav scroll-spy and the copy safety net. Also exports `humanize`, `humanizeText`, `label`, `LABELS`, `COMPANIES`. |
-| `assets/chat.js` / `chat.css` | Grounded assistant. Opened by the frame's Ask button; pages still mount it with their persona. |
+| `assets/chat.js` / `chat.css` | Grounded assistant. Opened by the frame's Ask button; pages still mount it with their persona. A docked assistant sends the research assistant a short text of the page behind it (title, `h1`, `.sys-lead`, `.sys-kpi` tiles, `.sys-note`); a view with more to say sets `window.BSPView = { describe() }` (the 3D map does). |
 | page CSS (`site.css`, `growth-plan.css`, `app.css` …) | Page-specific layout only (maps, demos, charts). No colours, fonts, radii, header, banner or footer. Read tokens with `var(--sys-…)`. |
 
 Retire as pages migrate: `.announce`, `.concept` / `.concept-in` banners, every private `<header class="nav|hdr">`, every private `<footer>`, `landing.css` frame and pill rules (`.nav`, `.pill`, `.foot`), and the rail's site-link block in `app.html`.

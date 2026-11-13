@@ -8,13 +8,13 @@
      Basemap             OpenFreeMap vector styles (key-free): /styles/dark, fallback /styles/positron
      Terrain             AWS Terrarium DEM tiles (CORS-enabled), exaggeration 1.4, plus hillshade
    Usage:
-     import { Theater } from './assets/theater.js?v=20261112194607';
+     import { Theater } from './assets/theater.js?v=20261112225245';
      await Theater.mount(el, { autoplay: true, scene: 'S1', onScene: (id, scene) => {} });
      Theater.play(); Theater.pause(); Theater.goTo('S3'); Theater.destroy();
    window.BSPTheater exposes the same API (plus state()) for automation.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-import { label } from './frame.js?v=20261112194607';
+import { label } from './frame.js?v=20261112225245';
 /* Caption source lines: dataset keys become their readable names (Frame.label); {id, note} adds a note in brackets. */
 const RX_KEY = /^[a-z][a-z0-9]*(?:_[a-z0-9]+)+$/;
 const SRC = (...parts) => [...new Set(parts.map(p => typeof p === 'string' ? (RX_KEY.test(p) ? label(p) : p) : `${label(p.id)} (${p.note})`))].join(' · ');
@@ -362,7 +362,7 @@ class TheaterInstance {
     window.addEventListener('keydown', this._onKey);
     this._syncPlay();
 
-    if (!this.core) this.core = await import('./core.js?v=20261112194607');
+    if (!this.core) this.core = await import('./core.js?v=20261112225245');
     const baseP = loadBase(this.core);
     if (!webglOK() || this.opts.forceFallback) return this._fallback(this.opts.forceFallback ? 'Static fallback requested.' : 'WebGL is not available in this browser, so the 3D map is showing a static 2D map.', baseP);
     loadCss(LIBS.mlCss, 'maplibre-css');
@@ -637,6 +637,34 @@ class TheaterInstance {
     try { this.leaflet && this.leaflet.remove(); } catch { }
     this.root?.remove(); this.map = null; this.overlay = null;
   }
+  /** What is on screen in plain words, for the assistant: the caption as shown, the legend, and the live alerts the storm layer draws. */
+  describe() {
+    const sc = this.scene; if (!sc || this.destroyed) return null;
+    const txt = el => String(el?.textContent || '').replace(/\s+/g, ' ').trim();
+    const cap = q => txt(this.$cap?.querySelector(q));
+    const lines = [`Scene ${SCENES.indexOf(sc) + 1} of ${SCENES.length} on the 3D map: ${sc.name}. The other scenes: ${SCENES.filter(x => x !== sc).map(x => x.name).join(', ')}.`];
+    const legend = [...(this.$legend?.querySelectorAll('.li') || [])].map(txt).filter(Boolean);
+    if (legend.length) lines.push(`Legend: ${legend.join('; ')}.`);
+    const a = this.alerts;
+    if (sc.layers.includes('alerts')) {
+      if (!a) lines.push('Live weather alerts: still loading.');
+      else if (a.error) lines.push('Live weather alerts: the National Weather Service feed did not respond.');
+      else {
+        const sev = x => (/Extreme/.test(x.severity) ? 0 : /Severe/.test(x.severity) ? 1 : /Moderate/.test(x.severity) ? 2 : 3);
+        const list = (a.list || []).slice().sort((x, y) => sev(x) - sev(y));
+        const until = x => { const t = Date.parse(x.ends || ''); return Number.isFinite(t) ? `, until ${new Date(t).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' })} ET` : ''; };
+        lines.push(`Live National Weather Service alerts for Pennsylvania and New Jersey, as of ${a.asof}: ${a.count} active, ${a.severe} severe or extreme, ${a.polys} drawn on the map.`);
+        for (const x of list.slice(0, 8)) lines.push(`- ${x.event} (${x.severity || 'severity not given'}): ${String(x.areaDesc || '').replace(/\s+/g, ' ').slice(0, 140)}${until(x)}`);
+        if (list.length > 8) lines.push(`- and ${list.length - 8} more.`);
+        const terr = (this.base?.terr || []).map(t => String(t.name || '').toLowerCase().replace(/\b[a-z]/g, c => c.toUpperCase())).filter(Boolean);
+        if (terr.length) lines.push(`Punctual Pros territory counties: ${terr.join(', ')}.`);
+        const hubs = (this.base?.hubs || []).map(h => h.name).filter(Boolean);
+        if (hubs.length) lines.push(`Punctual Pros weather hubs (where forecasts become staffing calls): ${hubs.join(', ')}.`);
+        lines.push('The other portfolio companies have no weather layer on this map.');
+      }
+    }
+    return { kicker: cap('.bt-kicker'), headline: cap('.bt-title'), lead: cap('.bt-line'), source: cap('.bt-src'), lines };
+  }
   state() { return { scene: this.scene?.id, playing: this.playing, elapsed: Math.round(this.elapsed), salesReady: !!this.salesReady, alerts: this.alerts ? { count: this.alerts.count, polys: this.alerts.polys } : null, fallback: !!this.leaflet, layers: Object.entries(this.alpha).filter(([, a]) => a > 0.5).map(([k]) => k) }; }
 }
 
@@ -649,15 +677,19 @@ export const Theater = {
     if (current) current.destroy();
     const qp = new URLSearchParams(location.search);
     const o = { ...opts }; if (o.scene == null && qp.get('scene')) o.scene = qp.get('scene'); if (o.autoplay == null && qp.has('autoplay')) o.autoplay = qp.get('autoplay') !== '0';
-    current = new TheaterInstance(el, o); window.BSPTheater = Theater;
+    current = new TheaterInstance(el, o); window.BSPTheater = Theater; window.BSPView = VIEW;
     await current.ready; return Theater;
   },
   play() { current?.play(); }, pause() { current?.pause(); },
   goTo(id) { return current ? current.goTo(id) : false; },
   next() { current?.step(1); }, prev() { current?.step(-1); },
-  destroy() { if (current) { current.destroy(); current = null; } },
+  destroy() { if (current) { current.destroy(); current = null; } if (window.BSPView === VIEW) window.BSPView = null; },
   state() { return current ? current.state() : null; },
+  /** Plain-text description of the scene on screen ({kicker, headline, lead, source, lines}); null when nothing is mounted. */
+  describe() { return current ? current.describe() : null; },
   get map() { return current?.map || null; },
 };
+/* The assistant asks the view on screen what it shows (assets/chat.js viewContext): one describe() per page. */
+const VIEW = { describe: () => Theater.describe() };
 window.BSPTheater = Theater;
 export default Theater;
