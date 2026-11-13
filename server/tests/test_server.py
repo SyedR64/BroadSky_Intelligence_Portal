@@ -1,11 +1,12 @@
 """
 End-to-end tests for server/app.py over real HTTP (httpx), against a local mock of the Claude API.
-The fixtures start the mock and three backend instances (normal, daily cap of 1, no Claude key)
+The fixtures start the mock and four backend instances (normal, daily cap of 1, no Claude key, a short key-check interval)
 on free ports with throwaway SQLite files, and stop them afterwards.
 
   cd server && python3 -m pytest -q tests
 """
 
+import base64
 import csv
 import json
 import os
@@ -34,7 +35,7 @@ def env(tmp_path_factory):
     mock = procs.start_mock(mport, str(d / 'mock.log'))
     started = [mock]
     try:
-        ports = {k: procs.free_port() for k in ('main', 'capped', 'nokey')}
+        ports = {k: procs.free_port() for k in ('main', 'capped', 'nokey', 'health')}
         main = procs.start_server(ports['main'], str(d / 'main.log'), str(d / 'main.db'), mport, RL_PER_10MIN=5, UPSTREAM_TOTAL_TIMEOUT=3,
                                   BLOB_READ_WRITE_TOKEN=BLOB_TOKEN, VERCEL_BLOB_API_URL=f'http://127.0.0.1:{mport}/blob')
         started.append(main)
@@ -42,7 +43,10 @@ def env(tmp_path_factory):
         started.append(capped)
         nokey = procs.start_server(ports['nokey'], str(d / 'nokey.log'), str(d / 'nokey.db'), mport, key=None)
         started.append(nokey)
+        health = procs.start_server(ports['health'], str(d / 'health.log'), str(d / 'health.db'), mport, HEALTH_PROBE_SECONDS=1)   # the key check may run every second here
+        started.append(health)
         yield {
+            'health': f'http://127.0.0.1:{ports["health"]}',
             'mock': f'http://127.0.0.1:{mport}', 'main': f'http://127.0.0.1:{ports["main"]}',
             'capped': f'http://127.0.0.1:{ports["capped"]}', 'nokey': f'http://127.0.0.1:{ports["nokey"]}',
             'main_proc': main, 'mock_proc': mock, 'main_db': str(d / 'main.db'),
@@ -93,7 +97,7 @@ def test_health_shape(env):
         r = httpx.get(env['main'] + path, headers={'Origin': GH})
         assert r.status_code == 200
         j = r.json()
-        assert {k: j[k] for k in ('ok', 'model', 'version', 'db', 'llm', 'kv', 'log')} == {'ok': True, 'model': 'claude-opus-5-5', 'version': '2.1.0', 'db': True, 'llm': True, 'kv': True, 'log': True}
+        assert {k: j[k] for k in ('ok', 'model', 'version', 'db', 'llm', 'kv', 'log')} == {'ok': True, 'model': 'claude-opus-5-5', 'version': '2.2.0', 'db': True, 'llm': True, 'kv': True, 'log': True}
         assert j['homes']['sales'] > 50000 and j['homes']['market_homes'] > 0 and j['homes']['built_at'] and re.fullmatch(r'\d{4}-\d{2}', j['homes']['through']['NJ']['full_month'])
         assert j['kb']['docs'] > 100 and j['kb']['chunks'] > j['kb']['docs'] and j['kb']['built_at']
         assert r.headers['access-control-allow-origin'] == GH
@@ -120,7 +124,7 @@ def test_chat_streams_meta_text_done(env):
     assert headers['access-control-allow-origin'] == GH
     types = [e['type'] for e in events]
     assert types[0] == 'meta' and types[-1] == 'done' and set(types[1:-1]) == {'text', 'status', 'thinking', 'sources'}
-    assert events[0] == {'type': 'meta', 'model': 'claude-opus-5-5', 'version': '2.1.0'}
+    assert events[0] == {'type': 'meta', 'model': 'claude-opus-5-5', 'version': '2.2.0'}
     src = next(e for e in events if e['type'] == 'sources')['sources']
     assert src[0] == {'n': 1, 'title': 'Debt memo', 'url': 'app.html#debt', 'publisher': 'This page', 'date': '', 'kind': 'page'}
     assert len(src) > 1 and all(s['n'] == i + 1 for i, s in enumerate(src))   # knowledge-base sources follow the page context
@@ -128,7 +132,8 @@ def test_chat_streams_meta_text_done(env):
     assert text.startswith('**Short answer:** lenders will test') and 'Show organic growth separately [2]' in text
     assert 'SECRET-THINKING' not in text   # thinking never mixes into the answer text …
     assert ''.join(e['text'] for e in events if e['type'] == 'thinking') == 'SECRET-THINKING: weigh lender questions.'   # … it comes as its own events
-    assert events[-1] == {'type': 'done', 'stop_reason': 'end_turn', 'model': 'claude-opus-5-5', 'steps': 1, 'usage': {'input_tokens': 3120, 'output_tokens': 640}}
+    assert events[-1] == {'type': 'done', 'stop_reason': 'end_turn', 'model': 'claude-opus-5-5', 'steps': 1, 'mode': 'chat',
+                          'usage': {'input_tokens': 3120, 'output_tokens': 640, 'cache_read_input_tokens': 0, 'cache_creation_input_tokens': 0}}
 
 
 def test_upstream_request_shape(env):
@@ -511,13 +516,390 @@ def test_stats_counts(env):
         threads = con.execute('SELECT COUNT(*) FROM threads').fetchone()[0]
         fb = con.execute('SELECT COUNT(*), SUM(rating > 0), SUM(rating < 0) FROM feedback').fetchone()
         req = con.execute('SELECT requests FROM usage_daily').fetchone()[0]
-    assert s['ok'] is True and s['db'] is True and s['version'] == '2.1.0' and s['model'] == 'claude-opus-5-5' and s['daily_cap'] == 400
+    assert s['ok'] is True and s['db'] is True and s['version'] == '2.2.0' and s['model'] == 'claude-opus-5-5' and s['daily_cap'] == 400
     assert s['knowledge']['docs'] > 100 and s['knowledge']['chunks'] > s['knowledge']['docs']
     assert s['homes']['sales'] > 50000 and set(s['homes']['through']) == {'NJ', 'PA'}
     assert s['threads'] == threads and s['feedback'] == fb[0] and s['feedback_up'] == fb[1] and s['feedback_down'] == fb[2]
     assert s['today']['requests'] == req and s['today']['tokens_out'] > 0 and s['today']['tokens_in'] > 0
     if threads:
         assert s['messages'] >= 1
+
+
+# ── model state on /health and /stats ───────────────────────────────────────
+def probe_mode(env, mode):
+    assert httpx.post(env['mock'] + '/_probe', json={'mode': mode}).json() == {'ok': True, 'mode': mode}
+
+
+def key_checks(env):
+    """The key-check requests the mock received (the only requests the backend sends without "stream")."""
+    return [r['body'] for r in mock_requests(env) if not r['body'].get('stream')]
+
+
+def test_health_reports_the_outcome_of_real_calls(env):
+    """/health is free: it never calls the provider, and it says what the last real call found. A rejected key or a billing
+    problem turns llm off; a rate limit or an outage is reported but leaves it on; the next good answer clears it."""
+    base = env['health']
+    httpx.delete(env['mock'] + '/_requests')
+    h = httpx.get(base + '/health').json()
+    ms = h['model_state']
+    assert (h['llm'], h['llm_state'], ms['state'], ms['ok'], ms['checked_at'], ms['source'], ms['last_call'], ms['probe']) == (True, 'unverified', 'unverified', False, None, None, None, None)
+    assert 'has not answered a question' in ms['message'] and 'check' not in ms
+
+    def state_after(question):
+        status, _, body = chat(base, question)
+        j = httpx.get(base + '/health').json()
+        assert j['llm_state'] == j['model_state']['state'] and j['model_state']['ok'] is (j['llm_state'] == 'ok')
+        return status, (body.get('error') if isinstance(body, dict) else None), j['llm'], j['llm_state'], j['model_state']
+
+    s, err, llm, state, ms = state_after('Hello')
+    assert (s, llm, state, ms['source'], ms['last_call']['http']) == (200, True, 'ok', 'chat', 200) and ms['checked_at'].endswith('Z')
+    s, err, llm, state, ms = state_after('x [mock:auth]')
+    assert (s, err, llm, state, ms['last_call']['http']) == (502, 'backend_auth', False, 'auth', 401) and 'rejected the key' in ms['message']
+    assert procs.TEST_KEY not in json.dumps(ms) and 'x-api-key' not in json.dumps(ms)   # no key and no provider text in the payload
+    s, err, llm, state, ms = state_after('x [mock:billing]')
+    assert (s, err, llm, state, ms['last_call']['http']) == (502, 'backend_billing', False, 'billing', 400) and 'billing problem' in ms['message']
+    s, err, llm, state, ms = state_after('x [mock:billing402]')
+    assert (s, err, llm, state, ms['last_call']['http']) == (502, 'backend_billing', False, 'billing', 402)
+    s, err, llm, state, ms = state_after('x [mock:busy]')
+    assert (s, err, llm, state) == (429, 'upstream_busy', True, 'rate_limited')
+    s, err, llm, state, ms = state_after('x [mock:down]')
+    assert (s, err, llm, state) == (503, 'upstream_unavailable', True, 'down')
+    st = httpx.get(base + '/stats').json()   # /stats carries the same block
+    assert (st['llm'], st['llm_state'], st['model_state']['state'], st['model_state']['last_call']['http']) == (True, 'down', 'down', 529)
+    s, err, llm, state, ms = state_after('Hello again')
+    assert (s, llm, state) == (200, True, 'ok')
+    _, _, ev = chat(base, 'Busy [mock:overloaded]')   # an outage in the middle of an answer counts too
+    assert ev[-1]['code'] == 'upstream_unavailable' and httpx.get(base + '/health').json()['llm_state'] == 'down'
+    assert key_checks(env) == []   # none of this ran a key check
+
+
+def test_health_deep_runs_one_key_check_and_keeps_the_result(env):
+    """GET /health?deep=1 sends one request with max_tokens 0, at most once per ten minutes per instance; in between it returns the stored result."""
+    base = env['capped']   # an instance with the default ten-minute interval
+    probe_mode(env, 'ok')
+    try:
+        httpx.delete(env['mock'] + '/_requests')
+        assert httpx.get(base + '/health').json()['model_state']['probe'] is None and key_checks(env) == []   # plain /health never checks
+        h = httpx.get(base + '/health?deep=1', headers={'Origin': GH})
+        j = h.json()
+        ms = j['model_state']
+        assert h.status_code == 200 and h.headers['cache-control'] == 'no-store' and h.headers['access-control-allow-origin'] == GH
+        assert (j['llm'], j['llm_state'], ms['source'], ms['probe']['state'], ms['probe']['http']) == (True, 'ok', 'probe', 'ok', 200)
+        assert ms['check'] == {'ran': True, 'cached': False, 'age_seconds': 0, 'next_check_in_seconds': 600}
+        sent = key_checks(env)
+        assert len(sent) == 1 and sent[0] == {'model': 'claude-opus-5-5', 'max_tokens': 0, 'messages': [{'role': 'user', 'content': 'ping'}]}   # no tools, no system prompt, no output
+        probe_mode(env, 'auth')   # the key is revoked a moment later …
+        for _ in range(3):
+            j = httpx.get(base + '/health?deep=1').json()
+            c = j['model_state']['check']
+            assert (c['ran'], c['cached']) == (False, True) and 590 <= c['next_check_in_seconds'] <= 600 and c['age_seconds'] <= 10
+            assert (j['llm'], j['llm_state']) == (True, 'ok')   # … and the stored result is returned until the window passes
+        assert len(key_checks(env)) == 1   # hammering the endpoint cannot spend credit
+        assert httpx.get(base + '/stats').json()['today']['requests'] in (0, 2)   # and a key check is not a question: the daily count is untouched
+    finally:
+        probe_mode(env, 'ok')
+
+
+def test_health_deep_finds_a_bad_key_and_a_billing_problem(env):
+    base = env['health']   # HEALTH_PROBE_SECONDS=1: a new check is allowed every second
+
+    def deep(mode):
+        probe_mode(env, mode)
+        time.sleep(1.15)
+        j = httpx.get(base + '/health?deep=1').json()
+        assert j['model_state']['check']['ran'] is True and j['model_state']['source'] == 'probe'
+        return j['llm'], j['llm_state'], j['model_state']['probe']['http']
+    try:
+        assert deep('ok') == (True, 'ok', 200)
+        assert deep('auth') == (False, 'auth', 401)
+        j = httpx.get(base + '/health').json()   # the plain check now reports it too, with a plain-language reason and no secrets
+        assert (j['llm'], j['llm_state']) == (False, 'auth') and 'rejected the key' in j['model_state']['message'] and procs.TEST_KEY not in json.dumps(j)
+        assert deep('billing') == (False, 'billing', 400)
+        assert deep('billing402') == (False, 'billing', 402)
+        assert deep('busy') == (True, 'rate_limited', 429)
+        assert deep('down') == (True, 'down', 529)
+        httpx.delete(env['mock'] + '/_requests')
+        assert deep('nozero') == (True, 'ok', 200)   # a provider that will not take max_tokens 0 is asked for one token instead
+        assert [b['max_tokens'] for b in key_checks(env)] == [0, 1]
+        s, _, ev = chat(base, 'Hello')   # a real answer after a failed check clears the state
+        probe_mode(env, 'auth')
+        time.sleep(1.15)
+        assert httpx.get(base + '/health?deep=1').json()['llm_state'] == 'auth'
+        s, _, ev = chat(base, 'Hello')
+        assert s == 200 and httpx.get(base + '/health').json()['llm_state'] == 'ok'
+        # HTTP 200 is not enough: a web page from a wrong address or a gateway is not a model reply
+        httpx.delete(env['mock'] + '/_requests')
+        assert deep('html') == (False, 'error', 200) and len(key_checks(env)) == 1
+        assert 'not a model answer' in httpx.get(base + '/health').json()['model_state']['message']
+        assert deep('ok') == (True, 'ok', 200)
+    finally:
+        probe_mode(env, 'ok')
+
+
+def test_an_off_state_clears_once_the_account_is_fixed(env):
+    """A billing problem found by a real call turns llm off, and the page then stops sending questions. Plain /health keeps saying
+    so (it never calls the provider), and the key check the page asks for (assets/backend.js verify) is what clears it."""
+    base = env['health']
+    probe_mode(env, 'ok')
+    s, _, body = chat(base, 'x [mock:billing]')
+    assert (s, body['error']) == (502, 'backend_billing')
+    time.sleep(1.15)
+    j = httpx.get(base + '/health').json()
+    assert (j['llm'], j['llm_state']) == (False, 'billing')
+    j = httpx.get(base + '/health?deep=1').json()   # the account was topped up: no redeploy, no successful question
+    assert (j['llm'], j['llm_state'], j['model_state']['check']['ran'], j['model_state']['source']) == (True, 'ok', True, 'probe')
+    j = httpx.get(base + '/health').json()
+    assert (j['llm'], j['llm_state']) == (True, 'ok')
+
+
+WORKFLOW = os.path.join(os.path.dirname(procs.SERVER_DIR), '.github', 'workflows', 'assistant-health.yml')
+
+
+def run_health_workflow(url, cwd):
+    """Runs the scheduled workflow's own script against a local address. Returns (exit code, output)."""
+    lines = open(WORKFLOW, encoding='utf-8').read().split('\n')
+    start = next(i for i, l in enumerate(lines) if l.strip() == 'run: |') + 1
+    block = [l for l in lines[start:]]
+    script = '\n'.join(l[10:] if l.startswith(' ' * 10) else l.strip() for l in block)
+    r = subprocess.run(['bash', '-c', script], env={**os.environ, 'HEALTH_URL': url}, capture_output=True, text=True, timeout=120, cwd=str(cwd))
+    return r.returncode, r.stdout + r.stderr
+
+
+@pytest.mark.skipif(not all(any(os.access(os.path.join(d, x), os.X_OK) for d in os.environ.get('PATH', '').split(os.pathsep)) for x in ('bash', 'jq', 'curl')), reason='needs bash, jq and curl')
+def test_health_workflow_fails_when_live_answers_are_off(env, tmp_path):
+    probe_mode(env, 'ok')
+    try:
+        code, out = run_health_workflow(env['nokey'] + '/health?deep=1', tmp_path)
+        assert code == 1 and "Model state 'no_key'" in out and '::error title=Assistant live answers are off::' in out
+        time.sleep(1.15)
+        code, out = run_health_workflow(env['health'] + '/health?deep=1', tmp_path)
+        assert code == 0 and "model state 'ok'" in out
+        probe_mode(env, 'billing')
+        time.sleep(1.15)
+        code, out = run_health_workflow(env['health'] + '/health?deep=1', tmp_path)
+        assert code == 1 and "Model state 'billing'" in out
+        # a backend from before the model check: a missing key still fails the job; with a key it passes with a warning
+        code, out = run_health_workflow(env['mock'] + '/_oldhealth?llm=0', tmp_path)
+        assert code == 1 and '::error title=Assistant live answers are off::' in out and 'does not report a model state' in out
+        code, out = run_health_workflow(env['mock'] + '/_oldhealth', tmp_path)
+        assert code == 0 and '::warning title=Model check not deployed::' in out
+    finally:
+        probe_mode(env, 'ok')
+
+
+def test_health_deep_without_a_key_calls_nobody(env):
+    httpx.delete(env['mock'] + '/_requests')
+    j = httpx.get(env['nokey'] + '/health?deep=1').json()
+    assert (j['llm'], j['llm_state'], j['model_state']['check']) == (False, 'no_key', {'ran': False, 'cached': False, 'reason': 'no_key'})
+    assert mock_requests(env) == []
+
+
+# ── what each question sends ────────────────────────────────────────────────
+def test_cache_tokens_reach_the_done_event_and_the_log(env):
+    q = 'Cached? [mock:cache] ' + uuid.uuid4().hex[:6]
+    _, _, events = chat(env['main'], q)
+    assert events[-1]['usage'] == {'input_tokens': 3120, 'output_tokens': 640, 'cache_read_input_tokens': 2000, 'cache_creation_input_tokens': 500}
+    r = logged(env, q)[0][1]['record']
+    assert r['tokens'] == {'in': 3120, 'out': 640, 'cache_read': 2000, 'cache_write': 500} and r['usage_steps'] == [{'in': 620, 'cache_read': 2000, 'cache_write': 500, 'out': 640}]
+
+
+def test_repeated_excerpts_are_named_not_resent(env):
+    httpx.delete(env['mock'] + '/_requests')
+    chat(env['main'], 'Keep searching [mock:loop]')
+    reqs = mock_requests(env)
+    first, second = (reqs[k]['body']['messages'][-1]['content'][0]['content'] for k in (1, 2))   # the same search, twice
+    assert first.startswith('Results for "loop again":') and '(This excerpt is already above; not repeated.)' not in first
+    assert second.count('(This excerpt is already above; not repeated.)') == first.count('\n\n[') and 'Nothing new: every result is already above.' in second
+    assert len(second) < len(first) / 2 and re.findall(r'^\[\d+\]', second, re.M) == re.findall(r'^\[\d+\]', first, re.M)   # the numbers and titles stay, so it can still cite and read them
+    assert reqs[0]['body']['cache_control'] == {'type': 'ephemeral'} and reqs[0]['body']['system'][0]['cache_control'] == {'type': 'ephemeral'}
+
+
+def test_home_records_question_skips_the_knowledge_lookup(env):
+    httpx.delete(env['mock'] + '/_requests')
+    _, _, events = chat(env['main'], "Who should get this month's new-homeowner mailer in Ocean County? [mock:homes]")
+    src = mock_requests(env)[0]['body']['messages'][-1]['content'][0]['text']
+    assert src == '<sources>\n(No excerpts were looked up: this question is answered from the home-sales records. Search the knowledge base if you need more.)\n</sources>'
+    assert events[-1]['type'] == 'done' and any(s['kind'] == 'data' for s in [e for e in events if e['type'] == 'sources'][-1]['sources'])
+    httpx.delete(env['mock'] + '/_requests')
+    chat(env['main'], "Who should get this month's new-homeowner mailer in Ocean County?", persona='pp')   # a concept site has no records tool: it still gets excerpts
+    assert mock_requests(env)[0]['body']['messages'][-1]['content'][0]['text'].startswith('<sources>\n[1] ')
+    # a private-equity question about "buyers" or "owners" is not a home-records question: it keeps its excerpts and its sources
+    for q in NOT_ROUTED[:5] + NOT_ROUTED[7:10]:
+        httpx.delete(env['mock'] + '/_requests')
+        _, _, events = chat(env['main'], q)
+        src = mock_requests(env)[0]['body']['messages'][-1]['content'][0]['text']
+        assert src.startswith('<sources>\n[1] ') and 'No excerpts were looked up' not in src and len(re.findall(r'^\[\d+\] ', src, re.M)) >= 3, q
+        assert any(e['type'] == 'sources' for e in events), q
+    httpx.delete(env['mock'] + '/_requests')
+    chat(env['main'], NOT_ROUTED[0], mode='voice')   # and in voice mode it is offered no home-records tool
+    assert 'tools' not in mock_requests(env)[0]['body'] and 'new_homeowners' not in mock_requests(env)[0]['body']['system'][0]['text']
+
+
+def test_older_answers_are_shortened_in_history(env):
+    httpx.delete(env['mock'] + '/_requests')
+    hist = [{'role': 'user', 'content': 'One'}, {'role': 'assistant', 'content': 'a' * 5000}, {'role': 'user', 'content': 'Two'}, {'role': 'assistant', 'content': 'b' * 5000}]
+    chat(env['main'], 'Three', messages=hist)
+    sent = mock_requests(env)[0]['body']['messages']
+    assert [len(m['content']) for m in sent[:4]] == [3, 2004, 3, 5000] and sent[1]['content'].endswith(' […]')   # the latest answer is kept whole
+
+
+# ── voice mode ──────────────────────────────────────────────────────────────
+NOT_ROUTED = ['List the recent buyers of home services companies', 'Show recent buyers in HVAC roll-ups', 'Find new buyers for Smith + Howard',
+              'Give me the list of new owners at Thomas Scientific', 'Send me the list of recent buyers BSP lost deals to',
+              "BSP's office is at 350 Park Avenue. What do we know about the firm?", 'What do we know about the building at 350 Park Avenue in New York?',
+              'Show recent buyers of home-services companies', 'List the new owners of Smith + Howard', 'Send me the list of recent buyers of law-firm services companies',
+              'What is this page worth reading for?', 'what is the weather worth watching', 'What are swim trunks worth?']
+SPOKEN = ('Leadership. Tyler Zachem leads BSP as Managing Partner. He co-founded it in 2021. First, see the team page for more. '
+          'Second, Fund I is $335M. Details today. Done.')
+
+
+def spoken(events):
+    return ''.join(e['text'] for e in events if e['type'] == 'text')
+
+
+def test_voice_answer_is_plain_speech(env):
+    """mode "voice": the same answer stream, but whatever markdown the model writes never reaches it."""
+    httpx.delete(env['mock'] + '/_requests')
+    q = 'Who leads BSP? [mock:md] ' + uuid.uuid4().hex[:6]
+    status, _, events = chat(env['main'], q, mode='voice', context=[{'title': 'Team', 'text': 'x' * 5000, 'href': 'app.html#team'}])
+    assert status == 200 and [e['type'] for e in events][0] == 'meta' and events[-1]['type'] == 'done'
+    assert spoken(events) == SPOKEN and not re.search(r'[*#`\[\]_>|]|https?:|\n|  ', spoken(events))
+    assert not any(e['type'] == 'thinking' for e in events) and 'SECRET-THINKING' not in json.dumps(events)   # reasoning is never shown or spoken
+    src = [e for e in events if e['type'] == 'sources'][-1]['sources']   # the screen still gets the sources
+    assert src[0]['kind'] == 'page' and 2 <= len(src) <= 5
+    assert (events[-1]['mode'], events[-1]['steps'], events[-1]['stop_reason']) == ('voice', 1, 'end_turn')
+    reqs = mock_requests(env)
+    assert len(reqs) == 1
+    b = reqs[0]['body']
+    assert (b['max_tokens'], b['output_config'], b['fallbacks']) == (3000, {'effort': 'low'}, 'default')
+    assert all(k not in b for k in ('tools', 'tool_choice', 'thinking', 'cache_control'))   # no tools, default thinking
+    system = b['system'][0]
+    assert 'cache_control' not in system and 'cache_control' not in json.dumps(b)   # one call, so nothing would read a cache entry back: none is written
+    assert system['text'].startswith("You are BSP Desk, the in-house analyst on Broad Sky's desk")
+    assert 'this answer is spoken aloud' in system['text'] and 'under about 80 words' in system['text'] and 'the knowledge base does not cover it' in system['text']
+    assert 'Format for a chat panel' not in system['text'] and 'search_knowledge' not in system['text'] and 'deal_model' not in system['text']
+    block = b['messages'][-1]['content'][0]['text']
+    assert block.startswith('<sources>\n[1] Team (This page) app.html#team (from the page the visitor is on)\n' + 'x' * 3000 + ' […]') and len(re.findall(r'^\[\d+\] ', block, re.M)) <= 5
+    r = logged(env, q)[0][1]['record']
+    assert (r['mode'], r['route'], r['answer'], r['thinking'], r['effort'], r['agent_steps']) == ('voice', None, SPOKEN, '', 'low', 1)
+
+
+def test_voice_is_one_step_with_no_research_loop(env):
+    httpx.delete(env['mock'] + '/_requests')
+    status, _, events = chat(env['main'], 'Keep searching [mock:loop]', mode='voice')   # in chat mode this question runs six steps
+    assert status == 200 and events[-1]['type'] == 'done' and events[-1]['steps'] == 1 and len(mock_requests(env)) == 1
+    assert spoken(events).startswith('Short answer: lenders will test') and '[1]' not in spoken(events) and '**' not in spoken(events)
+    # a model that writes a list anyway is not read as one run-on sentence: each item and heading ends with a full stop
+    assert spoken(events).endswith('They usually ask three things: How much EBITDA comes from acquired versus organic growth. Leverage after each add-on, est. at closing. '
+                                   'Integration cost and synergy timing. Next actions. Build a covenant headroom table by quarter. Show organic growth separately.')
+    httpx.delete(env['mock'] + '/_requests')
+    hist = [{'role': 'user' if k % 2 == 0 else 'assistant', 'content': f'turn {k} ' + 'y' * 3000} for k in range(10)]
+    chat(env['main'], 'And then?', mode='voice', messages=hist)
+    sent = mock_requests(env)[0]['body']['messages']
+    assert len(sent) == 7 and sent[0]['content'].startswith('turn 4 ') and all(len(m['content']) <= 1505 for m in sent[:6])   # the last few turns, shortened
+
+
+def test_voice_allows_one_tool_call_for_a_routed_question(env):
+    httpx.delete(env['mock'] + '/_requests')
+    status, _, events = chat(env['main'], "Who should get this month's new-homeowner mailer in Ocean County? [mock:homes]", mode='voice')
+    assert status == 200 and events[-1]['type'] == 'done' and events[-1]['steps'] == 2
+    assert {'type': 'status', 'text': 'Looking up new homeowners in Ocean County'} in events
+    assert any(s['kind'] == 'data' for s in [e for e in events if e['type'] == 'sources'][-1]['sources'])
+    assert spoken(events).startswith('Short answer: lenders will test') and not re.search(r'[*#\[\]]', spoken(events))
+    reqs = mock_requests(env)
+    assert len(reqs) == 2
+    one, two = reqs[0]['body'], reqs[1]['body']
+    assert [t['name'] for t in one['tools']] == ['new_homeowners', 'property_brief'] and one['tool_choice'] == {'type': 'auto', 'disable_parallel_tool_use': True}
+    assert 'call new_homeowners once' in one['system'][0]['text'] and 'Never give owner, buyer or seller names' in one['system'][0]['text']
+    assert one['system'][0]['cache_control'] == {'type': 'ephemeral'} and two['system'] == one['system'] and 'cache_control' not in one   # two calls: the second reads the fixed part back
+    assert two['tool_choice'] == {'type': 'none'} and 'NEW HOMEOWNERS: ' in two['messages'][-1]['content'][0]['content']
+
+    httpx.delete(env['mock'] + '/_requests')
+    _, _, events = chat(env['main'], 'What could BSP pay for CET and still earn 25% a year? [mock:deal]', mode='voice')
+    reqs = mock_requests(env)
+    assert len(reqs) == 2 and [t['name'] for t in reqs[0]['body']['tools']] == ['deal_model'] and events[-1]['steps'] == 2
+    assert 'IRR' in reqs[1]['body']['messages'][-1]['content'][0]['content'] and 'call deal_model once' in reqs[0]['body']['system'][0]['text']
+
+    # a model that keeps asking still gets one lookup: a second tool, or a tool it was not offered, is refused and the next call must answer
+    httpx.delete(env['mock'] + '/_requests')
+    plan = base64.urlsafe_b64encode(json.dumps([['new_homeowners', {'county': 'Ocean'}], ['new_homeowners', {'county': 'Monmouth'}]]).encode()).decode().rstrip('=')
+    _, _, events = chat(env['main'], f'New homeowner list for Ocean County [mock:plan:{plan}]', mode='voice')
+    assert len(mock_requests(env)) == 2 and events[-1]['type'] == 'done' and events[-1]['steps'] == 2
+    httpx.delete(env['mock'] + '/_requests')
+    _, _, events = chat(env['main'], 'New homeowner list for Ocean County [mock:tool]', mode='voice')   # asks for search_knowledge, which voice does not offer
+    reqs = mock_requests(env)
+    res = reqs[1]['body']['messages'][-1]['content'][0]
+    assert len(reqs) == 2 and res['is_error'] is True and res['content'].startswith('Only one lookup is allowed') and events[-1]['type'] == 'done'
+
+
+def test_voice_answer_cut_at_the_token_ceiling_says_so(env):
+    """stop_reason "max_tokens" is not a finished answer. Text already spoken is closed with a short notice; when nothing was
+    spoken (or only a held preamble before a lookup), the stream ends with an error so the page can fall back."""
+    _, _, events = chat(env['main'], 'Who leads BSP? [mock:maxtokens]', mode='voice')
+    assert events[-1]['type'] == 'done' and events[-1]['stop_reason'] == 'max_tokens'
+    assert spoken(events) == ('Short answer: lenders will test whether the add-on pipeline can carry the. '
+                              'That is as far as a spoken answer goes. Type the question for the full answer.')
+    httpx.delete(env['mock'] + '/_requests')
+    _, _, events = chat(env['main'], 'New homeowner list for Ocean County [mock:maxtokens]', mode='voice')   # routed: step one is cut before any lookup
+    assert spoken(events) == '' and events[-1] == {'type': 'error', 'code': 'cut_off', 'message': 'The spoken answer did not fit. Ask again, or type the question for a full answer.'}
+    assert len(mock_requests(env)) == 1 and not any(e['type'] == 'done' for e in events)
+    _, _, events = chat(env['main'], 'Who leads BSP? [mock:maxtokens]')   # chat mode is unchanged: the text so far and the stop reason
+    assert events[-1]['type'] == 'done' and events[-1]['stop_reason'] == 'max_tokens' and 'spoken answer' not in spoken(events)
+
+
+def test_voice_keeps_tool_gating_and_limits(env):
+    for persona in ('pp', 'fh'):   # the concept sites have no home-records or deal tool, in voice mode either
+        httpx.delete(env['mock'] + '/_requests')
+        status, _, events = chat(env['main'], 'New homeowner list for Ocean County [mock:homes]', mode='voice', persona=persona)
+        reqs = mock_requests(env)
+        assert status == 200 and len(reqs) == 1 and 'tools' not in reqs[0]['body'] and events[-1]['steps'] == 1
+        assert 'new_homeowners' not in reqs[0]['body']['system'][0]['text'] and not any(s['kind'] == 'data' for e in events if e['type'] == 'sources' for s in e['sources'])
+    httpx.delete(env['mock'] + '/_requests')
+    chat(env['main'], 'Who runs the firm? [mock:tool]', mode='voice')   # BSP Desk, a question for no tool: none is offered
+    assert len(mock_requests(env)) == 1 and 'tools' not in mock_requests(env)[0]['body']
+    s, _, b = chat(env['main'], 'x', mode='song')
+    assert (s, b['error']) == (400, 'bad_mode')
+    s, _, b = chat(env['capped'], 'one more', mode='voice')   # the daily cap covers voice answers too (test_daily_cap used it up)
+    assert (s, b['error']) == (429, 'daily_cap')
+    who = ip()
+    codes = [chat(env['main'], f'q{k}', visitor=who, mode='voice')[0] for k in range(6)]   # and so does the per-visitor limit (5 per 10 minutes here)
+    assert codes == [200] * 5 + [429]
+    s, _, b = chat(env['nokey'], 'x', mode='voice')
+    assert (s, b['error']) == (503, 'no_model_key')
+
+
+def test_voice_filter_and_routes():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('bsp_app3', os.path.join(procs.SERVER_DIR, 'app.py'))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    md = ('### Leadership\n\n**Tyler Zachem** leads BSP as *Managing Partner* [1][2]. He co-founded it in `2021` [3, 4].\n\n'
+          '- First, see [the team page](https://broadskypartners.com/team/) for more.\n- Second, Fund I is **$335M** [5].\n\n'
+          '1. Details at https://example.com/a?b=1 today.\n> __Done__.')
+    for size in (1, 2, 3, 5, 7, 11, 40, 1000):   # however the stream is cut, the same clean text comes out
+        f = mod.VoiceFilter()
+        assert ''.join([f.feed(md[i:i + size]) for i in range(0, len(md), size)] + [f.flush()]) == SPOKEN
+    f = mod.VoiceFilter()
+    assert f.feed('It grew 12.5 percent, to $3.2 million, in the 2025 fiscal_year; a 3 - 2 split. ') + f.flush() == 'It grew 12.5 percent, to $3.2 million, in the 2025 fiscal_year; a 3 - 2 split.'
+    routes = {"Who should get this month's new-homeowner mailer in Ocean County?": 'homes', 'New buyers in Toms River: who should we mail?': 'homes',
+              'I got a call from 317 Barcelona Drive in Toms River, what do we know about the house?': 'homes', 'What could BSP pay for CET and still earn 25% a year?': 'deal',
+              'What is Fair Harbor worth?': 'deal', 'Who leads BSP, and what did they do before?': None, 'Show the top 10 targets in CT': None,
+              'Draft a memo about the new homeowner mailer': None, 'What is GridOS and why does it raise valuation for CET?': None}
+    assert {q: mod.tool_route(q) for q in routes} == routes
+    more = {'New homeowner list for Ocean County': 'homes', 'List recent buyers in Lancaster County': 'homes', 'Which recent buyers in ZIP 08753 should get a postcard?': 'homes',
+            'Got a call from 12 Main Street, what can we offer?': 'homes', 'What is NuWave worth?': 'deal', 'What is Lancaster Plumbing worth?': 'deal',
+            'What would a plumbing company with $5M EBITDA be worth?': 'deal'}
+    assert {q: mod.tool_route(q) for q in more} == more
+    # "buyers" and "owners" of companies are private-equity questions, an office address is not a house call, and "worth" is not always a valuation
+    for q in NOT_ROUTED:
+        assert mod.tool_route(q) is None, q
+    for text, want in {'See www.example.com/page (source: https://x.y/z).': '', 'Read more at https://x.com/a. Then call.': 'Read more. Then call.',
+                       'We looked at the map. See the legend at left.': 'We looked at the map. See the legend at left.', '1. One\n2. Two\n3. Three': 'One. Two. Three.',
+                       '| Company | EBITDA |\n|---|---|\n| CET | $10M |\n\nThat is all': 'Company, EBITDA. CET, $10M. That is all'}.items():
+        for size in (1, 2, 3, 7, 1000):
+            f = mod.VoiceFilter()
+            assert ''.join([f.feed(text[i:i + size]) for i in range(0, len(text), size)] + [f.flush()]) == want, (text, size)
+    assert len(mod.clip_result('z' * 20000)) < 12100 and mod.clip_result('short') == 'short'
 
 
 # ── chat log (Vercel Blob, mocked) ───────────────────────────────────────────
@@ -548,7 +930,8 @@ def test_chat_log_keeps_question_answer_and_reasoning(env):
     assert r['answer'] == ''.join(e['text'] for e in events if e['type'] == 'text')
     assert r['thinking'] == 'SECRET-THINKING: weigh lender questions.'
     assert 'Thinking it through' in r['steps'] and r['sources'][0]['n'] == 1 and set(r['sources'][0]) == {'n', 'title', 'url', 'kind'}
-    assert (r['outcome'], r['error'], r['model'], r['stop_reason'], r['agent_steps'], r['tokens']) == ('answered', None, 'claude-opus-5-5', 'end_turn', 1, {'in': 3120, 'out': 640})
+    assert (r['outcome'], r['error'], r['model'], r['stop_reason'], r['agent_steps'], r['tokens']) == ('answered', None, 'claude-opus-5-5', 'end_turn', 1, {'in': 3120, 'out': 640, 'cache_read': 0, 'cache_write': 0})
+    assert (r['mode'], r['route'], r['usage_steps']) == ('chat', None, [{'in': 3120, 'cache_read': 0, 'cache_write': 0, 'out': 640}])
     assert re.match(r'^[0-9a-f]{10}$', r['id']) and r['at'].endswith('Z') and r['seconds'] >= 0
 
 

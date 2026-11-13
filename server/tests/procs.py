@@ -18,12 +18,20 @@ def free_port():
         return s.getsockname()[1]
 
 
-def wait_http(url, timeout=15.0):
+def wait_http(url, timeout=15.0, proc=None):
+    """Waits until url answers. With proc, the answer must come from that process: if it has exited (for example because the
+    port was taken), whatever else is listening there does not count."""
     t0 = time.time()
     while time.time() - t0 < timeout:
+        if proc is not None and proc.poll() is not None:
+            raise RuntimeError(f'the process for {url} exited with code {proc.returncode} before it answered (is the port in use?)')
         try:
             with urllib.request.urlopen(url, timeout=1) as r:
                 if r.status < 500:
+                    if proc is not None:
+                        time.sleep(0.2)   # a process that lost the race for the port exits within a moment of starting
+                        if proc.poll() is not None:
+                            continue
                     return True
         except Exception:
             time.sleep(0.15)
@@ -37,7 +45,7 @@ class Proc:
         self.p = subprocess.Popen(args, stdout=self.log, stderr=subprocess.STDOUT, env=env, cwd=cwd)
         if ready_url:
             try:
-                wait_http(ready_url)
+                wait_http(ready_url, proc=self.p)
             except Exception:
                 self.stop()
                 raise

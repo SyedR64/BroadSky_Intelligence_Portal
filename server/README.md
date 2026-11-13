@@ -15,6 +15,8 @@ This is the hosted part of the BSP Desk assistant: a small Python web service, f
    - `property_brief`: what the public record says about one address, what to check on arrival and which offers are worth raising.
 3. **Answer.** Claude writes a short answer that cites its sources as `[1]`, `[2]`. The stream tells the site what is happening (`status`), which numbered sources the answer can cite (`sources`, sent again when the list grows) and then the text.
 
+A question that clearly asks for a new-homeowner list or a brief on one address skips step 1 for BSP Desk: the records answer it, and Claude can still search. The test is strict (`tool_route` in `app.py`): the question must name homeowners or home buyers, or pair "new buyers" or "recent owners" with a place, a mailer or a house; a question about the buyers or owners of companies keeps its excerpts. A search result Claude already has from an earlier step is named by its number and title, not sent again. A tool result is cut at 12,000 characters; this is a backstop, not a saving, because no tool returns that much today. Earlier answers in a thread are sent in full only for the most recent one; older ones are cut to their first 2,000 characters.
+
 The last step always answers, and the whole answer is capped at `UPSTREAM_TOTAL_TIMEOUT` seconds. While Claude thinks or a tool runs, the stream carries `: ping` comment lines. The client ignores them, and they stop proxies from closing a quiet connection.
 
 ## The knowledge base
@@ -26,12 +28,19 @@ The last step always answers, and the whole answer is capped at `UPSTREAM_TOTAL_
 - The portfolio companies' own sites.
 - News coverage from Bing News and Google News.
 - A few Wikipedia articles.
-- The portal itself: every page and view as a visitor sees it, the research files and the prepared answers.
+- The portal itself: every page and view as a visitor sees it, the research files and the prepared answers. Local signals shows one company's forces at a time, so each company's table is read as its own document (this is where Fair Harbor's weather and season forces come from).
+- A short note on what the home-sales records cover: the counties, the date sales reach and the newest full month for each, the two home-records tools and the no-names rule. The build reads it from the `meta` table of `knowledge/homes.sqlite`, so it carries dates and no row counts. Rebuild the portal source after a sales refresh to move the dates.
 
 Each document is cut into passages of about 1,100 characters. Each passage is indexed two ways in one SQLite file:
 
 - **Keywords:** an FTS5 index ranked by BM25.
 - **Meaning:** a static embedding. The tokenizer's token vectors (minishlab/potion-base-8M) are averaged and normalised, so a query is embedded with numpy alone, with no model server.
+
+**Rebuild the portal part by hand.** Run it from the repo root. This needs no model download and fetches no outside website for text. It re-reads the research files, the prepared answers, the home-sales coverage and every rendered page, keeps the other sources as last collected, and rebuilds the index. Without `model2vec` the index step reuses the embedding table and tokenizer already stored in `kb.sqlite`, which are the same numbers. The rendered pages still load their map and chart libraries and the live weather alerts, as a visitor's browser would; nothing but a GET leaves the machine.
+
+```bash
+uv run --no-project --python 3.12 --with playwright==1.60.0 --with numpy==2.5.3 --with tokenizers==0.23.2 python scripts/build_corpus.py --only portal
+```
 
 A search runs both and merges the two rankings, so "who runs the firm" finds the CEO's biography even though the words differ. `knowledge/corpus.jsonl` is the readable copy of everything the assistant knows, one document per line; the server does not load it.
 
@@ -101,21 +110,51 @@ python3 scripts/fetch_pp_sales.py --only york --diff # one source, and which fie
 | `railway.json` | Start command, `/health` check and restart-on-failure. Railway only reads this for services created before config files were deprecated, and stops reading it on Dec 1, 2026. New services use `main.py` plus the dashboard settings below. |
 | `tests/` | `test_server.py` (pytest over real HTTP), `e2e_browser.py` (Playwright with the real site), `mock_claude.py` (stand-in for the Claude API) |
 
+## Voice mode
+
+`POST /chat` with `"mode": "voice"` returns one short answer written to be read aloud. It is the same stream with the same personas, tool rules, per-visitor limit and daily cap.
+
+- **One step.** The server looks up four excerpts and Claude answers from them. There is no search or read loop and no web search.
+- **One tool call at most.** Only a question that clearly belongs to the home records or the deal model is offered that tool (BSP Desk only, as in chat). Claude may call it once; the next call must answer.
+- **Short and plain.** The rules ask for under about 80 words in spoken sentences, numbers said the way a person says them, the answer first, and a plain statement when the knowledge base does not cover the question. Effort is `low`. `max_tokens` is 3,000: a ceiling that covers the model's thinking, one tool call and the answer, not a length (the rules and the effort set that). The reasoning is never streamed. An answer that still hits the ceiling ends with one spoken line saying so; when nothing was spoken, the stream ends with an `error` event (`cut_off`) and the page falls back to its own answer.
+- **Clean text, whatever the model writes.** The server strips markdown, `[n]` markers, links and web addresses from the stream before it leaves, so the text can go straight to speech. A list item, heading or table row gets a full stop, so a list is not read as one run-on sentence. A preamble before a tool call is dropped.
+- **Sources still arrive.** The `sources` event is sent as usual, so the screen can show what the answer rests on. `done` carries `"mode": "voice"`.
+
+Voice requests carry the last six turns at most, each cut to 1,500 characters, and the first 3,000 characters of the page context.
+
+## Model state and the key check
+
+`/health` used to report `llm: true` whenever a key was set, even when every answer failed on a dead key. It now reports what the provider last said:
+
+- **From real calls, free.** Every `/chat` call records its outcome: `ok`, `auth` (key rejected), `billing` (no credit or another billing problem), `rate_limited`, `down` or `error` (for example a model the account cannot use). `/health` and `/stats` return it as `llm_state` and `model_state` (`state`, `ok`, `message`, `checked_at`, `source`, `last_call`, `probe`). `llm` is false for `no_key`, `auth`, `billing` and `error`. A rate limit or an outage is reported but leaves `llm` true, and stops counting after ten minutes.
+- **`GET /health?deep=1`, the key check.** One request with `max_tokens: 0` to the model the site uses: the provider reads a one-word prompt and writes nothing, so it costs a few input tokens (well under a hundredth of a cent). It goes through the same key, account and model checks as an answer. The server runs it at most once per ten minutes per instance (once a minute after a rate limit or an outage) and returns the stored result in between, with `model_state.check` saying which happened. The public endpoint cannot be used to spend credit.
+- **`unverified`.** The state lives in memory, so it describes one instance. A fresh instance has a key but no evidence yet and says `unverified` (`llm` stays true). The site asks for the key check once in that case, and the scheduled workflow below always does.
+- **Recovery.** `auth`, `billing` and `error` do not expire by themselves, and the site stops sending questions while `llm` is false. So the site also asks for the key check when it loads to an off state and before a question, at most once per ten minutes per page. Once the key or the account is fixed, the next check clears the state with no redeploy.
+- **A real reply.** The key check counts HTTP 200 as `ok` only when the body is a model reply. A web page from a wrong address or a gateway is recorded as `error`.
+
+What the key check can and cannot find:
+
+- It finds a missing, invalid or revoked key (401), a key without permission (403), a billing error (402, or the 400 "credit balance is too low"), a model the account cannot use (404), a rate limit (429) and a provider outage (5xx, 529, timeout).
+- It has not been run against a real account with no credit left: there is no key on the development machine. The provider documents billing errors on the Messages endpoint, and a zero-output request is a Messages request, so it should be refused the same way. A real `/chat` call records `billing` either way, and that also flips `llm`.
+- It does not test the optional features an answer uses (web search, the fallback beta), limits that only bite under load, or the site's own daily cap.
+
+`.github/workflows/assistant-health.yml` calls the key check four times a day and fails when live answers are off; GitHub emails the repository owner when a scheduled run fails. It retries through a cold start, waits out a rate limit or an outage, and does not fail on a slow answer. In the site, the assistant header says "Limited" instead of "Online" when the backend reports that live answers are off.
+
 ## Endpoints
 
 These are the same endpoints as the Worker. CORS only allows the origins in `ALLOWED_ORIGINS`, and a POST from any other origin gets `403`.
 
 | Method and path | Returns |
 |---|---|
-| `GET /health` (also `/`) | `{ok, model, version, db, llm, kv, log, kb, homes}`. `llm` is false when no Claude key is set; `kv` is always true because rate limits are kept in memory; `log` says whether the chat log is on; `kb` gives the knowledge base's document and passage counts and build time (false if it could not open); `homes` gives the home-sales row counts, build time and data-through dates per state (false if the file is missing). |
-| `POST /chat` | `text/event-stream` of `data: {"type": "meta" \| "status" \| "thinking" \| "sources" \| "text" \| "done" \| "error", ...}`, or a JSON error. Body: `{persona, question, messages, context, retrieve, page}`; `context` items become the first numbered sources, and `retrieve: false` skips the knowledge-base search (used by "Expand with Claude"). |
+| `GET /health` (also `/`) | `{ok, model, version, db, llm, llm_state, model_state, kv, log, kb, homes}`. `llm` is false when no Claude key is set or the provider last rejected the key or the account (see [Model state and the key check](#model-state-and-the-key-check)); `?deep=1` runs the key check; `kv` is always true because rate limits are kept in memory; `log` says whether the chat log is on; `kb` gives the knowledge base's document and passage counts and build time (false if it could not open); `homes` gives the home-sales row counts, build time and data-through dates per state (false if the file is missing). |
+| `POST /chat` | `text/event-stream` of `data: {"type": "meta" \| "status" \| "thinking" \| "sources" \| "text" \| "done" \| "error", ...}`, or a JSON error. Body: `{persona, question, messages, context, retrieve, page, mode}`; `context` items become the first numbered sources, `retrieve: false` skips the knowledge-base search (used by "Expand with Claude"), and `mode: "voice"` asks for a short spoken answer (see [Voice mode](#voice-mode)). `done` carries `mode`, `steps` and `usage: {input_tokens, output_tokens, cache_read_input_tokens, cache_creation_input_tokens}`. |
 | `POST /feedback` | `201 {ok, id}` (the rating also goes to the chat log) |
 | `POST /log` | `202 {ok, saved}`. An answer the browser built itself (portfolio data, a prepared deep dive, a fallback) for the chat log: `{persona, question, answer, kind, intent, engine, sources, seconds, page}`. Shares the save rate limit with `/feedback` and `/thread`. |
 | `POST /thread` | `{ok, thread_id, updated_at}` (insert, or update if the thread exists) |
 | `GET /thread/:id` | `{ok, thread_id, persona, title, messages, created_at, updated_at}` |
-| `GET /stats` | `{threads, messages, feedback, feedback_up, feedback_down, today:{requests, tokens_in, tokens_out}, daily_cap, model, knowledge, homes}` |
+| `GET /stats` | `{threads, messages, feedback, feedback_up, feedback_down, today:{requests, tokens_in, tokens_out}, daily_cap, model, llm, llm_state, model_state, knowledge, homes}` |
 
-Error codes match the Worker: `no_model_key`, `rate_limited`, `daily_cap`, `upstream_busy`, `backend_auth`, `upstream_unavailable`, `upstream_timeout`, `refusal`, and the rest. A 400 from Claude that names an optional feature (web search, the server-side fallback beta, effort) is retried once without it.
+Error codes match the Worker: `no_model_key`, `rate_limited`, `daily_cap`, `upstream_busy`, `backend_auth`, `backend_billing`, `bad_mode`, `upstream_unavailable`, `upstream_timeout`, `refusal`, and the rest. A 400 from Claude that names an optional feature (web search, the server-side fallback beta, effort) is retried once without it.
 
 **Timeouts:** connecting to Claude times out after 6 s, and the wait for Claude's first reply after 45 s. A whole answer, tool calls included, is capped at 150 s (`UPSTREAM_TOTAL_TIMEOUT`); if it runs longer, the stream ends with an `upstream_timeout` error event. When a visitor presses Stop or closes the page, the server cancels the Claude stream at once and logs `visitor disconnected ... cancelled the upstream Claude stream`.
 
@@ -180,8 +219,11 @@ The token is on the store's **.env.local** tab in the dashboard. `chat-logs/` is
 ```bash
 cd server
 python3 -m pytest -q tests          # starts its own mock and servers on free ports; covers the tool loop, sources and limits, and the home-records tools (test_property.py)
-python3 tests/e2e_browser.py        # 18 browser checks with the real site in headless Chromium (needs Playwright)
+python3 tests/e2e_browser.py        # browser checks with the real site in headless Chromium (needs Playwright)
+python3 tests/measure_tokens.py --voice   # estimates what three typical questions send, part by part, in chat and voice mode
 ```
+
+The mock (`tests/mock_claude.py`) can script a run of tool calls (`[mock:plan:…]`), fail the key check (`POST /_probe`), report cache usage (`[mock:cache]`) and answer in heavy markdown (`[mock:md]`).
 
 ## Deploy on Railway
 
@@ -195,7 +237,7 @@ python3 tests/e2e_browser.py        # 18 browser checks with the real site in he
 ## Cost notes (estimates)
 
 - **Railway.** The server uses about 47 MB of memory when idle (measured locally) and almost no CPU, roughly $0.50 to $1 a month at Railway's rates ($10 per GB of RAM per month, $20 per vCPU per month, $0.15 per GB of volume per month), est. That fits within the Hobby plan's included $5 of usage ($5 a month subscription). The Free plan gives $1 of credit a month with 0.5 GB of RAM and a 0.5 GB volume, which may cover it.
-- **Claude.** The first step sends about 6,000 to 9,000 input tokens (rules, tools, the retrieved sources and the conversation); each extra research step adds the new search results, and the cached prefix is read back at a tenth of the price. A typical answer costs about $0.03 to $0.10 on Claude Opus 5.5 ($4 and $20 per million input and output tokens); web searches add $0.01 each. `DAILY_CAP` sets a hard daily limit on spend. Set `MODEL=claude-sonnet-5-5` to roughly halve the cost per answer.
+- **Claude.** Each step sends the fixed part again (rules and tool definitions: about 4,500 tokens by the estimate in `tests/measure_tokens.py`, more than half of a typical step), then the retrieved excerpts, the conversation and every tool result so far. The fixed part and the growing conversation are marked for the prompt cache, so each step after the first reads the earlier ones at a twentieth of the input price on Claude Opus 5.5 when the cache hits; the first step pays a 25% premium to write it. The chat log records `tokens.cache_read` and `tokens.cache_write` per answer and per step (`usage_steps`), so the real discount can be read after a deploy. A voice answer sends about 2,000 to 8,000 tokens in one or two steps. A one-step voice answer marks nothing for the cache, because nothing would read it back; a two-step one marks the fixed part, and its second step reads it. A typical chat answer costs about $0.03 to $0.10 on Claude Opus 5.5 ($4 and $20 per million input and output tokens); web searches add $0.01 each. `DAILY_CAP` sets a hard daily limit on spend. Set `MODEL=claude-sonnet-5-5` to roughly halve the cost per answer.
 - **Single process.** Run one replica. The per-visitor limits are in memory, and SQLite expects one writer. If you need more capacity, move storage to Railway Postgres before adding replicas.
 
 Author: Syed Rahman.

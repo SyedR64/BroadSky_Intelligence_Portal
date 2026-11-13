@@ -57,6 +57,7 @@
 .ch-sub .ch-engine{height:22px;padding:0 7px;font-size:11px;min-width:0}
 .ch-engine-t{overflow:hidden;text-overflow:ellipsis}
 .ch-dot{width:7px;height:7px;border-radius:50%;background:#34d399;flex:none}
+.ch-limited .ch-sub .ch-dot,.ch-limited .ch-launch .ch-dot{background:#d97706;box-shadow:none}
 .ch-busy .ch-sub .ch-dot{background:var(--ch-orange);animation:ch-pulse 1.1s ease-in-out infinite}
 @keyframes ch-pulse{50%{opacity:.35}}
 .ch-ib{display:flex;gap:2px;margin-left:auto}
@@ -213,6 +214,26 @@
 .ch-btn{flex:none;width:34px;height:34px;border:0;border-radius:10px;display:grid;place-items:center;background:transparent;color:var(--ch-mute);cursor:pointer;transition:background .15s,color .15s,transform .15s}
 .ch-btn:hover{background:var(--ch-bg3);color:var(--ch-fg)}
 .ch-btn.mic.on{color:#ef4444;background:color-mix(in srgb,#ef4444 12%,transparent);animation:ch-pulse 1.2s ease-in-out infinite}
+.ch-btn.mic{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.ch-btn.mic.off,.ch-btn.mic.off:hover{opacity:.5;background:transparent;color:var(--ch-mute);cursor:not-allowed}
+/* voice bar: what the microphone and the speaker are doing, with Stop and Mute. Floats over the thread so the composer never moves under a held finger. */
+.ch-voice{position:absolute;left:14px;right:14px;bottom:calc(100% - 4px);z-index:15;display:flex;align-items:center;gap:8px;min-height:40px;padding:5px 6px 5px 12px;border:1px solid var(--ch-line);border-radius:12px;background:var(--ch-bg);box-shadow:var(--ch-sh2);font-size:12.5px;line-height:1.35;color:var(--ch-fg2)}
+.ch-dock .ch-voice{left:0;right:0;bottom:calc(100% + 6px)}
+.ch-inline .ch-voice{position:static;margin-top:8px;border-radius:14px;box-shadow:var(--ch-sh1)}
+.ch-voice-t{flex:1;min-width:0}
+.ch-voice-ic{flex:none;display:none;align-items:center;gap:2px;height:14px;color:#ef4444}
+.ch-voice.on .ch-voice-ic,.ch-speaking .ch-voice-ic{display:inline-flex}
+.ch-speaking .ch-voice-ic{color:var(--ch-brand)}
+.ch-voice-ic i{width:3px;height:100%;border-radius:2px;background:currentColor;transform-origin:center;animation:ch-wave 1s ease-in-out infinite}
+.ch-voice-ic i:nth-child(2){animation-delay:.15s}
+.ch-voice-ic i:nth-child(3){animation-delay:.3s}
+@keyframes ch-wave{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+.ch-voice-b{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:0 10px;border:1px solid var(--ch-line2);border-radius:999px;background:var(--ch-bg);color:var(--ch-fg2);font:600 12px Inter,system-ui,sans-serif;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.ch-voice-b:hover{background:var(--ch-bg3);color:var(--ch-fg)}
+.ch-voice-b[aria-pressed="true"]{background:var(--ch-ink);border-color:var(--ch-ink);color:var(--ch-on-ink)}
+.ch-voice-b svg{width:13px;height:13px;flex:none}
+@media (pointer:coarse){.ch-btn.mic{width:40px;height:40px}.ch-voice-b{min-height:36px;padding:0 12px}}
+@media (prefers-reduced-motion:reduce){.ch-voice-ic i{animation:none;transform:scaleY(.7)}.ch-btn.mic.on{animation:none}}
 .ch-btn.send{border-radius:50%;background:var(--ch-ink);color:var(--ch-on-ink)}
 .ch-btn.send:hover{background:var(--ch-ink);transform:scale(1.05)}
 .ch-btn.send:disabled{background:var(--ch-bg4);color:var(--ch-mute2);cursor:default;transform:none}

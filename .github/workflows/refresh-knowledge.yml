@@ -65,7 +65,9 @@ jobs:
           kb = knowledge.KnowledgeBase()
           print(kb.stats())
           cases = {'Who runs Broad Sky Partners?': ('broadskypartners.com/team',), 'Who is the CEO of BSP?': ('broadskypartners.com/team',),
-                   'When did Broad Sky acquire Punctual Pros?': ('punctual',), 'Who bought Smith + Howard?': ('smith-howard', 'tpg')}
+                   'When did Broad Sky acquire Punctual Pros?': ('punctual',), 'Who bought Smith + Howard?': ('smith-howard', 'tpg'),
+                   'Is Fair Harbor sensitive to spring and summer weather?': ('signals/overview?co=fh',),
+                   'Which counties do the Punctual Pros home-sales records cover?': ('#/pp/movers',)}
           for q, want in cases.items():
               S = app.Sources()
               app.retrieve_initial(kb, {'question': q, 'messages': [{'role': 'user', 'content': q}], 'context': [], 'persona': 'portal', 'retrieve': True}, S)

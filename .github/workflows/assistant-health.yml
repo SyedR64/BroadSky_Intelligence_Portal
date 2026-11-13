@@ -1,0 +1,79 @@
+name: Assistant health
+
+# Asks the hosted assistant to check its own model key and account (GET /health?deep=1) a few times a day.
+# The job fails when live answers are off: a rejected key, a billing problem such as no credit left, a model
+# the account cannot use, or no key at all. GitHub emails the repository owner when a scheduled run fails,
+# and that email is the alert. No secret is used or printed: the endpoint is public and returns no key.
+# The backend runs the check at most once per ten minutes per instance, so this cannot spend real credit.
+
+on:
+  schedule:
+    - cron: '23 1,7,13,19 * * *'   # four times a day (UTC), off the hour
+  workflow_dispatch: {}
+
+permissions: {}
+
+concurrency:
+  group: assistant-health
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      HEALTH_URL: https://bsp-desk.vercel.app/health?deep=1
+    steps:
+      - name: Check the assistant's model
+        shell: bash
+        run: |
+          set -u
+          # One read of the endpoint. A cold start can take a while, so each try waits up to 60 seconds and a
+          # failed try is repeated with a longer pause. A slow answer is never a failure by itself.
+          fetch() {
+            local pause=10 code
+            for try in 1 2 3 4 5; do
+              code=$(curl -sS --max-time 60 -o health.json -w '%{http_code}' "$HEALTH_URL" 2>curl.err || true)
+              if [ "$code" = "200" ] && jq -e '.ok == true' health.json >/dev/null 2>&1; then return 0; fi
+              echo "Try $try: no usable answer yet (HTTP ${code:-none}). Waiting ${pause}s."
+              sleep "$pause"; pause=$((pause * 2))
+            done
+            return 1
+          }
+
+          # A rate limit or a provider outage usually passes: look again a few times before calling it a failure.
+          for round in 1 2 3 4; do
+            if ! fetch; then
+              echo "::error title=Assistant backend not reachable::The backend did not answer /health after five tries. Check the Vercel deployment."
+              exit 1
+            fi
+            state=$(jq -r '.model_state.state // "missing"' health.json)
+            message=$(jq -r '.model_state.message // ""' health.json)
+            checked=$(jq -r '.model_state.checked_at // "never"' health.json)
+            version=$(jq -r '.version // "?"' health.json)
+            echo "Backend $version: model state '$state' (checked $checked). $message"
+            case "$state" in
+              ok)
+                echo "Live answers are working."
+                exit 0 ;;
+              missing)
+                # A backend from before the model check. It can still say that no key is set, and that fails the job.
+                if [ "$(jq -r '.llm' health.json)" = "false" ]; then
+                  echo "::error title=Assistant live answers are off::This backend reports that live answers are off. It does not report a model state yet, so the reason is not known. Check the key in the host's settings and deploy server/."
+                  exit 1
+                fi
+                echo "::warning title=Model check not deployed::This backend version does not report a model state yet, so a rejected key or a billing problem would not be caught. Deploy server/ to turn the check on."
+                exit 0 ;;
+              rate_limited|down|unverified)
+                if [ "$round" -lt 4 ]; then
+                  echo "Temporary state. Looking again in 90 seconds (the backend re-checks after 60)."
+                  sleep 90
+                  continue
+                fi
+                echo "::error title=Assistant model unavailable::The model has been '$state' for several minutes. $message"
+                exit 1 ;;
+              *)
+                echo "::error title=Assistant live answers are off::Model state '$state'. $message Fix the key or the account in the host's settings, then run this workflow again."
+                exit 1 ;;
+            esac
+          done

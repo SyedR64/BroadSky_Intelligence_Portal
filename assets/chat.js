@@ -14,7 +14,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261112225245';
+import { Data, Fmt, Live, esc } from './core.js?v=20261113023635';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -57,7 +57,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261112225245';
+const BACKEND_JS = './backend.js?v=20261113023635';
 let BE = null, BE_P = null, BE_RETRY = 0;
 function backend() {
   // The check on page load can land on a cold start and miss: when the backend looked offline, check again (at most every 15 s).
@@ -65,16 +65,26 @@ function backend() {
     BE_RETRY = Date.now();
     BE_P = BE.discover().catch(() => null).then(() => { WIDGETS.forEach(w => { try { w.refreshEngine(); } catch { /* widget gone */ } }); return BE; });
   }
+  // Live answers were reported off (a rejected key, a billing problem): ask the backend to check again, so the page recovers once it is fixed.
+  // Backend.verify() does this at most once per ten minutes, and the backend limits the check itself.
+  if (BE && BE.endpoint && BE.llm === false) BE.verify?.().then(changed => { if (changed) WIDGETS.forEach(w => { try { w.refreshEngine(); } catch { /* widget gone */ } }); }).catch(() => {});
   if (!BE_P) BE_P = import(BACKEND_JS).then(async m => {
     const B = m.Backend || m.default; if (!B) return null; BE = B;
     try { await B.discover(); } catch { /* offline: grounded only */ }
     WIDGETS.forEach(w => { try { w.refreshEngine(); } catch { /* widget gone */ } });
+    // After a cold start the backend has not used its model yet, and an instance that saw a failure keeps reporting it: ask it to check,
+    // and update the header if the answer changes whether live answers work.
+    B.verify?.().then(changed => { if (changed) WIDGETS.forEach(w => { try { w.refreshEngine(); } catch { /* widget gone */ } }); }).catch(() => {});
     return B;
   }).catch(e => { console.debug('assistant backend unavailable', e?.message || e); return null; });
   return BE_P;
 }
-/** Hosted Claude is live (endpoint answered /health with a model key). */
+/** Hosted Claude is live (endpoint answered /health with a model key the provider accepts). */
 const hosted = () => !!(BE?.endpoint && BE.llm);
+/** The backend answered, but its research assistant cannot answer right now: the header says so instead of "Online". */
+const limited = () => !!(BE?.endpoint && BE.llm === false);
+const LIMITED_TIP = 'Live answers are unavailable right now. Answers come from the portfolio data.';
+const stateText = busy => busy ? 'Working' : limited() ? 'Limited' : 'Online';
 const GENERATIVE_RX = /^(write|draft|compose|summari[sz]e|explain|compare|rewrite|translate|brainstorm|outline|pitch|prepare|suggest|recommend|critique|review|assess)\b|\b(note|memo|email|letter|script|talking points|bullet points|one-pager|agenda|pros and cons|trade-?offs)\b|\b(what do you think|should (we|bsp|the prg)|how would you|in your view)\b/i;
 /* ── Questions about what is on screen, and what the screen says ──────────── */
 const SCREEN_NOUN = '(?:maps?|charts?|graphs?|views?|pages?|screens?|scenes?|pictures?|tables?|panels?|cards?|dashboards?|legends?|layers?|numbers?|figures?|kpis?|tiles?|columns?|hex(?:es|agons?)?|dots?|discs?|rings?|arcs?|lines?|bars?|colou?rs?|heights?|shading|badges?|chips?|alerts?|polygons?|shapes?)';
@@ -508,7 +518,9 @@ async function portfolio(q = '') {
     ? items.map(i => `<p><b>${esc(String(i.company).replace(/\s*\(.*\)$/, ''))}</b> <span class="ch-badge">since ${esc(when(i.entry_date))}</span><br>${esc(clip(i.description, 230))}${(i.add_ons || []).length ? ` <span style="color:var(--ch-mute)">Add-ons: ${esc(i.add_ons.map(addOnName).join(', '))}.</span>` : ''}</p>`).join('')
     : tbl(['Company', 'What it does', 'Owned since', 'Add-ons'], items.map(i => [`<b>${esc(String(i.company).replace(/\s*\(.*\)$/, ''))}</b>`, esc(clip(sectorOf(i.sector), 70)), esc(when(i.entry_date)), (i.add_ons || []).length ? `<span class="ch-num">${(i.add_ons || []).length}</span> <span style="color:var(--ch-mute)">${esc(i.add_ons.map(addOnName).filter(x => !/undisclosed/.test(x)).join(', '))}</span>` : '<span class="ch-num">0</span>']));
   const links = items.map(i => co(i.id)).filter(Boolean).slice(0, 3).map(k => app(`#/${k}/overview`, COS[k]));
-  return { html: `<h4>BSP: the portfolio today</h4><p>${esc(String(d?.firm?.strategy || 'New York lower-middle-market private equity; control investments in essential business and consumer services.').split('. ').slice(0, 1).join('. ').replace(/\.?$/, '.'))}</p>${body}<p>${n(st.current_holdings || items.length)} companies held today, ${n(st.add_ons || 23)} add-ons closed across ${n(st.platforms || 7)} companies since the 2021 relaunch, and one exit: Smith + Howard, sold to TPG Growth in August 2026.</p><div class="ch-src">Source: ${cite('bsp_firm')} (BSP releases, SEC Form D and company sites).</div>`, links: [app('#/home/firm', 'Firm profile'), app('#/home/overview', 'Command Center'), ...links], followups: ['Which portfolio company is the largest by revenue?', 'Which add-ons has BSP closed so far?', 'What are the tech-enablement theses for every company?'] };
+  const names = items.map(i => String(i.company).replace(/\s*\(.*\)$/, '')).filter(Boolean);
+  const say = names.length > 1 ? `The portfolio today is ${names.slice(0, -1).join(', ')} and ${names.at(-1)}.` : '';   // a spoken question gets the names, not the strategy line
+  return { say, html: `<h4>BSP: the portfolio today</h4><p>${esc(String(d?.firm?.strategy || 'New York lower-middle-market private equity; control investments in essential business and consumer services.').split('. ').slice(0, 1).join('. ').replace(/\.?$/, '.'))}</p>${body}<p>${n(st.current_holdings || items.length)} companies held today, ${n(st.add_ons || 23)} add-ons closed across ${n(st.platforms || 7)} companies since the 2021 relaunch, and one exit: Smith + Howard, sold to TPG Growth in August 2026.</p><div class="ch-src">Source: ${cite('bsp_firm')} (BSP releases, SEC Form D and company sites).</div>`, links: [app('#/home/firm', 'Firm profile'), app('#/home/overview', 'Command Center'), ...links], followups: ['Which portfolio company is the largest by revenue?', 'Which add-ons has BSP closed so far?', 'What are the tech-enablement theses for every company?'] };
 }
 async function profile(q) {
   const co = coOf(q); if (!co) return portfolio(q);
@@ -545,7 +557,7 @@ async function addonHistory(q) {
 }
 /** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
 async function dealModel(q) {
-  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261112225245').catch(() => null)]);
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261113023635').catch(() => null)]);
   if (!d || !L) return null;
   const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
   const P = pre.find(i => i.co === co && i.group !== 'generic') || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
@@ -1057,6 +1069,7 @@ const I = {
   check: svg('<path d="M20 6 9 17l-5-5"/>', 16),
   regen: svg('<path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/>', 16),
   speak: svg('<path d="M11 5 6 9H3v6h3l5 4Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>', 16),
+  mute: svg('<path d="M11 5 6 9H3v6h3l5 4Z"/><path d="m16 9.5 5 5"/><path d="m21 9.5-5 5"/>', 15),
   open: svg('<path d="M7 17 17 7"/><path d="M8 7h9v9"/>', 16),
   up: svg('<path d="M7 10v11"/><path d="M15 5.9 14 10h5.8a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 18.4 21H7V10l4-8a3 3 0 0 1 4 3.9Z"/>', 16),
   down: svg('<path d="M17 14V3"/><path d="M9 18.1 10 14H4.2a2 2 0 0 1-2-2.3l1.4-7A2 2 0 0 1 5.6 3H17v11l-4 8a3 3 0 0 1-4-3.9Z"/>', 16),
@@ -1091,6 +1104,112 @@ const hash = s => { let h = 2166136261; for (const c of String(s)) { h ^= c.char
 const logText = html => { const d = document.createElement('div'); d.innerHTML = String(html || '').replace(/<li\b[^>]*>/gi, m => m + '- ').replace(/<\/(p|li|h\d|tr|div|ul|ol|table)>|<br\s*\/?>/gi, m => m + '\n'); d.querySelectorAll('.ch-ref').forEach(r => r.replaceWith(`[${r.textContent.trim()}]`)); return (d.textContent || '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim(); };
 const plain = html => { const d = document.createElement('div'); d.innerHTML = html; d.querySelectorAll('.ch-ref').forEach(r => r.remove()); return (d.innerText || d.textContent || '').replace(/\n{3,}/g, '\n\n').trim(); };
 const ago = t => { const s = (Date.now() - t) / 1000; return s < 60 ? 'now' : s < 3600 ? `${Math.floor(s / 60)}m` : s < 86400 ? `${Math.floor(s / 3600)}h` : `${Math.floor(s / 86400)}d`; };
+/* ── Voice: push-to-talk in, one short spoken answer out. Browser speech only (Web Speech API); no audio is handled by this site. ── */
+const MUTE_LS = 'bsp-voice-muted';
+const NO_VOICE = 'Voice questions need Chrome, Edge or Safari. Typed questions work in every browser.';
+const NOVELTY_VOICE = /albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|deranged|hysterical|eloquence/i;
+const ABBREV_END = /\b(?:est|approx|vs|inc|co|corp|ltd|no|mr|mrs|ms|dr|st|e\.g|i\.e)\.$/i;
+/** Text fit to be read aloud: no citation markers, links, markdown or table symbols. */
+const speakable = s => String(s || '').replace(/\[\d+(?:\s*[,–-]\s*\d+)*\]/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\bhttps?:\/\/\S+|\bwww\.\S+/gi, '')
+  .replace(/#(?=\d)/g, 'number ').replace(/~\s*(?=[$€£]?\d)/g, 'about ').replace(/\best\.(?=\s|$)/gi, 'estimated').replace(/[*_#`|~]+/g, ' ')
+  .replace(/\s*→\s*/g, ' to ').replace(/\s*×\s*/g, ' times ').replace(/≈\s*/g, 'about ').replace(/\s*[·•]\s*/g, ', ').replace(/\s+[—–]\s+/g, ', ').replace(/\/yr\b/g, ' a year').replace(/\/mo\b/g, ' a month')
+  .replace(/\s+/g, ' ').replace(/\s+([,.;:!?])/g, '$1').replace(/,\s*,/g, ',').trim();
+/** A short spoken version of a full on-screen answer: its first two or three sentences, without tables, badges or notes. */
+function spokenShort(html) {
+  const d = document.createElement('div'); d.innerHTML = String(html || '');
+  const tables = d.querySelectorAll('table').length;
+  const top = speakable((d.querySelector('table tbody tr b') || d.querySelector('table tbody tr td'))?.textContent || '');   // the first row of a ranked table
+  d.querySelectorAll('.ch-ref,.ch-badge,.ch-warn,.ch-hint,.ch-src,.ch-stopped,table,style,script').forEach(n => n.remove());
+  const parts = [...d.querySelectorAll('p,li')].filter(n => !(n.tagName === 'P' && n.closest('li'))).map(n => speakable(n.textContent)).filter(t => t.length > 1).map(t => /[.!?:]$/.test(t) ? t.replace(/:$/, '.') : t + '.');
+  const sents = parts.join(' ').split(/(?<=[.!?])\s+(?=[A-Z0-9"“$])/).filter(Boolean);
+  const out = []; let len = 0;
+  for (const x of sents) { if (out.length && (out.length >= 3 || len + x.length > 300)) break; out.push(x); len += x.length; }
+  const head = speakable(d.querySelector('h2,h3,h4')?.textContent || '');
+  const lead = out.join(' ') || (head ? head + '.' + (top ? ` First on the list: ${top}.` : '') : '');
+  if (!lead) return 'The answer is on screen.';
+  return lead + (out.length < sents.length || tables ? ' The rest is on screen.' : '');
+}
+const Voice = {
+  owner: null, live: false, pending: 0, buf: '', token: 0, unlocked: false, keep: [], _muted: null, _voices: null,
+  Rec: () => window.SpeechRecognition || window.webkitSpeechRecognition || null,
+  canListen() { return !!this.Rec(); },
+  canSpeak() { return 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window; },
+  /** The page language (html lang), as a speech locale. */
+  lang() { const l = String(document.documentElement.lang || '').trim(); return !l || /^en$/i.test(l) ? 'en-US' : l; },
+  muted() { if (this._muted == null) this._muted = lsGet(MUTE_LS, false) === true; return this._muted; },
+  setMuted(v) { this._muted = !!v; lsSet(MUTE_LS, this._muted); if (v) this.cancel(); WIDGETS.forEach(w => { try { w.voiceUI(); } catch { /* widget gone */ } }); },
+  /** Voices arrive late on most browsers (and never as a full list on some phones): read them again whenever the browser says they changed. */
+  voices() {
+    if (!this.canSpeak()) return [];
+    if (this._voices == null) { this._voices = []; try { speechSynthesis.addEventListener?.('voiceschanged', () => { try { this._voices = speechSynthesis.getVoices() || []; } catch { /* keep the old list */ } }); } catch { /* no event */ } }
+    if (!this._voices.length) { try { this._voices = speechSynthesis.getVoices() || []; } catch { this._voices = []; } }
+    return this._voices;
+  },
+  /** A natural-sounding voice for the page language, or null to let the browser choose by language. */
+  pick() {
+    const want = this.lang().toLowerCase(), base = want.split('-')[0]; let best = null, top = 0;
+    for (const v of this.voices()) {
+      const l = String(v.lang || '').replace('_', '-').toLowerCase(); let n = l === want ? 6 : l.split('-')[0] === base ? 3 : 0; if (!n) continue;
+      const name = String(v.name || '');
+      if (NOVELTY_VOICE.test(name)) n -= 8;
+      if (/natural|neural|enhanced|premium|siri/i.test(name)) n += 4;
+      if (/samantha|ava|allison|aria|jenny|google us english|google uk english female/i.test(name)) n += 2;
+      if (v.default) n += 1;
+      if (n > top) { top = n; best = v; }
+    }
+    return best;
+  },
+  /** Phones only let a page speak after a tap: a silent utterance from inside the tap opens the way for the answer that arrives later. */
+  unlock() {
+    if (this.unlocked || this.muted() || !this.canSpeak()) return;
+    try {
+      const ss = speechSynthesis; this.voices();
+      if (ss.speaking || ss.pending) return;
+      const u = new SpeechSynthesisUtterance(''); u.volume = 0; u.lang = this.lang(); u.onend = () => { this.unlocked = true; };
+      ss.speak(u);
+    } catch { /* speech blocked */ }
+  },
+  active() { return this.live || this.pending > 0; },
+  begin(owner) { this.cancel(); this.owner = owner; this.live = true; this.buf = ''; this.sync(); },
+  /** Streamed text in; whole sentences out, so speech starts on the first sentence instead of waiting for the answer to end. */
+  feed(t) {
+    if (!this.live) return; this.buf += String(t || '');
+    let cut = -1; const rx = /[.!?]["”’)]?\s+/g;
+    for (let m; (m = rx.exec(this.buf));) { if (!ABBREV_END.test(this.buf.slice(0, m.index + 1))) cut = m.index + m[0].length; }   // "est. at closing" is not the end of a sentence
+    if (cut >= 40) { const head = this.buf.slice(0, cut); this.buf = this.buf.slice(cut); this.utter(head); }
+  },
+  end() { if (!this.live) return; const rest = this.buf; this.buf = ''; this.live = false; this.utter(rest); if (!this.pending) this.done(); else this.sync(); },
+  say(owner, text) { this.begin(owner); this.buf = String(text || ''); this.end(); },
+  utter(text) {
+    const t = speakable(text); if (!t || this.muted() || !this.canSpeak()) return;
+    try {
+      const ss = speechSynthesis, u = new SpeechSynthesisUtterance(t), tok = this.token, v = this.pick();
+      u.lang = v?.lang || this.lang(); if (v) u.voice = v; u.rate = 1;
+      const fin = () => { if (tok !== this.token) return; this.pending = Math.max(0, this.pending - 1); this.keep = this.keep.filter(x => x !== u); if (!this.pending && !this.live) this.done(); };
+      u.onend = fin; u.onerror = fin;
+      this.pending++; this.keep.push(u);   // held so the browser does not drop the utterance (and its end event) mid-speech
+      try { ss.resume(); } catch { /* not paused */ }
+      ss.speak(u); this.sync();
+    } catch { /* speech blocked: the answer is on screen */ }
+  },
+  done() { const o = this.owner; this.owner = null; this.live = false; this.pending = 0; this.keep = []; try { o?.voiceUI(); } catch { /* widget gone */ } },
+  /** Stops speech this module started. Speech started elsewhere on the page (the portal briefing) is left alone. */
+  cancel() {
+    const was = this.active(); const o = this.owner;
+    this.token++; this.live = false; this.buf = ''; this.pending = 0; this.keep = []; this.owner = null;
+    if (was) { try { speechSynthesis.cancel(); } catch { /* no speech */ } }
+    try { o?.voiceUI(); } catch { /* widget gone */ }
+  },
+  sync() { try { this.owner?.voiceUI(); } catch { /* widget gone */ } },
+  /** Closes every open microphone without sending what was heard. */
+  hush() { WIDGETS.forEach(w => { try { w.listenStop(false); } catch { /* widget gone */ } }); },
+};
+// Leaving the page or the view ends speech and closes the microphone; a hidden tab never keeps listening.
+if (typeof addEventListener === 'function') {
+  const leave = () => { Voice.hush(); Voice.cancel(); WIDGETS.forEach(w => { try { w.stopSpeech(); } catch { /* widget gone */ } }); };
+  addEventListener('pagehide', leave); addEventListener('hashchange', leave);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) Voice.hush(); });
+}
 function resolvePersona(id, opts = {}) {
   const base = PERSONAS[id] || SITE_BASE[id] || PERSONAS.portal;
   const short = opts.short_name || opts.short || base.short;
@@ -1197,7 +1316,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261112225245'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261113023635'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };
@@ -1275,6 +1394,8 @@ class Widget {
   /** Backend discovery finished (or settings changed): update engine chips, privacy lines and synthesis actions in place. */
   refreshEngine() {
     const r = this.root;
+    r.classList.toggle('ch-limited', limited());
+    const stt = r.querySelector('.ch-state'); if (stt) { stt.textContent = stateText(this.busy); if (limited()) stt.title = LIMITED_TIP; else stt.removeAttribute('title'); }
     r.querySelectorAll('.ch-engine').forEach(b => b.replaceWith(Object.assign(document.createElement('div'), { innerHTML: this.engineHTML() }).firstElementChild));
     const ft = r.querySelector('.ch-compose .ch-foot span'); if (ft) ft.innerHTML = this.footHTML();
     const foot = r.querySelector('.ch-dock .ch-foot span'); if (foot) foot.textContent = this.privacy();
@@ -1286,15 +1407,19 @@ class Widget {
   synthBtnHTML() { return `<button type="button" class="ch-synth-btn" data-act="synth" aria-label="Go deeper on this answer">${I.spark}<span>Go deeper</span></button>`; }
 
   headHTML() {
-    return `<div class="ch-head">${this.avatar()}<div class="ch-head-t"><div class="ch-title">${esc(this.persona.name)}</div><div class="ch-sub"><span class="ch-dot" aria-hidden="true"></span><span class="ch-state">${this.busy ? 'Working' : 'Online'}</span>${this.engineHTML()}</div></div><div class="ch-ib"><button type="button" data-a="new" aria-label="New chat" data-tip="New chat">${I.compose}</button><a data-a="expand" href="${esc(this.fullHref())}" aria-label="Open full assistant" data-tip="Open full assistant">${I.expand}</a><button type="button" data-a="close" aria-label="Close assistant" data-tip="Close">${I.x}</button></div></div>`;
+    return `<div class="ch-head">${this.avatar()}<div class="ch-head-t"><div class="ch-title">${esc(this.persona.name)}</div><div class="ch-sub"><span class="ch-dot" aria-hidden="true"></span><span class="ch-state"${limited() ? ` title="${esc(LIMITED_TIP)}"` : ''}>${stateText(this.busy)}</span>${this.engineHTML()}</div></div><div class="ch-ib"><button type="button" data-a="new" aria-label="New chat" data-tip="New chat">${I.compose}</button><a data-a="expand" href="${esc(this.fullHref())}" aria-label="Open full assistant" data-tip="Open full assistant">${I.expand}</a><button type="button" data-a="close" aria-label="Close assistant" data-tip="Close">${I.x}</button></div></div>`;
   }
   tbarHTML() { return `<div class="ch-tbar">${this.avatar('sm')}<b class="ch-tbar-n">${esc(this.persona.name)}</b>${this.engineHTML()}<span class="ch-sp"></span><button type="button" class="ch-ib-b" data-a="new" aria-label="New chat" data-tip="New chat">${I.compose}</button><a class="ch-ib-b" data-a="expand" href="${esc(this.fullHref())}" aria-label="Open full assistant" data-tip="Open full assistant">${I.expand}</a></div>`; }
   /** The page's own suggestion list (Chat.mount opts.suggestions), shown in full and in order; null when the page passed none. */
   ownSuggestions() { const o = this.opts?.suggestions; return this.id === this.baseId && Array.isArray(o) && o.length ? uniq(o.filter(Boolean)) : null; }
   chipsHTML() { const own = this.ownSuggestions(); return `<div class="ch-chips">${(own || uniq(this.persona.suggestions).slice(0, 5)).map(s => `<button type="button" class="ch-chip" data-prompt="${esc(s)}">${esc(s)}</button>`).join('')}</div>`; }
   composeHTML() {
-    const mic = ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) ? `<button type="button" class="ch-btn mic" aria-label="Dictate a question" data-tip="Dictate">${I.mic}</button>` : '';
-    return `<div class="ch-compose"><div class="ch-ac" role="listbox" aria-label="Suggestions" hidden></div><div class="ch-box"><textarea rows="1" placeholder="${esc(this.persona.placeholder || 'Ask anything…')}" aria-label="Message ${esc(this.persona.name)}" enterkeyhint="send"></textarea><div class="ch-tools"><span class="ch-sp"></span>${mic}<button type="button" class="ch-btn send" aria-label="Send" disabled><span class="i-send">${I.send}</span><span class="i-stop">${I.stop}</span></button></div></div>${this.mode === 'inline' ? `<div class="ch-foot">${I.lock}<span>${this.footHTML()}</span></div>` : ''}</div>`;
+    // Voice: one microphone button. Where the browser cannot listen it stays visible, marked unavailable, and says why when pressed.
+    const can = Voice.canListen(), coarse = (() => { try { return matchMedia('(pointer:coarse)').matches; } catch { return false; } })();
+    const mic = can ? `<button type="button" class="ch-btn mic" aria-pressed="false" aria-label="Ask by voice" data-tip="${coarse ? 'Hold to talk' : 'Ask by voice'}">${I.mic}</button>`
+      : `<button type="button" class="ch-btn mic off" aria-disabled="true" aria-label="Ask by voice (not available in this browser)" data-tip="Voice unavailable">${I.mic}</button>`;
+    const bar = `<div class="ch-voice" hidden><span class="ch-voice-ic" aria-hidden="true"><i></i><i></i><i></i></span><span class="ch-voice-t" role="status" aria-live="polite"></span><button type="button" class="ch-voice-b" data-a="voice-stop" aria-label="Stop speaking" hidden>${I.stop}<span>Stop</span></button>${Voice.canSpeak() ? `<button type="button" class="ch-voice-b" data-a="voice-mute" aria-pressed="false">${I.speak}<span>Mute</span></button>` : ''}</div>`;
+    return `<div class="ch-compose"><div class="ch-ac" role="listbox" aria-label="Suggestions" hidden></div>${this.mode === 'inline' ? '' : bar}<div class="ch-box"><textarea rows="1" placeholder="${esc(this.persona.placeholder || 'Ask anything…')}" aria-label="Message ${esc(this.persona.name)}" enterkeyhint="send"></textarea><div class="ch-tools"><span class="ch-sp"></span>${mic}<button type="button" class="ch-btn send" aria-label="Send" disabled><span class="i-send">${I.send}</span><span class="i-stop">${I.stop}</span></button></div></div>${this.mode === 'inline' ? `${bar}<div class="ch-foot">${I.lock}<span>${this.footHTML()}</span></div>` : ''}</div>`;
   }
   emptyHTML() {
     const full = this.mode === 'full'; const by = {};
@@ -1348,7 +1473,7 @@ class Widget {
     if (this.mode !== 'floating') { if (open) this.focus(); return; }
     const hadFocus = this.root.contains(document.activeElement);
     this.open = !!open;
-    if (!open) { this.stopSpeech(); this.hidePop(); this.renderLauncher(); if (hadFocus) this.root.querySelector('.ch-launch')?.focus({ preventScroll: true }); return; }
+    if (!open) { this.listenStop(false); this.stopSpeech(); this.hidePop(); this.renderLauncher(); if (hadFocus) this.root.querySelector('.ch-launch')?.focus({ preventScroll: true }); return; }
     this.root.innerHTML = `<div class="ch-panel" role="dialog" aria-label="${esc(this.persona.name)}">${this.headHTML()}<div class="ch-body"><button type="button" class="ch-jump" data-a="jump" aria-label="Jump to latest" hidden>${I.arrowDown}</button></div>${this.composeHTML()}</div>`;
     $('.ch-body', this.root).prepend(this.msgs);
     if (!this.msgs.querySelector('.ch-turn')) this.showEmpty();
@@ -1433,24 +1558,107 @@ class Widget {
       if (e.key === 'Tab' && !ac.hidden && idx >= 0) { e.preventDefault(); ta.value = items[idx].text; ac.hidden = true; grow(); return; }
       if (e.key === 'ArrowUp' && !ta.value && this.prompts.length) { e.preventDefault(); ta.value = this.prompts.at(-1); grow(); requestAnimationFrame(() => ta.setSelectionRange(ta.value.length, ta.value.length)); return; }
       if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); if (!ac.hidden && idx >= 0 && (kind === 'cmd' || ta.value.trim().length < 3)) { pick(idx); return; } ac.hidden = true; this.submit(); return; }
-      if (e.key === 'Escape') { e.stopPropagation(); if (!ac.hidden) { ac.hidden = true; return; } if (this.busy) { this.stop(); return; } if (this.mode === 'floating') this.togglePanel(false); }
+      if (e.key === 'Escape') { e.stopPropagation(); if (!ac.hidden) { ac.hidden = true; return; } if (this.hearing) { this.listenStop(false); return; } if (this.busy) { this.stop(); return; } if (this.mode === 'floating') this.togglePanel(false); }
     };
     ta.onblur = () => setTimeout(() => { ac.hidden = true; }, 150);
     ta.addEventListener('focus', () => { backend(); }, { once: true });
     send.onclick = () => (this.busy ? this.stop() : this.submit());
-    const mic = $('.ch-btn.mic', r); if (mic) mic.onclick = () => this.listen(ta, mic, grow);
+    const mic = $('.ch-btn.mic', r); if (mic) this.bindVoice(mic);
     const att = $('.ch-btn.attach', r); if (att) att.onclick = e => { e.preventDefault(); att.classList.add('tip-on'); clearTimeout(att._t); att._t = setTimeout(() => att.classList.remove('tip-on'), 1800); };
     grow();
   }
   syncSend() { const b = this.sendBtn; if (!b) return; b.disabled = !this.busy && !(this.ta?.value || '').trim(); b.setAttribute('aria-label', this.busy ? 'Stop generating' : 'Send'); b.dataset.tip = this.busy ? 'Stop' : ''; }
-  setBusy(on) { this.busy = on; this.root.classList.toggle('ch-busy', on); const s = this.root.querySelector('.ch-state'); if (s) s.textContent = on ? 'Working' : 'Online'; this.syncSend(); }
-  submit() { const ta = this.ta; const q = (ta?.value || '').trim(); if (!q || this.busy) return; ta.value = ''; this.grow?.(); if (q.startsWith('/') && this.command(q)) return; this.ask(q); }
+  setBusy(on) { this.busy = on; this.root.classList.toggle('ch-busy', on); const s = this.root.querySelector('.ch-state'); if (s) s.textContent = stateText(on); this.syncSend(); }
+  submit() { const ta = this.ta; const q = (ta?.value || '').trim(); if (!q || this.busy) return; this.listenStop(false); ta.value = ''; this.grow?.(); if (q.startsWith('/') && this.command(q)) return; this.ask(q); }
   command(text) {
     const c = String(text).trim().split(/\s+/)[0].toLowerCase(); const hit = COMMANDS.find(x => x[0] === c); if (!hit) return false;
     if (hit[2]) this.setPersona(hit[2]); else if (c === '/key') this.settings(); else this.newChat();
     return true;
   }
-  listen(ta, btn, grow) { const R = window.SpeechRecognition || window.webkitSpeechRecognition; const rec = new R(); rec.lang = 'en-US'; rec.interimResults = true; btn.classList.add('on'); btn.setAttribute('aria-pressed', 'true'); rec.onresult = e => { ta.value = Array.from(e.results).map(x => x[0].transcript).join(''); grow(); }; rec.onend = () => { btn.classList.remove('on'); btn.setAttribute('aria-pressed', 'false'); if (ta.value.trim()) this.submit(); }; rec.onerror = () => { btn.classList.remove('on'); btn.setAttribute('aria-pressed', 'false'); }; rec.start(); }
+  /* ── voice ── */
+  /** The microphone button: hold to talk on a touch screen (a quick tap also works: it listens until you pause), click or press Enter to start and stop elsewhere. */
+  bindVoice(mic) {
+    if (mic.getAttribute('aria-disabled') === 'true') { mic.onclick = () => this.voiceNote(NO_VOICE); this.voiceUI(); return; }
+    let touch = false, down = 0, mine = false, skip = -1e6;   // skip: when a touch last ended, so the click the browser sends after it is ignored
+    mic.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse' || e.button) return;   // a mouse click toggles (below)
+      touch = true; down = now(); mine = false;
+      try { mic.setPointerCapture(e.pointerId); } catch { /* not capturable */ }
+      if (!this.hearing && !this._tapOnly) { mine = true; this.listenStart(true, true); }
+    });
+    mic.addEventListener('pointerup', () => {
+      if (!touch) return; touch = false; skip = now(); Voice.unlock();
+      if (this.hearing) { if (mine && now() - down < 350) { this.hearing.hold = false; this.voiceUI(); } else this.listenStop(true); }
+      else if (!mine || this._tapOnly) this.listenStart(false);   // this browser only opens the microphone on release
+    });
+    mic.addEventListener('pointercancel', () => { if (!touch) return; touch = false; skip = now(); if (this.hearing && mine) { this.hearing.hold = false; this.voiceUI(); } });   // e.g. the permission prompt took the touch: keep listening until a pause
+    mic.addEventListener('contextmenu', e => e.preventDefault());
+    mic.onclick = () => { if (now() - skip < 700) return; Voice.unlock(); if (this.hearing) this.listenStop(true); else this.listenStart(false); };
+    this.voiceUI();
+  }
+  /** Opens the microphone. Only ever called from a press on the microphone button. */
+  listenStart(hold = false, fromDown = false) {
+    const R = Voice.Rec(), ta = this.ta; if (!R || !ta || this.hearing) return;
+    Voice.hush(); Voice.cancel(); this.stopSpeech();   // one microphone at a time, and never listen to our own voice
+    let rec; try { rec = new R(); } catch { this.voiceNote('Voice is not available right now. Type your question instead.'); return; }
+    rec.lang = Voice.lang(); rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
+    const h = this.hearing = { rec, hold, fromDown, err: '', send: true, draft: ta.value, over: false, timer: 0 };
+    clearTimeout(this._vnoteT); this._vnote = ''; ta.value = ''; this.grow?.();
+    const finish = () => {
+      if (h.over) return; h.over = true; clearTimeout(h.timer); clearTimeout(h.cap);
+      if (this.hearing === h) this.hearing = null;
+      const live = this.ta || ta, q = h.send ? live.value.replace(/\s+/g, ' ').trim() : '';
+      if (!h.send) { live.value = h.draft || ''; this.grow?.(); this.voiceUI(); return; }   // discarded: the composer goes back to what was typed before
+      if (q) { live.value = ''; this.grow?.(); this.voiceUI(); this.ask(q, { voice: true }); return; }
+      live.value = h.draft || ''; this.grow?.();
+      const denied = h.err === 'not-allowed' || h.err === 'service-not-allowed';
+      if (denied && h.fromDown && !this._tapOnly) { this._tapOnly = true; this.voiceNote('Tap the microphone, then speak.'); return; }
+      this.voiceNote(h.err === 'service-not-allowed' ? 'Voice input is turned off on this device. Type your question instead.'
+        : denied ? 'The microphone is blocked for this site. Allow it in your browser settings, or type your question.'
+        : h.err === 'audio-capture' ? 'No microphone was found. Type your question instead.'
+        : h.err === 'network' || h.err === 'language-not-supported' ? 'Voice is not available right now. Type your question instead.'
+        : 'Nothing was heard. Try again, or type your question.');
+    };
+    h.finish = finish;
+    rec.onresult = e => { if (this.hearing !== h) return; const live = this.ta || ta; live.value = Array.from(e.results).map(x => x[0].transcript).join('').replace(/\s+/g, ' ').trimStart(); this.grow?.(); };
+    rec.onerror = e => { h.err = e?.error || 'error'; };
+    rec.onend = finish;
+    h.cap = setTimeout(() => this.listenStop(true), 60000);   // the microphone never stays open for long
+    try { rec.start(); } catch { h.err = h.err || 'error'; finish(); return; }
+    this.voiceUI();
+  }
+  /** Closes the microphone. send: ask what was heard; otherwise discard it. */
+  listenStop(send = true) {
+    const h = this.hearing; if (!h) return;
+    h.send = h.send && send;
+    try { if (send) h.rec.stop(); else h.rec.abort(); } catch { /* already stopped */ }
+    if (!send) h.finish();
+    else h.timer = setTimeout(() => { try { h.rec.abort(); } catch { /* gone */ } h.finish(); }, 2500);   // some browsers never report the end
+  }
+  /** A one-line note in the voice bar (why voice is unavailable, nothing heard), cleared after a few seconds. */
+  voiceNote(text) { this._vnote = text; this.voiceUI(); clearTimeout(this._vnoteT); this._vnoteT = setTimeout(() => { this._vnote = ''; this.voiceUI(); }, 9000); }
+  /** Brings the microphone button and the voice bar in line with what is happening: listening, waiting, speaking, or idle. */
+  voiceUI() {
+    const r = this.root, mic = r.querySelector('.ch-btn.mic'), bar = r.querySelector('.ch-voice'); if (!mic || !bar) return;
+    const hearing = !!this.hearing, speaking = Voice.owner === this && Voice.pending > 0, waiting = !!this.voiceBusy, muted = Voice.muted();
+    const focused = bar.contains(document.activeElement) ? document.activeElement : null;
+    r.classList.toggle('ch-hearing', hearing); r.classList.toggle('ch-speaking', speaking);
+    if (mic.getAttribute('aria-disabled') !== 'true') {
+      mic.classList.toggle('on', hearing); mic.setAttribute('aria-pressed', String(hearing));
+      mic.setAttribute('aria-label', hearing ? 'Stop listening and send' : 'Ask by voice');
+      const coarse = (() => { try { return matchMedia('(pointer:coarse)').matches; } catch { return false; } })();
+      mic.dataset.tip = hearing ? 'Send' : coarse && !this._tapOnly ? 'Hold to talk' : 'Ask by voice';
+    }
+    if (this.ta) this.ta.placeholder = hearing ? 'Listening…' : (this.persona.placeholder || 'Ask anything…');
+    const text = hearing ? (this.hearing.hold ? 'Listening. Release to send.' : 'Listening. Pause, or press the microphone, to send.')
+      : this._vnote ? this._vnote : speaking ? 'Speaking.' : waiting ? (muted ? 'Getting a short answer. Sound is muted.' : 'Getting a short answer.') : '';
+    const t = bar.querySelector('.ch-voice-t'); if (t && t.textContent !== text) t.textContent = text;
+    const stop = bar.querySelector('[data-a="voice-stop"]'); if (stop) stop.hidden = !speaking;
+    const mute = bar.querySelector('[data-a="voice-mute"]');
+    if (mute) { mute.hidden = !(hearing || waiting || speaking); mute.setAttribute('aria-pressed', String(muted)); const ic = mute.querySelector('svg'); if (ic) ic.outerHTML = muted ? I.mute : I.speak; }
+    bar.classList.toggle('on', hearing); bar.hidden = !text;
+    if (focused && (bar.hidden || focused.hidden)) mic.focus({ preventScroll: true });   // Stop or Mute just went away: keyboard focus goes to the microphone, not to the page
+  }
 
   /* ── conversation ── */
   setPersona(id, { fresh = true } = {}) {
@@ -1463,14 +1671,14 @@ class Widget {
     return true;
   }
   newChat() {
-    if (this.busy) this.stop(); this.stopSpeech(); this.hidePop();
+    if (this.busy) this.stop(); this.listenStop(false); this.stopSpeech(); this.hidePop();
     this.history = []; this.ctx = null; this.thread = null; this.lastQ = '';
     this.msgs.innerHTML = '';
     if (this.mode === 'inline') this.root.querySelector('.ch-thread')?.classList.remove('open'); else this.showEmpty();
     if (this.mode === 'full') { this.renderThreads(); this.root.classList.remove('ch-side-open'); }
     this.updateExpand(); this.updateJump(); this.focus();
   }
-  stop() { if (this.ctl) this.ctl.stopped = true; try { BE?.abort(); } catch { /* nothing in flight */ } }
+  stop() { if (this.ctl) this.ctl.stopped = true; if (Voice.owner === this) Voice.cancel(); try { BE?.abort(); } catch { /* nothing in flight */ } }
   userTurn(q) { const d = document.createElement('div'); d.className = 'ch-turn user'; d.innerHTML = `<div class="ch-ubox">${esc(q)}</div>`; return d; }
   botShell() {
     this.msgs.querySelectorAll('.ch-turn.bot').forEach(t => { t.style.minHeight = ''; });
@@ -1478,8 +1686,11 @@ class Widget {
     d.innerHTML = `${this.avatar('sm')}<div class="ch-col"><div class="ch-note" hidden></div><div class="ch-status" role="status" hidden></div><div class="ch-answer"></div><div class="ch-synth" hidden></div><div class="ch-after"></div></div>`;
     return d;
   }
-  async ask(q) {
+  /** opts.voice: the question was spoken. It gets one short answer, shown on screen and read aloud. */
+  async ask(q, opts = {}) {
     q = String(q ?? '').trim(); if (!q) return;
+    const voice = !!opts.voice;
+    Voice.cancel(); this.stopSpeech(); this.listenStop(false);   // a new question ends the last answer's speech and closes the microphone
     backend();
     if (this.busy) { this.stop(); const t0 = now(); while (this.busy && now() - t0 < 2000) await sleep(40); }
     if (q.startsWith('/') && this.command(q)) return;
@@ -1492,7 +1703,11 @@ class Widget {
     this.history.push({ role: 'user', html: esc(q), text: q });
     if (this.msgs.querySelectorAll('.ch-turn.user').length > 1 || this.mode !== 'inline') turn.style.minHeight = Math.max(0, this.msgs.clientHeight - u.offsetHeight - 56) + 'px';
     this.msgs.scrollTo({ top: Math.max(0, u.offsetTop - 14), behavior: reduced() ? 'auto' : 'smooth' });
-    const rec = await this.answer(q, turn);
+    if (voice) { this.voiceBusy = true; this.voiceUI(); }
+    let rec; try { rec = await this.answer(q, turn, { voice }); } finally { if (voice) this.voiceBusy = false; }
+    // The research assistant did not answer a spoken question: read a short version of the answer on screen.
+    if (voice && rec && !rec.voice && (rec.kind === 'grounded' || rec.kind === 'retrieval' || rec.kind === 'deep') && rec.meta?.label !== 'Stopped' && !this.hearing && !this.busy) { rec.voice = 'short'; Voice.say(this, rec.say ? rec.say + ' The rest is on screen.' : spokenShort(rec.html)); }
+    this.voiceUI();
     if (rec) { this.history.push({ role: 'assistant', html: rec.html, text: plain(rec.html) }); this.saveTurn(q, rec); this.logAnswer(q, rec); }
     return rec;
   }
@@ -1504,7 +1719,7 @@ class Widget {
   }
   note(turn, fu) { const n = turn.querySelector('.ch-note'); n.hidden = false; n.innerHTML = `<span aria-hidden="true">↳</span> Continuing from “${esc(fu.from)}” <span class="ch-note-q">· read as “${esc(fu.q)}”</span>`; }
   /** The answer pipeline: intent → (follow-up resolution) → retrieval → optional Claude. Returns a serialisable record. */
-  async answer(q, turn) {
+  async answer(q, turn, { voice = false } = {}) {
     this.setBusy(true); const ctl = this.ctl = { stopped: false };
     const body = turn.querySelector('.ch-answer');
     const st = new Status(turn.querySelector('.ch-status')); const tr = new Tracker(t => st.push(t));
@@ -1518,9 +1733,24 @@ class Widget {
       const { hit, eq, fu, aboutView, toHosted } = routeOf(q, intents, this.ctx, !!view);
       if (fu) this.note(turn, fu);
       st.push(aboutView && view ? 'Reading this view' : 'Searching the portfolio data');
+      // A spoken question goes to the research assistant first, for one short answer. When it is off or fails, the usual route below
+      // answers on screen and a short version is read aloud.
+      let warn = '', tried = false;
+      if (voice) {
+        await beP;
+        if (ctl.stopped) return this.stopped(turn, st, q);
+        if (hosted()) {
+          tried = true; TRACK = null;
+          const r = await this.claude(q, turn, st, [], [], [], ctl, 'hosted', view, true); if (r.rec) return r.rec;
+          if (ctl.stopped) return this.stopped(turn, st, q);
+          warn = `<p class="ch-warn">${esc(r.error)}</p>`;
+          if (limited()) WIDGETS.forEach(w => { try { w.refreshEngine(); } catch { /* widget gone */ } });
+          TRACK = tr;
+        }
+      }
       if (hit && LLM.key() && LLM.always()) await beP;   // "always use Claude" applies to the personal key only when no backend is live
       if (toHosted) await beP;
-      const skipIntent = !!(LLM.key() && LLM.always() && !hosted()) || (toHosted && hosted());
+      const skipIntent = !voice && (!!(LLM.key() && LLM.always() && !hosted()) || (toHosted && hosted()));
       // A question about the view that the research assistant cannot take gets the closest grounded answer, and says so first.
       const viewNote = (tried, own) => `<p class="ch-hint">${tried ? "So I can't read this view for you right now." : "The research assistant is offline, so I can't read this view for you."} ${own ? 'This is what the view itself says.' : 'This is the closest answer from the portfolio data.'}</p>`;
       let res = null;
@@ -1528,7 +1758,7 @@ class Widget {
       if (ctl.stopped) return this.stopped(turn, st, q);
       if (res) {
         TRACK = null;
-        const rec = { kind: 'grounded', q, eq: eq !== q ? eq : undefined, note: fu?.from, html: (aboutView ? viewNote(false, false) : '') + res.html, links: res.links || [], followups: res.followups || [], sources: tr.list(), intent: hit.id, engine: GROUNDED() };
+        const rec = { kind: 'grounded', q, eq: eq !== q ? eq : undefined, note: fu?.from, html: warn + (aboutView ? viewNote(!!warn, false) : '') + res.html, links: res.links || [], followups: res.followups || [], sources: tr.list(), intent: hit.id, engine: GROUNDED(), ...(res.say ? { say: res.say } : {}) };
         await st.settle();
         if (ctl.stopped) return this.stopped(turn, st, q);
         this.prepare(body, rec); rec.meta = st.finish(rec.sources.length, 'Answered', rec.engine, groundedTip());
@@ -1545,12 +1775,12 @@ class Widget {
         if (ctl.stopped) return this.stopped(turn, st, q);
         if (pre) return await this.deepDive(q, eq, fu, turn, st, pre, ctl);
       }
-      let warn = '';
-      if (hosted()) {   // the hosted assistant searches its own knowledge base; the local datasets are the fallback
+      if (hosted() && !tried) {   // the hosted assistant searches its own knowledge base; the local datasets are the fallback
         TRACK = null;
         const r = await this.claude(q, turn, st, [], [], [], ctl, 'hosted', view); if (r.rec) return r.rec;
         if (ctl.stopped) return this.stopped(turn, st, q);
         warn = `<p class="ch-warn">${esc(r.error)}</p>`;
+        if (limited()) WIDGETS.forEach(w => { try { w.refreshEngine(); } catch { /* widget gone */ } });   // the backend said live answers are off: the header stops saying "Online"
       }
       if (hit && LIVE_ONLY.has(hit.id)) {   // the hosted assistant did not answer: say so plainly instead of showing the closest dataset
         const off = await hit.run(eq, {});
@@ -1644,7 +1874,7 @@ class Widget {
     this.renderAfter(turn, rec); this.msgs.setAttribute('aria-busy', 'false');
   }
   /** Stream an open question from Claude, hosted (via: 'hosted') or with the visitor's key (via: 'key'), grounded on retrieved docs. */
-  async claude(q, turn, st, docs, sources, sIdx, ctl, via, view = null) {
+  async claude(q, turn, st, docs, sources, sIdx, ctl, via, view = null, voice = false) {
     const body = turn.querySelector('.ch-answer'); const isHosted = via === 'hosted';
     let model = isHosted ? (BE.model || MODEL_DEFAULT) : LLM.model();
     let srv = false;   // true once the hosted assistant sends its own numbered sources
@@ -1654,7 +1884,7 @@ class Widget {
     let stream, started = false; const think = new Think(turn);
     if (isHosted) {
       // The page behind a docked assistant goes first: the server numbers it [1] and labels it as the page the visitor is on.
-      stream = BE.chat({ persona: this.id, messages: hist, question: q, context: [...(view ? [{ title: view.title, text: view.text, href: view.href }] : []), ...docs.map((d, i) => ({ title: sources[sIdx[i]]?.label || d.t, text: terms(d.s), href: d.href || '' }))], onEvent: ev => {
+      stream = BE.chat({ persona: this.id, messages: hist, question: q, mode: voice ? 'voice' : 'chat', context: [...(view ? [{ title: view.title, text: view.text, href: view.href }] : []), ...docs.map((d, i) => ({ title: sources[sIdx[i]]?.label || d.t, text: terms(d.s), href: d.href || '' }))], onEvent: ev => {
         if (ev.type === 'meta' && ev.model) { if (ev.fallback) st.push('Switching to a backup model'); model = ev.model; }
         else if (ev.type === 'done' && ev.model) model = ev.model;
         else if (ev.type === 'sources' && Array.isArray(ev.sources)) { srv = true; sources.length = 0; for (const s of ev.sources) sources.push(srvSource(s)); }
@@ -1670,15 +1900,17 @@ class Widget {
     let acc = '', err = ''; this.msgs.setAttribute('aria-busy', 'true'); turn.classList.add('ch-streaming');
     try {
       for await (const t of stream) {
-        if (!started) { started = true; think.close(); st.push('Writing the answer'); }
+        if (!started) { started = true; think.close(); st.push('Writing the answer'); if (voice && !this.hearing) Voice.begin(this); }
         acc += t; body.innerHTML = mdLite(terms(acc), refOf); (body.lastElementChild || body).appendChild(caret);
+        if (voice && Voice.owner === this) Voice.feed(t);   // spoken sentence by sentence as it arrives
         if (ctl.stopped) break;
       }
     } catch (e) { err = e?.message || String(e); }
+    if (voice && Voice.owner === this) { if (ctl.stopped) Voice.cancel(); else Voice.end(); }
     caret.remove(); turn.classList.remove('ch-streaming'); think.close();
     if (!acc) { body.innerHTML = ''; this.msgs.setAttribute('aria-busy', 'false'); return { error: ctl.stopped ? 'Stopped.' : err || 'No answer came back. Try again.' }; }
     const engine = isHosted ? hostedLabel(model) : keyLabel(model);
-    const rec = { kind: 'claude', via, q, html: mdLite(terms(acc), refOf) + (ctl.stopped ? '<p class="ch-stopped">Stopped.</p>' : '') + (err && !ctl.stopped ? `<p class="ch-warn">${esc(err)}</p>` : ''), links: sources.filter(s => s.href).slice(0, 3).map(s => link(s.href, s.label)), followups: [], sources, model, engine, think: think.record() };
+    const rec = { kind: 'claude', via, q, html: mdLite(terms(acc), refOf) + (ctl.stopped ? '<p class="ch-stopped">Stopped.</p>' : '') + (err && !ctl.stopped ? `<p class="ch-warn">${esc(err)}</p>` : ''), links: sources.filter(s => s.href).slice(0, 3).map(s => link(s.href, s.label)), followups: [], sources, model, engine, think: think.record(), ...(voice ? { voice: 'hosted' } : {}) };
     this.prepare(body, rec); rec.meta = st.finish(rec.sources.length, ctl.stopped ? 'Stopped' : 'Answered', engine, claudeTip(model));
     this.renderAfter(turn, rec); this.msgs.setAttribute('aria-busy', 'false');
     this.ctx = { q, intent: null, co: coOf(q) || this.ctx?.co || null, st: stateOf(q) };
@@ -1763,7 +1995,8 @@ class Widget {
     } else if (a === 'speak') {
       const ss = window.speechSynthesis; if (!ss) return;
       if (btn.getAttribute('aria-pressed') === 'true') { this.stopSpeech(); return; }
-      this.stopSpeech(); const u = new SpeechSynthesisUtterance(plain(rec.html).slice(0, 4000)); u.lang = 'en-US';
+      Voice.hush(); this.stopSpeech();   // never speak with a microphone open: the page would hear itself
+      const u = new SpeechSynthesisUtterance(plain(rec.html).slice(0, 4000)); u.lang = 'en-US';
       u.onend = u.onerror = () => { btn.setAttribute('aria-pressed', 'false'); btn.dataset.tip = 'Read aloud'; };
       btn.setAttribute('aria-pressed', 'true'); btn.dataset.tip = 'Stop reading'; this.speaking = btn; ss.speak(u);
     } else if (a === 'synth') {
@@ -1777,7 +2010,7 @@ class Widget {
       btn.dataset.tip = on ? (stored() ? 'Thanks — feedback saved' : 'Thanks — saved on this device') : (a === 'good' ? 'Good answer' : 'Bad answer'); btn.classList.add('tip-on'); setTimeout(() => { btn.classList.remove('tip-on'); btn.dataset.tip = a === 'good' ? 'Good answer' : 'Bad answer'; }, 1600);
     }
   }
-  stopSpeech() { try { if (this.speaking) { window.speechSynthesis?.cancel(); this.speaking.setAttribute('aria-pressed', 'false'); this.speaking = null; } } catch { /* no speech */ } }
+  stopSpeech() { if (Voice.owner === this) Voice.cancel(); try { if (this.speaking) { window.speechSynthesis?.cancel(); this.speaking.setAttribute('aria-pressed', 'false'); this.speaking = null; } } catch { /* no speech */ } }
 
   /* ── citations hover card ── */
   bindPopover() {
@@ -1827,10 +2060,12 @@ class Widget {
       this.applyTheme();
     }
     else if (a === 'menu') this.root.classList.toggle('ch-side-open');
+    else if (a === 'voice-stop') { Voice.cancel(); this.voiceUI(); }
+    else if (a === 'voice-mute') { const on = !Voice.muted(); Voice.setMuted(on); if (!on) Voice.unlock(); }
   }
   onKey(e) {
     if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase() === 'k' && this.mode !== 'full') { e.preventDefault(); this.focus(); return; }
-    if (e.key === 'Escape' && !e.target.matches?.('textarea')) { if (this.busy) this.stop(); else if (this.mode === 'floating' && this.open) this.togglePanel(false); }
+    if (e.key === 'Escape' && !e.target.matches?.('textarea')) { if (this.hearing) this.listenStop(false); else if (Voice.owner === this && Voice.pending) Voice.cancel(); else if (this.busy) this.stop(); else if (this.mode === 'floating' && this.open) this.togglePanel(false); }
   }
   updateJump() { const j = this.root.querySelector('.ch-jump'); if (!j) return; const m = this.msgs; j.hidden = !(m.scrollHeight - m.scrollTop - m.clientHeight > 240); }
 
@@ -1861,7 +2096,7 @@ class Widget {
   }
   openThread(id) {
     const t = this.threads().find(x => x.id === id); if (!t) return;
-    if (this.busy) this.stop(); this.stopSpeech(); this.hidePop();
+    if (this.busy) this.stop(); this.listenStop(false); this.stopSpeech(); this.hidePop();   // an open microphone must not send what it hears into another chat
     if (t.persona !== this.id) this.setPersona(t.persona, { fresh: false });
     this.thread = t; this.history = []; this.prompts = []; this.msgs.innerHTML = '';
     for (const x of t.turns) {

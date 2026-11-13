@@ -24,6 +24,16 @@ Markers in the last user message switch behaviour:
   [mock:loop]        asks for search_knowledge on every call until the request sets tool_choice "none"
   [mock:cite]        the answer's text block carries a web-search citation
   [mock:noweb]       HTTP 400 naming web_search when the web search tool is offered (tests the retry)
+  [mock:billing]     HTTP 400 "Your credit balance is too low …";  [mock:billing402] HTTP 402 billing_error
+  [mock:cache]       the usage block reports a cache read and a cache write (620 uncached + 2,000 read + 500 written)
+  [mock:plan:<b64>]  a scripted run: url-safe base64 of a JSON list of [tool name, input]; call k asks for item k, then the answer
+  [mock:md]          the answer is heavy with markdown, [n] markers, a link and a bare URL (for the voice filter)
+  [mock:sym]         a one-sentence answer with "#26", "~40" and "est." in it (for the page's speech clean-up)
+  [mock:maxtokens]   the answer stops after twelve pieces with stop_reason "max_tokens" (the reply budget ran out)
+A request without "stream": true is the backend's key check (GET /health?deep=1). It gets a JSON message, or the failure set
+with POST /_probe {"mode": "ok" | "auth" | "billing" | "billing402" | "busy" | "down" | "nozero" | "html"} ("nozero" rejects max_tokens 0 once;
+"html" answers 200 with a web page, as a wrong address or a gateway would).
+GET /_oldhealth is a backend from before the model check: {ok, version, llm} and no model_state (?llm=0 for a missing key).
 GET /_requests returns the recorded requests (headers of interest + JSON body); DELETE clears them.
 GET /_events returns stream outcomes ("complete" or "client_closed" with the delta count).
 
@@ -34,12 +44,20 @@ It also stands in for the Vercel Blob API used by the chat log (VERCEL_BLOB_API_
 """
 
 import argparse
+import base64
 import json
+import re
 import sys
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlsplit
+
+MD_ANSWER = ('### Leadership\n\n**Tyler Zachem** leads BSP as *Managing Partner* [1][2]. He co-founded it in `2021` [3, 4].\n\n'
+             '- First, see [the team page](https://broadskypartners.com/team/) for more.\n- Second, Fund I is **$335M** [5].\n\n'
+             '1. Details at https://example.com/a?b=1 today.\n> __Done__.')
+
+SYM_ANSWER = 'Fair Harbor ranked #26 on the list, with ~40 stores, est. at $5M a year.'
 
 ANSWER = ('**Short answer:** lenders will test whether the add-on pipeline can carry the debt. '
           'They usually ask three things [1]:\n\n- How much EBITDA comes from acquired versus organic growth\n'
@@ -49,6 +67,19 @@ ANSWER = ('**Short answer:** lenders will test whether the add-on pipeline can c
 _lock = threading.Lock()
 REQUESTS, EVENTS = [], []
 BLOBS = {}   # pathname -> {'body': text, 'headers': {...}}
+PROBE = {'mode': 'ok'}   # how a non-streaming request (the backend's key check) is answered
+
+
+def plan_of(text):
+    """The scripted tool calls in a [mock:plan:<b64>] marker, or None."""
+    m = re.search(r'\[mock:plan:([A-Za-z0-9_=-]+)\]', text)
+    if not m:
+        return None
+    try:
+        plan = json.loads(base64.urlsafe_b64decode(m.group(1) + '=' * (-len(m.group(1)) % 4)))
+        return plan if isinstance(plan, list) else None
+    except ValueError:
+        return None
 
 
 def words(text):
@@ -120,6 +151,8 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == '/_events':
             with _lock:
                 return self._json(200, EVENTS[-50:])
+        if u.path == '/_oldhealth':
+            return self._json(200, {'ok': True, 'model': 'claude-opus-5-5', 'version': '2.1.0', 'db': True, 'llm': parse_qs(u.query).get('llm', ['1'])[0] != '0', 'kv': True})
         return self._json(404, {'type': 'error', 'error': {'type': 'not_found_error', 'message': 'Not found'}})
 
     def do_DELETE(self):
@@ -136,6 +169,10 @@ class Handler(BaseHTTPRequestHandler):
             body = json.loads(raw)
         except ValueError:
             return self._json(400, {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'bad json'}})
+        if self.path == '/_probe':
+            with _lock:
+                PROBE['mode'] = str(body.get('mode') or 'ok')
+            return self._json(200, {'ok': True, 'mode': PROBE['mode']})
         hdr = {k: self.headers.get(k) for k in ('x-api-key', 'anthropic-version', 'anthropic-beta', 'content-type')}
         with _lock:
             REQUESTS.append({'path': self.path, 'headers': {k: (('set' if v else None) if k == 'x-api-key' else v) for k, v in hdr.items()}, 'body': body})
@@ -148,6 +185,12 @@ class Handler(BaseHTTPRequestHandler):
         msgs = body.get('messages') or []
         last = msgs[-1].get('content') if msgs else ''
         last = last if isinstance(last, str) else json.dumps(last)
+        if not body.get('stream'):
+            return self.probe(body)
+        if '[mock:billing402]' in last:
+            return self._json(402, {'type': 'error', 'error': {'type': 'billing_error', 'message': 'Billing problem'}})
+        if '[mock:billing]' in last:
+            return self._json(400, {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}})
         if '[mock:auth]' in last:
             return self._json(401, {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}})
         if '[mock:busy]' in last:
@@ -165,13 +208,40 @@ class Handler(BaseHTTPRequestHandler):
             return self.tool_call(body, *tool)
         self.stream(body, last)
 
+    def probe(self, body):
+        """The backend's key check: one small non-streaming request."""
+        with _lock:
+            mode = PROBE['mode']
+            if mode == 'nozero' and body.get('max_tokens') == 0:
+                PROBE['mode'] = 'ok'
+        err = {'auth': (401, 'authentication_error', 'invalid x-api-key'), 'billing402': (402, 'billing_error', 'Billing problem'),
+               'billing': (400, 'invalid_request_error', 'Your credit balance is too low to access the Anthropic API.'),
+               'busy': (429, 'rate_limit_error', 'rate limited'), 'down': (529, 'overloaded_error', 'Overloaded'),
+               'nozero': (400, 'invalid_request_error', 'max_tokens: must be greater than or equal to 1')}.get(mode)
+        if err and not (mode == 'nozero' and body.get('max_tokens') != 0):
+            return self._json(err[0], {'type': 'error', 'error': {'type': err[1], 'message': err[2]}})
+        if mode == 'html':   # HTTP 200, but not a model reply
+            data = b'<!doctype html><html><body><h1>Welcome</h1></body></html>'
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/html; charset=utf-8')
+            self.send_header('Content-Length', str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+            return None
+        return self._json(200, {'id': 'msg_probe', 'type': 'message', 'role': 'assistant', 'model': body.get('model'), 'content': [],
+                                'stop_reason': 'max_tokens', 'stop_sequence': None, 'usage': {'input_tokens': 8, 'output_tokens': 0}})
+
     @staticmethod
     def wants_tool(body, msgs):
         allm = json.dumps(msgs)
         tail = msgs[-1].get('content') if msgs else ''
         after_tool = isinstance(tail, list) and any(isinstance(b, dict) and b.get('type') == 'tool_result' for b in tail)
-        if (body.get('tool_choice') or {}).get('type') == 'none':
-            return None
+        if (body.get('tool_choice') or {}).get('type') == 'none' or not body.get('tools'):
+            return None   # told to answer, or offered no tools at all
+        plan = plan_of(allm)
+        if plan is not None:
+            done = sum(1 for m in msgs if isinstance(m.get('content'), list) and any(isinstance(b, dict) and b.get('type') == 'tool_result' for b in m['content']))
+            return (plan[done][0], plan[done][1]) if done < len(plan) else None
         if '[mock:loop]' in allm:
             return 'search_knowledge', {'query': 'loop again'}
         if after_tool:
@@ -233,7 +303,8 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.flush()
 
         try:
-            ev('message_start', {'type': 'message_start', 'message': {'id': 'msg_mock', 'type': 'message', 'role': 'assistant', 'model': model, 'content': [], 'stop_reason': None, 'usage': {'input_tokens': 3120, 'output_tokens': 1}}})
+            usage = {'input_tokens': 620, 'cache_read_input_tokens': 2000, 'cache_creation_input_tokens': 500, 'output_tokens': 1} if '[mock:cache]' in last else {'input_tokens': 3120, 'output_tokens': 1}
+            ev('message_start', {'type': 'message_start', 'message': {'id': 'msg_mock', 'type': 'message', 'role': 'assistant', 'model': model, 'content': [], 'stop_reason': None, 'usage': usage}})
             ev('ping', {'type': 'ping'})
             if '[mock:garbage]' in last:
                 self.wfile.write(b'data: {not json\n\n')
@@ -249,8 +320,11 @@ class Handler(BaseHTTPRequestHandler):
             ev('content_block_delta', {'type': 'content_block_delta', 'index': 0, 'delta': {'type': 'thinking_delta', 'thinking': 'SECRET-THINKING: weigh lender questions.'}})
             ev('content_block_stop', {'type': 'content_block_stop', 'index': 0})
             ev('content_block_start', {'type': 'content_block_start', 'index': 1, 'content_block': {'type': 'text', 'text': ''}})
-            parts = words(ANSWER)
+            parts = words(SYM_ANSWER if '[mock:sym]' in last else MD_ANSWER if '[mock:md]' in json.dumps(body.get('messages')) else ANSWER)
+            cut = '[mock:maxtokens]' in json.dumps(body.get('messages'))
             for i, w in enumerate(parts):
+                if cut and i == 12:
+                    break
                 if '[mock:overloaded]' in last and i == 5:
                     ev('error', {'type': 'error', 'error': {'type': 'overloaded_error', 'message': 'Overloaded'}})
                     with _lock:
@@ -269,7 +343,7 @@ class Handler(BaseHTTPRequestHandler):
             if '[mock:cite]' in last:
                 ev('content_block_delta', {'type': 'content_block_delta', 'index': 1, 'delta': {'type': 'citations_delta', 'citation': {'type': 'web_search_result_location', 'url': 'https://www.example.com/news/bsp', 'title': 'Example news', 'cited_text': 'BSP', 'encrypted_index': 'x'}}})
             ev('content_block_stop', {'type': 'content_block_stop', 'index': 1})
-            stop = 'refusal' if '[mock:refusal]' in last else 'end_turn'
+            stop = 'refusal' if '[mock:refusal]' in last else 'max_tokens' if cut else 'end_turn'
             ev('message_delta', {'type': 'message_delta', 'delta': {'stop_reason': stop, 'stop_sequence': None}, 'usage': {'output_tokens': 640}})
             ev('message_stop', {'type': 'message_stop'})
             with _lock:
@@ -285,6 +359,7 @@ def main():
     ap.add_argument('--host', default='127.0.0.1')
     ap.add_argument('--port', type=int, default=8799)
     a = ap.parse_args()
+    ThreadingHTTPServer.request_queue_size = 128   # the export script fetches eight files at once; the default backlog of 5 refuses some
     srv = ThreadingHTTPServer((a.host, a.port), Handler)
     srv.daemon_threads = True
     sys.stderr.write(f'mock_claude: listening on http://{a.host}:{a.port}\n')

@@ -5,7 +5,7 @@
    quietly, so the grounded engine in chat.js keeps working on its own.
 
    Usage (from chat.js):
-     const { Backend } = await import('./backend.js?v=20261112225245');
+     const { Backend } = await import('./backend.js?v=20261113023635');
      if (await Backend.discover()) for await (const t of Backend.chat({ persona, messages, context, question })) out += t;
      const pre = await Backend.precomputed(question);   // works without a backend
 
@@ -16,7 +16,7 @@
 const RUNTIME_URL = new URL('./runtime.json', import.meta.url).href;
 const ANSWERS_URL = new URL('../data/answers/index.json', import.meta.url).href;
 const OVERRIDE_LS = 'bsp-backend-endpoint';
-const HEALTH_TIMEOUT_MS = 6000, JSON_TIMEOUT_MS = 8000, FIRST_BYTE_TIMEOUT_MS = 30000;   // a cold start of the backend takes a few seconds
+const HEALTH_TIMEOUT_MS = 6000, JSON_TIMEOUT_MS = 8000, FIRST_BYTE_TIMEOUT_MS = 30000, VERIFY_EVERY_MS = 10 * 60 * 1000;   // a cold start of the backend takes a few seconds
 const MAX_CONTEXT_CHARS = 12000, MAX_QUESTION_CHARS = 2000, MAX_HISTORY = 12;
 
 /** Error with a sentence that can be shown to a visitor as-is (`message`). */
@@ -64,7 +64,7 @@ function humanize(status, body = {}, retryHeader = 0) {
   if (status === 400) return new BackendError(body.message || 'The assistant could not read that question.', opt);
   if (status === 403) return new BackendError('Deep research is not available on this page.', opt);
   if (status === 404) return new BackendError(body.message || 'Not found.', opt);
-  if (status === 502 && code === 'backend_auth') return new BackendError('Deep research is not available right now; answers come from the portfolio data.', opt);
+  if (status === 502 && (code === 'backend_auth' || code === 'backend_billing')) return new BackendError('Deep research is not available right now; answers come from the portfolio data.', opt);
   if (status === 503 && (code === 'no_model_key' || code === 'no_database')) return new BackendError('That feature is not available right now.', opt);
   if (status >= 500) return new BackendError('The assistant is temporarily unavailable. Try again shortly.', opt);
   return new BackendError(body.message || 'The assistant could not answer that just now.', opt);
@@ -107,8 +107,10 @@ function sanitize(html) {
 export const Backend = {
   /** Worker base URL once discovered, else null. */
   endpoint: null,
-  /** True when the Worker reports a model key (Claude answers available). */
+  /** True when the backend reports that live answers can work (a model key that the provider accepts). */
   llm: false,
+  /** The backend's model state: 'ok' | 'unverified' | 'no_key' | 'auth' | 'billing' | 'rate_limited' | 'down' | 'error' (null until discovered). */
+  state: null,
   model: null,
   version: null,
   db: false,
@@ -123,7 +125,7 @@ export const Backend = {
   async discover({ force = false } = {}) {
     if (this._discovery && !force) return this._discovery;
     this._discovery = (async () => {
-      this.endpoint = null; this.llm = false; this.db = false; this.logs = false; this.health = null;
+      this.endpoint = null; this.llm = false; this.state = null; this.db = false; this.logs = false; this.health = null;
       let base = override();
       if (base === 'off') return null;
       if (!base) {
@@ -140,13 +142,36 @@ export const Backend = {
         if (!res.ok) return null;
         const h = await res.json();
         if (!h || h.ok !== true) return null;
-        Object.assign(this, { endpoint: base, health: h, llm: h.llm !== false, model: h.model || null, version: h.version || null, db: !!h.db, logs: !!h.log });
+        Object.assign(this, { endpoint: base, health: h, llm: h.llm !== false, state: h.llm_state || (h.llm === false ? 'no_key' : 'ok'), model: h.model || null, version: h.version || null, db: !!h.db, logs: !!h.log });
         return base;
       } catch { return null; }
     })();
     const r = await this._discovery;
     if (!r) this._discovery = null;   // let a later call retry (e.g. after a cold start)
     return r;
+  },
+
+  /**
+   * Asks the backend to check its key (GET /health?deep=1; the backend rate-limits the check). Runs when the backend has a key but
+   * has not used it yet ('unverified', the usual state after a cold start), and when it reported live answers off for a reason that
+   * can be fixed without a redeploy ('auth', 'billing', 'error'): an instance keeps such a state until a check or an answer succeeds,
+   * and the page sends no questions while it stands. At most once per ten minutes per page. Resolves true when the answer changed
+   * whether live answers work.
+   */
+  async verify() {
+    const off = this.llm === false && !!this.state && this.state !== 'no_key';
+    if (!this.endpoint || !(this.state === 'unverified' || off)) return false;
+    if (this._verifiedAt && Date.now() - this._verifiedAt < VERIFY_EVERY_MS) return false;
+    this._verifiedAt = Date.now();
+    const was = this.llm;
+    try {
+      const res = await fetchWithTimeout(this.endpoint + '/health?deep=1', { cache: 'no-store' }, 20000);
+      if (!res.ok) return false;
+      const h = await res.json();
+      if (!h || h.ok !== true || !h.llm_state) return false;
+      Object.assign(this, { health: h, llm: h.llm !== false, state: h.llm_state });
+    } catch { return false; }
+    return this.llm !== was;
   },
 
   /** True when a backend with Claude is live (runs discovery if needed). */
@@ -165,8 +190,9 @@ export const Backend = {
    * fallback model that took over (text already received stays valid). A 'reset' event, if a
    * future Worker sends one, means discard the text received so far. Throws BackendError with a
    * visitor-facing message; ends quietly when Backend.abort() is called.
+   * mode: 'voice' asks for one short spoken answer: plain text with no markdown or [n] markers, no 'thinking' events; sources still arrive.
    */
-  async *chat({ persona = 'portal', messages = [], context = [], question = '', retrieve = true, onEvent = null, signal = null } = {}) {
+  async *chat({ persona = 'portal', messages = [], context = [], question = '', retrieve = true, mode = 'chat', onEvent = null, signal = null } = {}) {
     const q = String(question || '').trim();
     if (!q) throw new BackendError('Ask a question first.', { code: 'missing_question' });
     if (q.length > MAX_QUESTION_CHARS) throw new BackendError(`Questions are limited to ${MAX_QUESTION_CHARS.toLocaleString('en-US')} characters. Try a shorter one.`, { code: 'question_too_long' });
@@ -200,7 +226,7 @@ export const Backend = {
     try {
       res = await fetch(this.endpoint + '/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
-        body: JSON.stringify({ persona, messages: hist, context: ctxOut, question: q, page: pagePath(), ...(retrieve ? {} : { retrieve: false }) }), signal: ctrl.signal,
+        body: JSON.stringify({ persona, messages: hist, context: ctxOut, question: q, page: pagePath(), ...(retrieve ? {} : { retrieve: false }), ...(mode === 'voice' ? { mode: 'voice' } : {}) }), signal: ctrl.signal,
       });
     } catch (e) {
       if (this._ctrl === ctrl) this._ctrl = null;
@@ -208,7 +234,12 @@ export const Backend = {
       if (ctrl.signal.aborted) return;
       throw networkError(e);
     } finally { clearTimeout(timer); }
-    if (!res.ok) { if (this._ctrl === ctrl) this._ctrl = null; throw await errorFrom(res); }
+    if (!res.ok) {
+      if (this._ctrl === ctrl) this._ctrl = null;
+      const err = await errorFrom(res);
+      if (err.code === 'backend_auth' || err.code === 'backend_billing') { this.llm = false; this.state = err.code === 'backend_auth' ? 'auth' : 'billing'; }   // live answers are off until the backend is fixed
+      throw err;
+    }
     if (!res.body) { if (this._ctrl === ctrl) this._ctrl = null; throw new BackendError('This browser cannot stream answers.', { code: 'no_stream' }); }
 
     const reader = res.body.getReader(), dec = new TextDecoder();

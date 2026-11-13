@@ -17,7 +17,8 @@ Sources:
   news       Bing News and Google News RSS for the firm, its people and each portfolio company
   wiki       Wikipedia articles for the firm's companies and deal counterparties, where one exists
   portal     the portal itself: every page and app route rendered in headless Chromium (visible text), the
-             research files (summaries and items) and the prepared answers
+             Local signals forces for each company, the research files (summaries and items), the prepared
+             answers and a note on what the home-sales records cover (from server/knowledge/homes.sqlite)
 
 Index chunks each document (about 1,100 characters, paragraph and sentence aligned, titled), embeds every chunk
 with a static embedding model (token vectors averaged, then normalised; numpy alone at query time) and writes
@@ -26,6 +27,8 @@ vectors and the tokenizer. server/knowledge.py reads that file; nothing else is 
 
 Build-time packages: trafilatura (main-text extraction), model2vec (downloads the embedding model once),
 playwright (portal pages). The fetcher honours robots.txt and spaces requests to each host.
+Without model2vec the index step reuses the embedding table and tokenizer stored in the current kb.sqlite
+(the same numbers), so `--only portal` and `--index-only` run offline with numpy, tokenizers and playwright.
 Author: Syed Rahman.
 """
 import argparse, concurrent.futures, datetime as dt, gzip, hashlib, html, io, json, os, re, sqlite3, sys, threading, time
@@ -642,8 +645,97 @@ def src_answers():
     return out
 
 
+MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+
+def day_words(iso):
+    m = re.match(r'(\d{4})-(\d{2})-(\d{2})', iso or '')
+    return f'{MONTHS[int(m.group(2)) - 1][:3]} {int(m.group(3))}, {m.group(1)}' if m else ''
+
+
+def month_words(ym):
+    m = re.match(r'(\d{4})-(\d{2})', ym or '')
+    return f'{MONTHS[int(m.group(2)) - 1]} {m.group(1)}' if m else ''
+
+
+def src_homes():
+    """One document on what the Punctual Pros home-sales records cover, read from the meta table of
+    server/knowledge/homes.sqlite (built by scripts/build_homes_db.py). It carries dates, not row counts, and no names."""
+    path = os.path.join(OUT_DIR, 'homes.sqlite')
+    if not os.path.exists(path):
+        log('homes: no homes.sqlite, so no home-sales document')
+        return []
+    con = sqlite3.connect(f'file:{path}?mode=ro', uri=True)
+    try:
+        meta = dict(con.execute('SELECT k, v FROM meta').fetchall())
+    finally:
+        con.close()
+    cov = json.loads(meta.get('coverage') or '{}')
+    states, counties = cov.get('state') or {}, cov.get('county') or {}
+    if not states or not counties:
+        log('homes: no coverage in homes.sqlite, so no home-sales document')
+        return []
+    notes = ' '.join(n for lst in json.loads(meta.get('caveats') or '{}').values() for n in lst)
+    pulled = max(json.loads(meta.get('files_generated') or '{}').values(), default='')
+    state_name = {'NJ': 'New Jersey', 'PA': 'Pennsylvania'}
+    by_state = {}
+    for k in sorted(counties):
+        st, name = k.split('|', 1)
+        by_state.setdefault(st, []).append((name, counties[k]))
+    number = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve']
+    count = lambda n: number[n] if n < len(number) else str(n)
+    listed = lambda names: ', '.join(names[:-1]) + ' and ' + names[-1] if len(names) > 1 else names[0]
+    where = ' and '.join(f"{count(len(by_state[st]))} {state_name.get(st, st)} counties ({listed([n for n, _ in by_state[st]])})" for st in sorted(by_state))
+    frozen = re.search(r'(\w+) County is a frozen snapshot taken (\d{4}-\d{2}-\d{2})', notes)
+    parts = [
+        'What BSP Desk knows about home sales: the home-sales data the portal holds for the territory of Punctual Pros, a Broad Sky Partners (BSP) company.',
+        f'Coverage. The home-sales records hold public recorded sales for {where}. Each record is one recorded sale: the address, town, ZIP code, '
+        'sale date and price, and the year built, size and bedrooms where the county publishes them.',
+        "Sources. All public. New Jersey comes from the Division of Taxation's statewide sales file. Pennsylvania comes from each county's open parcel or assessment data.",
+        'How current. Public sale records run behind, so recorded sales are never this month\'s sales. '
+        + ' '.join(f"{state_name.get(st, st)} sales reach {day_words(v.get('latest_sale'))}; the newest full month is {month_words(v.get('dense_month')) or 'not set'}."
+                   for st, v in sorted(states.items())) + (f' The records were last pulled on {day_words(pulled)}.' if pulled else ''),
+    ]
+    for st in sorted(by_state):
+        lines = [f'{state_name.get(st, st)} home sales by county: the date sales reach and the newest full month.']
+        for name, v in by_state[st]:
+            full = month_words(v.get('dense_month'))
+            lines.append(f"{name} County, {st}: sales reach {day_words(v.get('latest_sale'))}; " + (f'newest full month {full}.' if full else 'no full recent month.'))
+        parts.append('\n'.join(lines))
+    gaps = []
+    for st in sorted(by_state):
+        for name, v in by_state[st]:
+            if v.get('dense_month'):
+                continue
+            if frozen and frozen.group(1) == name:
+                gaps.append(f'{name} County is frozen: a partial snapshot taken {day_words(frozen.group(2))}. The county site does not allow automated access, '
+                            f"so its records do not get newer and do not show the county's real sales volume.")
+            else:
+                gaps.append(f"{name} County is thin: the county's public file stops at {day_words(v.get('latest_sale'))}, so it has no full recent month.")
+    if gaps:
+        parts.append('Gaps. ' + ' '.join(gaps))
+    parts += [
+        'What the assistant can do with them. A new-homeowner list: recent home buyers by county, town or ZIP code, ranked for the new-homeowner promotion. '
+        'An address brief: what the public record says about one address, what to check on arrival and which offers are worth raising. '
+        'For a New Jersey address the brief also checks the state parcel and tax list and the construction permit data. Pennsylvania has no public permit feed, '
+        'so a Pennsylvania brief uses the sale record only.',
+        'No owner names. Buyer and seller names are not stored, so no list and no brief names an owner. Mail is addressed to "New homeowner".',
+        'Limits. Every list and brief states the date the sales reach and the date the records were pulled. A purchase after that date is not in the records yet.',
+    ]
+    return [doc('portal', 'research', 'Punctual Pros home sales data: what the records cover', SITE + 'app.html#/pp/movers', '\n\n'.join(parts),
+                publisher='BSP Desk research', date=pulled, key='homes-coverage', companies=['pp'])]
+
+
+def signal_companies():
+    """[(id, name)] of the companies in the Local signals module, in its order."""
+    s = open(os.path.join(ROOT, 'modules', 'signals.js'), encoding='utf-8').read()
+    m = re.search(r'const COS = \[([\s\S]*?)\];', s)
+    return re.findall(r"id: '(\w+)', name: '([^']+)'", m.group(1)) if m else []
+
+
 def src_rendered():
-    """Every page and app route, rendered in headless Chromium; the visible text of the main content."""
+    """Every page and app route, rendered in headless Chromium; the visible text of the main content. Local signals shows one
+    company's forces at a time, so each company's table is read as its own document."""
     sys.path.insert(0, os.path.join(ROOT, 'scripts'))
     import ci_check   # page and route discovery shared with the CI check
     from playwright.sync_api import sync_playwright
@@ -659,7 +751,7 @@ def src_rendered():
     srv = http.server.ThreadingHTTPServer(('127.0.0.1', port), handler)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     base = f'http://127.0.0.1:{port}/'
-    pages = [p for p in ci_check.find_pages() if not re.search(r'^(server|worker|legacy)/|chat_test|export_|system_demo|^briefing/.*shot', p)]
+    pages = [p for p in ci_check.find_pages() if not re.search(r'^(server|worker|legacy|tools)/|chat_test|export_|system_demo|^briefing/.*shot', p)]
     routes = [f'app.html#/{m}/{v}' for m, v in ci_check.parse_routes()]
     js = """() => {
       const root = document.querySelector('#content') && location.hash ? document.querySelector('#content') : (document.querySelector('main') || document.body);
@@ -678,7 +770,9 @@ def src_rendered():
         ctx = browser.new_context(viewport={'width': 1400, 'height': 1000})
         page = ctx.new_page()
         # Map and chart libraries load from CDNs, so scripts, styles and data calls go out; images, fonts and media (map tiles) do not.
-        page.route(re.compile(r'^https?://(?!127\.0\.0\.1)'), lambda route: route.abort() if route.request.resource_type in ('image', 'media', 'font') else route.continue_())
+        # The build only reads: anything but a GET to another host (a question to the assistant, a log line) is dropped.
+        page.route(re.compile(r'^https?://(?!127\.0\.0\.1)'), lambda route: route.abort() if route.request.method != 'GET'
+                   or route.request.resource_type in ('image', 'media', 'font') else route.continue_())
         for target in pages + routes:
             try:
                 page.goto(base + target, wait_until='domcontentloaded', timeout=30000)
@@ -689,6 +783,9 @@ def src_rendered():
                     pass
                 page.wait_for_timeout(1200)
                 r = page.evaluate(js)
+                if len(norm_ws(r['text'])) < 200:   # a slow first load: give it one more look before dropping the page
+                    page.wait_for_timeout(4000)
+                    r = page.evaluate(js)
             except Exception as e:
                 log('render failed', target, str(e)[:120])
                 continue
@@ -701,6 +798,40 @@ def src_rendered():
                 title = f'Portal: {title}' if not title.lower().startswith('portal') else title
             out.append(doc('portal', 'portal-view' if '#/' in target else 'site-page', title, SITE + target.replace('index.html', ''), text,
                            publisher='BSP Desk', date=dt.date.today().isoformat(), key='page-' + hashlib.sha1(target.encode()).hexdigest()[:10]))
+        for co, name in signal_companies():   # the forces table for each company (the view opens on the first one)
+            target = f'app.html#/signals/overview?co={co}'
+            try:
+                page.goto(base + target, wait_until='domcontentloaded', timeout=30000)
+                # the view redraws after the address changes, so wait for this company's own table, not the one left on screen
+                page.wait_for_function("name => ((document.querySelector('#sg-co-lead') || {}).innerText || '').startsWith(name + ':')"
+                                       " && document.querySelectorAll('#sg-tbl tbody tr').length > 0", arg=name, timeout=20000)
+                page.wait_for_timeout(600)
+                r = page.evaluate("""() => {
+                  const lines = el => el.innerText.split('\\n').map(t => t.replace(/\\s+/g, ' ').trim()).filter(Boolean);
+                  const rows = [...document.querySelectorAll('#sg-tbl tbody tr')].map(tr => [...tr.cells].map(lines));
+                  const heads = [...document.querySelectorAll('#sg-tbl thead th')].map(th => th.textContent.replace(/\\s+/g, ' ').trim());
+                  return { lead: (document.querySelector('#sg-co-lead') || {}).innerText || '', heads, rows };
+                }""")
+            except Exception as e:
+                log('render failed', target, str(e)[:120])
+                continue
+            if not r['rows']:
+                continue
+            stop = lambda t: t if t[-1:] in '.!?' else t + '.'
+            blocks = []
+            for row in r['rows']:   # one short paragraph per force: its name and why it matters, then each column under its heading
+                if not row or not row[0]:
+                    continue
+                parts = [f'{row[0][0]} ({name}).'] + [stop(t) for t in row[0][1:]]
+                for head, cell in zip(r['heads'][1:], row[1:]):
+                    cell = [re.sub(r'\s*→$', '', t) for t in cell if t != 'Not sized']
+                    if cell:
+                        parts.append(f"{re.sub(r' est[.]$', ' (est.)', head)}: " + ' '.join(stop(t) for t in cell))
+                blocks.append(' '.join(parts))
+            text = f'What moves sales at {name}: the market, cost, labor, calendar and weather forces, why each matters, today\'s reading and the move.\n\n' \
+                   + norm_ws(r['lead']) + '\n\n' + '\n\n'.join(blocks)
+            out.append(doc('portal', 'portal-view', f'Portal: Local signals · what moves sales at {name}', SITE + target, text, publisher='BSP Desk',
+                           date=dt.date.today().isoformat(), key='page-' + hashlib.sha1(target.encode()).hexdigest()[:10]))
         browser.close()
     srv.shutdown()
     log(f'portal: {len(out)} pages and views rendered')
@@ -708,7 +839,7 @@ def src_rendered():
 
 
 def src_portal():
-    return src_research() + src_answers() + src_rendered()
+    return src_research() + src_homes() + src_answers() + src_rendered()
 
 
 # ── Chunking and indexing ───────────────────────────────────────────────────
@@ -749,11 +880,20 @@ def chunk_text(text, size=CHUNK_CHARS):
 class Embedder:
     """Static embeddings: token vectors averaged over a text, then normalised (the same maths as server/knowledge.py)."""
     def __init__(self, model=EMBED_MODEL):
-        from model2vec import StaticModel
         import numpy as np
-        m = StaticModel.from_pretrained(model, force_download=False)
         self.np = np
+        self.name = model
+        try:
+            from model2vec import StaticModel
+        except ImportError:
+            StaticModel = None
+        if StaticModel is None and self._from_kb(model):
+            return
+        if StaticModel is None:
+            sys.exit('the index step needs model2vec, or a current kb.sqlite built with the same embedding model')
+        m = StaticModel.from_pretrained(model, force_download=False)
         self.tokenizer = m.tokenizer
+        self.tokenizer_json = m.tokenizer.to_str()
         self.unk = m.unk_token_id
         full = np.asarray(m.embedding, dtype=np.float32)
         # Stored as int8 with one scale per token (half the size of float16); passages are embedded with the same
@@ -762,7 +902,34 @@ class Embedder:
         safe = np.where(self.scale == 0, 1, self.scale).astype(np.float32)
         self.q8 = np.clip(np.rint(full / safe[:, None]), -127, 127).astype(np.int8)
         self.matrix = self.q8.astype(np.float32) * self.scale.astype(np.float32)[:, None]
-        self.name = model
+
+    def _from_kb(self, model):
+        """The embedding table and tokenizer the current kb.sqlite already holds (the int8 table, its scales and the tokenizer
+        are exactly what a fresh download reduces to), so a rebuild needs no model download. False if they are not there."""
+        np = self.np
+        if not os.path.exists(KB):
+            return False
+        con = sqlite3.connect(f'file:{KB}?mode=ro', uri=True)
+        try:
+            info = dict(con.execute('SELECT k, v FROM info').fetchall())
+            blobs = {n: (dtype, shape, data) for n, dtype, shape, data in con.execute(
+                "SELECT name, dtype, shape, data FROM blobs WHERE name IN ('token_vectors', 'token_scales', 'tokenizer')")}
+        except sqlite3.Error:
+            return False
+        finally:
+            con.close()
+        if info.get('embed_model') != model or set(blobs) != {'token_vectors', 'token_scales', 'tokenizer'} or blobs['token_vectors'][0] != 'int8':
+            return False
+        from tokenizers import Tokenizer
+        v, d = map(int, blobs['token_vectors'][1].split(','))
+        self.q8 = np.frombuffer(blobs['token_vectors'][2], dtype=np.int8).reshape(v, d).copy()
+        self.scale = np.frombuffer(blobs['token_scales'][2], dtype=np.float16).copy()
+        self.matrix = self.q8.astype(np.float32) * self.scale.astype(np.float32)[:, None]
+        self.tokenizer_json = blobs['tokenizer'][2].decode('utf-8')
+        self.tokenizer = Tokenizer.from_str(self.tokenizer_json)
+        self.unk = int(info['unk_token_id']) if (info.get('unk_token_id') or '').isdigit() else None
+        log(f'index: embedding table and tokenizer reused from {os.path.relpath(KB, ROOT)} (model2vec is not installed)')
+        return True
 
     def encode(self, texts):
         np = self.np
@@ -801,7 +968,7 @@ def build_index(docs):
             texts.append(f"{d['title']}\n{c}")
     con.execute("INSERT INTO chunks_fts(chunks_fts) VALUES ('rebuild')")
     vecs = emb.encode(texts).astype(np.float16)
-    tok = emb.tokenizer.to_str()
+    tok = emb.tokenizer_json
     blobs = [('chunk_vectors', 'float16', f'{vecs.shape[0]},{vecs.shape[1]}', vecs.tobytes()),
              ('token_vectors', 'int8', f'{emb.q8.shape[0]},{emb.q8.shape[1]}', emb.q8.tobytes()),
              ('token_scales', 'float16', f'{emb.scale.shape[0]}', emb.scale.tobytes()),
