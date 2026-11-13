@@ -30,7 +30,7 @@
    "folder": "research",
    "title": "bsp_firm",
    "item_count": 6,
-   "bytes": 76113,
+   "bytes": 76132,
    "generated": "2026-09-24",
    "lists": {
     "timeline": 52,
@@ -43,7 +43,7 @@
    "folder": "research",
    "title": "How BSP buys: a reverse-engineered acquisition methodology",
    "item_count": 68,
-   "bytes": 116954,
+   "bytes": 116993,
    "generated": "2026-10-06"
   },
   {
@@ -398,7 +398,7 @@
   "research_items": 4687,
   "sales_files": 10,
   "sales_rows": 180864,
-  "bytes": 43381419,
+  "bytes": 43381477,
   "data_from": "2026-09-24",
   "data_to": "2026-11-13"
  }
