@@ -7,6 +7,11 @@ on:
 
 env:
   NOREPLY_DOMAIN: users.noreply.github.com
+  # Punctual Pros home sales are pulled once a week inside this nightly job (ISO weekday, 1 = Monday) and on every
+  # manual run. County deeds post weeks late, so a weekly pull shows the same sales. A pull every night would add
+  # about 2.5 MB to the repository each night, because homes.sqlite and the sales files change a little every day
+  # and pack poorly. Set this to 'daily' to pull every night.
+  SALES_REFRESH_DAY: '1'
 
 permissions:
   contents: write
@@ -19,7 +24,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
 
@@ -30,6 +35,40 @@ jobs:
       - name: Snapshot live sources
         run: python3 scripts/refresh_live.py
 
+      - name: Is the home-sales pull due tonight?
+        id: sales
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$SALES_REFRESH_DAY" = "daily" ] || [ "$(date -u +%u)" = "$SALES_REFRESH_DAY" ]; then
+            echo "due=true" >> "$GITHUB_OUTPUT"; echo "Home sales: due."
+          else
+            echo "due=false" >> "$GITHUB_OUTPUT"; echo "Home sales: not due tonight (weekday $(date -u +%u), pull day $SALES_REFRESH_DAY)."
+          fi
+
+      # Punctual Pros home sales (NJ state file, ten PA county services). Dauphin County is not refreshed.
+      # A failure here must never block the live-data commit; a source that fails keeps the rows already held.
+      # The script gives up on its own well inside this limit (it stops starting sources after 7 minutes), and it
+      # writes only at the end, so the limit is kept above its worst case.
+      - name: Refresh Punctual Pros home sales
+        if: steps.sales.outputs.due == 'true'
+        continue-on-error: true
+        timeout-minutes: 15
+        run: python3 scripts/fetch_pp_sales.py
+
+      # Only when a sales file changed. The build also leaves homes.sqlite alone when its content would be the same,
+      # so an unchanged night gives no new file under server/ and no backend deploy.
+      - name: Rebuild the home-sales database if the sales files changed
+        if: steps.sales.outputs.due == 'true'
+        continue-on-error: true
+        run: |
+          if git diff --quiet -- data/sales/pp_sales_nj.json data/sales/pp_sales_pa_a.json data/sales/pp_sales_pa_b.json; then
+            echo "Sales files unchanged; homes.sqlite left as it is."
+          elif python3 scripts/build_homes_db.py; then
+            echo "homes.sqlite rebuilt."
+          else
+            echo "Build failed; keeping the committed sales files and homes.sqlite so the two stay in step."
+            git checkout -- data/sales/pp_sales_nj.json data/sales/pp_sales_pa_a.json data/sales/pp_sales_pa_b.json server/knowledge/homes.sqlite
+          fi
+
       - name: Regenerate research README
         run: python3 scripts/describe_research.py > /dev/null
 
@@ -38,7 +77,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@${NOREPLY_DOMAIN}"   # GitHub's standard bot identity
-          git add data/live data/research/README.md data/research/index.json README.md
+          git add data/live data/research/README.md data/research/index.json README.md data/sales/pp_sales_*.json server/knowledge/homes.sqlite
           if git diff --cached --quiet; then
             echo "No data changes."
             exit 0

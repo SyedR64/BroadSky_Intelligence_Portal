@@ -7,7 +7,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261112181124';
+       import { Frame } from '../../assets/frame.js?v=20261112194607';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html

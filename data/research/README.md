@@ -537,33 +537,33 @@ meta keys: dataset, portco, description, generated, item_count, method, coverage
 extra top-level keys: format, cols, enums, rows
 columns: `addr`, `arms_length`, `beds`, `builder_flag`, `building_class_category`, `buyer`, `county`, `geo_precision`, `id`, `lat`, `lon`, `muni`, `neighborhood`, `price`, `residential_units`, `retrieved`, `sale_date`, `seller`, `source`, `source_url`, `sqft`, `state`, `use_code_raw`, `use_type`, `year_built`, `zip`
 
-## sales/pp_sales_nj  (25,486 rows · 4.1 MB)
-meta keys: dataset, generated, method, coverage, caveats, failed_sources, item_count, extra_fields
+## sales/pp_sales_nj  (36,138 rows · 5.8 MB)
+meta keys: dataset, generated, method, coverage, caveats, failed_sources, item_count, extra_fields, refresh
 - **dataset**: "BSP property-transfer dataset - New Jersey Jersey Shore ring (Ocean, Monmouth, Atlantic, Burlington)"
-- **generated**: "2026-09-24"
+- **generated**: "2026-11-13"
 - **method**: "Primary: NJ Division of Taxation SR1A statewide sales extract (https://www.nj.gov/treasury/taxation/lpt/statdata/YTDSR1A2026.zip, 663-byte fixed-width, layout https://www.nj.gov/treasury/taxation/pdf/lpt/SR1Afilelayout.pdf; also Sales2025.zip checked - it ends at deed dates 2025-06 so contributes nothing in window). Filtered COUNTY-CODE in 01 Atlantic, 03 Burlington, 13 Monmouth, 15 Ocean and DEE
-- **item_count**: 25486
-- **caveats**: ["Source lag: the state SR1A YTD file (last modified 2026-08-12) is dense only through May 2026 (Ocean/Monmouth/Atlantic partially into June 2026; Burlington ends ~2026-05); roughly a 3-4 month lag vs today (2026-09-24). A handful of July/Aug 2026 deed dates exist.", "Window limited to deed dates 2025-09-01 onward to respect the ~25 MB file cap; the source also has ~13,800 in-scope records for 202
+- **item_count**: 36138
+- **caveats**: ["First pull (2026-09-24): Source lag: the state SR1A YTD file (last modified 2026-08-12) is dense only through May 2026 (Ocean/Monmouth/Atlantic partially into June 2026; Burlington ends ~2026-05); roughly a 3-4 month lag vs today (2026-09-24). A handful of July/Aug 2026 deed dates exist.", "First pull (2026-09-24): Window limited to deed dates 2025-09-01 onward to respect the ~25 MB file cap; th
 extra top-level keys: format, cols, enums, rows
 columns: `id`, `addr`, `arms_length`, `beds`, `block_lot`, `builder_flag`, `buyer`, `county`, `geo_precision`, `lat`, `lon`, `muni`, `new_construction`, `nu_code`, `price`, `retrieved`, `sale_date`, `seller`, `source`, `source_url`, `sqft`, `state`, `use_code_raw`, `use_type`, `year_built`, `zip`
 
-## sales/pp_sales_pa_a  (19,822 rows · 4.1 MB)
-meta keys: dataset, generated, window_requested, item_count, method, coverage, caveats, failed_sources
+## sales/pp_sales_pa_a  (23,383 rows · 4.9 MB)
+meta keys: dataset, generated, window_requested, item_count, method, coverage, caveats, failed_sources, refresh
 - **dataset**: "pp_sales_pa_a - Property transfers (sales) for Lancaster, York, Dauphin, Cumberland Counties, PA (BSP Desk)"
-- **generated**: "2026-09-24T19:27:23-04:00"
+- **generated**: "2026-11-13"
 - **method**: ["Lancaster: ArcGIS REST FeatureServer query on Parcels_HUBnew/FeatureServer/0 (found via Lancaster County LanCo View 2.0 web app config). where=SALE_DATE>=20250901 (SALE_DATE is numeric YYYYMMDD). returnIdsOnly then batched objectIds queries of 500, outFields=*, outSR=4326; polygon area-weighted centroid computed locally. 10,054 records.", "York: ArcGIS REST FeatureServer query on arcweb1.ycpc.or
-- **item_count**: 19822
-- **caveats**: ["Lancaster, York and Cumberland sources are current-parcel snapshots that store only the MOST RECENT sale per parcel: a parcel that sold twice in the window appears once (latest sale), and buyer = current owner of record. Dauphin records come from full per-parcel sales histories, so repeat sales are kept.", "Source lag: Lancaster latest sale 2026-08-24, Cumberland 2026-08-27, York 2026-09-16 (rou
+- **item_count**: 23383
+- **caveats**: ["Lancaster, York and Cumberland sources are current-parcel snapshots that store only the MOST RECENT sale per parcel: each pull shows only the latest sale of a parcel; an earlier sale picked up by a previous pull is kept, so a parcel that sold again can have more than one row, and buyer = current owner of record. Dauphin records come from full per-parcel sales histories, so repeat sales are kept.
 extra top-level keys: format, cols, enums, rows
 columns: `id`, `addr`, `arms_length`, `beds`, `builder_flag`, `buyer`, `county`, `deed_ref`, `geo_precision`, `lat`, `lon`, `muni`, `parcel_id`, `price`, `retrieved`, `sale_date`, `sale_type_raw`, `seller`, `source`, `source_url`, `sqft`, `state`, `use_code_raw`, `use_type`, `year_built`, `zip`
 
-## sales/pp_sales_pa_b  (31,941 rows · 5.4 MB)
-meta keys: dataset, generated, as_of, method, coverage, field_notes, caveats, failed_sources, item_count
+## sales/pp_sales_pa_b  (34,854 rows · 5.8 MB)
+meta keys: dataset, generated, as_of, method, coverage, field_notes, caveats, failed_sources, item_count, refresh
 - **dataset**: "pp_sales_pa_b - Property transfers (deeds/sales) for Punctual Pros / BSP portfolio service-area counties in PA: Berks, Lebanon, Franklin, Adams, Perry, Chester, Montgomery"
-- **generated**: "2026-09-24T19:29:03-04:00"
+- **generated**: "2026-11-13"
 - **method**: ["All data pulled live from public county ArcGIS REST query endpoints with curl/python (browser UA), POST /query, outSR=4326, f=json, paginated with resultOffset + resultRecordCount (1000-2000) ordered by OID until exceededTransferLimit=false.", "Montgomery: GIS_BOA_LAND FeatureServer/0 (table) where SALE_DATE_1 >= DATE '2025-09-01'; centroids from Parcels/Montgomery_County_Parcels FeatureServer/1
-- **item_count**: 31941
-- **caveats**: ["Records are the LAST recorded sale per parcel as carried in each county's assessment/parcel layer, not a full deed-transfer ledger: a parcel sold twice in the window appears once (latest sale), and buyer = current owner of record.", "Seller (grantor) is only available for Franklin (PREVIOUS_OWNER_1). builder_flag is therefore null wherever seller is unknown (all counties except Franklin); for Fr
+- **item_count**: 34854
+- **caveats**: ["Records are the LAST recorded sale per parcel as carried in each county's assessment/parcel layer, not a full deed-transfer ledger: each pull shows only the latest sale of a parcel; an earlier sale picked up by a previous pull is kept, so a parcel that sold again can have more than one row, and buyer = current owner of record.", "Seller (grantor) is only available for Franklin (PREVIOUS_OWNER_1)
 extra top-level keys: format, cols, enums, rows
 columns: `id`, `addr`, `arms_length`, `beds`, `builder_flag`, `buyer`, `county`, `geo_precision`, `lat`, `lon`, `muni`, `price`, `retrieved`, `sale_date`, `seller`, `source`, `source_url`, `sqft`, `state`, `use_code_raw`, `use_type`, `year_built`, `zip`
 

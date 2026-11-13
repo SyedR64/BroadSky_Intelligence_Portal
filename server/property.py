@@ -463,7 +463,7 @@ def _homes_sources(rows_by_county):
     out, seen = [], set()
     order = sorted(rows_by_county, key=lambda k: -rows_by_county[k])
     for st, co in order:
-        r = _q('SELECT * FROM sources WHERE state=? AND county=?', (st, co))
+        r = _q('SELECT * FROM sources WHERE state=? AND county=? ORDER BY retrieved DESC, url DESC', (st, co))     # NJ: the newest state file
         if not r:
             continue
         r = r[0]
@@ -537,17 +537,20 @@ def _homeowners_report(scope, kind, value, label, a, today, limit):
                            if any(r['state'] == st for r in by_county))
     else:
         plabel = label
-    L = [f"NEW HOMEOWNERS: {scope['label']}", f'Period: {plabel} (the newest full month in the data)' if kind == 'latest' else f'Period: {plabel}',
-         f'Today is {words_date(today.isoformat())}. These are recorded sales from the period above, not sales made this month.', '',
-         'Data through']
-    L += ['- ' + s for s in _lag_lines(scope, today, {r['state'] for r in by_county})]
+    thin = []
     if kind in ('month', 'latest'):
-        thin = []
         for r in by_county:
             dm = (_cov(r['state'], r['county']) or {}).get('dense_month')
             want = value if kind == 'month' else value.get(r['state'])
             if want and (not dm or dm < want):
                 thin.append(f"{r['county']} {r['state']}")
+    # "Full" is claimed only when every county listed is full for the month.
+    full = '(the newest full month in the data)' if not thin else '(the newest month that is full for most of the area; see the note on counties below)'
+    L = [f"NEW HOMEOWNERS: {scope['label']}", f'Period: {plabel} {full}' if kind == 'latest' else f'Period: {plabel}',
+         f'Today is {words_date(today.isoformat())}. These are recorded sales from the period above, not sales made this month.', '',
+         'Data through']
+    L += ['- ' + s for s in _lag_lines(scope, today, {r['state'] for r in by_county})]
+    if kind in ('month', 'latest'):
         if thin:
             L.append(f"- Not complete yet for this period: {', '.join(thin)}. Counts there will rise as the source catches up.")
     L += ['', f'Totals: {n:,} market home sales' + (f', median price {money(statistics.median(prices))}' if prices else '') + '.',
@@ -854,8 +857,10 @@ def _src_tag(src):
     return f"{src['short']}, retrieved {words_date(src['retrieved'])}"
 
 
-def _sale_source(state, county):
-    r = _q('SELECT * FROM sources WHERE state=? AND county=?', (state, county))
+def _sale_source(state, county, source_id=None):
+    # A New Jersey county has one source row per yearly state file: cite the file this sale came from.
+    r = _q('SELECT * FROM sources WHERE id=? AND state=? AND county=?', (source_id, state, county)) if source_id else []
+    r = r or _q('SELECT * FROM sources WHERE state=? AND county=? ORDER BY retrieved DESC, url DESC', (state, county))
     r = r[0] if r else None
     if state == 'NJ':
         return {'short': 'New Jersey home sales file', 'retrieved': r['retrieved'] if r else '', 'src': {
@@ -1126,7 +1131,7 @@ def run_property_brief(args):
     # ----- the brief
     facts, year_built, yb_tag, sale_date, new_build, through_co = [], None, '', None, False, None
     if rec:
-        ss = _sale_source(rec['state'], rec['county'])
+        ss = _sale_source(rec['state'], rec['county'], rec['source_id'] if 'source_id' in rec.keys() else None)
         sources.append(ss['src'])
         tag = f'[recorded: {_src_tag(ss)}]'
         title = f"{rec['addr']}, {_place(rec)}"

@@ -1,10 +1,10 @@
-import * as Copy from './copy.js?v=20261112181124';
+import * as Copy from './copy.js?v=20261112194607';
 /* ═══════════════════════════════════════════════════════════════════════════
    Punctual Pros — residential HVAC · plumbing · electrical (Central PA + Jersey Shore)
    Views: overview · weather & demand · new-mover marketing · territory · market · targets · filings
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, renderFilings } from '../assets/components.js?v=20261112181124';
-import { esc as E } from '../assets/core.js?v=20261112181124';
+import { renderTargets, renderFilings } from '../assets/components.js?v=20261112194607';
+import { esc as E } from '../assets/core.js?v=20261112194607';
 
 /* System palette only (UNIFIED.md §6, §8): company accents for categories, status tokens for status. */
 const PAL = { pp: 'var(--co-pp)', cet: 'var(--co-cet)', amber: 'var(--sys-warn)', green: 'var(--sys-good)', red: 'var(--sys-bad)', sky: 'var(--sys-info)', purple: 'var(--co-fl)', cyan: 'var(--co-fh)', ts: 'var(--co-ts)', muted: 'var(--sys-mute)', dim: 'var(--sys-mute-2)' };
@@ -100,7 +100,7 @@ const nameConflict = t => /punctual\s*pros/i.test(String(t?.company || ''));
 const pick = (o, ...ks) => { for (const k of ks) if (o && o[k] != null && o[k] !== '') return o[k]; return null; };
 
 function css() {
-  if (!document.getElementById('css-pp')) { const l = document.createElement('link'); l.id = 'css-pp'; l.rel = 'stylesheet'; l.href = 'modules/pp.css?v=20261112181124'; document.head.appendChild(l); }
+  if (!document.getElementById('css-pp')) { const l = document.createElement('link'); l.id = 'css-pp'; l.rel = 'stylesheet'; l.href = 'modules/pp.css?v=20261112194607'; document.head.appendChild(l); }
 }
 
 /* ── shared data ──────────────────────────────────────────────────────── */
@@ -713,6 +713,9 @@ async function movers(ctx) {
   const counties = [...new Set(all.map(r => r.county))].sort();
   const initCounty = params.county && counties.includes(params.county) ? params.county : '';
   const lastDate = all.reduce((m, r) => r.sale_date > m ? r.sale_date : m, '');
+  // Source footers follow the files: the newest file date, and the state file named in the NJ coverage notes.
+  const salesAsOf = LD.fileStatus.map(f => String(f.meta?.generated || '').slice(0, 10)).filter(d => /^\d{4}-\d\d-\d\d$/.test(d)).sort().pop() || null;
+  const njSrcUrl = [...LD.covMeta.values()].filter(c => c.state === 'NJ' && /^https:\/\/www\.nj\.gov\//.test(c.source_url || '')).map(c => c.source_url).sort().pop() || null;
   const winFrom = all.filter(r => r.served).reduce((m, r) => !m || r.sale_date < m ? r.sale_date : m, '');
   const nServedAll = all.filter(r => r.served).length;
   const SV = all.filter(r => r.served); const ageN = (lo, hi) => SV.filter(r => r.days != null && r.days > lo && r.days <= hi).length;
@@ -742,15 +745,15 @@ async function movers(ctx) {
   <div id="mv-filters"></div>
   <div id="mv-kpis"></div>
   <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Lead map', sub: 'Colored by lead score (highest on top) · capped at ~6,000 most recent leads, allocated by county volume · click a point for the lead', body: `<div class="map tall" id="mv-map"></div>`, flush: true, foot: ui.source('County parcel/CAMA layers · NJ Taxation SR1A', 'https://www.nj.gov/treasury/taxation/lpt/statdata/YTDSR1A2026.zip', '2026-09-24') })}
+    ${ui.panel({ title: 'Lead map', sub: 'Colored by lead score (highest on top) · capped at ~6,000 most recent leads, allocated by county volume · click a point for the lead', body: `<div class="map tall" id="mv-map"></div>`, flush: true, foot: ui.source('County parcel/CAMA layers · NJ Taxation SR1A', njSrcUrl, salesAsOf) })}
     <div class="col gap-12">
       ${ui.panel({ title: 'Campaigns', sub: 'Target counts from the filtered list · in-footprint vs. all', body: '<div id="mv-camp" class="col gap-12"></div>', foot: `<span class="dim">Response of 2–4% is an industry-typical direct-mail assumption</span> ${Copy.ILLUS}` })}
       ${ui.panel({ title: 'Lead flow by sale month', sub: 'Filtered leads · source lags make the last 1–3 months look light', body: '<div id="mv-month"></div>' })}
     </div>
   </div>
-  <div class="mt-12">${ui.panel({ title: 'Lead list', sub: 'Sorted by score · click a lead for score breakdown and next action', body: '<div id="mv-table"></div>', foot: ui.source('Combined from 4 county transfer sources; de-duplicated on county + address + sale date', null, '2026-09-24') })}</div>
+  <div class="mt-12">${ui.panel({ title: 'Lead list', sub: 'Sorted by score · click a lead for score breakdown and next action', body: '<div id="mv-table"></div>', foot: ui.source('Combined from 4 county transfer sources; de-duplicated on county + address + sale date', null, salesAsOf) })}</div>
   <div class="mt-12">
-    ${ui.panel({ title: 'Sales-record coverage by served county', sub: 'Home-sale records gathered for every county PP and Horvath serve · recording lag and gaps flagged', body: '<div id="mv-cov"></div>', foot: ui.source('County GIS / assessment layers; NJ Division of Taxation SR1A', null, '2026-09-24') })}
+    ${ui.panel({ title: 'Sales-record coverage by served county', sub: 'Home-sale records gathered for every county PP and Horvath serve · recording lag and gaps flagged', body: '<div id="mv-cov"></div>', foot: ui.source('County GIS / assessment layers; NJ Division of Taxation SR1A', null, salesAsOf) })}
   </div><div class="mt-12">
     ${ui.panel({ title: 'Lead score (0–100) — method', body: `<div class="sys-table-wrap"><table class="sys-table"><tbody>
       <tr><td><b>Recency</b> · 35</td><td class="wrap">≤60 days 35 · ≤120 26 · ≤180 18 · ≤365 9 · older 3 (new owners book in the first 60 days)</td></tr>

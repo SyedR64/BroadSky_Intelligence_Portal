@@ -18,6 +18,7 @@ Author: Syed Rahman.
 
 import argparse
 import datetime
+import hashlib
 import json
 import os
 import re
@@ -33,6 +34,7 @@ OUT = os.path.join(ROOT, 'server', 'knowledge', 'homes.sqlite')
 # least this share of the median of the months before it, and at least DENSE_MIN sales.
 DENSE_SHARE = 0.85
 DENSE_MIN = 20
+STATE_SHARE = 0.90      # share of a state's recent sales that must come from counties already full for the month
 
 def _load_normalisers():
     """addr_key and muni_key live in server/property.py so the build and the lookups can never disagree."""
@@ -102,6 +104,54 @@ def dense_month(counts):
     return best
 
 
+def state_dense_month(by_county):
+    """Latest full month for a state. by_county: {county: {ym: n}}.
+
+    The state total alone is not enough: a month can pass on the total while some counties have only part of it
+    posted. So a month counts for the state only when the total passes the rule AND the counties whose own newest
+    full month reaches it carry at least STATE_SHARE of the state's sales in the six months before. A county with
+    no recent sales (a frozen or stalled source) carries no weight and does not hold the state back."""
+    total = {}
+    for counts in by_county.values():
+        for ym, n in counts.items():
+            total[ym] = total.get(ym, 0) + n
+    own = {c: dense_month(counts) for c, counts in by_county.items()}
+    months = sorted(total)
+    for i in range(len(months) - 1, -1, -1):
+        ym, prior = months[i], months[max(0, i - 6):i]
+        before = [total[m] for m in prior]
+        if len(before) < 2 or total[ym] < DENSE_MIN or total[ym] < DENSE_SHARE * statistics.median(before):
+            continue
+        weight = {c: sum(counts.get(m, 0) for m in prior) for c, counts in by_county.items()}
+        full = sum(w for c, w in weight.items() if own[c] and own[c] >= ym)
+        if sum(weight.values()) and full >= STATE_SHARE * sum(weight.values()):
+            return ym
+    return None
+
+
+def content_hash(con):
+    """A hash of everything the database holds except the build time, so an unchanged input is recognised."""
+    h = hashlib.sha256()
+    for t in ('sources', 'munis', 'sales', 'months'):
+        for row in con.execute(f'SELECT * FROM {t} ORDER BY 1, 2, 3'):
+            h.update(repr(row).encode('utf-8'))
+    for k, v in con.execute("SELECT k, v FROM meta WHERE k NOT IN ('built_at', 'content_sha256') ORDER BY k"):
+        h.update(repr((k, v)).encode('utf-8'))
+    return h.hexdigest()
+
+
+def existing_hash(path):
+    try:
+        con = sqlite3.connect(f'file:{path}?mode=ro', uri=True)
+        try:
+            row = con.execute("SELECT v FROM meta WHERE k='content_sha256'").fetchone()
+        finally:
+            con.close()
+        return row[0] if row else None
+    except sqlite3.Error:
+        return None
+
+
 def build(out, src_dir=None):
     src_dir = src_dir or os.path.join(ROOT, 'data', 'sales')
     tmp = out + '.tmp'
@@ -146,10 +196,13 @@ def build(out, src_dir=None):
                     nm = str(nm or '').strip()
                     if len(nm) >= 8 and ' ' in nm:              # a full name; one short word would match ordinary text
                         names.add(nm)
-            sk = (st, co)
+            # One source per county. New Jersey rows come from yearly state files, so there the source is per file and
+            # each sale cites the file that holds it. Rows are newest first, so `retrieved` is that of the newest sale.
+            row_url = str(o.get('source_url') or '') if st == 'NJ' else ''
+            sk = (st, co, row_url)
             if sk not in sources:
-                c = cov.get(sk) or {}
-                sources[sk] = (len(sources) + 1, st, co, c.get('source') or o.get('source') or '', c.get('source_url') or '', f,
+                c = cov.get((st, co)) or {}
+                sources[sk] = (len(sources) + 1, st, co, c.get('source') or o.get('source') or '', row_url or c.get('source_url') or '', f,
                                str(o.get('retrieved') or generated[f])[:10], c.get('date_from') or '', c.get('date_to') or '')
             code = None
             if st == 'NJ':
@@ -202,9 +255,11 @@ def build(out, src_dir=None):
     # Coverage: latest sale date and last dense month per state and per county (market home sales).
     coverage = {'state': {}, 'county': {}}
     for st, in con.execute('SELECT DISTINCT state FROM sales'):
-        c = dict(con.execute('SELECT ym, SUM(n_homes) FROM months WHERE state=? GROUP BY ym', (st,)).fetchall())
+        c = {}
+        for co, ym, n in con.execute('SELECT county, ym, n_homes FROM months WHERE state=?', (st,)):
+            c.setdefault(co, {})[ym] = n
         r = con.execute('SELECT COUNT(*), SUM(market AND home), MIN(sale_date), MAX(sale_date) FROM sales WHERE state=?', (st,)).fetchone()
-        coverage['state'][st] = {'rows': r[0], 'market_homes': r[1] or 0, 'first_sale': r[2], 'latest_sale': r[3], 'dense_month': dense_month(c)}
+        coverage['state'][st] = {'rows': r[0], 'market_homes': r[1] or 0, 'first_sale': r[2], 'latest_sale': r[3], 'dense_month': state_dense_month(c)}
         stats['by_state'][st] = r[0]
     for st, co in con.execute('SELECT DISTINCT state, county FROM sales ORDER BY state, county'):
         c = dict(con.execute('SELECT ym, n_homes FROM months WHERE state=? AND county=?', (st, co)).fetchall())
@@ -219,7 +274,8 @@ def build(out, src_dir=None):
         'market_homes': con.execute('SELECT COUNT(*) FROM sales WHERE market AND home').fetchone()[0],
         'coverage': coverage, 'caveats': caveats, 'files_generated': generated,
         'dense_rule': f'A month is complete enough to report when it has at least {DENSE_MIN} market home sales and at least '
-                      f'{int(DENSE_SHARE * 100)}% of the median of the six months before it.',
+                      f'{int(DENSE_SHARE * 100)}% of the median of the six months before it. For a whole state the counties that are '
+                      f'full for the month must also carry at least {int(STATE_SHARE * 100)}% of the recent sales.',
         'names': 'Buyer and seller names are not stored.',
     }
     con.executemany('INSERT INTO meta VALUES (?,?)', [(k, json.dumps(v) if not isinstance(v, str) else v) for k, v in meta.items()])
@@ -232,6 +288,17 @@ def build(out, src_dir=None):
         raise SystemExit(f'{len(leaks)} buyer or seller names found in the notes or source list; nothing was written')
     cols = {r[1] for r in con.execute('PRAGMA table_info(sales)')}
     assert not cols & {'buyer', 'seller', 'owner', 'grantor', 'grantee'}, 'the sales table must not have a name column'
+    # Same sales files in, same database out: when nothing but the build time would differ, the file on disk is left alone.
+    # The nightly job relies on this so that an unchanged night does not produce a new homes.sqlite (and a backend deploy).
+    sha = content_hash(con)
+    meta['content_sha256'] = sha
+    if os.path.exists(out) and existing_hash(out) == sha:
+        con.close()
+        os.remove(tmp)
+        meta['unchanged'] = True
+        return meta, stats
+    con.execute('INSERT INTO meta VALUES (?,?)', ('content_sha256', sha))
+    con.commit()
     con.execute('VACUUM')
     con.close()
     os.replace(tmp, out)
@@ -243,7 +310,8 @@ def main():
     ap.add_argument('--out', default=OUT)
     a = ap.parse_args()
     meta, stats = build(a.out)
-    print(f"wrote {a.out}: {os.path.getsize(a.out) / 1e6:.1f} MB, {meta['rows']:,} sales ({meta['market_homes']:,} market home sales)")
+    verb = 'unchanged (same sales files, file left as it was)' if meta.get('unchanged') else 'wrote'
+    print(f"{verb} {a.out}: {os.path.getsize(a.out) / 1e6:.1f} MB, {meta['rows']:,} sales ({meta['market_homes']:,} market home sales)")
     print('rows by file:', meta['rows_by_file'], '| rows carrying a name in the source (not copied):', stats['names_dropped'])
     for st, c in meta['coverage']['state'].items():
         print(f"  {st}: {c['rows']:,} rows, latest sale {c['latest_sale']}, last dense month {c['dense_month']}")

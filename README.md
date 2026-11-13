@@ -162,6 +162,7 @@ Before each deploy, run `scripts/bump_version.sh`. It stamps one cache-busting `
 | Compact new `data/sales/*.json` files to columnar | `python3 scripts/compact_sales.py [max_items]` |
 | CET home sales (MA, CT, RI) | `python3 scripts/fetch_cet_home_sales.py [ma] [ct]`: re-pulls the residential sales and removes CT CAMA homes that had been mis-tagged as commercial from `cet_transfers_ct_ri` |
 | Thomas Scientific home sales (Gloucester NJ) | `python3 scripts/fetch_ts_home_sales.py [YTDSR1A2026.zip]` |
+| Punctual Pros home sales (NJ and PA) | `python3 scripts/fetch_pp_sales.py [--dry-run] [--only <source>]`: runs once a week (Mondays, and on every manual run) inside the nightly `refresh-data.yml` job; keeps an 18-month window; Dauphin County is a frozen snapshot and is not refreshed. Then `python3 scripts/build_homes_db.py`. See `server/README.md`. |
 | Research summaries | `python3 scripts/describe_research.py` |
 
 After any data change, update the `DATA_FILES` snapshot at the top of `modules/home.js` (row counts, home-sale counts, counties, generated date), or use **Refresh live counts** in the Data coverage panel to recount in the browser.

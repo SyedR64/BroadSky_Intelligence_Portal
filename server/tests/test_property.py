@@ -641,3 +641,60 @@ def test_live_new_jersey_lookups(monkeypatch):
         print('live timing (s):', homes.run_property_brief.last_timing)
     finally:
         homes.reset()
+
+
+def test_state_full_month_needs_the_counties_to_be_full(db):
+    """A month can pass on the state total while some counties have only part of it posted. It is not the state's full month then."""
+    b = db['build']
+    months = ['2026-02', '2026-03', '2026-04', '2026-05', '2026-06', '2026-07', '2026-08']
+    big = dict(zip(months, [1000, 1100, 1100, 1300, 1500, 1500, 1300]))
+    late = dict(zip(months, [300, 300, 300, 400, 450, 451, 287]))                   # August is part published
+    total = {m: big[m] + late[m] for m in months}
+    assert b.dense_month(total) == '2026-08' and b.dense_month(late) == '2026-07'   # the total alone would pass August
+    assert b.state_dense_month({'Big': big, 'Late': late}) == '2026-07'             # a quarter of the state is not full: July
+    # A county with under a tenth of the sales does not hold the state back, and neither does a source that stopped a year ago.
+    small = {m: n // 10 for m, n in late.items()}
+    stalled = {'2025-05': 200, '2025-06': 210, '2025-07': 190}
+    assert b.dense_month(small) == '2026-07'
+    assert b.state_dense_month({'Big': big, 'Small': small, 'Stalled': stalled}) == '2026-08'
+    assert b.state_dense_month({'Stalled': {'2025-05': 5}}) is None
+
+
+def test_a_new_jersey_sale_cites_the_state_file_it_came_from(db, tmp_path, monkeypatch):
+    """Rows from two yearly state files sit side by side after a refresh. Each sale cites its own file; a list cites the newest."""
+    y26, y27 = 'https://example.test/YTDSR1A2026.zip', 'https://example.test/YTDSR1A2027.zip'
+    nj = [dict(nj_row(2, '2026-09-03', '9 NEWER SALE LANE'), source_url=y27, retrieved='2026-11-12'),
+          dict(nj_row(1, '2026-05-12', '317 BARCELONA DRIVE', block_lot='442.31/1'), source_url=y26)]
+    src = tmp_path / 'sales'
+    src.mkdir()
+    cov = [{'county': 'Ocean', 'state': 'NJ', 'source': 'NJ sales files (YTDSR1A2026, YTDSR1A2027)', 'source_url': y27}]
+    files = {'pp_sales_nj': columnar(NJ_COLS, nj, {'generated': '2026-11-12', 'coverage': cov}, empty_enums=('beds', 'builder_flag', 'buyer', 'seller')),
+             'pp_sales_pa_a': columnar(PA_COLS, [pa_row(1, '2026-07-01', '1 MARKET ST')], {'generated': '2026-11-12', 'coverage': []}),
+             'pp_sales_pa_b': columnar(PB_COLS, [], {'generated': '2026-11-12', 'coverage': []})}
+    for name, j in files.items():
+        (src / f'{name}.json').write_text(json.dumps(j))
+    out = str(tmp_path / 'homes.sqlite')
+    db['build'].build(out, str(src))
+    con = sqlite3.connect(out)
+    cited = dict(con.execute("SELECT s.addr, x.url || '|' || x.retrieved FROM sales s JOIN sources x ON x.id=s.source_id WHERE s.state='NJ'"))
+    con.close()
+    assert cited == {'9 NEWER SALE LANE': y27 + '|2026-11-12', '317 BARCELONA DRIVE': y26 + '|2026-09-24'}      # the row's own source_url
+    monkeypatch.setattr(homes, 'DB_PATH', out)
+    monkeypatch.setattr(homes, 'LIVE_ON', False)
+    homes.reset()
+    try:
+        _, old = homes.run_property_brief({'address': '317 Barcelona Drive', 'municipality': 'Toms River', 'state': 'NJ'})
+        _, new = homes.run_property_brief({'address': '9 Newer Sale Lane', 'municipality': 'Toms River', 'state': 'NJ'})
+        assert (old[0]['url'], old[0]['date']) == (y26, '2026-09-24') and (new[0]['url'], new[0]['date']) == (y27, '2026-11-12')
+        assert homes._homes_sources({('NJ', 'Ocean'): 2})[0]['url'] == y27
+    finally:
+        homes.reset()
+
+
+def test_the_period_is_called_full_only_when_every_county_listed_is_full(mod):
+    m, _ = mod
+    text, _ = m.run_new_homeowners({'state': 'NJ'})                 # Monmouth holds one sale: no full month of its own
+    assert 'Not complete yet for this period: Monmouth NJ' in text
+    assert 'the newest month that is full for most of the area' in text and 'the newest full month in the data' not in text
+    text, _ = m.run_new_homeowners({'county': 'Ocean'})
+    assert '(the newest full month in the data)' in text and 'Not complete yet' not in text

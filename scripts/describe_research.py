@@ -8,6 +8,7 @@ index.json shape:
   - item_count  meta.item_count when present, else the length of items (research) or rows (sales)
   - generated   the file's own meta.generated date (YYYY-MM-DD) when present
   - lists       lengths of extra top-level list keys (e.g. bsp_firm.bpi_opportunities)
+  - residential sales files only: rows whose use_type is residential (home sales)
 Run after any research or sales file changes:  python3 scripts/describe_research.py
 """
 import json, os, glob, collections, datetime
@@ -54,6 +55,11 @@ for folder in ['research', 'sales']:
         entry = {'name': name, 'folder': folder, 'title': title, 'item_count': count, 'bytes': size, 'generated': gen}
         lists = {k: len(v) for k, v in (j.items() if isinstance(j, dict) else []) if k not in ('meta', 'items', 'rows', 'cols') and isinstance(v, list)}
         if lists: entry['lists'] = lists
+        if folder == 'sales' and nrows is not None and 'use_type' in (j.get('cols') or []):
+            # home sales in the file (use_type residential), so pages can show the count without opening the file
+            ci = j['cols'].index('use_type'); en = (j.get('enums') or {}).get('use_type') or []
+            want = en.index('residential') if 'residential' in en else ('residential' if not en else None)
+            entry['residential'] = sum(1 for r in j['rows'] if want is not None and r[ci] == want)
         index.append(entry)
 
         shown = nrows if nrows is not None else len(items)

@@ -308,7 +308,8 @@
    "title": "bpi_sales_dc",
    "item_count": 8003,
    "bytes": 1344278,
-   "generated": "2026-09-24"
+   "generated": "2026-09-24",
+   "residential": 7169
   },
   {
    "name": "cet_home_sales_ct_ri",
@@ -316,7 +317,8 @@
    "title": "cet_home_sales_ct_ri",
    "item_count": 31591,
    "bytes": 7844086,
-   "generated": "2026-09-24"
+   "generated": "2026-09-24",
+   "residential": 31591
   },
   {
    "name": "cet_home_sales_ma",
@@ -324,7 +326,8 @@
    "title": "cet_home_sales_ma",
    "item_count": 14273,
    "bytes": 5127229,
-   "generated": "2026-09-24"
+   "generated": "2026-09-24",
+   "residential": 14273
   },
   {
    "name": "cet_transfers_ct_ri",
@@ -332,7 +335,8 @@
    "title": "cet_transfers_ct_ri",
    "item_count": 5816,
    "bytes": 1394772,
-   "generated": "2026-09-24"
+   "generated": "2026-09-24",
+   "residential": 0
   },
   {
    "name": "cet_transfers_ma",
@@ -340,7 +344,8 @@
    "title": "cet_transfers_ma",
    "item_count": 4317,
    "bytes": 1601459,
-   "generated": "2026-09-24"
+   "generated": "2026-09-24",
+   "residential": 0
   },
   {
    "name": "fh_sales_nyc",
@@ -348,31 +353,35 @@
    "title": "fh_sales_nyc",
    "item_count": 19553,
    "bytes": 3215067,
-   "generated": "2026-09-24"
+   "generated": "2026-09-24",
+   "residential": 17018
   },
   {
    "name": "pp_sales_nj",
    "folder": "sales",
    "title": "BSP property-transfer dataset - New Jersey Jersey Shore ring (Ocean, Monmouth, Atlantic, Burlington)",
-   "item_count": 25486,
-   "bytes": 4114559,
-   "generated": "2026-09-24"
+   "item_count": 36138,
+   "bytes": 5836178,
+   "generated": "2026-11-13",
+   "residential": 30637
   },
   {
    "name": "pp_sales_pa_a",
    "folder": "sales",
    "title": "pp_sales_pa_a - Property transfers (sales) for Lancaster, York, Dauphin, Cumberland Counties, PA (BSP Desk)",
-   "item_count": 19822,
-   "bytes": 4127331,
-   "generated": "2026-09-24"
+   "item_count": 23383,
+   "bytes": 4852594,
+   "generated": "2026-11-13",
+   "residential": 20215
   },
   {
    "name": "pp_sales_pa_b",
    "folder": "sales",
    "title": "pp_sales_pa_b - Property transfers (deeds/sales) for Punctual Pros / BSP portfolio service-area counties in PA: Berks, Lebanon, Franklin, Adams, Perry, Chester, Montgomery",
-   "item_count": 31941,
-   "bytes": 5403367,
-   "generated": "2026-09-24"
+   "item_count": 34854,
+   "bytes": 5790714,
+   "generated": "2026-11-13",
+   "residential": 29885
   },
   {
    "name": "ts_sales_gloucester_nj",
@@ -380,16 +389,17 @@
    "title": "ts_sales_gloucester_nj",
    "item_count": 2936,
    "bytes": 447494,
-   "generated": "2026-09-24"
+   "generated": "2026-09-24",
+   "residential": 2936
   }
  ],
  "totals": {
   "research_files": 37,
   "research_items": 4687,
   "sales_files": 10,
-  "sales_rows": 163738,
-  "bytes": 40547190,
+  "sales_rows": 180864,
+  "bytes": 43381419,
   "data_from": "2026-09-24",
-  "data_to": "2026-10-08"
+  "data_to": "2026-11-13"
  }
 }

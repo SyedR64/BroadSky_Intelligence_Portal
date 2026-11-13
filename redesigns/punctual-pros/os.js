@@ -1,5 +1,5 @@
 /* ServiceOS product page — demo logic. Shared helpers come from ./site.js (same folder). */
-import { FAQ, TERRITORY, HUBS, classifyZip, zipIndex, cleanCity, miles, fillRange, territoryAlerts, alertLevel } from './site.js?v=20261112181124';
+import { FAQ, TERRITORY, HUBS, classifyZip, zipIndex, cleanCity, miles, fillRange, territoryAlerts, alertLevel } from './site.js?v=20261112194607';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -321,7 +321,7 @@ function movers(ctx) {
     const core = new Set(); if (idx) for (const [z, r] of idx) { const s = classifyZip(r).s; if (s === 'in' || s === 'nj') core.add(z); }
     const counties = new Set([...TERRITORY.PA, ...TERRITORY.NJ]);
     let total = 0, resid = 0, scored = 0, done = 0; const byC = {}; const span = { PA: [null, null], NJ: [null, null] }; const scoredBy = { PA: 0, NJ: 0 };
-    $('#n-hint').textContent = 'Loading 3 county deed feeds (~77K transfers)…';
+    $('#n-hint').textContent = 'Loading 3 county deed feeds…';
     for (const f of files) {
       let d; try { d = await Data.load(f); } catch { d = null; }
       done++; $('#lb').style.width = (done / files.length * 100) + '%';
