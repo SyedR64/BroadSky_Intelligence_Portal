@@ -547,22 +547,22 @@ meta keys: dataset, generated, method, coverage, caveats, failed_sources, item_c
 extra top-level keys: format, cols, enums, rows
 columns: `id`, `addr`, `arms_length`, `beds`, `block_lot`, `builder_flag`, `buyer`, `county`, `geo_precision`, `lat`, `lon`, `muni`, `new_construction`, `nu_code`, `price`, `retrieved`, `sale_date`, `seller`, `source`, `source_url`, `sqft`, `state`, `use_code_raw`, `use_type`, `year_built`, `zip`
 
-## sales/pp_sales_pa_a  (23,383 rows · 4.9 MB)
+## sales/pp_sales_pa_a  (23,639 rows · 4.9 MB)
 meta keys: dataset, generated, window_requested, item_count, method, coverage, caveats, failed_sources, refresh
 - **dataset**: "pp_sales_pa_a - Property transfers (sales) for Lancaster, York, Dauphin, Cumberland Counties, PA (BSP Desk)"
-- **generated**: "2026-11-13"
+- **generated**: "2026-11-16"
 - **method**: ["Lancaster: ArcGIS REST FeatureServer query on Parcels_HUBnew/FeatureServer/0 (found via Lancaster County LanCo View 2.0 web app config). where=SALE_DATE>=20250901 (SALE_DATE is numeric YYYYMMDD). returnIdsOnly then batched objectIds queries of 500, outFields=*, outSR=4326; polygon area-weighted centroid computed locally. 10,054 records.", "York: ArcGIS REST FeatureServer query on arcweb1.ycpc.or
-- **item_count**: 23383
+- **item_count**: 23639
 - **caveats**: ["Lancaster, York and Cumberland sources are current-parcel snapshots that store only the MOST RECENT sale per parcel: each pull shows only the latest sale of a parcel; an earlier sale picked up by a previous pull is kept, so a parcel that sold again can have more than one row, and buyer = current owner of record. Dauphin records come from full per-parcel sales histories, so repeat sales are kept.
 extra top-level keys: format, cols, enums, rows
 columns: `id`, `addr`, `arms_length`, `beds`, `builder_flag`, `buyer`, `county`, `deed_ref`, `geo_precision`, `lat`, `lon`, `muni`, `parcel_id`, `price`, `retrieved`, `sale_date`, `sale_type_raw`, `seller`, `source`, `source_url`, `sqft`, `state`, `use_code_raw`, `use_type`, `year_built`, `zip`
 
-## sales/pp_sales_pa_b  (34,854 rows · 5.8 MB)
+## sales/pp_sales_pa_b  (35,007 rows · 5.8 MB)
 meta keys: dataset, generated, as_of, method, coverage, field_notes, caveats, failed_sources, item_count, refresh
 - **dataset**: "pp_sales_pa_b - Property transfers (deeds/sales) for Punctual Pros / BSP portfolio service-area counties in PA: Berks, Lebanon, Franklin, Adams, Perry, Chester, Montgomery"
-- **generated**: "2026-11-13"
+- **generated**: "2026-11-16"
 - **method**: ["All data pulled live from public county ArcGIS REST query endpoints with curl/python (browser UA), POST /query, outSR=4326, f=json, paginated with resultOffset + resultRecordCount (1000-2000) ordered by OID until exceededTransferLimit=false.", "Montgomery: GIS_BOA_LAND FeatureServer/0 (table) where SALE_DATE_1 >= DATE '2025-09-01'; centroids from Parcels/Montgomery_County_Parcels FeatureServer/1
-- **item_count**: 34854
+- **item_count**: 35007
 - **caveats**: ["Records are the LAST recorded sale per parcel as carried in each county's assessment/parcel layer, not a full deed-transfer ledger: each pull shows only the latest sale of a parcel; an earlier sale picked up by a previous pull is kept, so a parcel that sold again can have more than one row, and buyer = current owner of record.", "Seller (grantor) is only available for Franklin (PREVIOUS_OWNER_1)
 extra top-level keys: format, cols, enums, rows
 columns: `id`, `addr`, `arms_length`, `beds`, `builder_flag`, `buyer`, `county`, `geo_precision`, `lat`, `lon`, `muni`, `price`, `retrieved`, `sale_date`, `seller`, `source`, `source_url`, `sqft`, `state`, `use_code_raw`, `use_type`, `year_built`, `zip`

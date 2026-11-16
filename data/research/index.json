@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-15",
+ "generated": "2026-11-16",
  "files": [
   {
    "name": "ai_agents_portfolio",
@@ -369,19 +369,19 @@
    "name": "pp_sales_pa_a",
    "folder": "sales",
    "title": "pp_sales_pa_a - Property transfers (sales) for Lancaster, York, Dauphin, Cumberland Counties, PA (BSP Desk)",
-   "item_count": 23383,
-   "bytes": 4852594,
-   "generated": "2026-11-13",
-   "residential": 20215
+   "item_count": 23639,
+   "bytes": 4906049,
+   "generated": "2026-11-16",
+   "residential": 20427
   },
   {
    "name": "pp_sales_pa_b",
    "folder": "sales",
    "title": "pp_sales_pa_b - Property transfers (deeds/sales) for Punctual Pros / BSP portfolio service-area counties in PA: Berks, Lebanon, Franklin, Adams, Perry, Chester, Montgomery",
-   "item_count": 34854,
-   "bytes": 5790714,
-   "generated": "2026-11-13",
-   "residential": 29885
+   "item_count": 35007,
+   "bytes": 5815418,
+   "generated": "2026-11-16",
+   "residential": 30030
   },
   {
    "name": "ts_sales_gloucester_nj",
@@ -397,9 +397,9 @@
   "research_files": 37,
   "research_items": 4687,
   "sales_files": 10,
-  "sales_rows": 180864,
-  "bytes": 43381477,
+  "sales_rows": 181273,
+  "bytes": 43459636,
   "data_from": "2026-09-24",
-  "data_to": "2026-11-13"
+  "data_to": "2026-11-16"
  }
 }
