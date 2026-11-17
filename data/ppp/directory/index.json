@@ -1,0 +1,153 @@
+{
+ "meta": {
+  "dataset": "All-business directory (SBA loan segments)",
+  "generated": "2026-11-17",
+  "built_at": "2026-11-17T19:40:02+00:00",
+  "script": "scripts/build_business_directory.py",
+  "notes": [
+   "Jobs come from loan records 2020-2026: PPP JobsReported is what the borrower reported in 2020-21; SBA JobsSupported is what the lender reported on a 7(a) or 504 loan.",
+   "Revenue is modelled (est.) from Census benchmarks and the loan data unless revenue_basis starts with \"researched\".",
+   "Ownership is unknown unless researched (ownership_basis).",
+   "Specialties for a business that was not researched are the plain NAICS trade label only."
+  ],
+  "sources": [
+   {
+    "title": "SBA Paycheck Protection Program loan data (FOIA)",
+    "url": "https://data.sba.gov/dataset/ppp-foia",
+    "publisher": "U.S. Small Business Administration",
+    "date": "2024-09-30"
+   },
+   {
+    "title": "SBA 7(a) and 504 loan data (FOIA)",
+    "url": "https://data.sba.gov/dataset/7-a-504-foia",
+    "publisher": "U.S. Small Business Administration",
+    "date": "2026-09-30"
+   },
+   {
+    "title": "Statistics of U.S. Businesses 2022 (revenue model benchmarks)",
+    "url": "https://www.census.gov/data/tables/2022/econ/susb/2022-susb-annual.html",
+    "publisher": "U.S. Census Bureau",
+    "date": "2026-11-17"
+   }
+  ]
+ },
+ "rows": 145337,
+ "rows_by_segment": {
+  "pp": 20794,
+  "cet": 5850,
+  "fl": 64571,
+  "ts": 20976,
+  "bpi": 12910,
+  "fh": 20236
+ },
+ "files": {
+  "pp": {
+   "file": "pp.json",
+   "rows": 20794,
+   "bytes": 5880928
+  },
+  "cet": {
+   "file": "cet.json",
+   "rows": 5850,
+   "bytes": 1674657
+  },
+  "fl": {
+   "file": "fl.json",
+   "rows": 64571,
+   "bytes": 21597493
+  },
+  "ts": {
+   "file": "ts.json",
+   "rows": 20976,
+   "bytes": 6187017
+  },
+  "bpi": {
+   "file": "bpi.json",
+   "rows": 12910,
+   "bytes": 3741797
+  },
+  "fh": {
+   "file": "fh.json",
+   "rows": 20236,
+   "bytes": 5834094
+  }
+ },
+ "sqlite": {
+  "file": "businesses.sqlite.gz",
+  "bytes": 23936159,
+  "raw_bytes": 122068992,
+  "sha256": "5f3d9b73be58186a59e52c759955963d9dd843eaddcbaf8587b2541839753701",
+  "built_at": "2026-11-17T19:40:02+00:00"
+ },
+ "columns": [
+  "id",
+  "segment",
+  "name",
+  "dba",
+  "address",
+  "city",
+  "county",
+  "county_basis",
+  "state",
+  "zip",
+  "lat",
+  "lon",
+  "geo_precision",
+  "naics",
+  "trade",
+  "specialties",
+  "specialties_basis",
+  "business_type",
+  "franchise",
+  "nonprofit",
+  "person_named",
+  "jobs_ppp",
+  "jobs_sba",
+  "jobs_latest",
+  "jobs_latest_source",
+  "ppp_loans",
+  "ppp_total_usd",
+  "ppp_first_draw_usd",
+  "ppp_second_draw_usd",
+  "ppp_first_approved",
+  "ppp_loan_numbers",
+  "sba_loans",
+  "sba_latest_program",
+  "sba_latest_date",
+  "sba_latest_amount_usd",
+  "sba_latest_status",
+  "change_of_ownership_date",
+  "change_of_ownership_recent",
+  "dist_hub_mi",
+  "nearest_hub",
+  "on_sba_screen",
+  "screen_rank",
+  "hand_built_list_id",
+  "hand_built_list_name",
+  "pe_list_match",
+  "ownership",
+  "ownership_basis",
+  "revenue_est_usd",
+  "revenue_low_usd",
+  "revenue_high_usd",
+  "revenue_basis",
+  "revenue_confidence",
+  "revenue_methods",
+  "revenue_benchmark_naics",
+  "source",
+  "data_source"
+ ],
+ "revenue_coverage": {
+  "model": 138450,
+  "researched model": 161,
+  "none": 6726
+ },
+ "gaps": {
+  "ppp_loan_not_found": 0,
+  "sba_latest_row_not_found": 3771,
+  "no_county": 14,
+  "no_revenue": 6726,
+  "no_latlon": 15,
+  "revenue_zero_method_retry": 1
+ }
+}

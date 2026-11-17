@@ -5,12 +5,13 @@ Holds the Claude API key server-side. Every question is answered by Claude worki
 agent over the knowledge base in knowledge/kb.sqlite (see knowledge.py and scripts/build_corpus.py): the
 server retrieves the best sources for the question, then Claude can search again, read whole sources and
 run the acquisition model (dealmath.py) before it writes a cited answer. BSP Desk can also look up public home-sales
-records for the Punctual Pros territory (property.py: the new-homeowner list and a property brief for one address). Threads and feedback go to SQLite;
+records for the Punctual Pros territory (property.py: the new-homeowner list and a property brief for one address) and search
+every business in the six SBA loan segments (directory.py: find_businesses, over a database the site serves). Threads and feedback go to SQLite;
 visitors are rate-limited in memory and the whole site is capped per UTC day. Every question and answer is also
 saved to a private Vercel Blob store for later analysis (chatlog.py).
 
 Routes (JSON unless noted; CORS limited to ALLOWED_ORIGINS):
-  GET  /health          {ok, model, version, db, llm, llm_state, model_state, kv, log, kb, homes}
+  GET  /health          {ok, model, version, db, llm, llm_state, model_state, kv, log, kb, homes, directory}
                         llm and model_state say whether answers work, from the last real call and the last key check;
                         ?deep=1 runs the key check (one tiny request, at most once per 10 minutes per instance)
   POST /chat            {persona, messages, context, question, mode?} -> text/event-stream
@@ -49,6 +50,7 @@ from starlette.responses import Response, StreamingResponse
 
 import chatlog
 import dealmath
+import directory as bizdir   # the all-business directory (find_businesses); downloads its database on first use
 import knowledge
 import property as homes   # never a bare `import property`: that would shadow the built-in in this module
 
@@ -116,7 +118,7 @@ PORTAL_BRIEF = ('Broad Sky Partners (BSP) is a New York private-equity firm that
                 'distribution), Bully Pulpit International (public affairs and communications) and Fair Harbor (apparel). BSP sold Smith + Howard '
                 '(accounting and advisory) to TPG in August 2026.')
 PERSONAS = {
-    'portal': {'name': 'BSP Desk', 'company': None, 'tools': ('search', 'read', 'deal', 'homes', 'web'),
+    'portal': {'name': 'BSP Desk', 'company': None, 'tools': ('search', 'read', 'deal', 'homes', 'directory', 'web'),
                'role': f'You are BSP Desk, the in-house analyst on Broad Sky\'s desk: part deal associate, part operating partner, working for the investment '
                        f'team and the Portfolio Resource Group. You know the firm the way someone in its New York office would: thematic investing in '
                        f'middle-market consumer and business services, backing founder-led companies, and the integrated investor-operator model, where '
@@ -173,6 +175,15 @@ HOMES_RULE = ('12. Home-sales records (Punctual Pros territory): for "who should
               'and say that no permit on record is not proof that no work was done. Never give owner, buyer or seller names: mail goes to '
               '"New homeowner". Never say where pipes, the panel, the water heater or other equipment are located: no record holds that. Cite the '
               'tool\'s sources as [n]. These answers may run to 400 words, and a list of addresses may run longer.')
+DIRECTORY_RULE = ('13. Business directory (every business in the six SBA loan segments): to find, count or list businesses by trade, place, '
+                  'size or name, call find_businesses. With its results always say three things: jobs come from the latest loan record, '
+                  'PPP (2020-21) or an SBA 7(a) or 504 loan that can date back to 1991 (the row gives the year), and are not a current '
+                  'headcount; revenue is modelled (est.) unless the row says stated; ownership is unknown unless the row says researched or '
+                  'loan record. Never call a business founder-owned, family-owned or for sale unless the row says researched. Cite the '
+                  'tool\'s sources as [n]. Then offer the next step: the '
+                  '[SBA loan screen](https://broadsky-agent.vercel.app/app.html#/ma/screen) for researched candidates and the '
+                  '[SBA loan records](https://broadsky-agent.vercel.app/app.html#/ma/loans) view for the loans behind them. If the tool says the '
+                  'directory is unavailable, say so in one sentence and offer those two views instead. A list of businesses may run past 400 words.')
 # mode "voice": the answer is read aloud, so the rules are short and the format rules are different.
 VOICE_RULES = '\n'.join([
     'How to answer (this answer is spoken aloud):',
@@ -851,6 +862,8 @@ def build_system(persona, tools_on):
         rules += '\n' + RESEARCH_RULE
     if 'homes' in tools_on:
         rules += '\n' + HOMES_RULE
+    if 'directory' in tools_on:
+        rules += '\n' + DIRECTORY_RULE
     d = datetime.now(timezone.utc)
     return [{'type': 'text', 'text': f"{p['role']}\n\n{rules}\n\nToday is {d.strftime('%b')} {d.day}, {d.year}.", 'cache_control': {'type': 'ephemeral'}}]
 
@@ -1243,11 +1256,14 @@ async def handle_chat(request, cors):
         tools_on.append('deal')
     if 'homes' in allowed and await run_in_threadpool(homes.ready):
         tools_on.append('homes')
+    if 'directory' in allowed and bizdir.enabled():   # offered before its first download: the database loads on the first call
+        tools_on.append('directory')
     if 'web' in allowed and (env('WEB_SEARCH') or 'on').strip().lower() not in ('off', '0', 'false', 'no'):
         tools_on.append('web')
     tools = ([SEARCH_TOOL] if 'search' in tools_on else []) + ([READ_TOOL] if 'read' in tools_on else []) + \
             ([{**dealmath.tool_definition(), 'eager_input_streaming': True}] if 'deal' in tools_on else []) + \
-            ([{**t, 'eager_input_streaming': True} for t in homes.tool_definitions()] if 'homes' in tools_on else []) + ([WEB_SEARCH_TOOL] if 'web' in tools_on else [])
+            ([{**t, 'eager_input_streaming': True} for t in homes.tool_definitions()] if 'homes' in tools_on else []) + \
+            ([{**t, 'eager_input_streaming': True} for t in bizdir.tool_definitions()] if 'directory' in tools_on else []) + ([WEB_SEARCH_TOOL] if 'web' in tools_on else [])
 
     voice = inp['mode'] == 'voice'
     if voice:
@@ -1257,6 +1273,7 @@ async def handle_chat(request, cors):
         tools_on = [route] if route else []
         tools = [t for t in tools if (route == 'deal' and t.get('name') == 'deal_model') or (route == 'homes' and t.get('name') in ('new_homeowners', 'property_brief'))]
     inp['homes_on'] = 'homes' in tools_on
+    inp['directory_on'] = 'directory' in tools_on
 
     sources = Sources()
     sources_block = await run_in_threadpool(retrieve_initial, kb, inp, sources)
@@ -1287,7 +1304,8 @@ async def handle_chat(request, cors):
     deadline = asyncio.get_running_loop().time() + (min(total_timeout(), VOICE['timeout']) if voice else total_timeout())
     first = await open_stream(base, opts, steps == 1, deadline)   # upstream HTTP errors still become JSON errors with status codes
     ctx = {'kb': kb, 'persona': inp['persona'], 'base': base, 'opts': opts, 'sources': sources, 'deadline': deadline, 'vkey': key, 'first': first,
-           'inp': inp, 'origin': request.headers.get('origin') or '', 't0': t0, 'homes_on': 'homes' in tools_on, 'voice': voice, 'steps': steps}
+           'inp': inp, 'origin': request.headers.get('origin') or '', 't0': t0, 'homes_on': 'homes' in tools_on,
+           'directory_on': 'directory' in tools_on, 'voice': voice, 'steps': steps}
     headers = {**cors, 'Cache-Control': 'no-cache, no-transform', 'X-Accel-Buffering': 'no'}
     return StreamingResponse(relay(ctx), status_code=200, headers=headers, media_type='text/event-stream')
 
@@ -1365,7 +1383,8 @@ async def relay(ctx):
 
 
 TOOL_STATUS = {'search_knowledge': 'Searching the knowledge base', 'read_source': 'Reading a source', 'deal_model': 'Running the acquisition model',
-               'new_homeowners': 'Looking up new homeowners', 'property_brief': 'Building a property brief'}
+               'new_homeowners': 'Looking up new homeowners', 'property_brief': 'Building a property brief',
+               'find_businesses': 'Searching the business directory'}
 
 
 def plain_words(v, n=60):
@@ -1399,6 +1418,31 @@ def run_homes(name, args, sources):
     return text, not homes.ready()
 
 
+def run_directory(args, sources):
+    """Run find_businesses and number its sources so the answer can cite them as [n]."""
+    text, srcs = bizdir.run_find_businesses(args)
+    marks = []
+    for s in srcs or []:
+        n = sources.add(f"directory:{s.get('title')}|{s.get('url')}", s.get('title'), s.get('url'), s.get('publisher'), s.get('date'), s.get('kind') or 'data')
+        marks.append(sources.header(n))
+    if marks:
+        text = 'Sources for this result (cite them as [n]):\n' + '\n'.join(marks) + '\n\n' + text
+    return text, not srcs
+
+
+def directory_scope(args):
+    """What a find_businesses call looks for, in plain words ("HVAC in Lancaster County, PA")."""
+    a = {**(args.get('filters') if isinstance(args.get('filters'), dict) else {}), **args}
+    what = plain_words(a.get('trade') or a.get('query') or a.get('name'), 40)
+    seg = bizdir.SEGMENTS.get(str(a.get('segment') or '').strip().lower(), '')
+    county = plain_words(a.get('county'), 30)
+    place = plain_words(a.get('city'), 30) or ((county if re.search(r'\bcounty$', county, re.I) else county + ' County') if county else '')
+    st = plain_words(a.get('state'), 20)
+    where = ', '.join(x for x in (place, st) if x)
+    t = what or (seg + ' businesses' if seg else '')
+    return (t + (' in ' + where if where else '')).strip() or where
+
+
 def tool_status(block, sources):
     args = getattr(block, 'input', None) or {}
     name = getattr(block, 'name', '')
@@ -1415,6 +1459,9 @@ def tool_status(block, sources):
     if name == 'property_brief':
         addr = plain_words(args.get('address'))
         return f'Building a property brief for {addr}' if addr else 'Building a property brief'
+    if name == 'find_businesses':
+        scope = directory_scope(args)
+        return f'Searching the business directory for {scope}' if scope else 'Searching the business directory'
     if name == 'web_search' and is_str(args.get('query')):
         return f'Searching the web for “{args["query"][:80]}”'
     return TOOL_STATUS.get(name, 'Working')
@@ -1586,6 +1633,8 @@ async def run_agent(ctx, q, st):
                             text = f'This run is source [{n}].\n' + text
                     elif b.name in ('new_homeowners', 'property_brief') and ctx['homes_on']:   # BSP Desk only
                         text, err = await run_in_threadpool(run_homes, b.name, args, sources)
+                    elif b.name == 'find_businesses' and ctx.get('directory_on'):   # BSP Desk only; the first call may download the database
+                        text, err = await run_in_threadpool(run_directory, args, sources)
                     else:
                         text, err = f'Unknown tool {b.name}.', True
                 except Exception:
@@ -1723,7 +1772,7 @@ def handle_stats_sync():
     ms = model_status()
     base = {'ok': True, 'version': VERSION, 'model': env('MODEL') or DEFAULT_MODEL, 'daily_cap': int_var(env('DAILY_CAP'), DAILY_CAP_DEFAULT), 'generated_at': now_iso(),
             'llm': llm_live(ms['state']), 'llm_state': ms['state'], 'model_state': ms,
-            'knowledge': kb.stats() if kb is not None else None, 'homes': homes_summary()}
+            'knowledge': kb.stats() if kb is not None else None, 'homes': homes_summary(), 'directory': bizdir.status()}
     if not _db_state['ready']:
         return {**base, 'db': False}
     day = today()
@@ -1764,6 +1813,8 @@ async def lifespan(_app):
         log.info('home-sales records ready: %s sales, built %s', hs['sales'], hs['built_at'])
     else:
         log.warning('home-sales records unavailable: the new-homeowner and property-brief tools are off')
+    ds = bizdir.status()
+    log.info('business directory: %s', 'loads on first use' if ds['enabled'] else 'off (DIRECTORY_URL=off)')
     if env('FAKE_ANTHROPIC_URL'):
         log.warning('FAKE_ANTHROPIC_URL is set: Claude calls go to %s (testing only)', anthropic_base_url())
     log.info('BSP Desk backend %s: model %s, Claude key %s, chat log %s, origins %s', VERSION, model_name(), 'set' if api_key() else 'MISSING',
@@ -1804,7 +1855,7 @@ async def router(request: Request, rest: str = ''):
                 return json_response({'ok': True, 'model': env('MODEL') or DEFAULT_MODEL, 'version': VERSION, 'db': await db_ok(),
                                       'llm': llm_live(ms['state']), 'llm_state': ms['state'], 'model_state': ms, 'kv': True, 'log': chatlog.enabled(),
                                       'kb': {'docs': len(kb.docs), 'chunks': int(len(kb.chunk_ids)), 'built_at': kb.info.get('built_at')} if kb is not None else False,
-                                      'homes': await run_in_threadpool(homes_summary)}, 200, cors)
+                                      'homes': await run_in_threadpool(homes_summary), 'directory': bizdir.status()}, 200, cors)
             if path == '/stats':
                 stats = await run_in_threadpool(handle_stats_sync)
                 return json_response(stats, 200, cors, {'Cache-Control': 'public, max-age=60'} if stats.get('db') else None)

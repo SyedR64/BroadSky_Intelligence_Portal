@@ -100,6 +100,7 @@ def test_health_shape(env):
         assert {k: j[k] for k in ('ok', 'model', 'version', 'db', 'llm', 'kv', 'log')} == {'ok': True, 'model': 'claude-opus-5-5', 'version': '2.2.0', 'db': True, 'llm': True, 'kv': True, 'log': True}
         assert j['homes']['sales'] > 50000 and j['homes']['market_homes'] > 0 and j['homes']['built_at'] and re.fullmatch(r'\d{4}-\d{2}', j['homes']['through']['NJ']['full_month'])
         assert j['kb']['docs'] > 100 and j['kb']['chunks'] > j['kb']['docs'] and j['kb']['built_at']
+        assert j['directory'] == {'enabled': True, 'loaded': False, 'rows': None, 'built_at': None, 'rows_by_segment': None}   # /health never downloads it
         assert r.headers['access-control-allow-origin'] == GH
         assert r.headers['cache-control'] == 'no-store'
 
@@ -166,10 +167,13 @@ def test_portal_persona_and_context_format(env):
     assert s.startswith("You are BSP Desk, the in-house analyst on Broad Sky's desk") and 'Say "we" and "our" for BSP' in s
     assert 'No "So what" labels' in s and 'never "playbook"' in s and '10. Deal maths:' in s and '11. Strategy and deal questions' in s
     assert b['output_config'] == {'effort': 'high'}   # the portal's research assistant works harder
-    assert [t.get('name') for t in b['tools']] == ['search_knowledge', 'read_source', 'deal_model', 'new_homeowners', 'property_brief', 'web_search']
+    assert [t.get('name') for t in b['tools']] == ['search_knowledge', 'read_source', 'deal_model', 'new_homeowners', 'property_brief', 'find_businesses', 'web_search']
     assert '12. Home-sales records' in s and 'Never give owner, buyer or seller names' in s and 'no record holds that' in s
-    assert all(t['eager_input_streaming'] is True for t in b['tools'][:5]) and 'never returned' in b['tools'][3]['description']
-    assert b['tools'][5] == {'type': 'web_search_20260209', 'name': 'web_search', 'max_uses': 3}
+    assert '13. Business directory' in s and 'revenue is modelled (est.) unless the row says stated' in s
+    assert 'ownership is unknown unless the row says researched or loan record' in s and 'can date back to 1991' in s
+    assert '2020-2026' not in s and '#/ma/screen' in s and '#/ma/loans' in s
+    assert all(t['eager_input_streaming'] is True for t in b['tools'][:6]) and 'never returned' in b['tools'][3]['description']
+    assert b['tools'][6] == {'type': 'web_search_20260209', 'name': 'web_search', 'max_uses': 3}
     src = b['messages'][-1]['content'][0]['text']
     assert src.startswith('<sources>\n[1] Debt (This page) (from the page the visitor is on)\nLeverage & terms\n\n[2] Plan (This page) app.html#plan (from the page the visitor is on)\nx\n\n[3] ')
     # the rule that makes a question about "this view" get answered from the page context, in the same words the sources block uses
@@ -248,7 +252,7 @@ def test_home_records_tools_stay_off_the_concept_sites(env):
         status, _, events = chat(env['main'], 'New homeowners in Ocean County? [mock:homes]', persona=persona)
         reqs = mock_requests(env)
         assert [t['name'] for t in reqs[0]['body']['tools']] == ['search_knowledge', 'read_source']
-        assert 'Home-sales records' not in reqs[0]['body']['system'][0]['text']
+        assert 'Home-sales records' not in reqs[0]['body']['system'][0]['text'] and 'Business directory' not in reqs[0]['body']['system'][0]['text']
         res = reqs[1]['body']['messages'][-1]['content'][0]   # a call the model was never offered is refused, not run
         assert res['is_error'] is True and res['content'] == 'Unknown tool new_homeowners.'
         assert status == 200 and events[-1]['type'] == 'done' and not any(s['kind'] == 'data' for e in events if e['type'] == 'sources' for s in e['sources'])
@@ -519,6 +523,7 @@ def test_stats_counts(env):
     assert s['ok'] is True and s['db'] is True and s['version'] == '2.2.0' and s['model'] == 'claude-opus-5-5' and s['daily_cap'] == 400
     assert s['knowledge']['docs'] > 100 and s['knowledge']['chunks'] > s['knowledge']['docs']
     assert s['homes']['sales'] > 50000 and set(s['homes']['through']) == {'NJ', 'PA'}
+    assert s['directory']['enabled'] is True and set(s['directory']) >= {'loaded', 'rows', 'built_at'}
     assert s['threads'] == threads and s['feedback'] == fb[0] and s['feedback_up'] == fb[1] and s['feedback_down'] == fb[2]
     assert s['today']['requests'] == req and s['today']['tokens_out'] > 0 and s['today']['tokens_in'] > 0
     if threads:

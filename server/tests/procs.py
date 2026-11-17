@@ -71,10 +71,14 @@ def start_mock(port, log_path):
 
 
 def start_server(port, log_path, db_path, mock_port=None, key=TEST_KEY, **extra_env):
-    env = {k: v for k, v in os.environ.items() if k not in ('ANTHROPIC_API_KEY', 'FAKE_ANTHROPIC_URL', 'DB_PATH', 'DAILY_CAP', 'RL_PER_10MIN', 'ALLOWED_ORIGINS', 'MODEL', 'EFFORT', 'UPSTREAM_TOTAL_TIMEOUT', 'RAILWAY_VOLUME_MOUNT_PATH', 'BLOB_READ_WRITE_TOKEN', 'VERCEL_BLOB_API_URL', 'CHAT_LOG')}
+    env = {k: v for k, v in os.environ.items() if k not in ('ANTHROPIC_API_KEY', 'DIRECTORY_URL', 'DIRECTORY_TMP', 'DIRECTORY_INDEX_URL', 'FAKE_ANTHROPIC_URL', 'DB_PATH', 'DAILY_CAP', 'RL_PER_10MIN', 'ALLOWED_ORIGINS', 'MODEL', 'EFFORT', 'UPSTREAM_TOTAL_TIMEOUT', 'RAILWAY_VOLUME_MOUNT_PATH', 'BLOB_READ_WRITE_TOKEN', 'VERCEL_BLOB_API_URL', 'CHAT_LOG')}
     env['DB_PATH'] = db_path
     env['PYTHONUNBUFFERED'] = '1'
     env['PROPERTY_LIVE'] = 'off'   # the property brief makes no live lookups in tests
+    # the business directory never downloads the site's copy in tests: a dead local address unless a test passes its own
+    env.pop('DIRECTORY_PATH', None)
+    env['DIRECTORY_URL'] = 'http://127.0.0.1:9/data/ppp/directory/businesses.sqlite.gz'
+    env['DIRECTORY_TIMEOUT'] = '5'
     if mock_port:
         env['FAKE_ANTHROPIC_URL'] = f'http://127.0.0.1:{mock_port}'
     if key:
