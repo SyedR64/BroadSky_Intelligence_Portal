@@ -1,0 +1,487 @@
+{
+"_note": "Ownership results for the Fair Harbor shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). Same keys as pp.json. Restored from the agents' saved results after the hand-off to the integration step was cut off.",
+"items": [
+{
+"cid": "fh-12069",
+"web": "https://hxcsport.com",
+"op": "no",
+"seg": true,
+"segnote": "Custom and team swimwear, more of a team-sports supplier than a lifestyle consumer brand",
+"wdec": "closed_or_inactive",
+"dec": "closed_or_inactive",
+"p": [
+0.08,
+0.0,
+0.02,
+0.03,
+0.0,
+0.75,
+0.02,
+0.1
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "",
+"succ": "Business appears wound down",
+"fit": "It appears closed: the company's own site shows a farewell notice. It made custom and team swimwear, which is a weaker consumer-brand fit anyway.",
+"risks": [
+"appears_closed",
+"team_custom_not_consumer_lifestyle"
+],
+"ev": [
+[
+"hardcoreswim.com redirects to hxcsport.com (HARDCORESPORT, custom swimwear and team suits)",
+"https://www.hardcoreswim.com/",
+"company_site"
+],
+[
+"hxcsport.com shows a farewell banner thanking customers for a good run, and no products are listed",
+"https://hxcsport.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "fh-14578",
+"web": "",
+"op": "unclear",
+"seg": false,
+"segnote": "NAICS 315990 (apparel accessories). Branded consumer apparel line not confirmed.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.15,
+0.1,
+0.05,
+0.05,
+0.0,
+0.1,
+0.15,
+0.4
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "",
+"succ": "none found (not researched: search budget exhausted)",
+"fit": "Unverified. No public source found for what this St. Michaels MD company makes or who owns it; the shared web-search budget ran out before any search could run.",
+"risks": [
+"no_web_presence_found",
+"search_budget_exhausted",
+"segment_fit_unverified"
+],
+"ev": [
+[
+"beachproducts.com is a parked domain for sale, so it is not this company's site (unverified who owns the business)",
+"https://www.beachproducts.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "fh-1658",
+"web": "https://www.islanddaze.com",
+"op": "yes",
+"seg": false,
+"segnote": "Private-label B2B apparel maker for resorts, brands and retailers. It does not sell its own branded consumer line, so it is not a Fair Harbor-style brand. It could still interest BSP as a supplier or manufacturing add-on.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.15,
+0.03,
+0.02,
+0.03,
+0.0,
+0.02,
+0.6,
+0.15
+],
+"founded": 1998,
+"years": "Established 1998 per company site (about 28 years).",
+"staff": "Not stated on site; PPP reported 36 jobs in 2020-21.",
+"rev": null,
+"rsig": "No review snippets gathered (search budget exhausted).",
+"succ": "none found (founder and owner not named on site; unverified)",
+"fit": "Coastal private-label apparel manufacturer, not a consumer brand; weak fit for a branded-line search.",
+"risks": [
+"private-label B2B model, not a consumer brand",
+"owner identity unverified",
+"state record not checked (Sunbiz returned 403)",
+"web search budget exhausted, so acquisition checks were not run"
+],
+"ev": [
+[
+"Site says premium private-label apparel since 1998 (boardshorts, walkshorts, sun tops, knits, headwear)",
+"https://www.islanddaze.com",
+"company_site"
+],
+[
+"Partners with brands, resorts and retailers to make products carrying their identity; end-to-end apparel manufacturing; buyer and rep portal (B2B)",
+"https://www.islanddaze.com",
+"company_site"
+],
+[
+"Showrooms in Hallandale Beach, FL (East) and San Diego, CA (West)",
+"https://www.islanddaze.com",
+"company_site"
+],
+[
+"About page: established 1998, more than 25 years in apparel; no owner, family, acquisition or succession mention",
+"https://www.islanddaze.com/pages/about-us",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "fh-17266",
+"web": "https://www.naniswimwear.com",
+"op": "yes",
+"seg": true,
+"segnote": "Branded consumer swimwear and apparel line",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.45,
+0.0,
+0.35,
+0.03,
+0.0,
+0.01,
+0.01,
+0.15
+],
+"founded": 2016,
+"years": "About 10 years",
+"staff": "Not stated on the site. SBA 7(a) 2025 jobs supported: 15.",
+"rev": null,
+"rsig": "",
+"succ": "none",
+"fit": "Good fit. It is a young direct-to-consumer swim and adventure apparel brand, owned by its co-founders. It took an SBA 7(a) loan in 2025.",
+"risks": [
+"co_founder_ownership_split",
+"recent_sba_debt",
+"young_company"
+],
+"ev": [
+[
+"Three friends founded the company in 2016 and packed the first orders from a basement. It is described as women-owned",
+"https://www.naniswimwear.com/",
+"company_site"
+],
+[
+"It sells adventure swimwear (tops, bottoms, one-pieces, rashguards) and outdoor apparel. Orders are hand-packed in Utah",
+"https://www.naniswimwear.com/",
+"company_site"
+],
+[
+"The site is active with Black Friday promotions and a 2026 copyright",
+"https://www.naniswimwear.com/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The company's own about page names three co-founders (Janna, Riss and Amy), says it is women-owned and was founded in 2016. Its timeline runs through 2023 (new headquarters in North Logan, Utah), 2025 (an exclusive print line at Dick's Sporting Goods) and 2026. It does not mention an acquisition, investors or a parent company, and the store is active with 2026 Black Friday deals. I could not run an outside news search because the web-search budget was used up.",
+"https://www.naniswimwear.com/pages/about-us"
+]
+},
+{
+"cid": "fh-4221",
+"web": "bayislandsportswear.com (unverified; certificate error)",
+"op": "unclear",
+"seg": false,
+"segnote": "NAICS 315190. Only the coastal name suggests a consumer brand, which is weak evidence.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.15,
+0.1,
+0.03,
+0.05,
+0.0,
+0.07,
+0.2,
+0.4
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "",
+"succ": "none found (not researched: search budget exhausted)",
+"fit": "Unverified. It may be a decorated-apparel, screen-print or private-label maker rather than a branded consumer line.",
+"risks": [
+"possible_contract_or_decorated_apparel",
+"website_unreachable",
+"search_budget_exhausted"
+],
+"ev": [
+[
+"bayislandsportswear.com could not be loaded (self-signed certificate), so what the company does and who owns it are not verified",
+"https://www.bayislandsportswear.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "fh-5635",
+"web": "https://www.vixpaulahermanny.com",
+"op": "yes",
+"seg": true,
+"segnote": "Branded consumer swimwear and resortwear line",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.6,
+0.0,
+0.05,
+0.1,
+0.0,
+0.02,
+0.03,
+0.2
+],
+"founded": null,
+"years": "Early 2000s start, per the company site, so about 20+ years",
+"staff": "Not stated. PPP figure: 15 jobs.",
+"rev": null,
+"rsig": "",
+"succ": "none found",
+"fit": "Good brand fit. It is a premium Brazilian beach and swim label with its founder still in a creative role. The San Diego entity may be the US arm of a Brazil-based business.",
+"risks": [
+"foreign_parent_or_cross_border_structure_unverified",
+"brazil_manufacturing_fx_exposure",
+"acquisition_check_not_run_search_budget_exhausted"
+],
+"ev": [
+[
+"Founder Paula Hermanny is still the creative director. The brand began in the early 2000s",
+"https://www.vixpaulahermanny.com/pages/vix-brand-profile",
+"company_site"
+],
+[
+"Pieces are hand-crafted in Brazil and the brand aims at the American market. It calls itself a woman-run, woman-operated business",
+"https://www.vixpaulahermanny.com/pages/vix-brand-profile",
+"company_site"
+],
+[
+"The online store is active with Resort-27 collections",
+"https://www.vixpaulahermanny.com/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The company's own brand profile says Paula Hermanny started the label in the early 2000s and still leads it as creative director. It calls ViX a woman-run, woman-operated business. It does not mention a parent company, investors, an acquisition or licensing; the Rosie Huntington-Whiteley tie-up is a collaboration, not ownership. I could not run an outside news search for outside investors or a sale because the web-search budget was used up. Treat this as confirmed by the brand's own site only.",
+"https://www.vixpaulahermanny.com/pages/vix-brand-profile"
+]
+},
+{
+"cid": "fh-5683",
+"web": "https://shop.karlacolletto.com",
+"op": "yes",
+"seg": true,
+"segnote": "Branded consumer swimwear line",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.6,
+0.05,
+0.03,
+0.05,
+0.0,
+0.02,
+0.02,
+0.23
+],
+"founded": null,
+"years": "Over 25 years, per the company site. The exact founding year is not stated.",
+"staff": "",
+"rev": null,
+"rsig": "",
+"succ": "Possible. The designer has run the brand for 25+ years and no successor is named (unverified).",
+"fit": "Good fit. It is a namesake designer swimwear brand, likely still run by its designer, though ownership is not stated.",
+"risks": [
+"founder_key_person_dependence",
+"ownership_not_explicitly_stated",
+"acquisition_check_not_run_search_budget_exhausted"
+],
+"ev": [
+[
+"The shop describes Karla Colletto as an American swimwear designer and says the brand has operated for over 25 years",
+"https://shop.karlacolletto.com/",
+"company_site"
+],
+[
+"The store is active with an SP25 collection and current sale listings",
+"https://shop.karlacolletto.com/",
+"company_site"
+]
+],
+"ver": [
+"unverifiable",
+"The shop names Karla Colletto as an American swimwear designer with more than 25 years in business. The store is active with SP25 products and does not mention a closing or a sale. But it does not say who owns or runs the company now, or what role she has today. The about pages I tried returned 404, and karlacolletto.com redirects to the shop. I could not search for news of an acquisition or retirement because the web-search budget was used up. I found no evidence either way on current founder control.",
+"https://shop.karlacolletto.com/"
+]
+},
+{
+"cid": "fh-7905",
+"web": "royalresortwear.com (unverified; certificate error)",
+"op": "unclear",
+"seg": false,
+"segnote": "NAICS 315990. Whether it sells a branded consumer line is not confirmed.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.2,
+0.05,
+0.05,
+0.05,
+0.0,
+0.1,
+0.15,
+0.4
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "",
+"succ": "none found (not researched: search budget exhausted)",
+"fit": "Unverified. The name points to resortwear, but it could be a private-label supplier to resorts or cruise lines rather than a consumer brand.",
+"risks": [
+"possible_private_label_or_uniform_supplier",
+"website_unreachable",
+"search_budget_exhausted"
+],
+"ev": [
+[
+"royalresortwear.com could not be loaded (TLS certificate error), so the site and the business were not verified",
+"https://www.royalresortwear.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "fh-8376",
+"web": "https://www.jamsworld.com",
+"op": "yes",
+"seg": true,
+"segnote": "Branded consumer apparel line (Jams World), with surf and beach DNA",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.05,
+0.75,
+0.03,
+0.04,
+0.0,
+0.01,
+0.02,
+0.1
+],
+"founded": 1962,
+"years": "About 60 years. The surf shop dates to 1962, and the Jams World brand handles use 1964.",
+"staff": "Not stated on the site. PPP figure: 67 jobs.",
+"rev": null,
+"rsig": "",
+"succ": "Second generation in charge. No third generation is named on the site (unverified).",
+"fit": "Strong fit. It is a heritage Hawaiian surf and resort apparel brand, made in its own Honolulu factory and run by the second generation.",
+"risks": [
+"ownership_not_explicitly_stated",
+"acquisition_check_not_run_search_budget_exhausted",
+"domestic_manufacturing_cost_base"
+],
+"ev": [
+[
+"Surf Line Hawaii started as founder Dave Rochlen's Honolulu surfboard shop around 1962 and grew into the Jams World apparel brand",
+"https://www.jamsworld.com/pages/ourstory",
+"company_site"
+],
+[
+"The founder's son, Pua Rochlen, runs the company today. The story page is signed by Pua and Heather Rochlen",
+"https://www.jamsworld.com/pages/ourstory",
+"company_site"
+],
+[
+"Garments are cut and sewn in the company's own factory. Address listed is 411 Puuhale Rd., Honolulu",
+"https://www.jamsworld.com/pages/ourstory",
+"company_site"
+],
+[
+"The online store is active with current collections. Social handles reference 1964",
+"https://www.jamsworld.com/pages/about-us",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The company's own story page says the founder's son, Pua Rochlen, runs the company. It calls Jams World a family business and is signed by Pua and Heather Rochlen. Nothing on the page points to a sale, investors or a closure. I could not run a news search for a sale or acquisition because the shared web-search budget was used up, so only the company's own site was checked.",
+"https://www.jamsworld.com/pages/ourstory"
+]
+},
+{
+"cid": "fh-9826",
+"web": "https://swimcity.com",
+"op": "yes",
+"seg": false,
+"segnote": "A specialty retailer of other brands, including Fair Harbor itself, not a branded apparel line. Owned by an individual owner-operator since 2006, not by the founder.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.05,
+0.03,
+0.02,
+0.03,
+0.0,
+0.02,
+0.75,
+0.1
+],
+"founded": 1968,
+"years": "Swim City lineage dates to 1968 per site; current owner acquired it in 2006.",
+"staff": "Not stated; site mentions full-time fit specialists. PPP reported 12 jobs.",
+"rev": null,
+"rsig": "Company site testimonial praises the ownership; no third-party review snippets gathered.",
+"succ": "Owner has held it since 2006 (about 20 years); no retirement or sale listing found (unverified).",
+"fit": "Retail store chain that resells beach brands; it is a channel partner, not a brand target.",
+"risks": [
+"retailer, not a brand",
+"owner acquired the business (not the founder)",
+"state record not checked (Sunbiz returned 403)",
+"web search budget exhausted, so acquisition and news checks were not run"
+],
+"ev": [
+[
+"Multi-brand swimwear, resort wear and beach accessories retailer; carries Kulani Kinis, Vuori, Fair Harbor, Tommy Bahama, Rip Curl; no house brand seen",
+"https://swimcity.com",
+"company_site"
+],
+[
+"Stores on Siesta Key, Downtown Sarasota, Longboat Key and Englewood, FL",
+"https://swimcity.com",
+"company_site"
+],
+[
+"About page: in swimwear since 1968; local owner Judy Johnson acquired Swim City in 2006 to grow her Swim Mart brand; five Southwest Florida locations",
+"https://swimcity.com/pages/about-us",
+"company_site"
+],
+[
+"Site cites Sarasota Magazine Best Swimwear Store award since 1999",
+"https://swimcity.com",
+"company_site"
+]
+],
+"ver": null
+}
+]
+}

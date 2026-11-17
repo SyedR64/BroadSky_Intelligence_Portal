@@ -1,0 +1,542 @@
+{
+"_note": "Ownership results for the Frontline shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). Same keys as pp.json. Restored from the agents' saved results after the hand-off to the integration step was cut off.",
+"items": [
+{
+"cid": "fl-18596",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "Unverified. Only the name suggests a legal focus.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.02,
+0.08,
+0.1,
+0.0,
+0.1,
+0.05,
+0.4
+],
+"founded": null,
+"years": "Unknown.",
+"staff": "Unknown. PPP showed 11 jobs in 2020-21 across 2 loans.",
+"rev": null,
+"rsig": "None checked.",
+"succ": "None found.",
+"fit": "Not verified. The name suggests legal tech or litigation support in Los Angeles.",
+"risks": [
+"no evidence gathered (shared web search budget exhausted)",
+"website not identified"
+],
+"ev": [
+[
+"The guessed domain ssblegal.com refused the connection, and ssblegaltech.com does not resolve. No company site was confirmed.",
+"https://www.ssblegal.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "fl-1894",
+"web": "https://www.pclegaltools.com/ (redirects to trackercorp.com, then to mitratech.com)",
+"op": "no",
+"seg": true,
+"segnote": "The product was legal software. The Mitratech page now describes it as I-9 compliance software. Unverified: the claim that the old Tracker product served immigration law firms.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.03,
+0.01,
+0.01,
+0.8,
+0.0,
+0.08,
+0.02,
+0.05
+],
+"founded": null,
+"years": "Unverified. Not checked because the search budget ran out.",
+"staff": "No independent headcount. It is part of Mitratech.",
+"rev": null,
+"rsig": "None checked.",
+"succ": "None. Already acquired.",
+"fit": "Legal software maker (Tracker), now absorbed into Mitratech. Not available as an independent target.",
+"risks": [
+"acquired by Mitratech (domain redirect; acquisition date and Mitratech's PE ownership unverified)",
+"no longer an independent entity",
+"web search budget exhausted; based on redirects only"
+],
+"ev": [
+[
+"pclegaltools.com returns a 301 redirect to trackercorp.com.",
+"https://www.pclegaltools.com/",
+"company_site"
+],
+[
+"trackercorp.com returns a 301 redirect to Mitratech's Tracker I-9 product page.",
+"https://www.trackercorp.com/",
+"company_site"
+],
+[
+"Mitratech sells the product as its own, 'Mitratech's Tracker I-9'. The page does not mention an acquisition date.",
+"https://mitratech.com/products/tracker-i-9-compliance/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "fl-32624",
+"web": "https://www.itsasap.com",
+"op": "yes",
+"seg": false,
+"segnote": "Generalist multi-city MSP. Legal is one vertical at most; the About page lists automotive, financial services, healthcare, manufacturing and construction, not law firms.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.1,
+0.0,
+0.02,
+0.8,
+0.0,
+0.0,
+0.05,
+0.03
+],
+"founded": 2003,
+"years": "Founded 2003 in Las Vegas per the company's About page.",
+"staff": "About page claims 360+ team members across 14 US cities.",
+"rev": null,
+"rsig": "Not checked. The search budget ran out.",
+"succ": "None needed: the company says it partnered with a private equity firm in 2022 (firm not named). Founder Tom Andrulis is still CEO.",
+"fit": "Already PE-backed and running its own add-on program (other firms 'joining' through 2026). A competitor or consolidator, not a founder-owned target. Law-firm focus is weak.",
+"risks": [
+"PE-backed since 2022 (sponsor not named)",
+"Active acquirer itself (Black Breach, Velocity IT in 2026)",
+"Generalist MSP, not legal-focused",
+"Scale (360+ staff) above tuck-in size"
+],
+"ev": [
+[
+"Founded 2003 in Las Vegas. Founder Tom Andrulis is CEO. In 2022 it partnered with a private equity firm. 14 US cities, 360+ team members.",
+"https://www.itsasap.com/about",
+"company_site"
+],
+[
+"Lists IT firms joining ITS, including Black Breach and Velocity IT in 2026.",
+"https://www.itsasap.com/about",
+"company_site"
+],
+[
+"Has published a law-firm managed IT guide (legal is one vertical).",
+"https://www.itsasap.com/ultimate-guide-managed-it-law",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "fl-3420",
+"web": "https://www.uptimelegal.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Managed IT, cloud and document management for law firms.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.7,
+0.01,
+0.04,
+0.13,
+0.0,
+0.01,
+0.01,
+0.1
+],
+"founded": 2005,
+"years": "About 21 years (since 2005).",
+"staff": "The team page lists 42 people (6 leadership and 36 staff).",
+"rev": null,
+"rsig": "None checked. The search budget ran out.",
+"succ": "No direct signal. The founder is about 21 years in, and the site names no successor.",
+"fit": "Founder-run managed IT and cloud firm that serves only law firms and makes its own acquisitions. Strong anchor fit.",
+"risks": [
+"serial acquirer, so it may have outside capital the site does not disclose (unverified)",
+"no news or press check done (search budget exhausted)"
+],
+"ev": [
+[
+"Founded in 2005. A timeline entry names Dennis Dimka as founder and CEO.",
+"https://www.uptimelegal.com/our-history/",
+"company_site"
+],
+[
+"The current team page still shows Dennis Dimka as founder and CEO. It lists 42 team members.",
+"https://www.uptimelegal.com/our-team/",
+"company_site"
+],
+[
+"Uptime is a buyer. It acquired JurisPage (2016), Inbound Law Marketing (2020), Flywire Technology (2022) and LexCloud (2024), and it invites IT owners to talk about an exit.",
+"https://www.uptimelegal.com/acquisitions/",
+"company_site"
+],
+[
+"It offers managed IT, cloud hosting, legal app support and document management (LexWorkplace) for law firms. Offices are in Minneapolis, Austin and Toronto.",
+"https://www.uptimelegal.com/",
+"company_site"
+],
+[
+"The site mentions no investors, private equity or parent company.",
+"https://www.uptimelegal.com/our-history/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The current team page says the firm is led by founder and CEO Dennis Dimka, alongside President and COO Erin Pickar. The acquisitions page lists Uptime as the buyer (JurisPage 2016, Inbound Law Marketing 2020, Flywire Technology 2022, LexCloud 2024) and invites IT owners to discuss an exit. No page mentions investors, private equity, a parent company or a sale of Uptime. Limit: the shared web-search budget was used up, so no third-party press or deal-database search was possible. A buyer with steady add-ons can sometimes have quiet PE backing that its own site does not disclose. Founder control is current per the company site; outside independence is unverified.",
+"https://www.uptimelegal.com/our-team/"
+]
+},
+{
+"cid": "fl-36274",
+"web": "https://www.bridgelegal.com/ (match unverified)",
+"op": "unclear",
+"seg": true,
+"segnote": "AI workflow and intake for plaintiff law firms. Law-firm focus, if the match is right.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.01,
+0.1,
+0.12,
+0.0,
+0.07,
+0.05,
+0.35
+],
+"founded": null,
+"years": "Unknown.",
+"staff": "Not stated. PPP showed 12 jobs in 2020-21.",
+"rev": null,
+"rsig": "None checked.",
+"succ": "None found.",
+"fit": "Probably the Chicago law-firm workflow and intake vendor Bridge Legal. Ownership is not established.",
+"risks": [
+"match between the PPP entity and bridgelegal.com is unverified",
+"mass tort intake work can carry reputational risk",
+"no Illinois state record check (budget exhausted)"
+],
+"ev": [
+[
+"Bridge Legal (bridgelegal.com) sells AI workflow tools and intake for law firms, with mass tort, personal injury and litigation funding offerings. It mentions a Chicago-based voice team.",
+"https://www.bridgelegal.com/",
+"company_site"
+],
+[
+"The site states no founders, founding year or parent company. Its /about page returned a 404.",
+"https://www.bridgelegal.com/about",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "fl-36907",
+"web": "https://www.advancedlegal.com",
+"op": "yes",
+"seg": true,
+"segnote": "Legal-only IT provider: private cloud hosting (LegalCloud), managed IT, security monitoring, iManage for law firms.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.65,
+0.03,
+0.08,
+0.07,
+0.0,
+0.02,
+0.02,
+0.13
+],
+"founded": 1997,
+"years": "Founded 1997 per the company's About page (about 29 years). Homepage cites 25+ years of experience.",
+"staff": "No headcount stated on the site. PPP 2020-21 reported 10 jobs.",
+"rev": null,
+"rsig": "Not checked. The search budget ran out, so no review snippets were gathered.",
+"succ": "Weak: founder Scott Randall is still CEO about 29 years in. No next generation or successor is named. Unverified.",
+"fit": "Small, founder-run legal IT shop in Las Vegas with its own data center and an iManage practice. Tight law-firm fit, but small (about 10 jobs).",
+"risks": [
+"Small scale (about 10 PPP jobs)",
+"Owner not named on site; ownership unverified",
+"Possible key-person dependence on the founder-CEO"
+],
+"ev": [
+[
+"Site describes the company as a technology partner specializing in legal IT for law firms, with an HQ on Las Vegas Blvd South.",
+"https://www.advancedlegal.com/",
+"company_site"
+],
+[
+"Founded 1997. Founder Scott Randall is CEO. VP of Service and Operations is listed. No acquisitions mentioned.",
+"https://www.advancedlegal.com/about/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"I found no sign of an acquisition, merger, parent company or investor. The About page says Scott Randall founded the company and lists him as CEO. Its footer reads 'Copyright 2025 Advanced Legal Systems, Inc.' The homepage has 2025 articles written by Scott Randall. The site does not say who owns the company. My search budget ran out, so I checked only the company's own site, not outside news.",
+"https://www.advancedlegal.com/about/"
+]
+},
+{
+"cid": "fl-41329",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "Unverified. Only the name suggests a legal focus.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.03,
+0.07,
+0.1,
+0.0,
+0.1,
+0.1,
+0.3
+],
+"founded": null,
+"years": "Unknown.",
+"staff": "Unknown. PPP showed 19 jobs in 2020-21.",
+"rev": null,
+"rsig": "None checked.",
+"succ": "None found.",
+"fit": "Not verified. The name suggests legal tech, but no public evidence was gathered.",
+"risks": [
+"no evidence gathered (shared web search budget exhausted)",
+"generic name, so matching it to a business is uncertain"
+],
+"ev": [
+[
+"legaltechnologies.com could not be fetched because of a TLS certificate error. It is unconfirmed whether this domain belongs to the Austin LLC.",
+"https://www.legaltechnologies.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "fl-42725",
+"web": "https://www.perfectpracticesoftware.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Practice management software for law firms. Clear law-firm focus.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.1,
+0.08,
+0.07,
+0.0,
+0.05,
+0.02,
+0.38
+],
+"founded": 1984,
+"years": "About 42 years ('Since 1984' tagline). Whether that date belongs to ADC Legal Systems as an entity is unverified.",
+"staff": "Not stated. PPP showed 18 jobs in 2020-21.",
+"rev": null,
+"rsig": "None checked.",
+"succ": "Possible. The company is about 40 years old, and the site names no owner or successor. Unverified.",
+"fit": "Long-running Orlando maker of practice management software for law firms (Perfect Practice). Owner not identified.",
+"risks": [
+"owner not identified",
+"old on-premise style software may face cloud competition",
+"Florida Sunbiz officer check not done (budget exhausted)"
+],
+"ev": [
+[
+"adclegal.com returns a 301 redirect to Perfect Practice Software.",
+"https://www.adclegal.com/",
+"company_site"
+],
+[
+"Perfect Practice sells legal practice management software (case management, trust accounting, calendaring, document assembly). It uses the tagline 'Since 1984'.",
+"https://www.perfectpracticesoftware.com/",
+"company_site"
+],
+[
+"Its about page says it was founded by software developers, has over 40 years in legal practice management, and handles all programming and support in-house. It names no owner.",
+"https://www.perfectpracticesoftware.com/about/",
+"company_site"
+],
+[
+"Its contact page lists a mailing address of P.O. Box 540086, Orlando, FL, which matches the PPP city.",
+"https://www.perfectpracticesoftware.com/contact/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "fl-45250",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "Unverified. Only the name suggests a legal focus.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.02,
+0.08,
+0.15,
+0.0,
+0.1,
+0.05,
+0.35
+],
+"founded": null,
+"years": "Unknown.",
+"staff": "Unknown. PPP showed 15 jobs in 2020-21.",
+"rev": null,
+"rsig": "None checked.",
+"succ": "None found.",
+"fit": "Not verified. The name suggests legal IT services in Washington DC.",
+"risks": [
+"no evidence gathered (shared web search budget exhausted)",
+"website not identified"
+],
+"ev": [
+[
+"The guessed domains ltgdc.com and legaltechgroup.com do not resolve. No company site was found.",
+"https://www.legaltechgroup.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "fl-46913",
+"web": "https://www.innovativecomp.com",
+"op": "yes",
+"seg": true,
+"segnote": "Managed IT, cloud hosting, cybersecurity and document management for law firms and corporate legal departments.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.45,
+0.05,
+0.15,
+0.08,
+0.0,
+0.01,
+0.01,
+0.25
+],
+"founded": 1989,
+"years": "About page says founder Michael Kemps formed the company in 1989. The site footer reads 1989-2026.",
+"staff": "Not stated on the site. PPP reported 57 jobs. The existing list's ZoomInfo figure is about 60 (modeled).",
+"rev": null,
+"rsig": "Not checked. The search budget ran out.",
+"succ": "Possible: about 37 years since founding. The leadership names did not load, so it is unverified whether the founder still runs it.",
+"fit": "Law-firm-focused MSP since 1989 with no acquirer or investor language on its site. Strong fit. Ownership and current leadership are unverified.",
+"risks": [
+"Current owner and leadership unverified (leadership page did not load)",
+"PPP address is El Segundo; the existing list shows an LA Wilshire Blvd HQ",
+"Revenue figures on the existing list are modeled, not reported"
+],
+"ev": [
+[
+"Founded in 1989 by Michael Kemps as a networking products and services firm. Now positions itself as a partner to law firms and legal departments.",
+"https://www.innovativecomp.com/about-us",
+"company_site"
+],
+[
+"Homepage covers managed IT, cloud, cybersecurity, document management and telephony for law firms. No acquisition, merger or investor language found.",
+"https://www.innovativecomp.com/",
+"company_site"
+],
+[
+"May 2025 press release announced a managed IT offering for US law firms.",
+"https://www.globenewswire.com/news-release/2025/05/19/3084156/0/en/Innovative-Computing-Systems-Unveils-Comprehensive-Managed-IT-Solution-Tailored-for-U-S-Law-Firms.html",
+"press"
+]
+],
+"ver": [
+"confirmed",
+"The company's management page lists Michael Kemps as 'Founder & Chief Executive Officer' and says he founded the company in 1989. The footer reads 'Copyright 1989-2026'. The homepage, About page and management page mention no acquisition, merger, parent company, investor or private equity. The site does not state ownership outright. My search budget ran out, so I could not check outside news. The GlobeNewswire release returned a 403 error.",
+"https://www.innovativecomp.com/management/"
+]
+},
+{
+"cid": "fl-54302",
+"web": "https://jurisdigital.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Law-firm marketing, SEO, intake and software. It serves law firms only.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.65,
+0.01,
+0.12,
+0.07,
+0.0,
+0.01,
+0.02,
+0.12
+],
+"founded": 2015,
+"years": "Formed around 2015 per the team page (approximate). It grew from an earlier SEO consultancy.",
+"staff": "About 33 people listed on the team page (counted by the fetch summary, unverified). SBA 7(a) data showed 43 jobs supported in 2020.",
+"rev": null,
+"rsig": "None checked. The search budget ran out.",
+"succ": "None found. The founders are about 10 years in.",
+"fit": "Founder-run marketing and tech agency that serves only law firms. Strong fit for the law-firm focus.",
+"risks": [
+"two co-founders, so it could be read as partner-owned",
+"Uptime Legal says it bought JurisPage in 2016, but Juris Digital now sells JurisPage; the link between the two is unverified",
+"no ownership check against state records (search budget exhausted)"
+],
+"ev": [
+[
+"The team page names Casey Meraz as founder and Matt Green as co-founder and VP of Innovation.",
+"https://jurisdigital.com/team/",
+"company_site"
+],
+[
+"The firm formed around 2015, when its founders chose to serve only law firms. It grew out of Ethical SEO Consulting.",
+"https://jurisdigital.com/team/",
+"company_site"
+],
+[
+"The firm sells law-firm marketing (JurisOS: SEO, content, web, paid ads, intake) and law-firm tech products (JurisLingo, JD Assistant, JurisPage).",
+"https://jurisdigital.com/",
+"company_site"
+],
+[
+"About 33 team members are listed, working remotely across the US and Canada. No Denver office is named.",
+"https://jurisdigital.com/team/",
+"company_site"
+],
+[
+"The site states no parent company and no acquisition.",
+"https://jurisdigital.com/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The current team page (fetched 2026-11-16) names Casey Meraz as founder and Matt Green as co-founder. The homepage footer says 2026 and promotes an upcoming Nov 17 webinar, so the site is current. Neither page mentions a parent company, investors, private equity, a merger or a sale. JurisPage appears on this site as a Juris Digital product, while Uptime Legal lists a 2016 JurisPage acquisition. Neither site explains this, and it says nothing about who owns Juris Digital. Limit: the shared web-search budget was used up, so no third-party news or deal search was possible. A quiet minority investment would not show up on the company's own pages. Founder control is current per the company site; outside independence is unverified.",
+"https://jurisdigital.com/team/"
+]
+}
+]
+}

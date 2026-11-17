@@ -7,7 +7,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261113023635';
+       import { Frame } from '../../assets/frame.js?v=20261116225931';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
@@ -283,7 +283,7 @@ export const LABELS = {
   cet_filings: 'CET public filings', cet_opportunities: 'CET opportunity radar', cet_playbook: 'CET growth plan', cet_wwtp_targets: 'CET wastewater-plant targets',
   design_refs: 'Design principles', fairharbor_filings: 'Fair Harbor public filings', fh_playbook: 'Fair Harbor growth plan', fl_midsize_firms: 'Mid-size law firms',
   fl_playbook: 'Frontline growth plan', frontline_filings: 'Frontline public filings', ma_targets_cet: 'CET add-on targets', ma_targets_fl_ts: 'Frontline and Thomas Scientific add-on targets',
-  ma_targets_pp: 'Punctual Pros add-on targets', pe_landscape: 'Private-equity landscape', pp_ads: 'Punctual Pros ad plan', pp_demand_model: 'Punctual Pros demand model',
+  ma_targets_pp: 'Punctual Pros add-on targets', ma_ppp_screen: 'SBA loan screen', pe_landscape: 'Private-equity landscape', pp_ads: 'Punctual Pros ad plan', pp_demand_model: 'Punctual Pros demand model',
   pp_filings: 'Punctual Pros public filings', pp_market: 'Punctual Pros market profile', pp_nationwide: 'Punctual Pros nationwide plan', pp_storm_events: 'Punctual Pros storm events',
   public_comps: 'Public comparables', rival_filings: 'Competitor filings', serviceos_evidence: 'OS program evidence', thomas_filings: 'Thomas Scientific public filings',
   ts_playbook: 'Thomas Scientific growth plan', voice_ai: 'Voice AI research',

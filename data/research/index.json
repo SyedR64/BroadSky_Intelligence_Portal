@@ -167,6 +167,14 @@
    "generated": "2026-09-24"
   },
   {
+   "name": "ma_ppp_screen",
+   "folder": "research",
+   "title": "SBA loan screen",
+   "item_count": 165,
+   "bytes": 811036,
+   "generated": "2026-11-16"
+  },
+  {
    "name": "ma_targets_cet",
    "folder": "research",
    "title": "CET add-on acquisition target screen (New England electrical, solar, controls, utility, generator, W/WW I&C)",
@@ -394,11 +402,11 @@
   }
  ],
  "totals": {
-  "research_files": 37,
-  "research_items": 4687,
+  "research_files": 38,
+  "research_items": 4852,
   "sales_files": 10,
   "sales_rows": 181273,
-  "bytes": 43459636,
+  "bytes": 44270672,
   "data_from": "2026-09-24",
   "data_to": "2026-11-16"
  }

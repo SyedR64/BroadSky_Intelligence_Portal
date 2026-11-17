@@ -1,0 +1,1143 @@
+{
+"_note": "Ownership results for the Thomas Scientific shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). Same keys as pp.json. Restored from the agents' saved results after the hand-off to the integration step was cut off.",
+"items": [
+{
+"cid": "ts-0418",
+"web": "https://www.ctlscientific.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Lab and testing consumables supplier, so it fits lab or scientific supply.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.15,
+0.05,
+0.05,
+0.0,
+0.0,
+0.0,
+0.45
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "none found (no searches were possible)",
+"succ": "none found",
+"fit": "Niche Long Island supplier of lab test papers and consumables. Its ownership is not stated.",
+"risks": [
+"ownership not stated on site",
+"founded year unknown",
+"footer says CTL Scientific Corp., a slightly different name"
+],
+"ev": [
+[
+"The company's site lists 1016 Grand Blvd., Deer Park, NY 11729, which matches the PPP city.",
+"https://www.ctlscientific.com/",
+"company_site"
+],
+[
+"It sells lab and testing products: pH papers and strips, test kits, filter papers, extraction thimbles, lab equipment and chemicals.",
+"https://www.ctlscientific.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-0547",
+"web": "https://www.dawnscientific.com",
+"op": "yes",
+"seg": true,
+"segnote": "Sells lab chemicals, reagents, solvents, chromatography products and consumables, including its own brands.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.25,
+0.02,
+0.05,
+0.0,
+0.0,
+0.0,
+0.38
+],
+"founded": null,
+"years": "The site says it has been a trusted partner 'for over 40 years'.",
+"staff": "",
+"rev": null,
+"rsig": "Not checked. The search budget ran out.",
+"succ": "About four decades in business with no owner named. This is a possible succession signal (unverified).",
+"fit": "A WBENC-certified, woman-owned lab chemical supplier that is more than 40 years old and has its own brands. It reported 30 PPP jobs on only an $18,200 loan.",
+"risks": [
+"Metuchen, NJ address not confirmed on the site",
+"Owner not named; founder or later generation unknown",
+"The PPP loan amount looks small for 30 jobs, so the data needs checking"
+],
+"ev": [
+[
+"Sells lab chemicals, consumables and equipment under its own brands, including LiChrom and ChemieR.",
+"https://www.dawnscientific.com/",
+"company_site"
+],
+[
+"Describes itself as a 100% woman-owned business certified by WBENC.",
+"https://www.dawnscientific.com/",
+"company_site"
+],
+[
+"Says it has been a trusted partner for over 40 years.",
+"https://www.dawnscientific.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-0693",
+"web": "https://www.htslabs.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Makes and sells lab consumables (filter vials, plates, flasks). Fits lab or scientific supply, with manufacturing as well as distribution.",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.2,
+0.4,
+0.03,
+0.1,
+0.0,
+0.0,
+0.0,
+0.27
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "none found (no searches were possible)",
+"succ": "Founder listed as emeritus; a CEO with the same surname runs the company, which suggests a generational handoff (unverified)",
+"fit": "Lab consumables maker. The founder has stepped back to emeritus, and a CEO who shares her family name now runs it, which points to next-generation family control.",
+"risks": [
+"family relationship between the founder and CEO is inferred from the shared surname and is unverified",
+"Oceanside, CA location not confirmed on the site",
+"acquisition search not run"
+],
+"ev": [
+[
+"The site is branded Thomson Life Sciences (2026 copyright), and its LinkedIn link uses the name 'thomson-instrument'.",
+"https://www.htslabs.com/",
+"company_site"
+],
+[
+"The team page lists Melissa Ellis as Founder Emeritus and Sam Ellis as CEO.",
+"https://www.htslabs.com/about",
+"company_site"
+],
+[
+"Products include cell culture flasks, filter vials, filter plates, SINGLE StEP columns and shake flasks. ISO 9001:2015 certified.",
+"https://www.htslabs.com/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The current About page lists Melissa Ellis as Founder Emeritus and Sam Ellis as CEO. A photo caption there calls him 'Owner Sam Ellis', which is positive current evidence that the company is owner-run and not held by a parent company. The homepage (copyright 2026 Thomson Life Sciences) mentions no parent company, merger or acquisition. Caveats: the site does not say the company is family-owned. The family link is inferred only from the shared Ellis surname and is unverified. The founding year is not stated. The shared web-search budget ran out before any search ran, so I could not check news or press for a sale. The verdict rests only on the company's own site.",
+"https://www.htslabs.com/about"
+]
+},
+{
+"cid": "ts-11227",
+"web": "https://www.morgansci.com",
+"op": "yes",
+"seg": false,
+"segnote": "Its business is respiratory and pulmonary diagnostic devices (NAICS 423450, medical equipment). That is medical, not lab or scientific supply.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.0,
+0.0,
+0.0,
+0.9,
+0.0,
+0.03,
+0.05,
+0.02
+],
+"founded": null,
+"years": "",
+"staff": "No current headcount found. PPP 2020-21 reported 24 jobs.",
+"rev": null,
+"rsig": "No review snippets seen.",
+"succ": "Already sold to Vitalograph in 2024.",
+"fit": "Already acquired by a strategic buyer (Vitalograph) in 2024 and being renamed. Not available.",
+"risks": [
+"acquired by strategic buyer 2024",
+"rebranding to Vitalograph Nov 2026",
+"medical device distribution rather than lab supply"
+],
+"ev": [
+[
+"morgansci.com redirects (302) to Vitalograph's 'Vitalograph Morgan Scientific' page.",
+"https://www.morgansci.com/",
+"company_site"
+],
+[
+"Morgan Scientific joined the Vitalograph group in 2024 as a wholly owned subsidiary. It had long been a distributor of Vitalograph products.",
+"https://vitalograph.com/about/vitalograph-morgan-scientific",
+"company_site"
+],
+[
+"On November 5, 2026, Morgan Scientific changes its name to Vitalograph.",
+"https://vitalograph.com/about/vitalograph-morgan-scientific",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-11327",
+"web": "https://www.scientificindustries.com",
+"op": "yes",
+"seg": true,
+"segnote": "Makes and sells lab equipment (Vortex-Genie mixers, rotators, shakers, incubators). Related brands: Scientific Bioprocessing, Torbal scales, VIVID pill counters.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.02,
+0.03,
+0.05,
+0.25,
+0.0,
+0.02,
+0.03,
+0.6
+],
+"founded": null,
+"years": "Founding year not confirmed in this pass. The company has filed 10-Ks with the SEC since at least 2018.",
+"staff": "Not stated on the pages fetched. PPP reported 50 jobs.",
+"rev": null,
+"rsig": "Not checked. The search budget ran out.",
+"succ": "None found. It is an SEC-reporting public company, so founder succession does not apply.",
+"fit": "Public SEC registrant (CIK 0000087802) that makes lab equipment. None of the private-owner labels fit, so it is marked unknown. A public-company deal would be complex.",
+"risks": [
+"Publicly traded SEC registrant; does not fit the founder-owned profile",
+"Mainly a manufacturer, not a distributor",
+"Ownership structure and major holders unverified"
+],
+"ev": [
+[
+"Storefront for the Genie line of lab equipment, with Investor Relations, SEC Filings and Stock Information links.",
+"https://www.scientificindustries.com/",
+"company_site"
+],
+[
+"EDGAR shows Scientific Industries Inc (CIK 0000087802) 10-K filings through 2026-03-31, plus a 10-KT in 2023.",
+"https://www.sec.gov/cgi-bin/browse-edgar?company=scientific+industries&type=10-K&dateb=&owner=include&count=10",
+"state_record"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-11735",
+"web": "https://www.americanlaboratorytrading.com",
+"op": "yes",
+"seg": true,
+"segnote": "Buys, refurbishes and resells used lab equipment such as HPLC, GC, centrifuges and spectroscopy systems.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.03,
+0.01,
+0.01,
+0.9,
+0.0,
+0.0,
+0.0,
+0.05
+],
+"founded": null,
+"years": "",
+"staff": "Not stated. The site cites more than 30,000 sq ft of equipment in stock.",
+"rev": null,
+"rsig": "Not checked.",
+"succ": "none; already sold to a strategic owner",
+"fit": "Already owned by Heritage Global, so it is not an independent target.",
+"risks": [
+"Already acquired: Heritage Global lists ALT as an operating company",
+"Acquisition date not confirmed (unverified)"
+],
+"ev": [
+[
+"The footer copyright reads 'Heritage ALT LLC', and the About menu links to hginc.com under Investors.",
+"https://www.americanlaboratorytrading.com/",
+"company_site"
+],
+[
+"Heritage Global lists American Lab Trading (ALT) among its operating companies.",
+"https://hginc.com/",
+"company_site"
+],
+[
+"Headquarters is at 12 Colton Road, East Lyme, CT.",
+"https://www.americanlaboratorytrading.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-12155",
+"web": "https://www.foxxlifesciences.com",
+"op": "yes",
+"seg": true,
+"segnote": "Makes and sells lab and bioprocess consumables (bottles, carboys, single-use assemblies, filters, tubing, labware).",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.55,
+0.02,
+0.05,
+0.13,
+0.0,
+0.0,
+0.02,
+0.23
+],
+"founded": 2008,
+"years": "Established as an independent entity in 2008, with roots in 2006-2007, per the company's About page.",
+"staff": "About page claims 350+ employees, with six facilities on three continents (US and India manufacturing).",
+"rev": null,
+"rsig": "Not checked. The search budget ran out.",
+"succ": "none found",
+"fit": "Privately held, founder-created (Thomas Foxx Taylor) lab-consumables maker in Salem NH. Grown well past PPP-era size (350+ staff). Strong lab-supply fit. Current founder control and any outside investor are unverified.",
+"risks": [
+"Scale (350+ staff) may exceed tuck-in size",
+"Outside investors not ruled out (no news search possible)",
+"Manufacturer with India operations"
+],
+"ev": [
+[
+"Founded as an independent entity in 2008 by Thomas Foxx Taylor, who acquired the original IP. Described as privately held, with 350+ employees.",
+"https://www.foxxlifesciences.com/pages/about-us",
+"company_site"
+],
+[
+"HQ in Salem NH, manufacturing in the US and India, ISO 13485 since 2010. Sells lab and bioprocess consumables.",
+"https://www.foxxlifesciences.com/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The 2026 About page says Thomas Foxx Taylor bought all of the original IP in 2008 and created the company as an independent entity. It also says the company is privately held. The page and homepage mention no acquisition, investor, private equity or parent company. Earlier joint ventures with Nypro and Roush appear in the timeline, but neither is shown as an owner. The page does not say who owns the company today. My search budget ran out, so outside news was not checked.",
+"https://www.foxxlifesciences.com/pages/about-us"
+]
+},
+{
+"cid": "ts-12321",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "NAICS 423490 and the name suggest scientific equipment wholesale, but the Oak Ridge, TN business's products are unverified.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.2,
+0.1,
+0.05,
+0.05,
+0.0,
+0.1,
+0.1,
+0.4
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "none found (no searches were possible)",
+"succ": "none found",
+"fit": "Website and ownership not found. The obvious domain belongs to an unrelated Florida company.",
+"risks": [
+"could not identify the website",
+"fit to segment unverified",
+"web search budget exhausted"
+],
+"ev": [
+[
+"scientificsales.com belongs to a weather-instrument seller in Melbourne, FL that says 'Trusted Since 1990'. It does not mention Oak Ridge, TN, so it is probably a different company.",
+"https://www.scientificsales.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-12712",
+"web": "",
+"op": "unclear",
+"seg": false,
+"segnote": "Unverified. The PPP NAICS code (423450, medical equipment wholesale) suggests medical or scientific distribution, but no website or business description was found.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.05,
+0.03,
+0.05,
+0.0,
+0.1,
+0.12,
+0.4
+],
+"founded": null,
+"years": "",
+"staff": "No current data. PPP reported 53 jobs.",
+"rev": null,
+"rsig": "Not checked. The search budget ran out.",
+"succ": "none found",
+"fit": "No public evidence gathered. The web search budget was exhausted, and the Florida Sunbiz lookup returned HTTP 403. Needs a follow-up pass.",
+"risks": [
+"No website identified",
+"Operating status unverified",
+"Segment fit unverified"
+],
+"ev": [
+[
+"Florida Sunbiz entity search was attempted and returned HTTP 403, so no state record was obtained.",
+"https://search.sunbiz.org/Inquiry/CorporationSearch/SearchResults/EntityName/WORLD%20SCIENTIFIC%20INDUSTRIAL/Page1?searchNameOrder=WORLDSCIENTIFICINDUSTRIAL",
+"state_record"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-14897",
+"web": "https://www.lifescienceplus.com",
+"op": "yes",
+"seg": false,
+"segnote": "It makes and sells hemostatic wound-care products. It is not a lab or scientific supply business.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.15,
+0.0,
+0.05,
+0.05,
+0.0,
+0.05,
+0.6,
+0.1
+],
+"founded": null,
+"years": "",
+"staff": "No headcount stated. PPP 2020-21 reported 23 jobs.",
+"rev": null,
+"rsig": "No review snippets seen.",
+"succ": "none found",
+"fit": "Medical wound-care product company, so outside the lab supply segment.",
+"risks": [
+"medical device maker, not lab supply",
+"ownership and founders not confirmed"
+],
+"ev": [
+[
+"LifeScience PLUS is a wound-care company. Its BloodSTOP line includes a plant-based hemostatic matrix for trauma, surgical, dental and consumer use.",
+"https://www.lifescienceplus.com/",
+"company_site"
+],
+[
+"Press release datelines place it in Mountain View, CA. The page names no parent company and gives no acquisition news.",
+"https://www.lifescienceplus.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-14991",
+"web": "https://www.alcorscientific.com",
+"op": "yes",
+"seg": true,
+"segnote": "Designs and makes ESR diagnostic analyzers (iSED line) and consumables for clinical labs.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.08,
+0.07,
+0.02,
+0.7,
+0.0,
+0.0,
+0.03,
+0.1
+],
+"founded": null,
+"years": "Founding year not stated on the pages fetched.",
+"staff": "Not stated. The site says it is growing and hiring. PPP reported 50 jobs.",
+"rev": null,
+"rsig": "Not checked. The search budget ran out.",
+"succ": "Transition already happened: founder Carlo Ruggeri is former CEO. Jim Post, an Executive Advisor to Water Street Healthcare Partners, became CEO in February 2022. The team page cites the Ruggeri family's partnership with Water Street.",
+"fit": "Likely PE-backed (Water Street Healthcare Partners) since about 2022. Probably not an available founder-owned target. Also a manufacturer, not a distributor.",
+"risks": [
+"Likely PE-backed (Water Street Healthcare Partners); the site does not state ownership directly",
+"Clinical diagnostics manufacturer, not a lab-supply distributor"
+],
+"ev": [
+[
+"Team page lists founder Carlo Ruggeri as former CEO and Jim Post as CEO since February 2022, a Water Street Healthcare Partners Executive Advisor.",
+"https://www.alcorscientific.com/our-team",
+"company_site"
+],
+[
+"Team page describes the Ruggeri family's partnership with Water Street Healthcare Partners.",
+"https://www.alcorscientific.com/our-team",
+"company_site"
+],
+[
+"Makes ESR analyzers (iSED PRO, iSED ELITE, miniiSED) and consumables.",
+"https://www.alcorscientific.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-15640",
+"web": "https://www.heathrowscientific.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Lab equipment and supplies brand. Core fit.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.15,
+0.03,
+0.02,
+0.35,
+0.0,
+0.0,
+0.0,
+0.45
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "none found (no searches were possible)",
+"succ": "none found",
+"fit": "Fits the segment, but ownership is not stated. My recollection that a strategic lab-supply consolidator bought it around 2021 is unverified: the search budget ran out before it could be checked.",
+"risks": [
+"possible prior acquisition by a lab-supply roll-up (unverified recollection; check before outreach)",
+"multi-brand owner, so it may already be part of a larger group",
+"About page returned 404"
+],
+"ev": [
+[
+"The site describes the company as a global supplier of lab equipment and supplies, with brands Vee Gee, TempShield and Vanguard Microscopes.",
+"https://www.heathrowscientific.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-16832",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "In the segment based on the name and NAICS 423450. Its business was not verified.",
+"wdec": "employee_or_partner_owned",
+"dec": "employee_or_partner_owned",
+"p": [
+0.05,
+0.03,
+0.6,
+0.05,
+0.0,
+0.05,
+0.05,
+0.17
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "Not checked.",
+"succ": "An employee stock ownership trust is already in place, so a founder's exit may already have happened.",
+"fit": "The borrower name ends in ESOT, which points to employee ownership. A sale would mean dealing with an ESOP trustee.",
+"risks": [
+"The website was not found because lifescienceproducts.com did not resolve",
+"ESOP inferred from the borrower name only (unverified)",
+"The search budget ran out"
+],
+"ev": [
+[
+"The PPP borrower name ends in 'ESOT', which suggests an employee stock ownership trust. The record shows 28 jobs and a $470,400 loan in Chestertown, MD. Taken from the provided screen row.",
+"https://data.sba.gov/dataset/ppp-foia",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-1756",
+"web": "https://www.betatechscientific.com/ (unverified match to the West Chicago, IL borrower)",
+"op": "unclear",
+"seg": false,
+"segnote": "No product information was found, so lab or scientific supply fit is unverified. in_segment is set to false only because nothing confirms it.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.2,
+0.05,
+0.05,
+0.05,
+0.0,
+0.15,
+0.1,
+0.4
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "none found (no searches were possible)",
+"succ": "none found",
+"fit": "Not enough evidence. The only site found is a placeholder page.",
+"risks": [
+"website under construction",
+"fit to segment unverified",
+"location unverified",
+"web search budget exhausted before any search ran for this company"
+],
+"ev": [
+[
+"The betatechscientific.com home page says only that the site is under construction. It names no products, location or owner.",
+"https://www.betatechscientific.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-17636",
+"web": "https://www.capitolscientific.com",
+"op": "yes",
+"seg": true,
+"segnote": "Lab supply distributor: equipment, glassware, reagents and chemicals, cleanroom and safety products.",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.05,
+0.75,
+0.02,
+0.06,
+0.0,
+0.02,
+0.0,
+0.1
+],
+"founded": 1963,
+"years": "Founded 1963 as Chem Products, Inc. by Lee Williams and Mack Johnson. Felix Ware, a founder's grandson, joined in 1993 and bought the company in 2000.",
+"staff": "Not stated. The site mentions sales teams, support staff and warehouses across the country.",
+"rev": null,
+"rsig": "Not checked. The search budget ran out before any review snippets were gathered.",
+"succ": "The owner has been in the business since 1993 and owner since 2000, about 26 years. No next generation is named on the site. Unverified beyond the company's own About page.",
+"fit": "A second-generation family lab supply distributor in Austin with 33 jobs on its 2010 SBA loan. It looks like a clean succession candidate.",
+"risks": [
+"Jobs figure dates from a 2010 SBA 7(a) loan; no PPP record",
+"No acquisition search run because the search budget ran out; check for any later sale",
+"Headquarters is named as Austin on the site but no street address was confirmed"
+],
+"ev": [
+[
+"The site header says 'Lab Supply Distributor Since 1963'.",
+"https://www.capitolscientific.com/about-us",
+"company_site"
+],
+[
+"Founded 1963 as Chem Products, Inc. by Lee Williams and Mack Johnson.",
+"https://www.capitolscientific.com/about-us",
+"company_site"
+],
+[
+"Felix Ware, grandson of founder Lee Williams, bought the company in 2000 and is President and CEO.",
+"https://www.capitolscientific.com/about-us",
+"company_site"
+],
+[
+"Headquartered in Austin, Texas; grew through product-line acquisitions and a J.T. Baker reagent distributorship.",
+"https://www.capitolscientific.com/about-us",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The live About page (its site banner refers to 2027, so it is current) says Lee Williams and Mack Johnson founded the company in 1963 as Chem Products, Inc. It also says Felix Ware, grandson of Mr. Williams, bought the company from him in 2000 and became President and CEO. The page names no parent company, merger, private-equity owner or sale. The 'acquisitions' it mentions are product lines and distributorships, not changes of ownership. Limits: the shared web-search budget was used up before this check ran, so I could not search news or press for a recent acquisition. The verdict rests only on the company's own current site.",
+"https://www.capitolscientific.com/about-us"
+]
+},
+{
+"cid": "ts-2141",
+"web": "https://magersci.com",
+"op": "unclear",
+"seg": true,
+"segnote": "Fit is not confirmed from any source read in this run. From prior knowledge only (unverified), it is a distributor of materials-lab equipment such as metallography sample prep.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.2,
+0.05,
+0.1,
+0.0,
+0.05,
+0.05,
+0.3
+],
+"founded": null,
+"years": "",
+"staff": "No current headcount found. PPP 2020-21 reported 25 jobs.",
+"rev": null,
+"rsig": "No review snippets seen. Search budget was used up.",
+"succ": "none found (not researched: no sources were readable)",
+"fit": "Likely a scientific or materials-lab equipment distributor. Ownership could not be checked because the site was down and the search budget was used up.",
+"risks": [
+"website returning database error on 2026-11-16",
+"ownership unverified",
+"web search budget exhausted before research"
+],
+"ev": [
+[
+"magersci.com resolves (www redirects to the bare domain), but on 2026-11-16 the site returned 'Error establishing a database connection' (HTTP 500). No company content could be read.",
+"https://magersci.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-2862",
+"web": "https://www.apogeeinstruments.com",
+"op": "yes",
+"seg": true,
+"segnote": "Makes research-grade environmental sensors. It is a scientific instrument maker more than a lab supply distributor, so it is only a partial fit.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.5,
+0.2,
+0.03,
+0.07,
+0.0,
+0.0,
+0.05,
+0.15
+],
+"founded": 1996,
+"years": "Founded 1996, about 30 years ago.",
+"staff": "",
+"rev": null,
+"rsig": "Not checked. The search budget ran out.",
+"succ": "The founder has been in place about 30 years. Leadership roles and any next generation were not confirmed (unverified).",
+"fit": "A founder-started scientific sensor maker from 1996 with 32 PPP jobs. Current ownership was not confirmed.",
+"risks": [
+"It makes products rather than distributing them, so it is only a partial segment fit",
+"The founder's current role and ownership are unverified because the founder page returned 404",
+"Logan, UT location not confirmed on the pages fetched"
+],
+"ev": [
+[
+"The site says 'Innovative Environmental Sensors Since 1996'; the legal name is Apogee Instruments, Inc.",
+"https://www.apogeeinstruments.com/",
+"company_site"
+],
+[
+"The About page names Dr. Bruce Bugbee as founder.",
+"https://www.apogeeinstruments.com/about-us/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The About page names Dr. Bruce Bugbee as founder. The company news page has items through 28 July 2026, and those items still feature Dr. Bugbee. Older items (2016 to 2018) call him Apogee's president. No item on the homepage, About page or news page mentions an acquisition, merger, parent company or private-equity owner. Limits: the 2026 items do not state his current title, so his current role as president is unverified. The shared web-search budget was also used up, so I could not search outside news for a sale. The verdict rests only on the company's own site.",
+"https://www.apogeeinstruments.com/apogee-news/"
+]
+},
+{
+"cid": "ts-5505",
+"web": "https://www.preiser.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Full-line lab supply distributor. Core fit.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.02,
+0.3,
+0.1,
+0.1,
+0.0,
+0.0,
+0.0,
+0.48
+],
+"founded": 1924,
+"years": "Since 1924, about 102 years.",
+"staff": "",
+"rev": null,
+"rsig": "none found (no searches were possible)",
+"succ": "Business is about 102 years old; current owners and successor not stated",
+"fit": "Century-old lab distributor based in West Virginia, with a Kentucky location. Ownership and generation are not stated in the page text that could be read.",
+"risks": [
+"ownership not stated; the About text was cut off when fetched",
+"acquisition search not run"
+],
+"ev": [
+[
+"The About Us page says: 'We started our business in 1924 to support the safety and creativity of the scientific community.'",
+"https://www.preiser.com/about-us",
+"company_site"
+],
+[
+"It sells a broad lab catalog: balances, chemicals, glassware, instruments, lab furniture and PPE. It also features Holmes crushers and Parr calorimeters.",
+"https://www.preiser.com/",
+"company_site"
+],
+[
+"The site footer lists addresses in St. Albans, WV and Louisville, KY.",
+"https://www.preiser.com/about-us",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-5813",
+"web": "https://labsociety.com",
+"op": "no",
+"seg": true,
+"segnote": "Sold lab distillation and extraction equipment (extraction-market focus is from prior knowledge, unverified). That is a partial fit for lab or scientific supply.",
+"wdec": "closed_or_inactive",
+"dec": "closed_or_inactive",
+"p": [
+0.05,
+0.0,
+0.0,
+0.35,
+0.0,
+0.4,
+0.05,
+0.15
+],
+"founded": null,
+"years": "",
+"staff": "No current headcount found. PPP 2020-21 reported 24 jobs.",
+"rev": null,
+"rsig": "No review snippets seen. Search budget was used up.",
+"succ": "Domain now redirects to another company. That suggests the assets or brand were sold or the business closed (unverified).",
+"fit": "The Boulder brand no longer has its own site. Its domain now points to a Michigan equipment reseller, so the business was likely sold or wound down. Unverified.",
+"risks": [
+"domain redirects to a different company",
+"likely closed or sold (unverified)",
+"cannabis-extraction market exposure (unverified)"
+],
+"ev": [
+[
+"labsociety.com returns a 301 redirect to mnrequipment.com.",
+"https://labsociety.com/",
+"company_site"
+],
+[
+"MNR Equipment (Fraser, MI; footer reads MNR Consulting LLC) sells new and used vacuum, filtration, distillation and analytical equipment. Its site does not mention Lab Society.",
+"https://www.mnrequipment.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-6103",
+"web": "https://www.hettweb.com",
+"op": "yes",
+"seg": true,
+"segnote": "US sales arm for German-made centrifuges, incubators, climate chambers and cold storage.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.02,
+0.1,
+0.02,
+0.7,
+0.0,
+0.0,
+0.06,
+0.1
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "Not checked.",
+"succ": "none; it appears to be a captive arm of a foreign manufacturer",
+"fit": "The North American office of the German maker Hettich. It looks like a captive subsidiary, not a buyable independent company.",
+"risks": [
+"Corporate ownership was inferred from the 'Visit Hettich Global' link to Andreas Hettich GmbH and from manufacturing in Tuttlingen, Germany. The parent-subsidiary link is not stated (unverified).",
+"The label means captive corporate subsidiary, not PE ownership"
+],
+"ev": [
+[
+"Products are designed and made at the company's headquarters in Tuttlingen, Germany; the site cites 115+ years of manufacturing know-how.",
+"https://www.hettweb.com/",
+"company_site"
+],
+[
+"The North America office is at 100 Cummings Center, Beverly, MA; a 'Visit Hettich Global' link points to Andreas Hettich GmbH.",
+"https://www.hettweb.com/",
+"company_site"
+],
+[
+"Recently began distributing Kirsch Medical refrigerators and freezers in the US.",
+"https://www.hettweb.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-6399",
+"web": "https://www.gamry.com",
+"op": "yes",
+"seg": true,
+"segnote": "Makes electrochemical instruments (potentiostats, galvanostats, QCMs), cells, accessories and software for research labs.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.4,
+0.05,
+0.2,
+0.07,
+0.0,
+0.0,
+0.03,
+0.25
+],
+"founded": 1989,
+"years": "Founded 1989 per the company's About page, which says it has been independent since the beginning.",
+"staff": "Not stated. PPP reported 50 jobs. HQ is in Warminster, PA, with offices in Italy and China.",
+"rev": null,
+"rsig": "Not checked. The search budget ran out.",
+"succ": "Possible: about 37 years independent. Founders and executive leadership are not named on the site (team page lists only managers). Unverified.",
+"fit": "Independent scientific instrument maker since 1989. A good lab-supply adjacency, though a manufacturer rather than a distributor. Founder status unverified.",
+"risks": [
+"Founder and owner not named on site",
+"Manufacturer, not a distributor",
+"Independence claim is self-stated"
+],
+"ev": [
+[
+"Founded 1989, HQ in Warminster PA, offices in Italy and China. Says it has been independent since the beginning.",
+"https://www.gamry.com/about-us/",
+"company_site"
+],
+[
+"Makes potentiostats, galvanostats, quartz crystal microbalances, cells and software.",
+"https://www.gamry.com/",
+"company_site"
+],
+[
+"Team page lists sales, support and marketing managers, but no owner or executive.",
+"https://www.gamry.com/about-us/our-team/",
+"company_site"
+]
+],
+"ver": [
+"unverifiable",
+"I found nothing showing an acquisition or a private-equity owner. The 2026 About page says 'Independent since the beginning'. But neither the About page nor the team page names a founder, owner or chief executive, so the founder-led label itself is unconfirmed. The site supports independence only. My search budget ran out, so I could not check outside news or state records for the founder's current role.",
+"https://www.gamry.com/about-us/"
+]
+},
+{
+"cid": "ts-7142",
+"web": "https://www.dotscientific.com",
+"op": "yes",
+"seg": true,
+"segnote": "General lab supplies distributor.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.35,
+0.1,
+0.03,
+0.07,
+0.0,
+0.0,
+0.0,
+0.45
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "Not checked. The search budget ran out.",
+"succ": "none found",
+"fit": "A woman-owned general lab supply distributor with 32 PPP jobs and on the hand-built list. Who owns it and when it was founded were not confirmed.",
+"risks": [
+"Burton, MI location not confirmed on the homepage",
+"The About and Contact pages returned 404",
+"Owner not named; 'woman owned' does not establish whether the owner is the founder"
+],
+"ev": [
+[
+"The homepage says it is 'Focusing on General Lab Supplies'.",
+"https://www.dotscientific.com/",
+"company_site"
+],
+[
+"The homepage describes it as a 'Woman Owned Small Business'.",
+"https://www.dotscientific.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-7407",
+"web": "https://www.geneseesci.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Life-science lab consumables supplier. Core fit.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.02,
+0.05,
+0.25,
+0.0,
+0.0,
+0.0,
+0.38
+],
+"founded": 1995,
+"years": "Founded 1995 per site metadata, about 31 years.",
+"staff": "",
+"rev": null,
+"rsig": "none found (no searches were possible)",
+"succ": "none found",
+"fit": "Strong fit and already on the hand-built list. The site does not say whether the founder still owns it or whether outside investors are involved.",
+"risks": [
+"ownership and investor status unverified: the acquisition search could not run",
+"mid-size with a global reach; may have outside capital"
+],
+"ev": [
+[
+"Site metadata gives a 1995 founding date, names Sean Patrick as founder, and lists an El Cajon, CA address.",
+"https://www.geneseesci.com/",
+"company_site"
+],
+[
+"The company describes itself as a global supplier to the life sciences, pharma and biotech industries.",
+"https://www.geneseesci.com/about-us",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-7632",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "In the segment based only on the name and NAICS 423450. The business itself was not verified.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.1,
+0.05,
+0.1,
+0.0,
+0.05,
+0.05,
+0.35
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "Not checked. The search budget ran out.",
+"succ": "none found (not researched)",
+"fit": "It reported 32 PPP jobs in Telford, PA, but no public evidence was gathered. It needs a follow-up search.",
+"risks": [
+"Unverified: the guessed domains did not resolve (qlaccessories.com) or returned an empty page (qualitylabaccessories.com)",
+"The search budget ran out before any search was run"
+],
+"ev": [
+[
+"The SBA PPP record shows 32 jobs and a $503,543 loan in Telford, PA, NAICS 423450. Taken from the provided screen row, not re-checked.",
+"https://data.sba.gov/dataset/ppp-foia",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "ts-7868",
+"web": "https://www.thermalscientific.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Texas lab supply and chemicals distributor, also serving oil and gas testing.",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.1,
+0.45,
+0.03,
+0.1,
+0.0,
+0.0,
+0.05,
+0.27
+],
+"founded": 1962,
+"years": "Since 1962, about 64 years.",
+"staff": "",
+"rev": null,
+"rsig": "none found (no searches were possible)",
+"succ": "Business is 64 years old; generation and successor not stated",
+"fit": "Family-owned Texas lab distributor with branches. Founded 1962, so later-generation ownership is likely but not confirmed.",
+"risks": [
+"PPP city (Alvarado) differs from the site address (Pasadena); match is likely but unverified",
+"a family-owned banner can survive an acquisition; acquisition search not run",
+"exposure to the oil and gas cycle"
+],
+"ev": [
+[
+"The site says it is 'Family Owned | Veteran Operated' and 'Serving Science & Industry Since 1962'.",
+"https://www.thermalscientific.com/",
+"company_site"
+],
+[
+"It distributes lab supplies, chemicals, reagents, calibration standards, instruments and oil and gas testing equipment.",
+"https://www.thermalscientific.com/",
+"company_site"
+],
+[
+"Structured data lists 2835 Preston Ave, Pasadena, TX. The site cites five branches and Texas service areas including Dallas-Fort Worth.",
+"https://www.thermalscientific.com/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The current homepage (2026) reads 'Third Generation | Family Owned | Veteran Operated'. Its structured data calls the company 'a family-owned, veteran-operated distributor of laboratory chemicals', with a founding date of 1962. The page names no parent company and mentions no acquisition. Limit: the shared web-search budget ran out before any search ran, so I could not look for news of a sale or private-equity owner. The verdict rests only on the company's own current site. Owner names are not given on the site and are unverified.",
+"https://www.thermalscientific.com/"
+]
+}
+]
+}

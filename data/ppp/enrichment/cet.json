@@ -1,0 +1,2817 @@
+{
+"_note": "Ownership results for the CET shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). Same keys as pp.json. Restored from the agents' saved results after the hand-off to the integration step was cut off.",
+"items": [
+{
+"cid": "cet-0332",
+"web": "",
+"op": "yes",
+"seg": true,
+"segnote": "Large commercial, industrial and institutional electrical contractor with a service arm. This fits CET's electrical construction and service work.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.1,
+0.1,
+0.1,
+0.0,
+0.0,
+0.05,
+0.4
+],
+"founded": 1985,
+"years": "35+ years per the company (founded about 1985 per a directory).",
+"staff": "Directory estimate of 100-249. Not stated by the company.",
+"rev": null,
+"rsig": "",
+"succ": "None found. A recent HQ expansion suggests a growth posture, not an exit.",
+"fit": "Scaled New England C&I electrical contractor (about 106 to 118 jobs) with a service division. Recently expanded its HQ. Ownership unconfirmed.",
+"risks": [
+"owner not confirmed; CEO is not necessarily the founder",
+"HQ moved Dec 2025, so the Uxbridge address in SBA data is stale",
+"no acquisition found, but the search was limited"
+],
+"ev": [
+[
+"Moved its corporate HQ from Uxbridge to 67 Green St, Foxborough, MA. Teams started there Dec 1, 2025. Says it has served New England for 35+ years.",
+"https://magazine.high-profile.com/high-profile-february-2026/0666203001769885374/p34",
+"press"
+],
+[
+"Stephen Brown is named CEO in the relocation item. The owner is not stated.",
+"https://magazine.high-profile.com/high-profile-february-2026/0666203001769885374/p34",
+"press"
+],
+[
+"Directory lists the firm as established in 1985 with 100-249 employees.",
+"https://naicslist.com/company-profile/energy-electric-co-inc-uxbridge-ma-01569",
+"other"
+],
+[
+"Commercial and industrial electrical contractor serving RI, MA, CT, NH and ME. Hiring service electricians.",
+"https://app.energyhire.com/job-board/service-electrician-uxbridge-ma-8c99ba75-6039-4572-9c63-aae141e2a1a9",
+"other"
+],
+[
+"A search for acquisitions or partnerships found no deal involving Energy Electric. The only news found was the HQ move.",
+"https://nerej.com/energy-electric-relocates-headquarters",
+"news"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-0347",
+"web": "https://www.tt-electric.com",
+"op": "yes",
+"seg": true,
+"segnote": "Full-service electrical contracting and engineering firm. Large design-build and maintenance work in schools, medical, office, hotel and high-rise residential buildings, such as Avalon North Station. Mostly commercial.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.15,
+0.25,
+0.05,
+0.1,
+0.0,
+0.05,
+0.0,
+0.4
+],
+"founded": 1973,
+"years": "The site says it has served Greater Boston since 1973, about 53 years.",
+"staff": "Not stated on the site. PPP reported 68 jobs.",
+"rev": null,
+"rsig": "none found",
+"succ": "In business 53 years. Ownership is not named on the site, so the original founder may no longer lead it. Unverified.",
+"fit": "Established Everett commercial electrician that does high-rise work. Ownership is unknown and needs a state-records check.",
+"risks": [
+"Owner and leadership not found",
+"Commercial and high-rise focus, not residential service",
+"A separate T&T Electrical exists in Hartford CT, so do not mix the records",
+"SBA 7(a) loan of $750K from 2018 is paid in full"
+],
+"ev": [
+[
+"The site says it has served Greater Boston since 1973 as a full-service electrical contracting and engineering firm.",
+"https://www.tt-electric.com/",
+"company_site"
+],
+[
+"Did the electrical construction for Avalon North Station, a 38-story Boston high-rise.",
+"https://www.high-profile.com/tt-nears-completion-avalon-project/",
+"press"
+],
+[
+"Office at 531 2nd St, Everett, MA.",
+"https://z1biz.com/?p=746096",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-0399",
+"web": "https://www.cfwelectric.com",
+"op": "yes",
+"seg": true,
+"segnote": "Residential work includes panels, rewiring and generators. It also does commercial and industrial work.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.35,
+0.05,
+0.05,
+0.05,
+0.0,
+0.03,
+0.02,
+0.45
+],
+"founded": null,
+"years": "",
+"staff": "The site says the company is growing and hiring licensed electricians. No headcount is given.",
+"rev": null,
+"rsig": "none found",
+"succ": "none found",
+"fit": "A VT/NH electrical contractor that does residential, commercial and industrial work. The site names no owner or founding year.",
+"risks": [
+"the site does not name a city, so the match to the Danville, VT borrower is unverified",
+"owner and founding year not stated"
+],
+"ev": [
+[
+"A licensed electrical contractor serving residential, commercial and industrial clients across Vermont and New Hampshire. It says it is growing and hiring.",
+"https://www.cfwelectric.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-0433",
+"web": "https://legacy-power.com/ (formerly peckelectric.com)",
+"op": "unclear",
+"seg": false,
+"segnote": "Commercial, industrial and utility solar EPC, not residential or local service work",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.03,
+0.03,
+0.0,
+0.6,
+0.0,
+0.17,
+0.12,
+0.05
+],
+"founded": 1972,
+"years": "Founded 1972 per Legacy Power site",
+"staff": "none stated",
+"rev": null,
+"rsig": "not checked (search budget exhausted)",
+"succ": "n/a: already acquired",
+"fit": "Former Vermont electrical and solar contractor, now under a larger power-company brand doing C&I and utility solar. Not a founder-owned target.",
+"risks": [
+"was owned by a public company (iSun), per background knowledge, unverified this run",
+"parent company went through bankruptcy (unverified this run)",
+"rebranded to Legacy Power; ownership of the current entity not confirmed"
+],
+"ev": [
+[
+"peckelectric.com 301-redirects to legacy-power.com",
+"https://www.peckelectric.com/",
+"company_site"
+],
+[
+"Legacy Power: commercial, industrial and utility-scale solar and storage EPC, founded 1972, 'part of a vertically integrated power platform'; no residential work listed",
+"https://legacy-power.com/",
+"company_site"
+],
+[
+"From background knowledge, not checked this run: Peck Electric merged with a SPAC in 2019 to form Peck Company Holdings (later iSun, Inc.), and iSun filed Chapter 11 in 2024 (unverified)",
+"https://legacy-power.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-0469",
+"web": "https://weco-group.com",
+"op": "unclear",
+"seg": true,
+"segnote": "Electrical contractor (NAICS 238210) in Chelsea. Specific work type not confirmed.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.15,
+0.15,
+0.05,
+0.1,
+0.0,
+0.05,
+0.05,
+0.45
+],
+"founded": null,
+"years": "Unknown.",
+"staff": "No current figure. 75 jobs on the 2021 SBA 7(a) loan.",
+"rev": null,
+"rsig": "",
+"succ": "none found",
+"fit": "About 75-job electrical contractor 19 miles from CET Norwell. Little public detail. The 'group' domain hints at a multi-entity holding (unverified).",
+"risks": [
+"website certificate expired, so possibly weak upkeep",
+"name match to Williamson New England Electric unverified",
+"'weco-group' suggests a holding structure; ownership unknown"
+],
+"ev": [
+[
+"A directory lists Williamson New England Electric at 25 Griffin Way, Chelsea MA, with website weco-group.com. The directory says to verify the details. The link to the PPP entity is unverified.",
+"https://www.regionaldirectory.us/ma/1358659.htm",
+"other"
+],
+[
+"No founding, ownership or deal history found. Similarly named firms (Williams Electric NC, acquired by United Utility 2021; WECO connectors) are unrelated.",
+"https://prnewswire.com/news-releases/united-utility-acquires-williams-electric-company-301368388.html",
+"press"
+],
+[
+"The company website weco-group.com could not be read because its TLS certificate had expired at fetch time.",
+"https://weco-group.com",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-0682",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "Union (IBEW) commercial electrical contractor. Turnkey construction work in healthcare and education, such as Tufts Medical Center. No residential service work found.",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.05,
+0.4,
+0.1,
+0.1,
+0.0,
+0.05,
+0.0,
+0.3
+],
+"founded": 1958,
+"years": "Founded in 1958 by Chet Bennett, so about 68 years old. NECA Boston gave it a 50-year plaque in 2009.",
+"staff": "No current figure. A 2009 article cited 40 IBEW field electricians and 8 office staff. PPP 2020-21 reported 90 jobs.",
+"rev": null,
+"rsig": "none found",
+"succ": "The founder started the firm in 1958, so a later generation or new owner very likely runs it now. Unverified: no current leadership was found.",
+"fit": "Large union commercial electrician 11 miles from Norwell. Ownership is likely a later generation but is unverified.",
+"risks": [
+"No current company website found",
+"Current owner and leadership not confirmed",
+"Commercial and institutional union work, not residential service",
+"The research budget ran out before a check for an acquisition"
+],
+"ev": [
+[
+"Founded by Chet Bennett in 1958. Turnkey electrical construction in healthcare and education.",
+"https://beta.nerej.com/bennett-s-focus-on-healthcare-and-educational-markets",
+"press"
+],
+[
+"A 2009 article cited 40 IBEW field electricians, 8 office staff, and a NECA 50-year plaque.",
+"https://nerej.com/print/9920",
+"press"
+],
+[
+"Listed as an electrician based in Quincy, MA.",
+"https://levelset.com/subcontractors/massachusetts/quincy/electricians/bennett-electrical-inc",
+"other"
+]
+],
+"ver": [
+"unverifiable",
+"Could not refute or confirm. The shared web-search budget ran out before any search returned results, so no search for an acquisition, sale or closure was done. Both NEREJ articles the worker cited returned HTTP 403, and the Massachusetts corporations search returned an empty page. The company has no website on file. Founding in 1958 by Chet Bennett and a family next-generation transfer are both unverified. No evidence of PE ownership, sale or closure was found, but nothing current was checked either.",
+"https://beta.nerej.com/bennett-s-focus-on-healthcare-and-educational-markets"
+]
+},
+{
+"cid": "cet-0717",
+"web": "http://www.sherwin-electric.com",
+"op": "yes",
+"seg": true,
+"segnote": "Commercial and industrial only. No residential work is mentioned.",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.0,
+0.7,
+0.05,
+0.05,
+0.0,
+0.02,
+0.08,
+0.1
+],
+"founded": 1882,
+"years": "About 144 years (founded 1882).",
+"staff": "",
+"rev": null,
+"rsig": "none found",
+"succ": "none found",
+"fit": "An old family-owned electrical contractor that focuses on commercial and industrial work, not residential service.",
+"risks": [
+"no residential service",
+"no acquisition search was possible because the search budget ran out",
+"the generation is inferred from the 1882 founding"
+],
+"ev": [
+[
+"Commercial and industrial electricians at 7A Morse Drive, Essex Junction, VT. Does high-voltage, fiber optic and low-voltage data work.",
+"http://www.sherwin-electric.com/",
+"company_site"
+],
+[
+"Founded in 1882. Family- and veteran-owned, locally owned and operated.",
+"http://www.sherwin-electric.com/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The homepage footer reads '© 2026 Sherwin Electric Company Inc.' The page says it is 'a family and veteran-owned business' that is 'locally owned and operated', established in 1882, at 7A Morse Drive, Essex Junction, VT. It names no parent company, acquirer or merger. NECA and IBEW Local 300 appear only as memberships. A firm founded in 1882 that is still family-owned fits the next-generation label. Caveat: the shared web-search budget for this turn was used up, so I could not search news or press for a recent deal. A footer year can also update automatically. This rests on the company's own current page only.",
+"https://www.sherwin-electric.com/"
+]
+},
+{
+"cid": "cet-0821",
+"web": "https://www.augustineelectric.com/ (match to the Bridgeport PPP borrower unverified)",
+"op": "yes",
+"seg": true,
+"segnote": "Electrical contractor in Fairfield County CT. Services page returned 404, so residential versus commercial mix is unverified.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.15,
+0.05,
+0.05,
+0.01,
+0.04,
+0.05,
+0.35
+],
+"founded": null,
+"years": "Site footer shows 2005-2026; that is a copyright range, not a confirmed founding year.",
+"staff": "No current headcount stated; 70 is the PPP 2020-21 figure.",
+"rev": null,
+"rsig": "",
+"succ": "none found",
+"fit": "Electrical contractor of about 70 staff in southwest CT. Ownership not established in this run.",
+"risks": [
+"Website address (Fairfield) differs from PPP address (Bridgeport); same-entity match unverified",
+"Search budget ran out after one search; ownership research incomplete",
+"108 mi from Worcester"
+],
+"ev": [
+[
+"Directory lists Augustine Electric, Inc. at 119 Lee Ave, Bridgeport CT 06605, corporation, about 70 employees (mirrors PPP data)",
+"https://naicslist.com/company-profile/augustine-electric-inc-bridgeport-ct-06605",
+"other"
+],
+[
+"Company site: Augustine Electric, Inc., licensed and insured, CT License 182752, 119 Andrassy Ave, Fairfield CT 06825; serves Stamford and Greenwich; footer 2005-2026; no owner, services or parent named. Address differs from PPP, so the match is unverified",
+"https://www.augustineelectric.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-0834",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "Electrical contractor (NAICS 238210). Commercial vs residential mix unknown.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.1,
+0.08,
+0.05,
+0.0,
+0.05,
+0.02,
+0.4
+],
+"founded": null,
+"years": "",
+"staff": "About 58 per an aggregator (unverified). The PPP record says 110.",
+"rev": null,
+"rsig": "No review snippets found.",
+"succ": "none found",
+"fit": "Mid-size Canton electrical contractor 16 miles from Norwell. Ownership, website and current activity were not confirmed.",
+"risks": [
+"No company website found",
+"Ownership unconfirmed",
+"Headcount conflict: PPP 110 vs aggregator about 58",
+"Search budget ran out before state-record lookup"
+],
+"ev": [
+[
+"NAICS directory lists K & H Electrical Systems Inc at 75 Getchell Way, Canton MA, as a Subchapter S corporation with about 58 employees and NAICS 238210.",
+"https://naicslist.com/company-profile/k-h-electrical-systems-inc-canton-ma-02021",
+"other"
+],
+[
+"LevelSet lists 11 jobs and no liens in the past 4 years.",
+"https://www.levelset.com/subcontractors/massachusetts/canton/electricians/k-h-electrical-systems",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-0929",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "Electrical contractor with consumer (residential) ratings and service work. This fits CET's electrical and service scope.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.15,
+0.03,
+0.05,
+0.0,
+0.1,
+0.02,
+0.35
+],
+"founded": null,
+"years": "30+ years per a profile.",
+"staff": "Directory estimate of about 66. Not stated by the company.",
+"rev": [
+39,
+4.2,
+"Checkbook snippet for the count (39 ratings); This Old House snippet for the rating (4.2/5). Two different sources."
+],
+"rsig": "Snippets praise reliability and clear cost discussions. No mention of the owner doing work himself.",
+"succ": "Possible. The firm is 30+ years old with no next generation named. Weak, unverified.",
+"fit": "30+ year electrical services firm in Taunton, right at CET's Taunton site. Has residential service reviews. Ownership unknown.",
+"risks": [
+"one listing shows 'Closed'; operating status needs a check",
+"owner not identified"
+],
+"ev": [
+[
+"Electrical contractor at 220 High St, Taunton MA. A profile says 30+ years in business, licensed in MA and RI.",
+"https://directory.yext.com/en/young-electrical-services-500940725",
+"other"
+],
+[
+"Consumers' Checkbook search snippet shows 39 consumer ratings and comments praising reliability and clear cost talks. The page itself could not be read.",
+"https://www.checkbook.org/ma/taunton/electricians/young-electrical-service/uhf44",
+"review_snippet"
+],
+[
+"A This Old House listing snippet shows a 4.2/5 user rating.",
+"https://www.thisoldhouse.com/near-me/massachusetts/taunton/electrical",
+"review_snippet"
+],
+[
+"One MapQuest listing marks the business 'Closed'. Other listings show it active, and review snippets from late 2024 are positive. Status unclear.",
+"https://phoenix.aws.mapquest.com/us/massachusetts/young-electrical-services-305791",
+"other"
+],
+[
+"Directory lists it as an S corporation with about 66 employees.",
+"https://naicslist.com/company-profile/young-electrical-services-inc-taunton-ma-02780",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-0938",
+"web": "https://www.capitalwell.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Water well, pump and treatment service for homes and businesses",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.1,
+0.5,
+0.15,
+0.05,
+0.0,
+0.0,
+0.0,
+0.2
+],
+"founded": 1986,
+"years": "Since 1986 (company site)",
+"staff": "none stated; 35 jobs per PPP 2020-21",
+"rev": null,
+"rsig": "not checked (search budget exhausted)",
+"succ": "Second generation already in VP roles; founding-generation status unknown",
+"fit": "Residential and commercial well, pump and water-treatment service in NH with 35 jobs, a good fit for Horton's water niche. Appears to be run by a second-generation family with a non-family president.",
+"risks": [
+"the founder is not named, and it is not confirmed whether the Dragon family owns it",
+"the president is a non-family member, so ownership may be split among partners"
+],
+"ev": [
+[
+"Capital Well: well drilling, pump service, water treatment, testing and irrigation for homes and businesses across NH since 1986; offices in Dunbarton, Meredith and Lancaster",
+"https://www.capitalwell.com/",
+"company_site"
+],
+[
+"Leadership: Jon Swain (President and Sales Manager, board member), plus Adam, Joe and Greg Dragon as VPs; the Dragons grew up in the business, and Joe mentions helping his father on a drilling rig",
+"https://www.capitalwell.com/leadership",
+"company_site"
+],
+[
+"No acquisition or parent company mentioned; the site announces a newly added irrigation service",
+"https://www.capitalwell.com/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"Company leadership page, footer copyright 2026, has VP Adam Dragon saying he 'joined the family business', and VP Joe Dragon recalls helping his father on a drilling rig. Three Dragon brothers are VPs. The home, About and leadership pages mention no parent company, acquisition, merger, employee ownership or franchise. Caveats: President Jon Swain is not a Dragon, and the site never names the founder or owner, so the exact ownership split is unverified. Web search was unavailable (search budget used up), so news and press could not be checked for a recent sale.",
+"https://www.capitalwell.com/leadership"
+]
+},
+{
+"cid": "cet-1365",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "NAICS 238210 electrical contractor per PPP. Not verified on the web.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.2,
+0.2,
+0.05,
+0.05,
+0.0,
+0.05,
+0.03,
+0.42
+],
+"founded": null,
+"years": "",
+"staff": "55 jobs per PPP 2020-21; no current figure.",
+"rev": null,
+"rsig": "",
+"succ": "none found",
+"fit": "55-job Plainville CT electrical contractor with large PPP loans ($3.46M). Nothing verified in this run.",
+"risks": [
+"Not researched: shared web search budget was exhausted",
+"Do not confuse it with Ferguson Electric of Buffalo NY",
+"PPP loan total is high for 55 jobs; check the data"
+],
+"ev": [
+[
+"fergusonelectric.com belongs to a different Ferguson Electric with New York offices only (Buffalo, Rochester, Syracuse, Ithaca), so it is not the Plainville CT borrower",
+"https://www.fergusonelectric.com/",
+"other"
+],
+[
+"Guessed domain fergusonelectricct.com does not resolve",
+"https://www.fergusonelectricct.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-1448",
+"web": "unverified",
+"op": "unclear",
+"seg": true,
+"segnote": "Assumed electrical contractor from NAICS only",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.15,
+0.05,
+0.07,
+0.01,
+0.12,
+0.05,
+0.3
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "none found (search budget exhausted)",
+"succ": "none found",
+"fit": "Unverified. PPP lists 54 jobs under NAICS 238210 in West Haven CT.",
+"risks": [
+"no evidence gathered: shared web search budget was used up",
+"matching domain is parked for sale (weak closure signal, unverified)"
+],
+"ev": [
+[
+"allbriteelectric.com redirects to a GoDaddy domain-for-sale page. It is not confirmed that this company ever used that domain.",
+"https://www.allbriteelectric.com",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-1622",
+"web": "https://www.paquetteelectric.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Mostly commercial, industrial and institutional electrical, plus generators and solar.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.03,
+0.03,
+0.02,
+0.85,
+0.0,
+0.02,
+0.0,
+0.05
+],
+"founded": 1979,
+"years": "Founded 1979, incorporated 1982.",
+"staff": "No headcount stated on site; 50 is the PPP 2020-21 figure.",
+"rev": null,
+"rsig": "",
+"succ": "Already absorbed into Horton Electrical Services; the page does not say when.",
+"fit": "Already a division of Horton Electrical Services, which BSP's internal portfolio notes list as a CET add-on (Sept 2026). This would put it inside CET already. Drop it as a target.",
+"risks": [
+"Likely already owned by CET through Horton. The Horton-CET link comes from internal notes and was not re-verified here",
+"Site lists an Ashford CT office address and also says Pomfret Center"
+],
+"ev": [
+[
+"Company site brands it 'A Division of Horton Electrical Services, LLC'",
+"https://www.paquetteelectric.com/",
+"company_site"
+],
+[
+"Founded 1979 by John M. Paquette, incorporated 1982; says it is the largest electrical contractor in northeastern CT",
+"https://www.paquetteelectric.com/",
+"company_site"
+],
+[
+"Industrial, commercial and institutional electrical, design-build, power quality, generators, energy conservation and solar; says it also serves residential customers",
+"https://www.paquetteelectric.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-1758",
+"web": "",
+"op": "yes",
+"seg": true,
+"segnote": "Commercial and institutional electrical contractor (it worked on Harvard projects) with a separate services company. This fits CET's electrical construction line.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.5,
+0.25,
+0.03,
+0.05,
+0.0,
+0.02,
+0.02,
+0.13
+],
+"founded": 2001,
+"years": "About 25 years (founded 2001).",
+"staff": "Not stated. 75 PPP jobs.",
+"rev": null,
+"rsig": "",
+"succ": "'& Sons' name points to a next generation in the business. No retirement signal found.",
+"fit": "Family-founded (2001) electrical contractor, about 75 PPP jobs, 32 miles from CET Norwell. Has a services affiliate.",
+"risks": [
+"separate services entity (2009) may need to be included in any deal",
+"addresses conflict (Middleton vs North Andover listings)"
+],
+"ev": [
+[
+"Harvard planning archive record: founded January 2001 by Stephanie O'Mahony as a small family-owned electrical shop. A separate services company was formed in 2009.",
+"https://harvardplanning.emuseum.com/people/4268/omahony--sons-electrical-inc",
+"other"
+],
+[
+"LevelSet shows about 40 projects and no reported payment issues on 2024 projects.",
+"https://www.levelset.com/subcontractors/massachusetts/middleton/electricians/omahony-sons-electrical-inc/job-history",
+"other"
+],
+[
+"A license record lists John O'Mahony as an electrical contractor in MA. His role at the firm is unverified.",
+"https://permitmint.com/contractors/ma/john-o-mahony/",
+"other"
+]
+],
+"ver": [
+"unverifiable",
+"I could not check this one either. The shared web search budget for this run was used up, so no search results came back. The Harvard planning archive page and the Levelset job-history page both returned HTTP 403, so I could not re-read the worker's sources. A guessed company domain also returned 403. I found nothing that shows an acquisition, a private-equity owner, a merger or a closure. I also found no current first-party page or news item that confirms family ownership today. The family-owned claim rests on an archive record of the 2001 founding. The Levelset activity on 2024 projects suggests the firm was still operating then, but I could not re-check it. Re-check when search is available.",
+"https://harvardplanning.emuseum.com/people/4268/omahony--sons-electrical-inc"
+]
+},
+{
+"cid": "cet-1760",
+"web": "https://www.lighthouse-electrical.com/",
+"op": "unclear",
+"seg": true,
+"segnote": "Full-service union electrical contractor (IBEW Local 103, NECA member). Does commercial work (education, biotech, health care, pharma, retail) plus commercial and residential solar PV.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.35,
+0.06,
+0.08,
+0.06,
+0.0,
+0.12,
+0.03,
+0.3
+],
+"founded": null,
+"years": "No founding year found. Its solar projects were covered in trade press around 2010.",
+"staff": "PPP 2020-21 reported 75 jobs. Directories differ: 75, 21-50, and 24.",
+"rev": null,
+"rsig": "No review snippets were seen about owner involvement.",
+"succ": "Herb Aikens was named president in a 2010 trade article and is still listed as president in a newer directory. Whether he founded the firm is unverified. No next generation was named.",
+"fit": "South Shore union electrical and solar contractor 5 miles from CET's Norwell site. Appears led for a long time by one president. Founder status and current activity need checking.",
+"risks": [
+"Founder status unverified. Herb Aikens is only confirmed as president.",
+"MapQuest marks the Rockland North Ave listing closed. Other directories list a Hingham address, which suggests a move.",
+"Website footer reads 2019",
+"Union shop",
+"Directory headcounts disagree"
+],
+"ev": [
+[
+"Site: full-service union electrical contractor, IBEW Local 103 signatory. Commercial sectors plus commercial and residential solar.",
+"https://www.lighthouse-electrical.com/",
+"company_site"
+],
+[
+"Herb Aikens named president. Firm described as a solar and wind leader in eastern MA.",
+"https://nerej.com/print/11962",
+"press"
+],
+[
+"Directory lists Herbie Aikens as president, HQ in Hingham, 24 employees",
+"https://aeroleads.com/c/lighthouse-electrical",
+"other"
+],
+[
+"Subchapter S corporation, about 75 employees, 59 North Ave, Rockland (directory)",
+"https://naicslist.com/company-profile/lighthouse-electrical-contracting-inc-rockland-ma-02370",
+"other"
+],
+[
+"MapQuest listing at the North Ave address is marked closed (search snippet)",
+"https://startpage.mapquest.com/us/massachusetts/lighthouse-electrical-contracting-inc-406730131",
+"other"
+]
+],
+"ver": [
+"confirmed",
+"The company's own about page says Herbert Aikens founded the firm in 2002 and is its president. It says the firm grew from a one-man shop to more than 100 electricians. The home page shows an active firm at 9 Sharp Street, Hingham, MA. It cites a 2021 safety award and has a 2023 image upload. The MapQuest 'closed' flag is for the older 59 North Ave, Rockland address, which looks like a relocation, not a closure. No page mentions an acquisition, parent company or private equity. Caveats: the footer copyright says 2019, so I could not confirm the site is current. My web search budget was used up, so I could not check news for a sale. I checked only the company site.",
+"https://www.lighthouse-electrical.com/about"
+]
+},
+{
+"cid": "cet-1896",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "The name and NAICS 238210 suggest electrical work tied to renewables. No source confirmed the scope of work, so the fit is unverified.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.2,
+0.04,
+0.04,
+0.08,
+0.01,
+0.13,
+0.05,
+0.45
+],
+"founded": null,
+"years": "",
+"staff": "PPP 2020-21 reported 68 jobs. No current figure was found.",
+"rev": null,
+"rsig": "No review snippets found.",
+"succ": "none found",
+"fit": "No web presence was found under this exact name. Searches kept returning the unrelated All Energy Solar (Westfield, MA). Needs a Massachusetts corporations lookup.",
+"risks": [
+"No website or public record found in 4 searches",
+"Easily confused with All Energy Solar, an unrelated company",
+"May operate under a different trade name, or may be inactive"
+],
+"ev": [
+[
+"Searches for the exact name in Weston, MA found no listing. The results were for All Energy Solar, which is based in Westfield/Chicopee, MA.",
+"https://www.energysage.com/local-data/solar-companies/ma/middlesex-county/weston/",
+"other"
+],
+[
+"Search for 'ALL RENEWABLE ENERGY, INC.' as a Massachusetts corporation returned no match",
+"https://www.mass.gov/orgs/renewable-energy-division",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-1905",
+"web": "not found",
+"op": "unclear",
+"seg": true,
+"segnote": "",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.2,
+0.15,
+0.05,
+0.05,
+0.0,
+0.1,
+0.05,
+0.4
+],
+"founded": null,
+"years": "unknown",
+"staff": "none stated; 47 jobs per PPP 2020-21",
+"rev": null,
+"rsig": "not checked (search budget exhausted)",
+"succ": "none found",
+"fit": "A 47-job CT electrical contractor that could fit. No ownership evidence was gathered.",
+"risks": [
+"web search budget ran out; no company website found",
+"ownership unconfirmed"
+],
+"ev": [
+[
+"enterpriseelectrical.com redirects to a GoDaddy domain-for-sale page; it is not confirmed this was ever the company's domain",
+"https://www.enterpriseelectrical.com/",
+"other"
+],
+[
+"PPP: 47 jobs and two loans totaling about $1.21M; NAICS 238210 electrical contractor in Newtown, CT",
+"https://data.sba.gov/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-1956",
+"web": "https://www.swelectricinc.com",
+"op": "yes",
+"seg": true,
+"segnote": "Commercial and high-end residential electrical contractor with a service and maintenance line. This fits CET's electrical scope.",
+"wdec": "employee_or_partner_owned",
+"dec": "employee_or_partner_owned",
+"p": [
+0.35,
+0.02,
+0.45,
+0.05,
+0.0,
+0.01,
+0.02,
+0.1
+],
+"founded": 2005,
+"years": "Founded 2005 per the company site.",
+"staff": "Not stated by the company. A directory estimates 22, versus 74 PPP jobs.",
+"rev": null,
+"rsig": "",
+"succ": "None found. The founders are about 20 years in.",
+"fit": "Two-founder electrical contractor from 2005, 8 miles from CET Taunton. Mixes commercial, residential and service work.",
+"risks": [
+"two co-founders, so a deal needs both to agree",
+"directory headcount (22) is far below PPP jobs (74)"
+],
+"ev": [
+[
+"The company's own site says it was founded in 2005. It offers design-build and installation for commercial work, tenant improvements, high-end residential, and service and maintenance programs.",
+"https://www.swelectricinc.com",
+"company_site"
+],
+[
+"Its bank's client profile says the firm began as a partnership founded by Brian Washburn and Matt Sylvia.",
+"https://southshorebank.com/S-W-Electric",
+"other"
+],
+[
+"A directory lists Matt Sylvia as owner and estimates 22 employees and $1-10M revenue. These are third-party estimates.",
+"https://www.visualvisitor.com/companies/302688/sw_electrical_contractors_inc.",
+"other"
+],
+[
+"Job postings for apprentices, a foreman and a project manager in Bridgewater show it is operating and hiring.",
+"https://www.jobtarget.com/jobs/jt-q8hx1jw49o/electrical-foreman-bridgewater-massachusetts",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-1978",
+"web": "https://www.anneseelectric.com",
+"op": "yes",
+"seg": true,
+"segnote": "Union commercial and public-sector electrical subcontractor (schools, municipal, wastewater). No residential work.",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.2,
+0.5,
+0.04,
+0.04,
+0.0,
+0.02,
+0.05,
+0.15
+],
+"founded": null,
+"years": "Founding year not stated.",
+"staff": "No headcount stated on the site.",
+"rev": null,
+"rsig": "No review snippets found.",
+"succ": "The founders (the Annese couple) have handed ownership to Melanie Legge. Her family relationship to the founders is unverified, so a transition may already be done.",
+"fit": "Family-owned union electrical sub doing public and institutional work, 6 miles from Norwell. It now has a non-founder owner.",
+"risks": [
+"Union shop (IBEW Local 103)",
+"WBE certification may depend on current ownership and could be lost on a sale",
+"Mostly public-bid work",
+"Address conflict: Weymouth vs West Bridgewater"
+],
+"ev": [
+[
+"Company site names Deb and Joe Annese as founders and says the firm continues to be family owned and operated.",
+"https://www.anneseelectric.com/about",
+"company_site"
+],
+[
+"Company site names Melanie Legge as president, director and owner.",
+"https://www.anneseelectric.com/",
+"company_site"
+],
+[
+"Certified women-owned business (SOMWBA, WBENC). NECA Boston member that works with IBEW Local 103.",
+"https://www.anneseelectric.com/",
+"company_site"
+],
+[
+"Focuses on public-sector work such as schools, ice rinks and wastewater plants, and is expanding into institutional work.",
+"https://www.anneseelectric.com/about",
+"company_site"
+],
+[
+"Directory lists 280 Libbey Industrial Pkwy, Weymouth, as a subcontractor. LevelSet places it in West Bridgewater.",
+"https://constructionjournal.com/companies/details/pages/Annese-Electrical-Services-460467.html",
+"other"
+]
+],
+"ver": [
+"confirmed",
+"I fetched the company's own site today. The About page says founders Deb and Joe Annese's firm 'continues to be family owned and operated'. The home page names Melanie Legge as president, director and owner, and lists the WBE (Supplier Diversity Office) and WBENC certifications. The footer is copyright 2026. Neither page mentions an acquisition, parent company, merger or private-equity owner. One gap: no page says Legge is related to the founders. I could not run a news search for a sale, because this run's shared web-search budget was used up before my first query.",
+"https://www.anneseelectric.com/about"
+]
+},
+{
+"cid": "cet-1981",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "NAICS 238210 electrical contractor per PPP. Not verified.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.1,
+0.05,
+0.05,
+0.0,
+0.05,
+0.05,
+0.45
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "",
+"succ": "none found (not researched)",
+"fit": "Not researched: the shared web-search budget ran out before this company. A guessed domain did not resolve.",
+"risks": [
+"Unverified: no searches run (shared search budget exhausted)",
+"105 miles from Worcester"
+],
+"ev": [],
+"ver": null
+},
+{
+"cid": "cet-2006",
+"web": "https://www.gatecityelectric.com",
+"op": "yes",
+"seg": true,
+"segnote": "Commercial electrical contractor (NAICS 238210). Does no residential work.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.7,
+0.03,
+0.1,
+0.05,
+0.0,
+0.02,
+0.02,
+0.08
+],
+"founded": 2004,
+"years": "About 22 years (founded August 2004)",
+"staff": "Not stated on site. The site cites over 200 years of combined experience.",
+"rev": null,
+"rsig": "none found (search budget exhausted)",
+"succ": "Possible. The founder had about 60 years in the trade by 2026, counting 35 years of experience before founding in 2004. No next generation is named, and two VPs could be internal successors. Inferred, not stated.",
+"fit": "Founder-run commercial electrical contractor in Nashua NH, 34 miles from CET Worcester. Strong add-on candidate if CET wants commercial electrical work.",
+"risks": [
+"founder age inferred, not confirmed",
+"commercial only",
+"acquisition check not run beyond the company site: search budget exhausted"
+],
+"ev": [
+[
+"Established August 2004. Don Gingras is named owner and Principal/President.",
+"https://www.gatecityelectric.com/about",
+"company_site"
+],
+[
+"Before founding Gate City, the founder had 35 years of industry relationships and ran another large electrical contractor for 25 years.",
+"https://www.gatecityelectric.com/about",
+"company_site"
+],
+[
+"Describes itself as one of the largest commercial electrical contractors in Southern NH and Northern MA. Two VPs are named, and no family successor is named.",
+"https://www.gatecityelectric.com/about",
+"company_site"
+],
+[
+"Services are commercial only: design-build, lighting, fire alarm, data center wiring, UPS, generators, retrofits and 24/7 emergency repair. No residential work is listed.",
+"https://www.gatecityelectric.com",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"I fetched the live About page today. It says the company was established in August 2004 and names Don Gingras as owner, founder and Principal/President. Two VPs, an office manager and a purchasing agent are also named. The page mentions no parent company, acquisition, merger or new owner. The PPP row (Nashua NH, NAICS 238210, 45 jobs, LLC) fits the New England CET segment. Caveat: the shared web-search budget ran out before I could search news or press for a sale or PE deal. This verdict rests only on the company's own live site, so no outside check for an acquisition was done.",
+"https://www.gatecityelectric.com/about"
+]
+},
+{
+"cid": "cet-2180",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "NAICS 238210 electrical contractor per PPP. Not verified on the web.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.1,
+0.1,
+0.05,
+0.01,
+0.04,
+0.02,
+0.38
+],
+"founded": null,
+"years": "",
+"staff": "57 jobs per PPP 2020-21; no current figure.",
+"rev": null,
+"rsig": "",
+"succ": "none found",
+"fit": "57-job electrical contractor 44 mi from Worcester. Nothing verified in this run.",
+"risks": [
+"Not researched: shared web search budget was exhausted before this company was searched",
+"Website not found"
+],
+"ev": [
+[
+"Guessed domain stelectrical.com redirects to stgroup.ca, an unrelated Canadian firm; no company site found",
+"https://www.stelectrical.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-2197",
+"web": "https://www.bostonsolar.us/",
+"op": "yes",
+"seg": true,
+"segnote": "Full-service solar design-and-install (EPC) contractor in Woburn. Installs solar and battery storage for homes and businesses.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.03,
+0.0,
+0.02,
+0.85,
+0.0,
+0.04,
+0.01,
+0.05
+],
+"founded": null,
+"years": "No founding year was confirmed on the sources read.",
+"staff": "PPP 2020-21 reported 64 jobs. No current figure was found.",
+"rev": null,
+"rsig": "Not assessed. The company is a subsidiary, so owner involvement does not apply.",
+"succ": "Already acquired. SinglePoint (OTC Pink: SING) took an 80.1% controlling stake, announced November 2021. A Powell Max Limited non-binding letter of intent to buy it for $9M (including $7M of assumed debt) was reported. Its date and status are unverified.",
+"fit": "Solar installer already controlled by a public company. A possible resale, but not founder-owned.",
+"risks": [
+"Controlled by SinglePoint, a distressed OTC Pink parent",
+"Possible pending sale to Powell Max (non-binding, undated)",
+"No status update found after March 2025",
+"Residential solar sector under stress"
+],
+"ev": [
+[
+"SinglePoint announced it would buy a controlling stake in The Boston Solar Company LLC",
+"https://www.eqmagpro.com/singlepoint-inc-announces-acquisition-of-premium-solar-epc-the-boston-solar-company-llc-with-projected-25-million-in-2022-revenue-eq-mag-pro/",
+"press"
+],
+[
+"SinglePoint acquires 80.1% stake in Boston Solar",
+"https://www.privsource.com/acquisitions/deal/l6S5q7",
+"news"
+],
+[
+"Early 2025 release calls Boston Solar a SinglePoint subsidiary with over $4M in contracted installs",
+"https://www.newsfilecorp.com/release/239514/SinglePoint-Subsidiary-Boston-Solar-Jumpstarts-2025-with-over-4000000-in-Contracted-Solar-and-Battery-Storage-Installations",
+"press"
+],
+[
+"Powell Max non-binding letter of intent to buy Boston Solar for $9M",
+"https://briefglance.com/companies/powell-max-limited/pulses/35197",
+"news"
+],
+[
+"Boston Solar bought Ecodaptive through a subsidiary (2022)",
+"https://mergr.com/transaction/boston-solar-acquires-ecodaptive",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-2261",
+"web": "https://www.electricalsystemsofmaine.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Residential and commercial electrical service work",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.25,
+0.05,
+0.05,
+0.0,
+0.0,
+0.0,
+0.4
+],
+"founded": 1986,
+"years": "Since 1986 (company site)",
+"staff": "hiring per site; 42 jobs per PPP 2020-21",
+"rev": null,
+"rsig": "not checked (search budget exhausted)",
+"succ": "Possible: two family members in leadership 38+ years after the 1986 start; unverified",
+"fit": "Residential and commercial electrical, generator and HVAC service in Maine with 42 jobs. Two Tassinaris lead it, which suggests a family business, though whether it is the founder or a later generation is unconfirmed.",
+"risks": [
+"founder unconfirmed",
+"family relationship between the Tassinaris unverified"
+],
+"ev": [
+[
+"Electrical Systems of Maine, 1200 Minot Ave, Auburn ME; residential and commercial electrical service, generators and heat pumps; 'since 1986'; currently hiring electricians",
+"https://www.electricalsystemsofmaine.com/",
+"company_site"
+],
+[
+"Leadership: David Tassinari (CEO), Mathew Tassinari (CFO), Craig Norcross (COO); the founder and any family relationship are not stated",
+"https://www.electricalsystemsofmaine.com/about",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-2346",
+"web": "https://www.newportelectric.com",
+"op": "yes",
+"seg": true,
+"segnote": "Electrical contracting (NAICS 238210), plus a solar department.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.35,
+0.1,
+0.1,
+0.07,
+0.01,
+0.02,
+0.03,
+0.32
+],
+"founded": null,
+"years": "Founding year not stated on site",
+"staff": "",
+"rev": null,
+"rsig": "none found (search budget exhausted)",
+"succ": "none found",
+"fit": "Active electrical, solar and HVAC contractor in RI and MA, with both residential and commercial work. Close to CET's Taunton site.",
+"risks": [
+"owner not identified",
+"address moved from the PPP city (Portsmouth) to Bristol RI and Needham MA",
+"solar and HVAC mix may change the fit",
+"acquisition check not run: search budget exhausted"
+],
+"ev": [
+[
+"Trades as NEC Electric & Solar (Newport Electric Construction, Corp.). Offers electrical, HVAC, solar with battery storage, EV charging and mini-splits.",
+"https://www.newportelectric.com",
+"company_site"
+],
+[
+"Offices are in Bristol, RI and Needham, MA. It serves RI, MA and CT and cites over 3,000 installations.",
+"https://www.newportelectric.com",
+"company_site"
+],
+[
+"Does both residential service work and commercial construction for GCs, property managers and building owners. Homepage names no owner or parent company.",
+"https://www.newportelectric.com",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-2358",
+"web": "https://www.geminielectricinc.com",
+"op": "unclear",
+"seg": true,
+"segnote": "Electrical contractor. Listed public projects include generator work for the NH State Police range and a fire station. The residential share is unknown.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.15,
+0.05,
+0.05,
+0.0,
+0.05,
+0.0,
+0.4
+],
+"founded": 1990,
+"years": "Directories say it was founded in 1990, about 36 years ago.",
+"staff": "A directory estimates about 71. PPP reported 68 jobs.",
+"rev": null,
+"rsig": "none found",
+"succ": "About 36 years in business, which fits a possible founder transition. No leadership was found. Unverified.",
+"fit": "NH electrician with generator and public work. Ownership is unknown.",
+"risks": [
+"The company website failed to load with an SSL error",
+"No owner or leadership found",
+"One directory codes it NAICS 238990, not 238210",
+"52 miles from Worcester"
+],
+"ev": [
+[
+"8 Priscilla Lane, Auburn NH. Founded 1990 and privately held.",
+"https://start.cortera.com/company/research/k3p6qyo4s/gemini-electric-inc/",
+"other"
+],
+[
+"Listed projects include Kohler generator work for the NH State Police range and a fire station.",
+"https://constructionjournal.com/companies/details/pages/Gemini-Electric-Inc-465475.html",
+"other"
+],
+[
+"Blue Book lists it as an electrical subcontractor.",
+"https://www.thebluebook.com/iProView/318197/gemini-electric-inc/subcontractors/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-2361",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "NAICS 238210 per PPP. Not verified.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.2,
+0.2,
+0.05,
+0.05,
+0.0,
+0.03,
+0.02,
+0.45
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "",
+"succ": "none found (not researched)",
+"fit": "Not researched: the shared web-search budget ran out. A guessed domain did not resolve. A large PPP loan ($2.95M) for 70 jobs suggests a high-wage, probably union, commercial shop (unverified).",
+"risks": [
+"Unverified: no searches run (shared search budget exhausted)",
+"107 miles from Worcester"
+],
+"ev": [],
+"ver": null
+},
+{
+"cid": "cet-2373",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "Solar installation filed under 238210. It is in segment by NAICS code, but its residential versus commercial mix is unknown.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.05,
+0.1,
+0.05,
+0.0,
+0.1,
+0.05,
+0.35
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "none found",
+"succ": "none found (not researched)",
+"fit": "Solar installer under the electrical NAICS code. It may fit if CET wants solar work. Ownership is unconfirmed.",
+"risks": [
+"web search budget exhausted before research",
+"no website confirmed",
+"unverified"
+],
+"ev": [
+[
+"greenmountainsolar.com redirects to greenmountain.com, which looks like a different company. Its website was not confirmed.",
+"https://www.greenmountainsolar.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-2379",
+"web": "https://www.granitestatesolar.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Solar and generator electrical work for homes and businesses",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.05,
+0.1,
+0.2,
+0.0,
+0.0,
+0.05,
+0.3
+],
+"founded": 2008,
+"years": "Founded 2008 (company site)",
+"staff": "site mentions an in-house team with no headcount; 30 jobs per PPP 2020-21",
+"rev": null,
+"rsig": "not checked (search budget exhausted)",
+"succ": "none found",
+"fit": "Residential and commercial solar, storage and generator installer in NH. It is part of a small three-brand group, so the buyer would likely be the group, not one unit.",
+"risks": [
+"multi-brand group with common ownership; the controlling owner or any investor is unconfirmed",
+"solar demand is sensitive to incentive policy",
+"founders not named on site"
+],
+"ev": [
+[
+"Granite State Solar, 57 Ryan Road, Bow NH; residential and commercial solar, battery backup and generators",
+"https://www.granitestatesolar.com/",
+"company_site"
+],
+[
+"Founded in 2008 in Bow, NH",
+"https://www.granitestatesolar.com/about/who-we-are/",
+"company_site"
+],
+[
+"Calls itself one of three local brands in 'one family of companies', with Green Mountain Solar (2017, VT) and Vermont Generator Systems (since 2004); the ownership structure is not explained",
+"https://www.granitestatesolar.com/about/who-we-are/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-2472",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "NAICS 238210 electrical contractor per PPP. Not verified on the web.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.2,
+0.15,
+0.1,
+0.05,
+0.0,
+0.03,
+0.02,
+0.45
+],
+"founded": null,
+"years": "",
+"staff": "85 jobs per PPP 2020-21; no current figure.",
+"rev": null,
+"rsig": "",
+"succ": "none found",
+"fit": "85-job South Burlington VT electrical contractor, 163 mi from Worcester. Nothing verified in this run.",
+"risks": [
+"Not researched: shared web search budget was exhausted",
+"Website not found",
+"Far from CET sites"
+],
+"ev": [
+[
+"Guessed domains omegaelectricvt.com and omegaelectricconstruction.com do not resolve; omegaelectric.com gave an SSL error. No company site read",
+"https://www.omegaelectric.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-2475",
+"web": "unverified",
+"op": "unclear",
+"seg": true,
+"segnote": "Assumed electrical contractor from NAICS only",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.2,
+0.05,
+0.05,
+0.01,
+0.06,
+0.05,
+0.33
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "none found (search budget exhausted)",
+"succ": "none found",
+"fit": "Unverified. PPP lists 58 jobs under NAICS 238210 in Woodsville NH, 119 miles from CET Worcester.",
+"risks": [
+"no evidence gathered: shared web search budget was used up",
+"common name, so entity matching is risky",
+"far from CET sites"
+],
+"ev": [
+[
+"royalelectricinc.com is an electrical contractor site claiming over 25 years of service. It gives no location, so a match to Woodsville NH is unconfirmed.",
+"https://www.royalelectricinc.com",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-2495",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "NAICS 238210 per PPP. Not verified.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.05,
+0.05,
+0.03,
+0.0,
+0.07,
+0.05,
+0.45
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "",
+"succ": "none found (not researched)",
+"fit": "Not researched: the shared web-search budget ran out. The PPP data looks inconsistent: 60 jobs on a $54,800 loan suggests far fewer real employees.",
+"risks": [
+"Unverified: no searches run (shared search budget exhausted)",
+"PPP jobs figure (60) is inconsistent with the small loan ($54,800); the real headcount is likely much lower"
+],
+"ev": [],
+"ver": null
+},
+{
+"cid": "cet-2580",
+"web": "https://www.ewaudet.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Commercial, industrial and institutional electrical work; no residential work mentioned",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.1,
+0.45,
+0.1,
+0.05,
+0.0,
+0.0,
+0.05,
+0.25
+],
+"founded": 1966,
+"years": "Since 1966 (company site)",
+"staff": "none stated; 65 jobs per PPP 2020-21",
+"rev": null,
+"rsig": "not checked (search budget exhausted)",
+"succ": "Possible: 58+ years old with 'Sons' in the name; no next generation named (unverified)",
+"fit": "Long-running Providence electrical contractor with 65 jobs, 17 mi from Taunton. The name and its 1966 start suggest a family business now in a later generation (unverified).",
+"risks": [
+"family generation inferred from the '& Sons' name only, unverified",
+"owners not named",
+"PPP total of $3.6M is large relative to 65 jobs; check payroll"
+],
+"ev": [
+[
+"E.W. Audet & Sons, 169 Bay Street, Providence RI; industrial, commercial and institutional electrical contracting, 24-hour emergency service; operating since 1966",
+"https://www.ewaudet.com/",
+"company_site"
+],
+[
+"About page: President and Vice President are directly involved in managing projects, and many employees have been there over a decade; no owners are named and no parent company is mentioned",
+"https://www.ewaudet.com/about",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"Company site, copyright 2026, is current. The staff directory lists Jeffrey Audet as President and Jax Audet as Accounting/Safety Officer, so the founding family name still appears in leadership of 'E.W. Audet & Sons, Inc.' (since 1966). The home, About and staff pages mention no parent company, acquisition, merger or franchise. Limit: web search was unavailable (search budget used up), so news and press could not be checked for a recent sale. Ownership percentages and the generation are not stated on the site and remain unverified.",
+"https://www.ewaudet.com/staff-directory/"
+]
+},
+{
+"cid": "cet-2596",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "In segment only by NAICS code. Its scope is unconfirmed.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.15,
+0.05,
+0.05,
+0.0,
+0.05,
+0.05,
+0.35
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "none found",
+"succ": "none found (not researched)",
+"fit": "Electrical contractor by NAICS 238210, 21 miles from CET's Taunton site. A loan total near $777K across 2 loans suggests a larger payroll than the 26 reported jobs.",
+"risks": [
+"web search budget exhausted before research",
+"no website found",
+"unverified"
+],
+"ev": [
+[
+"The guessed domain advanceelectricalcorp.com does not resolve. No website was confirmed.",
+"https://www.advanceelectricalcorp.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-2628",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "In segment only by NAICS code. No website was found, so its mix of residential and commercial work is unknown.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.15,
+0.05,
+0.05,
+0.0,
+0.05,
+0.05,
+0.35
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "none found",
+"succ": "none found (not researched)",
+"fit": "Electrical contractor by NAICS 238210. Its scope and ownership were not confirmed.",
+"risks": [
+"web search budget exhausted before research",
+"the website found belongs to a different company with the same name",
+"unverified"
+],
+"ev": [
+[
+"allphaseelectricinc.com belongs to a different All Phase Electric in Fort Smith, Arkansas, not the Saco, Maine borrower. No Maine source was found.",
+"https://www.allphaseelectricinc.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-2638",
+"web": "nardoneelectric.com (unverified; the site failed its TLS check when fetched)",
+"op": "yes",
+"seg": true,
+"segnote": "Commercial and industrial electrical contractor with service and generator divisions. Little residential work found.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.36,
+0.32,
+0.04,
+0.06,
+0.0,
+0.02,
+0.03,
+0.17
+],
+"founded": 1984,
+"years": "Search summary gives 1984. The 2021 release says more than 35 years, so about 1984-1986.",
+"staff": "Aggregators estimate 51-200 (LeadIQ) or 51-100 (Prospeo). The company publishes no figure.",
+"rev": null,
+"rsig": "No review snippets found.",
+"succ": "About 40 years in business with at least two Nardones involved (aggregator data). No retirement or sale notice found. Unverified whether a founder or a second generation runs it.",
+"fit": "About 100-person family-owned commercial electrical and generator contractor 28 miles from Norwell. Generation and owner age are unconfirmed.",
+"risks": [
+"Founder vs second-generation status unconfirmed",
+"Owner and VP names come from aggregators only",
+"Company website could not be fetched (TLS error)"
+],
+"ev": [
+[
+"2021 Woburn Chamber release calls it family owned and operated, with a history of more than 35 years.",
+"https://patch.com/massachusetts/woburn/woburn-chamber-commerce-nardone-electrical-corp",
+"press"
+],
+[
+"Main focus is commercial and industrial electrical work. It also has a service division (fire alarm, data, security, CATV) and a generator division with national accounts.",
+"https://patch.com/massachusetts/woburn/woburn-chamber-commerce-nardone-electrical-corp",
+"press"
+],
+[
+"BuildZoom names Stephen J. Nardone as owner (aggregator, unverified).",
+"https://www.buildzoom.com/contractor/nardone-electrical-corporation",
+"other"
+],
+[
+"Prospeo lists Gerald Nardone as vice president and 51-100 employees (aggregator, unverified).",
+"https://prospeo.io/c/nardone-electrical-corporation",
+"other"
+],
+[
+"2024-era job postings for a lead foreman and service electricians in Woburn suggest it is still operating.",
+"https://career.com/job/nardone-electrical-corporation/service-electrician/j202411192351026803954",
+"other"
+]
+],
+"ver": [
+"unverifiable",
+"I could not refute or confirm this. The run's shared web-search budget was used up, so no search for an acquisition, merger or closure ran. Fetching nardoneelectric.com failed twice: the bare domain gave a TLS certificate error and the www host refused the connection. The newest ownership evidence is a 2021 chamber release calling it family owned. The 2024 job posting shows it was still operating, not who owns it. The worker's founder_led label is also doubtful, since a firm over 35 years old with a second Nardone as VP may be family_next_generation. None of this could be checked.",
+"https://patch.com/massachusetts/woburn/woburn-chamber-commerce-nardone-electrical-corp"
+]
+},
+{
+"cid": "cet-2731",
+"web": "https://www.cascobayelectric.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Residential, commercial and industrial electrical service",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.35,
+0.05,
+0.1,
+0.15,
+0.0,
+0.0,
+0.0,
+0.35
+],
+"founded": null,
+"years": "unknown; the site cites 150+ years of combined team experience only",
+"staff": "none stated; 38 jobs per PPP 2020-21",
+"rev": null,
+"rsig": "not checked (search budget exhausted)",
+"succ": "none found",
+"fit": "Residential-heavy electrical and generator service in southern Maine with 38 jobs and four offices. A strong service-work fit, but ownership is unknown.",
+"risks": [
+"ownership not disclosed",
+"expansion to four offices could mean outside capital (unverified)"
+],
+"ev": [
+[
+"Casco Bay Electric (CBE): residential, commercial and industrial electrical work with 24-hour emergency service; offices in Portland, Lewiston, York and Arundel, ME; serves ME and NH; links to a Generac dealer site",
+"https://www.cascobayelectric.com/",
+"company_site"
+],
+[
+"Residential page: lighting, renovations and upgrades, EV charger installs in ME and NH",
+"https://www.cascobayelectric.com/residential",
+"company_site"
+],
+[
+"About page gives no founder, owner, founding year or parent company",
+"https://www.cascobayelectric.com/about",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-2766",
+"web": "https://www.ecincorporated.com",
+"op": "yes",
+"seg": true,
+"segnote": "Full-service CT commercial and institutional contractor. Projects include Gampel Pavilion, the Basketball Hall of Fame and Liberty Bank HQ. No residential work listed. It has federal contract awards and is a registered apprenticeship sponsor.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.05,
+0.25,
+0.2,
+0.1,
+0.0,
+0.05,
+0.0,
+0.35
+],
+"founded": 1971,
+"years": "Founded in 1971 by two partners, about 55 years ago.",
+"staff": "Not stated. PPP reported 90 jobs.",
+"rev": null,
+"rsig": "none found",
+"succ": "The two founding partners started it 55 years ago. Current ownership is not named, so a later generation or new owners likely run it. Unverified.",
+"fit": "Large Hartford commercial electrician founded by two partners in 1971. Current ownership is unknown.",
+"risks": [
+"Current owners not found",
+"The Hartford Business Journal article was blocked (403) and could not be read",
+"Commercial and institutional focus, not residential service",
+"An OSHA record lists it as nonunion with an Enfield address"
+],
+"ev": [
+[
+"The site says it has operated since 1971 and features commercial and institutional projects.",
+"https://www.ecincorporated.com/",
+"company_site"
+],
+[
+"Began in 1971 when two partners pursued electrical bids on construction projects.",
+"https://hartfordbusiness.com/article/electrical-contractors-inc/",
+"news"
+],
+[
+"About $2.07M in federal obligations across nine awards.",
+"https://www.sweetspot.so/markets/federal/contractors/electrical-contractors-inc-dx4sq2l6b8g5/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-2804",
+"web": "",
+"op": "yes",
+"seg": true,
+"segnote": "Union commercial and industrial electrical contractor that does controls and energy work. This fits CET's electrical construction line.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.4,
+0.2,
+0.05,
+0.05,
+0.0,
+0.03,
+0.02,
+0.25
+],
+"founded": 1997,
+"years": "About 28 years if founded in 1997, per one third-party profile.",
+"staff": "Not stated by the company.",
+"rev": null,
+"rsig": "",
+"succ": "Possible. The founder has been in about 28 years, and a contact database names two other Murphys as owners. Unverified.",
+"fit": "Union commercial electrical, controls and energy contractor 7 miles from CET Norwell. Founder-era owner with possible sons involved.",
+"risks": [
+"PPP borrower name does not exactly match Murphy Electric & Industrial Control; entity match unverified",
+"union shop (IBEW Local 103)",
+"two different addresses listed"
+],
+"ev": [
+[
+"Search results match the PPP name to Murphy Electric & Industrial Control in Pembroke MA. One directory lists an LLC at 7 Riverside Dr, Pembroke. The match is unverified.",
+"https://levelset.com/subcontractors/massachusetts/pembroke/electricians/murphy-electric-industrial-control",
+"other"
+],
+[
+"MA license data shows the company owned by Daniel P Murphy, at 42 Winter St, Pembroke.",
+"https://www.buildzoom.com/contractor/murphy-electric-and-industrial-control-inc",
+"other"
+],
+[
+"Crunchbase lists Dan Murphy as CEO and President.",
+"https://crunchbase.com/organization/murphy-electric-industrial-control",
+"other"
+],
+[
+"Contact database lists a 1997 founding year and names Conor Murphy and Patrick Murphy as owners, so a next generation may be involved. Unverified.",
+"https://prospeo.io/c/murphy-electric-industrial-control-revenue",
+"other"
+],
+[
+"Full-service electrical contractor in greater Boston working with IBEW Local 103. Does commercial construction, controls and energy work.",
+"https://village.ai/company/murphyelectric",
+"other"
+]
+],
+"ver": [
+"unverifiable",
+"I could not check this one. The shared web search budget for this run was used up before my first query ran, so no search results came back. Fetching murphyelectric.com returned only a tracking image and a privacy link, and the www host failed with an expired certificate, so I saw no ownership or status content. I found nothing that shows a sale, a private-equity owner or a closure, and nothing current that confirms independent family ownership. The worker's evidence comes only from third-party directories (BuildZoom, Crunchbase, Prospeo, Levelset). The link to the PPP borrower is also weak. The PPP borrower is 'ELECTRIC & INDUSTRIAL CONTROL, LLC', but the license and Crunchbase records are for 'Murphy Electric & Industrial Control, Inc.' So the match is unconfirmed. Re-check when search is available.",
+"https://www.buildzoom.com/contractor/murphy-electric-and-industrial-control-inc"
+]
+},
+{
+"cid": "cet-2856",
+"web": "https://www.performanceelectricalco.com",
+"op": "yes",
+"seg": true,
+"segnote": "Full-service union electrical contractor. Featured projects are commercial building work, such as Kenmore Square. It has a service manager role. No clear residential focus.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.5,
+0.05,
+0.1,
+0.05,
+0.0,
+0.05,
+0.0,
+0.25
+],
+"founded": 2008,
+"years": "The site says it has worked with clients since 2008, about 18 years.",
+"staff": "The team page lists 8 managers. No total headcount is given. PPP reported 63 jobs.",
+"rev": null,
+"rsig": "none found",
+"succ": "none found. The firm is young, and Jeffrey Catalano is listed as President.",
+"fit": "Young union commercial electrician 9 miles from Norwell. Likely led by its founder or president, but unverified.",
+"risks": [
+"It is not confirmed that the president is the founder or sole owner",
+"Union commercial work, not residential service",
+"Third-party directories conflict on project counts"
+],
+"ev": [
+[
+"The site describes a full-service union electrical contractor serving clients since 2008.",
+"https://www.performanceelectricalco.com/",
+"company_site"
+],
+[
+"The team page lists Jeffrey Catalano as President, plus project managers, a service manager and office staff.",
+"https://www.performanceelectricalco.com/our-team",
+"company_site"
+],
+[
+"Listed as an electrician based in Holbrook, MA.",
+"https://www.levelset.com/subcontractors/massachusetts/holbrook/electricians/performance-electrical-contractors/job-history/",
+"other"
+]
+],
+"ver": [
+"unverifiable",
+"The company's own homepage and team page are live. They name Jeffrey Catalano as President, say it has served clients 'since 2008', and say it is affiliated with IBEW Local 103. Neither page mentions a parent company, acquisition, private equity or a franchise, so no contrary evidence was found. Neither page names an owner or founder, and neither shows a copyright year or dated content. An image timestamp suggests a 2022 update, which is an inference only. So there is no positive current evidence that Catalano is the founder-owner. The web-search budget ran out before any acquisition or news search could run.",
+"https://www.performanceelectricalco.com/our-team"
+]
+},
+{
+"cid": "cet-3247",
+"web": "",
+"op": "yes",
+"seg": true,
+"segnote": "Commercial and public-sector electrical contractor. A tracker shows public contract awards from 2021 to 2024, including a $3.6M May 2023 award for CCTV cabling for Boston Public Schools.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.35,
+0.05,
+0.06,
+0.06,
+0.0,
+0.04,
+0.04,
+0.4
+],
+"founded": null,
+"years": "",
+"staff": "PPP 2020-21 reported 75 jobs. One directory also says about 75.",
+"rev": null,
+"rsig": "No review snippets found.",
+"succ": "none found",
+"fit": "Active public-works electrical contractor 7 miles from CET's Norwell site. No owner or website was found, so ownership is undetermined.",
+"risks": [
+"No company website found",
+"Owner or officers not identified. A Massachusetts corporations lookup is needed.",
+"Revenue may depend on public bids"
+],
+"ev": [
+[
+"Subchapter S corporation, about 75 employees, 345 Washington St, Pembroke (directory)",
+"https://naicslist.com/company-profile/your-electrical-solution-inc-pembroke-ma-02359",
+"other"
+],
+[
+"7 public contracts awarded 2021-2024, including a $3.6M CCTV cabling award for Boston Public Schools (May 2023)",
+"https://bidsfactory.com/en/companies/your-electrical-solution-inc",
+"other"
+],
+[
+"Electrician in Pembroke with about 21-23 recorded jobs and no reported payment issues in 2023 (search snippet)",
+"https://levelset.com/subcontractors/massachusetts/pembroke/electricians/your-electrical-solution",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-3397",
+"web": "",
+"op": "yes",
+"seg": true,
+"segnote": "Commercial fit-out electrical subcontractor (retail, medical, food). Also has a consumer-facing listing.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.5,
+0.03,
+0.07,
+0.04,
+0.0,
+0.04,
+0.02,
+0.3
+],
+"founded": 2014,
+"years": "Founded about 2014 per an aggregator (unverified). About 12 years old.",
+"staff": "Aggregators say 17-27. The PPP record says 55.",
+"rev": [
+null,
+5,
+"HomeAdvisor rating shown in a search-result snippet; review count not shown"
+],
+"rsig": "Search snippet shows a 5.0 rating but nothing about owner involvement.",
+"succ": "none; young company",
+"fit": "Young Framingham commercial electrical sub, likely still run by its founder. Smaller than the PPP job count suggests.",
+"risks": [
+"Headcount conflict: PPP 55 vs directories 17-27",
+"Founder identity unconfirmed",
+"Young company (about 2014)"
+],
+"ev": [
+[
+"Directory data gives a founding year of 2014 and about 27 employees. Another directory lists 17 employees at 42 Morton St, Framingham.",
+"https://naicslist.com/company-profile/voltech-electric-inc-framingham-ma-01702",
+"other"
+],
+[
+"Blue Book profile calls it a fast-growing, fully licensed, bonded and insured electrical company. Projects include retail (Shaw's, Lowe's), a dental office and a bakery.",
+"https://www.thebluebook.com/iProView/1243044/voltech-electric-inc/subcontractors/",
+"other"
+],
+[
+"ZoomInfo lists 107 2nd St, Framingham.",
+"https://www.zoominfo.com/c/voltech-electric/498801234",
+"other"
+]
+],
+"ver": [
+"unverifiable",
+"I could not refute or confirm this. The run's shared web-search budget was used up, so no search ran. The worker gave no company website. A guessed domain, voltechelectric.com, refused the connection and is not confirmed to belong to this firm. The worker's evidence comes only from directories: a 2014 founding year, 17 to 27 employees, and Framingham addresses. None of it names an owner or shows founder ownership, and nothing found shows a sale or a franchise.",
+"https://naicslist.com/company-profile/voltech-electric-inc-framingham-ma-01702"
+]
+},
+{
+"cid": "cet-3493",
+"web": "https://www.dmhelectric.com",
+"op": "yes",
+"seg": true,
+"segnote": "Started in residential work and later added commercial. Panel upgrades, rewiring, lighting, surge protection, generators and EV chargers. Licensed in MA, VT, NH and ME.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.02,
+0.03,
+0.07,
+0.85,
+0.0,
+0.01,
+0.0,
+0.02
+],
+"founded": 1991,
+"years": "Founded in 1991. It became a 100% ESOP in 2019, and Qmerit acquired it in September 2021.",
+"staff": "Not stated. PPP reported 64 jobs.",
+"rev": [
+87,
+4.7,
+"Birdeye, via search snippet"
+],
+"rsig": "A search snippet shows a 4.7-star Birdeye rating from 87 reviews. Nothing was found on whether the owner is hands-on.",
+"succ": "Already sold. It went to an ESOP in 2019, then Qmerit (Irvine, CA) bought it in 2021. The site says the next generation continues the legacy.",
+"fit": "Strong residential electrical fit 9 miles from Worcester, but already owned by Qmerit.",
+"risks": [
+"Acquired by Qmerit in 2021, which is a strategic electrification roll-up",
+"Its own site describes it as a Certified Qmerit Partner",
+"Not available as an independent target"
+],
+"ev": [
+[
+"Qmerit acquired the Sterling firm DMH Electric. The price was not disclosed.",
+"https://wbjournal.com/article/sterlings-dmh-electric-acquired-by-california-green-energy-company",
+"news"
+],
+[
+"Qmerit announced it was expanding to Greater Boston through the DMH location.",
+"https://qmerit.com/news/qmerit-expands-to-greater-boston-metro-market-with-new-company-location/",
+"press"
+],
+[
+"Was 100% owned by an ESOP as of 2019.",
+"https://www.wbjournal.com/article/20190121/NEWS01/190129994/.tab-1",
+"news"
+],
+[
+"The site says it was founded in 1991 by a father and a partner, started in residential work, and is a Certified Qmerit Partner.",
+"https://dmhelectric.com/about-us/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-3520",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "NAICS 238210 per PPP. The name suggests power or utility work, but this is unverified.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.08,
+0.05,
+0.04,
+0.0,
+0.05,
+0.08,
+0.45
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "",
+"succ": "none found (not researched)",
+"fit": "Not researched: the shared web-search budget ran out. The PPP screen shows an SBA 7(a) loan of $250,000 from 2011, paid in full.",
+"risks": [
+"Unverified: no searches run (shared search budget exhausted)"
+],
+"ev": [],
+"ver": null
+},
+{
+"cid": "cet-3549",
+"web": "https://www.rosciti.com",
+"op": "yes",
+"seg": true,
+"segnote": "Utility-side electrical, communications and gas construction for utilities and municipalities. This fits CET's utility-partner model, though it is more infrastructure than building electrical work.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.2,
+0.25,
+0.05,
+0.05,
+0.0,
+0.05,
+0.05,
+0.35
+],
+"founded": null,
+"years": "Unknown for this entity. A sister entity is shown as founded 2006 (unverified).",
+"staff": "Not stated. 54 PPP jobs.",
+"rev": null,
+"rsig": "",
+"succ": "A family limited partnership exists, which may point to estate planning. Weak, unverified.",
+"fit": "Family-named utility and communications contractor 21 miles from CET Taunton. Spread across several Rosciti entities.",
+"risks": [
+"several related Rosciti entities; deal perimeter unclear",
+"utility and gas infrastructure work, not building electrical",
+"rosciti.com TLS certificate failed at fetch"
+],
+"ev": [
+[
+"Directory says it installs electrical and communication systems for municipalities, industrial owners and private utilities. It is also a certified gas contractor (distribution and maintenance).",
+"https://naicslist.com/company-profile/rosciti-communication-utility-corporation-johnston-ri-02919",
+"other"
+],
+[
+"A RI Secretary of State certificate names a related entity, Rosciti Utility Construction, LLC, at 123 King Philip St.",
+"https://business.sos.ri.gov/CORP_DRIVE1/2022/0114/000000000/8422/CERT_1_1.pdf",
+"state_record"
+],
+[
+"A RI filing exists for a Rosciti Family Limited Partnership naming Henry Rosciti. This suggests family ownership but does not confirm it for the operating company.",
+"https://business.sos.ri.gov/CORP_DRIVE1/2025/0310/000000000/6606/202566681000_1.pdf",
+"state_record"
+],
+[
+"A sister name, Rosciti Construction, is listed at 129 King Philip St, Johnston, with a 2006 founding year on ZoomInfo (layout unclear, unverified).",
+"https://www.zoominfo.com/c/rosciti-construction/357052827",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-3604",
+"web": "unverified",
+"op": "unclear",
+"seg": true,
+"segnote": "Assumed electrical contractor from NAICS only",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.2,
+0.1,
+0.1,
+0.01,
+0.04,
+0.05,
+0.25
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "none found (search budget exhausted)",
+"succ": "none found",
+"fit": "Unverified. PPP lists 124 jobs under NAICS 238210 in Manchester CT. No public source was checked.",
+"risks": [
+"no evidence gathered: shared web search budget was used up",
+"common name, so entity matching is risky"
+],
+"ev": [
+[
+"customelectricinc.com belongs to an unrelated family-owned Nebraska electrician near Omaha, not the Manchester CT company.",
+"https://www.customelectricinc.com",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-3888",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "NAICS 237110 water and sewer line construction per PPP. Fits Horton's wastewater and civil niche if confirmed.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.15,
+0.05,
+0.05,
+0.0,
+0.05,
+0.05,
+0.4
+],
+"founded": null,
+"years": "",
+"staff": "42 jobs per PPP 2020-21; no current figure.",
+"rev": null,
+"rsig": "",
+"succ": "none found",
+"fit": "42-job water and sewer utility contractor 18 mi from Taunton. Nothing verified in this run.",
+"risks": [
+"Not researched: shared web search budget was exhausted",
+"Website not found"
+],
+"ev": [
+[
+"Guessed domain cbutility.com does not resolve; no company site found",
+"https://www.cbutility.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-3948",
+"web": "https://www.ralcoelectric.com",
+"op": "yes",
+"seg": true,
+"segnote": "Mixed residential and commercial work. Residential installs, upgrades, repairs and lighting. Commercial, industrial, telecom and fiber work. Generator sales and service through its sister brand RALCO Generator. Offices in Westport, MA and North Kingstown, RI.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.35,
+0.3,
+0.05,
+0.08,
+0.0,
+0.02,
+0.0,
+0.2
+],
+"founded": 1986,
+"years": "The site says since 1986, about 40 years.",
+"staff": "The site gives no count. Blue Book lists 50-99 employees, MapQuest says 60+, and PPP reported 63 jobs. Job postings from 2024-2026 show it is hiring.",
+"rev": null,
+"rsig": "none found",
+"succ": "The President is Rene A. Lachapelle Jr. It is unverified whether he founded the firm or is a later generation. 40 years in business.",
+"fit": "Good residential and generator service fit, 22 miles from Taunton. Ownership looks independent but needs confirmation.",
+"risks": [
+"It is unverified whether the President is the founder",
+"The site shows a Home Comfort Group logo among brand partners. Its meaning is unverified and could be a dealer network or an affiliation",
+"The research budget ran out before a search for an acquisition"
+],
+"ev": [
+[
+"The site says it has served MA and RI since 1986, doing residential, commercial and industrial work, plus generators.",
+"https://www.ralcoelectric.com/",
+"company_site"
+],
+[
+"The about page lists Rene A. Lachapelle Jr. as President, Edward Chaves as VP Construction, and RALCO Generator as a sister brand.",
+"https://www.ralcoelectric.com/about",
+"company_site"
+],
+[
+"Blue Book lists 50-99 employees and $10-20M in annual volume.",
+"https://www.thebluebook.com/iProView/7398",
+"other"
+]
+],
+"ver": [
+"unverifiable",
+"The company's own about page is live, with a 'Copyright © 2026' footer. It lists Rene A. Lachapelle Jr. as President and Edward Chaves as VP Construction, says the company has operated since 1986, and calls RALCO Generator a sister brand. The page does not mention a parent company, acquisition, private equity or merger, so no contrary evidence was found. It does not say who founded or owns the company. The 'Jr.' suffix, and the name RALCO possibly coming from Rene A. LaChapelle, mean this may be a second-generation family business rather than founder-led. That is an unverified inference. The web-search budget ran out before any acquisition or news search could run.",
+"https://www.ralcoelectric.com/about"
+]
+},
+{
+"cid": "cet-4155",
+"web": "https://www.mcelectrical.net",
+"op": "yes",
+"seg": true,
+"segnote": "Commercial and institutional electrical contractor. Its market is NYC, not New England.",
+"wdec": "founder_led",
+"dec": "not_in_segment",
+"p": [
+0.5,
+0.02,
+0.15,
+0.05,
+0.0,
+0.03,
+0.1,
+0.15
+],
+"founded": 2003,
+"years": "About 22 years (2003; the site also says since 2004)",
+"staff": "About 150 employees, per the company site",
+"rev": null,
+"rsig": "none found (search budget exhausted)",
+"succ": "none found",
+"fit": "NYC-focused commercial electrical contractor. This conflicts with the no-NYC rule for CET even though the PPP address is Southington CT.",
+"risks": [
+"NYC market: the guidance says no NYC for CET",
+"PPP address (Southington CT) does not match the site's NY offices, so the entity match is unverified",
+"the site calls the founder both CEO and Partner, so there may be other owners"
+],
+"ev": [
+[
+"M.C. Electrical NY Inc. names Mark Comerford as Founder & CEO and gives 2003 as the founding year.",
+"https://www.mcelectrical.net",
+"company_site"
+],
+[
+"Offices are in Yonkers NY and Woodside (Queens) NY. It serves NYC and the Tri-State area, with no Connecticut office listed.",
+"https://www.mcelectrical.net/about",
+"company_site"
+],
+[
+"Calls itself a 150-employee firm focused on commercial and institutional work. The about page also calls the founder a Partner.",
+"https://www.mcelectrical.net",
+"company_site"
+]
+],
+"ver": [
+"changed",
+"The company's own site gives 2003 as the founding year and names Mark Comerford (Founder & CEO on the home page, Partner on the about page). It mentions no acquirer or PE owner, so I found no ownership refutation. The geography is the problem. The site lists only two offices, Yonkers NY and Woodside (Queens) NY, says it serves NYC and the Tri-State area, and lists no Connecticut location. CET is a New England segment, and the site owner has said no NYC for CET. The PPP row does list a Southington CT borrower address (200 Executive Blvd, 120 jobs, NAICS 238210, Webster Bank). That address is unexplained: it may be a registered-agent or accountant address. It is also unverified that the Southington borrower is the same firm as mcelectrical.net. The 'NY' in the legal name and the similar headcount (120 vs 150) suggest it is. The web-search budget ran out, so I could not check CT state records. If the PPP row stays in the published data by borrower state, it should not be shortlisted as a New England target.",
+"https://www.mcelectrical.net/about"
+]
+},
+{
+"cid": "cet-4568",
+"web": "https://www.altyler.com",
+"op": "yes",
+"seg": true,
+"segnote": "Electrical work plus refrigeration and HVAC, residential and commercial, with 24/7 service.",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.02,
+0.75,
+0.03,
+0.05,
+0.0,
+0.02,
+0.03,
+0.1
+],
+"founded": 1943,
+"years": "About 83 years (founded 1943).",
+"staff": "",
+"rev": null,
+"rsig": "none found",
+"succ": "The 1943 founding means a later generation runs it now. No current owners or next generation are named on the homepage. Unverified.",
+"fit": "A long-running family electrical and HVAC contractor with residential and commercial service, 57 miles from CET's Worcester site. A strong fit.",
+"risks": [
+"the number of generations is not stated; 'family_next_generation' is inferred from the 1943 founding and the '& Sons' name",
+"no acquisition search was possible because the search budget ran out"
+],
+"ev": [
+[
+"Family-owned and operated master electricians, founded in 1943.",
+"https://www.altyler.com/",
+"company_site"
+],
+[
+"Does electrical, refrigeration and air-conditioning work for homes and businesses, with 24/7 service. Located at 175 Canal St, Brattleboro, VT. Licensed in VT and NH.",
+"https://www.altyler.com/",
+"company_site"
+]
+],
+"ver": [
+"unverifiable",
+"The live homepage still says 'Family Owned and Operated Since 1943' at 175 Canal Street, Brattleboro, VT. It names no parent company, buyer or merger. But the page has no date or copyright year and names no current owner. The site's firewall (Mod_Security) blocked subpage and link checks, and /about returns 404. The shared web-search budget for this turn was used up, so I could not search news, press or state records for a sale, roll-up or closure. Nothing contradicts the family_next_generation label, but I found no dated proof that ownership is current, so this check is unverified.",
+"https://www.altyler.com/"
+]
+},
+{
+"cid": "cet-4616",
+"web": "unverified (huntingtonpower.com did not load)",
+"op": "unclear",
+"seg": false,
+"segnote": "Could not confirm the company does electrical contracting work. in_segment is set false only because nothing confirmed it.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.15,
+0.05,
+0.05,
+0.03,
+0.07,
+0.15,
+0.25
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "none found (search budget exhausted)",
+"succ": "none found",
+"fit": "Unverified. The name points to power or generator equipment, which may be a dealer rather than an electrical contractor.",
+"risks": [
+"no evidence gathered: shared web search budget was used up",
+"name suggests equipment sales or rental, not contracting"
+],
+"ev": [
+[
+"Guessed domain huntingtonpower.com resolves to a shared Bizland host with a certificate mismatch. Content could not be read. Not confirmed as this company's site.",
+"https://www.huntingtonpower.com",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-4694",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "In segment only by NAICS code. Its scope is unconfirmed.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.2,
+0.05,
+0.05,
+0.0,
+0.05,
+0.05,
+0.35
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "none found",
+"succ": "none found (not researched)",
+"fit": "Electrical contractor by NAICS code in Aroostook County, Maine. At 331 miles from Norwell it is far from CET's footprint.",
+"risks": [
+"web search budget exhausted before research",
+"no website found",
+"far from CET's sites (331 mi)",
+"unverified"
+],
+"ev": [
+[
+"underwoodelectric.com redirects to a page selling the domain. No company website was found there.",
+"https://www.underwoodelectric.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-4783",
+"web": "https://www.eesc-ct.com",
+"op": "yes",
+"seg": true,
+"segnote": "Commercial, industrial and institutional electrical and communications contractor. Serves schools, medical, wastewater, government, and sports lighting. Fire alarm work. No residential work listed. The name does not mean utility work.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.2,
+0.15,
+0.1,
+0.05,
+0.0,
+0.05,
+0.0,
+0.45
+],
+"founded": null,
+"years": "Crunchbase says over 30 years and still in business. The exact founding year was not found.",
+"staff": "A directory estimates about 53. PPP reported 53 jobs.",
+"rev": null,
+"rsig": "",
+"succ": "none found",
+"fit": "Central CT institutional electrician and fire-alarm contractor. Ownership is unknown.",
+"risks": [
+"No owner or leadership found",
+"Institutional and commercial work only, not residential service",
+"73 miles from Worcester",
+"Duplicate name variants appear in directories"
+],
+"ev": [
+[
+"The site describes a full-service electrical and communications contractor in Central CT serving schools, medical, wastewater and government.",
+"https://www.eesc-ct.com/",
+"company_site"
+],
+[
+"Crunchbase says it has operated for over 30 years and is still in business.",
+"https://www.crunchbase.com/organization/electrical-energy-systems",
+"other"
+],
+[
+"BuildZoom shows permit activity, mostly electrical.",
+"https://www.buildzoom.com/contractor/electrical-energy-systems-corp",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-4789",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "NAICS 238210 electrical contractor per PPP. Not verified on the web.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.15,
+0.35,
+0.05,
+0.05,
+0.01,
+0.02,
+0.02,
+0.35
+],
+"founded": null,
+"years": "",
+"staff": "81 jobs per PPP 2020-21; no current figure.",
+"rev": null,
+"rsig": "",
+"succ": "Name suggests a family business already past or into a second generation (unverified).",
+"fit": "81-job electrical contractor 19 mi from Taunton. The '& Sons' name hints at family ownership (unverified). A 2025 7(a) loan suggests it is still active.",
+"risks": [
+"Not researched: shared web search budget was exhausted",
+"Family-generation label rests on the name only",
+"Open $500K SBA 7(a) loan from May 2025"
+],
+"ev": [
+[
+"Guessed domain izzoandsons.com does not resolve; izzoelectric.com redirects to an unrelated site. No company site found",
+"https://www.izzoandsons.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-4894",
+"web": "https://www.energycircle.com",
+"op": "yes",
+"seg": false,
+"segnote": "A marketing and web agency for building-performance contractors, not an electrical contractor. The fetched page did not state its location, so the match to the Portland, ME borrower is likely but unverified.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.2,
+0.0,
+0.02,
+0.02,
+0.0,
+0.01,
+0.65,
+0.1
+],
+"founded": 2008,
+"years": "",
+"staff": "The site calls itself a small team. No headcount is given.",
+"rev": null,
+"rsig": "none found",
+"succ": "none found",
+"fit": "A marketing agency, despite its electrical NAICS code. Not a CET target. If out-of-segment firms were in play, it would count as founder-led.",
+"risks": [
+"NAICS code does not match the actual business",
+"match to the PPP borrower's location not confirmed on the fetched page"
+],
+"ev": [
+[
+"Energy Circle sells marketing and website services to HVAC, home performance and solar contractors. It does not appear to do electrical work.",
+"https://www.energycircle.com/about",
+"company_site"
+],
+[
+"Founded in 2008. Peter Troast is the CEO and founder. Became a certified B Corp in early 2024.",
+"https://www.energycircle.com/about",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-4913",
+"web": "unverified",
+"op": "unclear",
+"seg": true,
+"segnote": "Assumed electrical contractor from NAICS only",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.1,
+0.1,
+0.07,
+0.01,
+0.05,
+0.05,
+0.37
+],
+"founded": null,
+"years": "",
+"staff": "",
+"rev": null,
+"rsig": "none found (search budget exhausted)",
+"succ": "none found",
+"fit": "Unverified. PPP lists 120 jobs under NAICS 238210 in Bristol CT.",
+"risks": [
+"no evidence gathered: shared web search budget was used up"
+],
+"ev": [
+[
+"Guessed domain ceelectricalcontractors.com returned an empty page. ceelectrical.com is parked for sale. Neither is confirmed as this company's.",
+"https://www.ceelectricalcontractors.com",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-4963",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "NAICS 238210 and the name suggest solar or renewable electrical work, which fits CET's electrical and energy-solutions scope. Unverified.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.2,
+0.05,
+0.05,
+0.05,
+0.02,
+0.18,
+0.05,
+0.4
+],
+"founded": null,
+"years": "Unknown. Had an SBA 7(a) loan in July 2015.",
+"staff": "No current figure. 60 jobs on the 2015 7(a) loan.",
+"rev": null,
+"rsig": "",
+"succ": "none found",
+"fit": "Possible solar or electrical fit, but no public footprint found. The only size signal is a 2015 SBA 7(a) loan.",
+"risks": [
+"no web presence found",
+"only data point is a 2015 SBA 7(a) loan; may be closed or renamed",
+"NH Secretary of State record not checked (search budget exhausted)"
+],
+"ev": [
+[
+"A search for the exact name plus Nashua NH returned no page naming this company. Results were only generic Nashua solar and renewable directories (unverified whether the firm still exists).",
+"https://www.energysage.com/local-data/solar-companies/nh/hillsborough-county/nashua/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-5108",
+"web": "unverified (duffelectric.com is a parked placeholder)",
+"op": "unclear",
+"seg": true,
+"segnote": "",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.15,
+0.2,
+0.05,
+0.05,
+0.0,
+0.2,
+0.05,
+0.3
+],
+"founded": null,
+"years": "unknown",
+"staff": "none stated; 40 jobs per 2013 SBA 7(a) record",
+"rev": null,
+"rsig": "not checked (search budget exhausted)",
+"succ": "none found",
+"fit": "Electrical contractor with 40 jobs on its 2013 SBA loan, 17 mi from Taunton. Ownership and current status unconfirmed.",
+"risks": [
+"web search budget ran out before any search; only a guessed domain was checked",
+"no PPP loan in 2020-21 may mean it closed, shrank or did not apply",
+"no live website found"
+],
+"ev": [
+[
+"duffelectric.com shows only a hosting placeholder with template text, not an electrical contractor site (unverified that this domain ever belonged to the RI company)",
+"https://www.duffelectric.com/",
+"company_site"
+],
+[
+"Name and NAICS 238210 point to electrical contracting; the latest SBA record is a 2013 7(a) loan paid in full, and there is no PPP loan",
+"https://data.sba.gov/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "cet-5381",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "Name points to solar installation under NAICS 238210. That fits CET and NuWave energy work if confirmed.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.05,
+0.1,
+0.05,
+0.0,
+0.08,
+0.05,
+0.37
+],
+"founded": null,
+"years": "",
+"staff": "53 jobs per SBA 7(a) JobsSupported (Nov 2021).",
+"rev": null,
+"rsig": "",
+"succ": "none found",
+"fit": "53 jobs per its 2021 SBA 7(a) loan; Hermon ME is 210 mi from Norwell. Nothing verified in this run.",
+"risks": [
+"Not researched: shared web search budget was exhausted",
+"Website blocked (HTTP 451)",
+"Far from CET sites"
+],
+"ev": [
+[
+"pinetreesolar.com returned HTTP 451 (unavailable for legal reasons); content not read and match to the Hermon ME borrower unverified",
+"https://www.pinetreesolar.com/",
+"other"
+]
+],
+"ver": null
+}
+]
+}

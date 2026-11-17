@@ -1,11 +1,11 @@
-import * as Copy from './copy.js?v=20261113023635';
+import * as Copy from './copy.js?v=20261116225931';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition engine (M&A) — cross-portfolio buy-and-build intelligence.
    Datasets: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets, Competitor filings,
              Public comparables, Private-equity landscape, BSP firm profile; sales/* (property transfers, lazy, theses view).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, fitTierOf } from '../assets/components.js?v=20261113023635';
-import * as DL from './deal-lib.js?v=20261113023635';
+import { renderTargets, fitTierOf } from '../assets/components.js?v=20261116225931';
+import * as DL from './deal-lib.js?v=20261116225931';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 const PLAT = {
@@ -15,6 +15,23 @@ const PLAT = {
   ts: { key: 'ts', label: 'Thomas Scientific', long: 'Thomas Scientific', color: 'var(--co-ts)', module: 'ts', bench: 'lab_distribution', firmId: 'bsp-ts', heat: 'thomas_scientific' },
 };
 const PKEYS = ['cet', 'pp', 'fl', 'ts'];
+/* BPI and Fair Harbor have no hand-built screen; their add-on candidates come only from SBA loan records. */
+PLAT.bpi = { key: 'bpi', label: 'BPI', long: 'Bully Pulpit International (BPI)', color: 'var(--co-bpi)', module: 'bpi', bench: null, firmId: 'bsp-bpi', heat: 'bpi' };
+PLAT.fh = { key: 'fh', label: 'Fair Harbor', long: 'Fair Harbor', color: 'var(--co-fh)', module: 'fh', bench: null, firmId: 'bsp-fh', heat: 'fair_harbor' };
+const SKEYS = ['cet', 'pp', 'fl', 'ts', 'bpi', 'fh'];
+/* SBA loan screen (data/research/ma_ppp_screen.json): plain words for its typed ownership decision and the re-check. */
+const SRC_LABEL = 'SBA loan screen';
+const DEC_TXT = { founder_led: 'Founder-led', family_next_generation: 'Family, next generation', employee_or_partner_owned: 'Employee or partner-owned', pe_backed_or_acquired: 'Sold to a sponsor or roll-up', franchise_unit: 'Franchise unit', closed_or_inactive: 'Closed', not_in_segment: 'Out of segment', unknown: 'Unknown' };
+const DEC_COLOR = { founder_led: 'var(--sys-good)', family_next_generation: 'var(--sys-good)', employee_or_partner_owned: 'var(--sys-info)', pe_backed_or_acquired: 'var(--sys-bad)', franchise_unit: 'var(--sys-violet)', closed_or_inactive: 'var(--sys-bad)', not_in_segment: 'var(--sys-mute-2)', unknown: 'var(--sys-mute-2)' };
+const VER_TXT = { confirmed: 'Confirmed by a second check', confirmed_site_only: 'Confirmed from the company site only (no deal search)', unverifiable: 'Second check could not confirm', corrected: 'Corrected on review', partial: 'Record arrived in part; second check missing', 'not run': 'No second check (only founder and family calls get one)', 'not received': 'Ownership not yet checked' };
+const VER_COLOR = { confirmed: 'var(--sys-good)', confirmed_site_only: 'var(--sys-warn)', unverifiable: 'var(--sys-warn)', corrected: 'var(--sys-bad)', partial: 'var(--sys-warn)', 'not run': 'var(--sys-mute-2)', 'not received': 'var(--sys-mute-2)' };
+const decOf = t => t?.ownership_decision || (t?.enrichment === 'not received' ? null : 'unknown');
+const srcChip = (fmt, t) => t._src === 'sba' ? fmt.chip(SRC_LABEL, 'var(--sys-info)') : t._sba ? fmt.chip(`also in ${SRC_LABEL}`, 'var(--sys-info)') : '';
+const srcLine = t => t._src === 'sba' ? SRC_LABEL : t._sba ? `also in ${SRC_LABEL}` : '';
+/* Fit and tier as the engine shows them: a company on a hand-built list keeps its hand-built fit even when the loan screen also found it. */
+const engFit = x => x.t._src === 'sba' ? x.s.fit_score : x.t.fit_score;
+const engTier = x => x.t._src === 'sba' ? x.s.tier : x.t._tier;
+const handOnly = T => T.filter(t => t._src !== 'sba');
 const OVERLAP = {
   punctual_pros: { label: 'Punctual Pros', color: 'var(--co-pp)', p: 'pp' }, cet: { label: 'CET', color: 'var(--co-cet)', p: 'cet' },
   frontline: { label: 'Frontline', color: 'var(--co-fl)', p: 'fl' }, thomas_scientific: { label: 'Thomas Sci.', color: 'var(--co-ts)', p: 'ts' },
@@ -26,7 +43,9 @@ const DIM_MAX = {
   pp: { density_adjacency: 20, trade_mix: 20, scale: 20, ownership_readiness: 20, brand_alignment: 20 },
   fl: { capability: 5, customer_overlap: 5, scale: 5, ownership_readiness: 5, geography: 5 },
   ts: { capability: 5, customer_overlap: 5, scale: 5, ownership_readiness: 5, geography: 5 },
+  sba: { segment_fit: 30, size: 20, ownership: 30, proximity: 10, verification: 5, evidence: 5 },
 };
+const dimMax = t => (t?._src === 'sba' ? DIM_MAX.sba : DIM_MAX[t?._p]) || {};
 /* Company accents are system tokens (--co-*); Smith + Howard, the exited benchmark, reads in ink. */
 const COMPANY_HEX = [[/CET|Commonwealth/i, 'var(--co-cet)'], [/Punctual/i, 'var(--co-pp)'], [/Frontline/i, 'var(--co-fl)'], [/Thomas/i, 'var(--co-ts)'], [/Bully|BPI/i, 'var(--co-bpi)'], [/Fair Harbor/i, 'var(--co-fh)'], [/Smith/i, 'var(--sys-ink)']];
 const hexFor = s => (COMPANY_HEX.find(([re]) => re.test(String(s || ''))) || [0, 'var(--sys-mute)'])[1];
@@ -93,7 +112,7 @@ const pctOf = (n, d) => d ? Math.round((n / d) * 100) : 0;
 const titleCase = s => String(s || '').replace(/_/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
 const ownerClass = s => { const x = String(s || '').toLowerCase().replace(/no sponsor disclosed|no pe affiliation/g, ''); if (!x.trim()) return 'Unverified'; if (/subsidiary|part of|venture-backed|pe-backed|private equity|backed by|\bpe\b/.test(x)) return 'Sponsor / corporate'; if (/founder|family/.test(x)) return 'Founder / family'; if (/unknown|unverified|not disclosed|not verified/.test(x)) return 'Unverified'; if (/esop|employee-owned/.test(x)) return 'ESOP'; if (/franchisee/.test(x)) return 'Franchisee'; return 'Private independent'; };
 const OWNER_COLOR = { 'Founder / family': 'var(--sys-good)', 'Private independent': 'var(--sys-info)', Franchisee: 'var(--sys-violet)', ESOP: 'var(--sys-warn)', Unverified: 'var(--sys-mute-2)', 'Sponsor / corporate': 'var(--sys-bad)' };
-const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261113023635'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261116225931'; document.head.appendChild(l); } };
 const shortList = a => { const v = (Array.isArray(a) ? a : [a]).filter(Boolean).map(x => { const y = String(x).replace(/\s*\(.*?\)\s*/g, ' ').replace(/_/g, ' ').trim(); return y.length > 26 ? y.slice(0, 25).trim() + '…' : y; }); return v.length > 2 ? [...v.slice(0, 2), `+${v.length - 2}`] : v; };
 const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
 const pctTxt = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;
@@ -130,21 +149,49 @@ function normT(t, p) {
   return { ...t, strategic_rationale: ceoFix(t.strategic_rationale), _p: p, platform: PLAT[p].label, fit_score: fit, employees: num(t.employees), revenue_est_usd: num(t.revenue_est_usd), _tier: fitTierOf(fit || 0), _state: t.state || t.hq_state || '', _owner: ownerClass(t.ownership), _affil: affilFlag(t), _reach: rc.reach, _node: rc.node, _nodeMi: rc.mi };
 }
 
+/* An SBA loan-screen company in the hand-built target shape: the ZIP centroid stands in for the HQ, the loan record's jobs
+   figure for staff, and the typed ownership decision for ownership. _src marks the source everywhere it is shown. */
+function normS(t) {
+  const p = t.segment;
+  const base = { ...t, ownership_notes: t.succession_signal || null, ...(p === 'cet' ? { nearest_cet_node: t.nearest_hub, nearest_cet_node_miles: t.distance_mi } : {}) };
+  return { ...normT(base, p), _src: 'sba', revenue_est_usd: null };
+}
+
 /* One shared load for every view (research() caches per file; this caches the derived bundle). */
 let _bundle = null, _last = null;
 function loadBundle(data) {
   if (_bundle) return _bundle;
   _bundle = (async () => {
-    const names = ['ma_targets_cet', 'ma_targets_pp', 'ma_targets_fl_ts', 'rival_filings', 'public_comps', 'pe_landscape', 'bsp_firm'];
+    const names = ['ma_targets_cet', 'ma_targets_pp', 'ma_targets_fl_ts', 'rival_filings', 'public_comps', 'pe_landscape', 'bsp_firm', 'ma_ppp_screen'];
     // the acquisition model's assumptions ride along (deal math in every profile) but never count as a missing screen
     const [res, dm] = await Promise.all([Promise.all(names.map(n => data.research(n))), data.research('deal_model').catch(() => null)]);
-    const [cet, pp, flts, rivals, comps, pe, firm] = res;
+    const [cet, pp, flts, rivals, comps, pe, firm, sba] = res;
     const missing = names.filter((n, i) => !res[i]);
     const targets = [];
     (cet?.items || []).forEach(t => targets.push(normT(t, 'cet')));
     (pp?.items || []).forEach(t => targets.push(normT(t, 'pp')));
     (flts?.items || []).forEach(t => targets.push(normT(t, t.platform === 'frontline' ? 'fl' : 'ts')));
-    const b = { cet, pp, flts, rivals, comps, pe, firm, dm, missing, targets };
+    // SBA loan screen: a company already on a hand-built list keeps that record and gains the loan facts (t._sba);
+    // every other screened company joins as its own target, marked _src 'sba'.
+    const hand = new Map(targets.map(t => [t.id, t]));
+    const sbaAll = [];
+    for (const s of sba?.items || []) {
+      const h = s.on_existing_list && hand.get(s.on_existing_list);
+      if (h) {
+        h._sba = s;
+        // the loan screen's checked call that the company was already sold overrides the hand-built ownership, so a sold company is
+        // not presented as a target: ownership becomes sponsor-backed, the evidence becomes a risk flag, and fit is capped at 40 (Tier 4)
+        if (s.ownership_decision === 'pe_backed_or_acquired') {
+          const why = (s.ownership_evidence || []).map(e => e.claim).filter(Boolean)[0] || s.succession_signal || '';
+          Object.assign(h, { ownership: 'pe', ownership_notes: `${SRC_LABEL}: already sold to a sponsor or roll-up${why ? ` (${why})` : ''}. Hand-built note: ${h.ownership_notes || '—'}`,
+            risk_flags: [`Already sold per the ${SRC_LABEL}${why ? `: ${why}` : ''}`, ...(h.risk_flags || [])], fit_score: Math.min(h.fit_score || 0, 40), _soldPerSba: true });
+          Object.assign(h, { _owner: ownerClass(h.ownership), _tier: fitTierOf(h.fit_score) });
+        }
+        sbaAll.push({ s, t: h }); continue;
+      }
+      const t = normS(s); targets.push(t); sbaAll.push({ s, t });
+    }
+    const b = { cet, pp, flts, rivals, comps, pe, firm, dm, sba, sbaAll, missing, targets };
     b.byId = new Map(targets.map(t => [t.id, t]));
     b.rivalRows = rivals ? buildRivals(rivals) : [];
     return b;
@@ -156,7 +203,7 @@ const rankedRaw = (b, p) => (p === 'cet' ? b.cet?.meta?.ranked_top_10 : p === 'p
 /* Ranked shortlist with affiliation-flagged names held out and ranks re-numbered (the screen authors' list is otherwise kept as-is). */
 const rankedFor = (b, p) => rankedRaw(b, p).filter(r => !affilFlag(r) && !b.byId.get(r.id)?._affil).map((r, i) => ({ ...r, rank: i + 1, why: ceoFix(r.why) }));
 const affilFor = (b, p) => b.targets.filter(t => t._affil && (!p || t._p === p));
-const metaFor = (b, p) => (p === 'cet' ? b.cet?.meta : p === 'pp' ? b.pp?.meta : b.flts?.meta) || null;
+const metaFor = (b, p) => (p === 'cet' ? b.cet?.meta : p === 'pp' ? b.pp?.meta : p === 'bpi' || p === 'fh' ? b.sba?.meta : b.flts?.meta) || null;
 function competitorsFor(b, p) {
   const src = p === 'cet' ? b.cet?.meta?.pe_backed_competitors : p === 'pp' ? b.pp?.meta?.pe_backed_competitors : p === 'fl' ? b.flts?.meta?.frontline?.pe_backed_competitors : b.flts?.meta?.thomas_scientific?.pe_backed_competitors;
   return (src || []).map(c => ({ name: c.company || c.platform, owner: c.owner || c.sponsor || 'sponsor n/d', note: c.note || c.notes || c.threat || c.footprint || '', src: (c.sources || [])[0] }));
@@ -168,6 +215,8 @@ const nextActionFor = p => ({
   pp: 'PRG-led owner outreach (for Authority Brands franchisees, open the territory-transfer path with the franchisor) → request 3-yr P&L, membership count, technician roster and call-centre metrics → indicative bid inside the LMM multiple band.',
   fl: 'Re-confirm tuck-in criteria with CEO Tim Britt (the ~$5M revenue / $1–2M EBITDA profile was stated under former CEO Naidoo) → approach → review law-firm client list overlap, contract terms and SOC 2 posture → indicative bid; plan service-desk (HELIX) migration.',
   ts: 'Line-card overlap analysis versus the Thomas catalogue → supplier change-of-control consents → request customer concentration and gross margin by line → indicative bid ahead of Calibre Scientific.',
+  bpi: 'Confirm ownership and client mix (public affairs, advocacy, research) → warm introduction through BPI leadership → request client list, retainer share and staff roster → indicative bid.',
+  fh: 'Confirm it is a branded consumer apparel or swim company, not contract sewing → check wholesale and direct-to-consumer mix → request three years of sales by channel → indicative bid.',
 })[p];
 
 /* ── Deal math and "How we estimated this" ──────────────────────────────────────────────────────────────────────
@@ -191,7 +240,7 @@ const noRetrieved = s => String(s || '').replace(/\s*\((?:retrieved|as of)[^)]*\
 function estimateFor(b, t) {
   if (!b || !t) return null;
   const p = t._p, dm = b.dm, sec = dmSector(b, p), par = dmParent(b, p);
-  if (!dm || !sec || !par) return null;
+  if (!dm || !sec || !par || t._src === 'sba') return null;   // loan-screen companies carry no revenue and are not in the model
   const sized = !(t.revenue_est_usd > 0);
   // a target with no revenue on record is sized at the median screened target, exactly as the model's preset does
   const revM = sized ? median(b.targets.filter(x => x._p === p && !x._affil && x.revenue_est_usd > 0).map(x => x.revenue_est_usd / 1e6)) : t.revenue_est_usd / 1e6;
@@ -257,21 +306,53 @@ function dealSection(ctx, b, t) {
 }
 const modelAction = (ctx, b, t) => { const E = !t._affil && estimateFor(b, t); return E ? { id: 'model', label: 'Model this deal', onClick: () => { location.hash = E.hash; } } : null; };
 
+/* Inspector sections for a company found in the SBA loan records: the loan facts (each figure with its year), the ownership
+   call with its probabilities, the second check and the evidence behind it. Used by both target inspectors. */
+const money0 = (fmt, v) => v ? `$${Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })}` : '—';
+function sbaSections(ctx, t) {
+  const { ui, fmt, esc, charts } = ctx; const s = t._src === 'sba' ? t : t._sba;
+  if (!s) return [];
+  const dec = decOf(s), ver = s.verification || {}, P = PLAT[t._p] || {};
+  const probs = s.ownership_probabilities ? Object.entries(s.ownership_probabilities).filter(([, v]) => v > 0).sort((x, y) => y[1] - x[1]).map(([k, v]) => ({ label: DEC_TXT[k] || k, value: Math.round(v * 100), color: DEC_COLOR[k] })) : [];
+  const ev = (s.ownership_evidence || []).map(e => `<li>${esc(Copy.text(e.claim))} <a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(fmt.host(e.url) || 'source')}</a></li>`).join('');
+  const hist = (s.sba_loan_history || []).map(h => `<li>${esc(h.program)} · ${esc(dayWords(h.date))} · ${money0(fmt, h.amount)} · ${esc(h.status || '')}${h.jobs_supported != null ? ` · ${fmt.num(h.jobs_supported)} jobs supported` : ''}${/change of ownership/i.test(h.business_age || '') ? ' · <b>change of ownership</b>' : ''}</li>`).join('');
+  return [
+    { label: `${SRC_LABEL}${t._src === 'sba' ? '' : ' (also found here)'}`, html: `<div class="m-ma-insp">${ui.kv({
+      Trade: s.trade ? esc(s.trade) : null,
+      'Jobs (PPP)': s.jobs_reported_ppp ? `${fmt.num(s.jobs_reported_ppp)} <span class="dim small">reported in ${esc(s.jobs_reported_ppp_years || '2020-2021')}</span>` : null,
+      'Jobs (latest)': s.jobs_latest != null ? `${fmt.num(s.jobs_latest)} <span class="dim small">${esc(Copy.text(s.jobs_latest_source || ''))}</span>` : null,
+      'PPP loans': s.ppp_amount_usd ? `${money0(fmt, s.ppp_amount_usd)} <span class="dim small">${fmt.num(s.ppp_loans)} loan${s.ppp_loans === 1 ? '' : 's'} · ${esc(s.ppp_amount_band)}</span>` : 'none found',
+      'Latest SBA loan': s.sba_latest_loan ? esc(s.sba_latest_loan) : 'none found',
+      'Change of ownership': s.sba_change_of_ownership ? `${esc(dayWords(s.sba_change_of_ownership))}${s.sba_change_of_ownership_recent ? ' <span class="dim small">recent: may have a new owner</span>' : ''}` : 'no SBA loan financed one',
+      Distance: s.distance_mi != null ? `${fmt.num(Math.round(s.distance_mi))} mi from ${esc(String(s.nearest_hub || '').replace(/\s*hub$/i, ''))} <span class="dim small">straight line from the ZIP centre</span>` : null,
+      Address: s.hq_address ? `${esc(s.hq_address)}, ${esc(s.hq_city || '')} ${esc(s.state || '')} ${esc(s.zip || '')}` : null,
+      'Fit (loan screen)': `${fmt.num(s.fit_score)} · ${esc(s.tier)}${t._src === 'sba' ? '' : ' <span class="dim small">the hand-built fit above is the one the engine uses</span>'}${s.fit_cap ? `<div class="dim small">${esc(s.fit_cap)}</div>` : ''}`,
+    })}${hist ? `<div class="sys-card-label th-h">SBA 7(a) and 504 loans</div><ul class="bul small">${hist}</ul>` : ''}</div>` },
+    { label: 'Ownership check', html: `<div class="m-ma-insp"><div class="sys-chips">${dec ? fmt.chip(DEC_TXT[dec] || dec, DEC_COLOR[dec]) : fmt.chip('Not yet checked')}${fmt.chip(VER_TXT[ver.verdict] || 'Not checked', VER_COLOR[ver.verdict])}</div>
+      ${ver.reason ? `<div class="small text-2 mt-8">${esc(Copy.text(ver.reason))}${ver.url ? ` <a href="${esc(ver.url)}" target="_blank" rel="noopener">${esc(fmt.host(ver.url))}</a>` : ''}</div>` : ''}
+      ${probs.length ? `<div class="mt-8">${charts.hbar(probs, { max: 100, fmt: v => `${v}%`, labelW: 170 })}</div>` : ''}
+      ${s.succession_signal ? `<div class="small text-2 mt-8"><b>Succession:</b> ${esc(Copy.text(s.succession_signal))}</div>` : ''}
+      ${s.review_count || s.review_rating || s.review_signal ? `<div class="small text-2 mt-8"><b>Reviews:</b> ${s.review_count ? `${fmt.num(s.review_count)} reviews` : ''}${s.review_rating ? ` · ${esc(s.review_rating)}★` : ''}${s.review_source ? ` <span class="dim">(${esc(s.review_source)})</span>` : ''}${s.review_signal ? ` ${esc(Copy.text(s.review_signal))}` : ''}</div>` : ''}
+      ${ev ? `<div class="sys-card-label th-h">Evidence</div><ul class="bul small">${ev}</ul>` : `<div class="dim small mt-8">${esc(P.label || '')} companies from the loan records have not had their ownership checked yet.</div>`}</div>` },
+  ];
+}
+
 /* Target inspector (used everywhere except the renderTargets table, which has its own). */
 function openTarget(ctx, t, _b = _last) {
-  const { ui, fmt, inspector, esc, charts, app } = ctx; const P = PLAT[t._p]; const mx = DIM_MAX[t._p] || {};
+  const { ui, fmt, inspector, esc, charts, app } = ctx; const P = PLAT[t._p]; const mx = dimMax(t);
   const fb = Object.entries(t.fit_breakdown || {}).map(([k, v]) => { const m = mx[k] || (t._p === 'fl' || t._p === 'ts' ? 5 : 20); return { label: `${titleCase(k)} (${num(v) ?? '—'}/${m})`, value: Math.round(((num(v) || 0) / m) * 100) }; });
   inspector.open({
     title: esc(t.company), color: P.color,
-    sub: `${esc(t.hq_city || '')}${t.hq_city ? ', ' : ''}${esc(t._state)} · ${esc(P.long)} add-on candidate · ${esc(t._tier)}${t._affil ? ' · held out: verify affiliation' : ''}`,
+    sub: `${esc(t.hq_city || '')}${t.hq_city ? ', ' : ''}${esc(t._state)} · ${esc(P.long)} add-on candidate · ${esc(t._tier)}${t._src === 'sba' ? ` · ${SRC_LABEL}` : ''}${t._affil ? ' · held out: verify affiliation' : ''}`,
     sections: [
       t._affil ? { label: 'Verify affiliation · do not contact yet', html: `<div class="m-ma-insp">${ui.note(`<b>${esc(affilNote(t))}.</b> Held out of every ranking. ${esc(P.label)} leadership to confirm status (owned · related party · independent); if independent, resolve the trade-name overlap, then re-score.`, 'warn')}</div>` } : null,
-      { label: 'Fit', html: `<div class="sys-kpi kpi" data-co="" style="--co:${P.color}"><div class="sys-kpi-label">Fit score (${esc(P.label)} rubric)</div><div class="sys-kpi-value">${fmt.num(t.fit_score)}</div><div class="sys-kpi-sub">${esc(t._tier)} · rubrics differ by company</div></div>${fb.length ? `<div class="mt-8">${charts.hbar(fb, { max: 100, fmt: v => `${v}%`, labelW: 170, color: P.color })}</div>` : ''}` },
-      { label: 'Profile', html: '<div class="m-ma-insp">' + ui.kv({ Founded: t.founded_year, Employees: t.employees != null ? fmt.num(t.employees) : null, 'Revenue (est.)': t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)} <span class="dim small">ZoomInfo modeled</span>` : null, Ownership: t.ownership ? `${esc(t.ownership)}${t.ownership_notes ? `<div class="dim small">${esc(clip(t.ownership_notes, 200))}</div>` : ''}` : null, Brands: t.brands_or_franchise ? esc(t.brands_or_franchise) : null, 'Specialties / trades': t.specialties || t.trades || t.offerings, 'End markets': t.end_markets || t.customer_segments, 'Route reach': t._reach ? `${fmt.chip(t._reach, REACH_COLOR[t._reach])} <span class="dim small">${fmt.num(t._nodeMi)} mi from ${esc(t._node || 'nearest node')} · straight-line; reach = ${esc(REACH_TXT[t._p])}</span>` : null, 'Nearest CET node': t.nearest_cet_node ? `${esc(t.nearest_cet_node)} · ${fmt.num(t.nearest_cet_node_miles)} mi` : null, 'Distance (Lancaster / Toms River)': t.distance_mi_from_lancaster != null ? `${fmt.num(t.distance_mi_from_lancaster)} / ${fmt.num(t.distance_mi_from_toms_river)} mi` : null, Reviews: t.review_count ? `${fmt.num(t.review_count)}${t.review_rating ? ` · ${esc(t.review_rating)}★` : ''}` : null, Website: t.website ? fmt.link(t.website) : null }) + '</div>' },
+      { label: 'Fit', html: `<div class="sys-kpi kpi" data-co="" style="--co:${P.color}"><div class="sys-kpi-label">Fit score (${t._src === 'sba' ? 'loan-screen formula' : `${esc(P.label)} rubric`})</div><div class="sys-kpi-value">${fmt.num(t.fit_score)}</div><div class="sys-kpi-sub">${esc(t._tier)} · rubrics differ by company</div></div>${fb.length ? `<div class="mt-8">${charts.hbar(fb, { max: 100, fmt: v => `${v}%`, labelW: 170, color: P.color })}</div>` : ''}` },
+      { label: 'Profile', html: '<div class="m-ma-insp">' + ui.kv({ Founded: t.founded_year, [t._src === 'sba' ? 'Jobs (loan record)' : 'Employees']: t.employees != null ? fmt.num(t.employees) : null, 'Revenue (est.)': t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)} <span class="dim small">ZoomInfo modeled</span>` : null, Ownership: t.ownership ? `${esc(t.ownership)}${t.ownership_notes ? `<div class="dim small">${esc(clip(t.ownership_notes, 200))}</div>` : ''}` : null, Brands: t.brands_or_franchise ? esc(t.brands_or_franchise) : null, 'Specialties / trades': t.specialties || t.trades || t.offerings, 'End markets': t.end_markets || t.customer_segments, 'Route reach': t._reach ? `${fmt.chip(t._reach, REACH_COLOR[t._reach])} <span class="dim small">${fmt.num(t._nodeMi)} mi from ${esc(t._node || 'nearest node')} · straight-line; reach = ${esc(REACH_TXT[t._p])}</span>` : null, 'Nearest CET node': t.nearest_cet_node ? `${esc(t.nearest_cet_node)} · ${fmt.num(t.nearest_cet_node_miles)} mi` : null, 'Distance (Lancaster / Toms River)': t.distance_mi_from_lancaster != null ? `${fmt.num(t.distance_mi_from_lancaster)} / ${fmt.num(t.distance_mi_from_toms_river)} mi` : null, Reviews: t.review_count ? `${fmt.num(t.review_count)}${t.review_rating ? ` · ${esc(t.review_rating)}★` : ''}` : null, Website: t.website ? fmt.link(t.website) : null }) + '</div>' },
+      ...sbaSections(ctx, t),
       dealSection(ctx, _b, t),
       { label: 'Strategic rationale', html: `<div class="small text-2">${esc(t.strategic_rationale || '—')}</div>` },
       t.risk_flags?.length ? { label: 'Risk flags', html: `<div class="m-ma-insp row wrap gap-4">${t.risk_flags.map(r => fmt.chip(r, 'var(--sys-warn)')).join(' ')}</div>` } : null,
-      { label: 'Sources', html: `<div class="col gap-4 small">${(t.sources || []).map(s => `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(fmt.host(s) || s)}</a>`).join('') || '—'}</div><div class="dim small mt-8">Retrieved ${esc(t.retrieved || '—')} · ${esc(Copy.text(t.revenue_source || 'revenue source not stated'))}</div>` },
+      { label: 'Sources', html: `<div class="col gap-4 small">${(t.sources || []).map(s => `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(fmt.host(s) || s)}</a>`).join('') || '—'}</div><div class="dim small mt-8">Retrieved ${esc(t.retrieved || '—')} · ${esc(Copy.text(t.revenue_source || (t._src === 'sba' ? 'no revenue figure on record' : 'revenue source not stated')))}</div>` },
       { label: 'Next action', html: `<div class="small text-2">${esc(t._affil ? `Do not contact. ${P.label} CEO to confirm ownership / related-party status first; only if independent, re-score and log in the pipeline.` : nextActionFor(t._p))}</div>` },
     ].filter(Boolean),
     actions: [modelAction(ctx, _b, t), t.website ? { label: 'Website ↗', href: t.website } : null, { id: 'pipe', label: 'Open in pipeline', onClick: () => app.go('ma', 'pipeline', { platform: t._p, id: t.id }) }, { id: 'mod', label: `${esc(P.label)} module`, onClick: () => app.go(P.module) }].filter(Boolean),
@@ -388,10 +469,12 @@ async function overview(ctx) {
   const T = b.targets;
   if (!T.length) { el.innerHTML = ui.pageHead({ title: 'Acquisition engine', sub: 'Cross-portfolio buy-and-build engine' }) + ui.note('M&A target screens (CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets) are not yet available.', 'warn'); return; }
   const byP = Object.fromEntries(PKEYS.map(p => [p, T.filter(t => t._p === p)]));
+  const sbaOnly = T.filter(t => t._src === 'sba'), coverP = SKEYS.filter(p => T.some(t => t._p === p));
   const t1 = T.filter(t => t._tier === 'Tier 1'), t2 = T.filter(t => t._tier === 'Tier 2');
   const t1By = Object.fromEntries(PKEYS.map(p => [p, byP[p].filter(t => t._tier === 'Tier 1').length]));
   const t12By = Object.fromEntries(PKEYS.map(p => [p, byP[p].filter(t => (t.fit_score || 0) >= 65).length]));
-  const medRev = median(T.map(t => t.revenue_est_usd)), medEmp = median(T.map(t => t.employees));
+  const medRev = median(T.map(t => t.revenue_est_usd)), medEmp = median(handOnly(T).map(t => t.employees));   // both from the hand-built lists
+  const t1Sba = t1.filter(t => t._src === 'sba').length, t1Hand = t1.length - t1Sba;
   const nRev = T.filter(t => t.revenue_est_usd).length;
   const ownerReady = T.filter(t => t._owner === 'Founder / family').length;
   const stats = b.firm?.firm?.stats || { add_ons: 23, platforms: 7 };
@@ -407,20 +490,20 @@ async function overview(ctx) {
 
   el.innerHTML = `<div class="m-ma">` + ui.pageHead({
     title: 'Acquisition engine',
-    sub: `<b>${fmt.num(t1.length)} of ${fmt.num(T.length)} screened targets are Tier 1.</b> Most of the actionable pool sits in ${esc(PLAT[topP[0]].label)} and ${esc(PLAT[topP[1]].label)}; the median target is an est. ${fmt.money(medRev)} tuck-in.`,
-    chips: `${fmt.chip('Screened ' + (b.cet?.meta?.generated || b.pp?.meta?.generated || '—'), 'var(--c-ma)')}${fmt.chip('Rubrics differ by company')}${fmt.chip('Revenue modelled est.')}`,
+    sub: `<b>${fmt.num(t1.length)} of ${fmt.num(T.length)} screened targets are Tier 1${t1Sba ? ` (${fmt.num(t1Hand)} hand-built, ${fmt.num(t1Sba)} from SBA loans)` : ''}.</b> Most of the actionable pool sits in ${esc(PLAT[topP[0]].label)} and ${esc(PLAT[topP[1]].label)}; the median target is an est. ${fmt.money(medRev)} tuck-in.`,
+    chips: `${fmt.chip('Screened ' + (b.cet?.meta?.generated || b.pp?.meta?.generated || '—'), 'var(--c-ma)')}${fmt.chip('Rubrics differ by company')}${sbaOnly.length ? fmt.chip('Two fit formulas: hand-built and SBA loan screen', 'var(--sys-info)') : ''}${fmt.chip('Revenue modelled est.')}`,
     actions: `<a class="sys-btn sys-btn--primary btn" href="#/deal/returns?p=typical">Acquisition model →</a><a class="sys-btn sys-btn--secondary btn" href="#/ma/pipeline">Full pipeline →</a><a class="sys-btn sys-btn--secondary btn" href="#/ma/theses">Company theses</a>`,
   }) + missingNote(ui, esc, b) +
   ui.kpis([
-    { label: 'Targets screened', value: fmt.num(T.length), sub: PKEYS.map(p => `${PLAT[p].key.toUpperCase()} ${byP[p].length}`).join(' · '), color: 'var(--c-ma)' },
-    { label: 'Tier-1 targets', value: fmt.num(t1.length), sub: `fit ≥80 · ${fmt.num(t2.length)} more at Tier 2`, color: 'var(--sys-good)' },
-    { label: 'Companies screened', value: `${PKEYS.length}<small>of ${firmItems.filter(i => i.status === 'held').length || 6} held</small>`, sub: `BPI and Fair Harbor not yet screened`, color: 'var(--sys-brand)' },
-    { label: 'Median target size', value: fmt.money(medRev), sub: `revenue est. · ${fmt.num(medEmp)} staff median`, color: 'var(--sys-info)' },
+    { label: 'Targets screened', value: fmt.num(T.length), sub: `${PKEYS.map(p => `${PLAT[p].key.toUpperCase()} ${byP[p].length}`).join(' · ')}${sbaOnly.length ? ` · BPI ${T.filter(t => t._p === 'bpi').length} · FH ${T.filter(t => t._p === 'fh').length}<br>${fmt.num(T.length - sbaOnly.length)} hand-built · <a href="#/ma/screen">${fmt.num(sbaOnly.length)} from SBA loans</a>` : ''}`, color: 'var(--c-ma)' },
+    { label: 'Tier-1 targets', value: fmt.num(t1.length), sub: `${t1Sba ? `${fmt.num(t1Hand)} hand-built + ${fmt.num(t1Sba)} from SBA loans · ` : ''}fit ≥80 · ${fmt.num(t2.length)} more at Tier 2`, color: 'var(--sys-good)' },
+    { label: 'Companies screened', value: `${coverP.length}<small>of ${firmItems.filter(i => i.status === 'held').length || 6} held</small>`, sub: coverP.length > PKEYS.length ? 'BPI and Fair Harbor from SBA loan records only' : 'BPI and Fair Harbor not yet screened', color: 'var(--sys-brand)' },
+    { label: 'Median target size', value: fmt.money(medRev), sub: `revenue est. · ${fmt.num(medEmp)} staff median · hand-built lists`, color: 'var(--sys-info)' },
     { label: 'Rival companies tracked', value: fmt.num(rivals.length), sub: `${peBacked} PE-backed · ${stressed.length} under credit stress`, color: 'var(--sys-bad)' },
     { label: 'BSP add-ons completed', value: fmt.num(stats.add_ons), sub: named != null ? `${named} identified by name` : 'stated by BSP', color: 'var(--sys-brand)' },
   ]) + dealDeskHtml(ctx, b) +
   `<div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Where the targets are', cls: 'ma-fill', sub: 'Every screened add-on by company (size = fit tier); rings are BSP portfolio company HQs. Click a point to inspect.', body: `<div class="map" id="ma-map"></div>`, flush: true, foot: ui.source('ZoomInfo search and company websites (add-on target lists); BSP firm profile', null, b.cet?.meta?.generated) })}
+    ${ui.panel({ title: 'Where the targets are', cls: 'ma-fill', sub: 'Every screened add-on by company (size = fit tier; lighter dots come from SBA loan records); rings are BSP portfolio company HQs. Click a point to inspect.', body: `<div class="map" id="ma-map"></div>`, flush: true, foot: ui.source('ZoomInfo search and company websites (add-on target lists); SBA PPP, 7(a) and 504 loan records; BSP firm profile', null, b.cet?.meta?.generated) })}
     ${ui.panel({ title: 'This quarter’s top 10', sub: 'Each company’s #1 pick, then its #2, and so on (rubrics are not comparable across companies). Names that collide with a BSP company are held out.', body: `<div class="ma-top" id="ma-top10"></div><div id="ma-affil"></div>`, scroll: true, foot: `<span class="src">Ranking: portfolio company shortlists (top 10 for CET and Punctual Pros, top 8 for Frontline and Thomas Scientific), affiliation-flagged names removed and ranks re-numbered · reasons from screen authors</span>` })}
   </div>
   <div class="mt-12">${ui.panel({ title: 'Smith + Howard benchmark · add-on pace and headcount since BSP entry', sub: 'Cumulative dated add-ons by years since BSP’s investment, each held portfolio company against the S+H trajectory (entry Nov 2022 → TPG exit Aug 2026)', accent: true, body: `<div class="ma-sh"><div><div id="ma-sh-chart"></div><div class="sys-chips ma-sh-leg" id="ma-sh-leg"></div></div><div><div id="ma-sh-tbl"></div><div class="h-note mt-8" id="ma-sh-read"></div></div></div>`, foot: ui.source('BSP firm profile (portfolio add-ons, timeline, employee estimates); S+H headcount and ~4x revenue from the BSP exit release', 'https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/', b.firm?.meta?.generated) })}</div>
@@ -472,7 +555,7 @@ async function overview(ctx) {
   // Playbook
   const prg = b.firm?.firm?.prg; const prgLead = (prg?.members || [])[0];
   el.querySelector('#ma-steps').innerHTML = [
-    { n: '01', t: 'Sourcing', d: 'ZoomInfo pulls, franchise directories and web verification; fit rubric per company', k: `${fmt.num(T.length)} screened` },
+    { n: '01', t: 'Sourcing', d: 'ZoomInfo pulls, franchise directories, SBA loan records and web verification; fit rubric per company', k: `${fmt.num(T.length)} screened` },
     { n: '02', t: 'PRG outreach', d: `Portfolio Resource Group${prgLead ? ` (${prgLead.name})` : ''} plus portfolio-company CEO warm intros; founder/family owners first`, k: `${fmt.num(sl.filter(t => t._owner === 'Founder / family').length)} founder/family-owned` },
     { n: '03', t: 'Diligence', d: '3-yr P&L, QoE, customer concentration, licensing/labour; price inside the LMM band', k: `${fmt.num(t1.length)} Tier-1` },
     { n: '04', t: 'Integration', d: '100-day plan: brand and dispatch (PP), crews and licences (CET), service desk (FL), line cards and ERP (TS)', k: `${fmt.num(stats.add_ons)} done` },
@@ -489,9 +572,11 @@ async function overview(ctx) {
 
   // Map
   const map = maps.create(el.querySelector('#ma-map'), { center: [39.6, -86], zoom: 4 });
-  for (const p of PKEYS) maps.points(map, byP[p], { color: tok(PLAT[p].color), stroke: tok('var(--sys-surface)'), radius: t => t._tier === 'Tier 1' ? 7.5 : t._tier === 'Tier 2' ? 5.5 : 4, cluster: false, opacity: .85, popup: t => `<b>${esc(t.company)}</b><br>${esc(PLAT[p].label)} · fit ${fmt.num(t.fit_score)} (${esc(t._tier)})<br><span class="muted">${esc(t.hq_city || '')}, ${esc(t._state)}${t.revenue_est_usd ? ' · ' + fmt.money(t.revenue_est_usd) + ' est.' : ''}</span>`, onClick: t => openTarget(ctx, t) });
-  for (const i of firmItems) { const p = PKEYS.find(k => PLAT[k].firmId === i.id); if (p && i.lat != null) maps.marker(map, i.lat, i.lon, { color: tok(PLAT[p].color), label: PLAT[p].key.toUpperCase(), size: 13, popup: `<b>${esc(i.company)}</b><br>${esc(i.hq_city || '')}, ${esc(i.state || '')}<br><a href="#/${PLAT[p].module}">Open module →</a>` }); }
-  maps.legend(map, [...PKEYS.map(p => ({ color: tok(PLAT[p].color), label: `${PLAT[p].label} targets (${byP[p].length})` })), { color: tok('var(--sys-mute)'), label: 'Company HQ', ring: true }], 'Add-on targets');
+  // SBA loan-screen companies sit under the hand-built screens as smaller, lighter dots in the same company colour
+  for (const p of SKEYS) maps.points(map, sbaOnly.filter(t => t._p === p), { color: tok(PLAT[p].color), stroke: tok('var(--sys-surface)'), radius: t => t._tier === 'Tier 1' ? 5 : 3.5, cluster: false, opacity: .45, weight: .5, popup: t => `<b>${esc(t.company)}</b><br>${esc(PLAT[p].label)} · ${SRC_LABEL} · fit ${fmt.num(t.fit_score)} (${esc(t._tier)})<br><span class="muted">${esc(t.hq_city || '')}, ${esc(t._state)}${t.jobs_latest ? ' · ' + fmt.num(t.jobs_latest) + ' jobs' : ''}</span>`, onClick: t => openTarget(ctx, t) });
+  for (const p of PKEYS) maps.points(map, byP[p].filter(t => t._src !== 'sba'), { color: tok(PLAT[p].color), stroke: tok('var(--sys-surface)'), radius: t => t._tier === 'Tier 1' ? 7.5 : t._tier === 'Tier 2' ? 5.5 : 4, cluster: false, opacity: .85, popup: t => `<b>${esc(t.company)}</b><br>${esc(PLAT[p].label)} · fit ${fmt.num(t.fit_score)} (${esc(t._tier)})<br><span class="muted">${esc(t.hq_city || '')}, ${esc(t._state)}${t.revenue_est_usd ? ' · ' + fmt.money(t.revenue_est_usd) + ' est.' : ''}</span>`, onClick: t => openTarget(ctx, t) });
+  for (const i of firmItems) { const p = SKEYS.find(k => PLAT[k].firmId === i.id); if (p && i.lat != null) maps.marker(map, i.lat, i.lon, { color: tok(PLAT[p].color), label: PLAT[p].key.toUpperCase(), size: 13, popup: `<b>${esc(i.company)}</b><br>${esc(i.hq_city || '')}, ${esc(i.state || '')}<br><a href="#/${PLAT[p].module}">Open module →</a>` }); }
+  maps.legend(map, [...PKEYS.map(p => ({ color: tok(PLAT[p].color), label: `${PLAT[p].label} targets (${byP[p].length})` })), ...['bpi', 'fh'].filter(p => coverP.includes(p)).map(p => ({ color: tok(PLAT[p].color), label: `${PLAT[p].label} targets (${T.filter(t => t._p === p).length})` })), ...(sbaOnly.length ? [{ color: `color-mix(in srgb, ${tok('var(--sys-mute)')} 45%, transparent)`, label: `Paler, smaller dots: ${SRC_LABEL}` }] : []), { color: tok('var(--sys-mute)'), label: 'Company HQ', ring: true }], 'Add-on targets');
 
   app.index([...T.slice(0, 260).map(t => ({ label: t.company, sub: `${PLAT[t._p].label} add-on target · ${t.hq_city || ''} ${t._state} · fit ${t.fit_score ?? '—'}`, href: `#/ma/pipeline?platform=${t._p}&q=${encodeURIComponent(t.company)}`, kind: 'Target', color: PLAT[t._p].color })), ...rivals.map(r => ({ label: r.name, sub: `Rival company · ${r.owner}`, href: `#/ma/rivals?r=${r.id}`, kind: 'Rival', color: 'var(--sys-bad)' }))]);
   return () => map.remove();
@@ -571,7 +656,7 @@ async function pipeline(ctx) {
   const { el, ui, fmt, esc, app, params } = ctx; injectCss();
   const b = await loadBundle(ctx.data);
   const idT = params.id ? b.byId.get(params.id) : null; // a single target opened from a profile link or the model
-  const sel = PKEYS.includes(params.platform) ? params.platform : idT ? idT._p : 'all';
+  const sel = SKEYS.includes(params.platform) ? params.platform : idT ? idT._p : 'all';
   const q = idT ? String(idT.company) : String(params.q || '').trim();
   const showPass = params.pass === '1';
   const S = stageStore.read();
@@ -594,8 +679,8 @@ async function pipeline(ctx) {
   const passParams = { ...(sel !== 'all' ? { platform: sel } : {}), ...(q ? { q } : {}), ...(showPass ? {} : { pass: '1' }) };
   el.innerHTML = `<div class="m-ma">` + ui.pageHead({
     title: `Add-on pipeline${P ? ` · ${esc(P.label)}` : ''}`,
-    sub: rows.length ? `<b>${fmt.num(rows.length)} target${rows.length === 1 ? '' : 's'}${q ? ` matching “${esc(q)}”` : P ? '' : ' across all four companies'}; ${fmt.num(t1)} Tier-1 and ${fmt.num(t2)} Tier-2${inPlay.length ? `; ${fmt.num(inPlay.length)} in play` : ''}.</b> ${pctOf(ff, rows.length)}% have a confirmed founder or family owner. Click a row to set stage and owner.` : 'No targets match the current filter.',
-    chips: `${fmt.chip('Rubrics differ by company')}${fmt.chip('Revenue modelled est.', 'var(--sys-warn)')}${passed.length && !showPass && !q ? fmt.chip(`${passed.length} passed · hidden`, 'var(--sys-bad)') : ''}`,
+    sub: rows.length ? `<b>${fmt.num(rows.length)} target${rows.length === 1 ? '' : 's'}${q ? ` matching “${esc(q)}”` : P ? '' : ' across all companies'}; ${fmt.num(t1)} Tier-1 and ${fmt.num(t2)} Tier-2${inPlay.length ? `; ${fmt.num(inPlay.length)} in play` : ''}.</b> ${pctOf(ff, rows.length)}% have a confirmed founder or family owner. Click a row to set stage and owner.` : 'No targets match the current filter.',
+    chips: `${fmt.chip('Rubrics differ by company')}${rows.some(t => t._src === 'sba') ? fmt.chip('Two fit formulas: hand-built and SBA loan screen', 'var(--sys-info)') : ''}${fmt.chip('Revenue modelled est.', 'var(--sys-warn)')}${passed.length && !showPass && !q ? fmt.chip(`${passed.length} passed · hidden`, 'var(--sys-bad)') : ''}`,
     actions: `<button class="sys-btn sys-btn--secondary btn" id="ma-trk-csv">⇩ Tracker CSV</button><a class="sys-btn sys-btn--secondary btn" href="#/ma/theses">Company theses →</a>`,
   }) + missingNote(ui, esc, b) +
   ui.kpis([
@@ -608,12 +693,12 @@ async function pipeline(ctx) {
   ]) +
   `<div class="sys-filters ma-seg-row mt-12"><span class="sys-field-label lbl">Portfolio company</span><div id="ma-seg"></div>${q ? `${fmt.chip(`Search: ${q}`, 'var(--c-ma)')}<a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/ma/pipeline${sel !== 'all' ? `?platform=${sel}` : ''}">Clear ✕</a>` : ''}${!q ? `<button class="sys-btn sys-btn--secondary sys-btn--sm btn xs ${showPass ? 'active' : ''}" id="ma-pass" aria-pressed="${showPass}">${showPass ? 'Hide' : 'Show'} passed (${passed.length})</button>` : ''}</div>
   <div id="ma-tg"></div>
-  <div class="sys-src src-line mt-8">${sel === 'all' ? 'Sources: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets (ZoomInfo company search, franchise directories, company websites)' : esc(clip(ceoFix(meta?.method || ''), 320))} · generated ${esc(meta?.generated || b.pp?.meta?.generated || '—')} · stages saved in this browser</div>
+  <div class="sys-src src-line mt-8">${sel === 'all' ? 'Sources: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets (ZoomInfo company search, franchise directories, company websites) and the SBA loan screen (SBA PPP, 7(a) and 504 loan records)' : esc(clip(ceoFix(meta?.method || ''), 320))} · generated ${esc(meta?.generated || b.pp?.meta?.generated || '—')} · stages saved in this browser</div>
   <div class="grid grid-2 mt-12">
     ${ui.panel({ title: 'How to work this list', sub: 'Recommended sequence for deal teams', body: `<ol class="acts"><li><span><b>Filter to Tier 1–2 and founder/family-owned</b> for PRG outreach this quarter; density tuck-ins first, new-hub anchors only with a branch plan.</span></li><li><span><b>Set stage, owner and next-step date</b> in the row inspector (Screened → Contacted → Meeting → NDA → IOI, or Pass). Passed targets drop out of the default view.</span></li><li><span><b>Share the tracker</b> with ⇩ Tracker CSV; stages are kept in this browser only.</span></li><li><span><b>Check risk flags</b> in the inspector. ZoomInfo revenue is modeled, so confirm size in the first call. Never contact a target flagged “verify affiliation”.</span></li><li><span><b>Price it</b> in the row inspector: Deal math shows the likely price, debt, equity check and return, and how each was estimated. Model this deal opens the full model, ready to download to Excel.</span></li></ol>` })}
-    ${ui.panel({ title: 'Data caveats', sub: 'From the screen authors — read before outreach', body: `<ul class="bul">${(sel === 'all' ? [b.cet?.meta, b.pp?.meta, b.flts?.meta] : [meta]).filter(Boolean).flatMap(m => (m.caveats || []).slice(0, sel === 'all' ? 2 : 5)).map(c => `<li>${esc(clip(ceoFix(c), 260))}</li>`).join('') || '<li>—</li>'}</ul>` })}
+    ${ui.panel({ title: 'Data caveats', sub: 'From the screen authors — read before outreach', body: `<ul class="bul">${(sel === 'all' ? [b.cet?.meta, b.pp?.meta, b.flts?.meta, b.sba?.meta] : [meta, ...(PKEYS.includes(sel) && b.sba ? [b.sba.meta] : [])]).filter(Boolean).flatMap(m => (m.caveats || []).slice(0, sel === 'all' ? 2 : 5)).map(c => `<li>${esc(clip(ceoFix(c), 260))}</li>`).join('') || '<li>—</li>'}</ul>` })}
   </div></div>`;
-  ui.seg(el.querySelector('#ma-seg'), [{ value: 'all', label: `All (${b.targets.length})` }, ...PKEYS.map(p => ({ value: p, label: `${PLAT[p].label} (${b.targets.filter(t => t._p === p).length})` }))], sel, v => app.go('ma', 'pipeline', { ...(v === 'all' ? {} : { platform: v }), ...(showPass ? { pass: '1' } : {}) }));
+  ui.seg(el.querySelector('#ma-seg'), [{ value: 'all', label: `All (${b.targets.length})` }, ...SKEYS.filter(p => PKEYS.includes(p) || b.targets.some(t => t._p === p)).map(p => ({ value: p, label: `${PLAT[p].label} (${b.targets.filter(t => t._p === p).length})` }))], sel, v => app.go('ma', 'pipeline', { ...(v === 'all' ? {} : { platform: v }), ...(showPass ? { pass: '1' } : {}) }));
   const pb = el.querySelector('#ma-pass'); if (pb) pb.onclick = () => app.go('ma', 'pipeline', passParams);
   el.querySelector('#ma-trk-csv').onclick = () => {
     const ids = new Set([...rows.map(t => t.id), ...Object.keys(S)]);
@@ -625,8 +710,8 @@ async function pipeline(ctx) {
   // Normalise fit_breakdown to % of each dimension's maximum so the shared inspector bars are comparable across rubrics.
   // Ownership is normalised to 6 classes (raw text restored in the inspector); long FL/TS offering strings are shortened for the table.
   // Affiliation-flagged names carry the flag inline (brand line and Why column) so the warning is visible without opening the row.
-  const items = rows.map(t => { const mx = DIM_MAX[t._p] || {}; const fb = {}; for (const [k, v] of Object.entries(t.fit_breakdown || {})) { const m = mx[k] || 20; fb[`${k} (${v}/${m})`] = Math.round(((num(v) || 0) / m) * 100); } const st = stageOf(S, t.id);
-    return { ...t, fit_breakdown: fb, ownership: t._owner, _ownRaw: t.ownership, specialties: shortList(t.specialties || t.trades || t.offerings || []), brands_or_franchise: t._affil ? `⚠ VERIFY AFFILIATION · ${clip(affilNote(t), 110)}` : t.brands_or_franchise, strategic_rationale: t._affil ? `⚠ Held out of ranking: ${clip(affilNote(t), 120)}` : clip(t.strategic_rationale, 95), _why: t.strategic_rationale, route_reach: t._reach ? `${t._reach} (${t._nodeMi} mi ${t._node})` : '', stage: st.stage, deal_owner: st.owner || '', next_date: st.next || '', ...(E => ({ _price: E ? E.S.price : null, _sized: !!E?.sized }))(t._affil ? null : estimateFor(b, t)) }; });
+  const items = rows.map(t => { const mx = dimMax(t); const fb = {}; for (const [k, v] of Object.entries(t.fit_breakdown || {})) { const m = mx[k] || 20; fb[`${k} (${v}/${m})`] = Math.round(((num(v) || 0) / m) * 100); } const st = stageOf(S, t.id);
+    return { ...t, fit_breakdown: fb, ownership: t._owner, _ownRaw: t.ownership, specialties: shortList(t.specialties || t.trades || t.offerings || []), brands_or_franchise: t._affil ? `⚠ VERIFY AFFILIATION · ${clip(affilNote(t), 110)}` : t.brands_or_franchise, strategic_rationale: t._affil ? `⚠ Held out of ranking: ${clip(affilNote(t), 120)}` : clip(t.strategic_rationale, 95), _why: t.strategic_rationale, _srcLine: srcLine(t), route_reach: t._reach ? `${t._reach} (${t._nodeMi} mi ${t._node})` : '', stage: st.stage, deal_owner: st.owner || '', next_date: st.next || '', ...(E => ({ _price: E ? E.S.price : null, _sized: !!E?.sized }))(t._affil ? null : estimateFor(b, t)) }; });
   const byName = new Map(rows.map(t => [esc(t.company), t]));
   const bindStage = t => {
     const box = [...document.querySelectorAll('#inspector [data-stage-for]')].find(n => n.dataset.stageFor === t.id); if (!box) return;
@@ -643,14 +728,14 @@ async function pipeline(ctx) {
   const insp = { ...ctx.inspector, open: cfg => { const t = byName.get(cfg.title); if (t) { const st = stageOf(S, t.id);
     cfg = { ...cfg, sections: cfg.sections.map(sec => sec.label === 'Strategic rationale' ? { label: sec.label, html: `<div class="small text-2">${esc(t.strategic_rationale || '—')}</div>` } : sec.label === 'Next action' ? { label: 'Next action', html: `<div class="small text-2">${esc(t._affil ? `Do not contact. ${PLAT[t._p].label} CEO to confirm ownership / related-party status first; only if independent, re-score and set a stage.` : nextActionFor(t._p))}</div>` } : sec) };
     const i = cfg.sections.findIndex(sec => sec.label === 'Profile');
-    cfg.sections.splice(i + 1, 0, { label: 'Ownership detail', html: `<div class="small text-2">${esc(t.ownership || '—')}${t.ownership_notes ? ` · ${esc(t.ownership_notes)}` : ''}</div>` }, t._reach ? { label: 'Route reach', html: `<div class="small text-2">${fmt.chip(t._reach, REACH_COLOR[t._reach])} ${fmt.num(t._nodeMi)} mi from ${esc(t._node || 'nearest node')} (straight-line). Reach = ${esc(REACH_TXT[t._p])}.</div>` } : null, dealSection(ctx, b, t));
+    cfg.sections.splice(i + 1, 0, ...sbaSections(ctx, t), { label: 'Ownership detail', html: `<div class="small text-2">${esc(t.ownership || '—')}${t.ownership_notes ? ` · ${esc(t.ownership_notes)}` : ''}</div>` }, t._reach ? { label: 'Route reach', html: `<div class="small text-2">${fmt.chip(t._reach, REACH_COLOR[t._reach])} ${fmt.num(t._nodeMi)} mi from ${esc(t._node || 'nearest node')} (straight-line). Reach = ${esc(REACH_TXT[t._p])}.</div>` } : null, dealSection(ctx, b, t));
     cfg.sections = cfg.sections.filter(Boolean);
     cfg.actions = [modelAction(ctx, b, t), ...(cfg.actions || [])].filter(Boolean);
     cfg.sections.unshift({ label: 'Deal stage', html: `<div class="m-ma-insp ma-stage" data-stage-for="${esc(t.id)}"><label>Stage<select data-f="stage">${STAGES.map(s => `<option ${s === st.stage ? 'selected' : ''}>${s}</option>`).join('')}</select></label><label>Deal owner<input data-f="owner" type="text" maxlength="60" placeholder="e.g. PRG lead" value="${esc(st.owner || '')}"></label><label>Next step<input data-f="next" type="date" value="${esc(st.next || '')}"></label><div class="dim small">Saved in this browser${st.updated ? ` · last update ${esc(st.updated)}` : ''} · share with ⇩ Tracker CSV</div></div>` });
     if (t._affil) cfg.sections.unshift({ label: 'Verify affiliation · do not contact yet', html: ui.note(`<b>${esc(affilNote(t))}.</b> Held out of every ranking until ${esc(PLAT[t._p].label)} leadership confirms status (owned · related party · independent).`, 'warn') });
   } ctx.inspector.open(cfg); if (t) bindStage(t); } };
   // Platform + route reach share one column (reach applies to PP and CET only) to keep the table inside the panel.
-  const extra = [{ key: 'platform', label: 'Portfolio company · reach', fmt: (v, r) => `${fmt.chip(v, PLAT[r._p]?.color)}${r._reach ? `<div class="small" style="margin-top:var(--sys-sp-1)"><span class="sys-dot" style="--co:${REACH_COLOR[r._reach]}" aria-hidden="true"></span> ${r._reach === 'Density tuck-in' ? 'Density' : 'New hub'} <span class="dim">· ${fmt.num(r._nodeMi)} mi ${esc(r._node || '')}</span></div>` : ''}` }];
+  const extra = [{ key: 'platform', label: 'Portfolio company · reach', fmt: (v, r) => `${fmt.chip(v, PLAT[r._p]?.color)}${srcChip(fmt, r)}${r._reach ? `<div class="small" style="margin-top:var(--sys-sp-1)"><span class="sys-dot" style="--co:${REACH_COLOR[r._reach]}" aria-hidden="true"></span> ${r._reach === 'Density tuck-in' ? 'Density' : 'New hub'} <span class="dim">· ${fmt.num(r._nodeMi)} mi ${esc(r._node || '')}</span></div>` : ''}` }];
   extra.push({ key: 'stage', label: 'Stage', fmt: (v, r) => `<span data-stage-cell="${esc(r.id)}">${stageCell(fmt, esc, stageOf(S, r.id))}</span>` });
   // the price the acquisition model opens at (EBITDA at the sector margin × its entry multiple), first of the extra columns so it
   // sits near revenue; the row opens the full working
@@ -664,10 +749,10 @@ function thesisStats(b, p) {
   const T = b.targets.filter(t => t._p === p);
   const n = T.length; const own = countBy(T, t => t._owner);
   const dims = {}; const mx = DIM_MAX[p];
-  T.forEach(t => Object.entries(t.fit_breakdown || {}).forEach(([k, v]) => { (dims[k] = dims[k] || []).push((num(v) || 0) / (mx[k] || 20)); }));
+  T.filter(t => t._src !== 'sba').forEach(t => Object.entries(t.fit_breakdown || {}).forEach(([k, v]) => { (dims[k] = dims[k] || []).push((num(v) || 0) / (mx[k] || 20)); }));
   const dimAvg = Object.entries(dims).map(([k, a]) => [k, a.reduce((s, x) => s + x, 0) / a.length]).sort((x, y) => y[1] - x[1]);
   return {
-    T, n, t1: T.filter(t => t._tier === 'Tier 1').length, t2: T.filter(t => t._tier === 'Tier 2').length, medEmp: median(T.map(t => t.employees)), medRev: median(T.map(t => t.revenue_est_usd)),
+    T, n, nSba: T.filter(t => t._src === 'sba').length, t1: T.filter(t => t._tier === 'Tier 1').length, t2: T.filter(t => t._tier === 'Tier 2').length, t1Sba: T.filter(t => t._tier === 'Tier 1' && t._src === 'sba').length, medEmp: median((handOnly(T).length ? handOnly(T) : T).map(t => t.employees)), medRev: median(T.map(t => t.revenue_est_usd)),
     ff: own['Founder / family'] || 0, unv: own.Unverified || 0, own, states: topN(countBy(T, t => t._state), 6), dimAvg,
     risks: topN(countBy(T.flatMap(t => t.risk_flags || []), x => x), 4), top5: T.filter(t => !t._affil).sort((x, y) => (y.fit_score || 0) - (x.fit_score || 0)).slice(0, 5),
     affil: T.filter(t => t._affil), dens: T.filter(t => !t._affil && t._reach === 'Density tuck-in').length, hub: T.filter(t => !t._affil && t._reach === 'New-hub anchor').length,
@@ -735,7 +820,7 @@ function thesisPanel(ctx, b, p, s) {
   const riskList = [...s.risks.map(([r, c]) => `${esc(r)} <span class="soft">(${c} targets)</span>`), ...INTEG[p].map(esc)];
   const weakest = s.dimAvg[s.dimAvg.length - 1], strongest = s.dimAvg[0];
   return ui.panel({
-    title: `${esc(P.long)}`, accent: true, sub: `${fmt.num(s.n)} targets · ${s.t1} Tier 1 · ${s.t2} Tier 2`,
+    title: `${esc(P.long)}`, accent: true, sub: `${fmt.num(s.n)} targets${s.nSba ? ` (${fmt.num(s.nSba)} from <a href="#/ma/screen">SBA loan records</a>)` : ''} · ${s.t1} Tier 1${s.t1Sba ? ` (${s.t1 - s.t1Sba} hand-built + ${s.t1Sba} from SBA loans)` : ''} · ${s.t2} Tier 2`,
     actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/ma/pipeline?platform=${p}">Pipeline →</a>`,
     body: `<div style="--cc:${P.color}">
       <div class="sys-chips stat-row">${fmt.chip(`median ${fmt.num(s.medEmp)} staff`)}${fmt.chip(`median ${fmt.money(s.medRev)} rev. est.`)}${fmt.chip(`${pctOf(s.ff, s.n)}% founder/family`, 'var(--sys-good)')}${s.unv ? fmt.chip(`${s.unv} ownership unverified`, 'var(--sys-warn)') : ''}${s.dens + s.hub ? fmt.chip(`${s.dens} density · ${s.hub} new-hub`, 'var(--sys-info)') : ''}${s.affil.length ? fmt.chip(`${s.affil.length} held · verify affiliation`, 'var(--sys-bad)') : ''}${strongest ? fmt.chip(`strongest: ${titleCase(strongest[0])} ${Math.round(strongest[1] * 100)}%`, P.color) : ''}${weakest ? fmt.chip(`weakest: ${titleCase(weakest[0])} ${Math.round(weakest[1] * 100)}%`, 'var(--sys-warn)') : ''}</div>
@@ -744,7 +829,7 @@ function thesisPanel(ctx, b, p, s) {
       <div class="th-two"><div><div class="sys-card-label th-h">Ideal target profile</div><ul class="bul">${IDEAL[p].map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
       <div><div class="sys-card-label th-h">Integration risks</div><ul class="bul">${riskList.slice(0, 6).map(x => `<li>${x}</li>`).join('')}</ul></div></div>
       <div class="sys-card-label th-h">Top 5 by fit</div>
-      <div class="sys-table-wrap"><table class="sys-table mini"><caption>Fit on the ${esc(P.label)} rubric · revenue is ZoomInfo modeled</caption><thead><tr><th>Company</th><th>HQ</th><th class="sys-n">Staff</th><th class="sys-n">Rev. est.</th><th>Owner</th><th class="sys-n">Fit</th></tr></thead><tbody>${s.top5.map(t => `<tr data-tid="${esc(t.id)}"><td class="nm">${esc(t.company)}</td><td>${esc(t.hq_city || '')}${t.hq_city ? ', ' : ''}${esc(t._state)}</td><td class="sys-n">${fmt.num(t.employees)}</td><td class="sys-n">${t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)}<span class="sys-est">est.</span>` : '—'}</td><td>${fmt.chip(t._owner, OWNER_COLOR[t._owner])}</td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}${s.affil.map(t => `<tr data-tid="${esc(t.id)}" class="ma-affil-row"><td class="nm" colspan="5"><b>Held out · verify affiliation:</b> ${esc(t.company)}<div class="flags">${(t.risk_flags || []).map(r => fmt.chip(r, /collision|affiliat/i.test(r) ? 'var(--sys-bad)' : 'var(--sys-warn)')).join('')}</div></td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}</tbody></table></div>
+      <div class="sys-table-wrap"><table class="sys-table mini"><caption>Fit on the ${esc(P.label)} rubric (loan-screen companies on the loan-screen formula) · revenue is ZoomInfo modeled; staff for loan-screen companies is the loan record's jobs figure</caption><thead><tr><th>Company</th><th>HQ</th><th class="sys-n">Staff</th><th class="sys-n">Rev. est.</th><th>Owner</th><th class="sys-n">Fit</th></tr></thead><tbody>${s.top5.map(t => `<tr data-tid="${esc(t.id)}"><td class="nm">${esc(t.company)}${t._src === 'sba' ? `<div class="dim small">${SRC_LABEL}</div>` : ''}</td><td>${esc(t.hq_city || '')}${t.hq_city ? ', ' : ''}${esc(t._state)}</td><td class="sys-n">${fmt.num(t.employees)}</td><td class="sys-n">${t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)}<span class="sys-est">est.</span>` : '—'}</td><td>${fmt.chip(t._owner, OWNER_COLOR[t._owner])}</td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}${s.affil.map(t => `<tr data-tid="${esc(t.id)}" class="ma-affil-row"><td class="nm" colspan="5"><b>Held out · verify affiliation:</b> ${esc(t.company)}<div class="flags">${(t.risk_flags || []).map(r => fmt.chip(r, /collision|affiliat/i.test(r) ? 'var(--sys-bad)' : 'var(--sys-warn)')).join('')}</div></td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}</tbody></table></div>
       <div class="sys-card-label th-h">Screen authors’ ranked shortlist (${ranked.length})${rankedRaw(b, p).length > ranked.length ? ` <span class="soft">· ${rankedRaw(b, p).length - ranked.length} held out for affiliation check, re-numbered</span>` : ''}</div>
       ${ranked.length ? `<ol class="shortlist">${ranked.map(r => `<li data-tid="${esc(r.id)}" style="cursor:pointer" title="${esc(r.why || '')}"><span class="r">${esc(r.rank)}</span><span class="ellipsis">${esc(r.company)}</span><span class="s">${esc(r.fit_score ?? '')}</span></li>`).join('')}</ol>` : ui.empty('No ranked list in dataset')}
       <div class="sys-card-label th-h">Competing sponsor-backed buyers (${comps.length})</div>
@@ -1163,20 +1248,182 @@ function openWS(ctx, w) {
 }
 
 /* ── Module ──────────────────────────────────────────────────────────────── */
+/* ═══ View: SBA loan screen ════════════════════════════════════════════════
+   Add-on candidates for all six companies found in SBA loan records (PPP, 7(a), 504), with the ownership check on top:
+   counts by company and ownership, the founder and family share, and each company's top targets with their evidence. */
+const OWN_COLS = [['founder_led', 'Founder-led'], ['family_next_generation', 'Family'], ['employee_or_partner_owned', 'Employee or partner'], ['pe_backed_or_acquired', 'Sold to sponsor or roll-up'], ['franchise_unit', 'Franchise'], ['unknown', 'Unknown'], [null, 'Not yet checked']];
+async function screenView(ctx) {
+  const { el, ui, fmt, esc } = ctx; injectCss();
+  const b = await loadBundle(ctx.data);
+  const M = b.sba?.meta;
+  if (!M) { el.innerHTML = `<div class="m-ma">${ui.pageHead({ title: 'SBA loan screen' })}${ui.note('The SBA loan screen is not available yet.', 'warn')}</div>`; return; }
+  const all = b.sbaAll, out = M.screened_out || [];
+  const segs = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'].filter(p => all.some(x => x.s.segment === p) || out.some(o => o.segment === p));   // the checked company first
+  const EV_RANK = { company_site: 0, press: 1, news: 1, state_record: 2, other: 3, review_snippet: 4 };
+  const isFF = x => ['founder_led', 'family_next_generation'].includes(x.s.ownership_decision);
+  const checked = all.filter(x => x.s.enrichment !== 'not received');
+  const ff = all.filter(isFF), conf = ff.filter(x => x.s.verification?.verdict === 'confirmed'), siteOnly = ff.filter(x => x.s.verification?.verdict === 'confirmed_site_only');
+  const sold = all.filter(x => x.s.ownership_decision === 'pe_backed_or_acquired');
+  const t1 = all.filter(x => engTier(x) === 'Tier 1');   // the engine's tier: hand-built fit for companies on a hand-built list
+  const onList = all.filter(x => x.t._src !== 'sba');
+  const checkedSegs = segs.filter(p => checked.some(x => x.s.segment === p));
+  const ppFF = ff.filter(x => x.s.segment === 'pp');
+  const asOf = (M.sources || []).find(x => /7\(a\)/.test(x.name))?.as_of;
+  el.innerHTML = `<div class="m-ma">` + ui.pageHead({
+    title: 'SBA loan screen',
+    sub: `<b>${fmt.num(ppFF.length)} home-service companies near Punctual Pros’ hubs look founder or family-owned, and a second check confirmed ${fmt.num(conf.filter(x => x.s.segment === 'pp').length)} of them.</b> SBA loan records give the size and recent borrowing of add-on candidates for all six companies. Ownership checks so far cover ${andList(checkedSegs.map(p => PLAT[p].label)) || 'none of them'}.`,
+    chips: `${fmt.chip(`7(a) and 504 FY1991 to ${dayWords(asOf)}`, 'var(--c-ma)')}${fmt.chip('PPP jobs are from 2020–21', 'var(--sys-warn)')}${fmt.chip('Ownership from public web evidence')}`,
+    actions: `<a class="sys-btn sys-btn--primary btn" href="#/ma/loans">SBA loan records →</a><a class="sys-btn sys-btn--secondary btn" href="#/ma/pipeline">Pipeline →</a>`,
+  }) + missingNote(ui, esc, b) +
+  ui.kpis([
+    { label: 'Companies on the screen', value: fmt.num(all.length), sub: segs.map(p => `${PLAT[p].key.toUpperCase()} ${all.filter(x => x.s.segment === p).length}`).join(' · '), color: 'var(--c-ma)' },
+    { label: 'Founder or family-owned', value: fmt.num(ff.length), sub: `${pctOf(ff.length, checked.length)}% of the companies checked`, color: 'var(--sys-good)' },
+    { label: 'Confirmed by a second check', value: fmt.num(conf.length), sub: `deal search run, no sale or investor found${siteOnly.length ? ` · ${fmt.num(siteOnly.length)} more from the company site only` : ''}`, color: 'var(--sys-good)' },
+    { label: 'Tier 1', value: fmt.num(t1.length), sub: 'fit 80 or more; hand-built fit for companies on a hand-built list', color: 'var(--sys-info)' },
+    { label: 'Already sold', value: fmt.num(sold.length), sub: 'to a sponsor, roll-up or strategic buyer', color: 'var(--sys-bad)' },
+    { label: 'Already on a hand-built list', value: fmt.num(onList.length), sub: `${fmt.num(out.length)} more dropped as out of segment`, color: 'var(--sys-mute)' },
+  ]) +
+  `<div class="grid grid-2 mt-12">
+    ${ui.panel({ title: 'How the screen works', sub: 'From loan records to a checked shortlist', body: `<ol class="acts">${[
+      'Every SBA loan whose industry code and place match a BSP company is kept: PPP loans from 2020 and 2021, and 7(a) and 504 loans from FY1991 to date.',
+      'First and second PPP loans, and name variants, become one business. Its 7(a) and 504 loans are joined by name and ZIP code.',
+      'BSP’s own companies and add-ons are removed. Companies already on a hand-built list stay in, marked.',
+      'Each company’s shortlist is ranked on the jobs figure, distance to the hub, the words in its name and any recent SBA loan.',
+      'Claude agents read each shortlisted company’s own site, state records, press and search snippets, and pick one of eight ownership labels with a probability for each. A second agent re-checks every founder or family call for a sale, parent or investor. Only a call whose re-check ran its own deal search can reach Tier 1.',
+    ].map(x => `<li><span>${esc(x)}</span></li>`).join('')}</ol>` })}
+    ${ui.panel({ title: 'How the fit score is built', sub: 'Six parts, out of 100. Tiers use the engine’s thresholds.', body: `<div class="sys-table-wrap"><table class="sys-table mini"><thead><tr><th>Part</th><th>How it scores</th></tr></thead><tbody>${['segment_fit', 'size', 'ownership', 'proximity', 'verification', 'evidence', 'scaling', 'cap', 'tiers'].filter(k => M.fit_formula?.[k]).map(k => `<tr><td class="nm">${esc({ segment_fit: 'Segment fit', size: 'Size', ownership: 'Ownership', proximity: 'Proximity', verification: 'Second check', evidence: 'Evidence', scaling: 'Scaling', cap: 'Cap', tiers: 'Tiers' }[k])}</td><td class="wrap small">${esc(M.fit_formula[k])}</td></tr>`).join('')}</tbody></table></div>` })}
+  </div>
+  <div class="mt-12">${ui.panel({ title: 'Who owns them', sub: 'Companies on the screen by BSP company and ownership call. Out of segment companies are counted but kept off the screen.', body: `<div class="sys-table-wrap"><table class="sys-table mini ma-own"><thead><tr><th>Company</th>${OWN_COLS.map(([, l]) => `<th class="sys-n">${esc(l)}</th>`).join('')}<th class="sys-n">Out of segment</th><th class="sys-n">On the screen</th><th class="sys-n">Founder or family</th></tr></thead><tbody>${segs.map(p => { const rs = all.filter(x => x.s.segment === p), ck = rs.filter(x => x.s.enrichment !== 'not received'), f = rs.filter(isFF).length;
+      return `<tr><td class="nm"><span class="sys-dot" style="--co:${PLAT[p].color}" aria-hidden="true"></span> ${esc(PLAT[p].label)}</td>${OWN_COLS.map(([k]) => { const n = rs.filter(x => (k ? x.s.ownership_decision === k : x.s.enrichment === 'not received')).length; return `<td class="sys-n">${n || '<span class="dim">–</span>'}</td>`; }).join('')}<td class="sys-n">${out.filter(o => o.segment === p).length || '<span class="dim">–</span>'}</td><td class="sys-n"><b>${rs.length}</b></td><td class="sys-n">${ck.length ? `${pctOf(f, ck.length)}%` : '<span class="dim">not checked</span>'}</td></tr>`; }).join('')}</tbody></table></div>`,
+    foot: `<span class="src">Founder or family share is of the companies whose ownership was checked. Ownership comes from public web evidence; a founder or family call means no sale, parent or investor was found.</span>` })}</div>
+  <div class="mt-12">${ui.panel({ title: 'Top targets by company', sub: 'The five best fits on each company’s screen, with the evidence behind the ownership call. Click a company for its loan record and full evidence.', body: `<div class="ma-scr-grid">${segs.map(p => { const rs = all.filter(x => x.s.segment === p).sort((x, y) => (engFit(y) - engFit(x)) || ((x.s.screen_rank || 99) - (y.s.screen_rank || 99))).slice(0, 5);
+      const ck = rs.some(x => x.s.enrichment !== 'not received');
+      return `<section class="ma-scr-co" style="--co:${PLAT[p].color}"><div class="sys-card-label th-h"><span class="sys-dot" style="--co:${PLAT[p].color}" aria-hidden="true"></span> ${esc(PLAT[p].long)}</div>${ck ? '' : `<div class="dim small">Ownership not yet checked; ranked on loan facts and name signals.${p === 'fh' ? ' PPP is a weak source here: most apparel borrowers are contract sewers and boutiques.' : ''}</div>`}
+        <ol class="ma-scr-list">${rs.map(x => { const s = x.s, d = decOf(s), e = (s.ownership_evidence || []).slice().sort((a, c) => (EV_RANK[a.type] ?? 3) - (EV_RANK[c.type] ?? 3))[0], v = s.verification?.verdict;
+          return `<li class="sys-card sys-card--link ma-scr-it" tabindex="0" role="button" data-sid="${esc(x.t.id)}"><div class="ma-scr-hd"><b class="ma-scr-nm">${esc(s.company)}</b><span>${fmt.score(engFit(x))}</span></div>${x.t._src !== 'sba' ? `<div class="dim small">Hand-built fit; loan-screen fit ${fmt.num(s.fit_score)}</div>` : ''}
+            <div class="dim small">${esc(s.hq_city || '')}, ${esc(s.state || '')} · ${esc(s.trade || '')}${s.jobs_latest ? ` · ${fmt.num(s.jobs_latest)} jobs` : ''}${s.distance_mi != null && (p === 'pp' || p === 'cet') ? ` · ${fmt.num(Math.round(s.distance_mi))} mi` : ''}</div>
+            <div class="sys-chips ma-scr-chips">${d ? fmt.chip(DEC_TXT[d], DEC_COLOR[d]) : ''}${v && v !== 'not received' ? fmt.chip(VER_TXT[v], VER_COLOR[v]) : ''}${x.t._src !== 'sba' ? fmt.chip('on a hand-built list') : ''}${s.sba_change_of_ownership_recent ? fmt.chip('recent change of ownership', 'var(--sys-warn)') : ''}</div>
+            ${e ? `<div class="small text-2">${esc(clip(Copy.text(e.claim), 150))} <a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(fmt.host(e.url))}</a></div>` : `<div class="small text-2">${esc(clip(Copy.text(s.rank_reason || ''), 150))}</div>`}
+            ${s.sba_latest_loan ? `<div class="dim small">Latest SBA loan: ${esc(s.sba_latest_loan)}</div>` : ''}</li>`; }).join('')}</ol></section>`; }).join('')}</div>`,
+    foot: ui.source('SBA PPP, 7(a) and 504 loan records; company websites, state records, press, news and search snippets', 'https://data.sba.gov/dataset/7-a-504-foia', M.generated) })}</div>
+  <div class="grid grid-2 mt-12">
+    ${ui.panel({ title: 'Read before outreach', body: `<ul class="bul">${(M.caveats || []).map(c => `<li>${esc(c)}</li>`).join('')}</ul>` })}
+    ${ui.panel({ title: 'Sources', body: `<ul class="bul">${(M.sources || []).map(x => `<li>${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name)}</a>` : esc(x.name)}${x.as_of ? ` <span class="dim">· as of ${esc(dayWords(x.as_of))}</span>` : ''}${x.note ? ` <span class="dim">· ${esc(x.note)}</span>` : ''}</li>`).join('')}</ul><div class="small text-2 mt-8">Every matching loan row, with every column the SBA released, is in <a href="#/ma/loans">SBA loan records</a>.</div>` })}
+  </div></div>`;
+  el.querySelectorAll('[data-sid]').forEach(n => { const go = () => { const t = b.byId.get(n.dataset.sid); if (t) openTarget(ctx, t, b); }; n.onclick = e => { if (!e.target.closest('a')) go(); }; n.onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === n) { e.preventDefault(); go(); } }; });
+}
+
+/* ═══ View: SBA loan records ═══════════════════════════════════════════════
+   Every PPP, 7(a) and 504 row that matches a company's industry codes and geography, with every column as the SBA released
+   it (data/ppp/*.json, columnar, kept as arrays and decoded only for the rows on screen). Searchable, sortable, paginated;
+   rows that belong to a screened company carry its tier and ownership call, and open its profile. */
+const PROGS = [['ppp', 'PPP'], ['sba7a', '7(a)'], ['sba504', '504']];
+const LOAN_PAGE = 50;
+/* A few borrowers typed an email address into an address field. The page shows a placeholder; the data file and the CSV keep the cell as released. */
+const RX_EMAIL = /[\w.%+-]+@[\w.-]+\.[a-z]{2,}/i;
+const _loanFiles = new Map();
+function loanFile(name) {
+  if (!_loanFiles.has(name)) {
+    const p = fetch(new URL(`data/ppp/${name}.json`, document.baseURI), { cache: 'force-cache' }).then(r => { if (!r.ok) throw new Error(`${name} (${r.status})`); return r.json(); });
+    _loanFiles.set(name, p); p.catch(() => _loanFiles.delete(name));
+    while (_loanFiles.size > 3) _loanFiles.delete(_loanFiles.keys().next().value);   // keep memory bounded: the largest file is ~16 MB
+  }
+  return _loanFiles.get(name);
+}
+const sortKey = v => { if (v == null || v === '') return null; const s = String(v); const d = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s); if (d) return `${d[3]}-${d[1]}-${d[2]}`; const n = /^\s*-?[\d.]+\s*$/.test(s) ? Number(s) : NaN; return isNaN(n) ? s.toLowerCase() : n; };
+async function loansView(ctx) {
+  const { el, ui, fmt, esc, app, params } = ctx; injectCss();
+  const seg = SKEYS.includes(params.seg) ? params.seg : 'pp';
+  const prog = PROGS.some(([k]) => k === params.prog) ? params.prog : 'ppp';
+  el.innerHTML = `<div class="m-ma">${ui.pageHead({ title: 'SBA loan records' })}${ui.loading('Loading loan records…')}</div>`;
+  const [b, idx] = await Promise.all([loadBundle(ctx.data), ctx.data.load('ppp/index').catch(() => null)]);
+  if (!idx?.files) { el.innerHTML = `<div class="m-ma">${ui.pageHead({ title: 'SBA loan records' })}${ui.note('The loan record files are not available yet.', 'warn')}</div>`; return; }
+  const files = idx.files.filter(f => f.segment === seg && (f.name === `${seg}_${prog}` || f.name.startsWith(`${seg}_${prog}_`)));
+  const mainF = files.find(f => !f.geo_unresolved) || files[0];
+  const P = PLAT[seg], PL = PROGS.find(([k]) => k === prog)[1];
+  const src = (idx.meta?.sources || [])[prog === 'ppp' ? 0 : 1];
+  let parts;
+  try { parts = await Promise.all(files.map(f => loanFile(f.name))); }
+  catch (e) { el.innerHTML = `<div class="m-ma">${ui.pageHead({ title: 'SBA loan records' })}${ui.note(`Could not load the loan file: ${esc(e.message)}`, 'warn')}</div>`; return; }
+  const cols = parts[0]?.cols || [];
+  // rows from every part (a split file's parts, then the rows whose ZIP has no location), each remembering its file and position
+  const rows = []; parts.forEach((j, fi) => j.rows.forEach((r, ri) => rows.push({ r, e: j.enums, f: files[fi], ri })));
+  const cell = (row, ci) => { const c = cols[ci], v = row.r[ci]; return row.e[c] ? row.e[c][v] : v; };
+  // join each row to the screen: PPP rows by loan number, 7(a)/504 rows by their position in the segment file
+  const join = new Map(); const lnCol = cols.indexOf('LoanNumber');
+  for (const x of b.sbaAll.filter(x => x.s.segment === seg)) {
+    const k = x.s.full_data_keys || {};
+    if (prog === 'ppp') (k.ppp_loan_numbers || []).forEach(n => join.set(`L${n}`, x));
+    else (k[`${prog}_rows`] || []).forEach(i => join.set(`R${i}`, x));
+  }
+  const hit = row => prog === 'ppp' ? join.get(`L${cell(row, lnCol)}`) : row.f === mainF ? join.get(`R${row.ri}`) : null;
+  rows.forEach(row => { row.x = hit(row) || null; });
+  const nJoined = rows.filter(r => r.x).length;
+  let q = String(params.q || ''), onlyScreen = params.screen === '1', sk = null, sd = 1, page = 0, view = rows, hay = null;
+  const segOpts = SKEYS.filter(p => idx.files.some(f => f.segment === p));
+  const fileLinks = files.map(f => `<a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="data/ppp/${esc(f.name)}.json" download>⇩ ${f.geo_unresolved ? 'Rows with no location' : 'Data file'} (JSON, ${f.bytes < 1e5 ? `${fmt.num(Math.max(1, Math.round(f.bytes / 1e3)))} KB` : `${fmt.num(f.bytes / 1e6, 1)} MB`})</a>`).join('');
+  el.innerHTML = `<div class="m-ma">` + ui.pageHead({
+    title: 'SBA loan records',
+    sub: `<b>${esc(PL)} loans that match the ${esc(P.long)} screen, every column and row as the SBA released them.</b> Rows that belong to a company on the <a href="#/ma/screen">SBA loan screen</a> show its tier and ownership call; click one for its profile.`,
+    chips: `${fmt.chip(prog === 'ppp' ? 'PPP loans, 2020–21' : `7(a) and 504, FY1991 to ${dayWords(src?.as_of)}`, 'var(--c-ma)')}${fmt.chip('Unfiltered: all borrowers and all columns')}`,
+    actions: `<a class="sys-btn sys-btn--secondary btn" href="#/ma/screen">SBA loan screen →</a>`,
+  }) +
+  `<div class="sys-filters ma-seg-row ma-loans-ctl"><span class="sys-field-label lbl">Company</span><div id="ml-seg"></div></div>
+  <div class="sys-filters ma-seg-row ma-loans-ctl"><span class="sys-field-label lbl">Program</span><div id="ml-prog"></div></div>
+  ${ui.panel({ title: `${esc(P.label)} · ${esc(PL)} loans`, sub: esc(Copy.text(parts[0]?.meta?.match_rule || '')),
+    actions: `<div class="ma-loans-dl">${fileLinks}<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm btn xs" id="ml-csv">⇩ CSV of this view</button></div>`,
+    body: `<div class="sys-filters ma-loans-filt"><input class="sys-input" type="search" id="ml-q" placeholder="Search any column: name, city, lender…" aria-label="Search loan records" value="${esc(q)}"><button type="button" class="sys-chip${onlyScreen ? ' active' : ''}" id="ml-only" aria-pressed="${onlyScreen}">Only companies on the screen${nJoined ? ` (${fmt.num(nJoined)} rows)` : ''}</button><span class="sys-src" id="ml-count" aria-live="polite"></span></div><div id="ml-tbl"></div>`,
+    foot: `${ui.source(src?.name || 'SBA loan data', src?.url, src?.as_of)}<span class="src">${esc(parts[0]?.meta?.columns_note || '')}</span>` })}
+  </div>`;
+  ui.seg(el.querySelector('#ml-seg'), segOpts.map(p => ({ value: p, label: PLAT[p].label })), seg, v => app.go('ma', 'loans', { seg: v, prog }));
+  ui.seg(el.querySelector('#ml-prog'), PROGS.map(([k, l]) => ({ value: k, label: l })), prog, v => app.go('ma', 'loans', { seg, prog: v }));
+  const tblEl = el.querySelector('#ml-tbl'), countEl = el.querySelector('#ml-count');
+  const apply = () => {
+    let v = onlyScreen ? rows.filter(r => r.x) : rows;
+    const qq = q.trim().toLowerCase();
+    if (qq) { if (!hay) hay = rows.map(r => r.r.map((_, ci) => cell(r, ci)).join(' ').toLowerCase() + (r.x ? ' ' + String(r.x.s.company).toLowerCase() : '')); const pos = new Map(rows.map((r, i) => [r, i])); v = v.filter(r => hay[pos.get(r)].includes(qq)); }
+    if (sk != null) { const kf = sk === -1 ? r => (r.x ? r.x.s.fit_score : null) : r => sortKey(cell(r, sk)); const keyed = v.map(r => [kf(r), r]); keyed.sort((a, c) => { if (a[0] == null && c[0] == null) return 0; if (a[0] == null) return 1; if (c[0] == null) return -1; return (typeof a[0] === 'number' && typeof c[0] === 'number' ? a[0] - c[0] : String(a[0]).localeCompare(String(c[0]))) * sd; }); v = keyed.map(k => k[1]); }
+    view = v; page = 0; render();
+  };
+  const scrCell = r => { if (!r.x) return '<span class="dim">–</span>'; const s = r.x.s, d = decOf(s); return `<span class="ma-loan-scr">${fmt.tier(s.tier)} <span class="sys-num">${fmt.num(s.fit_score)}</span>${d ? ` ${fmt.chip(DEC_TXT[d], DEC_COLOR[d])}` : ''}</span>`; };
+  const render = () => {
+    const pages = Math.max(1, Math.ceil(view.length / LOAN_PAGE)), start = page * LOAN_PAGE, slice = view.slice(start, start + LOAN_PAGE);
+    countEl.textContent = view.length ? `Showing ${fmt.num(start + 1)}–${fmt.num(start + slice.length)} of ${fmt.num(view.length)}` : 'No rows match';
+    const th = (ci, label) => `<th data-ci="${ci}" tabindex="0" aria-sort="${sk === ci ? (sd > 0 ? 'ascending' : 'descending') : 'none'}" class="${sk === ci ? 'sorted' : ''}">${esc(label)}${sk === ci ? `<span class="arr" aria-hidden="true">${sd > 0 ? '▲' : '▼'}</span>` : ''}</th>`;
+    tblEl.innerHTML = `<div class="sys-table-wrap tbl-wrap ma-loans-wrap"><table class="sys-table tbl ma-loans" data-raw><thead><tr>${th(-1, 'On the screen')}${cols.map((c, ci) => th(ci, c)).join('')}</tr></thead><tbody>${slice.map((r, i) => `<tr data-i="${start + i}"${r.x ? ' class="ma-loan-hit" tabindex="0"' : ''}><td>${scrCell(r)}</td>${cols.map((c, ci) => { const v = cell(r, ci); return `<td>${v === '' || v == null ? '' : RX_EMAIL.test(v) ? '<span class="dim">email address, kept in the data file</span>' : esc(v)}</td>`; }).join('')}</tr>`).join('') || `<tr><td colspan="${cols.length + 1}"><div class="empty">No rows match</div></td></tr>`}</tbody></table></div>
+      <div class="tbl-foot"><span class="sys-src">${fmt.num(view.length)} rows</span><div class="pages"><button type="button" class="sys-btn sys-btn--ghost sys-btn--sm btn xs ghost" data-pg="-1" aria-label="Previous page" ${page === 0 ? 'disabled' : ''}>‹</button><span class="sys-src">${page + 1} / ${pages}</span><button type="button" class="sys-btn sys-btn--ghost sys-btn--sm btn xs ghost" data-pg="1" aria-label="Next page" ${page >= pages - 1 ? 'disabled' : ''}>›</button></div></div>`;
+    tblEl.querySelectorAll('th[data-ci]').forEach(h => { const go = () => { const ci = Number(h.dataset.ci); if (sk === ci) sd = -sd; else { sk = ci; sd = ci === -1 ? -1 : 1; } apply(); tblEl.querySelector(`th[data-ci="${ci}"]`)?.focus({ preventScroll: true }); }; h.onclick = go; h.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }; });
+    tblEl.querySelectorAll('[data-pg]').forEach(btn => btn.onclick = () => { page = Math.max(0, Math.min(pages - 1, page + Number(btn.dataset.pg))); render(); });
+    tblEl.querySelectorAll('tr.ma-loan-hit').forEach(tr => { const go = () => { const x = view[Number(tr.dataset.i)]?.x; if (x) openTarget(ctx, x.t, b); }; tr.onclick = go; tr.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }; });
+  };
+  let tq; el.querySelector('#ml-q').oninput = e => { clearTimeout(tq); tq = setTimeout(() => { q = e.target.value; apply(); }, 220); };
+  el.querySelector('#ml-only').onclick = e => { onlyScreen = !onlyScreen; e.currentTarget.classList.toggle('active', onlyScreen); e.currentTarget.setAttribute('aria-pressed', String(onlyScreen)); apply(); };
+  el.querySelector('#ml-csv').onclick = () => {
+    const c = v => { const s = v == null ? '' : String(v); return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+    const csv = [cols.map(c).join(','), ...view.map(r => cols.map((_, ci) => c(cell(r, ci))).join(','))].join('\n');
+    const a = document.createElement('a'); const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.href = url; a.download = `${mainF.name}${q || onlyScreen ? '_filtered' : ''}.csv`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+    ui.toast(`Saved ${fmt.num(view.length)} rows`);
+  };
+  apply();
+}
+
 export default {
   id: 'ma', name: 'Acquisition engine', tag: 'M&A', color: 'var(--c-ma)', group: 'Intelligence',
-  tagline: 'Cross-portfolio buy-and-build engine: screened add-ons, company theses, rival companies, valuation benchmarks and white space',
+  tagline: 'Cross-portfolio buy-and-build engine: screened add-ons, the SBA loan screen, company theses, rival companies, valuation benchmarks and white space',
   hq: { lat: 40.7536, lon: -73.9832, label: 'BSP, New York, NY' },
   views: [
     { id: 'overview', name: 'Overview', icon: '◉', render: overview },
     { id: 'pipeline', name: 'Pipeline', icon: '▤', render: pipeline },
+    { id: 'screen', name: 'SBA loan screen', icon: '⊞', render: screenView },
+    { id: 'loans', name: 'SBA loan records', icon: '☰', render: loansView },
     { id: 'theses', name: 'Company theses', icon: '◇', render: theses },
     { id: 'rivals', name: 'Rival companies', icon: '⚔', render: rivalsView },
     { id: 'valuation', name: 'Valuation', icon: '$', render: valuation },
     { id: 'whitespace', name: 'White space', icon: '✦', render: whitespace },
   ],
   tour: [
-    { order: 800, hash: '#/ma/overview', caption: '<b>Acquisition engine.</b> Every screened add-on across four companies, ranked, with this quarter’s top ten.', narration: 'The acquisition engine ranks every screened add-on across four companies, with this quarter\'s top ten.', duration: 6500 },
+    { order: 800, hash: '#/ma/overview', caption: '<b>Acquisition engine.</b> Every screened add-on across the portfolio, ranked, with this quarter’s top ten.', narration: 'The acquisition engine ranks every screened add-on across the portfolio, with this quarter\'s top ten.', duration: 6500 },
     { order: 810, hash: '#/ma/theses', caption: '<b>Company theses.</b> Each thesis is written from its target pool; county home sales flag density gaps.', narration: 'Each thesis comes from its own target pool. Home sales show where turnover and targets line up.', duration: 8500 },
     { order: 820, hash: '#/ma/rivals', caption: '<b>Rival companies.</b> Lender filings flag stressed consolidators: likely sellers, not bidders.', narration: 'Lender filings flag rival consolidators paying interest in kind: likely sellers, not bidders.', duration: 5500 },
   ],

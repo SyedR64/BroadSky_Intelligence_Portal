@@ -197,3 +197,25 @@
 :is(.m-ma,.m-ma-insp) .ma-conf::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--cc)}
 .m-ma-insp.ma-dealsec .ma-how{margin-top:var(--sys-sp-3)}
 .m-ma .ma-deal .ma-deal-nm{margin:0;font:600 var(--sys-fs-base)/1.3 var(--sys-font);letter-spacing:-.01em;text-transform:none;color:var(--sys-ink)}
+
+/* SBA loan screen: top targets per company (a responsive grid of company columns, each a list of linked cards) */
+.m-ma .ma-scr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:var(--sys-sp-4)}
+.m-ma .ma-scr-list{display:flex;flex-direction:column;gap:var(--sys-sp-2);margin:0;padding:0;list-style:none}
+.m-ma .ma-scr-it{padding:var(--sys-sp-3);display:flex;flex-direction:column;gap:6px;min-width:0}
+.m-ma .ma-scr-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--sys-sp-2)}
+.m-ma .ma-scr-nm{font-size:var(--sys-fs-sm);line-height:1.35;overflow-wrap:anywhere}
+.m-ma .ma-scr-chips{gap:4px}
+.m-ma .ma-scr-chips .sys-chip{min-height:22px;padding:0 8px;font-size:var(--sys-fs-xs)}
+.m-ma .ma-own td,.m-ma .ma-own th{white-space:nowrap}
+
+/* SBA loan records: controls wrap on narrow screens; the wide table scrolls inside its card */
+.m-ma .ma-loans-ctl{flex-wrap:wrap}
+.m-ma .ma-loans-dl{display:flex;flex-wrap:wrap;gap:var(--sys-sp-2)}
+.m-ma .ma-loans-filt{flex-wrap:wrap;gap:var(--sys-sp-2);margin-bottom:var(--sys-sp-2)}
+.m-ma .ma-loans-filt .sys-input{flex:1 1 240px;min-width:0}
+.m-ma .ma-loans-wrap{max-height:70vh}
+.m-ma .ma-loans td,.m-ma .ma-loans th{white-space:nowrap;font-size:var(--sys-fs-xs)}
+.m-ma .ma-loans th{text-transform:none;letter-spacing:normal;cursor:pointer;position:sticky;top:0;z-index:1;background:var(--sys-surface)}
+.m-ma .ma-loans tr.ma-loan-hit{cursor:pointer;background:color-mix(in srgb,var(--sys-info) 6%,var(--sys-surface))}
+.m-ma .ma-loan-scr{display:inline-flex;align-items:center;gap:4px}
+@media (max-width:640px){.m-ma .ma-scr-grid{grid-template-columns:minmax(0,1fr)}}

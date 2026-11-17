@@ -2,7 +2,7 @@
    record fields, the est. badge, and a post-render pass that turns the console's
    textual "est." markers into .sys-est badges. Module renderers call these at the
    source; Frame.humanize stays the safety net. */
-import { Frame } from '../assets/frame.js?v=20261113023635';
+import { Frame } from '../assets/frame.js?v=20261116225931';
 
 export const EST = '<span class="sys-est">est.</span>';
 export const ILLUS = '<span class="sys-est sys-est--illus">illustrative</span>';
@@ -295,7 +295,7 @@ export const VIEW_TITLES = {
   'ts/overview': 'operating picture', 'ts/accounts': 'accounts', 'ts/sites': 'site explorer', 'ts/targets': 'add-on targets', 'ts/filings': 'public filings',
   'bpi/overview': 'operating picture', 'bpi/opportunities': 'growth opportunities', 'bpi/benchmarks': 'public-affairs comparables', 'bpi/filings': 'public filings',
   'fh/overview': 'operating picture', 'fh/opportunities': 'growth opportunities', 'fh/benchmarks': 'public comparables', 'fh/filings': 'public filings', 'fh/market': 'Manhattan home sales',
-  'ma/overview': 'cross-portfolio overview', 'ma/pipeline': 'add-on pipeline', 'ma/theses': 'company theses', 'ma/rivals': 'rival companies', 'ma/valuation': 'valuation benchmarks', 'ma/whitespace': 'white space',
+  'ma/overview': 'cross-portfolio overview', 'ma/pipeline': 'add-on pipeline', 'ma/screen': 'SBA loan screen', 'ma/loans': 'SBA loan records', 'ma/theses': 'company theses', 'ma/rivals': 'rival companies', 'ma/valuation': 'valuation benchmarks', 'ma/whitespace': 'white space',
   'deal/returns': 'buyout returns', 'deal/dcf': 'discounted cash flow', 'deal/rollup': 'buy-and-build roll-up', 'deal/sensitivity': 'sensitivity tables',
   'cases/timeline': 'case timelines', 'cases/levers': 'value-creation levers', 'cases/sequence': 'the Punctual Pros sequence', 'cases/exits': 'entry to exit',
   'pe/landscape': 'sponsor landscape', 'pe/deals': 'deal flow, 2025 to 2026', 'pe/heatmap': 'sector heatmap', 'pe/comparables': 'portfolio company comparables',

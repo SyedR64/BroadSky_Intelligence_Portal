@@ -1,0 +1,894 @@
+{
+"_note": "Ownership results for the BPI shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). Same keys as pp.json. Restored from the agents' saved results after the hand-off to the integration step was cut off.",
+"items": [
+{
+"cid": "bpi-0113",
+"web": "levick.com (did not resolve)",
+"op": "unclear",
+"seg": true,
+"segnote": "Known as a Washington crisis and strategic communications firm. Fit could not be confirmed this run.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.2,
+0.0,
+0.05,
+0.15,
+0.0,
+0.25,
+0.0,
+0.35
+],
+"founded": null,
+"years": "Unverified this run.",
+"staff": "Unknown.",
+"rev": null,
+"rsig": "No review snippets were gathered.",
+"succ": "The website domain no longer resolves. That may mean a closure or rebrand. Unverified.",
+"fit": "Right segment by name. Status and ownership could not be checked because web search ran out and the domain is down.",
+"risks": [
+"Website domain does not resolve",
+"Ownership and operating status unverified",
+"Web search budget was used up before any search ran"
+],
+"ev": [
+[
+"DNS lookups for levick.com and www.levick.com failed (ENOTFOUND) on 2026-11-16. The website may be gone, which may point to a closure or rebrand (unverified).",
+"https://www.levick.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "bpi-10580",
+"web": "https://www.southweststrategies.com",
+"op": "unclear",
+"seg": true,
+"segnote": "Its name and NAICS 541820 suggest a San Diego public affairs and communications firm. Not confirmed from any source.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.0,
+0.15,
+0.1,
+0.0,
+0.03,
+0.02,
+0.4
+],
+"founded": null,
+"years": "",
+"staff": "No current headcount found. PPP 2020-21 reported 40 jobs across 2 loans.",
+"rev": null,
+"rsig": "Not applicable. No snippets seen.",
+"succ": "none found (not researched)",
+"fit": "Likely fits the segment, but ownership and current status are unverified.",
+"risks": [
+"website unreachable (TLS error)",
+"ownership unverified",
+"web search budget exhausted before research"
+],
+"ev": [
+[
+"southweststrategies.com failed with a TLS error over HTTPS, and HTTP returned 404 on 2026-11-16. No content could be read.",
+"https://www.southweststrategies.com/",
+"company_site"
+],
+[
+"swstrategies.com belongs to an unrelated software consultancy, not this San Diego public affairs firm.",
+"https://www.swstrategies.com/about",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "bpi-11539",
+"web": "https://www.ceislermedia.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Integrated communications firm offering strategic communications, brand reputation, digital and creative, and advocacy. Four Pennsylvania locations.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.2,
+0.0,
+0.05,
+0.7,
+0.0,
+0.0,
+0.0,
+0.05
+],
+"founded": 1995,
+"years": "About 31 years (founded 1995).",
+"staff": "The site states 30+ employees. The team page lists 24 people.",
+"rev": null,
+"rsig": "No review snippets were gathered.",
+"succ": "The founder, about 31 years in, merged the firm into Athena Global Advisors in February 2026. It is now an Athena company, so the sale has effectively happened.",
+"fit": "Strong public affairs and advocacy fit, but already folded into Athena Global Advisors in 2026.",
+"risks": [
+"Merged into Athena Global Advisors in 2026",
+"Legal structure of the deal not disclosed"
+],
+"ev": [
+[
+"The About page lists Larry Ceisler as founder and dates the firm to 1995. It describes a 2026 merger with Athena Global Advisors.",
+"https://www.ceislermedia.com/about/",
+"company_site"
+],
+[
+"Athena says the two firms announced a merger in February 2026. Ceisler Media now runs independently 'as an Athena company'.",
+"https://www.athenaglobaladvisors.com/blog/ambassador-david-cohen-invests-in-athena",
+"press"
+],
+[
+"Former Ambassador David L. Cohen made a significant investment in Athena and joined its board. Athena's founder and CEO keeps majority control.",
+"https://www.athenaglobaladvisors.com/blog/ambassador-david-cohen-invests-in-athena",
+"press"
+],
+[
+"The homepage claims 30+ employees and 75+ clients.",
+"https://www.ceislermedia.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "bpi-11734",
+"web": "https://www.espousalstrategies.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Public affairs and government relations. Fits the segment.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.75,
+0.0,
+0.05,
+0.02,
+0.0,
+0.0,
+0.03,
+0.15
+],
+"founded": null,
+"years": "The founded year is not stated. Unverified.",
+"staff": "30 jobs supported per the 2024 SBA 7(a) loan. The site lists eight leaders.",
+"rev": null,
+"rsig": "none found",
+"succ": "none found",
+"fit": "A founder-led Portland public affairs boutique. It took a $500K SBA 7(a) loan in October 2024.",
+"risks": [
+"a large share of work is likely public-sector or DBE-certified contracting, so certifications may not transfer on a sale",
+"recent 7(a) debt"
+],
+"ev": [
+[
+"A Portland boutique government, community and public affairs firm at 1300 SW 6th Ave. Services include community engagement, coalition building, strategic communications and legislative advocacy.",
+"https://www.espousalstrategies.com/",
+"company_site"
+],
+[
+"Johnell Bell is listed as Chief Executive Officer and Founder. The firm is a certified minority-owned business with SBE and DBE certifications.",
+"https://www.espousalstrategies.com/about",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The About page lists Johnell Bell as CEO and Founder of a certified minority-owned business with SBE and DBE certifications, which implies independent ownership. No acquisition or merger is mentioned. The page shows no date. News searches could not run because the WebSearch budget was used up.",
+"https://www.espousalstrategies.com/about"
+]
+},
+{
+"cid": "bpi-1720",
+"web": "https://pos.org",
+"op": "yes",
+"seg": true,
+"segnote": "Public affairs and public opinion research. Fits the segment.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.05,
+0.0,
+0.35,
+0.5,
+0.0,
+0.0,
+0.02,
+0.08
+],
+"founded": 1991,
+"years": "",
+"staff": "No current headcount stated. Twelve partners named as a group. PPP 2020-21 reported 36 jobs.",
+"rev": null,
+"rsig": "Not applicable (B2B research firm). No snippets seen.",
+"succ": "Founding partners have been in since 1991. The firm has already joined the GP3 group.",
+"fit": "Strong-fit public affairs research firm, but already part of the GP3 group. Whether GP3 is PE-backed is unverified.",
+"risks": [
+"already part of GP3 group",
+"GP3 ownership and capital backing unverified",
+"political-cycle revenue exposure"
+],
+"ev": [
+[
+"National political and public affairs research firm, founded 1991, headquartered in Alexandria, VA. Twelve partners lead its research.",
+"https://pos.org/about/",
+"company_site"
+],
+[
+"The about page states 'Public Opinion Strategies is a GP3 company' and links to gp3partners.com.",
+"https://pos.org/about/",
+"company_site"
+],
+[
+"GP3 Partners calls itself the largest communications and public affairs company in the US and refers to partner firms. Its page does not describe ownership or investors.",
+"https://gp3partners.com/",
+"company_site"
+],
+[
+"Founded in 1991 by Neil Newhouse, Bill McInturff and Glen Bolger.",
+"https://en.wikipedia.org/wiki/Public_Opinion_Strategies",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "bpi-1927",
+"web": "https://www.jonespa.com",
+"op": "unclear",
+"seg": true,
+"segnote": "Its name and NAICS 541820 suggest a public affairs firm. Not confirmed from any source.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.0,
+0.1,
+0.1,
+0.0,
+0.05,
+0.03,
+0.42
+],
+"founded": null,
+"years": "",
+"staff": "No current headcount found. PPP 2020-21 reported 49 jobs.",
+"rev": null,
+"rsig": "Not applicable. No snippets seen.",
+"succ": "none found (not researched)",
+"fit": "Likely fits the segment, but no ownership or operating evidence could be gathered.",
+"risks": [
+"website unreachable",
+"domain match unverified",
+"ownership unverified",
+"web search budget exhausted before research"
+],
+"ev": [
+[
+"jonespa.com refused connections over both HTTP and HTTPS on 2026-11-16. The domain is assumed to be the company's but that is unverified.",
+"https://www.jonespa.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "bpi-2154",
+"web": "https://pentagroup.com/ (former hamiltonplacestrategies.com)",
+"op": "no",
+"seg": true,
+"segnote": "Public affairs and communications. Fits the segment, but it is no longer standalone.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.05,
+0.0,
+0.1,
+0.75,
+0.0,
+0.08,
+0.0,
+0.02
+],
+"founded": null,
+"years": "Not confirmed this run.",
+"staff": "57 jobs in PPP 2020-21. Penta's headcount is not stated.",
+"rev": null,
+"rsig": "none found",
+"succ": "Already combined into Penta Group. The merger terms and any investor backer are unverified.",
+"fit": "A DC public affairs and strategic communications firm, now absorbed into the larger multinational Penta Group. It is no longer an independent target.",
+"risks": [
+"brand retired, redirects to Penta Group",
+"part of a larger multinational group, so not an independent acquisition",
+"investor or backer of Penta unverified"
+],
+"ev": [
+[
+"hamiltonplacestrategies.com 301-redirects to pentagroup.com, so the brand appears to have been folded into Penta Group.",
+"https://hamiltonplacestrategies.com/",
+"company_site"
+],
+[
+"Penta Group, LLC lists eight offices in six countries (DC, NY, SF, Singapore, London, Dublin, Brussels, Paris). The page names no investor and gives no formation history.",
+"https://pentagroup.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "bpi-2343",
+"web": "https://www.amgroup.us/",
+"op": "yes",
+"seg": true,
+"segnote": "Mainly association management, with advocacy and communications as part of the offer. Partial fit.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.25,
+0.03,
+0.2,
+0.05,
+0.0,
+0.0,
+0.1,
+0.37
+],
+"founded": null,
+"years": "The site footer shows 2016-2025. The founded year is unverified.",
+"staff": "21 team members listed on the site (49 PPP jobs).",
+"rev": null,
+"rsig": "none found",
+"succ": "none found",
+"fit": "An association management company with a government advocacy arm. A partial fit for public affairs.",
+"risks": [
+"business mix weighted to association management rather than public affairs",
+"ownership unverified",
+"headcount may have fallen (49 PPP jobs vs 21 listed)"
+],
+"ev": [
+[
+"A Sacramento firm at One Capitol Mall. It offers association advocacy and management: government advocacy, events, marketing and communications, and membership services.",
+"https://www.amgroup.us/",
+"company_site"
+],
+[
+"Gloria Peterson, IOM, is listed as CEO. The site lists 21 team members. The founder and founded year are not stated, and no acquisition is mentioned.",
+"https://www.amgroup.us/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "bpi-3793",
+"web": "https://www.parkstrategies.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Government relations and advocacy. Fits the segment.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.45,
+0.05,
+0.3,
+0.03,
+0.0,
+0.02,
+0.0,
+0.15
+],
+"founded": 1999,
+"years": "Founded 1999, about 27 years in business.",
+"staff": "33 jobs in PPP 2020-21. The site states no current headcount.",
+"rev": null,
+"rsig": "none found",
+"succ": "The founder is a former senator, and the firm is 26+ years old. The site names no current leadership or successor. That is a possible succession signal (unverified).",
+"fit": "A New York government relations and lobbying firm with four offices. Fits public affairs well.",
+"risks": [
+"value tied to the founder's political relationships",
+"current day-to-day leadership and ownership split unverified"
+],
+"ev": [
+[
+"Founded in 1999 by former U.S. Senator Alfonse M. D'Amato. Offers government relations (state, local, federal, regulatory), business consulting and association management.",
+"https://www.parkstrategies.com/",
+"company_site"
+],
+[
+"Offices in Albany, Syracuse, Long Island (Uniondale) and New York City. No current leaders named. No acquisition mentioned.",
+"https://www.parkstrategies.com/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"No acquisition, merger, parent or investor appears on the firm's site. The About page still names founder Alfonse D'Amato (founded 1999). Family members hold senior roles: Christopher D'Amato is Partner, EVP and General Counsel, and Amy D'Amato is Director of Compliance. The page names no CEO, so the founder's current operating role is unverified. The firm may be closer to family_next_generation. News searches could not run because the shared WebSearch budget was used up. Only the company site was checked.",
+"https://parkstrategies.com/about/"
+]
+},
+{
+"cid": "bpi-4138",
+"web": "https://www.polleverywhere.com/",
+"op": "yes",
+"seg": false,
+"segnote": "Audience-engagement software (live polling for presentations) for education, corporate and event customers. Not a public affairs, communications or opinion-research firm.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.05,
+0.0,
+0.0,
+0.05,
+0.0,
+0.0,
+0.85,
+0.05
+],
+"founded": 2008,
+"years": "About 18 years (founded 2008).",
+"staff": "Not stated. The company says it is remote-first.",
+"rev": null,
+"rsig": "No review snippets were gathered.",
+"succ": "A non-founder CEO is in place. Ownership is not stated.",
+"fit": "SaaS polling tool, not a public affairs or opinion-research shop. Out of segment.",
+"risks": [
+"Software product company, not a services firm",
+"NAICS 541910 is a misleading match"
+],
+"ev": [
+[
+"The About page says Jeff Vyduna and Brad Gessler founded the company in 2008. It makes audience-engagement tools for presentations.",
+"https://www.polleverywhere.com/about",
+"company_site"
+],
+[
+"The About page lists Robert Graham as CEO. He is not one of the founders named. The team is remote-first.",
+"https://www.polleverywhere.com/about",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "bpi-4167",
+"web": "https://dittopr.co/",
+"op": "yes",
+"seg": true,
+"segnote": "Communications or PR. Fits the segment on communications, not on public affairs.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.6,
+0.0,
+0.05,
+0.05,
+0.0,
+0.0,
+0.1,
+0.2
+],
+"founded": 2012,
+"years": "Started in 2012 in Brooklyn, about 14 years in business.",
+"staff": "27 jobs in PPP 2020-21. The site states no headcount.",
+"rev": null,
+"rsig": "none found",
+"succ": "none found",
+"fit": "A tech-focused PR agency that trades as Ditto PR. It fits communications, though it does no government public affairs.",
+"risks": [
+"legal name says public affairs but the work is tech PR",
+"founder identity and ownership not confirmed on the site"
+],
+"ev": [
+[
+"Ditto PR is a PR firm for AI, emerging tech and fintech companies. Its work covers media relations, thought leadership, launches and reputation. It started in Brooklyn in 2012. The page names no founder and mentions no acquisition.",
+"https://dittopr.co/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The About page says Trey Ditto founded Ditto PR in Brooklyn in 2012. A client testimonial on the homepage (copyright 2026) refers to 'Trey and his team', which points to current founder leadership. The site mentions no acquisition, parent, holding company or investor. His formal title is not stated. News searches could not run because the WebSearch budget was used up.",
+"https://dittopr.co/about"
+]
+},
+{
+"cid": "bpi-5418",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "The name signals public affairs or public strategies (Des Moines, IA). Not confirmed.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.0,
+0.1,
+0.1,
+0.0,
+0.1,
+0.05,
+0.35
+],
+"founded": null,
+"years": "Unverified.",
+"staff": "Unknown.",
+"rev": null,
+"rsig": "No review snippets were gathered.",
+"succ": "none found",
+"fit": "51 jobs in PPP and a fitting name, but nothing could be verified this run.",
+"risks": [
+"No official website identified",
+"All facts unverified",
+"Web search budget was used up"
+],
+"ev": [
+[
+"No official website was found. Two guessed domains failed: groundswellps.com did not resolve, and groundswellpublicstrategies.com gave a TLS error. Neither is confirmed to belong to the firm.",
+"https://www.groundswellpublicstrategies.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "bpi-5940",
+"web": "https://www.spitfirestrategies.com",
+"op": "unclear",
+"seg": true,
+"segnote": "From prior knowledge only (unverified): a DC strategic-communications firm for nonprofits and foundations. That would fit communications.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.4,
+0.0,
+0.1,
+0.05,
+0.0,
+0.02,
+0.03,
+0.4
+],
+"founded": null,
+"years": "",
+"staff": "No current headcount found. PPP 2020-21 reported 46 jobs.",
+"rev": null,
+"rsig": "Not applicable. No snippets seen.",
+"succ": "none found (not researched)",
+"fit": "Likely a founder-led DC communications firm, but nothing was verified in this run.",
+"risks": [
+"website blocked automated access",
+"ownership unverified",
+"web search budget exhausted before research"
+],
+"ev": [
+[
+"spitfirestrategies.com returned HTTP 403 to automated fetches on 2026-11-16, so no content could be read. The domain is live.",
+"https://www.spitfirestrategies.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "bpi-6450",
+"web": "https://marathonstrategies.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Public affairs and communications. Fits the segment.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.65,
+0.0,
+0.1,
+0.1,
+0.0,
+0.0,
+0.0,
+0.15
+],
+"founded": null,
+"years": "The founded year is not stated on the pages fetched. Unverified.",
+"staff": "Company says nearly 70 communications professionals (up from 47 PPP jobs).",
+"rev": null,
+"rsig": "none found",
+"succ": "none found",
+"fit": "A founder-run public affairs and crisis communications firm of about 70 people. A strong fit for the segment.",
+"risks": [
+"investor or outside-capital status not checked by search (search budget exhausted)",
+"founder-dependent"
+],
+"ev": [
+[
+"The firm's services are corporate communications, public affairs, crisis management, competitive intelligence, digital and creative. Offices in DC, NYC and Albany. No acquisition or investor mentioned.",
+"https://marathonstrategies.com/",
+"company_site"
+],
+[
+"Phil Singer is listed as Founder & CEO. The firm describes nearly 70 communications professionals.",
+"https://marathonstrategies.com/our-people/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The people page (copyright 2026) still lists Phil Singer as Founder & CEO. Neither it nor the homepage mentions an acquisition, parent company, investor or private equity. News searches for outside investment could not run because the WebSearch budget was used up, so a minority stake reported only in the press is unverified.",
+"https://marathonstrategies.com/our-people/"
+]
+},
+{
+"cid": "bpi-7290",
+"web": "unverified (fsbcorestrategies.com returns 404)",
+"op": "unclear",
+"seg": true,
+"segnote": "Fit is assumed from the name and NAICS only. Unverified.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.02,
+0.2,
+0.08,
+0.0,
+0.1,
+0.05,
+0.25
+],
+"founded": null,
+"years": "unknown",
+"staff": "34 jobs in PPP 2020-21. No current figure.",
+"rev": null,
+"rsig": "none found (web search budget exhausted)",
+"succ": "none found",
+"fit": "The name and NAICS 541820 suggest a Sacramento public affairs firm. Nothing was confirmed this run.",
+"risks": [
+"no web search possible this run (shared search budget exhausted)",
+"company website not found",
+"ownership unverified"
+],
+"ev": [
+[
+"The guessed company domain returns HTTP 404 at the root and at /about-us. The company site was not confirmed. Unverified.",
+"https://www.fsbcorestrategies.com/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "bpi-7444",
+"web": "https://www.720strategies.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Public relations and public affairs firm in Washington, DC. Services include strategic communications, government services, grassroots advocacy, PAC fundraising and compliance, and digital strategy.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.03,
+0.0,
+0.02,
+0.9,
+0.0,
+0.0,
+0.0,
+0.05
+],
+"founded": 1999,
+"years": "The site claims over 20 years. The 1999 copyright suggests that founding year (unverified).",
+"staff": "Not stated on the site.",
+"rev": null,
+"rsig": "No review snippets were gathered.",
+"succ": "The founder has moved to a senior advisor role. A non-founder CEO runs the firm under HMA ownership, so the sale has already happened.",
+"fit": "Right kind of firm, but Health Management Associates already owns it. Not a founder-owned target.",
+"risks": [
+"Already owned by a strategic acquirer (HMA)",
+"Deal date and terms unverified",
+"Whether HMA itself has PE backing is unverified"
+],
+"ev": [
+[
+"The site footer calls the firm '720 Strategies, LLC, an HMA company' and links to healthmanagement.com.",
+"https://www.720strategies.com/",
+"company_site"
+],
+[
+"The About page lists Pam Fielding as Founder and Senior Advisor and Vlad Cartwright as CEO.",
+"https://www.720strategies.com/about",
+"company_site"
+],
+[
+"The site cites 'over two decades' of work and a copyright of 1999-2026.",
+"https://www.720strategies.com/about",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "bpi-7537",
+"web": "https://westendstrategy.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Strategic communications firm for policy and social issues: media relations, training and thought leadership. Issue work spans voting rights, gun violence prevention, reproductive rights and public lands.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.75,
+0.0,
+0.1,
+0.05,
+0.0,
+0.0,
+0.0,
+0.1
+],
+"founded": null,
+"years": "Founding year not stated on the site.",
+"staff": "17 people are listed on the team page.",
+"rev": null,
+"rsig": "No review snippets were gathered.",
+"succ": "none found. Two named partners could be internal successors.",
+"fit": "Founder-led DC issue-advocacy communications firm. Small (about 17 staff) and a clean founder-led fit.",
+"risks": [
+"Small team",
+"Partisan, cause-focused client base",
+"Founding year and ownership split unverified"
+],
+"ev": [
+[
+"The team page lists Matt Dorf as 'President and CEO' and as founder. Shannon Craig Straw and Samantha Kupferman are listed as partners.",
+"https://westendstrategy.com/team/",
+"company_site"
+],
+[
+"The team page lists 17 people.",
+"https://westendstrategy.com/team/",
+"company_site"
+],
+[
+"The homepage describes policy and social-issue communications work and mentions no parent company.",
+"https://westendstrategy.com/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The live team page, fetched today, still lists Matt Dorf as President and CEO and calls him 'president and founder'. Shannon Craig Straw and Samantha Kupferman are listed as partners, among 17 staff. The homepage and about page mention no parent company, holding company, acquisition or merger. The about page gives no founding date or ownership history, and /news/ returns a 404. Caveat: I could not run the web search for an acquisition, private-equity owner or merger because this turn's shared search budget was used up. So the refutation check used only the company's own site, and an outside sale is not ruled out. Founder-led status rests on the company's own current team page.",
+"https://westendstrategy.com/team/"
+]
+},
+{
+"cid": "bpi-7958",
+"web": "https://www.saxum.com/",
+"op": "yes",
+"seg": true,
+"segnote": "The site now pitches Saxum as an 'outsourced Chief Strategy Office' with diagnostic and decision products. Team titles still include media relations and public affairs. The segment fit has partly shifted toward strategy consulting.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.15,
+0.0,
+0.2,
+0.15,
+0.0,
+0.0,
+0.1,
+0.4
+],
+"founded": 2003,
+"years": "About 23 years (founded 2003). The screen also shows an SBA 504 loan from 2009, paid in full.",
+"staff": "Not stated. The About page lists about 14 leaders and team members.",
+"rev": null,
+"rsig": "No review snippets were gathered.",
+"succ": "The current CEO is not named as founder, and the firm has repositioned. A founder transition may have happened (unverified).",
+"fit": "Former PR and public affairs agency now pitching strategy consulting. Ownership is unclear. Needs a direct check.",
+"risks": [
+"Business model pivot away from a pure communications agency",
+"Founder role and ownership not stated",
+"Lower headcount visible than the 51 PPP jobs"
+],
+"ev": [
+[
+"The About page says Saxum was founded in 2003 in Oklahoma City. It lists Peter Farrell as CEO and does not name a founder.",
+"https://www.saxum.com/about",
+"company_site"
+],
+[
+"The team includes a Director of Media Relations and a strategic communications and public affairs lead.",
+"https://www.saxum.com/about",
+"company_site"
+],
+[
+"The homepage calls Saxum an 'outsourced Chief Strategy Office' with products named Bedrock Alignment and Bedrock OS.",
+"https://www.saxum.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "bpi-8918",
+"web": "crawfordstrategy.com (TLS certificate error)",
+"op": "unclear",
+"seg": true,
+"segnote": "Greenville, SC firm whose name signals strategy or communications. Its service mix was not confirmed.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.35,
+0.0,
+0.05,
+0.1,
+0.0,
+0.1,
+0.1,
+0.3
+],
+"founded": null,
+"years": "Unverified.",
+"staff": "Unknown.",
+"rev": null,
+"rsig": "No review snippets were gathered.",
+"succ": "none found",
+"fit": "Possible public affairs or marketing firm in Greenville. Ownership was not checked because search ran out and the site's certificate is broken.",
+"risks": [
+"Website could not be read",
+"Unclear whether this is public affairs or general marketing",
+"All facts unverified"
+],
+"ev": [
+[
+"crawfordstrategy.com and www.crawfordstrategy.com returned a certificate error (a Cloudways host certificate, not the firm's own), so the site could not be read on 2026-11-16.",
+"https://www.crawfordstrategy.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "bpi-9215",
+"web": "https://www.civicscience.com/",
+"op": "yes",
+"seg": false,
+"segnote": "A market-research data business. It falls outside public affairs and communications.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.2,
+0.0,
+0.02,
+0.1,
+0.0,
+0.0,
+0.5,
+0.18
+],
+"founded": null,
+"years": "The site claims over 14 years of continuous history (around 2011-2012 or earlier). The exact year is unverified.",
+"staff": "33 jobs in PPP 2020-21. No current figure found.",
+"rev": null,
+"rsig": "none found",
+"succ": "none found",
+"fit": "A Pittsburgh consumer-polling and data company. It sells survey data to advertisers and brands, not public affairs or communications services.",
+"risks": [
+"data or tech business model, not a services firm",
+"likely venture-funded (unverified), with founder and investors not confirmed this run"
+],
+"ev": [
+[
+"CivicScience describes itself as a real-time consumer insights provider with AI-enabled survey technology. Its services are advertising measurement, publisher solutions, strategy and insights, and AI enrichment. It cites over 14 years of history.",
+"https://www.civicscience.com/about/",
+"company_site"
+]
+],
+"ver": null
+}
+]
+}
