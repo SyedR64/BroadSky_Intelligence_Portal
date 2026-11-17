@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-16",
+ "generated": "2026-11-17",
  "files": [
   {
    "name": "ai_agents_portfolio",
@@ -170,8 +170,8 @@
    "name": "ma_ppp_screen",
    "folder": "research",
    "title": "SBA loan screen",
-   "item_count": 165,
-   "bytes": 811036,
+   "item_count": 161,
+   "bytes": 938533,
    "generated": "2026-11-16"
   },
   {
@@ -403,10 +403,10 @@
  ],
  "totals": {
   "research_files": 38,
-  "research_items": 4852,
+  "research_items": 4848,
   "sales_files": 10,
   "sales_rows": 181273,
-  "bytes": 44270672,
+  "bytes": 44398169,
   "data_from": "2026-09-24",
   "data_to": "2026-11-16"
  }

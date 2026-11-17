@@ -1,23 +1,23 @@
 {
-"_note": "Ownership results for the Frontline shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). Same keys as pp.json. Restored from the agents' saved results after the hand-off to the integration step was cut off.",
+"_note": "Ownership results for the Frontline shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). Same keys as pp.json. Restored from the agents' saved results after the hand-off to the integration step was cut off. Finishing pass 2026-11-17: every founder or family call not yet re-checked got a fresh deal search, companies marked unknown got a deeper ownership pass, and companies added after the first pass were researched in full.",
 "items": [
 {
 "cid": "fl-18596",
 "web": "",
-"op": "unclear",
-"seg": true,
-"segnote": "Unverified. Only the name suggests a legal focus.",
+"op": "unknown",
+"seg": false,
+"segnote": "No website or description was found, so the legal-IT focus is unconfirmed.",
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
-0.25,
-0.02,
-0.08,
-0.1,
+0.15,
 0.0,
-0.1,
+0.0,
 0.05,
-0.4
+0.0,
+0.05,
+0.0,
+0.75
 ],
 "founded": null,
 "years": "Unknown.",
@@ -28,16 +28,32 @@
 "fit": "Not verified. The name suggests legal tech or litigation support in Los Angeles.",
 "risks": [
 "no evidence gathered (shared web search budget exhausted)",
-"website not identified"
+"website not identified",
+"no web presence found",
+"no research possible (search budget exhausted)"
 ],
 "ev": [
 [
 "The guessed domain ssblegal.com refused the connection, and ssblegaltech.com does not resolve. No company site was confirmed.",
 "https://www.ssblegal.com/",
 "other"
+],
+[
+"A directory lists SSB Legal Technologies LLC as a Los Angeles (90064) LLC in computer systems design (NAICS 541512) with about 11 employees; no owners are named.",
+"https://naicslist.com/company-profile/ssb-legal-technologies-llc-los-angeles-ca-90064",
+"search_snippet"
+],
+[
+"The SSBB sale to NFP involves an unrelated LA business management firm.",
+"https://loeb.com/en/experience/advised-savitsky-satin-bacon--bucci-in-sale-to-nfp",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"Two searches found only a third-party directory profile. It lists SSB Legal Technologies LLC as a California LLC on Olympic Blvd, Los Angeles 90064, in computer systems design with about 11 employees. No owner, website, deal or closure was found. The Savitsky Satin Bacon & Bucci sale to NFP is an unrelated firm.",
+"https://naicslist.com/company-profile/ssb-legal-technologies-llc-los-angeles-ca-90064"
+]
 },
 {
 "cid": "fl-1894",
@@ -147,25 +163,27 @@
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.7,
-0.01,
-0.04,
-0.13,
+0.8,
 0.0,
-0.01,
-0.01,
-0.1
+0.05,
+0.1,
+0.0,
+0.0,
+0.0,
+0.05
 ],
 "founded": 2005,
 "years": "About 21 years (since 2005).",
 "staff": "The team page lists 42 people (6 leadership and 36 staff).",
 "rev": null,
 "rsig": "None checked. The search budget ran out.",
-"succ": "No direct signal. The founder is about 21 years in, and the site names no successor.",
+"succ": "A non-founder President and COO (Erin Pickar) is in place.",
 "fit": "Founder-run managed IT and cloud firm that serves only law firms and makes its own acquisitions. Strong anchor fit.",
 "risks": [
 "serial acquirer, so it may have outside capital the site does not disclose (unverified)",
-"no news or press check done (search budget exhausted)"
+"no news or press check done (search budget exhausted)",
+"serial acquirer, which may mean outside capital (none found)",
+"divested JurisPage in 2026"
 ],
 "ev": [
 [
@@ -192,43 +210,56 @@
 "The site mentions no investors, private equity or parent company.",
 "https://www.uptimelegal.com/our-history/",
 "company_site"
+],
+[
+"Uptime Legal sold JurisPage to Juris Digital in March 2026. That was a divestiture, not a sale of Uptime.",
+"https://www.privsource.com/acquisitions/deal/juris-digital-acquires-jurispage-from-uptime-legal-5ZSe77",
+"search_snippet"
+],
+[
+"Uptime Systems (Uptime Legal) bought LexCloud in Oct 2024, its fourth acquisition.",
+"https://mergr.com/transaction/uptime-systems-acquires-lexcloud",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"The current team page says the firm is led by founder and CEO Dennis Dimka, alongside President and COO Erin Pickar. The acquisitions page lists Uptime as the buyer (JurisPage 2016, Inbound Law Marketing 2020, Flywire Technology 2022, LexCloud 2024) and invites IT owners to discuss an exit. No page mentions investors, private equity, a parent company or a sale of Uptime. Limit: the shared web-search budget was used up, so no third-party press or deal-database search was possible. A buyer with steady add-ons can sometimes have quiet PE backing that its own site does not disclose. Founder control is current per the company site; outside independence is unverified.",
+"The deal search found Uptime as a buyer (LexCloud, Oct 2024) and as a seller of one unit (JurisPage to Juris Digital, Mar 2026). It found no sale of Uptime itself and no PE investment in it. The team page still says the firm is led by founder and CEO Dennis Dimka, with Erin Pickar as President and COO.",
 "https://www.uptimelegal.com/our-team/"
 ]
 },
 {
 "cid": "fl-36274",
-"web": "https://www.bridgelegal.com/ (match unverified)",
-"op": "unclear",
+"web": "https://www.bridgelegal.com/",
+"op": "yes",
 "seg": true,
-"segnote": "AI workflow and intake for plaintiff law firms. Law-firm focus, if the match is right.",
+"segnote": "Legal AI workflow software plus intake, marketing and back-office services for high-volume consumer and mass-tort law firms and litigation funders. That is legal tech, not a classic legal IT managed-services firm. It is borderline for the segment.",
 "wdec": "unknown",
-"dec": "unknown",
+"dec": "founder_led",
 "p": [
-0.3,
-0.01,
-0.1,
-0.12,
+0.8,
 0.0,
-0.07,
-0.05,
-0.35
+0.0,
+0.1,
+0.0,
+0.0,
+0.0,
+0.1
 ],
-"founded": null,
+"founded": 2018,
 "years": "Unknown.",
 "staff": "Not stated. PPP showed 12 jobs in 2020-21.",
 "rev": null,
 "rsig": "None checked.",
-"succ": "None found.",
+"succ": "Founder-CEO in place as of 2024; no succession signal.",
 "fit": "Probably the Chicago law-firm workflow and intake vendor Bridge Legal. Ownership is not established.",
 "risks": [
 "match between the PPP entity and bridgelegal.com is unverified",
 "mass tort intake work can carry reputational risk",
-"no Illinois state record check (budget exhausted)"
+"no Illinois state record check (budget exhausted)",
+"entity match to SBA borrower inferred, not verified",
+"no deal search run (search budget exhausted)",
+"litigation-funding adjacency raises odds of outside capital"
 ],
 "ev": [
 [
@@ -240,9 +271,38 @@
 "The site states no founders, founding year or parent company. Its /about page returned a 404.",
 "https://www.bridgelegal.com/about",
 "company_site"
+],
+[
+"Release dated October 3, 2024 names Ed Scanlan as Founder & CEO of Bridge Legal, based in Chicago, and mentions no investors or parent company.",
+"https://prnewswire.com/news-releases/chris-dore-joins-bridge-legal-as-managing-director-strategic-opportunities-302266799.html",
+"press_release"
+],
+[
+"Search snippets say Ed Scanlan founded Bridge Legal in January 2018, list Alex Sha as Co-Founder & CTO, and put headcount near 85.",
+"https://theorg.com/org/bridge-legal/org-chart/ed-scanlan",
+"search_snippet"
+],
+[
+"In September 2025 Bridge Legal became the inaugural member of the ILFA industry partnership program.",
+"https://litigationfinanceinsider.com/p/bridge-legal-becomes-first-industry-partner-of-ilfa",
+"search_snippet"
+],
+[
+"Bridge Legal is described as a privately held, operating Chicago legal tech company.",
+"https://www.promptloop.com/directory/what-does-bridge-legal-do",
+"search_snippet"
+],
+[
+"The Bridge acquired by Boundless Immigration in 2023 was a different California visa-software firm.",
+"https://www.privsource.com/acquisitions/deal/7YS8mX",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"confirmed",
+"An acquisition search and an investor/PE search found no sale, acquirer or outside investor for Bridge Legal. Results describe it as privately held and still operating: it was the inaugural ILFA industry partner and hired a Managing Director of Strategic Opportunities. The 'Bridge' deals in the results (Boundless/Bridge, North Highland/Bridge, Bridge Investments) are different companies. Founder Ed Scanlan is still CEO, which supports founder_led.",
+"https://litigationfinanceinsider.com/p/bridge-legal-becomes-first-industry-partner-of-ilfa"
+]
 },
 {
 "cid": "fl-36907",
@@ -253,14 +313,14 @@
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.65,
+0.85,
+0.02,
 0.03,
-0.08,
-0.07,
+0.05,
 0.0,
-0.02,
-0.02,
-0.13
+0.01,
+0.0,
+0.04
 ],
 "founded": 1997,
 "years": "Founded 1997 per the company's About page (about 29 years). Homepage cites 25+ years of experience.",
@@ -272,7 +332,9 @@
 "risks": [
 "Small scale (about 10 PPP jobs)",
 "Owner not named on site; ownership unverified",
-"Possible key-person dependence on the founder-CEO"
+"Possible key-person dependence on the founder-CEO",
+"small firm (about 10 jobs)",
+"copyright footer still says 2025"
 ],
 "ev": [
 [
@@ -284,31 +346,36 @@
 "Founded 1997. Founder Scott Randall is CEO. VP of Service and Operations is listed. No acquisitions mentioned.",
 "https://www.advancedlegal.com/about/",
 "company_site"
+],
+[
+"A partner listing says the firm was founded to serve legal-field IT needs. Deal search found no acquisition.",
+"https://rcpmag.com/partners/al/a/advanced-legal.aspx",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"I found no sign of an acquisition, merger, parent company or investor. The About page says Scott Randall founded the company and lists him as CEO. Its footer reads 'Copyright 2025 Advanced Legal Systems, Inc.' The homepage has 2025 articles written by Scott Randall. The site does not say who owns the company. My search budget ran out, so I checked only the company's own site, not outside news.",
+"A search for acquisition or merger news on Advanced Legal in Las Vegas returned only profile listings and unrelated deals. The About page still names founder Scott Randall as CEO and mentions no parent company or investor. One partner listing gives the founding year as 1999, against 1997 on the company's own site.",
 "https://www.advancedlegal.com/about/"
 ]
 },
 {
 "cid": "fl-41329",
 "web": "",
-"op": "unclear",
-"seg": true,
-"segnote": "Unverified. Only the name suggests a legal focus.",
+"op": "unknown",
+"seg": false,
+"segnote": "Focus not confirmed. No verified website.",
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
 0.3,
-0.03,
-0.07,
-0.1,
+0.0,
 0.0,
 0.1,
-0.1,
-0.3
+0.0,
+0.15,
+0.0,
+0.45
 ],
 "founded": null,
 "years": "Unknown.",
@@ -319,34 +386,50 @@
 "fit": "Not verified. The name suggests legal tech, but no public evidence was gathered.",
 "risks": [
 "no evidence gathered (shared web search budget exhausted)",
-"generic name, so matching it to a business is uncertain"
+"generic name, so matching it to a business is uncertain",
+"no website verified",
+"deal search not run (search budget exhausted)"
 ],
 "ev": [
 [
 "legaltechnologies.com could not be fetched because of a TLS certificate error. It is unconfirmed whether this domain belongs to the Austin LLC.",
 "https://www.legaltechnologies.com/",
 "other"
+],
+[
+"Aggregator lists Legal Technologies, LLC on S Lamar Blvd, Austin 78704, computer-related services, about 19 employees; no owner named",
+"https://naicslist.com/company-profile/legal-technologies-llc-austin-tx-78704",
+"search_snippet"
+],
+[
+"G2 seller profile for Legal Technologies LLC (legal process software) gives no location, so the link to the Austin entity is unconfirmed",
+"https://www.g2.com/sellers/legal-technologies",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"Two searches found only an aggregator listing for Legal Technologies, LLC at 2110 S Lamar Blvd, Austin 78704, with about 19 employees (unverified), plus a G2 seller profile with no location. They found no owner, founder, acquisition or closure. The label stays unknown.",
+"https://naicslist.com/company-profile/legal-technologies-llc-austin-tx-78704"
+]
 },
 {
 "cid": "fl-42725",
 "web": "https://www.perfectpracticesoftware.com/",
 "op": "yes",
 "seg": true,
-"segnote": "Practice management software for law firms. Clear law-firm focus.",
+"segnote": "Legal practice management software vendor (Perfect Practice). It sells software, not managed IT.",
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
-0.3,
+0.35,
+0.15,
+0.15,
 0.1,
-0.08,
-0.07,
 0.0,
-0.05,
-0.02,
-0.38
+0.0,
+0.0,
+0.25
 ],
 "founded": 1984,
 "years": "About 42 years ('Since 1984' tagline). Whether that date belongs to ADC Legal Systems as an entity is unverified.",
@@ -358,7 +441,10 @@
 "risks": [
 "owner not identified",
 "old on-premise style software may face cloud competition",
-"Florida Sunbiz officer check not done (budget exhausted)"
+"Florida Sunbiz officer check not done (budget exhausted)",
+"owners not identified",
+"founders likely near retirement age after 40+ years",
+"deal search not run (search budget exhausted)"
 ],
 "ev": [
 [
@@ -380,27 +466,46 @@
 "Its contact page lists a mailing address of P.O. Box 540086, Orlando, FL, which matches the PPP city.",
 "https://www.perfectpracticesoftware.com/contact/",
 "company_site"
+],
+[
+"Perfect Practice case-management software was created by ADC Legal Systems, Inc.",
+"https://www.24-7pressrelease.com/press-release/384820/firm-solutions-authorized-as-consultants-for-perfect-practice",
+"search_snippet"
+],
+[
+"Trade news calls Perfect Practice Orlando-based and describes an Affinity Consulting reseller partnership, not a sale",
+"https://dsnews.com/tag/perfect-practice",
+"search_snippet"
+],
+[
+"ZoomInfo lists ADC Legal Systems with a Walpole, MA HQ and no owner named",
+"https://www.zoominfo.com/c/perfect-practice/88572816",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"Two searches found no acquisition of ADC Legal Systems or of its Perfect Practice product. The only partnership found is a reseller deal with Affinity Consulting Group, not a sale. No owner, founder or president is identified. ZoomInfo gives a Walpole, MA headquarters, which conflicts with the Orlando record. The label stays unknown.",
+"https://www.zoominfo.com/c/perfect-practice/88572816"
+]
 },
 {
 "cid": "fl-45250",
 "web": "",
-"op": "unclear",
-"seg": true,
-"segnote": "Unverified. Only the name suggests a legal focus.",
+"op": "unknown",
+"seg": false,
+"segnote": "Focus not confirmed. No company site found.",
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
-0.25,
-0.02,
-0.08,
+0.1,
+0.0,
+0.0,
+0.05,
+0.0,
 0.15,
 0.0,
-0.1,
-0.05,
-0.35
+0.7
 ],
 "founded": null,
 "years": "Unknown.",
@@ -411,16 +516,32 @@
 "fit": "Not verified. The name suggests legal IT services in Washington DC.",
 "risks": [
 "no evidence gathered (shared web search budget exhausted)",
-"website not identified"
+"website not identified",
+"no website found",
+"deal search not run (search budget exhausted)"
 ],
 "ev": [
 [
 "The guessed domains ltgdc.com and legaltechgroup.com do not resolve. No company site was found.",
 "https://www.legaltechgroup.com/",
 "other"
+],
+[
+"Search for the exact name in Washington DC returned only legal tech directories, with no matching company.",
+"https://builtin.com/companies/location/washington-dc/type/legal-tech-companies",
+"search_snippet"
+],
+[
+"The closest litigation-support hit was a different entity, Legaltech LLC, with no DC location or owner shown.",
+"https://www.bloomberg.com/profile/company/1927536D:US",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"Two searches found no company called Legal Technology Group Inc in Washington DC, no website, no owner and no deal. Results were directories and similarly named firms such as Legaltech LLC and ETRM, none tied to this borrower. Ownership and operating status are still unknown.",
+""
+]
 },
 {
 "cid": "fl-46913",
@@ -431,14 +552,14 @@
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.45,
-0.05,
-0.15,
-0.08,
+0.85,
+0.02,
+0.03,
+0.06,
 0.0,
-0.01,
-0.01,
-0.25
+0.0,
+0.0,
+0.04
 ],
 "founded": 1989,
 "years": "About page says founder Michael Kemps formed the company in 1989. The site footer reads 1989-2026.",
@@ -450,7 +571,8 @@
 "risks": [
 "Current owner and leadership unverified (leadership page did not load)",
 "PPP address is El Segundo; the existing list shows an LA Wilshire Blvd HQ",
-"Revenue figures on the existing list are modeled, not reported"
+"Revenue figures on the existing list are modeled, not reported",
+"similarly named CT firm acquired by Intellinet in 2015 (different company)"
 ],
 "ev": [
 [
@@ -467,31 +589,41 @@
 "May 2025 press release announced a managed IT offering for US law firms.",
 "https://www.globenewswire.com/news-release/2025/05/19/3084156/0/en/Innovative-Computing-Systems-Unveils-Comprehensive-Managed-IT-Solution-Tailored-for-U-S-Law-Firms.html",
 "press"
+],
+[
+"Deal search found only hiring news, such as a 2018 account executive hire, and no sale of the company.",
+"https://www.globenewswire.com/news-release/2018/07/09/1534849/0/en/Bob-Moore-Joins-Innovative-Computing-Systems-as-Account-Executive.html",
+"search_snippet"
+],
+[
+"The 2015 Intellinet acquisition involved Innovative Computer Systems of Farmington, CT, a different firm.",
+"https://hartfordbusiness.com/article/atlanta-company-acquires-farmington-it-services-provider/",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"The company's management page lists Michael Kemps as 'Founder & Chief Executive Officer' and says he founded the company in 1989. The footer reads 'Copyright 1989-2026'. The homepage, About page and management page mention no acquisition, merger, parent company, investor or private equity. The site does not state ownership outright. My search budget ran out, so I could not check outside news. The GlobeNewswire release returned a 403 error.",
-"https://www.innovativecomp.com/management/"
+"A search for acquisition, joins or merger news found only hiring releases and client wins, plus a 2015 deal involving a different firm, Innovative Computer Systems of Farmington, CT. The About page still says Michael Kemps founded the company in 1989, with no parent company or investor, and its copyright runs 1989-2026.",
+"https://www.innovativecomp.com/about-us"
 ]
 },
 {
 "cid": "fl-54302",
 "web": "https://jurisdigital.com/",
 "op": "yes",
-"seg": true,
-"segnote": "Law-firm marketing, SEO, intake and software. It serves law firms only.",
+"seg": false,
+"segnote": "Primarily a law-firm marketing agency (SEO, content, web, paid ads) with in-house legal tech products. It does not provide general managed IT, so it fits a legal IT services screen only loosely.",
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.65,
-0.01,
-0.12,
-0.07,
+0.85,
 0.0,
-0.01,
-0.02,
-0.12
+0.05,
+0.06,
+0.0,
+0.0,
+0.0,
+0.04
 ],
 "founded": 2015,
 "years": "Formed around 2015 per the team page (approximate). It grew from an earlier SEO consultancy.",
@@ -503,7 +635,9 @@
 "risks": [
 "two co-founders, so it could be read as partner-owned",
 "Uptime Legal says it bought JurisPage in 2016, but Juris Digital now sells JurisPage; the link between the two is unverified",
-"no ownership check against state records (search budget exhausted)"
+"no ownership check against state records (search budget exhausted)",
+"marketing agency rather than IT services",
+"active acquirer, which may mean outside capital (none found)"
 ],
 "ev": [
 [
@@ -530,11 +664,21 @@
 "The site states no parent company and no acquisition.",
 "https://jurisdigital.com/",
 "company_site"
+],
+[
+"In March 2026 Juris Digital, a Denver law-firm marketing agency, agreed to buy JurisPage from Uptime Legal. Juris Digital is the buyer.",
+"https://www.law360.com/articles/2456740",
+"search_snippet"
+],
+[
+"Juris Digital bought Black Fin Marketing in 2020.",
+"https://jurisdigital.com/news/juris-digital-acquires-black-fin/",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"The current team page (fetched 2026-11-16) names Casey Meraz as founder and Matt Green as co-founder. The homepage footer says 2026 and promotes an upcoming Nov 17 webinar, so the site is current. Neither page mentions a parent company, investors, private equity, a merger or a sale. JurisPage appears on this site as a Juris Digital product, while Uptime Legal lists a 2016 JurisPage acquisition. Neither site explains this, and it says nothing about who owns Juris Digital. Limit: the shared web-search budget was used up, so no third-party news or deal search was possible. A quiet minority investment would not show up on the company's own pages. Founder control is current per the company site; outside independence is unverified.",
+"The deal search shows Juris Digital buying, not being bought: it bought JurisPage from Uptime Legal in March 2026 and Black Fin Marketing in 2020. No funding round or outside investor turned up. The team page still names founder Casey Meraz and co-founder Matt Green, with no parent company.",
 "https://jurisdigital.com/team/"
 ]
 }

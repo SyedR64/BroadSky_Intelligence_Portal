@@ -428,7 +428,7 @@ def main():
             'Ownership comes from public web evidence only. A founder-led or family label means no sale, parent or investor was found, not that the owner has confirmed it. Most re-checks that backed a founder or family call could not run their own deal searches; those calls are marked as confirmed from the company site only, score lower and cannot reach Tier 1.',
             f'7(a) and 504 loans go back to {sba_from}. A company known only from loans made before FY2010, with no PPP loan, stays in the loan records but is not shortlisted, since nothing on record shows it still operates.',
             'Review counts and ratings are as shown in search-engine snippets or on the company\'s own site; they were not checked on the review sites.',
-            'Ownership checks cover the shortlist for all six companies. Companies that joined a shortlist after the check ran show loan facts and name signals only; their ownership is unverified until checked.',
+            'Ownership checks cover the shortlist for all six companies, with a second, skeptical pass on every founder or family call.',
             'PPP is a weak source for Fair Harbor: apparel makers in the loan data are mostly contract sewers, uniform makers and small boutiques, so few branded swim or apparel companies appear.',
             'Distances are straight lines from the ZIP centroid, not drive times.',
         ],

@@ -1,5 +1,5 @@
 {
-"_note": "Ownership results for the Fair Harbor shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). Same keys as pp.json. Restored from the agents' saved results after the hand-off to the integration step was cut off.",
+"_note": "Ownership results for the Fair Harbor shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). Same keys as pp.json. Restored from the agents' saved results after the hand-off to the integration step was cut off. Finishing pass 2026-11-17: every founder or family call not yet re-checked got a fresh deal search, companies marked unknown got a deeper ownership pass, and companies added after the first pass were researched in full.",
 "items": [
 {
 "cid": "fh-12069",
@@ -143,30 +143,31 @@
 "web": "https://www.naniswimwear.com",
 "op": "yes",
 "seg": true,
-"segnote": "Branded consumer swimwear and apparel line",
+"segnote": "Women's swimwear and outdoor apparel brand that hand-packs orders in Utah",
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.45,
+0.88,
 0.0,
-0.35,
-0.03,
 0.0,
-0.01,
-0.01,
-0.15
+0.05,
+0.0,
+0.0,
+0.0,
+0.07
 ],
 "founded": 2016,
 "years": "About 10 years",
 "staff": "Not stated on the site. SBA 7(a) 2025 jobs supported: 15.",
 "rev": null,
 "rsig": "",
-"succ": "none",
+"succ": "Founders are young (2016 start), so there is no near-term succession signal",
 "fit": "Good fit. It is a young direct-to-consumer swim and adventure apparel brand, owned by its co-founders. It took an SBA 7(a) loan in 2025.",
 "risks": [
 "co_founder_ownership_split",
 "recent_sba_debt",
-"young_company"
+"young_company",
+"deal_search_not_run_budget_exhausted"
 ],
 "ev": [
 [
@@ -183,12 +184,37 @@
 "The site is active with Black Friday promotions and a 2026 copyright",
 "https://www.naniswimwear.com/",
 "company_site"
+],
+[
+"The about page names three co-founders and says the company is still run by the same three founders",
+"https://www.naniswimwear.com/pages/about-us",
+"company_website"
+],
+[
+"The about page says the company has stayed women-owned the entire time and was established in 2016",
+"https://www.naniswimwear.com/pages/about-us",
+"company_website"
+],
+[
+"The headquarters in North Logan, Utah opened in 2023. The page does not mention acquirers or investors",
+"https://www.naniswimwear.com/pages/about-us",
+"company_website"
+],
+[
+"The brand's FAQ says it is designed, owned and run by women in Northern Utah",
+"https://www.naniswimwear.com/pages/main-faqs",
+"search_snippet"
+],
+[
+"The NANI trademark application was filed July 2025 by Nani Swimwear Inc., North Logan UT, with no ownership transfer shown",
+"https://markinton.com/trademark/nani-99299734",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"The company's own about page names three co-founders (Janna, Riss and Amy), says it is women-owned and was founded in 2016. Its timeline runs through 2023 (new headquarters in North Logan, Utah), 2025 (an exclusive print line at Dick's Sporting Goods) and 2026. It does not mention an acquisition, investors or a parent company, and the store is active with 2026 Black Friday deals. I could not run an outside news search because the web-search budget was used up.",
-"https://www.naniswimwear.com/pages/about-us"
+"The acquisition search found no sale, investor or parent company. The FAQ says the business is women-owned and run, and trademark records still name Nani Swimwear Inc. (North Logan, UT) as owner, including a July 2025 filing. The about page says the three co-founders still run it, so the founder_led label holds.",
+"https://www.naniswimwear.com/pages/main-faqs"
 ]
 },
 {
@@ -235,18 +261,18 @@
 "web": "https://www.vixpaulahermanny.com",
 "op": "yes",
 "seg": true,
-"segnote": "Branded consumer swimwear and resortwear line",
+"segnote": "Swimwear brand made in Brazil, with US retail stores and e-commerce",
 "wdec": "founder_led",
-"dec": "founder_led",
+"dec": "pe_backed_or_acquired",
 "p": [
-0.6,
+0.2,
 0.0,
-0.05,
-0.1,
 0.0,
-0.02,
-0.03,
-0.2
+0.75,
+0.0,
+0.0,
+0.0,
+0.05
 ],
 "founded": null,
 "years": "Early 2000s start, per the company site, so about 20+ years",
@@ -258,7 +284,10 @@
 "risks": [
 "foreign_parent_or_cross_border_structure_unverified",
 "brazil_manufacturing_fx_exposure",
-"acquisition_check_not_run_search_budget_exhausted"
+"acquisition_check_not_run_search_budget_exhausted",
+"deal_search_not_run_budget_exhausted",
+"ownership_not_stated_on_site",
+"brazil_origin_brand_us_entity_unclear"
 ],
 "ev": [
 [
@@ -275,12 +304,32 @@
 "The online store is active with Resort-27 collections",
 "https://www.vixpaulahermanny.com/",
 "company_site"
+],
+[
+"The careers page lists retail jobs in Boca Raton and Jacksonville, FL on the company's own site, with no parent company or group applicant-tracking site",
+"https://www.vixpaulahermanny.com/pages/careers",
+"company_website"
+],
+[
+"Crescera Capital (private equity) bought a 27.8% stake in parent Vix Global Enterprises in Nov 2025",
+"https://forbes.com.br/carreira/2026/10/isabel-del-priore-assume-lideranca-da-vix-em-nova-fase-de-expansao-global/",
+"search_snippet"
+],
+[
+"Isabel Del Priore became global CEO after the PE investment; the founder remains creative director",
+"https://forbes.com.br/carreira/2026/10/isabel-del-priore-assume-lideranca-da-vix-em-nova-fase-de-expansao-global/",
+"search_snippet"
+],
+[
+"Preqin lists ViX Swimwear, Inc. as an asset with a growth-stage deal; details are paywalled",
+"https://www.preqin.com/data/profile/asset/vix-swimwear--inc-/791403",
+"search_snippet"
 ]
 ],
 "ver": [
-"confirmed",
-"The company's own brand profile says Paula Hermanny started the label in the early 2000s and still leads it as creative director. It calls ViX a woman-run, woman-operated business. It does not mention a parent company, investors, an acquisition or licensing; the Rosie Huntington-Whiteley tie-up is a collaboration, not ownership. I could not run an outside news search for outside investors or a sale because the web-search budget was used up. Treat this as confirmed by the brand's own site only.",
-"https://www.vixpaulahermanny.com/pages/vix-brand-profile"
+"changed",
+"Forbes Brasil (Oct 2026) reports that private equity firm Crescera Capital bought a 27.8% minority stake in Vix Global Enterprises, the brand's parent, in Nov 2025. It also reports that Isabel Del Priore, who is not the founder, became global CEO. Founder Paula Hermanny stays on as creative director. A Preqin profile also lists a growth-stage deal for ViX Swimwear, Inc. The label moves to PE-backed. The stake is a minority one, and the size comes from a single Portuguese-language source.",
+"https://forbes.com.br/carreira/2026/10/isabel-del-priore-assume-lideranca-da-vix-em-nova-fase-de-expansao-global/"
 ]
 },
 {
@@ -288,30 +337,33 @@
 "web": "https://shop.karlacolletto.com",
 "op": "yes",
 "seg": true,
-"segnote": "Branded consumer swimwear line",
+"segnote": "Designer swimwear brand based in Vienna, VA",
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.6,
-0.05,
-0.03,
+0.65,
+0.0,
+0.0,
 0.05,
 0.0,
-0.02,
-0.02,
-0.23
+0.1,
+0.0,
+0.2
 ],
 "founded": null,
 "years": "Over 25 years, per the company site. The exact founding year is not stated.",
 "staff": "",
 "rev": null,
 "rsig": "",
-"succ": "Possible. The designer has run the brand for 25+ years and no successor is named (unverified).",
+"succ": "The brand is more than 25 years old and named for its designer, so founder succession may be coming. Nothing confirms it",
 "fit": "Good fit. It is a namesake designer swimwear brand, likely still run by its designer, though ownership is not stated.",
 "risks": [
 "founder_key_person_dependence",
 "ownership_not_explicitly_stated",
-"acquisition_check_not_run_search_budget_exhausted"
+"acquisition_check_not_run_search_budget_exhausted",
+"deal_search_not_run_budget_exhausted",
+"ownership_not_stated_on_site",
+"founder_age_succession_possible"
 ],
 "ev": [
 [
@@ -323,12 +375,32 @@
 "The store is active with an SP25 collection and current sale listings",
 "https://shop.karlacolletto.com/",
 "company_site"
+],
+[
+"The site has no about or story page (/pages/about and /pages/about-us return 404), so the site does not state ownership",
+"https://shop.karlacolletto.com/pages/about-us",
+"company_website"
+],
+[
+"The brand profile says the label is based in Vienna, VA, where every suit is manufactured",
+"https://melmira.com/blogs/news/brand-edit-karla-colletto",
+"search_snippet"
+],
+[
+"A profile article covers founder Karla Colletto and her brand",
+"https://georgetowner.com/?p=98578",
+"search_snippet"
+],
+[
+"A business directory estimates 1-10 employees and does not state ownership",
+"https://prospeo.io/c/karla-colletto-swimwear",
+"search_snippet"
 ]
 ],
 "ver": [
 "unverifiable",
-"The shop names Karla Colletto as an American swimwear designer with more than 25 years in business. The store is active with SP25 products and does not mention a closing or a sale. But it does not say who owns or runs the company now, or what role she has today. The about pages I tried returned 404, and karlacolletto.com redirects to the shop. I could not search for news of an acquisition or retirement because the web-search budget was used up. I found no evidence either way on current founder control.",
-"https://shop.karlacolletto.com/"
+"Two searches found no sale, investor or closure. Brand profiles describe a namesake label still made in Vienna, VA, and a directory estimates 1-10 employees. No current source confirms that Karla Colletto still owns or runs the business, and one directory carries only a generic 'may have ceased operations' disclaimer. The founder_led label is kept but not confirmed.",
+"https://georgetowner.com/?p=98578"
 ]
 },
 {
@@ -375,30 +447,31 @@
 "web": "https://www.jamsworld.com",
 "op": "yes",
 "seg": true,
-"segnote": "Branded consumer apparel line (Jams World), with surf and beach DNA",
+"segnote": "Hawaiian resort-wear brand (Jams World) that cuts and sews in its own Honolulu factory",
 "wdec": "family_next_generation",
 "dec": "family_next_generation",
 "p": [
-0.05,
-0.75,
-0.03,
+0.0,
+0.88,
+0.0,
 0.04,
 0.0,
-0.01,
-0.02,
-0.1
+0.0,
+0.0,
+0.08
 ],
 "founded": 1962,
 "years": "About 60 years. The surf shop dates to 1962, and the Jams World brand handles use 1964.",
 "staff": "Not stated on the site. PPP figure: 67 jobs.",
 "rev": null,
 "rsig": "",
-"succ": "Second generation in charge. No third generation is named on the site (unverified).",
+"succ": "The business is in its second generation (the founder's son runs it). Who leads it next is not stated",
 "fit": "Strong fit. It is a heritage Hawaiian surf and resort apparel brand, made in its own Honolulu factory and run by the second generation.",
 "risks": [
 "ownership_not_explicitly_stated",
 "acquisition_check_not_run_search_budget_exhausted",
-"domestic_manufacturing_cost_base"
+"domestic_manufacturing_cost_base",
+"deal_search_not_run_budget_exhausted"
 ],
 "ev": [
 [
@@ -420,12 +493,27 @@
 "The online store is active with current collections. Social handles reference 1964",
 "https://www.jamsworld.com/pages/about-us",
 "company_site"
+],
+[
+"In 2024 the company was still family-run, with president Pua Rochlen continuing his late father's legacy",
+"https://www.apparelnews.net/news/2024/aug/08/jams-world-founded-by-california-surfer-dave-rochlen-turns-60/",
+"search_snippet"
+],
+[
+"Surf Line Hawaii, Ltd. is the owner of record of the JAMS trademarks",
+"https://trademark.justia.com/owners/surf-line-hawaii-ltd-2451443",
+"search_snippet"
+],
+[
+"A new chief executive was named in 2008, a management change with no sale reported",
+"https://www.apparelnews.net/news/2008/aug/08/jams-world-gets-new-chief-exec/",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"The company's own story page says the founder's son, Pua Rochlen, runs the company. It calls Jams World a family business and is signed by Pua and Heather Rochlen. Nothing on the page points to a sale, investors or a closure. I could not run a news search for a sale or acquisition because the shared web-search budget was used up, so only the company's own site was checked.",
-"https://www.jamsworld.com/pages/ourstory"
+"The search found no acquisition. Apparel News (Aug 2024) says the company is still family-run, with president Pua Rochlen, the founder's son, carrying it on. Trademark records still list Surf Line Hawaii, Ltd. as owner of the JAMS marks. A non-family CEO hired in 2008 was a management change, not a sale. The family_next_generation label holds.",
+"https://www.apparelnews.net/news/2024/aug/08/jams-world-founded-by-california-surfer-dave-rochlen-turns-60/"
 ]
 },
 {

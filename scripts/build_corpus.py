@@ -775,6 +775,7 @@ def src_rendered():
                    or route.request.resource_type in ('image', 'media', 'font') else route.continue_())
         for target in pages + routes:
             try:
+                page.goto('about:blank')   # a fresh load for every view: a heavy view (the SBA loan table) must not stall the ones after it
                 page.goto(base + target, wait_until='domcontentloaded', timeout=30000)
                 sel = '#content' if '#/' in target else 'main'
                 try:   # views that draw maps and tables from large datasets take a few seconds
@@ -791,6 +792,7 @@ def src_rendered():
                 continue
             text = norm_ws(r['text'])
             if len(text) < 200:
+                log('render empty, dropped', target)
                 continue
             title = re.sub(r'\s+', ' ', r['title'] or target)
             if '#/' in target:

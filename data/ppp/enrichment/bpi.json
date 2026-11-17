@@ -1,23 +1,23 @@
 {
-"_note": "Ownership results for the BPI shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). Same keys as pp.json. Restored from the agents' saved results after the hand-off to the integration step was cut off.",
+"_note": "Ownership results for the BPI shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). Same keys as pp.json. Restored from the agents' saved results after the hand-off to the integration step was cut off. Finishing pass 2026-11-17: every founder or family call not yet re-checked got a fresh deal search, companies marked unknown got a deeper ownership pass, and companies added after the first pass were researched in full.",
 "items": [
 {
 "cid": "bpi-0113",
-"web": "levick.com (did not resolve)",
-"op": "unclear",
+"web": "levick.com (domain does not resolve)",
+"op": "doubtful; the domain no longer resolves",
 "seg": true,
-"segnote": "Known as a Washington crisis and strategic communications firm. Fit could not be confirmed this run.",
+"segnote": "Strategic communications/crisis PR firm in Washington DC",
 "wdec": "unknown",
-"dec": "unknown",
+"dec": "closed_or_inactive",
 "p": [
-0.2,
+0.0,
+0.0,
 0.0,
 0.05,
-0.15,
 0.0,
-0.25,
+0.9,
 0.0,
-0.35
+0.05
 ],
 "founded": null,
 "years": "Unverified this run.",
@@ -29,34 +29,56 @@
 "risks": [
 "Website domain does not resolve",
 "Ownership and operating status unverified",
-"Web search budget was used up before any search ran"
+"Web search budget was used up before any search ran",
+"website_gone",
+"possible_closure_or_rebrand",
+"no_deal_search_run"
 ],
 "ev": [
 [
 "DNS lookups for levick.com and www.levick.com failed (ENOTFOUND) on 2026-11-16. The website may be gone, which may point to a closure or rebrand (unverified).",
 "https://www.levick.com/",
 "company_site"
+],
+[
+"DNS lookup for levick.com failed (ENOTFOUND) on 2026-11-17",
+"https://levick.com/",
+"company_website"
+],
+[
+"In May 2023 Leidar opened US offices run by former LEVICK staff after LEVICK closed",
+"https://www.provokemedia.com/latest/article/leider-opens-us-offices-run-by-levick-staffers",
+"search_snippet"
+],
+[
+"A firm history describes LEVICK's closure and its staff moving to Leidar USA",
+"https://everything-pr.com/levick-communications-levick-pr",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"changed",
+"After the founder died in April 2023, LEVICK closed as an independent firm. Its staff joined its international partner Leidar to launch Leidar USA in DC and New York in May 2023. That fits the dead domain.",
+"https://www.provokemedia.com/latest/article/leider-opens-us-offices-run-by-levick-staffers"
+]
 },
 {
 "cid": "bpi-10580",
-"web": "https://www.southweststrategies.com",
-"op": "unclear",
+"web": "https://www.southweststrategies.com (unreachable)",
+"op": "unknown; site unreachable",
 "seg": true,
-"segnote": "Its name and NAICS 541820 suggest a San Diego public affairs and communications firm. Not confirmed from any source.",
+"segnote": "NAICS 541820 public affairs/PR firm in San Diego; not confirmed from the site",
 "wdec": "unknown",
-"dec": "unknown",
+"dec": "pe_backed_or_acquired",
 "p": [
-0.3,
+0.05,
 0.0,
-0.15,
-0.1,
 0.0,
-0.03,
-0.02,
-0.4
+0.9,
+0.0,
+0.0,
+0.0,
+0.05
 ],
 "founded": null,
 "years": "",
@@ -68,7 +90,9 @@
 "risks": [
 "website unreachable (TLS error)",
 "ownership unverified",
-"web search budget exhausted before research"
+"web search budget exhausted before research",
+"website_unreachable",
+"no_deal_search_run"
 ],
 "ev": [
 [
@@ -80,9 +104,33 @@
 "swstrategies.com belongs to an unrelated software consultancy, not this San Diego public affairs firm.",
 "https://www.swstrategies.com/about",
 "other"
+],
+[
+"southweststrategies.com failed with a TLS internal-error alert on 2026-11-17, so no content could be read",
+"https://southweststrategies.com/",
+"company_website"
+],
+[
+"Palladium Heritage (Palladium Equity Partners) invested in Southwest Strategies in 2022",
+"https://prnewswire.com/news-releases/palladium-heritage-invests-in-southwest-strategies-one-of-the-premier-public-outreach-and-communications-firms-in-california-301691029.html",
+"search_snippet"
+],
+[
+"Southwest Strategies Group bought Kiterocket in July 2025",
+"https://www.globenewswire.com/fr/news-release/2025/07/01/3108842/0/en/Southwest-Strategies-Group-Acquires-Kiterocket.html",
+"search_snippet"
+],
+[
+"The firm rebranded as Bodewell Group in 2026, folding its acquired agencies into one brand",
+"https://thebusinessjournal.com/public-affairs-firm-lands-in-river-park-rebrands-as-bodewell-group/",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"changed",
+"Palladium Heritage, the lower-middle-market arm of Palladium Equity Partners, invested in Southwest Strategies in 2022. The firm then bought Katz & Associates, BergDavis, ColLAborate and Kiterocket, and rebranded as Bodewell Group in February 2026. It is a PE-backed platform.",
+"https://prnewswire.com/news-releases/palladium-heritage-invests-in-southwest-strategies-one-of-the-premier-public-outreach-and-communications-firms-in-california-301691029.html"
+]
 },
 {
 "cid": "bpi-11539",
@@ -146,25 +194,27 @@
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.75,
+0.85,
 0.0,
-0.05,
+0.0,
 0.02,
 0.0,
+0.05,
 0.0,
-0.03,
-0.15
+0.08
 ],
 "founded": null,
 "years": "The founded year is not stated. Unverified.",
 "staff": "30 jobs supported per the 2024 SBA 7(a) loan. The site lists eight leaders.",
 "rev": null,
 "rsig": "none found",
-"succ": "none found",
+"succ": "Founder still CEO.",
 "fit": "A founder-led Portland public affairs boutique. It took a $500K SBA 7(a) loan in October 2024.",
 "risks": [
 "a large share of work is likely public-sector or DBE-certified contracting, so certifications may not transfer on a sale",
-"recent 7(a) debt"
+"recent 7(a) debt",
+"deal_search_not_run_budget_exhausted",
+"dbe_certification_tied_to_owner"
 ],
 "ev": [
 [
@@ -176,12 +226,22 @@
 "Johnell Bell is listed as Chief Executive Officer and Founder. The firm is a certified minority-owned business with SBE and DBE certifications.",
 "https://www.espousalstrategies.com/about",
 "company_site"
+],
+[
+"Johnell Bell is Founder and CEO of Espousal Strategies LLC, a Portland public affairs firm",
+"https://childrensbehavioralhealth.uoregon.edu/johnell-bell",
+"search_snippet"
+],
+[
+"2019 item quotes Bell as Founder/President announcing a new director",
+"https://www.portlandobserver.com/post/espousal-strategies-welcomes-new-director",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"The About page lists Johnell Bell as CEO and Founder of a certified minority-owned business with SBE and DBE certifications, which implies independent ownership. No acquisition or merger is mentioned. The page shows no date. News searches could not run because the WebSearch budget was used up.",
-"https://www.espousalstrategies.com/about"
+"Two searches found no acquisition. Sources describe Johnell Bell as founder and CEO of the boutique Portland public affairs firm. One caution: some profiles give him a public role on the Interstate Bridge Replacement Program, so he may not work at the firm full time.",
+""
 ]
 },
 {
@@ -240,21 +300,21 @@
 },
 {
 "cid": "bpi-1927",
-"web": "https://www.jonespa.com",
-"op": "unclear",
+"web": "https://www.jonespa.com (unverified, unreachable)",
+"op": "unknown",
 "seg": true,
-"segnote": "Its name and NAICS 541820 suggest a public affairs firm. Not confirmed from any source.",
+"segnote": "NAICS 541820 public affairs firm in Washington DC per SBA record; not independently confirmed",
 "wdec": "unknown",
-"dec": "unknown",
+"dec": "pe_backed_or_acquired",
 "p": [
-0.3,
-0.0,
-0.1,
 0.1,
 0.0,
-0.05,
-0.03,
-0.42
+0.0,
+0.85,
+0.0,
+0.0,
+0.0,
+0.05
 ],
 "founded": null,
 "years": "",
@@ -267,16 +327,43 @@
 "website unreachable",
 "domain match unverified",
 "ownership unverified",
-"web search budget exhausted before research"
+"web search budget exhausted before research",
+"website_unreachable",
+"domain_unverified",
+"no_deal_search_run"
 ],
 "ev": [
 [
 "jonespa.com refused connections over both HTTP and HTTPS on 2026-11-16. The domain is assumed to be the company's but that is unverified.",
 "https://www.jonespa.com/",
 "company_site"
+],
+[
+"jonespa.com refused HTTPS connections (ECONNREFUSED) on 2026-11-17",
+"https://jonespa.com/",
+"company_website"
+],
+[
+"Great Point Partners acquired Jones Public Affairs / JPA Health on May 4, 2022",
+"https://mergr.com/transaction/great-point-partners-acquires-jones-public-affairs",
+"search_snippet"
+],
+[
+"Great Point Partners invested in JPA Health",
+"https://www.privsource.com/acquisitions/deal/8WSvlN",
+"search_snippet"
+],
+[
+"JPA Health bought akt health (London) in July 2024",
+"https://hlth.com/insights/news/jpa-health-acquires-akt-health-to-bolster-global-healthcare-communications-2024-07-23",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"changed",
+"Jones Public Affairs now operates as JPA Health. Great Point Partners, a private equity firm, acquired or invested in it in May 2022. Since then JPA Health has made add-on acquisitions: True North Solutions (2023), BioCentric (2024) and akt health (2024).",
+"https://mergr.com/transaction/great-point-partners-acquires-jones-public-affairs"
+]
 },
 {
 "cid": "bpi-2154",
@@ -325,20 +412,20 @@
 {
 "cid": "bpi-2343",
 "web": "https://www.amgroup.us/",
-"op": "yes",
+"op": "yes; site live with a 2025 copyright and an active team page",
 "seg": true,
-"segnote": "Mainly association management, with advocacy and communications as part of the offer. Partial fit.",
+"segnote": "Association management and government advocacy firm. It is adjacent to public affairs, not pure PR",
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
-0.25,
-0.03,
+0.3,
+0.0,
 0.2,
-0.05,
 0.0,
 0.0,
 0.1,
-0.37
+0.0,
+0.4
 ],
 "founded": null,
 "years": "The site footer shows 2016-2025. The founded year is unverified.",
@@ -350,7 +437,9 @@
 "risks": [
 "business mix weighted to association management rather than public affairs",
 "ownership unverified",
-"headcount may have fallen (49 PPP jobs vs 21 listed)"
+"headcount may have fallen (49 PPP jobs vs 21 listed)",
+"no_deal_search_run",
+"association_management_hybrid"
 ],
 "ev": [
 [
@@ -362,9 +451,23 @@
 "Gloria Peterson, IOM, is listed as CEO. The site lists 21 team members. The founder and founded year are not stated, and no acquisition is mentioned.",
 "https://www.amgroup.us/",
 "company_site"
+],
+[
+"The team page lists a CEO, a CFO and a Managing Director for CAMTC, with no founder or ownership information",
+"https://amgroup.us/theamgteam/",
+"company_website"
+],
+[
+"A directory lists Advocacy & Management Group (amgroup.us) at 1 Capitol Mall #320, Sacramento, and notes it may have ceased or moved",
+"https://www.regionaldirectory.us/ca/3792090.htm",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"One search found no acquisition. The only direct result is a business directory listing at 1 Capitol Mall, Sacramento, which warns the business may have closed or moved. The company site, however, still lists current officers. No owner or founder was identified.",
+"https://www.regionaldirectory.us/ca/3792090.htm"
+]
 },
 {
 "cid": "bpi-3793",
@@ -375,25 +478,28 @@
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.45,
+0.65,
+0.25,
+0.0,
 0.05,
-0.3,
-0.03,
 0.0,
-0.02,
 0.0,
-0.15
+0.0,
+0.05
 ],
 "founded": 1999,
 "years": "Founded 1999, about 27 years in business.",
 "staff": "33 jobs in PPP 2020-21. The site states no current headcount.",
 "rev": null,
 "rsig": "none found",
-"succ": "The founder is a former senator, and the firm is 26+ years old. The site names no current leadership or successor. That is a possible succession signal (unverified).",
+"succ": "D'Amato family members hold senior roles, per the earlier site check.",
 "fit": "A New York government relations and lobbying firm with four offices. Fits public affairs well.",
 "risks": [
 "value tied to the founder's political relationships",
-"current day-to-day leadership and ownership split unverified"
+"current day-to-day leadership and ownership split unverified",
+"founder_advanced_age",
+"family_succession_likely",
+"deal_search_not_run_budget_exhausted"
 ],
 "ev": [
 [
@@ -405,12 +511,17 @@
 "Offices in Albany, Syracuse, Long Island (Uniondale) and New York City. No current leaders named. No acquisition mentioned.",
 "https://www.parkstrategies.com/",
 "company_site"
+],
+[
+"D'Amato's firm Park Strategies bought a Troy NY insurance consulting firm in 2007 (Park was the acquirer)",
+"https://www.propertycasualty360.com/2007/12/18/damatos-firm-buys-insurance-consulting-company/",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"No acquisition, merger, parent or investor appears on the firm's site. The About page still names founder Alfonse D'Amato (founded 1999). Family members hold senior roles: Christopher D'Amato is Partner, EVP and General Counsel, and Amy D'Amato is Director of Compliance. The page names no CEO, so the founder's current operating role is unverified. The firm may be closer to family_next_generation. News searches could not run because the shared WebSearch budget was used up. Only the company site was checked.",
-"https://parkstrategies.com/about/"
+"One search found no sale or merger of Park Strategies. The only deal it turned up is a 2007 purchase in which Park Strategies was the buyer. The firm is still credited to its founder, Alfonse D'Amato, and family members hold senior roles, so a move to family_next_generation is possible.",
+""
 ]
 },
 {
@@ -465,14 +576,14 @@
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.6,
+0.85,
+0.0,
 0.0,
 0.05,
-0.05,
 0.0,
 0.0,
-0.1,
-0.2
+0.0,
+0.1
 ],
 "founded": 2012,
 "years": "Started in 2012 in Brooklyn, about 14 years in business.",
@@ -483,38 +594,55 @@
 "fit": "A tech-focused PR agency that trades as Ditto PR. It fits communications, though it does no government public affairs.",
 "risks": [
 "legal name says public affairs but the work is tech PR",
-"founder identity and ownership not confirmed on the site"
+"founder identity and ownership not confirmed on the site",
+"current_ceo_not_named",
+"deal_search_not_run_budget_exhausted"
 ],
 "ev": [
 [
 "Ditto PR is a PR firm for AI, emerging tech and fintech companies. Its work covers media relations, thought leadership, launches and reputation. It started in Brooklyn in 2012. The page names no founder and mentions no acquisition.",
 "https://dittopr.co/",
 "company_site"
+],
+[
+"Trey Ditto, a former Associated Press reporter, founded Ditto PR in Brooklyn in 2012. No parent, acquisition or investor is mentioned.",
+"https://dittopr.co/about",
+"company_website"
+],
+[
+"Ditto PR founded 2012 by Trey Ditto, who is listed as CEO; described as a small independent agency (profile updated Oct 2026)",
+"https://everything-pr.com/get-to-know-ditto-pr",
+"search_snippet"
+],
+[
+"Recent agency news covers a London office and new clients, no sale",
+"https://agilitypr.com/pr-agency-news/ditto-pr-opens-first-international-office-in-london-announces-advisory-service-offering",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"The About page says Trey Ditto founded Ditto PR in Brooklyn in 2012. A client testimonial on the homepage (copyright 2026) refers to 'Trey and his team', which points to current founder leadership. The site mentions no acquisition, parent, holding company or investor. His formal title is not stated. News searches could not run because the WebSearch budget was used up.",
-"https://dittopr.co/about"
+"One search found no sale. An Everything-PR profile updated in October 2026 calls Ditto PR a small independent agency founded by Trey Ditto and lists him as CEO. The acquisition results were about a different company, Didit.",
+""
 ]
 },
 {
 "cid": "bpi-5418",
-"web": "",
-"op": "unclear",
+"web": "none found",
+"op": "unknown",
 "seg": true,
-"segnote": "The name signals public affairs or public strategies (Des Moines, IA). Not confirmed.",
+"segnote": "NAICS 541820 public affairs firm in Des Moines IA per SBA record",
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
 0.3,
 0.0,
-0.1,
-0.1,
 0.0,
-0.1,
-0.05,
-0.35
+0.0,
+0.0,
+0.3,
+0.0,
+0.4
 ],
 "founded": null,
 "years": "Unverified.",
@@ -526,55 +654,97 @@
 "risks": [
 "No official website identified",
 "All facts unverified",
-"Web search budget was used up"
+"Web search budget was used up",
+"no_website_found",
+"no_deal_search_run"
 ],
 "ev": [
 [
 "No official website was found. Two guessed domains failed: groundswellps.com did not resolve, and groundswellpublicstrategies.com gave a TLS error. Neither is confirmed to belong to the firm.",
 "https://www.groundswellpublicstrategies.com/",
 "other"
+],
+[
+"groundswellstrategies.com redirects to a GoDaddy for-sale page, so it is not the firm's site",
+"https://www.groundswellstrategies.com/",
+"company_website"
+],
+[
+"A SlideShare profile lists Groundswell Public Strategies in Des Moines as a public affairs and digital consulting firm",
+"https://www.slideshare.net/groundswellpublicstrategies",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"One search returned only a SlideShare profile placing a public affairs and digital consulting firm in Des Moines. No website, owner, deal or closure notice turned up.",
+"https://www.slideshare.net/groundswellpublicstrategies"
+]
 },
 {
 "cid": "bpi-5940",
 "web": "https://www.spitfirestrategies.com",
-"op": "unclear",
+"op": "likely yes (domain live)",
 "seg": true,
-"segnote": "From prior knowledge only (unverified): a DC strategic-communications firm for nonprofits and foundations. That would fit communications.",
+"segnote": "Communications strategy firm for nonprofits and foundations, which fits public affairs and PR.",
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
 0.4,
 0.0,
-0.1,
+0.25,
 0.05,
 0.0,
-0.02,
-0.03,
-0.4
+0.0,
+0.0,
+0.3
 ],
 "founded": null,
 "years": "",
 "staff": "No current headcount found. PPP 2020-21 reported 46 jobs.",
 "rev": null,
 "rsig": "Not applicable. No snippets seen.",
-"succ": "none found (not researched)",
+"succ": "none found",
 "fit": "Likely a founder-led DC communications firm, but nothing was verified in this run.",
 "risks": [
 "website blocked automated access",
 "ownership unverified",
-"web search budget exhausted before research"
+"web search budget exhausted before research",
+"site_blocks_fetch",
+"deal_search_not_run_budget_exhausted"
 ],
 "ev": [
 [
 "spitfirestrategies.com returned HTTP 403 to automated fetches on 2026-11-16, so no content could be read. The domain is live.",
 "https://www.spitfirestrategies.com/",
 "company_site"
+],
+[
+"spitfirestrategies.com/about returned HTTP 403 Forbidden on 2026-11-17, so no ownership content could be read.",
+"https://www.spitfirestrategies.com/about",
+"company_website"
+],
+[
+"Founder moved from president to Founder and Strategist as of July 1, 2023, and a long-time staffer became president",
+"https://spitfirestrategies.com/2023/05/25/spitfire-presidential-transition-to-spark-change/",
+"search_snippet"
+],
+[
+"Described as a woman-owned strategic communication firm in DC; no acquisition reported",
+"https://www.idealist.org/en/consultant/3abacde0b67a4ceb836b931af2cbe88a-spitfire-strategies-washington",
+"search_snippet"
+],
+[
+"The 2026 Precision Strategies deal was for Firehouse Strategies, not Spitfire",
+"https://www.axios.com/2026/03/04/scoop-precision-strategies-to-buy-firehouse-strategies",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"Two searches found no sale, roll-up or PE deal. The founder stepped down as president in July 2023 and a long-time staffer became president, while the founder stayed on as Founder and Strategist. Who holds the equity now is not stated, so founder-led cannot be confirmed. Search results about a 2026 Firehouse Strategies deal involve a different firm.",
+"https://spitfirestrategies.com/2023/05/25/spitfire-presidential-transition-to-spark-change/"
+]
 },
 {
 "cid": "bpi-6450",
@@ -585,25 +755,26 @@
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.65,
+0.8,
 0.0,
+0.05,
 0.1,
-0.1,
 0.0,
 0.0,
 0.0,
-0.15
+0.05
 ],
 "founded": null,
 "years": "The founded year is not stated on the pages fetched. Unverified.",
 "staff": "Company says nearly 70 communications professionals (up from 47 PPP jobs).",
 "rev": null,
 "rsig": "none found",
-"succ": "none found",
+"succ": "Founder still CEO.",
 "fit": "A founder-run public affairs and crisis communications firm of about 70 people. A strong fit for the segment.",
 "risks": [
 "investor or outside-capital status not checked by search (search budget exhausted)",
-"founder-dependent"
+"founder-dependent",
+"deal_search_not_run_budget_exhausted"
 ],
 "ev": [
 [
@@ -615,31 +786,41 @@
 "Phil Singer is listed as Founder & CEO. The firm describes nearly 70 communications professionals.",
 "https://marathonstrategies.com/our-people/",
 "company_site"
+],
+[
+"Deal results concern unrelated Marathon Asset Management (CVC acquisition, 2026), not Marathon Strategies",
+"https://irei.com/news/cvc-acquires-u-s-credit-manager-marathon-asset-management/",
+"search_snippet"
+],
+[
+"Firm's recent news covers awards (2026 Reed Awards, 2027 PRNEWS Agency Elite), no ownership change",
+"https://marathonstrategies.com/news-insights/",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"The people page (copyright 2026) still lists Phil Singer as Founder & CEO. Neither it nor the homepage mentions an acquisition, parent company, investor or private equity. News searches for outside investment could not run because the WebSearch budget was used up, so a minority stake reported only in the press is unverified.",
-"https://marathonstrategies.com/our-people/"
+"Three searches found no sale, stake or PE investment. The deal results were all about the unrelated Marathon Asset Management and its sale to CVC. The firm's own 2025-2026 news covers only awards and practice launches, with no change of ownership. The founder_led label stands, but this rests on finding no deal news rather than a positive statement.",
+""
 ]
 },
 {
 "cid": "bpi-7290",
-"web": "unverified (fsbcorestrategies.com returns 404)",
-"op": "unclear",
+"web": "unverified (fsbcorestrategies.com 404; fsbcore.com parked for sale)",
+"op": "unknown",
 "seg": true,
-"segnote": "Fit is assumed from the name and NAICS only. Unverified.",
+"segnote": "NAICS 541820 public affairs firm in Sacramento per SBA record",
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
 0.3,
-0.02,
-0.2,
-0.08,
+0.0,
 0.0,
 0.1,
-0.05,
-0.25
+0.0,
+0.2,
+0.0,
+0.4
 ],
 "founded": null,
 "years": "unknown",
@@ -651,16 +832,37 @@
 "risks": [
 "no web search possible this run (shared search budget exhausted)",
 "company website not found",
-"ownership unverified"
+"ownership unverified",
+"no_website_found",
+"no_deal_search_run"
 ],
 "ev": [
 [
 "The guessed company domain returns HTTP 404 at the root and at /about-us. The company site was not confirmed. Unverified.",
 "https://www.fsbcorestrategies.com/",
 "other"
+],
+[
+"fsbcore.com redirects (302) to a HugeDomains for-sale listing, so it is not an active company site",
+"https://www.fsbcore.com/",
+"company_website"
+],
+[
+"The FSB brand started in 2012; by 2020 Core Strategic Group was described as its successor group (secondary, unverified source)",
+"https://yespress.io/strategic-communications-consulting",
+"search_snippet"
+],
+[
+"A directory listing describes FSB Core Strategies as a Sacramento integrated communications campaign firm",
+"https://startpage.mapquest.com/us/california/state-government-state-of-california-411374884",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"Two searches found no sale. One secondary source says trade reporting named Core Strategic Group as the FSB brand's successor by 2020. That suggests a rebrand or restructuring but proves no change of owner. No owner was identified.",
+"https://yespress.io/strategic-communications-consulting"
+]
 },
 {
 "cid": "bpi-7444",
@@ -720,26 +922,27 @@
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.75,
+0.8,
 0.0,
 0.1,
 0.05,
 0.0,
 0.0,
 0.0,
-0.1
+0.05
 ],
 "founded": null,
 "years": "Founding year not stated on the site.",
 "staff": "17 people are listed on the team page.",
 "rev": null,
 "rsig": "No review snippets were gathered.",
-"succ": "none found. Two named partners could be internal successors.",
+"succ": "Founder still CEO, with two partners (possible internal succession).",
 "fit": "Founder-led DC issue-advocacy communications firm. Small (about 17 staff) and a clean founder-led fit.",
 "risks": [
 "Small team",
 "Partisan, cause-focused client base",
-"Founding year and ownership split unverified"
+"Founding year and ownership split unverified",
+"deal_search_not_run_budget_exhausted"
 ],
 "ev": [
 [
@@ -756,31 +959,46 @@
 "The homepage describes policy and social-issue communications work and mentions no parent company.",
 "https://westendstrategy.com/",
 "company_site"
+],
+[
+"Matt Dorf is founder, president and CEO of West End Strategy Team, founded 2013",
+"https://yespress.io/west-end-strategy-team.md",
+"search_snippet"
+],
+[
+"Named first managing partner and partners in 2021",
+"https://yespress.io/matt-dorf",
+"search_snippet"
+],
+[
+"Listed as never having raised funding",
+"https://prospeo.io/c/west-end-strategy-team-revenue",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"The live team page, fetched today, still lists Matt Dorf as President and CEO and calls him 'president and founder'. Shannon Craig Straw and Samantha Kupferman are listed as partners, among 17 staff. The homepage and about page mention no parent company, holding company, acquisition or merger. The about page gives no founding date or ownership history, and /news/ returns a 404. Caveat: I could not run the web search for an acquisition, private-equity owner or merger because this turn's shared search budget was used up. So the refutation check used only the company's own site, and an outside sale is not ruled out. Founder-led status rests on the company's own current team page.",
-"https://westendstrategy.com/team/"
+"Two searches found no acquisition, merger or partnership. Profiles still list Matt Dorf as founder, president and CEO, and the firm has added partners and a managing partner since 2021. A data vendor says the firm never raised funding. The founder_led label stands.",
+""
 ]
 },
 {
 "cid": "bpi-7958",
 "web": "https://www.saxum.com/",
-"op": "yes",
+"op": "yes; site live",
 "seg": true,
-"segnote": "The site now pitches Saxum as an 'outsourced Chief Strategy Office' with diagnostic and decision products. Team titles still include media relations and public affairs. The segment fit has partly shifted toward strategy consulting.",
+"segnote": "Started as a PR and public affairs agency; it now markets itself as strategy consulting, so segment fit is weakening",
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
-0.15,
+0.4,
 0.0,
 0.2,
 0.15,
 0.0,
 0.0,
-0.1,
-0.4
+0.0,
+0.25
 ],
 "founded": 2003,
 "years": "About 23 years (founded 2003). The screen also shows an SBA 504 loan from 2009, paid in full.",
@@ -792,7 +1010,10 @@
 "risks": [
 "Business model pivot away from a pure communications agency",
 "Founder role and ownership not stated",
-"Lower headcount visible than the 51 PPP jobs"
+"Lower headcount visible than the 51 PPP jobs",
+"non_founder_ceo",
+"business_model_pivot",
+"no_deal_search_run"
 ],
 "ev": [
 [
@@ -809,27 +1030,46 @@
 "The homepage calls Saxum an 'outsourced Chief Strategy Office' with products named Bedrock Alignment and Bedrock OS.",
 "https://www.saxum.com/",
 "company_site"
+],
+[
+"Renzi Stone founded Saxum Strategic Communications in 2003 and is listed as chairman and CEO",
+"https://uk.marketscreener.com/insider/C-RENZI-STONE-A1CLWU",
+"search_snippet"
+],
+[
+"Saxum's 2020 rebrand release names its Oklahoma City office as its only official headquarters, with no mention of a parent company",
+"https://www.businesswire.com/news/home/20200916005166/en/Saxum-Reveals-New-Brand-and-Website",
+"search_snippet"
+],
+[
+"A separate SAXUM engineering firm in Irving, TX, sold a majority stake to Lycopodium in Oct 2024; this is not the communications agency",
+"https://www.cbinsights.com/company/saxum",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"Two searches turned up no acquisition of Saxum. The insurance-agency deals and the Texas engineering firm SAXUM in the results are unrelated. A MarketScreener insider profile names Renzi Stone as founder and as Saxum's chairman/CEO, but the site's About page lists Peter Farrell as CEO, so the founder may have moved to a chairman-only role. No source says who owns the firm, so the label stays unknown.",
+"https://uk.marketscreener.com/insider/C-RENZI-STONE-A1CLWU"
+]
 },
 {
 "cid": "bpi-8918",
 "web": "crawfordstrategy.com (TLS certificate error)",
-"op": "unclear",
+"op": "likely; the domain is hosted on Cloudways, but its content was not readable",
 "seg": true,
-"segnote": "Greenville, SC firm whose name signals strategy or communications. Its service mix was not confirmed.",
+"segnote": "NAICS 541820 public affairs/PR firm in Greenville SC per SBA record",
 "wdec": "unknown",
-"dec": "unknown",
+"dec": "founder_led",
 "p": [
-0.35,
+0.75,
+0.0,
 0.0,
 0.05,
-0.1,
 0.0,
-0.1,
-0.1,
-0.3
+0.0,
+0.0,
+0.2
 ],
 "founded": null,
 "years": "Unverified.",
@@ -841,16 +1081,42 @@
 "risks": [
 "Website could not be read",
 "Unclear whether this is public affairs or general marketing",
-"All facts unverified"
+"All facts unverified",
+"website_unreadable",
+"no_deal_search_run"
 ],
 "ev": [
 [
 "crawfordstrategy.com and www.crawfordstrategy.com returned a certificate error (a Cloudways host certificate, not the firm's own), so the site could not be read on 2026-11-16.",
 "https://www.crawfordstrategy.com/",
 "company_site"
+],
+[
+"crawfordstrategy.com fails with a certificate mismatch (it serves a *.cloudwaysapps.com certificate) on 2026-11-17",
+"https://crawfordstrategy.com/",
+"company_website"
+],
+[
+"Founded as Crawford Strategy in 2010; it dropped 'Strategy' from its name on its 10th anniversary",
+"https://scbiz.com/crawford/",
+"search_snippet"
+],
+[
+"Founder Marion Crawford is still CEO of the roughly 35-person Greenville agency",
+"https://yespress.io/crawford",
+"search_snippet"
+],
+[
+"The agency now operates as Crawford and continues to win new clients",
+"https://whosonthemove.com/?p=360890",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"Two searches found no sale. The firm rebranded from Crawford Strategy to Crawford (crawford.agency) around its 10th anniversary. Its founder, Marion Crawford, is still CEO, so the label was moved from unknown to founder_led. A 2026 sale of a 'Crawford Group' to 24 Seven names a different founder and is not this firm. Equity ownership is not stated outright.",
+"https://scbiz.com/crawford/"
+]
 },
 {
 "cid": "bpi-9215",

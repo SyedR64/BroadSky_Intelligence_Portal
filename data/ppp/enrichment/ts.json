@@ -1,5 +1,5 @@
 {
-"_note": "Ownership results for the Thomas Scientific shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). Same keys as pp.json. Restored from the agents' saved results after the hand-off to the integration step was cut off.",
+"_note": "Ownership results for the Thomas Scientific shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). Same keys as pp.json. Restored from the agents' saved results after the hand-off to the integration step was cut off. Finishing pass 2026-11-17: every founder or family call not yet re-checked got a fresh deal search, companies marked unknown got a deeper ownership pass, and companies added after the first pass were researched in full.",
 "items": [
 {
 "cid": "ts-0418",
@@ -11,13 +11,13 @@
 "dec": "unknown",
 "p": [
 0.3,
-0.15,
+0.0,
+0.0,
 0.05,
-0.05,
 0.0,
 0.0,
 0.0,
-0.45
+0.65
 ],
 "founded": null,
 "years": "",
@@ -29,7 +29,8 @@
 "risks": [
 "ownership not stated on site",
 "founded year unknown",
-"footer says CTL Scientific Corp., a slightly different name"
+"footer says CTL Scientific Corp., a slightly different name",
+"no web deal search: search budget exhausted"
 ],
 "ev": [
 [
@@ -41,39 +42,60 @@
 "It sells lab and testing products: pH papers and strips, test kits, filter papers, extraction thimbles, lab equipment and chemicals.",
 "https://www.ctlscientific.com/",
 "company_site"
+],
+[
+"Describes itself as the US distributor of Macherey-Nagel rapid tests and BDH-brand chemicals and lab equipment; names no owner or parent.",
+"https://www.ctlscientific.com/about.htm",
+"company_website"
+],
+[
+"Directory lists CTL Scientific Supply Corp as a Deer Park, NY distributor founded in 2006; no owner or parent named",
+"https://www.agriculture-xprt.com/companies/ctl-scientific-supply-corp-29917",
+"search_snippet"
+],
+[
+"VWR lists CTL Scientific Supply Corp as a supplier (relationship, not ownership)",
+"https://b2b-us.vwr.com/store/supplier/id/0000033468/ctl-scientific-supply-corp",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"One search found no sale. A directory gives a founding year of 2006 and the Deer Park address, but no owner. VWR listings show a supplier relationship only. The owner is still not established.",
+"https://www.agriculture-xprt.com/companies/ctl-scientific-supply-corp-29917"
+]
 },
 {
 "cid": "ts-0547",
 "web": "https://www.dawnscientific.com",
 "op": "yes",
 "seg": true,
-"segnote": "Sells lab chemicals, reagents, solvents, chromatography products and consumables, including its own brands.",
+"segnote": "Lab chemicals and consumables distributor with its own brands.",
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
-0.3,
-0.25,
-0.02,
+0.1,
+0.0,
+0.05,
 0.05,
 0.0,
 0.0,
 0.0,
-0.38
+0.8
 ],
-"founded": null,
+"founded": 1978,
 "years": "The site says it has been a trusted partner 'for over 40 years'.",
 "staff": "",
 "rev": null,
 "rsig": "Not checked. The search budget ran out.",
-"succ": "About four decades in business with no owner named. This is a possible succession signal (unverified).",
+"succ": "Ownership already changed in 2018 to an individual owner-operator, who is not named.",
 "fit": "A WBENC-certified, woman-owned lab chemical supplier that is more than 40 years old and has its own brands. It reported 30 PPP jobs on only an $18,200 loan.",
 "risks": [
 "Metuchen, NJ address not confirmed on the site",
 "Owner not named; founder or later generation unknown",
-"The PPP loan amount looks small for 30 jobs, so the data needs checking"
+"The PPP loan amount looks small for 30 jobs, so the data needs checking",
+"second-generation owner, not the founder",
+"no web deal search: search budget exhausted"
 ],
 "ev": [
 [
@@ -90,27 +112,51 @@
 "Says it has been a trusted partner for over 40 years.",
 "https://www.dawnscientific.com/",
 "company_site"
+],
+[
+"Founded in 1978 by a chemistry professor and incorporated in New Jersey in 1982.",
+"https://www.dawnscientific.com/about",
+"company_website"
+],
+[
+"In 2018 the company was acquired by an unnamed individual described as a member of the scientific community.",
+"https://www.dawnscientific.com/about",
+"company_website"
+],
+[
+"Federal registry aggregator lists a current president for Dawn Scientific, Inc.; women-owned small business in Metuchen, NJ, established 1978",
+"https://opengovus.com/sam-entity/UAMNH87NR175",
+"search_snippet"
+],
+[
+"Harvard Bioscience bought Denville Scientific (a different Metuchen company), not Dawn Scientific",
+"https://www.massdevice.com/harvard-bioscience-buys-denville-scientific-24-million/",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"One search found no sale or merger after the 2018 purchase by an individual. A federal contractor registry aggregator lists a president, which fits the woman-owned status. The owner is a second, individual owner, not the founder and not PE, so no label fits cleanly and the label stays unknown. A Metuchen hit about Harvard Bioscience buying Denville Scientific is a different company.",
+"https://opengovus.com/sam-entity/UAMNH87NR175"
+]
 },
 {
 "cid": "ts-0693",
 "web": "https://www.htslabs.com/",
 "op": "yes",
 "seg": true,
-"segnote": "Makes and sells lab consumables (filter vials, plates, flasks). Fits lab or scientific supply, with manufacturing as well as distribution.",
+"segnote": "Sells its own branded single-use lab consumables (filter vials, Optimum Growth flasks, SINGLE StEP columns) and uses distributors. It is a brand-owner rather than a pure distributor.",
 "wdec": "family_next_generation",
 "dec": "family_next_generation",
 "p": [
-0.2,
-0.4,
-0.03,
 0.1,
+0.75,
+0.0,
+0.05,
 0.0,
 0.0,
 0.0,
-0.27
+0.1
 ],
 "founded": null,
 "years": "",
@@ -122,7 +168,10 @@
 "risks": [
 "family relationship between the founder and CEO is inferred from the shared surname and is unverified",
 "Oceanside, CA location not confirmed on the site",
-"acquisition search not run"
+"acquisition search not run",
+"deal search not run (search budget exhausted)",
+"family relationship inferred from surname only",
+"rebrand to Thomson Life Sciences could signal recapitalization; unchecked"
 ],
 "ev": [
 [
@@ -139,12 +188,27 @@
 "Products include cell culture flasks, filter vials, filter plates, SINGLE StEP columns and shake flasks. ISO 9001:2015 certified.",
 "https://www.htslabs.com/",
 "company_site"
+],
+[
+"The company careers page describes Thomson as family owned and operated and lists Melissa Ellis as Founder Emeritus.",
+"https://htslabs.com/legal/careers",
+"search_snippet"
+],
+[
+"Sam Ellis has been CEO since October 2023, after serving as Vice President from April 1999.",
+"https://theorg.com/org/thomson-instrument-company/org-chart/sam-ellis",
+"search_snippet"
+],
+[
+"Danaher's 2002 purchase was of Thomson Industries, a different (linear motion) company.",
+"https://mergr.com/company/thomson-industries",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"The current About page lists Melissa Ellis as Founder Emeritus and Sam Ellis as CEO. A photo caption there calls him 'Owner Sam Ellis', which is positive current evidence that the company is owner-run and not held by a parent company. The homepage (copyright 2026 Thomson Life Sciences) mentions no parent company, merger or acquisition. Caveats: the site does not say the company is family-owned. The family link is inferred only from the shared Ellis surname and is unverified. The founding year is not stated. The shared web-search budget ran out before any search ran, so I could not check news or press for a sale. The verdict rests only on the company's own site.",
-"https://www.htslabs.com/about"
+"Acquisition and PE/joins searches found no sale of the Oceanside Thomson Instrument Company. Similarly named deals (Danaher/Thomson Industries, Thompson Group/AIT) are unrelated. The company's careers page says 'Family owned & Operated' and lists Melissa Ellis as Founder Emeritus. A profile says Sam Ellis became CEO in October 2023 after serving as VP since 1999. This is a generational handover inside the Ellis family, though no source states the exact relationship.",
+"https://htslabs.com/legal/careers"
 ]
 },
 {
@@ -200,31 +264,35 @@
 "cid": "ts-11327",
 "web": "https://www.scientificindustries.com",
 "op": "yes",
-"seg": true,
-"segnote": "Makes and sells lab equipment (Vortex-Genie mixers, rotators, shakers, incubators). Related brands: Scientific Bioprocessing, Torbal scales, VIVID pill counters.",
+"seg": false,
+"segnote": "Publicly traded SEC registrant that makes lab equipment (Genie vortex mixers, Scientific Bioprocessing, Torbal scales, VIVID pill counters). It is a manufacturer with public shareholders, not a private founder-owned distributor.",
 "wdec": "unknown",
-"dec": "unknown",
+"dec": "not_in_segment",
 "p": [
-0.02,
-0.03,
-0.05,
-0.25,
 0.0,
-0.02,
-0.03,
-0.6
+0.0,
+0.0,
+0.1,
+0.0,
+0.0,
+0.8,
+0.1
 ],
 "founded": null,
 "years": "Founding year not confirmed in this pass. The company has filed 10-Ks with the SEC since at least 2018.",
 "staff": "Not stated on the pages fetched. PPP reported 50 jobs.",
 "rev": null,
 "rsig": "Not checked. The search budget ran out.",
-"succ": "None found. It is an SEC-reporting public company, so founder succession does not apply.",
+"succ": "not applicable (public company)",
 "fit": "Public SEC registrant (CIK 0000087802) that makes lab equipment. None of the private-owner labels fit, so it is marked unknown. A public-company deal would be complex.",
 "risks": [
 "Publicly traded SEC registrant; does not fit the founder-owned profile",
 "Mainly a manufacturer, not a distributor",
-"Ownership structure and major holders unverified"
+"Ownership structure and major holders unverified",
+"publicly_traded",
+"outside_13d_blockholders",
+"manufacturer_not_distributor",
+"deal_search_not_run_budget_exhausted"
 ],
 "ev": [
 [
@@ -236,9 +304,28 @@
 "EDGAR shows Scientific Industries Inc (CIK 0000087802) 10-K filings through 2026-03-31, plus a 10-KT in 2023.",
 "https://www.sec.gov/cgi-bin/browse-edgar?company=scientific+industries&type=10-K&dateb=&owner=include&count=10",
 "state_record"
+],
+[
+"EDGAR lists Schedule 13D and 13D/A filings for CIK 0000087802, including 2023-12-15, 2023-12-29 and 2024-11-13. These show outside 5%+ holders.",
+"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000087802&type=SC+13D&dateb=&owner=include&count=40",
+"sec_filing"
+],
+[
+"Scientific Industries subsidiary agreed to acquire aquila biolabs GmbH in April 2021, financed by private placement",
+"https://www.sec.gov/Archives/edgar/data/87802/000165495421004871/scndaquiresaquilabiolabsp.htm",
+"search_snippet"
+],
+[
+"Aug 2025 asset purchase agreement with Troemner; Torbal division continues in Bohemia NY",
+"https://equibles.com/stocks/scnd/documents/d46ae78e-82c9-490c-899b-92f2098921c3",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"One search found no sale of the company. It is an SEC-reporting public company (SCND) that buys and sells businesses: it bought aquila biolabs in 2021, raising the money through a private placement, and sold assets to Troemner in 2025. A public company is not a private founder-led target, so I relabeled it not_in_segment. Who controls it remains unverified.",
+""
+]
 },
 {
 "cid": "ts-11735",
@@ -293,18 +380,18 @@
 "web": "https://www.foxxlifesciences.com",
 "op": "yes",
 "seg": true,
-"segnote": "Makes and sells lab and bioprocess consumables (bottles, carboys, single-use assemblies, filters, tubing, labware).",
+"segnote": "Makes and sells lab and bioprocess consumables, with plants in the US and India. It is more a manufacturer-brand than a pure distributor.",
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.55,
-0.02,
+0.8,
 0.05,
-0.13,
+0.0,
+0.1,
 0.0,
 0.0,
-0.02,
-0.23
+0.0,
+0.05
 ],
 "founded": 2008,
 "years": "Established as an independent entity in 2008, with roots in 2006-2007, per the company's About page.",
@@ -316,7 +403,9 @@
 "risks": [
 "Scale (350+ staff) may exceed tuck-in size",
 "Outside investors not ruled out (no news search possible)",
-"Manufacturer with India operations"
+"Manufacturer with India operations",
+"deal search not run (search budget exhausted)",
+"current CEO not named on site"
 ],
 "ev": [
 [
@@ -328,12 +417,27 @@
 "HQ in Salem NH, manufacturing in the US and India, ISO 13485 since 2010. Sells lab and bioprocess consumables.",
 "https://www.foxxlifesciences.com/",
 "company_site"
+],
+[
+"Foxx is described as a privately held company, formed when Thomas Taylor bought Roush Life Sciences and renamed it.",
+"https://www.mpo-mag.com/?p=27185",
+"search_snippet"
+],
+[
+"A directory describes Foxx Life Sciences as a family-owned company founded in 2008.",
+"https://medindexer.com/directory/foxx-life-sciences",
+"search_snippet"
+],
+[
+"The Acri Capital reverse merger (Sept 2024) was with Foxx Development Inc., a consumer electronics/IoT firm, not Foxx Life Sciences.",
+"https://in.marketscreener.com/quote/stock/ACRI-CAPITAL-ACQUISITION--141869226/news/Foxx-Development-Inc-entered-into-a-definitive-business-combination-agreement-to-acquire-Acri-Capit-45990649/",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"The 2026 About page says Thomas Foxx Taylor bought all of the original IP in 2008 and created the company as an independent entity. It also says the company is privately held. The page and homepage mention no acquisition, investor, private equity or parent company. Earlier joint ventures with Nypro and Roush appear in the timeline, but neither is shown as an owner. The page does not say who owns the company today. My search budget ran out, so outside news was not checked.",
-"https://www.foxxlifesciences.com/pages/about-us"
+"Searches for acquisitions and for PE, investment or partnership news found no sale of Foxx Life Sciences. Results describe it as privately held and family-owned, founded in 2008 after Thomas Taylor bought out Roush Life Sciences, and it has made its own small acquisition (LabRatGifts.com). One CB Insights 'Foxx' entry shows a September 2024 reverse merger with Acri Capital, but a follow-up search showed that deal was Foxx Development Inc., an unrelated consumer electronics/IoT company. That entry does not refer to Foxx Life Sciences.",
+"https://medindexer.com/directory/foxx-life-sciences"
 ]
 },
 {
@@ -345,14 +449,14 @@
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
-0.2,
-0.1,
-0.05,
+0.4,
+0.3,
+0.0,
 0.05,
 0.0,
-0.1,
-0.1,
-0.4
+0.0,
+0.0,
+0.25
 ],
 "founded": null,
 "years": "",
@@ -364,16 +468,43 @@
 "risks": [
 "could not identify the website",
 "fit to segment unverified",
-"web search budget exhausted"
+"web search budget exhausted",
+"no website found",
+"name collision with a Florida company",
+"no web deal search: search budget exhausted"
 ],
 "ev": [
 [
 "scientificsales.com belongs to a weather-instrument seller in Melbourne, FL that says 'Trusted Since 1990'. It does not mention Oak Ridge, TN, so it is probably a different company.",
 "https://www.scientificsales.com/",
 "company_site"
+],
+[
+"Small woman- and minority-owned lab, safety and industrial products distributor in Oak Ridge, TN",
+"https://members.eteconline.org/member-directory/Details/scientific-sales-inc-2734818",
+"search_snippet"
+],
+[
+"Thomasnet lists a different president from the one a DOE page names; the sources conflict",
+"https://www.thomasnet.com/company/scientific-sales-inc-715072/profile",
+"search_snippet"
+],
+[
+"CAGE registration active, renewal June 2026; business started 1987",
+"https://cage.report/CAGE/09NX5",
+"search_snippet"
+],
+[
+"Federal contract awards continued through November 2025",
+"https://www.govconinabox.com/explore/contractors/profile/V15DH5BKFJQ5",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"Two searches found no sale. Directories describe a small woman- and minority-owned distributor that has operated since 1987 and is still active. Thomasnet names one president and a DOE page names another, so it is unclear who owns it and whether the founder or the next generation runs it. The label stays unknown, though the evidence leans toward an owner-operated business.",
+""
+]
 },
 {
 "cid": "ts-12712",
@@ -510,39 +641,71 @@
 "web": "https://www.heathrowscientific.com/",
 "op": "yes",
 "seg": true,
-"segnote": "Lab equipment and supplies brand. Core fit.",
+"segnote": "Lab equipment and supplies maker and distributor with its own brands (Vee Gee, TempShield, Vanguard Microscopes). It may be closer to a manufacturer than a pure distributor.",
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
-0.15,
-0.03,
-0.02,
-0.35,
+0.3,
+0.1,
+0.0,
+0.3,
 0.0,
 0.0,
 0.0,
-0.45
+0.3
 ],
 "founded": null,
 "years": "",
 "staff": "",
 "rev": null,
-"rsig": "none found (no searches were possible)",
+"rsig": "Great Place to Work certified (company news)",
 "succ": "none found",
 "fit": "Fits the segment, but ownership is not stated. My recollection that a strategic lab-supply consolidator bought it around 2021 is unverified: the search budget ran out before it could be checked.",
 "risks": [
 "possible prior acquisition by a lab-supply roll-up (unverified recollection; check before outreach)",
 "multi-brand owner, so it may already be part of a larger group",
-"About page returned 404"
+"About page returned 404",
+"multi_brand_possible_rollup",
+"no_ownership_disclosure",
+"deal_search_not_run_budget_exhausted"
 ],
 "ev": [
 [
 "The site describes the company as a global supplier of lab equipment and supplies, with brands Vee Gee, TempShield and Vanguard Microscopes.",
 "https://www.heathrowscientific.com/",
 "company_site"
+],
+[
+"The Great Place to Work certification news post names no Heathrow Scientific executive, owner or investor.",
+"https://www.heathrowscientific.com/news-events/we-did-it-again-great-place-to-work-certified/",
+"company_website"
+],
+[
+"heathrowscientific.com/about-us returns HTTP 404.",
+"https://www.heathrowscientific.com/about-us",
+"company_website"
+],
+[
+"Heathrow Scientific acquired the Whitney Medical Solutions product portfolio (Feb 2025)",
+"https://www.heathrowscientific.com/news-events/heathrow-scientific-enters-surgical-product-market-with-acquisition-of-whitney-medical-solutions-portfolio/",
+"search_snippet"
+],
+[
+"Profiled as private, founded 1996, Vernon Hills IL; no investor named",
+"https://craft.co/heathrow-scientific",
+"search_snippet"
+],
+[
+"Data vendor lists no funding raised (unreliable)",
+"https://prospeo.io/c/heathrow-scientific-revenue",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"Two searches found no sale and no PE owner. Heathrow Scientific is the buyer in its own February 2025 Whitney Medical deal. Profiles call it private, founded in 1996, and one data vendor claims it never raised funding. No owner is named anywhere, so ownership is still open.",
+""
+]
 },
 {
 "cid": "ts-16832",
@@ -628,16 +791,16 @@
 "web": "https://www.capitolscientific.com",
 "op": "yes",
 "seg": true,
-"segnote": "Lab supply distributor: equipment, glassware, reagents and chemicals, cleanroom and safety products.",
+"segnote": "Austin, TX distributor of lab supplies and reagents.",
 "wdec": "family_next_generation",
 "dec": "family_next_generation",
 "p": [
-0.05,
-0.75,
-0.02,
-0.06,
 0.0,
-0.02,
+0.85,
+0.0,
+0.05,
+0.0,
+0.0,
 0.0,
 0.1
 ],
@@ -646,12 +809,14 @@
 "staff": "Not stated. The site mentions sales teams, support staff and warehouses across the country.",
 "rev": null,
 "rsig": "Not checked. The search budget ran out before any review snippets were gathered.",
-"succ": "The owner has been in the business since 1993 and owner since 2000, about 26 years. No next generation is named on the site. Unverified beyond the company's own About page.",
+"succ": "Owner-CEO since 2000 (25+ years in role); no named successor.",
 "fit": "A second-generation family lab supply distributor in Austin with 33 jobs on its 2010 SBA loan. It looks like a clean succession candidate.",
 "risks": [
 "Jobs figure dates from a 2010 SBA 7(a) loan; no PPP record",
 "No acquisition search run because the search budget ran out; check for any later sale",
-"Headquarters is named as Austin on the site but no street address was confirmed"
+"Headquarters is named as Austin on the site but no street address was confirmed",
+"deal search not run (search budget exhausted)",
+"owner has led the company 25+ years; succession question"
 ],
 "ev": [
 [
@@ -673,12 +838,22 @@
 "Headquartered in Austin, Texas; grew through product-line acquisitions and a J.T. Baker reagent distributorship.",
 "https://www.capitolscientific.com/about-us",
 "company_site"
+],
+[
+"The company's About page says Mr. Ware purchased the company in 2000; the firm grew by acquiring lab equipment and reagent distributorships.",
+"https://www.capitolscientific.com/about",
+"search_snippet"
+],
+[
+"Capitol Scientific is listed as a private company.",
+"https://craft.co/capitol-scientific",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"The live About page (its site banner refers to 2027, so it is current) says Lee Williams and Mack Johnson founded the company in 1963 as Chem Products, Inc. It also says Felix Ware, grandson of Mr. Williams, bought the company from him in 2000 and became President and CEO. The page names no parent company, merger, private-equity owner or sale. The 'acquisitions' it mentions are product lines and distributorships, not changes of ownership. Limits: the shared web-search budget was used up before this check ran, so I could not search news or press for a recent acquisition. The verdict rests only on the company's own current site.",
-"https://www.capitolscientific.com/about-us"
+"An acquisition search found no sale of Capitol Scientific. Results confirm it is privately held, and the acquisitions it mentions are its own purchases of distributorships. Its About page says Felix Ware, the founder's grandson, bought the company in 2000. That positively supports third-generation family ownership.",
+"https://www.capitolscientific.com/about"
 ]
 },
 {
@@ -688,16 +863,16 @@
 "seg": true,
 "segnote": "Fit is not confirmed from any source read in this run. From prior knowledge only (unverified), it is a distributor of materials-lab equipment such as metallography sample prep.",
 "wdec": "unknown",
-"dec": "unknown",
+"dec": "pe_backed_or_acquired",
 "p": [
-0.25,
-0.2,
-0.05,
-0.1,
 0.0,
-0.05,
-0.05,
-0.3
+0.0,
+0.0,
+0.95,
+0.0,
+0.04,
+0.0,
+0.01
 ],
 "founded": null,
 "years": "",
@@ -709,46 +884,69 @@
 "risks": [
 "website returning database error on 2026-11-16",
 "ownership unverified",
-"web search budget exhausted before research"
+"web search budget exhausted before research",
+"website down",
+"no web deal search: search budget exhausted"
 ],
 "ev": [
 [
 "magersci.com resolves (www redirects to the bare domain), but on 2026-11-16 the site returned 'Error establishing a database connection' (HTTP 500). No company content could be read.",
 "https://magersci.com/",
 "company_site"
+],
+[
+"The /about-us/ page also returned HTTP 500.",
+"https://magersci.com/about-us/",
+"company_website"
+],
+[
+"Verder Scientific acquires Mager Scientific (all shares); Mager joins QATM line",
+"https://www.verder-scientific.com/news/news/details/news_detail/verder-scientific-acquires-mager-scientific/",
+"search_snippet"
+],
+[
+"Trade press reports the Verder Scientific acquisition of Mager Scientific",
+"https://www.metal-am.com/verder-scientific-acquires-mager-scientific/",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"changed",
+"Verder Scientific (Verder Group) bought all shares of Mager Scientific around June 2021, and Mager became part of its QATM product line. Quotes and orders moved to Verder Scientific Inc. in Newtown, PA. The buyer is a strategic acquirer rather than PE, and the acquisition explains why the Dexter site is down.",
+"https://www.verder-scientific.com/news/news/details/news_detail/verder-scientific-acquires-mager-scientific/"
+]
 },
 {
 "cid": "ts-2862",
 "web": "https://www.apogeeinstruments.com",
 "op": "yes",
 "seg": true,
-"segnote": "Makes research-grade environmental sensors. It is a scientific instrument maker more than a lab supply distributor, so it is only a partial fit.",
+"segnote": "Makes environmental sensors (radiation, PAR, temperature, etc.) rather than distributing lab supplies. It sits in the segment by NAICS only.",
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.5,
+0.7,
+0.0,
+0.0,
 0.2,
-0.03,
-0.07,
 0.0,
 0.0,
-0.05,
-0.15
+0.0,
+0.1
 ],
 "founded": 1996,
 "years": "Founded 1996, about 30 years ago.",
 "staff": "",
 "rev": null,
 "rsig": "Not checked. The search budget ran out.",
-"succ": "The founder has been in place about 30 years. Leadership roles and any next generation were not confirmed (unverified).",
+"succ": "COO (Devin Overly) and long-tenured chief scientist in place; possible internal successors.",
 "fit": "A founder-started scientific sensor maker from 1996 with 32 PPP jobs. Current ownership was not confirmed.",
 "risks": [
 "It makes products rather than distributing them, so it is only a partial segment fit",
 "The founder's current role and ownership are unverified because the founder page returned 404",
-"Logan, UT location not confirmed on the pages fetched"
+"Logan, UT location not confirmed on the pages fetched",
+"deal search not run (search budget exhausted)",
+"founder likely near retirement age; succession unclear"
 ],
 "ev": [
 [
@@ -760,12 +958,32 @@
 "The About page names Dr. Bruce Bugbee as founder.",
 "https://www.apogeeinstruments.com/about-us/",
 "company_site"
+],
+[
+"The staff listing names Bruce Bugbee as President. Devin Overly is COO and Mark Blonquist is Chief Scientist.",
+"https://www.apogeeinstruments.com/staff-listing/",
+"company_website"
+],
+[
+"In spring 2005 Campbell Scientific acquired an interest in Apogee Instruments to develop sensor-datalogger combinations.",
+"https://www.campbellsci.com/newsroom/campbell-scientific-invests-in-apogee-instruments",
+"search_snippet"
+],
+[
+"Campbell's associated-companies page describes a 2005 shareholding; Campbell Group's named subsidiaries are Campbell Scientific, Juniper Systems and METER Group, not Apogee.",
+"https://campbellsci.com.au/associated-companies",
+"search_snippet"
+],
+[
+"Bruce Bugbee is referred to as President and founder of Apogee Instruments.",
+"https://www.campbellsci.com.au/bruce-bugbee",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"The About page names Dr. Bruce Bugbee as founder. The company news page has items through 28 July 2026, and those items still feature Dr. Bugbee. Older items (2016 to 2018) call him Apogee's president. No item on the homepage, About page or news page mentions an acquisition, merger, parent company or private-equity owner. Limits: the 2026 items do not state his current title, so his current role as president is unverified. The shared web-search budget was also used up, so I could not search outside news for a sale. The verdict rests only on the company's own site.",
-"https://www.apogeeinstruments.com/apogee-news/"
+"No sale or PE deal was found, and founder Bruce Bugbee is still named President and founder. However, Campbell Scientific, a strategic buyer in the same Logan, Utah industry, took a shareholding in Apogee in spring 2005, and Campbell's associated-companies pages list Apogee. No source gives the stake size or calls Apogee a subsidiary. Campbell Group's stated subsidiaries are Campbell Scientific, Juniper Systems and METER Group, so the stake reads as a minority one. Diligence should confirm the cap table, since a strategic minority holder could affect any sale.",
+"https://www.campbellsci.com/newsroom/campbell-scientific-invests-in-apogee-instruments"
 ]
 },
 {
@@ -777,25 +995,26 @@
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
-0.02,
-0.3,
+0.0,
+0.4,
 0.1,
-0.1,
+0.05,
 0.0,
 0.0,
 0.0,
-0.48
+0.45
 ],
 "founded": 1924,
 "years": "Since 1924, about 102 years.",
 "staff": "",
 "rev": null,
 "rsig": "none found (no searches were possible)",
-"succ": "Business is about 102 years old; current owners and successor not stated",
+"succ": "About 100 years old, so ownership has passed beyond the founder; the current owners are not disclosed.",
 "fit": "Century-old lab distributor based in West Virginia, with a Kentucky location. Ownership and generation are not stated in the page text that could be read.",
 "risks": [
 "ownership not stated; the About text was cut off when fetched",
-"acquisition search not run"
+"acquisition search not run",
+"no web deal search: search budget exhausted"
 ],
 "ev": [
 [
@@ -812,9 +1031,33 @@
 "The site footer lists addresses in St. Albans, WV and Louisville, KY.",
 "https://www.preiser.com/about-us",
 "company_site"
+],
+[
+"Holmes Bros. Technologies, LLC is a partnership between Preiser Scientific and Towne Machine Tool Co. It bought the Holmes Bros. sampling products division in 2007.",
+"https://www.preiser.com/pages/holmes-bros",
+"company_website"
+],
+[
+"Directory lists Preiser Scientific as established 1924, privately owned, about 30 employees",
+"https://photonics.com/Buyers_Guide/Preiser_Scientific_Inc/c9559",
+"search_snippet"
+],
+[
+"Alvin E. Preiser listed as chairman and treasurer (third-party, possibly dated)",
+"https://at.marketscreener.com/insider/ALVIN-E-PREISER-A0XHFR/",
+"search_snippet"
+],
+[
+"ZoomInfo lists a non-family President & CEO (third-party, unconfirmed)",
+"https://www.zoominfo.com/c/preiser-scientific-inc/96797027",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"Two searches found no sale; the acquisition hits were about Prior Scientific and other companies. A Photonics directory lists the company as privately held with about 30 employees. A MarketScreener profile lists Alvin E. Preiser as chairman/treasurer, and ZoomInfo lists a non-Preiser president/CEO. That points to a continuing family role but does not confirm family ownership, so the label stays unknown.",
+"https://photonics.com/Buyers_Guide/Preiser_Scientific_Inc/c9559"
+]
 },
 {
 "cid": "ts-5813",
@@ -913,18 +1156,18 @@
 "web": "https://www.gamry.com",
 "op": "yes",
 "seg": true,
-"segnote": "Makes electrochemical instruments (potentiostats, galvanostats, QCMs), cells, accessories and software for research labs.",
+"segnote": "Makes electrochemical instruments (potentiostats, galvanostats, QCMs) rather than distributing lab supplies. It sits in the segment by NAICS only.",
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.4,
-0.05,
+0.55,
+0.0,
 0.2,
-0.07,
+0.05,
 0.0,
 0.0,
-0.03,
-0.25
+0.0,
+0.2
 ],
 "founded": 1989,
 "years": "Founded 1989 per the company's About page, which says it has been independent since the beginning.",
@@ -936,7 +1179,9 @@
 "risks": [
 "Founder and owner not named on site",
 "Manufacturer, not a distributor",
-"Independence claim is self-stated"
+"Independence claim is self-stated",
+"deal search not run (search budget exhausted)",
+"no owner or executive identified anywhere on site"
 ],
 "ev": [
 [
@@ -953,12 +1198,27 @@
 "Team page lists sales, support and marketing managers, but no owner or executive.",
 "https://www.gamry.com/about-us/our-team/",
 "company_site"
+],
+[
+"No acquisition found; results show partnerships only (Arbin, Bioz), not a sale",
+"https://www.pr.com/press-release/681700",
+"search_snippet"
+],
+[
+"Press release names Max Yaffe as Vice President and Co-Founder, and Greg Martinchek as President",
+"https://www.24-7pressrelease.com/press-release/436536/gamry-instruments-to-attend-the-231st-electrochemical-society-meeting",
+"search_snippet"
+],
+[
+"Gamry marked 30 and 35 years in business; founded 1989 in Warminster, PA",
+"https://gamry.com/news-and-announcements/general-news/gamry-marks-35th-anniversary",
+"search_snippet"
 ]
 ],
 "ver": [
 "unverifiable",
-"I found nothing showing an acquisition or a private-equity owner. The 2026 About page says 'Independent since the beginning'. But neither the About page nor the team page names a founder, owner or chief executive, so the founder-led label itself is unconfirmed. The site supports independence only. My search budget ran out, so I could not check outside news or state records for the founder's current role.",
-"https://www.gamry.com/about-us/"
+"Two searches found no sale, PE investment or acquisition. Gamry press releases from about 2016-2017 name Max Yaffe as co-founder (VP/chairman) and Greg Martinchek as president, and the company's own site says it has been independent since its 1989 founding. With a co-founder still in leadership and no outside owner found, the label moves from unknown to founder_led. The leadership sources are dated and none states ownership outright, so the verdict stays unverifiable.",
+"https://www.pr.com/press-release/789226"
 ]
 },
 {
@@ -970,14 +1230,14 @@
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
-0.35,
-0.1,
-0.03,
-0.07,
+0.2,
+0.15,
+0.0,
+0.05,
 0.0,
 0.0,
 0.0,
-0.45
+0.6
 ],
 "founded": null,
 "years": "",
@@ -989,7 +1249,9 @@
 "risks": [
 "Burton, MI location not confirmed on the homepage",
 "The About and Contact pages returned 404",
-"Owner not named; 'woman owned' does not establish whether the owner is the founder"
+"Owner not named; 'woman owned' does not establish whether the owner is the founder",
+"owner not named",
+"no web deal search: search budget exhausted"
 ],
 "ev": [
 [
@@ -1001,9 +1263,28 @@
 "The homepage describes it as a 'Woman Owned Small Business'.",
 "https://www.dotscientific.com/",
 "company_site"
+],
+[
+"The About page is an unfilled default template with no company history or ownership details.",
+"https://www.dotscientific.com/about",
+"company_website"
+],
+[
+"Lab supply distributor founded 1984, HQ 4165 Lippincott Blvd, Burton, MI",
+"https://www.cbinsights.com/company/dot-scientific",
+"search_snippet"
+],
+[
+"Govly vendor page for J&H Berge describes DOT Scientific; ownership relationship not stated",
+"https://app.govly.com/public/vendors/jh_berge",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"Two searches found no sale. CB Insights gives a 1984 founding and a Burton, MI headquarters on Lippincott Blvd, which explains the 'Lippincott' on the homepage. A Govly vendor page ties DOT Scientific to J&H Berge Inc (The Lab Mart), but no source says one owns the other. No owner is named, so the label stays unknown.",
+"https://www.cbinsights.com/company/dot-scientific"
+]
 },
 {
 "cid": "ts-7407",
@@ -1012,16 +1293,16 @@
 "seg": true,
 "segnote": "Life-science lab consumables supplier. Core fit.",
 "wdec": "unknown",
-"dec": "unknown",
+"dec": "pe_backed_or_acquired",
 "p": [
-0.3,
-0.02,
-0.05,
-0.25,
+0.03,
+0.0,
+0.0,
+0.95,
 0.0,
 0.0,
 0.0,
-0.38
+0.02
 ],
 "founded": 1995,
 "years": "Founded 1995 per site metadata, about 31 years.",
@@ -1032,7 +1313,9 @@
 "fit": "Strong fit and already on the hand-built list. The site does not say whether the founder still owns it or whether outside investors are involved.",
 "risks": [
 "ownership and investor status unverified: the acquisition search could not run",
-"mid-size with a global reach; may have outside capital"
+"mid-size with a global reach; may have outside capital",
+"attractive PE profile; sale not ruled out",
+"no web deal search: search budget exhausted"
 ],
 "ev": [
 [
@@ -1044,9 +1327,33 @@
 "The company describes itself as a global supplier to the life sciences, pharma and biotech industries.",
 "https://www.geneseesci.com/about-us",
 "company_site"
+],
+[
+"Job postings are hosted on recruiting.paylocity.com with no larger group mentioned.",
+"https://www.geneseesci.com/careers",
+"company_website"
+],
+[
+"Genesee Scientific acquired by LLR Partners in 2021",
+"https://en.wikipedia.org/wiki/Genesee_Scientific",
+"search_snippet"
+],
+[
+"LLR Partners posts the September 2025 Genesee acquisition of Jade Scientific as a portfolio company announcement",
+"https://www.llrpartners.com/genesee-scientific-acquires-jade-scientific-expanding-capabilities-in-lab-essentials-market",
+"search_snippet"
+],
+[
+"Mergr classifies the Jade Scientific deal as an add-on acquisition",
+"https://mergr.com/transaction/genesee-scientific-acquires-jade-scientific",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"changed",
+"Genesee Scientific was acquired by private equity firm LLR Partners in 2021. Its September 2025 add-on acquisition of Jade Scientific is posted on LLR's site and logged by Mergr as an add-on deal. It is PE-backed, not founder-led.",
+"https://www.llrpartners.com/genesee-scientific-acquires-jade-scientific-expanding-capabilities-in-lab-essentials-market"
+]
 },
 {
 "cid": "ts-7632",
@@ -1058,13 +1365,13 @@
 "dec": "unknown",
 "p": [
 0.3,
-0.1,
-0.05,
-0.1,
+0.0,
 0.0,
 0.05,
-0.05,
-0.35
+0.0,
+0.0,
+0.0,
+0.65
 ],
 "founded": null,
 "years": "",
@@ -1075,34 +1382,60 @@
 "fit": "It reported 32 PPP jobs in Telford, PA, but no public evidence was gathered. It needs a follow-up search.",
 "risks": [
 "Unverified: the guessed domains did not resolve (qlaccessories.com) or returned an empty page (qualitylabaccessories.com)",
-"The search budget ran out before any search was run"
+"The search budget ran out before any search was run",
+"no website found",
+"no web deal search: search budget exhausted"
 ],
 "ev": [
 [
 "The SBA PPP record shows 32 jobs and a $503,543 loan in Telford, PA, NAICS 423450. Taken from the provided screen row, not re-checked.",
 "https://data.sba.gov/dataset/ppp-foia",
 "other"
+],
+[
+"The guessed domain qualitylabaccessories.com returned no content.",
+"https://www.qualitylabaccessories.com/",
+"company_website"
+],
+[
+"Merel Instruments partners with QLA for US distribution (2025), showing QLA still operating independently",
+"https://dissolutiontech.com/issues/202508/inews-qla01.php",
+"search_snippet"
+],
+[
+"QLA launched QLA Korea in 2023",
+"https://dissolutiontech.com/issues/202302/inews-qla01.php",
+"search_snippet"
+],
+[
+"Directory lists Quality Lab Accessories LLC at Telford, PA 18969 with about 32 employees",
+"https://naicslist.com/company-profile/quality-lab-accessories-llc-telford-pa-18969",
+"search_snippet"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"Two searches found no sale. QLA is a Telford, PA dissolution-accessory maker with about 32 employees. It is still active: it launched QLA Korea in 2023 and signed a US distribution partnership with Merel Instruments in 2025. A 'now trading as Crawford Scientific' heading appeared on a UK distributor's QLA manufacturer page; it appears to be that distributor's own banner, not evidence of a QLA sale. No owner is named, so the label stays unknown.",
+"https://dissolutiontech.com/issues/202508/inews-qla01.php"
+]
 },
 {
 "cid": "ts-7868",
 "web": "https://www.thermalscientific.com/",
 "op": "yes",
 "seg": true,
-"segnote": "Texas lab supply and chemicals distributor, also serving oil and gas testing.",
+"segnote": "Texas distributor of lab chemicals, supplies, instruments and oil and gas testing equipment, with five branches.",
 "wdec": "family_next_generation",
 "dec": "family_next_generation",
 "p": [
-0.1,
-0.45,
-0.03,
+0.0,
+0.8,
+0.0,
 0.1,
 0.0,
 0.0,
-0.05,
-0.27
+0.0,
+0.1
 ],
 "founded": 1962,
 "years": "Since 1962, about 64 years.",
@@ -1114,7 +1447,10 @@
 "risks": [
 "PPP city (Alvarado) differs from the site address (Pasadena); match is likely but unverified",
 "a family-owned banner can survive an acquisition; acquisition search not run",
-"exposure to the oil and gas cycle"
+"exposure to the oil and gas cycle",
+"deal search not run (search budget exhausted)",
+"owner names not on site",
+"family-owned banner could survive a sale"
 ],
 "ev": [
 [
@@ -1131,12 +1467,17 @@
 "Structured data lists 2835 Preston Ave, Pasadena, TX. The site cites five branches and Texas service areas including Dallas-Fort Worth.",
 "https://www.thermalscientific.com/",
 "company_site"
+],
+[
+"Thermal Scientific, of Alvarado TX, is family-owned and veteran-operated, has absorbed General Lab Supply, and runs six Texas branches; CEO Coby Wishert is quoted.",
+"https://fortworthbusiness.com/?p=875116",
+"search_snippet"
 ]
 ],
 "ver": [
 "confirmed",
-"The current homepage (2026) reads 'Third Generation | Family Owned | Veteran Operated'. Its structured data calls the company 'a family-owned, veteran-operated distributor of laboratory chemicals', with a founding date of 1962. The page names no parent company and mentions no acquisition. Limit: the shared web-search budget ran out before any search ran, so I could not look for news of a sale or private-equity owner. The verdict rests only on the company's own current site. Owner names are not given on the site and are unverified.",
-"https://www.thermalscientific.com/"
+"Searches found no sale or PE owner for Thermal Scientific. A July 2025 article describes it as a buyer: it folded General Lab Supply into its operations, now branded 'General Lab Supply - A Thermal Scientific Company', within a six-branch Texas network. The same article calls it family-owned and veteran-operated, serving science and industry since 1962, and quotes CEO Coby Wishert. Other results were for unrelated Thermo Fisher deals.",
+"https://fortworthbusiness.com/?p=875116"
 ]
 }
 ]

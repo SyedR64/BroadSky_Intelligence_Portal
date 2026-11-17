@@ -1,483 +1,41 @@
 {
-"_note": "Ownership results for the Punctual Pros shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). p order: founder_led, family_next_generation, employee_or_partner_owned, pe_backed_or_acquired, franchise_unit, closed_or_inactive, not_in_segment, unknown. ver = [verdict, reason, source_url]; dec = final decision after verification; wdec = enrichment worker's decision. The delivered list was cut off part-way through pp-11873; nothing after it was received. Review corrections 2026-11-16: pp-10256 (Fante's) changed to pe_backed_or_acquired on Apex Service Partners applicant-tracking evidence (ver 'corrected'); BBB evidence on pp-12140 re-labelled as a search snippet (its own years note cites a BBB snippet) and on pp-18545 re-worded as a search result note, and a BBB profile entry on pp-11226 dropped because it could not be shown to come from a search snippet. Recovered 2026-11-16: the records cut off in delivery (pp-11873 in full, pp-13203, pp-12833, pp-9226) were restored from the enrichment and re-check agents' saved results.",
+"_note": "Ownership results for the Punctual Pros shortlist, 2026-11-16 (Claude agents as a typed decision model over public web evidence; founder-led and family calls re-checked by a second agent). p order: founder_led, family_next_generation, employee_or_partner_owned, pe_backed_or_acquired, franchise_unit, closed_or_inactive, not_in_segment, unknown. ver = [verdict, reason, source_url]; dec = final decision after verification; wdec = enrichment worker's decision. The delivered list was cut off part-way through pp-11873; nothing after it was received. Review corrections 2026-11-16: pp-10256 (Fante's) changed to pe_backed_or_acquired on Apex Service Partners applicant-tracking evidence (ver 'corrected'); BBB evidence on pp-12140 re-labelled as a search snippet (its own years note cites a BBB snippet) and on pp-18545 re-worded as a search result note, and a BBB profile entry on pp-11226 dropped because it could not be shown to come from a search snippet. Recovered 2026-11-16: the records cut off in delivery (pp-11873 in full, pp-13203, pp-12833, pp-9226) were restored from the enrichment and re-check agents' saved results. Finishing pass 2026-11-17: every founder or family call not yet re-checked got a fresh deal search, companies marked unknown got a deeper ownership pass, and companies added after the first pass were researched in full.",
 "items": [
 {
-"cid": "pp-2860",
-"web": "https://www.lph.biz",
-"op": "yes",
-"seg": true,
-"segnote": "Residential plumbing, heating, cooling, drain and electrical service; runs a sewer and drain line called Rabbit Rooter; some commercial work.",
-"wdec": "family_next_generation",
-"dec": "family_next_generation",
-"p": [
-0.03,
-0.42,
-0.12,
-0.08,
-0,
-0,
-0,
-0.35
-],
-"founded": 1904,
-"years": "Founded 1904. A 2011 trade article names Scott Peppler as the fourth known owner, owner since 1979.",
-"staff": "About 30 staff and 20 trucks in 2011 (trade article); the 2025 SBA 7(a) loan reports 45 jobs; directories give 38 to 43.",
-"rev": [
-3010,
-4.8,
-"U.S. Boiler contractor listing (search snippet)"
-],
-"rsig": "No snippet describes the owner as hands-on; snippets are generally positive about technicians.",
-"succ": "Peppler had owned it 47 years by 2026. The site says family-owned for 2 generations. An unopened BBB snippet names other owners, including Jenna Kaufman (creative director in 2011), which suggests a handoff may be under way. The $800K SBA 7(a) loan in 2025 could be transition financing. Unverified.",
-"fit": "Large residential full-service shop near the Lancaster hub with a strong review base. Ownership looks family-held; whether the next generation has taken over is unverified.",
-"risks": [
-"Current owner unverified; owner names come from a BBB search snippet",
-"Open SBA 7(a) loan of $800K from 2025",
-"Nexstar Network member (a training network, not an owner)"
-],
-"ev": [
-[
-"Site says family owned and operated since 1904, family-owned for 2 generations",
-"https://www.lph.biz/about-us/",
-"company_site"
-],
-[
-"2011 article: Scott Peppler is the fourth known owner, owner since 1979, about 30 staff and 20 trucks",
-"https://www.pmmag.com/articles/94757-pm-truck-of-the-month-lancaster-plumbing-heating-east-petersburg-pa",
-"press"
-],
-[
-"Acquisition searches found no deal for this company",
-"https://hvacinsider.com/hb-mcclure-company-announces-recent-mergers/",
-"other"
-],
-[
-"Contractor listing shows 4.8 from 3,010 reviews and a full residential service mix",
-"https://www.usboiler.net/contractors/lancaster-plumbing-heating-co",
-"review_snippet"
-]
-],
-"ver": [
-"confirmed",
-"Company home and about pages (fetched) say family-owned since 1904 and run by the family for 2 generations; no parent or acquisition named. The verifier's own acquisition searches could not run; the 2-generation label comes only from the site, which names no owner.",
-"https://www.lph.biz/about-us/"
-]
-},
-{
-"cid": "pp-5483",
-"web": "https://www.comfort-pro.com",
-"op": "yes",
-"seg": true,
-"segnote": "Residential and commercial heating, cooling, geothermal and water heaters; the site does not list plumbing.",
-"wdec": "founder_led",
-"dec": "founder_led",
-"p": [
-0.65,
-0.07,
-0.08,
-0.05,
-0,
-0,
-0,
-0.15
-],
-"founded": 2001,
-"years": "Opened 2001 under owners Doug and Craig Weisman (directory listing); the company site says it opened in 2001.",
-"staff": "No company figure; PPP reported 51 jobs.",
-"rev": [
-882,
-4.8,
-"Birdeye (search snippet)"
-],
-"rsig": "No snippet about owner involvement.",
-"succ": "None found; founders about 25 years in.",
-"fit": "Founder-owned residential HVAC shop near Reading and a Lennox Premier Dealer. Fits the segment, but plumbing is thin.",
-"risks": [
-"Mostly HVAC, little or no plumbing",
-"Founder names come only from a directory snippet"
-],
-"ev": [
-[
-"Directory says owners Doug and Craig Weisman opened it in 2001",
-"https://www.homeyou.com/comfort-pro-reading-pa",
-"other"
-],
-[
-"Company site says family-owned, opened 2001, residential and commercial, no parent named",
-"https://www.comfort-pro.com/about-us/",
-"company_site"
-],
-[
-"Lennox lists it as a Premier Dealer at 109 Dries Rd, Reading",
-"https://www.lennox.com/residential/locate/dealer/pa/reading/comfort-pro-inc",
-"other"
-],
-[
-"Birdeye shows 4.8 from 882 reviews",
-"https://reviews.birdeye.com/comfort-pro-148893784185917",
-"review_snippet"
-]
-],
-"ver": [
-"confirmed",
-"About page (2026 copyright) says family-owned and operated, opened 2001; no parent, partner owner or acquisition. Owner names come only from a third-party directory. The verifier's own acquisition searches could not run.",
-"https://www.comfort-pro.com/about-us/"
-]
-},
-{
-"cid": "pp-10926",
-"web": "https://www.bvhvac.com",
-"op": "yes",
-"seg": true,
-"segnote": "Residential and commercial heating and cooling service, repair and installation.",
-"wdec": "founder_led",
-"dec": "founder_led",
-"p": [
-0.7,
-0.08,
-0.04,
-0.05,
-0,
-0,
-0,
-0.13
-],
-"founded": 1993,
-"years": "Founded 1993; 30th anniversary in March 2023.",
-"staff": "57 employees and 30 trucks in March 2023 (trade press).",
-"rev": null,
-"rsig": "No useful snippets on owner involvement; one older Checkbook comment (2014) said the company had slipped.",
-"succ": "Co-founder and president Bill Ronayne is 33 years in and no next generation is named: a possible succession window, unverified.",
-"fit": "Founder-run HVAC company with about 57 staff in Chester County, about 38 miles from Lancaster.",
-"risks": [
-"Some commercial work, such as a senior-living new-build project",
-"Some listings show a second address in Exton"
-],
-"ev": [
-[
-"30th anniversary article (March 2023) names co-founder and president Bill Ronayne, 57 employees, 30 trucks, family owned",
-"https://www.achrnews.com/articles/152723-brandywine-valley-heating-and-air-conditioning-celebrates-30th-anniversary",
-"press"
-],
-[
-"2019 article names Ronayne as owner",
-"https://vista.today/2019/08/brandywine-valley-hvac-takes-barclay-friends-under-its-wing-as-rebuilding-begins",
-"news"
-],
-[
-"Search for acquisition or partnership news found no deal",
-"https://www.contractingbusiness.com/residential-hvac/article/21261282/pennsylvania-hvac-company-celebrates-30th-anniversary",
-"press"
-]
-],
-"ver": [
-"confirmed",
-"About page (fetched) calls it a local, family-owned company opened in 1993; home page has a 2026 copyright and no parent or partner group. The March 2023 article names Bill Ronayne as co-founder and president. The verifier's own acquisition searches could not run; nothing confirms ownership after 2023 beyond the current site.",
-"https://www.bvhvac.com/about/"
-]
-},
-{
-"cid": "pp-8344",
-"web": "https://www.ezimmerman.com",
-"op": "yes",
-"seg": true,
-"segnote": "Residential plumbing, heating and cooling, plus electrical, water treatment, duct cleaning and generators.",
-"wdec": "family_next_generation",
-"dec": "family_next_generation",
-"p": [
-0.33,
-0.4,
-0.03,
-0.04,
-0,
-0,
-0,
-0.2
-],
-"founded": 1980,
-"years": "Founded 1980 by Earnie Zimmerman; Carrier lists 46 years in business.",
-"staff": "No company figure; PPP reported 53 jobs; one directory gives 50 to 100.",
-"rev": null,
-"rsig": "No snippet about owner involvement.",
-"succ": "Founder is 46 years in; listings say still family owned. The current leader was not found. Unverified.",
-"fit": "Long-running family residential plumbing and HVAC shop in Mechanicsburg, a Carrier Factory Authorized Dealer. Who runs it today is unverified.",
-"risks": [
-"Current owner unverified (company site returned 403; a magazine profile returned 404)",
-"Several Zimmerman-named firms exist in PA; do not confuse them"
-],
-"ev": [
-[
-"Local magazine snippet: Earnie Zimmerman founded it in 1980, still family owned",
-"https://strollmag.com/locations/winding-hills-pa/articles/-6f6122",
-"press"
-],
-[
-"Chamber listing at 110 East Allen St, Mechanicsburg",
-"https://business.mechanicsburgchamber.org/list/member/zimmerman-plumbing-heating-air-conditioning-438",
-"other"
-],
-[
-"Carrier Factory Authorized Dealer, 46 years in business",
-"https://www.carrier.com/us/en/residential/dealers/pa/mechanicsburg/110-e-allen-st-7260-loc",
-"other"
-],
-[
-"Job posting calls it family owned",
-"https://zimmerman-plumbing-heating-and-air-conditioning-inc.careerplug.com/jobs/2456607",
-"other"
-]
-],
-"ver": [
-"confirmed",
-"Mechanicsburg Chamber listing (fetched) calls it a family owned home services company established in 1980; no parent or acquisition evidence. Founder name and whether the next generation runs it could not be checked; family ownership is supported, the next-generation part is unverified.",
-"https://business.mechanicsburgchamber.org/list/member/zimmerman-plumbing-heating-air-conditioning-438"
-]
-},
-{
-"cid": "pp-3726",
-"web": "https://frigidairllc.com",
+"cid": "pp-0055",
+"web": "https://tempaircompany.com",
 "op": "yes",
 "seg": false,
-"segnote": "Mainly commercial refrigeration and commercial rooftop HVAC; residential AC and furnace work is minor.",
+"segnote": "Commercial mechanical contractor for hospitals, schools, government and offices; no residential work.",
 "wdec": "not_in_segment",
 "dec": "not_in_segment",
 "p": [
-0.1,
+0.03,
+0.17,
 0.02,
-0.02,
-0.02,
+0.03,
 0,
 0,
 0.7,
-0.14
+0.05
 ],
-"founded": null,
-"staff": "Site mentions 13 trucks; the PPP figure of 50 jobs on a $35,700 loan looks inconsistent.",
+"founded": 1980,
+"staff": "About 45 per directory.",
 "rev": null,
-"rsig": "None seen.",
-"succ": "none found",
-"fit": "Commercial refrigeration contractor, not a residential service shop.",
+"rsig": "No review snippets.",
+"succ": "Unverified.",
+"fit": "Commercial mechanical contractor.",
 "risks": [
-"Mostly commercial work",
-"PPP jobs figure does not match loan size"
+"Commercial only"
 ],
 "ev": [
 [
-"Site lists 24/7 commercial refrigeration, commercial HVAC and rooftop units, ice machines, 13-truck fleet",
-"https://frigidairllc.com",
+"Locally owned commercial HVAC and plumbing contractor, founded 1980",
+"https://tempaircompany.com",
 "company_site"
 ]
 ],
 "ver": null
-},
-{
-"cid": "pp-2648",
-"web": "",
-"op": "yes",
-"seg": false,
-"segnote": "Plumbing, drain and sewer service with a heavy commercial focus.",
-"wdec": "pe_backed_or_acquired",
-"dec": "pe_backed_or_acquired",
-"p": [
-0.03,
-0.02,
-0,
-0.9,
-0,
-0,
-0.03,
-0.02
-],
-"founded": 1965,
-"years": "In the plumbing trade since 1965 (job posting); started in founder Mike O'Hara's garage.",
-"staff": "No figure; an aggregator estimates 21 to 50.",
-"rev": null,
-"rsig": "None seen.",
-"succ": "Already sold: partnered with Orion Group's Helios Service Partners in March 2024.",
-"fit": "Already part of the Helios Service Partners roll-up (Orion Group) and mostly commercial.",
-"risks": [
-"Already in a roll-up",
-"Mostly commercial plumbing",
-"Whether Orion is PE-backed was not confirmed"
-],
-"ev": [
-[
-"March 2024: Orion Group partners with Action Plumbing as the eighth partner in Helios Service Partners",
-"https://www.roi-nj.com/2024/03/26/industry/orion-group-partners-with-leading-plumbing-service-provider-action-plumbing/",
-"news"
-],
-[
-"Job posting describes Action Plumbing as a Helios Service Partners company",
-"https://job-boards.greenhouse.io/heliosservicepartners/jobs/4589259006",
-"other"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-7220",
-"web": "https://www.centralpennplumbing.com",
-"op": "yes",
-"seg": true,
-"segnote": "Residential plumbing (drains, water heaters, sewer and water lines, well pumps, water treatment) plus residential HVAC; also commercial plumbing and HVAC.",
-"wdec": "founder_led",
-"dec": "founder_led",
-"p": [
-0.55,
-0.05,
-0.05,
-0.05,
-0,
-0,
-0,
-0.3
-],
-"founded": 1998,
-"years": "Founded 1998 by Scott Campbell.",
-"staff": "No company figure; PPP and a directory show about 51.",
-"rev": [
-453,
-4.9,
-"Birdeye (search snippet)"
-],
-"rsig": "Snippets praise technicians; one complained the office was slow to return a call. Nothing about owner involvement.",
-"succ": "none found",
-"fit": "Residential plumbing and HVAC shop in Mechanicsburg with strong reviews and no sign of a sale.",
-"risks": [
-"Another firm (Pronto Plumbing) is listed at the same 631 Gettysburg Pike address"
-],
-"ev": [
-[
-"Company History page: Scott Campbell founded it in 1998 and is President",
-"https://www.centralpennplumbing.com/history",
-"company_site"
-],
-[
-"Company site lists residential and commercial HVAC and plumbing, no parent company",
-"https://www.centralpennplumbing.com/",
-"company_site"
-],
-[
-"Bryant dealer at 631 Gettysburg Pike, Mechanicsburg",
-"https://www.bryant.com/en/us/dealers/pa/mechanicsburg/631-gettysburg-pike-bry-141048-loc",
-"other"
-]
-],
-"ver": [
-"confirmed",
-"History page (fetched) says Scott Campbell founded it in 1998 and is President; 2026 copyright; no parent, sale or acquisition. The verifier's own acquisition searches could not run, and the page does not state current ownership outright.",
-"https://www.centralpennplumbing.com/history"
-]
-},
-{
-"cid": "pp-12054",
-"web": "",
-"op": "yes",
-"seg": true,
-"segnote": "Residential heating, cooling and plumbing; now trades as Level Home Services.",
-"wdec": "pe_backed_or_acquired",
-"dec": "pe_backed_or_acquired",
-"p": [
-0.02,
-0.02,
-0,
-0.9,
-0,
-0.02,
-0,
-0.04
-],
-"founded": 1972,
-"years": "Served Maryland homeowners since 1972 (directory snippet).",
-"staff": "",
-"rev": [
-1246,
-4.8,
-"Google rating shown on Expertise.com (search snippet)"
-],
-"rsig": "One review snippet notes a change of ownership.",
-"succ": "Already sold: Strikepoint Group Holdings (formerly Horizon) acquired it in August 2021.",
-"fit": "Already part of the PE-backed Strikepoint/Horizon roll-up.",
-"risks": [
-"Already in a roll-up",
-"Which PE firm backs Strikepoint differs across sources; unverified"
-],
-"ev": [
-[
-"Deal record: Strikepoint Group Holdings acquired Level Home Services, announced Aug 15, 2021",
-"https://app.mergerlinks.com/transactions/2021-08-15-level-home-services",
-"other"
-],
-[
-"News: Strikepoint (formerly Horizon) is funded by private equity and kept buying HVAC companies through 2021",
-"https://delawarebusinessnow.com/2021/11/strikepoint-formerly-horizon-continues-wave-of-hvac-acquisitions/",
-"news"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-6944",
-"web": "",
-"op": "yes",
-"seg": true,
-"segnote": "Residential HVAC, plumbing and electrical service, plus new-construction and commercial divisions.",
-"wdec": "founder_led",
-"dec": "founder_led",
-"p": [
-0.4,
-0.15,
-0.08,
-0.1,
-0,
-0.02,
-0.05,
-0.2
-],
-"founded": 1990,
-"years": "About 35 years (BBB snippet gives 12/21/1990).",
-"staff": "No current headcount; PPP 2020-21 reported 67 jobs.",
-"rev": [
-40,
-null,
-"Checkbook (search snippet)"
-],
-"rsig": "No snippet describes the owner as hands-on; Checkbook snippet mentions about 40 ratings with mixed comments.",
-"succ": "Weak: about 35 years old and no next generation named. Unverified.",
-"fit": "A 35-year South Jersey residential HVAC service firm. It looks like a good fit, but ownership is unverified.",
-"risks": [
-"Officer names come only from a possibly dated BBB snippet",
-"Part new construction and commercial",
-"No company website found",
-"Mixed review ratings (Checkbook snippet)"
-],
-"ev": [
-[
-"BBB snippet: business start and incorporation 12/21/1990; names Lorraine Clark as President and James M. McMullen as Secretary (possibly dated, unverified)",
-"https://www.bbb.org/us/nj/vincentown/profile/air-conditioning-contractor/shamrock-heating-air-conditioning-inc-0221-80003934",
-"other"
-],
-[
-"Named BCIT 2023 Business Partner of the Year (Jan 12, 2024); based in Vincentown",
-"https://careertechnj.org/shamrock-heating-air-conditioning-recognized-as-bcits-business-partner-of-the-year",
-"press"
-],
-[
-"Directory: residential and commercial HVAC, water heaters and residential electrical across South and Central Jersey",
-"https://directory.yext.com/en/shamrock-heating-and-air-conditioning-inc-968379018",
-"other"
-],
-[
-"Bryant dealer at 143 Red Lion Road, Vincentown",
-"https://www.bryant.com/en/us/dealers/nj/vincentown/143-red-lion-road-bry-9039392-loc",
-"other"
-]
-],
-"ver": [
-"unverifiable",
-"No contrary evidence and no current positive evidence of ownership. The Jan 2024 BCIT article shows it operating but names no owner. Officer names come only from an unopened, possibly dated BBB snippet. No company website found.",
-"https://careertechnj.org/shamrock-heating-air-conditioning-recognized-as-bcits-business-partner-of-the-year"
-]
 },
 {
 "cid": "pp-0198",
@@ -515,6 +73,183 @@ null,
 [
 "Levelset job history lists commercial projects for general contractors in Delaware",
 "https://www.levelset.com/subcontractors/delaware/newark/plumbers/east-coast-plumbing-hvac-inc/job-history/",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-0261",
+"wdec": "founder_led",
+"risks": [
+"rebrand to Gold Star Home Service (watch for a platform tie-in)",
+"two Hicksville addresses listed"
+],
+"ev": [
+[
+"Podcast episode 'From apprentice to owner' names Matt Thompson as owner and founder of Gold Star Plumbing, Heating & Cooling, Hicksville NY",
+"https://www.buzzsprout.com/2548175/episodes/18497765-from-apprentice-to-owner-how-gold-star-wins-on-process-people-and-24-7-service",
+"search_snippet"
+],
+[
+"GuildQuality: Gold Star Plumbing, Heating & Cooling, established 2010, locally owned and operated, Nassau and western Suffolk",
+"https://www.guildquality.com/pro/gold-star-plumbing-heating-cooling",
+"search_snippet"
+],
+[
+"HomeAdvisor owner replies are signed 'Matt T., Owner, Gold Star Service'",
+"https://homeadvisor.com/rated.GoldStarServices.53829933.html",
+"search_snippet"
+],
+[
+"Company site: Gold Star Home Service, 200 Engineers Drive, Hicksville; copyright 2026; careers page on its own domain; no parent company mentioned",
+"https://goldstar-plumbing.com/",
+"company_website"
+],
+[
+"Deal search on Gold Star with Apex, Wrench, Sila, acquired and joins returned no Long Island Gold Star transaction",
+"https://prnewswire.com/news-releases/sila-services-enters-western-new-york-with-acquisition-of-t-mark-plumbing-heating-cooling--electric-302121569.html",
+"search_snippet"
+]
+],
+"dec": "founder_led",
+"p": [
+0.72,
+0.03,
+0.03,
+0.08,
+0.0,
+0.0,
+0.0,
+0.14
+],
+"ver": [
+"confirmed",
+"A podcast episode describes Matt Thompson as owner and founder of Gold Star Plumbing, Heating & Cooling in Hicksville. HomeAdvisor replies are signed 'Matt T., Owner'. GuildQuality says it was established in 2010 and is locally owned. A deal search covering acquired, joins and Apex/Wrench/Sila found no sale. The careers page sits on the company's own domain.",
+"https://www.buzzsprout.com/2548175/episodes/18497765-from-apprentice-to-owner-how-gold-star-wins-on-process-people-and-24-7-service"
+],
+"web": "https://goldstar-plumbing.com/",
+"op": "yes; the site now brands it as Gold Star Home Service, 200 Engineers Drive, Hicksville NY, copyright 2026",
+"seg": true,
+"segnote": "Residential plumbing, water heaters, drain cleaning, and now heating and cooling across Nassau and western Suffolk",
+"founded": 2010,
+"succ": "Founder-owner (master plumber) still running it; no successor named",
+"rsig": "Reviews mostly praise punctuality; several complain of high pricing and sales pressure"
+},
+{
+"cid": "pp-0848",
+"web": "",
+"op": "yes",
+"seg": false,
+"segnote": "New-construction plumbing for builders, not residential service or replacement.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.28,
+0.05,
+0.01,
+0.02,
+0,
+0.02,
+0.55,
+0.07
+],
+"founded": 1990,
+"staff": "Postings say 75 to 80+ employees.",
+"rev": null,
+"rsig": "No review snippets seen.",
+"succ": "Unverified.",
+"fit": "Builder-driven new-construction plumbing.",
+"risks": [
+"New-construction cyclicality"
+],
+"ev": [
+[
+"Blue Book: focuses on new multi-family and custom home construction; over 20,000 new homes plumbed",
+"https://thebluebook.com/iProView/399894/james-e-conner-jr-plumbing-inc/subcontractors",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-0868",
+"web": "",
+"op": "unclear",
+"seg": false,
+"segnote": "Mostly underground utility and commercial or institutional work.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.25,
+0.1,
+0,
+0,
+0,
+0.1,
+0.45,
+0.1
+],
+"founded": 1998,
+"staff": "",
+"rev": null,
+"rsig": "No review snippets.",
+"succ": "Unverified.",
+"fit": "Utility and commercial contractor, not residential plumbing service.",
+"risks": [
+"Not residential service"
+],
+"ev": [
+[
+"R. E. Harrington Plumbing, Heating & Utilities founded in Baltimore in 1998 by Robert Harrington, Sr.; mainly underground utility work",
+"https://bmorenews.com/welcome-to-r-e-harrington-plumbing-heating-utilities-company-410-466-4800",
+"press"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-10063",
+"web": "",
+"op": "unclear",
+"seg": true,
+"segnote": "Residential HVAC, plumbing and geothermal service in Chester County, PA.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.03,
+0.01,
+0.01,
+0.88,
+0,
+0.03,
+0.01,
+0.03
+],
+"founded": 2002,
+"years": "Founded 2002 (CB Insights); acquired March 2023.",
+"staff": "A Bradford White listing shows 25 employees.",
+"rev": [
+42,
+null,
+"Checkbook (search snippet)"
+],
+"rsig": "Checkbook rates it highly, with prices about 25% above average.",
+"succ": "Already sold (March 2023).",
+"fit": "Already acquired by the Granite Comfort roll-up and folded into Signature HVAC.",
+"risks": [
+"Already acquired by Granite Comfort",
+"Brand may be merged into Signature HVAC"
+],
+"ev": [
+[
+"CB Insights and PitchBook snippets: Timothy Off Heating & Air Conditioning acquired by Granite Comfort on 28 March 2023",
+"https://www.cbinsights.com/company/timothy-off-heating-air-conditioning",
+"other"
+],
+[
+"PitchBook lists Timothy Off as a subsidiary of Signature HVAC (West Chester, PA)",
+"https://pitchbook.com/profiles/company/128814-94",
 "other"
 ]
 ],
@@ -584,465 +319,295 @@ null,
 ]
 },
 {
-"cid": "pp-2596",
+"cid": "pp-10267",
 "web": "",
-"op": "unclear",
-"seg": false,
-"segnote": "Unverified; no consumer-facing presence found.",
+"op": "unclear; no web presence beyond aggregator",
+"seg": true,
+"segnote": "HVAC contractor per NAICS",
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
+0.25,
 0.1,
-0.03,
-0.02,
-0.04,
-0,
-0.08,
-0.13,
-0.6
-],
-"founded": null,
-"staff": "PPP 2020-21 reported 47 jobs.",
-"rev": null,
-"rsig": "none found",
-"succ": "none",
-"fit": "Almost no public footprint; residential service work and owner could not be confirmed.",
-"risks": [
-"No website or owner found",
-"May be commercial-only",
-"Operating status unconfirmed; check PA Department of State records"
-],
-"ev": [
-[
-"Directory listing: 2804 Old Rodgers Rd, Bristol PA, NAICS 238220, about 47 employees",
-"https://naicslist.com/company-profile/air-concepts-inc-bristol-pa-19007",
-"other"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-6284",
-"web": "https://www.fourquartersinc.com/",
-"op": "yes",
-"seg": true,
-"segnote": "Residential home-services division beside a commercial mechanical business.",
-"wdec": "founder_led",
-"dec": "founder_led",
-"p": [
-0.38,
-0.3,
-0.04,
-0.06,
-0,
-0.01,
+0.0,
 0.05,
-0.16
-],
-"founded": 1990,
-"years": "About 35 years; sources say 1990 or 1992.",
-"staff": "PPP 2020-21 reported 49 jobs.",
-"rev": null,
-"rsig": "GuildQuality shows no public reviews; no hands-on owner snippet seen.",
-"succ": "Possible: a same-surname VP (Brandon Sady) suggests the next generation is involved. Unverified.",
-"fit": "A 35-year Cinnaminson HVAC and plumbing firm with a residential home-services arm; two people named Sady appear.",
-"risks": [
-"Mixed commercial and residential work",
-"Owner and officer roles unverified"
-],
-"ev": [
-[
-"GuildQuality: HVAC and plumbing install and service for residential and commercial clients in NJ and eastern PA since 1990",
-"https://www.guildquality.com/pro/four-quarters-home-services",
-"other"
-],
-[
-"Blue Book: Four Quarters Mechanical, established 1990",
-"https://www.thebluebook.com/iProView/400233/four-quarters-mechanical-inc/subcontractors/",
-"other"
-],
-[
-"Chamber listing snippet names Brandon Sady as Vice President",
-"https://business.chambersnj.com/directory/Details/four-quarters-4329806",
-"other"
-],
-[
-"Current company site says family-owned and operated, locally owned",
-"https://www.fourquartersinc.com/",
-"company_site"
-]
-],
-"ver": [
-"confirmed",
-"The current site (fourquartersinc.com) states family-owned and operated, locally owned; no parent, partner or acquisition. The older home-services domain now returns 503, which looks like a domain move. The site says 'for generations', so family next generation is possible. Sady names come from secondary listings.",
-"https://www.fourquartersinc.com/"
-]
-},
-{
-"cid": "pp-13876",
-"web": "",
-"op": "yes",
-"seg": true,
-"segnote": "Residential and commercial plumbing and drain service.",
-"wdec": "unknown",
-"dec": "unknown",
-"p": [
+0.0,
 0.25,
-0.25,
-0.03,
-0.05,
-0,
-0.03,
-0.04,
+0.0,
 0.35
 ],
 "founded": null,
-"years": "About 30 years per a family-tradition claim in a directory snippet (undated).",
-"staff": "PPP 2020-21 reported 52 jobs.",
+"staff": "",
 "rev": null,
-"rsig": "Snippets name technicians, not the owner.",
+"rsig": "No review snippets.",
 "succ": "none found",
-"fit": "A family-branded residential plumbing and drain firm in Camden; owner and generation not identified.",
+"fit": "Almost no web presence; the PPP total of about $137K looks small for 40 jobs.",
 "risks": [
-"Owner unidentified",
-"No company website found"
+"No website or reviews found",
+"PPP loan size inconsistent with 40 jobs",
+"Operating status unverified",
+"no web presence",
+"current operation unconfirmed",
+"employee count from aggregator only"
 ],
 "ev": [
 [
-"Directory: Subchapter S corporation in Camden 08104, about 52 employees",
-"https://naicslist.com/company-profile/root-24-hours-plumbing-inc-camden-nj-08104",
-"other"
-],
-[
-"Blue Book: plumbing contracting and sewer and pipeline cleaning in central and southern NJ",
-"https://thebluebook.com/iProView/1491146",
+"Aggregator profile: LLC at 13 Fairchild Pl, Irvington NJ, NAICS 238220, about 40 employees",
+"https://naicslist.com/company-profile/jay-temp-heating-and-air-conditioning-irvington-nj-07111",
 "other"
 ]
 ],
-"ver": null
+"ver": [
+"unverifiable",
+"One search returned only the same naicslist aggregator profile (LLC, 13 Fairchild Pl, Irvington, about 40 employees). There was no website, reviews, owner or deal news. A second search was not run because the first showed no footprint to build on. No sale found, and ownership and operating status are still unknown.",
+"https://naicslist.com/company-profile/jay-temp-heating-and-air-conditioning-irvington-nj-07111"
+]
 },
 {
-"cid": "pp-18545",
+"cid": "pp-10510",
 "web": "",
-"op": "yes",
-"seg": false,
-"segnote": "Unverified; no consumer-facing presence found.",
+"op": "probably; an unclaimed Birdeye profile lists B & R Heating & Cooling at 1797 Lanes Mill Rd, Lakewood NJ",
+"seg": true,
+"segnote": "HVAC contractor by name and NAICS 238220; no service detail found",
 "wdec": "unknown",
 "dec": "unknown",
 "p": [
-0.12,
-0.12,
+0.35,
 0.05,
-0.03,
-0.03,
-0.02,
-0.08,
-0.55
+0.0,
+0.05,
+0.0,
+0.15,
+0.0,
+0.4
 ],
 "founded": null,
-"years": "SBA record says more than 2 years old.",
-"staff": "60 jobs supported per the 2026 SBA 7(a) record.",
+"staff": "",
 "rev": null,
-"rsig": "none found",
-"succ": "Possible but unverified: a $3.25M Live Oak 7(a) with a 25-year term and collateral often funds a change of ownership or real estate.",
-"fit": "A Bergen County plumbing and heating corporation with a large 2026 7(a) loan; owner and kind of work not public.",
+"rsig": "No confirmed review snippets for this firm.",
+"succ": "None found.",
+"fit": "Name and NAICS suggest residential HVAC 7 miles from Toms River, but no public footprint was found; check the NJ entity record.",
 "risks": [
-"No web presence",
-"Possible recent ownership change",
-"Residential vs commercial unknown",
-"May be confused with a Spring Valley NY firm of the same name"
+"Almost no web presence; operating status unverified",
+"Similar-named firms elsewhere",
+"Owner and founding year unknown",
+"no website found",
+"owner unknown",
+"thin web footprint"
 ],
 "ev": [
 [
-"SBA 7(a) record (as of 2026-09-30): Live Oak, $3,250,000, approved 2026-08-28, 300-month term, 60 jobs supported",
-"https://data.sba.gov/dataset/7-a-504-foia",
-"state_record"
-],
-[
-"Web searches for the name and address found no website, owner or service listing (the link is a BBB category listing for the town, not a company profile)",
-"https://prod.bbb.org/us/nj/south-hackensack/category/plumber",
-"other"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-4474",
-"web": "https://www.metrocorpplumbing.com/",
-"op": "yes",
-"seg": false,
-"segnote": "Builder new-construction plumbing subcontractor, not residential service.",
-"wdec": "not_in_segment",
-"dec": "not_in_segment",
-"p": [
-0.15,
-0.03,
-0,
-0.02,
-0,
-0.03,
-0.7,
-0.07
-],
-"founded": 1997,
-"staff": "PPP 2020-21 reported 39 jobs.",
-"rev": null,
-"rsig": "none found",
-"succ": "Weak.",
-"fit": "New-construction plumbing subcontractor for builders.",
-"risks": [
-"Not residential service"
-],
-"ev": [
-[
-"Company site: plumbing design and installation for builders since 1997; no homeowner service mentioned",
-"https://www.metrocorpplumbing.com/",
-"company_site"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-2149",
-"web": "https://www.santashvac.com",
-"op": "yes",
-"seg": true,
-"segnote": "Residential HVAC service and replacement; Carrier dealer.",
-"wdec": "founder_led",
-"dec": "founder_led",
-"p": [
-0.45,
-0.22,
-0.03,
-0.08,
-0.01,
-0.04,
-0.02,
-0.15
-],
-"founded": 1984,
-"years": "About 42 years (1984 to 2026).",
-"staff": "PPP 2020-21 reported 40 jobs.",
-"rev": null,
-"rsig": "No review snippets seen.",
-"succ": "Founders about 42 years in; no next generation named. Current owner unverified.",
-"fit": "Established residential HVAC dealer with a likely founder-owner who may be near succession.",
-"risks": [
-"Current ownership unverified"
-],
-"ev": [
-[
-"Founded 1984 by Joe and Darlene Santacroce; Douglassville HQ; five-county area plus parts of NJ; in-house sheet metal shop",
-"https://runsignup.com/Race/124592/Sponsor/1077153",
+"Two targeted searches found no website, owner or NJ license record for the Lakewood entity",
+"https://www.rheem.com/best-contractors-in-lakewood-nj/",
 "other"
 ],
 [
-"Carrier Factory Authorized Dealer at 1712 Ben Franklin Hwy, Douglassville",
-"https://www.carrier.com/us/en/residential/dealers/pa/douglassville/1712-ben-franklin-hwy-e-6439-loc",
-"other"
-],
-[
-"Company About page: Joe and Darlene Santacroce founded it in 1984; no parent or partner group named",
-"https://www.santashvac.com/about/",
-"company_site"
+"Birdeye profile: B & R Heating & Cooling, 1797 Lanes Mill Rd, Lakewood NJ 08701. Unclaimed profile, about 41 reviews, linked site elcooling.com.",
+"https://reviews.birdeye.com/b-r-heating-cooling-167058724678597",
+"review_aggregator"
 ]
 ],
 "ver": [
 "unverifiable",
-"Company site (2026 copyright) says Joe and Darlene Santacroce founded it in 1984 and names no parent or partner group, but does not say who owns or runs it today. Deal-news searches could not be run, so an acquisition was not ruled out.",
-"https://www.santashvac.com/about/"
+"One search returned only the unclaimed Birdeye profile (4.4 stars, 41 reviews). There was no owner, address detail or deal news. No sale found, and ownership is still undetermined. The second search was skipped because the earlier research had already exhausted this name.",
+"https://reviews.birdeye.com/b-r-heating-cooling-167058724678597"
 ]
 },
 {
-"cid": "pp-19327",
+"cid": "pp-10599",
 "web": "",
 "op": "yes",
 "seg": false,
-"segnote": "Commercial and government fire protection (Kinetix); no residential service work.",
+"segnote": "Commercial HVAC maintenance and building automation; no residential service evidence.",
 "wdec": "not_in_segment",
 "dec": "not_in_segment",
 "p": [
-0.05,
+0.1,
+0.12,
 0.04,
-0.02,
-0.03,
+0.04,
 0,
 0.02,
-0.8,
-0.04
+0.5,
+0.18
 ],
-"founded": null,
-"staff": "The 2012 SBA 7(a) loan reported 46 jobs.",
+"founded": 1964,
+"staff": "About 45 per directory.",
 "rev": null,
 "rsig": "No review snippets seen.",
-"succ": "none",
-"fit": "Commercial fire and life safety contractor.",
+"succ": "Unverified.",
+"fit": "Commercial mechanical service firm.",
 "risks": [
-"Commercial and government focus"
+"Commercial and public-sector focus"
 ],
 "ev": [
 [
-"Federal contractor listing: Kinetix is the fire and life safety brand of Media Plumbing & Heating",
-"https://www.govconinabox.com/explore/smb-federal-contractors/media-plumbing-heating-inc-ZMNPZJK8YVN3",
+"ZoomInfo: mechanical HVAC maintenance, service and contracting at 718 Jefferson Ave, Kenilworth; names Ralph Vecchio as President",
+"https://www.zoominfo.com/c/air-systems-maintenance/1738258",
 "other"
 ]
 ],
 "ver": null
 },
 {
-"cid": "pp-17154",
-"web": "https://www.lauryheating.com",
+"cid": "pp-10897",
+"web": "https://www.serviceexperts.com/croppmetcalfe-linthicum-heights-md/",
 "op": "yes",
 "seg": true,
-"segnote": "Residential HVAC and plumbing in South Jersey; also serves businesses.",
+"segnote": "Residential HVAC and electrical service.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.02,
+0.03,
+0,
+0.9,
+0,
+0,
+0,
+0.05
+],
+"founded": 1971,
+"years": "Since 1971; takeover date not stated.",
+"staff": "",
+"rev": null,
+"rsig": "Reviewers note a change of ownership and the same staff staying on.",
+"succ": "Already sold.",
+"fit": "Already part of Service Experts and rebranded CroppMetcalfe.",
+"risks": [
+"Already acquired by Service Experts"
+],
+"ev": [
+[
+"Service Experts page: CroppMetcalfe Linthicum Heights, formerly Arundel Cooling & Heating, part of the Service Experts family",
+"https://www.serviceexperts.com/croppmetcalfe-linthicum-heights-md/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-10926",
+"web": "https://www.bvhvac.com",
+"op": "yes",
+"seg": true,
+"segnote": "Residential and commercial HVAC and geothermal in PA and DE",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.72,
+0.06,
+0.04,
+0.06,
+0.0,
+0.0,
+0.0,
+0.12
+],
+"founded": 1993,
+"years": "Founded 1993; 30th anniversary in March 2023.",
+"staff": "57 employees and 30 trucks in March 2023 (trade press).",
+"rev": null,
+"rsig": "No review figures collected.",
+"succ": "Co-founder is still president; no successor named.",
+"fit": "Founder-run HVAC company with about 57 staff in Chester County, about 38 miles from Lancaster.",
+"risks": [
+"Some commercial work, such as a senior-living new-build project",
+"Some listings show a second address in Exton",
+"footer credits Unifeyed (a web vendor)"
+],
+"ev": [
+[
+"30th anniversary article (March 2023) names co-founder and president Bill Ronayne, 57 employees, 30 trucks, family owned",
+"https://www.achrnews.com/articles/152723-brandywine-valley-heating-and-air-conditioning-celebrates-30th-anniversary",
+"press"
+],
+[
+"2019 article names Ronayne as owner",
+"https://vista.today/2019/08/brandywine-valley-hvac-takes-barclay-friends-under-its-wing-as-rebuilding-begins",
+"news"
+],
+[
+"Search for acquisition or partnership news found no deal",
+"https://www.contractingbusiness.com/residential-hvac/article/21261282/pennsylvania-hvac-company-celebrates-30th-anniversary",
+"press"
+],
+[
+"About page: local, family-owned company, opened in 1993",
+"https://www.bvhvac.com/about/",
+"company_website"
+],
+[
+"HVACR Business author page (article dated October 2024) lists Bill Ronayne as president",
+"https://hvacrbusiness.com/staff/bill-ronayne",
+"search_snippet"
+],
+[
+"Employment page applications go to careers.hireology.com; no parent named",
+"https://www.bvhvac.com/employment/",
+"company_website"
+],
+[
+"Searches for the company name with acquired, joins and now part of found no deal",
+"https://www.mychesco.com/a/news/business/mergers-and-acquisitions/sila-services-expands-in-chester-county-with-acquisition-of-oxford-plumbing-heating/",
+"search_snippet"
+]
+],
+"ver": [
+"confirmed",
+"The About page calls it a local, family-owned company opened in 1993, and the home page (2026) names no parent or partner group. A 2024 HVACR Business author page still lists co-founder Bill Ronayne as president. Deal searches found no transaction; the Chester County hits were Sila buying Oxford Plumbing. The careers page uses Hireology and Precision Recruiter, which are single-employer hiring tools, not a group applicant-tracking site.",
+"https://www.bvhvac.com/about/"
+]
+},
+{
+"cid": "pp-11226",
+"web": "https://www.cleanairhvac.com",
+"op": "yes",
+"seg": true,
+"segnote": "Residential and commercial HVAC service.",
 "wdec": "family_next_generation",
 "dec": "family_next_generation",
 "p": [
-0.02,
-0.8,
-0.02,
-0.06,
-0,
-0.01,
-0.01,
-0.08
-],
-"founded": 1945,
-"years": "About 81 years (1945 to 2026).",
-"staff": "PPP 2020-21 reported 57 jobs.",
-"rev": [
-2365,
-4.9,
-"Google rating shown in a web search summary (not checked directly); Birdeye shows 4.6 from 159"
-],
-"rsig": "No snippet describes the owner as hands-on.",
-"succ": "Fourth generation already in place; no sale signal found.",
-"fit": "Strong residential fit with a large review base. The fourth generation runs it, so it may not be ready to sell.",
-"risks": [
-"PPP borrower name is misspelled (COLLING)",
-"Second location found; possibly multi-site"
-],
-"ev": [
-[
-"Founded 1945 by brothers Charles and Paul Laury; fourth generation led by Ted Laury, David Laury and Kasie Harris",
-"https://www.lauryheating.com/about-us/",
-"company_site"
-],
-[
-"Carrier Factory Authorized Dealer at 511 E Plum St, Vineland",
-"https://www.carrier.com/us/en/residential/dealers/nj/vineland/511-e-plum-st-10154-loc",
-"other"
-],
-[
-"Acquisition searches found no deal involving Laury",
-"https://www.achrnews.com/articles/keyword/17511-acquisitions-in-the-hvac-industry?page=17",
-"news"
-]
-],
-"ver": [
-"confirmed",
-"About page calls it a local, family-run business in its fourth generation, led by Ted Laury with his son David Laury and daughter Kasie Harris; names no parent, partner group or investor. Extra deal-news searches could not be run.",
-"https://www.lauryheating.com/about-us/"
-]
-},
-{
-"cid": "pp-14278",
-"web": "",
-"op": "yes",
-"seg": true,
-"segnote": "Residential and commercial HVAC install, repair and maintenance.",
-"wdec": "founder_led",
-"dec": "founder_led",
-"p": [
-0.38,
-0.15,
-0.04,
-0.06,
-0.01,
-0.02,
-0.04,
-0.3
-],
-"founded": 1984,
-"years": "About 42 years if the 1984 Thumbtack date is right (unverified).",
-"staff": "PPP 2020-21 reported 45 jobs; a 2026 listing showed 2 open roles.",
-"rev": null,
-"rsig": "No snippet describes a hands-on owner.",
-"succ": "About 42 years in; no owner or next generation named. Unverified.",
-"fit": "Residential HVAC fit with active hiring; ownership unconfirmed.",
-"risks": [
-"Owner name not found",
-"No company website confirmed",
-"Mixed residential and commercial work"
-],
-"ev": [
-[
-"Thumbtack profile: served homeowners since 1984",
-"https://www.thumbtack.com/nj/middlesex/central-air-conditioning-installation/supreme-heating-air-conditioning-inc/service/379495432735465479",
-"other"
-],
-[
-"Recent job posting for a residential HVAC installer in Middlesex, NJ",
-"https://www.careerbuilder.com/job-details/residential-hvac-installer-mechanic-middlesex-nj--dd4f35b6-c11a-4192-a473-af20765c4e8d",
-"other"
-]
-],
-"ver": [
-"unverifiable",
-"Thumbtack shows active booking and 42 years in business, but no website, owner name or state record was found. Founder-led status and independence are both unverified.",
-"https://www.thumbtack.com/nj/middlesex/central-air-conditioning-installation/supreme-heating-air-conditioning-inc/service/379495432735465479"
-]
-},
-{
-"cid": "pp-2986",
-"web": "https://getprecisiontoday.com",
-"op": "yes",
-"seg": true,
-"segnote": "Full residential home services: HVAC, plumbing and electrical in Monmouth, Middlesex and Ocean counties.",
-"wdec": "founder_led",
-"dec": "founder_led",
-"p": [
+0.2,
 0.45,
-0.22,
-0.03,
-0.1,
-0.01,
-0.01,
-0.01,
-0.17
+0.05,
+0.05,
+0,
+0,
+0,
+0.25
 ],
-"founded": 1989,
-"years": "About 37 years (1989 to 2026).",
-"staff": "Directories conflict at 40 and 55; PPP 2020-21 reported 37 jobs.",
-"rev": null,
-"rsig": "No review snippets seen.",
-"succ": "Founder about 37 years in; site says family-owned but no next generation is named. The domain rebrand is unexplained.",
-"fit": "Strong multi-trade residential fit near Toms River. Confirm the founder still owns it.",
+"founded": 1972,
+"years": "Since 1972 (about 54 years); started in a garage in Hampden.",
+"staff": "PPP shows 70.",
+"rev": [
+86,
+4.64,
+"Experience.com (search snippet)"
+],
+"rsig": "Snippets praise technicians and customer service; one complaint about an installation leak.",
+"succ": "54 years old and family-run, so likely second generation; no successor or sale signal found. Unverified.",
+"fit": "The largest of the Baltimore batch (70 PPP jobs). Independent, family-run HVAC firm with no roll-up found.",
 "risks": [
-"Domain rebrand could mean new ownership (unverified)",
-"2020 SBA 7(a) loan was cancelled"
+"Owner not named",
+"Commercial revenue share unknown"
 ],
 "ev": [
 [
-"Trane dealer page (search summary): Mario Lalima launched the company in June 1989",
-"https://www.trane.com/residential/en/dealers/precision-tech-home-services-inc-manalapan-nj/",
+"Company About page: family owned and operated; incorporated 1972 with 10 employees in a Hampden garage; moved to Holabird Industrial Park in 1986",
+"https://www.cleanairhvac.com/about-us",
+"company_site"
+],
+[
+"Carrier dealer at 1911 Portal St, Baltimore",
+"https://www.carrier.com/us/en/residential/dealers/md/baltimore/1911-portal-st-11746-loc",
 "other"
-],
-[
-"Company site: family-owned, founded 1989; heating, AC, plumbing, electrical, generators",
-"https://getprecisiontoday.com/",
-"company_site"
-],
-[
-"Old domain precisiontechnj.com redirects to getprecisiontoday.com; no parent named",
-"https://www.precisiontechnj.com/",
-"company_site"
 ]
 ],
 "ver": [
 "confirmed",
-"Current homepage says family-owned and names no parent, acquisition or private equity; the brands listed are manufacturer programs. The founder name is unverified. Deal searches could not be run.",
-"https://getprecisiontoday.com/"
+"Company site (2026 copyright) says family owned and operated since 1972; no parent, investor or acquisition. It names no owners and does not say which generation runs it, so the next-generation part is unverified.",
+"https://www.cleanairhvac.com/about-us"
 ]
 },
 {
@@ -1098,200 +663,148 @@ null,
 ]
 },
 {
-"cid": "pp-0848",
-"web": "",
-"op": "yes",
-"seg": false,
-"segnote": "New-construction plumbing for builders, not residential service or replacement.",
-"wdec": "not_in_segment",
-"dec": "not_in_segment",
-"p": [
-0.28,
-0.05,
-0.01,
-0.02,
-0,
-0.02,
-0.55,
-0.07
-],
-"founded": 1990,
-"staff": "Postings say 75 to 80+ employees.",
-"rev": null,
-"rsig": "No review snippets seen.",
-"succ": "Unverified.",
-"fit": "Builder-driven new-construction plumbing.",
-"risks": [
-"New-construction cyclicality"
-],
-"ev": [
-[
-"Blue Book: focuses on new multi-family and custom home construction; over 20,000 new homes plumbed",
-"https://thebluebook.com/iProView/399894/james-e-conner-jr-plumbing-inc/subcontractors",
-"other"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-10599",
-"web": "",
-"op": "yes",
-"seg": false,
-"segnote": "Commercial HVAC maintenance and building automation; no residential service evidence.",
-"wdec": "not_in_segment",
-"dec": "not_in_segment",
-"p": [
-0.1,
-0.12,
-0.04,
-0.04,
-0,
-0.02,
-0.5,
-0.18
-],
-"founded": 1964,
-"staff": "About 45 per directory.",
-"rev": null,
-"rsig": "No review snippets seen.",
-"succ": "Unverified.",
-"fit": "Commercial mechanical service firm.",
-"risks": [
-"Commercial and public-sector focus"
-],
-"ev": [
-[
-"ZoomInfo: mechanical HVAC maintenance, service and contracting at 718 Jefferson Ave, Kenilworth; names Ralph Vecchio as President",
-"https://www.zoominfo.com/c/air-systems-maintenance/1738258",
-"other"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-3758",
-"web": "https://forteplumbing.com",
-"op": "yes",
+"cid": "pp-11873",
+"web": "https://www.strines.com/",
+"op": "operating (site copyright 2026; hiring service and install staff)",
 "seg": true,
-"segnote": "Plumbing and heating for residential and commercial clients, including renovation and new construction; also fire suppression on commercial buildings.",
-"wdec": "founder_led",
-"dec": "founder_led",
+"segnote": "Residential HVAC contractor (Lennox Premier Dealer), NAICS 238220",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
 "p": [
-0.45,
-0.12,
-0.15,
+0.05,
+0.75,
 0.03,
-0,
-0.02,
-0.13,
-0.1
+0.04,
+0.0,
+0.0,
+0.0,
+0.13
 ],
-"founded": 1988,
-"years": "Company site says it has served northern NJ and NYC since 1988.",
-"staff": "PPP reported 52 jobs.",
-"rev": null,
-"rsig": "No review snippets about owner involvement.",
-"succ": "None found. Two brothers run it: Robert Forte (president and owner) and Mark Forte (vice president). Founder or second generation unverified.",
-"fit": "Family-run plumbing and heating firm in Bergen County; the mix leans commercial and new construction, which weakens the residential fit.",
+"founded": 1972,
+"years": "A search snippet says the company's own history page dates it to Strine's Service, started January 2, 1972 by Paul S. Strine. One profile site says 1985 instead. The about page returned 404 when fetched, so the 1972 date is unverified.",
+"staff": "PPP 2020-21 reported 28 jobs. Datanyze estimates 12 employees, a third-party figure. The site advertises immediate full-time openings in service and install.",
+"rev": [
+400,
+4.9,
+"Homeyou listing seen in a search snippet. The listing itself is flagged as unverified."
+],
+"rsig": "The snippets seen do not say whether the owner works on jobs himself.",
+"succ": "Second generation (Barry Strine, in the business since 1975) appears to run it, with no third generation named, so a sale is likely.",
+"fit": "Residential HVAC dealer 18 miles from Lancaster, about 54 years old, and probably family run by a later generation.",
 "risks": [
-"Commercial, fire-suppression and new-construction work may outweigh residential service",
-"Founder vs second-generation status unverified",
-"60 miles from the NJ hub"
+"Current owner not confirmed on a primary source",
+"Founding year differs between sources (1972 vs 1985)",
+"Employee estimates differ (28 PPP vs 12 Datanyze)",
+"second-generation owner joined in 1975 and is likely near retirement",
+"current owner title rests on a data aggregator"
 ],
 "ev": [
 [
-"Company site: served northern NJ and NYC since 1988; residential and commercial plumbing and heating plus fire suppression",
-"https://forteplumbing.com",
+"Lennox Premier Dealer. The site's content is residential (home comfort, furnace repair).",
+"https://www.strines.com/",
 "company_site"
 ],
 [
-"Directory describes it as family-owned and operated",
-"https://www.greatpossibilities.com/forte-express-plumbing-and-heating-10043.html",
-"other"
-],
-[
-"Robert Forte listed as president and owner, brother Mark Forte as vice president",
-"https://hireveterans.com/company/105712/forte-express-plbg-htg-inc/",
-"other"
-]
-],
-"ver": [
-"unverifiable",
-"The company's home and About pages (copyright 2016) name no owner, no family ownership and no parent. Nothing contradicts founder or family ownership, but owner evidence comes only from third-party directories.",
-"https://forteplumbing.com"
-]
-},
-{
-"cid": "pp-14693",
-"web": "https://www.groffs.com",
-"op": "yes",
-"seg": true,
-"segnote": "Residential HVAC, plumbing and electrical for Lancaster County homeowners, plus some commercial; Lennox dealer.",
-"wdec": "founder_led",
-"dec": "founder_led",
-"p": [
-0.5,
-0.15,
-0.2,
-0.05,
-0,
-0,
-0,
-0.1
-],
-"founded": 1987,
-"years": "Started 1987 in DeVon Groff's garage in Mountville PA; master plumber Denny Dagen joined about four years later; incorporated as partners in 1993; added electrical in 2000.",
-"staff": "Site cites more than 15 licensed plumbers and over 50 trucks; PPP reported 86 jobs.",
-"rev": null,
-"rsig": "Site shows a Google 5-star badge with no count; no owner-involvement snippets.",
-"succ": "Both co-founders about 38 years in. A contact database lists D. Dagen as president and a VP with initials A. G. (possibly a next-generation Groff, unverified). Now brands as Groff's Home Comfort Team. No sale found.",
-"fit": "Strong residential HVAC, plumbing and electrical fit 8 miles from Lancaster, run by two co-founders who may be nearing succession age.",
-"risks": [
-"Two founding partners, so ownership is split",
-"Current leadership confirmed only by contact databases",
-"Brand changed to Groff's Home Comfort Team"
-],
-"ev": [
-[
-"Founded 1987 by DeVon Groff; Dennis Dagen joined; partnership incorporated 1993; family-owned legacy",
-"https://www.groffs.com/about",
+"Hiring: immediate full-time positions in service and install",
+"https://www.strines.com/",
 "company_site"
 ],
 [
-"Family-owned and operated; 15+ licensed plumbers; 50+ trucks",
-"https://www.groffs.com/",
-"company_site"
+"Lennox dealer locator lists Strine Htg & AC Inc in York",
+"https://www.lennox.com/residential/locate/dealer/pa/york/strine-htg-and-ac-inc",
+"other"
 ],
 [
-"Contact database lists Denny Dagen as president",
-"https://prospeo.io/c/groff-s-heating-air-conditioning-plumbing-email-format",
+"Barry Strine listed as key decision maker. About 12 employees, about $2.5M revenue (estimates).",
+"https://www.datanyze.com/companies/strines-heating-and-air-conditioning/347665398",
 "other"
+],
+[
+"Search snippet: began as Strine's Service on January 2, 1972, founded by Paul S. Strine",
+"https://www.strines.com/",
+"review_snippet"
+],
+[
+"4.9/5 from 400 reviews on an unverified listing. Address 1549 Coffee Mill Ln, York.",
+"https://homeyou.com/strines-heating-air-conditioning-york-pa",
+"review_snippet"
+],
+[
+"About page: founded Jan 2, 1972 by Paul S. Strine; son Barry joined 1975; daughter Paula Deardorff secretary; no parent or investor named",
+"https://www.strines.com/about/",
+"company_website"
 ]
 ],
 "ver": [
 "confirmed",
-"About page (2026 copyright) still calls it a local family-owned business founded 1987 by DeVon Groff, partnered with Denny Dagen and incorporated 1993; no acquisition, parent or private equity. Sale searches could not be run.",
-"https://www.groffs.com/about"
+"The company's About page says Paul S. Strine founded it on Jan 2, 1972. His son Barry joined in 1975 and his daughter Paula Deardorff later became secretary. Datanyze lists Barry Strine as president and key decision maker. The site names no parent or investor; the only affiliation is a Lennox Premier Dealer tie. The deal search found Sila and Burnham deals with other York-area firms, and none with Strine's.",
+"https://www.strines.com/about/"
 ]
 },
 {
-"cid": "pp-12140",
+"cid": "pp-12054",
 "web": "",
 "op": "yes",
 "seg": true,
-"segnote": "Residential HVAC: central air, furnaces, heat pumps and air cleaners; Lennox Premier Dealer.",
+"segnote": "Residential heating, cooling and plumbing; now trades as Level Home Services.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.02,
+0.02,
+0,
+0.9,
+0,
+0.02,
+0,
+0.04
+],
+"founded": 1972,
+"years": "Served Maryland homeowners since 1972 (directory snippet).",
+"staff": "",
+"rev": [
+1246,
+4.8,
+"Google rating shown on Expertise.com (search snippet)"
+],
+"rsig": "One review snippet notes a change of ownership.",
+"succ": "Already sold: Strikepoint Group Holdings (formerly Horizon) acquired it in August 2021.",
+"fit": "Already part of the PE-backed Strikepoint/Horizon roll-up.",
+"risks": [
+"Already in a roll-up",
+"Which PE firm backs Strikepoint differs across sources; unverified"
+],
+"ev": [
+[
+"Deal record: Strikepoint Group Holdings acquired Level Home Services, announced Aug 15, 2021",
+"https://app.mergerlinks.com/transactions/2021-08-15-level-home-services",
+"other"
+],
+[
+"News: Strikepoint (formerly Horizon) is funded by private equity and kept buying HVAC companies through 2021",
+"https://delawarebusinessnow.com/2021/11/strikepoint-formerly-horizon-continues-wave-of-hvac-acquisitions/",
+"news"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-12140",
+"web": "https://jasmithheating.com",
+"op": "likely operating (Lennox Premier Dealer listing current; one MapQuest listing flags it closed)",
+"seg": true,
+"segnote": "Residential/light commercial HVAC contractor, NAICS 238220",
 "wdec": "founder_led",
 "dec": "founder_led",
 "p": [
-0.75,
+0.72,
 0.08,
-0.03,
-0.04,
-0,
-0.03,
-0,
-0.07
+0.02,
+0.05,
+0.0,
+0.05,
+0.0,
+0.08
 ],
 "founded": 1983,
 "years": "Incorporated April 23, 1983 (BBB snippet).",
@@ -1302,12 +815,15 @@ null,
 "Bradford White contractor finder listing (search snippet)"
 ],
 "rsig": "No owner-involvement snippets.",
-"succ": "Strong signal: founder Jeffrey A. Smith is president and owner with more than 50 years in the industry (listing snippet); no next generation named.",
+"succ": "Founder has 50+ years in the trade and no named successor, so a succession need is likely.",
 "fit": "Founder-owned residential HVAC firm in Bucks County with a high rating; the founder has 50+ years in the trade and no named successor.",
 "risks": [
 "One MapQuest listing shows 'Closed', likely stale (unverified)",
 "Company website not confirmed",
-"Bradford White listing is under the related name 'JA Smith Systems Inc'"
+"Bradford White listing is under the related name 'JA Smith Systems Inc'",
+"owner evidence is third-party only",
+"MapQuest listing shows 'Closed'",
+"owner likely near retirement age (50+ years in trade)"
 ],
 "ev": [
 [
@@ -1324,367 +840,22 @@ null,
 "Lennox Premier Dealer in Warminster",
 "https://www.lennox.com/residential/locate/dealer/pa/warminster/ja-smith-htg-and-ac-inc",
 "other"
-]
-],
-"ver": [
-"unverifiable",
-"No company website found and the Bradford White page returned 403. 'JA Smith Systems Inc' may be a rename or a related entity. Owner evidence comes only from third-party listings and was not re-checked.",
-"https://contractorfinder.bradfordwhite.com/contractors/ja-smith-systems-inc-2407-warminster-pa"
-]
-},
-{
-"cid": "pp-6463",
-"web": "",
-"op": "yes",
-"seg": true,
-"segnote": "Residential Carrier Factory Authorized Dealer: AC, furnace and heat pump installation, repair and maintenance.",
-"wdec": "unknown",
-"dec": "unknown",
-"p": [
-0.3,
-0.15,
-0.05,
-0.05,
-0,
-0.03,
-0,
-0.42
-],
-"founded": null,
-"staff": "A directory estimates about 35; PPP reported 35 jobs.",
-"rev": null,
-"rsig": "No review snippets found.",
-"succ": "None found; owner not identified.",
-"fit": "Residential Carrier dealer in Middlesex County, 31 miles from Toms River; ownership could not be determined.",
-"risks": [
-"Owner not identified",
-"No company website found",
-"Phone numbers differ between listings"
-],
-"ev": [
-[
-"Carrier dealer at 1007 Eastpark Blvd, Cranbury; home-focused HVAC services",
-"https://www.carrier.com/us/en/residential/dealers/nj/cranbury/1007-eastpark-blvd-36357-loc",
-"other"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-17453",
-"web": "",
-"op": "yes",
-"seg": true,
-"segnote": "Residential and light-commercial HVAC in Montgomery County PA; Bryant and Lennox dealer.",
-"wdec": "family_next_generation",
-"dec": "family_next_generation",
-"p": [
-0.08,
-0.78,
-0.03,
-0.05,
-0,
-0,
-0,
-0.06
-],
-"founded": 1972,
-"years": "Founded 1972 by Will and Catherine Cordero; moved to Souderton in 2006.",
-"staff": "A magazine profile says it grew from 4 to about 100 employees; PPP reported 64 jobs.",
-"rev": null,
-"rsig": "No owner-involvement snippets.",
-"succ": "Second generation in charge: son Doug Cordero joined in 1989 and leads it (2021 profile). No third generation named.",
-"fit": "Second-generation family HVAC firm with 50+ years of history, active in 2024, about 54 miles from Lancaster.",
-"risks": [
-"Company website not fetched directly",
-"Headcount figures vary across sources"
-],
-"ev": [
-[
-"Will and Catherine Cordero started C&C in 1972; son Doug joined in 1989 and is the second generation to lead it",
-"https://www.suburbanlifemagazine.com/article/2734/Complete-Control",
-"press"
 ],
 [
-"Dec 2024 news: Souderton business, family-owned and operated, donated an HVAC system to a local veteran",
-"https://northpennnow.com/news/2024/dec/04/souderton-business-donates-hvac-system-to-local-vietnam-veteran",
-"news"
+"Profile names Jeffrey A. Smith President and owner, founded 1983, website jasmithheating.com, no funding data (updated Nov 2024)",
+"https://www.bouncewatch.com/explore/startup/ja-smith-heating-and-air-conditioning",
+"directory"
 ],
 [
-"Bryant dealer at 800 Hagey Rd, Souderton",
-"https://www.bryant.com/en/us/dealers/pa/souderton/800-hagey-rd-bry-202155-loc",
-"other"
+"Company site describes a full-service HVAC/refrigeration contractor; no parent, investor or acquisition language",
+"https://jasmithheating.com",
+"company_website"
 ]
 ],
 "ver": [
 "confirmed",
-"Dec 2024 news calls it family-owned and operated, founded 1972 by Will Cordero; a 2021 profile names son Doug Cordero as the second generation leading it. No acquisition or PE evidence. Searches for a 2025-2026 sale could not be run.",
-"https://northpennnow.com/news/2024/dec/04/souderton-business-donates-hvac-system-to-local-vietnam-veteran"
-]
-},
-{
-"cid": "pp-9385",
-"web": "",
-"op": "yes",
-"seg": true,
-"segnote": "Residential plumbing, heating, cooling, drains and bath remodeling; Carrier dealer.",
-"wdec": "pe_backed_or_acquired",
-"dec": "pe_backed_or_acquired",
-"p": [
-0,
-0.04,
-0,
-0.93,
-0,
-0,
-0,
-0.03
-],
-"founded": 1965,
-"years": "Founded 1965 by Edward McLoughlin; his sons ran it before the sale.",
-"staff": "More than 40 employees at the August 2021 acquisition.",
-"rev": [
-720,
-4.8,
-"Third-party directory (search snippet)"
-],
-"rsig": "No owner-involvement snippets.",
-"succ": "Already sold: HomeServe acquired it in August 2021.",
-"fit": "Already owned by a strategic acquirer (HomeServe).",
-"risks": [
-"Acquired by HomeServe in 2021"
-],
-"ev": [
-[
-"HomeServe announced the acquisition of McLoughlin Plumbing, Heating & Cooling on August 3, 2021",
-"https://www.businesswire.com/news/home/20210803005376/en",
-"press"
-],
-[
-"HomeServe media page: McLoughlin is part of HomeServe",
-"https://www.homeserve.com/en-us/media/mcloughlin-plumbing-heating-cooling-part-of-homeserve/",
-"company_site"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-5957",
-"web": "",
-"op": "unclear",
-"seg": true,
-"segnote": "Residential HVAC service, maintenance and replacement in western Monmouth and Middlesex counties.",
-"wdec": "founder_led",
-"dec": "founder_led",
-"p": [
-0.38,
-0.15,
-0.03,
-0.05,
-0,
-0.07,
-0,
-0.32
-],
-"founded": 1995,
-"years": "A Thumbtack listing says family-owned, started 1995 (unverified).",
-"staff": "PPP reported 34 jobs.",
-"rev": [
-28,
-4.4,
-"Thumbtack (search snippet)"
-],
-"rsig": "Snippets praise service and replacement work; none mention the owner.",
-"succ": "None found; owner not identified.",
-"fit": "Family-owned residential HVAC firm in Manalapan, 24 miles from Toms River; owner and current brand unconfirmed.",
-"risks": [
-"A HomeAdvisor profile for this firm now shows the name 'North East Home Services', a possible rebrand or sale (unverified)",
-"Several different addresses listed",
-"Owner not identified"
-],
-"ev": [
-[
-"Directory: family-owned and operated HVAC company in Manalapan",
-"https://phoenix.aws.mapquest.com/us/new-jersey/air-management-1074518",
-"other"
-],
-[
-"NJ HVAC license 19HC00134000, Park Ave, Manalapan",
-"https://local.demandforce.com/b/airmanagementhvac",
-"other"
-],
-[
-"HomeAdvisor URL for AirManagementHeating is titled 'North East Home Services' (possible rebrand)",
-"https://www.homeadvisor.com/rated.AirManagementHeating.74465840.html",
-"review_snippet"
-]
-],
-"ver": [
-"unverifiable",
-"The possible rebrand to 'North East Home Services' could not be checked; it could mean a merger, acquisition or new trade name. No first-party page was found. Family-owned rests on directory listings only.",
-"https://www.homeadvisor.com/rated.AirManagementHeating.74465840.html"
-]
-},
-{
-"cid": "pp-0055",
-"web": "https://tempaircompany.com",
-"op": "yes",
-"seg": false,
-"segnote": "Commercial mechanical contractor for hospitals, schools, government and offices; no residential work.",
-"wdec": "not_in_segment",
-"dec": "not_in_segment",
-"p": [
-0.03,
-0.17,
-0.02,
-0.03,
-0,
-0,
-0.7,
-0.05
-],
-"founded": 1980,
-"staff": "About 45 per directory.",
-"rev": null,
-"rsig": "No review snippets.",
-"succ": "Unverified.",
-"fit": "Commercial mechanical contractor.",
-"risks": [
-"Commercial only"
-],
-"ev": [
-[
-"Locally owned commercial HVAC and plumbing contractor, founded 1980",
-"https://tempaircompany.com",
-"company_site"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-8085",
-"web": "",
-"op": "unclear",
-"seg": false,
-"segnote": "No website or service description found; project listings point to construction subcontracting. Unverified.",
-"wdec": "unknown",
-"dec": "unknown",
-"p": [
-0.2,
-0.1,
-0.05,
-0.05,
-0,
-0.1,
-0.2,
-0.3
-],
-"founded": null,
-"staff": "Directory repeats the PPP figure of 52.",
-"rev": null,
-"rsig": "No review snippets could be tied to the Randolph company.",
-"succ": "none found",
-"fit": "Too little public evidence; needs a call or NJ registry check.",
-"risks": [
-"No website found",
-"Segment unverified",
-"Name collides with other Prestige plumbing firms"
-],
-"ev": [
-[
-"Directory: 1040 State Rte 10 W, Randolph NJ, S corporation, 52 employees",
-"https://naicslist.com/company-profile/prestige-plumbing-inc-randolph-nj-07869",
-"other"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-0868",
-"web": "",
-"op": "unclear",
-"seg": false,
-"segnote": "Mostly underground utility and commercial or institutional work.",
-"wdec": "not_in_segment",
-"dec": "not_in_segment",
-"p": [
-0.25,
-0.1,
-0,
-0,
-0,
-0.1,
-0.45,
-0.1
-],
-"founded": 1998,
-"staff": "",
-"rev": null,
-"rsig": "No review snippets.",
-"succ": "Unverified.",
-"fit": "Utility and commercial contractor, not residential plumbing service.",
-"risks": [
-"Not residential service"
-],
-"ev": [
-[
-"R. E. Harrington Plumbing, Heating & Utilities founded in Baltimore in 1998 by Robert Harrington, Sr.; mainly underground utility work",
-"https://bmorenews.com/welcome-to-r-e-harrington-plumbing-heating-utilities-company-410-466-4800",
-"press"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-6908",
-"web": "https://www.tdplumbing.com/",
-"op": "yes",
-"seg": true,
-"segnote": "Mixed: multifamily and commercial construction work plus some homeowner service; residential service share unknown.",
-"wdec": "family_next_generation",
-"dec": "family_next_generation",
-"p": [
-0.05,
-0.55,
-0.05,
-0.05,
-0,
-0,
-0.2,
-0.1
-],
-"founded": 1958,
-"years": "Since 1958 (about 68 years); third generation, self-reported.",
-"staff": "Blue Book says 50-99 employees.",
-"rev": [
-15,
-4.4,
-"Plumber directory listing (search snippet)"
-],
-"rsig": "Snippets praise the crew's work; none mention the owner.",
-"succ": "Third generation already in charge; no sign of a fourth generation or a sale.",
-"fit": "Large, long-lived family plumber near Baltimore; fit depends on residential service share versus construction.",
-"risks": [
-"Construction-heavy revenue mix possible",
-"Two addresses listed",
-"Owner not named in sources"
-],
-"ev": [
-[
-"Company site: 2133 Monumental Rd, Halethorpe MD; running since 1958; 3rd generation family-owned",
-"https://www.tdplumbing.com/",
-"company_site"
-],
-[
-"Blue Book: Halethorpe MD, established 1958, 50-99 employees",
-"https://www.thebluebook.com/iProView/1218453/t-d-plumbing-heating-co-inc/subcontractors/reviews-ratings/",
-"other"
-]
-],
-"ver": [
-"confirmed",
-"Company site (2026 fetch) says it has run since 1958 and calls it a 3rd generation family-owned company; no parent, investor or acquisition. Acquisition searches could not be run.",
-"https://www.tdplumbing.com/"
+"Several independent listings name Jeffrey A. Smith as president and owner, with 50+ years in the trade and the company incorporated in 1983. A deal search for acquired, joins or partners with turned up only dealer and directory pages, with no sale or roll-up. The company website exists but names no owner, and the owner evidence is all third-party.",
+"https://www.bouncewatch.com/explore/startup/ja-smith-heating-and-air-conditioning"
 ]
 },
 {
@@ -1734,958 +905,58 @@ null,
 "ver": null
 },
 {
-"cid": "pp-19435",
-"web": "https://njpdplumbing.com",
+"cid": "pp-12833",
+"web": "https://www.bortnerbros.com/",
 "op": "yes",
 "seg": false,
-"segnote": "New-construction subcontractor for builders and developers.",
+"segnote": "The site describes 'commercial mechanical construction & service' and asks visitors about commercial projects. Its featured project is mechanical and plumbing work at Gettysburg College. This is not residential service work.",
 "wdec": "not_in_segment",
 "dec": "not_in_segment",
 "p": [
+0.02,
 0.3,
-0,
-0.05,
-0,
-0,
-0,
-0.45,
-0.2
-],
-"founded": null,
-"staff": "Directories show 22, or 11-50.",
-"rev": null,
-"rsig": "No review snippets.",
-"succ": "none found",
-"fit": "New-construction trade sub tied to the Lakewood building cycle.",
-"risks": [
-"New construction, not service"
-],
-"ev": [
-[
-"Company site: plumbing, heating and AC for new construction, additions and remodeling",
-"https://njpdplumbing.com",
-"company_site"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-3483",
-"web": "http://www.perryhallhtg.com",
-"op": "yes",
-"seg": true,
-"segnote": "Residential HVAC and plumbing service.",
-"wdec": "founder_led",
-"dec": "founder_led",
-"p": [
-0.4,
-0.3,
-0,
-0.05,
-0,
-0,
-0,
-0.25
-],
-"founded": 1982,
-"years": "Founded 1982 by partners Peter J. Pac and Steven M. Faulkner (company About page).",
-"staff": "Not stated.",
-"rev": [
-206,
-4.5,
-"Google reviews as shown on the Carrier dealer page"
-],
-"rsig": "Directory text says the owner is available onsite, a hands-on signal; a customer says they have used the company for over 20 years.",
-"succ": "Founded about 44 years ago; no next generation named. Possible founder-age transition. Unverified.",
-"fit": "Long-running residential HVAC and plumbing firm near Baltimore with a strong review base and a likely succession window.",
-"risks": [
-"Current owner not named",
-"Family-owned claim comes only from a HomeAdvisor snippet"
-],
-"ev": [
-[
-"Carrier dealer at 7619 Fitch Ln, Baltimore; Factory Authorized Dealer; President's Award; 4.5 from 206 Google reviews",
-"https://www.carrier.com/us/en/residential/dealers/md/baltimore/7619-fitch-ln-78302-loc",
-"other"
-],
-[
-"HomeAdvisor snippet: family owned and operated, owner available onsite",
-"https://www.homeadvisor.com/rated.PerryHallHeatingAir.4389483.html",
-"review_snippet"
-],
-[
-"Company About page: Peter J. Pac and Steven M. Faulkner founded it as partners in 1982",
-"http://www.perryhallhtg.com/about-us",
-"company_site"
-]
-],
-"ver": [
-"unverifiable",
-"Company site (2026 copyright) names no parent, investor or acquisition; the About page names the 1982 founding partners but not today's owner, and does not call it family-owned. News searches for a sale could not be run.",
-"http://www.perryhallhtg.com/about-us"
-]
-},
-{
-"cid": "pp-10897",
-"web": "https://www.serviceexperts.com/croppmetcalfe-linthicum-heights-md/",
-"op": "yes",
-"seg": true,
-"segnote": "Residential HVAC and electrical service.",
-"wdec": "pe_backed_or_acquired",
-"dec": "pe_backed_or_acquired",
-"p": [
-0.02,
-0.03,
-0,
-0.9,
-0,
-0,
-0,
-0.05
-],
-"founded": 1971,
-"years": "Since 1971; takeover date not stated.",
-"staff": "",
-"rev": null,
-"rsig": "Reviewers note a change of ownership and the same staff staying on.",
-"succ": "Already sold.",
-"fit": "Already part of Service Experts and rebranded CroppMetcalfe.",
-"risks": [
-"Already acquired by Service Experts"
-],
-"ev": [
-[
-"Service Experts page: CroppMetcalfe Linthicum Heights, formerly Arundel Cooling & Heating, part of the Service Experts family",
-"https://www.serviceexperts.com/croppmetcalfe-linthicum-heights-md/",
-"company_site"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-11226",
-"web": "https://www.cleanairhvac.com",
-"op": "yes",
-"seg": true,
-"segnote": "Residential and commercial HVAC service.",
-"wdec": "family_next_generation",
-"dec": "family_next_generation",
-"p": [
-0.2,
-0.45,
-0.05,
-0.05,
-0,
-0,
-0,
-0.25
-],
-"founded": 1972,
-"years": "Since 1972 (about 54 years); started in a garage in Hampden.",
-"staff": "PPP shows 70.",
-"rev": [
-86,
-4.64,
-"Experience.com (search snippet)"
-],
-"rsig": "Snippets praise technicians and customer service; one complaint about an installation leak.",
-"succ": "54 years old and family-run, so likely second generation; no successor or sale signal found. Unverified.",
-"fit": "The largest of the Baltimore batch (70 PPP jobs). Independent, family-run HVAC firm with no roll-up found.",
-"risks": [
-"Owner not named",
-"Commercial revenue share unknown"
-],
-"ev": [
-[
-"Company About page: family owned and operated; incorporated 1972 with 10 employees in a Hampden garage; moved to Holabird Industrial Park in 1986",
-"https://www.cleanairhvac.com/about-us",
-"company_site"
-],
-[
-"Carrier dealer at 1911 Portal St, Baltimore",
-"https://www.carrier.com/us/en/residential/dealers/md/baltimore/1911-portal-st-11746-loc",
-"other"
-]
-],
-"ver": [
-"confirmed",
-"Company site (2026 copyright) says family owned and operated since 1972; no parent, investor or acquisition. It names no owners and does not say which generation runs it, so the next-generation part is unverified.",
-"https://www.cleanairhvac.com/about-us"
-]
-},
-{
-"cid": "pp-13579",
-"web": "",
-"op": "yes",
-"seg": true,
-"segnote": "Residential plumbing and heating service, plus some institutional heating work.",
-"wdec": "family_next_generation",
-"dec": "family_next_generation",
-"p": [
-0.25,
-0.4,
-0.03,
-0.05,
-0.01,
-0.03,
-0.03,
-0.2
-],
-"founded": null,
-"years": "Customers say they have used the firm for about 20 years.",
-"staff": "About 46 per aggregator and PPP.",
-"rev": null,
-"rsig": "Snippets stress long customer tenure and capable crews.",
-"succ": "The '& Son' name suggests a handover happened or is planned; no retirement or sale signal.",
-"fit": "Residential plumbing and heating firm in Morris County; second generation unconfirmed.",
-"risks": [
-"No company website confirmed",
-"Ownership and founding year unverified",
-"Name confusion with J.A. Hall Plumbing & Heating in the same town"
-],
-"ev": [
-[
-"Directory: 42 Bartley Rd, Chester NJ; plumbing, heating and AC contractor; about 46 employees",
-"https://naicslist.com/company-profile/andrew-e-hall-son-plumbing-inc-chester-nj-07930",
-"other"
-],
-[
-"Directory review snippets describe long-term residential customers",
-"https://www.bestprosintown.com/nj/chester/andrew-e-hall-and-son-inc-/",
-"review_snippet"
-]
-],
-"ver": [
-"unverifiable",
-"The guessed company domain does not resolve. A directory page lists the address and 'over 20 years' of service but no owner, sale or closure, and no dated evidence of current operation. The family label rests only on '& Son' in the name.",
-"https://www.bestprosintown.com/nj/chester/andrew-e-hall-and-son-inc-/"
-]
-},
-{
-"cid": "pp-15268",
-"web": "https://www.flo-tron.com/",
-"op": "yes",
-"seg": false,
-"segnote": "Commercial, institutional and federal mechanical work; no residential service.",
-"wdec": "not_in_segment",
-"dec": "not_in_segment",
-"p": [
-0.1,
-0.1,
-0.02,
-0.02,
-0,
-0.01,
-0.7,
-0.05
-],
-"founded": 1985,
-"staff": "Site cites 75 licensed technicians plus engineers; SBA 504 (2025) lists 54 jobs.",
-"rev": [
-14,
-3.6,
-"Birdeye (search snippet)"
-],
-"rsig": "Few reviews.",
-"succ": "None found.",
-"fit": "Family-owned commercial, industrial and government mechanical contractor.",
-"risks": [
-"Commercial and government focus"
-],
-"ev": [
-[
-"Company site: HVAC, process piping, plumbing, engineering and building automation for commercial, government, healthcare, industrial and military clients; one family has owned it since 1985",
-"https://www.flo-tron.com/",
-"company_site"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-10267",
-"web": "",
-"op": "unclear",
-"seg": true,
-"segnote": "Name implies HVAC service; residential versus commercial mix unknown.",
-"wdec": "unknown",
-"dec": "unknown",
-"p": [
-0.3,
-0.05,
-0.03,
-0.02,
-0.01,
-0.12,
-0.07,
-0.4
-],
-"founded": null,
-"staff": "",
-"rev": null,
-"rsig": "No review snippets.",
-"succ": "none found",
-"fit": "Almost no web presence; the PPP total of about $137K looks small for 40 jobs.",
-"risks": [
-"No website or reviews found",
-"PPP loan size inconsistent with 40 jobs",
-"Operating status unverified"
-],
-"ev": [
-[
-"Aggregator profile: LLC at 13 Fairchild Pl, Irvington NJ, NAICS 238220, about 40 employees",
-"https://naicslist.com/company-profile/jay-temp-heating-and-air-conditioning-irvington-nj-07111",
-"other"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-19893",
-"web": "",
-"op": "yes",
-"seg": true,
-"segnote": "Residential drain, sewer, water line and water heater work, much of it through a utility warranty program.",
-"wdec": "unknown",
-"dec": "unknown",
-"p": [
-0.35,
 0.03,
 0.04,
-0.03,
+0.0,
 0.02,
-0.03,
-0.05,
-0.45
-],
-"founded": null,
-"years": "Self-described as having over a decade of experience (unverified).",
-"staff": "SBA 7(a) Dec 2024 lists 121 jobs supported.",
-"rev": [
-null,
-4.6,
-"HomeAdvisor (search snippet)"
-],
-"rsig": "Snippets name technicians, not an owner; mixed reviews including a refund dispute.",
-"succ": "none found",
-"fit": "Residential drain and plumbing service firm in South Jersey, about 30 miles from Toms River, with warranty-network volume; owner unidentified.",
-"risks": [
-"Revenue concentration in American Water warranty-plan work (share unverified)",
-"Mixed reviews and refund complaints",
-"Owner not identified",
-"121 jobs figure from the SBA record not corroborated"
-],
-"ev": [
-[
-"HomeAdvisor snippet: over a decade of experience, from faucet repair to main water line replacement",
-"https://www.homeadvisor.com/rated.UltimateDrainCleaning.49539628.html",
-"review_snippet"
-],
-[
-"Review snippets (2024) say it works under American Water's home protection plans",
-"https://www.homeadvisor.com/rated.UltimateDrainCleaning.49539628.html",
-"review_snippet"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-9850",
-"web": "https://www.abaileyplumbing.com/",
-"op": "yes",
-"seg": true,
-"segnote": "Residential plumbing, drain, sewer and HVAC service, plus some light commercial.",
-"wdec": "founder_led",
-"dec": "founder_led",
-"p": [
-0.45,
-0.3,
-0.02,
-0.06,
-0.01,
-0.01,
-0.01,
-0.14
-],
-"founded": 1989,
-"years": "About 37 years (since 1989).",
-"staff": "PPP lists 29 jobs; the fleet was 13 trucks in 2009.",
-"rev": [
-4000,
-4.8,
-"Company website (Google review summary, approximate)"
-],
-"rsig": "The company site cites nearly 4,000 Google reviews at 4.8; no snippet mentions the owner doing jobs.",
-"succ": "Owner about 37 years in; no next generation named; no retirement or sale listing found.",
-"fit": "Strong residential plumbing and HVAC brand 16 miles from Toms River with very high review volume; family-run with the Bailey couple at the top.",
-"risks": [
-"Whether Christopher Bailey founded it or is second generation is unverified"
-],
-"ev": [
-[
-"Company site: family owned and operated for over 35 years; residential plumbing, drain, sewer, water heater and HVAC; no parent named",
-"https://www.abaileyplumbing.com/",
-"company_site"
-],
-[
-"BBB snippet lists Christopher Bailey as President and Joanne Bailey as VP, Wall Township",
-"https://prod.bbb.org/us/nj/wall-township/profile/plumber/bailey-plumbing-heating-cooling-0221-1000948",
-"other"
-],
-[
-"2009 trade article calls Christopher Bailey the family owner; 13 trucks",
-"https://www.pmmag.com/articles/92869-pm-truck-of-the-month-a-bailey-plumbing-heating-freehold-nj",
-"press"
-]
-],
-"ver": [
-"confirmed",
-"Current site says 'Family Owned & Operated for Over 35 Years' and names no parent, partner brand or acquisition. The 2009 trade article names Christopher Bailey as the family owner. Whether he founded the firm is not stated, so founder-led and next-generation family are both possible.",
-"https://www.abaileyplumbing.com/"
-]
-},
-{
-"cid": "pp-5358",
-"web": "https://www.associatesplumbing.com/",
-"op": "yes",
-"seg": false,
-"segnote": "Multifamily and commercial property work for property managers.",
-"wdec": "not_in_segment",
-"dec": "not_in_segment",
-"p": [
-0.05,
-0.03,
-0.12,
-0.03,
-0,
-0.02,
-0.7,
-0.05
-],
-"founded": 1982,
-"staff": "PPP lists 64 jobs.",
-"rev": null,
-"rsig": "Very few reviews.",
-"succ": "None found.",
-"fit": "Commercial and multifamily property-management plumbing contractor.",
-"risks": [
-"Commercial and multifamily focus"
-],
-"ev": [
-[
-"Company site: serves multifamily and commercial property clients and the property management industry; incorporated 1982",
-"https://www.associatesplumbing.com/",
-"company_site"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-17341",
-"web": "https://www.amhac.com/",
-"op": "yes",
-"seg": true,
-"segnote": "Residential and commercial HVAC, geothermal and service with a strong residential homeowner base.",
-"wdec": "family_next_generation",
-"dec": "family_next_generation",
-"p": [
-0.02,
-0.78,
-0.04,
-0.05,
-0,
-0.01,
-0.02,
-0.08
-],
-"founded": 1953,
-"years": "Founding year conflicts: 1953 (ACHR News), 1949 (company site), 1959 (directories).",
-"staff": "50-55 employees per ACHR News (2023).",
-"rev": [
-160,
-4.97,
-"Carrier dealer page (search snippet)"
-],
-"rsig": "Highly rated on Carrier's dealer page; no owner-specific snippets.",
-"succ": "Strong: the second-generation president has run it since 1975, a non-family general manager runs daily operations, and no third generation is named.",
-"fit": "Second-generation family HVAC firm in Westchester with a strong residential brand; the 2023 profile says it wants to merge with or acquire other HVAC companies.",
-"risks": [
-"70 miles from the Toms River hub, in Westchester NY",
-"Founding year inconsistent across sources"
-],
-"ev": [
-[
-"ACHR News (May 2023): founder Stefan Weinberg started the firm; son William Weinberg president since 1975; son Saul Weinberg VP; 50-55 employees",
-"https://www.achrnews.com/articles/153065-amhac-led-to-inspire-hvac-contracting",
-"press"
-],
-[
-"Company site: family owned and operated; residential and commercial HVAC; 15,000+ clients; 20+ vehicles",
-"https://www.amhac.com/",
-"company_site"
-],
-[
-"Carrier dealer page: 4.97 from 160 reviews",
-"https://www.carrier.com/us/en/residential/dealers/ny/eastchester/365-white-plains-rd-19870-loc",
-"other"
-]
-],
-"ver": [
-"confirmed",
-"Company site (2026 copyright) calls it family owned and operated, 'next generation solutions since 1949', and names no parent, merger or acquirer. This fits the May 2023 profile where the founder's sons lead the firm.",
-"https://www.amhac.com/"
-]
-},
-{
-"cid": "pp-10063",
-"web": "",
-"op": "unclear",
-"seg": true,
-"segnote": "Residential HVAC, plumbing and geothermal service in Chester County, PA.",
-"wdec": "pe_backed_or_acquired",
-"dec": "pe_backed_or_acquired",
-"p": [
-0.03,
-0.01,
-0.01,
-0.88,
-0,
-0.03,
-0.01,
-0.03
-],
-"founded": 2002,
-"years": "Founded 2002 (CB Insights); acquired March 2023.",
-"staff": "A Bradford White listing shows 25 employees.",
-"rev": [
-42,
-null,
-"Checkbook (search snippet)"
-],
-"rsig": "Checkbook rates it highly, with prices about 25% above average.",
-"succ": "Already sold (March 2023).",
-"fit": "Already acquired by the Granite Comfort roll-up and folded into Signature HVAC.",
-"risks": [
-"Already acquired by Granite Comfort",
-"Brand may be merged into Signature HVAC"
-],
-"ev": [
-[
-"CB Insights and PitchBook snippets: Timothy Off Heating & Air Conditioning acquired by Granite Comfort on 28 March 2023",
-"https://www.cbinsights.com/company/timothy-off-heating-air-conditioning",
-"other"
-],
-[
-"PitchBook lists Timothy Off as a subsidiary of Signature HVAC (West Chester, PA)",
-"https://pitchbook.com/profiles/company/128814-94",
-"other"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-7757",
-"web": "https://saffertotalhome.com/",
-"op": "yes",
-"seg": true,
-"segnote": "Residential plumbing, heating, electrical and drain service.",
-"wdec": "family_next_generation",
-"dec": "family_next_generation",
-"p": [
-0.03,
-0.75,
-0.04,
-0.08,
-0.01,
-0.01,
-0.01,
-0.07
-],
-"founded": 1946,
-"years": "About 80 years (since 1946), now in its fourth generation.",
-"staff": "PPP showed 38 jobs.",
-"rev": [
-1071,
-4.8,
-"Aggregator citing Google reviews (search snippet); counts conflict across aggregators"
-],
-"rsig": "The company's own site says ownership is involved day to day; older review snippets mostly positive.",
-"succ": "None stated. Fourth-generation family business with two named family principals, apparently growing by adding brands.",
-"fit": "Strong residential plumbing, heating and electrical business in Baltimore. A good fit if the family will sell, but it may be buying firms itself.",
-"risks": [
-"Crouse and All Steamed Up brands suggest it buys other firms; check for outside capital",
-"Review counts conflict",
-"52 miles from the Lancaster hub"
-],
-"ev": [
-[
-"Company About page: fourth-generation, family-owned; John Kaiser founded it in 1946; David Saffer took over in the 1980s; Chris Saffer runs it now",
-"https://saffertotalhome.com/about/",
-"company_site"
-],
-[
-"Site shows two related divisions: All Steamed Up and Crouse Plumbing, Heating & Electrical",
-"http://saffertotalhome.com/",
-"company_site"
-]
-],
-"ver": [
-"confirmed",
-"About page calls Saffer a fourth-generation, family-owned company; the homepage says ownership is involved day to day and names no parent, investor or acquirer. All Steamed Up and Crouse are called divisions of Saffer. News searches for a recent PE deal could not be run.",
-"https://saffertotalhome.com/about/"
-]
-},
-{
-"cid": "pp-6976",
-"web": "",
-"op": "unclear",
-"seg": true,
-"segnote": "Does residential work, but the mix leans commercial and industrial.",
-"wdec": "unknown",
-"dec": "unknown",
-"p": [
-0.15,
-0.2,
-0.05,
-0.05,
-0,
-0.05,
-0.15,
-0.35
-],
-"founded": 1969,
-"years": "About 57 years (since 1969, per directory).",
-"staff": "PPP showed 54 jobs.",
-"rev": null,
-"rsig": "No review snippets.",
-"succ": "Founded 1969, so the founding owner is likely near retirement or gone; no successor named. Inferred.",
-"fit": "Long-running Westchester HVAC firm doing commercial and residential work; ownership and residential share unverified.",
-"risks": [
-"Mix appears commercial-heavy",
-"Website would not load; operating status unverified",
-"Easy to confuse with ABM Industries",
-"80 miles from the Toms River hub"
-],
-"ev": [
-[
-"Franklin Report: founded 1969; commercial, industrial and residential customers; 11 West Cross St, Hawthorne NY",
-"https://www.franklinreport.com/ReportCard.aspx?v=6779",
-"other"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-3394",
-"web": "",
-"op": "yes",
-"seg": true,
-"segnote": "Residential HVAC, plumbing, drain and electrical.",
-"wdec": "pe_backed_or_acquired",
-"dec": "pe_backed_or_acquired",
-"p": [
-0.02,
-0.03,
-0.01,
-0.9,
-0,
-0,
-0,
-0.04
-],
-"founded": 1979,
-"years": "About 47 years (since 1979).",
-"staff": "An Angi snippet says 60+ employees; PPP showed 58 jobs.",
-"rev": null,
-"rsig": "No owner-specific snippets.",
-"succ": "Already sold: part of Apex Service Partners (Alpine Investors); deal date unknown.",
-"fit": "Good residential business, already owned by a PE-backed roll-up.",
-"risks": [
-"Already owned by Apex Service Partners"
-],
-"ev": [
-[
-"Bruni & Campisi careers site runs under Apex Service Partners; job posts describe the firm as part of the Apex network",
-"https://careers-bruniandcampisi.icims.com/jobs/search",
-"other"
-],
-[
-"Apex Service Partners is a residential HVAC, plumbing and electrical roll-up backed by Alpine Investors",
-"https://www.mdm.com/news/top-distributor-sectors/contractor/hvac-electrical-plumbing-service-platform-apex-nets-2b-investment-from-apollo/",
-"news"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-4611",
-"web": "",
-"op": "yes",
-"seg": false,
-"segnote": "Commercial and industrial HVAC and mechanical contracting.",
-"wdec": "not_in_segment",
-"dec": "not_in_segment",
-"p": [
-0.2,
-0.02,
-0.02,
-0.02,
-0,
-0.02,
-0.65,
-0.07
-],
-"founded": 1986,
-"staff": "An aggregator estimates 21-50.",
-"rev": null,
-"rsig": "No review snippets.",
-"succ": "Inferred.",
-"fit": "Commercial and industrial mechanical contractor.",
-"risks": [
-"Commercial and industrial focus"
-],
-"ev": [
-[
-"Directories: HVAC design and mechanical contractor for commercial and industrial clients in NJ",
-"https://www.cisleads.com/company/details/20046",
-"other"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-15745",
-"web": "",
-"op": "yes",
-"seg": true,
-"segnote": "Residential and commercial HVAC, including oil-to-gas conversions and system upgrades.",
-"wdec": "unknown",
-"dec": "unknown",
-"p": [
-0.05,
-0.25,
-0.15,
-0.05,
-0,
-0.02,
-0.03,
-0.45
-],
-"founded": 1961,
-"years": "About 65 years (since 1961).",
-"staff": "About 47 (directory) or 51-200 (ZoomInfo); PPP showed 47 jobs.",
-"rev": [
-54,
-4.6,
-"Birdeye (search snippet); a BestProsInTown snippet shows 4.9 from 228"
-],
-"rsig": "Reviews praise follow-up and rebate help; no owner signal.",
-"succ": "None found. Founded 1961, so the current president is likely not the founder; ownership structure unknown.",
-"fit": "Long-running Morris County HVAC firm with a residential focus; ownership unconfirmed.",
-"risks": [
-"Ownership not confirmed",
-"Company website not found",
-"70 miles from the Toms River hub"
-],
-"ev": [
-[
-"Directory: indoor comfort services to residential and commercial customers since 1961; 129 Hibernia Ave, Rockaway NJ",
-"https://levelset.com/subcontractors/new-jersey/rockaway/hvac/harmony-heating-corporation",
-"other"
-],
-[
-"ZoomInfo lists John Uhrynowich as president (licensed HVAC master contractor); 51-200 employees (estimate)",
-"https://www.zoominfo.com/c/harmony-heating-corp/53758293",
-"other"
-],
-[
-"No acquisition news found in a targeted search",
-"https://www.achrnews.com/articles/keyword/17511-acquisitions-in-the-hvac-industry?page=11",
-"news"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-5035",
-"web": "",
-"op": "unclear",
-"seg": false,
-"segnote": "Commercial plumbing and heating subcontracting.",
-"wdec": "not_in_segment",
-"dec": "not_in_segment",
-"p": [
-0.15,
-0.03,
-0.02,
-0.02,
-0,
-0.08,
 0.5,
-0.2
+0.09
 ],
-"founded": 1995,
-"staff": "A directory estimates about 19; PPP showed 34 jobs.",
+"founded": 1951,
+"years": "Blue Book profile: started in 1951 by Glenn Bortner and a brother, incorporated in 1965. Another directory traces it to a 1925 plumbing business. Blue Book could not be fetched (403), so this rests on search snippets.",
+"staff": "PPP 2020-21 reported 49 jobs. The Blue Book band is 20-49.",
 "rev": null,
-"rsig": "No review snippets.",
-"succ": "None found.",
-"fit": "Commercial plumbing and heating subcontractor.",
+"rsig": "No review snippets were seen about owner involvement.",
+"succ": "Second generation: Glenn retired in 1996 and his son Larry Bortner took over (Blue Book snippet). About 30 years into the second generation, with no third generation named. Unverified whether Larry still leads.",
+"fit": "Second-generation York mechanical contractor that does commercial construction, not residential service.",
 "risks": [
-"Commercial construction focus"
+"Commercial mechanical contractor, not residential",
+"Can be confused with R.S. Bortner, Inc., a separate York firm",
+"Current leader not confirmed"
 ],
 "ev": [
 [
-"Blue Book: heating and plumbing subcontractor established 1995; projects include a Stop & Shop supermarket",
-"https://thebluebook.com/iProView/908482/competitive-plumbing-heating-inc/subcontractors",
+"Site describes 'commercial mechanical construction & service'",
+"https://www.bortnerbros.com/",
+"company_site"
+],
+[
+"Search snippet: founded in 1951 by Glenn Bortner and a brother. Glenn retired in 1996 and son Larry Bortner took over.",
+"https://thebluebook.com/iProView/1562",
+"other"
+],
+[
+"Featured project: Gettysburg College mechanical and plumbing",
+"https://thebluebook.com/iProView/1562/bortner-bros-inc/subcontractors/construction-projects/gettysburg-college-mechanical-and-plumbing-11222",
+"other"
+],
+[
+"About 49 employees, 160 Crossway Dr, York (directory)",
+"https://naicslist.com/company-profile/bortner-bros-inc-york-pa-17402",
 "other"
 ]
 ],
 "ver": null
-},
-{
-"cid": "pp-17385",
-"web": "https://caqs.com/",
-"op": "yes",
-"seg": false,
-"segnote": "Commercial and industrial HVAC.",
-"wdec": "not_in_segment",
-"dec": "not_in_segment",
-"p": [
-0.1,
-0.03,
-0.02,
-0.03,
-0,
-0.05,
-0.65,
-0.12
-],
-"founded": 1993,
-"staff": "PPP showed 53 jobs.",
-"rev": null,
-"rsig": "No review snippets.",
-"succ": "None found.",
-"fit": "Commercial and industrial HVAC contractor.",
-"risks": [
-"Commercial and industrial focus"
-],
-"ev": [
-[
-"Company site: served the Tri-State area since 1993 for commercial and industrial customers",
-"https://caqs.com/",
-"company_site"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-10510",
-"web": "",
-"op": "unclear",
-"seg": true,
-"segnote": "Presumed residential HVAC from the name and NAICS code; not confirmed.",
-"wdec": "unknown",
-"dec": "unknown",
-"p": [
-0.3,
-0.05,
-0.05,
-0.03,
-0,
-0.07,
-0.1,
-0.4
-],
-"founded": null,
-"staff": "",
-"rev": null,
-"rsig": "No confirmed review snippets for this firm.",
-"succ": "None found.",
-"fit": "Name and NAICS suggest residential HVAC 7 miles from Toms River, but no public footprint was found; check the NJ entity record.",
-"risks": [
-"Almost no web presence; operating status unverified",
-"Similar-named firms elsewhere",
-"Owner and founding year unknown"
-],
-"ev": [
-[
-"Two targeted searches found no website, owner or NJ license record for the Lakewood entity",
-"https://www.rheem.com/best-contractors-in-lakewood-nj/",
-"other"
-]
-],
-"ver": null
-},
-{
-"cid": "pp-11873",
-"web": "https://www.strines.com/",
-"op": "yes",
-"seg": true,
-"segnote": "Residential HVAC service and replacement. The site talks about home comfort and furnace repair in York. Lennox Premier Dealer.",
-"wdec": "family_next_generation",
-"dec": "family_next_generation",
-"p": [
-0.18,
-0.45,
-0.04,
-0.08,
-0.02,
-0.02,
-0.02,
-0.19
-],
-"founded": 1972,
-"years": "A search snippet says the company's own history page dates it to Strine's Service, started January 2, 1972 by Paul S. Strine. One profile site says 1985 instead. The about page returned 404 when fetched, so the 1972 date is unverified.",
-"staff": "PPP 2020-21 reported 28 jobs. Datanyze estimates 12 employees, a third-party figure. The site advertises immediate full-time openings in service and install.",
-"rev": [
-400,
-4.9,
-"Homeyou listing seen in a search snippet. The listing itself is flagged as unverified."
-],
-"rsig": "The snippets seen do not say whether the owner works on jobs himself.",
-"succ": "Founder era began in 1972. A Strine family member (Barry Strine) is listed as key decision maker, which suggests a second generation. No third generation or retirement was found. Unverified.",
-"fit": "Residential HVAC dealer 18 miles from Lancaster, about 54 years old, and probably family run by a later generation.",
-"risks": [
-"Current owner not confirmed on a primary source",
-"Founding year differs between sources (1972 vs 1985)",
-"Employee estimates differ (28 PPP vs 12 Datanyze)"
-],
-"ev": [
-[
-"Lennox Premier Dealer. The site's content is residential (home comfort, furnace repair).",
-"https://www.strines.com/",
-"company_site"
-],
-[
-"Hiring: immediate full-time positions in service and install",
-"https://www.strines.com/",
-"company_site"
-],
-[
-"Lennox dealer locator lists Strine Htg & AC Inc in York",
-"https://www.lennox.com/residential/locate/dealer/pa/york/strine-htg-and-ac-inc",
-"other"
-],
-[
-"Barry Strine listed as key decision maker. About 12 employees, about $2.5M revenue (estimates).",
-"https://www.datanyze.com/companies/strines-heating-and-air-conditioning/347665398",
-"other"
-],
-[
-"Search snippet: began as Strine's Service on January 2, 1972, founded by Paul S. Strine",
-"https://www.strines.com/",
-"review_snippet"
-],
-[
-"4.9/5 from 400 reviews on an unverified listing. Address 1549 Coffee Mill Ln, York.",
-"https://homeyou.com/strines-heating-air-conditioning-york-pa",
-"review_snippet"
-]
-],
-"ver": [
-"confirmed",
-"The company's own about page (footer dated 2026) says Paul S. Strine founded Strine's Service on Jan 2, 1972. His son Barry joined in 1975 and his daughter Paula Deardorff joined as secretary. The home page and about page mention no acquisition, parent company or private equity. The only outside relationship is a Lennox Premier Dealer manufacturer tie. That supports a family business now run by the second generation, with Barry Strine named as the key decision maker. The page does not name the current owner or president. My web search budget was used up, so I could not run news searches for a sale. I checked only the company site.",
-"https://www.strines.com/about"
-]
 },
 {
 "cid": "pp-13203",
@@ -2746,58 +1017,2082 @@ null,
 ]
 },
 {
-"cid": "pp-12833",
-"web": "https://www.bortnerbros.com/",
-"op": "yes",
-"seg": false,
-"segnote": "The site describes 'commercial mechanical construction & service' and asks visitors about commercial projects. Its featured project is mechanical and plumbing work at Gettysburg College. This is not residential service work.",
-"wdec": "not_in_segment",
-"dec": "not_in_segment",
+"cid": "pp-13579",
+"web": "",
+"op": "unclear; no dated evidence of current activity",
+"seg": true,
+"segnote": "Plumbing, heating and AC contractor",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
 "p": [
-0.02,
-0.3,
-0.03,
-0.04,
+0.2,
+0.55,
 0.0,
-0.02,
-0.5,
-0.09
+0.05,
+0.0,
+0.05,
+0.0,
+0.15
 ],
-"founded": 1951,
-"years": "Blue Book profile: started in 1951 by Glenn Bortner and a brother, incorporated in 1965. Another directory traces it to a 1925 plumbing business. Blue Book could not be fetched (403), so this rests on search snippets.",
-"staff": "PPP 2020-21 reported 49 jobs. The Blue Book band is 20-49.",
+"founded": null,
+"years": "Customers say they have used the firm for about 20 years.",
+"staff": "About 46 per aggregator and PPP.",
 "rev": null,
-"rsig": "No review snippets were seen about owner involvement.",
-"succ": "Second generation: Glenn retired in 1996 and his son Larry Bortner took over (Blue Book snippet). About 30 years into the second generation, with no third generation named. Unverified whether Larry still leads.",
-"fit": "Second-generation York mechanical contractor that does commercial construction, not residential service.",
+"rsig": "Snippets stress long customer tenure and capable crews.",
+"succ": "'& Son' in legal name",
+"fit": "Residential plumbing and heating firm in Morris County; second generation unconfirmed.",
 "risks": [
-"Commercial mechanical contractor, not residential",
-"Can be confused with R.S. Bortner, Inc., a separate York firm",
-"Current leader not confirmed"
+"No company website confirmed",
+"Ownership and founding year unverified",
+"Name confusion with J.A. Hall Plumbing & Heating in the same town",
+"no website",
+"owner unidentified",
+"current operation unconfirmed"
 ],
 "ev": [
 [
-"Site describes 'commercial mechanical construction & service'",
-"https://www.bortnerbros.com/",
+"Directory: 42 Bartley Rd, Chester NJ; plumbing, heating and AC contractor; about 46 employees",
+"https://naicslist.com/company-profile/andrew-e-hall-son-plumbing-inc-chester-nj-07930",
+"other"
+],
+[
+"Directory review snippets describe long-term residential customers",
+"https://www.bestprosintown.com/nj/chester/andrew-e-hall-and-son-inc-/",
+"review_snippet"
+]
+],
+"ver": [
+"confirmed",
+"Two searches (name/location and acquisition/joins/retired) found no sale or roll-up. A July 2026 customer review describes recent heating work by Andrew Hall, so the business is still operating with the named family member involved. Together with the '& Son' name, that supports keeping family_next_generation. The 42 Bartley Rd address comes from directories only.",
+"https://www.bestprosintown.com/nj/chester/andrew-e-hall-and-son-inc-/"
+]
+},
+{
+"cid": "pp-13876",
+"web": "https://root24hrs.com",
+"op": "operating (site copyright 2025)",
+"seg": true,
+"segnote": "Residential and commercial plumbing, drain and sewer service, south and central NJ",
+"wdec": "unknown",
+"dec": "family_next_generation",
+"p": [
+0.1,
+0.35,
+0.05,
+0.05,
+0.0,
+0.05,
+0.0,
+0.4
+],
+"founded": 1967,
+"years": "About 30 years per a family-tradition claim in a directory snippet (undated).",
+"staff": "PPP 2020-21 reported 52 jobs.",
+"rev": null,
+"rsig": "Snippets name technicians, not the owner.",
+"succ": "Founded 1967; 'family tradition' wording points to a later generation",
+"fit": "A family-branded residential plumbing and drain firm in Camden; owner and generation not identified.",
+"risks": [
+"Owner unidentified",
+"No company website found",
+"conflicting founding years (1967/1972/1974)",
+"owner unidentified"
+],
+"ev": [
+[
+"Directory: Subchapter S corporation in Camden 08104, about 52 employees",
+"https://naicslist.com/company-profile/root-24-hours-plumbing-inc-camden-nj-08104",
+"other"
+],
+[
+"Blue Book: plumbing contracting and sewer and pipeline cleaning in central and southern NJ",
+"https://thebluebook.com/iProView/1491146",
+"other"
+],
+[
+"Company site: 'leading professional plumbing service since 1967'; copyright 2025 Root 24 Hours, Inc.; no owner, parent or acquisition language",
+"https://root24hrs.com",
+"company_website"
+],
+[
+"HomeAdvisor snippet describes it as a family tradition for 30 years",
+"https://www.homeadvisor.com/rated.Root24HrsPlumbing.14588573.html",
+"search_snippet"
+],
+[
+"Acquisition search for Root 24 returned no deal announcements",
+"https://www.bestprosintown.com/nj/camden/root-/",
+"search_snippet"
+]
+],
+"ver": [
+"unverifiable",
+"Root 24 Hours, Inc. is operating, and its site has a 2025 copyright. The company dates itself to 1967 (directories say 1972 or 1974), so a founder probably no longer runs it. A HomeAdvisor snippet calls it a 'family tradition', which is weak, and no owner is named anywhere. A deal search found no acquisition. One BestPros review says Root24 was 'no longer part of' something, but the snippet is cut off and the context is unclear.",
+""
+]
+},
+{
+"cid": "pp-14278",
+"web": "",
+"op": "likely operating (recent installer job postings; BBB A+ listing)",
+"seg": true,
+"segnote": "Residential/commercial HVAC contractor, NAICS 238220",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.3,
+0.2,
+0.05,
+0.05,
+0.0,
+0.05,
+0.0,
+0.35
+],
+"founded": 1984,
+"years": "About 42 years if the 1984 Thumbtack date is right (unverified).",
+"staff": "PPP 2020-21 reported 45 jobs; a 2026 listing showed 2 open roles.",
+"rev": null,
+"rsig": "No snippet describes a hands-on owner.",
+"succ": "About 42 years old with no named owner, so succession status is unknown.",
+"fit": "Residential HVAC fit with active hiring; ownership unconfirmed.",
+"risks": [
+"Owner name not found",
+"No company website confirmed",
+"Mixed residential and commercial work",
+"no website found",
+"no owner name found",
+"company name in SBA record truncated ('SUPREME HEATING &')"
+],
+"ev": [
+[
+"Thumbtack profile: served homeowners since 1984",
+"https://www.thumbtack.com/nj/middlesex/central-air-conditioning-installation/supreme-heating-air-conditioning-inc/service/379495432735465479",
+"other"
+],
+[
+"Recent job posting for a residential HVAC installer in Middlesex, NJ",
+"https://www.careerbuilder.com/job-details/residential-hvac-installer-mechanic-middlesex-nj--dd4f35b6-c11a-4192-a473-af20765c4e8d",
+"other"
+],
+[
+"NEIF approved-contractor listing: 257 Wagner Street, Middlesex NJ 08846",
+"https://neifund.org/supreme-heating-air-conditioning-inc",
+"search_snippet"
+]
+],
+"ver": [
+"unverifiable",
+"There is no first-party website, and no listing names an owner or president. Directories give 257 Wagner St, Middlesex NJ, a 1984 start and BBB A+ accreditation. A former employee mentions 'the owner' without a name. No acquisition was found, but founder-led status and independence remain unproven, and the NJ entity record was not checked.",
+"https://neifund.org/supreme-heating-air-conditioning-inc"
+]
+},
+{
+"cid": "pp-14693",
+"web": "https://www.groffs.com",
+"op": "yes",
+"seg": true,
+"segnote": "Residential HVAC and plumbing in Lancaster County, 50+ trucks; Lennox dealer",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.55,
+0.18,
+0.08,
+0.06,
+0.0,
+0.0,
+0.0,
+0.13
+],
+"founded": 1987,
+"years": "Started 1987 in DeVon Groff's garage in Mountville PA; master plumber Denny Dagen joined about four years later; incorporated as partners in 1993; added electrical in 2000.",
+"staff": "Site cites more than 15 licensed plumbers and over 50 trucks; PPP reported 86 jobs.",
+"rev": null,
+"rsig": "No review figures collected.",
+"succ": "Co-founding partners from 1987 and 1993; the next generation is not named.",
+"fit": "Strong residential HVAC, plumbing and electrical fit 8 miles from Lancaster, run by two co-founders who may be nearing succession age.",
+"risks": [
+"Two founding partners, so ownership is split",
+"Current leadership confirmed only by contact databases",
+"Brand changed to Groff's Home Comfort Team",
+"president name only from a contact database",
+"rebranded as Groff's Home Comfort Team"
+],
+"ev": [
+[
+"Founded 1987 by DeVon Groff; Dennis Dagen joined; partnership incorporated 1993; family-owned legacy",
+"https://www.groffs.com/about",
 "company_site"
 ],
 [
-"Search snippet: founded in 1951 by Glenn Bortner and a brother. Glenn retired in 1996 and son Larry Bortner took over.",
-"https://thebluebook.com/iProView/1562",
+"Family-owned and operated; 15+ licensed plumbers; 50+ trucks",
+"https://www.groffs.com/",
+"company_site"
+],
+[
+"Contact database lists Denny Dagen as president",
+"https://prospeo.io/c/groff-s-heating-air-conditioning-plumbing-email-format",
 "other"
 ],
 [
-"Featured project: Gettysburg College mechanical and plumbing",
-"https://thebluebook.com/iProView/1562/bortner-bros-inc/subcontractors/construction-projects/gettysburg-college-mechanical-and-plumbing-11222",
+"Join-our-team page sends applicants to Indeed; no parent group named",
+"https://www.groffs.com/about/join-our-team/",
+"company_website"
+],
+[
+"Craft lists it as private, active, founded 1987",
+"https://craft.co/groff-s-heating-air-conditioning-and-plumbing",
+"search_snippet"
+]
+],
+"ver": [
+"confirmed",
+"The About page (2026, now branded Groff's Home Comfort Team) says DeVon Groff started the business in 1987 and partnered with Denny Dagen, incorporating in 1993. It calls the company a local family-owned legacy and names no parent or private equity. A contact database lists Dagen as president, and Craft lists it as private and active. Deal searches found no acquisition; the only Groff deal hit was the unrelated Groff Tractor. Hiring goes through Indeed, not a group applicant-tracking site.",
+"https://www.groffs.com/about"
+]
+},
+{
+"cid": "pp-15268",
+"web": "https://www.flo-tron.com/",
+"op": "yes",
+"seg": false,
+"segnote": "Commercial, institutional and federal mechanical work; no residential service.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.1,
+0.1,
+0.02,
+0.02,
+0,
+0.01,
+0.7,
+0.05
+],
+"founded": 1985,
+"staff": "Site cites 75 licensed technicians plus engineers; SBA 504 (2025) lists 54 jobs.",
+"rev": [
+14,
+3.6,
+"Birdeye (search snippet)"
+],
+"rsig": "Few reviews.",
+"succ": "None found.",
+"fit": "Family-owned commercial, industrial and government mechanical contractor.",
+"risks": [
+"Commercial and government focus"
+],
+"ev": [
+[
+"Company site: HVAC, process piping, plumbing, engineering and building automation for commercial, government, healthcare, industrial and military clients; one family has owned it since 1985",
+"https://www.flo-tron.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-15745",
+"web": "https://harmonyheating.com",
+"op": "operating",
+"seg": true,
+"segnote": "Residential and commercial HVAC, oil-to-gas conversions, northern NJ",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.05,
+0.3,
+0.15,
+0.07,
+0.0,
+0.02,
+0.0,
+0.41
+],
+"founded": 1961,
+"years": "About 65 years (since 1961).",
+"staff": "About 47 (directory) or 51-200 (ZoomInfo); PPP showed 47 jobs.",
+"rev": [
+54,
+4.6,
+"Birdeye (search snippet); a BestProsInTown snippet shows 4.9 from 228"
+],
+"rsig": "Reviews praise follow-up and rebate help; no owner signal.",
+"succ": "Founded 1961; current president's tie to the founders unknown",
+"fit": "Long-running Morris County HVAC firm with a residential focus; ownership unconfirmed.",
+"risks": [
+"Ownership not confirmed",
+"Company website not found",
+"70 miles from the Toms River hub",
+"owner and family link unconfirmed"
+],
+"ev": [
+[
+"Directory: indoor comfort services to residential and commercial customers since 1961; 129 Hibernia Ave, Rockaway NJ",
+"https://levelset.com/subcontractors/new-jersey/rockaway/hvac/harmony-heating-corporation",
 "other"
 ],
 [
-"About 49 employees, 160 Crossway Dr, York (directory)",
-"https://naicslist.com/company-profile/bortner-bros-inc-york-pa-17402",
+"ZoomInfo lists John Uhrynowich as president (licensed HVAC master contractor); 51-200 employees (estimate)",
+"https://www.zoominfo.com/c/harmony-heating-corp/53758293",
+"other"
+],
+[
+"No acquisition news found in a targeted search",
+"https://www.achrnews.com/articles/keyword/17511-acquisitions-in-the-hvac-industry?page=11",
+"news"
+],
+[
+"Company site: 'Your Indoor Comfort Specialists For Over 60 Years'; no ownership or parent language; careers on own domain; copyright 2022",
+"https://harmonyheating.com",
+"company_website"
+],
+[
+"Acquisition search returned only unrelated deals (Harmonic Heating, Harmon & Co)",
+"https://www.pmmag.com/articles/107421-j-and-k-sales-announces-acquisition-of-harmon-and-company-effective-may-4-2026",
+"search_snippet"
+]
+],
+"ver": [
+"unverifiable",
+"Operating; the site says 'Over 60 Years' (founded 1961) and has a 2022 copyright, with no owner, family, parent or partner language. ZoomInfo lists John Uhrynowich as president, but nothing ties him to the founding family. A deal search found no acquisition; the matches were unrelated Harmonic Heating and Harmon & Co deals.",
+""
+]
+},
+{
+"cid": "pp-17154",
+"web": "https://www.lauryheating.com",
+"op": "operating",
+"seg": true,
+"segnote": "Residential HVAC and plumbing contractor, NAICS 238220",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.01,
+0.9,
+0.02,
+0.03,
+0.0,
+0.0,
+0.0,
+0.04
+],
+"founded": 1945,
+"years": "About 81 years (1945 to 2026).",
+"staff": "PPP 2020-21 reported 57 jobs.",
+"rev": [
+2365,
+4.9,
+"Google rating shown in a web search summary (not checked directly); Birdeye shows 4.6 from 159"
+],
+"rsig": "No snippet describes the owner as hands-on.",
+"succ": "Fourth generation is in place, with Ted Laury handing over to his son and daughter.",
+"fit": "Strong residential fit with a large review base. The fourth generation runs it, so it may not be ready to sell.",
+"risks": [
+"PPP borrower name is misspelled (COLLING)",
+"Second location found; possibly multi-site"
+],
+"ev": [
+[
+"Founded 1945 by brothers Charles and Paul Laury; fourth generation led by Ted Laury, David Laury and Kasie Harris",
+"https://www.lauryheating.com/about-us/",
+"company_site"
+],
+[
+"Carrier Factory Authorized Dealer at 511 E Plum St, Vineland",
+"https://www.carrier.com/us/en/residential/dealers/nj/vineland/511-e-plum-st-10154-loc",
+"other"
+],
+[
+"Acquisition searches found no deal involving Laury",
+"https://www.achrnews.com/articles/keyword/17511-acquisitions-in-the-hvac-industry?page=17",
+"news"
+],
+[
+"GuildQuality snippet: fourth-generation family-owned and operated HVAC company",
+"https://www.guildquality.com/pro/laury-heating-cooling-and-plumbing-vineland",
+"search_snippet"
+],
+[
+"APR Supply bought Wallace Organization branches in Vineland, a distributor deal unrelated to Laury",
+"https://acprosite.com/apr-announces-the-acquisition-of-three-new-branch-locations-from-the-wallace-organization/",
+"press"
+]
+],
+"ver": [
+"confirmed",
+"The About page says Laury is in its fourth generation of family leadership under Ted Laury, his son David Laury and his daughter Kasie Harris, and calls it a local, family-run business. No parent or investor is named, and careers sit on the company's own domain. The deal search found only an unrelated APR Supply branch purchase in Vineland, and no Laury sale.",
+"https://www.lauryheating.com/about-us/"
+]
+},
+{
+"cid": "pp-17341",
+"web": "https://www.amhac.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Residential and commercial HVAC, geothermal and service with a strong residential homeowner base.",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.02,
+0.78,
+0.04,
+0.05,
+0,
+0.01,
+0.02,
+0.08
+],
+"founded": 1953,
+"years": "Founding year conflicts: 1953 (ACHR News), 1949 (company site), 1959 (directories).",
+"staff": "50-55 employees per ACHR News (2023).",
+"rev": [
+160,
+4.97,
+"Carrier dealer page (search snippet)"
+],
+"rsig": "Highly rated on Carrier's dealer page; no owner-specific snippets.",
+"succ": "Strong: the second-generation president has run it since 1975, a non-family general manager runs daily operations, and no third generation is named.",
+"fit": "Second-generation family HVAC firm in Westchester with a strong residential brand; the 2023 profile says it wants to merge with or acquire other HVAC companies.",
+"risks": [
+"70 miles from the Toms River hub, in Westchester NY",
+"Founding year inconsistent across sources"
+],
+"ev": [
+[
+"ACHR News (May 2023): founder Stefan Weinberg started the firm; son William Weinberg president since 1975; son Saul Weinberg VP; 50-55 employees",
+"https://www.achrnews.com/articles/153065-amhac-led-to-inspire-hvac-contracting",
+"press"
+],
+[
+"Company site: family owned and operated; residential and commercial HVAC; 15,000+ clients; 20+ vehicles",
+"https://www.amhac.com/",
+"company_site"
+],
+[
+"Carrier dealer page: 4.97 from 160 reviews",
+"https://www.carrier.com/us/en/residential/dealers/ny/eastchester/365-white-plains-rd-19870-loc",
+"other"
+]
+],
+"ver": [
+"confirmed",
+"Company site (2026 copyright) calls it family owned and operated, 'next generation solutions since 1949', and names no parent, merger or acquirer. This fits the May 2023 profile where the founder's sons lead the firm.",
+"https://www.amhac.com/"
+]
+},
+{
+"cid": "pp-17385",
+"web": "https://caqs.com/",
+"op": "yes",
+"seg": false,
+"segnote": "Commercial and industrial HVAC.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.1,
+0.03,
+0.02,
+0.03,
+0,
+0.05,
+0.65,
+0.12
+],
+"founded": 1993,
+"staff": "PPP showed 53 jobs.",
+"rev": null,
+"rsig": "No review snippets.",
+"succ": "None found.",
+"fit": "Commercial and industrial HVAC contractor.",
+"risks": [
+"Commercial and industrial focus"
+],
+"ev": [
+[
+"Company site: served the Tri-State area since 1993 for commercial and industrial customers",
+"https://caqs.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-17453",
+"web": "https://cc-hvac.com",
+"op": "operating (site copyright 2026)",
+"seg": true,
+"segnote": "Residential HVAC/plumbing contractor, NAICS 238220",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.05,
+0.85,
+0.02,
+0.04,
+0.0,
+0.0,
+0.0,
+0.04
+],
+"founded": 1972,
+"years": "Founded 1972 by Will and Catherine Cordero; moved to Souderton in 2006.",
+"staff": "A magazine profile says it grew from 4 to about 100 employees; PPP reported 64 jobs.",
+"rev": null,
+"rsig": "No owner-involvement snippets.",
+"succ": "Second generation (Doug Cordero) leads the company; no third generation is named.",
+"fit": "Second-generation family HVAC firm with 50+ years of history, active in 2024, about 54 miles from Lancaster.",
+"risks": [
+"Company website not fetched directly",
+"Headcount figures vary across sources"
+],
+"ev": [
+[
+"Will and Catherine Cordero started C&C in 1972; son Doug joined in 1989 and is the second generation to lead it",
+"https://www.suburbanlifemagazine.com/article/2734/Complete-Control",
+"press"
+],
+[
+"Dec 2024 news: Souderton business, family-owned and operated, donated an HVAC system to a local veteran",
+"https://northpennnow.com/news/2024/dec/04/souderton-business-donates-hvac-system-to-local-vietnam-veteran",
+"news"
+],
+[
+"Bryant dealer at 800 Hagey Rd, Souderton",
+"https://www.bryant.com/en/us/dealers/pa/souderton/800-hagey-rd-bry-202155-loc",
+"other"
+],
+[
+"Site: 'Family-owned in Souderton for over 50 years', founded 1972; no parent or investor named; copyright 2026",
+"https://www.cc-hvac.com/",
+"company_website"
+],
+[
+"Company page: Will and Catherine founded it in 1972; the welcome letter is signed by their son Doug Cordero",
+"https://cc-hvac.com/company/",
+"company_website"
+],
+[
+"Crete Mechanical deal concerns a different firm, C&C Service LLC, not this company",
+"https://prnewswire.com/news-releases/crete-mechanical-group-expands-presence-through-partnership-with-cc-service-301985563.html",
+"press_release"
+]
+],
+"ver": [
+"confirmed",
+"The company's own site (copyright 2026) says it is family-owned and operated in Souderton for 50+ years. Its company page carries a welcome letter from Doug Cordero, son of founders Will and Catherine Cordero. A deal search found only an unrelated 'C&C Service' deal with Crete Mechanical. No acquisition was found.",
+"https://cc-hvac.com/company/"
+]
+},
+{
+"cid": "pp-18545",
+"web": "",
+"op": "yes",
+"seg": false,
+"segnote": "Unverified; no consumer-facing presence found.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.12,
+0.12,
+0.05,
+0.03,
+0.03,
+0.02,
+0.08,
+0.55
+],
+"founded": null,
+"years": "SBA record says more than 2 years old.",
+"staff": "60 jobs supported per the 2026 SBA 7(a) record.",
+"rev": null,
+"rsig": "none found",
+"succ": "Possible but unverified: a $3.25M Live Oak 7(a) with a 25-year term and collateral often funds a change of ownership or real estate.",
+"fit": "A Bergen County plumbing and heating corporation with a large 2026 7(a) loan; owner and kind of work not public.",
+"risks": [
+"No web presence",
+"Possible recent ownership change",
+"Residential vs commercial unknown",
+"May be confused with a Spring Valley NY firm of the same name"
+],
+"ev": [
+[
+"SBA 7(a) record (as of 2026-09-30): Live Oak, $3,250,000, approved 2026-08-28, 300-month term, 60 jobs supported",
+"https://data.sba.gov/dataset/7-a-504-foia",
+"state_record"
+],
+[
+"Web searches for the name and address found no website, owner or service listing (the link is a BBB category listing for the town, not a company profile)",
+"https://prod.bbb.org/us/nj/south-hackensack/category/plumber",
 "other"
 ]
 ],
 "ver": null
+},
+{
+"cid": "pp-18668",
+"wdec": "unknown",
+"risks": [
+"no website found",
+"owner unknown",
+"possible related entity Concept Mechanical dba CM Plumbing"
+],
+"ev": [
+[
+"BBB directory: Concept Plumbing Inc, plumber, 360 Ashburton Ave, Yonkers NY 10701, A+ rating",
+"https://www.bbb.org/us/ny/yonkers/category/plumber",
+"search_snippet"
+],
+[
+"Levelset: Concept Mechanical dba CM Plumbing (NY), 372 Ashburton Ave, Yonkers, subcontractor with commercial projects in Manhattan and the Bronx",
+"https://www.levelset.com/contractors/concept-mechanical-dba-cm-plumbing-ny",
+"search_snippet"
+]
+],
+"dec": "unknown",
+"p": [
+0.3,
+0.15,
+0.0,
+0.05,
+0.0,
+0.1,
+0.0,
+0.4
+],
+"ver": [
+"unverifiable",
+"Two searches (acquired/owner, Concept Mechanical owner) found no sale. BBB lists Concept Plumbing Inc at 360 Ashburton Ave, Yonkers (A+). Levelset lists Concept Mechanical dba CM Plumbing at 372 Ashburton Ave. The two are probably related given the same street, but this is unconfirmed. No owner name was found.",
+"https://www.levelset.com/contractors/concept-mechanical-dba-cm-plumbing-ny"
+],
+"op": "probably; a BBB directory snippet lists it at 360 Ashburton Ave, Yonkers NY, (914) 963-4520",
+"seg": true,
+"segnote": "Plumber in Yonkers. A related-looking Concept Mechanical dba CM Plumbing at 372 Ashburton Ave works as a commercial subcontractor on NYC projects; the link between the two is unconfirmed."
+},
+{
+"cid": "pp-19327",
+"web": "",
+"op": "yes",
+"seg": false,
+"segnote": "Commercial and government fire protection (Kinetix); no residential service work.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.05,
+0.04,
+0.02,
+0.03,
+0,
+0.02,
+0.8,
+0.04
+],
+"founded": null,
+"staff": "The 2012 SBA 7(a) loan reported 46 jobs.",
+"rev": null,
+"rsig": "No review snippets seen.",
+"succ": "none",
+"fit": "Commercial fire and life safety contractor.",
+"risks": [
+"Commercial and government focus"
+],
+"ev": [
+[
+"Federal contractor listing: Kinetix is the fire and life safety brand of Media Plumbing & Heating",
+"https://www.govconinabox.com/explore/smb-federal-contractors/media-plumbing-heating-inc-ZMNPZJK8YVN3",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-19435",
+"web": "https://njpdplumbing.com",
+"op": "yes",
+"seg": false,
+"segnote": "New-construction subcontractor for builders and developers.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.3,
+0,
+0.05,
+0,
+0,
+0,
+0.45,
+0.2
+],
+"founded": null,
+"staff": "Directories show 22, or 11-50.",
+"rev": null,
+"rsig": "No review snippets.",
+"succ": "none found",
+"fit": "New-construction trade sub tied to the Lakewood building cycle.",
+"risks": [
+"New construction, not service"
+],
+"ev": [
+[
+"Company site: plumbing, heating and AC for new construction, additions and remodeling",
+"https://njpdplumbing.com",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-19893",
+"web": "",
+"op": "operating (2024 reviews)",
+"seg": true,
+"segnote": "Residential plumbing and drain service, much of it warranty-plan work for American Water",
+"wdec": "unknown",
+"dec": "founder_led",
+"p": [
+0.55,
+0.05,
+0.0,
+0.05,
+0.0,
+0.05,
+0.0,
+0.3
+],
+"founded": null,
+"years": "Self-described as having over a decade of experience (unverified).",
+"staff": "SBA 7(a) Dec 2024 lists 121 jobs supported.",
+"rev": [
+null,
+4.6,
+"HomeAdvisor (search snippet)"
+],
+"rsig": "Mixed reviews; BBB F rating per snippet",
+"succ": "none found",
+"fit": "Residential drain and plumbing service firm in South Jersey, about 30 miles from Toms River, with warranty-network volume; owner unidentified.",
+"risks": [
+"Revenue concentration in American Water warranty-plan work (share unverified)",
+"Mixed reviews and refund complaints",
+"Owner not identified",
+"121 jobs figure from the SBA record not corroborated",
+"BBB F rating",
+"customer concentration on American Water warranty work",
+"owner unidentified",
+"no website found"
+],
+"ev": [
+[
+"HomeAdvisor snippet: over a decade of experience, from faucet repair to main water line replacement",
+"https://www.homeadvisor.com/rated.UltimateDrainCleaning.49539628.html",
+"review_snippet"
+],
+[
+"Review snippets (2024) say it works under American Water's home protection plans",
+"https://www.homeadvisor.com/rated.UltimateDrainCleaning.49539628.html",
+"review_snippet"
+],
+[
+"Trademark (drain cleaning services) filed Feb 2021 by Ultimate Drain Cleaning and Service LLC",
+"https://trademarks.justia.com/owners/ultimate-drain-cleaning-and-service-llc-4722006",
+"search_snippet"
+],
+[
+"BBB Tabernacle plumber listing snippet shows a BBB F rating",
+"https://prod.bbb.org/us/nj/tabernacle/category/plumber",
+"search_snippet"
+]
+],
+"ver": [
+"unverifiable",
+"Two searches found no sale, roll-up or PE owner. The only direct hit was a HomeAdvisor profile citing 'over a decade of experience' and mixed reviews. No owner is named anywhere, so founder ownership is still an inference from the young LLC, not positive evidence. The label is kept but cannot be confirmed.",
+"https://www.homeadvisor.com/rated.UltimateDrainCleaning.49539628.html"
+]
+},
+{
+"cid": "pp-2149",
+"web": "https://www.santashvac.com",
+"op": "yes",
+"seg": true,
+"segnote": "Residential and light commercial HVAC with an in-house sheet metal shop; Carrier Factory Authorized Dealer",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.45,
+0.25,
+0.04,
+0.06,
+0.0,
+0.0,
+0.0,
+0.2
+],
+"founded": 1984,
+"years": "About 42 years (1984 to 2026).",
+"staff": "PPP 2020-21 reported 40 jobs.",
+"rev": null,
+"rsig": "No review figures collected.",
+"succ": "Founders since 1984; current leadership not stated, so succession is possible.",
+"fit": "Established residential HVAC dealer with a likely founder-owner who may be near succession.",
+"risks": [
+"Current ownership unverified",
+"current owner not stated anywhere found"
+],
+"ev": [
+[
+"Founded 1984 by Joe and Darlene Santacroce; Douglassville HQ; five-county area plus parts of NJ; in-house sheet metal shop",
+"https://runsignup.com/Race/124592/Sponsor/1077153",
+"other"
+],
+[
+"Carrier Factory Authorized Dealer at 1712 Ben Franklin Hwy, Douglassville",
+"https://www.carrier.com/us/en/residential/dealers/pa/douglassville/1712-ben-franklin-hwy-e-6439-loc",
+"other"
+],
+[
+"Company About page: Joe and Darlene Santacroce founded it in 1984; no parent or partner group named",
+"https://www.santashvac.com/about/",
+"company_site"
+]
+],
+"ver": [
+"unverifiable",
+"The About page (2026) says Joe and Darlene Santacroce founded the company in 1984 and shows a photo of Joe, but it never says who owns or runs it today. Deal searches found no acquisition, partnership or roll-up. Because the founders started it 42 years ago, a handover to the next generation is plausible, but no source confirms the current owner.",
+"https://www.santashvac.com/about/"
+]
+},
+{
+"cid": "pp-2596",
+"web": "",
+"op": "unclear",
+"seg": false,
+"segnote": "Unverified; no consumer-facing presence found.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.1,
+0.03,
+0.02,
+0.04,
+0,
+0.08,
+0.13,
+0.6
+],
+"founded": null,
+"staff": "PPP 2020-21 reported 47 jobs.",
+"rev": null,
+"rsig": "none found",
+"succ": "none",
+"fit": "Almost no public footprint; residential service work and owner could not be confirmed.",
+"risks": [
+"No website or owner found",
+"May be commercial-only",
+"Operating status unconfirmed; check PA Department of State records"
+],
+"ev": [
+[
+"Directory listing: 2804 Old Rodgers Rd, Bristol PA, NAICS 238220, about 47 employees",
+"https://naicslist.com/company-profile/air-concepts-inc-bristol-pa-19007",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-2648",
+"web": "",
+"op": "yes",
+"seg": false,
+"segnote": "Plumbing, drain and sewer service with a heavy commercial focus.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.03,
+0.02,
+0,
+0.9,
+0,
+0,
+0.03,
+0.02
+],
+"founded": 1965,
+"years": "In the plumbing trade since 1965 (job posting); started in founder Mike O'Hara's garage.",
+"staff": "No figure; an aggregator estimates 21 to 50.",
+"rev": null,
+"rsig": "None seen.",
+"succ": "Already sold: partnered with Orion Group's Helios Service Partners in March 2024.",
+"fit": "Already part of the Helios Service Partners roll-up (Orion Group) and mostly commercial.",
+"risks": [
+"Already in a roll-up",
+"Mostly commercial plumbing",
+"Whether Orion is PE-backed was not confirmed"
+],
+"ev": [
+[
+"March 2024: Orion Group partners with Action Plumbing as the eighth partner in Helios Service Partners",
+"https://www.roi-nj.com/2024/03/26/industry/orion-group-partners-with-leading-plumbing-service-provider-action-plumbing/",
+"news"
+],
+[
+"Job posting describes Action Plumbing as a Helios Service Partners company",
+"https://job-boards.greenhouse.io/heliosservicepartners/jobs/4589259006",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-2860",
+"web": "https://www.lph.biz",
+"op": "yes",
+"seg": true,
+"segnote": "Residential plumbing, HVAC, electrical and sewer service in Lancaster County",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.05,
+0.6,
+0.08,
+0.07,
+0.0,
+0.0,
+0.0,
+0.2
+],
+"founded": 1904,
+"years": "Founded 1904. A 2011 trade article names Scott Peppler as the fourth known owner, owner since 1979.",
+"staff": "About 30 staff and 20 trucks in 2011 (trade article); the 2025 SBA 7(a) loan reports 45 jobs; directories give 38 to 43.",
+"rev": [
+3010,
+4.8,
+"U.S. Boiler contractor listing (search snippet)"
+],
+"rsig": "A U.S. Boiler contractor listing shows 4.8 from 3,010 reviews. It was a 2026 LNP Readers' Choice nominee.",
+"succ": "The site says 2 generations of family ownership. Peppler has owned it since 1979, and a BBB snippet names a different owner (unverified), which may mean the business has already passed to the next generation.",
+"fit": "Large residential full-service shop near the Lancaster hub with a strong review base. Ownership looks family-held; whether the next generation has taken over is unverified.",
+"risks": [
+"Current owner unverified; owner names come from a BBB search snippet",
+"Open SBA 7(a) loan of $800K from 2025",
+"Nexstar Network member (a training network, not an owner)",
+"current owner name only from an unopened BBB snippet",
+"about page has a Nexstar Network logo (a membership network, not an owner)"
+],
+"ev": [
+[
+"Site says family owned and operated since 1904, family-owned for 2 generations",
+"https://www.lph.biz/about-us/",
+"company_site"
+],
+[
+"2011 article: Scott Peppler is the fourth known owner, owner since 1979, about 30 staff and 20 trucks",
+"https://www.pmmag.com/articles/94757-pm-truck-of-the-month-lancaster-plumbing-heating-east-petersburg-pa",
+"press"
+],
+[
+"Acquisition searches found no deal for this company",
+"https://hvacinsider.com/hb-mcclure-company-announces-recent-mergers/",
+"other"
+],
+[
+"Contractor listing shows 4.8 from 3,010 reviews and a full residential service mix",
+"https://www.usboiler.net/contractors/lancaster-plumbing-heating-co",
+"review_snippet"
+],
+[
+"BBB snippet lists a different person as owner, which may mean a generational handover (unverified)",
+"https://www.bbb.org/us/pa/e-petersburg/profile/plumber/lancaster-plumbing-heating-co-inc-0241-70001620",
+"search_snippet"
+],
+[
+"Careers page posts jobs through recruiting.paylocity.com; no parent group named",
+"https://www.lph.biz/about/careers/",
+"company_website"
+],
+[
+"Searches for the company name with acquired, joins and partners with found no deal; the hits are directories and other firms' deals",
+"https://www.phcppros.com/articles/13181-thompson-street-capital-partners-portfolio-company-len-the-plumber-acquires-neffsville-plumbing-heating-services",
+"search_snippet"
+]
+],
+"ver": [
+"confirmed",
+"The company's 2026 site still says it has been family owned and operated for 2 generations, and it names no parent, partner group or private equity. Deal searches using the company name with acquired, joins and partners with found no transaction; the Lancaster-area deals that came up (Len The Plumber buying Neffsville, HB McClure) involve other firms. Scott Peppler has owned the business since 1979, so the current family are not the 1904 founders. A BBB search snippet names a different person as owner, which suggests the next generation now runs it. The careers page uses Paylocity, a single-company applicant-tracking account, not a shared group site.",
+"https://www.lph.biz/about-us/"
+]
+},
+{
+"cid": "pp-2986",
+"web": "https://getprecisiontoday.com",
+"op": "yes",
+"seg": true,
+"segnote": "Residential heating, AC, plumbing, electrical and generators in Monmouth and Middlesex counties",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.5,
+0.18,
+0.04,
+0.08,
+0.0,
+0.0,
+0.0,
+0.2
+],
+"founded": 1989,
+"years": "About 37 years (1989 to 2026).",
+"staff": "Directories conflict at 40 and 55; PPP 2020-21 reported 37 jobs.",
+"rev": null,
+"rsig": "No review figures collected.",
+"succ": "Founder since 1989; current leadership not stated.",
+"fit": "Strong multi-trade residential fit near Toms River. Confirm the founder still owns it.",
+"risks": [
+"Domain rebrand could mean new ownership (unverified)",
+"2020 SBA 7(a) loan was cancelled",
+"rebranded to the getprecisiontoday.com domain",
+"current owner unverified"
+],
+"ev": [
+[
+"Trane dealer page (search summary): Mario Lalima launched the company in June 1989",
+"https://www.trane.com/residential/en/dealers/precision-tech-home-services-inc-manalapan-nj/",
+"other"
+],
+[
+"Company site: family-owned, founded 1989; heating, AC, plumbing, electrical, generators",
+"https://getprecisiontoday.com/",
+"company_site"
+],
+[
+"Old domain precisiontechnj.com redirects to getprecisiontoday.com; no parent named",
+"https://www.precisiontechnj.com/",
+"company_site"
+],
+[
+"About page: founded in 1989 by Mario Lalima; family-owned; no parent named",
+"https://www.getprecisiontoday.com/about-us/",
+"company_website"
+],
+[
+"Careers page uses an embedded application form with no external applicant-tracking or group domain",
+"https://www.getprecisiontoday.com/careers/",
+"company_website"
+],
+[
+"BuiltWith lists Mario Lalima as a contact for precisiontechnj.com (technical role)",
+"https://builtwith.com/meta/precisiontechnj.com",
+"search_snippet"
+]
+],
+"ver": [
+"unverifiable",
+"The company site says it is family-owned and was founded in 1989 by Mario Lalima, with no parent, partner group or private equity named. The careers page uses an embedded form, not a shared applicant-tracking site. Deal searches found no acquisition. However, no source names the current owner or president: BuiltWith lists Lalima only as a technical contact for the old domain. The move to the getprecisiontoday.com domain looks like a marketing-agency rebrand (Scorpion), not a sale, but it is unconfirmed.",
+"https://www.getprecisiontoday.com/about-us/"
+]
+},
+{
+"cid": "pp-3394",
+"web": "",
+"op": "yes",
+"seg": true,
+"segnote": "Residential HVAC, plumbing, drain and electrical.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.02,
+0.03,
+0.01,
+0.9,
+0,
+0,
+0,
+0.04
+],
+"founded": 1979,
+"years": "About 47 years (since 1979).",
+"staff": "An Angi snippet says 60+ employees; PPP showed 58 jobs.",
+"rev": null,
+"rsig": "No owner-specific snippets.",
+"succ": "Already sold: part of Apex Service Partners (Alpine Investors); deal date unknown.",
+"fit": "Good residential business, already owned by a PE-backed roll-up.",
+"risks": [
+"Already owned by Apex Service Partners"
+],
+"ev": [
+[
+"Bruni & Campisi careers site runs under Apex Service Partners; job posts describe the firm as part of the Apex network",
+"https://careers-bruniandcampisi.icims.com/jobs/search",
+"other"
+],
+[
+"Apex Service Partners is a residential HVAC, plumbing and electrical roll-up backed by Alpine Investors",
+"https://www.mdm.com/news/top-distributor-sectors/contractor/hvac-electrical-plumbing-service-platform-apex-nets-2b-investment-from-apollo/",
+"news"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-3483",
+"web": "http://www.perryhallhtg.com",
+"op": "operating (site copyright 2026; Carrier and Trane dealer listings)",
+"seg": true,
+"segnote": "Residential HVAC and plumbing contractor, NAICS 238220",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.35,
+0.2,
+0.15,
+0.05,
+0.0,
+0.0,
+0.0,
+0.25
+],
+"founded": 1982,
+"years": "Founded 1982 by partners Peter J. Pac and Steven M. Faulkner (company About page).",
+"staff": "Not stated.",
+"rev": [
+206,
+4.5,
+"Google reviews as shown on the Carrier dealer page"
+],
+"rsig": "Directory text says the owner is available onsite, a hands-on signal; a customer says they have used the company for over 20 years.",
+"succ": "Founded in 1982 by two partners, with no named current leader, so succession may be pending or already done.",
+"fit": "Long-running residential HVAC and plumbing firm near Baltimore with a strong review base and a likely succession window.",
+"risks": [
+"Current owner not named",
+"Family-owned claim comes only from a HomeAdvisor snippet",
+"current owner not named",
+"founded by two partners, so it may be partner-owned rather than founder-led",
+"founders likely at retirement age"
+],
+"ev": [
+[
+"Carrier dealer at 7619 Fitch Ln, Baltimore; Factory Authorized Dealer; President's Award; 4.5 from 206 Google reviews",
+"https://www.carrier.com/us/en/residential/dealers/md/baltimore/7619-fitch-ln-78302-loc",
+"other"
+],
+[
+"HomeAdvisor snippet: family owned and operated, owner available onsite",
+"https://www.homeadvisor.com/rated.PerryHallHeatingAir.4389483.html",
+"review_snippet"
+],
+[
+"Company About page: Peter J. Pac and Steven M. Faulkner founded it as partners in 1982",
+"http://www.perryhallhtg.com/about-us",
+"company_site"
+],
+[
+"Trane dealer listing: established 1982 by Pac and Faulkner; Trane Comfort Specialist",
+"https://www.trane.com/residential/en/dealers/perry-hall-heating-and-a-c-baltimore-md/",
+"manufacturer_dealer_locator"
+]
+],
+"ver": [
+"unverifiable",
+"The About page (copyright 2026) names founding partners Peter J. Pac and Steven M. Faulkner (1982) but not today's owner, and names no parent or investor. Deal searches for acquired, joins, partners with and new owner found nothing. There is no positive evidence that the founders still own or run it 44 years on. A HomeAdvisor snippet says family-owned with the owner onsite, but no name is given.",
+"http://www.perryhallhtg.com/about-us"
+]
+},
+{
+"cid": "pp-3726",
+"web": "https://frigidairllc.com",
+"op": "yes",
+"seg": false,
+"segnote": "Mainly commercial refrigeration and commercial rooftop HVAC; residential AC and furnace work is minor.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.1,
+0.02,
+0.02,
+0.02,
+0,
+0,
+0.7,
+0.14
+],
+"founded": null,
+"staff": "Site mentions 13 trucks; the PPP figure of 50 jobs on a $35,700 loan looks inconsistent.",
+"rev": null,
+"rsig": "None seen.",
+"succ": "none found",
+"fit": "Commercial refrigeration contractor, not a residential service shop.",
+"risks": [
+"Mostly commercial work",
+"PPP jobs figure does not match loan size"
+],
+"ev": [
+[
+"Site lists 24/7 commercial refrigeration, commercial HVAC and rooftop units, ice machines, 13-truck fleet",
+"https://frigidairllc.com",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-3758",
+"web": "https://forteplumbing.com",
+"op": "operating",
+"seg": true,
+"segnote": "Residential and commercial plumbing, heating and fire protection, northern NJ and NYC",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.6,
+0.2,
+0.02,
+0.05,
+0.0,
+0.03,
+0.0,
+0.1
+],
+"founded": 1988,
+"years": "Company site says it has served northern NJ and NYC since 1988.",
+"staff": "PPP reported 52 jobs.",
+"rev": null,
+"rsig": "No review snippets about owner involvement.",
+"succ": "Brothers in leadership; no next generation named",
+"fit": "Family-run plumbing and heating firm in Bergen County; the mix leans commercial and new construction, which weakens the residential fit.",
+"risks": [
+"Commercial, fire-suppression and new-construction work may outweigh residential service",
+"Founder vs second-generation status unverified",
+"60 miles from the NJ hub",
+"website stale (2016 copyright)",
+"owner evidence undated third-party"
+],
+"ev": [
+[
+"Company site: served northern NJ and NYC since 1988; residential and commercial plumbing and heating plus fire suppression",
+"https://forteplumbing.com",
+"company_site"
+],
+[
+"Directory describes it as family-owned and operated",
+"https://www.greatpossibilities.com/forte-express-plumbing-and-heating-10043.html",
+"other"
+],
+[
+"Robert Forte listed as president and owner, brother Mark Forte as vice president",
+"https://hireveterans.com/company/105712/forte-express-plbg-htg-inc/",
+"other"
+],
+[
+"Registered apprenticeship sponsor listing names Robert Forte as owner, Wallington NJ",
+"https://skillplum.com/apprenticeship/forte-express-plumbing-heating-inc-wallington-nj",
+"search_snippet"
+]
+],
+"ver": [
+"confirmed",
+"Two separate listings name Robert Forte as owner and president, with his brother Mark Forte as VP; one is an apprenticeship-sponsor record. The company carries the family name and was founded in 1987 or 1988. Deal searches found no acquisition or partnership. The company site (copyright 2016) names no owner or parent, and the owner listings are undated, so how current they are is uncertain.",
+""
+]
+},
+{
+"cid": "pp-4474",
+"web": "https://www.metrocorpplumbing.com/",
+"op": "yes",
+"seg": false,
+"segnote": "Builder new-construction plumbing subcontractor, not residential service.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.15,
+0.03,
+0,
+0.02,
+0,
+0.03,
+0.7,
+0.07
+],
+"founded": 1997,
+"staff": "PPP 2020-21 reported 39 jobs.",
+"rev": null,
+"rsig": "none found",
+"succ": "Weak.",
+"fit": "New-construction plumbing subcontractor for builders.",
+"risks": [
+"Not residential service"
+],
+"ev": [
+[
+"Company site: plumbing design and installation for builders since 1997; no homeowner service mentioned",
+"https://www.metrocorpplumbing.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-4611",
+"web": "",
+"op": "yes",
+"seg": false,
+"segnote": "Commercial and industrial HVAC and mechanical contracting.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.2,
+0.02,
+0.02,
+0.02,
+0,
+0.02,
+0.65,
+0.07
+],
+"founded": 1986,
+"staff": "An aggregator estimates 21-50.",
+"rev": null,
+"rsig": "No review snippets.",
+"succ": "Inferred.",
+"fit": "Commercial and industrial mechanical contractor.",
+"risks": [
+"Commercial and industrial focus"
+],
+"ev": [
+[
+"Directories: HVAC design and mechanical contractor for commercial and industrial clients in NJ",
+"https://www.cisleads.com/company/details/20046",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-5035",
+"web": "",
+"op": "unclear",
+"seg": false,
+"segnote": "Commercial plumbing and heating subcontracting.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.15,
+0.03,
+0.02,
+0.02,
+0,
+0.08,
+0.5,
+0.2
+],
+"founded": 1995,
+"staff": "A directory estimates about 19; PPP showed 34 jobs.",
+"rev": null,
+"rsig": "No review snippets.",
+"succ": "None found.",
+"fit": "Commercial plumbing and heating subcontractor.",
+"risks": [
+"Commercial construction focus"
+],
+"ev": [
+[
+"Blue Book: heating and plumbing subcontractor established 1995; projects include a Stop & Shop supermarket",
+"https://thebluebook.com/iProView/908482/competitive-plumbing-heating-inc/subcontractors",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-5358",
+"web": "https://www.associatesplumbing.com/",
+"op": "yes",
+"seg": false,
+"segnote": "Multifamily and commercial property work for property managers.",
+"wdec": "not_in_segment",
+"dec": "not_in_segment",
+"p": [
+0.05,
+0.03,
+0.12,
+0.03,
+0,
+0.02,
+0.7,
+0.05
+],
+"founded": 1982,
+"staff": "PPP lists 64 jobs.",
+"rev": null,
+"rsig": "Very few reviews.",
+"succ": "None found.",
+"fit": "Commercial and multifamily property-management plumbing contractor.",
+"risks": [
+"Commercial and multifamily focus"
+],
+"ev": [
+[
+"Company site: serves multifamily and commercial property clients and the property management industry; incorporated 1982",
+"https://www.associatesplumbing.com/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-5483",
+"web": "https://www.comfort-pro.com",
+"op": "yes",
+"seg": true,
+"segnote": "Residential and commercial HVAC and geothermal; Lennox Premier Dealer",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.65,
+0.15,
+0.03,
+0.05,
+0.0,
+0.0,
+0.0,
+0.12
+],
+"founded": 2001,
+"years": "Opened 2001 under owners Doug and Craig Weisman (directory listing); the company site says it opened in 2001.",
+"staff": "No company figure; PPP reported 51 jobs.",
+"rev": [
+882,
+4.8,
+"Birdeye (search snippet)"
+],
+"rsig": "Birdeye shows 4.8 from 882 reviews (from earlier research).",
+"succ": "Father-and-son co-founders, so the son is already in the business.",
+"fit": "Founder-owned residential HVAC shop near Reading and a Lennox Premier Dealer. Fits the segment, but plumbing is thin.",
+"risks": [
+"Mostly HVAC, little or no plumbing",
+"Founder names come only from a directory snippet",
+"latest named-owner source is from 2021"
+],
+"ev": [
+[
+"Directory says owners Doug and Craig Weisman opened it in 2001",
+"https://www.homeyou.com/comfort-pro-reading-pa",
+"other"
+],
+[
+"Company site says family-owned, opened 2001, residential and commercial, no parent named",
+"https://www.comfort-pro.com/about-us/",
+"company_site"
+],
+[
+"Lennox lists it as a Premier Dealer at 109 Dries Rd, Reading",
+"https://www.lennox.com/residential/locate/dealer/pa/reading/comfort-pro-inc",
+"other"
+],
+[
+"Birdeye shows 4.8 from 882 reviews",
+"https://reviews.birdeye.com/comfort-pro-148893784185917",
+"review_snippet"
+],
+[
+"Chamber magazine (spring 2021): owners Doug and Craig Weisman opened it in 2001; Doug is CEO; 49 team members",
+"https://nxtbook.com/hoffmann/GreaterReadingChamber_CommerceQuarterly/GRCA_CommerceQuarterly_Spring2021/index.php?startid=22",
+"news"
+],
+[
+"Deal searches found no acquisition of Comfort Pro; Reading-area deals involve Essig and ECS Comfort",
+"https://lebtown.com/2024/02/16/sila-services-acquires-palmyra-hvac-company-ecs-comfort-heating-cooling/",
+"search_snippet"
+]
+],
+"ver": [
+"confirmed",
+"A spring 2021 chamber magazine says father and son Doug and Craig Weisman opened the company in 2001 and own it, with Doug as CEO. The About page (2026 copyright) still says family-owned and operated and names no parent or partner. Deal searches found no acquisition; the partnership hits were other Reading-area firms (Essig with P1 Service Group, ECS Comfort with Sila).",
+"https://www.comfort-pro.com/about-us/"
+]
+},
+{
+"cid": "pp-5957",
+"web": "",
+"op": "operating under the trade name North East Home Services (Monroe Township, NJ)",
+"seg": true,
+"segnote": "Residential HVAC contractor, now also plumbing/electrical under the new trade name",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.45,
+0.3,
+0.02,
+0.06,
+0.0,
+0.03,
+0.0,
+0.14
+],
+"founded": 1995,
+"years": "A Thumbtack listing says family-owned, started 1995 (unverified).",
+"staff": "PPP reported 34 jobs.",
+"rev": [
+28,
+4.4,
+"Thumbtack (search snippet)"
+],
+"rsig": "Snippets praise service and replacement work; none mention the owner.",
+"succ": "Two generations (Robert Williams Sr and Robert Williams) appear on staff, so a transition may be under way.",
+"fit": "Family-owned residential HVAC firm in Manalapan, 24 miles from Toms River; owner and current brand unconfirmed.",
+"risks": [
+"A HomeAdvisor profile for this firm now shows the name 'North East Home Services', a possible rebrand or sale (unverified)",
+"Several different addresses listed",
+"Owner not identified",
+"no first-party website (airmanagementhvac.net no longer resolves)",
+"founder vs next generation unclear (Robert Williams Sr and Jr)",
+"rebrand to North East Home Services; NJ entity record not checked"
+],
+"ev": [
+[
+"Directory: family-owned and operated HVAC company in Manalapan",
+"https://phoenix.aws.mapquest.com/us/new-jersey/air-management-1074518",
+"other"
+],
+[
+"NJ HVAC license 19HC00134000, Park Ave, Manalapan",
+"https://local.demandforce.com/b/airmanagementhvac",
+"other"
+],
+[
+"HomeAdvisor URL for AirManagementHeating is titled 'North East Home Services' (possible rebrand)",
+"https://www.homeadvisor.com/rated.AirManagementHeating.74465840.html",
+"review_snippet"
+],
+[
+"Thumbtack 'North East Home Services' profile uses the same service ID as Air Management's; shows 31 years in business, 25 employees; HVAC, plumbing, electrical, general contracting",
+"https://thumbtack.com/nj/monroe-township/central-air-conditioning-installation/north-east-home-services/service/459623988134494212",
+"directory"
+],
+[
+"Thumbtack snippet: Air Management is a family-owned business started in 1995; background check shows Robert Williams",
+"https://thumbtack.com/nj/monroe-township/central-air-conditioning-installation/air-management-heating-air-conditioning/service/459623988134494212",
+"search_snippet"
+]
+],
+"ver": [
+"confirmed",
+"The suspected rebrand looks like a trade-name change by the same owners, not a sale. The Thumbtack profiles for 'Air Management Heating & Air Conditioning' and 'North East Home Services' share one service ID, and North East shows 31 years in business, which fits a 1995 start. Robert Williams appears on both listings, and Air Management's staff also includes Robert Williams Sr. Listings call it family-owned, and the rebranded profile says 'locally owned and operated'. The deal search found no acquisition. Founder versus next generation is unclear because two Williams generations are involved.",
+"https://thumbtack.com/nj/monroe-township/central-air-conditioning-installation/north-east-home-services/service/459623988134494212"
+]
+},
+{
+"cid": "pp-6284",
+"web": "https://www.fourquartersinc.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Residential home-services division beside a commercial mechanical business.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.38,
+0.3,
+0.04,
+0.06,
+0,
+0.01,
+0.05,
+0.16
+],
+"founded": 1990,
+"years": "About 35 years; sources say 1990 or 1992.",
+"staff": "PPP 2020-21 reported 49 jobs.",
+"rev": null,
+"rsig": "GuildQuality shows no public reviews; no hands-on owner snippet seen.",
+"succ": "Possible: a same-surname VP (Brandon Sady) suggests the next generation is involved. Unverified.",
+"fit": "A 35-year Cinnaminson HVAC and plumbing firm with a residential home-services arm; two people named Sady appear.",
+"risks": [
+"Mixed commercial and residential work",
+"Owner and officer roles unverified"
+],
+"ev": [
+[
+"GuildQuality: HVAC and plumbing install and service for residential and commercial clients in NJ and eastern PA since 1990",
+"https://www.guildquality.com/pro/four-quarters-home-services",
+"other"
+],
+[
+"Blue Book: Four Quarters Mechanical, established 1990",
+"https://www.thebluebook.com/iProView/400233/four-quarters-mechanical-inc/subcontractors/",
+"other"
+],
+[
+"Chamber listing snippet names Brandon Sady as Vice President",
+"https://business.chambersnj.com/directory/Details/four-quarters-4329806",
+"other"
+],
+[
+"Current company site says family-owned and operated, locally owned",
+"https://www.fourquartersinc.com/",
+"company_site"
+]
+],
+"ver": [
+"confirmed",
+"The current site (fourquartersinc.com) states family-owned and operated, locally owned; no parent, partner or acquisition. The older home-services domain now returns 503, which looks like a domain move. The site says 'for generations', so family next generation is possible. Sady names come from secondary listings.",
+"https://www.fourquartersinc.com/"
+]
+},
+{
+"cid": "pp-6463",
+"web": "",
+"op": "likely operating (live Carrier dealer listing)",
+"seg": true,
+"segnote": "Residential HVAC install, repair and maintenance",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.3,
+0.25,
+0.05,
+0.05,
+0.0,
+0.05,
+0.0,
+0.3
+],
+"founded": null,
+"staff": "A directory estimates about 35; PPP reported 35 jobs.",
+"rev": null,
+"rsig": "No review snippets found.",
+"succ": "None found; owner not identified.",
+"fit": "Residential Carrier dealer in Middlesex County, 31 miles from Toms River; ownership could not be determined.",
+"risks": [
+"Owner not identified",
+"No company website found",
+"Phone numbers differ between listings",
+"no company website found",
+"owner unidentified"
+],
+"ev": [
+[
+"Carrier dealer at 1007 Eastpark Blvd, Cranbury; home-focused HVAC services",
+"https://www.carrier.com/us/en/residential/dealers/nj/cranbury/1007-eastpark-blvd-36357-loc",
+"other"
+],
+[
+"Directory lists the corporation in Cranbury 08512 under NAICS 238220, about 35 employees",
+"https://naicslist.com/company-profile/dans-heating-air-conditioning-co-inc-cranbury-nj-08512",
+"directory"
+]
+],
+"ver": [
+"unverifiable",
+"Two searches (acquisition, owner/founder) found only the Carrier dealer listing, a NAICS directory profile (~35 employees) and a BBB category listing. No sale, roll-up or PE owner surfaced, but no owner name or founding year either, so ownership stays unknown.",
+"https://www.carrier.com/us/en/residential/dealers/nj/cranbury/1007-eastpark-blvd-36357-loc"
+]
+},
+{
+"cid": "pp-6908",
+"web": "https://www.tdplumbing.com/",
+"op": "operating",
+"seg": true,
+"segnote": "Residential and commercial plumbing and heating, Maryland",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.02,
+0.8,
+0.03,
+0.07,
+0.0,
+0.02,
+0.0,
+0.06
+],
+"founded": 1958,
+"years": "Since 1958 (about 68 years); third generation, self-reported.",
+"staff": "Blue Book says 50-99 employees.",
+"rev": [
+15,
+4.4,
+"Plumber directory listing (search snippet)"
+],
+"rsig": "Snippets praise the crew's work; none mention the owner.",
+"succ": "3rd generation family owned",
+"fit": "Large, long-lived family plumber near Baltimore; fit depends on residential service share versus construction.",
+"risks": [
+"Construction-heavy revenue mix possible",
+"Two addresses listed",
+"Owner not named in sources",
+"owner names not published"
+],
+"ev": [
+[
+"Company site: 2133 Monumental Rd, Halethorpe MD; running since 1958; 3rd generation family-owned",
+"https://www.tdplumbing.com/",
+"company_site"
+],
+[
+"Blue Book: Halethorpe MD, established 1958, 50-99 employees",
+"https://www.thebluebook.com/iProView/1218453/t-d-plumbing-heating-co-inc/subcontractors/reviews-ratings/",
+"other"
+],
+[
+"Acquisition search returned no T&D deal; Halethorpe-area deal found was CET acquiring JDL Electric (unrelated)",
+"https://www.citybiz.co/?p=925825",
+"search_snippet"
+]
+],
+"ver": [
+"confirmed",
+"The company site says it has served Maryland since 1958 and calls itself a 3rd generation family-owned company, with no parent, investor or partner language. The careers page is on its own domain. An acquisition search found no T&D deal; the only Halethorpe deal was CET buying JDL Electric, an unrelated firm.",
+""
+]
+},
+{
+"cid": "pp-6944",
+"web": "",
+"op": "yes",
+"seg": true,
+"segnote": "Residential and commercial HVAC, water heaters and some electrical in South Jersey; Bryant dealer",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.4,
+0.15,
+0.08,
+0.07,
+0.0,
+0.0,
+0.0,
+0.3
+],
+"founded": 1990,
+"years": "About 35 years (BBB snippet gives 12/21/1990).",
+"staff": "No current headcount; PPP 2020-21 reported 67 jobs.",
+"rev": [
+40,
+null,
+"Checkbook (search snippet)"
+],
+"rsig": "BBB-accredited since May 2024 (search snippet).",
+"succ": "Unknown; officers come only from a BBB snippet.",
+"fit": "A 35-year South Jersey residential HVAC service firm. It looks like a good fit, but ownership is unverified.",
+"risks": [
+"Officer names come only from a possibly dated BBB snippet",
+"Part new construction and commercial",
+"No company website found",
+"Mixed review ratings (Checkbook snippet)",
+"no company website found",
+"officer names only from a BBB snippet"
+],
+"ev": [
+[
+"BBB snippet: business start and incorporation 12/21/1990; names Lorraine Clark as President and James M. McMullen as Secretary (possibly dated, unverified)",
+"https://www.bbb.org/us/nj/vincentown/profile/air-conditioning-contractor/shamrock-heating-air-conditioning-inc-0221-80003934",
+"other"
+],
+[
+"Named BCIT 2023 Business Partner of the Year (Jan 12, 2024); based in Vincentown",
+"https://careertechnj.org/shamrock-heating-air-conditioning-recognized-as-bcits-business-partner-of-the-year",
+"press"
+],
+[
+"Directory: residential and commercial HVAC, water heaters and residential electrical across South and Central Jersey",
+"https://directory.yext.com/en/shamrock-heating-and-air-conditioning-inc-968379018",
+"other"
+],
+[
+"Bryant dealer at 143 Red Lion Road, Vincentown",
+"https://www.bryant.com/en/us/dealers/nj/vincentown/143-red-lion-road-bry-9039392-loc",
+"other"
+],
+[
+"Deal searches found no acquisition; the Shamrock deal hits are unrelated (Seacoast buying a Florida plumber)",
+"https://mergr.com/transaction/seacoast-service-partners-acquires-shamrock-plumbing-drain-cleaning",
+"search_snippet"
+]
+],
+"ver": [
+"unverifiable",
+"Deal searches found no acquisition; the only Shamrock deals are unrelated firms in Florida and Colorado. No company website was found. A BBB snippet names a president and a 1990 start, but nothing shows whether she is the founder or whether the family still owns it. It was operating and BBB-accredited in 2024. There is no contrary evidence, but also no positive current proof of founder ownership.",
+"https://www.bbb.org/us/nj/vincentown/profile/air-conditioning-contractor/shamrock-heating-air-conditioning-inc-0221-80003934"
+]
+},
+{
+"cid": "pp-6976",
+"web": "http://www.abmhvac.com",
+"op": "yes, operating in Hawthorne NY with a branch in Stamford CT; sold in 2026",
+"seg": true,
+"segnote": "Commercial, industrial and residential HVAC contractor with a pipefitting and welding shop",
+"wdec": "unknown",
+"dec": "pe_backed_or_acquired",
+"p": [
+0.04,
+0.02,
+0.02,
+0.88,
+0.0,
+0.0,
+0.0,
+0.04
+],
+"founded": 1969,
+"years": "About 57 years (since 1969, per directory).",
+"staff": "PPP showed 54 jobs.",
+"rev": null,
+"rsig": "No review snippets.",
+"succ": "Co-founder/President and co-owner sold to a PE-backed platform in 2026",
+"fit": "Long-running Westchester HVAC firm doing commercial and residential work; ownership and residential share unverified.",
+"risks": [
+"Mix appears commercial-heavy",
+"Website would not load; operating status unverified",
+"Easy to confuse with ABM Industries",
+"80 miles from the Toms River hub",
+"already PE-owned (Waypoint Capital / AMX Mechanical)",
+"2026 transaction"
+],
+"ev": [
+[
+"Franklin Report: founded 1969; commercial, industrial and residential customers; 11 West Cross St, Hawthorne NY",
+"https://www.franklinreport.com/ReportCard.aspx?v=6779",
+"other"
+],
+[
+"BusinessWire (Mar 2026): AMX Mechanical expands its HVAC platform through a partnership with ABM Air Conditioning & Heating, a Hawthorne NY commercial HVAC contractor. The release quotes ABM's President/Co-Founder and VP/Co-Owner.",
+"https://www.businesswire.com/news/home/20260318601668/en/AMX-Mechanical-LLC-Expands-Commercial-and-Residential-HVAC-Platform-Through-Partnership-with-ABM-Air-Conditioning-Heating-LLC",
+"search_snippet"
+],
+[
+"Everingham & Kerr press release (Apr 8 2026): ABM Air Conditioning and Heating, Inc. was acquired by AMX Mechanical LLC / AMX Cooling & Heating LLC, a portfolio company of Waypoint Capital Partners.",
+"https://www.everkerr.com/wp-content/uploads/2026/04/ABM-Air-Conditioning-and-Heating-In-Press-Release.pdf",
+"search_snippet"
+]
+],
+"ver": [
+"changed",
+"A deal search found that ABM Air Conditioning & Heating (Hawthorne NY) was acquired in March/April 2026 by AMX Mechanical / AMX Cooling & Heating, a portfolio company of Waypoint Capital Partners. Both a BusinessWire release and the sell-side adviser's press release say so. The BusinessWire release quotes the co-founder/President and the VP/Co-Owner of ABM. This is not the same company as ABM Industries.",
+"https://www.businesswire.com/news/home/20260318601668/en/AMX-Mechanical-LLC-Expands-Commercial-and-Residential-HVAC-Platform-Through-Partnership-with-ABM-Air-Conditioning-Heating-LLC"
+]
+},
+{
+"cid": "pp-7220",
+"web": "https://www.centralpennplumbing.com",
+"op": "yes",
+"seg": true,
+"segnote": "Residential and commercial plumbing, HVAC and drain service; Bryant dealer",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.72,
+0.05,
+0.04,
+0.06,
+0.0,
+0.0,
+0.0,
+0.13
+],
+"founded": 1998,
+"years": "Founded 1998 by Scott Campbell.",
+"staff": "No company figure; PPP and a directory show about 51.",
+"rev": [
+453,
+4.9,
+"Birdeye (search snippet)"
+],
+"rsig": "No review figures collected.",
+"succ": "Founder is still president; no successor named.",
+"fit": "Residential plumbing and HVAC shop in Mechanicsburg with strong reviews and no sign of a sale.",
+"risks": [
+"Another firm (Pronto Plumbing) is listed at the same 631 Gettysburg Pike address",
+"no dated third-party source after 2025 names the president"
+],
+"ev": [
+[
+"Company History page: Scott Campbell founded it in 1998 and is President",
+"https://www.centralpennplumbing.com/history",
+"company_site"
+],
+[
+"Company site lists residential and commercial HVAC and plumbing, no parent company",
+"https://www.centralpennplumbing.com/",
+"company_site"
+],
+[
+"Bryant dealer at 631 Gettysburg Pike, Mechanicsburg",
+"https://www.bryant.com/en/us/dealers/pa/mechanicsburg/631-gettysburg-pike-bry-141048-loc",
+"other"
+],
+[
+"Business profile: corporation in Mechanicsburg, about 51 employees",
+"https://naicslist.com/company-profile/central-penn-plumbing-service-inc-mechanicsburg-pa-17055",
+"search_snippet"
+],
+[
+"Searches for the company name with acquired, joins and partners with found no deal; the local deals involve HB McClure and Sila",
+"https://hvacinsider.com/hb-mcclure-company-announces-recent-mergers/",
+"search_snippet"
+]
+],
+"ver": [
+"confirmed",
+"The History page (2026) says Scott Campbell founded the company in 1998 and quotes him as President; it names no parent, sale or private equity. Deal searches found no transaction; the Mechanicsburg-area hits were HB McClure buying BBEC and Sila buying other central PA firms.",
+"https://www.centralpennplumbing.com/history"
+]
+},
+{
+"cid": "pp-7757",
+"web": "https://saffertotalhome.com/",
+"op": "operating",
+"seg": true,
+"segnote": "Plumbing, steam/hot-water heating and HVAC contractor, NAICS 238220",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.02,
+0.88,
+0.02,
+0.04,
+0.0,
+0.0,
+0.0,
+0.04
+],
+"founded": 1946,
+"years": "About 80 years (since 1946), now in its fourth generation.",
+"staff": "PPP showed 38 jobs.",
+"rev": [
+1071,
+4.8,
+"Aggregator citing Google reviews (search snippet); counts conflict across aggregators"
+],
+"rsig": "The company's own site says ownership is involved day to day; older review snippets mostly positive.",
+"succ": "The fourth generation (Chris Saffer) is in charge.",
+"fit": "Strong residential plumbing, heating and electrical business in Baltimore. A good fit if the family will sell, but it may be buying firms itself.",
+"risks": [
+"Crouse and All Steamed Up brands suggest it buys other firms; check for outside capital",
+"Review counts conflict",
+"52 miles from the Lancaster hub",
+"operates multiple brands (All Steamed Up, Crouse), so it may itself be a small consolidator"
+],
+"ev": [
+[
+"Company About page: fourth-generation, family-owned; John Kaiser founded it in 1946; David Saffer took over in the 1980s; Chris Saffer runs it now",
+"https://saffertotalhome.com/about/",
+"company_site"
+],
+[
+"Site shows two related divisions: All Steamed Up and Crouse Plumbing, Heating & Electrical",
+"http://saffertotalhome.com/",
+"company_site"
+],
+[
+"Careers page is on the company's own domain, not a group ATS",
+"https://saffertotalhome.com/careers/",
+"company_website"
+],
+[
+"HomeAdvisor snippet: fourth-generation family business serving Baltimore since 1946",
+"https://www.homeadvisor.com/rated.safferplumbingheating.156395778.html",
+"search_snippet"
+]
+],
+"ver": [
+"confirmed",
+"The About page says it is a fourth-generation, family-owned company. Chris Saffer leads it, with David Saffer as advisor. All Steamed Up and Crouse Plumbing & Heating are its own divisions, not owners. Careers sit on the company's own domain. The deal search found no sale; the Baltimore-area deals it turned up involve other firms (McArdle & Walsh, Shipley, Boothe's).",
+"https://saffertotalhome.com/about/"
+]
+},
+{
+"cid": "pp-8085",
+"web": "",
+"op": "unclear",
+"seg": false,
+"segnote": "No website or service description found; project listings point to construction subcontracting. Unverified.",
+"wdec": "unknown",
+"dec": "unknown",
+"p": [
+0.2,
+0.1,
+0.05,
+0.05,
+0,
+0.1,
+0.2,
+0.3
+],
+"founded": null,
+"staff": "Directory repeats the PPP figure of 52.",
+"rev": null,
+"rsig": "No review snippets could be tied to the Randolph company.",
+"succ": "none found",
+"fit": "Too little public evidence; needs a call or NJ registry check.",
+"risks": [
+"No website found",
+"Segment unverified",
+"Name collides with other Prestige plumbing firms"
+],
+"ev": [
+[
+"Directory: 1040 State Rte 10 W, Randolph NJ, S corporation, 52 employees",
+"https://naicslist.com/company-profile/prestige-plumbing-inc-randolph-nj-07869",
+"other"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-8344",
+"web": "https://www.ezimmerman.com",
+"op": "yes",
+"seg": true,
+"segnote": "Residential plumbing, heating and cooling, plus electrical, water treatment, duct cleaning and generators.",
+"wdec": "family_next_generation",
+"dec": "family_next_generation",
+"p": [
+0.33,
+0.4,
+0.03,
+0.04,
+0,
+0,
+0,
+0.2
+],
+"founded": 1980,
+"years": "Founded 1980 by Earnie Zimmerman; Carrier lists 46 years in business.",
+"staff": "No company figure; PPP reported 53 jobs; one directory gives 50 to 100.",
+"rev": null,
+"rsig": "No snippet about owner involvement.",
+"succ": "Founder is 46 years in; listings say still family owned. The current leader was not found. Unverified.",
+"fit": "Long-running family residential plumbing and HVAC shop in Mechanicsburg, a Carrier Factory Authorized Dealer. Who runs it today is unverified.",
+"risks": [
+"Current owner unverified (company site returned 403; a magazine profile returned 404)",
+"Several Zimmerman-named firms exist in PA; do not confuse them"
+],
+"ev": [
+[
+"Local magazine snippet: Earnie Zimmerman founded it in 1980, still family owned",
+"https://strollmag.com/locations/winding-hills-pa/articles/-6f6122",
+"press"
+],
+[
+"Chamber listing at 110 East Allen St, Mechanicsburg",
+"https://business.mechanicsburgchamber.org/list/member/zimmerman-plumbing-heating-air-conditioning-438",
+"other"
+],
+[
+"Carrier Factory Authorized Dealer, 46 years in business",
+"https://www.carrier.com/us/en/residential/dealers/pa/mechanicsburg/110-e-allen-st-7260-loc",
+"other"
+],
+[
+"Job posting calls it family owned",
+"https://zimmerman-plumbing-heating-and-air-conditioning-inc.careerplug.com/jobs/2456607",
+"other"
+]
+],
+"ver": [
+"confirmed",
+"Mechanicsburg Chamber listing (fetched) calls it a family owned home services company established in 1980; no parent or acquisition evidence. Founder name and whether the next generation runs it could not be checked; family ownership is supported, the next-generation part is unverified.",
+"https://business.mechanicsburgchamber.org/list/member/zimmerman-plumbing-heating-air-conditioning-438"
+]
 },
 {
 "cid": "pp-9226",
@@ -2863,6 +3158,107 @@ null,
 ]
 ],
 "ver": null
+},
+{
+"cid": "pp-9385",
+"web": "",
+"op": "yes",
+"seg": true,
+"segnote": "Residential plumbing, heating, cooling, drains and bath remodeling; Carrier dealer.",
+"wdec": "pe_backed_or_acquired",
+"dec": "pe_backed_or_acquired",
+"p": [
+0,
+0.04,
+0,
+0.93,
+0,
+0,
+0,
+0.03
+],
+"founded": 1965,
+"years": "Founded 1965 by Edward McLoughlin; his sons ran it before the sale.",
+"staff": "More than 40 employees at the August 2021 acquisition.",
+"rev": [
+720,
+4.8,
+"Third-party directory (search snippet)"
+],
+"rsig": "No owner-involvement snippets.",
+"succ": "Already sold: HomeServe acquired it in August 2021.",
+"fit": "Already owned by a strategic acquirer (HomeServe).",
+"risks": [
+"Acquired by HomeServe in 2021"
+],
+"ev": [
+[
+"HomeServe announced the acquisition of McLoughlin Plumbing, Heating & Cooling on August 3, 2021",
+"https://www.businesswire.com/news/home/20210803005376/en",
+"press"
+],
+[
+"HomeServe media page: McLoughlin is part of HomeServe",
+"https://www.homeserve.com/en-us/media/mcloughlin-plumbing-heating-cooling-part-of-homeserve/",
+"company_site"
+]
+],
+"ver": null
+},
+{
+"cid": "pp-9850",
+"web": "https://www.abaileyplumbing.com/",
+"op": "yes",
+"seg": true,
+"segnote": "Residential plumbing, drain, sewer and HVAC service, plus some light commercial.",
+"wdec": "founder_led",
+"dec": "founder_led",
+"p": [
+0.45,
+0.3,
+0.02,
+0.06,
+0.01,
+0.01,
+0.01,
+0.14
+],
+"founded": 1989,
+"years": "About 37 years (since 1989).",
+"staff": "PPP lists 29 jobs; the fleet was 13 trucks in 2009.",
+"rev": [
+4000,
+4.8,
+"Company website (Google review summary, approximate)"
+],
+"rsig": "The company site cites nearly 4,000 Google reviews at 4.8; no snippet mentions the owner doing jobs.",
+"succ": "Owner about 37 years in; no next generation named; no retirement or sale listing found.",
+"fit": "Strong residential plumbing and HVAC brand 16 miles from Toms River with very high review volume; family-run with the Bailey couple at the top.",
+"risks": [
+"Whether Christopher Bailey founded it or is second generation is unverified"
+],
+"ev": [
+[
+"Company site: family owned and operated for over 35 years; residential plumbing, drain, sewer, water heater and HVAC; no parent named",
+"https://www.abaileyplumbing.com/",
+"company_site"
+],
+[
+"BBB snippet lists Christopher Bailey as President and Joanne Bailey as VP, Wall Township",
+"https://prod.bbb.org/us/nj/wall-township/profile/plumber/bailey-plumbing-heating-cooling-0221-1000948",
+"other"
+],
+[
+"2009 trade article calls Christopher Bailey the family owner; 13 trucks",
+"https://www.pmmag.com/articles/92869-pm-truck-of-the-month-a-bailey-plumbing-heating-freehold-nj",
+"press"
+]
+],
+"ver": [
+"confirmed",
+"Current site says 'Family Owned & Operated for Over 35 Years' and names no parent, partner brand or acquisition. The 2009 trade article names Christopher Bailey as the family owner. Whether he founded the firm is not stated, so founder-led and next-generation family are both possible.",
+"https://www.abaileyplumbing.com/"
+]
 }
 ]
 }

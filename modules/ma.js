@@ -1,11 +1,11 @@
-import * as Copy from './copy.js?v=20261116230102';
+import * as Copy from './copy.js?v=20261117023416';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition engine (M&A) — cross-portfolio buy-and-build intelligence.
    Datasets: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets, Competitor filings,
              Public comparables, Private-equity landscape, BSP firm profile; sales/* (property transfers, lazy, theses view).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, fitTierOf } from '../assets/components.js?v=20261116230102';
-import * as DL from './deal-lib.js?v=20261116230102';
+import { renderTargets, fitTierOf } from '../assets/components.js?v=20261117023416';
+import * as DL from './deal-lib.js?v=20261117023416';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 const PLAT = {
@@ -112,7 +112,7 @@ const pctOf = (n, d) => d ? Math.round((n / d) * 100) : 0;
 const titleCase = s => String(s || '').replace(/_/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
 const ownerClass = s => { const x = String(s || '').toLowerCase().replace(/no sponsor disclosed|no pe affiliation/g, ''); if (!x.trim()) return 'Unverified'; if (/subsidiary|part of|venture-backed|pe-backed|private equity|backed by|\bpe\b/.test(x)) return 'Sponsor / corporate'; if (/founder|family/.test(x)) return 'Founder / family'; if (/unknown|unverified|not disclosed|not verified/.test(x)) return 'Unverified'; if (/esop|employee-owned/.test(x)) return 'ESOP'; if (/franchisee/.test(x)) return 'Franchisee'; return 'Private independent'; };
 const OWNER_COLOR = { 'Founder / family': 'var(--sys-good)', 'Private independent': 'var(--sys-info)', Franchisee: 'var(--sys-violet)', ESOP: 'var(--sys-warn)', Unverified: 'var(--sys-mute-2)', 'Sponsor / corporate': 'var(--sys-bad)' };
-const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261116230102'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261117023416'; document.head.appendChild(l); } };
 const shortList = a => { const v = (Array.isArray(a) ? a : [a]).filter(Boolean).map(x => { const y = String(x).replace(/\s*\(.*?\)\s*/g, ' ').replace(/_/g, ' ').trim(); return y.length > 26 ? y.slice(0, 25).trim() + '…' : y; }); return v.length > 2 ? [...v.slice(0, 2), `+${v.length - 2}`] : v; };
 const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
 const pctTxt = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;
@@ -238,6 +238,7 @@ const mult1 = v => v == null || !isFinite(v) ? 'n/m' : `${Number(v).toFixed(1)}x
 const noRetrieved = s => String(s || '').replace(/\s*\((?:retrieved|as of)[^)]*\)/i, '').replace(/\s*(?:modell?ed\s+)?estimate\b/i, '').trim();
 /** Estimates for one screened target, or null when the acquisition model's assumptions are not loaded. */
 function estimateFor(b, t) {
+  if (t && t._soldPerSba) return null;   // already sold per the SBA loan screen: no model price or deal link
   if (!b || !t) return null;
   const p = t._p, dm = b.dm, sec = dmSector(b, p), par = dmParent(b, p);
   if (!dm || !sec || !par || t._src === 'sba') return null;   // loan-screen companies carry no revenue and are not in the model
