@@ -2,13 +2,15 @@
  "meta": {
   "dataset": "All-business directory (SBA loan segments)",
   "generated": "2026-11-17",
-  "built_at": "2026-11-17T19:40:02+00:00",
+  "built_at": "2026-11-17T23:17:44+00:00",
   "script": "scripts/build_business_directory.py",
   "notes": [
-   "Jobs come from loan records 2020-2026: PPP JobsReported is what the borrower reported in 2020-21; SBA JobsSupported is what the lender reported on a 7(a) or 504 loan.",
-   "Revenue is modelled (est.) from Census benchmarks and the loan data unless revenue_basis starts with \"researched\".",
-   "Ownership is unknown unless researched (ownership_basis).",
-   "Specialties for a business that was not researched are the plain NAICS trade label only."
+   "Jobs come from the latest loan record: PPP JobsReported is what the borrower reported in 2020-21; SBA JobsSupported is what the lender reported on a 7(a) or 504 loan, approved as far back as 1991 (jobs_latest_source gives the date).",
+   "Revenue is always modelled (est.) from Census benchmarks and the loan data. \"researched model\" means the SBA screen ran the same model with checked inputs; only a revenue_basis that says \"stated\" is a figure a source reported.",
+   "Ownership is unknown unless ownership_basis gives a source: researched (SBA screen), hand-built list (checked against company sites and public sources), company website (read by AI, used when the site was read and the call has a probability of 0.5 or more; \"re-checked\" means a second model tried to refute a founder or family call and kept it, \"corrected on re-check\" that it changed the call, which then has no probability), public news of a sale, or SBA loan record (ESOP business type).",
+   "Specialties for a business that was not researched are the plain NAICS trade label only.",
+   "Websites (10,000 businesses) were matched by name and place to Overture Maps Foundation, Places theme release 2026-10-21.0 (CDLA-Permissive-2.0; some rows also Apache-2.0 or CC0-1.0). Sources include Meta, Microsoft, Foursquare and OpenStreetMap contributors as listed per row.",
+   "Website research (2026-11-17): 10,000 businesses had their own sites read. Claude Haiku 5.5 read the pages each site served (up to 50) and made the ownership call, with the quote it rests on. Claude Sonnet 5.5 re-checked 1,080 calls, trying to refute each, and changed 187; of the 1,041 final founder-run and family-owned calls, 900 were re-checked."
   ],
   "sources": [
    {
@@ -28,6 +30,13 @@
     "url": "https://www.census.gov/data/tables/2022/econ/susb/2022-susb-annual.html",
     "publisher": "U.S. Census Bureau",
     "date": "2026-11-17"
+   },
+   {
+    "title": "Overture Maps Places (business websites)",
+    "url": "https://overturemaps.org/",
+    "publisher": "Overture Maps Foundation",
+    "date": "2026-10-21.0",
+    "attribution": "Overture Maps Foundation, Places theme release 2026-10-21.0 (CDLA-Permissive-2.0; some rows also Apache-2.0 or CC0-1.0). Sources include Meta, Microsoft, Foursquare and OpenStreetMap contributors as listed per row."
    }
   ]
  },
@@ -44,40 +53,40 @@
   "pp": {
    "file": "pp.json",
    "rows": 20794,
-   "bytes": 5880928
+   "bytes": 6760127
   },
   "cet": {
    "file": "cet.json",
    "rows": 5850,
-   "bytes": 1674657
+   "bytes": 1903822
   },
   "fl": {
    "file": "fl.json",
    "rows": 64571,
-   "bytes": 21597493
+   "bytes": 24111873
   },
   "ts": {
    "file": "ts.json",
    "rows": 20976,
-   "bytes": 6187017
+   "bytes": 7064699
   },
   "bpi": {
    "file": "bpi.json",
    "rows": 12910,
-   "bytes": 3741797
+   "bytes": 4263722
   },
   "fh": {
    "file": "fh.json",
    "rows": 20236,
-   "bytes": 5834094
+   "bytes": 6563233
   }
  },
  "sqlite": {
   "file": "businesses.sqlite.gz",
-  "bytes": 23936159,
-  "raw_bytes": 122068992,
-  "sha256": "5f3d9b73be58186a59e52c759955963d9dd843eaddcbaf8587b2541839753701",
-  "built_at": "2026-11-17T19:40:02+00:00"
+  "bytes": 25866452,
+  "raw_bytes": 129142784,
+  "sha256": "1e83e70954fedcd6c6a79a69062762e20d15e20be2c2d6f152232b27895e4d0b",
+  "built_at": "2026-11-17T23:17:44+00:00"
  },
  "columns": [
   "id",
@@ -135,7 +144,14 @@
   "revenue_methods",
   "revenue_benchmark_naics",
   "source",
-  "data_source"
+  "data_source",
+  "website",
+  "web_coverage",
+  "web_ownership",
+  "web_confidence",
+  "founded",
+  "fit_score",
+  "deal_status"
  ],
  "revenue_coverage": {
   "model": 138450,
@@ -149,5 +165,56 @@
   "no_revenue": 6726,
   "no_latlon": 15,
   "revenue_zero_method_retry": 1
+ },
+ "researched": {
+  "file": "researched.json",
+  "rows": 10000,
+  "bytes": 2537326,
+  "not_in_directory": 0,
+  "columns": [
+   "id",
+   "segment",
+   "name",
+   "dba",
+   "city",
+   "state",
+   "zip",
+   "trade",
+   "jobs_latest",
+   "revenue_est_usd",
+   "revenue_low_usd",
+   "revenue_high_usd",
+   "dist_hub_mi",
+   "nearest_hub",
+   "fit_score",
+   "segment_rank",
+   "website",
+   "web_coverage",
+   "ownership",
+   "ownership_basis",
+   "web_ownership",
+   "web_confidence",
+   "web_cue",
+   "web_note",
+   "founded",
+   "web_rechecked",
+   "deal_status",
+   "deal_buyer",
+   "deal_date",
+   "deal_url",
+   "on_sba_screen"
+  ],
+  "ownership_basis": {
+   "company website read, no clear call": 3469,
+   "company website, read by AI": 3420,
+   "company website, read by AI and re-checked": 793,
+   "company website could not be read": 2267,
+   "hand-built list": 27,
+   "company website, read by AI and corrected on re-check": 16,
+   "SBA loan record (ESOP business type)": 4,
+   "hand-built list, ownership not disclosed": 3,
+   "sold to or backed by Herschend Family Entertainment Corp. (public news, 2011-03-03)": 1
+  },
+  "fts_includes_website_quote": true
  }
 }

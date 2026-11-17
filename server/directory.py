@@ -97,6 +97,17 @@ TRADE_FILLER = STOP | {'supply', 'supplies', 'supplier', 'suppliers', 'distribut
                        'industry', 'sector', 'commercial', 'residential'}
 TRADE_EXAMPLES = '"plumbing", "electrical", "IT", "public relations", "lab supply" or "apparel"'
 EMAIL = re.compile(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}')
+# ownership filter words -> (ownership codes, words for the answer). The ownership column holds the merged call (SBA screen,
+# hand-built list, company website read by AI, loan record), so the filter works on databases built before the website research.
+OWNERSHIP_FILTERS = {
+    'founder': (('founder',), 'founder-run'), 'family': (('family',), 'family-owned'),
+    'founder_family': (('founder', 'family'), 'founder-run or family-owned'), 'pe': (('pe',), 'PE-backed or acquired'),
+    'employee': (('esop', 'private_independent'), 'employee- or partner-owned'), 'franchise': (('franchisee',), 'franchise unit'),
+    'unknown': (('unknown', 'unverified'), 'unknown'),
+}
+OWNERSHIP_EXAMPLES = '"founder-run", "family-owned", "founder-or-family", "PE-backed", "employee-owned", "franchise" or "unknown"'
+SOURCE_SITE = {'title': 'Overture Maps Places (business websites)',
+               'url': 'https://overturemaps.org/', 'publisher': 'Overture Maps Foundation', 'date': '2026-10-21', 'kind': 'data'}
 
 
 def _env(name, default=''):
@@ -118,7 +129,8 @@ def enabled():
 
 _lock = threading.Lock()      # one loader at a time
 _qlock = threading.Lock()     # one query at a time on the shared connection
-_state = {'con': None, 'meta': None, 'error': None, 'error_at': 0.0, 'timings': None, 'source': None, 'path': None, 'counties': None}
+_state = {'con': None, 'meta': None, 'error': None, 'error_at': 0.0, 'timings': None, 'source': None, 'path': None, 'counties': None,
+          'cols': None}
 
 
 def _today():
@@ -353,12 +365,24 @@ def reset():
         if _state['con'] is not None:
             with _ignore():
                 _state['con'].close()
-        _state.update(con=None, meta=None, error=None, error_at=0.0, timings=None, source=None, path=None, counties=None)
+        _state.update(con=None, meta=None, error=None, error_at=0.0, timings=None, source=None, path=None, counties=None, cols=None)
 
 
 def _q(sql, params=()):
     with _qlock:
         return _state['con'].execute(sql, params).fetchall()
+
+
+def _cols():
+    """The businesses table's columns. A database built before the website research has no website or web_* columns."""
+    if _state.get('cols') is None:
+        _state['cols'] = frozenset(r['name'] for r in _q('PRAGMA table_info(businesses)'))
+    return _state['cols']
+
+
+def _g(r, k):
+    """A row's value, or None when this database has no such column."""
+    return r[k] if k in r.keys() else None
 
 
 # ---------------------------------------------------------------- arguments
@@ -470,6 +494,34 @@ def _trade(v):
     return [], [], words, notes
 
 
+def _ownership(v):
+    """Ownership filter words -> (keys of OWNERSHIP_FILTERS, words not understood). "founder-run, family-owned", "founder or
+    family", "PE backed", "ESOP" and "franchisee" are all read."""
+    keys, bad = [], []
+    for x in _list(v):
+        s = re.sub(r'\s+', ' ', re.sub(r'[^a-z]+', ' ', str(x).lower())).strip()
+        if ('founder' in s or 'owner run' in s) and 'family' in s:
+            k = 'founder_family'
+        elif 'founder' in s or 'owner operated' in s or 'owner run' in s:
+            k = 'founder'
+        elif 'family' in s:
+            k = 'family'
+        elif re.search(r'\b(pe|private equity|backed|sponsor|acquired|sold)\b', s):
+            k = 'pe'
+        elif re.search(r'\b(employee|esop|partner|partners)\b', s):
+            k = 'employee'
+        elif 'franchis' in s:
+            k = 'franchise'
+        elif re.search(r'\b(unknown|not known|unclear|unverified)\b', s):
+            k = 'unknown'
+        else:
+            bad.append(_echo(x))
+            continue
+        if k not in keys:
+            keys.append(k)
+    return keys, bad
+
+
 def county_key(v):
     """A county name without case, spaces or punctuation, Saint/Sainte read as St/Ste: "Prince George's" and "Prince Georges",
     "St. Louis" and "Saint Louis", "DeKalb" and "De Kalb" agree."""
@@ -551,7 +603,8 @@ def _where(a, today):
         said.append(f"trade {' '.join(hit)} (NAICS {', '.join(codes)})")
     for t in tw:   # no known trade word: whole-word prefix match on the trade label, or on researched specialties
         w.append("(rid IN (SELECT rowid FROM biz_fts WHERE biz_fts MATCH ?) OR "
-                 "(specialties_basis = 'researched' AND (' ' || lower(replace(replace(specialties, ';', ' '), ',', ' '))) LIKE ?))")
+                 "(specialties_basis IN ('researched', 'company website, read by AI') AND "
+                 "(' ' || lower(replace(replace(specialties, ';', ' '), ',', ' '))) LIKE ?))")
         p += [f'trade : "{t}"*', f'% {t}%']
     if tw:
         said.append('trade ' + ' '.join(tw))
@@ -598,6 +651,20 @@ def _where(a, today):
         w.append('(change_of_ownership_date IS NULL OR change_of_ownership_date < ?)')
         p.append(cut)
         said.append(f'no SBA-financed change of ownership since {words_date(cut)}')
+    okeys, obad = _ownership(a.get('ownership'))
+    for x in obad:
+        notes.append(f'Ownership "{x}" was not recognised and was ignored. Use {OWNERSHIP_EXAMPLES}.')
+    if okeys:
+        codes = [c for k in okeys for c in OWNERSHIP_FILTERS[k][0]]
+        cond = f"ownership IN ({','.join('?' * len(codes))})"
+        if 'unknown' in okeys:
+            cond = f'(ownership IS NULL OR {cond})'
+        w.append(cond)
+        p += codes
+        said.append('ownership ' + ' or '.join(OWNERSHIP_FILTERS[k][1] for k in okeys))
+        if 'website' not in _cols():
+            notes.append('This copy of the directory was built before the website research, so ownership is known only for '
+                         'businesses on the SBA screen or a hand-built list.')
     if a.get('exclude_researched') in (True, 'true', 'yes', 1):
         w.append('on_sba_screen = 0')
         said.append('not on the SBA screen')
@@ -650,7 +717,7 @@ def _jobs_text(r):
     return f'jobs {j} (PPP, 2020-21, borrower-reported)'
 
 
-OWN_WORDS = {'founder': 'founder-owned', 'family': 'family-owned', 'pe': 'PE-backed or acquired', 'private_independent': 'independent (employee- or partner-owned)',
+OWN_WORDS = {'founder': 'founder-run', 'family': 'family-owned', 'pe': 'PE-backed or acquired', 'private_independent': 'independent (employee- or partner-owned)',
              'franchisee': 'franchise unit', 'closed': 'closed or inactive', 'not_in_segment': 'outside the segment', 'unverified': 'not confirmed',
              'esop': 'employee-owned (ESOP)'}
 
@@ -675,6 +742,60 @@ def _revenue_kind(basis):
     if b.startswith('researched'):
         return 'modelled, inputs checked on the SBA screen'   # the screen's figures come from the same Census model
     return 'modelled'
+
+
+DEAL_WORDS = {'no_deal_found': 'no sale or investment found in public news',
+              'unclear': 'a public news search found no sale, but no dated source confirms the current owner',
+              'still_independent': 'public news shows no sale; still independent'}
+
+
+# A website cue that is the reader's own note (site down, redirect, record or roll-up match), not words from the site. The
+# directory build keeps these out of web_cue; this guards databases built before it did.
+CUE_NOTE = re.compile(
+    r"^(?:site|website|title|cues?|no (?:site|page|text|content|owner|ownership|business|company|founder|description|statement|"
+    r"clear)|only (?:a|the|one|reviews?|title|footer)|home ?page|page (?:is|reads|shows|title|text|content)|the (?:site|page|"
+    r"home ?page|record)|this (?:site|page)|record|roll-?up|unresolved|dead|blocked|server|connection|robots|https?|dns|bot|redirect|"
+    r"parked|placeholder|error|crawl|covered|domain)\b|\b(?:pre-label|rollup_names|bot_check|customer review|redirects? to)\b", re.I)
+
+
+def _quote(v, n=160):
+    s = re.sub(r'\s+', ' ', _no_email(str(v or ''))).strip().replace('"', "'")
+    s = re.sub(r'\b[a-z]+(?:_[a-z]+)+\b', lambda m: m.group().replace('_', ' '), s)   # no internal field names
+    return s if len(s) <= n else s[:n - 1].rsplit(' ', 1)[0] + '…'
+
+
+def _web_bits(r):
+    """Website, founding year, the website quote and a deal result, for databases that have them."""
+    bits = []
+    site = _g(r, 'website')
+    if site:
+        cov = _g(r, 'web_coverage')
+        bits.append(f'website {_no_email(site)}' + ('' if cov in (None, 'covered') else ' (could not be read)'))
+    if _g(r, 'founded'):
+        bits.append(f"founded {_g(r, 'founded')} (its website)")
+    cue = _g(r, 'web_cue') if _g(r, 'web_coverage') == 'covered' else None
+    if cue and not CUE_NOTE.search(cue):
+        bits.append(f'its website says: "{_quote(cue)}"')
+    if _g(r, 'web_note') and _g(r, 'web_coverage') == 'covered':
+        bits.append(f"the AI reader noted (not the site's words): {_quote(_g(r, 'web_note'))}")
+    if _g(r, 'deal_status') in DEAL_WORDS:
+        bits.append(DEAL_WORDS[_g(r, 'deal_status')])
+    if _g(r, 'deal_status') == 'sold_or_pe_backed' and _g(r, 'deal_url'):
+        bits.append(f"sale news: {_g(r, 'deal_url')}")
+    elif _g(r, 'deal_status') == 'still_independent' and _g(r, 'deal_url'):
+        bits.append(f"ownership news: {_g(r, 'deal_url')}")
+    return bits
+
+
+def _ownership_text(r):
+    own = r['ownership'] or 'unknown'
+    b = r['ownership_basis'] or ''
+    if own in ('unknown', 'unverified') and not b.startswith('researched'):
+        return f"ownership unknown ({b or 'not researched'})"
+    t = f"ownership {OWN_WORDS.get(own, own)} ({_ownership_source(r)}"
+    if b.startswith('company website') and _g(r, 'web_confidence') is not None:
+        t += f", {round(_g(r, 'web_confidence') * 100)}% likely"
+    return t + ')'
 
 
 def _ownership_source(r):
@@ -710,10 +831,12 @@ def _row_line(i, r):
             bits.append(f"revenue est. {money(r['revenue_est_usd'])}{rng}, {kind}, {r['revenue_confidence'] or 'unrated'} confidence")
     else:
         bits.append('revenue: no estimate')
-    own = r['ownership'] or 'unknown'
-    bits.append(f"ownership {OWN_WORDS.get(own, own)} ({_ownership_source(r)})" if own != 'unknown' else 'ownership unknown (not researched)')
+    bits.append(_ownership_text(r))
     if r['specialties_basis'] == 'researched' and r['specialties']:
         bits.append('specialties: ' + r['specialties'])
+    elif r['specialties_basis'] == 'company website, read by AI' and r['specialties']:
+        bits.append('specialties (its website): ' + r['specialties'])
+    bits += _web_bits(r)
     if r['franchise']:
         bits.append(f"franchise: {r['franchise']}")
     tags = []
@@ -736,7 +859,7 @@ def _cap(text, n=MAX_CHARS):
     return cut[:cut.rfind('\n')] + '\n[List trimmed to fit. Narrow the search or lower the limit.]'
 
 
-def _sources(meta, any_revenue):
+def _sources(meta, any_revenue, any_site=False):
     out = [{'title': 'SBA Paycheck Protection Program loan data (FOIA)', 'url': 'https://data.sba.gov/dataset/ppp-foia',
             'publisher': 'U.S. Small Business Administration', 'date': '2024-09-30', 'kind': 'data'},
            {'title': 'SBA 7(a) and 504 loan data (FOIA)', 'url': 'https://data.sba.gov/dataset/7-a-504-foia',
@@ -745,6 +868,8 @@ def _sources(meta, any_revenue):
         out.append({'title': 'Statistics of U.S. Businesses 2022 (Census benchmarks behind the revenue model)',
                     'url': 'https://www.census.gov/data/tables/2022/econ/susb/2022-susb-annual.html', 'publisher': 'U.S. Census Bureau',
                     'date': '', 'kind': 'data'})
+    if any_site:
+        out.append(dict(SOURCE_SITE))
     out.append({'title': 'BSP Desk SBA loan screen (researched add-on candidates)', 'url': SCREEN_URL, 'publisher': 'BSP Desk',
                 'date': (meta.get('generated') or ''), 'kind': 'page'})
     return out
@@ -789,7 +914,10 @@ def run_find_businesses(args):
         'What the fields mean: jobs come from the latest loan record, either PPP (what the borrower reported in 2020-21) or an SBA '
         '7(a) or 504 loan (what the lender reported; these loans go back to 1991, and the row gives the year). It is not a current '
         'headcount. Revenue is always modelled (est.) from Census benchmarks and the loan data, never reported by the company, unless '
-        'the row says stated. Ownership is unknown unless the row says researched or loan record. A change of ownership is known only '
+        'the row says stated. Ownership is unknown unless the row says researched or loan record, or company website: AI read the '
+        "business's own site (re-checked means a second AI pass tried to refute a founder or family call and kept it; corrected on "
+        're-check means it changed the call), so treat it '
+        'as a lead to confirm and quote the website. A change of ownership is known only '
         'when an SBA loan financed it. Miles are straight-line from the ZIP centre to the nearest BSP hub (Punctual Pros and CET only).',
         f"Directory built {words_date((meta.get('built_at') or '')[:10]) or 'recently'} from SBA PPP (as of Sep 30, 2024) and 7(a)/504 "
         f"(as of Sep 30, 2026) loan records.",
@@ -807,7 +935,7 @@ def run_find_businesses(args):
     tail = [f'Researched candidates and their evidence: SBA loan screen ({SCREEN_URL}). Every loan row behind these businesses: '
             f'SBA loan records view ({RECORDS_URL}).', f'(query took {ms:.0f} ms)']
     text = '\n'.join(head) + '\n' + '\n'.join(lines) + '\n' + '\n'.join(tail)
-    return _cap(text), _sources(meta, any(r['revenue_est_usd'] for r in rows))
+    return _cap(text), _sources(meta, any(r['revenue_est_usd'] for r in rows), any(_g(r, 'website') for r in rows))
 
 
 # ---------------------------------------------------------------- tool schema
@@ -820,11 +948,15 @@ def tool_definitions():
             'Search the all-business directory: about 145,000 US businesses found in SBA loan records (PPP 2020-21, SBA 7(a) and 504 loans to '
             'Sep 2026), in six segments, one per BSP company: ' + '; '.join(f'{k} = {SEGMENTS[k]} ({SEG_TRADE[k]})' for k in SEGMENTS) + '. '
             'Filters: segment, keyword or name words, state, county, city, ZIP, NAICS code or trade words, jobs range, modelled revenue '
-            'range, miles from a BSP hub (Punctual Pros and CET only), leaving out businesses with an SBA-financed change of ownership in '
+            'range, miles from a BSP hub (Punctual Pros and CET only), ownership (founder-run, family-owned, founder-or-family, PE-backed, '
+            'employee-owned, franchise or unknown), leaving out businesses with an SBA-financed change of ownership in '
             'the last N years, and leaving out businesses already researched or on a hand-built list. Returns totals by segment and state '
             'and the top rows with jobs and their source, PPP first draw, latest SBA loan, change of ownership, distance, a modelled revenue '
-            'estimate with its range, and ownership (unknown unless researched). Use it to count or list businesses by trade, place, size '
-            'or name, for example "HVAC contractors in Lancaster County with 20 to 60 jobs not sold since 2023" or "IT firms with legal '
+            'estimate with its range, the website, and ownership with its source: the SBA screen, a hand-built list, or for about 10,000 '
+            'businesses the company\'s own website read by AI (with how likely the call is and the sentence on the site it rests on); '
+            'otherwise unknown. Use it to count or list businesses by trade, place, size, ownership '
+            'or name, for example "HVAC contractors in Lancaster County with 20 to 60 jobs not sold since 2023", "family-owned electrical '
+            'contractors in Massachusetts" or "IT firms with legal '
             'in the name". Some borrowers are sole proprietors filed under a person\'s own name, as the SBA released them.'),
         'input_schema': {
             'type': 'object',
@@ -845,6 +977,8 @@ def tool_definitions():
                 'max_miles': {'type': 'number', 'description': 'Optional. Straight-line miles from the nearest BSP hub (Punctual Pros and CET segments only).'},
                 'exclude_sold_within_years': {'type': 'integer', 'minimum': 0, 'maximum': 40, 'description': 'Optional. Leave out businesses with an SBA-financed change of ownership in the last N years.'},
                 'exclude_sold_since': {'type': 'string', 'description': 'Optional. Leave out businesses with an SBA-financed change of ownership on or after this year or date ("2023" or "2023-01-01").'},
+                'ownership': {'type': 'string', 'enum': ['founder-run', 'family-owned', 'founder-or-family', 'PE-backed', 'employee-owned', 'franchise', 'unknown'],
+                              'description': 'Optional. Only businesses with this ownership call (from the SBA screen, a hand-built list or the company website read by AI).'},
                 'exclude_researched': {'type': 'boolean', 'description': 'Leave out businesses already on the researched SBA screen.'},
                 'exclude_hand_built': {'type': 'boolean', 'description': 'Leave out businesses already on a hand-built target list.'},
                 'sort': {'type': 'string', 'enum': list(SORTS), 'description': 'jobs (default, largest first), revenue (largest first), distance (closest first) or name.'},

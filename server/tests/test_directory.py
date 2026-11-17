@@ -161,7 +161,7 @@ def test_name_keyword_state_and_researched_labels(local):
     assert '1 businesses match' in text and 'LEGAL IT PARTNERS LLC' in text and 'NETWORK' not in text
     # the screen's revenue comes from the same Census model: never shown as anything but modelled
     assert 'revenue est. $4.0M ($3.0M to $5.0M), modelled, inputs checked on the SBA screen, high confidence' in text
-    assert 'ownership founder-owned (researched)' in text
+    assert 'ownership founder-run (researched)' in text
     assert 'specialties: managed IT; legal software support' in text and 'on the SBA screen, rank 2' in text
     text, _ = find(query='lab supply', state='new jersey')
     assert '1 businesses match' in text and 'GARDEN STATE LAB SUPPLY CO' in text
@@ -363,6 +363,164 @@ def test_row_labels_name_their_source(extra):
     assert 'revenue $20.0M, stated by a source' in text and 'specialties: it asset disposal; pipettes' in text
     text, _ = find(segment='bpi')
     assert '[email withheld] RESEARCH' in text and '@' not in text   # the data keeps it; the answer does not repeat it
+
+
+# ---------------------------------------------------------------- website research: ownership filter and old databases
+
+WEB_BASIS, WEB_KEPT = 'company website, read by AI', 'company website, read by AI and re-checked'
+WEB = [
+    rec(id='pp-20', segment='pp', name='FOUNDER HVAC LLC', city='Lancaster', county='Lancaster', state='PA', zip='17601', naics='238220', trade=HVAC,
+        jobs_latest=35, ownership='founder', ownership_basis=WEB_KEPT, website='https://founderhvac.example/', web_coverage='covered',
+        web_ownership='Founder-run', web_confidence=0.82, web_rechecked=1, founded=1998, fit_score=91.0,
+        web_cue='Founded in 1998 by our owner, who still runs every job. Write to office@founderhvac.example', specialties='boilers; geothermal wells',
+        specialties_basis=WEB_BASIS),
+    rec(id='pp-21', segment='pp', name='FAMILY PLUMBING INC', city='Lititz', county='Lancaster', state='PA', zip='17543', naics='238220', trade=HVAC,
+        jobs_latest=28, ownership='family', ownership_basis=WEB_KEPT, website='https://familyplumbing.example/', web_coverage='covered',
+        web_ownership='Family-owned', web_confidence=0.9, web_rechecked=1, web_cue='Now in our third generation of family ownership'),
+    rec(id='pp-22', segment='pp', name='ROLLUP MECHANICAL LLC', city='Ephrata', county='Lancaster', state='PA', zip='17522', naics='238220', trade=HVAC,
+        jobs_latest=60, ownership='pe', ownership_basis=WEB_BASIS, website='https://rollup.example/', web_coverage='covered',
+        web_ownership='PE-backed or acquired', web_confidence=0.66, web_rechecked=0, web_cue='Rollup Mechanical is now part of a national group'),
+    rec(id='pp-23', segment='pp', name='QUIET HEATING CO', city='Lancaster', county='Lancaster', state='PA', zip='17602', naics='238220', trade=HVAC,
+        jobs_latest=22, ownership='unknown', ownership_basis='company website could not be read', website='https://quiet.example/',
+        web_coverage='dead', web_ownership='Unknown', web_confidence=0.9, web_cue='Dead (dns); no content reviewed'),
+    rec(id='cet-20', segment='cet', name='WORKER ELECTRIC CO', city='Worcester', county='Worcester', state='MA', zip='01608', naics='238210',
+        trade=ELEC, jobs_latest=40, ownership='esop', ownership_basis='SBA loan record (ESOP business type)'),
+    rec(id='cet-21', segment='cet', name='SPARKS FRANCHISE LLC', city='Worcester', county='Worcester', state='MA', zip='01608', naics='238210',
+        trade=ELEC, jobs_latest=12, ownership='franchisee', ownership_basis=WEB_BASIS, website='https://sparks.example/', web_coverage='covered',
+        web_ownership='Franchise unit', web_confidence=0.7, web_cue='An independently owned and operated franchise'),
+]
+
+
+def _gz(d, recs, cols=None):
+    raw = str(d / 'businesses.sqlite')
+    B.write_sqlite(raw, recs, {'built_at': '2026-11-17T12:00:00+00:00', 'generated': '2026-11-17'}, cols=cols)
+    B.gzip_file(raw, str(d / 'businesses.sqlite.gz'))
+    return str(d / 'businesses.sqlite.gz')
+
+
+@pytest.fixture
+def web(monkeypatch, tmp_path):
+    monkeypatch.setenv('DIRECTORY_PATH', _gz(tmp_path, WEB))
+    monkeypatch.setenv('DIRECTORY_TMP', str(tmp_path / 'tmp'))
+    monkeypatch.delenv('DIRECTORY_URL', raising=False)
+    bizdir.reset()
+    yield bizdir
+    bizdir.reset()
+
+
+def test_ownership_filter_and_website_lines(web):
+    text, sources = find(segment='pp', ownership='founder-run')
+    assert text.startswith('BUSINESS DIRECTORY: 1 businesses match (segment Punctual Pros; ownership founder-run).')
+    line = [l for l in text.splitlines() if l.startswith('1. ')][0]
+    assert 'FOUNDER HVAC LLC' in line and 'ownership founder-run (company website, read by AI and re-checked, 82% likely)' in line
+    assert 'website https://founderhvac.example/' in line and 'founded 1998 (its website)' in line
+    assert 'its website says: "Founded in 1998 by our owner, who still runs every job. Write to [email withheld]"' in line
+    assert 'specialties (its website): boilers; geothermal wells' in line and '@' not in text
+    assert any(s['title'].startswith('Overture Maps Places') for s in sources)
+    text, _ = find(ownership='founder-or-family', sort='name')
+    assert '2 businesses match' in text and 'ownership founder-run or family-owned' in text and 'FAMILY PLUMBING INC' in text
+    for words, n, name in (('family-owned', 1, 'FAMILY PLUMBING'), ('PE-backed', 1, 'ROLLUP'), ('employee-owned', 1, 'WORKER ELECTRIC'),
+                           ('franchise', 1, 'SPARKS'), ('unknown', 1, 'QUIET HEATING'), ('founder-run, family-owned', 2, 'FOUNDER HVAC')):
+        text, _ = find(ownership=words)
+        assert f'{n} businesses match' in text and name in text, words
+    text, _ = find(ownership='unknown')
+    assert 'ownership unknown (company website could not be read)' in text and 'website https://quiet.example/ (could not be read)' in text
+    assert 'its website says' not in text   # a dead site's note is not a quote
+    text, _ = find(ownership='PE-backed')
+    assert 'ownership PE-backed or acquired (company website, read by AI, 66% likely)' in text
+    text, _ = find(ownership='martian')
+    assert '6 businesses match' in text and 'Ownership "martian" was not recognised and was ignored.' in text
+    text, _ = find(query='generation')   # the website quote is in the keyword index where the site was read
+    assert '1 businesses match' in text and 'FAMILY PLUMBING INC' in text
+    text, _ = find(query='dns')
+    assert 'No business matches' in text
+    text, _ = find(trade='geothermal')   # website specialties match trade words like researched ones
+    assert '1 businesses match' in text and 'FOUNDER HVAC LLC' in text
+    d = bizdir.tool_definitions()[0]
+    assert 'founder-or-family' in d['input_schema']['properties']['ownership']['enum'] and 'website read by AI' in d['description']
+
+
+NOTES = [
+    rec(id='pp-30', segment='pp', name='REDIRECT HVAC LLC', city='Lancaster', county='Lancaster', state='PA', zip='17601', naics='238220',
+        trade=HVAC, jobs_latest=30, ownership='pe', ownership_basis=WEB_BASIS, website='https://redirect.example/', web_coverage='covered',
+        web_ownership='PE-backed or acquired', web_confidence=0.7,
+        web_cue='home page https://redirect.example redirects to bigco.example; pre-label pe_backed_or_acquired'),
+    rec(id='pp-31', segment='pp', name='NOTED HVAC LLC', city='Lancaster', county='Lancaster', state='PA', zip='17601', naics='238220',
+        trade=HVAC, jobs_latest=29, ownership='pe', ownership_basis=WEB_BASIS, website='https://noted.example/', web_coverage='covered',
+        web_ownership='PE-backed or acquired', web_confidence=0.6, web_note='Known roll-up match: BigCo (on a list of known roll-ups)'),
+    rec(id='pp-32', segment='pp', name='CHANGED HVAC LLC', city='Lancaster', county='Lancaster', state='PA', zip='17601', naics='238220',
+        trade=HVAC, jobs_latest=28, ownership='family', ownership_basis='company website, read by AI and corrected on re-check',
+        website='https://changed.example/', web_coverage='covered', web_ownership='Family-owned', web_confidence=None, web_rechecked=1,
+        web_cue='Now run by the third generation of geothermalists', deal_status='unclear'),
+]
+
+
+@pytest.fixture
+def notes(monkeypatch, tmp_path):
+    monkeypatch.setenv('DIRECTORY_PATH', _gz(tmp_path, NOTES))
+    monkeypatch.setenv('DIRECTORY_TMP', str(tmp_path / 'tmp'))
+    monkeypatch.delenv('DIRECTORY_URL', raising=False)
+    bizdir.reset()
+    yield bizdir
+    bizdir.reset()
+
+
+def test_reader_notes_are_not_quoted_and_trade_ignores_the_quote(notes):
+    text, _ = find(segment='pp', sort='name', limit=10)
+    line = {l.split(' | ')[0].split('. ', 1)[1]: l for l in text.splitlines() if l[:1].isdigit() and '. ' in l[:4]}
+    assert 'its website says' not in line['REDIRECT HVAC LLC'] and 'pre-label' not in text and '_' not in text.split('Top ')[1]
+    assert "the AI reader noted (not the site's words): Known roll-up match: BigCo" in line['NOTED HVAC LLC']
+    assert 'its website says' not in line['NOTED HVAC LLC']
+    # a call the re-check changed has no probability, and an unclear deal search says what it found
+    assert 'ownership family-owned (company website, read by AI and corrected on re-check)' in line['CHANGED HVAC LLC']
+    assert '% likely' not in line['CHANGED HVAC LLC']
+    assert 'a public news search found no sale, but no dated source confirms the current owner' in line['CHANGED HVAC LLC']
+    text, _ = find(query='geothermalists')   # the quote is in the keyword index ...
+    assert '1 businesses match' in text and 'CHANGED HVAC LLC' in text
+    text, _ = find(trade='geothermalists')   # ... but a trade word never matches quote text
+    assert 'No business matches' in text
+
+
+def test_split_cue_and_email_scrub():
+    assert B.split_cue('home page http://x.com/ redirects to ntiva.com (Ntiva); pre-label pe_backed_or_acquired') == \
+        (None, 'home page http://x.com/ redirects to ntiva.com (Ntiva)')
+    assert B.split_cue('Record roll-up match: EMCOR (rollup_names)') == (None, 'Record roll-up match: EMCOR (on a list of known roll-ups)')
+    assert B.split_cue('Since 1987, we have served Boston; no owner stated.') == ('Since 1987, we have served Boston', None)
+    assert B.split_cue('She became the owner and president in 2019 (owner-operator, not founder)') == \
+        ('She became the owner and president in 2019', None)
+    assert B.split_cue('I HIGHLY recommend this company The owner, Bob, was great') == (None, None)
+    assert B.split_cue('Great family owned feel! (a customer review, not an ownership statement)') == (None, None)
+    assert B.split_cue('Founded in 1998 by John Smith and Mary Jones. Write to office@acme.example') == \
+        ('Founded in 1998 by [name] and [name]. Write to', None)
+    assert B.split_cue('Owner Erik Gitli runs every job') == ('Owner [name] runs every job', None)
+    assert B.split_cue("I'm Allison Kenner, President and Founder of Preferred MedSurg")[0].startswith("I'm [name], President")
+    assert B.split_cue('In March of 2022, Microdesk was acquired by Symetri, an Addnode Group company')[0].endswith('Addnode Group company')
+    assert B.scrub_email('63 Winsor Ave Somebody02@Hotmail Com') == '63 Winsor Ave'
+    assert B.scrub_email('DAVID@EXAMPLEMSP.COM') == '' and B.scrub_email('NET@WORK INC.') == 'NET@WORK INC.'
+
+
+def test_old_database_without_website_columns(monkeypatch, tmp_path):
+    new = {'website', 'web_coverage', 'web_ownership', 'web_confidence', 'web_cue', 'web_note', 'founded', 'web_rechecked', 'fit_score',
+           'deal_status', 'deal_buyer', 'deal_date', 'deal_url'}
+    old_cols = [c for c in B.COLS if c not in new]
+    monkeypatch.setenv('DIRECTORY_PATH', _gz(tmp_path, RECS + EXTRA, cols=old_cols))
+    monkeypatch.setenv('DIRECTORY_TMP', str(tmp_path / 'tmp'))
+    monkeypatch.delenv('DIRECTORY_URL', raising=False)
+    bizdir.reset()
+    try:
+        assert bizdir.ready() is True and 'website' not in bizdir._cols()
+        text, sources = find(limit=100)
+        assert '16 businesses match' in text and 'website' not in text.split('Top ')[1] and 'Traceback' not in text
+        assert not any(s['title'].startswith('Overture') for s in sources)
+        text, _ = find(ownership='founder-or-family')
+        assert '2 businesses match' in text and 'LEGAL IT PARTNERS LLC' in text and 'GRIFFIN ELECTRIC INC' in text
+        assert 'built before the website research' in text
+        text, _ = find(ownership='employee-owned')
+        assert '1 businesses match' in text and 'RIVER ELECTRIC CO' in text
+        text, _ = find(trade='disposal')
+        assert '1 businesses match' in text and 'STATED LAB CO' in text
+    finally:
+        bizdir.reset()
 
 
 # ---------------------------------------------------------------- concurrent first calls

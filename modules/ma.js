@@ -21,7 +21,7 @@ PLAT.fh = { key: 'fh', label: 'Fair Harbor', long: 'Fair Harbor', color: 'var(--
 const SKEYS = ['cet', 'pp', 'fl', 'ts', 'bpi', 'fh'];
 /* SBA loan screen (data/research/ma_ppp_screen.json): plain words for its typed ownership decision and the re-check. */
 const SRC_LABEL = 'SBA loan screen';
-const DEC_TXT = { founder_led: 'Founder-led', family_next_generation: 'Family, next generation', employee_or_partner_owned: 'Employee or partner-owned', pe_backed_or_acquired: 'Sold to a sponsor or roll-up', franchise_unit: 'Franchise unit', closed_or_inactive: 'Closed', not_in_segment: 'Out of segment', unknown: 'Unknown' };
+const DEC_TXT = { founder_led: 'Founder-run', family_next_generation: 'Family-owned', employee_or_partner_owned: 'Employee- or partner-owned', pe_backed_or_acquired: 'PE-backed or sold', franchise_unit: 'Franchise unit', closed_or_inactive: 'Closed', not_in_segment: 'Outside the segment', unknown: 'Unknown' };
 const DEC_COLOR = { founder_led: 'var(--sys-good)', family_next_generation: 'var(--sys-good)', employee_or_partner_owned: 'var(--sys-info)', pe_backed_or_acquired: 'var(--sys-bad)', franchise_unit: 'var(--sys-violet)', closed_or_inactive: 'var(--sys-bad)', not_in_segment: 'var(--sys-mute-2)', unknown: 'var(--sys-mute-2)' };
 const VER_TXT = { confirmed: 'Confirmed by a second check', confirmed_site_only: 'Confirmed from the company site only (no deal search)', unverifiable: 'Second check could not confirm', corrected: 'Corrected on review', partial: 'Record arrived in part; second check missing', 'not run': 'No second check (only founder and family calls get one)', 'not received': 'Ownership not yet checked' };
 const VER_COLOR = { confirmed: 'var(--sys-good)', confirmed_site_only: 'var(--sys-warn)', unverifiable: 'var(--sys-warn)', corrected: 'var(--sys-bad)', partial: 'var(--sys-warn)', 'not run': 'var(--sys-mute-2)', 'not received': 'var(--sys-mute-2)' };
@@ -1343,7 +1343,7 @@ function openWS(ctx, w) {
 /* ═══ View: SBA loan screen ════════════════════════════════════════════════
    Add-on candidates for all six companies found in SBA loan records (PPP, 7(a), 504), with the ownership check on top:
    counts by company and ownership, the founder and family share, and each company's top targets with their evidence. */
-const OWN_COLS = [['founder_led', 'Founder-led'], ['family_next_generation', 'Family'], ['employee_or_partner_owned', 'Employee or partner'], ['pe_backed_or_acquired', 'Sold to sponsor or roll-up'], ['franchise_unit', 'Franchise'], ['unknown', 'Unknown'], [null, 'Not yet checked']];
+const OWN_COLS = [['founder_led', 'Founder-run'], ['family_next_generation', 'Family-owned'], ['employee_or_partner_owned', 'Employee- or partner-owned'], ['pe_backed_or_acquired', 'PE-backed or sold'], ['franchise_unit', 'Franchise'], ['unknown', 'Unknown'], [null, 'Not yet checked']];
 async function screenView(ctx) {
   const { el, ui, fmt, esc } = ctx; injectCss();
   const b = await loadBundle(ctx.data);
@@ -1373,7 +1373,7 @@ async function screenView(ctx) {
     { label: 'Confirmed by a second check', value: fmt.num(conf.length), sub: `deal search run, no sale or investor found${siteOnly.length ? ` · ${fmt.num(siteOnly.length)} more from the company site only` : ''}`, color: 'var(--sys-good)' },
     { label: 'Tier 1', value: fmt.num(t1.length), sub: 'fit 80 or more; hand-built fit for companies on a hand-built list', color: 'var(--sys-info)' },
     { label: 'Already sold', value: fmt.num(sold.length), sub: 'to a sponsor, roll-up or strategic buyer', color: 'var(--sys-bad)' },
-    { label: 'Already on a hand-built list', value: fmt.num(onList.length), sub: `${fmt.num(out.length)} more dropped as out of segment`, color: 'var(--sys-mute)' },
+    { label: 'Already on a hand-built list', value: fmt.num(onList.length), sub: `${fmt.num(out.length)} more dropped as outside the segment`, color: 'var(--sys-mute)' },
   ]) +
   `<div class="grid grid-2 mt-12">
     ${ui.panel({ title: 'How the screen works', sub: 'From loan records to a checked shortlist', body: `<ol class="acts">${[
@@ -1385,7 +1385,7 @@ async function screenView(ctx) {
     ].map(x => `<li><span>${esc(x)}</span></li>`).join('')}</ol>` })}
     ${ui.panel({ title: 'How the fit score is built', sub: 'Six parts, out of 100. Tiers use the engine’s thresholds.', body: `<div class="sys-table-wrap"><table class="sys-table mini"><thead><tr><th>Part</th><th>How it scores</th></tr></thead><tbody>${['segment_fit', 'size', 'ownership', 'proximity', 'verification', 'evidence', 'scaling', 'cap', 'tiers'].filter(k => M.fit_formula?.[k]).map(k => `<tr><td class="nm">${esc({ segment_fit: 'Segment fit', size: 'Size', ownership: 'Ownership', proximity: 'Proximity', verification: 'Second check', evidence: 'Evidence', scaling: 'Scaling', cap: 'Cap', tiers: 'Tiers' }[k])}</td><td class="wrap small">${esc(M.fit_formula[k])}</td></tr>`).join('')}</tbody></table></div>` })}
   </div>
-  <div class="mt-12">${ui.panel({ title: 'Who owns them', sub: 'Companies on the screen by BSP company and ownership call. Out of segment companies are counted but kept off the screen.', body: `<div class="sys-table-wrap"><table class="sys-table mini ma-own"><thead><tr><th>Company</th>${OWN_COLS.map(([, l]) => `<th class="sys-n">${esc(l)}</th>`).join('')}<th class="sys-n">Out of segment</th><th class="sys-n">On the screen</th><th class="sys-n">Founder or family</th></tr></thead><tbody>${segs.map(p => { const rs = all.filter(x => x.s.segment === p), ck = rs.filter(x => x.s.enrichment !== 'not received'), f = rs.filter(isFF).length;
+  <div class="mt-12">${ui.panel({ title: 'Who owns them', sub: 'Companies on the screen by BSP company and ownership call. Companies outside the segment are counted but kept off the screen.', body: `<div class="sys-table-wrap"><table class="sys-table mini ma-own"><thead><tr><th>Company</th>${OWN_COLS.map(([, l]) => `<th class="sys-n">${esc(l)}</th>`).join('')}<th class="sys-n">Outside the segment</th><th class="sys-n">On the screen</th><th class="sys-n">Founder or family</th></tr></thead><tbody>${segs.map(p => { const rs = all.filter(x => x.s.segment === p), ck = rs.filter(x => x.s.enrichment !== 'not received'), f = rs.filter(isFF).length;
       return `<tr><td class="nm"><span class="sys-dot" style="--co:${PLAT[p].color}" aria-hidden="true"></span> ${esc(PLAT[p].label)}</td>${OWN_COLS.map(([k]) => { const n = rs.filter(x => (k ? x.s.ownership_decision === k : x.s.enrichment === 'not received')).length; return `<td class="sys-n">${n || '<span class="dim">–</span>'}</td>`; }).join('')}<td class="sys-n">${out.filter(o => o.segment === p).length || '<span class="dim">–</span>'}</td><td class="sys-n"><b>${rs.length}</b></td><td class="sys-n">${ck.length ? `${pctOf(f, ck.length)}%` : '<span class="dim">not checked</span>'}</td></tr>`; }).join('')}</tbody></table></div>`,
     foot: `<span class="src">Founder or family share is of the companies whose ownership was checked. Ownership comes from public web evidence; a founder or family call means no sale, parent or investor was found.</span>` })}</div>
   <div class="mt-12">${ui.panel({ title: 'Top targets by company', sub: 'The five best fits on each company’s screen, with the evidence behind the ownership call. Click a company for its loan record and full evidence.', body: `<div class="ma-scr-grid">${segs.map(p => { const rs = all.filter(x => x.s.segment === p).sort((x, y) => (engFit(y) - engFit(x)) || ((x.s.screen_rank || 99) - (y.s.screen_rank || 99))).slice(0, 5);
@@ -1500,6 +1500,136 @@ async function loansView(ctx) {
   apply();
 }
 
+/* ═══ View: Website research ═══════════════════════════════════════════════
+   data/ppp/directory/researched.json: the 10,000 best-fit businesses whose own websites were read by AI for ownership,
+   with the quote each call rests on and a second-model re-check of founder and family calls. Columnar; filtered,
+   sorted and paged in memory (50 rows in the DOM). */
+const RS_OWN = {
+  founder: ['Founder-run', 'var(--sys-good)'], family: ['Family-owned', 'var(--sys-good)'], pe: ['PE-backed or sold', 'var(--sys-bad)'],
+  private_independent: ['Private, independent', 'var(--sys-info)'], esop: ['Employee-owned', 'var(--sys-info)'], franchisee: ['Franchise unit', 'var(--sys-violet)'],
+  closed: ['Closed', 'var(--sys-bad)'], not_in_segment: ['Outside the segment', 'var(--sys-mute-2)'], unknown: ['Unknown', 'var(--sys-mute-2)'],
+};
+const RS_OWN_OPTS = [['ff', 'Founder or family'], ['founder', 'Founder-run'], ['family', 'Family-owned'], ['pe', 'PE-backed or sold'], ['other', 'Other private'], ['not_in_segment', 'Outside the segment'], ['unknown', 'Unknown'], ['unread', 'Site could not be read']];
+const RS_DEAL = { sold_or_pe_backed: 'Sold', still_independent: 'Still independent', unclear: 'No sale found', no_deal_found: 'No deal found' };
+/* What the website leaned to when the call was too weak to use (the site's own words for each call). */
+const RS_LEAN = { 'Founder-run': 'founder-run', 'Family-owned': 'family-owned', 'PE-backed or acquired': 'PE-backed or sold', 'Employee- or partner-owned': 'employee- or partner-owned', 'Franchise unit': 'a franchise unit', 'Closed or inactive': 'closed' };
+const RS_FF = ['Founder-run', 'Family-owned'];
+const RS_EMAIL = /[\w.%+-]+@[\w-]+(?:\.[\w-]+)+/gi;
+/* A cue that reads like the reader's own note (site down, redirect, record or roll-up match) rather than text from the site.
+   The directory build moves these to web_note; this guards an older researched.json. */
+const RS_NOTE = /^(?:site|website|title|cues?|no (?:site|page|text|content|owner|ownership|business|company|founder|description|statement|clear)|only (?:a|the|one|reviews?|title|footer)|home ?page|page (?:is|reads|shows|title|text|content)|the (?:site|page|home ?page|record)|this (?:site|page)|record|roll-?up|unresolved|dead|blocked|server|connection|robots|https?|dns|bot|redirect|parked|placeholder|error|crawl|covered|domain)\b|\b(?:pre-label|rollup_names|bot_check|customer review|redirects? to)\b/i;
+const rsName = (fmt, s) => fmt.title(s).replace(/(\w)'S\b/g, "$1's").replace(/\bINC\b\.?/g, 'Inc.').replace(/\bIt (?=Solutions|Services|Consulting|Group|Support|Systems)/g, 'IT ');
+const rsText = s => String(s || '').replace(RS_EMAIL, '').replace(/\b[a-z]+(?:_[a-z]+)+\b/g, m => m.replace(/_/g, ' ')).replace(/\s{2,}/g, ' ').trim();
+const rsCap = s => String(s || '').replace(/^./, m => m.toUpperCase());
+async function researchView(ctx) {
+  const { el, ui, fmt, esc } = ctx; injectCss();
+  const TITLE = 'Website research';
+  el.innerHTML = `<div class="m-ma">${ui.pageHead({ title: TITLE })}${ui.loading('Loading website research…')}</div>`;
+  let j;
+  try { j = await loanFile('directory/researched'); }
+  catch (e) { el.innerHTML = `<div class="m-ma">${ui.pageHead({ title: TITLE })}${ui.note(`Could not load the website research: ${esc(e.message)}`, 'warn')}</div>`; return; }
+  const { cols, enums, rows: raw, meta = {} } = j;
+  const R = raw.map(r => { const o = {}; cols.forEach((c, i) => { const v = r[i]; o[c] = v != null && enums[c] ? enums[c][v] : v; }); return o; });
+  const isFF = r => r.ownership === 'founder' || r.ownership === 'family';
+  const isPE = r => r.ownership === 'pe' || r.deal_status === 'sold_or_pe_backed';
+  const unread = r => r.web_coverage === 'dead' || r.web_coverage === 'blocked';
+  // an ownership code this view does not know (a list's "Private (ownership not disclosed)") is unknown, not a claim
+  const ownKey = r => RS_OWN[r.ownership] ? r.ownership : 'unknown';
+  const ownLabel = r => r._pe && ownKey(r) !== 'pe' ? RS_OWN.pe[0] : r.ownership === 'private_independent' && r.web_ownership === 'Employee- or partner-owned' ? 'Employee- or partner-owned' : RS_OWN[ownKey(r)][0];
+  const basis = r => String(r.ownership_basis || '');
+  const corrected = r => /corrected on re-check/.test(basis(r));
+  // the re-check judged the website's call: kept when its final call is still founder-run or family-owned
+  const webFF = r => RS_FF.includes(r.web_ownership);
+  const reTxt = r => !r.web_rechecked ? '' : corrected(r) ? 'Changed on re-check' : !webFF(r) ? 'Not kept on re-check'
+    : r._ff ? '✓ Kept on re-check' : leanTxt(r) ? '' : `Re-check kept the site's ${RS_LEAN[r.web_ownership]} call`;
+  R.forEach(r => {
+    r._ff = isFF(r); r._pe = isPE(r);
+    r.Business = rsName(fmt, r.name); r.Ownership = ownLabel(r);
+    r['City and state'] = [fmt.title(r.city || ''), r.state].filter(Boolean).join(', ') || null;
+    r['Jobs (loan record)'] = r.jobs_latest; r['Revenue (est.)'] = r.revenue_est_usd; r['Fit score'] = r.fit_score;
+    r._hay = `${r.name} ${r.dba || ''} ${r.city || ''} ${r.state || ''} ${r.trade || ''} ${r.website || ''}`.toLowerCase();
+  });
+  const nFF = R.filter(r => r._ff).length, nPE = R.filter(r => r._pe).length, nUnread = R.filter(unread).length, nRead = R.filter(r => r.web_coverage === 'covered').length;
+  const nKept = R.filter(r => r._ff && /re-checked$/.test(basis(r))).length;
+  const states = topN(countBy(R, r => r.state), 99).map(([s]) => s).sort();
+  const segs = SKEYS.filter(p => R.some(r => r.segment === p));
+  const asOf = dayWords(meta.research_date || meta.generated);
+  el.innerHTML = `<div class="m-ma">` + ui.pageHead({
+    title: TITLE,
+    sub: `AI read the websites of ${fmt.num(nRead)} of the ${fmt.num(R.length)} best-fit businesses to see who owns them. A second model re-checked the founder and family calls.`,
+    chips: `${fmt.chip(`Read ${asOf}`, 'var(--c-ma)')}${fmt.chip('Revenue is modelled')}`,
+    actions: `<a class="sys-btn sys-btn--secondary btn" href="#/ma/screen">SBA loan screen →</a>`,
+  }) + ui.kpis([
+    { label: 'Researched', value: fmt.num(R.length), sub: `${fmt.num(nRead)} sites read`, color: 'var(--c-ma)' },
+    { label: 'Founder or family', value: fmt.num(nFF), sub: `${fmt.num(nKept)} kept on a second check`, color: 'var(--sys-good)' },
+    { label: 'PE-backed or sold', value: fmt.num(nPE), sub: 'Per the site or public news', color: 'var(--sys-bad)' },
+    { label: 'Could not read', value: fmt.num(nUnread), sub: 'Site down or blocked the reader', color: 'var(--sys-mute-2)' },
+  ]) + `<div class="mt-12"></div>` + ui.panel({
+    title: 'Researched businesses',
+    sub: 'Founder and family calls first, then by fit. Click a row for the quote the call rests on.',
+    body: `<div id="rs-filt"></div><div id="rs-tbl" class="mt-8"></div>`,
+    foot: `${ui.source('Company websites, read by AI; SBA PPP, 7(a) and 504 loan records; websites matched through Overture Maps', null, asOf)}<span class="src">Revenue is modelled from Census benchmarks and the loan data. Jobs are the figure on the latest loan.</span>`,
+  }) + `</div>`;
+  const params = ctx.params || {};
+  const F = ui.filters(el.querySelector('#rs-filt'), [
+    { key: 'seg', label: 'Company', type: 'select', options: segs.map(p => ({ value: p, label: PLAT[p].label })), value: segs.includes(params.seg) ? params.seg : '' },
+    { key: 'own', label: 'Ownership', type: 'select', options: RS_OWN_OPTS.map(([value, label]) => ({ value, label })), value: RS_OWN_OPTS.some(([k]) => k === params.own) ? params.own : '' },
+    { key: 'st', label: 'State', type: 'select', options: states, value: states.includes(params.st) ? params.st : '' },
+    { key: 'q', label: 'Search name, city or trade', type: 'search', value: params.q || '' },
+  ], () => apply());
+  const ownMatch = (r, o) => !o || (o === 'ff' ? r._ff : o === 'pe' ? r._pe : o === 'unread' ? unread(r) : o === 'other' ? ['private_independent', 'esop', 'franchisee', 'closed'].includes(ownKey(r)) && !r._pe : ownKey(r) === o && !r._pe);
+  const confOf = r => r.web_confidence != null && /^company website, read by AI/.test(basis(r)) ? r.web_confidence : null;
+  const confHtml = c => `<span class="ma-conf" style="--cc:${c >= 0.8 ? 'var(--sys-good)' : c >= 0.6 ? 'var(--sys-warn)' : 'var(--sys-mute-2)'}">${Math.round(c * 100)}% sure</span>`;
+  const leanTxt = r => ownKey(r) === 'unknown' && RS_LEAN[r.web_ownership] && r.web_confidence != null ? `Site leaned ${RS_LEAN[r.web_ownership]}, ${Math.round(r.web_confidence * 100)}%${r.web_rechecked && webFF(r) ? ', kept on re-check' : ''}` : '';
+  const ownCell = r => {
+    const c = confOf(r), re = reTxt(r), lean = leanTxt(r);
+    return `${fmt.chip(r.Ownership, r._pe ? RS_OWN.pe[1] : RS_OWN[ownKey(r)][1])}${c != null ? confHtml(c) : ''}${re ? `<div class="dim small">${esc(re)}</div>` : ''}${lean ? `<div class="dim small">${esc(lean)}</div>` : ''}`;
+  };
+  const basisTxt = r => { const b = basis(r); return /^sold to or backed by/.test(b) ? 'Public news of a sale' : rsCap(b.replace(/^company website, read by AI and re-checked$/, 'company website, read by AI and re-checked by a second model')); };
+  const dealTxt = r => r.deal_status ? `${RS_DEAL[r.deal_status] || 'No sale found'}${r.deal_buyer ? ` to ${r.deal_buyer}` : ''}${r.deal_date ? `, ${dayWords(r.deal_date)}` : ''}` : '';
+  const open = r => {
+    const P = PLAT[r.segment], cue = rsText(r.web_cue), note = rsText(r.web_note) || (cue && RS_NOTE.test(cue) ? cue : '');
+    const quote = cue && !RS_NOTE.test(cue) ? cue : '';
+    const site = unread(r) ? `<p class="small text-2">${r.web_coverage === 'dead' ? 'The site was down, parked or a placeholder, so there was nothing to read.' : 'The site blocked the reader, so no page text was read.'} That is not evidence the business closed.</p>`
+      : `${quote ? `<blockquote class="sys-note sys-note--info">“${esc(quote)}”</blockquote>` : '<p class="dim small">No quote recorded.</p>'}${note ? `<p class="small text-2 mt-8"><span class="sys-field-label">Reader's note</span> ${esc(note)}</p>` : ''}`;
+    const c = confOf(r), re = reTxt(r), lean = leanTxt(r);
+    const kv = {
+      'Jobs (loan record)': r.jobs_latest != null ? fmt.num(r.jobs_latest) : '—',
+      'Revenue': r.revenue_est_usd ? `${fmt.money(r.revenue_est_usd)} <span class="sys-est">est.</span>${r.revenue_low_usd && r.revenue_high_usd ? ` <span class="dim small">(${fmt.money(r.revenue_low_usd)}–${fmt.money(r.revenue_high_usd)} <span class="sys-est">est.</span>)</span>` : ''}` : '—',
+      'Distance to hub': r.nearest_hub && r.dist_hub_mi != null ? `${fmt.num(r.dist_hub_mi, 1)} mi from ${esc(r.nearest_hub)}` : '—',
+      'Founded': r.founded ? `${esc(r.founded)} <span class="dim small">per the site</span>` : '—',
+      'Fit score': r.fit_score != null ? `${fmt.score(r.fit_score)} <span class="dim small">0 to 100, used to pick the ${fmt.num(R.length)}</span>` : '—',
+    };
+    ctx.inspector.open({
+      title: esc(r.Business), color: P ? P.color : 'var(--c-ma)',
+      sub: [rsCap(r.trade), r['City and state'], P && P.label, r.dba ? `trades as ${rsName(fmt, r.dba)}` : ''].filter(Boolean).map(esc).join(' · '),
+      sections: [
+        { label: 'Ownership', html: `<div class="m-ma-insp"><div class="sys-chips">${fmt.chip(r.Ownership, r._pe ? RS_OWN.pe[1] : RS_OWN[ownKey(r)][1])}${c != null ? confHtml(c) : ''}</div><div class="small text-2 mt-8">${esc(unread(r) && !r._pe ? 'Company website could not be read' : basisTxt(r))}${re && !/re-check/.test(basis(r)) ? `. ${esc(re)}` : ''}${lean ? `. ${esc(lean)}` : ''}</div></div>` },
+        { label: 'On the website', html: `${site}${r.website ? `<div class="small mt-8">${fmt.link(r.website, fmt.host(r.website) || 'Website')}</div>` : ''}` },
+        { label: 'Sale news', html: r.deal_status ? `<div class="small text-2">${r.deal_url ? fmt.link(r.deal_url, dealTxt(r)) : esc(dealTxt(r))}</div>` : '<div class="dim small">Not searched</div>' },
+        { label: 'Size and place', html: ui.kv(kv) },
+      ],
+      actions: [r.website ? { label: 'Open website ↗', href: r.website } : null].filter(Boolean),
+    });
+  };
+  const columns = [
+    { key: 'Business', label: 'Business', wrap: true, fmt: (v, r) => { const P = PLAT[r.segment]; return `<b>${esc(v)}</b><div class="dim small">${esc(rsCap(r.trade) || '—')}</div>${P ? `<div class="small">${fmt.chip(P.label, P.color)}</div>` : ''}`; } },
+    { key: 'Ownership', label: 'Ownership', fmt: (v, r) => ownCell(r) },
+    { key: 'City and state', label: 'City and state', fmt: v => v ? esc(v) : '<span class="dim">—</span>' },
+    { key: 'Jobs (loan record)', label: 'Jobs (loan record)', num: true, fmt: v => v != null ? fmt.num(v) : '<span class="dim">—</span>' },
+    { key: 'Revenue (est.)', label: 'Revenue', num: true, fmt: (v, r) => v ? `<span title="${r.revenue_low_usd ? `Range ${esc(fmt.money(r.revenue_low_usd))}–${esc(fmt.money(r.revenue_high_usd))}` : ''}">${fmt.money(v)}</span><span class="sys-est">est.</span>` : '<span class="dim">—</span>' },
+    { key: 'Fit score', label: 'Fit score', num: true, title: () => 'Fit score, 0 to 100, used to pick the 10,000', fmt: v => fmt.score(v) },
+  ];
+  const sorted = v => v.slice().sort((a, c) => (c._ff - a._ff) || ((c.fit_score ?? -1) - (a.fit_score ?? -1)));
+  const tbl = ui.table(el.querySelector('#rs-tbl'), { columns, rows: sorted(R), pageSize: 50, exportName: 'ma_website_research', rowKey: r => r.id, onRow: open });
+  const apply = () => {
+    const { seg, own, st, q } = F.state, qq = String(q || '').trim().toLowerCase();
+    const v = R.filter(r => (!seg || r.segment === seg) && (!st || r.state === st) && ownMatch(r, own) && (!qq || r._hay.includes(qq)));
+    F.setCount(`${fmt.num(v.length)} of ${fmt.num(R.length)}`); tbl.update(sorted(v));
+  };
+  apply();
+}
+
 export default {
   id: 'ma', name: 'Acquisition engine', tag: 'M&A', color: 'var(--c-ma)', group: 'Intelligence',
   tagline: 'Cross-portfolio buy-and-build engine: screened add-ons, the SBA loan screen, company theses, rival companies, valuation benchmarks and white space',
@@ -1509,6 +1639,7 @@ export default {
     { id: 'pipeline', name: 'Pipeline', icon: '▤', render: pipeline },
     { id: 'screen', name: 'SBA loan screen', icon: '⊞', render: screenView },
     { id: 'loans', name: 'SBA loan records', icon: '☰', render: loansView },
+    { id: 'research', name: 'Website research', icon: '⌕', render: researchView },
     { id: 'theses', name: 'Company theses', icon: '◇', render: theses },
     { id: 'rivals', name: 'Rival companies', icon: '⚔', render: rivalsView },
     { id: 'valuation', name: 'Valuation', icon: '$', render: valuation },

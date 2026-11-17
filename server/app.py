@@ -179,7 +179,7 @@ DIRECTORY_RULE = ('13. Business directory (every business in the six SBA loan se
                   'size or name, call find_businesses. With its results always say three things: jobs come from the latest loan record, '
                   'PPP (2020-21) or an SBA 7(a) or 504 loan that can date back to 1991 (the row gives the year), and are not a current '
                   'headcount; revenue is modelled (est.) unless the row says stated; ownership is unknown unless the row says researched or '
-                  'loan record. Never call a business founder-owned, family-owned or for sale unless the row says researched. Cite the '
+                  'loan record, or company website (AI read the business\'s own site: say so and quote it). Never call a business founder-owned or family-owned unless the row says researched or company website, or for sale unless it says researched. Cite the '
                   'tool\'s sources as [n]. Then offer the next step: the '
                   '[SBA loan screen](https://broadsky-agent.vercel.app/app.html#/ma/screen) for researched candidates and the '
                   '[SBA loan records](https://broadsky-agent.vercel.app/app.html#/ma/loans) view for the loans behind them. If the tool says the '
