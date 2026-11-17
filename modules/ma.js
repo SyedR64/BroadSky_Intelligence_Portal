@@ -1,11 +1,11 @@
-import * as Copy from './copy.js?v=20261117133920';
+import * as Copy from './copy.js?v=20261117144031';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition engine (M&A) — cross-portfolio buy-and-build intelligence.
    Datasets: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets, Competitor filings,
              Public comparables, Private-equity landscape, BSP firm profile; sales/* (property transfers, lazy, theses view).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, fitTierOf } from '../assets/components.js?v=20261117133920';
-import * as DL from './deal-lib.js?v=20261117133920';
+import { renderTargets, fitTierOf } from '../assets/components.js?v=20261117144031';
+import * as DL from './deal-lib.js?v=20261117144031';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 const PLAT = {
@@ -112,7 +112,7 @@ const pctOf = (n, d) => d ? Math.round((n / d) * 100) : 0;
 const titleCase = s => String(s || '').replace(/_/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
 const ownerClass = s => { const x = String(s || '').toLowerCase().replace(/no sponsor disclosed|no pe affiliation/g, ''); if (!x.trim()) return 'Unverified'; if (/subsidiary|part of|venture-backed|pe-backed|private equity|backed by|\bpe\b/.test(x)) return 'Sponsor / corporate'; if (/founder|family/.test(x)) return 'Founder / family'; if (/unknown|unverified|not disclosed|not verified/.test(x)) return 'Unverified'; if (/esop|employee-owned/.test(x)) return 'ESOP'; if (/franchisee/.test(x)) return 'Franchisee'; return 'Private independent'; };
 const OWNER_COLOR = { 'Founder / family': 'var(--sys-good)', 'Private independent': 'var(--sys-info)', Franchisee: 'var(--sys-violet)', ESOP: 'var(--sys-warn)', Unverified: 'var(--sys-mute-2)', 'Sponsor / corporate': 'var(--sys-bad)' };
-const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261117133920'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261117144031'; document.head.appendChild(l); } };
 const shortList = a => { const v = (Array.isArray(a) ? a : [a]).filter(Boolean).map(x => { const y = String(x).replace(/\s*\(.*?\)\s*/g, ' ').replace(/_/g, ' ').trim(); return y.length > 26 ? y.slice(0, 25).trim() + '…' : y; }); return v.length > 2 ? [...v.slice(0, 2), `+${v.length - 2}`] : v; };
 const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
 const pctTxt = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;
@@ -120,7 +120,9 @@ const multTxt = (fmt, v) => v == null || isNaN(v) ? '—' : `${fmt.num(v, 1)}x`;
 
 /* Name-collision guard: a target trading under a BSP platform's own name (e.g. "PHE, Inc. d/b/a The Punctual Pros NJ")
    may already be an affiliate or related party. It is held out of every ranking until the company confirms its status. */
-const affilFlag = t => /punctual\s*pros/i.test(String(t?.company || '')) || (t?.risk_flags || []).some(r => /name collision|already affiliated/i.test(r));
+// a name collision counts only when it is with a BSP company; the loan screen also flags collisions with unrelated firms
+// ("name collision with a Florida company"), which are a research caution, not an affiliation risk
+const affilFlag = t => /punctual\s*pros/i.test(String(t?.company || '')) || (t?.risk_flags || []).some(r => /already affiliated|name collision\b.*\b(BSP|Punctual Pros|portfolio compan|affiliat)/i.test(r));
 const affilNote = t => (t.risk_flags || []).find(r => /name collision|affiliat/i.test(r)) || 'Trades under a BSP portfolio company’s name; confirm it is not already affiliated before outreach';
 /* Leadership guard: Frontline's CEO changed in Jan 2026 (Tim Britt succeeded Seelin Naidoo, who moved to the board; bsp_firm, frontline_filings).
    Screen text written earlier attributes criteria to "CEO Seelin Naidoo"; restate it so it is not presented as current leadership's view. */
@@ -146,15 +148,49 @@ const REACH_COLOR = { 'Density tuck-in': 'var(--sys-good)', 'New-hub anchor': 'v
 
 function normT(t, p) {
   const fit = num(t.fit_score); const rc = reachOf(t, p);
-  return { ...t, strategic_rationale: ceoFix(t.strategic_rationale), _p: p, platform: PLAT[p].label, fit_score: fit, employees: num(t.employees), revenue_est_usd: num(t.revenue_est_usd), _tier: fitTierOf(fit || 0), _state: t.state || t.hq_state || '', _owner: ownerClass(t.ownership), _affil: affilFlag(t), _reach: rc.reach, _node: rc.node, _nodeMi: rc.mi };
+  const rev = num(t.revenue_est_usd);
+  return { ...t, strategic_rationale: ceoFix(t.strategic_rationale), _p: p, platform: PLAT[p].label, fit_score: fit, employees: num(t.employees), revenue_est_usd: rev, _revKind: rev > 0 ? 'vendor' : null, _tier: fitTierOf(fit || 0), _state: t.state || t.hq_state || '', _owner: ownerClass(t.ownership), _affil: affilFlag(t), _reach: rc.reach, _node: rc.node, _nodeMi: rc.mi };
 }
 
-/* An SBA loan-screen company in the hand-built target shape: the ZIP centroid stands in for the HQ, the loan record's jobs
-   figure for staff, and the typed ownership decision for ownership. _src marks the source everywhere it is shown. */
+/* An SBA loan-screen company in the hand-built target shape: the ZIP centroid stands in for the HQ, and the typed ownership
+   decision for ownership. Staff is the headcount the company states on its website, else the loan record's jobs figure
+   (employees_basis says which). Revenue is the screen's own estimate: modelled from Census benchmarks and the company's SBA
+   loan data (_revKind 'loan'), or stated by the company ('stated'). _src marks the source everywhere it is shown. */
 function normS(t) {
   const p = t.segment;
   const base = { ...t, ownership_notes: t.succession_signal || null, ...(p === 'cet' ? { nearest_cet_node: t.nearest_hub, nearest_cet_node_miles: t.distance_mi } : {}) };
-  return { ...normT(base, p), _src: 'sba', revenue_est_usd: null };
+  const n = normT(base, p);
+  return { ...n, _src: 'sba', revenue_est_usd: n.revenue_est_usd > 0 ? n.revenue_est_usd : null, _revKind: n.revenue_est_usd > 0 ? (t.revenue_basis === 'stated' ? 'stated' : 'loan') : null };
+}
+/* Revenue and staff wording for loan-screen companies (cells, inspector, deal math). */
+const REV_METHOD_TXT = { blend: 'headcount and payroll methods', headcount: 'headcount method', payroll: 'payroll method', stated: 'stated by the company' };
+const revRangeTxt = (fmt, t) => t.revenue_est_low_usd && t.revenue_est_high_usd ? `${fmt.money(t.revenue_est_low_usd)}–${fmt.money(t.revenue_est_high_usd)}` : '';
+const revTip = (fmt, t) => t._revKind === 'stated' ? `Stated by the company: ${Copy.text(t.revenue_source || '')}`
+  : `Modelled from Census benchmarks and SBA loan data, not reported: est. ${fmt.money(t.revenue_est_usd)}${revRangeTxt(fmt, t) ? ` (range ${revRangeTxt(fmt, t)})` : ''}; ${REV_METHOD_TXT[t.revenue_method] || 'model'}; ${revConfOf(t)} confidence. ${t.revenue_confidence_note ? `${Copy.text(t.revenue_confidence_note)} ` : ''}${revRangeTxt(fmt, t) ? RANGE_TXT : ''}`.trim();
+/* The loan record's jobs field in plain words (the SBA column names stay out of visitor copy). */
+const jobsWords = src => { const s = String(src || ''); let m = s.match(/^PPP JobsReported \(borrower-reported, ([^)]+)\)/); if (m) return `jobs the borrower reported on its PPP loan, ${m[1].replace('-', ' and ')}`;
+  m = s.match(/^SBA (7\(a\)|504) JobsSupported on loan approved (\d{4}-\d{2}-\d{2})/); return m ? `jobs its SBA ${m[1]} loan of ${m[2]} supports, as the lender reported them` : s; };
+/* One confidence per revenue figure: a loan-screen estimate is modelled, so medium at best (the model's own "high" means its two
+   methods agree); a stated figure is medium. The same level shows in the cell tooltip, the profile and "How we estimated this". */
+const revConfOf = t => t._revKind === 'stated' ? 'medium' : t.revenue_confidence === 'high' ? 'medium' : 'low';
+const RANGE_TXT = 'The range covers the two methods and the spread between Census size classes, not how far one company can sit from its class average.';
+const loanYear = t => { const s = String(t.jobs_latest_source || ''); const m = s.match(/(\d{4})-\d{2}-\d{2}/) || s.match(/(20\d\d(?:-20\d\d)?)/); return m ? m[1] : ''; };
+const staffTip = t => t.employees_basis === 'stated' ? Copy.text(t.employees_note || `Stated on the company's website (${t.employees_source || ''}).`)
+  : t.employees_note ? `${Copy.text(t.employees_note)} It may be several years old.` : `Jobs figure on the company's latest SBA loan: ${jobsWords(t.jobs_latest_source) || 'loan record'}. It may be several years old.`;
+const usdM = v => `$${(v / 1e6).toFixed(1)}M`;
+const WIDE_RANGE = 4;   // no model price when the revenue range's high end is more than this many times its low end
+/* Why a loan-screen company has no model price (null when it has one or is not a loan-screen company). */
+function noModelWhy(b, t) {
+  if (!t) return null;
+  const P = PLAT[t._p] || {};
+  if (t._soldPerSba || (t._src === 'sba' && t.ownership_decision === 'pe_backed_or_acquired')) return 'Already sold to a sponsor or roll-up, so it is listed for reference and not priced as a target.';
+  if (t._src !== 'sba') return null;
+  if (t.ownership_decision === 'closed_or_inactive') return 'Closed or inactive, so it is not priced.';
+  if (!(t.revenue_est_usd > 0)) return 'No revenue estimate on record, so it is not priced.';
+  if (t._revKind === 'loan' && t.revenue_est_low_usd > 0 && t.revenue_est_high_usd / t.revenue_est_low_usd > WIDE_RANGE) return `The revenue range is too wide to price (${usdM(t.revenue_est_low_usd)}–${usdM(t.revenue_est_high_usd)}, more than ${WIDE_RANGE} times from low to high). Confirm its size first.`;
+  if (t.in_segment === false) return `Not confirmed as a ${P.label} fit${t.segment_note ? ` (${Copy.text(t.segment_note).replace(/\.$/, '')})` : ''}, so it is not priced until its business is confirmed.`;
+  if (b && b.dm && !dmSector(b, t._p)) return `The acquisition model has no sector assumptions for ${P.label} add-ons yet (margin, growth), so no price is modelled. The revenue estimate stands on its own.`;
+  return null;
 }
 
 /* One shared load for every view (research() caches per file; this caches the derived bundle). */
@@ -241,25 +277,47 @@ function estimateFor(b, t) {
   if (t && t._soldPerSba) return null;   // already sold per the SBA loan screen: no model price or deal link
   if (!b || !t) return null;
   const p = t._p, dm = b.dm, sec = dmSector(b, p), par = dmParent(b, p);
-  if (!dm || !sec || !par || t._src === 'sba') return null;   // loan-screen companies carry no revenue and are not in the model
+  if (!dm || !sec || !par) return null;   // BPI and Fair Harbor have no sector in the acquisition model
+  const sba = t._src === 'sba';
+  // a loan-screen company is priced on its own revenue estimate when it is in segment and not sold or closed (noModelWhy says why not)
+  if (sba && noModelWhy(b, t)) return null;
   const sized = !(t.revenue_est_usd > 0);
-  // a target with no revenue on record is sized at the median screened target, exactly as the model's preset does
-  const revM = sized ? median(b.targets.filter(x => x._p === p && !x._affil && x.revenue_est_usd > 0).map(x => x.revenue_est_usd / 1e6)) : t.revenue_est_usd / 1e6;
+  // a hand-built target with no revenue on record is sized at the median hand-built target, exactly as the model's preset does;
+  // loan-screen estimates stay out of that median (a different method, which reads higher than the vendor figures)
+  const revM = sized ? median(handOnly(b.targets).filter(x => x._p === p && !x._affil && x.revenue_est_usd > 0).map(x => x.revenue_est_usd / 1e6)) : t.revenue_est_usd / 1e6;
   if (revM == null) return null;
   const vals = DL.targetVals(dm.meta.base, dm.meta.target_defaults, sec, par.inputs, revM);
   const S = DL.dealSummary(vals);
-  const band = DL.priceBand(S.ebitda, vals.em, dm.items.filter(i => i.kind === 'benchmark'));
+  let band = DL.priceBand(S.ebitda, vals.em, dm.items.filter(i => i.kind === 'benchmark'));
+  // a loan-screen estimate carries a revenue range: the band runs from the low revenue at the low multiple to the high revenue at the high one
+  if (band && sba && t._revKind === 'loan' && t.revenue_est_low_usd > 0 && t.revenue_est_high_usd > 0) {
+    const m = vals.mg / 100;
+    band = { ...band, lo: t.revenue_est_low_usd / 1e6 * m * band.mLo, hi: t.revenue_est_high_usd / 1e6 * m * band.mHi, revRange: true };
+  }
   const peer = b.comps?.meta?.sector_benchmarks?.[PLAT[p].bench] || null;
   const rpe = num(peer?.median_revenue_per_employee_usd);
   const emp = t.employees;
   const ceiling = emp && rpe ? emp * rpe / 1e6 : null;
   const ratio = !sized && ceiling ? revM / ceiling : null;
-  const stated = num(String(t.employees_note || '').replace(/,/g, '').match(/(\d+)/)?.[1]);
-  const empConf = emp == null ? null : stated && Math.abs(stated - emp) / emp <= 0.15 ? 'high' : 'medium';
-  const revConf = sized ? 'low' : ratio != null && ratio >= 0.25 && ratio <= 1 ? 'medium' : 'low';
-  return { p, sec, par, sized, revM, vals, S, band, peer, rpe, emp, ceiling, ratio, empConf, revConf, td: dm.meta.target_defaults,
-    hash: t._affil ? null : `#/deal/returns?p=${encodeURIComponent(t.id)}`, rollHash: t._affil ? null : `#/deal/rollup?p=${encodeURIComponent(t.id)}` };
+  let empConf, revConf;
+  if (sba) {
+    // staff: stated on the company's site and within 25% of the loan jobs figure = high; stated alone = medium; loan figure only = low (it is years old)
+    const loan = num(t.jobs_latest);
+    empConf = emp == null ? null : t.employees_basis === 'stated' ? (loan && Math.abs(loan - emp) / emp <= 0.25 ? 'high' : 'medium') : 'low';
+    // revenue: modelled, so medium at best (the two methods agreeing is the cross-check); a stated figure is medium
+    revConf = revConfOf(t);
+  } else {
+    const stated = num(String(t.employees_note || '').replace(/,/g, '').match(/(\d+)/)?.[1]);
+    empConf = emp == null ? null : stated && Math.abs(stated - emp) / emp <= 0.15 ? 'high' : 'medium';
+    revConf = sized ? 'low' : ratio != null && ratio >= 0.25 && ratio <= 1 ? 'medium' : 'low';
+  }
+  // hand-built targets have their own preset in the model; a loan-screen company opens the company's add-on defaults with its
+  // own figures set and named (the model tags them est. and links back here through ref)
+  const scen = view => `#/deal/${view}?${DL.encode({ preset: par.id, vals }, par.inputs)}&for=${encodeURIComponent(shortCo(t.company))}&ref=${encodeURIComponent(t.id)}`;
+  return { p, sec, par, sized, revM, vals, S, band, peer, rpe, emp, ceiling, ratio, empConf, revConf, td: dm.meta.target_defaults, sba,
+    hash: t._affil ? null : sba ? scen('returns') : `#/deal/returns?p=${encodeURIComponent(t.id)}`, rollHash: t._affil ? null : sba ? scen('rollup') : `#/deal/rollup?p=${encodeURIComponent(t.id)}` };
 }
+const shortCo = s => String(s || '').replace(/\s*\(.*?\)\s*/g, ' ').replace(/,?\s+(Inc|LLC|Corp|Corporation|Co|Company|Ltd)\.?$/i, '').replace(/[.,]+$/, '').replace(/\s{2,}/g, ' ').trim();
 const confChip = (esc, c) => c ? `<span class="ma-conf" style="--cc:${CONF_COLOR[c]}">${esc(c === 'market' ? 'market average' : `${c} confidence`)}</span>` : '';
 const srcLabel = s => s.label.split('(')[0].split(':')[0].trim();
 const srcLinks = (b, esc, ids) => [...new Set(ids)].map(id => dmSource(b, id)).filter(Boolean).map(s => s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(srcLabel(s))}</a>` : esc(srcLabel(s))).join(' · ');
@@ -269,16 +327,23 @@ function howHtml(ctx, b, t, E, open = false) {
   const asOf = dayWords(t.retrieved || b[t._p === 'fl' || t._p === 'ts' ? 'flts' : t._p]?.meta?.generated);
   const mktDate = dayWords((b.dm?.meta?.sources || []).find(s => s.id === 'gf-q2-2026')?.retrieved);
   const empSrc = t.employees_source || 'company database search (ZoomInfo)';
+  const peerCheck = E.ceiling ? ` Check: ${fmt.num(E.emp)} staff × ${fmt.money(E.rpe)} revenue per employee at ${fmt.num(E.peer?.n)} ${esc(PEER_WORDS[t._p])} = ${money$M(fmt, E.ceiling)} ceiling. The ${E.sba ? 'estimate' : 'modelled figure'} is ${fmt.money(E.revM * 1e6 / E.emp)} per employee, ${Math.round(E.ratio * 100)}% of the peer rate${E.ratio > 1 ? ', above the ceiling, so treat it as high' : E.ratio < 0.25 ? ', far below it, so confirm size early' : ', inside the ceiling'}.` : ' No headcount to cross-check it against.';
+  const census = (b.sba?.meta?.sources || []).find(s => /Statistics of U\.S\. Businesses/.test(s.name || ''));
   const rows = [
-    { k: 'Staff', v: E.emp != null ? fmt.num(E.emp) : 'not on record', conf: E.empConf,
+    E.sba ? { k: 'Staff', v: E.emp != null ? fmt.num(E.emp) : 'not on record', conf: E.empConf,
+      how: E.emp == null ? 'No headcount on record. Confirm it in the first call.' : esc(staffTip(t)) + (t.employees_basis === 'stated' && t.employees_source_url ? ` <a href="${esc(t.employees_source_url)}" target="_blank" rel="noopener">${esc(fmt.host(t.employees_source_url) || 'source')}</a>` : ''), src: '' }
+    : { k: 'Staff', v: E.emp != null ? fmt.num(E.emp) : 'not on record', conf: E.empConf,
       how: E.emp != null ? `Headcount from the ${esc(Copy.text(empSrc))}${t.employees_note ? `; ${esc(Copy.text(t.employees_note))}` : ''}.` : 'No headcount on record. Confirm it in the first call.', src: '' },
-    { k: 'Revenue', v: `${money$M(fmt, E.revM)}${Copy.EST}`, conf: E.revConf,
+    E.sba ? { k: 'Revenue', v: `${money$M(fmt, E.revM)}${Copy.EST}`, conf: E.revConf,
+      how: `${esc(Copy.text(t.revenue_source || ''))}${t.revenue_confidence_note ? ` ${esc(Copy.text(t.revenue_confidence_note))}` : ''} ${esc(RANGE_TXT)}${peerCheck}`,
+      src: [census?.url ? `<a href="${esc(census.url)}" target="_blank" rel="noopener">Census SUSB 2022</a>` : 'Census SUSB 2022', 'SBA loan records', E.ceiling ? 'SEC filings of listed peers' : ''].filter(Boolean).join(' · ') }
+    : { k: 'Revenue', v: `${money$M(fmt, E.revM)}${Copy.EST}`, conf: E.revConf,
       how: E.sized ? `No revenue on record. Sized at the median screened ${esc(P.label)} target, so treat it as a placeholder.`
-        : `Modelled by ${esc(noRetrieved(Copy.text(t.revenue_source || 'the company database')))}, not reported by the company.${E.ceiling ? ` Check: ${fmt.num(E.emp)} staff × ${fmt.money(E.rpe)} revenue per employee at ${fmt.num(E.peer?.n)} ${esc(PEER_WORDS[t._p])} = ${money$M(fmt, E.ceiling)} ceiling. The modelled figure is ${fmt.money(E.revM * 1e6 / E.emp)} per employee, ${Math.round(E.ratio * 100)}% of the peer rate${E.ratio > 1 ? ', above the ceiling, so treat it as high' : E.ratio < 0.25 ? ', far below it, so confirm size early' : ', inside the ceiling'}.` : ' No headcount to cross-check it against.'}`,
+        : `Modelled by ${esc(noRetrieved(Copy.text(t.revenue_source || 'the company database')))}, not reported by the company.${peerCheck}`,
       src: E.ceiling ? 'SEC filings of listed peers' : '' },
     { k: 'EBITDA', v: `${money$M(fmt, S.ebitda)}${Copy.EST}`, conf: 'low', how: `Revenue × ${fmt.num(E.sec.margin_pct)}% margin. ${esc(E.sec.basis)}`, src: srcLinks(b, esc, E.sec.source_ids || []) },
     E.band ? { k: 'Likely price', v: `${money$M(fmt, E.band.lo)}–${money$M(fmt, E.band.hi)}${Copy.EST}`, conf: 'low',
-      how: `EBITDA × ${mult1(E.band.mLo)} to ${mult1(E.band.mHi)}, the ${esc(E.band.label)}. The model starts at ${mult1(v.em)}: ${money$M(fmt, S.price)}${E.band.inBand ? '' : ', below this band, so raise the entry multiple to test it'}.`, src: srcLinks(b, esc, E.band.source_ids) } : null,
+      how: `${E.band.revRange ? `Revenue range ${esc(revRangeTxt(fmt, t))} × ${fmt.num(E.sec.margin_pct)}% margin × ${mult1(E.band.mLo)} to ${mult1(E.band.mHi)}, the ${esc(E.band.label)}: the low revenue at the low multiple to the high revenue at the high one.` : `EBITDA × ${mult1(E.band.mLo)} to ${mult1(E.band.mHi)}, the ${esc(E.band.label)}.`} The model starts at ${mult1(v.em)}: ${money$M(fmt, S.price)}${E.band.inBand ? '' : ', below this band, so raise the entry multiple to test it'}.`, src: srcLinks(b, esc, E.band.source_ids) } : null,
     { k: 'Financing', v: `${money$M(fmt, S.debt)} debt · ${money$M(fmt, S.equity)} equity${Copy.EST}`, conf: 'market',
       how: `Debt of ${mult1(td.lev)} EBITDA at ${fmt.num(td.ir, 1)}% interest, the current market averages; ${fmt.num(v.fee, 0)}% deal fees (analyst assumption). The equity check is ${S.eqShare == null ? 'n/m' : `${Math.round(S.eqShare * 100)}%`} of the cost.`, src: srcLinks(b, esc, td.source_ids || []) },
     { k: 'Return', v: `${pct1(S.irr)} a year${Copy.EST}`, conf: 'low',
@@ -293,13 +358,14 @@ function howHtml(ctx, b, t, E, open = false) {
 /** Inspector section: the deal math at the model's defaults, the disclosure and the links into the acquisition model. */
 function dealSection(ctx, b, t) {
   const { esc, fmt, ui } = ctx; const E = estimateFor(b, t); const P = PLAT[t._p];
-  if (!E) return null;
+  if (!E) { const why = noModelWhy(b, t); return why ? { label: 'Deal math', html: `<div class="m-ma-insp">${ui.note(`<b>No model price.</b> ${esc(why)}`, 'info')}</div>` } : null; }
   if (t._affil) return { label: 'Deal math', html: `<div class="m-ma-insp">${ui.note('Not modelled until affiliation is confirmed.', 'warn')}</div>` };
   const S = E.S;
+  const revLbl = E.sized ? 'placeholder: median screened target' : t._revKind === 'loan' ? `modelled from Census benchmarks and SBA loan data${revRangeTxt(fmt, t) ? `, range ${revRangeTxt(fmt, t)}` : ''}` : t._revKind === 'stated' ? 'stated by the company' : 'vendor modelled (ZoomInfo)';
   return { label: 'Deal math', html: `<div class="m-ma-insp ma-dealsec">${ui.kv({
-      'Revenue': `${money$M(fmt, E.revM)}${Copy.EST}${E.sized ? ' <span class="dim small">placeholder: median screened target</span>' : ''}`,
+      'Revenue': `${money$M(fmt, E.revM)}${Copy.EST} <span class="dim small">${esc(revLbl)}</span>`,
       'EBITDA': `${money$M(fmt, S.ebitda)}${Copy.EST} <span class="dim small">at a ${fmt.num(E.sec.margin_pct)}% margin</span>`,
-      'Likely price': E.band ? `${money$M(fmt, E.band.lo)}–${money$M(fmt, E.band.hi)}${Copy.EST} <span class="dim small">${mult1(E.band.mLo)} to ${mult1(E.band.mHi)}</span>` : null,
+      'Likely price': E.band ? `${money$M(fmt, E.band.lo)}–${money$M(fmt, E.band.hi)}${Copy.EST} <span class="dim small">${mult1(E.band.mLo)} to ${mult1(E.band.mHi)}${E.band.revRange ? ' on the revenue range' : ''}</span>` : null,
       'Model price': `${money$M(fmt, S.price)}${Copy.EST} <span class="dim small">at ${mult1(E.vals.em)}</span>`,
       'Debt and equity': `${money$M(fmt, S.debt)} debt${Copy.EST} <span class="dim small">${mult1(E.td.lev)} at ${fmt.num(E.td.ir, 1)}%</span> · ${money$M(fmt, S.equity)} equity${Copy.EST}`,
       'Return': `${pct1(S.irr)} a year${Copy.EST} <span class="dim small">${S.moic == null ? '' : `${S.moic.toFixed(2)}x in ${S.years} years, sold at ${mult1(E.vals.xm)}`}</span>`,
@@ -321,7 +387,7 @@ function sbaSections(ctx, t) {
     { label: `${SRC_LABEL}${t._src === 'sba' ? '' : ' (also found here)'}`, html: `<div class="m-ma-insp">${ui.kv({
       Trade: s.trade ? esc(s.trade) : null,
       'Jobs (PPP)': s.jobs_reported_ppp ? `${fmt.num(s.jobs_reported_ppp)} <span class="dim small">reported in ${esc(s.jobs_reported_ppp_years || '2020-2021')}</span>` : null,
-      'Jobs (latest)': s.jobs_latest != null ? `${fmt.num(s.jobs_latest)} <span class="dim small">${esc(Copy.text(s.jobs_latest_source || ''))}</span>` : null,
+      'Jobs (latest)': s.jobs_latest != null ? `${fmt.num(s.jobs_latest)} <span class="dim small">${esc(Copy.text(jobsWords(s.jobs_latest_source)))}</span>` : null,
       'PPP loans': s.ppp_amount_usd ? `${money0(fmt, s.ppp_amount_usd)} <span class="dim small">${fmt.num(s.ppp_loans)} loan${s.ppp_loans === 1 ? '' : 's'} · ${esc(s.ppp_amount_band)}</span>` : 'none found',
       'Latest SBA loan': s.sba_latest_loan ? esc(s.sba_latest_loan) : 'none found',
       'Change of ownership': s.sba_change_of_ownership ? `${esc(dayWords(s.sba_change_of_ownership))}${s.sba_change_of_ownership_recent ? ' <span class="dim small">recent: may have a new owner</span>' : ''}` : 'no SBA loan financed one',
@@ -338,6 +404,26 @@ function sbaSections(ctx, t) {
   ];
 }
 
+/* Profile section for a loan-screen company: what it does (from its own website where one was found), staff with its source,
+   and the revenue estimate with its range, method and confidence. */
+function sbaProfileSection(ctx, t) {
+  const { ui, fmt, esc } = ctx;
+  const pages = (t.profile_pages_read || []).filter(u => /^https?:\/\/\S+$/.test(u));
+  const list = a => (a || []).length ? a.map(x => esc(Copy.text(x))).join(', ') : null;
+  return { label: 'Profile', html: `<div class="m-ma-insp">${t.one_line ? `<div class="small text-2">${esc(Copy.text(t.one_line))}</div>` : ''}${ui.kv({
+    Founded: t.founded_year,
+    Staff: t.employees != null ? `${fmt.num(t.employees)} <span class="dim small">${esc(t.employees_basis === 'stated' ? `stated on its website (${t.employees_source_url ? fmt.host(t.employees_source_url) : 'company site'})` : `jobs on its latest SBA loan${loanYear(t) ? `, ${loanYear(t)}` : ''}`)}</span>${t.employees_note ? `<div class="dim small">${esc(Copy.text(t.employees_note))}${t.employees_basis === 'stated' ? (t.employees_scope === 'worldwide' ? ' The revenue model uses the loan figure.' : ' The revenue model uses the stated figure.') : ''}</div>` : ''}` : null,
+    'Revenue (est.)': t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)}${Copy.EST} <span class="dim small">${t._revKind === 'stated' ? 'stated by the company' : `range ${esc(revRangeTxt(fmt, t))} · ${esc(REV_METHOD_TXT[t.revenue_method] || 'model')} · ${esc(revConfOf(t))} confidence`}</span><div class="dim small">${esc(Copy.text(t.revenue_source || ''))}${t._revKind === 'loan' ? ` ${esc(RANGE_TXT)}` : ''}</div>` : null,
+    'Specialties / trades': list(t.specialties),
+    'End markets': list(t.end_markets),
+    'Service area': t.service_area ? esc(Copy.text(t.service_area)) : null,
+    'Scale signals': t.profile_scale_note ? esc(Copy.text(t.profile_scale_note)) : null,
+    'Route reach': t._reach ? `${fmt.chip(t._reach, REACH_COLOR[t._reach])} <span class="dim small">${fmt.num(t._nodeMi)} mi from ${esc(t._node || 'nearest node')} · straight-line; reach = ${esc(REACH_TXT[t._p])}</span>` : null,
+    Website: t.website ? fmt.link(t.website) : null,
+    'Pages read': pages.length ? pages.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''))}</a>`).join(' · ') : '<span class="dim small">no company website was found or readable</span>',
+  })}</div>` };
+}
+
 /* Target inspector (used everywhere except the renderTargets table, which has its own). */
 function openTarget(ctx, t, _b = _last) {
   const { ui, fmt, inspector, esc, charts, app } = ctx; const P = PLAT[t._p]; const mx = dimMax(t);
@@ -348,12 +434,12 @@ function openTarget(ctx, t, _b = _last) {
     sections: [
       t._affil ? { label: 'Verify affiliation · do not contact yet', html: `<div class="m-ma-insp">${ui.note(`<b>${esc(affilNote(t))}.</b> Held out of every ranking. ${esc(P.label)} leadership to confirm status (owned · related party · independent); if independent, resolve the trade-name overlap, then re-score.`, 'warn')}</div>` } : null,
       { label: 'Fit', html: `<div class="sys-kpi kpi" data-co="" style="--co:${P.color}"><div class="sys-kpi-label">Fit score (${t._src === 'sba' ? 'loan-screen formula' : `${esc(P.label)} rubric`})</div><div class="sys-kpi-value">${fmt.num(t.fit_score)}</div><div class="sys-kpi-sub">${esc(t._tier)} · rubrics differ by company</div></div>${fb.length ? `<div class="mt-8">${charts.hbar(fb, { max: 100, fmt: v => `${v}%`, labelW: 170, color: P.color })}</div>` : ''}` },
-      { label: 'Profile', html: '<div class="m-ma-insp">' + ui.kv({ Founded: t.founded_year, [t._src === 'sba' ? 'Jobs (loan record)' : 'Employees']: t.employees != null ? fmt.num(t.employees) : null, 'Revenue (est.)': t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)} <span class="dim small">ZoomInfo modeled</span>` : null, Ownership: t.ownership ? `${esc(t.ownership)}${t.ownership_notes ? `<div class="dim small">${esc(clip(t.ownership_notes, 200))}</div>` : ''}` : null, Brands: t.brands_or_franchise ? esc(t.brands_or_franchise) : null, 'Specialties / trades': t.specialties || t.trades || t.offerings, 'End markets': t.end_markets || t.customer_segments, 'Route reach': t._reach ? `${fmt.chip(t._reach, REACH_COLOR[t._reach])} <span class="dim small">${fmt.num(t._nodeMi)} mi from ${esc(t._node || 'nearest node')} · straight-line; reach = ${esc(REACH_TXT[t._p])}</span>` : null, 'Nearest CET node': t.nearest_cet_node ? `${esc(t.nearest_cet_node)} · ${fmt.num(t.nearest_cet_node_miles)} mi` : null, 'Distance (Lancaster / Toms River)': t.distance_mi_from_lancaster != null ? `${fmt.num(t.distance_mi_from_lancaster)} / ${fmt.num(t.distance_mi_from_toms_river)} mi` : null, Reviews: t.review_count ? `${fmt.num(t.review_count)}${t.review_rating ? ` · ${esc(t.review_rating)}★` : ''}` : null, Website: t.website ? fmt.link(t.website) : null }) + '</div>' },
+      t._src === 'sba' ? sbaProfileSection(ctx, t) : { label: 'Profile', html: '<div class="m-ma-insp">' + ui.kv({ Founded: t.founded_year, [t._src === 'sba' ? 'Jobs (loan record)' : 'Employees']: t.employees != null ? fmt.num(t.employees) : null, 'Revenue (est.)': t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)} <span class="dim small">ZoomInfo modeled</span>` : null, Ownership: t.ownership ? `${esc(t.ownership)}${t.ownership_notes ? `<div class="dim small">${esc(clip(t.ownership_notes, 200))}</div>` : ''}` : null, Brands: t.brands_or_franchise ? esc(t.brands_or_franchise) : null, 'Specialties / trades': t.specialties || t.trades || t.offerings, 'End markets': t.end_markets || t.customer_segments, 'Route reach': t._reach ? `${fmt.chip(t._reach, REACH_COLOR[t._reach])} <span class="dim small">${fmt.num(t._nodeMi)} mi from ${esc(t._node || 'nearest node')} · straight-line; reach = ${esc(REACH_TXT[t._p])}</span>` : null, 'Nearest CET node': t.nearest_cet_node ? `${esc(t.nearest_cet_node)} · ${fmt.num(t.nearest_cet_node_miles)} mi` : null, 'Distance (Lancaster / Toms River)': t.distance_mi_from_lancaster != null ? `${fmt.num(t.distance_mi_from_lancaster)} / ${fmt.num(t.distance_mi_from_toms_river)} mi` : null, Reviews: t.review_count ? `${fmt.num(t.review_count)}${t.review_rating ? ` · ${esc(t.review_rating)}★` : ''}` : null, Website: t.website ? fmt.link(t.website) : null }) + '</div>' },
       ...sbaSections(ctx, t),
       dealSection(ctx, _b, t),
       { label: 'Strategic rationale', html: `<div class="small text-2">${esc(t.strategic_rationale || '—')}</div>` },
       t.risk_flags?.length ? { label: 'Risk flags', html: `<div class="m-ma-insp row wrap gap-4">${t.risk_flags.map(r => fmt.chip(r, 'var(--sys-warn)')).join(' ')}</div>` } : null,
-      { label: 'Sources', html: `<div class="col gap-4 small">${(t.sources || []).map(s => `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(fmt.host(s) || s)}</a>`).join('') || '—'}</div><div class="dim small mt-8">Retrieved ${esc(t.retrieved || '—')} · ${esc(Copy.text(t.revenue_source || (t._src === 'sba' ? 'no revenue figure on record' : 'revenue source not stated')))}</div>` },
+      { label: 'Sources', html: `<div class="col gap-4 small">${(t.sources || []).map(s => `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(fmt.host(s) || s)}</a>`).join('') || '—'}</div><div class="dim small mt-8">Retrieved ${esc(t.retrieved || '—')} · ${esc(t._src === 'sba' ? (t.revenue_est_usd ? 'Revenue: modelled from Census benchmarks and SBA loan data (see Profile)' : 'no revenue figure on record') : Copy.text(t.revenue_source || 'revenue source not stated'))}</div>` },
       { label: 'Next action', html: `<div class="small text-2">${esc(t._affil ? `Do not contact. ${P.label} CEO to confirm ownership / related-party status first; only if independent, re-score and log in the pipeline.` : nextActionFor(t._p))}</div>` },
     ].filter(Boolean),
     actions: [modelAction(ctx, _b, t), t.website ? { label: 'Website ↗', href: t.website } : null, { id: 'pipe', label: 'Open in pipeline', onClick: () => app.go('ma', 'pipeline', { platform: t._p, id: t.id }) }, { id: 'mod', label: `${esc(P.label)} module`, onClick: () => app.go(P.module) }].filter(Boolean),
@@ -431,7 +517,7 @@ const INTENSITY_COLOR = s => /very high/i.test(s) ? 'var(--sys-bad)' : /^high/i.
    working behind every figure one click away. Leads the overview so the deal math is the first thing a deal team sees. */
 function dealDeskHtml(ctx, b) {
   const { ui, fmt, esc } = ctx;
-  const best = p => b.targets.filter(t => t._p === p && !t._affil && t.revenue_est_usd > 0).sort((x, y) => (y.fit_score || 0) - (x.fit_score || 0))[0];
+  const best = p => handOnly(b.targets).filter(t => t._p === p && !t._affil && t.revenue_est_usd > 0).sort((x, y) => (y.fit_score || 0) - (x.fit_score || 0))[0];
   const picks = PKEYS.map(p => rankedFor(b, p).map(r => b.byId.get(r.id)).find(t => t && !t._affil && t.revenue_est_usd > 0) || best(p)).filter(Boolean).map(t => ({ t, E: estimateFor(b, t) })).filter(x => x.E);
   if (!picks.length) return '';
   const flow = [
@@ -474,10 +560,10 @@ async function overview(ctx) {
   const t1 = T.filter(t => t._tier === 'Tier 1'), t2 = T.filter(t => t._tier === 'Tier 2');
   const t1By = Object.fromEntries(PKEYS.map(p => [p, byP[p].filter(t => t._tier === 'Tier 1').length]));
   const t12By = Object.fromEntries(PKEYS.map(p => [p, byP[p].filter(t => (t.fit_score || 0) >= 65).length]));
-  const medRev = median(T.map(t => t.revenue_est_usd)), medEmp = median(handOnly(T).map(t => t.employees));   // both from the hand-built lists
+  const medRev = median(handOnly(T).map(t => t.revenue_est_usd)), medEmp = median(handOnly(T).map(t => t.employees));   // both from the hand-built lists
+  const medRevSba = median(sbaOnly.map(t => t.revenue_est_usd));   // loan screen: Census-modelled, shown apart
   const t1Sba = t1.filter(t => t._src === 'sba').length, t1Hand = t1.length - t1Sba;
-  const nRev = T.filter(t => t.revenue_est_usd).length;
-  const ownerReady = T.filter(t => t._owner === 'Founder / family').length;
+    const ownerReady = T.filter(t => t._owner === 'Founder / family').length;
   const stats = b.firm?.firm?.stats || { add_ons: 23, platforms: 7 };
   const firmItems = b.firm?.items || [];
   const namedFromItems = firmItems.flatMap(i => (i.add_ons || []).filter(a => !/unidentified/i.test(a.name || '')).map(a => ({ ...a, company: i.company })));
@@ -491,7 +577,7 @@ async function overview(ctx) {
 
   el.innerHTML = `<div class="m-ma">` + ui.pageHead({
     title: 'Acquisition engine',
-    sub: `<b>${fmt.num(t1.length)} of ${fmt.num(T.length)} screened targets are Tier 1${t1Sba ? ` (${fmt.num(t1Hand)} hand-built, ${fmt.num(t1Sba)} from SBA loans)` : ''}.</b> Most of the actionable pool sits in ${esc(PLAT[topP[0]].label)} and ${esc(PLAT[topP[1]].label)}; the median target is an est. ${fmt.money(medRev)} tuck-in.`,
+    sub: `<b>${fmt.num(t1.length)} of ${fmt.num(T.length)} screened targets are Tier 1${t1Sba ? ` (${fmt.num(t1Hand)} hand-built, ${fmt.num(t1Sba)} from SBA loans)` : ''}.</b> Most of the actionable pool sits in ${esc(PLAT[topP[0]].label)} and ${esc(PLAT[topP[1]].label)}; the median hand-built target is an est. ${fmt.money(medRev)} tuck-in.`,
     chips: `${fmt.chip('Screened ' + (b.cet?.meta?.generated || b.pp?.meta?.generated || '—'), 'var(--c-ma)')}${fmt.chip('Rubrics differ by company')}${sbaOnly.length ? fmt.chip('Two fit formulas: hand-built and SBA loan screen', 'var(--sys-info)') : ''}${fmt.chip('Revenue modelled est.')}`,
     actions: `<a class="sys-btn sys-btn--primary btn" href="#/deal/returns?p=typical">Acquisition model →</a><a class="sys-btn sys-btn--secondary btn" href="#/ma/pipeline">Full pipeline →</a><a class="sys-btn sys-btn--secondary btn" href="#/ma/theses">Company theses</a>`,
   }) + missingNote(ui, esc, b) +
@@ -499,7 +585,7 @@ async function overview(ctx) {
     { label: 'Targets screened', value: fmt.num(T.length), sub: `${PKEYS.map(p => `${PLAT[p].key.toUpperCase()} ${byP[p].length}`).join(' · ')}${sbaOnly.length ? ` · BPI ${T.filter(t => t._p === 'bpi').length} · FH ${T.filter(t => t._p === 'fh').length}<br>${fmt.num(T.length - sbaOnly.length)} hand-built · <a href="#/ma/screen">${fmt.num(sbaOnly.length)} from SBA loans</a>` : ''}`, color: 'var(--c-ma)' },
     { label: 'Tier-1 targets', value: fmt.num(t1.length), sub: `${t1Sba ? `${fmt.num(t1Hand)} hand-built + ${fmt.num(t1Sba)} from SBA loans · ` : ''}fit ≥80 · ${fmt.num(t2.length)} more at Tier 2`, color: 'var(--sys-good)' },
     { label: 'Companies screened', value: `${coverP.length}<small>of ${firmItems.filter(i => i.status === 'held').length || 6} held</small>`, sub: coverP.length > PKEYS.length ? 'BPI and Fair Harbor from SBA loan records only' : 'BPI and Fair Harbor not yet screened', color: 'var(--sys-brand)' },
-    { label: 'Median target size', value: fmt.money(medRev), sub: `revenue est. · ${fmt.num(medEmp)} staff median · hand-built lists`, color: 'var(--sys-info)' },
+    { label: 'Median target size', value: fmt.money(medRev), sub: `revenue est. · ${fmt.num(medEmp)} staff median · hand-built lists${medRevSba != null ? `<br>SBA loan screen: ${fmt.money(medRevSba)} (Census model)` : ''}`, color: 'var(--sys-info)' },
     { label: 'Rival companies tracked', value: fmt.num(rivals.length), sub: `${peBacked} PE-backed · ${stressed.length} under credit stress`, color: 'var(--sys-bad)' },
     { label: 'BSP add-ons completed', value: fmt.num(stats.add_ons), sub: named != null ? `${named} identified by name` : 'stated by BSP', color: 'var(--sys-brand)' },
   ]) + dealDeskHtml(ctx, b) +
@@ -688,7 +774,10 @@ async function pipeline(ctx) {
     { label: 'Targets in view', value: fmt.num(rows.length), sub: `${sel === 'all' ? `of ${fmt.num(b.targets.length)} screened` : `${esc(P.long)} screen`} · ${fmt.num(states.size)} states/countries`, color: P?.color || 'var(--c-ma)' },
     { label: 'Tier 1 / Tier 2', value: `${fmt.num(t1)}<small>/ ${fmt.num(t2)}</small>`, sub: 'fit ≥80 / 65–79', color: 'var(--sys-good)' },
     { label: 'Median fit', value: fmt.num(median(rows.map(t => t.fit_score))), sub: 'portfolio company rubric, 0–100', color: 'var(--sys-info)' },
-    { label: 'Median revenue (est.)', value: fmt.money(median(rows.map(t => t.revenue_est_usd))), sub: `median staff ${fmt.num(median(rows.map(t => t.employees)))} · ZoomInfo modeled`, color: 'var(--c-ma)' },
+    // hand-built (vendor-modelled) and loan-screen (Census-modelled) revenue are summarised apart: the two methods differ in level
+    (() => { const hr = handOnly(rows), sr = rows.filter(t => t._src === 'sba'), mh = median(hr.map(t => t.revenue_est_usd)), ms = median(sr.map(t => t.revenue_est_usd));
+      const useH = mh != null; const mEmp = median((useH ? hr : sr).map(t => t.employees));
+      return { label: 'Median revenue (est.)', value: fmt.money(useH ? mh : ms), sub: `${useH ? 'hand-built lists, ZoomInfo modeled' : 'SBA loan screen, Census model'} · median staff ${fmt.num(mEmp)}${useH && ms != null ? `<br>loan screen: ${fmt.money(ms)} (Census model)` : ''}`, color: 'var(--c-ma)' }; })(),
     { label: 'Founder/family-owned', value: `${pctOf(ff, rows.length)}%`, sub: `${fmt.num(ff)} confirmed · ${esc(topState || '—')}`, color: 'var(--sys-good)' },
     { label: 'In play', value: fmt.num(inPlay.length), sub: inPlay.length ? `${STAGES.filter(s => byStage[s]).map(s => `${s} ${byStage[s]}`).join(' · ')}${overdue ? ` · ${overdue} overdue` : ''}` : 'set stage in the row inspector', color: overdue ? 'var(--sys-bad)' : 'var(--sys-violet)' },
   ]) +
@@ -696,14 +785,14 @@ async function pipeline(ctx) {
   <div id="ma-tg"></div>
   <div class="sys-src src-line mt-8">${sel === 'all' ? 'Sources: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets (ZoomInfo company search, franchise directories, company websites) and the SBA loan screen (SBA PPP, 7(a) and 504 loan records)' : esc(clip(ceoFix(meta?.method || ''), 320))} · generated ${esc(meta?.generated || b.pp?.meta?.generated || '—')} · stages saved in this browser</div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'How to work this list', sub: 'Recommended sequence for deal teams', body: `<ol class="acts"><li><span><b>Filter to Tier 1–2 and founder/family-owned</b> for PRG outreach this quarter; density tuck-ins first, new-hub anchors only with a branch plan.</span></li><li><span><b>Set stage, owner and next-step date</b> in the row inspector (Screened → Contacted → Meeting → NDA → IOI, or Pass). Passed targets drop out of the default view.</span></li><li><span><b>Share the tracker</b> with ⇩ Tracker CSV; stages are kept in this browser only.</span></li><li><span><b>Check risk flags</b> in the inspector. ZoomInfo revenue is modeled, so confirm size in the first call. Never contact a target flagged “verify affiliation”.</span></li><li><span><b>Price it</b> in the row inspector: Deal math shows the likely price, debt, equity check and return, and how each was estimated. Model this deal opens the full model, ready to download to Excel.</span></li></ol>` })}
-    ${ui.panel({ title: 'Data caveats', sub: 'From the screen authors — read before outreach', body: `<ul class="bul">${(sel === 'all' ? [b.cet?.meta, b.pp?.meta, b.flts?.meta, b.sba?.meta] : [meta, ...(PKEYS.includes(sel) && b.sba ? [b.sba.meta] : [])]).filter(Boolean).flatMap(m => (m.caveats || []).slice(0, sel === 'all' ? 2 : 5)).map(c => `<li>${esc(clip(ceoFix(c), 260))}</li>`).join('') || '<li>—</li>'}</ul>` })}
+    ${ui.panel({ title: 'How to work this list', sub: 'Recommended sequence for deal teams', body: `<ol class="acts"><li><span><b>Filter to Tier 1–2 and founder/family-owned</b> for PRG outreach this quarter; density tuck-ins first, new-hub anchors only with a branch plan.</span></li><li><span><b>Set stage, owner and next-step date</b> in the row inspector (Screened → Contacted → Meeting → NDA → IOI, or Pass). Passed targets drop out of the default view.</span></li><li><span><b>Share the tracker</b> with ⇩ Tracker CSV; stages are kept in this browser only.</span></li><li><span><b>Check risk flags</b> in the inspector. Revenue is modelled on every row: ZoomInfo's estimate on hand-built rows, Census benchmarks and SBA loan data (with a range) on loan-screen rows. Confirm size in the first call. Never contact a target flagged “verify affiliation”.</span></li><li><span><b>Price it</b> in the row inspector: Deal math shows the likely price, debt, equity check and return, and how each was estimated. Model this deal opens the full model, ready to download to Excel.</span></li></ol>` })}
+    ${ui.panel({ title: 'Data caveats', sub: 'From the screen authors — read before outreach', body: `<ul class="bul">${(() => { const lc = rows.some(t => t._src === 'sba') ? (b.sba?.meta?.caveats || []).filter(c => /^(Revenue|Staff) for loan-screen/.test(c)) : []; const rest = (sel === 'all' ? [b.cet?.meta, b.pp?.meta, b.flts?.meta, b.sba?.meta] : [meta, ...(PKEYS.includes(sel) && b.sba ? [b.sba.meta] : [])]).filter(Boolean).flatMap(m => (m.caveats || []).filter(c => !lc.includes(c)).slice(0, sel === 'all' ? 2 : 5)); return [...lc, ...rest].map(c => `<li>${esc(clip(ceoFix(c), lc.includes(c) ? 900 : 260))}</li>`).join('') || '<li>—</li>'; })()}</ul>` })}
   </div></div>`;
   ui.seg(el.querySelector('#ma-seg'), [{ value: 'all', label: `All (${b.targets.length})` }, ...SKEYS.filter(p => PKEYS.includes(p) || b.targets.some(t => t._p === p)).map(p => ({ value: p, label: `${PLAT[p].label} (${b.targets.filter(t => t._p === p).length})` }))], sel, v => app.go('ma', 'pipeline', { ...(v === 'all' ? {} : { platform: v }), ...(showPass ? { pass: '1' } : {}) }));
   const pb = el.querySelector('#ma-pass'); if (pb) pb.onclick = () => app.go('ma', 'pipeline', passParams);
   el.querySelector('#ma-trk-csv').onclick = () => {
     const ids = new Set([...rows.map(t => t.id), ...Object.keys(S)]);
-    const out = b.targets.filter(t => ids.has(t.id)).map(t => { const st = stageOf(S, t.id); return { platform: PLAT[t._p].label, company: t.company, hq: `${t.hq_city || ''}${t.hq_city ? ', ' : ''}${t._state}`, fit_score: t.fit_score, tier: t._tier, route_reach: t._reach ? `${t._reach} (${t._nodeMi} mi ${t._node})` : '', ownership: t._owner, revenue_est_usd: t.revenue_est_usd, verify_affiliation: t._affil ? 'YES' : '', stage: st.stage, deal_owner: st.owner || '', next_step_date: st.next || '', stage_updated: st.updated || '', website: t.website || '' }; });
+    const out = b.targets.filter(t => ids.has(t.id)).map(t => { const st = stageOf(S, t.id); return { platform: PLAT[t._p].label, company: t.company, hq: `${t.hq_city || ''}${t.hq_city ? ', ' : ''}${t._state}`, fit_score: t.fit_score, tier: t._tier, route_reach: t._reach ? `${t._reach} (${t._nodeMi} mi ${t._node})` : '', ownership: t._owner, revenue_est_usd: t.revenue_est_usd, revenue_basis: t._revKind === 'loan' ? 'modelled: Census benchmarks and SBA loan data' : t._revKind === 'stated' ? 'stated by the company' : t._revKind === 'vendor' ? 'modelled: ZoomInfo' : '', revenue_low_usd: t._src === 'sba' ? t.revenue_est_low_usd ?? '' : '', revenue_high_usd: t._src === 'sba' ? t.revenue_est_high_usd ?? '' : '', staff: t.employees ?? '', staff_basis: t._src === 'sba' ? (t.employees_basis === 'stated' ? 'stated on company website' : 'SBA loan jobs figure') : '', verify_affiliation: t._affil ? 'YES' : '', stage: st.stage, deal_owner: st.owner || '', next_step_date: st.next || '', stage_updated: st.updated || '', website: t.website || '' }; });
     ui.exportCSV(out, null, `ma_deal_tracker_${sel}`);
   };
   const host = el.querySelector('#ma-tg');
@@ -712,7 +801,7 @@ async function pipeline(ctx) {
   // Ownership is normalised to 6 classes (raw text restored in the inspector); long FL/TS offering strings are shortened for the table.
   // Affiliation-flagged names carry the flag inline (brand line and Why column) so the warning is visible without opening the row.
   const items = rows.map(t => { const mx = dimMax(t); const fb = {}; for (const [k, v] of Object.entries(t.fit_breakdown || {})) { const m = mx[k] || 20; fb[`${k} (${v}/${m})`] = Math.round(((num(v) || 0) / m) * 100); } const st = stageOf(S, t.id);
-    return { ...t, fit_breakdown: fb, ownership: t._owner, _ownRaw: t.ownership, specialties: shortList(t.specialties || t.trades || t.offerings || []), brands_or_franchise: t._affil ? `⚠ VERIFY AFFILIATION · ${clip(affilNote(t), 110)}` : t.brands_or_franchise, strategic_rationale: t._affil ? `⚠ Held out of ranking: ${clip(affilNote(t), 120)}` : clip(t.strategic_rationale, 95), _why: t.strategic_rationale, _srcLine: srcLine(t), route_reach: t._reach ? `${t._reach} (${t._nodeMi} mi ${t._node})` : '', stage: st.stage, deal_owner: st.owner || '', next_date: st.next || '', ...(E => ({ _price: E ? E.S.price : null, _sized: !!E?.sized }))(t._affil ? null : estimateFor(b, t)) }; });
+    return { ...t, fit_breakdown: fb, ownership: t._owner, _ownRaw: t.ownership, specialties: shortList(t.specialties || t.trades || t.offerings || []), brands_or_franchise: t._affil ? `⚠ VERIFY AFFILIATION · ${clip(affilNote(t), 110)}` : t.brands_or_franchise, strategic_rationale: t._affil ? `⚠ Held out of ranking: ${clip(affilNote(t), 120)}` : clip(t.strategic_rationale, 95), _why: t.strategic_rationale, _srcLine: srcLine(t), route_reach: t._reach ? `${t._reach} (${t._nodeMi} mi ${t._node})` : '', stage: st.stage, deal_owner: st.owner || '', next_date: st.next || '', ...(t._src === 'sba' ? { _revFmt: v => v == null ? '<span class="dim">—</span>' : `<span title="${esc(revTip(fmt, t))}">${fmt.money(v)}</span>${t._revKind === 'loan' && revRangeTxt(fmt, t) ? `<div class="dim small" title="${esc(revTip(fmt, t))}">${esc(revRangeTxt(fmt, t))}</div>` : ''}`, _staffFmt: v => v == null ? '<span class="dim">—</span>' : `<span title="${esc(staffTip(t))}">${fmt.num(v)}</span><div class="dim small">${t.employees_basis === 'stated' ? 'website' : `loan ${esc(loanYear(t))}`}</div>` } : {}), ...(E => ({ _price: E ? E.S.price : null, _sized: !!E?.sized, _noPrice: E ? null : t._affil ? 'Not modelled until it is confirmed not to be affiliated with a BSP company.' : noModelWhy(b, t) }))(t._affil ? null : estimateFor(b, t)) }; });
   const byName = new Map(rows.map(t => [esc(t.company), t]));
   const bindStage = t => {
     const box = [...document.querySelectorAll('#inspector [data-stage-for]')].find(n => n.dataset.stageFor === t.id); if (!box) return;
@@ -729,6 +818,7 @@ async function pipeline(ctx) {
   const insp = { ...ctx.inspector, open: cfg => { const t = byName.get(cfg.title); if (t) { const st = stageOf(S, t.id);
     cfg = { ...cfg, sections: cfg.sections.map(sec => sec.label === 'Strategic rationale' ? { label: sec.label, html: `<div class="small text-2">${esc(t.strategic_rationale || '—')}</div>` } : sec.label === 'Next action' ? { label: 'Next action', html: `<div class="small text-2">${esc(t._affil ? `Do not contact. ${PLAT[t._p].label} CEO to confirm ownership / related-party status first; only if independent, re-score and set a stage.` : nextActionFor(t._p))}</div>` } : sec) };
     const i = cfg.sections.findIndex(sec => sec.label === 'Profile');
+    if (t._src === 'sba' && i >= 0) cfg.sections[i] = sbaProfileSection(ctx, t);
     cfg.sections.splice(i + 1, 0, ...sbaSections(ctx, t), { label: 'Ownership detail', html: `<div class="small text-2">${esc(t.ownership || '—')}${t.ownership_notes ? ` · ${esc(t.ownership_notes)}` : ''}</div>` }, t._reach ? { label: 'Route reach', html: `<div class="small text-2">${fmt.chip(t._reach, REACH_COLOR[t._reach])} ${fmt.num(t._nodeMi)} mi from ${esc(t._node || 'nearest node')} (straight-line). Reach = ${esc(REACH_TXT[t._p])}.</div>` } : null, dealSection(ctx, b, t));
     cfg.sections = cfg.sections.filter(Boolean);
     cfg.actions = [modelAction(ctx, b, t), ...(cfg.actions || [])].filter(Boolean);
@@ -740,7 +830,8 @@ async function pipeline(ctx) {
   extra.push({ key: 'stage', label: 'Stage', fmt: (v, r) => `<span data-stage-cell="${esc(r.id)}">${stageCell(fmt, esc, stageOf(S, r.id))}</span>` });
   // the price the acquisition model opens at (EBITDA at the sector margin × its entry multiple), first of the extra columns so it
   // sits near revenue; the row opens the full working
-  extra.unshift({ key: '_price', label: 'Model price est.', num: true, fmt: (v, r) => v == null ? '<span class="dim">—</span>' : `${fmt.money(v * 1e6)}${r._sized ? '<span class="dim small"> sized</span>' : ''}` });
+  // 'sized': no revenue on record, priced at the median hand-built target; 'loan model': priced on the loan screen's Census-modelled revenue
+  extra.unshift({ key: '_price', label: 'Model price est.', num: true, fmt: (v, r) => v == null ? `<span class="dim"${r._noPrice ? ` title="${esc(r._noPrice)}"` : ''}>—</span>` : `${fmt.money(v * 1e6)}${r._sized ? '<span class="dim small" title="No revenue on record: priced at the median hand-built target"> sized</span>' : r._revKind === 'loan' ? '<div class="dim small" title="Priced on revenue modelled from Census benchmarks and SBA loan data">loan model</div>' : r._revKind === 'stated' ? '<div class="dim small">stated rev.</div>' : ''}` });
   renderTargets({ ...ctx, inspector: insp }, host, { items: Copy.targets(items), color: P?.color || 'var(--c-ma)', platformLabel: P ? P.label : 'Cross-portfolio', exportName: `ma_pipeline_${sel}`, pageSize: 40, extraColumns: extra });
   if (q && rows.length === 1) host.querySelector('#tg-table tbody tr[data-i]')?.click(); // opens the stage-aware inspector
 }
@@ -753,7 +844,7 @@ function thesisStats(b, p) {
   T.filter(t => t._src !== 'sba').forEach(t => Object.entries(t.fit_breakdown || {}).forEach(([k, v]) => { (dims[k] = dims[k] || []).push((num(v) || 0) / (mx[k] || 20)); }));
   const dimAvg = Object.entries(dims).map(([k, a]) => [k, a.reduce((s, x) => s + x, 0) / a.length]).sort((x, y) => y[1] - x[1]);
   return {
-    T, n, nSba: T.filter(t => t._src === 'sba').length, t1: T.filter(t => t._tier === 'Tier 1').length, t2: T.filter(t => t._tier === 'Tier 2').length, t1Sba: T.filter(t => t._tier === 'Tier 1' && t._src === 'sba').length, medEmp: median((handOnly(T).length ? handOnly(T) : T).map(t => t.employees)), medRev: median(T.map(t => t.revenue_est_usd)),
+    T, n, nSba: T.filter(t => t._src === 'sba').length, t1: T.filter(t => t._tier === 'Tier 1').length, t2: T.filter(t => t._tier === 'Tier 2').length, t1Sba: T.filter(t => t._tier === 'Tier 1' && t._src === 'sba').length, medEmp: median((handOnly(T).length ? handOnly(T) : T).map(t => t.employees)), medRev: median(handOnly(T).map(t => t.revenue_est_usd)), medRevSba: median(T.filter(t => t._src === 'sba').map(t => t.revenue_est_usd)), nHand: handOnly(T).length,
     ff: own['Founder / family'] || 0, unv: own.Unverified || 0, own, states: topN(countBy(T, t => t._state), 6), dimAvg,
     risks: topN(countBy(T.flatMap(t => t.risk_flags || []), x => x), 4), top5: T.filter(t => !t._affil).sort((x, y) => (y.fit_score || 0) - (x.fit_score || 0)).slice(0, 5),
     affil: T.filter(t => t._affil), dens: T.filter(t => !t._affil && t._reach === 'Density tuck-in').length, hub: T.filter(t => !t._affil && t._reach === 'New-hub anchor').length,
@@ -775,8 +866,8 @@ function thesisText(b, p, s, fmt) {
   if (p === 'fl') {
     const catx = T.filter(t => ['CA', 'TX'].includes(t._state)).length; const intl = T.filter(t => t.country && t.country !== 'United States').length;
     const bill = T.filter(t => /billing|rcm|revenue|invoice|accounting/i.test((t.offerings || []).join(' '))).length;
-    const small = T.filter(t => t.revenue_est_usd != null && t.revenue_est_usd <= 15e6).length;
-    return `Frontline has ${s.n} legal-IT managed-service and law-firm billing/RCM targets (${stateMix}; ${intl} outside the US). ${catx} are in California or Texas, two of Frontline’s stated priority geographies (set under former CEO Naidoo; re-confirm with Tim Britt, CEO since Jan 2026), and ${bill} offer billing, eBilling or RCM services that extend Frontline’s second product line. ${small} of ${s.n} have modeled revenue at or below $15M, which fits the previously stated tuck-in profile of ~$5M revenue and $1–2M EBITDA. Analyst view: the PE landscape rates the sector “${heat.frontline?.intensity || 'low-medium'}” and finds no sponsor-backed copy of the legal IT + RCM model. The window to lock in law-firm MSP and billing add-ons is open, but it will close once a generalist MSP roll-up (Alpine’s Evergreen) builds a legal vertical.`;
+    const small = handOnly(T).filter(t => t.revenue_est_usd != null && t.revenue_est_usd <= 15e6).length;   // vendor figures only: the profile below was set on them
+    return `Frontline has ${s.n} legal-IT managed-service and law-firm billing/RCM targets (${stateMix}; ${intl} outside the US). ${catx} are in California or Texas, two of Frontline’s stated priority geographies (set under former CEO Naidoo; re-confirm with Tim Britt, CEO since Jan 2026), and ${bill} offer billing, eBilling or RCM services that extend Frontline’s second product line. ${small} of the ${s.nHand} hand-built targets have modeled revenue at or below $15M, which fits the previously stated tuck-in profile of ~$5M revenue and $1–2M EBITDA. Analyst view: the PE landscape rates the sector “${heat.frontline?.intensity || 'low-medium'}” and finds no sponsor-backed copy of the legal IT + RCM model. The window to lock in law-firm MSP and billing add-ons is open, but it will close once a generalist MSP roll-up (Alpine’s Evergreen) builds a legal vertical.`;
   }
   const cr = T.filter(t => /cleanroom|controlled/i.test((t.offerings || []).join(' ') + ' ' + (t.strategic_rationale || ''))).length;
   const nonNE = T.filter(t => !['NJ', 'NY', 'PA', 'MA', 'CT'].includes(t._state)).length;
@@ -824,13 +915,13 @@ function thesisPanel(ctx, b, p, s) {
     title: `${esc(P.long)}`, accent: true, sub: `${fmt.num(s.n)} targets${s.nSba ? ` (${fmt.num(s.nSba)} from <a href="#/ma/screen">SBA loan records</a>)` : ''} · ${s.t1} Tier 1${s.t1Sba ? ` (${s.t1 - s.t1Sba} hand-built + ${s.t1Sba} from SBA loans)` : ''} · ${s.t2} Tier 2`,
     actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/ma/pipeline?platform=${p}">Pipeline →</a>`,
     body: `<div style="--cc:${P.color}">
-      <div class="sys-chips stat-row">${fmt.chip(`median ${fmt.num(s.medEmp)} staff`)}${fmt.chip(`median ${fmt.money(s.medRev)} rev. est.`)}${fmt.chip(`${pctOf(s.ff, s.n)}% founder/family`, 'var(--sys-good)')}${s.unv ? fmt.chip(`${s.unv} ownership unverified`, 'var(--sys-warn)') : ''}${s.dens + s.hub ? fmt.chip(`${s.dens} density · ${s.hub} new-hub`, 'var(--sys-info)') : ''}${s.affil.length ? fmt.chip(`${s.affil.length} held · verify affiliation`, 'var(--sys-bad)') : ''}${strongest ? fmt.chip(`strongest: ${titleCase(strongest[0])} ${Math.round(strongest[1] * 100)}%`, P.color) : ''}${weakest ? fmt.chip(`weakest: ${titleCase(weakest[0])} ${Math.round(weakest[1] * 100)}%`, 'var(--sys-warn)') : ''}</div>
+      <div class="sys-chips stat-row">${fmt.chip(`median ${fmt.num(s.medEmp)} staff (${s.nHand ? 'hand-built' : 'loan screen'})`)}${fmt.chip(`median ${fmt.money(s.medRev)} rev. est. (hand-built)`)}${s.medRevSba != null ? fmt.chip(`loan screen median ${fmt.money(s.medRevSba)} (Census model)`, 'var(--sys-info)') : ''}${fmt.chip(`${pctOf(s.ff, s.n)}% founder/family`, 'var(--sys-good)')}${s.unv ? fmt.chip(`${s.unv} ownership unverified`, 'var(--sys-warn)') : ''}${s.dens + s.hub ? fmt.chip(`${s.dens} density · ${s.hub} new-hub`, 'var(--sys-info)') : ''}${s.affil.length ? fmt.chip(`${s.affil.length} held · verify affiliation`, 'var(--sys-bad)') : ''}${strongest ? fmt.chip(`strongest: ${titleCase(strongest[0])} ${Math.round(strongest[1] * 100)}%`, P.color) : ''}${weakest ? fmt.chip(`weakest: ${titleCase(weakest[0])} ${Math.round(weakest[1] * 100)}%`, 'var(--sys-warn)') : ''}</div>
       <div class="sys-card-label th-h">Thesis <span class="sys-est sys-est--illus analyst">analyst view</span></div>
       <div class="h-note">${esc(thesisText(b, p, s, fmt))}</div>
       <div class="th-two"><div><div class="sys-card-label th-h">Ideal target profile</div><ul class="bul">${IDEAL[p].map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
       <div><div class="sys-card-label th-h">Integration risks</div><ul class="bul">${riskList.slice(0, 6).map(x => `<li>${x}</li>`).join('')}</ul></div></div>
       <div class="sys-card-label th-h">Top 5 by fit</div>
-      <div class="sys-table-wrap"><table class="sys-table mini"><caption>Fit on the ${esc(P.label)} rubric (loan-screen companies on the loan-screen formula) · revenue is ZoomInfo modeled; staff for loan-screen companies is the loan record's jobs figure</caption><thead><tr><th>Company</th><th>HQ</th><th class="sys-n">Staff</th><th class="sys-n">Rev. est.</th><th>Owner</th><th class="sys-n">Fit</th></tr></thead><tbody>${s.top5.map(t => `<tr data-tid="${esc(t.id)}"><td class="nm">${esc(t.company)}${t._src === 'sba' ? `<div class="dim small">${SRC_LABEL}</div>` : ''}</td><td>${esc(t.hq_city || '')}${t.hq_city ? ', ' : ''}${esc(t._state)}</td><td class="sys-n">${fmt.num(t.employees)}</td><td class="sys-n">${t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)}<span class="sys-est">est.</span>` : '—'}</td><td>${fmt.chip(t._owner, OWNER_COLOR[t._owner])}</td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}${s.affil.map(t => `<tr data-tid="${esc(t.id)}" class="ma-affil-row"><td class="nm" colspan="5"><b>Held out · verify affiliation:</b> ${esc(t.company)}<div class="flags">${(t.risk_flags || []).map(r => fmt.chip(r, /collision|affiliat/i.test(r) ? 'var(--sys-bad)' : 'var(--sys-warn)')).join('')}</div></td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}</tbody></table></div>
+      <div class="sys-table-wrap"><table class="sys-table mini"><caption>Fit on the ${esc(P.label)} rubric (loan-screen companies on the loan-screen formula) · revenue is modelled: ZoomInfo for hand-built targets, Census benchmarks and SBA loan data for loan-screen companies; loan-screen staff is the company's stated headcount, or else its loan jobs figure</caption><thead><tr><th>Company</th><th>HQ</th><th class="sys-n">Staff</th><th class="sys-n">Rev. est.</th><th>Owner</th><th class="sys-n">Fit</th></tr></thead><tbody>${s.top5.map(t => `<tr data-tid="${esc(t.id)}"><td class="nm">${esc(t.company)}${t._src === 'sba' ? `<div class="dim small">${SRC_LABEL}</div>` : ''}</td><td>${esc(t.hq_city || '')}${t.hq_city ? ', ' : ''}${esc(t._state)}</td><td class="sys-n">${fmt.num(t.employees)}</td><td class="sys-n">${t.revenue_est_usd ? `<span${t._src === 'sba' ? ` title="${esc(revTip(fmt, t))}"` : ''}>${fmt.money(t.revenue_est_usd)}</span><span class="sys-est">est.</span>` : '—'}</td><td>${fmt.chip(t._owner, OWNER_COLOR[t._owner])}</td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}${s.affil.map(t => `<tr data-tid="${esc(t.id)}" class="ma-affil-row"><td class="nm" colspan="5"><b>Held out · verify affiliation:</b> ${esc(t.company)}<div class="flags">${(t.risk_flags || []).map(r => fmt.chip(r, /collision|affiliat/i.test(r) ? 'var(--sys-bad)' : 'var(--sys-warn)')).join('')}</div></td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}</tbody></table></div>
       <div class="sys-card-label th-h">Screen authors’ ranked shortlist (${ranked.length})${rankedRaw(b, p).length > ranked.length ? ` <span class="soft">· ${rankedRaw(b, p).length - ranked.length} held out for affiliation check, re-numbered</span>` : ''}</div>
       ${ranked.length ? `<ol class="shortlist">${ranked.map(r => `<li data-tid="${esc(r.id)}" style="cursor:pointer" title="${esc(r.why || '')}"><span class="r">${esc(r.rank)}</span><span class="ellipsis">${esc(r.company)}</span><span class="s">${esc(r.fit_score ?? '')}</span></li>`).join('')}</ol>` : ui.empty('No ranked list in dataset')}
       <div class="sys-card-label th-h">Competing sponsor-backed buyers (${comps.length})</div>
@@ -1103,7 +1194,7 @@ async function valuation(ctx) {
   /* Default add-on EBITDA per benchmark sector = median screened target revenue (ZoomInfo est.) for the BSP platform in that sector
      × an assumed LMM EBITDA margin of 10% (capped at the sector's public median). ≈ $0.7M Punctual Pros, $1.5M CET. */
   const LMM_MARGIN = 10;
-  const defEbitda = id => { const p = PKEYS.find(k => PLAT[k].bench === id); const s = secRows.find(r => r.id === id); const rev = p ? median(b.targets.filter(t => t._p === p).map(t => t.revenue_est_usd)) : null; const mg = Math.min(LMM_MARGIN, s?.em > 0 ? s.em : LMM_MARGIN); return rev ? { v: Math.max(0.1, Math.round((rev * mg / 100) / 1e5) / 10), p, rev, mg } : { v: 1, p: null, rev: null, mg }; };
+  const defEbitda = id => { const p = PKEYS.find(k => PLAT[k].bench === id); const s = secRows.find(r => r.id === id); const rev = p ? median(handOnly(b.targets).filter(t => t._p === p).map(t => t.revenue_est_usd)) : null; const mg = Math.min(LMM_MARGIN, s?.em > 0 ? s.em : LMM_MARGIN); return rev ? { v: Math.max(0.1, Math.round((rev * mg / 100) / 1e5) / 10), p, rev, mg } : { v: 1, p: null, rev: null, mg }; };
   el.innerHTML = `<div class="m-ma">` + ui.pageHead({
     title: 'Valuation benchmarks',
     sub: c ? `<b>BSP’s edge is multiple arbitrage:</b> buy small add-ons at lower-middle-market prices and sell the combined company nearer scaled-sponsor prices. Use the calculator to size a deal.` : 'Public comparables dataset is not yet available.',

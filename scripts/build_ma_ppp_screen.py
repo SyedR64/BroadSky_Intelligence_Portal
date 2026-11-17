@@ -9,6 +9,21 @@ Inputs
                 typed decision through a pluggable provider.
   --zcta        Census ZCTA gazetteer (ZIP centroids) for lat/lon
   --ppp-dir     data/ppp (published SBA rows) so each item carries the keys that join it to its loan rows
+  --profiles    data/ppp/enrichment/profiles.json: one company profile per item (JSON list, keyed by cid), read from the
+                company's own website where one was found: specialties, end markets, service area, a one-line description
+                and any headcount the company states, with its source page
+  --benchmarks  data/research/revenue_benchmarks.json (scripts/estimate_revenue.py benchmarks): Census SUSB 2022 receipts
+                per employee and payroll share by industry and size class, CPI-U and the BLS benefit load
+  --stated      optional {items:[{id, revenue_usd, year, source, url}]}: revenue a company states, which overrides the model
+Revenue (est.) per item comes from scripts/estimate_revenue.py (estimate_one), run on the item itself: a headcount method
+(the headcount the company states for its US business, else the latest loan jobs figure, x Census receipts per employee)
+and, for PPP borrowers, a payroll method (PPP loan amount, first draw or else second draw -> payroll -> revenue at the
+Census payroll share), in 2025 dollars, with a low-high range, the method used and a confidence. A revenue figure the
+company states overrides it. Staff (employees) is the headcount the company states on its own site when the profile has
+one, else the latest loan jobs figure, labelled either way. A count of people on a team page is not a stated headcount
+(profile stated_employees_kind 'team_page_count'), so the loan figure stays; a stated count that includes staff outside
+the US (stated_employees_scope 'worldwide') is shown but the revenue model keeps the loan figure. When a first-draw PPP
+jobs figure cannot fit its payroll and the model uses the second draw instead, staff follows the second draw.
 Output: data/research/ma_ppp_screen.json ({meta, items}); companies judged out of segment or closed are counted in meta and
 left out of items. Standard library only; the same inputs give the same file.
 
@@ -38,6 +53,8 @@ hand-built list (its anchor cap) are kept here from the candidates' on_list, so 
 import argparse, json, os, re, sys, datetime
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import estimate_revenue as REV   # the revenue model (Census SUSB benchmarks + SBA loan data); standard library only
 SEGS = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh']
 SEG_NAME = {'pp': 'Punctual Pros', 'cet': 'CET', 'fl': 'Frontline', 'ts': 'Thomas Scientific', 'bpi': 'BPI', 'fh': 'Fair Harbor'}
 LABELS = ['founder_led', 'family_next_generation', 'employee_or_partner_owned', 'pe_backed_or_acquired', 'franchise_unit', 'closed_or_inactive', 'not_in_segment', 'unknown']
@@ -172,6 +189,116 @@ def jobs_band(n):
     return '250 or more'
 
 
+# Profile lists are written in lower case; acronyms and proper names are restored for display, word by word.
+CASE = {'hvac': 'HVAC', 'ev': 'EV', 'ppe': 'PPE', 'ups': 'UPS', 'voip': 'VoIP', 'seo': 'SEO', 'it': 'IT', 'esr': 'ESR', 'soc': 'SOC', 'mdr': 'MDR',
+        'hipaa': 'HIPAA', 'cmmc': 'CMMC', 'i-9': 'I-9', 'e-verify': 'E-Verify', 'ph': 'pH', 'par': 'PAR', 'ai': 'AI', 'av': 'AV', 'pac': 'PAC',
+        'ac': 'AC', 'drosophila': 'Drosophila'}
+
+
+def tidy_terms(xs):
+    out = []
+    for x in xs or []:
+        s = re.sub(r"[A-Za-z0-9/'-]+", lambda m: CASE.get(m.group(0).lower(), m.group(0)), str(x).strip())
+        if s and s not in out: out.append(s)
+    return out
+
+
+def host_path(u):
+    """'https://www.comfort-pro.com/our-team/' -> 'comfort-pro.com/our-team'."""
+    m = re.match(r'(?:https?://)?(?:www\.)?([^?#\s]+)', (u or '').strip())
+    return m.group(1).rstrip('/') if m else u
+
+
+def plain_jobs(src):
+    """The loan record's jobs field in plain words: 'PPP JobsReported (borrower-reported, 2020)' -> 'jobs the borrower reported
+    on its PPP loan, 2020'; 'SBA 7(a) JobsSupported on loan approved 2024-12-19 (...)' -> 'jobs its SBA 7(a) loan of 2024-12-19
+    supports, as the lender reported them'."""
+    src = src or ''
+    m = re.match(r'PPP JobsReported \(borrower-reported, ([^)]+)\)', src)
+    if m: return f"jobs the borrower reported on its PPP loan, {m.group(1).replace('-', ' and ')}"
+    m = re.match(r'SBA (7\(a\)|504) JobsSupported on loan approved (\d{4}-\d{2}-\d{2})', src)
+    if m: return f"jobs its SBA {m.group(1)} loan of {m.group(2)} supports, as the lender reported them"
+    return src
+
+
+def staff_of(item, prof):
+    """(employees, basis, source, note, url, scope): a headcount the company states on its own site wins; else the latest loan
+    jobs figure. A count of people on a team page is not a stated headcount, so the loan figure stays (the count goes in the
+    note). scope is 'worldwide' when the stated count includes staff outside the US."""
+    loan, lsrc = item.get('jobs_latest'), item.get('jobs_latest_source') or ''
+    words = plain_jobs(lsrc)
+    loan_txt = (f"SBA loan record: {words}" if lsrc else 'SBA loan record')
+    pr = prof or {}
+    st, ssrc = pr.get('stated_employees'), pr.get('stated_employees_source') or ''
+    if st and not re.match(r'\s*SBA\b', ssrc):
+        url = re.match(r'\S+', ssrc).group(0) if ssrc else None
+        extra = ssrc[len(url):].strip(' ()') if url else ''
+        if pr.get('stated_employees_kind') == 'team_page_count' and loan is not None:
+            note = (f"The company's team page ({host_path(url)}) lists {st} people, but the site states no headcount, so staff "
+                    f"is the jobs figure on its SBA loan record: {loan} ({words}).")
+            return loan, 'loan', loan_txt, note, None, None
+        scope = pr.get('stated_employees_scope')
+        note = f"Stated on the company's website ({host_path(url)})" + (f": {extra}" if extra else '') + '.'
+        if scope == 'worldwide':
+            note += ' The count includes staff outside the US.'
+        if loan:
+            note += f" The SBA loan record had {loan} jobs ({words})."
+        return st, 'stated', f"company website ({host_path(url)})", note, url, scope
+    return loan, 'loan' if loan is not None else None, loan_txt, None, None, None
+
+
+TABLE_WORDS = {'detailed': 'detailed size table', 'broad': 'broad size table', 'parent_detailed': 'parent industry, detailed sizes',
+               'parent_broad': 'parent industry, broad sizes', 'all_sizes': 'all firm sizes', 'parent_all_sizes': 'parent industry, all firm sizes'}
+
+
+def money_words(v):
+    return REV.money(v) if v is not None else None
+
+
+def revenue_fields(item, rev):
+    """Screen fields from one estimate_revenue result: the figure, its range, the method and plain words with the benchmark table."""
+    if not rev or rev.get('revenue_est_usd') is None:
+        return {'revenue_est_usd': None, 'revenue_est_low_usd': None, 'revenue_est_high_usd': None, 'revenue_method': None, 'revenue_basis': None,
+                'revenue_confidence': None, 'revenue_confidence_note': (rev or {}).get('confidence_note'), 'revenue_source': 'No revenue figure on record.',
+                'revenue_note': None, 'revenue_methods': {}}
+    m = rev.get('methods') or {}
+    if rev['basis'] == 'stated':
+        st = rev['stated']
+        method, src = 'stated', f"Stated revenue for {st.get('year')}: {st.get('source')}{(' (' + st['url'] + ')') if st.get('url') else ''}."
+        note = f"{money_words(rev['revenue_est_usd'])} stated ({st.get('year')})"
+    else:
+        mids = rev.get('midpoint_methods') or rev.get('methods_used') or []
+        method = 'blend' if len(mids) == 2 else mids[0] if mids else None
+        naics, ind = item.get('naics'), rev.get('industry') or ''
+        parts = []
+        if 'headcount' in m:
+            h = m['headcount']
+            who = {'stated': 'staff the company states', 'second_draw': 'jobs on the second-draw PPP loan'}.get(h.get('jobs_basis'), 'jobs on the loan record')
+            parts.append(f"Headcount method {money_words(h['revenue_usd'])}: {h['jobs']} {who} x ${h['receipts_per_employee_2025']:,} "
+                         f"receipts per employee (Census, NAICS {rev.get('benchmark_naics') or naics}, {h['size_class']} employees, {TABLE_WORDS.get(h['table'], h['table'])})."
+                         + ('' if h.get('in_midpoint', True) else ' It sets only the range.'))
+        if 'payroll' in m:
+            p = m['payroll']
+            parts.append(f"Payroll method {money_words(p['revenue_usd'])}: {p['draw']}-draw PPP loan ${p['loan_usd']:,} x 12 / 2.5 = "
+                         f"{money_words(p['ppp_annual_payroll_usd'])} payroll for {p['payroll_year']}, less benefits (/ {p['benefit_load']}), "
+                         f"divided by the {round(p['payroll_share'] * 100, 1)}% payroll share (Census, {p['size_class']} employees, "
+                         f"{TABLE_WORDS.get(p['table'], p['table'])}), then CPI-U to 2025."
+                         + ('' if p.get('in_midpoint', True) else ' It sets only the range.'))
+        how = {'blend': 'The estimate is the midpoint of both methods.', 'headcount': 'The estimate is the headcount method.',
+               'payroll': 'The estimate is the payroll method.'}.get(method, '')
+        src = (f"Modelled (est.), not reported by the company: Census SUSB 2022 benchmarks for {ind} and the company's SBA loan data, "
+               f"in 2025 dollars. {' '.join(parts)} {how} Range {money_words(rev['revenue_low_usd'])} to {money_words(rev['revenue_high_usd'])}.").strip()
+        words = {'blend': 'headcount and payroll methods', 'headcount': 'headcount method', 'payroll': 'payroll method'}.get(method, 'model')
+        note = (f"est. {money_words(rev['revenue_est_usd'])} ({money_words(rev['revenue_low_usd'])} to {money_words(rev['revenue_high_usd'])}); "
+                f"{words}; {rev.get('confidence')} confidence")
+    keep = ('revenue_usd', 'size_class', 'table', 'jobs', 'jobs_basis', 'receipts_per_employee_2025', 'draw', 'loan_usd', 'loan_jobs', 'payroll_share',
+            'payroll_year', 'in_midpoint')
+    return {'revenue_est_usd': rev['revenue_est_usd'], 'revenue_est_low_usd': rev.get('revenue_low_usd'), 'revenue_est_high_usd': rev.get('revenue_high_usd'),
+            'revenue_method': method, 'revenue_basis': 'stated' if rev['basis'] == 'stated' else 'model', 'revenue_dollars': '2025 dollars' if rev['basis'] != 'stated' else None,
+            'revenue_confidence': rev.get('confidence'), 'revenue_confidence_note': rev.get('confidence_note'), 'revenue_source': src, 'revenue_note': note,
+            'revenue_methods': {k: {kk: v[kk] for kk in keep if kk in v} for k, v in m.items()}}
+
+
 def load_zcta(path):
     out = {}
     with open(path, encoding='utf-8') as fh:
@@ -254,13 +381,25 @@ def main():
     ap.add_argument('--ppp-dir', default=os.path.join(ROOT, 'data', 'ppp'))
     ap.add_argument('--out', default=os.path.join(ROOT, 'data', 'research', 'ma_ppp_screen.json'))
     ap.add_argument('--generated', default=None, help='date for meta.generated (default: the candidates file date)')
+    ap.add_argument('--profiles', default=os.path.join(ROOT, 'data', 'ppp', 'enrichment', 'profiles.json'))
+    ap.add_argument('--benchmarks', default=REV.BENCH)
+    ap.add_argument('--stated', default=None, help='optional {items:[{id, revenue_usd, year, source, url}]}: revenue a company states')
     a = ap.parse_args()
     cand = json.load(open(a.candidates, encoding='utf-8'))
     cm, segs, shortlist = cand['meta'], cand['segments'], cand['shortlist']
     enr = {}
-    for f in a.enrichment:
+    prof_path = os.path.abspath(a.profiles) if a.profiles else None
+    enrich_files = [f for f in a.enrichment if os.path.abspath(f) != prof_path]   # the profiles list is read on its own
+    for f in enrich_files:
         for e in json.load(open(f, encoding='utf-8')).get('items', []):
             enr[e['cid']] = e
+    profiles = {p['cid']: p for p in json.load(open(a.profiles, encoding='utf-8'))} if a.profiles and os.path.exists(a.profiles) else {}
+    bench = json.load(open(a.benchmarks, encoding='utf-8'))
+    bench_by = {x['naics']: x for x in bench['items']}
+    loans = REV.load_ppp(a.ppp_dir)
+    stated_rev = {x['id']: x for x in bench['meta'].get('stated_revenue') or []}
+    if a.stated:
+        for x in json.load(open(a.stated, encoding='utf-8')).get('items', []): stated_rev[x['id']] = x
     zc = load_zcta(a.zcta)
     sba_keys = {(seg, prog): sba_row_keys(a.ppp_dir, seg, prog) for seg in SEGS for prog in ('sba7a', 'sba504')}
     gen = a.generated or cm.get('generated') or datetime.date.today().isoformat()
@@ -353,6 +492,24 @@ def main():
             'sources': list(dict.fromkeys([u for _, u, _ in ((e or {}).get('ev') or [])] + ([ver[2]] if ver and ver[2] else []))),
             'full_data_keys': rows, 'retrieved': gen,
         }
+        # company profile (own website where one was found) and staff: a stated headcount wins over the loan jobs figure
+        pr = profiles.get(s['cid'])
+        emp, basis, esrc, enote, eurl, escope = staff_of(item, pr)
+        item.update({'employees': emp, 'employees_basis': basis, 'employees_source': esrc, 'employees_note': enote, 'employees_source_url': eurl,
+                     'employees_scope': escope,
+                     'specialties': tidy_terms((pr or {}).get('specialties')), 'end_markets': tidy_terms((pr or {}).get('end_markets')),
+                     'service_area': (pr or {}).get('service_area') or None, 'one_line': (pr or {}).get('one_line') or None,
+                     'profile_pages_read': list((pr or {}).get('pages_read') or []), 'profile_scale_note': (pr or {}).get('stated_trucks_or_techs') or None,
+                     'profile': 'received' if pr else 'not received'})
+        # revenue (est.): the revenue model run on this item (stated staff or loan jobs, PPP loans, Census benchmarks)
+        rev = REV.estimate_one(item, item, bench_by, bench['meta'], loans, stated_rev)
+        hc = (rev.get('methods') or {}).get('headcount') or {}
+        if hc.get('jobs_basis') == 'second_draw' and item['employees_basis'] == 'loan':
+            # the first draw's jobs figure does not fit its payroll; staff follows the second draw the model used
+            item.update({'employees': hc['jobs'], 'employees_source': 'SBA loan record: jobs the borrower reported on its second-draw PPP loan, 2021',
+                         'employees_note': (f"The PPP loans reported {item['jobs_latest']} jobs, but the first draw's payroll is far too small "
+                                            f"for that many staff. The second-draw loan's {hc['jobs']} jobs fit its payroll, so staff uses them (2021).")})
+        item.update(revenue_fields(item, rev))
         items.append(item)
     items.sort(key=lambda t: (SEGS.index(t['segment']), -t['fit_score'], t['screen_rank'] or 999, t['company']))
     coverage = {}
@@ -375,6 +532,43 @@ def main():
         elif rows:
             top = rows[:8]
             highlights.append(f"{SEG_NAME[seg]} ({SEG_DESC[seg]}): add-on candidates from SBA loan records, ownership not yet checked, best fit first: " + '; '.join(f"{t['company']} ({t['hq_city']}, {t['state']}; {t['trade_plain']})" for t in top) + '.')
+    # revenue model summary: range width, staff basis, and the check against the hand-built lists' vendor figures
+    hand_rev = {}
+    for fn in ('ma_targets_pp.json', 'ma_targets_cet.json', 'ma_targets_fl_ts.json'):
+        p = os.path.join(ROOT, 'data', 'research', fn)
+        if os.path.exists(p):
+            for h in json.load(open(p, encoding='utf-8')).get('items', []): hand_rev[h.get('id')] = h.get('revenue_est_usd')
+    widths = sorted(t['revenue_est_high_usd'] / t['revenue_est_low_usd'] for t in items if t.get('revenue_est_low_usd') and t.get('revenue_est_high_usd'))
+    cal = sorted(t['revenue_est_usd'] / hand_rev[t['on_existing_list']] for t in items
+                 if t.get('on_existing_list') and t.get('revenue_est_usd') and (hand_rev.get(t['on_existing_list']) or 0) > 0)
+    med = lambda xs: None if not xs else (xs[len(xs) // 2] if len(xs) % 2 else (xs[len(xs) // 2 - 1] + xs[len(xs) // 2]) / 2)
+    rv = {'width': round(med(widths), 1) if widths else None, 'cal_n': len(cal), 'cal_ratio': round(med(cal), 1) if cal else None,
+          'stated_staff': sum(1 for t in items if t.get('employees_basis') == 'stated'),
+          'stated_rev': sum(1 for t in items if t.get('revenue_basis') == 'stated')}
+    by_seg = {}
+    for seg in SEGS:
+        v = sorted(t['revenue_est_usd'] for t in items if t['segment'] == seg and t.get('revenue_est_usd'))
+        conf = {}
+        for t in items:
+            if t['segment'] == seg: conf[t.get('revenue_confidence') or 'none'] = conf.get(t.get('revenue_confidence') or 'none', 0) + 1
+        by_seg[seg] = {'with_estimate': len(v), 'median_usd': REV.rnd(med(v), 10000) if v else None, 'confidence': conf}
+    revenue_model = {
+        'what': 'Revenue (est.) for every loan-screen company, from scripts/estimate_revenue.py run on the item.',
+        'dollars': '2025 dollars (CPI-U); a stated figure is as stated',
+        'methods': {'headcount': 'Staff the company states for its US business, else the latest loan jobs figure, x Census receipts per employee for the industry and size class.',
+                    'payroll': 'PPP loan (first draw, else second draw) x 12 / 2.5 = payroll, less benefits (BLS), / the Census payroll share for the industry and size class, then CPI-U to 2025.',
+                    'blend': 'Midpoint of the two methods.', 'stated': f"Revenue the company states; overrides the model. Companies with one: {rv['stated_rev']}."},
+        'range': ('Lowest method x (1 - s) to highest x (1 + s); s is the gap to neighbouring Census size classes, 10% to 40%. It covers the two '
+                  'methods and the spread between Census size classes, not how far one company can sit from its class average.'),
+        'confidence': ('High: the two methods agree within 25%. Medium: within 60%, or one method alone. Low: further apart, a thin Census cell, '
+                       'or a data warning. The portal shows a loan-screen estimate at medium confidence at most, since it is modelled.'),
+        'checks': ('PPP payroll per reported job above $100K plus benefits: the payroll method sets only the range. Below $20K: the jobs figure '
+                   'or the loan is wrong, so a consistent second draw replaces the first, or else the headcount method sets only the range.'),
+        'benchmarks': os.path.relpath(os.path.abspath(a.benchmarks), ROOT), 'benchmarks_generated': bench['meta'].get('generated'),
+        'range_width_median': rv['width'], 'staff_stated_on_website': rv['stated_staff'],
+        'vs_hand_built': {'companies': rv['cal_n'], 'median_ratio': rv['cal_ratio'], 'note': 'Model estimate / the hand-built list\'s vendor-modelled figure, same company.'},
+        'by_segment': by_seg,
+    }
     meta = {
         'dataset': 'SBA loan add-on screen: PPP, 7(a) and 504 borrowers matched to the six BSP companies',
         'title': 'SBA loan screen',
@@ -400,7 +594,15 @@ def main():
             'was not used because no account was available; scripts/classify_ownership.py makes the same decision through either provider. '
             f'PPP jobs are what borrowers reported in 2020 and 2021. The 7(a) and 504 data run from {sba_from} to {sba_asof}, and each company shows its latest '
             'SBA loan, the jobs that loan supports, and whether the loan financed a change of ownership. The fit score adds six parts shown in '
-            'fit_formula; tiers use the engine\'s thresholds, and Tier 1 needs a fully confirmed call.'),
+            'fit_formula; tiers use the engine\'s thresholds, and Tier 1 needs a fully confirmed call. '
+            'Each company then got a short profile from its own website where one was found: what it does (specialties), who it serves, '
+            'where it works and any headcount it states. Staff is that stated headcount with its source page, or else the latest jobs figure '
+            'on its SBA loans, labelled either way. '
+            + ('No company states its revenue, so revenue' if not rv['stated_rev'] else f"{rv['stated_rev']} companies state their revenue, which is used as stated. Other revenue")
+            + ' is modelled (est.) in 2025 dollars from US Census '
+            'Statistics of U.S. Businesses 2022 benchmarks and the company\'s SBA loan data: the stated US headcount or else the loan jobs '
+            'figure times Census receipts per employee for its industry and size, and, for PPP borrowers, the PPP loan turned back into payroll and divided by the '
+            'Census payroll share. The estimate is the midpoint of the two, with a low-high range and a confidence; see revenue_model.'),
         'fit_formula': {
             'segment_fit': '0-30. Checked companies: 30 x (1 - the probability it is out of segment). Unchecked: 18 when the name carries a segment signal, else 12.',
             'size': '0-20. Latest jobs figure inside the ideal band: 20; elsewhere inside the screen band: 12; outside: 5.',
@@ -421,6 +623,9 @@ def main():
             {'name': 'SBA 7(a) and 504 loan data (FOIA)', 'url': 'https://data.sba.gov/dataset/7-a-504-foia', 'as_of': sba_asof, 'retrieved': gen},
             {'name': 'US Census ZCTA gazetteer (ZIP centroids)', 'url': 'https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.html', 'as_of': '2024', 'retrieved': gen},
             {'name': 'Company websites, state business records, press releases, news and search-engine snippets', 'url': None, 'retrieved': gen, 'note': 'Cited per company in ownership_evidence.'},
+            *[{'name': f"{x['name']} ({x.get('publisher', '')})".replace(' ()', ''), 'url': x.get('url'), 'as_of': str(x.get('data_year')) if x.get('data_year') else None,
+               'retrieved': x.get('retrieved'), 'note': 'Revenue model benchmarks (data/research/revenue_benchmarks.json).'}
+              for x in bench['meta'].get('sources') or [] if 'Census' in (x.get('publisher') or '') or 'Labor Statistics' in (x.get('publisher') or '')],
         ],
         'caveats': [
             'PPP jobs are what the borrower reported in 2020 or 2021, not a current headcount. Where a later 7(a) or 504 loan exists, its jobs figure is used instead; the lender reports it and SBA does not check it.',
@@ -431,12 +636,26 @@ def main():
             'Ownership checks cover the shortlist for all six companies, with a second, skeptical pass on every founder or family call.',
             'PPP is a weak source for Fair Harbor: apparel makers in the loan data are mostly contract sewers, uniform makers and small boutiques, so few branded swim or apparel companies appear.',
             'Distances are straight lines from the ZIP centroid, not drive times.',
+            f'Revenue for loan-screen companies is modelled from Census benchmarks and SBA loan data, not reported. Each figure carries a low-high '
+            f'range (the high end is a median {rv["width"]} times the low end) and a confidence. The range covers the two methods and the spread between '
+            f'Census size classes; no model price is shown when its high end is more than 4 times the low end. Census figures are national averages for an industry '
+            f'and size, and a company can sit well above or below them. On the {rv["cal_n"]} companies that are also on a hand-built list, the model '
+            f'reads a median {rv["cal_ratio"]} times the vendor figures those lists use, mostly because the vendor assumes lower revenue per employee. '
+            f'So loan-screen and hand-built revenue are shown and summarised apart.',
+            f'Staff for loan-screen companies is the headcount the company states on its website where it gives one ({rv["stated_staff"]} companies), '
+            f'else the jobs figure on its latest SBA loan, which may be several years old. The revenue model uses the stated headcount when it covers '
+            f'the US business only, else the loan figure.',
         ],
         'highlights': highlights,
         'enrichment_status': {'received_for': received, 'note': 'Ownership results cover every shortlist. Companies added to a shortlist after the check ran are listed as not received; rerun this script with a new enrichment file to fold them in.'},
         'coverage': coverage,
         'screened_out': out_of_segment,
         'full_data': {'index': 'data/ppp/index.json', 'note': 'Every SBA column and row that matches each segment, unfiltered, as published loan files; items carry full_data_keys to find their own rows.'},
+        'revenue_model': revenue_model,
+        'build_inputs': {'candidates': os.path.basename(a.candidates), 'enrichment': sorted(os.path.relpath(os.path.abspath(f), ROOT) for f in enrich_files),
+                         'profiles': os.path.relpath(os.path.abspath(a.profiles), ROOT) if a.profiles else None, 'zcta': os.path.basename(a.zcta),
+                         'benchmarks': os.path.relpath(os.path.abspath(a.benchmarks), ROOT), 'stated': os.path.basename(a.stated) if a.stated else None,
+                         'note': 'candidates and zcta are working files kept outside the repo (scripts/build_ppp_screen.py output and the Census ZCTA gazetteer).'},
         'item_count': len(items),
     }
     os.makedirs(os.path.dirname(a.out), exist_ok=True)

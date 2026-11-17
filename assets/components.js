@@ -1,5 +1,5 @@
 /* Shared, higher-level components used by several modules (targets, filings, opportunities). */
-import { esc } from './core.js?v=20261117133920';
+import { esc } from './core.js?v=20261117144031';
 
 const num = v => (v == null || isNaN(v)) ? null : Number(v);
 const fmtFig = x => x == null ? '—' : typeof x === 'boolean' ? (x ? 'yes' : 'no') : typeof x === 'number' ? x.toLocaleString() : typeof x === 'object' ? (Array.isArray(x) ? x.map(fmtFig).join(', ') : Object.entries(x).map(([k, v]) => `${k} ${fmtFig(v)}`).join('; ')) : String(x);
@@ -26,8 +26,9 @@ export function renderTargets(ctx, el, { items, color, platformLabel, exportName
     { key: 'fit_score', label: 'Fit', num: true, fmt: v => fmt.score(v), width: '90px' },
     { key: 'company', label: 'Company', fmt: (v, r) => `<b>${esc(v)}</b>${r.brands_or_franchise ? `<div class="dim small">${esc(r.brands_or_franchise)}</div>` : ''}${r._srcLine ? `<div class="dim small">${esc(r._srcLine)}</div>` : ''}` },
     { key: '_state', label: 'HQ', fmt: (v, r) => `${esc(r.hq_city || '')}${r.hq_city ? ', ' : ''}${esc(v)}` },
-    { key: 'employees', label: 'Staff', num: true, fmt: v => fmt.num(v) },
-    { key: 'revenue_est_usd', label: 'Rev. est.', num: true, fmt: v => fmt.money(v) },
+    // a caller can label a row's staff or revenue (source, range) with _staffFmt / _revFmt; the sort still uses the number
+    { key: 'employees', label: 'Staff', num: true, fmt: (v, r) => r._staffFmt ? r._staffFmt(v) : fmt.num(v) },
+    { key: 'revenue_est_usd', label: 'Rev. est.', num: true, fmt: (v, r) => r._revFmt ? r._revFmt(v) : fmt.money(v) },
     { key: 'ownership', label: 'Ownership', fmt: v => v ? fmt.chip(v, v === 'pe' ? 'var(--red)' : v === 'founder' || v === 'family' ? 'var(--green)' : 'var(--muted)') : '—' },
     { key: 'specialties', label: 'Specialties / trades', fmt: (v, r) => fmt.list(v || r.trades || r.offerings || [], 3) },
     ...extraColumns,

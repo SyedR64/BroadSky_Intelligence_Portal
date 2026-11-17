@@ -1,5 +1,5 @@
-import * as Copy from './copy.js?v=20261117133920';
-import * as L from './deal-lib.js?v=20261117133920';
+import * as Copy from './copy.js?v=20261117144031';
+import * as L from './deal-lib.js?v=20261117144031';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition model: a live buyout, DCF, roll-up and sensitivity model with
    spreadsheet-style input cells, presets from the portfolio's own estimates and
@@ -12,7 +12,8 @@ const XLSX_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.m
 const COLOR = 'color-mix(in srgb,var(--sys-good) 72%,var(--sys-ink))';
 const CO_COLOR = { pp: 'var(--co-pp)', cet: 'var(--co-cet)', fl: 'var(--co-fl)', ts: 'var(--co-ts)', bpi: 'var(--co-bpi)', fh: 'var(--co-fh)' };
 const CO_ROUTE = { pp: 'pp', cet: 'cet', fl: 'fl', ts: 'ts' };
-const injectCss = () => { if (!document.getElementById('css-deal')) { const l = document.createElement('link'); l.id = 'css-deal'; l.rel = 'stylesheet'; l.href = 'modules/deal.css?v=20261117133920'; document.head.appendChild(l); } };
+const CO_NAME = { pp: 'Punctual Pros', cet: 'CET', fl: 'Frontline', ts: 'Thomas Scientific', bpi: 'BPI', fh: 'Fair Harbor' };
+const injectCss = () => { if (!document.getElementById('css-deal')) { const l = document.createElement('link'); l.id = 'css-deal'; l.rel = 'stylesheet'; l.href = 'modules/deal.css?v=20261117144031'; document.head.appendChild(l); } };
 
 /* ── formatting ──────────────────────────────────────────────────────────── */
 const MINUS = '−';
@@ -75,14 +76,14 @@ function fromParams(params) {
     setPreset(params.p && BYID.has(params.p) ? params.p : (S?.preset || 'typical'));
     const d = sanitize(L.decode(params, keys())); Object.assign(S.vals, d);
     const f = String(params.for || '').replace(/[<>]/g, '').trim().slice(0, 80);
-    if (f) { S.for = f; S.forVals = d; }
+    if (f) { S.for = f; S.forVals = d; const r = String(params.ref || ''); if (/^[a-z]{2,4}-\d{1,6}$/.test(r)) S.ref = r; }
   }
   else if (!S) setPreset('typical');
 }
 function clampKey(k, v) { const m = INP[k]; if (!m || !fin(v)) return null; let x = Math.min(m.max, Math.max(m.min, v)); if (L.INT.has(k)) x = Math.round(x); return x; }
 function sanitize(o) { const out = {}; for (const [k, v] of Object.entries(o)) { const c = clampKey(k, v); if (c != null) out[k] = c; } return out; }
 function syncHash(ctx) {
-  const q = L.encode(S, preset().vals) + (S.for ? `&for=${encodeURIComponent(S.for)}` : ''); const h = `#/deal/${ctx.view.id}?${q}`;
+  const q = L.encode(S, preset().vals) + (S.for ? `&for=${encodeURIComponent(S.for)}` : '') + (S.ref ? `&ref=${encodeURIComponent(S.ref)}` : ''); const h = `#/deal/${ctx.view.id}?${q}`;
   if (location.hash !== h) history.replaceState(null, '', h);
 }
 
@@ -119,6 +120,8 @@ function toolbar(ctx) {
    shows how it was built; a scenario opened for a rival names it. */
 const presetSummary = esc => {
   const p = preset();
+  // a company from the SBA loan screen (ref = its id): its modelled revenue on its BSP company's add-on defaults
+  if (S.for && S.ref) return `Scenario for <b>${esc(S.for)}</b>, an add-on candidate from the SBA loan screen. Revenue is modelled from Census benchmarks and its SBA loan data; margin, multiples and debt are the ${esc(CO_NAME[p.co] || p.label)} add-on defaults. Cells tagged est. are estimates, not reported figures. <a href="#/ma/pipeline?id=${encodeURIComponent(S.ref)}">How these figures were estimated →</a>`;
   if (S.for) return `Scenario for <b>${esc(S.for)}</b>, built from the acquisition engine's estimates on top of a typical lower-middle-market deal. Cells tagged est. are estimates, not reported figures. <a href="#/ma/rivals">Rival profiles →</a>`;
   const back = p.parent && CO_ROUTE[p.co] ? ` <a href="#/ma/pipeline?platform=${encodeURIComponent(p.co)}&amp;id=${encodeURIComponent(p.id)}">How these figures were estimated →</a>` : '';
   return `${esc(p.summary)}${p.est.size ? ' Cells tagged est. are estimates, not BSP figures.' : ''}${back}`;

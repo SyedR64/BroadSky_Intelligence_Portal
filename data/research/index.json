@@ -171,7 +171,7 @@
    "folder": "research",
    "title": "SBA loan screen",
    "item_count": 161,
-   "bytes": 938533,
+   "bytes": 1310989,
    "generated": "2026-11-16"
   },
   {
@@ -261,6 +261,14 @@
    "item_count": 31,
    "bytes": 118735,
    "generated": "2026-09-24"
+  },
+  {
+   "name": "revenue_benchmarks",
+   "folder": "research",
+   "title": "Revenue benchmarks by industry and company size",
+   "item_count": 15,
+   "bytes": 225383,
+   "generated": "2026-11-17"
   },
   {
    "name": "rival_filings",
@@ -402,12 +410,12 @@
   }
  ],
  "totals": {
-  "research_files": 38,
-  "research_items": 4848,
+  "research_files": 39,
+  "research_items": 4863,
   "sales_files": 10,
   "sales_rows": 181273,
-  "bytes": 44398169,
+  "bytes": 44996008,
   "data_from": "2026-09-24",
-  "data_to": "2026-11-16"
+  "data_to": "2026-11-17"
  }
 }
