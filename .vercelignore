@@ -1,6 +1,6 @@
-# The site deploys from the repo root; these folders are never served to visitors. Leaving them out keeps every
-# deployment smaller (the assistant backend deploys separately from server/).
-server/
+# Both Vercel projects read this file from the repository root, including the assistant backend (root directory
+# server/), so never list server/ here: that strips the backend and its build fails. These folders are not needed
+# by either project.
 scripts/
 worker/
 tools/
