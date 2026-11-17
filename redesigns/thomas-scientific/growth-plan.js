@@ -1,5 +1,5 @@
 /* Thomas Scientific — growth plan. Renders every section from the portal datasets. */
-import { badgeEst } from './shared.js?v=20261117023416';
+import { badgeEst } from './shared.js?v=20261117035151';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 let esc = s => String(s ?? '');

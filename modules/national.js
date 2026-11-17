@@ -5,7 +5,7 @@
          (OMB July 2023 metro crosswalk), data/research/pp_nationwide.json (Punctual Pros phases 1–4).
    All scores are computed client-side from percentile ranks; every score is a modelled estimate.
    ═══════════════════════════════════════════════════════════════════════════ */
-import { EST } from './copy.js?v=20261117023416';
+import { EST } from './copy.js?v=20261117035151';
 
 const COLOR = 'var(--co-pp)';
 /* Colours come from the system palette (assets/system.css): DOM markup uses var(--…) directly; Leaflet's canvas renderer
@@ -89,7 +89,7 @@ async function loadModel(ctx) {
   if (MODEL) return MODEL;
   const t0 = performance.now();
   const [nc, cbsa, pn] = await Promise.all([
-    fetch(COUNTIES_URL, { cache: 'force-cache' }).then(r => r.ok ? r.json() : null).then(j => j ? ctx.data.decode(j) : null).catch(() => null),
+    fetch(COUNTIES_URL, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(j => j ? ctx.data.decode(j) : null).catch(() => null),
     ctx.data.research('county_cbsa'),
     ctx.data.research('pp_nationwide'),
   ]);

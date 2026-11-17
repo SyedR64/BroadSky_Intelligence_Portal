@@ -8,7 +8,7 @@
    read live with the snapshot as fallback) and from the repo's own tables (national_counties, company filings
    estimate tables, fl_lawfirms, ma_targets_pp, cet_opportunities). Every estimate is labelled est. and shows its
    assumption; a missing snapshot leaves its factors as "not available" instead of failing the view. */
-import * as Copy from './copy.js?v=20261117023416';
+import * as Copy from './copy.js?v=20261117035151';
 
 const injectCss = () => { if (document.getElementById('css-signals')) return; const l = document.createElement('link'); l.id = 'css-signals'; l.rel = 'stylesheet'; l.href = new URL('./signals.css', import.meta.url).href; document.head.appendChild(l); };
 const COUNTIES_URL = new URL('../data/national_counties.json', import.meta.url).href;
@@ -102,7 +102,7 @@ async function loadAll(ctx) {
   const p = (async () => {
     const [fred, housing, nih, fedbuy, policy, permits, echo, counties, lawfirms, maPp, cetOpp, aPA, aNJ, aMA, aCT, aRI, ...fins] = await Promise.all([
       snap('fred_signals'), snap('housing_counties'), snap('nih_awards'), snap('federal_buying'), snap('policy_activity'), snap('census_permits'), snap('echo_npdes_majors'),
-      fetch(COUNTIES_URL, { cache: 'force-cache' }).then(r => (r.ok ? r.json() : null)).then(j => (j ? data.decode(j) : null)).catch(() => null),
+      fetch(COUNTIES_URL, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null)).then(j => (j ? data.decode(j) : null)).catch(() => null),
       data.load('fl_lawfirms').catch(() => []), data.research('ma_targets_pp'), data.research('cet_opportunities'),
       alerts('PA'), alerts('NJ'), alerts('MA'), alerts('CT'), alerts('RI'),
       ...COS.map(c => data.research(REV[c.id][0])),

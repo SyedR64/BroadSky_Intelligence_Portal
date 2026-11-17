@@ -1,11 +1,11 @@
-import * as Copy from './copy.js?v=20261117023416';
+import * as Copy from './copy.js?v=20261117035151';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition engine (M&A) — cross-portfolio buy-and-build intelligence.
    Datasets: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets, Competitor filings,
              Public comparables, Private-equity landscape, BSP firm profile; sales/* (property transfers, lazy, theses view).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, fitTierOf } from '../assets/components.js?v=20261117023416';
-import * as DL from './deal-lib.js?v=20261117023416';
+import { renderTargets, fitTierOf } from '../assets/components.js?v=20261117035151';
+import * as DL from './deal-lib.js?v=20261117035151';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 const PLAT = {
@@ -112,7 +112,7 @@ const pctOf = (n, d) => d ? Math.round((n / d) * 100) : 0;
 const titleCase = s => String(s || '').replace(/_/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
 const ownerClass = s => { const x = String(s || '').toLowerCase().replace(/no sponsor disclosed|no pe affiliation/g, ''); if (!x.trim()) return 'Unverified'; if (/subsidiary|part of|venture-backed|pe-backed|private equity|backed by|\bpe\b/.test(x)) return 'Sponsor / corporate'; if (/founder|family/.test(x)) return 'Founder / family'; if (/unknown|unverified|not disclosed|not verified/.test(x)) return 'Unverified'; if (/esop|employee-owned/.test(x)) return 'ESOP'; if (/franchisee/.test(x)) return 'Franchisee'; return 'Private independent'; };
 const OWNER_COLOR = { 'Founder / family': 'var(--sys-good)', 'Private independent': 'var(--sys-info)', Franchisee: 'var(--sys-violet)', ESOP: 'var(--sys-warn)', Unverified: 'var(--sys-mute-2)', 'Sponsor / corporate': 'var(--sys-bad)' };
-const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261117023416'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261117035151'; document.head.appendChild(l); } };
 const shortList = a => { const v = (Array.isArray(a) ? a : [a]).filter(Boolean).map(x => { const y = String(x).replace(/\s*\(.*?\)\s*/g, ' ').replace(/_/g, ' ').trim(); return y.length > 26 ? y.slice(0, 25).trim() + '…' : y; }); return v.length > 2 ? [...v.slice(0, 2), `+${v.length - 2}`] : v; };
 const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
 const pctTxt = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;
@@ -1272,7 +1272,7 @@ async function screenView(ctx) {
   const asOf = (M.sources || []).find(x => /7\(a\)/.test(x.name))?.as_of;
   el.innerHTML = `<div class="m-ma">` + ui.pageHead({
     title: 'SBA loan screen',
-    sub: `<b>${fmt.num(ppFF.length)} home-service companies near Punctual Pros’ hubs look founder or family-owned, and a second check confirmed ${fmt.num(conf.filter(x => x.s.segment === 'pp').length)} of them.</b> SBA loan records give the size and recent borrowing of add-on candidates for all six companies. Ownership checks so far cover ${andList(checkedSegs.map(p => PLAT[p].label)) || 'none of them'}.`,
+    sub: `<b>${fmt.num(ppFF.length)} home-service companies near Punctual Pros’ hubs look founder or family-owned, and a second check confirmed ${fmt.num(conf.filter(x => x.s.segment === 'pp').length)} of them.</b> SBA loan records give the size and recent borrowing of add-on candidates for all six companies. ${checkedSegs.length === 6 ? 'Every shortlisted company had its ownership checked, and every founder or family call got a second, skeptical pass.' : `Ownership checks so far cover ${andList(checkedSegs.map(p => PLAT[p].label)) || 'none of them'}.`}`,
     chips: `${fmt.chip(`7(a) and 504 FY1991 to ${dayWords(asOf)}`, 'var(--c-ma)')}${fmt.chip('PPP jobs are from 2020–21', 'var(--sys-warn)')}${fmt.chip('Ownership from public web evidence')}`,
     actions: `<a class="sys-btn sys-btn--primary btn" href="#/ma/loans">SBA loan records →</a><a class="sys-btn sys-btn--secondary btn" href="#/ma/pipeline">Pipeline →</a>`,
   }) + missingNote(ui, esc, b) +
@@ -1325,7 +1325,7 @@ const RX_EMAIL = /[\w.%+-]+@[\w.-]+\.[a-z]{2,}/i;
 const _loanFiles = new Map();
 function loanFile(name) {
   if (!_loanFiles.has(name)) {
-    const p = fetch(new URL(`data/ppp/${name}.json`, document.baseURI), { cache: 'force-cache' }).then(r => { if (!r.ok) throw new Error(`${name} (${r.status})`); return r.json(); });
+    const p = fetch(new URL(`data/ppp/${name}.json`, document.baseURI), { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(`${name} (${r.status})`); return r.json(); });
     _loanFiles.set(name, p); p.catch(() => _loanFiles.delete(name));
     while (_loanFiles.size > 3) _loanFiles.delete(_loanFiles.keys().next().value);   // keep memory bounded: the largest file is ~16 MB
   }

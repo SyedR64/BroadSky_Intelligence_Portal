@@ -100,8 +100,8 @@ function initDeals() {
   let done = false;
   const run = async () => {
     if (done) return; done = true;
-    const get = url => fetch(ROOT + url, { cache: 'force-cache' }).then(r => r.ok ? r.json() : null).catch(() => null);
-    const [dm, cet, pp, flts, comps, L] = await Promise.all(['deal_model', 'ma_targets_cet', 'ma_targets_pp', 'ma_targets_fl_ts', 'public_comps'].map(n => get(`data/research/${n}.json`)).concat(import(ROOT + 'modules/deal-lib.js?v=20261117023416').catch(() => null)));
+    const get = url => fetch(ROOT + url, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null);
+    const [dm, cet, pp, flts, comps, L] = await Promise.all(['deal_model', 'ma_targets_cet', 'ma_targets_pp', 'ma_targets_fl_ts', 'public_comps'].map(n => get(`data/research/${n}.json`)).concat(import(ROOT + 'modules/deal-lib.js?v=20261117035151').catch(() => null)));
     if (!dm?.meta || !L?.targetVals) return;
     const all = [...(cet?.items || []).map(t => ({ ...t, _p: 'cet' })), ...(pp?.items || []).map(t => ({ ...t, _p: 'pp' })), ...(flts?.items || []).map(t => ({ ...t, _p: t.platform === 'frontline' ? 'fl' : 'ts' }))];
     for (const card of cards) {
@@ -289,7 +289,7 @@ async function initBridge() {
   if (!$('#bridge-bars')) return;
   renderBridge(OS_FALLBACK, false);
   try {
-    const r = await fetch(ROOT + 'data/research/serviceos_evidence.json', { cache: 'force-cache' }); if (!r.ok) return;
+    const r = await fetch(ROOT + 'data/research/serviceos_evidence.json', { cache: 'no-cache' }); if (!r.ok) return;
     const d = await r.json(); const ra = (d.items || []).filter(i => i.kind === 'roadmap_assumption' && Array.isArray(i.ebitda_impact_usd));
     const order = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
     if (ra.length >= 6) renderBridge(order.map(c => ra.find(i => i.company === c)).filter(Boolean), true);
@@ -299,7 +299,7 @@ async function initBridge() {
 async function initPrinciples() {
   const src = $('#principles-src'); if (!src) return;
   try {
-    const r = await fetch(ROOT + 'data/research/design_refs.json', { cache: 'force-cache' }); if (!r.ok) return;
+    const r = await fetch(ROOT + 'data/research/design_refs.json', { cache: 'no-cache' }); if (!r.ok) return;
     const d = await r.json(); const n = d.items?.length; const gen = fmtDate(d.meta?.generated);
     if (n && gen) src.innerHTML = `<b>Source:</b> design references, ${n} reference homepages reviewed and captured on ${esc(gen)}.`;
   } catch { /* static line stays */ }

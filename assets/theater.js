@@ -8,13 +8,13 @@
      Basemap             OpenFreeMap vector styles (key-free): /styles/dark, fallback /styles/positron
      Terrain             AWS Terrarium DEM tiles (CORS-enabled), exaggeration 1.4, plus hillshade
    Usage:
-     import { Theater } from './assets/theater.js?v=20261117023416';
+     import { Theater } from './assets/theater.js?v=20261117035151';
      await Theater.mount(el, { autoplay: true, scene: 'S1', onScene: (id, scene) => {} });
      Theater.play(); Theater.pause(); Theater.goTo('S3'); Theater.destroy();
    window.BSPTheater exposes the same API (plus state()) for automation.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-import { label } from './frame.js?v=20261117023416';
+import { label } from './frame.js?v=20261117035151';
 /* Caption source lines: dataset keys become their readable names (Frame.label); {id, note} adds a note in brackets. */
 const RX_KEY = /^[a-z][a-z0-9]*(?:_[a-z0-9]+)+$/;
 const SRC = (...parts) => [...new Set(parts.map(p => typeof p === 'string' ? (RX_KEY.test(p) ? label(p) : p) : `${label(p.id)} (${p.note})`))].join(' · ');
@@ -163,7 +163,7 @@ const SCENES = [
 /* ── cached data (survives remounts in the portal) ────────────────────────── */
 let _base = null, _sales = null, _cetSales = null, _alerts = null;
 
-async function fetchJSON(rel) { const r = await fetch(new URL(rel, import.meta.url), { cache: 'force-cache' }); if (!r.ok) throw new Error(`${rel} ${r.status}`); return r.json(); }
+async function fetchJSON(rel) { const r = await fetch(new URL(rel, import.meta.url), { cache: 'no-cache' }); if (!r.ok) throw new Error(`${rel} ${r.status}`); return r.json(); }
 /** Decode the columnar sales files straight into typed arrays (lon, lat, price, day). */
 function decodeSales(files) {
   let n = 0; for (const j of files) n += j.rows.length;
@@ -362,7 +362,7 @@ class TheaterInstance {
     window.addEventListener('keydown', this._onKey);
     this._syncPlay();
 
-    if (!this.core) this.core = await import('./core.js?v=20261117023416');
+    if (!this.core) this.core = await import('./core.js?v=20261117035151');
     const baseP = loadBase(this.core);
     if (!webglOK() || this.opts.forceFallback) return this._fallback(this.opts.forceFallback ? 'Static fallback requested.' : 'WebGL is not available in this browser, so the 3D map is showing a static 2D map.', baseP);
     loadCss(LIBS.mlCss, 'maplibre-css');

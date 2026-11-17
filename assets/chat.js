@@ -14,7 +14,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261117023416';
+import { Data, Fmt, Live, esc } from './core.js?v=20261117035151';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -57,7 +57,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261117023416';
+const BACKEND_JS = './backend.js?v=20261117035151';
 let BE = null, BE_P = null, BE_RETRY = 0;
 function backend() {
   // The check on page load can land on a cold start and miss: when the backend looked offline, check again (at most every 15 s).
@@ -557,7 +557,7 @@ async function addonHistory(q) {
 }
 /** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
 async function dealModel(q) {
-  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261117023416').catch(() => null)]);
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261117035151').catch(() => null)]);
   if (!d || !L) return null;
   const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
   const P = pre.find(i => i.co === co && i.group !== 'generic') || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
@@ -853,7 +853,7 @@ async function siteIntents(co) {
 const RESEARCH_FILES = 36, DEED_FILES = 10;   // data/research and data/sales; core tables come from data/manifest.json
 let DATASETS = 56;   // refined from the manifest below so the count matches the landing page
 const WIDGETS = new Set();
-fetch(ROOT + 'data/manifest.json', { cache: 'force-cache' }).then(r => r.ok ? r.json() : null).then(m => {
+fetch(ROOT + 'data/manifest.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(m => {
   const core = Array.isArray(m?.datasets) ? m.datasets.length : 0; if (!core) return;
   const old = DATASETS; DATASETS = core + RESEARCH_FILES + DEED_FILES; if (old !== DATASETS) WIDGETS.forEach(w => w.syncCount(old));
 }).catch(() => { /* keep the default count */ });
@@ -1317,7 +1317,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261117023416'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261117035151'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };

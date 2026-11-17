@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261117023416';
+import * as Copy from './copy.js?v=20261117035151';
 /* Briefing — narrated tour + rendered video + script */
 async function render(ctx) {
   const { el, ui, esc, fmt } = ctx;
