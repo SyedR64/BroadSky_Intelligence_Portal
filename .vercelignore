@@ -1,0 +1,7 @@
+# The site deploys from the repo root; these folders are never served to visitors. Leaving them out keeps every
+# deployment smaller (the assistant backend deploys separately from server/).
+server/
+scripts/
+worker/
+tools/
+.github/

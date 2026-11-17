@@ -84,10 +84,18 @@ if (!globalThis.__bspFetchShim) {
     return nativeFetch(input, init);
   };
 }
+/* Nightly snapshots (data/live/) are read from the GitHub Pages copy of the repo when the site runs elsewhere (Vercel):
+   the nightly data commit then needs no new Vercel deployment, which keeps deployment storage small. GitHub Pages
+   allows cross-site reads. If that copy cannot be reached, the copy deployed with the site is used. */
+const PAGES_BASE = 'https://syedr64.github.io/BroadSky_Intelligence_Portal/';
+const liveUrls = name => (location.hostname.endsWith('github.io') || location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? [`${BASE}data/live/${name}.json`] : [`${PAGES_BASE}data/live/${name}.json`, `${BASE}data/live/${name}.json`];
+const fetchLive = (get, name) => liveUrls(name).reduce((prev, url) => prev.then(v => v != null ? v
+  : get(url, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null)).catch(() => null)), Promise.resolve(null));
 function snapshot(name) {
   if (!/^[a-z0-9_]+$/.test(name)) return Promise.resolve(null);
   if (!SHARED.snaps.has(name)) {
-    const p = nativeFetch(`${BASE}data/live/${name}.json`, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null)).catch(() => null);
+    const p = fetchLive(nativeFetch, name);
     SHARED.snaps.set(name, p); p.then(v => { if (v == null && SHARED.snaps.get(name) === p) SHARED.snaps.delete(name); });
   }
   return SHARED.snaps.get(name);
@@ -584,5 +592,5 @@ export const App = {
     App.route();
   },
 };
-// Guard: assets/components.js imports ./core.js?v=20261117035151 without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
+// Guard: assets/components.js imports ./core.js?v=20261117133824 without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
 window.BSP = window.BSP || { Data, Fmt, UI, Maps, Charts, Live, Tour, App, Inspector, Theme };

@@ -1,6 +1,6 @@
 /* Live2 — read the nightly snapshots written by scripts/refresh_live.py (data/live/<name>.json).
    Use when a live browser-side API call fails:
-     import { Live2 } from '../assets/live.js?v=20261117035151';
+     import { Live2 } from '../assets/live.js?v=20261117133824';
      const alerts = await Live2.fallback(() => ctx.live.nwsAlerts('PA'), 'nws_alerts', s => s.items.filter(a => a.state === 'PA'));
    Snapshots: nws_alerts, forecast_hubs, usaspending_trades, echo_npdes_majors, census_permits, manifest. */
 const BASE = new URL('.', import.meta.url).href.replace(/assets\/$/, '');
@@ -11,14 +11,21 @@ if (!SHARED.snaps) SHARED.snaps = new Map();
 const _cache = SHARED.snaps;
 const _fetch = (...a) => (globalThis.__bspNativeFetch || fetch)(...a);
 
+/* Nightly snapshots (data/live/) are read from the GitHub Pages copy of the repo when the site runs elsewhere (Vercel):
+   the nightly data commit then needs no new Vercel deployment, which keeps deployment storage small. GitHub Pages
+   allows cross-site reads. If that copy cannot be reached, the copy deployed with the site is used. */
+const PAGES_BASE = 'https://syedr64.github.io/BroadSky_Intelligence_Portal/';
+const liveUrls = name => (location.hostname.endsWith('github.io') || location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? [`${BASE}data/live/${name}.json`] : [`${PAGES_BASE}data/live/${name}.json`, `${BASE}data/live/${name}.json`];
+const fetchLive = (get, name) => liveUrls(name).reduce((prev, url) => prev.then(v => v != null ? v
+  : get(url, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null)).catch(() => null)), Promise.resolve(null));
+
 export const Live2 = {
   /** Fetch data/live/<name>.json. Returns the parsed snapshot ({fetched_at, source_urls, items, ...}) or null if missing. */
   async snapshot(name) {
     if (!/^[a-z0-9_]+$/.test(name)) throw new Error(`Bad snapshot name: ${name}`);
     if (_cache.has(name)) return _cache.get(name);
-    const p = _fetch(`${BASE}data/live/${name}.json`, { cache: 'no-cache' })
-      .then(r => (r.ok ? r.json() : null))
-      .catch(() => null);
+    const p = fetchLive(_fetch, name);
     _cache.set(name, p);
     const v = await p; if (v == null && _cache.get(name) === p) _cache.delete(name);
     return v;
