@@ -219,3 +219,7 @@
 .m-ma .ma-loans tr.ma-loan-hit{cursor:pointer;background:color-mix(in srgb,var(--sys-info) 6%,var(--sys-surface))}
 .m-ma .ma-loan-scr{display:inline-flex;align-items:center;gap:4px}
 @media (max-width:640px){.m-ma .ma-scr-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* SBA loan records: keep the table title readable when the download buttons share its header row */
+.m-ma .panel-head:has(.ma-loans-dl) > .panel-title { flex: 1 1 18rem; min-width: min(18rem, 100%); }
+.m-ma .panel-head:has(.ma-loans-dl) > .actions { flex: 0 1 auto; justify-content: flex-end; }
