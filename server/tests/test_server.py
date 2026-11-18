@@ -1143,7 +1143,10 @@ def test_text_after_a_tool_call_starts_a_new_paragraph(env):
     assert text.startswith('Let me check the records.\n\n**Short answer:** lenders') and '\n\n\n' not in text
     marker = plan_marker(['workspace_search', {'app': 'servicetitan', 'set': 'jobs', 'days': 0}])
     _, _, events = chat(env['main'], f'My jobs today {marker} [mock:preamble]', workspace=TECH_WS)
-    assert ''.join(e['text'] for e in events if e['type'] == 'text').startswith('Let me check the records.\n\n**Short answer:**')
+    # the company agent drops a short note before a lookup: the answer is the first thing the reader sees
+    assert ''.join(e['text'] for e in events if e['type'] == 'text').startswith('**Short answer:**')
+    _, _, events = chat(env['main'], f'My jobs today {marker}', workspace=TECH_WS)   # an answer with no lookup still arrives whole
+    assert ''.join(e['text'] for e in events if e['type'] == 'text').startswith('**Short answer:**')
     _, _, events = chat(env['main'], 'Who runs the firm? [mock:tool]')   # no text before the tool: no break is added
     assert ''.join(e['text'] for e in events if e['type'] == 'text').startswith('**Short answer:**')
     _, _, events = chat(env['main'], 'News? [mock:cite]')   # text blocks split only by a citation stay joined

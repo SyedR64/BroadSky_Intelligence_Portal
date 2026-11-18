@@ -978,10 +978,11 @@ STYLES = {
                  'Status in one sentence, the top risk, the next step.'),
     'desk': ('Short, with drafts', 'Two to four lines; offer a draft when an action fits.', 'Two sentences; offer a draft.'),
     'field': ('Under 30 seconds',
-              'Hard limit for a phone in a driveway: five short lines at most, under 60 words in all, no headings or lists; this '
-              'overrides the general length and format guide. For a job at an address: first where the equipment for this issue is and '
-              'its shutoff, then the likely cause and the first check, then at most three things to bring, then one offer with its '
-              'price. Leave other equipment and pipe runs to the sketch unless asked.',
+              'Hard limit for a phone in a driveway: four lines, each one sentence of 15 words or fewer, 60 words in all; no headings '
+              'or lists; this overrides the general length and format guide. For a job at an address: line 1, where the equipment for '
+              'this issue is and its shutoff; line 2, the likely cause and the first check; line 3, "Bring:" and at most three things; '
+              'line 4, "Offer:" one item with its price. A gas or CO report adds one safety line first. Leave other equipment, '
+              'pipe runs and history to the sketch unless asked.',
               'Hard limit: under 30 seconds, about 60 words, same order; say "from our records" or "likely" for each location; end '
               'with "The sketch is on your screen." when a sketch was drawn.'),
 }

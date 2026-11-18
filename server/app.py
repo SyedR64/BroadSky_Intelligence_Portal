@@ -205,6 +205,7 @@ VOICE_RULES = '\n'.join([
     '7. House style: say "growth plan" and "portfolio company" or "company". No greetings and no addressing anyone by name. No legal or compliance '
     'commentary. Call the firm BSP.',
 ])
+PRE_HOLD = 200   # WORKSPACE HOOK: characters of a step's opening text held back in case it is only a note before a lookup
 VOICE_CUT = ' That is as far as a spoken answer goes. Type the question for the full answer.'   # spoken when an answer hits the token ceiling
 VOICE_DEAL_RULE = ('8. Deal maths: when the question is what a company or target is worth, a purchase price or a return, call deal_model once, starting '
                    'from the closest preset. Then say the price, the equity check, the yearly return and the money multiple in a sentence or two, and '
@@ -1551,6 +1552,18 @@ async def run_agent(ctx, q, st):
             # to the end of the step, so a preamble before a lookup ("Let me check") is never read aloud.
             vf = VoiceFilter() if voice else None
             hold = voice and not final and bool(base['tools'])
+            # WORKSPACE HOOK: in chat, the opening text of a step that may still call a tool is held until it is clearly an answer
+            # (PRE_HOLD characters). A short note before a lookup ("Open the covenant email.") is dropped when the tool call starts.
+            pre = '' if ctx.get('ws') and not voice and not final and base['tools'] else None
+
+            def emit(out):
+                nonlocal gap
+                if gap and vf is None:   # one paragraph break, not between blocks split only by citations
+                    out = '\n\n' + out.lstrip()
+                gap = False
+                st['sent_text'] = True
+                st['chunks'] += 1
+                put({'type': 'text', 'text': out})
             try:
                 it = stream.__aiter__()
                 while True:
@@ -1581,19 +1594,21 @@ async def run_agent(ctx, q, st):
                             put({'type': 'status', 'text': 'Reading web results'})
                         elif bt == 'tool_use':
                             tool_open = True
+                        if bt in ('tool_use', 'server_tool_use') and pre:
+                            pre = ''   # a note before a lookup, not part of the answer
                     elif t == 'thinking':   # summarized reasoning: shown in its own panel, never mixed into the answer
                         if is_str(getattr(ev, 'thinking', None)) and ev.thinking and not voice:
                             put({'type': 'thinking', 'text': ev.thinking})
                     elif t == 'text':
                         if is_str(ev.text) and ev.text:
                             out = ev.text if vf is None else vf.feed(ev.text)
+                            if out and pre is not None:
+                                pre += out
+                                out = ''
+                                if len(pre) >= PRE_HOLD:
+                                    out, pre = pre, None
                             if out and not hold:
-                                if gap and vf is None:   # one paragraph break, not between blocks split only by citations
-                                    out = '\n\n' + out.lstrip()
-                                gap = False
-                                st['sent_text'] = True
-                                st['chunks'] += 1
-                                put({'type': 'text', 'text': out})
+                                emit(out)
                     elif t == 'content_block_stop':
                         b = ev.content_block
                         bt = getattr(b, 'type', '')
@@ -1605,7 +1620,9 @@ async def run_agent(ctx, q, st):
                                     n = sources.add(f'web:{url}', getattr(c, 'title', None) or url, url, re.sub(r'^www\.', '', url.split('/')[2]) if '//' in url else '', '', 'web')
                                     if f'[{n}]' not in marks:
                                         marks.append(f'[{n}]')
-                            if marks:
+                            if marks and pre is not None:
+                                pre += ' ' + ''.join(marks)
+                            elif marks:
                                 put({'type': 'text', 'text': ' ' + ''.join(marks)})
                         elif bt in ('tool_use', 'server_tool_use'):
                             tool_open = False
@@ -1615,6 +1632,9 @@ async def run_agent(ctx, q, st):
                         put(sources.event())
                         sent_sources = len(sources.items)
                 msg = await stream.get_final_message()
+                if pre:   # the step ended without a lookup: what was held is the answer
+                    emit(pre)
+                pre = None
             except ValueError:
                 if not tool_open:
                     raise   # malformed upstream data, not a tool input: end the answer with an error event
