@@ -1,0 +1,331 @@
+{
+ "issues": [
+  {
+   "id": "no_heat",
+   "label": "No heat",
+   "trades": [
+    "hvac"
+   ],
+   "match": [
+    "no heat",
+    "not heating",
+    "furnace (won.?t|not) (start|run|light)",
+    "runs a few seconds",
+    "cold (house|inside)",
+    "heat (is )?(out|off)"
+   ],
+   "focus": [
+    "furnace",
+    "boiler",
+    "heat_pump",
+    "gas_shutoff",
+    "service_switch"
+   ],
+   "causes": [
+    {
+     "text": "Hot-surface ignitor has failed",
+     "w": 3,
+     "boost": {
+      "kind": "furnace",
+      "age_over": 10,
+      "fuel": "gas",
+      "rec_word": "ignitor"
+     }
+    },
+    {
+     "text": "Dirty flame sensor shuts the burner down",
+     "w": 2,
+     "boost": {
+      "kind": "furnace",
+      "fuel": "gas"
+     }
+    },
+    {
+     "text": "Thermostat, power or a tripped furnace switch",
+     "w": 2
+    },
+    {
+     "text": "Clogged filter tripping the high-limit switch",
+     "w": 1
+    }
+   ],
+   "check": [
+    "Thermostat set to heat and calling",
+    "Furnace switch and breaker on",
+    "Board light code",
+    "Filter"
+   ],
+   "bring": [
+    {
+     "text": "Universal hot-surface ignitor",
+     "part": "ign-hsi"
+    },
+    {
+     "text": "Flame sensor and emery cloth",
+     "part": "flame-sensor"
+    },
+    {
+     "text": "Multimeter"
+    },
+    {
+     "text": "3 to 5 amp fuse",
+     "part": "fuse-3a"
+    },
+    {
+     "text": "16x25 filters",
+     "part": "filter-1625"
+    }
+   ],
+   "safety": [
+    "gas"
+   ],
+   "offers": [
+    "ignitor",
+    "diag",
+    "tuneup",
+    "club_total",
+    "replace_furnace"
+   ]
+  },
+  {
+   "id": "heat_pump",
+   "label": "Heat pump not heating",
+   "trades": [
+    "hvac"
+   ],
+   "match": [
+    "heat pump"
+   ],
+   "focus": [
+    "heat_pump",
+    "air_handler",
+    "panel"
+   ],
+   "causes": [
+    {
+     "text": "Defrost board or sensor fault",
+     "w": 3,
+     "boost": {
+      "kind": "heat_pump",
+      "age_over": 8
+     }
+    },
+    {
+     "text": "Low refrigerant charge",
+     "w": 2
+    },
+    {
+     "text": "Tripped breaker for the outdoor unit",
+     "w": 1
+    }
+   ],
+   "check": [
+    "Breakers for both units",
+    "Outdoor unit iced over",
+    "Thermostat in heat mode"
+   ],
+   "bring": [
+    {
+     "text": "Defrost sensor",
+     "part": "defrost-sensor"
+    },
+    {
+     "text": "Gauges and a leak detector"
+    }
+   ],
+   "safety": [
+    "electric"
+   ],
+   "offers": [
+    "heat_pump_repair",
+    "diag",
+    "club_total"
+   ]
+  },
+  {
+   "id": "wh_leak",
+   "label": "Water heater leaking",
+   "trades": [
+    "plumbing"
+   ],
+   "match": [
+    "water heater (is )?leak",
+    "leak(ing)? water heater",
+    "puddle"
+   ],
+   "focus": [
+    "water_heater",
+    "gas_shutoff",
+    "main_water"
+   ],
+   "causes": [
+    {
+     "text": "Tank has rusted through",
+     "w": 3,
+     "boost": {
+      "kind": "water_heater",
+      "age_over": 10
+     }
+    },
+    {
+     "text": "Relief valve dripping",
+     "w": 2
+    },
+    {
+     "text": "Loose supply fitting",
+     "w": 1
+    }
+   ],
+   "check": [
+    "Where the water comes from",
+    "Relief valve discharge pipe",
+    "Tank age on the plate"
+   ],
+   "bring": [
+    {
+     "text": "Relief valve",
+     "part": "tp-valve"
+    },
+    {
+     "text": "Drain hose and wet vac"
+    }
+   ],
+   "safety": [
+    "water"
+   ],
+   "offers": [
+    "wh_replace",
+    "diag",
+    "club_total"
+   ]
+  },
+  {
+   "id": "gas_smell",
+   "label": "Gas smell",
+   "trades": [
+    "hvac",
+    "plumbing"
+   ],
+   "match": [
+    "smell (of )?gas",
+    "gas smell",
+    "gas leak"
+   ],
+   "focus": [
+    "gas_meter",
+    "gas_shutoff"
+   ],
+   "causes": [
+    {
+     "text": "Leak at a fitting or appliance valve",
+     "w": 3
+    },
+    {
+     "text": "Pilot or burner not lighting",
+     "w": 2
+    }
+   ],
+   "check": [
+    "Leave if the smell is strong",
+    "Meter shutoff reachable from outside"
+   ],
+   "bring": [
+    {
+     "text": "Gas leak detector"
+    }
+   ],
+   "safety": [
+    "gas"
+   ],
+   "offers": [
+    "diag"
+   ]
+  },
+  {
+   "id": "co_alarm",
+   "label": "Carbon monoxide alarm",
+   "trades": [
+    "hvac"
+   ],
+   "match": [
+    "carbon monoxide",
+    "\\bco alarm"
+   ],
+   "focus": [
+    "furnace",
+    "water_heater",
+    "gas_shutoff"
+   ],
+   "causes": [
+    {
+     "text": "Blocked flue or chimney",
+     "w": 3
+    },
+    {
+     "text": "Cracked heat exchanger",
+     "w": 2,
+     "boost": {
+      "kind": "furnace",
+      "age_over": 15
+     }
+    }
+   ],
+   "check": [
+    "Alarm age and location",
+    "Flue connections"
+   ],
+   "bring": [
+    {
+     "text": "Combustion analyzer"
+    }
+   ],
+   "safety": [
+    "co",
+    "gas"
+   ],
+   "offers": [
+    "diag",
+    "replace_furnace"
+   ]
+  },
+  {
+   "id": "unknown",
+   "label": "Not sure (generic checks)",
+   "trades": [
+    "hvac",
+    "plumbing",
+    "electrical"
+   ],
+   "match": [],
+   "focus": [
+    "main_water",
+    "panel"
+   ],
+   "causes": [
+    {
+     "text": "Ask the customer to show you the problem first",
+     "w": 1
+    }
+   ],
+   "check": [
+    "Main water shutoff",
+    "Panel"
+   ],
+   "bring": [
+    {
+     "text": "Multimeter"
+    }
+   ],
+   "safety": [],
+   "offers": [
+    "diag"
+   ]
+  }
+ ],
+ "safety": {
+  "gas": "If you smell gas: no switches or flames, get everyone out and call the gas utility from outside.",
+  "co": "If a carbon monoxide alarm is sounding: get everyone out, air the house and keep the appliance off until it is checked.",
+  "electric": "Turn off the breaker and test the circuit dead before touching wiring.",
+  "water": "Find the main water shutoff before opening any line."
+ }
+}

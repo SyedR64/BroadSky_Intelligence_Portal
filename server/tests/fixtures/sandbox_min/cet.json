@@ -1,0 +1,546 @@
+{
+ "co": "cet",
+ "season": {
+  "1": 1.0,
+  "2": 1.0,
+  "3": 1.0,
+  "4": 1.0,
+  "5": 1.0,
+  "6": 1.0,
+  "7": 1.0,
+  "8": 1.0,
+  "9": 1.0,
+  "10": 1.0,
+  "11": 1.0,
+  "12": 1.0
+ },
+ "apps": {
+  "financials": {
+   "pnl": [
+    {
+     "id": "fi-cet-pnl-m-24",
+     "co": "cet",
+     "m": -24,
+     "revenue_k": 6800,
+     "cogs_k": 3400,
+     "opex_k": 2720,
+     "plan_revenue_k": 6667,
+     "plan_cogs_k": 3334,
+     "plan_opex_k": 2667,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-23",
+     "co": "cet",
+     "m": -23,
+     "revenue_k": 6593,
+     "cogs_k": 3296,
+     "opex_k": 2638,
+     "plan_revenue_k": 6693,
+     "plan_cogs_k": 3346,
+     "plan_opex_k": 2677,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-22",
+     "co": "cet",
+     "m": -22,
+     "revenue_k": 6754,
+     "cogs_k": 3377,
+     "opex_k": 2702,
+     "plan_revenue_k": 6720,
+     "plan_cogs_k": 3360,
+     "plan_opex_k": 2688,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-21",
+     "co": "cet",
+     "m": -21,
+     "revenue_k": 6882,
+     "cogs_k": 3441,
+     "opex_k": 2753,
+     "plan_revenue_k": 6747,
+     "plan_cogs_k": 3374,
+     "plan_opex_k": 2699,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-20",
+     "co": "cet",
+     "m": -20,
+     "revenue_k": 6671,
+     "cogs_k": 3336,
+     "opex_k": 2668,
+     "plan_revenue_k": 6773,
+     "plan_cogs_k": 3386,
+     "plan_opex_k": 2709,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-19",
+     "co": "cet",
+     "m": -19,
+     "revenue_k": 6834,
+     "cogs_k": 3417,
+     "opex_k": 2734,
+     "plan_revenue_k": 6800,
+     "plan_cogs_k": 3400,
+     "plan_opex_k": 2720,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-18",
+     "co": "cet",
+     "m": -18,
+     "revenue_k": 6964,
+     "cogs_k": 3482,
+     "opex_k": 2786,
+     "plan_revenue_k": 6827,
+     "plan_cogs_k": 3414,
+     "plan_opex_k": 2731,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-17",
+     "co": "cet",
+     "m": -17,
+     "revenue_k": 6750,
+     "cogs_k": 3375,
+     "opex_k": 2700,
+     "plan_revenue_k": 6853,
+     "plan_cogs_k": 3426,
+     "plan_opex_k": 2741,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-16",
+     "co": "cet",
+     "m": -16,
+     "revenue_k": 6914,
+     "cogs_k": 3457,
+     "opex_k": 2766,
+     "plan_revenue_k": 6880,
+     "plan_cogs_k": 3440,
+     "plan_opex_k": 2752,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-15",
+     "co": "cet",
+     "m": -15,
+     "revenue_k": 7045,
+     "cogs_k": 3522,
+     "opex_k": 2818,
+     "plan_revenue_k": 6907,
+     "plan_cogs_k": 3454,
+     "plan_opex_k": 2763,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-14",
+     "co": "cet",
+     "m": -14,
+     "revenue_k": 6829,
+     "cogs_k": 3414,
+     "opex_k": 2732,
+     "plan_revenue_k": 6933,
+     "plan_cogs_k": 3466,
+     "plan_opex_k": 2773,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-13",
+     "co": "cet",
+     "m": -13,
+     "revenue_k": 6995,
+     "cogs_k": 3498,
+     "opex_k": 2798,
+     "plan_revenue_k": 6960,
+     "plan_cogs_k": 3480,
+     "plan_opex_k": 2784,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-12",
+     "co": "cet",
+     "m": -12,
+     "revenue_k": 7127,
+     "cogs_k": 3564,
+     "opex_k": 2850,
+     "plan_revenue_k": 6987,
+     "plan_cogs_k": 3494,
+     "plan_opex_k": 2795,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-11",
+     "co": "cet",
+     "m": -11,
+     "revenue_k": 6908,
+     "cogs_k": 3454,
+     "opex_k": 2763,
+     "plan_revenue_k": 7013,
+     "plan_cogs_k": 3506,
+     "plan_opex_k": 2805,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-10",
+     "co": "cet",
+     "m": -10,
+     "revenue_k": 7075,
+     "cogs_k": 3538,
+     "opex_k": 2830,
+     "plan_revenue_k": 7040,
+     "plan_cogs_k": 3520,
+     "plan_opex_k": 2816,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-9",
+     "co": "cet",
+     "m": -9,
+     "revenue_k": 7208,
+     "cogs_k": 3604,
+     "opex_k": 2883,
+     "plan_revenue_k": 7067,
+     "plan_cogs_k": 3534,
+     "plan_opex_k": 2827,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-8",
+     "co": "cet",
+     "m": -8,
+     "revenue_k": 6987,
+     "cogs_k": 3494,
+     "opex_k": 2794,
+     "plan_revenue_k": 7093,
+     "plan_cogs_k": 3546,
+     "plan_opex_k": 2837,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-7",
+     "co": "cet",
+     "m": -7,
+     "revenue_k": 7156,
+     "cogs_k": 3578,
+     "opex_k": 2862,
+     "plan_revenue_k": 7120,
+     "plan_cogs_k": 3560,
+     "plan_opex_k": 2848,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-6",
+     "co": "cet",
+     "m": -6,
+     "revenue_k": 7290,
+     "cogs_k": 3645,
+     "opex_k": 2916,
+     "plan_revenue_k": 7147,
+     "plan_cogs_k": 3574,
+     "plan_opex_k": 2859,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-5",
+     "co": "cet",
+     "m": -5,
+     "revenue_k": 7065,
+     "cogs_k": 3532,
+     "opex_k": 2826,
+     "plan_revenue_k": 7173,
+     "plan_cogs_k": 3586,
+     "plan_opex_k": 2869,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-4",
+     "co": "cet",
+     "m": -4,
+     "revenue_k": 7236,
+     "cogs_k": 3618,
+     "opex_k": 2894,
+     "plan_revenue_k": 7200,
+     "plan_cogs_k": 3600,
+     "plan_opex_k": 2880,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-3",
+     "co": "cet",
+     "m": -3,
+     "revenue_k": 7372,
+     "cogs_k": 3686,
+     "opex_k": 2949,
+     "plan_revenue_k": 7227,
+     "plan_cogs_k": 3614,
+     "plan_opex_k": 2891,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-2",
+     "co": "cet",
+     "m": -2,
+     "revenue_k": 7144,
+     "cogs_k": 3572,
+     "opex_k": 2858,
+     "plan_revenue_k": 7253,
+     "plan_cogs_k": 3626,
+     "plan_opex_k": 2901,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-cet-pnl-m-1",
+     "co": "cet",
+     "m": -1,
+     "revenue_k": 7316,
+     "cogs_k": 3658,
+     "opex_k": 2926,
+     "plan_revenue_k": 7280,
+     "plan_cogs_k": 3640,
+     "plan_opex_k": 2912,
+     "team": null,
+     "est": true
+    }
+   ],
+   "kpis": [
+    {
+     "id": "fi-cet-kpi-a-m-3",
+     "co": "cet",
+     "m": -3,
+     "kpi": "kpi_a",
+     "label": "Utilization",
+     "value": 37,
+     "unit": "%",
+     "target": 45,
+     "team": null,
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "fi-cet-kpi-a-m-2",
+     "co": "cet",
+     "m": -2,
+     "kpi": "kpi_a",
+     "label": "Utilization",
+     "value": 38,
+     "unit": "%",
+     "target": 45,
+     "team": null,
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "fi-cet-kpi-a-m-1",
+     "co": "cet",
+     "m": -1,
+     "kpi": "kpi_a",
+     "label": "Utilization",
+     "value": 39,
+     "unit": "%",
+     "target": 45,
+     "team": null,
+     "seasonal": false,
+     "est": true
+    }
+   ],
+   "debt": [
+    {
+     "id": "fi-cet-debt",
+     "co": "cet",
+     "facility": "First-lien term loan",
+     "balance_k": 40000,
+     "rate_pct": 9.1,
+     "maturity_year": 2029,
+     "covenant": "Senior leverage under 5.5x",
+     "next_test_d": 44,
+     "basis": "Modeled",
+     "est": true
+    }
+   ],
+   "close": [
+    {
+     "id": "fi-cet-close-1",
+     "co": "cet",
+     "m": -1,
+     "item": "Fleet lease renewal",
+     "owner": {
+      "name": null,
+      "role": "Controller"
+     },
+     "status": "Open"
+    }
+   ],
+   "inventory": [],
+   "orders": [],
+   "invoices": []
+  },
+  "adp": {
+   "headcount": [
+    {
+     "id": "ad-cet-hq",
+     "co": "cet",
+     "team": null,
+     "unit": "Head office",
+     "group": "Staff",
+     "count": 20,
+     "open_roles": 1,
+     "turnover_12m_pct": 10,
+     "est": true
+    }
+   ],
+   "payroll": [
+    {
+     "id": "ad-cet-pay-m-2",
+     "co": "cet",
+     "m": -2,
+     "payroll_k": 790,
+     "plan_k": 780,
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "ad-cet-pay-m-1",
+     "co": "cet",
+     "m": -1,
+     "payroll_k": 790,
+     "plan_k": 780,
+     "seasonal": false,
+     "est": true
+    }
+   ]
+  },
+  "salesforce": {
+   "accounts": [
+    {
+     "id": "sf-cet-a1",
+     "co": "cet",
+     "name": "Pellbrook Water District",
+     "segment": "Public",
+     "state": "CT",
+     "owner": {
+      "name": null,
+      "role": "Business development lead"
+     },
+     "health": "Good"
+    }
+   ],
+   "opps": [
+    {
+     "id": "sf-cet-o1",
+     "co": "cet",
+     "account_id": "sf-cet-a1",
+     "name": "Pump station upgrade",
+     "stage": "Proposal",
+     "amount": 2400000,
+     "close_d": 30,
+     "owner": {
+      "name": null,
+      "role": "Business development lead"
+     },
+     "next_step": "Site walk",
+     "est": true
+    }
+   ],
+   "services": [
+    {
+     "id": "sf-cet-s1",
+     "co": "cet",
+     "name": "EV charging install",
+     "unit": "project",
+     "low": 40000,
+     "high": 250000,
+     "est": true
+    }
+   ]
+  },
+  "procore": {
+   "projects": [
+    {
+     "id": "pc-cet-p1",
+     "co": "cet",
+     "for": [],
+     "team": "crew-2",
+     "number": "P-1042",
+     "name": "Orrisdale School solar",
+     "owner_name": "Orrisdale School District",
+     "town": "Hartford",
+     "state": "CT",
+     "contract_value": 3100000,
+     "pct_complete": 42,
+     "phase": "Rough-in",
+     "pm": {
+      "name": "Lena P.",
+      "role": "Project manager"
+     },
+     "crew_today": [
+      {
+       "name": "Omar T.",
+       "role": "Field electrician"
+      }
+     ],
+     "next_milestone": "Inspection",
+     "next_d": 6,
+     "rfis": [
+      {
+       "n": "RFI-12",
+       "subject": "Conduit route at the gym",
+       "status": "Open",
+       "due_d": 3
+      }
+     ],
+     "change_orders": [
+      {
+       "n": "CO-4",
+       "subject": "Added panel",
+       "amount": 18000,
+       "status": "Pending"
+      }
+     ],
+     "daily": [
+      {
+       "day": -1,
+       "crew": 4,
+       "hours": 32,
+       "note": "Roof racking done on the east wing."
+      }
+     ],
+     "inspections": [
+      {
+       "day": 6,
+       "what": "Rough electrical"
+      }
+     ],
+     "est": true
+    }
+   ]
+  }
+ }
+}

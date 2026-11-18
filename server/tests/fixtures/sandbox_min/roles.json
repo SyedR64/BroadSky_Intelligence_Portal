@@ -1,0 +1,1170 @@
+{
+ "version": 1,
+ "companies": {
+  "bsp": {
+   "name": "BSP",
+   "co": null,
+   "sells": "Sandbox company.",
+   "lines": [
+    "Sandbox"
+   ],
+   "depts": [
+    "Leadership"
+   ]
+  },
+  "pp": {
+   "name": "Punctual Pros",
+   "co": "pp",
+   "sells": "Sandbox company.",
+   "lines": [
+    "Sandbox"
+   ],
+   "depts": [
+    "Leadership"
+   ]
+  },
+  "cet": {
+   "name": "CET",
+   "co": "cet",
+   "sells": "Sandbox company.",
+   "lines": [
+    "Sandbox"
+   ],
+   "depts": [
+    "Leadership"
+   ]
+  },
+  "fl": {
+   "name": "Frontline",
+   "co": "fl",
+   "sells": "Sandbox company.",
+   "lines": [
+    "Sandbox"
+   ],
+   "depts": [
+    "Leadership"
+   ]
+  },
+  "ts": {
+   "name": "Thomas Scientific",
+   "co": "ts",
+   "sells": "Sandbox company.",
+   "lines": [
+    "Sandbox"
+   ],
+   "depts": [
+    "Leadership"
+   ]
+  },
+  "bpi": {
+   "name": "BPI",
+   "co": "bpi",
+   "sells": "Sandbox company.",
+   "lines": [
+    "Sandbox"
+   ],
+   "depts": [
+    "Leadership"
+   ]
+  },
+  "fh": {
+   "name": "Fair Harbor",
+   "co": "fh",
+   "sells": "Sandbox company.",
+   "lines": [
+    "Sandbox"
+   ],
+   "depts": [
+    "Leadership"
+   ]
+  }
+ },
+ "apps": {
+  "email": {
+   "category": "Email",
+   "what": "Inbox threads for this role. Sender names and roles only.",
+   "sets": {
+    "threads": "Threads"
+   }
+  },
+  "calendar": {
+   "category": "Calendar",
+   "what": "Meetings and holds for this role.",
+   "sets": {
+    "events": "Events"
+   }
+  },
+  "chat": {
+   "category": "Team chat",
+   "what": "Channels this role is in.",
+   "sets": {
+    "channels": "Channels"
+   }
+  },
+  "drive": {
+   "category": "Documents",
+   "what": "Shared folders, decks and the data room.",
+   "sets": {
+    "docs": "Documents"
+   }
+  },
+  "dealcloud": {
+   "category": "Deal CRM",
+   "what": "The deal pipeline: targets, stages, owners and next steps.",
+   "sets": {
+    "deals": "Deals"
+   }
+  },
+  "salesforce": {
+   "category": "CRM",
+   "what": "Accounts, opportunities and what the company sells.",
+   "sets": {
+    "accounts": "Accounts",
+    "opps": "Opportunities",
+    "services": "Services"
+   }
+  },
+  "marketing": {
+   "category": "Marketing",
+   "what": "Campaigns, leads and what they booked or sold.",
+   "sets": {
+    "campaigns": "Campaigns"
+   }
+  },
+  "servicetitan": {
+   "category": "Field service",
+   "what": "Jobs, customers, equipment and the price book.",
+   "sets": {
+    "jobs": "Jobs",
+    "customers": "Customers",
+    "equipment": "Equipment",
+    "technicians": "Technicians",
+    "pricebook": "Price book"
+   }
+  },
+  "procore": {
+   "category": "Construction",
+   "what": "Projects, RFIs, change orders and daily logs.",
+   "sets": {
+    "projects": "Projects"
+   }
+  },
+  "servicedesk": {
+   "category": "Service desk",
+   "what": "Tickets, client runbooks and response times.",
+   "sets": {
+    "tickets": "Tickets",
+    "runbooks": "Runbooks"
+   }
+  },
+  "shopify": {
+   "category": "Online store",
+   "what": "Orders, products and returns.",
+   "sets": {
+    "products": "Products",
+    "daily": "Daily sales",
+    "returns": "Returns"
+   }
+  },
+  "financials": {
+   "category": "Finance",
+   "what": "Monthly results, plans, debt and, where kept here, stock, orders or invoices.",
+   "sets": {
+    "pnl": "P&L",
+    "kpis": "KPIs",
+    "debt": "Debt",
+    "close": "Close items",
+    "fund": "Fund",
+    "packs": "Reporting packs",
+    "inventory": "Inventory",
+    "orders": "Orders",
+    "invoices": "Invoices"
+   }
+  },
+  "adp": {
+   "category": "People",
+   "what": "Headcount, open roles and payroll totals. No personal records.",
+   "sets": {
+    "headcount": "Headcount",
+    "payroll": "Payroll"
+   }
+  }
+ },
+ "app_names": {
+  "bsp": {
+   "email": {
+    "name": "Outlook",
+    "mono": "OL"
+   },
+   "calendar": {
+    "name": "Outlook Calendar",
+    "mono": "OC"
+   },
+   "chat": {
+    "name": "Slack",
+    "mono": "SL"
+   },
+   "drive": {
+    "name": "SharePoint",
+    "mono": "SP"
+   },
+   "dealcloud": {
+    "name": "DealCloud",
+    "mono": "DC"
+   },
+   "salesforce": {
+    "name": "Salesforce",
+    "mono": "SF"
+   },
+   "marketing": {
+    "name": "HubSpot",
+    "mono": "HS"
+   },
+   "servicetitan": {
+    "name": "ServiceTitan",
+    "mono": "ST"
+   },
+   "procore": {
+    "name": "Procore",
+    "mono": "PC"
+   },
+   "servicedesk": {
+    "name": "ServiceNow",
+    "mono": "SN"
+   },
+   "shopify": {
+    "name": "Shopify",
+    "mono": "SH"
+   },
+   "financials": {
+    "name": "NetSuite",
+    "mono": "NS"
+   },
+   "adp": {
+    "name": "ADP",
+    "mono": "ADP"
+   }
+  },
+  "pp": {
+   "email": {
+    "name": "Outlook",
+    "mono": "OL"
+   },
+   "calendar": {
+    "name": "Outlook Calendar",
+    "mono": "OC"
+   },
+   "chat": {
+    "name": "Teams",
+    "mono": "TM"
+   },
+   "drive": {
+    "name": "SharePoint",
+    "mono": "SP"
+   },
+   "dealcloud": {
+    "name": "DealCloud",
+    "mono": "DC"
+   },
+   "salesforce": {
+    "name": "Salesforce",
+    "mono": "SF"
+   },
+   "marketing": {
+    "name": "HubSpot",
+    "mono": "HS"
+   },
+   "servicetitan": {
+    "name": "ServiceTitan",
+    "mono": "ST"
+   },
+   "procore": {
+    "name": "Procore",
+    "mono": "PC"
+   },
+   "servicedesk": {
+    "name": "ServiceNow",
+    "mono": "SN"
+   },
+   "shopify": {
+    "name": "Shopify",
+    "mono": "SH"
+   },
+   "financials": {
+    "name": "QuickBooks",
+    "mono": "QB"
+   },
+   "adp": {
+    "name": "ADP",
+    "mono": "ADP"
+   }
+  },
+  "cet": {
+   "email": {
+    "name": "Outlook",
+    "mono": "OL"
+   },
+   "calendar": {
+    "name": "Outlook Calendar",
+    "mono": "OC"
+   },
+   "chat": {
+    "name": "Teams",
+    "mono": "TM"
+   },
+   "drive": {
+    "name": "SharePoint",
+    "mono": "SP"
+   },
+   "dealcloud": {
+    "name": "DealCloud",
+    "mono": "DC"
+   },
+   "salesforce": {
+    "name": "Salesforce",
+    "mono": "SF"
+   },
+   "marketing": {
+    "name": "HubSpot",
+    "mono": "HS"
+   },
+   "servicetitan": {
+    "name": "ServiceTitan",
+    "mono": "ST"
+   },
+   "procore": {
+    "name": "Procore",
+    "mono": "PC"
+   },
+   "servicedesk": {
+    "name": "ServiceNow",
+    "mono": "SN"
+   },
+   "shopify": {
+    "name": "Shopify",
+    "mono": "SH"
+   },
+   "financials": {
+    "name": "NetSuite",
+    "mono": "NS"
+   },
+   "adp": {
+    "name": "ADP",
+    "mono": "ADP"
+   }
+  },
+  "fl": {
+   "email": {
+    "name": "Outlook",
+    "mono": "OL"
+   },
+   "calendar": {
+    "name": "Outlook Calendar",
+    "mono": "OC"
+   },
+   "chat": {
+    "name": "Teams",
+    "mono": "TM"
+   },
+   "drive": {
+    "name": "SharePoint",
+    "mono": "SP"
+   },
+   "dealcloud": {
+    "name": "DealCloud",
+    "mono": "DC"
+   },
+   "salesforce": {
+    "name": "Salesforce",
+    "mono": "SF"
+   },
+   "marketing": {
+    "name": "HubSpot",
+    "mono": "HS"
+   },
+   "servicetitan": {
+    "name": "ServiceTitan",
+    "mono": "ST"
+   },
+   "procore": {
+    "name": "Procore",
+    "mono": "PC"
+   },
+   "servicedesk": {
+    "name": "ServiceNow",
+    "mono": "SN"
+   },
+   "shopify": {
+    "name": "Shopify",
+    "mono": "SH"
+   },
+   "financials": {
+    "name": "NetSuite",
+    "mono": "NS"
+   },
+   "adp": {
+    "name": "ADP",
+    "mono": "ADP"
+   }
+  },
+  "ts": {
+   "email": {
+    "name": "Outlook",
+    "mono": "OL"
+   },
+   "calendar": {
+    "name": "Outlook Calendar",
+    "mono": "OC"
+   },
+   "chat": {
+    "name": "Teams",
+    "mono": "TM"
+   },
+   "drive": {
+    "name": "SharePoint",
+    "mono": "SP"
+   },
+   "dealcloud": {
+    "name": "DealCloud",
+    "mono": "DC"
+   },
+   "salesforce": {
+    "name": "Salesforce",
+    "mono": "SF"
+   },
+   "marketing": {
+    "name": "HubSpot",
+    "mono": "HS"
+   },
+   "servicetitan": {
+    "name": "ServiceTitan",
+    "mono": "ST"
+   },
+   "procore": {
+    "name": "Procore",
+    "mono": "PC"
+   },
+   "servicedesk": {
+    "name": "ServiceNow",
+    "mono": "SN"
+   },
+   "shopify": {
+    "name": "Shopify",
+    "mono": "SH"
+   },
+   "financials": {
+    "name": "NetSuite",
+    "mono": "NS"
+   },
+   "adp": {
+    "name": "ADP",
+    "mono": "ADP"
+   }
+  },
+  "bpi": {
+   "email": {
+    "name": "Outlook",
+    "mono": "OL"
+   },
+   "calendar": {
+    "name": "Outlook Calendar",
+    "mono": "OC"
+   },
+   "chat": {
+    "name": "Teams",
+    "mono": "TM"
+   },
+   "drive": {
+    "name": "SharePoint",
+    "mono": "SP"
+   },
+   "dealcloud": {
+    "name": "DealCloud",
+    "mono": "DC"
+   },
+   "salesforce": {
+    "name": "Salesforce",
+    "mono": "SF"
+   },
+   "marketing": {
+    "name": "HubSpot",
+    "mono": "HS"
+   },
+   "servicetitan": {
+    "name": "ServiceTitan",
+    "mono": "ST"
+   },
+   "procore": {
+    "name": "Procore",
+    "mono": "PC"
+   },
+   "servicedesk": {
+    "name": "ServiceNow",
+    "mono": "SN"
+   },
+   "shopify": {
+    "name": "Shopify",
+    "mono": "SH"
+   },
+   "financials": {
+    "name": "NetSuite",
+    "mono": "NS"
+   },
+   "adp": {
+    "name": "ADP",
+    "mono": "ADP"
+   }
+  },
+  "fh": {
+   "email": {
+    "name": "Outlook",
+    "mono": "OL"
+   },
+   "calendar": {
+    "name": "Outlook Calendar",
+    "mono": "OC"
+   },
+   "chat": {
+    "name": "Teams",
+    "mono": "TM"
+   },
+   "drive": {
+    "name": "SharePoint",
+    "mono": "SP"
+   },
+   "dealcloud": {
+    "name": "DealCloud",
+    "mono": "DC"
+   },
+   "salesforce": {
+    "name": "Salesforce",
+    "mono": "SF"
+   },
+   "marketing": {
+    "name": "HubSpot",
+    "mono": "HS"
+   },
+   "servicetitan": {
+    "name": "ServiceTitan",
+    "mono": "ST"
+   },
+   "procore": {
+    "name": "Procore",
+    "mono": "PC"
+   },
+   "servicedesk": {
+    "name": "ServiceNow",
+    "mono": "SN"
+   },
+   "shopify": {
+    "name": "Shopify",
+    "mono": "SH"
+   },
+   "financials": {
+    "name": "NetSuite",
+    "mono": "NS"
+   },
+   "adp": {
+    "name": "ADP",
+    "mono": "ADP"
+   }
+  }
+ },
+ "styles": {
+  "brief": {
+   "label": "Three lines, one action",
+   "chat": "Three lines: the answer, the number that matters with its source, then Recommend: and one action.",
+   "voice": "Three spoken sentences, the last one a recommendation."
+  },
+  "analyst": {
+   "label": "Full numbers, sourced",
+   "chat": "Full numbers with units and [n] on each; a small table is fine; up to 300 words.",
+   "voice": "Lead with the number, then the two drivers; under 80 words."
+  },
+  "operator": {
+   "label": "Status, risks, next",
+   "chat": "Three short labelled parts: Status, Risks, Next steps; under 180 words.",
+   "voice": "Status in one sentence, the top risk, the next step."
+  },
+  "desk": {
+   "label": "Short, with drafts",
+   "chat": "Two to four lines; offer a draft when an action fits.",
+   "voice": "Two sentences; offer a draft."
+  },
+  "field": {
+   "label": "Under 30 seconds",
+   "chat": "For a phone in a driveway: at most five short lines, under 75 words. First where the equipment for this issue is and its shutoff, then the likely cause and first check, what to bring, one offer. No headings.",
+   "voice": "Under 30 seconds, about 70 words, same order; say \"from our records\" or \"likely\" for each location; end with \"The sketch is on your screen.\" when a sketch was drawn."
+  }
+ },
+ "actions": {
+  "reply_email": {
+   "label": "Reply to an email",
+   "app": "email"
+  },
+  "calendar_hold": {
+   "label": "Hold time on the calendar",
+   "app": "calendar"
+  },
+  "chat_post": {
+   "label": "Post in a channel",
+   "app": "chat"
+  },
+  "crm_stage": {
+   "label": "Move a deal stage",
+   "app": "salesforce"
+  },
+  "book_job": {
+   "label": "Book a follow-up job",
+   "app": "servicetitan"
+  },
+  "log_findings": {
+   "label": "Log what I found",
+   "app": "servicetitan"
+  },
+  "add_recommendation": {
+   "label": "Add a recommendation",
+   "app": "servicetitan"
+  },
+  "order_part": {
+   "label": "Order a part",
+   "app": "servicetitan"
+  },
+  "text_customer": {
+   "label": "Text the customer",
+   "app": "servicetitan"
+  },
+  "daily_log": {
+   "label": "Add to the daily log",
+   "app": "procore"
+  },
+  "rfi": {
+   "label": "Draft an RFI",
+   "app": "procore"
+  },
+  "ticket_update": {
+   "label": "Update a ticket",
+   "app": "servicedesk"
+  }
+ },
+ "public_tools": {
+  "search": "Knowledge base",
+  "read": "Knowledge base",
+  "deal": "Deal model",
+  "homes": "Home sales records",
+  "directory": "Business directory",
+  "web": "Web search"
+ },
+ "roles": {
+  "bsp-managing-partner": {
+   "label": "Managing partner",
+   "label_a": "the managing partner",
+   "company": "bsp",
+   "dept": "Partners",
+   "order": 1,
+   "style": "brief",
+   "team": "firm",
+   "key_app": "financials",
+   "desc": "Sandbox role.",
+   "apps": {
+    "email": {
+     "threads": "own"
+    },
+    "calendar": {
+     "events": "own"
+    },
+    "chat": {
+     "channels": "team"
+    },
+    "drive": {
+     "docs": "company"
+    },
+    "dealcloud": {
+     "deals": "company"
+    },
+    "financials": {
+     "pnl": "portfolio",
+     "kpis": "portfolio",
+     "debt": "portfolio",
+     "close": "portfolio",
+     "fund": "company",
+     "packs": "company"
+    },
+    "adp": {
+     "headcount": "portfolio"
+    }
+   },
+   "numbers": {
+    "companies": [
+     "pp",
+     "cet",
+     "fl",
+     "ts",
+     "bpi",
+     "fh",
+     "portfolio"
+    ],
+    "views": [
+     "pnl",
+     "kpis",
+     "headcount",
+     "debt",
+     "fund"
+    ],
+    "by_company": {
+     "pp": [
+      "pnl",
+      "kpis",
+      "headcount",
+      "debt"
+     ],
+     "cet": [
+      "pnl",
+      "kpis",
+      "headcount",
+      "debt"
+     ],
+     "fl": [
+      "pnl",
+      "kpis",
+      "headcount",
+      "debt"
+     ],
+     "ts": [
+      "pnl",
+      "kpis",
+      "headcount",
+      "debt"
+     ],
+     "bpi": [
+      "pnl",
+      "kpis",
+      "headcount",
+      "debt"
+     ],
+     "fh": [
+      "pnl",
+      "kpis",
+      "headcount",
+      "debt"
+     ],
+     "portfolio": [
+      "pnl",
+      "kpis",
+      "headcount",
+      "debt"
+     ]
+    }
+   },
+   "numbers_text": "P&L, KPIs, headcount and debt for all six companies; the fund",
+   "public": [
+    "search",
+    "read",
+    "deal",
+    "directory",
+    "web"
+   ],
+   "tools": [
+    "workspace_search",
+    "open_record",
+    "company_numbers",
+    "draft_action"
+   ],
+   "actions": [
+    "reply_email",
+    "calendar_hold",
+    "chat_post",
+    "crm_stage"
+   ],
+   "denied_hint": ""
+  },
+  "bsp-investor-relations": {
+   "label": "Investor relations",
+   "label_a": "the investor relations lead",
+   "company": "bsp",
+   "dept": "Finance and investors",
+   "order": 7,
+   "style": "desk",
+   "team": "firm",
+   "key_app": "email",
+   "desc": "Sandbox role.",
+   "apps": {
+    "email": {
+     "threads": "own"
+    },
+    "calendar": {
+     "events": "own"
+    },
+    "chat": {
+     "channels": "team"
+    },
+    "drive": {
+     "docs": "team"
+    },
+    "financials": {
+     "fund": "company"
+    }
+   },
+   "numbers": {
+    "companies": [],
+    "views": [
+     "fund"
+    ],
+    "by_company": {}
+   },
+   "numbers_text": "The fund",
+   "public": [
+    "search",
+    "read",
+    "web"
+   ],
+   "tools": [
+    "workspace_search",
+    "open_record",
+    "company_numbers",
+    "draft_action"
+   ],
+   "actions": [
+    "reply_email",
+    "calendar_hold",
+    "chat_post"
+   ],
+   "denied_hint": "The fund CFO has company results."
+  },
+  "pp-ceo": {
+   "label": "CEO",
+   "label_a": "the CEO of Punctual Pros",
+   "company": "pp",
+   "dept": "Leadership",
+   "order": 10,
+   "style": "brief",
+   "team": "leadership",
+   "key_app": "financials",
+   "desc": "Sandbox role.",
+   "apps": {
+    "email": {
+     "threads": "own"
+    },
+    "calendar": {
+     "events": "own"
+    },
+    "chat": {
+     "channels": "team"
+    },
+    "drive": {
+     "docs": "company"
+    },
+    "marketing": {
+     "campaigns": "company"
+    },
+    "servicetitan": {
+     "jobs": "company",
+     "customers": "company",
+     "equipment": "company",
+     "technicians": "company",
+     "pricebook": "company"
+    },
+    "financials": {
+     "pnl": "company",
+     "kpis": "company",
+     "debt": "company",
+     "close": "company"
+    },
+    "adp": {
+     "headcount": "company",
+     "payroll": "company"
+    }
+   },
+   "numbers": {
+    "companies": [
+     "pp"
+    ],
+    "views": [
+     "pnl",
+     "kpis",
+     "headcount",
+     "payroll",
+     "debt"
+    ],
+    "by_company": {
+     "pp": [
+      "pnl",
+      "kpis",
+      "headcount",
+      "payroll",
+      "debt"
+     ]
+    }
+   },
+   "numbers_text": "Punctual Pros P&L, KPIs, headcount, payroll and debt",
+   "public": [
+    "search",
+    "read",
+    "deal",
+    "web"
+   ],
+   "tools": [
+    "site_brief",
+    "workspace_search",
+    "open_record",
+    "company_numbers",
+    "draft_action"
+   ],
+   "actions": [
+    "reply_email",
+    "calendar_hold",
+    "chat_post"
+   ],
+   "denied_hint": "BSP's deal team has the other companies' numbers."
+  },
+  "pp-hvac-technician": {
+   "label": "HVAC technician",
+   "label_a": "an HVAC technician",
+   "company": "pp",
+   "dept": "Field service",
+   "order": 30,
+   "style": "field",
+   "team": "lancaster",
+   "key_app": "servicetitan",
+   "desc": "Runs heating and cooling calls from the Lancaster hub. Sees own jobs, the customers on them and the price book.",
+   "apps": {
+    "servicetitan": {
+     "jobs": "own",
+     "customers": "own",
+     "equipment": "own",
+     "pricebook": "company"
+    },
+    "chat": {
+     "channels": "team"
+    }
+   },
+   "numbers": {
+    "companies": [],
+    "views": [],
+    "by_company": {}
+   },
+   "numbers_text": "None",
+   "public": [],
+   "tools": [
+    "site_brief",
+    "workspace_search",
+    "open_record",
+    "draft_action"
+   ],
+   "actions": [
+    "log_findings",
+    "add_recommendation",
+    "order_part",
+    "text_customer",
+    "book_job"
+   ],
+   "denied_hint": "The location general manager or the CFO has company results."
+  },
+  "pp-dispatcher": {
+   "label": "Dispatcher",
+   "label_a": "a dispatcher",
+   "company": "pp",
+   "dept": "Office",
+   "order": 32,
+   "style": "desk",
+   "team": "all-hubs",
+   "key_app": "servicetitan",
+   "desc": "Sandbox role.",
+   "apps": {
+    "servicetitan": {
+     "jobs": "company",
+     "customers": "company",
+     "equipment": "company",
+     "technicians": "company",
+     "pricebook": "company"
+    },
+    "email": {
+     "threads": "own"
+    },
+    "calendar": {
+     "events": "own"
+    },
+    "chat": {
+     "channels": "team"
+    }
+   },
+   "numbers": {
+    "companies": [],
+    "views": [],
+    "by_company": {}
+   },
+   "numbers_text": "None",
+   "public": [
+    "search",
+    "read"
+   ],
+   "tools": [
+    "site_brief",
+    "workspace_search",
+    "open_record",
+    "draft_action"
+   ],
+   "actions": [
+    "book_job",
+    "text_customer",
+    "reply_email",
+    "chat_post"
+   ],
+   "denied_hint": "The CFO has company results."
+  },
+  "pp-location-gm": {
+   "label": "Location general manager",
+   "label_a": "the Lancaster location general manager",
+   "company": "pp",
+   "dept": "Office",
+   "order": 33,
+   "style": "operator",
+   "team": "lancaster",
+   "key_app": "servicetitan",
+   "desc": "Sandbox role.",
+   "apps": {
+    "servicetitan": {
+     "jobs": "team",
+     "customers": "team",
+     "equipment": "team",
+     "technicians": "team",
+     "pricebook": "company"
+    },
+    "email": {
+     "threads": "own"
+    },
+    "calendar": {
+     "events": "own"
+    },
+    "chat": {
+     "channels": "team"
+    },
+    "financials": {
+     "kpis": "team"
+    },
+    "adp": {
+     "headcount": "team"
+    }
+   },
+   "numbers": {
+    "companies": [
+     "team"
+    ],
+    "views": [
+     "kpis",
+     "headcount"
+    ],
+    "by_company": {
+     "team": [
+      "kpis",
+      "headcount"
+     ]
+    }
+   },
+   "numbers_text": "Lancaster hub KPIs and headcount",
+   "public": [
+    "search",
+    "read"
+   ],
+   "tools": [
+    "site_brief",
+    "workspace_search",
+    "open_record",
+    "company_numbers",
+    "draft_action"
+   ],
+   "actions": [
+    "book_job",
+    "text_customer",
+    "reply_email",
+    "calendar_hold",
+    "chat_post"
+   ],
+   "denied_hint": "The CFO has the company-wide P&L."
+  },
+  "cet-ceo": {
+   "label": "CEO",
+   "label_a": "the CEO of CET",
+   "company": "cet",
+   "dept": "Leadership",
+   "order": 40,
+   "style": "brief",
+   "team": "leadership",
+   "key_app": "financials",
+   "desc": "Sandbox role.",
+   "apps": {
+    "email": {
+     "threads": "own"
+    },
+    "calendar": {
+     "events": "own"
+    },
+    "chat": {
+     "channels": "team"
+    },
+    "drive": {
+     "docs": "company"
+    },
+    "salesforce": {
+     "accounts": "company",
+     "opps": "company",
+     "services": "company"
+    },
+    "procore": {
+     "projects": "company"
+    },
+    "financials": {
+     "pnl": "company",
+     "kpis": "company",
+     "debt": "company",
+     "close": "company"
+    },
+    "adp": {
+     "headcount": "company",
+     "payroll": "company"
+    }
+   },
+   "numbers": {
+    "companies": [
+     "cet"
+    ],
+    "views": [
+     "pnl",
+     "kpis",
+     "headcount",
+     "payroll",
+     "debt"
+    ],
+    "by_company": {
+     "cet": [
+      "pnl",
+      "kpis",
+      "headcount",
+      "payroll",
+      "debt"
+     ]
+    }
+   },
+   "numbers_text": "CET P&L, KPIs, headcount, payroll and debt",
+   "public": [
+    "search",
+    "read",
+    "deal",
+    "web"
+   ],
+   "tools": [
+    "workspace_search",
+    "open_record",
+    "company_numbers",
+    "draft_action"
+   ],
+   "actions": [
+    "reply_email",
+    "calendar_hold",
+    "chat_post",
+    "crm_stage"
+   ],
+   "denied_hint": "BSP's deal team has the other companies' numbers."
+  }
+ }
+}

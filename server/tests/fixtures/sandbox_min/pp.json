@@ -1,0 +1,765 @@
+{
+ "co": "pp",
+ "season": {
+  "1": 0.85,
+  "2": 0.8,
+  "3": 0.9,
+  "4": 0.95,
+  "5": 1.0,
+  "6": 1.1,
+  "7": 1.2,
+  "8": 1.15,
+  "9": 1.05,
+  "10": 1.25,
+  "11": 1.0,
+  "12": 0.95
+ },
+ "apps": {
+  "financials": {
+   "pnl": [
+    {
+     "id": "fi-pp-pnl-m-24",
+     "co": "pp",
+     "m": -24,
+     "revenue_k": 2040,
+     "cogs_k": 1020,
+     "opex_k": 775,
+     "plan_revenue_k": 2000,
+     "plan_cogs_k": 1000,
+     "plan_opex_k": 760,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-23",
+     "co": "pp",
+     "m": -23,
+     "revenue_k": 1978,
+     "cogs_k": 989,
+     "opex_k": 752,
+     "plan_revenue_k": 2008,
+     "plan_cogs_k": 1004,
+     "plan_opex_k": 763,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-22",
+     "co": "pp",
+     "m": -22,
+     "revenue_k": 2026,
+     "cogs_k": 1013,
+     "opex_k": 770,
+     "plan_revenue_k": 2016,
+     "plan_cogs_k": 1008,
+     "plan_opex_k": 766,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-21",
+     "co": "pp",
+     "m": -21,
+     "revenue_k": 2064,
+     "cogs_k": 1032,
+     "opex_k": 784,
+     "plan_revenue_k": 2024,
+     "plan_cogs_k": 1012,
+     "plan_opex_k": 769,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-20",
+     "co": "pp",
+     "m": -20,
+     "revenue_k": 2002,
+     "cogs_k": 1001,
+     "opex_k": 761,
+     "plan_revenue_k": 2032,
+     "plan_cogs_k": 1016,
+     "plan_opex_k": 772,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-19",
+     "co": "pp",
+     "m": -19,
+     "revenue_k": 2050,
+     "cogs_k": 1025,
+     "opex_k": 779,
+     "plan_revenue_k": 2040,
+     "plan_cogs_k": 1020,
+     "plan_opex_k": 775,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-18",
+     "co": "pp",
+     "m": -18,
+     "revenue_k": 2089,
+     "cogs_k": 1044,
+     "opex_k": 794,
+     "plan_revenue_k": 2048,
+     "plan_cogs_k": 1024,
+     "plan_opex_k": 778,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-17",
+     "co": "pp",
+     "m": -17,
+     "revenue_k": 2025,
+     "cogs_k": 1012,
+     "opex_k": 770,
+     "plan_revenue_k": 2056,
+     "plan_cogs_k": 1028,
+     "plan_opex_k": 781,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-16",
+     "co": "pp",
+     "m": -16,
+     "revenue_k": 2074,
+     "cogs_k": 1037,
+     "opex_k": 788,
+     "plan_revenue_k": 2064,
+     "plan_cogs_k": 1032,
+     "plan_opex_k": 784,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-15",
+     "co": "pp",
+     "m": -15,
+     "revenue_k": 2113,
+     "cogs_k": 1056,
+     "opex_k": 803,
+     "plan_revenue_k": 2072,
+     "plan_cogs_k": 1036,
+     "plan_opex_k": 787,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-14",
+     "co": "pp",
+     "m": -14,
+     "revenue_k": 2049,
+     "cogs_k": 1024,
+     "opex_k": 779,
+     "plan_revenue_k": 2080,
+     "plan_cogs_k": 1040,
+     "plan_opex_k": 790,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-13",
+     "co": "pp",
+     "m": -13,
+     "revenue_k": 2098,
+     "cogs_k": 1049,
+     "opex_k": 797,
+     "plan_revenue_k": 2088,
+     "plan_cogs_k": 1044,
+     "plan_opex_k": 793,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-12",
+     "co": "pp",
+     "m": -12,
+     "revenue_k": 2138,
+     "cogs_k": 1069,
+     "opex_k": 812,
+     "plan_revenue_k": 2096,
+     "plan_cogs_k": 1048,
+     "plan_opex_k": 796,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-11",
+     "co": "pp",
+     "m": -11,
+     "revenue_k": 2072,
+     "cogs_k": 1036,
+     "opex_k": 787,
+     "plan_revenue_k": 2104,
+     "plan_cogs_k": 1052,
+     "plan_opex_k": 800,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-10",
+     "co": "pp",
+     "m": -10,
+     "revenue_k": 2123,
+     "cogs_k": 1062,
+     "opex_k": 806,
+     "plan_revenue_k": 2112,
+     "plan_cogs_k": 1056,
+     "plan_opex_k": 803,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-9",
+     "co": "pp",
+     "m": -9,
+     "revenue_k": 2162,
+     "cogs_k": 1081,
+     "opex_k": 822,
+     "plan_revenue_k": 2120,
+     "plan_cogs_k": 1060,
+     "plan_opex_k": 806,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-8",
+     "co": "pp",
+     "m": -8,
+     "revenue_k": 2096,
+     "cogs_k": 1048,
+     "opex_k": 796,
+     "plan_revenue_k": 2128,
+     "plan_cogs_k": 1064,
+     "plan_opex_k": 809,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-7",
+     "co": "pp",
+     "m": -7,
+     "revenue_k": 2147,
+     "cogs_k": 1074,
+     "opex_k": 815,
+     "plan_revenue_k": 2136,
+     "plan_cogs_k": 1068,
+     "plan_opex_k": 812,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-6",
+     "co": "pp",
+     "m": -6,
+     "revenue_k": 2187,
+     "cogs_k": 1094,
+     "opex_k": 831,
+     "plan_revenue_k": 2144,
+     "plan_cogs_k": 1072,
+     "plan_opex_k": 815,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-5",
+     "co": "pp",
+     "m": -5,
+     "revenue_k": 2120,
+     "cogs_k": 1060,
+     "opex_k": 806,
+     "plan_revenue_k": 2152,
+     "plan_cogs_k": 1076,
+     "plan_opex_k": 818,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-4",
+     "co": "pp",
+     "m": -4,
+     "revenue_k": 2171,
+     "cogs_k": 1086,
+     "opex_k": 824,
+     "plan_revenue_k": 2160,
+     "plan_cogs_k": 1080,
+     "plan_opex_k": 821,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-3",
+     "co": "pp",
+     "m": -3,
+     "revenue_k": 2211,
+     "cogs_k": 1106,
+     "opex_k": 840,
+     "plan_revenue_k": 2168,
+     "plan_cogs_k": 1084,
+     "plan_opex_k": 824,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-2",
+     "co": "pp",
+     "m": -2,
+     "revenue_k": 2143,
+     "cogs_k": 1072,
+     "opex_k": 814,
+     "plan_revenue_k": 2176,
+     "plan_cogs_k": 1088,
+     "plan_opex_k": 827,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-pp-pnl-m-1",
+     "co": "pp",
+     "m": -1,
+     "revenue_k": 2195,
+     "cogs_k": 1098,
+     "opex_k": 834,
+     "plan_revenue_k": 2184,
+     "plan_cogs_k": 1092,
+     "plan_opex_k": 830,
+     "team": null,
+     "est": true
+    }
+   ],
+   "kpis": [
+    {
+     "id": "fi-pp-kpi-a-m-3",
+     "co": "pp",
+     "m": -3,
+     "kpi": "kpi_a",
+     "label": "Booking rate",
+     "value": 37,
+     "unit": "%",
+     "target": 45,
+     "team": null,
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "fi-pp-kpi-a-m-2",
+     "co": "pp",
+     "m": -2,
+     "kpi": "kpi_a",
+     "label": "Booking rate",
+     "value": 38,
+     "unit": "%",
+     "target": 45,
+     "team": null,
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "fi-pp-kpi-a-m-1",
+     "co": "pp",
+     "m": -1,
+     "kpi": "kpi_a",
+     "label": "Booking rate",
+     "value": 39,
+     "unit": "%",
+     "target": 45,
+     "team": null,
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "fi-pp-kpi-rev-lancaster-m-2",
+     "co": "pp",
+     "m": -2,
+     "kpi": "revenue_k",
+     "label": "Revenue",
+     "value": 612,
+     "unit": "k$",
+     "target": 600,
+     "team": "lancaster",
+     "seasonal": true,
+     "est": true
+    },
+    {
+     "id": "fi-pp-kpi-jobs-lancaster-m-2",
+     "co": "pp",
+     "m": -2,
+     "kpi": "jobs",
+     "label": "Jobs",
+     "value": 900,
+     "unit": "",
+     "target": 880,
+     "team": "lancaster",
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "fi-pp-kpi-rev-lancaster-m-1",
+     "co": "pp",
+     "m": -1,
+     "kpi": "revenue_k",
+     "label": "Revenue",
+     "value": 612,
+     "unit": "k$",
+     "target": 600,
+     "team": "lancaster",
+     "seasonal": true,
+     "est": true
+    },
+    {
+     "id": "fi-pp-kpi-jobs-lancaster-m-1",
+     "co": "pp",
+     "m": -1,
+     "kpi": "jobs",
+     "label": "Jobs",
+     "value": 900,
+     "unit": "",
+     "target": 880,
+     "team": "lancaster",
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "fi-pp-kpi-rev-york-m-2",
+     "co": "pp",
+     "m": -2,
+     "kpi": "revenue_k",
+     "label": "Revenue",
+     "value": 420,
+     "unit": "k$",
+     "target": 410,
+     "team": "york",
+     "seasonal": true,
+     "est": true
+    },
+    {
+     "id": "fi-pp-kpi-jobs-york-m-2",
+     "co": "pp",
+     "m": -2,
+     "kpi": "jobs",
+     "label": "Jobs",
+     "value": 610,
+     "unit": "",
+     "target": 600,
+     "team": "york",
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "fi-pp-kpi-rev-york-m-1",
+     "co": "pp",
+     "m": -1,
+     "kpi": "revenue_k",
+     "label": "Revenue",
+     "value": 420,
+     "unit": "k$",
+     "target": 410,
+     "team": "york",
+     "seasonal": true,
+     "est": true
+    },
+    {
+     "id": "fi-pp-kpi-jobs-york-m-1",
+     "co": "pp",
+     "m": -1,
+     "kpi": "jobs",
+     "label": "Jobs",
+     "value": 610,
+     "unit": "",
+     "target": 600,
+     "team": "york",
+     "seasonal": false,
+     "est": true
+    }
+   ],
+   "debt": [
+    {
+     "id": "fi-pp-debt",
+     "co": "pp",
+     "facility": "First-lien term loan",
+     "balance_k": 14000,
+     "rate_pct": 8.73,
+     "maturity_year": 2029,
+     "covenant": "Senior leverage under 5.5x",
+     "next_test_d": 44,
+     "basis": "Rate and maturity from public filings; balance modeled",
+     "est": true
+    }
+   ],
+   "close": [
+    {
+     "id": "fi-pp-close-1",
+     "co": "pp",
+     "m": -1,
+     "item": "Fleet lease renewal",
+     "owner": {
+      "name": null,
+      "role": "Controller"
+     },
+     "status": "Open"
+    }
+   ],
+   "inventory": [],
+   "orders": [],
+   "invoices": []
+  },
+  "adp": {
+   "headcount": [
+    {
+     "id": "ad-pp-hq",
+     "co": "pp",
+     "team": null,
+     "unit": "Head office",
+     "group": "Staff",
+     "count": 20,
+     "open_roles": 1,
+     "turnover_12m_pct": 10,
+     "est": true
+    },
+    {
+     "id": "ad-pp-lancaster-tech",
+     "co": "pp",
+     "team": "lancaster",
+     "unit": "Lancaster hub",
+     "group": "Technicians",
+     "count": 31,
+     "open_roles": 3,
+     "turnover_12m_pct": 15,
+     "est": true
+    }
+   ],
+   "payroll": [
+    {
+     "id": "ad-pp-pay-m-2",
+     "co": "pp",
+     "m": -2,
+     "payroll_k": 790,
+     "plan_k": 780,
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "ad-pp-pay-m-1",
+     "co": "pp",
+     "m": -1,
+     "payroll_k": 790,
+     "plan_k": 780,
+     "seasonal": false,
+     "est": true
+    }
+   ]
+  },
+  "email": {
+   "threads": [
+    {
+     "id": "em-pp-0007",
+     "co": "pp",
+     "for": [
+      "pp-ceo"
+     ],
+     "subject": "{month:-1} close: two open items",
+     "from": {
+      "name": null,
+      "role": "Controller"
+     },
+     "participants": [
+      {
+       "name": "You",
+       "role": "CEO"
+      },
+      {
+       "name": null,
+       "role": "Controller"
+      }
+     ],
+     "day": -1,
+     "time": "16:42",
+     "unread": true,
+     "kind": null,
+     "messages": [
+      {
+       "from": {
+        "name": null,
+        "role": "Controller"
+       },
+       "day": -1,
+       "time": "16:42",
+       "body": "Two items hold the {month:-1} close: a fleet lease renewal and the franchise royalty true-up. Both should clear this week."
+      }
+     ]
+    },
+    {
+     "id": "em-pp-0101",
+     "co": "pp",
+     "for": [
+      "pp-dispatcher"
+     ],
+     "subject": "Callback for the Lititz no-heat job",
+     "from": {
+      "name": "Rosa K.",
+      "role": "Customer"
+     },
+     "participants": [
+      {
+       "name": "You",
+       "role": "Dispatcher"
+      },
+      {
+       "name": "Rosa K.",
+       "role": "Customer"
+      }
+     ],
+     "day": 0,
+     "time": "07:05",
+     "unread": true,
+     "kind": null,
+     "messages": [
+      {
+       "from": {
+        "name": "Rosa K.",
+        "role": "Customer"
+       },
+       "day": 0,
+       "time": "07:05",
+       "body": "Can the technician call when close?"
+      }
+     ]
+    }
+   ]
+  },
+  "calendar": {
+   "events": [
+    {
+     "id": "ca-pp-0103",
+     "co": "pp",
+     "for": [
+      "pp-ceo"
+     ],
+     "title": "Weekly ops review",
+     "day": 0,
+     "start": "09:30",
+     "end": "10:15",
+     "where": "Lancaster office",
+     "with": [
+      {
+       "name": null,
+       "role": "VP operations"
+      }
+     ],
+     "notes": "Booking rate and callbacks first."
+    },
+    {
+     "id": "ca-pp-0104",
+     "co": "pp",
+     "for": [
+      "pp-ceo"
+     ],
+     "title": "Lender call",
+     "day": 2,
+     "start": "14:00",
+     "end": "14:30",
+     "where": "Phone",
+     "with": [
+      {
+       "name": null,
+       "role": "CFO"
+      }
+     ],
+     "notes": ""
+    }
+   ]
+  },
+  "chat": {
+   "channels": [
+    {
+     "id": "ch-pp-dispatch-lancaster",
+     "co": "pp",
+     "team": "lancaster",
+     "name": "Dispatch, Lancaster",
+     "messages": [
+      {
+       "from": {
+        "name": "Noor A.",
+        "role": "Dispatcher"
+       },
+       "day": 0,
+       "time": "07:12",
+       "text": "Two no-heat calls added for this morning. Lititz first."
+      }
+     ]
+    },
+    {
+     "id": "ch-pp-dispatch-york",
+     "co": "pp",
+     "team": "york",
+     "name": "Dispatch, York",
+     "messages": [
+      {
+       "from": {
+        "name": "Noor A.",
+        "role": "Dispatcher"
+       },
+       "day": 0,
+       "time": "07:20",
+       "text": "Red Lion water heater first."
+      }
+     ]
+    },
+    {
+     "id": "ch-pp-leadership",
+     "co": "pp",
+     "team": "leadership",
+     "name": "Leadership",
+     "messages": [
+      {
+       "from": {
+        "name": null,
+        "role": "CFO"
+       },
+       "day": -1,
+       "time": "17:00",
+       "text": "Close is on track."
+      }
+     ]
+    }
+   ]
+  },
+  "drive": {
+   "docs": [
+    {
+     "id": "dr-pp-0004",
+     "co": "pp",
+     "team": "leadership",
+     "title": "Next year's budget, draft 2",
+     "folder": "Finance",
+     "kind": "Spreadsheet",
+     "day": -6,
+     "owner": {
+      "name": null,
+      "role": "Controller"
+     },
+     "summary": "Revenue plan by trade and hub, with the membership target.",
+     "body": "Revenue plan by trade and hub. Membership target up a tenth."
+    }
+   ]
+  },
+  "marketing": {
+   "campaigns": [
+    {
+     "id": "mk-pp-012",
+     "co": "pp",
+     "name": "New neighbor tune-up",
+     "channel": "Mail",
+     "m": -1,
+     "spend": 6200,
+     "leads": 148,
+     "booked": 41,
+     "est": true
+    }
+   ]
+  }
+ }
+}

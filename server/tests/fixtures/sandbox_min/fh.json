@@ -1,0 +1,441 @@
+{
+ "co": "fh",
+ "season": {
+  "1": 1.0,
+  "2": 1.0,
+  "3": 1.0,
+  "4": 1.0,
+  "5": 1.0,
+  "6": 1.0,
+  "7": 1.0,
+  "8": 1.0,
+  "9": 1.0,
+  "10": 1.0,
+  "11": 1.0,
+  "12": 1.0
+ },
+ "apps": {
+  "financials": {
+   "pnl": [
+    {
+     "id": "fi-fh-pnl-m-24",
+     "co": "fh",
+     "m": -24,
+     "revenue_k": 2295,
+     "cogs_k": 1148,
+     "opex_k": 1009,
+     "plan_revenue_k": 2250,
+     "plan_cogs_k": 1125,
+     "plan_opex_k": 990,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-23",
+     "co": "fh",
+     "m": -23,
+     "revenue_k": 2225,
+     "cogs_k": 1112,
+     "opex_k": 980,
+     "plan_revenue_k": 2259,
+     "plan_cogs_k": 1130,
+     "plan_opex_k": 994,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-22",
+     "co": "fh",
+     "m": -22,
+     "revenue_k": 2279,
+     "cogs_k": 1140,
+     "opex_k": 1002,
+     "plan_revenue_k": 2268,
+     "plan_cogs_k": 1134,
+     "plan_opex_k": 998,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-21",
+     "co": "fh",
+     "m": -21,
+     "revenue_k": 2323,
+     "cogs_k": 1162,
+     "opex_k": 1022,
+     "plan_revenue_k": 2277,
+     "plan_cogs_k": 1138,
+     "plan_opex_k": 1002,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-20",
+     "co": "fh",
+     "m": -20,
+     "revenue_k": 2252,
+     "cogs_k": 1126,
+     "opex_k": 991,
+     "plan_revenue_k": 2286,
+     "plan_cogs_k": 1143,
+     "plan_opex_k": 1006,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-19",
+     "co": "fh",
+     "m": -19,
+     "revenue_k": 2306,
+     "cogs_k": 1153,
+     "opex_k": 1015,
+     "plan_revenue_k": 2295,
+     "plan_cogs_k": 1148,
+     "plan_opex_k": 1010,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-18",
+     "co": "fh",
+     "m": -18,
+     "revenue_k": 2350,
+     "cogs_k": 1175,
+     "opex_k": 1034,
+     "plan_revenue_k": 2304,
+     "plan_cogs_k": 1152,
+     "plan_opex_k": 1014,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-17",
+     "co": "fh",
+     "m": -17,
+     "revenue_k": 2278,
+     "cogs_k": 1139,
+     "opex_k": 1002,
+     "plan_revenue_k": 2313,
+     "plan_cogs_k": 1156,
+     "plan_opex_k": 1018,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-16",
+     "co": "fh",
+     "m": -16,
+     "revenue_k": 2334,
+     "cogs_k": 1167,
+     "opex_k": 1027,
+     "plan_revenue_k": 2322,
+     "plan_cogs_k": 1161,
+     "plan_opex_k": 1022,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-15",
+     "co": "fh",
+     "m": -15,
+     "revenue_k": 2378,
+     "cogs_k": 1189,
+     "opex_k": 1046,
+     "plan_revenue_k": 2331,
+     "plan_cogs_k": 1166,
+     "plan_opex_k": 1026,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-14",
+     "co": "fh",
+     "m": -14,
+     "revenue_k": 2305,
+     "cogs_k": 1152,
+     "opex_k": 1015,
+     "plan_revenue_k": 2340,
+     "plan_cogs_k": 1170,
+     "plan_opex_k": 1030,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-13",
+     "co": "fh",
+     "m": -13,
+     "revenue_k": 2361,
+     "cogs_k": 1180,
+     "opex_k": 1039,
+     "plan_revenue_k": 2349,
+     "plan_cogs_k": 1174,
+     "plan_opex_k": 1034,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-12",
+     "co": "fh",
+     "m": -12,
+     "revenue_k": 2405,
+     "cogs_k": 1202,
+     "opex_k": 1059,
+     "plan_revenue_k": 2358,
+     "plan_cogs_k": 1179,
+     "plan_opex_k": 1038,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-11",
+     "co": "fh",
+     "m": -11,
+     "revenue_k": 2331,
+     "cogs_k": 1166,
+     "opex_k": 1025,
+     "plan_revenue_k": 2367,
+     "plan_cogs_k": 1184,
+     "plan_opex_k": 1041,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-10",
+     "co": "fh",
+     "m": -10,
+     "revenue_k": 2388,
+     "cogs_k": 1194,
+     "opex_k": 1051,
+     "plan_revenue_k": 2376,
+     "plan_cogs_k": 1188,
+     "plan_opex_k": 1045,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-9",
+     "co": "fh",
+     "m": -9,
+     "revenue_k": 2433,
+     "cogs_k": 1216,
+     "opex_k": 1071,
+     "plan_revenue_k": 2385,
+     "plan_cogs_k": 1192,
+     "plan_opex_k": 1049,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-8",
+     "co": "fh",
+     "m": -8,
+     "revenue_k": 2358,
+     "cogs_k": 1179,
+     "opex_k": 1038,
+     "plan_revenue_k": 2394,
+     "plan_cogs_k": 1197,
+     "plan_opex_k": 1053,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-7",
+     "co": "fh",
+     "m": -7,
+     "revenue_k": 2415,
+     "cogs_k": 1208,
+     "opex_k": 1062,
+     "plan_revenue_k": 2403,
+     "plan_cogs_k": 1202,
+     "plan_opex_k": 1057,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-6",
+     "co": "fh",
+     "m": -6,
+     "revenue_k": 2460,
+     "cogs_k": 1230,
+     "opex_k": 1082,
+     "plan_revenue_k": 2412,
+     "plan_cogs_k": 1206,
+     "plan_opex_k": 1061,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-5",
+     "co": "fh",
+     "m": -5,
+     "revenue_k": 2385,
+     "cogs_k": 1192,
+     "opex_k": 1050,
+     "plan_revenue_k": 2421,
+     "plan_cogs_k": 1210,
+     "plan_opex_k": 1065,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-4",
+     "co": "fh",
+     "m": -4,
+     "revenue_k": 2442,
+     "cogs_k": 1221,
+     "opex_k": 1074,
+     "plan_revenue_k": 2430,
+     "plan_cogs_k": 1215,
+     "plan_opex_k": 1069,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-3",
+     "co": "fh",
+     "m": -3,
+     "revenue_k": 2488,
+     "cogs_k": 1244,
+     "opex_k": 1095,
+     "plan_revenue_k": 2439,
+     "plan_cogs_k": 1220,
+     "plan_opex_k": 1073,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-2",
+     "co": "fh",
+     "m": -2,
+     "revenue_k": 2411,
+     "cogs_k": 1206,
+     "opex_k": 1060,
+     "plan_revenue_k": 2448,
+     "plan_cogs_k": 1224,
+     "plan_opex_k": 1077,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-fh-pnl-m-1",
+     "co": "fh",
+     "m": -1,
+     "revenue_k": 2469,
+     "cogs_k": 1234,
+     "opex_k": 1087,
+     "plan_revenue_k": 2457,
+     "plan_cogs_k": 1228,
+     "plan_opex_k": 1081,
+     "team": null,
+     "est": true
+    }
+   ],
+   "kpis": [
+    {
+     "id": "fi-fh-kpi-a-m-3",
+     "co": "fh",
+     "m": -3,
+     "kpi": "kpi_a",
+     "label": "Utilization",
+     "value": 37,
+     "unit": "%",
+     "target": 45,
+     "team": null,
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "fi-fh-kpi-a-m-2",
+     "co": "fh",
+     "m": -2,
+     "kpi": "kpi_a",
+     "label": "Utilization",
+     "value": 38,
+     "unit": "%",
+     "target": 45,
+     "team": null,
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "fi-fh-kpi-a-m-1",
+     "co": "fh",
+     "m": -1,
+     "kpi": "kpi_a",
+     "label": "Utilization",
+     "value": 39,
+     "unit": "%",
+     "target": 45,
+     "team": null,
+     "seasonal": false,
+     "est": true
+    }
+   ],
+   "debt": [
+    {
+     "id": "fi-fh-debt",
+     "co": "fh",
+     "facility": "First-lien term loan",
+     "balance_k": 40000,
+     "rate_pct": 9.1,
+     "maturity_year": 2029,
+     "covenant": "Senior leverage under 5.5x",
+     "next_test_d": 44,
+     "basis": "Modeled",
+     "est": true
+    }
+   ],
+   "close": [
+    {
+     "id": "fi-fh-close-1",
+     "co": "fh",
+     "m": -1,
+     "item": "Fleet lease renewal",
+     "owner": {
+      "name": null,
+      "role": "Controller"
+     },
+     "status": "Open"
+    }
+   ],
+   "inventory": [],
+   "orders": [],
+   "invoices": []
+  },
+  "adp": {
+   "headcount": [
+    {
+     "id": "ad-fh-hq",
+     "co": "fh",
+     "team": null,
+     "unit": "Head office",
+     "group": "Staff",
+     "count": 20,
+     "open_roles": 1,
+     "turnover_12m_pct": 10,
+     "est": true
+    }
+   ],
+   "payroll": [
+    {
+     "id": "ad-fh-pay-m-2",
+     "co": "fh",
+     "m": -2,
+     "payroll_k": 790,
+     "plan_k": 780,
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "ad-fh-pay-m-1",
+     "co": "fh",
+     "m": -1,
+     "payroll_k": 790,
+     "plan_k": 780,
+     "seasonal": false,
+     "est": true
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,622 @@
+{
+ "version": 1,
+ "counties": {
+  "Lancaster|PA": {
+   "median_year": 1978,
+   "fuel": {
+    "gas": 0.33,
+    "electric": 0.36,
+    "oil": 0.16,
+    "propane": 0.09
+   },
+   "detached": 0.55
+  },
+  "York|PA": {
+   "median_year": 1979,
+   "fuel": {
+    "gas": 0.51,
+    "electric": 0.27,
+    "oil": 0.12,
+    "propane": 0.07
+   },
+   "detached": 0.62
+  },
+  "Ocean|NJ": {
+   "median_year": 1981,
+   "fuel": {
+    "gas": 0.71,
+    "electric": 0.22,
+    "oil": 0.03,
+    "propane": 0.03
+   },
+   "detached": 0.74
+  }
+ },
+ "eras": [
+  {
+   "to": 1939,
+   "name": "pre-1940",
+   "style": "older two-story",
+   "stories": 2
+  },
+  {
+   "to": 1959,
+   "name": "1940s-50s",
+   "style": "Cape Cod",
+   "stories": 1.5
+  },
+  {
+   "to": 1979,
+   "name": "1960s-70s",
+   "style": "ranch or split-level",
+   "stories": 1
+  },
+  {
+   "to": 1999,
+   "name": "1980s-90s",
+   "style": "two-story colonial",
+   "stories": 2
+  },
+  {
+   "to": 2100,
+   "name": "2000s or later",
+   "style": "two-story",
+   "stories": 2
+  }
+ ],
+ "foundation": {
+  "PA": [
+   {
+    "to": 2100,
+    "type": "basement"
+   }
+  ],
+  "NJ": [
+   {
+    "to": 1969,
+    "type": "crawl"
+   },
+   {
+    "to": 2100,
+    "type": "slab"
+   }
+  ]
+ },
+ "heating": {
+  "gas": [
+   "furnace"
+  ],
+  "propane": [
+   "furnace"
+  ],
+  "oil": [
+   "boiler"
+  ],
+  "electric": [
+   "heat_pump",
+   "air_handler"
+  ]
+ },
+ "spots": {
+  "front-wall-left": [
+   0.15,
+   0.92
+  ],
+  "front-wall-center": [
+   0.5,
+   0.92
+  ],
+  "front-wall-right": [
+   0.85,
+   0.92
+  ],
+  "rear-wall-left": [
+   0.15,
+   0.08
+  ],
+  "rear-wall-center": [
+   0.5,
+   0.08
+  ],
+  "rear-wall-right": [
+   0.85,
+   0.08
+  ],
+  "side-left": [
+   0.06,
+   0.5
+  ],
+  "side-right": [
+   0.94,
+   0.5
+  ],
+  "center": [
+   0.5,
+   0.5
+  ],
+  "utility-corner": [
+   0.85,
+   0.15
+  ],
+  "stairs-top": [
+   0.4,
+   0.6
+  ],
+  "kitchen": [
+   0.3,
+   0.25
+  ],
+  "bath": [
+   0.75,
+   0.3
+  ],
+  "garage": [
+   0.88,
+   0.75
+  ],
+  "attic": [
+   0.5,
+   0.5
+  ]
+ },
+ "outside_spots": {
+  "outside-left": {
+   "side": "left",
+   "at": 0.35
+  },
+  "outside-right": {
+   "side": "right",
+   "at": 0.35
+  },
+  "outside-rear": {
+   "side": "rear",
+   "at": 0.5
+  },
+  "outside-front": {
+   "side": "front",
+   "at": 0.25
+  }
+ },
+ "kinds": {
+  "main_water": {
+   "label": "Main water shutoff",
+   "short": "W"
+  },
+  "water_heater": {
+   "label": "Water heater",
+   "short": "WH"
+  },
+  "furnace": {
+   "label": "Furnace",
+   "short": "F"
+  },
+  "air_handler": {
+   "label": "Air handler",
+   "short": "AH"
+  },
+  "boiler": {
+   "label": "Boiler",
+   "short": "B"
+  },
+  "condenser": {
+   "label": "AC condenser",
+   "short": "AC"
+  },
+  "heat_pump": {
+   "label": "Heat pump",
+   "short": "HP"
+  },
+  "panel": {
+   "label": "Electrical panel",
+   "short": "P"
+  },
+  "gas_meter": {
+   "label": "Gas meter",
+   "short": "G"
+  },
+  "gas_shutoff": {
+   "label": "Gas shutoff",
+   "short": "GS"
+  },
+  "service_switch": {
+   "label": "Furnace switch",
+   "short": "SW"
+  },
+  "sewer_cleanout": {
+   "label": "Sewer cleanout",
+   "short": "C"
+  },
+  "sump_pump": {
+   "label": "Sump pump",
+   "short": "S"
+  },
+  "fixture_shutoffs": {
+   "label": "Fixture shutoffs",
+   "short": "FX"
+  },
+  "oil_tank": {
+   "label": "Oil tank",
+   "short": "OT"
+  },
+  "generator": {
+   "label": "Generator",
+   "short": "GN"
+  }
+ },
+ "locations": {
+  "basement": {
+   "main_water": {
+    "floor": "basement",
+    "spot": "front-wall-left",
+    "note": "Front wall where the line comes in from the street, near the water meter"
+   },
+   "water_heater": {
+    "floor": "basement",
+    "spot": "utility-corner",
+    "note": "Utility corner near the furnace or air handler"
+   },
+   "furnace": {
+    "floor": "basement",
+    "spot": "center",
+    "note": "Near the middle of the house, close to the chimney or flue"
+   },
+   "boiler": {
+    "floor": "basement",
+    "spot": "center",
+    "note": "Near the chimney, with the expansion tank above it"
+   },
+   "air_handler": {
+    "floor": "basement",
+    "spot": "center",
+    "note": "Beside the furnace position"
+   },
+   "heat_pump": {
+    "floor": "basement",
+    "spot": "outside-right",
+    "note": "Outdoor unit on a pad beside the house"
+   },
+   "condenser": {
+    "floor": "basement",
+    "spot": "outside-left",
+    "note": "Outdoor unit on a pad beside the house"
+   },
+   "panel": {
+    "floor": "basement",
+    "spot": "side-left",
+    "note": "Wall near where the service line enters"
+   },
+   "gas_meter": {
+    "floor": "basement",
+    "spot": "outside-right",
+    "note": "Usually on a side wall near the panel; confirm on site"
+   },
+   "gas_shutoff": {
+    "floor": "basement",
+    "spot": "center",
+    "note": "On the gas pipe beside the furnace, a lever valve"
+   },
+   "service_switch": {
+    "floor": "basement",
+    "spot": "stairs-top",
+    "note": "A light-style switch near the furnace or at the top of the stairs"
+   },
+   "sewer_cleanout": {
+    "floor": "basement",
+    "spot": "front-wall-center",
+    "note": "Low on the front wall where the drain leaves the house"
+   },
+   "sump_pump": {
+    "floor": "basement",
+    "spot": "rear-wall-left",
+    "note": "A pit in the basement floor, often in a rear corner"
+   },
+   "fixture_shutoffs": {
+    "floor": "first",
+    "spot": "kitchen",
+    "note": "Under the kitchen sink and behind each toilet"
+   }
+  },
+  "crawl": {
+   "main_water": {
+    "floor": "first",
+    "spot": "utility-corner",
+    "note": "In the crawlspace or a utility closet. Utility closet by the water heater, or the garage wall facing the street"
+   },
+   "water_heater": {
+    "floor": "first",
+    "spot": "utility-corner",
+    "note": "In the crawlspace or a utility closet. Utility corner near the furnace or air handler"
+   },
+   "furnace": {
+    "floor": "first",
+    "spot": "center",
+    "note": "In the crawlspace or a utility closet. Near the middle of the house, close to the chimney or flue"
+   },
+   "boiler": {
+    "floor": "first",
+    "spot": "center",
+    "note": "In the crawlspace or a utility closet. Near the chimney, with the expansion tank above it"
+   },
+   "air_handler": {
+    "floor": "second",
+    "spot": "attic",
+    "note": "In the attic above the hall, or a closet on the top floor"
+   },
+   "heat_pump": {
+    "floor": "first",
+    "spot": "outside-right",
+    "note": "Outdoor unit on a pad beside the house"
+   },
+   "condenser": {
+    "floor": "first",
+    "spot": "outside-left",
+    "note": "Outdoor unit on a pad beside the house"
+   },
+   "panel": {
+    "floor": "first",
+    "spot": "garage",
+    "note": "In the crawlspace or a utility closet. Wall near where the service line enters"
+   },
+   "gas_meter": {
+    "floor": "first",
+    "spot": "outside-right",
+    "note": "Usually on a side wall near the panel; confirm on site"
+   },
+   "gas_shutoff": {
+    "floor": "first",
+    "spot": "center",
+    "note": "In the crawlspace or a utility closet. On the gas pipe beside the furnace, a lever valve"
+   },
+   "service_switch": {
+    "floor": "first",
+    "spot": "stairs-top",
+    "note": "A light-style switch near the furnace or at the top of the stairs"
+   },
+   "sewer_cleanout": {
+    "floor": "first",
+    "spot": "front-wall-center",
+    "note": "In the crawlspace or a utility closet. Low on the front wall where the drain leaves the house"
+   },
+   "sump_pump": {
+    "floor": "first",
+    "spot": "rear-wall-left",
+    "note": "A pit in the basement floor, often in a rear corner"
+   },
+   "fixture_shutoffs": {
+    "floor": "first",
+    "spot": "kitchen",
+    "note": "Under the kitchen sink and behind each toilet"
+   }
+  },
+  "slab": {
+   "main_water": {
+    "floor": "first",
+    "spot": "utility-corner",
+    "note": "Utility closet by the water heater, or the garage wall facing the street"
+   },
+   "water_heater": {
+    "floor": "first",
+    "spot": "utility-corner",
+    "note": "Utility corner near the furnace or air handler"
+   },
+   "furnace": {
+    "floor": "first",
+    "spot": "center",
+    "note": "Near the middle of the house, close to the chimney or flue"
+   },
+   "boiler": {
+    "floor": "first",
+    "spot": "center",
+    "note": "Near the chimney, with the expansion tank above it"
+   },
+   "air_handler": {
+    "floor": "second",
+    "spot": "attic",
+    "note": "In the attic above the hall, or a closet on the top floor"
+   },
+   "heat_pump": {
+    "floor": "first",
+    "spot": "outside-right",
+    "note": "Outdoor unit on a pad beside the house"
+   },
+   "condenser": {
+    "floor": "first",
+    "spot": "outside-left",
+    "note": "Outdoor unit on a pad beside the house"
+   },
+   "panel": {
+    "floor": "first",
+    "spot": "garage",
+    "note": "Wall near where the service line enters"
+   },
+   "gas_meter": {
+    "floor": "first",
+    "spot": "outside-right",
+    "note": "Usually on a side wall near the panel; confirm on site"
+   },
+   "gas_shutoff": {
+    "floor": "first",
+    "spot": "center",
+    "note": "On the gas pipe beside the furnace, a lever valve"
+   },
+   "service_switch": {
+    "floor": "first",
+    "spot": "stairs-top",
+    "note": "A light-style switch near the furnace or at the top of the stairs"
+   },
+   "sewer_cleanout": {
+    "floor": "first",
+    "spot": "front-wall-center",
+    "note": "Low on the front wall where the drain leaves the house"
+   },
+   "sump_pump": {
+    "floor": "first",
+    "spot": "rear-wall-left",
+    "note": "A pit in the basement floor, often in a rear corner"
+   },
+   "fixture_shutoffs": {
+    "floor": "first",
+    "spot": "kitchen",
+    "note": "Under the kitchen sink and behind each toilet"
+   }
+  }
+ },
+ "runs": {
+  "basement": [
+   {
+    "kind": "water",
+    "label": "Water line",
+    "floor": "basement",
+    "via": [
+     "front-wall-left",
+     "utility-corner"
+    ],
+    "needs": [
+     "main_water",
+     "water_heater"
+    ]
+   },
+   {
+    "kind": "gas",
+    "label": "Gas line",
+    "floor": "basement",
+    "via": [
+     "side-right",
+     "center"
+    ],
+    "needs": [
+     "gas_meter"
+    ]
+   },
+   {
+    "kind": "drain",
+    "label": "Drain",
+    "floor": "basement",
+    "via": [
+     "rear-wall-center",
+     "front-wall-center"
+    ],
+    "needs": [
+     "sewer_cleanout"
+    ]
+   }
+  ],
+  "crawl": [
+   {
+    "kind": "water",
+    "label": "Water line",
+    "floor": "first",
+    "via": [
+     "front-wall-left",
+     "utility-corner"
+    ],
+    "needs": [
+     "main_water",
+     "water_heater"
+    ]
+   },
+   {
+    "kind": "gas",
+    "label": "Gas line",
+    "floor": "first",
+    "via": [
+     "side-right",
+     "center"
+    ],
+    "needs": [
+     "gas_meter"
+    ]
+   },
+   {
+    "kind": "drain",
+    "label": "Drain",
+    "floor": "first",
+    "via": [
+     "rear-wall-center",
+     "front-wall-center"
+    ],
+    "needs": [
+     "sewer_cleanout"
+    ]
+   }
+  ],
+  "slab": [
+   {
+    "kind": "water",
+    "label": "Water line",
+    "floor": "first",
+    "via": [
+     "front-wall-left",
+     "utility-corner"
+    ],
+    "needs": [
+     "main_water",
+     "water_heater"
+    ]
+   },
+   {
+    "kind": "gas",
+    "label": "Gas line",
+    "floor": "first",
+    "via": [
+     "side-right",
+     "center"
+    ],
+    "needs": [
+     "gas_meter"
+    ]
+   },
+   {
+    "kind": "drain",
+    "label": "Drain",
+    "floor": "first",
+    "via": [
+     "rear-wall-center",
+     "front-wall-center"
+    ],
+    "needs": [
+     "sewer_cleanout"
+    ]
+   }
+  ]
+ },
+ "materials": [
+  {
+   "kind": "water",
+   "to": 1959,
+   "text": "galvanized steel"
+  },
+  {
+   "kind": "water",
+   "to": 2100,
+   "text": "copper or PEX"
+  },
+  {
+   "kind": "gas",
+   "to": 2100,
+   "text": "black iron"
+  },
+  {
+   "kind": "drain",
+   "to": 1959,
+   "text": "cast iron"
+  },
+  {
+   "kind": "drain",
+   "to": 2100,
+   "text": "PVC"
+  }
+ ],
+ "era_flags": [
+  {
+   "from": 1965,
+   "to": 1973,
+   "text": "Aluminum branch wiring is possible in homes built 1965 to 1973."
+  },
+  {
+   "from": 1900,
+   "to": 1949,
+   "text": "Fuses instead of breakers are possible in homes built before 1950."
+  }
+ ]
+}

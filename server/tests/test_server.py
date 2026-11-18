@@ -1078,3 +1078,149 @@ def test_main_py_starts_on_port(tmp_path):
         assert h['ok'] is True and h['llm'] is False and h['db'] is True
     finally:
         p.stop()
+
+
+# ── Company agent (agent.html): workspace requests ──────────────────────────
+TECH_WS = {'role': 'pp-hvac-technician', 'connected': ['servicetitan']}
+MP_WS = {'role': 'bsp-managing-partner', 'connected': ['email', 'financials']}
+FLAGSHIP = '418 Wexcombe Ln, Lititz, PA 17543'
+
+
+def plan_marker(*calls):
+    """A [mock:plan:…] marker: the mock asks for these tool calls in order, then answers."""
+    return '[mock:plan:' + base64.urlsafe_b64encode(json.dumps([list(c) for c in calls]).encode()).decode().rstrip('=') + ']'
+
+
+def system_text(body):
+    return ''.join(b['text'] for b in body['system'])
+
+
+def test_workspace_technician_tools(env):
+    httpx.delete(env['mock'] + '/_requests')
+    status, _, events = chat(env['main'], 'hi', workspace=TECH_WS)
+    assert status == 200 and events[-1]['type'] == 'done'
+    b = mock_requests(env)[0]['body']
+    assert [t['name'] for t in b['tools']] == ['site_brief', 'workspace_search', 'open_record', 'draft_action']   # no knowledge base, deal model, homes, directory or web
+    assert all(t['eager_input_streaming'] is True for t in b['tools'])
+    assert len(b['system']) == 3 and b['system'][0]['text'].startswith("You are the company agent in BSP Desk's sandbox")
+    s = system_text(b)
+    assert 'COMPANY AGENT (sandbox)' in s and 'Local date:' in s and 'Never say where pipes' not in s
+    assert b['system'][1]['cache_control'] == {'type': 'ephemeral'} and 'cache_control' not in b['system'][2]   # role block cached, state block never
+    first = b['messages'][-1]['content'][0]['text']
+    assert first.startswith('<sources>\n(') and 'Results for' not in first   # no knowledge-base excerpts for a field role
+    assert b['output_config'] == {'effort': 'low'}   # field roles answer at low effort
+
+
+def test_workspace_managing_partner_tools(env):
+    httpx.delete(env['mock'] + '/_requests')
+    chat(env['main'], 'How is the portfolio doing?', workspace=MP_WS)
+    b = mock_requests(env)[0]['body']
+    names = [t.get('name') for t in b['tools']]
+    # tests set a dead DIRECTORY_URL, and the directory is still offered before its first download (as in test_portal_persona_and_context_format)
+    assert names == ['search_knowledge', 'read_source', 'deal_model', 'find_businesses', 'web_search', 'workspace_search', 'open_record', 'company_numbers', 'draft_action']
+    s = system_text(b)
+    assert 'COMPANY AGENT (sandbox)' in s and '12. Home-sales records' not in s and 'Never say where pipes' not in s
+    assert b['messages'][-1]['content'][0]['text'].startswith('<sources>\n[1] ')   # a research role keeps the knowledge-base excerpts
+
+
+def test_workspace_bad_role(env):
+    base = env['main']
+    s, _, b = chat(base, 'q', workspace={'role': 'no-such-role'})
+    assert (s, b['error'], b['message']) == (400, 'bad_workspace', 'Unknown role.')
+    for bad in ('pp-hvac-technician', ['pp-hvac-technician'], 7):
+        s, _, b = chat(base, 'q', workspace=bad)
+        assert (s, b['error'], b['message']) == (400, 'bad_workspace', 'workspace must be an object.')
+    s, _, b = chat(base, 'q', workspace={'role': 'x' * 300})
+    assert (s, b['error']) == (413, 'workspace_too_large')
+    s, _, b = chat(base, 'q', workspace={'role': 'pp-hvac-technician', 'connected': ['servicetitan'] * 65})
+    assert (s, b['error']) == (413, 'workspace_too_large')
+    deep = b'{"question":"q","workspace":{"role":' + b'[' * 5000 + b']' * 5000 + b'}}'
+    r = httpx.post(base + '/chat', headers=hdrs(visitor=ip()), content=deep)
+    assert r.status_code == 400 and r.json()['error'] in ('bad_workspace', 'bad_json')   # 3.12+ parses it: a role that is not a string; never a 500
+
+
+def test_agent_persona_without_workspace(env):
+    for persona in ('ag-pp-hvac-technician', 'ws-pp', 'WS-BSP'):
+        s, _, b = chat(env['main'], 'q', persona=persona)
+        assert (s, b['error'], b['message']) == (400, 'bad_workspace', 'Pick a role first.')
+
+
+def test_workspace_blocks_unoffered_tool(env):
+    httpx.delete(env['mock'] + '/_requests')
+    status, _, events = chat(env['main'], 'What is PP worth? ' + plan_marker(['deal_model', {'preset': 'pp'}]), workspace=TECH_WS)
+    assert status == 200 and events[-1]['type'] == 'done'
+    res = mock_requests(env)[1]['body']['messages'][-1]['content'][0]
+    assert res['is_error'] is True and res['content'].startswith("Outside this role's access") and 'IRR' not in res['content']
+    assert not any(s['kind'] == 'model' for e in events if e['type'] == 'sources' for s in e['sources'])
+    assert not any(e['type'] == 'card' for e in events)
+
+
+def test_workspace_site_brief_card(env):
+    httpx.delete(env['mock'] + '/_requests')
+    marker = plan_marker(['site_brief', {'address': FLAGSHIP, 'issue': 'no heat'}])
+    status, _, events = chat(env['main'], f'Heading to my first job {marker}', workspace=TECH_WS)
+    assert status == 200 and events[-1]['type'] == 'done'
+    types = [e['type'] for e in events]
+    cards = [e for e in events if e['type'] == 'card']
+    assert len(cards) == 1 and cards[0]['kind'] == 'floor_sketch' and types.index('card') < types.index('done')
+    card = cards[0]
+    assert re.fullmatch(r'fs-[0-9a-f]{8}', card['id']) and card['floors'] and card['focus'] and card['area']['status'] in ('in', 'adjacent')
+    assert {'type': 'status', 'text': 'Checking the service area and records for 418 Wexcombe Ln'} in events
+    res = mock_requests(env)[1]['body']['messages'][-1]['content'][0]
+    assert not res.get('is_error') and res['content'].startswith('Sources for this result (cite them as [n]):')
+    assert 'WHERE THE PROBLEM IS' in res['content'] and 'MATCHED:' in res['content'] and 'L-2187' in res['content']
+    final = [e for e in events if e['type'] == 'sources'][-1]['sources']
+    sandbox = [s for s in final if s['kind'] == 'sandbox']
+    assert sandbox and all(s['publisher'] == 'Sandbox: ServiceTitan' and s['url'] == '' for s in sandbox)
+
+
+def test_workspace_draft_card(env):
+    httpx.delete(env['mock'] + '/_requests')
+    marker = plan_marker(['draft_action', {'action': 'text_customer', 'body': "I'm 10 minutes out"}])
+    status, _, events = chat(env['main'], f'Tell them I am close {marker}', workspace=TECH_WS)
+    assert status == 200 and events[-1]['type'] == 'done'
+    cards = [e for e in events if e['type'] == 'card']
+    assert len(cards) == 1 and cards[0]['kind'] == 'action_draft' and cards[0]['status'] == 'draft' and cards[0]['action'] == 'text_customer'
+    assert re.fullmatch(r'ad-[0-9a-f]{8}', cards[0]['id']) and any(f['label'] == 'Message' for f in cards[0]['fields'])
+    res = mock_requests(env)[1]['body']['messages'][-1]['content'][0]
+    assert not res.get('is_error') and res['content'].startswith('Draft ready on screen, not sent')
+
+
+def test_workspace_voice_one_tool(env):
+    httpx.delete(env['mock'] + '/_requests')
+    status, _, events = chat(env['main'], "I'm going to 418 Wexcombe Ln, Lititz. Customer says no heat.", mode='voice', workspace=TECH_WS)
+    assert status == 200 and events[-1]['type'] == 'done'
+    b = mock_requests(env)[0]['body']
+    assert [t['name'] for t in b['tools']] == ['site_brief']
+    assert 'and in the tool result' in b['system'][0]['text'] and 'COMPANY AGENT (sandbox)' in system_text(b)
+
+
+def test_workspace_voice_keeps_deal_route(env):
+    httpx.delete(env['mock'] + '/_requests')
+    chat(env['main'], 'What could BSP pay for CET and still earn 25% a year? [mock:deal]', mode='voice', workspace=MP_WS)
+    reqs = mock_requests(env)
+    assert [t['name'] for t in reqs[0]['body']['tools']] == ['deal_model'] and len(reqs) == 2
+    assert 'IRR' in reqs[1]['body']['messages'][-1]['content'][0]['content']
+
+
+def test_persona_ignored_with_workspace(env):
+    httpx.delete(env['mock'] + '/_requests')
+    s, _, events = chat(env['main'], 'q', persona='portal', workspace=TECH_WS)
+    assert s == 200 and events[-1]['type'] == 'done'
+    b = mock_requests(env)[0]['body']
+    assert [t['name'] for t in b['tools']] == ['site_brief', 'workspace_search', 'open_record', 'draft_action']
+    assert not b['system'][0]['text'].startswith('You are BSP Desk')
+
+
+def test_health_has_workspace(env):
+    j = httpx.get(env['main'] + '/health', headers={'Origin': GH}).json()
+    assert j['workspace'] == {'roles': 44, 'version': 1}
+
+
+def test_requests_without_workspace_unchanged(env):
+    httpx.delete(env['mock'] + '/_requests')
+    s, _, events = chat(env['main'], 'q')
+    assert s == 200 and not any(e['type'] == 'card' for e in events)
+    b = mock_requests(env)[0]['body']
+    assert [t.get('name') for t in b['tools']] == ['search_knowledge', 'read_source', 'deal_model', 'new_homeowners', 'property_brief', 'find_businesses', 'web_search']
+    assert len(b['system']) == 1 and 'COMPANY AGENT' not in b['system'][0]['text']

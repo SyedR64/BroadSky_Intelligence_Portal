@@ -1,0 +1,219 @@
+{
+ "co": "bsp",
+ "season": {
+  "1": 1.0,
+  "2": 1.0,
+  "3": 1.0,
+  "4": 1.0,
+  "5": 1.0,
+  "6": 1.0,
+  "7": 1.0,
+  "8": 1.0,
+  "9": 1.0,
+  "10": 1.0,
+  "11": 1.0,
+  "12": 1.0
+ },
+ "apps": {
+  "financials": {
+   "pnl": [],
+   "kpis": [],
+   "debt": [],
+   "close": [],
+   "inventory": [],
+   "orders": [],
+   "invoices": [],
+   "fund": [
+    {
+     "id": "fi-bsp-fund",
+     "co": "bsp",
+     "fund": "Fund I",
+     "commitments_m": 335.0,
+     "commitments_basis": "Form D, public",
+     "investors": 46,
+     "called_m": 201.0,
+     "called_pct": 60,
+     "next_report_d": 21,
+     "est": true
+    }
+   ],
+   "packs": [
+    {
+     "id": "fi-bsp-pack-pp",
+     "co": "bsp",
+     "company": "pp",
+     "m": -1,
+     "status": "In",
+     "received_d": -5
+    },
+    {
+     "id": "fi-bsp-pack-cet",
+     "co": "bsp",
+     "company": "cet",
+     "m": -1,
+     "status": "In",
+     "received_d": -5
+    },
+    {
+     "id": "fi-bsp-pack-fl",
+     "co": "bsp",
+     "company": "fl",
+     "m": -1,
+     "status": "In",
+     "received_d": -5
+    },
+    {
+     "id": "fi-bsp-pack-ts",
+     "co": "bsp",
+     "company": "ts",
+     "m": -1,
+     "status": "In",
+     "received_d": -5
+    },
+    {
+     "id": "fi-bsp-pack-bpi",
+     "co": "bsp",
+     "company": "bpi",
+     "m": -1,
+     "status": "Late",
+     "received_d": -5
+    },
+    {
+     "id": "fi-bsp-pack-fh",
+     "co": "bsp",
+     "company": "fh",
+     "m": -1,
+     "status": "In",
+     "received_d": -5
+    }
+   ]
+  },
+  "adp": {
+   "headcount": [
+    {
+     "id": "ad-bsp-hq",
+     "co": "bsp",
+     "team": null,
+     "unit": "Head office",
+     "group": "Staff",
+     "count": 20,
+     "open_roles": 1,
+     "turnover_12m_pct": 10,
+     "est": true
+    }
+   ],
+   "payroll": [
+    {
+     "id": "ad-bsp-pay-m-2",
+     "co": "bsp",
+     "m": -2,
+     "payroll_k": 790,
+     "plan_k": 780,
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "ad-bsp-pay-m-1",
+     "co": "bsp",
+     "m": -1,
+     "payroll_k": 790,
+     "plan_k": 780,
+     "seasonal": false,
+     "est": true
+    }
+   ]
+  },
+  "dealcloud": {
+   "deals": [
+    {
+     "id": "dc-0001",
+     "co": "bsp",
+     "name": "Pellbrook Comfort Services",
+     "fit_for": "pp",
+     "segment": "HVAC",
+     "town": "Reading",
+     "state": "PA",
+     "revenue_m": 9.5,
+     "ebitda_m": 1.4,
+     "stage": "LOI",
+     "owner": {
+      "name": null,
+      "role": "Partner"
+     },
+     "next_step": "Send the draft LOI",
+     "next_d": 4,
+     "est": true
+    }
+   ]
+  },
+  "email": {
+   "threads": [
+    {
+     "id": "em-bsp-0001",
+     "co": "bsp",
+     "for": [
+      "bsp-investor-relations"
+     ],
+     "subject": "Question on the quarterly letter",
+     "from": {
+      "name": null,
+      "role": "Investor"
+     },
+     "participants": [],
+     "day": -2,
+     "time": "10:00",
+     "unread": true,
+     "kind": "investor question",
+     "messages": [
+      {
+       "from": {
+        "name": null,
+        "role": "Investor"
+       },
+       "day": -2,
+       "time": "10:00",
+       "body": "When does the next letter go out?"
+      }
+     ]
+    }
+   ]
+  },
+  "drive": {
+   "docs": [
+    {
+     "id": "dr-bsp-0001",
+     "co": "bsp",
+     "team": "deal",
+     "title": "Pellbrook data room index",
+     "folder": "Data room",
+     "kind": "Document",
+     "day": -3,
+     "owner": {
+      "name": null,
+      "role": "Senior associate"
+     },
+     "summary": "Index of the seller documents.",
+     "body": "Index."
+    },
+    {
+     "id": "dr-bsp-0002",
+     "co": "bsp",
+     "team": "ir",
+     "for": [
+      "bsp-investor-relations"
+     ],
+     "title": "Quarterly letter, draft",
+     "folder": "Investors",
+     "kind": "Document",
+     "day": -1,
+     "owner": {
+      "name": null,
+      "role": "Investor relations"
+     },
+     "summary": "Draft letter for Fund I investors.",
+     "body": "Draft."
+    }
+   ]
+  }
+ }
+}

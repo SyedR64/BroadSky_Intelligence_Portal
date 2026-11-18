@@ -53,6 +53,7 @@ import dealmath
 import directory as bizdir   # the all-business directory (find_businesses); downloads its database on first use
 import knowledge
 import property as homes   # never a bare `import property`: that would shadow the built-in in this module
+import workspace   # WORKSPACE HOOK: company agent (agent.html): roles, sandbox apps, site briefs, drafts
 
 anthropic = None   # the Anthropic SDK, imported on the first /chat: it takes over a second to import, and /health must answer fast on a cold start
 
@@ -144,6 +145,7 @@ PERSONAS = {
     'fh': {'name': 'Fair Harbor assistant', 'company': 'fh', 'tools': ('search', 'read'),
            'role': 'You are the assistant on a concept website for Fair Harbor, an apparel brand (boardshorts, swim and lifestyle wear). Help shoppers with products, sizing guidance and sustainability questions. Do not confirm orders, stock or prices. Voice: relaxed and sunny, like a beach-town shop that cares about where its fabric comes from.'},
 }
+PERSONAS.update(workspace.PERSONAS)   # WORKSPACE HOOK: 'ws-bsp', 'ws-pp', ...; used only by workspace requests
 RULES = '\n'.join([
     'How to answer:',
     '1. Ground facts in the knowledge base. The <sources> block in the latest message holds the best matches for the question. If they do not answer it, call search_knowledge again with different wording (people\'s names, job titles, company names, synonyms) before deciding it is not covered, and use read_source when an excerpt is cut off. Several searches are fine; stop once you have what you need.',
@@ -751,8 +753,15 @@ def validate_chat(body):
         raise HttpError(400, 'bad_mode', 'mode must be "chat" or "voice".')
     if mode == 'voice':
         context, messages = voice_trim(context, messages)
+    # WORKSPACE HOOK: the company agent's role and connected apps, checked here; an agent persona never runs without one
+    try:
+        ws = workspace.clean(body.get('workspace'))
+    except workspace.WorkspaceError as e:
+        raise HttpError(e.status, e.code, str(e))
+    if ws is None and str(persona).startswith(('ag-', 'ws-')):
+        raise HttpError(400, 'bad_workspace', 'Pick a role first.')
     return {'persona': persona, 'question': question, 'context': context, 'messages': messages, 'retrieve': body.get('retrieve') is not False, 'page': page,
-            'mode': mode, 'route': tool_route(question)}
+            'mode': mode, 'route': tool_route(question), 'workspace': ws}
 
 
 def voice_trim(context, messages):
@@ -1250,7 +1259,12 @@ async def handle_chat(request, cors):
     kb = await run_in_threadpool(knowledge.get_kb)
     await run_in_threadpool(sdk)   # the first call imports the SDK (a second or more on a cold start): before the answer's clock starts, not inside it
     persona = PERSONAS.get(inp['persona']) or PERSONAS['portal']
-    allowed = set(persona['tools'])
+    ws = inp['workspace']   # WORKSPACE HOOK: the server, not the page, decides a role's tools
+    if ws:
+        inp['persona'] = workspace.persona_id(ws)
+        persona = PERSONAS[inp['persona']]
+        inp['retrieve'] = inp['retrieve'] and 'search' in workspace.public_tools(ws) and workspace.style(ws) not in ('field', 'desk')
+    allowed = set(workspace.public_tools(ws) if ws else persona['tools'])
     tools_on = [t for t in ('search', 'read') if t in allowed and kb is not None]
     if 'deal' in allowed and dealmath.presets()['presets']:
         tools_on.append('deal')
@@ -1264,18 +1278,24 @@ async def handle_chat(request, cors):
             ([{**dealmath.tool_definition(), 'eager_input_streaming': True}] if 'deal' in tools_on else []) + \
             ([{**t, 'eager_input_streaming': True} for t in homes.tool_definitions()] if 'homes' in tools_on else []) + \
             ([{**t, 'eager_input_streaming': True} for t in bizdir.tool_definitions()] if 'directory' in tools_on else []) + ([WEB_SEARCH_TOOL] if 'web' in tools_on else [])
+    if ws:   # WORKSPACE HOOK: the role's sandbox-app tools follow its public ones
+        tools += [{**t, 'eager_input_streaming': True} for t in workspace.tool_defs(ws)]
 
     voice = inp['mode'] == 'voice'
     if voice:
         # A spoken answer is one step: no search or read loop and no web search. Only a question that clearly belongs to the
         # home records or the deal model is offered that one tool, and then a second call writes the answer.
         route = inp['route'] if inp['route'] in tools_on else None
-        tools_on = [route] if route else []
-        tools = [t for t in tools if (route == 'deal' and t.get('name') == 'deal_model') or (route == 'homes' and t.get('name') in ('new_homeowners', 'property_brief'))]
+        wroute = (workspace.route(inp['question'], ws) if ws else None) if not route else None   # WORKSPACE HOOK: a role's one spoken lookup
+        tools_on = [route] if route else ([wroute] if wroute else [])
+        tools = [t for t in tools if (route == 'deal' and t.get('name') == 'deal_model')
+                 or (route == 'homes' and t.get('name') in ('new_homeowners', 'property_brief'))
+                 or (wroute and t.get('name') == wroute)]
     inp['homes_on'] = 'homes' in tools_on
     inp['directory_on'] = 'directory' in tools_on
 
     sources = Sources()
+    sources.ws = bool(ws)   # WORKSPACE HOOK: sandbox status lines only on workspace requests
     sources_block = await run_in_threadpool(retrieve_initial, kb, inp, sources)
     messages = [dict(m) for m in inp['messages']]
     messages[-1] = {'role': 'user', 'content': [{'type': 'text', 'text': sources_block}, {'type': 'text', 'text': messages[-1]['content']}]}
@@ -1293,6 +1313,7 @@ async def handle_chat(request, cors):
     else:
         # the portal's research assistant works harder (more searches, longer reasoning); the concept-site assistants stay quick
         effort = env('EFFORT') if env('EFFORT') in ('low', 'medium', 'high') else ('high' if persona is PERSONAS['portal'] else 'medium')
+        if ws: effort = workspace.effort(ws) or effort   # WORKSPACE HOOK: field roles answer at low effort
         base = {
             'model': model_name(), 'max_tokens': AGENT['maxTokens'],
             'system': build_system(inp['persona'], tools_on), 'messages': messages, 'tools': tools,
@@ -1300,12 +1321,15 @@ async def handle_chat(request, cors):
             'metadata': {'user_id': 'v-' + key},                    # hashed visitor id for abuse tracing
         }
         opts = {'effort': effort, 'fallback': True, 'web': 'web' in tools_on, 'thinking': (env('SHOW_THINKING') or 'on').strip().lower() not in ('off', '0', 'false', 'no')}
+    if ws:   # WORKSPACE HOOK: the role block (cached per role) and the state block (today's date, apps, jobs) follow the base prompt
+        base['system'] = base['system'] + await run_in_threadpool(workspace.system_blocks, ws, voice, (not voice) or bool(tools))
     steps = (2 if tools else 1) if voice else AGENT['steps']
     deadline = asyncio.get_running_loop().time() + (min(total_timeout(), VOICE['timeout']) if voice else total_timeout())
     first = await open_stream(base, opts, steps == 1, deadline)   # upstream HTTP errors still become JSON errors with status codes
     ctx = {'kb': kb, 'persona': inp['persona'], 'base': base, 'opts': opts, 'sources': sources, 'deadline': deadline, 'vkey': key, 'first': first,
            'inp': inp, 'origin': request.headers.get('origin') or '', 't0': t0, 'homes_on': 'homes' in tools_on,
-           'directory_on': 'directory' in tools_on, 'voice': voice, 'steps': steps}
+           'directory_on': 'directory' in tools_on, 'voice': voice, 'steps': steps,
+           'ws': ws}   # WORKSPACE HOOK
     headers = {**cors, 'Cache-Control': 'no-cache, no-transform', 'X-Accel-Buffering': 'no'}
     return StreamingResponse(relay(ctx), status_code=200, headers=headers, media_type='text/event-stream')
 
@@ -1464,6 +1488,8 @@ def tool_status(block, sources):
         return f'Searching the business directory for {scope}' if scope else 'Searching the business directory'
     if name == 'web_search' and is_str(args.get('query')):
         return f'Searching the web for “{args["query"][:80]}”'
+    if workspace.owns(name) and getattr(sources, 'ws', False):   # WORKSPACE HOOK
+        return workspace.status_text(name, args)
     return TOOL_STATUS.get(name, 'Working')
 
 
@@ -1620,6 +1646,8 @@ async def run_agent(ctx, q, st):
                 try:
                     if voice and (i > 0 or b.name not in offered):   # voice: one lookup, and only the tool this question was offered
                         text, err = 'Only one lookup is allowed for a spoken answer. Answer from what you have.', True
+                    elif ctx.get('ws') and b.name not in offered:   # WORKSPACE HOOK: a role never runs a tool it was not given
+                        text, err = workspace.outside(ctx['ws'], b.name), True
                     elif b.name == 'search_knowledge' and ctx['kb'] is not None:
                         text, err = await run_in_threadpool(run_search, ctx['kb'], sources, args, ctx['persona'])
                     elif b.name == 'read_source' and ctx['kb'] is not None:
@@ -1635,6 +1663,13 @@ async def run_agent(ctx, q, st):
                         text, err = await run_in_threadpool(run_homes, b.name, args, sources)
                     elif b.name == 'find_businesses' and ctx.get('directory_on'):   # BSP Desk only; the first call may download the database
                         text, err = await run_in_threadpool(run_directory, args, sources)
+                    elif ctx.get('ws') and workspace.owns(b.name):   # WORKSPACE HOOK: sandbox apps, within the role's access
+                        if not workspace.allowed(ctx['ws'], b.name):
+                            text, err = workspace.outside(ctx['ws'], b.name), True
+                        else:
+                            text, err, cards = await run_in_threadpool(workspace.run_tool, b.name, args, ctx['ws'], sources)
+                            for c in ([] if err else cards):
+                                put(c)
                     else:
                         text, err = f'Unknown tool {b.name}.', True
                 except Exception:
@@ -1813,6 +1848,7 @@ async def lifespan(_app):
         log.info('home-sales records ready: %s sales, built %s', hs['sales'], hs['built_at'])
     else:
         log.warning('home-sales records unavailable: the new-homeowner and property-brief tools are off')
+    await run_in_threadpool(workspace.warm)   # WORKSPACE HOOK: roles and rules load before the first visitor
     ds = bizdir.status()
     log.info('business directory: %s', 'loads on first use' if ds['enabled'] else 'off (DIRECTORY_URL=off)')
     if env('FAKE_ANTHROPIC_URL'):
@@ -1855,7 +1891,8 @@ async def router(request: Request, rest: str = ''):
                 return json_response({'ok': True, 'model': env('MODEL') or DEFAULT_MODEL, 'version': VERSION, 'db': await db_ok(),
                                       'llm': llm_live(ms['state']), 'llm_state': ms['state'], 'model_state': ms, 'kv': True, 'log': chatlog.enabled(),
                                       'kb': {'docs': len(kb.docs), 'chunks': int(len(kb.chunk_ids)), 'built_at': kb.info.get('built_at')} if kb is not None else False,
-                                      'homes': await run_in_threadpool(homes_summary), 'directory': bizdir.status()}, 200, cors)
+                                      'homes': await run_in_threadpool(homes_summary), 'directory': bizdir.status(),
+                                      'workspace': await run_in_threadpool(workspace.status)}, 200, cors)   # WORKSPACE HOOK: the agent page treats a backend without this key as offline
             if path == '/stats':
                 stats = await run_in_threadpool(handle_stats_sync)
                 return json_response(stats, 200, cors, {'Cache-Control': 'public, max-age=60'} if stats.get('db') else None)

@@ -1,0 +1,441 @@
+{
+ "co": "bpi",
+ "season": {
+  "1": 1.0,
+  "2": 1.0,
+  "3": 1.0,
+  "4": 1.0,
+  "5": 1.0,
+  "6": 1.0,
+  "7": 1.0,
+  "8": 1.0,
+  "9": 1.0,
+  "10": 1.0,
+  "11": 1.0,
+  "12": 1.0
+ },
+ "apps": {
+  "financials": {
+   "pnl": [
+    {
+     "id": "fi-bpi-pnl-m-24",
+     "co": "bpi",
+     "m": -24,
+     "revenue_k": 8925,
+     "cogs_k": 4462,
+     "opex_k": 2589,
+     "plan_revenue_k": 8750,
+     "plan_cogs_k": 4375,
+     "plan_opex_k": 2538,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-23",
+     "co": "bpi",
+     "m": -23,
+     "revenue_k": 8653,
+     "cogs_k": 4326,
+     "opex_k": 2510,
+     "plan_revenue_k": 8785,
+     "plan_cogs_k": 4392,
+     "plan_opex_k": 2548,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-22",
+     "co": "bpi",
+     "m": -22,
+     "revenue_k": 8864,
+     "cogs_k": 4432,
+     "opex_k": 2571,
+     "plan_revenue_k": 8820,
+     "plan_cogs_k": 4410,
+     "plan_opex_k": 2558,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-21",
+     "co": "bpi",
+     "m": -21,
+     "revenue_k": 9032,
+     "cogs_k": 4516,
+     "opex_k": 2619,
+     "plan_revenue_k": 8855,
+     "plan_cogs_k": 4428,
+     "plan_opex_k": 2568,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-20",
+     "co": "bpi",
+     "m": -20,
+     "revenue_k": 8757,
+     "cogs_k": 4378,
+     "opex_k": 2540,
+     "plan_revenue_k": 8890,
+     "plan_cogs_k": 4445,
+     "plan_opex_k": 2578,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-19",
+     "co": "bpi",
+     "m": -19,
+     "revenue_k": 8970,
+     "cogs_k": 4485,
+     "opex_k": 2601,
+     "plan_revenue_k": 8925,
+     "plan_cogs_k": 4462,
+     "plan_opex_k": 2588,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-18",
+     "co": "bpi",
+     "m": -18,
+     "revenue_k": 9139,
+     "cogs_k": 4570,
+     "opex_k": 2650,
+     "plan_revenue_k": 8960,
+     "plan_cogs_k": 4480,
+     "plan_opex_k": 2598,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-17",
+     "co": "bpi",
+     "m": -17,
+     "revenue_k": 8860,
+     "cogs_k": 4430,
+     "opex_k": 2569,
+     "plan_revenue_k": 8995,
+     "plan_cogs_k": 4498,
+     "plan_opex_k": 2609,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-16",
+     "co": "bpi",
+     "m": -16,
+     "revenue_k": 9075,
+     "cogs_k": 4538,
+     "opex_k": 2631,
+     "plan_revenue_k": 9030,
+     "plan_cogs_k": 4515,
+     "plan_opex_k": 2619,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-15",
+     "co": "bpi",
+     "m": -15,
+     "revenue_k": 9246,
+     "cogs_k": 4623,
+     "opex_k": 2681,
+     "plan_revenue_k": 9065,
+     "plan_cogs_k": 4532,
+     "plan_opex_k": 2629,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-14",
+     "co": "bpi",
+     "m": -14,
+     "revenue_k": 8964,
+     "cogs_k": 4482,
+     "opex_k": 2600,
+     "plan_revenue_k": 9100,
+     "plan_cogs_k": 4550,
+     "plan_opex_k": 2639,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-13",
+     "co": "bpi",
+     "m": -13,
+     "revenue_k": 9181,
+     "cogs_k": 4590,
+     "opex_k": 2663,
+     "plan_revenue_k": 9135,
+     "plan_cogs_k": 4568,
+     "plan_opex_k": 2649,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-12",
+     "co": "bpi",
+     "m": -12,
+     "revenue_k": 9353,
+     "cogs_k": 4676,
+     "opex_k": 2713,
+     "plan_revenue_k": 9170,
+     "plan_cogs_k": 4585,
+     "plan_opex_k": 2659,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-11",
+     "co": "bpi",
+     "m": -11,
+     "revenue_k": 9067,
+     "cogs_k": 4534,
+     "opex_k": 2629,
+     "plan_revenue_k": 9205,
+     "plan_cogs_k": 4602,
+     "plan_opex_k": 2669,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-10",
+     "co": "bpi",
+     "m": -10,
+     "revenue_k": 9286,
+     "cogs_k": 4643,
+     "opex_k": 2693,
+     "plan_revenue_k": 9240,
+     "plan_cogs_k": 4620,
+     "plan_opex_k": 2680,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-9",
+     "co": "bpi",
+     "m": -9,
+     "revenue_k": 9460,
+     "cogs_k": 4730,
+     "opex_k": 2743,
+     "plan_revenue_k": 9275,
+     "plan_cogs_k": 4638,
+     "plan_opex_k": 2690,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-8",
+     "co": "bpi",
+     "m": -8,
+     "revenue_k": 9170,
+     "cogs_k": 4585,
+     "opex_k": 2659,
+     "plan_revenue_k": 9310,
+     "plan_cogs_k": 4655,
+     "plan_opex_k": 2700,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-7",
+     "co": "bpi",
+     "m": -7,
+     "revenue_k": 9392,
+     "cogs_k": 4696,
+     "opex_k": 2724,
+     "plan_revenue_k": 9345,
+     "plan_cogs_k": 4672,
+     "plan_opex_k": 2710,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-6",
+     "co": "bpi",
+     "m": -6,
+     "revenue_k": 9568,
+     "cogs_k": 4784,
+     "opex_k": 2775,
+     "plan_revenue_k": 9380,
+     "plan_cogs_k": 4690,
+     "plan_opex_k": 2720,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-5",
+     "co": "bpi",
+     "m": -5,
+     "revenue_k": 9274,
+     "cogs_k": 4637,
+     "opex_k": 2689,
+     "plan_revenue_k": 9415,
+     "plan_cogs_k": 4708,
+     "plan_opex_k": 2730,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-4",
+     "co": "bpi",
+     "m": -4,
+     "revenue_k": 9497,
+     "cogs_k": 4748,
+     "opex_k": 2755,
+     "plan_revenue_k": 9450,
+     "plan_cogs_k": 4725,
+     "plan_opex_k": 2741,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-3",
+     "co": "bpi",
+     "m": -3,
+     "revenue_k": 9675,
+     "cogs_k": 4838,
+     "opex_k": 2805,
+     "plan_revenue_k": 9485,
+     "plan_cogs_k": 4742,
+     "plan_opex_k": 2751,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-2",
+     "co": "bpi",
+     "m": -2,
+     "revenue_k": 9377,
+     "cogs_k": 4688,
+     "opex_k": 2720,
+     "plan_revenue_k": 9520,
+     "plan_cogs_k": 4760,
+     "plan_opex_k": 2761,
+     "team": null,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-pnl-m-1",
+     "co": "bpi",
+     "m": -1,
+     "revenue_k": 9603,
+     "cogs_k": 4802,
+     "opex_k": 2784,
+     "plan_revenue_k": 9555,
+     "plan_cogs_k": 4778,
+     "plan_opex_k": 2771,
+     "team": null,
+     "est": true
+    }
+   ],
+   "kpis": [
+    {
+     "id": "fi-bpi-kpi-a-m-3",
+     "co": "bpi",
+     "m": -3,
+     "kpi": "kpi_a",
+     "label": "Utilization",
+     "value": 37,
+     "unit": "%",
+     "target": 45,
+     "team": null,
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-kpi-a-m-2",
+     "co": "bpi",
+     "m": -2,
+     "kpi": "kpi_a",
+     "label": "Utilization",
+     "value": 38,
+     "unit": "%",
+     "target": 45,
+     "team": null,
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "fi-bpi-kpi-a-m-1",
+     "co": "bpi",
+     "m": -1,
+     "kpi": "kpi_a",
+     "label": "Utilization",
+     "value": 39,
+     "unit": "%",
+     "target": 45,
+     "team": null,
+     "seasonal": false,
+     "est": true
+    }
+   ],
+   "debt": [
+    {
+     "id": "fi-bpi-debt",
+     "co": "bpi",
+     "facility": "First-lien term loan",
+     "balance_k": 40000,
+     "rate_pct": 9.1,
+     "maturity_year": 2029,
+     "covenant": "Senior leverage under 5.5x",
+     "next_test_d": 44,
+     "basis": "Modeled",
+     "est": true
+    }
+   ],
+   "close": [
+    {
+     "id": "fi-bpi-close-1",
+     "co": "bpi",
+     "m": -1,
+     "item": "Fleet lease renewal",
+     "owner": {
+      "name": null,
+      "role": "Controller"
+     },
+     "status": "Open"
+    }
+   ],
+   "inventory": [],
+   "orders": [],
+   "invoices": []
+  },
+  "adp": {
+   "headcount": [
+    {
+     "id": "ad-bpi-hq",
+     "co": "bpi",
+     "team": null,
+     "unit": "Head office",
+     "group": "Staff",
+     "count": 20,
+     "open_roles": 1,
+     "turnover_12m_pct": 10,
+     "est": true
+    }
+   ],
+   "payroll": [
+    {
+     "id": "ad-bpi-pay-m-2",
+     "co": "bpi",
+     "m": -2,
+     "payroll_k": 790,
+     "plan_k": 780,
+     "seasonal": false,
+     "est": true
+    },
+    {
+     "id": "ad-bpi-pay-m-1",
+     "co": "bpi",
+     "m": -1,
+     "payroll_k": 790,
+     "plan_k": 780,
+     "seasonal": false,
+     "est": true
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,50 @@
+{
+ "selected_with": {
+  "homes_sales_rows": 0,
+  "directory_rows": 0,
+  "note": "test fixture"
+ },
+ "bases": [
+  {
+   "base": "WEXCOMBE",
+   "suffixes": [
+    "LN"
+   ],
+   "towns": [
+    "Lititz"
+   ]
+  },
+  {
+   "base": "BRINDLEMOOR",
+   "suffixes": [
+    "CT"
+   ],
+   "towns": [
+    "Red Lion"
+   ]
+  },
+  {
+   "base": "QUILLFEATHER",
+   "suffixes": [
+    "WAY"
+   ],
+   "towns": [
+    "Toms River"
+   ]
+  },
+  {
+   "base": "TAMBERLYN",
+   "suffixes": [
+    "RD"
+   ],
+   "towns": [
+    "Ephrata"
+   ]
+  }
+ ],
+ "org_bases": [
+  "Pellbrook",
+  "Orrisdale",
+  "Tamberlyn"
+ ]
+}

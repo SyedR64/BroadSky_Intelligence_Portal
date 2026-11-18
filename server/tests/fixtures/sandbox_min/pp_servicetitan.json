@@ -1,0 +1,868 @@
+{
+ "co": "pp",
+ "technicians": [
+  {
+   "id": "st-tech-you-hvac",
+   "co": "pp",
+   "team": "lancaster",
+   "name": "You",
+   "trade": "HVAC",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "status": "On a job"
+  },
+  {
+   "id": "st-tech-dm",
+   "co": "pp",
+   "team": "lancaster",
+   "name": "Dani M.",
+   "trade": "HVAC",
+   "years": 6,
+   "status": "Driving"
+  },
+  {
+   "id": "st-tech-jr",
+   "co": "pp",
+   "team": "lancaster",
+   "name": "Jose R.",
+   "trade": "Plumbing",
+   "years": 4,
+   "status": "Free"
+  },
+  {
+   "id": "st-tech-at",
+   "co": "pp",
+   "team": "york",
+   "name": "Ana T.",
+   "trade": "Plumbing",
+   "years": 5,
+   "status": "Free"
+  }
+ ],
+ "customers": [
+  {
+   "id": "st-cus-0001",
+   "co": "pp",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "name": "Marta V.",
+   "address": {
+    "line": "418 Wexcombe Ln",
+    "town": "Lititz",
+    "state": "PA",
+    "zip": "17543",
+    "county": "Lancaster"
+   },
+   "addr_key": "418 WEXCOMBE LN",
+   "house_no": "418",
+   "street_base": "WEXCOMBE",
+   "member": {
+    "plan": "Comfort",
+    "since_m": -26,
+    "renew_d": 41,
+    "visits_due": 1
+   },
+   "house": {
+    "year": 1962,
+    "sqft": 1850,
+    "stories": 2,
+    "style": "two-story",
+    "foundation": "basement",
+    "basement": "full",
+    "fuel": "gas",
+    "garage": "attached-right"
+   },
+   "runs": [
+    {
+     "kind": "water",
+     "label": "Water line",
+     "floor": "basement",
+     "via": [
+      "front-wall-left",
+      "utility-corner"
+     ],
+     "material": "copper",
+     "note": "Meter then shutoff at the front wall, copper to the water heater"
+    },
+    {
+     "kind": "drain",
+     "label": "Drain",
+     "floor": "basement",
+     "via": [
+      "rear-wall-center",
+      "front-wall-center"
+     ],
+     "material": "cast iron",
+     "note": "Cast-iron drain to the cleanout at the front wall"
+    }
+   ],
+   "notes": [
+    {
+     "day": -38,
+     "by": {
+      "name": "Dani M.",
+      "role": "HVAC technician"
+     },
+     "text": "Tune-up. Cleaned the flame sensor; the ignitor shows wear. Recommended replacing it within a year."
+    }
+   ],
+   "recs": [
+    {
+     "id": "st-rec-0001",
+     "day": -38,
+     "text": "Replace hot-surface ignitor",
+     "code": "ignitor",
+     "price": 420,
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "id": "st-cus-0002",
+   "co": "pp",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "name": "Hugo B.",
+   "address": {
+    "line": "1207 Tamberlyn Rd",
+    "town": "Ephrata",
+    "state": "PA",
+    "zip": "17522",
+    "county": "Lancaster"
+   },
+   "addr_key": "1207 TAMBERLYN RD",
+   "house_no": "1207",
+   "street_base": "TAMBERLYN",
+   "member": null,
+   "house": {
+    "year": 1994,
+    "sqft": 2200,
+    "stories": 2,
+    "style": "two-story colonial",
+    "foundation": "basement",
+    "basement": "full",
+    "fuel": "electric",
+    "garage": null
+   },
+   "runs": [],
+   "notes": [],
+   "recs": []
+  },
+  {
+   "id": "st-cus-0003",
+   "co": "pp",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "name": "Ines F.",
+   "address": {
+    "line": "88 Wexcombe Ln",
+    "town": "Lititz",
+    "state": "PA",
+    "zip": "17543",
+    "county": "Lancaster"
+   },
+   "addr_key": "88 WEXCOMBE LN",
+   "house_no": "88",
+   "street_base": "WEXCOMBE",
+   "member": null,
+   "house": {
+    "year": 1978,
+    "sqft": 1500,
+    "stories": 1,
+    "style": "ranch",
+    "foundation": "basement",
+    "basement": "full",
+    "fuel": "gas",
+    "garage": null
+   },
+   "runs": [],
+   "notes": [],
+   "recs": []
+  },
+  {
+   "id": "st-cus-0004",
+   "co": "pp",
+   "team": "lancaster",
+   "for": [],
+   "name": "Pavel O.",
+   "address": {
+    "line": "420 Tamberlyn Rd",
+    "town": "Ephrata",
+    "state": "PA",
+    "zip": "17522",
+    "county": "Lancaster"
+   },
+   "addr_key": "420 TAMBERLYN RD",
+   "house_no": "420",
+   "street_base": "TAMBERLYN",
+   "member": null,
+   "house": {
+    "year": 1985,
+    "sqft": 1700,
+    "stories": 2,
+    "style": "two-story",
+    "foundation": "basement",
+    "basement": "full",
+    "fuel": "gas",
+    "garage": null
+   },
+   "runs": [],
+   "notes": [],
+   "recs": []
+  },
+  {
+   "id": "st-cus-0005",
+   "co": "pp",
+   "team": "york",
+   "for": [],
+   "name": "Wren C.",
+   "address": {
+    "line": "27 Brindlemoor Ct",
+    "town": "Red Lion",
+    "state": "PA",
+    "zip": "17356",
+    "county": "York"
+   },
+   "addr_key": "27 BRINDLEMOOR CT",
+   "house_no": "27",
+   "street_base": "BRINDLEMOOR",
+   "member": null,
+   "house": {
+    "year": 1971,
+    "sqft": 1600,
+    "stories": 1,
+    "style": "ranch",
+    "foundation": "basement",
+    "basement": "full",
+    "fuel": "gas",
+    "garage": null
+   },
+   "runs": [],
+   "notes": [],
+   "recs": []
+  },
+  {
+   "id": "st-cus-0006",
+   "co": "pp",
+   "team": "toms-river",
+   "for": [],
+   "name": "Yara L.",
+   "address": {
+    "line": "112 Quillfeather Way",
+    "town": "Toms River",
+    "state": "NJ",
+    "zip": "08753",
+    "county": "Ocean"
+   },
+   "addr_key": "112 QUILLFEATHER WAY",
+   "house_no": "112",
+   "street_base": "QUILLFEATHER",
+   "member": null,
+   "house": {
+    "year": 1988,
+    "sqft": 1700,
+    "stories": 2,
+    "style": "two-story",
+    "foundation": "slab",
+    "basement": "none",
+    "fuel": "electric",
+    "garage": null
+   },
+   "runs": [],
+   "notes": [],
+   "recs": []
+  }
+ ],
+ "equipment": [
+  {
+   "id": "st-eq-0001",
+   "co": "pp",
+   "customer": "st-cus-0001",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "kind": "furnace",
+   "floor": "basement",
+   "spot": "center",
+   "note": "Center by the chimney",
+   "detail": "Gas, 80,000 BTU",
+   "make": "Carrier",
+   "year": 2012,
+   "last_service_d": -38
+  },
+  {
+   "id": "st-eq-0002",
+   "co": "pp",
+   "customer": "st-cus-0001",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "kind": "gas_shutoff",
+   "floor": "basement",
+   "spot": "center",
+   "note": "On the gas pipe at the furnace's left side, yellow-handle valve",
+   "detail": null,
+   "make": null,
+   "year": null,
+   "last_service_d": null
+  },
+  {
+   "id": "st-eq-0003",
+   "co": "pp",
+   "customer": "st-cus-0001",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "kind": "service_switch",
+   "floor": "basement",
+   "spot": "stairs-top",
+   "note": "Top of the basement stairs, red cover plate",
+   "detail": null,
+   "make": null,
+   "year": null,
+   "last_service_d": null
+  },
+  {
+   "id": "st-eq-0004",
+   "co": "pp",
+   "customer": "st-cus-0001",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "kind": "main_water",
+   "floor": "basement",
+   "spot": "front-wall-left",
+   "note": "Front wall, left of the water meter",
+   "detail": "3/4 in ball valve",
+   "make": null,
+   "year": null,
+   "last_service_d": null
+  },
+  {
+   "id": "st-eq-0005",
+   "co": "pp",
+   "customer": "st-cus-0001",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "kind": "water_heater",
+   "floor": "basement",
+   "spot": "utility-corner",
+   "note": "Utility corner",
+   "detail": "Gas, 40 gal",
+   "make": "Bradford White",
+   "year": 2014,
+   "last_service_d": null
+  },
+  {
+   "id": "st-eq-0006",
+   "co": "pp",
+   "customer": "st-cus-0001",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "kind": "condenser",
+   "floor": "basement",
+   "spot": "outside-left",
+   "note": "On a pad by the left side wall",
+   "detail": "3 ton",
+   "make": "Carrier",
+   "year": 2012,
+   "last_service_d": null
+  },
+  {
+   "id": "st-eq-0007",
+   "co": "pp",
+   "customer": "st-cus-0001",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "kind": "panel",
+   "floor": "basement",
+   "spot": "side-left",
+   "note": "Side wall, left",
+   "detail": "200 A",
+   "make": "Square D",
+   "year": 1998,
+   "last_service_d": null
+  },
+  {
+   "id": "st-eq-0008",
+   "co": "pp",
+   "customer": "st-cus-0001",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "kind": "sewer_cleanout",
+   "floor": "basement",
+   "spot": "front-wall-center",
+   "note": "Front wall center",
+   "detail": null,
+   "make": null,
+   "year": null,
+   "last_service_d": null
+  },
+  {
+   "id": "st-eq-0009",
+   "co": "pp",
+   "customer": "st-cus-0001",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "kind": "fixture_shutoffs",
+   "floor": "first",
+   "spot": "kitchen",
+   "note": "Under the kitchen sink",
+   "detail": null,
+   "make": null,
+   "year": null,
+   "last_service_d": null
+  },
+  {
+   "id": "st-eq-0010",
+   "co": "pp",
+   "customer": "st-cus-0002",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "kind": "heat_pump",
+   "floor": "first",
+   "spot": "outside-right",
+   "note": "Pad on the right side",
+   "detail": "3 ton",
+   "make": "Trane",
+   "year": 2015,
+   "last_service_d": null
+  },
+  {
+   "id": "st-eq-0011",
+   "co": "pp",
+   "customer": "st-cus-0002",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "kind": "air_handler",
+   "floor": "basement",
+   "spot": "center",
+   "note": "Basement center",
+   "detail": null,
+   "make": "Trane",
+   "year": 2015,
+   "last_service_d": null
+  },
+  {
+   "id": "st-eq-0012",
+   "co": "pp",
+   "customer": "st-cus-0004",
+   "team": "lancaster",
+   "for": [],
+   "kind": "furnace",
+   "floor": "basement",
+   "spot": "center",
+   "note": "Center of the basement",
+   "detail": "Gas",
+   "make": "Lennox",
+   "year": 2009,
+   "last_service_d": null
+  },
+  {
+   "id": "st-eq-0013",
+   "co": "pp",
+   "customer": "st-cus-0005",
+   "team": "york",
+   "for": [],
+   "kind": "water_heater",
+   "floor": "basement",
+   "spot": "utility-corner",
+   "note": "Utility corner by the stairs",
+   "detail": "Gas, 50 gal",
+   "make": "A. O. Smith",
+   "year": 2013,
+   "last_service_d": null
+  },
+  {
+   "id": "st-eq-0014",
+   "co": "pp",
+   "customer": "st-cus-0006",
+   "team": "toms-river",
+   "for": [],
+   "kind": "air_handler",
+   "floor": "attic",
+   "spot": "attic",
+   "note": "In the attic above the hall",
+   "detail": null,
+   "make": "Rheem",
+   "year": 2010,
+   "last_service_d": null
+  }
+ ],
+ "jobs": [
+  {
+   "id": "st-job-2187",
+   "co": "pp",
+   "number": "L-2187",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "customer": "st-cus-0001",
+   "tech": "st-tech-you-hvac",
+   "trade": "HVAC",
+   "type": "No heat",
+   "issue": "no_heat",
+   "day": 0,
+   "start": "08:00",
+   "end": "10:00",
+   "status": "Scheduled",
+   "assigned": true,
+   "member": true,
+   "urgent": false,
+   "said": "Furnace runs a few seconds then stops. House is at 58.",
+   "value": 420
+  },
+  {
+   "id": "st-job-5002",
+   "co": "pp",
+   "number": "L-5002",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "customer": "st-cus-0002",
+   "tech": "st-tech-you-hvac",
+   "trade": "HVAC",
+   "type": "Heat pump not heating",
+   "issue": "heat_pump",
+   "day": 0,
+   "start": "10:30",
+   "end": "12:00",
+   "status": "Scheduled",
+   "assigned": true,
+   "member": false,
+   "urgent": false,
+   "said": "Heat pump blows cold air.",
+   "value": 0
+  },
+  {
+   "id": "st-job-5003",
+   "co": "pp",
+   "number": "L-5003",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "customer": "st-cus-0003",
+   "tech": "st-tech-you-hvac",
+   "trade": "HVAC",
+   "type": "No heat",
+   "issue": "no_heat",
+   "day": 3,
+   "start": "13:00",
+   "end": "15:00",
+   "status": "Scheduled",
+   "assigned": true,
+   "member": false,
+   "urgent": false,
+   "said": "No heat upstairs.",
+   "value": 0
+  },
+  {
+   "id": "st-job-5004",
+   "co": "pp",
+   "number": "L-5004",
+   "team": "lancaster",
+   "for": [
+    "pp-hvac-technician"
+   ],
+   "customer": "st-cus-0003",
+   "tech": "st-tech-you-hvac",
+   "trade": "HVAC",
+   "type": "Tune-up",
+   "issue": "unknown",
+   "day": -20,
+   "start": "09:00",
+   "end": "10:00",
+   "status": "Done",
+   "assigned": true,
+   "member": false,
+   "urgent": false,
+   "said": "Yearly tune-up.",
+   "value": 0
+  },
+  {
+   "id": "st-job-5010",
+   "co": "pp",
+   "number": "L-5010",
+   "team": "lancaster",
+   "for": [],
+   "customer": "st-cus-0004",
+   "tech": "st-tech-dm",
+   "trade": "HVAC",
+   "type": "No heat",
+   "issue": "no_heat",
+   "day": 0,
+   "start": "09:00",
+   "end": "11:00",
+   "status": "En route",
+   "assigned": true,
+   "member": false,
+   "urgent": false,
+   "said": "No heat since last night.",
+   "value": 0
+  },
+  {
+   "id": "st-job-5020",
+   "co": "pp",
+   "number": "Y-5020",
+   "team": "york",
+   "for": [],
+   "customer": "st-cus-0005",
+   "tech": "st-tech-at",
+   "trade": "Plumbing",
+   "type": "Water heater leaking",
+   "issue": "wh_leak",
+   "day": 0,
+   "start": "08:30",
+   "end": "10:30",
+   "status": "Scheduled",
+   "assigned": true,
+   "member": false,
+   "urgent": false,
+   "said": "Water around the base of the water heater.",
+   "value": 0
+  },
+  {
+   "id": "st-job-5030",
+   "co": "pp",
+   "number": "N-5030",
+   "team": "toms-river",
+   "for": [],
+   "customer": "st-cus-0006",
+   "tech": null,
+   "trade": "HVAC",
+   "type": "Heat pump not heating",
+   "issue": "heat_pump",
+   "day": 0,
+   "start": "11:00",
+   "end": "13:00",
+   "status": "Scheduled",
+   "assigned": false,
+   "member": false,
+   "urgent": false,
+   "said": "Heat pump not heating.",
+   "value": 0
+  }
+ ],
+ "pricebook": [
+  {
+   "id": "st-pb-diag",
+   "co": "pp",
+   "code": "diag",
+   "name": "Diagnostic visit",
+   "trade": "All",
+   "kind": "Diagnostic",
+   "unit": "visit",
+   "tier": null,
+   "price": 89,
+   "low": null,
+   "high": null,
+   "member_price": 0,
+   "financing": false,
+   "basis": "Illustrative price on the concept site"
+  },
+  {
+   "id": "st-pb-tuneup",
+   "co": "pp",
+   "code": "tuneup",
+   "name": "Tune-up",
+   "trade": "HVAC",
+   "kind": "Maintenance",
+   "unit": "visit",
+   "tier": null,
+   "price": 129,
+   "low": null,
+   "high": null,
+   "member_price": null,
+   "financing": false,
+   "basis": "Illustrative price on the concept site"
+  },
+  {
+   "id": "st-pb-ignitor",
+   "co": "pp",
+   "code": "ignitor",
+   "name": "Ignitor replacement",
+   "trade": "HVAC",
+   "kind": "Repair",
+   "unit": "each",
+   "tier": null,
+   "price": 420,
+   "low": null,
+   "high": null,
+   "member_price": null,
+   "financing": false,
+   "basis": "Illustrative price on the concept site"
+  },
+  {
+   "id": "st-pb-hp",
+   "co": "pp",
+   "code": "heat_pump_repair",
+   "name": "Heat pump repair",
+   "trade": "HVAC",
+   "kind": "Repair",
+   "unit": "each",
+   "tier": null,
+   "price": 640,
+   "low": null,
+   "high": null,
+   "member_price": null,
+   "financing": false,
+   "basis": "Illustrative price on the concept site"
+  },
+  {
+   "id": "st-pb-wh",
+   "co": "pp",
+   "code": "wh_replace",
+   "name": "Water heater replacement",
+   "trade": "Plumbing",
+   "kind": "Replacement",
+   "unit": "each",
+   "tier": "good",
+   "price": 1850,
+   "low": null,
+   "high": null,
+   "member_price": null,
+   "financing": true,
+   "basis": "Illustrative price on the concept site"
+  },
+  {
+   "id": "st-pb-club-total",
+   "co": "pp",
+   "code": "club_total",
+   "name": "Total Home plan",
+   "trade": "All",
+   "kind": "Membership",
+   "unit": "month",
+   "tier": null,
+   "price": 24.95,
+   "low": null,
+   "high": null,
+   "member_price": null,
+   "financing": false,
+   "basis": "Illustrative price on the concept site"
+  },
+  {
+   "id": "st-pb-repl-furnace",
+   "co": "pp",
+   "code": "replace_furnace",
+   "name": "Replacement furnace",
+   "trade": "HVAC",
+   "kind": "Replacement",
+   "unit": "each",
+   "tier": "good",
+   "price": 11500,
+   "low": 11500,
+   "high": null,
+   "member_price": null,
+   "financing": true,
+   "basis": "Illustrative price on the concept site"
+  }
+ ],
+ "parts": [
+  {
+   "id": "st-part-ign",
+   "co": "pp",
+   "code": "ign-hsi",
+   "name": "Universal hot-surface ignitor",
+   "price": 64,
+   "stock": {
+    "lancaster": 6,
+    "york": 3,
+    "harrisburg": 4,
+    "toms-river": 2
+   }
+  },
+  {
+   "id": "st-part-fs",
+   "co": "pp",
+   "code": "flame-sensor",
+   "name": "Flame sensor",
+   "price": 22,
+   "stock": {
+    "lancaster": 4,
+    "york": 2,
+    "harrisburg": 2,
+    "toms-river": 1
+   }
+  },
+  {
+   "id": "st-part-fuse",
+   "co": "pp",
+   "code": "fuse-3a",
+   "name": "3 amp fuse",
+   "price": 2,
+   "stock": {
+    "lancaster": 40,
+    "york": 30,
+    "harrisburg": 30,
+    "toms-river": 20
+   }
+  },
+  {
+   "id": "st-part-filter",
+   "co": "pp",
+   "code": "filter-1625",
+   "name": "16x25 filter",
+   "price": 9,
+   "stock": {
+    "lancaster": 24,
+    "york": 12,
+    "harrisburg": 12,
+    "toms-river": 8
+   }
+  },
+  {
+   "id": "st-part-defrost",
+   "co": "pp",
+   "code": "defrost-sensor",
+   "name": "Defrost sensor",
+   "price": 38,
+   "stock": {
+    "lancaster": 3,
+    "york": 1,
+    "harrisburg": 1,
+    "toms-river": 2
+   }
+  },
+  {
+   "id": "st-part-tp",
+   "co": "pp",
+   "code": "tp-valve",
+   "name": "Relief valve",
+   "price": 24,
+   "stock": {
+    "lancaster": 5,
+    "york": 5,
+    "harrisburg": 3,
+    "toms-river": 2
+   }
+  }
+ ]
+}
