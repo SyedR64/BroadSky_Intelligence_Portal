@@ -622,9 +622,9 @@ def main():
              'note': 'Latest batch on the portal when the screen ran; loans approved April 2020 to May 2021.'},
             {'name': 'SBA 7(a) and 504 loan data (FOIA)', 'url': 'https://data.sba.gov/dataset/7-a-504-foia', 'as_of': sba_asof, 'retrieved': gen},
             {'name': 'US Census ZCTA gazetteer (ZIP centroids)', 'url': 'https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.html', 'as_of': '2024', 'retrieved': gen},
-            {'name': 'Company websites, state business records, press releases, news and search-engine snippets', 'url': None, 'retrieved': gen, 'note': 'Cited per company in ownership_evidence.'},
+            {'name': 'Company websites, state business records, press releases, news and search-engine snippets', 'url': None, 'retrieved': gen, 'note': 'Cited for each company with its ownership evidence.'},
             *[{'name': f"{x['name']} ({x.get('publisher', '')})".replace(' ()', ''), 'url': x.get('url'), 'as_of': str(x.get('data_year')) if x.get('data_year') else None,
-               'retrieved': x.get('retrieved'), 'note': 'Revenue model benchmarks (data/research/revenue_benchmarks.json).'}
+               'retrieved': x.get('retrieved'), 'note': 'Used for the revenue model benchmarks.'}
               for x in bench['meta'].get('sources') or [] if 'Census' in (x.get('publisher') or '') or 'Labor Statistics' in (x.get('publisher') or '')],
         ],
         'caveats': [

@@ -73,35 +73,35 @@
     "name": "Company websites, state business records, press releases, news and search-engine snippets",
     "url": null,
     "retrieved": "2026-11-16",
-    "note": "Cited per company in ownership_evidence."
+    "note": "Cited for each company with its ownership evidence."
    },
    {
     "name": "Statistics of U.S. Businesses (SUSB), U.S. and states, 6-digit NAICS, detailed enterprise employment sizes (U.S. Census Bureau)",
     "url": "https://www2.census.gov/programs-surveys/susb/tables/2022/us_state_naics_detailedsizes_2022.txt",
     "as_of": "2022",
     "retrieved": "2026-11-17",
-    "note": "Revenue model benchmarks (data/research/revenue_benchmarks.json)."
+    "note": "Used for the revenue model benchmarks."
    },
    {
     "name": "Statistics of U.S. Businesses (SUSB), U.S. and states, 6-digit NAICS, broad enterprise employment sizes (U.S. Census Bureau)",
     "url": "https://www2.census.gov/programs-surveys/susb/tables/2022/us_state_6digitnaics_2022.txt",
     "as_of": "2022",
     "retrieved": "2026-11-17",
-    "note": "Revenue model benchmarks (data/research/revenue_benchmarks.json)."
+    "note": "Used for the revenue model benchmarks."
    },
    {
     "name": "Consumer Price Index for All Urban Consumers (CPI-U), U.S. city average, all items, annual averages (U.S. Bureau of Labor Statistics)",
     "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
     "as_of": null,
     "retrieved": "2026-11-17",
-    "note": "Revenue model benchmarks (data/research/revenue_benchmarks.json)."
+    "note": "Used for the revenue model benchmarks."
    },
    {
     "name": "Employer Costs for Employee Compensation (ECEC), private industry, percent of total compensation (U.S. Bureau of Labor Statistics)",
     "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
     "as_of": null,
     "retrieved": "2026-11-17",
-    "note": "Revenue model benchmarks (data/research/revenue_benchmarks.json)."
+    "note": "Used for the revenue model benchmarks."
    }
   ],
   "caveats": [
