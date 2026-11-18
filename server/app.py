@@ -890,6 +890,25 @@ def build_voice_system(persona, tools_on, cache=False):
     return [{'type': 'text', 'text': f"{p['role']}\n\n{rules}\n\nToday is {d.strftime('%b')} {d.day}, {d.year}.", **({'cache_control': {'type': 'ephemeral'}} if cache else {})}]
 
 
+def url_title(title, publisher=''):
+    """A readable label for a source whose title is a bare URL (often a PDF): the publisher (or the site) and the cleaned file name."""
+    from urllib.parse import urlsplit
+    try:
+        parts = urlsplit(title.strip())
+        host = re.sub(r'^www\.', '', parts.hostname or '')
+    except ValueError:
+        return publisher or 'Web page'
+    leaf = unquote(parts.path.rstrip('/').rsplit('/', 1)[-1]) if parts.path.strip('/') else ''
+    pdf = leaf.lower().endswith('.pdf')
+    name = re.sub(r'\.[A-Za-z0-9]{1,5}$', '', leaf)
+    name = re.sub(r'\s+', ' ', re.sub(r'[_\-+.~]+', ' ', name)).strip()
+    if not re.search(r'[A-Za-z]{3}', name) or name.lower() in ('download', 'view', 'index', 'file', 'document', 'pdf'):
+        name = ''   # an id, a number or a generic word is no name
+    who = (publisher or '').strip() or host or 'Web page'
+    label = f'{who}: {name[:1].upper()}{name[1:]}' if name else who
+    return label + (' (PDF)' if pdf else '')
+
+
 class Sources:
     """Numbered sources for one answer: the visitor's page context first, then knowledge-base documents, model runs and web pages."""
     def __init__(self):
@@ -900,6 +919,7 @@ class Sources:
         if key in self.by_key:
             return self.by_key[key]
         n = len(self.items) + 1
+        title = url_title(title, publisher) if is_str(title) and re.match(r'\s*https?://', title) else title
         self.items.append({'n': n, 'title': (title or 'Untitled')[:LIMITS['title']], 'url': url or '', 'publisher': publisher or '', 'date': date or '', 'kind': kind or ''})
         self.by_key[key] = n
         return n
@@ -1007,6 +1027,7 @@ def retrieve_initial(kb, inp, sources):
     if text:
         blocks.append(text)
     empty = ('(No excerpts were looked up: this question is answered from the home-sales records. Search the knowledge base if you need more.)' if routed
+             else '(No excerpts are attached. Search the knowledge base only if the question needs public research.)' if not inp['retrieve']  # WORKSPACE HOOK
              else '(The knowledge base returned nothing for this question.)' if voice
              else '(The knowledge base returned nothing for this question; search it with other words.)')
     return '<sources>\n' + ('\n\n'.join(blocks) if blocks else empty) + '\n</sources>'
@@ -1263,7 +1284,7 @@ async def handle_chat(request, cors):
     if ws:
         inp['persona'] = workspace.persona_id(ws)
         persona = PERSONAS[inp['persona']]
-        inp['retrieve'] = inp['retrieve'] and 'search' in workspace.public_tools(ws) and workspace.style(ws) not in ('field', 'desk')
+        inp['retrieve'] = False   # no automatic knowledge-base lookup: a role's apps answer it; roles with search can still call it
     allowed = set(workspace.public_tools(ws) if ws else persona['tools'])
     tools_on = [t for t in ('search', 'read') if t in allowed and kb is not None]
     if 'deal' in allowed and dealmath.presets()['presets']:
@@ -1513,6 +1534,7 @@ async def run_agent(ctx, q, st):
         if kb_n:
             put({'type': 'status', 'text': f'Found {kb_n} source{"s" if kb_n != 1 else ""} in the knowledge base'})
     json_retries = 0
+    gap = False   # text resumes after a tool call (in a later step or after a web search): it starts a new paragraph, never runs on
     try:
         for step in range(steps):
             st['steps'] = step + 1
@@ -1566,6 +1588,9 @@ async def run_agent(ctx, q, st):
                         if is_str(ev.text) and ev.text:
                             out = ev.text if vf is None else vf.feed(ev.text)
                             if out and not hold:
+                                if gap and vf is None:   # one paragraph break, not between blocks split only by citations
+                                    out = '\n\n' + out.lstrip()
+                                gap = False
                                 st['sent_text'] = True
                                 st['chunks'] += 1
                                 put({'type': 'text', 'text': out})
@@ -1584,6 +1609,7 @@ async def run_agent(ctx, q, st):
                                 put({'type': 'text', 'text': ' ' + ''.join(marks)})
                         elif bt in ('tool_use', 'server_tool_use'):
                             tool_open = False
+                            gap = gap or (st['sent_text'] and not voice)
                             put({'type': 'status', 'text': tool_status(b, sources)})
                     if len(sources.items) > sent_sources:
                         put(sources.event())

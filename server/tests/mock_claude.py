@@ -30,6 +30,7 @@ Markers in the last user message switch behaviour:
   [mock:md]          the answer is heavy with markdown, [n] markers, a link and a bare URL (for the voice filter)
   [mock:sym]         a one-sentence answer with "#26", "~40" and "est." in it (for the page's speech clean-up)
   [mock:maxtokens]   the answer stops after twelve pieces with stop_reason "max_tokens" (the reply budget ran out)
+  [mock:preamble]    a tool-call step first writes "Let me check the records." before its tool_use block (with [mock:tool] or a plan)
 A request without "stream": true is the backend's key check (GET /health?deep=1). It gets a JSON message, or the failure set
 with POST /_probe {"mode": "ok" | "auth" | "billing" | "billing402" | "busy" | "down" | "nozero" | "html"} ("nozero" rejects max_tokens 0 once;
 "html" answers 200 with a web page, as a wrong address or a gateway would).
@@ -274,11 +275,18 @@ class Handler(BaseHTTPRequestHandler):
             ev('content_block_start', {'type': 'content_block_start', 'index': 0, 'content_block': {'type': 'thinking', 'thinking': '', 'signature': ''}})
             ev('content_block_delta', {'type': 'content_block_delta', 'index': 0, 'delta': {'type': 'signature_delta', 'signature': 'sig-mock'}})
             ev('content_block_stop', {'type': 'content_block_stop', 'index': 0})
-            ev('content_block_start', {'type': 'content_block_start', 'index': 1, 'content_block': {'type': 'tool_use', 'id': 'toolu_mock_%d' % len(REQUESTS), 'name': name, 'input': {}}})
+            ti = 1
+            if '[mock:preamble]' in json.dumps(body.get('messages')):   # a note before the tool call, as the model sometimes writes
+                ev('content_block_start', {'type': 'content_block_start', 'index': 1, 'content_block': {'type': 'text', 'text': ''}})
+                for w in ('Let me ', 'check the ', 'records.'):
+                    ev('content_block_delta', {'type': 'content_block_delta', 'index': 1, 'delta': {'type': 'text_delta', 'text': w}})
+                ev('content_block_stop', {'type': 'content_block_stop', 'index': 1})
+                ti = 2
+            ev('content_block_start', {'type': 'content_block_start', 'index': ti, 'content_block': {'type': 'tool_use', 'id': 'toolu_mock_%d' % len(REQUESTS), 'name': name, 'input': {}}})
             raw = json.dumps(args)
             for k in range(0, len(raw), 7):
-                ev('content_block_delta', {'type': 'content_block_delta', 'index': 1, 'delta': {'type': 'input_json_delta', 'partial_json': raw[k:k + 7]}})
-            ev('content_block_stop', {'type': 'content_block_stop', 'index': 1})
+                ev('content_block_delta', {'type': 'content_block_delta', 'index': ti, 'delta': {'type': 'input_json_delta', 'partial_json': raw[k:k + 7]}})
+            ev('content_block_stop', {'type': 'content_block_stop', 'index': ti})
             ev('message_delta', {'type': 'message_delta', 'delta': {'stop_reason': 'tool_use', 'stop_sequence': None}, 'usage': {'output_tokens': 50}})
             ev('message_stop', {'type': 'message_stop'})
             with _lock:

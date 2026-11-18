@@ -557,7 +557,7 @@ OUTSIDE_SPOTS = {'outside-left': {'side': 'left', 'at': 0.35}, 'outside-right': 
 LOC = {
     'basement': {
         'main_water': ('basement', 'front-wall-left', 'Front wall where the line comes in from the street, near the water meter'),
-        'water_heater': ('basement', 'utility-corner', 'Near the furnace and the floor drain'),
+        'water_heater': ('basement', 'utility-corner', 'Utility corner, near the floor drain'),
         'furnace': ('basement', 'center', 'Center of the basement, near the chimney or flue'),
         'air_handler': ('basement', 'center', 'Center of the basement, where the ducts meet'),
         'boiler': ('basement', 'center', 'Center of the basement, near the chimney'),
@@ -565,8 +565,8 @@ LOC = {
         'heat_pump': ('outside', 'outside-right', 'Outside on a pad along a side wall'),
         'panel': ('basement', 'side-left', 'On a side or front wall, near where the power line enters'),
         'gas_meter': ('outside', 'outside-right', 'Outside on a side wall, near where the gas line enters'),
-        'gas_shutoff': ('basement', 'center', 'On the gas pipe beside the furnace, a lever valve'),
-        'service_switch': ('basement', 'stairs-top', 'On the wall at the top of the basement stairs, or on the furnace'),
+        'gas_shutoff': ('basement', 'center', 'On the gas pipe beside the furnace or boiler, a lever valve'),
+        'service_switch': ('basement', 'stairs-top', 'On the wall at the top of the basement stairs, or on the furnace or boiler'),
         'sewer_cleanout': ('basement', 'front-wall-center', 'Front wall where the drain leaves for the street'),
         'sump_pump': ('basement', 'rear-wall-right', 'In a pit in a low corner of the basement'),
         'fixture_shutoffs': ('first', 'kitchen', 'Under each sink and behind each toilet'),
@@ -583,8 +583,8 @@ LOC = {
         'heat_pump': ('outside', 'outside-right', 'Outside on a pad along a side wall'),
         'panel': ('first', 'garage', 'Garage or utility room wall'),
         'gas_meter': ('outside', 'outside-right', 'Outside on a side wall'),
-        'gas_shutoff': ('first', 'utility-corner', 'On the gas pipe at the furnace or water heater'),
-        'service_switch': ('first', 'utility-corner', 'On or beside the furnace'),
+        'gas_shutoff': ('first', 'utility-corner', 'On the gas pipe at the furnace, boiler or water heater'),
+        'service_switch': ('first', 'utility-corner', 'On or beside the furnace or boiler'),
         'sewer_cleanout': ('outside', 'outside-front', 'Outside near the front foundation, a capped pipe'),
         'sump_pump': ('first', 'center', 'In the crawlspace, if there is one'),
         'fixture_shutoffs': ('first', 'kitchen', 'Under each sink and behind each toilet'),
@@ -601,8 +601,8 @@ LOC = {
         'heat_pump': ('outside', 'outside-right', 'Outside on a pad along a side wall'),
         'panel': ('first', 'garage', 'Garage wall'),
         'gas_meter': ('outside', 'outside-right', 'Outside on a side wall'),
-        'gas_shutoff': ('first', 'utility-corner', 'On the gas pipe at the furnace or water heater'),
-        'service_switch': ('first', 'utility-corner', 'On or beside the furnace'),
+        'gas_shutoff': ('first', 'utility-corner', 'On the gas pipe at the furnace, boiler or water heater'),
+        'service_switch': ('first', 'utility-corner', 'On or beside the furnace or boiler'),
         'sewer_cleanout': ('outside', 'outside-front', 'Outside near the front of the house, a capped pipe'),
         'sump_pump': ('first', 'garage', 'Rare on a slab; check the garage'),
         'fixture_shutoffs': ('first', 'kitchen', 'Under each sink and behind each toilet'),
@@ -610,6 +610,28 @@ LOC = {
         'generator': ('outside', 'outside-left', 'Outside on a pad near the gas meter'),
     },
 }
+
+
+# How a house heats (trade rules of thumb). The county's most common fuel picks the default type (heat_of_fuel); the customer's
+# words override it (heat_words, checked in order, first match wins). Each type lists its equipment kinds, the fuels it burns
+# (default_fuel when the county fuel does not fit), the issue whose causes, checks, parts and offers fit it, and what its service
+# switch is called (None: no switch).
+HEAT_TYPES = {
+    'furnace': {'label': 'Furnace', 'kinds': ['furnace'], 'fuels': ['gas', 'propane', 'oil'], 'default_fuel': 'gas', 'issue': 'no_heat',
+                'switch_label': 'Furnace switch'},
+    'boiler': {'label': 'Boiler', 'kinds': ['boiler'], 'fuels': ['gas', 'oil', 'propane'], 'default_fuel': 'oil', 'issue': 'boiler',
+               'switch_label': 'Boiler switch'},
+    'heat_pump': {'label': 'Heat pump', 'kinds': ['heat_pump', 'air_handler'], 'fuels': ['electric'], 'default_fuel': 'electric',
+                  'issue': 'heat_pump', 'switch_label': None},
+}
+HEAT_OF_FUEL = {'gas': 'furnace', 'propane': 'furnace', 'oil': 'boiler', 'electric': 'heat_pump'}
+HEAT_WORDS = [
+    {'heat': 'boiler', 'match': ['radiator', 'boiler', 'baseboards? (are |is )?(cold|not heating|not warm)', 'cold baseboard',
+                                 'hot.?water baseboard', 'steam (heat|pipe|boiler)', 'hydronic', 'hot.?water (heat|heating)\\b', 'zone valve',
+                                 'circulator']},
+    {'heat': 'heat_pump', 'match': ['heat ?pump', 'aux(iliary)? heat', 'emergency heat', 'mini.?split', 'ductless', 'frozen outdoor unit']},
+    {'heat': 'furnace', 'match': ['furnace']},
+]
 
 
 def run_rule(kind, floor):
@@ -643,7 +665,8 @@ def build_likely_rules():
             'counties': county_profiles(),
             'eras': ERAS,
             'foundation': {'PA': [{'to': 2100, 'type': 'basement'}], 'NJ': [{'to': 1969, 'type': 'crawl'}, {'to': 2100, 'type': 'slab'}]},
-            'heating': {'gas': ['furnace'], 'propane': ['furnace'], 'oil': ['boiler'], 'electric': ['heat_pump', 'air_handler']},
+            'heating': {f: HEAT_TYPES[t]['kinds'] for f, t in HEAT_OF_FUEL.items()},
+            'heat_types': HEAT_TYPES, 'heat_of_fuel': HEAT_OF_FUEL, 'heat_words': HEAT_WORDS,
             'spots': SPOTS, 'outside_spots': OUTSIDE_SPOTS,
             'kinds': {k: {'label': v[0], 'short': v[1]} for k, v in KINDS.items()},
             'locations': locations, 'runs': runs,
@@ -660,20 +683,44 @@ def build_likely_rules():
 SAFETY = {'gas': 'If you smell gas: no switches or flames, get everyone out and call the gas utility from outside.',
           'co': 'If a carbon monoxide alarm is sounding: get everyone out, air the house and keep the appliance off until it is checked.',
           'electric': 'Turn off the breaker and test the circuit dead before touching wiring.',
-          'water': 'Find the main water shutoff before opening any line.'}
+          'water': 'Find the main water shutoff before opening any line.',
+          'hot': 'Boiler water and steam scald: let the system cool and drop the pressure before opening a fitting.'}
 
 
-def I(id_, label, trades, match, focus, causes, check, bring, safety, offers):
-    return {'id': id_, 'label': label, 'trades': trades, 'match': match, 'focus': focus,
-            'causes': [dict(text=c[0], w=c[1], **({'boost': c[2]} if len(c) > 2 else {})) for c in causes],
-            'check': check, 'bring': [dict(text=b[0], **({'part': b[1]} if len(b) > 1 else {})) for b in bring],
-            'safety': safety, 'offers': offers}
+def I(id_, label, trades, match, focus, causes, check, bring, safety, offers, by_heat=None):
+    out = {'id': id_, 'label': label, 'trades': trades, 'match': match, 'focus': focus,
+           'causes': [dict(text=c[0], w=c[1], **({'boost': c[2]} if len(c) > 2 else {})) for c in causes],
+           'check': check, 'bring': [dict(text=b[0], **({'part': b[1]} if len(b) > 1 else {})) for b in bring],
+           'safety': safety, 'offers': offers}
+    if by_heat:
+        out['by_heat'] = by_heat
+    return out
 
 
 # Job types: redesigns/punctual-pros/os.js JOBS0 and data/research/ai_agents_portfolio.json ag-pp-* triggers.
+# Order matters: the first issue whose match pattern hits wins, so the boiler issue (radiators, baseboards) sits before no_heat and
+# no_heat sits before breaker ("keeps shutting off"). by_heat: when the house heats with that type (likely_rules heat_types), use
+# that issue's causes, checks, parts, safety and offers and keep this issue's label.
 ISSUES = [
+    I('boiler', 'Boiler or radiators not heating', ['hvac'],
+      ['radiator', 'boiler', 'baseboards? (are |is )?(cold|not heating|not warm)', 'cold baseboard', 'hot.?water baseboard',
+       'steam (heat|pipe|boiler)', 'hydronic', 'hot.?water (heat|heating)\\b', 'zone valve', 'circulator'],
+      ['boiler', 'gas_shutoff', 'service_switch'],
+      [('Circulator pump or a zone valve has failed, so hot water does not reach the radiators', 3, {'kind': 'boiler', 'age_over': 12}),
+       ('Low pressure or air in the loop; on steam, the low-water cutoff has tripped', 2, {'kind': 'boiler'}),
+       ('Burner will not fire: ignitor or flame sensor', 2, {'kind': 'boiler', 'fuel': 'gas'}),
+       ('Out of oil, or a clogged oil filter or nozzle', 1, {'kind': 'boiler', 'fuel': 'oil'}),
+       ('Thermostat, power or a tripped boiler switch', 1)],
+      ['Thermostat calling for heat', 'Boiler switch and breaker on', 'Pressure gauge at 12 to 15 psi, or the sight glass on steam',
+       'Circulator running and zone valves open', 'Burner reset button, and the tank gauge on oil'],
+      [('Circulator cartridge',), ('Multimeter',), ('Bleeder key, hose and bucket',), ('Flame sensor and emery cloth', 'flame-sensor'),
+       ('Oil nozzle and filter',), ('3 to 5 amp fuse', 'fuse-3a')],
+      ['hot'], ['boiler_service', 'diag', 'club_total', 'replace_boiler']),
     I('no_heat', 'No heat', ['hvac'],
-      ['no heat', 'not heating', 'furnace (won.?t|not) (start|run|light)', 'runs a few seconds', 'cold (house|inside)', 'heat (is )?(out|off)'],
+      ['no heat', '^(?!.*water heater).*not heating', 'runs a few seconds', 'cold (house|inside)', 'heat (is )?(out|off)',
+       '^(?!.*(water heater|bang|boom|loud|nois|dryer|stove|oven|range|cooktop|grill|fireplace)).*ignit',
+       '(furnace|heat) (won.?t|will not|not|isn.?t|is not|doesn.?t|does not) (start|run|light|ignite|igniting|work|working|turn(ing)? on|come on|fire|firing|kick(ing)? on)',
+       'furnace (is )?(out|dead|down|off)', 'furnace .*(shut(s|ting)? (off|down)|cuts? out|stops)', 'furnace clicks'],
       ['furnace', 'boiler', 'heat_pump', 'gas_shutoff', 'service_switch'],
       [('Hot-surface ignitor has failed', 3, {'kind': 'furnace', 'age_over': 10, 'fuel': 'gas', 'rec_word': 'ignitor'}),
        ('Dirty flame sensor shuts the burner down', 2, {'kind': 'furnace', 'fuel': 'gas'}),
@@ -682,7 +729,7 @@ ISSUES = [
       ['Thermostat set to heat and calling', 'Furnace switch and breaker on', 'Board light code', 'Filter'],
       [('Universal hot-surface ignitor', 'ign-hsi'), ('Flame sensor and emery cloth', 'flame-sensor'), ('Multimeter',),
        ('3 to 5 amp fuse', 'fuse-3a'), ('16x25 filters', 'filter-1625')],
-      ['gas'], ['ignitor', 'diag', 'tuneup', 'club_total', 'replace_furnace']),
+      ['gas'], ['ignitor', 'diag', 'tuneup', 'club_total', 'replace_furnace'], by_heat={'boiler': 'boiler', 'heat_pump': 'heat_pump'}),
     I('no_cool', 'No cooling', ['hvac'],
       ['no (cool|cooling|ac|a/c|air)', 'not cooling', 'ac (is )?(out|off|not)', 'blowing warm', 'warm air'],
       ['condenser', 'air_handler', 'panel'],
@@ -713,7 +760,8 @@ ISSUES = [
       [('Temperature and pressure relief valve', 'tp-valve'), ('Drain hose and wet vac',), ('3/4 in ball valve', 'ball-valve-34'), ('Pipe wrenches',)],
       ['water', 'gas'], ['replace_wh', 'tp_valve', 'replace_wh_tankless', 'club_total']),
     I('no_hot_water', 'No hot water', ['plumbing'],
-      ['no hot water', 'hot water (is )?(out|gone)', 'water (is|runs) cold', 'pilot (is )?out'],
+      ['no hot water', 'hot water (is )?(out|gone)', 'water (is|runs) cold', 'pilot (is )?out',
+       'water heater .*(ignit|light|pilot|not working|won.?t work|not heating)'],
       ['water_heater', 'gas_shutoff', 'main_water'],
       [('Pilot or thermocouple failed', 3, {'kind': 'water_heater', 'fuel': 'gas'}),
        ('Heating element burned out', 2, {'kind': 'water_heater', 'fuel': 'electric'}),
@@ -812,6 +860,38 @@ ISSUES = [
 ]
 
 
+def issue_for(text):
+    """The issue a customer's words pick, the way server/workspace.py _text_issue does: an issue label inside the text first
+    (longest), then the first issue whose match pattern hits. None when nothing matches."""
+    low = (text or '').lower()
+    labs = sorted((i for i in ISSUES if i['label'].lower() in low and i['id'] != 'unknown'), key=lambda i: -len(i['label']))
+    if labs:
+        return labs[0]['id']
+    for i in ISSUES:
+        if any(re.search(rx, text or '', re.I) for rx in i['match']):
+            return i['id']
+    return None
+
+
+def heat_for(text):
+    """The heat type a customer's words name (likely_rules heat_words), or None."""
+    for w in HEAT_WORDS:
+        if any(re.search(rx, text or '', re.I) for rx in w['match']):
+            return w['heat']
+    return None
+
+
+# Words a technician types, and the issue (and heat type) they must pick. Checked at every build.
+ISSUE_CASES = [('furnace not igniting', 'no_heat', 'furnace'), ("furnace won't ignite", 'no_heat', 'furnace'), ('no ignition', 'no_heat', None),
+               ("won't ignite", 'no_heat', None), ('furnace not working', 'no_heat', 'furnace'), ('furnace keeps shutting off', 'no_heat', 'furnace'),
+               ("the heat won't come on", 'no_heat', None), ('the radiators are cold', 'boiler', 'boiler'), ("boiler won't fire", 'boiler', 'boiler'),
+               ('no heat and the radiators are cold', 'no_heat', 'boiler'), ('baseboards are cold', 'boiler', 'boiler'),
+               ('no heat, heat pump', 'no_heat', 'heat_pump'), ('heat pump not heating', 'heat_pump', 'heat_pump'),
+               ("water heater won't ignite", 'no_hot_water', None), ('water heater not heating', 'no_hot_water', None),
+               ('The furnace makes a loud bang when it starts.', 'noise', 'furnace'), ('The kitchen breaker trips when the microwave runs.', 'breaker', None),
+               ('The carbon monoxide alarm went off near the furnace.', 'co_alarm', 'furnace')]
+
+
 # ------------------------------------------------------------------------------------------------ organisations and apps
 
 ORG_NAME = {'bsp': 'BSP', 'pp': 'Punctual Pros', 'cet': 'CET', 'fl': 'Frontline', 'ts': 'Thomas Scientific', 'bpi': 'BPI', 'fh': 'Fair Harbor'}
@@ -884,20 +964,26 @@ TERMS = {'ServiceTitan': 'ServiceTitan: field-service software for jobs, technic
          'DealCloud': 'DealCloud: deal-tracking software.', 'Procore': 'Procore: construction project software.',
          'ServiceNow': "ServiceNow: service-desk software; Frontline's HELIX desk runs on it.", 'Klaviyo': 'Klaviyo: email and text marketing.'}
 
+# The chat rule is a hard limit for the brief and field styles: it overrides the general length and format guide.
 STYLES = {
     'brief': ('Three lines, one action',
-              'Three lines: the answer, the number that matters with its source, then "Recommend:" and one action.',
-              'Three spoken sentences, the last one a recommendation.'),
+              'Hard limit: three short lines, under 60 words in all, no bullets, lists or headings; this overrides the general length '
+              'and format guide. Line 1: the answer. Line 2: the number that matters, with its source. Line 3: "Recommend:" and one '
+              'action. For a list or a draft (an agenda, deals, people), give the count and the one item that matters most; the full '
+              'list stays in the draft on screen and is not repeated in the answer.',
+              'Hard limit: three spoken sentences, under 50 words, the last one a recommendation.'),
     'analyst': ('Full numbers, sourced', 'Full numbers with units and [n] on each; a small table is fine; up to 300 words.',
                 'Lead with the number, then the two drivers; under 80 words.'),
     'operator': ('Status, risks, next', 'Three short labelled parts: Status, Risks, Next steps; under 180 words.',
                  'Status in one sentence, the top risk, the next step.'),
     'desk': ('Short, with drafts', 'Two to four lines; offer a draft when an action fits.', 'Two sentences; offer a draft.'),
     'field': ('Under 30 seconds',
-              'For a phone in a driveway: at most five short lines, under 75 words. First where the equipment for this issue is and its '
-              'shutoff, then the likely cause and first check, what to bring, one offer. No headings.',
-              'Under 30 seconds, about 70 words, same order; say "from our records" or "likely" for each location; end with "The sketch '
-              'is on your screen." when a sketch was drawn.'),
+              'Hard limit for a phone in a driveway: five short lines at most, under 60 words in all, no headings or lists; this '
+              'overrides the general length and format guide. For a job at an address: first where the equipment for this issue is and '
+              'its shutoff, then the likely cause and the first check, then at most three things to bring, then one offer with its '
+              'price. Leave other equipment and pipe runs to the sketch unless asked.',
+              'Hard limit: under 30 seconds, about 60 words, same order; say "from our records" or "likely" for each location; end '
+              'with "The sketch is on your screen." when a sketch was drawn.'),
 }
 
 ACTIONS = {'reply_email': ('Reply to an email', 'email'), 'calendar_hold': ('Hold time on the calendar', 'calendar'),
@@ -1322,6 +1408,8 @@ NOTE_FOR = {'no_heat': 'Cleaned the flame sensor. Ignitor shows wear.',
             'unknown': 'Tune-up done. No problems found.',
             'co_alarm': 'Readings normal. Replaced an old alarm.',
             'gas_smell': 'Tightened a union at the heater. Leak test passed.'}
+BOILER_NOTE = 'Bled the radiators and reset the burner. Circulator is noisy.'
+BOILER_REC = ('Boiler service', 'boiler_service')
 FLAGSHIP_CUSTOMERS = {'st-cus-0001', 'st-cus-0002', 'st-cus-0003'}
 URGENT_ISSUES = {'no_heat', 'heat_pump', 'no_cool', 'wh_leak', 'no_hot_water', 'sewer_backup', 'gas_smell', 'co_alarm', 'breaker'}
 WINDOWS = [('08:00', '10:00'), ('08:30', '10:30'), ('10:00', '12:00'), ('10:30', '12:30'), ('12:00', '14:00'), ('13:00', '15:00'),
@@ -1395,9 +1483,12 @@ def material(kind, year, rng):
 def run_record(kind, floor, year, rng, side='right'):
     r = run_rule(kind, floor)
     mat = material(kind, year, rng)
-    note = {'water': 'Meter, shutoff, %s to heater' % mat, 'gas': 'Meter on the %s wall to appliances' % side,
+    note = {'water': 'Meter, shutoff, %s to heater' % mat, 'gas': 'Meter on the %s side wall to the appliances' % side,
             'drain': '%s to the cleanout' % mat.capitalize()}[kind]
-    return {'kind': kind, 'label': r['label'], 'floor': floor, 'via': r['via'], 'material': mat, 'note': note}
+    via = list(r['via'])
+    if kind == 'gas':
+        via[0] = 'side-' + side   # the line enters on the meter's side, so the note and the drawing agree
+    return {'kind': kind, 'label': r['label'], 'floor': floor, 'via': via, 'material': mat, 'note': note}
 
 
 def build_servicetitan(rng, people, streets, techs_os, sa):
@@ -1545,7 +1636,7 @@ def build_servicetitan(rng, people, streets, techs_os, sa):
     h2 = {'year': 1978, 'sqft': 1640, 'stories': 2, 'style': 'split-level', 'foundation': 'basement', 'basement': 'full', 'fuel': 'gas', 'garage': 'attached-left'}
     p_items = [
         {'kind': 'water_heater', 'floor': 'basement', 'spot': 'rear-wall-left', 'note': 'Rear wall, left side, on a stand by the floor drain', 'detail': 'Gas, 50 gal', 'make': 'Rheem', 'year': 2013, 'last_service_d': -300},
-        {'kind': 'gas_shutoff', 'floor': 'basement', 'spot': 'rear-wall-left', 'note': 'On the gas pipe beside the water heater, lever valve', 'detail': 'Lever valve', 'make': None, 'year': None, 'last_service_d': None},
+        {'kind': 'gas_shutoff', 'floor': 'basement', 'spot': 'rear-wall-left', 'note': 'On the gas pipe beside the water heater', 'detail': 'Lever valve', 'make': None, 'year': None, 'last_service_d': None},
         {'kind': 'main_water', 'floor': 'basement', 'spot': 'front-wall-right', 'note': 'Front wall, right side, beside the water meter', 'detail': '3/4 in gate valve', 'make': None, 'year': None, 'last_service_d': None},
         {'kind': 'furnace', 'floor': 'basement', 'spot': 'center', 'note': 'Center, under the main trunk duct', 'detail': 'Gas, 60,000 BTU', 'make': 'Trane', 'year': 2009, 'last_service_d': -290},
         {'kind': 'service_switch', 'floor': 'basement', 'spot': 'stairs-top', 'note': 'Top of the basement stairs, red cover plate', 'detail': None, 'make': None, 'year': None, 'last_service_d': None},
@@ -1596,9 +1687,17 @@ def build_servicetitan(rng, people, streets, techs_os, sa):
                           'renew_d': rng.randint(5, 360), 'visits_due': rng.choice([0, 1, 1, 2])}
             floor = 'basement' if house['foundation'] == 'basement' else 'first'
             runs = [run_record('water', floor, house['year'], rng), run_record('drain', floor, house['year'], rng)]
+            gas_side = None
             if house['fuel'] in ('gas', 'propane') and rng.random() < 0.3:
-                runs.insert(1, run_record('gas', floor, house['year'], rng, rng.choice(['right', 'left'])))
-            add_customer('st-cus-%04d' % cn, hub, t, people.name(), house, a, k, hn, b, member, runs, equipment_for(None, house, rng))
+                gas_side = rng.choice(['right', 'left'])
+                runs.insert(1, run_record('gas', floor, house['year'], rng, gas_side))
+            name = people.name()   # drawn before the equipment, as before, so the random stream is unchanged
+            items = equipment_for(None, house, rng)
+            for it in items:
+                if it['kind'] == 'gas_meter' and gas_side:   # a recorded meter sits where the recorded gas line enters
+                    it['spot'] = 'outside-' + gas_side
+                    it['note'] = 'On the %s side of the house' % gas_side
+            add_customer('st-cus-%04d' % cn, hub, t, name, house, a, k, hn, b, member, runs, items)
     need(len(customers) == 200, 'servicetitan: expected 200 customers, got %d' % len(customers))
 
     # ---- jobs
@@ -1786,10 +1885,11 @@ def build_servicetitan(rng, people, streets, techs_os, sa):
         if rng.random() < 0.7:
             t = tmap[j['tech']]
             by = {'name': 'You', 'role': TRADE_ROLE[t['trade']]} if t['name'] == 'You' else {'name': t['name'], 'role': TRADE_ROLE[t['trade']]}
-            c['notes'].append({'day': j['day'], 'by': by, 'text': NOTE_FOR[j['issue']]})
+            boiler = j['issue'] == 'no_heat' and c['house']['fuel'] == 'oil'   # an oil house heats with a boiler, not a furnace
+            c['notes'].append({'day': j['day'], 'by': by, 'text': BOILER_NOTE if boiler else NOTE_FOR[j['issue']]})
             if rng.random() < 0.3 and not c['recs']:
                 rn += 1
-                text, code = REC_FOR[j['issue']]
+                text, code = BOILER_REC if boiler else REC_FOR[j['issue']]
                 c['recs'].append({'id': 'st-rec-%04d' % (rn + 1), 'day': j['day'], 'text': text, 'code': code,
                                   'price': [p[6] for p in PRICEBOOK if p[0] == code][0], 'status': 'open'})
     c1['notes'] = [{'day': -38, 'by': {'name': 'Dani M.', 'role': 'HVAC technician'},
@@ -1904,6 +2004,18 @@ KPIS = {
            ('markdown_share', 'Markdown share of live variants', '%', 38.5, 25, .1, .6, 1, False), ('ship_days', 'Days to ship', 'days', 2.4, 1.5, .01, .2, 1, False)],
 }
 HUB_SHARE = {'lancaster': .38, 'york': .25, 'harrisburg': .22, 'toms-river': .15}
+# One plan tolerance everywhere (home leads, sandbox documents, roles.json for the agent): within 1% of plan counts as on plan.
+PLAN_TOL_PCT = 1.0
+
+
+def vs_plan(actual, plan):
+    """(percent off plan rounded to 0.1, words): 'on plan' within PLAN_TOL_PCT, else 'x.x% above plan' or 'x.x% below plan'."""
+    x = round((actual / plan - 1) * 100, 1) if plan else 0.0
+    return x, ('on plan' if abs(x) <= PLAN_TOL_PCT else '%.1f%% %s plan' % (abs(x), 'above' if x > 0 else 'below'))
+
+
+def ebitda_vs_plan(p):
+    return vs_plan(p['revenue_k'] - p['cogs_k'] - p['opex_k'], p['plan_revenue_k'] - p['plan_cogs_k'] - p['plan_opex_k'])
 
 
 def fin_company(co, rng, anc):
@@ -2175,12 +2287,19 @@ def build_cet_crm(rng, words, people):
     scopes = [('Pump station electrical upgrade', 400, 2600), ('Rooftop solar, 400 kW', 700, 1400), ('EV chargers, 12 ports', 180, 520),
               ('Wastewater plant controls', 900, 6200), ('LED lighting retrofit', 150, 600), ('Standby generator and switchgear', 300, 1800),
               ('Service upgrade, 2,000 A', 350, 1100), ('Battery storage, 1 MWh', 900, 2400)]
-    stages = ['Qualifying', 'Bidding', 'Bidding', 'Submitted', 'Won', 'Lost', 'Lost']
+    # Closed bids are drawn as one stage and split into Won and Lost below, so the CRM win rate matches the bid win rate KPI.
+    stages = ['Qualifying', 'Bidding', 'Bidding', 'Submitted', 'Closed', 'Closed', 'Closed', 'Closed']
     estimators = [people.person('Estimator') for _ in range(3)]
+    seen = set()
     for i in range(84):
         acc = rng.choice(accounts)
         sc, lo, hi = rng.choice(scopes)
+        while '%s: %s' % (acc['name'], sc) in seen:   # one opportunity per account and scope
+            acc = rng.choice(accounts)
+            sc, lo, hi = rng.choice(scopes)
+        seen.add('%s: %s' % (acc['name'], sc))
         st = rng.choice(stages)
+        st = 'Lost' if st == 'Closed' else st
         close = {'Qualifying': (10, 60), 'Bidding': (0, 21), 'Submitted': (5, 40), 'Won': (-330, -5), 'Lost': (-330, -5)}[st]
         team = 'estimating' if rng.random() < .65 else None
         rec = {'id': 'sf-cet-opp-%03d' % (i + 1), 'co': 'cet', 'account_id': acc['id'], 'account': acc['name'], 'name': '%s: %s' % (acc['name'], sc),
@@ -2194,6 +2313,20 @@ def build_cet_crm(rng, words, people):
     # Bids due this week for the estimator (spec 2.3 home lead).
     for j, d in enumerate((1, 3, 4, 6)):
         opps[j].update({'stage': 'Bidding', 'close_d': d, 'team': 'estimating', 'owner': estimators[j % 3], 'next_step': 'Finish takeoff and supplier quotes'})
+    # Won share of closed bids = the bid win rate KPI (the public 15% baseline), in the estimating team and in the rest, so the
+    # estimator's and the business development lead's win-rate tiles agree with the KPI. Wins are spread evenly over the close dates.
+    rate = [k[3] for k in KPIS['cet'] if k[0] == 'bid_win_rate'][0] / 100.0
+    for grp in ('estimating', None):
+        closed = sorted((o for o in opps if o['stage'] in ('Won', 'Lost') and o.get('team') == grp), key=lambda o: (-o['close_d'], o['id']))
+        won = max(1, int(rate * len(closed) + .5))
+        wins = {int(k * len(closed) / won) for k in range(won)}
+        for k, o in enumerate(closed):
+            o['stage'] = 'Won' if k in wins else 'Lost'
+            o['next_step'] = 'Hand off to project management' if o['stage'] == 'Won' else 'Ask the owner for the bid tab'
+    for grp in ('estimating', None):
+        closed = [o for o in opps if o['stage'] in ('Won', 'Lost') and o.get('team') == grp]
+        r = 100.0 * sum(1 for o in closed if o['stage'] == 'Won') / max(1, len(closed))
+        need(abs(r - rate * 100) <= 3, 'cet crm: win rate %.0f%% is not within 3 points of the bid win rate KPI' % r)
     services = [('Electrical construction, commercial', 'project', 250000, 6000000), ('Wastewater and pump-station electrical (Horton)', 'project', 300000, 8000000),
                 ('Solar install', 'project', 400000, 3000000), ('Solar operations and maintenance', 'month', 1500, 9000),
                 ('EV charger install', 'project', 60000, 600000), ('EV charger network management', 'month', 25, 50),
@@ -2211,9 +2344,14 @@ def build_fl_crm(rng, words, people, firms):
                          'health': rng.choice(['Good', 'Good', 'Good', 'Watch', 'At risk']), 'renewal_d': rng.randint(10, 360)})
     kinds = [('Managed IT renewal', 120, 900), ('Cybersecurity add-on', 40, 260), ('E-billing outsourcing', 60, 480), ('HELIX desk upgrade', 30, 200),
              ('Legal AI enablement', 25, 150), ('Collections support', 40, 300)]
+    seen = set()
     for i in range(64):
         acc = rng.choice(accounts)
         k, lo, hi = rng.choice(kinds)
+        while '%s: %s' % (acc['name'], k) in seen:   # one opportunity per account and kind
+            acc = rng.choice(accounts)
+            k, lo, hi = rng.choice(kinds)
+        seen.add('%s: %s' % (acc['name'], k))
         st = rng.choice(['Discovery', 'Proposal', 'Proposal', 'Negotiation', 'Won', 'Lost'])
         close = {'Discovery': (20, 90), 'Proposal': (5, 60), 'Negotiation': (1, 30), 'Won': (-200, -3), 'Lost': (-200, -3)}[st]
         opps.append({'id': 'sf-fl-opp-%03d' % (i + 1), 'co': 'fl', 'account_id': acc['id'], 'account': acc['name'], 'name': '%s: %s' % (acc['name'], k),
@@ -2243,12 +2381,19 @@ def build_ts_crm(rng, words, people):
             rec['for'], rec['team'] = ['ts-inside-sales'], 'inside-east'
         accounts.append(rec)
     lines = ['Gloves and wipes', 'Pipette tips', 'Centrifuge tubes', 'Cleanroom garments', 'Benchtop centrifuge', 'Freezer, -80 C', 'Private-label consumables', 'Managed inventory']
+    seen = set()
     for i in range(100):
         acc = accounts[i % 40] if i < 40 else rng.choice(accounts)
         st = rng.choice(['Qualifying', 'Quote sent', 'Quote sent', 'Negotiating', 'Won', 'Lost'])
         close = {'Qualifying': (10, 60), 'Quote sent': (1, 30), 'Negotiating': (1, 21), 'Won': (-120, -2), 'Lost': (-120, -2)}[st]
+        line = rng.choice(lines)
+        while '%s: %s' % (acc['name'], line) in seen:   # one opportunity per account and product line
+            if i >= 40:
+                acc = rng.choice(accounts)
+            line = rng.choice(lines)
+        seen.add('%s: %s' % (acc['name'], line))
         rec = {'id': 'sf-ts-opp-%03d' % (i + 1), 'co': 'ts', 'account_id': acc['id'], 'account': acc['name'],
-               'name': '%s: %s' % (acc['name'], rng.choice(lines)), 'stage': st, 'amount': rng.randrange(2, 250) * 1000,
+               'name': '%s: %s' % (acc['name'], line), 'stage': st, 'amount': rng.randrange(2, 250) * 1000,
                'close_d': rng.randint(*close), 'owner': acc['owner'],
                'next_step': {'Qualifying': 'Confirm volumes and the buyer', 'Quote sent': 'Follow up on the quote', 'Negotiating': 'Match the contract price',
                              'Won': 'Set up punchout ordering', 'Lost': 'Ask what price won'}[st], 'est': True}
@@ -2278,9 +2423,15 @@ def build_bpi_crm(rng, words, people):
     accounts[1]['renewal_d'] = 38
     kinds = [('Public affairs retainer', 300, 1800), ('Reputation research study', 80, 400), ('Issue campaign, paid media', 400, 2400),
              ('Crisis readiness program', 60, 300), ('Policy campaign', 200, 1200)]
+    seen = set()
     for i in range(50):
         acc = accounts[i % 8] if i < 8 else rng.choice(accounts)
         k, lo, hi = rng.choice(kinds)
+        while '%s: %s' % (acc['name'], k) in seen:   # one opportunity per account and kind
+            if i >= 8:
+                acc = rng.choice(accounts)
+            k, lo, hi = rng.choice(kinds)
+        seen.add('%s: %s' % (acc['name'], k))
         st = rng.choice(['Pitch', 'Proposal', 'Proposal', 'Negotiation', 'Won', 'Lost'])
         close = {'Pitch': (14, 90), 'Proposal': (2, 30), 'Negotiation': (1, 30), 'Won': (-120, -2), 'Lost': (-120, -2)}[st]
         rec = {'id': 'sf-bpi-opp-%03d' % (i + 1), 'co': 'bpi', 'account_id': acc['id'], 'account': acc['name'], 'name': '%s: %s' % (acc['name'], k),
@@ -2338,8 +2489,9 @@ def build_procore(rng, words, people):
         el_mine = i in (0, 6, 7)
         fr = [r for r, c in (('cet-project-manager', pm_mine), ('cet-field-electrician', el_mine)) if c]
         team = 'crew-2' if el_mine else 'crew-%d' % (1 + i % 6 if (1 + i % 6) != 2 else 7)
+        el_today = i == 0   # the electrician works one of their three sites today
         today_crew = [rng.choice(foremen)] + rng.sample(crew, 3)
-        if el_mine:
+        if el_today:
             today_crew = [today_crew[0], YOU('Field electrician')] + today_crew[1:3]
         rfis = []
         for _ in range(rng.choice([2, 3, 3, 4])):
@@ -2354,7 +2506,7 @@ def build_procore(rng, words, people):
         daily = []
         for d, nt in zip(sorted(rng.sample(range(-14, 1), 11), reverse=True), rng.sample(notes, 11)):
             daily.append({'day': d, 'crew': rng.randint(3, 8), 'hours': rng.randrange(24, 72, 4), 'note': nt})
-        if el_mine and daily[0]['day'] != 0:
+        if el_today and daily[0]['day'] != 0:
             daily.insert(0, {'day': 0, 'crew': 5, 'hours': 40, 'note': 'Crew starts at 7:00 am. Pull feeders to the new panel.'})
         cv = rng.randrange(300, 9000, 10) * 1000
         rec = {'id': 'pc-%03d' % (i + 1), 'co': 'cet', 'team': team, 'number': 'P-%d' % (3101 + i), 'name': name, 'owner_name': owner,
@@ -2555,7 +2707,7 @@ def build_shopify(rng, season):
             continue
         used.add((p['id'], r))
         returns.append({'id': 'sh-r-%02d' % (len(returns) + 1), 'co': 'fh', 'product_id': p['id'], 'product': p['name'], 'reason': r,
-                        'count_30d': rng.randint(2, 60)})
+                        'title': '%s (%s)' % (p['name'], r), 'count_30d': rng.randint(2, 60)})   # the title names the record in sources
     returns.sort(key=lambda x: -x['count_30d'])
     del season
     return products, daily, returns
@@ -2751,7 +2903,11 @@ CAL = {
             ('Associate model review', 'New York office', ['Senior associate', 'Associate'], 'Downside case.'),
             ('Audit planning', 'Video call', ['*Audit manager'], 'Fund audit timeline.'),
             ('Fair Harbor board prep', 'Video call', ['Fair Harbor CEO'], 'Wholesale and store plans.'),
-            ('BPI quarterly review', 'Washington office', ['BPI CEO'], 'Retainer mix.')],
+            ('BPI quarterly review', 'Washington office', ['BPI CEO'], 'Retainer mix.'),
+            ('Investor letter review', 'New York office', ['Managing partner'], 'Comments on draft 2.'),
+            ('Annual meeting planning', 'Video call', ['*Event planner'], 'Venue and agenda.'),
+            ('Capital call planning', 'New York office', ['Managing partner'], 'Amount and timing.'),
+            ('Investor data requests', 'Video call', ['*Investor contact'], 'Quarterly template.')],
     'leader': [('Weekly leadership meeting', '{office}', ['CEO', 'CFO', 'VP operations'], 'KPIs and the top risks.'),
                ('KPI review', '{office}', ['VP operations'], 'Trend and drivers.'),
                ('Check-in with BSP', 'Video call', ['BSP operating partner'], 'KPIs first.'),
@@ -2764,7 +2920,9 @@ CAL = {
                ('Safety walk', 'On site', ['*Safety lead'], 'Two sites.'),
                ('Vendor review', 'Video call', ['*Purchasing lead'], 'Prices and lead times.'),
                ('All-hands', '{office}', [], 'Short update to the team.'),
-               ('Lender call', 'Video call', ['*Lender'], 'Compliance certificate.')],
+               ('Lender call', 'Video call', ['*Lender'], 'Compliance certificate.'),
+               ('Growth review', '{office}', ['CEO'], 'Leads, wins and next steps.'),
+               ('Team meeting', '{office}', [], 'Priorities for the week.')],
     'office': [('Morning board check', 'Lancaster office', ['VP operations'], 'Unassigned and late jobs.'),
                ('Technician huddle', 'Lancaster office', [], 'Safety tip and today\'s parts.'),
                ('Callback review', 'Lancaster office', ['*Field trainer'], 'Last week\'s callbacks.'),
@@ -2784,7 +2942,9 @@ CAL = {
                 ('Takeoff review', 'Worcester office', ['*Estimating assistant'], 'Counts check.'),
                 ('Pre-bid meeting', 'On site', ['*Owner representative'], 'Site walk.'),
                 ('Safety stand-down', 'On site', ['*Safety lead'], 'Fall protection.'.replace('Fall protection', 'Working at height')),
-                ('Closeout punch list', 'On site', ['*Foreman'], 'Final items.')],
+                ('Closeout punch list', 'On site', ['*Foreman'], 'Final items.'),
+                ('Bid opening', 'Video call', ['*Owner representative'], 'Read-out of the bids.'),
+                ('Estimating team meeting', 'Worcester office', [], 'Bids this week.')],
     'desk': [('Team stand-up', 'Video call', [], 'Priorities for today.'),
              ('Client call', 'Video call', ['*Client contact'], 'Open items.'),
              ('Quote and renewal check-in', 'Video call', ['VP sales'], 'Quotes and renewals.'),
@@ -2796,6 +2956,35 @@ CAL = {
              ('Vendor call', 'Video call', ['*Vendor contact'], 'Service review.'),
              ('Team retro', 'Video call', [], 'What to keep and change.')],
 }
+# Who goes to each meeting: the archetypes that may have it on their calendar, by pool and title (titles after CAL_SWAP). A title
+# not listed is open to every archetype of its pool. Separately, every role of the same company named in a meeting's attendee
+# list always gets the event (build_comms).
+WHO = {
+    'bsp': {'Investment committee': {'mp', 'partner', 'op', 'sa'}, 'Portfolio review: Punctual Pros': {'mp', 'partner', 'op'},
+            'Deal team weekly': {'mp', 'partner', 'sa'}, 'Lender call': {'mp', 'partner', 'fundcfo'},
+            'Management meeting: add-on target': {'mp', 'partner', 'sa'}, 'Fund close checklist': {'fundcfo', 'mp'},
+            'Investor call': {'mp', 'ir', 'fundcfo'}, 'CET board meeting': {'mp', 'partner', 'op'},
+            'Frontline operating review': {'mp', 'partner', 'op'}, 'Thomas Scientific pricing review': {'partner', 'op', 'sa'},
+            'Banker lunch': {'mp', 'partner', 'sa'}, 'Associate model review': {'partner', 'sa'}, 'Audit planning': {'fundcfo', 'mp'},
+            'Fair Harbor board prep': {'mp', 'partner', 'op'}, 'BPI quarterly review': {'mp', 'partner', 'op'},
+            'Investor letter review': {'ir', 'mp'}, 'Annual meeting planning': {'ir'}, 'Capital call planning': {'fundcfo', 'mp'},
+            'Investor data requests': {'ir', 'fundcfo'}},
+    'leader': {'KPI review': {'ceo', 'cfo', 'vp'}, 'Check-in with BSP': {'ceo', 'cfo', 'vp'}, 'Pipeline review': {'ceo', 'sales'},
+               'Month-end close review': {'cfo'}, 'Hiring sync': {'ceo', 'vp', 'sales'}, 'Customer visit': {'ceo', 'vp', 'sales'},
+               'Wholesale account visit': {'ceo', 'sales'}, 'Budget working session': {'ceo', 'cfo', 'vp'}, 'Board update prep': {'ceo', 'cfo'},
+               'Safety walk': {'ceo', 'vp'}, 'Staffing review': {'ceo', 'vp'}, 'Desk operations review': {'ceo', 'vp'},
+               'Fulfillment walk': {'ceo', 'vp'}, 'Vendor review': {'cfo', 'vp'}, 'Lender call': {'ceo', 'cfo'}, 'Growth review': {'ceo', 'sales'},
+               'Team meeting': {'vp', 'sales'}},
+    'office': {'Callback review': {'gm'}, 'Hub numbers review': {'gm'}, 'Ride-along': {'gm'}, 'Interview: technician candidate': {'gm'}},
+    'project': {'Owner meeting': {'pm'}, 'Foreman coordination': {'pm'}, 'Bid review': {'estimator'}, 'Inspection walk': {'pm'},
+                'Project review': {'pm'}, 'Takeoff review': {'estimator'}, 'Pre-bid meeting': {'estimator'}, 'Safety stand-down': {'pm'},
+                'Closeout punch list': {'pm'}, 'Bid opening': {'estimator'}, 'Estimating team meeting': {'estimator'}},
+    'desk': {'Client call': {'billing', 'inside', 'ad'}, 'Quote and renewal check-in': {'inside'}, 'Account planning': {'inside', 'ad'},
+             'Promo planning': {'ecom'}, 'Status meeting': {'ad'}},
+}
+# An attendee label that names a role under another label.
+LABEL_ALIAS = {'Investor relations lead': 'Investor relations'}
+
 CAL_GROUP = {'mp': 'bsp', 'partner': 'bsp', 'op': 'bsp', 'sa': 'bsp', 'fundcfo': 'bsp', 'ir': 'bsp', 'ceo': 'leader', 'cfo': 'leader', 'vp': 'leader',
              'sales': 'leader', 'dispatcher': 'office', 'gm': 'office', 'pm': 'project', 'estimator': 'project', 'billing': 'desk', 'inside': 'desk',
              'ad': 'desk', 'ecom': 'desk'}
@@ -3011,7 +3200,8 @@ def build_comms(org, roles, rng, people, ctx):
                                 'participants': [you, sender], 'day': d, 'time': t0, 'unread': i < 3, 'kind': kind, 'messages': msgs})
         if 'calendar' in r['apps']:
             g = CAL_GROUP[a]
-            for idx in rng.sample(range(len(CAL[g])), 10):
+            ok = [i for i, t in enumerate(cal_pool(g, org)) if a in WHO.get(g, {}).get(t[0], {a})]   # only meetings this role attends
+            for idx in rng.sample(ok, min(10, len(ok))):
                 picks.append((r, g, idx))
     # One event per (pool, entry) per organisation; attendees in the order they picked it.
     meet = {}
@@ -3023,10 +3213,13 @@ def build_comms(org, roles, rng, people, ctx):
         return all(not (bd == d and s_ < be and bs < e_) for r in rs for bd, bs, be in booked.get(r['id'], ()))
     later_days = [1, 2, 3, 4, 6, 7]
     events = []
+    cal_roles = [x for x in roles if x['company'] == org and 'calendar' in x['apps']]
     for en, key in enumerate(order, 1):
         g, idx = key
-        rs = meet[key]
         title, where, withs, notes = cal_pool(g, org)[idx]
+        named = {LABEL_ALIAS.get(w, w) for w in withs}
+        # A role of this company named as an attendee always has the event on its own calendar.
+        rs = meet[key] + [x for x in cal_roles if x['label'] in named and x not in meet[key]]
         fixed = TITLE_TIME.get(title)
         today_n = max(sum(1 for d, _, _ in booked.get(r['id'], ()) if d == 0) for r in rs)
         days = ([0] if today_n < 4 else []) + rng.sample(later_days, len(later_days))
@@ -3042,11 +3235,16 @@ def build_comms(org, roles, rng, people, ctx):
         for r in rs:
             booked.setdefault(r['id'], []).append(slot)
         labels = {r['label'] for r in rs}
-        attendees = [person_of(w, people, cache) for w in withs] + [role_only(l) for l in sorted(labels - set(withs))] if len(rs) > 1 else \
-            [person_of(w, people, cache) for w in withs if w != rs[0]['label']]
+        attendees = [person_of(w, people, cache) for w in withs] + [role_only(l) for l in sorted(labels - named)] if len(rs) > 1 else \
+            [person_of(w, people, cache) for w in withs if LABEL_ALIAS.get(w, w) != rs[0]['label']]
         events.append({'id': 'ca-%s-%03d' % (org, en), 'co': org, 'for': [r['id'] for r in rs], 'title': fill(title, ctx), 'day': d, 'start': s_,
                        'end': e_, 'where': fill(where, {'office': OFFICE[org]}), 'with': attendees, 'notes': fill(notes, ctx)})
     events.sort(key=lambda e: (e['day'], e['start'], e['id']))
+    by_label = {x['label']: x['id'] for x in cal_roles}
+    for e in events:
+        for w in e['with']:
+            rid = by_label.get(LABEL_ALIAS.get(w['role'], w['role'])) if not w.get('name') else None
+            need(rid is None or rid in e['for'], 'calendar: %s names the %s but it is not on their calendar' % (e['title'], w['role']))
     return threads, events
 
 
@@ -3288,7 +3486,10 @@ def tile(label, value, sub, needs, modeled=False):
 
 def cal_list(pool, role):
     ev = sorted(vis(pool, role, 'calendar', 'events', lambda r: r['day'] == 0), key=lambda r: r['start'])
-    return [{'time': t12(e['start']), 'title': e['title'], 'where': e['where'], 'prompt': 'Prep me for %s.' % lower_first(e['title'])} for e in ev]
+    def prompt(title):
+        t = lower_first(title)
+        return ('Help me with %s.' if t.lower().endswith(' prep') else 'Prep me for %s.') % t   # never "Prep me for board update prep."
+    return [{'time': t12(e['start']), 'title': e['title'], 'where': e['where'], 'prompt': prompt(e['title'])} for e in ev]
 
 
 def home_for(role, pool, st, org_files):
@@ -3300,10 +3501,23 @@ def home_for(role, pool, st, org_files):
     if rid in ('bsp-managing-partner', 'bsp-partner', 'bsp-operating-partner', 'bsp-senior-associate', 'bsp-associate'):
         # Only companies whose pack is in have reported (the packs show Thomas Scientific late and BPI due).
         sent = {r['company'] for r in pool.all('financials', 'packs') if r['m'] == -1 and r['status'] == 'In'}
-        pnl = [r for r in pool.all('financials', 'pnl') if r['m'] == -1 and r['co'] in sent]
-        k = sum(1 for r in pnl if r['revenue_k'] < .99 * r['plan_revenue_k'])
-        h['lead'] = '%d of 6 companies reported for {month:-1}. %s' % (len(pnl), 'None of those are behind plan.' if k == 0 else (
-            'One is behind plan.' if k == 1 else '%d are behind plan.' % k))
+        pnl = sorted((r for r in pool.all('financials', 'pnl') if r['m'] == -1 and r['co'] in sent), key=lambda r: COS.index(r['co']))
+        # Behind plan = revenue or EBITDA more than PLAN_TOL_PCT under plan (the same tolerance as the CEO homes and the agent).
+        behind = []
+        for r in pnl:
+            rv, ev = vs_plan(r['revenue_k'], r['plan_revenue_k'])[0], ebitda_vs_plan(r)[0]
+            miss = [(n_, -x) for n_, x in (('revenue', rv), ('EBITDA', ev)) if x < -PLAN_TOL_PCT]
+            if miss:
+                behind.append((ORG_NAME[r['co']], miss))
+        if not behind:
+            tail = 'None is more than %g%% behind plan on revenue or EBITDA.' % PLAN_TOL_PCT
+        elif len(behind) == 1:
+            nm, miss = behind[0]
+            tail = ('%s %s is %.1f%% below plan.' % (nm, miss[0][0], miss[0][1]) if len(miss) == 1 else
+                    '%s is below plan: revenue %.1f%%, EBITDA %.1f%%.' % (nm, miss[0][1], miss[1][1]))
+        else:
+            tail = '%s are more than %g%% behind plan: %s.' % (num_word(len(behind)), PLAN_TOL_PCT, and_list([b[0] for b in behind]))
+        h['lead'] = '%d of 6 companies reported for {month:-1}. %s' % (len(pnl), tail)
         h['needs_text'] = 'portfolio results'
         third = tile('Deals in diligence', sum(1 for d in pool.all('dealcloud', 'deals') if d['stage'] == 'Diligence'), 'From DealCloud', 'dealcloud') \
             if rid != 'bsp-operating-partner' else tile('Open roles', sum(r['open_roles'] for r in pool.all('adp', 'headcount') if r['co'] in COS), 'Across six companies', 'adp')
@@ -3329,7 +3543,9 @@ def home_for(role, pool, st, org_files):
     elif kind == 'ceo':
         p = [r for r in pool.all('financials', 'pnl') if r['co'] == co and r['m'] == -1][0]
         x = (p['revenue_k'] / p['plan_revenue_k'] - 1) * 100
-        h['lead'] = ('Revenue was on plan in {month:-1}.' if abs(x) < .05 else 'Revenue was %.1f%% %s plan in {month:-1}.' % (abs(x), 'above' if x > 0 else 'below'))
+        ev, ew = ebitda_vs_plan(p)
+        h['lead'] = 'Revenue was %s in {month:-1}.' % vs_plan(p['revenue_k'], p['plan_revenue_k'])[1] + (
+            '' if ew == 'on plan' else ' EBITDA was %s.' % ew)
         h['needs_text'] = 'results against plan'
         rev = l12(pool, co)
         eb = rev - l12(pool, co, 'cogs_k') - l12(pool, co, 'opex_k')
@@ -3444,8 +3660,13 @@ def home_for(role, pool, st, org_files):
         h['kpis'] = [tile('Jobs today', len(today), 'Lancaster hub', 'servicetitan'),
                      tile('Booking rate', kfmt(kpi_of(pool, 'pp', 'booking_rate', 'lancaster')), 'Lancaster hub, last month', 'financials'),
                      tile('Callbacks', kfmt(kpi_of(pool, 'pp', 'callbacks', 'lancaster')), 'Last 30 days', 'financials')]
-        h['list'] = [{'time': t12(j['start']), 'title': j['type'], 'where': '%s · %s' % (cust[j['customer']]['address']['town'],
-                                                                                        (tmap[j['tech']]['name'] if j['tech'] else 'Not assigned')),
+        def tech_word(j):
+            # A technician named "You" is that technician's own persona; the general manager sees the trade, never "You".
+            if not j['tech']:
+                return 'Not assigned'
+            t_ = tmap[j['tech']]
+            return TRADE_ROLE[t_['trade']] if t_['name'] == 'You' and rid not in (t_.get('for') or ()) else t_['name']
+        h['list'] = [{'time': t12(j['start']), 'title': j['type'], 'where': '%s · %s' % (cust[j['customer']]['address']['town'], tech_word(j)),
                       'prompt': "What's the status of job %s?" % j['number']} for j in today[:12]]
     elif rid == 'cet-field-electrician':
         mine = vis(pool, role, 'procore', 'projects')
@@ -3453,16 +3674,17 @@ def home_for(role, pool, st, org_files):
         insp = sorted([(i['day'], i['what']) for p in mine for i in p['inspections'] if i['day'] > 0])[0]
         h.update({'title': 'Today', 'list_first': True, 'list_title': "Today's site", 'needs': 'procore', 'needs_text': "today's site", 'list_needs': 'procore',
                   'lead': 'Today: %s, %s. Crew starts at 7:00 am.' % (t['name'], t['town'])})
-        h['kpis'] = [tile('Hours logged', sum(d['hours'] for p in mine for d in p['daily'] if -7 <= d['day'] <= -1), 'Last 7 days', 'procore'),
+        # The daily logs record crew-hours (crew of 3 to 8), so the tile says crew hours on the electrician's sites, not personal hours.
+        h['kpis'] = [tile('Crew hours', '{:,}'.format(sum(d['hours'] for p in mine for d in p['daily'] if -7 <= d['day'] <= -1)), 'My sites, last 7 days', 'procore'),
                      tile('Open RFIs', sum(1 for p in mine for x in p['rfis'] if x['status'] == 'Open'), 'On my sites', 'procore'),
                      tile('Next inspection', 'In %d days' % insp[0], insp[1], 'procore')]
-        h['list'] = [{'time': '7:00 am', 'title': p['name'], 'where': '%s, %s' % (p['town'], p['state']), 'prompt': "What's on today at %s?" % p['name']}
-                     for p in sorted(mine, key=lambda p: (p is not t, p['number']))]
+        need(sum(1 for p in mine if any(c['name'] == 'You' for c in p['crew_today'])) == 1, 'field electrician: on more than one site today')
+        h['list'] = [{'time': '7:00 am', 'title': t['name'], 'where': '%s, %s' % (t['town'], t['state']), 'prompt': "What's on today at %s?" % t['name']}]
     elif rid == 'cet-project-manager':
         mine = vis(pool, role, 'procore', 'projects')
         r = sum(1 for p in mine for x in p['rfis'] if x['status'] == 'Open' and 0 <= x['due_d'] <= 7)
         h.update({'title': 'Today', 'needs': 'procore', 'needs_text': 'your projects', 'list_title': 'Projects at risk', 'list_needs': 'procore',
-                  'lead': '%d projects. %d RFIs are due this week.' % (len(mine), r)})
+                  'lead': '%d projects. %s due this week.' % (len(mine), 'One RFI is' if r == 1 else '%d RFIs are' % r)})
         h['kpis'] = [tile('Projects', len(mine), 'Active', 'procore'), tile('RFIs due', r, 'Next 7 days', 'procore'),
                      tile('Change orders', sum(1 for p in mine for x in p['change_orders'] if x['status'] == 'Pending owner'), 'Waiting on owner', 'procore')]
         h['list'] = [{'time': '%d%% done' % p['pct_complete'], 'title': p['name'], 'where': '%s, %s' % (p['town'], p['state']), 'chip': p['health'],
@@ -3650,7 +3872,7 @@ def build_roles_json(roles):
             'app_names': {o: {a: app_name(o, a) for a in APP_ORDER if a in apps_used[o]} for o in ORGS},
             'styles': {k: {'label': v[0], 'chat': v[1], 'voice': v[2]} for k, v in STYLES.items()},
             'actions': {k: dict({'label': v[0], 'app': v[1]}, **({'app_by_org': {'bsp': 'dealcloud'}} if k == 'crm_stage' else {})) for k, v in ACTIONS.items()},
-            'public_tools': PUBLIC, 'teams': TEAM_NAME, 'roles': out}
+            'public_tools': PUBLIC, 'teams': TEAM_NAME, 'roles': out, 'plan_tolerance_pct': PLAN_TOL_PCT}
 
 
 # ------------------------------------------------------------------------------------------------ scans
@@ -3871,16 +4093,14 @@ def generate(streets):
             c['close_list'] = 'Open items for the {month:-1} close: %s.%s' % (and_list(op), ' Bank reconciliation is done.' if recon == 'Done' else '')
             c['close_short'] = '%s close %s still open.' % (num_word(n), 'item is' if n == 1 else 'items are')
         pay = [r for r in fin[co]['payroll'] if r['m'] == -1][0]
-        d = (pay['payroll_k'] / pay['plan_k'] - 1) * 100
-        c['payroll_line'] = ('Payroll ran %.1f%% above plan last month, mostly overtime. Detail by team is attached.' % d) if d >= 0.05 else \
-            ('Payroll ran %.1f%% under plan last month. Detail by team is attached.' % -d)
+        d, dw = vs_plan(pay['payroll_k'], pay['plan_k'])
+        c['payroll_line'] = 'Payroll ran %s last month%s. Detail by team is attached.' % (dw, ', mostly overtime' if d > PLAN_TOL_PCT else '')
         orl = sum(r['open_roles'] for r in hcs[co])
         c['open_roles_n'] = str(orl)
         c['open_roles_line'] = '%d roles are still open across the company. Overtime covers the gap for now.' % orl
         c['open_roles_chat'] = '%d open roles across the company; hiring plan is in the folder.' % orl
         pnl1 = [r for r in fin[co]['pnl'] if r['m'] == -1][0]
-        rv = (pnl1['revenue_k'] / pnl1['plan_revenue_k'] - 1) * 100
-        c['rev_line'] = 'Revenue was on plan' if abs(rv) < .3 else 'Revenue was %.1f%% %s plan' % (abs(rv), 'above' if rv > 0 else 'below')
+        c['rev_line'] ='Revenue was %s' % vs_plan(pnl1['revenue_k'], pnl1['plan_revenue_k'])[1]
     pin = [p_ for p_ in packs if p_['m'] == -1]
     n_in = sum(1 for p_ in pin if p_['status'] == 'In')
     late = ['%s is %s' % (ORG_NAME[p_['company']], 'late' if p_['status'] == 'Late' else 'due this week') for p_ in pin if p_['status'] != 'In']
@@ -3924,7 +4144,32 @@ def generate(streets):
             need('part' not in b or b['part'] in parts, 'issue %s: part %s is not in the parts list' % (i['id'], b.get('part')))
         for c in i['offers']:
             need(c in codes, 'issue %s: offer %s is not in the price book' % (i['id'], c))
-    need(len(ISSUES) == 17, 'issues: expected 17')
+    need(len(ISSUES) == 18, 'issues: expected 18')
+    for g, m in WHO.items():
+        titles = {t[0] for t in CAL[g]} | {t[0] for sw in CAL_SWAP.values() for (gg, _), t in sw.items() if gg == g}
+        for t, who_ in m.items():
+            need(t in titles, 'calendar: WHO names %s, which is not in the %s pool' % (t, g))
+            need(who_ <= {a for a, gg in CAL_GROUP.items() if gg == g}, 'calendar: WHO for %s names a role outside the %s pool' % (t, g))
+    ids = {i['id'] for i in ISSUES}
+    for i in ISSUES:
+        for rx in i['match']:
+            try:
+                re.compile(rx)
+            except re.error:
+                need(False, 'issue %s: bad pattern %s' % (i['id'], rx))
+        for t, iid in (i.get('by_heat') or {}).items():
+            need(t in HEAT_TYPES and iid in ids, 'issue %s: by_heat %s -> %s is unknown' % (i['id'], t, iid))
+        need(all(k in SAFETY for k in i['safety']), 'issue %s: unknown safety key' % i['id'])
+    for t, v in HEAT_TYPES.items():
+        need(v['issue'] in ids and all(k in KINDS for k in v['kinds']) and v['default_fuel'] in v['fuels'], 'heat type %s is inconsistent' % t)
+    for text, want, heat in ISSUE_CASES:
+        need(issue_for(text) == want, 'issues: "%s" picks %s, not %s' % (text, issue_for(text), want))
+        need(heat_for(text) == heat, 'heat words: "%s" names %s, not %s' % (text, heat_for(text), heat))
+    for trade, types in JOB_TYPES.items():
+        for _, iid, _, saids in types:
+            for said in saids:
+                got = issue_for(said)
+                need(got in (None, iid) or (iid, got) == ('no_heat', 'boiler'), 'job type %s: "%s" picks %s' % (iid, said, got))
     need(len(st['parts']) == 14, 'parts: expected 14')
     for o in ORGS:
         for a, sets in org_files[o]['apps'].items():

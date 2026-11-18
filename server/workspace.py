@@ -12,6 +12,7 @@ addresses and public property facts). Nothing here sends anything anywhere: draf
 """
 from __future__ import annotations
 
+import contextvars
 import datetime
 import difflib
 import hashlib
@@ -61,9 +62,17 @@ NUM_RX = re.compile(r'\b(revenue|ebitda|margin|p&l|profit|cash|debt|headcount|pa
 EMAIL_RX = re.compile(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}')
 PHONE_RX = re.compile(r'(?<![\w-])(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}(?![\w-])')
 TOKEN_RX = re.compile(r'\{month:(-?\d+)\}')
-STATE_WORDS = {'PENNSYLVANIA': 'PA', 'NEW JERSEY': 'NJ'}
-US_STATES = set('AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD '
-                'TN TX UT VT VA WA WV WI WY DC'.split())
+STATE_WORDS = {'ALABAMA': 'AL', 'ALASKA': 'AK', 'ARIZONA': 'AZ', 'ARKANSAS': 'AR', 'CALIFORNIA': 'CA', 'COLORADO': 'CO', 'CONNECTICUT': 'CT',
+               'DELAWARE': 'DE', 'FLORIDA': 'FL', 'GEORGIA': 'GA', 'HAWAII': 'HI', 'IDAHO': 'ID', 'ILLINOIS': 'IL', 'INDIANA': 'IN', 'IOWA': 'IA',
+               'KANSAS': 'KS', 'KENTUCKY': 'KY', 'LOUISIANA': 'LA', 'MAINE': 'ME', 'MARYLAND': 'MD', 'MASSACHUSETTS': 'MA', 'MICHIGAN': 'MI',
+               'MINNESOTA': 'MN', 'MISSISSIPPI': 'MS', 'MISSOURI': 'MO', 'MONTANA': 'MT', 'NEBRASKA': 'NE', 'NEVADA': 'NV', 'NEW HAMPSHIRE': 'NH',
+               'NEW JERSEY': 'NJ', 'NEW MEXICO': 'NM', 'NEW YORK': 'NY', 'NORTH CAROLINA': 'NC', 'NORTH DAKOTA': 'ND', 'OHIO': 'OH', 'OKLAHOMA': 'OK',
+               'OREGON': 'OR', 'PENNSYLVANIA': 'PA', 'RHODE ISLAND': 'RI', 'SOUTH CAROLINA': 'SC', 'SOUTH DAKOTA': 'SD', 'TENNESSEE': 'TN',
+               'TEXAS': 'TX', 'UTAH': 'UT', 'VERMONT': 'VT', 'VIRGINIA': 'VA', 'WASHINGTON': 'WA', 'WEST VIRGINIA': 'WV', 'WISCONSIN': 'WI',
+               'WYOMING': 'WY', 'DISTRICT OF COLUMBIA': 'DC'}
+US_STATES = set(STATE_WORDS.values())
+# A full state name that is also a common town name counts as the state only after a town ("Seattle, Washington"), never alone.
+STATE_TOWN_NAMES = {'WASHINGTON', 'NEW YORK', 'DELAWARE', 'INDIANA'}
 GAS_KINDS = {'furnace', 'water_heater', 'boiler', 'gas_shutoff', 'gas_meter'}
 HEAT_KINDS = {'furnace', 'boiler', 'heat_pump', 'air_handler'}
 FLOOR_NAMES = {'basement': 'Basement', 'first': 'First floor', 'second': 'Second floor'}
@@ -364,12 +373,48 @@ def visible(rec, role_id, app, set_):
     return False
 
 
+# The role reading the records during one tool call. "You" on a record is that record's own persona (its `for` role): another
+# reader sees the persona's role instead, so a location manager never reads a technician's job as their own.
+_READER = contextvars.ContextVar('workspace_reader', default=None)
+
+
+def _reader_label():
+    rid = _READER.get()
+    if not rid:
+        return None
+    try:
+        return (role(rid).get('label') or '').strip().lower() or None
+    except Exception:   # noqa: BLE001
+        return None
+
+
+def _you_for(for_ids):
+    """True when the persona a record's `for` list names is the reader (or no reader is set)."""
+    rid = _READER.get()
+    return not rid or rid in (for_ids or ())
+
+
+def _persona_label(for_ids, fallback=''):
+    """The role label of the persona a record belongs to ("HVAC technician"), for readers other than that persona."""
+    for rid in for_ids or ():
+        try:
+            lab = role(rid).get('label')
+        except Exception:   # noqa: BLE001
+            lab = None
+        if lab:
+            return lab
+    return fallback
+
+
 def who(person, reader_co=None, co=None):
     if not isinstance(person, dict):
         return ''
     name, r = person.get('name'), person.get('role') or ''
     if name == 'You':
-        return 'You'
+        lab = _reader_label()
+        if lab is None or not r or r.strip().lower() == lab:
+            return 'You'
+        name = None
     if name:
         return f'{name}, {_lc(r)}' if r else name
     if not r:
@@ -653,6 +698,20 @@ def _public_words(R):
     return ', '.join(out) or 'none'
 
 
+STYLE_WORDS = {('field', False): 60, ('field', True): 60, ('brief', False): 60, ('brief', True): 50}   # when the style text names no limit
+STYLE_LINES = {'field': 'five short lines', 'brief': 'three short lines'}
+
+
+def _style_rule(style_id, rule, voice):
+    """W0: the role's answer style, a hard rule placed under the precedence line so it overrides general rule 8 on length and format."""
+    s = f'W0. Answer style (a hard rule over rule {1 if voice else 8} and any longer limit): {rule or "short and plain"}'
+    if style_id in STYLE_LINES:
+        m = re.search(r'\b(?:under|about|at most|no more than)\s+(\d{2,3})\s+words\b', rule or '')
+        n = int(m.group(1)) if m else STYLE_WORDS[(style_id, bool(voice))]
+        s += f' Stop at {n} words even if a tool returns more.'
+    return s
+
+
 def _role_block(ws, voice):
     R = _rl(ws)
     co = R.get('company')
@@ -665,27 +724,31 @@ def _role_block(ws, voice):
     L = ['COMPANY AGENT (sandbox)',
          f"You are answering as the company agent for one person: {R.get('label_a')} at {org}{', ' + team if team else ''}. The person is "
          f'"You" in the records; never use a name for them.',
-         f'Answer style: {rule or "short and plain"}',
          'Rules for this workspace (they take precedence over the general rules above for this role):',
-         f"W1. Use only the role's tools. The apps hold sandbox data: fictional people and modeled numbers that mirror what {org}'s systems "
-         'could hold. They are cleared for this demo, so the rule about non-public information does not apply to them; never present them as '
-         'real company figures. Mark modeled money figures "est.". Do not add a "General view" label.',
+         _style_rule(R.get('style'), rule, voice),
+         'W0b. No text before or between tool calls; your first words are the answer.',
+         f"W1. Use only the role's tools. The apps hold sandbox data (fictional people, modeled numbers) mirroring what {org}'s systems "
+         'could hold. It is cleared for this demo, so the rule about non-public information does not apply, but never present it as real '
+         'company figures. Mark modeled money figures "est.". No "General view" label.',
          ('W2. Never print record ids. People without a name are named by role.' if voice else
           'W2. Cite records as [n] like any source (chat). Never print record ids; use job numbers, titles and names. People without a name '
           'are named by role ("the controller").'),
+         'W2b. Sandbox people are fictional even where a role matches a real person (a CEO, a BSP partner): never put a real person\'s '
+         'name on a sandbox email, message, meeting or record, or say they wrote, said or owe anything in it; use the role ("the Punctual '
+         'Pros CEO"). Who holds a role is a public fact for its own sentence and source.',
          f"W3. Access: this role may read {_access_words(R)}; numbers: {R.get('numbers_text') or 'None'}; public research: {_public_words(R)}. "
          'Public research estimates may be quoted only as public estimates with their source; the company\'s internal results are outside '
-         f"access. If asked for anything else, say \"That's outside your access as {R.get('label_a')}.\" and then: {R.get('denied_hint') or ''} "
-         'Do not guess or describe the hidden figures.',
+         f"access. If asked for anything else, say \"That's outside your access as {R.get('label_a')}.\""
+         + (f" and then: {R['denied_hint']}" if R.get('denied_hint') else '') + ' Do not guess or describe the hidden figures.',
          "W4. If an answer needs an app the role may use but has not connected, say which app to connect and what it would add."]
     if R.get('actions'):
         L.append('W5. Actions: use draft_action. Never say a message was sent, a job booked, a part ordered or a stage moved: say the draft is on '
                  'screen waiting for approval.')
     if 'site_brief' in tools:
-        L.append('W6. Site work: lead with where the equipment for the reported issue is and its shutoff, as site_brief lists it under WHERE THE '
-                 'PROBLEM IS. Say "from our records" for a recorded location and "likely; confirm on site" for an inferred one, exactly as '
-                 'site_brief marks it. Never present a likely location as a record. If site_brief says MATCHED, name the job it matched. For a '
-                 'real address give only public facts and likely layout; never invent people, history or problems for it.')
+        L.append('W6. Site work: lead with where the equipment for the issue is and its shutoff. Say "from our records" for a recorded '
+                 'location and "likely; confirm on site" for an inferred one, as each line is marked; never state a likely location, house '
+                 'style or layout as fact. If the lookup says MATCHED, name that job. For a real address give only public facts and likely '
+                 'layout; never invent people, history or problems. Never name the tool or say "the brief".')
     L.append('W7. Safety first: for a gas smell, a carbon monoxide alarm, sparking or water near electrical, give the safety step before anything '
              'else. Operational safety only; no legal or compliance talk.')
     L.append('W8. No email addresses or phone numbers in answers or drafts.')
@@ -710,7 +773,7 @@ def _state_block(ws):
     if 'search' not in pub:
         L.append('This role has no knowledge-base search; the sources block is empty by design (ignore its note about searching '
                  'with other words). Do not search the knowledge base.')
-    elif R.get('style') in ('field', 'desk'):
+    else:   # no automatic knowledge-base lookup for a workspace request: the role's apps answer most questions
         L.append('No excerpts are attached; search the knowledge base only for public research.')
     job = ws.get('job')
     if job and (job.get('address') or job.get('issue')):
@@ -852,6 +915,8 @@ def _title(app, set_, rec):
         return f'Customer record, {_addr_line(rec)}'
     if app == 'servicetitan' and set_ == 'equipment':
         return f"{_kind_label(rec.get('kind'))}, {_addr_line(_customer(rec.get('customer')), town=False)}"
+    if app == 'servicetitan' and set_ == 'technicians':   # "You" only for the reader's own record
+        return f"{_set_label(app, set_)}: {tok(_tech_name(rec))}"
     if app == 'email':
         return 'Email: ' + tok(rec.get('subject') or 'thread')
     if app in ('financials', 'adp') and set_ in ('pnl', 'kpis', 'payroll'):
@@ -859,6 +924,16 @@ def _title(app, set_, rec):
     if app in ('financials', 'adp') and set_ in ('debt', 'close', 'headcount', 'inventory'):
         v = rec.get('facility') or rec.get('item') or ' '.join(str(x) for x in (rec.get('unit'), rec.get('group')) if x) or rec.get('name') or ''
         return f"{_co_name(rec.get('co'))} {_lc(_set_label(app, set_))}: {tok(v)}"
+    if app == 'financials' and set_ == 'packs' and rec.get('company'):
+        return f"{_co_name(rec.get('company'))} reporting pack, {_mon(rec.get('m', -1), True)}"
+    if app == 'shopify' and set_ == 'daily' and isinstance(rec.get('day'), int):
+        d = _date(rec['day'])
+        return f"{_set_label(app, set_)}: {d.strftime('%b')} {d.day}"
+    if app == 'shopify' and set_ == 'returns' and not rec.get('title'):
+        prod = _lookup(rec.get('product_id'), rec.get('co')) if rec.get('product_id') else None
+        bits = [tok(str(x)) for x in ((prod or {}).get('name') or rec.get('product'), rec.get('reason')) if x]
+        if bits:
+            return f"{_set_label(app, set_)}: {bits[0]}" + (f' ({bits[1]})' if len(bits) > 1 else '')
     for k in ('number', 'title', 'subject', 'name', 'item', 'facility', 'unit', 'sku', 'fund'):
         if rec.get(k):
             pre = _set_label(app, set_)
@@ -907,9 +982,11 @@ def _seasoned(app, set_, rec):
             r['plan_ebitda_k'] = r['plan_revenue_k'] - r['plan_cogs_k'] - r['plan_opex_k']
     elif r.get('seasonal') and isinstance(r.get('m'), int):
         f = _season(r.get('co'), r['m'])
+        count = r.get('unit') not in ('%', '$', 'k$')   # jobs, orders: whole numbers stay whole (no "3,062.5 jobs" target)
         for k in ('value', 'target', 'payroll_k', 'plan_k'):
-            if isinstance(r.get(k), (int, float)):
-                r[k] = r[k] * f
+            if isinstance(r.get(k), (int, float)) and not isinstance(r.get(k), bool):
+                v = r[k] * f
+                r[k] = int(math.floor(v + 0.5)) if count and k in ('value', 'target') and isinstance(rec.get(k), int) else v
     elif app == 'shopify' and set_ == 'daily' and isinstance(r.get('day'), int):
         d = _date(r['day'])
         try:
@@ -945,7 +1022,7 @@ def _line(app, set_, rec, reader_co):
         P = [_kind_label(r.get('kind')), _addr_line(c), ', '.join(str(x) for x in (r.get('make'), r.get('year')) if x),
              _floor_words(r.get('floor')) + (', ' + _lc(r['note']) if r.get('note') else '')]
     elif app == 'servicetitan' and set_ == 'technicians':
-        P = [r.get('name'), r.get('trade'), _team_name(r.get('team')), r.get('status')]
+        P = [_tech_name(r), r.get('trade'), _team_name(r.get('team')), r.get('status')]
     elif app == 'servicetitan' and set_ == 'pricebook':
         P = [r.get('name'), _price(r), (f"member {money(r['member_price'])}" if isinstance(r.get('member_price'), (int, float)) else '')]
     elif app == 'email':
@@ -1002,7 +1079,10 @@ def _line(app, set_, rec, reader_co):
         P = [(prod or {}).get('name'), r.get('reason'), f"{r.get('count_30d')} in the last 30 days"]
     elif app == 'financials' and set_ == 'pnl':
         P = [_co_name(co), _mon(r.get('m', -1), True), f"revenue {money(r.get('revenue_k'), True)}", f"plan {money(r.get('plan_revenue_k'), True)}",
-             f"EBITDA {money(r.get('ebitda_k'), True)}{est}" if 'ebitda_k' in r else '']
+             _margin_words('gross margin', r.get('gross_k'), r.get('revenue_k')),
+             f"EBITDA {money(r.get('ebitda_k'), True)}{est}" if 'ebitda_k' in r else '',
+             f"plan EBITDA {money(r.get('plan_ebitda_k'), True)} ({_vs_plan(r.get('ebitda_k'), r.get('plan_ebitda_k'))})"
+             if isinstance(r.get('plan_ebitda_k'), (int, float)) and isinstance(r.get('ebitda_k'), (int, float)) else '']
     elif app == 'financials' and set_ == 'kpis':
         P = [_co_name(co) + (f", {_team_name(r.get('team'))}" if r.get('team') else ''), r.get('label'), _mon(r.get('m', -1), True),
              f"{_kpi(r.get('value'), r.get('unit'))} against {_kpi(r.get('target'), r.get('unit'))}{est}"]
@@ -1035,6 +1115,35 @@ def _line(app, set_, rec, reader_co):
     else:
         P = [tok(str(r.get(k))) for k in ('number', 'name', 'title', 'subject', 'status') if r.get(k)]
     return ' · '.join(tok(str(x)) for x in P if x not in (None, '', 'None'))
+
+
+def _tech_name(t):
+    """A technician's name; the reader's own persona is "You", anyone else's persona is its role ("HVAC technician")."""
+    name = (t or {}).get('name') or ''
+    if name == 'You' and not _you_for(t.get('for')):
+        return _persona_label(t.get('for'), f"{t.get('trade') or 'Field'} technician")
+    return name
+
+
+def _plan_tol():
+    try:
+        v = load('roles').get('plan_tolerance_pct')
+    except Exception:   # noqa: BLE001
+        v = None
+    return float(v) if isinstance(v, (int, float)) and not isinstance(v, bool) and v >= 0 else 1.0
+
+
+def _vs_plan(a, b):
+    """"+5.0%, above plan", "-0.2%, on plan": within the plan tolerance (roles.json, 1%) counts as on plan, as on the home view."""
+    if not (isinstance(a, (int, float)) and isinstance(b, (int, float)) and b):
+        return ''
+    x = round((a - b) / b * 100, 1)
+    word = 'on plan' if abs(x) <= _plan_tol() else ('above plan' if x > 0 else 'below plan')
+    return f'{x:+.1f}%, {word}'
+
+
+def _margin_words(label, part, whole):
+    return f'{label} {part / whole * 100:.1f}%' if isinstance(part, (int, float)) and isinstance(whole, (int, float)) and whole else ''
 
 
 def _kpi(v, unit):
@@ -1107,6 +1216,8 @@ def _render_value(k, v, reader_co, co, known):
 def _full(app, set_, rec, reader_co):
     """The whole record in plain lines (open_record)."""
     r = _seasoned(app, set_, rec)
+    if app == 'servicetitan' and set_ == 'technicians':
+        r = dict(r, name=_tech_name(r))
     co = r.get('co')
     try:
         known = set(load(co if co in ORGS else 'pp')['_by_id']) | (set(_st()['_by_id']) if app == 'servicetitan' else set())
@@ -1120,7 +1231,7 @@ def _full(app, set_, rec, reader_co):
     if app == 'servicetitan' and set_ == 'jobs' and r.get('tech'):
         t = _st()['_by_id'].get(r['tech'])
         if t:
-            L.append(f"Technician: {t.get('name')}")
+            L.append(f"Technician: {_tech_name(t)}")
     if r.get('account_id'):
         a = _lookup(r['account_id'], co)
         if a:
@@ -1133,6 +1244,8 @@ def _full(app, set_, rec, reader_co):
         L.append(f"Where: {_floor_words(r.get('floor'))}, {_lc(r.get('note') or '')}")
     for k, v in r.items():
         if k in SKIP_KEYS or k.startswith('_') or (k in ('messages', 'notes', 'daily', 'rfis', 'change_orders', 'steps') and isinstance(v, list)):
+            continue
+        if k == 'title' and isinstance(v, str) and tok(v) in L[0]:   # already the record's first line
             continue
         s = _render_value(k, v, reader_co, co, known)
         if s:
@@ -1154,7 +1267,7 @@ def _full(app, set_, rec, reader_co):
         L.append(f"- Daily log, {when_words(x.get('day'))}: {x.get('crew')} crew, {x.get('hours')} hours. {tok(x.get('note') or '')}")
     for i, x in enumerate(r.get('steps') or [], 1):
         L.append(f'{i}. {tok(x) if isinstance(x, str) else _render_value("step", x, reader_co, co, known)}')
-    return '\n'.join(x for x in L if x)
+    return '\n'.join(x for i, x in enumerate(L) if x and x not in L[:i])
 
 
 def _searchable(app, set_, rec):
@@ -1356,16 +1469,20 @@ def _numbers(ws, args, sources):
         targets = [company]
     title_co = 'Portfolio (six companies)' if company == 'portfolio' else (
         f"{_co_name(rco)}, {_team_name(R.get('team')) or 'your team'}" if company == 'team' else _co_name(company))
-    n = sources.add(f'ws:{app}:{company}:{view}', f'{title_co} {_VIEW_TITLE[view]}', '', f'Sandbox: {app_name(app, rco)}', _iso(), 'sandbox')
+    vt = _VIEW_TITLE[view]
+    if view == 'fund':   # "BSP Fund I", never "BSP the fund"
+        names = [str(r.get('fund')) for r in _records('financials', 'fund', 'bsp') if r.get('fund')]
+        vt = names[0] if len(names) == 1 else 'funds'
+    n = sources.add(f'ws:{app}:{company}:{view}', f'{title_co} {vt}', '', f'Sandbox: {app_name(app, rco)}', _iso(), 'sandbox')
     team = R.get('team') if company == 'team' else None
     if view == 'kpis':
         body = _v_kpis(targets, months, team, company, rco, hc=_connected(ws, 'adp') and 'adp' in (R.get('apps') or {}))
     else:
         body = _VIEW_FN[view](targets, months, team, company, rco)
-    return _scrub(_with_sources(sources, [n], f'{title_co}: {_VIEW_TITLE[view]} [{n}]\n{body}')), False, []
+    return _scrub(_with_sources(sources, [n], f'{title_co}: {vt} [{n}]\n{body}')), False, []
 
 
-_VIEW_TITLE = {'pnl': 'monthly results', 'kpis': 'KPIs', 'headcount': 'headcount', 'payroll': 'payroll', 'debt': 'debt', 'fund': 'the fund'}
+_VIEW_TITLE = {'pnl': 'monthly results', 'kpis': 'KPIs', 'headcount': 'headcount', 'payroll': 'payroll', 'debt': 'debt', 'fund': 'fund'}
 
 
 def _pct(a, b):
@@ -1376,30 +1493,40 @@ def _v_pnl(targets, months, team, company, rco):
     rows = _num_records('financials', 'pnl', targets)
     rows = [r for r in rows if isinstance(r.get('m'), int) and r['m'] < 0 and r.get('team') in (None, '')]
     by_m = {}
+    keys = ('revenue_k', 'plan_revenue_k', 'gross_k', 'ebitda_k', 'plan_ebitda_k')
     for r in rows:
-        a = by_m.setdefault(r['m'], {'revenue_k': 0, 'plan_revenue_k': 0, 'ebitda_k': 0, 'plan_ebitda_k': 0, 'n': 0})
-        for k in ('revenue_k', 'plan_revenue_k', 'ebitda_k', 'plan_ebitda_k'):
+        a = by_m.setdefault(r['m'], {**{k: 0 for k in keys}, 'n': 0})
+        for k in keys:
             a[k] += r.get(k) or 0
         a['n'] += 1
     ms = sorted(by_m, reverse=True)
-    L = ['Month | Revenue | Plan | vs plan | EBITDA | Margin  ($ thousands, est.)']
+    pct = lambda part, whole: f'{part / whole * 100:.1f}%' if whole else ''
+    L = ['Month | Revenue | Revenue plan | Revenue vs plan | Gross margin | EBITDA | EBITDA plan | EBITDA vs plan | EBITDA margin  ($ thousands, est.)']
     for m in ms[:months]:
         a = by_m[m]
-        mg = f"{a['ebitda_k'] / a['revenue_k'] * 100:.1f}%" if a['revenue_k'] else ''
         L.append(f"{_mon(m, True)} | {round(a['revenue_k']):,} | {round(a['plan_revenue_k']):,} | {_pct(a['revenue_k'], a['plan_revenue_k'])} | "
-                 f"{round(a['ebitda_k']):,} | {mg}")
+                 f"{pct(a['gross_k'], a['revenue_k'])} | {round(a['ebitda_k']):,} | {round(a['plan_ebitda_k']):,} | "
+                 f"{_pct(a['ebitda_k'], a['plan_ebitda_k'])} | {pct(a['ebitda_k'], a['revenue_k'])}")
     last12 = [by_m[m] for m in ms[:12]]
     if last12:
-        rev, plan, eb = (sum(a[k] for a in last12) for k in ('revenue_k', 'plan_revenue_k', 'ebitda_k'))
-        L.append(f"Last {len(last12)} closed months: revenue {money(rev, True)} against plan {money(plan, True)} ({_pct(rev, plan)}); EBITDA "
-                 f"{money(eb, True)}" + (f" ({eb / rev * 100:.1f}% margin)" if rev else '') + ' (est.)')
+        rev, plan, gross, eb, peb = (sum(a[k] for a in last12) for k in keys)
+        L.append(f"Last {len(last12)} closed months: revenue {money(rev, True)} against plan {money(plan, True)} ({_pct(rev, plan)}); "
+                 + (f'gross margin {pct(gross, rev)}; ' if rev else '') + f"EBITDA {money(eb, True)}"
+                 + (f" ({eb / rev * 100:.1f}% margin)" if rev else '')
+                 + (f" against plan {money(peb, True)} ({_pct(eb, peb)})" if peb else '') + ' (est.)')
+    tol = _plan_tol()
+    L.append(f'On plan means within {tol:g}% of plan, the rule the home view uses; a bigger gap is above or below plan.')
     if company == 'portfolio' and ms:
         L.append(f'By company, {_mon(ms[0], True)}:')
         for c in targets:
             r = next((x for x in rows if x.get('co') == c and x['m'] == ms[0]), None)
             if r:
                 L.append(f"- {_co_name(c)}: revenue {money(r.get('revenue_k'), True)}, plan {money(r.get('plan_revenue_k'), True)} "
-                         f"({_pct(r.get('revenue_k'), r.get('plan_revenue_k'))}), EBITDA {money(r.get('ebitda_k'), True)} (est.)")
+                         f"({_vs_plan(r.get('revenue_k'), r.get('plan_revenue_k'))})"
+                         + (f", {_margin_words('gross margin', r.get('gross_k'), r.get('revenue_k'))}" if r.get('gross_k') is not None else '')
+                         + f", EBITDA {money(r.get('ebitda_k'), True)}"
+                         + (f", plan EBITDA {money(r.get('plan_ebitda_k'), True)} ({_vs_plan(r.get('ebitda_k'), r.get('plan_ebitda_k'))})"
+                            if isinstance(r.get('plan_ebitda_k'), (int, float)) else '') + ' (est.)')
     L.append('basis: ' + ('Each company anchored to its run-rate estimate in BSP Desk research (est.).' if company == 'portfolio' else _basis(targets[0])))
     return '\n'.join(L)
 
@@ -1502,7 +1629,7 @@ def _suffix_words():
     global _SUFFIX_WORDS
     if _SUFFIX_WORDS is None:
         import property as homes
-        _SUFFIX_WORDS = set(homes.SUFFIX) | set(homes.SUFFIX.values()) | {'LN', 'WAY', 'RUN', 'PIKE', 'CT', 'ST', 'RD', 'AVE', 'DR', 'PL'}
+        _SUFFIX_WORDS = set(homes.SUFFIX) | set(homes.SUFFIX.values()) | {'LN', 'LA', 'WAY', 'RUN', 'PIKE', 'CT', 'ST', 'RD', 'AVE', 'DR', 'PL'}
         _SUFFIX_WORDS -= {'N', 'S', 'E', 'W', 'NE', 'NW', 'SE', 'SW', '1ST', '2ND', '3RD', '4TH', '5TH', '6TH', '7TH', '8TH', '9TH', '10TH',
                           '11TH', '12TH', 'NORTH', 'SOUTH', 'EAST', 'WEST', 'FIRST', 'SECOND', 'THIRD', 'FOURTH', 'FIFTH', 'SIXTH',
                           'SEVENTH', 'EIGHTH', 'NINTH', 'TENTH', 'ELEVENTH', 'TWELFTH', 'SAINT', 'MOUNT', 'MT'}
@@ -1518,43 +1645,102 @@ def _known_towns():
         return []
 
 
+def _state_name_at(words, i):
+    """(code, word count) when a full state name starts at words[i], else (None, 0). Longest name first ("West Virginia")."""
+    clean = [re.sub(r'[^A-Za-z]', '', w).upper() for w in words]
+    for n in (3, 2, 1):
+        if i + n <= len(words) and all(clean[i:i + n]):
+            code = STATE_WORDS.get(' '.join(clean[i:i + n]))
+            if code:
+                return code, n
+    return None, 0
+
+
 def _state_zip(words):
-    """(state, zip, index of the first state/ZIP word) in a list of words."""
+    """(state, zip, index of the first state/ZIP word) in a list of words.
+
+    Codes ("PA", "VT") and the names Pennsylvania and New Jersey count anywhere. Any other full state name counts only at the end
+    (before a ZIP at most), and a name that is also a common town ("Washington") only as its own comma part after a town
+    ("Seattle, Washington"; never "Fort Washington")."""
     st = z = None
     first = None
+    skip = 0
     for i, w in enumerate(words):
+        if skip:
+            skip -= 1
+            continue
         u = re.sub(r'[^A-Za-z0-9]', '', w)
         if re.fullmatch(r'\d{5}', u):
             z = z or u
             first = i if first is None else first
-        elif u.upper() in ('PA', 'NJ') or (len(u) == 2 and u.isupper() and u in US_STATES):
+            continue
+        if u.upper() in ('PA', 'NJ') or (len(u) == 2 and u.isupper() and u in US_STATES):
             st = st or u.upper()
             first = i if first is None else first
-        elif i + 1 < len(words) and f'{u} {re.sub(r"[^A-Za-z]", "", words[i + 1])}'.upper() == 'NEW JERSEY':
-            st = st or 'NJ'
+            continue
+        code, n = _state_name_at(words, i)
+        if not code:
+            continue
+        name = ' '.join(re.sub(r'[^A-Za-z]', '', x).upper() for x in words[i:i + n])
+        at_end = all(re.fullmatch(r'\d{5}(-\d{4})?', re.sub(r'[^0-9-]', '', x) or 'x') for x in words[i + n:])
+        own_part = i > 0 and words[i - 1].rstrip().endswith(',')
+        if code in ('PA', 'NJ') or (at_end and (name not in STATE_TOWN_NAMES or own_part)):
+            st = st or code
             first = i if first is None else first
-        elif u.upper() == 'PENNSYLVANIA':
-            st = st or 'PA'
-            first = i if first is None else first
+            skip = n - 1
     return st, z, first
+
+
+def _strip_state_name(text, state):
+    """Drop a trailing full name of `state` ("Burlington Vermont" -> "Burlington")."""
+    if not state:
+        return text
+    for name, code in STATE_WORDS.items():
+        if code == state:
+            text = re.sub(r'(?i)[\s,]*\b' + name.replace(' ', r'\s+') + r'\b[\s,]*$', '', text).strip()
+    return text
 
 
 def parse_address(text):
     import property as homes
     t = re.sub(r'\s+', ' ', text if isinstance(text, str) else '').strip()
-    m = re.search(r'\b\d{1,5}\b', t)
-    if m:
-        t = t[m.start():]
+    # Chatter before the house number ("I'm going to 418 ...") is dropped. Only a number followed by a street word counts, so a ZIP
+    # ("Fruitville Pike, Lancaster PA 17601") or a route number ("Route 30, ...") is never read as the house number.
+    cut = None
+    # Rear and split house numbers stay whole: "418 1/2 Main St", "123-125 Main St", "418-4 Creek Ct".
+    for m in re.finditer(r'(?<![\d/-])\d{1,5}(?:-\d{1,5}[A-Za-z]?)?(?:\s+1/2)?\b(?=\s+(?!(?:PA|NJ)\b)(?:[A-Za-z]|\d{1,4}(?:st|nd|rd|th)\b))', t):
+        before = t[:m.start()].rstrip(' ,')
+        last = re.sub(r'[^A-Za-z]', '', before.split()[-1]) if before.split() else ''
+        if len(m.group(0)) == 5 and ((len(last) == 2 and last.isupper() and last in US_STATES)
+                                     or (len(last) > 2 and last.upper() in {w.split()[-1] for w in STATE_WORDS})):
+            continue   # a ZIP right after a state, with more words after it
+        cut = m
+        break
+    if cut:
+        t = t[cut.start():]
+    else:
+        t = re.sub(r"(?i)^.*?\b(?:going|heading|headed|on (?:my|the) way)\s+(?:to|over to)\s+(?:(?:a|the)\s+(?:house|home|job|place)\s+(?:on|at|in)\s+)?",
+                   '', t).strip()
     if ',' in t:
         parts = [p.strip() for p in t.split(',')]
         street, rest = parts[0], parts[1:]
-        st, z, _ = _state_zip(' '.join(rest).split())
+        sw = street.split()
+        for i in range(2, len(sw) - 1):   # "12 Elm St in Burlington, Vermont": the town is inside the street part
+            if sw[i].lower() in ('in', 'at') and re.sub(r'[^A-Za-z]', '', sw[i - 1]).upper() in _suffix_words():
+                street, rest = ' '.join(sw[:i]), [' '.join(sw[i + 1:])] + rest
+                break
+        st, z, _ = _state_zip(', '.join(rest).split())   # commas kept: "Staten Island, New York"
         town = None
         for p in rest:
-            w = [x for x in p.split() if not re.fullmatch(r'\d{5}(-\d{4})?', x) and x.upper() not in ('PA', 'NJ', 'PENNSYLVANIA')
+            pw = p.split()
+            f_ = _state_zip(pw)[2]
+            if f_:
+                pw = pw[:f_]   # "Lancaster PA 17601 customer says no heat" -> "Lancaster"
+            w = [x for x in pw if not re.fullmatch(r'\d{5}(-\d{4})?', x) and x.upper() not in ('PA', 'NJ', 'PENNSYLVANIA')
                  and not (len(x) == 2 and x.isupper() and x in US_STATES)]
             w = ' '.join(w)
             w = re.sub(r'(?i)\bnew jersey\b', '', w).strip()
+            w = _strip_state_name(w, st)
             if w:
                 town = w
                 break
@@ -1720,6 +1906,8 @@ def area_of(zip_=None, town=None, state=None):
         m = [r for r in rows if (r['town'] or '').lower() == town.lower() and (not state or r['state'] == state)]
         if m and len({(r['status'], r['county'], r['hub']) for r in m}) == 1:
             return out(m[0])
+    if state and state not in {r['state'] for r in rows}:   # a state the area does not reach at all (Vermont, New York): no ZIP needed
+        return {'status': 'out', 'county': None, 'state': state, 'hub': None, 'zip': zip_, 'label': 'Outside the Punctual Pros service area'}
     return {'status': 'unknown', 'county': None, 'state': state, 'hub': None, 'zip': zip_, 'label': ''}
 
 
@@ -1762,10 +1950,22 @@ def _plan_name(plan):
 SAFETY_ISSUES = ('gas_smell', 'co_alarm')
 
 
+def _rx_hit(rx, t):
+    try:
+        return bool(re.search(rx, t or '', re.I))
+    except re.error:
+        return False
+
+
 def _text_issue(t):
     """The issue a customer's words describe: an issue label inside the text first (longest), then the first match pattern."""
     table = load('issues').get('issues') or []
+    # Gas and CO first: "no heat and I smell gas" is a gas call before it is a heating call.
+    table = [i for i in table if i.get('id') in SAFETY_ISSUES] + [i for i in table if i.get('id') not in SAFETY_ISSUES]
     low = (t or '').lower()
+    for i in table[:len(SAFETY_ISSUES)]:
+        if (i.get('label') and i['label'].lower() in low) or any(_rx_hit(rx, t) for rx in i.get('match') or []):
+            return i
     labs = sorted((i for i in table if i.get('label') and i['label'].lower() in low), key=lambda i: -len(i['label']))
     if labs and labs[0].get('id') != 'unknown':
         return labs[0]
@@ -1798,14 +1998,54 @@ def _pick_issue(issue_text, job_issue=None):
     for i in table:
         if t and t.strip().lower() == (i.get('label') or '').lower():
             return i
+    # Last resort before "not sure": heating or water-heater words the patterns missed ("the furnace is acting up").
+    for rx, iid in ((r'water heater|hot water', 'no_hot_water'), (r'water heater', 'wh_leak'), (r'heat ?pump', 'heat_pump'),
+                    (r'radiator|boiler', 'boiler'), (r'furnace|\bheat(ing)?\b', 'no_heat')):
+        if re.search(rx, t, re.I) and iid in by_id:
+            return by_id[iid]
     return by_id.get('unknown') or {'id': 'unknown', 'label': 'Not sure', 'focus': ['main_water', 'panel'], 'causes': [], 'check': [],
                                     'bring': [], 'safety': [], 'offers': []}
 
 
-def triage(issue_text, house, equipment, recs=(), job_issue=None, hub=None, member=None):
+def _heat_word(text):
+    """The heat type the customer's words name ("radiators are cold" -> boiler), from likely_rules heat_words, or None."""
+    for hw in _rules().get('heat_words') or []:
+        for rx in hw.get('match') or []:
+            try:
+                if re.search(rx, text or '', re.I):
+                    return hw.get('heat')
+            except re.error:
+                continue
+    return None
+
+
+def _heat_of_kinds(kinds):
+    """The heat type of recorded equipment: a boiler or a heat pump with no furnace, else a furnace when there is one."""
+    ks = set(kinds or ())
+    if 'furnace' in ks:
+        return 'furnace'
+    if 'boiler' in ks:
+        return 'boiler'
+    if 'heat_pump' in ks:
+        return 'heat_pump'
+    return None
+
+
+def _issue_for(issue_text, job_issue=None, heat=None):
+    """The issue, with a no-heat report turned into the house's own heat type (a boiler or a heat pump), keeping the "No heat" label."""
     issue = _pick_issue(issue_text, job_issue)
+    alt_id = (issue.get('by_heat') or {}).get(heat) if heat else None
+    if alt_id:
+        alt = next((i for i in load('issues').get('issues') or [] if i.get('id') == alt_id), None)
+        if alt:
+            issue = {**alt, 'label': issue.get('label') or alt.get('label')}
+    return issue
+
+
+def triage(issue_text, house, equipment, recs=(), job_issue=None, hub=None, member=None):
     house = house or {}
     kinds = [e.get('kind') for e in equipment or []]
+    issue = _issue_for(issue_text, job_issue, house.get('heat') or _heat_of_kinds(kinds))
     yr = today().year
     open_recs = [r for r in recs or () if (r.get('status') or 'open') == 'open']
     causes = []
@@ -1907,9 +2147,17 @@ def _county_rule(county, state):
     return same[0] if same else {'median_year': 1975, 'fuel': {'gas': 0.4, 'electric': 0.3, 'oil': 0.2, 'propane': 0.1}, 'detached': 0.6}
 
 
+def _heat_type(house):
+    ht = (_rules().get('heat_types') or {}).get(house.get('heat')) if house.get('heat') else None
+    return ht if isinstance(ht, dict) else None
+
+
 def _inferred_kinds(house, focus_kinds):
     fuel = house.get('fuel') or 'gas'
-    heat = list((_rules().get('heating') or {}).get(fuel) or ['furnace'])
+    ht = _heat_type(house)
+    heat = list(ht.get('kinds') or []) if ht else []
+    heat = heat or list((_rules().get('heating') or {}).get(fuel) or ['furnace'])
+    switch_ok = bool(ht.get('switch_label')) if ht else 'furnace' in heat
     ks = ['main_water', 'water_heater'] + heat + ['panel']
     if fuel == 'gas':
         ks += ['gas_meter', 'gas_shutoff']
@@ -1919,7 +2167,7 @@ def _inferred_kinds(house, focus_kinds):
             continue
         if k in ('gas_meter', 'gas_shutoff') and fuel != 'gas':
             continue
-        if k == 'service_switch' and 'furnace' not in heat:
+        if k == 'service_switch' and not switch_ok:
             continue
         if k == 'sump_pump' and house.get('foundation') != 'basement':
             continue
@@ -1930,14 +2178,36 @@ def _inferred_kinds(house, focus_kinds):
 
 def _likely_items(house, have_kinds, focus_kinds):
     locs = (_rules().get('locations') or {}).get(house.get('foundation') or 'basement') or {}
+    ht = _heat_type(house)
     out = []
     for k in _inferred_kinds(house, focus_kinds):
         if k in have_kinds or k not in locs:
             continue
         L = locs[k]
-        out.append({'kind': k, 'floor': L.get('floor'), 'spot': L.get('spot'), 'note': L.get('note') or '', 'detail': None, 'make': None,
-                    'year': None, 'basis': 'likely'})
+        it = {'kind': k, 'floor': L.get('floor'), 'spot': L.get('spot'), 'note': L.get('note') or '', 'detail': None, 'make': None,
+              'year': None, 'basis': 'likely'}
+        if k == 'service_switch' and ht and ht.get('switch_label'):
+            it['label'] = ht['switch_label']   # "Boiler switch" in a boiler house
+        out.append(it)
     return out
+
+
+OUTSIDE_OF_VIA = {'side-left': 'outside-left', 'side-right': 'outside-right'}
+
+
+def _meter_from_runs(items, runs):
+    """A likely gas meter goes outside the wall where a recorded gas line enters, not the rule-of-thumb side."""
+    gas = next((r for r in runs or () if r.get('kind') == 'gas' and r.get('basis') == 'record' and r.get('via')), None)
+    if not gas:
+        return
+    v = str(gas['via'][0])
+    spot = OUTSIDE_OF_VIA.get(v) or ('outside-front' if v.startswith('front-wall') else 'outside-rear' if v.startswith('rear-wall') else None)
+    if not spot:
+        return
+    for it in items:
+        if it.get('kind') == 'gas_meter' and it.get('basis') != 'record':
+            it['spot'], it['floor'] = spot, 'outside'
+            it['note'] = f"{_uc(_spot_words(spot))}, where the recorded gas line enters"
 
 
 def _material(kind, year):
@@ -1980,7 +2250,7 @@ def _item_line(e, prefix=''):
     if det and e.get('detail') and _lc(e['detail']).lower() in note.lower():
         det = _item_detail({**e, 'detail': None})
     body = ', '.join(x for x in (where, note) if x)
-    return f"- {prefix or _kind_label(e.get('kind'))}: {body}{'; ' + det if det else ''} {_tag(e.get('basis'))}"
+    return f"- {prefix or e.get('label') or _kind_label(e.get('kind'))}: {body}{'; ' + det if det else ''} {_tag(e.get('basis'))}"
 
 
 def _run_text(r):
@@ -2050,7 +2320,7 @@ def sketch(address, house, items, runs, basis, area, issue, focus, source_line, 
         k = it.get('kind')
         meta = kinds.get(k) or {}
         spot = it.get('spot') or 'center'
-        base = {'kind': k, 'label': meta.get('label') or _kind_label(k), 'short': meta.get('short') or (k or '?')[:2].upper(),
+        base = {'kind': k, 'label': it.get('label') or meta.get('label') or _kind_label(k), 'short': meta.get('short') or (k or '?')[:2].upper(),
                 'basis': it.get('basis') or 'likely', 'focus': k in focus, 'note': _uc(it.get('note') or ''), 'detail': _item_detail(it) or None}
         if spot in outside_spots or spot.startswith('outside'):
             o = outside_spots.get(spot) or {'side': 'right', 'at': 0.35}
@@ -2147,9 +2417,12 @@ def _public_facts(line, town, state, zip_, sources):
     m = re.search(r'- Bedrooms: (\d+)', text or '')
     if m:
         facts['beds'] = int(m.group(1))
+    m = re.search(r'Building description \(assessor shorthand\): "([^"]{1,40})"', text or '')
+    if m:
+        facts['bldg_desc'] = m.group(1).strip()
     m = re.search(r'Likely reading: ([^\[]+)', text or '')
     if m:
-        facts['reading'] = m.group(1).strip().rstrip('.')
+        facts['reading'] = m.group(1).strip().rstrip('.')   # the property brief tags this [inferred]: it stays "likely" here too
     if facts:
         for s in srcs or []:
             ns.append(sources.add(f"homes:{s.get('title')}|{s.get('url')}", s.get('title'), s.get('url'), s.get('publisher'), s.get('date'),
@@ -2199,8 +2472,10 @@ def _site_brief(ws, args, sources):
     state = caddr.get('state') if cust else parsed.get('state')
     area = area_of(zip_, town, state)
     if area['status'] == 'out':
-        where = f"{area['county']} County, {area['state']}" if area.get('county') else (f'ZIP {zip_}' if zip_ else 'outside')
-        return (f'SERVICE AREA: outside ({where}). This address is outside the Punctual Pros service area. Refer to dispatch.'), False, []
+        where = f"{area['county']} County, {area['state']}" if area.get('county') else (
+            f'ZIP {zip_}' if zip_ else (', '.join(x for x in (town, area.get('state')) if x) or 'another state'))
+        return (f'SERVICE AREA: outside ({where}). This address is outside the Punctual Pros service area; say so plainly, no ZIP is '
+                'needed. Refer to dispatch.'), False, []
     if area['status'] == 'unknown':
         return 'SERVICE AREA: unknown. Ask for the ZIP or the town.', False, []
     state = state or area.get('state')
@@ -2237,6 +2512,9 @@ def _site_brief(ws, args, sources):
         member = ((cust.get('member') or {}).get('plan')) if isinstance(cust.get('member'), dict) else None
         recs = cust.get('recs') or []
         rec_runs = [dict(r, basis='record') for r in cust.get('runs') or []]
+        rec_heat = _heat_of_kinds([e.get('kind') for e in eq])
+        if rec_heat:
+            house['heat'] = rec_heat
     else:
         line = parsed.get('line') or text.split(',')[0]
         if not cust:
@@ -2253,19 +2531,36 @@ def _site_brief(ws, args, sources):
         if not year:
             year = cr.get('median_year') or 1975
         fm = cr.get('fuel') or {'gas': 1.0}
-        fuel = max(sorted(fm), key=lambda k: fm[k])
-        if _pick_issue(issue_text).get('id') == 'heat_pump':     # the customer says they have a heat pump
-            fuel = 'electric'
+        fuel = top_fuel = max(sorted(fm), key=lambda k: fm[k])
+        heat_types = _rules().get('heat_types') or {}
+        said_heat = _heat_word(issue_text)                      # "radiators are cold" -> boiler, "heat pump" -> heat pump
+        heat = said_heat or (_rules().get('heat_of_fuel') or {}).get(fuel)
+        if heat in heat_types:
+            ht = heat_types[heat]
+            if fuel not in (ht.get('fuels') or [fuel]):
+                fuel = ht.get('default_fuel') or fuel             # a heat pump is electric; a boiler in an all-electric county burns oil
+        else:
+            heat = None
+            if _pick_issue(issue_text).get('id') == 'heat_pump':     # rules without heat types: the customer says they have a heat pump
+                fuel = 'electric'
         era = _era(year)
         fnd = _foundation(state, year)
         house = {'year': year, 'sqft': facts.get('sqft'), 'stories': era.get('stories') or 2, 'style': era.get('style'), 'foundation': fnd,
-                 'basement': 'full' if fnd == 'basement' else 'none', 'fuel': fuel, 'garage': None, '_share': fm.get(fuel), '_era': era}
+                 'basement': 'full' if fnd == 'basement' else 'none', 'fuel': fuel, 'garage': None, '_share': fm.get(top_fuel), '_era': era,
+                 '_top_fuel': top_fuel, '_said_heat': said_heat if heat and said_heat == heat else None}
+        if heat:
+            house['heat'] = heat
         hbasis = {'year': ybasis, 'fuel': 'likely', 'layout': 'likely'}
         eq, recs, rec_runs, member = [], [], [], None
         site_line = ', '.join(x for x in (line, town, ' '.join(y for y in (state, zip_) if y)) if x)
-    pre = _pick_issue(issue_text, (job or {}).get('issue') if records else None)
+    pre = _issue_for(issue_text, (job or {}).get('issue') if records else None, house.get('heat'))
     have = {e.get('kind') for e in eq}
     items = eq + _likely_items(house, have, pre.get('focus') or [])
+    sw_label = (_heat_type(house) or {}).get('switch_label')
+    for e in items:
+        if e.get('kind') == 'service_switch' and sw_label and not e.get('label'):
+            e['label'] = sw_label
+    _meter_from_runs(items, rec_runs)
     tri = triage(issue_text, house, items, recs, (job or {}).get('issue') if records else None, hub=hub, member=member)
     runs = rec_runs + _likely_runs(house, items, rec_runs)
     focus = tri['focus']
@@ -2338,11 +2633,26 @@ def _site_brief(ws, args, sources):
                 f"Year built: not on public record here; {area['county']} County median is {yr} (likely)")
         sq = f"; {house['sqft']:,} sq ft (public record)" if house.get('sqft') else ''
         share = house.get('_share')
-        fuel_txt = (f"{ {'gas': 'gas', 'oil': 'oil', 'propane': 'propane', 'electric': 'electric'}.get(house['fuel'], house['fuel']) } heat is most "
-                    f"common here ({round(share * 100)}% of homes) (likely)") if isinstance(share, (int, float)) else ''
+        top = house.get('_top_fuel') or house['fuel']
+        fuel_txt = (f"{top} heat is most common here ({round(share * 100)}% of homes) (likely)") if isinstance(share, (int, float)) else ''
+        ht = _heat_type(house)
+        if ht and ht.get('label'):
+            why = "the customer's words point to" if house.get('_said_heat') else 'the heat is likely'
+            fuel_txt = '; '.join(x for x in (fuel_txt, f"{why} a {_lc(ht['label'])} (likely)") if x)
+        fm2 = (_county_rule(area.get('county'), state).get('fuel') or {})
+        second = sorted(((v, k) for k, v in fm2.items() if k != top and isinstance(v, (int, float))), reverse=True)[:1]
+        if not house.get('_said_heat') and isinstance(share, (int, float)) and second and share - second[0][0] <= 0.05:
+            fuel_txt += f"; {second[0][1]} heat is nearly as common ({round(second[0][0] * 100)}%), so confirm the heat type on arrival"
         fd = {'basement': 'over a basement', 'crawl': 'over a crawlspace', 'slab': 'on a slab'}.get(house['foundation'], '')
-        house_line = (f"HOUSE: {ytxt}{sq}; likely a {era.get('style') or 'house'} {fd} (likely)" + (f'; {fuel_txt}' if fuel_txt else '')
-                      + (f"; assessor description reads {facts.get('reading')} (public record)" if not cust and facts.get('reading') else ''))
+        # The public record gives no house style: the style is a rule of thumb for the age, never stated as this house's.
+        sty = era.get('style') or ''
+        style_txt = (f"style not on public record; a house of that age here is often {'an' if sty[:1].lower() in 'aeiou' else 'a'} {sty} {fd} "
+                     '(likely; confirm on site)' if sty else f'likely {fd} (likely; confirm on site)')
+        reading = ''
+        if not cust and facts.get('reading'):
+            reading = (f"; assessor shorthand \"{facts['bldg_desc']}\" (public record), likely meaning {facts['reading']} (likely)"
+                       if facts.get('bldg_desc') else f"; the assessor description likely means {facts['reading']} (likely)")
+        house_line = f"HOUSE: {ytxt}{sq}; {style_txt}" + (f'; {fuel_txt}' if fuel_txt else '') + reading
     tail = [house_line]
     if records:
         mem = cust.get('member') if isinstance(cust.get('member'), dict) else None
@@ -2364,13 +2674,13 @@ def _site_brief(ws, args, sources):
     if tri['check']:
         tail.append('CHECK FIRST: ' + '; '.join(_lc(c) for c in tri['check']) + '.')
     field = R.get('style') == 'field'
-    bring = tri['bring'][:5] if field else tri['bring']
+    bring = tri['bring'][:3] if field else tri['bring']   # a field answer names at most three things to bring and one offer
     hub_short = hub_name or 'the hub'
     if bring:
         tail.append('BRING: ' + '; '.join(_lc(b['text']) + (f" ({hub_short} hub has {b['on_hand']})" if 'on_hand' in b else '') for b in bring) + '.')
     if tri['safety'] and not tri['safety_first']:
         tail.append(f'SAFETY: {safety_txt}')
-    offers = tri['offers'][:3] if field else tri['offers']
+    offers = tri['offers'][:2] if field else tri['offers']
     pb_ref = f' [{ns[1]}]' if records else ''
     if offers:
         ot = []
@@ -2383,14 +2693,13 @@ def _site_brief(ws, args, sources):
                     pct = 20 if 'total' in member.lower() else 15
                     s += f", {money(o['member_price'])} with {_plan_name(member)} ({pct}% off)"
             ot.append(s)
-        tail.append(f'OFFER (price book, est.){pb_ref}: ' + '; '.join(ot) + '.')
+        tail.append(f'OFFER (price book, est.{"; lead with the first" if field and len(ot) > 1 else ""}){pb_ref}: ' + '; '.join(ot) + '.')
     n_rec = sum(1 for e in items if e.get('basis') == 'record')
     n_lik = len(items) - n_rec
     card_basis = 'record' if n_lik == 0 else ('likely' if n_rec == 0 else 'mixed')
     if not records:
-        era = house.get('_era') or _era(house.get('year') or 1975)
-        source_line = (f"Source: public property records where shown; layout is a rule of thumb for a {era.get('name')} {era.get('style')} in "
-                       f"{area.get('county')} County.")
+        source_line = (f"Source: public property records where shown; layout is a rule of thumb for houses built around "
+                       f"{house.get('year') or 1975} in {area.get('county')} County.")
     else:
         source_line = 'Source: sandbox ServiceTitan record, fictional customer.'
     key = (parsed.get('key') or site_line) + '|' + (zip_ or '')
@@ -2475,14 +2784,17 @@ def _draft(ws, args, sources):
             else:
                 return 'That record is not a job or a customer. Give the job number.', True, []
         else:
-            if ws.get('job') and ws['job'].get('address'):
+            addr = (ws.get('job') or {}).get('address')
+            if addr:   # the person is at an address: attach to that customer's job only, never to another customer's job
                 try:
-                    hit = match_job(parse_address(ws['job']['address']), ws)
+                    hit = match_job(parse_address(addr), ws)
                 except Exception:   # noqa: BLE001
                     hit = None
-                if hit:
-                    job, cust = hit.get('job'), hit.get('customer')
-            if not job and not cust:
+                if not hit or not (hit.get('job') or hit.get('customer')):
+                    return ('No job of yours matches the current address, so there is nothing to attach this to. Ask for the job number; '
+                            'do not attach it to another job.'), True, []
+                job, cust = hit.get('job'), hit.get('customer')
+            else:
                 job = _next_job(ws)
                 cust = _customer(job.get('customer')) if job else None
         if not job and not cust:
@@ -2519,7 +2831,8 @@ def _draft(ws, args, sources):
         t = None
         if job and job.get('tech'):
             t = _st()['_by_id'].get(job['tech'])
-        tech = 'You' if (t and t.get('name') == 'You') or R.get('style') == 'field' else ((t or {}).get('name') or 'To be assigned')
+        tech = 'You' if R.get('style') == 'field' or (t and t.get('name') == 'You' and ws['role'] in (t.get('for') or ())) else (
+            (_tech_name(t) if t else '') or 'To be assigned')
         fields = [{'label': 'Customer', 'value': f'Customer at {_addr_line(cust, town=False)}'}, {'label': 'Job', 'value': body},
                   {'label': 'When', 'value': when or 'Not set'}, {'label': 'Technician', 'value': tech}]
     elif action == 'log_findings':
@@ -2581,7 +2894,13 @@ def _draft(ws, args, sources):
     except Exception:   # noqa: BLE001
         pass
     card = action_card(ws['role'], action, app, a_name, meta['label'], fields, rec_id, body)
-    return f"Draft ready on screen, not sent: {meta['label']}. It waits for the person to approve or discard it.", False, [card]
+    on = ''
+    if action in JOB_ACTIONS:   # name the job it is attached to, so the answer can never claim another one
+        place = _addr_line(cust or _customer((job or {}).get('customer')), town=False)
+        on = ' (' + ', '.join(x for x in ((f"job {job.get('number')}" if job and job.get('number') else ''), place) if x) + ')'
+        on = '' if on == ' ()' else on
+    return (f"Draft ready on screen, not sent: {meta['label']}{on}. It waits for the person to approve or discard it. Mention it in one "
+            'line; do not repeat the draft in the answer.'), False, [card]
 
 
 def action_card(role_id, action, app, app_display, label, fields, rec_id, body):
@@ -2599,14 +2918,12 @@ def run_tool(name, args, ws, sources):
     if not owns(name) or not allowed(ws, name):
         return outside(ws, name), True, []
     ws = dict(ws, _sources=sources)
-    if name == 'site_brief':
-        return _site_brief(ws, args, sources)
-    if name == 'workspace_search':
-        return _search(ws, args, sources)
-    if name == 'open_record':
-        return _open(ws, args, sources)
-    if name == 'company_numbers':
-        return _numbers(ws, args, sources)
-    if name == 'draft_action':
-        return _draft(ws, args, sources)
-    return outside(ws, name), True, []
+    fn = {'site_brief': _site_brief, 'workspace_search': _search, 'open_record': _open, 'company_numbers': _numbers,
+          'draft_action': _draft}.get(name)
+    if not fn:
+        return outside(ws, name), True, []
+    token = _READER.set(ws.get('role'))   # "You" on a record is only the reader's own persona
+    try:
+        return fn(ws, args, sources)
+    finally:
+        _READER.reset(token)

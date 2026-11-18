@@ -1113,14 +1113,57 @@ def test_workspace_technician_tools(env):
 
 def test_workspace_managing_partner_tools(env):
     httpx.delete(env['mock'] + '/_requests')
-    chat(env['main'], 'How is the portfolio doing?', workspace=MP_WS)
+    _, _, events = chat(env['main'], 'How is the portfolio doing?', workspace=MP_WS)
+    assert not any(e['type'] == 'status' and e['text'].startswith('Found ') for e in events)   # nothing was looked up before the answer
     b = mock_requests(env)[0]['body']
     names = [t.get('name') for t in b['tools']]
     # tests set a dead DIRECTORY_URL, and the directory is still offered before its first download (as in test_portal_persona_and_context_format)
     assert names == ['search_knowledge', 'read_source', 'deal_model', 'find_businesses', 'web_search', 'workspace_search', 'open_record', 'company_numbers', 'draft_action']
     s = system_text(b)
     assert 'COMPANY AGENT (sandbox)' in s and '12. Home-sales records' not in s and 'Never say where pipes' not in s
-    assert b['messages'][-1]['content'][0]['text'].startswith('<sources>\n[1] ')   # a research role keeps the knowledge-base excerpts
+    # no automatic knowledge-base lookup for any role (unrelated hits led the sources); a research role can still search for itself
+    first = b['messages'][-1]['content'][0]['text']
+    assert first.startswith('<sources>\n(') and 'No excerpts are attached; search the knowledge base only for public research.' in s
+
+
+def test_workspace_answer_style_is_binding(env):
+    httpx.delete(env['mock'] + '/_requests')
+    chat(env['main'], 'How is the portfolio doing?', workspace=MP_WS)
+    s = system_text(mock_requests(env)[0]['body'])
+    pre, style = s.index('Rules for this workspace (they take precedence'), s.index('W0. Answer style (a hard rule over rule 8')
+    assert pre < style and 'Answer style: ' not in s and 'Stop at 60 words' in s
+    assert 'W0b. No text before or between tool calls; your first words are the answer.' in s
+    assert 'W2b. Sandbox people are fictional even where a role matches a real person' in s
+
+
+def test_text_after_a_tool_call_starts_a_new_paragraph(env):
+    # a note written before a tool call never runs into the answer written after it ("IC agenda.This week's")
+    _, _, events = chat(env['main'], 'Who runs the firm? [mock:tool] [mock:preamble]')
+    text = ''.join(e['text'] for e in events if e['type'] == 'text')
+    assert text.startswith('Let me check the records.\n\n**Short answer:** lenders') and '\n\n\n' not in text
+    marker = plan_marker(['workspace_search', {'app': 'servicetitan', 'set': 'jobs', 'days': 0}])
+    _, _, events = chat(env['main'], f'My jobs today {marker} [mock:preamble]', workspace=TECH_WS)
+    assert ''.join(e['text'] for e in events if e['type'] == 'text').startswith('Let me check the records.\n\n**Short answer:**')
+    _, _, events = chat(env['main'], 'Who runs the firm? [mock:tool]')   # no text before the tool: no break is added
+    assert ''.join(e['text'] for e in events if e['type'] == 'text').startswith('**Short answer:**')
+    _, _, events = chat(env['main'], 'News? [mock:cite]')   # text blocks split only by a citation stay joined
+    assert '\n\n [' not in ''.join(e['text'] for e in events if e['type'] == 'text')
+
+
+def test_url_titles_become_readable_labels():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('bsp_app_titles', os.path.join(procs.SERVER_DIR, 'app.py'))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    s = mod.Sources()
+    url = ('https://portal.ct.gov/-/media/deep/water/municipal_wastewater/cwffy26-27-draft-prioirty-list-with-tables-12-29-25.pdf'
+           '?rev=d7e5d1bb&hash=8A92AE0D')
+    n = s.add('doc:1', url, url, 'portal.ct.gov', '', 'web')
+    it = s.items[n - 1]
+    assert it['title'] == 'portal.ct.gov: Cwffy26 27 draft prioirty list with tables 12 29 25 (PDF)' and it['url'] == url
+    assert mod.url_title('https://cards.example.gov/documents/%7B204CB19E%7D/download?x=1', '') == 'cards.example.gov'
+    assert mod.url_title('https://www.example.com/news/bsp_buys_cet.html') == 'example.com: Bsp buys cet'
+    assert s.items[s.add('doc:2', 'BSP team', 'https://broadskypartners.com/team/') - 1]['title'] == 'BSP team'   # a real title is kept
 
 
 def test_workspace_bad_role(env):

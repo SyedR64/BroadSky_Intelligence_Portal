@@ -604,7 +604,8 @@ def test_draft_action(sb):
     ws = ws_for(TECH)
     body = "Hi, this is your One Hour Heating & Air Conditioning technician. I'm about 10 minutes away."
     text, err, cards, s = run('draft_action', {'action': 'text_customer', 'number': 'L-2187', 'body': body}, ws)
-    assert not err and text == 'Draft ready on screen, not sent: Text the customer. It waits for the person to approve or discard it.'
+    assert not err and text == ('Draft ready on screen, not sent: Text the customer (job L-2187, 418 Wexcombe Ln). It waits for the person to '
+                                'approve or discard it. Mention it in one line; do not repeat the draft in the answer.')
     c = cards[0]
     assert c['kind'] == 'action_draft' and c['status'] == 'draft' and c['app'] == 'servicetitan' and c['app_name'] == 'ServiceTitan'
     assert c['fields'][0] == {'label': 'To', 'value': 'Customer on job L-2187'} and c['title'] == 'Text the customer'
@@ -1016,3 +1017,274 @@ def test_review_helpers():
     workspace._clip_text('<' * 130_000)
     workspace._sanitize_body('<' * 60_000)
     assert (datetime.datetime.now() - t0).total_seconds() < 0.5
+
+
+# ---------------------------------------------------------------- live-check fixes (Nov 17)
+
+def test_role_block_rules(sb):
+    """copy-1, PH-3, D5, copy-9, D1: the answer style is a numbered rule under the precedence line; real people never on sandbox items."""
+    for rid in workspace.roles():
+        for voice in (False, True):
+            t = workspace.system_blocks(ws_for(rid), voice=voice, cache=not voice)[0]['text']
+            pre = t.index('Rules for this workspace (they take precedence over the general rules above for this role):')
+            w0 = f'W0. Answer style (a hard rule over rule {1 if voice else 8} and any longer limit): '   # voice rule 1, chat rule 8: length
+            assert pre < t.index(w0) < t.index('W1.'), rid
+            assert 'Answer style: ' not in t and 'W0b. No text before or between tool calls; your first words are the answer.' in t
+            assert 'W2b. Sandbox people are fictional even where a role matches a real person' in t
+            assert 'say they wrote, said or owe anything in it' in t and 'own sentence and source' in t
+            if workspace.role(rid).get('style') in ('field', 'brief'):
+                assert re.search(r'Stop at \d{2} words even if a tool returns more\.', t), rid
+            if 'site_brief' in workspace.role(rid)['tools']:
+                assert 'Never name the tool or say "the brief".' in t and 'house style or layout as fact' in t
+    assert 'Stop at 60 words' in workspace._style_rule('field', 'Under 30 seconds.', True)
+    assert 'Stop at 75 words' in workspace._style_rule('field', 'Five short lines, under 75 words.', False)
+    assert 'Stop at' not in workspace._style_rule('analyst', 'Up to 300 words.', False)
+
+
+def test_no_preamble_and_no_knowledge_lookup_note(sb):
+    """copy-3: no automatic knowledge-base lookup for a workspace request; roles with search are told to use it only for public research."""
+    s = workspace.system_blocks(ws_for('bsp-managing-partner'))[1]['text']
+    assert 'No excerpts are attached; search the knowledge base only for public research.' in s
+    assert 'This role has no knowledge-base search' in workspace.system_blocks(ws_for(TECH))[1]['text']
+
+
+def test_field_site_brief_is_short(sb):
+    """PH-3: a field role is fed at most three things to bring and two offers."""
+    text, err, _, _ = run('site_brief', {'address': FLAGSHIP, 'issue': 'no heat'}, ws_for(TECH))
+    bring = next(l for l in text.split('\n') if l.startswith('BRING: '))
+    offer = next(l for l in text.split('\n') if l.startswith('OFFER '))
+    assert not err and bring.count(';') <= 2 and offer.split(': ', 1)[1].count('; ') <= 1
+
+
+def test_pnl_has_gross_margin_and_plan_ebitda(real):
+    """D3 and copy-5: P&L views and search lines carry gross margin and plan EBITDA; on plan means within the home view's tolerance."""
+    text, err, _, _ = run('company_numbers', {'view': 'pnl', 'company': 'pp'}, ws_for('bsp-senior-associate'))
+    assert not err and '| Gross margin |' in text and '| EBITDA plan |' in text
+    oct_row = next(l for l in text.split('\n') if l.startswith('Oct 2026 |'))
+    assert '| 49.5% |' in oct_row and '| 300 |' in oct_row, oct_row
+    assert 'gross margin 49.1%' in text and 'against plan $2.8M' in text
+    assert 'On plan means within 1% of plan, the rule the home view uses' in text
+    text, err, _, _ = run('company_numbers', {'view': 'pnl', 'company': 'portfolio'}, ws_for('bsp-managing-partner'))
+    pp = next(l for l in text.split('\n') if l.startswith('- Punctual Pros:'))
+    assert '(-0.2%, on plan)' in pp and 'gross margin 49.5%' in pp and 'plan EBITDA $300,000 (+5.0%, above plan)' in pp
+    fl = next(l for l in text.split('\n') if l.startswith('- Frontline:'))
+    assert '(-4.2%, below plan)' in fl
+    text, err, _, _ = run('workspace_search', {'app': 'financials', 'set': 'pnl', 'limit': 1}, ws_for('pp-cfo'))
+    assert not err and 'gross margin 49.5%' in text and 'plan EBITDA $300,000 (+5.0%, above plan)' in text
+    assert workspace._vs_plan(99.2, 100) == '-0.8%, on plan' and workspace._vs_plan(98.9, 100) == '-1.1%, below plan'
+
+
+def test_seasoned_counts_stay_whole(real):
+    """D7: a season-scaled count target is a whole number ("3,063 jobs", never "3,062.5 jobs")."""
+    text, err, _, _ = run('company_numbers', {'view': 'kpis', 'company': 'pp', 'months': 2}, ws_for('bsp-senior-associate'))
+    jobs = next(l for l in text.split('\n') if l.startswith('- Jobs completed'))
+    assert not err and 'target 3,063 jobs' in jobs and not re.search(r'\d\.\d jobs', text), jobs
+    rows = [workspace._seasoned('financials', 'kpis', r) for r in workspace.load('pp')['apps']['financials']['kpis'] if r.get('seasonal')]
+    assert all(isinstance(r['value'], int) and isinstance(r['target'], int) for r in rows if r.get('unit') == 'jobs')
+    assert any(isinstance(r['value'], float) for r in rows if r.get('unit') == 'k$')   # money keeps its precision
+
+
+def test_source_titles_name_the_record(real):
+    """D8 and ACC-7: Shopify returns and daily sales say which record; the fund source is "BSP Fund I", never "BSP the fund"."""
+    ws = ws_for('fh-ecommerce-manager')
+    _, err, _, s = run('workspace_search', {'app': 'shopify', 'set': 'returns', 'limit': 20}, ws)
+    titles = [it['title'] for it in s.items]
+    assert not err and titles and all(t.startswith('Returns: ') and len(t) > len('Returns: ') for t in titles), titles
+    text, err, _, _ = run('open_record', {'ref': 1}, ws, s)
+    assert not err and 'Title:' not in text and len(text.split('\n')) == len(set(text.split('\n')))
+    _, _, _, s = run('workspace_search', {'app': 'shopify', 'set': 'daily', 'limit': 3}, ws)
+    assert all(re.fullmatch(r'Daily sales: [A-Z][a-z]{2} \d{1,2}', it['title']) or it['title'].startswith('Daily') for it in s.items)
+    if 'fund' in ((workspace.role('bsp-investor-relations').get('numbers') or {}).get('views') or ()):
+        text, err, _, s = run('company_numbers', {'view': 'fund'}, ws_for('bsp-investor-relations'))
+        assert not err and 'the fund' not in s.items[0]['title'] and s.items[0]['title'].startswith('BSP ')
+
+
+def test_drafts_never_attach_to_another_customers_job(sb):
+    """ACC-1: at an address that is none of the person's jobs, a job draft asks for the job number instead of using the next job."""
+    for addr in ('800 Florida Ave, York PA 17404', '12 Nowhere Rd, Lititz, PA 17543'):
+        ws = ws_for(TECH, job={'address': addr, 'issue': 'no heat'})
+        for action in ('text_customer', 'log_findings', 'order_part', 'add_recommendation', 'book_job'):
+            if action not in workspace.role(TECH)['actions']:
+                continue
+            text, err, cards, _ = run('draft_action', {'action': action, 'body': 'Back tomorrow at 9 with the part.', 'item': 'Ignitor'}, ws)
+            assert err and not cards and 'job number' in text and 'L-2187' not in text, (addr, action, text)
+    # with no address the next job is used, and the result names the job it attached to
+    text, err, cards, _ = run('draft_action', {'action': 'log_findings', 'body': 'Cracked heat exchanger.'}, ws_for(TECH))
+    assert not err and '(job L-2187, 418 Wexcombe Ln)' in text and cards[0]['fields'][0]['value'].startswith('L-2187')
+    text, err, cards, _ = run('draft_action', {'action': 'text_customer', 'number': 'L-2187', 'body': 'On my way.'},
+                              ws_for(TECH, job={'address': '800 Florida Ave, York PA 17404', 'issue': ''}))
+    assert not err and cards   # a job number given outright still works
+
+
+def test_named_state_outside_the_area(sb):
+    """ACC-3 and ADDR-1: a state the area does not reach is outside without a ZIP; full state names parse."""
+    assert workspace.area_of(None, 'Burlington', 'VT')['status'] == 'out'
+    assert workspace.area_of(None, 'Nowhereville', 'PA')['status'] == 'unknown'
+    assert workspace.area_of(None, 'Nowhereville')['status'] == 'unknown'
+    for a, town, st in (('12 Elm St, Burlington, Vermont', 'Burlington', 'VT'), ('12 Elm St in Burlington, Vermont', 'Burlington', 'VT'),
+                        ('12 Elm St Burlington Vermont', 'Burlington', 'VT'), ('45 Oak St, Staten Island, New York', 'Staten Island', 'NY'),
+                        ('12 Main St, Washington, PA', 'Washington', 'PA'), ('12 Main St, Washington', 'Washington', None),
+                        ('12 Main St, Fort Washington', 'Fort Washington', None), ('12 Elm St, Seattle, Washington', 'Seattle', 'WA'),
+                        ('9 Pine Rd, Charleston, West Virginia 25301', 'Charleston', 'WV')):
+        p = workspace.parse_address(a)
+        assert (p['town'], p['state'], p['line']) == (town, st, a.split(',')[0].split(' in ')[0].replace(' Burlington Vermont', '')), (a, p)
+    ws = ws_for(TECH)
+    for a in ('12 Elm St, Burlington, Vermont', '12 Elm St, Burlington, VT', '12 Elm St Burlington Vermont', '12 Elm St, Brooklyn, NY'):
+        text, err, cards, _ = run('site_brief', {'address': a, 'issue': 'no heat'}, ws)
+        assert text.startswith('SERVICE AREA: outside (') and 'no ZIP is needed' in text and 'Refer to dispatch.' in text and not cards, (a, text)
+        assert '(outside)' not in text
+    text, _, _, _ = run('site_brief', {'address': '12 Elm St, Burlington, VT'}, ws)
+    assert text.startswith('SERVICE AREA: outside (Burlington, VT).')
+    text, _, cards, _ = run('site_brief', {'address': '12 Main St, Washington'}, ws)
+    assert text.startswith('SERVICE AREA: unknown') and not cards   # a town that is also a state name, alone: ask, never "outside"
+
+
+def test_address_without_a_house_number(sb):
+    """ADDR-5: a ZIP or a route number is never read as the house number."""
+    for a in ('Fruitville Pike, Lancaster PA 17601', 'Fruitville Pike Lancaster PA 17601', 'Heading to a house on Fruitville Pike, Lancaster PA 17601'):
+        p = workspace.parse_address(a)
+        assert (p['line'], p['house_no'], p['town'], p['state'], p['zip']) == ('Fruitville Pike', '', 'Lancaster', 'PA', '17601'), (a, p)
+    p = workspace.parse_address('Route 30, Lancaster, PA 17601')
+    assert (p['line'], p['house_no'], p['zip']) == ('Route 30', '', '17601')
+    p = workspace.parse_address('418 2nd St, York, PA 17401')
+    assert (p['house_no'], p['town'], p['zip']) == ('418', 'York', '17401')
+    p = workspace.parse_address('Fruitville Pike, Lancaster PA 17601 customer says no heat')
+    assert (p['town'], p['zip'], p['house_no']) == ('Lancaster', '17601', '')
+    text, err, cards, _ = run('site_brief', {'address': 'Fruitville Pike, Lancaster PA 17601', 'issue': 'no heat'}, ws_for(TECH))
+    assert not err and 'SERVICE AREA: inside (Lancaster County' in text and cards and 'MATCHED' not in text
+
+
+def test_issue_fallback_for_heating_words(sb):
+    """ACC-4: heating or water-heater words the patterns miss still pick the heating issue, never "not sure"."""
+    assert workspace._pick_issue('the furnace is acting up')['id'] == 'no_heat'
+    assert workspace._pick_issue('heating is weird today')['id'] == 'no_heat'
+    assert workspace._pick_issue('something with the water heater')['id'] in ('no_hot_water', 'wh_leak')
+    assert workspace._pick_issue('it smells odd')['id'] == 'unknown'
+
+
+def test_furnace_phrases_pick_no_heat(real):
+    for t in ('furnace not igniting', "furnace won't ignite", 'furnace not working', 'furnace keeps shutting off'):
+        assert workspace._pick_issue(t)['id'] == 'no_heat', t
+        text, _, cards, _ = run('site_brief', {'address': FLAGSHIP, 'issue': t}, ws_for(TECH))
+        assert cards[0]['focus'][:2] == ['furnace', 'gas_shutoff'], (t, cards[0]['focus'])
+
+
+def test_heat_type_follows_the_house_and_the_words(real):
+    """ADDR-4 and ADDR-6: a heat-pump house gets heat-pump causes, parts and offers; "radiators are cold" means a boiler."""
+    ws = ws_for(TECH)
+    text, err, cards, _ = run('site_brief', {'address': '221 Arch St, Ephrata PA 17522', 'issue': 'no heat'}, ws)
+    assert not err and cards
+    kinds = {i['kind'] for i in card_items(cards[0])}
+    assert 'heat_pump' in kinds and 'furnace' not in kinds and 'gas_meter' not in kinds
+    bring = next(l for l in text.split('\n') if l.startswith('BRING: ')).lower()
+    assert 'ignitor' not in bring and 'defrost' in bring and 'If you smell gas' not in text and 'Heat pump repair' in text
+    assert 'ISSUE: no heat' in text and 'the heat is likely a heat pump (likely)' in text
+    text, err, cards, _ = run('site_brief', {'address': '317 E College Ave, York PA 17403', 'issue': 'no heat and the radiators are cold'}, ws)
+    kinds = {i['kind'] for i in card_items(cards[0])}
+    assert 'boiler' in kinds and 'furnace' not in kinds and cards[0]['focus'][0] == 'boiler'
+    bring = next(l for l in text.split('\n') if l.startswith('BRING: ')).lower()
+    assert 'circulator' in bring and 'ignitor' not in bring and 'Boiler service' in text
+    assert "the customer's words point to a boiler (likely)" in text and '- Boiler switch:' in text and 'Furnace switch' not in text
+    assert any(i['label'] == 'Boiler switch' for i in card_items(cards[0]) if i['kind'] == 'service_switch')
+    # the flagship furnace house is unchanged
+    text, _, cards, _ = run('site_brief', {'address': FLAGSHIP, 'issue': 'no heat'}, ws)
+    assert cards[0]['focus'][0] == 'furnace' and 'ignitor' in text.lower()
+
+
+def test_likely_gas_meter_on_the_recorded_side(real):
+    """PH-4: a likely gas meter sits outside the wall where the recorded gas line enters."""
+    text, err, cards, _ = run('site_brief', {'address': '27 Brindlemoor Ct, Red Lion, PA 17356', 'issue': 'water heater leaking'},
+                              ws_for('pp-plumber'))
+    meter = next(o for o in cards[0]['outside'] if o['kind'] == 'gas_meter')
+    assert not err and meter['side'] == 'left' and meter['basis'] == 'likely'
+    assert '- Gas meter: outside on the left side wall, where the recorded gas line enters (likely; confirm on site)' in text
+
+
+def test_house_style_and_assessor_reading_stay_likely(sb, monkeypatch):
+    """ADDR-3: an inferred reading of the assessor's shorthand is never "(public record)"; no house style is stated as fact."""
+    brief = ('PROPERTY BRIEF: 120 NEWINGTON LN\n- Year built: 2001 [recorded: NJ parcels]\n- Living area: 3,680 sq ft [recorded]\n'
+             '- Building description (assessor shorthand): "2F2G 3634" [recorded: NJ parcels and tax list]. Likely reading: 2 stories, frame, '
+             '2-car garage [inferred]')
+    monkeypatch.setattr(homes, 'ready', lambda: True)
+    monkeypatch.setattr(homes, 'run_property_brief', lambda a: (brief, [{'title': 'NJ parcels', 'url': 'https://example.gov/p', 'publisher': 'NJ',
+                                                                          'date': '', 'kind': 'data'}]))
+    text, err, cards, _ = run('site_brief', {'address': '120 Newington Lane, Toms River NJ 08755', 'issue': 'water heater leaking'},
+                              ws_for(TECH))
+    house = next(l for l in text.split('\n') if l.startswith('HOUSE: '))
+    assert not err and 'assessor shorthand "2F2G 3634" (public record), likely meaning 2 stories, frame, 2-car garage (likely)' in house
+    assert 'garage (public record)' not in house and 'reads 2 stories' not in house
+    assert 'style not on public record; a house of that age here is often a' in house and '(likely; confirm on site)' in house
+    assert cards[0]['source_line'] == ('Source: public property records where shown; layout is a rule of thumb for houses built around 2001 in '
+                                       'Ocean County.')
+
+
+@pytest.mark.skipif(not os.path.exists(HOMES_DB), reason='server/knowledge/homes.sqlite is not present')
+def test_postal_town_keeps_public_year_built(sb):
+    """ADDR-2: a postal town that is a different municipality (Camp Hill vs Lower Allen Township) still finds the public record."""
+    if not homes.ready():
+        pytest.skip('homes database not readable')
+    con = sqlite3.connect(f'file:{HOMES_DB}?mode=ro', uri=True)
+    row = con.execute("select s.year_built from sales s join munis m on m.id=s.muni_id where s.addr='112 OLD MILL DRIVE' and s.zip='17011' "
+                      "and m.muni='LOWER ALLEN TOWNSHIP'").fetchone()
+    con.close()
+    if not row or not row[0]:
+        pytest.skip('the Camp Hill example is not in this homes database')
+    text, _ = homes.run_property_brief({'address': '112 Old Mill Dr', 'municipality': 'Camp Hill', 'state': 'PA', 'zip': '17011'})
+    assert f'Year built: {row[0]}' in text and 'is the postal town; the house is recorded in LOWER ALLEN TOWNSHIP, ZIP 17011.' in text
+    text, err, _, _ = run('site_brief', {'address': '112 Old Mill Dr, Camp Hill PA 17011', 'issue': 'furnace makes a loud bang'}, ws_for(TECH))
+    assert not err and f'Year built: {row[0]} (public record' in text and 'not on public record here' not in text
+
+
+def test_you_is_only_the_readers_own_persona(sb):
+    """copy-2: another role sees the technician persona by its role, never as "You"."""
+    gm = ws_for('pp-location-gm')
+    text, err, _, _ = run('open_record', {'number': 'L-2187'}, gm)
+    assert not err and 'Technician: HVAC technician' in text and 'You' not in text
+    text, err, _, _ = run('workspace_search', {'app': 'servicetitan', 'set': 'technicians', 'limit': 20}, gm)
+    assert not err and '] You ·' not in text
+    text, _, _, _ = run('open_record', {'number': 'L-2187'}, ws_for(TECH))
+    assert 'Technician: You' in text
+    _, err, cards, _ = run('draft_action', {'action': 'book_job', 'number': 'L-2187', 'body': 'Ignitor swap'}, ws_for('pp-dispatcher'))
+    if not err:
+        assert next(f['value'] for f in cards[0]['fields'] if f['label'] == 'Technician') != 'You'
+    workspace._READER.set(None)
+    assert workspace.who({'name': 'You', 'role': 'HVAC technician'}) == 'You'   # no reader set: unchanged
+    tok_ = workspace._READER.set('pp-location-gm')
+    try:
+        assert workspace.who({'name': 'You', 'role': 'HVAC technician'}) == 'the HVAC technician'
+        assert workspace.who({'name': 'You', 'role': 'Location general manager'}) == 'You'
+    finally:
+        workspace._READER.reset(tok_)
+
+
+def test_technician_titles_follow_the_reader(sb):
+    """copy-2: a manager's source titles and full records name the technician persona by its role, never as "You"."""
+    gm = ws_for('pp-location-gm')
+    text, err, _, s = run('workspace_search', {'app': 'servicetitan', 'set': 'technicians', 'limit': 20}, gm)
+    if err or 'HVAC technician' not in text:
+        pytest.skip('this sandbox lists no technician the manager can see')
+    assert not any('Technicians: You' in str(x) for x in s.__dict__.values())
+    assert 'Technicians: You' not in text and 'Name: You' not in text
+
+
+def test_gas_and_co_outrank_a_heating_complaint(sb):
+    """A gas smell or a CO alarm reported along with a heating complaint is still a gas or CO call (safety first)."""
+    ids = {i.get('id') for i in workspace.load('issues').get('issues') or []}
+    if not {'gas_smell', 'co_alarm', 'no_heat'} <= ids:
+        pytest.skip('this sandbox has no gas, CO or no-heat issue')
+    assert workspace._text_issue('furnace not igniting and I smell gas')['id'] == 'gas_smell'
+    assert workspace._pick_issue('furnace not working, co alarm going off', 'no_heat')['id'] == 'co_alarm'
+    assert workspace._pick_issue('radiators cold and I smell gas', 'boiler')['id'] == 'gas_smell'
+    assert workspace._pick_issue('no heat', 'no_heat')['id'] == 'no_heat'
+
+
+def test_house_numbers_stay_whole(sb):
+    """Rear and split house numbers keep their real number; a house number after "in" is not taken for a ZIP; LA is Lane."""
+    for text, key, hn in (('418 1/2 Main St, Lititz PA 17543', '418 1/2 MAIN ST', '418'),
+                          ('123-125 Main St, Lancaster PA', '123-125 MAIN ST', '123'),
+                          ('Job in 11050 Susquehanna Trail, Glen Rock PA 17327', None, '11050')):
+        p = workspace.parse_address(text)
+        assert p['house_no'] == hn and (key is None or p['key'] == key), (text, p)
+    p = workspace.parse_address('25 Orchard LA Lititz PA')
+    assert p['state'] == 'PA' and (p['town'] or '').lower() == 'lititz', p
+    assert workspace.parse_address('25 ORCHARD LA LITITZ')['state'] is None

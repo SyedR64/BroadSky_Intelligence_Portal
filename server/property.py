@@ -983,6 +983,20 @@ def run_property_brief(args):
         area_note = (f'"{_echo(named)}" is not a municipal name in the data (it may be a postal city), so the search covered '
                      f"{scope['label'] if (scope['state'] or scope['zip']) else 'the whole territory'}.")
     rows, how = _find_address(key, unit, scope)
+    if (not rows or how == 'near') and scope['munis'] and scope['zip']:
+        # The town given is often the postal town ("Camp Hill"); the house can be recorded in a neighbouring municipality with the same
+        # ZIP (Lower Allen Township). Look inside the ZIP without the municipality; only an exact or prefix match is taken.
+        b = {k: v for k, v in a.items() if k in ('state', 'county', 'zip') and v}
+        b['state'] = b.get('state') or scope['state']
+        b['zip'] = scope['zip']
+        s_b, e_b = _scope(b)
+        if not e_b:
+            r_b, h_b = _find_address(key, unit, s_b)
+            if r_b and h_b != 'near':
+                named = a.get('municipality') or a.get('area')
+                area_note = (f'"{_echo(named)}" is the postal town; the house is recorded in {r_b[0]["muni"] or "a neighbouring municipality"}, '
+                             f'ZIP {scope["zip"]}.')
+                rows, how, scope = r_b, h_b, s_b
     if not rows and scope['zip']:                                # ZIPs in the data are derived and sometimes missing: retry without
         s2 = dict(scope)
         i = s2['where'].index('s.zip=?')
