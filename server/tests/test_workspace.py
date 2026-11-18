@@ -1288,3 +1288,13 @@ def test_house_numbers_stay_whole(sb):
     p = workspace.parse_address('25 Orchard LA Lititz PA')
     assert p['state'] == 'PA' and (p['town'] or '').lower() == 'lititz', p
     assert workspace.parse_address('25 ORCHARD LA LITITZ')['state'] is None
+
+
+def test_founder_owned_is_not_a_leadership_question():
+    """'founder-owned businesses' is about acquisition targets: no BSP leadership hint, no team-page pin. 'Who founded BSP?' keeps both."""
+    import app
+    q = 'Website research on founder-owned businesses'
+    assert app.retrieval_query('portal', q) == q and not [u for rx, u in app.PINNED if rx.search(q)]
+    assert app.retrieval_query('portal', 'founder-led HVAC companies') == 'founder-led HVAC companies'
+    assert 'CEO chief executive' in app.retrieval_query('portal', 'Who are the founders of the firm?')
+    assert [u for rx, u in app.PINNED if rx.search('Who founded BSP?')]

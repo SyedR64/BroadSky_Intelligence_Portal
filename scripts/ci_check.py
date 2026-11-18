@@ -95,7 +95,10 @@ def start_server(port):
     class Quiet(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *a): pass
     h = functools.partial(Quiet, directory=ROOT)
-    srv = http.server.ThreadingHTTPServer(('127.0.0.1', port), h)
+    class Srv(http.server.ThreadingHTTPServer):
+        request_queue_size = 128   # the default backlog of 5 resets connections when a view imports many modules at once
+        daemon_threads = True
+    srv = Srv(('127.0.0.1', port), h)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     return srv
 

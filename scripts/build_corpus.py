@@ -585,7 +585,62 @@ def fmt_val(x):
     return strip_tags(str(x)) if '<' in str(x) else str(x)
 
 
-ITEM_TITLE_KEYS = ('title', 'name', 'company', 'firm', 'target', 'lever', 'event', 'question', 'headline', 'label', 'agent', 'case', 'platform', 'plant', 'project')
+ITEM_TITLE_KEYS = ('title', 'name', 'company', 'firm', 'target', 'lever', 'event', 'question', 'headline', 'label', 'agent', 'case', 'platform', 'plant', 'project', 'industry')
+
+# Loan-screen fields that are the revenue model's working (or fetch bookkeeping), not facts about the company.
+SCREEN_DROP = {'revenue_methods', 'revenue_source', 'revenue_confidence_note', 'revenue_est_usd', 'revenue_est_low_usd', 'revenue_est_high_usd',
+               'revenue_method', 'revenue_basis', 'revenue_dollars', 'revenue_confidence', 'revenue_note', 'profile', 'profile_pages_read', 'full_data_keys'}
+
+
+URL_RX = re.compile(r'(https?://[^\s;|,)\]]+)')
+
+
+def scrub_paths(s):
+    """Drop build-machine paths and repo file names from research text ("(data/research/x.json)", "/Users/...", "a_b_2022.txt").
+    URLs pass through whole: only the text between them is scrubbed."""
+    s = re.sub(r'file://\S+', '', s)
+    s = re.sub(r'\s*\((?:data|scripts|server)/[\w./{},*-]+\.(?:jsonl?|py|txt|csv|sqlite)\b[^()]*\)', '', s)
+    parts = URL_RX.split(s)
+    for i in range(0, len(parts), 2):   # even parts are the text between URLs
+        t = re.sub(r'(?<![\w./:-])(?:/Users/[^\s,;)]+|(?:data|scripts|server)/[\w./{},*-]+\.(?:jsonl?|py|txt|csv|sqlite)\b|\w+_\w+\.txt\b)', '', parts[i])
+        t = re.sub(r'(?:;[ \t]*){2,}', '; ', t)                    # "a; ; ; b" left by removed paths
+        parts[i] = re.sub(r'\([ \t]*\)', '', t)
+    return ''.join(parts)
+
+
+BENCH_ALIAS = {'238220': 'HVAC and plumbing contractors', '238210': 'electricians', '541513': 'managed IT services firms', '541512': 'IT services firms',
+               '541519': 'IT services firms', '541820': 'PR and public affairs agencies', '541910': 'polling and market research companies',
+               '423450': 'lab and medical supply distributors', '423490': 'lab and scientific supply distributors',
+               '424690': 'lab chemical distributors', '315990': 'apparel makers', '315280': 'apparel makers', '315190': 'apparel makers',
+               '424350': 'apparel wholesalers', '237110': 'water and sewer contractors'}
+
+
+def benchmark_text(it):
+    """Two paragraphs for one industry's Census benchmarks, both naming the industry and its NAICS code."""
+    name = re.sub(r'\s*\(2017 codes[^)]*\)', '', it.get('industry') or '').strip()
+    code = it.get('naics') or it.get('id') or ''
+    who = f"{name} (NAICS {code}" + (f"; {BENCH_ALIAS[code]}" if code in BENCH_ALIAS else '') + ')'
+    money_ = lambda v: f'${v:,.0f}' if isinstance(v, (int, float)) else 'n/a'
+    pct = lambda v: f'{v * 100:.0f}%' if isinstance(v, (int, float)) else 'n/a'
+    a, band = it.get('all_sizes') or {}, it.get('band_5_to_299') or {}
+    p = [f"Revenue benchmark for {who}, Census Statistics of U.S. Businesses 2022: all sizes {a.get('firms', 'n/a'):,} firms and "
+         f"{a.get('employees', 0):,} employees; receipts (revenue) per employee {money_(a.get('receipts_per_employee_2025'))} in 2025 dollars "
+         f"({money_(a.get('receipts_per_employee_2022'))} in 2022); payroll {pct(a.get('payroll_share'))} of receipts."]
+    if band:
+        p.append(f"Companies with 5 to 299 employees: {money_(band.get('receipts_per_employee_2025_min'))} to "
+                 f"{money_(band.get('receipts_per_employee_2025_max'))} per employee, payroll {pct(band.get('payroll_share_min'))} to "
+                 f"{pct(band.get('payroll_share_max'))} of receipts.")
+    pa = it.get('parent_all_sizes') or {}
+    if it.get('parent_industry') and pa:
+        p.append(f"The wider industry, {it['parent_industry']} (NAICS {it.get('parent_naics', '')}): "
+                 f"{money_(pa.get('receipts_per_employee_2025'))} per employee.")
+    rows = [f"{r.get('size_class')} employees: {money_(r.get('receipts_per_employee_2025'))} per employee, payroll {pct(r.get('payroll_share'))}, "
+            f"{r.get('firms', 0):,} firms" + ('' if r.get('reliable') else ' (thin data)')
+            for r in it.get('detailed') or [] if isinstance(r, dict)]
+    out = ' '.join(p)
+    for i in range(0, len(rows), 8):   # short, self-labelled paragraphs: a chunk never holds a number without its industry
+        out += f"\n\n{who} by company size, 2025 dollars: " + '; '.join(rows[i:i + 8]) + '.'
+    return out
 
 
 def src_research():
@@ -604,16 +659,31 @@ def src_research():
         body = (lab['desc'] + '\n\n' if lab['desc'] else '') + flatten({k: v for k, v in meta.items() if k not in ('dataset', 'item_count', 'counts')})
         for extra in [k for k in (d.keys() if isinstance(d, dict) else []) if k not in ('meta', 'items')]:
             body += f'\n\n{humanize_key(extra)}:\n' + flatten(d[extra])
+        body = scrub_paths(body)
         out.append(doc('portal', 'research', head, lab['href'], body, publisher='BSP Desk research', date=gen, key=f'research-{key}-meta'))
         items = d.get('items', []) if isinstance(d, dict) else []
         if key == 'pp_storm_events':   # 1,500+ NOAA rows: keep the summary above only
+            continue
+        if key == 'revenue_benchmarks':   # one doc per industry, every paragraph naming it, so a number is never read for the wrong one
+            for it in items:
+                if not isinstance(it, dict):
+                    continue
+                code = it.get('naics') or it.get('id') or ''
+                name = re.sub(r'\s*\(2017 codes[^)]*\)', '', it.get('industry') or '').strip()
+                out.append(doc('portal', 'research', f"Revenue benchmark: {name} (NAICS {code}" + (f"; {BENCH_ALIAS[code]}" if code in BENCH_ALIAS else '') + ')',
+                               lab['href'], benchmark_text(it), publisher='BSP Desk research', date=gen, key=f'research-{key}-{code}', companies=[]))
             continue
         batch, n = [], 0
         for it in items:
             if not isinstance(it, dict):
                 continue
             t = next((str(it[k]) for k in ITEM_TITLE_KEYS if it.get(k) and isinstance(it.get(k), (str, int))), '')
-            text = flatten(it)
+            if key == 'ma_ppp_screen':   # one revenue line per company; how the model works is in the screen's summary
+                note = it.get('revenue_note') or ''
+                it = {k: v for k, v in it.items() if k not in SCREEN_DROP}
+                if note:
+                    it['revenue_estimate'] = re.sub(r';\s*(headcount|payroll)[a-z ]*methods?', '', note) + '; modelled, not reported by the company'
+            text = scrub_paths(flatten(it))
             if t and len(text) > 250:
                 out.append(doc('portal', 'research', f"{lab['name']}: {strip_tags(t)[:160]}", lab['href'], text, publisher='BSP Desk research', date=gen,
                                key=f'research-{key}-{n}'))
@@ -748,15 +818,33 @@ def src_rendered():
         def log_message(self, *a):
             pass
     handler = functools.partial(Quiet, directory=ROOT)
-    srv = http.server.ThreadingHTTPServer(('127.0.0.1', port), handler)
+    class Srv(http.server.ThreadingHTTPServer):
+        request_queue_size = 128   # the default backlog of 5 resets connections when a view imports many modules at once
+        daemon_threads = True
+    srv = Srv(('127.0.0.1', port), handler)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     base = f'http://127.0.0.1:{port}/'
     pages = [p for p in ci_check.find_pages() if not re.search(r'^(server|worker|legacy|tools)/|chat_test|export_|system_demo|^briefing/.*shot', p)]
     routes = [f'app.html#/{m}/{v}' for m, v in ci_check.parse_routes()]
     js = """() => {
       const root = document.querySelector('#content') && location.hash ? document.querySelector('#content') : (document.querySelector('main') || document.body);
+      // The text is read from a copy, which has no layout: mark block, cell and chip boundaries on the page first so words never run together.
+      for (const el of root.querySelectorAll('*')) {
+        const d = getComputedStyle(el).display;
+        if (d === 'none' || d === 'inline' || d === 'contents' || el.dataset.kbSep) continue;
+        el.dataset.kbSep = '1';   // a second read of the same page adds nothing
+        if (!d.startsWith('table')) el.before(document.createTextNode(' '));
+        // empty bits (score bars, swatches) and blocks inside a cell get a space, so a row never breaks mid-row; a row ends a paragraph,
+        // so chunks hold whole rows
+        const empty = !el.textContent.trim();
+        el.append(document.createTextNode(d === 'table-cell' ? '\\t' : (empty || el.closest('td,th') || d.startsWith('inline')) ? ' '
+          : d === 'table-row' ? '\\n\\n' : '\\n'));
+      }
       const c = root.cloneNode(true);
-      c.querySelectorAll('script,style,noscript,svg,canvas,nav,header,footer,[aria-hidden="true"],[class^="ch-"],[class*=" ch-"],.sys-sr').forEach(e => e.remove());
+      // .ca-hint: the company agent's live status line; #apps and .ca-access: its example apps and access table, which would read as
+      // facts about the companies' real systems; .ca-roles, .ca-role-head and .ca-home: the role picker and live role card, which outranked
+      // real sources on questions about real people's jobs (the page's purpose, sandbox line and "Who sees what" lead stay)
+      c.querySelectorAll('script,style,noscript,svg,canvas,nav,header,footer,[aria-hidden="true"],[class^="ch-"],[class*=" ch-"],.sys-sr,.ca-hint,#apps,.ca-access,.ca-roles,.ca-role-head,.ca-home,select,datalist').forEach(e => e.remove());
       const h = document.querySelector('#content h1, main h1, h1');
       return { title: (h && h.innerText.trim()) || document.title, text: c.innerText };
     }"""
@@ -786,6 +874,15 @@ def src_rendered():
                 r = page.evaluate(js)
                 if len(norm_ws(r['text'])) < 200:   # a slow first load: give it one more look before dropping the page
                     page.wait_for_timeout(4000)
+                    r = page.evaluate(js)
+                if len(norm_ws(r['text'])) < 200:   # still empty (a module failed to load): load it once more from scratch
+                    page.goto('about:blank')
+                    page.goto(base + target, wait_until='domcontentloaded', timeout=30000)
+                    try:
+                        page.wait_for_function(f"() => ((document.querySelector('{sel}') || document.body).innerText || '').length > 600", timeout=12000)
+                    except Exception:
+                        pass
+                    page.wait_for_timeout(1500)
                     r = page.evaluate(js)
             except Exception as e:
                 log('render failed', target, str(e)[:120])

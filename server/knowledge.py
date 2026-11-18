@@ -30,6 +30,7 @@ PER_DOC = 2               # chunks kept per document in one result list
 KIND_WEIGHT = {'firm': 1.15, 'firm-team': 1.2, 'firm-investment': 1.15, 'press-release': 1.08, 'filing': 1.0, 'company': 1.0,
                'research': 1.0, 'answer': 1.05, 'portal-view': 1.0, 'site-page': 0.95, 'article': 1.0, 'reference': 0.95, 'headline': 0.85}
 COMPANY_BOOST = 1.35
+INDUSTRY_DOCS = ('research-revenue_benchmarks-',)   # industry-wide Census tables: they name no company, so a company question skips them
 STOP = set('a an and are as at be by can could did do does for from had has have how i if in into is it its me my of on or our '
            'should so than that the their them then there these they this to us was we were what when where which who whom why will '
            'with would you your about tell show give list find much many any all also please'.split())
@@ -113,8 +114,11 @@ class KnowledgeBase:
     def search(self, text, k=6, company=None, kinds=None, exclude_docs=()):
         """Top k chunks for a query: [{chunk_id, doc, text, score}], at most PER_DOC chunks per document."""
         fused = {}
-        for ranking in (self.keyword(text), self.semantic(text)):
-            for rank, cid in enumerate(ranking):
+        pool = POOL * 2 if company else POOL
+        for ranking in (self.keyword(text, pool), self.semantic(text, pool)):
+            if company:   # on a company question, industry tables would crowd the company's own sources out of the pool
+                ranking = [c for c in ranking if not str((self.docs.get(int(self.chunk_doc[c - 1])) or {}).get('key', '')).startswith(INDUSTRY_DOCS)]
+            for rank, cid in enumerate(ranking[:POOL]):
                 fused[cid] = fused.get(cid, 0.0) + 1.0 / (RRF_K + rank + 1)
         if not fused:
             return []

@@ -977,7 +977,7 @@ def company_hint(persona, question):
 
 QUERY_HINTS = [   # words a visitor uses for BSP and its leaders, added to the first search (Claude's own searches are already specific)
     (re.compile(r"\b(the|our|this) (firm|fund|sponsor|pe firm)\b|\b(we|us|our)\b", re.I), 'Broad Sky Partners'),
-    (re.compile(r'\bwho (runs|leads|heads|manages|founded|started|owns|is in charge)\b|\b(leadership|leaders?|management team|executives?|founders?|in charge|'
+    (re.compile(r'\bwho (runs|leads|heads|manages|founded|started|owns|is in charge)\b|\b(leadership|leaders?|management team|executives?|founders?(?![- ](?:owned|operated|held)\b|-(?:led|run)\b)|in charge|'
                 r'ceo|chief executive|vice chair|chair(man|woman)?|managing directors?|operating partners?|partners (at|of|in)|investment team|team members?)\b', re.I),
      'CEO chief executive founder partner team'),
 ]
