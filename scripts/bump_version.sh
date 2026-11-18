@@ -6,7 +6,7 @@ ROOT=${ROOT:-$(cd "$(dirname "$0")/.." && pwd)}
 V="$V" ROOT="$ROOT" python3 - <<'PY'
 import os, re, sys
 V = os.environ['V']; ROOT = os.environ['ROOT']
-SKIP = ('.git', 'node_modules', 'data', 'worker', '.github', 'briefing/ads')
+SKIP = ('.git', 'node_modules', 'data', 'worker', '.github', 'briefing/ads', 'tools')
 EXTS = ('.html', '.js', '.css')
 n_files = 0; n_stamps = 0; n_added = 0
 # 1) existing stamps → V ;  2) unstamped local .js/.css references in src/href/import → add ?v=V

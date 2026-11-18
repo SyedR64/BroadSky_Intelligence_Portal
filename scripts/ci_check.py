@@ -21,7 +21,7 @@ import argparse, asyncio, functools, http.server, json, os, re, socket, sys, tem
 from urllib.parse import urlparse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-EXCLUDE_DIRS = {'legacy', 'scripts', '.git', 'node_modules', '.github', '.claude'}
+EXCLUDE_DIRS = {'legacy', 'scripts', '.git', 'node_modules', '.github', '.claude', 'tools'}
 
 IGNORE_TEXT = [
     re.compile(r'luma\.gl|deck\.gl|@deck\.gl|luma', re.I),

@@ -5,7 +5,7 @@
    quietly, so the grounded engine in chat.js keeps working on its own.
 
    Usage (from chat.js):
-     const { Backend } = await import('./backend.js?v=20261117144031');
+     const { Backend } = await import('./backend.js?v=20261117201626');
      if (await Backend.discover()) for await (const t of Backend.chat({ persona, messages, context, question })) out += t;
      const pre = await Backend.precomputed(question);   // works without a backend
 
@@ -76,6 +76,15 @@ function networkError(e) {
 async function errorFrom(res) {
   let body = {}; try { body = await res.json(); } catch { /* not JSON */ }
   return humanize(res.status, body, res.headers.get('Retry-After'));
+}
+/** The company agent's request field { role, connected[], job? }, clipped to the sizes the server accepts (at most about 600
+    characters). Anything else (no object, no role) sends no workspace at all, so other pages' requests are unchanged. */
+function clipWorkspace(w) {
+  if (!w || typeof w !== 'object') return null;
+  const s = (v, n) => (typeof v === 'string' ? v.slice(0, n) : '');
+  const out = { role: s(w.role, 40), connected: (Array.isArray(w.connected) ? w.connected : []).filter(x => typeof x === 'string').slice(0, 16).map(x => x.slice(0, 16)) };
+  if (w.job && typeof w.job === 'object') out.job = { address: s(w.job.address, 120), issue: s(w.job.issue, 120) };
+  return out.role ? out : null;
 }
 
 /* ── Precomputed deep-dives ───────────────────────────────────────────────── */
@@ -191,8 +200,10 @@ export const Backend = {
    * future Worker sends one, means discard the text received so far. Throws BackendError with a
    * visitor-facing message; ends quietly when Backend.abort() is called.
    * mode: 'voice' asks for one short spoken answer: plain text with no markdown or [n] markers, no 'thinking' events; sources still arrive.
+   * workspace: the company agent's { role, connected[], job? } (agent.html only); with it the server may also send 'card' events
+   * ({type:'card', kind, id, …}), passed to onEvent like 'status'.
    */
-  async *chat({ persona = 'portal', messages = [], context = [], question = '', retrieve = true, mode = 'chat', onEvent = null, signal = null } = {}) {
+  async *chat({ persona = 'portal', messages = [], context = [], question = '', retrieve = true, mode = 'chat', onEvent = null, signal = null, workspace = null } = {}) {
     const q = String(question || '').trim();
     if (!q) throw new BackendError('Ask a question first.', { code: 'missing_question' });
     if (q.length > MAX_QUESTION_CHARS) throw new BackendError(`Questions are limited to ${MAX_QUESTION_CHARS.toLocaleString('en-US')} characters. Try a shorter one.`, { code: 'question_too_long' });
@@ -214,6 +225,7 @@ export const Backend = {
     const hist = (Array.isArray(messages) ? messages : []).filter(m => m && (m.role === 'user' || m.role === 'assistant'))
       .slice(-MAX_HISTORY).map(m => ({ role: m.role, content: typeof m.content === 'string' ? m.content : stripTags(m.text || m.html || '') }));
 
+    const ws = clipWorkspace(workspace);   // the company agent's role and connected apps; absent on every other page
     this.abort();
     const ctrl = new AbortController(); this._ctrl = ctrl;
     if (signal) { if (signal.aborted) ctrl.abort(); else signal.addEventListener('abort', () => ctrl.abort(), { once: true }); }
@@ -226,7 +238,7 @@ export const Backend = {
     try {
       res = await fetch(this.endpoint + '/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
-        body: JSON.stringify({ persona, messages: hist, context: ctxOut, question: q, page: pagePath(), ...(retrieve ? {} : { retrieve: false }), ...(mode === 'voice' ? { mode: 'voice' } : {}) }), signal: ctrl.signal,
+        body: JSON.stringify({ persona, messages: hist, context: ctxOut, question: q, page: pagePath(), ...(retrieve ? {} : { retrieve: false }), ...(mode === 'voice' ? { mode: 'voice' } : {}), ...(ws ? { workspace: ws } : {}) }), signal: ctrl.signal,
       });
     } catch (e) {
       if (this._ctrl === ctrl) this._ctrl = null;
@@ -262,7 +274,7 @@ export const Backend = {
           let ev; try { ev = JSON.parse(data); } catch { continue; }
           if (ev.type === 'text' && ev.text) yield ev.text;
           else if (ev.type === 'meta') { if (ev.model) this.model = ev.model; emit(ev); }
-          else if (ev.type === 'reset' || ev.type === 'sources' || ev.type === 'status' || ev.type === 'thinking') { emit(ev); }
+          else if (ev.type === 'reset' || ev.type === 'sources' || ev.type === 'status' || ev.type === 'thinking' || ev.type === 'card') { emit(ev); }
           else if (ev.type === 'done') { this.last = { model: ev.model || this.model, stop_reason: ev.stop_reason || null, usage: ev.usage || null }; finished = true; emit(ev); }
           else if (ev.type === 'error') {
             finished = true;

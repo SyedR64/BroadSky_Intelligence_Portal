@@ -41,6 +41,7 @@ KNOWN = {
     'redesigns/case-studies.html': ('Sponsor case studies', 'How other sponsors grew companies like these.'),
     'redesigns/methodology.html': ('How BSP buys', 'How BSP finds, buys and grows companies.'),
     'assistant.html': ('Assistant', 'The BSP Desk assistant, full screen.'),
+    'agent.html': ('Company agent', 'Ask as any role at BSP or its six companies, with sandbox apps and data.'),
     'briefing/executive_memo.html': ('Executive memo', 'Four pages: where the six companies stand and what to do next.'),
 }
 CO_PAGE = {
@@ -56,7 +57,7 @@ FILES = [
 ]
 # Applied before the stylesheets load so a saved dark theme never flashes light (UNIFIED.md §8).
 THEME_JS = '<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage \'bsp-theme\', light by default) before the stylesheets load; the frame\'s top-bar button changes it */(function(){try{var t=localStorage.getItem(\'bsp-theme\');if(t===\'dark\'||t===\'light\'){document.documentElement.setAttribute(\'data-sys-theme\',t);if(t===\'dark\'){var m=document.querySelector(\'meta[name="theme-color"]\');if(m)m.setAttribute(\'content\',\'#0a0e14\')}}}catch(e){}})();</script>'
-SKIP_DIRS = {'legacy', 'scripts', 'node_modules', 'data', '.git', 'assets'}
+SKIP_DIRS = {'legacy', 'scripts', 'node_modules', 'data', '.git', 'assets', 'tools'}
 
 
 def esc(s):
@@ -82,7 +83,8 @@ def pages():
     out = []
     for p in sorted(ROOT.rglob('*.html')):
         rel = p.relative_to(ROOT).as_posix()
-        if rel.split('/')[0] in SKIP_DIRS:
+        top = rel.split('/')[0]
+        if top in SKIP_DIRS or top.startswith('.'):   # .claude/worktrees and other dot dirs are local only
             continue
         out.append(rel)
     if 'sitemap.html' not in out:
@@ -131,7 +133,7 @@ def main():
     groups = []
 
     # 1. start
-    start = [p for p in ['index.html', 'app.html', 'theater.html', 'sitemap.html', 'assistant.html'] if p in all_pages]
+    start = [p for p in ['index.html', 'app.html', 'theater.html', 'sitemap.html', 'assistant.html', 'agent.html'] if p in all_pages]
     lis = [item(p if p != 'index.html' else './', *KNOWN[p]) for p in start]
     groups.append(('start', 'Start', 'The front door, the portal and the 3D map.', None, lis))
 

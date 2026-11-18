@@ -7,7 +7,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261117144031';
+       import { Frame } from '../../assets/frame.js?v=20261117201626';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
@@ -65,6 +65,7 @@ const CO_ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
 
 export const NAV = [
   { id: 'portal',    label: 'Portal',   href: 'app.html',   hint: 'analyst console' },
+  { id: 'agent',     label: 'Company agent', href: 'agent.html', hint: 'sandbox agent by role' },
   { id: 'concepts',  label: 'Concepts', href: 'redesigns/', hint: 'websites, OS and growth plans' },
   { id: 'briefing',  label: 'Briefing', href: '#briefing',  hint: 'video and memo' },
 ];
@@ -104,6 +105,7 @@ function where() {
     else if (PLAYBOOK_FILES.has(file)) active = 'playbooks';
     else active = 'concepts';
   } else if (file === 'app.html' || file === 'theater.html') active = 'portal';
+  else if (file === 'agent.html') active = 'agent';
   else if (parts[0] === 'briefing') active = 'briefing';
   return { rel, parts, file, active, co, concept: parts[0] === 'redesigns' && !!co };
 }
@@ -184,7 +186,7 @@ function footerHTML() {
       </div>
       <nav class="sys-footer-col" aria-label="Portal"><p class="sys-footer-h">Portal</p>${a('app.html', 'Portal home')}${a('app.html#/home/overview', 'Command Center')}${a('app.html#/ma/overview', 'Acquisition engine')}${a('app.html#/techos/overview', 'Tech enablement')}${a('theater.html', '3D map')}</nav>
       <nav class="sys-footer-col" aria-label="Site concepts"><p class="sys-footer-h">Site concepts</p>${cos}</nav>
-      <nav class="sys-footer-col" aria-label="Programs"><p class="sys-footer-h">Programs</p>${a('redesigns/#os', 'OS program')}${a('redesigns/#growth-plans', 'Growth plans')}${a('redesigns/voice-ai.html', '24/7 Voice AI')}${a('redesigns/ai-agents.html', 'AI agents')}</nav>
+      <nav class="sys-footer-col" aria-label="Programs"><p class="sys-footer-h">Programs</p>${a('redesigns/#os', 'OS program')}${a('redesigns/#growth-plans', 'Growth plans')}${a('redesigns/voice-ai.html', '24/7 Voice AI')}${a('redesigns/ai-agents.html', 'AI agents')}${a('agent.html', 'Company agent')}</nav>
       <nav class="sys-footer-col" aria-label="Briefing"><p class="sys-footer-h">Briefing</p>${a('#briefing', 'Video briefing')}${a('briefing/executive_memo.html', 'Executive memo')}</nav>
     </div>
     <div class="sys-footer-legal"><p>${esc(DISCLAIMER)}</p><p class="sys-mono">Prepared by ${AUTHOR} · October 2026</p></div>

@@ -1,0 +1,196 @@
+/* Company agent page (agent.html): layout only. Tokens only (UNIFIED.md §5 checklist item 5); class prefix ca-.
+   Text uses the system classes (.sys-card-label, .sys-card-body, .sys-src); colours, fonts, radii and shadows are tokens. */
+
+/* BSP's own accent (no data-co): the brand ink on its soft tint is 4.4:1 in light mode, so text on a tint (the current sub-nav
+   link, BSP's line chips, the picked BSP role) uses a slightly deeper shade. Company areas ([data-co]) set their own ink. */
+.ca{--co-ink:color-mix(in srgb,var(--sys-brand) 86%,var(--sys-ink))}
+
+/* ── hero: shorter than a landing hero (this page is a work tool) ── */
+.ca .sys-hero{padding:var(--sys-sp-7) 0 var(--sys-sp-5)}
+.ca .sys-hero .sys-h1{margin-top:0}
+/* Laptops: a compact hero so the agent (role, home and composer) starts above the fold */
+@media (min-width:561px){.ca .sys-hero{padding:var(--sys-sp-5) 0 var(--sys-sp-4)}.ca .sys-hero .sys-h1{font-size:var(--sys-fs-2xl)}}
+.ca .sys-hero .sys-lead{margin-top:var(--sys-sp-3)}
+.ca-sandbox{margin-top:var(--sys-sp-4);max-width:62ch}
+#agent.sys-section--tight{padding-top:var(--sys-sp-3)}
+
+/* ── three-area layout: roles · main · apps ── */
+.ca-layout{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"main" "apps";gap:var(--sys-sp-5);align-items:start}
+.ca-roles{grid-area:roles;display:none}
+.ca-main{grid-area:main;display:flex;flex-direction:column;gap:var(--sys-sp-4);min-width:0;padding-bottom:env(safe-area-inset-bottom,0px)}
+.ca-apps{grid-area:apps;min-width:0}
+@media (min-width:1024px){
+  .ca-layout{grid-template-columns:minmax(240px,280px) minmax(0,1fr);grid-template-areas:"roles main" "roles apps"}
+  .ca-roles{display:flex;position:sticky;top:calc(var(--sys-top-h) + var(--sys-subnav-h,48px) + var(--sys-sp-4));max-height:calc(100dvh - var(--sys-top-h) - var(--sys-subnav-h,48px) - var(--sys-sp-6));overflow-y:auto;overscroll-behavior:contain}
+  .ca-change{display:none}
+}
+@media (min-width:1280px){
+  .ca-layout{grid-template-columns:minmax(240px,280px) minmax(0,1fr) minmax(280px,320px);grid-template-areas:"roles main apps"}
+  .ca-apps{position:sticky;top:calc(var(--sys-top-h) + var(--sys-subnav-h,48px) + var(--sys-sp-4));max-height:calc(100dvh - var(--sys-top-h) - var(--sys-subnav-h,48px) - var(--sys-sp-6));overflow-y:auto;overscroll-behavior:contain}
+  .ca-app-list{grid-template-columns:minmax(0,1fr)}
+}
+
+/* ── role tree (desktop card and the phone sheet) ── */
+.ca-start{margin-bottom:var(--sys-sp-2)}
+.ca-tree{display:flex;flex-direction:column;gap:var(--sys-sp-2)}
+.ca-pc-label{margin-top:var(--sys-sp-3)}
+.ca-tree-co{display:flex;flex-direction:column;gap:var(--sys-sp-1);border-left:1px solid var(--sys-line);padding-left:var(--sys-sp-4)}
+.ca-org>summary{display:flex;align-items:center;gap:var(--sys-sp-2);min-height:40px;padding:var(--sys-sp-1) var(--sys-sp-2);margin:0 calc(-1 * var(--sys-sp-2));border-radius:var(--sys-r-sm);list-style:none;cursor:pointer;font-weight:600;font-size:var(--sys-fs-sm);color:var(--sys-ink)}
+.ca-org>summary::-webkit-details-marker{display:none}
+.ca-org>summary:hover{background:var(--sys-bg-3)}
+.ca-org>summary .sys-muted{font-weight:500;font-size:var(--sys-fs-xs)}
+.ca-org>summary::after{content:"";flex-shrink:0;margin-left:auto;width:7px;height:7px;border-right:2px solid var(--sys-mute);border-bottom:2px solid var(--sys-mute);transform:rotate(-45deg);transition:transform var(--sys-t)}
+.ca-org[open]>summary::after{transform:rotate(45deg)}
+.ca-org-body{display:flex;flex-direction:column;gap:var(--sys-sp-2);padding:var(--sys-sp-1) 0 var(--sys-sp-3)}
+.ca-org-body>.sys-card-body{font-size:var(--sys-fs-sm)}
+.ca-lines .sys-chip{min-height:26px;padding:0 10px;font-size:var(--sys-fs-xs);white-space:normal}
+.ca-dept{display:flex;flex-direction:column;gap:var(--sys-sp-1);margin-top:var(--sys-sp-1)}
+.ca-role-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.ca-role{display:flex;align-items:center;width:100%;min-height:36px;padding:var(--sys-sp-1) var(--sys-sp-3);border:0;border-radius:var(--sys-r-sm);background:transparent;font:500 var(--sys-fs-sm)/1.3 var(--sys-font);color:var(--sys-ink-2);text-align:left;cursor:pointer}
+.ca-role:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
+.ca-role[aria-pressed="true"]{background:var(--co-soft);color:var(--co-ink);font-weight:600}
+.ca-role-desc{margin:0 0 var(--sys-sp-2);padding:0 var(--sys-sp-3)}
+.ca-roles>.sys-src,.ca-tree>.sys-src{margin-top:var(--sys-sp-2)}
+
+/* ── role head ── */
+.ca-role-top{display:flex;align-items:center;justify-content:space-between;gap:var(--sys-sp-3)}
+.ca-role-top .sys-card-title{min-width:0}
+.ca-change{flex-shrink:0}
+.ca-role-head .sys-chips{margin-top:var(--sys-sp-1)}
+.ca-role-head .sys-card-foot{justify-content:flex-start}
+
+/* ── home summary ── */
+.ca-home{display:flex;flex-direction:column;gap:var(--sys-sp-3);min-width:0}
+.ca-home .sys-kpis{margin-top:0}
+.ca-home .sys-src{margin-top:0}
+.ca-home .ca-lead .sys-btn{white-space:normal;text-align:left;line-height:1.25;padding-top:var(--sys-sp-2);padding-bottom:var(--sys-sp-2)}
+.ca-list{display:flex;flex-direction:column;gap:var(--sys-sp-2)}
+.ca-rows{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--sys-sp-2)}
+.ca-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:var(--sys-sp-3);width:100%;min-height:52px;padding:var(--sys-sp-2) var(--sys-sp-3);border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface);color:var(--sys-ink-2);font:inherit;text-align:left;cursor:pointer;transition:border-color var(--sys-t),background var(--sys-t)}
+.ca-row:hover{border-color:var(--sys-ink);color:var(--sys-ink)}
+.ca-row-time{min-width:8ch;font-size:var(--sys-fs-xs);color:var(--sys-mute)}
+.ca-row-main{display:flex;flex-direction:column;min-width:0;font-size:var(--sys-fs-sm);line-height:1.35}
+.ca-row-main b{color:var(--sys-ink);font-weight:600}
+.ca-row-main span{overflow-wrap:anywhere}
+.ca-show-all{align-self:flex-start;display:none}
+
+/* ── chat area (the shared widget, mounted inline) ── */
+.ca-chat .ch-box textarea{font-size:var(--sys-fs-base)}
+.ca-chat .ch-inline .ch-chips{justify-content:flex-start}
+.ca-chat .ch-inline .ch-thread.open{max-height:none}
+.ca-chat .ch-inline .ch-thread .ch-msgs{max-height:none;overflow:visible}   /* the page scrolls, not a box: sketches and drafts show in full */
+.ca-actions{margin-top:var(--sys-sp-3)}
+.ca-actions[hidden]{display:none}
+.ca[data-style="field"] .ch-think{display:none}
+.ca-hint{margin-top:0}
+.ca-hint[hidden]{display:none}
+
+/* ── connected apps ── */
+.ca-apps-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:var(--sys-sp-3)}
+.ca-apps-head>div{display:flex;flex-direction:column;gap:var(--sys-sp-1)}
+.ca-app-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:var(--sys-sp-3);margin-top:var(--sys-sp-2)}
+.ca-app{gap:var(--sys-sp-2);padding:var(--sys-sp-4)}
+.ca-app-top{display:flex;align-items:center;gap:var(--sys-sp-3);min-width:0}
+.ca-app-name{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ca-app .sys-card-title{font-size:var(--sys-fs-base)}
+.ca-app .sys-card-body{font-size:var(--sys-fs-sm)}
+.ca-app .sys-card-foot{padding-top:var(--sys-sp-3)}
+.ca-app .sys-card-foot .sys-src{margin-top:0;flex:1 1 140px;text-align:right}
+@media (min-width:1280px){.ca-app .sys-card-foot{flex-direction:column;align-items:flex-start}.ca-app .sys-card-foot .sys-src{text-align:left;flex:none}}
+.ca-syncing::before{display:none}
+.ca-mono{display:inline-grid;place-items:center;flex-shrink:0;width:36px;height:36px;background:var(--sys-bg-3);color:var(--sys-ink);border-radius:var(--sys-r-sm);box-shadow:inset 0 0 0 1px var(--sys-line);font:600 var(--sys-fs-xs)/1 var(--sys-mono);letter-spacing:.02em}
+.ca-apps>.sys-src{margin-top:var(--sys-sp-1)}
+
+/* ── dialogs: consent, sync and the role sheet (component: system.css §6o) ── */
+.ca-dlg-title{display:flex;align-items:center;gap:var(--sys-sp-3)}
+.ca-dlg-app{margin-top:var(--sys-sp-1)}
+.ca-sync{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border:1px solid var(--sys-line);border-radius:var(--sys-r-sm)}
+.ca-sync li{display:flex;align-items:center;gap:var(--sys-sp-3);min-height:44px;padding:0 var(--sys-sp-4);font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
+.ca-sync li+li{border-top:1px solid var(--sys-line)}
+.ca-sync-l{flex:1;min-width:0}
+.ca-sync-n{color:var(--sys-ink);font-weight:600}
+.ca-sync-ok{width:16px;flex-shrink:0;text-align:center;font-weight:700;color:var(--sys-good-ink)}
+.ca-sync li.is-done .ca-sync-ok::before{content:"\2713"}
+.ca-sync-done[hidden],.sys-dialog .sys-actions[hidden]{display:none}
+#ca-role-sheet .ca-sheet-body{display:flex;flex-direction:column;gap:var(--sys-sp-2)}
+#ca-role-sheet>h2{position:sticky;top:calc(-1 * var(--sys-sp-5));z-index:1;margin-top:calc(-1 * var(--sys-sp-2));padding-block:var(--sys-sp-2);background:var(--sys-surface)}
+
+/* ── access ── */
+.ca-access{display:flex;flex-direction:column;gap:var(--sys-sp-4)}
+.ca-access .sys-table td{min-width:12ch}
+.ca-access .sys-table td:first-child{min-width:16ch}
+.ca-access .sys-table tr.ca-row-current td{background:var(--sys-surface-2)}
+.ca-access .sys-table tr.ca-row-current td:first-child{box-shadow:inset 3px 0 0 var(--co,var(--sys-brand))}
+.ca-access-list{display:none}
+.ca-access-row{margin:0;padding:var(--sys-sp-3) var(--sys-sp-4);display:flex;flex-direction:column;gap:var(--sys-sp-1);background:var(--sys-surface);border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
+.ca-access-row.ca-row-current{background:var(--sys-surface-2);border-color:var(--sys-line-2)}
+.ca-access-row>div{display:grid;grid-template-columns:minmax(0,9ch) minmax(0,1fr);gap:var(--sys-sp-3)}
+.ca-access-row dt{font:600 var(--sys-fs-2xs)/1.5 var(--sys-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sys-mute)}
+.ca-access-row dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.ca-access-row .ca-ar-role{display:block}
+.ca-access-row .ca-ar-role b{color:var(--sys-ink)}
+.ca-try{margin:0}
+.ca-try .sys-link{background:none;border:0;border-bottom:1px solid var(--sys-line-2);border-radius:0;padding:0 0 2px;font:600 var(--sys-fs-base)/1.4 var(--sys-font);cursor:pointer}
+.ca-try .sys-link:hover{border-bottom-color:var(--sys-ink)}
+
+/* ── phones ── */
+@media (max-width:560px){
+  .ca .sys-hero{padding:var(--sys-sp-4) 0 var(--sys-sp-2)}
+  .ca .sys-hero .sys-lead{margin-top:var(--sys-sp-2)}
+  .ca-lead-more{display:none}                     /* the phone lead is one sentence */
+  .ca-sandbox{margin-top:var(--sys-sp-3);padding:var(--sys-sp-2) var(--sys-sp-3)}
+  .ca-main{gap:var(--sys-sp-3)}
+  /* Field roles: role, the next jobs and the composer on the first screen. The home card opens up so the
+     KPI tiles can follow the chat; today's jobs scroll sideways as one row of cards. */
+  .ca[data-style="field"] .ca-sells{display:none}
+  .ca[data-style="field"] .ca-role-head{gap:var(--sys-sp-2);padding:var(--sys-sp-4)}
+  .ca[data-style="field"] .ca-rows .ca-row{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"time chip" "main chip";row-gap:2px;align-items:start}
+  .ca[data-style="field"] .ca-rows .ca-row-time{grid-area:time;min-width:0}
+  .ca[data-style="field"] .ca-rows .ca-row-main{grid-area:main}
+  .ca[data-style="field"] .ca-rows .ca-row>.sys-chip{grid-area:chip;align-self:center}
+  .ca[data-style="field"] .ca-home{display:contents}
+  .ca[data-style="field"] .ca-role-head{order:1}
+  .ca[data-style="field"] .ca-home>h2{order:2}
+  .ca[data-style="field"] .ca-home>.ca-lead{order:3}
+  .ca[data-style="field"] .ca-home>.ca-list{order:4}
+  .ca[data-style="field"] .ca-chat{order:5}
+  .ca[data-style="field"] .ca-hint{order:6}
+  .ca[data-style="field"] .ca-home>.ca-kpis{order:7}
+  .ca[data-style="field"] .ca-home>.sys-src{order:8}
+  .ca[data-style="field"] .ca-list>.sys-card-label{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .ca[data-style="field"] .ca-rows{flex-direction:row;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 calc(-1 * var(--sys-gut));padding:0 var(--sys-gut);scroll-padding:0 var(--sys-gut)}
+  .ca[data-style="field"] .ca-rows::-webkit-scrollbar{display:none}
+  .ca[data-style="field"] .ca-rows>li{flex:0 0 min(86%,320px);scroll-snap-align:start}
+  .ca[data-style="field"] .ca-rows .ca-row{height:100%}
+  .ca[data-style="field"] .ca-list .ca-row-more{display:block}
+  .ca[data-style="field"] .ca-list.has-more .ca-show-all{display:none}
+  .ca-desc{display:none}
+  .ca-list:not(.is-all) .ca-row-more{display:none}
+  .ca-list.has-more:not(.is-all) .ca-show-all{display:inline-flex}
+  .ca-chat .ch-inline .ch-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;justify-content:flex-start;padding-bottom:2px}
+  .ca-chat .ch-inline .ch-chips::-webkit-scrollbar{display:none}
+  .ca-chat .ch-inline .ch-chip{flex-shrink:0}
+  .ca-chat .ch-inline .ch-thread.open,.ca-chat .ch-inline .ch-thread .ch-msgs{max-height:none;overflow:visible}
+  .ca-access-table{display:none}
+  .ca-access-list{display:flex;flex-direction:column;gap:var(--sys-sp-2)}
+  .ca-access-list>.sys-src{margin-top:var(--sys-sp-1)}
+  .ca-app .sys-card-foot .sys-src{text-align:left}
+}
+
+/* ── touch ── */
+@media (pointer:coarse){
+  .ca .sys-btn--sm,.ca :is(button,a).sys-chip,.ca-dialog .sys-btn--sm,.ca-dialog button.sys-chip,.ca-sketch .sys-chip,.ca-draft .sys-btn,.ca-actions .sys-chip,.ca-role{min-height:44px}
+  .ca-chat .ch-btn.mic,.ca-chat .ch-btn.send{width:48px;height:48px}
+  .ca-chat .ch-chip{min-height:44px}
+  .ca-chat .ch-actions :is(button,a){min-width:44px;min-height:44px}
+  .ca-chat .ch-ib-b,.ca-chat .ch-ib button,.ca-chat .ch-sources>summary{min-height:44px;min-width:44px}
+  .ca-try .sys-link{display:inline-flex;align-items:center;min-height:44px}
+  .ca-org>summary{min-height:44px}
+}
+
+/* KPI strip: three tiles read as one row from 720px; on phones the odd last tile spans the row (no empty cell) */
+.ca-kpis>.sys-kpi:last-child:nth-child(odd){grid-column:1/-1}
+@media (min-width:720px){
+  .ca-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .ca-kpis>.sys-kpi:last-child:nth-child(odd){grid-column:auto}
+}

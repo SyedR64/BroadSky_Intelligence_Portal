@@ -14,7 +14,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261117144031';
+import { Data, Fmt, Live, esc } from './core.js?v=20261117201626';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -57,7 +57,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261117144031';
+const BACKEND_JS = './backend.js?v=20261117201626';
 let BE = null, BE_P = null, BE_RETRY = 0;
 function backend() {
   // The check on page load can land on a cold start and miss: when the backend looked offline, check again (at most every 15 s).
@@ -557,7 +557,7 @@ async function addonHistory(q) {
 }
 /** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
 async function dealModel(q) {
-  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261117144031').catch(() => null)]);
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261117201626').catch(() => null)]);
   if (!d || !L) return null;
   const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
   const P = pre.find(i => i.co === co && i.group !== 'generic') || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
@@ -930,14 +930,14 @@ const SPECIAL = { pmax: 'PMax', ebitda: 'EBITDA', usd: 'USD' };
 const srcKey = k => String(k || '').replace(/^\.\//, '').replace(/^sales\//, '').replace(/\.json$/, '');
 function srcLabel(key) { key = srcKey(key); if (SRC[key]) return SRC[key][0]; const w = key.split('_').filter(Boolean).map((b, i) => i === 0 && PREFIX[b] ? PREFIX[b] : UPPER.has(b) ? b.toUpperCase() : SPECIAL[b] || b).join(' '); return w.charAt(0).toUpperCase() + w.slice(1); }
 function srcOf(key) { key = srcKey(key); const r = SRC[key] || []; const live = key.startsWith('live:'); return { key, label: srcLabel(key), desc: r[1] || '', href: srcHref(r[2]), kind: live ? 'live' : 'dataset', asOf: live ? 'live' : ASOF.get(key) || (FRESH.has(key) ? '2026-10-06' : AS_OF_DEFAULT), at: Date.now() }; }
-const KIND_TEXT = { live: 'Live feed', page: 'Page', insight: 'Dataset insight', firm: 'BSP website', press: 'Press release', filing: 'SEC filing', news: 'News', company: 'Company website', web: 'Public source', model: 'Acquisition model', records: 'Public records' };
+const KIND_TEXT = { live: 'Live feed', page: 'Page', insight: 'Dataset insight', firm: 'BSP website', press: 'Press release', filing: 'SEC filing', news: 'News', company: 'Company website', web: 'Public source', model: 'Acquisition model', records: 'Public records', sandbox: 'Sandbox app', rules: 'Rule of thumb' };
 const DATED = new Set(['firm', 'press', 'filing', 'news', 'company', 'web', 'records']);
-const asOfText = s => s.kind === 'live' ? `Live · fetched ${new Date(s.at || Date.now()).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}` : s.kind === 'page' ? 'Portal view' : s.kind === 'model' ? 'Run for this answer' : DATED.has(s.kind) ? (s.asOf ? `Dated ${Fmt.date(s.asOf)}` : 'Public page') : `As of ${Fmt.date(s.asOf || AS_OF_DEFAULT)}`;
+const asOfText = s => s.kind === 'live' ? `Live · fetched ${new Date(s.at || Date.now()).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}` : s.kind === 'page' ? 'Portal view' : s.kind === 'model' ? 'Run for this answer' : s.kind === 'sandbox' ? 'Sandbox data' : s.kind === 'rules' ? 'Not a record' : DATED.has(s.kind) ? (s.asOf ? `Dated ${Fmt.date(s.asOf)}` : 'Public page') : `As of ${Fmt.date(s.asOf || AS_OF_DEFAULT)}`;
 const kindText = s => KIND_TEXT[s.kind] || 'Dataset';
 /* A source from the hosted knowledge base, in the shape the source list and popovers use. */
 const HOSTED_FIRST = new Set(['model', 'homeowners', 'brief']);   // intents the hosted assistant answers better (it has the deal-model and home-records tools); the intent stays the offline answer
 const LIVE_ONLY = new Set(['homeowners', 'brief']);   // answered from live records only: never from a prepared answer or the closest dataset
-const SRV_KIND = { page: 'page', 'portal-view': 'page', 'site-page': 'page', answer: 'page', research: 'dataset', model: 'model', firm: 'firm', 'firm-team': 'firm', 'firm-investment': 'firm', 'press-release': 'press', filing: 'filing', company: 'company', article: 'news', headline: 'news', reference: 'web', web: 'web', data: 'records' };
+const SRV_KIND = { page: 'page', 'portal-view': 'page', 'site-page': 'page', answer: 'page', research: 'dataset', model: 'model', firm: 'firm', 'firm-team': 'firm', 'firm-investment': 'firm', 'press-release': 'press', filing: 'filing', company: 'company', article: 'news', headline: 'news', reference: 'web', web: 'web', data: 'records', sandbox: 'sandbox', rules: 'rules' };
 function srvSource(s) {
   const url = String(s?.url || ''), p = ownPath(url) ?? (/^(?:\.\/)?(?:[\w-]+\/)*[\w-]+\.html/.test(url) ? url.replace(/^\.\//, '') : null), href = p !== null ? ROOT + p : url;   // a page of this site, named from the site root, opens from any page depth
   const kind = SRV_KIND[s?.kind] || 'web';
@@ -1317,7 +1317,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261117144031'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261117201626'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };
@@ -1386,9 +1386,10 @@ class Widget {
   loadExtra() { const id = this.id; siteIntents(id).then(x => { if (this.id === id) this.extra = x; }).catch(() => { }); }
   fullHref() { return `${ROOT}assistant.html?persona=${encodeURIComponent(this.id)}${this.lastQ ? `&q=${encodeURIComponent(this.lastQ)}` : ''}`; }
   avatar(cls = '') { return `<span class="ch-avatar ch-avatar--logo ${cls}" aria-hidden="true"><img src="${logoOf(this.id)}" alt="" width="44" height="44" decoding="async"></span>`; }
-  engineHTML() { return `<button type="button" class="ch-engine" data-a="settings" title="${esc(engineTip())}" aria-label="${esc(engineLabel())}. About this assistant">${hosted() || LLM.key() ? I.spark : I.db}<span class="ch-engine-t">${esc(engineLabel())}</span>${I.gear}</button>`; }
+  engineHTML() { if (this.opts?.engine === false) return ''; return `<button type="button" class="ch-engine" data-a="settings" title="${esc(engineTip())}" aria-label="${esc(engineLabel())}. About this assistant">${hosted() || LLM.key() ? I.spark : I.db}<span class="ch-engine-t">${esc(engineLabel())}</span>${I.gear}</button>`; }
   /** One short line: where answers come from. */
   privacy() {
+    if (this.opts?.privacy) return String(this.opts.privacy);
     return hosted() || LLM.key() ? 'Every answer shows its sources.' : 'Answers come from the portfolio data.';
   }
   footHTML() { return `${esc(this.privacy())}${DEV && !hosted() && !LLM.key() ? ' <a href="#" data-a="settings" data-adv="1">Add a model key</a>' : ''}`; }
@@ -1408,11 +1409,24 @@ class Widget {
   synthBtnHTML() { return `<button type="button" class="ch-synth-btn" data-act="synth" aria-label="Go deeper on this answer">${I.spark}<span>Go deeper</span></button>`; }
 
   headHTML() {
-    return `<div class="ch-head">${this.avatar()}<div class="ch-head-t"><div class="ch-title">${esc(this.persona.name)}</div><div class="ch-sub"><span class="ch-dot" aria-hidden="true"></span><span class="ch-state"${limited() ? ` title="${esc(LIMITED_TIP)}"` : ''}>${stateText(this.busy)}</span>${this.engineHTML()}</div></div><div class="ch-ib"><button type="button" data-a="new" aria-label="New chat" data-tip="New chat">${I.compose}</button><a data-a="expand" href="${esc(this.fullHref())}" aria-label="Open full assistant" data-tip="Open full assistant">${I.expand}</a><button type="button" data-a="close" aria-label="Close assistant" data-tip="Close">${I.x}</button></div></div>`;
+    return `<div class="ch-head">${this.avatar()}<div class="ch-head-t"><div class="ch-title">${esc(this.persona.name)}</div><div class="ch-sub"><span class="ch-dot" aria-hidden="true"></span><span class="ch-state"${limited() ? ` title="${esc(LIMITED_TIP)}"` : ''}>${stateText(this.busy)}</span>${this.engineHTML()}</div></div><div class="ch-ib"><button type="button" data-a="new" aria-label="New chat" data-tip="New chat">${I.compose}</button>${this.opts?.expand === false ? '' : `<a data-a="expand" href="${esc(this.fullHref())}" aria-label="Open full assistant" data-tip="Open full assistant">${I.expand}</a>`}<button type="button" data-a="close" aria-label="Close assistant" data-tip="Close">${I.x}</button></div></div>`;
   }
-  tbarHTML() { return `<div class="ch-tbar">${this.avatar('sm')}<b class="ch-tbar-n">${esc(this.persona.name)}</b>${this.engineHTML()}<span class="ch-sp"></span><button type="button" class="ch-ib-b" data-a="new" aria-label="New chat" data-tip="New chat">${I.compose}</button><a class="ch-ib-b" data-a="expand" href="${esc(this.fullHref())}" aria-label="Open full assistant" data-tip="Open full assistant">${I.expand}</a></div>`; }
+  tbarHTML() { return `<div class="ch-tbar">${this.avatar('sm')}<b class="ch-tbar-n">${esc(this.persona.name)}</b>${this.engineHTML()}<span class="ch-sp"></span><button type="button" class="ch-ib-b" data-a="new" aria-label="New chat" data-tip="New chat">${I.compose}</button>${this.opts?.expand === false ? '' : `<a class="ch-ib-b" data-a="expand" href="${esc(this.fullHref())}" aria-label="Open full assistant" data-tip="Open full assistant">${I.expand}</a>`}</div>`; }
   /** The page's own suggestion list (Chat.mount opts.suggestions), shown in full and in order; null when the page passed none. */
   ownSuggestions() { const o = this.opts?.suggestions; return this.id === this.baseId && Array.isArray(o) && o.length ? uniq(o.filter(Boolean)) : null; }
+  /** The company agent's request field (opts.workspace: an object, or a function evaluated at ask time); null on every other page. */
+  workspaceOf() { try { const f = this.opts?.workspace; const v = typeof f === 'function' ? f() : f; return v && typeof v === 'object' ? v : null; } catch { return null; } }
+  /** Puts a card event (opts.renderCard's element) in the turn's block area, replacing an earlier card with the same id. */
+  paintCard(turn, ev) {
+    const f = this.opts?.renderCard, box = turn?.querySelector('.ch-blocks');
+    if (!box || typeof f !== 'function' || !ev?.id) return;
+    let el = null; try { el = f(ev, { turn, widget: this }); } catch (e) { console.warn('card failed', e); }
+    if (!(el instanceof Element)) return;
+    el.dataset.cardId = ev.id;
+    const old = [...box.children].find(c => c.dataset.cardId === ev.id);
+    if (old) old.replaceWith(el); else box.appendChild(el);
+    box.hidden = false;
+  }
   chipsHTML() { const own = this.ownSuggestions(); return `<div class="ch-chips">${(own || uniq(this.persona.suggestions).slice(0, 5)).map(s => `<button type="button" class="ch-chip" data-prompt="${esc(s)}">${esc(s)}</button>`).join('')}</div>`; }
   composeHTML() {
     // Voice: one microphone button. Where the browser cannot listen it stays visible, marked unavailable, and says why when pressed.
@@ -1531,7 +1545,7 @@ class Widget {
     for (let n = w.nextNode(); n; n = w.nextNode()) if (rx.test(n.nodeValue)) { rx.lastIndex = 0; n.nodeValue = n.nodeValue.replace(rx, String(DATASETS)); }
     for (const attr of ['aria-label', 'title']) this.root.querySelectorAll(`[${attr}]`).forEach(e => { const v = e.getAttribute(attr); if (rx.test(v)) { rx.lastIndex = 0; e.setAttribute(attr, v.replace(rx, String(DATASETS))); } });
   }
-  updateExpand() { this.root.querySelectorAll('[data-a="expand"]').forEach(a => { a.href = this.fullHref(); }); }
+  updateExpand() { if (this.opts?.expand === false) return; this.root.querySelectorAll('[data-a="expand"]').forEach(a => { a.href = this.fullHref(); }); }
   focus() { const ta = this.root.querySelector('textarea'); if (!ta) return; if (this.mode === 'inline') ta.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' }); ta.focus({ preventScroll: this.mode === 'inline' }); }
 
   /* ── composer ── */
@@ -1546,7 +1560,7 @@ class Widget {
     const pick = i => { const it = items[i]; if (!it) return; ac.hidden = true; if (kind === 'cmd') { ta.value = ''; grow(); this.command(it.text); } else { ta.value = it.text; grow(); this.submit(); } };
     const showAc = () => {
       const q = ta.value.trim().toLowerCase(); if (!q) { ac.hidden = true; return; }
-      if (q.startsWith('/')) { if (!DEV) { ac.hidden = true; idx = -1; items = []; return; } kind = 'cmd'; const c = q.split(/\s/)[0]; items = COMMANDS.filter(x => x[0].startsWith(c)).map(x => ({ text: x[0], sub: x[1] })); idx = Math.max(0, items.findIndex(x => x.text === c)); }
+      if (q.startsWith('/')) { if (!DEV || this.opts?.commands === false) { ac.hidden = true; idx = -1; items = []; return; } kind = 'cmd'; const c = q.split(/\s/)[0]; items = COMMANDS.filter(x => x[0].startsWith(c)).map(x => ({ text: x[0], sub: x[1] })); idx = Math.max(0, items.findIndex(x => x.text === c)); }
       else { kind = 'q'; const words = q.split(/\s+/); items = uniq(this.persona.suggestions).filter(s => { const l = s.toLowerCase(); return l.startsWith(q) || words.every(w => l.includes(w)); }).slice(0, 6).map(s => ({ text: s })); idx = 0; }
       if (!items.length) { ac.hidden = true; idx = -1; return; }
       ac.innerHTML = `<p class="ch-ac-h">${kind === 'cmd' ? 'Commands' : 'Suggestions'}</p>` + items.map((it, i) => { const k = it.text.toLowerCase().indexOf(q); const h = k >= 0 ? esc(it.text.slice(0, k)) + '<b>' + esc(it.text.slice(k, k + q.length)) + '</b>' + esc(it.text.slice(k + q.length)) : esc(it.text); return `<div role="option" data-i="${i}" aria-selected="false">${kind === 'cmd' ? I.slash : I.search}<span class="ch-ac-t">${h}${it.sub ? `<small>${esc(it.sub)}</small>` : ''}</span>${i === 0 ? '<span class="k">Tab</span>' : ''}</div>`; }).join('');
@@ -1572,6 +1586,7 @@ class Widget {
   setBusy(on) { this.busy = on; this.root.classList.toggle('ch-busy', on); const s = this.root.querySelector('.ch-state'); if (s) s.textContent = stateText(on); this.syncSend(); }
   submit() { const ta = this.ta; const q = (ta?.value || '').trim(); if (!q || this.busy) return; this.listenStop(false); ta.value = ''; this.grow?.(); if (q.startsWith('/') && this.command(q)) return; this.ask(q); }
   command(text) {
+    if (this.opts?.commands === false) return false;
     const c = String(text).trim().split(/\s+/)[0].toLowerCase(); const hit = COMMANDS.find(x => x[0] === c); if (!hit) return false;
     if (hit[2]) this.setPersona(hit[2]); else if (c === '/key') this.settings(); else this.newChat();
     return true;
@@ -1662,29 +1677,29 @@ class Widget {
   }
 
   /* ── conversation ── */
-  setPersona(id, { fresh = true } = {}) {
+  setPersona(id, { fresh = true, focus = true } = {}) {
     if (!(PERSONAS[id] || SITE_BASE[id])) return false;
     this.id = id; this.persona = id === this.baseId ? this.basePersona : resolvePersona(id);
     this.setAccent(); this.extra = null; this.loadExtra();
-    if (fresh) this.newChat();
+    if (fresh) this.newChat({ focus });
     this.refreshChrome();
     if (this.mode === 'full') { try { const u = new URL(location.href); u.searchParams.set('persona', id); history.replaceState(null, '', u); } catch { /* keep URL */ } }
     return true;
   }
-  newChat() {
+  newChat({ focus = true } = {}) {
     if (this.busy) this.stop(); this.listenStop(false); this.stopSpeech(); this.hidePop();
     this.history = []; this.ctx = null; this.thread = null; this.lastQ = '';
     this.msgs.innerHTML = '';
     if (this.mode === 'inline') this.root.querySelector('.ch-thread')?.classList.remove('open'); else this.showEmpty();
     if (this.mode === 'full') { this.renderThreads(); this.root.classList.remove('ch-side-open'); }
-    this.updateExpand(); this.updateJump(); this.focus();
+    this.updateExpand(); this.updateJump(); if (focus) this.focus();
   }
   stop() { if (this.ctl) this.ctl.stopped = true; if (Voice.owner === this) Voice.cancel(); try { BE?.abort(); } catch { /* nothing in flight */ } }
   userTurn(q) { const d = document.createElement('div'); d.className = 'ch-turn user'; d.innerHTML = `<div class="ch-ubox">${esc(q)}</div>`; return d; }
   botShell() {
     this.msgs.querySelectorAll('.ch-turn.bot').forEach(t => { t.style.minHeight = ''; });
     const d = document.createElement('div'); d.className = 'ch-turn bot';
-    d.innerHTML = `${this.avatar('sm')}<div class="ch-col"><div class="ch-note" hidden></div><div class="ch-status" role="status" hidden></div><div class="ch-answer"></div><div class="ch-synth" hidden></div><div class="ch-after"></div></div>`;
+    d.innerHTML = `${this.avatar('sm')}<div class="ch-col"><div class="ch-note" hidden></div><div class="ch-status" role="status" hidden></div><div class="ch-answer"></div>${this.opts?.renderCard ? '<div class="ch-after"></div><div class="ch-blocks" hidden aria-live="off"></div><div class="ch-synth" hidden></div><div class="ch-after ch-tail"></div>' : '<div class="ch-synth" hidden></div><div class="ch-after"></div>'}</div>`;
     return d;
   }
   /** opts.voice: the question was spoken. It gets one short answer, shown on screen and read aloud. */
@@ -1701,6 +1716,7 @@ class Widget {
     this.lastQ = q; if (this.prompts.at(-1) !== q) this.prompts.push(q); this.updateExpand();
     const u = this.userTurn(q), turn = this.botShell();
     this.msgs.append(u, turn);
+    if (typeof this.opts?.onTurn === 'function') { try { this.opts.onTurn(u); } catch (e) { console.warn('onTurn failed', e); } }
     this.history.push({ role: 'user', html: esc(q), text: q });
     if (this.msgs.querySelectorAll('.ch-turn.user').length > 1 || this.mode !== 'inline') turn.style.minHeight = Math.max(0, this.msgs.clientHeight - u.offsetHeight - 56) + 'px';
     this.msgs.scrollTo({ top: Math.max(0, u.offsetTop - 14), behavior: reduced() ? 'auto' : 'smooth' });
@@ -1731,16 +1747,17 @@ class Widget {
       const intents = [...(this.extra || []), ...(this.persona.intents || [])];
       // A docked assistant reads the page behind it at ask time; the research assistant gets it with every question.
       const view = this.mode === 'floating' ? viewContext() : null;
-      const { hit, eq, fu, aboutView, toHosted } = routeOf(q, intents, this.ctx, !!view);
+      const only = !!this.opts?.hostedOnly;   // company agent: the server gets the raw question (no follow-up rewriting, no intents)
+      const { hit, eq, fu, aboutView, toHosted } = only ? { hit: null, eq: q, fu: null, aboutView: false, toHosted: true } : routeOf(q, intents, this.ctx, !!view);
       if (fu) this.note(turn, fu);
-      st.push(aboutView && view ? 'Reading this view' : 'Searching the portfolio data');
+      st.push(only ? "Reading this role's apps" : aboutView && view ? 'Reading this view' : 'Searching the portfolio data');
       // A spoken question goes to the research assistant first, for one short answer. When it is off or fails, the usual route below
       // answers on screen and a short version is read aloud.
       let warn = '', tried = false;
       if (voice) {
         await beP;
         if (ctl.stopped) return this.stopped(turn, st, q);
-        if (hosted()) {
+        if (hosted() && (!only || BE.health?.workspace)) {
           tried = true; TRACK = null;
           const r = await this.claude(q, turn, st, [], [], [], ctl, 'hosted', view, true); if (r.rec) return r.rec;
           if (ctl.stopped) return this.stopped(turn, st, q);
@@ -1748,6 +1765,19 @@ class Widget {
           if (limited()) WIDGETS.forEach(w => { try { w.refreshEngine(); } catch { /* widget gone */ } });
           TRACK = tr;
         }
+      }
+      if (only) {   // company agent: every answer comes from the hosted agent, which enforces the role's access; no local fallback
+        if (!tried) {
+          await beP; if (ctl.stopped) return this.stopped(turn, st, q);
+          if (hosted() && BE.health?.workspace) {   // a backend without the company agent (no "workspace" in /health) would answer as the portal assistant
+            TRACK = null; const r = await this.claude(q, turn, st, [], [], [], ctl, 'hosted', view); if (r.rec) return r.rec;
+            if (ctl.stopped) return this.stopped(turn, st, q);
+            warn = `<p class="ch-warn">${esc(r.error)}</p>`;
+          }
+        }
+        TRACK = null;
+        const rec = { kind: 'error', q, html: warn + (this.opts.offlineHTML || '<p>The agent is offline right now. Try again in a minute.</p>'), links: [], followups: [], sources: [] };
+        this.prepare(body, rec); st.finish(0, 'Not answered'); st.el.hidden = true; this.renderAfter(turn, rec); return rec;   // no "✓ Not answered" line
       }
       if (hit && LLM.key() && LLM.always()) await beP;   // "always use Claude" applies to the personal key only when no backend is live
       if (toHosted) await beP;
@@ -1834,7 +1864,7 @@ class Widget {
     } catch (e) {
       console.warn('chat failed', e);
       const rec = { kind: 'error', q, html: '<p>Something went wrong with that answer. Please try again.</p>', links: [], followups: [], sources: [] };
-      this.prepare(body, rec); rec.meta = st.finish(0, 'Failed'); this.renderAfter(turn, rec); return rec;
+      this.prepare(body, rec); rec.meta = st.finish(0, 'Failed'); if (this.opts?.hostedOnly) { st.el.hidden = true; rec.meta = null; } this.renderAfter(turn, rec); return rec;
     } finally { TRACK = null; ACTIVE = prev; this.ctl = null; this.msgs.setAttribute('aria-busy', 'false'); this.setBusy(false); }
   }
   /** Serve a precomputed Claude deep dive (data/answers) with its own sources and a dated badge. */
@@ -1881,16 +1911,17 @@ class Widget {
     let srv = false;   // true once the hosted assistant sends its own numbered sources
     const refOf = n => srv ? (n >= 1 && n <= sources.length ? n - 1 : null) : (n >= 1 && n <= sIdx.length ? sIdx[n - 1] : null);
     const hist = this.history.slice(0, -1).map(h => ({ role: h.role, content: h.text }));
-    st.push(isHosted && !docs.length ? 'Searching the knowledge base' : docs.length ? `Researching with ${docs.length} source${docs.length === 1 ? '' : 's'} from the portfolio data` : 'Researching');
-    let stream, started = false; const think = new Think(turn);
+    st.push(this.opts?.hostedOnly ? "Reading this role's apps" : isHosted && !docs.length ? 'Searching the knowledge base' : docs.length ? `Researching with ${docs.length} source${docs.length === 1 ? '' : 's'} from the portfolio data` : 'Researching');
+    let stream, started = false; const think = new Think(turn); const cards = [];
     if (isHosted) {
       // The page behind a docked assistant goes first: the server numbers it [1] and labels it as the page the visitor is on.
-      stream = BE.chat({ persona: this.id, messages: hist, question: q, mode: voice ? 'voice' : 'chat', context: [...(view ? [{ title: view.title, text: view.text, href: view.href }] : []), ...docs.map((d, i) => ({ title: sources[sIdx[i]]?.label || d.t, text: terms(d.s), href: d.href || '' }))], onEvent: ev => {
+      stream = BE.chat({ persona: this.id, messages: hist, question: q, mode: voice ? 'voice' : 'chat', workspace: this.workspaceOf(), context: [...(view ? [{ title: view.title, text: view.text, href: view.href }] : []), ...docs.map((d, i) => ({ title: sources[sIdx[i]]?.label || d.t, text: terms(d.s), href: d.href || '' }))], onEvent: ev => {
         if (ev.type === 'meta' && ev.model) { if (ev.fallback) st.push('Switching to a backup model'); model = ev.model; }
         else if (ev.type === 'done' && ev.model) model = ev.model;
         else if (ev.type === 'sources' && Array.isArray(ev.sources)) { srv = true; sources.length = 0; for (const s of ev.sources) sources.push(srvSource(s)); }
         else if (ev.type === 'status' && ev.text && !started) { st.push(String(ev.text)); think.step(String(ev.text)); }
         else if (ev.type === 'thinking' && ev.text && !started) think.text(String(ev.text));
+        else if (ev.type === 'card' && ev.id) { const i = cards.findIndex(c => c.id === ev.id); if (i < 0) cards.push(ev); else cards[i] = ev; this.paintCard(turn, ev); }
       } });
     } else {
       const ctxText = docs.map((d, i) => `[${i + 1}] ${sources[sIdx[i]]?.label || d.t}: ${terms(d.s)}`).join('\n');
@@ -1911,8 +1942,8 @@ class Widget {
     caret.remove(); turn.classList.remove('ch-streaming'); think.close();
     if (!acc) { body.innerHTML = ''; this.msgs.setAttribute('aria-busy', 'false'); return { error: ctl.stopped ? 'Stopped.' : err || 'No answer came back. Try again.' }; }
     const engine = isHosted ? hostedLabel(model) : keyLabel(model);
-    const rec = { kind: 'claude', via, q, html: mdLite(terms(acc), refOf) + (ctl.stopped ? '<p class="ch-stopped">Stopped.</p>' : '') + (err && !ctl.stopped ? `<p class="ch-warn">${esc(err)}</p>` : ''), links: sources.filter(s => s.href).slice(0, 3).map(s => link(s.href, s.label)), followups: [], sources, model, engine, think: think.record(), ...(voice ? { voice: 'hosted' } : {}) };
-    this.prepare(body, rec); rec.meta = st.finish(rec.sources.length, ctl.stopped ? 'Stopped' : 'Answered', engine, claudeTip(model));
+    const rec = { kind: 'claude', via, q, html: mdLite(terms(acc), refOf) + (ctl.stopped ? '<p class="ch-stopped">Stopped.</p>' : '') + (err && !ctl.stopped ? `<p class="ch-warn">${esc(err)}</p>` : ''), links: sources.filter(s => s.href).slice(0, 3).map(s => link(s.href, s.label)), followups: [], sources, model, engine, think: think.record(), ...(voice ? { voice: 'hosted' } : {}), ...(cards.length ? { cards } : {}) };
+    this.prepare(body, rec); rec.meta = st.finish(rec.sources.length, ctl.stopped ? 'Stopped' : 'Answered', this.opts?.engine === false ? '' : engine, claudeTip(model));
     this.renderAfter(turn, rec); this.msgs.setAttribute('aria-busy', 'false');
     this.ctx = { q, intent: null, co: coOf(q) || this.ctx?.co || null, st: stateOf(q) };
     return { rec };
@@ -1932,7 +1963,7 @@ class Widget {
     const caret = document.createElement('span'); caret.className = 'ch-caret'; caret.setAttribute('aria-hidden', 'true');
     let acc = '', err = '';
     try {
-      for await (const t of BE.chat({ persona: this.id, messages: [], context, question: ask, retrieve: false, onEvent: ev => { if (ev.type === 'meta' && ev.model) model = ev.model; } })) {
+      for await (const t of BE.chat({ persona: this.id, messages: [], context, question: ask, retrieve: false, workspace: this.workspaceOf(), onEvent: ev => { if (ev.type === 'meta' && ev.model) model = ev.model; } })) {
         acc += t; out.innerHTML = mdLite(terms(acc), refOf); (out.lastElementChild || out).appendChild(caret);
         if (ctl.stopped) break;
       }
@@ -1961,7 +1992,11 @@ class Widget {
     const actions = rec.kind === 'static' ? '' : `<div class="ch-actions" role="toolbar" aria-label="Answer actions"><button type="button" data-act="copy" aria-label="Copy answer" data-tip="Copy">${I.copy}</button><button type="button" data-act="regen" aria-label="Regenerate answer" data-tip="Regenerate">${I.regen}</button>${speak}${first ? `<a data-act="open" href="${esc(first)}" aria-label="${/app\.html/.test(first) ? 'Open in portal' : 'Open page'}" data-tip="${/app\.html/.test(first) ? 'Open in portal' : 'Open page'}">${I.open}</a>` : ''}<span class="ch-act-sep" aria-hidden="true"></span><button type="button" data-act="good" aria-pressed="${fb === 'good'}" aria-label="Good answer" data-tip="Good answer">${I.up}</button><button type="button" data-act="bad" aria-pressed="${fb === 'bad'}" aria-label="Bad answer" data-tip="Bad answer">${I.down}</button>${this.canSynth(rec) ? this.synthBtnHTML() : ''}</div>`;
     const fus = uniq(rec.followups || []).filter(f => !sameQ(f, rec.q) && !sameQ(f, rec.eq));
     const fu = fus.length ? `<div class="ch-follow"><div class="ch-follow-h">Related</div>${fus.map(f => `<button type="button" class="ch-fu" data-prompt="${esc(f)}"><span>${esc(f)}</span>${I.plus}</button>`).join('')}</div>` : '';
-    turn.querySelector('.ch-after').innerHTML = cites + details + links + actions + fu;
+    // Pages with cards (the company agent): citations and sources sit right under the answer, the cards follow, then the actions.
+    const tail = turn.querySelector('.ch-tail');
+    const quiet = rec.kind === 'error' && this.opts?.hostedOnly;   // an unanswered question gets no copy, regenerate or rating buttons
+    if (tail) { turn.querySelector('.ch-after').innerHTML = cites + details; tail.innerHTML = links + (quiet ? '' : actions) + fu; }
+    else turn.querySelector('.ch-after').innerHTML = cites + details + links + actions + fu;
     this.msgs.querySelectorAll('.ch-turn.bot.last').forEach(t => t !== turn && t.classList.remove('last')); turn.classList.add('last');
     this.updateJump();
   }
@@ -1987,7 +2022,8 @@ class Widget {
     } else if (a === 'regen') {
       if (this.busy) return;
       const q = rec.q; if (!q) return;
-      this.stopSpeech(); turn.querySelector('.ch-note').hidden = true; turn.querySelector('.ch-after').innerHTML = ''; turn.querySelector('.ch-answer').innerHTML = ''; const sy = turn.querySelector('.ch-synth'); if (sy) { sy.hidden = true; sy.innerHTML = ''; }
+      this.stopSpeech(); turn.querySelector('.ch-note').hidden = true; turn.querySelectorAll('.ch-after').forEach(x => { x.innerHTML = ''; }); turn.querySelector('.ch-answer').innerHTML = ''; const sy = turn.querySelector('.ch-synth'); if (sy) { sy.hidden = true; sy.innerHTML = ''; }
+      const bl = turn.querySelector('.ch-blocks'); if (bl) { bl.innerHTML = ''; bl.hidden = true; }
       const isLast = turn === [...this.msgs.querySelectorAll('.ch-turn.bot')].at(-1);
       if (isLast && this.history.at(-1)?.role === 'assistant') this.history.pop();
       const r = await this.answer(q, turn);
@@ -2106,6 +2142,7 @@ class Widget {
       if (rec.note) this.note(turn, { from: rec.note, q: rec.eq || rec.q });
       Status.render(turn.querySelector('.ch-status'), rec.meta); Think.render(turn, rec.think);
       turn.querySelector('.ch-answer').innerHTML = rec.html || ''; turn.querySelectorAll('.ch-answer .ch-badge').forEach(b => { if (/^\s*est\.?\s*$/i.test(b.textContent)) b.classList.add('ch-est'); }); rec.sources ||= [];
+      for (const c of rec.cards || []) this.paintCard(turn, c);
       if (rec.synth?.html) { const sy = turn.querySelector('.ch-synth'); sy.hidden = false; sy.innerHTML = this.synthHead(rec.synth.model) + `<div class="ch-synth-body">${rec.synth.html}</div>`; }
       this.renderAfter(turn, rec);
       this.history.push({ role: 'assistant', html: rec.html, text: plain(rec.html || '') });

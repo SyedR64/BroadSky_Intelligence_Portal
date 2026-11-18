@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Company agent · BSP Desk</title>
+<meta name="description" content="A sandbox AI agent for BSP and its six companies: pick a role, connect its apps and ask, from partner to technician.">
+<meta name="theme-color" content="#fbfaf7">
+<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
+<meta name="author" content="Syed Rahman">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="BSP_Logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/system.css?v=20261117201626">
+<link rel="stylesheet" id="bsp-chat-css" href="assets/chat.css?v=20261117201626">
+<link rel="stylesheet" href="assets/agent-cards.css?v=20261117201626">
+<link rel="stylesheet" href="assets/agent.css?v=20261117201626">
+<link rel="modulepreload" href="assets/frame.js?v=20261117201626">
+<link rel="modulepreload" href="assets/chat.js?v=20261117201626">
+<link rel="modulepreload" href="assets/backend.js?v=20261117201626">
+<link rel="modulepreload" href="assets/agent.js?v=20261117201626">
+<link rel="modulepreload" href="assets/agent-cards.js?v=20261117201626">
+</head>
+<body>
+<main id="main" class="ca" data-style="field">
+  <nav class="sys-subnav" aria-label="On this page">
+    <div class="sys-subnav-in">
+      <a class="sys-subnav-title" href="#main">Company agent</a>
+      <div class="sys-subnav-links">
+        <a href="#agent">Agent</a>
+        <a href="#apps">Apps</a>
+        <a href="#access">Who sees what</a>
+      </div>
+      <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" id="ca-portal" href="app.html#/pp/overview">Open in portal</a></div>
+    </div>
+  </nav>
+
+  <section class="sys-hero" id="top" aria-labelledby="ca-h1">
+    <div class="sys-wrap">
+      <h1 class="sys-h1" id="ca-h1">Company agent</h1>
+      <p class="sys-lead">Pick a role and connect its apps.<span class="ca-lead-more"> The agent answers from those apps and sees only what that role can see.</span></p>
+      <div class="sys-note sys-note--info ca-sandbox"><p><b>Sandbox:</b> fictional people and modeled numbers. No company systems are connected.</p></div>
+    </div>
+  </section>
+
+  <section class="sys-section sys-section--tight" id="agent" aria-label="Agent">
+    <div class="sys-wrap sys-wrap--wide">
+      <div class="ca-layout">
+        <section class="ca-roles sys-card sys-card--flat" aria-labelledby="ca-roles-h"></section>
+        <div class="ca-main">
+          <article class="ca-role-head sys-card" aria-labelledby="ca-role-t"></article>
+          <section class="ca-home sys-card" aria-labelledby="ca-home-h"></section>
+          <div id="ca-chat" class="ca-chat"></div>
+          <p class="ca-hint sys-src"></p>
+        </div>
+        <section id="apps" class="ca-apps sys-card" aria-labelledby="ca-apps-h"></section>
+      </div>
+    </div>
+  </section>
+
+  <section class="sys-section sys-section--alt" id="access" aria-labelledby="ca-access-h">
+    <div class="sys-wrap">
+      <div class="sys-section-head">
+        <p class="sys-kicker">Access</p>
+        <h2 class="sys-h2" id="ca-access-h">Who sees what</h2>
+        <p class="sys-lead">Each role reads only its own apps and numbers. Ask for EBITDA as a technician and the agent says it is outside that role's access.</p>
+      </div>
+      <div class="ca-access"></div>
+    </div>
+  </section>
+
+  <section class="sys-cta" aria-labelledby="ca-cta-h">
+    <div class="sys-wrap">
+      <div class="sys-cta-in">
+        <div class="sys-cta-copy">
+          <h2 id="ca-cta-h">Where the numbers come from</h2>
+          <p>Modeled figures start from the public estimates in the portal. Open a company there to see each source.</p>
+        </div>
+        <div class="sys-actions">
+          <a class="sys-btn sys-btn--primary sys-btn--lg" href="app.html">Open the portal</a>
+          <a class="sys-btn sys-btn--secondary sys-btn--lg" href="redesigns/ai-agents.html">See the AI agents plan</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<dialog class="sys-dialog ca-dialog" id="ca-consent" aria-labelledby="ca-consent-h"></dialog>
+<dialog class="sys-dialog ca-dialog" id="ca-role-sheet" aria-labelledby="ca-sheet-h"></dialog>
+<div class="sys-sr" aria-live="polite" id="ca-live"></div>
+<noscript><p class="sys-wrap">The company agent needs JavaScript. <a href="app.html">Open the portal</a> instead.</p></noscript>
+<script type="module">
+  import { boot } from './assets/agent.js?v=20261117201626';
+  boot();
+</script>
+</body>
+</html>

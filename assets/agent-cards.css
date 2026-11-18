@@ -1,0 +1,81 @@
+/* Company agent cards (assets/agent-cards.js): floor sketch and action draft inside the chat thread. Tokens only. */
+
+.ca-sketch,.ca-draft{gap:var(--sys-sp-3);box-shadow:none}
+.ca-sketch .sys-card-title,.ca-draft .sys-card-title{margin:0;overflow-wrap:anywhere}
+.ca-sketch .sys-card-label,.ca-draft .sys-card-label{flex-wrap:wrap}
+.ca-sketch .sys-card-label .sys-chip,.ca-draft .sys-card-label .sys-chip{min-height:24px;padding:0 10px;font:600 var(--sys-fs-xs)/1.2 var(--sys-font);letter-spacing:0;text-transform:none}
+.ca-sketch .sys-src,.ca-draft .sys-src{margin:0}
+.ca-sketch p,.ca-draft p{margin:0}
+.ca-fs-title:focus{outline:none}
+.ca-fs-title:focus-visible{outline:2px solid var(--sys-focus);outline-offset:3px;border-radius:var(--sys-r-xs)}
+.ca-house{margin:0}
+
+/* floor chips and the drawing */
+.ca-fs-floors{margin-top:var(--sys-sp-1)}
+.ca-fs-svg{border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface);padding:var(--sys-sp-1)}
+.ca-fs{display:block;width:100%;height:auto;max-height:60dvh}
+.ca-fs-wall{fill:var(--sys-surface-2);stroke:var(--sys-ink-2);stroke-width:2}
+.ca-fs-wall-line{fill:none}
+.ca-fs-room{fill:none;stroke:var(--sys-line-2);stroke-dasharray:6 4}
+.ca-fs-room-t{fill:var(--sys-mute);font:500 13px var(--sys-mono);paint-order:stroke;stroke:var(--sys-surface-2);stroke-width:4}
+.ca-fs-street{fill:var(--sys-mute);font:500 14px var(--sys-mono);text-anchor:middle}
+.ca-fs-arrow{fill:none;stroke:var(--sys-mute);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.ca-fs-run{fill:none;stroke:var(--sys-ink-2);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.ca-fs-run.k-gas{stroke-width:2}
+.ca-fs-run.k-drain{stroke-width:5}
+.ca-fs-run.is-likely{stroke-dasharray:8 6}
+.ca-fs-run-t{fill:var(--sys-ink-2);font:600 12px var(--sys-mono);text-anchor:middle;paint-order:stroke;stroke:var(--sys-surface-2);stroke-width:4}
+.ca-fs-m.is-record circle{fill:var(--co);stroke:var(--sys-surface);stroke-width:2}
+.ca-fs-m.is-record text{fill:var(--sys-on-accent)}
+.ca-fs-m.is-likely circle{fill:var(--sys-surface);stroke:var(--sys-warn-ink);stroke-width:2}
+.ca-fs-m.is-likely text{fill:var(--sys-warn-ink)}
+.ca-fs-m text{font:700 15px var(--sys-mono);text-anchor:middle;dominant-baseline:central}
+/* Phones: the drawing scales down to about 60%, so its text is set larger to stay at 11 px or more on screen */
+@media (max-width:560px){.ca-fs-room-t,.ca-fs-run-t,.ca-fs-street,.ca-fs-m text{font-size:18px}}
+.ca-fs-m circle.ca-fs-ring{fill:none;stroke:var(--co);stroke-width:3;stroke-dasharray:none}
+.ca-fs-m circle.ca-fs-halo{fill:none;stroke:var(--co);stroke-width:3;opacity:0;stroke-dasharray:none}
+.ca-fs-m.is-pulse .ca-fs-ring{animation:ca-pulse 1.2s ease-out 1}
+.ca-fs-m.is-pulse .ca-fs-halo{animation:ca-halo 1.2s ease-out 1}
+@keyframes ca-pulse{0%{stroke-width:9}100%{stroke-width:3}}
+@keyframes ca-halo{0%{opacity:1;stroke-width:9}100%{opacity:0;stroke-width:3}}
+@media (prefers-reduced-motion:reduce){.ca-fs-m.is-pulse .ca-fs-ring{animation:none}.ca-fs-m.is-pulse .ca-fs-halo{animation:none;opacity:1}}
+
+/* legend */
+.ca-legend{display:flex;flex-wrap:wrap;gap:var(--sys-sp-2) var(--sys-sp-4);margin:0;font:500 var(--sys-fs-xs)/1.4 var(--sys-font);color:var(--sys-ink-2)}
+.ca-legend>span{display:inline-flex;align-items:center;gap:6px}
+.ca-sw{flex:none}
+.ca-sw-rec{fill:var(--co);stroke:var(--sys-surface);stroke-width:1.5}
+.ca-sw-lik{fill:var(--sys-surface);stroke:var(--sys-warn-ink);stroke-width:1.5}
+.ca-sw-line{stroke:var(--sys-ink-2);stroke-width:3;stroke-linecap:round}
+.ca-sw-line.k-gas{stroke-width:2}
+.ca-sw-line.k-drain{stroke-width:5}
+
+/* equipment list */
+.ca-equip{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border-top:1px solid var(--sys-line)}
+.ca-equip li{border-bottom:1px solid var(--sys-line)}
+.ca-eq{display:flex;align-items:flex-start;gap:var(--sys-sp-3);width:100%;min-height:44px;padding:var(--sys-sp-2) var(--sys-sp-1);border:0;background:none;color:var(--sys-ink);font:400 var(--sys-fs-sm)/1.45 var(--sys-font);text-align:left;cursor:pointer;border-radius:var(--sys-r-xs);transition:background var(--sys-t)}
+.ca-eq:hover{background:var(--sys-surface-2)}
+.ca-eq-m{box-sizing:border-box;flex:none;display:grid;place-items:center;width:28px;height:28px;margin-top:1px;border-radius:var(--sys-r-pill);font:700 var(--sys-fs-xs)/1 var(--sys-mono)}
+.ca-eq-m.is-record{background:var(--co);color:var(--sys-on-accent)}
+.ca-eq-m.is-likely{background:var(--sys-surface);color:var(--sys-warn-ink);border:2px dashed var(--sys-warn-ink)}
+.ca-eq-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ca-eq-h{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.ca-eq-h b{font-weight:600;color:var(--sys-ink)}
+.ca-eq-h .sys-chip{min-height:22px;padding:0 8px;font-size:var(--sys-fs-2xs)}
+.ca-eq-n{color:var(--sys-ink-2);overflow-wrap:anywhere}
+.ca-eq-d{font:500 var(--sys-fs-xs)/1.45 var(--sys-mono);color:var(--sys-mute)}
+
+/* repeat reference */
+.ca-fs-ref{margin:0;font-size:var(--sys-fs-sm)}
+
+/* action draft */
+.ca-fields{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:var(--sys-sp-2) var(--sys-sp-4);margin:0;font-size:var(--sys-fs-sm);line-height:1.5}
+.ca-fields>div{display:contents}
+.ca-fields dt{font:600 var(--sys-fs-2xs)/1.9 var(--sys-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sys-mute)}
+.ca-fields dd{margin:0;color:var(--sys-ink);overflow-wrap:anywhere;white-space:pre-line}
+.ca-dr-foot{justify-content:flex-start;margin-top:0}
+.ca-dr-status:focus{outline:none}
+.ca-dr-status:focus-visible{outline:2px solid var(--sys-focus);outline-offset:2px}
+.ca-dr-note{flex-basis:100%}
+@media (max-width:420px){.ca-fields{grid-template-columns:minmax(0,1fr);gap:2px}.ca-fields dd{margin-bottom:var(--sys-sp-2)}}
+@media (pointer:coarse){.ca-sketch .sys-chip[data-ca],.ca-draft .sys-btn{min-height:44px}}

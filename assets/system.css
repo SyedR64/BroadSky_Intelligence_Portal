@@ -344,6 +344,7 @@ a.sys-card:hover,.sys-card--link:hover{transform:translateY(-3px);box-shadow:var
 button.sys-chip,a.sys-chip{cursor:pointer;transition:border-color var(--sys-t),color var(--sys-t),background var(--sys-t)}
 button.sys-chip:hover,a.sys-chip:hover{border-color:var(--sys-ink);color:var(--sys-ink)}
 .sys-chip[aria-pressed="true"],.sys-chip[aria-current]{background:var(--sys-ink);border-color:var(--sys-ink);color:var(--sys-on-ink)}
+button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-current]:hover{background:var(--sys-ink);border-color:var(--sys-ink);color:var(--sys-on-ink)}   /* a picked chip stays readable under hover and after a tap */
 .sys-chip--soft{border-color:transparent;background:var(--co-soft);color:var(--co-ink);font-weight:600}
 /* status chips: same hues as notes and est. badges; status only (§6) */
 .sys-chip--good{--s:var(--sys-good);--s-ink:var(--sys-good-ink)} .sys-chip--warn{--s:var(--sys-warn);--s-ink:var(--sys-warn-ink)} .sys-chip--bad{--s:var(--sys-bad);--s-ink:var(--sys-bad-ink)} .sys-chip--info{--s:var(--sys-info);--s-ink:var(--sys-info-ink)}
@@ -445,6 +446,25 @@ button.sys-chip:hover,a.sys-chip:hover{border-color:var(--sys-ink);color:var(--s
 @media (min-width:720px){
   .sys-compare-grid,.sys-compare-list{grid-template-columns:repeat(2,minmax(0,1fr))}
   .sys-compare-seg{max-width:none}
+}
+
+/* ── 6o · dialog (native <dialog>; UNIFIED.md §3) ─────────────────────────── */
+/* <dialog class="sys-dialog" aria-labelledby="…">, opened with showModal(): the
+   browser's top layer gives the focus trap, Escape and ::backdrop. Surface is
+   the card recipe; a bottom sheet at ≤560px. Initial focus on the h2
+   (tabindex="-1"); the page returns focus to the opener on close. The action
+   row stays in reach while the body scrolls. The backdrop's first declaration
+   and the var() fallback are literal because older iOS Safari does not pass
+   custom properties into ::backdrop.                                          */
+.sys-dialog{--sys-dialog-pb:var(--sys-sp-5);width:min(520px,calc(100vw - 2 * var(--sys-gut)));max-width:none;max-height:calc(100dvh - 48px);margin:auto;padding:var(--sys-sp-5) var(--sys-sp-5) var(--sys-dialog-pb);overflow:auto;overscroll-behavior:contain;background:var(--sys-surface);color:var(--sys-ink);border:1px solid var(--sys-line);border-radius:var(--sys-r-lg);box-shadow:var(--sys-sh-3);font:400 var(--sys-fs-base)/var(--sys-lh-body) var(--sys-font)}
+.sys-dialog[open]{display:flex;flex-direction:column;gap:var(--sys-sp-3)}
+.sys-dialog::backdrop{background:rgba(10,14,22,.36);background:color-mix(in srgb,var(--sys-ink,#0a0e16) 28%,transparent);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.sys-dialog :where(h2,h3)[tabindex="-1"]:focus{outline:none}
+.sys-dialog :where(h2,h3)[tabindex="-1"]:focus-visible{outline:2px solid var(--sys-focus);outline-offset:2px}
+.sys-dialog .sys-actions{position:sticky;bottom:calc(-1 * var(--sys-dialog-pb));z-index:1;margin:var(--sys-sp-2) 0 calc(-1 * var(--sys-dialog-pb));padding:var(--sys-sp-3) 0 var(--sys-dialog-pb);background:var(--sys-surface)}
+@media (max-width:560px){
+  .sys-dialog{--sys-dialog-pb:calc(var(--sys-sp-5) + env(safe-area-inset-bottom,0px));margin:auto 0 0;width:100%;max-width:none;max-height:calc(100dvh - 24px);border-bottom:0;border-radius:var(--sys-r-lg) var(--sys-r-lg) 0 0}
+  .sys-dialog .sys-actions .sys-btn{flex:1 1 100%}
 }
 
 /* ── 7a · layout: portal console (app.html) ───────────────────────────────── */

@@ -85,7 +85,7 @@ Use the same `?v=` stamp on `system.css`, `frame.js` and `chat.js` (`scripts/bum
 
 ```
 body[data-co?]                          ← company pages only: pp | cet | fl | ts | bpi | fh
-  header.sys-top                        ← injected: brand · Portal · Concepts · Briefing · Ask · theme
+  header.sys-top                        ← injected: brand · Portal · Company agent · Concepts · Briefing · Ask · theme
   nav.sys-crumb                         ← injected only on a page without a sub-nav: Home / Concepts / ● Company / Page, concept tag at the right
   main#main
     nav.sys-subnav                      ← the page bar: parent / ● page name, at most five section anchors, the concept tag
@@ -97,7 +97,13 @@ body[data-co?]                          ← company pages only: pp | cet | fl | 
   footer.sys-footer                     ← injected: brand + author line, Portal / Site concepts / Programs / Briefing, disclaimer
 ```
 
-Section content uses only: `.sys-grid--2|3|4`, `.sys-card` (`-label`, `-title`, `-body`, `-list`, `-foot`), `.sys-kpi` (`-label`, `-value`, `-sub`, `.sys-delta--up|down`), `.sys-table-wrap > table.sys-table` (`.sys-n` numeric cells, `<caption>` provenance), `.sys-note--info|warn|good|bad|co`, `.sys-chip` (`--soft` for the company accent; `--good|warn|bad|info` for status, so pages never define their own status chips), `.sys-est`, `.sys-btn`, `.sys-prose`, `.sys-src`. Anything bespoke (map, chart, simulator, 3D) sits inside a `.sys-card` or a full-width block inside `.sys-wrap`.
+Section content uses only: `.sys-grid--2|3|4`, `.sys-card` (`-label`, `-title`, `-body`, `-list`, `-foot`), `.sys-kpi` (`-label`, `-value`, `-sub`, `.sys-delta--up|down`), `.sys-table-wrap > table.sys-table` (`.sys-n` numeric cells, `<caption>` provenance), `.sys-note--info|warn|good|bad|co`, `.sys-chip` (`--soft` for the company accent; `--good|warn|bad|info` for status, so pages never define their own status chips), `.sys-est`, `.sys-btn`, `.sys-prose`, `.sys-src`, `.sys-dialog` (§3b). Anything bespoke (map, chart, simulator, 3D) sits inside a `.sys-card` or a full-width block inside `.sys-wrap`.
+
+### 3b · Dialog (`dialog.sys-dialog`, system.css §6o)
+
+- **Markup.** A native `<dialog class="sys-dialog" aria-labelledby="…">` opened with `showModal()`, so the browser supplies the focus trap, Escape and the backdrop. Inside: `.sys-card-label` → `h2.sys-h3` (`tabindex="-1"`, focused on open) → `.sys-card-body` / `.sys-card-list` → one `.sys-actions` row (one `.sys-btn--primary`, then `.sys-btn--ghost` Cancel or Close). No private header, close icon or colours.
+- **Look.** The card recipe (`--sys-surface`, 1px `--sys-line`, `--sys-r-lg`, `--sys-sh-3`), `min(520px, 100vw − 2 gutters)` wide, a blurred ink backdrop. At ≤560px it is a bottom sheet with the safe-area inset under it and full-width buttons. The action row is sticky at the bottom, so it stays in reach while a long body scrolls.
+- **Behaviour.** Escape and Cancel close it; the page returns focus to the control that opened it (or the nearest surviving one when that control was redrawn). A dialog never asks for a password, an email address or any other account field, and never imitates a vendor's sign-in page (plain monogram tile and app name only). First user: `agent.html` (connect consent, records sync, role sheet).
 
 ### 3a · Sub-nav (`nav.sys-subnav`)
 
@@ -141,10 +147,11 @@ Buttons: one `.sys-btn--primary` per view region; `--secondary` beside it; `--gh
 | `redesigns/<co>/growth-plan.html`, `punctual-pros/nationwide.html`, `ads.html` | `Frame.mount({})` | company | Active = Concepts; the page bar reads `Company / ● Growth plan`. |
 | `redesigns/voice-ai.html`, `ai-agents.html` | `Frame.mount({ banner: true })` | portal | Page bar `Growth plans / ● Page`. |
 | `app.html` | `Frame.mount({ variant: 'app', theme })` (the saved `bsp-theme`, light by default) | portal | See §8. Hotkey ⌘J (⌘K stays the portal search). The app variant sets `nav: { briefing: 'app.html#/briefing/play' }` itself. |
+| `agent.html` (company agent) | `Frame.mount({ active: 'agent', crumb: [{ label: 'Home', href: './' }, { label: 'Company agent' }], persona: inst.id, chat: inst })`, called once after `Chat.mount` | `ag-<role>` (registered by `assets/agent.js`) | Inline agent (`Chat.mount('#ca-chat', { mode: 'inline', hostedOnly: true, expand: false, commands: false, engine: false, workspace, renderCard, onTurn })`); no floating launcher. Top-bar NAV entry "Company agent" (id `agent`, after Portal; "Agent" if the 1024px bar wraps). Consent, sync and role sheet use `.sys-dialog` (§3b). Page CSS `assets/agent.css`, prefix `ca-`. |
 | `theater.html` | `Frame.mount({ variant: 'minimal', theme: 'dark' })` | portal | See §9. |
 | `briefing/executive_memo.html` | no mount | — | See §10. |
 
-Other options: `nav` (per-page override of primary links, `{ <id>: href }` or `{ <id>: { href, label, hint } }`; ids are `portal`, `concepts`, `os`, `playbooks`, `briefing`, `github`. A link whose href is a `#/` route on the current page is marked `aria-current` while the hash is on that route and the frame keeps it in sync on `hashchange`, so pages never patch frame links after mount), `co`, `active`, `persona`, `crumb: [{label, href?, co?}]` (hrefs are root-relative: `'redesigns/'`, `'app.html#/pp/overview'`), `crumbAside: 'Concept · Oct 2026'`, `cta: {label, href}` (small primary button in the bar), `footer`, `hotkey`, `chat` (an existing widget instance), `humanize: true | 'observe' | false`. Mount once per page; a second call returns the first frame.
+Other options: `nav` (per-page override of primary links, `{ <id>: href }` or `{ <id>: { href, label, hint } }`; ids are `portal`, `agent` (the company agent, `agent.html`), `concepts`, `os`, `playbooks`, `briefing`, `github`. A link whose href is a `#/` route on the current page is marked `aria-current` while the hash is on that route and the frame keeps it in sync on `hashchange`, so pages never patch frame links after mount), `co`, `active`, `persona`, `crumb: [{label, href?, co?}]` (hrefs are root-relative: `'redesigns/'`, `'app.html#/pp/overview'`), `crumbAside: 'Concept · Oct 2026'`, `cta: {label, href}` (small primary button in the bar), `footer`, `hotkey`, `chat` (an existing widget instance), `humanize: true | 'observe' | false`. Mount once per page; a second call returns the first frame.
 
 Chat: pages keep mounting their own floating widget (`Chat.mount(null, { persona, mode: 'floating' })`; any `theme` option is ignored, the widget follows the page theme) with their FAQ and suggestions. **Launcher label rule:** the floating launcher reads "Ask " + the persona's short name — the persona's `short` field, or `short_name` passed to `Chat.mount` when a page renames its assistant ("Ask Punctual Pros", "Ask CET", "Ask Fair Harbor", "Ask the portfolio"). Never derive it by truncating the persona name to its first word ("Ask Punctual", "Ask Fair"); a persona without a short name gets one added, not a fallback. At ≤560px the launcher is an icon-only 44px circle (label kept in `aria-label`), see §11. The Ask button opens that widget if present, else focuses an inline chat, else lazy-loads `chat.js` with the persona. Pass `chat: inst` to `Frame.mount` (or call `Frame.mount(...).setChat(inst)`) when you hold the instance.
 

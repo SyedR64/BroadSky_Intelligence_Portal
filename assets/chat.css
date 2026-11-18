@@ -428,6 +428,8 @@
 .ch-actions>.ch-synth-btn:disabled{opacity:.55;cursor:progress}
 .ch-synth{margin:12px 0 4px;padding:12px 14px 6px;border:1px solid var(--ch-line);border-left:3px solid var(--ch-accent);border-radius:12px;background:color-mix(in srgb,var(--ch-accent) 4%,var(--ch-bg));animation:ch-fade .25s ease}
 .ch-synth[hidden]{display:none}
+.ch-blocks{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.ch-blocks[hidden]{display:none}
 .ch-synth-h{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;font:700 12px Inter,system-ui,sans-serif;letter-spacing:.02em;color:var(--ch-fg)}
 .ch-synth-h>svg{color:var(--ch-accent)}
 .ch-synth-body{font-size:14px;line-height:1.62;color:var(--ch-fg);overflow-wrap:break-word}
