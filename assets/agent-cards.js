@@ -69,16 +69,35 @@ function markerSVG(m, x, y, focus) {
     + `<circle cx="${x}" cy="${y}" r="20"${rec ? '' : ' stroke-dasharray="5 4"'}/><text x="${x}" y="${y}">${esc(String(m.short || '?').slice(0, 2))}</text></g>`;
 }
 
-/** Eases apart inside markers whose circles (radius 20) would overlap; outside markers stay put. Positions stay on the floor. */
-function spread(pts, W, H, gap = 44) {
+/** How far a marker's drawing reaches from its centre: a focus ring (radius 27, 3-unit stroke) or the plain circle (radius 20). */
+const reach = p => (p.ring ? 29 : 22);
+/** Distance from a point to a box {x0, y0, x1, y1} (0 inside it). */
+const boxDist = (x, y, b) => Math.hypot(Math.max(b.x0 - x, 0, x - b.x1), Math.max(b.y0 - y, 0, y - b.y1));
+/** Moves a marker off a label box until its drawing clears the box; a centre inside the box leaves through the nearest side that
+ *  stays on the floor. Returns true when it moved. */
+function offBox(p, b, W, H) {
+  const r = reach(p), cx = Math.min(b.x1, Math.max(b.x0, p.x)), cy = Math.min(b.y1, Math.max(b.y0, p.y));
+  const dx = p.x - cx, dy = p.y - cy, d = Math.hypot(dx, dy);
+  if (d >= r) return false;
+  if (d > 0.01) { p.x = cx + dx / d * r; p.y = cy + dy / d * r; return true; }
+  const ways = [[b.x0 - r, p.y, p.x - b.x0], [b.x1 + r, p.y, b.x1 - p.x], [p.x, b.y0 - r, p.y - b.y0], [p.x, b.y1 + r, b.y1 - p.y]];
+  const ok = ways.filter(([x, y]) => x >= 0 && x <= W && y >= 0 && y <= H);
+  const [x, y] = (ok.length ? ok : ways).sort((m, n) => m[2] - n[2])[0];
+  p.x = x; p.y = y; return true;
+}
+/** Eases apart inside markers whose drawings would overlap (focus rings count) and keeps them off the room names in `boxes`;
+ *  outside markers stay put. Positions stay on the floor. */
+function spread(pts, W, H, gap = 44, boxes = []) {
   for (let pass = 0; pass < 40; pass++) {
     let moved = false;
+    for (const p of pts) if (!p.fixed) for (const b of boxes) if (offBox(p, b, W, H)) moved = true;
     for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
       const a = pts[i], b = pts[j]; if (a.fixed && b.fixed) continue;
+      const g = a.ring && b.ring ? 58 : a.ring || b.ring ? 51 : gap;   // two focus rings, one ring and a circle, two circles
       let dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
-      if (d >= gap) continue;
+      if (d >= g) continue;
       if (d < 0.01) { dx = 1; dy = 0; d = 1; }
-      const push = (gap - d) / (a.fixed || b.fixed ? 1 : 2), ux = dx / d, uy = dy / d;
+      const push = (g - d) / (a.fixed || b.fixed ? 1 : 2), ux = dx / d, uy = dy / d;
       if (!a.fixed) { a.x -= ux * push; a.y -= uy * push; }
       if (!b.fixed) { b.x += ux * push; b.y += uy * push; }
       moved = true;
@@ -87,6 +106,23 @@ function spread(pts, W, H, gap = 44) {
     if (!moved) break;
   }
   for (const p of pts) { p.x = Math.round(p.x * 10) / 10; p.y = Math.round(p.y * 10) / 10; }
+}
+/** Where a room's name goes: the first corner of the room (top left, bottom left, top right, bottom right) whose label box stays
+ *  clear of every marker's drawing, else the corner that moves the markers least (a focus marker counts double; outside markers
+ *  cannot move). Sizes are for the largest text (18 px on phones). */
+function roomLabelAt(r, all, W, H) {
+  const tw = String(r.label).length * 10.8, { x, y, w, h } = r;
+  const spots = [[x + 8, y + 18, 'start', y], [x + 8, y + h - 8, 'start', y + h - 26], [x + w - 8, y + 18, 'end', y], [x + w - 8, y + h - 8, 'end', y + h - 26]]
+    .map(([tx, ty, anchor, top]) => ({ tx, ty, anchor, box: anchor === 'end' ? { x0: tx - tw, y0: top, x1: tx, y1: top + 22 } : { x0: tx, y0: top, x1: tx + tw, y1: top + 22 } }));
+  const cost = s => all.reduce((c, p) => {
+    if (boxDist(p.x, p.y, s.box) >= reach(p)) return c;
+    if (p.fixed) return c + 1e4;
+    const q = { ...p }; offBox(q, s.box, W, H);
+    return c + Math.hypot(q.x - p.x, q.y - p.y) * (p.ring ? 2 : 1);
+  }, 0);
+  let best = spots[0], low = Infinity;
+  for (const s of spots) { const c = cost(s); if (c === 0) return s; if (c < low) { low = c; best = s; } }
+  return best;
 }
 /** Where a run's label reads best: the point along the run (segment quarters and midpoints) whose label box stays furthest
  *  outside every marker's focus ring (radius 27), so a ring never covers a label. text: the label (its width counts). */
@@ -111,19 +147,20 @@ function runLabelAt(pts, markers, text = '', boxes = []) {
   }
   return best ? best.map(v => Math.round(v * 10) / 10) : pts[0];
 }
-/** A gas line that stops at the wall continues out to the gas meter drawn outside, when there is one. */
+/** A gas line that stops at the wall the gas meter sits outside continues out to it: the short link from the line's end (within
+ *  five feet of that wall) to the meter, or null. A line ending at any other wall is never joined across the house. */
 function toMeter(pts, kind, all, W, H) {
-  if (kind !== 'gas') return pts;
-  const meter = all.find(p => p.fixed && String(p.m.kind) === 'gas_meter'); if (!meter) return pts;
-  const atWall = ([x, y]) => x <= 40 || y <= 40 || x >= W - 40 || y >= H - 40;   // within five feet of a wall
+  if (kind !== 'gas' || pts.length < 2) return null;
+  const meter = all.find(p => p.fixed && String(p.m.kind) === 'gas_meter'); if (!meter) return null;
+  const atWall = meter.x < 0 ? ([x]) => x <= 40 : meter.x > W ? ([x]) => x >= W - 40 : meter.y < 0 ? ([, y]) => y <= 40 : ([, y]) => y >= H - 40;
   const d = q => Math.hypot(q[0] - meter.x, q[1] - meter.y);
-  const [a, b] = [pts[0], pts.at(-1)];
-  if (d(a) <= d(b)) return atWall(a) ? [[meter.x, meter.y], ...pts] : pts;
-  return atWall(b) ? [...pts, [meter.x, meter.y]] : pts;
+  const end = [pts[0], pts.at(-1)].filter(atWall).sort((a, b) => d(a) - d(b))[0];
+  return end ? [end, [meter.x, meter.y]] : null;
 }
 
 /**
- * The SVG for one floor (string). Units are feet scaled by 8; margin 56 on each side plus 24 at the bottom for the street label.
+ * The SVG for one floor (string). Units are feet scaled by 8; margin 64 on each side (an outside marker's focus ring reaches 62.5
+ * past the wall) plus 16 more at the bottom for the street label.
  * opts: { focus: string[] (focus kinds), front: 'bottom' | 'top', markers: [{...item, key}] for this floor (inside and outside) }.
  */
 export function sketchSVG(floor, outside = [], opts = {}) {
@@ -137,32 +174,38 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   const label = `${name} sketch: ${say.length ? say.join('; ') : 'no equipment recorded on this floor'}`;
   const boxes = [];   // label boxes run labels keep clear of
   let roomText = '';   // room names go over the pipe runs (with a halo), so a line never hides them
-  let s = `<svg class="ca-fs" viewBox="-56 -56 ${W + 112} ${H + 136}" role="img" aria-label="${esc(label)}" focusable="false"><title>${esc(label)}</title>`;
+  let s = `<svg class="ca-fs" viewBox="-64 -64 ${W + 128} ${H + 144}" role="img" aria-label="${esc(label)}" focusable="false"><title>${esc(label)}</title>`;
   s += `<rect class="ca-fs-wall" x="0" y="0" width="${W}" height="${H}" rx="4"/>`;
+  // Marker positions: outside markers sit off the walls; inside markers closer than one marker apart are eased apart so each stays readable.
+  const all = [...inside.map(m => ({ m, x: num(m.x) * PX, y: num(m.y) * PX, fixed: false, ring: isFocus(m, focus) })), ...outs.map(m => { const [x, y] = outsidePoint(m, W, H, front); return { m, x, y, fixed: true, ring: isFocus(m, focus) }; })];
+  spread(all, W, H);
+  // Room names take the first corner of their room that no marker covers; a marker still on a name is then eased off it.
   for (const r of Array.isArray(f.rooms) ? f.rooms : []) {
     if (!r || typeof r !== 'object') continue;
     const x = num(r.x) * PX, y = num(r.y) * PX, w = num(r.w) * PX, h = num(r.h) * PX;
     if (!(x <= 0 && y <= 0 && w >= W && h >= H)) s += `<rect class="ca-fs-room" x="${x}" y="${y}" width="${w}" height="${h}"/>`;   // a room that is the whole floor is only named
-    if (r.label) { roomText += `<text class="ca-fs-room-t" x="${x + 8}" y="${y + 18}">${esc(r.label)}</text>`; boxes.push({ x0: x + 8, y0: y, x1: x + 8 + String(r.label).length * 10.8, y1: y + 22 }); }
+    if (r.label) { const at = roomLabelAt({ label: r.label, x, y, w, h }, all, W, H); roomText += `<text class="ca-fs-room-t" x="${at.tx}" y="${at.ty}"${at.anchor === 'end' ? ' text-anchor="end"' : ''}>${esc(r.label)}</text>`; boxes.push(at.box); }
   }
   s += `<rect class="ca-fs-wall ca-fs-wall-line" x="0" y="0" width="${W}" height="${H}" rx="4"/>`;
-  // Marker positions: outside markers sit off the walls; inside markers closer than one marker apart are eased apart so each stays readable.
-  const all = [...inside.map(m => ({ m, x: num(m.x) * PX, y: num(m.y) * PX, fixed: false })), ...outs.map(m => { const [x, y] = outsidePoint(m, W, H, front); return { m, x, y, fixed: true }; })];
-  spread(all, W, H);
-  // Street side: a small arrow from the wall and the label 30 units out (further out when a marker sits on that side).
+  if (boxes.length) spread(all, W, H, 44, boxes);
+  // Street side: a small arrow from the wall and the label 34 units out (further out when a marker sits on that side). The arrow
+  // stops 18 above the baseline, clear of the capitals at the phone text size.
   const busy = outs.some(m => { const [, oy] = outsidePoint(m, W, H, front); return front === 'bottom' ? oy > H : oy < 0; });
   if (front === 'bottom') {
-    const ly = busy ? H + 72 : H + 30;
-    s += `<path class="ca-fs-arrow" d="M${W / 2} ${H + 4}V${ly - 14}M${W / 2 - 5} ${ly - 19}L${W / 2} ${ly - 14}L${W / 2 + 5} ${ly - 19}"/><text class="ca-fs-street" x="${W / 2}" y="${ly}">Street side</text>`;
+    const ly = busy ? H + 74 : H + 34;
+    s += `<path class="ca-fs-arrow" d="M${W / 2} ${H + 4}V${ly - 18}M${W / 2 - 5} ${ly - 23}L${W / 2} ${ly - 18}L${W / 2 + 5} ${ly - 23}"/><text class="ca-fs-street" x="${W / 2}" y="${ly}">Street side</text>`;
   } else {
     s += `<text class="ca-fs-street" x="${W / 2}" y="-30">Street side</text>`;
   }
-  // Pipe runs under the markers: solid from records, dashed when likely.
+  // Pipe runs under the markers: solid from records, dashed when likely. The link from a gas line to its meter is drawn on its own,
+  // dashed unless both the line and the meter are records.
   for (const r of Array.isArray(f.runs) ? f.runs : []) {
     if (!r || typeof r !== 'object' || !Array.isArray(r.points)) continue;
     const k = KINDS.has(r.kind) ? r.kind : 'water';
-    const pts = toMeter(r.points.filter(p => Array.isArray(p)).map(p => [num(p[0]) * PX, num(p[1]) * PX]), k, all, W, H); if (pts.length < 2) continue;
+    const pts = r.points.filter(p => Array.isArray(p)).map(p => [num(p[0]) * PX, num(p[1]) * PX]); if (pts.length < 2) continue;
     s += `<polyline class="ca-fs-run ${isRecord(r.basis) ? 'is-record' : 'is-likely'} k-${k}" points="${pts.map(p => p.join(',')).join(' ')}"/>`;
+    const link = toMeter(pts, k, all, W, H);
+    if (link) { const meter = all.find(p => p.fixed && String(p.m.kind) === 'gas_meter'); s += `<polyline class="ca-fs-run ca-fs-link ${isRecord(r.basis) && isRecord(meter?.m.basis) ? 'is-record' : 'is-likely'} k-${k}" points="${link.map(p => p.join(',')).join(' ')}"/>`; }
     const txt = r.label || RUN_NAMES[k], at = runLabelAt(pts, all, txt, boxes), hw = Math.max(16, String(txt).length * 5.4);
     boxes.push({ x0: at[0] - hw, y0: at[1] - 26, x1: at[0] + hw, y1: at[1] - 4 });
     s += `<text class="ca-fs-run-t" x="${at[0]}" y="${at[1] - 6}">${esc(txt)}</text>`;

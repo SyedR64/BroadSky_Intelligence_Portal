@@ -14,7 +14,7 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261117201626';
+import { Data, Fmt, Live, esc } from './core.js?v=20261117223642';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -30,7 +30,7 @@ const KEY_LS = 'bsp-anthropic-key', MODEL_LS = 'bsp-anthropic-model', MODE_LS = 
 /** Owner tools (key/model dialog, slash-command menu, key hints) appear only with ?dev=1 in the page URL. */
 const DEV = (() => { try { return new URLSearchParams(location.search).get('dev') === '1'; } catch { return false; } })();
 const $ = (s, r = document) => r.querySelector(s);
-const link = (href, label) => `<a class="ch-link" href="${esc(href)}">${esc(label)} →</a>`;
+const link = (href, label) => `<a class="ch-link" href="${esc(href)}"><span class="t">${esc(label)}</span> →</a>`;   // the label is its own box, so a long one ends in an ellipsis inside the pill
 const app = (hash, label) => link(APP + hash, label);
 const n = (v, d = 0) => `<span class="ch-num">${Fmt.num(v, d)}</span>`;
 const money = v => `<span class="ch-num">${Fmt.money(v)}</span>`;
@@ -57,7 +57,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261117201626';
+const BACKEND_JS = './backend.js?v=20261117223642';
 let BE = null, BE_P = null, BE_RETRY = 0;
 function backend() {
   // The check on page load can land on a cold start and miss: when the backend looked offline, check again (at most every 15 s).
@@ -557,7 +557,7 @@ async function addonHistory(q) {
 }
 /** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
 async function dealModel(q) {
-  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261117201626').catch(() => null)]);
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261117223642').catch(() => null)]);
   if (!d || !L) return null;
   const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
   const P = pre.find(i => i.co === co && i.group !== 'generic') || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
@@ -821,8 +821,28 @@ const LLM = {
 const mdLite = (s, refOf) => mdBase(s).replace(/ ?\[(\d{1,2}(?:\s*,\s*\d{1,2})*)\]/g, (m, list) => { if (!refOf) return m; const out = list.split(/\s*,\s*/).map(Number).map(refOf).filter(k => k != null); return out.length ? uniq(out).map(k => `<span class="ch-ref" data-src="${k}">${k + 1}</span>`).join('') : ''; });
 /** [text](https://…) links in answers: links into this site open in place, others in a new tab (http and https only). */
 const mdLink = s => s.replace(/\[([^\]\n]{1,200})\]\((https?:\/\/[^\s()<>"]+)\)/g, (m, t, u) => { const p = ownPath(u), own = p !== null; const href = own ? ROOT + p : u; return `<a href="${href}"${own ? '' : ' target="_blank" rel="noopener"'}>${t}</a>`; });
-const mdBase = s => mdLink(esc(s)).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^#{2,4} (.+)$/gm, '<h4>$1</h4>').replace(/^\s*[-•*] (.+)$/gm, '<li>$1</li>').replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m.replace(/\n/g, '')}</ul>\n\n`).replace(/(<\/h4>)\n*/g, '$1\n\n')
-  .split(/\n{2,}/).map(b => b.trim()).filter(Boolean).map(b => /^<(h4|ul)>[\s\S]*<\/(h4|ul)>$/.test(b) ? b : `<p>${b.replace(/\n/g, '<br>')}</p>`).join('');
+const mdBase = s => mdTables(mdLink(esc(s)).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^#{2,4} (.+)$/gm, '<h4>$1</h4>').replace(/^\s*[-•*] (.+)$/gm, '<li>$1</li>').replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m.replace(/\n/g, '')}</ul>\n\n`).replace(/(<\/h4>)\n*/g, '$1\n\n'))
+  .split(/\n{2,}/).map(b => b.trim()).filter(Boolean).map(b => /^<(h4|ul|table)>[\s\S]*<\/(h4|ul|table)>$/.test(b) ? b : `<p>${b.replace(/\n/g, '<br>')}</p>`).join('');
+/** GFM pipe tables (a header row, a |---| row, then body rows) become <table>; columns of numbers get class "n" (right-aligned). */
+const TBL_ROW = /^\s*\|/, TBL_SEP = /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$/;
+const TBL_NUM = /^\(?[-+−–]?[$€£]?\d[\d,.]*\s?(%|[kKMB]|bn|pts?|x)?\)?(\s*est\.?)?$/, TBL_NIL = /^(—|–|-|n\/a)?$/i;
+const tblCells = l => { let t = l.trim(); if (t.startsWith('|')) t = t.slice(1); if (t.endsWith('|') && !t.endsWith('\\|')) t = t.slice(0, -1); return t.split(/(?<!\\)\|/).map(c => c.trim().replace(/\\\|/g, '|')); };
+function mdTables(s) {
+  if (!s.includes('|')) return s;
+  const L = s.split('\n'), out = [];
+  for (let i = 0; i < L.length; i++) {
+    const head = TBL_ROW.test(L[i]) && i + 1 < L.length && TBL_SEP.test(L[i + 1]) ? tblCells(L[i]) : null;
+    if (!head || head.length < 2) { out.push(L[i]); continue; }
+    const rows = []; let j = i + 2;
+    for (; j < L.length && TBL_ROW.test(L[j]); j++) rows.push(tblCells(L[j]));
+    const txt = c => String(c || '').replace(/<[^>]+>/g, '').trim();
+    const num = head.map((_, c) => { const v = rows.map(r => txt(r[c])).filter(x => !TBL_NIL.test(x)); return v.length > 0 && v.every(x => TBL_NUM.test(x)); });
+    const cell = (tag, v, c) => `<${tag}${num[c] ? ' class="n"' : ''}>${v ?? ''}</${tag}>`;
+    out.push('', `<table><thead><tr>${head.map((h, c) => cell('th', h, c)).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${head.map((_, c) => cell('td', r[c], c)).join('')}</tr>`).join('')}</tbody></table>`, '');
+    i = j - 1;
+  }
+  return out.join('\n');
+}
 
 /* ── Personas ─────────────────────────────────────────────────────────────── */
 export const PERSONAS = {
@@ -941,8 +961,11 @@ const SRV_KIND = { page: 'page', 'portal-view': 'page', 'site-page': 'page', ans
 function srvSource(s) {
   const url = String(s?.url || ''), p = ownPath(url) ?? (/^(?:\.\/)?(?:[\w-]+\/)*[\w-]+\.html/.test(url) ? url.replace(/^\.\//, '') : null), href = p !== null ? ROOT + p : url;   // a page of this site, named from the site root, opens from any page depth
   const kind = SRV_KIND[s?.kind] || 'web';
-  const desc = kind === 'page' || kind === 'dataset' ? '' : String(s?.publisher || '');
-  return { key: null, label: terms(String(s?.title || 'Source')), desc, href: href || null, kind, asOf: s?.date ? String(s.date).slice(0, 10) : null, at: Date.now() };
+  let desc = kind === 'page' || kind === 'dataset' ? '' : String(s?.publisher || '');
+  // A document with no title of its own arrives titled with its address: show who published it instead of a raw URL.
+  let title = String(s?.title || 'Source').trim();
+  if (/^https?:\/\//i.test(title)) { const pub = String(s?.publisher || '').trim(); let host = ''; try { host = new URL(title).hostname.replace(/^www\./, ''); } catch { /* not a URL after all */ } title = `${pub && !/^https?:/i.test(pub) ? pub : host || 'Public source'}${/\.pdf(?:[?#]|$)/i.test(title) ? ' (PDF)' : ''}`; desc = ''; }
+  return { key: null, label: terms(title), desc, href: href || null, kind, asOf: s?.date ? String(s.date).slice(0, 10) : null, at: Date.now() };
 }
 
 /** Record which datasets and live feeds an answer actually reads (wraps Data.load / Live once, transparently). */
@@ -1103,7 +1126,9 @@ const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); retu
 const hash = s => { let h = 2166136261; for (const c of String(s)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); };
 /** Answer text for the chat log: paragraphs and list items on their own lines, citations kept as [n]. */
 const logText = html => { const d = document.createElement('div'); d.innerHTML = String(html || '').replace(/<li\b[^>]*>/gi, m => m + '- ').replace(/<\/(p|li|h\d|tr|div|ul|ol|table)>|<br\s*\/?>/gi, m => m + '\n'); d.querySelectorAll('.ch-ref').forEach(r => r.replaceWith(`[${r.textContent.trim()}]`)); return (d.textContent || '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim(); };
-const plain = html => { const d = document.createElement('div'); d.innerHTML = html; d.querySelectorAll('.ch-ref').forEach(r => r.remove()); return (d.innerText || d.textContent || '').replace(/\n{3,}/g, '\n\n').trim(); };
+/** Answer text for Copy, Read aloud and the history sent back: paragraphs, headings and lists keep their breaks (a detached div has
+ *  no layout, so innerText would run them together), table cells are split by tabs, citation marks are dropped. */
+const plain = html => { const d = document.createElement('div'); d.innerHTML = String(html || '').replace(/<li\b[^>]*>/gi, m => m + '- ').replace(/<\/(p|h\d|ul|ol|table)>/gi, m => m + '\n\n').replace(/<\/(li|tr|div)>|<br\s*\/?>/gi, m => m + '\n').replace(/<\/t[dh]>(?=\s*<t[dh][\s>])/gi, m => m + '\t'); d.querySelectorAll('.ch-ref').forEach(r => r.remove()); return (d.textContent || '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim(); };
 const ago = t => { const s = (Date.now() - t) / 1000; return s < 60 ? 'now' : s < 3600 ? `${Math.floor(s / 60)}m` : s < 86400 ? `${Math.floor(s / 3600)}h` : `${Math.floor(s / 86400)}d`; };
 /* ── Voice: push-to-talk in, one short spoken answer out. Browser speech only (Web Speech API); no audio is handled by this site. ── */
 const MUTE_LS = 'bsp-voice-muted';
@@ -1317,7 +1342,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261117201626'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261117223642'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };
@@ -1718,7 +1743,10 @@ class Widget {
     this.msgs.append(u, turn);
     if (typeof this.opts?.onTurn === 'function') { try { this.opts.onTurn(u); } catch (e) { console.warn('onTurn failed', e); } }
     this.history.push({ role: 'user', html: esc(q), text: q });
-    if (this.msgs.querySelectorAll('.ch-turn.user').length > 1 || this.mode !== 'inline') turn.style.minHeight = Math.max(0, this.msgs.clientHeight - u.offsetHeight - 56) + 'px';
+    // Room for the answer below the question, so it can land at the top of the message box. Only in a box that scrolls: where the
+    // page scrolls instead (the company agent), clientHeight is the whole thread and the reserve would be that much blank page.
+    const box = (() => { try { return getComputedStyle(this.msgs).overflowY !== 'visible'; } catch { return true; } })();
+    if (box && (this.msgs.querySelectorAll('.ch-turn.user').length > 1 || this.mode !== 'inline')) turn.style.minHeight = Math.max(0, this.msgs.clientHeight - u.offsetHeight - 56) + 'px';
     this.msgs.scrollTo({ top: Math.max(0, u.offsetTop - 14), behavior: reduced() ? 'auto' : 'smooth' });
     if (voice) { this.voiceBusy = true; this.voiceUI(); }
     let rec; try { rec = await this.answer(q, turn, { voice }); } finally { if (voice) this.voiceBusy = false; }
@@ -1912,16 +1940,16 @@ class Widget {
     const refOf = n => srv ? (n >= 1 && n <= sources.length ? n - 1 : null) : (n >= 1 && n <= sIdx.length ? sIdx[n - 1] : null);
     const hist = this.history.slice(0, -1).map(h => ({ role: h.role, content: h.text }));
     st.push(this.opts?.hostedOnly ? "Reading this role's apps" : isHosted && !docs.length ? 'Searching the knowledge base' : docs.length ? `Researching with ${docs.length} source${docs.length === 1 ? '' : 's'} from the portfolio data` : 'Researching');
-    let stream, started = false; const think = new Think(turn); const cards = [];
+    let stream, started = false, gap = false; const think = new Think(turn); const cards = [];
     if (isHosted) {
       // The page behind a docked assistant goes first: the server numbers it [1] and labels it as the page the visitor is on.
       stream = BE.chat({ persona: this.id, messages: hist, question: q, mode: voice ? 'voice' : 'chat', workspace: this.workspaceOf(), context: [...(view ? [{ title: view.title, text: view.text, href: view.href }] : []), ...docs.map((d, i) => ({ title: sources[sIdx[i]]?.label || d.t, text: terms(d.s), href: d.href || '' }))], onEvent: ev => {
         if (ev.type === 'meta' && ev.model) { if (ev.fallback) st.push('Switching to a backup model'); model = ev.model; }
         else if (ev.type === 'done' && ev.model) model = ev.model;
         else if (ev.type === 'sources' && Array.isArray(ev.sources)) { srv = true; sources.length = 0; for (const s of ev.sources) sources.push(srvSource(s)); }
-        else if (ev.type === 'status' && ev.text && !started) { st.push(String(ev.text)); think.step(String(ev.text)); }
+        else if (ev.type === 'status' && ev.text) { if (started) gap = true; else { st.push(String(ev.text)); think.step(String(ev.text)); } }   // a step after the text began: what follows is a new paragraph
         else if (ev.type === 'thinking' && ev.text && !started) think.text(String(ev.text));
-        else if (ev.type === 'card' && ev.id) { const i = cards.findIndex(c => c.id === ev.id); if (i < 0) cards.push(ev); else cards[i] = ev; this.paintCard(turn, ev); }
+        else if (ev.type === 'card' && ev.id) { if (started) gap = true; const i = cards.findIndex(c => c.id === ev.id); if (i < 0) cards.push(ev); else cards[i] = ev; this.paintCard(turn, ev); }
       } });
     } else {
       const ctxText = docs.map((d, i) => `[${i + 1}] ${sources[sIdx[i]]?.label || d.t}: ${terms(d.s)}`).join('\n');
@@ -1931,8 +1959,10 @@ class Widget {
     const caret = document.createElement('span'); caret.className = 'ch-caret'; caret.setAttribute('aria-hidden', 'true');
     let acc = '', err = ''; this.msgs.setAttribute('aria-busy', 'true'); turn.classList.add('ch-streaming');
     try {
-      for await (const t of stream) {
+      for await (let t of stream) {
         if (!started) { started = true; think.close(); st.push('Writing the answer'); if (voice && !this.hearing) Voice.begin(this); }
+        // Text that resumes after a tool step starts a new paragraph, unless the server already sent the break.
+        if (gap) { gap = false; if (acc && !/\n[ \t]*\n[ \t]*$/.test(acc) && !/^[ \t]*\n[ \t]*\n/.test(t)) t = (/\n[ \t]*$/.test(acc) ? '\n' : '\n\n') + t.replace(/^[ \t]+/, ''); }
         acc += t; body.innerHTML = mdLite(terms(acc), refOf); (body.lastElementChild || body).appendChild(caret);
         if (voice && Voice.owner === this) Voice.feed(t);   // spoken sentence by sentence as it arrives
         if (ctl.stopped) break;
@@ -1942,8 +1972,15 @@ class Widget {
     caret.remove(); turn.classList.remove('ch-streaming'); think.close();
     if (!acc) { body.innerHTML = ''; this.msgs.setAttribute('aria-busy', 'false'); return { error: ctl.stopped ? 'Stopped.' : err || 'No answer came back. Try again.' }; }
     const engine = isHosted ? hostedLabel(model) : keyLabel(model);
-    const rec = { kind: 'claude', via, q, html: mdLite(terms(acc), refOf) + (ctl.stopped ? '<p class="ch-stopped">Stopped.</p>' : '') + (err && !ctl.stopped ? `<p class="ch-warn">${esc(err)}</p>` : ''), links: sources.filter(s => s.href).slice(0, 3).map(s => link(s.href, s.label)), followups: [], sources, model, engine, think: think.record(), ...(voice ? { voice: 'hosted' } : {}), ...(cards.length ? { cards } : {}) };
-    this.prepare(body, rec); rec.meta = st.finish(rec.sources.length, ctl.stopped ? 'Stopped' : 'Answered', this.opts?.engine === false ? '' : engine, claudeTip(model));
+    const rec = { kind: 'claude', via, q, html: mdLite(terms(acc), refOf) + (ctl.stopped ? '<p class="ch-stopped">Stopped.</p>' : '') + (err && !ctl.stopped ? `<p class="ch-warn">${esc(err)}</p>` : ''), links: [], followups: [], sources, model, engine, think: think.record(), ...(voice ? { voice: 'hosted' } : {}), ...(cards.length ? { cards } : {}) };
+    this.prepare(body, rec);
+    // Related links and the Open button come from the sources the answer cites (in the order it cites them); the chip row lists
+    // cited sources first (renderAfter). An answer with no [n] marks (every spoken answer) keeps the top three sources, except in the
+    // company agent, where an uncited search hit is never offered as a link.
+    const cited = uniq([...body.querySelectorAll('.ch-ref')].map(r => Number(r.dataset.src)).filter(i => Number.isInteger(i) && sources[i]));
+    if (cited.length || this.opts?.hostedOnly) { rec.cited = cited; rec.links = cited.map(i => sources[i]).filter(s => s.href).slice(0, 3).map(s => link(s.href, s.label)); }
+    else rec.links = sources.filter(s => s.href).slice(0, 3).map(s => link(s.href, s.label));
+    rec.meta = st.finish(rec.sources.length, ctl.stopped ? 'Stopped' : 'Answered', this.opts?.engine === false ? '' : engine, claudeTip(model));
     this.renderAfter(turn, rec); this.msgs.setAttribute('aria-busy', 'false');
     this.ctx = { q, intent: null, co: coOf(q) || this.ctx?.co || null, st: stateOf(q) };
     return { rec };
@@ -1983,9 +2020,13 @@ class Widget {
   fbKey(rec) { return hash(`${this.id}|${rec.q}|${String(rec.html).slice(0, 400)}`); }
   renderAfter(turn, rec) {
     turn._rec = rec;
-    const S = rec.sources || []; const first = linksOf(rec.links)[0]?.href || S.find(s => s.href)?.href;
+    // An answer that records what it cites (rec.cited) opens only a cited page, and its chips show cited sources first. Each chip keeps
+    // its source's own number, so it still matches the [n] in the text.
+    const S = rec.sources || [], C = Array.isArray(rec.cited) ? new Set(rec.cited) : null;
+    const first = linksOf(rec.links)[0]?.href || (C ? null : S.find(s => s.href)?.href);
+    const order = S.map((_, i) => i); if (C) order.sort((a, b) => (C.has(b) - C.has(a)) || a - b);
     const fb = lsGet(FB_LS, {})[this.fbKey(rec)]?.v;
-    const cites = S.length ? `<div class="ch-cites">${S.slice(0, S.length > 6 ? 5 : 6).map((s, i) => this.citeHTML(s, i)).join('')}${S.length > 6 ? `<button type="button" class="ch-cite more" data-a="sources" aria-label="Show all ${S.length} sources">+${S.length - 5} more</button>` : ''}</div>` : '';
+    const cites = S.length ? `<div class="ch-cites">${order.slice(0, S.length > 6 ? 5 : 6).map(i => this.citeHTML(S[i], i)).join('')}${S.length > 6 ? `<button type="button" class="ch-cite more" data-a="sources" aria-label="Show all ${S.length} sources">+${S.length - 5} more</button>` : ''}</div>` : '';
     const details = S.length ? `<details class="ch-sources"><summary>${I.db}<span>Sources</span><span class="ch-count">${S.length}</span>${I.chev}</summary><ol>${S.map((s, i) => `<li><span class="n">${i + 1}</span><div><div class="t">${s.href ? `<a href="${esc(s.href)}" data-src="${i}">${esc(s.label)}</a>` : esc(s.label)}</div>${s.desc ? `<div class="d">${esc(s.desc)}</div>` : ''}<div class="m">${esc(kindText(s))} · ${esc(asOfText(s))}</div></div></li>`).join('')}</ol></details>` : '';
     const links = rec.links?.length ? `<div class="ch-links">${rec.links.join('')}</div>` : '';
     const speak = 'speechSynthesis' in window ? `<button type="button" data-act="speak" aria-pressed="false" aria-label="Read aloud" data-tip="Read aloud">${I.speak}</button>` : '';
@@ -2033,7 +2074,7 @@ class Widget {
       const ss = window.speechSynthesis; if (!ss) return;
       if (btn.getAttribute('aria-pressed') === 'true') { this.stopSpeech(); return; }
       Voice.hush(); this.stopSpeech();   // never speak with a microphone open: the page would hear itself
-      const u = new SpeechSynthesisUtterance(plain(rec.html).slice(0, 4000)); u.lang = 'en-US';
+      const u = new SpeechSynthesisUtterance(plain(rec.html).replace(/^- /gm, '').replace(/\t/g, ', ').slice(0, 4000)); u.lang = 'en-US';
       u.onend = u.onerror = () => { btn.setAttribute('aria-pressed', 'false'); btn.dataset.tip = 'Read aloud'; };
       btn.setAttribute('aria-pressed', 'true'); btn.dataset.tip = 'Stop reading'; this.speaking = btn; ss.speak(u);
     } else if (a === 'synth') {

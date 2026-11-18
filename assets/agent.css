@@ -157,6 +157,9 @@
   .ca[data-style="field"] .ca-hint{order:6}
   .ca[data-style="field"] .ca-home>.ca-kpis{order:7}
   .ca[data-style="field"] .ca-home>.sys-src{order:8}
+  /* The home card's pieces come before the chat in the page source but draw around it: none of them may be the browser's scroll
+     anchor, or a long answer growing above the KPI tiles pushes the answer and the floor sketch off the top of the screen. */
+  .ca[data-style="field"] .ca-home>*{overflow-anchor:none}
   .ca[data-style="field"] .ca-list>.sys-card-label{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .ca[data-style="field"] .ca-rows{flex-direction:row;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 calc(-1 * var(--sys-gut));padding:0 var(--sys-gut);scroll-padding:0 var(--sys-gut)}
   .ca[data-style="field"] .ca-rows::-webkit-scrollbar{display:none}

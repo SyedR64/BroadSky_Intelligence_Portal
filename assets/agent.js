@@ -2,8 +2,8 @@
    Everything role-dependent comes from data/agent/catalog.json; the agent itself is the shared chat widget (assets/chat.js),
    which sends { role, connected, job } with each question. The browser only says which role and which apps; access is
    decided where the answers are made. Spec: SPEC section 1 and 5.2. Copy rules: UNIFIED.md §0 and §7. */
-import { Frame } from './frame.js?v=20261117201626';
-import { Chat, PERSONAS } from './chat.js?v=20261117201626';
+import { Frame } from './frame.js?v=20261117223642';
+import { Chat, PERSONAS } from './chat.js?v=20261117223642';
 
 const ROLE_KEY = 'bsp-agent-role';
 const CONN_KEY = 'bsp-agent-connected';
@@ -440,16 +440,19 @@ function onClick(e) {
   }
 }
 
-/** Desktop role list: scroll the picked role into the upper third of the list (the page itself does not move). */
+/** Desktop role list: when the picked role is out of view, scroll it into the upper third of the list (the page itself does not
+ *  move). A role already in view leaves the list where it is, so the "Choose a role" label and the Start chips stay showing. */
 function showCurrentRole() {
   const list = $('.ca-roles'), b = list && $('.ca-role[aria-pressed="true"]', list);
   if (!b || list.scrollHeight <= list.clientHeight) return;
-  list.scrollTop = Math.max(0, list.scrollTop + b.getBoundingClientRect().top - list.getBoundingClientRect().top - list.clientHeight / 3);
+  const lr = list.getBoundingClientRect(), br = b.getBoundingClientRect(), top = lr.top + list.clientTop;
+  if (br.top >= top && br.bottom <= top + list.clientHeight) return;
+  list.scrollTop = Math.max(0, list.scrollTop + br.top - top - list.clientHeight / 3);
 }
 /** Say up front when the agent is offline (no backend, or one without the company agent), not only after a question. */
 async function checkBackend() {
   try {
-    const m = await import('./backend.js?v=20261117201626');
+    const m = await import('./backend.js?v=20261117223642');
     const B = m.Backend || m.default;
     const ok = B && await B.discover() && B.health?.workspace;
     if (ok) return;
@@ -481,7 +484,7 @@ export async function boot() {
   writeStore(ROLE_KEY, state.role.id);
   applyRoleAccent();
   registerPersona(state.role);
-  state.cards = await import('./agent-cards.js?v=20261117201626').catch(e => { console.warn('company agent: card renderers did not load', e); return null; });
+  state.cards = await import('./agent-cards.js?v=20261117223642').catch(e => { console.warn('company agent: card renderers did not load', e); return null; });
 
   state.inst = Chat.mount(document.getElementById('ca-chat'), {
     persona: 'ag-' + state.role.id, mode: 'inline', hostedOnly: true, expand: false, commands: false, engine: false,

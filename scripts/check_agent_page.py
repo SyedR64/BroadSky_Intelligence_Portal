@@ -188,6 +188,7 @@ def page_checks(browser, site, catalog):
 
     # card renderers against the fixture (contract C4)
     cards_checks(page)
+    sketch_geometry_checks(page)
     check('no console errors (390 px walk)', not con.errors, '; '.join(con.errors[:3]))
     ctx.close()
 
@@ -247,7 +248,7 @@ def cards_checks(page):
       t3.append(d);
       const unknown = m.renderCard({ type: 'card', kind: 'no_such_card', id: 'x' }, {});
       return { record: svg('.ca-fs-m.is-record'), likely: svg('.ca-fs-m.is-likely'), focus: svg('.ca-fs-m.is-focus'),
-               runs: svg('.ca-fs-run'), shown, pressed, again: again ? again.textContent.trim() : null, unknown: unknown === null };
+               runs: svg('.ca-fs-run:not(.ca-fs-link)'), shown, pressed, again: again ? again.textContent.trim() : null, unknown: unknown === null };
     }""", [sketch, draft])
     for k in ('record', 'likely', 'focus', 'runs'):
         check(f'sketch card: {k} count matches the fixture', got[k] == want[k], f'{got[k]} vs {want[k]}')
@@ -259,6 +260,228 @@ def cards_checks(page):
     foot = page.inner_text('#ca-test .ca-draft')
     check('draft card: Approve shows Approved and "Nothing was sent."', 'Approved' in foot and 'Nothing was sent.' in foot, foot.splitlines()[-1] if foot else '')
     page.evaluate("document.getElementById('ca-test')?.remove()")
+
+
+# ── floor sketch geometry (phone text sizes) ────────────────────────────────────────────────────
+def _plumber_sketch(meter_side='right'):
+    """A basement like the plumber's record: water heater and gas shutoff in the rear-left corner under the room name, a recorded
+    gas line from the left wall, and a likely gas meter outside on `meter_side`."""
+    item = lambda k, s, x, y, focus=False: {'kind': k, 'label': k.replace('_', ' ').capitalize(), 'short': s, 'basis': 'record', 'focus': focus, 'x': x, 'y': y}  # noqa: E731
+    return {'type': 'card', 'kind': 'floor_sketch', 'id': f'fs-geo-{meter_side}', 'address': '27 Test Ct', 'basis': 'mixed', 'front': 'bottom',
+            'focus': ['water_heater', 'gas_shutoff', 'main_water'],
+            'floors': [{'id': 'basement', 'name': 'Basement', 'w': 35, 'h': 23, 'rooms': [{'x': 0, 'y': 0, 'w': 35, 'h': 23, 'label': 'Unfinished basement'}],
+                        'items': [item('water_heater', 'WH', 5.2, 1.8, True), item('gas_shutoff', 'GS', 7.2, 1.8, True), item('main_water', 'W', 29.8, 21.2, True),
+                                  item('furnace', 'F', 17.5, 11.5), item('service_switch', 'SW', 14.0, 13.8), item('panel', 'P', 32.9, 11.5),
+                                  item('cleanout', 'C', 17.5, 21.2), item('sump', 'S', 29.8, 1.8)],
+                        'runs': [{'kind': 'water', 'basis': 'record', 'points': [[29.8, 21.2], [5.2, 1.8]]},
+                                 {'kind': 'gas', 'basis': 'record', 'points': [[2.1, 11.5], [17.5, 11.5], [5.2, 1.8]]},
+                                 {'kind': 'drain', 'basis': 'record', 'points': [[17.5, 1.8], [17.5, 21.2]]}]}],
+            'outside': [{'kind': 'gas_meter', 'label': 'Gas meter', 'short': 'G', 'basis': 'likely', 'side': meter_side, 'at': 0.35, 'floor': 'basement'}]}
+
+
+def _corner_sketch():
+    """A small room in the floor's rear-left corner with a likely oil tank on its name, and a focused heat pump outside on the right."""
+    return {'type': 'card', 'kind': 'floor_sketch', 'id': 'fs-geo-corner', 'address': '1 Test Ln', 'basis': 'likely', 'front': 'bottom', 'focus': ['heat_pump'],
+            'floors': [{'id': 'basement', 'name': 'Basement', 'w': 30, 'h': 24, 'rooms': [{'x': 0, 'y': 0, 'w': 20, 'h': 15, 'label': 'Partial basement'}],
+                        'items': [{'kind': 'oil_tank', 'label': 'Oil tank', 'short': 'OT', 'basis': 'likely', 'x': 4.5, 'y': 1.9}], 'runs': []}],
+            'outside': [{'kind': 'heat_pump', 'label': 'Heat pump', 'short': 'HP', 'basis': 'record', 'side': 'right', 'at': 0.5, 'floor': 'basement', 'focus': True}]}
+
+
+SKETCH_GEOMETRY_JS = """async (evs) => {
+  const m = await import('./assets/agent-cards.js');
+  const out = {};
+  for (const [name, ev] of Object.entries(evs)) {
+    const host = document.createElement('div'); host.id = 'ca-geo'; document.querySelector('main').append(host);
+    host.append(m.renderCard(JSON.parse(JSON.stringify(ev)), { widget: { root: host } }));
+    host.querySelectorAll('.ca-fs-svg').forEach(d => { d.hidden = false; });
+    const r = { labelOver: [], ringOver: [], clipped: [], arrowGap: [], links: [], runs: [] };
+    for (const svg of host.querySelectorAll('svg.ca-fs')) {
+      const vb = svg.viewBox.baseVal;
+      const marks = [...svg.querySelectorAll('.ca-fs-m')].map(g => { const c = g.querySelector('circle:not(.ca-fs-ring):not(.ca-fs-halo)');
+        return { t: g.querySelector('text').textContent, x: +c.getAttribute('cx'), y: +c.getAttribute('cy'), ring: !!g.querySelector('.ca-fs-ring') }; });
+      const reach = k => (k.ring ? 28.5 : 21);
+      for (const t of svg.querySelectorAll('.ca-fs-room-t')) { const b = t.getBBox();
+        for (const k of marks) { const d = Math.hypot(Math.max(b.x - k.x, 0, k.x - (b.x + b.width)), Math.max(b.y - k.y, 0, k.y - (b.y + b.height))); if (d < reach(k)) r.labelOver.push(`${k.t} on ${t.textContent}`); } }
+      for (let i = 0; i < marks.length; i++) for (let j = i + 1; j < marks.length; j++) { const a = marks[i], b = marks[j];
+        if ((a.ring || b.ring) && Math.hypot(a.x - b.x, a.y - b.y) < reach(a) + reach(b)) r.ringOver.push(`${a.t}/${b.t}`); }
+      for (const k of marks.filter(k => k.ring)) if (k.x - 28.5 < vb.x || k.x + 28.5 > vb.x + vb.width || k.y - 28.5 < vb.y || k.y + 28.5 > vb.y + vb.height) r.clipped.push(k.t);
+      const arrow = svg.querySelector('.ca-fs-arrow'), st = svg.querySelector('.ca-fs-street');
+      if (arrow && st) { const tip = +(arrow.getAttribute('d').match(/V(-?[\\d.]+)/) || [])[1];   // the shaft ends at the tip
+        r.arrowGap.push(+st.getAttribute('y') - tip - parseFloat(getComputedStyle(st).fontSize) * 0.73); }   // baseline to cap top: 0.73 em
+      r.links.push(...[...svg.querySelectorAll('.ca-fs-link')].map(l => ({ cls: l.getAttribute('class'), pts: l.getAttribute('points') })));
+      r.runs.push(...[...svg.querySelectorAll('.ca-fs-run:not(.ca-fs-link)')].map(l => ({ cls: l.getAttribute('class'), n: l.getAttribute('points').split(' ').length })));
+    }
+    r.font = getComputedStyle(host.querySelector('.ca-fs-room-t')).fontSize;
+    out[name] = r; host.remove();
+  }
+  return out;
+}"""
+
+
+def sketch_geometry_checks(page):
+    """PH-4, PH-6, ADDR-8: room names stay readable, focus rings do not overlap or clip, the street arrow clears its label, and a gas
+    line joins the meter only from the meter's own wall, as its own dashed link."""
+    events = json.load(open(FIXTURE, encoding='utf-8'))
+    flagship = next(e for e in events if e.get('kind') == 'floor_sketch')
+    got = page.evaluate(SKETCH_GEOMETRY_JS, {'flagship': flagship, 'plumber': _plumber_sketch('right'), 'left': _plumber_sketch('left'), 'corner': _corner_sketch()})
+    for name, r in got.items():
+        check(f'sketch geometry ({name}, {r["font"]}): no marker on a room name', not r['labelOver'], ', '.join(r['labelOver']))
+        check(f'sketch geometry ({name}): focus rings do not overlap other markers', not r['ringOver'], ', '.join(r['ringOver']))
+        check(f'sketch geometry ({name}): no focus ring clipped by the drawing edge', not r['clipped'], ', '.join(r['clipped']))
+        gaps = [round(g, 1) for g in r['arrowGap']]
+        check(f'sketch geometry ({name}): the street arrow clears its label', all(g >= 3 for g in gaps), str(gaps))
+    p = got['plumber']
+    check('gas line: a meter on the far wall is not joined across the house', not p['links'], json.dumps(p['links']))
+    left = got['left']
+    gas = [x for x in left['runs'] if 'k-gas' in x['cls']]
+    check('gas line: a meter on its own wall gets a separate dashed link', len(left['links']) == 1 and 'is-likely' in left['links'][0]['cls']
+          and gas and gas[0]['n'] == 3 and 'is-record' in gas[0]['cls'], json.dumps(left['links']) + ' ' + json.dumps(gas))
+
+
+# ── recorded-style answers replayed into the page (no backend, no model) ──────────────────────────
+REPLAY = 'http://replay.test'
+# Answers /health and /chat for the replay origin from window.__replay.queue (one list of events per question, each event sent after
+# its __wait milliseconds), so the page streams like the live backend. Everything else goes to the network as usual.
+REPLAY_SHIM = """(() => {
+  const orig = window.fetch.bind(window), R = window.__replay = { queue: [], bodies: [] };
+  const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json' } });
+  window.fetch = async function (url, opts = {}) {
+    const u = String((url && url.url) || url);
+    if (!u.startsWith('%s')) return orig(url, opts);
+    const path = new URL(u).pathname;
+    if (path === '/health') return json({ ok: true, llm: true, llm_state: 'ok', model: 'replay', workspace: true });
+    if (path !== '/chat') return json({ ok: false }, 404);
+    R.bodies.push(opts.body || '');
+    const evs = R.queue.shift() || [{ type: 'text', text: 'Nothing queued.' }, { type: 'done' }], enc = new TextEncoder();
+    const body = new ReadableStream({ async start(c) {
+      for (const e of evs) { await new Promise(r => setTimeout(r, e.__wait ?? 25)); const x = { ...e }; delete x.__wait; c.enqueue(enc.encode('data: ' + JSON.stringify(x) + '\\n\\n')); }
+      c.close(); } });
+    return new Response(body, { status: 200, headers: { 'content-type': 'text/event-stream' } });
+  };
+})();""" % REPLAY
+
+
+def _text_events(text, size=40):
+    return [{'type': 'text', 'text': text[i:i + size]} for i in range(0, len(text), size)]
+
+
+def _ask(page, q, events):
+    """Queues one answer, asks q through the widget and waits until the turn is finished. Returns the finished bot turn's index."""
+    n = page.evaluate("() => document.querySelectorAll('#ca-chat .ch-turn.bot').length")
+    page.evaluate('evs => { window.__replay.queue.push(evs); }', events)
+    page.evaluate('q => { window.__agent.state.inst.ask(q); }', q)
+    done = poll(lambda: page.evaluate("""n => { const t = [...document.querySelectorAll('#ca-chat .ch-turn.bot')];
+      return t.length > n && !!t.at(-1)._rec && !t.at(-1).classList.contains('ch-streaming'); }""", n), 20, 0.1)
+    page.wait_for_timeout(700)   # any smooth scroll settles
+    return n if done else None
+
+
+TURN_JS = """i => { const t = document.querySelectorAll('#ca-chat .ch-turn.bot')[i], u = document.querySelectorAll('#ca-chat .ch-turn.user')[i];
+  const R = e => e ? Math.round(e.getBoundingClientRect().top) : null;
+  return { userTop: R(u), answerTop: R(t.querySelector('.ch-answer')), sketchTop: R(t.querySelector('article.ca-sketch')), minHeight: t.style.minHeight,
+           height: Math.round(t.getBoundingClientRect().height), content: Math.round([...t.querySelector('.ch-col').children].reduce((s, c) => s + c.getBoundingClientRect().height, 0)),
+           paras: [...t.querySelectorAll('.ch-answer > p')].map(p => p.textContent), html: t.querySelector('.ch-answer').innerHTML,
+           history: window.__agent.state.inst.history.at(-1)?.text || '' }; }"""
+
+
+def replay_checks(browser, site):
+    events = json.load(open(FIXTURE, encoding='utf-8'))
+    sketch = {**next(e for e in events if e.get('kind') == 'floor_sketch'), 'id': 'fs-replay'}
+    url = f'{site}/agent.html?role={TECH}&apps=all&backend={urllib.parse.quote(REPLAY, safe=":/")}'
+    ctx = browser.new_context(viewport={'width': 390, 'height': 844}, reduced_motion='reduce', is_mobile=True, has_touch=True)
+    ctx.add_init_script(REPLAY_SHIM)
+    page = ctx.new_page()
+    con = Console(page, site)
+    page.goto(url)
+    wait_ready(page)
+    poll(lambda: page.evaluate("() => !document.querySelector('.ca-kpis') ? false : true"), 5)
+    page.wait_for_timeout(600)
+
+    # PH-1: the sketch and a long answer arrive after the page scrolled the question to the top; the question must stay in view.
+    answer = ' '.join(f'Step {i}: check the burner, the flame sensor and the inducer before you open the gas valve [1].' for i in range(1, 13))
+    evs = [{'type': 'meta', 'model': 'replay'}, {'type': 'status', 'text': 'Checking the service area'},
+           {'type': 'sources', 'sources': [{'title': 'Customer record', 'url': '', 'kind': 'sandbox'}]},
+           {**sketch, '__wait': 1600}, *_text_events(answer.replace('. Step', '.\n\nStep')), {'type': 'done', 'model': 'replay'}]
+    i = _ask(page, "hey I'm going to 418 Wexcombe Ln, customer says no heat", evs)
+    t = page.evaluate(TURN_JS, i) if i is not None else {}
+    check('phone replay: the first answer finishes', i is not None)
+    check('phone replay: the question stays in view after the sketch and answer arrive (scroll anchor)', 0 <= (t.get('userTop') or -1) <= 400,
+          f"question top {t.get('userTop')}, answer top {t.get('answerTop')}, sketch top {t.get('sketchTop')}")
+
+    # PH-2: a follow-up reserves no blank space when the page, not the message list, scrolls.
+    i = _ask(page, 'Text: 10 minutes out', [{'type': 'meta', 'model': 'replay'}, *_text_events('On my way, about 10 minutes out.'), {'type': 'done'}])
+    t = page.evaluate(TURN_JS, i) if i is not None else {}
+    check('phone replay: a follow-up turn reserves no blank min-height', i is not None and not t.get('minHeight') and t.get('height', 9999) - t.get('content', 0) < 80,
+          f"min-height {t.get('minHeight')!r}, height {t.get('height')}, content {t.get('content')}")
+
+    # D1 / copy-6 backstop: text after a tool step starts a new paragraph, once, also when the server already sent the break.
+    evs = [{'type': 'meta', 'model': 'replay'}, *_text_events('Open the key emails.'), {'type': 'status', 'text': 'Opening a record'},
+           *_text_events("This week's priorities are covenants."), {'type': 'status', 'text': 'Opening a record'},
+           {'type': 'text', 'text': '\n\nLate reporting is next.'}, {'type': 'done'}]
+    i = _ask(page, 'What needs my attention?', evs)
+    t = page.evaluate(TURN_JS, i) if i is not None else {}
+    paras = t.get('paras') or []
+    check('answer steps: text after a tool step is its own paragraph, with no doubled break', paras == ['Open the key emails.', "This week's priorities are covenants.", 'Late reporting is next.'], json.dumps(paras))
+    # PH-5: the text kept for the history (and Copy, Read aloud) keeps paragraph and list breaks.
+    i = _ask(page, 'List the checks', [{'type': 'meta', 'model': 'replay'}, *_text_events('Check these first.\n\n- Filter\n- Flame sensor\n\nThen call the office.'), {'type': 'done'}])
+    t = page.evaluate(TURN_JS, i) if i is not None else {}
+    check('answer text for copy and history keeps paragraph and list breaks', t.get('history') == 'Check these first.\n\n- Filter\n- Flame sensor\n\nThen call the office.', repr(t.get('history')))
+
+    # D2: a markdown pipe table renders as a table; number columns are right-aligned.
+    table = 'Here is the month.\n| Month | Revenue | vs plan |\n|---|---|---|\n| Aug | $4.1M | -2.0% |\n| Sept | $4.3M | +1.5% |\n\nSept beat plan.'
+    i = _ask(page, 'This month vs plan', [{'type': 'meta', 'model': 'replay'}, *_text_events(table, 23), {'type': 'done'}])
+    tb = page.evaluate("""i => { const a = document.querySelectorAll('#ca-chat .ch-turn.bot')[i].querySelector('.ch-answer');
+      return { wrapped: a.querySelectorAll('.ch-tbl > table').length, rows: a.querySelectorAll('tbody tr').length, tdn: a.querySelectorAll('td.n').length,
+               thn: a.querySelectorAll('th.n').length, pipes: [...a.querySelectorAll('p')].some(p => p.textContent.includes('|')),
+               history: window.__agent.state.inst.history.at(-1)?.text || '' }; }""", i) if i is not None else {}
+    check('markdown table: renders as a table with right-aligned number columns', tb.get('wrapped') == 1 and tb.get('rows') == 2 and tb.get('tdn') == 4 and tb.get('thn') == 2 and not tb.get('pipes'), json.dumps(tb)[:200])
+
+    # D4 / copy-3 / D6: cited sources lead the chips (numbers unchanged), links and Open use cited sources only, labels stay in their pills.
+    srcs = [{'title': 'https://portal.ct.gov/-/media/deep/water/municipal_wastewater/cwffy26-27-draft-prioirty-list-with-tables-12-29-25.pdf?rev=d7e5d1bb&hash=8A92AE0D', 'url': 'https://portal.ct.gov/-/media/deep/water/list.pdf?rev=d7e5', 'kind': 'reference'},
+            {'title': 'CET wastewater-plant targets: summary', 'url': 'https://example.org/cet-targets', 'kind': 'research'},
+            {'title': 'News and insights', 'url': 'https://example.org/news', 'kind': 'web'},
+            {'title': 'Plant upgrade notes', 'url': 'https://example.org/notes', 'kind': 'web'},
+            {'title': 'Lender update', 'url': 'https://example.org/lender', 'kind': 'web'},
+            {'title': 'Thread: covenant test', 'url': '', 'kind': 'sandbox'},
+            {'title': 'Deal: pipeline review', 'url': '', 'kind': 'sandbox'},
+            {'title': 'https://portal.ct.gov/-/media/deep/water/municipal_wastewater/priority_list_with_tables.pdf?rev=1', 'url': 'https://portal.ct.gov/-/media/deep/water/municipal_wastewater/priority_list_with_tables.pdf?rev=1', 'kind': 'web', 'publisher': 'CT DEEP'},
+            {'title': 'A very long public page title about wastewater treatment plant upgrades across Connecticut and Rhode Island', 'url': 'https://example.org/long', 'kind': 'web'}]
+    evs = [{'type': 'meta', 'model': 'replay'}, {'type': 'sources', 'sources': srcs},
+           *_text_events('Covenant tests are close [6][7]. The state list is out [8]. Upgrades continue [9].'), {'type': 'done'}]
+    i = _ask(page, 'Draft IC agenda', evs)
+    s = page.evaluate("""i => { const t = document.querySelectorAll('#ca-chat .ch-turn.bot')[i], box = t.querySelector('.ch-links');
+      const links = [...t.querySelectorAll('.ch-links .ch-link')];
+      return { chips: [...t.querySelectorAll('.ch-cites .ch-cite:not(.more) .n')].map(n => n.textContent),
+               chipLabels: [...t.querySelectorAll('.ch-cites .ch-cite:not(.more) .t')].map(n => n.textContent),
+               links: links.map(a => a.getAttribute('href')), open: t.querySelector('[data-act="open"]')?.getAttribute('href') || null,
+               labels: links.map(a => a.textContent.trim()),
+               pills: links.map(a => { const r = a.getBoundingClientRect(), b = box.getBoundingClientRect(), x = a.querySelector('.t');
+                 return { h: Math.round(r.height), inside: r.left >= b.left - 1 && r.right <= b.right + 1, cut: !!x && x.scrollWidth > x.clientWidth }; }) }; }""", i) if i is not None else {}
+    check('source chips: cited sources first, each keeping its number', (s.get('chips') or [])[:4] == ['6', '7', '8', '9'], json.dumps(s.get('chips')))
+    check('related links and Open: only cited sources', s.get('links') == [srcs[7]['url'], srcs[8]['url']] and s.get('open') == srcs[7]['url'], json.dumps({k: s.get(k) for k in ('links', 'open')}))
+    check('source labels: a document titled with its address shows its publisher, not the URL',
+          not any('http' in x or '?' in x for x in (s.get('labels') or []) + (s.get('chipLabels') or [])) and (s.get('labels') or [''])[0].startswith('CT DEEP'), json.dumps(s.get('labels')))
+    pills = s.get('pills') or []
+    check('link pills: one line, inside the row, long labels cut with an ellipsis', pills and all(p['h'] <= 32 and p['inside'] for p in pills) and pills[-1]['cut'], json.dumps(pills))
+    check('no console errors (replay)', not con.errors, '; '.join(con.errors[:3]))
+    ctx.close()
+
+
+def desktop_role_list_checks(browser, site):
+    """D9: on load the role list keeps its label and Start chips in view when the picked role is already visible, and still scrolls
+    to a role further down."""
+    for w, h in ((1440, 900), (1024, 768)):
+        for role, top in (('bsp-managing-partner', True), ('fh-ecommerce-manager', False)):
+            ctx, page = new_page(browser, w, h)
+            page.goto(f'{site}/agent.html?role={role}&backend=off')
+            wait_ready(page)
+            page.wait_for_timeout(400)
+            r = page.evaluate("""() => { const l = document.querySelector('.ca-roles'), lr = l.getBoundingClientRect(), b = l.querySelector('.ca-role[aria-pressed="true"]').getBoundingClientRect();
+              const hd = document.getElementById('ca-roles-h').getBoundingClientRect();
+              return { scrollTop: Math.round(l.scrollTop), labelIn: hd.top >= lr.top - 1 && hd.bottom <= lr.bottom + 1, roleIn: b.top >= lr.top - 1 && b.bottom <= lr.bottom + 1 }; }""")
+            ok = r['roleIn'] and (r['labelIn'] and r['scrollTop'] == 0 if top else True)
+            check(f'{w} px role list: {role} in view{", label and Start chips not scrolled away" if top else ""}', ok, json.dumps(r))
+            ctx.close()
 
 
 # ── axe-core ───────────────────────────────────────────────────────────────────────────────────
@@ -340,6 +563,8 @@ def main():
             browser = pw.chromium.launch()
             try:
                 page_checks(browser, site, catalog)
+                replay_checks(browser, site)
+                desktop_role_list_checks(browser, site)
                 if not args.no_axe:
                     axe_checks(browser, site)
                 if not args.no_backend:
