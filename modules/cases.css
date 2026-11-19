@@ -1,5 +1,5 @@
-/* Value-creation cases — chart and layout styles shared by the portal module (#/cases/*)
-   and the public page (redesigns/case-studies.html). Every selector is scoped .m-cases.
+/* Value-creation cases — chart and layout styles for the portal module (#/cases/*). The case-studies page
+   (redesigns/case-studies.html) now forwards to the portal. Every selector is scoped .m-cases.
    Cards, KPI tiles, chips, buttons, inputs and notes are the system components
    (system.css: .sys-kpi, .sys-chip, .sys-btn, .sys-input, .sys-note); this file only lays
    out the timeline, matrix, hold clock, Gantt and bar charts. Every value is a --sys-* /
@@ -224,3 +224,39 @@
   .m-cases .cs-bar-axis{grid-template-columns:minmax(0,1fr) 92px}
 }
 @media print{.m-cases .cs-tl-in{min-width:0}.m-cases .cs-mx-wrap{overflow:visible}}
+
+/* ── moved in from the case-studies page (it now forwards to the portal) ── */
+/* closed sections: same look as the acquisition engine's "How we estimated this" disclosure (ma.css .ma-how) */
+.m-cases .cs-drawer{border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2)}
+.m-cases .cs-drawer>summary{display:flex;flex-wrap:wrap;align-items:center;gap:4px var(--sys-sp-2);min-height:44px;padding:var(--sys-sp-2) var(--sys-sp-3);cursor:pointer;list-style:none;font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
+.m-cases .cs-drawer>summary b{font-weight:600;color:var(--sys-ink)}
+.m-cases .cs-drawer>summary::-webkit-details-marker{display:none}
+.m-cases .cs-drawer>summary::before{content:"";flex:none;width:7px;height:7px;margin-right:4px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform var(--sys-t)}
+.m-cases .cs-drawer[open]>summary::before{transform:rotate(45deg)}
+.m-cases .cs-drawer>:not(summary){margin:0 var(--sys-sp-4) var(--sys-sp-4)}
+.m-cases .cs-method{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:var(--sys-sp-5)}
+.m-cases .cs-drawer .sys-prose{max-width:none;font-size:var(--sys-fs-sm);line-height:1.6}
+.m-cases .cs-drawer>.sys-prose{columns:2;column-gap:var(--sys-sp-6)}
+.m-cases .cs-drawer>.sys-prose p{break-inside:avoid}
+.m-cases .cs-caveats li{font-size:var(--sys-fs-sm);line-height:1.55}
+/* the six moves: compact rows in the style of the hold-clock rows */
+.m-cases .cs-moves-more{margin:0 0 var(--sys-sp-4)}
+.m-cases .cs-moves-list{list-style:none;margin:0 0 var(--sys-sp-3);padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 var(--sys-sp-6)}
+.m-cases .cs-mv{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:2px 12px;width:100%;padding:8px 0;border:0;border-bottom:1px solid var(--sys-line);background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.m-cases .cs-mv-n{grid-row:1/3;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--sys-ink);color:var(--sys-on-ink);font:600 12px/1 var(--sys-mono)}
+.m-cases .cs-mv b{font-weight:600;line-height:1.3;color:var(--sys-ink)}
+.m-cases .cs-mv-w{grid-column:2;font:500 var(--sys-fs-xs)/1.3 var(--sys-mono);color:var(--sys-mute)}
+.m-cases .cs-mv .sys-chip{grid-column:3;grid-row:1/3;min-height:26px;padding:0 10px;font-size:var(--sys-fs-xs)}
+.m-cases .cs-mv:hover b{text-decoration:underline;text-decoration-color:var(--sys-line-2);text-underline-offset:3px}
+/* key under the hold clock */
+.m-cases .cs-ck-key{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-size:12.5px;color:var(--sys-mute)}
+.m-cases .cs-ck-key span{display:inline-flex;align-items:center;gap:7px}
+.m-cases .cs-ck-key i{display:inline-block;width:18px;height:8px;border-radius:4px;background:var(--sys-info)}
+.m-cases .cs-ck-key i.cs-ck-bar--good{background:var(--sys-good)} .m-cases .cs-ck-key i.cs-ck-bar--warn{background:var(--sys-warn)} .m-cases .cs-ck-key i.cs-ck-bar--bad{background:var(--sys-bad)}
+.m-cases .cs-ck-key i.cs-ck-tick{width:2px;height:14px;border-radius:0;background:var(--sys-ink)}
+@media (max-width:900px){
+  .m-cases .cs-moves-list,.m-cases .cs-method{grid-template-columns:minmax(0,1fr)}
+  .m-cases .cs-drawer>.sys-prose{columns:1}
+  .m-cases .cs-mv{grid-template-columns:auto minmax(0,1fr)}
+  .m-cases .cs-mv .sys-chip{grid-column:2;grid-row:auto;justify-self:start;margin-top:4px}
+}

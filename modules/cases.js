@@ -1,8 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    Value-creation cases (Precedents) — how sponsors built and sold companies like
    Punctual Pros. Dataset: Value-creation case set (data/research/value_creation_cases.json),
-   modelled by ./cases-lib.js (shared with redesigns/case-studies.html).
-   Views: timeline · levers · sequence · exits.
+   modelled by ./cases-lib.js. The case-studies page (redesigns/case-studies.html) now forwards
+   here: its six moves, full story, method and caveats are on the timeline screen, its hold-clock key on levers.
+   Screens: timeline · levers · sequence · exits.
    ═══════════════════════════════════════════════════════════════════════════ */
 import * as L from './cases-lib.js?v=20261117223642';
 import * as Copy from './copy.js?v=20261117223642';
@@ -14,7 +15,6 @@ const ppChip = t => `<span class="sys-chip sys-chip--soft" data-co="pp">${esc(t)
 const btn = (ui, size = '') => ui.btnCls('secondary', size);
 /** "2026-10-06" → "Oct 6, 2026" for provenance lines (dates in words). */
 const asOf = s => { const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(String(s || '')); if (!m) return s; const mo = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'][Number(m[2]) - 1]; return m[3] ? `${mo} ${Number(m[3])}, ${m[1]}` : `${mo} ${m[1]}`; };
-const PAGE = 'redesigns/case-studies.html';
 const injectCss = () => { if (!document.getElementById('css-cases')) { const l = document.createElement('link'); l.id = 'css-cases'; l.rel = 'stylesheet'; l.href = 'modules/cases.css?v=20261117223642'; document.head.appendChild(l); } };
 const esc = L.esc;
 const EST = Copy.EST;
@@ -49,6 +49,31 @@ function kpis(ctx, M) {
   ]);
 }
 
+/* The six moves: the first six patterns the best exits followed, in order (titles from the case-studies page). */
+const MOVES = [['pat-01', 'Put an operator team in charge'], ['pat-02', 'Buy the first add-on early, close to home'], ['pat-04', 'Keep tuck-ins coming every few months'], ['pat-03', 'Run every brand on one system'], ['pat-06', 'Build recurring members buyers pay for'], ['pat-07', 'Own the technician pipeline']];
+function movesHTML(M) {
+  return `<ol class="cs-moves-list">${MOVES.map(([id, title], i) => { const p = M.patterns.find(x => x.id === id); if (!p) return '';
+    const win = (p.pattern.split(':')[0] || '').replace(/(\d)-(\d)/g, '$1–$2');
+    return `<li><button type="button" class="cs-mv" data-pat="${esc(p.id)}"><span class="cs-mv-n">${i + 1}</span><b>${esc(title)}</b><span class="cs-mv-w">${esc(win)}</span><span class="sys-chip sys-chip--${p.tone}">Punctual Pros · ${esc(p.chip)}</span></button></li>`; }).join('')}</ol>
+    <p class="cs-moves-more"><a class="sys-btn sys-btn--secondary sys-btn--sm btn" href="#/cases/levers">All twelve on the hold clock</a></p>`;
+}
+/* The full story (meta.narrative), three sentences to a paragraph. Closed: open, it is most of a laptop screen. */
+function storyHTML(M) {
+  const sents = M.narrative.split(/(?<=\.)\s+(?=[A-Z])/); const paras = []; for (let i = 0; i < sents.length; i += 3) paras.push(sents.slice(i, i + 3).join(' '));
+  return `<details class="cs-drawer"><summary><b>Read the full story</b><span>The pattern across all ${M.stats.n} cases, in twelve sentences.</span></summary><div class="sys-prose">${paras.map(p => `<p>${esc(p)}</p>`).join('')}<p class="sys-src">Source: value-creation case set synthesis, Oct 2026. Every claim is tied to a dated, sourced event in the timelines below.</p></div></details>`;
+}
+/* Method, the eight caveats and the source count. Closed, last on the timeline screen. */
+function methodHTML(M) {
+  const st = M.stats, c = st.conf || {}; const n = new Set(M.cases.flatMap(x => x.sources || [])).size;
+  return `<details class="cs-drawer mt-12"><summary><b>Method, caveats and sources</b><span>How the cases were built, and where they are thin.</span></summary><div class="cs-method">
+    <div class="sys-prose"><p>${st.nHome} residential home-services and franchisor histories and ${st.nCross} cross-sector analogs (commercial and fire/life-safety services, legal services, lab distribution, agencies and consumer brands) were rebuilt from sponsor and company press releases, SEC filings, UK Companies House accounts, lender filings and trade press. Each case lists dated events, the levers used, before and after KPIs and what BSP can copy.</p>
+      <p>Levers and patterns were derived from the ${st.events} dated events. Timing uses months from the first sponsor's entry; year-only dates count as mid-year. Evidence quality: ${c.high ?? '—'} cases high (filings with disclosed figures), ${c.medium ?? '—'} medium (releases and trade press) and ${c.low ?? '—'} low (few primary sources).</p>
+      <p>Unknown values stay blank and show as a dash. Figures from press reports, derived ratios and analyst recommendations carry an est. badge. All pages were retrieved ${esc(L.when(M.retrieved)?.label || 'Oct 2026')}.</p>
+      <p>Sources: ${n} unique pages across ${M.cases.length} cases. Each case lists its own under Case detail.</p>
+      <p class="sys-src"><b>Terms:</b> MOIC: multiple on invested capital. LTM: last twelve months. PIK: interest paid in more debt instead of cash.</p></div>
+    <ul class="sys-card-list cs-caveats">${M.caveats.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div></details>`;
+}
+
 /* ── inspector ────────────────────────────────────────────────────────────── */
 function openCase(ctx, M, c) {
   const { ui, inspector } = ctx;
@@ -63,7 +88,7 @@ function openCase(ctx, M, c) {
       { label: 'Levers used', html: `<div class="sys-chips">${c.levers.map(l => stChip(l, '')).join('')}</div>` },
       { label: 'Sources', html: `<div class="col gap-4 small">${(c.sources || []).map(u => ext(u)).join('')}</div>` },
     ],
-    actions: [{ label: 'Timeline', href: `#/cases/timeline?case=${c.id}` }, { label: 'Public page ↗', href: `${PAGE}#case=${c.id}` }, ...(c.portal ? [{ label: c.portal.label, href: L.hrefFor(c.portal, '') }] : [])],
+    actions: [{ label: 'Timeline', href: `#/cases/timeline?case=${c.id}` }, ...(c.portal ? [{ label: c.portal.label, href: L.hrefFor(c.portal, '') }] : [])],
   });
 }
 function openLever(ctx, M, l, focus) {
@@ -77,7 +102,7 @@ function openLever(ctx, M, l, focus) {
       { label: `Evidence (${ev.length})`, html: `<div class="m-cases col gap-4 small">${ev.map(e => `<div${focus === e.case ? ' class="cs-focus"' : ''}><b>${esc(M.byId[e.case]?.short || '—')}</b> <span class="sys-num dim">${esc(e.dateLabel || '')}${e.months_from_entry != null ? ` · month ${Math.round(e.months_from_entry)}` : ''}</span> — ${esc(e.fact)} ${ext(e.source_url)}</div>`).join('')}</div>` },
       { label: 'Cases', html: l.cases.map(id => `<a href="#/cases/timeline?case=${esc(id)}">${esc(M.byId[id].short)}</a>`).join(', ') },
     ],
-    actions: [{ label: 'Lever matrix', href: `#/cases/levers?lever=${l.id}` }, { label: 'Public page ↗', href: `${PAGE}#levers` }],
+    actions: [{ label: 'Lever matrix', href: `#/cases/levers?lever=${l.id}` }],
   });
 }
 function openPattern(ctx, M, p) {
@@ -101,7 +126,7 @@ function openStep(ctx, M, s) {
       s.bench ? { label: 'Benchmark', html: `<div class="small text-2">${esc(s.bench)}${s.done ? '' : EST}</div>` } : null,
       { label: 'Borrowed from', html: s.borrows.map(id => `<a href="#/cases/timeline?case=${esc(id)}">${esc(M.byId[id].short)}</a>`).join(', ') || '—' },
       { label: 'Patterns it follows', html: `<div class="col gap-4 small">${pats.map(p => `<div>${esc(L.dash(L.capFirst(p.name)))}</div>`).join('')}</div>` },
-      { label: 'Supporting views', html: `<div class="col gap-4 small">${s.refs.map(x => `<a href="${esc(L.hrefFor(x, ''))}">${esc(x.label)} →</a>`).join('') || '—'}</div>` },
+      { label: 'Supporting screens', html: `<div class="col gap-4 small">${s.refs.map(x => `<a href="${esc(L.hrefFor(x, ''))}">${esc(x.label)} →</a>`).join('') || '—'}</div>` },
       (s.xrefs || []).length ? { label: 'Sources', html: `<div class="col gap-4 small">${s.xrefs.filter(x => x.source_url).map(x => ext(x.source_url)).join('')}</div>` } : null,
     ].filter(Boolean),
     actions: s.refs.slice(0, 2).map(x => ({ label: x.label, href: L.hrefFor(x, '') })),
@@ -131,8 +156,8 @@ async function timeline(ctx) {
     title: 'Case timelines',
     sub: `<b>${M.stats.n} sponsor-built companies, ${M.stats.events} dated moves.</b> Winners bought the first add-on near month ${M.stats.firstAddon?.median ?? 7}, then one every ~${M.stats.cadence?.median ?? 4.6} months. Punctual Pros is at month ${M.stats.pp?.hold_month_on_2026_10_06 ?? 30}.`,
     chips: `${ctx.fmt.chip('Releases, filings, trade press')}${ctx.fmt.chip('Months from sponsor entry')}`,
-    actions: `<a class="${btn(ui)}" href="${PAGE}" target="_blank" rel="noopener">Public page ↗</a>`,
   })}${kpis(ctx, M)}
+  <div class="mt-12">${ui.panel({ title: 'The six moves, in order', sub: 'What the highest-value exits did first, and where Punctual Pros stands on each. Select a move for its cases.', body: movesHTML(M) + storyHTML(M), foot: SRC(ui, M) })}</div>
   <div class="mt-12">${ui.panel({ title: 'Dated events by case', sub: 'Pick a case, compare up to two more, align by months from entry · click a dot for the event', body: `
     <div class="sys-filters cs-ctl"><label class="sys-field"><span class="sys-field-label">Case</span><select class="sys-input" id="cs-pick">${opts}</select></label><label class="sys-field"><span class="sys-field-label">Compare</span><select class="sys-input" id="cs-add"><option value="">Add a case…</option>${opts}</select></label><div class="sys-chips cs-cmp" id="cs-cmp"></div>
       <div class="sys-chips cs-seg" role="group" aria-label="Time axis"><button type="button" class="sys-chip" data-mode="aligned">Months from entry</button><button type="button" class="sys-chip" data-mode="calendar">Calendar</button></div>
@@ -141,7 +166,7 @@ async function timeline(ctx) {
   <div class="grid grid-main mt-12">
     <div>${ui.panel({ title: 'Event log', sub: 'Chronological across the selected cases · sortable · CSV', body: '<div id="cs-ev"></div>', foot: SRC(ui, M) })}</div>
     <div>${ui.panel({ title: 'Before and after', sub: 'Disclosed KPI moves for the selected case', body: '<div id="cs-kpi"></div>', foot: SRC(ui, M) })}</div>
-  </div></div>`;
+  </div>${methodHTML(M)}</div>`;
   const $ = s => el.querySelector(s);
   let tbl = null;
   const render = () => {
@@ -169,6 +194,7 @@ async function timeline(ctx) {
   $('#cs-add').onchange = ev => { const v = ev.target.value; ev.target.value = ''; if (v && v !== TS.primary && !TS.compare.includes(v)) { TS.compare = [...TS.compare, v].slice(-2); render(); } };
   $('#cs-pp').onchange = ev => { TS.showPP = ev.target.checked; render(); };
   const onClick = ev => {
+    const mv = ev.target.closest('[data-pat]'); if (mv) { const p = M.patterns.find(x => x.id === mv.dataset.pat); if (p) openPattern(ctx, M, p); return; }
     const m = ev.target.closest('.cs-seg [data-mode]'); if (m) { TS.mode = m.dataset.mode; render(); return; }
     const rm = ev.target.closest('[data-rm]'); if (rm) { TS.compare = TS.compare.filter(x => x !== rm.dataset.rm); render(); return; }
     const f = ev.target.closest('[data-fam]'); if (f) { const k = f.dataset.fam; TS.hidden.has(k) ? TS.hidden.delete(k) : TS.hidden.add(k); if (TS.hidden.size === Object.keys(L.FAMILY).length) TS.hidden.clear(); render(); return; }
@@ -197,11 +223,11 @@ async function levers(ctx) {
     { label: 'Behind', value: String(behind.length), sub: 'patterns where Punctual Pros trails', color: 'var(--sys-bad)' },
   ])}
   <div class="mt-12">${ui.panel({ title: 'Lever × case matrix', sub: 'Solid = dated move (more saturated = earlier in the hold) · hollow = used, date not disclosed · click a lever, dot or case', body: '<div id="cs-mx"></div>', foot: SRC(ui, M) })}</div>
-  <div class="mt-12">${ui.panel({ title: 'Levers: evidence, timing and Punctual Pros applicability', sub: 'Sortable · click a row for the evidence and supporting views · CSV', body: '<div id="cs-lv"></div>', foot: SRC(ui, M) })}</div>
-  <div class="mt-12">${ui.panel({ title: 'Chronological patterns on the hold clock', sub: 'Window in months from entry · colour = Punctual Pros status · dotted line = Punctual Pros today', body: '<div id="cs-ck"></div>', foot: SRC(ui, M) })}</div></div>`;
+  <div class="mt-12">${ui.panel({ title: 'Levers: evidence, timing and Punctual Pros applicability', sub: 'Sortable · click a row for the evidence and supporting screens · CSV', body: '<div id="cs-lv"></div>', foot: SRC(ui, M) })}</div>
+  <div class="mt-12">${ui.panel({ title: 'Chronological patterns on the hold clock', sub: 'Twelve patterns on a seven-year hold · bar colour = where Punctual Pros stands today · dotted line = Punctual Pros today · select a pattern for its cases', body: '<div id="cs-ck"></div>', foot: SRC(ui, M) + `<span>Timing computed from dated events (first add-on n = ${M.stats.firstAddon?.n ?? '—'}, cadence n = ${M.stats.cadence?.n ?? '—'}, hold n = ${M.stats.holdN ?? '—'}); Punctual Pros status from public filings and releases.</span>` })}</div></div>`;
   const $ = s => el.querySelector(s);
   $('#cs-mx').innerHTML = L.matrixHTML(M, { selected: ctx.params.lever || null });
-  $('#cs-ck').innerHTML = L.clockHTML(M);
+  $('#cs-ck').innerHTML = L.clockHTML(M) + '<div class="cs-ck-key"><span><i class="cs-ck-bar--good"></i>Punctual Pros: done or no stress</span><span><i class="cs-ck-bar--warn"></i>Partly done</span><span><i class="cs-ck-bar--bad"></i>Behind the cases</span><span><i></i>Not started, unknown or ongoing</span><span><i class="cs-ck-tick"></i>Median month</span></div>';
   const rows = M.levers.map(l => ({ id: l.id, name: L.dash(l.name), n: l.cases.length, ev: l.evidence.length, start: l.range ? l.range[0] : null, timing: L.timingText(l, true), kpi: l.kpi, pp: l.pp, links: l.links.map(x => x.label).join('; '), _l: l }));
   ui.table($('#cs-lv'), { rows, pageSize: 20, sortKey: 'n', exportName: 'value_creation_levers', onRow: r => openLever(ctx, M, r._l), columns: [
     { key: 'name', label: 'Lever', wrap: true, fmt: v => `<b>${e2(v)}</b>` },
@@ -209,7 +235,7 @@ async function levers(ctx) {
     { key: 'start', label: 'Timing', fmt: (v, r) => `<span class="small">${e2(r.timing)}</span>` },
     { key: 'kpi', label: 'KPI moved', wrap: true, fmt: v => `<span class="small text-2">${e2(clip(v, 80))}</span>` },
     { key: 'pp', label: 'Punctual Pros applicability', wrap: true, fmt: v => `<span class="small text-2">${e2(clip(v, 150))}</span>` },
-    { key: 'links', label: 'Supporting views', wrap: true, fmt: (v, r) => r._l.links.map(x => `<a class="small" href="${e2(L.hrefFor(x, ''))}" onclick="event.stopPropagation()">${e2(x.label)}</a>`).join('<br>') || '—' },
+    { key: 'links', label: 'Supporting screens', wrap: true, fmt: (v, r) => r._l.links.map(x => `<a class="small" href="${e2(L.hrefFor(x, ''))}" onclick="event.stopPropagation()">${e2(x.label)}</a>`).join('<br>') || '—' },
   ] });
   const onClick = ev => {
     const lv = ev.target.closest('[data-lever]'); if (lv) { openLever(ctx, M, M.levers.find(l => l.id === lv.dataset.lever)); return; }
@@ -231,7 +257,6 @@ async function sequence(ctx) {
     title: 'The Punctual Pros sequence',
     sub: `<b>Three steps done, ${fwd.length} to go, in the order the winning cases used.</b> Next: ${esc(next12.map(s => /^[A-Z][a-z]/.test(s.title) ? s.title[0].toLowerCase() + s.title.slice(1) : s.title).slice(0, 1).join(''))}. Steps after 3 are recommendations.`,
     chips: `${ppChip('Entry: April 2024')}${ctx.fmt.chip('To September 2029')}`,
-    actions: `<a class="${btn(ui)}" href="${PAGE}#sequence" target="_blank" rel="noopener">Public page ↗</a>`,
   })}${ui.kpis([
     { label: 'Hold month today', value: String(M.stats.pp?.hold_month_on_2026_10_06 ?? 30), sub: 'BSP entry Apr 3, 2024', color: 'var(--co-pp)' },
     { label: 'Done', value: String(M.steps.filter(s => s.done).length), sub: 'entry · ServiceTitan · Horvath (month 8)', color: 'var(--sys-good)' },
@@ -239,7 +264,7 @@ async function sequence(ctx) {
     { label: 'Home-services median hold', value: `${M.stats.holdHome?.toFixed(1)} yrs`, sub: `≈ ${L.monthLabel(M.ppLane.entry.t + (M.stats.holdHome || 4))} for Punctual Pros` },
     { label: 'Exit window', value: exitStep ? `${L.mLabel(exitStep.a)}` : '—', sub: exitStep ? `option, to ${L.mLabel(exitStep.b)}` : '' },
   ])}
-  <div class="mt-12">${ui.panel({ title: '36-month plan', sub: 'Bars = recommended window (text = hold months) · dashed = option · click a step for the action, benchmark, precedent cases and supporting views', body: '<div id="cs-g"></div>', foot: ui.source('Value-creation case set (Punctual Pros sequence), Punctual Pros public filings, OS program evidence, nationwide plan', null, asOf(M.retrieved)) })}</div>
+  <div class="mt-12">${ui.panel({ title: '36-month plan', sub: 'Bars = recommended window (text = hold months) · dashed = option · click a step for the action, benchmark, precedent cases and supporting screens', body: '<div id="cs-g"></div>', foot: ui.source('Value-creation case set (Punctual Pros sequence), Punctual Pros public filings, OS program evidence, nationwide plan', null, asOf(M.retrieved)) })}</div>
   <div class="mt-12">${ui.panel({ title: 'Steps', sub: 'Sortable · CSV · click for detail', body: '<div id="cs-st"></div>', foot: SRC(ui, M) })}</div></div>`;
   const $ = s => el.querySelector(s);
   $('#cs-g').innerHTML = L.ganttHTML(M, { root: '', selected: ctx.params.step != null ? Number(ctx.params.step) : null });
@@ -250,7 +275,7 @@ async function sequence(ctx) {
     { key: 'status', label: 'Status', fmt: v => stChip(v, v === 'Done' ? 'good' : v === 'Option' ? 'warn' : 'info') },
     { key: 'bench', label: 'Benchmark', wrap: true, fmt: (v, r) => v ? `<span class="small text-2">${e2(clip(v, 110))}</span>${r._s.done ? '' : EST}` : '—' },
     { key: 'borrows', label: 'Borrowed from', wrap: true, fmt: v => `<span class="small">${e2(v || '—')}</span>` },
-    { key: 'views', label: 'Supporting views', wrap: true, fmt: (v, r) => r._s.refs.map(x => `<a class="small" href="${e2(L.hrefFor(x, ''))}" onclick="event.stopPropagation()">${e2(x.label)}</a>`).join('<br>') || '—' },
+    { key: 'views', label: 'Supporting screens', wrap: true, fmt: (v, r) => r._s.refs.map(x => `<a class="small" href="${e2(L.hrefFor(x, ''))}" onclick="event.stopPropagation()">${e2(x.label)}</a>`).join('<br>') || '—' },
   ] });
   const onClick = ev => { const b = ev.target.closest('[data-step]'); if (b) { const s = M.steps.find(x => x.step === Number(b.dataset.step)); if (s) openStep(ctx, M, s); } };
   el.addEventListener('click', onClick);
@@ -266,7 +291,6 @@ async function entryExit(ctx) {
     title: 'Entry to exit',
     sub: `<b>${toSponsor.length} of ${sold.length} dated exits went to another sponsor</b> after a median ${M.stats.hold.toFixed(1)}-year hold. Scaled home-services companies sold near ~${L.xTimes(M.stats.exitMult)} against ~6–7x for small deals.`,
     chips: `${stChip('Press-reported values are estimates', 'warn')}${ctx.fmt.chip('First-sponsor hold')}`,
-    actions: `<a class="${btn(ui)}" href="${PAGE}#entry-exit" target="_blank" rel="noopener">Public page ↗</a>`,
   })}${kpis(ctx, M)}
   <div class="mt-12" id="cs-flt"></div>
   <div class="mt-12">${ui.panel({ title: 'Entry and exit by case', sub: 'Sortable · click a row for the full case · CSV', body: '<div id="cs-ee"></div>', foot: SRC(ui, M) })}</div>
