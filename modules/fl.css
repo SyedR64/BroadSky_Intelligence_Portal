@@ -24,12 +24,8 @@
 /* maps that fill their card */
 .m-fl .fill-panel .panel-body{flex:1;display:flex;flex-direction:column}
 .m-fl .fill-panel .panel-body>.map{flex:1;min-height:520px;border:0;border-radius:0}
-.m-fl .m-map-420{min-height:420px}
 
-/* shared add-on and filings tables (components.js): column widths */
-.m-fl .m-fl-tg .sys-chip{max-width:190px;overflow:hidden;text-overflow:ellipsis}
-.m-fl .m-fl-tg td.wrap{min-width:240px;white-space:normal}
-.m-fl .m-fl-tg td{max-width:210px}
+/* shared filings table (components.js): column widths */
 .m-fl .m-fl-fil #fil-table td{max-width:300px}
 .m-fl .m-fl-fil #fil-table td:nth-child(4){white-space:normal;min-width:120px;max-width:170px;text-align:left}
 .m-fl .m-fl-fil #fil-table td:nth-child(5){min-width:300px;max-width:400px}

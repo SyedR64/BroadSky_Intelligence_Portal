@@ -1,8 +1,8 @@
 import * as Copy from './copy.js?v=20261117223642';
 /* Frontline Managed Services — legal managed IT, cyber and revenue-cycle services for law firms.
-   Views: overview · amlaw · midsize · targets · filings. Data: Frontline law-firm universe, Mid-size law firms,
-   Frontline and Thomas Scientific add-on targets (platform==='frontline'), Frontline public filings, Public comparables. */
-import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261117223642';
+   Views: overview · amlaw · midsize · filings. Data: Frontline law-firm universe, Mid-size law firms,
+   Frontline and Thomas Scientific add-on targets (platform==='frontline', counts on the overview only), Frontline public filings, Public comparables. */
+import { renderFilings, fitTierOf } from '../assets/components.js?v=20261117223642';
 import { companyLinks } from './company-links.js?v=20261117223642';
 
 /* Colours are system tokens (system.css): company accent --co-fl, status --sys-good/info/warn/bad, neutral --sys-mute-2.
@@ -235,14 +235,14 @@ async function overview(ctx) {
     title: 'Frontline Managed Services',
     sub: `Frontline already serves over half the AM Law 200, so this is an account map. ${fmt.num(t1.length)} Tier-1 accounts and ${fmt.num(rcm.length)} with a cyber or revenue-cycle trigger carry the largest cross-sell.`,
     chips: `${fmt.chip('HQ St. Louis, MO', COLOR)}${fmt.chip('Held since December 2024')}${fmt.chip('800+ law-firm clients')}${fmt.chip('~1,100 staff · 11 offices')}${fmt.chip('CEO Tim Britt')}`,
-    actions: `<a class="sys-btn sys-btn--primary" href="#/fl/amlaw">AM Law account map</a><a class="sys-btn sys-btn--secondary" href="#/fl/targets">Add-on targets</a>`,
+    actions: `<a class="sys-btn sys-btn--primary" href="#/fl/amlaw">AM Law account map</a>`,
   }) + companyLinks('fl') +
   ui.kpis([
     { label: 'Large-firm accounts mapped', value: fmt.num(firms.length), sub: `${BANDS.map(b => `${bandN[b] || 0} ${b}`).join(' · ')} revenue`, color: COLOR },
     { label: 'Tier-1 accounts', value: fmt.num(t1.length), sub: `${fmt.num(cyber5T1.length)} with cyber urgency 5/5`, color: 'var(--sys-good)' },
     { label: 'Attorneys addressable', value: fmt.compact(atty), sub: `≈${fmt.compact(atty * 2)} end users incl. staff (est.)`, color: 'var(--sys-info)' },
     { label: 'Mid-size firms screened', value: mid ? fmt.num(midItems.length) : '—', sub: mid ? `${fmt.num(midItems.filter(r => (MS.fit(r) || 0) >= 65).length)} Tier 1–2 fit (≥65)` : 'research pending', color: 'var(--co-fh)' },
-    { label: 'Add-on targets', value: targets.length ? fmt.num(targets.length) : '—', sub: `${fmt.num(priGeo.length)} in CEO-priority geographies`, color: 'var(--sys-warn)' },
+    { label: 'Hand-researched add-on targets', value: targets.length ? fmt.num(targets.length) : '—', sub: `${fmt.num(priGeo.length)} in Frontline’s stated priority geographies`, color: 'var(--sys-warn)' },
     { label: 'Revenue-cycle candidates', value: fmt.num(rcm.length), sub: `cyber ≥4 or AI “planning” · ${fmt.num(planning.length)} planning`, color: 'var(--sys-orange)' },
   ]) +
   `<div class="grid grid-main mt-12">
@@ -280,7 +280,7 @@ async function overview(ctx) {
     { h: `AI-readiness bundle for ${fmt.num(planning.length)} firms planning AI programs`, d: 'Package the HELIX AI service desk with KL Software M365/SharePoint legal apps (partnership announced Aug 2026) and DMS clean-up.', go: 'Filter →', href: '#/fl/amlaw?ai=planning' },
     { h: `Revenue-cycle cross-sell: ${fmt.num(firms.filter(f => f.attorney_count >= 1000).length)} firms with 1,000+ attorneys`, d: 'eBilling (InvoicePrep), AR and outsourced accounting (added Nov 2025) scale with billing volume, which makes the largest firms the highest-value RCM targets.', go: 'Filter →', href: '#/fl/amlaw?size=1%2C000%2B' },
     { h: mid ? `Move down-market: ${fmt.num(midItems.length)} mid-size firms screened` : 'Move down-market into mid-size firms (screen pending)', d: mid ? `${fmt.num(midItems.filter(r => (MS.fit(r) || 0) >= 65).length)} reach Tier 1–2 fit and ${fmt.num(midItems.filter(r => /insurance/i.test(r.client_base || '')).length)} have insurance-defense books (carrier eBilling makes RCM the wedge). Packaged managed IT + eBilling offers suit firms with 40–350 attorneys.` : 'The mid-size screen (signals, fit score, recommended offer) is still being verified. It will populate the Mid-size view.', go: 'Open →', href: '#/fl/midsize' },
-    { h: topT ? `Tuck-in M&A: ${esc(topT.company)} (fit ${topT.fit_score})` : 'Tuck-in M&A pipeline', d: `${fmt.num(targets.length)} legal-IT/RCM candidates, ${fmt.num(priGeo.length)} of them in the CEO's stated priority geographies (CA, TX, Atlanta, South Florida, UK).`, go: 'Targets →', href: '#/fl/targets' },
+    { h: topT ? `Tuck-in M&A: ${esc(topT.company)} (fit ${topT.fit_score})` : 'Tuck-in M&A pipeline', d: `${fmt.num(targets.length)} hand-researched legal-IT/RCM candidates, ${fmt.num(priGeo.length)} of them in Frontline’s stated priority geographies (CA, TX, Atlanta, South Florida, UK).`, go: 'Targets →', href: '#/ma/pipeline?platform=fl' },
   ];
   el.querySelector('#fl-acts').innerHTML = leverList(levers);
 
@@ -519,67 +519,6 @@ async function midsize(ctx) {
   return () => { stopSize(); map.remove(); unroot(el)(); };
 }
 
-/* ══ 4. Add-on targets ═══════════════════════════════════════════════════ */
-async function targetsView(ctx) {
-  cssOnce();
-  const { el, ui, fmt, data, maps, esc, inspector } = ctx; root(el);
-  const ma = await data.research('ma_targets_fl_ts');
-  if (!ma) { el.innerHTML = ui.pageHead({ title: 'Add-on targets' }) + ui.note('Research dataset <b>Frontline and Thomas Scientific add-on targets</b> is not yet available.', 'warn'); return unroot(el); }
-  const fm = ma.meta?.frontline || {}; const pc = fm.platform_context || {};
-  const items = (ma.items || []).filter(t => t.platform === 'frontline');
-  // fit_breakdown is on a 1–5 scale; renderTargets draws it against max 100 → rescale for display.
-  const disp = items.map(t => ({ ...t, fit_breakdown: Object.fromEntries(Object.entries(t.fit_breakdown || {}).map(([k, v]) => [`${k} (×20)`, (n(v) || 0) * 20])) }));
-  const top8 = (fm.ranked_top_8 || []).map(r => ({ ...r, item: items.find(t => t.id === r.id) }));
-  const priGeo = items.filter(t => ['CA', 'TX', 'FL', 'GA'].includes(t.state) || t.country === 'United Kingdom');
-  const tuck = items.filter(t => t.revenue_est_usd && t.revenue_est_usd <= 15e6);
-  const large = items.filter(t => t.revenue_est_usd && t.revenue_est_usd >= 20e6);
-  const rcmT = items.filter(t => /billing|revenue|invoice|accounting|time entry/i.test(JSON.stringify(t.offerings || [])));
-  const comp = fm.pe_backed_competitors || [];
-  const avgTop = top8.length ? top8.reduce((a, r) => a + (r.fit_score || 0), 0) / top8.length : null;
-
-  el.innerHTML = ui.pageHead({
-    title: 'Add-on targets',
-    sub: `${fmt.num(priGeo.length)} of ${fmt.num(items.length)} legal-IT and revenue-cycle candidates sit in the CEO's priority regions; ${fmt.num(tuck.length)} fit the ~$5M tuck-in profile. ${fmt.num(comp.length)} consolidators compete for them.`,
-    chips: `${fmt.chip('Tuck-ins ~$5M revenue', COLOR)}${fmt.chip('Revenue modelled est.', 'var(--sys-warn)')}`,
-  }) + ui.kpis([
-    { label: 'Candidates', value: fmt.num(items.length), sub: `${fmt.num(items.filter(t => t.fit_score >= 80).length)} fit ≥80`, color: 'var(--sys-warn)' },
-    { label: 'Top-8 avg fit', value: fmt.num(avgTop, 0), sub: esc(top8[0]?.company || '—'), color: 'var(--sys-good)' },
-    { label: 'Priority geographies', value: fmt.num(priGeo.length), sub: 'CA · TX · GA · FL · UK', color: COLOR },
-    { label: 'Tuck-in size (≤$15M est.)', value: fmt.num(tuck.length), sub: `${fmt.num(large.length)} at $20M+ (anchor-scale)` },
-    { label: 'RCM / billing specialists', value: fmt.num(rcmT.length), sub: 'extend InvoicePrep / eBilling', color: 'var(--sys-orange)' },
-    { label: 'Combined staff (est.)', value: fmt.num(sum(items, t => t.employees)), sub: 'ZoomInfo headcount', color: 'var(--sys-info)' },
-  ]) +
-  `<div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Target geography vs. Frontline footprint', sub: `Size = fit score · ${items.filter(t => t.country === 'United Kingdom').length} UK targets off-map (London office adjacency)`, body: '<div class="map m-map-420" id="fl-tg-map"></div>', flush: true, foot: ui.source('Frontline and Thomas Scientific add-on targets (ZoomInfo and websites)', null, ma.meta?.generated) })}
-    ${ui.panel({ title: 'Ranked top 8', sub: 'Research-team ranking (capability 30% · customer overlap 25% · scale · ownership · geography 15% each)', body: '<div id="fl-tg-top"></div>', flush: true, foot: ui.source('Frontline add-on targets: top-8 ranking', null, ma.meta?.generated) })}
-  </div>
-  ${ui.panel({ title: 'Full screen', sub: 'Filter, sort, export · click a row for fit breakdown, rationale, sources', body: '<div id="fl-tg-list" class="m-fl-tg"></div>', cls: 'mt-12', foot: `${ui.source('ZoomInfo company search, company websites, press', null, ma.meta?.generated)} · <span>fit breakdown bars rescaled ×20 (source scale 1–5)</span>` })}
-  <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'PE-backed & strategic consolidators', sub: 'Who else is rolling up legal IT — bid competition and potential exits', body: '<div id="fl-tg-comp"></div>', flush: true, foot: ui.source('Sponsor sites, press releases, ZoomInfo', null, ma.meta?.generated) })}
-    ${ui.panel({ title: 'Frontline M&A plan', sub: 'Prior deals and stated criteria', body: `<h4 class="sys-card-label">Prior acquisitions</h4><ul class="sys-card-list mt-8" data-co="fl">${(pc.prior_acquisitions || []).map(x => `<li>${esc(x)}</li>`).join('') || '<li>—</li>'}</ul><h4 class="sys-card-label mt-16">Divestitures</h4><ul class="sys-card-list mt-8" data-co="fl">${(pc.divestitures || []).map(x => `<li>${esc(x)}</li>`).join('') || '<li>—</li>'}</ul>${pc.recent ? `<h4 class="sys-card-label mt-16">Recent</h4><div class="small text-2 mt-8">${esc(pc.recent)}</div>` : ''}${pc.stated_criteria ? `<h4 class="sys-card-label mt-16">Stated criteria</h4><div class="small text-2 mt-8">${esc(pc.stated_criteria)}</div>` : ''}<h4 class="sys-card-label mt-16">Next actions</h4><ul class="sys-card-list mt-8" data-co="fl"><li>Approach the top 3 (${esc(top8.slice(0, 3).map(t => t.company).join(', '))}) through PRG before the consolidators do</li><li>Before any LOI, check whether revenue claims are ZoomInfo estimates (e.g. Helm360's $116.5M)</li><li>Prioritise RCM/billing tuck-ins that extend InvoicePrep margins</li></ul>`, foot: `<span class="src">Sources: ${(pc.sources || []).slice(0, 4).map(s => fmt.link(s, fmt.host(s))).join(' · ')}</span>` })}
-  </div>`;
-
-  const map = maps.create(el.querySelector('#fl-tg-map'), { center: [39, -96], zoom: 4 });
-  for (const o of OFFICES) maps.marker(map, o.lat, o.lon, { color: tok(HEX), label: o.name.split(',')[0], size: 9, popup: `<b>Frontline · ${esc(o.name)}</b><br><span class="muted">${esc(o.role)}</span>` });
-  maps.points(map, items, { color: t => tok(t.fit_score >= 80 ? 'var(--sys-good)' : t.fit_score >= 60 ? 'var(--sys-info)' : 'var(--sys-warn)'), radius: t => 4 + (t.fit_score || 50) / 12, cluster: false, opacity: .85, popup: t => `<b>${esc(t.company)}</b><br>${esc(t.hq_city || '')}, ${esc(t.state || t.country || '')} · fit ${t.fit_score}<br>${fmt.num(t.employees)} staff · ${fmt.money(t.revenue_est_usd)} est.` });
-  maps.legend(map, [{ color: 'var(--sys-good)', label: 'Fit ≥80' }, { color: 'var(--sys-info)', label: 'Fit 60–79' }, { color: 'var(--sys-warn)', label: 'Fit <60' }, { color: HEX, label: 'Frontline office', ring: true }], 'Add-on targets');
-  const stopSize = autoSize(map, () => fitRows(map, items.filter(t => t.country !== 'United Kingdom')));
-
-
-  el.querySelector('#fl-tg-top').innerHTML = top8.length ? `<div class="sys-table-wrap"><table class="sys-table"><thead><tr><th class="sys-n">#</th><th>Company</th><th class="sys-n">Staff</th><th class="sys-n">Revenue <span class="sys-est">est.</span></th><th class="sys-n">Fit</th></tr></thead><tbody>${top8.map((r, i) => `<tr tabindex="0" data-i="${i}"><td class="sys-n">${r.rank}</td><td><b>${esc(r.company)}</b><div class="dim small">${esc(r.item ? `${r.item.hq_city || ''}, ${r.item.state || ''}` : '')} · ${esc((r.item?.ownership || '').split(/[;(]/)[0].slice(0, 44))}</div></td><td class="sys-n">${fmt.num(r.item?.employees)}</td><td class="sys-n">${fmt.money(r.item?.revenue_est_usd)}</td><td class="sys-n">${fmt.score(r.fit_score)}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('The ranked top 8 is not in the dataset yet');
-  const tg = renderTargets(ctx, el.querySelector('#fl-tg-list'), { items: Copy.targets(disp), color: COLOR, platformLabel: 'Frontline', exportName: 'frontline_addon_targets', pageSize: 25 });
-  const clickCompany = name => { const rowsNow = el.querySelectorAll('#fl-tg-list tbody tr'); const all = tg.rows(); const idx = all.findIndex(t => t.company === name); if (idx >= 0 && idx < 25) rowsNow[idx]?.click(); else { const t = disp.find(x => x.company === name); if (t) openTargetLite(t); } };
-  function openTargetLite(t) { inspector.open({ title: esc(t.company), sub: `${esc(t.hq_city || '')}, ${esc(t.state || '')} · Frontline add-on candidate`, color: COLOR, sections: [{ label: 'Fit', html: `${fmt.score(t.fit_score)}` }, { label: 'Rationale', html: `<div class="small text-2">${esc(t.strategic_rationale || '')}</div>` }, { label: 'Next action', html: '<div class="small text-2">Route to PRG for a founder-level intro; verify ZoomInfo revenue/headcount against the website and LinkedIn before any LOI, and check overlap with Frontline\'s existing law-firm clients.</div>' }, { label: 'Sources', html: `<div class="col gap-4 small">${(t.sources || []).map(s => fmt.link(s, fmt.host(s))).join('')}</div>` }], actions: t.website ? [{ label: 'Website ↗', href: t.website }] : [] }); }
-  rowsOn(el.querySelector('#fl-tg-top'), tr => clickCompany(top8[Number(tr.dataset.i)].company));
-
-  const compTbl = ui.table(el.querySelector('#fl-tg-comp'), {
-    columns: [{ key: 'company', label: 'Consolidator', fmt: (v, r) => `<b>${esc(v)}</b><div class="dim small">${esc(r.hq || '')}</div>` }, { key: 'sponsor', label: 'Sponsor', wrap: true, fmt: v => `<span class="small">${esc(v || 'not verified')}</span>` }, { key: 'scale', label: 'Scale', wrap: true, fmt: v => `<span class="small text-2">${esc(v || '—')}</span>` }, { key: 'notes', label: 'Notes', wrap: true, fmt: v => `<span class="small text-2">${esc(String(v || '').slice(0, 120))}</span>` }],
-    rows: comp.map((c, i) => ({ ...c, id: `comp-${i}` })), pageSize: 10, exportName: 'frontline_pe_competitors',
-    onRow: c => inspector.open({ title: esc(c.company), sub: `${esc(c.hq || 'HQ n/a')} · legal-IT consolidator`, color: 'var(--sys-mute)', sections: [{ label: 'Profile', html: ui.kv({ Sponsor: esc(c.sponsor || 'not verified'), Scale: esc(c.scale || '—') }) }, { label: 'Notes', html: `<div class="small text-2">${esc(c.notes || '')}</div>` }, { label: 'Implication for Frontline', html: `<div class="small text-2">Likely rival bidder for the same tuck-ins and a benchmark for exit multiples. Track its add-ons in the PE landscape module and move early on overlapping targets.</div>` }, { label: 'Sources', html: `<div class="col gap-4 small">${(c.sources || []).map(s => fmt.link(s, fmt.host(s))).join('')}</div>` }], actions: [{ label: 'PE landscape →', href: '#/pe' }] }),
-  });
-  return () => { stopSize(); map.remove(); unroot(el)(); };
-}
-
 /* Diverging horizontal bars around a zero axis (true values printed; negatives red). */
 function divBars(rows) {
   const h = x => String(x ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -680,7 +619,6 @@ export default {
     { id: 'overview', name: 'Operating picture', icon: '◉', render: overview },
     { id: 'amlaw', name: 'AM Law account map', icon: '⚖', render: amlaw },
     { id: 'midsize', name: 'Mid-size firms', icon: '◧', render: midsize },
-    { id: 'targets', name: 'Add-on targets', icon: '⊕', render: targetsView },
     { id: 'filings', name: 'Public filings', icon: '§', render: filings },
   ],
   tour: [
