@@ -3,7 +3,7 @@ import * as Copy from './copy.js?v=20261117223642';
    CET — Commonwealth Electrical Technologies (Worcester + Taunton MA; NuWave, Norwell MA;
    Horton Electrical Services, CT). New England only.
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261117223642';
+import { renderFilings } from '../assets/components.js?v=20261117223642';
 import { esc as E } from '../assets/core.js?v=20261117223642';
 import { companyLinks } from './company-links.js?v=20261117223642';
 
@@ -47,7 +47,6 @@ const SRC = {
   opp: ['CET opportunity radar (CT DEEP CWF, ME/VT CWSRF, BidNet, USASpending)', 'https://portal.ct.gov/deep/water/municipal-wastewater/clean-water-fund'],
   wwtp: ['EPA ECHO + CT DEEP CWF FY26-27 + MassDEP 2026 CWSRF IUP + RIDEM SFY27 IUP', 'https://echo.epa.gov/'],
   counties: ['CET county model (Census business and housing counts, permit data)', null],
-  targets: ['ZoomInfo + company websites + press (CET add-on targets)', null],
 };
 
 /* ── helpers ────────────────────────────────────────────────────────────── */
@@ -286,7 +285,7 @@ async function overview(ctx) {
   const tl = [
     { date: 'February 2025', color: 'var(--sys-brand)', html: `<b>BSP becomes majority investor in CET</b><div class="dim small">Worcester HQ + Taunton office · founded 2008 · about 140 staff (October 2025)</div>` },
     ...ons.map(a => ({ date: fmt.date(a.date), color: /Horton/.test(a.name) ? PAL.cyan : PAL.purple, html: `<b>${esc(a.name)}</b> · ${esc(a.hq || '')}${a.source_url ? ` <a class="dim" href="${esc(a.source_url)}" target="_blank" rel="noopener">↗</a>` : ''}<div class="dim small">${esc(String(a.note || '').slice(0, 170))}${String(a.note || '').length > 170 ? '…' : ''}</div>` })),
-    { date: 'Next', color: COLOR, html: `<b>Add-on #3</b> · hand-researched list of ${fmt.num(targets?.items?.length || 0)} New England targets <a href="#/cet/targets">→</a><div class="dim small">Top: ${esc((targets?.meta?.ranked_top_10 || []).slice(0, 3).map(t => t.company).join(' · ') || '—')}</div>` },
+    { date: 'Next', color: COLOR, html: `<b>Add-on #3</b> · hand-researched list of ${fmt.num(targets?.items?.length || 0)} New England targets <a href="#/ma/pipeline?platform=cet">→</a><div class="dim small">Top: ${esc((targets?.meta?.ranked_top_10 || []).slice(0, 3).map(t => t.company).join(' · ') || '—')}</div>` },
   ];
   if (!ons.length) tl.splice(1, 0, { date: 'October 7, 2025', color: PAL.purple, html: '<b>NuWave Energy Solutions</b> · Norwell, MA' }, { date: 'September 15, 2026', color: PAL.cyan, html: `<b>Horton Electrical Services</b> · ${esc(horton.town)}` });
   el.querySelector('#cet-tl').innerHTML = ui.timeline(tl);
@@ -773,55 +772,6 @@ async function transfers(ctx) {
 /* segmented control helper (ui.seg writes into el) */
 function UI_seg(ctx, el, options, value, onChange) { if (el) ctx.ui.seg(el, options, value, onChange); }
 
-/* ═══ 6. Add-on targets ═════════════════════════════════════════════════════ */
-async function targets(ctx) {
-  ensureCss();
-  const { el, ui, fmt, data, maps, esc, inspector } = ctx;
-  const [ma, filings] = await Promise.all([data.research('ma_targets_cet'), data.research('cet_filings')]);
-  if (!ma) { el.innerHTML = wrap(ui.pageHead({ title: 'Add-on targets', sub: 'CET add-on screen' }) + ui.note('Research dataset <b>CET add-on targets</b> is not available yet.', 'warn')); return; }
-  const T = ma.items || []; const m = ma.meta || {};
-  const fam = T.filter(t => t.ownership === 'founder' || t.ownership === 'family'); const near = T.filter(t => (t.nearest_cet_node_miles ?? 999) <= 30);
-  const top = m.ranked_top_10 || []; const pe = m.pe_backed_competitors || [];
-  el.innerHTML = wrap(ui.pageHead({
-    title: 'Add-on targets',
-    sub: `${fmt.num(fam.length)} of ${fmt.num(T.length)} screened New England contractors are founder- or family-owned. With ${fmt.num(pe.length)} PE-backed consolidators active, approach the founder-owned top 10 first.`,
-    chips: `${chip(`${fmt.num(T.length)} screened`, COLOR)}${chip(`${fmt.num(fam.length)} founder- or family-owned`, PAL.green)}${chip(`${fmt.num(pe.length)} PE-backed rivals`, PAL.red)}${chip(`${fmt.num((m.screened_and_excluded || []).length)} excluded`)}`,
-  }) +
-  ui.kpis([
-    { label: 'Targets screened', value: fmt.num(T.length), sub: esc(Object.entries(T.reduce((a, t) => (a[t.state] = (a[t.state] || 0) + 1, a), {})).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, v]) => `${k} ${v}`).join(' · ')), color: COLOR },
-    { label: 'Tier 1–2 fit (65+)', value: fmt.num(T.filter(t => (t.fit_score || 0) >= 65).length), sub: `top score ${fmt.num(Math.max(...T.map(t => t.fit_score || 0)))}`, color: PAL.green },
-    { label: 'Founder or family owned', value: fmt.num(fam.length), sub: `${fmt.num(T.filter(t => t.ownership === 'unknown').length)} ownership unknown`, color: PAL.cet },
-    { label: 'Within 30 miles of a node', value: fmt.num(near.length), sub: 'Worcester · Taunton · Norwell', color: PAL.purple },
-    { label: 'Revenue, top 10', value: `${fmt.money(sum(T.filter(t => top.some(x => x.id === t.id)), t => t.revenue_est_usd))} ${Copy.EST}`, sub: 'ZoomInfo modeled', color: PAL.amber },
-  ]) +
-  `<div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Target map', sub: 'Colour = fit tier · size = employees · CET / Horton nodes', body: `<div class="map cet-map-md" id="tg-map"></div>`, flush: true, foot: ui.source(SRC.targets[0], null, m.generated) })}
-    <div class="col gap-12">
-      ${ui.panel({ title: 'Ranked top 10', sub: 'Research ranking · click for profile', body: top.length ? `<div class="sys-table-wrap"><table class="sys-table cet-rows" id="tg-top"><thead><tr><th class="sys-n">#</th><th>Company</th><th class="sys-n">Fit</th></tr></thead><tbody>${top.map(t => `<tr data-id="${esc(t.id)}" tabindex="0"><td class="sys-n">${esc(t.rank)}</td><td><b>${esc(t.company)}</b><div class="sys-muted small">${esc(T.find(x => x.id === t.id)?.hq_city || '')}, ${esc(t.state)} · ${esc((T.find(x => x.id === t.id)?.specialties || []).slice(0, 2).join(', '))}</div></td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('Ranking pending'), flush: !!top.length, scroll: true, accent: true })}
-    </div>
-  </div>
-  <div class="mt-12">${ui.panel({ title: 'PE-backed competitors already consolidating New England', sub: 'Who else is buying and where they collide with CET', body: pe.length ? `<div class="sys-table-wrap"><table class="sys-table"><thead><tr><th>Company</th><th>HQ</th><th>Owner / sponsor</th><th class="sys-n">Year</th><th>Note</th><th>Sources</th></tr></thead><tbody>${pe.map(p => `<tr><td><b>${esc(p.company)}</b></td><td>${esc(p.hq || '')}</td><td>${chip(p.owner || '—')}</td><td class="sys-n">${esc(p.year || '')}</td><td class="small text-2">${esc(p.note || '')}</td><td class="small">${(p.sources || []).slice(0, 2).map(u => fmt.link(u)).join('<br>')}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('No PE-backed competitors listed'), foot: `<span class="dim">Scoring rubric: ${esc(Object.entries(m.scoring_rubric || {}).map(([k, v]) => `${Copy.field(k).toLowerCase()} ${v.split(':')[0]}`).join(' · '))}</span>` })}</div>
-  <h3 class="sys-card-title mt-16 mb-8">Full target screen</h3><div id="tg-screen"></div>`);
-  renderTargets(ctx, el.querySelector('#tg-screen'), { items: Copy.targets(T), color: COLOR, platformLabel: 'CET', exportName: 'cet_addon_targets', extraColumns: [{ key: 'nearest_cet_node_miles', label: 'Mi to node', num: true, fmt: (v, r) => v != null ? `${fmt.num(v)} <span class="dim small">${esc(String(r.nearest_cet_node || '').split(' ')[0])}</span>` : '—' }] });
-  const map = maps.create(el.querySelector('#tg-map'), { center: [42.3, -71.6], zoom: 7 });
-  const tierHex = s => s >= 80 ? PAL.green : s >= 65 ? PAL.cet : s >= 50 ? PAL.amber : PAL.muted;
-  const openT = t => inspector.open({ title: esc(t.company), sub: `${esc(t.hq_city || '')}, ${esc(t.state)} · ${esc(fitTierOf(t.fit_score || 0))} · fit ${esc(t.fit_score)}`, color: tierHex(t.fit_score), sections: [
-    { label: 'Profile', html: ui.kv({ Employees: fmt.num(t.employees), 'Revenue (est.)': t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)} ${Copy.EST} <span class="sys-muted small">ZoomInfo</span>` : null, Founded: t.founded_year ? esc(t.founded_year) : null, Ownership: esc(t.ownership || ''), 'Nearest CET node': `${esc(t.nearest_cet_node || '')} · ${fmt.num(t.nearest_cet_node_miles)} mi`, Specialties: (t.specialties || []).map(s => esc(s)).join(', '), 'End markets': (t.end_markets || []).map(s => esc(s)).join(', '), Website: t.website ? fmt.link(t.website) : null }) },
-    t.fit_breakdown ? { label: 'Fit breakdown', html: ctx.charts.hbar(Object.entries(t.fit_breakdown).map(([k, v]) => ({ label: k.replace(/_/g, ' '), value: Number(v) || 0 })), { max: 30, fmt: v => v, labelW: 130, color: COLOR }) } : null,
-    { label: 'Strategic rationale', html: `<div class="small text-2">${esc(t.strategic_rationale || '')}</div>` },
-    t.ownership_notes ? { label: 'Ownership notes', html: `<div class="small text-2">${esc(t.ownership_notes)}</div>` } : null,
-    (t.risk_flags || []).length ? { label: 'Risk flags', html: chips(...t.risk_flags.map(r => chip(r, PAL.amber))) } : null,
-    { label: 'Sources', html: `<div class="col gap-4 small">${(t.sources || []).map(s => fmt.link(s, fmt.host(s) || s)).join('')}</div>` },
-    { label: 'Next action', html: `<div class="small text-2">Warm intro via PRG or the CET CEO. Confirm succession intent, request 3 years of financials and customer concentration, and test fit with ${esc(t.nearest_cet_node || 'the nearest CET office')} for crew and supervision consolidation.</div>` },
-  ].filter(Boolean), actions: [t.website ? { label: 'Website ↗', href: t.website } : null].filter(Boolean) });
-  pts(maps, map, T, { color: t => tierHex(t.fit_score), radius: t => Math.max(4, Math.min(14, 3 + Math.sqrt(t.employees || 0) * .8)), cluster: false, opacity: .85, onClick: openT, popup: t => `<b>${esc(t.company)}</b><br>${esc(t.hq_city || '')}, ${esc(t.state)} · fit ${esc(t.fit_score)}<br>${fmt.num(t.employees)} staff · ${esc(t.ownership || '')}` });
-  addNodes(ctx, map, hortonNode(filings));
-  maps.legend(map, [{ color: PAL.green, label: 'Fit 80+' }, { color: PAL.cet, label: 'Fit 65–79' }, { color: PAL.amber, label: 'Fit 50–64' }, { color: PAL.muted, label: 'Fit under 50' }], 'Target fit');
-  fitLater(map, T.filter(t => t.lat != null).map(t => [t.lat, t.lon]), 9);
-  bindRows(el, '#tg-top tr[data-id]', n => { const t = T.find(x => x.id === n.dataset.id); if (t) { openT(t); if (t.lat != null) map.setView([t.lat, t.lon], 10); } });
-  return () => map.remove();
-}
-
 /* ═══ 7. Filings & financials ═══════════════════════════════════════════════ */
 async function filingsView(ctx) {
   ensureCss();
@@ -851,7 +801,6 @@ export default {
     { id: 'opportunities', name: 'Opportunity radar', icon: '◎', flush: true, render: opportunities },
     { id: 'wastewater', name: 'Wastewater accounts', icon: '◍', render: wastewater },
     { id: 'transfers', name: 'Property transfers', icon: '⇄', render: transfers },
-    { id: 'targets', name: 'Add-on targets', icon: '◆', render: targets },
     { id: 'filings', name: 'Public filings', icon: '§', render: filingsView },
   ],
   tour: [
