@@ -1017,9 +1017,13 @@ async function market(ctx) {
     ${ui.panel({ title: 'Competitor & franchise map', sub: 'Competitors by ownership (size = reviews) · Authority Brands sites by PP affiliation · click for detail', body: `<div class="map tall" id="mk-map"></div>`, flush: true, foot: mSrc })}
     ${intens.length ? ui.panel({ title: 'Competitive intensity by county', sub: 'Tracked competitors, PE presence and households per competitor', body: '<div id="mk-int"></div>', foot: mSrc }) : ui.panel({ title: 'PE-backed competitors', body: '<div id="mk-pe2"></div>' })}
   </div>
-  ${comps.length ? `<div class="mt-12">${ui.panel({ title: 'Competitors', sub: 'Ownership: PE-backed red · utility purple · independent green · click for notes, sources and next action', body: '<div id="mk-comp"></div>', foot: mSrc })}</div>` : ''}
-  <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'PE-backed companies (rival bidders)', sub: 'Sponsor, regional holdings, threat to PP', body: '<div id="mk-pe"></div>', foot: ui.source('Sponsor press releases · roll-up trackers', null, ma?.meta?.generated) })}
+  <div class="mt-12">${ui.panel({ title: 'Competitors and rival bidders', sub: `${comps.length ? `${fmt.num(comps.length)} local competitors and ` : ''}${fmt.num(pe.length)} sponsor-backed bidders around the footprint`, actions: `<a class="${ui.btnCls('secondary', 'sm')}" href="#/ma/rivals?o=punctual_pros">Rival companies →</a>`,
+    body: `<p class="sys-card-body">Owners, loans and lender marks for the sponsor-backed rivals are on Rival companies. The lists behind this map are below.</p>
+    <details class="pp-fold mt-12" id="mk-rivals"><summary><b>Local competitors and rival bidders</b> <span class="sys-muted">${comps.length ? `${fmt.num(comps.length)} competitors · ` : ''}${fmt.num(pe.length)} sponsor-backed bidders</span></summary><div class="pp-fold-body">
+      ${comps.length ? `<h4 class="sys-card-label">Competitors</h4><p class="sys-muted small mt-8 mb-8">Ownership: PE-backed red · utility purple · independent green · click for notes, sources and next action</p><div id="mk-comp"></div>` : ''}
+      <h4 class="sys-card-label${comps.length ? ' mt-16' : ''}">PE-backed companies (rival bidders)</h4><p class="sys-muted small mt-8 mb-8">Sponsor, regional holdings, threat to PP</p><div id="mk-pe"></div>
+    </div></details>`, foot: `${mSrc} ${ui.source('Sponsor press releases · roll-up trackers', null, ma?.meta?.generated)}` })}</div>
+  <div class="mt-12">
     ${ui.panel({ title: 'Franchise territories — One Hour · Ben Franklin · Mister Sparky', sub: 'Which Authority Brands sites are PP/Horvath vs. other franchisees (tuck-in pool)', body: '<div id="mk-ft"></div>', foot: ui.source('Authority Brands location directories', 'https://www.onehourheatandair.com/locations/', mm.generated || ma?.meta?.generated) })}
   </div>
   ${profs.length ? `<div class="mt-12">${ui.panel({ title: 'County profiles · where the replacement and conversion demand is', sub: 'Shading is per column · oil/propane share = heat-pump conversion opportunity · pre-1980 share = replacement & safety demand · growth = new-build demand', body: '<div id="mk-prof"></div>', foot: ui.source('ACS 2020–2024 5-yr · Census PEP 2025 · Census BPS', SRC.acs, mm.generated) })}</div>` : ''}
@@ -1137,7 +1141,7 @@ async function market(ctx) {
       { label: 'Site', html: ui.kv({ Address: esc(x.address || ''), Owner: esc(x.owner || 'not published'), Reviews: x.reviews ? `${fmt.num(x.reviews)} · ${x.rating || ''}★` : null, Website: x.website ? fmt.link(x.website) : null, Note: x.note ? esc(x.note) : null }) },
       { label: 'Next action', html: `<div class="small text-2">${/confirmed|yes/.test(x.aff) ? 'PP site: benchmark review velocity and membership penetration against neighbouring franchisees.' : /likely|possible/.test(x.aff) ? 'Verify ownership (state business filings, FDD franchisee list) before counting it in the PP footprint.' : 'Tuck-in pool: identify the franchisee, confirm Authority Brands transfer path, add to the target screen.'}</div>` },
       { label: 'Sources', html: `<div class="small col gap-4">${(x.sources || []).map(s => fmt.link(s)).join('') || '—'}</div>` },
-    ], actions: [{ id: 'tg', label: 'Open add-on targets', onClick: () => app.go('pp', 'targets') }] });
+    ], actions: [{ id: 'tg', label: 'Open add-on targets', onClick: () => app.go('ma', 'pipeline', { platform: 'pp' }) }] });
   }
   function openComp(c) {
     inspector.open({ title: esc(c.name), sub: `${esc(c.hq || '')} · ${esc(ownOf(c.ownership)[0])}`, color: ownOf(c.ownership)[1], sections: [
