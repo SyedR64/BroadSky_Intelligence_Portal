@@ -207,7 +207,7 @@ function buildFactors(D) {
       `${big(pp.hu * pp.oil)} oil or propane homes in the ${pp.n} counties (ACS); $12,000 average conversion (assumption).`) : null });
   add({ id: 'pp-weather', co: 'pp', cat: 'weather', w: 2, name: 'Weather', why: 'Heat waves, freezes and storms lift calls for a few days at a time.',
     read: { v: D.alerts.pp.length ? `${D.alerts.pp.length} weather alert${D.alerts.pp.length > 1 ? 's' : ''} in the footprint` : 'No weather alerts in the footprint', d: 'Checked when this page opened', date: today, src: 'National Weather Service', url: URL_.nws, dir: D.alerts.pp.length ? 1 : 0 },
-    lever: 'Plan surge technicians from the weather view on alert days.', link: ['#/pp/weather', 'Weather and demand'] });
+    lever: 'Plan surge technicians from Weather and demand on alert days.', link: ['#/pp/weather', 'Weather and demand'] });
   const peList = D.maPp?.meta?.pe_backed_competitors || [];
   add({ id: 'pp-rivals', co: 'pp', cat: 'rivals', w: 2, name: 'Sponsor-backed rivals', why: 'Rivals backed by other sponsors buy local shops and hire away technicians.',
     read: pp ? { v: `${num(peList.length)} sponsor-backed rivals on the watch list`, d: `${num(pp.estab)} heating, plumbing and electrical shops in the ${pp.n} counties`, date: 'Sep 2026', src: 'Add-on target research · Census business counts (2022)', url: URL_.cbp, dir: peList.length >= 3 ? -1 : 0 } : null,
@@ -262,7 +262,7 @@ function buildFactors(D) {
   const cetH = D.hz.cet;
   add({ id: 'cet-owners', co: 'cet', cat: 'housing', w: 1, name: 'Property changing hands', why: 'New owners of buildings and homes often upgrade in their first year.',
     read: cetH ? { v: `${num(cetH.newL.cur)} new home listings`, d: `${pctS(cetH.newL.chg)} vs a year ago${cetH.pend.breaks ? ' · Massachusetts under-contract counts changed method, so they are left out' : ''}`, date: hz, src: 'Realtor.com county data', url: URL_.realtor, dir: sgn(cetH.newL.chg, 0.03) } : null,
-    lever: 'Reach new owners through the property transfers view.', link: ['#/cet/transfers', 'Property transfers'] });
+    lever: 'Reach new owners through the Property transfers list.', link: ['#/cet/transfers', 'Property transfers'] });
   add({ id: 'cet-weather', co: 'cet', cat: 'weather', w: 1, name: 'Weather', why: 'Storms drive emergency work on pump stations and generators.',
     read: { v: D.alerts.cet.length ? `${D.alerts.cet.length} weather alert${D.alerts.cet.length > 1 ? 's' : ''} in operating counties` : 'No weather alerts in operating counties', d: 'Checked when this page opened', date: today, src: 'National Weather Service', url: URL_.nws, dir: D.alerts.cet.length ? 1 : 0 },
     lever: 'Keep an on-call crew for pump-station and generator outages.' });
