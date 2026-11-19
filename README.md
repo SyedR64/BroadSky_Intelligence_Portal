@@ -35,7 +35,7 @@ Every view leads with one short sentence and its KPIs, then the evidence (map, t
 | `redesigns/bpi/` | Concept site · `signalos.html` (SignalOS) · growth plan (`growth-plan.html`) |
 | `redesigns/fair-harbor/` | Concept site · `harboros.html` (HarborOS) · growth plan (`growth-plan.html`) |
 | `redesigns/ai-agents.html`, `redesigns/voice-ai.html` | Cross-portfolio agentic-layer program and the 24/7 voice-AI model |
-| `theater.html` | Full-screen 3D map (also in the portal at `#/theater/play`) |
+| `theater.html`, `redesigns/case-studies.html`, `redesigns/methodology.html` | Forwarding pages. The 3D map lives in the portal at `app.html#/theater/play` (old `?scene=` links carry over); the other two forward to `#/cases/timeline` and `#/bsp/deals`. |
 | `briefing/` | Rendered briefing (`broad_sky_briefing.mp4`), 29-second intro, executive memo (HTML + PDF), shot lists |
 
 Every concept page carries the same dismissible banner ("Concept work by Syed Rahman for the Portfolio Resource Group at Broad Sky Partners (BSP). Not an official company website; estimates are marked est.") with the shared navigation **Portal · Site concepts · OS program · Briefing**, the floating assistant, and the same footer disclaimer as the landing page. All internal links are relative, so the site works from any GitHub Pages sub-path.
@@ -54,7 +54,7 @@ Every concept page carries the same dismissible banner ("Concept work by Syed Ra
 | Portfolio | Fair Harbor (`fh`) | overview, opportunities, benchmarks, filings, market | Capital-light growth, apparel comps, Manhattan home-sales market, filings |
 | Intelligence | Acquisition engine (`ma`) | overview, pipeline, theses, rivals, valuation, whitespace | Portfolio-wide add-on pipeline, theses joined to county home sales, stressed rivals, multiple arbitrage. Every target and rival profile carries its deal math (revenue, EBITDA, likely price, debt, equity check, return), a "How we estimated this" disclosure (method, inputs, source, confidence, as-of date) and a "Model this deal" link into the acquisition model |
 | Intelligence | Acquisition model (`deal`) | returns, dcf, rollup, sensitivity | Live buyout, DCF, buy-and-build and sensitivity model with spreadsheet inputs; presets for the portfolio and every screened add-on (`#/deal/returns?p=<target id>`); rival scenarios via share links (`?p=typical&…&for=<name>`); financing terms next to their market benchmarks; Excel download with live formulas. Shared math in `modules/deal-lib.js` (`targetVals`, `priceBand`, `dealSummary` keep the engine, the model and the landing page on the same numbers) |
-| Intelligence | PE landscape (`pe`) | landscape, deals, heatmap, companies | 35 competing sponsors, disclosed deals, rival presence by portfolio county |
+| Intelligence | PE landscape (`pe`) | landscape, deals, companies | 35 competing sponsors, disclosed deals, rival presence by portfolio county |
 | Intelligence | Filings & financials (`fin`) | portfolio, deal, explorer, comps, rivals, methods | Form D/ADV capital, triangulated financials, deal math, 31 public comps, data-gaps register |
 | Intelligence | **Tech enablement (`techos`)** | overview, evidence, roadmap, calculator | The six OS theses (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS): KPIs moved, est. investment and EBITDA impact, valuation-premium evidence, 12–24 month roadmap, equity-value calculator |
 | Briefing | 3D map (`theater`) | play | GPU-rendered scenes over the portfolio datasets |
@@ -152,7 +152,7 @@ scripts/check_page.sh "redesigns/cet/gridos.html" /tmp/g.png 390 844 # page at p
 
 To list every portal route, open `scripts/export_routes.html` (or dump it headlessly with `--dump-dom`) and run `check_page.sh` on each. Test the assistant with `scripts/chat_test.html?q=Do%20you%20serve%2017601%3F&p=pp`.
 
-Before each deploy, run `scripts/bump_version.sh`. It stamps one cache-busting `?v=` on the shared imports in `index.html`, `app.html`, `theater.html`, `scripts/chat_test.html`, `modules/*.js`, `assets/*.js`, every `redesigns/**/*.html` and the concept sites' own JS imports of `../../assets/*`. Concept-site CSS/JS (`site.css`, `os.js`, …) carry their own `?v=` stamps.
+Before each deploy, run `scripts/bump_version.sh`. It stamps one cache-busting `?v=` on the shared imports in `index.html`, `app.html`, `scripts/chat_test.html`, `modules/*.js`, `assets/*.js`, every `redesigns/**/*.html` and the concept sites' own JS imports of `../../assets/*`. Concept-site CSS/JS (`site.css`, `os.js`, …) carry their own `?v=` stamps.
 
 ## Rebuild data
 
@@ -191,7 +191,7 @@ python3 scripts/make_briefing.py                         # → briefing/broad_sk
 | `redesigns/voice-ai.html` | 24/7 voice AI as the growth engine: economics, reference voice-AI platforms, ASR/LLM stack, sample calls, governance | `data/research/voice_ai.json` |
 | `redesigns/ai-agents.html` | The agentic layer: 45 agents across six operating systems, patterns, rollout waves, governance | `data/research/ai_agents_portfolio.json` |
 | `redesigns/<slug>/growth-plan.html` | Growth plans for CET, Frontline, Thomas Scientific, BPI, Fair Harbor | `data/research/<co>_playbook.json` |
-| `theater.html` / `app.html#/theater/play` | WebGL 3D map (MapLibre GL + deck.gl): six fly-through scenes over real data | sales, opportunities, targets, live NWS |
+| `app.html#/theater/play` | WebGL 3D map (MapLibre GL + deck.gl): six fly-through scenes over real data. `theater.html` forwards here. | sales, opportunities, targets, live NWS |
 | `briefing/BSP_Desk_Memo.pdf` | Four-page executive memo (`briefing/executive_memo.html`, printed with headless Chrome) | all research metas |
 | `briefing/broad_sky_intro.mp4` | Cinematic product-intro film (`scripts/make_cinematic.py`: Playwright recording + title cards + narration + synthesized music) | `briefing/cinematic_shots_master.json` |
 
