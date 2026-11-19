@@ -290,7 +290,7 @@ function stackedMonthly(rows, fmt) {
   const tot = counts.map(c => types.reduce((a, t) => a + c[t], 0)); const max = Math.max(2, ...tot); const H = 200;
   const step = max <= 4 ? 1 : max <= 8 ? 2 : Math.ceil(max / 4);
   const grid = []; for (let v = step; v <= max; v += step) grid.push(`<div class="gl" style="bottom:${16 + (v / max) * H}px"><span>${v}</span></div>`);
-  return `<div class="pe-sbar">${grid.join('')}${ms.map((m, i) => `<div class="mc" title="${m}: ${tot[i]} deals (${types.map(t => `${counts[i][t]} ${TYPE[t].label.toLowerCase()}`).join(', ')})"><div class="stk">${types.map(t => counts[i][t] ? `<i style="height:${(counts[i][t] / max) * H}px;background:${TYPE[t].color}"></i>` : '').join('')}${tot[i] ? `<span class="tot">${tot[i]}</span>` : ''}</div><div class="lb">${m.endsWith('-01') || i === 0 ? m.slice(2, 4) + '·' : ''}${new Date(m + '-15').toLocaleDateString('en-US', { month: 'short' }).slice(0, 3)}</div></div>`).join('')}</div>`;
+  return `<div class="pe-sbar">${grid.join('')}${ms.map((m, i) => `<div class="mc" title="${m}: ${tot[i]} deals (${types.map(t => `${counts[i][t]} ${TYPE[t].label.toLowerCase()}`).join(', ')})"><div class="stk">${types.map(t => counts[i][t] ? `<i style="height:${(counts[i][t] / max) * H}px;background:${TYPE[t].color}"></i>` : '').join('')}${tot[i] ? `<span class="tot">${tot[i]}</span>` : ''}</div><div class="lb">${m.endsWith('-01') || i === 0 ? `'${m.slice(2, 4)}` : new Date(m + '-15').toLocaleDateString('en-US', { month: 'short' }).slice(0, 3)}</div></div>`).join('')}</div>`;
 }
 async function dealsView(ctx) {
   const { el, ui, fmt, charts, esc, params } = ctx; injectCss();
