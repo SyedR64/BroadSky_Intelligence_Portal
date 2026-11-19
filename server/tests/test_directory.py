@@ -168,7 +168,7 @@ def test_name_keyword_state_and_researched_labels(local):
     text, _ = find(segment='fl', exclude_researched=True, exclude_hand_built=True)
     assert 'No business matches' in text
     text, _ = find(segment='fl', exclude_researched=True)
-    assert 'NETWORK SOLUTIONS INC' in text and 'on a hand-built list' in text
+    assert 'NETWORK SOLUTIONS INC' in text and 'on a hand-researched list' in text
     text, _ = find(state='Atlantis')
     assert 'State "Atlantis" was not recognised' in text
 
@@ -356,9 +356,13 @@ def test_county_spellings(extra):
 
 def test_row_labels_name_their_source(extra):
     text, _ = find(segment='cet', sort='name')
-    assert 'GRIFFIN ELECTRIC INC' in text and 'ownership family-owned (researched, hand-built list)' in text
+    assert 'GRIFFIN ELECTRIC INC' in text and 'ownership family-owned (researched, hand-researched list)' in text
+    assert 'hand-built' not in text   # the database keeps its own value; the answer uses the portal's wording
     assert 'jobs 80 (SBA 7(a) loan, 2005, lender-reported, an old figure)' in text
     assert 'ownership employee-owned (ESOP) (loan record: ESOP business type)' in text
+    # a list that does not give the ownership: the stored basis is shown in the same wording
+    undisclosed = {'ownership': 'unknown', 'ownership_basis': 'hand-built list, ownership not disclosed'}
+    assert bizdir._ownership_text(undisclosed) == 'ownership unknown (hand-researched list, ownership not disclosed)'
     text, _ = find(segment='ts')
     assert 'revenue $20.0M, stated by a source' in text and 'specialties: it asset disposal; pipettes' in text
     text, _ = find(segment='bpi')

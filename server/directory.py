@@ -664,13 +664,13 @@ def _where(a, today):
         said.append('ownership ' + ' or '.join(OWNERSHIP_FILTERS[k][1] for k in okeys))
         if 'website' not in _cols():
             notes.append('This copy of the directory was built before the website research, so ownership is known only for '
-                         'businesses on the SBA screen or a hand-built list.')
+                         'businesses on the SBA screen or a hand-researched list.')
     if a.get('exclude_researched') in (True, 'true', 'yes', 1):
         w.append('on_sba_screen = 0')
         said.append('not on the SBA screen')
     if a.get('exclude_hand_built') in (True, 'true', 'yes', 1) or a.get('exclude_on_list') in (True, 'true', 'yes', 1):
         w.append('hand_built_list_id IS NULL')
-        said.append('not on a hand-built list')
+        said.append('not on a hand-researched list')
     return (' AND '.join(w) or '1=1'), p, said, notes
 
 
@@ -787,11 +787,16 @@ def _web_bits(r):
     return bits
 
 
+def _basis_words(b):
+    """A stored basis as it is shown. The database value is 'hand-built list'; the answer says 'hand-researched list', as the portal does."""
+    return (b or '').replace('hand-built list', 'hand-researched list')
+
+
 def _ownership_text(r):
     own = r['ownership'] or 'unknown'
     b = r['ownership_basis'] or ''
     if own in ('unknown', 'unverified') and not b.startswith('researched'):
-        return f"ownership unknown ({b or 'not researched'})"
+        return f"ownership unknown ({_basis_words(b) or 'not researched'})"
     t = f"ownership {OWN_WORDS.get(own, own)} ({_ownership_source(r)}"
     if b.startswith('company website') and _g(r, 'web_confidence') is not None:
         t += f", {round(_g(r, 'web_confidence') * 100)}% likely"
@@ -805,8 +810,8 @@ def _ownership_source(r):
     if b.startswith('SBA loan record') or (b == 'hand-built list' and not r['hand_built_list_id'] and r['ownership'] == 'esop'):
         return 'loan record: ESOP business type'   # set from the SBA business type, not from a list
     if b == 'hand-built list':
-        return 'researched, hand-built list'   # the lists were checked against company sites and public sources
-    return b
+        return 'researched, hand-researched list'   # the lists were checked against company sites and public sources
+    return _basis_words(b)
 
 
 def _row_line(i, r):
@@ -843,7 +848,7 @@ def _row_line(i, r):
     if r['on_sba_screen']:
         tags.append('on the SBA screen' + (f", rank {r['screen_rank']}" if r['screen_rank'] else ''))
     if r['hand_built_list_id']:
-        tags.append('on a hand-built list')
+        tags.append('on a hand-researched list')
     if r['pe_list_match']:
         tags.append('name matches a PE-backed company')
     if tags:
@@ -950,9 +955,9 @@ def tool_definitions():
             'Filters: segment, keyword or name words, state, county, city, ZIP, NAICS code or trade words, jobs range, modelled revenue '
             'range, miles from a BSP hub (Punctual Pros and CET only), ownership (founder-run, family-owned, founder-or-family, PE-backed, '
             'employee-owned, franchise or unknown), leaving out businesses with an SBA-financed change of ownership in '
-            'the last N years, and leaving out businesses already researched or on a hand-built list. Returns totals by segment and state '
+            'the last N years, and leaving out businesses already researched or on a hand-researched list. Returns totals by segment and state '
             'and the top rows with jobs and their source, PPP first draw, latest SBA loan, change of ownership, distance, a modelled revenue '
-            'estimate with its range, the website, and ownership with its source: the SBA screen, a hand-built list, or for about 10,000 '
+            'estimate with its range, the website, and ownership with its source: the SBA screen, a hand-researched list, or for about 10,000 '
             'businesses the company\'s own website read by AI (with how likely the call is and the sentence on the site it rests on); '
             'otherwise unknown. Use it to count or list businesses by trade, place, size, ownership '
             'or name, for example "HVAC contractors in Lancaster County with 20 to 60 jobs not sold since 2023", "family-owned electrical '
@@ -978,9 +983,9 @@ def tool_definitions():
                 'exclude_sold_within_years': {'type': 'integer', 'minimum': 0, 'maximum': 40, 'description': 'Optional. Leave out businesses with an SBA-financed change of ownership in the last N years.'},
                 'exclude_sold_since': {'type': 'string', 'description': 'Optional. Leave out businesses with an SBA-financed change of ownership on or after this year or date ("2023" or "2023-01-01").'},
                 'ownership': {'type': 'string', 'enum': ['founder-run', 'family-owned', 'founder-or-family', 'PE-backed', 'employee-owned', 'franchise', 'unknown'],
-                              'description': 'Optional. Only businesses with this ownership call (from the SBA screen, a hand-built list or the company website read by AI).'},
+                              'description': 'Optional. Only businesses with this ownership call (from the SBA screen, a hand-researched list or the company website read by AI).'},
                 'exclude_researched': {'type': 'boolean', 'description': 'Leave out businesses already on the researched SBA screen.'},
-                'exclude_hand_built': {'type': 'boolean', 'description': 'Leave out businesses already on a hand-built target list.'},
+                'exclude_hand_built': {'type': 'boolean', 'description': 'Leave out businesses already on a hand-researched target list.'},
                 'sort': {'type': 'string', 'enum': list(SORTS), 'description': 'jobs (default, largest first), revenue (largest first), distance (closest first) or name.'},
                 'limit': {'type': 'integer', 'minimum': 1, 'maximum': MAX_LIMIT, 'description': f'Rows to list. Default {DEFAULT_LIMIT}.'},
             },
