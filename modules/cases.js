@@ -326,7 +326,7 @@ export default {
   views: [
     { id: 'timeline', name: 'Timelines', icon: '⇢', render: timeline },
     { id: 'levers', name: 'Levers', icon: '▦', render: levers },
-    { id: 'sequence', name: 'PP sequence', icon: '☰', render: sequence },
+    { id: 'sequence', name: 'Punctual Pros sequence', icon: '☰', render: sequence },
     { id: 'exits', name: 'Entry → exit', icon: '$', render: entryExit },
   ],
   tour: [

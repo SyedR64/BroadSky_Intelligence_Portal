@@ -87,7 +87,7 @@ export default {
   group: 'Command',
   tagline: 'Cinematic, GPU-rendered map scenes over the portfolio datasets: home sales, expansion arcs, CET infrastructure and live weather',
   views: [
-    { id: 'play', name: 'Theater', icon: '▶', flush: true, render: play },
+    { id: 'play', name: '3D map', icon: '▶', flush: true, render: play },
   ],
   tour: [
     { order: 150, hash: '#/theater/play?scene=S2&autoplay=0', caption: '<b>3D map.</b> Every home sale in the Punctual Pros territory; the newest 90 days pulse.', narration: 'Every home sale in the Punctual Pros territory, in 3D. The last ninety days pulse.', duration: 10000 },

@@ -16,7 +16,7 @@ async function render(ctx) {
   el.querySelector('#b-play').onclick = () => Tour.start(0);
   el.querySelectorAll('[data-i]').forEach(b => b.onclick = () => Tour.start(Number(b.dataset.i)));
 }
-export default { id: 'briefing', name: 'Briefing & video', tag: '6:42', color: 'var(--c-bsp)', group: 'Briefing', views: [{ id: 'play', name: 'Briefing', icon: '▶', render }],
+export default { id: 'briefing', name: 'Briefing & video', tag: '6:42', color: 'var(--c-bsp)', group: 'Briefing', views: [{ id: 'play', name: 'Narrated tour', icon: '▶', render }],
   tour: [
     { order: 1100, hash: '#/briefing/play', caption: '<b>Monday priorities.</b> CET: win near-term bids, cross-sell Horton · Punctual Pros: capture new movers, staff to weather.', narration: 'To recap: CET wins near-term bids and cross-sells Horton; Punctual Pros captures movers and staffs to weather.', duration: 8500 },
     { order: 1110, hash: '#/briefing/play', caption: '<b>Across the portfolio.</b> Frontline and Thomas sell into ranked accounts; BPI and Fair Harbor chase sourced growth.', narration: 'Frontline and Thomas sell into ranked account lists; BPI and Fair Harbor pursue growth plays.', duration: 6500 },
