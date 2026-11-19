@@ -1,7 +1,7 @@
 import * as Copy from './copy.js?v=20261117223642';
 /* ═══════════════════════════════════════════════════════════════════════════
    CET — Commonwealth Electrical Technologies (Worcester + Taunton MA; NuWave, Norwell MA;
-   Horton Electrical Services, CT). New England only — NYC analysis archived (CEO guidance).
+   Horton Electrical Services, CT). New England only.
    ═══════════════════════════════════════════════════════════════════════════ */
 import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261117223642';
 import { esc as E } from '../assets/core.js?v=20261117223642';
@@ -88,10 +88,10 @@ function topActions(ctx, list, gen) {
   const { fmt, esc } = ctx;
   // dates in words: the research text's m/d deadlines ("due 10/8") read "due October 8" in the copy and the chips
   const rows = list.map((t, i) => { const all = actionDates(t, gen), words = new Map(all.map(x => [x.tok, x.words])); const a = String(t || '').replace(/\b(1[0-2]|0?[1-9])\/([12]\d|3[01]|0?[1-9])\b(?!\/)/g, k => words.get(k) || k); const ds = all.map(x => ({ ...x, d: fmt.days(x.iso) })).filter(x => x.d != null); const up = ds.filter(x => x.d >= 0); return { a, ds, lapsed: ds.length > 0 && !up.length, i }; });
-  rows.sort((p, q) => (p.lapsed - q.lapsed) || p.i - q.i);
+  const open = rows.filter(r => !r.lapsed);   // an action whose dated deadlines have all passed is not shown
   const dl = x => x.d < 0 ? chip(`${x.words} passed`) : x.d === 0 ? chip(`${x.words} due today · go/no-go`, PAL.red) : chip(`${x.words} · ${x.d} days left`, x.d <= 7 ? PAL.red : x.d <= 30 ? PAL.amber : PAL.green);
-  const html = `<ol class="sys-card-list cet-acts">${rows.map((r, k) => `<li${r.lapsed ? ' class="sys-muted"' : ''}><span class="sys-kbd">${k + 1}</span><div>${bold1(r.a, esc)}${r.ds.length ? `<div class="sys-chips mt-8">${r.lapsed ? chip('lapsed: all deadlines passed') : ''}${r.ds.map(dl).join('')}</div>` : ''}</div></li>`).join('')}</ol>`;
-  return { html, lapsed: rows.filter(r => r.lapsed).length, live: rows.filter(r => r.ds.some(x => x.d >= 0 && x.d <= 7)).length };
+  const html = `<ol class="sys-card-list cet-acts">${open.map((r, k) => `<li><span class="sys-kbd">${k + 1}</span><div>${bold1(r.a, esc)}${r.ds.length ? `<div class="sys-chips mt-8">${r.ds.map(dl).join('')}</div>` : ''}</div></li>`).join('')}</ol>`;
+  return { html, open: open.length, total: rows.length, live: open.filter(r => r.ds.some(x => x.d >= 0 && x.d <= 7)).length };
 }
 const bold1 = (s, esc) => { const t = String(s || '').replace(/^\s*\d+\.\s*/, ''); const i = t.indexOf(':'); return i > 0 && i < 110 ? `<b>${esc(t.slice(0, i))}</b>${esc(t.slice(i))}` : esc(t); };
 
@@ -223,9 +223,9 @@ const wrap = html => `<div class="m-cet">${html}</div>`;
 async function overview(ctx) {
   ensureCss();
   const { el, ui, fmt, data, maps, charts, esc, app } = ctx;
-  const [opp, wwtp, counties, targets, rfps, nyc, firm, filings] = await Promise.all([
+  const [opp, wwtp, counties, targets, rfps, firm, filings] = await Promise.all([
     data.research('cet_opportunities'), data.research('cet_wwtp_targets'), safe(data.load('cet_ne_counties')), data.research('ma_targets_cet'),
-    safe(data.load('cet_ne_rfps')), safe(data.load('cet_nyc_archive_summary')), data.research('bsp_firm'), data.research('cet_filings')]);
+    safe(data.load('cet_ne_rfps')), data.research('bsp_firm'), data.research('cet_filings')]);
   const items = opp?.items || []; const plants = wwtp?.items || []; const cnt = counties || [];
   const valued = items.filter(o => o.est_value_usd); const totalVal = sum(valued, o => o.est_value_usd);
   const legacyDue = (rfps || []).map(r => ({ title: String(r.title || '').replace(/\s+/g, ' '), owner_or_agency: r.agency, state: r.state, due_date: mdy(r.due_date), _src: 'legacy', id: 'leg-' + r.id }));
@@ -252,12 +252,11 @@ async function overview(ctx) {
   const slateRow = (o, i) => `<tr data-i="${i}" tabindex="0"><td class="wrap"><b>${esc(o.title)}</b><div class="sys-muted small">${esc(isUnverified(o) ? 'Owner not verified (BidNet listing locked)' : o.owner_or_agency || '')} · ${esc(o.state || '')}${o.fit_score != null ? ` · fit ${esc(o.fit_score)}` : ''}${o._src === 'legacy' ? ' · earlier bid list' : ''}</div></td><td class="sys-n">${dueChip(o._d)}<div class="sys-muted small mt-8">${fmt.dateShort(o.due_date)}</div></td></tr>`;
   let si = 0; const grp = (label, xs) => xs.length ? `<tbody><tr class="cet-grp"><th colspan="2" scope="colgroup">${label} (${xs.length})</th></tr>${xs.map(o => slateRow(o, si++)).join('')}</tbody>` : '';
   const acts = opp?.meta?.top_10_actions?.length ? topActions(ctx, opp.meta.top_10_actions, opp.meta.generated) : null;
-  const actAge = opp?.meta?.generated ? -fmt.days(opp.meta.generated) : null;
 
   el.innerHTML = wrap(ui.pageHead({
     title: 'Commonwealth Electrical Technologies (CET)',
     sub: opp ? `<b>${fmt.num(openLive.length)} open bids</b> in New England, <b>${fmt.num(dueSoon.length)}</b> due within 60 days. ${wwtp ? `Horton adds <b>${funded.length}</b> funded plant projects worth ${fmt.money(fundedPipe)} (est.) that CET can prime.` : `Only ${fmt.num(openValN)} states a value; the rest need estimator sizing.`}` : 'Electrical, solar, EV and energy-efficiency contractor · Worcester + Taunton MA · NuWave (Norwell MA) · Horton (CT)',
-    chips: `${chip('Licensed across New England', COLOR)}${chip('Held since February 2025', 'var(--sys-brand)')}${chip('Add-ons: NuWave, Horton', PAL.purple)}${chip('No NYC (CEO guidance)')}`,
+    chips: `${chip('Licensed across New England', COLOR)}${chip('Held since February 2025', 'var(--sys-brand)')}${chip('Add-ons: NuWave, Horton', PAL.purple)}`,
     actions: `<a class="${ui.btnCls('secondary', '')}" href="#/cet/opportunities">Opportunity radar →</a><a class="${ui.btnCls('secondary', '')}" href="#/cet/wastewater">Horton cross-sell →</a>`,
   }) + companyLinks('cet') +
   (opp ? '' : ui.note('Research dataset <b>CET opportunity radar</b> is not available yet — pipeline KPIs are partial.', 'warn')) +
@@ -268,25 +267,24 @@ async function overview(ctx) {
     { label: 'Capital program universe', value: `${fmt.money(totalVal)} ${Copy.EST}`, sub: `not biddable today · ${fmt.money(planned.v)} planned`, color: PAL.sky },
     { label: 'Funded WWTP accounts', value: wwtp ? fmt.num(funded.length) : '—', sub: wwtp ? `${fmt.money(fundedPipe)} pipeline (est.) · of ${fmt.num(plants.length)} plants` : 'dataset pending', color: PAL.cyan },
     { label: 'Tier-1 counties', value: fmt.num(t1.length), sub: `${esc(t1.map(c => `${c.county_name} ${c.state}`).join(', ') || '—')} · ${t2.length} Tier-2${cGap.length ? ` · ${cGap.length} CT unscored` : ''}`, color: PAL.cet },
-    { label: 'Add-on targets screened', value: fmt.num(targets?.items?.length || 0), sub: targets ? `top: ${esc(targets.meta?.ranked_top_10?.[0]?.company || '—')}` : 'dataset pending', color: COLOR },
+    { label: 'Hand-researched add-on targets', value: fmt.num(targets?.items?.length || 0), sub: targets ? `top: ${esc(targets.meta?.ranked_top_10?.[0]?.company || '—')}` : 'dataset pending', color: COLOR },
   ]) +
   `<div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Operating footprint', sub: 'CET nodes, Horton, county fit tiers and funded wastewater plants (Horton cross-sell anchors)', body: `<div class="map tall" id="cet-ov-map"></div>`, flush: true, foot: `${ui.source('CET / BSP press releases', 'https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/', 'Sept 2026')} ${ui.source(SRC.wwtp[0], SRC.wwtp[1], wwtp?.meta?.generated)}` })}
-    ${ui.panel({ title: 'Top 10 actions', sub: acts ? `Research list of ${esc(fmt.dateShort(opp.meta.generated))}. ${acts.live} due within 7 days; ${acts.lapsed} lapsed, moved to the bottom.` : 'From the opportunity research', body: acts ? acts.html : ui.note('Top actions will populate from CET opportunity radar.', 'warn'), scroll: true, accent: true, foot: ui.source(SRC.opp[0], SRC.opp[1], opp?.meta?.generated) })}
+    ${ui.panel({ title: 'Open actions', sub: acts ? `${acts.open} of the ${acts.total} actions on the ${esc(fmt.dateShort(opp.meta.generated))} research list are still open${acts.live ? `; ${acts.live} due within 7 days` : ''}.` : 'From the opportunity research', body: acts ? (acts.open ? acts.html : ui.empty('Every dated action on the research list has passed. The bid slate shows what is open now.')) : ui.note('Open actions will populate from CET opportunity radar.', 'warn'), scroll: true, accent: true, foot: ui.source(SRC.opp[0], SRC.opp[1], opp?.meta?.generated) })}
   </div>
   <div class="grid grid-3 mt-12">
     ${ui.panel({ title: 'Buy-and-build', sub: 'BSP entry and add-ons', body: `<div id="cet-tl"></div>`, foot: ui.source('BSP / CET press releases', 'https://broadskypartners.com/news/', firm?.meta?.generated) })}
     ${ui.panel({ title: 'Bid slate · next 60 days', sub: `${dueSoon.length} solicitations · verified owners with 5+ days left first, ranked by fit · click to open on the radar`, body: slate.length ? `<div class="sys-table-wrap"><table class="sys-table cet-rows" id="cet-due"><caption class="sys-sr">Bid slate, next 60 days</caption>${grp('Biddable · 5+ days left · by fit', slateGood)}${grp('Go/no-go now · under 5 days', slateNow)}${grp('Needs owner verification', slateUnv)}</table></div>` : ui.empty('No open bids due in the next 60 days'), flush: !!slate.length, scroll: true, foot: ui.source('BidNet / owner portals / COMMBUYS', null, opp?.meta?.generated) })}
     ${ui.panel({ title: 'Capital program universe by state', sub: 'Stated value by stage (est.) · only open items can be bid today', body: `<div class="cet-stk">${byState.map(x => `<div class="cet-stk-row"><div class="cet-stk-l"><b>${esc(x.s)}</b> <span class="sys-muted small">${x.nOpen} open / ${x.n}</span></div><div class="cet-stk-bar">${x.seg.filter(g => g.v > 0).map(g => `<i style="width:${(g.v / maxSt * 100).toFixed(2)}%;background:${STAGE_COLOR[g.st]}" title="${esc(g.st)}: ${fmt.money(g.v)}"></i>`).join('')}</div><div class="sys-num small">${fmt.money(x.v)}</div></div>`).join('')}</div>${legend(STK.map(k => { const z = k === 'open' ? { n: items.filter(o => o.stage === 'open').length, v: sum(items.filter(o => o.stage === 'open'), o => o.est_value_usd) } : stageOf(k); return [STAGE_COLOR[k], `${k} ${z.n} · ${fmt.money(z.v)}`]; }))}<p class="sys-muted small">Requested or estimated amounts (est.), not bid values. Planned = capital plans and SRF lists (bid windows typically 12–36 months out); awarded = sub-tier or O&amp;M upside only. ${items.length - valued.length} of ${items.length} items state no value.</p>`, foot: ui.source(SRC.opp[0], SRC.opp[1], opp?.meta?.generated) })}
-  </div>
-  <div class="mt-12">${ui.note(`<b>Archived:</b> NYC pipeline (${fmt.num(nyc?.total || 0)} leads). Per CEO guidance, CET is not expanding into New York City, so NYC is excluded from every view.`)}</div>`);
+  </div>`);
 
   // timeline
   const ons = cetFirm?.add_ons || [];
   const tl = [
     { date: 'February 2025', color: 'var(--sys-brand)', html: `<b>BSP becomes majority investor in CET</b><div class="dim small">Worcester HQ + Taunton office · founded 2008 · about 140 staff (October 2025)</div>` },
     ...ons.map(a => ({ date: fmt.date(a.date), color: /Horton/.test(a.name) ? PAL.cyan : PAL.purple, html: `<b>${esc(a.name)}</b> · ${esc(a.hq || '')}${a.source_url ? ` <a class="dim" href="${esc(a.source_url)}" target="_blank" rel="noopener">↗</a>` : ''}<div class="dim small">${esc(String(a.note || '').slice(0, 170))}${String(a.note || '').length > 170 ? '…' : ''}</div>` })),
-    { date: 'Next', color: COLOR, html: `<b>Add-on #3</b> · ranked screen of ${fmt.num(targets?.items?.length || 0)} New England targets <a href="#/cet/targets">→</a><div class="dim small">Top: ${esc((targets?.meta?.ranked_top_10 || []).slice(0, 3).map(t => t.company).join(' · ') || '—')}</div>` },
+    { date: 'Next', color: COLOR, html: `<b>Add-on #3</b> · hand-researched list of ${fmt.num(targets?.items?.length || 0)} New England targets <a href="#/cet/targets">→</a><div class="dim small">Top: ${esc((targets?.meta?.ranked_top_10 || []).slice(0, 3).map(t => t.company).join(' · ') || '—')}</div>` },
   ];
   if (!ons.length) tl.splice(1, 0, { date: 'October 7, 2025', color: PAL.purple, html: '<b>NuWave Energy Solutions</b> · Norwell, MA' }, { date: 'September 15, 2026', color: PAL.cyan, html: `<b>Horton Electrical Services</b> · ${esc(horton.town)}` });
   el.querySelector('#cet-tl').innerHTML = ui.timeline(tl);
