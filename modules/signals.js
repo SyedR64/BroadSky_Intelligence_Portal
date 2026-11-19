@@ -1,7 +1,8 @@
 /* Local signals: the market, cost, labor, funding, policy and calendar forces that move each portfolio company's sales
-   and margins. Weather is one force among many. Three views:
-     overview  "What moves sales"  lead + KPIs, force × company matrix, per-company factor table, action list
-     levers    "Sales levers"      every sized lever (est., assumptions shown), ranked by today's effect
+   and margins. Weather is one force among many. Two views:
+     overview  "What moves sales"  lead + KPIs, force × company matrix, action list and one panel with a company switch:
+                                   a company shows its factor table; "All six" (?co=all) ranks every sized lever
+                                   (est., assumptions shown) across the portfolio by today's effect, chart then table
      readings  "Live readings"     the public series behind each reading, with source and as-of date
    Readings come from the nightly snapshots in data/live/ written by scripts/refresh_live.py (fred_signals,
    housing_counties, nih_awards, federal_buying, policy_activity, census_permits, echo_npdes_majors; NWS alerts are
@@ -428,7 +429,7 @@ const sourcesFoot = (ui, D) => `${ui.source('FRED (Freddie Mac, BLS, Census, FHF
 
 /* ── view 1: what moves sales ─────────────────────────────────────────────── */
 async function overview(ctx) {
-  const { el, ui, app } = ctx; injectCss();
+  const { el, ui, app, charts } = ctx; injectCss();
   const D = await loadAll(ctx); if (!el.isConnected) return;
   const F = buildFactors(D);
   const big3 = F.filter(f => f.w >= 2);
@@ -441,12 +442,12 @@ async function overview(ctx) {
   const worst = sized.filter(f => f.sens.nowUsd < 0).sort((a, b) => a.sens.nowUsd - b.sens.nowUsd)[0];
   const best = sized.filter(f => f.sens.nowUsd > 0).sort((a, b) => b.sens.nowUsd - a.sens.nowUsd)[0];
   const mort = D.fred.get('MORTGAGE30US');
-  const co0 = COS.some(c => c.id === ctx.params.co) ? ctx.params.co : 'pp';
+  const co0 = ctx.params.co === 'all' || COS.some(c => c.id === ctx.params.co) ? ctx.params.co : 'pp';
   const ed = F.find(f => f.id === 'bpi-vote');
   el.innerHTML = `<div class="m-signals">${ui.pageHead({
     title: 'What moves sales',
     sub: `Weather is one force among many. Right now the biggest drag is ${h(topHurt ? Copy.sentence(topHurt.name) : 'none')}${topHurt ? ` at ${h(CO_NAME[topHurt.co])}` : ''}; the biggest lift is ${h(topHelp ? Copy.sentence(topHelp.name) : 'none')}${topHelp ? ` at ${h(CO_NAME[topHelp.co])}` : ''}.`,
-    actions: `<a class="${ui.btnCls('secondary', '')}" href="#/signals/levers">Sales levers</a><a class="${ui.btnCls('secondary', '')}" href="#/signals/readings">Live readings</a>`,
+    actions: `<a class="${ui.btnCls('secondary', '')}" href="#/signals/overview?co=all" data-sg-all>Sales levers, all six</a><a class="${ui.btnCls('secondary', '')}" href="#/signals/readings">Live readings</a>`,
   })}
   ${ui.kpis([
     { label: 'Forces hurting now', value: `${hurts.length} <small class="sg-kpi-of">of ${big3.length}</small>`, sub: `${helps.length} helping · the rest steady`, color: 'var(--sys-bad)' },
@@ -456,8 +457,9 @@ async function overview(ctx) {
     { label: 'Days to Election Day', value: ed ? h(ed.read.v.split(' ')[0]) : '—', sub: 'BPI busy season', color: 'var(--co-bpi)' },
   ])}
   <div class="mt-12">${ui.panel({ title: 'What moves each company', sub: 'Rows are forces, columns are companies. Click a cell for the readings behind it.', body: `<div id="sg-matrix"></div>`, flush: true, foot: sourcesFoot(ui, D) })}</div>
-  <div class="mt-12">${ui.panel({ title: 'Forces by company', sub: 'Why each force matters, today’s reading, the move and its size. Click a row for detail.', actions: '<div id="sg-co"></div>', body: '<p class="sg-co-lead" id="sg-co-lead"></p><div id="sg-tbl"></div>', flush: true, foot: sourcesFoot(ui, D) })}</div>
-  <div class="mt-12">${ui.panel({ title: 'What to do now', sub: 'The moves that matter most this month, largest effect first', body: `<ol class="sg-actions" id="sg-actions"></ol>`, foot: `<span class="sys-muted">Effects are estimates ${EST}. Sales levers shows every assumption.</span>` })}</div>
+  <div class="mt-12" id="sg-forces">${ui.panel({ title: 'Forces by company', sub: 'Why each force matters, today’s reading, the move and its size. Click a row for detail.', actions: '<div id="sg-co"></div>', body: '<p class="sg-co-lead" id="sg-co-lead"></p><div class="sg-all" id="sg-all" hidden></div><div id="sg-tbl"></div>', flush: true, foot: sourcesFoot(ui, D) })}</div>
+  <div class="mt-12">${ui.panel({ title: 'What to do now', sub: 'The moves that matter most this month, largest effect first', body: `<ol class="sg-actions" id="sg-actions"></ol>`, foot: `<span class="sys-muted">Effects are estimates ${EST} <a href="#/signals/overview?co=all" data-sg-all>All six</a> shows every assumption.</span>` })}</div>
+  <div class="mt-12" id="sg-est-note">${ui.note(`Every figure here is an estimate ${EST} from public readings and the assumptions shown. Revenue points come from each company’s public filings estimates (updated ${h(dayWords(D.finDate))}). Swap in company numbers to firm them up.`, 'warn')}</div>
   </div>`;
   const root = el.querySelector('.m-signals');
 
@@ -485,13 +487,42 @@ async function overview(ctx) {
     { key: 'lever', label: 'What to do', wrap: true, width: '240px', fmt: (v, r) => `<div class="small">${h(v)}</div>${r.link ? `<a class="small" href="${h(r.link[0])}">${h(r.link[1])} →</a>` : ''}` },
     { key: 'size', label: 'Size (est.)', wrap: true, width: '220px', fmt: (v, r) => effectHtml(r.sens, true) },
   ];
-  let tbl = null;
+  let tbl = null;   // the company table; null while All six or the phone cards are on screen
+  const phone = () => window.matchMedia('(max-width: 600px)').matches;
+  // All six: every sized lever across the portfolio, ranked by today's effect (the former Sales levers screen)
+  const drawAll = host => {
+    const L = F.filter(f => f.sens), now = L.filter(f => f.sens.nowUsd != null).sort((a, b) => Math.abs(b.sens.nowUsd) - Math.abs(a.sens.nowUsd));
+    const salesL = L.filter(f => f.sens.kind === 'sales'), marginL = L.filter(f => f.sens.kind === 'margin');
+    const net = a => smoney(a.reduce((t, f) => t + (f.sens.nowUsd || 0), 0));
+    const step = L.slice().sort((a, b) => Math.abs(b.sens.unitUsd || 0) - Math.abs(a.sens.unitUsd || 0))[0];
+    root.querySelector('#sg-co-lead').innerHTML = `<b>All six</b>: every sized lever, ${L.length} in all ${EST}, each from public data and a stated assumption. Sales levers sized: ${salesL.length}, today’s net ${net(salesL)} a year. Margin risks sized: ${marginL.length}, today’s net ${net(marginL)} a year.${step ? ` Biggest step lever: ${smoney(step.sens.unitUsd)} at ${h(CO_NAME[step.co])}, ${h(step.sens.unit.split(' ≈ ')[0].replace(/^Each/, 'each'))}.` : ''}`;
+    const bars = now.slice(0, 14).map(f => ({ label: `${CO_NAME[f.co]} · ${f.name}`, value: Math.abs(f.sens.nowUsd), color: f.sens.nowUsd >= 0 ? 'var(--sys-good)' : 'var(--sys-bad)' }));
+    root.querySelector('#sg-all').innerHTML = `<h4 class="sys-card-label mb-8">Effect of today’s readings</h4><div class="small text-2 mb-12">A year of sales or margin at today’s change vs a year ago ${EST}</div>${bars.length ? charts.hbar(bars, { fmt: v => money(v), labelW: phone() ? 150 : 300 }) : ui.empty('No live changes to size today')}<div class="small text-2 mt-8">Green adds sales, red costs margin. Assumptions are in the table below.</div>`;
+    const rows = L.map(f => ({ ...f, co_name: CO_NAME[f.co], today: f.sens.nowUsd, step: f.sens.unitUsd, kind_txt: f.sens.kind === 'sales' ? 'Sales' : 'Margin', step_txt: f.sens.unit, today_txt: f.sens.now || '', assume: f.sens.assume, _abs: Math.abs(f.sens.nowUsd ?? 0) }));
+    const today = v => v == null ? '<span class="dim small">no live change</span>' : `<span class="${v >= 0 ? 'sg-pos' : 'sg-neg'}">${smoney(v)}</span>`;
+    if (phone()) {   // phone: one card per lever instead of a six-column table
+      host.innerHTML = `<ul class="sg-cards">${rows.sort((a, b) => b._abs - a._abs).map(r => `<li><div class="sg-card" role="button" tabindex="0" data-id="${r.id}"><span class="row wrap">${coChip(r.co)}<span class="strong">${h(r.name)}</span><span class="small">${today(r.today)} ${r.today == null ? '' : EST}</span></span><span class="small"><b>Do:</b> ${h(r.lever)}</span><span class="sg-card-read"><span class="small">${h(r.sens.unit)} ${EST}</span></span><span class="small text-2">${h(r.kind_txt)} · ${h(r.assume)}</span></div></li>`).join('')}</ul>`;
+      host.querySelectorAll('.sg-card').forEach(b => { b.onclick = () => openFactor(ctx, F.find(f => f.id === b.dataset.id)); b.onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === b) { e.preventDefault(); b.onclick(e); } }; });
+      return;
+    }
+    ui.table(host, { rows, pageSize: 25, sortKey: '_abs', exportName: 'local_signals_levers', onRow: r => openFactor(ctx, F.find(f => f.id === r.id)), columns: [
+      { key: 'co_name', label: 'Company', fmt: (v, r) => coChip(r.co) },
+      { key: 'name', label: 'Lever', wrap: true, width: '200px', fmt: (v, r) => `<div class="strong small">${h(v)}</div><div class="small text-2">${h(r.lever)}</div>` },
+      { key: 'today', label: 'Today (est.)', num: true, fmt: v => today(v) },
+      { key: 'step', label: 'Per step (est.)', wrap: true, width: '220px', fmt: (v, r) => `<div class="small">${h(r.sens.unit)}</div>` },
+      { key: 'kind_txt', label: 'Type', fmt: v => `<span class="small">${h(v)}</span>` },
+      { key: 'assume', label: 'Assumptions', wrap: true, width: '260px', fmt: v => `<div class="small text-2">${h(v)}</div>` },
+    ] });
+  };
   const draw = co => {
+    const allBox = root.querySelector('#sg-all'); allBox.hidden = co !== 'all';
+    if (co === 'all') { tbl = null; return drawAll(root.querySelector('#sg-tbl')); }
+    allBox.innerHTML = '';
     const rows = F.filter(f => f.co === co).map(f => ({ ...f, reading: `${f.read.v}${f.read.d ? ` (${f.read.d})` : ''}${f.read.src ? ` · ${f.read.src}${f.read.date ? `, ${f.read.date}` : ''}` : ''}`, effect_now: DIR[f.read.dir].t, size: f.sens ? `${f.sens.now || ''}${f.sens.now ? '. ' : ''}${f.sens.unit} (est.; ${f.sens.assume})` : '', _w: f.w * 10 + (f.read.dir < 0 ? 2 : f.read.dir > 0 ? 1 : 0) }));
     const hu = rows.filter(r => r.read.dir < 0).length, he = rows.filter(r => r.read.dir > 0).length;
     root.querySelector('#sg-co-lead').innerHTML = `<b>${h(CO_NAME[co])}</b>: ${rows.length} forces tracked, ${hu} hurting and ${he} helping now. Revenue ${h(D.revTxt[co])} from public filings.`;
     const host = root.querySelector('#sg-tbl');
-    if (window.matchMedia('(max-width: 600px)').matches) {   // phone: one card per force instead of a five-column table
+    if (phone()) {   // phone: one card per force instead of a five-column table
       tbl = null;
       host.innerHTML = `<ul class="sg-cards">${rows.sort((a, b) => b._w - a._w).map(r => `<li><div class="sg-card" role="button" tabindex="0" data-id="${r.id}"><span class="row wrap"><span class="strong">${h(r.name)}</span>${dirChip(r.read.dir)}<span class="small dim">${W_TXT[r.w]}</span></span><span class="sg-why">${h(r.why)}</span><span class="sg-card-read">${readHtml(r.read)}</span><span class="small"><b>Do:</b> ${h(r.lever)}</span>${r.sens ? `<span class="sg-card-size">${effectHtml(r.sens, true)}</span>` : ''}</div></li>`).join('')}</ul>`;
       host.querySelectorAll('.sg-card').forEach(b => { b.onclick = e => { if (!e.target.closest('a')) openFactor(ctx, F.find(f => f.id === b.dataset.id)); }; b.onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === b) { e.preventDefault(); b.onclick(e); } }; });
@@ -500,50 +531,17 @@ async function overview(ctx) {
     const cfg = { columns: cols, rows, pageSize: 20, sortKey: '_w', exportName: `local_signals_${co}`, onRow: r => openFactor(ctx, F.find(f => f.id === r.id)) };
     if (tbl) tbl.update(rows); else tbl = ui.table(host, cfg);
   };
-  ui.seg(root.querySelector('#sg-co'), COS.map(c => ({ value: c.id, label: c.name })), co0, v => draw(v));
+  ui.seg(root.querySelector('#sg-co'), [...COS.map(c => ({ value: c.id, label: c.name })), { value: 'all', label: 'All six' }], co0, v => draw(v));
   draw(co0);
-  app.index(F.map(f => ({ label: f.name, sub: `${CO_NAME[f.co]} · local signal`, href: `#/signals/overview?co=${f.co}`, kind: 'Signal', color: `var(--co-${f.co})` })));
+  // an address that names a company or All six opens on that panel; the stylesheet can land after the first paint, so place it again then
+  const toForces = () => { const p = root.querySelector('#sg-forces'); if (p && p.isConnected) el.scrollTop += p.getBoundingClientRect().top - el.getBoundingClientRect().top - 12; };
+  if (ctx.params.co === co0) { toForces(); const css = document.getElementById('css-signals'); if (css && !css.sheet) css.addEventListener('load', toForces, { once: true }); }
+  root.querySelectorAll('[data-sg-all]').forEach(a => { a.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); root.querySelector('#sg-co [data-v="all"]')?.click(); toForces(); }; });
+  app.index([...F.map(f => ({ label: f.name, sub: `${CO_NAME[f.co]} · local signal`, href: `#/signals/overview?co=${f.co}`, kind: 'Signal', color: `var(--co-${f.co})` })),
+    { label: 'Sales levers, all six companies', sub: 'Local signals · every sized lever, ranked', href: '#/signals/overview?co=all', kind: 'Signal', color: 'var(--sys-brand)' }]);
 }
 
-/* ── view 2: sales levers ─────────────────────────────────────────────────── */
-async function levers(ctx) {
-  const { el, ui, charts } = ctx; injectCss();
-  const D = await loadAll(ctx); if (!el.isConnected) return;
-  const F = buildFactors(D).filter(f => f.sens);
-  const now = F.filter(f => f.sens.nowUsd != null).sort((a, b) => Math.abs(b.sens.nowUsd) - Math.abs(a.sens.nowUsd));
-  const top = now[0];
-  const salesL = F.filter(f => f.sens.kind === 'sales'), marginL = F.filter(f => f.sens.kind === 'margin');
-  const sum = (a, k) => a.reduce((s, f) => s + (f.sens[k] || 0), 0);
-  el.innerHTML = `<div class="m-signals">${ui.pageHead({
-    title: 'Sales levers',
-    sub: `Each lever is sized from public data and a stated assumption. The largest today is ${top ? `${h(Copy.sentence(top.name))} at ${h(CO_NAME[top.co])}, about ${smoney(top.sens.nowUsd)} a year` : 'not available'} ${EST}.`,
-    actions: `<a class="${ui.btnCls('secondary', '')}" href="#/signals/overview">What moves sales</a>`,
-  })}
-  ${ui.kpis([
-    { label: 'Sales levers sized', value: String(salesL.length), sub: `today’s net ${smoney(sum(salesL, 'nowUsd'))} a year (est.)`, color: 'var(--sys-good)' },
-    { label: 'Margin risks sized', value: String(marginL.length), sub: `today’s net ${smoney(sum(marginL, 'nowUsd'))} a year (est.)`, color: 'var(--sys-bad)' },
-    { label: 'Largest today (est.)', value: top ? smoney(top.sens.nowUsd) : '—', sub: top ? `${h(CO_NAME[top.co])} · ${h(Copy.sentence(top.name))}` : '' },
-    { label: 'Biggest step lever (est.)', value: (() => { const b = F.slice().sort((a, c) => Math.abs(c.sens.unitUsd || 0) - Math.abs(a.sens.unitUsd || 0))[0]; return b ? smoney(b.sens.unitUsd) : '—'; })(), sub: (() => { const b = F.slice().sort((a, c) => Math.abs(c.sens.unitUsd || 0) - Math.abs(a.sens.unitUsd || 0))[0]; return b ? `${h(CO_NAME[b.co])} · ${h(b.sens.unit.split(' ≈ ')[0].replace(/^Each/, 'each'))}` : ''; })() },
-  ])}
-  <div class="mt-12">${ui.panel({ title: 'Effect of today’s readings', sub: 'A year of sales or margin at today’s change vs a year ago (est.)', body: `<div id="lv-chart"></div>`, foot: `<span class="sys-muted">Green adds sales, red costs margin. Assumptions are in the table below.</span>` })}</div>
-  <div class="mt-12">${ui.panel({ title: 'Every sized lever', sub: 'Click a row for the reading, the assumption and the move', body: '<div id="lv-tbl"></div>', flush: true, foot: sourcesFoot(ui, D) })}</div>
-  <div class="mt-12">${ui.note(`Every figure here is an estimate ${EST} from public readings and the assumptions shown. Revenue points come from each company’s public filings estimates (updated ${h(dayWords(D.finDate))}). Swap in company numbers to firm them up.`, 'warn')}</div>
-  </div>`;
-  const root = el.querySelector('.m-signals');
-  const bars = now.slice(0, 14).map(f => ({ label: `${CO_NAME[f.co]} · ${f.name}`, value: Math.abs(f.sens.nowUsd), color: f.sens.nowUsd >= 0 ? 'var(--sys-good)' : 'var(--sys-bad)' }));
-  root.querySelector('#lv-chart').innerHTML = bars.length ? charts.hbar(bars, { fmt: v => money(v), labelW: window.innerWidth < 600 ? 150 : 300 }) : ui.empty('No live changes to size today');
-  const rows = F.map(f => ({ ...f, co_name: CO_NAME[f.co], today: f.sens.nowUsd, step: f.sens.unitUsd, kind_txt: f.sens.kind === 'sales' ? 'Sales' : 'Margin', step_txt: f.sens.unit, today_txt: f.sens.now || '', assume: f.sens.assume, _abs: Math.abs(f.sens.nowUsd ?? 0) }));
-  ui.table(root.querySelector('#lv-tbl'), { rows, pageSize: 25, sortKey: '_abs', exportName: 'local_signals_levers', onRow: r => openFactor(ctx, F.find(f => f.id === r.id)), columns: [
-    { key: 'co_name', label: 'Company', fmt: (v, r) => coChip(r.co) },
-    { key: 'name', label: 'Lever', wrap: true, width: '200px', fmt: (v, r) => `<div class="strong small">${h(v)}</div><div class="small text-2">${h(r.lever)}</div>` },
-    { key: 'today', label: 'Today (est.)', num: true, fmt: v => v == null ? '<span class="dim small">no live change</span>' : `<span class="${v >= 0 ? 'sg-pos' : 'sg-neg'}">${smoney(v)}</span>` },
-    { key: 'step', label: 'Per step (est.)', wrap: true, width: '220px', fmt: (v, r) => `<div class="small">${h(r.sens.unit)}</div>` },
-    { key: 'kind_txt', label: 'Type', fmt: v => `<span class="small">${h(v)}</span>` },
-    { key: 'assume', label: 'Assumptions', wrap: true, width: '260px', fmt: v => `<div class="small text-2">${h(v)}</div>` },
-  ] });
-}
-
-/* ── view 3: live readings ────────────────────────────────────────────────── */
+/* ── view 2: live readings ────────────────────────────────────────────────── */
 const GROUPS = [['financing', 'Rates and credit'], ['housing', 'Housing and building'], ['costs', 'Input costs'], ['labor', 'Labor and pay'], ['demand', 'Customer demand']];
 const id2pub = id => id === 'CUSTOMS' ? 'US Treasury' : PUB[id] || 'Bureau of Labor Statistics';
 const USES = { MORTGAGE30US: 'pp cet', BAMLH0A0HYM2: 'fl ts bpi', DPRIME: 'pp cet', EXHOSLUSM495S: 'pp cet', HOUST: 'pp', TLNRESCONS: 'cet', PASTHPI: 'pp', NJSTHPI: 'pp', MASTHPI: 'cet', CTSTHPI: 'cet', PCU333415333415: 'pp', PCOPPUSDM: 'cet', PCU335311335311: 'cet', PCU3353133531: 'cet', PCU334516334516: 'ts', GASREGW: 'pp', GASDESW: 'ts fh', APU000072610: 'cet', APU000072511: 'pp', CUSTOMS: 'ts fh', CES2023800001: 'pp cet', JTS2300JOL: 'cet', CES2000000003: 'pp cet', CES6000000003: 'fl bpi', CES6054150001: 'fl', PAUR: 'pp', NJUR: 'pp', MAUR: 'cet', CTUR: 'cet', DCUR: 'bpi', MOUR: 'fl', UMCSENT: 'fh', RSCCAS: 'fh', CES6054110001: 'fl', PCU541110541110: 'fl', CES6562200001: 'ts', PCU541810541810: 'bpi', CP: 'bpi' };
@@ -619,12 +617,11 @@ export default {
   tagline: 'The local and market forces that move each company’s sales and margins, weather included',
   views: [
     { id: 'overview', name: 'What moves sales', icon: '◎', render: overview },
-    { id: 'levers', name: 'Sales levers', icon: '◆', render: levers },
     { id: 'readings', name: 'Live readings', icon: '∿', render: readings },
   ],
   tour: [
     { order: 125, hash: '#/signals/overview', caption: '<b>What moves sales.</b> Weather is one force. Home sales, pay, prices, rates, grants and elections move sales too.', narration: 'Weather is one force. Home sales, pay, prices, rates, grants and elections move sales too.', duration: 8000 },
-    { order: 126, hash: '#/signals/levers', caption: '<b>Sales levers.</b> Each force sized in dollars, with its assumption shown.', narration: 'Each lever is sized in dollars from public data, with the assumption shown.', duration: 7000 },
+    { order: 126, hash: '#/signals/overview?co=all', caption: '<b>All six, ranked.</b> Each force sized in dollars, with its assumption shown.', narration: 'Each lever is sized in dollars from public data, with the assumption shown.', duration: 7000 },
     { order: 127, hash: '#/signals/readings', caption: '<b>Live readings.</b> Rates, costs, labor, housing, grants and federal buying, refreshed every night.', narration: 'Every reading is public and refreshed nightly: rates, costs, labor, housing, grants and federal buying.', duration: 7500 },
   ],
 };

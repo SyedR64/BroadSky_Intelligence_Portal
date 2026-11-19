@@ -24,6 +24,9 @@
 .m-signals .sg-more:hover{color:var(--sys-ink);text-decoration-color:currentColor}
 
 .m-signals .sg-co-lead{margin:0;padding:var(--sys-sp-3) var(--pad,16px);font-size:var(--sys-fs-sm);color:var(--sys-ink-2);border-bottom:1px solid var(--sys-line)}
+/* All six: the chart of today's effects sits between the lead line and the table of every sized lever */
+.m-signals .sg-all{padding:var(--sys-sp-4) var(--pad,16px);border-bottom:1px solid var(--sys-line)}
+.m-signals .sg-all[hidden]{display:none}
 .m-signals .sg-why{margin-top:2px;max-width:40ch;font-size:var(--sys-fs-xs);line-height:1.45;color:var(--sys-ink-2);white-space:normal}
 .m-signals .sg-src{margin-top:2px;font-size:var(--sys-fs-2xs);line-height:1.4;color:var(--sys-mute)}
 .m-signals .sg-src a{color:inherit;text-decoration:underline;text-decoration-color:var(--sys-line-2);text-underline-offset:2px}
