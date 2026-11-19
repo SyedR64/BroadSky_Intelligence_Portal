@@ -1003,7 +1003,7 @@ async function market(ctx) {
     sub: `${!mk && !ma ? 'Market study (Punctual Pros market profile) and add-on screen (Punctual Pros add-on targets) are not yet available — competitor, franchise and PE views will populate when published.' : mk ? `${peHigh.length} PE-backed rivals rate a high threat inside the core. PP’s answer: densify routes, buy same-brand franchisees and move ${fmt.compact(oilHH)} oil and propane homes to heat pumps.` : `${peHigh.length} PE-backed companies rate a high threat and are buying inside the core; Authority Brands franchisees nearby are same-model tuck-ins.`}`,
     chips: `${chip(`${comps.length || '—'} competitors tracked`)}${chip(`${pe.length} PE-backed rivals profiled`, PAL.red)}${chip(`${sites.length} Authority Brands sites`, PP)}${mm.generated ? chip(`as of ${dfull(fmt, mm.generated)}`.replace(/ \d{1,2},/, '')) : ''}`,
   })}
-  ${mk ? '' : ui.note('<b>Punctual Pros market profile</b> (competitor census, franchise territories, incentives, county profiles, market signals) is not published yet — showing the Authority Brands territory map and PE landscape from the add-on screen.', 'warn')}
+  ${mk ? '' : ui.note('<b>Punctual Pros market profile</b> (competitor census, franchise territories, incentives, county profiles, market signals) is not published yet — showing the Authority Brands territory map from the add-on list.', 'warn')}
   ${ui.kpis([
     { label: 'Competitors tracked', value: comps.length ? fmt.num(comps.length) : '—', sub: comps.length ? `${peComps.length} PE-backed · ${comps.filter(c => c.ownership === 'utility-affiliated').length} utility · ${comps.filter(c => c.ownership === 'independent').length} independent` : 'pending Punctual Pros market profile', color: PAL.sky },
     { label: 'PE-backed rivals (bidders)', value: ma ? fmt.num(pe.length) : '—', sub: ma ? `${peHigh.length} rated high threat to PP` : 'pending Punctual Pros add-on targets', color: PAL.red },
@@ -1015,14 +1015,14 @@ async function market(ctx) {
   ${thesis.length ? `<div class="mt-12">${ui.panel({ title: 'Expansion thesis', sub: 'Ranked moves from the market study · evidence and named targets', accent: true, body: `<div class="sys-grid pp-kgrid">${thesis.map(t => `<div class="sys-card sys-card--flat"${t.priority === 'watch' ? '' : ` data-co="" style="--co:${t.priority === 1 ? PP : PAL.sky}"`}><div class="sys-card-label">${t.priority === 'watch' ? 'Watch' : `Priority ${esc(t.priority)}`}</div><div class="sys-card-title" role="heading" aria-level="4">${esc(t.move)}</div><p class="sys-card-body">${esc(String(t.evidence || '').slice(0, 260))}${String(t.evidence || '').length > 260 ? '…' : ''}</p>${t.targets ? `<p class="small"><span class="sys-muted">Targets:</span> ${esc(String(t.targets).slice(0, 200))}${String(t.targets).length > 200 ? '…' : ''}</p>` : ''}</div>`).join('')}</div>`, foot: mSrc })}</div>` : ''}
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Competitor & franchise map', sub: 'Competitors by ownership (size = reviews) · Authority Brands sites by PP affiliation · click for detail', body: `<div class="map tall" id="mk-map"></div>`, flush: true, foot: mSrc })}
-    ${intens.length ? ui.panel({ title: 'Competitive intensity by county', sub: 'Tracked competitors, PE presence and households per competitor', body: '<div id="mk-int"></div>', foot: mSrc }) : ui.panel({ title: 'PE-backed competitors', body: '<div id="mk-pe2"></div>' })}
+    ${intens.length ? ui.panel({ title: 'Competitive intensity by county', sub: 'Tracked competitors, PE presence and households per competitor', body: '<div id="mk-int"></div>', foot: mSrc }) : ui.panel({ title: 'Sponsor-backed buyers', body: '<p class="sys-card-body">The sponsor-backed buyers are on the Punctual Pros add-on list. <a href="#/ma/pipeline?platform=pp">Sponsor-backed buyers →</a></p>' })}
   </div>
-  <div class="mt-12">${ui.panel({ title: 'Competitors and rival bidders', sub: `${comps.length ? `${fmt.num(comps.length)} local competitors and ` : ''}${fmt.num(pe.length)} sponsor-backed bidders around the footprint`, actions: `<a class="${ui.btnCls('secondary', 'sm')}" href="#/ma/rivals?o=punctual_pros">Rival companies →</a>`,
-    body: `<p class="sys-card-body">Owners, loans and lender marks for the sponsor-backed rivals are on Rival companies. The lists behind this map are below.</p>
-    <details class="pp-fold mt-12" id="mk-rivals"><summary><b>Local competitors and rival bidders</b> <span class="sys-muted">${comps.length ? `${fmt.num(comps.length)} competitors · ` : ''}${fmt.num(pe.length)} sponsor-backed bidders</span></summary><div class="pp-fold-body">
-      ${comps.length ? `<h4 class="sys-card-label">Competitors</h4><p class="sys-muted small mt-8 mb-8">Ownership: PE-backed red · utility purple · independent green · click for notes, sources and next action</p><div id="mk-comp"></div>` : ''}
-      <h4 class="sys-card-label${comps.length ? ' mt-16' : ''}">PE-backed companies (rival bidders)</h4><p class="sys-muted small mt-8 mb-8">Sponsor, regional holdings, threat to PP</p><div id="mk-pe"></div>
-    </div></details>`, foot: `${mSrc} ${ui.source('Sponsor press releases · roll-up trackers', null, ma?.meta?.generated)}` })}</div>
+  <div class="mt-12">${ui.panel({ title: 'Competitors and rival bidders', sub: `${comps.length ? `${fmt.num(comps.length)} local competitors and ` : ''}${fmt.num(pe.length)} sponsor-backed buyers around the footprint`,
+    actions: `<a class="${ui.btnCls('secondary', 'sm')}" href="#/ma/rivals?o=punctual_pros">Rival companies →</a><a class="${ui.btnCls('secondary', 'sm')}" href="#/ma/pipeline?platform=pp">Sponsor-backed buyers →</a>`,
+    body: `<p class="sys-card-body">Owners, loans and lender marks for the sponsor-backed rivals are on Rival companies. The ${fmt.num(pe.length)} sponsor-backed buyers, with threat and holdings, are on the Punctual Pros add-on list.${comps.length ? ' The local competitors behind this map are below.' : ''}</p>
+    ${comps.length ? `<details class="pp-fold mt-12" id="mk-rivals"><summary><b>Local competitors</b> <span class="sys-muted">${fmt.num(comps.length)} companies with owner, trades, staff and reviews</span></summary><div class="pp-fold-body">
+      <p class="sys-muted small mb-8">Ownership: PE-backed red · utility purple · independent green · click for notes, sources and next action</p><div id="mk-comp"></div>
+    </div></details>` : ''}`, foot: mSrc })}</div>
   <div class="mt-12">
     ${ui.panel({ title: 'Franchise territories — One Hour · Ben Franklin · Mister Sparky', sub: 'Which Authority Brands sites are PP/Horvath vs. other franchisees (tuck-in pool)', body: '<div id="mk-ft"></div>', foot: ui.source('Authority Brands location directories', 'https://www.onehourheatandair.com/locations/', mm.generated || ma?.meta?.generated) })}
   </div>
@@ -1073,14 +1073,6 @@ async function market(ctx) {
       { key: 'territory_overlap', label: 'Overlap with PP', wrap: true, fmt: v => `<span class="small">${fmt.list(v || [], 4)}</span>` },
     ], rows: comps.map(c => ({ ...c, _rev: fin(num(c.review_count)) ? Number(c.review_count) : -1 })), pageSize: 15, sortKey: '_rev', exportName: 'pp_competitors', rowKey: r => r.name, onRow: openComp,
   });
-  ui.table(root.querySelector('#mk-pe'), {
-    columns: [
-      { key: 'platform', label: 'Company', fmt: (v, r) => `<b>${esc(v)}</b><div class="dim small">${esc(String(r.sponsor || 'sponsor n/a').split(/[;(]/)[0])}</div>` },
-      { key: 'threat', label: 'Threat', fmt: v => chip(String(v || '—').split(':')[0].split(' ')[0], /^High/i.test(v) ? PAL.red : /^Medium/i.test(v) ? PAL.amber : PAL.muted) },
-      { key: 'regional_holdings', label: 'Regional holdings', wrap: true, fmt: v => `<span class="small text-2">${fmt.list(v || [], 2)}</span>` },
-    ], rows: pe, pageSize: 8, exportName: 'pp_pe_competitors', rowKey: r => r.platform, onRow: openPE,
-  });
-  if (!intens.length && root.querySelector('#mk-pe2')) root.querySelector('#mk-pe2').innerHTML = ui.empty('See PE-backed companies below');
   ui.table(root.querySelector('#mk-ft'), {
     columns: [
       { key: 'brand', label: 'Brand', fmt: v => dot(String(v).replace(/ Heating & Air Conditioning| Plumbing/, ''), /One Hour/.test(v) ? PAL.pp : /Franklin/.test(v) ? PAL.cet : PAL.purple) },
@@ -1151,17 +1143,7 @@ async function market(ctx) {
       { label: 'Sources', html: `<div class="small col gap-4">${(c.source_urls || [c.source_url]).filter(Boolean).map(u => fmt.link(u)).join('')}</div>${c.retrieved ? `<div class="dim small mt-8">Retrieved ${esc(dfull(fmt, c.retrieved))}</div>` : ''}` },
     ], actions: c.website ? [{ label: 'Website ↗', href: c.website }] : [] });
   }
-  function openPE(p) {
-    inspector.open({ title: esc(p.platform), sub: `${esc(p.hq || 'HQ n/a')} · ${esc(String(p.sponsor || 'sponsor n/a').split(';')[0])}`, color: /^High/i.test(p.threat || '') ? PAL.red : PAL.amber, sections: [
-      { label: 'Threat to PP', html: `<div class="small text-2">${esc(p.threat || '—')}</div>` },
-      { label: 'Sponsor', html: `<div class="small text-2">${esc(p.sponsor || '—')}</div>` },
-      { label: 'Footprint', html: `<div class="small text-2">${esc(p.footprint || '—')}</div>` },
-      { label: 'Regional holdings', html: `<ul class="sys-card-list">${(p.regional_holdings || []).map(h => `<li>${esc(h)}</li>`).join('') || '<li>—</li>'}</ul>` },
-      { label: 'Next action', html: `<div class="small text-2">${/^High/i.test(p.threat || '') ? 'Defend: lock key technicians, accelerate membership renewals in overlapping zips, and move first on independents they are courting.' : 'Track deal flow; expect them as rival bidders on targets in the screen.'}</div>` },
-      { label: 'Sources', html: `<div class="small col gap-4">${(p.sources || []).map(s => fmt.link(s)).join('') || '—'}</div>` },
-    ] });
-  }
-  app.index([...comps.map(c => ({ label: c.name, sub: `PP competitor · ${ownOf(c.ownership)[0]} · ${c.hq || ''}`, href: '#/pp/market', kind: 'Competitor', color: ownOf(c.ownership)[1] })), ...pe.map(p => ({ label: p.platform, sub: `PE-backed rival · ${p.threat || ''}`, href: '#/pp/market', kind: 'Competitor', color: PAL.red }))].slice(0, 120));
+  app.index([...comps.map(c => ({ label: c.name, sub: `PP competitor · ${ownOf(c.ownership)[0]} · ${c.hq || ''}`, href: '#/pp/market', kind: 'Competitor', color: ownOf(c.ownership)[1] })), ...pe.map(p => ({ label: p.platform, sub: `PE-backed rival · ${p.threat || ''}`, href: '#/ma/pipeline?platform=pp', kind: 'Competitor', color: PAL.red }))].slice(0, 120));
   return () => map.remove();
 }
 
