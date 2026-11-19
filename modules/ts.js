@@ -255,7 +255,7 @@ async function overview(ctx) {
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Where the scored sites are', sub: 'All 27.5K sites clustered (grey) · Pursue sites (green) · add-on targets (amber) · Thomas Scientific HQ', body: `<div class="map tall" id="ts-ov-map"></div>`, flush: true, foot: `${srcSites(ui)} · sites placed at their ZIP-code centre (${fmt.num(A.rows.filter(r => r.lat == null).length)} unmapped)` })}
     <div class="col gap-12">
-      ${ui.panel({ title: 'Coverage priority', sub: 'The priority label for each site, after two corrections; every Thomas view uses it', body: `${charts.hbar(LABELS.map(l => ({ label: l, value: A.byLabel.get(l) || 0, color: LBL_VAR[l] })), { fmt: v => fmt.num(v), labelW: 80 })}
+      ${ui.panel({ title: 'Coverage priority', sub: 'The priority label for each site, after two corrections; every Thomas screen uses it', body: `${charts.hbar(LABELS.map(l => ({ label: l, value: A.byLabel.get(l) || 0, color: LBL_VAR[l] })), { fmt: v => fmt.num(v), labelW: 80 })}
         <h4 class="sys-card-label mt-16 mb-8">Bridge: model Pursue → named-account Pursue</h4>
         <div class="sys-table-wrap"><table class="sys-table m-bridge"><thead><tr><th></th><th class="sys-n">Sites</th><th class="sys-n">Medicare 2023</th></tr></thead><tbody>
           <tr><td>Model Pursue label <span class="dim">(${fmt.num(B.v3cParents.size)} parents)</span></td><td class="sys-n">${fmt.num(B.v3c)}</td><td class="sys-n">${fmt.money(B.v3cCms)}</td></tr>
@@ -467,7 +467,7 @@ async function filings(ctx) {
   const bspAddons = (fil?.items || []).filter(i => /BSP-era add-on/i.test(i.title || ''));
   const nAdd = Math.max(0, ...bspAddons.map(i => { const m = String(i.title || '').match(/#(\d+)(?:[–-](\d+))?/); return m ? Number(m[2] || m[1]) : 0; })) || null;
   const matDays = cr?.maturity && DATE.test(cr.maturity) ? (() => { const [y, m, d] = cr.maturity.split('-').map(Number); const n = new Date(); return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(n.getFullYear(), n.getMonth(), n.getDate())) / 864e5); })() : null; // calendar days, no UTC/DST drift
-  const toggle = deal ? '<a class="sys-btn sys-btn--secondary" href="#/ts/filings">← Company view</a>' : '<a class="sys-btn sys-btn--secondary" href="#/ts/filings?deal=1" title="What lenders’ and funds’ public filings show, each with its filing and date">Lender filings view</a>';
+  const toggle = deal ? '<a class="sys-btn sys-btn--secondary" href="#/ts/filings">← Public filings</a>' : '<a class="sys-btn sys-btn--secondary" href="#/ts/filings?deal=1" title="What lenders’ and funds’ public filings show, each with its filing and date">Lender filings</a>';
   const fedNow = String(fed?.estimate || '').replace(/\s*\(.*$/, '');
   const sub = deal
     ? (cr?.last ? `What lenders' public filings show: MFIC's 10-Q carries the loan at ${fmt.num(cr.last[1].pct, 1)}% of par as of ${esc(fmt.date(dfix(cr.last[0])))}, and the loan matures ${esc(fmt.date(dfix(cr.maturity)))}. The refinancing plan comes first.` : 'What lenders\' public filings show for Thomas Scientific.')
