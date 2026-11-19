@@ -46,21 +46,12 @@
 .m-ma .bul li,.m-ma-insp .bul li{list-style:none;position:relative;padding-left:16px;font-size:var(--sys-fs-sm);line-height:1.5;color:var(--sys-ink-2)}
 .m-ma .bul li::before,.m-ma-insp .bul li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:2px;background:var(--co)}
 
-/* company theses */
+/* company brief on the pipeline: stat chips and two-column lists */
 .m-ma .th-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sys-sp-4)}
 .m-ma .stat-row{margin-bottom:var(--sys-sp-3);gap:6px}
 .m-ma .stat-row .sys-chip{min-height:26px;padding:0 10px;font-size:var(--sys-fs-xs)}
 .m-ma .mini td.nm{white-space:normal;min-width:180px}
 .m-ma .mini tbody tr[data-tid]{cursor:pointer}
-.m-ma .mini tr.ma-affil-row td{background:color-mix(in srgb,var(--sys-bad) 5%,transparent);white-space:normal}
-.m-ma .mini tr.ma-affil-row .flags{display:flex;flex-wrap:wrap;gap:var(--sys-sp-1);margin-top:var(--sys-sp-1)}
-.m-ma .mini tr.ma-affil-row .sys-chip{white-space:normal;height:auto;max-width:100%;text-align:left}
-.m-ma .shortlist{columns:2;column-gap:var(--sys-sp-5);margin:0;padding:0}
-.m-ma .shortlist li{list-style:none;break-inside:avoid;display:flex;gap:var(--sys-sp-2);padding:3px 0;font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
-.m-ma .shortlist li:hover{color:var(--sys-ink)}
-.m-ma .shortlist li .r{width:20px;flex-shrink:0;font-family:var(--sys-mono);color:var(--sys-mute)}
-.m-ma .shortlist li .s{margin-left:auto;padding-left:var(--sys-sp-2);font-family:var(--sys-mono);color:var(--sys-mute)}
-@media (max-width:1280px){.m-ma .grid.ma-theses{grid-template-columns:1fr}}
 
 /* prose blocks */
 .m-ma .soft{font-size:var(--sys-fs-xs);color:var(--sys-mute)}
@@ -138,7 +129,6 @@
 
 @media (max-width:900px){
   .m-ma .th-two,.m-ma .calc{grid-template-columns:1fr}
-  .m-ma .shortlist{columns:1}
   .m-ma .intens .r{grid-template-columns:1fr;gap:var(--sys-sp-2)}
   .m-ma-insp.ma-stage{grid-template-columns:1fr}
 }

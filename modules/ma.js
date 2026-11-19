@@ -2,7 +2,7 @@ import * as Copy from './copy.js?v=20261117223642';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition engine (M&A) — cross-portfolio buy-and-build intelligence.
    Datasets: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets, Competitor filings,
-             Public comparables, Private-equity landscape, BSP firm profile; sales/* (property transfers, lazy, theses view).
+             Public comparables, Private-equity landscape, BSP firm profile; sales/* (property transfers, loaded when the pipeline's county section is opened).
    ═══════════════════════════════════════════════════════════════════════════ */
 import { renderTargets, fitTierOf } from '../assets/components.js?v=20261117223642';
 import * as DL from './deal-lib.js?v=20261117223642';
@@ -241,10 +241,6 @@ const rankedRaw = (b, p) => (p === 'cet' ? b.cet?.meta?.ranked_top_10 : p === 'p
 const rankedFor = (b, p) => rankedRaw(b, p).filter(r => !affilFlag(r) && !b.byId.get(r.id)?._affil).map((r, i) => ({ ...r, rank: i + 1, why: ceoFix(r.why) }));
 const affilFor = (b, p) => b.targets.filter(t => t._affil && (!p || t._p === p));
 const metaFor = (b, p) => (p === 'cet' ? b.cet?.meta : p === 'pp' ? b.pp?.meta : p === 'bpi' || p === 'fh' ? b.sba?.meta : b.flts?.meta) || null;
-function competitorsFor(b, p) {
-  const src = p === 'cet' ? b.cet?.meta?.pe_backed_competitors : p === 'pp' ? b.pp?.meta?.pe_backed_competitors : p === 'fl' ? b.flts?.meta?.frontline?.pe_backed_competitors : b.flts?.meta?.thomas_scientific?.pe_backed_competitors;
-  return (src || []).map(c => ({ name: c.company || c.platform, owner: c.owner || c.sponsor || 'sponsor n/d', note: c.note || c.notes || c.threat || c.footprint || '', src: (c.sources || [])[0] }));
-}
 const missingNote = (ui, esc, b) => b.missing.length ? ui.note(`Research dataset${b.missing.length > 1 ? 's' : ''} not yet available: ${b.missing.map(esc).join(', ')}. Views that depend on ${b.missing.length > 1 ? 'them' : 'it'} show partial results.`, 'warn') + '<div class="mt-12"></div>' : '';
 const sourceFoot = (ui, meta, label) => meta ? ui.source(label || (meta.dataset ? Copy.dataset(meta.dataset) : 'Research screen'), null, meta.generated) : '';
 const nextActionFor = p => ({
@@ -580,7 +576,7 @@ async function overview(ctx) {
     title: 'Acquisition engine',
     sub: `<b>${fmt.num(t1.length)} of ${fmt.num(T.length)} screened targets are Tier 1${t1Sba ? ` (${fmt.num(t1Hand)} hand-built, ${fmt.num(t1Sba)} from SBA loans)` : ''}.</b> Most of the actionable pool sits in ${esc(PLAT[topP[0]].label)} and ${esc(PLAT[topP[1]].label)}; the median hand-built target is an est. ${fmt.money(medRev)} tuck-in.`,
     chips: `${fmt.chip('Screened ' + (b.cet?.meta?.generated || b.pp?.meta?.generated || '—'), 'var(--c-ma)')}${fmt.chip('Rubrics differ by company')}${sbaOnly.length ? fmt.chip('Two fit formulas: hand-built and SBA loan screen', 'var(--sys-info)') : ''}${fmt.chip('Revenue modelled est.')}`,
-    actions: `<a class="sys-btn sys-btn--primary btn" href="#/deal/returns?p=typical">Acquisition model →</a><a class="sys-btn sys-btn--secondary btn" href="#/ma/pipeline">Full pipeline →</a><a class="sys-btn sys-btn--secondary btn" href="#/ma/theses">Company theses</a>`,
+    actions: `<a class="sys-btn sys-btn--primary btn" href="#/deal/returns?p=typical">Acquisition model →</a><a class="sys-btn sys-btn--secondary btn" href="#/ma/pipeline">Full pipeline →</a>`,
   }) + missingNote(ui, esc, b) +
   ui.kpis([
     { label: 'Targets screened', value: fmt.num(T.length), sub: `${PKEYS.map(p => `${PLAT[p].key.toUpperCase()} ${byP[p].length}`).join(' · ')}${sbaOnly.length ? ` · BPI ${T.filter(t => t._p === 'bpi').length} · FH ${T.filter(t => t._p === 'fh').length}<br>${fmt.num(T.length - sbaOnly.length)} hand-built · <a href="#/ma/screen">${fmt.num(sbaOnly.length)} from SBA loans</a>` : ''}`, color: 'var(--c-ma)' },
@@ -844,101 +840,6 @@ async function pipeline(ctx) {
   renderTargets({ ...ctx, inspector: insp }, host, { items: Copy.targets(items), color: P?.color || 'var(--c-ma)', platformLabel: P ? P.label : 'Cross-portfolio', exportName: `ma_pipeline_${sel}`, pageSize: 40, extraColumns: extra });
   if (q && rows.length === 1) host.querySelector('#tg-table tbody tr[data-i]')?.click(); // opens the stage-aware inspector
   return unmount;
-}
-
-/* ═══ View 3: Company theses ═════════════════════════════════════════════ */
-function thesisStats(b, p) {
-  const T = b.targets.filter(t => t._p === p);
-  const n = T.length; const own = countBy(T, t => t._owner);
-  const dims = {}; const mx = DIM_MAX[p];
-  T.filter(t => t._src !== 'sba').forEach(t => Object.entries(t.fit_breakdown || {}).forEach(([k, v]) => { (dims[k] = dims[k] || []).push((num(v) || 0) / (mx[k] || 20)); }));
-  const dimAvg = Object.entries(dims).map(([k, a]) => [k, a.reduce((s, x) => s + x, 0) / a.length]).sort((x, y) => y[1] - x[1]);
-  return {
-    T, n, nSba: T.filter(t => t._src === 'sba').length, t1: T.filter(t => t._tier === 'Tier 1').length, t2: T.filter(t => t._tier === 'Tier 2').length, t1Sba: T.filter(t => t._tier === 'Tier 1' && t._src === 'sba').length, medEmp: median((handOnly(T).length ? handOnly(T) : T).map(t => t.employees)), medRev: median(handOnly(T).map(t => t.revenue_est_usd)), medRevSba: median(T.filter(t => t._src === 'sba').map(t => t.revenue_est_usd)), nHand: handOnly(T).length,
-    ff: own['Founder / family'] || 0, unv: own.Unverified || 0, own, states: topN(countBy(T, t => t._state), 6), dimAvg,
-    risks: topN(countBy(T.flatMap(t => t.risk_flags || []), x => x), 4), top5: T.filter(t => !t._affil).sort((x, y) => (y.fit_score || 0) - (x.fit_score || 0)).slice(0, 5),
-    affil: T.filter(t => t._affil), dens: T.filter(t => !t._affil && t._reach === 'Density tuck-in').length, hub: T.filter(t => !t._affil && t._reach === 'New-hub anchor').length,
-  };
-}
-function thesisText(b, p, s, fmt) {
-  const T = s.T, heat = b.pe?.meta?.sector_heatmap || {};
-  const stateMix = s.states.map(([k, v]) => `${k} ${v}`).join(', ');
-  if (p === 'cet') {
-    const ct = T.filter(t => t._state === 'CT').length;
-    return `CET’s pool is ${s.n} New England electrical, solar, controls and generator contractors (${stateMix}). ${s.dens} of ${s.n} are density tuck-ins (${REACH_TXT.cet}); the other ${s.hub} would be new-hub or capability anchors. ${ct} are in Connecticut, where Horton (120+ staff, Sept 2026) now gives CET a base. The median target has ${fmt.num(s.medEmp)} staff and ${fmt.money(s.medRev)} of modeled revenue, so these are tuck-ins, not mergers of equals. Ownership is the main risk: ${s.unv} of ${s.n} have unverified ownership and only ${s.ff} are confirmed founder or family-owned. Analyst view: CET should buy capability (W/WW I&C, generators, solar O&M, controls) and Eastern-MA density now. The PE landscape rates the sector “${heat.cet?.intensity || 'medium, rising'}”, and the Kohlberg and Huron electrical companies have not yet entered New England.`;
-  }
-  if (p === 'pp') {
-    const tri = T.filter(t => ['hvac', 'plumbing', 'electrical'].every(x => (t.trades || []).includes(x))).length;
-    const auth = T.filter(t => /One Hour|Benjamin Franklin|Mister Sparky/i.test(`${t.brands_or_franchise || ''} ${t.company}`)).length;
-    const rev1k = T.filter(t => (t.review_count || 0) >= 1000).length;
-    return `Punctual Pros has ${s.n} residential HVAC, plumbing and electrical operators screened across PA, NJ, MD and DE (${stateMix}). ${s.dens} are density tuck-ins (${REACH_TXT.pp}) that add route density to existing dispatch; the other ${s.hub} are new-hub anchors, i.e. branch acquisitions that need their own GM, dispatch and marketing plan. ${s.affil.length ? `${s.affil.length} more trade${s.affil.length === 1 ? 's' : ''} under the Punctual Pros name and ${s.affil.length === 1 ? 'is' : 'are'} held out until affiliation is confirmed. ` : ''}${tri} already run all three trades, ${auth} operate Authority Brands territories that could transfer, and ${rev1k} have 1,000+ reviews. Most are small (median ${fmt.num(s.medEmp)} staff, ${fmt.money(s.medRev)} est. revenue), and ${pctOf(s.ff, s.n)}% are family- or founder-owned, so the likely sellers are owners planning succession. Analyst view: PP has to win proprietary deals before they go to auction. The PE landscape rates the sector “${heat.punctual_pros?.intensity || 'very high'}”, and Sila (Goldman Sachs), Legacy (Gridiron) and Ally (Watchtower) are all buying in its counties.`;
-  }
-  if (p === 'fl') {
-    const catx = T.filter(t => ['CA', 'TX'].includes(t._state)).length; const intl = T.filter(t => t.country && t.country !== 'United States').length;
-    const bill = T.filter(t => /billing|rcm|revenue|invoice|accounting/i.test((t.offerings || []).join(' '))).length;
-    const small = handOnly(T).filter(t => t.revenue_est_usd != null && t.revenue_est_usd <= 15e6).length;   // vendor figures only: the profile below was set on them
-    return `Frontline has ${s.n} legal-IT managed-service and law-firm billing/RCM targets (${stateMix}; ${intl} outside the US). ${catx} are in California or Texas, two of Frontline’s stated priority geographies (set under former CEO Naidoo; re-confirm with Tim Britt, CEO since Jan 2026), and ${bill} offer billing, eBilling or RCM services that extend Frontline’s second product line. ${small} of the ${s.nHand} hand-built targets have modeled revenue at or below $15M, which fits the previously stated tuck-in profile of ~$5M revenue and $1–2M EBITDA. Analyst view: the PE landscape rates the sector “${heat.frontline?.intensity || 'low-medium'}” and finds no sponsor-backed copy of the legal IT + RCM model. The window to lock in law-firm MSP and billing add-ons is open, but it will close once a generalist MSP roll-up (Alpine’s Evergreen) builds a legal vertical.`;
-  }
-  const cr = T.filter(t => /cleanroom|controlled/i.test((t.offerings || []).join(' ') + ' ' + (t.strategic_rationale || ''))).length;
-  const nonNE = T.filter(t => !['NJ', 'NY', 'PA', 'MA', 'CT'].includes(t._state)).length;
-  return `Thomas Scientific has ${s.n} lab-supply, life-science and cleanroom distributors (${stateMix}). ${nonNE} are outside Thomas’s Northeast core and would extend its distribution network, and ${cr} bring cleanroom or controlled-environment lines. The screen found no public Thomas acquisition since late 2023, so the company’s earlier add-on pace (regional distributors: NCI, Quintana, Day, Arrowhead) has stalled. The median target has ${fmt.num(s.medEmp)} staff and ${fmt.money(s.medRev)} of modeled revenue. Analyst view: restart the programme with exclusive line-card and regional-coverage deals. Calibre Scientific (StoneCalibre) is the main bidder, but its focus is mostly Europe, which leaves room in the US.`;
-}
-const IDEAL = {
-  cet: ['25–400 employees and $8–120M revenue (rubric scale band)', `Density tuck-in: ${REACH_TXT.cet}; new-hub anchor: CT near Horton`, 'Capabilities that extend CET lines: solar O&M, EV, energy efficiency, W/WW I&C, generators, controls', 'Founder or family owner with a succession need; labour model compatible with CET’s', 'Licensed in several New England states; recurring service/maintenance mix'],
-  pp: ['Tri-trade HVAC + plumbing + electrical (top trade-mix score, 20)', '30–150 employees (rubric scale 17–20)', `Density tuck-in: ${REACH_TXT.pp}; farther = new-hub anchor (branch plan needed)`, 'Founder or multi-generation family owner with long tenure', 'Authority Brands franchisee, or 1,000+ reviews and ready to rebrand'],
-  fl: ['Law-firm-focused MSP or billing/eBilling/RCM provider', 'Tuck-in ~$5M revenue / $1–2M EBITDA; larger targets at $20M+ revenue', 'Priority geographies: California, Texas, Atlanta, South Florida, UK (stated under former CEO Naidoo; re-confirm with CEO Tim Britt)', 'Point solutions, proprietary software or GenAI capability', 'Founder- or partner-owned, with clean SOC 2 / security posture'],
-  ts: ['Regional life-science, clinical or cleanroom distributor', 'Exclusive or hard-to-replicate supplier line cards', 'Geography outside the Northeast core (Midwest, West, Canada)', 'Family or founder owner; 20–150 staff', 'Private-label or kitting capability (margin lever vs 4–5% pure-distributor margins)'],
-};
-const INTEG = {
-  cet: ['Union vs open-shop labour models across add-ons', 'Licence and bonding transfer on change of control', 'Backlog quality and project-margin discipline (public comps: 6–10% op. margin)'],
-  pp: ['Brand-conversion dis-synergy when retiring heritage brands', 'Technician retention through dispatch and pay-plan changes', 'Franchisor approval needed for Authority Brands territory transfers'],
-  fl: ['Law-firm client concentration and partner-level relationships', 'Service-desk tooling migration onto HELIX', 'Security and compliance posture (SOC 2) of acquired MSPs'],
-  ts: ['Supplier change-of-control consents on line cards', 'ERP and catalogue migration; pricing harmonisation', 'Customer overlap with existing Northeast accounts'],
-};
-async function theses(ctx) {
-  const { el, ui, fmt, esc } = ctx; injectCss();
-  const b = await loadBundle(ctx.data);
-  let alive = true;
-  const S = Object.fromEntries(PKEYS.map(p => [p, thesisStats(b, p)]));
-  const tot = PKEYS.reduce((a, p) => a + S[p].n, 0);
-  const best = PKEYS.slice().sort((x, y) => (S[y].t1 + S[y].t2) / (S[y].n || 1) - (S[x].t1 + S[x].t2) / (S[x].n || 1))[0];
-  const hardest = b.pe?.meta?.sector_heatmap?.punctual_pros?.intensity || 'very high';
-  el.innerHTML = `<div class="m-ma">` + ui.pageHead({
-    title: 'Company theses',
-    sub: `<b>${esc(PLAT[best].label)} has the richest pool (${pctOf(S[best].t1 + S[best].t2, S[best].n)}% Tier 1–2).</b> Punctual Pros faces the hardest competition; CET has the most open field.`,
-    chips: PKEYS.map(p => fmt.chip(`${PLAT[p].key.toUpperCase()} ${S[p].n} · ${S[p].t1} T1`, PLAT[p].color)).join(''),
-    actions: `<a class="sys-btn sys-btn--secondary btn" href="#/ma/pipeline">Pipeline →</a>`,
-  }) + missingNote(ui, esc, b) +
-  `<div class="grid grid-2 ma-theses">${PKEYS.map(p => thesisPanel(ctx, b, p, S[p])).join('')}</div>
-  <div class="mt-12" id="ma-housing"></div></div>`;
-  el.querySelectorAll('[data-tid]').forEach(n => n.onclick = () => { const t = b.byId.get(n.dataset.tid); if (t) openTarget(ctx, t); });
-  housingPanel(ctx, el.querySelector('#ma-housing'), b, () => alive);
-  return () => { alive = false; };
-}
-function thesisPanel(ctx, b, p, s) {
-  const { ui, fmt, esc } = ctx; const P = PLAT[p]; const meta = metaFor(b, p);
-  if (!s.n) return ui.panel({ title: esc(P.long), body: ui.note(`Target screen for ${esc(P.label)} is not yet available.`, 'warn') });
-  const ranked = rankedFor(b, p); const comps = competitorsFor(b, p);
-  const riskList = [...s.risks.map(([r, c]) => `${esc(r)} <span class="soft">(${c} targets)</span>`), ...INTEG[p].map(esc)];
-  const weakest = s.dimAvg[s.dimAvg.length - 1], strongest = s.dimAvg[0];
-  return ui.panel({
-    title: `${esc(P.long)}`, accent: true, sub: `${fmt.num(s.n)} targets${s.nSba ? ` (${fmt.num(s.nSba)} from <a href="#/ma/screen">SBA loan records</a>)` : ''} · ${s.t1} Tier 1${s.t1Sba ? ` (${s.t1 - s.t1Sba} hand-built + ${s.t1Sba} from SBA loans)` : ''} · ${s.t2} Tier 2`,
-    actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/ma/pipeline?platform=${p}">Pipeline →</a>`,
-    body: `<div style="--cc:${P.color}">
-      <div class="sys-chips stat-row">${fmt.chip(`median ${fmt.num(s.medEmp)} staff (${s.nHand ? 'hand-built' : 'loan screen'})`)}${fmt.chip(`median ${fmt.money(s.medRev)} rev. est. (hand-built)`)}${s.medRevSba != null ? fmt.chip(`loan screen median ${fmt.money(s.medRevSba)} (Census model)`, 'var(--sys-info)') : ''}${fmt.chip(`${pctOf(s.ff, s.n)}% founder/family`, 'var(--sys-good)')}${s.unv ? fmt.chip(`${s.unv} ownership unverified`, 'var(--sys-warn)') : ''}${s.dens + s.hub ? fmt.chip(`${s.dens} density · ${s.hub} new-hub`, 'var(--sys-info)') : ''}${s.affil.length ? fmt.chip(`${s.affil.length} held · verify affiliation`, 'var(--sys-bad)') : ''}${strongest ? fmt.chip(`strongest: ${titleCase(strongest[0])} ${Math.round(strongest[1] * 100)}%`, P.color) : ''}${weakest ? fmt.chip(`weakest: ${titleCase(weakest[0])} ${Math.round(weakest[1] * 100)}%`, 'var(--sys-warn)') : ''}</div>
-      <div class="sys-card-label th-h">Thesis <span class="sys-est sys-est--illus analyst">analyst view</span></div>
-      <div class="h-note">${esc(thesisText(b, p, s, fmt))}</div>
-      <div class="th-two"><div><div class="sys-card-label th-h">Ideal target profile</div><ul class="bul">${IDEAL[p].map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
-      <div><div class="sys-card-label th-h">Integration risks</div><ul class="bul">${riskList.slice(0, 6).map(x => `<li>${x}</li>`).join('')}</ul></div></div>
-      <div class="sys-card-label th-h">Top 5 by fit</div>
-      <div class="sys-table-wrap"><table class="sys-table mini"><caption>Fit on the ${esc(P.label)} rubric (loan-screen companies on the loan-screen formula) · revenue is modelled: ZoomInfo for hand-built targets, Census benchmarks and SBA loan data for loan-screen companies; loan-screen staff is the company's stated headcount, or else its loan jobs figure</caption><thead><tr><th>Company</th><th>HQ</th><th class="sys-n">Staff</th><th class="sys-n">Rev. est.</th><th>Owner</th><th class="sys-n">Fit</th></tr></thead><tbody>${s.top5.map(t => `<tr data-tid="${esc(t.id)}"><td class="nm">${esc(t.company)}${t._src === 'sba' ? `<div class="dim small">${SRC_LABEL}</div>` : ''}</td><td>${esc(t.hq_city || '')}${t.hq_city ? ', ' : ''}${esc(t._state)}</td><td class="sys-n">${fmt.num(t.employees)}</td><td class="sys-n">${t.revenue_est_usd ? `<span${t._src === 'sba' ? ` title="${esc(revTip(fmt, t))}"` : ''}>${fmt.money(t.revenue_est_usd)}</span><span class="sys-est">est.</span>` : '—'}</td><td>${fmt.chip(t._owner, OWNER_COLOR[t._owner])}</td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}${s.affil.map(t => `<tr data-tid="${esc(t.id)}" class="ma-affil-row"><td class="nm" colspan="5"><b>Held out · verify affiliation:</b> ${esc(t.company)}<div class="flags">${(t.risk_flags || []).map(r => fmt.chip(r, /collision|affiliat/i.test(r) ? 'var(--sys-bad)' : 'var(--sys-warn)')).join('')}</div></td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}</tbody></table></div>
-      <div class="sys-card-label th-h">Screen authors’ ranked shortlist (${ranked.length})${rankedRaw(b, p).length > ranked.length ? ` <span class="soft">· ${rankedRaw(b, p).length - ranked.length} held out for affiliation check, re-numbered</span>` : ''}</div>
-      ${ranked.length ? `<ol class="shortlist">${ranked.map(r => `<li data-tid="${esc(r.id)}" style="cursor:pointer" title="${esc(r.why || '')}"><span class="r">${esc(r.rank)}</span><span class="ellipsis">${esc(r.company)}</span><span class="s">${esc(r.fit_score ?? '')}</span></li>`).join('')}</ol>` : ui.empty('No ranked list in dataset')}
-      <div class="sys-card-label th-h">Competing sponsor-backed buyers (${comps.length})</div>
-      <div class="row wrap gap-4">${comps.slice(0, 12).map(c => { const lbl = clip(String(c.name || '').replace(/\s*\(.*?\)/g, ''), 34); const tip = `${c.name} · owner: ${c.owner}${c.note ? ' · ' + clip(c.note, 140) : ''}`; return c.src ? `<a href="${esc(c.src)}" target="_blank" rel="noopener" title="${esc(tip)}">${fmt.chip(lbl, 'var(--sys-bad)')}</a>` : `<span title="${esc(tip)}">${fmt.chip(lbl, 'var(--sys-bad)')}</span>`; }).join('')}${comps.length > 12 ? `<span class="soft">+${comps.length - 12} more</span>` : ''}${comps.length ? '' : '<span class="soft">None listed</span>'}</div><div class="soft mt-8">Hover a chip for owner and note; click for source.</div>
-    </div>`,
-    foot: sourceFoot(ui, meta, `${P.label} add-on screen (ZoomInfo + websites)`),
-  });
 }
 
 /* Property-transfer demand signal: home and commercial sales gathered in the counties every platform serves (lazy).
@@ -1656,7 +1557,7 @@ const KIT = { Copy, PLAT, PKEYS, SKEYS, SRC_LABEL, REACH_TXT, DIM_MAX, num, medi
 
 export default {
   id: 'ma', name: 'Acquisition engine', tag: 'M&A', color: 'var(--c-ma)', group: 'Intelligence',
-  tagline: 'Cross-portfolio buy-and-build engine: screened add-ons, the SBA loan screen, company theses, rival companies, valuation benchmarks and white space',
+  tagline: 'Cross-portfolio buy-and-build engine: screened add-ons with a brief per company, the SBA loan screen, rival companies, valuation benchmarks and white space',
   hq: { lat: 40.7536, lon: -73.9832, label: 'BSP, New York, NY' },
   views: [
     { id: 'overview', name: 'Overview', icon: '◉', render: overview },
@@ -1664,14 +1565,13 @@ export default {
     { id: 'screen', name: 'SBA loan screen', icon: '⊞', render: screenView },
     { id: 'loans', name: 'SBA loan records', icon: '☰', render: loansView },
     { id: 'research', name: 'Website research', icon: '⌕', render: researchView },
-    { id: 'theses', name: 'Company theses', icon: '◇', render: theses },
     { id: 'rivals', name: 'Rival companies', icon: '⚔', render: rivalsView },
     { id: 'valuation', name: 'Valuation', icon: '$', render: valuation },
     { id: 'whitespace', name: 'White space', icon: '✦', render: whitespace },
   ],
   tour: [
     { order: 800, hash: '#/ma/overview', caption: '<b>Acquisition engine.</b> Every screened add-on across the portfolio, ranked, with this quarter’s top ten.', narration: 'The acquisition engine ranks every screened add-on across the portfolio, with this quarter\'s top ten.', duration: 6500 },
-    { order: 810, hash: '#/ma/theses', caption: '<b>Company theses.</b> Each thesis is written from its target pool; county home sales flag density gaps.', narration: 'Each thesis comes from its own target pool. Home sales show where turnover and targets line up.', duration: 8500 },
+    { order: 810, hash: '#/ma/pipeline', caption: '<b>One target list.</b> Every add-on target across six companies; pick a company for its thesis, map and ranked picks.', narration: 'One list holds every add-on target. Pick a company for its thesis, map and ranked picks.', duration: 8500 },
     { order: 820, hash: '#/ma/rivals', caption: '<b>Rival companies.</b> Lender filings flag stressed consolidators: likely sellers, not bidders.', narration: 'Lender filings flag rival consolidators paying interest in kind: likely sellers, not bidders.', duration: 5500 },
   ],
 };
