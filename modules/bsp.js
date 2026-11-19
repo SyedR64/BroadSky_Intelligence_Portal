@@ -1,8 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    How BSP buys (module id 'bsp') — the acquisition methodology,
    reverse-engineered from every disclosed BSP deal, and applied live to
-   the add-on pipelines.
-   Views: deals · patterns · rubric · network.
+   the add-on pipelines. The methodology page (redesigns/methodology.html) now forwards
+   here: its twelve observations are on deals; its scoring detail and call sheet on rubric.
+   Screens: deals · patterns · rubric · network.
    Datasets: BSP acquisition methodology, BSP professional network,
    Punctual Pros / CET / Frontline and Thomas Scientific add-on target screens.
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -51,7 +52,7 @@ function indexOnce(app, b) {
     ...(b.graph?.nodes || []).filter(n => /^p-/.test(n.id)).slice(0, 120).map(n => ({ label: n.name, sub: `${TYPE_LABEL[n.type] || ''} · ${n.title || ''}`, href: `#/bsp/network?node=${encodeURIComponent(n.id)}`, kind: 'Network', color: COLOR })),
   ]);
 }
-const missingNote = (ui, b) => b.missing.length ? ui.note(`Research dataset${b.missing.length > 1 ? 's' : ''} not yet available: ${b.missing.map(Copy.dataset).join(', ')}. This view shows partial results.`, 'warn') + '<div class="mt-12"></div>' : '';
+const missingNote = (ui, b) => b.missing.length ? ui.note(`Research dataset${b.missing.length > 1 ? 's' : ''} not yet available: ${b.missing.map(Copy.dataset).join(', ')}. This screen shows partial results.`, 'warn') + '<div class="mt-12"></div>' : '';
 const pChip = (fmt, p) => p ? coChip(p, PLATFORMS[p].short) : '—';
 
 /* ── Deal inspector ──────────────────────────────────────────────────────── */
@@ -78,8 +79,44 @@ function openDeal(ctx, b, d) {
       pats.length ? { label: 'Patterns this deal supports', html: `<div class="sys-chips">${pats.map(p => stChip(clip(p.pattern.split(':')[0], 60), STR_ST[p.strength])).join('')}</div>` } : null,
       { label: 'Source', html: `<div class="small">${ctx.fmt.link(d.source_url, host(d.source_url) || 'Release')}</div><div class="dim small mt-4">Retrieved ${esc(d.retrieved ? fmtDay(d.retrieved) : '—')}</div>` },
     ].filter(Boolean),
-    actions: [d.source_url ? { label: 'Release ↗', href: d.source_url } : null, P?.co ? { id: 'mod', label: `${esc(P.short)} module`, onClick: () => app.go(P.co) } : null].filter(Boolean),
+    actions: [d.source_url ? { label: 'Release ↗', href: d.source_url } : null, P?.co ? { id: 'mod', label: `Open ${esc(P.short)}`, onClick: () => app.go(P.co) } : null].filter(Boolean),
   });
+}
+
+/* The twelve observations (bsp_methodology meta.methodology_narrative), moved from the methodology page.
+   Closed by default: open, the list is about one laptop screen tall. */
+const NUM_WORDS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen'];
+function narHTML(ctx, b) {
+  const { ui, esc } = ctx; const nar = b.meth?.meta?.methodology_narrative || []; if (!nar.length) return '';
+  return `<details class="bsp-drawer mt-12"><summary><b>Thesis first, essential services, founders stay</b><span>${NUM_WORDS[nar.length] || nar.length} observations, each traceable to a press release or a filing.</span></summary>
+    <ol class="bsp-nar">${nar.map(s => `<li>${esc(s)}</li>`).join('')}</ol>
+    <p class="sys-src">${ui.source(SRC_METH, null, 'Oct 2026')} · Weights and strengths are analyst inference from the public record, not BSP’s internal criteria.</p>
+    <p class="sys-src"><b>Terms:</b> Form ADV: the filing every investment adviser makes with the SEC (Securities and Exchange Commission). PIK: interest paid in more debt instead of cash.</p></details>`;
+}
+/* The next five (highest BSP fit, at most two per company) with the intro path and the draft first call:
+   the same text the side panel shows for one row, printed for five. */
+function nextFiveHTML(ctx, b) {
+  const { ui, esc, fmt } = ctx; const five = nextFive(b, 5, 2); if (!five.length) return '';
+  return `<details class="bsp-drawer mt-12"><summary><b>Call sheet: the next five</b><span>The highest BSP fit scores, at most two per company, each with an intro path and a draft first-call script.</span></summary>
+    <div class="bsp-next">${five.map((r, i) => { const ip = introFor(b, r); const sc = firstCallScript(b, r); return `<article class="sys-card sys-card--flat bsp-nx" ${coAttr(r._p)}>
+      <div class="bsp-nx-h"><b>${i + 1}. ${esc(r.company)}</b>${coChip(r._p, r._plat)}<span class="sys-src">${esc([r.hq_city, r.state].filter(Boolean).join(', '))}</span><span class="sys-num">BSP fit ${r._score}</span></div>
+      <p class="sys-card-body">${esc(r._explain)}</p>
+      <div class="bsp-nx-grid"><div>
+        <p class="sys-card-label">Intro path · ${ip?.sourced ? `${esc(ip.confidence)} confidence` : 'default path'}</p>
+        ${ip ? `<div class="bsp-path">${ip.names.filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i>→</i>')}</div><p class="sys-card-body">${esc(ip.path)}</p>` : ''}
+        <p class="sys-card-label">Profile</p><p class="sys-card-body">${esc(r.ownership ? String(r.ownership).replace(/_/g, ' ') : '—')}${r.founded_year ? ` · founded ${r.founded_year}` : ''}${r.employees != null ? ` · ${fmt.num(r.employees)} employees` : ''}${r.revenue_est_usd ? ` · ${fmt.money(r.revenue_est_usd)}${EST} revenue` : ''}</p>
+        ${r.risk_flags?.length ? `<p class="sys-card-label">Risk flags</p><div class="sys-chips">${r.risk_flags.map(x => stChip(x, 'warn')).join('')}</div>` : ''}
+      </div><div>
+        <p class="sys-card-label">First-call script (draft)</p><ol class="bsp-script">${sc.map(s => `<li><b>${esc(s.k)}.</b> ${esc(s.t)}</li>`).join('')}</ol>
+      </div></div>
+    </article>`; }).join('')}</div>
+    <p class="sys-src">${ui.source(SRC_POOLS, null, 'Sept 2026')} · Revenue figures are modeled estimates. Scripts are drafts for the Portfolio Resource Group, not outreach that has happened.</p></details>`;
+}
+/* How each of the ten criteria is scored: the text the side panel shows for one criterion, printed for all ten. */
+function critHTML(ctx, b) {
+  const { esc } = ctx;
+  return `<details class="bsp-drawer mt-12"><summary><b>How each criterion is scored</b><span>The test, the 1 to 5 bands and how the portal checks it.</span></summary>
+    <div class="bsp-critd">${b.criteria.slice().sort((a, c) => c.weight_pct - a.weight_pct).map(c => `<div><p><b>${esc(c.criterion)}</b> · <span class="sys-num">${c.weight_pct}%</span></p><p>${esc(c.test)}</p><p class="bsp-bands">${Object.entries(c.scoring_bands || {}).sort((x, y) => y[0] - x[0]).map(([k, v]) => `<span><b>${esc(k)}</b>${esc(v)}</span>`).join('')}</p><p class="sys-muted">${esc(TESTS[c.id]?.how || '')}</p></div>`).join('')}</div></details>`;
 }
 
 /* ═══ View: deals ═══ */
@@ -90,7 +127,7 @@ async function viewDeals(ctx) {
   indexOnce(app, b); const c = b.cadence;
   const named = b.deals.filter(d => d.deal_type === 'add_on');
   const disclosed = named.filter(d => d.seller_type), anchors = b.deals.filter(d => d.deal_type === 'platform'), anchorsUndisclosed = anchors.filter(d => !d.seller_type).length;
-  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Every deal', sub: `${c.platforms} anchor acquisitions in ${n1(monthsBetween(b.deals[0].date, b.deals.filter(d => d.deal_type === 'platform').slice(-1)[0].date) / 12)} years, ${c.pePlatforms} from other sponsors. None of the ${disclosed.length} add-ons with a disclosed seller came from a private-equity seller.`, chips: `${fmt.chip('Releases and SEC filings')}${fmt.chip('Retrieved Oct 6, 2026')}` })}
+  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Every deal', sub: `${c.platforms} anchor acquisitions in ${n1(monthsBetween(b.deals[0].date, b.deals.filter(d => d.deal_type === 'platform').slice(-1)[0].date) / 12)} years, ${c.pePlatforms} from other sponsors. None of the ${disclosed.length} add-ons with a disclosed seller came from a private-equity seller.`, chips: `${fmt.chip('Releases and SEC filings')}${fmt.chip('Retrieved Oct 6, 2026')}`, actions: `<a class="${ui.btnCls('secondary', '')}" href="#/home/firm">BSP profile</a>` })}
     ${missingNote(ui, b)}
     ${ui.kpis([
       { label: 'Anchor acquisitions', value: fmt.num(c.platforms), sub: `${c.pePlatforms} from sponsors · ${anchors.length - c.pePlatforms - anchorsUndisclosed} from founders, partners or franchisees${anchorsUndisclosed ? ` · ${anchorsUndisclosed} undisclosed` : ''}` },
@@ -99,6 +136,7 @@ async function viewDeals(ctx) {
       { label: 'Months between anchor deals', value: n1(c.medianGap), sub: 'Median, Jan 2022 to Feb 2025' },
       { label: 'First exit', value: `${n1(c.exitHold)} mo`, sub: 'Smith + Howard to TPG Growth, Aug 2026' },
     ])}
+    ${narHTML(ctx, b)}
     <div class="mt-12"></div>
     ${ui.panel({ title: 'Deal chronology', sub: 'Each mark is a disclosed transaction. Select one to read the rationale, advisers, lenders and co-invest vehicle.', body: `<div class="bsp-stripwrap">${stripSVG(b, PCOL)}</div>`, foot: ui.source(SRC_METH, null, 'Oct 2026') + `<span>Thomas Scientific uses the Jan 2022 announcement; CET uses the Feb 2025 Form D first sale.</span>` })}
     <div class="mt-12"></div>
@@ -188,7 +226,7 @@ function openTarget(ctx, b, r) {
       { label: 'BSP fit', html: `<div class="sys-kpis"><div class="sys-kpi" ${coAttr(r._p)}><div class="sys-kpi-label">Score (inferred rubric)</div><div class="sys-kpi-value">${r._score}</div><div class="sys-kpi-sub">${esc(r._gate)} · built from ${r._tested}% of the rubric weight · full rubric with portfolio company context ${r._full} · company screen fit ${fmt.num(r.fit_score)}</div></div></div><div class="small text-2 mt-8">${esc(r._explain)}</div>` },
       { label: 'Criterion scores (0–100)', html: charts.hbar(bars, { max: 100, fmt: v => `${v}`, labelW: 190, color: PCOL[r._p] }) + `<div class="dim small mt-4">Company-level criteria are context; neutral criteria are held at 3 of 5 until diligence measures them. Neither is in the BSP fit score.</div>` },
       { label: 'What drove each test', html: ui.kv(Object.fromEntries(b.criteria.filter(c => TESTS[c.id]?.tested).map(c => [`${critShort(c.id)}${isTargetTest(c.id) ? '' : ' (portfolio company)'}`, esc(r._why[c.id])]))) },
-      intro ? { label: intro.sourced ? `Intro path · ${intro.confidence} confidence` : 'Intro path · default route', html: `<div class="bsp-path">${intro.names.filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i>→</i>')}</div><div class="small text-2 mt-4">${esc(intro.path)}</div>${intro.sourced ? `<div class="dim small mt-4">${fmt.link(intro.source_url, host(intro.source_url))}</div>` : ''}` } : null,
+      intro ? { label: intro.sourced ? `Intro path · ${intro.confidence} confidence` : 'Intro path · default path', html: `<div class="bsp-path">${intro.names.filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i>→</i>')}</div><div class="small text-2 mt-4">${esc(intro.path)}</div>${intro.sourced ? `<div class="dim small mt-4">${fmt.link(intro.source_url, host(intro.source_url))}</div>` : ''}` } : null,
       { label: 'First-call script (draft)', html: `<ol class="bsp-script">${script.map(s => `<li><b>${esc(s.k)}.</b> ${esc(s.t)}</li>`).join('')}</ol>` },
       { label: 'Profile', html: ui.kv({ Ownership: esc(r.ownership || '—'), Founded: r.founded_year, Employees: r.employees != null ? fmt.num(r.employees) : null, 'Revenue': r.revenue_est_usd ? `${fmt.money(r.revenue_est_usd)}${EST} <span class="dim small">modeled</span>` : null, Website: r.website ? fmt.link(r.website) : null }) },
       r.risk_flags?.length ? { label: 'Risk flags', html: `<div class="sys-chips">${r.risk_flags.map(x => stChip(x, 'warn')).join('')}</div>` } : null,
@@ -208,7 +246,7 @@ async function viewRubric(ctx) {
   const tested = b.criteria.filter(c => isTargetTest(c.id)).reduce((a, c) => a + c.weight_pct, 0);
   const platW = b.criteria.filter(c => TESTS[c.id]?.tested === 'platform').reduce((a, c) => a + c.weight_pct, 0);
   const pools = PORDER.filter(p => all.some(r => r._p === p));
-  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Acquisition rubric', sub: `<b>${pri} of ${ranked.length} targets clear the 70-point gate</b>, so the score orders the list rather than filters it. BSP closes about one add-on per company-year: work the top 15 first.`, chips: `${stChip('Weights inferred, not disclosed', 'warn')}${fmt.chip(`${ranked.length} targets · ${pools.length} companies`)}` })}
+  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Acquisition rubric', sub: `<b>${pri} of ${ranked.length} targets clear the 70-point gate</b>, so the score orders the list rather than filters it. BSP closes about one add-on per company-year: work the top 15 first.`, chips: `${stChip('Weights inferred, not disclosed', 'warn')}${fmt.chip(`${ranked.length} targets · ${pools.length} companies`)}`, actions: `<a class="${ui.btnCls('secondary', '')}" href="#/bsp/network">Deal network</a>` })}
     ${missingNote(ui, b)}
     ${ui.kpis([
       { label: 'Targets scored', value: fmt.num(ranked.length), sub: `${all.length - ranked.length} held out (affiliation check)` },
@@ -222,6 +260,10 @@ async function viewRubric(ctx) {
       ${ui.panel({ title: 'The inferred screening criteria', sub: 'Weights sum to 100. Each criterion scores 1–5. BSP fit uses the criteria tested for each target, rescaled to 0–100.', body: `<div class="bsp-crit">${b.criteria.slice().sort((a, c) => c.weight_pct - a.weight_pct).map(c => `<div class="bsp-cr" data-crit="${esc(c.id)}" role="button" tabindex="0" aria-label="${esc(c.criterion)}, weight ${c.weight_pct}%"><div class="bsp-cr-h"><span class="bsp-cr-n">${esc(c.criterion)}</span><span class="sys-num">${c.weight_pct}%</span></div><div class="bsp-cr-bar" aria-hidden="true"><i style="width:${c.weight_pct / 15 * 100}%"></i></div><div class="bsp-cr-t">${TESTS[c.id]?.tested ? stChip(TESTS[c.id].tested === 'proxy' ? 'In score · tested by proxy' : TESTS[c.id].tested === 'platform' ? 'Portfolio company level · context' : 'In score · tested per target', TESTS[c.id].tested === 'platform' ? 'info' : 'good') : stChip('Diligence item · not scored', '')}</div></div>`).join('')}</div>`, foot: ui.source(SRC_METH, null, 'Oct 2026') })}
       ${ui.panel({ title: 'Top 15 by BSP fit', sub: 'Across all company screens. Select a row for the criterion breakdown, intro path and first-call script.', body: '<div data-top></div>', foot: ui.source(SRC_POOLS, null, 'Sept 2026') })}
     </div>
+    <div class="mt-12"></div>
+    ${ui.note(`<b>How to read the score.</b> The add-on screens were built to find companies that fit each company, so most targets clear the 70 gate; the rubric’s job is ordering. Recurring revenue, tech upside and the bench below the owner are ${b.criteria.filter(c => !TESTS[c.id]?.tested).reduce((a, c) => a + c.weight_pct, 0)}% of the weight and come from the first call, which is why the first-call script asks for them.`, 'info')}
+    ${critHTML(ctx, b)}
+    ${nextFiveHTML(ctx, b)}
     <div class="mt-12"></div>
     ${ui.panel({ title: 'Every target, scored', sub: 'Ranked by BSP fit. Switch to the top 15 for the call list; sort any column; export the scored pipeline to CSV.', body: '<div class="mb-12" data-top15></div><div data-f></div><div data-t></div>', foot: ui.source(SRC_POOLS, null, 'Sept 2026') + `<span>Rubric: ${esc(SRC_METH)}</span>` })}
   </div>`;
@@ -297,7 +339,7 @@ async function viewNetwork(ctx) {
     <div class="mt-12"></div>
     <div class="grid grid-main">
       ${ui.panel({ title: 'Network map', sub: 'Hover to see a node’s connections; select it for role and sources. Search highlights matches.', body: `<div class="sys-filters mb-12"><input type="search" class="sys-input bsp-search" placeholder="Search people, firms, sectors" aria-label="Search the network"><span class="sys-src bsp-hits" aria-live="polite"></span></div><div class="bsp-graph">${graphSVG(g)}</div>${legendHTML()}`, foot: ui.source(SRC_NET, null, 'Oct 2026') + '<span>Intro paths are hypotheses over public connections, not known relationships.</span>' })}
-      ${ui.panel({ title: 'Intro paths for top targets', sub: 'Top BSP fit targets, then next-company themes. Select a path to trace it on the map.', scroll: true, body: `<div class="bsp-paths">${pathsFor.map((x, i) => `<button type="button" class="bsp-pathc" data-i="${i}" ${x.r ? coAttr(x.r._p) : 'data-co=""'}><div class="bsp-pathc-h"><b>${esc(x.r ? x.r.company : x.ip.target)}</b>${x.r ? `<span class="sys-num">${x.r._score}</span>` : ''}</div><div class="bsp-pathc-m">${x.r ? `${esc(x.r._plat)} · ` : 'Next company · '}${x.ip?.sourced ? `${esc(x.ip.confidence)} confidence · ${x.ip.hops} hops` : 'default route, unsourced'}</div><div class="bsp-path">${(x.ip?.names || []).filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i>→</i>')}</div></button>`).join('')}</div>`, foot: ui.source(SRC_NET, null, 'Oct 2026') })}
+      ${ui.panel({ title: 'Intro paths for top targets', sub: 'Top BSP fit targets, then next-company themes. Select a path to trace it on the map.', scroll: true, body: `<div class="bsp-paths">${pathsFor.map((x, i) => `<button type="button" class="bsp-pathc" data-i="${i}" ${x.r ? coAttr(x.r._p) : 'data-co=""'}><div class="bsp-pathc-h"><b>${esc(x.r ? x.r.company : x.ip.target)}</b>${x.r ? `<span class="sys-num">${x.r._score}</span>` : ''}</div><div class="bsp-pathc-m">${x.r ? `${esc(x.r._plat)} · ` : 'Next company · '}${x.ip?.sourced ? `${esc(x.ip.confidence)} confidence · ${x.ip.hops} hops` : 'default path, unsourced'}</div><div class="bsp-path">${(x.ip?.names || []).filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i>→</i>')}</div></button>`).join('')}</div>`, foot: ui.source(SRC_NET, null, 'Oct 2026') })}
     </div>
   </div>`;
   const root = el.querySelector('.m-bsp');

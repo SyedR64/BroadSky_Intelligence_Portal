@@ -91,3 +91,29 @@
 .m-bsp .bsp-cell--wide{min-width:210px;max-width:300px}
 .m-bsp .bsp-cell--narrow{min-width:110px;max-width:170px}
 .m-bsp .bsp-ledger .tbl td{vertical-align:top}
+
+/* ── moved in from the methodology page (it now forwards to the portal) ── */
+/* closed sections: same look as the acquisition engine's "How we estimated this" disclosure (ma.css .ma-how) */
+.m-bsp .bsp-drawer{border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2)}
+.m-bsp .bsp-drawer>summary{display:flex;flex-wrap:wrap;align-items:center;gap:4px var(--sys-sp-2);min-height:44px;padding:var(--sys-sp-2) var(--sys-sp-3);cursor:pointer;list-style:none;font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
+.m-bsp .bsp-drawer>summary b{font-weight:600;color:var(--sys-ink)}
+.m-bsp .bsp-drawer>summary::-webkit-details-marker{display:none}
+.m-bsp .bsp-drawer>summary::before{content:"";flex:none;width:7px;height:7px;margin-right:4px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform var(--sys-t)}
+.m-bsp .bsp-drawer[open]>summary::before{transform:rotate(45deg)}
+.m-bsp .bsp-drawer>:not(summary){margin:0 var(--sys-sp-4) var(--sys-sp-4)}
+/* the twelve observations (two columns; one below 900px) */
+.m-bsp .bsp-nar{padding:0;list-style:none;counter-reset:nar;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sys-sp-3) var(--sys-sp-6)}
+.m-bsp .bsp-nar li{counter-increment:nar;position:relative;padding-left:36px;font-size:var(--sys-fs-sm);line-height:1.55;color:var(--sys-ink-2)}
+.m-bsp .bsp-nar li::before{content:counter(nar,decimal-leading-zero);position:absolute;left:0;top:2px;font:600 var(--sys-fs-xs)/1.55 var(--sys-mono);color:var(--sys-mute);border-top:2px solid var(--sys-line-2);padding-top:2px}
+/* how each criterion is scored; the next five */
+.m-bsp .bsp-critd{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sys-sp-4) var(--sys-sp-6);font-size:var(--sys-fs-sm);line-height:1.5;color:var(--sys-ink-2)}
+.m-bsp .bsp-critd p{margin:0 0 6px}
+.m-bsp .bsp-critd b{color:var(--sys-ink)}
+.m-bsp .bsp-bands{display:flex;flex-direction:column;gap:2px}
+.m-bsp .bsp-bands b{font-family:var(--sys-mono);margin-right:6px}
+.m-bsp .bsp-next{display:flex;flex-direction:column;gap:var(--sys-gap)}
+.m-bsp .bsp-nx{display:flex;flex-direction:column;gap:var(--sys-sp-2);border-top:3px solid var(--co,var(--sys-line-2))}
+.m-bsp .bsp-nx-h{display:flex;flex-wrap:wrap;align-items:center;gap:6px var(--sys-sp-3)}
+.m-bsp .bsp-nx-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sys-sp-5)}
+.m-bsp .bsp-nx-grid>div{display:flex;flex-direction:column;gap:var(--sys-sp-2)}
+@media (max-width:900px){.m-bsp .bsp-nar,.m-bsp .bsp-critd,.m-bsp .bsp-nx-grid{grid-template-columns:minmax(0,1fr)}}

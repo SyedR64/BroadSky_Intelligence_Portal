@@ -1,6 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   How BSP buys · shared logic for the portal module (modules/bsp.js) and
-   the methodology page (redesigns/methodology.html). Pure functions only: no
+   How BSP buys · shared logic for the portal module (modules/bsp.js). The
+   methodology page (redesigns/methodology.html) now forwards to the portal;
+   its script still imports this file until it is removed. Pure functions only: no
    DOM framework, no portal runtime. Datasets: BSP acquisition methodology,
    BSP professional network, Punctual Pros / CET / Frontline and Thomas
    Scientific add-on target screens.
@@ -357,7 +358,7 @@ export function introFor(b, t) {
   const pc = PLATFORMS[t._p]?.node; if (!pc || !g.byId.has(pc)) return null;
   const leader = (g.adj.get(pc) || []).filter(e => e.relation === 'works_at' && e.to === pc && e.current !== false).map(e => g.byId.get(e.from)).find(n => n?.type === 'portfolio_ceo');
   const ids = ['org-bsp', pc, leader?.id].filter(Boolean);
-  return { sourced: false, path_node_ids: ids, names: ids.map(id => g.byId.get(id)?.name), hops: ids.length - 1, confidence: 'unsourced', path: `No sourced intro path yet. Default route: ${leader ? `${leader.name} (${leader.title}) at ${g.byId.get(pc).name}` : g.byId.get(pc).name} makes the owner-to-owner approach, which is how most named BSP add-ons were sourced.` };
+  return { sourced: false, path_node_ids: ids, names: ids.map(id => g.byId.get(id)?.name), hops: ids.length - 1, confidence: 'unsourced', path: `No sourced intro path yet. Default path: ${leader ? `${leader.name} (${leader.title}) at ${g.byId.get(pc).name}` : g.byId.get(pc).name} makes the owner-to-owner approach, which is how most named BSP add-ons were sourced.` };
 }
 
 /* ── Chronological strip (inline SVG) ─────────────────────────────────────── */
