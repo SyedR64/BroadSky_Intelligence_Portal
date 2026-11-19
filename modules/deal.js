@@ -112,6 +112,7 @@ function toolbar(ctx) {
       <button type="button" class="${ui.btnCls('secondary', 'sm')}" id="dm-csv">CSV</button>
       <button type="button" class="${ui.btnCls('secondary', 'sm')}" id="dm-link">Copy link</button>
       <button type="button" class="${ui.btnCls('ghost', 'sm', 'ghost')}" id="dm-reset">Reset</button>
+      <button type="button" class="${ui.btnCls('secondary', 'sm')} dm-jump" id="dm-jump">Change the assumptions</button>
     </div>
   </div>
   <p class="dm-preset-sum sys-src" id="dm-sum"></p>`;
@@ -239,6 +240,8 @@ async function frame(ctx, vid, draw, srcIds) {
   el.querySelector('#dm-link').onclick = () => copyLink(ctx);
   el.querySelector('#dm-csv').onclick = () => downloadCsv(ctx);
   el.querySelector('#dm-xlsx').onclick = e => downloadXlsx(ctx, e.currentTarget);
+  // phones show the results first; this button (hidden on wide screens) scrolls down to the inputs
+  el.querySelector('#dm-jump').onclick = () => el.querySelector('.dm-inputs').scrollIntoView({ block: 'start', behavior: 'smooth' });
   // benchmarks under the grid (returns and sensitivity)
   if (vid === 'returns') el.querySelector('#dm-bench').innerHTML = benchPanel(ctx);
   app.index([

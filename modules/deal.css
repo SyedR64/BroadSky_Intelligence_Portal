@@ -124,7 +124,7 @@
   .m-deal .dm-ff-axis>div:empty{display:none}
   .m-deal .dm-right .sys-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-/* stacked layout: inputs, then results, then the benchmarks */
+/* stacked layout: inputs, then results, then the benchmarks (results first at 900px and below: see the end of this file) */
 @media (max-width:1180px){
   .m-deal .dm-left{display:contents}
   .m-deal .dm-inputs{order:1}.m-deal .dm-right{order:2}.m-deal #dm-bench{order:3}
@@ -166,3 +166,10 @@
   .m-deal .dm-fin tr.dm-derived{background:var(--sys-bg-2)}
   .m-deal .dm-fin tr.dm-derived th,.m-deal .dm-fin tr.dm-derived td{background:transparent}
 }
+
+/* phones and narrow tablets (the shell's own phone breakpoint): results first, then the assumptions, then the
+   benchmarks. Visual order only: the DOM, the tab order and every input name and id are unchanged. */
+@media (max-width:900px){.m-deal .dm-right{order:1}.m-deal .dm-inputs{order:2}}
+/* "Change the assumptions": a jump to the inputs, shown only where the results come first */
+.m-deal .dm-jump{display:none}
+@media (max-width:900px){.m-deal .dm-jump{display:inline-flex}}
