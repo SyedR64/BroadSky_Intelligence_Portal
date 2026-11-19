@@ -228,6 +228,10 @@
 .m-ma .ma-co-legend{gap:6px;padding:var(--sys-sp-3) var(--sys-sp-4)}
 .m-ma .ma-co-legend[hidden]{display:none}
 .m-ma .ma-co-legend .sys-chip{min-height:26px;padding:0 10px;font-size:var(--sys-fs-xs)}
+/* ranked picks sit in the narrow column of the row: the name column gives way so the three columns always fit */
+.m-ma #ma-co-ranked .sys-table{width:100%}
+.m-ma #ma-co-ranked .sys-table th,.m-ma #ma-co-ranked .sys-table td{padding-left:10px;padding-right:10px}
+.m-ma #ma-co-ranked td.nm{min-width:0;overflow-wrap:anywhere}
 .m-ma .ma-co-held{margin:var(--sys-sp-3)}
 .m-ma .ma-co-held [data-tid]{cursor:pointer}
 .m-ma .ma-co-strip{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sys-sp-2);margin:0}
