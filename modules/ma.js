@@ -118,7 +118,6 @@ const shortList = a => { const v = (Array.isArray(a) ? a : [a]).filter(Boolean).
 const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
 const cap1 = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 const pctTxt = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;
-const multTxt = (fmt, v) => v == null || isNaN(v) ? '—' : `${fmt.num(v, 1)}x`;
 
 /* Name-collision guard: a target trading under a BSP platform's own name (e.g. "PHE, Inc. d/b/a The Punctual Pros NJ")
    may already be an affiliate or related party. It is held out of every ranking until the company confirms its status. */
@@ -246,7 +245,7 @@ const metaFor = (b, p) => (p === 'cet' ? b.cet?.meta : p === 'pp' ? b.pp?.meta :
 const missingNote = (ui, esc, b) => b.missing.length ? ui.note(`Research dataset${b.missing.length > 1 ? 's' : ''} not yet available: ${b.missing.map(esc).join(', ')}. Screens that depend on ${b.missing.length > 1 ? 'them' : 'it'} show partial results.`, 'warn') + '<div class="mt-12"></div>' : '';
 const sourceFoot = (ui, meta, label) => meta ? ui.source(label || (meta.dataset ? Copy.dataset(meta.dataset) : 'Research screen'), null, meta.generated) : '';
 const nextActionFor = p => ({
-  cet: 'Warm introduction through CET leadership (or the NuWave/Horton networks) → confirm ownership and succession intent → request 3-yr P&L, backlog, bonding capacity, union status and licences → indicative bid inside the LMM multiple band (see Valuation).',
+  cet: 'Warm introduction through CET leadership (or the NuWave/Horton networks) → confirm ownership and succession intent → request 3-yr P&L, backlog, bonding capacity, union status and licences → indicative bid inside the LMM multiple band (see Public comparables in Fundamentals).',
   pp: 'PRG-led owner outreach (for Authority Brands franchisees, open the territory-transfer path with the franchisor) → request 3-yr P&L, membership count, technician roster and call-centre metrics → indicative bid inside the LMM multiple band.',
   fl: 'Re-confirm tuck-in criteria with CEO Tim Britt (the ~$5M revenue / $1–2M EBITDA profile was stated under former CEO Naidoo) → approach → review law-firm client list overlap, contract terms and SOC 2 posture → indicative bid; plan service-desk (HELIX) migration.',
   ts: 'Line-card overlap analysis versus the Thomas catalogue → supplier change-of-control consents → request customer concentration and gross margin by line → indicative bid ahead of Calibre Scientific.',
@@ -1121,95 +1120,9 @@ function openRival(ctx, b, r, peName) {
   });
 }
 
-/* ═══ View 5: Valuation benchmarks ════════════════════════════════════════ */
-const SECTOR_LABEL = { residential_home_services: 'Residential home services', commercial_electrical_energy: 'Commercial electrical & energy', legal_bpo_managed_services: 'Legal / BPO / managed services', lab_distribution: 'Lab supply distribution', communications_agencies: 'Communications agencies', apparel_dtc: 'Apparel / DTC' };
-async function valuation(ctx) {
-  const { el, ui, fmt, esc, charts } = ctx; injectCss();
-  const b = await loadBundle(ctx.data);
-  const c = b.comps; const sb = c?.meta?.sector_benchmarks || {};
-  const secRows = Object.entries(sb).map(([k, s]) => ({ id: k, sector: SECTOR_LABEL[k] || titleCase(k), bsp: s.bsp_company, n: s.n, comps: (s.comps || []).join(', '), growth: s.median_revenue_growth_latest_pct, cagr: s.median_revenue_cagr_2023_latest_pct, om: s.median_operating_margin_latest_pct, omAvg: s.median_operating_margin_multiyear_avg_pct, em: s.median_ebitda_margin_latest_pct, rpe: s.median_revenue_per_employee_usd, implies: s.what_this_implies_for_bsp }));
-  const hiM = secRows.slice().sort((x, y) => (y.em ?? -99) - (x.em ?? -99))[0], hiG = secRows.slice().sort((x, y) => (y.cagr ?? -99) - (x.cagr ?? -99))[0];
-  const evs = b.rivalRows.filter(r => r.ev).sort((x, y) => y.ev - x.ev);
-  const flRaw = b.flts?.meta?.frontline?.platform_context?.stated_criteria;
-  const flCrit = flRaw ? (/Naidoo/.test(flRaw) ? String(flRaw).replace(/^[^:]*Naidoo[^:]*:\s*/, '') : flRaw) : null;
-  /* Default add-on EBITDA per benchmark sector = median screened target revenue (ZoomInfo est.) for the BSP platform in that sector
-     × an assumed LMM EBITDA margin of 10% (capped at the sector's public median). ≈ $0.7M Punctual Pros, $1.5M CET. */
-  const LMM_MARGIN = 10;
-  const defEbitda = id => { const p = PKEYS.find(k => PLAT[k].bench === id); const s = secRows.find(r => r.id === id); const rev = p ? median(handOnly(b.targets).filter(t => t._p === p).map(t => t.revenue_est_usd)) : null; const mg = Math.min(LMM_MARGIN, s?.em > 0 ? s.em : LMM_MARGIN); return rev ? { v: Math.max(0.1, Math.round((rev * mg / 100) / 1e5) / 10), p, rev, mg } : { v: 1, p: null, rev: null, mg }; };
-  el.innerHTML = `<div class="m-ma">` + ui.pageHead({
-    title: 'Valuation benchmarks',
-    sub: c ? `<b>BSP’s edge is multiple arbitrage:</b> buy small add-ons at lower-middle-market prices and sell the combined company nearer scaled-sponsor prices. Use the calculator to size a deal.` : 'Public comparables dataset is not yet available.',
-    chips: `${fmt.chip('SEC XBRL, FY2023–FY2025', 'var(--sys-info)')}${fmt.chip('EBITDA not adjusted', 'var(--sys-warn)')}${fmt.chip('LMM 5–9x assumed', 'var(--c-ma)')}`,
-  }) + (c ? '' : ui.note('Research dataset Public comparables is not yet available; the calculator still works.', 'warn') + '<div class="mt-12"></div>') +
-  ui.kpis([
-    { label: 'Public comps', value: fmt.num(c?.items?.length), sub: `${secRows.length} sectors · 10-K / 20-F`, color: 'var(--sys-info)' },
-    { label: 'Richest margins', value: pctTxt(fmt, hiM?.em), sub: `${esc(hiM?.sector || '—')} · median EBITDA margin`, color: 'var(--sys-good)' },
-    { label: 'Fastest growth', value: pctTxt(fmt, hiG?.cagr), sub: `${esc(hiG?.sector || '—')} · 3-yr CAGR`, color: 'var(--co-cet)' },
-    { label: 'LMM entry band', value: '5–9x', sub: 'EBITDA, private add-ons (assumed)', color: 'var(--c-ma)' },
-    { label: 'Largest rival valuation', value: evs[0] ? fmt.money(evs[0].ev) : '—', sub: evs[0] ? `${esc(evs[0].name)} EV (disclosed)` : 'none disclosed', color: 'var(--sys-bad)' },
-  ]) +
-  `<div class="grid grid-main mt-12">
-    <div class="col gap-12">${ui.panel({ title: 'Sector medians by BSP portfolio company', sub: 'Click a row for what it implies for the BSP company', body: `<div id="ma-sec"></div>`, flush: false, foot: ui.source('SEC EDGAR XBRL company facts (public comparables, sector benchmarks)', 'https://www.sec.gov/edgar/search/', c?.meta?.generated) })}
-    ${ui.panel({ title: 'Margin vs growth regime by sector', sub: 'Median EBITDA margin (latest FY) and median revenue CAGR FY2023 → latest', body: `<div class="th-two"><div><div class="sys-card-label th-h">EBITDA margin</div>${charts.hbar(secRows.map(s => ({ label: s.sector, value: s.em, color: s.em < 0 ? 'var(--sys-bad)' : 'var(--sys-good)' })).sort((x, y) => y.value - x.value), { labelW: 150, fmt: v => pctTxt(fmt, v) })}</div><div><div class="sys-card-label th-h">Revenue CAGR</div>${charts.hbar(secRows.map(s => ({ label: s.sector, value: Math.max(0, s.cagr ?? 0), color: 'var(--co-cet)' })).sort((x, y) => y.value - x.value), { labelW: 150, fmt: v => pctTxt(fmt, v) })}</div></div><div class="soft mt-8">Trades (CET, PP) are the growth engine with thin-to-mid margins; lab distribution and agencies are low-growth. ${secRows.some(s => (s.cagr ?? 0) < 0) ? `Negative CAGRs shown as zero: ${esc(secRows.filter(s => (s.cagr ?? 0) < 0).map(s => `${s.sector} ${pctTxt(fmt, s.cagr)}`).join(', '))}.` : ''}</div>`, foot: ui.source('Public comparables', null, c?.meta?.generated) })}</div>
-    ${ui.panel({ title: 'Implied value calculator', sub: 'Size an add-on and the value created by rolling it into a company', accent: true, actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn" href="#/deal/rollup?p=typical">Full model →</a>`, body: `<div class="calc">
-        <label>Add-on EBITDA ($M)<input type="number" id="c-ebitda" value="1" min="0.1" max="500" step="0.1"><span class="soft" id="c-ebitda-note"></span></label>
-        <label>Benchmark sector<select id="c-sector">${secRows.map(s => `<option value="${esc(s.id)}">${esc(s.sector)}</option>`).join('')}</select></label>
-        <label>Entry multiple <span class="v" id="c-mult-v">7.0x</span><input type="range" id="c-mult" min="5" max="12" step="0.5" value="7"></label>
-        <label>Company exit multiple <span class="v" id="c-exit-v">10.0x</span><input type="range" id="c-exit" min="8" max="14" step="0.5" value="10"></label>
-      </div><div class="sys-kpis calc-out" id="c-out"></div><div class="mt-12" id="c-chart"></div>
-      ${ui.note('<b>Analyst assumption:</b> private lower-middle-market add-ons typically trade at about 5–9x EBITDA, below public comps and scaled sponsor companies. The exit multiple is illustrative, not a forecast. Implied revenue assumes a 10% LMM EBITDA margin, capped at the sector’s public median (LMM targets rarely reach public margins). The default EBITDA is the BSP portfolio company’s median screened target in that sector.', 'warn')}`, foot: `<span class="src">Illustrative · not investment advice${flCrit ? ` · Frontline tuck-in criteria (Mergermarket; stated under former CEO Naidoo, re-confirm with CEO Tim Britt): ${esc(clip(flCrit, 150))}` : ''}</span>` })}
-  </div>
-  <div class="mt-12">${ui.panel({ title: 'All public comparables', sub: 'Sortable · click for fiscal-year detail and the 10-K', body: `<div id="ma-comps"></div>`, foot: ui.source('SEC EDGAR XBRL company facts and 10-K / 20-F filings (public comparables)', 'https://www.sec.gov/edgar/search/', c?.meta?.generated) })}</div>
-  <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Implications for BSP', sub: 'Research synthesis of the public comparables', body: `<div class="fp"><p>${esc(c?.meta?.financial_picture || '—')}</p></div>`, scroll: true, foot: ui.source('Public comparables synthesis (research team)', null, c?.meta?.generated) })}
-    ${ui.panel({ title: 'Benchmark estimate table', sub: 'Metric · estimate · basis · confidence', body: `<div id="ma-est"></div>`, foot: ui.source('Public comparables estimate table · estimates, not reported figures', null, c?.meta?.generated) })}
-  </div></div>`;
-  ui.table(el.querySelector('#ma-sec'), { rows: secRows, pageSize: 10, sortKey: 'em', exportName: 'ma_sector_benchmarks', onRow: s => ctx.inspector.open({ title: esc(s.sector), sub: `Benchmarks ${esc(s.bsp || '')} · ${s.n} peers`, color: 'var(--c-ma)', sections: [{ label: 'Medians', html: ui.kv({ 'Revenue growth (latest)': pctTxt(fmt, s.growth), 'Revenue CAGR 2023→latest': pctTxt(fmt, s.cagr), 'Operating margin (latest)': pctTxt(fmt, s.om), 'Operating margin (multi-yr avg)': pctTxt(fmt, s.omAvg), 'EBITDA margin (latest)': pctTxt(fmt, s.em), 'Revenue / employee': fmt.money(s.rpe), Comps: esc(s.comps) }) }, { label: 'What this implies for BSP', html: `<div class="small text-2">${esc(s.implies || '')}</div>` }, { label: 'Next action', html: `<div class="small text-2">Use these medians as the “mature state” in the add-on model; price targets on their own EBITDA at an LMM multiple, not at public multiples.</div>` }] }),
-    columns: [
-      { key: 'sector', label: 'Sector', fmt: (v, r) => `<b>${esc(v)}</b><div class="dim small">${esc(clip(r.bsp || '', 40))}</div>` },
-      { key: 'n', label: 'n', num: true }, { key: 'growth', label: 'Growth', num: true, fmt: v => pctTxt(fmt, v) }, { key: 'cagr', label: 'CAGR', num: true, fmt: v => pctTxt(fmt, v) },
-      { key: 'om', label: 'Op. margin', num: true, fmt: v => pctTxt(fmt, v) }, { key: 'em', label: 'EBITDA mgn', num: true, fmt: v => pctTxt(fmt, v) }, { key: 'rpe', label: 'Rev / emp.', num: true, fmt: v => fmt.money(v) },
-    ] });
-  ui.table(el.querySelector('#ma-comps'), { rows: (c?.items || []).map(x => ({ ...x, _sector: SECTOR_LABEL[x.sector_tag] || x.sector_tag, _rev: (x.fiscal_years || []).slice(-1)[0]?.revenue_usd })), pageSize: 12, sortKey: 'ebitda_margin_latest_pct', exportName: 'ma_public_comps',
-    columns: [
-      { key: 'ticker', label: 'Ticker', fmt: (v, r) => `<b class="num">${esc(v)}</b><div class="dim small">${esc(clip(r.company, 30))}</div>` }, { key: '_sector', label: 'Sector' }, { key: 'latest_fy', label: 'FY', num: true },
-      { key: '_rev', label: 'Revenue', num: true, fmt: v => fmt.money(v) }, { key: 'revenue_growth_latest_pct', label: 'Growth', num: true, fmt: v => pctTxt(fmt, v) }, { key: 'revenue_cagr_2023_latest_pct', label: 'CAGR', num: true, fmt: v => pctTxt(fmt, v) },
-      { key: 'operating_margin_latest_pct', label: 'Op. margin', num: true, fmt: v => pctTxt(fmt, v) }, { key: 'ebitda_margin_latest_pct', label: 'EBITDA mgn', num: true, fmt: v => pctTxt(fmt, v) }, { key: 'revenue_per_employee_usd', label: 'Rev / emp.', num: true, fmt: v => fmt.money(v) },
-      { key: 'status_note', label: 'Note', wrap: true, fmt: v => `<span class="small dim">${esc(clip(v || '', 90))}</span>` },
-    ],
-    onRow: x => ctx.inspector.open({ title: `${esc(x.ticker)} · ${esc(x.company)}`, sub: `${esc(SECTOR_LABEL[x.sector_tag] || x.sector_tag)} · benchmarks ${esc(clip(x.benchmarks_bsp || '', 60))}`, color: 'var(--sys-info)',
-      sections: [{ label: 'Fiscal years', html: `<div class="sys-table-wrap"><table class="sys-table mini"><thead><tr><th>FY</th><th class="sys-n">Revenue</th><th class="sys-n">Op. mgn</th><th class="sys-n">EBITDA mgn</th><th class="sys-n">Staff</th></tr></thead><tbody>${(x.fiscal_years || []).map(f => `<tr><td>${esc(f.fy)}</td><td class="sys-n">${fmt.money(f.revenue_usd)}</td><td class="sys-n">${pctTxt(fmt, f.operating_margin_pct)}</td><td class="sys-n">${pctTxt(fmt, f.ebitda_margin_pct)}</td><td class="sys-n">${fmt.num(f.employees)}</td></tr>`).join('')}</tbody></table></div>` },
-        { label: 'What it tells us', html: `<div class="small text-2">${esc(x.what_it_tells_us || x.status_note || '—')}</div>` },
-        { label: 'Sources', html: `<div class="col gap-4 small">${x.tenk_url ? `<a href="${esc(x.tenk_url)}" target="_blank" rel="noopener">${esc(x.tenk_form || '10-K')} filed ${esc(x.tenk_filed || '')} ↗</a>` : ''}${x.source_url ? `<a href="${esc(x.source_url)}" target="_blank" rel="noopener">XBRL companyfacts ↗</a>` : ''}</div>` },
-        { label: 'Next action', html: `<div class="small text-2">Use as a margin and productivity benchmark for ${esc(clip(x.benchmarks_bsp || 'the BSP portfolio company', 60))}.</div>` }],
-      actions: x.tenk_url ? [{ label: '10-K ↗', href: x.tenk_url }] : [] }) });
-  const est = c?.meta?.estimate_table || [];
-  const estEl = el.querySelector('#ma-est');
-  if (est.length) ui.table(estEl, { rows: est.map((e, i) => ({ ...e, id: i })), pageSize: 8, exportName: 'ma_benchmark_estimates', columns: [{ key: 'metric', label: 'Metric', wrap: true, fmt: v => `<span class="small">${esc(v)}</span>` }, { key: 'estimate', label: 'Estimate', wrap: true, fmt: v => `<b class="small">${esc(v)}</b>` }, { key: 'confidence', label: 'Conf.', fmt: v => fmt.chip(v, v === 'high' ? 'var(--sys-good)' : v === 'medium' ? 'var(--sys-warn)' : 'var(--sys-mute-2)') }], onRow: e => ctx.inspector.open({ title: esc(e.metric), sub: `Estimate ${esc(e.estimate)}`, color: 'var(--c-ma)', sections: [{ label: 'Basis', html: `<div class="small text-2">${esc(e.basis)}</div>` }, { label: 'Confidence', html: fmt.chip(e.confidence) }] }) });
-  else estEl.innerHTML = ui.empty('No estimate table');
-  // Calculator
-  const $e = el.querySelector('#c-ebitda'), $m = el.querySelector('#c-mult'), $x = el.querySelector('#c-exit'), $s = el.querySelector('#c-sector');
-  const secPref = secRows.find(s => s.id === 'residential_home_services') || secRows[0]; if (secPref) $s.value = secPref.id;
-  let edited = false;
-  const setDefault = () => { const d = defEbitda($s.value); $e.value = String(d.v); el.querySelector('#c-ebitda-note').textContent = d.p ? `default = ${PLAT[d.p].label} median target ${fmt.money(d.rev)} rev. est. × ${fmt.num(d.mg, 1)}% LMM margin` : 'no BSP target screen in this sector; illustrative $1M'; };
-  $e.addEventListener('input', () => { edited = true; }); $s.addEventListener('change', () => { if (!edited) { setDefault(); calc(); } });
-  if (secPref) setDefault();
-  const calc = () => {
-    const e = Math.max(0, Number($e.value) || 0) * 1e6, m = Number($m.value), x = Number($x.value); const s = secRows.find(r => r.id === $s.value);
-    el.querySelector('#c-mult-v').textContent = `${m.toFixed(1)}x`; el.querySelector('#c-exit-v').textContent = `${x.toFixed(1)}x`;
-    const mg = Math.min(LMM_MARGIN, s?.em > 0 ? s.em : LMM_MARGIN); const ev = e * m, rev = mg > 0 ? e / (mg / 100) : null, arb = e * (x - m);
-    el.querySelector('#c-out').innerHTML = [
-      ui.kpi({ label: 'Enterprise value', value: fmt.money(ev), sub: `${fmt.money(e)} EBITDA × ${m.toFixed(1)}x`, color: 'var(--c-ma)' }),
-      ui.kpi({ label: 'LMM band (5–9x)', value: `${fmt.money(e * 5)}–${fmt.money(e * 9)}`, sub: 'analyst assumption', color: 'var(--sys-warn)' }),
-      ui.kpi({ label: 'Implied revenue (est.)', value: rev ? fmt.money(rev) : '—', sub: s ? `at ${pctTxt(fmt, mg)} LMM margin (sector public median ${pctTxt(fmt, s.em)})` : '—', color: 'var(--sys-info)' }),
-      ui.kpi({ label: 'Multiple-arbitrage uplift', value: fmt.money(arb), sub: `(${x.toFixed(1)}x − ${m.toFixed(1)}x) × EBITDA · illustrative`, color: arb >= 0 ? 'var(--sys-good)' : 'var(--sys-bad)' }),
-    ].join('');
-    el.querySelector('#c-chart').innerHTML = `<div class="sys-card-label th-h">Enterprise value by entry multiple</div>${charts.bar([5, 6, 7, 8, 9, 10, 11, 12].map(k => ({ label: `${k}x`, value: e * k, k })), { h: 130, color: 'var(--sys-line-2)', fmt: v => `$${fmt.num(v / 1e6, e * 12 < 2e7 ? 1 : 0)}M`, highlight: d => d.k === Math.round(m) })}`;
-  };
-  [$e, $m, $x, $s].forEach(n => n.addEventListener('input', calc)); calc();
-}
-
 /* ═══ View 6: White space ═════════════════════════════════════════════════ */
+/* Plain names for the public-comparables sector keys (the White space cards name their nearest benchmark). */
+const SECTOR_LABEL = { residential_home_services: 'Residential home services', commercial_electrical_energy: 'Commercial electrical & energy', legal_bpo_managed_services: 'Legal / BPO / managed services', lab_distribution: 'Lab supply distribution', communications_agencies: 'Communications agencies', apparel_dtc: 'Apparel / DTC' };
 function buildWhitespace(b) {
   const firms = b.pe?.items || []; const bspSectors = b.firm?.firm?.sectors || [];
   const heldSectors = { 'Infrastructure Services': 'CET', 'Residential Services': 'Punctual Pros', 'IT & Tech Services': 'Frontline', 'Distribution & Logistics Services': 'Thomas Scientific', 'Media Services': 'BPI' };
@@ -1576,7 +1489,7 @@ const KIT = { Copy, PLAT, PKEYS, SKEYS, SRC_LABEL, REACH_TXT, DIM_MAX, num, medi
 
 export default {
   id: 'ma', name: 'Acquisition engine', tag: 'M&A', color: 'var(--c-ma)', group: 'Intelligence',
-  tagline: 'Cross-portfolio buy-and-build engine: screened add-ons with a brief per company, the SBA loan screen, rival companies, valuation benchmarks and white space',
+  tagline: 'Cross-portfolio buy-and-build engine: screened add-ons with a brief per company, the SBA loan screen, website research, rival companies and white space',
   hq: { lat: 40.7536, lon: -73.9832, label: 'BSP, New York, NY' },
   views: [
     { id: 'overview', name: 'Overview', icon: '◉', render: overview },
@@ -1585,7 +1498,6 @@ export default {
     { id: 'loans', name: 'SBA loan records', icon: '☰', render: loansView },
     { id: 'research', name: 'Website research', icon: '⌕', render: researchView },
     { id: 'rivals', name: 'Rival companies', icon: '⚔', render: rivalsView },
-    { id: 'valuation', name: 'Valuation', icon: '$', render: valuation },
     { id: 'whitespace', name: 'White space', icon: '✦', render: whitespace },
   ],
   tour: [

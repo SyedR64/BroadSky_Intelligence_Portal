@@ -1,7 +1,7 @@
 /* Acquisition engine (M&A): layout only. Every selector is prefixed .m-ma / .m-ma-insp.
    Cards, KPI tiles, chips, tables, notes and est. badges are the system components
    (system.css); this file only places them and sizes the few bespoke pieces
-   (top-10 list, plan steps, benchmark legend, calculator, white-space breakdown bars)
+   (top-10 list, plan steps, benchmark legend, company cards, lender-mark bars, white-space breakdown bars)
    with --sys-* tokens. No colour, radius, shadow or font of its own.               */
 
 /* map panel fills its card */
@@ -75,16 +75,6 @@
 .m-ma .intens .sp{margin-top:var(--sys-sp-1);font-size:var(--sys-fs-xs);color:var(--sys-mute)}
 .m-ma .intens .sys-chip{white-space:normal;max-width:100%;height:auto;min-height:26px;font-size:var(--sys-fs-xs)}
 
-/* valuation calculator */
-.m-ma .calc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sys-sp-3) var(--sys-sp-4)}
-.m-ma .calc label{display:flex;flex-direction:column;gap:6px;font:600 var(--sys-fs-2xs)/1.3 var(--sys-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sys-mute)}
-.m-ma .calc label .v{font:600 var(--sys-fs-sm) var(--sys-mono);letter-spacing:0;color:var(--sys-ink)}
-.m-ma .calc label .soft{font:400 var(--sys-fs-xs)/1.45 var(--sys-font);letter-spacing:0;text-transform:none}
-.m-ma .calc input[type=range]{width:100%;padding:0;accent-color:var(--sys-ink)}
-.m-ma .calc input[type=number],.m-ma .calc select{width:100%;text-transform:none;letter-spacing:0}
-.m-ma .calc-out{margin-top:var(--sys-sp-4)}
-.m-ma .calc-out .sys-kpi-value{font-size:clamp(20px,1.8vw,24px)}
-
 /* white space: linked system cards */
 .m-ma .ws-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr))}
 .m-ma .ws .hd{display:flex;align-items:flex-start;gap:var(--sys-sp-2)}
@@ -128,7 +118,7 @@
 .m-ma #ma-rtbl .sys-table td:nth-child(5),.m-ma #ma-rtbl .sys-table td:nth-child(8){white-space:normal;max-width:140px}
 
 @media (max-width:900px){
-  .m-ma .th-two,.m-ma .calc{grid-template-columns:1fr}
+  .m-ma .th-two{grid-template-columns:1fr}
   .m-ma .intens .r{grid-template-columns:1fr;gap:var(--sys-sp-2)}
   .m-ma-insp.ma-stage{grid-template-columns:1fr}
 }
