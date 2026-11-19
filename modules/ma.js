@@ -116,6 +116,7 @@ const OWNER_COLOR = { 'Founder / family': 'var(--sys-good)', 'Private independen
 const injectCss = () => { if (!document.getElementById('css-ma')) { const l = document.createElement('link'); l.id = 'css-ma'; l.rel = 'stylesheet'; l.href = 'modules/ma.css?v=20261117223642'; document.head.appendChild(l); } };
 const shortList = a => { const v = (Array.isArray(a) ? a : [a]).filter(Boolean).map(x => { const y = String(x).replace(/\s*\(.*?\)\s*/g, ' ').replace(/_/g, ' ').trim(); return y.length > 26 ? y.slice(0, 25).trim() + '…' : y; }); return v.length > 2 ? [...v.slice(0, 2), `+${v.length - 2}`] : v; };
 const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
+const cap1 = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 const pctTxt = (fmt, v, d = 1) => v == null || isNaN(v) ? '—' : `${fmt.num(v, d)}%`;
 const multTxt = (fmt, v) => v == null || isNaN(v) ? '—' : `${fmt.num(v, 1)}x`;
 
@@ -489,7 +490,14 @@ function buildRivals(rf) {
     const maturities = kf.filter(([k, v]) => /maturity/.test(k) && typeof v === 'string' && /^\d{4}-\d{2}/.test(v)).map(([, v]) => v).sort();
     const ev = (nums.find(([k]) => /enterprise_value_usd/.test(k)) || [])[1] || null;
     const price = (nums.find(([k]) => /estimated_price_usd/.test(k)) || [])[1] || null;
-    const scaleTxt = (kf.find(([k]) => /^(employees|team_members|jobs_reported|experts)/.test(k)) || [])[1];
+    // staff: a headcount the filings or the company state (also "full_time_employees_…", "solo_brands_employees_…"), else the PPP jobs figure of 2020
+    const staffKF = kf.find(([k]) => /(^|_)(full_time_employees|employees|team_members|experts)(_|$)/.test(k) && !/contractors/.test(k)) || kf.find(([k]) => /^jobs_reported/.test(k));
+    const scaleTxt = staffKF?.[1], scaleKind = !staffKF ? '' : /jobs_reported/.test(staffKF[0]) ? 'PPP jobs, 2020' : /team_members|experts/.test(staffKF[0]) ? 'company website' : 'headcount';
+    // visible debt: a total one filing reports where there is one, else the sum of every lender's slice on file (slices can overlap, so it is a floor)
+    const debtTot = nums.filter(([k]) => /total.*par|par.*total/.test(k)).map(([, v]) => v);
+    const debtSlices = kf.filter(([k]) => /par(_usd(_m)?)?$|_pars_usd$/.test(k) && !/prior_period|common|unfunded|total/.test(k)).flatMap(([k, v]) => (Array.isArray(v) ? v : [v]).map(x => /usd_m$/.test(k) ? x * 1e6 : x)).filter(x => typeof x === 'number');
+    const visDebt = debtTot.length ? Math.max(...debtTot) : debtSlices.length ? debtSlices.reduce((a, x) => a + x, 0) : null;
+    const visDebtKind = debtTot.length ? 'a total one lender’s filing reports' : debtSlices.length ? `the sum of ${debtSlices.length} lender slice${debtSlices.length === 1 ? '' : 's'} on file` : '';
     const estRows = r.est ? est.filter(e => String(e.metric).includes(r.est)) : [];
     const estRev = estRows.find(e => /revenue/i.test(e.metric));
     const estEbitda = estRows.find(e => /EBITDA/i.test(e.metric));
@@ -500,7 +508,7 @@ function buildRivals(rf) {
     const signal = r.type === 'Public strategic' ? 'Public — reported' : pik || (minMark != null && minMark < 95) ? 'Stressed' : nearMat ? 'Refi due' : hasLoan ? 'Performing' : 'No lender data';
     return {
       ...r, overlapList: [...r.overlap], n: r.items.length, rev, revFy, margin, marginNote, minMark, maxMark: marks.length ? Math.max(...marks) : null, maxPar, ltd: ltd.length ? Math.max(...ltd) : null,
-      spread, pik, maturity: maturities[0] || null, ev, price, scaleTxt, estRev, estEbitda, estRows, latest: dates[dates.length - 1] || null, signal,
+      spread, pik, maturity: maturities[0] || null, ev, price, scaleTxt, scaleKind, visDebt, visDebtKind, estRev, estEbitda, estRows, latest: dates[dates.length - 1] || null, signal,
       _scale: rev ?? (estRev ? parseRange(estRev.estimate) : null),
     };
   });
@@ -984,12 +992,17 @@ async function rivalsView(ctx) {
   const b = await loadBundle(ctx.data);
   if (!b.rivals) { el.innerHTML = `<div class="m-ma">${ui.pageHead({ title: 'Rival companies', sub: 'PE-backed and strategic competitors for the same add-ons' })}${ui.note('Research dataset Competitor filings is not yet available.', 'warn')}</div>`; return; }
   const all = b.rivalRows; const m = b.rivals.meta || {};
-  const sel = Object.keys(OVERLAP).includes(params.o) ? params.o : 'all';
+  const sel = OVERLAP[params.o] ? params.o : OVERLAP[params.sector] ? params.sector : 'all';   // `sector`: the same keys on a forwarded Fundamentals rivals link
   const rows = all.filter(r => sel === 'all' || r.overlapList.includes(sel));
   const stressed = all.filter(r => r.signal === 'Stressed'), refi = all.filter(r => r.signal === 'Refi due');
   const peN = all.filter(r => r.type === 'PE-backed').length, pubN = all.filter(r => r.type === 'Public strategic').length;
   const ppR = all.filter(r => r.overlapList.includes('punctual_pros')).length;
   const heat = b.pe?.meta?.sector_heatmap || {};
+  const nBdc = (b.rivals.items || []).filter(i => i.category === 'bdc_loan_schedule').length, nPpp = (b.rivals.items || []).filter(i => i.category === 'sba_ppp').length, pikN = all.filter(r => r.pik).length;
+  // lender marks (lowest first) and the maturity wall (earliest first) use this screen's own figures, so the bars, the wall and the table agree
+  const marked = all.filter(r => r.minMark != null).sort((x, y) => x.minMark - y.minMark);
+  const wall = all.filter(r => r.maturity || r.spread).sort((x, y) => String(x.maturity || '9').localeCompare(String(y.maturity || '9')));
+  const estAll = Array.isArray(m.estimate_table) ? m.estimate_table : [];
   const peName = id => (b.pe?.items || []).find(f => f.id === id)?.firm || titleCase(id);
   const targetNames = b.targets.map(t => String(t.company).toLowerCase());
   all.forEach(r => { const w = r.name.toLowerCase().replace(/\(.*?\)/g, '').split(/[^a-z0-9&]+/).map(x => x.replace(/[^a-z0-9]/g, '')).filter(x => x.length > 1).slice(0, 2); const re = w.length === 2 ? new RegExp(`\\b${w[0].replace(/[^a-z0-9]/g, '')}\\b.*\\b${w[1].replace(/[^a-z0-9]/g, '')}\\b`) : null; r.alsoTarget = !!re && targetNames.some(n => re.test(n)); });
@@ -1000,9 +1013,9 @@ async function rivalsView(ctx) {
     actions: `<a class="sys-btn sys-btn--secondary btn" href="#/pe">Private equity →</a><a class="sys-btn sys-btn--secondary btn" href="#/fin/methods">Methods and gaps</a>`,
   }) +
   ui.kpis([
-    { label: 'Rival companies', value: fmt.num(all.length), sub: `${fmt.num(b.rivals.items?.length)} filings parsed`, color: 'var(--sys-bad)' },
+    { label: 'Rival companies', value: fmt.num(all.length), sub: `${fmt.num(b.rivals.items?.length)} filings · ${fmt.num(nBdc)} lender loan lines · ${fmt.num(nPpp)} PPP records`, color: 'var(--sys-bad)' },
     { label: 'PE-backed', value: fmt.num(peN), sub: `${pubN} public strategics · ${all.length - peN - pubN} private/other`, color: 'var(--c-pe)' },
-    { label: 'Credit stress', value: fmt.num(stressed.length), sub: esc(stressed.slice(0, 3).map(r => r.name).join(', ') || '—'), color: 'var(--sys-bad)' },
+    { label: 'Credit stress', value: fmt.num(stressed.length), sub: `${esc(stressed.slice(0, 3).map(r => r.name).join(', ') || '—')} · ${fmt.num(pikN)} paying PIK`, color: 'var(--sys-bad)' },
     { label: 'Refi due ≤2027', value: fmt.num(refi.length), sub: esc(refi.map(r => r.name).slice(0, 2).join(', ') || '—'), color: 'var(--sys-warn)' },
     { label: 'Competing with PP', value: fmt.num(ppR), sub: 'most contested BSP portfolio company', color: 'var(--co-pp)' },
     { label: 'Also on a BSP target list', value: fmt.num(all.filter(r => r.alsoTarget).length), sub: esc(all.filter(r => r.alsoTarget).map(r => r.name).join(', ') || '—'), color: 'var(--sys-good)' },
@@ -1010,16 +1023,26 @@ async function rivalsView(ctx) {
   `<div class="sys-filters ma-seg-row mt-12"><span class="sys-field-label lbl">Competes with</span><div id="ma-rseg"></div></div>
   <div id="ma-rtbl"></div>
   <div class="sys-src src-line mt-8">Sources: SEC EDGAR BDC schedules of investments (10-Q/10-K, N-PORT), issuer 10-Ks, Form D and SBA PPP FOIA (Competitor filings, ${esc(fmt.num(b.rivals.items?.length))} filings) · estimates labelled est. · generated ${esc(m.generated || '—')}</div>
+  <div class="grid grid-2 mt-12">
+    ${ui.panel({ title: 'Where lenders mark rivals', sub: `Lowest visible lender mark per borrower, as a share of face value. Red is under 90, amber under 97. ${marked.length} borrowers have a visible mark${marked[0] ? `; the lowest is ${esc(marked[0].name)} at ${fmt.num(marked[0].minMark, 1)}` : ''}. Click a bar for the filings.`,
+      body: `<div id="ma-mk">${marked.map(r => { const v = r.minMark, c = v < 90 ? 'var(--sys-bad)' : v < 97 ? 'var(--sys-warn)' : 'var(--sys-good)'; return `<div class="ma-mk" data-r="${esc(r.id)}" tabindex="0" role="button" title="${esc(r.name)}: ${fmt.num(v, 1)}% of face value"><span class="lb"><span class="n">${esc(r.name)}</span>${r.pik ? '<span class="pk">PIK</span>' : ''}</span><span class="tr"><i style="width:${Math.max(2, Math.min(100, (v - 70) / 30 * 100))}%;background:${c}"></i></span><span class="vv">${fmt.num(v, 1)}</span></div>`; }).join('') || ui.empty('No marks disclosed')}${marked.length ? '<div class="ma-mk-axis"><span>70</span><span>85</span><span>100</span></div>' : ''}</div>`,
+      foot: `${ui.source('Lender filings: fund schedules of investments (10-Q, 10-K, N-PORT)', 'https://efts.sec.gov/LATEST/search-index', m.generated)}<span class="src">One lender’s slice of each loan. Where a filing gives fair value and face value but no mark, the mark is fair value divided by face value.</span>` })}
+    ${ui.panel({ title: 'Pricing and maturity wall', sub: 'Earliest maturity first. Red falls due within 18 months. Click a row for the filings.', scroll: true, flush: true,
+      body: `<div class="sys-table-wrap" id="ma-wall"><table class="sys-table mini"><thead><tr><th>Borrower</th><th>Pricing</th><th class="sys-n">Earliest maturity</th><th class="sys-n">Visible debt, at least</th></tr></thead><tbody>${wall.map(r => { const mo = r.maturity ? (new Date(r.maturity.length === 7 ? r.maturity + '-01' : r.maturity) - new Date()) / 2.63e9 : null; return `<tr data-r="${esc(r.id)}" tabindex="0"><td class="nm">${esc(r.name)}</td><td class="wrap small text-2">${esc(Copy.credit(String(r.spread || '—')))}${r.pik ? ` ${fmt.chip('PIK', 'var(--sys-bad)')}` : ''}</td><td class="sys-n" style="color:${mo != null && mo < 18 ? 'var(--sys-bad-ink)' : 'var(--sys-ink-2)'}">${esc(r.maturity ? dayWords(r.maturity) : '—')}</td><td class="sys-n"${r.visDebtKind ? ` title="${esc(cap1(r.visDebtKind))}"` : ''}>${r.visDebt ? `≥${fmt.money(r.visDebt)}` : '—'}</td></tr>`; }).join('')}</tbody></table></div>`,
+      foot: `${ui.source('Lender filings: fund schedules of investments', null, m.generated)}<span class="src">Sum of the lender slices on file; slices held by different lenders may overlap.</span>` })}
+  </div>
+  ${estAll.length ? `<details class="ma-how ma-sec mt-12" id="ma-rest"><summary>Rival estimates (${estAll.length}): the figure, how it was built and the confidence</summary><div class="ma-sec-body"><div class="sys-table-wrap"><table class="sys-table mini ma-stack"><thead><tr><th>Metric</th><th>Estimate</th><th>How it was built</th><th>Confidence</th></tr></thead><tbody>${estAll.map(e => `<tr><td class="nm">${esc(Copy.text(e.metric))}</td><td><b>${esc(e.estimate)}</b>${Copy.EST}</td><td class="wrap small text-2">${esc(Copy.text(e.basis || ''))}</td><td>${confChip(esc, e.confidence)}</td></tr>`).join('')}</tbody></table></div></div><div class="ma-how-foot">${esc(CONF_RULE)}</div></details>` : ''}
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Competitive intensity by sector', sub: 'Private-equity heat map: most active sponsors per BSP company sector. Click a row for detail.', body: `<div class="intens" id="ma-heatrows"></div>`, foot: ui.source('Private-equity landscape: sector heatmap', null, b.pe?.meta?.generated) })}
-    ${ui.panel({ title: 'What the filings say', sub: 'Synthesis by the research team (competitor filings)', body: `<div class="fp">${(Array.isArray(m.financial_picture) ? m.financial_picture : [m.financial_picture]).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join('')}</div><div class="sys-card-label th-h">How rival figures are built</div><ul class="bul"><li><b>Lender filings.</b> Funds that lend to rivals list each loan, its size, its rate and what they think it is worth, which shows debt, stress and when it falls due.</li><li><b>Loan records.</b> Payroll in pandemic-era loan records, divided by the share of revenue spent on labour, gives a revenue range.</li><li><b>Annual reports.</b> Listed rivals report revenue, profit and headcount.</li><li><b>Headcount.</b> For private rivals, staff × typical revenue per employee, with the range stated. Each estimate carries its confidence; open a rival to see the working.</li></ul><div class="sys-card-label th-h">Where to look next</div><ul class="bul">${(m.next_pulls || []).slice(0, 5).map(x => `<li>${esc(x)}</li>`).join('')}</ul>`, scroll: true, foot: ui.source('SEC EDGAR (BDC 10-Q/10-K, N-PORT, 10-K, Form D), SBA PPP FOIA', 'https://efts.sec.gov/LATEST/search-index', m.generated) })}
+    ${ui.panel({ title: 'What the filings say', sub: 'Synthesis by the research team (competitor filings)', body: `<div class="fp">${(Array.isArray(m.financial_picture) ? m.financial_picture : [m.financial_picture]).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join('')}</div><div class="sys-card-label th-h">How rival figures are built</div><ul class="bul"><li><b>Lender filings.</b> Funds that lend to rivals list each loan, its size, its rate and what they think it is worth, which shows debt, stress and when it falls due.</li><li><b>Loan records.</b> Payroll in pandemic-era loan records, divided by the share of revenue spent on labour, gives a revenue range.</li><li><b>Annual reports.</b> Listed rivals report revenue, profit and headcount.</li><li><b>Headcount.</b> For private rivals, staff × typical revenue per employee, with the range stated. Each estimate carries its confidence; open a rival to see the working.</li></ul><div class="sys-card-label th-h">Where to look next</div><ul class="bul">${(m.next_pulls || []).slice(0, 6).map(x => `<li>${esc(x)}</li>`).join('')}</ul>`, scroll: true, foot: ui.source('SEC EDGAR (BDC 10-Q/10-K, N-PORT, 10-K, Form D), SBA PPP FOIA', 'https://efts.sec.gov/LATEST/search-index', m.generated) })}
   </div></div>`;
   ui.seg(el.querySelector('#ma-rseg'), [{ value: 'all', label: `All (${all.length})` }, ...Object.entries(OVERLAP).map(([k, o]) => ({ value: k, label: `${o.label} (${all.filter(r => r.overlapList.includes(k)).length})` }))], sel, v => app.go('ma', 'rivals', v === 'all' ? undefined : { o: v }));
   const columns = [
     { key: 'name', label: 'Rival', fmt: (v, r) => `<b>${esc(v)}</b>${r.alsoTarget ? ` ${fmt.chip('also a target', 'var(--sys-good)')}` : ''}<div class="small"><span class="sys-dot" style="--co:${r.type === 'PE-backed' ? 'var(--c-pe)' : r.type === 'Public strategic' ? 'var(--sys-info)' : 'var(--sys-mute)'}" aria-hidden="true"></span> ${esc(r.type)} <span class="dim">· ${esc(clip(r.owner, 38))}</span></div>` },
     { key: 'overlapList', label: 'Overlap', sort: (a, c) => a.overlapList.length - c.overlapList.length, fmt: v => v.map(o => fmt.chip(OVERLAP[o]?.label || o, OVERLAP[o]?.color)).join(' ') },
     { key: 'signal', label: 'Credit signal', fmt: v => fmt.chip(v, SIGNAL_COLOR[v]) },
-    { key: '_scale', label: 'Revenue', num: true, fmt: (v, r) => r.rev ? `${fmt.money(r.rev)} <span class="dim small">FY${r.revFy}</span>` : r.estRev ? `<span title="${esc(r.estRev.basis)}">${esc(r.estRev.estimate)} <span class="dim small">est.</span></span>` : r.scaleTxt ? `<span class="dim small">${esc(r.scaleTxt)} staff</span>` : '—' },
+    { key: '_scale', label: 'Revenue', num: true, fmt: (v, r) => { const st = r.scaleTxt != null ? `<span class="dim small" title="${esc(cap1(r.scaleKind))}">${esc(typeof r.scaleTxt === 'number' ? fmt.num(r.scaleTxt) : r.scaleTxt)} staff</span>` : '';
+      return r.rev ? `${fmt.money(r.rev)} <span class="dim small">FY${r.revFy}</span>${st ? `<div>${st}</div>` : ''}` : r.estRev ? `<span title="${esc(r.estRev.basis)}">${esc(r.estRev.estimate)} <span class="dim small">est.</span></span>${st ? `<div>${st}</div>` : ''}` : st || '—'; } },
     { key: 'margin', label: 'Op. margin', num: true, fmt: (v, r) => v != null ? `<span title="${esc(r.marginNote)}">${pctTxt(fmt, v)}</span>` : r.estEbitda ? `<span class="small" title="${esc(r.estEbitda.basis)}">EBITDA ${esc(r.estEbitda.estimate)} est.</span>` : '—' },
     { key: 'maxPar', label: 'Largest visible loan', num: true, fmt: (v, r) => v ? fmt.money(v) : r.ltd ? `${fmt.money(r.ltd)} <span class="dim small">LTD</span>` : '—' },
     { key: 'minMark', label: 'Lender mark', num: true, fmt: (v, r) => v == null ? '—' : `<span style="color:${v < 95 ? 'var(--sys-bad-ink)' : v < 98 ? 'var(--sys-warn-ink)' : 'var(--sys-good-ink)'}">${fmt.num(v, 1)}</span>${r.maxMark != null && r.maxMark !== v ? `<span class="dim small">–${fmt.num(r.maxMark, 1)}</span>` : ''}` },
@@ -1034,10 +1057,15 @@ async function rivalsView(ctx) {
   el.querySelectorAll('#ma-heatrows .r').forEach(n => n.onclick = () => { const h = heat[n.dataset.k]; const firms = (h.most_active || []).map(id => (b.pe?.items || []).find(f => f.id === id)).filter(Boolean);
     ctx.inspector.open({ title: esc(OVERLAP[n.dataset.k]?.label || titleCase(n.dataset.k)), sub: `${esc(h.sector)} · intensity ${esc(h.intensity)}`, color: OVERLAP[n.dataset.k]?.color,
       sections: [{ label: 'Read-out', html: `<div class="small text-2">${esc(h.note || '')}</div>` }, { label: `Most active sponsors (${firms.length})`, html: `<div class="m-ma-insp">${firms.map(f => `<div class="it"><div class="t">${esc(f.firm)} ${fmt.chip(`threat ${f.threat_level}`, f.threat_level === 'high' ? 'var(--sys-bad)' : f.threat_level === 'medium' ? 'var(--sys-warn)' : 'var(--sys-mute-2)')}</div><div class="w">${esc(clip(f.threat_rationale || f.strategy || '', 220))}</div>${f.website ? `<div class="kf"><a href="${esc(f.website)}" target="_blank" rel="noopener">${esc(fmt.host(f.website))}</a></div>` : ''}</div>`).join('')}</div>` },
-        { label: 'Next action', html: `<div class="small text-2">Review sponsor deal flow in the Private equity module; flag any target in this sector that a listed sponsor has approached.</div>` }],
+        { label: 'Next action', html: `<div class="small text-2">Review sponsor deal flow in Private equity; flag any target in this sector that a listed sponsor has approached.</div>` }],
       actions: [{ id: 'pe', label: 'Open Private equity', onClick: () => app.go('pe') }] }); });
   app.index(all.map(r => ({ label: r.name, sub: `Rival company · ${r.owner}`, href: `#/ma/rivals?r=${r.id}`, kind: 'Rival', color: 'var(--sys-bad)' })));
-  if (params.r) { const r = all.find(x => x.id === params.r); if (r) { tbl.select(r.id); openRival(ctx, b, r, peName); } }
+  const openR = r => { if (r) { tbl.select(r.id); openRival(ctx, b, r, peName); } };
+  el.querySelectorAll('#ma-mk [data-r], #ma-wall [data-r]').forEach(n => { const go = () => openR(all.find(x => x.id === n.dataset.r)); n.onclick = go; n.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }; });
+  // ?r= is this screen's rival id. ?rival= is the name slug the retired Fundamentals rivals screen used: matched on its first word, best effort.
+  const slug = x => String(x || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'), w0 = slug(params.rival).split('-').filter(Boolean)[0] || '';
+  if (params.r) openR(all.find(x => x.id === params.r));
+  else if (w0) openR(all.find(x => x.id === params.rival) || all.find(x => slug(x.name).startsWith(w0)) || (w0.length > 3 ? all.find(x => slug(x.name).includes(w0)) : null));
 }
 /* A rival has no model preset, so "Model this deal" is a scenario link written with deal-lib's encode(): the typical
    lower-middle-market deal with this rival's own figures laid over it (revenue, margin, price multiple and debt where the
@@ -1081,7 +1109,7 @@ function rivalHowHtml(ctx, b, r, M) {
   if (!rows.length) return '';
   return `<details class="ma-how"><summary>How we estimated this</summary>
     <ol class="ma-how-steps">${rows.map(x => `<li><div class="ma-how-h"><span class="ma-how-k">${esc(x.k)}</span><span class="ma-how-v">${x.v}</span>${confChip(esc, x.conf)}</div><div class="ma-how-t">${x.how}</div></li>`).join('')}</ol>
-    <div class="ma-how-foot">Latest filing ${esc(dayWords(r.latest))}; rival research as of ${esc(dayWords(m.generated))}. Methods: lender schedules of investments and fund holdings, loan records, annual reports and company headcount × revenue per employee. ${esc(CONF_RULE)} <a href="#/fin/rivals">Rival filings</a> · <a href="#/fin/methods">Methods and data gaps →</a></div>
+    <div class="ma-how-foot">Latest filing ${esc(dayWords(r.latest))}; rival research as of ${esc(dayWords(m.generated))}. Methods: lender schedules of investments and fund holdings, loan records, annual reports and company headcount × revenue per employee. ${esc(CONF_RULE)} <a href="#/fin/explorer?company=rival">Rival filings</a> · <a href="#/fin/methods">Methods and data gaps →</a></div>
   </details>`;
 }
 function openRival(ctx, b, r, peName) {

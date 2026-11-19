@@ -238,3 +238,30 @@
 @media (max-width:900px){.m-ma .ma-co-map .panel-body,.m-ma .ma-co-map .map{min-height:300px}}
 /* phone: a compact card (the chip already names the company) */
 @media (max-width:560px){.m-ma .ma-co-card .sys-card-title,.m-ma .ma-co-card .ma-co-split{display:none}}
+
+/* rival companies: lender-mark bars and the maturity wall (moved here from the retired Fundamentals rivals screen) */
+.m-ma .ma-mk{display:grid;grid-template-columns:150px 1fr 52px;gap:var(--sys-sp-2);align-items:center;padding:3px 0;font-size:var(--sys-fs-xs);cursor:pointer}
+.m-ma .ma-mk .lb{display:flex;gap:var(--sys-sp-1);min-width:0;color:var(--sys-ink-2)}
+.m-ma .ma-mk .lb .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.m-ma .ma-mk .lb .pk{flex:none;color:var(--sys-warn-ink)}
+.m-ma .ma-mk .tr{position:relative;height:10px;overflow:hidden;border-radius:var(--sys-r-pill);background:var(--sys-bg-3)}
+.m-ma .ma-mk .tr i{position:absolute;left:0;top:0;bottom:0;border-radius:var(--sys-r-pill)}
+.m-ma .ma-mk .vv{text-align:right;font-family:var(--sys-mono)}
+.m-ma .ma-mk-axis{display:flex;justify-content:space-between;margin:var(--sys-sp-1) 60px 0 158px;font:500 var(--sys-fs-2xs) var(--sys-mono);color:var(--sys-mute)}
+.m-ma #ma-wall tr[data-r]{cursor:pointer}
+/* four columns in half a row: headers may wrap and the two text columns give way, so the table fits its card */
+.m-ma #ma-wall .sys-table th{white-space:normal}
+.m-ma #ma-wall .sys-table th,.m-ma #ma-wall .sys-table td{padding-left:10px;padding-right:10px}
+.m-ma #ma-wall td.nm,.m-ma #ma-wall td.wrap{min-width:104px}
+@media (max-width:900px){.m-ma .ma-mk{grid-template-columns:110px 1fr 48px}.m-ma .ma-mk-axis{margin-left:118px;margin-right:56px}}
+@media (max-width:560px){
+  .m-ma #ma-wall .sys-table th,.m-ma #ma-wall .sys-table td{padding-left:7px;padding-right:7px}
+  .m-ma #ma-wall td.nm,.m-ma #ma-wall td.wrap{min-width:80px}
+  .m-ma #ma-wall td.sys-n{white-space:normal}
+  /* a reference table inside a closed section reads as stacked rows on a phone: no sideways scroll */
+  .m-ma table.ma-stack thead{display:none}
+  .m-ma table.ma-stack tbody,.m-ma table.ma-stack tr,.m-ma table.ma-stack td{display:block}
+  .m-ma table.ma-stack tr{padding:var(--sys-sp-3) 0;border-bottom:1px solid var(--sys-line)}
+  .m-ma table.ma-stack tr:last-child{border-bottom:0}
+  .m-ma table.ma-stack td{min-width:0;padding:2px var(--sys-sp-3);border:0;overflow-wrap:anywhere}
+}
