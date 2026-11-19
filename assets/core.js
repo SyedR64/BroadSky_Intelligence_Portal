@@ -267,7 +267,13 @@ export const Maps = {
     const map = L.map(el, { center, zoom, minZoom, maxZoom: Math.min(maxZoom, 16), zoomControl: true, preferCanvas: true, attributionControl: true });
     Maps._tile(map, Theme.get()); Maps._live.add(map);
     map._renderer = L.canvas({ padding: 0.5 });
-    setTimeout(() => map.invalidateSize(), 60); setTimeout(() => map.invalidateSize(), 240);
+    // re-measure once the container has its size; a visitor who has already left the screen removed the map (no pane left to measure)
+    const fit = () => { if (map._mapPane) map.invalidateSize(); };
+    setTimeout(fit, 60); setTimeout(fit, 240);
+    // Leaflet leaves its zoom-end timer armed when a map is removed in the middle of a zoom, and the timer then throws on the
+    // missing pane. Views remove their map when the visitor moves on, so clear the flag that timer checks first.
+    const remove = map.remove.bind(map);
+    map.remove = () => { map._animatingZoom = false; return remove(); };
     return map;
   },
   /** Base + label tiles for a theme; a theme change swaps them on every live map (Theme.watch below). */
@@ -511,7 +517,8 @@ export const Tour = {
   prev() { Tour.i = Math.max(0, Tour.i - 1); Tour._show(); },
   _show() {
     clearTimeout(Tour.timer); const s = Tour.steps[Tour.i]; if (!s) return Tour.stop();
-    if (s.hash && location.hash !== s.hash) location.hash = s.hash;
+    const to = s.hash && App.resolve(s.hash).hash;   // a step written for a merged screen goes straight to where it landed
+    if (to && location.hash !== to) location.hash = to;
     let el = $('#tour'); if (!el) { el = document.createElement('div'); el.id = 'tour'; document.body.appendChild(el); }
     const dur = s.duration || Math.max(6000, (s.narration || s.caption).split(' ').length * 420);
     if (!el.classList.contains('sys-card')) { el.className = 'sys-card'; el.setAttribute('role', 'region'); el.setAttribute('aria-label', 'Briefing'); }
@@ -526,15 +533,43 @@ export const Tour = {
 /* ── App shell / router ───────────────────────────────────────────────────── */
 const searchIndex = [];
 export const App = {
-  modules: [], current: null, view: null, params: {}, state: {}, _unmount: null,
+  modules: [], aliases: {}, current: null, view: null, params: {}, state: {}, _unmount: null, _warned: new Set(),
+  /** The forwarding table for merged screens ('module/view' → 'module/view?params', modules/registry.js ALIASES).
+      app.html hands it over, so this file never imports the registry (that would be an import cycle). */
+  alias(table) { App.aliases = { ...(table || {}) }; },
   register(m) { App.modules.push(m); if (Array.isArray(m.tour) && m.tour.length) Tour.register(m.tour); (m.views || []).forEach(v => searchIndex.push({ label: `${m.name} · ${v.name}`, kind: 'View', href: `#/${m.id}/${v.id}`, color: m.color })); },
   /** Modules call this to make entities searchable in ⌘K: items [{label, sub, href, kind}] */
   index(items) { for (const i of items) if (!searchIndex.some(x => x.href === i.href && x.label === i.label)) searchIndex.push(i); },
-  parse() { const h = location.hash.replace(/^#\/?/, ''); const [path, q] = h.split('?'); const [mod, view] = path.split('/'); const params = Object.fromEntries(new URLSearchParams(q || '')); return { mod: mod || App.modules[0]?.id, view, params }; },
-  go(mod, view, params) { const q = params ? '?' + new URLSearchParams(params).toString() : ''; location.hash = `#/${mod}/${view || ''}${q}`; },
+  parse(hash = location.hash) { const h = String(hash).replace(/^#\/?/, ''); const [path, q] = h.split('?'); const [mod, view] = path.split('/'); const params = Object.fromEntries(new URLSearchParams(q || '')); return { mod: mod || App.modules[0]?.id, view, params }; },
+  /** One resolver for every way into a screen: the address bar (route), App.go and the tour.
+      Returns { m, v, params, hash, forwarded, miss }. A live address always wins. The forwarding table is read ONLY ON A
+      MISS: the view id is non-empty and that module has no such view (or there is no such module), and 'module/view' is
+      in the table. Then the old link's parameters are kept, the parameters named in the target are added (the old
+      link's value wins if both name one), and `hash` is the address to show. Otherwise `hash` is the input untouched,
+      and `miss` names an unknown module or view so route() can warn once and fall back to the first screen. */
+  resolve(hash = location.hash) {
+    let { mod, view, params } = App.parse(hash); let forwarded = null, miss = null;
+    const find = (mo, vi) => { const m = App.modules.find(x => x.id === mo); return { m, v: (m && vi && m.views.find(x => x.id === vi)) || null }; };
+    let { m, v } = find(mod, view);
+    if (view && !v) {
+      const [path, q] = String(App.aliases[`${mod}/${view}`] || '').split('?'); const [tm, tv] = path.split('/'); const hit = find(tm, tv);
+      if (hit.v) { forwarded = `${mod}/${view}`; params = { ...Object.fromEntries(new URLSearchParams(q || '')), ...params }; ({ m, v } = hit); }
+    }
+    if (!m || (view && !v)) miss = `${mod}/${view || ''}`;
+    m = m || App.modules[0]; v = v || m?.views.find(x => x.id === view) || m?.views[0];   // the fallback is the one the router always had
+    const qs = forwarded ? new URLSearchParams(params).toString() : '';
+    return { m, v, params, forwarded, miss, hash: forwarded ? `#/${m.id}/${v.id}${qs ? '?' + qs : ''}` : String(hash) };
+  },
+  go(mod, view, params) { const q = params ? '?' + new URLSearchParams(params).toString() : ''; location.hash = App.resolve(`#/${mod}/${view || ''}${q}`).hash; },
   async route() {
-    const { mod, view, params } = App.parse(); const m = App.modules.find(x => x.id === mod) || App.modules[0]; if (!m) return;
-    const v = m.views.find(x => x.id === view) || m.views[0];
+    // an in-page anchor (the frame's "Skip to content" link jumps to #main) is not a screen: keep the open one and its address
+    const raw = location.hash.slice(1);
+    if (App.current && raw && !raw.includes('/') && !App.modules.some(x => x.id === raw) && document.getElementById(raw)) { history.replaceState(history.state, '', App._hash || location.pathname + location.search); return; }
+    const r = App.resolve(); const { m, v, params } = r; if (!m) return;
+    // a merged screen's old address: show the new one in its place (replace, not push, so Back returns to where the visitor was)
+    if (r.forwarded) history.replaceState(history.state, '', r.hash);
+    else if (r.miss && !App._warned.has(r.miss)) { App._warned.add(r.miss); console.warn(`BSP Desk: no screen at #/${r.miss}; showing #/${m.id}/${v.id} instead.`); }
+    App._hash = location.hash;
     if (App._unmount) { try { App._unmount(); } catch { } App._unmount = null; }
     App.current = m; App.view = v; App.params = params; Inspector.close(); clearSnapshotNote();
     document.documentElement.style.setProperty('--mc', m.color);
@@ -548,18 +583,34 @@ export const App = {
     document.title = `${m.name} · ${v.name} — BSP Desk`;
   },
   renderRail() {
-    const nav = $('#rail .rail-nav'); const groups = [...new Set(App.modules.map(m => m.group || 'Portfolio'))];
+    const nav = $('#rail .rail-nav'); if (!nav) return;
+    // drawn from the flags modules/registry.js sets, on a filtered and sorted COPY (App.modules keeps its order): a module
+    // off the menu shows only while it is open, and items follow railPos
+    const shown = App.modules.filter(m => m.rail !== false || m === App.current).sort((a, b) => (a.railPos ?? 1e9) - (b.railPos ?? 1e9));
+    const groups = [...new Set(shown.map(m => m.group || 'Portfolio'))];
     const refocus = App._railKey && nav.contains(document.activeElement);   // keyboard user on the rail: keep focus there after the re-render
-    nav.innerHTML = groups.map(g => `<div class="rail-group"><div class="sys-card-label rail-section">${esc(g)}</div>${App.modules.filter(m => (m.group || 'Portfolio') === g).map(m => `<a class="rail-item${m === App.current ? ' active' : ''}" href="#/${esc(m.id)}/" data-co="" style="--co:${m.color};--mc:${m.color}" data-mod="${m.id}"${m === App.current ? ' aria-current="page"' : ''}><span class="sys-dot" aria-hidden="true"></span><span class="ellipsis">${esc(m.name)}</span>${m.tag ? `<span class="sys-kbd tag">${esc(m.tag)}</span>` : ''}</a>`).join('')}</div>`).join('');
+    nav.innerHTML = groups.map(g => `<div class="rail-group"><div class="sys-card-label rail-section">${esc(g)}</div>${shown.filter(m => (m.group || 'Portfolio') === g).map(m => `<a class="rail-item${m === App.current ? ' active' : ''}" href="#/${esc(m.id)}/" data-co="" style="--co:${m.color};--mc:${m.color}" data-mod="${m.id}"${m === App.current ? ' aria-current="page"' : ''}><span class="sys-dot" aria-hidden="true"></span><span class="ellipsis">${esc(m.name)}</span></a>`).join('')}</div>`).join('');
     $$('.rail-item', nav).forEach(el => { el.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); App.go(el.dataset.mod); }; el.onkeydown = e => { if (e.key === ' ') { e.preventDefault(); App.go(el.dataset.mod); } }; });
     if (refocus) $(`.rail-item[data-mod="${CSS.escape(App._railKey)}"]`, nav)?.focus({ preventScroll: true });
-    // phone strip: keep the current module in view
-    const cur = $('.rail-item.active', nav); if (cur && nav.scrollWidth > nav.clientWidth + 4) { const a = cur.getBoundingClientRect(), b = nav.getBoundingClientRect(); if (a.left < b.left || a.right > b.right) nav.scrollLeft += a.left - b.left - (b.width - a.width) / 2; }
+    // a short window: keep the current item in view
+    const cur = $('.rail-item.active', nav); if (cur && nav.scrollHeight > nav.clientHeight + 4) { const a = cur.getBoundingClientRect(), b = nav.getBoundingClientRect(); if (a.top < b.top || a.bottom > b.bottom) nav.scrollTop += a.top - b.top - (b.height - a.height) / 2; }
+    // phone: the same menu as one native picker (app.css shows it at 900px and narrower). Groups on the menu are
+    // optgroups, a module off the menu is listed only while it is open, and the menu foot's link ("All views") comes last.
+    const pick = $('#rail-pick'); if (!pick) return;
+    const opt = m => `<option value="${esc(m.id)}"${m === App.current ? ' selected' : ''}>${esc(m.name)}</option>`;
+    const all = $('#rail .rail-foot a[href]');
+    pick.innerHTML = groups.map(g => { const ms = shown.filter(m => (m.group || 'Portfolio') === g); return ms.every(m => m.rail === false) ? ms.map(opt).join('') : `<optgroup label="${esc(g)}">${ms.map(opt).join('')}</optgroup>`; }).join('')
+      + (all ? `<option value="" data-href="${esc(all.getAttribute('href'))}">${esc(all.textContent.trim())}</option>` : '');
+    if (App.current) pick.value = App.current.id;
   },
   renderTop() {
     const m = App.current, v = App.view; const t = $('#topbar');
     $('.crumb', t).innerHTML = `<a class="sys-subnav-title" href="#/${esc(m.id)}/" data-co="" style="--co:${m.color}">${esc(m.name)}</a><span class="sys-sr"> · ${esc(v.name)}</span>`;
-    $('.view-tabs', t).innerHTML = m.views.map(x => `<a class="view-tab" href="#/${esc(m.id)}/${esc(x.id)}" data-v="${x.id}"${x === v ? ' aria-current="page"' : ''}>${x.icon ? `<span class="ico" aria-hidden="true">${x.icon}</span>` : ''}${esc(x.name)}${x.badge ? `<span class="sys-kbd n">${esc(x.badge)}</span>` : ''}</a>`).join('');
+    // tabs are a filtered and sorted COPY of m.views (never the array itself): a screen flagged menu:false keeps its address
+    // and shows its tab only while it is open; m.tabOrder puts the ids it lists first and the rest keep their place after
+    const ord = m.tabOrder || [], pos = x => { const i = ord.indexOf(x.id); return i < 0 ? ord.length : i; };
+    const shown = m.views.filter(x => x.menu !== false || x === v).sort((a, b) => pos(a) - pos(b));
+    $('.view-tabs', t).innerHTML = shown.map(x => `<a class="view-tab" href="#/${esc(m.id)}/${esc(x.id)}" data-v="${x.id}"${x === v ? ' aria-current="page"' : ''}>${esc(x.name)}${x.badge ? `<span class="sys-kbd n">${esc(x.badge)}</span>` : ''}</a>`).join('');
     $$('.view-tab', t).forEach(b => b.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); App.go(m.id, b.dataset.v); });
     const cur = $('.view-tab[aria-current]', t), tabs = $('.view-tabs', t); if (cur && tabs.scrollWidth > tabs.clientWidth) { const a = cur.getBoundingClientRect(), b = tabs.getBoundingClientRect(); if (a.left < b.left || a.right > b.right - 24) tabs.scrollLeft += a.left - b.left - 24; }
   },
@@ -578,17 +629,13 @@ export const App = {
     // keep keyboard focus on the chosen rail item when the rail re-renders after a route change
     $('#rail .rail-nav')?.addEventListener('focusin', e => { const it = e.target.closest('.rail-item'); App._railKey = it ? it.dataset.mod : null; });
     $('#search-btn').onclick = App.palette;
-    // theme: one preference shared with every page (Theme above); the console toggle hides when the frame brings its own
-    const tb = $('#theme-btn');
-    const paintTheme = () => { if (!tb) return; const d = Theme.get() === 'dark'; tb.innerHTML = d ? ICON.sun : ICON.moon; tb.setAttribute('aria-label', d ? 'Switch to light theme' : 'Switch to dark theme'); tb.title = tb.getAttribute('aria-label'); };
-    if (tb) { tb.onclick = () => Theme.toggle(); if (document.querySelector('.sys-top [data-sys-theme-toggle], .sys-top .sys-theme')) tb.hidden = true; }
-    Theme.apply(Theme.get()); paintTheme();
-    Theme.watch(t => { paintTheme(); Maps.retheme(t); });
-    const ib = $('#insp-btn'); if (ib) { ib.innerHTML = ICON.panel; ib.onclick = () => $('#inspector').classList.contains('open') ? Inspector.close() : UI.toast('Select a row, card or map point to inspect it'); }
-    const rb = $('#tour-btn'); App._tourBtn = () => { if (!rb) return; rb.innerHTML = Tour.running ? ICON.stop : ICON.play; const l = Tour.running ? 'Stop the briefing' : 'Play the briefing'; rb.setAttribute('aria-label', l); rb.title = l; };
-    if (rb) { rb.onclick = () => Tour.running ? Tour.stop() : Tour.start(0); App._tourBtn(); }
+    // phone menu: one native picker (renderRail fills it); the option carrying a link leaves the portal, the rest open a module
+    const pick = $('#rail-pick');
+    if (pick) pick.onchange = () => { const to = pick.selectedOptions[0]?.dataset.href; if (!to) return App.go(pick.value); pick.value = App.current?.id || ''; location.href = to; };
+    // theme: one preference shared with every page (Theme above); its button is the frame's, in the top bar
+    Theme.apply(Theme.get());
+    Theme.watch(t => Maps.retheme(t));
     const sb = $('#search-btn .sys-kbd'); if (sb && !/mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent)) sb.textContent = 'Ctrl K';
-    const clock = $('#clock'); const tick = () => { if (clock) clock.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' }) + ' ET'; }; tick(); setInterval(tick, 1000);
     App.route();
   },
 };

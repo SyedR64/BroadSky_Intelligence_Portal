@@ -29,20 +29,18 @@
 </head>
 <body>
 <div id="app">
-  <aside id="rail" aria-label="Portal modules">
-    <nav class="rail-nav" aria-label="Modules"></nav>
-    <div class="sys-src rail-foot">Prepared by Syed Rahman · October 2026</div>
+  <aside id="rail" aria-label="Portal menu">
+    <!-- phone (900px and narrower): the menu is this one native picker; assets/core.js renderRail fills it -->
+    <div class="rail-pick"><label class="sys-sr" for="rail-pick">Portal menu</label><select id="rail-pick"></select></div>
+    <nav class="rail-nav" aria-label="Sections"></nav>
+    <div class="sys-src rail-foot"><a href="sitemap.html#g-portal">All views</a><span>Prepared by Syed Rahman · November 2026</span></div>
   </aside>
   <main id="main">
     <header id="topbar">
       <div class="crumb"></div>
-      <nav class="sys-subnav-links view-tabs" aria-label="Views"></nav>
+      <nav class="sys-subnav-links view-tabs" aria-label="Screens in this section"></nav>
       <div class="top-right">
-        <button id="search-btn" class="sys-btn sys-btn--secondary sys-btn--sm search-btn" type="button" aria-label="Search the portal"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg><span class="search-label">Search everything</span><span class="sys-kbd" aria-hidden="true">⌘K</span></button>
-        <span class="sys-chip live-pill" title="Live feeds: National Weather Service alerts and Open-Meteo forecasts"><span class="sys-dot sys-dot--live" aria-hidden="true"></span><span id="clock" class="sys-num">—</span></span>
-        <button id="tour-btn" class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon icon-btn" type="button" title="Play the briefing" aria-label="Play the briefing"></button>
-        <button id="insp-btn" class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon icon-btn" type="button" title="Inspector" aria-label="Inspector"></button>
-        <button id="theme-btn" class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon icon-btn" type="button" title="Switch to dark theme" aria-label="Switch to dark theme"></button>
+        <button id="search-btn" class="sys-btn sys-btn--secondary sys-btn--sm search-btn" type="button" title="Search" aria-label="Search the portal"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg><span class="search-label">Search</span><span class="sys-kbd" aria-hidden="true">⌘K</span></button>
       </div>
     </header>
     <section id="content"></section>
@@ -52,7 +50,7 @@
 <script type="module">
   import { Frame } from './assets/frame.js?v=20261117223642';
   import { App } from './assets/core.js?v=20261117223642';
-  import { modules } from './modules/registry.js?v=20261117223642';
+  import { modules, ALIASES } from './modules/registry.js?v=20261117223642';
   import { enhance, retitle, viewTitle } from './modules/copy.js?v=20261117223642';
 
   // 1 · shared frame strip above the rail and console (UNIFIED.md §8); the theme is the visitor's saved choice (light by default)
@@ -72,21 +70,10 @@
   }).observe(el, { childList: true, subtree: true });
   watch(content); watch(document.getElementById('inspector'));
 
-  // 3 · portal console: every module registers before the first route, and the
-  // rail footer counts come from the same registry the rail and ⌘K search use
+  // 3 · portal console: every module registers before the first route. The registry also hands over the forwarding
+  // table for merged screens (the shell never imports the registry itself: that would be an import cycle)
   for (const m of modules) App.register(m);
-  const nViews = modules.reduce((n, m) => n + (m.views || []).length, 0);
-  const nCos = modules.filter(m => m.group === 'Portfolio').length;
-  const railCount = document.querySelector('[data-rail-count]');
-  const DATASETS = { core: 10, research: 36, deeds: 10 };   // data/manifest.json tables · data/research files · data/sales deed files (Oct 6, 2026)
-  const paintCount = core => { if (!railCount) return; railCount.textContent = `${modules.length} modules`; railCount.title = `${nViews} views across ${nCos} companies, built from public records and licensed sources`; };
-  paintCount(DATASETS.core);
-  const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null);
-  Promise.all([getJSON('data/manifest.json'), getJSON('data/research/index.json')]).then(([m, ix]) => {
-    const files = Array.isArray(ix?.files) ? ix.files : [];
-    if (files.length) { DATASETS.research = files.filter(f => f.folder === 'research').length; DATASETS.deeds = files.filter(f => f.folder === 'sales').length; }
-    paintCount(m?.datasets?.length || DATASETS.core);
-  });
+  App.alias(ALIASES);
   App.start();
 
   // 4 · grounded assistant: the frame's Ask button and ⌘J open the same widget
@@ -100,7 +87,6 @@
     requestAnimationFrame(launchClear);
     addEventListener('resize', () => requestAnimationFrame(launchClear));
   });
-  import('./assets/counter.js?v=20261117223642').then(({ Counter }) => { const slot = document.createElement('div'); slot.id = 'rail-counter'; document.querySelector('#rail .rail-foot').before(slot); slot.className = 'sys-kpi'; Counter.mount(slot, { theme: document.documentElement.dataset.sysTheme === 'dark' ? 'dark' : 'light', compact: true, baseline: 'today', minDisplay: 100, caption: 'Left on the table by not hiring Syed · so far today' }).then(() => Frame.humanize(slot)); });
 </script>
 </body>
 </html>

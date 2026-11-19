@@ -82,11 +82,13 @@ body[data-sys-layout="app"]>.sys-top{background:var(--sys-top-bg)}   /* the same
 .rail-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
 .rail-item[aria-current]{background:var(--co-soft);color:var(--co-ink);font-weight:600}
 .rail-item .sys-dot{box-shadow:0 0 0 3px var(--co-soft)}
-.rail-item .tag{margin-left:auto;height:20px;flex-shrink:0;max-width:96px;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;letter-spacing:.04em;font-size:10px}
-.rail-item[aria-current] .tag{background:var(--sys-surface);color:var(--co-ink)}
-#rail-counter{margin:0 var(--sys-sp-3) var(--sys-sp-3);padding:14px 16px}
-.rail-foot{margin-top:0;padding:var(--sys-sp-3) var(--sys-sp-5) var(--sys-sp-4);border-top:1px solid var(--sys-line);font-size:11px}
-.rail-foot .dim{color:var(--sys-mute)}
+/* menu foot: the "All views" link, then the prepared-by line. The two cannot share one line at the rail's width, so each
+   gets its own; the sans face keeps the prepared-by line from wrapping, so the foot is two lines tall, as it was before */
+.rail-foot{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px var(--sys-sp-3);margin-top:0;padding:var(--sys-sp-3) var(--sys-sp-5) var(--sys-sp-4);border-top:1px solid var(--sys-line);font-family:var(--sys-font);font-size:11px}
+.rail-foot a{flex-shrink:0;font-weight:600;color:var(--sys-ink-2)}
+.rail-foot span{white-space:nowrap}
+/* phone menu: one native picker in place of the list (shown at 900px and narrower, §9) */
+.rail-pick{display:none}
 
 /* view bar: the system sub-nav pattern (module title + view links + actions) */
 #topbar{display:flex;align-items:center;gap:var(--sys-sp-4);height:var(--bar-h);padding:0 var(--sys-gut);flex-shrink:0;background:var(--sys-top-bg);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid var(--sys-line);position:relative;z-index:5}
@@ -95,15 +97,12 @@ body[data-sys-layout="app"]>.sys-top{background:var(--sys-top-bg)}   /* the same
 .view-tabs{flex:1;min-width:0}
 :where(#app) a.view-tab{text-decoration:none}
 .view-tab{gap:6px}
-.view-tab .ico{font-size:12px;opacity:.8}
 .view-tab .n{height:18px;padding:0 5px;font-size:10px}
+/* the bar's one control: "Search" with its shortcut on wide screens, an icon at 1280px and narrower (§9) */
 .top-right{margin-left:auto;display:flex;align-items:center;gap:var(--sys-sp-2);flex-shrink:0}
-.search-btn{min-width:220px;justify-content:flex-start;color:var(--sys-mute);font-weight:500}
+.search-btn{color:var(--sys-mute);font-weight:500}
 .search-btn:hover{color:var(--sys-ink)}
-.search-btn .sys-kbd{margin-left:auto}
-.live-pill{gap:7px;font:500 var(--sys-fs-xs)/1 var(--sys-mono);color:var(--sys-mute);cursor:default}
 .icon-btn{color:var(--sys-ink-2)}
-.icon-btn[hidden]{display:none}
 
 /* ── 4 · view scaffolding: page head, grids ──────────────────────────────── */
 /* the hero order of every page: title, lead, status chips, then the action row */
@@ -307,26 +306,20 @@ kbd.k{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-ra
 @media print{#rail,#topbar,#inspector,#tour,.filters .sys-btn{display:none!important}#app{display:block}#content{overflow:visible;height:auto}}
 
 /* ── 9 · responsive ──────────────────────────────────────────────────────── */
-@media (max-width:1280px){.search-btn{min-width:0}.search-btn .sys-kbd{display:none}}
-@media (max-width:1100px){.live-pill{display:none}}
-/* tablet and phone: the rail becomes a module strip of chips, the view bar wraps, the inspector slides over */
+@media (max-width:1280px){.search-btn{width:36px;min-width:36px;padding:0;justify-content:center}.search-btn .search-label,.search-btn .sys-kbd{display:none}}
+/* tablet and phone: the rail becomes one native picker, the view bar is one row of tabs, the inspector slides over */
 @media (max-width:900px){
   #app{display:flex;flex-direction:column;min-height:0}
-  #rail{flex-direction:row;flex-shrink:0;min-height:0;border-right:0;border-bottom:1px solid var(--sys-line)}
-  .rail-nav{display:flex;align-items:center;gap:var(--sys-sp-2);overflow-x:auto;overflow-y:hidden;padding:var(--sys-sp-2) var(--sys-gut);scrollbar-width:none;flex:1 1 auto}
-  .rail-nav::-webkit-scrollbar{display:none}
-  .rail-group{display:contents}
-  .rail-section,.rail-item .tag,#rail-counter,.rail-foot{display:none}
-  /* .sys-chip look: bordered pill, the current module ink-filled */
-  .rail-item{flex-shrink:0;min-height:34px;padding:0 12px;gap:7px;border:1px solid var(--sys-line-2);background:var(--sys-surface);font-size:13px}
-  .rail-item .ellipsis{overflow:visible}
-  .rail-item[aria-current]{background:var(--sys-ink);border-color:var(--sys-ink);color:var(--sys-on-ink)}
-  .rail-item[aria-current] .sys-dot{box-shadow:0 0 0 2px var(--sys-on-ink)}
+  #rail{flex-shrink:0;min-height:0;border-right:0;border-bottom:1px solid var(--sys-line)}
+  .rail-nav,.rail-foot{display:none}
+  .rail-pick{display:block;padding:var(--sys-sp-2) var(--sys-gut)}
+  /* 16px type: a phone browser zooms the page when a control with smaller type takes focus */
+  #rail-pick{display:block;width:100%;min-height:44px;font-size:16px;font-weight:600}
   #main{flex:1 1 0;min-height:0}
-  #topbar{flex-wrap:wrap;height:auto;padding:var(--sys-sp-2) var(--sys-gut);gap:var(--sys-sp-2)}
-  .crumb{flex:1 1 auto;min-width:0;overflow:hidden}
-  .top-right{gap:var(--sys-sp-1)}
-  .view-tabs{order:3;flex:1 0 100%;margin:0 calc(-1 * var(--sys-gut));padding:0 var(--sys-gut)}
+  /* one row under the picker: the tabs, then the search icon. The picker already names the module, so the title is not repeated */
+  #topbar{height:auto;padding:var(--sys-sp-2) var(--sys-gut);gap:var(--sys-sp-2)}
+  .crumb{display:none}
+  .view-tabs{margin-left:calc(-1 * var(--sys-gut));padding-left:var(--sys-gut)}
   #inspector.open{position:fixed;right:var(--sys-sp-2);top:var(--sys-sp-2);bottom:var(--sys-sp-2);z-index:1200;margin:0;width:min(calc(100vw - 16px),var(--insp-w));box-shadow:var(--sys-sh-3)}
   #content{padding:var(--sys-sp-5) var(--sys-gut) var(--sys-sp-6)}
   .page-head h1,.page-head .sub{overflow-wrap:anywhere}
@@ -343,8 +336,6 @@ kbd.k{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-ra
   .panel-head .actions{margin-left:0;justify-content:flex-start}
 }
 @media (max-width:560px){
-  .search-btn{width:36px;min-width:36px;padding:0;justify-content:center}
-  .search-btn .search-label{display:none}
   .kpis:not(.sys-kpis){grid-template-columns:repeat(2,minmax(0,1fr))}
   .page-head .actions .sys-btn{flex:1 1 auto}
   .kv{grid-template-columns:minmax(0,1fr);gap:2px}
