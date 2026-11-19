@@ -4,3 +4,42 @@
 .m-theater .bsp-theater .bt-legend{bottom:88px}
 .m-theater .bsp-theater .bt-cap{bottom:clamp(30px,6vh,70px)}
 @media (max-width:1100px){.m-theater .bsp-theater .bt-cap{max-width:calc(100% - 40px)}.m-theater .bsp-theater .bt-legend{display:none}}
+/* About panel (what each scene answers) and its button in the scene list; moved in from the standalone page */
+.m-theater .th-about{position:absolute;left:16px;top:16px;z-index:11;width:min(440px,calc(100% - 32px));max-height:calc(100% - 32px);overflow:auto;background:color-mix(in srgb,var(--sys-surface) 94%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:var(--sys-sh-3)}
+.m-theater .th-about[hidden]{display:none}
+.m-theater .th-about-head{display:flex;align-items:center;justify-content:space-between;gap:var(--sys-sp-3)}
+.m-theater .th-about .sys-card-body>*+*{margin-top:var(--sys-sp-2)}
+.m-theater .th-about ol{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.m-theater .th-about li b{color:var(--sys-ink)}
+.m-theater .th-about .sys-src{margin-top:0}
+.m-theater .bsp-theater .bt-rail .th-about-btn{margin-top:2px;border-top:1px solid var(--sys-line);border-radius:0 0 var(--sys-r-sm) var(--sys-r-sm)}
+/* a short window: let the stage shrink with the screen */
+@media (max-height:620px){.m-theater,.m-theater .bsp-theater{min-height:0}}
+/* phones, upright (narrow) or on their side (short): one row of scene buttons and a two-line caption that opens on
+   tap, so the map keeps most of the screen. The engine's own phone rules stop at 760px wide, so the row layout is
+   set here in full for the short window. */
+@media (max-width:760px),(max-height:520px){
+  .m-theater .bsp-theater .bt-rail{flex-direction:row;flex-wrap:nowrap;align-items:center;top:8px;left:8px;right:8px;min-width:0;padding:4px;gap:0;overflow-x:auto}
+  .m-theater .bsp-theater .bt-rail button{min-height:36px;min-width:34px;padding:0 7px;justify-content:center;flex:0 0 auto}
+  .m-theater .bsp-theater .bt-rail button .n{width:auto}
+  .m-theater .bsp-theater .bt-rail button .t{display:none}
+  .m-theater .bsp-theater .bt-rail .bt-ctl{order:2;flex:0 0 auto;margin:0 0 0 auto;padding:0;border:0;gap:2px}
+  .m-theater .bsp-theater .bt-rail .th-about-btn{margin-top:0;border-top:0;border-radius:var(--sys-r-pill)}
+  .m-theater .bsp-theater .bt-hint,.m-theater .bsp-theater .bt-prog,.m-theater .bsp-theater .bt-legend{display:none}
+  .m-theater .bsp-theater .bt-cap{left:12px;right:64px;bottom:10px;max-width:none;pointer-events:auto;cursor:pointer}
+  .m-theater .bsp-theater .bt-kicker{margin-bottom:6px}
+  .m-theater .bsp-theater .bt-title{margin-bottom:4px;font-size:var(--sys-fs-lg);line-height:1.15}
+  .m-theater .bsp-theater .bt-line{font-size:13px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .m-theater .bsp-theater .bt-src{display:none}
+  .m-theater .bsp-theater .bt-cap.is-open .bt-line{display:block}
+  .m-theater .bsp-theater .bt-cap.is-open .bt-src{display:block}
+  .m-theater .bsp-theater .bt-status{top:56px;bottom:auto;left:8px}
+  /* the panel docks to the bottom, above the floating Ask button; the caption steps aside while it is open */
+  .m-theater .th-about{left:8px;right:8px;width:auto;top:auto;bottom:64px;max-height:70%}
+  .m-theater .th-about:not([hidden])~.bsp-theater .bt-cap{visibility:hidden}
+}
+/* on its side the window is short but wide: the caption and the panel stop short of the wide Ask button */
+@media (min-width:761px) and (max-height:520px){
+  .m-theater .bsp-theater .bt-cap{right:auto;max-width:min(560px,calc(100% - 232px))}
+  .m-theater .th-about{top:8px;bottom:8px;right:auto;width:min(560px,calc(100% - 232px));max-height:none}
+}
