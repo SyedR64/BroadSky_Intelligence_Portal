@@ -1,9 +1,9 @@
 import * as Copy from './copy.js?v=20261117223642';
 /* ═══════════════════════════════════════════════════════════════════════════
    Punctual Pros — residential HVAC · plumbing · electrical (Central PA + Jersey Shore)
-   Views: overview · weather & demand · new-mover marketing · territory · market · targets · filings
+   Views: overview · weather & demand · new-mover marketing · territory · market · filings
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderTargets, renderFilings } from '../assets/components.js?v=20261117223642';
+import { renderFilings } from '../assets/components.js?v=20261117223642';
 import { esc as E } from '../assets/core.js?v=20261117223642';
 import { companyLinks } from './company-links.js?v=20261117223642';
 
@@ -302,14 +302,14 @@ async function overview(ctx) {
     { label: 'Home sales · last 90 days', value: mv ? fmt.num(mv.n90) : '…', sub: mvTxt(), color: PAL.green },
     { label: 'Live NWS alerts in territory', value: alerts == null ? '…' : fmt.num(alerts.alerts.length), sub: alerts == null ? 'querying api.weather.gov' : alerts.failed ? 'feed unavailable' : `${alerts.alerts.filter(a => /Extreme|Severe/.test(a.severity)).length} severe/extreme · PA + NJ`, color: alerts?.alerts?.some(a => /Extreme|Severe/.test(a.severity)) ? PAL.red : PAL.amber },
     { label: 'Tier 1 expansion zips (adjacent)', value: fmt.num(adjT1.length), sub: `${fmt.compact(huAdjT1)} housing units next door`, color: PAL.green },
-    { label: 'Add-on targets screened', value: ma ? fmt.num(targets.length) : '—', sub: top ? `#1 ${esc(String(top.company).split(/[,(]/)[0].trim())} · fit ${top.fit_score}${conflicts.length ? ` · ${conflicts.length} held out` : ''}` : 'Punctual Pros add-on targets pending', color: PP },
+    { label: 'Hand-researched add-on targets', value: ma ? fmt.num(targets.length) : '—', sub: top ? `#1 ${esc(String(top.company).split(/[,(]/)[0].trim())} · fit ${top.fit_score}${conflicts.length ? ` · ${conflicts.length} held out` : ''}` : 'Punctual Pros add-on targets pending', color: PP },
   ]);
 
   const levers = [
     { n: '<span id="pp-mv-n">…</span>', u: 'home sales · last 90 days', t: 'New-mover marketing', d: `Every closed sale is a home that needs a tune-up, inspection or plan: mail within 60 days of closing. The New-mover view holds the mail-ready list from the county deed records.`, h: '#/pp/movers' },
     { n: model ? fmt.num(Math.round(epsYr)) : '—', u: 'warning-type episodes / yr', t: 'Weather-driven capacity', d: `${model ? `Territory averages ~${Math.round(epsYr)} episodes a year of the ${pbs.length} NWS warning types in the plan (Storm Events 2019–25; the Weather view’s higher all-event episode count also includes event types outside the plan).` : 'Episode frequency pending Punctual Pros demand model.'} Convert maintenance slots to repair capacity when the pressure index clears 120 and pre-stage parts.`, h: '#/pp/weather' },
     { n: fmt.num(adjT1.length), u: 'Tier 1 zips', t: 'Contiguous expansion', d: `${fmt.compact(huAdjT1)} housing units in adjacent Tier 1 zips (Schuylkill, Chester, Montgomery, northern MD) can be served from existing hubs with route density.`, h: '#/pp/territory' },
-    { n: top ? String(top.fit_score) : '—', u: 'top fit score', t: 'Tuck-in M&A', d: top ? `${esc(top.company)} leads a ${targets.length}-company screen; Authority Brands franchisees in West Chester, Bucks County and Monmouth are same-model tuck-ins.${conflicts.length ? ` ${conflicts.length === 1 ? 'One South Jersey franchisee' : `${conflicts.length} franchisees`} trading as “The Punctual Pros” ${conflicts.length === 1 ? 'is' : 'are'} held out until affiliation is verified.` : ''}` : 'Target screen pending.', h: '#/pp/targets' },
+    { n: top ? String(top.fit_score) : '—', u: 'top fit score', t: 'Tuck-in M&A', d: top ? `${esc(top.company)} leads the ${targets.length}-company hand-researched list; Authority Brands franchisees in West Chester, Bucks County and Monmouth are same-model tuck-ins.${conflicts.length ? ` ${conflicts.length === 1 ? 'One South Jersey franchisee' : `${conflicts.length} franchisees`} trading as “The Punctual Pros” ${conflicts.length === 1 ? 'is' : 'are'} held out until affiliation is verified.` : ''}` : 'Target screen pending.', h: '#/ma/pipeline?platform=pp' },
     { n: ma ? fmt.num(peCount) : '—', u: 'PE-backed rivals', t: 'Competitive defense', d: `Sila (ECS Comfort, Palmyra) and HomeX (Haller, Lititz) are consolidating inside the core; protect membership base and technician bench.`, h: '#/pp/market' },
   ];
 
@@ -1165,76 +1165,6 @@ async function market(ctx) {
   return () => map.remove();
 }
 
-/* ═══ 6. ADD-ON TARGETS ═════════════════════════════════════════════════ */
-async function targets(ctx) {
-  const { el, ui, fmt, data, maps, esc, inspector, app } = ctx; css();
-  const ma = await data.research('ma_targets_pp');
-  if (!ma) { el.innerHTML = `<div class="m-pp">${ui.pageHead({ title: 'Add-on targets', sub: 'Punctual Pros tuck-in screen' })}${ui.note('Research dataset not yet available (Punctual Pros add-on targets).', 'warn')}</div>`; return; }
-  const all = ma.items || []; const m = ma.meta || {}; const byId = new Map(all.map(t => [t.id, t]));
-  /* name-collision guard: a company trading as "The Punctual Pros" may already be a BSP affiliate → hold out of every ranking until verified */
-  const conflicts = all.filter(nameConflict); const items = all.filter(t => !nameConflict(t)); const okId = new Set(items.map(t => t.id));
-  const top0 = (m.ranked_top_10 || []).filter(r => okId.has(r.id) && !nameConflict(r));
-  const backfill = items.filter(t => !top0.some(r => r.id === t.id)).sort((a, b) => b.fit_score - a.fit_score).slice(0, Math.max(0, Math.min(10, (m.ranked_top_10 || []).length) - top0.length))
-    .map(t => ({ id: t.id, company: t.company, fit_score: t.fit_score, why: t.strategic_rationale, backfill: true }));
-  const top = [...top0, ...backfill].map((r, i) => ({ ...r, rank: i + 1 }));
-  const t1 = items.filter(t => t.fit_score >= 80), near = items.filter(t => t.distance_mi_from_lancaster <= 60 || t.distance_mi_from_toms_river <= 40);
-  const fam = items.filter(t => /family|founder/.test(t.ownership || ''));
-  const franchisees = items.filter(t => /franchisee/.test(t.ownership || ''));
-  el.innerHTML = `<div class="m-pp">${ui.pageHead({
-    title: 'Add-on targets',
-    sub: `${t1.length} of ${items.length} screened companies score Tier 1. ${top[0] ? `${esc(top[0].company)} (fit ${top[0].fit_score}) leads; ` : ''}${franchisees.length} Authority Brands franchisees can fold in with no rebrand.`,
-    chips: `${chip(`${items.length} companies`, PP)}${chip(`PA ${items.filter(t => t.state === 'PA').length} · NJ ${items.filter(t => t.state === 'NJ').length}`)}${m.generated ? chip(`screened ${dfull(fmt, m.generated)}`) : ''}${conflicts.length ? chip(`${conflicts.length} held · name conflict`, PAL.red) : ''}`,
-  })}
-  ${ui.kpis([
-    { label: 'Targets screened', value: fmt.num(items.length), sub: `${fmt.num(m.excluded_pe_or_strategic_owned?.length || 0)} PE-owned excluded${conflicts.length ? ` · ${conflicts.length} held` : ''}`, color: PP },
-    { label: 'Tier 1 (fit 80+)', value: fmt.num(t1.length), sub: `${fmt.num(items.filter(t => t.fit_score >= 65 && t.fit_score < 80).length)} Tier 2`, color: PAL.green },
-    { label: 'Within route reach', value: fmt.num(near.length), sub: '60 mi of Lancaster, 40 of Toms River', color: PAL.sky },
-    { label: 'Authority franchisees', value: fmt.num(franchisees.length), sub: 'same brands · no rebrand', color: PP },
-    { label: 'Family or founder owned', value: fmt.num(fam.length), sub: 'succession-driven sellers', color: PAL.amber },
-    { label: 'Median distance · Lancaster', value: `${fmt.num(median(items.map(t => t.distance_mi_from_lancaster)))} mi`, sub: 'straight-line, city centroids', color: PAL.dim },
-  ])}
-  <div class="grid grid-3 mt-12">
-    ${ui.panel({ title: 'Ranked top 10', sub: `Analyst ranking · click for profile${conflicts.length ? ' · name-conflict rows removed and re-ranked' : ''}`, body: top.length ? `<div class="sys-table-wrap"><table class="sys-table pp-rows pp-top10"><thead><tr><th class="sys-n">#</th><th>Company</th><th class="sys-n">Fit</th></tr></thead><tbody>${top.map(t => `<tr data-id="${esc(t.id)}" tabindex="0"><td class="sys-n">${t.rank}</td><td><b>${esc(t.company)}</b>${t.backfill ? ` ${chip('next by fit score')}` : ''}<div class="small text-2">${esc(String(t.why || '').slice(0, 170))}</div></td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('No ranking'), flush: !!top.length, scroll: true, foot: ui.source(`Punctual Pros add-on targets, top-10 ranking${backfill.length ? ` (+${backfill.length} back-filled by fit score)` : ''}`, null, m.generated) })}
-    ${ui.panel({ title: 'Target map', sub: 'Fit tier · Tier 1 green · Tier 2 blue · Tier 3+ amber', body: `<div class="map tall pp-map-md" id="tg-map"></div>`, flush: true, foot: ui.source('ZoomInfo search · company sites · Authority directories', null, m.generated) })}
-    ${ui.panel({ title: 'PE-backed competitors (rival bidders)', sub: 'Who else is buying in PA / NJ / MD / DE', body: `<ul class="sys-card-list pp-pe">${(m.pe_backed_competitors || []).filter(p => !/^Other/i.test(p.platform)).map(p => `<li><div class="sys-row"><b>${esc(p.platform)}</b>${chip(String(p.threat || '—').split(':')[0].split(' ')[0], /^High/i.test(p.threat || '') ? PAL.red : /^Medium/i.test(p.threat || '') ? PAL.amber : PAL.muted)}</div><div class="small text-2">${esc(String(p.sponsor || 'sponsor n/a').split(/[;(]/)[0])}${p.regional_holdings?.length ? ` · ${esc(p.regional_holdings.slice(0, 2).join(', '))}` : ''}</div></li>`).join('')}</ul>`, scroll: true, foot: ui.source('Sponsor press releases · roll-up trackers', null, m.generated) })}
-  </div>
-  ${conflicts.length ? `<div class="mt-12">${ui.panel({ title: 'Verify affiliation — held out of ranking', sub: 'Trades under the portfolio company’s own name: either already part of the Punctual Pros / Authority network (owned or related party) or a brand conflict. PP team to confirm status (owned · related · independent) before any outreach.', body: `<div class="sys-table-wrap"><table class="sys-table pp-rows pp-affil"><thead><tr><th>Company</th><th class="sys-n">Fit</th></tr></thead><tbody>${conflicts.map(t => `<tr data-id="${esc(t.id)}" tabindex="0"><td><div class="sys-row"><b>${esc(t.company)}</b>${chip('name conflict — verify', PAL.red)}${chip('affiliation: unverified', PAL.amber)}</div><div class="small text-2 mt-8">${esc(t.hq_city || '')}, ${esc(t.state || '')} · ${esc(t.brands_or_franchise || '')}</div><ul class="sys-card-list mt-8">${(t.risk_flags || []).map(r => `<li>${esc(Copy.text(r))}</li>`).join('')}</ul></td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}</tbody></table></div>`, flush: true, foot: ui.source('Punctual Pros add-on targets: risk flags · PitchBook profile', 'https://pitchbook.com/profiles/company/593145-91', m.generated), accent: true })}</div>` : ''}
-  <div class="mt-12">${ui.panel({ title: 'Full screen', sub: `Fit rubric: ${esc(Object.keys(m.scoring_rubric || {}).map(k => k.replace(/_/g, ' ')).join(' · '))} (20 pts each)`, body: '<div id="tg-screen"></div>', foot: ui.source('Punctual Pros add-on targets', null, m.generated) })}</div>
-  ${(m.caveats || []).length ? `<div class="mt-12">${ui.note(`<b>Caveats:</b> ${(m.caveats || []).slice(0, 3).map(c => esc(Copy.text(c))).join(' ')}`, 'warn')}</div>` : ''}
-  </div>`;
-  const root = el.querySelector('.m-pp');
-  renderTargets(ctx, root.querySelector('#tg-screen'), {
-    items: Copy.targets(items), color: PP, platformLabel: 'Punctual Pros', exportName: 'pp_addon_targets', pageSize: 25,
-    extraColumns: [
-      { key: 'distance_mi_from_lancaster', label: 'Mi (Lanc / TR)', num: true, fmt: (v, r) => `${v == null ? '—' : fmt.num(v)}<span class="dim"> / ${r.distance_mi_from_toms_river == null ? '—' : fmt.num(r.distance_mi_from_toms_river)}</span>` },
-      { key: 'review_count', label: 'Reviews', num: true, fmt: (v, r) => v ? `${fmt.num(v)}${r.review_rating ? ` · ${esc(r.review_rating)}★` : ''}` : '<span class="dim">—</span>' },
-    ],
-  });
-  const map = maps.create(root.querySelector('#tg-map'), { center: [40.0, -75.9], zoom: 7 });
-  const tc = s => s >= 80 ? PAL.green : s >= 65 ? PAL.sky : PAL.amber;
-  pts(maps, map, items.filter(t => fin(t.lat)), { color: t => tc(t.fit_score), radius: t => Math.max(4, (t.fit_score - 40) / 6), cluster: false, popup: t => `<b>${esc(t.company)}</b><br>${esc(t.hq_city)}, ${esc(t.state)} · fit ${t.fit_score}<br><span class="sys-muted">${esc(Copy.text(t.ownership || ''))}</span>`, onClick: openT });
-  if (conflicts.some(t => fin(t.lat))) pts(maps, map, conflicts.filter(t => fin(t.lat)), { color: PAL.red, radius: 5, cluster: false, popup: t => `<b>${esc(t.company)}</b><br>${esc(t.hq_city)}, ${esc(t.state)}<br><b>Name conflict — verify affiliation</b>`, onClick: openT });
-  maps.marker(map, HQ.lat, HQ.lon, { color: hx(INK), label: 'PP HQ' });
-  maps.marker(map, HORVATH.lat, HORVATH.lon, { color: hx(STATUS.horvath.color), label: 'Horvath' });
-  maps.circle(map, HQ.lat, HQ.lon, 60 * 1609, { color: hx(PP), fill: .03, dash: '4 4' });
-  maps.legend(map, [{ color: PAL.green, label: 'Tier 1 (80+)' }, { color: PAL.sky, label: 'Tier 2 (65–79)' }, { color: PAL.amber, label: 'Tier 3+ (under 65)' }, { color: PP, label: '60 miles from HQ', ring: true }, ...(conflicts.length ? [{ color: PAL.red, label: 'Name conflict · verify' }] : [])], 'Fit');
-  maps.fitPoints(map, items.filter(t => fin(t.lat)).map(t => [t.lat, t.lon]), 8);
-  bindRows(root, '.pp-top10 tr[data-id], .pp-affil tr[data-id]', r => { const t = byId.get(r.dataset.id); if (t) openT(t); });
-  function openT(t) {
-    const fb = t.fit_breakdown || {}; const nc = nameConflict(t);
-    inspector.open({ title: esc(t.company), sub: `${esc(t.hq_city || '')}, ${esc(t.state || '')} · fit ${t.fit_score}${nc ? ' · held out of ranking' : ''}`, color: nc ? PAL.red : tc(t.fit_score), sections: [
-      nc ? { label: 'Affiliation', html: `<div class="sys-chips">${chip('name conflict — verify', PAL.red)}${chip('status: unverified', PAL.amber)}</div><div class="small text-2 mt-8">Owned, related or independent: not yet confirmed. Trades as “The Punctual Pros”. Confirm with PP management and the Authority Brands franchise register whether this is an existing network entity before it re-enters the ranking.</div>` } : null,
-      { label: 'Fit breakdown', html: Object.keys(fb).length ? ctx.charts.hbar(Object.entries(fb).map(([k, v]) => ({ label: k.replace(/_/g, ' '), value: v })), { max: 20, fmt: v => v, labelW: 130, color: PP }) : '—' },
-      { label: 'Profile', html: ui.kv({ Founded: t.founded_year != null ? esc(t.founded_year) : null, Ownership: esc(Copy.text(t.ownership || '')), 'Ownership notes': esc(Copy.text(t.ownership_notes || '')), Brands: esc(t.brands_or_franchise || ''), Trades: (t.trades || []).map(x => Copy.text(x)), 'Mi from Lancaster': t.distance_mi_from_lancaster, 'Mi from Toms River': t.distance_mi_from_toms_river, Reviews: t.review_count ? `${fmt.num(t.review_count)} · ${esc(t.review_rating || '')}★` : null, Website: t.website ? fmt.link(t.website) : null }) },
-      { label: 'Strategic rationale', html: `<div class="small text-2">${esc(t.strategic_rationale || '')}</div>` },
-      t.risk_flags?.length ? { label: 'Risk flags', html: `<ul class="sys-card-list">${t.risk_flags.map(r => `<li>${esc(Copy.text(r))}</li>`).join('')}</ul>` } : null,
-      { label: 'Next action', html: nc ? `<div class="small text-2"><b>Do not contact yet.</b> PP CEO to confirm ownership / related-party status; if independent, resolve the trade-name overlap first, then re-score.</div>` : `<div class="small text-2">Log in pipeline → PRG-led owner outreach → request 3-yr P&L, membership count and tech roster → indicative value at sector multiple (see Filings & financials).${/franchisee/.test(t.ownership || '') ? ' Confirm Authority Brands transfer approval path.' : ''}</div>` },
-      { label: 'Sources', html: `<div class="small col gap-4">${(t.sources || []).map(s => fmt.link(s)).join('') || '—'}</div>${t.retrieved ? `<div class="dim small mt-8">Retrieved ${esc(dfull(fmt, t.retrieved))}</div>` : ''}` },
-    ].filter(Boolean), actions: t.website ? [{ label: 'Website ↗', href: t.website }] : [] });
-  }
-  return () => map.remove();
-}
-
 /* ═══ 7. FILINGS & FINANCIALS ════════════════════════════════════════════ */
 async function filings(ctx) {
   const { el, ui, data, esc, fmt } = ctx; css();
@@ -1260,13 +1190,12 @@ export default {
     { id: 'movers', name: 'New movers', icon: '⌂', render: movers },
     { id: 'territory', name: 'Territory', icon: '▦', render: territory },
     { id: 'market', name: 'Market', icon: '◎', render: market },
-    { id: 'targets', name: 'Add-on targets', icon: '◆', render: targets },
     { id: 'filings', name: 'Public filings', icon: '▤', render: filings },
   ],
   tour: [
     { order: 300, hash: '#/pp/overview', caption: '<b>Punctual Pros.</b> ~1.6M housing units in Central PA and the Jersey Shore. Levers: new movers, weather, adjacent zips.', narration: 'Punctual Pros serves Central Pennsylvania and the Jersey Shore. The levers: new movers, weather staffing and adjacent zips.', duration: 7500 },
     { order: 310, hash: '#/pp/weather', caption: '<b>Weather to calls to techs.</b> Live alerts and forecasts become a call-pressure index and a surge-staffing number.', narration: 'Live alerts and forecasts become a call-pressure index and the number of extra technicians to schedule.', duration: 7500 },
     { order: 320, hash: '#/pp/movers', caption: '<b>Every home sale is a lead.</b> Scored deed records, with an offer per house and a mailing list.', narration: 'Every closed home sale in the footprint becomes a scored new-mover lead, with the right offer attached.', duration: 7000 },
-    { order: 330, hash: '#/pp/targets', caption: '<b>Tuck-ins.</b> 60 ranked operators, led by same-brand franchisees, against the PE-backed rivals bidding for them.', narration: 'Sixty ranked tuck-ins, led by same-brand franchisees, against the PE-backed rivals bidding for them.', duration: 6500 },
+    { order: 330, hash: '#/ma/pipeline?platform=pp', caption: '<b>Tuck-ins.</b> The Punctual Pros add-on list, led by same-brand franchisees, against the PE-backed rivals bidding for them.', narration: 'The Punctual Pros add-on list, led by same-brand franchisees, against the PE-backed rivals bidding for them.', duration: 6500 },
   ],
 };

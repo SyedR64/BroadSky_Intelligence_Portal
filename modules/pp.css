@@ -46,7 +46,6 @@
 .m-pp .pp-cov td.wrap{max-width:260px}
 .m-pp .tbl td.pp-wrap{white-space:normal;min-width:240px}
 .m-pp .pp-pad{padding:var(--sys-sp-3) var(--sys-sp-5) 0}
-.m-pp .pp-map-md{min-height:520px}
 .m-pp .pp-map-lg{min-height:640px}
 
 /* filings: give the shared renderFilings layout room (estimate table full width, readable wraps) */
