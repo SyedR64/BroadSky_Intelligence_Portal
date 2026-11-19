@@ -336,10 +336,17 @@ function initPreviews() {
   if (new URLSearchParams(location.search).get('live') === '1') loadAll();
 }
 
+/* ── anchors that left the home page ──────────────────────────────────────────
+   /#os and /#growth-plans forward to the same grids on the Concepts page. (/#answers, /#numbers and /#tour
+   have no target any more, so the home page simply opens at the top.) Home page only: the gallery keeps both ids. */
+const MOVED = { '#os': 'redesigns/#os', '#growth-plans': 'redesigns/#growth-plans' };
+function forwardMoved() { const to = MOVED[location.hash]; if (to) location.replace(ROOT + to); }
+
 /* ── public API ────────────────────────────────────────────────────────────── */
 const REVEAL = '.sys-section .sys-grid > *, .sys-section .sys-kpis, .lp-stage, .lp-video, .lp-bridge, .lp-pr, .sys-cta-in';
 export const Landing = {
   init() {
+    forwardMoved(); window.addEventListener('hashchange', forwardMoved);
     initAsk(); initSteps(); initNumbers(); initDeals(); initTour(); initBriefing();
     initReveal(REVEAL);
   },

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BSP Desk</title>
-<meta name="description" content="Ask about six BSP portfolio companies in plain English. Answers come with evidence and a link to the portal view.">
+<meta name="description" content="Ask about six BSP portfolio companies in plain English, or try the company agent by role.">
 <meta name="theme-color" content="#fbfaf7">
 <script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
 <meta name="author" content="Syed Rahman">
@@ -14,7 +14,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BSP Desk">
 <meta property="og:title" content="BSP Desk">
-<meta property="og:description" content="Ask about six BSP portfolio companies in plain English, with evidence and the portal view.">
+<meta property="og:description" content="Ask about six BSP portfolio companies in plain English, or try the company agent by role.">
 <meta property="og:url" content="https://broadsky-agent.vercel.app/">
 <meta property="og:image" content="https://broadsky-agent.vercel.app/assets/img/portal_home_overview.jpg">
 <meta property="og:image:width" content="1400">
@@ -22,7 +22,7 @@
 <meta property="og:image:alt" content="The Command Center: a portfolio map of the Northeast with company headquarters and KPI cards">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="BSP Desk">
-<meta name="twitter:description" content="Ask about six BSP portfolio companies in plain English, with evidence and the portal view.">
+<meta name="twitter:description" content="Ask about six BSP portfolio companies in plain English, or try the company agent by role.">
 <meta name="twitter:image" content="https://broadsky-agent.vercel.app/assets/img/portal_home_overview.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,61 +34,64 @@
 <body data-page="landing">
 <main id="main">
 
-  <!-- ═══ Hero: the inline assistant is the primary action ═══ -->
+  <!-- ═══ 1 · What the site is, then the company agent. The question box sits just under the two buttons. ═══ -->
   <section class="sys-hero sys-hero--center lp-hero" id="top" aria-labelledby="hero-title">
     <div class="sys-wrap">
-      <h1 id="hero-title" class="sys-h1 sys-h1--display">Welcome to <span class="sys-grad-text">Broad&nbsp;Sky.</span></h1>
-      <p class="sys-lead">Ask about any of the six companies.</p>
+      <h1 id="hero-title" class="sys-h1">A working desk for Broad&nbsp;Sky's <span class="sys-grad-text">six&nbsp;companies.</span></h1>
+      <p class="sys-lead">Public information turned into clear next steps: research, deal tools and one AI agent for every role.</p>
+      <p class="lp-hero-note"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 2.5 3.8v3.9c0 3.2 2.3 6 5.5 6.8 3.2-.8 5.5-3.6 5.5-6.8V3.8z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="m5.6 8 1.7 1.7 3.2-3.4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg><span>Prepared by Syed Rahman for BSP's Portfolio Resource Group. Every number has a source; estimates are <span class="lp-nb">marked <span class="sys-est">est.</span></span></span></p>
+      <div class="sys-actions">
+        <a class="sys-btn sys-btn--primary sys-btn--lg" href="agent.html?role=pp-hvac-technician&amp;apps=all">Try the company agent <span aria-hidden="true">→</span></a>
+        <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#start">Five things in five minutes</a>
+      </div>
       <div id="hero-chat" class="lp-chat">
         <div class="lp-skeleton" aria-hidden="true">
           <div class="lp-sk-box"><span>Ask anything, e.g. “Show me how to take Punctual Pros nationwide”</span><i></i></div>
           <div class="lp-sk-chips"><i></i><i></i><i></i><i></i></div>
         </div>
       </div>
-      <div class="sys-actions">
-        <a class="sys-btn sys-btn--primary sys-btn--lg" href="app.html">Open the portal <span aria-hidden="true">→</span></a>
-        <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#start">Start here</a>
-      </div>
-      <p class="lp-hero-note"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 2.5 3.8v3.9c0 3.2 2.3 6 5.5 6.8 3.2-.8 5.5-3.6 5.5-6.8V3.8z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="m5.6 8 1.7 1.7 3.2-3.4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg><span>Prepared by Syed Rahman for the Portfolio Resource Group at Broad Sky Partners (BSP). Every number has a source; estimates are marked <span class="sys-est">est.</span></span></p>
-      <div class="sys-card lp-counter" id="hero-counter" aria-label="Revenue left on the table across the portfolio, estimate"></div>
     </div>
   </section>
 
-  <!-- ═══ Start here ═══ -->
+  <!-- ═══ 2 · Five stops, one link each ═══ -->
   <section class="sys-section" id="start" aria-labelledby="start-title">
     <div class="sys-wrap">
-      <div class="sys-section-head sys-section-head--row">
-        <div>
-          <p class="sys-kicker">Start here</p>
-          <h2 id="start-title" class="sys-h2">Three things to try.</h2>
-          <p class="sys-lead">Ask a question, open the plan, watch the film.</p>
-        </div>
-        <a class="sys-link" href="sitemap.html">Every page and portal view <span aria-hidden="true">→</span></a>
+      <div class="sys-section-head">
+        <p class="sys-kicker">Start here</p>
+        <h2 id="start-title" class="sys-h2">Five things, five minutes.</h2>
       </div>
-      <ol class="sys-grid sys-grid--3 lp-list lp-steps" id="steps">
-        <li class="sys-card sys-card--feature lp-step" data-step="ask">
-          <span class="sys-card-label"><span class="lp-step-n" aria-hidden="true">1</span>Ask</span>
-          <h3 class="sys-card-title">Ask a question</h3>
-          <p class="sys-card-body">Try “Show me how to take Punctual Pros nationwide.” Every number in the answer shows where it came from.</p>
-          <div class="sys-card-foot"><button class="sys-btn sys-btn--secondary sys-btn--sm" type="button" data-ask="Show me how to take Punctual Pros nationwide" data-step-go="ask">Ask it</button></div>
+      <ol class="sys-grid sys-grid--3 lp-list lp-stops">
+        <li class="sys-card sys-card--feature lp-step lp-step--wide">
+          <h3 class="sys-card-title"><span class="lp-step-n" aria-hidden="true">1</span>The company agent</h3>
+          <p class="sys-card-body">One agent for every role, from BSP's managing partner to a Punctual Pros HVAC technician. Each role sees only its own apps and data. Sandbox data.</p>
+          <div class="sys-card-foot"><a class="sys-btn sys-btn--primary sys-btn--sm" href="agent.html?role=pp-hvac-technician&amp;apps=all">Open as the HVAC technician <span aria-hidden="true">→</span></a></div>
         </li>
-        <li class="sys-card sys-card--feature lp-step" data-step="playbook">
-          <span class="sys-card-label"><span class="lp-step-n" aria-hidden="true">2</span>Read</span>
-          <h3 class="sys-card-title">Read the plan</h3>
-          <p class="sys-card-body">The step-by-step plan to take Punctual Pros from Pennsylvania to the whole country.</p>
-          <div class="sys-card-foot"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="redesigns/punctual-pros/nationwide.html" data-step-go="playbook">Open the plan <span aria-hidden="true">→</span></a></div>
+        <li class="sys-card sys-card--feature lp-step">
+          <h3 class="sys-card-title"><span class="lp-step-n" aria-hidden="true">2</span>Who to buy</h3>
+          <p class="sys-card-body">10,000 businesses read from their own websites and sorted by who owns them.</p>
+          <div class="sys-card-foot"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="app.html#/ma/research">Website research <span aria-hidden="true">→</span></a><a href="app.html#/ma/pipeline">The full target list <span aria-hidden="true">→</span></a></div>
         </li>
-        <li class="sys-card sys-card--feature lp-step" data-step="film">
-          <span class="sys-card-label"><span class="lp-step-n" aria-hidden="true">3</span>Watch</span>
-          <h3 class="sys-card-title">Watch the film</h3>
-          <p class="sys-card-body">Two minutes on what this site does.</p>
-          <div class="sys-card-foot"><button class="sys-btn sys-btn--secondary sys-btn--sm" type="button" data-play="film" data-step-go="film">Play the film</button></div>
+        <li class="sys-card sys-card--feature lp-step">
+          <h3 class="sys-card-title"><span class="lp-step-n" aria-hidden="true">3</span>What to pay</h3>
+          <p class="sys-card-body">One named add-on for CET carried to price, financing and return, with an Excel file.</p>
+          <div class="sys-card-foot"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="app.html#/deal/returns?p=cet-t01">Model this deal <span aria-hidden="true">→</span></a></div>
+        </li>
+        <li class="sys-card sys-card--feature lp-step">
+          <h3 class="sys-card-title"><span class="lp-step-n" aria-hidden="true">4</span>The portfolio on one page</h3>
+          <p class="sys-card-body">Six companies: hold, exit window and next action in one table.</p>
+          <div class="sys-card-foot"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="app.html#/home/overview">Command Center <span aria-hidden="true">→</span></a></div>
+        </li>
+        <li class="sys-card sys-card--feature lp-step">
+          <h3 class="sys-card-title"><span class="lp-step-n" aria-hidden="true">5</span>Before and after</h3>
+          <p class="sys-card-body">Each company's website today, next to a redesign.</p>
+          <div class="sys-card-foot"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="redesigns/#before-after">See the six <span aria-hidden="true">→</span></a></div>
         </li>
       </ol>
+      <p class="lp-more">Everything else: <a class="sys-link" href="sitemap.html">all pages <span aria-hidden="true">→</span></a></p>
     </div>
   </section>
 
-  <!-- ═══ Acquisition engine: the deal math, in house (figures refreshed from the same data by assets/landing.js) ═══ -->
+  <!-- ═══ 3 · Acquisition engine: one worked example (figures refreshed from the same data by assets/landing.js) ═══ -->
   <section class="sys-section lp-deals" id="deals" data-sys-theme="dark" aria-labelledby="deals-title">
     <div class="sys-wrap">
       <div class="sys-section-head sys-section-head--row">
@@ -99,374 +102,129 @@
         </div>
         <a class="sys-link" href="app.html#/ma/overview">Open the acquisition engine <span aria-hidden="true">→</span></a>
       </div>
-      <ol class="sys-grid sys-grid--3 lp-list lp-deal-steps">
-        <li class="sys-card sys-card--feature">
-          <span class="sys-card-label"><span class="lp-step-n" aria-hidden="true">1</span>Screen</span>
-          <h3 class="sys-card-title">Find and size targets</h3>
-          <p class="sys-card-body"><span data-stat="targets">157</span> add-on targets and <span data-stat="sponsors">35</span> rival sponsors. Each target gets staff, revenue, EBITDA and a likely price, all <span class="sys-est">est.</span>, with its source and a confidence.</p>
-        </li>
-        <li class="sys-card sys-card--feature">
-          <span class="sys-card-label"><span class="lp-step-n" aria-hidden="true">2</span>Price and finance</span>
-          <h3 class="sys-card-title">Set price, debt and equity</h3>
-          <p class="sys-card-body">The likely price comes from what deals of that size fetch today. Debt, interest and fees start at current market averages, each with its source.</p>
-        </li>
-        <li class="sys-card sys-card--feature">
-          <span class="sys-card-label"><span class="lp-step-n" aria-hidden="true">3</span>Model</span>
-          <h3 class="sys-card-title">Run the numbers</h3>
-          <p class="sys-card-body">Returns, DCF, buy-and-build and sensitivity tables on one live model. Download it to Excel with working formulas.</p>
-        </li>
-      </ol>
-      <div class="sys-grid sys-grid--2 lp-deal-ex">
-        <article class="sys-card lp-deal" data-co="cet" data-deal="cet-t01">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>CET add-on · fit <span data-f="fit">83</span> of 100</span>
-          <h3 class="sys-card-title">McDonald Electrical Corporation</h3>
-          <p class="sys-card-body">Electrical contractor in Hingham, MA. Founder-owned, <span data-f="staff">96</span> staff.</p>
-          <dl class="lp-math lp-deal-math" data-f="math"><div><dt>Revenue</dt><dd>$18.4M<span class="sys-est">est.</span></dd></div><div><dt>EBITDA</dt><dd>$1.8M<span class="sys-est">est.</span></dd></div><div><dt>Likely price</dt><dd>$11.6M–$12.7M<span class="sys-est">est.</span></dd></div><div><dt>Debt</dt><dd>$5.5M<span class="sys-est">est.</span></dd></div><div><dt>Equity check</dt><dd>$6.8M<span class="sys-est">est.</span></dd></div><div><dt>Return a year</dt><dd>16.1%<span class="sys-est">est.</span></dd></div></dl>
-          <details class="lp-how">
-            <summary>How we estimated this</summary>
-            <ol class="lp-list" data-f="how">
-              <li><b>Staff: 96.</b> From a company database search (ZoomInfo). <i>Medium confidence.</i></li>
-              <li><b>Revenue: $18.4M <span class="sys-est">est.</span></b> Modelled by ZoomInfo, not reported. Check: 96 staff × $406K revenue per employee at listed electrical contractors = $39.0M ceiling; the estimate is 47% of that rate. <i>Medium confidence.</i></li>
-              <li><b>EBITDA: $1.8M <span class="sys-est">est.</span></b> Revenue × 10%. Listed electrical peers earn 11.2% EBITDA margins (median); 10% assumed for a private contractor. <i>Low confidence.</i></li>
-              <li><b>Likely price: $11.6M–$12.7M <span class="sys-est">est.</span></b> EBITDA × 6.3x to 6.9x, the average for deals under $25M of value (GF Data). The model starts at 6.5x: $12.0M. <i>Low confidence.</i></li>
-              <li><b>Financing: $5.5M debt, $6.8M equity <span class="sys-est">est.</span></b> Debt of 3.0x EBITDA at 7.8%, the current market averages (GF Data), plus 3% deal fees. <i>Market average.</i></li>
-              <li><b>Return: 16.1% a year <span class="sys-est">est.</span></b> Sold at the same 6.5x after 5 years, before any gain from merging into CET. <i>Low confidence.</i></li>
-            </ol>
-          </details>
-          <div class="sys-card-foot"><a class="sys-btn sys-btn--primary sys-btn--sm" href="app.html#/deal/returns?p=cet-t01">Model this deal <span aria-hidden="true">→</span></a><a href="app.html#/ma/pipeline?platform=cet&amp;id=cet-t01">Full profile <span aria-hidden="true">→</span></a></div>
-        </article>
-        <article class="sys-card lp-deal" data-co="pp" data-deal="pp-t11">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Punctual Pros add-on · fit <span data-f="fit">84</span> of 100</span>
-          <h3 class="sys-card-title">Lancaster Plumbing, Heating, Cooling &amp; Electrical</h3>
-          <p class="sys-card-body">Home services in East Petersburg, PA. Family-owned, <span data-f="staff">27</span> staff.</p>
-          <dl class="lp-math lp-deal-math" data-f="math"><div><dt>Revenue</dt><dd>$7.0M<span class="sys-est">est.</span></dd></div><div><dt>EBITDA</dt><dd>$840K<span class="sys-est">est.</span></dd></div><div><dt>Likely price</dt><dd>$5.3M–$5.8M<span class="sys-est">est.</span></dd></div><div><dt>Debt</dt><dd>$2.5M<span class="sys-est">est.</span></dd></div><div><dt>Equity check</dt><dd>$3.1M<span class="sys-est">est.</span></dd></div><div><dt>Return a year</dt><dd>14.6%<span class="sys-est">est.</span></dd></div></dl>
-          <details class="lp-how">
-            <summary>How we estimated this</summary>
-            <ol class="lp-list" data-f="how">
-              <li><b>Staff: 27.</b> From a company database search (ZoomInfo). <i>Medium confidence.</i></li>
-              <li><b>Revenue: $7.0M <span class="sys-est">est.</span></b> Modelled by ZoomInfo, not reported. Check: 27 staff × $401K revenue per employee at listed residential-services companies = $10.8M ceiling; the estimate is 65% of that rate. <i>Medium confidence.</i></li>
-              <li><b>EBITDA: $840K <span class="sys-est">est.</span></b> Revenue × 12%. Listed residential peers earn 15.1% EBITDA margins; Punctual Pros itself about 8 to 14%. Small independents assumed at 12%. <i>Low confidence.</i></li>
-              <li><b>Likely price: $5.3M–$5.8M <span class="sys-est">est.</span></b> EBITDA × 6.3x to 6.9x, the average for deals under $25M of value (GF Data). The model starts at 6.5x: $5.5M. <i>Low confidence.</i></li>
-              <li><b>Financing: $2.5M debt, $3.1M equity <span class="sys-est">est.</span></b> Debt of 3.0x EBITDA at 7.8%, the current market averages (GF Data), plus 3% deal fees. <i>Market average.</i></li>
-              <li><b>Return: 14.6% a year <span class="sys-est">est.</span></b> Sold at the same 6.5x after 5 years, before any gain from merging into Punctual Pros. <i>Low confidence.</i></li>
-            </ol>
-          </details>
-          <div class="sys-card-foot"><a class="sys-btn sys-btn--primary sys-btn--sm" href="app.html#/deal/returns?p=pp-t11">Model this deal <span aria-hidden="true">→</span></a><a href="app.html#/ma/pipeline?platform=pp&amp;id=pp-t11">Full profile <span aria-hidden="true">→</span></a></div>
-        </article>
-      </div>
-      <div class="lp-deal-foot">
-        <p class="sys-src" id="deals-src"><b>Source:</b> add-on screens (ZoomInfo, company websites), September 24, 2026; listed-peer filings (SEC); deal multiples and debt terms (GF Data), retrieved October 6, 2026. Estimates, not company-reported figures.</p>
-        <a class="sys-btn sys-btn--secondary" href="app.html#/deal/returns?p=typical">Open the acquisition model <span aria-hidden="true">→</span></a>
-      </div>
+      <article class="sys-card lp-deal" data-co="cet" data-deal="cet-t01">
+        <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>CET add-on · fit <span data-f="fit">83</span> of 100</span>
+        <h3 class="sys-card-title">McDonald Electrical Corporation</h3>
+        <p class="sys-card-body">Electrical contractor in Hingham, MA. Founder-owned, <span data-f="staff">96</span> staff.</p>
+        <dl class="lp-math lp-deal-math" data-f="math"><div><dt>Revenue</dt><dd>$18.4M<span class="sys-est">est.</span></dd></div><div><dt>EBITDA</dt><dd>$1.8M<span class="sys-est">est.</span></dd></div><div><dt>Likely price</dt><dd>$11.6M–$12.7M<span class="sys-est">est.</span></dd></div><div><dt>Debt</dt><dd>$5.5M<span class="sys-est">est.</span></dd></div><div><dt>Equity check</dt><dd>$6.8M<span class="sys-est">est.</span></dd></div><div><dt>Return a year</dt><dd>16.1%<span class="sys-est">est.</span></dd></div></dl>
+        <details class="lp-how">
+          <summary>How we estimated this</summary>
+          <ol class="lp-list" data-f="how">
+            <li><b>Staff: 96.</b> From a company database search (ZoomInfo). <i>Medium confidence.</i></li>
+            <li><b>Revenue: $18.4M <span class="sys-est">est.</span></b> Modelled by ZoomInfo, not reported. Check: 96 staff × $406K revenue per employee at listed electrical contractors = $39.0M ceiling; the estimate is 47% of that rate. <i>Medium confidence.</i></li>
+            <li><b>EBITDA: $1.8M <span class="sys-est">est.</span></b> Revenue × 10%. Listed electrical peers earn 11.2% EBITDA margins (median); 10% assumed for a private contractor. <i>Low confidence.</i></li>
+            <li><b>Likely price: $11.6M–$12.7M <span class="sys-est">est.</span></b> EBITDA × 6.3x to 6.9x, the average for deals under $25M of value (GF Data). The model starts at 6.5x: $12.0M. <i>Low confidence.</i></li>
+            <li><b>Financing: $5.5M debt, $6.8M equity <span class="sys-est">est.</span></b> Debt of 3.0x EBITDA at 7.8%, the current market averages (GF Data), plus 3% deal fees. <i>Market average.</i></li>
+            <li><b>Return: 16.1% a year <span class="sys-est">est.</span></b> Sold at the same 6.5x after 5 years, before any gain from merging into CET. <i>Low confidence.</i></li>
+          </ol>
+        </details>
+        <div class="sys-card-foot"><a class="sys-btn sys-btn--primary sys-btn--sm" href="app.html#/deal/returns?p=cet-t01">Model this deal <span aria-hidden="true">→</span></a><a href="app.html#/ma/pipeline?platform=cet&amp;id=cet-t01">See it in the target list <span aria-hidden="true">→</span></a></div>
+      </article>
+      <p class="sys-src" id="deals-src"><b>Source:</b> add-on screens (ZoomInfo, company websites), September 24, 2026; listed-peer filings (SEC); deal multiples and debt terms (GF Data), retrieved October 6, 2026. Estimates, not company-reported figures.</p>
     </div>
   </section>
 
-  <!-- ═══ What it answers ═══ -->
-  <section class="sys-section sys-section--alt" id="answers" aria-labelledby="answers-title">
-    <div class="sys-wrap">
-      <div class="sys-section-head">
-        <p class="sys-kicker">What it answers</p>
-        <h2 id="answers-title" class="sys-h2">Questions by role.</h2>
-        <p class="sys-lead">Each answer links to the portal view behind it.</p>
-      </div>
-      <div class="sys-grid sys-grid--3">
-        <article class="sys-card lp-q" data-co="pp">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Operating partner</span>
-          <p class="sys-card-title">“What do this week's storms mean for Punctual Pros?”</p>
-          <p class="sys-card-body">Live National Weather Service alerts, a 7-day forecast and the demand model</p>
-          <div class="sys-card-foot"><button class="sys-btn sys-btn--secondary sys-btn--sm" type="button" data-ask="What do this week's storms mean for Punctual Pros?">Ask</button><a href="app.html#/pp/weather">Weather and demand <span aria-hidden="true">→</span></a></div>
-        </article>
-        <article class="sys-card lp-q" data-co="pp">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>CFO and finance</span>
-          <p class="sys-card-title">“Estimate Punctual Pros revenue from public filings”</p>
-          <p class="sys-card-body">SEC, loan and franchise filings, combined into estimates that are clearly marked</p>
-          <div class="sys-card-foot"><button class="sys-btn sys-btn--secondary sys-btn--sm" type="button" data-ask="Estimate Punctual Pros revenue from public filings">Ask</button><a href="app.html#/fin/portfolio">Portfolio financials <span aria-hidden="true">→</span></a></div>
-        </article>
-        <article class="sys-card lp-q" data-co="pp">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Growth marketing</span>
-          <p class="sys-card-title">“How many new-mover leads are in Lancaster County?”</p>
-          <p class="sys-card-body">County deed records, a score for each lead and a list ready to mail</p>
-          <div class="sys-card-foot"><button class="sys-btn sys-btn--secondary sys-btn--sm" type="button" data-ask="How many new-mover leads are in Lancaster County?">Ask</button><a href="app.html#/pp/movers">New movers <span aria-hidden="true">→</span></a></div>
-        </article>
-        <article class="sys-card lp-q" data-co="cet">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Deal team</span>
-          <p class="sys-card-title">“Show the top add-on targets for CET in Connecticut”</p>
-          <p class="sys-card-body">48 screened CET targets with a fit score and sources</p>
-          <div class="sys-card-foot"><button class="sys-btn sys-btn--secondary sys-btn--sm" type="button" data-ask="Show the top add-on targets for CET in Connecticut">Ask</button><a href="app.html#/cet/targets">Add-on targets <span aria-hidden="true">→</span></a></div>
-        </article>
-        <article class="sys-card lp-q" data-co="cet">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Business development</span>
-          <p class="sys-card-title">“Which wastewater plants should Horton call first?”</p>
-          <p class="sys-card-body">183 plants in CT, MA and RI, with funded projects and a fit score</p>
-          <div class="sys-card-foot"><button class="sys-btn sys-btn--secondary sys-btn--sm" type="button" data-ask="Which wastewater plants should Horton call first?">Ask</button><a href="app.html#/cet/wastewater">Wastewater accounts <span aria-hidden="true">→</span></a></div>
-        </article>
-        <article class="sys-card lp-q">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Investment committee</span>
-          <p class="sys-card-title">“Who competes with BSP for home-services deals?”</p>
-          <p class="sys-card-body">35 rival sponsors, with their funds and their 2025–26 deals</p>
-          <div class="sys-card-foot"><button class="sys-btn sys-btn--secondary sys-btn--sm" type="button" data-ask="Who competes with BSP for home-services deals?">Ask</button><a href="app.html#/pe/landscape">Sponsor landscape <span aria-hidden="true">→</span></a></div>
-        </article>
-        <article class="sys-card lp-q" style="grid-column:1/-1">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Underwriting</span>
-          <p class="sys-card-title">“What can we pay for a tuck-in and still earn 20% a year?”</p>
-          <p class="sys-card-body">A live buyout, DCF and roll-up model, prefilled from filings and the add-on screens. It downloads as an Excel workbook with working formulas.</p>
-          <div class="sys-card-foot"><a href="app.html#/deal/returns?p=typical">Acquisition model <span aria-hidden="true">→</span></a></div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ Evidence base (dark band) ═══ -->
-  <section class="sys-section sys-section--tight lp-numbers" id="numbers" data-sys-theme="dark" aria-labelledby="numbers-title">
-    <div class="sys-wrap">
-      <div class="sys-section-head sys-section-head--row">
-        <div>
-          <p class="sys-kicker">The evidence base</p>
-          <h2 id="numbers-title" class="sys-h2">Counted live on each visit.</h2>
-        </div>
-      </div>
-      <div class="sys-kpis" role="list">
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Public filings</span><span class="sys-kpi-value"><span data-stat="filings">203</span></span><span class="sys-kpi-sub" data-sub="filings">SEC, lender and state records</span></div>
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Home sales and deeds</span><span class="sys-kpi-value"><span data-stat="sales">163,738</span></span><span class="sys-kpi-sub" data-sub="sales">from county recorder deed records</span></div>
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Opportunities</span><span class="sys-kpi-value"><span data-stat="opps">160</span></span><span class="sys-kpi-sub" data-sub="opps">CET 86 sourced + 53 older public bids · BPI 12 · Fair Harbor 9</span></div>
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Add-on targets</span><span class="sys-kpi-value"><span data-stat="targets">157</span></span><span class="sys-kpi-sub" data-sub="targets">across four companies</span></div>
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">PE sponsors</span><span class="sys-kpi-value"><span data-stat="sponsors">35</span></span><span class="sys-kpi-sub" data-sub="sponsors">profiled with funds and deals</span></div>
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Lab sites</span><span class="sys-kpi-value"><span data-stat="sites">27,503</span></span><span class="sys-kpi-sub" data-sub="sites">scored for Thomas Scientific</span></div>
-      </div>
-      <p class="sys-src" id="numbers-src"><b>Source:</b> public filings, bid boards, county deed records and press, counted when this page loads.</p>
-    </div>
-  </section>
-
-  <!-- ═══ Product tour ═══ -->
-  <section class="sys-section lp-tour-sec" id="tour" aria-labelledby="tour-title">
-    <div class="sys-wrap">
-      <div class="sys-section-head">
-        <p class="sys-kicker">Product tour</p>
-        <h2 id="tour-title" class="sys-h2">Four portal views.</h2>
-        <p class="sys-lead">Each view opens with the answer, then shows the evidence and the next step.</p>
-      </div>
-      <div class="lp-tour">
-        <ol class="lp-list lp-tour-steps" role="tablist" aria-label="Product tour steps">
-          <li role="presentation"><button role="tab" id="tt-0" aria-selected="true" aria-controls="tour-stage" data-step="0"><span class="lp-tn">01</span><span class="lp-tt"><b>Command Center</b><span>Six companies, weather alerts and this week's signals.</span></span><i class="lp-tbar" aria-hidden="true"></i></button></li>
-          <li role="presentation"><button role="tab" id="tt-1" aria-selected="false" aria-controls="tour-stage" data-step="1"><span class="lp-tn">02</span><span class="lp-tt"><b>Weather and demand</b><span>Turns the forecast into technician staffing.</span></span><i class="lp-tbar" aria-hidden="true"></i></button></li>
-          <li role="presentation"><button role="tab" id="tt-2" aria-selected="false" aria-controls="tour-stage" data-step="2"><span class="lp-tn">03</span><span class="lp-tt"><b>Wastewater accounts</b><span>183 plants ranked for Horton, with funded projects.</span></span><i class="lp-tbar" aria-hidden="true"></i></button></li>
-          <li role="presentation"><button role="tab" id="tt-3" aria-selected="false" aria-controls="tour-stage" data-step="3"><span class="lp-tn">04</span><span class="lp-tt"><b>Acquisition engine</b><span>157 add-on targets across four companies.</span></span><i class="lp-tbar" aria-hidden="true"></i></button></li>
-        </ol>
-        <div class="lp-stage" id="tour-stage" role="tabpanel" aria-labelledby="tt-0">
-          <div class="lp-browser">
-            <div class="lp-browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="lp-browser-url">Portal / <b id="tour-url">Command Center</b></span></div>
-            <div class="lp-browser-view">
-              <img class="lp-shot on" src="assets/img/portal_home_overview.jpg" alt="Command Center: the portfolio in two sentences, KPI cards and the value and exit-readiness table" width="1400" height="875" loading="lazy" decoding="async">
-              <img class="lp-shot" data-src="assets/img/portal_pp_weather.jpg" alt="Punctual Pros weather and demand: service-call pressure heatgrid by hub and day with live alerts" width="1400" height="875" decoding="async">
-              <img class="lp-shot" data-src="assets/img/portal_cet_wastewater.jpg" alt="CET wastewater accounts: map of treatment plants sized by design flow with a ranked priority list" width="1400" height="875" decoding="async">
-              <img class="lp-shot" data-src="assets/img/portal_ma_overview.jpg" alt="Acquisition engine: map of add-on targets by company with this quarter's top ten" width="1400" height="875" decoding="async">
-            </div>
-          </div>
-          <div class="lp-tour-chat" aria-live="polite">
-            <p class="lp-tc-q" id="tour-q">What does the portfolio look like this week?</p>
-            <p class="lp-tc-a" id="tour-a"><b>6 companies</b>, 23 add-ons and one realized exit. 86 CET opportunities, 157 add-on targets and live weather alerts for PA, NJ, MA and CT on one map.</p>
-            <p class="sys-src">Sample answer · October 2026</p>
-          </div>
-          <a class="sys-link lp-tour-open" id="tour-open" href="app.html#/home/overview">Open this view <span aria-hidden="true">→</span></a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ Companies ═══ -->
+  <!-- ═══ 4 · The six companies: best portal screen, plan and website concept; the running counter sits here, once ═══ -->
   <section class="sys-section sys-section--alt" id="platforms" aria-labelledby="platforms-title">
     <div class="sys-wrap">
       <div class="sys-section-head">
         <p class="sys-kicker">The portfolio</p>
         <h2 id="platforms-title" class="sys-h2">The six companies.</h2>
-        <p class="sys-lead">Each one has a portal module for weekly decisions and a concept website.</p>
+        <p class="sys-lead">For each: its strongest screen in the portal, its growth plan and its website concept.</p>
       </div>
       <div class="sys-grid sys-grid--3">
-        <article class="sys-card" data-co="pp">
+        <article class="sys-card lp-co" data-co="pp">
           <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Home services · since April 2024</span>
           <h3 class="sys-card-title">Punctual Pros</h3>
           <p class="sys-card-body">Residential HVAC, plumbing and electrical from East Hempfield (Lancaster), PA.</p>
-          <ul class="sys-card-list"><li>One Hour Heating &amp; Air, Benjamin Franklin Plumbing and Mister Sparky</li><li>248 core Central PA ZIP codes</li><li>Horvath Home Services in Ocean and Monmouth counties, NJ</li><li>About $22M revenue<span class="sys-est">est.</span></li></ul>
-          <div class="sys-card-foot"><a href="app.html#/pp/overview">Portal module <span aria-hidden="true">→</span></a><a href="redesigns/punctual-pros/">Site concept <span aria-hidden="true">→</span></a></div>
+          <ul class="lp-list lp-co-links">
+            <li><span>Best screen</span><a href="app.html#/pp/movers">New movers <span aria-hidden="true">→</span></a></li>
+            <li><span>Plan</span><a href="redesigns/punctual-pros/nationwide.html">Nationwide plan <span aria-hidden="true">→</span></a></li>
+            <li><span>Website</span><a href="redesigns/punctual-pros/">Concept <span aria-hidden="true">→</span></a></li>
+          </ul>
         </article>
-        <article class="sys-card" data-co="cet">
+        <article class="sys-card lp-co" data-co="cet">
           <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Electrical and energy · since February 2025</span>
-          <h3 class="sys-card-title">Commonwealth Electrical Technologies</h3>
-          <p class="sys-card-body">Electrical and energy infrastructure across New England, from Worcester and Taunton, MA.</p>
-          <ul class="sys-card-list"><li>Licensed in all six New England states</li><li>NuWave Energy Solutions, Norwell, MA</li><li>Horton Electrical Services, Canton, CT: wastewater, pump stations, solar and generators</li><li>About 280 staff pro forma</li></ul>
-          <div class="sys-card-foot"><a href="app.html#/cet/overview">Portal module <span aria-hidden="true">→</span></a><a href="redesigns/cet/">Site concept <span aria-hidden="true">→</span></a></div>
+          <h3 class="sys-card-title">CET</h3>
+          <p class="sys-card-body">Commonwealth Electrical Technologies. Electrical and energy infrastructure across New England, from Worcester and Taunton, MA.</p>
+          <ul class="lp-list lp-co-links">
+            <li><span>Best screen</span><a href="app.html#/cet/wastewater">Wastewater accounts <span aria-hidden="true">→</span></a></li>
+            <li><span>Plan</span><a href="redesigns/cet/growth-plan.html">Growth plan <span aria-hidden="true">→</span></a></li>
+            <li><span>Website</span><a href="redesigns/cet/">Concept <span aria-hidden="true">→</span></a></li>
+          </ul>
         </article>
-        <article class="sys-card" data-co="fl">
+        <article class="sys-card lp-co" data-co="fl">
           <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Legal IT · since December 2024</span>
-          <h3 class="sys-card-title">Frontline Managed Services</h3>
-          <p class="sys-card-body">Managed IT, help desk, cybersecurity and billing services for law firms, from St. Louis.</p>
-          <ul class="sys-card-list"><li>800+ law firms</li><li>More than half of the AM Law 200</li><li>Toledo, Honolulu, New York, Toronto, London, Hyderabad, Goa and Cape Town</li></ul>
-          <div class="sys-card-foot"><a href="app.html#/fl/overview">Portal module <span aria-hidden="true">→</span></a><a href="redesigns/frontline/">Site concept <span aria-hidden="true">→</span></a></div>
+          <h3 class="sys-card-title">Frontline</h3>
+          <p class="sys-card-body">Frontline Managed Services. Managed IT, help desk, cybersecurity and billing services for law firms, from St. Louis.</p>
+          <ul class="lp-list lp-co-links">
+            <li><span>Best screen</span><a href="app.html#/fl/midsize">Mid-size firms <span aria-hidden="true">→</span></a></li>
+            <li><span>Plan</span><a href="redesigns/frontline/growth-plan.html">Growth plan <span aria-hidden="true">→</span></a></li>
+            <li><span>Website</span><a href="redesigns/frontline/">Concept <span aria-hidden="true">→</span></a></li>
+          </ul>
         </article>
-        <article class="sys-card" data-co="ts">
+        <article class="sys-card lp-co" data-co="ts">
           <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Lab supply · since January 2022</span>
           <h3 class="sys-card-title">Thomas Scientific</h3>
           <p class="sys-card-body">Lab supply distribution since 1900, from Swedesboro, NJ.</p>
-          <ul class="sys-card-list"><li>Research, biopharma and clinical diagnostics</li><li>Cleanroom and cannabis testing labs</li><li>27,503 lab and hospital sites scored</li></ul>
-          <div class="sys-card-foot"><a href="app.html#/ts/overview">Portal module <span aria-hidden="true">→</span></a><a href="redesigns/thomas-scientific/">Site concept <span aria-hidden="true">→</span></a></div>
+          <ul class="lp-list lp-co-links">
+            <li><span>Best screen</span><a href="app.html#/ts/accounts">Accounts <span aria-hidden="true">→</span></a></li>
+            <li><span>Plan</span><a href="redesigns/thomas-scientific/growth-plan.html">Growth plan <span aria-hidden="true">→</span></a></li>
+            <li><span>Website</span><a href="redesigns/thomas-scientific/">Concept <span aria-hidden="true">→</span></a></li>
+          </ul>
         </article>
-        <article class="sys-card" data-co="bpi">
+        <article class="sys-card lp-co" data-co="bpi">
           <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Communications · since April 2023</span>
-          <h3 class="sys-card-title">Bully Pulpit International</h3>
-          <p class="sys-card-body">Strategic communications, public affairs and digital, founded by Andrew Bleeker.</p>
-          <ul class="sys-card-list"><li>Washington DC, New York, San Francisco, Chicago and Europe</li><li>Add-ons include BOLDT, Message House and Propper Daley</li></ul>
-          <div class="sys-card-foot"><a href="app.html#/bpi/overview">Portal module <span aria-hidden="true">→</span></a><a href="redesigns/bpi/">Site concept <span aria-hidden="true">→</span></a></div>
+          <h3 class="sys-card-title">BPI</h3>
+          <p class="sys-card-body">Bully Pulpit International. Strategic communications, public affairs and digital, founded by Andrew Bleeker.</p>
+          <ul class="lp-list lp-co-links">
+            <li><span>Best screen</span><a href="app.html#/bpi/opportunities">Growth opportunities <span aria-hidden="true">→</span></a></li>
+            <li><span>Plan</span><a href="redesigns/bpi/growth-plan.html">Growth plan <span aria-hidden="true">→</span></a></li>
+            <li><span>Website</span><a href="redesigns/bpi/">Concept <span aria-hidden="true">→</span></a></li>
+          </ul>
         </article>
-        <article class="sys-card" data-co="fh">
+        <article class="sys-card lp-co" data-co="fh">
           <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Consumer · since March 2022</span>
           <h3 class="sys-card-title">Fair Harbor</h3>
           <p class="sys-card-body">Sustainable beachwear made from recycled plastic bottles, from New York.</p>
-          <ul class="sys-card-list"><li>Founded by Jake and Caroline Danehy</li><li>Certified B Corp</li><li>Direct to consumer, plus specialty and department-store wholesale</li></ul>
-          <div class="sys-card-foot"><a href="app.html#/fh/overview">Portal module <span aria-hidden="true">→</span></a><a href="redesigns/fair-harbor/">Site concept <span aria-hidden="true">→</span></a></div>
+          <ul class="lp-list lp-co-links">
+            <li><span>Best screen</span><a href="app.html#/fh/overview">Operating picture <span aria-hidden="true">→</span></a></li>
+            <li><span>Plan</span><a href="redesigns/fair-harbor/growth-plan.html">Growth plan <span aria-hidden="true">→</span></a></li>
+            <li><span>Website</span><a href="redesigns/fair-harbor/">Concept <span aria-hidden="true">→</span></a></li>
+          </ul>
         </article>
       </div>
+      <p class="lp-more">Also: <a class="sys-link" href="app.html#/techos/overview">the software program for all six <span aria-hidden="true">→</span></a> and <a class="sys-link" href="redesigns/">every concept and plan <span aria-hidden="true">→</span></a></p>
       <p class="sys-src">Smith + Howard, BSP's first exit (to TPG, August 2026), is not tracked here.</p>
+      <div class="sys-card lp-counter" id="portfolio-counter" role="group" aria-label="Revenue left on the table across the portfolio, estimate"></div>
     </div>
   </section>
 
-  <!-- ═══ OS program (dark band) ═══ -->
-  <section class="sys-section" id="os" data-sys-theme="dark" aria-labelledby="os-title">
-    <div class="sys-wrap">
-      <div class="sys-section-head">
-        <p class="sys-kicker">The OS program</p>
-        <h2 id="os-title" class="sys-h2">Software that lifts the exit multiple.</h2>
-        <p class="sys-lead">Bankers value project-based service companies at 5–6x EBITDA and tech-enabled ones at 10x or more. Each company gets its own software system, aimed at the numbers buyers pay for.</p>
-      </div>
-      <div class="sys-kpis lp-os-sum" role="list">
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Total investment</span><span class="sys-kpi-value">$6.0–12.4M<span class="sys-est">est.</span></span><span class="sys-kpi-sub">across six companies</span></div>
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">EBITDA margin</span><span class="sys-kpi-value">+0.5–5 pts<span class="sys-est">est.</span></span><span class="sys-kpi-sub">per company</span></div>
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">EBITDA multiple</span><span class="sys-kpi-value">+0.5–2.5x<span class="sys-est">est.</span></span><span class="sys-kpi-sub">at exit</span></div>
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Time to value</span><span class="sys-kpi-value">4–18 mo</span><span class="sys-kpi-sub">first measurable KPI lift</span></div>
-      </div>
-      <div class="sys-grid sys-grid--3">
-        <article class="sys-card" data-co="pp">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Punctual Pros</span>
-          <h3 class="sys-card-title lp-os-name">ServiceOS</h3>
-          <p class="sys-card-body">Weather-driven dispatch, AI call answering, memberships and new-mover automation.</p>
-          <ul class="sys-card-list"><li>Call booking rate</li><li>Average ticket</li><li>Members per technician</li></ul>
-          <dl class="lp-math"><div><dt>Invest</dt><dd>$0.4–0.9M<span class="sys-est">est.</span></dd></div><div><dt>EBITDA</dt><dd>+$0.3–1.1M<span class="sys-est">est.</span></dd></div><div><dt>Multiple</dt><dd>+1.0–2.5x<span class="sys-est">est.</span></dd></div><div><dt>Value in</dt><dd>6–12 mo</dd></div></dl>
-          <div class="sys-card-foot"><a href="redesigns/punctual-pros/serviceos.html">Product page and demo <span aria-hidden="true">→</span></a><button class="sys-btn sys-btn--ghost sys-btn--sm" type="button" data-ask="What is ServiceOS and why does it raise valuation for Punctual Pros?">Ask</button></div>
-        </article>
-        <article class="sys-card" data-co="cet">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>CET</span>
-          <h3 class="sys-card-title lp-os-name">GridOS</h3>
-          <p class="sys-card-body">Estimating, crew scheduling, solar fleet monitoring and wastewater service contracts.</p>
-          <ul class="sys-card-list"><li>Hard-bid win rate</li><li>Non-productive field time</li><li>Solar fleet availability</li></ul>
-          <dl class="lp-math"><div><dt>Invest</dt><dd>$0.8–1.8M<span class="sys-est">est.</span></dd></div><div><dt>EBITDA</dt><dd>+$0.6–2.6M<span class="sys-est">est.</span></dd></div><div><dt>Multiple</dt><dd>+0.5–1.5x<span class="sys-est">est.</span></dd></div><div><dt>Value in</dt><dd>9–15 mo</dd></div></dl>
-          <div class="sys-card-foot"><a href="redesigns/cet/gridos.html">Product page and demo <span aria-hidden="true">→</span></a><button class="sys-btn sys-btn--ghost sys-btn--sm" type="button" data-ask="What is GridOS and why does it raise valuation for CET?">Ask</button></div>
-        </article>
-        <article class="sys-card" data-co="fl">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Frontline</span>
-          <h3 class="sys-card-title lp-os-name">FirmOS</h3>
-          <p class="sys-card-body">An AI service desk, a security score for each firm, and eBilling with receivables automation.</p>
-          <ul class="sys-card-list"><li>eBilling rejection rate</li><li>Days from invoice to paid</li><li>First-level resolution</li></ul>
-          <dl class="lp-math"><div><dt>Invest</dt><dd>$1.5–3.0M<span class="sys-est">est.</span></dd></div><div><dt>EBITDA</dt><dd>+$1.5–4.2M<span class="sys-est">est.</span></dd></div><div><dt>Multiple</dt><dd>+0.5–1.5x<span class="sys-est">est.</span></dd></div><div><dt>Value in</dt><dd>6–12 mo</dd></div></dl>
-          <div class="sys-card-foot"><a href="redesigns/frontline/firmos.html">Product page and demo <span aria-hidden="true">→</span></a><button class="sys-btn sys-btn--ghost sys-btn--sm" type="button" data-ask="What is FirmOS and why does it raise valuation for Frontline?">Ask</button></div>
-        </article>
-        <article class="sys-card" data-co="ts">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Thomas Scientific</span>
-          <h3 class="sys-card-title lp-os-name">LabOS</h3>
-          <p class="sys-card-body">Ordering from inside customers' purchasing systems, managed inventory, AI search and account-health scores.</p>
-          <ul class="sys-card-list"><li>Share of orders placed online</li><li>Share placed from customer systems</li><li>Online versus rep-led growth</li></ul>
-          <dl class="lp-math"><div><dt>Invest</dt><dd>$2.0–4.0M<span class="sys-est">est.</span></dd></div><div><dt>EBITDA</dt><dd>+$1.3–4.8M<span class="sys-est">est.</span></dd></div><div><dt>Multiple</dt><dd>+0.5–1.0x<span class="sys-est">est.</span></dd></div><div><dt>Value in</dt><dd>9–18 mo</dd></div></dl>
-          <div class="sys-card-foot"><a href="redesigns/thomas-scientific/labos.html">Product page and demo <span aria-hidden="true">→</span></a><button class="sys-btn sys-btn--ghost sys-btn--sm" type="button" data-ask="What is LabOS and why does it raise valuation for Thomas Scientific?">Ask</button></div>
-        </article>
-        <article class="sys-card" data-co="bpi">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>BPI</span>
-          <h3 class="sys-card-title lp-os-name">SignalOS</h3>
-          <p class="sys-card-body">Narrative monitoring and message testing, sold as subscriptions that smooth the election cycle.</p>
-          <ul class="sys-card-list"><li>Retainer share of revenue</li><li>Adjusted EBITDA margin</li><li>AI-assisted content</li></ul>
-          <dl class="lp-math"><div><dt>Invest</dt><dd>$1.0–2.0M<span class="sys-est">est.</span></dd></div><div><dt>EBITDA</dt><dd>+$0.9–3.8M<span class="sys-est">est.</span></dd></div><div><dt>Multiple</dt><dd>+0.5–2.0x<span class="sys-est">est.</span></dd></div><div><dt>Value in</dt><dd>6–12 mo</dd></div></dl>
-          <div class="sys-card-foot"><a href="redesigns/bpi/signalos.html">Product page and demo <span aria-hidden="true">→</span></a><button class="sys-btn sys-btn--ghost sys-btn--sm" type="button" data-ask="What is SignalOS and why does it raise valuation for BPI?">Ask</button></div>
-        </article>
-        <article class="sys-card" data-co="fh">
-          <span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Fair Harbor</span>
-          <h3 class="sys-card-title lp-os-name">HarborOS</h3>
-          <p class="sys-card-body">AI fit and size, replenishment reminders, a wholesale portal and inventory forecasting for a seasonal line.</p>
-          <ul class="sys-card-list"><li>Online return rate</li><li>Repeat purchase rate</li><li>EBITDA margin</li></ul>
-          <dl class="lp-math"><div><dt>Invest</dt><dd>$0.3–0.7M<span class="sys-est">est.</span></dd></div><div><dt>EBITDA</dt><dd>+$0.4–1.8M<span class="sys-est">est.</span></dd></div><div><dt>Multiple</dt><dd>+0.2–0.5x revenue<span class="sys-est">est.</span></dd></div><div><dt>Value in</dt><dd>4–9 mo</dd></div></dl>
-          <div class="sys-card-foot"><a href="redesigns/fair-harbor/harboros.html">Product page and demo <span aria-hidden="true">→</span></a><button class="sys-btn sys-btn--ghost sys-btn--sm" type="button" data-ask="What is HarborOS and why does it raise valuation for Fair Harbor?">Ask</button></div>
-        </article>
-      </div>
-      <div class="lp-os-foot">
-        <p class="sys-src"><b>Source:</b> OS program estimates: vendor case studies, PKF, Capstone/IMAP, October 2026. Analyst assumptions, not guidance.</p>
-        <a class="sys-btn sys-btn--secondary" href="app.html#/techos/overview">Open the tech-enablement module <span aria-hidden="true">→</span></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ Growth plans and programs ═══ -->
-  <section class="sys-section" id="growth-plans" aria-labelledby="growth-plans-title">
-    <div class="sys-wrap">
-      <div class="sys-section-head">
-        <p class="sys-kicker">Growth plans and programs</p>
-        <h2 id="growth-plans-title" class="sys-h2">How each company gets to the next multiple.</h2>
-        <p class="sys-lead">One growth plan per company, the programs that span the portfolio, and the memo.</p>
-      </div>
-      <div class="sys-grid sys-grid--3">
-        <a class="sys-card" data-co="pp" href="redesigns/punctual-pros/nationwide.html"><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Punctual Pros · Growth plan</span><span class="sys-card-title">Nationwide plan</span><span class="sys-card-body">Lancaster to national in four phases.</span><span class="sys-card-foot"><span>Open <span aria-hidden="true">→</span></span></span></a>
-        <a class="sys-card" data-co="pp" href="redesigns/punctual-pros/ads.html"><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Punctual Pros · Program</span><span class="sys-card-title">Growth marketing and sample ads</span><span class="sys-card-body">Connected TV on storm alerts, Local Services Ads and new-mover mail.</span><span class="sys-card-foot"><span>Open <span aria-hidden="true">→</span></span></span></a>
-        <a class="sys-card" href="redesigns/voice-ai.html"><span class="sys-card-label">Portfolio · Program</span><span class="sys-card-title">24/7 voice AI</span><span class="sys-card-body">Answers every call and books into dispatch. Modelled revenue, vendors and a sample late-night call.</span><span class="sys-card-foot"><span>Open <span aria-hidden="true">→</span></span></span></a>
-        <a class="sys-card" href="redesigns/ai-agents.html"><span class="sys-card-label">Portfolio · Program</span><span class="sys-card-title">AI agents across the portfolio</span><span class="sys-card-body">45 agents, rollout waves and estimated annual value.</span><span class="sys-card-foot"><span>Open <span aria-hidden="true">→</span></span></span></a>
-        <a class="sys-card" data-co="cet" href="redesigns/cet/growth-plan.html"><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>CET · Growth plan</span><span class="sys-card-title">CET growth plan</span><span class="sys-card-body">New England electrical to Northeast infrastructure, with the Horton wastewater pipeline.</span><span class="sys-card-foot"><span>Open <span aria-hidden="true">→</span></span></span></a>
-        <a class="sys-card" data-co="fl" href="redesigns/frontline/growth-plan.html"><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Frontline · Growth plan</span><span class="sys-card-title">Frontline growth plan</span><span class="sys-card-body">From the largest law firms to mid-size firms and abroad: FirmOS, offshore delivery and eBilling.</span><span class="sys-card-foot"><span>Open <span aria-hidden="true">→</span></span></span></a>
-        <a class="sys-card" data-co="ts" href="redesigns/thomas-scientific/growth-plan.html"><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Thomas Scientific · Growth plan</span><span class="sys-card-title">Thomas Scientific growth plan</span><span class="sys-card-body">Distributor to lab supply-chain partner, selling into 27,503 scored sites.</span><span class="sys-card-foot"><span>Open <span aria-hidden="true">→</span></span></span></a>
-        <a class="sys-card" data-co="bpi" href="redesigns/bpi/growth-plan.html"><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>BPI · Growth plan</span><span class="sys-card-title">BPI growth plan</span><span class="sys-card-body">From agency to subscription communications: SignalOS retainers and international add-ons.</span><span class="sys-card-foot"><span>Open <span aria-hidden="true">→</span></span></span></a>
-        <a class="sys-card" data-co="fh" href="redesigns/fair-harbor/growth-plan.html"><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>Fair Harbor · Growth plan</span><span class="sys-card-title">Fair Harbor growth plan</span><span class="sys-card-body">Swim brand to year-round lifestyle brand, with HarborOS for retention.</span><span class="sys-card-foot"><span>Open <span aria-hidden="true">→</span></span></span></a>
-        <a class="sys-card" href="theater.html"><span class="sys-card-label">Portfolio · Visual</span><span class="sys-card-title">3D map</span><span class="sys-card-body">A 3D fly-through of 76,000 home sales, expansion arcs and live storms.</span><span class="sys-card-foot"><span>Open <span aria-hidden="true">→</span></span></span></a>
-        <a class="sys-card" href="briefing/BSP_Desk_Memo.pdf"><span class="sys-card-label">Portfolio · Memo</span><span class="sys-card-title">Executive memo (PDF)</span><span class="sys-card-body">Four pages: where the six companies stand and what to do next.</span><span class="sys-card-foot"><span>Open <span aria-hidden="true">→</span></span></span></a>
-        <a class="sys-card" href="app.html"><span class="sys-card-label">Portfolio · Portal</span><span class="sys-card-title">The portal</span><span class="sys-card-body">Live weather, add-on screens, the acquisition model and the PE landscape.</span><span class="sys-card-foot"><span>Open <span aria-hidden="true">→</span></span></span></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ Briefing ═══ -->
-  <section class="sys-section sys-section--alt" id="briefing" aria-labelledby="briefing-title">
+  <!-- ═══ 5 · Briefing: two dated recordings, and what runs live ═══ -->
+  <section class="sys-section" id="briefing" aria-labelledby="briefing-title">
     <div class="sys-wrap lp-brief">
       <div>
-        <p class="sys-kicker">The briefing</p>
-        <h2 id="briefing-title" class="sys-h2">The portfolio in five minutes.</h2>
-        <p class="sys-lead">A narrated walk through every module: demand, bids, targets and next steps. Or watch the two-minute film.</p>
-        <ul class="lp-list lp-brief-meta">
-          <li><b>5:03</b><span>video briefing</span></li>
-          <li><b>52</b><span>chapters</span></li>
-          <li><b>2:13</b><span>cinematic film</span></li>
-        </ul>
-        <div class="sys-chips" role="group" aria-label="Choose a video">
-          <button class="sys-chip" type="button" data-video="briefing/broad_sky_briefing.mp4" data-poster="briefing/poster.jpg" data-cap="Video briefing · 5 min 3 s · 52 chapters · 1080p" aria-pressed="true">Video briefing · 5:03</button>
-          <button class="sys-chip" type="button" data-video="briefing/broad_sky_intro.mp4" data-poster="briefing/intro_poster.jpg" data-cap="Cinematic film · 2 min 13 s · 13 shots · 1080p" aria-pressed="false">Cinematic film · 2:13</button>
+        <p class="sys-kicker">Briefing</p>
+        <h2 id="briefing-title" class="sys-h2">Watch or read.</h2>
+        <p class="sys-lead">Two recordings from October 6, 2026, made before the company agent and the website research. The narrated tour and the 3D map run live.</p>
+        <div class="sys-chips" role="group" aria-label="Choose a recording">
+          <button class="sys-chip" type="button" data-video="briefing/broad_sky_intro.mp4" data-poster="briefing/intro_poster.jpg" data-cap="Cinematic film · 2 min 13 s · 13 shots · 1080p" aria-pressed="true">Cinematic film · 2:13</button>
+          <button class="sys-chip" type="button" data-video="briefing/broad_sky_briefing.mp4" data-poster="briefing/poster.jpg" data-cap="Video briefing · 5 min 3 s · 52 chapters · 1080p" aria-pressed="false">Video briefing · 5:03</button>
         </div>
-        <a class="sys-link" href="app.html#/briefing/play">Or take the narrated tour in the portal (6:42) <span aria-hidden="true">→</span></a>
+        <ul class="lp-list lp-brief-links">
+          <li><a class="sys-link" href="app.html#/briefing/play">Narrated tour in the portal <span aria-hidden="true">→</span></a></li>
+          <li><a class="sys-link" href="app.html#/theater/play">3D map <span aria-hidden="true">→</span></a></li>
+          <li><a class="sys-link" href="briefing/BSP_Desk_Memo.pdf">Executive memo (PDF) <span aria-hidden="true">→</span></a></li>
+        </ul>
       </div>
       <div>
         <div class="lp-video">
-          <video id="brief-video" controls playsinline preload="none" data-poster="briefing/poster.jpg" aria-label="BSP Desk briefing video">
-            <source src="briefing/broad_sky_briefing.mp4" type="video/mp4">
-            Your browser does not play MP4 video. <a href="briefing/broad_sky_briefing.mp4">Download the briefing</a>.
+          <video id="brief-video" controls playsinline preload="none" data-poster="briefing/intro_poster.jpg" aria-label="BSP Desk cinematic film">
+            <source src="briefing/broad_sky_intro.mp4" type="video/mp4">
+            Your browser does not play MP4 video. <a href="briefing/broad_sky_intro.mp4">Download the film</a>.
           </video>
         </div>
-        <p class="sys-src lp-video-cap" id="brief-cap">Video briefing · 5 min 3 s · 52 chapters · 1080p</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ Closing call to action ═══ -->
-  <section class="sys-cta" aria-labelledby="cta-title">
-    <div class="sys-wrap">
-      <div class="sys-cta-in">
-        <div class="sys-cta-copy">
-          <h2 id="cta-title">Start with a question.</h2>
-          <p>Answers come from the portal's own data.</p>
-        </div>
-        <div class="sys-actions">
-          <a class="sys-btn sys-btn--accent sys-btn--lg" href="#hero-chat" data-focus-chat>Ask a question</a>
-          <a class="sys-btn sys-btn--secondary sys-btn--lg" href="redesigns/">Browse site concepts</a>
-        </div>
+        <p class="sys-src lp-video-cap" id="brief-cap">Cinematic film · 2 min 13 s · 13 shots · 1080p</p>
       </div>
     </div>
   </section>
@@ -488,9 +246,10 @@
 </script>
 <script type="module">
   import { Counter } from './assets/counter.js?v=20261117223642';
-  const el = document.getElementById('hero-counter');
-  // baseline 'today' counts from local midnight; below minDisplay the clock shows "—" so a first frame never reads "$1"
-  if (el) Counter.mount(el, { theme: 'light', baseline: 'today', minDisplay: 100, caption: 'What BSP is leaving on the table by not hiring Syed · so far today' })
+  const el = document.getElementById('portfolio-counter');
+  // baseline 'today' counts from local midnight; below minDisplay the clock shows "—" so a first frame never reads "$1".
+  // The counter adds its own "est." tag after the caption, so the line reads "..., so far today, est."
+  if (el) Counter.mount(el, { theme: 'light', baseline: 'today', minDisplay: 100, caption: 'Revenue left on the table across the portfolio, so far today, ' })
     .catch(() => el.remove());
 </script>
 </body>

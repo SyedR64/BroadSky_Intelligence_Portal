@@ -294,7 +294,7 @@ def main():
             route_js = """async qs => { const { Chat } = await import('/assets/chat.js'); return qs.map(q => { const on = Chat.route(q, { hosted: true }), off = Chat.route(q, { hosted: false }); return [q, `${on.to}:${on.intent || '-'}`, `${off.to}:${off.intent || '-'}`, on.why]; }); }"""
             got = {q: on for q, on, _, _ in pr.evaluate(route_js, sorted(prompts))}
             moved = [f'{q!r}: {expected.get(q)} -> {r}' for q, r in got.items() if expected.get(q) != r]
-            check(f'all {len(got)} suggested prompts keep their route', len(got) >= 25 and not moved and all(any(w in v for w in ('index', 'assistant', 'portal panel')) or 'portal list' in v for v in prompts.values()),
+            check(f'all {len(got)} suggested prompts keep their route', len(got) >= 20 and not moved and all(any(w in v for w in ('index', 'assistant', 'portal panel')) or 'portal list' in v for v in prompts.values()),
                   '; '.join(moved) or ', '.join(f'{w} {sum(w in v for v in prompts.values())}' for w in ('index', 'assistant', 'portal panel', 'portal list')))
 
             # 9a. Follow-up chips (the buttons under an answer) keep their route too.
