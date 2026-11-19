@@ -61,10 +61,15 @@ export const credit = s => typeof s !== 'string' ? s : s
   .replace(/\bmarked at par\b/g, 'valued by lenders at full face value')
   .replace(/\bsub-(\d{2}) marks\b/g, 'lender marks below $1% of face value');
 
+/** Drafting notes that came through in dataset prose ("… holding (per brief).", "control, per brief") are not for a
+    visitor. Stripped where text is drawn; the datasets stay as they are. */
+const RX_BRIEF = /\s*\(per brief\)|,\s*per brief\b/gi;
+export const noBrief = s => typeof s === 'string' && /per brief/i.test(s) ? s.replace(RX_BRIEF, '') : s;
+
 /** Clean a free-text string (source summaries, notes) of ids, file names, paths and null artefacts. */
 export function text(s) {
   if (s == null) return '';
-  let t = noEmail(String(s))
+  let t = noBrief(noEmail(String(s)))
     // absolute or repo paths to data files → the dataset's name
     .replace(/(?:\/Users\/[^\s/]+\/[^\s]*?\/)?(?:data\/)?(?:research|sales)\/\*_filings\.json/g, 'company public filings')
     .replace(/(?:\/Users\/[^\s/]+\/[^\s]*?\/)?(?:data\/)?(?:research\/|sales\/)?([a-z][a-z0-9_]*)\.(?:json|csv|geojson)\b/g, (m, id) => dataset(id))
@@ -127,6 +132,8 @@ export function enhance(root) {
     if (v && v.indexOf('n=') >= 0 && RX_NEQ.test(v) && !t.parentElement?.closest(SKIP)) v = t.nodeValue = v.replace(RX_NEQ_G, 'n = $1');
     // loan shorthand from lender filings ("S+425", "marked at par") reads as words
     if (v && (v.indexOf('S+') >= 0 || v.indexOf('at par') >= 0 || v.indexOf(' marks') >= 0) && !t.parentElement?.closest(SKIP)) { const c = credit(v); if (c !== v) v = t.nodeValue = c; }
+    // drafting notes from the datasets ("(per brief)", ", per brief") never reach the page
+    if (v && v.indexOf('er brief') >= 0 && !t.parentElement?.closest(SKIP)) { const c = noBrief(v); if (c !== v) v = t.nodeValue = c; }
     if (!v || v.indexOf('st.') < 0 || !RX_EST.test(v)) continue;
     const p = t.parentElement;
     if (!p || p.closest(SKIP)) continue;
