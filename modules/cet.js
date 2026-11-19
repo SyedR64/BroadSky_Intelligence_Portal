@@ -5,6 +5,7 @@ import * as Copy from './copy.js?v=20261117223642';
    ═══════════════════════════════════════════════════════════════════════════ */
 import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261117223642';
 import { esc as E } from '../assets/core.js?v=20261117223642';
+import { companyLinks } from './company-links.js?v=20261117223642';
 
 const COLOR = 'var(--co-cet)';
 /* System palette only (UNIFIED.md §6, §8): company accents for categories, status tokens for status. */
@@ -258,7 +259,7 @@ async function overview(ctx) {
     sub: opp ? `<b>${fmt.num(openLive.length)} open bids</b> in New England, <b>${fmt.num(dueSoon.length)}</b> due within 60 days. ${wwtp ? `Horton adds <b>${funded.length}</b> funded plant projects worth ${fmt.money(fundedPipe)} (est.) that CET can prime.` : `Only ${fmt.num(openValN)} states a value; the rest need estimator sizing.`}` : 'Electrical, solar, EV and energy-efficiency contractor · Worcester + Taunton MA · NuWave (Norwell MA) · Horton (CT)',
     chips: `${chip('Licensed across New England', COLOR)}${chip('Held since February 2025', 'var(--sys-brand)')}${chip('Add-ons: NuWave, Horton', PAL.purple)}${chip('No NYC (CEO guidance)')}`,
     actions: `<a class="${ui.btnCls('secondary', '')}" href="#/cet/opportunities">Opportunity radar →</a><a class="${ui.btnCls('secondary', '')}" href="#/cet/wastewater">Horton cross-sell →</a>`,
-  }) +
+  }) + companyLinks('cet') +
   (opp ? '' : ui.note('Research dataset <b>CET opportunity radar</b> is not available yet — pipeline KPIs are partial.', 'warn')) +
   (wwtp ? '' : ui.note('Research dataset <b>CET wastewater-plant targets</b> is not available yet — wastewater KPIs and map layer are omitted.', 'warn')) +
   ui.kpis([

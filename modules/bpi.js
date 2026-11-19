@@ -3,6 +3,7 @@ import * as Copy from './copy.js?v=20261117223642';
    Views: overview · opportunities · benchmarks · filings. The DC home-sales view was dropped (Oct 2026 review: not decision-grade for a public-affairs agency).
    Helpers were originally duplicated from fh.js (no cross-module imports); this file no longer mirrors fh.js line for line. */
 import { renderFilings, opportunityCard } from '../assets/components.js?v=20261117223642';
+import { companyLinks } from './company-links.js?v=20261117223642';
 
 /* ── module config (the only block that differs from fh.js) ──────────────── */
 const CFG = {
@@ -101,7 +102,7 @@ async function overview(ctx) {
   const high = d.rivals.filter(r => r.threat_level === 'high').length;
   el.innerHTML = ui.pageHead({ title: esc(CFG.name), sub: `${esc(CFG.soWhat(d))}`,
     chips: co ? `${fmt.chip(`Held since ${words(co.entry_date).replace(/ \d{1,2},/, '')}`, CFG.hex)}${fmt.chip(`${String(co.hq_city).split(/[;(]/)[0].trim()}, ${co.state}`)}${fmt.chip(`${d.addOns} add-ons`)}<span class="sys-chip sys-chip--good">${co.status === 'held' ? 'Held' : esc(co.status)}</span>` : '',
-    actions: `<a class="sys-btn sys-btn--primary" href="#/${CFG.id}/opportunities">Opportunities</a><a class="sys-btn sys-btn--secondary" href="#/${CFG.id}/benchmarks">Benchmarks</a>` }) +
+    actions: `<a class="sys-btn sys-btn--primary" href="#/${CFG.id}/opportunities">Opportunities</a><a class="sys-btn sys-btn--secondary" href="#/${CFG.id}/benchmarks">Benchmarks</a>` }) + companyLinks(CFG.id) +
   (co ? '' : ui.note('Company record not found in BSP firm profile. Profile panels are empty until it lands.', 'warn')) +
   ui.kpis([
     { label: 'Growth opportunities', value: fmt.num(d.opps.length), sub: `${new Set(d.opps.map(o => o.type)).size} types · sourced`, color: CFG.color },

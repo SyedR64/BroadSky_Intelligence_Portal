@@ -3,6 +3,7 @@ import * as Copy from './copy.js?v=20261117223642';
    Views: overview · amlaw · midsize · targets · filings. Data: Frontline law-firm universe, Mid-size law firms,
    Frontline and Thomas Scientific add-on targets (platform==='frontline'), Frontline public filings, Public comparables. */
 import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261117223642';
+import { companyLinks } from './company-links.js?v=20261117223642';
 
 /* Colours are system tokens (system.css): company accent --co-fl, status --sys-good/info/warn/bad, neutral --sys-mute-2.
    HTML and inline SVG read them as var(); the Leaflet canvas renderer gets a resolved value from tok(). */
@@ -235,7 +236,7 @@ async function overview(ctx) {
     sub: `Frontline already serves over half the AM Law 200, so this is an account map. ${fmt.num(t1.length)} Tier-1 accounts and ${fmt.num(rcm.length)} with a cyber or revenue-cycle trigger carry the largest cross-sell.`,
     chips: `${fmt.chip('HQ St. Louis, MO', COLOR)}${fmt.chip('Held since December 2024')}${fmt.chip('800+ law-firm clients')}${fmt.chip('~1,100 staff · 11 offices')}${fmt.chip('CEO Tim Britt')}`,
     actions: `<a class="sys-btn sys-btn--primary" href="#/fl/amlaw">AM Law account map</a><a class="sys-btn sys-btn--secondary" href="#/fl/targets">Add-on targets</a>`,
-  }) +
+  }) + companyLinks('fl') +
   ui.kpis([
     { label: 'Large-firm accounts mapped', value: fmt.num(firms.length), sub: `${BANDS.map(b => `${bandN[b] || 0} ${b}`).join(' · ')} revenue`, color: COLOR },
     { label: 'Tier-1 accounts', value: fmt.num(t1.length), sub: `${fmt.num(cyber5T1.length)} with cyber urgency 5/5`, color: 'var(--sys-good)' },

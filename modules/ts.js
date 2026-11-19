@@ -6,6 +6,7 @@ import * as Copy from './copy.js?v=20261117223642';
    Thomas Scientific public filings, Public comparables. Lender marks and sponsor equity marks sit behind the
    BSP-only deal-team toggle on the Financials view (#/ts/filings?deal=1), never on company-facing views. */
 import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261117223642';
+import { companyLinks } from './company-links.js?v=20261117223642';
 
 /* Colours are system tokens (system.css); tok() resolves one for the Leaflet canvas renderer. */
 const C = 'var(--co-ts)', HEX = 'var(--co-ts)';
@@ -242,7 +243,7 @@ async function overview(ctx) {
   const stTop = sortedEntries(A.byState); const top3 = stTop.slice(0, 3); const top3Share = top3.reduce((s, x) => s + x[1], 0) / A.rows.length;
   const plan = accounts.filter(p => p.in_top500_plan && p.coverage_priority === 'Pursue').length;
   const sub = `${fmt.num(A.pursueParents)} top-priority (Pursue) accounts bill ${fmt.money(A.pursueCms)}, ${fmt.num(pShareCms * 100, 0)}% of 2023 Medicare lab spend: a named-account list.${mat ? ` The loan matures ${esc(mat)}, so target-account revenue matters most.` : ''}`;
-  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Thomas Scientific', sub, chips: `${fmt.chip('Lab supply, since 1900', C)}${fmt.chip('Held since January 2022')}${fmt.chip('HQ Swedesboro, NJ')}`, actions: `<a class="sys-btn sys-btn--primary" href="#/ts/accounts">Accounts</a><a class="sys-btn sys-btn--secondary" href="#/ts/sites?label=Pursue">Pursue sites</a><a class="sys-btn sys-btn--secondary" href="#/ts/filings">Financials</a>` })}
+  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Thomas Scientific', sub, chips: `${fmt.chip('Lab supply, since 1900', C)}${fmt.chip('Held since January 2022')}${fmt.chip('HQ Swedesboro, NJ')}`, actions: `<a class="sys-btn sys-btn--primary" href="#/ts/accounts">Accounts</a><a class="sys-btn sys-btn--secondary" href="#/ts/sites?label=Pursue">Pursue sites</a><a class="sys-btn sys-btn--secondary" href="#/ts/filings">Financials</a>` })}${companyLinks('ts')}
   ${ui.kpis([
     { label: 'Pursue accounts', value: fmt.num(A.pursueParents), sub: `${fmt.num(A.pursue.length)} Pursue sites · named-account list`, color: 'var(--sys-good)' },
     { label: 'Pursue Medicare 2023', value: fmt.money(A.pursueCms), sub: `${fmt.num(pShareCms * 100, 0)}% of universe · ${PROXY}`, color: 'var(--sys-info)' },
