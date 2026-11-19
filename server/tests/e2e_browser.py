@@ -434,20 +434,20 @@ def main():
             pf.close()
             # 9d-3. A page in a folder names itself from the site root, and the link opens that page from anywhere.
             pd = ctx.new_page()
-            goto(pd, SITE + '/redesigns/methodology.html?backend=off')
+            goto(pd, SITE + '/redesigns/voice-ai.html?backend=off')
             pd.wait_for_selector('.ch-floating .ch-launch', timeout=30000)
             nested = pd.evaluate("async () => { const { Chat } = await import('/assets/chat.js'); return Chat.viewContext()?.href; }")
-            check('view link is relative to the site root', nested == './redesigns/methodology.html', repr(nested))
+            check('view link is relative to the site root', nested == './redesigns/voice-ai.html', repr(nested))
             pd.close()
             pd = ctx.new_page()
             sent_n = []
             pd.on('request', lambda r: sent_n.append(json.loads(r.post_data or '{}')) if r.url.endswith('/chat') and r.method == 'POST' else None)
-            goto(pd, SITE + '/redesigns/methodology.html?backend=' + urllib.parse.quote(MAIN, safe=':/'))
+            goto(pd, SITE + '/redesigns/voice-ai.html?backend=' + urllib.parse.quote(MAIN, safe=':/'))
             pd.wait_for_selector('.ch-floating .ch-launch', timeout=30000)
             ask_docked(pd, 'What am I looking at?')
             src = pd.evaluate("() => { const t = [...document.querySelectorAll('.ch-turn.bot')].at(-1); return (t._rec.sources || []).map(s => [s.label, s.href]); }")
             view_src = [h for l, h in src if str(l).startswith('This view')]
-            check('nested page: the server keeps the link and the answer opens the right page', sent_n and sent_n[-1]['context'][0]['href'] == './redesigns/methodology.html' and view_src == [SITE + '/redesigns/methodology.html'], f"sent {sent_n[-1]['context'][0]['href'] if sent_n else None!r}; source link {view_src}")
+            check('nested page: the server keeps the link and the answer opens the right page', sent_n and sent_n[-1]['context'][0]['href'] == './redesigns/voice-ai.html' and view_src == [SITE + '/redesigns/voice-ai.html'], f"sent {sent_n[-1]['context'][0]['href'] if sent_n else None!r}; source link {view_src}")
             pd.close()
             # 9e. Research assistant refuses (daily cap): the error, then the same honest fallback.
             pc, _ = open_storm(CAPPED)

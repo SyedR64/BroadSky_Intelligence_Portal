@@ -1,95 +1,35 @@
 <!DOCTYPE html>
-<html lang="en" data-sys-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>3D map · BSP Desk</title>
-<meta name="description" content="Map scenes over the portfolio's own data: home sales, expansion paths, wastewater plants and live weather alerts.">
-<meta name="theme-color" content="#0a0e14">
+<meta name="description" content="The 3D map now opens inside the portal.">
+<meta name="theme-color" content="#fbfaf7">
+<!-- A forwarding page (scripts/ci_check.py): the 3D map lives in the portal. It is not rendered, indexed or listed. -->
+<meta name="bsp-forward" content="app.html#/theater/play">
+<script>/* hand the visitor on at once. What the portal screen reads (scene, autoplay, fallback) goes inside the hash; anything else stays in the page's own query string */(function(){var to='app.html#/theater/play';try{var view=new URLSearchParams(),rest=new URLSearchParams();new URLSearchParams(location.search).forEach(function(v,k){(k==='scene'||k==='autoplay'||k==='fallback'?view:rest).append(k,v)});view=view.toString();rest=rest.toString();to='app.html'+(rest?'?'+rest:'')+'#/theater/play'+(view?'?'+view:'')}catch(e){}location.replace(to);document.addEventListener('DOMContentLoaded',function(){var a=document.getElementById('go');if(a)a.setAttribute('href',to)})})();</script>
+<noscript><meta http-equiv="refresh" content="0; url=app.html#/theater/play"></noscript>
+<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
 <link rel="icon" href="BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/system.css?v=20261117223642">
 <style>
-  /* page layout only: full-bleed WebGL stage under the minimal transparent frame (UNIFIED.md §9) */
-  html, body { height: 100%; overflow: hidden; background: var(--sys-bg); }
-  #stage { position: fixed; inset: 0; }
-  /* engine chrome that sits top-right / top-left clears the frame bar and the Ask button */
-  .bsp-theater .bt-rail { top: calc(var(--sys-top-h) + 8px) !important; }
-  .bsp-theater .bt-status { top: calc(var(--sys-top-h) + 8px) !important; }
-  .bsp-theater .bt-rail .th-about { margin-top: 2px; border-top: 1px solid var(--sys-line); border-radius: 0 0 var(--sys-r-sm) var(--sys-r-sm); }
-  /* the About panel is a .sys-card floating over the stage; only its position and scroll are page layout */
-  #about { position: fixed; left: var(--sys-gut); top: calc(var(--sys-top-h) + 8px); z-index: 11; width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - var(--sys-top-h) - 24px); overflow: auto; background: color-mix(in srgb, var(--sys-surface) 94%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: var(--sys-sh-3); }
-  /* map attribution and engine controls use the system font (the vendor CSS ships Helvetica Neue) */
-  .bsp-theater .maplibregl-ctrl, .bsp-theater .maplibregl-ctrl-attrib, .bsp-theater .maplibregl-ctrl-attrib a, .bsp-theater .maplibregl-popup, .bsp-theater .deck-tooltip, .bsp-theater button { font-family: var(--sys-font); }
-  #about[hidden] { display: none; }
-  #about .th-about-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sys-sp-3); }
-  #about .sys-card-body > * + * { margin-top: var(--sys-sp-2); }
-  #about ol { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
-  #about li b { color: var(--sys-ink); }
-  #about .sys-src { margin-top: 0; }
-  @media (max-width: 760px) {
-    .bsp-theater .bt-rail { top: calc(var(--sys-top-h) + 4px) !important; }
-    .bsp-theater .bt-status { top: auto !important; }
-    .bsp-theater .bt-rail .th-about { border-top: 0; margin-top: 0; padding-top: 5px; }
-    .bsp-theater .bt-rail .bt-ctl { order: 2; }
-    #about { left: 12px; right: 12px; width: auto; top: auto; bottom: 12px; max-height: 70dvh; }
-  }
+  /* page layout only: one notice card in the middle of the screen */
+  .fw { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: var(--sys-sp-6) var(--sys-gut); }
+  .fw-card { width: min(460px, 100%); }
+  .fw-card .sys-actions { margin-top: var(--sys-sp-2); }
 </style>
 </head>
 <body>
-<h1 class="sys-h1 sys-sr">3D map: the BSP portfolio on one map</h1>
-<div id="stage"></div>
-<aside id="about" class="sys-card" hidden aria-labelledby="about-h">
-  <div class="th-about-head"><h2 class="sys-card-title" id="about-h">The portfolio as a film</h2><button id="about-x" class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon" type="button" aria-label="Close about panel"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></button></div>
-  <div class="sys-card-body">
-  <p>Six scenes render the portal's own data on the GPU, over vector tiles with 3D terrain. Each scene answers one question a partner would ask:</p>
-  <ol>
-    <li><b>Portfolio</b>: where the portfolio companies sit and how big each footprint is.</li>
-    <li><b>Where the homes trade</b>: every recorded home sale in the Punctual Pros territory, with the newest 90 days pulsing.</li>
-    <li><b>Nationwide</b>: the phased path from East Hempfield to the Sun Belt, plus screened add-on targets.</li>
-    <li><b>New England grid</b>: CET opportunities and the wastewater plants Horton opens up.</li>
-    <li><b>Storm</b>: live National Weather Service alerts over the territory and the hubs that staff to them.</li>
-    <li><b>Close</b>: every layer at once.</li>
-  </ol>
-  <p>Hover a column, disc or marker for details. Estimates are marked <span class="sys-est">est.</span>; verify public and licensed data before use.</p>
+<main id="main" class="fw">
+  <div class="sys-card fw-card">
+    <p class="sys-card-label">BSP Desk · 3D map</p>
+    <h1 class="sys-card-title">This page has moved into the portal.</h1>
+    <div class="sys-actions"><a class="sys-btn sys-btn--primary" id="go" href="app.html#/theater/play">Open the 3D map</a></div>
   </div>
-  <p class="sys-src"><b>Keys:</b> <kbd class="sys-kbd">←</kbd> <kbd class="sys-kbd">→</kbd> change scene · <kbd class="sys-kbd">Space</kbd> play or pause</p>
-  <p class="sys-src"><b>Source:</b> Punctual Pros deed records (PA and NJ), CET opportunity radar, CET wastewater-plant targets, National Weather Service alerts (live). Maps: MapLibre GL, deck.gl, OpenFreeMap and OpenMapTiles, AWS Terrain Tiles.</p>
-</aside>
-<script type="module">
-  import { Frame } from './assets/frame.js?v=20261117223642';
-  import { Theater } from './assets/theater.js?v=20261117223642';
-  Frame.mount({ variant: 'minimal', theme: 'dark' });
-  const qp = new URLSearchParams(location.search);
-  const autoplay = qp.get('autoplay') !== '0';
-  const stage = document.getElementById('stage');
-  const about = document.getElementById('about');
-  let aboutBtn = null;
-  const setAbout = open => { about.hidden = !open; aboutBtn?.setAttribute('aria-expanded', String(open)); if (open) document.getElementById('about-x').focus(); };
-  document.getElementById('about-x').onclick = () => { setAbout(false); aboutBtn?.focus(); };
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !about.hidden) { setAbout(false); aboutBtn?.focus(); } });
-  // The About toggle lives in the engine's scene rail (UNIFIED.md §9); add it once the rail exists.
-  const addAbout = () => {
-    const rail = stage.querySelector('.bt-rail');
-    if (!rail || rail.querySelector('.th-about')) return !!rail;
-    aboutBtn = document.createElement('button');
-    aboutBtn.type = 'button'; aboutBtn.className = 'th-about';
-    aboutBtn.setAttribute('aria-controls', 'about'); aboutBtn.setAttribute('aria-expanded', 'false');
-    aboutBtn.innerHTML = '<span class="n">i</span><span class="t">About this film</span>';
-    aboutBtn.title = 'About this film';
-    aboutBtn.onclick = () => setAbout(about.hidden);
-    rail.appendChild(aboutBtn);
-    return true;
-  };
-  const mo = new MutationObserver(() => { if (addAbout()) mo.disconnect(); });
-  mo.observe(stage, { childList: true, subtree: true });
-  Theater.mount(stage, {
-    autoplay, scene: qp.get('scene') || 'S1', forceFallback: qp.get('fallback') === '1',
-    onScene: id => { const u = new URL(location.href); u.searchParams.set('scene', id); history.replaceState(null, '', u); },
-  });
-  addAbout();
-</script>
+</main>
 </body>
 </html>

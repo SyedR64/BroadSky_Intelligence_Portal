@@ -3,217 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Value-creation cases · BSP Desk</title>
-<meta name="description" content="34 dated sponsor case histories in home services and adjacent sectors, and the 36-month sequence they imply for Punctual Pros.">
+<title>Sponsor precedents · BSP Desk</title>
+<meta name="description" content="Sponsor precedents now open inside the portal.">
 <meta name="theme-color" content="#fbfaf7">
-<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
+<!-- A forwarding page (scripts/ci_check.py): the sponsor case histories live in the portal. It is not rendered, indexed or listed. -->
+<meta name="bsp-forward" content="../app.html#/cases/timeline">
+<script>/* hand the visitor on at once. The old page's section links map to the portal screens that now hold them; the query string stays as it was */(function(){var view='#/cases/timeline',to='../app.html'+view;try{var h=location.hash,c=/^#case=([\w-]+)/.exec(h),map={'#sequence':'#/cases/sequence','#levers':'#/cases/levers','#patterns':'#/cases/levers','#entry-exit':'#/cases/exits'};if(c)view='#/cases/timeline?case='+c[1];else if(map[h])view=map[h];to='../app.html'+location.search+view}catch(e){}location.replace(to);document.addEventListener('DOMContentLoaded',function(){var a=document.getElementById('go');if(a)a.setAttribute('href',to)})})();</script>
+<noscript><meta http-equiv="refresh" content="0; url=../app.html#/cases/timeline"></noscript>
+<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
 <link rel="icon" href="../BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/system.css?v=20261117223642">
-<link rel="stylesheet" href="../modules/cases.css?v=20261117223642">
-<link rel="stylesheet" href="case-studies.css?v=20261117223642">
+<style>
+  /* page layout only: one notice card in the middle of the screen */
+  .fw { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: var(--sys-sp-6) var(--sys-gut); }
+  .fw-card { width: min(460px, 100%); }
+  .fw-card .sys-actions { margin-top: var(--sys-sp-2); }
+</style>
 </head>
 <body>
-<main id="main">
-  <nav class="sys-subnav" aria-label="On this page">
-    <div class="sys-subnav-in">
-      <a class="sys-subnav-title" href="#top">Value-creation cases</a>
-      <div class="sys-subnav-links">
-        <a href="#timeline">Timelines</a>
-        <a href="#entry-exit">Entry to exit</a>
-        <a href="#levers">Levers</a>
-        <a href="#patterns">Patterns</a>
-        <a href="#sources">Sources</a>
-      </div>
-      <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../app.html#/cases/timeline">Open in portal</a></div>
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <section class="sys-hero" id="top" aria-labelledby="hero-h">
-    <div class="sys-wrap">
-      <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Precedents</b> · October 2026</p>
-      <h1 class="sys-h1" id="hero-h">How sponsors built and sold companies like <span class="sys-grad-text">Punctual Pros.</span></h1>
-      <p class="sys-lead" id="hero-lead">Thirty-four companies, 1996 to 2026: what each owner did, in what order, and what the next buyer paid. Punctual Pros is about 30 months in.</p>
-<p class="sys-src page-terms"><b>Terms:</b> MOIC: multiple on invested capital. LTM: last twelve months. PIK: interest paid in more debt instead of cash.</p>
-      <div class="sys-actions">
-        <a class="sys-btn sys-btn--accent sys-btn--lg" href="#timeline">Explore the timelines</a>
-        <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#sequence">See the Punctual Pros sequence</a>
-      </div>
-      <div class="sys-kpis cs-hero-kpis" id="hero-kpis" role="list" aria-label="The case set at a glance"></div>
-      <p class="sys-src" id="hero-src"><b>Source:</b> Value-creation case set (sponsor and company releases, SEC and Companies House filings, trade press), BSP portal, retrieved Oct 2026.</p>
-      <div class="cs-moves" id="moves" aria-label="The six moves"></div>
-      <details class="sys-card cs-drawer" id="story">
-        <summary><span><b>Read the full story</b> · the pattern across all 34 cases in one page</span><span class="cs-chev" aria-hidden="true"></span></summary>
-        <div class="sys-prose cs-story" id="story-body"></div>
-      </details>
-    </div>
-  </section>
-
-  <!-- 01 TIMELINE EXPLORER -->
-  <section class="sys-section sys-section--alt" id="timeline" aria-labelledby="tl-h">
-    <div class="sys-wrap">
-      <div class="sys-section-head">
-        <p class="sys-kicker">01 · Case timelines</p>
-        <h2 class="sys-h2" id="tl-h">Every dated move, case by case.</h2>
-        <p class="sys-lead">Pick a company to see what its owners did and when. Add up to two more and align them by months from the sponsor's entry.</p>
-      </div>
-      <div class="sys-card cs-explorer m-cases">
-        <div class="cs-x-ctl">
-          <label class="cs-x-pick"><span>Case</span><select id="pick" aria-label="Choose a case"></select></label>
-          <label class="cs-x-pick"><span>Compare with</span><select id="add" aria-label="Add a case to compare"></select></label>
-          <div class="cs-cmp" id="cmp" aria-live="polite"></div>
-          <div class="cs-x-right">
-            <div class="cs-seg" role="group" aria-label="Time axis"><button type="button" data-mode="aligned" aria-pressed="true">Months from entry</button><button type="button" data-mode="calendar" aria-pressed="false">Calendar</button></div>
-            <label class="cs-x-tog"><input type="checkbox" id="show-pp" checked> Show Punctual Pros</label>
-          </div>
-        </div>
-        <div id="legend"></div>
-        <div id="tl" class="cs-x-tl"></div>
-        <div id="ev-detail" class="cs-x-detail" aria-live="polite"></div>
-        <p class="sys-src" id="tl-src"></p>
-      </div>
-      <div class="cs-x-grid">
-        <div class="cs-x-col m-cases">
-          <div class="cs-x-h"><h3 class="sys-h3">Dated events</h3><button class="sys-btn sys-btn--ghost sys-btn--sm" type="button" id="ev-csv">Download CSV</button></div>
-          <div class="sys-table-wrap cs-ev-wrap"><table class="sys-table cs-ev-table" id="ev-table"><caption id="ev-cap"></caption></table></div>
-        </div>
-        <div class="cs-x-col m-cases" id="case-panel"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 02 ENTRY → EXIT -->
-  <section class="sys-section" id="entry-exit" aria-labelledby="ee-h">
-    <div class="sys-wrap">
-      <div class="sys-section-head">
-        <p class="sys-kicker">02 · Entry to exit</p>
-        <h2 class="sys-h2" id="ee-h">Bought small, sold big, usually to a larger sponsor.</h2>
-        <p class="sys-lead" id="ee-lead">Sponsors rarely publish prices, so this is what is on the record: entry, exit, buyer, hold and revenue growth. Click a row for its timeline.</p>
-      </div>
-      <div class="cs-ee-ctl">
-        <div class="sys-chips" role="group" aria-label="Filter by sector" id="ee-filter"></div>
-        <button class="sys-btn sys-btn--ghost sys-btn--sm" type="button" id="ee-csv">Download CSV</button>
-      </div>
-      <div class="sys-table-wrap"><table class="sys-table cs-ee" id="ee-table"><caption id="ee-cap"></caption></table></div>
-      <div class="sys-grid sys-grid--2 cs-ee-charts">
-        <div class="sys-card m-cases">
-          <span class="sys-card-label">The multiple ladder</span>
-          <h3 class="sys-card-title">Small deals cost about 6–7x. Scaled companies sold for about 17–18.5x.</h3>
-          <div id="ladder"></div>
-          <p class="sys-src"><b>Source:</b> GF Data middle-market reports (H1 2025, Q2 2026) via Middle Market Growth and ACG; Champions and Sila values are press-reported estimates, Oct 2026.</p>
-        </div>
-        <div class="sys-card m-cases">
-          <span class="sys-card-label">Revenue growth during the hold</span>
-          <h3 class="sys-card-title" id="growth-h">Median growth of about 2x, with a long tail of serial acquirers.</h3>
-          <div id="growth"></div>
-          <p class="sys-src"><b>Source:</b> Value-creation case set, sourced before and after pairs only; several are not like-for-like (acquisitions change the perimeter). Log scale; 1x = no growth.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 03 LEVERS -->
-  <section class="sys-section sys-section--alt" id="levers" aria-labelledby="lv-h">
-    <div class="sys-wrap">
-      <div class="sys-section-head">
-        <p class="sys-kicker">03 · What they did</p>
-        <h2 class="sys-h2" id="lv-h">Eighteen levers, and which owners pulled them when.</h2>
-        <p class="sys-lead">Each dot is a case that used the lever; darker means earlier in the hold, hollow means undated. Click a lever for the evidence.</p>
-      </div>
-      <div class="m-cases" id="matrix"></div>
-      <p class="sys-src"><b>Source:</b> Value-creation case set: dated timelines, levers used and before-and-after KPIs of 34 cases, with the source of every dated move, Oct 2026.</p>
-      <div class="cs-lever-detail m-cases" id="lever-detail" aria-live="polite"></div>
-    </div>
-  </section>
-
-  <!-- 04 PATTERNS -->
-  <section class="sys-section" id="patterns" aria-labelledby="pt-h">
-    <div class="sys-wrap">
-      <div class="sys-section-head">
-        <p class="sys-kicker">04 · In what order</p>
-        <h2 class="sys-h2" id="pt-h">The hold has a clock. Punctual Pros is at month 30.</h2>
-        <p class="sys-lead">Twelve patterns on a seven-year hold. Bar colour shows where Punctual Pros stands today; click a pattern for its cases.</p>
-      </div>
-      <div class="sys-card m-cases" id="clock"></div>
-      <p class="sys-src"><b>Source:</b> Value-creation case set, timing computed from dated events (first add-on n=11, cadence n=8, hold n=21); Punctual Pros status from public filings and releases, Oct 2026.</p>
-      <div class="cs-pat-detail m-cases" id="pat-detail" aria-live="polite"></div>
-    </div>
-  </section>
-
-  <!-- 05 THE PUNCTUAL PROS SEQUENCE -->
-  <section class="sys-section sys-section--alt" id="sequence" aria-labelledby="sq-h">
-    <div class="sys-wrap">
-      <div class="sys-section-head">
-        <p class="sys-kicker">05 · The Punctual Pros sequence</p>
-        <h2 class="sys-h2" id="sq-h">The next 36 months, in the order the winners did it.</h2>
-        <p class="sys-lead">Three steps are done. The next twelve follow from the patterns above and are analyst recommendations, not company plans.</p>
-      </div>
-      <div class="sys-card m-cases" id="gantt"></div>
-      <div class="cs-step-detail m-cases" id="step-detail" aria-live="polite"></div>
-      <p class="sys-src"><b>Source:</b> Value-creation case set (Punctual Pros sequence), Punctual Pros public filings, OS program evidence and the Punctual Pros nationwide plan, Oct 2026. Steps 3–14 are recommendations.</p>
-    </div>
-  </section>
-
-  <!-- METHOD AND SOURCES -->
-  <section class="sys-section" id="sources" aria-labelledby="src-h">
-    <div class="sys-wrap">
-      <div class="sys-section-head">
-        <p class="sys-kicker">Method and sources</p>
-        <h2 class="sys-h2" id="src-h">How the cases were built, and where they are thin.</h2>
-      </div>
-      <div class="sys-grid sys-grid--2">
-        <div class="sys-card">
-          <span class="sys-card-label">Method</span>
-          <div class="sys-prose cs-method" id="method"></div>
-        </div>
-        <div class="sys-card">
-          <span class="sys-card-label">Caveats</span>
-          <ul class="sys-card-list cs-caveats" id="caveats"></ul>
-        </div>
-      </div>
-      <details class="sys-card cs-drawer" id="all-src">
-        <summary><span><b>Every source, by case</b> · <span id="src-count"></span></span><span class="cs-chev" aria-hidden="true"></span></summary>
-        <div class="cs-src-grid" id="src-list"></div>
-      </details>
-    </div>
-  </section>
-
-  <section class="sys-cta" aria-labelledby="cta-h">
-    <div class="sys-wrap">
-      <div class="sys-cta-in">
-        <div class="sys-cta-copy">
-          <h2 id="cta-h">Put the sequence to work.</h2>
-          <p>The nationwide plan turns these precedents into territories, targets and returns. The portal keeps the cases next to the live data.</p>
-        </div>
-        <div class="sys-actions">
-          <a class="sys-btn sys-btn--primary sys-btn--lg" href="punctual-pros/nationwide.html">Nationwide plan</a>
-          <a class="sys-btn sys-btn--secondary sys-btn--lg" href="../app.html#/cases/sequence">Sequence in the portal</a>
-        </div>
-      </div>
-    </div>
-  </section>
+<main id="main" class="fw">
+  <div class="sys-card fw-card">
+    <p class="sys-card-label">BSP Desk · Sponsor precedents</p>
+    <h1 class="sys-card-title">This page has moved into the portal.</h1>
+    <div class="sys-actions"><a class="sys-btn sys-btn--primary" id="go" href="../app.html#/cases/timeline">Open Sponsor precedents</a></div>
+  </div>
 </main>
-
-<script type="module">
-import { Frame } from '../assets/frame.js?v=20261117223642';
-import { Data } from '../assets/core.js?v=20261117223642';
-import { Chat } from '../assets/chat.js?v=20261117223642';
-import { boot } from './case-studies.js?v=20261117223642';
-const frame = Frame.mount({ active: 'playbooks', banner: true, crumb: [{ label: 'Home', href: './' }, { label: 'Growth plans', href: 'redesigns/#growth-plans' }, { label: 'Value-creation cases' }] });
-const res = await boot({ Data }).catch(e => { console.warn('case studies boot failed', e); return null; });
-try {
-  const chat = Chat.mount(null, {
-    persona: 'portal', short_name: 'the cases', mode: 'floating', theme: 'light', name: 'Precedents assistant', initials: 'VC',
-    greeting: 'Ask about the 34 sponsor-built companies: what each owner did and when, how long they held, what they sold for, which levers moved the numbers, and what Punctual Pros should do next. Answers are computed from the case set.',
-    placeholder: 'Ask about a case, a lever or the sequence…',
-    suggestions: ['What did Alpine do with Apex before Apollo invested?', 'How long did sponsors hold home-services companies?', 'Which levers moved EBITDA fastest?', 'What should Punctual Pros do in the next 12 months?', 'What multiples did scaled companies sell for?'],
-    faq: res?.faq || [], intents: res?.intents || [],
-  });
-  frame.setChat(chat);
-} catch (e) { console.warn('chat mount failed', e); }
-</script>
 </body>
 </html>
