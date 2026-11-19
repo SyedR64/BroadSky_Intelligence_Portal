@@ -7,13 +7,20 @@ in step with the site. Re-run after adding a page or a portal view:
 
     python3 scripts/make_sitemap.py
 
+The portal section follows the portal's own menu (the RAIL groups in modules/registry.js), then lists the
+modules that are off the menu. Every screen is listed, with or without a tab. A forwarding page (one that
+carries <meta name="bsp-forward">, scripts/ci_check.py forward_target) is not a page of its own and is left out.
+
 Writes ./sitemap.html using the unified system (assets/system.css + assets/frame.js).
 """
 import html
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from ci_check import forward_target   # the one test for a forwarding page, shared with the checker and the knowledge build
 VER = '20261006090506'
 m = re.search(r"system\.css\?v=(\d+)", (ROOT / 'index.html').read_text())
 if m:
@@ -31,21 +38,21 @@ OS = {'pp': 'ServiceOS', 'cet': 'GridOS', 'fl': 'FirmOS', 'ts': 'LabOS', 'bpi': 
 
 # Hand-written names and one-line blurbs for known pages (plain English, no identifiers).
 KNOWN = {
-    'index.html': ('Home', 'The landing page: ask a question, then three things to try.'),
-    'app.html': ('Portal', 'Every module and view, listed below.'),
+    'index.html': ('Home', 'The front page: what the site is and where to start.'),
+    'app.html': ('Portal', 'The six companies and the deal tools. Every screen is listed below.'),
     'theater.html': ('3D map', 'A 3D fly-through of home sales, bids, add-on targets and live weather alerts.'),
-    'sitemap.html': ('Sitemap', 'This page.'),
-    'redesigns/index.html': ('Site concepts', 'Six concept websites and the OS program.'),
+    'sitemap.html': ('All pages', 'This page.'),
+    'redesigns/index.html': ('Concepts', 'Six concept websites and the OS program.'),
     'redesigns/voice-ai.html': ('24/7 Voice AI', 'What missed calls cost, the vendors and a sample call.'),
-    'redesigns/ai-agents.html': ('AI agents', '45 agents across six companies, with rollout and value.'),
-    'redesigns/case-studies.html': ('Sponsor case studies', 'How other sponsors grew companies like these.'),
+    'redesigns/ai-agents.html': ('AI agents plan', '45 agents across six companies, with rollout and value.'),
+    'redesigns/case-studies.html': ('Sponsor precedents', 'How other sponsors grew companies like these.'),
     'redesigns/methodology.html': ('How BSP buys', 'How BSP finds, buys and grows companies.'),
-    'assistant.html': ('Assistant', 'The BSP Desk assistant, full screen.'),
+    'assistant.html': ('Full assistant', 'The BSP Desk assistant, full screen.'),
     'agent.html': ('Company agent', 'Ask as any role at BSP or its six companies, with sandbox apps and data.'),
     'briefing/executive_memo.html': ('Executive memo', 'Four pages: where the six companies stand and what to do next.'),
 }
 CO_PAGE = {
-    'index.html': ('Concept site', 'A concept website that uses the portal data.'),
+    'index.html': ('Website concept', 'A concept website that uses the portal data.'),
     'growth-plan.html': ('Growth plan', 'The steps from today to a higher exit value, with sources.'),
     'nationwide.html': ('Nationwide plan', 'Lancaster to national in four phases.'),
     'ads.html': ('Growth marketing and sample ads', 'Connected TV, Local Services Ads and new-mover mail.'),
@@ -86,6 +93,8 @@ def pages():
         top = rel.split('/')[0]
         if top in SKIP_DIRS or top.startswith('.'):   # .claude/worktrees and other dot dirs are local only
             continue
+        if forward_target(rel) is not None:   # a forwarding page: its target is listed, the old address is not
+            continue
         out.append(rel)
     if 'sitemap.html' not in out:
         out.append('sitemap.html')
@@ -107,12 +116,24 @@ def modules():
         if not mid:  # modules configured through a CFG object (bpi.js, fh.js)
             cfg = re.search(r"CFG\s*=\s*\{([^}]*)\}", s)
             mid = re.search(r"\bid:\s*'([\w-]+)'", cfg.group(1)) if cfg else None
-            mname = re.search(r"\bname:\s*'([^']+)'", cfg.group(1)) if cfg else None
+            mname = (re.search(r"\bshort:\s*'([^']+)'", cfg.group(1)) or re.search(r"\bname:\s*'([^']+)'", cfg.group(1))) if cfg else None   # the menu shows CFG.short
         vi = s.find('views:', i)
         views = re.findall(r"\{\s*id:\s*'([\w-]+)',\s*name:\s*'([^']+)'", s[vi:]) if vi > 0 else []
         if mid:
             mods.append((mid.group(1), names.get(mid.group(1), mname.group(1) if mname else f), views))
     return mods
+
+
+def menu():
+    """The portal's menu, read from modules/registry.js: ([(group name, [module id, ...])], the label for modules off the
+    menu, {module id: [view ids in tab order]} for the modules whose tab order differs from their views' order)."""
+    reg = (ROOT / 'modules/registry.js').read_text()
+    rail = re.search(r"const RAIL = (\[.*\]);", reg)
+    groups = [(name, re.findall(r"'([\w-]+)'", ids)) for name, ids in re.findall(r"\['([^']+)',\s*\[([^\]]*)\]\]", rail.group(1))] if rail else []
+    more = re.search(r"const OFF_MENU_GROUP = '([^']+)'", reg)
+    order = re.search(r"const TAB_ORDER = \{(.*)\};", reg)
+    tabs = {mid: re.findall(r"'([\w-]+)'", ids) for mid, ids in re.findall(r"(\w+):\s*\[([^\]]*)\]", order.group(1))} if order else {}
+    return groups, (more.group(1) if more else 'More'), tabs
 
 
 def item(href, name, blurb, extra=''):
@@ -128,14 +149,16 @@ def routes_html(mid, views):
 
 def main():
     all_pages = pages()
-    mods = modules()
+    rail, more, tab_order = menu()
+    # screens in the same order as the tab row: the ids TAB_ORDER lists first, the rest in place after them
+    mods = [(mid, mname, sorted(views, key=lambda v, first=tab_order.get(mid, []): first.index(v[0]) if v[0] in first else len(first))) for mid, mname, views in modules()]
     mod_by_id = {m[0]: m for m in mods}
     groups = []
 
     # 1. start
-    start = [p for p in ['index.html', 'app.html', 'theater.html', 'sitemap.html', 'assistant.html', 'agent.html'] if p in all_pages]
+    start = [p for p in ['index.html', 'agent.html', 'app.html', 'sitemap.html', 'assistant.html'] if p in all_pages]
     lis = [item(p if p != 'index.html' else './', *KNOWN[p]) for p in start]
-    groups.append(('start', 'Start', 'The front door, the portal and the 3D map.', None, lis))
+    groups.append(('start', 'Start', 'The front page, the company agent and the portal.', None, lis))
 
     # 2. companies
     used = set(start)
@@ -157,7 +180,7 @@ def main():
             lis.append(item(base if fn == 'index.html' else p, nm, bl))
         if co in mod_by_id:
             mid, mname, views = mod_by_id[co]
-            lis.append(item(f'app.html#/{mid}/{views[0][0]}' if views else 'app.html', 'Portal module', f'{len(views)} views in the portal.', routes_html(mid, views)))
+            lis.append(item(f'app.html#/{mid}/{views[0][0]}' if views else 'app.html', 'In the portal', f'{len(views)} screens.', routes_html(mid, views)))
         groups.append((co, name, what, co, lis))
 
     # 3. portfolio-wide programs and pages
@@ -173,32 +196,50 @@ def main():
         lis.append(item(p, title_of(ROOT / p), desc_of(ROOT / p)))
     groups.append(('programs', 'Portfolio programs', 'Programs that span all six companies.', None, lis))
 
-    # 4. portfolio-wide portal modules
-    lis = []
-    co_ids = {c[0] for c in CO}
-    for mid, mname, views in mods:
-        if mid in co_ids:
-            continue
-        lis.append(item(f'app.html#/{mid}/{views[0][0]}' if views else 'app.html', mname, f'{len(views)} view{"s" if len(views) != 1 else ""}.', routes_html(mid, views)))
-    groups.append(('portal', 'Portal: portfolio modules', 'Modules that span the portfolio.', None, lis))
+    # 4. the portal, in the order of its own menu: the three menu groups, then the modules that are off the menu.
+    # Every screen is listed, including the ones with no tab. `lis` is a list of (sub-heading, [items]) here.
+    def mod_item(mid):
+        _, mname, views = mod_by_id[mid]
+        return item(f'app.html#/{mid}/{views[0][0]}' if views else 'app.html', mname, f'{len(views)} screen{"s" if len(views) != 1 else ""}.', routes_html(mid, views))
+    on_menu = {mid for _, ids in rail for mid in ids}
+    blocks = [(name, [mod_item(mid) for mid in ids if mid in mod_by_id]) for name, ids in rail]
+    off = [mod_item(mid) for mid, _, _ in mods if mid not in on_menu]
+    if off:
+        blocks.append((more if rail else 'Portal', off))
+    n_off = len(off) if rail else 0
+    lead = 'In the order of the portal’s menu' + (f'. The ones under “{more}” open from other screens' if n_off else '')
+    groups.append(('portal', 'Every screen in the portal', lead, None, blocks))
 
-    # 5. briefing
+    # 5. briefing (the 3D map is listed here for as long as it is a page of its own)
     lis = []
+    if 'theater.html' in all_pages:
+        lis.append(item('theater.html', *KNOWN['theater.html']))
     if 'briefing/executive_memo.html' in all_pages:
         lis.append(item('briefing/executive_memo.html', *KNOWN['briefing/executive_memo.html']))
     for f, nm, bl in FILES:
         if (ROOT / f).exists():
             lis.append(item(f, nm, bl))
-    groups.append(('briefing', 'Briefing', 'Videos and the memo.', None, lis))
+    groups.append(('briefing', 'Briefing', 'The 3D map, the videos and the memo.' if 'theater.html' in all_pages else 'Videos and the memo.', None, lis))
 
     n_pages = len(all_pages)
     n_routes = sum(len(m[2]) for m in mods)
-    SHORT = {'start': 'Start', 'pp': 'Punctual Pros', 'cet': 'CET', 'fl': 'Frontline', 'ts': 'Thomas Scientific', 'bpi': 'BPI', 'fh': 'Fair Harbor', 'programs': 'Programs', 'portal': 'Portal modules', 'briefing': 'Briefing'}
+    SHORT = {'start': 'Start', 'pp': 'Punctual Pros', 'cet': 'CET', 'fl': 'Frontline', 'ts': 'Thomas Scientific', 'bpi': 'BPI', 'fh': 'Fair Harbor', 'programs': 'Programs', 'portal': 'Portal', 'briefing': 'Briefing'}
     # page bar: five links at most; the six company groups share one "Companies" link to the first of them
     BAR = {'start': 'Start', 'pp': 'Companies', 'programs': 'Programs', 'portal': 'Portal', 'briefing': 'Briefing'}
     sub = ''.join(f'<a href="#g-{g[0]}">{esc(BAR[g[0]])}</a>' for g in groups if g[0] in BAR)
 
     KICK = {'start': 'Overview', 'pp': 'Home services', 'cet': 'Electrical and energy', 'fl': 'Legal IT', 'ts': 'Lab supply', 'bpi': 'Communications', 'fh': 'Consumer', 'programs': 'Across the portfolio', 'portal': 'Portal', 'briefing': 'Briefing'}
+
+    def ul(lis):
+        return f'''      <ul class="lp-list lp-map-list">
+        {chr(10).join("        " + x for x in lis).strip()}
+      </ul>'''
+
+    def lists(lis):   # one list, or (sub-heading, items) blocks: a heading in the system type scale above each list
+        if not lis or not isinstance(lis[0], tuple):
+            return ul(lis)
+        return chr(10).join(f'''      <h3 class="sys-h3" style="margin:{'0' if k == 0 else 'var(--sys-sp-7)'} 0 var(--sys-sp-4)">{esc(head)}</h3>
+{ul(items)}''' for k, (head, items) in enumerate(lis))
 
     def section(i, g):
         gid, name, what, co, lis = g
@@ -212,9 +253,7 @@ def main():
         <h2 id="g-{gid}-t" class="sys-h2">{esc(name)}</h2>
         <p class="sys-lead">{esc(what if what.endswith('.') else what + '.')}</p>
       </div>
-      <ul class="lp-list lp-map-list">
-        {chr(10).join("        " + x for x in lis).strip()}
-      </ul>
+{lists(lis)}
     </div>
   </section>'''
 
@@ -225,7 +264,7 @@ def main():
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sitemap · BSP Desk</title>
-<meta name="description" content="Every page and portal view, grouped by company.">
+<meta name="description" content="Every page and portal screen, grouped by company.">
 <meta name="theme-color" content="#fbfaf7">
 {THEME_JS}
 <meta name="author" content="Syed Rahman">
@@ -235,12 +274,12 @@ def main():
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BSP Desk">
 <meta property="og:title" content="Sitemap · BSP Desk">
-<meta property="og:description" content="Every page and portal view, grouped by company.">
+<meta property="og:description" content="Every page and portal screen, grouped by company.">
 <meta property="og:url" content="https://broadsky-agent.vercel.app/sitemap.html">
 <meta property="og:image" content="https://broadsky-agent.vercel.app/assets/img/portal_home_overview.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Sitemap · BSP Desk">
-<meta name="twitter:description" content="Every page and portal view, grouped by company.">
+<meta name="twitter:description" content="Every page and portal screen, grouped by company.">
 <meta name="twitter:image" content="https://broadsky-agent.vercel.app/assets/img/portal_home_overview.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -260,9 +299,9 @@ def main():
 
   <section class="sys-hero" id="top" aria-labelledby="map-title">
     <div class="sys-wrap">
-      <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Every page</b> and every portal view, in one place</p>
+      <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Every page</b> and every portal screen, in one place</p>
       <h1 id="map-title" class="sys-h1">Every page, <span class="sys-grad-text">one list.</span></h1>
-      <p class="sys-lead">Every page and portal view, by company, then the programs and modules that span the portfolio.</p>
+      <p class="sys-lead">Every page, by company, then the programs that span the portfolio and every screen in the portal.</p>
       <div class="sys-chips" style="margin-top:var(--sys-sp-6)">
         {''.join(f'<a class="sys-chip" data-co="{c[0]}" href="#g-{c[0]}">{esc(SHORT[c[0]])}</a>' for c in CO)}
       </div>
