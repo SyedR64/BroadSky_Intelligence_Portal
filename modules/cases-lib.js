@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    Value-creation cases · shared model and renderers
-   Used by the portal module (modules/cases.js) and the public page
-   (redesigns/case-studies.html). Pure functions: data in, HTML strings out.
+   Used by the portal module (modules/cases.js). The case-studies page
+   (redesigns/case-studies.html) now forwards to the portal. Pure functions: data in, HTML strings out.
    Dataset: data/research/value_creation_cases.json (34 cases, 18 levers,
    12 patterns, the dated Punctual Pros sequence and the entry → exit table).
    Styles for every .cs-* class live in modules/cases.css (scoped .m-cases).
@@ -58,13 +58,13 @@ const STEP_TITLE = {
 /** Supporting views that the dataset does not name but that carry the evidence for a step (shown as extra links). */
 const STEP_EXTRA = { 4: ['#/pp/weather'], 7: ['redesigns/punctual-pros/nationwide.html#map'], 10: ['#/pp/movers'] };
 
-/* Portal views and pages a step or lever can point at → readable names. */
+/* Portal screens and pages a step or lever can point at → readable names. */
 const VIEW_LABEL = {
-  '#/pp/overview': 'Punctual Pros overview', '#/pp/targets': 'Punctual Pros add-on targets', '#/pp/movers': 'New-mover leads', '#/pp/market': 'Punctual Pros market',
+  '#/pp/overview': 'Punctual Pros overview', '#/pp/movers': 'New-mover leads', '#/pp/market': 'Punctual Pros market',
   '#/pp/territory': 'Territory and expansion', '#/pp/filings': 'Punctual Pros filings', '#/pp/weather': 'Weather and demand',
   '#/techos/calculator': 'Tech-enablement calculator', '#/techos/roadmap': 'Tech-enablement roadmap', '#/techos/evidence': 'Tech-enablement evidence', '#/techos/overview': 'Tech enablement',
-  '#/ma/pipeline': 'Add-on pipeline', '#/ma/rivals': 'Rival operators', '#/ma/valuation': 'Valuation benchmarks', '#/pe/comparables': 'Sponsor comparables',
-  '#/fin/rivals': 'Rival filings', '#/fin/comps': 'Public comparables', '#/fl/overview': 'Frontline overview',
+  '#/ma/pipeline': 'Add-on pipeline', '#/ma/pipeline?platform=pp': 'Punctual Pros add-on targets', '#/ma/rivals': 'Rival operators', '#/pe/comparables': 'Sponsor comparables',
+  '#/fin/comps': 'Public comparables', '#/fl/overview': 'Frontline overview',
 };
 const PAGE_LABEL = {
   'redesigns/punctual-pros/serviceos.html': 'ServiceOS', 'redesigns/punctual-pros/nationwide.html': 'Nationwide plan', 'redesigns/punctual-pros/ads.html': 'Growth marketing',
@@ -74,11 +74,13 @@ const ANCHOR_LABEL = {
   modules: 'modules', demo: 'demo', membership: 'memberships', exit: 'exit math', value: 'value math', template: 'Smith + Howard template', map: 'expansion map',
   levers: 'growth levers', agents: 'AI agents', pros: 'technician programs', tuckins: 'tuck-in machine', returns: 'financing and returns', calc: 'calculator', baseline: 'baseline',
 };
-/** One reference ('#/pp/targets', 'redesigns/voice-ai.html#x') → { ref, label, portal }. Hrefs are built by the caller (root differs). */
+/* Screens folded into another one (the dataset still names the old address): old → where it lives now. */
+const MOVED = { '#/pp/targets': '#/ma/pipeline?platform=pp', '#/ma/valuation': '#/fin/comps', '#/fin/rivals': '#/ma/rivals' };
+/** One reference ('#/pp/movers', 'redesigns/voice-ai.html#x') → { ref, label, portal }. Hrefs are built by the caller (root differs). */
 export function linkInfo(ref) {
   const r = String(ref || '').trim().replace(/[.,;)]+$/, '');
   if (!r) return null;
-  if (r.startsWith('#/')) { const base = r.split('?')[0]; return { ref: r, portal: true, label: VIEW_LABEL[base] || 'Portal view' }; }
+  if (r.startsWith('#/')) { const to = MOVED[r.split('?')[0]]; const ref = to || r; return { ref, portal: true, label: VIEW_LABEL[ref] || VIEW_LABEL[ref.split('?')[0]] || 'Open in the portal' }; }
   const [path, anchor] = r.split('#');
   const page = PAGE_LABEL[path];
   if (!page) return null;
@@ -94,7 +96,10 @@ export function hrefFor(info, root = '') {
 export function parseRefs(s) {
   const out = [];
   const rx = /#\/[a-z]+\/[a-z_]+(?:\?[\w=&-]+)?|redesigns\/[\w/.-]+?\.html(?:#[\w-]+)?/g;
-  for (const m of String(s || '').matchAll(rx)) { const li = linkInfo(m[0]); if (li && !out.some(x => x.ref === li.ref)) out.push(li); }
+  // two references to one portal screen collapse into one link, and the one that carries a filter wins
+  for (const m of String(s || '').matchAll(rx)) { const li = linkInfo(m[0]); if (!li) continue;
+    const k = out.findIndex(x => x.portal === li.portal && x.ref.split('?')[0] === li.ref.split('?')[0] && (li.portal || x.ref === li.ref));
+    if (k < 0) out.push(li); else if (li.portal && li.ref.includes('?') && !out[k].ref.includes('?')) out[k] = li; }
   return out;
 }
 
