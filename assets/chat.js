@@ -110,12 +110,13 @@ const VIEW_RX = new RegExp([
 const VIEW_CHARS = 3600;   // about 900 tokens: the view's own words and figures, never its tables
 /** What the visitor has on screen behind a docked assistant: view title, headline, lead, status chips, KPI tiles, notes, section titles
     and whatever the view reports about itself (window.BSPView.describe, e.g. the 3D map's scene and live alerts). Read from the DOM at
-    ask time, so it is always the view as shown. Plain text; no table rows, form values or query strings. Returns null off a page. */
+    ask time, so it is always the view as shown: nothing inside a closed section (a <details> that is not open; its summary line is on
+    screen and still counts). Plain text; no table rows, form values or query strings. Returns null off a page. */
 function viewContext() {
   try {
     const root = document.getElementById('content') || document.querySelector('main') || document.body; if (!root) return null;
     const txt = el => String(el?.innerText ?? el?.textContent ?? '').replace(/\s+/g, ' ').trim();
-    const all = (sel, k) => [...root.querySelectorAll(sel)].filter(e => !e.closest('.ch, [hidden], .leaflet-container')).slice(0, k);
+    const all = (sel, k) => [...root.querySelectorAll(sel)].filter(e => !e.closest('.ch, [hidden], .leaflet-container, details:not([open]) > :not(summary)')).slice(0, k);
     const page = String(document.title || '').replace(/\s*·\s*BSP Desk\s*$/, '').trim();
     let own = null; try { own = window.BSPView?.describe?.() || null; } catch { own = null; }
     const h1 = txt(all('h1', 1)[0]);
@@ -305,7 +306,7 @@ async function addons(q) {
   if (stc) items = items.filter(i => (i.state || i.hq_state) === stc);
   progress(`Ranking ${items.length} targets by fit`);
   items = items.slice().sort((a, b) => (b.fit_score || 0) - (a.fit_score || 0)).slice(0, 8);
-  return { html: `<h4>Top add-on targets · ${esc(COS_S[co])}${stc ? ` · ${stc}` : ''}</h4>${items.length ? tbl(['Fit', 'Company', 'HQ', 'Staff', 'Why'], items.map(t => [t.fit_score ?? '—', `<b>${esc(t.company)}</b>`, esc(`${t.hq_city || ''}${t.hq_city ? ', ' : ''}${t.state || t.hq_state || ''}`), t.employees ?? '—', esc(clip(t.strategic_rationale || '', 90))])) : '<p>No targets match.</p>'}<div class="ch-src">Screened via ZoomInfo + company sites; every target carries sources in the portal.</div>`, links: [app(`#/ma/pipeline?platform=${co}`, 'Full pipeline'), app(`#/${co}/targets`, `${COS[co]} targets`)], followups: ['Who are the PE-backed competitors in this sector?', 'What multiple would a tuck-in trade at?'] };
+  return { html: `<h4>Top add-on targets · ${esc(COS_S[co])}${stc ? ` · ${stc}` : ''}</h4>${items.length ? tbl(['Fit', 'Company', 'HQ', 'Staff', 'Why'], items.map(t => [t.fit_score ?? '—', `<b>${esc(t.company)}</b>`, esc(`${t.hq_city || ''}${t.hq_city ? ', ' : ''}${t.state || t.hq_state || ''}`), t.employees ?? '—', esc(clip(t.strategic_rationale || '', 90))])) : '<p>No targets match.</p>'}<div class="ch-src">Screened via ZoomInfo + company sites; every target carries sources in the portal.</div>`, links: [app(`#/ma/pipeline?platform=${co}`, 'Full pipeline')], followups: ['Who are the PE-backed competitors in this sector?', 'What multiple would a tuck-in trade at?'] };
 }
 async function peRivals(q) {
   const d = await Data.research('pe_landscape'); if (!d) return null; const co = coOf(q);
@@ -357,7 +358,7 @@ const SECTOR = { residential_home_services: 'Residential home services', commerc
 async function comps(q) {
   const d = await Data.research('public_comps'); if (!d) return null; const sb = d.meta?.sector_benchmarks || {};
   const rows = Object.entries(sb).slice(0, 8).map(([k, v]) => [esc(SECTOR[k] || srcLabel(k)), pct(v.median_revenue_growth_latest_pct ?? v.median_revenue_growth_pct ?? v.median_growth ?? v.growth), pct(v.median_operating_margin_latest_pct ?? v.median_operating_margin_pct ?? v.median_operating_margin ?? v.operating_margin), esc(String(v.median_revenue_per_employee_usd ? Fmt.money(v.median_revenue_per_employee_usd) : v.revenue_per_employee ?? '—'))]);
-  return { html: `<h4>Public comparables by sector</h4>${tbl(['Sector', 'Growth', 'Op. margin', 'Rev/employee'], rows)}<p>${esc(sentences(d.meta?.financial_picture, 2))}.</p>`, links: [app('#/fin/comps', 'Fundamentals · public comparables'), app('#/ma/valuation', 'Valuation benchmarks')], followups: ['What multiple would a tuck-in trade at?', 'Estimate Punctual Pros revenue from filings'] };
+  return { html: `<h4>Public comparables by sector</h4>${tbl(['Sector', 'Growth', 'Op. margin', 'Rev/employee'], rows)}<p>${esc(sentences(d.meta?.financial_picture, 2))}.</p>`, links: [app('#/fin/comps', 'Fundamentals · public comparables')], followups: ['What multiple would a tuck-in trade at?', 'Estimate Punctual Pros revenue from filings'] };
 }
 const NAV = [[/weather|storm|forecast/i, '#/pp/weather', 'Weather & demand'], [/mover|lead|mailing|home sales/i, '#/pp/movers', 'New-mover marketing'], [/wastewater|horton/i, '#/cet/wastewater', 'Wastewater accounts'], [/radar|opportunit|rfp|bid/i, '#/cet/opportunities', 'Opportunity radar'], [/pipeline|acquisition|add-?on|m&a/i, '#/ma/pipeline', 'Acquisition engine'], [/landscape|competitor|sponsor|pe firm/i, '#/pe/landscape', 'Private equity'], [/filing|financial|sec|form d/i, '#/fin/portfolio', 'Fundamentals'], [/comps|comparable|valuation|multiple/i, '#/fin/comps', 'Fundamentals · public comparables'], [/law ?firm|am ?law/i, '#/fl/amlaw', 'AM Law 200 targets'], [/lab|site explorer|hospital/i, '#/ts/sites', 'Site explorer'], [/briefing|video|tour/i, '#/briefing/play', 'Narrated tour'], [/tech|serviceos|gridos|os\b/i, '#/techos/overview', 'Tech enablement'], [/3d|theater|theatre|cinematic|fly.?through|webgl|globe/i, '#/theater/play', '3D map'], [/case(s| stud)|value.?creation|timeline|exits?\b/i, '#/cases/timeline', 'Sponsor precedents'], [/how broad sky buys|deal patterns|rubric|methodolog|network|deals?\b/i, '#/bsp/deals', 'How BSP buys'], [/national|scorer|county scores?|nationwide/i, '#/national/scorer', 'US expansion']];
 function navigate(q) { const hit = NAV.find(([rx]) => rx.test(q)); if (!hit) return null; return { html: `<p>Opening <b>${esc(hit[2])}</b>.</p>`, links: [app(hit[1], hit[2])], go: APP + hit[1] }; }
@@ -415,7 +416,7 @@ async function voiceAI(q) {
 /* ── Value-creation cases, how BSP buys, national county scorer (tolerant of files still being produced) ── */
 const NEW_FOLLOW = { cases: 'What did sponsors do with companies like Punctual Pros?', buys: 'How does BSP actually buy companies?', national: 'Which counties nationwide should Punctual Pros expand to first?' };
 const pending = (title, what, links, followups) => ({ html: `<h4>${esc(title)}</h4><p>${esc(what)} The full analysis is on the page below.</p>`, links, followups });
-const casesLinks = () => [app('#/cases/timeline', 'Sponsor precedents'), link(ROOT + 'redesigns/case-studies.html', 'Case studies page'), link(ROOT + 'redesigns/punctual-pros/nationwide.html', 'Nationwide plan')];
+const casesLinks = () => [app('#/cases/timeline', 'Sponsor precedents'), app('#/cases/sequence', 'Punctual Pros sequence'), link(ROOT + 'redesigns/punctual-pros/nationwide.html', 'Nationwide plan')];
 async function valueCases(q = '') {
   const d = await Data.research('value_creation_cases');
   const fus = [NEW_FOLLOW.buys, NEW_FOLLOW.national, 'Show me how to take Punctual Pros nationwide'];
@@ -435,7 +436,7 @@ async function valueCases(q = '') {
 }
 async function bspBuys(q = '') {
   const d = await Data.research('bsp_methodology');
-  const L = [app('#/bsp/deals', 'How BSP buys'), link(ROOT + 'redesigns/methodology.html', 'Methodology page'), app('#/home/firm', 'Firm profile')];
+  const L = [app('#/bsp/deals', 'How BSP buys'), app('#/bsp/rubric', 'Acquisition rubric'), app('#/home/firm', 'Firm profile')];
   const fus = [NEW_FOLLOW.cases, NEW_FOLLOW.national, 'Who competes with BSP for home-services deals?'];
   if (!d || !Array.isArray(d.items)) return pending('How BSP buys', 'This answer rebuilds every disclosed BSP deal from primary releases to show the pattern: theme-first sourcing, who sells, how soon the first add-on closes, which advisers recur, and a weighted rubric for the next company.', L, fus);
   const m = d.meta || {}; const it = d.items;
@@ -567,7 +568,7 @@ async function dealModel(q) {
   const est = P.co ? ' <span class="sys-est">est.</span>' : '';
   const hash = `#/deal/returns?p=${encodeURIComponent(P.id)}`;
   return { html: `<h4>What to pay for ${P.co ? esc(COS_S[P.co] || P.label) : 'a typical tuck-in'}</h4><p>${P.co ? `Using public-filing estimates for ${esc(COS_S[P.co] || P.label)}` : 'For a typical lower-middle-market deal'} ($${n(v.rev, 0)}M revenue, ${n(v.mg, 0)}% EBITDA margin${est}), buying at <b>${mult(v.em)}</b> EBITDA and selling at <b>${mult(v.xm)}</b> after ${n(v.yrs, 0)} years returns <b>${pct(R.irr)} a year</b> (${R.moic == null ? 'n/m' : R.moic.toFixed(2) + 'x'} the money).</p><p>The most a buyer can pay and still earn <b>${Math.round(hurdle * 100)}% a year</b> is about <b>${mult(max)} EBITDA</b>, all else equal.</p><p>The acquisition model lets you change any assumption, see the DCF and roll-up views, and download a live Excel file.</p>`,
-    links: [app(hash, 'Open the acquisition model'), app('#/deal/sensitivity', 'Sensitivity tables'), app('#/ma/valuation', 'Valuation benchmarks')],
+    links: [app(hash, 'Open the acquisition model'), app('#/deal/sensitivity', 'Sensitivity tables'), app('#/fin/comps', 'Fundamentals · public comparables')],
     followups: ['What are typical EBITDA multiples in the lower middle market?', 'Show the top add-on targets for Punctual Pros', 'How does Broad Sky buy companies?'] };
 }
 async function valuation(q) {
@@ -577,7 +578,7 @@ async function valuation(q) {
   const bp = Object.entries(ms.by_platform || {}).filter(([k]) => !co || k === co);
   const tuck = /tuck|add-?on|small|bolt/i.test(q);
   return { html: `<h4>${tuck ? 'Tuck-in multiples and combined value' : 'What the multiples evidence says'}</h4>${tuck ? `<p>Small, project-heavy owner-operated shops trade at the low end: about <b>5–6x EBITDA</b> for HVAC firms with low retention, against <b>10x and up</b> for repeatable-service businesses with visible earnings, and private MSP deals rise from about 5x under $5M of deal size to 11x at scale. Buying at the low band and selling the combined company at the high band is the arbitrage every add-on plan rests on.</p>` : ''}<p>${esc(clip(ms.headline || '', 360))}</p>${ve.length ? tbl(['Evidence', 'Multiple', 'Applies to'], ve.slice(0, 8).map(i => [esc(clip(i.title, 90)), `<b class="ch-num">${esc(i.metric_value)}x</b>`, esc((i.applies_to || []).map(k => NAMES[k] || k).join(', '))])) : ''}${bp.length ? `<h4>Premium tech enablement can claim <span class="ch-badge ch-est">est.</span></h4>${tbl(['Company', 'Extra turns of EBITDA', 'Strength of evidence'], bp.map(([k, v]) => [`<b>${esc(COS[k] || k)}</b>`, Array.isArray(v.range_turns) ? `<span class="ch-num">${v.range_turns[0]}–${v.range_turns[1]}</span>` : '—', esc(clip(v.strength || '', 60))]))}` : ''}<div class="ch-src">Source: ${cite('serviceos_evidence')} (banker surveys, press-reported deal multiples, public filings). Multiples are press or banker estimates.</div>`,
-    links: [app('#/ma/valuation', 'Valuation benchmarks'), app('#/fin/comps', 'Fundamentals · public comparables'), link(ROOT + 'redesigns/punctual-pros/serviceos.html', 'ServiceOS')], followups: ['Compare the portfolio to public comps', 'What is ServiceOS and why does it raise valuation?', 'Show the top add-on targets for Punctual Pros'] };
+    links: [app('#/fin/comps', 'Fundamentals · public comparables'), link(ROOT + 'redesigns/punctual-pros/serviceos.html', 'ServiceOS')], followups: ['Compare the portfolio to public comps', 'What is ServiceOS and why does it raise valuation?', 'Show the top add-on targets for Punctual Pros'] };
 }
 async function membership() {
   const [nw, so, v] = await Promise.all([Data.research('pp_nationwide'), Data.research('serviceos_evidence'), Data.research('voice_ai')]);
@@ -753,7 +754,7 @@ const PORTAL_INTENTS = [
 
 /* ── Retrieval index (fallback) ───────────────────────────────────────────── */
 const STATIC_DOCS = [
-  { t: 'Command Center', s: 'portfolio footprint, live NWS alerts, signals this week, timeline, data coverage', h: '#/home/overview' },
+  { t: 'Command Center', s: 'value and exit table, portfolio footprint, live NWS alerts, signals this week', h: '#/home/overview' },
   { t: 'CET opportunity radar', s: 'New England bids, RFPs, capital plans, federal awards for electrical, solar, EV, wastewater, efficiency', h: '#/cet/opportunities' },
   { t: 'CET wastewater accounts', s: 'Horton cross-sell: 183 treatment plants ranked by fit with funded projects', h: '#/cet/wastewater' },
   { t: 'CET property transfers', s: 'commercial and industrial buildings that changed hands in MA CT RI, retrofit triggers, home sales by county', h: '#/cet/transfers' },
@@ -764,14 +765,13 @@ const STATIC_DOCS = [
   { t: 'Frontline AM Law 200 targets', s: 'law firms scored for managed IT, cyber urgency, AI signal, revenue cycle', h: '#/fl/amlaw' },
   { t: 'Frontline mid-size firm targets', s: 'mid-size law firms with cyber incidents, mergers, CIO hires', h: '#/fl/midsize' },
   { t: 'Thomas Scientific parent accounts', s: '500 parent accounts, diagnostics labs, hospitals, pathology, commercial priority', h: '#/ts/accounts' },
-  { t: 'Acquisition engine', s: 'add-on pipeline across portfolio companies, company theses, rival companies, valuation calculator, white space', h: '#/ma/overview' },
-  { t: 'Private equity · sponsor landscape', s: 'competing sponsors, fund history, deals 2025-2026, sector heatmap, comparable companies', h: '#/pe/landscape' },
-  { t: 'Sponsor precedents', s: 'how sponsors built and sold home-services companies: operator team at entry, first add-on timing, tuck-in cadence, one system, memberships, exits and buyers, entry to exit timeline', h: '#/cases/timeline' },
+  { t: 'Acquisition engine', s: 'add-on pipeline across portfolio companies, company theses, rival companies, white space', h: '#/ma/overview' },
+  { t: 'Private equity · sponsor landscape', s: 'competing sponsors, fund history, deals 2025-2026, sector grid, comparable companies', h: '#/pe/landscape' },
+  { t: 'Sponsor precedents', s: 'how sponsors built and sold home-services companies: operator team at entry, first add-on timing, tuck-in cadence, one system, memberships, exits and buyers, entry to exit timeline, sponsor case studies in home services and adjacent sectors: Apex, Wrench, Champions, Sila, Smith + Howard, what they did before selling', h: '#/cases/timeline' },
   { t: 'How BSP buys', s: 'deal patterns, screening rubric with weights, sourcing network of bankers and advisers, seller types, first add-on timing, every disclosed BSP deal', h: '#/bsp/deals' },
   { t: 'US expansion · county scorer', s: 'county scores nationwide from home sales, building permits, housing age, climate and competition; where Punctual Pros expands next', h: '#/national/scorer' },
-  { t: 'Case studies', s: 'sponsor case studies in home services and adjacent sectors: Apex, Wrench, Champions, Sila, Smith + Howard, what they did before selling', p: 'redesigns/case-studies.html' },
-  { t: 'Methodology', s: 'how the portal is built and how BSP buys: sources, scoring methods, deal rubric, caveats and estimates', p: 'redesigns/methodology.html' },
-  { t: 'Fundamentals', s: 'Form D, Form ADV, BDC loan schedules, PPP, FDD Item 19, public comps, rival financials', h: '#/fin/portfolio' },
+  { t: 'How BSP buys · rubric', s: 'scoring methods, deal rubric, criteria weights, first-call script, intro paths', h: '#/bsp/rubric' },
+  { t: 'Fundamentals', s: 'value and exit, Form D, Form ADV, BDC loan schedules, PPP, FDD Item 19, public comps', h: '#/fin/portfolio' },
   { t: 'Tech enablement program', s: 'ServiceOS GridOS FirmOS LabOS SignalOS HarborOS theses, valuation impact, roadmaps', h: '#/techos/overview' },
   { t: 'Narrated tour', s: 'narrated tour, executive video', h: '#/briefing/play' },
   { t: '3D map', s: 'WebGL fly-through: home-sales hexagons, nationwide expansion arcs, New England opportunity columns, live storm polygons', h: '#/theater/play' },
@@ -784,7 +784,7 @@ async function buildIndex(persona) {
   const res = await Promise.all(metaFiles.map(f => Data.research(f)));
   res.forEach((d, i) => { if (!d) return; const m = d.meta || {}; const narr = Array.isArray(m.methodology_narrative) ? m.methodology_narrative.slice(0, 6) : [];
     const pats = (d.items || []).filter(x => x.kind === 'pattern').slice(0, 10).map(x => `${x.pattern || ''} ${x.description || x.implication_for_next_deals || ''}`);
-    const texts = [m.financial_picture, m.landscape_summary, m.territory_summary, m.expansion_thesis, typeof m.narrative === 'string' ? m.narrative : null, ...narr, ...pats, ...(m.top_10_actions || []), ...(m.implications_for_bsp || [])].filter(Boolean); texts.forEach((t, k) => docs.push({ t: `${srcLabel(metaFiles[i])} · insight`, s: String(typeof t === 'string' ? t : JSON.stringify(t)).slice(0, 600), href: APP + ({ pp_filings: '#/pp/filings', cet_filings: '#/cet/filings', frontline_filings: '#/fl/filings', thomas_filings: '#/ts/filings', bpi_filings: '#/bpi/filings', fairharbor_filings: '#/fh/filings', pe_landscape: '#/pe/landscape', cet_opportunities: '#/cet/opportunities', pp_market: '#/pp/market', public_comps: '#/fin/comps', ma_targets_pp: '#/pp/targets', ma_targets_cet: '#/cet/targets', bsp_firm: '#/home/firm', value_creation_cases: '#/cases/timeline', bsp_methodology: '#/bsp/deals' }[metaFiles[i]] || '#/home/overview') })); });
+    const texts = [m.financial_picture, m.landscape_summary, m.territory_summary, m.expansion_thesis, typeof m.narrative === 'string' ? m.narrative : null, ...narr, ...pats, ...(m.top_10_actions || []), ...(m.implications_for_bsp || [])].filter(Boolean); texts.forEach((t, k) => docs.push({ t: `${srcLabel(metaFiles[i])} · insight`, s: String(typeof t === 'string' ? t : JSON.stringify(t)).slice(0, 600), href: APP + ({ pp_filings: '#/pp/filings', cet_filings: '#/cet/filings', frontline_filings: '#/fl/filings', thomas_filings: '#/ts/filings', bpi_filings: '#/bpi/filings', fairharbor_filings: '#/fh/filings', pe_landscape: '#/pe/landscape', cet_opportunities: '#/cet/opportunities', pp_market: '#/pp/market', public_comps: '#/fin/comps', ma_targets_pp: '#/ma/pipeline?platform=pp', ma_targets_cet: '#/ma/pipeline?platform=cet', bsp_firm: '#/home/firm', value_creation_cases: '#/cases/timeline', bsp_methodology: '#/bsp/deals' }[metaFiles[i]] || '#/home/overview') })); });
   for (const f of (persona.faq || [])) docs.push({ t: f.q, s: f.a.replace(/<[^>]+>/g, ''), href: f.href || null, faq: true, html: f.a });
   _index = docs; return docs;
 }
@@ -930,7 +930,7 @@ const SRC = {
   fh_playbook: ['Fair Harbor growth plan', 'Phases, levers, AI agents and the roadmap for Fair Harbor', RD + 'fair-harbor/growth-plan.html'],
   fh_sales_nyc: ['Deed records (New York City)', 'Recorded transfers used for the Fair Harbor retail screen', '#/fh/overview'],
   pe_landscape: ['Private-equity landscape', 'Competing sponsors, funds, portfolio companies and threat level', '#/pe/landscape'],
-  rival_filings: ['Competitor filings', 'Public filings of rival companies', '#/fin/portfolio'],
+  rival_filings: ['Competitor filings', 'Public filings of rival companies', '#/ma/rivals'],
   public_comps: ['Public comparables', 'Sector medians from SEC XBRL filings', '#/fin/comps'],
   bsp_firm: ['BSP firm profile', 'Strategy, portfolio companies, add-ons and exits', '#/home/firm'],
   value_creation_cases: ['Value-creation cases', '34 sponsor-backed home-services and adjacent cases: entry, add-on cadence, exits and the levers they pulled', '#/cases/timeline'],
