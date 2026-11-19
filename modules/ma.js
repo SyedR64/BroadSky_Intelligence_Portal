@@ -6,6 +6,7 @@ import * as Copy from './copy.js?v=20261117223642';
    ═══════════════════════════════════════════════════════════════════════════ */
 import { renderTargets, fitTierOf } from '../assets/components.js?v=20261117223642';
 import * as DL from './deal-lib.js?v=20261117223642';
+import { companyBlock } from './ma-company.js?v=20261117223642';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 const PLAT = {
@@ -768,7 +769,7 @@ async function pipeline(ctx) {
     title: `Add-on pipeline${P ? ` · ${esc(P.label)}` : ''}`,
     sub: rows.length ? `<b>${fmt.num(rows.length)} target${rows.length === 1 ? '' : 's'}${q ? ` matching “${esc(q)}”` : P ? '' : ' across all companies'}; ${fmt.num(t1)} Tier-1 and ${fmt.num(t2)} Tier-2${inPlay.length ? `; ${fmt.num(inPlay.length)} in play` : ''}.</b> ${pctOf(ff, rows.length)}% have a confirmed founder or family owner. Click a row to set stage and owner.` : 'No targets match the current filter.',
     chips: `${fmt.chip('Rubrics differ by company')}${rows.some(t => t._src === 'sba') ? fmt.chip('Two fit formulas: hand-built and SBA loan screen', 'var(--sys-info)') : ''}${fmt.chip('Revenue modelled est.', 'var(--sys-warn)')}${passed.length && !showPass && !q ? fmt.chip(`${passed.length} passed · hidden`, 'var(--sys-bad)') : ''}`,
-    actions: `<button class="sys-btn sys-btn--secondary btn" id="ma-trk-csv">⇩ Tracker CSV</button><a class="sys-btn sys-btn--secondary btn" href="#/ma/theses">Company theses →</a>`,
+    actions: `<button class="sys-btn sys-btn--secondary btn" id="ma-trk-csv">⇩ Tracker CSV</button>`,
   }) + missingNote(ui, esc, b) +
   ui.kpis([
     { label: 'Targets in view', value: fmt.num(rows.length), sub: `${sel === 'all' ? `of ${fmt.num(b.targets.length)} screened` : `${esc(P.long)} screen`} · ${fmt.num(states.size)} states/countries`, color: P?.color || 'var(--c-ma)' },
@@ -782,21 +783,29 @@ async function pipeline(ctx) {
     { label: 'In play', value: fmt.num(inPlay.length), sub: inPlay.length ? `${STAGES.filter(s => byStage[s]).map(s => `${s} ${byStage[s]}`).join(' · ')}${overdue ? ` · ${overdue} overdue` : ''}` : 'set stage in the row inspector', color: overdue ? 'var(--sys-bad)' : 'var(--sys-violet)' },
   ]) +
   `<div class="sys-filters ma-seg-row mt-12"><span class="sys-field-label lbl">Portfolio company</span><div id="ma-seg"></div>${q ? `${fmt.chip(`Search: ${q}`, 'var(--c-ma)')}<a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/ma/pipeline${sel !== 'all' ? `?platform=${sel}` : ''}">Clear ✕</a>` : ''}${!q ? `<button class="sys-btn sys-btn--secondary sys-btn--sm btn xs ${showPass ? 'active' : ''}" id="ma-pass" aria-pressed="${showPass}">${showPass ? 'Hide' : 'Show'} passed (${passed.length})</button>` : ''}</div>
+  <div id="ma-co"></div>
   <div id="ma-tg"></div>
   <div class="sys-src src-line mt-8">${sel === 'all' ? 'Sources: CET add-on targets, Punctual Pros add-on targets, Frontline and Thomas Scientific add-on targets (ZoomInfo company search, franchise directories, company websites) and the SBA loan screen (SBA PPP, 7(a) and 504 loan records)' : esc(clip(ceoFix(meta?.method || ''), 320))} · generated ${esc(meta?.generated || b.pp?.meta?.generated || '—')} · stages saved in this browser</div>
   <div class="grid grid-2 mt-12">
     ${ui.panel({ title: 'How to work this list', sub: 'Recommended sequence for deal teams', body: `<ol class="acts"><li><span><b>Filter to Tier 1–2 and founder/family-owned</b> for PRG outreach this quarter; density tuck-ins first, new-hub anchors only with a branch plan.</span></li><li><span><b>Set stage, owner and next-step date</b> in the row inspector (Screened → Contacted → Meeting → NDA → IOI, or Pass). Passed targets drop out of the default view.</span></li><li><span><b>Share the tracker</b> with ⇩ Tracker CSV; stages are kept in this browser only.</span></li><li><span><b>Check risk flags</b> in the inspector. Revenue is modelled on every row: ZoomInfo's estimate on hand-built rows, Census benchmarks and SBA loan data (with a range) on loan-screen rows. Confirm size in the first call. Never contact a target flagged “verify affiliation”.</span></li><li><span><b>Price it</b> in the row inspector: Deal math shows the likely price, debt, equity check and return, and how each was estimated. Model this deal opens the full model, ready to download to Excel.</span></li></ol>` })}
     ${ui.panel({ title: 'Data caveats', sub: 'From the screen authors — read before outreach', body: `<ul class="bul">${(() => { const lc = rows.some(t => t._src === 'sba') ? (b.sba?.meta?.caveats || []).filter(c => /^(Revenue|Staff) for loan-screen/.test(c)) : []; const rest = (sel === 'all' ? [b.cet?.meta, b.pp?.meta, b.flts?.meta, b.sba?.meta] : [meta, ...(PKEYS.includes(sel) && b.sba ? [b.sba.meta] : [])]).filter(Boolean).flatMap(m => (m.caveats || []).filter(c => !lc.includes(c)).slice(0, sel === 'all' ? 2 : 5)); return [...lc, ...rest].map(c => `<li>${esc(clip(ceoFix(c), lc.includes(c) ? 900 : 260))}</li>`).join('') || '<li>—</li>'; })()}</ul>` })}
-  </div></div>`;
+  </div>
+  <div class="mt-12" id="ma-county"></div></div>`;
   ui.seg(el.querySelector('#ma-seg'), [{ value: 'all', label: `All (${b.targets.length})` }, ...SKEYS.filter(p => PKEYS.includes(p) || b.targets.some(t => t._p === p)).map(p => ({ value: p, label: `${PLAT[p].label} (${b.targets.filter(t => t._p === p).length})` }))], sel, v => app.go('ma', 'pipeline', { ...(v === 'all' ? {} : { platform: v }), ...(showPass ? { pass: '1' } : {}) }));
   const pb = el.querySelector('#ma-pass'); if (pb) pb.onclick = () => app.go('ma', 'pipeline', passParams);
+  // the company block (six cards, the picked company's brief, or one line) and the closed county section are drawn apart from
+  // the list and can never stop it: a fault in either is logged (the checker fails on it) and the list still renders
+  let coUn = null, cyUn = null;
+  try { coUn = companyBlock(ctx, el.querySelector('#ma-co'), { b, sel, focused: !!(idT || q), kit: KIT }); } catch (e) { console.error(e); }
+  try { cyUn = countySection(ctx, el.querySelector('#ma-county'), b, params.counties === '1'); } catch (e) { console.error(e); }
+  const unmount = () => { try { coUn && coUn(); } catch { } try { cyUn && cyUn(); } catch { } };
   el.querySelector('#ma-trk-csv').onclick = () => {
     const ids = new Set([...rows.map(t => t.id), ...Object.keys(S)]);
     const out = b.targets.filter(t => ids.has(t.id)).map(t => { const st = stageOf(S, t.id); return { platform: PLAT[t._p].label, company: t.company, hq: `${t.hq_city || ''}${t.hq_city ? ', ' : ''}${t._state}`, fit_score: t.fit_score, tier: t._tier, route_reach: t._reach ? `${t._reach} (${t._nodeMi} mi ${t._node})` : '', ownership: t._owner, revenue_est_usd: t.revenue_est_usd, revenue_basis: t._revKind === 'loan' ? 'modelled: Census benchmarks and SBA loan data' : t._revKind === 'stated' ? 'stated by the company' : t._revKind === 'vendor' ? 'modelled: ZoomInfo' : '', revenue_low_usd: t._src === 'sba' ? t.revenue_est_low_usd ?? '' : '', revenue_high_usd: t._src === 'sba' ? t.revenue_est_high_usd ?? '' : '', staff: t.employees ?? '', staff_basis: t._src === 'sba' ? (t.employees_basis === 'stated' ? 'stated on company website' : 'SBA loan jobs figure') : '', verify_affiliation: t._affil ? 'YES' : '', stage: st.stage, deal_owner: st.owner || '', next_step_date: st.next || '', stage_updated: st.updated || '', website: t.website || '' }; });
     ui.exportCSV(out, null, `ma_deal_tracker_${sel}`);
   };
   const host = el.querySelector('#ma-tg');
-  if (!b.targets.length) { host.innerHTML = ui.note('Target screens are not yet available.', 'warn'); return; }
+  if (!b.targets.length) { host.innerHTML = ui.note('Target screens are not yet available.', 'warn'); return unmount; }
   // Normalise fit_breakdown to % of each dimension's maximum so the shared inspector bars are comparable across rubrics.
   // Ownership is normalised to 6 classes (raw text restored in the inspector); long FL/TS offering strings are shortened for the table.
   // Affiliation-flagged names carry the flag inline (brand line and Why column) so the warning is visible without opening the row.
@@ -834,6 +843,7 @@ async function pipeline(ctx) {
   extra.unshift({ key: '_price', label: 'Model price est.', num: true, fmt: (v, r) => v == null ? `<span class="dim"${r._noPrice ? ` title="${esc(r._noPrice)}"` : ''}>—</span>` : `${fmt.money(v * 1e6)}${r._sized ? '<span class="dim small" title="No revenue on record: priced at the median hand-built target"> sized</span>' : r._revKind === 'loan' ? '<div class="dim small" title="Priced on revenue modelled from Census benchmarks and SBA loan data">loan model</div>' : r._revKind === 'stated' ? '<div class="dim small">stated rev.</div>' : ''}` });
   renderTargets({ ...ctx, inspector: insp }, host, { items: Copy.targets(items), color: P?.color || 'var(--c-ma)', platformLabel: P ? P.label : 'Cross-portfolio', exportName: `ma_pipeline_${sel}`, pageSize: 40, extraColumns: extra });
   if (q && rows.length === 1) host.querySelector('#tg-table tbody tr[data-i]')?.click(); // opens the stage-aware inspector
+  return unmount;
 }
 
 /* ═══ View 3: Company theses ═════════════════════════════════════════════ */
@@ -967,6 +977,17 @@ const PORTCO_COUNTIES = [
   { p: 'fl', state: 'MO', county: 'St. Louis City', why: 'HQ (St. Louis)' }, { p: 'ts', state: 'NJ', county: 'Gloucester', why: 'HQ and distribution centre (Swedesboro)' },
   { p: 'bpi', state: 'DC', county: 'District of Columbia', why: 'HQ (1445 New York Ave NW)' }, { p: 'fh', state: 'NY', county: 'New York', why: 'Owned store (Prince St, SoHo)' },
 ];
+/* The county table as a closed section at the foot of the pipeline. It reads 37 MB of sales records, so it loads only when the
+   section is opened, or straight away when the address carries ?counties=1. */
+function countySection(ctx, host, b, open) {
+  if (!host) return null;
+  let alive = true, loaded = false;
+  host.innerHTML = `<details class="ma-how ma-sec" id="ma-county-d"${open ? ' open' : ''}><summary>County home sales against the target pool</summary><div class="ma-sec-body" id="ma-housing"></div></details>`;
+  const d = host.querySelector('details');
+  const load = () => { if (loaded || !d.open) return; loaded = true; housingPanel(ctx, host.querySelector('#ma-housing'), b, () => alive); };
+  d.addEventListener('toggle', load); load();
+  return () => { alive = false; };
+}
 async function housingPanel(ctx, host, b, alive) {
   const { ui, fmt, esc, data } = ctx;
   const TITLE = 'Demand signal · home sales in portfolio-company counties';
@@ -1051,7 +1072,7 @@ async function housingPanel(ctx, host, b, alive) {
         rel[r._p] && r.signal === 'HQ market' ? { label: 'Why it matters', html: `<div class="small text-2">${esc(rel[r._p])}</div>` } : null,
         r._scr ? { label: 'Screened targets in county', html: `<div class="col gap-4 small">${(r._list || []).slice().sort((x, y) => (y.fit_score || 0) - (x.fit_score || 0)).map(t => `<span>${fmt.score(t.fit_score)} ${esc(t.company)}</span>`).join('') || '<span class="dim">None screened. Extend the ZoomInfo radius pass to this county.</span>'}</div>` } : null,
         { label: 'Sources', html: `<div class="col gap-4 small">${cov.filter(c => c.county === r.county && c.state === r.state).map(c => `${c.source_url ? `<a href="${esc(c.source_url)}" target="_blank" rel="noopener">${esc(c.source ? layerLabel(c.source) : 'County records')}</a>` : esc(layerLabel(c.source))} <span class="dim">${esc(dayWords(c.date_from))} to ${esc(dayWords(c.date_to))}</span>`).join('') || '<span class="dim">No county records gathered yet</span>'}</div>` },
-        { label: 'Next action', html: `<div class="small text-2">${esc(r.signal === 'Pull records' ? `Gather county deed/assessor sales for ${cname(r)} (same method as the PA/NJ/MA/DC/NYC pulls) so ${r.platform} can be read against local housing turnover.` : r.signal === 'HQ market' ? `Use as ${r.platform}’s home-market context (cost-of-living and customer affluence); refresh with each quarterly pull.` : r.signal === 'Sourcing gap' ? 'High turnover and no screened target: run a ZoomInfo radius pass plus franchise-directory check for this county.' : r.signal === 'Density play' ? 'Prioritise outreach to the Tier 1–2 targets here; overlay PP new-mover marketing once acquired.' : 'Keep on watch; re-rank when the next sales pull lands.')}</div>` },
+        { label: 'Next action', html: `<div class="small text-2">${esc(r.signal === 'Pull records' ? `Gather county deed/assessor sales for ${cname(r)} (same method as the county pulls already gathered) so ${r.platform} can be read against local housing turnover.` : r.signal === 'HQ market' ? `Use as ${r.platform}’s home-market context (cost-of-living and customer affluence); refresh with each quarterly pull.` : r.signal === 'Sourcing gap' ? 'High turnover and no screened target: run a ZoomInfo radius pass plus franchise-directory check for this county.' : r.signal === 'Density play' ? 'Prioritise outreach to the Tier 1–2 targets here; overlay PP new-mover marketing once acquired.' : 'Keep on watch; re-rank when the next sales pull lands.')}</div>` },
       ].filter(Boolean) }),
   });
 }
@@ -1629,6 +1650,9 @@ async function researchView(ctx) {
   };
   apply();
 }
+
+/* Everything modules/ma-company.js needs from this file. It is passed in, so that file imports nothing. */
+const KIT = { Copy, PLAT, PKEYS, SKEYS, SRC_LABEL, REACH_TXT, DIM_MAX, num, median, countBy, topN, clip, pctOf, titleCase, handOnly, tok, ceoFix, rankedFor, rankedRaw, metaFor, sourceFoot, nextActionFor, openTarget };
 
 export default {
   id: 'ma', name: 'Acquisition engine', tag: 'M&A', color: 'var(--c-ma)', group: 'Intelligence',
