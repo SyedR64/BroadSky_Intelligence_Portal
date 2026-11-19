@@ -10,7 +10,7 @@ import * as Copy from './copy.js?v=20261117223642';
    ═══════════════════════════════════════════════════════════════════════════ */
 const injectCss = () => { if (!document.getElementById('css-techos')) { const l = document.createElement('link'); l.id = 'css-techos'; l.rel = 'stylesheet'; l.href = 'modules/techos.css?v=20261117223642'; document.head.appendChild(l); } };
 
-const OUT_LINKS = `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="index.html" title="BSP Desk landing page">Landing</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="redesigns/index.html" title="Portfolio site concepts + OS program gallery">Site concepts</a>`;
+const OUT_LINKS = `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="index.html" title="BSP Desk landing page">Landing</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="redesigns/index.html" title="Concepts: company websites, software pages and growth plans">Concepts</a>`;
 /* ── Platform / OS definitions (copy + calculator wiring) ────────────────── */
 const ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
 const ICON = {
@@ -256,7 +256,7 @@ function openOS(ctx, b, p) {
       { label: `${escTxt(p.os)} page ↗`, href: p.page },
       { id: 'tx-calc', label: 'Model it', onClick: () => app.go('techos', 'calculator', { co: p.k }) },
       { id: 'tx-road', label: 'Roadmap', onClick: () => app.go('techos', 'roadmap', { co: p.k }) },
-      { id: 'tx-mod', label: `${escTxt(p.co)} module`, onClick: () => app.go(p.module, 'overview') },
+      { id: 'tx-mod', label: `Open ${escTxt(p.co)}`, onClick: () => app.go(p.module, 'overview') },
     ],
   });
 }
@@ -305,7 +305,7 @@ async function overview(ctx) {
     title: 'Tech enablement',
     sub: `Six operating systems, one per company, cost an est. <b>${rangeM(inv)}</b> for <b>${rangeM(imp)}</b> of run-rate EBITDA. The mid case adds ≈<b>${$M(dEV)}</b> of value; ${escTxt(lead.os)} at ${escTxt(lead.co)} is the largest.`,
     chips: `${fmt.chip('OS program', 'var(--sys-brand)')}${fmt.chip('est. · analyst assumptions', 'var(--sys-warn)')}${b.items.length ? fmt.chip(`${b.items.length} evidence items`, 'var(--sys-brand)') : fmt.chip('October 2026 baseline', 'var(--sys-warn)')}${fmt.chip('Excludes Smith + Howard', 'var(--sys-mute-2)')}`,
-    actions: `${OUT_LINKS}<button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="evidence">Evidence</button><button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="roadmap">Roadmap</button><button class="sys-btn sys-btn--primary sys-btn--sm btn sm primary" data-go="calculator">Open calculator →</button>`,
+    actions: `${OUT_LINKS}<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="agent.html">Try the company agent</a><button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="evidence">Evidence</button><button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" data-go="roadmap">Roadmap</button><button class="sys-btn sys-btn--primary sys-btn--sm btn sm primary" data-go="calculator">Open calculator →</button>`,
   })}
   ${missingNote(ui, b)}
   ${ui.kpis([
