@@ -8,10 +8,20 @@
 /* ── hero: shorter than a landing hero (this page is a work tool) ── */
 .ca .sys-hero{padding:var(--sys-sp-7) 0 var(--sys-sp-5)}
 .ca .sys-hero .sys-h1{margin-top:0}
-/* Laptops: a compact hero so the agent (role, home and composer) starts above the fold */
-@media (min-width:561px){.ca .sys-hero{padding:var(--sys-sp-5) 0 var(--sys-sp-4)}.ca .sys-hero .sys-h1{font-size:var(--sys-fs-2xl)}}
+/* Tablets and laptops: a compact hero so the agent (role, today's list and the question box) starts above the fold */
+@media (min-width:561px){
+  .ca .sys-hero{padding:var(--sys-sp-4) 0 var(--sys-sp-3)}
+  .ca .sys-hero .sys-h1{font-size:var(--sys-fs-2xl)}
+  .ca .sys-hero .sys-lead{margin-top:var(--sys-sp-1);max-width:none;font-size:var(--sys-fs-base)}
+}
 .ca .sys-hero .sys-lead{margin-top:var(--sys-sp-3)}
 .ca-sandbox{margin-top:var(--sys-sp-4);max-width:62ch}
+/* Laptops: the title and the sandbox note share one row; the one-line lead runs under both */
+@media (min-width:1024px){
+  .ca-hero{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:var(--sys-sp-6)}
+  .ca-hero>.sys-lead{grid-column:1/-1;grid-row:2}
+  .ca-sandbox{grid-column:2;grid-row:1;justify-self:end;margin-top:0;max-width:none;padding:var(--sys-sp-2) var(--sys-sp-4)}
+}
 #agent.sys-section--tight{padding-top:var(--sys-sp-3)}
 
 /* ── three-area layout: roles · main · apps ── */
@@ -58,6 +68,15 @@
 .ca-change{flex-shrink:0}
 .ca-role-head .sys-chips{margin-top:var(--sys-sp-1)}
 .ca-role-head .sys-card-foot{justify-content:flex-start}
+/* Laptops: a short role card. The answer-style and apps chips sit beside the role name, and the company line is left to the
+   role list on the left, which shows it for the open company. */
+@media (min-width:1024px){
+  .ca-role-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--sys-sp-2) var(--sys-sp-4);padding:var(--sys-sp-4) var(--sys-sp-5)}
+  .ca-role-head>*{grid-column:1/-1}
+  .ca-role-head>.ca-role-top{grid-column:1}
+  .ca-role-head>.sys-chips{grid-column:2;grid-row:2;align-self:center;margin-top:0}
+  .ca-role-head>.ca-sells{display:none}
+}
 
 /* ── home summary ── */
 .ca-home{display:flex;flex-direction:column;gap:var(--sys-sp-3);min-width:0}
@@ -73,6 +92,30 @@
 .ca-row-main b{color:var(--sys-ink);font-weight:600}
 .ca-row-main span{overflow-wrap:anywhere}
 .ca-show-all{align-self:flex-start;display:none}
+/* Field roles, every width: role, today's list and the question box come first; the KPI tiles and the source line follow
+   the box. The home card opens up (display:contents) so its parts can sit either side of the chat. They come before the chat
+   in the page source but draw around it: none of them may be the browser's scroll anchor, or a long answer growing above the
+   KPI tiles pushes the answer and the floor sketch off the top of the screen. */
+.ca[data-style="field"] .ca-home{display:contents}
+.ca[data-style="field"] .ca-role-head{order:1}
+.ca[data-style="field"] .ca-home>h2{order:2}
+.ca[data-style="field"] .ca-home>.ca-lead{order:3}
+.ca[data-style="field"] .ca-home>.ca-list{order:4}
+.ca[data-style="field"] .ca-chat{order:5}
+.ca[data-style="field"] .ca-hint{order:6}
+.ca[data-style="field"] .ca-home>.ca-kpis{order:7}
+.ca[data-style="field"] .ca-home>.sys-src{order:8}
+.ca[data-style="field"] .ca-home>*{overflow-anchor:none}
+/* the heading and its summary already say what the list is: its own label stays for screen readers only */
+.ca[data-style="field"] .ca-list>.sys-card-label{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* wider than a phone: the heading and its one-line summary sit close together, above the list; a long list shows its first
+   rows and a "Show all" button, so the question box stays near the top */
+@media (min-width:561px){
+  .ca[data-style="field"] .ca-home>h2{margin-top:var(--sys-sp-1)}
+  .ca[data-style="field"] .ca-home>.sys-card-body.ca-lead{margin-top:calc(-1 * var(--sys-sp-3))}
+  .ca[data-style="field"] .ca-list:not(.is-all) .ca-row-more{display:none}
+  .ca[data-style="field"] .ca-list.has-more:not(.is-all) .ca-show-all{display:inline-flex}
+}
 
 /* ── chat area (the shared widget, mounted inline) ── */
 .ca-chat .ch-box textarea{font-size:var(--sys-fs-base)}
@@ -140,27 +183,14 @@
   .ca-lead-more{display:none}                     /* the phone lead is one sentence */
   .ca-sandbox{margin-top:var(--sys-sp-3);padding:var(--sys-sp-2) var(--sys-sp-3)}
   .ca-main{gap:var(--sys-sp-3)}
-  /* Field roles: role, the next jobs and the composer on the first screen. The home card opens up so the
-     KPI tiles can follow the chat; today's jobs scroll sideways as one row of cards. */
+  /* Field roles: role, the next jobs and the composer on the first screen (the order is set above, for every width);
+     on a phone today's jobs scroll sideways as one row of cards. */
   .ca[data-style="field"] .ca-sells{display:none}
   .ca[data-style="field"] .ca-role-head{gap:var(--sys-sp-2);padding:var(--sys-sp-4)}
   .ca[data-style="field"] .ca-rows .ca-row{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"time chip" "main chip";row-gap:2px;align-items:start}
   .ca[data-style="field"] .ca-rows .ca-row-time{grid-area:time;min-width:0}
   .ca[data-style="field"] .ca-rows .ca-row-main{grid-area:main}
   .ca[data-style="field"] .ca-rows .ca-row>.sys-chip{grid-area:chip;align-self:center}
-  .ca[data-style="field"] .ca-home{display:contents}
-  .ca[data-style="field"] .ca-role-head{order:1}
-  .ca[data-style="field"] .ca-home>h2{order:2}
-  .ca[data-style="field"] .ca-home>.ca-lead{order:3}
-  .ca[data-style="field"] .ca-home>.ca-list{order:4}
-  .ca[data-style="field"] .ca-chat{order:5}
-  .ca[data-style="field"] .ca-hint{order:6}
-  .ca[data-style="field"] .ca-home>.ca-kpis{order:7}
-  .ca[data-style="field"] .ca-home>.sys-src{order:8}
-  /* The home card's pieces come before the chat in the page source but draw around it: none of them may be the browser's scroll
-     anchor, or a long answer growing above the KPI tiles pushes the answer and the floor sketch off the top of the screen. */
-  .ca[data-style="field"] .ca-home>*{overflow-anchor:none}
-  .ca[data-style="field"] .ca-list>.sys-card-label{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .ca[data-style="field"] .ca-rows{flex-direction:row;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 calc(-1 * var(--sys-gut));padding:0 var(--sys-gut);scroll-padding:0 var(--sys-gut)}
   .ca[data-style="field"] .ca-rows::-webkit-scrollbar{display:none}
   .ca[data-style="field"] .ca-rows>li{flex:0 0 min(86%,320px);scroll-snap-align:start}
