@@ -1,11 +1,11 @@
 import * as Copy from './copy.js?v=20261117223642';
-/* Thomas Scientific — target-account intelligence, add-on screen and financial picture.
+/* Thomas Scientific — target-account intelligence and financial picture (the add-on list is on the Acquisition engine).
    Data: Thomas Scientific lab sites (27.5K scored sites, columnar) is the single source for every site and account number:
    parent accounts are rolled up from it, so the overview and the account list always agree.
    Thomas Scientific parent accounts (legacy top-500 account plan) only flags plan membership. Frontline and Thomas Scientific add-on targets,
    Thomas Scientific public filings, Public comparables. Lender marks and sponsor equity marks sit behind the
    BSP-only deal-team toggle on the Financials view (#/ts/filings?deal=1), never on company-facing views. */
-import { renderTargets, renderFilings, fitTierOf } from '../assets/components.js?v=20261117223642';
+import { renderFilings } from '../assets/components.js?v=20261117223642';
 import { companyLinks } from './company-links.js?v=20261117223642';
 
 /* Colours are system tokens (system.css); tok() resolves one for the Leaflet canvas renderer. */
@@ -250,7 +250,7 @@ async function overview(ctx) {
     { label: 'Enterprise / GPO accounts', value: fmt.num(A.ent.parents), sub: `${fmt.num(A.ent.sites)} sites · ${fmt.money(A.ent.cms)} · corporate contract`, color: 'var(--co-fl)' },
     { label: 'Sites scored', value: fmt.num(A.rows.length), sub: `${fmt.num(A.byLabel.get('Nurture') || 0)} Nurture · ${fmt.num(A.byLabel.get('Excluded') || 0)} non-lab excluded`, color: C },
     { label: 'States covered', value: fmt.num(A.states.size), sub: `${A.n50} states + ${A.other.map(esc).join(', ')}`, color: 'var(--co-fh)' },
-    { label: 'Add-on targets', value: ma ? fmt.num(targets.length) : '—', sub: ma ? `${ranked.length} ranked · top fit ${esc(ranked[0]?.fit_score ?? '—')} (${esc(String(ranked[0]?.company || '').split(/[,(]/)[0])})` : 'research pending', color: 'var(--sys-warn)' },
+    { label: 'Hand-researched add-on targets', value: ma ? fmt.num(targets.length) : '—', sub: ma ? `${ranked.length} ranked · top fit ${esc(ranked[0]?.fit_score ?? '—')} (${esc(String(ranked[0]?.company || '').split(/[,(]/)[0])})` : 'research pending', color: 'var(--sys-warn)' },
   ])}
   <div class="grid grid-main mt-12">
     ${ui.panel({ title: 'Where the scored sites are', sub: 'All 27.5K sites clustered (grey) · Pursue sites (green) · add-on targets (amber) · Thomas Scientific HQ', body: `<div class="map tall" id="ts-ov-map"></div>`, flush: true, foot: `${srcSites(ui)} · sites placed at their ZIP-code centre (${fmt.num(A.rows.filter(r => r.lat == null).length)} unmapped)` })}
@@ -280,7 +280,7 @@ async function overview(ctx) {
   const map = maps.create(el.querySelector('#ts-ov-map'), { center: [38.6, -95.5], zoom: 4 });
   maps.points(map, A.rows, { color: () => tok('var(--sys-mute-2)'), radius: 3, cluster: true, clusterZoom: 7, gridDeg: 0.9, opacity: .55, weight: 0, popup: r => sitePopup(ctx, r), onClick: r => openSite(ctx, r) });
   maps.points(map, A.pursue, { color: () => tok(HEX), radius: 3.5, cluster: false, opacity: .95, weight: .5, popup: r => sitePopup(ctx, r), onClick: r => openSite(ctx, r) });
-  maps.points(map, targets.filter(t => t.lat != null), { color: () => tok('var(--sys-warn)'), radius: 6, cluster: false, weight: 1.5, stroke: tok('var(--sys-ink)'), popup: t => `<b>${esc(t.company)}</b><br>${esc(t.hq_city || '')}, ${esc(t.state || '')} · fit ${esc(t.fit_score)}<br><a href="#/ts/targets?q=${encodeURIComponent(t.company)}">Open in add-on screen →</a>` });
+  maps.points(map, targets.filter(t => t.lat != null), { color: () => tok('var(--sys-warn)'), radius: 6, cluster: false, weight: 1.5, stroke: tok('var(--sys-ink)'), popup: t => `<b>${esc(t.company)}</b><br>${esc(t.hq_city || '')}, ${esc(t.state || '')} · fit ${esc(t.fit_score)}<br><a href="#/ma/pipeline?platform=ts&q=${encodeURIComponent(t.company)}">Open in add-on targets →</a>` });
   maps.marker(map, HQ.lat, HQ.lon, { color: tok(HEX), label: 'Thomas HQ' });
   maps.legend(map, [{ color: 'var(--sys-mute-2)', label: 'Scored sites (clustered)' }, { color: HEX, label: `Pursue sites (${fmt.num(A.pursue.length)})` }, { color: 'var(--sys-warn)', label: 'Add-on targets' }], 'Layers');
   return () => map.remove();
@@ -304,7 +304,7 @@ function levers(ctx, A, targets, ranked) {
     { h: `Regional multi-site labs: ${fmt.num(sa('Regional multi-site laboratory'))} sites, ${fmt.num(pa('Regional multi-site laboratory'))} Pursue`, d: 'Sign a network supply agreement and put VMI or consignment at the hub lab. One contract covers many ship-to sites.', href: `#/ts/sites?arch=${encodeURIComponent('Regional multi-site laboratory')}&label=Pursue`, go: 'Sites' },
     { h: `Nurture ${fmt.num(A.byLabel.get('Nurture') || 0)} sites without field time`, d: 'Run a marketing-automation nurture (samples and price sheets), then re-score on the CMS 2024 utilization release and move risers to Pursue.', href: '#/ts/sites?label=Nurture', go: 'Sites' },
     { h: `Enterprise / GPO: ${fmt.num(A.ent.parents)} national-contract accounts (${fmt.num(A.ent.sites)} sites)`, d: 'Quest, Labcorp and Sonic subsidiaries, national specialty labs (Myriad, Veracyte, Exact…) and IDNs buy on corporate contracts. Strategic accounts sells Thomas as the qualified secondary source for backorders and specialty/cleanroom items, not branch by branch.', href: '#/ts/accounts?label=Enterprise', go: 'Accounts' },
-    { h: 'Close geographic white space by add-on', d: top ? `${esc(top.company)} (fit ${esc(top.fit_score)}, ${esc(top.hq_city || '')} ${esc(top.state || '')}) is the top-ranked candidate. ${esc(String(top.strategic_rationale || '').slice(0, 200))}${String(top.strategic_rationale || '').length > 200 ? '…' : ''}` : 'Match target HQs to site density to find the regions where an add-on gives the most local coverage.', href: '#/ts/targets', go: 'Targets' },
+    { h: 'Close geographic white space by add-on', d: top ? `${esc(top.company)} (fit ${esc(top.fit_score)}, ${esc(top.hq_city || '')} ${esc(top.state || '')}) is the top-ranked candidate. ${esc(String(top.strategic_rationale || '').slice(0, 200))}${String(top.strategic_rationale || '').length > 200 ? '…' : ''}` : 'Match target HQs to site density to find the regions where an add-on gives the most local coverage.', href: '#/ma/pipeline?platform=ts', go: 'Targets' },
   ];
 }
 
@@ -451,49 +451,6 @@ async function sites(ctx) {
   return () => map.remove();
 }
 
-/* ── View 4: Add-on targets ───────────────────────────────────────────────── */
-async function targetsView(ctx) {
-  const { el, ui, fmt, maps, esc, data, params } = ctx; injectCss();
-  const ma = await data.research('ma_targets_fl_ts');
-  if (!ma) { el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Add-on targets', sub: 'Lab and cleanroom distributor screen for Thomas Scientific' })}${ui.note('Research dataset not yet available (Frontline and Thomas Scientific add-on targets).', 'warn')}</div>`; return; }
-  const items = (ma.items || []).filter(t => t.platform === 'thomas_scientific');
-  const meta = ma.meta?.thomas_scientific || {}; const ranked = meta.ranked_top_8 || []; const pe = meta.pe_backed_competitors || []; const pc = meta.platform_context || {};
-  const A = await getSites(data).catch(() => null);
-  const fit80 = items.filter(t => (t.fit_score || 0) >= 80).length; const top8 = ranked.map(r => items.find(t => t.id === r.id)).filter(Boolean);
-  const top = top8[0]; const w = ma.meta?.scoring_weights || {};
-  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Add-on targets', sub: `${fmt.num(fit80)} of ${fmt.num(items.length)} regional lab and cleanroom distributors score 80 or more.${top ? ` ${esc(top.company)} (fit ${esc(top.fit_score)}) leads.` : ''}`, chips: Object.entries(w).map(([k, v]) => fmt.chip(`${Copy.field(k)} ${fmt.num(v * 100)}%`, 'var(--sys-warn)')).join('') })}
-  ${ui.kpis([
-    { label: 'Candidates screened', value: fmt.num(items.length), sub: `${fmt.num(new Set(items.map(t => t.state)).size)} states / provinces`, color: 'var(--sys-warn)' },
-    { label: 'Fit ≥ 80', value: fmt.num(fit80), sub: `${ranked.length} ranked shortlist`, color: 'var(--sys-good)' },
-    { label: 'Median staff', value: fmt.num(median(items.map(t => t.employees))), sub: 'ZoomInfo', color: 'var(--sys-info)' },
-    { label: 'Top-8 revenue (est.)', value: fmt.money(top8.reduce((s, t) => s + (t.revenue_est_usd || 0), 0)), sub: 'ZoomInfo modeled · directional', color: 'var(--sys-info)' },
-    { label: 'Prior Thomas add-ons', value: fmt.num((pc.prior_acquisitions || []).length), sub: 'since December 2017 · none since October 2023', color: C },
-    { label: 'PE-backed rivals', value: fmt.num(pe.length), sub: 'competing for the same targets', color: 'var(--sys-mute)' },
-  ])}
-  <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Targets against the demand map', sub: 'Candidate HQs (amber, sized by fit) over Thomas scored-site clusters (grey)', body: '<div class="map m-map-420" id="tg-map"></div>', flush: true, foot: ui.source('Company websites · ZoomInfo · Thomas Scientific site file', 'https://www.zoominfo.com', ma.meta?.generated) })}
-    ${ui.panel({ title: 'Ranked top 8', sub: 'Click a company for its profile', flush: true, body: `<div id="tg-rank">${top8.length ? `<div class="sys-table-wrap"><table class="sys-table"><thead><tr><th class="sys-n">#</th><th>Company</th><th class="sys-n">Fit</th></tr></thead><tbody>${top8.map((t, i) => `<tr tabindex="0" data-i="${i}" data-q="${esc(t.company)}"><td class="sys-n">${esc(ranked[i]?.rank ?? i + 1)}</td><td><b>${esc(t.company)}</b><div class="dim small">${esc(t.hq_city || '')}, ${esc(t.state || '')} · ${fmt.num(t.employees)} staff · ${fmt.money(t.revenue_est_usd)} est.</div></td><td class="sys-n">${fmt.score(t.fit_score)}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('No ranked shortlist in dataset')}</div>`, foot: ui.source('BSP add-on screen (Frontline and Thomas Scientific add-on targets)', null, ma.meta?.generated) })}
-  </div>
-  <div class="mt-12">${ui.panel({ title: 'Full screen', sub: 'Filters · sortable · CSV · click a row for fit breakdown, sources and next action', body: '<div id="tg-screen"></div>', foot: `<span class="dim">${esc((ma.meta?.caveats || [])[0] || '')}</span>` })}</div>
-  <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'PE-backed competitors for the same targets', sub: 'Who bids against Thomas for lab distributors', body: pe.length ? `<div class="sys-stack m-pe">${pe.map(p => `<article class="sys-card sys-card--flat"><h4 class="sys-card-label">${esc(p.hq || '')} · ${esc(p.sponsor || 'Sponsor not verified')}</h4><h3 class="sys-card-title">${esc(p.company)}</h3>${p.scale ? `<div class="sys-chips"><span class="sys-chip">${esc(p.scale)}</span></div>` : ''}<p class="sys-card-body">${esc(p.notes || '')}</p><p class="small">${(p.sources || []).map(s => fmt.link(s)).join(' · ')}</p></article>`).join('')}</div>` : ui.empty('No competitor list in dataset'), foot: ui.source('BSP add-on screen (Frontline and Thomas Scientific add-on targets) · company sites · ZoomInfo', null, ma.meta?.generated) })}
-    ${ui.panel({ title: 'Company add-on history', sub: 'Pattern: regional life-science and cleanroom distributors', body: `${ui.timeline((pc.prior_acquisitions || []).slice().reverse().map(a => ({ date: (String(a).match(/\(([^)]*)\)\s*$/) || [])[1] || '', text: String(a).replace(/\s*\([^)]*\)\s*$/, '') })))}${actList(esc, [
-      { h: 'Re-open the add-on engine', d: 'There has been no deal since October 2023. Run owner outreach on the top 8 through PRG; start with founder- and family-owned targets (lowest process risk).' },
-      { h: 'Buy margin, not just revenue', d: 'Prioritize targets that add gross margin and stocking reach: private label, cleanroom, equipment service. Structure with seller notes or earn-outs where founders stay on.' },
-    ])}`, foot: `<span class="src">Sources: ${(pc.sources || []).slice(0, 4).map(s => fmt.link(s)).join(' · ')}</span>` })}
-  </div></div>`;
-  const ctl = renderTargets(ctx, el.querySelector('#tg-screen'), { items: Copy.targets(items), color: C, platformLabel: 'Thomas Scientific', exportName: 'ts_addon_targets', pageSize: 30 });
-  const focus = q => { const inp = el.querySelector('#tg-screen input[type=search]'); if (!inp) return; inp.value = q; inp.dispatchEvent(new Event('input')); setTimeout(() => el.querySelector('#tg-screen tbody tr[data-i]')?.click(), 260); };
-  rowsOn(el.querySelector('#tg-rank'), tr => focus(tr.dataset.q));
-  const map = maps.create(el.querySelector('#tg-map'), { center: [40, -92], zoom: 4 });
-  if (A) maps.points(map, A.rows, { color: () => tok('var(--sys-mute-2)'), radius: 3, cluster: true, clusterZoom: 7, gridDeg: 0.9, opacity: .5, weight: 0 });
-  maps.points(map, items.filter(t => t.lat != null), { color: () => tok('var(--sys-warn)'), radius: t => 4 + Math.max(0, (t.fit_score || 50) - 50) / 6, cluster: false, weight: 1.5, popup: t => `<b>${esc(t.company)}</b><br>${esc(t.hq_city || '')}, ${esc(t.state || '')} · fit ${esc(t.fit_score)} (${esc(fitTierOf(t.fit_score || 0))})<br>${fmt.num(t.employees)} staff · ${fmt.money(t.revenue_est_usd)} est.`, onClick: t => focus(t.company) });
-  maps.marker(map, HQ.lat, HQ.lon, { color: tok(HEX), label: 'Thomas HQ' });
-  maps.legend(map, [{ color: 'var(--sys-warn)', label: 'Add-on candidate (size = fit)' }, { color: 'var(--sys-mute-2)', label: 'Thomas Scientific scored sites' }, { color: HEX, label: 'Thomas HQ' }], 'Layers');
-  if (params.q) focus(params.q);
-  return () => map.remove();
-}
-
 /* ── View 5: Financials (company view) · deal-team view behind ?deal=1 (BSP only) ─────── */
 const DEAL_ITEM = it => ['bdc_loan_schedule', 'sec_form_d', 'lender_press'].includes(it.category) || /N-PORT/i.test(it.title || '');
 async function filings(ctx) {
@@ -624,7 +581,6 @@ export default {
     { id: 'overview', name: 'Operating picture', icon: '◉', render: overview },
     { id: 'accounts', name: 'Accounts', icon: '▦', render: accounts },
     { id: 'sites', name: 'Site explorer', icon: '⌖', render: sites },
-    { id: 'targets', name: 'Add-on targets', icon: '◎', render: targetsView },
     { id: 'filings', name: 'Public filings', icon: '§', render: filings },
   ],
   tour: [

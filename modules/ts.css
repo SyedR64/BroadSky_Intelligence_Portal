@@ -15,9 +15,7 @@
 .m-ts .m-bridge tr.tot td{font-weight:600;color:var(--sys-ink);border-top:1px solid var(--sys-line-2)}
 .m-ts .heat th[scope="row"]{position:static;text-transform:none;letter-spacing:0;font:500 var(--sys-fs-xs)/1.3 var(--sys-font);color:var(--sys-ink)}
 .m-ts .m-pad{padding:var(--sys-sp-3) var(--pad)}
-.m-ts .m-map-420{min-height:420px}
 .m-ts .m-kpi2 .sys-kpis{margin-top:0;grid-template-columns:repeat(2,minmax(0,1fr))}
-.m-ts .m-pe .sys-card{gap:var(--sys-sp-2)}
 
 /* mini diverging bar in the comps table (growth / margin around zero) */
 .m-ts .dv{position:relative;display:inline-block;width:56px;height:8px;margin-right:6px;vertical-align:middle;background:var(--sys-bg-3);border-radius:var(--sys-r-pill)}
@@ -26,12 +24,6 @@
 .m-ts .dv i.pos{background:var(--sys-good)} .m-ts .dv i.neg{background:var(--sys-bad)}
 .m-ts .chart text{font-size:10px}
 
-/* keep the shared renderTargets table compact inside this module */
-.m-ts #tg-screen .tbl td:nth-child(2){max-width:250px}
-.m-ts #tg-screen .tbl td:nth-child(6){max-width:170px}
-.m-ts #tg-screen .tbl td:nth-child(7){max-width:210px}
-.m-ts #tg-screen .tbl td.wrap{min-width:280px;max-width:360px}
-.m-ts #tg-screen .tbl td.wrap span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /* shared renderFilings: give the estimate table room and let long estimates wrap */
 .m-ts #fc-fil > .grid-main{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 .m-ts #fc-fil > .grid-main .tbl td{white-space:normal;min-width:90px}
