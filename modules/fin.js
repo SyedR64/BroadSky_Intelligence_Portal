@@ -625,23 +625,88 @@ function scatter(ctx, comps, meds, onPick) {
   return `<svg class="sc chart" viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">${gx}${gy}${md}<text x="${W - pr}" y="${pt + 10}" text-anchor="end">↑ EBITDA margin (latest FY)</text><text x="${W - pr}" y="${H - pb - 6}" text-anchor="end">revenue growth →</text>${pts}</svg>`;
 }
 
+/* Public-affairs transactions: BPI's primary valuation benchmark (PPHC as the public floor, FGS / KKR as the ceiling, Penta and Teneo
+   as sponsor-exit analogs). Moved here from the BPI benchmarks screen. PPHC is record bpi-022 of BPI's filings, FGS is rival-046 of the
+   rival filings, the three analogs are in BPI's growth plan. */
+const recById = (ds, id) => (ds?.items || []).find(i => i.id === id) || null;
+const dateWords = s => { const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(String(s || '')); return m ? new Date(+m[1], +m[2] - 1, +(m[3] || 15)).toLocaleDateString('en-US', m[3] ? { month: 'long', day: 'numeric', year: 'numeric' } : { month: 'long', year: 'numeric' }) : s; };
+function publicAffairsDeals(bpiF, rivalF, plan) {
+  const pi = recById(bpiF, 'bpi-022'), pk = pi?.key_figures || {}, fgs = recById(rivalF, 'rival-046'), fgsT = recById(plan, 'tpl-fgs-03'), penta = recById(plan, 'tpl-penta-03'), teneo = recById(plan, 'tpl-teneo-01');
+  const fgsEst = (rivalF?.meta?.estimate_table || []).find(e => /FGS.*EBITDA/i.test(e.metric));
+  return [
+    pi && { id: 'pphc', deal: 'PPHC: Nasdaq IPO', date: '2026-01', buyer: 'Public market', ev: pk.implied_EV_usd_m ? pk.implied_EV_usd_m * 1e6 : null, evTxt: pk.implied_EV_usd_m ? `$${pk.implied_EV_usd_m}M` : '—', mult: `${pk.implied_EV_to_2025_adj_EBITDA || '—'} 2025 adj. EBITDA`, scale: `$${pk.revenue_2025_usd_m}M revenue · ${pk.adj_EBITDA_margin_2025} adj. EBITDA margin · ${pk.organic_growth_2025} organic growth`, role: 'Floor (public multiple)', confidence: pi.confidence || 'high', lesson: pi.what_it_tells_us, src: [pi.source_url], retrieved: pi.retrieved },
+    fgs && { id: 'fgs', deal: 'FGS Global: WPP sells ~50% to KKR', date: fgsT?.date || fgs.filed_or_dated || '2024-08', buyer: 'KKR', ev: fgs.key_figures?.enterprise_value_usd, evTxt: '$1.7B', mult: fgsEst ? `~12-16x 2023 EBITDA (est.; EBITDA ${fgsEst.estimate})` : 'not disclosed', scale: `${fgs.key_figures?.experts || '—'} experts · ${fgs.key_figures?.clients || '—'} clients`, role: 'Ceiling (scaled strategic comms)', confidence: `EV high · multiple ${fgsEst?.confidence || 'n/a'}`, lesson: fgsT?.lesson_for_bpi || fgs.what_it_tells_us, src: [fgs.source_url, fgsT?.source_url], retrieved: fgs.retrieved },
+    penta && { id: 'penta', deal: 'Penta Group: Falfurrias sells to Shamrock Capital', date: penta.date, buyer: 'Shamrock Capital', ev: null, evTxt: 'undisclosed', mult: 'terms undisclosed', scale: penta.metric, role: 'Closest analog (~$100M rev., data-led)', confidence: penta.confidence, lesson: penta.lesson_for_bpi, src: [penta.source_url], retrieved: penta.retrieved },
+    teneo && { id: 'teneo', deal: 'Teneo: CVC Fund VII replaces BC Partners', date: teneo.date, buyer: 'CVC', ev: 7e8, evTxt: '~$700M (reported)', mult: 'not disclosed', scale: teneo.metric, role: 'Sponsor-to-sponsor analog', confidence: teneo.confidence, lesson: teneo.lesson_for_bpi, src: [teneo.source_url], retrieved: teneo.retrieved },
+  ].filter(Boolean);
+}
+/* names as a reader says them, for headings ("What this implies for Punctual Pros") */
+const CO_SAY = { cet: 'CET', pp: 'Punctual Pros', fl: 'Frontline', ts: 'Thomas Scientific', bpi: 'BPI', fh: 'Fair Harbor' };
+/* drafting notes in the dataset's company label never reach the page */
+const benchName = (b, co) => String(b.bsp_company || co?.name || '').replace(/\s*\(per brief\)/i, '');
+/* the Private equity landscape's Overlap filter key for a sector (same keys as OVERLAP above) */
+const overlapKey = s => Object.keys(OVERLAP).find(k => OVERLAP[k].co === SECTORS[s]?.co);
+
+/* The one comparables screen. With no parameter it shows everything: six sector cards, BPI's public-affairs transactions, all listed
+   peers, the written synthesis and the benchmark estimates. ?sector=<key> puts that sector's read-out first (for communications
+   agencies, the transactions lead) and narrows the charts and the table; an unknown key is treated as no sector. */
 async function compsView(ctx) {
   const { el, ui, fmt, esc, params, inspector, app } = ctx;
   injectCss();
   el.innerHTML = ui.loading('Loading public comparables…');
-  const pc = await ctx.data.research('public_comps');
+  const [pc, bpiF, rivalF, bpiPlan] = await Promise.all(['public_comps', 'bpi_filings', 'rival_filings', 'bpi_playbook'].map(n => ctx.data.research(n).catch(() => null)));
+  if (!el.isConnected) return;
   if (!pc || !pc.items?.length) { el.innerHTML = `<div class="m-fin">${ui.pageHead({ title: 'Public comparables' })}${ui.note('Research dataset <b>Public comparables</b> not yet available.', 'warn')}</div>`; return; }
   const items = pc.items.map(c => { const fy = (c.fiscal_years || []).slice().sort((a, b) => b.fy - a.fy)[0] || {}; return { ...c, _rev: fy.revenue_usd ?? null, _emp: fy.employees ?? null, _ebitda: fy.ebitda_approx_usd ?? null, _sector: SECTORS[c.sector_tag]?.label || catLabel(c.sector_tag), _co: SECTORS[c.sector_tag]?.co }; });
   const bm = pc.meta?.sector_benchmarks || {};
   const allG = median(items.map(c => c.revenue_growth_latest_pct)), allM = median(items.map(c => c.ebitda_margin_latest_pct)), allO = median(items.map(c => c.operating_margin_latest_pct));
   const sectorOpts = Object.keys(SECTORS).filter(s => items.some(c => c.sector_tag === s)).map(s => ({ value: s, label: `${SECTORS[s].label} (${coById(SECTORS[s].co)?.short})` }));
+  const sector0 = bm[params.sector] && sectorOpts.some(o => o.value === params.sector) ? params.sector : '';   // an unknown ?sector= shows every sector
   const best = items.slice().sort((a, b) => (b.revenue_growth_latest_pct ?? -99) - (a.revenue_growth_latest_pct ?? -99))[0];
   const fastSector = Object.entries(bm).sort((a, b) => (b[1].median_revenue_growth_latest_pct ?? -99) - (a[1].median_revenue_growth_latest_pct ?? -99))[0];
+  const rollup = '#/deal/rollup?p=typical';
+
+  /* BPI's transactions block (two full-width panels, so the table fits), built once; draw() places it under the cards (every sector)
+     or at the top of the focus block (communications agencies) */
+  const deals = bpiF && rivalF && bpiPlan ? publicAffairsDeals(bpiF, rivalF, bpiPlan) : [];
+  const pk = recById(bpiF, 'bpi-022')?.key_figures || {};
+  const fig = (l, v, s, tip) => `<div class="sys-kpi st"><div class="sys-kpi-label l" title="${esc(tip || l)}">${esc(l)}</div><div class="sys-kpi-value v">${v}</div>${s ? `<div class="sys-kpi-sub">${s}</div>` : ''}</div>`;
+  let dealsHtml = '';
+  if (deals.length) {
+    const bpiEst = toArr(bpiF?.meta?.estimate_table);
+    // value bridge: BPI's estimated adj. EBITDA range times the PPHC floor multiple
+    const eb = String(bpiEst.find(e => /adj\. ebitda/i.test(e.metric))?.estimate || '').match(/\$(\d+)\s*[-–]\s*(\d+)M/);
+    const lo = eb ? +eb[1] : null, hi = eb ? +eb[2] : null, floor = parseFloat(String(pk.implied_EV_to_2025_adj_EBITDA || '').replace(/[^\d.]/g, '')) || null;
+    const bridge = lo && floor ? `On $${lo}-${hi}M EBITDA (est.), the floor implies ~$${Math.round(lo * floor)}-${Math.round(hi * floor)}M EV.` : '';
+    const cmp = bpiEst.filter(e => /revenue|ebitda|headcount|margin|value/i.test(e.metric)).slice(0, 6);
+    const hasFgs = deals.some(x => x.id === 'fgs');
+    const grew = pk.revenue_2024_usd_m ? sPct(fmt, (pk.revenue_2025_usd_m / pk.revenue_2024_usd_m - 1) * 100) : '';
+    dealsHtml = `<div class="mt-12">${ui.panel({ cls: 'bench bench-wide', title: `<span class="fin-co-head"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:var(--co-bpi)"></i>Public-affairs transactions (BPI's primary benchmark)</span>`, sub: 'Valuation floor, ceiling and sponsor-exit analogs. The listed agency holding companies are secondary reference only (ad/marketing holding cos., not public-affairs peers). Click a row for terms, lesson and sources.',
+        body: `<div class="sys-kpis stats">${fig('PPHC EV / adj. EBITDA', esc(pk.implied_EV_to_2025_adj_EBITDA || '—'), `public floor · EV $${esc(pk.implied_EV_usd_m ?? '—')}M`)}${fig('FGS Global EV (KKR, 2024)', hasFgs ? '$1.7B' : '—', hasFgs ? '~12-16x 2023 EBITDA (est.) · ceiling' : 'not available')}${fig('PPHC adj. EBITDA margin', esc(pk.adj_EBITDA_margin_2025 || '—'), `2024 ${esc(pk.adj_EBITDA_margin_2024 || '—')} · BPI est. 18-24%`)}${fig('PPHC organic growth', esc(pk.organic_growth_2025 || '—'), grew ? `2025 · reported ${grew} incl. M&A` : '2025')}</div><div id="cp-deal-tbl"></div>`,
+        foot: ui.source('BPI public filings: PPHC annual report (10-K), competitor filings (WPP 6-K), BPI growth plan templates', recById(bpiF, 'bpi-022')?.source_url, 'October 6, 2026') })}</div>
+      <div class="mt-12">${ui.panel({ title: 'What this implies for BPI', accent: true, body: `<div class="grid grid-2"><ol class="prose small"><li><b>Underwrite to the PPHC floor.</b> ${esc(bridge || 'PPHC trades at ~8.4x 2025 adj. EBITDA.')}</li><li><b>Earn the sponsor premium.</b> FGS, Penta and Teneo cleared above the public multiple on scale, transatlantic reach and proprietary data. BPI needs off-year resilience and recurring retainers to get there.</li><li><b>Match PPHC's disclosure.</b> PPHC reports organic growth and a corporate-affairs segment; BPI's board pack should too.</li></ol><div>${cmp.length ? `<h4 class="sys-card-label">BPI estimates (filings) for comparison</h4><div class="fin-insp sys-table-wrap mt-8"><table class="sys-table"><tbody>${cmp.map(e => `<tr title="${esc(Copy.text(e.basis || ''))}"><td>${confDot(e.confidence)}${esc(e.metric)}</td><td class="sys-n n">${esc(e.estimate)}</td><td>${fmt.chip(e.confidence || 'n/a', confColor(e.confidence))}</td></tr>`).join('')}</tbody></table></div>` : ''}<div class="small text-2 mt-12">The same sponsors bid against BPI for add-ons and are its likely exit buyers. <a href="#/pe/landscape?overlap=bpi">Sponsors that overlap BPI: Private equity →</a></div></div></div>`,
+        foot: ui.source('Bully Pulpit International public filings estimate table; BPI growth plan, phase 4', null, 'October 6, 2026') })}</div>`;
+  }
+  const openDeal = x => inspector.open({ title: esc(x.deal), sub: `${esc(dateWords(x.date))} · ${esc(x.role)}`, color: 'var(--co-bpi)', sections: [
+    { label: 'Terms', html: ui.kv({ Buyer: esc(x.buyer), 'Enterprise value': esc(x.evTxt), Multiple: esc(x.mult), Scale: esc(x.scale), Confidence: esc(x.confidence) }) },
+    { label: 'Lesson for BPI', html: `<div class="small text-2">${esc(clean(x.lesson || '—'))}</div>` },
+    { label: 'Sources', html: `<div class="col gap-4 small">${(x.src || []).filter(Boolean).map(u => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(fmt.host(u) || u)} ↗</a>`).join('') || '<span class="dim">No source link</span>'}</div><div class="dim small mt-8">Retrieved ${esc(x.retrieved || '')}</div>` },
+    { label: 'Next action', html: `<div class="small text-2">Add ${esc(x.deal.split(':')[0])} to the exit comp set in the BPI board pack and refresh it when new terms are disclosed.</div>` },
+  ], actions: x.src?.[0] ? [{ label: 'Open source ↗', href: x.src[0] }] : [] });
+  const wireDeals = () => { const host = el.querySelector('#cp-deal-tbl'); if (host && deals.length) ui.table(host, { rows: deals, pageSize: 10, sortKey: 'date', exportName: 'bpi_public_affairs_deals', onRow: openDeal, columns: [
+    { key: 'deal', label: 'Transaction', wrap: true, fmt: (v, r) => `<div style="min-width:150px"><b>${esc(v)}</b><div class="dim small">${esc(r.role)}</div></div>` },
+    { key: 'date', label: 'Date', fmt: v => esc(dateWords(v)) },
+    { key: 'ev', label: 'EV', num: true, fmt: (v, r) => esc(r.evTxt) },
+    { key: 'mult', label: 'Multiple', wrap: true, fmt: v => `<span class="small">${esc(v)}</span>` },
+    { key: 'scale', label: 'Scale', wrap: true, fmt: v => `<span class="small text-2">${esc(v)}</span>` },
+    { key: 'src', label: 'Source', fmt: v => fmt.link(v?.[0]) },
+  ] }); };
 
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Public comparables',
     sub: fastSector ? `Across ${fmt.num(items.length)} public peers, ${esc(SECTORS[fastSector[0]]?.label || fastSector[0])} grows fastest (${sPct(fmt, fastSector[1].median_revenue_growth_latest_pct)} median). Median EBITDA margin is ${pctF(fmt, allM)}.` : `${esc(sentences(pc.meta?.financial_picture, 1))}`,
     chips: `${fmt.chip(`${items.length} listed peers`, 'var(--c-fin)')}${fmt.chip('SEC XBRL', 'var(--sys-mute)')}${fmt.chip('EBITDA not adjusted', 'var(--sys-warn)')}`,
+    actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="${rollup}">Size an add-on in the roll-up model →</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/portfolio">Portfolio picture</a>`,
   })}
   ${ui.kpis([
     { label: 'Comps tracked', value: fmt.num(items.length), sub: `${Object.keys(bm).length} sectors · FY2023–latest`, color: 'var(--c-fin)' },
@@ -651,15 +716,22 @@ async function compsView(ctx) {
     { label: 'Fastest grower', value: best ? esc(best.ticker) : '—', sub: best ? `${sPct(fmt, best.revenue_growth_latest_pct)} · ${esc(best._sector)}` : '', color: 'var(--c-pe)' },
   ])}
   <div class="mt-12" id="cp-f"></div>
+  <div id="cp-focus"></div>
   <div class="grid grid-main">
     ${ui.panel({ title: 'Growth vs EBITDA margin', sub: 'Latest FY · colour = BSP company benchmarked · dashed = median of selection · * = off-scale, clamped · click a dot', body: '<div id="cp-sc"></div><div class="sys-chips legend mt-8" id="cp-leg"></div>', foot: ui.source('SEC XBRL companyfacts', 'https://data.sec.gov/api/xbrl/companyfacts/', pc.meta?.generated) })}
     ${ui.panel({ title: 'Revenue growth by comp', sub: 'Latest FY y/y · dashed = selection median', body: '<div id="cp-g"></div>', scroll: true, foot: ui.source('SEC XBRL companyfacts', 'https://data.sec.gov/api/xbrl/companyfacts/', pc.meta?.generated) })}
   </div>
   <div class="grid grid-3 mt-12" id="cp-bm"></div>
+  <div id="cp-deals"></div>
   <div class="mt-12">${ui.panel({ title: 'All comparables', sub: 'Click a row for fiscal-year detail and the 10-K', body: '<div id="cp-t"></div>', foot: ui.source('10-K / 20-F via EDGAR', 'https://www.sec.gov/edgar/search/', pc.meta?.generated) })}</div>
   <div class="grid grid-2 mt-12">
     ${ui.panel({ title: 'Margin structure', sub: 'Operating margin (grey) → EBITDA margin (colour) · D&A intensity is the gap', body: '<div id="cp-db"></div>', scroll: true, foot: ui.source('SEC XBRL companyfacts (operating income, D&A)', 'https://data.sec.gov/api/xbrl/companyfacts/', pc.meta?.generated) })}
     ${ui.panel({ title: 'Benchmarks to apply', sub: 'What each portfolio company should be measured against', body: '<div id="cp-acts"></div>', foot: `${ui.source('Public comparables: sector benchmarks', null, pc.meta?.generated)} · <a href="#/fin/portfolio">Compare with portfolio estimates →</a>` })}
+  </div>
+  <div class="mt-12">${ui.note(`<b>BSP’s edge is multiple arbitrage:</b> buy small add-ons at lower-middle-market prices and sell the combined company nearer scaled-sponsor prices. Analyst assumption: private lower-middle-market add-ons typically trade at about 5–9x EBITDA, below public comps and scaled sponsor companies. Trades (CET, PP) are the growth engine with thin-to-mid margins; lab distribution and agencies are low-growth. <a href="${rollup}">Size one add-on in the roll-up model →</a>`, 'warn')}</div>
+  <div class="grid grid-2 mt-12">
+    ${ui.panel({ title: 'Implications for BSP', sub: 'Research synthesis of the public comparables', body: `<div class="small text-2" style="line-height:1.55">${segments(pc.meta?.financial_picture).map(s => `<p class="mb-8">${esc(clean(s))}</p>`).join('') || '—'}</div>`, foot: ui.source('Public comparables synthesis (research team)', null, pc.meta?.generated) })}
+    ${ui.panel({ title: 'Benchmark estimate table', sub: 'Metric · estimate · confidence. Click a row for the basis.', body: '<div id="cp-est"></div>', foot: ui.source('Public comparables estimate table · estimates, not reported figures', null, pc.meta?.generated) })}
   </div>
   </div>`;
 
@@ -673,11 +745,13 @@ async function compsView(ctx) {
     { key: 'latest_fy', label: 'FY', num: true, fmt: v => esc(v) },
     { key: '_rev', label: 'Revenue', num: true, fmt: v => fmt.money(v) },
     { key: 'revenue_growth_latest_pct', label: 'Growth', num: true, fmt: v => `<span style="color:${v == null ? 'var(--sys-mute-2)' : v >= 0 ? 'var(--sys-good-ink)' : 'var(--sys-bad-ink)'}">${sPct(fmt, v)}</span>` },
+    { key: 'revenue_cagr_2023_latest_pct', label: 'CAGR', num: true, fmt: v => sPct(fmt, v) },
     { key: 'operating_margin_latest_pct', label: 'Op. margin', num: true, fmt: v => pctF(fmt, v) },
     { key: 'ebitda_margin_latest_pct', label: 'EBITDA mgn', num: true, fmt: v => pctF(fmt, v) },
     { key: '_emp', label: 'Employees', num: true, fmt: v => fmt.num(v) },
     { key: 'revenue_per_employee_usd', label: 'Rev / emp', num: true, fmt: v => fmt.money(v) },
     { key: 'tenk_url', label: '10-K', fmt: (v, r) => v ? fmt.link(v, `${r.tenk_form || '10-K'} ↗`) : fmt.link(r.source_url, 'XBRL ↗') },
+    { key: 'status_note', label: 'Note', wrap: true, fmt: v => v ? `<span class="small dim" style="display:block;min-width:300px">${esc(clip(v, 90))}</span>` : '' },
   ];
   let tbl;
   const openComp = c => {
@@ -693,6 +767,14 @@ async function compsView(ctx) {
       ],
       actions: [c.tenk_url ? { label: `${esc(c.tenk_form || '10-K')} ↗`, href: c.tenk_url } : null, { label: 'XBRL ↗', href: c.source_url }].filter(Boolean),
     });
+  };
+  /* One sector's card: six medians, then the read-out under its own heading. wide = the one card of a ?sector= screen. */
+  const sectorCard = (s, b, wide) => {
+    const co = coById(SECTORS[s]?.co), ov = overlapKey(s);
+    return ui.panel({ cls: `bench${wide ? ' bench-wide' : ''}`, title: `<span class="fin-co-head"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${co?.color}"></i>${esc(SECTORS[s]?.label || s)}</span>`, sub: `Benchmarks ${esc(benchName(b, co))}, ${esc(b.n)} peers · ${esc((b.comps || []).join(', '))}`,
+      body: `<div class="sys-kpis stats">${fig('Growth', sPct(fmt, b.median_revenue_growth_latest_pct))}${fig('3-yr CAGR', sPct(fmt, b.median_revenue_cagr_2023_latest_pct), '', 'Revenue growth a year, FY2023 to latest')}${fig('Op. margin', pctF(fmt, b.median_operating_margin_latest_pct))}${fig('Multi-yr avg', pctF(fmt, b.median_operating_margin_multiyear_avg_pct), '', 'Operating margin, multi-year average')}${fig('EBITDA margin', pctF(fmt, b.median_ebitda_margin_latest_pct))}${fig('Rev / employee', fmt.money(b.median_revenue_per_employee_usd))}</div><h4 class="sys-card-label mb-8">${s === 'communications_agencies' ? 'Holding-company read-across' : `What this implies for ${esc(CO_SAY[co?.id] || co?.name || 'BSP')}`}</h4><div class="sys-card-body imp">${esc(b.what_this_implies_for_bsp || '')}</div>${ov ? `<div class="small text-2 mt-12">Sponsors in this sector bid against BSP for add-ons and are the likely exit buyers: <a href="#/pe/landscape?overlap=${ov}">Private equity →</a></div>` : ''}`,
+      actions: wide ? `<a class="fin-link" href="#/fin/comps">All sectors →</a>` : `<a class="fin-link" href="#/fin/comps?sector=${s}">Filter →</a>`,
+      foot: ui.source('Median of sector comps, latest FY', null, pc.meta?.generated) });
   };
   const draw = st => {
     const q = (st.q || '').toLowerCase();
@@ -711,24 +793,35 @@ async function compsView(ctx) {
     const ms = sel.filter(c => c.ebitda_margin_latest_pct != null).sort((a, b) => b.ebitda_margin_latest_pct - a.ebitda_margin_latest_pct);
     el.querySelector('#cp-db').innerHTML = ms.length ? `<div class="dv db">${ms.map(c => { const o = c.operating_margin_latest_pct, e = c.ebitda_margin_latest_pct, col = coById(c._co)?.color; return `<div class="r" data-t="${esc(c.ticker)}" title="${esc(c.company)}: op. ${pctF(fmt, o)} → EBITDA ${pctF(fmt, e)}${(o < lo || e < lo) ? ' (clamped)' : ''}"><span class="lb">${esc(c.ticker)}</span><span class="tr"><span class="z" style="left:${P(0)}%"></span><span class="seg" style="left:${Math.min(P(o), P(e))}%;width:${Math.abs(P(e) - P(o))}%"></span><span class="p op" style="left:${P(o)}%"></span><span class="p" style="left:${P(e)}%;background:${col}"></span></span><span class="vv">${pctF(fmt, e)}</span></div>`; }).join('')}</div><div class="axis-l"><span>${lo}%</span><span>${(lo + hi) / 2}%</span><span>${hi}%</span></div>` : ui.empty('No comps');
     el.querySelectorAll('#cp-db [data-t]').forEach(g => g.onclick = () => { const c = items.find(x => x.ticker === g.dataset.t); if (c) openComp(c); });
-    // benchmark panels
-    el.querySelector('#cp-bm').innerHTML = Object.entries(bm).filter(([s]) => !st.sector || s === st.sector).map(([s, b]) => {
-      const co = coById(SECTORS[s]?.co);
-      return ui.panel({ cls: 'bench', title: `<span class="fin-co-head"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${co?.color}"></i>${esc(SECTORS[s]?.label || s)}</span>`, sub: `Benchmarks ${esc(b.bsp_company || co?.name || '')}, ${esc(b.n)} peers · ${esc((b.comps || []).join(', '))}`,
-        body: `<div class="sys-kpis stats"><div class="sys-kpi st"><div class="sys-kpi-label l">Growth</div><div class="sys-kpi-value v">${sPct(fmt, b.median_revenue_growth_latest_pct)}</div></div><div class="sys-kpi st"><div class="sys-kpi-label l">Op. margin</div><div class="sys-kpi-value v">${pctF(fmt, b.median_operating_margin_latest_pct)}</div></div><div class="sys-kpi st"><div class="sys-kpi-label l">EBITDA margin</div><div class="sys-kpi-value v">${pctF(fmt, b.median_ebitda_margin_latest_pct)}</div></div><div class="sys-kpi st"><div class="sys-kpi-label l">Rev / employee</div><div class="sys-kpi-value v">${fmt.money(b.median_revenue_per_employee_usd)}</div></div></div><div class="sys-card-body imp">${esc(b.what_this_implies_for_bsp || '')}</div>`,
-        actions: `<a class="fin-link" href="#/fin/comps?sector=${s}">Filter →</a>`, foot: ui.source('Median of sector comps, latest FY', null, pc.meta?.generated) });
-    }).join('') || '';
+    // sector cards and BPI's transactions: every sector in the grid, or the one picked at the top (the focus block)
+    const one = st.sector && bm[st.sector] ? st.sector : '';
+    const cards = Object.entries(bm).filter(([s]) => !one || s === one).map(([s, b]) => sectorCard(s, b, !!one)).join('');
+    const focus = el.querySelector('#cp-focus'), grid = el.querySelector('#cp-bm'), dealsEl = el.querySelector('#cp-deals');
+    focus.innerHTML = !one ? '' : `${one === 'communications_agencies' ? dealsHtml : ''}<div class="mt-12">${cards}</div><div class="mt-12"></div>`;
+    grid.innerHTML = one ? '' : cards; grid.style.display = one ? 'none' : '';   // not the hidden attribute: .grid{display:grid} in app.css would override it
+    dealsEl.innerHTML = one ? '' : dealsHtml;
+    wireDeals();   // the transactions table, wherever the block was placed
     tbl ? tbl.update(sel) : (tbl = ui.table(el.querySelector('#cp-t'), { columns, rows: sel, pageSize: 40, sortKey: 'revenue_growth_latest_pct', exportName: 'bsp_public_comps', rowKey: r => r.id, onRow: openComp }));
   };
   const f = ui.filters(el.querySelector('#cp-f'), [
-    { key: 'sector', label: 'Sector', options: sectorOpts, value: params.sector || '' },
+    { key: 'sector', label: 'Sector', options: sectorOpts, value: sector0 },
     { key: 'q', label: 'Ticker or company…', type: 'search', value: params.q || '' },
   ], draw);
   draw(f.state);
   if (params.ticker) { const c = items.find(x => x.ticker === params.ticker); if (c) openComp(c); }
 
-  const acts = Object.entries(bm).map(([s, b]) => { const co = coById(SECTORS[s]?.co); return { chip: co?.short, color: co?.color, html: `<b>${esc(b.bsp_company || co?.name)}</b>: hold to ${fmt.money(b.median_revenue_per_employee_usd)} revenue per employee and a ${pctF(fmt, b.median_ebitda_margin_latest_pct)} EBITDA margin (sector medians across ${esc(b.n)} peers); peer growth is ${sPct(fmt, b.median_revenue_growth_latest_pct)}. Ask management for the same three KPIs on a trailing-12-month basis.` }; });
+  const acts = Object.entries(bm).map(([s, b]) => { const co = coById(SECTORS[s]?.co); return { chip: co?.short, color: co?.color, html: `<b>${esc(benchName(b, co))}</b>: hold to ${fmt.money(b.median_revenue_per_employee_usd)} revenue per employee and a ${pctF(fmt, b.median_ebitda_margin_latest_pct)} EBITDA margin (sector medians across ${esc(b.n)} peers); peer growth is ${sPct(fmt, b.median_revenue_growth_latest_pct)}. Ask management for the same three KPIs on a trailing-12-month basis.` }; });
   el.querySelector('#cp-acts').innerHTML = actionList(ctx, acts);
+
+  // benchmark estimates (from the comparables research): the basis opens on click
+  const bEst = toArr(pc.meta?.estimate_table), estEl = el.querySelector('#cp-est');
+  if (bEst.length) ui.table(estEl, { rows: bEst.map((e, i) => ({ ...e, id: i })), pageSize: 10, exportName: 'bsp_benchmark_estimates', columns: [
+    { key: 'metric', label: 'Metric', wrap: true, fmt: v => `<span class="small">${esc(v)}</span>` },
+    { key: 'estimate', label: 'Estimate', wrap: true, fmt: v => `<b class="small">${esc(v)}</b>` },
+    { key: 'confidence', label: 'Conf.', fmt: v => fmt.chip(v || 'n/a', confColor(v)) },
+  ], onRow: e => inspector.open({ title: esc(e.metric), sub: `Estimate ${esc(e.estimate)}`, color: 'var(--c-fin)', sections: [{ label: 'Basis', html: `<div class="small text-2">${esc(clean(e.basis || '—'))}</div>` }, { label: 'Confidence', html: fmt.chip(e.confidence || 'n/a', confColor(e.confidence)) }] }) });
+  else estEl.innerHTML = ui.empty('No estimate table');
+
   app.index(items.map(c => ({ label: `${c.ticker} · ${c.company}`, sub: `Public comp · ${c._sector}`, href: `#/fin/comps?ticker=${encodeURIComponent(c.ticker)}`, kind: 'Comp', color: 'var(--c-fin)' })));
 }
 

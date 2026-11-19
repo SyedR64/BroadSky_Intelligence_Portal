@@ -44,6 +44,9 @@
 .m-fin .bench .imp{font-size:var(--sys-fs-sm)}
 .m-fin .bench.dim{opacity:.45}
 @media (min-width:1181px){.m-fin .bench .stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* the one full-width card of a ?sector= screen, and BPI's transactions strip: figures in one row */
+@media (min-width:1181px){.m-fin .bench-wide .stats{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}}
+.m-fin .bench-wide .stats .sys-kpi-label{white-space:normal}
 
 /* diverging bars (revenue growth) */
 .m-fin .dv{display:flex;flex-direction:column;gap:5px}
