@@ -126,11 +126,6 @@ function normRow(ctx, i, co) {
 }
 const isBsp = r => /BSP|Broad Sky/i.test(`${r.entity} ${r.title}`);
 
-function itemHtml(ctx, r) {
-  const { esc, fmt } = ctx;
-  return `<div class="it"><div class="tt">${esc(r.title)}</div><div class="mm">${fmt.chip(catLabel(r.category), r._color || 'var(--c-fin)')} ${esc(r.filed_or_dated || '')} · ${esc(r.filer_or_source_agency || '')} · ${esc(r.confidence || '')} conf.</div><div class="kf">${esc(kfSummary(fmt, r.key_figures, 8))}</div>${r.what_it_tells_us ? `<div class="wt">${esc(r.what_it_tells_us)}</div>` : ''}${r.source_url ? `<div class="mt-8 small">${fmt.link(r.source_url, 'Source ↗')}${r.secondary_url ? ` · ${fmt.link(r.secondary_url, 'Secondary ↗')}` : ''}</div>` : ''}</div>`;
-}
-
 function openItem(ctx, r) {
   const { esc, fmt, ui, inspector, app } = ctx;
   const co = coById(r._co);
@@ -145,7 +140,7 @@ function openItem(ctx, r) {
       { label: 'Source', html: `<div class="col gap-4 small">${r.source_url ? fmt.link(r.source_url, Copy.srcLabel(r.source_url)) : '—'}${r.secondary_url ? fmt.link(r.secondary_url, Copy.srcLabel(r.secondary_url)) : ''}${r.xbrl_source ? fmt.link(r.xbrl_source, 'XBRL companyfacts') : ''}</div>` },
       { label: 'Next action', html: `<div class="small text-2">${esc(NEXT_ACTION[r.category] || NEXT_ACTION.other)}</div>` },
     ].filter(Boolean),
-    actions: [r.source_url ? { label: 'Open source ↗', href: r.source_url } : null, r._co !== 'rival' ? { id: 'co', label: `All ${esc(co?.short || '')} filings`, onClick: () => app.go('fin', 'explorer', { company: r._co }) } : { id: 'rv', label: 'Rival companies', onClick: () => app.go('fin', 'rivals') }].filter(Boolean),
+    actions: [r.source_url ? { label: 'Open source ↗', href: r.source_url } : null, r._co !== 'rival' ? { id: 'co', label: `All ${esc(co?.short || '')} filings`, onClick: () => app.go('fin', 'explorer', { company: r._co }) } : { id: 'rv', label: 'Rival companies', onClick: () => app.go('ma', 'rivals') }].filter(Boolean),
   });
 }
 
@@ -825,162 +820,7 @@ async function compsView(ctx) {
   app.index(items.map(c => ({ label: `${c.ticker} · ${c.company}`, sub: `Public comp · ${c._sector}`, href: `#/fin/comps?ticker=${encodeURIComponent(c.ticker)}`, kind: 'Comp', color: 'var(--c-fin)' })));
 }
 
-/* ═══ View 4: Rival company financials ═════════════════════════════════════ */
-function rivalName(entity) {
-  let s = String(entity || '').replace(/\s*\([^)]*\)/g, '');
-  s = s.split(/\s+[—–]\s+|\s\/\s/)[0].trim();
-  for (let i = 0; i < 3; i++) s = s.replace(/,?\s+(Inc|LLC|LP|L\.P|Corp|Co)\.?$/i, '').trim();
-  const A = [[/^sila/i, 'Sila Services'], [/^kraft/i, 'Kraft Kennedy'], [/^(solo brands|chubbies)/i, 'Solo Brands / Chubbies'], [/^(skdk|stagwell)/i, 'Stagwell / SKDK'], [/^avantor/i, 'Avantor (VWR)'], [/^ies holdings/i, 'IES Holdings'], [/^heartland/i, 'Heartland Home Services'], [/^any hour/i, 'Any Hour'], [/^j\.?\s?&\s?m\.? brown/i, 'J&M Brown']];
-  for (const [re, n] of A) if (re.test(s)) return n;
-  return s;
-}
-function rivalHeadline(ctx, g, estRows) {
-  const { fmt } = ctx;
-  const kv = g.items.flatMap(i => flatKF(i.key_figures).map(([k, v]) => [k, v, i]));
-  const h = {};
-  // revenue
-  const revs = kv.filter(([k, v]) => typeof v === 'number' && /(revenue|net_sales)_fy(\d{4})_usd$/i.test(k)).map(([k, v]) => ({ k, v, y: +k.match(/fy(\d{4})/i)[1], exact: /^revenue_fy\d{4}_usd$/i.test(k) }));
-  const rv = revs.sort((a, b) => (b.exact - a.exact) || (b.y - a.y))[0];
-  const w0 = g.name.split(/[\s/(]/)[0].replace(/[^A-Za-z&]/g, '');
-  const nameRe = w0.length >= 3 ? new RegExp(`\\b${w0}\\b`, 'i') : /$^/;
-  const myEst = estRows.filter(e => nameRe.test(e.metric));
-  if (rv) h.revenue = { v: fmt.money(rv.v), s: `FY${rv.y}${rv.exact ? '' : ' segment'}` };
-  else { const e = myEst.find(e => /revenue/i.test(e.metric)); if (e) h.revenue = { v: shortEst(e.estimate), s: 'est.' }; else { const p = kv.find(([k, v]) => /implied_annual_payroll/i.test(k) && typeof v === 'number'); if (p) h.revenue = { v: fmt.money(p[1]), s: 'PPP payroll' }; } }
-  // debt
-  const ltd = kv.find(([k, v]) => /long_term_debt/i.test(k) && typeof v === 'number' && v > 0);
-  const tot = kv.filter(([k, v]) => /total.*par|par.*total/i.test(k) && typeof v === 'number');
-  const pars = kv.filter(([k]) => /par(_usd(_m)?)?$|_pars_usd$/i.test(k) && !/prior_period|common|unfunded|total/i.test(k)).flatMap(([k, v]) => (Array.isArray(v) ? v : [v]).map(x => /usd_m$/i.test(k) ? x * 1e6 : x)).filter(x => typeof x === 'number');
-  if (ltd) h.debt = { v: fmt.money(ltd[1]), s: 'LT debt' };
-  else if (tot.length) h.debt = { v: `≥${fmt.money(Math.max(...tot.map(t => t[1])))}`, s: 'visible par' };
-  else if (pars.length) h.debt = { v: `≥${fmt.money(pars.reduce((a, b) => a + b, 0))}`, s: 'visible par' };
-  // marks
-  const marks = kv.filter(([k, v]) => /mark/i.test(k) && typeof v === 'number' && v > 40 && v <= 105).map(([, v]) => v);
-  if (marks.length) h.mark = Math.min(...marks);
-  h.pik = kv.some(([k, v]) => /pik/i.test(k) || (typeof v === 'string' && /PIK/.test(v)));
-  const sp = kv.find(([k, v]) => /spread/i.test(k) && typeof v === 'string'); if (sp) h.spread = sp[1];
-  // staff
-  const emp = kv.find(([k]) => /(^|_)(employees|team_members|jobs_reported|experts|full_time_employees)(_|$)/i.test(k) && !/contractors/i.test(k));
-  if (emp) h.staff = { v: typeof emp[1] === 'number' ? fmt.num(emp[1]) : String(emp[1]), s: /jobs_reported/i.test(emp[0]) ? 'PPP jobs' : /team|experts/i.test(emp[0]) ? 'website' : 'headcount' };
-  const ev = kv.find(([k, v]) => /enterprise_value/i.test(k) && typeof v === 'number'); if (ev) h.ev = fmt.money(ev[1]);
-  const rating = kv.find(([k]) => /rating|moody|s_p_|cfr/i.test(k)); h.rating = rating ? String(rating[1]) : null;
-  const lev = kv.find(([k]) => /leverage/i.test(k)) || null;
-  const LX = '(\\d+(?:\\.\\d+)?\\s*[–-]\\s*\\d+(?:\\.\\d+)?x|\\d+(?:\\.\\d+)?x)';
-  const levRe = new RegExp(`leverage (?:of )?(?:about |~)?${LX}|${LX} leverage`, 'i');
-  const levEst = myEst.map(e => `${e.estimate} ${e.basis}`.match(levRe)).find(Boolean);
-  h.leverage = lev ? String(lev[1]) : levEst ? (levEst[1] || levEst[2]).replace(/\s/g, '') : null;
-  const mat = kv.filter(([k, v]) => /maturity$/i.test(k) && typeof v === 'string').map(([, v]) => v).sort()[0]; h.maturity = mat || null;
-  h.est = myEst;
-  return h;
-}
-
-/* A BDC schedule line sometimes bundles several borrowers in one record
-   ("Apex Service Partners LLC / Any Hour LLC / …") with borrower-prefixed keys
-   (any_hour_tl_mark_pct_of_par, apex_tl_par_usd …). Split it into one record per
-   borrower so a mark or PIK coupon is never attributed to the first-named entity. */
-function splitMulti(i) {
-  const parts = String(i.entity || '').split(/\s\/\s/).map(x => x.trim()).filter(Boolean);
-  const kf = i.key_figures;
-  if (parts.length < 2 || !kf || typeof kf !== 'object') return [i];
-  const keys = Object.keys(kf);
-  const slug = x => x.toLowerCase().replace(/\s*\([^)]*\)/g, '').replace(/,?\s+(inc|llc|lp|l\.p|corp|co)\.?$/i, '').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
-  const pre = parts.map(p => { const w = slug(p).split('_'); return [w.slice(0, 2).join('_'), w[0]].filter(c => c.length >= 3).find(c => keys.some(k => k.startsWith(`${c}_`))) || null; });
-  if (pre.some(x => !x) || new Set(pre).size !== pre.length) return [i];
-  if (keys.filter(k => pre.some(x => k.startsWith(`${x}_`))).length < keys.length * 0.8) return [i];
-  return parts.map((p, n) => {
-    const own = {};
-    for (const k of keys) if (k.startsWith(`${pre[n]}_`)) own[k.slice(pre[n].length + 1)] = kf[k];
-    // fair value ÷ par where the schedule gives both but no explicit mark (e.g. Apex: FV = par → 100.0)
-    if (!Object.keys(own).some(k => /mark/i.test(k)) && typeof own.tl_par_usd === 'number' && typeof own.tl_fair_value_usd === 'number' && own.tl_par_usd > 0) own.tl_mark_pct_of_par_derived = Math.round(own.tl_fair_value_usd / own.tl_par_usd * 1000) / 10;
-    return { ...i, id: `${i.id}-${pre[n]}`, entity: p, key_figures: own, what_it_tells_us: `[Borrower line split from multi-borrower record ${i.id}] ${i.what_it_tells_us || ''}`.trim() };
-  });
-}
-
-async function rivalsView(ctx) {
-  const { el, ui, fmt, esc, params, inspector, app } = ctx;
-  injectCss();
-  el.innerHTML = ui.loading('Loading rival filings…');
-  const rv = await ctx.data.research('rival_filings');
-  if (!rv || !rv.items?.length) { el.innerHTML = `<div class="m-fin">${ui.pageHead({ title: 'Rival company financials' })}${ui.note('Research dataset <b>Competitor filings</b> not yet available.', 'warn')}</div>`; return; }
-  const est = toArr(rv.meta?.estimate_table);
-  const map = new Map();
-  for (const i of rv.items.flatMap(splitMulti)) { const n = rivalName(i.entity); if (!map.has(n)) map.set(n, { name: n, items: [], overlap: new Set() }); const g = map.get(n); g.items.push({ ...i, _co: 'rival', _color: RIVAL.color, _coName: 'Rival', _date: dateKey(i.filed_or_dated), _cat: i.category, _key: `rival:${i.id}` }); (i.bsp_overlap || []).forEach(o => g.overlap.add(o)); }
-  const groups = [...map.values()].map(g => { g.overlap = [...g.overlap]; g.h = rivalHeadline(ctx, g, est); g.id = g.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'); g.color = coById(OVERLAP[g.overlap[0]]?.co)?.color || RIVAL.color; g.cats = [...new Set(g.items.map(i => i.category))]; g.owner = (g.items.map(i => (String(i.entity).match(/\(([^)]*(Partners|Investors|Private Equity|KKR|Stagwell|NYSE|NASDAQ)[^)]*)\)/) || [])[1]).find(Boolean)) || ''; return g; })
-    .sort((a, b) => b.items.length - a.items.length);
-  const marked = groups.filter(g => g.h.mark != null).sort((a, b) => a.h.mark - b.h.mark);
-  const pik = groups.filter(g => g.h.pik);
-  const fp = Array.isArray(rv.meta?.financial_picture) ? rv.meta.financial_picture : [rv.meta?.financial_picture].filter(Boolean);
-  const overlaps = Object.keys(OVERLAP).filter(o => groups.some(g => g.overlap.includes(o)));
-
-  el.innerHTML = `<div class="m-fin">${ui.pageHead({
-    title: 'Rival company financials',
-    sub: `${esc(Copy.credit(sentences(fp[0], 2)))}`,
-    chips: `${fmt.chip(`${groups.length} rival companies`, 'var(--c-pe)')}${fmt.chip('Marks: one lender slice', 'var(--sys-warn)')}${fmt.chip('Ratings not yet retrieved', 'var(--sys-mute)')}`,
-    actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/ma/rivals">Rival profiles and deal math →</a>`,
-  })}
-  ${ui.kpis([
-    { label: 'Rival companies', value: fmt.num(groups.length), sub: `${fmt.num(rv.items.length)} filings · ${overlaps.length} BSP sectors`, color: 'var(--c-pe)' },
-    { label: 'BDC loan lines', value: fmt.num(rv.items.filter(i => i.category === 'bdc_loan_schedule').length), sub: `${marked.length} borrowers with a visible mark`, color: 'var(--co-ts)' },
-    { label: 'Lowest lender mark', value: marked[0] ? fmt.num(marked[0].h.mark, 1) : '—', sub: marked[0] ? esc(marked[0].name) : '', color: 'var(--sys-bad)' },
-    { label: 'Borrowers paying PIK', value: fmt.num(pik.length), sub: esc(pik.slice(0, 3).map(g => g.name).join(', ')), color: 'var(--sys-warn)' },
-    { label: 'PPP records', value: fmt.num(rv.items.filter(i => i.category === 'sba_ppp').length), sub: 'pre-roll-up payroll anchors', color: 'var(--co-pp)' },
-  ])}
-  <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Where lenders are marking rivals', sub: 'Lowest visible BDC / fund mark (% of par) per borrower · red < 90 · amber < 97 · click for the filings', body: `<div id="rv-mk"></div>`, foot: ui.source('BDC 10-Q/10-K schedules of investments, N-PORT', 'https://efts.sec.gov/LATEST/search-index?q=%22HGH%20Purchaser%22', rv.meta?.generated) })}
-    ${ui.panel({ title: 'What the rival filings tell us', sub: 'Analyst synthesis', body: `<div>${fp.map((p, i) => `<div class="act"><span class="n">${String(i + 1).padStart(2, '0')}</span><div class="x">${esc(clean(p))}</div></div>`).join('')}</div>`, scroll: true, foot: ui.source('Competitor filings: financial picture', null, rv.meta?.generated) })}
-  </div>
-  <div class="mt-12" id="rv-f"></div>
-  <div class="sys-grid rv-grid mt-12" id="rv-cards"></div>
-  <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Rival estimates', sub: 'Triangulated figures (est.) with basis', body: '<div id="rv-est"></div>', foot: ui.source('Competitor filings: estimate table', null, rv.meta?.generated) })}
-    ${ui.panel({ title: 'Next actions', sub: 'What to pull next and why it matters for BSP', body: `<div id="rv-acts"></div>`, foot: ui.source('Competitor filings: next pulls', null, rv.meta?.generated) })}
-  </div>
-  </div>`;
-
-  const openG = g => {
-    const h = g.h;
-    inspector.open({
-      title: esc(g.name), color: g.color, sub: `${g.items.length} filings · ${esc(g.overlap.map(o => OVERLAP[o]?.label || o).join(', '))}${g.owner ? ` · ${esc(g.owner)}` : ''}`,
-      sections: [
-        { label: 'Headline figures', html: ui.kv({ Revenue: h.revenue ? `${esc(h.revenue.v)} <span class="dim small">${esc(h.revenue.s)}</span>` : null, Debt: h.debt ? `${esc(h.debt.v)} <span class="dim small">${esc(h.debt.s)}</span>` : null, 'Enterprise value': h.ev || null, 'Lowest mark': h.mark != null ? `${fmt.num(h.mark, 1)}% of par` : null, Pricing: h.spread ? esc(h.spread) : null, PIK: h.pik ? fmt.chip('PIK interest', 'var(--sys-warn)') : null, Leverage: h.leverage ? `${esc(h.leverage)} <span class="dim small">est.</span>` : null, Rating: h.rating ? esc(h.rating) : '<span class="dim">not retrieved (see gaps)</span>', Staff: h.staff ? `${esc(h.staff.v)} <span class="dim small">${esc(h.staff.s)}</span>` : null }) },
-        h.est.length ? { label: 'Estimates', html: `<div class="fin-insp sys-table-wrap"><table class="sys-table"><tbody>${h.est.map(e => `<tr><td>${confDot(e.confidence)}${esc(e.metric)}<div class="dim small">${esc(e.basis || '')}</div></td><td class="sys-n n">${esc(e.estimate)}</td></tr>`).join('')}</tbody></table></div>` } : null,
-        { label: `Filings (${g.items.length})`, html: `<div class="fin-insp">${g.items.sort((a, b) => b._date.localeCompare(a._date)).map(r => itemHtml(ctx, r)).join('')}</div>` },
-        { label: 'Next action', html: `<div class="small text-2">${h.mark != null && h.mark < 95 ? `Stressed credit (${fmt.num(h.mark, 1)} mark${h.pik ? ', PIK' : ''}): monitor for a distressed sale of assets or technicians in overlapping markets; brief ${esc(g.overlap.map(o => coById(OVERLAP[o]?.co)?.short).join('/'))} management on talent and customer poaching opportunities.` : `Track the next quarterly filing; pull rating-agency reports and PitchBook deal history to size ${esc(g.name)}'s acquisition capacity against ${esc(g.overlap.map(o => coById(OVERLAP[o]?.co)?.short).join('/'))}.`}</div>` },
-      ].filter(Boolean),
-      actions: g.items.filter(i => i.source_url).slice(0, 2).map((i, k) => ({ label: `Source ${k + 1} ↗`, href: i.source_url })),
-    });
-  };
-
-  el.querySelector('#rv-mk').innerHTML = marked.length ? marked.map(g => { const v = g.h.mark; const c = v < 90 ? 'var(--sys-bad)' : v < 97 ? 'var(--sys-warn)' : 'var(--sys-good)'; return `<div class="mk" data-g="${esc(g.id)}" title="${esc(g.name)} · ${fmt.num(v, 1)}% of par${g.h.pik ? ' · PIK' : ''}"><span class="lb">${esc(g.name)}${g.h.pik ? ' <span class="small" style="color:var(--sys-warn-ink)">PIK</span>' : ''}</span><span class="tr"><i style="width:${Math.max(2, (v - 70) / 30 * 100)}%;background:${c}"></i></span><span class="vv">${fmt.num(v, 1)}</span></div>`; }).join('') + `<div class="axis-l" style="margin:4px 56px 0 158px"><span>70</span><span>85</span><span>100</span></div>
-    <h4 class="sys-card-label mt-16 mb-8">Pricing & maturity wall</h4><div class="fin-insp sys-table-wrap"><table class="sys-table"><thead><tr><th>Borrower</th><th>Pricing</th><th class="sys-n n">Earliest maturity</th></tr></thead><tbody>${marked.slice().sort((a, b) => String(a.h.maturity || '9').localeCompare(String(b.h.maturity || '9'))).map(g => { const mo = g.h.maturity ? (new Date(g.h.maturity.length === 7 ? g.h.maturity + '-01' : g.h.maturity) - new Date()) / 2.63e9 : null; return `<tr><td>${esc(g.name)}</td><td class="small text-2">${esc(String(g.h.spread || '—').slice(0, 42))}</td><td class="sys-n n" style="color:${mo != null && mo < 18 ? 'var(--sys-bad-ink)' : 'var(--sys-ink-2)'}">${esc(g.h.maturity || '—')}</td></tr>`; }).join('')}</tbody></table></div>` : ui.empty('No marks disclosed');
-  el.querySelectorAll('#rv-mk [data-g]').forEach(n => n.onclick = () => openG(groups.find(g => g.id === n.dataset.g)));
-
-  const card = g => { const h = g.h; const st = (l, v, s) => `<div class="h"><div class="l">${l}</div><div class="v ${v ? '' : 'na'}" title="${esc(s || '')}">${v ? esc(v) : 'n/a'}</div>${v && s ? `<div class="s">${esc(s)}</div>` : ''}</div>`;
-    return `<div class="sys-card sys-card--link rv" tabindex="0" role="button" data-co="" data-g="${esc(g.id)}" style="--co:${g.color}"><div class="sys-card-title t">${esc(g.name)}<span class="n">${g.items.length} filings</span></div>${g.owner ? `<div class="sys-card-body own">${esc(g.owner)}</div>` : ''}<div class="hs">${st('Revenue', h.revenue?.v, h.revenue?.s)}${st('Debt', h.debt?.v, h.debt?.s)}${st('Low mark', h.mark != null ? fmt.num(h.mark, 1) : null, 'lowest % of par')}${st('Staff', h.staff?.v, h.staff?.s)}</div><div class="m">${g.overlap.map(o => fmt.chip(OVERLAP[o]?.label || o, coById(OVERLAP[o]?.co)?.color)).join('')}${h.pik ? fmt.chip('PIK', 'var(--sys-warn)') : ''}${h.leverage ? fmt.chip(`lev. ${h.leverage} est.`, 'var(--sys-bad)') : ''}${h.spread ? fmt.chip(String(h.spread).replace(/\s*\(.*$/, '').slice(0, 26), 'var(--sys-mute)') : ''}</div></div>`; };
-  const draw = st => {
-    const q = (st.q || '').toLowerCase();
-    const sel = groups.filter(g => (!st.sector || g.overlap.includes(st.sector)) && (!st.stress || (g.h.pik || (g.h.mark != null && g.h.mark < 95))) && (!q || JSON.stringify(g.items).toLowerCase().includes(q) || g.name.toLowerCase().includes(q)));
-    f.setCount(`${sel.length} / ${groups.length} companies`);
-    el.querySelector('#rv-cards').innerHTML = sel.map(card).join('') || ui.empty('No rivals match');
-    el.querySelectorAll('#rv-cards .rv').forEach(n => n.onclick = () => { el.querySelectorAll('#rv-cards .rv').forEach(x => x.classList.toggle('sel', x === n)); openG(groups.find(g => g.id === n.dataset.g)); });
-  };
-  const f = ui.filters(el.querySelector('#rv-f'), [
-    { key: 'sector', label: 'Competes with', options: overlaps.map(o => ({ value: o, label: `${OVERLAP[o].sector} (${coById(OVERLAP[o].co)?.short})` })), value: params.sector || '' },
-    { key: 'q', label: 'Search rival, lender, figure…', type: 'search', value: params.q || '' },
-    { key: 'stress', label: 'Stressed credit only', type: 'toggle', value: false },
-  ], draw);
-  draw(f.state);
-
-  ui.table(el.querySelector('#rv-est'), { rows: est.map((e, i) => ({ ...e, id: i })), pageSize: 8, exportName: 'rival_estimates', columns: [
-    { key: 'metric', label: 'Metric', wrap: true, fmt: (v, r) => `${confDot(r.confidence)}${esc(v)}` },
-    { key: 'estimate', label: 'Estimate', wrap: true, fmt: v => `<span class="num small">${esc(v)}</span>` },
-    { key: 'confidence', label: 'Conf.', fmt: v => fmt.chip(v || 'n/a', confColor(v)) },
-  ], onRow: r => inspector.open({ title: esc(r.metric), color: RIVAL.color, sub: 'Rival estimate (est.)', sections: [{ label: 'Estimate', html: `<div class="num">${esc(r.estimate)}</div>` }, { label: 'Basis', html: `<div class="small text-2">${esc(r.basis || '')}</div>` }, { label: 'Confidence', html: fmt.chip(r.confidence || 'n/a', confColor(r.confidence)) }, { label: 'Next action', html: '<div class="small text-2">Validate with PitchBook / Capital IQ financials or rating-agency reports before using in an IC memo.</div>' }] }) });
-  el.querySelector('#rv-acts').innerHTML = actionList(ctx, toArr(rv.meta?.next_pulls).slice(0, 6).map(t => ({ chip: 'Pull', color: 'var(--c-pe)', text: clip(t, 280) })));
-  if (params.rival) { const g = groups.find(x => x.id === params.rival); if (g) openG(g); }
-  app.index(groups.map(g => ({ label: g.name, sub: `Rival company · ${g.overlap.map(o => OVERLAP[o]?.label || o).join(', ')}`, href: `#/fin/rivals?rival=${g.id}`, kind: 'Rival', color: 'var(--c-pe)' })));
-}
-
-/* ═══ View 5: Methods & gaps ════════════════════════════════════════════════ */
+/* ═══ View 4: Methods & gaps ════════════════════════════════════════════════ */
 const METHODS = [
   { id: 'formd', title: 'SEC Form D', cats: ['sec_form_d'], formula: 'Equity raised = "Total amount sold" on the vehicle\'s latest Form D / D-A', text: 'Every BSP fund and deal SPV files a Form D under Rule 506(b). Amendments show top-ups; investor counts reveal LP co-invest breadth.', caveat: 'SPVs pool Fund I capital with co-invest, so vehicle amounts are not additive to Fund I and are not enterprise value.' },
   { id: 'adv', title: 'Form ADV (Schedule D)', cats: ['form_adv'], formula: 'Gross mark ≈ fund gross asset value ÷ Form D amount sold', text: 'The adviser\'s annual ADV amendment lists regulatory AUM, headcount and gross asset value by private fund: the only public read on marks.', caveat: 'GAV is gross of fees and leverage and gives no mark for individual positions.' },
@@ -1095,7 +935,6 @@ export default {
     { id: 'portfolio', name: 'Portfolio picture', icon: '◉', render: portfolioView },
     { id: 'explorer', name: 'Filings explorer', icon: '▤', render: explorerView },
     { id: 'comps', name: 'Public comparables', icon: '◧', render: compsView },
-    { id: 'rivals', name: 'Rival companies', icon: '⚔', render: rivalsView },
     { id: 'methods', name: 'Methods & gaps', icon: '⚙', render: methodsView },
   ],
   tour: [

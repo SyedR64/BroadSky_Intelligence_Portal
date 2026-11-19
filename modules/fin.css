@@ -1,6 +1,6 @@
 /* Filings & financials: layout only (.m-fin / .fin-insp). Cards, KPI tiles, chips,
    tables and notes are the system components; this file places them and sizes the
-   bespoke charts (diverging bars, dumbbells, scatter, mark bars) with --sys-* tokens.
+   bespoke charts (diverging bars, dumbbells, scatter) with --sys-* tokens.
    No colour, radius, shadow or font of its own.                                     */
 
 .m-fin .fin-co-head{display:inline-flex;align-items:center;gap:var(--sys-sp-2)}
@@ -71,35 +71,7 @@
 .m-fin svg.sc circle{cursor:pointer;stroke:var(--sys-surface);stroke-width:1.2}
 .m-fin svg.sc .lbl{fill:var(--sys-ink-2)}
 
-/* rival cards: linked system cards with the overlap accent bar */
-.m-fin .rv-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));--sys-gap:var(--sys-sp-3)}
-.m-fin .rv{padding:var(--sys-sp-4);gap:var(--sys-sp-2)}
-.m-fin .rv.sel{border-color:var(--co);box-shadow:0 0 0 1px var(--co),var(--sys-sh-2)}
-.m-fin .rv .t{display:flex;gap:var(--sys-sp-2);align-items:baseline;font-size:var(--sys-fs-base)}
-.m-fin .rv .t .n{margin-left:auto;font:500 var(--sys-fs-xs) var(--sys-mono);color:var(--sys-mute)}
-.m-fin .rv .own{margin-top:-4px;font-size:var(--sys-fs-xs);color:var(--sys-mute)}
-.m-fin .rv .hs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sys-sp-2);padding:var(--sys-sp-3) 0;border-top:1px dashed var(--sys-line-2);border-bottom:1px dashed var(--sys-line-2)}
-.m-fin .rv .h{min-width:0}
-.m-fin .rv .h .l{font:600 var(--sys-fs-2xs)/1.3 var(--sys-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sys-mute)}
-.m-fin .rv .h .v{margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:600 var(--sys-fs-sm) var(--sys-mono);color:var(--sys-ink)}
-.m-fin .rv .h .v.na{font-weight:500;color:var(--sys-mute-2)}
-.m-fin .rv .h .s{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--sys-fs-2xs);color:var(--sys-mute)}
-.m-fin .rv .m{display:flex;flex-wrap:wrap;gap:6px}
-.m-fin .rv .m .sys-chip{min-height:26px;padding:0 10px;font-size:var(--sys-fs-xs)}
-/* lender marks */
-.m-fin .mk{display:grid;grid-template-columns:150px 1fr 52px;gap:var(--sys-sp-2);align-items:center;padding:3px 0;font-size:var(--sys-fs-xs);cursor:pointer}
-.m-fin .mk .lb{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sys-ink-2)}
-.m-fin .mk .tr{position:relative;height:10px;overflow:hidden;border-radius:var(--sys-r-pill);background:var(--sys-bg-3)}
-.m-fin .mk .tr i{position:absolute;left:0;top:0;bottom:0;border-radius:var(--sys-r-pill)}
-.m-fin .mk .vv{text-align:right;font-family:var(--sys-mono)}
-
-/* filing items (page and inspector) */
-:is(.m-fin,.fin-insp) .it{display:flex;flex-direction:column;gap:var(--sys-sp-1);padding:var(--sys-sp-3) 0;border-bottom:1px solid var(--sys-line)}
-:is(.m-fin,.fin-insp) .it:last-child{border-bottom:0}
-:is(.m-fin,.fin-insp) .it .tt{font-size:var(--sys-fs-sm);font-weight:600;color:var(--sys-ink)}
-:is(.m-fin,.fin-insp) .it .mm{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:var(--sys-fs-xs);color:var(--sys-mute)}
-:is(.m-fin,.fin-insp) .it .kf{font:500 var(--sys-fs-xs)/1.55 var(--sys-mono);color:var(--sys-ink-2);word-break:break-word}
-:is(.m-fin,.fin-insp) .it .wt{font-size:var(--sys-fs-sm);line-height:1.5;color:var(--sys-ink-2)}
+/* tables inside the side panel */
 .fin-insp .sys-table th,.fin-insp .sys-table td{padding:10px 12px;white-space:normal}
 
 /* methods */
@@ -113,5 +85,4 @@
 /* vehicles table: keep the entity column readable */
 .m-fin #fin-veh td.wrap{min-width:210px}
 
-@media (max-width:900px){.m-fin .rv .hs{grid-template-columns:repeat(2,minmax(0,1fr))}.m-fin .mk{grid-template-columns:110px 1fr 48px}}
 .m-fin .sys-table td.wrap .sys-chip{border-radius:var(--sys-r-sm);height:auto;min-height:26px;padding:4px 10px;white-space:normal}
