@@ -34,7 +34,7 @@ async function play(ctx) {
   let Theater;
   try { ({ Theater } = await import(`../assets/theater.js?v=20261117223642${V}`)); }
   catch (e) { host.innerHTML = `<div style="padding:var(--sys-sp-6) var(--sys-gut)">${ctx.ui.note('The 3D map could not load. Check the connection and reload.', 'warn')}</div>`; console.warn('[theater]', e); return; }
-  if (!el.isConnected) return;
+  if (!host.isConnected) return;   // the visitor left while the engine loaded: do not mount into a screen that is gone
   const scene = params.scene || 'S1';
   const autoplay = params.autoplay != null ? params.autoplay !== '0' : true;
   Theater.mount(host, {
