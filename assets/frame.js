@@ -14,7 +14,7 @@
      Frame.mount({ variant: 'minimal', theme: 'dark' });   // theater.html
 
    Options (all optional):
-     active   'home'|'portal'|'concepts'|'os'|'playbooks'|'briefing'  (auto from URL; 'os' and 'playbooks' mark Concepts)
+     active   'home'|'agent'|'portal'|'concepts'|'os'|'playbooks'|'briefing'  (auto from URL; 'os' and 'playbooks' mark Concepts)
      co       'pp'|'cet'|'fl'|'ts'|'bpi'|'fh'   company accent + crumb  (auto from URL)
      persona  chat persona for the Ask button      (default: co, else 'portal')
      theme    'light'|'dark'                       fallback when the visitor has no saved choice (default 'light').
@@ -32,7 +32,8 @@
                                                     e.g. { briefing: 'app.html#/briefing/play' }. An href
                                                     with a '#/' route on this page is marked current while
                                                     location.hash is on that route (kept in sync on hashchange).
-                                                    Variant 'app' defaults to { briefing: 'app.html#/briefing/play' }.
+                                                    No page overrides by default: "Briefing" goes to the home
+                                                    page's Briefing section from every page, the portal included.
      footer   true|false                           (default true, false for app/minimal)
      hotkey   'mod+k'|'mod+j'|false                (default 'mod+k'; 'mod+j' for variant 'app',
                                                     where ⌘K already opens the portal search)
@@ -64,10 +65,10 @@ export const COMPANIES = {
 const CO_ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
 
 export const NAV = [
-  { id: 'portal',    label: 'Portal',   href: 'app.html',   hint: 'analyst console' },
-  { id: 'agent',     label: 'Company agent', href: 'agent.html', hint: 'sandbox agent by role' },
-  { id: 'concepts',  label: 'Concepts', href: 'redesigns/', hint: 'websites, OS and growth plans' },
-  { id: 'briefing',  label: 'Briefing', href: '#briefing',  hint: 'video and memo' },
+  { id: 'agent',     label: 'Company agent', href: 'agent.html', hint: 'one agent for every role' },
+  { id: 'portal',    label: 'Portal',   href: 'app.html',   hint: 'the six companies and the deal tools' },
+  { id: 'concepts',  label: 'Concepts', href: 'redesigns/', hint: 'website redesigns, software and growth plans' },
+  { id: 'briefing',  label: 'Briefing', href: '#briefing',  hint: 'films, narrated tour and memo' },
 ];
 /** Pages under these old top-bar entries now mark Concepts. */
 const NAV_PARENT = { os: 'concepts', playbooks: 'concepts' };
@@ -75,7 +76,7 @@ const NAV_PARENT = { os: 'concepts', playbooks: 'concepts' };
 export const BANNER_TEXT = `A concept by ${AUTHOR} for Broad Sky Partners (BSP), not the company's official website.`;
 export const DISCLAIMER = 'Not an official BSP or portfolio-company website.';
 
-const PAGE_LABELS = { 'index.html': 'Concept site', 'growth-plan.html': 'Growth plan', 'nationwide.html': 'Nationwide plan', 'ads.html': 'Growth marketing', 'voice-ai.html': '24/7 Voice AI', 'ai-agents.html': 'AI agents' };
+const PAGE_LABELS = { 'index.html': 'Concepts', 'growth-plan.html': 'Growth plan', 'nationwide.html': 'Nationwide plan', 'ads.html': 'Growth marketing', 'voice-ai.html': '24/7 Voice AI', 'ai-agents.html': 'AI agents plan' };
 const OS_FILES = new Set(Object.values(COMPANIES).map(c => c.osFile));
 const PLAYBOOK_FILES = new Set(['growth-plan.html', 'nationwide.html', 'ads.html', 'voice-ai.html', 'ai-agents.html']);
 
@@ -114,7 +115,7 @@ function autoCrumb(w) {
   if (w.parts[0] !== 'redesigns' || w.parts.length < 2) return null;
   const items = [{ label: 'Home', href: './' }];
   if (!w.co) {               // redesigns/voice-ai.html, redesigns/ai-agents.html
-    items.push({ label: 'Growth plans', href: 'redesigns/#growth-plans' }, { label: PAGE_LABELS[w.file] || 'Page' });
+    items.push({ label: 'Concepts', href: 'redesigns/' }, { label: PAGE_LABELS[w.file] || 'Page' });
     return items;
   }
   const c = COMPANIES[w.co];
@@ -176,20 +177,16 @@ function crumbHTML(items, aside, tag) {
   return `<div class="sys-crumb-in"><ol>${li}</ol>${aside ? `<span class="sys-crumb-aside">${esc(aside)}</span>` : ''}${tag ? conceptTagHTML() : ''}</div>`;
 }
 function footerHTML() {
-  const a = (href, label, extra = '') => `<a href="${esc(url(href))}"${extra}>${esc(label)}</a>`;
-  const cos = CO_ORDER.map(k => a(`redesigns/${COMPANIES[k].slug}/`, COMPANIES[k].short === 'CET' ? 'CET' : COMPANIES[k].short, ` data-co="${k}"`)).join('');
+  const a = (href, label) => `<a href="${esc(url(href))}">${esc(label)}</a>`;
   return `<div class="sys-wrap">
     <div class="sys-footer-grid">
       <div class="sys-footer-brand">
         <a class="sys-brand" href="${esc(ROOT)}" aria-label="${esc(PRODUCT)}, home">${MARK}<span class="sys-brand-name">${esc(PRODUCT)}</span></a>
         <p>Made by ${AUTHOR} for Broad Sky's Portfolio Resource Group. Public information about six companies, turned into clear next steps.</p>
       </div>
-      <nav class="sys-footer-col" aria-label="Portal"><p class="sys-footer-h">Portal</p>${a('app.html', 'Portal home')}${a('app.html#/home/overview', 'Command Center')}${a('app.html#/ma/overview', 'Acquisition engine')}${a('app.html#/techos/overview', 'Tech enablement')}${a('theater.html', '3D map')}</nav>
-      <nav class="sys-footer-col" aria-label="Site concepts"><p class="sys-footer-h">Site concepts</p>${cos}</nav>
-      <nav class="sys-footer-col" aria-label="Programs"><p class="sys-footer-h">Programs</p>${a('redesigns/#os', 'OS program')}${a('redesigns/#growth-plans', 'Growth plans')}${a('redesigns/voice-ai.html', '24/7 Voice AI')}${a('redesigns/ai-agents.html', 'AI agents')}${a('agent.html', 'Company agent')}</nav>
-      <nav class="sys-footer-col" aria-label="Briefing"><p class="sys-footer-h">Briefing</p>${a('#briefing', 'Video briefing')}${a('briefing/executive_memo.html', 'Executive memo')}</nav>
+      <nav class="sys-footer-row" aria-label="Site">${a('agent.html', 'Company agent')}${a('app.html', 'Portal')}${a('redesigns/', 'Concepts')}${a('#briefing', 'Briefing')}${a('briefing/executive_memo.html', 'Executive memo')}${a('sitemap.html', 'All pages')}</nav>
     </div>
-    <div class="sys-footer-legal"><p>${esc(DISCLAIMER)}</p><p class="sys-mono">Prepared by ${AUTHOR} · October 2026</p></div>
+    <div class="sys-footer-legal"><p>${esc(DISCLAIMER)}</p><p class="sys-mono">Prepared by ${AUTHOR} · November 2026</p></div>
   </div>`;
 }
 
@@ -415,7 +412,8 @@ function spySubnav() {
 }
 
 /* ── primary nav: per-page overrides + hash-route current state ───────────── */
-const APP_NAV = { briefing: 'app.html#/briefing/play' };
+/** Per-variant defaults for the primary links. Empty on purpose: every page, the portal included, sends "Briefing" to the home page's Briefing section. */
+const APP_NAV = {};
 /** NAV with per-page overrides applied: { id: href } or { id: { href, label, hint } }. */
 function navFor(over) {
   if (!over || typeof over !== 'object') return NAV;

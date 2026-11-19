@@ -380,16 +380,16 @@ button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-current]:hover{backgr
 
 /* ── 6l · footer ──────────────────────────────────────────────────────────── */
 .sys-footer{background:var(--sys-footer-bg);color:var(--sys-footer-fg);padding:56px 0 28px;font:400 14px/1.55 var(--sys-font)}
-.sys-footer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:36px 24px}
-.sys-footer-brand{grid-column:1/-1}
+/* the brand line, then one row of six links (frame.js footerHTML); the row drops under the brand when it does not fit beside it */
+.sys-footer-grid{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:24px 48px}
+.sys-footer-brand{flex:1 1 320px;min-width:0}
 .sys-footer-brand .sys-brand{color:#fff}
 .sys-footer-brand .sys-brand-sub{color:var(--sys-footer-mute)}
 .sys-footer-brand p{margin-top:14px;max-width:440px}
-.sys-footer-h{font-weight:700;color:#fff;margin-bottom:12px;letter-spacing:-.01em;font-size:14px}
-.sys-footer-col{display:flex;flex-direction:column;gap:9px;min-width:0}
-.sys-footer-col a{display:inline-flex;align-items:center;gap:8px;color:var(--sys-footer-fg);text-decoration:none}
-.sys-footer-col a:hover{color:#fff}
-.sys-footer-col a[data-co]::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--co);flex-shrink:0}
+.sys-footer-row{display:flex;flex-wrap:wrap;align-items:center;gap:0 26px;min-width:0}
+.sys-footer-row a{display:inline-flex;align-items:center;min-height:36px;font-weight:600;letter-spacing:-.01em;color:#fff;text-decoration:none}
+.sys-footer-row a:hover{text-decoration:underline;text-underline-offset:3px}
+@media (pointer:coarse){.sys-footer-row a{min-height:44px}}
 .sys-footer-legal{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 24px;margin-top:44px;padding-top:22px;border-top:1px solid rgba(255,255,255,.1);font-size:12.5px;color:var(--sys-footer-mute)}
 .sys-footer-legal p:first-child{max-width:820px;line-height:1.6}
 .sys-footer-legal .sys-mono{white-space:nowrap}
@@ -515,8 +515,6 @@ body[data-sys-layout="app"] .sys-btn[aria-pressed="true"]{background:var(--sys-i
 @media (min-width:720px){
   .sys-grid--2,.sys-grid--3{grid-template-columns:repeat(2,minmax(0,1fr))}
   .sys-kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
-  .sys-footer-grid{grid-template-columns:1.5fr repeat(4,minmax(0,1fr))}
-  .sys-footer-brand{grid-column:auto}
 }
 @media (min-width:1024px){
   .sys-grid--3{grid-template-columns:repeat(3,minmax(0,1fr))}

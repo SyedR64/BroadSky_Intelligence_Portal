@@ -37,7 +37,7 @@
   const p = new URLSearchParams(location.search);
   host.innerHTML = '';
   const inst = window.__assistant = Chat.mount(host, { mode: 'full', persona: p.get('persona') || 'portal', autoAsk: p.get('q') || undefined });
-  Frame.mount({ active: 'portal', crumb: false, persona: inst.id, chat: inst });
+  Frame.mount({ crumb: false, persona: inst.id, chat: inst });
 </script>
 </body>
 </html>
