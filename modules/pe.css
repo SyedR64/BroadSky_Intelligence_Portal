@@ -18,9 +18,11 @@
 
 /* BSP reference: a KPI strip inside the card */
 .m-pe .pe-ref{margin-top:0;box-shadow:none}
-.m-pe .pe-ref .sys-kpi-value{font-size:clamp(20px,1.8vw,26px)}
+.m-pe :is(.pe-ref,.pe-gstats) .sys-kpi-value{font-size:clamp(20px,1.8vw,26px)}
 .m-pe .pe-cstats{margin-top:0;box-shadow:none}
 @media (min-width:1181px){.m-pe .pe-ref{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.m-pe .pe-gstats{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:560px){.m-pe .pe-gstats{grid-template-columns:minmax(0,1fr)}}
 
 /* compact tables inside cards */
 .m-pe .pe-mini th,.m-pe .pe-mini td{padding:10px 12px}
@@ -33,8 +35,8 @@
 .m-pe .pe-act{display:grid;grid-template-columns:28px minmax(0,1fr);gap:var(--sys-sp-2);padding:var(--sys-sp-3) var(--sys-sp-2);border-bottom:1px solid var(--sys-line);border-radius:var(--sys-r-sm)}
 .m-pe .pe-act:last-child{border-bottom:0}
 .m-pe .pe-act .n{font:600 var(--sys-fs-xs) var(--sys-mono);color:var(--sys-mute);padding-top:2px}
-.m-pe .pe-act .h{font-size:var(--sys-fs-sm);font-weight:600;color:var(--sys-ink)}
-.m-pe .pe-act .b{margin-top:var(--sys-sp-1);font-size:var(--sys-fs-sm);line-height:1.5;color:var(--sys-ink-2)}
+.m-pe .pe-act .h{font-size:var(--sys-fs-sm);font-weight:600;color:var(--sys-ink);overflow-wrap:anywhere}
+.m-pe .pe-act .b{margin-top:var(--sys-sp-1);font-size:var(--sys-fs-sm);line-height:1.5;color:var(--sys-ink-2);overflow-wrap:anywhere}
 .m-pe .pe-act .c{gap:6px;margin-top:var(--sys-sp-2);align-items:center}
 .m-pe .pe-act .c .sys-chip{min-height:26px;padding:0 10px;font-size:var(--sys-fs-xs)}
 .m-pe .pe-act.click{cursor:pointer}
@@ -73,8 +75,22 @@
 .m-pe .pe-cell.ov{border:2px solid var(--cc);background:color-mix(in srgb,var(--cc) 12%,transparent)}
 .m-pe .pe-cell.no{width:6px;height:6px;border-radius:50%;background:var(--sys-line-2)}
 .m-pe .pe-notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sys-sp-2) var(--sys-sp-4);margin-top:var(--sys-sp-4)}
-.m-pe .pe-notes div{padding-left:10px;border-left:3px solid var(--cc);font-size:var(--sys-fs-xs);line-height:1.55;color:var(--sys-ink-2)}
+.m-pe .pe-notes div{padding-left:10px;border-left:3px solid var(--cc);font-size:var(--sys-fs-xs);line-height:1.55;color:var(--sys-ink-2);overflow-wrap:anywhere}
 .m-pe .pe-notes b{color:var(--sys-ink)}
+
+/* closed section: the portal's one disclosure look, the five rules of .ma-how in ma.css (less its top margin: the column's gap places this one) */
+.m-pe .pe-more{border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2)}
+.m-pe .pe-more>summary{display:flex;align-items:center;gap:var(--sys-sp-2);min-height:40px;padding:var(--sys-sp-2) var(--sys-sp-3);cursor:pointer;list-style:none;font-size:var(--sys-fs-sm);font-weight:600;color:var(--sys-ink)}
+.m-pe .pe-more>summary::-webkit-details-marker{display:none}
+.m-pe .pe-more>summary::before{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform var(--sys-t)}
+.m-pe .pe-more[open]>summary::before{transform:rotate(45deg)}
+/* what this one adds: summary = <b>title</b><span>one line</span>, the line under the title; the body holds the county table and its source line */
+.m-pe .pe-more>summary{flex-wrap:wrap;row-gap:2px}
+.m-pe .pe-more>summary::before{flex:none}
+.m-pe .pe-more>summary b{flex:1;min-width:0}
+.m-pe .pe-more>summary span{flex-basis:100%;padding-left:calc(7px + var(--sys-sp-2));font-size:var(--sys-fs-xs);font-weight:400;line-height:1.5;color:var(--sys-mute)}
+.m-pe .pe-more-body{padding:0 var(--sys-sp-3) var(--sys-sp-3)}
+.m-pe #pe-cbody>.small .sys-chip{margin-block:2px;padding-block:var(--sys-sp-1);white-space:normal}   /* region-wide mentions: a long name wraps inside its chip */
 
 /* read-out bullets */
 .m-pe .pe-bul{display:flex;flex-direction:column;gap:var(--sys-sp-3)}

@@ -101,7 +101,7 @@ async function load(ctx) {
 }
 
 function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261117223642'; document.head.appendChild(l); } }
-function missing(ctx, title) { ctx.el.innerHTML = ctx.ui.pageHead({ title, sub: 'Competitive intelligence on the private-equity sponsors bidding against BSP.' }) + ctx.ui.note('Research dataset <b>Private-equity landscape</b> is not yet available (still being verified). This view will populate automatically once it is published.', 'warn'); }
+function missing(ctx, title) { ctx.el.innerHTML = ctx.ui.pageHead({ title, sub: 'Competitive intelligence on the private-equity sponsors bidding against BSP.' }) + ctx.ui.note('Research dataset <b>Private-equity landscape</b> is not yet available (still being verified). This screen fills in once it is published.', 'warn'); }
 const srcFoot = (ctx, meta, extra) => ctx.ui.source(SRC_PE.text, null, meta?.generated) + (extra ? ` <span class="dim">· ${extra}</span>` : '');
 
 /* ── shared chips / actions ────────────────────────────────────────────── */
@@ -150,7 +150,7 @@ function openFirm(ctx, f, B) {
       (f.key_people || []).length ? { label: 'Key people', html: `<div class="col gap-4">${f.key_people.map(p => `<div class="small"><b>${esc(p.name)}</b> <span class="muted">${esc(p.title || '')}</span></div>`).join('')}</div>` } : null,
       { label: 'Sources', html: `<div class="col gap-4 small">${(f.sources || []).map(s => `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(fmt.host(s) || s)}</a>`).join('') || '—'}</div><div class="dim small mt-8">Retrieved ${esc(f.retrieved || B.meta.generated || '')} · threat level is an analyst judgment</div>` },
     ].filter(Boolean),
-    actions: [f.website ? { label: 'Website ↗', href: f.website } : null, { id: 'pe-deals', label: 'Deals →', onClick: () => app.go('pe', 'deals', { firm: f.id }) }, { id: 'pe-plats', label: 'Companies →', onClick: () => app.go('pe', 'platforms', { firm: f.id }) }].filter(Boolean),
+    actions: [f.website ? { label: 'Website ↗', href: f.website } : null, { id: 'pe-deals', label: 'Deals →', onClick: () => app.go('pe', 'deals', { firm: f.id }) }, { id: 'pe-plats', label: 'Companies →', onClick: () => app.go('pe', 'comparables', { firm: f.id }) }].filter(Boolean),
   });
 }
 
@@ -203,7 +203,7 @@ async function landscape(ctx) {
   el.innerHTML = `<div class="m-pe">` + ui.pageHead({
     title: 'PE landscape',
     sub: `${firms.length} sponsors chase the same deals; ${high.length} are high-threat. Fund I is ${fmt.num(medFund / bspRef.fund, 1)}× smaller than the median rival fund, so BSP wins on sector focus and co-invest, not price.`,
-    actions: `<button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" id="pe-exp">⇩ Firms CSV</button><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/pe/deals">Deal flow</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/pe/heatmap">Heatmap</a>`,
+    actions: `<button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" id="pe-exp">⇩ Firms CSV</button><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/pe/deals">Deal flow</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/cases/timeline">Sponsor precedents</a>`,
   }) + ui.kpis([
     { label: 'Sponsors profiled', value: fmt.num(firms.length), sub: `${(meta.excluded_candidates || []).length} more screened out`, color: 'var(--c-pe)' },
     { label: 'High-threat firms', value: fmt.num(high.length), sub: `${firms.filter(f => f.threat_level === 'medium').length} medium · ${firms.filter(f => f.threat_level === 'low').length} low`, color: 'var(--sys-bad)' },
@@ -216,7 +216,7 @@ async function landscape(ctx) {
         <div class="sys-kpi pe-stat"><div class="sys-kpi-label l">Fund I</div><div class="sys-kpi-value v">${fmt.money(bspRef.fund)}</div><div class="sys-kpi-sub s" title="Broad Sky Partners, LP total sold per SEC Form D${bspRef.investors ? ` (${bspRef.investors} investors)` : ''}">Form D, ${esc(bspRef.fundClose)}${bspRef.spvTotal ? ` · +${fmt.money(bspRef.spvTotal)} deal SPVs` : ''}</div></div>
         <div class="sys-kpi pe-stat"><div class="sys-kpi-label l">Companies</div><div class="sys-kpi-value v">${fmt.num(bspRef.platforms)}</div><div class="sys-kpi-sub s">6 held · ${fmt.num(bspRef.exits)} exited</div></div>
         <div class="sys-kpi pe-stat"><div class="sys-kpi-label l">Add-ons</div><div class="sys-kpi-value v">${fmt.num(bspRef.addOns)}</div><div class="sys-kpi-sub s">since late-2021 relaunch</div></div>
-        <div class="sys-kpi pe-stat"><div class="sys-kpi-label l">Equity check</div><div class="sys-kpi-value v">$${fmt.num(bspRef.checkMin / 1e6)}–${fmt.num(bspRef.checkMax / 1e6)}M</div><div class="sys-kpi-sub s">control, per brief</div></div>
+        <div class="sys-kpi pe-stat"><div class="sys-kpi-label l">Equity check</div><div class="sys-kpi-value v">$${fmt.num(bspRef.checkMin / 1e6)}–${fmt.num(bspRef.checkMax / 1e6)}M</div><div class="sys-kpi-sub s">control investments</div></div>
         <div class="sys-kpi pe-stat"><div class="sys-kpi-label l">First exit</div><div class="sys-kpi-value v">S+H</div><div class="sys-kpi-sub s">→ TPG Growth, Aug 2026</div></div>
       </div>
       <div class="mt-12">${ctx.charts.hbar([
@@ -229,7 +229,11 @@ async function landscape(ctx) {
       foot: ui.source('SEC Form D — Broad Sky Partners, LP', bspRef.fundSrc, bspRef.fundClose) + ` <span class="dim">· rival funds: Private-equity landscape research (${esc(meta.generated || '')}) · deal SPVs = ${bspRef.spvCount || 0} BSP-* Form D vehicles (BSP-TS, BSP-BPI, BSP-FL, BSP-CET), deal-specific capital not commingled with Fund I · the $137M sometimes quoted as Fund I is the BSP-FL (Frontline) vehicle</span>` })}
     ${ui.panel({ title: 'Threat by BSP portfolio company', sub: 'Sponsors overlapping each portfolio company · click a row to filter', body: `<div class="sys-table-wrap"><table class="sys-table pe-mini"><thead><tr><th>Portfolio company</th><th class="sys-n">High</th><th class="sys-n">Med</th><th class="sys-n">Low</th><th>Intensity</th><th>Top high-threat rivals</th></tr></thead><tbody>${SECTOR_KEYS.map(k => { const fs = firms.filter(f => f._overlap.includes(k)); const hm = meta.sector_heatmap?.[k]; const ma = hm?.most_active || []; const rk = f => { const i = ma.indexOf(f.id); return i < 0 ? 99 : i; }; const hi = fs.filter(f => f.threat_level === 'high').sort((x, y) => rk(x) - rk(y)); return `<tr class="click" data-ov="${k}"><td>${ctx.fmt.chip(sec(k).label, sec(k).color)}</td><td class="sys-n" style="color:var(--sys-bad-ink)">${hi.length || '·'}</td><td class="sys-n">${fs.filter(f => f.threat_level === 'medium').length || '·'}</td><td class="sys-n">${fs.filter(f => f.threat_level === 'low').length || '·'}</td><td class="small nowrap" title="${esc(hm?.intensity || '')}">${esc(String(hm?.intensity || '—').split('(')[0].trim())}</td><td class="small">${hi.map(f => esc(shortName(f.firm))).slice(0, 4).join(', ') || '<span class="dim">none</span>'}</td></tr>`; }).join('')}</tbody></table></div>`, foot: srcFoot(ctx, meta, 'threat = analyst judgment') })}
   </div>
-  ${ui.panel({ title: 'Competitor sponsors', sub: 'Sorted by threat, then overlap with BSP, then fund size · click a card for history, funds, companies, deals and sources', body: `<div id="pe-f"></div><div id="pe-cards"></div>`, cls: 'mt-12', foot: srcFoot(ctx, meta, `${(meta.caveats || []).length} caveats — fund sizes left blank where undisclosed`) })}
+  <div class="grid grid-main mt-12">
+    <div class="col gap-16">${sectorGridPanel(ctx, B)}${countiesSection(ctx)}</div>
+    ${implicationsPanel(ctx, B)}
+  </div>
+  ${ui.panel({ id: 'pe-sponsors', title: 'Competitor sponsors', sub: 'Sorted by threat, then overlap with BSP, then fund size · click a card for history, funds, companies, deals and sources', body: `<div id="pe-f"></div><div id="pe-cards"></div>`, cls: 'mt-12', foot: srcFoot(ctx, meta, `${(meta.caveats || []).length} caveats — fund sizes left blank where undisclosed`) })}
   <div class="grid grid-2 mt-12">
     ${ui.panel({ title: 'Watch list — high-threat sponsors and what to do', sub: 'Action list', body: `<div class="pe-acts" id="pe-watch">${high.slice().sort((a, b) => b._overlap.length - a._overlap.length || (b._fund || 0) - (a._fund || 0)).map((f, i) => `<div class="pe-act click" tabindex="0" role="button" data-id="${esc(f.id)}"><div class="n">${String(i + 1).padStart(2, '0')}</div><div><div class="h">${esc(f.firm)}</div><div class="b">${esc(nextAction(f))}</div><div class="sys-chips c">${overlapChips(ctx, f._overlap)}${fmt.chip(COMPETES[f.competes_for] || '', 'var(--c-pe)')}</div></div></div>`).join('')}</div>`, foot: srcFoot(ctx, meta) })}
     ${ui.panel({ title: 'Landscape read-out', sub: 'Analyst synthesis, condensed by sector', body: `<div class="pe-bul">${summary.slice(1).map(s => `<div><b>${esc(firstSentence(s))}</b> ${esc(String(s).slice(firstSentence(s).length).trim())}</div>`).join('') || ui.empty('No synthesis in dataset')}</div>`, scroll: true, foot: srcFoot(ctx, meta) })}
@@ -266,7 +270,16 @@ async function landscape(ctx) {
   el.querySelector('#pe-exp').onclick = () => ui.exportCSV(shown, cols, 'pe_landscape_firms');
   app.index(firms.map(f => ({ label: f.firm, sub: `PE sponsor · ${THREAT[f.threat_level]?.label || ''} · ${f.hq || ''}`, href: `#/pe/landscape?firm=${encodeURIComponent(f.id)}`, kind: 'PE firm', color: 'var(--c-pe)' })));
   app.index(B.plats.slice(0, 200).map(p => ({ label: p.name, sub: `${p.firm} portfolio company · ${p.sector || ''}`, href: `#/pe/comparables?q=${encodeURIComponent(p.name)}`, kind: 'Rival company', color: 'var(--c-pe)' })));
+  // sector grid rows open the sponsor profile; the county table loads on first open (its sales files are large)
+  el.querySelectorAll('.pe-matrix tbody tr').forEach(tr => tr.onclick = () => openFirm(ctx, B.byId[tr.dataset.id], B));
+  const more = el.querySelector('#pe-counties'), cc = el.querySelector('#pe-cc'); let unmounted = false, asked = false;
+  const loadCounties = () => { if (asked) return; asked = true; portfolioCounties(ctx, cc, B, () => !unmounted && document.body.contains(cc)).catch(e => { if (!unmounted) cc.innerHTML = ui.note(`Could not load county home-sales data: ${esc(e.message)}`, 'warn'); }); };
+  more.addEventListener('toggle', () => { if (more.open) loadCounties(); });
+  if (params.show === 'counties') { more.open = true; loadCounties(); more.scrollIntoView({ block: 'start' }); }
+  else if (params.show === 'grid') el.querySelector('#pe-sectors').scrollIntoView({ block: 'start' });
+  else if (params.overlap || params.q) el.querySelector('#pe-sponsors').scrollIntoView({ block: 'start' });
   if (params.firm && B.byId[params.firm]) openFirm(ctx, B.byId[params.firm], B);
+  return () => { unmounted = true; };
 }
 
 /* ── View 2: Deal flow ─────────────────────────────────────────────────── */
@@ -351,7 +364,7 @@ async function dealsView(ctx) {
   render(f.state);
 }
 
-/* ── View 3: Sector heatmap ────────────────────────────────────────────── */
+/* ── Landscape sections: sector grid, implications, rival presence by county ── */
 /* Home-sales footprints of every platform that has a county sales file in data/sales/.
    Rival presence is parsed from Private-equity landscape text (county/city names), plus region-wide mentions. */
 const FOOTPRINTS = {
@@ -374,7 +387,7 @@ const FOOTPRINTS = {
       Hartford: /\bHartford\b/, 'New Haven': /\bNew Haven\b/, Fairfield: /\bFairfield County\b|\bStamford\b|\bBridgeport\b/, 'New London': /\bNew London\b/, Providence: /\bProvidence\b/,
     },
     region: /\bNew England\b|\bMassachusetts\b|\bConnecticut\b|\bRhode Island\b/,
-    why: 'Home sales drive residential electrical/EV/solar retrofit demand; CET\'s core is commercial, so use the commercial rows in the CET module for its main market.',
+    why: 'Home sales drive residential electrical/EV/solar retrofit demand; CET\'s core is commercial, so see CET › Property transfers for its main market.',
     src: ['MassGIS L3 parcels, CT CAMA / OPM, RI town parcels', 'https://www.mass.gov/info-details/massgis-data-property-tax-parcels'],
   },
   bpi: {
@@ -461,10 +474,9 @@ async function portfolioCounties(ctx, box, B, alive) {
   ui.seg(box.querySelector('#pe-cseg'), Object.keys(FOOTPRINTS).map(k => ({ value: k, label: sec(k).label })), 'punctual_pros', show);
   await show('punctual_pros');
 }
-async function heatmap(ctx) {
-  const { el, ui, fmt, charts, esc } = ctx; injectCss();
-  const B = await load(ctx); if (!B.pe) return missing(ctx, 'Sector heatmap');
-  const { firms, meta, bspRef } = B;
+/** Sponsors × BSP portfolio companies: filled = named most-active in that sector, ring = overlap only. */
+function sectorGridPanel(ctx, B) {
+  const { ui, fmt, esc } = ctx; const { firms, meta } = B;
   const hm = meta.sector_heatmap || {};
   const active = Object.fromEntries(SECTOR_KEYS.map(k => [k, new Set(hm[k]?.most_active || [])]));
   const cellOf = (f, k) => active[k].has(f.id) ? 2 : f._overlap.includes(k) ? 1 : 0;
@@ -472,38 +484,28 @@ async function heatmap(ctx) {
     .sort((a, b) => b.cells.filter(c => c === 2).length - a.cells.filter(c => c === 2).length || b.f._threatRank - a.f._threatRank || b.cells.filter(Boolean).length - a.cells.filter(Boolean).length);
   const multi = rows.filter(r => r.cells.filter(Boolean).length >= 2).length;
   const hottest = SECTOR_KEYS.slice().sort((a, b) => active[b].size - active[a].size)[0];
-  const funds = firms.filter(f => f._fund != null).sort((a, b) => b._fund - a._fund);
-  const rank = funds.filter(f => f._fund > bspRef.fund).length + 1;
+  const open = SECTOR_KEYS.filter(k => /low/.test(hm[k]?.intensity || ''));
+  const stat = (label, value, sub) => `<div class="sys-kpi pe-stat"><div class="sys-kpi-label l">${label}</div><div class="sys-kpi-value v">${value}</div><div class="sys-kpi-sub s">${sub}</div></div>`;
+  return ui.panel({ id: 'pe-sectors', title: 'Rival activity × BSP portfolio company', sub: `Filled = named most-active in that sector · ring = overlap only · click a row for the sponsor profile · ${rows.length} sponsors active in at least one sector`,
+    body: `<div class="sys-kpis pe-cstats pe-gstats mb-12">${stat('Hottest sector', esc(sec(hottest).short), `<span title="Named most-active = sponsors analysts flag as most active in the sector; overlapping = any sponsor whose companies or mandate overlap the BSP portfolio company">${active[hottest].size} named most-active · ${firms.filter(f => f._overlap.includes(hottest)).length} overlapping</span>`)}${stat('Multi-sector rivals', fmt.num(multi), 'overlap ≥2 BSP companies')}${stat('Open-space sectors', fmt.num(open.length), open.map(k => sec(k).short).join(' · ') || '—')}</div>
+      <div class="sys-table-wrap pe-matrix"><table class="sys-table"><thead><tr><th class="l">Sponsor</th>${SECTOR_KEYS.map(k => `<th title="${esc(hm[k]?.sector || '')} — intensity: ${esc(hm[k]?.intensity || 'n/d')}"><span class="co"><span class="sys-dot" style="--co:${sec(k).color}" aria-hidden="true"></span>${esc(sec(k).short)}</span><span class="int">${fmt.chip(String(hm[k]?.intensity || 'n/d').split('(')[0].trim(), /very high/.test(hm[k]?.intensity || '') ? 'var(--sys-bad)' : /medium/.test(hm[k]?.intensity || '') ? 'var(--sys-warn)' : 'var(--sys-good)')}</span></th>`).join('')}<th>Threat</th><th class="sys-n">Fund</th></tr></thead><tbody>${rows.map(r => `<tr data-id="${esc(r.f.id)}"><td class="l" title="${esc(r.f.firm)}"><div class="nm"><b>${esc(r.f.firm.split(' - ')[0])}</b></div>${r.f.firm.includes(' - ') ? `<div class="sb dim">${esc(r.f.firm.split(' - ')[1])}</div>` : ''}</td>${r.cells.map((c, j) => `<td><span class="pe-cell ${c === 2 ? 'on' : c === 1 ? 'ov' : 'no'}" style="--cc:${sec(SECTOR_KEYS[j]).color}" title="${esc(sec(SECTOR_KEYS[j]).label)}: ${c === 2 ? 'most active' : c === 1 ? 'overlap' : '—'}"></span></td>`).join('')}<td>${threatChip(ctx, r.f.threat_level)}</td><td class="sys-n">${r.f._fund != null ? fmt.money(r.f._fund) : '<span class="dim">n/d</span>'}</td></tr>`).join('')}</tbody></table></div>
+      <div class="pe-notes">${SECTOR_KEYS.filter(k => hm[k]?.note).map(k => `<div style="--cc:${sec(k).color}"><b>${esc(sec(k).label)}.</b> ${esc(hm[k].note)}</div>`).join('')}</div>`,
+    foot: srcFoot(ctx, meta, 'most-active lists and intensity are analyst judgments · fund sizes as announced; some are co-invest/top-up vehicles') });
+}
+/** One move per company, from the research set's implications list. */
+function implicationsPanel(ctx, B) {
+  const { ui, fmt, esc } = ctx; const { meta } = B;
   const imps = Array.isArray(meta.implications_for_bsp) ? meta.implications_for_bsp : [];
   const impKey = s => { for (const [k, v] of Object.entries(SECTORS)) if (new RegExp(v.label.split(' ')[0], 'i').test(s.slice(0, 60))) return k; return null; };
-  const unmounted = { v: false };
-
-  el.innerHTML = `<div class="m-pe">` + ui.pageHead({
-    title: 'Sector heatmap',
-    sub: `${sec(hottest).label} faces the densest competition; CET and Frontline face almost none. Defend PP with proprietary sourcing and speed up CET and Frontline add-ons.`,
-    actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/pe/landscape">Landscape</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/pe/comparables">Companies</a>`,
-  }) + ui.kpis([
-    { label: 'BSP sectors mapped', value: fmt.num(SECTOR_KEYS.length), sub: `${rows.length} sponsors active in ≥1`, color: 'var(--sys-brand)' },
-    { label: 'Hottest sector', value: esc(sec(hottest).short), sub: `<span title="Named most-active = sponsors analysts flag as most active in the sector (sector heatmap); overlapping = any sponsor whose companies or mandate overlap the BSP portfolio company">${active[hottest].size} named most-active · ${firms.filter(f => f._overlap.includes(hottest)).length} overlapping</span>`, color: sec(hottest).color },
-    { label: 'Multi-sector rivals', value: fmt.num(multi), sub: 'overlap ≥2 BSP companies', color: 'var(--sys-bad)' },
-    { label: 'Open-space sectors', value: fmt.num(SECTOR_KEYS.filter(k => /low/.test(hm[k]?.intensity || '')).length), sub: SECTOR_KEYS.filter(k => /low/.test(hm[k]?.intensity || '')).map(k => sec(k).short).join(' · ') || '—', color: 'var(--sys-good)' },
-    { label: 'BSP fund-size rank', value: `#${rank}`, sub: `Fund I ${fmt.money(bspRef.fund)} · of ${funds.length + 1} funds`, color: 'var(--c-pe)' },
-  ]) + `
-  <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Rival activity × BSP portfolio company', sub: 'Filled = named most-active in that sector · ring = overlap only · click a row for the sponsor profile', body: `<div class="sys-table-wrap pe-matrix"><table class="sys-table"><thead><tr><th class="l">Sponsor</th>${SECTOR_KEYS.map(k => `<th title="${esc(hm[k]?.sector || '')} — intensity: ${esc(hm[k]?.intensity || 'n/d')}"><span class="co"><span class="sys-dot" style="--co:${sec(k).color}" aria-hidden="true"></span>${esc(sec(k).short)}</span><span class="int">${fmt.chip(String(hm[k]?.intensity || 'n/d').split('(')[0].trim(), /very high/.test(hm[k]?.intensity || '') ? 'var(--sys-bad)' : /medium/.test(hm[k]?.intensity || '') ? 'var(--sys-warn)' : 'var(--sys-good)')}</span></th>`).join('')}<th>Threat</th><th class="sys-n">Fund</th></tr></thead><tbody>${rows.map(r => `<tr data-id="${esc(r.f.id)}"><td class="l" title="${esc(r.f.firm)}"><div class="nm"><b>${esc(r.f.firm.split(' - ')[0])}</b></div>${r.f.firm.includes(' - ') ? `<div class="sb dim">${esc(r.f.firm.split(' - ')[1])}</div>` : ''}</td>${r.cells.map((c, j) => `<td><span class="pe-cell ${c === 2 ? 'on' : c === 1 ? 'ov' : 'no'}" style="--cc:${sec(SECTOR_KEYS[j]).color}" title="${esc(sec(SECTOR_KEYS[j]).label)}: ${c === 2 ? 'most active' : c === 1 ? 'overlap' : '—'}"></span></td>`).join('')}<td>${threatChip(ctx, r.f.threat_level)}</td><td class="sys-n">${r.f._fund != null ? fmt.money(r.f._fund) : '<span class="dim">n/d</span>'}</td></tr>`).join('')}</tbody></table></div>
-      <div class="pe-notes">${SECTOR_KEYS.filter(k => hm[k]?.note).map(k => `<div style="--cc:${sec(k).color}"><b>${esc(sec(k).label)}.</b> ${esc(hm[k].note)}</div>`).join('')}</div>`, foot: srcFoot(ctx, meta, 'most-active lists and intensity are analyst judgments') })}
-    ${ui.panel({ title: 'Implications for BSP', sub: 'Action list — one move per company', body: `<div class="pe-acts">${imps.map((s, i) => { const k = impKey(s); return `<div class="pe-act"><div class="n">${String(i + 1).padStart(2, '0')}</div><div><div class="h">${esc(firstSentence(s))}</div><div class="b">${esc(String(s).slice(firstSentence(s).length).trim())}</div><div class="sys-chips c">${k ? `${fmt.chip(sec(k).label, sec(k).color)}<a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/${sec(k).mod}">Open ${esc(sec(k).short)} →</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/pe/deals?sector=${k}">Rival deals →</a>` : fmt.chip('Firm level', 'var(--sys-brand)')}</div></div></div>`; }).join('') || ui.empty('No implications in dataset')}</div>`, foot: srcFoot(ctx, meta, 'analyst judgment') })}
-  </div>
-  <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Fund-size comparison — latest flagship', sub: `BSP Fund I highlighted · bars coloured by threat · ${firms.length - funds.length} firms without a disclosed fund size omitted`, body: charts.hbar([...funds.map(f => ({ label: `${f.firm.split(' - ')[0]}${f._fundYear ? ` '${String(f._fundYear).slice(2)}` : ''}`, value: f._fund, color: THREAT[f.threat_level]?.color || 'var(--c-pe)' })), { label: '▶ BSP Fund I', value: bspRef.fund, color: 'var(--sys-brand)' }, ...(bspRef.spvTotal ? [{ label: '▷ BSP Fund I + deal SPVs', value: bspRef.fund + bspRef.spvTotal, color: 'var(--sys-brand)' }] : [])].sort((a, b) => b.value - a.value), { fmt: v => fmt.money(v), labelW: 180 }) + `<div class="sys-chips pe-legend mt-12"><span><i style="background:var(--sys-bad)"></i>High threat</span><span><i style="background:var(--sys-warn)"></i>Medium</span><span><i style="background:var(--sys-mute)"></i>Low</span><span><i style="background:var(--sys-brand)"></i>BSP</span></div>`, foot: srcFoot(ctx, meta, 'fund sizes as announced; some are co-invest/top-up vehicles') + ` <span class="dim">· BSP Fund I = ${fmt.link(bspRef.fundSrc, 'SEC Form D')} (${esc(bspRef.fundClose)}); deal SPVs from BSP-* Form D filings</span>` })}
-    ${ui.panel({ title: 'Portfolio counties — rival presence × home-sales turnover', sub: 'Home sales in the counties each portfolio company serves, crossed with the rival companies research places there · switch company below', body: `<div id="pe-cc">${ui.loading('Loading county home-sales records…')}</div>`, foot: ui.source('County assessor and deed records (PA, NJ, MA, CT, RI, DC, New York City)', 'https://www.nj.gov/treasury/taxation/lpt/statdata/', 'Sep 2026') + ` <span class="dim">· rival presence parsed from Private-equity landscape text</span>` })}
-  </div></div>`;
-  el.querySelectorAll('.pe-matrix tbody tr').forEach(tr => tr.onclick = () => openFirm(ctx, B.byId[tr.dataset.id], B));
-  portfolioCounties(ctx, el.querySelector('#pe-cc'), B, () => !unmounted.v && document.body.contains(el.querySelector('#pe-cc'))).catch(e => { const b = el.querySelector('#pe-cc'); if (b) b.innerHTML = ui.note(`Could not load county home-sales data: ${esc(e.message)}`, 'warn'); });
-  return () => { unmounted.v = true; };
+  return ui.panel({ title: 'Implications for BSP', sub: 'Action list — one move per company', body: `<div class="pe-acts">${imps.map((s, i) => { const k = impKey(s); return `<div class="pe-act"><div class="n">${String(i + 1).padStart(2, '0')}</div><div><div class="h">${esc(firstSentence(s))}</div><div class="b">${esc(String(s).slice(firstSentence(s).length).trim())}</div><div class="sys-chips c">${k ? `${fmt.chip(sec(k).label, sec(k).color)}<a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/${sec(k).mod}">Open ${esc(sec(k).short)} →</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/pe/deals?sector=${k}">Rival deals →</a>` : fmt.chip('Firm level', 'var(--sys-brand)')}</div></div></div>`; }).join('') || ui.empty('No implications in dataset')}</div>`, foot: srcFoot(ctx, meta, 'analyst judgment') });
+}
+/** Rival presence by county: a closed section; landscape() fills #pe-cc the first time it is opened. */
+function countiesSection(ctx) {
+  const { ui } = ctx;
+  return `<details class="pe-more" id="pe-counties"><summary><b>Portfolio counties — rival presence × home-sales turnover</b><span>Home sales in the counties each portfolio company serves, crossed with the rival companies research places there · the records load when you open this section</span></summary><div class="pe-more-body"><div id="pe-cc"></div><p class="sys-src">${ui.source('County assessor and deed records (PA, NJ, MA, CT, RI, DC, New York City)', 'https://www.nj.gov/treasury/taxation/lpt/statdata/', 'Sep 2026')} <span class="dim">· rival presence parsed from Private-equity landscape text</span></p></div></details>`;
 }
 
-/* ── View 4: Platform comparables ──────────────────────────────────────── */
+/* ── View 3: Portfolio company comparables ─────────────────────────────── */
 async function platforms(ctx) {
   const { el, ui, fmt, charts, esc, params } = ctx; injectCss();
   const B = await load(ctx); if (!B.pe) return missing(ctx, 'Portfolio company comparables');
@@ -598,12 +600,11 @@ export default {
   views: [
     { id: 'landscape', name: 'Landscape', icon: '◎', render: landscape },
     { id: 'deals', name: 'Deal flow 2025–26', icon: '⇄', render: dealsView },
-    { id: 'heatmap', name: 'Sector heatmap', icon: '▦', render: heatmap },
     { id: 'comparables', name: 'Portfolio company comparables', icon: '◫', render: platforms },
   ],
   tour: [
     { order: 900, hash: '#/pe/landscape', caption: '<b>PE landscape.</b> 35 sponsors chase the same deals; 9 are high-threat. Median rival fund: ~4.5× Fund I.', narration: 'Thirty-five sponsors chase the same deals, nine of them high-threat. Win on focus, not price.', duration: 8000 },
-    { order: 910, hash: '#/pe/heatmap', caption: '<b>Sector heatmap.</b> Punctual Pros sits in the most crowded field; CET and Frontline still have room.', narration: 'Residential services is the most crowded field; CET and Frontline still have open space to accelerate add-ons.', duration: 7000 },
+    { order: 910, hash: '#/pe/landscape?show=grid', caption: '<b>Sector grid.</b> Punctual Pros sits in the most crowded field; CET and Frontline still have room.', narration: 'Residential services is the most crowded field; CET and Frontline still have open space to accelerate add-ons.', duration: 7000 },
     { order: 920, hash: '#/pe/deals', caption: '<b>Deal flow 2025–26.</b> Every disclosed rival deal, with those in portfolio sectors flagged.', narration: 'Every disclosed rival deal since January 2025, with those in portfolio sectors flagged.', duration: 5500 },
   ],
 };
