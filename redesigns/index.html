@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Concepts · BSP Desk</title>
+<title>Concepts · Broad Sky OS</title>
 <meta name="description" content="Six concept websites for the BSP portfolio, each paired with an OS product and a growth plan.">
 <meta name="theme-color" content="#fbfaf7">
 <script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
@@ -12,8 +12,8 @@
 <link rel="apple-touch-icon" href="../BSP_Logo.png">
 <link rel="canonical" href="https://broadsky-agent.vercel.app/redesigns/">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="BSP Desk">
-<meta property="og:title" content="Concepts · BSP Desk">
+<meta property="og:site_name" content="Broad Sky OS">
+<meta property="og:title" content="Concepts · Broad Sky OS">
 <meta property="og:description" content="Six concept websites for the BSP portfolio, each paired with an OS product.">
 <meta property="og:url" content="https://broadsky-agent.vercel.app/redesigns/">
 <meta property="og:image" content="https://broadsky-agent.vercel.app/assets/img/portal_ma_overview.jpg">
@@ -21,7 +21,7 @@
 <meta property="og:image:height" content="875">
 <meta property="og:image:alt" content="The acquisition engine: a map of add-on targets by company">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Concepts · BSP Desk">
+<meta name="twitter:title" content="Concepts · Broad Sky OS">
 <meta name="twitter:description" content="Six concept websites for the BSP portfolio, each paired with an OS product.">
 <meta name="twitter:image" content="https://broadsky-agent.vercel.app/assets/img/portal_ma_overview.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -428,7 +428,7 @@
   import { Frame } from '../assets/frame.js?v=20261123143257';
   import { Chat } from '../assets/chat.js?v=20261123143257';
   import { Gallery } from '../assets/landing.js?v=20261123143257';
-  const chat = Chat.mount(null, { persona: 'portal', short_name: 'the desk', mode: 'floating', theme: 'light' });
+  const chat = Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'light' });
   Frame.mount({ crumb: [{ label: 'Home', href: './' }, { label: 'Concepts' }], chat });
   Gallery.init();
 </script>

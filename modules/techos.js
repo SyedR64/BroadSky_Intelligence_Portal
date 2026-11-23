@@ -10,7 +10,7 @@ import * as Copy from './copy.js?v=20261123143257';
    ═══════════════════════════════════════════════════════════════════════════ */
 const injectCss = () => { if (!document.getElementById('css-techos')) { const l = document.createElement('link'); l.id = 'css-techos'; l.rel = 'stylesheet'; l.href = 'modules/techos.css?v=20261123143257'; document.head.appendChild(l); } };
 
-const OUT_LINKS = `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="index.html" title="BSP Desk landing page">Landing</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="redesigns/index.html" title="Concepts: company websites, software pages and growth plans">Concepts</a>`;
+const OUT_LINKS = `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="index.html" title="Broad Sky OS landing page">Landing</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="redesigns/index.html" title="Concepts: company websites, software pages and growth plans">Concepts</a>`;
 /* ── Platform / OS definitions (copy + calculator wiring) ────────────────── */
 const ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
 const ICON = {

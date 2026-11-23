@@ -253,7 +253,7 @@ export function workbook(XLSX, st, info = {}) {
 
   /* Inputs */
   const wi = sheet();
-  put(wi, 0, 0, S_('BSP Desk · Acquisition model'));
+  put(wi, 0, 0, S_('Broad Sky OS · Acquisition model'));
   put(wi, 0, 1, S_(`Scenario: ${st.label}`));
   put(wi, 0, 2, S_(`Prepared by Syed Rahman · ${info.date || ''}. Change the values in column C; every other sheet recalculates.`));
   put(wi, 0, 3, S_('Rows marked est. are estimates from public filings or analyst assumptions, not BSP figures.'));
@@ -430,14 +430,14 @@ export function workbook(XLSX, st, info = {}) {
   XLSX.utils.book_append_sheet(wb, finish(wsrc, [56, 80, 60, 12]), 'Sources');
 
   wb.Workbook = { Names: names };
-  wb.Props = { Title: `BSP Desk acquisition model: ${st.label}`, Author: 'Syed Rahman' };
+  wb.Props = { Title: `Broad Sky OS acquisition model: ${st.label}`, Author: 'Syed Rahman' };
   return wb;
 }
 
 /* CSV fallback: inputs, the year-by-year model and the headline results. */
 export function csv(st) {
   const p = st.vals, R = lbo(p), D = dcf(p), U = rollup(p);
-  const rows = [['BSP Desk acquisition model', st.label], [], ['Input', 'Value', 'Unit', 'Estimate']];
+  const rows = [['Broad Sky OS acquisition model', st.label], [], ['Input', 'Value', 'Unit', 'Estimate']];
   for (const m of st.inputs) rows.push([m.label, p[m.key], m.unit, st.est.has(m.key) ? 'est.' : '']);
   rows.push([], ['Year', ...R.yr.slice(0, R.N + 1)]);
   const L = [['Revenue before add-ons ($M)', 'rev'], ['EBITDA total ($M)', 'ebitda'], ['Add-on spend ($M)', 'buy'], ['Interest ($M)', 'int'], ['Cash to repay debt ($M)', 'cash'], ['Net debt ($M)', 'nd'], ['Equity cash flow ($M)', 'cf']];

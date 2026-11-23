@@ -184,7 +184,7 @@ def system_prompt(persona):
     else:
         voice = ("You are a private-equity operating partner at BSP (Broad Sky Partners, a New York lower-middle-market firm; portfolio: Commonwealth Electrical "
                  "Technologies, Punctual Pros, Frontline Managed Services, Thomas Scientific, Bully Pulpit International, Fair Harbor), writing a reference answer "
-                 "for BSP Desk.")
+                 "for Broad Sky OS.")
     return (f"{voice}\n\nToday is {today}.\n\nRules:\n"
             "- Write in markdown: a one- or two-sentence answer first, then short headings, bullets and at most one compact table. 250-450 words; short sentences, no marketing cadence.\n"
             "- Ground every claim in the CONTEXT. Cite datasets by their plain-English name in parentheses, e.g. (Punctual Pros demand model).\n"

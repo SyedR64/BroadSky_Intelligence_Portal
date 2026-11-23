@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   BSP Desk assistant backend client (ES module, no dependencies).
+   Broad Sky OS assistant backend client (ES module, no dependencies).
    Talks to the hosted assistant (server/, on Vercel; see SETUP.md). Its URL is
    read from assets/runtime.json. When no backend is live every method degrades
    quietly, so the grounded engine in chat.js keeps working on its own.

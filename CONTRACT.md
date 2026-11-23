@@ -1,4 +1,4 @@
-# BSP Desk — build contract for module authors
+# Broad Sky OS — build contract for module authors
 
 Static site (GitHub Pages, no build step, vanilla ES modules). Everything a module needs lives in `assets/core.js`.
 Read this file fully, then read `assets/core.js` and `assets/app.css` before writing a module.

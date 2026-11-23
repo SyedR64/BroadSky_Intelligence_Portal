@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI agents plan · BSP Desk</title>
+<title>AI agents plan · Broad Sky OS</title>
 <meta name="description" content="45 AI agents across six BSP portfolio companies: triggers, approvals, cost and value (est.), rollout and governance.">
 <meta name="theme-color" content="#fbfaf7">
 <script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
@@ -294,7 +294,7 @@ const frame = Frame.mount({ banner: true });
 const d = await boot().catch(e => { console.warn('agentic layer boot failed', e); return null; });
 try {
   const chat = Chat.mount(null, {
-    persona: 'portal', short_name: 'the desk', mode: 'floating', theme: 'light',
+    persona: 'portal', mode: 'floating', theme: 'light',
     faq: d?.faq || [],
     suggestions: ['What does wave 1 cost and need?', 'What does the agent program cost?', 'Which agents pay back fastest?', 'How much value does each company get from AI agents?', 'Who approves what an agent does?', 'What are the kill criteria for an agent?']
   });

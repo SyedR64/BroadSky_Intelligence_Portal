@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   BSP Desk — 3D map engine (ES module, no build step)
+   Broad Sky OS — 3D map engine (ES module, no build step)
    GPU-rendered, cinematic map presentations over the portal's real datasets.
 
    Stack (CDN only, verified 2026-10-06):

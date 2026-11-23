@@ -282,7 +282,7 @@ function loadXlsx() {
   return _xlsx;
 }
 const stamp = () => new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
-const fileBase = () => `BSP Desk acquisition model - ${(S.for || preset().label).replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim()}`;
+const fileBase = () => `Broad Sky OS acquisition model - ${(S.for || preset().label).replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim()}`;
 /* Workbook basis column: the preset's own note first, else the market benchmark, else the analyst assumption, so every
    price and financing input in the Excel file says where its number comes from. */
 const forBasis = k => S?.for && S.forVals?.[k] != null ? `Set from the acquisition engine's estimates for ${S.for}; see its profile for how each was built.` : '';
