@@ -120,7 +120,7 @@ function assessment() {
   const list = $('#qs'); if (!list) return;
   const ans = store.get('fl-posture', {}) || {};
   const opts = [['1', 'Yes'], ['0.5', 'Partly'], ['0', 'No']];
-  list.innerHTML = QUESTIONS.map((q, i) => `<li class="q" data-id="${q.id}"><div class="qt">${i + 1}. ${q.q}<small>${q.d}</small></div><div class="seg" role="group" aria-label="Answer for question ${i + 1}">${opts.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="false">${l}</button>`).join('')}</div></li>`).join('');
+  list.innerHTML = QUESTIONS.map((q, i) => `<li class="q" data-id="${q.id}"><div class="qt" title="${q.d}">${i + 1}. ${q.q}</div><div class="seg" role="group" aria-label="Answer for question ${i + 1}">${opts.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="false">${l}</button>`).join('')}</div></li>`).join('');
   const render = () => {
     $$('.q', list).forEach(li => { const v = ans[li.dataset.id]; li.classList.toggle('done', v != null); $$('button', li).forEach(b => b.setAttribute('aria-pressed', String(v != null && +b.dataset.v === v))); });
     const { score, answered } = postureScore(ans);
@@ -198,12 +198,12 @@ function drawMap(el) {
 }
 
 const INSIGHTS = [
-  { cat: 'Revenue cycle', type: 'Report', min: 7, t: 'Rejections jumped from 11% to 18% in 2025. A pre-flight checklist to bring them back.', d: 'Client AI tools now audit every line. These are the five LEDES checks that catch most rejections before submission.', src: 'https://www.elite.com/insights/news/new-elite-research-law-firms-see-64-climb-in-rejection-rates-as-client-ai-billing-scrutiny-advances' },
-  { cat: 'Security', type: 'Bulletin', min: 4, t: 'Outside counsel guidelines are the new security questionnaire', d: 'Clients now write MFA, EDR and breach-notice windows into engagement terms. Here is how to keep an evidence library current.' },
-  { cat: 'Service desk', type: 'Guide', min: 6, t: 'What "AI-optimized" should mean on a law-firm service desk', d: 'Tier-0 handles resets and access requests; judgment calls stay with people. Where to draw the line.' },
-  { cat: 'AI', type: 'Guide', min: 8, t: 'Generative AI in the firm: a rollout checklist for IT leaders', d: 'Data boundaries, vendor terms, audit logs and the rollout questions to settle before go-live.' },
-  { cat: 'Revenue cycle', type: 'Benchmark', min: 5, t: '62 days to 50: how eBilling automation shortens the cash cycle', d: 'What the fastest-paying firms do differently between invoice approval and cash application.', src: 'https://www.elite.com/insights/news/new-elite-research-law-firms-see-64-climb-in-rejection-rates-as-client-ai-billing-scrutiny-advances' },
-  { cat: 'Service desk', type: 'Event', ic: 'i-users', min: 2, t: 'Meet Frontline at ILTACON and ALA', d: 'Tabletop demos, the FirmOS posture score and a CIO roundtable on co-managed IT. Book time with the team.' },
+  { cat: 'Revenue cycle', type: 'Report', min: 7, t: 'Rejections jumped from 11% to 18% in 2025. A pre-flight checklist to bring them back.', d: 'Five LEDES checks catch most rejections before submission.', src: 'https://www.elite.com/insights/news/new-elite-research-law-firms-see-64-climb-in-rejection-rates-as-client-ai-billing-scrutiny-advances' },
+  { cat: 'Security', type: 'Bulletin', min: 4, t: 'Outside counsel guidelines are the new security questionnaire', d: 'MFA, EDR and breach-notice windows now sit in engagement terms.' },
+  { cat: 'Service desk', type: 'Guide', min: 6, t: 'What "AI-optimized" should mean on a law-firm service desk', d: 'Tier-0 handles resets and access; judgment calls stay with people.' },
+  { cat: 'AI', type: 'Guide', min: 8, t: 'Generative AI in the firm: a rollout checklist for IT leaders', d: 'Data boundaries, vendor terms, audit logs, go-live questions.' },
+  { cat: 'Revenue cycle', type: 'Benchmark', min: 5, t: '62 days to 50: how eBilling automation shortens the cash cycle', d: 'What the fastest-paying firms do between approval and cash application.', src: 'https://www.elite.com/insights/news/new-elite-research-law-firms-see-64-climb-in-rejection-rates-as-client-ai-billing-scrutiny-advances' },
+  { cat: 'Service desk', type: 'Event', ic: 'i-users', min: 2, t: 'Meet Frontline at ILTACON and ALA', d: 'Tabletop demos, FirmOS posture score, CIO roundtable on co-managed IT.' },
 ];
 const MIX = (c, p, base = 'var(--sys-surface)') => `color-mix(in srgb,${c} ${p}%,${base})`;
 const ART = { 'Revenue cycle': [MIX('var(--co)', 12), 'var(--co)', 'i-invoice', false], 'Security': ['var(--sys-navy)', MIX('var(--co)', 80, '#fff'), 'i-shield', true], 'Service desk': ['var(--sys-bg-3)', 'var(--co)', 'i-desk', false], 'AI': ['var(--sys-ink)', 'var(--sys-good)', 'i-spark', true] };
@@ -215,7 +215,7 @@ function insights() {
   bar.innerHTML = cats.map(c => `<button class="sys-chip" type="button" data-c="${c}" aria-pressed="${c === cur}">${c}</button>`).join('') + `<button class="sys-chip" type="button" data-s="1" aria-pressed="false"><span>Saved (<span id="sv-n">${saved.size}</span>)</span></button>`;
   const draw = () => {
     const rows = INSIGHTS.map((x, i) => ({ ...x, i })).filter(x => (cur === 'All' || x.cat === cur) && (!savedOnly || saved.has(x.i)));
-    grid.innerHTML = rows.length ? rows.map(x => `<article class="sys-card post"><div class="art">${artSvg(x)}</div><div class="bd"><span class="sys-card-label"><span class="type">${x.type}</span><span>· ${x.cat} · ${x.min} min</span></span><h3 class="sys-card-title">${x.t}</h3><p class="sys-card-body">${x.d}</p><div class="sys-card-foot">${x.src ? `<a href="${x.src}" target="_blank" rel="noopener">Elite research →</a>` : '<span class="sys-muted">Concept article</span>'}<button class="bm" type="button" data-i="${x.i}" aria-pressed="${saved.has(x.i)}" aria-label="${saved.has(x.i) ? 'Remove from saved' : 'Save for later'}"><svg aria-hidden="true"><use href="#i-mark"/></svg></button></div></div></article>`).join('') : '<p class="sys-src">Nothing saved yet. Use the bookmark on any piece.</p>';
+    grid.innerHTML = rows.length ? rows.map(x => `<article class="sys-card post"><div class="art">${artSvg(x)}</div><div class="bd"><span class="sys-card-label"><span class="type">${x.type}</span><span>· ${x.cat} · ${x.min} min</span></span><h3 class="sys-card-title">${x.t}</h3><p class="sys-card-body">${x.d}</p><div class="sys-card-foot">${x.src ? `<a href="${x.src}" target="_blank" rel="noopener">Elite research →</a>` : '<span class="sys-muted">Concept article</span>'}<button class="bm" type="button" data-i="${x.i}" aria-pressed="${saved.has(x.i)}" aria-label="${saved.has(x.i) ? 'Remove from saved' : 'Save for later'}"><svg aria-hidden="true"><use href="#i-mark"/></svg></button></div></div></article>`).join('') : '<p class="sys-src">Nothing saved.</p>';
     $('#sv-n').textContent = saved.size;
   };
   bar.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.s) { savedOnly = !savedOnly; b.setAttribute('aria-pressed', savedOnly); } else { cur = b.dataset.c; $$('button[data-c]', bar).forEach(x => x.setAttribute('aria-pressed', x === b)); } draw(); });
@@ -225,7 +225,7 @@ function insights() {
 
 function faqList(esc) {
   const el = $('#faq-list'); if (!el) return;
-  el.innerHTML = FAQ.filter(f => !/^Request/.test(f.q)).slice(0, 9).map((f, i) => `<details${i === 0 ? ' open' : ''}><summary>${esc(f.q)}</summary><p>${f.a.replace(/<\/?p>/g, '')}</p></details>`).join('');
+  el.innerHTML = FAQ.filter(f => !/^Request/.test(f.q)).slice(0, 9).map((f, i) => `<details><summary>${esc(f.q)}</summary><p>${f.a.replace(/<\/?p>/g, '')}</p></details>`).join('');
 }
 
 async function rationale({ Data, esc }) {
