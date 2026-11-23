@@ -108,10 +108,10 @@ function hortonNode(filings) {
   if (/Horton's Canton|97 River Road|Canton HQ/i.test(txt)) return { lat: 41.8243, lon: -72.8937, label: 'Horton · Canton CT', town: 'Canton, CT', basis: 'CET public filings: Canton HQ (97 River Road)' };
   return { lat: 41.6, lon: -72.7, label: 'Horton · Connecticut', town: 'Connecticut', basis: 'state centroid (town not in research)' };
 }
-function addNodes(ctx, map, horton, labels = true) {
+function addNodes(ctx, map, horton) {
   const { maps, esc } = ctx;
-  for (const n of NODES) maps.marker(map, n.lat, n.lon, { color: hx(n.color), label: labels ? n.label : '', size: n.size, popup: `<b>${esc(n.label)}</b>` });
-  if (horton) maps.marker(map, horton.lat, horton.lon, { color: hx(PAL.cyan), label: labels ? horton.label : '', size: 12, popup: `<b>Horton Electrical Services</b><br>${esc(horton.town)} · acquired September 15, 2026<br><span class="sys-muted">Wastewater / pump-station electrical, solar, generators, civil</span>` });
+  for (const n of NODES) maps.marker(map, n.lat, n.lon, { color: hx(n.color), label: n.label, size: n.size, popup: `<b>${esc(n.label)}</b>` });
+  if (horton) maps.marker(map, horton.lat, horton.lon, { color: hx(PAL.cyan), label: horton.label, size: 12, popup: `<b>Horton Electrical Services</b><br>${esc(horton.town)} · acquired September 15, 2026<br><span class="sys-muted">Wastewater / pump-station electrical, solar, generators, civil</span>` });
 }
 
 /* capability classes for the radar */
@@ -346,7 +346,7 @@ async function opportunities(ctx) {
   </div>`;
   const map = maps.create(el.querySelector('#op-map'), { center: [42.8, -71.3], zoom: 7 });
   fitLater(map, NE_BOUNDS);
-  addNodes(ctx, map, hortonNode(await data.research('cet_filings')), false);
+  addNodes(ctx, map, hortonNode(await data.research('cet_filings')));
   maps.legend(map, CAPS.map(c => ({ color: c.color, label: c.label })), 'Primary capability');
   const overlay = maps.overlay(map, '');
   let layer = null, rows = [], shown = 30, sortBy = ['due', 'fit', 'value'].includes(params.sort) ? params.sort : 'due';
@@ -485,17 +485,17 @@ async function wastewater(ctx) {
     ${pnl(ui, { title: 'Discharge permit status', body: charts.donut(['Effective', 'Admin Continued', 'Expired'].map(s => ({ label: s, value: P.filter(p => p.npdes_permit_status_echo === s).length, color: s === 'Expired' ? PAL.red : s === 'Admin Continued' ? PAL.amber : PAL.dim })), { fmt: v => fmt.num(v) }) + `<div class="sys-muted small" data-method>An expired or admin-continued permit often means an upgrade is coming. ECHO status mostly reflects permitting backlog, not plant condition: read it as timing only.</div>`, foot: ui.source('EPA ECHO CWA REST', 'https://echo.epa.gov/', m.generated) })}
   </div>
   <div class="mt-12">${pnl(ui, { title: 'Action list', accent: true, body: actionsList([
-    `<b>Prime the funded plants.</b> Book engineer and GC meetings on the ${funded.length} funded plants (${fmt.money(fundedPipe)}), starting with ${esc(funded.slice().sort((a, b) => (b.horton_fit || 0) - (a.horton_fit || 0)).slice(0, 3).map(p => p.facility_name).join(', '))}.`,
+    `<b>Prime the funded plants.</b> Meet engineers and GCs at the ${funded.length} funded plants (${fmt.money(fundedPipe)}): ${esc(funded.slice().sort((a, b) => (b.horton_fit || 0) - (a.horton_fit || 0)).slice(0, 3).map(p => p.facility_name).join(', '))} first.`,
     `<b>Bundle solar and efficiency.</b> ${solarAdd.length} plants qualify for solar; pair each with a NuWave aeration and VFD audit.`,
     `<b>Quote generators and pump stations.</b> ${genPS.length} accounts need generator, ATS or pump-station electrical; add 24/7 service agreements.`,
-    `<b>Watch permits.</b> ${permitNoProj.length} plants have expired or admin-continued permits and no listed project; open the relationship before ${gloss('SRF', 'state revolving fund: low-cost state loans for water projects')} listing.`,
+    `<b>Watch permits.</b> ${permitNoProj.length} plants have expired or admin-continued permits and no listed project; open the relationship before funding.`,
     `<b>Fill the MA gap.</b> ${fmt.num(P.filter(p => p.state === 'MA' && p.project_class === 'none').length)} MA plants have no listed project; work them from Worcester and Taunton with service and audit offers.`,
   ]), fk: 'method', foot: `<span class="dim">${esc(Copy.text((m.caveats || []).slice(0, 2).join(' ')))}</span>` })}</div>`);
 
   const map = maps.create(el.querySelector('#ww-map'), { center: [41.9, -71.8], zoom: 8 });
   let layer = null, rows = P, tbl;
   const draw = rs => { if (layer) layer.remove(); layer = pts(maps, map, rs.slice().sort((a, b) => (b.design_flow_mgd || 0) - (a.design_flow_mgd || 0)), { color: p => (CLASS[p.project_class] || CLASS.none).color, radius: p => p.design_flow_mgd ? Math.min(22, 3.5 + Math.sqrt(p.design_flow_mgd) * 2.2) : 3.5, cluster: false, opacity: .8, onClick: p => { openPlant(ctx, p, map); tbl?.select(p.id); }, popup: p => `<b>${esc(p.facility_name)}</b><br>${esc(p.town)}, ${esc(p.state)} · ${fmt.num(p.design_flow_mgd, 1)} MGD<br>${esc(p.recent_or_planned_project || 'No listed project')}<br>Horton fit ${esc(p.horton_fit)}` }); };
-  addNodes(ctx, map, hortonNode(filings), false);
+  addNodes(ctx, map, hortonNode(filings));
   maps.legend(map, Object.values(CLASS).map(c => ({ color: c.color, label: c.label })), 'Project class');
   fitLater(map, SNE_BOUNDS);
   const columns = [
@@ -728,7 +728,7 @@ async function transfers(ctx) {
   UI_seg(ctx, el.querySelector('#tx-seg'), segOpts, seg, v => { seg = v; apply(f.state); });
   UI_seg(ctx, el.querySelector('#tx-roll-seg'), [{ value: 'n', label: 'by count' }, { value: 'vol', label: 'by $' }], rollBy, v => { rollBy = v; renderRoll(); });
   const map = maps.create(el.querySelector('#tx-map'), { center: [42.0, -72.0], zoom: 8 });
-  addNodes(ctx, map, { lat: 41.8243, lon: -72.8937, label: 'Horton · Canton CT', town: 'Canton, CT' }, false);
+  addNodes(ctx, map, { lat: 41.8243, lon: -72.8937, label: 'Horton · Canton CT', town: 'Canton, CT' });
   maps.legend(map, Object.entries(USE_HEX).map(([k, c]) => ({ color: c, label: k === 'residential' ? 'residential (home sale)' : k })), 'Use type');
   fitLater(map, [[41.0, -73.73], [42.75, -70.6]]);
 
