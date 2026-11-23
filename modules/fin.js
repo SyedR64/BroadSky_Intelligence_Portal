@@ -638,7 +638,9 @@ function publicAffairsDeals(bpiF, rivalF, plan) {
 /* names as a reader says them, for headings ("What this implies for Punctual Pros") */
 const CO_SAY = { cet: 'CET', pp: 'Punctual Pros', fl: 'Frontline', ts: 'Thomas Scientific', bpi: 'BPI', fh: 'Fair Harbor' };
 /* drafting notes in the dataset's company label never reach the page */
-const benchName = (b, co) => String(b.bsp_company || co?.name || '').replace(/\s*\(per brief\)/i, '');
+/* Smith + Howard was sold (August 2026): the comps dataset still lists it beside Frontline, so drop it at draw time ("Frontline (and Smith + Howard via CBIZ)" → "Frontline") */
+const noSH = t => String(t ?? '').replace(/\s*\(and Smith \+ Howard via CBIZ\)/g, '').replace(/,\s*Smith \+ Howard(?=[,)])/g, '');
+const benchName = (b, co) => noSH(String(b.bsp_company || co?.name || '').replace(/\s*\(per brief\)/i, ''));
 /* the Private equity landscape's Overlap filter key for a sector (same keys as OVERLAP above) */
 const overlapKey = s => Object.keys(OVERLAP).find(k => OVERLAP[k].co === SECTORS[s]?.co);
 
@@ -725,7 +727,7 @@ async function compsView(ctx) {
   </div>
   <div class="mt-12">${ui.note(`<b>BSP’s edge is multiple arbitrage:</b> buy small add-ons at lower-middle-market prices and sell the combined company nearer scaled-sponsor prices. Analyst assumption: private lower-middle-market add-ons typically trade at about 5–9x EBITDA, below public comps and scaled sponsor companies. Trades (CET, PP) are the growth engine with thin-to-mid margins; lab distribution and agencies are low-growth. <a href="${rollup}">Size one add-on in the roll-up model →</a>`, 'warn')}</div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Implications for BSP', sub: 'Research synthesis of the public comparables', body: `<div class="small text-2" style="line-height:1.55">${segments(pc.meta?.financial_picture).map(s => `<p class="mb-8">${esc(clean(s))}</p>`).join('') || '—'}</div>`, foot: ui.source('Public comparables synthesis (research team)', null, pc.meta?.generated) })}
+    ${ui.panel({ title: 'Implications for BSP', sub: 'Research synthesis of the public comparables', body: `<div class="small text-2" style="line-height:1.55">${segments(pc.meta?.financial_picture).map(s => `<p class="mb-8">${esc(noSH(clean(s)))}</p>`).join('') || '—'}</div>`, foot: ui.source('Public comparables synthesis (research team)', null, pc.meta?.generated) })}
     ${ui.panel({ title: 'Benchmark estimate table', sub: 'Metric · estimate · confidence. Click a row for the basis.', body: '<div id="cp-est"></div>', foot: ui.source('Public comparables estimate table · estimates, not reported figures', null, pc.meta?.generated) })}
   </div>
   </div>`;
@@ -756,7 +758,7 @@ async function compsView(ctx) {
       sections: [
         { label: 'Latest FY', html: ui.kv({ 'Fiscal year': esc(c.latest_fy), Revenue: fmt.money(c._rev), 'Revenue growth': sPct(fmt, c.revenue_growth_latest_pct), '3-yr CAGR': sPct(fmt, c.revenue_cagr_2023_latest_pct), 'Operating margin': `${pctF(fmt, c.operating_margin_latest_pct)} <span class="dim">(avg ${pctF(fmt, c.operating_margin_avg_pct)})</span>`, 'EBITDA margin': pctF(fmt, c.ebitda_margin_latest_pct), Employees: fmt.num(c._emp), 'Revenue / employee': fmt.money(c.revenue_per_employee_usd), Confidence: fmt.chip(c.confidence || 'n/a', confColor(c.confidence)) }) },
         { label: 'Fiscal years', html: `<div class="fin-insp sys-table-wrap"><table class="sys-table"><thead><tr><th>FY</th><th class="sys-n n">Revenue</th><th class="sys-n n">Op. inc.</th><th class="sys-n n">EBITDA</th><th class="sys-n n">Op. mgn</th><th class="sys-n n">Staff</th></tr></thead><tbody>${(c.fiscal_years || []).map(y => `<tr><td class="sys-n n">${esc(y.fy)}</td><td class="sys-n n">${fmt.money(y.revenue_usd)}</td><td class="sys-n n">${fmt.money(y.operating_income_usd)}</td><td class="sys-n n">${fmt.money(y.ebitda_approx_usd)}</td><td class="sys-n n">${pctF(fmt, y.operating_margin_pct)}</td><td class="sys-n n">${fmt.num(y.employees)}</td></tr>`).join('')}</tbody></table></div>` },
-        { label: 'What it tells us', html: `<div class="small text-2">${esc(c.what_it_tells_us || '')}</div>${c.status_note ? `<div class="small dim mt-8">${esc(c.status_note)}</div>` : ''}${c.employee_note ? `<div class="small dim mt-8">${esc(c.employee_note)}</div>` : ''}` },
+        { label: 'What it tells us', html: `<div class="small text-2">${esc(noSH(c.what_it_tells_us))}</div>${c.status_note ? `<div class="small dim mt-8">${esc(c.status_note)}</div>` : ''}${c.employee_note ? `<div class="small dim mt-8">${esc(c.employee_note)}</div>` : ''}` },
         { label: 'Sources', html: `<div class="col gap-4 small">${c.tenk_url ? fmt.link(c.tenk_url, `${c.tenk_form || '10-K'} filed ${c.tenk_filed || ''}`) : ''}${fmt.link(c.source_url, 'XBRL company facts')}</div><div class="dim small mt-8">Retrieved ${esc(c.retrieved || '')}</div>` },
         { label: 'Next action', html: `<div class="small text-2">Use ${esc(c.ticker)} as a ${esc(c._sector.toLowerCase())} reference point for ${esc(co?.name || 'the portfolio company')}: compare its ${fmt.money(c.revenue_per_employee_usd)} revenue per employee and ${pctF(fmt, c.ebitda_margin_latest_pct)} EBITDA margin with the company's management accounts.</div>` },
       ],
@@ -768,7 +770,7 @@ async function compsView(ctx) {
     const co = coById(SECTORS[s]?.co), ov = overlapKey(s);
     return ui.panel({ cls: `bench${wide ? ' bench-wide' : ''}`, title: `<span class="fin-co-head"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${co?.color}"></i>${esc(SECTORS[s]?.label || s)}</span>`, sub: `Benchmarks ${esc(benchName(b, co))}, ${esc(b.n)} peers · ${esc((b.comps || []).join(', '))}`,
       body: `<div class="sys-kpis stats">${fig('Growth', sPct(fmt, b.median_revenue_growth_latest_pct))}${fig('3-yr CAGR', sPct(fmt, b.median_revenue_cagr_2023_latest_pct), '', 'Revenue growth a year, FY2023 to latest')}${fig('Op. margin', pctF(fmt, b.median_operating_margin_latest_pct))}${fig('Multi-yr avg', pctF(fmt, b.median_operating_margin_multiyear_avg_pct), '', 'Operating margin, multi-year average')}${fig('EBITDA margin', pctF(fmt, b.median_ebitda_margin_latest_pct))}${fig('Rev / employee', fmt.money(b.median_revenue_per_employee_usd))}</div><h4 class="sys-card-label mb-8">${s === 'communications_agencies' ? 'Holding-company read-across' : `What this implies for ${esc(CO_SAY[co?.id] || co?.name || 'BSP')}`}</h4><div class="sys-card-body imp">${esc(b.what_this_implies_for_bsp || '')}</div>${ov ? `<div class="small text-2 mt-12">Sponsors in this sector bid against BSP for add-ons and are the likely exit buyers: <a href="#/pe/landscape?overlap=${ov}">Private equity →</a></div>` : ''}`,
-      actions: wide ? `<a class="fin-link" href="#/fin/comps">All sectors →</a>` : `<a class="fin-link" href="#/fin/comps?sector=${s}">Filter →</a>`,
+      actions: wide ? `<a class="fin-link" href="#/fin/comps" data-all>All sectors →</a>` : `<a class="fin-link" href="#/fin/comps?sector=${s}">Filter →</a>`,
       foot: ui.source('Median of sector comps, latest FY', null, pc.meta?.generated) });
   };
   const draw = st => {
@@ -793,6 +795,8 @@ async function compsView(ctx) {
     const cards = Object.entries(bm).filter(([s]) => !one || s === one).map(([s, b]) => sectorCard(s, b, !!one)).join('');
     const focus = el.querySelector('#cp-focus'), grid = el.querySelector('#cp-bm'), dealsEl = el.querySelector('#cp-deals');
     focus.innerHTML = !one ? '' : `${one === 'communications_agencies' ? dealsHtml : ''}<div class="mt-12">${cards}</div><div class="mt-12"></div>`;
+    // "All sectors →" also clears the picker: when the sector came from the picker the address does not change, so the link alone would do nothing
+    const allLink = focus.querySelector('[data-all]'); if (allLink) allLink.onclick = () => { const s = el.querySelector('#cp-f select[data-k="sector"]'); if (s) { s.value = ''; s.dispatchEvent(new Event('change')); } };
     grid.innerHTML = one ? '' : cards; grid.style.display = one ? 'none' : '';   // not the hidden attribute: .grid{display:grid} in app.css would override it
     dealsEl.innerHTML = one ? '' : dealsHtml;
     wireDeals();   // the transactions table, wherever the block was placed
@@ -810,7 +814,7 @@ async function compsView(ctx) {
 
   // benchmark estimates (from the comparables research): the basis opens on click
   const bEst = toArr(pc.meta?.estimate_table), estEl = el.querySelector('#cp-est');
-  if (bEst.length) ui.table(estEl, { rows: bEst.map((e, i) => ({ ...e, id: i })), pageSize: 10, exportName: 'bsp_benchmark_estimates', columns: [
+  if (bEst.length) ui.table(estEl, { rows: bEst.map((e, i) => ({ ...e, metric: noSH(e.metric), id: i })), pageSize: 10, exportName: 'bsp_benchmark_estimates', columns: [
     { key: 'metric', label: 'Metric', wrap: true, fmt: v => `<span class="small">${esc(v)}</span>` },
     { key: 'estimate', label: 'Estimate', wrap: true, fmt: v => `<b class="small">${esc(v)}</b>` },
     { key: 'confidence', label: 'Conf.', fmt: v => fmt.chip(v || 'n/a', confColor(v)) },
