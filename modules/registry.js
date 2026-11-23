@@ -20,17 +20,18 @@ import fin from './fin.js?v=20261123143257';
 import techos from './techos.js?v=20261123143257';
 import theater from './theater.js?v=20261123143257';
 import briefing from './briefing.js?v=20261123143257';
+import connect from './connect.js?v=20261123143257';
 /* Rail and heading names. Headings read "<module name> · <view title>" (modules/copy.js VIEW_TITLES), so a module
    name must not repeat a word of its own view titles ("PE landscape · sponsor landscape"). Ids never change. */
 const NAMES = { cases: 'Sponsor precedents', pe: 'Private equity', national: 'US expansion', fin: 'Fundamentals', briefing: 'Narrated tour' };
-export const modules = [home, signals, bsp, cet, pp, fl, ts, bpi, fh, ma, deal, cases, pe, national, fin, techos, theater, briefing];
+export const modules = [home, signals, bsp, cet, pp, fl, ts, bpi, fh, ma, deal, cases, pe, national, fin, techos, theater, briefing, connect];
 for (const m of modules) if (NAMES[m.id]) m.name = NAMES[m.id];
 
 /* ── The side menu: three groups, one item per module, in this order ────────────
    A module that is not listed is off the menu: its address, tabs, search entries and tour steps are unchanged, and it
    shows in the menu only while it is open. scripts/make_sitemap.py reads RAIL by regex: keep it one statement of
    ['Group name', ['id', …]] pairs. */
-const RAIL = [['Portfolio', ['home', 'cet', 'pp', 'fl', 'ts', 'bpi', 'fh']], ['Deals', ['ma', 'deal', 'pe', 'bsp']], ['Value creation', ['signals', 'fin', 'techos']]];
+const RAIL = [['Portfolio', ['home', 'cet', 'pp', 'fl', 'ts', 'bpi', 'fh']], ['Deals', ['ma', 'deal', 'pe', 'bsp']], ['Value creation', ['signals', 'fin', 'techos', 'connect']]];
 /* The modules off the menu. In the portal the open one is drawn as a 15th item under a rule, with no heading (a fourth
    heading does not fit a laptop screen); this name is the heading they share on the "All pages" page (make_sitemap.py). */
 const OFF_MENU_GROUP = 'More';
