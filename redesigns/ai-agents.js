@@ -69,11 +69,11 @@ const TS_MATURITY_MO = (2027 * 12 + 11) - (START.y * 12 + START.m); // Dec 2027
 
 /* Value type: what kind of EBITDA each formula produces, and how much of it we count when risk-adjusting. */
 const VT = {
-  cost: { label: 'Hard cost-out', short: 'Cost-out', hair: [1, 1], col: 'var(--ag-vt-cost)', rule: 'counted at 100%' },
-  wc: { label: 'Working-capital carry', short: 'WC carry', hair: [1, 1], col: 'var(--ag-vt-wc)', rule: 'counted at 100% (interest on cash released)' },
-  rev: { label: 'Margin on revenue lift & leakage recovery', short: 'Revenue lift', hair: [0.5, 0.5], col: 'var(--ag-vt-rev)', rule: 'counted at 50% (overlaps between agents, unproven at our scale)' },
-  product: { label: 'New recurring products', short: 'New products', hair: [0.5, 0.5], col: 'var(--ag-vt-product)', rule: 'counted at 50% (needs buyers and contracts)' },
-  cap: { label: 'Freed capacity (hours × loaded rate)', short: 'Capacity', hair: [0, 0.5], col: 'var(--ag-vt-cap)', rule: 'counted at 0–50%: EBITDA only with a hiring-avoidance or headcount plan' },
+  cost: { label: 'Hard cost-out', short: 'Cost-out', hair: [1, 1], col: 'var(--ag-vt-cost)', rule: 'counted at 100%', pct: '100%' },
+  wc: { label: 'Working-capital carry', short: 'WC carry', hair: [1, 1], col: 'var(--ag-vt-wc)', rule: 'counted at 100% (interest on cash released)', pct: '100%' },
+  rev: { label: 'Margin on revenue lift & leakage recovery', short: 'Revenue lift', hair: [0.5, 0.5], col: 'var(--ag-vt-rev)', rule: 'counted at 50% (overlaps between agents, unproven at our scale)', pct: '50%' },
+  product: { label: 'New recurring products', short: 'New products', hair: [0.5, 0.5], col: 'var(--ag-vt-product)', rule: 'counted at 50% (needs buyers and contracts)', pct: '50%' },
+  cap: { label: 'Freed capacity (hours × loaded rate)', short: 'Capacity', hair: [0, 0.5], col: 'var(--ag-vt-cap)', rule: 'counted at 0–50%: EBITDA only with a hiring-avoidance or headcount plan', pct: '0–50%' },
 };
 const VT_ORDER = ['cost', 'wc', 'rev', 'product', 'cap'];
 const VTYPE = {
@@ -107,7 +107,7 @@ const CASH = {
   'ag-fh-04': { usd: 8e6 * 0.08, how: '8% less excess on ~$8M inventory' },
 };
 /* Re-sequencing: TS has the Dec-2027 maturity; its inventory agent must land before the Dec-2027 maturity. */
-const RESEQ = { 'ag-ts-05': { from: 4, to: 2, why: 'Moved from wave 4 to wave 2. Thomas Scientific’s loan matures in December 2027; in wave 4 (Q4-27 to Q1-28) the inventory release would land after the refinancing.' } };
+const RESEQ = { 'ag-ts-05': { from: 4, to: 2, short: 'Thomas Scientific inventory agent, from wave 4: its loan matures December 2027.', why: 'Moved from wave 4 to wave 2. Thomas Scientific’s loan matures in December 2027; in wave 4 (Q4-27 to Q1-28) the inventory release would land after the refinancing.' } };
 /* Revised wave gates. The dataset gated wave 1 on controls 1–5 only, although three wave-1 agents talk to customers. */
 const GATE_FIX = {
   4: 'Monitoring agents priced as recurring services (contracts, SLAs, client reporting); AI-content labeling live at BPI and Fair Harbor. (The Frontline confidentiality evidence pack moved to the wave-1 gate.)',
@@ -208,7 +208,6 @@ function hero() {
   $('#hero-count').textContent = AG.length;
   $('#hero-radj').textContent = `${money(T.netLo)}–${money(T.netHi)}`;
   $('#hero-vt').innerHTML = vtStrip(AG) + vtLegend();
-  $('#hero-kpis').innerHTML = [['Agents', AG.length, 'Across six companies'], ['Build cost', money(T.build), 'One-time, all waves'], ['Run cost a year', money(T.run), 'Licences, model spend, upkeep'], ['Payback', pbTxt(T.payback), 'On risk-adjusted net, mid case']].map(([k, v, s], i) => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${k}</span><span class="sys-kpi-value">${v}${i ? EST() : ''}</span><span class="sys-kpi-sub">${s}</span></div>`).join('');
   { const g = new Date((D.meta.generated || '2026-10-06') + 'T12:00:00'); $('#gen-date').textContent = isNaN(g) ? 'Oct 2026' : g.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }); }
   const ss = sentences(deID(D.meta.program_summary)); const paras = [];
   for (let i = 0; i < ss.length; i += 3) paras.push(ss.slice(i, i + 3).join(' '));
@@ -217,10 +216,10 @@ function hero() {
   const seq = (WAVES[0]?.agents || []).map(id => AG.find(a => a.id === id)).filter(Boolean);
   let k = 0; const show = (a, animate) => {
     $('#run-id').textContent = `${CO[a.company].name} · agent run`;
-    $('#run-trigger').textContent = clip(a.trigger, 120);
+    $('#run-trigger').textContent = clip(a.trigger, 56);
     $('#run-agent').textContent = a.agent;
-    $('#run-tools').innerHTML = (a.tools_it_uses || []).slice(0, 3).map(t => `<span>${esc(clip(t, 28))}</span>`).join('');
-    $('#run-human').textContent = clip(sentences(a.human_in_the_loop)[0], 130);
+    $('#run-tools').innerHTML = (a.tools_it_uses || []).slice(0, 1).map(t => `<span>${esc(clip(t, 28))}</span>`).join('');
+    $('#run-human').textContent = clip(sentences(a.human_in_the_loop)[0], 52);
     $('#run-co').innerHTML = `${dot(a.company)} ${esc(CO[a.company].name)} · ${esc(a.os)}`;
     $('#run-val').textContent = `${money(a.est_annual_value_usd)} a year ceiling`;
     const steps = $$('#run .rs'); const st = $('#run-status');
@@ -240,20 +239,22 @@ function economics() {
   const fullMo = Math.max(...AG.map(a => E[a.id].live)) + RAMP_MO;
   const inv = Object.values(RA).map(r => r.investment_usd || [0, 0]); const invLo = sumBy(inv, x => x[0]), invHi = sumBy(inv, x => x[1]);
   $('#eco-kpis').innerHTML = [
-    ['Ceiling a year', money(T.ceil), 'Every agent ramped, before costs'],
-    ['Risk-adjusted net a year', `${money(T.netLo)}–${money(T.netHi)}`, 'Haircut by value type, less run cost'],
-    ['Build, one-time', money(T.build), `${Math.round(T.engW)} engineer-weeks plus pilots`],
-    ['Run cost a year', money(T.run), 'Licences, model spend, upkeep'],
-    ['Payback', pbTxt(T.payback), 'Build ÷ monthly risk-adjusted net (mid case)'],
+    ['Ceiling a year', money(T.ceil), ''],
+    ['Risk-adjusted net a year', `${money(T.netLo)}–${money(T.netHi)}`, ''],
+    ['Build, one-time', money(T.build), `${Math.round(T.engW)} engineer-weeks`],
+    ['Run cost a year', money(T.run), ''],
+    ['Payback', pbTxt(T.payback), ''],
     ['Agent engineers', `${w1.eng} → ${peak.eng}`, `${w1.q}, peaking in ${peak.q}`],
-  ].map(([k, v, s]) => `<div class="sys-kpi"><span class="sys-kpi-label">${k}</span><span class="sys-kpi-value">${v}${EST()}</span><span class="sys-kpi-sub">${s}</span></div>`).join('');
+  ].map(([k, v, s]) => `<div class="sys-kpi"><span class="sys-kpi-label">${k}</span><span class="sys-kpi-value">${v}${EST()}</span>${s ? `<span class="sys-kpi-sub">${s}</span>` : ''}</div>`).join('');
   $('#eco-strip').innerHTML = vtStrip(AG, 'vt-lg') + vtLegend();
   $('#eco-types').innerHTML = `<thead><tr><th>Value type</th><th class="n">Agents</th><th class="n">Ceiling</th><th class="rule">How we count it</th><th class="n">Risk-adjusted (est.)</th></tr></thead><tbody>${VT_ORDER.map(t => {
     const L = AG.filter(a => vtype(a) === t); const v = sumBy(L, a => a.est_annual_value_usd); const [lo, hi] = VT[t].hair;
-    return `<tr><td><i class="vt-sw" style="background:${VT[t].col}"></i>${esc(VT[t].label)}<small class="rule-m">${esc(VT[t].rule)}</small></td><td class="n">${L.length}</td><td class="n">${money(v)}</td><td class="rule">${esc(VT[t].rule)}</td><td class="n">${lo === hi ? money(v * lo) : `${money(v * lo)}–${money(v * hi)}`}</td></tr>`;
+    return `<tr><td><i class="vt-sw" style="background:${VT[t].col}"></i>${esc(VT[t].label)}<small class="rule-m">${VT[t].pct}</small></td><td class="n">${L.length}</td><td class="n">${money(v)}</td><td class="rule">${VT[t].pct}</td><td class="n">${lo === hi ? money(v * lo) : `${money(v * lo)}–${money(v * hi)}`}</td></tr>`;
   }).join('')}<tr class="tot"><td>Total<small class="rule-m">net of est. run cost ${money(T.run)} a year</small></td><td class="n">${AG.length}</td><td class="n">${money(T.ceil)}</td><td class="rule">less est. run cost ${money(T.run)} a year</td><td class="n">${money(T.netLo)}–${money(T.netHi)}</td></tr></tbody>`;
   const capV = sumBy(AG.filter(a => vtype(a) === 'cap'), a => a.est_annual_value_usd);
   const nettedN = AG.filter(a => NETTED.has(a.id)).length;
+  $('#eco-cap').innerHTML = `${money(capV)} of the ${money(T.ceil)} is hours saved, not EBITDA.`;
+  $('#m-types').innerHTML = VT_ORDER.map(t => `<li><b>${esc(VT[t].label)}:</b> ${esc(VT[t].rule)}.</li>`).join('');
   $('#eco-types-foot').innerHTML = `${AG.filter(a => vtype(a) === 'cap').length} agents (${money(capV)}, ${pct(capV, T.ceil)}% of the ceiling) are hours saved × loaded rate. That is EBITDA only if a company hires fewer people or redeploys them to billable work, so each one needs a named hiring-avoidance plan before it is counted. Only ${nettedN} of ${AG.length} value formulas subtract a run cost; the run costs here are charged to the other ${AG.length - nettedN}.`;
   $('#eco-waves').innerHTML = `<thead><tr><th>Wave</th><th>When</th><th class="n">Agents</th><th class="n">Build</th><th class="n">Run a year</th><th class="n">Engineers</th><th class="n">Ceiling</th><th class="n">Risk-adjusted net</th><th class="n">Payback</th></tr></thead><tbody>${WR.map(r => `<tr><td>Wave ${r.w.wave}</td><td style="white-space:nowrap">${r.q}</td><td class="n">${r.ags.length}</td><td class="n">${money(r.T.build)}</td><td class="n">${money(r.T.run)}</td><td class="n">${r.eng}</td><td class="n">${money(r.T.ceil)}</td><td class="n">${money(r.T.netLo)}–${money(r.T.netHi)}</td><td class="n">${pbTxt(r.T.payback)}</td></tr>`).join('')}<tr class="tot"><td>Program</td><td style="white-space:nowrap">${qRange(0, +WAVES[WAVES.length - 1].months.split('-')[1])}</td><td class="n">${AG.length}</td><td class="n">${money(T.build)}</td><td class="n">${money(T.run)}</td><td class="n">peak ${peak.eng}</td><td class="n">${money(T.ceil)}</td><td class="n">${money(T.netLo)}–${money(T.netHi)}</td><td class="n">${pbTxt(T.payback)}</td></tr></tbody>`;
   const neg = AG.filter(a => E[a.id].netHi <= 0);
@@ -270,15 +271,15 @@ function economics() {
   $('#ask').innerHTML = `<p class="sys-card-label">The ask</p>
     <h3 id="ask-h">Approve wave 1: ${w1.ags.length} agents, ${money(W1.build)} to build, ${w1.eng} agent engineers.</h3>
     <ul class="ask-list">
-      <li><b>Scope.</b> ${w1.ags.length} agents across ${cos} companies in ${w1.q} (${monOf(w1.s)} to ${monOf(w1.e - 0.01)}): ${w1.ags.map(a => esc(a.agent)).join('; ')}.</li>
-      <li><b>Budget.</b> ${money(W1.build)} one-time (engineering, implementation, eval sets, pilots) and ${money(W1.run)} a year to run. Est., until vendor quotes.</li>
-      <li><b>Team.</b> ${w1.eng} agent engineers plus a named owner in each company. Wave 2 needs ${WR[1]?.eng ?? '—'}.</li>
-      <li><b>Controls.</b> 1–${gnum(5)} live everywhere before go-live; control ${gnum(7)} and the confidentiality evidence pack before the Frontline service desk touches law-firm data.</li>
-      <li><b>Day-90 gate review.</b> Each agent measured against its 8-week baseline. Continue at ≥ 50% of target; otherwise fix or stop.</li>
+      <li><b>Scope.</b> ${w1.ags.length} agents, ${cos} companies, ${w1.q} (${monOf(w1.s)} to ${monOf(w1.e - 0.01)}): ${w1.ags.map(a => esc(a.agent)).join('; ')}.</li>
+      <li><b>Budget.</b> ${money(W1.build)} one-time and ${money(W1.run)} a year to run${EST()}</li>
+      <li><b>Team.</b> ${w1.eng} agent engineers and a named owner per company. Wave 2 needs ${WR[1]?.eng ?? '—'}.</li>
+      <li><b>Controls.</b> 1–${gnum(5)} everywhere; ${gnum(7)} and the confidentiality evidence pack at Frontline.</li>
+      <li><b>Day-90 gate.</b> Each agent against its 8-week baseline: continue at ≥ 50% of target, else fix or stop.</li>
     </ul>
     <div class="ask-val"><div><span>Wave-1 ceiling</span><b class="sys-num">${money(W1.ceil)}</b></div><div><span>Risk-adjusted net</span><b class="sys-num">${money(W1.netLo)}–${money(W1.netHi)}</b></div><div><span>Payback</span><b class="sys-num">${pbTxt(W1.payback)}</b></div></div>
-    <p class="ask-foot">All figures estimated until vendor quotes arrive.</p>
-    <p class="ask-foot">Full ceiling run-rate arrives around ${qOf(fullMo)} (month ${Math.round(fullMo)}), not month 18: agents ramp over two quarters after go-live.</p>`;
+    <p class="ask-foot">Full ${money(T.ceil)} run-rate: ${qOf(fullMo)}.</p>`;
+  $('#m-ask').innerHTML = `The ask. Budget covers engineering, implementation, eval sets and pilots; figures are estimates until vendor quotes arrive. Controls 1–${gnum(5)} live everywhere before go-live; control ${gnum(7)} and the confidentiality evidence pack before the Frontline service desk touches law-firm data. Full ceiling run-rate arrives around ${qOf(fullMo)} (month ${Math.round(fullMo)}), not month 18: agents ramp over two quarters after go-live.`;
 }
 
 /* ── Catalog ───────────────────────────────────────────────────────────── */
@@ -317,7 +318,7 @@ const sorted = list => list.slice().sort({
   wave: (a, b) => a.wave - b.wave || b.est_annual_value_usd - a.est_annual_value_usd,
 }[S.sort] || ((a, b) => b.est_annual_value_usd - a.est_annual_value_usd));
 function flowHTML() {
-  return `<div class="flow" aria-label="Trigger, then agent, then human approval"><span class="fn fn-t">${ICO.t}Trigger</span><span class="fl"></span><span class="fn fn-a">${ICO.a}Agent</span><span class="fl"></span><span class="fn fn-h">${ICO.h}Approve</span></div>`;
+  return `<div class="flow" aria-label="Trigger, then agent, then human approval"><span class="fn fn-t">${ICO.t}</span><span class="fl"></span><span class="fn fn-a">${ICO.a}</span><span class="fl"></span><span class="fn fn-h">${ICO.h}</span></div>`;
 }
 function renderCatalog() {
   const list = sorted(filtered()); const v = list.reduce((s, a) => s + a.est_annual_value_usd, 0);
@@ -330,7 +331,7 @@ function renderCatalog() {
       <div class="c-top"><span class="c-co">${dot(a.company)}${esc(CO[a.company].name)}</span><span class="c-wave">Wave ${a.wave} · ${a.weeks_to_deploy} wks · payback ${pbTxt(E[a.id].payback)}</span></div>
       <h3>${esc(a.agent)}</h3>
       ${flowHTML()}
-      <p class="c-trig"><b>When:</b> ${esc(a.trigger)}</p>
+      <p class="c-trig"><b>When:</b> ${esc(clip(a.trigger, 64))}</p>
       <div class="c-meta"><span class="layer">${esc(a.layer)}</span><span class="dec dec-${decision(a)}">${DEC[decision(a)]}</span><span class="vt-tag" style="--vt:${VT[vtype(a)].col}">${esc(VT[vtype(a)].short)}</span><span class="c-val">${money(a.est_annual_value_usd)}${EST()}</span></div>
     </button>`).join('') + (list.length > shown.length ? `<button type="button" class="sys-btn sys-btn--secondary ag-more" id="cards-more">Show all ${list.length} agents <span aria-hidden="true">↓</span></button>` : '') : `<div class="ag-empty">No agents match these filters. <button type="button" class="ag-linkbtn" id="empty-reset">Reset filters</button></div>`;
   $('#empty-reset')?.addEventListener('click', resetFilters);
@@ -351,9 +352,10 @@ function select(id, { scroll = true, open = true, url = true } = {}) {
   const W = WAVES.find(w => w.wave === a.wave); const [ws, we] = (W?.months || '0-0').split('-').map(Number);
   const et = evType(a);
   const src = a.source_url ? `<a href="${esc(a.source_url)}" target="_blank" rel="noopener">${esc(host(a.source_url))} ↗</a>` : '';
+  const claim = `<details class="sys-fold"><summary><b>Claim and source</b></summary><p class="ag-mt">${esc(a.metric_claim)} ${src}</p></details>`;
   const evidence = et === 'effect'
-    ? `<div class="ib"><h4>Effect evidence <span class="ev ev-effect">from a comparable company</span></h4><div class="metric"><b class="sys-num">${esc(a.metric_value)}</b><span>${esc(deID(a.metric_unit))}</span></div><p class="ag-mt">${esc(a.metric_claim)} ${src}</p></div>`
-    : `<div class="ib"><h4>${et === 'benchmark' ? 'Benchmark' : 'Why it matters'} <span class="ev ev-${et}">${et === 'benchmark' ? 'industry benchmark, not an effect size' : 'context, not an effect size'}</span></h4><p class="ctx"><b>${esc(deID(fmtMetric(a.metric_value, a.metric_unit)))}.</b> ${esc(a.metric_claim)} ${src}</p><p class="ctx-note">No measured result at a comparable company yet; the value rests on the formula below until the 8-week baseline and pilot.</p></div>`;
+    ? `<div class="ib"><h4>Effect evidence <span class="ev ev-effect">from a comparable company</span></h4><div class="metric"><b class="sys-num">${esc(a.metric_value)}</b><span>${esc(deID(a.metric_unit))}</span></div>${claim}</div>`
+    : `<div class="ib"><h4>${et === 'benchmark' ? 'Benchmark' : 'Why it matters'} <span class="ev ev-${et}">${et === 'benchmark' ? 'industry benchmark, not an effect size' : 'context, not an effect size'}</span></h4><p class="ctx"><b>${esc(deID(fmtMetric(a.metric_value, a.metric_unit)))}.</b></p>${claim}</div>`;
   $('#inspector').innerHTML = `
     <div class="insp-head">
       <div class="insp-id">${dot(a.company)}<span>${esc(c.full)} · ${esc(a.os)}</span><button type="button" class="insp-close" aria-label="Close inspector">×</button></div>
@@ -365,7 +367,7 @@ function select(id, { scroll = true, open = true, url = true } = {}) {
       ${RESEQ[a.id] ? `<p class="reseq"><b>Re-sequenced.</b> ${esc(RESEQ[a.id].why)}</p>` : ''}
       <div class="ib"><h4>Economics ${EST()}</h4>
         <div class="insp-stats"><div><span>Build</span><b>${money(e.build)}</b></div><div><span>Run a year</span><b>${money(e.run)}</b></div><div><span>Payback</span><b>${pbTxt(e.payback)}</b></div></div>
-        <p class="ag-mt"><b>${esc(t.label)}</b>, ${esc(t.rule)}. Risk-adjusted ${e.radjLo === e.radjHi ? money(e.radjLo) : `${money(e.radjLo)}–${money(e.radjHi)}`} a year; net of run cost ${e.netLo === e.netHi ? money(e.netLo) : `${money(e.netLo)}–${money(e.netHi)}`}.${NETTED.has(a.id) ? ' The formula already nets its software or unit cost, so no licence is charged again.' : ''}</p>
+        <p class="ag-mt"><b>${esc(t.label)}</b>, ${esc(t.rule)}. Risk-adjusted ${e.radjLo === e.radjHi ? money(e.radjLo) : `${money(e.radjLo)}–${money(e.radjHi)}`} a year; net of run cost ${e.netLo === e.netHi ? money(e.netLo) : `${money(e.netLo)}–${money(e.netHi)}`}.</p>
         ${e.cash ? `<p class="cash"><b>${money(e.cash)} one-time cash released</b> (${esc(CASH[a.id].how)}), not in the annual value.</p>` : ''}
       </div>
       <ol class="vflow">
@@ -374,9 +376,9 @@ function select(id, { scroll = true, open = true, url = true } = {}) {
         <li class="rs-human"><span class="rs-ico">${ICO.h}</span><div><span class="rs-k">Human approval</span><p>${esc(a.human_in_the_loop)}</p></div></li>
       </ol>
       ${evidence}
-      <div class="ib"><h4>Value formula ${EST('assumption')}</h4><p class="formula">${esc(a.est_annual_value_formula.replace(/^ASSUMPTION \(analyst estimate, not company data\):\s*/, ''))}</p></div>
-      <div class="ib"><h4>Vendor or build</h4><p>${esc(a.vendor_or_build)}</p>${(a.vendor_urls || []).length ? `<div class="links ag-mt">${a.vendor_urls.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(host(u))} ↗</a>`).join('')}</div>` : ''}</div>
-      <div class="ib"><h4>Risks and controls</h4><p class="risk">${esc(deID(a.risk_notes))}</p></div>
+      <details class="sys-fold"><summary><b>Value formula</b>${EST('assumption')}</summary><p class="formula">${esc(a.est_annual_value_formula.replace(/^ASSUMPTION \(analyst estimate, not company data\):\s*/, ''))}${NETTED.has(a.id) ? ' The formula already nets its software or unit cost, so no licence is charged again.' : ''}</p></details>
+      <details class="sys-fold"><summary><b>Vendor or build</b></summary><p>${esc(a.vendor_or_build)}</p>${(a.vendor_urls || []).length ? `<div class="links ag-mt">${a.vendor_urls.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(host(u))} ↗</a>`).join('')}</div>` : ''}</details>
+      <details class="sys-fold"><summary><b>Risks and controls</b></summary><p class="risk">${esc(deID(a.risk_notes))}</p></details>
       <div class="ib"><h4>Where it lives</h4><div class="links"><a href="${c.slug}/${c.osf}">${esc(c.os)} product page →</a><a href="${c.slug}/${c.pb}">${esc(c.pbl)} →</a><a href="../app.html#/${a.company}/overview">Portal module →</a></div></div>
     </div>`;
   $('.insp-close', $('#inspector')).onclick = closeSheet;
@@ -400,10 +402,8 @@ function patterns() {
     return `<article class="sys-card pat">
       <div class="pat-n"><span>Pattern ${i + 1}</span><span class="pat-cos">${(p.companies || []).map(dot).join('')}</span></div>
       <h3>${esc(p.pattern)}</h3>
-      <p>${esc(p.description)}</p>
-      <div class="pat-ev"><b class="sys-num">${esc(p.metric_value)}</b><span>${esc(deID(p.metric_unit))}</span><span style="margin-top:4px">${esc(clip(p.evidence, 150))} <a href="${esc(p.source_url)}" target="_blank" rel="noopener">${esc(host(p.source_url))} ↗</a></span></div>
-      <div class="pat-comp">${(p.shared_components || []).map(s => `<span class="tag">${esc(s)}</span>`).join('')}</div>
-      <p class="pat-note">${esc(p.build_once_note)}</p>
+      <div class="pat-ev"><b class="sys-num">${esc(p.metric_value)}</b><span>${esc(deID(p.metric_unit))}</span></div>
+      <details class="sys-fold"><summary><b>How it works</b></summary><p>${esc(p.description)}</p><p class="pat-ev"><span>${esc(clip(p.evidence, 150))} <a href="${esc(p.source_url)}" target="_blank" rel="noopener">${esc(host(p.source_url))} ↗</a></span></p><div class="pat-comp">${(p.shared_components || []).map(s => `<span class="tag">${esc(s)}</span>`).join('')}</div><p class="pat-note">${esc(p.build_once_note)}</p></details>
       <div class="pat-foot"><span><b>${ags.length}</b> agents · ${money(v)}${EST()}</span><button type="button" class="sys-btn sys-btn--secondary sys-btn--sm" data-pat="${p.id}">Show agents →</button></div>
     </article>`;
   }).join('');
@@ -421,9 +421,10 @@ function timeline() {
   $('#timeline').innerHTML = `<div class="tl-axis"><div></div><div class="tl-ticks">${ticks.map(m => `<span style="left:${(m + 1.5) / span * 100}%;transform:translateX(-50%)">${qOf(m)}</span>`).join('')}</div></div>` + WR.map((r, i) => {
     const { w, ags, s, e } = r; const cum = WR.slice(0, i + 1).flatMap(x => x.ags);
     const live = rampAt(AG.filter(a => cum.includes(a)), e);
-    const gate = GATE_FIX[w.wave] || (w.wave === 1
+    const gateFull = GATE_FIX[w.wave] || (w.wave === 1
       ? `Controls 1–${gnum(5)} live at every company (access, approval tiers, audit log, model terms and vendor review), because three wave-1 agents talk to customers; control ${gnum(7)} and its confidentiality evidence pack live before the Frontline service desk touches law-firm data; 8-week KPI baselines captured; ${r.eng} agent engineers (about ${Math.round(r.T.engW)} engineer-weeks in 13 weeks) and a named owner in each company.`
       : deID(w.prerequisite));
+    const gate = [`Controls 1–${gnum(5)} live; baselines set; ${r.eng} engineers and an owner per company.`, `Wave-1 agents at ≥ 50% of target; shared triage service live; each CFO signs off the payments firewall (control ${gnum(8)}).`, 'Clean master data in each system of record; customer lists cleaned.', 'Monitoring priced as recurring services; AI-content labeling live at BPI and Fair Harbor.'][w.wave - 1] || gateFull;
     const moved = ags.filter(a => RESEQ[a.id]?.to === w.wave);
     return `<article class="sys-card wave">
       <div class="w-meta"><span class="w-mo">${esc(r.q)} · months ${s}–${e}</span><h3>Wave ${w.wave} · ${esc(wname[i] || '')}</h3>
@@ -431,11 +432,13 @@ function timeline() {
       <div>
         <div class="w-track" aria-hidden="true"><div class="w-bar" style="left:${s / span * 100}%;width:${(e - s) / span * 100}%">Wave ${w.wave}</div>${matPct <= 100 ? `<i class="w-mat" style="left:${matPct}%"></i>` : ''}</div>
         <div class="sys-chips w-chips">${ags.map(a => `<button type="button" class="sys-chip${RESEQ[a.id] ? ' w-moved' : ''}" data-co="${CO[a.company] ? a.company : ''}" data-id="${a.id}" title="${esc(CO[a.company].full)} · ${money(a.est_annual_value_usd)} ceiling">${esc(a.agent)}</button>`).join('')}</div>
-        ${moved.length ? `<p class="w-note"><b>Moved in</b><span>${moved.map(a => esc(RESEQ[a.id].why)).join(' ')}</span></p>` : ''}
+        ${moved.length ? `<p class="w-note"><b>Moved in</b><span>${moved.map(a => esc(RESEQ[a.id].short)).join(' ')}</span></p>` : ''}
         <p class="w-gate"><b>Gate</b><span>${esc(gate)}</span></p>
       </div>
     </article>`;
-  }).join('') + `<p class="tl-foot"><i class="w-mat-key" aria-hidden="true"></i> Red line: Thomas Scientific loan maturity, December 2027. Calendar assumes approval this month (month 0 = ${monOf(0)}). <b>Live at wave end</b> assumes each agent goes live its stated number of weeks after the wave starts and ramps evenly to full value over two quarters, the same window the kill rule uses. The full ${money(totals().ceil)} ceiling run-rate arrives around ${qOf(fullMo)}, not month 18.</p>`;
+  }).join('') + `<p class="tl-foot"><i class="w-mat-key" aria-hidden="true"></i> Thomas Scientific loan maturity, December 2027. Full ${money(totals().ceil)} run-rate: ${qOf(fullMo)}.</p>`;
+  $('#m-tl').innerHTML = `Rollout calendar. Red line: Thomas Scientific loan maturity, December 2027. Calendar assumes approval this month (month 0 = ${monOf(0)}). <b>Live at wave end</b> assumes each agent goes live its stated number of weeks after the wave starts and ramps evenly to full value over two quarters, the same window the kill rule uses. The full ${money(totals().ceil)} ceiling run-rate arrives around ${qOf(fullMo)}, not month 18.`;
+  $('#m-gates').innerHTML = WR.map(r => { const gf = GATE_FIX[r.w.wave] || (r.w.wave === 1 ? `Controls 1–${gnum(5)} live at every company (access, approval tiers, audit log, model terms and vendor review), because three wave-1 agents talk to customers; control ${gnum(7)} and its confidentiality evidence pack live before the Frontline service desk touches law-firm data; 8-week KPI baselines captured; ${r.eng} agent engineers (about ${Math.round(r.T.engW)} engineer-weeks in 13 weeks) and a named owner in each company.` : deID(r.w.prerequisite)); return `<li><b>Wave ${r.w.wave} gate.</b> ${esc(gf)}</li>`; }).join('');
   $('#timeline').onclick = e => { const b = e.target.closest('.w-chips .sys-chip'); if (b) focusAgent(b.dataset.id); };
 }
 
@@ -452,7 +455,8 @@ const STRETCH = 75; // agents using ≥ 75% of the top of their OS case need re-
 function valueChart() {
   const rows = companyRows(); const box = $('#chart'); const tip = $('#tip'); const card = box.closest('.ag-chart-card');
   const hot = rows.filter(r => r.ofTop >= STRETCH).sort((a, b) => b.ofTop - a.ofTop);
-  $('#val-sub').innerHTML = `Bars are each company's agent ceiling by value type; the whisker is its OS program's EBITDA case. <b>Agents sit inside that case, so never add the two.</b>`;
+  $('#val-sub').innerHTML = `Agents sit inside each OS case: never add the two.`;
+  $('#m-val').innerHTML = `Value chart. Bars are each company's agent ceiling by value type, USD a year after ramp, estimated; the whisker is its OS program's EBITDA case. Under each name: share of current adjusted EBITDA; amber means the agents use at least ${STRETCH}% of the top of the OS case. Sum of agent estimated annual value (labelled assumptions); EBITDA-equivalent run-rate after ramp; not de-duplicated.`;
   $('#chart-legend').innerHTML = VT_ORDER.map(t => `<span><i class="vt-sw" style="background:${VT[t].col}"></i>${esc(VT[t].short)}</span>`).join('') + '<span><i class="lg-rng"></i>OS program EBITDA case (estimated)</span>';
   const draw = () => {
     const W = Math.max(300, box.clientWidth); const small = W < 520;
@@ -494,14 +498,17 @@ function valueChart() {
     $('#chart').hidden = t; $('#chart-table').hidden = !t; $('#chart-legend').hidden = t;
   });
   // Reality check: agents vs EBITDA and the OS case.
-  $('#reality').innerHTML = rows.slice().sort((a, b) => (b.ofTop || 0) - (a.ofTop || 0)).map(r => `<div class="rc${r.ofTop >= STRETCH ? ' hot' : ''}"><span>${dot(r.c)}${esc(CO[r.c].name)}</span><span class="rc-bar"><i style="width:${Math.min(100, r.ofTop || 0)}%"></i></span><span>${r.ofTop ?? '—'}%</span></div>`).join('') + `<p class="vn-foot">Agent ceiling as a share of the top of each OS program's EBITDA case. Above ${STRETCH}% leaves almost nothing for the rest of the OS (systems, pricing, data), so re-base on measured baselines before using either number.</p>`;
+  $('#reality').innerHTML = rows.slice().sort((a, b) => (b.ofTop || 0) - (a.ofTop || 0)).map(r => `<div class="rc${r.ofTop >= STRETCH ? ' hot' : ''}"><span>${dot(r.c)}${esc(CO[r.c].name)}</span><span class="rc-bar"><i style="width:${Math.min(100, r.ofTop || 0)}%"></i></span><span>${r.ofTop ?? '—'}%</span></div>`).join('') + `<p class="vn-foot">Share of each OS case top. Above ${STRETCH}%: re-base on measured baselines.</p>`;
+  $('#m-val').innerHTML += ` Above ${STRETCH}% leaves almost nothing for the rest of the OS (systems, pricing, data), so re-base on measured baselines before using either number.`;
   // Thomas Scientific: cash before EBITDA.
   const cashAg = AG.filter(a => E[a.id].cash).sort((a, b) => E[b.id].cash - E[a.id].cash); const tsCash = sumBy(cashAg.filter(a => a.company === 'ts'), a => E[a.id].cash);
-  $('#ts-cash').innerHTML = `<p>Thomas Scientific carries est. 7–10x leverage and a loan maturing in <b>December 2027</b> (tech-enablement evidence file). For a refinancing, one-time cash matters more than run-rate EBITDA, and the annual values hide it.</p>
+  $('#ts-cash').innerHTML = `<p>Est. 7–10x leverage; loan matures <b>December 2027</b>.</p>
     <ul class="cash-list">${cashAg.filter(a => a.company === 'ts').map(a => { const W = WAVES.find(w => w.wave === a.wave); const [s, e] = W.months.split('-').map(Number); return `<li><span class="cl-n">${dot(a.company)}${esc(a.agent)}</span><span class="cl-v"><b>${money(E[a.id].cash)}</b> cash once · books ${money(a.est_annual_value_usd)} a year · ${qRange(s, e)}</span></li>`; }).join('')}</ul>
-    <p class="vn-foot">${money(tsCash)} of Thomas cash starts landing in ${qOf(3)} and is fully released by ${cashBy('ts')} if both agents hit target, ahead of the December 2027 maturity; the inventory agent was moved up from wave 4 for this reason. Elsewhere, Fair Harbor's size-curve agent frees about ${money(E['ag-fh-04']?.cash || 0)} of inventory; Punctual Pros has no working-capital agent.</p>`;
+    <p class="vn-foot">${money(tsCash)} lands ${qOf(3)} to ${cashBy('ts')}, ahead of the maturity. Fair Harbor frees about ${money(E['ag-fh-04']?.cash || 0)} of inventory; Punctual Pros has no working-capital agent.</p>`;
+  $('#m-val').innerHTML += ` Thomas Scientific carries est. 7–10x leverage and a loan maturing in December 2027 (tech-enablement evidence file). For a refinancing, one-time cash matters more than run-rate EBITDA, and the annual values hide it. ${money(tsCash)} of Thomas cash starts landing in ${qOf(3)} and is fully released by ${cashBy('ts')} if both agents hit target, ahead of the December 2027 maturity; the inventory agent was moved up from wave 4 for this reason.`;
   const WR = waveRows(); const mx = Math.max(...WR.map(r => r.T.ceil));
-  $('#by-wave').innerHTML = WR.map(r => `<div class="bw"><span>Wave ${r.w.wave}</span><span class="bw-bar"><i style="width:${r.T.ceil / mx * 100}%"></i></span><span>${money(r.T.ceil)}</span></div>`).join('') + `<p class="vn-foot">Ceiling per wave after moving the Thomas inventory agent to wave 2. ${esc(deID(D.meta.value_summary?.basis || ''))}</p>`;
+  $('#by-wave').innerHTML = WR.map(r => `<div class="bw"><span>Wave ${r.w.wave}</span><span class="bw-bar"><i style="width:${r.T.ceil / mx * 100}%"></i></span><span>${money(r.T.ceil)}</span></div>`).join('') + ``;
+  $('#m-val').innerHTML += ` Ceiling per wave after moving the Thomas inventory agent to wave 2. ${esc(deID(D.meta.value_summary?.basis || ''))}`;
   const cv = (D.meta.caveats || []).map(deID);
   $('#caveats').innerHTML = [cv[0], cv[1], cv[2], `About a third of the ceiling is freed capacity valued at loaded rates; it becomes EBITDA only with a hiring-avoidance or headcount plan.`, cv[7]].filter(Boolean).map(c => `<li>${esc(c)}</li>`).join('');
 }
@@ -519,10 +526,10 @@ function governance() {
   $('#gov-list').innerHTML = GOV.map((g, i) => {
     return `<li class="sys-card gov ${done.has(g.id) ? 'done' : ''}" data-id="${g.id}">
       <label><input type="checkbox" ${done.has(g.id) ? 'checked' : ''} aria-describedby="gr-${g.id}"><span><span class="g-n">Control ${i + 1} · <span class="g-gate${/Wave-1/.test(GOV_GATE[g.id] || '') ? ' w1' : ''}">${esc(GOV_GATE[g.id] || '')}</span></span><h3>${esc(g.control)}</h3></span></label>
-      ${g.requirement.length <= 240 ? `<p id="gr-${g.id}">${esc(deID(g.requirement))}</p>` : `<p id="gr-${g.id}">${esc(deID(clip(g.requirement, 200)))}</p><details><summary>Full requirement</summary><p>${esc(deID(g.requirement))}</p></details>`}
+      <p id="gr-${g.id}">${esc(deID(clip(sentences(g.requirement)[0] || '', 130)))}</p>
       <div class="g-meta"><span class="tag">${esc(area(g.area))}</span><span class="tag">${(g.applies_to || []).includes('all') ? 'All companies' : (g.applies_to || []).map(c => CO[c]?.name || c).join(', ')}</span></div>
       <p class="g-owner"><b>Owner:</b> ${esc(deID(g.owner))}</p>
-      <p class="g-ev">${esc(deID(clip(g.evidence, 170)))}${g.source_url ? ` <a href="${esc(g.source_url)}" target="_blank" rel="noopener">${esc(host(g.source_url))} ↗</a>` : ''}</p>
+      <details class="sys-fold"><summary><b>Requirement and evidence</b></summary><p>${esc(deID(g.requirement))}</p><p class="g-ev">${esc(deID(g.evidence))}${g.source_url ? ` <a href="${esc(g.source_url)}" target="_blank" rel="noopener">${esc(host(g.source_url))} ↗</a>` : ''}</p></details>
     </li>`;
   }).join('');
   const sync = () => { const n = done.size; $('#gov-count').textContent = `${n} of ${GOV.length} controls live`; $('#gov-fill').style.width = `${n / GOV.length * 100}%`; };
@@ -535,9 +542,9 @@ function governance() {
 function buildBuy() {
   const grp = k => AG.filter(a => decision(a) === k);
   const blurb = {
-    buy: ['Vendor-native', 'The agent ships inside the system of record or a category leader (Dispatch Pro, Procore Helix, Gorgias, Rilla, Conexiom). Configure, pilot, measure.'],
-    hybrid: ['Buy the plumbing, build the judgment', 'A vendor handles extraction or transport; the PRG builds triage, exceptions, disclosure and audit once and reuses it across companies.'],
-    build: ['Built in-house on Claude or OpenAI', 'The agent\'s memory is BSP\'s own data and scoring (bids, storms, grants, dockets). This is the IP a buyer pays for at exit.'],
+    buy: ['Vendor-native', 'Inside the system of record: Dispatch Pro, Procore Helix, Gorgias, Rilla, Conexiom.'],
+    hybrid: ['Buy the plumbing, build the judgment', 'Vendor handles transport; the PRG builds triage, exceptions and audit once.'],
+    build: ['Built in-house', 'On Claude or OpenAI, from BSP data: bids, storms, grants, dockets.'],
   };
   $('#bb-cols').innerHTML = ['buy', 'hybrid', 'build'].map(k => { const g = grp(k); return `<div class="sys-card bb"><div class="bb-h"><span class="dec dec-${k}">${DEC[k]}</span><b class="sys-num">${g.length}</b></div><h3 class="sys-card-title">${blurb[k][0]}</h3><p class="sys-card-body">${blurb[k][1]}</p><p class="bb-val">${money(g.reduce((s, a) => s + a.est_annual_value_usd, 0))} ceiling${EST()} · average ${(g.reduce((s, a) => s + a.weeks_to_deploy, 0) / (g.length || 1)).toFixed(1)} weeks to go live</p><p class="bb-val">Build ${money(totals(g).build)} · run ${money(totals(g).run)} a year${EST()}</p></div>`; }).join('');
   let tab = 'all';
