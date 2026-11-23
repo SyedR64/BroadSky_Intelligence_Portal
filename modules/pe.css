@@ -107,3 +107,7 @@
 @media (max-width:900px){.m-pe .pe-notes{grid-template-columns:1fr}}
 .m-pe .pe-mini td,.m-pe .pe-mini th{padding:10px 12px}
 .m-pe #pe-dt .sys-table td.wrap{min-width:280px}
+
+/* "Why" disclosure under an action line */
+.m-pe .pe-why{margin-top:var(--sys-sp-1)}
+.m-pe .pe-why>summary{cursor:pointer;font-size:var(--sys-fs-xs);color:var(--sys-mute)}

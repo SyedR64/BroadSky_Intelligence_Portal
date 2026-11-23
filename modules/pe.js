@@ -101,8 +101,14 @@ async function load(ctx) {
 }
 
 function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261123143257'; document.head.appendChild(l); } }
-function missing(ctx, title) { ctx.el.innerHTML = ctx.ui.pageHead({ title, sub: 'Competitive intelligence on the private-equity sponsors bidding against BSP.' }) + ctx.ui.note('Research dataset <b>Private-equity landscape</b> is not yet available (still being verified). This screen fills in once it is published.', 'warn'); }
-const srcFoot = (ctx, meta, extra) => ctx.ui.source(SRC_PE.text, null, meta?.generated) + (extra ? ` <span class="dim">· ${extra}</span>` : '');
+function missing(ctx, title) { ctx.el.innerHTML = ctx.ui.pageHead({ title }) + ctx.ui.note('Private-equity landscape data is not available yet.', 'warn'); }
+/* Source, method and as-of text is marked for the Sources and Method drawers; srcFoot collects the method text a panel used to carry in its footer, marks() writes it all once per screen. */
+let _marks = { method: [] };
+const markReset = () => { _marks = { method: [] }; };
+const srcFoot = (ctx, meta, extra) => { if (extra && !_marks.method.includes(extra)) _marks.method.push(extra); return ''; };
+const marks = (ctx, meta, srcs = []) => [ctx.ui.source(SRC_PE.text, null, meta?.generated), ...srcs].map(x => `<div data-src>${x}</div>`).join('') + _marks.method.map(x => `<div data-method>${x}</div>`).join('') + (meta?.generated ? `<span data-asof="${ctx.esc(meta.generated)}"></span>` : '');
+/** Table cell: at most n words; the full text stays in the title and in the side panel. */
+const clip = (ctx, v, n = 10) => { const t = String(v || '').trim(); const w = t.split(/\s+/); return w.length <= n ? ctx.esc(t) : `<span title="${ctx.esc(t)}">${ctx.esc(w.slice(0, n).join(' '))}…</span>`; };
 
 /* ── shared chips / actions ────────────────────────────────────────────── */
 const threatChip = (ctx, t) => ctx.fmt.chip(THREAT[t]?.label || 'n/d', THREAT[t]?.color || 'var(--sys-mute-2)');
@@ -189,8 +195,8 @@ function openPlatform(ctx, p, B) {
 /* ── View 1: Landscape ─────────────────────────────────────────────────── */
 async function landscape(ctx) {
   const { el, ui, fmt, app, esc, params } = ctx; injectCss();
-  const B = await load(ctx); if (!B.pe) return missing(ctx, 'PE landscape');
-  const { firms, meta, bspRef } = B;
+  const B = await load(ctx); if (!B.pe) return missing(ctx, 'Landscape');
+  const { firms, meta, bspRef } = B; markReset();
   const high = firms.filter(f => f.threat_level === 'high');
   const funds = firms.map(f => f._fund).filter(v => v != null);
   const medFund = median(funds);
@@ -201,18 +207,21 @@ async function landscape(ctx) {
   const ppFirms = firms.filter(f => f._overlap.includes('punctual_pros'));
 
   el.innerHTML = `<div class="m-pe">` + ui.pageHead({
-    title: 'PE landscape',
-    sub: `${firms.length} sponsors chase the same deals; ${high.length} are high-threat. Fund I is ${fmt.num(medFund / bspRef.fund, 1)}× smaller than the median rival fund, so BSP wins on sector focus and co-invest, not price.`,
+    title: 'Landscape',
+    sub: `${firms.length} sponsors, ${high.length} high-threat. Fund I is ${fmt.num(medFund / bspRef.fund, 1)}× smaller than the median.`,
     actions: `<button class="sys-btn sys-btn--secondary sys-btn--sm btn sm" id="pe-exp">⇩ Firms CSV</button><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/pe/deals">Deal flow</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/cases/timeline">Sponsor precedents</a>`,
   }) + ui.kpis([
-    { label: 'Sponsors profiled', value: fmt.num(firms.length), sub: `${(meta.excluded_candidates || []).length} more screened out`, color: 'var(--c-pe)' },
-    { label: 'High-threat firms', value: fmt.num(high.length), sub: `${firms.filter(f => f.threat_level === 'medium').length} medium · ${firms.filter(f => f.threat_level === 'low').length} low`, color: 'var(--sys-bad)' },
-    { label: 'Latest-fund capital', value: fmt.money(capital), sub: `${funds.length} rival funds · Fund I ranks #${rank}`, color: 'var(--c-pe)' },
-    { label: 'Deals 2025–26', value: fmt.num(B.deals.length), sub: `${B.deals.filter(d => d.type === 'add_on').length} add-ons · ${B.deals.filter(d => d.type === 'exit').length} exits (disclosed)`, color: 'var(--sys-info)' },
-    { label: 'Rival companies in BSP sectors', value: fmt.num(overlapPlats.length), sub: `held, of ${fmt.num(B.plats.length)} companies tracked`, color: 'var(--sys-warn)' },
-  ]) + (B.bsp ? '' : `<div class="mt-12">${ui.note('Research dataset <b>BSP firm profile</b> is not available — the BSP reference uses the published facts (six companies today, seven since launch; 23 add-ons, 1 exit).', 'warn')}</div>`) + `
-  <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'BSP reference — scale vs peers', sub: 'The yardstick for every card below', accent: true, body: `<div class="sys-kpis pe-ref">
+    { label: 'Sponsors', value: fmt.num(firms.length), sub: `${(meta.excluded_candidates || []).length} screened out`, color: 'var(--c-pe)' },
+    { label: 'High-threat', value: fmt.num(high.length), sub: `${firms.filter(f => f.threat_level === 'medium').length} medium · ${firms.filter(f => f.threat_level === 'low').length} low`, color: 'var(--sys-bad)' },
+    { label: 'Latest-fund capital', value: fmt.money(capital), sub: `Fund I #${rank} of ${funds.length}`, color: 'var(--c-pe)' },
+    { label: 'Deals 2025–26', value: fmt.num(B.deals.length), sub: `${B.deals.filter(d => d.type === 'add_on').length} add-ons · ${B.deals.filter(d => d.type === 'exit').length} exits`, color: 'var(--sys-info)' },
+    { label: 'Rivals in BSP sectors', value: fmt.num(overlapPlats.length), sub: `of ${fmt.num(B.plats.length)} tracked`, color: 'var(--sys-warn)' },
+  ]) + (B.bsp ? '' : `<div class="mt-12">${ui.note('BSP firm profile not loaded; published facts shown: six companies, seven since launch, 23 add-ons, 1 exit.', 'warn')}</div>`) + `
+  <div class="mt-12">
+    ${ui.panel({ title: 'Threat by company', body: `<div class="sys-table-wrap"><table class="sys-table pe-mini"><thead><tr><th>Company</th><th class="sys-n">High</th><th class="sys-n">Med</th><th class="sys-n">Low</th><th>Intensity</th><th>Top rivals</th></tr></thead><tbody>${SECTOR_KEYS.map(k => { const fs = firms.filter(f => f._overlap.includes(k)); const hm = meta.sector_heatmap?.[k]; const ma = hm?.most_active || []; const rk = f => { const i = ma.indexOf(f.id); return i < 0 ? 99 : i; }; const hi = fs.filter(f => f.threat_level === 'high').sort((x, y) => rk(x) - rk(y)); return `<tr class="click" data-ov="${k}"><td>${ctx.fmt.chip(sec(k).label, sec(k).color)}</td><td class="sys-n" style="color:var(--sys-bad-ink)">${hi.length || '·'}</td><td class="sys-n">${fs.filter(f => f.threat_level === 'medium').length || '·'}</td><td class="sys-n">${fs.filter(f => f.threat_level === 'low').length || '·'}</td><td class="small nowrap" title="${esc(hm?.intensity || '')}">${esc(String(hm?.intensity || '—').split('(')[0].trim())}</td><td class="small">${hi.map(f => esc(shortName(f.firm))).slice(0, 4).join(', ') || '<span class="dim">none</span>'}</td></tr>`; }).join('')}</tbody></table></div>`, foot: srcFoot(ctx, meta, 'Threat levels are analyst judgment.') })}
+  </div>
+  <div class="mt-12">
+    ${ui.panel({ title: 'BSP vs peers', accent: true, body: `<div class="sys-kpis pe-ref">
         <div class="sys-kpi pe-stat"><div class="sys-kpi-label l">Fund I</div><div class="sys-kpi-value v">${fmt.money(bspRef.fund)}</div><div class="sys-kpi-sub s" title="Broad Sky Partners, LP total sold per SEC Form D${bspRef.investors ? ` (${bspRef.investors} investors)` : ''}">Form D, ${esc(bspRef.fundClose)}${bspRef.spvTotal ? ` · +${fmt.money(bspRef.spvTotal)} deal SPVs` : ''}</div></div>
         <div class="sys-kpi pe-stat"><div class="sys-kpi-label l">Companies</div><div class="sys-kpi-value v">${fmt.num(bspRef.platforms)}</div><div class="sys-kpi-sub s">6 held · ${fmt.num(bspRef.exits)} exited</div></div>
         <div class="sys-kpi pe-stat"><div class="sys-kpi-label l">Add-ons</div><div class="sys-kpi-value v">${fmt.num(bspRef.addOns)}</div><div class="sys-kpi-sub s">since late-2021 relaunch</div></div>
@@ -226,18 +235,19 @@ async function landscape(ctx) {
         { label: `Rival flagship — median`, value: medFund, color: 'var(--c-pe)' },
         { label: `Rival flagship — 75th pct`, value: quant(funds, .75), color: 'var(--c-pe)' },
       ], { fmt: v => fmt.money(v), labelW: 170 })}</div>`,
-      foot: ui.source('SEC Form D — Broad Sky Partners, LP', bspRef.fundSrc, bspRef.fundClose) + ` <span class="dim">· rival funds: Private-equity landscape research (${esc(meta.generated || '')}) · deal SPVs = ${bspRef.spvCount || 0} BSP-* Form D vehicles (BSP-TS, BSP-BPI, BSP-FL, BSP-CET), deal-specific capital not commingled with Fund I · the $137M sometimes quoted as Fund I is the BSP-FL (Frontline) vehicle</span>` })}
-    ${ui.panel({ title: 'Threat by BSP portfolio company', sub: 'Sponsors overlapping each portfolio company · click a row to filter', body: `<div class="sys-table-wrap"><table class="sys-table pe-mini"><thead><tr><th>Portfolio company</th><th class="sys-n">High</th><th class="sys-n">Med</th><th class="sys-n">Low</th><th>Intensity</th><th>Top high-threat rivals</th></tr></thead><tbody>${SECTOR_KEYS.map(k => { const fs = firms.filter(f => f._overlap.includes(k)); const hm = meta.sector_heatmap?.[k]; const ma = hm?.most_active || []; const rk = f => { const i = ma.indexOf(f.id); return i < 0 ? 99 : i; }; const hi = fs.filter(f => f.threat_level === 'high').sort((x, y) => rk(x) - rk(y)); return `<tr class="click" data-ov="${k}"><td>${ctx.fmt.chip(sec(k).label, sec(k).color)}</td><td class="sys-n" style="color:var(--sys-bad-ink)">${hi.length || '·'}</td><td class="sys-n">${fs.filter(f => f.threat_level === 'medium').length || '·'}</td><td class="sys-n">${fs.filter(f => f.threat_level === 'low').length || '·'}</td><td class="small nowrap" title="${esc(hm?.intensity || '')}">${esc(String(hm?.intensity || '—').split('(')[0].trim())}</td><td class="small">${hi.map(f => esc(shortName(f.firm))).slice(0, 4).join(', ') || '<span class="dim">none</span>'}</td></tr>`; }).join('')}</tbody></table></div>`, foot: srcFoot(ctx, meta, 'threat = analyst judgment') })}
+      foot: srcFoot(ctx, meta, `Deal SPVs: ${bspRef.spvCount || 0} Form D vehicles (BSP-TS, BSP-BPI, BSP-FL, BSP-CET) hold deal-specific capital, separate from Fund I. The $137M sometimes quoted as Fund I is the BSP-FL (Frontline) vehicle.`) })}
   </div>
   <div class="grid grid-main mt-12">
     <div class="col gap-16">${sectorGridPanel(ctx, B)}${countiesSection(ctx)}</div>
     ${implicationsPanel(ctx, B)}
   </div>
-  ${ui.panel({ id: 'pe-sponsors', title: 'Competitor sponsors', sub: 'Sorted by threat, then overlap with BSP, then fund size · click a card for history, funds, companies, deals and sources', body: `<div id="pe-f"></div><div id="pe-cards"></div>`, cls: 'mt-12', foot: srcFoot(ctx, meta, `${(meta.caveats || []).length} caveats — fund sizes left blank where undisclosed`) })}
-  <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Watch list — high-threat sponsors and what to do', sub: 'Action list', body: `<div class="pe-acts" id="pe-watch">${high.slice().sort((a, b) => b._overlap.length - a._overlap.length || (b._fund || 0) - (a._fund || 0)).map((f, i) => `<div class="pe-act click" tabindex="0" role="button" data-id="${esc(f.id)}"><div class="n">${String(i + 1).padStart(2, '0')}</div><div><div class="h">${esc(f.firm)}</div><div class="b">${esc(nextAction(f))}</div><div class="sys-chips c">${overlapChips(ctx, f._overlap)}${fmt.chip(COMPETES[f.competes_for] || '', 'var(--c-pe)')}</div></div></div>`).join('')}</div>`, foot: srcFoot(ctx, meta) })}
-    ${ui.panel({ title: 'Landscape read-out', sub: 'Analyst synthesis, condensed by sector', body: `<div class="pe-bul">${summary.slice(1).map(s => `<div><b>${esc(firstSentence(s))}</b> ${esc(String(s).slice(firstSentence(s).length).trim())}</div>`).join('') || ui.empty('No synthesis in dataset')}</div>`, scroll: true, foot: srcFoot(ctx, meta) })}
-  </div></div>`;
+  ${ui.panel({ id: 'pe-sponsors', title: 'Sponsors', body: `<div id="pe-f"></div><div id="pe-cards"></div>`, cls: 'mt-12', foot: srcFoot(ctx, meta, `Sorted by threat, then overlap, then fund size. ${(meta.caveats || []).length} caveats: fund sizes are blank where undisclosed.`) })}
+  <div class="mt-12">
+    ${ui.panel({ title: 'Watch list', body: `<div class="pe-acts" id="pe-watch">${high.slice().sort((a, b) => b._overlap.length - a._overlap.length || (b._fund || 0) - (a._fund || 0)).map((f, i) => `<div class="pe-act click" tabindex="0" role="button" data-id="${esc(f.id)}"><div class="n">${String(i + 1).padStart(2, '0')}</div><div><div class="h">${esc(f.firm)}</div><div class="sys-chips c">${overlapChips(ctx, f._overlap)}${fmt.chip(COMPETES[f.competes_for] || '', 'var(--c-pe)')}</div></div></div>`).join('')}</div>`, foot: srcFoot(ctx, meta) })}
+  </div>
+  <details class="pe-more mt-12"><summary><b>Landscape read-out</b><span>Analyst synthesis by sector</span></summary><div class="pe-more-body"><div class="pe-bul">${summary.slice(1).map(s => `<div><b>${esc(firstSentence(s))}</b> ${esc(String(s).slice(firstSentence(s).length).trim())}</div>`).join('') || ui.empty('No synthesis in dataset')}</div></div></details>
+  ${marks(ctx, meta, [ui.source('SEC Form D — Broad Sky Partners, LP', bspRef.fundSrc, bspRef.fundClose)])}
+</div>`;
 
   // filters + cards
   const states = [...new Set(firms.map(f => f._state).filter(Boolean))].sort();
@@ -253,12 +263,11 @@ async function landscape(ctx) {
       <div class="sys-card-title t"><span class="nm" title="${esc(f.firm)}">${esc(f.firm)}</span>${threatChip(ctx, f.threat_level)}</div>
       <div class="sys-card-body s">${esc(f.hq || 'HQ n/d')}${f.founded ? ` · founded ${esc(f.founded)}` : ''}${f.aum_usd ? ` · AUM ${fmt.money(f.aum_usd)}` : ''}</div>
       <div class="pe-fund"><b>${f._fund != null ? fmt.money(f._fund) : 'n/d'}</b><span title="${esc(f._fundName || '')}">${esc(f._fundName || 'Latest fund not disclosed')}${f._fundYear ? ` · ${f._fundYear}` : ''}</span></div>
-      <div class="sys-card-body pe-strat">${esc(firstSentence(f.strategy))}</div>
       <div class="sys-chips m">${overlapChips(ctx, f._overlap)}${fmt.chip(`${f._deals.length} deal${f._deals.length === 1 ? '' : 's'}`, 'var(--sys-info)')}${fmt.chip(`${f._plats.length} portfolio compan${f._plats.length === 1 ? 'y' : 'ies'}`, 'var(--sys-mute)')}</div></div>`).join('')}</div>` : ui.empty('No firms match these filters');
     cardsEl.querySelectorAll('.pe-card').forEach(c => c.onclick = () => { cardsEl.querySelectorAll('.pe-card').forEach(x => x.classList.toggle('selected', x === c)); openFirm(ctx, B.byId[c.dataset.id], B); });
   };
   const fl = ui.filters(el.querySelector('#pe-f'), [
-    { key: 'q', label: 'Search firm, portfolio company, person, sector…', type: 'search', value: params.q || '' },
+    { key: 'q', label: 'Search sponsors', type: 'search', value: params.q || '' },
     { key: 'ov', label: 'Overlap', options: SECTOR_KEYS.map(k => ({ value: k, label: sec(k).label })), value: params.overlap || '' },
     { key: 'threat', label: 'Threat', options: ['high', 'medium', 'low'].map(t => ({ value: t, label: THREAT[t].label })) },
     { key: 'comp', label: 'Competes for', options: Object.entries(COMPETES).map(([value, label]) => ({ value, label })) },
@@ -294,8 +303,8 @@ function stackedMonthly(rows, fmt) {
 }
 async function dealsView(ctx) {
   const { el, ui, fmt, charts, esc, params } = ctx; injectCss();
-  const B = await load(ctx); if (!B.pe) return missing(ctx, 'Deal flow 2025–2026');
-  const { deals, meta } = B;
+  const B = await load(ctx); if (!B.pe) return missing(ctx, 'Deal flow 2025–26');
+  const { deals, meta } = B; markReset();
   const inB = deals.filter(d => d._bucket !== 'other');
   const byFirm = {}; deals.forEach(d => byFirm[d.firm_id] = (byFirm[d.firm_id] || 0) + 1);
   const topFirmId = Object.entries(byFirm).sort((a, b) => b[1] - a[1])[0]?.[0]; const topFirm = B.byId[topFirmId];
@@ -305,27 +314,27 @@ async function dealsView(ctx) {
   const firmsActive = new Set(deals.map(d => d.firm_id)).size;
 
   el.innerHTML = `<div class="m-pe">` + ui.pageHead({
-    title: 'Deal flow 2025–2026',
-    sub: `${fmt.pct(inB.length / Math.max(1, deals.length))} of ${fmt.num(deals.length)} disclosed sponsor deals since January 2025 land in BSP sectors, led by residential services (${ppN}). Treat counts as a floor.`,
+    title: 'Deal flow 2025–26',
+    sub: `${fmt.pct(inB.length / Math.max(1, deals.length))} of ${fmt.num(deals.length)} deals are in BSP sectors; ${ppN} residential.`,
     actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/pe/landscape">Landscape</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/pe/comparables">Companies</a>`,
   }) + ui.kpis([
-    { label: 'Disclosed deals', value: fmt.num(deals.length), sub: `${firmsActive} of ${B.firms.length} sponsors active`, color: 'var(--c-pe)' },
-    { label: 'New companies', value: fmt.num(deals.filter(d => d.type === 'platform').length), sub: 'incl. structured equity', color: TYPE.platform.color },
-    { label: 'Add-ons', value: fmt.num(deals.filter(d => d.type === 'add_on').length), sub: 'disclosed only — lower bound', color: TYPE.add_on.color },
-    { label: 'Exits', value: fmt.num(deals.filter(d => d.type === 'exit').length), sub: 'incl. partial liquidity', color: TYPE.exit.color },
-    { label: 'In BSP sectors', value: fmt.num(inB.length), sub: `${fmt.pct(inB.length / Math.max(1, deals.length))} of all deals`, color: 'var(--sys-warn)' },
+    { label: 'Deals', value: fmt.num(deals.length), sub: `${firmsActive} of ${B.firms.length} sponsors`, color: 'var(--c-pe)' },
+    { label: 'New companies', value: fmt.num(deals.filter(d => d.type === 'platform').length), color: TYPE.platform.color },
+    { label: 'Add-ons', value: fmt.num(deals.filter(d => d.type === 'add_on').length), color: TYPE.add_on.color },
+    { label: 'Exits', value: fmt.num(deals.filter(d => d.type === 'exit').length), color: TYPE.exit.color },
+    { label: 'In BSP sectors', value: fmt.num(inB.length), color: 'var(--sys-warn)' },
     { label: 'Most active sponsor', value: fmt.num(byFirm[topFirmId] || 0), sub: esc(topFirm?.firm.split(' - ')[0] || '—'), color: 'var(--c-pe)' },
   ]) + `
   <div id="pe-df" class="mt-12"></div>
   <div class="grid grid-main">
-    ${ui.panel({ title: 'Monthly deal count', sub: `Stacked by deal type · Jan 2025 – Sep 2026${undated ? ` · ${undated} deals dated to year only are excluded from the chart` : ''}`, body: `<div id="pe-month"></div><div class="sys-chips pe-legend mt-8">${Object.values(TYPE).map(t => `<span><i style="background:${t.color}"></i>${t.label}</span>`).join('')}</div>`, foot: srcFoot(ctx, meta, 'disclosed transactions only') })}
-    ${ui.panel({ title: 'What they are buying', sub: 'Portfolio company + add-on deals by BSP-overlap sector, then top raw sectors', body: `<div id="pe-buy"></div>`, foot: srcFoot(ctx, meta, 'sector mapping = keyword classification') })}
+    ${ui.panel({ title: 'Monthly deal count', sub: 'Jan 2025 – Sep 2026', body: `<div id="pe-month"></div><div class="sys-chips pe-legend mt-8">${Object.values(TYPE).map(t => `<span><i style="background:${t.color}"></i>${t.label}</span>`).join('')}</div>`, foot: srcFoot(ctx, meta, `Disclosed transactions only: counts are a floor; add-ons are a lower bound. New companies include structured equity; exits include partial liquidity.${undated ? ` ${undated} deals dated to year only are left out of the chart.` : ''}`) })}
+    ${ui.panel({ title: 'What they are buying', body: `<div id="pe-buy"></div>`, foot: srcFoot(ctx, meta, 'Portfolio company and add-on deals by BSP-overlap sector, then top sectors as reported. Sector mapping is keyword classification.') })}
   </div>
   <div class="mt-12" id="pe-dt"></div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Deals that touch BSP companies — act on these', sub: 'Most recent first · click for detail and next action', body: `<div class="pe-acts" id="pe-dact"></div>`, scroll: true, foot: srcFoot(ctx, meta) })}
-    ${ui.panel({ title: 'Exits 2025–26 — who is paying for scaled services', sub: 'Sponsor-to-sponsor and strategic exits support BSP exit multiples', body: `<div id="pe-exits"></div>`, scroll: true, foot: srcFoot(ctx, meta) })}
-  </div></div>`;
+    ${ui.panel({ title: 'Deals in BSP sectors', body: `<div class="pe-acts" id="pe-dact"></div>`, scroll: true, foot: srcFoot(ctx, meta) })}
+    ${ui.panel({ title: 'Exits 2025–26', body: `<div id="pe-exits"></div>`, scroll: true, foot: srcFoot(ctx, meta) })}
+  </div>${marks(ctx, meta)}</div>`;
 
   const columns = [
     { key: 'date', label: 'Date', num: true, width: '96px', fmt: v => /^\d{4}$/.test(String(v)) ? `${esc(v)} <span class="dim">(yr)</span>` : /^\d{4}-\d{2}-\d{2}$/.test(String(v)) ? fmt.date(v + 'T12:00:00') : /^\d{4}-\d{2}$/.test(String(v)) ? new Date(v + '-15T12:00:00').toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : esc(v) },
@@ -333,7 +342,7 @@ async function dealsView(ctx) {
     { key: 'company', label: 'Company', fmt: v => `<b>${esc(v)}</b>` },
     { key: 'type', label: 'Type', fmt: v => fmt.chip(TYPE[v]?.label || v, TYPE[v]?.color) },
     { key: 'sector', label: 'Sector', fmt: (v, r) => `${esc(v || '—')}${r._bucket !== 'other' ? ` ${fmt.chip(sec(r._bucket).short, sec(r._bucket).color)}` : ''}` },
-    { key: 'note', label: 'Note', wrap: true, fmt: v => `<span class="small text-2">${esc(String(v || '').slice(0, 150))}</span>` },
+    { key: 'note', label: 'Note', wrap: true, fmt: v => `<span class="small text-2">${clip(ctx, v, 8)}</span>` },
     { key: 'source_url', label: 'Source', fmt: v => v ? fmt.link(v, (fmt.host(v) || 'link') + ' ↗') : '—' },
   ];
   let tbl;
@@ -346,17 +355,17 @@ async function dealsView(ctx) {
     const buys = rows.filter(d => d.type !== 'exit');
     const bk = [...SECTOR_KEYS, 'other'].map(k => ({ label: sec(k).bucket, value: buys.filter(d => d._bucket === k).length, color: sec(k).color })).filter(x => x.value);
     const raw = {}; buys.forEach(d => { const s = d.sector || 'n/d'; raw[s] = (raw[s] || 0) + 1; });
-    el.querySelector('#pe-buy').innerHTML = buys.length ? charts.hbar(bk, { fmt: v => fmt.num(v), labelW: 190 }) + `<h4 class="sys-card-label mt-12 mb-8">Top sectors as reported</h4><div class="sys-chips">${Object.entries(raw).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([s, n]) => `<span class="sys-chip chip">${esc(s)} <span class="sys-num sys-muted">${n}</span></span>`).join('')}</div>` : ui.empty('No portfolio company/add-on deals in selection');
-    tbl ? tbl.update(rows) : (tbl = ui.table(el.querySelector('#pe-dt'), { columns, rows, pageSize: 25, sortKey: 'date', exportName: 'pe_deals_2025_2026', onRow: d => openDeal(ctx, d, B) }));
+    el.querySelector('#pe-buy').innerHTML = buys.length ? charts.hbar(bk, { fmt: v => fmt.num(v), labelW: 190 }) + `<details class="pe-more mt-12"><summary><b>Sectors as reported</b><span>Top 12</span></summary><div class="pe-more-body"><div class="sys-chips">${Object.entries(raw).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([s, n]) => `<span class="sys-chip chip">${esc(s)} <span class="sys-num sys-muted">${n}</span></span>`).join('')}</div></div></details>` : ui.empty('No portfolio company/add-on deals in selection');
+    tbl ? tbl.update(rows) : (tbl = ui.table(el.querySelector('#pe-dt'), { columns, rows, pageSize: 15, sortKey: 'date', exportName: 'pe_deals_2025_2026', onRow: d => openDeal(ctx, d, B) }));
     const acts = rows.filter(d => d._bucket !== 'other' && d.type !== 'exit').sort((a, b) => String(b.date).localeCompare(String(a.date)));
-    el.querySelector('#pe-dact').innerHTML = acts.length ? acts.map((d, i) => `<div class="pe-act click" tabindex="0" role="button" data-id="${esc(d.id)}"><div class="n">${String(i + 1).padStart(2, '0')}</div><div><div class="h">${esc(d.company)} <span class="sys-muted" style="font-weight:400">· ${esc(d.firm.split(' - ')[0])} · ${esc(d.date)}</span></div><div class="b">${esc(PLAY[d._bucket] ? PLAY[d._bucket].charAt(0).toUpperCase() + PLAY[d._bucket].slice(1) : '')}.</div><div class="sys-chips c">${fmt.chip(TYPE[d.type]?.label || d.type, TYPE[d.type]?.color)}${fmt.chip(sec(d._bucket).label, sec(d._bucket).color)}</div></div></div>`).join('') : ui.empty('No deals in BSP sectors for this selection');
+    el.querySelector('#pe-dact').innerHTML = acts.length ? acts.map((d, i) => `<div class="pe-act click" tabindex="0" role="button" data-id="${esc(d.id)}"><div class="n">${String(i + 1).padStart(2, '0')}</div><div><div class="h">${esc(d.company)} <span class="sys-muted" style="font-weight:400">· ${esc(d.firm.split(' - ')[0])} · ${esc(d.date)}</span></div><div class="sys-chips c">${fmt.chip(TYPE[d.type]?.label || d.type, TYPE[d.type]?.color)}${fmt.chip(sec(d._bucket).label, sec(d._bucket).color)}</div></div></div>`).join('') : ui.empty('No deals in BSP sectors for this selection');
     el.querySelectorAll('#pe-dact .pe-act').forEach(a => a.onclick = () => openDeal(ctx, deals.find(d => d.id === a.dataset.id), B));
     const ex = rows.filter(d => d.type === 'exit').sort((a, b) => String(b.date).localeCompare(String(a.date)));
-    el.querySelector('#pe-exits').innerHTML = ex.length ? `<div class="sys-table-wrap"><table class="sys-table pe-mini"><thead><tr><th>Date</th><th>Company</th><th>Seller</th><th>Note</th></tr></thead><tbody>${ex.map(d => `<tr class="click" tabindex="0" data-id="${esc(d.id)}"><td class="sys-num nowrap">${esc(d.date)}</td><td><b>${esc(d.company)}</b><div class="dim">${esc(d.sector || '')}</div></td><td>${esc(d.firm.split(' - ')[0])}</td><td class="small text-2" style="white-space:normal">${esc(d.note || '')}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('No exits in selection');
+    el.querySelector('#pe-exits').innerHTML = ex.length ? `<div class="sys-table-wrap"><table class="sys-table pe-mini"><thead><tr><th>Date</th><th>Company</th><th>Seller</th><th>Note</th></tr></thead><tbody>${ex.map(d => `<tr class="click" tabindex="0" data-id="${esc(d.id)}"><td class="sys-num nowrap">${esc(d.date)}</td><td><b>${esc(d.company)}</b><div class="dim">${esc(d.sector || '')}</div></td><td>${esc(d.firm.split(' - ')[0])}</td><td class="small text-2">${clip(ctx, d.note, 8)}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('No exits in selection');
     el.querySelectorAll('#pe-exits tr[data-id]').forEach(a => a.onclick = () => openDeal(ctx, deals.find(d => d.id === a.dataset.id), B));
   };
   const f = ui.filters(el.querySelector('#pe-df'), [
-    { key: 'q', label: 'Search company, note, sector…', type: 'search', value: params.q || '' },
+    { key: 'q', label: 'Search deals', type: 'search', value: params.q || '' },
     { key: 'type', label: 'Type', options: Object.entries(TYPE).map(([value, t]) => ({ value, label: t.label })), value: params.type || '' },
     { key: 'bucket', label: 'Sector', options: [...SECTOR_KEYS, 'other'].map(k => ({ value: k, label: sec(k).bucket })), value: params.sector || '' },
     { key: 'firm', label: 'Sponsor', options: firmOpts, value: params.firm || '' },
@@ -486,30 +495,31 @@ function sectorGridPanel(ctx, B) {
   const hottest = SECTOR_KEYS.slice().sort((a, b) => active[b].size - active[a].size)[0];
   const open = SECTOR_KEYS.filter(k => /low/.test(hm[k]?.intensity || ''));
   const stat = (label, value, sub) => `<div class="sys-kpi pe-stat"><div class="sys-kpi-label l">${label}</div><div class="sys-kpi-value v">${value}</div><div class="sys-kpi-sub s">${sub}</div></div>`;
-  return ui.panel({ id: 'pe-sectors', title: 'Rival activity × BSP portfolio company', sub: `Filled = named most-active in that sector · ring = overlap only · click a row for the sponsor profile · ${rows.length} sponsors active in at least one sector`,
+  return ui.panel({ id: 'pe-sectors', title: 'Rival activity by portfolio company', sub: `${rows.length} sponsors`,
     body: `<div class="sys-kpis pe-cstats pe-gstats mb-12">${stat('Hottest sector', esc(sec(hottest).short), `<span title="Named most-active = sponsors analysts flag as most active in the sector; overlapping = any sponsor whose companies or mandate overlap the BSP portfolio company">${active[hottest].size} named most-active · ${firms.filter(f => f._overlap.includes(hottest)).length} overlapping</span>`)}${stat('Multi-sector rivals', fmt.num(multi), 'overlap ≥2 BSP companies')}${stat('Open-space sectors', fmt.num(open.length), open.map(k => sec(k).short).join(' · ') || '—')}</div>
       <div class="sys-table-wrap pe-matrix"><table class="sys-table"><thead><tr><th class="l">Sponsor</th>${SECTOR_KEYS.map(k => `<th title="${esc(hm[k]?.sector || '')} — intensity: ${esc(hm[k]?.intensity || 'n/d')}"><span class="co"><span class="sys-dot" style="--co:${sec(k).color}" aria-hidden="true"></span>${esc(sec(k).short)}</span><span class="int">${fmt.chip(String(hm[k]?.intensity || 'n/d').split('(')[0].trim(), /very high/.test(hm[k]?.intensity || '') ? 'var(--sys-bad)' : /medium/.test(hm[k]?.intensity || '') ? 'var(--sys-warn)' : 'var(--sys-good)')}</span></th>`).join('')}<th>Threat</th><th class="sys-n">Fund</th></tr></thead><tbody>${rows.map(r => `<tr data-id="${esc(r.f.id)}"><td class="l" title="${esc(r.f.firm)}"><div class="nm"><b>${esc(r.f.firm.split(' - ')[0])}</b></div>${r.f.firm.includes(' - ') ? `<div class="sb dim">${esc(r.f.firm.split(' - ')[1])}</div>` : ''}</td>${r.cells.map((c, j) => `<td><span class="pe-cell ${c === 2 ? 'on' : c === 1 ? 'ov' : 'no'}" style="--cc:${sec(SECTOR_KEYS[j]).color}" title="${esc(sec(SECTOR_KEYS[j]).label)}: ${c === 2 ? 'most active' : c === 1 ? 'overlap' : '—'}"></span></td>`).join('')}<td>${threatChip(ctx, r.f.threat_level)}</td><td class="sys-n">${r.f._fund != null ? fmt.money(r.f._fund) : '<span class="dim">n/d</span>'}</td></tr>`).join('')}</tbody></table></div>
-      <div class="pe-notes">${SECTOR_KEYS.filter(k => hm[k]?.note).map(k => `<div style="--cc:${sec(k).color}"><b>${esc(sec(k).label)}.</b> ${esc(hm[k].note)}</div>`).join('')}</div>`,
-    foot: srcFoot(ctx, meta, 'most-active lists and intensity are analyst judgments · fund sizes as announced; some are co-invest/top-up vehicles') });
+      <details class="pe-more mt-12"><summary><b>Sector notes</b><span>One per portfolio company</span></summary><div class="pe-more-body"><div class="pe-notes">${SECTOR_KEYS.filter(k => hm[k]?.note).map(k => `<div style="--cc:${sec(k).color}"><b>${esc(sec(k).label)}.</b> ${esc(hm[k].note)}</div>`).join('')}</div></div></details>`,
+    foot: srcFoot(ctx, meta, 'Filled cell = named most-active in the sector; ring = overlap only. Most-active lists and intensity are analyst judgments. Fund sizes as announced; some are co-invest or top-up vehicles.') });
 }
 /** One move per company, from the research set's implications list. */
 function implicationsPanel(ctx, B) {
   const { ui, fmt, esc } = ctx; const { meta } = B;
   const imps = Array.isArray(meta.implications_for_bsp) ? meta.implications_for_bsp : [];
   const impKey = s => { for (const [k, v] of Object.entries(SECTORS)) if (new RegExp(v.label.split(' ')[0], 'i').test(s.slice(0, 60))) return k; return null; };
-  return ui.panel({ title: 'Implications for BSP', sub: 'Action list — one move per company', body: `<div class="pe-acts">${imps.map((s, i) => { const k = impKey(s); return `<div class="pe-act"><div class="n">${String(i + 1).padStart(2, '0')}</div><div><div class="h">${esc(firstSentence(s))}</div><div class="b">${esc(String(s).slice(firstSentence(s).length).trim())}</div><div class="sys-chips c">${k ? `${fmt.chip(sec(k).label, sec(k).color)}<a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/${sec(k).mod}">Open ${esc(sec(k).short)} →</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/pe/deals?sector=${k}">Rival deals →</a>` : fmt.chip('Firm level', 'var(--sys-brand)')}</div></div></div>`; }).join('') || ui.empty('No implications in dataset')}</div>`, foot: srcFoot(ctx, meta, 'analyst judgment') });
+  const MOVE = { punctual_pros: 'Run outreach to sub-$3M PA/NJ shops; skip auctions.', cet: 'Keep consolidating New England electrical contractors first.', frontline: 'Lock in law-firm MSP and billing add-ons first.', thomas_scientific: 'Treat Calibre Scientific as the main bidding rival.', fund: 'Use the Smith + Howard exit as the Fund II proof point.' };
+  return ui.panel({ title: 'Moves by portfolio company', body: `<div class="pe-acts">${imps.map((s, i) => { const k = impKey(s); return `<div class="pe-act"><div class="n">${String(i + 1).padStart(2, '0')}</div><div><div class="h">${esc(MOVE[k || 'fund'] || firstSentence(s))}</div><details class="pe-why"><summary>Why</summary><div class="b">${esc(s)}</div></details><div class="sys-chips c">${k ? `${fmt.chip(sec(k).label, sec(k).color)}<a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/${sec(k).mod}">Open ${esc(sec(k).short)} →</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/pe/deals?sector=${k}">Rival deals →</a>` : fmt.chip('Firm level', 'var(--sys-brand)')}</div></div></div>`; }).join('') || ui.empty('No implications in dataset')}</div>`, foot: srcFoot(ctx, meta, 'Moves are analyst judgment.') });
 }
 /** Rival presence by county: a closed section; landscape() fills #pe-cc the first time it is opened. */
 function countiesSection(ctx) {
   const { ui } = ctx;
-  return `<details class="pe-more" id="pe-counties"><summary><b>Portfolio counties — rival presence × home-sales turnover</b><span>Home sales in the counties each portfolio company serves, crossed with the rival companies research places there · the records load when you open this section</span></summary><div class="pe-more-body"><div id="pe-cc"></div><p class="sys-src">${ui.source('County assessor and deed records (PA, NJ, MA, CT, RI, DC, New York City)', 'https://www.nj.gov/treasury/taxation/lpt/statdata/', 'Sep 2026')} <span class="dim">· rival presence parsed from Private-equity landscape text</span></p></div></details>`;
+  return `<details class="pe-more" id="pe-counties"><summary><b>Portfolio counties</b><span>Rival presence and home sales by county</span></summary><div class="pe-more-body"><div id="pe-cc"></div><p class="sys-src">${ui.source('County assessor and deed records (PA, NJ, MA, CT, RI, DC, New York City)', 'https://www.nj.gov/treasury/taxation/lpt/statdata/', 'Sep 2026')} <span class="dim">· rival presence parsed from Private-equity landscape text</span></p></div></details>`;
 }
 
 /* ── View 3: Portfolio company comparables ─────────────────────────────── */
 async function platforms(ctx) {
   const { el, ui, fmt, charts, esc, params } = ctx; injectCss();
   const B = await load(ctx); if (!B.pe) return missing(ctx, 'Portfolio company comparables');
-  const { plats, meta, bspPlats } = B;
+  const { plats, meta, bspPlats } = B; markReset();
   const withAdd = plats.filter(p => p.add_ons_count != null);
   const withVel = plats.filter(p => p._velocity != null);
   const rivMed = median(withVel.map(p => p._velocity)); const bspMed = median(bspPlats.map(p => p.velocity));
@@ -520,29 +530,32 @@ async function platforms(ctx) {
 
   el.innerHTML = `<div class="m-pe">` + ui.pageHead({
     title: 'Portfolio company comparables',
-    sub: `Rivals add a median ${fmt.num(rivMed, 1)} add-ons a year against ${fmt.num(bspMed, 1)} at BSP${top ? `; ${esc(top.name)} runs at ${fmt.num(top._velocity, 0)}` : ''}. Keeping pace needs a funded add-on engine.`,
+    sub: `Rivals add a median ${fmt.num(rivMed, 1)} a year; BSP adds ${fmt.num(bspMed, 1)}${top ? `; ${esc(top.name)} ${fmt.num(top._velocity, 0)}` : ''}.`,
     actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/pe/landscape">Landscape</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/ma">Acquisition engine</a>`,
   }) + ui.kpis([
-    { label: 'Rival companies tracked', value: fmt.num(plats.length), sub: `${fmt.num(plats.filter(p => p.status === 'held').length)} held · ${fmt.num(exits.length)} exited`, color: 'var(--c-pe)' },
+    { label: 'Rival companies', value: fmt.num(plats.length), sub: `${fmt.num(plats.filter(p => p.status === 'held').length)} held · ${fmt.num(exits.length)} exited`, color: 'var(--c-pe)' },
     { label: 'In BSP sectors', value: fmt.num(inB.length), sub: `${fmt.num(inB.filter(p => p._bucket === 'punctual_pros').length)} residential services`, color: 'var(--sys-warn)' },
-    { label: 'Disclosed add-on counts', value: fmt.num(withAdd.length), sub: `${fmt.num(withAdd.reduce((s, p) => s + p.add_ons_count, 0))} add-ons in total`, color: 'var(--sys-info)' },
-    { label: 'Rival median pace', value: `${fmt.num(rivMed, 1)}<small>/yr</small>`, sub: `${withVel.length} companies with an entry year`, color: 'var(--sys-bad)' },
-    { label: 'BSP median pace', value: `${fmt.num(bspMed, 1)}<small>/yr</small>`, sub: `${bspTotal} add-ons, ${bspPlats.length} compan${bspPlats.length === 1 ? 'y' : 'ies'} owned since launch`, color: 'var(--sys-brand)' },
-  ]) + (B.bsp ? '' : `<div class="mt-12">${ui.note('Research dataset <b>BSP firm profile</b> is not available — the BSP benchmark falls back to Smith + Howard only (published exit facts); BSP pace is not representative until the BSP firm profile is restored.', 'warn')}</div>`) + `
-  <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Add-on velocity — rivals vs BSP', sub: 'Disclosed add-ons ÷ years held (mid-year entry assumed where month unknown) · BSP companies marked ▶', actions: `<div id="pe-vseg"></div>`, body: `<div id="pe-vel"></div>`, foot: srcFoot(ctx, meta, 'add-on counts mix lifetime and single-year figures — indicative') + ` · ${ui.source('BSP firm profile', 'https://broadskypartners.com/news/', B.bsp?.meta?.generated)}` })}
-    ${ui.panel({ title: 'Exits — who buys scaled companies', sub: 'Exit buyers set the ceiling for BSP exit multiples', body: `<div class="sys-table-wrap"><table class="sys-table pe-mini"><thead><tr><th>Portfolio company</th><th>Seller</th><th class="sys-n">Year</th><th>Buyer</th></tr></thead><tbody>${exits.sort((a, b) => (b.exit_year || 0) - (a.exit_year || 0)).map(p => `<tr class="click" data-id="${esc(p.id)}"><td><b>${esc(p.name)}</b><div class="dim">${esc(p.sector || '')}</div></td><td>${esc(p.firm.split(' - ')[0])}</td><td class="sys-n">${p.exit_year ?? '—'}</td><td>${esc(p.exit_buyer || 'n/d')}</td></tr>`).join('')}<tr><td><b>Smith + Howard</b><div class="dim">Tax, accounting & advisory</div></td><td>BSP</td><td class="sys-n">2026</td><td>TPG Growth</td></tr></tbody></table></div>`, scroll: true, foot: srcFoot(ctx, meta) })}
+    { label: 'Add-ons disclosed', value: fmt.num(withAdd.length), sub: `${fmt.num(withAdd.reduce((s, p) => s + p.add_ons_count, 0))} add-ons total`, color: 'var(--sys-info)' },
+    { label: 'Rival median pace', value: `${fmt.num(rivMed, 1)}<small>/yr</small>`, sub: `${withVel.length} with entry year`, color: 'var(--sys-bad)' },
+    { label: 'BSP median pace', value: `${fmt.num(bspMed, 1)}<small>/yr</small>`, sub: `${bspTotal} add-ons, ${bspPlats.length} compan${bspPlats.length === 1 ? 'y' : 'ies'}`, color: 'var(--sys-brand)' },
+  ]) + (B.bsp ? '' : `<div class="mt-12">${ui.note('BSP firm profile not loaded; BSP pace is not representative.', 'warn')}</div>`) + `
+  <div class="mt-12">
+    ${ui.panel({ title: 'Add-on velocity', actions: `<div id="pe-vseg"></div>`, body: `<div id="pe-vel"></div>`, foot: srcFoot(ctx, meta, 'Pace = disclosed add-ons ÷ years held, assuming mid-year entry where the month is unknown. BSP companies are marked ▶. Add-on counts mix lifetime and single-year figures, so read them as indicative.') })}
   </div>
   <div class="mt-12" id="pe-pf"></div><div id="pe-pt"></div>
-  ${ui.panel({ title: 'What the benchmark means for BSP', sub: 'Action list', cls: 'mt-12', body: `<div class="pe-acts" id="pe-pact"></div>`, foot: srcFoot(ctx, meta) })}
+  <div class="mt-12">
+    ${ui.panel({ title: 'Exits', body: `<div class="sys-table-wrap"><table class="sys-table pe-mini"><thead><tr><th>Portfolio company</th><th>Seller</th><th class="sys-n">Year</th><th>Buyer</th></tr></thead><tbody>${exits.sort((a, b) => (b.exit_year || 0) - (a.exit_year || 0)).map(p => `<tr class="click" data-id="${esc(p.id)}"><td><b>${esc(p.name)}</b><div class="dim">${esc(p.sector || '')}</div></td><td>${esc(p.firm.split(' - ')[0])}</td><td class="sys-n">${p.exit_year ?? '—'}</td><td>${esc(p.exit_buyer || 'n/d')}</td></tr>`).join('')}<tr><td><b>Smith + Howard</b><div class="dim">Tax, accounting & advisory</div></td><td>BSP</td><td class="sys-n">2026</td><td>TPG Growth</td></tr></tbody></table></div>`, scroll: true, foot: srcFoot(ctx, meta) })}
+  </div>
+  ${ui.panel({ title: 'Actions', cls: 'mt-12', body: `<div class="pe-acts" id="pe-pact"></div>`, foot: srcFoot(ctx, meta) })}
+  ${marks(ctx, meta, [ui.source('BSP firm profile', 'https://broadskypartners.com/news/', B.bsp?.meta?.generated)])}
   </div>`;
 
   // velocity chart
   const velRows = mode => {
-    const r = withAdd.map(p => ({ label: `${p.name} · ${p.firm.split(' - ')[0].split(' ')[0]}`, value: mode === 'pace' ? p._velocity : p.add_ons_count, color: p._bucket !== 'other' ? 'var(--c-pe)' : 'var(--sys-mute)', rival: true }))
+    const r = withAdd.map(p => ({ label: p.name, value: mode === 'pace' ? p._velocity : p.add_ons_count, color: p._bucket !== 'other' ? 'var(--c-pe)' : 'var(--sys-mute)', rival: true }))
       .concat(bspPlats.map(p => ({ label: `▶ ${p.name} (BSP)`, value: mode === 'pace' ? p.velocity : p.add, color: 'var(--sys-brand)' })))
       .filter(x => x.value != null).sort((a, b) => b.value - a.value);
-    return charts.hbar(r, { fmt: v => mode === 'pace' ? `${fmt.num(v, 1)}/yr` : fmt.num(v), labelW: 230 }) + `<div class="sys-chips pe-legend mt-12"><span><i style="background:var(--c-pe)"></i>Rival company in a BSP sector</span><span><i style="background:var(--sys-mute)"></i>Rival company, other sector</span><span><i style="background:var(--sys-brand)"></i>BSP portfolio company (▶)</span></div>`;
+    return charts.hbar(r, { fmt: v => mode === 'pace' ? `${fmt.num(v, 1)}/yr` : fmt.num(v), labelW: 230 }) + `<div class="sys-chips pe-legend mt-12"><span><i style="background:var(--c-pe)"></i>Rival, BSP sector</span><span><i style="background:var(--sys-mute)"></i>Rival, other sector</span><span><i style="background:var(--sys-brand)"></i>BSP (▶)</span></div>`;
   };
   const velEl = el.querySelector('#pe-vel');
   ui.seg(el.querySelector('#pe-vseg'), [{ value: 'pace', label: 'Per year' }, { value: 'total', label: 'Total' }], 'pace', v => velEl.innerHTML = velRows(v));
@@ -553,29 +566,29 @@ async function platforms(ctx) {
   const ppR = withVel.filter(p => p._bucket === 'punctual_pros'); const ppPace = median(ppR.map(p => p._velocity));
   const bspPP = bspPlats.find(p => /punctual/i.test(p.name)); const bspCET = bspPlats.find(p => /commonwealth|cet/i.test(p.name));
   const acts = [
-    { h: `Punctual Pros is out-paced ${ppPace && bspPP ? `${fmt.num(ppPace / Math.max(.1, bspPP.velocity), 0)}×` : ''} by residential consolidators`, b: `Residential rivals with disclosed counts run at a median ${fmt.num(ppPace, 1)} add-ons/yr (${ppR.map(p => esc(p.name)).join(', ')}) vs Punctual Pros at ${bspPP ? fmt.num(bspPP.velocity, 1) : '—'}/yr. Stand up a funded tuck-in program (target 3–4/yr) aimed at founder-owned PA/NJ shops below the size large sponsors chase.`, k: 'punctual_pros' },
-    { h: 'CET should compound before institutional electrical companies arrive', b: `Kohlberg's Loenbro and Huron's Criticore are adding ${fmt.num(median(withVel.filter(p => p._bucket === 'cet').map(p => p._velocity)), 1)}/yr outside New England; CET is at ${bspCET ? fmt.num(bspCET.velocity, 1) : '—'}/yr. Pre-build a pipeline of New England electrical/wastewater targets (see Acquisition engine).`, k: 'cet' },
-    { h: 'Smith + Howard proves the model — replicate its cadence', b: `S+H added 9 firms in ~${fmt.num(bspPlats.find(p => /smith/i.test(p.name))?.years || 3.7, 1)} years (${fmt.num(bspPlats.find(p => /smith/i.test(p.name))?.velocity || 2.4, 1)}/yr) and sold to TPG Growth. Use it as the Fund II proof point and as the template for BPI and Thomas Scientific add-on programs.`, k: null },
-    { h: 'Exit buyers are paying for scale', b: `${exits.length} rival company exits on record went to ${[...new Set(exits.map(p => p.exit_buyer).filter(Boolean))].slice(0, 5).map(esc).join(', ')}. Build companies to the size these buyers underwrite.`, k: null },
+    { m: 'Fund 3–4 add-ons a year at Punctual Pros.', h: `Punctual Pros is out-paced ${ppPace && bspPP ? `${fmt.num(ppPace / Math.max(.1, bspPP.velocity), 0)}×` : ''} by residential consolidators`, b: `Residential rivals with disclosed counts run at a median ${fmt.num(ppPace, 1)} add-ons/yr (${ppR.map(p => esc(p.name)).join(', ')}) vs Punctual Pros at ${bspPP ? fmt.num(bspPP.velocity, 1) : '—'}/yr. Stand up a funded tuck-in program (target 3–4/yr) aimed at founder-owned PA/NJ shops below the size large sponsors chase.`, k: 'punctual_pros' },
+    { m: 'Build a New England electrical target pipeline for CET.', h: 'CET should compound before institutional electrical companies arrive', b: `Kohlberg's Loenbro and Huron's Criticore are adding ${fmt.num(median(withVel.filter(p => p._bucket === 'cet').map(p => p._velocity)), 1)}/yr outside New England; CET is at ${bspCET ? fmt.num(bspCET.velocity, 1) : '—'}/yr. Pre-build a pipeline of New England electrical/wastewater targets (see Acquisition engine).`, k: 'cet' },
+    { m: 'Use the Smith + Howard cadence for BPI and Thomas Scientific.', h: 'Smith + Howard proves the model — replicate its cadence', b: `S+H added 9 firms in ~${fmt.num(bspPlats.find(p => /smith/i.test(p.name))?.years || 3.7, 1)} years (${fmt.num(bspPlats.find(p => /smith/i.test(p.name))?.velocity || 2.4, 1)}/yr) and sold to TPG Growth. Use it as the Fund II proof point and as the template for BPI and Thomas Scientific add-on programs.`, k: null },
+    { m: 'Build companies to the size exit buyers underwrite.', h: 'Exit buyers are paying for scale', b: `${exits.length} rival company exits on record went to ${[...new Set(exits.map(p => p.exit_buyer).filter(Boolean))].slice(0, 5).map(esc).join(', ')}. Build companies to the size these buyers underwrite.`, k: null },
   ];
-  el.querySelector('#pe-pact').innerHTML = acts.map((a, i) => `<div class="pe-act"><div class="n">${String(i + 1).padStart(2, '0')}</div><div><div class="h">${a.h}</div><div class="b">${a.b}</div>${a.k ? `<div class="sys-chips c">${fmt.chip(sec(a.k).label, sec(a.k).color)}<a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/${sec(a.k).mod}">Open ${esc(sec(a.k).short)} →</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/ma">Targets →</a></div>` : ''}</div></div>`).join('');
+  el.querySelector('#pe-pact').innerHTML = acts.map((a, i) => `<div class="pe-act"><div class="n">${String(i + 1).padStart(2, '0')}</div><div><div class="h">${a.m}</div><details class="pe-why"><summary>Why</summary><div class="b"><b>${a.h}.</b> ${a.b}</div></details>${a.k ? `<div class="sys-chips c">${fmt.chip(sec(a.k).label, sec(a.k).color)}<a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/${sec(a.k).mod}">Open ${esc(sec(a.k).short)} →</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/ma">Targets →</a></div>` : ''}</div></div>`).join('');
 
   // table
   const columns = [
     { key: 'name', label: 'Company', fmt: (v, r) => `<b>${esc(v)}</b>${r._filings.length ? ` ${fmt.chip(`${r._filings.length} filings`, 'var(--c-fin)')}` : ''}` },
     { key: 'firm', label: 'Sponsor', fmt: v => `<span title="${esc(v)}">${esc(String(v).split(' - ')[0])}</span>` },
-    { key: 'sector', label: 'Sector', wrap: true, width: '220px', fmt: (v, r) => `<span class="small">${esc(v || '—')}</span>${r._bucket !== 'other' ? ` ${fmt.chip(sec(r._bucket).short, sec(r._bucket).color)}` : ''}` },
+    { key: 'sector', label: 'Sector', wrap: true, width: '220px', fmt: (v, r) => `<span class="small">${clip(ctx, v || '—', 10)}</span>${r._bucket !== 'other' ? ` ${fmt.chip(sec(r._bucket).short, sec(r._bucket).color)}` : ''}` },
     { key: 'entry_year', label: 'Entry', num: true, sort: nullLast('entry_year'), fmt: v => v ?? '—' },
     { key: 'add_ons_count', label: 'Add-ons', num: true, sort: nullLast('add_ons_count'), fmt: v => v != null ? fmt.num(v) : '<span class="dim">n/d</span>' },
     { key: '_velocity', label: 'Pace /yr', num: true, sort: nullLast('_velocity'), fmt: v => v != null ? fmt.num(v, 1) : '—' },
     { key: 'status', label: 'Status', fmt: v => fmt.chip(v, v === 'exited' ? 'var(--sys-mute)' : v === 'held' ? 'var(--sys-good)' : 'var(--sys-mute-2)') },
-    { key: '_exit', label: 'Exit', wrap: true, width: '150px', fmt: v => v ? `<span class="small">${esc(v)}</span>` : '—' },
-    { key: 'notes', label: 'Notes', wrap: true, width: '280px', fmt: v => `<span class="small text-2">${esc(String(v || '').slice(0, 120))}</span>` },
+    { key: '_exit', label: 'Exit', wrap: true, width: '150px', fmt: v => v ? `<span class="small">${clip(ctx, v, 10)}</span>` : '—' },
+    { key: 'notes', label: 'Notes', wrap: true, width: '280px', fmt: v => `<span class="small text-2">${clip(ctx, v, 8)}</span>` },
   ];
   let tbl;
   const firmOpts = B.firms.filter(f => f._plats.length).map(f => ({ value: f.id, label: f.firm.split(' - ')[0] })).sort((a, b) => a.label.localeCompare(b.label));
   const f = ui.filters(el.querySelector('#pe-pf'), [
-    { key: 'q', label: 'Search company, sponsor, notes…', type: 'search', value: params.q || '' },
+    { key: 'q', label: 'Search companies', type: 'search', value: params.q || '' },
     { key: 'bucket', label: 'Sector', options: [...SECTOR_KEYS, 'other'].map(k => ({ value: k, label: sec(k).bucket })), value: params.sector || '' },
     { key: 'status', label: 'Status', options: ['held', 'exited', 'n/d'] },
     { key: 'firm', label: 'Sponsor', options: firmOpts, value: params.firm || '' },
@@ -584,12 +597,12 @@ async function platforms(ctx) {
     const q = (st.q || '').toLowerCase();
     const rows = plats.filter(p => (!st.bucket || p._bucket === st.bucket) && (!st.status || p.status === st.status) && (!st.firm || p.firm_id === st.firm) && (!st.disc || p.add_ons_count != null) && (!q || JSON.stringify(p).toLowerCase().includes(q)));
     f.setCount(`${rows.length} / ${plats.length} companies`);
-    tbl ? tbl.update(rows) : (tbl = ui.table(el.querySelector('#pe-pt'), { columns, rows, pageSize: 25, sortKey: 'add_ons_count', exportName: 'pe_company_comparables', onRow: p => openPlatform(ctx, p, B) }));
+    tbl ? tbl.update(rows) : (tbl = ui.table(el.querySelector('#pe-pt'), { columns, rows, pageSize: 15, sortKey: 'add_ons_count', exportName: 'pe_company_comparables', onRow: p => openPlatform(ctx, p, B) }));
   });
   const st0 = f.state; const q0 = (st0.q || '').toLowerCase();
   const rows0 = plats.filter(p => (!st0.bucket || p._bucket === st0.bucket) && (!st0.firm || p.firm_id === st0.firm) && (!q0 || JSON.stringify(p).toLowerCase().includes(q0)));
   f.setCount(`${rows0.length} / ${plats.length} companies`);
-  tbl = ui.table(el.querySelector('#pe-pt'), { columns, rows: rows0, pageSize: 25, sortKey: 'add_ons_count', exportName: 'pe_company_comparables', onRow: p => openPlatform(ctx, p, B) });
+  tbl = ui.table(el.querySelector('#pe-pt'), { columns, rows: rows0, pageSize: 15, sortKey: 'add_ons_count', exportName: 'pe_company_comparables', onRow: p => openPlatform(ctx, p, B) });
   const exact = params.q ? rows0.find(p => p.name.toLowerCase() === params.q.toLowerCase()) : null; if (exact || (params.q && rows0.length === 1)) openPlatform(ctx, exact || rows0[0], B);
 }
 
