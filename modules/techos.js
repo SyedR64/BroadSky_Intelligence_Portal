@@ -164,7 +164,7 @@ const unitShort = u => { u = String(u || ''); return /^%/.test(u) ? '%' : /days/
 const kpiVal = (v, u) => v == null ? 'n/d' : `${trim(v, 1)}${unitShort(u)}`;
 const host = u => { try { return new URL(u).hostname.replace('www.', ''); } catch { return ''; } };
 const extLink = (u, t) => u ? `<a href="${escAttr(u)}" target="_blank" rel="noopener">${escTxt(t || host(u) || 'source')} ↗</a>` : '';
-const escTxt = s => Copy.text(String(s ?? '')).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const escTxt = s => Copy.text(String(s ?? '').replace(/\s*\((?:ve|vs|ks|ra|kpi)-[\w-]+(?:,\s*[\w-]+)*\)/gi, '').replace(/the techos calculator/gi, 'the calculator')).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const escAttr = escTxt;
 const platColor = k => (OS[k] || PRG).color;
 const platChip = (fmt, k) => OS[k] ? fmt.chip(OS[k].co, OS[k].color) : fmt.chip(String(k || ''), 'var(--sys-mute)');
