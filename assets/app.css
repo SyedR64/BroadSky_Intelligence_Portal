@@ -97,13 +97,11 @@ body[data-sys-layout="app"]>.sys-top{background:var(--sys-top-bg)}   /* the same
 #topbar{display:flex;align-items:center;gap:var(--sys-sp-4);height:var(--bar-h);padding:0 var(--sys-gut);flex-shrink:0;background:var(--sys-top-bg);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid var(--sys-line);position:relative;z-index:5}
 .view-tabs{flex:1;min-width:0}
 .view-tabs--one{visibility:hidden}
-/* closed section (<details>): the portal's one disclosure look, a bar on surface-2 with a 7px chevron first. New markup
-   uses .sys-fold; the module names listed here are the same section built before it existed, and their CSS adds only spacing */
-:is(.sys-fold,.ma-how,.bsp-drawer,.cs-drawer,.pe-more){border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2)}
-:is(.sys-fold,.ma-how,.cet-fold,.pp-fold,.bsp-drawer,.cs-drawer,.pe-more)>summary{display:flex;align-items:center;cursor:pointer;list-style:none;font-size:var(--sys-fs-sm)}
-:is(.sys-fold,.ma-how,.cet-fold,.pp-fold,.bsp-drawer,.cs-drawer,.pe-more)>summary::-webkit-details-marker{display:none}
-:is(.sys-fold,.ma-how,.cet-fold,.pp-fold,.bsp-drawer,.cs-drawer,.pe-more)>summary::before{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform var(--sys-t)}
-:is(.sys-fold,.ma-how,.cet-fold,.pp-fold,.bsp-drawer,.cs-drawer,.pe-more)[open]>summary::before{transform:rotate(45deg)}
+/* closed section (<details>): .sys-fold and the module names that share its look live in assets/system.css (R7), so a
+   standalone page can use it too; this file adds only the spacing of the side panel's two folds (Details, Sources) */
+.insp-fold{margin-top:var(--sys-sp-5)}
+.insp-fold>summary{gap:var(--sys-sp-2);padding:var(--sys-sp-2) var(--sys-sp-3)}
+.insp-fold>.insp-sec{margin:0;padding:var(--sys-sp-3);border-top:1px solid var(--sys-line)}
 :where(#app) a.view-tab{text-decoration:none}
 .view-tab{gap:6px}
 .view-tab .n{height:18px;padding:0 5px;font-size:10px}
@@ -122,6 +120,8 @@ body[data-sys-layout="app"]>.sys-top{background:var(--sys-top-bg)}   /* the same
 
 /* ── 4 · view scaffolding: page head, grids ──────────────────────────────── */
 /* the hero order of every page: title, lead, status chips, then the action row */
+/* one screen heading for every screen (home and Connections included): card-title size, never a hero */
+:where(#content) h1,#content h1.sys-h1{font-size:var(--sys-fs-xl);line-height:1.15;letter-spacing:var(--sys-tr-title)}
 .page-head{display:flex;flex-direction:column;align-items:flex-start;margin-bottom:var(--sys-sp-6)}
 .page-head-copy,.page-head>div{min-width:0;max-width:100%}
 .page-head .sub{max-width:80ch}
@@ -150,6 +150,7 @@ body[data-sys-layout="app"]>.sys-top{background:var(--sys-top-bg)}   /* the same
 .panel-foot .src{display:inline-flex;gap:5px;align-items:center;flex-wrap:wrap}
 .panel-foot:not(.sys-src){font:500 var(--sys-fs-xs)/1.55 var(--sys-mono);color:var(--sys-mute)}
 .panel-foot a{color:inherit}
+.panel-foot:empty{display:none}   /* its source line moved to the Sources drawer */
 /* tables, maps and charts that fill a flush body lose their own frame: the card is the frame */
 .panel-body.flush>:is(.sys-table-wrap,.tbl-wrap),.panel-body.flush>*>:is(.sys-table-wrap,.tbl-wrap){border:0;border-top:1px solid var(--sys-line);border-radius:0;box-shadow:none}
 .panel-body.flush>:first-child:is(.sys-table-wrap,.tbl-wrap){border-top:0}
@@ -357,6 +358,10 @@ kbd.k{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-ra
   .panel-head .actions{margin-left:0;justify-content:flex-start}
 }
 @media (max-width:560px){
+  /* phone: the tabs take the whole first row (with the fade at its edge as the scroll cue); Sources, Method and Search
+     take the row under it, right-aligned. A module with one screen draws no tabs, so its controls keep the first row */
+  .view-tabs{flex-basis:100%}
+  .view-tabs--one{flex-basis:0}
   .kpis:not(.sys-kpis){grid-template-columns:repeat(2,minmax(0,1fr))}
   .page-head .actions .sys-btn{flex:1 1 auto}
   .kv{grid-template-columns:minmax(0,1fr);gap:2px}
