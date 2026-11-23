@@ -118,3 +118,9 @@ html{scroll-behavior:smooth}
 .lp-ba-tag--after{background:var(--co);color:var(--sys-on-accent)}
 .lp-ba .sys-card-foot span{font-weight:600;color:var(--sys-ink-2)}
 .lp-ba:hover .sys-card-foot span{color:var(--sys-ink)}
+
+/* compact first screen: the concepts start above the fold */
+body[data-page="gallery"] .sys-hero{padding:24px 0 16px}
+body[data-page="gallery"] .sys-hero .sys-h1{margin-top:0;max-width:none;font-size:clamp(30px,3.6vw,40px)}
+body[data-page="gallery"] .sys-hero .sys-actions{margin-top:var(--sys-sp-4)}
+body[data-page="gallery"] #before-after{padding-top:24px}
