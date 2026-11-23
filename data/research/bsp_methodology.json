@@ -1109,7 +1109,7 @@
   {
    "id": "pat-adjacent-then-leap",
    "kind": "pattern",
-   "pattern": "Geographic expansion first fills the region next door, then makes one larger move. Punctual Pros went Central PA to Central NJ. CET went Worcester/Taunton to Norwell MA to Connecticut, and the CEO has ruled out NYC. S+H went Atlanta to TN, VA, Carolinas and AL before going national at exit. BPI went DC to Brussels and Berlin, then London, then LA and Miami.",
+   "pattern": "Geographic expansion first fills the region next door, then makes one larger move. Punctual Pros went Central PA to Central NJ. CET went Worcester/Taunton to Norwell MA to Connecticut, then to Maryland and New Jersey. S+H went Atlanta to TN, VA, Carolinas and AL before going national at exit. BPI went DC to Brussels and Berlin, then London, then LA and Miami.",
    "evidence_deal_ids": [
     "deal-pp-horvath",
     "deal-cet-nuwave",

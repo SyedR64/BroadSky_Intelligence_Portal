@@ -368,7 +368,7 @@
     ],
     "scoring_rubric": {
       "capability": "0-30: overlap/extension of CET lines (electrical, solar O&M, EV, energy efficiency) and Horton niches (W/WW, pump stations, generators, utility)",
-      "geography": "0-30: straight-line distance to nearest CET node; CT sites credited for Horton adjacency; NY exposure penalized",
+      "geography": "0-30: straight-line distance to nearest CET node; CT sites credited for Horton adjacency",
       "scale": "0-20: employees/revenue relative to 25-400 employees and $8-120M band",
       "ownership_readiness": "0-20: founder/family ownership, generational succession signals; penalized for recent sales, WBE status or acquirer posture"
     }
