@@ -6,6 +6,7 @@ import * as Copy from './copy.js?v=20261123143257';
 import { renderFilings } from '../assets/components.js?v=20261123143257';
 import { esc as E } from '../assets/core.js?v=20261123143257';
 import { companyLinks } from './company-links.js?v=20261123143257';
+import { embedView } from './embed.js?v=20261123143257';
 
 /* System palette only (UNIFIED.md §6, §8): company accents for categories, status tokens for status. */
 const PAL = { pp: 'var(--co-pp)', cet: 'var(--co-cet)', amber: 'var(--sys-warn)', green: 'var(--sys-good)', red: 'var(--sys-bad)', sky: 'var(--sys-info)', purple: 'var(--co-fl)', cyan: 'var(--co-fh)', ts: 'var(--co-ts)', muted: 'var(--sys-mute)', dim: 'var(--sys-mute-2)' };
@@ -317,7 +318,6 @@ async function overview(ctx) {
     title: 'Punctual Pros',
     sub: `PP serves ~${fmt.compact(huTerr + huH)} housing units in ${terr.length} Central PA zips and the Jersey Shore. The fastest levers are new movers, weather staffing and ${adjT1.length} adjacent Tier 1 zips.`,
     chips: `${chip('Authority Brands franchisee', PP)}${dot('Horvath add-on, 2024', STATUS.horvath.color)}${chip('HQ Lancaster County, PA')}`,
-    actions: `<a class="${ui.btnCls('secondary', '')}" href="#/pp/weather">Weather and demand →</a><a class="${ui.btnCls('secondary', '')}" href="#/pp/movers">New movers →</a><a class="${ui.btnCls('secondary', '')}" href="#/national/scorer">US expansion →</a><a class="${ui.btnCls('secondary', '')}" href="#/cases/timeline">Sponsor precedents →</a>`,
   })}${companyLinks('pp')}
   ${missing.length ? ui.note(`Research dataset not yet available: <b>${esc(missing.map(Copy.dataset).join(', '))}</b> — dependent KPIs, levers and storm columns show “—”.`, 'warn') : ''}
   <div id="pp-ov-kpis">${kpis(null)}</div>
@@ -1178,6 +1178,8 @@ export default {
     { id: 'territory', name: 'Territory', icon: '▦', render: territory },
     { id: 'market', name: 'Market', icon: '◎', render: market },
     { id: 'filings', name: 'Public filings', icon: '▤', render: filings },
+    { id: 'tools', name: 'Tools', render: ctx => embedView(ctx, 'redesigns/punctual-pros/serviceos.html', { title: 'Punctual Pros tools' }) },
+    { id: 'plan', name: 'Plan', render: ctx => embedView(ctx, 'redesigns/punctual-pros/nationwide.html', { title: 'Punctual Pros plan' }) },
   ],
   tour: [
     { order: 300, hash: '#/pp/overview', caption: '<b>Punctual Pros.</b> ~1.6M housing units in Central PA and the Jersey Shore. Levers: new movers, weather, adjacent zips.', narration: 'Punctual Pros serves Central Pennsylvania and the Jersey Shore. The levers: new movers, weather staffing and adjacent zips.', duration: 7500 },

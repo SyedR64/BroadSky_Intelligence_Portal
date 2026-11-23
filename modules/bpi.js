@@ -4,6 +4,7 @@ import * as Copy from './copy.js?v=20261123143257';
    Helpers were originally duplicated from fh.js (no cross-module imports); this file no longer mirrors fh.js line for line. */
 import { renderFilings, opportunityCard } from '../assets/components.js?v=20261123143257';
 import { companyLinks } from './company-links.js?v=20261123143257';
+import { embedView } from './embed.js?v=20261123143257';
 
 /* ── module config (the only block that differs from fh.js) ──────────────── */
 const CFG = {
@@ -80,7 +81,7 @@ async function overview(ctx) {
   const high = d.rivals.filter(r => r.threat_level === 'high').length;
   el.innerHTML = ui.pageHead({ title: esc(CFG.name), sub: `${esc(CFG.soWhat(d))}`,
     chips: co ? `${fmt.chip(`Held since ${words(co.entry_date).replace(/ \d{1,2},/, '')}`, CFG.hex)}${fmt.chip(`${String(co.hq_city).split(/[;(]/)[0].trim()}, ${co.state}`)}${fmt.chip(`${d.addOns} add-ons`)}<span class="sys-chip sys-chip--good">${co.status === 'held' ? 'Held' : esc(co.status)}</span>` : '',
-    actions: `<a class="sys-btn sys-btn--primary" href="#/${CFG.id}/opportunities">Opportunities</a><a class="sys-btn sys-btn--secondary" href="#/fin/comps?sector=${CFG.sector}">Public comparables</a>` }) + companyLinks(CFG.id) +
+  }) + companyLinks(CFG.id) +
   (co ? '' : ui.note('Company record not found in BSP firm profile. Profile panels are empty until it lands.', 'warn')) +
   ui.kpis([
     { label: 'Growth opportunities', value: fmt.num(d.opps.length), sub: `${new Set(d.opps.map(o => o.type)).size} types · sourced`, color: CFG.color },
@@ -188,6 +189,8 @@ export default {
     { id: 'overview', name: 'Operating picture', icon: '◉', render: overview },
     { id: 'opportunities', name: 'Growth opportunities', icon: '◆', render: opportunities },
     { id: 'filings', name: 'Public filings', icon: '§', render: filings },
+    { id: 'tools', name: 'Tools', render: ctx => embedView(ctx, 'redesigns/bpi/signalos.html', { title: 'BPI tools' }) },
+    { id: 'plan', name: 'Plan', render: ctx => embedView(ctx, 'redesigns/bpi/growth-plan.html', { title: 'BPI plan' }) },
   ],
   tour: [
     { order: 600, hash: '#/bpi/overview', caption: '<b>Bully Pulpit International.</b> A ~400-person public-affairs firm built on 6 add-ons since April 2023.', narration: 'Bully Pulpit is a roughly four-hundred-person transatlantic public-affairs firm, built on six add-ons since April 2023.', duration: 7000 },

@@ -3,6 +3,7 @@ import * as Copy from './copy.js?v=20261123143257';
    Views: overview · opportunities · filings · NYC context (Manhattan home sales, demoted: context only). Shared helpers are duplicated in bpi.js by design (no cross-module imports). */
 import { renderFilings, opportunityCard } from '../assets/components.js?v=20261123143257';
 import { companyLinks } from './company-links.js?v=20261123143257';
+import { embedView } from './embed.js?v=20261123143257';
 
 /* ── module config (the only block that differs from bpi.js) ──────────────── */
 const CFG = {
@@ -114,7 +115,7 @@ async function overview(ctx) {
   const nonSwim = k ? (k.active_products - (k.product_type_mix.Swim || 0)) : null;
   el.innerHTML = ui.pageHead({ title: esc(CFG.name), sub: `${esc(CFG.soWhat(d))}`,
     chips: co ? `${fmt.chip(`Held since ${words(co.entry_date).replace(/ \d{1,2},/, '')}`, CFG.hex)}${fmt.chip(CFG.hq.label)}${fmt.chip(`${d.addOns} add-ons`)}<span class="sys-chip sys-chip--good">${co.status === 'held' ? 'Held' : esc(co.status)}</span>` : '',
-    actions: `<a class="sys-btn sys-btn--primary" href="#/${CFG.id}/opportunities">Opportunities</a><a class="sys-btn sys-btn--secondary" href="#/${CFG.id}/filings">Filings</a><a class="sys-btn sys-btn--ghost" href="#/${CFG.id}/market">Manhattan home sales</a>` }) + companyLinks(CFG.id) +
+  }) + companyLinks(CFG.id) +
   (co ? '' : ui.note('Company record not found in BSP firm profile. Profile panels are empty until it lands.', 'warn')) +
   ui.kpis([
     { label: 'Variants marked down', value: k ? `${fmt.num(k.markdown_share_pct, 1)}%` : '—', sub: k ? `${fmt.num(k.variants_marked_down_vs_compare_at)} of ${fmt.num(k.variants)} · public store, ${esc(day(fmt, cat.retrieved))}` : 'catalog data pending', color: 'var(--sys-bad)' },
@@ -331,6 +332,8 @@ export default {
     { id: 'opportunities', name: 'Growth opportunities', icon: '◆', render: opportunities },
     { id: 'filings', name: 'Public filings', icon: '§', render: filings },
     { id: 'market', name: 'Manhattan home sales', icon: '⌂', render: market },
+    { id: 'tools', name: 'Tools', render: ctx => embedView(ctx, 'redesigns/fair-harbor/harboros.html', { title: 'Fair Harbor tools' }) },
+    { id: 'plan', name: 'Plan', render: ctx => embedView(ctx, 'redesigns/fair-harbor/growth-plan.html', { title: 'Fair Harbor plan' }) },
   ],
   tour: [
     { order: 700, hash: '#/fh/overview', caption: '<b>Fair Harbor.</b> 4.5 years in. First questions: sell-through, markdowns (38.5% of variants), wholesale doors.', narration: 'For Fair Harbor, the first questions for management are sell-through, markdowns and wholesale doors.', duration: 6000 },

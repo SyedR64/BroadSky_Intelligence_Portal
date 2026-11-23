@@ -7,6 +7,7 @@ import * as Copy from './copy.js?v=20261123143257';
    BSP-only deal-team toggle on the Financials view (#/ts/filings?deal=1), never on company-facing views. */
 import { renderFilings } from '../assets/components.js?v=20261123143257';
 import { companyLinks } from './company-links.js?v=20261123143257';
+import { embedView } from './embed.js?v=20261123143257';
 
 /* Colours are system tokens (system.css); tok() resolves one for the Leaflet canvas renderer. */
 const C = 'var(--co-ts)', HEX = 'var(--co-ts)';
@@ -243,7 +244,7 @@ async function overview(ctx) {
   const stTop = sortedEntries(A.byState); const top3 = stTop.slice(0, 3); const top3Share = top3.reduce((s, x) => s + x[1], 0) / A.rows.length;
   const plan = accounts.filter(p => p.in_top500_plan && p.coverage_priority === 'Pursue').length;
   const sub = `${fmt.num(A.pursueParents)} top-priority (Pursue) accounts bill ${fmt.money(A.pursueCms)}, ${fmt.num(pShareCms * 100, 0)}% of 2023 Medicare lab spend: a named-account list.${mat ? ` The loan matures ${esc(mat)}, so target-account revenue matters most.` : ''}`;
-  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Thomas Scientific', sub, chips: `${fmt.chip('Lab supply, since 1900', C)}${fmt.chip('Held since January 2022')}${fmt.chip('HQ Swedesboro, NJ')}`, actions: `<a class="sys-btn sys-btn--primary" href="#/ts/accounts">Accounts</a><a class="sys-btn sys-btn--secondary" href="#/ts/sites?label=Pursue">Pursue sites</a><a class="sys-btn sys-btn--secondary" href="#/ts/filings">Financials</a>` })}${companyLinks('ts')}
+  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Thomas Scientific', sub, chips: `${fmt.chip('Lab supply, since 1900', C)}${fmt.chip('Held since January 2022')}${fmt.chip('HQ Swedesboro, NJ')}`)}${companyLinks('ts')}
   ${ui.kpis([
     { label: 'Pursue accounts', value: fmt.num(A.pursueParents), sub: `${fmt.num(A.pursue.length)} Pursue sites · named-account list`, color: 'var(--sys-good)' },
     { label: 'Pursue Medicare 2023', value: fmt.money(A.pursueCms), sub: `${fmt.num(pShareCms * 100, 0)}% of universe · ${PROXY}`, color: 'var(--sys-info)' },
@@ -582,6 +583,8 @@ export default {
     { id: 'accounts', name: 'Accounts', icon: '▦', render: accounts },
     { id: 'sites', name: 'Site explorer', icon: '⌖', render: sites },
     { id: 'filings', name: 'Public filings', icon: '§', render: filings },
+    { id: 'tools', name: 'Tools', render: ctx => embedView(ctx, 'redesigns/thomas-scientific/labos.html', { title: 'Thomas Scientific tools' }) },
+    { id: 'plan', name: 'Plan', render: ctx => embedView(ctx, 'redesigns/thomas-scientific/growth-plan.html', { title: 'Thomas Scientific plan' }) },
   ],
   tour: [
     { order: 500, hash: '#/ts/overview', caption: '<b>Thomas Scientific.</b> 643 Pursue accounts bill ~$3.1B of 2023 Medicare lab volume: the named-account list.', narration: 'Thomas Scientific: six hundred forty Pursue accounts bill about three billion dollars of Medicare lab volume.', duration: 9000 },
