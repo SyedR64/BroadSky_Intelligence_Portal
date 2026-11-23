@@ -81,12 +81,6 @@
    "publisher": "Docusign"
   },
   {
-   "id": "microsoft_agent365",
-   "title": "Microsoft Agent 365 tooling servers",
-   "url": "https://learn.microsoft.com/microsoft-agent-365/tooling-servers-overview",
-   "publisher": "Microsoft"
-  },
-  {
    "id": "slack_mcp",
    "title": "Slack MCP server",
    "url": "https://docs.slack.dev/ai/mcp-server",
@@ -141,12 +135,6 @@
    "publisher": "Salesforce"
   },
   {
-   "id": "coupa_punchout",
-   "title": "Coupa punchout catalogs for suppliers",
-   "url": "https://docs.coupa.com/en/supplier-documentation/coupa-for-suppliers/the-coupa-supplier-portal-or-csp/features-and-processes-in-the-coupa-supplier-portal/catalogs/punchout-catalogs",
-   "publisher": "Coupa"
-  },
-  {
    "id": "meltwater_dev",
    "title": "Meltwater developer documentation",
    "url": "https://developer.meltwater.com/",
@@ -195,12 +183,6 @@
    "publisher": "ServiceTitan"
   },
   {
-   "id": "one_hour_reviews",
-   "title": "One Hour Heating & Air Conditioning, Toms River: financing and reviews",
-   "url": "https://www.onehourheatandair.com/toms-river/about-us/financing",
-   "publisher": "One Hour Heating & Air Conditioning"
-  },
-  {
    "id": "frontline_servicenow",
    "title": "Frontline Legal IT Operations Platform powered by ServiceNow",
    "url": "https://frontlinems.com/managed-it-services-for-law-firms/servicenow-legal-it-operations",
@@ -216,12 +198,6 @@
    "id": "frontline_partners",
    "title": "Frontline home page, strategic partners",
    "url": "https://frontlinems.com/",
-   "publisher": "Frontline Managed Services"
-  },
-  {
-   "id": "frontline_press",
-   "title": "Frontline press releases",
-   "url": "https://frontlinems.com/press/",
    "publisher": "Frontline Managed Services"
   },
   {
@@ -318,7 +294,7 @@
  "groups": [
   {
    "id": "firm",
-   "name": "BSP",
+   "name": "Broad Sky",
    "co": null,
    "tools": [
     {
@@ -345,8 +321,7 @@
      "category": "Email",
      "reads": "Inbox threads and replies",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "calendar",
@@ -354,8 +329,7 @@
      "category": "Calendar",
      "reads": "Meetings and free time",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "chat",
@@ -372,8 +346,7 @@
      "category": "Documents",
      "reads": "Shared files and folders",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "adp",
@@ -539,8 +512,7 @@
      "category": "Email",
      "reads": "Inbox threads and replies",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "calendar",
@@ -548,8 +520,7 @@
      "category": "Calendar",
      "reads": "Meetings and free time",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "chat",
@@ -557,8 +528,7 @@
      "category": "Team chat",
      "reads": "Channels and threads",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "drive",
@@ -566,8 +536,7 @@
      "category": "Documents",
      "reads": "Shared files and folders",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "adp",
@@ -601,8 +570,7 @@
      "category": "Reviews",
      "reads": "Ratings and new reviews",
      "state": "planned",
-     "mark": "in_use",
-     "evidence": "one_hour_reviews"
+     "mark": "industry_standard"
     },
     {
      "id": "podium",
@@ -687,8 +655,7 @@
      "category": "Email",
      "reads": "Inbox threads and replies",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "calendar",
@@ -696,8 +663,7 @@
      "category": "Calendar",
      "reads": "Meetings and free time",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "chat",
@@ -705,8 +671,7 @@
      "category": "Team chat",
      "reads": "Channels and threads",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "drive",
@@ -714,8 +679,7 @@
      "category": "Documents",
      "reads": "Shared files and folders",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "adp",
@@ -842,8 +806,7 @@
      "category": "Email",
      "reads": "Inbox threads and replies",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "calendar",
@@ -851,8 +814,7 @@
      "category": "Calendar",
      "reads": "Meetings and free time",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "chat",
@@ -860,8 +822,7 @@
      "category": "Team chat",
      "reads": "Channels and threads",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "drive",
@@ -869,8 +830,7 @@
      "category": "Documents",
      "reads": "Shared files and folders",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "adp",
@@ -950,14 +910,13 @@
      "category": "Security",
      "reads": "Security alerts and open cases",
      "state": "planned",
-     "mark": "supports_clients",
-     "evidence": "frontline_press"
+     "mark": "industry_standard"
     },
     {
      "id": "fred",
      "name": "FRED",
      "category": "Economic data",
-     "reads": "Legal jobs and engineer pay",
+     "reads": "Legal jobs and law-firm prices",
      "state": "live",
      "mark": "industry_standard",
      "doc": "fred"
@@ -993,8 +952,7 @@
      "category": "Email",
      "reads": "Inbox threads and replies",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "calendar",
@@ -1002,8 +960,7 @@
      "category": "Calendar",
      "reads": "Meetings and free time",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "chat",
@@ -1011,8 +968,7 @@
      "category": "Team chat",
      "reads": "Channels and threads",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "drive",
@@ -1020,8 +976,7 @@
      "category": "Documents",
      "reads": "Shared files and folders",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "adp",
@@ -1030,15 +985,6 @@
      "reads": "Headcount and payroll totals",
      "state": "sandbox",
      "mark": "industry_standard"
-    },
-    {
-     "id": "coupa",
-     "name": "Coupa",
-     "category": "Customer procurement",
-     "reads": "Punchout orders from customer buyers",
-     "state": "available",
-     "mark": "industry_standard",
-     "doc": "coupa_punchout"
     },
     {
      "id": "sap-ariba",
@@ -1134,12 +1080,11 @@
     },
     {
      "id": "email",
-     "name": "Outlook",
+     "name": "Gmail",
      "category": "Email",
      "reads": "Inbox threads and replies",
      "state": "sandbox",
-     "mark": "industry_standard",
-     "doc": "microsoft_agent365"
+     "mark": "industry_standard"
     },
     {
      "id": "calendar",
