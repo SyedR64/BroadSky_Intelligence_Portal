@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Punctual Pros concept site · BSP Desk</title>
+<title>Punctual Pros concept site · Broad Sky OS</title>
 <meta name="description" content="Concept website for Punctual Pros: heating, cooling, plumbing and electrical in Central Pennsylvania and the Jersey Shore.">
 <meta name="theme-color" content="#fbfaf7">
 <script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="../../assets/system.css?v=20261123143257">
-<link rel="stylesheet" href="./site.css?v=20261123143257">
+<link rel="stylesheet" href="../../assets/system.css?v=20261123172325">
+<link rel="stylesheet" href="./site.css?v=20261123172325">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
 </head>
 <body data-co="pp">
@@ -83,12 +83,12 @@
           <button class="sys-chip" type="button" id="geo" aria-label="Switch region between Central PA and the Jersey Shore"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg><span id="geo-lbl">Central PA</span></button>
         </div>
         <h1 class="sys-h1" id="hero-h">Comfort, fixed <span class="sys-grad-text">on time.</span></h1>
-        <p class="sys-lead">Heating, cooling, plumbing and electrical from <b>One Hour Heating &amp; Air</b>, <b>Benjamin Franklin Plumbing</b> and <b>Mister Sparky</b>, priced up front. If we're late, we pay you for the wait.</p>
+        <p class="sys-lead">Heating, cooling, plumbing, electrical. Priced up front. Late? We pay you.</p>
         <div class="sys-note sys-note--info pp-storm" id="stormbar" data-level="load" role="status" aria-live="polite">
           <span class="pp-pulse" aria-hidden="true"></span>
           <span><b>Storm readiness</b><span class="sys-est sys-est--live">live</span> <span id="storm-msg">Checking National Weather Service alerts for our 11 counties…</span> <span class="pp-storm-src" id="storm-src">National Weather Service</span></span>
         </div>
-        <p class="pp-oslink"><a class="sys-link" href="./serviceos.html">Live tech tracking and weather-ready dispatch, run on ServiceOS <span aria-hidden="true">→</span></a></p>
+        <p class="pp-oslink"><a class="sys-link" href="./serviceos.html">Run on ServiceOS <span aria-hidden="true">→</span></a></p>
 
         <div class="sys-card sys-card--feature pp-book" id="book" aria-labelledby="book-h">
           <div class="book-form">
@@ -106,17 +106,17 @@
             </div>
             <p class="zipmsg" id="hero-zipmsg" aria-live="polite"><span class="dot"></span><span>We serve 248 ZIP codes in Central PA plus Ocean and Monmouth counties, NJ.</span></p>
             <div class="slots" id="slots" role="group" aria-label="Arrival windows"></div>
-            <div class="book-foot"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg>Upfront price before work · licensed, background-checked technicians · no obligation</div>
+            <div class="book-foot"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg>Upfront price · licensed, background-checked · no obligation</div>
           </div>
           <div class="book-done" id="book-done" tabindex="-1">
             <p class="sys-card-label">You're on the board</p>
             <h3 class="sys-card-title" id="done-h">Heating &amp; Air · Today 2–4 PM</h3>
             <ol>
-              <li>A text confirms your window and the technician's name and photo.</li>
-              <li>When they're on the way you get a live ETA link, so there is no waiting by the window.</li>
-              <li>They diagnose, then show good, better and best options with the price before any work.</li>
+              <li>A text confirms your window, plus the technician's name and photo.</li>
+              <li>A live ETA link when they're on the way.</li>
+              <li>Good, better and best options, priced before any work.</li>
             </ol>
-            <p class="sys-note sys-note--info"><span>Concept demo: no request was sent. In production this writes straight onto the ServiceOS dispatch board.</span></p>
+            <p class="sys-note sys-note--info"><span>Demo: nothing sent. Production books onto the ServiceOS dispatch board.</span></p>
             <button class="sys-btn sys-btn--secondary" type="button" id="book-again">Book another visit</button>
           </div>
         </div>
@@ -154,17 +154,17 @@
       </svg>
         <div class="float f-ontime"><span class="ck"><svg class="ico"><use href="#i-check"/></svg></span><div><div class="k">Arrived</div><div class="v">1:52 PM · window 2–4</div></div></div>
         <div class="float f-eta"><div class="k">Technician en route</div><div class="who"><span class="av">DM</span><div><div class="v">Dani M. · HVAC</div><div class="s">11 min away · Mount Joy</div></div></div><div class="bar"><i></i></div></div>
-        <div class="float f-club"><div class="k">Comfort Club · this year</div><div class="v" id="float-save">$432 saved</div><div class="s">2 tune-ups · no after-hours fees</div></div>
+        <div class="float f-club"><div class="k">Comfort Club · this year</div><div class="v" id="float-save">$432 saved</div></div>
       </div>
     </div>
 
     <div class="sys-kpis" role="list" aria-label="Why homeowners choose Punctual Pros">
-      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Average Google rating</span><span class="sys-kpi-value">4.9<span class="sys-est sys-est--illus">illustrative</span></span><span class="sys-kpi-sub">Concept placeholder until review data is connected</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Average Google rating</span><span class="sys-kpi-value">4.9<span class="sys-est sys-est--illus">illustrative</span></span></div>
       <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Founded</span><span class="sys-kpi-value">1958</span><span class="sys-kpi-sub">In Lancaster, as The Rohrer Company</span></div>
-      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Franchise territories</span><span class="sys-kpi-value">25</span><span class="sys-kpi-sub">One Hour, Ben Franklin and Mister Sparky</span></div>
-      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Homes in our PA ZIP codes</span><span class="sys-kpi-value" id="trust-homes">~1.0M</span><span class="sys-kpi-sub">Housing units across the core service area</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Franchise territories</span><span class="sys-kpi-value">25</span><span class="sys-kpi-sub">Three brands</span></div>
+      <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Homes in our PA ZIP codes</span><span class="sys-kpi-value" id="trust-homes">~1.0M</span><span class="sys-kpi-sub">Housing units, core PA ZIPs</span></div>
     </div>
-    <p class="sys-src"><b>Source:</b> 2026 franchise disclosure documents (territories); Punctual Pros ZIP-code model, Census ACS housing counts (homes); company history. Rating is illustrative.</p>
+    <details class="sys-fold"><summary><b>Sources</b><span>Territories, homes, history</span></summary><p class="sys-src"><b>Source:</b> 2026 franchise disclosure documents (territories); Punctual Pros ZIP-code model, Census ACS housing counts (homes); company history. Rating is illustrative: a placeholder until review data is connected.</p></details>
   </div>
 </section>
 
@@ -174,7 +174,6 @@
     <div class="sys-section-head">
       <p class="sys-kicker">Before and after</p>
       <h2 class="sys-h2" id="ba-h">The site today, and what it could look like.</h2>
-      <p class="sys-lead">The company’s One Hour Heating &amp; Air Conditioning page for Southeast Pennsylvania, as captured on October 8, 2026, beside this concept. Scroll inside a frame to see the whole page.</p>
     </div>
     <div class="sys-compare">
       <fieldset class="sys-compare-seg">
@@ -192,7 +191,7 @@
           <div class="sys-compare-dev sys-compare-dev--phone">
             <div class="sys-compare-screen" tabindex="0" role="region" aria-label="Punctual Pros site today on a phone, scrolls"><img src="before/mobile.jpg" width="390" height="4200" loading="lazy" decoding="async" alt="The same page on a phone: the headline, review badge, Book now and Call us buttons, then long blocks of text in one column."></div>
           </div>
-          <figcaption class="sys-compare-cap"><b>onehourheatandair.com/southeast-pa</b>, the franchisor’s location page for the Lancaster campus, captured October 8, 2026. Plumbing and electrical use the matching Benjamin Franklin and Mister Sparky pages.</figcaption>
+          <figcaption class="sys-compare-cap"><b>onehourheatandair.com/southeast-pa</b>, captured October 8, 2026</figcaption>
         </figure>
         <figure class="sys-compare-col sys-compare-col--after">
           <p class="sys-compare-tag"><b>After</b> This concept</p>
@@ -203,19 +202,19 @@
           <div class="sys-compare-dev sys-compare-dev--phone">
             <div class="sys-compare-screen" tabindex="0" role="region" aria-label="Punctual Pros concept on a phone, scrolls"><img src="after/mobile.jpg" width="390" height="4200" loading="lazy" decoding="async" alt="The concept on a phone: the headline, the storm readiness note and the book-a-visit card with service choices and a ZIP code check."></div>
           </div>
-          <figcaption class="sys-compare-cap"><b>This concept</b>, home page, October 2026. Figures marked illustrative or est. are not company data.</figcaption>
+          <figcaption class="sys-compare-cap"><b>This concept</b>, October 2026</figcaption>
         </figure>
       </div>
       <div class="sys-compare-changes">
         <h3 class="sys-h3">What changes</h3>
         <ul class="sys-compare-list">
-          <li><span><b>Booking in the first screen.</b> A 30-second booking card, a Book now button that stays in view and a call bar on phones.</span><span class="sys-compare-num">Calls booked: 38% (industry) to 59%<span class="sys-est">est.</span></span></li>
-          <li><span><b>Every call answered.</b> An after-hours dispatcher picks up and books the job when the office is closed.</span><span class="sys-compare-num">Calls missed today: about 14.8%<span class="sys-est">est.</span> of inbound</span></li>
-          <li><span><b>Comfort Club sold on the page.</b> A savings calculator, and membership offered in every service card.</span><span class="sys-compare-num">Members per technician: to about 83<span class="sys-est">est.</span></span></li>
-          <li><span><b>Prices before the visit.</b> Good, better and best options with a monthly payment estimator.</span><span class="sys-compare-num">Average ticket growth: 8% (industry) to 14%<span class="sys-est">est.</span> a year</span></li>
+          <li><span><b>Booking on the first screen.</b> Sticky Book now, phone call bar.</span><span class="sys-compare-num">Calls booked: 38% (industry) to 59%<span class="sys-est">est.</span></span></li>
+          <li><span><b>Every call answered.</b> An after-hours dispatcher books the job.</span><span class="sys-compare-num">Calls missed today: about 14.8%<span class="sys-est">est.</span> of inbound</span></li>
+          <li><span><b>Comfort Club on the page.</b> Savings calculator, in every service card.</span><span class="sys-compare-num">Members per technician: to about 83<span class="sys-est">est.</span></span></li>
+          <li><span><b>Prices before the visit.</b> Good, better, best; payment estimator.</span><span class="sys-compare-num">Average ticket growth: 8% (industry) to 14%<span class="sys-est">est.</span> a year</span></li>
         </ul>
       </div>
-      <p class="sys-src"><b>Source:</b> Before screenshots of the One Hour Southeast Pennsylvania location page, October 8, 2026; OS program evidence (industry benchmarks) and Voice AI research, October 2026. Punctual Pros actuals are not public.</p>
+      <details class="sys-fold"><summary><b>Sources</b><span>Screenshots, benchmarks</span></summary><p class="sys-src"><b>Source:</b> Before screenshots of the One Hour Southeast Pennsylvania location page (the franchisor's page for the Lancaster campus; plumbing and electrical use the matching Benjamin Franklin and Mister Sparky pages), October 8, 2026; OS program evidence (industry benchmarks) and Voice AI research, October 2026. Punctual Pros actuals are not public. Figures marked illustrative or est. are not company data.</p></details>
     </div>
   </div>
 </section>
@@ -227,19 +226,17 @@
       <div>
         <p class="sys-kicker">Three trusted brands · one team</p>
         <h2 class="sys-h2" id="svc-h">Whatever broke, one call fixes it.</h2>
-        <p class="sys-lead">Every technician carries a digital flat-rate pricebook, so you see good, better and best options with the price before anything is touched.</p>
-      </div>
+        </div>
       <a class="sys-btn sys-btn--secondary" href="#book">Book any service <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
     </div>
     <div class="sys-grid sys-grid--3">
-      <a class="sys-card pp-svc" href="#book" data-trade="t-hvac" style="--c:var(--pp-heat)"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-flame"/></svg></span><span class="sys-card-label">One Hour Heating &amp; Air</span><span class="sys-card-title">Heating</span><span class="sys-card-body">No heat at 2 a.m. is our specialty. Furnaces, boilers and heat pumps, repaired or replaced.</span><ul class="sys-card-list"><li>Furnace and boiler repair</li><li>Heat-pump installs with utility rebates</li><li>Fall safety tune-up and CO check</li></ul><span class="sys-card-foot"><span>Book heating →</span><span class="price">Diagnostic from $89<span class="sys-est sys-est--illus">illustrative</span></span></span></a>
-      <a class="sys-card pp-svc" href="#book" data-trade="t-hvac" style="--c:var(--pp-cool)"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-snow"/></svg></span><span class="sys-card-label">One Hour Heating &amp; Air</span><span class="sys-card-title">Cooling</span><span class="sys-card-body">Central air, ductless mini-splits and indoor air quality, sized for your home rather than guessed.</span><ul class="sys-card-list"><li>AC repair and same-week replacement</li><li>Ductless mini-splits for additions</li><li>Filtration, humidity and UV air</li></ul><span class="sys-card-foot"><span>Book cooling →</span><span class="price">Diagnostic from $89<span class="sys-est sys-est--illus">illustrative</span></span></span></a>
-      <a class="sys-card pp-svc" href="#book" data-trade="t-plumb" style="--c:var(--pp-plumb)"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-drop"/></svg></span><span class="sys-card-label">Benjamin Franklin Plumbing</span><span class="sys-card-title">Plumbing</span><span class="sys-card-body">Leaks, fixtures, repipes and gas lines. Our plumbers wear shoe covers and leave the bathroom cleaner than they found it.</span><ul class="sys-card-list"><li>Leak detection and repair</li><li>Fixtures, toilets and disposals</li><li>Repiping and gas lines</li></ul><span class="sys-card-foot"><span>Book plumbing →</span><span class="price">Upfront flat rate<span class="sys-est sys-est--illus">illustrative</span></span></span></a>
-      <a class="sys-card pp-svc" href="#book" data-trade="t-plumb" style="--c:var(--pp-drain)"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-drain"/></svg></span><span class="sys-card-label">Benjamin Franklin Plumbing</span><span class="sys-card-title">Drains and sewer</span><span class="sys-card-body">Before a heavy rain, not after. Camera inspections, hydro-jetting and sump pumps with battery backup.</span><ul class="sys-card-list"><li>Drain cleaning and hydro-jetting</li><li>Sewer camera inspection</li><li>Sump pumps and backup batteries</li></ul><span class="sys-card-foot"><span>Book drain service →</span><span class="price">Upfront flat rate<span class="sys-est sys-est--illus">illustrative</span></span></span></a>
-      <a class="sys-card pp-svc" href="#book" data-trade="t-plumb" style="--c:var(--co)"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-tank"/></svg></span><span class="sys-card-label">Benjamin Franklin Plumbing</span><span class="sys-card-title">Water heaters</span><span class="sys-card-body">Cold shower this morning? Most tank replacements are done the same day, and we haul the old one away.</span><ul class="sys-card-list"><li>Same-day tank replacement</li><li>Tankless and heat-pump water heaters</li><li>Flush and anode service</li></ul><span class="sys-card-foot"><span>Book water heater →</span><span class="price">Upfront flat rate<span class="sys-est sys-est--illus">illustrative</span></span></span></a>
-      <a class="sys-card pp-svc" href="#book" data-trade="t-elec" style="--c:var(--pp-elec)"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-bolt"/></svg></span><span class="sys-card-label">Mister Sparky</span><span class="sys-card-title">Electrical and generators</span><span class="sys-card-body">Panels, EV chargers and whole-home generators, so the next outage is just a flicker.</span><ul class="sys-card-list"><li>Panel upgrades and surge protection</li><li>Level 2 EV chargers</li><li>Whole-home standby generators</li></ul><span class="sys-card-foot"><span>Book an electrician →</span><span class="price">Upfront flat rate<span class="sys-est sys-est--illus">illustrative</span></span></span></a>
+      <a class="sys-card pp-svc" href="#book" data-trade="t-hvac" style="--c:var(--pp-heat)"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-flame"/></svg></span><span class="sys-card-label">One Hour Heating &amp; Air</span><span class="sys-card-title">Heating</span><span class="sys-card-body">No heat at 2 a.m.? Furnaces, boilers and heat pumps.</span><ul class="sys-card-list"><li>Furnace and boiler repair</li><li>Heat-pump installs with utility rebates</li><li>Fall safety tune-up and CO check</li></ul><span class="sys-card-foot"><span>Book heating →</span><span class="price">Diagnostic from $89<span class="sys-est sys-est--illus">illustrative</span></span></span></a>
+      <a class="sys-card pp-svc" href="#book" data-trade="t-hvac" style="--c:var(--pp-cool)"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-snow"/></svg></span><span class="sys-card-label">One Hour Heating &amp; Air</span><span class="sys-card-title">Cooling</span><span class="sys-card-body">Central air, ductless mini-splits, indoor air quality.</span><ul class="sys-card-list"><li>AC repair and same-week replacement</li><li>Ductless mini-splits for additions</li><li>Filtration, humidity and UV air</li></ul><span class="sys-card-foot"><span>Book cooling →</span><span class="price">Diagnostic from $89<span class="sys-est sys-est--illus">illustrative</span></span></span></a>
+      <a class="sys-card pp-svc" href="#book" data-trade="t-plumb" style="--c:var(--pp-plumb)"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-drop"/></svg></span><span class="sys-card-label">Benjamin Franklin Plumbing</span><span class="sys-card-title">Plumbing</span><span class="sys-card-body">Leaks, fixtures, repipes and gas lines.</span><ul class="sys-card-list"><li>Leak detection and repair</li><li>Fixtures, toilets and disposals</li><li>Repiping and gas lines</li></ul><span class="sys-card-foot"><span>Book plumbing →</span><span class="price">Upfront flat rate<span class="sys-est sys-est--illus">illustrative</span></span></span></a>
+      <a class="sys-card pp-svc" href="#book" data-trade="t-plumb" style="--c:var(--pp-drain)"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-drain"/></svg></span><span class="sys-card-label">Benjamin Franklin Plumbing</span><span class="sys-card-title">Drains and sewer</span><span class="sys-card-body">Fixed before the heavy rain, not after.</span><ul class="sys-card-list"><li>Drain cleaning and hydro-jetting</li><li>Sewer camera inspection</li><li>Sump pumps and backup batteries</li></ul><span class="sys-card-foot"><span>Book drain service →</span><span class="price">Upfront flat rate<span class="sys-est sys-est--illus">illustrative</span></span></span></a>
+      <a class="sys-card pp-svc" href="#book" data-trade="t-plumb" style="--c:var(--co)"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-tank"/></svg></span><span class="sys-card-label">Benjamin Franklin Plumbing</span><span class="sys-card-title">Water heaters</span><span class="sys-card-body">Cold shower? Most tank swaps are same-day.</span><ul class="sys-card-list"><li>Same-day tank replacement</li><li>Tankless and heat-pump water heaters</li><li>Flush and anode service</li></ul><span class="sys-card-foot"><span>Book water heater →</span><span class="price">Upfront flat rate<span class="sys-est sys-est--illus">illustrative</span></span></span></a>
+      <a class="sys-card pp-svc" href="#book" data-trade="t-elec" style="--c:var(--pp-elec)"><span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-bolt"/></svg></span><span class="sys-card-label">Mister Sparky</span><span class="sys-card-title">Electrical and generators</span><span class="sys-card-body">Panels, EV chargers, whole-home generators.</span><ul class="sys-card-list"><li>Panel upgrades and surge protection</li><li>Level 2 EV chargers</li><li>Whole-home standby generators</li></ul><span class="sys-card-foot"><span>Book an electrician →</span><span class="price">Upfront flat rate<span class="sys-est sys-est--illus">illustrative</span></span></span></a>
     </div>
-    <p class="sys-src"><b>Note:</b> prices shown are illustrative for this concept. Real pricing would be set by the operator in the ServiceOS pricebook.</p>
   </div>
 </section>
 
@@ -247,23 +244,21 @@
 <section class="sys-section sys-section--alt" id="storm" aria-labelledby="storm-h">
   <div class="sys-wrap">
     <div class="sys-section-head">
-      <p class="sys-kicker">Storm readiness</p>
+      <p class="sys-kicker">Next seven days<span class="sys-est sys-est--live">live</span></p>
       <h2 class="sys-h2" id="storm-h">Storm readiness for your street.</h2>
-      <p class="sys-lead">Our dispatchers stage crews from National Weather Service alerts. Here is what the next seven days mean for your home.<span class="sys-est sys-est--live">live</span></p>
     </div>
     <div class="pp-two pp-two--storm">
       <div class="sys-card">
         <div class="card-h"><h3 class="sys-card-title">7-day home-risk forecast</h3><div class="sys-chips" id="hub-seg" role="group" aria-label="Choose area"><button class="sys-chip" type="button" aria-pressed="true" data-hub="lancaster">Lancaster</button><button class="sys-chip" type="button" aria-pressed="false" data-hub="york">York</button><button class="sys-chip" type="button" aria-pressed="false" data-hub="harrisburg">Harrisburg</button><button class="sys-chip" type="button" aria-pressed="false" data-hub="toms">Toms River</button></div></div>
         <div class="days" id="days"><div class="skel" style="height:150px;grid-column:1/-1"></div></div>
         <ul class="checklist" id="todo"></ul>
-        <p class="sys-src" id="fc-src"><b>Source:</b> Open-Meteo forecast (NOAA GFS and HRRR blend). Risk thresholds from the Punctual Pros weather-to-demand model (National Weather Service and Consumer Reports criteria).</p>
       </div>
       <div class="sys-card">
         <div class="card-h"><h3 class="sys-card-title">Active alerts in our 11 counties</h3><span class="meta" id="alert-meta">—</span></div>
         <div class="alerts" id="alerts"><div class="skel" style="height:64px"></div><div class="skel" style="height:64px"></div></div>
-        <p class="sys-src"><b>Source:</b> National Weather Service active alerts for PA and NJ (<a href="https://api.weather.gov/alerts/active?area=PA" target="_blank" rel="noopener">api.weather.gov</a>), matched to forecast zones for Lancaster, York, Dauphin, Cumberland, Berks, Lebanon, Franklin, Adams, Perry, Ocean and Monmouth counties.</p>
       </div>
     </div>
+    <details class="sys-fold"><summary><b>Sources</b><span>Forecast and alert feeds</span></summary><p class="sys-src" id="fc-src"><b>Source:</b> Open-Meteo forecast (NOAA GFS and HRRR blend). Risk thresholds from the Punctual Pros weather-to-demand model (National Weather Service and Consumer Reports criteria).</p><p class="sys-src"><b>Source:</b> National Weather Service active alerts for PA and NJ (<a href="https://api.weather.gov/alerts/active?area=PA" target="_blank" rel="noopener">api.weather.gov</a>), matched to forecast zones for Lancaster, York, Dauphin, Cumberland, Berks, Lebanon, Franklin, Adams, Perry, Ocean and Monmouth counties.</p></details>
   </div>
 </section>
 
@@ -273,14 +268,13 @@
     <div class="sys-section-head">
       <p class="sys-kicker">Service area</p>
       <h2 class="sys-h2" id="cov-h">Do we serve you? Find out in five digits.</h2>
-      <p class="sys-lead">Nine Central Pennsylvania counties from our East Hempfield headquarters, and the Jersey Shore through Horvath Home Services, a Punctual Pros company since 2024.</p>
     </div>
     <div class="cov">
       <div class="cov-panel">
         <div class="sys-card">
           <div class="zipbig"><div class="field"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg><label class="sys-sr" for="cov-zip">ZIP code</label><input id="cov-zip" inputmode="numeric" maxlength="5" placeholder="17601" autocomplete="postal-code"></div><button class="sys-btn sys-btn--primary sys-btn--lg" type="button" id="cov-go">Check</button></div>
           <div class="sys-chips quick" aria-label="Try a ZIP"><button class="sys-chip" type="button" data-zip="17601">17601 Lancaster</button><button class="sys-chip" type="button" data-zip="17402">17402 York</button><button class="sys-chip" type="button" data-zip="08753">08753 Toms River</button><button class="sys-chip" type="button" data-zip="19103">19103 Philadelphia</button></div>
-          <div class="zipres" id="zipres" aria-live="polite"><h4>Enter your ZIP</h4><p>We'll tell you if you're in our core area, which shop serves you, and how fast we can usually get there.</p></div>
+          <div class="zipres" id="zipres" aria-live="polite"><h4>Enter your ZIP</h4><p>See your shop and usual arrival time.</p></div>
         </div>
         <div class="cov-stats">
           <div class="sys-kpi"><span class="sys-kpi-label">Core PA ZIP codes</span><span class="sys-kpi-value" id="st-zips">248</span></div>
@@ -293,7 +287,7 @@
         <div class="map-legend"><span><i class="lg-core"></i>Core service ZIP (PA)</span><span><i class="lg-nj"></i>Horvath Home Services (NJ)</span><span><i class="lg-adj"></i>By appointment (adjacent)</span><span><i class="lg-hub"></i>Shop or dispatch hub</span></div>
       </div>
     </div>
-    <p class="sys-src"><b>Source:</b> Punctual Pros ZIP-code model, BSP portal (Census ACS housing counts, service-territory and adjacency flags; 3,691 ZIP codes scored), Sept 2026. Ocean and Monmouth ZIPs are mapped to Horvath Home Services. Map tiles © Esri.</p>
+    <details class="sys-fold"><summary><b>Sources and coverage</b><span>Counties, ZIP model, map</span></summary><p class="sys-src"><b>Coverage:</b> nine Central Pennsylvania counties (Lancaster, York, Dauphin, Cumberland, Berks, Lebanon, Franklin, Adams and Perry) from our East Hempfield headquarters, and Ocean and Monmouth counties, NJ, through Horvath Home Services, a Punctual Pros company since 2024.</p><p class="sys-src"><b>Source:</b> Punctual Pros ZIP-code model, BSP portal (Census ACS housing counts, service-territory and adjacency flags; 3,691 ZIP codes scored), Sept 2026. Ocean and Monmouth ZIPs are mapped to Horvath Home Services. Map tiles © Esri.</p></details>
   </div>
 </section>
 
@@ -301,9 +295,8 @@
 <section class="sys-section sys-section--alt" id="club" aria-labelledby="club-h">
   <div class="sys-wrap">
     <div class="sys-section-head">
-      <p class="sys-kicker">Comfort Club membership</p>
+      <p class="sys-kicker">Comfort Club membership<span class="sys-est sys-est--illus">illustrative</span></p>
       <h2 class="sys-h2" id="club-h">Pay a little monthly. Skip the 2 a.m. surprise.</h2>
-      <p class="sys-lead">Two tune-ups a year catch most failures early. Members also get priority scheduling, no after-hours fees and member pricing.<span class="sys-est sys-est--illus">illustrative</span></p>
     </div>
     <div class="pp-two">
       <div class="sys-stack">
@@ -311,18 +304,18 @@
           <button class="tier" type="button" data-plan="comfort" aria-pressed="true"><span class="sys-card-title">Comfort</span><span class="pr">$14.95<small>/mo</small></span><span class="per">Heating and cooling</span><ul><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>2 HVAC tune-ups a year</li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>15% off repairs</li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>No diagnostic or after-hours fees</li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Priority scheduling</li></ul></button>
           <button class="tier" type="button" data-plan="total" aria-pressed="false"><span class="pop">Most popular</span><span class="sys-card-title">Total Home</span><span class="pr">$24.95<small>/mo</small></span><span class="per">HVAC, plumbing and electrical</span><ul><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Everything in Comfort</li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Annual plumbing inspection</li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Annual electrical safety check</li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>20% off repairs · 2-year repair warranty</li></ul></button>
         </div>
-        <div class="sys-note sys-note--co"><span><b>Renewals take care of themselves.</b> ServiceOS books your spring and fall tune-ups automatically and texts you two windows to pick from.</span></div>
+        <div class="sys-note sys-note--co"><span><b>Renewals run themselves.</b> ServiceOS books spring and fall tune-ups and texts two windows.</span></div>
       </div>
       <div class="sys-card calc" data-sys-theme="dark" aria-labelledby="calc-h">
         <h3 class="sys-card-title" id="calc-h">What would you save?</h3>
-        <p class="hint">Move the sliders to match your home.</p>
+        
         <div class="ctrl"><label for="c-sys">Heating and cooling systems <output id="o-sys">1</output></label><input type="range" id="c-sys" min="1" max="3" step="1" value="1"></div>
         <div class="ctrl"><label for="c-visits">Repair visits in a typical year <output id="o-visits">2</output></label><input type="range" id="c-visits" min="0" max="5" step="1" value="2"></div>
         <div class="ctrl"><label for="c-ticket">Average repair bill <output id="o-ticket">$420</output></label><input type="range" id="c-ticket" min="150" max="1500" step="10" value="420"></div>
         <div class="out"><div><div class="save-l">Estimated net savings per year</div><div class="save"><span id="c-save">$432</span><span class="sys-est">est.</span></div></div><a class="sys-btn sys-btn--secondary" href="#book">Join and book</a></div>
         <div class="stack" id="c-stack" aria-hidden="true"></div>
         <div class="brk" id="c-brk"></div>
-        <p class="sys-src">Illustrative math: tune-up value $129 per system per visit, $89 diagnostic waived, $99 after-hours fee waived on one in four visits, member discount on the repair bill, minus the annual plan price. Final pricing is set by the operator.</p>
+        <details class="sys-fold"><summary><b>How it is computed</b><span>Tune-up value, waived fees</span></summary><p class="sys-src">Illustrative math: tune-up value $129 per system per visit, $89 diagnostic waived, $99 after-hours fee waived on one in four visits, member discount on the repair bill, minus the annual plan price. Final pricing is set by the operator.</p></details>
       </div>
     </div>
   </div>
@@ -334,7 +327,6 @@
     <div class="sys-section-head">
       <p class="sys-kicker">Financing and rebates</p>
       <h2 class="sys-h2" id="fin-h">A new system for less than your phone bill.</h2>
-      <p class="sys-lead">Spread a replacement over 5 to 10 years and stack the utility rebates we file for you. These are the live programs in our counties.</p>
     </div>
     <div class="pp-two pp-two--fin">
       <div class="sys-card">
@@ -347,13 +339,13 @@
           <div class="pay-tot" id="f-tot">—</div>
         </div>
         <a class="sys-btn sys-btn--primary sys-btn--block" href="#book">Get a free replacement estimate</a>
-        <p class="sys-src">Subject to credit approval through a lending partner. Terms shown are examples, not an offer.</p>
+        <p class="sys-src">Subject to credit approval. Examples, not an offer.</p>
       </div>
-      <div class="sys-card" id="rebates">
-        <div class="card-h"><h3 class="sys-card-title">Rebates and programs in our area</h3><div class="sys-chips" id="reb-seg" role="group" aria-label="Filter by state"><button class="sys-chip" type="button" data-st="PA" aria-pressed="true">PA</button><button class="sys-chip" type="button" data-st="NJ" aria-pressed="false">NJ</button><button class="sys-chip" type="button" data-st="ALL" aria-pressed="false">All</button></div></div>
+      <details class="sys-fold" id="rebates"><summary><b>Rebates and programs in our area</b><span>PA, NJ, live programs</span></summary>
+        <div class="card-h"><div class="sys-chips" id="reb-seg" role="group" aria-label="Filter by state"><button class="sys-chip" type="button" data-st="PA" aria-pressed="true">PA</button><button class="sys-chip" type="button" data-st="NJ" aria-pressed="false">NJ</button><button class="sys-chip" type="button" data-st="ALL" aria-pressed="false">All</button></div></div>
         <div class="reb-list" id="reb-list"><div class="skel" style="height:70px"></div><div class="skel" style="height:70px"></div><div class="skel" style="height:70px"></div></div>
-        <p class="sys-src" id="reb-src"><b>Source:</b> Punctual Pros market profile, BSP portal (utility and agency program pages), retrieved Sept 2026.</p>
-      </div>
+        <details class="sys-fold"><summary><b>Sources</b><span>Program pages</span></summary><p class="sys-src" id="reb-src"><b>Source:</b> Punctual Pros market profile, BSP portal (utility and agency program pages), retrieved Sept 2026.</p></details>
+      </details>
     </div>
   </div>
 </section>
@@ -366,14 +358,13 @@
         <div>
           <p class="sys-kicker">Powered by ServiceOS</p>
           <h2 class="sys-h2" id="os-h">The reason we're on time is software.</h2>
-          <p class="sys-lead">ServiceOS runs every Punctual Pros visit. It forecasts calls from the weather, routes the nearest tech and answers the phone overnight.</p>
           <div class="sys-actions"><a class="sys-btn sys-btn--primary" href="./serviceos.html">See ServiceOS <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="sys-btn sys-btn--secondary" href="./serviceos.html#demo">Try the dispatch demo</a></div>
         </div>
         <div class="os-feats">
-          <div class="os-f"><svg class="ico" aria-hidden="true"><use href="#i-route"/></svg><h3>Live ETA, like a ride-share</h3><p>Tech photo, name and a map link the moment they head your way.</p></div>
-          <div class="os-f"><svg class="ico" aria-hidden="true"><use href="#i-gauge"/></svg><h3>Weather-ready dispatch</h3><p>The Service-Call Pressure Index stages crews before a cold snap hits.</p></div>
-          <div class="os-f"><svg class="ico" aria-hidden="true"><use href="#i-msg"/></svg><h3>Answers at 2 a.m.</h3><p>An AI dispatcher books real slots after hours and hands off to on-call staff.</p></div>
-          <div class="os-f"><svg class="ico" aria-hidden="true"><use href="#i-tag"/></svg><h3>Price before work</h3><p>Good, better and best options on a tablet, with financing and rebates built in.</p></div>
+          <div class="os-f"><svg class="ico" aria-hidden="true"><use href="#i-route"/></svg><h3>Live ETA, like a ride-share</h3><p>Tech photo, name and map link as they head your way.</p></div>
+          <div class="os-f"><svg class="ico" aria-hidden="true"><use href="#i-gauge"/></svg><h3>Weather-ready dispatch</h3><p>The Service-Call Pressure Index stages crews before a cold snap.</p></div>
+          <div class="os-f"><svg class="ico" aria-hidden="true"><use href="#i-msg"/></svg><h3>Answers at 2 a.m.</h3><p>An AI dispatcher books real slots, hands off to on-call.</p></div>
+          <div class="os-f"><svg class="ico" aria-hidden="true"><use href="#i-tag"/></svg><h3>Price before work</h3><p>Good, better, best on a tablet, financing and rebates built in.</p></div>
         </div>
       </div>
     </div>
@@ -384,14 +375,13 @@
 <section class="sys-section sys-section--alt" id="reviews" aria-labelledby="rev-h">
   <div class="sys-wrap">
     <div class="sys-section-head">
-      <p class="sys-kicker">What neighbors say</p>
+      <p class="sys-kicker">What neighbors say<span class="sys-est sys-est--illus">illustrative</span></p>
       <h2 class="sys-h2" id="rev-h">On time is the first thing they mention.</h2>
-      <p class="sys-lead">Sample reviews written for this concept, showing the voice the site would feature.<span class="sys-est sys-est--illus">illustrative</span></p>
     </div>
     <div class="sys-grid sys-grid--3">
-      <figure class="sys-card q"><div class="stars" role="img" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"Furnace quit on the first cold night. I booked online at 9 p.m., got a text with the tech's photo, and he was in my basement by 8:15 the next morning."</blockquote><figcaption class="sys-card-foot"><span><b>Karen S.</b><small>Mount Joy, PA · Heating</small></span></figcaption></figure>
-      <figure class="sys-card q"><div class="stars" role="img" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"Three options with prices on an iPad before he touched anything. We went with the middle one and the rebate paperwork was already filled in."</blockquote><figcaption class="sys-card-foot"><span><b>David R.</b><small>Camp Hill, PA · Water heater</small></span></figcaption></figure>
-      <figure class="sys-card q"><div class="stars" role="img" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"After the last nor'easter half the street lost power. Our generator kicked on, and they'd already checked it at our spring visit."</blockquote><figcaption class="sys-card-foot"><span><b>Maria T.</b><small>Toms River, NJ · Generator</small></span></figcaption></figure>
+      <figure class="sys-card q"><div class="stars" role="img" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"Furnace quit on the first cold night. Booked at 9 p.m.; the tech was in my basement by 8:15."</blockquote><figcaption class="sys-card-foot"><span><b>Karen S.</b><small>Mount Joy, PA · Heating</small></span></figcaption></figure>
+      <figure class="sys-card q"><div class="stars" role="img" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"Three priced options on an iPad before he touched anything. We took the middle one; the rebate paperwork was done."</blockquote><figcaption class="sys-card-foot"><span><b>David R.</b><small>Camp Hill, PA · Water heater</small></span></figcaption></figure>
+      <figure class="sys-card q"><div class="stars" role="img" aria-label="5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>"After the nor'easter half the street lost power. Our generator kicked on; they'd checked it in spring."</blockquote><figcaption class="sys-card-foot"><span><b>Maria T.</b><small>Toms River, NJ · Generator</small></span></figcaption></figure>
     </div>
   </div>
 </section>
@@ -403,30 +393,29 @@
       <div>
         <p class="sys-kicker">Careers · technician pipeline</p>
         <h2 class="sys-h2" id="car-h">Build a career with a toolbox and a future.</h2>
-        <p class="sys-lead">Paid training from day one, a company truck and a path from apprentice to lead technician.</p>
-      </div>
+        </div>
       <a class="sys-btn sys-btn--secondary" href="#careers" id="apply-btn">Apply in 60 seconds <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
     </div>
     <div class="pp-two">
       <div class="sys-card">
         <div class="card-h"><h3 class="sys-card-title">Your path at Punctual Pros</h3><span class="sys-est sys-est--illus">illustrative timeline</span></div>
         <div class="ladder">
-          <div class="rung"><span class="n">01</span><div><h4>Apprentice</h4><p>Paid classroom and ride-alongs. We cover tools and certifications (EPA 608, NATE).</p></div><span class="when">Month 0</span></div>
-          <div class="rung"><span class="n">02</span><div><h4>Service technician</h4><p>Your own truck and territory. ServiceOS routes you close to home.</p></div><span class="when">Year 1–2</span></div>
-          <div class="rung"><span class="n">03</span><div><h4>Lead technician</h4><p>Mentor apprentices, take on installs and the hardest diagnostics.</p></div><span class="when">Year 3–4</span></div>
-          <div class="rung"><span class="n">04</span><div><h4>Comfort advisor or field supervisor</h4><p>Lead in-home design consults, or run a crew and a hub.</p></div><span class="when">Year 5+</span></div>
+          <div class="rung"><span class="n">01</span><div><h4>Apprentice</h4><p>Paid classroom and ride-alongs. Tools and certifications (EPA 608, NATE) covered.</p></div><span class="when">Month 0</span></div>
+          <div class="rung"><span class="n">02</span><div><h4>Service technician</h4><p>Your own truck and territory, routed close to home.</p></div><span class="when">Year 1–2</span></div>
+          <div class="rung"><span class="n">03</span><div><h4>Lead technician</h4><p>Mentor apprentices; take installs and hard diagnostics.</p></div><span class="when">Year 3–4</span></div>
+          <div class="rung"><span class="n">04</span><div><h4>Comfort advisor or field supervisor</h4><p>Lead design consults, or run a crew and a hub.</p></div><span class="when">Year 5+</span></div>
         </div>
       </div>
       <div class="sys-card">
         <div class="card-h"><h3 class="sys-card-title">Pay that beats the market</h3><span class="meta" id="wage-meta">HVAC technicians · annual</span></div>
         <div class="wage" id="wage"><div class="skel" style="height:160px"></div></div>
         <div class="pipe" id="pipe"></div>
-        <p class="sys-src" id="wage-src"><b>Source:</b> BLS Occupational Employment and Wage Statistics, May 2025 metro medians; Punctual Pros job posting on HVACJobsHQ; LancasterOnline; PA Department of Environmental Protection (via the Punctual Pros market profile).</p>
+        <details class="sys-fold"><summary><b>Sources</b><span>Wage and job data</span></summary><p class="sys-src" id="wage-src"><b>Source:</b> BLS Occupational Employment and Wage Statistics, May 2025 metro medians; Punctual Pros job posting on HVACJobsHQ; LancasterOnline; PA Department of Environmental Protection (via the Punctual Pros market profile).</p></details>
       </div>
     </div>
     <div class="sys-card partner" id="partner">
       <span class="ic" aria-hidden="true"><svg class="ico"><use href="#i-brief"/></svg></span>
-      <div><h3 class="sys-card-title">Own a home-services company in PA, NJ, MD or DE?</h3><p class="sys-card-body">Horvath Home Services joined us in 2024 and kept its name, its people and its 20-year reputation. If you're thinking about what's next, we'd like to talk, confidentially.</p></div>
+      <div><h3 class="sys-card-title">Own a home-services company in PA, NJ, MD or DE?</h3><p class="sys-card-body">Horvath Home Services joined in 2024 and kept its name, people and 20-year reputation. Talk to us, confidentially.</p></div>
       <a class="sys-btn sys-btn--secondary" href="#contact">Partner with us</a>
     </div>
   </div>
@@ -438,7 +427,6 @@
     <div class="sys-section-head">
       <p class="sys-kicker">FAQ</p>
       <h2 class="sys-h2" id="faq-h">Good questions. Straight answers.</h2>
-      <p class="sys-lead">Can't find yours? Press Ask in the top bar to check your ZIP, the weather and our programs.</p>
     </div>
     <div class="faq-list" id="faq-list"></div>
   </div>
@@ -447,19 +435,15 @@
 <!-- ── Design rationale (for the PRG) ────────────────────────────────────── -->
 <section class="sys-section" id="rationale" data-sys-theme="dark" aria-labelledby="rat-h">
   <div class="sys-wrap">
-    <div class="sys-section-head">
-      <p class="sys-kicker">Design rationale</p>
-      <h2 class="sys-h2" id="rat-h">The principles behind the page, and the number each one should move.</h2>
-      <p class="sys-lead">Each element follows a pattern proven in residential services, tied to the KPI it should move.</p>
-    </div>
-    <div class="sys-grid sys-grid--2" id="ref-grid"></div>
+    <h2 class="sys-sr" id="rat-h">Design rationale</h2>
+    <details class="sys-fold"><summary><b>Design rationale</b><span>Principles and the KPI each one moves</span></summary>    <div class="sys-grid sys-grid--2" id="ref-grid"></div>
     <div class="sys-table-wrap score-wrap">
       <table class="sys-table score">
         <thead><tr><th>KPI</th><th class="sys-n">Benchmark today</th><th class="sys-n">Target</th><th>Page element that moves it</th><th>Source</th></tr></thead>
         <tbody id="score-body"></tbody>
-        <caption>Source: OS program evidence (industry KPI benchmarks), BSP portal research, Oct 2026. Punctual Pros actuals are not public; targets are estimates.</caption>
       </table>
     </div>
+<p class="sys-src">Source: OS program evidence (industry KPI benchmarks), BSP portal research, Oct 2026. Punctual Pros actuals are not public; targets are estimates.</p></details>
   </div>
 </section>
 
@@ -469,14 +453,14 @@
     <div class="sys-cta-in">
       <div class="sys-cta-copy">
         <h2 id="final-h">Something's not right at home? We're on our way.</h2>
-        <p>Book online in under a minute or call. A real person answers day and night, 365 days a year.</p>
+        <p>A real person answers day and night, 365 days a year.</p>
       </div>
       <div class="sys-actions">
         <a class="sys-btn sys-btn--accent sys-btn--lg" href="#book">Book now</a>
         <a class="sys-btn sys-btn--secondary sys-btn--lg" href="tel:+17175550123" data-phone-link><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span data-phone>(717) 555-0123</span></a>
       </div>
     </div>
-    <p class="sys-src">Punctual Pros is an independently owned franchisee of One Hour Heating &amp; Air Conditioning®, Benjamin Franklin Plumbing® and Mister Sparky®, serving Lancaster, York, Dauphin, Cumberland, Berks, Lebanon, Franklin, Adams and Perry counties in PA, with Ocean and Monmouth counties in NJ served by Horvath Home Services. Phone numbers, prices, reviews, ratings and license numbers on this concept are illustrative.</p>
+    <p class="sys-src">Independent franchisee of One Hour Heating &amp; Air Conditioning®, Benjamin Franklin Plumbing® and Mister Sparky®. Phone numbers, prices, reviews, ratings and license numbers are illustrative.</p>
     <p class="sys-src"><b>More from this concept:</b> <a href="#careers">Careers</a> · <a href="#rationale">Design rationale</a> · <a href="./nationwide.html">Nationwide plan</a> · <a href="./ads.html">Sample ads</a> · <a href="tel:+17175550123" data-phone-link>Call <span data-phone>(717) 555-0123</span></a></p>
   </div>
 </section>
@@ -484,11 +468,12 @@
 
 <div class="actionbar" role="region" aria-label="Quick actions"><a class="sys-btn sys-btn--secondary" href="tel:+17175550123" data-phone-link><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>Call</a><a class="sys-btn sys-btn--primary" href="#book">Book now</a></div>
 
+<script>/* open a closed section when a link or the address points inside it */(function(){function o(){var h=location.hash.slice(1);if(!h)return;var e=document.getElementById(h);while(e){if(e.tagName==='DETAILS')e.open=true;e=e.parentElement}}addEventListener('hashchange',o);addEventListener('DOMContentLoaded',o);document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[href^="#"]');if(a){var t=document.getElementById(a.getAttribute('href').slice(1));while(t){if(t.tagName==='DETAILS')t.open=true;t=t.parentElement}}})})();</script>
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261123143257';
-  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261123143257';
-  import { Chat } from '../../assets/chat.js?v=20261123143257';
-  import { init } from './site.js?v=20261123143257';
+  import { Frame } from '../../assets/frame.js?v=20261123172325';
+  import { Data, Fmt, Live, esc } from '../../assets/core.js?v=20261123172325';
+  import { Chat } from '../../assets/chat.js?v=20261123172325';
+  import { init } from './site.js?v=20261123172325';
   const frame = Frame.mount({});
   const chat = init({ Data, Fmt, Live, Chat, esc, Frame });
   if (chat) frame.setChat(chat);

@@ -1,7 +1,7 @@
 /* BPI concept homepage behaviour. */
-import { Data } from '../../assets/core.js?v=20261123143257';
-import { chrome, mountChat, faqHTML, OFFICES, timeIn, isOpen } from './site.js?v=20261123143257';
-import { mountMonitor, mountPulse } from './monitor.js?v=20261123143257';
+import { Data } from '../../assets/core.js?v=20261123172325';
+import { chrome, mountChat, faqHTML, OFFICES, timeIn, isOpen } from './site.js?v=20261123172325';
+import { mountMonitor, mountPulse } from './monitor.js?v=20261123172325';
 
 const monthYear = d => { const t = new Date(String(d).slice(0, 10) + 'T12:00:00Z'); if (isNaN(t)) return String(d); const m = t.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' }); return `${m === 'Sep' ? 'Sept' : m} ${t.getUTCFullYear()}`; };
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -53,7 +53,7 @@ const JOBS = [
   ['Paid Media Strategist', 'Chicago', 'Digital & paid media'],
 ];
 const jobs = document.getElementById('jobs');
-if (jobs) jobs.innerHTML = JOBS.map(([t, c, p]) => `<a class="job" href="#contact"><b>${esc(t)}</b><span>${esc(p)}</span><span>${esc(c)} · Hybrid</span><span class="go" aria-hidden="true">→</span></a>`).join('') + '<p class="sys-src">Illustrative openings for the concept<span class="sys-est sys-est--illus">illustrative</span>; the live site would sync from the applicant-tracking system.</p>';
+if (jobs) jobs.innerHTML = JOBS.map(([t, c, p]) => `<a class="job" href="#contact"><b>${esc(t)}</b><span>${esc(p)}</span><span>${esc(c)} · Hybrid</span><span class="go" aria-hidden="true">→</span></a>`).join('') + '<p class="sys-src"><span class="sys-est sys-est--illus">illustrative</span> openings</p><details class="sys-fold"><summary><b>Source</b><span>Openings</span></summary><p class="sys-src">Illustrative openings for the concept; the live site would sync from the applicant-tracking system.</p></details>';
 
 // faq
 const fl = document.getElementById('faq-list'); if (fl) fl.innerHTML = faqHTML();

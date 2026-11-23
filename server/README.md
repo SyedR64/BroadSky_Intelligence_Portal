@@ -1,6 +1,6 @@
 # Assistant backend (Python, no Cloudflare)
 
-This is the hosted part of the BSP Desk assistant: a small Python web service, first written as a port of the Cloudflare Worker in [`../worker`](../worker). It keeps the Claude API key on the server and answers every question with Claude working as a research agent over a real knowledge base. It also saves conversation threads and answer feedback, and enforces per-visitor and daily limits.
+This is the hosted part of the Broad Sky OS assistant: a small Python web service, first written as a port of the Cloudflare Worker in [`../worker`](../worker). It keeps the Claude API key on the server and answers every question with Claude working as a research agent over a real knowledge base. It also saves conversation threads and answer feedback, and enforces per-visitor and daily limits.
 
 ## How an answer is made
 
@@ -8,14 +8,14 @@ This is the hosted part of the BSP Desk assistant: a small Python web service, f
 2. **Research.** Claude can call three tools before it answers, up to five model steps in all:
    - `search_knowledge`: search again with other words, a name or a company;
    - `read_source`: read a whole source when an excerpt is cut off;
-   - `deal_model`: run the acquisition model (`dealmath.py`, a line-for-line port of `modules/deal-lib.js`, so the numbers match the portal and its Excel download) for price, financing, returns, a DCF and what a buyer can pay, and return a link that opens the same scenario in the portal.
+   - `deal_model`: run the acquisition model (`dealmath.py`, a line-for-line port of `modules/deal-lib.js`, so the numbers match Broad Sky OS and its Excel download) for price, financing, returns, a DCF and what a buyer can pay, and return a link that opens the same scenario in the portal.
 
-   For BSP Desk only, Claude also has Anthropic's web search for public facts the knowledge base does not hold, and two home-records tools for the Punctual Pros territory (see [Home-sales records](#home-sales-records)):
+   For Broad Sky OS only, Claude also has Anthropic's web search for public facts the knowledge base does not hold, and two home-records tools for the Punctual Pros territory (see [Home-sales records](#home-sales-records)):
    - `new_homeowners`: recent home buyers by county, town or ZIP code, ranked for the new-homeowner promotion;
    - `property_brief`: what the public record says about one address, what to check on arrival and which offers are worth raising.
 3. **Answer.** Claude writes a short answer that cites its sources as `[1]`, `[2]`. The stream tells the site what is happening (`status`), which numbered sources the answer can cite (`sources`, sent again when the list grows) and then the text.
 
-A question that clearly asks for a new-homeowner list or a brief on one address skips step 1 for BSP Desk: the records answer it, and Claude can still search. The test is strict (`tool_route` in `app.py`): the question must name homeowners or home buyers, or pair "new buyers" or "recent owners" with a place, a mailer or a house; a question about the buyers or owners of companies keeps its excerpts. A search result Claude already has from an earlier step is named by its number and title, not sent again. A tool result is cut at 12,000 characters; this is a backstop, not a saving, because no tool returns that much today. Earlier answers in a thread are sent in full only for the most recent one; older ones are cut to their first 2,000 characters.
+A question that clearly asks for a new-homeowner list or a brief on one address skips step 1 for Broad Sky OS: the records answer it, and Claude can still search. The test is strict (`tool_route` in `app.py`): the question must name homeowners or home buyers, or pair "new buyers" or "recent owners" with a place, a mailer or a house; a question about the buyers or owners of companies keeps its excerpts. A search result Claude already has from an earlier step is named by its number and title, not sent again. A tool result is cut at 12,000 characters; this is a backstop, not a saving, because no tool returns that much today. Earlier answers in a thread are sent in full only for the most recent one; older ones are cut to their first 2,000 characters.
 
 The last step always answers, and the whole answer is capped at `UPSTREAM_TOTAL_TIMEOUT` seconds. While Claude thinks or a tool runs, the stream carries `: ping` comment lines. The client ignores them, and they stop proxies from closing a quiet connection.
 
@@ -24,11 +24,11 @@ The last step always answers, and the whole answer is capped at `UPSTREAM_TOTAL_
 `scripts/build_corpus.py` builds it, and the monthly **Refresh assistant knowledge** workflow rebuilds it and commits the result. A commit to `server/` redeploys the service. The sources are:
 
 - BSP's own website, read through its public WordPress data: team biographies, strategy, investments and news.
-- Every web page the portal's research cites: press releases, SEC Form D filings, company pages and trade press.
+- Every web page the research in Broad Sky OS cites: press releases, SEC Form D filings, company pages and trade press.
 - The portfolio companies' own sites.
 - News coverage from Bing News and Google News.
 - A few Wikipedia articles.
-- The portal itself: every page and view as a visitor sees it, the research files and the prepared answers. Local signals shows one company's forces at a time, so each company's table is read as its own document (this is where Fair Harbor's weather and season forces come from).
+- Broad Sky OS itself: every page and screen as a visitor sees it, the research files and the prepared answers. Local signals shows one company's forces at a time, so each company's table is read as its own document (this is where Fair Harbor's weather and season forces come from).
 - A short note on what the home-sales records cover: the counties, the date sales reach and the newest full month for each, the two home-records tools and the no-names rule. The build reads it from the `meta` table of `knowledge/homes.sqlite`, so it carries dates and no row counts. Rebuild the portal source after a sales refresh to move the dates.
 
 Each document is cut into passages of about 1,100 characters. Each passage is indexed two ways in one SQLite file:
@@ -46,7 +46,7 @@ A search runs both and merges the two rankings, so "who runs the firm" finds the
 
 ## Home-sales records
 
-`knowledge/homes.sqlite` holds one row per recorded sale in the Punctual Pros territory: four New Jersey and eleven Pennsylvania counties, about 94,000 sales at the Nov 13, 2026 refresh, some 75,000 of them market sales of homes. The counts move with each refresh; the build prints the current ones and `/health` reports them. `property.py` reads it for the two BSP Desk tools. The concept-site assistants never get these tools.
+`knowledge/homes.sqlite` holds one row per recorded sale in the Punctual Pros territory: four New Jersey and eleven Pennsylvania counties, about 94,000 sales at the Nov 13, 2026 refresh, some 75,000 of them market sales of homes. The counts move with each refresh; the build prints the current ones and `/health` reports them. `property.py` reads it for the two Broad Sky OS tools. The concept-site assistants never get these tools.
 
 **Rebuild.** Run this from the repo root after the home-sales files in `data/sales/` change, then commit the new file. It needs only the Python standard library and takes a few seconds. When the sales files have not changed, the build leaves the file on disk untouched, so a rebuild never makes a diff by itself.
 
@@ -115,7 +115,7 @@ python3 scripts/fetch_pp_sales.py --only york --diff # one source, and which fie
 `POST /chat` with `"mode": "voice"` returns one short answer written to be read aloud. It is the same stream with the same personas, tool rules, per-visitor limit and daily cap.
 
 - **One step.** The server looks up four excerpts and Claude answers from them. There is no search or read loop and no web search.
-- **One tool call at most.** Only a question that clearly belongs to the home records or the deal model is offered that tool (BSP Desk only, as in chat). Claude may call it once; the next call must answer.
+- **One tool call at most.** Only a question that clearly belongs to the home records or the deal model is offered that tool (Broad Sky OS only, as in chat). Claude may call it once; the next call must answer.
 - **Short and plain.** The rules ask for under about 80 words in spoken sentences, numbers said the way a person says them, the answer first, and a plain statement when the knowledge base does not cover the question. Effort is `low`. `max_tokens` is 3,000: a ceiling that covers the model's thinking, one tool call and the answer, not a length (the rules and the effort set that). The reasoning is never streamed. An answer that still hits the ceiling ends with one spoken line saying so; when nothing was spoken, the stream ends with an `error` event (`cut_off`) and the page falls back to its own answer.
 - **Clean text, whatever the model writes.** The server strips markdown, `[n]` markers, links and web addresses from the stream before it leaves, so the text can go straight to speech. A list item, heading or table row gets a full stop, so a list is not read as one run-on sentence. A preamble before a tool call is dropped.
 - **Sources still arrive.** The `sources` event is sent as usual, so the screen can show what the answer rests on. `done` carries `"mode": "voice"`.
@@ -178,7 +178,7 @@ Error codes match the Worker: `no_model_key`, `rate_limited`, `daily_cap`, `upst
 | `ANTHROPIC_API_KEY` | (none) | **Secret.** Set it only in the host's variables UI, never in a file. Without it, `/health` reports `llm:false` and the site keeps using its grounded answers. |
 | `MODEL` | `claude-opus-5-5` | `claude-sonnet-5-5` costs about half as much per answer |
 | `EFFORT` | `medium` | `low`, `medium` or `high` |
-| `WEB_SEARCH` | `on` | `off` removes web search from BSP Desk (it is never offered to the concept-site assistants) |
+| `WEB_SEARCH` | `on` | `off` removes web search from Broad Sky OS (it is never offered to the concept-site assistants) |
 | `DAILY_CAP` | `400` | Total `/chat` requests per UTC day across all visitors. `0` switches Claude off. |
 | `RL_PER_10MIN` | `30` | `/chat` requests per visitor in any 10-minute window |
 | `ALLOWED_ORIGINS` | `https://broadsky-agent.vercel.app,https://broadsky-desk.vercel.app,https://syedr64.github.io,http://127.0.0.1:8765,http://localhost:8765` | Comma-separated. The site's own addresses (`SITE_ORIGINS`: broadsky-agent.vercel.app, its earlier name broadsky-desk.vercel.app, and GitHub Pages) are always allowed. |

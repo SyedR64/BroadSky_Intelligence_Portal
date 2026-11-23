@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LabOS · BSP Desk</title>
+<title>LabOS · Broad Sky OS</title>
 <meta name="description" content="LabOS for Thomas Scientific: AI product search, punchout, vendor-managed inventory and account-health scoring.">
 <meta name="theme-color" content="#fbfaf7">
 <script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261123143257">
-<link rel="stylesheet" href="site.css?v=20261123143257">
+<link rel="stylesheet" href="../../assets/system.css?v=20261123172325">
+<link rel="stylesheet" href="site.css?v=20261123172325">
 </head>
 <body data-co="ts">
 <main id="main">
@@ -27,20 +27,22 @@
 <!-- Hero -->
 <section class="sys-hero" aria-labelledby="osh">
   <div class="sys-wrap">
-    <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>LabOS</b> · for Thomas Scientific</p>
+    <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span>Thomas Scientific</p>
     <h1 id="osh" class="sys-h1">Make every reorder digital. <span class="sys-grad-text">Make every account visible.</span></h1>
-    <p class="sys-lead">AI search that reads specs and CAS numbers, punchout, vendor-managed inventory and account-health scoring across <b data-stat="sites">27,503</b> US lab sites. Mostly proven vendors, with a thin BSP data layer.</p>
-<p class="sys-src page-terms"><b>Terms:</b> CAS number: a chemical's registry ID. Punchout: ordering from inside the customer's own purchasing system. VMI: vendor-managed inventory. ERP: the accounting and order system. PO: purchase order.</p>
+    <p class="sys-lead">Search, punchout, VMI and account health across <b data-stat="sites">27,503</b> US lab sites.</p>
     <div class="sys-actions"><a class="sys-btn sys-btn--primary sys-btn--lg" href="#demo">Try the live demo</a><a class="sys-btn sys-btn--secondary sys-btn--lg" href="index.html">See the Thomas Scientific store →</a></div>
     <div class="sys-kpis" role="list" data-os-kpis></div>
-    <p class="sys-src"><b>Source:</b> Avantor Form 10-K FY2025; Grainger Q4 2025 results; OS program evidence (LabOS assumption), Oct 2026.</p>
+    <details class="sys-fold"><summary><b>Terms and sources</b><span>CAS, punchout, VMI, ERP, PO</span></summary>
+      <p class="sys-src"><b>Terms:</b> CAS number: a chemical's registry ID. Punchout: ordering from inside the customer's own purchasing system. VMI: vendor-managed inventory. ERP: the accounting and order system. PO: purchase order.</p>
+      <p class="sys-src"><b>Source:</b> Avantor Form 10-K FY2025; Grainger Q4 2025 results; OS program evidence (LabOS assumption), Oct 2026. <span data-os-src></span> Mostly proven vendors, with a thin BSP data layer.</p>
+    </details>
   </div>
 </section>
 
 <!-- Modules -->
 <section class="sys-section" id="modules" aria-labelledby="mod-h">
   <div class="sys-wrap">
-    <div class="sys-section-head" data-reveal><p class="sys-kicker">What it is</p><h2 id="mod-h" class="sys-h2">Six modules, one operating layer.</h2><p class="sys-lead">Each module replaces a phone call, a spreadsheet or a sales visit with a workflow the customer runs inside their own systems.</p></div>
+    <div class="sys-section-head" data-reveal><p class="sys-kicker">What it is</p><h2 id="mod-h" class="sys-h2">Six modules, one operating layer.</h2></div>
     <div class="sys-grid sys-grid--3" data-modules></div>
   </div>
 </section>
@@ -48,7 +50,7 @@
 <!-- Demo -->
 <section class="sys-section sys-section--alt" id="demo" aria-labelledby="demo-h">
   <div class="sys-wrap">
-    <div class="sys-section-head" data-reveal><p class="sys-kicker">Interactive demo</p><h2 id="demo-h" class="sys-h2">Run LabOS on real portal data.</h2><p class="sys-lead">Account health runs on portal data, aggregated with no names shown. Search, VMI and spend data are illustrative.</p></div>
+    <div class="sys-section-head" data-reveal><p class="sys-kicker">Interactive demo</p><h2 id="demo-h" class="sys-h2">Run LabOS on real portal data.</h2></div>
     <div class="ts-app" data-app>
       <div class="ts-app-bar"><i></i><i></i><i></i><span>LabOS · concept</span></div>
       <div class="ts-app-tabs" role="tablist" aria-label="LabOS demo modules">
@@ -68,15 +70,16 @@
 <!-- Thesis -->
 <section class="sys-section" id="thesis" aria-labelledby="th-h">
   <div class="sys-wrap">
-    <div class="sys-section-head" data-reveal><p class="sys-kicker">The e-commerce penetration thesis</p><h2 id="th-h" class="sys-h2">Volume is flat. Digital share is not.</h2><p class="sys-lead">Lab distribution grows in the low single digits. Share goes to distributors whose customers order digitally.</p></div>
+    <div class="sys-section-head" data-reveal><p class="sys-kicker">The e-commerce penetration thesis</p><h2 id="th-h" class="sys-h2">Volume is flat. Digital share is not.</h2></div>
     <div class="sys-grid sys-grid--2" data-thesis></div>
+    <details class="sys-fold"><summary><b>Sources</b><span>one per card</span></summary><ul data-thesis-src></ul></details>
   </div>
 </section>
 
 <!-- Value math (dark band) -->
 <section class="sys-section" id="value" data-sys-theme="dark" data-co="ts" aria-labelledby="vl-h">
   <div class="sys-wrap">
-    <div class="sys-section-head" data-reveal><p class="sys-kicker">Value math</p><h2 id="vl-h" class="sys-h2">An EBITDA and cash program first.</h2><p class="sys-lead">Every input defaults to the LabOS assumption in the OS program evidence file <span class="sys-est">est.</span> Move the sliders to stress it.</p></div>
+    <div class="sys-section-head" data-reveal><p class="sys-kicker">Value math</p><h2 id="vl-h" class="sys-h2">An EBITDA and cash program first.</h2></div>
     <div class="ts-vl-grid">
       <form class="sys-card" data-calc aria-label="Value creation calculator"></form>
       <div class="sys-card sys-card--feature" data-calc-out aria-live="polite"></div>
@@ -88,7 +91,7 @@
 <!-- Stack -->
 <section class="sys-section" id="stack" aria-labelledby="st-h">
   <div class="sys-wrap">
-    <div class="sys-section-head" data-reveal><p class="sys-kicker">Build vs buy</p><h2 id="st-h" class="sys-h2">Buy the systems. Build the data layer.</h2><p class="sys-lead">Named vendors and pricing from the evidence file. The proprietary part is the portal's account and site intelligence.</p></div>
+    <div class="sys-section-head" data-reveal><p class="sys-kicker">Build vs buy</p><h2 id="st-h" class="sys-h2">Buy the systems. Build the data layer.</h2></div>
     <div class="sys-grid sys-grid--3" data-stack></div>
   </div>
 </section>
@@ -96,7 +99,7 @@
 <!-- Roadmap -->
 <section class="sys-section sys-section--alt" id="roadmap" aria-labelledby="rm-h">
   <div class="sys-wrap">
-    <div class="sys-section-head" data-reveal><p class="sys-kicker">12-month roadmap</p><h2 id="rm-h" class="sys-h2">Value in two quarters, scale in four.</h2><p class="sys-lead">Sequenced so search and quick order pay for punchout, and punchout data pays for VMI. Time to value is 9–18 months <span class="sys-est">est.</span></p></div>
+    <div class="sys-section-head" data-reveal><p class="sys-kicker">12-month roadmap</p><h2 id="rm-h" class="sys-h2">Value in two quarters, scale in four.</h2></div>
     <div class="sys-card ts-gantt" data-gantt></div>
   </div>
 </section>
@@ -105,12 +108,12 @@
 <section class="sys-section" id="risks" aria-labelledby="rk-h">
   <div class="sys-wrap ts-rk-wrap">
     <div>
-      <div class="sys-section-head" data-reveal><p class="sys-kicker">Risks</p><h2 id="rk-h" class="sys-h2">What could go wrong, and the mitigation.</h2></div>
+      <div class="sys-section-head" data-reveal><p class="sys-kicker">Risks</p><h2 id="rk-h" class="sys-h2">Risks and mitigations</h2></div>
       <div class="ts-rk" data-risks></div>
     </div>
     <aside class="sys-card sys-card--feature ts-exit" data-co="ts" aria-labelledby="ex-h">
       <p class="sys-kicker">At exit</p>
-      <h2 id="ex-h" class="sys-h3">Why a buyer pays for this.</h2>
+      <h2 id="ex-h" class="sys-h3">Why a buyer pays</h2>
       <ol class="ts-exit-l" data-exit></ol>
     </aside>
   </div>
@@ -122,7 +125,7 @@
     <div class="sys-cta-in">
       <div class="sys-cta-copy">
         <h2 id="cta-h">Put LabOS inside the operating plan.</h2>
-        <p>The plan sequences LabOS behind the cash levers and the December 2027 maturity; the portal holds the account and site data it runs on.</p>
+        <p>LabOS follows the cash levers and the December 2027 maturity.</p>
       </div>
       <div class="sys-actions">
         <a class="sys-btn sys-btn--accent sys-btn--lg" href="growth-plan.html">Read the plan</a>
@@ -134,10 +137,10 @@
 </main>
 
 <script type="module">
-import { Frame } from '../../assets/frame.js?v=20261123143257';
-import { Data } from '../../assets/core.js?v=20261123143257';
-import { Chat } from '../../assets/chat.js?v=20261123143257';
-import { init } from './labos.js?v=20261123143257';
+import { Frame } from '../../assets/frame.js?v=20261123172325';
+import { Data } from '../../assets/core.js?v=20261123172325';
+import { Chat } from '../../assets/chat.js?v=20261123172325';
+import { init } from './labos.js?v=20261123172325';
 const frame = Frame.mount({});
 init({ Data, Chat, Frame, frame });
 </script>

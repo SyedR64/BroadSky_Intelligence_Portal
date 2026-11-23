@@ -1,45 +1,50 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   BSP Desk · global frame (frame.js)
-   One top bar, one page bar (the page's own sub-nav, with the breadcrumb and the
-   concept tag folded in), one footer, one Ask button and one copy safety net
-   for every page. Styles live in assets/system.css.
-   Spec: UNIFIED.md.
+   Broad Sky OS · global frame (frame.js)
+   One top bar (brand, "Viewing as" switch, Ask, theme), one page bar (the page's
+   own sub-nav, with the breadcrumb and the concept tag folded in), one footer,
+   one Ask button and one copy safety net for every page. Styles live in
+   assets/system.css. Spec: UNIFIED.md and the OS build spec, section 4.
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261123143257';
+       import { Frame } from '../../assets/frame.js?v=20261123172325';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
-     Frame.mount({ variant: 'minimal', theme: 'dark' });   // theater.html
+     Frame.mount({ variant: 'minimal', theme: 'dark' });   // a full-bleed stage
+
+   Embedded: any page opened with ?embed=1 in its address (the shell shows it in an iframe, modules/embed.js) is drawn
+   with variant 'embed' whatever the page asked for: no top bar, footer, crumb row, concept tag, page sub-bar or
+   floating Ask button, and <html data-embed>. A link that leaves the page opens in the top window. Pages need no change.
 
    Options (all optional):
-     active   'home'|'agent'|'portal'|'concepts'|'os'|'playbooks'|'briefing'  (auto from URL; 'os' and 'playbooks' mark Concepts)
+     active   'home'|'agent'|'connect'|'concepts'|'os'|'playbooks'  (auto from URL; 'os' and 'playbooks' mark Concepts)
      co       'pp'|'cet'|'fl'|'ts'|'bpi'|'fh'   company accent + crumb  (auto from URL)
      persona  chat persona for the Ask button      (default: co, else 'portal')
      theme    'light'|'dark'                       fallback when the visitor has no saved choice (default 'light').
                                                     The visitor's choice (localStorage 'bsp-theme', set by the top-bar
                                                     theme button on every page) always wins, except on a 'minimal'
                                                     page that passes theme: 'dark' (the 3D map stage), which stays dark.
-     variant  'default'|'app'|'minimal'            (app: strip above the console; minimal: transparent, no footer)
+     variant  'default'|'app'|'minimal'|'embed'    (app: strip above the console, no page links (the side menu has them);
+                                                    minimal: transparent, no footer; embed: nothing drawn, set by ?embed=1)
      banner   true|false                           concept tag in the page bar (default: true on concept pages under redesigns/<company>/)
      crumb    false | [{ label, href? }, …]        (default: auto for pages under redesigns/). On a page with a
                                                     sub-nav (.sys-subnav) the parent shows before its title; otherwise
                                                     the crumb is its own row.
      crumbAside  short text at the right of the crumb row, e.g. 'Concept · Oct 2026'
      cta      { label, href }                      small primary button in the top bar
-     nav      { <nav id>: href | { href?, label?, hint? } }   per-page override of primary links,
-                                                    e.g. { briefing: 'app.html#/briefing/play' }. An href
+     nav      { <nav id>: href | { href?, label? } }   per-page override of primary links. An href
                                                     with a '#/' route on this page is marked current while
                                                     location.hash is on that route (kept in sync on hashchange).
-                                                    No page overrides by default: "Briefing" goes to the home
-                                                    page's Briefing section from every page, the portal included.
+     viewAs   true|false                           the "Viewing as" switch (default true; never in embed)
      footer   true|false                           (default true, false for app/minimal)
      hotkey   'mod+k'|'mod+j'|false                (default 'mod+k'; 'mod+j' for variant 'app',
                                                     where ⌘K already opens the portal search)
      chat     an existing Chat widget instance the Ask button should open
      humanize true|'observe'|false                 (default 'observe': one pass now, then on DOM changes)
    ═══════════════════════════════════════════════════════════════════════════ */
+
+import { Session } from './session.js?v=20261123172325';
 
 /* The site lives at broadsky-agent.vercel.app. Older addresses (GitHub Pages and the project's earlier Vercel names) forward there, keeping the page, query and portal view. */
 export const HOME = 'https://broadsky-agent.vercel.app/';
@@ -51,7 +56,11 @@ const VER = SELF.searchParams.get('v');
 const QV = VER ? `?v=${encodeURIComponent(VER)}` : '';
 const AUTHOR = 'Syed Rahman';
 /** The product name: the one wordmark for the top bar, the mobile sheet and the footer (UNIFIED.md §0). */
-export const PRODUCT = 'BSP Desk';
+export const PRODUCT = 'Broad Sky OS';
+/** The shell's own address: the brand and "Home" lead here. */
+const APP = 'app.html';
+const APP_HOME = 'app.html#/home/overview';
+const EMBED = (() => { try { return new URLSearchParams(location.search).get('embed') === '1'; } catch { return false; } })();
 const IS_MAC = /mac|iphone|ipad|ipod/i.test((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent);
 
 export const COMPANIES = {
@@ -64,11 +73,12 @@ export const COMPANIES = {
 };
 const CO_ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
 
+/** The four page links on standalone pages. Inside the shell (variant 'app') the side menu carries them instead. */
 export const NAV = [
-  { id: 'agent',     label: 'Company agent', href: 'agent.html', hint: 'one agent for every role' },
-  { id: 'portal',    label: 'Portal',   href: 'app.html',   hint: 'the six companies and the deal tools' },
-  { id: 'concepts',  label: 'Concepts', href: 'redesigns/', hint: 'website redesigns, software and growth plans' },
-  { id: 'briefing',  label: 'Briefing', href: '#briefing',  hint: 'films, narrated tour and memo' },
+  { id: 'home',     label: 'Home',        href: 'app.html#/home/overview' },
+  { id: 'agent',    label: 'Agent',       href: 'app.html#/home/agent' },
+  { id: 'connect',  label: 'Connections', href: 'app.html#/connect/overview' },
+  { id: 'concepts', label: 'Concepts',    href: 'redesigns/' },
 ];
 /** Pages under these old top-bar entries now mark Concepts. */
 const NAV_PARENT = { os: 'concepts', playbooks: 'concepts' };
@@ -113,7 +123,7 @@ function where() {
 
 function autoCrumb(w) {
   if (w.parts[0] !== 'redesigns' || w.parts.length < 2) return null;
-  const items = [{ label: 'Home', href: './' }];
+  const items = [{ label: 'Home', href: APP_HOME }];
   if (!w.co) {               // redesigns/voice-ai.html, redesigns/ai-agents.html
     items.push({ label: 'Concepts', href: 'redesigns/' }, { label: PAGE_LABELS[w.file] || 'Page' });
     return items;
@@ -128,21 +138,120 @@ function autoCrumb(w) {
 
 /* ── markup ───────────────────────────────────────────────────────────────── */
 function topHTML(o) {
-  const links = o.nav.map(n => `<a data-nav="${esc(n.id)}" href="${esc(url(n.href))}"${n.external ? ' rel="noopener" target="_blank"' : ''}${n.id === o.active ? ' aria-current="page"' : ''}>${esc(n.label)}${n.external ? EXT : ''}</a>`).join('');
-  const sheet = o.nav.map(n => `<a data-nav="${esc(n.id)}" href="${esc(url(n.href))}"${n.external ? ' rel="noopener" target="_blank"' : ''}${n.id === o.active ? ' aria-current="page"' : ''}>${esc(n.label)} <span>${esc(n.hint)}</span></a>`).join('');
+  const link = n => `<a data-nav="${esc(n.id)}" href="${esc(url(n.href))}"${n.external ? ' rel="noopener" target="_blank"' : ''}${n.id === o.active ? ' aria-current="page"' : ''}>${esc(n.label)}${n.external ? EXT : ''}</a>`;
+  const links = o.nav.map(link).join('');
   const keyName = o.hotkey ? `${IS_MAC ? '⌘' : 'Ctrl '}${o.hotkey.split('+').pop().toUpperCase()}` : '';
   const cta = o.cta ? `<a class="sys-btn sys-btn--primary sys-btn--sm sys-top-cta" href="${esc(url(o.cta.href))}">${esc(o.cta.label)}</a>` : '';
+  const menu = o.nav.length || o.cta;
   return `<div class="sys-top-in">
-    <a class="sys-brand" href="${esc(ROOT)}" aria-label="${esc(PRODUCT)}, home">${MARK}<span class="sys-brand-name">${esc(PRODUCT)}</span></a>
-    <nav class="sys-nav" aria-label="Primary">${links}</nav>
+    <a class="sys-brand" href="${esc(url(APP))}" aria-label="${esc(PRODUCT)}, home">${MARK}<span class="sys-brand-name">${esc(PRODUCT)}</span></a>
+    ${o.nav.length ? `<nav class="sys-nav" aria-label="Primary">${links}</nav>` : ''}
     <div class="sys-top-actions">
+      ${o.viewAs ? viewAsHTML() : ''}
       <button class="sys-ask" type="button" data-sys-ask aria-label="Ask the assistant${o.hotkey ? ` (${IS_MAC ? 'Command' : 'Control'} ${o.hotkey.split('+').pop().toUpperCase()})` : ''}"${keyName ? ` title="Ask the assistant (${keyName})"` : ''}><span class="sys-dot" aria-hidden="true"></span>Ask</button>
       ${o.themeToggle ? `<button class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon sys-theme" type="button" data-sys-theme-toggle aria-label="Switch to dark theme" title="Switch to dark theme"></button>` : ''}
       ${cta}
-      <button class="sys-menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sys-sheet"><span></span><span></span></button>
+      ${menu ? `<button class="sys-menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sys-sheet"><span></span><span></span></button>` : ''}
     </div>
-    <div class="sys-sheet" id="sys-sheet" aria-label="${esc(PRODUCT)} menu" hidden>${sheet}${o.cta ? `<a class="sys-btn sys-btn--primary" href="${esc(url(o.cta.href))}">${esc(o.cta.label)}</a>` : ''}</div>
+    ${menu ? `<div class="sys-sheet" id="sys-sheet" aria-label="${esc(PRODUCT)} menu" hidden>${links}${o.cta ? `<a class="sys-btn sys-btn--primary" href="${esc(url(o.cta.href))}">${esc(o.cta.label)}</a>` : ''}</div>` : ''}
   </div>`;
+}
+
+/* ── "Viewing as" switch (OS build spec 4.2) ──────────────────────────────────
+   Closed: the role's title and organisation. Open: the five levels, then the roles of the chosen level grouped by
+   organisation. Choosing a role calls Session.setRole (assets/session.js), which keeps the choice, writes ?role= into
+   the address and tells every listener (the shell redraws its menu and home). Navigation, not security: the words are
+   always "Viewing as". */
+const CHEV = '<svg class="sys-viewas-chev" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+/** The organisation's display name: the firm reads "Broad Sky"; a company reads its catalogue name. */
+function orgName(id) {
+  if (!id || id === 'bsp') return 'Broad Sky';
+  const o = Session.orgs().find(x => x.id === id);
+  return (o && o.name) || (COMPANIES[id] && COMPANIES[id].short) || id;
+}
+function viewAsHTML() {
+  return `<div class="sys-viewas" data-sys-viewas>
+      <button class="sys-viewas-btn" type="button" aria-expanded="false" aria-controls="sys-viewas-pop" aria-haspopup="true">
+        <span class="sys-viewas-k">Viewing as</span><span class="sys-viewas-v"><b data-sys-viewas-title></b><span data-sys-viewas-org></span></span>${CHEV}
+      </button>
+      <div class="sys-viewas-pop" id="sys-viewas-pop" role="group" aria-label="Viewing as" hidden>
+        <div class="sys-chips sys-viewas-levels" role="group" aria-label="Level" data-sys-viewas-levels></div>
+        <div class="sys-viewas-roles" data-sys-viewas-roles></div>
+      </div>
+    </div>`;
+}
+function bindViewAs(top) {
+  const box = top.querySelector('[data-sys-viewas]');
+  if (!box) return;
+  const btn = box.querySelector('.sys-viewas-btn'), pop = box.querySelector('.sys-viewas-pop');
+  const levelsEl = box.querySelector('[data-sys-viewas-levels]'), rolesEl = box.querySelector('[data-sys-viewas-roles]');
+  let level = Session.level();
+  const paintLabel = () => {
+    const r = Session.role(), org = orgName(r.org);
+    box.querySelector('[data-sys-viewas-title]').textContent = r.title;
+    box.querySelector('[data-sys-viewas-org]').textContent = ` · ${org}`;
+    btn.setAttribute('aria-label', `Viewing as ${r.title}, ${org}. Change`);
+    box.dataset.level = r.level;
+  };
+  const paintLevels = () => {
+    const all = Session.roles();
+    levelsEl.innerHTML = Session.levels().map(l => {
+      const n = all.filter(r => r.level === l.id).length;
+      return `<button type="button" class="sys-chip" data-level="${esc(l.id)}" aria-pressed="${l.id === level}">${esc(l.name)}<span class="sys-muted sys-num">${n}</span></button>`;
+    }).join('');
+  };
+  const paintRoles = () => {
+    const cur = Session.role().id, groups = new Map();
+    for (const r of Session.roles().filter(x => x.level === level)) {
+      const k = r.org || 'bsp';
+      if (!groups.has(k)) groups.set(k, []);
+      groups.get(k).push(r);
+    }
+    const order = ['bsp', ...CO_ORDER];
+    const keys = [...groups.keys()].sort((a, b) => (order.indexOf(a) + 1 || 99) - (order.indexOf(b) + 1 || 99));
+    rolesEl.innerHTML = keys.map(k => `<div class="sys-viewas-group"${k !== 'bsp' ? ` data-co="${esc(k)}"` : ''}>
+        <p class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>${esc(orgName(k))}</p>
+        <ul class="sys-viewas-list">${groups.get(k).map(r => `<li><button type="button" class="sys-viewas-role" data-role="${esc(r.id)}"${r.id === cur ? ' aria-current="true"' : ''}>${esc(r.title)}</button></li>`).join('')}</ul>
+      </div>`).join('') || '<p class="sys-muted">No roles at this level.</p>';
+  };
+  const isOpen = () => !pop.hidden;
+  const open = focus => {
+    level = Session.level(); paintLevels(); paintRoles();
+    pop.hidden = false; btn.setAttribute('aria-expanded', 'true'); box.classList.add('is-open');
+    if (focus) (rolesEl.querySelector('[aria-current]') || levelsEl.querySelector('[aria-pressed="true"]'))?.focus();
+  };
+  const close = (refocus) => {
+    if (!isOpen()) return;
+    pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); box.classList.remove('is-open');
+    if (refocus) btn.focus();
+  };
+  btn.addEventListener('click', e => { isOpen() ? close(false) : open(e.detail === 0); });   // keyboard activation moves focus inside
+  btn.addEventListener('keydown', e => { if (e.key === 'ArrowDown' && !isOpen()) { e.preventDefault(); open(true); } });
+  levelsEl.addEventListener('click', e => {
+    const b = e.target.closest('button[data-level]'); if (!b) return;
+    level = b.dataset.level; paintLevels(); paintRoles();
+    levelsEl.querySelector(`[data-level="${level}"]`)?.focus();
+  });
+  rolesEl.addEventListener('click', e => {
+    const b = e.target.closest('button[data-role]'); if (!b) return;
+    Session.setRole(b.dataset.role);
+    close(true);
+  });
+  pop.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(true); return; }
+    // <html> carries data-level and data-role too (assets/session.js), so only the switch's own buttons count
+    const inLevels = e.target.closest('button[data-level]'), inRoles = e.target.closest('button[data-role]');
+    const step = (list, el, d) => { const i = list.indexOf(el); const n = list[(i + d + list.length) % list.length]; if (n) { e.preventDefault(); n.focus(); } };
+    if (inLevels && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) step([...levelsEl.querySelectorAll('[data-level]')], inLevels, e.key === 'ArrowRight' ? 1 : -1);
+    if (inRoles && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) step([...rolesEl.querySelectorAll('[data-role]')], inRoles, e.key === 'ArrowDown' ? 1 : -1);
+  });
+  // leaving the switch (click elsewhere, or Tab past its last control) closes it
+  document.addEventListener('pointerdown', e => { if (isOpen() && !box.contains(e.target)) close(false); });
+  box.addEventListener('focusout', e => { if (isOpen() && e.relatedTarget && !box.contains(e.relatedTarget)) close(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && isOpen()) close(true); });
+  Session.onChange((r, what) => { if (what === 'role') { paintLabel(); if (isOpen()) { level = r.level; paintLevels(); paintRoles(); } } });
+  paintLabel();
+  Session.ready().then(() => { paintLabel(); if (isOpen()) { paintLevels(); paintRoles(); } });
 }
 /** The concept notice: a small tag that stays in the page bar (the full sentence is its tooltip and is read by screen readers). */
 function conceptTagHTML() {
@@ -176,15 +285,17 @@ function crumbHTML(items, aside, tag) {
   }).join('');
   return `<div class="sys-crumb-in"><ol>${li}</ol>${aside ? `<span class="sys-crumb-aside">${esc(aside)}</span>` : ''}${tag ? conceptTagHTML() : ''}</div>`;
 }
+/** One line under the wordmark (13 words at most), then the links, then the legal line. */
+export const FOOTER_LINE = 'One operating system for Broad Sky and its six companies.';
 function footerHTML() {
   const a = (href, label) => `<a href="${esc(url(href))}">${esc(label)}</a>`;
   return `<div class="sys-wrap">
     <div class="sys-footer-grid">
       <div class="sys-footer-brand">
-        <a class="sys-brand" href="${esc(ROOT)}" aria-label="${esc(PRODUCT)}, home">${MARK}<span class="sys-brand-name">${esc(PRODUCT)}</span></a>
-        <p>Made by ${AUTHOR} for Broad Sky's Portfolio Resource Group. Public information about six companies, turned into clear next steps.</p>
+        <a class="sys-brand" href="${esc(url(APP))}" aria-label="${esc(PRODUCT)}, home">${MARK}<span class="sys-brand-name">${esc(PRODUCT)}</span></a>
+        <p>${esc(FOOTER_LINE)}</p>
       </div>
-      <nav class="sys-footer-row" aria-label="Site">${a('agent.html', 'Company agent')}${a('app.html', 'Portal')}${a('redesigns/', 'Concepts')}${a('#briefing', 'Briefing')}${a('briefing/executive_memo.html', 'Executive memo')}${a('sitemap.html', 'All pages')}</nav>
+      <nav class="sys-footer-row" aria-label="Site">${NAV.map(n => a(n.href, n.label)).join('')}${a('app.html#/briefing/play', 'Narrated tour')}${a('briefing/executive_memo.html', 'Executive memo')}${a('sitemap.html', 'All pages')}</nav>
     </div>
     <div class="sys-footer-legal"><p>${esc(DISCLAIMER)}</p><p class="sys-mono">Prepared by ${AUTHOR} · November 2026</p></div>
   </div>`;
@@ -271,7 +382,7 @@ function bindHotkey(spec) {
 export const LABELS = {
   // portal datasets (data/)
   cet_ne_counties: 'CET New England county scores', cet_ne_development: 'New England development activity', cet_ne_rfps: 'New England public bids',
-  cet_nyc_archive_summary: 'CET legacy archive summary', fl_lawfirms: 'Frontline law-firm universe', pp_meta: 'Punctual Pros territory profile',
+  fl_lawfirms: 'Frontline law-firm universe', pp_meta: 'Punctual Pros territory profile',
   pp_sales_90d: 'Punctual Pros home sales, January to April 2026', pp_zips: 'Punctual Pros ZIP-code model', ts_parents: 'Thomas Scientific parent accounts', ts_sites: 'Thomas Scientific lab sites',
   // deed records (data/sales/)
   pp_sales_pa_a: 'Punctual Pros deed records (Lancaster, York, Dauphin, Cumberland)', pp_sales_pa_b: 'Punctual Pros deed records (Berks, Lebanon, Franklin, Adams, Perry, Chester, Montgomery)', pp_sales_nj: 'Punctual Pros deed records (NJ)',
@@ -412,9 +523,7 @@ function spySubnav() {
 }
 
 /* ── primary nav: per-page overrides + hash-route current state ───────────── */
-/** Per-variant defaults for the primary links. Empty on purpose: every page, the portal included, sends "Briefing" to the home page's Briefing section. */
-const APP_NAV = {};
-/** NAV with per-page overrides applied: { id: href } or { id: { href, label, hint } }. */
+/** NAV with per-page overrides applied: { id: href } or { id: { href, label } }. */
 function navFor(over) {
   if (!over || typeof over !== 'object') return NAV;
   return NAV.map(n => {
@@ -451,14 +560,17 @@ function mount(opts = {}) {
   if (state.mounted) return state.mounted;
   ensureCSS();
   const w = where();
-  const variant = opts.variant || 'default';
+  const variant = EMBED ? 'embed' : (opts.variant || 'default');
+  if (variant === 'embed') return mountEmbed(opts, w);
   const o = {
     active: NAV_PARENT[opts.active || w.active] || opts.active || w.active,
     co: opts.co !== undefined ? opts.co : w.co,
     hotkey: opts.hotkey !== undefined ? opts.hotkey : (variant === 'app' ? 'mod+j' : 'mod+k'),
     cta: opts.cta || null,
+    viewAs: opts.viewAs !== false,
   };
-  o.nav = navFor(opts.nav !== undefined ? opts.nav : (variant === 'app' ? APP_NAV : null));
+  // inside the shell the side menu carries the page links; standalone pages get the four
+  o.nav = variant === 'app' ? [] : navFor(opts.nav);
   state.persona = opts.persona || o.co || 'portal';
   // theme: the visitor's saved choice wins; a 'minimal' page that asks for dark (the 3D map) stays dark
   themeLocked = variant === 'minimal' && opts.theme === 'dark';
@@ -501,8 +613,55 @@ function mount(opts = {}) {
     if (slot) slot.replaceWith(footer); else body.appendChild(footer);
   }
 
-  // menu sheet
+  // "Viewing as" switch
+  bindViewAs(top);
+
+  // menu sheet (pages with links only)
   const menu = top.querySelector('.sys-menu'), sheet = top.querySelector('.sys-sheet');
+  if (menu && sheet) bindSheet(top, menu, sheet);
+
+  // primary nav current state follows hash routes (e.g. app.html#/connect/overview on the shell's own page)
+  if (o.nav.some(n => hashRoute(n.href))) { syncCurrent(top, o.nav, o.active); window.addEventListener('hashchange', () => syncCurrent(top, o.nav, o.active)); }
+
+  // theme toggle
+  top.querySelector('[data-sys-theme-toggle]')?.addEventListener('click', () => toggleTheme());
+  paintThemeToggles();
+
+  // ask + hotkey
+  top.querySelector('[data-sys-ask]').addEventListener('click', () => openChat());
+  bindHotkey(o.hotkey);
+
+  finishMount(body, opts);
+  state.mounted = { top, banner: null, footer, root: ROOT, page: w, nav: o.nav, variant, embed: false, openChat, humanize, setTheme, getTheme, toggleTheme, setChat: inst => { state.chat = inst; } };
+  return state.mounted;
+}
+
+/** The embedded form (?embed=1): the page's own content only. The shell around it owns the bar, the switch and Ask. */
+function mountEmbed(opts, w) {
+  const html = document.documentElement, body = document.body;
+  html.dataset.embed = '';
+  state.persona = opts.persona || w.co || 'portal';
+  if (opts.chat) state.chat = opts.chat;
+  applyTheme(savedTheme() || (opts.theme === 'dark' ? 'dark' : 'light'));
+  body.dataset.sysLayout = 'embed';
+  const co = opts.co !== undefined ? opts.co : w.co;
+  if (co && !body.dataset.co) body.dataset.co = co;
+  document.querySelector('[data-sys-footer]')?.remove();
+  // a link that leaves this page (the shell, another page, another site) opens in the top window, never in the frame;
+  // a link within the page (#section) and one that already opens a new tab keep their behaviour
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
+    let u; try { u = new URL(a.getAttribute('href'), location.href); } catch { return; }
+    if (!/^https?:$/.test(u.protocol) || (u.origin === location.origin && u.pathname === location.pathname && u.search === location.search)) return;
+    a.target = '_top';
+  }, true);
+  finishMount(body, opts);
+  state.mounted = { top: null, banner: null, footer: null, root: ROOT, page: w, nav: [], variant: 'embed', embed: true, openChat, humanize, setTheme, getTheme, toggleTheme, setChat: inst => { state.chat = inst; } };
+  return state.mounted;
+}
+
+function bindSheet(top, menu, sheet) {
   const setSheet = (open, focusFirst) => {
     sheet.hidden = !open; menu.setAttribute('aria-expanded', String(open)); menu.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     if (open && focusFirst) sheet.querySelector('a')?.focus();
@@ -522,18 +681,10 @@ function mount(opts = {}) {
   });
   document.addEventListener('click', e => { if (!sheet.hidden && !top.contains(e.target)) setSheet(false); });
   matchMedia('(min-width: 961px)').addEventListener?.('change', ev => { if (ev.matches) setSheet(false); });
+}
 
-  // primary nav current state follows hash routes (e.g. app.html#/briefing/play)
-  if (o.nav.some(n => hashRoute(n.href))) { syncCurrent(top, o.nav, o.active); window.addEventListener('hashchange', () => syncCurrent(top, o.nav, o.active)); }
-
-  // theme toggle
-  top.querySelector('[data-sys-theme-toggle]')?.addEventListener('click', () => toggleTheme());
-  paintThemeToggles();
-
-  // ask + hotkey
-  top.querySelector('[data-sys-ask]').addEventListener('click', () => openChat());
-  bindHotkey(o.hotkey);
-
+/** What every variant gets: sub-nav scroll-spy, the skip link, the copy safety net and keyboard access for scrolling tables. */
+function finishMount(body, opts) {
   // page sub-nav scroll-spy
   spySubnav();
 
@@ -557,11 +708,8 @@ function mount(opts = {}) {
   if (!state.observer) observe(body, false);
   let rz = 0; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => scrollAccess(body), 200); });
   window.addEventListener('load', () => scrollAccess(body), { once: true });
-
-  state.mounted = { top, banner: null, footer, root: ROOT, page: w, nav: o.nav, openChat, humanize, setTheme, getTheme, toggleTheme, setChat: inst => { state.chat = inst; } };
-  return state.mounted;
 }
 
-export const Frame = { mount, humanize, humanizeText, label, keyDates, openChat, setTheme, getTheme, toggleTheme, COMPANIES, NAV, LABELS, BANNER_TEXT, DISCLAIMER, PRODUCT, ROOT };
+export const Frame = { mount, humanize, humanizeText, label, keyDates, openChat, setTheme, getTheme, toggleTheme, COMPANIES, NAV, LABELS, BANNER_TEXT, DISCLAIMER, PRODUCT, ROOT, EMBED, Session };
 window.BSPFrame = Frame;
 export default Frame;

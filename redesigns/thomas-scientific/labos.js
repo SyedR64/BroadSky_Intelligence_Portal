@@ -1,9 +1,10 @@
 /* LabOS product page — demo + value math. Account health uses aggregated portal data (no names). */
-import { esc, num, PRODUCTS, STOCK, catById, search, aggregateSites, SITES_FALLBACK, toast, reveal, mountChat, badgeEst } from './shared.js?v=20261123143257';
+import { esc, num, PRODUCTS, STOCK, catById, search, aggregateSites, SITES_FALLBACK, toast, reveal, mountChat, badgeEst } from './shared.js?v=20261123172325';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const M = v => v == null || isNaN(v) ? '—' : Math.abs(v) >= 1e9 ? `$${(v / 1e9).toFixed(1)}B` : Math.abs(v) >= 1e6 ? `$${(v / 1e6).toFixed(Math.abs(v) >= 1e8 ? 0 : 1)}M` : Math.abs(v) >= 1e3 ? `$${Math.round(v / 1e3)}K` : `$${Math.round(v)}`;
 const EST = '<span class="sys-est">est.</span>';
+const fold = (t, body, line = '') => `<details class="sys-fold"><summary><b>${t}</b><span>${line}</span></summary>${body}</details>`;
 const ILL = '<span class="sys-est sys-est--illus">illustrative</span>';
 let Data, EV = null, COMPS = null;
 const ev = id => (EV?.items || []).find(x => x.id === id);
@@ -17,11 +18,12 @@ const ra = () => ev('ra-ts') || RA_FALLBACK;
 function heroKpis() {
   const k1 = ev('kb-ts-1'), k2 = ev('kb-ts-2'), r = ra();
   const items = [
-    { k: 'Digital share of transactions', v: `${k1?.target ?? 80}%`, s: 'Avantor FY2025 bar; Thomas baseline not disclosed', src: srcLink(k1?.source_url, 'Avantor 10-K'), bar: k1?.target ?? 80 },
+    { k: 'Digital share of transactions', v: `${k1?.target ?? 80}%`, s: 'Avantor FY2025 bar', src: srcLink(k1?.source_url, 'Avantor 10-K'), bar: k1?.target ?? 80 },
     { k: 'eProcurement share of connected orders', v: `${k2?.target ?? 40}%`, s: 'Grainger, Q4 2025', src: srcLink(k2?.source_url, 'Digital Commerce 360'), bar: k2?.target ?? 40 },
     { k: 'EBITDA impact', v: `+${r.ebitda_impact_pct_revenue[0]}–${r.ebitda_impact_pct_revenue[1]} pts${EST}`, s: `${M(r.ebitda_impact_usd[0])}–${M(r.ebitda_impact_usd[1])} on ${M(r.revenue_basis_usd[0])}–${M(r.revenue_basis_usd[1])} revenue`, src: 'OS program evidence, LabOS assumption', bar: null },
   ];
-  $('[data-os-kpis]').innerHTML = items.map(i => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${esc(i.k)}</span><span class="sys-kpi-value">${i.v}</span>${i.bar != null ? `<i class="ts-osk-bar" style="--w:${i.bar}%"></i>` : '<i class="ts-osk-bar dash"></i>'}<span class="sys-kpi-sub">${esc(i.s)}</span><span class="sys-kpi-sub">Source: ${i.src}</span></div>`).join('');
+  $('[data-os-kpis]').innerHTML = items.map(i => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${esc(i.k)}</span><span class="sys-kpi-value">${i.v}</span>${i.bar != null ? `<i class="ts-osk-bar" style="--w:${i.bar}%"></i>` : '<i class="ts-osk-bar dash"></i>'}<span class="sys-kpi-sub">${esc(i.s)}</span></div>`).join('');
+  const hs = $('[data-os-src]'); if (hs) hs.innerHTML = items.map(i => i.src).join('; ');
 }
 
 /* ── Modules ───────────────────────────────────────────────────────────── */
@@ -34,12 +36,12 @@ const MI = {
   copilot: '<path d="M12 3a6 6 0 0 1 6 6c0 4-6 12-6 12S6 13 6 9a6 6 0 0 1 6-6z"/><circle cx="12" cy="9" r="2"/>',
 };
 const MODULES = [
-  { i: 'search', t: 'AI product search', d: 'Understands specs, units, CAS numbers and competitor part numbers. Returns the in-stock match plus approved substitutes.', k: 'Search-to-cart conversion' },
-  { i: 'punch', t: 'Punchout & B2B commerce', d: 'Contract catalogs inside Coupa, Ariba and Jaggaer; quick reorder, account hierarchies and PO/invoice flow.', k: 'Digital share of orders' },
-  { i: 'vmi', t: 'VMI & replenishment', d: 'Min/max by stockroom, scan-based counts, service-level-driven reorder points and auto-drafted POs.', k: 'Stock-outs · cost-to-serve' },
-  { i: 'spend', t: 'Supplier consolidation', d: 'Shows a lab its spend across suppliers and models the savings of consolidating the tail onto one contract.', k: 'Share of wallet' },
-  { i: 'health', t: 'Account-health scoring', d: 'Scores every account and lab site on fit, footprint, volume and data coverage; routes plays to reps.', k: 'Net revenue retention' },
-  { i: 'copilot', t: 'Rep & quote copilot', d: 'Drafts quotes from a pasted BOM, flags cross-sell gaps and books the next QBR from the health score.', k: 'Quote turnaround' },
+  { i: 'search', t: 'AI product search', d: 'Reads specs, units, CAS and competitor part numbers; returns in-stock match and approved substitutes.', k: 'Search-to-cart conversion' },
+  { i: 'punch', t: 'Punchout & B2B commerce', d: 'Contract catalogs in Coupa, Ariba and Jaggaer; quick reorder, account hierarchies, PO/invoice flow.', k: 'Digital share of orders' },
+  { i: 'vmi', t: 'VMI & replenishment', d: 'Min/max by stockroom, scan counts, service-level reorder points, auto-drafted POs.', k: 'Stock-outs · cost-to-serve' },
+  { i: 'spend', t: 'Supplier consolidation', d: 'Shows a lab its spend across suppliers; models savings from one contract.', k: 'Share of wallet' },
+  { i: 'health', t: 'Account-health scoring', d: 'Scores accounts and lab sites on fit, footprint, volume, data coverage; routes plays to reps.', k: 'Net revenue retention' },
+  { i: 'copilot', t: 'Rep & quote copilot', d: 'Drafts quotes from a pasted BOM; flags cross-sell gaps; books the next QBR.', k: 'Quote turnaround' },
 ];
 function modules() { $('[data-modules]').innerHTML = MODULES.map((m, i) => `<article class="sys-card" data-reveal><div class="ts-mod-h"><svg viewBox="0 0 24 24" aria-hidden="true">${MI[m.i]}</svg><span class="sys-num">0${i + 1}</span></div><h3 class="sys-card-title">${esc(m.t)}</h3><p class="sys-card-body">${esc(m.d)}</p><span class="sys-card-foot ts-mod-k"><span>Moves: <b>${esc(m.k)}</b></span></span></article>`).join(''); }
 
@@ -72,17 +74,17 @@ async function demoHealth() {
   const LAB = { fit: 'Fit (lab-type score)', foot: 'Footprint (sites · states)', vol: 'Volume proxy (CMS allowed $)', cov: 'Data coverage (registries)' };
   el.innerHTML = `<div class="ts-hl-grid">
     <div class="ts-hl-side">
-      <h3>Scoring weights</h3><p class="ts-sm">Drag to re-weight; 500 parent organizations re-score instantly (scaled 0–100 across the book).</p>
+      <h3>Scoring weights</h3><p class="ts-sm">Scaled 0–100 across 500 parent organizations.</p>
       ${Object.keys(W).map(k => `<label class="ts-rng"><span>${LAB[k]}<b class="sys-num" data-wv="${k}">${W[k]}</b></span><input type="range" min="0" max="60" step="5" value="${W[k]}" data-w="${k}" aria-label="${LAB[k]} weight"></label>`).join('')}
       <div class="ts-hl-sites" data-hl-sites><div class="ts-loading"><i></i>Loading 27.5k lab sites…</div></div>
     </div>
     <div>
       <div class="ts-hl-kpis" data-hl-kpis></div>
       <div class="ts-hl-chart"><div class="ts-hl-ch-h"><h4>Health-score distribution · 500 parent accounts</h4><span class="ts-lg"><i class="b-ex"></i>Expand<i class="b-gr"></i>Grow<i class="b-pr"></i>Protect</span></div><div data-hist></div></div>
-      <div class="ts-hl-tbl"><h4>Top accounts by health score · anonymized, no names</h4><div class="sys-table-wrap"><table class="sys-table ts-tbl-sm"><thead><tr><th>Account</th><th>Segment</th><th class="sys-n">Sites</th><th class="sys-n">States</th><th>Volume</th><th class="sys-n">Health</th><th>Play</th></tr></thead><tbody data-rows></tbody><caption>Source: Thomas Scientific parent accounts, Oct 2026. Demo weighting.</caption></table></div></div>
+      <div class="ts-hl-tbl"><h4>Top accounts by health score · anonymized, no names</h4><div class="sys-table-wrap"><table class="sys-table ts-tbl-sm"><thead><tr><th>Account</th><th>Segment</th><th class="sys-n">Sites</th><th class="sys-n">States</th><th>Volume</th><th class="sys-n">Health</th><th>Play</th></tr></thead><tbody data-rows></tbody></table></div></div>
       <div class="ts-hl-detail" data-detail></div>
     </div></div>
-    <p class="sys-src"><b>Source:</b> Thomas Scientific parent accounts (500 parent organizations, the top tier of the LabOS target map) and Thomas Scientific lab sites (CMS, CLIA and NPPES registries), aggregated, Oct 2026. Scores are a demo weighting, not a sales forecast.</p>`;
+    ${fold('Source', '<p class="sys-src">Thomas Scientific parent accounts (500 parent organizations, the top tier of the LabOS target map) and Thomas Scientific lab sites (CMS, CLIA and NPPES registries), aggregated, no names, Oct 2026. Scores are a demo weighting, not a sales forecast. Search, VMI and spend data are illustrative.</p>')}`;
   const band = s => s >= 60 ? 'ex' : s >= 40 ? 'gr' : 'pr';
   const PLAY = { ex: 'Expand: punchout + VMI pilot', gr: 'Grow: standing orders + category gaps', pr: 'Protect: QBR + service review' };
   let sel = null;
@@ -104,7 +106,7 @@ async function demoHealth() {
   const detail = p => {
     $('[data-detail]', el).innerHTML = `<div class="ts-dt-h"><div><small class="sys-num">${p.id}</small><h4>${esc(p.vert || '—')} · ${p.sites} site${p.sites > 1 ? 's' : ''} in ${p.states} state${p.states > 1 ? 's' : ''}</h4></div><span class="ts-hs big b-${p.b}">${p.h}</span></div>
       <div class="ts-dt-f">${Object.keys(W).map(k => `<div class="ts-fb"><span>${LAB[k]}</span><i style="--w:${Math.round(p.f[k] * 100)}%"></i><b class="sys-num">${Math.round(p.f[k] * 100)}</b></div>`).join('')}</div>
-      <p class="ts-dt-play"><b>Recommended play:</b> ${PLAY[p.b]}. ${p.b === 'ex' ? 'Multi-site footprint justifies a punchout connection and a VMI pilot in the highest-volume site.' : p.b === 'gr' ? 'Convert the repeat consumables list to standing orders and close category gaps (cold chain, PPE).' : 'Keep service levels visible with a quarterly business review; low cost-to-serve via quick order.'}</p>`;
+      <p class="ts-dt-play"><b>Play:</b> ${PLAY[p.b]}. ${p.b === 'ex' ? 'Punchout and VMI pilot at the highest-volume site.' : p.b === 'gr' ? 'Standing orders for the repeat list; close cold chain and PPE gaps.' : 'Quarterly business review; quick order keeps cost-to-serve low.'}</p>`;
   };
   el.addEventListener('input', e => { const r = e.target.closest('[data-w]'); if (!r) return; W[r.dataset.w] = +r.value; $(`[data-wv="${r.dataset.w}"]`, el).textContent = r.value; run(); });
   el.addEventListener('click', e => { const tr = e.target.closest('tr[data-id]'); if (!tr) return; sel = tr.dataset.id; run(); });
@@ -143,7 +145,7 @@ function demoSearch() {
     <form class="ts-as-box" data-as><label class="sys-sr" for="as-q">Describe what you need</label><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4z"/></svg><input id="as-q" value="${esc(EXAMPLES[0])}" autocomplete="off"><button class="sys-btn sys-btn--primary sys-btn--sm">Search</button></form>
     <div class="sys-chips ts-as-ex">${EXAMPLES.map(x => `<button type="button" class="sys-chip" data-ex="${esc(x)}">${esc(x)}</button>`).join('')}</div>
     <div data-as-out aria-live="polite"></div>
-    <p class="sys-src"><b>Source:</b> sample screen over the illustrative concept catalog; contract prices are illustrative. In production the ranking layer is a hosted search service (Algolia in the OS program evidence) over the product catalog, with CAS and cross-reference synonyms.</p></div>`;
+    ${fold('Source', '<p class="sys-src">Sample screen over the illustrative concept catalog; contract prices are illustrative. In production the ranking layer is a hosted search service (Algolia in the OS program evidence) over the product catalog, with CAS and cross-reference synonyms.</p>')}</div>`;
   const run = () => {
     const q = $('#as-q').value.trim(); const t0 = performance.now();
     const tags = parseQuery(q);
@@ -171,12 +173,12 @@ const Z = { 90: 1.28, 95: 1.65, 98: 2.05, 99: 2.33 };
 function rng(seed) { let s = seed; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
 function demoVmi() {
   const el = $('[data-panel="vmi"]'); let sl = 95, review = 7, cur = 1;
-  el.innerHTML = `<div class="ts-vm-top"><div><h3>QC Microbiology · Stockroom B ${ILL}</h3><p class="ts-sm">8 VMI lines · counted by scan on Mon/Thu · supplier lead time per line</p></div>
+  el.innerHTML = `<div class="ts-vm-top"><div><h3>QC Microbiology · Stockroom B ${ILL}</h3><p class="ts-sm">8 VMI lines · scan counts Mon/Thu</p></div>
     <div class="ts-vm-ctl"><label>Service level<select data-sl>${Object.keys(Z).map(k => `<option ${+k === sl ? 'selected' : ''} value="${k}">${k}%</option>`).join('')}</select></label><label>Review cycle<select data-rv><option value="3">3 days</option><option value="7" selected>7 days</option><option value="14">14 days</option></select></label></div></div>
     <div class="ts-vm-kpis" data-vm-kpis></div>
-    <div class="ts-vm-grid"><div class="sys-table-wrap"><table class="sys-table ts-tbl-sm ts-vm-t"><thead><tr><th>Line</th><th class="sys-n">On hand</th><th class="sys-n">Reorder pt</th><th>Days of cover</th><th>Status</th></tr></thead><tbody data-vm-rows></tbody><caption>Source: illustrative stockroom; usage and stock levels are illustrative.</caption></table></div>
+    <div class="ts-vm-grid"><div class="sys-table-wrap"><table class="sys-table ts-tbl-sm ts-vm-t"><thead><tr><th>Line</th><th class="sys-n">On hand</th><th class="sys-n">Reorder pt</th><th>Days of cover</th><th>Status</th></tr></thead><tbody data-vm-rows></tbody></table></div>
     <div class="sys-card"><div data-vm-chart></div><button type="button" class="sys-btn sys-btn--primary sys-btn--sm sys-btn--block" data-po>Draft replenishment PO</button><div data-po-out></div></div></div>
-    <p class="sys-src"><b>Method:</b> reorder point = daily usage × lead time + z × σ × √lead time (z from service level); order-up-to = reorder point + usage × review cycle. Usage and stock levels are illustrative.</p>`;
+    ${fold('Method', '<p class="sys-src">Reorder point = daily usage × lead time + z × σ × √lead time (z from service level); order-up-to = reorder point + usage × review cycle. Usage and stock levels are illustrative; supplier lead time per line.</p>')}`;
   const calc = () => VMI_SKUS.map(([id, name, uom, mu, sd, L, oh, cost]) => { const ss = Z[sl] * sd * Math.sqrt(L); const rop = mu * L + ss; const max = rop + mu * review; const st = oh <= ss ? 'crit' : oh <= rop ? 'warn' : 'ok'; return { id, name, uom, mu, sd, L, oh, cost, ss, rop, max, st, doc: oh / mu, q: Math.max(0, Math.ceil(max - oh)) }; });
   const draw = () => {
     const R = calc(); const below = R.filter(r => r.st !== 'ok'); const val = R.reduce((a, r) => a + r.oh * r.cost, 0); const avgDoc = R.reduce((a, r) => a + r.doc, 0) / R.length;
@@ -211,11 +213,11 @@ const SUPPLIERS = [['Thomas Scientific', 410e3, 260, true], ['Broadline distribu
 function demoSpend() {
   const el = $('[data-panel="spend"]'); const st = { move: 60, save: 3, po: 75 };
   el.innerHTML = `<div class="ts-sp-grid"><div class="ts-sp-in">
-    <h3>Mid-size biopharma · 3 sites ${ILL}</h3><p class="ts-sm">${M(SUPPLIERS.reduce((a, s) => a + s[1], 0))} annual lab spend across ${SUPPLIERS.length} suppliers. OEM-direct equipment stays put.</p>
+    <h3>Mid-size biopharma · 3 sites ${ILL}</h3><p class="ts-sm">${M(SUPPLIERS.reduce((a, s) => a + s[1], 0))} annual lab spend, ${SUPPLIERS.length} suppliers. OEM-direct stays put.</p>
     <label class="ts-rng"><span>Share of movable spend consolidated<b class="sys-num" data-v="move">${st.move}%</b></span><input type="range" min="0" max="100" step="5" value="${st.move}" data-k="move" aria-label="Share of movable spend consolidated"></label>
     <label class="ts-rng"><span>Price harmonization on moved spend<b class="sys-num" data-v="save">${st.save}%</b></span><input type="range" min="0" max="8" step=".5" value="${st.save}" data-k="save" aria-label="Price harmonization percentage"></label>
     <label class="ts-rng"><span>Customer cost per PO processed<b class="sys-num" data-v="po">$${st.po}</b></span><input type="range" min="25" max="200" step="5" value="${st.po}" data-k="po" aria-label="Cost per purchase order"></label>
-    <p class="ts-xs">Harmonization and per-PO cost are assumptions for the demo, not sourced benchmarks; set them to the customer's own numbers in a live review.</p>
+    ${fold('Assumptions', '<p class="ts-xs">Harmonization and per-PO cost are demo assumptions, not sourced benchmarks; a live review uses the customer\'s own numbers.</p>')}
     </div><div data-sp-out></div></div>`;
   const draw = () => {
     const tot = SUPPLIERS.reduce((a, s) => a + s[1], 0); const movable = SUPPLIERS.filter(s => !s[3] && !s[4]); const mv = movable.reduce((a, s) => a + s[1], 0) * st.move / 100; const mvPo = movable.reduce((a, s) => a + s[2], 0) * st.move / 100;
@@ -228,8 +230,8 @@ function demoSpend() {
     $('[data-sp-out]', el).innerHTML = `<div class="ts-sp-k"><div><small>Thomas share of wallet</small><b class="sys-num">${Math.round(tsBefore / tot * 100)}% → ${Math.round(tsAfter / tot * 100)}%</b></div><div><small>Customer savings / yr</small><b class="sys-num">${M(savings)}</b></div><div><small>Purchase orders / yr</small><b class="sys-num">−${num(poSaved)}</b></div><div><small>Active suppliers</small><b class="sys-num">${SUPPLIERS.length} → ${supAfter}</b></div></div>
       ${stack(before, 'Today')}${stack(after, 'Consolidated')}
       <div class="ts-sp-lg"><span><i class="ts"></i>Thomas Scientific</span><span><i class="o0"></i>Other suppliers</span><span><i class="oem"></i>OEM direct</span><span><i class="sav"></i>Savings</span></div>
-      <p class="ts-sp-note">Thomas revenue gained: <b class="sys-num">${M(tsAfter - tsBefore)}</b>/yr from one account ${ILL}. The review itself is the sales motion: the customer sees the savings, the rep sees the share-of-wallet gap.</p>
-      <p class="sys-src"><b>Source:</b> illustrative customer; every supplier and spend figure is illustrative.</p>`;
+      <p class="ts-sp-note">Thomas revenue gained: <b class="sys-num">${M(tsAfter - tsBefore)}</b>/yr from one account ${ILL}.</p>
+      ${fold('Source', '<p class="sys-src">Illustrative customer; every supplier and spend figure is illustrative. The review is the sales motion: the customer sees the savings, the rep sees the share-of-wallet gap.</p>')}`;
   };
   el.addEventListener('input', e => { const r = e.target.closest('[data-k]'); if (!r) return; st[r.dataset.k] = +r.value; $(`[data-v="${r.dataset.k}"]`, el).textContent = r.dataset.k === 'po' ? `$${r.value}` : `${r.value}%`; draw(); });
   draw();
@@ -241,12 +243,13 @@ function thesis() {
   const g = lab?.median_revenue_growth_latest_pct ?? 1.5, om = lab?.median_operating_margin_latest_pct ?? 5.0;
   const bar = (rows, max) => rows.map(([l, v, c, t]) => `<div class="ts-tb"><span>${l}</span><div><i class="${c}" style="--w:${v == null ? 100 : v / max * 100}%"></i></div><b class="sys-num${t ? ' tx' : ''}">${t ?? (v == null ? '?' : v + '%')}</b></div>`).join('');
   const cards = [
-    { h: 'Digital is the bar, not the edge', b: bar([['Avantor (VWR)', v18?.metric_value ?? 80, 'g'], ['Thomas Scientific', null, 'na', 'not disclosed']], 100), p: `Avantor reports ~${v18?.metric_value ?? 80}% of transactions through digital channels across 300,000+ customer locations. TS does not disclose its share, which is the first number LabOS instruments.`, s: srcLink(v18?.source_url, v18?.source_name || 'Avantor 10-K FY2025') },
-    { h: 'Digital channels outgrow reps', b: bar([['Grainger digital (Endless Assortment)', v19?.metric_value ?? 15.6, 'g'], ['Grainger rep-led (High-Touch)', v19?.extra_metrics?.high_touch_growth_pct ?? 2.1, 'm']], 18), p: 'Same company, same year, same macro: the digital model grew about seven times faster than the branch and rep model.', s: srcLink(v19?.source_url, 'Grainger FY2025 results') },
-    { h: 'Procurement integration is the moat', b: bar([['Grainger ePro share of connected orders', k2?.target ?? 40, 'g']], 100), p: 'Punchout and EDI put the distributor inside the customer\'s purchasing system. Switching suppliers then means re-integrating, which is what makes share sticky.', s: srcLink(k2?.source_url, 'Digital Commerce 360, Feb 2026') },
-    { h: 'Volume will not carry the story', b: bar([['Lab distribution median growth', g, 'm'], ['Median operating margin', om, 'm']], 18), p: `Public lab and healthcare distributors grew a median ${g}% in their latest year at a ${om}% operating margin. Margin has to come from cost-to-serve and share of wallet.`, s: 'Public comparables, SEC XBRL filings (AVTR, TMO, HSIC, PDCO, TECH)' },
+    { h: 'Digital is the bar, not the edge', b: bar([['Avantor (VWR)', v18?.metric_value ?? 80, 'g'], ['Thomas Scientific', null, 'na', 'not disclosed']], 100), p: `Avantor: ~${v18?.metric_value ?? 80}% of transactions digital across 300,000+ locations. TS share undisclosed; LabOS instruments it first.`, s: srcLink(v18?.source_url, v18?.source_name || 'Avantor 10-K FY2025') },
+    { h: 'Digital channels outgrow reps', b: bar([['Grainger digital (Endless Assortment)', v19?.metric_value ?? 15.6, 'g'], ['Grainger rep-led (High-Touch)', v19?.extra_metrics?.high_touch_growth_pct ?? 2.1, 'm']], 18), p: 'Digital grew about seven times faster than branch and rep sales.', s: srcLink(v19?.source_url, 'Grainger FY2025 results') },
+    { h: 'Procurement integration is the moat', b: bar([['Grainger ePro share of connected orders', k2?.target ?? 40, 'g']], 100), p: 'Punchout and EDI put the distributor inside the customer\'s purchasing system; switching means re-integrating.', s: srcLink(k2?.source_url, 'Digital Commerce 360, Feb 2026') },
+    { h: 'Volume will not carry the story', b: bar([['Lab distribution median growth', g, 'm'], ['Median operating margin', om, 'm']], 18), p: `Median growth ${g}% at ${om}% operating margin: gains come from cost-to-serve and share of wallet.`, s: 'Public comparables, SEC XBRL filings (AVTR, TMO, HSIC, PDCO, TECH)' },
   ];
-  $('[data-thesis]').innerHTML = cards.map(c => `<article class="sys-card" data-reveal><h3 class="sys-card-title">${esc(c.h)}</h3><div class="ts-tbars">${c.b}</div><p class="sys-card-body">${esc(c.p)}</p><p class="sys-src"><b>Source:</b> ${c.s}</p></article>`).join('');
+  $('[data-thesis]').innerHTML = cards.map(c => `<article class="sys-card" data-reveal><h3 class="sys-card-title">${esc(c.h)}</h3><div class="ts-tbars">${c.b}</div><p class="sys-card-body">${esc(c.p)}</p></article>`).join('');
+  const ts = $('[data-thesis-src]'); if (ts) ts.innerHTML = cards.map(c => `<li><b>${esc(c.h)}:</b> ${c.s}</li>`).join('');
 }
 
 /* ── Value math ────────────────────────────────────────────────────────── */
@@ -256,12 +259,12 @@ function value() {
   const ebLo = 25e6, ebHi = 35e6;
   const I = { rev: (r.revenue_basis_usd[0] + r.revenue_basis_usd[1]) / 2 / 1e6, pts: (r.ebitda_impact_pct_revenue[0] + r.ebitda_impact_pct_revenue[1]) / 2, eb: 30, mult: typ, turns: r.multiple_expansion_turns[0], inv: (r.investment_usd[0] + r.investment_usd[1]) / 2 / 1e6 };
   const F = [
-    ['rev', 'Revenue base', 200, 350, 5, v => `$${v}M`, `range $${r.revenue_basis_usd[0] / 1e6}–${r.revenue_basis_usd[1] / 1e6}M · Thomas Scientific public filings`],
-    ['pts', 'EBITDA margin uplift', 0, 2.5, .25, v => `${(+v).toFixed(2).replace(/0$/, '')} pts`, `range ${r.ebitda_impact_pct_revenue[0]}–${r.ebitda_impact_pct_revenue[1]} pts · LabOS assumption`],
-    ['eb', 'Current EBITDA', 20, 40, 1, v => `$${v}M`, `$${ebLo / 1e6}–${ebHi / 1e6}M · public filings, low confidence`],
-    ['mult', 'Exit multiple (base)', 5, 11, .1, v => `${v.toFixed(1)}x`, `typical lower middle market ${typ}x · Capstone/IMAP survey`],
-    ['turns', 'Re-rating from LabOS', 0, 1.5, .1, v => `+${v.toFixed(1)}x`, `range ${r.multiple_expansion_turns[0]}–${r.multiple_expansion_turns[1]}x · weak evidence for TS`],
-    ['inv', 'Investment', 1, 6, .25, v => `$${v}M`, `range $${r.investment_usd[0] / 1e6}–${r.investment_usd[1] / 1e6}M · LabOS assumption`],
+    ['rev', 'Revenue base', 200, 350, 5, v => `$${v}M`, `range $${r.revenue_basis_usd[0] / 1e6}–${r.revenue_basis_usd[1] / 1e6}M`],
+    ['pts', 'EBITDA margin uplift', 0, 2.5, .25, v => `${(+v).toFixed(2).replace(/0$/, '')} pts`, `range ${r.ebitda_impact_pct_revenue[0]}–${r.ebitda_impact_pct_revenue[1]} pts`],
+    ['eb', 'Current EBITDA', 20, 40, 1, v => `$${v}M`, `range $${ebLo / 1e6}–${ebHi / 1e6}M`],
+    ['mult', 'Exit multiple (base)', 5, 11, .1, v => `${v.toFixed(1)}x`, `typical ${typ}x`],
+    ['turns', 'Re-rating from LabOS', 0, 1.5, .1, v => `+${v.toFixed(1)}x`, `range ${r.multiple_expansion_turns[0]}–${r.multiple_expansion_turns[1]}x · weak evidence`],
+    ['inv', 'Investment', 1, 6, .25, v => `$${v}M`, `range $${r.investment_usd[0] / 1e6}–${r.investment_usd[1] / 1e6}M`],
   ];
   $('[data-calc]').innerHTML = F.map(([k, l, mn, mx, st, f, s]) => `<label class="ts-rng"><span><span>${l}<span class="sys-est">est.</span></span><b class="sys-num" data-cv="${k}">${f(I[k])}</b></span><input type="range" min="${mn}" max="${mx}" step="${st}" value="${I[k]}" data-c="${k}" aria-label="${l}"><small>${s}</small></label>`).join('') + `<button type="button" class="ts-link" data-reset>Reset to evidence defaults</button>`;
   const draw = () => {
@@ -276,13 +279,13 @@ function value() {
         <div class="ts-vb"><span>Investment</span><i style="--w:${inv / mx * 100}%" class="c"></i><b class="sys-num">${M(inv)}</b></div>
       </div>
       <dl class="ts-vo-kv"><div><dt>Run-rate EBITDA uplift</dt><dd class="sys-num">${M(up)}</dd></div><div><dt>Pro forma EBITDA</dt><dd class="sys-num">${M(base + up)}</dd></div><div><dt>Share of value from EBITDA</dt><dd class="sys-num">${tot ? Math.round(evUp / tot * 100) : 0}%</dd></div></dl>
-      <p class="ts-vo-note">Formula: (revenue × margin pts) × (exit multiple + re-rating) + re-rating × current EBITDA. The OS program evidence rates the multiple case <b>weak</b> and the EBITDA case <b>medium</b> for Thomas Scientific: capital structure and refinancing timing dominate exit value, so LabOS is underwritten on EBITDA and cash, and the re-rating slider is upside, not the plan.</p>`;
+      ${fold('Formula and rating', '<p class="ts-vo-note">Formula: (revenue × margin pts) × (exit multiple + re-rating) + re-rating × current EBITDA. The OS program evidence rates the multiple case <b>weak</b> and the EBITDA case <b>medium</b> for Thomas Scientific: capital structure and refinancing timing dominate exit value, so LabOS is underwritten on EBITDA and cash, and the re-rating slider is upside, not the plan. Every input defaults to the LabOS assumption in the OS program evidence file. Input sources: revenue and EBITDA from Thomas Scientific public filings (low confidence); margin uplift, re-rating and investment are the LabOS assumption; the exit multiple is the typical lower middle market figure from the Capstone/IMAP survey; re-rating evidence is weak for Thomas Scientific.</p>')}`;
   };
   $('[data-calc]').oninput = (e => { const s = e.target.closest('[data-c]'); if (!s) return; const k = s.dataset.c; I[k] = +s.value; $(`[data-cv="${k}"]`).textContent = F.find(f => f[0] === k)[5](I[k]); draw(); });
   $('[data-reset]').onclick = () => value();
   draw();
   const rows = [['Investment', `${M(r.investment_usd[0])}–${M(r.investment_usd[1])}`], ['Time to value', `${r.time_to_value_months[0]}–${r.time_to_value_months[1]} months`], ['EBITDA impact', `+${r.ebitda_impact_pct_revenue[0]}–${r.ebitda_impact_pct_revenue[1]} pts · ${M(r.ebitda_impact_usd[0])}–${M(r.ebitda_impact_usd[1])}`], ['Multiple expansion', `${r.multiple_expansion_turns[0]}–${r.multiple_expansion_turns[1]}x EV/EBITDA`], ['Current EBITDA', r.current_ebitda_estimate], ['Premium ceiling', `${v06?.metric_range?.[0] ?? 6.8}x typical vs ${v06?.metric_range?.[1] ?? 9.8}x premium (${v06?.metric_value ?? 3}-turn spread)`]];
-  $('[data-range]').innerHTML = `<h3 class="sys-card-title">LabOS assumption in the OS program evidence ${EST}</h3><div class="ts-rg-t">${rows.map(([k, v]) => `<div><small>${k}</small><b class="sys-num">${esc(v)}</b></div>`).join('')}</div><p class="sys-src"><b>Source:</b> OS program evidence, LabOS assumption (an analyst assumption, not a forecast or company guidance). Revenue basis: Thomas Scientific public filings, estimate table. Premium spread: ${v06 ? srcLink(v06.source_url, v06.source_name) : 'Capstone/IMAP survey'}.</p>`;
+  $('[data-range]').innerHTML = `<h3 class="sys-card-title">LabOS assumption in the OS program evidence ${EST}</h3><div class="ts-rg-t">${rows.map(([k, v]) => `<div><small>${k}</small><b class="sys-num">${esc(v)}</b></div>`).join('')}</div>${fold('Source', `<p class="sys-src">OS program evidence, LabOS assumption (an analyst assumption, not a forecast or company guidance). Revenue basis: Thomas Scientific public filings, estimate table. Premium spread: ${v06 ? srcLink(v06.source_url, v06.source_name) : 'Capstone/IMAP survey'}.</p>`)}`;
 }
 
 /* ── Stack ─────────────────────────────────────────────────────────────── */
@@ -290,8 +293,8 @@ function stack() {
   const vs = (EV?.items || []).filter(i => i.kind === 'vendor_stack' && i.company === 'ts');
   const list = vs.length ? vs : [{ vendor: 'Shopify Plus (or commercetools)', category: 'B2B commerce platform', what_it_does: 'Customer-specific catalogs, contract pricing, quick reorder.', pricing_note: 'From $2,300/month.' }, { vendor: 'Coupa (punchout / supplier network)', category: 'eProcurement connectivity', what_it_does: 'Punchout catalogs and PO/invoice flow.', pricing_note: 'Not published.' }, { vendor: 'Netstock', category: 'Inventory planning', what_it_does: 'Forecasting and replenishment.', pricing_note: '~$400-900/month.' }, { vendor: 'Algolia', category: 'Product search', what_it_does: 'Typo-tolerant, synonym-aware catalog search.', pricing_note: '$0.50 per 1,000 requests.' }];
   const MAP = { 'B2B commerce platform': 'Punchout & B2B commerce', 'eProcurement connectivity': 'Punchout & B2B commerce', 'Inventory planning': 'VMI & replenishment', 'Product search and discovery': 'AI product search' };
-  $('[data-stack]').innerHTML = list.map(v => `<article class="sys-card ts-sk" data-reveal><span class="ts-sk-tag">Buy</span><span class="sys-card-label">${esc(v.category)}</span><h3 class="sys-card-title">${esc(v.vendor)}</h3><p class="sys-card-body">${esc(String(v.what_it_does || '').replace(/\bheadless\/composable builds\b/g, 'custom storefronts'))}</p><div class="ts-sk-m"><span>Powers</span><b>${esc(MAP[v.category] || 'LabOS')}</b></div><p class="sys-card-body"><b>Pricing:</b> ${esc(v.pricing_note)}</p>${v.note ? `<p class="sys-src">${esc(v.note)}</p>` : ''}${v.source_url ? `<span class="sys-card-foot"><a href="${esc(v.source_url)}" target="_blank" rel="noopener">Pricing source →</a></span>` : ''}</article>`).join('') +
-    `<article class="sys-card ts-sk build" data-co="ts" data-reveal><span class="ts-sk-tag build">Build</span><span class="sys-card-label">BSP data layer</span><h3 class="sys-card-title">Account and site intelligence</h3><p class="sys-card-body">Health scores over ${num(SITES_FALLBACK.total)} lab sites and 500 scored parent organizations, rep routing, supplier-consolidation reviews and the KPI layer (digital share, ePro share, cost-to-serve). Already prototyped in the portal.</p><div class="ts-sk-m"><span>Powers</span><b>Account health · consolidation · copilot</b></div><p class="sys-card-body"><b>Cost:</b> part of the $2–4M program${EST}; no license fee.</p></article>`;
+  $('[data-stack]').innerHTML = list.map(v => `<article class="sys-card ts-sk" data-reveal><span class="ts-sk-tag">Buy</span><span class="sys-card-label">${esc(v.category)}</span><h3 class="sys-card-title">${esc(v.vendor)}</h3><div class="ts-sk-m"><span>Powers</span><b>${esc(MAP[v.category] || 'LabOS')}</b></div>${fold('What it does and pricing', `<p class="sys-card-body">${esc(String(v.what_it_does || '').replace(/\bheadless\/composable builds\b/g, 'custom storefronts'))}</p><p class="sys-card-body"><b>Pricing:</b> ${esc(v.pricing_note)}</p>${v.note ? `<p class="sys-src">${esc(v.note)}</p>` : ''}${v.source_url ? `<span class="sys-card-foot"><a href="${esc(v.source_url)}" target="_blank" rel="noopener">Pricing source →</a></span>` : ''}`)}</article>`).join('') +
+    `<article class="sys-card ts-sk build" data-co="ts" data-reveal><span class="ts-sk-tag build">Build</span><span class="sys-card-label">BSP data layer</span><h3 class="sys-card-title">Account and site intelligence</h3><div class="ts-sk-m"><span>Powers</span><b>Account health · consolidation · copilot</b></div>${fold('What it does and cost', `<p class="sys-card-body">Health scores over ${num(SITES_FALLBACK.total)} lab sites and 500 parent organizations, rep routing, consolidation reviews, KPI layer (digital share, ePro share, cost-to-serve). Prototyped in the portal.</p><p class="sys-card-body"><b>Cost:</b> part of the $2–4M program${EST}; no license fee.</p>`)}</article>`;
 }
 
 /* ── Roadmap ───────────────────────────────────────────────────────────── */
@@ -299,9 +302,9 @@ const LANES = [
   ['Catalog data & AI search', 1, 4, 'PIM cleanup, CAS + cross-reference synonyms, Algolia ranking', 's'],
   ['B2B commerce & quick order', 2, 7, 'Contract catalogs, account hierarchies, quick order', 'c'],
   ['Punchout: top accounts', 4, 10, 'Coupa · Jaggaer · Ariba for the top 50 accounts', 'c'],
-  ['Account-health scoring in CRM', 2, 6, 'Scores from the parent-account and lab-site files, rep plays, QBR triggers', 'h'],
+  ['Account-health scoring in CRM', 2, 6, 'Parent-account and lab-site scores, rep plays, QBR triggers', 'h'],
   ['VMI pilot → scale', 5, 12, 'Netstock + scan counts: 5 pilot stockrooms, then rollout', 'v'],
-  ['Supplier-consolidation reviews', 7, 12, 'Spend reviews as the sales motion in expand accounts', 'h'],
+  ['Supplier-consolidation reviews', 7, 12, 'Spend reviews in expand accounts', 'h'],
   ['Rep comp & change management', 1, 12, 'Digital orders credit the rep; adoption dashboards', 'o'],
 ];
 const MILES = [[4, 'Search live'], [7, 'First punchout accounts'], [9, 'Digital-share baseline +10 pts'], [12, 'Run-rate EBITDA measured']];
@@ -310,26 +313,26 @@ function roadmap() {
     ${LANES.map(([n, a, b, d, c]) => `<div class="ts-gt-row"><div class="ts-gt-l"><b>${esc(n)}</b><small>${esc(d)}</small></div><div class="ts-gt-track"><i class="ts-gt-bar ${c}" style="grid-column:${a}/${b + 1}"><span class="sys-num">M${a}–${b}</span></i></div></div>`).join('')}
     <div class="ts-gt-row ts-gt-m"><div class="ts-gt-l"><b>Milestones</b></div><div class="ts-gt-track">${MILES.map(([m, t], i) => `<i class="ts-ms${i % 2 ? ' lo' : ''}" style="grid-column:${m}"><span>${esc(t)}</span></i>`).join('')}</div></div></div>
     <ol class="ts-gt-ml">${MILES.map(([m, t]) => `<li><b class="sys-num">M${m}</b>${esc(t)}</li>`).join('')}</ol>
-    <p class="sys-src">Owners: the Thomas e-commerce lead and VP Sales with the PRG; spend gated on payback at each phase${EST}</p>`;
+    ${fold('Owners and gating', `<p class="sys-src">Owners: the Thomas e-commerce lead and VP Sales with the PRG; spend gated on payback at each phase${EST}. Sequenced so search and quick order pay for punchout, and punchout data pays for VMI.</p>`)}`;
 }
 
 /* ── Risks + exit ──────────────────────────────────────────────────────── */
 function risks() {
   const R = [
-    ['Product data quality', 'AI search is only as good as the item master. Inconsistent units, packs and CAS fields break matching.', 'Start with the top 5,000 SKUs by revenue; supplier data feeds; measure search exit rate weekly.', 'high'],
-    ['Channel conflict with reps', 'Reps resist digital orders that bypass them.', 'Digital orders credit the account owner; reps are paid on share of wallet and health, not order entry.', 'high'],
-    ['Customer-side punchout lead times', 'Procurement teams control their own integration queue.', 'Prioritize accounts already on Coupa/Jaggaer; offer a hosted catalog while the integration is pending.', 'med'],
-    ['Capital constraints', 'Leverage limits discretionary spend; a big-bang replatform is not affordable.', 'Vendor-first, phased spend ($2–4M est.); each phase must show payback before the next.', 'med'],
-    ['ERP and pricing complexity', 'Contract price files across thousands of accounts and acquired businesses.', 'Single price service fed from the ERP; migrate acquired businesses in waves.', 'med'],
+    ['Product data quality', 'Inconsistent units, packs and CAS fields break AI search matching.', 'Start with the top 5,000 SKUs by revenue; supplier data feeds; track search exit rate weekly.', 'high'],
+    ['Channel conflict with reps', 'Reps resist digital orders that bypass them.', 'Digital orders credit the account owner; pay reps on share of wallet and health.', 'high'],
+    ['Customer-side punchout lead times', 'Procurement teams control their own integration queue.', 'Start with accounts already on Coupa/Jaggaer; offer a hosted catalog meanwhile.', 'med'],
+    ['Capital constraints', 'Leverage limits discretionary spend; no big-bang replatform.', 'Vendor-first, phased spend ($2–4M est.); payback before the next phase.', 'med'],
+    ['ERP and pricing complexity', 'Contract price files span thousands of accounts and acquired businesses.', 'One price service fed from the ERP; migrate acquired businesses in waves.', 'med'],
   ];
-  $('[data-risks]').innerHTML = R.map(([t, d, m, s]) => `<article class="sys-card ts-rk-i"><div class="ts-rk-h"><h3 class="sys-card-title">${esc(t)}</h3><span class="ts-sev ${s}">${s === 'high' ? 'High' : 'Medium'}</span></div><p class="sys-card-body">${esc(d)}</p><p class="sys-card-body"><b>Mitigation:</b> ${esc(m)}</p></article>`).join('');
+  $('[data-risks]').innerHTML = R.map(([t, d, m, s]) => `<article class="sys-card ts-rk-i"><div class="ts-rk-h"><h3 class="sys-card-title">${esc(t)}</h3><span class="ts-sev ${s}">${s === 'high' ? 'High' : 'Medium'}</span></div><p class="sys-card-body"><b>Mitigation:</b> ${esc(m)}</p>${fold('Risk', `<p class="sys-card-body">${esc(d)}</p>`)}</article>`).join('');
   const v06 = ev('ve-06');
   $('[data-exit]').innerHTML = [
-    ['Switching costs a buyer can see', 'Punchout and VMI embed Thomas inside customers\' procurement and stockrooms. Retention stops depending on individual reps.'],
-    ['Diligence-ready KPIs', 'Digital share, ePro share, account health and cost-to-serve, measured monthly from day one, replace anecdotes in the CIM.'],
-    ['Margin that survives flat volume', `Lower cost-to-serve and higher share of wallet lift EBITDA even with end-market growth near ${COMPS?.meta?.sector_benchmarks?.lab_distribution?.median_revenue_growth_latest_pct ?? 1.5}%.`],
-    ['A company for the next add-on', 'Acquired distributors plug into one catalog, one price service and one account model in months, not years.'],
-  ].map(([h, p]) => `<li><b>${h}</b><p>${p}</p></li>`).join('') + `<li class="cap"><p>Ceiling: advisors see a ${v06?.metric_value ?? 3}-turn spread between typical (${v06?.metric_range?.[0] ?? 6.8}x) and premium (${v06?.metric_range?.[1] ?? 9.8}x) lower-middle-market deals ${v06 ? `(${srcLink(v06.source_url, 'Capstone/IMAP')})` : ''}; LabOS claims only 0.5–1.0x of it${EST}</p></li>`;
+    ['Switching costs a buyer can see', 'Punchout and VMI embed Thomas in customers\' procurement and stockrooms; retention stops depending on reps.'],
+    ['Diligence-ready KPIs', 'Monthly digital share, ePro share, account health and cost-to-serve replace anecdotes in the CIM.'],
+    ['Margin that survives flat volume', `Lower cost-to-serve and more share of wallet lift EBITDA at end-market growth near ${COMPS?.meta?.sector_benchmarks?.lab_distribution?.median_revenue_growth_latest_pct ?? 1.5}%.`],
+    ['A company for the next add-on', 'Acquired distributors plug into one catalog, price service and account model in months.'],
+  ].map(([h, p]) => `<li><b>${h}</b><p>${p}</p></li>`).join('') + `<li class="cap"><p>Ceiling: ${v06?.metric_value ?? 3}-turn spread, typical ${v06?.metric_range?.[0] ?? 6.8}x to premium ${v06?.metric_range?.[1] ?? 9.8}x ${v06 ? `(${srcLink(v06.source_url, 'Capstone/IMAP')})` : ''}; LabOS claims 0.5–1.0x${EST}</p></li>`;
 }
 
 export async function init({ Data: D, Chat, frame }) {

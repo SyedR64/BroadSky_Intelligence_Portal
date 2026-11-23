@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal · BSP Desk</title>
-<meta name="description" content="The BSP portfolio console: territories, opportunities, add-on targets, sponsors and filings for six companies.">
+<title>Broad Sky OS</title>
+<meta name="description" content="Broad Sky OS: the firm and its six companies in one place, with a view for every role.">
 <meta name="theme-color" content="#fbfaf7">
 <link rel="icon" href="BSP_Logo.png">
 <script>
@@ -19,8 +19,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<link rel="stylesheet" href="assets/system.css?v=20261123143257">
-<link rel="stylesheet" href="assets/app.css?v=20261123143257">
+<link rel="stylesheet" href="assets/system.css?v=20261123172325">
+<link rel="stylesheet" href="assets/app.css?v=20261123172325">
 <style>
   /* the floating "Ask" launcher sits over the bottom-right corner of the console; keep the last table row
      scrollable clear of it (--launch-clear is measured from the launcher once it mounts; 88px until then) */
@@ -32,18 +32,21 @@
 </head>
 <body>
 <div id="app">
-  <aside id="rail" aria-label="Portal">
-    <!-- phone (900px and narrower): the menu is this one native picker; assets/core.js renderRail fills it -->
-    <div class="rail-pick"><label class="sys-sr" for="rail-pick">Portal menu</label><select id="rail-pick"></select></div>
+  <aside id="rail" aria-label="Menu">
+    <!-- phone (900px and narrower): the menu is this one native picker; assets/core.js renderRail fills it for the role in view -->
+    <div class="rail-pick"><label class="sys-sr" for="rail-pick">Menu</label><select id="rail-pick"></select></div>
     <nav class="rail-nav" aria-label="Sections"></nav>
-    <div class="sys-src rail-foot"><a href="sitemap.html#g-portal">All views</a><span title="Prepared by Syed Rahman, November 2026">Syed Rahman · Nov 2026</span></div>
+    <div class="sys-src rail-foot"><a href="sitemap.html#g-portal">All pages</a><span title="Prepared by Syed Rahman, November 2026">Syed Rahman · Nov 2026</span></div>
   </aside>
   <main id="main">
     <header id="topbar">
-      <div class="crumb"></div>
       <nav class="sys-subnav-links view-tabs" aria-label="Screens in this section"></nav>
       <div class="top-right">
-        <button id="search-btn" class="sys-btn sys-btn--secondary sys-btn--sm search-btn" type="button" title="Search" aria-label="Search the portal"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg><span class="search-label">Search</span><span class="sys-kbd" aria-hidden="true">⌘K</span></button>
+        <!-- Sources, Method and the as-of chip (OS_SPEC 4.8): assets/core.js shows each only when the screen has one -->
+        <span class="sys-chip asof-chip" hidden></span>
+        <button type="button" class="sys-btn sys-btn--secondary sys-btn--sm drawer-btn" data-drawer-btn="src" aria-controls="inspector" aria-expanded="false" hidden>Sources</button>
+        <button type="button" class="sys-btn sys-btn--secondary sys-btn--sm drawer-btn" data-drawer-btn="method" aria-controls="inspector" aria-expanded="false" hidden>Method</button>
+        <button id="search-btn" class="sys-btn sys-btn--secondary sys-btn--sm search-btn" type="button" title="Search" aria-label="Search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg><span class="search-label">Search</span><span class="sys-kbd" aria-hidden="true">⌘K</span></button>
       </div>
     </header>
     <section id="content"></section>
@@ -51,18 +54,19 @@
   <aside id="inspector" class="sys-card" aria-label="Inspector" aria-hidden="true"></aside>
 </div>
 <script type="module">
-  import { Frame } from './assets/frame.js?v=20261123143257';
-  import { App } from './assets/core.js?v=20261123143257';
-  import { modules, ALIASES } from './modules/registry.js?v=20261123143257';
-  import { enhance, retitle, viewTitle } from './modules/copy.js?v=20261123143257';
+  import { Frame } from './assets/frame.js?v=20261123172325';
+  import { App } from './assets/core.js?v=20261123172325';
+  import { modules, ALIASES, LEVELS, ONLY, MENUS, MENU_NAMES, OWN_PARAM, COMPANIES } from './modules/registry.js?v=20261123172325';
+  import { enhance, retitle, viewTitle } from './modules/copy.js?v=20261123172325';
 
   // 1 · shared frame strip above the rail and console (UNIFIED.md §8); the theme is the visitor's saved choice (light by default)
   const frame = Frame.mount({ variant: 'app', theme: document.documentElement.dataset.sysTheme === 'dark' ? 'dark' : 'light' });
 
   // 2 · copy safety net after every route render: plain English, est. badges
   const content = document.getElementById('content');
-  // one h1 pattern for every view: "<Module name> · <view name in sentence case>" (modules/copy.js VIEW_TITLES)
-  const title = () => { const m = App.current, v = App.view; if (!m || !v) return; retitle(content, m, v); const t = `${viewTitle(m, v)} · BSP Desk`; if (document.title !== t) document.title = t; };
+  // the screen is named once, by its tab: a heading that only repeats the tab is kept for screen readers and hidden
+  // (modules/copy.js retitle). The window title still reads "<Module name> · <view title>" (modules/copy.js VIEW_TITLES)
+  const title = () => { const m = App.current, v = App.view; if (!m || !v) return; retitle(content, m, v); const t = `${viewTitle(m, v)} · Broad Sky OS`; if (document.title !== t) document.title = t; };
   const settle = () => { enhance(content); Frame.humanize(content); Frame.humanize(document.getElementById('topbar')); title(); };
   const route = App.route;
   App.route = async function (...args) { const r = await route.apply(App, args); settle(); return r; };
@@ -73,10 +77,12 @@
   }).observe(el, { childList: true, subtree: true });
   watch(content); watch(document.getElementById('inspector'));
 
-  // 3 · portal console: every module registers before the first route. The registry also hands over the forwarding
-  // table for merged screens (the shell never imports the registry itself: that would be an import cycle)
+  // 3 · the shell: every module registers before the first route. The registry also hands over the forwarding table for
+  // merged screens and the level tables (the shell never imports the registry itself: that would be an import cycle).
+  // App.start waits for the role in view (assets/session.js) before the first route
   for (const m of modules) App.register(m);
   App.alias(ALIASES);
+  App.levels({ table: LEVELS, only: ONLY, menus: MENUS, names: MENU_NAMES, param: OWN_PARAM, companies: COMPANIES });
   App.start();
 
   // 4 · grounded assistant: the frame's Ask button and ⌘J open the same widget
@@ -88,7 +94,7 @@
     const r = l.getBoundingClientRect(); if (!r.height) return;
     document.documentElement.style.setProperty('--launch-clear', `${Math.max(48, Math.ceil(innerHeight - r.top + 12))}px`);
   };
-  import('./assets/chat.js?v=20261123143257').then(({ Chat }) => {
+  import('./assets/chat.js?v=20261123172325').then(({ Chat }) => {
     frame.setChat(Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'auto' }));
     requestAnimationFrame(() => launchClear());
     addEventListener('resize', () => requestAnimationFrame(() => launchClear()));

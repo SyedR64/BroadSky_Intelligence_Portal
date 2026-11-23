@@ -1,0 +1,32 @@
+/* The 3D house for a service call (assets/house3d.js). Tokens and classes from assets/system.css only. */
+.h3{display:flex;flex-direction:column;gap:var(--sys-sp-3);max-width:100%;min-width:0;overflow:hidden}
+.h3-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sys-sp-2)}
+.h3-addr{margin:0;overflow-wrap:anywhere}
+.h3-ex{font-weight:500;color:var(--sys-mute);font-size:var(--sys-fs-sm)}
+.h3-stage{position:relative;width:100%;height:min(62vh,560px);min-height:280px;border-radius:var(--sys-r-sm);overflow:hidden;background:var(--sys-surface-2);border:1px solid var(--sys-line)}
+.h3-canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.h3-canvas:active{cursor:grabbing}
+.h3.is-wallmode .h3-canvas{cursor:crosshair}
+.h3-labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.h3-label{position:absolute;left:0;top:0;padding:2px 7px;border-radius:var(--sys-r-xs);background:var(--sys-surface);color:var(--sys-ink);border:1px solid var(--sys-line-2);font:600 12px/1.3 var(--sys-font);white-space:nowrap;box-shadow:var(--sys-sh-1)}
+.h3-label.is-likely{border-style:dashed;border-color:var(--sys-warn);color:var(--sys-ink-2);font-weight:500}
+.h3-key{position:absolute;left:var(--sys-sp-2);top:var(--sys-sp-2);margin:0;display:flex;align-items:center;gap:6px;padding:4px 9px;border-radius:var(--sys-r-pill);background:var(--sys-surface);border:1px solid var(--sys-line);color:var(--sys-ink-2);font:500 12px/1.2 var(--sys-font)}
+.h3-key-solid,.h3-key-dash{display:inline-block;width:18px;height:0;border-top:3px solid var(--sys-ink-2)}
+.h3-key-dash{border-top-style:dashed;border-color:var(--sys-warn);margin-left:6px}
+.h3-info{position:absolute;left:var(--sys-sp-2);right:var(--sys-sp-2);bottom:var(--sys-sp-2);max-height:45%;overflow:auto;padding:var(--sys-sp-2) var(--sys-sp-3);border-radius:var(--sys-r-sm);background:var(--sys-surface);border:1px solid var(--sys-line-2);box-shadow:var(--sys-sh-2);color:var(--sys-ink)}
+.h3-info-h{display:flex;align-items:center;gap:var(--sys-sp-2);flex-wrap:wrap}
+.h3-info-h b{font:600 var(--sys-fs-base)/1.3 var(--sys-font)}
+.h3-info-h .sys-btn{margin-left:auto;min-height:36px;padding:0 12px}
+.h3-info-l{margin:4px 0 0;color:var(--sys-ink-2);font-size:var(--sys-fs-sm)}
+.h3-info-list{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.h3-info-list li{display:flex;align-items:center;justify-content:space-between;gap:var(--sys-sp-2);font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
+.h3-bar{display:flex;flex-direction:column;gap:var(--sys-sp-2);min-width:0}
+.h3-row{display:flex;gap:var(--sys-sp-2);flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;min-width:0}
+.h3-row::-webkit-scrollbar{display:none}
+.h3-row .sys-chip{flex:0 0 auto;min-height:40px}
+.h3-acts{align-items:center;justify-content:space-between}
+@media (max-width:560px){
+  .h3-stage{height:56vh;min-height:300px}
+  .h3-label{font-size:13px}
+  .h3-row .sys-chip{min-height:44px}
+}

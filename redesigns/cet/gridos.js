@@ -1,7 +1,7 @@
 /* GridOS concept: interactive demo and value math.
    Real data (portal datasets via core.js): CET opportunity radar, CET wastewater-plant screen,
    GridOS evidence base, public comparables. Illustrative: fleet sites, EV ports, the savings project. */
-import { STATES, STAGE, daysTo, money, shortDate, clip, ownerOf, plain, srcName, longDate, EST, ILLUS } from './site.js?v=20261123143257';
+import { STATES, STAGE, daysTo, money, shortDate, clip, ownerOf, plain, srcName, longDate, EST, ILLUS } from './site.js?v=20261123172325';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -37,7 +37,7 @@ function tabs() {
 function clock() { const el = $('#clock'); if (!el) return; const f = () => { el.textContent = new Date().toLocaleString('en-US', { timeZone: 'America/New_York', weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' ET'; }; f(); setInterval(f, 30000); }
 const head = (title, sub, right = '') => `<div class="go-ph"><div><h3 class="sys-h3">${title}</h3><p class="go-ph-sub">${sub}</p></div>${right ? `<div class="go-ph-r">${right}</div>` : ''}</div>`;
 const tile = (label, value, sub, cls = '') => `<div class="sys-kpi"><span class="sys-kpi-label">${label}</span><span class="sys-kpi-value">${value}</span><span class="sys-kpi-sub${cls ? ' go-' + cls : ''}">${sub}</span></div>`;
-const foot = (html, link = '') => `<div class="go-foot"><p class="sys-src">${html}</p>${link}</div>`;
+const foot = (html, link = '') => `<div class="go-foot"><details class="sys-fold"><summary><b>Sources and method</b></summary><p class="sys-src">${html}</p></details>${link}</div>`;
 
 /* ── Bid board (CET opportunity radar) ────────────────────────────────────── */
 const CAPS = [['all', 'All capabilities'], ['wastewater', 'Wastewater'], ['pump_station', 'Pump stations'], ['generator', 'Generators'], ['controls', 'Controls and SCADA'], ['solar', 'Solar'], ['storage', 'Storage'], ['ev_charging', 'EV charging'], ['energy_efficiency', 'Efficiency'], ['utility', 'Utility'], ['electrical_construction', 'Electrical']];
@@ -46,13 +46,13 @@ const gng = o => { const d = daysTo(o.due_date); if (o.stage === 'awarded' || (d
 const cd = o => { const d = daysTo(o.due_date); if (o.stage === 'awarded') return ['Awarded', 'closed']; if (d == null) return o.stage === 'planned' || o.type === 'capital_plan' ? ['Planned', 'roll'] : ['Rolling', 'roll']; if (d < 0) return ['Closed', 'closed']; if (d === 0) return ['Today', 'urgent']; return [`${d} ${d === 1 ? 'day' : 'days'}`, d <= 3 ? 'urgent' : d <= 14 ? 'soon' : 'ok']; };
 const live = o => o.stage !== 'awarded' && !(o.due_date && daysTo(o.due_date) < 0);
 function bids(items, meta) {
-  const p = $('#pane-bids'); const S = { st: 'ALL', cap: 'all', q: '', closed: false, open: null };
+  const p = $('#pane-bids'); const S = { st: 'ALL', cap: 'all', q: '', closed: false, open: null, all: false };
   const stCount = st => items.filter(o => live(o) && (st === 'ALL' || o.state === st)).length;
-  p.innerHTML = head('Bid board · New England', `${items.length} public opportunities · compiled ${esc(longDate(meta?.generated))} · countdown in days from today`,
+  p.innerHTML = head('Bid board · New England', `${items.length} opportunities · compiled ${esc(longDate(meta?.generated))}`,
     `<input class="go-input go-search" type="search" placeholder="Search owner, town or scope" aria-label="Search opportunities" data-f="q"><select class="go-input" aria-label="Capability" data-f="cap">${CAPS.map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join('')}</select><label class="go-tgl"><input type="checkbox" data-f="closed"> Show closed</label>`) +
     `<div class="sys-chips go-fbar" role="group" aria-label="Filter by state">${['ALL', ...Object.keys(STATES)].map(st => `<button class="sys-chip" type="button" data-st="${st}" aria-pressed="${st === 'ALL'}">${st === 'ALL' ? 'All states' : st}<span class="go-c">${stCount(st)}</span></button>`).join('')}</div>
     <div class="go-tiles" data-k="tiles"></div>
-    <div class="sys-table-wrap go-tbl"><table class="sys-table go-tb"><thead><tr><th>Due</th><th>Opportunity</th><th class="go-hide-m">State</th><th class="go-hide-m">Scope</th><th class="sys-n go-hide-m">Value ${EST}</th><th class="go-hide-m">Fit</th><th>Go / no-go</th></tr></thead><tbody data-k="rows"></tbody></table></div>` +
+    <div class="sys-table-wrap go-tbl"><table class="sys-table go-tb"><thead><tr><th>Due</th><th>Opportunity</th><th class="go-hide-m">State</th><th class="go-hide-m">Scope</th><th class="sys-n go-hide-m">Value ${EST}</th><th class="go-hide-m">Fit</th><th>Go / no-go</th></tr></thead><tbody data-k="rows"></tbody></table></div><button class="sys-btn sys-btn--secondary cet-more" type="button" data-f="all" hidden></button>` +
     foot(`<b>Source:</b> CET opportunity radar (public bid boards, CT, ME and VT Clean Water SRF lists, owner portals). Go/no-go is a GridOS rule ${ILLUS}: fit 80 or more means bid, 60–79 review, planned work pre-position.`, '<a class="sys-link" href="../../app.html#/cet/opportunities">Full radar in the portal →</a>');
   const draw = () => {
     const q = S.q.toLowerCase();
@@ -63,12 +63,13 @@ function bids(items, meta) {
     const pipe = lv.reduce((s, o) => s + (o.est_value_usd || 0), 0); const fits = lv.filter(o => o.fit_score != null);
     $('[data-k=tiles]', p).innerHTML = tile('Live opportunities', lv.length, `${lv.filter(o => o.stage === 'open').length} open bids · ${lv.filter(o => o.stage !== 'open').length} pipeline`) +
       tile('Due in 14 days', soon.length, `${soon.filter(o => daysTo(o.due_date) <= 3).length} within 3 days`, soon.length ? 'warn' : '') +
-      tile('Pipeline value', money(pipe) + EST, 'Owner and SRF list estimates') +
+      tile('Pipeline value', money(pipe) + EST, 'Owner estimates') +
       tile('Average fit', fits.length ? Math.round(fits.reduce((s, o) => s + o.fit_score, 0) / fits.length) : '—', `${lv.filter(o => gng(o)[0] === 'Bid').length} flagged “Bid”`, 'good');
+    const total = rows.length; const more = $('[data-f=all]', p); if (!S.all) rows = rows.slice(0, 8); more.hidden = total <= 8; more.textContent = S.all ? 'Show top 8' : `Show all ${total}`;
     $('[data-k=rows]', p).innerHTML = rows.map(o => {
       const [c, cc] = cd(o); const [g, gc] = gng(o); const ex = S.open === o.id;
       const caps = (o.capability_match || []).filter(c => c !== 'electrical_construction').slice(0, 2).map(c => `<span class="go-cc">${esc(CAPN[c] || plain(c))}</span>`).join('') || '<span class="go-cc">Electrical</span>';
-      return `<tr class="go-row" data-id="${esc(o.id)}" tabindex="0" aria-expanded="${ex}"><td><span class="go-cd go-cd--${cc}">${c}</span></td><td class="go-tt"><b>${esc(clip(o.title, 72))}</b><span>${esc(o.city ? o.city + ', ' + o.state : o.state)}${o.due_date ? ' · due ' + esc(shortDate(o.due_date)) : ''}</span><span>${esc(ownerOf(o))}</span></td><td class="sys-num go-hide-m">${esc(o.state)}</td><td class="go-hide-m"><div class="go-caps">${caps}</div></td><td class="sys-n go-hide-m">${o.est_value_usd ? money(o.est_value_usd) : '—'}</td><td class="go-hide-m"><span class="go-fitb"><i><u style="width:${o.fit_score || 0}%"></u></i>${o.fit_score ?? '—'}</span></td><td><span class="go-gng go-gng--${gc}">${g}</span></td></tr>${ex ? `<tr class="go-det"><td colspan="7"><div class="go-det-g"><div><p class="sys-card-label">Why it fits</p>${esc(plain(o.fit_rationale || '—'))}${(o.scope_tags || []).length ? `<p class="sys-card-label go-mt">Scope</p><div class="go-caps">${(o.scope_tags || []).map(t => `<span class="go-cc">${esc(t)}</span>`).join('')}</div>` : ''}</div><div><p class="sys-card-label">Record</p>${esc(TYPE[o.type] || plain(o.type))} · ${esc(STAGE[o.stage] || o.stage)}${o.posted_date ? ' · posted ' + esc(shortDate(o.posted_date)) : ''}<br>${o.competitors_noted?.length ? 'Competitors noted: ' + esc(o.competitors_noted.join(', ')) + '<br>' : ''}${o.source_url ? `<a href="${esc(o.source_url)}" target="_blank" rel="noopener">${esc(clip(srcName(o.source_name), 70))} ↗</a>` : ''}</div></div></td></tr>` : ''}`;
+      return `<tr class="go-row" data-id="${esc(o.id)}" tabindex="0" aria-expanded="${ex}"><td><span class="go-cd go-cd--${cc}">${c}</span></td><td class="go-tt"><b>${esc(clip(o.title, 72))}</b><span>${esc(o.city ? o.city + ', ' + o.state : o.state)}${o.due_date ? ' · due ' + esc(shortDate(o.due_date)) : ''}</span></td><td class="sys-num go-hide-m">${esc(o.state)}</td><td class="go-hide-m"><div class="go-caps">${caps}</div></td><td class="sys-n go-hide-m">${o.est_value_usd ? money(o.est_value_usd) : '—'}</td><td class="go-hide-m"><span class="go-fitb"><i><u style="width:${o.fit_score || 0}%"></u></i>${o.fit_score ?? '—'}</span></td><td><span class="go-gng go-gng--${gc}">${g}</span></td></tr>${ex ? `<tr class="go-det"><td colspan="7"><div class="go-det-g"><div><p class="sys-card-label">Why it fits</p>${esc(plain(o.fit_rationale || '—'))}${(o.scope_tags || []).length ? `<p class="sys-card-label go-mt">Scope</p><div class="go-caps">${(o.scope_tags || []).map(t => `<span class="go-cc">${esc(t)}</span>`).join('')}</div>` : ''}</div><div><p class="sys-card-label">Record</p>${esc(o.title)}<br>Owner: ${esc(ownerOf(o))}<br>${esc(TYPE[o.type] || plain(o.type))} · ${esc(STAGE[o.stage] || o.stage)}${o.posted_date ? ' · posted ' + esc(shortDate(o.posted_date)) : ''}<br>${o.competitors_noted?.length ? 'Competitors noted: ' + esc(o.competitors_noted.join(', ')) + '<br>' : ''}${o.source_url ? `<a href="${esc(o.source_url)}" target="_blank" rel="noopener">${esc(clip(srcName(o.source_name), 70))} ↗</a>` : ''}</div></div></td></tr>` : ''}`;
     }).join('') || '<tr><td colspan="7">No opportunities match these filters.</td></tr>';
   };
   p.addEventListener('click', e => { const b = e.target.closest('[data-st]'); if (b) { S.st = b.dataset.st; $$('[data-st]', p).forEach(x => x.setAttribute('aria-pressed', String(x === b))); draw(); return; } const r = e.target.closest('tr.go-row'); if (r && !e.target.closest('a')) { S.open = S.open === r.dataset.id ? null : r.dataset.id; draw(); } });
@@ -76,6 +77,7 @@ function bids(items, meta) {
   $('[data-f=q]', p).addEventListener('input', e => { S.q = e.target.value; draw(); });
   $('[data-f=cap]', p).addEventListener('change', e => { S.cap = e.target.value; draw(); });
   $('[data-f=closed]', p).addEventListener('change', e => { S.closed = e.target.checked; draw(); });
+  $('[data-f=all]', p).addEventListener('click', () => { S.all = !S.all; draw(); });
   draw();
 }
 
@@ -222,7 +224,7 @@ function value() {
     { k: 'inv', l: 'GridOS investment', min: i0, max: i1, step: .1, v: +((i0 + i1) / 2).toFixed(1), f: v => `$${v.toFixed(1)}M`, src: `$${i0}–${i1}M, GridOS roadmap assumption` },
   ];
   const S = Object.fromEntries(SL.map(s => [s.k, s.v]));
-  $('#calc-in').innerHTML = `<span class="sys-card-label">Assumptions <span class="sys-est">est.</span></span>` + SL.map(s => `<div class="go-sl"><div class="go-sl-top"><label for="sl-${s.k}">${esc(s.l)}</label><output class="sys-num" id="out-${s.k}" for="sl-${s.k}">${s.f(s.v)}</output></div><input type="range" id="sl-${s.k}" data-k="${s.k}" min="${s.min}" max="${s.max}" step="${s.step}" value="${s.v}"><div class="go-sl-meta"><span>${s.f(s.min)}</span><em>${esc(s.src)}</em><span>${s.f(s.max)}</span></div></div>`).join('');
+  $('#calc-in').innerHTML = `<span class="sys-card-label">Assumptions <span class="sys-est">est.</span></span>` + SL.map(s => `<div class="go-sl"><div class="go-sl-top"><label for="sl-${s.k}">${esc(s.l)}</label><output class="sys-num" id="out-${s.k}" for="sl-${s.k}">${s.f(s.v)}</output></div><input type="range" id="sl-${s.k}" data-k="${s.k}" min="${s.min}" max="${s.max}" step="${s.step}" value="${s.v}"><div class="go-sl-meta"><span>${s.f(s.min)}</span><span>${s.f(s.max)}</span></div></div>`).join('') + `<details class="sys-fold"><summary><b>Assumption sources</b></summary><ul>${SL.map(s => `<li><b>${esc(s.l)}:</b> ${esc(s.src)}</li>`).join('')}</ul></details>`;
   const calc = x => { const E0 = x.rev * x.m / 100, up = x.rev * x.u / 100, E1 = E0 + up, V0 = E0 * x.M, V1 = E1 * (x.M + x.t); return { E0, up, E1, V0, V1, v1: up * x.M, v2: E1 * x.t, total: V1 - V0 }; };
   const fm = v => `$${v >= 100 ? n0(v) : n1(v)}M`;
   const draw = () => {
@@ -270,28 +272,29 @@ function exitCards(comps) {
   const e5 = ev('ve-05'), e6 = ev('ve-06'), e12 = ev('ve-12'), e13 = ev('ve-13'), e7 = ev('ve-07');
   const bm = comps?.meta?.sector_benchmarks?.commercial_electrical_energy;
   const C = [
-    e5 && ['10x+', 'EBITDA for repeatable service', 'Buyers pay for service mix, not volume', 'PKF’s valuation grid puts project-heavy, low-retention contractors at 5–6x and repeatable-service, high-visibility businesses above 10x. Assure and monitoring contracts move CET up that grid.', e5],
-    e6 && ['3.0x', 'typical-to-premium spread', 'The ceiling on any one lever', 'Advisors expect 6.8x typical against 9.8x premium middle-market multiples in 2026. GridOS is credited with 0.5–1.5 of those turns, not all of them.', e6],
-    e12 && ['106%', 'Procore net revenue retention', 'Digital operating layers stick', 'Contractors that adopt project software rarely leave it (95% gross retention). A buyer inherits a workforce already running on the system.', e12],
-    e7 && ['>110%', 'ServiceTitan net dollar retention', 'Contractors keep adding to their operating system', 'Trade contractors keep expanding spend on their operating system: evidence that the company layer becomes core infrastructure, not overhead.', e7],
-    e13 && ['99', 'electrical-contractor deals in 2025', 'Fewer, choosier buyers', 'Deal count fell from 140 to 99 while financial buyers did about two thirds of deals. Differentiation in service mix, systems and data decides who gets bid up.', e13],
-    bm && [`${bm.median_ebitda_margin_latest_pct}%`, `median EBITDA margin · ${bm.n} public comparables`, 'Margin upside lives in service mix', `Public electrical and energy contractors (${(bm.comps || []).join(', ')}) earn about ${bm.median_operating_margin_latest_pct}% operating margins; only specialist, self-perform and service-heavy leaders clear 10%.`, { source_url: null, source_name: 'Public comparables, SEC filings', date: comps.meta.generated, confidence: 'high' }],
+    e5 && ['10x+', 'EBITDA for repeatable service', 'Buyers pay for service mix, not volume', 'Project-heavy contractors trade at 5–6x; repeatable service above 10x.', e5],
+    e6 && ['3.0x', 'typical-to-premium spread', 'The ceiling on any one lever', '6.8x typical, 9.8x premium in 2026; GridOS gets 0.5–1.5 turns.', e6],
+    e12 && ['106%', 'Procore net revenue retention', 'Digital operating layers stick', '95% gross retention: buyers inherit a workforce already on the system.', e12],
+    e7 && ['>110%', 'ServiceTitan net dollar retention', 'Contractors keep adding to their operating system', 'Spend keeps expanding: the layer becomes infrastructure, not overhead.', e7],
+    e13 && ['99', 'electrical-contractor deals in 2025', 'Fewer, choosier buyers', 'Deals fell from 140 to 99; financial buyers did about two thirds.', e13],
+    bm && [`${bm.median_ebitda_margin_latest_pct}%`, `median EBITDA margin · ${bm.n} public comparables`, 'Margin upside lives in service mix', `${(bm.comps || []).join(', ')} earn about ${bm.median_operating_margin_latest_pct}% operating margin.`, { source_url: null, source_name: 'Public comparables, SEC filings', date: comps.meta.generated, confidence: 'high' }],
   ].filter(Boolean);
-  $('#exit-cards').innerHTML = C.map(([big, sub, h, p, s]) => `<article class="sys-card go-ex" data-co="cet"><div class="go-ex-n"><b class="sys-num">${esc(big)}</b><span class="sys-est">est.</span><small>${esc(sub)}</small></div><h3 class="sys-card-title">${esc(h)}</h3><p class="sys-card-body">${esc(p)}</p><p class="sys-src"><b>Source:</b> ${s.source_url ? `<a href="${esc(s.source_url)}" target="_blank" rel="noopener">${esc(clip(srcName(s.source_name), 70))} ↗</a>` : esc(srcName(s.source_name))}${s.date ? ', ' + esc(longDate(s.date)) : ''}${s.confidence ? ' · ' + esc(s.confidence) + ' confidence' : ''}</p></article>`).join('');
+  $('#exit-cards').innerHTML = C.map(([big, sub, h, p, s]) => `<article class="sys-card go-ex" data-co="cet"><div class="go-ex-n"><b class="sys-num">${esc(big)}</b><span class="sys-est">est.</span><small>${esc(sub)}</small></div><h3 class="sys-card-title">${esc(h)}</h3><p class="sys-card-body">${esc(p)}</p></article>`).join('');
+  const extra = bm ? `<li><span class="sys-card-label">Margin benchmark</span> Median EBITDA margin, ${bm.n} public comparables: ${esc(srcName('Public comparables, SEC filings'))}, ${esc(longDate(comps.meta.generated))} <span class="go-cf">high confidence</span></li>` : '';
   const src = EV.filter(i => (Array.isArray(i.applies_to) && i.applies_to.includes('cet')) || i.company === 'cet');
   const KIND = { valuation_evidence: 'Valuation', vendor_stack: 'Vendor', kpi_benchmark: 'KPI benchmark', roadmap_assumption: 'Roadmap assumption' };
   const label = i => i.kind === 'roadmap_assumption' ? 'GridOS roadmap: investment, time to value, EBITDA impact and multiple range' : i.title || i.vendor || i.kpi || i.os_name || '';
-  $('#sources').innerHTML = src.map(i => `<li><span class="sys-card-label">${esc(KIND[i.kind] || 'Evidence')}</span> ${esc(plain(label(i)))}: ${i.source_url ? `<a href="${esc(i.source_url)}" target="_blank" rel="noopener">${esc(clip(srcName(i.source_name || host(i.source_url)), 60))} ↗</a>` : 'analyst assumption, not company guidance'}${i.confidence ? ` <span class="go-cf">${esc(i.confidence)} confidence</span>` : ''}</li>`).join('') || '<li>The evidence file is not available right now.</li>';
+  $('#sources').innerHTML = src.map(i => `<li><span class="sys-card-label">${esc(KIND[i.kind] || 'Evidence')}</span> ${esc(plain(label(i)))}: ${i.source_url ? `<a href="${esc(i.source_url)}" target="_blank" rel="noopener">${esc(clip(srcName(i.source_name || host(i.source_url)), 60))} ↗</a>` : 'analyst assumption, not company guidance'}${i.date ? `, ${esc(longDate(i.date))}` : ''}${i.confidence ? ` <span class="go-cf">${esc(i.confidence)} confidence</span>` : ''}</li>`).join('') + extra || '<li>The evidence file is not available right now.</li>';
   const n = $('#sources-n'); if (n && src.length) n.textContent = `${src.length} sources behind this page`;
 }
 function hero() {
   const ra = ev('ra-cet'); const k1 = ev('kb-cet-1'), k2 = ev('kb-cet-2'), k3 = ev('kb-cet-3');
   const t = $('#thesis'); if (t && ra) { const M = v => (v / 1e6).toFixed(1); $('[data-k=ebitda]', t).textContent = `$${M(ra.ebitda_impact_usd[0])}–${M(ra.ebitda_impact_usd[1])}M`; $('[data-k=ebitda-s]', t).textContent = `${ra.ebitda_impact_pct_revenue[0].toFixed(1)}–${ra.ebitda_impact_pct_revenue[1].toFixed(1)}% of $${ra.revenue_basis_usd[0] / 1e6}–${ra.revenue_basis_usd[1] / 1e6}M revenue`; $('[data-k=turns]', t).textContent = `+${ra.multiple_expansion_turns[0]}–${ra.multiple_expansion_turns[1]}x`; $('[data-k=inv]', t).textContent = `$${M(ra.investment_usd[0])}–${M(ra.investment_usd[1])}M`; $('[data-k=ttv]', t).textContent = `${ra.time_to_value_months[0]}–${ra.time_to_value_months[1]} mo`; }
   const k = $('#kpi3'); if (!k) return;
-  const lnk = (u, l) => `<b>Source:</b> <a href="${esc(u)}" target="_blank" rel="noopener">${l} ↗</a>`;
-  if (k1) { $('[data-k=b1]', k).textContent = k1.baseline + '%'; $('[data-k=t1]', k).textContent = k1.target + '%'; $('[data-k=s1]', k).innerHTML = lnk(k1.source_url, 'ConstructConnect and ENR guidance'); }
-  if (k3) { $('[data-k=b3]', k).textContent = k3.baseline + '%'; $('[data-k=t3]', k).textContent = k3.target + '%'; $('[data-k=s3]', k).innerHTML = lnk(k3.source_url, 'NREL PV fleet study'); }
-  if (k2) { $('[data-k=b2]', k).textContent = k2.baseline + '%'; $('[data-k=t2]', k).textContent = k2.target == null ? 'TBD' : k2.target + '%'; $('[data-k=s2]', k).innerHTML = lnk(k2.source_url, 'FMI and PlanGrid via Construction Dive'); }
+  const lnk = (u, l) => `<a href="${esc(u)}" target="_blank" rel="noopener">${l} ↗</a>`;
+  if (k1) { $('[data-k=b1]', k).textContent = k1.baseline + '%'; $('[data-k=t1]', k).textContent = k1.target + '%'; $('[data-k=s1]').innerHTML = lnk(k1.source_url, 'ConstructConnect and ENR guidance'); }
+  if (k3) { $('[data-k=b3]', k).textContent = k3.baseline + '%'; $('[data-k=t3]', k).textContent = k3.target + '%'; $('[data-k=s3]').innerHTML = lnk(k3.source_url, 'NREL PV fleet study'); }
+  if (k2) { $('[data-k=b2]', k).textContent = k2.baseline + '%'; $('[data-k=t2]', k).textContent = k2.target == null ? 'TBD' : k2.target + '%'; $('[data-k=s2]').innerHTML = lnk(k2.source_url, 'FMI and PlanGrid via Construction Dive'); }
 }
 
 export async function initOS({ Data }) {

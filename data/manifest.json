@@ -85,19 +85,6 @@
    ]
   },
   {
-   "file": "cet_nyc_archive_summary.json",
-   "rows": 4,
-   "bytes": 319,
-   "source": "Legacy CET tool (NYC DOB NOW filings)",
-   "note": "Summary only.",
-   "fields": [
-    "total",
-    "by_tier",
-    "by_borough",
-    "note"
-   ]
-  },
-  {
    "file": "pp_zips.json",
    "rows": 3691,
    "bytes": 1552223,

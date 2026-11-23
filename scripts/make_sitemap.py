@@ -7,7 +7,8 @@ in step with the site. Re-run after adding a page or a portal view:
 
     python3 scripts/make_sitemap.py
 
-The portal section follows the portal's own menu (the RAIL groups in modules/registry.js), then lists the
+The Start list is the Broad Sky OS home, the agent, Connections and this page. The portal section follows the portal's
+own menu (the RAIL groups in modules/registry.js), then lists the
 modules that are off the menu. Every screen is listed there, once, with or without a tab; a company's own section
 carries one row that opens its first screen. A forwarding page (one that
 carries <meta name="bsp-forward">, scripts/ci_check.py forward_target) is not a page of its own and is left out.
@@ -42,6 +43,9 @@ PAGE_NAME = 'All pages'   # this page's one name: its title, its bar, its crumb,
 KNOWN = {
     'index.html': ('Home', 'The front page: what the site is and where to start.'),
     'app.html': ('Portal', 'The six companies and the deal tools. Every screen is listed below.'),
+    'os-home': ('Broad Sky OS', 'The firm view: six companies, today and approvals.'),
+    'os-agent': ('Agent', 'Ask as any of 44 roles, with sandbox apps.'),
+    'os-connect': ('Connections', 'Every tool by name, with its state.'),
     'theater.html': ('3D map', 'A 3D fly-through of home sales, bids, add-on targets and live weather alerts.'),
     'sitemap.html': (PAGE_NAME, 'This page.'),
     'redesigns/index.html': ('Concepts', 'Six concept websites and the OS program.'),
@@ -49,7 +53,7 @@ KNOWN = {
     'redesigns/ai-agents.html': ('AI agents plan', '45 agents across six companies, with rollout and value.'),
     'redesigns/case-studies.html': ('Sponsor precedents', 'How other sponsors grew companies like these.'),
     'redesigns/methodology.html': ('How BSP buys', 'How BSP finds, buys and grows companies.'),
-    'assistant.html': ('Full assistant', 'The BSP Desk assistant, full screen.'),
+    'assistant.html': ('Full assistant', 'The assistant, full screen.'),
     'agent.html': ('Company agent', 'Ask as any role at BSP or its six companies, with sandbox apps and data.'),
     'briefing/executive_memo.html': ('Executive memo', 'Four pages: where the six companies stand and what to do next.'),
 }
@@ -157,13 +161,18 @@ def main():
     mod_by_id = {m[0]: m for m in mods}
     groups = []
 
-    # 1. start
-    start = [p for p in ['index.html', 'agent.html', 'app.html', 'sitemap.html', 'assistant.html'] if p in all_pages]
-    lis = [item(p if p != 'index.html' else './', *KNOWN[p]) for p in start]
-    groups.append(('start', 'Start', 'The front page, the company agent and the portal.', None, lis))
+    # 1. start: the OS home, the agent, Connections, then this page. The agent opens inside the shell (#/home/agent) once
+    # that screen exists; until then its own page. The shell, the agent page and the old front door are not listed again.
+    live = {(mid, v) for mid, _, views in mods for v, _ in views}
+    start = [('app.html#/home/overview', 'os-home'),
+             ('app.html#/home/agent' if ('home', 'agent') in live else 'agent.html', 'os-agent'),
+             ('app.html#/connect/overview', 'os-connect'),
+             ('sitemap.html', 'sitemap.html')]
+    lis = [item(href, *KNOWN[k]) for href, k in start if not href.startswith('app.html#/connect/') or ('connect', 'overview') in live]
+    groups.append(('start', 'Start', 'The firm view, the agent and every tool.', None, lis))
 
     # 2. companies
-    used = set(start)
+    used = {'index.html', 'app.html', 'agent.html', 'sitemap.html'}
     for co, slug, name, what in CO:
         lis = []
         base = f'redesigns/{slug}/'
@@ -188,7 +197,7 @@ def main():
 
     # 3. portfolio-wide programs and pages
     lis = []
-    for p in ['redesigns/index.html', 'redesigns/voice-ai.html', 'redesigns/ai-agents.html', 'redesigns/case-studies.html', 'redesigns/methodology.html']:
+    for p in ['redesigns/index.html', 'redesigns/voice-ai.html', 'redesigns/ai-agents.html', 'redesigns/case-studies.html', 'redesigns/methodology.html', 'assistant.html']:
         if p in all_pages:
             used.add(p)
             lis.append(item('redesigns/' if p == 'redesigns/index.html' else p, *KNOWN[p]))
@@ -205,7 +214,8 @@ def main():
         _, mname, views = mod_by_id[mid]
         return item(f'app.html#/{mid}/{views[0][0]}' if views else 'app.html', mname, f'{len(views)} screen{"s" if len(views) != 1 else ""}.', routes_html(mid, views))
     on_menu = {mid for _, ids in rail for mid in ids}
-    blocks = [(name, [mod_item(mid) for mid in ids if mid in mod_by_id]) for name, ids in rail]
+    # a group that holds one module of its own name (the menu's "Home") gets no heading, as in the menu itself
+    blocks = [('' if [mod_by_id[i][1] for i in ids if i in mod_by_id] == [name] else name, [mod_item(mid) for mid in ids if mid in mod_by_id]) for name, ids in rail]
     off = [mod_item(mid) for mid, _, _ in mods if mid not in on_menu]
     if off:
         blocks.append((more if rail else 'Portal', off))
@@ -242,8 +252,8 @@ def main():
     def lists(lis):   # one list, or (sub-heading, items) blocks: a heading in the system type scale above each list
         if not lis or not isinstance(lis[0], tuple):
             return ul(lis)
-        return chr(10).join(f'''      <h3 class="sys-h3" style="margin:{'0' if k == 0 else 'var(--sys-sp-7)'} 0 var(--sys-sp-4)">{esc(head)}</h3>
-{ul(items)}''' for k, (head, items) in enumerate(lis))
+        return chr(10).join((f'''      <h3 class="sys-h3" style="margin:{'0' if k == 0 else 'var(--sys-sp-7)'} 0 var(--sys-sp-4)">{esc(head)}</h3>
+''' if head else '') + ul(items) for k, (head, items) in enumerate(lis))
 
     def section(i, g):
         gid, name, what, co, lis = g
@@ -267,7 +277,7 @@ def main():
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{PAGE_NAME} · BSP Desk</title>
+<title>{PAGE_NAME} · Broad Sky OS</title>
 <meta name="description" content="Every page and portal screen, grouped by company.">
 <meta name="theme-color" content="#fbfaf7">
 {THEME_JS}
@@ -276,13 +286,13 @@ def main():
 <link rel="apple-touch-icon" href="BSP_Logo.png">
 <link rel="canonical" href="https://broadsky-agent.vercel.app/sitemap.html">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="BSP Desk">
-<meta property="og:title" content="{PAGE_NAME} · BSP Desk">
+<meta property="og:site_name" content="Broad Sky OS">
+<meta property="og:title" content="{PAGE_NAME} · Broad Sky OS">
 <meta property="og:description" content="Every page and portal screen, grouped by company.">
 <meta property="og:url" content="https://broadsky-agent.vercel.app/sitemap.html">
 <meta property="og:image" content="https://broadsky-agent.vercel.app/assets/img/portal_home_overview.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="{PAGE_NAME} · BSP Desk">
+<meta name="twitter:title" content="{PAGE_NAME} · Broad Sky OS">
 <meta name="twitter:description" content="Every page and portal screen, grouped by company.">
 <meta name="twitter:image" content="https://broadsky-agent.vercel.app/assets/img/portal_home_overview.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -328,7 +338,7 @@ def main():
         </div>
         <div class="sys-actions">
           <a class="sys-btn sys-btn--accent sys-btn--lg" href="./#start">Start here</a>
-          <a class="sys-btn sys-btn--secondary sys-btn--lg" href="app.html">Open the portal</a>
+          <a class="sys-btn sys-btn--secondary sys-btn--lg" href="app.html#/home/overview">Open Broad Sky OS</a>
         </div>
       </div>
     </div>

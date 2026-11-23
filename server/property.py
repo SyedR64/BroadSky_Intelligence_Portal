@@ -1,5 +1,5 @@
 """
-Two assistant tools for BSP Desk, built only on public records of the Punctual Pros service area.
+Two assistant tools for Broad Sky OS, built only on public records of the Punctual Pros service area.
 
   new_homeowners   who should get the new-homeowner promotion: recorded market home sales for an
                    area and period, ranked by likely need (oldest homes first).

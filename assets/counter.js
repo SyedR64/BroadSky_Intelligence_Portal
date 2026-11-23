@@ -1,7 +1,9 @@
-/* "Revenue left on the table" clock — a debt-clock style live counter driven by the portal's sourced rates.
-   Usage: import { Counter } from './assets/counter.js?v=20261123143257';
+/* Open value: a running estimate driven by the portal's sourced rates (the firm home's "Strategy and operations" tile).
+   Usage: import { Counter } from './assets/counter.js?v=20261123172325';
+     Counter.live(valueEl, { baseline?: 'load'|'today', minDisplay?: number })
+       writes the running figure into valueEl's text and returns { annual, comps, method, destroy } (method: HTML).
      Counter.mount(el, { theme:'light'|'dark', caption?: string, compact?: boolean,
-                         baseline?: 'load'|'today', minDisplay?: number })
+                         baseline?: 'load'|'today', minDisplay?: number })   (a stand-alone block; not on any screen)
    baseline 'load' (default) counts up from $0 when the page opens; 'today' counts from local midnight
    (the per-day figure prorated to the moment of mount). Below minDisplay (default 0, or 100 with
    baseline 'today') the value shows "—" so a first frame never reads "$1".
@@ -13,7 +15,7 @@
    Each lever is read at runtime; a lever whose data is missing is skipped. "How" lines quote formula inputs and
    are shown only while the formula still contains them (otherwise a generic line is shown).
    Colours come from system.css tokens, so the clock follows the page's light or dark theme. */
-import { Data, Fmt, esc } from './core.js?v=20261123143257';
+import { Data, Fmt, esc } from './core.js?v=20261123172325';
 const ROOT = new URL('../', import.meta.url).href;
 const YEAR = 365.25 * 24 * 3600;
 const AGENT_SHARE = 0.5;      // revenue-lift and new-product agents count at 50%, the same haircut as redesigns/ai-agents.js
@@ -127,16 +129,18 @@ function groups(comps) {
   return [...by].map(([co, rows]) => ({ co, rows: rows.sort((a, b) => b.annual - a.annual), total: rows.reduce((s, r) => s + r.annual, 0) })).sort((a, b) => b.total - a.total);
 }
 const NOTE = [
-  'All figures are extra sales a year, not profit. Each is an analyst estimate from public benchmarks, not a forecast. The clock spreads the total over every second of the year.',
-  'Nothing is counted twice. Punctual Pros’ AI agents for missed calls, renewals, storm days and new-homeowner mail, the quick callback on ad leads, and CET’s bid-scoring and storm-crew agents are left out, because the rows above already cover that work.',
-  'AI agent rows count half of their sales, the same cut the AI agents page uses. Cost savings, add-on deals and growth-plan targets are left out.',
+  'All figures are extra sales a year, not profit. Each is an analyst estimate from public benchmarks, not a forecast.',
+  'The running figure spreads the yearly total over every second of the year.',
+  'Nothing is counted twice: agents whose work a lever above already covers are left out.',
+  'AI agent rows count half of their sales, the same cut the AI agents page uses.',
+  'Cost savings, add-on deals and growth-plan targets are left out.',
 ];
 function panel(comps, annual) {
   const est = '<small class="rc-est">est.</small>';
   let wide = true; try { wide = matchMedia('(min-width: 640px)').matches; } catch { /* no matchMedia: open every group */ }
   const lv = x => `<div class="rc-row rc-lv"><span class="rc-lv-n">${esc(x.label)}</span><b>${esc(usd(x.annual))} ${est}</b><span class="rc-lv-h">${esc(x.how)} <a href="${esc(x.href)}">${esc(x.source)}&nbsp;<span aria-hidden="true">→</span></a></span></div>`;
   const grp = (g, i) => `<details class="rc-grp" style="--co:${CO[g.co][1]}"${wide || i === 0 ? ' open' : ''}><summary class="rc-grp-h"><span class="sys-dot" aria-hidden="true"></span><span class="rc-grp-n">${esc(CO[g.co][0])}<small>${g.rows.length} ${g.rows.length === 1 ? 'lever' : 'levers'}</small></span><b>${esc(usd(g.total))} ${est}</b></summary>${g.rows.map(lv).join('')}</details>`;
-  return `<div class="rc-pop-t">The levers behind the number</div><p class="rc-pop-s">Each line says what is missed today, the fix, and the extra sales it adds a year (est.). Tap or click a company to show or hide its levers.</p>${groups(comps).map(grp).join('')}<div class="rc-tot"><span>Total extra sales a year</span><b>${esc(usd(annual))} ${est}</b></div><div class="rc-note">${NOTE.map(p => `<p>${esc(p)}</p>`).join('')}</div>`;
+  return `<div class="rc-pop-t">The levers behind the number</div><p class="rc-pop-s">Each line names a lever and the extra sales it adds a year, est.</p>${groups(comps).map(grp).join('')}<div class="rc-tot"><span>Total extra sales a year</span><b>${esc(usd(annual))} ${est}</b></div><div class="rc-note">${NOTE.map(p => `<p>${esc(p)}</p>`).join('')}</div>`;
 }
 const CSS = `.rc{font-family:var(--sys-font,Inter,system-ui,sans-serif);color:var(--sys-ink);position:relative}
 .rc-cap{font-size:var(--sys-fs-xs,12px);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sys-mute)}
@@ -173,27 +177,43 @@ const CSS = `.rc{font-family:var(--sys-font,Inter,system-ui,sans-serif);color:va
 .rc-note p{margin:0 0 4px}
 .rc-compact .rc-val{font-size:22px;margin:2px 0}.rc-compact .rc-cap{font-size:10px}.rc-compact .rc-sub{display:none}`;
 const reduced = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
+const injectCss = () => { if (!document.getElementById('rc-css')) { const st = document.createElement('style'); st.id = 'rc-css'; st.textContent = CSS; document.head.appendChild(st); } };
+/** Paint the running figure into `val` (about ten times a second, once a second with reduced motion); returns a stop function. */
+function tick(val, perSec, today, minDisplay) {
+  let base = 0;
+  if (today) { const midnight = new Date(); midnight.setHours(0, 0, 0, 0); base = (Date.now() - midnight.getTime()) / 1000; }
+  const t0 = performance.now();
+  const paint = () => { const v = Math.floor((base + (performance.now() - t0) / 1000) * perSec); val.textContent = v >= minDisplay ? '$' + v.toLocaleString('en-US') : '—'; };
+  let raf = 0, iv = 0, last = 0, dead = false;
+  paint();
+  if (reduced()) iv = setInterval(paint, 1000);
+  else { const loop = now => { if (dead || !val.isConnected) return; if (now - last > 90) { paint(); last = now; } raf = requestAnimationFrame(loop); }; raf = requestAnimationFrame(loop); }
+  return () => { dead = true; cancelAnimationFrame(raf); clearInterval(iv); };
+}
 export const Counter = {
+  /** The running figure alone, for a tile: `val` gets the text; `method` is the levers and notes as HTML (for a Method drawer). */
+  async live(val, opts = {}) {
+    const comps = await components(); const annual = comps.reduce((a, x) => a + x.annual, 0);
+    if (!ok(annual) || !val.isConnected) { if (val.isConnected) val.textContent = '—'; return { annual: 0, comps, method: '', destroy() {} }; }
+    injectCss();
+    const today = opts.baseline === 'today';
+    const destroy = tick(val, annual / YEAR, today, opts.minDisplay ?? (today ? 100 : 0));
+    const method = `<div class="rc rc-pop rc-method"><p class="rc-pop-s">${today ? 'Counted from midnight' : 'Counted from when the page opened'}: ≈ ${esc(Fmt.money(annual))} a year in extra sales, est.</p>${panel(comps, annual)}</div>`;
+    return { annual, comps, method, destroy };
+  },
   async mount(el, opts = {}) {
     const comps = await components(); const annual = comps.reduce((a, x) => a + x.annual, 0); const perSec = annual / YEAR;
     if (!ok(annual)) { el.innerHTML = ''; return { perSec: 0, annual: 0, comps, baseline: opts.baseline === 'today' ? 'today' : 'load', destroy() {} }; }
     const theme = opts.theme || 'light';
     const today = opts.baseline === 'today';
     const minDisplay = opts.minDisplay ?? (today ? 100 : 0);
-    const caption = opts.caption || (today ? 'Revenue left on the table today' : 'Revenue left on the table since you opened this page');
+    const caption = opts.caption || (today ? 'Open value today' : 'Open value since this page opened');
     el.innerHTML = `<div class="rc ${theme === 'dark' ? 'rc-dark' : ''} ${opts.compact ? 'rc-compact' : ''}"><div class="rc-cap">${esc(caption)}<span class="sys-est rc-badge">est.</span></div><div class="rc-val" aria-live="off">${minDisplay > 0 ? '—' : '$0'}</div><div class="rc-sub">≈ ${esc(Fmt.money(annual))} a year in extra sales (est.) · <button type="button" class="rc-why" aria-expanded="false">how is this computed?</button></div><div class="rc-pop" hidden>${panel(comps, annual)}</div></div>`;
-    if (!document.getElementById('rc-css')) { const st = document.createElement('style'); st.id = 'rc-css'; st.textContent = CSS; document.head.appendChild(st); }
+    injectCss();
     const val = el.querySelector('.rc-val'); const pop = el.querySelector('.rc-pop'); const why = el.querySelector('.rc-why');
     why.onclick = () => { pop.hidden = !pop.hidden; why.setAttribute('aria-expanded', String(!pop.hidden)); };
-    let base = 0;
-    if (today) { const midnight = new Date(); midnight.setHours(0, 0, 0, 0); base = (Date.now() - midnight.getTime()) / 1000; }
-    const t0 = performance.now();
-    const paint = () => { const v = Math.floor((base + (performance.now() - t0) / 1000) * perSec); val.textContent = v >= minDisplay ? '$' + v.toLocaleString('en-US') : '—'; };
-    let raf = 0, iv = 0, last = 0, dead = false;
-    paint();
-    if (reduced()) iv = setInterval(paint, 1000);
-    else { const loop = now => { if (dead) return; if (now - last > 90) { paint(); last = now; } raf = requestAnimationFrame(loop); }; raf = requestAnimationFrame(loop); }
-    return { perSec, annual, comps, baseline: today ? 'today' : 'load', destroy() { dead = true; cancelAnimationFrame(raf); clearInterval(iv); } };
+    const destroy = tick(val, perSec, today, minDisplay);
+    return { perSec, annual, comps, baseline: today ? 'today' : 'load', destroy };
   },
 };
 window.BSPCounter = Counter;

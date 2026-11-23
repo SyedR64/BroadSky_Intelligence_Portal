@@ -11,7 +11,7 @@
         "Norwell MA (NuWave Energy Solutions, Oct 2025)",
         "Connecticut (Horton Electrical Services, Sept 15 2026)"
       ],
-      "constraint": "No NYC expansion; New England footprint only"
+      "constraint": "Screen covers the six New England states"
     },
     "method": "Pulled the target universe from ZoomInfo company search for private companies with 25-400 employees headquartered in the six New England states. Keyword passes covered electrical contractors, solar, SCADA, substation, generator and building automation. We checked each candidate's ownership, founding year and capabilities against its own website and public sources (press releases, BBB/Blue Book, PrivSource, sponsor sites). Companies owned by PE firms or strategic buyers were moved to the PE-backed competitor list. Each target is scored 0-100: capability 30, geography 30 (distance to the nearest CET node, with credit for CT sites near Horton), scale 20, ownership readiness 20.",
     "zoominfo_query_parameters": [
@@ -368,7 +368,7 @@
     ],
     "scoring_rubric": {
       "capability": "0-30: overlap/extension of CET lines (electrical, solar O&M, EV, energy efficiency) and Horton niches (W/WW, pump stations, generators, utility)",
-      "geography": "0-30: straight-line distance to nearest CET node; CT sites credited for Horton adjacency; NY exposure penalized",
+      "geography": "0-30: straight-line distance to nearest CET node; CT sites credited for Horton adjacency",
       "scale": "0-20: employees/revenue relative to 25-400 employees and $8-120M band",
       "ownership_readiness": "0-20: founder/family ownership, generational succession signals; penalized for recent sales, WBE status or acquirer posture"
     }
@@ -794,7 +794,7 @@
       "risk_flags": [
         "Solar policy/ITC exposure",
         "Developer activities carry project-finance risk",
-        "NY license irrelevant given no-NYC guidance"
+        "New York licence not part of this screen"
       ],
       "zoominfo_id": "358874264",
       "sources": [
@@ -1858,7 +1858,7 @@
       ],
       "certifications_or_licenses": "CT-certified WBE/SBE; licensed in CT and NY",
       "geography_served": "Greater Danbury / Connecticut (and NY)",
-      "strategic_rationale": "Adds DOT traffic-signal and highway-lighting capability with CT DOT credentials. Danbury is western CT; NY work would be de-emphasized given CEO guidance against NYC expansion.",
+      "strategic_rationale": "Adds DOT traffic-signal and highway-lighting capability with CT DOT credentials. Danbury is western CT; its New York work is outside this screen.",
       "fit_score": 60,
       "fit_breakdown": {
         "capability": 18,
@@ -1868,7 +1868,7 @@
       },
       "risk_flags": [
         "WBE certification would not transfer on sale",
-        "Proximity to NY market conflicts with no-NYC guidance"
+        "Part of its work sits in New York, outside this screen"
       ],
       "zoominfo_id": "70763425",
       "sources": [

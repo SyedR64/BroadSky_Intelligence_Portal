@@ -898,7 +898,7 @@ ORG_NAME = {'bsp': 'BSP', 'pp': 'Punctual Pros', 'cet': 'CET', 'fl': 'Frontline'
 # What each sells and its lines: the site's existing persona strings (assets/chat.js 835-840), spec 1.4.
 SELLS = {'bsp': 'Private-equity firm that buys and grows six companies.',
          'pp': 'Heating, cooling, plumbing and electrical service for homes in central PA and the Jersey Shore.',
-         'cet': 'Electrical construction and service across New England.',
+         'cet': 'Electrical construction, solar and energy services.',
          'fl': 'Managed IT and billing support for law firms.',
          'ts': 'Lab supplies, equipment and services for research and clinical labs.',
          'bpi': 'Public affairs, reputation and campaign work.',
@@ -947,22 +947,26 @@ RECORD_SETS = {'docs', 'deals', 'accounts', 'opps', 'services', 'campaigns', 'jo
 
 
 def app_name(org, app):
-    """Example vendor choices, spec 2.1 (ServiceNow and Klaviyo follow BSP Desk's research files)."""
-    n = {'email': ('Gmail', 'GM') if org == 'fh' else ('Outlook', 'OL'),
+    """Example vendor per organisation, the OS build spec section 6. Where a research file names the company's own system it is
+    used (Fair Harbor: NetSuite, Shopify; Frontline: ServiceNow; Punctual Pros: ServiceTitan, through its franchisor). Elsewhere
+    the name is a product standard in that industry (Chronograph for a firm's portfolio reporting, Viewpoint Vista for an
+    electrical contractor's job-cost accounting, CallRail for home-service call and campaign tracking). App ids never change."""
+    n = {'email': ('Gmail', 'GM') if org in ('bpi', 'fh') else ('Outlook', 'OL'),
          'calendar': ('Google Calendar', 'GC') if org in ('fh', 'bpi') else ('Outlook Calendar', 'OC'),
-         'chat': ('Slack', 'SL') if org in ('bsp', 'bpi', 'fh') else ('Teams', 'TM'),
+         'chat': ('Slack', 'SL') if org in ('bsp', 'bpi', 'fh') else ('Microsoft Teams', 'TM'),
          'drive': ('Google Drive', 'GD') if org in ('bpi', 'fh') else ('SharePoint', 'SP'),
          'dealcloud': ('DealCloud', 'DC'), 'salesforce': ('Salesforce', 'SF'),
-         'marketing': ('Klaviyo', 'KL') if org == 'fh' else ('HubSpot', 'HS'),
+         'marketing': ('Klaviyo', 'KL') if org == 'fh' else ('CallRail', 'CR'),
          'servicetitan': ('ServiceTitan', 'ST'), 'procore': ('Procore', 'PC'), 'servicedesk': ('ServiceNow', 'SN'),
-         'shopify': ('Shopify', 'SH'), 'financials': ('QuickBooks', 'QB') if org in ('pp', 'fh') else ('NetSuite', 'NS'),
+         'shopify': ('Shopify', 'SH'),
+         'financials': {'bsp': ('Chronograph', 'CG'), 'pp': ('QuickBooks', 'QB'), 'cet': ('Viewpoint Vista', 'VV')}.get(org, ('NetSuite', 'NS')),
          'adp': ('ADP', 'ADP')}[app]
     return {'name': n[0], 'mono': n[1]}
 
 
 TERMS = {'ServiceTitan': 'ServiceTitan: field-service software for jobs, technicians and pricing.',
          'DealCloud': 'DealCloud: deal-tracking software.', 'Procore': 'Procore: construction project software.',
-         'ServiceNow': "ServiceNow: service-desk software; Frontline's HELIX desk runs on it.", 'Klaviyo': 'Klaviyo: email and text marketing.'}
+         'ServiceNow': "ServiceNow: service-desk software; Frontline's legal IT operations run on it.", 'Klaviyo': 'Klaviyo: email and text marketing.'}
 
 # The chat rule is a hard limit for the brief and field styles: it overrides the general length and format guide.
 STYLES = {
@@ -1047,6 +1051,15 @@ def at_of(co):
     return {'pp': 'Punctual Pros', 'cet': 'CET', 'fl': 'Frontline', 'ts': 'Thomas Scientific', 'bpi': 'BPI', 'fh': 'Fair Harbor'}[co]
 
 
+def level_of(org, dept, style):
+    """The OS level of a role (the OS build spec section 3; assets/session.js levelOf is the same rule)."""
+    if org == 'bsp':
+        return 'firm_leadership' if dept == 'Partners' else 'firm_team'
+    if dept == 'Leadership':
+        return 'co_leadership'
+    return 'co_field' if style == 'field' else 'co_office'
+
+
 def mk_role(rid, org, dept, label, label_a, style, team, apps, numbers, numbers_text, public, site, actions, denied, desc, chips,
             placeholder, key_app, action_chips=()):
     tools = (['site_brief'] if site else []) + ['workspace_search', 'open_record'] + (['company_numbers'] if numbers else []) + \
@@ -1055,7 +1068,8 @@ def mk_role(rid, org, dept, label, label_a, style, team, apps, numbers, numbers_
     views = sorted({v for vs in numbers.values() for v in vs}, key=VIEWS.index)
     by_co = {c: sorted(vs, key=VIEWS.index) for c, vs in numbers.items() if c != '_fund'}
     action_apps = {a: ('dealcloud' if (a == 'crm_stage' and org == 'bsp') else ACTIONS[a][1]) for a in actions}
-    return {'id': rid, 'label': label, 'label_a': label_a, 'company': org, 'dept': dept, 'style': style, 'team': team,
+    return {'id': rid, 'label': label, 'label_a': label_a, 'company': org, 'dept': dept, 'style': style,
+            'level': level_of(org, dept, style), 'team': team,
             'key_app': key_app, 'desc': desc, 'chips': chips, 'placeholder': placeholder, 'action_chips': list(action_chips),
             'apps': {a: dict(sorted(s.items())) for a, s in apps.items()},
             'numbers': {'companies': comps, 'views': views, 'by_company': by_co}, 'numbers_text': numbers_text,
@@ -1764,7 +1778,7 @@ def build_servicetitan(rng, people, streets, techs_os, sa):
                (C[1], ('10:30', '12:30'), pick_type('HVAC', 'heat_pump'), None, None),
                (C[2], ('13:00', '15:00'), pick_type('HVAC', 'thermostat'), None, None),
                (C[3], ('15:30', '17:30'), pick_type('HVAC', 'noise'), None, None)]
-    # Members on today's route: 2; open recommendations on today's customers: 3 (spec 3.4).
+    # Members on today's jobs: 2; open recommendations on today's customers: 3 (spec 3.4).
     C[1]['member'] = {'plan': 'Total Home', 'since_m': -11, 'renew_d': 203, 'visits_due': 1}
     C[2]['member'] = None
     C[3]['member'] = None
@@ -2736,7 +2750,7 @@ EMAIL = {
            ('Investor question on add-on pace', 'Investor relations lead', 'investor question', ['An investor asked how many add-ons we expect across the portfolio next year. Draft answer attached for your review.'])],
     'partner': [('Re: {deal3} process letter', '*Banker', 'seller', ['The seller wants indications by the end of next week. Management meetings follow for the top three.', 'We will submit. Send the data room access when ready.']),
                 ('{deal4}: first financials', 'Senior associate', None, ['Revenue and margin are in line with the teaser. Customer concentration is the open question.']),
-                ('Add-on screen for CET', 'Associate', None, ['Twelve electrical contractors in New England fit the size range. Four are worth a call.']),
+                ('Add-on screen for CET', 'Associate', None, ['Twelve electrical contractors in New England and the Mid-Atlantic fit the size range. Four are worth a call.']),
                 ('IC memo draft: {deal1}', 'Senior associate', None, ['Memo draft is in the data room folder. The model shows a 2.6x base case. Comments by tomorrow?']),
                 ('Lender feedback', '*Lender', None, ['We can support 3.5x on the add-on at current pricing. Term sheet to follow.']),
                 ('Management meeting logistics', 'Managing partner', None, ['Can you lead the management meeting? I will join for the first hour.'])],
@@ -2909,13 +2923,13 @@ CAL = {
             ('Annual meeting planning', 'Video call', ['*Event planner'], 'Venue and agenda.'),
             ('Capital call planning', 'New York office', ['Managing partner'], 'Amount and timing.'),
             ('Investor data requests', 'Video call', ['*Investor contact'], 'Quarterly template.')],
-    'leader': [('Weekly leadership meeting', '{office}', ['CEO', 'CFO', 'VP operations'], 'KPIs and the top risks.'),
+    'leader': [('Leadership meeting', '{office}', ['CEO', 'CFO', 'VP operations'], 'Weekly: KPIs and the top risks.'),
                ('KPI review', '{office}', ['VP operations'], 'Trend and drivers.'),
                ('Check-in with BSP', 'Video call', ['BSP operating partner'], 'KPIs first.'),
                ('Pipeline review', '{office}', ['CEO'], 'Top deals by stage.'),
                ('Month-end close review', '{office}', ['Controller'], 'Open items.'),
                ('Hiring sync', 'Video call', ['*Recruiter'], 'Open roles.'),
-               ('Customer visit', 'On site', ['*Client contact'], 'Relationship check-in.'),
+               ('Site visit', 'On site', ['*Client contact'], 'Relationship check-in.'),
                ('Budget working session', '{office}', ['CFO'], "Next year's plan."),
                ('Board update prep', '{office}', ['CEO', 'CFO'], 'Two pages.'),
                ('Safety walk', 'On site', ['*Safety lead'], 'Two sites.'),
@@ -2971,7 +2985,7 @@ WHO = {
             'Investor letter review': {'ir', 'mp'}, 'Annual meeting planning': {'ir'}, 'Capital call planning': {'fundcfo', 'mp'},
             'Investor data requests': {'ir', 'fundcfo'}},
     'leader': {'KPI review': {'ceo', 'cfo', 'vp'}, 'Check-in with BSP': {'ceo', 'cfo', 'vp'}, 'Pipeline review': {'ceo', 'sales'},
-               'Month-end close review': {'cfo'}, 'Hiring sync': {'ceo', 'vp', 'sales'}, 'Customer visit': {'ceo', 'vp', 'sales'},
+               'Month-end close review': {'cfo'}, 'Hiring sync': {'ceo', 'vp', 'sales'}, 'Site visit': {'ceo', 'vp', 'sales'},
                'Wholesale account visit': {'ceo', 'sales'}, 'Budget working session': {'ceo', 'cfo', 'vp'}, 'Board update prep': {'ceo', 'cfo'},
                'Safety walk': {'ceo', 'vp'}, 'Staffing review': {'ceo', 'vp'}, 'Desk operations review': {'ceo', 'vp'},
                'Fulfillment walk': {'ceo', 'vp'}, 'Vendor review': {'cfo', 'vp'}, 'Lender call': {'ceo', 'cfo'}, 'Growth review': {'ceo', 'sales'},
@@ -3071,7 +3085,7 @@ DOCS = {
             ('Diligence request list: {deal2}', 'Diligence', 'Request list', 'deal', 'Open and answered requests.'),
             ('Data room index: {deal1}', 'Data room', 'Index', 'deal', 'Folders and what is missing.'),
             ('Data room index: {deal2}', 'Data room', 'Index', 'deal', 'Folders and what is missing.'),
-            ('Add-on screen: CET', 'Deals', 'Spreadsheet', 'deal', 'New England electrical contractors in the size range.'),
+            ('Add-on screen: CET', 'Deals', 'Spreadsheet', 'deal', 'Electrical contractors in the size range, New England and Mid-Atlantic.'),
             ('Add-on screen: Punctual Pros', 'Deals', 'Spreadsheet', 'deal', 'Residential service companies near the hubs.'),
             ('Public comps table', 'Deals', 'Spreadsheet', 'deal', 'Listed peers and multiples.'),
             ('Portfolio KPI pack, {month:-1}', 'Portfolio', 'Deck', 'prg', 'KPIs for all six companies against plan.'),
@@ -3621,7 +3635,7 @@ def home_for(role, pool, st, org_files):
                   'lead': '%d jobs today. First at %s in %s.' % (len(today), t12(today[0]['start']), c0['address']['town'])})
         recs = sum(1 for j in today for x in cust[j['customer']]['recs'] if x['status'] == 'open')
         h['kpis'] = [tile('Jobs today', len(today), 'First at %s' % t12(today[0]['start']), 'servicetitan'),
-                     tile("Members on today's route", sum(1 for j in today if j['member']), 'Comfort Club', 'servicetitan'),
+                     tile("Members on today's jobs", sum(1 for j in today if j['member']), 'Comfort Club', 'servicetitan'),
                      tile('Open recommendations', recs, "On today's customers", 'servicetitan')]
         rows = []
         for j in today:
@@ -3721,7 +3735,7 @@ def home_for(role, pool, st, org_files):
                      tile('Unpaid over 60 days', sum(1 for x in inv if x['status'] != 'Paid' and x['days_out'] > 60), 'Count', 'financials'),
                      tile('Rejection rate', '%d%%' % round(rate), 'Last 30 days', 'financials')]
         h['list'] = [{'time': 'today' if x['rejected_d'] == 0 else ('yesterday' if x['rejected_d'] == -1 else '%d days ago' % -x['rejected_d']),
-                      'title': '%s · %s' % (x['number'], money(x['amount'])), 'where': x['client'],
+                      'title': '%s · %s' % (x['client'], money(x['amount'])), 'where': x['reason'],
                       'prompt': 'Why was %s rejected, and how do I fix it?' % x['number']} for x in rej]
     elif rid == 'ts-inside-sales':
         o = vis(pool, role, 'salesforce', 'opps')
@@ -3745,7 +3759,7 @@ def home_for(role, pool, st, org_files):
                   'lead': '%d orders ship today. %d items are below reorder point.' % (n, k)})
         h['kpis'] = [tile('Orders shipping today', n, 'Swedesboro', 'financials'), tile('Below reorder point', k, 'Items', 'financials'),
                      tile('Late orders', len(late), 'Past ship date', 'financials')]
-        h['list'] = [{'time': '%d days late' % -x['ship_d'] if x['ship_d'] < -1 else '1 day late', 'title': x['number'], 'where': x['account'],
+        h['list'] = [{'time': '%d days late' % -x['ship_d'] if x['ship_d'] < -1 else '1 day late', 'title': x['account'], 'where': x['dc'],
                       'prompt': "What's holding order %s?" % x['number']} for x in late]
     elif rid == 'bpi-account-director':
         acc = vis(pool, role, 'salesforce', 'accounts')
@@ -3825,6 +3839,7 @@ def build_catalog(roles, pool, st, org_files):
             if PUBLIC[p] not in pub:
                 pub.append(PUBLIC[p])
         cat_roles.append({'id': r['id'], 'org': org, 'dept': r['dept'], 'label': r['label'], 'label_a': r['label_a'], 'style': r['style'],
+                          'level': r['level'],
                           'key_app': r['key_app'], 'desc': r['desc'], 'placeholder': r['placeholder'], 'chips': r['chips'],
                           'action_chips': r['action_chips'], 'apps': apps, 'unavailable': unavailable, 'numbers_text': r['numbers_text'],
                           'public': pub, 'actions': [ACTIONS[a][0] for a in r['actions']], 'home': home_for(r, pool, st, org_files)})
@@ -3863,7 +3878,7 @@ def build_roles_json(roles):
         apps_used.setdefault(r['company'], set()).update(r['apps'])
     out = {}
     for r in roles:
-        x = {k: r[k] for k in ('label', 'label_a', 'company', 'dept', 'order', 'style', 'team', 'key_app', 'desc', 'apps', 'numbers', 'numbers_text',
+        x = {k: r[k] for k in ('label', 'label_a', 'company', 'dept', 'order', 'style', 'level', 'team', 'key_app', 'desc', 'apps', 'numbers', 'numbers_text',
                                'public', 'tools', 'actions', 'action_apps', 'denied_hint')}
         x['team_name'] = TEAM_NAME[r['team']] if r['id'] in team_roles else None
         out[r['id']] = x
@@ -3932,7 +3947,7 @@ def privacy_scan(files, banned_full, techs_os):
             if 'Smith + Howard' in s:
                 msgs.append('%s %s: Smith + Howard' % (name, p))
             if name == 'cet.json' and re.search(r'New York|NYC|Manhattan|Brooklyn|Queens', s):
-                msgs.append('%s %s: CET stays in New England: %s' % (name, p, s[:60]))
+                msgs.append('%s %s: CET has no New York City plan: %s' % (name, p, s[:60]))
         for p, n, role in walk_people(obj):
             if n is None or n == 'You':
                 pass

@@ -1,0 +1,39 @@
+/* Connections screen: one compact row per tool, grouped by organisation (ruling R6). Layout only; look comes from
+   assets/system.css (.sys-table-wrap box, .sys-chip states, .sys-btn controls, .sys-card-label group heads). */
+.page-head:has(+[data-asof]),.page-head:has(+.cx-filter){margin-bottom:0}
+.cx-filter{margin:var(--sys-sp-3) 0 var(--sys-sp-4)}
+.cx-groups{display:flex;flex-direction:column;gap:var(--sys-sp-4)}
+.cx-group-head{margin:0 0 var(--sys-sp-1)}
+.cx-group-head .sys-num{color:var(--sys-mute-2)}
+.cx-group:not([data-co]) .cx-group-head .sys-dot{--co:var(--sys-brand)}
+.cx-list{list-style:none;margin:0;padding:0;overflow:hidden}
+.cx-row{display:grid;grid-template-columns:minmax(9.5rem,.85fr) minmax(9.5rem,.9fr) minmax(12rem,2.2fr) 10rem minmax(8rem,.9fr) 6rem;
+  align-items:center;column-gap:var(--sys-sp-3);min-height:24px;padding:0 var(--sys-sp-1) 0 var(--sys-sp-3);
+  border-bottom:1px solid var(--sys-line);font-size:var(--sys-fs-sm);line-height:1.25;color:var(--sys-ink-2)}
+.cx-row:last-child{border-bottom:0}
+.cx-row:hover{background:var(--sys-surface-2)}
+.cx-row>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cx-name{color:var(--sys-ink);font-weight:600}
+.cx-cat,.cx-mark{color:var(--sys-mute)}
+.cx-mark a{color:inherit;text-underline-offset:2px}
+.cx-act{text-align:right}
+.cx-row .sys-chip{min-height:18px;padding:0 8px;gap:5px;font-size:var(--sys-fs-xs)}
+.cx-row .sys-btn--sm{min-height:22px;margin:1px 0;padding:0 10px;font-size:var(--sys-fs-xs)}
+.cx-planned{border-style:dashed}
+.cx-sources .sys-card-list a{overflow-wrap:anywhere}
+.cx-method .sys-card-list,.cx-sources .sys-card-list{margin-top:var(--sys-sp-3)}
+/* narrow screens: name, state and control on the first line; category, reads and mark run on under it */
+@media (max-width:900px){
+  .cx-row{display:flex;flex-wrap:wrap;align-items:center;column-gap:0;row-gap:0;padding:var(--sys-sp-1) var(--sys-sp-2) var(--sys-sp-1) var(--sys-sp-3)}
+  .cx-row::after{content:"";flex-basis:100%;order:3}
+  .cx-row>span{white-space:normal;overflow:visible}
+  .cx-name{flex:1 1 0;order:0}
+  .cx-st{order:1;margin-left:var(--sys-sp-2)}
+  .cx-act{order:2;margin-left:var(--sys-sp-2)}
+  .cx-act:empty{display:none}
+  .cx-cat,.cx-reads,.cx-mark{order:4;font-size:var(--sys-fs-xs)}
+  .cx-reads,.cx-mark{color:var(--sys-mute)}
+  .cx-reads:empty,.cx-mark:empty{display:none}
+  .cx-reads::before,.cx-mark::before{content:"\00a0· "}
+  .cx-row .sys-btn--sm{min-height:28px}
+}

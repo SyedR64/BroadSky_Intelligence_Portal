@@ -65,3 +65,10 @@
 .m-cet .cet-fold>summary{flex-wrap:wrap;gap:var(--sys-sp-2) var(--sys-sp-3);min-height:48px;padding:var(--sys-sp-3) var(--sys-sp-4);border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2);color:var(--sys-ink)}
 .m-cet .cet-fold>summary::before{flex-shrink:0}
 .m-cet .cet-fold-body{padding-top:var(--sys-gap)}
+
+/* the radar filters and the filings notes sit in closed sections; the radar list grows by 30 at a time */
+.m-cet .sys-filters>.cet-fold{flex:1 1 100%}
+.m-cet .cet-more{justify-content:space-between;margin:var(--sys-sp-3) 0}
+.m-cet .cet-folds{display:flex;flex-direction:column;gap:var(--sys-sp-3)}
+.m-cet .cet-fold-body .cet-fp{columns:1}
+.m-cet #cet-est .sys-n{white-space:normal;text-align:left}

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   BSP Desk — 3D map engine (ES module, no build step)
+   Broad Sky OS — 3D map engine (ES module, no build step)
    GPU-rendered, cinematic map presentations over the portal's real datasets.
 
    Stack (CDN only, verified 2026-10-06):
@@ -8,13 +8,13 @@
      Basemap             OpenFreeMap vector styles (key-free): /styles/dark, fallback /styles/positron
      Terrain             AWS Terrarium DEM tiles (CORS-enabled), exaggeration 1.4, plus hillshade
    Usage:
-     import { Theater } from './assets/theater.js?v=20261123143257';
+     import { Theater } from './assets/theater.js?v=20261123172325';
      await Theater.mount(el, { autoplay: true, scene: 'S1', onScene: (id, scene) => {} });
      Theater.play(); Theater.pause(); Theater.goTo('S3'); Theater.destroy();
    window.BSPTheater exposes the same API (plus state()) for automation.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-import { label } from './frame.js?v=20261123143257';
+import { label } from './frame.js?v=20261123172325';
 /* Caption source lines: dataset keys become their readable names (Frame.label); {id, note} adds a note in brackets. */
 const RX_KEY = /^[a-z][a-z0-9]*(?:_[a-z0-9]+)+$/;
 const SRC = (...parts) => [...new Set(parts.map(p => typeof p === 'string' ? (RX_KEY.test(p) ? label(p) : p) : `${label(p.id)} (${p.note})`))].join(' · ');
@@ -362,7 +362,7 @@ class TheaterInstance {
     window.addEventListener('keydown', this._onKey);
     this._syncPlay();
 
-    if (!this.core) this.core = await import('./core.js?v=20261123143257');
+    if (!this.core) this.core = await import('./core.js?v=20261123172325');
     const baseP = loadBase(this.core);
     if (!webglOK() || this.opts.forceFallback) return this._fallback(this.opts.forceFallback ? 'Static fallback requested.' : 'WebGL is not available in this browser, so the 3D map is showing a static 2D map.', baseP);
     loadCss(LIBS.mlCss, 'maplibre-css');

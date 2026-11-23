@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   BSP Desk chat — grounded assistant for the portal and the portfolio sites.
+   Broad Sky OS chat — grounded assistant for the portal and the portfolio sites.
    • Deterministic intents answer from the portal's own datasets (no backend, no key).
    • Retrieval fallback searches an index built from research metadata.
    • Hosted backend (assets/backend.js, discovered on first use): precomputed Claude deep
@@ -14,11 +14,11 @@
            Chat.mount(document.querySelector('#hero-chat'), { persona: 'portal', mode: 'inline' });
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Data, Fmt, Live, esc } from './core.js?v=20261123143257';
+import { Data, Fmt, Live, esc } from './core.js?v=20261123172325';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
-const LOGO = new URL('./img/bsp-mark.png', import.meta.url).href;  // the BSP mark, used as BSP Desk's avatar and launcher
+const LOGO = new URL('./img/bsp-mark.png', import.meta.url).href;  // the BSP mark, used as the Broad Sky OS avatar and launcher
 /* Each company's assistant wears that company's mark (Punctual Pros trades under its franchise brands, so its mark is the concept's on-time clock). */
 const LOGOS = Object.fromEntries(['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'].map(k => [k, new URL(`./img/logos/${k}.png`, import.meta.url).href]));
 const logoOf = id => LOGOS[id] || LOGO;
@@ -47,7 +47,7 @@ const cite = k => `<span data-cite="${esc(k)}">${esc(srcLabel(k))}</span>`;
 const tbl = (head, rows) => `<table><thead><tr>${head.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td class="${typeof c === 'number' ? 'n' : ''}">${typeof c === 'number' ? Fmt.num(c) : c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
 /** Short company names for answer headings (six words or fewer). */
 const COS_S = { pp: 'Punctual Pros', cet: 'CET', fl: 'Frontline', ts: 'Thomas Scientific', bpi: 'BPI', fh: 'Fair Harbor' };
-const COS = { pp: 'Punctual Pros', cet: 'Commonwealth Electrical (CET)', fl: 'Frontline Managed Services', ts: 'Thomas Scientific', bpi: 'Bully Pulpit International', fh: 'Fair Harbor' };
+const COS = { pp: 'Punctual Pros', cet: 'Commonwealth Electrical Technologies (CET)', fl: 'Frontline Managed Services', ts: 'Thomas Scientific', bpi: 'Bully Pulpit International', fh: 'Fair Harbor' };
 const CO_RX = { pp: /punctual|one hour|ben(jamin)? franklin|mister sparky|horvath|hvac|plumb|serviceos|comfort club/i, cet: /\bcet\b|commonwealth|horton|nuwave|electrical|wastewater|solar|gridos|new england/i, fl: /frontline|law firm|legal|am ?law|firmos/i, ts: /thomas|lab supply|laborator|diagnostic|labos|lab sites?/i, bpi: /bully|\bbpi\b|public affairs|comms|communications agency|signalos/i, fh: /fair harbor|beachwear|swim|apparel|harboros/i };
 const coOf = q => Object.keys(CO_RX).find(k => CO_RX[k].test(q));
 const TERRITORY_PA = ['Lancaster', 'York', 'Dauphin', 'Cumberland', 'Berks', 'Lebanon', 'Franklin', 'Adams', 'Perry'];
@@ -57,7 +57,7 @@ let ACTIVE = null;
 const progress = t => { try { ACTIVE?.progress?.(t); } catch { /* status only */ } };
 
 /* ── Hosted backend: imported and discovered on first use; every path degrades to the grounded engine ── */
-const BACKEND_JS = './backend.js?v=20261123143257';
+const BACKEND_JS = './backend.js?v=20261123172325';
 let BE = null, BE_P = null, BE_RETRY = 0;
 function backend() {
   // The check on page load can land on a cold start and miss: when the backend looked offline, check again (at most every 15 s).
@@ -117,7 +117,7 @@ function viewContext() {
     const root = document.getElementById('content') || document.querySelector('main') || document.body; if (!root) return null;
     const txt = el => String(el?.innerText ?? el?.textContent ?? '').replace(/\s+/g, ' ').trim();
     const all = (sel, k) => [...root.querySelectorAll(sel)].filter(e => !e.closest('.ch, [hidden], .leaflet-container, details:not([open]) > :not(summary)')).slice(0, k);
-    const page = String(document.title || '').replace(/\s*·\s*BSP Desk\s*$/, '').trim();
+    const page = String(document.title || '').replace(/\s*·\s*(?:Broad Sky OS|BSP Desk)\s*$/, '').trim();
     let own = null; try { own = window.BSPView?.describe?.() || null; } catch { own = null; }
     const h1 = txt(all('h1', 1)[0]);
     const headline = clip(own?.headline || h1 || page, 160);
@@ -558,7 +558,7 @@ async function addonHistory(q) {
 }
 /** Underwriting questions ("what can we pay and still earn 20%?") run the acquisition model itself. */
 async function dealModel(q) {
-  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261123143257').catch(() => null)]);
+  const [d, L] = await Promise.all([Data.research('deal_model'), import(ROOT + 'modules/deal-lib.js?v=20261123172325').catch(() => null)]);
   if (!d || !L) return null;
   const pre = (d.items || []).filter(i => i.kind === 'preset'); const co = coOf(q);
   const P = pre.find(i => i.co === co && i.group !== 'generic') || pre.find(i => i.id === 'typical') || pre[0]; if (!P) return null;
@@ -610,7 +610,7 @@ async function cetScope(q) {
   const sorted = its.slice().sort((a, b) => (open(b) - open(a)) || ((b.fit_score || 0) - (a.fit_score || 0)));
   const val = its.reduce((s, i) => s + (i.est_value_usd || 0), 0);
   const label = topics.length ? topics.map(t => t[0]).join(' and ') : 'solar, EV charging and storage';
-  return { html: `<h4>CET ${esc(label)} work</h4><p>${n(its.length)} tracked opportunities match${val ? `, about ${money(val)} of disclosed value` : ''}; ${n(its.filter(open).length)} have an open bid date.</p>${sorted.length ? tbl(['Opportunity', 'Owner', 'Kind', 'Value', 'Due'], sorted.slice(0, 10).map(i => [`<b>${esc(clip(i.title, 90))}</b> <span class="ch-badge">${esc(i.state || '')}</span>`, esc(clip(i.owner_or_agency || '', 50)), esc(OPP_TYPE[i.type] || 'Opportunity'), i.est_value_usd ? money(i.est_value_usd) : '—', i.due_date ? esc(when(i.due_date)) : '—'])) : '<p>No tracked opportunity matches that scope yet.</p>'}${sorted[0]?.fit_rationale ? `<p><b>Best fit:</b> ${esc(clip(sorted[0].fit_rationale, 240))}</p>` : ''}<div class="ch-src">Source: ${cite('cet_opportunities')} (state procurement portals, capital plans, program pages and federal award data). New England only.</div>`,
+  return { html: `<h4>CET ${esc(label)} work</h4><p>${n(its.length)} tracked opportunities match${val ? `, about ${money(val)} of disclosed value` : ''}; ${n(its.filter(open).length)} have an open bid date.</p>${sorted.length ? tbl(['Opportunity', 'Owner', 'Kind', 'Value', 'Due'], sorted.slice(0, 10).map(i => [`<b>${esc(clip(i.title, 90))}</b> <span class="ch-badge">${esc(i.state || '')}</span>`, esc(clip(i.owner_or_agency || '', 50)), esc(OPP_TYPE[i.type] || 'Opportunity'), i.est_value_usd ? money(i.est_value_usd) : '—', i.due_date ? esc(when(i.due_date)) : '—'])) : '<p>No tracked opportunity matches that scope yet.</p>'}${sorted[0]?.fit_rationale ? `<p><b>Best fit:</b> ${esc(clip(sorted[0].fit_rationale, 240))}</p>` : ''}<div class="ch-src">Source: ${cite('cet_opportunities')} (state procurement portals, capital plans, program pages and federal award data), covering New England.</div>`,
     links: [app('#/cet/opportunities', 'Opportunity radar')], followups: ['Which CET bids are due within 30 days?', 'Which wastewater plants should Horton call first?', 'What is the growth plan for CET?'] };
 }
 async function cetTransfers(q) {
@@ -631,7 +631,7 @@ async function cetCounties(q) {
   const rows = await Data.load('cet_ne_counties').catch(() => null); if (!rows?.length) return null;
   const st = stateOf(q); const pool = rows.filter(r => !st || r.state === st).slice().sort((a, b) => (b.cet_fit_score || 0) - (a.cet_fit_score || 0));
   progress(`Ranking ${rows.length} New England counties`);
-  return { html: `<h4>Top CET counties${st ? ` in ${esc(ST_NAME[st] || st)}` : ''}</h4><p>The county score blends commercial and healthcare establishment density, manufacturing footprint, permit activity, data-center and EV-charging build-out. ${pool[0] ? `<b>${esc(pool[0].county_name)}, ${esc(pool[0].state)}</b> leads at ${n(pool[0].cet_fit_score, 1)}.` : ''}</p>${tbl(['#', 'County', 'Fit score', 'Tier', 'What drives it'], pool.slice(0, 10).map((r, i) => [i + 1, `<b>${esc(r.county_name)}</b>, ${esc(r.state)}`, `<span class="ch-num">${Fmt.num(r.cet_fit_score, 1)}</span>`, esc(r.cet_fit_tier || '—'), esc(clip((r.fit_drivers || []).slice(0, 2).join('; '), 90))]))}<p>CET grows across New England from its Worcester, Taunton and Norwell base and Horton's Connecticut footprint.</p><div class="ch-src">Source: ${cite('cet_ne_counties')} (Census County Business Patterns, building permits, EV-charging and data-center indicators).</div>`,
+  return { html: `<h4>Top CET counties${st ? ` in ${esc(ST_NAME[st] || st)}` : ''}</h4><p>The county score blends commercial and healthcare establishment density, manufacturing footprint, permit activity, data-center and EV-charging build-out. ${pool[0] ? `<b>${esc(pool[0].county_name)}, ${esc(pool[0].state)}</b> leads at ${n(pool[0].cet_fit_score, 1)}.` : ''}</p>${tbl(['#', 'County', 'Fit score', 'Tier', 'What drives it'], pool.slice(0, 10).map((r, i) => [i + 1, `<b>${esc(r.county_name)}</b>, ${esc(r.state)}`, `<span class="ch-num">${Fmt.num(r.cet_fit_score, 1)}</span>`, esc(r.cet_fit_tier || '—'), esc(clip((r.fit_drivers || []).slice(0, 2).join('; '), 90))]))}<p>CET is based in Worcester and licensed in about ten states (reported); these scores cover New England.</p><div class="ch-src">Source: ${cite('cet_ne_counties')} (Census County Business Patterns, building permits, EV-charging and data-center indicators).</div>`,
     links: [app('#/cet/overview', 'CET module'), app('#/cet/opportunities', 'Opportunity radar')], followups: ['Show CET add-on targets in Massachusetts', 'What solar and EV work can CET bid on?', 'How does BSP scale CET across the Northeast?'] };
 }
 async function lawFirms(q) {
@@ -846,14 +846,14 @@ function mdTables(s) {
 
 /* ── Personas ─────────────────────────────────────────────────────────────── */
 export const PERSONAS = {
-  portal: { name: 'BSP Desk', short: 'the desk', initials: 'BSP', logo: true, greeting: "I'm the analyst on the BSP Desk. I know our six companies, their markets and the add-on pipeline, and I can price a deal while we talk. What are we working on?", placeholder: 'Ask anything, e.g. "Show me how to take Punctual Pros nationwide"', color: '#d9622b',
+  portal: { name: 'Broad Sky OS', short: '', initials: 'BSP', logo: true, greeting: 'Ask about the six companies, or price a deal.', placeholder: 'Ask anything, e.g. "Show me how to take Punctual Pros nationwide"', color: '#d9622b',
     suggestions: ['Who leads BSP, and what did they do before?', 'What could BSP pay for CET and still earn 25% a year?', 'Show me how to take Punctual Pros nationwide', 'Which wastewater plants should Horton call first?', "What do this week's storms mean for Punctual Pros?", 'Who competes with BSP for home-services deals?', 'Which CET bids are due within 30 days?', 'Which counties nationwide should Punctual Pros expand to first?', 'What did sponsors do with companies like Punctual Pros?', 'How does BSP actually buy companies?', 'Estimate Punctual Pros revenue from public filings', 'Show the top add-on targets for CET in Connecticut', "How does tech enablement raise Punctual Pros' value?", "Who should get this month's new-homeowner mailer in Ocean County?", 'How many new-mover leads are in Lancaster County?', "How do the portfolio's valuations compare with public peers?", 'Which private-equity rivals are most active in our sectors?', 'Which portfolio company is largest by revenue?', 'What would a TV ad campaign for Punctual Pros look like?', 'How does BSP scale CET across the Northeast?', 'What is the growth plan for Frontline?', 'Which AI agents create the most value?', 'How much revenue do missed calls cost Punctual Pros?'],
     intents: PORTAL_INTENTS, faq: [] },
 };
 /** Customer-facing site personas are extended by each redesign (faq/suggestions/intents via mount options). */
 const SITE_BASE = {
   pp: { name: 'Punctual Pros assistant', short: 'Punctual Pros', initials: 'PP', color: '#f08a3c', greeting: 'Hi! I can check whether we serve your address, book a visit, explain memberships and rebates, or tell you what this week\'s weather means for your home.', placeholder: 'Ask about service, coverage, pricing…', suggestions: ['Do you serve 17601?', 'Book a tune-up', 'Can I reach you at 2am?', 'What does the Comfort Club membership include?', 'What rebates are available for a heat pump?', 'Is there a storm coming this week?', 'My AC stopped working'] },
-  cet: { name: 'CET project desk', short: 'CET', initials: 'CET', color: '#4c8dff', greeting: 'Ask about electrical construction, solar and storage, EV charging, wastewater and pump-station work (Horton), or energy-efficiency programs (NuWave) anywhere in New England.', placeholder: 'Ask about capabilities, states served, programs…', suggestions: ['Do you work in Connecticut?', 'What incentives exist for commercial solar in Massachusetts?', 'Can you upgrade a wastewater plant\'s switchgear?', 'Request a design-build estimate', 'Which EV charging programs are open now?'] },
+  cet: { name: 'CET project desk', short: 'CET', initials: 'CET', color: '#4c8dff', greeting: 'Ask about electrical construction, solar and storage, EV charging, wastewater and pump-station work (Horton), or energy-efficiency programs (NuWave).', placeholder: 'Ask about capabilities, states served, programs…', suggestions: ['Do you work in Connecticut?', 'What incentives exist for commercial solar in Massachusetts?', 'Can you upgrade a wastewater plant\'s switchgear?', 'Request a design-build estimate', 'Which EV charging programs are open now?'] },
   fl: { name: 'Frontline advisor', short: 'Frontline', initials: 'FL', color: '#9d7bff', greeting: 'I help law firms scope managed IT, service desk, cybersecurity and revenue-cycle support. Ask about coverage, security posture or a quick assessment.', placeholder: 'Ask about managed IT for law firms…', suggestions: ['Do you support AM Law 200 firms?', 'What is included in the service desk?', 'How do you handle eBilling and A/R?', 'Request a security assessment', 'Which offices do you operate from?'] },
   ts: { name: 'Thomas Scientific concierge', short: 'Thomas Scientific', initials: 'TS', color: '#2ecc8f', greeting: 'Find products, categories and services for research, clinical, biopharma and cleanroom labs, or reach an account representative.', placeholder: 'Search products or ask about services…', suggestions: ['Do you supply cleanroom consumables?', 'Set up a punchout catalog', 'Who is my account rep?', 'Do you serve cannabis testing labs?', 'What is vendor-managed inventory?'] },
   bpi: { name: 'BPI desk', short: 'BPI', initials: 'BPI', color: '#e05c8a', greeting: 'Ask about public affairs, corporate reputation, campaigns, research and AI-era communications work.', placeholder: 'Ask about services or case studies…', suggestions: ['What services does BPI offer?', 'Can you run a corporate reputation campaign?', 'Which offices do you have?', 'Start a conversation with the team'] },
@@ -903,7 +903,6 @@ const SRC = {
   cet_ne_rfps: ['New England public bids', 'State procurement notices tagged for CET fit', '#/cet/opportunities'],
   cet_ne_counties: ['CET New England county scores', '67 New England counties scored for electrical demand', '#/cet/overview'],
   cet_ne_development: ['New England development activity', 'Municipal development logs, federal awards and press', '#/cet/opportunities'],
-  cet_nyc_archive_summary: ['CET legacy archive summary', 'Summary of a retired legacy archive', '#/cet/overview'],
   cet_wwtp_targets: ['CET wastewater-plant targets', 'CT, MA and RI treatment plants scored for Horton fit', '#/cet/wastewater'],
   cet_filings: ['CET public filings', 'Form D, lender schedules and state records, with analyst estimates', '#/cet/filings'],
   cet_playbook: ['CET growth plan', 'Phases, levers, AI agents and the roadmap for CET', RD + 'cet/growth-plan.html'],
@@ -1061,11 +1060,11 @@ const MODEL_NAMES = { 'claude-opus-5-5': 'Claude Opus 5.5', 'claude-sonnet-5-5':
 const modelName = id => MODEL_NAMES[id] || String(id || '').replace(/^claude-/, 'Claude ').replace(/-(\d+)-(\d+)$/, ' $1.$2').replace(/\b[a-z]/g, c => c.toUpperCase());
 /* Engine labels are plain words for visitors; the detail (model, dataset count, date) lives in the tooltip. */
 const GROUNDED = () => 'From the portfolio data';
-const CLAUDE = 'Deep research', PREPARED = 'Prepared answer';   // the research assistant's label: BSP Desk's own, no vendor name
+const CLAUDE = 'Deep research', PREPARED = 'Prepared answer';   // the research assistant's label: Broad Sky OS's own, no vendor name
 const hostedLabel = () => CLAUDE;
 const keyLabel = () => CLAUDE;
 const groundedTip = () => `Answered directly from ${DATASETS} portfolio datasets`;
-const claudeTip = () => 'Researched across BSP Desk\'s library, with the sources it read and the models it ran';
+const claudeTip = () => 'Researched across the Broad Sky OS library, with the sources it read and the models it ran';
 /** Label, tooltip and style for an answer's engine chip; also reads labels saved by older versions. */
 function engineInfo(e, tip) {
   const t = String(e || '');
@@ -1119,7 +1118,7 @@ const GROUPS = [
   ['market', 'Market', svg('<path d="m3 11 15-6v14L3 13Z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>', 16), /\bads?\b|ctv|media|new-?mover|new-?homeowner|leads?\b|market|campaign|reputation|brand|wholesale|sell|fit|sizing|made of|shipping|return policy/i],
 ];
 const groupOf = s => (GROUPS.find(g => g[3].test(s)) || GROUPS[2])[0];
-const COMMANDS = [['/portal', 'BSP Desk', 'portal'], ['/pp', 'Punctual Pros assistant', 'pp'], ['/cet', 'CET project desk', 'cet'], ['/fl', 'Frontline advisor', 'fl'], ['/ts', 'Thomas Scientific concierge', 'ts'], ['/bpi', 'BPI desk', 'bpi'], ['/fh', 'Fair Harbor helper', 'fh'], ['/new', 'Start a new chat'], ['/clear', 'Clear this conversation'], ['/key', 'Model key and settings']];
+const COMMANDS = [['/portal', 'Broad Sky OS', 'portal'], ['/pp', 'Punctual Pros assistant', 'pp'], ['/cet', 'CET project desk', 'cet'], ['/fl', 'Frontline advisor', 'fl'], ['/ts', 'Thomas Scientific concierge', 'ts'], ['/bpi', 'BPI desk', 'bpi'], ['/fh', 'Fair Harbor helper', 'fh'], ['/new', 'Start a new chat'], ['/clear', 'Clear this conversation'], ['/key', 'Model key and settings']];
 const FB_LS = 'bsp-chat-feedback', TH_LS = 'bsp-assistant-threads', THEME_KEY = 'bsp-theme';
 const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } };
@@ -1238,7 +1237,9 @@ if (typeof addEventListener === 'function') {
 }
 function resolvePersona(id, opts = {}) {
   const base = PERSONAS[id] || SITE_BASE[id] || PERSONAS.portal;
-  const short = opts.short_name || opts.short || base.short;
+  // a page that still passes the old short name ("the desk") gets the plain "Ask" of Broad Sky OS
+  let short = opts.short_name || opts.short || base.short;
+  if (/^the desk$/i.test(String(short || '').trim())) short = '';
   return { ...base, ...opts, short, faq: [...(base.faq || []), ...(opts.faq || [])], suggestions: opts.suggestions ? [...opts.suggestions, ...(base.suggestions || [])] : (base.suggestions || []), intents: [...(opts.intents || []), ...(base.intents || [])] };
 }
 
@@ -1342,7 +1343,7 @@ export const Chat = {
     let personaId = opts.persona || 'portal';
     if (opts.mode === 'full' && !(PERSONAS[personaId] || SITE_BASE[personaId])) personaId = 'portal';
     const persona = resolvePersona(personaId, opts);
-    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261123143257'; document.head.appendChild(l); }
+    if (!document.getElementById('bsp-chat-css')) { const l = document.createElement('link'); l.id = 'bsp-chat-css'; l.rel = 'stylesheet'; l.href = ROOT + 'assets/chat.css?v=20261123172325'; document.head.appendChild(l); }
     return new Widget(el, persona, personaId, opts);
   },
 };
@@ -1465,21 +1466,23 @@ class Widget {
     const full = this.mode === 'full'; const by = {};
     for (const s of uniq(this.persona.suggestions)) (by[groupOf(s)] ||= []).push(s);
     const groups = GROUPS.filter(g => by[g[0]]?.length);
-    const per = full ? 3 : groups.length > 3 ? 1 : 2;
+    const per = full ? 1 : groups.length > 3 ? 1 : 2;
     const card = (s, g) => `<button type="button" class="ch-pc" data-prompt="${esc(s)}"><span class="ch-pc-k">${g[2]}<span>${g[1]}</span></span><span class="ch-pc-t">${esc(s)}</span></button>`;
     // A page that passes its own suggestions gets every one, in its order; the persona defaults only fill empty slots.
-    const own = this.ownSuggestions(), slots = full ? 9 : 6;
+    const own = this.ownSuggestions(), slots = full ? 3 : 6;   // the full page opens on the question box and three chips
     const list = own ? uniq([...own, ...uniq(this.persona.suggestions)]).slice(0, Math.max(own.length, slots)) : null;
-    const body = list ? `<div class="ch-cards ch-cards-own">${list.map(s => card(s, GROUPS.find(g => g[0] === groupOf(s)))).join('')}</div>` : full ? groups.map(g => `<section class="ch-group" aria-label="${g[1]}"><h3 class="ch-group-h">${g[2]}<span>${g[1]}</span></h3><div class="ch-cards">${by[g[0]].slice(0, per).map(s => card(s, g)).join('')}</div></section>`).join('')
-      : `<div class="ch-cards">${groups.flatMap(g => by[g[0]].slice(0, per).map(s => card(s, g))).slice(0, 6).join('')}</div>`;
+    const body = list ? `<div class="ch-cards ch-cards-own">${list.map(s => card(s, GROUPS.find(g => g[0] === groupOf(s)))).join('')}</div>`
+      : `<div class="ch-cards">${groups.flatMap(g => by[g[0]].slice(0, per).map(s => card(s, g))).slice(0, slots).join('')}</div>`;
     return `<div class="ch-empty">${full ? '' : ''}<div class="ch-hello">${this.avatar('lg')}<h2>${esc(full ? this.persona.name : 'How can I help?')}</h2><p>${esc(this.persona.greeting || '')}</p></div><div class="ch-groups${full ? '' : ' compact'}${list ? ' own' : ''}">${body}</div>${full ? '' : `<p class="ch-privacy">${I.lock}<span>${esc(this.privacy())}</span></p>`}</div>`;
   }
   showEmpty() { if (this.mode === 'inline') return; this.msgs.innerHTML = this.emptyHTML(); }
 
   renderLauncher() {
     if (this._tuck) setTimeout(this._tuck, 0);
-    const who = this.persona.short || (this.persona.initials === 'BSP' ? 'the desk' : String(this.persona.name || 'us').split(' ')[0]);
-    this.root.innerHTML = `<button type="button" class="ch-launch" aria-label="Ask ${esc(who)} (opens the ${esc(this.persona.name)} chat)" aria-haspopup="dialog"><span class="ch-launch-av ch-launch-av--logo" aria-hidden="true"><img src="${logoOf(this.id)}" alt="" width="34" height="34" decoding="async"></span><span>Ask ${esc(who)}</span><span class="ch-dot" aria-hidden="true"></span></button>`;
+    // the firm's assistant (Broad Sky OS) reads "Ask"; a company site's reads "Ask <company>"
+    const who = this.persona.short || (this.persona.initials === 'BSP' ? '' : String(this.persona.name || 'us').split(' ')[0]);
+    const aria = who ? `Ask ${who} (opens the ${this.persona.name} chat)` : `Ask ${this.persona.name}`;
+    this.root.innerHTML = `<button type="button" class="ch-launch" aria-label="${esc(aria)}" aria-haspopup="dialog"><span class="ch-launch-av ch-launch-av--logo" aria-hidden="true"><img src="${logoOf(this.id)}" alt="" width="34" height="34" decoding="async"></span><span>${esc(who ? `Ask ${who}` : 'Ask')}</span><span class="ch-dot" aria-hidden="true"></span></button>`;
   }
   /* Phones (<=560px): the launcher steps aside while it would sit on top of a page button or link,
      and comes back once the user scrolls past it. Sampled with elementsFromPoint, throttled to one frame. */
@@ -1527,7 +1530,7 @@ class Widget {
   renderFull() {
     const per = id => { const p = PERSONAS[id] || SITE_BASE[id]; return `<button type="button" class="ch-pp" data-persona="${id}" aria-pressed="${id === this.id}" style="--pc:${esc(p.color || '#d9622b')}"><span class="ch-avatar ch-avatar--logo xs" aria-hidden="true"><img src="${logoOf(id)}" alt="" width="22" height="22" decoding="async"></span><span>${esc(p.name)}</span></button>`; };
     this.root.innerHTML = `<div class="ch-app">
-<aside class="ch-side" aria-label="Chats"><div class="ch-side-top"><a class="ch-brand" href="${ROOT}"><img src="${ROOT}BSP_Logo.png" alt="" width="28" height="28"><span><b>BSP Desk</b><small>Assistant</small></span></a><button type="button" class="ch-ib-b ch-only-m" data-a="menu" aria-label="Close sidebar">${I.x}</button></div>
+<aside class="ch-side" aria-label="Chats"><div class="ch-side-top"><a class="ch-brand" href="${ROOT}"><img src="${ROOT}BSP_Logo.png" alt="" width="28" height="28"><span><b>Broad Sky OS</b><small>Assistant</small></span></a><button type="button" class="ch-ib-b ch-only-m" data-a="menu" aria-label="Close sidebar">${I.x}</button></div>
 <button type="button" class="ch-newchat" data-a="new">${I.compose}<span>New chat</span><kbd>${MOD}⇧O</kbd></button>
 <div class="ch-side-sec ch-side-grow"><div class="ch-side-h">Recent</div><nav class="ch-threads" aria-label="Recent chats"></nav></div>
 <div class="ch-side-sec"><div class="ch-side-h">Assistant</div><div class="ch-personas" role="group" aria-label="Choose an assistant">${PERSONA_ORDER.map(per).join('')}</div></div>
@@ -1953,7 +1956,7 @@ class Widget {
       } });
     } else {
       const ctxText = docs.map((d, i) => `[${i + 1}] ${sources[sIdx[i]]?.label || d.t}: ${terms(d.s)}`).join('\n');
-      const sys = `You are ${this.persona.name}, an assistant embedded in ${this.id === 'portal' ? "BSP Desk, the portal of BSP (a private-equity firm in New York; portfolio: Commonwealth Electrical Technologies, Punctual Pros, Frontline Managed Services, Thomas Scientific, Bully Pulpit International, Fair Harbor)" : `the website of ${this.persona.name.replace(/ (assistant|desk|advisor|concierge|helper)$/i, '')}`}. Answer briefly in markdown (headings of six words or fewer, bullets, bold numbers). Ground every claim in the numbered context below and cite it inline as [1], [2]; if the context does not cover it, say so and point to the most relevant portal view. Say "growth plan" rather than "playbook", and "portfolio company" rather than "platform" for a sponsor's company ("platform" is fine for software). Never print dataset identifiers or underscores; use the plain-English names in the context. Write dates in words (Oct 6, 2026). No greetings or addressing anyone by name. Label estimates "est.". Today is ${new Date().toDateString()}.\n\nCONTEXT:\n${ctxText}${view ? `\n\nON SCREEN (the page the visitor is looking at; answer questions about "this" or "what I'm seeing" from it, without a citation number):\n${view.text}` : ''}`;
+      const sys = `You are ${this.persona.name}, ${this.id === 'portal' ? "the assistant inside the operating system of BSP (a private-equity firm in New York; portfolio: Commonwealth Electrical Technologies, Punctual Pros, Frontline Managed Services, Thomas Scientific, Bully Pulpit International, Fair Harbor)" : `an assistant embedded in the website of ${this.persona.name.replace(/ (assistant|desk|advisor|concierge|helper)$/i, '')}`}. Answer briefly in markdown (headings of six words or fewer, bullets, bold numbers). Ground every claim in the numbered context below and cite it inline as [1], [2]; if the context does not cover it, say so and point to the most relevant portal view. Say "growth plan" rather than "playbook", and "portfolio company" rather than "platform" for a sponsor's company ("platform" is fine for software). Never print dataset identifiers or underscores; use the plain-English names in the context. Write dates in words (Oct 6, 2026). No greetings or addressing anyone by name. Label estimates "est.". Today is ${new Date().toDateString()}.\n\nCONTEXT:\n${ctxText}${view ? `\n\nON SCREEN (the page the visitor is looking at; answer questions about "this" or "what I'm seeing" from it, without a citation number):\n${view.text}` : ''}`;
       stream = LLM.stream(sys, hist, q);
     }
     const caret = document.createElement('span'); caret.className = 'ch-caret'; caret.setAttribute('aria-hidden', 'true');
@@ -2216,7 +2219,7 @@ class Widget {
     const live = hosted();
     const adv = '';   // visitors never see the key dialog; owners open it with ?dev=1
     const { m, close } = this.modal(trigger, `<div class="ch-card-h"><h3 id="ch-about-h">About this assistant</h3><button type="button" class="ch-ib-b" data-x="close" aria-label="Close">${I.x}</button></div>
-<p>BSP Desk answers questions about the six portfolio companies. Questions about the portfolio are answered straight from the data behind this site, and every answer lists its sources.</p>
+<p>Broad Sky OS answers questions about the six portfolio companies. Questions about the portfolio are answered straight from the data behind this site, and every answer lists its sources.</p>
 <p>${live ? 'Open questions, and the <b>Go deeper</b> button, get a research pass: the assistant searches the library, reads the sources, runs the acquisition model when a price matters, and shows its thinking.' : 'Open questions get the closest material from the site, with links to the full pages.'}</p>
 ${BE?.logs ? '<p class="ch-muted">Questions and answers are kept, without names or addresses, to improve the assistant.</p>' : ''}
 <div class="row">${adv}<span class="ch-sp"></span><button type="button" class="btn pri" data-x="close">Done</button></div>`, 'ch-about-h');

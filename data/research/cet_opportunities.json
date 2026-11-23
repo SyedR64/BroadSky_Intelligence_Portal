@@ -23,7 +23,7 @@
       "Items marked stage 'awarded' include some past-due bids whose award could not be verified. Their fit rationale says so. Treat them as sub-contract or competitor intelligence, not open bids.",
       "The web-search budget ran out partway through. Categories not fully covered: MSBA school projects, DCAMM filed sub-bids, private data-center, life-science and industrial electrical packages, MBTA/CTDOT/Massport capital programs beyond the two Massport items, and hospital/university energy retrofits (Mass Save custom). Treat this as a first pass on those areas.",
       "Lat/lon are approximate town centroids unless marked 'address'.",
-      "All opportunities are in New England, in line with CET CEO guidance (no New York City).",
+      "All opportunities are in the six New England states.",
       "Smith + Howard (exited Aug 2026) is out of scope.",
       "Verified 2026-09-24: sampled 45, confirmed 42, removed 0",
       "Verification note: sources for ct-glastonbury-parker-terrace-ps, ma-new-bedford-wamsutta-ps and ma-nantucket-surfside-wwtf-phase2 returned 403/bot-challenge pages (not 404), so they could not be re-checked. Parker Terrace's $5.30M value is confirmed in the CT DEEP CWF list. The Bartlett Bay item depends on the Aug 11, 2026 bond vote, whose result was not captured."

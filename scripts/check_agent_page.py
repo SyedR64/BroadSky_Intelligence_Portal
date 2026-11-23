@@ -116,20 +116,41 @@ def page_checks(browser, site, catalog):
     head = page.text_content('.ca-role-head') or ''
     check('role head shows HVAC technician', 'HVAC technician' in head)
     check('role head shows "Punctual Pros · Field service"', 'Punctual Pros · Field service' in head, ' '.join(head.split())[:80])
+    # R1: a sandbox tool counts as connected until the visitor disconnects it (the Connections screen gives the same answer)
+    # R2: a role named in the address is an explicit choice and is stored; a role nobody chose never is
+    check('a role named in the address is stored (R2)', TECH in (page.evaluate("localStorage.getItem('bsp-agent-role')") or ''))
+    ctx0, page0 = new_page(browser, 1440, 900)
+    page0.goto(f'{site}/agent.html?backend=off')
+    wait_ready(page0)
+    page0.wait_for_timeout(400)
+    check('fresh visit with no role in the address stores no role (R2)', page0.evaluate("localStorage.getItem('bsp-agent-role')") is None)
+    ctx0.close()
+    check('fresh visit: no page role list beside the Viewing as switch',
+          page.locator('.ca-roles').count() == 0 and page.locator('[data-sys-viewas] .sys-viewas-btn').count() == 1)
+    lead0 = page.inner_text('.ca-home')
+    check('fresh visit: sandbox ServiceTitan counts as connected, home shows "4 jobs today"',
+          '4 jobs today' in lead0 and page.locator('.ca-main [data-ca="connect"]').count() == 0, ' '.join(lead0.split())[:80])
+    ws0 = page.evaluate('window.__agent.workspace()') or {}
+    check('fresh visit: the request carries the sandbox apps', 'servicetitan' in (ws0.get('connected') or []), json.dumps(ws0)[:120])
+    page.locator('#apps .ca-app[data-app="servicetitan"] [data-ca="disconnect"]').click()
+    stored = page.evaluate("JSON.parse(localStorage.getItem('bsp-os-connections') || '{}')")
+    check("Disconnect stores 'available' for the company", (stored.get('pp') or {}).get('servicetitan') == 'available', json.dumps(stored))
+    ws1 = page.evaluate('window.__agent.workspace()') or {}
+    check('after Disconnect the request leaves ServiceTitan out', 'servicetitan' not in (ws1.get('connected') or []), json.dumps(ws1)[:120])
     home_btn = page.locator('.ca-home button', has_text="Connect ServiceTitan to see today's jobs")
     check("home offers Connect ServiceTitan to see today's jobs", home_btn.count() == 1)
-    visible_text_ok(page, catalog, 'technician, nothing connected')
+    visible_text_ok(page, catalog, 'technician, ServiceTitan disconnected')
 
     n_connect = page.locator('.ca-main [data-ca="connect"]').count()
     n_kpis = page.locator('.ca-main .ca-kpis').count()
-    check('one Connect button in the role and home cards, no KPI tiles before connecting', n_connect == 1 and n_kpis == 0, f'{n_connect} buttons, {n_kpis} tile rows')
+    check('one Connect button in the role and home cards, no KPI tiles while disconnected', n_connect == 1 and n_kpis == 0, f'{n_connect} buttons, {n_kpis} tile rows')
 
     # consent and sync, from the home summary
     home_btn.click()
     dlg = page.locator('#ca-consent')
     check('Connect opens the consent dialog', poll(lambda: dlg.evaluate('d => d.open'), 3))
     first = (dlg.locator('.sys-card-label').first.text_content() or '').strip()
-    check('first dialog label is "BSP Desk sandbox"', first == 'BSP Desk sandbox', first)
+    check('first dialog label is "Broad Sky OS sandbox"', first == 'Broad Sky OS sandbox', first)
     n_inputs = dlg.locator('input, select, textarea').count()
     check('consent dialog has no input, select or textarea', n_inputs == 0, f'{n_inputs} found')
     visible_text_ok(page, catalog, 'consent dialog')
@@ -156,19 +177,25 @@ def page_checks(browser, site, catalog):
     check("390x664: first Today's jobs row above the fold", row_bottom < 664, f'bottom {row_bottom:.0f}')
     page.set_viewport_size({'width': 390, 'height': 844})
 
-    # role sheet -> Managing partner
-    page.locator('.ca-role-head .ca-change').click()
-    sheet = page.locator('#ca-role-sheet')
-    check('Change role opens the role sheet', poll(lambda: sheet.evaluate('d => d.open'), 3))
-    check('role sheet: BSP is open at the root', sheet.locator('details.ca-org[data-org="bsp"]').evaluate('d => d.open'))
-    sheet.locator('.ca-role[data-role="bsp-managing-partner"]').click()
-    page.wait_for_timeout(300)
+    # Change role -> the top bar's Viewing as switch -> Managing partner
+    pop = page.locator('#sys-viewas-pop')
+
+    def pick(level, role):
+        page.locator('.ca-role-head .ca-change').click()
+        opened = poll(lambda: pop.is_visible(), 3)
+        pop.locator(f'[data-level="{level}"]').click()
+        pop.locator(f'[data-role="{role}"]').click()
+        page.wait_for_timeout(300)
+        return opened
+
+    check('Change role opens the Viewing as switch', pick('firm_leadership', 'bsp-managing-partner'))
     title = page.inner_text('.ca-role-head .sys-card-title').strip()
     check('role head updates to Managing partner', title == 'Managing partner', title)
     check('apps panel lists DealCloud', 'DealCloud' in page.inner_text('#apps'))
     check('?role= follows the pick', 'role=bsp-managing-partner' in page.url, page.url)
     focus = page.evaluate("document.activeElement?.className || ''")
-    check('focus returns to Change role', 'ca-change' in focus, focus)
+    check('focus returns to the Viewing as switch', 'sys-viewas-btn' in focus, focus)
+    check('the pick is stored', page.evaluate("localStorage.getItem('bsp-agent-role')") == '"bsp-managing-partner"')
     check('composer not focused after the pick', not page.evaluate("document.activeElement?.tagName === 'TEXTAREA'"))
     visible_text_ok(page, catalog, 'managing partner')
 
@@ -176,10 +203,7 @@ def page_checks(browser, site, catalog):
     page.locator('.ca-filter [data-org="all"]').click()
     n_all = page.locator('.ca-access tbody tr').count()
     check('access table: 44 roles with All', n_all == 44, str(n_all))
-    page.locator('.ca-role-head .ca-change').click()
-    poll(lambda: sheet.evaluate('d => d.open'), 3)
-    sheet.locator('.ca-start [data-role="pp-ceo"]').click()   # the "Punctual Pros CEO" start chip
-    page.wait_for_timeout(300)
+    pick('co_leadership', 'pp-ceo')
     pressed = page.locator('.ca-filter [aria-pressed="true"]').inner_text().strip()
     n_pp = page.locator('.ca-access tbody tr').count()
     check('access table: a Punctual Pros role filters to Punctual Pros', pressed == 'Punctual Pros', pressed)
@@ -468,20 +492,43 @@ def replay_checks(browser, site):
 
 
 def desktop_role_list_checks(browser, site):
-    """D9: on load the role list keeps its label and Start chips in view when the picked role is already visible, and still scrolls
-    to a role further down."""
+    """One role control: on laptops the top bar's Viewing as switch picks the role. The page shows no role list of its own, the
+    role card's Change role is visible and opens the switch, and the agent and the apps fill the width."""
     for w, h in ((1440, 900), (1024, 768)):
-        for role, top in (('bsp-managing-partner', True), ('fh-ecommerce-manager', False)):
+        for role in ('bsp-managing-partner', 'fh-ecommerce-manager'):
             ctx, page = new_page(browser, w, h)
             page.goto(f'{site}/agent.html?role={role}&backend=off')
             wait_ready(page)
             page.wait_for_timeout(400)
-            r = page.evaluate("""() => { const l = document.querySelector('.ca-roles'), lr = l.getBoundingClientRect(), b = l.querySelector('.ca-role[aria-pressed="true"]').getBoundingClientRect();
-              const hd = document.getElementById('ca-roles-h').getBoundingClientRect();
-              return { scrollTop: Math.round(l.scrollTop), labelIn: hd.top >= lr.top - 1 && hd.bottom <= lr.bottom + 1, roleIn: b.top >= lr.top - 1 && b.bottom <= lr.bottom + 1 }; }""")
-            ok = r['roleIn'] and (r['labelIn'] and r['scrollTop'] == 0 if top else True)
-            check(f'{w} px role list: {role} in view{", label and Start chips not scrolled away" if top else ""}', ok, json.dumps(r))
+            r = page.evaluate("""() => ({ list: document.querySelectorAll('.ca-roles').length, change: !!document.querySelector('.ca-change')?.offsetParent,
+              sw: document.documentElement.scrollWidth, apps: Math.round(document.getElementById('apps').getBoundingClientRect().top) })""")
+            page.locator('.ca-change').click()
+            opened = poll(lambda: page.locator('#sys-viewas-pop').is_visible(), 3)
+            check(f'{w} px {role}: no page role list, Change role opens the switch, no sideways scroll',
+                  r['list'] == 0 and r['change'] and opened and r['sw'] == w, json.dumps(r))
             ctx.close()
+
+
+def embed_checks(browser, site):
+    """R9: inside the shell (?embed=1) only today's list, the question box and the answers; links to other pages open on top."""
+    for w, h in ((1440, 900), (390, 844)):
+        ctx, page = new_page(browser, w, h)
+        con = Console(page, site)
+        page.goto(f'{site}/agent.html?role=pp-dispatcher&backend=off&embed=1')
+        page.wait_for_function("() => !!(window.__agent && document.querySelector('#ca-chat textarea'))", timeout=15000)
+        page.wait_for_timeout(300)
+        shown = page.evaluate("""() => ['.sys-top', '.sys-subnav', '.sys-hero', '.ca-roles', '.ca-role-head', '#apps', '#access', '.ca-about-sec', '[data-sys-footer]']
+          .filter(s => [...document.querySelectorAll(s)].some(e => e.offsetParent !== null || getComputedStyle(e).position === 'fixed' && e.getClientRects().length))""")
+        home = page.locator('.ca-home .ca-row').count()
+        check(f'embed {w} px: no bar, role card, apps or access table; today and the question box show',
+              not shown and home > 0 and page.locator('#ca-chat textarea').is_visible(), json.dumps(shown))
+        target = page.evaluate("""() => { const a = document.createElement('a'); a.href = 'app.html#/home/overview'; a.textContent = 'x';
+          document.querySelector('.ca-home').append(a); let t = null;
+          addEventListener('click', e => { t = a.target; e.preventDefault(); }, { once: true }); a.click(); a.remove(); return t; }""")
+        check(f'embed {w} px: a link to another page opens in the top window', target == '_top', str(target))
+        sw = page.evaluate('document.documentElement.scrollWidth')
+        check(f'embed {w} px: no sideways scroll, no console errors', sw == w and not con.errors, f'{sw}; ' + '; '.join(con.errors[:2]))
+        ctx.close()
 
 
 # ── axe-core ───────────────────────────────────────────────────────────────────────────────────
@@ -565,6 +612,7 @@ def main():
                 page_checks(browser, site, catalog)
                 replay_checks(browser, site)
                 desktop_role_list_checks(browser, site)
+                embed_checks(browser, site)
                 if not args.no_axe:
                     axe_checks(browser, site)
                 if not args.no_backend:

@@ -1,7 +1,7 @@
 /* CET concept site: interactions and data-powered sections.
    Data comes from the portal's verified datasets via core.js (Data.research).
    The page frame (top bar, concept notice, breadcrumb, footer) comes from assets/frame.js. */
-import { humanizeText } from '../../assets/frame.js?v=20261123143257';
+import { humanizeText } from '../../assets/frame.js?v=20261123172325';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -30,35 +30,35 @@ export const TILE = { url: 'https://server.arcgisonline.com/ArcGIS/rest/services
 
 /* ── Chat content ─────────────────────────────────────────────────────────── */
 export const FAQ = [
-  { q: 'Which states do you work in?', a: '<p>All six New England states — <b>Massachusetts, Connecticut, Rhode Island, New Hampshire, Maine and Vermont</b> — and we hold electrical licenses in each. Crews work out of <b>Worcester, Taunton and Norwell, MA</b> and <b>Canton, CT</b>.</p>', href: '#footprint' },
-  { q: 'Do you take projects in New York City or outside New England?', a: '<p>No. CET is focused on New England, where we are licensed in all six states and can staff work from our four offices. If your site is outside the region we are happy to refer you.</p>', href: '#footprint' },
-  { q: 'What does Horton Electrical Services do within CET?', a: '<p><b>Horton Electrical Services</b> (Canton, CT; founded 1976) joined CET in September 2026. Horton leads our municipal water work: <b>wastewater-treatment and pump-station electrical</b>, instrumentation and SCADA, generators, solar installation and O&amp;M, civil site work and <b>24/7 emergency response</b>.</p>', href: '#markets' },
-  { q: 'What is NuWave Energy Solutions?', a: '<p><b>NuWave Energy Solutions</b> (Norwell, MA) joined CET in October 2025. NuWave is our energy-efficiency design-build team: LED and controls retrofits, HVAC and process-load optimization, utility-incentive applications (such as <b>Mass Save</b>) and measurement &amp; verification.</p>', href: '#capabilities' },
-  { q: 'Can you upgrade a wastewater plant or pump station electrical system?', a: '<p>Yes, it is Horton’s core work: MCCs, switchgear, VFDs, generators, transfer switches and SCADA, phased so the plant keeps treating. We often work on <b>Clean Water SRF</b>-financed projects.</p>', href: '#markets' },
-  { q: 'Do you offer 24/7 emergency generator and pump-station service?', a: '<p>Yes. Our <b>24/7 emergency desk</b> dispatches licensed crews from Canton CT, Worcester and Taunton for generator failures, transfer-switch problems, switchgear faults and pump-station alarms. Customers on a <b>CET Assure</b> contract get priority dispatch and monitored alarms.</p>', href: '#contact' },
+  { q: 'Which states do you work in?', a: '<p>About ten states across New England and the Mid-Atlantic (reported), including <b>Massachusetts, Connecticut, Rhode Island, New Hampshire, Maine and Vermont</b>. Crews work out of <b>Worcester, Taunton and Norwell, MA</b> and <b>Canton, CT</b>.</p>', href: '#footprint' },
+  { q: 'Do you take projects in New York City or outside New England?', a: '<p>No. CET has no New York City plan. For sites outside our licensed states we are happy to refer you.</p>', href: '#footprint' },
+  { q: 'What does Horton Electrical Services do within CET?', a: '<p><b>Horton Electrical Services</b> (Canton, CT; founded 1976) joined in September 2026 and leads municipal water: <b>wastewater and pump-station electrical</b>, SCADA, generators, solar O&amp;M, civil site work and <b>24/7 emergency response</b>.</p>', href: '#markets' },
+  { q: 'What is NuWave Energy Solutions?', a: '<p><b>NuWave Energy Solutions</b> (Norwell, MA) joined in October 2025: LED and controls retrofits, HVAC and process-load optimization, utility incentives (such as <b>Mass Save</b>) and measurement &amp; verification.</p>', href: '#capabilities' },
+  { q: 'Can you upgrade a wastewater plant or pump station electrical system?', a: '<p>Yes, Horton’s core work: MCCs, switchgear, VFDs, generators, transfer switches and SCADA, phased so the plant keeps treating, often on <b>Clean Water SRF</b> projects.</p>', href: '#markets' },
+  { q: 'Do you offer 24/7 emergency generator and pump-station service?', a: '<p>Yes. The <b>24/7 emergency desk</b> dispatches crews from Canton CT, Worcester and Taunton for generator, transfer-switch, switchgear and pump-station calls. <b>CET Assure</b> customers get priority dispatch.</p>', href: '#contact' },
   { q: 'How do you price work?', a: '<ul><li><b>Design-build:</b> fixed price after a site walk and preliminary design.</li><li><b>Bid-build:</b> lump-sum bids on public and GC packages.</li><li><b>Service:</b> time-and-materials or an annual <b>CET Assure</b> contract.</li><li><b>Efficiency:</b> priced net of utility incentives, with savings verified.</li></ul>', href: '#contact' },
-  { q: 'Which incentive and funding programs can you help with?', a: '<p>We map each project to the program that pays for it: <b>SMART 3.0</b> and <b>CT NRES</b> (solar), <b>Mass Save</b> (efficiency), <b>MassEVIP</b> and <b>NEVI</b> (EV charging), resilience grants and state <b>Clean Water SRF</b> programs.</p>', href: '#funding' },
-  { q: 'Do you install and operate EV chargers?', a: '<p>Yes. We install Level 2 and DC fast chargers for fleets, transit depots, campuses and municipalities (including on-street charging), handle make-ready and utility coordination, and can operate the network afterwards with uptime reporting through GridOS.</p>', href: '#capabilities' },
-  { q: 'Will you maintain a solar array you did not build?', a: '<p>Yes. We take over O&amp;M on existing PV and storage systems: inspection, inverter service, monitoring and truck rolls when production drops. Most owners move it onto a <b>CET Assure</b> contract with a monthly availability report.</p>', href: '#capabilities' },
-  { q: 'What is CET Assure?', a: '<p><b>CET Assure</b> is one annual contract covering inspection, preventive maintenance, monitoring and 24/7 response for pump stations, generators, switchgear, solar and EV chargers — one point of contact, one invoice and one uptime report.</p>', href: '#contact' },
-  { q: 'What is GridOS?', a: '<p><b>GridOS</b> is the operating layer behind CET: a bid board for every public opportunity in New England, estimating and field coordination, solar fleet and pump-station monitoring, EV network operations and NuWave M&amp;V dashboards. <a href="gridos.html">See GridOS →</a></p>', href: 'gridos.html' },
-  { q: 'Are you hiring electricians and apprentices?', a: '<p>Yes — journeyman electricians, apprentices, SCADA/instrumentation technicians, solar O&amp;M technicians, estimators and energy engineers across Worcester, Taunton, Norwell and Canton CT. We pay for apprenticeship training and support licensing in more than one state.</p>', href: '#careers' },
-  { q: 'How quickly do you respond to a bid or quote request?', a: '<p>Quote requests get a response within one business day. Send plans and specs for public bids as early as possible — we prefer to be on the plan-holder list so we can walk the site before bid day.</p>', href: '#contact' },
-  { q: 'Is CET acquiring other contractors?', a: '<p>Yes. NuWave (2025) and Horton (2026) joined and kept their names and teams. If you own an electrical, solar or efficiency business in New England, start a confidential conversation.</p>', href: '#acquisitions' },
+  { q: 'Which incentive and funding programs can you help with?', a: '<p><b>SMART 3.0</b> and <b>CT NRES</b> (solar), <b>Mass Save</b> (efficiency), <b>MassEVIP</b> and <b>NEVI</b> (EV charging), resilience grants and state <b>Clean Water SRF</b> programs.</p>', href: '#funding' },
+  { q: 'Do you install and operate EV chargers?', a: '<p>Yes. Level 2 and DC fast chargers for fleets, transit depots, campuses and municipalities, including on-street, with make-ready, utility coordination and network operation through GridOS.</p>', href: '#capabilities' },
+  { q: 'Will you maintain a solar array you did not build?', a: '<p>Yes. O&amp;M on existing PV and storage: inspection, inverter service, monitoring and truck rolls. Most owners move to a <b>CET Assure</b> contract.</p>', href: '#capabilities' },
+  { q: 'What is CET Assure?', a: '<p><b>CET Assure</b> is one annual contract for inspection, maintenance, monitoring and 24/7 response on pump stations, generators, switchgear, solar and EV chargers: one contact, one invoice, one uptime report.</p>', href: '#contact' },
+  { q: 'What is GridOS?', a: '<p><b>GridOS</b> is the operating layer behind CET: bid board, estimating, field coordination, fleet and pump-station monitoring, EV network operations and NuWave M&amp;V. <a href="gridos.html">See GridOS →</a></p>', href: 'gridos.html' },
+  { q: 'Are you hiring electricians and apprentices?', a: '<p>Yes: journeyman electricians, apprentices, SCADA technicians, solar O&amp;M technicians, estimators and energy engineers in Worcester, Taunton, Norwell and Canton CT. Training is paid; multi-state licensing is supported.</p>', href: '#careers' },
+  { q: 'How quickly do you respond to a bid or quote request?', a: '<p>Within one business day. For public bids, put us on the plan-holder list so we can walk the site before bid day.</p>', href: '#contact' },
+  { q: 'Is CET acquiring other contractors?', a: '<p>Yes. Six add-ons so far, four of them reported: NuWave (2025) and Horton (2026) are confirmed. Owners can start a confidential conversation.</p>', href: '#acquisitions' },
 ];
 export const SUGGESTIONS = ['Do you offer 24/7 emergency generator and pump-station service?', 'Which programs can fund our project?', 'What is CET Assure?', 'What is GridOS?', 'Are you hiring electricians?'];
 
 /* customer-facing program copy; dates, states and sources come from the dataset */
 const PROGRAM_COPY = [
-  [/Energy Resilience/i, 'CT DEEP Energy Resilience Construction Grants', 'Grant', 'Funds microgrids and outage-prevention builds at critical facilities. We design solar + storage + generator microgrids for WPCAs, shelters and town halls.'],
-  [/Leading by Example/i, 'MA DOER Leading by Example — Fleet EVSE 4.0', 'Grant', 'Rolling grants for state agencies and campuses to install fleet charging. We deliver make-ready, chargers, commissioning and networking turnkey.'],
-  [/NRES/i, 'CT NRES — Non-Residential Renewable Energy Solutions', 'Tariff', 'Connecticut’s 200 kW–5 MW commercial solar program. The August window has closed; we are building 2027 submissions with owners now.'],
-  [/Energy Recovery/i, 'MassDEP Wastewater Energy Recovery Pilot Grants', 'Grant', 'Rolling grants for energy recovery at treatment plants. Horton and NuWave help plants apply — then design and build the electrical scope.'],
-  [/SMART 3\.0/i, 'Massachusetts SMART 3.0', 'Incentive', 'The state solar incentive, with adders for landfill, brownfield and public-entity sites. We size projects to the open capacity blocks.'],
-  [/MassEVIP/i, 'MassEVIP Workplace & Fleet Charging', 'Incentive', 'Covers up to 60% of eligible charger costs, up to $50K per address. We build it into every Massachusetts workplace and fleet proposal.'],
-  [/NEVI/i, 'Rhode Island NEVI Phase 2A', 'Federal', 'Community fast charging: an initial $10M for roughly 20 locations and 110+ ports. Awardees need NEVI-compliant installers.'],
-  [/83E/i, 'MA Section 83E Round II — Energy Storage', 'Procurement', 'A 1,000 MW storage procurement with a distribution-connected carve-out. Selected projects will need balance-of-plant electrical.'],
-  [/GRANITE/i, 'NH GRANITE Grid Resilience', 'Grant', '$3M for grid-hardening and microgrid builds. We team with New Hampshire municipalities, co-ops and utilities.'],
+  [/Energy Resilience/i, 'CT DEEP Energy Resilience Construction Grants', 'Grant', 'Microgrids and outage prevention at critical facilities.'],
+  [/Leading by Example/i, 'MA DOER Leading by Example — Fleet EVSE 4.0', 'Grant', 'Rolling fleet-charging grants for state agencies and campuses.'],
+  [/NRES/i, 'CT NRES — Non-Residential Renewable Energy Solutions', 'Tariff', '200 kW–5 MW commercial solar. August window closed; 2027 submissions in preparation.'],
+  [/Energy Recovery/i, 'MassDEP Wastewater Energy Recovery Pilot Grants', 'Grant', 'Rolling energy-recovery grants for treatment plants.'],
+  [/SMART 3\.0/i, 'Massachusetts SMART 3.0', 'Incentive', 'State solar incentive, with adders for landfill, brownfield and public sites.'],
+  [/MassEVIP/i, 'MassEVIP Workplace & Fleet Charging', 'Incentive', 'Up to 60% of eligible charger costs, up to $50K per address.'],
+  [/NEVI/i, 'Rhode Island NEVI Phase 2A', 'Federal', 'Community fast charging: $10M initial, about 20 locations, 110+ ports.'],
+  [/83E/i, 'MA Section 83E Round II — Energy Storage', 'Procurement', '1,000 MW storage procurement with a distribution-connected carve-out.'],
+  [/GRANITE/i, 'NH GRANITE Grid Resilience', 'Grant', '$3M for grid-hardening and microgrid builds.'],
 ];
 
 /* ── Shell interactions ───────────────────────────────────────────────────── */
@@ -74,7 +74,7 @@ function tabs() {
 }
 function faq() {
   const el = $('#faq-list'); if (!el) return;
-  el.innerHTML = FAQ.map((f, i) => `<details${i === 0 ? ' open' : ''}><summary>${esc(f.q)}</summary><div class="cet-faq-a">${f.a}</div></details>`).join('');
+  el.innerHTML = FAQ.map((f, i) => `<details><summary>${esc(f.q)}</summary><div class="cet-faq-a">${f.a}</div></details>`).join('');
 }
 function form() {
   const f = $('#quote'); if (!f) return;
@@ -99,8 +99,8 @@ function form() {
       : st === 'RI' ? ['Taunton, MA estimating', 'Our South Coast team covers Rhode Island and responds within one business day.']
       : ['Worcester, MA estimating', 'An estimator responds within one business day.'];
     const r = $('#route', f);
-    r.innerHTML = desk ? `<b>Routed to: ${esc(desk[0])}</b><span>${esc(desk[1])}${/SRF|CWF/.test(fund) ? ' We will align the scope to the SRF project list and the funding schedule.' : /SMART|NRES|Mass Save|NEVI|Grant/.test(fund) ? ` We will confirm ${esc(fund)} eligibility before pricing.` : ''}</span><span class="sys-src">Concept form: nothing was sent.</span>`
-      : `<b>Thanks. We focus on New England.</b><span>CET works only in MA, CT, RI, NH, ME and VT. We are happy to refer you to a trusted contractor in your region.</span>`;
+    r.innerHTML = desk ? `<b>Routed to: ${esc(desk[0])}</b><span>${esc(desk[1])}${/SRF|CWF/.test(fund) ? ' We will align the scope to the SRF project list and the funding schedule.' : /SMART|NRES|Mass Save|NEVI|Grant/.test(fund) ? ` We will confirm ${esc(fund)} eligibility before pricing.` : ''}</span><span class="sys-src">Demo: nothing was sent.</span>`
+      : `<b>Thanks. That state is outside our licensed footprint.</b><span>We are happy to refer you to a trusted contractor.</span>`;
     r.hidden = false;
   });
 }
@@ -143,7 +143,7 @@ function radarCard(items) {
   const next = items.filter(o => o.due_date && daysTo(o.due_date) >= 0 && o.stage !== 'awarded').sort((a, b) => a.due_date.localeCompare(b.due_date))[0];
   $('[data-k=open]', c).textContent = open.length;
   const nst = new Set(open.map(o => o.state)).size; const st = $('[data-k=states]', c); if (st) st.textContent = `open bids · ${nst} state${nst === 1 ? '' : 's'}`;
-  $('[data-k=next]', c).innerHTML = next ? `<span class="cet-due">Next due · ${esc(dueLabel(daysTo(next.due_date)))}</span><br><b>${esc(next.title.length > 74 ? next.title.slice(0, 72) + '…' : next.title)}</b>, ${esc(ownerOf(next))}${/, [A-Z]{2}$/.test(ownerOf(next)) ? '' : ', ' + esc(next.state)}` : 'No public bids due this week.';
+  $('[data-k=next]', c).innerHTML = next ? `<span class="cet-due">Next due · ${esc(dueLabel(daysTo(next.due_date)))}</span><br><b title="${esc(next.title)} · ${esc(ownerOf(next))}">${esc(next.title.length > 56 ? next.title.slice(0, 54) + '…' : next.title)}</b>, ${esc(next.state)}` : 'No public bids due this week.';
 }
 function mini(items) {
   const m = $('#mini'); if (!m) return;
@@ -151,7 +151,7 @@ function mini(items) {
   $('[data-k=open]', m).textContent = items.filter(o => o.stage === 'open' && isOpen(o)).length;
   $('[data-k=soon]', m).textContent = up.filter(o => daysTo(o.due_date) <= 14).length;
   $('[data-k=pipe]', m).textContent = money(items.filter(o => o.stage !== 'awarded').reduce((s, o) => s + (o.est_value_usd || 0), 0));
-  $('[data-k=rows]', m).innerHTML = up.slice(0, 5).map(o => { const d = daysTo(o.due_date); return `<tr><td class="sys-num cet-due">${esc(dueLabel(d))}</td><td class="cet-t" title="${esc(o.title)}">${esc(o.title)}</td><td class="sys-num">${esc(o.state)}</td><td class="sys-n cet-hide-s"><span class="cet-fit"><i style="width:${o.fit_score || 0}%"></i></span>${o.fit_score ?? '—'}</td></tr>`; }).join('') || '<tr><td colspan="4">No bids due in the next weeks.</td></tr>';
+  $('[data-k=rows]', m).innerHTML = up.slice(0, 5).map(o => { const d = daysTo(o.due_date); return `<tr><td class="sys-num cet-due">${esc(dueLabel(d))}</td><td class="cet-t" title="${esc(o.title)}">${esc(clip(o.title, 56))}</td><td class="sys-num">${esc(o.state)}</td><td class="sys-n cet-hide-s"><span class="cet-fit"><i style="width:${o.fit_score || 0}%"></i></span>${o.fit_score ?? '—'}</td></tr>`; }).join('') || '<tr><td colspan="4">No bids due in the next weeks.</td></tr>';
 }
 let MAP = null, LAYER = null, SEL = null, ITEMS = [];
 function statesList(items) {
@@ -210,13 +210,13 @@ function lazyMap() {
 function programs(items) {
   const el = $('#progs'); if (!el) return;
   const progs = items.filter(o => o.type === 'program').map(o => { const c = PROGRAM_COPY.find(p => p[0].test(o.title)); const d = daysTo(o.due_date); return { st: o.state, kind: c?.[2] || 'Program', title: c?.[1] || o.title, body: c?.[3] || '', d, due: o.due_date, url: o.source_url, src: o.source_name }; });
-  progs.push({ st: 'MA', kind: 'Utility incentive', title: 'Mass Save — commercial & industrial', body: 'Prescriptive and custom incentives for LED, controls, HVAC and process upgrades. NuWave prepares the application and proves the savings.', d: null, url: 'https://www.masssave.com/business', src: 'masssave.com' });
-  const srf = (rx, st, title) => { const s = items.filter(o => rx.test(o.source_name || '')); return { st, kind: 'Revolving fund', title, body: `${s.length} wastewater and pump-station projects worth ${money(s.reduce((a, o) => a + (o.est_value_usd || 0), 0))}${EST} (applicant estimates) on current lists; we price the electrical scope with your engineer.`, html: true, d: null, rolling: 'Priority list', url: s[0]?.source_url, src: s[0]?.source_name, value: s.reduce((a, o) => a + (o.est_value_usd || 0), 0) }; };
+  progs.push({ st: 'MA', kind: 'Utility incentive', title: 'Mass Save — commercial & industrial', body: 'Prescriptive and custom incentives for LED, controls, HVAC and process upgrades.', d: null, url: 'https://www.masssave.com/business', src: 'masssave.com' });
+  const srf = (rx, st, title) => { const s = items.filter(o => rx.test(o.source_name || '')); return { st, kind: 'Revolving fund', title, body: `${s.length} wastewater and pump-station projects worth ${money(s.reduce((a, o) => a + (o.est_value_usd || 0), 0))}${EST} (applicant estimates) on current lists.`, html: true, d: null, rolling: 'Priority list', url: s[0]?.source_url, src: s[0]?.source_name, value: s.reduce((a, o) => a + (o.est_value_usd || 0), 0) }; };
   const ct = srf(/CT DEEP Clean Water Fund/i, 'CT', 'Connecticut Clean Water Fund'); const nne = srf(/Maine DEP CWSRF|VT CWSRF|VT DEC/i, 'ME · VT', 'Maine & Vermont Clean Water SRF');
   progs.push(ct, nne);
   const rank = p => p.d != null && p.d >= 0 ? p.d : p.d == null ? 500 : 1000 - p.d;
   progs.sort((a, b) => rank(a) - rank(b));
-  el.innerHTML = progs.map(p => { const when = p.d == null ? (p.rolling || 'Rolling') : p.d >= 0 ? `Due ${shortDate(p.due)}` : 'Next round'; const soon = p.d != null && p.d >= 0 && p.d <= 30; return `<article class="sys-card cet-prog" data-co="cet"><div class="cet-prog-top"><span class="cet-prog-st">${esc(p.st)}</span><span class="sys-card-label">${esc(p.kind)}</span><span class="cet-prog-when${soon ? ' is-soon' : ''}">${esc(when)}</span></div><h3 class="sys-card-title">${esc(p.title)}</h3><p class="sys-card-body">${p.html ? p.body : esc(p.body)}</p>${p.url ? `<span class="sys-card-foot"><a href="${esc(p.url)}" target="_blank" rel="noopener">Source: ${esc(clip(srcName(p.src || Fmtr.host(p.url)), 62))} ↗</a></span>` : ''}</article>`; }).join('');
+  el.innerHTML = progs.map(p => { const when = p.d == null ? (p.rolling || 'Rolling') : p.d >= 0 ? `Due ${shortDate(p.due)}` : 'Next round'; const soon = p.d != null && p.d >= 0 && p.d <= 30; return `<article class="sys-card cet-prog" data-co="cet"><div class="cet-prog-top"><span class="cet-prog-st">${esc(p.st)}</span><span class="sys-card-label">${esc(p.kind)}</span><span class="cet-prog-when${soon ? ' is-soon' : ''}">${esc(when)}</span></div><h3 class="sys-card-title">${esc(p.title)}</h3><p class="sys-card-body">${p.html ? p.body : esc(p.body)}</p>${p.url ? `<span class="sys-card-foot"><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(clip(srcName(p.src || Fmtr.host(p.url)), 62))} ↗</a></span>` : ''}</article>`; }).join('');
   if (progs.length > 6) { el.classList.add('is-collapsed'); const more = document.createElement('button'); more.type = 'button'; more.className = 'sys-btn sys-btn--secondary cet-more'; more.textContent = `Show all ${progs.length} programs`; more.addEventListener('click', () => { el.classList.remove('is-collapsed'); more.remove(); }); el.after(more); }
   const fs = $('#fund-strip');
   if (fs) { $('[data-k=srf]', fs).textContent = money(ct.value + nne.value); $('[data-k=progs]', fs).textContent = progs.length - 2; const nx = progs.find(p => p.d != null && p.d >= 0); $('[data-k=nextd]', fs).textContent = nx ? shortDate(nx.due) : 'Rolling'; if (nx) $('[data-k=nextl]', fs).textContent = nx.title.split(' — ')[0]; }
@@ -243,7 +243,7 @@ export function makeIntents(Data, base = '') {
   const faqIntent = { id: 'cet-faq', rx: KW.map(k => k[0]), run: async q => { const k = KW.find(x => x[0].test(q)); const f = k && FAQ.find(x => x.q === k[1]); return f ? { html: f.a, links: f.href ? [lnk(f.href.startsWith('#') ? base + f.href : f.href, 'Read more')] : [] } : null; } };
   return [
     faqIntent,
-    { id: 'cet-nyc', rx: [/new york|\bnyc\b|manhattan|brooklyn/i], run: async () => ({ html: '<p>No — CET works only in New England (MA, CT, RI, NH, ME, VT), where we hold licenses in all six states and staff every job from Worcester, Taunton, Norwell or Canton CT.</p>', links: [lnk(base + '#footprint', 'See our footprint')] }) },
+    { id: 'cet-nyc', rx: [/new york|\bnyc\b|manhattan|brooklyn/i], run: async () => ({ html: '<p>No. CET has no New York City plan. It is licensed in about ten states across New England and the Mid-Atlantic (reported) and staffs jobs from Worcester, Taunton, Norwell and Canton CT.</p>', links: [lnk(base + '#footprint', 'See our footprint')] }) },
     { id: 'cet-state', rx: [/(work|serve|cover|licen[sc]ed|operate|available).*\b(CT|MA|RI|NH|ME|VT)\b/, /(work|serve|cover|licen[sc]ed|operate|available).*(connecticut|massachusetts|rhode island|new hampshire|maine|vermont)/i], run: async q => {
       const m = q.match(/\b(CT|MA|RI|NH|ME|VT)\b/) || []; const nm = Object.keys(NAME2ST).find(k => q.toLowerCase().includes(k)); const st = m[1] || NAME2ST[nm]; if (!st) return null;
       const items = (await opps()).filter(o => o.state === st); const open = items.filter(isOpen);

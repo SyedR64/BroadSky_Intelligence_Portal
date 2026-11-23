@@ -180,8 +180,8 @@ export function mountMonitor(root, { initial = 'ai-jobs', interval = 2600 } = {}
     const cw = $('chart').clientWidth || 600; $('chart').innerHTML = chartSVG(data, cw < 460 ? { w: 360, h: 150 } : {});
     $('clusters').innerHTML = sc.clusters.map(c => `<div class="cl"><div class="nm"><span class="tr ${c.tr}">${c.tr === 'up' ? '▲' : c.tr === 'dn' ? '▼' : '■'}</span><span title="${esc(c.n)}">${esc(c.n)}</span>${c.flag ? `<span class="flag">${esc(c.flag)}</span>` : ''}</div>${sbar(c.s)}<div class="pc">${c.share}%</div></div>`).join('');
     const m = sc.move;
-    $('move').innerHTML = `<div><div class="gauge">${gaugeSVG(sc.risk)}<div><span class="sev ${m.sev}">${esc(m.sevL)}</span><div class="sys-src" style="margin-top:6px">${esc(m.window)} · recommended by SignalOS</div></div></div><h4>${esc(m.title)}</h4><ol>${m.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol></div><div><div class="sub-h"><span>Draft holding statement</span><span>AI draft · human approval</span></div><blockquote>${esc(m.draft)}</blockquote><div class="checks">${m.checks.map(([k, t]) => `<span class="${k}">${esc(t)}</span>`).join('')}</div></div>`;
-    root.querySelector('[data-k="client"]').textContent = `Client: ${sc.client} (illustrative)`;
+    $('move').innerHTML = `<div><div class="gauge">${gaugeSVG(sc.risk)}<div><span class="sev ${m.sev}">${esc(m.sevL)}</span><div class="sys-src" style="margin-top:6px">${esc(m.window)}</div></div></div><h4>${esc(m.title)}</h4><ol>${m.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol></div><div><div class="sub-h"><span>Draft holding statement</span><span>AI draft · human approval</span></div><blockquote>${esc(m.draft)}</blockquote><div class="checks">${m.checks.map(([k, t]) => `<span class="${k}">${esc(t)}</span>`).join('')}</div></div>`;
+    root.querySelector('[data-k="client"]').textContent = `Client: ${sc.client}`;
   };
   const setScenario = id => {
     sc = SCENARIOS.find(s => s.id === id) || SCENARIOS[0];
@@ -216,6 +216,7 @@ export function mountPulse(el) {
   sp.setAttribute('viewBox', `0 0 ${w} ${h}`);
   sp.innerHTML = `<defs><linearGradient id="pg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:var(--co);stop-opacity:.5"/><stop offset="1" style="stop-color:var(--co);stop-opacity:0"/></linearGradient></defs><polygon points="0,${h} ${line} ${w},${h}" fill="url(#pg)"/><polyline points="${line}" fill="none" style="stroke:var(--co)" stroke-width="2"/><circle cx="${pts[pts.length - 1][0] - 3}" cy="${pts[pts.length - 1][1]}" r="4" style="fill:var(--sys-ink)"/>`;
   big.textContent = data[data.length - 1].v.toLocaleString('en-US');
+  if (!list) return; // the card is the number and the line; the signals themselves are in the monitor below
   let i = 0; const items = sc.signals;
   const row = x => `<li><span class="chn">${esc(x.ch)}</span><span>${esc(x.tx.length > 74 ? x.tx.slice(0, 72) + '…' : x.tx)}</span><span class="s" style="color:${sCol(x.s)}">${sgn(x.s)}</span></li>`;
   list.innerHTML = [0, 1, 2].map(k => row(items[k])).join('').replace(/<li>/g, '<li style="animation:none">');

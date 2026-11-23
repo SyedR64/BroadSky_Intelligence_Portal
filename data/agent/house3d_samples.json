@@ -1,0 +1,620 @@
+{
+ "about": "Floor sketch cards captured from server/workspace.py site_brief (sandbox data, fictional customers) for the 3D house view and scripts/check_house3d.py.",
+ "samples": [
+  {
+   "role": "pp-hvac-technician",
+   "issue": "Furnace runs a few seconds then stops",
+   "card": {
+    "type": "card",
+    "kind": "floor_sketch",
+    "id": "fs-d65d9ba2",
+    "title": "Floor sketch",
+    "address": "418 Wexcombe Ln, Lititz, PA 17543",
+    "issue": "No heat",
+    "basis": "mixed",
+    "area": {
+     "status": "in",
+     "label": "Inside the Punctual Pros service area (Lancaster County, Lancaster hub)"
+    },
+    "house": {
+     "text": "Two stories over a full basement. Built 1962. Gas heat.",
+     "year": 1962,
+     "year_basis": "record",
+     "stories": 2,
+     "foundation": "basement",
+     "basement": "full",
+     "fuel": "gas",
+     "fuel_basis": "record"
+    },
+    "focus": [
+     "furnace",
+     "gas_shutoff",
+     "service_switch"
+    ],
+    "floors": [
+     {
+      "id": "basement",
+      "name": "Basement",
+      "w": 37,
+      "h": 25,
+      "rooms": [
+       {
+        "x": 0,
+        "y": 0,
+        "w": 37,
+        "h": 25,
+        "label": "Unfinished basement"
+       }
+      ],
+      "items": [
+       {
+        "kind": "furnace",
+        "label": "Furnace",
+        "short": "F",
+        "basis": "record",
+        "focus": true,
+        "note": "Center by the chimney",
+        "detail": "Carrier, gas, 80,000 BTU, 2012 (14 years)",
+        "x": 18.5,
+        "y": 12.5
+       },
+       {
+        "kind": "gas_shutoff",
+        "label": "Gas shutoff",
+        "short": "GS",
+        "basis": "record",
+        "focus": true,
+        "note": "On the gas pipe at the furnace's left side, yellow-handle valve",
+        "detail": null,
+        "x": 20.5,
+        "y": 12.5
+       },
+       {
+        "kind": "service_switch",
+        "label": "Furnace switch",
+        "short": "SW",
+        "basis": "record",
+        "focus": true,
+        "note": "Top of the basement stairs, red cover plate",
+        "detail": null,
+        "x": 14.8,
+        "y": 15.0
+       },
+       {
+        "kind": "main_water",
+        "label": "Main water shutoff",
+        "short": "W",
+        "basis": "record",
+        "focus": false,
+        "note": "Front wall, left of the water meter",
+        "detail": "3/4 in ball valve",
+        "x": 5.5,
+        "y": 23.0
+       },
+       {
+        "kind": "water_heater",
+        "label": "Water heater",
+        "short": "WH",
+        "basis": "record",
+        "focus": false,
+        "note": "Utility corner, next to the floor drain",
+        "detail": "Bradford White, gas, 40 gal, 2014 (12 years)",
+        "x": 31.4,
+        "y": 3.8
+       },
+       {
+        "kind": "panel",
+        "label": "Electrical panel",
+        "short": "P",
+        "basis": "record",
+        "focus": false,
+        "note": "Left side wall, gray box with a labeled door",
+        "detail": "Square D, 200 A, 2003 (23 years)",
+        "x": 2.2,
+        "y": 12.5
+       },
+       {
+        "kind": "sewer_cleanout",
+        "label": "Sewer cleanout",
+        "short": "C",
+        "basis": "record",
+        "focus": false,
+        "note": "Front wall center, capped pipe at floor level",
+        "detail": "4 in cap",
+        "x": 18.5,
+        "y": 23.0
+       }
+      ],
+      "runs": [
+       {
+        "kind": "water",
+        "label": "Water",
+        "points": [
+         [
+          5.5,
+          23.0
+         ],
+         [
+          31.4,
+          3.8
+         ]
+        ],
+        "basis": "record"
+       },
+       {
+        "kind": "drain",
+        "label": "Drain",
+        "points": [
+         [
+          18.5,
+          2.0
+         ],
+         [
+          18.5,
+          23.0
+         ]
+        ],
+        "basis": "record"
+       },
+       {
+        "kind": "gas",
+        "label": "Gas",
+        "points": [
+         [
+          34.8,
+          12.5
+         ],
+         [
+          18.5,
+          12.5
+         ]
+        ],
+        "basis": "likely"
+       }
+      ]
+     },
+     {
+      "id": "first",
+      "name": "First floor",
+      "w": 37,
+      "h": 25,
+      "rooms": [
+       {
+        "x": 27,
+        "y": 13,
+        "w": 10,
+        "h": 12,
+        "label": "Garage"
+       }
+      ],
+      "items": [
+       {
+        "kind": "fixture_shutoffs",
+        "label": "Fixture shutoffs",
+        "short": "FX",
+        "basis": "record",
+        "focus": false,
+        "note": "Under the kitchen sink",
+        "detail": "quarter-turn valves",
+        "x": 11.1,
+        "y": 6.2
+       }
+      ],
+      "runs": []
+     }
+    ],
+    "outside": [
+     {
+      "kind": "condenser",
+      "label": "AC condenser",
+      "short": "AC",
+      "floor": "basement",
+      "side": "rear",
+      "at": 0.5,
+      "basis": "record",
+      "focus": false,
+      "note": "On a pad behind the house, by the back steps"
+     },
+     {
+      "kind": "gas_meter",
+      "label": "Gas meter",
+      "short": "G",
+      "floor": "basement",
+      "side": "right",
+      "at": 0.35,
+      "basis": "likely",
+      "focus": false,
+      "note": "Outside on a side wall, near where the gas line enters"
+     }
+    ],
+    "front": "bottom",
+    "source_line": "Source: sandbox ServiceTitan record, fictional customer.",
+    "sources": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "role": "pp-plumber",
+   "issue": "Kitchen sink is leaking under the cabinet",
+   "card": {
+    "type": "card",
+    "kind": "floor_sketch",
+    "id": "fs-ce08747c",
+    "title": "Floor sketch",
+    "address": "27 Brindlemoor Ct, Red Lion, PA 17356",
+    "issue": "Water heater leaking",
+    "basis": "mixed",
+    "area": {
+     "status": "in",
+     "label": "Inside the Punctual Pros service area (York County, York hub)"
+    },
+    "house": {
+     "text": "Two stories over a full basement. Built 1978. Gas heat.",
+     "year": 1978,
+     "year_basis": "record",
+     "stories": 2,
+     "foundation": "basement",
+     "basement": "full",
+     "fuel": "gas",
+     "fuel_basis": "record"
+    },
+    "focus": [
+     "water_heater",
+     "gas_shutoff",
+     "main_water"
+    ],
+    "floors": [
+     {
+      "id": "basement",
+      "name": "Basement",
+      "w": 35,
+      "h": 23,
+      "rooms": [
+       {
+        "x": 0,
+        "y": 0,
+        "w": 35,
+        "h": 23,
+        "label": "Unfinished basement"
+       }
+      ],
+      "items": [
+       {
+        "kind": "water_heater",
+        "label": "Water heater",
+        "short": "WH",
+        "basis": "record",
+        "focus": true,
+        "note": "Rear wall, left side, on a stand by the floor drain",
+        "detail": "Rheem, gas, 50 gal, 2013 (13 years)",
+        "x": 5.2,
+        "y": 1.8
+       },
+       {
+        "kind": "gas_shutoff",
+        "label": "Gas shutoff",
+        "short": "GS",
+        "basis": "record",
+        "focus": true,
+        "note": "On the gas pipe beside the water heater",
+        "detail": "lever valve",
+        "x": 7.2,
+        "y": 1.8
+       },
+       {
+        "kind": "main_water",
+        "label": "Main water shutoff",
+        "short": "W",
+        "basis": "record",
+        "focus": true,
+        "note": "Front wall, right side, beside the water meter",
+        "detail": "3/4 in gate valve",
+        "x": 29.8,
+        "y": 21.2
+       },
+       {
+        "kind": "furnace",
+        "label": "Furnace",
+        "short": "F",
+        "basis": "record",
+        "focus": false,
+        "note": "Center, under the main trunk duct",
+        "detail": "Trane, gas, 60,000 BTU, 2009 (17 years)",
+        "x": 17.5,
+        "y": 11.5
+       },
+       {
+        "kind": "service_switch",
+        "label": "Furnace switch",
+        "short": "SW",
+        "basis": "record",
+        "focus": false,
+        "note": "Top of the basement stairs, red cover plate",
+        "detail": null,
+        "x": 14.0,
+        "y": 13.8
+       },
+       {
+        "kind": "panel",
+        "label": "Electrical panel",
+        "short": "P",
+        "basis": "record",
+        "focus": false,
+        "note": "Right side wall",
+        "detail": "Siemens, 150 A, 1998 (28 years)",
+        "x": 32.9,
+        "y": 11.5
+       },
+       {
+        "kind": "sewer_cleanout",
+        "label": "Sewer cleanout",
+        "short": "C",
+        "basis": "record",
+        "focus": false,
+        "note": "Front wall center, capped pipe at floor level",
+        "detail": "4 in cap",
+        "x": 17.5,
+        "y": 21.2
+       },
+       {
+        "kind": "sump_pump",
+        "label": "Sump pump",
+        "short": "S",
+        "basis": "record",
+        "focus": false,
+        "note": "Pit in the rear wall, right corner",
+        "detail": "1/3 hp, 2021 (5 years)",
+        "x": 29.8,
+        "y": 1.8
+       }
+      ],
+      "runs": [
+       {
+        "kind": "water",
+        "label": "Water",
+        "points": [
+         [
+          29.8,
+          21.2
+         ],
+         [
+          5.2,
+          1.8
+         ]
+        ],
+        "basis": "record"
+       },
+       {
+        "kind": "gas",
+        "label": "Gas",
+        "points": [
+         [
+          2.1,
+          11.5
+         ],
+         [
+          17.5,
+          11.5
+         ],
+         [
+          5.2,
+          1.8
+         ]
+        ],
+        "basis": "record"
+       },
+       {
+        "kind": "drain",
+        "label": "Drain",
+        "points": [
+         [
+          17.5,
+          1.8
+         ],
+         [
+          17.5,
+          21.2
+         ]
+        ],
+        "basis": "record"
+       }
+      ]
+     }
+    ],
+    "outside": [
+     {
+      "kind": "gas_meter",
+      "label": "Gas meter",
+      "short": "G",
+      "floor": "basement",
+      "side": "left",
+      "at": 0.35,
+      "basis": "likely",
+      "focus": false,
+      "note": "Outside on the left side wall, where the recorded gas line enters"
+     }
+    ],
+    "front": "bottom",
+    "source_line": "Source: sandbox ServiceTitan record, fictional customer.",
+    "sources": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "role": "pp-hvac-technician",
+   "issue": "Breaker keeps tripping",
+   "card": {
+    "type": "card",
+    "kind": "floor_sketch",
+    "id": "fs-82f3504a",
+    "title": "Floor sketch",
+    "address": "12 Testcase Ave, Toms River, NJ 08753",
+    "issue": "Breaker keeps tripping",
+    "basis": "likely",
+    "area": {
+     "status": "in",
+     "label": "Inside the Punctual Pros service area (Ocean County, Toms River hub)"
+    },
+    "house": {
+     "text": "Two stories on a slab. (likely) Built 1981. (likely) Gas heat. (likely)",
+     "year": 1981,
+     "year_basis": "likely",
+     "stories": 2,
+     "foundation": "slab",
+     "basement": "none",
+     "fuel": "gas",
+     "fuel_basis": "likely"
+    },
+    "focus": [
+     "panel"
+    ],
+    "floors": [
+     {
+      "id": "first",
+      "name": "First floor",
+      "w": 35,
+      "h": 23,
+      "rooms": [],
+      "items": [
+       {
+        "kind": "panel",
+        "label": "Electrical panel",
+        "short": "P",
+        "basis": "likely",
+        "focus": true,
+        "note": "Garage wall",
+        "detail": null,
+        "x": 30.8,
+        "y": 17.2
+       },
+       {
+        "kind": "main_water",
+        "label": "Main water shutoff",
+        "short": "W",
+        "basis": "likely",
+        "focus": false,
+        "note": "Utility closet by the water heater, or the garage wall facing the street",
+        "detail": null,
+        "x": 29.8,
+        "y": 3.4
+       },
+       {
+        "kind": "water_heater",
+        "label": "Water heater",
+        "short": "WH",
+        "basis": "likely",
+        "focus": false,
+        "note": "Garage or utility closet",
+        "detail": null,
+        "x": 32.8,
+        "y": 17.2
+       },
+       {
+        "kind": "furnace",
+        "label": "Furnace",
+        "short": "F",
+        "basis": "likely",
+        "focus": false,
+        "note": "Utility closet",
+        "detail": null,
+        "x": 31.8,
+        "y": 3.4
+       },
+       {
+        "kind": "gas_shutoff",
+        "label": "Gas shutoff",
+        "short": "GS",
+        "basis": "likely",
+        "focus": false,
+        "note": "On the gas pipe at the furnace, boiler or water heater",
+        "detail": null,
+        "x": 33.8,
+        "y": 3.4
+       }
+      ],
+      "runs": [
+       {
+        "kind": "water",
+        "label": "Water",
+        "points": [
+         [
+          5.2,
+          21.2
+         ],
+         [
+          29.8,
+          3.4
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "gas",
+        "label": "Gas",
+        "points": [
+         [
+          32.9,
+          11.5
+         ],
+         [
+          29.8,
+          3.4
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "drain",
+        "label": "Drain",
+        "points": [
+         [
+          26.2,
+          6.9
+         ],
+         [
+          17.5,
+          21.2
+         ]
+        ],
+        "basis": "likely"
+       }
+      ]
+     }
+    ],
+    "outside": [
+     {
+      "kind": "gas_meter",
+      "label": "Gas meter",
+      "short": "G",
+      "floor": "first",
+      "side": "right",
+      "at": 0.35,
+      "basis": "likely",
+      "focus": false,
+      "note": "Outside on a side wall"
+     },
+     {
+      "kind": "sewer_cleanout",
+      "label": "Sewer cleanout",
+      "short": "C",
+      "floor": "first",
+      "side": "front",
+      "at": 0.25,
+      "basis": "likely",
+      "focus": false,
+      "note": "Outside near the front of the house, a capped pipe"
+     }
+    ],
+    "front": "bottom",
+    "source_line": "Source: public property records where shown; layout is a rule of thumb for houses built around 1981 in Ocean County.",
+    "sources": [
+     1
+    ]
+   }
+  }
+ ]
+}

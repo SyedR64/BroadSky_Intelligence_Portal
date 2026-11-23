@@ -7,8 +7,9 @@ Usage:  python3 scripts/apply_voice.py            # dry run: counts per file + e
         python3 scripts/apply_voice.py --quiet     # totals only
 
 Three rules, all idempotent:
-  1. Product name. Every spelling of the old product name becomes "BSP Desk" ("bsp-desk" in slugs),
-     in every text file (prose, comments, docs, scripts). The repo URL path and GitHub links stay.
+  1. Product name. Every spelling of an old product name ("Operating Intelligence", "BSP Desk") becomes
+     "Broad Sky OS" ("bsp-desk" in slugs), in every text file (prose, comments, docs, scripts). The repo URL
+     path, GitHub links, file names (BSP_Desk_Memo), storage keys and the hosted address stay.
   2. No "So what". "So what:" / "So what —" / "So what." labels (with their <b>/<strong> wrapper)
      are removed from HTML, JavaScript prose and JSON prose; the sentence that followed is kept and
      its first letter capitalised.
@@ -16,7 +17,9 @@ Three rules, all idempotent:
      prose. Kept as written: strings containing a legal entity ("Broad Sky Partners, LP",
      "Broad Sky Partners LLC", "BSP-…" vehicles, the unrelated "Broad Sky Networks"), URLs and file
      paths, quoted press text (a string that opens with a quotation mark, a quoted phrase inside a
-     string, a wire-service headline, a field named *quote*), and verbatim filing fields. On each
+     string, a wire-service headline, a field named *quote*), verbatim filing fields, the product name
+     "Broad Sky OS", and a string that is the firm's name alone ("Broad Sky": the "Viewing as" switch and
+     the Connections heading). On each
      HTML page without the concept banner, the first plain "Broad Sky Partners" in the body becomes
      "Broad Sky Partners (BSP)"; concept pages get that once from the frame's banner.
 
@@ -40,26 +43,31 @@ CO_SLUGS = ('punctual-pros', 'cet', 'frontline', 'thomas-scientific', 'bpi', 'fa
 # ── rule 1: product name (applied to the whole text of every file) ──────────────────────────────
 PRODUCT_RULES = [
     (r'Broad_Sky_Operating_Intelligence_Memo', 'BSP_Desk_Memo'),
-    (r'Broad Sky <span>/</span> Operating Intelligence', 'BSP Desk'),
+    (r'Broad Sky <span>/</span> Operating Intelligence', 'Broad Sky OS'),
     (r"Broad Sky Partners' operating-intelligence portal \(a private-equity firm",
-     'BSP Desk, the portal of BSP (a private-equity firm'),
-    (r"Broad Sky Partners['’]? operating[- ]intelligence portal", 'BSP Desk'),
-    (r"Commonwealth Electrical Technologies / Broad Sky Partners operating[- ]intelligence", 'CET in BSP Desk'),
-    (r"Broad Sky Partners['’]? operating[- ]intelligence", 'BSP Desk'),
-    (r"the firm's operating[- ]intelligence portal", "BSP Desk, the firm's portal"),
-    (r'Broad Sky operating[- ]intelligence portal', 'BSP Desk'),
-    (r'BSP operating[- ]intelligence', 'BSP Desk'),
-    (r'Broad Sky Operating Intelligence', 'BSP Desk'),
-    (r'BROAD SKY OPERATING INTELLIGENCE', 'BSP DESK'),
-    (r'Broad Sky Intelligence', 'BSP Desk'),
-    (r'\bthe Operating Intelligence portal\b', 'BSP Desk'),
-    (r'\bthe Operating Intelligence data\b', 'the BSP Desk data'),
-    (r'\bOperating-intelligence portal\b', 'BSP Desk portal'),
-    (r'\boperating-intelligence portal\b', 'BSP Desk portal'),
+     'Broad Sky OS, the operating system of BSP (a private-equity firm'),
+    (r"Broad Sky Partners['’]? operating[- ]intelligence portal", 'Broad Sky OS'),
+    (r"Commonwealth Electrical Technologies / Broad Sky Partners operating[- ]intelligence", 'CET in Broad Sky OS'),
+    (r"Broad Sky Partners['’]? operating[- ]intelligence", 'Broad Sky OS'),
+    (r"the firm's operating[- ]intelligence portal", "Broad Sky OS, the firm's operating system"),
+    (r'Broad Sky operating[- ]intelligence portal', 'Broad Sky OS'),
+    (r'BSP operating[- ]intelligence', 'Broad Sky OS'),
+    (r'Broad Sky Operating Intelligence', 'Broad Sky OS'),
+    (r'BROAD SKY OPERATING INTELLIGENCE', 'BROAD SKY OS'),
+    (r'Broad Sky Intelligence', 'Broad Sky OS'),
+    (r'\bthe Operating Intelligence portal\b', 'Broad Sky OS'),
+    (r'\bthe Operating Intelligence data\b', 'the Broad Sky OS data'),
+    (r'\bOperating-intelligence portal\b', 'Broad Sky OS'),
+    (r'\boperating-intelligence portal\b', 'Broad Sky OS'),
     (r'(?<=[/_.])operating[-_]intelligence\b|\boperating[-_]intelligence(?=[/_.]\w)', 'bsp-desk'),
-    (r'OPERATING INTELLIGENCE', 'BSP DESK'),
-    (r'\b[Oo]perating[- ][Ii]ntelligence\b', 'BSP Desk'),
-    (r'BSP Desk · Broad Sky(?=</title>)|BSP Desk · BSP Desk(?=</title>)', 'BSP Desk'),     # the landing page's own title
+    (r'OPERATING INTELLIGENCE', 'BROAD SKY OS'),
+    (r'\b[Oo]perating[- ][Ii]ntelligence\b', 'Broad Sky OS'),
+    # the second product name (Nov 2026): "BSP Desk" in words; "BSP_Desk_Memo", "bsp-desk" and storage keys stay
+    (r'BSP Desk, the portal of BSP', 'Broad Sky OS, the operating system of BSP'),
+    (r'\bthe BSP Desk\b(?! data)', 'Broad Sky OS'),
+    (r'\bBSP Desk\b', 'Broad Sky OS'),
+    (r'\bBSP DESK\b', 'BROAD SKY OS'),
+    (r'Broad Sky OS · (?:Broad Sky OS|Broad Sky)(?=</title>)', 'Broad Sky OS'),     # the landing page's own title
 ]
 PRODUCT_RULES = [(re.compile(p), r) for p, r in PRODUCT_RULES]
 OLD_NAME = re.compile(r'operating[- _]intelligence|Broad Sky Intelligence', re.I)
@@ -84,7 +92,9 @@ QUOTE_KEY = re.compile(r'quote', re.I)
 FILING_KEYS = {'related_persons', 'filer_or_source_agency', 'legal_entities_on_sec_edgar', 'ultimate_controlling_party_post_deal',
                'records', 'entity', 'issuer', 'filer', 'legal_name', 'entity_name'}
 BSP_KEEP = re.compile(r'Broad Sky Partners \(BSP\)')
-BSP_RX = re.compile(r'Broad Sky Partners(?P<pp>[\'’](?=\s))?|Broad Sky(?P<ps>[\'’]s)?')
+# "Broad Sky OS" is the product's name and is never shortened (OS build spec, ruling R4)
+BSP_RX = re.compile(r'Broad Sky Partners(?P<pp>[\'’](?=\s))?|Broad Sky(?![ \u00a0]+OS\b)(?P<ps>[\'’]s)?')
+FIRM_ALONE = re.compile(r'^\s*Broad Sky\s*$')   # the firm's name on its own: the "Viewing as" switch and Connections (R3)
 TITLE_TAIL = re.compile(r'(·|&middot;)\s*Broad Sky(?=\s*$)')
 WORDMARK = re.compile(r'<b>Broad Sky</b><small>Assistant</small>')
 
@@ -97,6 +107,7 @@ def bump(path, rule, n=1):
 def skip_reason(unit, key=None, kind='json'):
     """Whole-unit exceptions: the string is kept exactly as written."""
     if 'Broad Sky' not in unit: return None
+    if FIRM_ALONE.match(unit): return 'the firm\'s name on its own ("Viewing as" switch, Connections)'
     if key and QUOTE_KEY.search(key): return f'quoted field "{key}"'
     if key in FILING_KEYS: return f'verbatim filing field "{key}"'
     if URLISH.search(unit): return 'URL or file path'
@@ -112,8 +123,8 @@ def bsp_unit(unit, path, key=None, page=None, kind='json', quoted_start=False):
     why = skip_reason(unit, key, kind)
     if why:
         skipped.append((path, why, unit.strip()[:140])); return unit
-    unit, n = WORDMARK.subn('<b>BSP Desk</b><small>Assistant</small>', unit); bump(path, 'bsp', n)
-    unit, n = TITLE_TAIL.subn(lambda t: t.group(1) + ' BSP Desk', unit); bump(path, 'title', n)
+    unit, n = WORDMARK.subn('<b>Broad Sky OS</b><small>Assistant</small>', unit); bump(path, 'bsp', n)
+    unit, n = TITLE_TAIL.subn(lambda t: t.group(1) + ' Broad Sky OS', unit); bump(path, 'title', n)
     keep = [(q.start(), q.end(), None) for q in BSP_KEEP.finditer(unit)]
     keep += [(q.start(), q.end(), f'legal entity "{q.group(0)}"') for q in ENTITY.finditer(unit) if 'Broad Sky' in q.group(0)]
     qrx = INNER_QUOTE_JS if kind == 'js' else INNER_QUOTE
@@ -230,7 +241,7 @@ def do_html(text, path):
 PY_STR = re.compile(r"'(?:[^'\\\n]|\\.)*'|\"(?:[^\"\\\n]|\\.)*\"")
 def do_py_ui(text, path):
     """Generators of HTML pages (scripts/make_sitemap.py): the contents of each string literal are UI copy."""
-    text, n = re.subn(r'(·|&middot;)\s*Broad Sky(?=</title>|")', lambda t: t.group(1) + ' BSP Desk', text); bump(path, 'title', n)
+    text, n = re.subn(r'(·|&middot;)\s*Broad Sky(?=</title>|")', lambda t: t.group(1) + ' Broad Sky OS', text); bump(path, 'title', n)
     return PY_STR.sub(lambda m: m.group(0)[0] + bsp_unit(m.group(0)[1:-1], path, kind='js') + m.group(0)[-1], text)
 
 def process(rel):

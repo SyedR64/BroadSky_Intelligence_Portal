@@ -1,5 +1,5 @@
-import * as Copy from './copy.js?v=20261123143257';
-import * as L from './deal-lib.js?v=20261123143257';
+import * as Copy from './copy.js?v=20261123172325';
+import * as L from './deal-lib.js?v=20261123172325';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition model: a live buyout, DCF, roll-up and sensitivity model with
    spreadsheet-style input cells, presets from the portfolio's own estimates and
@@ -13,7 +13,7 @@ const COLOR = 'color-mix(in srgb,var(--sys-good) 72%,var(--sys-ink))';
 const CO_COLOR = { pp: 'var(--co-pp)', cet: 'var(--co-cet)', fl: 'var(--co-fl)', ts: 'var(--co-ts)', bpi: 'var(--co-bpi)', fh: 'var(--co-fh)' };
 const CO_ROUTE = { pp: 'pp', cet: 'cet', fl: 'fl', ts: 'ts' };
 const CO_NAME = { pp: 'Punctual Pros', cet: 'CET', fl: 'Frontline', ts: 'Thomas Scientific', bpi: 'BPI', fh: 'Fair Harbor' };
-const injectCss = () => { if (!document.getElementById('css-deal')) { const l = document.createElement('link'); l.id = 'css-deal'; l.rel = 'stylesheet'; l.href = 'modules/deal.css?v=20261123143257'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-deal')) { const l = document.createElement('link'); l.id = 'css-deal'; l.rel = 'stylesheet'; l.href = 'modules/deal.css?v=20261123172325'; document.head.appendChild(l); } };
 
 /* ── formatting ──────────────────────────────────────────────────────────── */
 const MINUS = '−';
@@ -88,18 +88,15 @@ function syncHash(ctx) {
 }
 
 /* ── shared chrome: head, toolbar, how-to note, source line ─────────────── */
-const LEADS = {
-  returns: 'Buy one company with debt, grow it, add smaller companies, sell it. Change any white cell and every number recalculates.',
-  dcf: 'Value the company from the cash it should produce, discounted to today, then compare with what similar deals fetch.',
-  rollup: 'Buy smaller companies for less per dollar of EBITDA than the combined company sells for. See how much value that gap creates.',
-  sensitivity: 'How the annual return and the money multiple move when the price, the sale multiple, growth or margins change.',
-};
+/* Reference text for the Method drawer: terms, how to read the colours, what the model leaves out. */
 const HOWTO = {
-  returns: '<b>How to read this.</b> MOIC (money multiple) is what each dollar invested comes back as: 2.5x turns $10M into $25M. IRR (annual return) spreads that over the years held; buyout funds usually aim for 20% or more.',
-  dcf: '<b>How to read this.</b> Free cash flow is the cash left after tax, equipment and working capital. Most of a DCF value usually sits in the years after year 5, so the two methods are shown side by side.',
-  rollup: '<b>How to read this.</b> Multiple arbitrage is the gain from paying, say, 6.5x for small companies and selling the combined company at 9x. Operating growth is the gain from earning more.',
-  sensitivity: '<b>How to read this.</b> The middle cell is the current model. Green beats a 20% annual return or a 2.5x money multiple; red falls short. Each cell is a full re-run of the model.',
+  returns: ['<b>MOIC</b> (money multiple) is what each dollar invested comes back as: 2.5x turns $10M into $25M. <b>IRR</b> (annual return) spreads that over the years held; buyout funds usually aim for 20% or more.', 'One debt layer, repaid from cash each year. Seller notes and earn-outs are not modelled: the full price is paid at closing with the debt and equity above.'],
+  dcf: ['Free cash flow is the cash left after tax, equipment and working capital. Most of a DCF value usually sits in the years after year 5, so the two methods are shown side by side.'],
+  rollup: ['<b>Multiple arbitrage</b> is the gain from paying, say, 6.5x for small companies and selling the combined company at 9x. <b>Operating growth</b> is the gain from earning more.'],
+  sensitivity: ['The middle cell is the current model, and each cell is a full re-run. Green beats a 20% annual return or a 2.5x money multiple; red falls short.', 'Steps: multiples 1x, growth 2 points, margin gain half a point.'],
 };
+/* Method lines the draw functions add for the current figures (set on each draw, read by paint). */
+let XM = [];
 
 function toolbar(ctx) {
   const { esc, ui } = ctx;
@@ -122,17 +119,17 @@ function toolbar(ctx) {
 const presetSummary = esc => {
   const p = preset();
   // a company from the SBA loan screen (ref = its id): its modelled revenue on its BSP company's add-on defaults
-  if (S.for && S.ref) return `Scenario for <b>${esc(S.for)}</b>, an add-on candidate from the SBA loan screen. Revenue is modelled from Census benchmarks and its SBA loan data; margin, multiples and debt are the ${esc(CO_NAME[p.co] || p.label)} add-on defaults. Cells tagged est. are estimates, not reported figures. <a href="#/ma/pipeline?id=${encodeURIComponent(S.ref)}">How these figures were estimated →</a>`;
-  if (S.for) return `Scenario for <b>${esc(S.for)}</b>, built from the acquisition engine's estimates on top of a typical lower-middle-market deal. Cells tagged est. are estimates, not reported figures. <a href="#/ma/rivals">Rival profiles →</a>`;
+  if (S.for && S.ref) return { html: `Scenario for <b>${esc(S.for)}</b>: add-on candidate from the SBA loan screen. <a href="#/ma/pipeline?id=${encodeURIComponent(S.ref)}">How these figures were estimated →</a>`, method: `Revenue is modelled from Census benchmarks and its SBA loan data; margin, multiples and debt are the ${esc(CO_NAME[p.co] || p.label)} add-on defaults.` };
+  if (S.for) return { html: `Scenario for <b>${esc(S.for)}</b>, built on a typical lower-middle-market deal. <a href="#/ma/rivals">Rival profiles →</a>`, method: `Inputs come from the acquisition engine's estimates.` };
   const back = p.parent && CO_ROUTE[p.co] ? ` <a href="#/ma/pipeline?platform=${encodeURIComponent(p.co)}&amp;id=${encodeURIComponent(p.id)}">How these figures were estimated →</a>` : '';
-  return `${esc(p.summary)}${p.est.size ? ' Cells tagged est. are estimates, not BSP figures.' : ''}${back}`;
+  return { html: `${esc(p.summary)}${back}`, method: '' };
 };
 
 function sourceLine(ctx, ids) {
   const { esc } = ctx;
   const seen = new Set(), parts = [];
   for (const id of ids) { const s = SRC[id]; if (!s || seen.has(id)) continue; seen.add(id); parts.push(s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>` : esc(s.label)); }
-  return `<p class="sys-src dm-src">Sources: ${parts.join(' · ')}. Presets are estimates from public filings and screens, not BSP's terms. Model by Syed Rahman.</p>`;
+  return `${parts.join(' · ')}. Presets come from public filings and screens, not BSP's terms. Model by Syed Rahman.`;
 }
 
 /* ── market benchmark per input ──────────────────────────────────────────
@@ -150,19 +147,18 @@ function mkt(k) {
   return a ? { text: '', assumed: a } : null;
 }
 /* under each input: the first benchmark only (the formula bar and the financing table give them all) */
-const mktLine = (esc, k) => { const m = mkt(k); if (!m) return ''; if (m.assumed) return '<span class="dm-mkt dm-mkt--a">No market source: analyst assumption</span>'; const b = m.bs[0]; return `<span class="dm-mkt">Market: ${esc(`${bval(b)} ${MKT_WORDS[b.id] || b.metric.toLowerCase()} (${srcShort(b.source_ids[0])})`)}</span>`; };
+const mktLine = (esc, k) => { const m = mkt(k); if (!m) return ''; if (m.assumed) return ''; const b = m.bs[0]; return `<span class="dm-mkt">Market ${esc(bval(b))}</span>`; };
 
 /* ── the spreadsheet grid ───────────────────────────────────────────────── */
 function gridHtml(ctx, sections) {
   const { esc } = ctx;
   let i = 0;
   const rows = sections.map(([title, ks]) => `<tbody><tr class="dm-sec"><th colspan="4" scope="colgroup">${esc(title)}</th></tr>${ks.map(k => { const m = INP[k]; const idx = i++;
-    return `<tr data-k="${k}"><th scope="row"><label for="dm-in-${k}"><span class="dm-name">${esc(m.label)}</span><span class="dm-gloss">${esc(m.gloss)}</span>${mktLine(esc, k)}</label></th>
+    return `<tr data-k="${k}"><th scope="row"><label for="dm-in-${k}" title="${esc(m.gloss)}"><span class="dm-name">${esc(m.label)}</span>${mktLine(esc, k)}</label></th>
       <td class="dm-v"><input id="dm-in-${k}" class="dm-cell" data-k="${k}" data-i="${idx}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="${esc(trim(S.vals[k]))}" aria-describedby="dm-fx"></td>
       <td class="dm-u">${esc(m.unit)}</td><td class="dm-f">${isEst(k) ? '<span class="sys-est">est.</span>' : ''}</td></tr>`; }).join('')}</tbody>`).join('');
-  return `<div class="dm-fx" id="dm-fx" aria-live="polite"><span class="dm-fx-k">Cell</span><span class="dm-fx-t">Choose a cell to see what it means and where the number comes from.</span></div>
-  <div class="sys-table-wrap dm-gridwrap"><table class="sys-table dm-grid"><caption class="sys-sr">Model inputs. Arrow keys move between cells; Enter saves and moves down; Escape undoes.</caption>${rows}</table></div>
-  <p class="sys-src dm-keys">Tab, arrow keys and Enter move between cells, as in a spreadsheet. Escape undoes a change.</p>`;
+  return `<div class="dm-fx" id="dm-fx" aria-live="polite"><span class="dm-fx-k"></span><span class="dm-fx-t"></span></div>
+  <div class="sys-table-wrap dm-gridwrap"><table class="sys-table dm-grid" aria-label="Model inputs">${rows}</table></div>`;
 }
 
 function bindGrid(ctx, host, onChange) {
@@ -173,6 +169,7 @@ function bindGrid(ctx, host, onChange) {
     const k = inp.dataset.k, m = INP[k], p = preset();
     const basis = forBasis(k) || p.basis?.[k] || DM.items.find(i => i.kind === 'assumptions')?.items?.[k] || '';
     const mk = mkt(k);
+    fx.classList.add('dm-fx--on');
     fx.innerHTML = `<span class="dm-fx-k">${ctx.esc(m.label)}</span><span class="dm-fx-t">${ctx.esc(basis || m.gloss)}${isEst(k) ? ' <span class="sys-est">est.</span>' : ''}${mk && !mk.assumed ? ` <span class="dm-mkt">Market: ${ctx.esc(mk.text)}.</span>` : ''}</span>`;
   };
   const parse = s => { const t = String(s).replace(/[−–]/g, '-').replace(/[^0-9.\-]/g, ''); if (!t || t === '-' || t === '.') return null; const v = parseFloat(t); return isFinite(v) ? v : null; };
@@ -220,17 +217,25 @@ async function frame(ctx, vid, draw, srcIds) {
   if (!el.isConnected) return;
   if (!ok) { el.innerHTML = ui.pageHead({ title: TITLES[vid] }) + ui.note('The model assumptions could not load. Reload the page to try again.', 'warn'); return; }
   fromParams(ctx.params || {});
-  el.innerHTML = `<div class="m-deal" data-no-gloss>${ui.pageHead({ title: TITLES[vid], sub: LEADS[vid] })}
+  el.innerHTML = `<div class="m-deal" data-no-gloss>${ui.pageHead({ title: TITLES[vid] })}
     ${toolbar(ctx)}
-    ${ui.note(HOWTO[vid], 'info')}
     <div class="grid grid-side mt-12 dm-main">
-      <div class="dm-left">${ui.panel({ title: 'Assumptions', sub: 'White cells are inputs. Type over any of them.', body: gridHtml(ctx, GRIDS[vid]), cls: 'dm-inputs' })}<div id="dm-bench"></div></div>
+      <div class="dm-left">${ui.panel({ title: 'Assumptions', body: gridHtml(ctx, GRIDS[vid]), cls: 'dm-inputs' })}<div id="dm-bench"></div></div>
       <div class="dm-right" id="dm-out" aria-live="polite"></div>
     </div>
     <div id="dm-srcline"></div></div>`;
   const out = el.querySelector('#dm-out');
   const sum = el.querySelector('#dm-sum');
-  const paint = () => { sum.innerHTML = presetSummary(ctx.esc); draw(out); el.querySelector('#dm-srcline').innerHTML = sourceLine(ctx, [...srcIds(), ...preset().sources]); syncHash(ctx); };
+  // Sources and Method text sit in elements the shell moves to its drawers; paint rewrites them in place
+  const mk = kind => { const e = document.createElement('div'); e.className = 'sys-src dm-src'; e.setAttribute(kind, ''); el.querySelector('#dm-srcline').appendChild(e); return e; };
+  const srcEl = mk('data-src'), methEl = mk('data-method');
+  const paint = () => {
+    const ps = presetSummary(ctx.esc); sum.innerHTML = ps.html; XM = [];
+    draw(out);
+    srcEl.innerHTML = sourceLine(ctx, [...srcIds(), ...preset().sources]);
+    methEl.innerHTML = [...HOWTO[vid], ...XM, ps.method, preset().est.size ? 'Cells tagged est. are estimates, not reported figures.' : ''].filter(Boolean).map(t => `<p>${t}</p>`).join('');
+    syncHash(ctx);
+  };
   let raf = 0; const schedule = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; if (el.isConnected) paint(); }); };
   bindGrid(ctx, el.querySelector('.dm-inputs'), schedule);
   paint();
@@ -259,12 +264,12 @@ function refreshGrid(ctx, el, vid, schedule) {
 }
 
 function benchPanel(ctx) {
-  const { esc, ui } = ctx;
+  const { esc } = ctx;
   const B = DM.items.filter(i => i.kind === 'benchmark');
   const pick = ['b-entry-avg', 'b-small', 'b-large', 'b-typ-prem', 'b-hvac', 'b-scaled', 'b-lev-2026', 'b-lev-2025', 'b-rate', 'b-hold'].map(id => B.find(b => b.id === id)).filter(Boolean);
   const val = b => b.value != null ? (b.unit === '%' ? `${nf(b.value, 1)}%` : b.unit === 'years' ? `${nf(b.value, 1)} yrs` : `${nf(b.value, 1)}x`) : `${nf(b.low, 1)}–${nf(b.high, 1)}x`;
-  const rows = pick.map(b => { const s = SRC[b.source_ids[0]]; return `<tr><th scope="row">${esc(b.metric)}<span class="dm-gloss">${esc(b.note)}${s ? ` ${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label.split(',')[0])}</a>` : esc(s.label.split(':')[0])}` : ''}</span></th><td class="sys-n">${val(b)}</td></tr>`; }).join('');
-  return ui.panel({ title: 'Market benchmarks', sub: 'What lower-middle-market deals look like today', cls: 'mt-12 dm-bench', body: `<div class="sys-table-wrap"><table class="sys-table dm-bt"><caption class="sys-sr">Market benchmarks with sources</caption><tbody>${rows}</tbody></table></div>` });
+  const rows = pick.map(b => { const s = SRC[b.source_ids[0]]; return `<tr><td>${esc(b.metric)}<br><span class="sys-muted small">${esc(b.note)}${s ? ` ${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label.split(',')[0])}</a>` : esc(s.label.split(':')[0])}` : ''}</span></td><td class="sys-n">${val(b)}</td></tr>`; }).join('');
+  return `<div data-method><b>Market benchmarks</b><div class="sys-table-wrap"><table class="sys-table" aria-label="Market benchmarks with sources"><tbody>${rows}</tbody></table></div></div>`;
 }
 
 /* ── exports ────────────────────────────────────────────────────────────── */
@@ -277,7 +282,7 @@ function loadXlsx() {
   return _xlsx;
 }
 const stamp = () => new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
-const fileBase = () => `BSP Desk acquisition model - ${(S.for || preset().label).replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim()}`;
+const fileBase = () => `Broad Sky OS acquisition model - ${(S.for || preset().label).replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim()}`;
 /* Workbook basis column: the preset's own note first, else the market benchmark, else the analyst assumption, so every
    price and financing input in the Excel file says where its number comes from. */
 const forBasis = k => S?.for && S.forVals?.[k] != null ? `Set from the acquisition engine's estimates for ${S.for}; see its profile for how each was built.` : '';
@@ -309,7 +314,7 @@ async function copyLink(ctx) {
 function bars(ctx, items, { total, totalLabel } = {}) {
   const { esc } = ctx;
   const max = Math.max(1e-9, ...items.map(i => Math.abs(i.v)), total != null ? Math.abs(total) : 0);
-  const row = (l, v, note, cls = '') => `<div class="dm-bar-row ${cls}"><div class="dm-bar-l"><span>${esc(l)}</span>${note ? `<span class="dm-gloss">${esc(note)}</span>` : ''}</div><div class="dm-bar-t"><i class="${v < 0 ? 'neg' : 'pos'}" style="width:${Math.max(1, Math.abs(v) / max * 100).toFixed(1)}%"></i></div><div class="dm-bar-v sys-num">${$m(v)}</div></div>`;
+  const row = (l, v, note, cls = '') => `<div class="dm-bar-row ${cls}"><div class="dm-bar-l"${note ? ` title="${esc(note)}"` : ''}><span>${esc(l)}</span></div><div class="dm-bar-t"><i class="${v < 0 ? 'neg' : 'pos'}" style="width:${Math.max(1, Math.abs(v) / max * 100).toFixed(1)}%"></i></div><div class="dm-bar-v sys-num">${$m(v)}</div></div>`;
   return `<div class="dm-bars">${items.map(i => row(i.label, i.v, i.note)).join('')}${total != null ? row(totalLabel, total, '', 'tot') : ''}</div>`;
 }
 const yearHead = (n, lab) => `<tr><th scope="col">${lab || '$M'}</th>${[...Array(n + 1).keys()].map(y => `<th scope="col" class="sys-n">Year ${y}</th>`).join('')}</tr>`;
@@ -319,35 +324,35 @@ function drawReturns(ctx, out) {
   const { ui, esc } = ctx; const p = S.vals; const R = L.lbo(p); const N = R.N; const hurdle = DM.meta.hurdle.irr_pct / 100;
   const status = y => y === 0 ? 'Buy' : y === N ? 'Sell' : '';
   const kp = ui.kpis([
-    { label: 'Purchase price', value: $m(R.ev0), sub: `${xm(p.em)} EBITDA of ${$m(R.ebitda[0])}`, color: COLOR },
-    { label: 'Equity check', value: $m(R.eq0), sub: R.ev0 > 0 ? `${pc(R.eq0 / (R.ev0 + R.fees), 0)} of the cost; the rest is debt` : '', color: 'var(--sys-info)' },
-    { label: 'Exit value', value: $m(R.exitEV), sub: `Year ${N} at ${xm(p.xm)}`, color: 'var(--sys-brand)' },
-    { label: 'Equity at exit', value: $m(R.exitEq), sub: `after ${$m(R.exitND)} of net debt`, color: 'var(--sys-violet)' },
-    { label: 'MOIC (money multiple)', value: R.moic == null ? 'n/m' : xm(R.moic, 2), sub: `on ${$m(R.totalEq)} of equity`, color: COLOR },
-    { label: 'IRR (annual return)', value: R.irr == null ? 'n/m' : pc(R.irr), sub: R.irr == null ? 'equity is negative' : R.irr >= hurdle ? 'above a 20% fund target' : 'below a 20% fund target', color: R.irr != null && R.irr >= hurdle ? 'var(--sys-good)' : 'var(--sys-bad)' },
+    { label: 'Purchase price', value: $m(R.ev0), sub: `${xm(p.em)} of ${$m(R.ebitda[0])} EBITDA`, color: COLOR },
+    { label: 'Equity check', value: $m(R.eq0), sub: R.ev0 > 0 ? `${pc(R.eq0 / (R.ev0 + R.fees), 0)} of cost` : '', color: 'var(--sys-info)' },
+    { label: 'Exit value', value: $m(R.exitEV), sub: `Year ${N}, ${xm(p.xm)}`, color: 'var(--sys-brand)' },
+    { label: 'Equity at exit', value: $m(R.exitEq), sub: `after ${$m(R.exitND)} debt`, color: 'var(--sys-violet)' },
+    { label: 'MOIC (money multiple)', value: R.moic == null ? 'n/m' : xm(R.moic, 2), sub: `on ${$m(R.totalEq)} equity`, color: COLOR },
+    { label: 'IRR (annual return)', value: R.irr == null ? 'n/m' : pc(R.irr), sub: R.irr == null ? 'equity negative' : R.irr >= hurdle ? 'above 20% target' : 'below 20% target', color: R.irr != null && R.irr >= hurdle ? 'var(--sys-good)' : 'var(--sys-bad)' },
   ]);
   const ROWS = [['Revenue, before add-ons', 'rev'], ['EBITDA, including add-ons', 'ebitda'], ['EBITDA margin, before add-ons', 'mgn', 'p'], ['Add-on spend', 'buy'], ['Interest', 'int'], ['Cash to repay debt', 'cash'], ['Net debt, end of year', 'nd'], ['Net debt / EBITDA', 'lev', 'x'], ['Equity cash flow', 'cf']];
   const val = (q, y, f) => q === 'lev' ? (R.ebitda[y] > 0 ? xm(R.nd[y] / R.ebitda[y]) : 'n/m') : f === 'p' ? pc(R.mgn[y]) : cellNum(R[q][y]);
-  const table = `<div class="sys-table-wrap"><table class="sys-table dm-yt"><caption class="sys-sr">Year by year, $M</caption><thead>${yearHead(N)}<tr class="dm-st"><th scope="row"></th>${[...Array(N + 1).keys()].map(y => `<td class="sys-n">${status(y)}</td>`).join('')}</tr></thead><tbody>${ROWS.map(([l, q, f]) => `<tr${q === 'cf' || q === 'ebitda' ? ' class="dm-strong"' : ''}><th scope="row">${esc(l)}</th>${[...Array(N + 1).keys()].map(y => `<td class="sys-n">${val(q, y, f)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-  const su = `<div class="sys-table-wrap"><table class="sys-table dm-su"><caption class="sys-sr">Sources and uses at entry, $M</caption><tbody>
-    <tr class="dm-sec2"><th scope="rowgroup" colspan="2">Uses: what the money pays for</th></tr>
+  const table = `<div class="sys-table-wrap"><table class="sys-table dm-yt" aria-label="Year by year, $M"><thead>${yearHead(N)}<tr class="dm-st"><th scope="row"></th>${[...Array(N + 1).keys()].map(y => `<td class="sys-n">${status(y)}</td>`).join('')}</tr></thead><tbody>${ROWS.map(([l, q, f]) => `<tr${q === 'cf' || q === 'ebitda' ? ' class="dm-strong"' : ''}><th scope="row">${esc(l)}</th>${[...Array(N + 1).keys()].map(y => `<td class="sys-n">${val(q, y, f)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  const su = `<div class="sys-table-wrap"><table class="sys-table dm-su" aria-label="Sources and uses at entry, $M"><tbody>
+    <tr class="dm-sec2"><th scope="rowgroup" colspan="2">Uses</th></tr>
     <tr><th scope="row">Purchase price</th><td class="sys-n">${cellNum(R.ev0)}</td></tr>
     <tr><th scope="row">Deal fees</th><td class="sys-n">${cellNum(R.fees)}</td></tr>
     <tr class="dm-strong"><th scope="row">Total uses</th><td class="sys-n">${cellNum(R.ev0 + R.fees)}</td></tr>
-    <tr class="dm-sec2"><th scope="rowgroup" colspan="2">Sources: where the money comes from</th></tr>
+    <tr class="dm-sec2"><th scope="rowgroup" colspan="2">Sources</th></tr>
     <tr><th scope="row">Debt (${xm(p.lev)} EBITDA)</th><td class="sys-n">${cellNum(R.debt0)}</td></tr>
     <tr><th scope="row">Equity from the fund</th><td class="sys-n">${cellNum(R.eq0)}</td></tr>
     <tr class="dm-strong"><th scope="row">Total sources</th><td class="sys-n">${cellNum(R.debt0 + R.eq0)}</td></tr></tbody></table></div>
-    <p class="sys-src">Add-ons later in the hold cost ${$m(R.addSpend)}: ${pc(p.ad / 100, 0)} borrowed, the rest (${$m(R.addEq)}) new equity.</p>`;
+    <p class="sys-muted small">Add-ons ${$m(R.addSpend)}: ${pc(p.ad / 100, 0)} debt, ${$m(R.addEq)} equity.</p>`;
   const bridge = bars(ctx, R.bridge, { total: R.gain, totalLabel: 'Equity gain' });
   // multiple expansion is an explicit, optional line: the headline sells at the input exit multiple
   const gap = r4(p.xm - p.em);
   const alt = gap === 0 ? L.lbo({ ...p, xm: p.em + 2 }) : L.lbo({ ...p, xm: p.em });
-  const altTxt = (R2, x) => `IRR ${R2.irr == null ? 'n/m' : pc(R2.irr)} and MOIC ${R2.moic == null ? 'n/m' : xm(R2.moic, 2)} at a ${xm(x)} sale`;
-  const expNote = `<p class="sys-src dm-exp">${gap === 0 ? `<b>No multiple expansion assumed:</b> the company sells at the ${xm(p.em)} it was bought for. With +2.0x expansion: ${altTxt(alt, p.em + 2)}.` : `<b>Includes ${gap > 0 ? '+' : MINUS}${xm(Math.abs(gap))} of multiple ${gap > 0 ? 'expansion' : 'contraction'}.</b> Selling at the ${xm(p.em)} entry multiple instead: ${altTxt(alt, p.em)}.`}</p>`;
-  out.innerHTML = kp + expNote + ui.panel({ title: 'Year by year', sub: `${$m(p.rev)} of revenue growing ${nf(p.gr, 1)}% a year, ${p.ae > 0 ? `${$m(p.ae)} of add-on EBITDA bought each year to year ${N - 1}` : 'no add-ons'}. Figures in $M.`, body: table, cls: 'mt-12' }) +
-    ui.panel({ title: 'Financing terms', sub: 'Each term of the purchase, next to the market figure it was set from', body: financingHtml(ctx, p, R), cls: 'mt-12' }) +
-    `<div class="grid grid-2 mt-12">${ui.panel({ title: 'Sources and uses', sub: 'How the purchase is paid for', body: su })}${ui.panel({ title: 'Where the return comes from', sub: 'The equity gain, split into its drivers', body: bridge })}</div>`;
+  const altTxt = (R2, x) => `IRR ${R2.irr == null ? 'n/m' : pc(R2.irr)}, MOIC ${R2.moic == null ? 'n/m' : xm(R2.moic, 2)} at ${xm(x)}`;
+  const expNote = `<p class="sys-src dm-exp">${gap === 0 ? `<b>Flat multiple.</b> At +2.0x: ${altTxt(alt, p.em + 2)}.` : `<b>${gap > 0 ? '+' : MINUS}${xm(Math.abs(gap))} ${gap > 0 ? 'expansion' : 'contraction'}.</b> At entry multiple: ${altTxt(alt, p.em)}.`}</p>`;
+  out.innerHTML = kp + expNote + ui.panel({ title: 'Year by year', body: table, cls: 'mt-12' }) +
+    ui.panel({ title: 'Financing terms', body: financingHtml(ctx, p, R), cls: 'mt-12' }) +
+    `<div class="grid grid-2 mt-12">${ui.panel({ title: 'Sources and uses', body: su })}${ui.panel({ title: 'Where the return comes from', body: bridge })}</div>`;
 }
 /* Financing terms: every input behind the purchase, what it comes to in dollars, and its market benchmark with a link.
    Rows with no market source are labelled as analyst assumptions; the last rows are credit checks derived from the model. */
@@ -355,48 +360,48 @@ function financingHtml(ctx, p, R) {
   const { esc } = ctx; const N = R.N;
   const link = id => { const s = SRC[id]; return s ? (s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(srcShort(id))}</a>` : esc(srcShort(id))) : ''; };
   const srcOnce = ids => { const seen = new Set(); return ids.filter(id => { const k = srcShort(id); if (seen.has(k)) return false; seen.add(k); return true; }); };
-  const market = k => { const m = mkt(k); if (!m) return ['—', '']; if (m.assumed) return [`<b>No market source.</b> <span class="dm-gloss dm-inl">Analyst assumption: ${esc(m.assumed)}</span>`, '']; return [m.bs.map(b => `${bval(b)} <span class="dm-gloss dm-inl">${esc(MKT_WORDS[b.id] || b.metric)}</span>`).join('<br>'), srcOnce(m.bs.map(b => b.source_ids[0])).map(link).join(', ')]; };
+  const market = k => { const m = mkt(k); if (!m) return ['—', '']; if (m.assumed) return ['Assumption', '']; return [m.bs.map(b => `${bval(b)} <span class="dm-gloss dm-inl">${esc(MKT_WORDS[b.id] || b.metric)}</span>`).join('<br>'), srcOnce(m.bs.map(b => b.source_ids[0])).map(link).join(', ')]; };
   const eqShare = R.ev0 + R.fees > 0 ? R.eq0 / (R.ev0 + R.fees) : null;
   const gulf = bench('b-lev-2025'), eqMkt = String(gulf?.note || '').match(/equity\s+([\d.]+)%/i);
   const row = (term, deal, [mk, src], cls = '') => `<tr${cls ? ` class="${cls}"` : ''}><th scope="row">${esc(term)}</th><td class="sys-n dm-fdeal">${deal}</td><td class="dm-fmkt">${mk}</td><td class="dm-fsrc">${src ? `<span class="dm-fsrc-l">Source: </span>${src}` : ''}</td></tr>`;
   const cover = R.int[1] > 0 ? R.ebitda[1] / R.int[1] : null;
   const exitLev = R.ebitda[N] > 0 ? R.nd[N] / R.ebitda[N] : null;
-  return `<div class="sys-table-wrap"><table class="sys-table dm-fin"><caption class="sys-sr">Financing terms with market benchmarks</caption><colgroup><col class="dm-c1"><col class="dm-c2"><col class="dm-c3"><col class="dm-c4"></colgroup><thead><tr><th scope="col">Term</th><th scope="col" class="sys-n">This deal</th><th scope="col">Market</th><th scope="col">Source</th></tr></thead><tbody>
+  return `<div class="sys-table-wrap"><table class="sys-table dm-fin" aria-label="Financing terms with market benchmarks"><colgroup><col class="dm-c1"><col class="dm-c2"><col class="dm-c3"><col class="dm-c4"></colgroup><thead><tr><th scope="col">Term</th><th scope="col" class="sys-n">This deal</th><th scope="col">Market</th><th scope="col">Source</th></tr></thead><tbody>
     ${row('Purchase price', `${xm(p.em)} EBITDA<br><b>${$m(R.ev0)}</b>`, market('em'))}
     ${row('Debt at entry', `${xm(p.lev)} EBITDA<br><b>${$m(R.debt0)}</b>`, market('lev'))}
     ${row('Interest rate', `${nf(p.ir, 2)}% a year<br><b>${$m(R.int[1])}</b> in year 1`, market('ir'))}
-    ${row('Equity check', `${eqShare == null ? 'n/m' : pc(eqShare, 0)} of the cost<br><b>${$m(R.eq0)}</b>`, eqMkt ? [`${nf(+eqMkt[1], 1)}% <span class="dm-gloss dm-inl">equity share of capital, first half 2025</span>`, link(gulf.source_ids[0])] : ['—', ''])}
+    ${row('Equity check', `${eqShare == null ? 'n/m' : pc(eqShare, 0)} of the cost<br><b>${$m(R.eq0)}</b>`, eqMkt ? [`${nf(+eqMkt[1], 1)}% <span class="dm-gloss dm-inl">equity, first half 2025</span>`, link(gulf.source_ids[0])] : ['—', ''])}
     ${row('Deal fees', `${nf(p.fee, 1)}% of price<br><b>${$m(R.fees)}</b>`, market('fee'))}
     ${row('Add-ons paid with debt', `${nf(p.ad, 0)}% of each price`, market('ad'))}
     ${row('Debt repayment', `${nf(p.cc, 0)}% of EBITDA, less interest`, market('cc'))}
-    ${row('Interest cover, year 1', cover == null ? 'n/m' : xm(cover), ['EBITDA divided by interest', 'From the model'], 'dm-derived')}
-    ${row(`Net debt / EBITDA, year ${N}`, exitLev == null ? 'n/m' : xm(exitLev), ['Leverage left at the sale', 'From the model'], 'dm-derived')}
-  </tbody></table></div>
-  <p class="sys-src">One debt layer, repaid from cash each year. Seller notes and earn-outs are not modelled: the full price is paid at closing with the debt and equity above.</p>`;
+    ${row('Interest cover, year 1', cover == null ? 'n/m' : xm(cover), ['EBITDA ÷ interest', 'Model'], 'dm-derived')}
+    ${row(`Net debt / EBITDA, year ${N}`, exitLev == null ? 'n/m' : xm(exitLev), ['Left at the sale', 'Model'], 'dm-derived')}
+  </tbody></table></div>`;
 }
 
 /* ── DCF ────────────────────────────────────────────────────────────────── */
 function drawDcf(ctx, out) {
   const { ui, esc } = ctx; const p = S.vals; const D = L.dcf(p); const F = L.football(p, { gf: SRC['gf-h1-2025'], cap: SRC['capstone-2026'] });
   const kp = ui.kpis([
-    { label: 'Value: long-run growth', value: D.evG == null ? 'n/m' : $m(D.evG), sub: D.evMultG == null ? 'discount rate must beat growth' : `${xm(D.evMultG)} today's EBITDA`, color: COLOR },
-    { label: 'Value: year-5 sale', value: $m(D.evM), sub: `${xm(D.evMultM)} today's EBITDA`, color: 'var(--sys-info)' },
-    { label: 'Share value, growth method', value: D.eqG == null ? 'n/m' : $m(D.eqG), sub: `after ${$m(p.nd)} of net debt`, color: 'var(--sys-violet)' },
-    { label: 'Value after year 5', value: D.tvShare == null ? 'n/m' : pc(D.tvShare, 0), sub: 'of the growth-method value', color: 'var(--sys-brand)' },
+    { label: 'Value: long-run growth', value: D.evG == null ? 'n/m' : $m(D.evG), sub: D.evMultG == null ? 'needs rate above growth' : `${xm(D.evMultG)} EBITDA`, color: COLOR },
+    { label: 'Value: year-5 sale', value: $m(D.evM), sub: `${xm(D.evMultM)} EBITDA`, color: 'var(--sys-info)' },
+    { label: 'Share value, growth method', value: D.eqG == null ? 'n/m' : $m(D.eqG), sub: `after ${$m(p.nd)} debt`, color: 'var(--sys-violet)' },
+    { label: 'Value after year 5', value: D.tvShare == null ? 'n/m' : pc(D.tvShare, 0), sub: 'of growth-method value', color: 'var(--sys-brand)' },
   ]);
+  XM.push('Bars show each range; the tick marks the base case.', ...F.rows.map(r => `<b>${esc(r.label)}.</b> ${esc(r.sub)}`));
   const Y = L.DCF_YEARS;
   const ROWS = [['Revenue', 'rev'], ['EBITDA', 'ebitda'], ['Depreciation', 'da'], ['Operating profit', 'ebit'], ['Tax', 'tax', -1], ['Capital spending', 'capex', -1], ['More working capital', 'dnwc', -1], ['Free cash flow', 'fcf'], ['Discount factor', 'df', 0, 'd'], ['Value today', 'pv']];
   const cell = (q, y, sg, f) => f === 'd' ? nf(D.df[y], 3) : (y === 0 && /fcf|pv|dnwc/.test(q)) ? '' : cellNum((sg ? -1 : 1) * D[q][y]);
-  const table = `<div class="sys-table-wrap"><table class="sys-table dm-yt"><caption class="sys-sr">Free cash flow forecast, $M</caption><thead>${yearHead(Y)}</thead><tbody>${ROWS.map(([l, q, sg, f]) => `<tr${q === 'fcf' || q === 'pv' ? ' class="dm-strong"' : ''}><th scope="row">${esc(l)}</th>${[...Array(Y + 1).keys()].map(y => `<td class="sys-n">${cell(q, y, sg, f)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-  const br = `<div class="sys-table-wrap"><table class="sys-table dm-su"><caption class="sys-sr">From enterprise value to share value, $M</caption><thead><tr><th scope="col">$M</th><th scope="col" class="sys-n">Long-run growth</th><th scope="col" class="sys-n">Year-5 sale</th></tr></thead><tbody>
+  const table = `<div class="sys-table-wrap"><table class="sys-table dm-yt" aria-label="Free cash flow forecast, $M"><thead>${yearHead(Y)}</thead><tbody>${ROWS.map(([l, q, sg, f]) => `<tr${q === 'fcf' || q === 'pv' ? ' class="dm-strong"' : ''}><th scope="row">${esc(l)}</th>${[...Array(Y + 1).keys()].map(y => `<td class="sys-n">${cell(q, y, sg, f)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  const br = `<div class="sys-table-wrap"><table class="sys-table dm-su" aria-label="From enterprise value to share value, $M"><thead><tr><th scope="col">$M</th><th scope="col" class="sys-n">Long-run growth</th><th scope="col" class="sys-n">Year-5 sale</th></tr></thead><tbody>
     <tr><th scope="row">Years 1 to 5, today's value</th><td class="sys-n">${cellNum(D.sumPV)}</td><td class="sys-n">${cellNum(D.sumPV)}</td></tr>
     <tr><th scope="row">Later years, today's value</th><td class="sys-n">${D.pvTvG == null ? 'n/m' : cellNum(D.pvTvG)}</td><td class="sys-n">${cellNum(D.pvTvM)}</td></tr>
     <tr class="dm-strong"><th scope="row">Enterprise value</th><td class="sys-n">${D.evG == null ? 'n/m' : cellNum(D.evG)}</td><td class="sys-n">${cellNum(D.evM)}</td></tr>
     <tr><th scope="row">Less net debt</th><td class="sys-n">${cellNum(-p.nd)}</td><td class="sys-n">${cellNum(-p.nd)}</td></tr>
     <tr class="dm-strong"><th scope="row">Value of the shares</th><td class="sys-n">${D.eqG == null ? 'n/m' : cellNum(D.eqG)}</td><td class="sys-n">${cellNum(D.eqM)}</td></tr></tbody></table></div>
-    <p class="sys-src">Cross-check: the growth method implies a ${D.impliedMult == null ? 'n/m' : xm(D.impliedMult)} year-5 sale multiple; the ${xm(p.tm)} sale multiple implies ${D.impliedG == null ? 'n/m' : pc(D.impliedG)} growth forever.</p>`;
-  out.innerHTML = kp + ui.panel({ title: 'Valuation range', sub: 'Enterprise value by method, $M. The line marks the price in the returns model.', body: footballHtml(ctx, F), cls: 'mt-12' }) +
-    ui.panel({ title: 'Free cash flow', sub: 'Figures in $M; costs shown as negatives', body: table, cls: 'mt-12' }) + ui.panel({ title: 'From company value to share value', sub: 'Both methods, side by side', body: br, cls: 'mt-12' });
+    <p class="sys-muted small">Growth method implies a ${D.impliedMult == null ? 'n/m' : xm(D.impliedMult)} sale; the ${xm(p.tm)} sale implies ${D.impliedG == null ? 'n/m' : pc(D.impliedG)} growth.</p>`;
+  out.innerHTML = kp + ui.panel({ title: 'Valuation range', body: footballHtml(ctx, F), cls: 'mt-12' }) +
+    ui.panel({ title: 'Free cash flow', body: table, cls: 'mt-12' }) + ui.panel({ title: 'From company value to share value', body: br, cls: 'mt-12' });
 }
 function footballHtml(ctx, F) {
   const { esc } = ctx; const rows = F.rows; if (!rows.length) return ctx.ui.note('EBITDA must be positive to compare valuation methods.', 'warn');
@@ -404,34 +409,34 @@ function footballHtml(ctx, F) {
   const pad = (hi - lo) * 0.06 || 1, a = Math.max(0, lo - pad), b = hi + pad, pos = v => ((v - a) / (b - a) * 100).toFixed(2);
   const ticks = (() => { const span = b - a, raw = span / 4, mag = Math.pow(10, Math.floor(Math.log10(raw))), step = [1, 2, 2.5, 5, 10].map(s => s * mag).find(s => s >= raw) || raw; const t = []; for (let v = Math.ceil(a / step) * step; v <= b; v += step) t.push(v); return t; })();
   return `<div class="dm-ff" role="img" aria-label="Valuation range by method; purchase price ${esc($m(F.price))}">
-    ${rows.map(r => `<div class="dm-ff-row"><div class="dm-ff-l"><span>${esc(r.label)}</span><span class="dm-gloss">${esc(r.sub)}${r.src?.url ? ` <a href="${esc(r.src.url)}" target="_blank" rel="noopener">source</a>` : ''}</span></div>
+    ${rows.map(r => `<div class="dm-ff-row"><div class="dm-ff-l"><span>${esc(r.label)}</span>${r.src?.url ? `<span class="dm-gloss"><a href="${esc(r.src.url)}" target="_blank" rel="noopener">source</a></span>` : ''}</div>
       <div class="dm-ff-t"><i style="left:${pos(r.lo)}%;width:${Math.max(0.6, pos(r.hi) - pos(r.lo))}%"></i>${r.mid != null ? `<b style="left:${pos(r.mid)}%" aria-hidden="true"></b>` : ''}<span class="dm-ff-p" style="left:${pos(F.price)}%"></span></div>
       <div class="dm-ff-v sys-num">${$m(r.lo, 0)}–${$m(r.hi, 0)}${r.mult ? `<span class="dm-gloss">${xm(r.mult[0])} to ${xm(r.mult[1])}</span>` : ''}</div></div>`).join('')}
     <div class="dm-ff-row dm-ff-axis"><div></div><div class="dm-ff-t">${ticks.map(t => `<span style="left:${pos(t)}%">${$m(t, 0)}</span>`).join('')}</div><div></div></div>
-    <p class="sys-src dm-ff-key"><span class="dm-ff-sw"></span>Range <span class="dm-ff-sw dm-ff-sw--mid"></span>Base case <span class="dm-ff-sw dm-ff-sw--p"></span>Price in the returns model: ${esc($m(F.price))} (${xm(S.vals.em)})</p></div>`;
+    <p class="sys-src dm-ff-key"><span class="dm-ff-sw dm-ff-sw--p"></span>Price ${esc($m(F.price))} (${xm(S.vals.em)})</p></div>`;
 }
 
 /* ── Roll-up ────────────────────────────────────────────────────────────── */
 function drawRollup(ctx, out) {
   const { ui, esc, el } = ctx; const p = S.vals; const U = L.rollup(p);
   const kp = ui.kpis([
-    { label: 'Blended multiple paid', value: xm(U.blended), sub: `versus ${xm(p.rx)} at exit`, color: COLOR },
+    { label: 'Blended multiple paid', value: xm(U.blended), sub: `vs ${xm(p.rx)} at exit`, color: COLOR },
     { label: 'Total cost', value: $m(U.cost), sub: `company plus ${U.n} add-on${U.n === 1 ? '' : 's'}`, color: 'var(--sys-info)' },
-    { label: 'Exit value', value: $m(U.exitEV), sub: `${$m(U.exitE)} EBITDA in year ${Math.round(p.yrs)}`, color: 'var(--sys-brand)' },
-    { label: 'Value created', value: $m(U.created), sub: U.onCost == null ? '' : `${xm(U.onCost, 2)} the total cost`, color: U.created >= 0 ? 'var(--sys-good)' : 'var(--sys-bad)' },
+    { label: 'Exit value', value: $m(U.exitEV), sub: `${$m(U.exitE)} EBITDA, year ${Math.round(p.yrs)}`, color: 'var(--sys-brand)' },
+    { label: 'Value created', value: $m(U.created), sub: U.onCost == null ? '' : `${xm(U.onCost, 2)} cost`, color: U.created >= 0 ? 'var(--sys-good)' : 'var(--sys-bad)' },
   ]);
-  const steps = `<div class="sys-table-wrap"><table class="sys-table dm-yt"><caption class="sys-sr">Blended multiple after each add-on</caption><thead><tr><th scope="col">Add-ons bought</th><th scope="col" class="sys-n">EBITDA ($M)</th><th scope="col" class="sys-n">Total paid ($M)</th><th scope="col" class="sys-n">Blended multiple</th></tr></thead><tbody>${U.steps.map(s => `<tr><th scope="row">${s.k === 0 ? 'Company alone' : s.k}</th><td class="sys-n">${cellNum(s.ebitda)}</td><td class="sys-n">${cellNum(s.paid)}</td><td class="sys-n">${xm(s.blended, 2)}</td></tr>`).join('')}</tbody></table></div>`;
+  const steps = `<div class="sys-table-wrap"><table class="sys-table dm-yt" aria-label="Blended multiple after each add-on"><thead><tr><th scope="col">Add-ons bought</th><th scope="col" class="sys-n">EBITDA ($M)</th><th scope="col" class="sys-n">Total paid ($M)</th><th scope="col" class="sys-n">Blended multiple</th></tr></thead><tbody>${U.steps.map(s => `<tr><th scope="row">${s.k === 0 ? 'Company alone' : s.k}</th><td class="sys-n">${cellNum(s.ebitda)}</td><td class="sys-n">${cellNum(s.paid)}</td><td class="sys-n">${xm(s.blended, 2)}</td></tr>`).join('')}</tbody></table></div>`;
   const co = preset().co, P = preset(), parentP = P.parent ? BYID.get(P.parent) : (co ? P : null), tco = parentP?.co;
   const pool = tco ? (TARGETS[tco] || []) : [];
   let targ = '';
   if (pool.length) {
     const top = pool.slice(0, 5), med = (a => { const s = a.slice().sort((x, y) => x - y), m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; })(top.map(t => t.ebitda));
-    targ = ui.panel({ title: `Screened add-ons for ${esc(parentP.label)}`, sub: `Top five by fit score. EBITDA assumes a ${top[0].margin}% margin.`, cls: 'mt-12',
+    targ = ui.panel({ title: `Screened add-ons for ${esc(parentP.label)}`, sub: `Top 5 by fit, ${top[0].margin}% margin`, cls: 'mt-12',
       actions: `<button type="button" class="${ui.btnCls('secondary', 'sm')}" id="dm-use-targets" data-v="${med.toFixed(2)}">Use their median size</button>`,
-      body: `<div class="sys-table-wrap"><table class="sys-table dm-yt"><caption class="sys-sr">Top screened add-on targets</caption><thead><tr><th scope="col">Company</th><th scope="col" class="sys-n">Fit</th><th scope="col" class="sys-n">Revenue</th><th scope="col" class="sys-n">EBITDA</th></tr></thead><tbody>${top.map(t => `<tr><th scope="row">${esc(clip(t.name, 44))}${t.state ? ` <span class="dm-gloss dm-inl">${esc(t.state)}</span>` : ''}</th><td class="sys-n">${t.fit ?? '—'}</td><td class="sys-n">${$m(t.rev, 1)} <span class="sys-est">est.</span></td><td class="sys-n">${$m(t.ebitda, 1)} <span class="sys-est">est.</span></td></tr>`).join('')}</tbody></table></div>
-      <p class="sys-src">Median EBITDA ${$m(med)}. ${CO_ROUTE[tco] ? `<a href="#/${CO_ROUTE[tco]}/targets">See all ${pool.length} screened targets</a>` : ''}</p>` });
+      body: `<div class="sys-table-wrap"><table class="sys-table dm-yt" aria-label="Top screened add-on targets"><thead><tr><th scope="col">Company</th><th scope="col" class="sys-n">Fit</th><th scope="col" class="sys-n">Revenue</th><th scope="col" class="sys-n">EBITDA</th></tr></thead><tbody>${top.map(t => `<tr><th scope="row">${esc(clip(t.name, 44))}${t.state ? ` <span class="dm-gloss dm-inl">${esc(t.state)}</span>` : ''}</th><td class="sys-n">${t.fit ?? '—'}</td><td class="sys-n">${$m(t.rev, 1)} <span class="sys-est">est.</span></td><td class="sys-n">${$m(t.ebitda, 1)} <span class="sys-est">est.</span></td></tr>`).join('')}</tbody></table></div>
+      <p class="sys-muted small">Median EBITDA ${$m(med)}. ${CO_ROUTE[tco] ? `<a href="#/${CO_ROUTE[tco]}/targets">See all ${pool.length} screened targets</a>` : ''}</p>` });
   }
-  out.innerHTML = kp + ui.panel({ title: 'Where the value comes from', sub: `Value created, split into its sources. The company alone would create ${$m(U.alone)}.`, body: bars(ctx, U.parts, { total: U.created, totalLabel: 'Value created' }), cls: 'mt-12' }) + ui.panel({ title: 'Add-on by add-on', sub: 'Each cheaper add-on pulls the blended multiple down', body: steps, cls: 'mt-12' }) + targ;
+  out.innerHTML = kp + ui.panel({ title: 'Where the value comes from', sub: `Company alone ${$m(U.alone)}`, body: bars(ctx, U.parts, { total: U.created, totalLabel: 'Value created' }), cls: 'mt-12' }) + ui.panel({ title: 'Add-on by add-on', body: steps, cls: 'mt-12' }) + targ;
   const b = out.querySelector('#dm-use-targets');
   if (b) b.onclick = () => { S.vals.ra = Math.round(+b.dataset.v * 100) / 100; const inp = el.querySelector('#dm-in-ra'); if (inp) inp.value = trim(S.vals.ra); const f = el.querySelector('tr[data-k="ra"] .dm-f'); if (f) f.innerHTML = ''; drawRollup(ctx, out); syncHash(ctx); ctx.ui.toast(`EBITDA per add-on set to ${$m(S.vals.ra)}`); };
 }
@@ -440,7 +445,7 @@ function drawRollup(ctx, out) {
 function heat(ctx, spec, tab, fmtCell, hurdle, span, axisFmt, colFmt = axisFmt) {
   const { esc } = ctx;
   const tint = v => { if (!fin(v)) return ''; const t = Math.max(-1, Math.min(1, (v - hurdle) / span)); const pct = Math.round(10 + Math.abs(t) * 34); return `--dm-h:color-mix(in srgb,var(${t >= 0 ? '--sys-good' : '--sys-bad'}) ${pct}%,var(--sys-surface))`; };
-  return `<div class="sys-table-wrap"><table class="sys-table dm-heat"><caption class="sys-sr">${esc(spec.rowLabel)} down, ${esc(spec.colLabel)} across</caption>
+  return `<div class="sys-table-wrap"><table class="sys-table dm-heat" aria-label="${esc(spec.rowLabel)} down, ${esc(spec.colLabel)} across">
     <thead><tr><th scope="col" class="dm-corner"><span>${esc(spec.rowLabel)} ↓</span><span>${esc(spec.colLabel)} →</span></th>${tab.cols.map((c, j) => `<th scope="col" class="sys-n${j === 2 ? ' dm-base-h' : ''}">${colFmt(c)}</th>`).join('')}</tr></thead>
     <tbody>${tab.rows.map((r, i) => `<tr><th scope="row" class="sys-n${i === 2 ? ' dm-base-h' : ''}">${axisFmt(r)}</th>${tab.cells[i].map((c, j) => `<td class="sys-n${i === 2 && j === 2 ? ' dm-base' : ''}" style="${tint(c.v)}">${fmtCell(c.v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
@@ -450,12 +455,11 @@ function drawSens(ctx, out) {
   const base = L.lbo(p);
   const kp = ui.kpis([
     { label: 'IRR (annual return), base', value: base.irr == null ? 'n/m' : pc(base.irr), sub: `${xm(p.em)} in, ${xm(p.xm)} out`, color: COLOR },
-    { label: 'MOIC (money multiple), base', value: base.moic == null ? 'n/m' : xm(base.moic, 2), sub: `${nf(p.gr, 1)}% growth, ${Math.abs(p.dm) < 1e-9 ? 'flat margin' : `${p.dm > 0 ? '+' : MINUS}${nf(Math.abs(p.dm), 1)} pts margin a year`}`, color: 'var(--sys-info)' },
-    { label: 'Most you can pay for 20%', value: (() => { const e = L.solveEntry(p, h.irr_pct / 100); return e == null ? 'n/m' : xm(e); })(), sub: 'entry multiple, all else equal', color: 'var(--sys-brand)' },
+    { label: 'MOIC (money multiple), base', value: base.moic == null ? 'n/m' : xm(base.moic, 2), sub: `${nf(p.gr, 1)}% growth, ${Math.abs(p.dm) < 1e-9 ? 'flat margin' : `${p.dm > 0 ? '+' : MINUS}${nf(Math.abs(p.dm), 1)} pts`}`, color: 'var(--sys-info)' },
+    { label: 'Most you can pay for 20%', value: (() => { const e = L.solveEntry(p, h.irr_pct / 100); return e == null ? 'n/m' : xm(e); })(), sub: 'entry multiple', color: 'var(--sys-brand)' },
   ]);
-  out.innerHTML = kp + ui.panel({ title: 'Annual return by price paid and sale multiple', sub: 'IRR (annual return). Rows: entry multiple. Columns: exit multiple.', cls: 'mt-12', body: heat(ctx, L.SENS.irr, t1, v => v == null ? 'n/m' : pc(v, 0), h.irr_pct / 100, 0.15, v => xm(v)) }) +
-    ui.panel({ title: 'Money multiple by growth and margin gain', sub: 'MOIC (money multiple). Rows: revenue growth a year. Columns: EBITDA margin gain a year.', cls: 'mt-12', body: heat(ctx, L.SENS.moic, t2, v => v == null ? 'n/m' : xm(v, 1), h.moic_x, 1.5, v => `${nf(v, 1)}%`, v => Math.abs(v) < 1e-9 ? '0.0 pts' : `${v > 0 ? '+' : MINUS}${nf(Math.abs(v), 1)} pts`) }) + `
-  <p class="sys-src dm-legend"><span class="dm-sw dm-sw--bad"></span>Below a 20% return or 2.5x <span class="dm-sw dm-sw--good"></span>Above it <span class="dm-sw dm-sw--base"></span>Current model. Multiples move 1x per step, growth 2 points, margin gain half a point.</p>`;
+  out.innerHTML = kp + ui.panel({ title: 'Annual return by price paid and sale multiple', cls: 'mt-12', body: heat(ctx, L.SENS.irr, t1, v => v == null ? 'n/m' : pc(v, 0), h.irr_pct / 100, 0.15, v => xm(v)) }) +
+    ui.panel({ title: 'Money multiple by growth and margin gain', cls: 'mt-12', body: heat(ctx, L.SENS.moic, t2, v => v == null ? 'n/m' : xm(v, 1), h.moic_x, 1.5, v => `${nf(v, 1)}%`, v => Math.abs(v) < 1e-9 ? '0.0 pts' : `${v > 0 ? '+' : MINUS}${nf(Math.abs(v), 1)} pts`) });
 }
 
 /* ── module ─────────────────────────────────────────────────────────────── */

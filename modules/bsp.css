@@ -40,6 +40,7 @@
 .m-bsp .bsp-path{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sys-sp-1);font-size:var(--sys-fs-xs)}
 .m-bsp .bsp-path span{padding:3px 9px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-pill);background:var(--sys-surface);color:var(--sys-ink-2);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .m-bsp .bsp-path i{font-style:normal;color:var(--sys-mute-2)}
+.m-bsp .bsp-path i::before{content:'→'}
 
 /* pattern cards: .sys-card.sys-card--flat in a grid; evidence = .sys-chip--soft buttons */
 .m-bsp .bsp-pats{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}

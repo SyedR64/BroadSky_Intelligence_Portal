@@ -1,0 +1,1368 @@
+{
+ "title": "Connections",
+ "as_of": "2026-11-23",
+ "states": {
+  "live": "Live",
+  "sandbox": "Sandbox",
+  "available": "Connector available",
+  "planned": "Planned"
+ },
+ "marks": {
+  "in_use": "In use (public source)",
+  "franchisor": "Franchisor's system",
+  "supports_clients": "Supports for clients",
+  "industry_standard": "Standard in the industry"
+ },
+ "sources": [
+  {
+   "id": "dealcloud_mcp",
+   "title": "DealCloud MCP server tools",
+   "url": "https://api.docs.dealcloud.com/mcp/tools",
+   "publisher": "Intapp"
+  },
+  {
+   "id": "affinity_mcp",
+   "title": "Getting started with Affinity MCP",
+   "url": "https://support.affinity.co/s/article/Getting-started-with-Affinity-MCP",
+   "publisher": "Affinity"
+  },
+  {
+   "id": "pitchbook_connector",
+   "title": "PitchBook connector",
+   "url": "https://claude.com/marketplace/connectors/pitchbook",
+   "publisher": "Anthropic connector directory"
+  },
+  {
+   "id": "grata_mcp",
+   "title": "May I present: the Grata MCP",
+   "url": "https://grata.com/newsletter/may-i-present-the-grata-mcp",
+   "publisher": "Grata"
+  },
+  {
+   "id": "datasite_mcp",
+   "title": "Datasite MCP",
+   "url": "https://www.datasite.com/en/resources/ai-at-datasite/datasite-mcp",
+   "publisher": "Datasite"
+  },
+  {
+   "id": "intralinks_connector",
+   "title": "Intralinks DealCentre AI connector",
+   "url": "https://claude.com/marketplace/connectors/intralinks-dealcentre-ai",
+   "publisher": "Anthropic connector directory"
+  },
+  {
+   "id": "chronograph_mcp",
+   "title": "Chronograph MCP connectors",
+   "url": "https://www.chronograph.pe/mcp-connectors/",
+   "publisher": "Chronograph"
+  },
+  {
+   "id": "juniper_headless",
+   "title": "Juniper Square headless GPX",
+   "url": "https://www.junipersquare.com/gpx/headless",
+   "publisher": "Juniper Square"
+  },
+  {
+   "id": "hebbia_connector",
+   "title": "Hebbia connector",
+   "url": "https://claude.com/marketplace/connectors/hebbia",
+   "publisher": "Anthropic connector directory"
+  },
+  {
+   "id": "alphasense_mcp",
+   "title": "AlphaSense SuperAnalyst MCP",
+   "url": "https://www.alpha-sense.com/platform/superanalyst-mcp/",
+   "publisher": "AlphaSense"
+  },
+  {
+   "id": "docusign_mcp",
+   "title": "Docusign MCP server general availability",
+   "url": "https://www.docusign.com/blog/docusign-mcp-server-general-availability",
+   "publisher": "Docusign"
+  },
+  {
+   "id": "slack_mcp",
+   "title": "Slack MCP server",
+   "url": "https://docs.slack.dev/ai/mcp-server",
+   "publisher": "Slack"
+  },
+  {
+   "id": "servicetitan_marketplace",
+   "title": "ServiceTitan App Marketplace program guide",
+   "url": "https://www.servicetitan.com/legal/app-marketplace-program-guide",
+   "publisher": "ServiceTitan"
+  },
+  {
+   "id": "callrail_api",
+   "title": "CallRail API documentation",
+   "url": "https://apidocs.callrail.com/",
+   "publisher": "CallRail"
+  },
+  {
+   "id": "intacct_api",
+   "title": "Sage Intacct developer documentation",
+   "url": "https://developer.intacct.com/",
+   "publisher": "Sage"
+  },
+  {
+   "id": "samsara_api",
+   "title": "Samsara developer documentation",
+   "url": "https://developers.samsara.com/",
+   "publisher": "Samsara"
+  },
+  {
+   "id": "procore_api",
+   "title": "Procore developer documentation",
+   "url": "https://developers.procore.com/",
+   "publisher": "Procore"
+  },
+  {
+   "id": "clio_api",
+   "title": "Clio developer documentation",
+   "url": "https://docs.developers.clio.com/",
+   "publisher": "Clio"
+  },
+  {
+   "id": "netsuite_rest",
+   "title": "NetSuite REST web services",
+   "url": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/chapter_1540391670.html",
+   "publisher": "Oracle"
+  },
+  {
+   "id": "salesforce_dev",
+   "title": "Salesforce developer documentation",
+   "url": "https://developer.salesforce.com/",
+   "publisher": "Salesforce"
+  },
+  {
+   "id": "meltwater_dev",
+   "title": "Meltwater developer documentation",
+   "url": "https://developer.meltwater.com/",
+   "publisher": "Meltwater"
+  },
+  {
+   "id": "shopify_api",
+   "title": "Shopify API documentation",
+   "url": "https://shopify.dev/docs/api",
+   "publisher": "Shopify"
+  },
+  {
+   "id": "klaviyo_api",
+   "title": "Klaviyo API overview",
+   "url": "https://developers.klaviyo.com/en/reference/api_overview",
+   "publisher": "Klaviyo"
+  },
+  {
+   "id": "attentive_api",
+   "title": "Attentive API documentation",
+   "url": "https://docs.attentive.com/",
+   "publisher": "Attentive"
+  },
+  {
+   "id": "gorgias_api",
+   "title": "Gorgias developer documentation",
+   "url": "https://developers.gorgias.com/",
+   "publisher": "Gorgias"
+  },
+  {
+   "id": "loop_integrations",
+   "title": "Loop integrations",
+   "url": "https://help.loopreturns.com/category/59-integrations",
+   "publisher": "Loop"
+  },
+  {
+   "id": "nuorder_integrations",
+   "title": "NuORDER integrations",
+   "url": "https://helpdesk.nuorder.com/hc/en-us/categories/200539259-Integrations",
+   "publisher": "NuORDER"
+  },
+  {
+   "id": "servicetitan_authority",
+   "title": "ServiceTitan and Authority Brands partnership, 17 September 2024",
+   "url": "https://www.servicetitan.com/press/servicetitan-partnership-authority-brands",
+   "publisher": "ServiceTitan"
+  },
+  {
+   "id": "frontline_servicenow",
+   "title": "Frontline Legal IT Operations Platform powered by ServiceNow",
+   "url": "https://frontlinems.com/managed-it-services-for-law-firms/servicenow-legal-it-operations",
+   "publisher": "Frontline Managed Services"
+  },
+  {
+   "id": "frontline_imanage",
+   "title": "Frontline managed IT for law firms",
+   "url": "https://frontlinems.com/managed-it-services-for-law-firms/",
+   "publisher": "Frontline Managed Services"
+  },
+  {
+   "id": "frontline_partners",
+   "title": "Frontline home page, strategic partners",
+   "url": "https://frontlinems.com/",
+   "publisher": "Frontline Managed Services"
+  },
+  {
+   "id": "fh_cx_posting",
+   "title": "Fair Harbor Customer Experience Manager posting",
+   "url": "https://builtin.com/job/customer-service-manager/7938308",
+   "publisher": "Built In"
+  },
+  {
+   "id": "fh_wholesale_posting",
+   "title": "Fair Harbor Wholesale Planner posting",
+   "url": "https://www.wayup.com/i-j-Wholesale-Planner-Fair-Harbor-203826578165596/",
+   "publisher": "WayUp"
+  },
+  {
+   "id": "fh_careers",
+   "title": "Fair Harbor careers",
+   "url": "https://fair-harbor.breezy.hr/",
+   "publisher": "Breezy HR"
+  },
+  {
+   "id": "edgar",
+   "title": "SEC EDGAR full-text and company filings",
+   "url": "https://www.sec.gov/edgar/search/",
+   "publisher": "US Securities and Exchange Commission"
+  },
+  {
+   "id": "fred",
+   "title": "FRED economic data",
+   "url": "https://fred.stlouisfed.org/",
+   "publisher": "Federal Reserve Bank of St. Louis"
+  },
+  {
+   "id": "sba_ppp",
+   "title": "Paycheck Protection Program loan data",
+   "url": "https://data.sba.gov/dataset/ppp-foia",
+   "publisher": "US Small Business Administration"
+  },
+  {
+   "id": "nws",
+   "title": "National Weather Service alerts",
+   "url": "https://www.weather.gov/alerts",
+   "publisher": "National Weather Service"
+  },
+  {
+   "id": "open_meteo",
+   "title": "Open-Meteo forecast API",
+   "url": "https://open-meteo.com/",
+   "publisher": "Open-Meteo"
+  },
+  {
+   "id": "realtor_data",
+   "title": "Realtor.com residential data",
+   "url": "https://www.realtor.com/research/data/",
+   "publisher": "Realtor.com"
+  },
+  {
+   "id": "census_bps",
+   "title": "Census Building Permits Survey",
+   "url": "https://www.census.gov/construction/bps/",
+   "publisher": "US Census Bureau"
+  },
+  {
+   "id": "echo",
+   "title": "EPA Enforcement and Compliance History Online",
+   "url": "https://echo.epa.gov/",
+   "publisher": "US Environmental Protection Agency"
+  },
+  {
+   "id": "usaspending",
+   "title": "USAspending award search",
+   "url": "https://www.usaspending.gov/search",
+   "publisher": "US Department of the Treasury"
+  },
+  {
+   "id": "nih_reporter",
+   "title": "NIH RePORTER",
+   "url": "https://reporter.nih.gov/",
+   "publisher": "National Institutes of Health"
+  },
+  {
+   "id": "fiscaldata",
+   "title": "Monthly Treasury Statement",
+   "url": "https://fiscaldata.treasury.gov/datasets/monthly-treasury-statement/receipts-of-the-u-s-government",
+   "publisher": "US Department of the Treasury"
+  },
+  {
+   "id": "federal_register",
+   "title": "Federal Register",
+   "url": "https://www.federalregister.gov/",
+   "publisher": "National Archives"
+  }
+ ],
+ "groups": [
+  {
+   "id": "firm",
+   "name": "Broad Sky",
+   "co": null,
+   "tools": [
+    {
+     "id": "dealcloud",
+     "name": "DealCloud",
+     "category": "Deal CRM",
+     "reads": "Deals, stages and contacts",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "dealcloud_mcp"
+    },
+    {
+     "id": "financials",
+     "name": "Chronograph",
+     "category": "Portfolio monitoring",
+     "reads": "Company results, reporting packs and fund figures",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "chronograph_mcp"
+    },
+    {
+     "id": "email",
+     "name": "Outlook",
+     "category": "Email",
+     "reads": "Inbox threads and replies",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "calendar",
+     "name": "Outlook Calendar",
+     "category": "Calendar",
+     "reads": "Meetings and free time",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "chat",
+     "name": "Slack",
+     "category": "Team chat",
+     "reads": "Channels and threads",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "slack_mcp"
+    },
+    {
+     "id": "drive",
+     "name": "SharePoint",
+     "category": "Documents",
+     "reads": "Shared files and folders",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "adp",
+     "name": "ADP",
+     "category": "Payroll",
+     "reads": "Headcount and payroll totals",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "affinity",
+     "name": "Affinity",
+     "category": "Relationship CRM",
+     "reads": "Relationships, deals and notes",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "affinity_mcp"
+    },
+    {
+     "id": "pitchbook",
+     "name": "PitchBook",
+     "category": "Market data",
+     "reads": "Company, deal and investor profiles",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "pitchbook_connector"
+    },
+    {
+     "id": "grata",
+     "name": "Grata",
+     "category": "Company search",
+     "reads": "Private company lists and profiles",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "grata_mcp"
+    },
+    {
+     "id": "datasite",
+     "name": "Datasite",
+     "category": "Data room",
+     "reads": "Deal room documents and activity",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "datasite_mcp"
+    },
+    {
+     "id": "intralinks",
+     "name": "Intralinks",
+     "category": "Data room",
+     "reads": "Deal room documents",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "intralinks_connector"
+    },
+    {
+     "id": "juniper-square",
+     "name": "Juniper Square",
+     "category": "Investor portal",
+     "reads": "Investors, commitments, documents and transactions",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "juniper_headless"
+    },
+    {
+     "id": "hebbia",
+     "name": "Hebbia",
+     "category": "Research AI",
+     "reads": "Answers from the firm's documents",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "hebbia_connector"
+    },
+    {
+     "id": "alphasense",
+     "name": "AlphaSense",
+     "category": "Market research",
+     "reads": "Filings, transcripts and expert calls",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "alphasense_mcp"
+    },
+    {
+     "id": "docusign",
+     "name": "Docusign",
+     "category": "E-signature",
+     "reads": "Agreements and signing status",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "docusign_mcp"
+    },
+    {
+     "id": "allvue",
+     "name": "Allvue",
+     "category": "Fund accounting",
+     "reads": "Fund ledgers and investor reports",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "edgar",
+     "name": "SEC EDGAR",
+     "category": "Public filings",
+     "reads": "Form D, adviser and company filings",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "edgar"
+    },
+    {
+     "id": "fred",
+     "name": "FRED",
+     "category": "Economic data",
+     "reads": "Rates, credit spreads and prices",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "fred"
+    },
+    {
+     "id": "sba-ppp",
+     "name": "SBA loan records",
+     "category": "Public loan records",
+     "reads": "Paycheck Protection Program loans by business",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "sba_ppp"
+    }
+   ]
+  },
+  {
+   "id": "pp",
+   "name": "Punctual Pros",
+   "co": "pp",
+   "tools": [
+    {
+     "id": "servicetitan",
+     "name": "ServiceTitan",
+     "category": "Field service",
+     "reads": "Jobs, customers, equipment and the price book",
+     "state": "sandbox",
+     "mark": "franchisor",
+     "doc": "servicetitan_marketplace",
+     "evidence": "servicetitan_authority"
+    },
+    {
+     "id": "marketing",
+     "name": "CallRail",
+     "category": "Call tracking",
+     "reads": "Calls, leads and campaign results",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "callrail_api"
+    },
+    {
+     "id": "financials",
+     "name": "QuickBooks",
+     "category": "Accounting",
+     "reads": "Monthly results, plan and debt",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "email",
+     "name": "Outlook",
+     "category": "Email",
+     "reads": "Inbox threads and replies",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "calendar",
+     "name": "Outlook Calendar",
+     "category": "Calendar",
+     "reads": "Meetings and free time",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "chat",
+     "name": "Microsoft Teams",
+     "category": "Team chat",
+     "reads": "Channels and threads",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "drive",
+     "name": "SharePoint",
+     "category": "Documents",
+     "reads": "Shared files and folders",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "adp",
+     "name": "ADP",
+     "category": "Payroll",
+     "reads": "Headcount and payroll totals",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "sage-intacct",
+     "name": "Sage Intacct",
+     "category": "Accounting",
+     "reads": "Ledger, job costs and cash",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "intacct_api"
+    },
+    {
+     "id": "samsara",
+     "name": "Samsara",
+     "category": "Fleet",
+     "reads": "Van locations and drive time",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "samsara_api"
+    },
+    {
+     "id": "google-business-profile",
+     "name": "Google Business Profile",
+     "category": "Reviews",
+     "reads": "Ratings and new reviews",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "podium",
+     "name": "Podium",
+     "category": "Customer messaging",
+     "reads": "Texts and review requests",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "nws",
+     "name": "National Weather Service",
+     "category": "Weather alerts",
+     "reads": "Active alerts for PA and NJ",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "nws"
+    },
+    {
+     "id": "open-meteo",
+     "name": "Open-Meteo",
+     "category": "Weather forecast",
+     "reads": "Seven-day forecast for each hub",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "open_meteo"
+    },
+    {
+     "id": "realtor",
+     "name": "Realtor.com",
+     "category": "Housing data",
+     "reads": "Listings and homes under contract by county",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "realtor_data"
+    },
+    {
+     "id": "census-permits",
+     "name": "Census Bureau",
+     "category": "Building permits",
+     "reads": "New home permits by county",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "census_bps"
+    }
+   ]
+  },
+  {
+   "id": "cet",
+   "name": "CET",
+   "co": "cet",
+   "tools": [
+    {
+     "id": "procore",
+     "name": "Procore",
+     "category": "Construction",
+     "reads": "Projects, RFIs, change orders and daily logs",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "procore_api"
+    },
+    {
+     "id": "salesforce",
+     "name": "Salesforce",
+     "category": "CRM",
+     "reads": "Accounts, bids and open opportunities",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "salesforce_dev"
+    },
+    {
+     "id": "financials",
+     "name": "Viewpoint Vista",
+     "category": "Job-cost accounting",
+     "reads": "Job costs, monthly results and plan",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "email",
+     "name": "Outlook",
+     "category": "Email",
+     "reads": "Inbox threads and replies",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "calendar",
+     "name": "Outlook Calendar",
+     "category": "Calendar",
+     "reads": "Meetings and free time",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "chat",
+     "name": "Microsoft Teams",
+     "category": "Team chat",
+     "reads": "Channels and threads",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "drive",
+     "name": "SharePoint",
+     "category": "Documents",
+     "reads": "Shared files and folders",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "adp",
+     "name": "ADP",
+     "category": "Payroll",
+     "reads": "Headcount and payroll totals",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "servicetitan",
+     "name": "ServiceTitan",
+     "category": "Field service",
+     "reads": "Service calls and maintenance visits",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "servicetitan_marketplace"
+    },
+    {
+     "id": "samsara",
+     "name": "Samsara",
+     "category": "Fleet",
+     "reads": "Truck locations and drive time",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "samsara_api"
+    },
+    {
+     "id": "foundation",
+     "name": "Foundation Software",
+     "category": "Job-cost accounting",
+     "reads": "Job costs and union payroll",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "bluebeam",
+     "name": "Bluebeam",
+     "category": "Drawings",
+     "reads": "Marked-up drawings and takeoffs",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "accubid",
+     "name": "Trimble Accubid",
+     "category": "Estimating",
+     "reads": "Estimates and bid prices",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "constructconnect",
+     "name": "ConstructConnect",
+     "category": "Bid boards",
+     "reads": "Projects out to bid",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "echo",
+     "name": "EPA ECHO",
+     "category": "Permit records",
+     "reads": "Wastewater plants with open violations",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "echo"
+    },
+    {
+     "id": "usaspending",
+     "name": "USAspending",
+     "category": "Federal contracts",
+     "reads": "Federal electrical contract awards",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "usaspending"
+    },
+    {
+     "id": "census-permits",
+     "name": "Census Bureau",
+     "category": "Building permits",
+     "reads": "Building permits by county",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "census_bps"
+    }
+   ]
+  },
+  {
+   "id": "fl",
+   "name": "Frontline",
+   "co": "fl",
+   "tools": [
+    {
+     "id": "servicedesk",
+     "name": "ServiceNow",
+     "category": "Service desk",
+     "reads": "Tickets, client runbooks and response times",
+     "state": "sandbox",
+     "mark": "in_use",
+     "evidence": "frontline_servicenow"
+    },
+    {
+     "id": "salesforce",
+     "name": "Salesforce",
+     "category": "CRM",
+     "reads": "Accounts, renewals and open opportunities",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "salesforce_dev"
+    },
+    {
+     "id": "financials",
+     "name": "NetSuite",
+     "category": "Finance",
+     "reads": "Invoices, monthly results and plan",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "netsuite_rest"
+    },
+    {
+     "id": "email",
+     "name": "Outlook",
+     "category": "Email",
+     "reads": "Inbox threads and replies",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "calendar",
+     "name": "Outlook Calendar",
+     "category": "Calendar",
+     "reads": "Meetings and free time",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "chat",
+     "name": "Microsoft Teams",
+     "category": "Team chat",
+     "reads": "Channels and threads",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "drive",
+     "name": "SharePoint",
+     "category": "Documents",
+     "reads": "Shared files and folders",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "adp",
+     "name": "ADP",
+     "category": "Payroll",
+     "reads": "Headcount and payroll totals",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "clio",
+     "name": "Clio",
+     "category": "Practice management",
+     "reads": "Matters, time and bills",
+     "state": "available",
+     "mark": "supports_clients",
+     "doc": "clio_api",
+     "evidence": "frontline_partners"
+    },
+    {
+     "id": "imanage",
+     "name": "iManage",
+     "category": "Document management",
+     "reads": "Matter workspaces and documents",
+     "state": "planned",
+     "mark": "supports_clients",
+     "evidence": "frontline_imanage"
+    },
+    {
+     "id": "netdocuments",
+     "name": "NetDocuments",
+     "category": "Document management",
+     "reads": "Matter workspaces and documents",
+     "state": "planned",
+     "mark": "supports_clients",
+     "evidence": "frontline_partners"
+    },
+    {
+     "id": "aderant",
+     "name": "Aderant",
+     "category": "Billing",
+     "reads": "Time, bills and collections",
+     "state": "planned",
+     "mark": "supports_clients",
+     "evidence": "frontline_partners"
+    },
+    {
+     "id": "elite",
+     "name": "Elite",
+     "category": "Billing",
+     "reads": "Time, bills and collections",
+     "state": "planned",
+     "mark": "supports_clients",
+     "evidence": "frontline_partners"
+    },
+    {
+     "id": "litera",
+     "name": "Litera",
+     "category": "Drafting",
+     "reads": "Document comparisons and checks",
+     "state": "planned",
+     "mark": "supports_clients",
+     "evidence": "frontline_partners"
+    },
+    {
+     "id": "relativity",
+     "name": "Relativity",
+     "category": "E-discovery",
+     "reads": "Review projects and document counts",
+     "state": "planned",
+     "mark": "supports_clients",
+     "evidence": "frontline_partners"
+    },
+    {
+     "id": "arctic-wolf",
+     "name": "Arctic Wolf",
+     "category": "Security",
+     "reads": "Security alerts and open cases",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "fred",
+     "name": "FRED",
+     "category": "Economic data",
+     "reads": "Legal jobs and law-firm prices",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "fred"
+    }
+   ]
+  },
+  {
+   "id": "ts",
+   "name": "Thomas Scientific",
+   "co": "ts",
+   "tools": [
+    {
+     "id": "salesforce",
+     "name": "Salesforce",
+     "category": "CRM",
+     "reads": "Accounts, quotes and the pipeline",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "salesforce_dev"
+    },
+    {
+     "id": "financials",
+     "name": "NetSuite",
+     "category": "ERP",
+     "reads": "Stock, orders and monthly results",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "netsuite_rest"
+    },
+    {
+     "id": "email",
+     "name": "Outlook",
+     "category": "Email",
+     "reads": "Inbox threads and replies",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "calendar",
+     "name": "Outlook Calendar",
+     "category": "Calendar",
+     "reads": "Meetings and free time",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "chat",
+     "name": "Microsoft Teams",
+     "category": "Team chat",
+     "reads": "Channels and threads",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "drive",
+     "name": "SharePoint",
+     "category": "Documents",
+     "reads": "Shared files and folders",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "adp",
+     "name": "ADP",
+     "category": "Payroll",
+     "reads": "Headcount and payroll totals",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "sap-ariba",
+     "name": "SAP Ariba",
+     "category": "Customer procurement",
+     "reads": "Punchout orders and catalogs",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "jaggaer",
+     "name": "JAGGAER",
+     "category": "Customer procurement",
+     "reads": "Punchout orders and catalogs",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "clear-spider",
+     "name": "Clear Spider",
+     "category": "Lab inventory",
+     "reads": "Customer stock levels and reorders",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "sps-commerce",
+     "name": "SPS Commerce",
+     "category": "EDI",
+     "reads": "Purchase orders and invoices",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "akeneo",
+     "name": "Akeneo",
+     "category": "Product data",
+     "reads": "Product attributes and catalog content",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "nih",
+     "name": "NIH RePORTER",
+     "category": "Research funding",
+     "reads": "Research awards by state and institution",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "nih_reporter"
+    },
+    {
+     "id": "usaspending",
+     "name": "USAspending",
+     "category": "Federal contracts",
+     "reads": "Federal lab supply contracts",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "usaspending"
+    },
+    {
+     "id": "fiscaldata",
+     "name": "Fiscal Data",
+     "category": "Treasury data",
+     "reads": "Customs duties collected each month",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "fiscaldata"
+    }
+   ]
+  },
+  {
+   "id": "bpi",
+   "name": "BPI",
+   "co": "bpi",
+   "tools": [
+    {
+     "id": "salesforce",
+     "name": "Salesforce",
+     "category": "CRM",
+     "reads": "Accounts, proposals and the pipeline",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "salesforce_dev"
+    },
+    {
+     "id": "financials",
+     "name": "NetSuite",
+     "category": "Finance",
+     "reads": "Monthly results, plan and debt",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "netsuite_rest"
+    },
+    {
+     "id": "email",
+     "name": "Gmail",
+     "category": "Email",
+     "reads": "Inbox threads and replies",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "calendar",
+     "name": "Google Calendar",
+     "category": "Calendar",
+     "reads": "Meetings and free time",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "chat",
+     "name": "Slack",
+     "category": "Team chat",
+     "reads": "Channels and threads",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "slack_mcp"
+    },
+    {
+     "id": "drive",
+     "name": "Google Drive",
+     "category": "Documents",
+     "reads": "Shared files and folders",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "adp",
+     "name": "ADP",
+     "category": "Payroll",
+     "reads": "Headcount and payroll totals",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "meltwater",
+     "name": "Meltwater",
+     "category": "Media monitoring",
+     "reads": "News, social and AI-visibility mentions",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "meltwater_dev"
+    },
+    {
+     "id": "cision",
+     "name": "Cision",
+     "category": "Media monitoring",
+     "reads": "Coverage and media contacts",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "tableau",
+     "name": "Tableau",
+     "category": "Dashboards",
+     "reads": "Campaign dashboards and figures",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "google-analytics",
+     "name": "Google Analytics",
+     "category": "Web analytics",
+     "reads": "Site visits and conversions",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "fiscalnote",
+     "name": "FiscalNote",
+     "category": "Policy data",
+     "reads": "Bills, rules and lawmakers",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "quorum",
+     "name": "Quorum",
+     "category": "Policy data",
+     "reads": "Bills, votes and outreach",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "federal-register",
+     "name": "Federal Register",
+     "category": "Federal rules",
+     "reads": "Rules and proposed rules this year",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "federal_register"
+    },
+    {
+     "id": "usaspending",
+     "name": "USAspending",
+     "category": "Federal contracts",
+     "reads": "Federal PR and ad contracts",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "usaspending"
+    },
+    {
+     "id": "fred",
+     "name": "FRED",
+     "category": "Economic data",
+     "reads": "Corporate profits and agency prices",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "fred"
+    }
+   ]
+  },
+  {
+   "id": "fh",
+   "name": "Fair Harbor",
+   "co": "fh",
+   "tools": [
+    {
+     "id": "shopify",
+     "name": "Shopify",
+     "category": "Online store",
+     "reads": "Orders, products and returns",
+     "state": "sandbox",
+     "mark": "in_use",
+     "doc": "shopify_api",
+     "evidence": "fh_cx_posting"
+    },
+    {
+     "id": "financials",
+     "name": "NetSuite",
+     "category": "ERP",
+     "reads": "Stock transfers, monthly results and plan",
+     "state": "sandbox",
+     "mark": "in_use",
+     "doc": "netsuite_rest",
+     "evidence": "fh_wholesale_posting"
+    },
+    {
+     "id": "marketing",
+     "name": "Klaviyo",
+     "category": "Email and text",
+     "reads": "Campaigns and email revenue",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "klaviyo_api"
+    },
+    {
+     "id": "email",
+     "name": "Gmail",
+     "category": "Email",
+     "reads": "Inbox threads and replies",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "calendar",
+     "name": "Google Calendar",
+     "category": "Calendar",
+     "reads": "Meetings and free time",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "chat",
+     "name": "Slack",
+     "category": "Team chat",
+     "reads": "Channels and threads",
+     "state": "sandbox",
+     "mark": "industry_standard",
+     "doc": "slack_mcp"
+    },
+    {
+     "id": "drive",
+     "name": "Google Drive",
+     "category": "Documents",
+     "reads": "Shared files and folders",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "adp",
+     "name": "ADP",
+     "category": "Payroll",
+     "reads": "Headcount and payroll totals",
+     "state": "sandbox",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "gorgias",
+     "name": "Gorgias",
+     "category": "Helpdesk",
+     "reads": "Support tickets and replies",
+     "state": "available",
+     "mark": "in_use",
+     "doc": "gorgias_api",
+     "evidence": "fh_cx_posting"
+    },
+    {
+     "id": "loop",
+     "name": "Loop Returns",
+     "category": "Returns",
+     "reads": "Return requests and reasons",
+     "state": "available",
+     "mark": "in_use",
+     "doc": "loop_integrations",
+     "evidence": "fh_cx_posting"
+    },
+    {
+     "id": "salesforce",
+     "name": "Salesforce",
+     "category": "Customer service",
+     "reads": "Cases and customer history",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "salesforce_dev"
+    },
+    {
+     "id": "nuorder",
+     "name": "NuORDER",
+     "category": "Wholesale orders",
+     "reads": "Wholesale orders and buyers",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "nuorder_integrations"
+    },
+    {
+     "id": "attentive",
+     "name": "Attentive",
+     "category": "Text marketing",
+     "reads": "Subscribers and text campaigns",
+     "state": "available",
+     "mark": "industry_standard",
+     "doc": "attentive_api"
+    },
+    {
+     "id": "breezy",
+     "name": "Breezy HR",
+     "category": "Hiring",
+     "reads": "Open roles and applicants",
+     "state": "planned",
+     "mark": "in_use",
+     "evidence": "fh_careers"
+    },
+    {
+     "id": "yotpo",
+     "name": "Yotpo",
+     "category": "Reviews",
+     "reads": "Product reviews and ratings",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "shipbob",
+     "name": "ShipBob",
+     "category": "Fulfillment",
+     "reads": "Orders shipped and stock by warehouse",
+     "state": "planned",
+     "mark": "industry_standard"
+    },
+    {
+     "id": "fred",
+     "name": "FRED",
+     "category": "Economic data",
+     "reads": "Clothing sales and shopper confidence",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "fred"
+    },
+    {
+     "id": "fiscaldata",
+     "name": "Fiscal Data",
+     "category": "Treasury data",
+     "reads": "Customs duties collected each month",
+     "state": "live",
+     "mark": "industry_standard",
+     "doc": "fiscaldata"
+    }
+   ]
+  }
+ ]
+}

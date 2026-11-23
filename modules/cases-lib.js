@@ -191,6 +191,8 @@ export const kpiVal = v => v == null || v === '' ? '—' : typeof v === 'number'
 export const host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return 'source'; } };
 export const capFirst = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 /** "Months 12-48: …" → "Months 12–48: …" (en dash between numbers, never inside dates). */
+/** A lever's name without its parenthesis, at most nine words; the whole name is the title of its side panel. */
+export const leverShort = n => { const w = String(n || '').replace(/\s*\(.*$/, '').trim().split(/\s+/); return w.length <= 9 ? w.join(' ') : w.slice(0, 9).join(' ').replace(/[,;:.\s]+$/, '') + '…'; };
 export const dash = s => String(s || '').replace(/(^|[^\d-])(\d{1,3})-(\d{1,3})(?![\d-])/g, '$1$2–$3');
 const firstClause = s => { const t = clean(s); const c = t.split(/[:;]|, (?:then|and) |\. /)[0]; return c.length > 70 ? c.slice(0, 68).replace(/\s+\S*$/, '') + '…' : c; };
 
@@ -374,7 +376,7 @@ export function matrixHTML(model, { selected = null, onlyHome = false } = {}) {
   const groups = []; for (const c of cols) { const g = groups[groups.length - 1]; if (g && g.s === c.sector) g.n++; else groups.push({ s: c.sector, n: 1 }); }
   const band = m => m == null ? 'undated' : m <= 12 ? 'early' : m <= 36 ? 'mid' : 'late';
   const bandTxt = { early: 'first 12 months', mid: 'months 13–36', late: 'after month 36', undated: 'date not disclosed' };
-  const head1 = `<tr><th class="cs-mx-corner" rowspan="2" scope="col">Lever <span>sorted by number of cases</span></th>${groups.map(g => `<th colspan="${g.n}" class="cs-mx-grp" scope="colgroup">${esc(SECTOR[g.s] || g.s)}</th>`).join('')}</tr>`;
+  const head1 = `<tr><th class="cs-mx-corner" rowspan="2" scope="col">Lever</th>${groups.map(g => `<th colspan="${g.n}" class="cs-mx-grp" scope="colgroup">${esc(SECTOR[g.s] || g.s)}</th>`).join('')}</tr>`;
   let prev = null;
   const head2 = `<tr>${cols.map(c => { const first = c.sector !== prev; prev = c.sector; return `<th class="cs-mx-col${first ? ' cs-mx-first' : ''}" scope="col"><button type="button" data-case="${esc(c.id)}" title="${esc(c.name)}"><span>${esc(c.short)}</span></button></th>`; }).join('')}</tr>`;
   const body = model.levers.map(l => {
@@ -387,11 +389,10 @@ export function matrixHTML(model, { selected = null, onlyHome = false } = {}) {
       const tip = `${c.short} · ${l.name} · ${tm?.m != null ? `month ${Math.round(tm.m)} from entry` : bandTxt.undated}${tm?.fact ? ` · ${tm.fact}` : ''}`;
       return `<td class="cs-mx-cell${first ? ' cs-mx-first' : ''}"><button type="button" class="cs-mx-dot cs-mx-dot--${bd}" data-cell="${esc(l.id)}|${esc(c.id)}" title="${esc(tip)}" aria-label="${esc(tip)}"></button></td>`;
     }).join('');
-    const when = timingText(l, true);
-    return `<tr class="${selected === l.id ? 'is-sel' : ''}"><th scope="row" class="cs-mx-lever"><button type="button" data-lever="${esc(l.id)}"><span class="cs-mx-ln">${esc(l.name)}</span><span class="cs-mx-meta">${l.cases.length} cases · ${esc(when)}</span></button></th>${cells}</tr>`;
+    return `<tr class="${selected === l.id ? 'is-sel' : ''}"><th scope="row" class="cs-mx-lever"><button type="button" data-lever="${esc(l.id)}"><span class="cs-mx-ln" title="${esc(l.name)}">${esc(leverShort(l.name))}</span></button></th>${cells}</tr>`;
   }).join('');
   return `<div class="cs-mx-wrap"><table class="cs-mx"><thead>${head1}${head2}</thead><tbody>${body}</tbody></table></div>
-    <div class="cs-mx-key" aria-label="Key"><span><i class="cs-mx-dot cs-mx-dot--early"></i>first 12 months</span><span><i class="cs-mx-dot cs-mx-dot--mid"></i>months 13–36</span><span><i class="cs-mx-dot cs-mx-dot--late"></i>after month 36</span><span><i class="cs-mx-dot cs-mx-dot--undated"></i>used, date not disclosed</span></div>`;
+    <div class="cs-mx-key" data-method aria-label="Key"><span>Levers sorted by number of cases. Solid dot: dated move, darker when earlier in the hold. </span><span><i class="cs-mx-dot cs-mx-dot--early"></i>first 12 months</span><span><i class="cs-mx-dot cs-mx-dot--mid"></i>months 13–36</span><span><i class="cs-mx-dot cs-mx-dot--late"></i>after month 36</span><span><i class="cs-mx-dot cs-mx-dot--undated"></i>used, date not disclosed</span></div>`;
 }
 
 /** "Hold clock": pattern windows on a 0–84 month axis with Punctual Pros' current month. */
@@ -400,7 +401,7 @@ export function clockHTML(model, { selected = null } = {}) {
   const ppM = model.stats.pp?.hold_month_on_2026_10_06 ?? Math.round((TODAY.t - model.ppLane.entry.t) * 12);
   const rows = model.patterns.map(p => {
     let s = p.w.start, e = p.w.end, rel = '';
-    if (p.w.relative_to === 'exit') { s = exitM + (p.w.start ?? -18); e = exitM + (p.w.end ?? 0); rel = ` (shown before an exit at the ${hold.toFixed(1)}-year median hold)`; }
+    if (p.w.relative_to === 'exit') { s = exitM + (p.w.start ?? -18); e = exitM + (p.w.end ?? 0); rel = ` · before exit at ${hold.toFixed(1)}-year median hold`; }
     const has = s != null && e != null;
     const med = p.w.median ?? null;
     const lab = has ? `Months ${Math.round(s)}–${Math.round(e)}${rel}` : 'Applies across the hold';
@@ -427,7 +428,7 @@ export function ganttHTML(model, { root = '', selected = null } = {}) {
   const rows = fwd.map(s => {
     const x0 = pct(s.a.t, A, B), x1 = pct(s.b.t + 1 / 365, A, B);
     return `<li class="cs-g-row${selected === s.step ? ' is-sel' : ''}">
-      <button type="button" class="cs-g-label" data-step="${s.step}"><span class="cs-g-n">${s.step}</span><span><b>${esc(s.title)}</b><span>${esc(mLabel(s.a))} – ${esc(mLabel(s.b))} · hold months ${s.hold_month_start}–${s.hold_month_end}</span></span></button>
+      <button type="button" class="cs-g-label" data-step="${s.step}"><span class="cs-g-n">${s.step}</span><span><b>${esc(s.title)}</b><span>${esc(mLabel(s.a))}${mLabel(s.a) === mLabel(s.b) ? '' : ` – ${esc(mLabel(s.b))}`}</span></span></button>
       <div class="cs-g-track">${grid}<span class="cs-g-today" style="left:${today.toFixed(2)}%"></span><button type="button" class="cs-g-bar cs-g-bar--${s.statusLabel === 'Option' ? 'opt' : 'rec'}" data-step="${s.step}" style="left:${x0.toFixed(2)}%;width:${Math.max(2, x1 - x0).toFixed(2)}%" aria-label="${esc(`${s.title}: ${s.statusLabel}, ${mLabel(s.a)} to ${mLabel(s.b)}`)}"><span>${s.hold_month_start}–${s.hold_month_end}</span></button></div>
       <div class="cs-g-links">${s.refs.slice(0, 3).map(link).join('')}</div>
     </li>`;
@@ -436,7 +437,7 @@ export function ganttHTML(model, { root = '', selected = null } = {}) {
   const doneHTML = done.map(s => `<li><button type="button" data-step="${s.step}"><span class="cs-g-n cs-g-n--done">✓</span><span><b>${esc(s.title)}</b><span>${esc(s.a.label)} · hold month ${s.hold_month_start}</span></span></button></li>`).join('');
   return `<div class="cs-g">
     <div class="cs-g-done"><p class="sys-card-label cs-g-h">Already done</p><ol>${doneHTML}</ol></div>
-    <div class="cs-g-fwd"><div class="cs-g-headrow"><p class="sys-card-label cs-g-h">Next 36 months · Oct 2026 – Sept 2029</p><span class="cs-g-key"><i class="cs-g-k cs-g-k--rec"></i>Recommended <i class="cs-g-k cs-g-k--opt"></i>Option <span>Bar text = months of BSP's hold</span></span></div>
+    <div class="cs-g-fwd"><div class="cs-g-headrow"><p class="sys-card-label cs-g-h">Next 36 months · Oct 2026 – Sept 2029</p><span class="cs-g-key" data-method><i class="cs-g-k cs-g-k--rec"></i>Recommended <i class="cs-g-k cs-g-k--opt"></i>Option <span>Bar text = months of BSP's hold</span></span></div>
       <div class="cs-g-axisrow" aria-hidden="true"><span></span><div class="cs-g-axis">${axis}<em style="left:${today.toFixed(2)}%">Today</em></div><span></span></div>
       <ol class="cs-g-rows">${rows}</ol></div>
   </div>`;
@@ -452,7 +453,7 @@ export function ladderRows(model) {
   for (const m of model.stats.exitMults.slice().sort((a, b) => a.v - b.v)) {
     const c = model.byId[m.id];
     const src = c.timeline.find(e => /x\b/.test(String(e.metric || '')) && /~?\d+(\.\d)?x/.test(String(e.metric || '')))?.source_url || c.sources?.[c.sources.length - 1];
-    rows.push({ label: `${c.short} sold to ${c.buyer.split(' (')[0]}`, sub: `${c.exit?.label || ''} · press-reported`, lo: m.v, hi: m.v, url: src, kind: 'exit', id: c.id });
+    rows.push({ label: `${c.short} sold to ${c.buyer.split(' (')[0]}`, sub: `${c.exit?.label || ''}`, lo: m.v, hi: m.v, url: src, kind: 'exit', id: c.id });
   }
   return rows;
 }

@@ -1,6 +1,6 @@
 # UNIFIED · the one template for every page
 
-Binding spec for the BSP Desk site and portal. Every page — landing, portal, gallery, the six concept sites, the six OS pages, every plan, Voice AI, AI agents and the memo — uses one frame, one type scale, one spacing rhythm and one voice. If a page needs something this file does not cover, add it to `assets/system.css` as a `.sys-` component and document it here; do not invent it locally.
+Binding spec for the Broad Sky OS site and shell. Every page — the shell, gallery, the six concept sites, the six OS pages, every plan, Voice AI, AI agents and the memo — uses one frame, one type scale, one spacing rhythm and one voice. If a page needs something this file does not cover, add it to `assets/system.css` as a `.sys-` component and document it here; do not invent it locally.
 
 Author on every page: **Syed Rahman**. No other name, no email, no employer anywhere.
 
@@ -10,25 +10,32 @@ Reference build: `scripts/system_demo.html` (every component, light and dark; `?
 
 Short, plain and specific. Say the finding, give the number, stop.
 
-**Product name.** The site is **BSP Desk**. The wordmark is the text "BSP Desk" from `Frame.PRODUCT` (`assets/frame.js`): top bar, mobile sheet and footer, no tagline line under it. Page titles read `<Page> · BSP Desk`; the landing page is just `BSP Desk`. The old product name is retired everywhere (titles, meta, copy, films, memo, scripts, prompts). The repo path `BroadSky_Intelligence_Portal` stays.
+**Product name.** The product is **Broad Sky OS**: one operating system for Broad Sky and its six companies. The wordmark is the text "Broad Sky OS" from `Frame.PRODUCT` (`assets/frame.js`): top bar, mobile sheet and footer. Page titles read `<Page> · Broad Sky OS`; a portal screen reads `<Module> · <Screen> · Broad Sky OS` through `modules/copy.js`. The assistant is "Broad Sky OS" and its floating button reads "Ask". The earlier product name and its "the desk" shorthand never appear in text a visitor or the model reads. File names, storage keys, the memo PDF (`BSP_Desk_Memo.pdf`) and the repo path `BroadSky_Intelligence_Portal` keep their names. The old product name is retired everywhere else (titles, meta, copy, films, memo, scripts, prompts).
 
-**The firm is BSP.** Spell out "Broad Sky Partners (BSP)" at most once per page: the frame's concept notice on concept pages, the memo's "To" line, or the first body mention on other pages. Everywhere else write BSP ("BSP portfolio company", "BSP's first exit"). Keep the legal name only where it is the record: entity names in filings (`Broad Sky Partners, LP`, `Broad Sky Partners LLC`, `BSP-FL LP`), quoted press text and wire headlines. Portfolio Resource Group is spelled out once per page, then PRG.
+**The firm.** "Broad Sky" is written out in the "Viewing as" switch and in the Connections group heading. Everywhere else the firm is BSP ("BSP portfolio company", "BSP's first exit"). Spell out "Broad Sky Partners (BSP)" at most once per page: the frame's concept notice on concept pages, the memo's "To" line, or the first body mention on other pages. Keep the legal name only where it is the record: entity names in filings (`Broad Sky Partners, LP`, `Broad Sky Partners LLC`, `BSP-FL LP`), quoted press text and wire headlines. Portfolio Resource Group is spelled out once per page, then PRG. The firm's own site names no software vendor and never mentions AI: nothing is worded as the firm's own stated position on either.
 
-**No "So what".** Never label a sentence "So what:", "So what —" or "So what." The answer is simply the first sentence.
+**Viewing as.** The words are always "Viewing as", never "signed in" or "logged in". It is navigation, not security.
 
-**Brevity targets.**
+**The twelve copy rules.** They bind every screen and page.
 
-| Element | Target |
-|---|---|
-| View and page leads (`pageHead.sub`, `.sys-lead`) | One or two sentences, 30 words or fewer |
-| KPI sub-line (`.sys-kpi-sub`) | 8 words or fewer |
-| Card body | Two sentences |
-| Chip | Four words |
-| Tour step and film narration | 18 words or fewer per step |
-| Assistant answer heading | 6 words or fewer |
-| Meta description | One sentence, about 20 words |
+1. A lead only under the screen title: one line, 12 words at most, a status or a number. No lead under a section heading.
+2. A tile is label, value, change. A caption is 4 words at most, or none.
+3. A card is a title plus the visual. No subtitle that describes the chart.
+4. No "Source:" line on the page. Mark it `data-src` and it moves to the Sources drawer. Method, legend and caveat text take `data-method`. A warning that changes a decision stays, as a chip of 12 words at most.
+5. No instruction text ("click a row", "choose a cell", keyboard hints). Controls are labelled, not explained.
+6. No process notes, apologies or research to-dos on any screen. Uncertainty is the `est.` badge on the number, defined once in Method.
+7. A table cell is 10 words at most, one line. Longer detail opens in the side panel. No raw identifiers in cells.
+8. An action line starts with a verb and is 15 words at most, one per card. No paragraph of advice.
+9. The screen name appears once. No sentence appears twice on one screen, or on two screens.
+10. Sentences stop at 18 words. A glossary term is defined once, in a tooltip.
+11. The answer comes first: the table or list that is the point of the screen starts on the first screen at 1440x900.
+12. Pages that only explain (methods, transcripts, design notes) become a drawer behind a control, not a tab.
 
-No marketing cadence: no taglines ("one system for the whole portfolio"), no triplets for rhythm, no "not X, but Y" flourishes, no rhetorical questions. Existing rules still hold: no "playbook", no private-equity sense of "platform", no raw identifiers, dates in words, `est.` badges on estimates, no legal-compliance copy, no salutations.
+Targets: a portal screen is at most 60 percent of its audited word count, a first screen at most half. No number, name, date or control is removed to hit a target; text is.
+
+**Also binding.** No "So what" label: the answer is simply the first sentence. No email addresses. Never "playbook" or "Tough Leaf". "Platform" never in the private-equity sense. No snake_case or raw identifiers. No developer words ("route", "alias", "module", "view"). Nobody at the firm is addressed by name. Smith + Howard has exited and gets no screen. No legal-compliance copy. No marketing cadence: no taglines, no triplets for rhythm, no "not X, but Y" flourishes, no rhetorical questions. Dates in words; `est.` badges on estimates.
+
+**CET.** Commonwealth Electrical Technologies, also branded CET Energy Solutions; headquarters Worcester, Massachusetts; "400+ professionals" (its own site). Six add-ons: NuWave Energy Solutions (7 October 2025) and Horton Electrical Services (15 September 2026) confirmed; Direct Electric Services, JDL Electric, New Horizons Technologies and Vanguard Building Solutions are labelled "reported" (trade press, 28 to 29 October 2026). Licensed in about ten states across New England and the Mid-Atlantic (reported). It has no New York City plan: never say or imply one, and "New England only" is not correct. Punctual Pros is "one of the largest franchisee operators within Authority Brands".
 
 **Before and after.**
 
@@ -38,7 +45,7 @@ No marketing cadence: no taglines ("one system for the whole portfolio"), no tri
 | Six companies, one portal: every datapoint tied to a revenue, acquisition or operating decision. | Six companies. Every number is tied to a decision. |
 | Broad Sky put $90.0M of equity into BPI in April 2023, and Broad Sky's Fund I is $335M. | BSP put $90.0M of equity into BPI in April 2023 (Form D); Fund I is $335M. |
 
-`scripts/apply_voice.py` applies the mechanical part (product name, "So what" labels, Broad Sky → BSP with the legal-name exceptions) and is safe to re-run; dry run by default, `--write` to apply. Brevity is an editing job, not a script.
+`scripts/apply_voice.py` is the earlier mechanical pass (Broad Sky to BSP with the legal-name exceptions, "So what" labels). Its product-name rule predates Broad Sky OS: do not re-run it. Brevity is an editing job, not a script.
 
 ---
 
@@ -47,18 +54,20 @@ No marketing cadence: no taglines ("one system for the whole portfolio"), no tri
 | File | Role |
 |---|---|
 | `assets/system.css` | Tokens (`--sys-*`, `--co-*`), frame, scaffolding, components, dark variant, print. The only shared stylesheet. |
-| `assets/frame.js` | `Frame.mount(opts)` injects top bar, concept tag, breadcrumb (folded into the page's sub-nav when it has one), footer, Ask button, hotkey, sub-nav scroll-spy and the copy safety net. Also exports `humanize`, `humanizeText`, `label`, `LABELS`, `COMPANIES`. |
+| `assets/session.js` | The one state store: who the visitor is "Viewing as" (`Session.role()`, `setRole(id)`, `level()`, `co()`, `roles()`, `levels()`, `onChange(fn)`; also sets `data-level` and `data-co` on `<html>`) and which tools are connected (`conn`, `setConn`, `connectedApps`). Imported by `frame.js`, `core.js` and `agent.js`. Only an explicit choice (the switch or `?role=`) is stored; the default is the managing partner. |
+| `assets/frame.js` | `Frame.mount(opts)` injects top bar with the "Viewing as" switch, concept tag, breadcrumb (folded into the page's sub-nav when it has one), footer, Ask button, hotkey, sub-nav scroll-spy and the copy safety net. With `?embed=1` it draws nothing but the page (§9a). Also exports `humanize`, `humanizeText`, `label`, `LABELS`, `COMPANIES`. |
+| `modules/embed.js` | `embedView(ctx, src, opts)`: shows one of the site's own pages in an iframe that fills the shell's content area (§9a). |
 | `assets/chat.js` / `chat.css` | Grounded assistant. Opened by the frame's Ask button; pages still mount it with their persona. A docked assistant sends the research assistant a short text of the page behind it (title, `h1`, `.sys-lead`, `.sys-kpi` tiles, `.sys-note`; nothing inside a closed `<details>`, whose summary line still counts); a view with more to say sets `window.BSPView = { describe() }` (the 3D map does). Voice: the microphone in the composer listens only while pressed (hold on a touch screen, click to start and stop elsewhere), sends the question for one short answer, and reads it aloud; a voice bar above the composer carries the state line, Stop and Mute (`bsp-voice-muted`). Where the browser cannot listen the button stays, marked unavailable, and says so in one line. |
 | page CSS (`site.css`, `growth-plan.css`, `app.css` …) | Page-specific layout only (maps, demos, charts). No colours, fonts, radii, header, banner or footer. Read tokens with `var(--sys-…)`. |
 
-Retire as pages migrate: `.announce`, `.concept` / `.concept-in` banners, every private `<header class="nav|hdr">`, every private `<footer>`, `landing.css` frame and pill rules (`.nav`, `.pill`, `.foot`), and the rail's site-link block in `app.html`.
+Retire as pages migrate: `.announce`, `.concept` / `.concept-in` banners, every private `<header class="nav|hdr">`, and every private `<footer>`.
 
 ## 2 · Load order (in `<head>`, exactly this order)
 
 ```html
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Page name · BSP Desk</title>
+<title>Page name · Broad Sky OS</title>
 <meta name="description" content="One plain-English sentence.">
 <meta name="theme-color" content="#fbfaf7">          <!-- #0a0e14 on dark pages -->
 <script>/* one theme for the whole site … */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
@@ -85,19 +94,19 @@ Use the same `?v=` stamp on `system.css`, `frame.js` and `chat.js` (`scripts/bum
 
 ```
 body[data-co?]                          ← company pages only: pp | cet | fl | ts | bpi | fh
-  header.sys-top                        ← injected: brand · Portal · Company agent · Concepts · Briefing · Ask · theme
+  header.sys-top                        ← injected: brand · Home · Agent · Connections · Concepts · Viewing as · Ask · theme
   nav.sys-crumb                         ← injected only on a page without a sub-nav: Home / Concepts / ● Company / Page, concept tag at the right
   main#main
     nav.sys-subnav                      ← the page bar: parent / ● page name, at most five section anchors, the concept tag
                                           (span.sys-concept, injected on concept pages) and one button. The frame adds the parent
                                           (a.sys-subnav-up) and the tag, so a page has two bars: the top bar and this one.
     section.sys-hero                    ← .sys-eyebrow → h1.sys-h1 → p.sys-lead → .sys-actions → .sys-kpis (optional)
-    section.sys-section (repeat)        ← .sys-section-head (.sys-kicker, h2.sys-h2, p.sys-lead) → content → p.sys-src
+    section.sys-section (repeat)        ← .sys-section-head (.sys-kicker, h2.sys-h2; no lead under it) → content
     section.sys-cta                     ← one closing call to action
-  footer.sys-footer                     ← injected: brand + author line, Portal / Site concepts / Programs / Briefing, disclaimer
+  footer.sys-footer                     ← injected: brand + one line, Home / Agent / Connections / Concepts / Narrated tour / Executive memo / All pages, disclaimer + author line
 ```
 
-Section content uses only: `.sys-grid--2|3|4`, `.sys-card` (`-label`, `-title`, `-body`, `-list`, `-foot`), `.sys-kpi` (`-label`, `-value`, `-sub`, `.sys-delta--up|down`), `.sys-table-wrap > table.sys-table` (`.sys-n` numeric cells, `<caption>` provenance), `.sys-note--info|warn|good|bad|co`, `.sys-chip` (`--soft` for the company accent; `--good|warn|bad|info` for status, so pages never define their own status chips), `.sys-est`, `.sys-btn`, `.sys-prose`, `.sys-src`, `.sys-dialog` (§3b). Anything bespoke (map, chart, simulator, 3D) sits inside a `.sys-card` or a full-width block inside `.sys-wrap`.
+Section content uses only: `.sys-grid--2|3|4`, `.sys-card` (`-label`, `-title`, `-body`, `-list`, `-foot`), `.sys-kpi` (`-label`, `-value`, `-sub`, `.sys-delta--up|down`), `.sys-table-wrap > table.sys-table` (`.sys-n` numeric cells), `.sys-note--info|warn|good|bad|co`, `.sys-chip` (`--soft` for the company accent; `--good|warn|bad|info` for status, so pages never define their own status chips), `.sys-est`, `.sys-btn`, `.sys-prose`, `.sys-fold` (§3c), `.sys-dialog` (§3b); provenance is `data-src` (§7). Anything bespoke (map, chart, simulator, 3D) sits inside a `.sys-card` or a full-width block inside `.sys-wrap`.
 
 ### 3b · Dialog (`dialog.sys-dialog`, system.css §6o)
 
@@ -110,13 +119,18 @@ Section content uses only: `.sys-grid--2|3|4`, `.sys-card` (`-label`, `-title`, 
 - **Title, dot only.** `a.sys-subnav-title` is the page's short name as plain text (company name on a concept home, the OS name on an OS page, the plan name on a plan). The frame draws one dot before it in the company accent (brand orange on portfolio-wide pages). No logo, icon, wordmark or SVG inside the title; system.css hides any that remain.
 - **One CTA, and the portal link has one wording.** `.sys-subnav-actions` holds at most one `.sys-btn--sm`. When it links into the portal it reads exactly **"Open in portal"** (not "Open in the portal", "Open the portal" or "View in portal"), uses `.sys-btn--secondary`, and points at the most specific route (`app.html#/cet/overview`, `app.html#/techos/overview`). A page-local action ("Try the demo", "Request a quote") uses `.sys-btn--primary` instead; a page may add one small secondary 'Open in portal' link beside its own primary button; never two primary buttons. The CTA is hidden at ≤560px, so nothing important may live only there.
 
+### 3c · Closed section (`details.sys-fold`)
+
+- **Markup.** `<details class="sys-fold"><summary>Label</summary>…</details>`. It lives in `assets/system.css` so standalone pages and the shell share it; the older module names that carry the same look (`ma-how`, `bsp-drawer`, `cs-drawer`, `pe-more`) keep working and add only spacing.
+- **Use.** Explanation, method and design notes (copy rule 12) sit in a closed `.sys-fold` or behind the Method control, never in a tab.
+
 Alternate band: `.sys-section--alt` (warm grey). Dark band: `data-sys-theme="dark"` on the section. Never more than one dark band in a row, never two `.sys-section--alt` in a row.
 
 ## 4 · Type, spacing, radii
 
 | Role | Class / token | Size | Weight · tracking |
 |---|---|---|---|
-| Landing hero only | `.sys-h1.sys-h1--display` | `clamp(48px, 9vw, 112px)` | 800 · −.05em |
+| Display hero only (a gallery or section hero) | `.sys-h1.sys-h1--display` | `clamp(48px, 9vw, 112px)` | 800 · −.05em |
 | Page title (one per page) | `.sys-h1` / `--sys-fs-3xl` | `clamp(36px, 6.2vw, 72px)` | 800 · −.04em |
 | Section title | `.sys-h2` / `--sys-fs-2xl` | `clamp(28px, 4.2vw, 48px)` | 800 · −.04em |
 | Card / sub-section title | `.sys-h3`, `.sys-card-title` | 18–22px | 700 · −.02em |
@@ -126,7 +140,7 @@ Alternate band: `.sys-section--alt` (warm grey). Dark band: `data-sys-theme="dar
 | Kicker | `.sys-kicker` | mono 12px, uppercase, .12em | 600 |
 | Labels, table heads | `.sys-card-label`, `th` | mono 11px, uppercase, .07–.08em | 600 |
 | Numbers | `.sys-num`, `.sys-kpi-value` | mono, tabular | 600 |
-| Provenance | `.sys-src`, `caption` | mono 12px, mute | 500 |
+| Provenance (in the Sources drawer) | `.sys-src` | mono 12px, mute | 500 |
 
 Fonts: Inter for everything; JetBrains Mono only for numbers, labels, kickers and provenance. No other families.
 
@@ -140,20 +154,21 @@ Buttons: one `.sys-btn--primary` per view region; `--secondary` beside it; `--gh
 
 | Page | Call | Persona | Notes |
 |---|---|---|---|
-| `index.html` (landing) | `Frame.mount({ crumb: false })` | portal | Inline hero chat stays; Ask scrolls to it and focuses it. Hero uses `.sys-h1--display`. Remove `.announce` and `.nav`. |
+| `index.html` (front door) | no mount | — | Forwarding page into `app.html#/home/overview`. See §9. |
 | `redesigns/index.html` | `Frame.mount({})` | portal | Active = Concepts. No concept tag (gallery is ours, not a company mock). |
 | `redesigns/<co>/index.html` | `Frame.mount({})` | auto = company | Concept tag + `Concepts / ● Company` in the page bar, automatic. Old `.concept` bar and private header removed; section links move to `.sys-subnav`. |
 | `redesigns/<co>/<os>.html` | `Frame.mount({})` | company | Active = Concepts; the page bar reads `Company / ● OS name` (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS). |
 | `redesigns/<co>/growth-plan.html`, `punctual-pros/nationwide.html`, `ads.html` | `Frame.mount({})` | company | Active = Concepts; the page bar reads `Company / ● Growth plan`. |
 | `redesigns/voice-ai.html`, `ai-agents.html` | `Frame.mount({ banner: true })` | portal | Page bar `Growth plans / ● Page`. |
-| `app.html` | `Frame.mount({ variant: 'app', theme })` (the saved `bsp-theme`, light by default) | portal | See §8. Hotkey ⌘J (⌘K stays the portal search). The app variant sets `nav: { briefing: 'app.html#/briefing/play' }` itself. |
-| `agent.html` (company agent) | `Frame.mount({ active: 'agent', crumb: [{ label: 'Home', href: './' }, { label: 'Company agent' }], persona: inst.id, chat: inst })`, called once after `Chat.mount` | `ag-<role>` (registered by `assets/agent.js`) | Inline agent (`Chat.mount('#ca-chat', { mode: 'inline', hostedOnly: true, expand: false, commands: false, engine: false, workspace, renderCard, onTurn })`); no floating launcher. Top-bar NAV entry "Company agent" (id `agent`, after Portal; "Agent" if the 1024px bar wraps). Consent, sync and role sheet use `.sys-dialog` (§3b). Page CSS `assets/agent.css`, prefix `ca-`. |
+| `app.html` | `Frame.mount({ variant: 'app', theme })` (the saved `bsp-theme`, light by default) | portal | See §8. Hotkey ⌘J (⌘K stays the shell's search). The top bar carries no page links; the side menu does. |
+| `agent.html` (the agent) | `Frame.mount({ active: 'agent', crumb: [{ label: 'Home', href: './' }, { label: 'Agent' }], persona: inst.id, chat: inst })`, called once after `Chat.mount` | `ag-<role>` (registered by `assets/agent.js`) | Inline agent (`Chat.mount('#ca-chat', { mode: 'inline', hostedOnly: true, expand: false, commands: false, engine: false, workspace, renderCard, onTurn })`); no floating launcher. Top-bar link "Agent" (id `agent`). Inside the shell it is embedded at `#/home/agent` with `?embed=1` (§9a). Consent, sync and role sheet use `.sys-dialog` (§3b). Page CSS `assets/agent.css`, prefix `ca-`. |
 | `theater.html`, `redesigns/case-studies.html`, `redesigns/methodology.html` | no mount | — | Forwarding pages. See §9. |
+| any page with `?embed=1` | whatever it asks for | — | Drawn as the embedded form (§9a). |
 | `briefing/executive_memo.html` | no mount | — | See §10. |
 
-Other options: `nav` (per-page override of primary links, `{ <id>: href }` or `{ <id>: { href, label, hint } }`; ids are `portal`, `agent` (the company agent, `agent.html`), `concepts`, `os`, `playbooks`, `briefing`, `github`. A link whose href is a `#/` route on the current page is marked `aria-current` while the hash is on that route and the frame keeps it in sync on `hashchange`, so pages never patch frame links after mount), `co`, `active`, `persona`, `crumb: [{label, href?, co?}]` (hrefs are root-relative: `'redesigns/'`, `'app.html#/pp/overview'`), `crumbAside: 'Concept · Oct 2026'`, `cta: {label, href}` (small primary button in the bar), `footer`, `hotkey`, `chat` (an existing widget instance), `humanize: true | 'observe' | false`. Mount once per page; a second call returns the first frame.
+Other options: `nav` (per-page override of primary links, `{ <id>: href }` or `{ <id>: { href, label, hint } }`; ids are `home`, `agent`, `connect`, `concepts`; the old `os` and `playbooks` ids mark Concepts. A link whose href is a `#/` route on the current page is marked `aria-current` while the hash is on that route and the frame keeps it in sync on `hashchange`, so pages never patch frame links after mount), `co`, `active`, `persona`, `crumb: [{label, href?, co?}]` (hrefs are root-relative: `'redesigns/'`, `'app.html#/pp/overview'`), `crumbAside: 'Concept · Oct 2026'`, `cta: {label, href}` (small primary button in the bar), `viewAs` (the "Viewing as" switch; default on), `footer`, `hotkey`, `chat` (an existing widget instance), `humanize: true | 'observe' | false`. Mount once per page; a second call returns the first frame.
 
-Chat: pages keep mounting their own floating widget (`Chat.mount(null, { persona, mode: 'floating' })`; any `theme` option is ignored, the widget follows the page theme) with their FAQ and suggestions. **Launcher label rule:** the floating launcher reads "Ask " + the persona's short name — the persona's `short` field, or `short_name` passed to `Chat.mount` when a page renames its assistant ("Ask Punctual Pros", "Ask CET", "Ask Fair Harbor", "Ask the portfolio"). Never derive it by truncating the persona name to its first word ("Ask Punctual", "Ask Fair"); a persona without a short name gets one added, not a fallback. At ≤560px the launcher is an icon-only 44px circle (label kept in `aria-label`), see §11. The Ask button opens that widget if present, else focuses an inline chat, else lazy-loads `chat.js` with the persona. Pass `chat: inst` to `Frame.mount` (or call `Frame.mount(...).setChat(inst)`) when you hold the instance.
+Chat: pages keep mounting their own floating widget (`Chat.mount(null, { persona, mode: 'floating' })`; any `theme` option is ignored, the widget follows the page theme) with their FAQ and suggestions. **Launcher label rule:** the shell's floating launcher (persona `portal`, the assistant "Broad Sky OS") reads just "Ask". A company persona's launcher reads "Ask " + its short name — the persona's `short` field, or `short_name` passed to `Chat.mount` when a page renames its assistant ("Ask Punctual Pros", "Ask CET", "Ask Fair Harbor"). Never derive it by truncating the persona name to its first word ("Ask Punctual", "Ask Fair"). At ≤560px the launcher is an icon-only 44px circle (label kept in `aria-label`), see §11. The Ask button opens that widget if present, else focuses an inline chat, else lazy-loads `chat.js` with the persona. Pass `chat: inst` to `Frame.mount` (or call `Frame.mount(...).setChat(inst)`) when you hold the instance.
 
 ## 6 · Accent rules
 
@@ -166,31 +181,31 @@ Chat: pages keep mounting their own floating widget (`Chat.mount(null, { persona
 ## 7 · Copy rules
 
 1. Plain English sentences. Sentence case for headings and buttons. No marketing filler.
-2. **No raw identifiers in visible text**: no snake_case (`book_job`, `pp_sales_pa_a`), no file names (`.json`), no internal ids (`ra-pp`, `kb-fl-2`), no `key=value`, no route hashes, no `(null)`, `undefined`, `NaN`. Write the human name: "Punctual Pros deed records (PA)", "books the job and pages the on-call tech". Use `Frame.label(id)` / `Frame.humanizeText(s)` in renderers; `Frame.humanize` is the safety net, not the plan. Wrap genuine code in `<code>` or mark the block `data-raw`.
+2. **No raw identifiers in visible text**: no snake_case (`book_job`, `pp_sales_pa_a`), no file names (`.json`), no internal ids (`ra-pp`, `kb-fl-2`), no `key=value`, no route hashes, no `(null)`, `undefined`, `NaN`. Write the human name: "Punctual Pros deed records (PA)", "books the job and pages the on-call tech". Use `Frame.label(id)` / `Frame.humanizeText(s)` in renderers; `Frame.humanize` is the safety net, not the plan. Wrap genuine code in `<code>` or mark the block `data-raw`. A table cell holds no identifier at all.
 3. **Every estimate carries `.sys-est`** (`<span class="sys-est">est.</span>`) right after the number; illustrative figures use `.sys-est--illus` ("illustrative"); live feeds use `.sys-est--live` ("live"). Missing values render as "—", never blank, never "null".
-4. **Every table, chart and KPI block ends with a provenance line**: `<p class="sys-src"><b>Source:</b> dataset human name, publisher, month year.</p>` (tables use `<caption>`). Dataset names come from `Frame.LABELS`.
+4. **Provenance and method sit behind controls, not on the page.** No "Source:" line, caption or legend paragraph on a screen. Mark the element `data-src` (the shell moves it into the Sources drawer) or `data-method` (the Method drawer), and the screen's as-of date `data-asof` (the one chip in the header). Each control shows only when it has content. A standalone page keeps its sources in a closed `.sys-fold`. A warning that changes a decision stays on the screen, as a chip of 12 words at most. Dataset names come from `Frame.LABELS`.
 5. Numbers: `$14.2M`, `27%`, `4,417`, `Sept 2026`; ranges with an en dash (`$25–35M`); mono via `.sys-num` in running text.
 6. Author line: "Prepared by Syed Rahman". The footer already carries it with the disclaimer; do not repeat it elsewhere except the memo's title block.
 7. Concept notice wording comes only from the frame (`Frame.BANNER_TEXT`); pages never write their own.
 8. Link text says where it goes ("Wastewater accounts →"), never "click here". External links open in a new tab with `rel="noopener"`.
-9. **Visitor-ready, never developer-facing.** Nothing a visitor sees mentions keys, model pickers, slash commands, dataset ids, the repo, builds, deploys, scripts, manifests, row counts, version strings or a "working draft". Data dates read as plain sentences ("Updated October 8, 2026"); a data inventory is titled "Data sources" with Records and Updated columns. Estimates stay visible behind a "Show estimates" / "Hide estimates" toggle, never a "BSP-only" label.
+9. **Visitor-ready, never developer-facing.** Nothing a visitor sees mentions keys, model pickers, slash commands, dataset ids, the repo, builds, deploys, scripts, manifests, row counts, version strings or a "working draft". Data dates read as plain sentences ("Updated October 8, 2026") or sit in the as-of chip. Estimates stay visible behind a "Show estimates" / "Hide estimates" toggle, never a "BSP-only" label.
 10. **Define a term on first use in a view.** `modules/copy.js` `gloss()` adds a short definition in parentheses after the first use of unitranche, PIK, delayed-draw, NPDES, SRF, WWTP, FSM, MOIC, IRR, CTV, LSA, ASR, BDC, RCM, MSP, LMM, SPV, GAV, DTC, AOV, GPO and NWS in running text of `#content` (and separately in `#inspector`). It never touches headings, labels, KPI tiles, chips, buttons or links, never nests inside another parenthesis, and skips a view that already spells the term out. Loan shorthand from lender filings ("S+425–475", "marked at par") is rewritten in words by `Copy.credit`. PRG and EBITDA need no gloss for this audience.
 11. **Same words for the same thing.** Company modules use the tab names Operating picture, Add-on targets, Growth opportunities, Comparables and Public filings; the matching h1 reads "<Company> · operating picture | add-on targets | public filings". A company's ranked levers panel is "Growth levers"; the full target table is "Full screen"; the redesign pages are "Growth plan".
 
-## 8 · `app.html` (portal console: the website, with a rail)
+## 8 · `app.html` (the shell: the website, with a side menu)
 
-The portal is not a separate product skin. A visitor moving between `index.html`, a concept page and `app.html` sees the same background, surfaces, type scale, card radius and shadow, KPI tiles, tables, buttons, chips, notes and est. badges, and the same light or dark theme.
+The shell is not a separate product skin. A visitor moving between `index.html`, a concept page and `app.html` sees the same background, surfaces, type scale, card radius and shadow, KPI tiles, tables, buttons, chips, notes and est. badges, and the same light or dark theme.
 
 **Theme (one preference, every page).** `html[data-sys-theme]` is `light` or `dark`; the choice is saved under `localStorage['bsp-theme']`, light by default like the site, and an explicit saved choice wins. Every page applies it in the inline `<head>` script of §2 before the stylesheets (no flash). The one toggle is the frame's top-bar button (`.sys-theme[data-sys-theme-toggle]`, next to Ask) on every page; it calls `Frame.setTheme()` (also `getTheme`, `toggleTheme`), which writes the attribute and the key, and other open tabs follow through the `storage` event. No page is locked to one theme; the portal's 3D map (`#/theater/play`) draws its stage as a dark band on either theme. In the portal, `Frame.mount({ variant: 'app', theme })` gets the saved value, the console's own `#theme-btn` hides because the frame renders the toggle, and `Theme.set()` in `assets/core.js` calls `Frame.setTheme()`. Every chat widget follows the page (`theme` is always `'auto'`; the assistant page's own theme button also calls `Frame.setTheme()`). Dark exists only as system.css §2 tokens; the console has no palette of its own. `html[data-theme]` is mirrored for older module CSS hooks. `Theme.watch` hears every change, whoever makes it, and Leaflet maps swap between the Esri light and dark tiles in place (filters and selection survive). The chat widget (`theme: 'auto'`) follows the attribute.
 
-**Load order and shell.** `system.css` before `app.css`; `Frame.mount` before `App.start()`. The frame strip (56px, the same top bar as every page) sits above the rail and content; `body[data-sys-layout="app"]` becomes a column flex and `#app` fills the rest (system.css §7a). No banner, breadcrumb row or footer. ⌘K opens the portal search; the Ask button and ⌘J open the chat. The frame's Briefing link points at `app.html#/briefing/play` and carries `aria-current` on `#/briefing/…`.
+**Load order and shell.** `system.css` before `app.css`; `Frame.mount` before `App.start()`; `App.start()` waits for the role in view (`assets/session.js`). The frame strip (56px, the same top bar as every page: wordmark, "Viewing as", Ask, theme) sits above the menu and content; `body[data-sys-layout="app"]` becomes a column flex and `#app` fills the rest (system.css §7a). No banner, breadcrumb row or footer, and no page links in the strip: the side menu carries them. ⌘K opens the shell's search; the Ask button and ⌘J open the chat. `modules/registry.js` holds the menu (`RAIL` for the firm levels, `MENUS` for the company levels) and the `LEVELS` table; the menu and the tabs are drawn from them at draw time. A screen the level does not have sends the visitor home with one line, "Not in this view."
 
 | Console part | Built from |
 |---|---|
-| Rail `#rail` | a vertical sys-nav on `--sys-bg`: `.sys-card-label` group heads, `a.rail-item` links (14px Inter, pill hover on `--sys-bg-3`, current = `--co-soft` / `--co-ink`), the module's `.sys-dot` accent, `.sys-kbd` tags; the counter sits in a `.sys-kpi`, the footer is a `.sys-src` line. At ≤900px the rail is a strip of chips (current = ink fill, the `.sys-chip[aria-current]` look). |
-| View bar `#topbar` | the sub-nav pattern (§3a): `.sys-subnav-title` with the module dot, `nav.sys-subnav-links` of `a.view-tab` links (current = `--co-soft`), then `.sys-btn--secondary` search with `.sys-kbd`, a `.sys-chip` live clock with `.sys-dot--live`, and `.sys-btn--ghost.sys-btn--icon` buttons. |
+| Menu `#rail` | a vertical sys-nav on `--sys-bg`: `.sys-card-label` group heads, `a.rail-item` links (14px Inter, pill hover on `--sys-bg-3`, current = `--co-soft` / `--co-ink`), the module's `.sys-dot` accent, `.sys-kbd` tags; the footer is a `.sys-src` line ("All views" for the firm levels, and the author line). The firm menu fits without scrolling at 1440x900 and 1280x800. At ≤900px the menu is one native picker (`#rail-pick`). |
+| Screen bar `#topbar` | the sub-nav pattern (§3a): `nav.sys-subnav-links` of `a.view-tab` links (current = `--co-soft`), then the one as-of chip (`.sys-chip`), the "Sources" and "Method" buttons (`.sys-btn--secondary.sys-btn--sm`, each shown only when it has content) and `.sys-btn--secondary` search with `.sys-kbd`. |
 | Content `#content` | `--sys-bg`, padding `--sys-sp-6` / `--sys-gut`. `#main[data-co]` carries the module accent (`--co`), so `.sys-card[data-co]` bars, `.sys-chip--soft`, `.sys-note--co` and the current tab read it. |
-| Inspector `#inspector` | a `.sys-card` drawer (`--sys-sh-2`, accent bar from `data-co`), `.sys-card-title` head, `.sys-card-label` section heads, `.sys-btn--secondary.sys-btn--sm` actions; full-height overlay at ≤900px. |
+| Inspector `#inspector` (the side panel; also the Sources and Method drawers) | a `.sys-card` drawer (`--sys-sh-2`, accent bar from `data-co`), `.sys-card-title` head, `.sys-card-label` section heads, `.sys-btn--secondary.sys-btn--sm` actions; full-height overlay at ≤900px. |
 | Palette `#palette`, tour `#tour`, toast | `.sys-card` dialog and bar; palette rows use `.sys-card-label` kinds; tour uses `.sys-btn` and the brand gradient progress; toast is a `.sys-note`. |
 
 **Components (core.js helpers write the system class, and keep the old class on the same element for module CSS hooks).** `app.css` holds layout and aliases only: no colour, radius, shadow or font of its own (every value is a token).
@@ -210,17 +225,25 @@ The portal is not a separate product skin. A visitor moving between `index.html`
 | `.icon-btn` | `.sys-btn--ghost.sys-btn--sm.sys-btn--icon` | shell |
 | est. text | `.sys-est` (`--illus`, `--live`) | copy pass |
 
-**Bespoke blocks in a module** use the same vocabulary, never new colours: a block is `<section class="sys-card">` with `<h3 class="sys-card-title">`, `<div class="sys-card-body">` and a `<p class="sys-src">` source line; a figure is `<div class="sys-kpi"><div class="sys-kpi-label">…</div><div class="sys-kpi-value">…</div><div class="sys-kpi-sub">…</div></div>` inside `.sys-kpis`; status is `.sys-chip--good/--warn/--bad/--info`; an accent is `data-co="<company>"` (or `data-co="" style="--co:var(--c-…)"`). Hand-written `.panel/.kpi/.btn/.chip/.tbl/.note` still work: `modules/copy.js` adds the matching `.sys-` class after every render and `app.css` aliases the old child classes to the same tokens.
+**Bespoke blocks in a module** use the same vocabulary, never new colours: a block is `<section class="sys-card">` with `<h3 class="sys-card-title">`, `<div class="sys-card-body">` and a a source marked `data-src`; a figure is `<div class="sys-kpi"><div class="sys-kpi-label">…</div><div class="sys-kpi-value">…</div><div class="sys-kpi-sub">…</div></div>` inside `.sys-kpis`; status is `.sys-chip--good/--warn/--bad/--info`; an accent is `data-co="<company>"` (or `data-co="" style="--co:var(--c-…)"`). Hand-written `.panel/.kpi/.btn/.chip/.tbl/.note` still work: `modules/copy.js` adds the matching `.sys-` class after every render and `app.css` aliases the old child classes to the same tokens.
 
 - Module renderers write human labels (`Frame.label`) and `.sys-est` badges; `humanize: 'observe'` catches anything that slips through on re-render.
-- Rail footer: "Prepared by Syed Rahman · October 2026 · N modules · N datasets" (the counts come from the registry and the data index at load).
+- Menu footer: "All views" (firm levels) and "Syed Rahman · Nov 2026".
 
-## 9 · Forwarding pages (`theater.html`, `redesigns/case-studies.html`, `redesigns/methodology.html`)
+## 9 · Forwarding pages (`index.html`, `theater.html`, `redesigns/case-studies.html`, `redesigns/methodology.html`)
 
-- These three pages moved into the portal: the 3D map is `app.html#/theater/play`, the sponsor case histories are `#/cases/timeline` and How BSP buys is `#/bsp/deals`. Each old address only hands its visitor on.
-- Head: the §2 order, plus `<meta name="bsp-forward" content="<target>">`, one inline script that replaces the location, and `<noscript><meta http-equiv="refresh" content="0; url=<target>"></noscript>`. The script keeps what the old link carried: the 3D map's `scene`, `autoplay` and `fallback` go inside the hash (`theater.html?scene=S3&autoplay=0` opens `app.html#/theater/play?scene=S3&autoplay=0`), an old section anchor opens the matching portal screen (`#sequence` opens `#/cases/sequence`, `#rubric` opens `#/bsp/rubric`), and any other query string stays on `app.html`.
-- Body: no `Frame.mount`, no chat. One `.sys-card` in the middle of the screen: a `.sys-card-label`, the sentence "This page has moved into the portal." as `h1.sys-card-title`, and one `.sys-btn--primary` link to the target. Light or dark from the saved theme.
+- `index.html` is the front door: it carries `<meta name="bsp-forward" content="app.html#/home/overview">` (plus its title, description and share image) and opens the firm view, keeping the query string (`?role=`, `?backend=`). Old anchors land where their content now lives: `#briefing` on `#/briefing/play`, `#platforms` on `#/home/overview`, `#deals` on `#/ma/pipeline`, `#os` and `#growth-plans` on the same anchors of `redesigns/`. Its body card reads "Opening the firm view." with one link, "Open Broad Sky OS".
+- The other three pages moved into the shell: the 3D map is `app.html#/theater/play`, the sponsor case histories are `#/cases/timeline` and How BSP buys is `#/bsp/deals`. Each old address only hands its visitor on.
+- Head: the §2 order, plus `<meta name="bsp-forward" content="<target>">`, one inline script that replaces the location, and `<noscript><meta http-equiv="refresh" content="0; url=<target>"></noscript>`. The script keeps what the old link carried: the 3D map's `scene`, `autoplay` and `fallback` go inside the hash (`theater.html?scene=S3&autoplay=0` opens `app.html#/theater/play?scene=S3&autoplay=0`), an old section anchor opens the matching screen (`#sequence` opens `#/cases/sequence`, `#rubric` opens `#/bsp/rubric`), and any other query string stays on `app.html`.
+- Body: no `Frame.mount`, no chat. One `.sys-card` in the middle of the screen: a `.sys-card-label`, the sentence "This page has moved into Broad Sky OS." as `h1.sys-card-title`, and one `.sys-btn--primary` link to the target. Light or dark from the saved theme.
 - `scripts/ci_check.py` checks each target and does not render the page; the knowledge build and the sitemap leave it out. No page uses the frame's `variant: 'minimal'` any more.
+
+## 9a · Embedded form (`?embed=1`)
+
+- **What it is.** Any page opened with `?embed=1` is drawn by `Frame.mount` as variant `embed`, whatever the page asked for, and gets `<html data-embed>`. Pages need no change. The shell (`modules/embed.js`, `embedView`) shows such a page in an iframe for the agent (`#/home/agent`), each company's Tools (its software page) and Plan (its growth plan).
+- **What it draws.** The page's own content only: no top bar, footer, breadcrumb, concept tag, page sub-bar or floating Ask button (system.css §7a hides them). It fills the shell's content area and scrolls once. The shell owns the bar, the switch and Ask.
+- **Role and theme.** The shell passes `?role=<id>`; the page follows the switch through the storage event (`assets/session.js`) and the same saved theme.
+- **Links.** A link in an embedded page that leads to `app.html` or to another page opens in the top window, never inside the frame.
 
 ## 10 · Print pages
 
@@ -229,21 +252,21 @@ The portal is not a separate product skin. A visitor moving between `index.html`
 
 ## 11 · Mobile
 
-Mobile-first. The top bar collapses to brand + Ask + menu at ≤960px (the sheet lists every primary link with a hint); a page shows two bars at most (top bar + page bar, 56 + 48px); at ≤560px the page bar's parent becomes a back arrow; the floating chat launcher is an icon-only 44px circle anchored bottom-right inside the safe-area insets at ≤560px and the full "Ask …" pill from 561px up, and it steps aside (fades out, `.ch-launch--tuck`) while it would sit on a page button or link, coming back as soon as the user scrolls past it; the footer carries extra bottom padding so the launcher never sits on its last line; the sub-nav scrolls horizontally with a fade; grids are one column below 720px (KPI strips two columns); hero and CTA buttons stack. Nothing may scroll the page horizontally at 390px — wide tables scroll inside `.sys-table-wrap`, maps and charts size to their container.
+Mobile-first. The "Viewing as" switch is in the top bar at every width: its label word hides at ≤960px, and at ≤560px it takes the free width, the wordmark shrinks to its mark and its list opens as a full-width sheet with 44px role buttons. On a standalone page the primary links collapse into a menu sheet at ≤960px; a page shows two bars at most (top bar + page bar, 56 + 48px); at ≤560px the page bar's parent becomes a back arrow; the floating chat launcher is an icon-only 44px circle anchored bottom-right inside the safe-area insets at ≤560px and the labelled pill ("Ask", or "Ask" + a company name) from 561px up, and it steps aside (fades out, `.ch-launch--tuck`) while it would sit on a page button or link, coming back as soon as the user scrolls past it; the footer carries extra bottom padding so the launcher never sits on its last line; the sub-nav scrolls horizontally with a fade; grids are one column below 720px (KPI strips two columns); hero and CTA buttons stack. Nothing may scroll the page horizontally at 390px — wide tables scroll inside `.sys-table-wrap`, maps and charts size to their container.
 
 ## 12 · Checklist (every page must pass all twelve)
 
 1. Head follows §2 exactly: Inter + JetBrains Mono, `system.css` before page CSS, same `?v=` stamp on system, frame and chat.
-2. `Frame.mount` is called once with the options in §5; the right primary link is marked active; no private header, banner or footer remains.
+2. `Frame.mount` is called once with the options in §5; the right primary link is marked active; no private header, banner or footer remains; the page also reads correctly with `?embed=1` (§9a).
 3. Concept pages show the frame banner (not a local one) and the automatic breadcrumb with the company dot.
 4. Skeleton follows §3: one `h1.sys-h1`, sections built from `.sys-section-head` + `.sys-*` components, one `.sys-cta`, frame footer last.
 5. No colour, font family, font size, radius or shadow literal in page CSS that a `--sys-*` / `--co-*` token covers.
 6. Accents follow §6: gradient only in its allowed places, company accent only via `data-co` and never as text colour except `--co-ink`.
 7. Visible text contains no snake_case, file names, internal ids, `key=value`, `(null)`, `undefined` or `NaN` — check with `document.body.innerText` after the page settles.
 8. Every estimate has `.sys-est`, every illustrative figure `.sys-est--illus`, every live feed `.sys-est--live`; missing values show "—".
-9. Every table, chart and KPI group has a provenance line (`.sys-src` or `<caption>`) naming datasets by their human names.
+9. Provenance and method are marked `data-src` and `data-method`, not printed on the screen; the as-of date is `data-asof`.
 10. Author appears only as "Syed Rahman"; no email, phone, employer or other name anywhere in markup, metadata or scripts.
-11. Ask opens the chat with the page's persona (§5); ⌘K (⌘J in the portal) does the same; the floating launcher and Ask open the same widget.
+11. Ask opens the chat with the page's persona (§5); ⌘K (⌘J in the shell) does the same; the floating launcher and Ask open the same widget.
 12. `scripts/check_page.sh "<path>" /tmp/x.png 1600 1000` shows zero console errors, and a 390px run (Playwright or a 390px iframe) shows `scrollWidth === 390`, a working menu sheet and readable crumb, hero and footer; open both PNGs and look at them.
 
 ## 13 · Accessibility
@@ -261,19 +284,20 @@ Target: WCAG 2.2 AA. Checked with axe-core 4.10 (Playwright, 1400px, light and d
 **Focus**
 
 - `:where(:focus-visible)` draws a 2px ring in `--sys-focus` on every interactive element of every page (`#b84a17` light, `#f0874a` on dark pages, the banner, the footer and dark bands; both clear 3:1). The rule has zero specificity, so a page may replace the ring (an input's box-shadow ring, a thicker stroke on an SVG node) but must never remove focus without a replacement.
-- Inside clipped scrollers (portal rail, view tabs, tables, palette) the ring draws inside the element (`outline-offset: -2px`) so it is never cut off.
+- Inside clipped scrollers (side menu, screen tabs, tables, palette) the ring draws inside the element (`outline-offset: -2px`) so it is never cut off.
 
 **Landmarks, skip link, names**
 
 - One `main#main` per page; the frame adds `a.sys-skip` ("Skip to content") as the first tab stop. It focuses `<main>` (made `tabindex="-1"`) without touching `location.hash`, so it is safe on hash-routed pages such as `app.html`.
 - The concept banner is a top-level `<aside aria-label="Concept notice">`; nothing on a page sits outside a landmark. Embedded widgets (the full-screen assistant) never add a second `<main>`.
-- Icon-only buttons carry an `aria-label` that starts with their visible text when there is any ("Ask the portfolio (opens the … chat)", "Close inspector", "Previous page", "Next page", "Open menu" / "Close menu", "Dismiss concept notice"). Search boxes without a visible label carry `aria-label`; selects sit inside their `<label>`.
+- Icon-only buttons carry an `aria-label` that starts with their visible text when there is any ("Ask (opens the … chat)", "Close inspector", "Previous page", "Next page", "Open menu" / "Close menu", "Dismiss concept notice"). Search boxes without a visible label carry `aria-label`; selects sit inside their `<label>`.
 - A table wrap that scrolls but holds nothing focusable gets `tabindex="0"`, `role="region"` and a name from its caption or card heading (the frame does this on mount, on DOM changes and on resize), so keyboard users can scroll it.
 
 **Keyboard**
 
-- Tab order: skip link → brand → primary links → Ask → (portal) rail items → view tabs → console actions → view content (filters, sortable headers, rows) → chat composer when open.
-- Portal rail items are `role="link"` with `tabindex="0"` and `aria-current="page"` on the active module; Enter or Space opens the module and focus stays on the item after the route change. View tabs carry `aria-current="page"`; segmented buttons and filter toggles carry `aria-pressed`.
+- Tab order: skip link → brand → primary links → Viewing as → Ask → (shell) menu items → screen tabs → Sources, Method and search → view content (filters, sortable headers, rows) → chat composer when open.
+- The "Viewing as" switch is a button that opens a group of level chips and role buttons: Enter or ArrowDown opens it onto the current role, Left and Right move between levels, Up and Down between roles, Escape closes it and returns focus to the button. Its accessible name is "Viewing as <role>, <organisation>. Change".
+- Menu items are links (`a.rail-item`) with `aria-current="page"` on the active module; Enter or Space opens the module and focus stays on the item after the route change. View tabs carry `aria-current="page"`; segmented buttons and filter toggles carry `aria-pressed`.
 - `UI.table`: sortable headers are focusable with `aria-sort` and sort on Enter or Space; when a table has a row inspector, rows are focusable and open it on Enter or Space.
 - The inspector moves focus to its close button when opened from the keyboard; Escape or the close button closes it and returns focus to the row or control that opened it. Escape inside the chat closes only the chat.
 - Escape closes the floating chat panel and returns focus to its launcher; ⌘K / ⌘J still open it.

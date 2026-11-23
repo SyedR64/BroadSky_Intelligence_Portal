@@ -2,7 +2,7 @@
    (CET growth plan, opportunity radar, wastewater-plant screen, add-on screen, filings review,
    county fit model, sponsor landscape, firm profile, GridOS evidence base, portfolio agent model).
    The page frame (top bar, concept notice, breadcrumb, footer) comes from assets/frame.js. */
-import { humanizeText } from '../../assets/frame.js?v=20261123143257';
+import { humanizeText } from '../../assets/frame.js?v=20261123172325';
 
 const NE = ['MA', 'CT', 'RI', 'NH', 'ME', 'VT'];
 const STATE_NAME = { MA: 'Massachusetts', CT: 'Connecticut', RI: 'Rhode Island', NH: 'New Hampshire', ME: 'Maine', VT: 'Vermont' };
@@ -28,7 +28,7 @@ const AG_GROUPS = [
   { id: 'cust', label: 'Customers & plant operators', rx: /customer|operator|municipal/i },
 ];
 
-let D = {}; let H = {};
+let D = {}; let H = {}; let NOTE_STRIP = ''; const NOTES = [];
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const M = v => v == null || isNaN(v) ? '—' : '$' + (Math.abs(v) >= 1e9 ? (v / 1e9).toFixed(2) + 'B' : Math.abs(v) >= 1e6 ? (v / 1e6).toFixed(v >= 1e8 ? 0 : 1).replace(/\.0$/, '') + 'M' : Math.abs(v) >= 1e3 ? Math.round(v / 1e3) + 'K' : Math.round(v));
@@ -49,7 +49,7 @@ const PLAIN = [
   [/\b(?:meta\.)?estimate_table\b/g, 'estimate table'], [/\bdata_gaps\b/g, 'data gaps'], [/\bdata_points\b/g, 'data points'],
   [/\s+(?:ra-cet|cet-\d{3})\b/g, ''], [/\(baseline null\)/g, '(baseline not public)'], [/\bbaseline null\b/g, 'baseline not public'],
   [/\ba 3-4 year hold\b/g, 'about three years left in the hold'],
-  [/at most one Phase 4 anchor/g, 'New England only, no new region needed'], [/;\s*also the Phase 4 gate test/g, ''],
+  [/at most one Phase 4 anchor/g, 'no new region needed'], [/;\s*also the Phase 4 gate test/g, ''],
   [/\bASSUMPTION\b/g, 'assumption'],
   [/\$(\d{4,}(?:\.\d+)?)M\b/g, (_, v) => '$' + (parseFloat(v) / 1000).toFixed(2) + 'B'],
 ];
@@ -84,7 +84,7 @@ function sld() {
   const p2 = [{ x: 70, n: 'RI' }, { x: 163, n: 'NH' }, { x: 256, n: 'ME' }, { x: 349, n: 'VT' }];
   const bolt = (x, y) => `<path d="M${x + 2} ${y - 8} l-6 9 h4.5 l-2 7 l6.5 -9.5 h-4.5 z" fill="#0a1730"/>`;
   s.innerHTML = `
-  <text class="pb-sub" x="24" y="24">MAIN BUS · MONTH 0 · 4 SITES · ~275 PEOPLE (EST.)</text>
+  <text class="pb-sub" x="24" y="24">MAIN BUS · MONTH 0 · 4 SITES · 400+ PEOPLE</text>
   <line x1="24" y1="40" x2="416" y2="40" stroke="#ffb627" stroke-width="4" stroke-linecap="round"/>
   ${nodes.map(d => `<line x1="${d.x}" y1="40" x2="${d.x}" y2="86" stroke="#ffb627" stroke-width="2.5"/>
     <circle cx="${d.x}" cy="100" r="15" fill="#ffb627"/>${bolt(d.x, 100)}
@@ -96,7 +96,7 @@ function sld() {
   ${p2.map(d => `<line class="pb-flow" x1="${d.x}" y1="196" x2="${d.x}" y2="214" stroke="#7aa2ff" stroke-width="2"/>
     <circle cx="${d.x}" cy="228" r="14" fill="#13254a" stroke="#7aa2ff" stroke-width="2" stroke-dasharray="4 3"/>
     <text class="pb-lbl" x="${d.x}" y="232" text-anchor="middle">${d.n}</text>`).join('')}
-  <text class="pb-sub" x="40" y="262">Licensed in all six states. Crews today sit only in MA and CT.</text>
+  <text class="pb-sub" x="40" y="262">Licensed in ~10 states (reported). Crews today: MA and CT.</text>
   <rect x="24" y="280" width="146" height="40" rx="8" fill="#0f2a22" stroke="#12a170" stroke-width="1.5"/>
   <text class="pb-lbl" x="34" y="297">Phase 3 · recurring O&amp;M</text><text class="pb-sub" x="34" y="311">SCADA·PV·EV·efficiency</text>
   <line x1="400" y1="196" x2="400" y2="300" stroke="#5a6f96" stroke-width="2" stroke-dasharray="4 4"/>
@@ -113,10 +113,10 @@ function kpis() {
   const r = D.road; if (!r.length) return;
   const a = r[0], z = r[r.length - 1];
   const defs = [
-    { l: 'Revenue', k: 'revenue_usd', f: M, n: 'Pro forma run-rate, month 0 to 36' },
+    { l: 'Revenue', k: 'revenue_usd', f: M, n: 'Month 0 to 36' },
     { l: 'EBITDA', k: 'ebitda_usd', f: M, n: `${(a.ebitda_usd / a.revenue_usd * 100).toFixed(1)}% to ${(z.ebitda_usd / z.revenue_usd * 100).toFixed(1)}% margin` },
-    { l: 'People', k: 'headcount', f: N, n: 'Licensed electricians are the constraint' },
-    { l: 'Sites', k: 'locations_or_accounts', f: N, n: `${a.locations_or_accounts} today in 2 states; then all 6` },
+    { l: 'People', k: 'headcount', f: N, n: 'Own site: 400+' },
+    { l: 'Sites', k: 'locations_or_accounts', f: N, n: '2 states, then 6' },
   ];
   $('#kpis').innerHTML = defs.map(d => { const max = Math.max(...r.map(x => x[d.k] || 0)); return `<div class="sys-kpi" data-co="cet">
     <span class="sys-kpi-label">${d.l}</span>
@@ -133,15 +133,15 @@ function strip() {
   const t12 = D.counties.filter(c => /Tier [12]/.test(c.cet_fit_tier || '')).length;
   const sp = D.pe.filter(p => (p.overlap_with_bsp || []).includes('cet')); const hi = sp.filter(p => p.threat_level === 'high').length;
   const cells = [
-    ['Bid radar', N(D.opp.length), `Bids and programs · ${open} open now`],
-    ['Wastewater projects', N(proj.length), `Plant and pump-station projects · ${M(projV)}*`],
-    ['Add-on targets', N(D.tgt.length), `${fit70} score 70 or more`],
-    ['Counties scored', N(D.counties.length), `New England · ${t12} in tiers 1–2`],
-    ['Competing sponsors', N(sp.length), `Sponsors chasing similar deals · ${hi} high threat`],
-    ['High-fit bids', N(fit80), 'Radar items scoring 80 or more'],
+    ['Bid radar', N(D.opp.length), `${open} open now`],
+    ['Wastewater projects', N(proj.length), `${M(projV)}*`],
+    ['Add-on targets', N(D.tgt.length), `${fit70} score 70+`],
+    ['Counties scored', N(D.counties.length), `${t12} in tiers 1–2`],
+    ['Competing sponsors', N(sp.length), `${hi} high threat`],
+    ['High-fit bids', N(fit80), 'Radar score 80+'],
   ];
   $('#hero-strip').innerHTML = cells.map(([l, b, s]) => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${H.esc(l)}</span><span class="sys-kpi-value">${H.esc(b)}</span><span class="sys-kpi-sub">${H.esc(s)}</span></div>`).join('');
-  const sn = $('#strip-note'); if (sn) sn.innerHTML = `<b>Source:</b> CET opportunity radar, wastewater-plant screen, add-on screen, county fit model and sponsor landscape, Sept 2026. *One wastewater measure is used throughout this page: the ${N(proj.length)} plant and pump-station projects that are funded or requested on the CT, MA and RI state lists, at the applicant’s total project cost (${M(projV)}). CET’s electrical scope is typically about 10–20% of that, so the addressable work is roughly ${M(projV * .1)}–${M(projV * .2)}${EST}. Bid-radar values are a separate universe (see the state table).`;
+  NOTE_STRIP = `<b>Source:</b> CET opportunity radar, wastewater-plant screen, add-on screen, county fit model and sponsor landscape, Sept 2026. *One wastewater measure is used throughout this page: the ${N(proj.length)} plant and pump-station projects that are funded or requested on the CT, MA and RI state lists, at the applicant’s total project cost (${M(projV)}). CET’s electrical scope is typically about 10–20% of that, so the addressable work is roughly ${M(projV * .1)}–${M(projV * .2)}${EST}. Bid-radar values are a separate universe (see the state table).`;
 }
 
 /* ── template ───────────────────────────────────────────────────────────── */
@@ -157,28 +157,28 @@ function template() {
         <div class="pb-tl-date">${H.esc(fmtDate(x.date))} · ${H.esc(x.location || '')}</div>
         <div class="pb-tl-h">${H.esc(x.company)}</div>
         ${x.metric ? `<p class="pb-tl-m">${H.esc(x.metric)}</p>` : ''}
-        <p class="pb-tl-e">${H.esc(head.replace(/\s*CET parallel:.*$/, ''))}</p>
         <div class="sys-note sys-note--co pb-tl-cet"><span><b>CET move:</b> ${H.esc(x.cet_move || '')}</span></div>
-        <p class="sys-src"><b>Source:</b> ${srcA(x.source_url)}</p></li>`; }).join('');
+        <details class="sys-fold"><summary><b>Detail</b><span>What happened, with source</span></summary><p class="pb-tl-e">${H.esc(head.replace(/\s*CET parallel:.*$/, ''))}</p><p class="sys-src">${srcA(x.source_url)}</p></details></li>`; }).join('');
   };
   draw('sh');
   $$('#tpl-seg button').forEach(b => b.onclick = () => { $$('#tpl-seg button').forEach(x => { x.setAttribute('aria-selected', x === b); x.setAttribute('aria-pressed', x === b); }); draw(b.dataset.f); });
   const a = D.road[0] || {}, z = D.road[D.road.length - 1] || {};
   const rows = [
-    ['Starting base', '~100 professionals, 1 office', `~${N(a.headcount)} people, ${N(a.locations_or_accounts)} sites${EST}`],
-    ['Time frame', '3.5 years, entry to exit', 'Entered Feb 2025. This plan runs Oct 2026 to Oct 2029'],
-    ['Add-ons', '9', '2 closed (NuWave, Horton) + ~6–7 planned'],
+    ['Starting base', '~100 professionals, 1 office', `400+ people (own site); plan base ~${N(a.headcount)}${EST}, ${N(a.locations_or_accounts)} sites`],
+    ['Time frame', '3.5 years, entry to exit', 'Entry Feb 2025; plan runs Oct 2026 to Oct 2029'],
+    ['Add-ons', '9', `6 so far, 4 reported; plan models 2 closed (NuWave, Horton) + ~6–7 planned`],
     ['First adjacent-state deal', 'Market Street, ~9 months in', 'Horton (CT), ~19 months in'],
     ['Revenue', '~4x', `<b>${(z.revenue_usd / a.revenue_usd).toFixed(1)}x</b> (${M(a.revenue_usd)} to ${M(z.revenue_usd)})${EST}`],
     ['Headcount', '8x', `<b>${(z.headcount / a.headcount).toFixed(1)}x</b>${EST}`],
     ['Locations', '1 to 11', `<b>${a.locations_or_accounts} to ${z.locations_or_accounts}</b>${EST}`],
     ['Delivery leverage', 'AI tools + offshore center in India', 'GridOS: 9 AI agents + shared back office'],
-    ['Exit', 'TPG Growth, Aug 2026', 'Month 36 is Q4 2029, about 4.7 years after entry (a sale at month 24–30 would be about 3.7–4.2 years)'],
+    ['Exit', 'TPG Growth, Aug 2026', 'Month 36 is Q4 2029, 4.7 years after entry (month 24–30: 3.7–4.2)'],
   ];
-  $('#compare').innerHTML = `<span class="sys-card-label">Template against this plan</span><h3 class="sys-card-title">Smith + Howard and the CET plan</h3><p class="sys-card-body">Smith + Howard facts are sourced. CET figures are labelled assumptions.</p>
+  $('#compare').innerHTML = `<span class="sys-card-label">Template against this plan</span><h3 class="sys-card-title">Smith + Howard and the CET plan</h3>
     <table class="pb-cmp"><thead><tr><th></th><th>Smith + Howard</th><th>CET plan</th></tr></thead><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody></table>
+    <details class="sys-fold"><summary><b>Why 3x, not 4x</b><span>And why the hold is longer</span></summary>
     <div class="sys-note sys-note--co"><span><b>Why about 3x and not 4x.</b> CET starts about 2.7x larger by headcount than Smith + Howard did. The multiple comes from mix (recurring O&amp;M) and margin (10% to 12.5%), not only from adding sites.</span></div>
-    <div class="sys-note sys-note--info"><span><b>The hold is longer.</b> Smith + Howard took about 3.7 years. CET reaches month 36 about 4.7 years after BSP’s entry, so the returns card in section 07 shows IRR as well as MOIC.</span></div>`;
+    <div class="sys-note sys-note--info"><span><b>The hold is longer.</b> Smith + Howard took about 3.7 years. CET reaches month 36 about 4.7 years after BSP’s entry, so the returns card in section 07 shows IRR as well as MOIC.</span></div></details>`;
 }
 const fmtDate = s => { if (!s) return ''; const [y, m, d] = String(s).split('-'); const mo = m ? new Date(2000, +m - 1, 1).toLocaleString('en-US', { month: 'short' }) : ''; return [mo, d ? +d : '', y].filter(Boolean).join(' ').replace(/ (\d{4})$/, d ? ', $1' : ' $1'); };
 
@@ -258,9 +258,9 @@ function phasePanel() {
   if (PHASE === 'all') {
     el.style.removeProperty('--pc');
     el.innerHTML = `<span class="pb-pp-months">Months 0–36 · ${ph.length} phases</span><h3 class="sys-h3">The whole plan</h3>
-      <p class="pb-th">${H.esc(String(D.pb?.meta?.narrative || '').split('. ').slice(2, 4).join('. '))}.</p>
+      <details class="sys-fold"><summary><b>Baseline</b><span>Where the plan starts</span></summary><p class="pb-th">${H.esc(String(D.pb?.meta?.narrative || '').split('. ').slice(2, 4).join('. '))}.</p></details>
       <p class="sys-card-label">Phases</p><ul>${ph.map((p, i) => `<li><b style="color:${PHASE_COLOR[i]}">Phase ${i + 1}</b> (months ${H.esc(p.months)}): ${H.esc(shortPhase(p.phase))}</li>`).join('')}</ul>
-      <p class="sys-card-label">How to read the map</p><ul><li>Amber: bids, capital plans and programs (brighter means open now)</li><li>Teal: wastewater plants; a bold ring means Horton fit of 80 or more</li><li>Violet: add-on targets (solid means fit of 70 or more)</li><li>Blue bubbles: county fit score</li></ul><p class="pb-th">Everything on this map, and every number on this page, is New England. Anything beyond is outside the plan (see Risks).</p>`;
+      <details class="sys-fold"><summary><b>Map key</b><span>Colours and rings</span></summary><ul><li>Amber: bids, capital plans and programs (brighter means open now)</li><li>Teal: wastewater plants; a bold ring means Horton fit of 80 or more</li><li>Violet: add-on targets (solid means fit of 70 or more)</li><li>Blue bubbles: county fit score</li></ul><p class="pb-th">The map shows New England. The Mid-Atlantic is a separate month-24 board decision (see Risks).</p></details>`;
     return;
   }
   const i = +PHASE, p = ph[i]; if (!p) return; const dp = p.data_points || {};
@@ -289,7 +289,8 @@ function stateTable() {
     <thead><tr><th>State</th><th ${n}>Opportunities</th><th ${n}>Open now</th><th ${n}>Value* ${EST}</th><th ${n}>Treatment plants</th><th ${n}>Plant and pump-station projects</th><th ${n}>Project cost†</th><th ${n}>Targets</th><th ${n}>Fit 70+</th><th ${n}>Founder or family</th><th>Top county (fit)</th></tr></thead>
     <tbody>${rows.map(r => `<tr data-s="${r.s}"><td>${STATE_NAME[r.s]}</td><td ${n}>${r.opp}</td><td ${n}>${r.open}</td><td ${n}>${M(r.val)}</td><td ${n}>${r.wwtp || '—'}</td><td ${n}>${r.proj || '—'}</td><td ${n}>${r.projV ? M(r.projV) : '—'}</td><td ${n}>${r.tgt}</td><td ${n}>${r.t70}</td><td ${n}>${r.fam}</td><td>${H.esc(r.county)}</td></tr>`).join('')}</tbody>
     <tfoot><tr><td>New England</td><td ${n}>${sum('opp')}</td><td ${n}>${sum('open')}</td><td ${n}>${M(sum('val'))}</td><td ${n}>${sum('wwtp')}</td><td ${n}>${sum('proj')}</td><td ${n}>${M(sum('projV'))}</td><td ${n}>${sum('tgt')}</td><td ${n}>${sum('t70')}</td><td ${n}>${sum('fam')}</td><td>—</td></tr></tfoot>
-    <caption>Source: CET opportunity radar, wastewater-plant screen (Maine, New Hampshire and Vermont are not screened yet), add-on screen and county fit model, Sept 2026. *Bid radar: total project or program cost where stated (${D.opp.filter(x => x.est_value_usd).length} of ${D.opp.length} items). †Funded or requested plant and pump-station projects on the state lists, at the applicant’s total project cost. Neither is CET’s electrical scope, which is typically about 10–20% of project cost.</caption></table>`;
+</table>`;
+  NOTES.push(`Source: CET opportunity radar, wastewater-plant screen (Maine, New Hampshire and Vermont are not screened yet), add-on screen and county fit model, Sept 2026. *Bid radar: total project or program cost where stated (${D.opp.filter(x => x.est_value_usd).length} of ${D.opp.length} items). †Funded or requested plant and pump-station projects on the state lists, at the applicant’s total project cost. Neither is CET’s electrical scope, which is typically about 10–20% of project cost.`);
   highlightStates();
 }
 function highlightStates() { const i = PHASE === 'all' ? -1 : +PHASE; const st = i < 0 ? [] : i === 2 ? [] : PHASE_STATES[i]; $$('#state-table tbody tr').forEach(tr => tr.classList.toggle('is-on', st.includes(tr.dataset.s))); }
@@ -311,11 +312,11 @@ function levers() {
     return `<article class="sys-card pb-lever" data-co="cet"><span class="sys-card-label">Lever ${k + 1}</span><h3 class="sys-card-title">${H.esc(l.lever)}</h3>
       <div class="pb-lv-vals"><span class="pb-lv-b">${b == null ? 'Not public' : fmt(b, l.unit)}</span><span aria-hidden="true">→</span><span class="pb-lv-t">${fmt(t, l.unit)}</span>${EST}<span class="pb-lv-u">${H.esc(unit)}</span></div>
       <div class="pb-lv-bar" role="img" aria-label="Baseline ${b == null ? 'not public' : fmt(b, l.unit)}, target ${fmt(t, l.unit)}">${bar}</div>
-      <div class="pb-lv-leg">${b == null ? 'Baseline not public: set in the first 30 days' : down ? 'Grey is today; green is the target (lower is better)' : 'Grey is today; colour is the uplift'}</div>
-      ${recon[l.id] ? `<p class="sys-note sys-note--info pb-lv-recon"><span>${H.esc(recon[l.id])}</span></p>` : ''}<p class="sys-card-body pb-lv-ev">${H.esc(l.evidence)}</p><p class="sys-src"><b>Source:</b> ${srcA(l.source_url)}</p></article>`;
+      <details class="sys-fold"><summary><b>Evidence</b></summary>${recon[l.id] ? `<p class="sys-note sys-note--info pb-lv-recon"><span>${H.esc(recon[l.id])}</span></p>` : ''}<p class="sys-card-body pb-lv-ev">${H.esc(l.evidence)}</p><p class="sys-src">${srcA(l.source_url)}</p></details></article>`;
   }).join('');
   const rest = all.filter(x => !LEVER_ORDER.includes(x.id));
-  if (rest.length) $('#lever-more').innerHTML = `<b>Also tracked:</b> ${rest.map(l => `${H.esc(l.lever)} (${H.esc(l.baseline ?? 'not public')} to ${H.esc(l.target)} ${H.esc(String(l.unit || '').replace(/^x /, ''))})`).join('; ')}.`;
+  NOTES.push('Levers: the grey bar is today and the colour is the uplift; the bar is hatched where CET’s own number is not public and the 30-day data request fills it in.');
+  if (rest.length) { $('#lever-more-fold').hidden = false; $('#lever-more').innerHTML = `${rest.map(l => `${H.esc(l.lever)} (${H.esc(l.baseline ?? 'not public')} to ${H.esc(l.target)} ${H.esc(String(l.unit || '').replace(/^x /, ''))})`).join('; ')}.`; }
 }
 
 /* ── agents ─────────────────────────────────────────────────────────────── */
@@ -324,17 +325,16 @@ function agents() {
   const inG = (a, g) => g.rx.test(a.who_it_helps || '');
   $('#ag-seg').innerHTML = AG_GROUPS.map((g, k) => `<button class="sys-chip" type="button" role="tab" aria-selected="${k === 0}" aria-pressed="${k === 0}" data-g="${g.id}">${g.label}<span class="pb-n">${ag.filter(a => inG(a, g)).length}</span></button>`).join('');
   const fmtM = a => a.metric_value == null ? '—' : a.metric_unit && /GBP/.test(a.metric_unit) ? '£' + Math.round(a.metric_value / 1000) + 'K' : /USD/.test(a.metric_unit || '') ? M(a.metric_value) : N(a.metric_value) + (/^%/.test(a.metric_unit || '') ? '%' : /percentage points/.test(a.metric_unit || '') ? ' pts' : '');
-  $('#agent-grid').innerHTML = ag.map(a => `<article class="sys-card pb-agent" data-id="${a.id}"><span class="sys-card-label">${H.esc(a.who_it_helps)}</span><h3 class="sys-card-title">${H.esc(a.agent)}</h3><p class="sys-card-body">${H.esc(a.job_to_be_done)}</p>
+  $('#agent-grid').innerHTML = ag.map(a => `<article class="sys-card pb-agent" data-id="${a.id}"><span class="sys-card-label">${H.esc(a.who_it_helps)}</span><h3 class="sys-card-title">${H.esc(a.agent)}</h3>
     ${a.metric_value == null ? '<div class="pb-metric"><span class="sys-chip">Qualitative vendor claim</span></div>' : `<div class="pb-metric"><b class="sys-num">${fmtM(a)}</b><span>${H.esc(String(a.metric_unit || '').replace(/^% /, '').replace(/^USD /, '').replace(/^GBP /, '').replace(/^percentage points /, ''))}</span></div>`}
-    <p class="pb-claim">${H.esc(a.metric_claim)}</p>
     <div class="sys-chips pb-meta"><span class="sys-chip sys-chip--soft">${a.weeks_to_deploy ?? '—'} weeks to go live</span>${(a.vendor_examples || []).slice(0, 2).map(v => `<span class="sys-chip">${H.esc(v)}</span>`).join('')}</div>
-    <p class="sys-src">${H.esc(a.cost_model || '')} · ${srcA(a.source_url)}</p></article>`).join('');
+    <details class="sys-fold"><summary><b>Detail</b></summary><p class="sys-card-body">${H.esc(a.job_to_be_done)}</p><p class="pb-claim">${H.esc(a.metric_claim)}</p><p class="sys-src">${H.esc(a.cost_model || '')} · ${srcA(a.source_url)}</p></details></article>`).join('');
   const sorted = ag.slice().sort((a, b) => (a.weeks_to_deploy || 99) - (b.weeks_to_deploy || 99));
   const maxW = Math.max(...ag.map(a => a.weeks_to_deploy || 0), 10);
   const val = D.agp.filter(x => x.company === 'cet').reduce((s, x) => s + (x.est_annual_value_usd || 0), 0);
   const ra = D.sev.find(x => x.id === 'ra-cet');
   $('#runway').innerHTML = `<span class="sys-card-label">Go-live runway (weeks)</span>${sorted.map(a => `<div class="pb-rw-row" data-id="${a.id}"><span>${H.esc(a.agent.replace(/\s*\(.*\)$/, ''))}</span><div class="pb-tr"><i style="width:${((a.weeks_to_deploy || 0) / maxW) * 100}%"></i></div></div>`).join('')}<div class="pb-rw-ax"><span>0</span><span>${maxW} weeks</span></div>
-    ${val ? `<p class="pb-ag-total">The portfolio agent model values the GridOS agents at <b>${M(val)}</b>${EST} a year in EBITDA-equivalent after ramp${ra ? `, inside the ${M(ra.ebitda_impact_usd[0])}–${M(ra.ebitda_impact_usd[1])} GridOS range` : ''}.</p>` : ''}`;
+    ${val ? `<p class="pb-ag-total">Agent model: <b>${M(val)}</b>${EST} a year EBITDA-equivalent${ra ? `, inside the ${M(ra.ebitda_impact_usd[0])}–${M(ra.ebitda_impact_usd[1])} GridOS range` : ''}.</p>` : ''}`;
   $$('#ag-seg button').forEach(b => b.onclick = () => {
     $$('#ag-seg button').forEach(x => { x.setAttribute('aria-selected', x === b); x.setAttribute('aria-pressed', x === b); }); const g = AG_GROUPS.find(x => x.id === b.dataset.g);
     $$('#agent-grid .pb-agent').forEach(c => { const a = ag.find(x => x.id === c.dataset.id); c.classList.toggle('is-off', !inG(a, g)); });
@@ -346,10 +346,10 @@ function agents() {
 function talent() {
   const me = D.pb?.meta?.market_evidence || {}; const el = me.electrician_labor_us || {}, gap = me.construction_worker_gap_2026 || {};
   const cells = [
-    ['Electrician openings', N(el.annual_openings), 'A year in the US, BLS 2024–34', el.source_url, 'BLS'],
-    ['Job growth', `+${el.growth_2024_34_pct ?? '—'}%`, 'Electricians, 2024–34, BLS', el.source_url, 'BLS'],
-    ['Median pay', M(el.median_pay_usd_2024), 'Electricians, 2024, BLS', el.source_url, 'BLS'],
-    ['Workers needed', gap.value ? Math.round(gap.value / 1000) + 'K' : '—', 'Net new construction workers in 2026, ABC', gap.source_url, 'ABC'],
+    ['Electrician openings', N(el.annual_openings), 'A year in the US', el.source_url, 'BLS'],
+    ['Job growth', `+${el.growth_2024_34_pct ?? '—'}%`, 'Electricians, 2024–34', el.source_url, 'BLS'],
+    ['Median pay', M(el.median_pay_usd_2024), 'Electricians, 2024', el.source_url, 'BLS'],
+    ['Workers needed', gap.value ? Math.round(gap.value / 1000) + 'K' : '—', 'Net new in 2026', gap.source_url, 'ABC'],
   ];
   $('#shortage').innerHTML = cells.map(([l, b, s, u, who]) => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${H.esc(l)}</span><span class="sys-kpi-value">${H.esc(b)}</span><span class="sys-kpi-sub">${H.esc(s)}</span>${u ? `<span class="sys-src">${srcA(u, `${who} source ↗`)}</span>` : ''}</div>`).join('');
   const icons = [
@@ -361,7 +361,7 @@ function talent() {
     '<path d="M4 12h5l2-5 3 10 2-5h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
   ];
   $('#programs').innerHTML = D.K('talent_program').map((t, k) => `<article class="sys-card pb-prog"><span class="pb-ic"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">${icons[k % icons.length]}</svg></span>
-    <h3 class="sys-card-title">${H.esc(t.program)}</h3><span class="sys-card-label">For ${H.esc(t.who_it_helps)}</span><span class="pb-pm sys-num">${H.esc(t.metric)}</span><p class="sys-card-body">${H.esc(t.evidence)}</p><p class="sys-src"><b>Source:</b> ${srcA(t.source_url)}</p></article>`).join('');
+    <h3 class="sys-card-title">${H.esc(t.program)}</h3><span class="sys-card-label">For ${H.esc(t.who_it_helps)}</span><span class="pb-pm sys-num">${H.esc(t.metric)}</span><details class="sys-fold"><summary><b>Evidence</b></summary><p class="sys-card-body">${H.esc(t.evidence)}</p><p class="sys-src">${srcA(t.source_url)}</p></details></article>`).join('');
 }
 
 /* ── add-ons ────────────────────────────────────────────────────────────── */
@@ -372,22 +372,24 @@ function addons() {
   const draw = s => {
     const list = (s === 'All' ? T : T.filter(t => t.state === s)).slice(0, 8);
     $('#targets').innerHTML = list.map(t => `<article class="sys-card pb-tg"><span class="pb-rk sys-num">${T.indexOf(t) + 1}</span><div class="pb-tg-main"><h3 class="sys-card-title">${H.esc(t.company)}</h3>
-      <div class="pb-ln">${H.esc(t.hq_city)}, ${H.esc(t.state)} · about ${H.esc(t.employees ?? '—')} staff · ${M(t.revenue_est_usd)} revenue${EST} (ZoomInfo model) · ${H.esc(OWN[t.ownership] || 'Ownership unknown')} · ${(nn => `${H.esc(nn.mi ?? '—')} miles from ${H.esc(nn.name)}`)(nearestNode(t))}</div>
+      <div class="pb-ln">${H.esc(t.hq_city)}, ${H.esc(t.state)} · about ${H.esc(t.employees ?? '—')} staff · ${M(t.revenue_est_usd)} revenue${EST} · ${H.esc(OWN[t.ownership] || 'Ownership unknown')} · ${(nn => `${H.esc(nn.mi ?? '—')} miles from ${H.esc(nn.name)}`)(nearestNode(t))}</div>
       <div class="sys-chips pb-sp">${(t.specialties || []).slice(0, 3).map(x => `<span class="sys-chip">${H.esc(x)}</span>`).join('')}</div>${(t.risk_flags || [])[0] ? `<div class="pb-rf">Watch: ${H.esc(t.risk_flags[0])}</div>` : ''}</div>
-      <div class="pb-fit"><b class="sys-num">${t.fit_score}</b><small>fit out of 100</small><div class="pb-fb"><i style="width:${t.fit_score}%"></i></div></div></article>`).join('') || '<p class="sys-src">No targets screened in this state yet. That gap is why Phase 2 needs an outreach-led sourcing pass.</p>';
+      <div class="pb-fit"><b class="sys-num">${t.fit_score}</b><small>fit out of 100</small><div class="pb-fb"><i style="width:${t.fit_score}%"></i></div></div></article>`).join('') || '<p class="sys-src">No targets screened here yet; Phase 2 needs outreach-led sourcing.</p>';
   };
   draw('All');
   $$('button', seg).forEach(b => b.onclick = () => { $$('button', seg).forEach(x => { x.setAttribute('aria-selected', x === b); x.setAttribute('aria-pressed', x === b); }); draw(b.dataset.s); });
   const med = D.pb?.items?.find(x => x.id === 'cp-phase-2')?.data_points?.target_screen_median_revenue_usd;
-  $('#ad-sub').innerHTML = `Ranked from the portal’s add-on screen, fit out of 100. Median target: ${M(med)} revenue${EST}, about 71 staff.`;
+  $('#ad-sub').innerHTML = `Median target: ${M(med)} revenue${EST}, about 71 staff.`;
   const maxC = Math.max(...NE.map(s => T.filter(t => t.state === s).length));
-  $('#ad-states').innerHTML = `<h3 class="sys-card-title">Targets by state</h3><div class="pb-bars-h">${NE.map(s => { const n = T.filter(t => t.state === s).length, f = T.filter(t => t.state === s && t.fit_score >= 70).length; return `<div class="pb-bh-r"><b>${s}</b><div class="pb-tr"><i class="is-fit" style="width:${(f / maxC) * 100}%"></i><i style="width:${((n - f) / maxC) * 100}%"></i></div><span>${n}</span></div>`; }).join('')}</div><p class="sys-src"><i class="pb-key is-fit"></i>Fit 70 or more <i class="pb-key"></i>Other. Outside MA, only one target scores 70 or more. <b>Source:</b> CET add-on screen, Sept 2026.</p>`;
-  const hd = [['Day 0', 'Retention agreements for named managers. The brand, license holders and 24/7 on-call crews stay in place.'], ['Weeks 1–4', 'Estimating moves onto Accubid and the GridOS bid board. The add-on’s bids start going through go/no-go scoring.'], ['Weeks 4–8', 'Safety, payroll, AP and job costing move onto the shared back office. Apprentices enroll in the MA/CT tax credits.'], ['Month 3', 'Crew scheduling moves onto the shared bench, so labor can be lent across MA, CT and new states.'], ['Months 3–6', 'Cross-sell: CET generators and controls, plus NuWave efficiency work, into the add-on’s accounts.'], ['Month 6+', 'Field practices change last. Measure against the lever baselines.']];
-  $('#hundred').innerHTML = `<h3 class="sys-card-title">Day one, the same way every time</h3><ol class="pb-hd">${hd.map(([a, b]) => `<li><b>${a}</b><span>${b}</span></li>`).join('')}</ol><p class="sys-src">Back office first and field last, because about 70% of mergers miss their revenue-synergy targets (McKinsey).</p>`;
+  $('#ad-states').innerHTML = `<h3 class="sys-card-title">Targets by state</h3><div class="pb-bars-h">${NE.map(s => { const n = T.filter(t => t.state === s).length, f = T.filter(t => t.state === s && t.fit_score >= 70).length; return `<div class="pb-bh-r"><b>${s}</b><div class="pb-tr"><i class="is-fit" style="width:${(f / maxC) * 100}%"></i><i style="width:${((n - f) / maxC) * 100}%"></i></div><span>${n}</span></div>`; }).join('')}</div><p class="sys-src"><i class="pb-key is-fit"></i>Fit 70+ <i class="pb-key"></i>Other</p>`;
+  NOTES.push('Outside MA, only one target scores 70 or more. Source: CET add-on screen, Sept 2026. Target revenue is a ZoomInfo model.');
+  const hd = [['Day 0', 'Retention agreements for named managers; brand, license holders and crews stay.'], ['Weeks 1–4', 'Estimating moves onto Accubid and the GridOS bid board.'], ['Weeks 4–8', 'Safety, payroll, AP and job costing join the shared back office.'], ['Month 3', 'Crew scheduling joins the shared bench across MA, CT and new states.'], ['Months 3–6', 'Cross-sell CET generators and controls, plus NuWave efficiency.'], ['Month 6+', 'Field practices change last.']];
+  $('#hundred').innerHTML = `<h3 class="sys-card-title">Day one, the same way every time</h3><ol class="pb-hd">${hd.map(([a, b]) => `<li><b>${a}</b><span>${b}</span></li>`).join('')}</ol><p class="sys-src">About 70% of mergers miss synergy targets (McKinsey).</p>`;
   const pbc = D.tgtMeta.pe_backed_competitors || []; const sp = D.pe.filter(p => (p.overlap_with_bsp || []).includes('cet'));
-  $('#rivals').innerHTML = `<h3 class="sys-card-title">Who else is buying</h3><div class="sys-card-body"><p><b>${pbc.length}</b> New England electrical and energy firms are already sponsor- or strategic-owned, and <b>${sp.length}</b> PE firms compete for CET-type deals (${sp.filter(p => p.threat_level === 'high').length} high threat).</p>
+  $('#rivals').innerHTML = `<h3 class="sys-card-title">Who else is buying</h3><div class="sys-card-body"><p><b>${pbc.length}</b> New England firms are sponsor- or strategic-owned; <b>${sp.length}</b> PE firms compete (${sp.filter(p => p.threat_level === 'high').length} high threat).</p>
     <ul class="sys-card-list pb-mt">${pbc.slice(0, 4).map(c => `<li><b>${H.esc(c.company)}</b>: ${H.esc(c.owner)}${c.year ? `, ${c.year}` : ''}</li>`).join('')}</ul>
-    <p class="pb-mt">High-threat sponsors: ${sp.filter(p => p.threat_level === 'high').map(p => H.esc(p.firm)).join(', ')}.</p></div><p class="sys-src"><b>Source:</b> Private-equity landscape and CET add-on screen, Sept 2026.</p>`;
+    <p class="pb-mt">High threat: ${sp.filter(p => p.threat_level === 'high').map(p => H.esc(p.firm)).join(', ')}.</p></div>`;
+  NOTES.push('Source: private-equity landscape and CET add-on screen, Sept 2026.');
 }
 
 /* ── financing ──────────────────────────────────────────────────────────── */
@@ -395,7 +397,7 @@ const FIN_OVERRIDE = {
   'cp-fin-01': { source_of_funds: 'Sponsor equity and co-invest', amount_or_range: 'Co-invest vehicle (Form D, Feb 2025)', evidence: 'BSP has already set up a dedicated CET co-invest vehicle alongside the fund. A Phase 2 add-on wave can reuse that route instead of drawing only on the fund.' },
 };
 function finance() {
-  $('#fin-grid').innerHTML = D.K('financing').map(f => ({ ...f, ...(FIN_OVERRIDE[f.id] || {}) })).map((f, k) => `<article class="sys-card pb-fin" data-co="cet"><span class="sys-card-label">Source of funds ${k + 1}</span><h3 class="sys-card-title">${H.esc(f.source_of_funds)}</h3><div class="pb-amt sys-num">${H.esc(f.amount_or_range)}</div><p class="sys-card-body">${H.esc((() => { const ss = String(f.evidence).split('. '); const two = ss.slice(0, 2).join('. '); return (two.length > 260 ? ss[0] : two).replace(/\.$/, ''); })())}.</p><p class="sys-src"><b>Source:</b> ${srcA(f.source_url)}</p></article>`).join('');
+  $('#fin-grid').innerHTML = D.K('financing').map(f => ({ ...f, ...(FIN_OVERRIDE[f.id] || {}) })).map((f, k) => `<article class="sys-card pb-fin" data-co="cet"><span class="sys-card-label">Source of funds ${k + 1}</span><h3 class="sys-card-title">${H.esc(f.source_of_funds)}</h3><div class="pb-amt sys-num">${H.esc(f.amount_or_range)}</div><details class="sys-fold"><summary><b>Evidence</b></summary><p class="sys-card-body">${H.esc((() => { const ss = String(f.evidence).split('. '); const two = ss.slice(0, 2).join('. '); return (two.length > 260 ? ss[0] : two).replace(/\.$/, ''); })())}.</p><p class="sys-src">${srcA(f.source_url)}</p></details></article>`).join('');
 }
 
 function roadmap() {
@@ -410,9 +412,10 @@ function roadmap() {
     <text class="pb-vl2" x="${gx(k) + bw / 2 + 4}" y="${y(x.ebitda_usd) + 4}">${M(x.ebitda_usd)}</text>
     <text class="pb-ax pb-ax--b" x="${gx(k)}" y="${Hh - 36}" text-anchor="middle">Month ${x.month}</text><text class="pb-ax" x="${gx(k)}" y="${Hh - 21}" text-anchor="middle">${N(x.headcount)} people</text><text class="pb-ax" x="${gx(k)}" y="${Hh - 7}" text-anchor="middle">${x.locations_or_accounts} sites</text>`).join('');
   $('#road-chart').innerHTML = `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Revenue and EBITDA by month: ${r.map(x => `month ${x.month} ${M(x.revenue_usd)} revenue, ${M(x.ebitda_usd)} EBITDA`).join('; ')}">${grid}${bars}</svg>
-    <p class="sys-src"><i class="pb-key pb-key--rev"></i>Revenue <i class="pb-key pb-key--ebitda"></i>EBITDA, same scale. <b>Source:</b> CET growth plan roadmap, analyst assumptions, Oct 2026.</p>`;
+    <p class="sys-src"><i class="pb-key pb-key--rev"></i>Revenue <i class="pb-key pb-key--ebitda"></i>EBITDA, same scale</p>`;
+  NOTES.push('Source: CET growth plan roadmap, analyst assumptions, Oct 2026. All figures are analyst estimates, not company guidance.');
   const n = 'class="sys-n"';
-  $('#road-table').innerHTML = `<table class="sys-table pb-tbl"><thead><tr><th>Month</th><th ${n}>Revenue</th><th ${n}>EBITDA</th><th ${n}>Margin</th><th ${n}>People</th><th ${n}>Sites</th><th>Basis</th></tr></thead><tbody>${r.map(x => `<tr><td>${x.month}</td><td ${n}>${M(x.revenue_usd)}</td><td ${n}>${M(x.ebitda_usd)}</td><td ${n}>${(x.ebitda_usd / x.revenue_usd * 100).toFixed(1)}%</td><td ${n}>${N(x.headcount)}</td><td ${n}>${x.locations_or_accounts}</td><td class="pb-note">${H.esc(String(x.note || '').replace(/^ASSUMPTION\.\s*/, ''))}</td></tr>`).join('')}</tbody><caption>All figures are analyst estimates, not company guidance.</caption></table>`;
+  $('#road-table').innerHTML = `<table class="sys-table pb-tbl"><thead><tr><th>Month</th><th ${n}>Revenue</th><th ${n}>EBITDA</th><th ${n}>Margin</th><th ${n}>People</th><th ${n}>Sites</th><th>Basis</th></tr></thead><tbody>${r.map(x => `<tr><td>${x.month}</td><td ${n}>${M(x.revenue_usd)}</td><td ${n}>${M(x.ebitda_usd)}</td><td ${n}>${(x.ebitda_usd / x.revenue_usd * 100).toFixed(1)}%</td><td ${n}>${N(x.headcount)}</td><td ${n}>${x.locations_or_accounts}</td><td class="pb-note">${H.esc(String(x.note || '').replace(/^ASSUMPTION\.\s*/, ''))}</td></tr>`).join('')}</tbody></table>`;
 }
 
 /* Shared deal arithmetic (all est.): organic growth ~8%/yr per the month-12 roadmap note; acquired revenue
@@ -436,14 +439,15 @@ function bridge() {
     $('#bridge').innerHTML = `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Enterprise value bridge: today ${M(ev0)}, plus ${M(go)} organic EBITDA growth, plus ${M(ga)} acquired EBITDA, plus ${M(p)} quality premium, minus ${M(sp.spend)} paid for add-ons, equals ${M(net)} at month 36 net of add-on capital">
       <line class="pb-grid" x1="0" x2="${W}" y1="${y(0)}" y2="${y(0)}"/>
       ${steps.map(([l, b, v, c, sg], k) => { const x = pl + k * cw + (cw - bw) / 2; const top = sg === '−' ? b + v : b + v; const lvl = sg === '−' ? b : b + v; return `<rect class="${c}" x="${x}" y="${y(top)}" width="${bw}" height="${Math.max(1, y(b) - y(b + v))}" rx="5"/>${k < steps.length - 1 ? `<line class="pb-link" x1="${x + bw}" x2="${x + cw}" y1="${y(lvl)}" y2="${y(lvl)}"/>` : ''}<text class="pb-vl" x="${x + bw / 2}" y="${y(top) - 7}" text-anchor="middle">${sg}${M(v)}</text><text class="pb-ax" x="${x + bw / 2}" y="${Hh - 24}" text-anchor="middle">${l[0]}</text>${l[1] ? `<text class="pb-ax" x="${x + bw / 2}" y="${Hh - 9}" text-anchor="middle">${l[1]}</text>` : ''}`; }).join('')}</svg>`;
+    $('#bridge-sum').innerHTML = `<b>${M(ev1)}</b> gross, <b>${M(net)}</b> net of <b>${M(sp.spend)}</b> paid for add-ons.`;
     $('#bridge-note').innerHTML = `Enterprise value = EBITDA × multiple. Today: ${M(a.ebitda_usd)} × ${m.toFixed(1)}x = ${M(ev0)}. Month 36: ${M(z.ebitda_usd)} × (${m.toFixed(1)}x + ${t.toFixed(2).replace(/0$/, '')} ${t === 1 ? 'turn' : 'turns'}) = <b>${M(ev1)}</b>, or <b>${(ev1 / ev0).toFixed(1)}x today's EV, gross of add-on capital</b>. Not all of that is created: at ~8% organic growth CET reaches ~${M(sp.orgRev)} of revenue on its own, so ~${M(sp.acqRev)} of the ${M(z.revenue_usd)} is bought. That brings ~${M(sp.acqE)} of EBITDA at an est. ${ACQ_X}x, or <b>~${M(sp.spend)} of capital paid for add-ons</b>. Net of that capital, month-36 value is <b>${M(net)}</b>, ${M(net - ev0)} above today. Capstone/IMAP put typical middle-market deals at 6.8x and premium deals at 9.8x. PKF puts project-heavy contractors at 5–6x and repeatable service at 10x+. The GridOS evidence base credits CET with ${ra ? ra.multiple_expansion_turns.join('–') : '0.5–1.5'} turns. All figures are estimates${EST}. <b>Source:</b> CET growth plan roadmap, GridOS evidence base, Capstone and IMAP 2026 survey, PKF summer 2026 update.`;
   };
   mx.oninput = draw; os.oninput = draw; draw();
   if (ra) {
     const tv = ra.multiple_expansion_turns.map(t => t * z.ebitda_usd);
-    $('#gridos-case').innerHTML = `<div class="sys-kpi"><span class="sys-kpi-value">${M(ra.investment_usd[0])}–${M(ra.investment_usd[1])}${EST}</span><span class="sys-kpi-sub">GridOS investment · ${ra.time_to_value_months.join('–')} months to value</span></div>
-      <div class="sys-kpi"><span class="sys-kpi-value">${M(ra.ebitda_impact_usd[0])}–${M(ra.ebitda_impact_usd[1])}${EST}</span><span class="sys-kpi-sub">EBITDA impact (${ra.ebitda_impact_pct_revenue.join('–')} points of revenue)</span></div>
-      <div class="sys-kpi"><span class="sys-kpi-value">${M(tv[0])}–${M(tv[1])}${EST}</span><span class="sys-kpi-sub">Value of ${ra.multiple_expansion_turns.join('–')} turns on month-36 EBITDA</span></div>`;
+    $('#gridos-case').innerHTML = `<div class="sys-kpi"><span class="sys-kpi-value">${M(ra.investment_usd[0])}–${M(ra.investment_usd[1])}${EST}</span><span class="sys-kpi-sub">Investment · ${ra.time_to_value_months.join('–')} months</span></div>
+      <div class="sys-kpi"><span class="sys-kpi-value">${M(ra.ebitda_impact_usd[0])}–${M(ra.ebitda_impact_usd[1])}${EST}</span><span class="sys-kpi-sub">EBITDA impact · ${ra.ebitda_impact_pct_revenue.join('–')} pts</span></div>
+      <div class="sys-kpi"><span class="sys-kpi-value">${M(tv[0])}–${M(tv[1])}${EST}</span><span class="sys-kpi-sub">Value of ${ra.multiple_expansion_turns.join('–')} turns</span></div>`;
   }
   returns();
 }
@@ -495,8 +499,9 @@ function risks() {
     ['l', 'Data-center hype', 'ISO-NE says New England data-center load lags other regions, so data-center electrical is upside, not the core of the plan.', `Price it as an option. ${ra ? `GridOS value is booked only inside the ${ra.multiple_expansion_turns.join('–')}-turn evidence range.` : ''}`],
   ];
   const z = D.road[D.road.length - 1] || {}, m24 = D.road.find(x => x.month === 24) || {};
-  const by = $('#beyond'); if (by) by.innerHTML = `<span><b>Beyond this plan, not in the numbers.</b> Any move into NY, NJ or eastern PA would be a separate board decision at month 24, and only if month-24 revenue and margin are at or above plan (${M(m24.revenue_usd)}, ${m24.revenue_usd ? (m24.ebitda_usd / m24.revenue_usd * 100).toFixed(1) : '—'}%). The ${M(z.revenue_usd)} month-36 figure does not depend on it. New York City is out either way.</span>`;
-  $('#risk-list').innerHTML = R.map(([s, h, p, m]) => `<li><span class="pb-sev pb-sev--${s}">${s === 'h' ? 'High' : s === 'm' ? 'Medium' : 'Low'}</span><div><b>${H.esc(h)}</b><p>${H.esc(p)}</p><p class="pb-mit"><b>Mitigation:</b> ${H.esc(m)}</p></div></li>`).join('');
+  const by = $('#beyond'); if (by) by.innerHTML = `<span><b>Beyond this plan, not in the numbers.</b> A Mid-Atlantic leg is a separate board decision at month 24, if revenue and margin reach plan (${M(m24.revenue_usd)}, ${m24.revenue_usd ? (m24.ebitda_usd / m24.revenue_usd * 100).toFixed(1) : '—'}%). The ${M(z.revenue_usd)} month-36 figure does not depend on it.</span>`;
+  const ACT = ['Run a 30-day data request; re-base roadmap and levers on actuals.', 'Two apprenticeship lanes, tax credits, journeyman fast track, foremen equity.', 'Keep the brand and 24/7 crews; sign retention agreements; back office first.', 'Lead with founder rollover and a partner model, not banker auctions.', 'Run outreach through NECA and IEC chapters; extend the wastewater screen.', 'Arrange surety early; bid selectively; cap public hard-bid share.', 'Run union add-ons as divisions beside the IEC merit-shop lane.', 'Price it as an option inside the GridOS turn range.'];
+  $('#risk-list').innerHTML = R.map(([s, h, p, m], k) => `<li><span class="pb-sev pb-sev--${s}">${s === 'h' ? 'High' : s === 'm' ? 'Medium' : 'Low'}</span><div><b>${H.esc(h)}</b><p class="pb-mit">${H.esc(ACT[k] || m)}</p><details class="sys-fold"><summary><b>Detail</b></summary><p>${H.esc(p)}</p><p class="pb-mit"><b>Mitigation:</b> ${H.esc(m)}</p></details></div></li>`).join('');
   const A = [
     ['A 30-day data request', 'actual revenue, EBITDA, backlog, recurring share, utilization and bid-hit ratio by state, to replace every est. on this page.', 'Nov 2026'],
     [`Approve the GridOS budget (${ra ? `${M(ra.investment_usd[0])}–${M(ra.investment_usd[1])}` : '$0.8–1.8M'})`, 'start with the three fastest agents: 24/7 dispatcher (3 wks), bid-radar triage (4 wks) and contract review (4 wks).', 'Q4 2026'],
@@ -505,7 +510,7 @@ function risks() {
     ['Surety and bonding introductions', 'to support public wastewater and SRF-funded bids at a larger size.', 'Q1 2027'],
     ['People design', 'an equity pool for licensed electricians and foremen, plus a plan to claim MA RATC (up to $100K per employer) and the CT apprenticeship credit.', 'Q1 2027'],
   ];
-  $('#ask-list').innerHTML = A.map(([h, p, w]) => `<li><b>${H.esc(h)}</b>: ${H.esc(p)} <span class="sys-chip sys-chip--soft pb-when">${H.esc(w)}</span></li>`).join('');
+  $('#ask-list').innerHTML = A.map(([h, p, w]) => `<li><b>${H.esc(h)}</b> <span class="sys-chip sys-chip--soft pb-when">${H.esc(w)}</span><details class="sys-fold"><summary><b>Detail</b></summary><p>${H.esc(p)}</p></details></li>`).join('');
 }
 
 /* ── sources ────────────────────────────────────────────────────────────── */
@@ -513,8 +518,9 @@ function sources() {
   const m = D.pb?.meta || {}; const urls = [...new Set(D.items.flatMap(i => [i.source_url, ...(i.source_urls || [])]).filter(Boolean))];
   const byHost = {}; urls.forEach(u => { const h = host(u); (byHost[h] = byHost[h] || []).push(u); });
   const method = `Template events come from BSP, Smith + Howard and trade-press releases (Accounting Today, CPA Practice Advisor), checked ${fmtDate(m.generated) || '—'}. Vertical analogs (Pfingsten NEC Group, Ridgemont Crete United, Kohlberg Loenbro, IES Holdings) come from PE Hub, PrivSource and SEC 8-K filings. AI-agent, talent and growth-lever evidence comes from vendor case studies, government sources (BLS, DOL, mass.gov, CT DRS, EPA, NREL, ISO-NE, PJM) and banker and legal commentary (Taft, Capstone/IMAP, PKF, GF Data). Phase figures are computed from the portal's research: the bid radar (${D.opp.length} items), the wastewater screen (${D.wwtp.length} plants), the add-on screen (${D.tgt.length} targets), the county fit model (${D.counties.length} counties), our filings review and the GridOS evidence base. Every revenue, EBITDA, headcount and margin target is an analyst assumption anchored to filings-based estimates.`;
-  const caveats = (m.caveats || []).map(c => /NY\/NJ\/PA/.test(c) ? 'Management guidance is a New England focus with no NYC expansion. This plan and every number on this page are New England only. A move into NY, NJ or eastern PA would be a separate board decision and is not modelled.' : String(c).replace(/\b\d{4}-\d{2}-\d{2}\b/g, d => fmtDate(d)));
-  $('#src-body').innerHTML = `<p><b>Method.</b> ${H.esc(method)}</p>
+  const caveats = (m.caveats || []).filter(c => !/HTTP 403|spot-check|search-engine extracts|\brepo\b/i.test(c)).map(c => /NY\/NJ\/PA/.test(c) ? 'The plan numbers use CET’s New England crews. A Mid-Atlantic leg is a separate month-24 board decision and is not modelled. There is no New York City plan.' : String(c).replace(/\b\d{4}-\d{2}-\d{2}\b/g, d => fmtDate(d)));
+  const facts = 'Company: Commonwealth Electrical Technologies, also branded CET Energy Solutions, Worcester, MA; 400+ professionals per its own site, against the plan’s filings-based base of 275 (est.). Add-ons: NuWave Energy Solutions (7 October 2025) and Horton Electrical Services (15 September 2026) confirmed; Direct Electric Services, JDL Electric, New Horizons Technologies and Vanguard Building Solutions reported in trade press, 28 to 29 October 2026. Licensed in about ten states across New England and the Mid-Atlantic (reported). Terms: CET is Commonwealth Electrical Technologies. O&M: operations and maintenance. SRF: state revolving fund for water projects. WWTP: wastewater treatment plant. IBEW and NECA: the electricians’ union and its contractor association. IRR: internal rate of return. Today means the Oct 2026 pro forma run-rate; month 36 is the plan. All figures are analyst assumptions anchored to public filings (PPP payroll, revenue per employee, peer margins), not company guidance; replace them with actuals in the first 30 days.';
+  $('#src-body').innerHTML = `<p><b>Company and terms.</b> ${H.esc(facts)}</p>${[NOTE_STRIP, ...NOTES].map(n => `<p>${/^</.test(n) ? n : H.esc(n)}</p>`).join('')}<p><b>Method.</b> ${H.esc(method)}</p>
     <p><b>Wastewater dollars.</b> The page uses one measure: funded or requested plant and pump-station projects on the CT, MA and RI state lists, at the applicant's total project cost (the first-listed project per plant). The underlying screen also carries a broader "pipeline" total that adds every facility-related line, including collection-system and tributary-town work. It is larger and is not used here. Neither figure is an award or CET's electrical scope.</p>
     <p><b>Caveats</b></p><ul>${caveats.map(c => `<li>${H.esc(c)}</li>`).join('')}</ul>
     <p><b>${urls.length} sources</b> (${Object.keys(byHost).length} domains), retrieved ${H.esc(fmtDate(m.generated) || '—')}:</p><p class="pb-src-links">${Object.entries(byHost).map(([h, us]) => us.map((u, k) => srcA(u, k ? `${h} (${k + 1})` : h)).join(' · ')).join(' · ')}</p>`;
@@ -526,10 +532,10 @@ function chat() {
   const top = D.tgt.slice().sort((x, y) => y.fit_score - x.fit_score).slice(0, 5);
   const ra = D.sev.find(x => x.id === 'ra-cet');
   const faq = [
-    { q: 'What is the growth plan for CET?', href: '#map', a: `<p>CET follows BSP’s Smith + Howard template, aiming for about <b>3x revenue in 36 months</b>: ${M(a.revenue_usd)} → ${M(z.revenue_usd)}, with EBITDA ${M(a.ebitda_usd)} → ${M(z.ebitda_usd)} (est.).</p><ul>${ph.map((p, i) => `<li><b>Phase ${i + 1}</b> (mo ${H.esc(p.months)}): ${H.esc(shortPhase(p.phase))}</li>`).join('')}</ul><p>All figures are analyst assumptions anchored to our filings review, and are New England only.</p>` },
+    { q: 'What is the growth plan for CET?', href: '#map', a: `<p>CET follows BSP’s Smith + Howard template, aiming for about <b>3x revenue in 36 months</b>: ${M(a.revenue_usd)} → ${M(z.revenue_usd)}, with EBITDA ${M(a.ebitda_usd)} → ${M(z.ebitda_usd)} (est.).</p><ul>${ph.map((p, i) => `<li><b>Phase ${i + 1}</b> (mo ${H.esc(p.months)}): ${H.esc(shortPhase(p.phase))}</li>`).join('')}</ul><p>All figures are analyst assumptions anchored to our filings review.</p>` },
     { q: 'Which add-on targets should CET call first?', href: '#addons', a: `<p>Top of the 48-company screen (fit out of 100):</p><ul>${top.map(t => `<li><b>${H.esc(t.company)}</b> (${H.esc(t.hq_city)}, ${t.state}): fit ${t.fit_score}, ~${t.employees ?? '—'} staff, ${H.esc((t.specialties || [])[0] || '')}</li>`).join('')}</ul><p>No target in RI, NH, ME or VT scores ≥ 70 yet, so Phase 2 needs outreach-led sourcing.</p>` },
     { q: 'How does CET earn a higher exit multiple?', href: '#returns', a: `<p>The multiple comes from mix. Moving from one-off hard bids to <b>~25% recurring</b> O&amp;M (SCADA and pump-station monitoring, solar and storage O&amp;M, EV charger management, NuWave efficiency) moves CET toward the premium band. PKF puts project-heavy firms at 5–6x and repeatable service at 10x+. Capstone/IMAP put typical deals at 6.8x and premium deals at 9.8x.</p><p>GridOS (est.): ${ra ? `${M(ra.investment_usd[0])}–${M(ra.investment_usd[1])} investment, ${M(ra.ebitda_impact_usd[0])}–${M(ra.ebitda_impact_usd[1])} EBITDA impact and <b>${ra.multiple_expansion_turns.join('–')} turns</b>` : '0.5–1.5 turns'} of multiple expansion.</p>` },
-    { q: 'Will CET expand into New York City?', href: '#risks', a: `<p><b>No.</b> Management guidance is a New England focus with no NYC expansion, and this plan is New England only. Every number on the page, including ${M(z.revenue_usd)} at month 36, comes from the six New England states. Anything beyond would be a separate board decision, not part of this plan.</p>` },
+    { q: 'Will CET expand into New York City?', href: '#risks', a: `<p><b>No.</b> CET has no New York City plan. The ${M(z.revenue_usd)} month-36 figure rests on New England crews; a Mid-Atlantic leg would be a separate board decision at month 24.</p>` },
   ];
   const inst = H.Chat.mount(null, { persona: 'cet', short_name: 'CET', mode: 'floating', theme: 'light', faq, suggestions: faq.map(f => f.q) });
   H.frame?.setChat?.(inst);

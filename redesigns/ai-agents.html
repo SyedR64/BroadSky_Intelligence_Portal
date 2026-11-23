@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI agents plan · BSP Desk</title>
+<title>AI agents plan · Broad Sky OS</title>
 <meta name="description" content="45 AI agents across six BSP portfolio companies: triggers, approvals, cost and value (est.), rollout and governance.">
 <meta name="theme-color" content="#fbfaf7">
 <script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/system.css?v=20261123143257">
-<link rel="stylesheet" href="ai-agents.css?v=20261123143257">
+<link rel="stylesheet" href="../assets/system.css?v=20261123172325">
+<link rel="stylesheet" href="ai-agents.css?v=20261123172325">
 </head>
 <body>
 <main id="main">
@@ -34,14 +34,12 @@
   <section class="sys-hero" aria-labelledby="hero-h">
     <div class="sys-wrap ag-hero">
       <div class="ag-hero-copy">
-        <p class="sys-eyebrow"><b>Growth plan</b> · <span id="hero-date">October 2026</span></p>
         <h1 id="hero-h" class="sys-h1">The <span class="sys-grad-text">agentic layer</span>.</h1>
-        <p class="sys-lead"><b id="hero-count">45</b> AI agents across BSP's six companies. Each starts on an event and names the person who approves its work.</p>
-<p class="sys-src page-terms"><b>Terms:</b> ERP: the accounting and order system. CRM: the customer and sales system. O&amp;M: operations and maintenance. DSO: days customers take to pay. RFQ: request for quote.</p>
+        <p class="sys-lead"><b id="hero-count">45</b> agents, six companies, one named approver each.</p>
         <div class="sys-card ag-total">
           <div class="ag-total-top">
             <p class="ag-total-num"><span class="sys-num" id="hero-total">$12.7M</span><span class="sys-est">est. ceiling</span></p>
-            <p class="ag-total-lbl">A year once every agent is ramped, before run costs and not de-duplicated. Risk-adjusted by value type and net of estimated run costs: <b id="hero-radj">$3–5M</b><span class="sys-est">est.</span> <a href="#economics">Costs and the ask →</a></p>
+            <p class="ag-total-lbl">Net of run cost: <b id="hero-radj">$3–5M</b><span class="sys-est">est.</span> <a href="#economics">Costs and the ask →</a></p>
           </div>
           <div id="hero-vt"></div>
         </div>
@@ -50,13 +48,6 @@
           <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#catalog">Browse the 45 agents</a>
           <a class="sys-btn sys-btn--ghost sys-btn--lg" href="../agent.html">Try the company agent <span aria-hidden="true">→</span></a>
         </div>
-        <div class="sys-kpis" id="hero-kpis" role="list" aria-label="Program headline">
-          <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Agents</span><span class="sys-kpi-value">45</span></div>
-          <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Build cost</span><span class="sys-kpi-value">—</span></div>
-          <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Run cost a year</span><span class="sys-kpi-value">—</span></div>
-          <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Payback</span><span class="sys-kpi-value">—</span></div>
-        </div>
-        <p class="sys-src"><b>Source:</b> Portfolio AI-agent plan and tech-enablement evidence (generated <span id="gen-date">Oct 2026</span>); costs, haircuts and ramp are analyst overlays on this page.</p>
       </div>
       <div class="ag-hero-demo" aria-label="Example agent run">
         <div class="ag-run" id="run">
@@ -72,7 +63,6 @@
           </ol>
           <div class="run-foot"><span id="run-co">Punctual Pros · ServiceOS</span><span class="sys-num" id="run-val">$116K a year ceiling</span></div>
         </div>
-        <p class="ag-demo-cap">Sample cycling through the wave-1 agents. Every agent has the same three parts.</p>
       </div>
     </div>
     <div class="sys-wrap">
@@ -88,8 +78,7 @@
     <div class="sys-wrap">
       <div class="sys-section-head">
         <p class="sys-kicker">01 · Program economics</p>
-        <h2 id="eco-h" class="sys-h2">What it costs, who builds it, and what we are asking for</h2>
-        <p class="sys-lead">The headline is a ceiling. Here it is netted for build and run cost, a haircut by value type and payback; costs are assumptions until quoted.</p>
+        <h2 id="eco-h" class="sys-h2">Cost, team and the ask</h2>
       </div>
       <div class="ag-eco-kpis" id="eco-kpis"></div>
       <div class="ag-eco-grid">
@@ -97,7 +86,7 @@
           <h3 class="sys-card-title">How the ceiling is built</h3>
           <div id="eco-strip"></div>
           <div class="ag-scroll"><table class="ag-tbl ag-eco-tbl" id="eco-types"></table></div>
-          <p class="ag-foot" id="eco-types-foot"></p>
+          <p class="ag-foot" id="eco-cap"></p>
         </div>
         <aside class="sys-card ag-ask" id="ask" data-sys-theme="dark" aria-labelledby="ask-h"></aside>
       </div>
@@ -105,7 +94,6 @@
         <h3 class="sys-card-title">By wave: cost, team and payback</h3>
         <div class="ag-scroll"><table class="ag-tbl ag-eco-tbl" id="eco-waves"></table></div>
         <details class="ag-details"><summary>Cost and risk assumptions</summary><ul id="eco-assume"></ul></details>
-        <p class="sys-src"><b>Source:</b> Portfolio AI-agent plan; tech-enablement evidence; analyst cost model on this page. All figures are estimates.</p>
       </div>
     </div>
   </section>
@@ -115,8 +103,7 @@
     <div class="sys-wrap">
       <div class="sys-section-head">
         <p class="sys-kicker">02 · Agent catalog</p>
-        <h2 id="cat-h" class="sys-h2">Every agent, its trigger, and who signs off</h2>
-        <p class="sys-lead">Filter by company, layer and time to go live. Select a card for its job, gate, cost, evidence and risks.</p>
+        <h2 id="cat-h" class="sys-h2">Every agent and who signs off</h2>
       </div>
       <div class="sys-card ag-filters" role="group" aria-label="Catalog filters">
         <div class="f-row">
@@ -140,10 +127,9 @@
       <div class="ag-cat">
         <div class="ag-cards" id="cards" aria-live="polite"></div>
         <aside class="ag-inspector" id="inspector" aria-label="Agent inspector" tabindex="-1">
-          <div class="insp-empty"><p>Select an agent to inspect it.</p></div>
+          <div class="insp-empty"><p>No agent selected.</p></div>
         </aside>
       </div>
-      <p class="sys-src"><b>Source:</b> Portfolio AI-agent plan, Oct 2026. Values are ceilings and analyst estimates; each agent cites its evidence.</p>
     </div>
   </section>
 
@@ -152,10 +138,8 @@
     <div class="sys-wrap">
       <div class="sys-section-head">
         <p class="sys-kicker">03 · Reusable patterns</p>
-        <h2 id="pat-h" class="sys-h2">Eight patterns, built once, swapped per company</h2>
-        <p class="sys-lead">Each agent is an instance of a shared pattern. The PRG builds the approval and audit layer once; only the connector changes.</p>
+        <h2 id="pat-h" class="sys-h2">Eight patterns, built once</h2>
       </div>
-      <p class="ag-swipe" aria-hidden="true">Swipe for all eight →</p>
       <div class="ag-patterns" id="pattern-grid"></div>
     </div>
   </section>
@@ -166,7 +150,6 @@
       <div class="sys-section-head">
         <p class="sys-kicker">04 · Rollout waves</p>
         <h2 id="roll-h" class="sys-h2">Four waves over 18 months, lowest risk first</h2>
-        <p class="sys-lead">Inbound-contact and document agents go first because their baselines are clearest; finance, revenue and monitoring follow. Each wave has a gate.</p>
       </div>
       <div class="ag-timeline" id="timeline"></div>
     </div>
@@ -178,12 +161,12 @@
       <div class="sys-section-head">
         <p class="sys-kicker">05 · Value by company</p>
         <h2 id="val-h" class="sys-h2">Where the $12.7M ceiling comes from</h2>
-        <p class="sys-lead" id="val-sub">Bars are each company's agent ceiling, stacked by the kind of value it is. The whisker is the whole OS program's EBITDA case. Agents are part of that case, not on top of it.</p>
+        <p class="sys-lead" id="val-sub"></p>
       </div>
       <div class="ag-value">
         <figure class="sys-card ag-chart-card">
           <div class="chart-top">
-            <figcaption><b>Agent value ceiling by company and value type</b><span>USD a year after ramp, estimated. Under each name: share of current adjusted EBITDA; amber means the agents use at least 75% of the top of the OS case.</span></figcaption>
+            <figcaption><b>Agent value ceiling by company and value type</b><span>USD a year, est.</span></figcaption>
             <div class="ag-seg" role="tablist" aria-label="Chart or table">
               <button type="button" role="tab" aria-selected="true" data-view="chart">Chart</button>
               <button type="button" role="tab" aria-selected="false" data-view="table">Table</button>
@@ -193,7 +176,6 @@
           <div class="ag-chart" id="chart" role="img" aria-label="Stacked horizontal bar chart of estimated annual agent value by company and value type, with each OS program's EBITDA range; the Table view has the same numbers"></div>
           <div class="chart-table" id="chart-table" hidden></div>
           <div class="ag-tip" id="tip" role="tooltip" hidden></div>
-          <p class="sys-src"><b>Source:</b> Portfolio AI-agent plan; tech-enablement evidence (OS EBITDA cases, adjusted EBITDA estimates), Oct 2026.</p>
         </figure>
         <div class="ag-value-notes">
           <div class="sys-card ag-vn"><span class="sys-card-label">Agents vs the OS EBITDA case</span><div id="reality"></div></div>
@@ -202,7 +184,7 @@
       <div class="ag-value-more">
         <div class="sys-card ag-vn ag-vn-ts" data-co="ts"><span class="sys-card-label">Thomas Scientific: cash before EBITDA</span><div id="ts-cash"></div></div>
         <div class="sys-card ag-vn"><span class="sys-card-label">By wave</span><div id="by-wave"></div></div>
-        <div class="sys-card ag-vn"><span class="sys-card-label">Read it carefully</span><ul class="ag-caveats" id="caveats"></ul></div>
+        <div class="sys-card ag-vn"><details class="sys-fold"><summary><b>Read it carefully</b><span>Caveats on the figures</span></summary><ul class="ag-caveats" id="caveats"></ul></details></div>
       </div>
     </div>
   </section>
@@ -213,7 +195,6 @@
       <div class="sys-section-head">
         <p class="sys-kicker">06 · Governance checklist</p>
         <h2 id="gov-h" class="sys-h2">Five controls before any agent touches a customer. Six at Frontline.</h2>
-        <p class="sys-lead">Controls 1–5 gate wave 1; control 6 gates any Frontline agent touching law-firm data. Ticks stay in this browser only.</p>
       </div>
       <div class="ag-tiers" id="tiers" aria-label="Approval tiers by consequence"></div>
       <div class="ag-gov-top"><div class="ag-gov-progress"><div class="gp-bar"><i id="gov-fill"></i></div><span id="gov-count">0 controls live</span></div><button type="button" class="ag-linkbtn" id="gov-reset">Clear ticks</button></div>
@@ -227,23 +208,22 @@
       <div class="sys-section-head">
         <p class="sys-kicker">07 · Build vs buy</p>
         <h2 id="bb-h" class="sys-h2">Buy the plumbing. Build the judgment that only BSP has.</h2>
-        <p class="sys-lead">Classified by each agent's vendor or build path. Analyst guidance, not company decisions.</p>
       </div>
       <div class="sys-grid sys-grid--3" id="bb-cols"></div>
       <div class="sys-card ag-bb-rules">
-        <h3 class="sys-card-title">Decision rules</h3>
+        <details class="sys-fold"><summary><b>Decision rules</b><span>When to buy, build or mix</span></summary>
         <ol>
           <li><b>Buy when the agent lives inside the system of record.</b> If ServiceTitan, Procore or Gorgias ships it natively, speed beats differentiation; a buyer will not pay more for a home-built dispatch board.</li>
-          <li><b>Build when the agent's memory is BSP data.</b> Bid go or no-go on CET's New England bid radar, weather surge on Punctual Pros' storm history, grant signals from NIH RePORTER, docket tracking: that scoring is the IP that makes an OS an OS at exit.</li>
+          <li><b>Build when the agent's memory is BSP data.</b> Bid go or no-go on CET's bid radar, weather surge on Punctual Pros' storm history, grant signals from NIH RePORTER, docket tracking: that scoring is the IP that makes an OS an OS at exit.</li>
           <li><b>Hybrid by default for documents.</b> Buy extraction or transport (Conexiom, Vic.ai, Intapp), build the exception queue, disclosure and audit layer once and reuse it across companies.</li>
           <li><b>Every purchase passes the vendor AI review (control 5).</b> A 30-day pilot against the company's own baseline, SOC 2 Type II, no training on portfolio data, and an exit and export clause.</li>
           <li><b>Never single-source the model.</b> Route small models to extraction and frontier models to drafting; keep a second provider qualified for failover (control 4).</li>
-        </ol>
+        </ol></details>
       </div>
       <div class="sys-card ag-bb-table">
+        <details class="sys-fold"><summary><b>All 45 agents</b><span>Call, vendor or build path, weeks, ceiling</span></summary>
         <div class="ag-seg" role="tablist" aria-label="Filter build vs buy table" id="bb-tabs"></div>
-        <div class="ag-scroll ag-bb-scroll"><table class="ag-tbl bb-table" id="bb-table"></table></div>
-        <p class="sys-src"><b>Source:</b> Portfolio AI-agent plan, vendor or build path per agent, Oct 2026.</p>
+        <div class="ag-scroll ag-bb-scroll"><table class="ag-tbl bb-table" id="bb-table"></table></div></details>
       </div>
     </div>
   </section>
@@ -254,7 +234,6 @@
       <div class="sys-section-head">
         <p class="sys-kicker">08 · By company</p>
         <h2 id="co-h" class="sys-h2">Each OS, its agents, its plan</h2>
-        <p class="sys-lead">The agents are the part of each OS that acts. Jump to the OS page, growth plan, website concept or the company in the portal.</p>
       </div>
       <div class="sys-grid sys-grid--3" id="co-grid"></div>
     </div>
@@ -263,17 +242,30 @@
   <!-- rationale -->
   <section class="sys-section sys-section--alt" id="rationale" aria-labelledby="rat-h">
     <div class="sys-wrap">
-      <div class="sys-section-head">
-        <p class="sys-kicker">Why this page</p>
-        <h2 id="rat-h" class="sys-h2">Design and program rationale</h2>
-        <p class="sys-lead">An operating partner should be able to approve a wave in one meeting, and a buyer should see the controls behind the value.</p>
-      </div>
+      <details class="sys-fold"><summary><b id="rat-h">Design and program rationale</b><span>An operating partner approves a wave in one meeting</span></summary>
       <div class="sys-grid sys-grid--2">
         <article class="sys-card"><h3 class="sys-card-title">One system, not a feature dump</h3><p class="sys-card-body">Give every agent the same anatomy: trigger, agent, approver. Forty-five then scan as one system.</p><p class="sys-card-foot">KPI: time to approve a wave; agents stopped vs shipped per quarter.</p></article>
         <article class="sys-card"><h3 class="sys-card-title">Controls up front</h3><p class="sys-card-body">Show the controls, owners and evidence before anyone asks for them.</p><p class="sys-card-foot">KPI: diligence questions answered from the page; tier-3 incidents (target 0).</p></article>
         <article class="sys-card"><h3 class="sys-card-title">Lead with the number</h3><p class="sys-card-body">One headline figure, with its cost and risk-adjusted net beside it. Every figure stays an estimate until measured.</p><p class="sys-card-foot">KPI: share of the $12.7M ceiling re-based on measured baselines; capacity value counted only with a hiring plan.</p></article>
         <article class="sys-card"><h3 class="sys-card-title">Institutional tone, sources on every claim</h3><p class="sys-card-body">Sober type and a source on every claim. It should read as a memo, not a pitch.</p><p class="sys-card-foot" id="kpi-effect">KPI: agents backed by a measured result at a comparable company (target 45 of 45 via pilots).</p></article>
-      </div>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- sources and method -->
+  <section class="sys-section" id="method-sec" aria-label="Sources and method">
+    <div class="sys-wrap">
+      <details class="sys-fold" id="method"><summary><b>Sources and method</b><span>Terms, sources, assumptions</span></summary>
+        <p class="ag-foot"><b>Terms.</b> ERP: the accounting and order system. CRM: the customer and sales system. O&amp;M: operations and maintenance. DSO: days customers take to pay. RFQ: request for quote.</p>
+        <p class="ag-foot"><b>Sources.</b> Portfolio AI-agent plan and tech-enablement evidence (generated <span id="gen-date">Oct 2026</span>), including OS EBITDA cases and adjusted EBITDA estimates, vendor or build path per agent; costs, haircuts and ramp are analyst overlays on this page. All figures are estimates; values are ceilings, and each agent cites its evidence.</p>
+        <p class="ag-foot"><b>Ceiling.</b> A year once every agent is ramped, before run costs, not de-duplicated. Risk-adjusted by value type and net of estimated run costs. Costs are assumptions until quoted.</p>
+        <ul class="ag-foot" id="m-types"></ul>
+        <p class="ag-foot" id="eco-types-foot"></p>
+        <p class="ag-foot" id="m-ask"></p>
+        <p class="ag-foot" id="m-tl"></p>
+        <ul class="ag-foot" id="m-gates"></ul>
+        <p class="ag-foot" id="m-val"></p>
+      </details>
     </div>
   </section>
 
@@ -282,7 +274,7 @@
       <div class="sys-cta-in">
         <div class="sys-cta-copy">
           <h2 id="cta-h">Approve wave 1, measure for 90 days.</h2>
-          <p>Six agents, controls 1–5 live everywhere, and a day-90 review against 8-week baselines. Track it in the portal under Tech enablement, or try one working agent now.</p>
+          <p>Six agents, controls 1–5 live, day-90 review against 8-week baselines.</p>
         </div>
         <div class="sys-actions">
           <a class="sys-btn sys-btn--primary sys-btn--lg" href="../app.html#/techos/overview">Open tech enablement</a>
@@ -295,14 +287,14 @@
 </main>
 
 <script type="module">
-import { Frame } from '../assets/frame.js?v=20261123143257';
-import { Chat } from '../assets/chat.js?v=20261123143257';
-import { boot } from './ai-agents.js?v=20261123143257';
+import { Frame } from '../assets/frame.js?v=20261123172325';
+import { Chat } from '../assets/chat.js?v=20261123172325';
+import { boot } from './ai-agents.js?v=20261123172325';
 const frame = Frame.mount({ banner: true });
 const d = await boot().catch(e => { console.warn('agentic layer boot failed', e); return null; });
 try {
   const chat = Chat.mount(null, {
-    persona: 'portal', short_name: 'the desk', mode: 'floating', theme: 'light',
+    persona: 'portal', mode: 'floating', theme: 'light',
     faq: d?.faq || [],
     suggestions: ['What does wave 1 cost and need?', 'What does the agent program cost?', 'Which agents pay back fastest?', 'How much value does each company get from AI agents?', 'Who approves what an agent does?', 'What are the kill criteria for an agent?']
   });

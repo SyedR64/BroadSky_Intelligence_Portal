@@ -114,7 +114,7 @@ export const TESTS = {
   'crit-fragmentation': { tested: 'platform', how: 'Counted live: independent, non-sponsor targets in the company’s own screen. 25 or more = 5, 10–24 = 3, under 10 = 1.' },
   'crit-founder-transition': { tested: true, how: 'Ownership class (founder or family with 20+ years = 4, founder or family or franchisee = 3.5, independent = 3, unverified = 2, sponsor-owned, subsidiary or ESOP = 1), averaged with the screen’s own ownership-readiness sub-score. A 5 needs proof the owner stays with a successor named, which only a first call can supply.' },
   'crit-size-band': { tested: true, how: 'Add-on band of 10–150 employees = 5; 5–9 or 151–250 = 3; otherwise 1. Without headcount, modeled revenue of $3–40M = 4, else 2. Unknown = 2.' },
-  'crit-geo-adjacency': { tested: true, how: 'Straight-line miles to the nearest portfolio company hub (Punctual Pros: Lancaster, Harrisburg, York, Toms River; CET: Worcester, Taunton, Norwell, Horton CT). 60 mi or less = 5, 60–150 = 3, beyond = 1. Frontline and Thomas Scientific use the screen’s geography sub-score (fills a named gap = 5). CET targets in New York score 1 (no NYC).' },
+  'crit-geo-adjacency': { tested: true, how: 'Straight-line miles to the nearest portfolio company hub (Punctual Pros: Lancaster, Harrisburg, York, Toms River; CET: Worcester, Taunton, Norwell, Horton CT). 60 mi or less = 5, 60–150 = 3, beyond = 1. Frontline and Thomas Scientific use the screen’s geography sub-score (fills a named gap = 5). CET targets in New York score 1.' },
   'crit-thematic-tailwind': { tested: 'proxy', how: 'Proxy: rank inside the company’s own screen (fit score encodes the company thesis). Top fifth = 5, then 4, 3, 2, bottom fifth = 1, so companies with different screens compare fairly.' },
   'crit-tech-upside': { tested: false, how: 'Not in the target screens. Held at a neutral 3 until the tooling gap is checked (job posts, web stack).' },
   'crit-mgmt-culture': { tested: false, how: 'Not in the target screens. Held at a neutral 3 until the bench below the owner is known.' },
@@ -191,7 +191,7 @@ export function scoreTargets(b) {
     else { s['crit-size-band'] = 2; why['crit-size-band'] = 'size not disclosed'; }
     // geography
     const hub = nearestHub(r, r._p);
-    if (r._p === 'cet' && /^NY$/i.test(r.state || '')) { s['crit-geo-adjacency'] = 1; why['crit-geo-adjacency'] = 'New York is outside CET’s New England footprint'; }
+    if (r._p === 'cet' && /^NY$/i.test(r.state || '')) { s['crit-geo-adjacency'] = 1; why['crit-geo-adjacency'] = 'New York is outside CET’s footprint'; }
     else if (hub) { const mi = Math.round(hub.mi); s['crit-geo-adjacency'] = mi <= 60 ? 5 : mi <= 150 ? 3 : 1; why['crit-geo-adjacency'] = mi < 1 ? `same town as the ${hub.node} hub` : `${mi} mi from ${hub.node}`; r._hub = hub.node; r._hubMi = mi; }
     else if (DIM_MAX[r._p] === 5 && num(r.fit_breakdown?.geography) != null) { const g = num(r.fit_breakdown.geography); s['crit-geo-adjacency'] = clamp(g); why['crit-geo-adjacency'] = g >= 5 ? 'fills a named geographic gap (screen 5 of 5)' : `screen geography ${g} of 5`; }
     else { s['crit-geo-adjacency'] = 2; why['crit-geo-adjacency'] = 'location not scored'; }
@@ -213,7 +213,7 @@ export function scoreTargets(b) {
     for (const c of crit) { const w = W[c.id] || 0; fsum += w; ftot += w * (s[c.id] ?? 3); if (isTargetTest(c.id)) { wsum += w; tot += w * (s[c.id] ?? 3); } }
     r._crit = s; r._why = why; r._score = wsum ? Math.round(tot / 5 * (100 / wsum)) : null; r._tested = wsum; r._full = fsum ? Math.round(ftot / 5 * (100 / fsum)) : null;
     r._gate = r._score == null ? '—' : r._score >= 70 ? 'Priority' : r._score >= 55 ? 'Watch list' : 'Pass';
-    r._explain = explain(r, crit, W);
+    r._explain = explain(r, crit, W); r._brief = briefWhy(r, crit, W);
   }
   const ranked = rows.filter(r => !r._affil).sort((a, b) => (b._score - a._score) || ((b.fit_score || 0) - (a.fit_score || 0)));
   ranked.forEach((r, i) => { r._rank = i + 1; });
@@ -222,6 +222,21 @@ export function scoreTargets(b) {
 }
 
 const SHORT = { 'crit-essential': 'essential sector', 'crit-recurring': 'recurring revenue', 'crit-fragmentation': 'add-on runway', 'crit-founder-transition': 'owner readiness', 'crit-size-band': 'size band', 'crit-geo-adjacency': 'adjacency', 'crit-thematic-tailwind': 'company-thesis fit', 'crit-tech-upside': 'tech upside', 'crit-mgmt-culture': 'bench and culture', 'crit-downside': 'downside' };
+/* Compact form of the explanation for a table cell: ten words at most. */
+const COMPACT = {
+  'crit-thematic-tailwind': r => `Fit #${(r._fitRank ?? 0) + 1}/${r._fitN ?? 1}`,
+  'crit-size-band': r => r._why['crit-size-band'].replace(' employees', ' staff').replace(' modeled revenue', ' revenue'),
+  'crit-geo-adjacency': r => r._why['crit-geo-adjacency'].replace(/^same town as the (.+) hub$/, 'at $1 hub').replace(/^fills a named geographic gap.*$/, 'fills a gap').replace(/^(\d+) mi from /, '$1 mi, '),
+  'crit-founder-transition': r => r._why['crit-founder-transition'],
+  'crit-downside': r => 'few risk flags',
+};
+function briefWhy(r, crit, W) {
+  const tested = crit.filter(c => TESTS[c.id]?.tested === true || TESTS[c.id]?.tested === 'proxy');
+  const strong = tested.filter(c => r._crit[c.id] >= 4.5).sort((a, b) => W[b.id] - W[a.id]).slice(0, 3).map(c => (COMPACT[c.id] || (() => SHORT[c.id]))(r));
+  const weak = tested.filter(c => r._crit[c.id] <= 2.5).sort((a, b) => W[b.id] - W[a.id]).slice(0, 2).map(c => `weak ${(COMPACT[c.id] || (() => SHORT[c.id]))(r)}`);
+  const t = [...strong, ...weak].join(', ') || 'Mid-band on every test';
+  const w = t.split(/\s+/); return w.length > 10 ? w.slice(0, 10).join(' ').replace(/,$/, '') + '…' : t;
+}
 export const critShort = id => SHORT[id] || id;
 function explain(r, crit, W) {
   const tested = crit.filter(c => TESTS[c.id]?.tested === true || TESTS[c.id]?.tested === 'proxy');
@@ -393,7 +408,7 @@ export function firstCallScript(b, r) {
   const pc = P?.node; const leader = g && pc ? (g.adj.get(pc) || []).filter(e => e.relation === 'works_at' && e.to === pc && e.current !== false).map(e => g.byId.get(e.from)).find(n => n?.type === 'portfolio_ceo') : null;
   const skip = new Set(['org-bsp', pc, leader?.id]);
   const via = intro?.sourced ? (intro.path_node_ids || []).filter(id => !skip.has(id)).map(id => g.byId.get(id)?.name).filter(Boolean).slice(-1)[0] : null;
-  const what = r._p === 'pp' ? 'the leading home-services operator in the Mid-Atlantic' : r._p === 'cet' ? 'the leading electrical and energy services group in New England' : r._p === 'fl' ? 'the managed-IT partner of choice for law firms' : 'the leading independent lab-supply distributor';
+  const what = r._p === 'pp' ? 'the leading home-services operator in the Mid-Atlantic' : r._p === 'cet' ? 'the leading electrical and energy services group across New England and the Mid-Atlantic' : r._p === 'fl' ? 'the managed-IT partner of choice for law firms' : 'the leading independent lab-supply distributor';
   const lines = [
     { k: 'Who calls', t: `${leader ? `${leader.name} of ${P.short}` : `${P.short} leadership`}, with the Portfolio Resource Group${via ? `; ask ${via} for the introduction first` : '; no warm introduction is on file, so the call opens cold'}.` },
     { k: 'Open', t: `“I lead ${P.short}. We are backed by BSP and building ${what}. I’d like to understand your plans; this is not an offer.”` },

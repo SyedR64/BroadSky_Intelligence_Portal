@@ -5,8 +5,8 @@
    here: its six moves, full story, method and caveats are on the timeline screen, its hold-clock key on levers.
    Screens: timeline · levers · sequence · exits.
    ═══════════════════════════════════════════════════════════════════════════ */
-import * as L from './cases-lib.js?v=20261123143257';
-import * as Copy from './copy.js?v=20261123143257';
+import * as L from './cases-lib.js?v=20261123172325';
+import * as Copy from './copy.js?v=20261123172325';
 
 const COLOR = 'var(--sys-violet)';   // module accent from the brand palette (company accents stay with their companies)
 /* chips: status (.sys-chip--good|warn|bad|info), Punctual Pros (.sys-chip--soft in its accent) or neutral */
@@ -15,12 +15,16 @@ const ppChip = t => `<span class="sys-chip sys-chip--soft" data-co="pp">${esc(t)
 const btn = (ui, size = '') => ui.btnCls('secondary', size);
 /** "2026-10-06" → "Oct 6, 2026" for provenance lines (dates in words). */
 const asOf = s => { const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(String(s || '')); if (!m) return s; const mo = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'][Number(m[2]) - 1]; return m[3] ? `${mo} ${Number(m[3])}, ${m[1]}` : `${mo} ${m[1]}`; };
-const injectCss = () => { if (!document.getElementById('css-cases')) { const l = document.createElement('link'); l.id = 'css-cases'; l.rel = 'stylesheet'; l.href = 'modules/cases.css?v=20261123143257'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-cases')) { const l = document.createElement('link'); l.id = 'css-cases'; l.rel = 'stylesheet'; l.href = 'modules/cases.css?v=20261123172325'; document.head.appendChild(l); } };
 const esc = L.esc;
 const EST = Copy.EST;
 const ext = (u, t) => u ? `<a href="${esc(u)}" target="_blank" rel="noopener" title="${esc(u)}">${esc(t || L.host(u))} ↗</a>` : '—';
 const clip = (s, n = 140) => { s = String(s ?? ''); return s.length <= n ? s : s.slice(0, n).replace(/\s+\S*$/, '') + '…'; };
-const SRC = (ui, M) => ui.source('Value-creation case set (sponsor and company releases, SEC and Companies House filings, trade press)', null, asOf(M?.retrieved || '2026-10-06'));
+/* One source line per screen, marked for the Sources drawer, and the one as-of date for the header. */
+const SRC = (text, M) => { const d = asOf(M?.retrieved || '2026-10-06'); return `<span class="src" data-src>Source: ${esc(text)} · as of ${esc(d)}</span><span data-asof="${esc(d)}"></span>`; };
+const SRC_CASES = 'Value-creation case set (sponsor and company releases, SEC and Companies House filings, trade press)';
+/** First n words of a cell; the whole text opens in the side panel. */
+const words = (s, n = 10) => { const w = String(s ?? '').replace(/\s+/g, ' ').trim().split(' '); return w.length <= n ? w.join(' ') : w.slice(0, n).join(' ').replace(/[,;:.\s]+$/, '') + '…'; };
 
 let _model = null, _indexed = false;
 function load(ctx) {
@@ -37,41 +41,43 @@ function load(ctx) {
     return M;
   });
 }
-const missing = ui => ui.note('Research dataset not yet available: the value-creation case set could not be loaded.', 'warn');
-function kpis(ctx, M) {
+const missing = ui => ui.note('Case set unavailable.', 'warn');
+function kpis(ctx, M, pp) {
   const st = M.stats;
   return ctx.ui.kpis([
-    { label: 'Cases', value: String(st.n), sub: `${st.nHome} home services · ${st.nCross} adjacent · ${st.yearMin}–${st.yearMax}` },
-    { label: 'Median hold', value: `${st.hold.toFixed(1)} yrs`, sub: `first sponsor, ${st.holdN} cases · ${st.holdHome?.toFixed(1)} in home services` },
-    { label: 'Median exit multiple', value: `~${L.xTimes(st.exitMult)}${EST}`, sub: `EBITDA, press-reported, ${st.exitMults.length} cases` },
-    { label: 'Median revenue growth', value: `~${L.xTimes(st.growth)}${EST}`, sub: `over the hold, ${st.growthN} sourced pairs` },
-    { label: 'Punctual Pros', value: `month ${st.pp?.hold_month_on_2026_10_06 ?? 30}`, sub: `of BSP's hold · first add-on month ${st.pp?.first_addon_month ?? 8}`, color: 'var(--co-pp)' },
+    { label: 'Cases', value: String(st.n), sub: `${st.nHome} home · ${st.nCross} adjacent` },
+    { label: 'Median hold', value: `${st.hold.toFixed(1)} yrs`, sub: `${st.holdHome?.toFixed(1)} home services` },
+    { label: 'Median exit multiple', value: `~${L.xTimes(st.exitMult)}${EST}`, sub: '' },
+    { label: 'Median revenue growth', value: `~${L.xTimes(st.growth)}${EST}`, sub: '' },
+    ...(pp === false ? [] : [{ label: 'Punctual Pros', value: `month ${st.pp?.hold_month_on_2026_10_06 ?? 30}`, sub: `add-on month ${st.pp?.first_addon_month ?? 8}`, color: 'var(--co-pp)' }]),
   ]);
 }
+/* What the strip's captions used to say, once, for the Method drawer. */
+const kpiMethod = (M, pp = true) => { const st = M.stats; return `<p class="sys-src" data-method>Cases span ${st.yearMin}–${st.yearMax}. Median hold: first sponsor, ${st.holdN} cases. Exit multiples: EBITDA, press-reported, ${st.exitMults.length} cases. Revenue growth: over the hold, ${st.growthN} sourced pairs.${pp ? '' : ` Punctual Pros: month ${st.pp?.hold_month_on_2026_10_06 ?? 30} of BSP's hold, first add-on month ${st.pp?.first_addon_month ?? 8}.`}</p>`; };
 
 /* The six moves: the first six patterns the best exits followed, in order (titles from the case-studies page). */
 const MOVES = [['pat-01', 'Put an operator team in charge'], ['pat-02', 'Buy the first add-on early, close to home'], ['pat-04', 'Keep tuck-ins coming every few months'], ['pat-03', 'Run every brand on one system'], ['pat-06', 'Build recurring members buyers pay for'], ['pat-07', 'Own the technician pipeline']];
 function movesHTML(M) {
   return `<ol class="cs-moves-list">${MOVES.map(([id, title], i) => { const p = M.patterns.find(x => x.id === id); if (!p) return '';
     const win = (p.pattern.split(':')[0] || '').replace(/(\d)-(\d)/g, '$1–$2');
-    return `<li><button type="button" class="cs-mv" data-pat="${esc(p.id)}"><span class="cs-mv-n">${i + 1}</span><b>${esc(title)}</b><span class="cs-mv-w">${esc(win)}</span><span class="sys-chip sys-chip--${p.tone}">Punctual Pros · ${esc(p.chip)}</span></button></li>`; }).join('')}</ol>
+    return `<li><button type="button" class="cs-mv" data-pat="${esc(p.id)}"><span class="cs-mv-n">${i + 1}</span><b>${esc(title)}</b><span class="cs-mv-w">${esc(win)}</span><span class="sys-chip sys-chip--${p.tone}">${esc(p.chip)}</span></button></li>`; }).join('')}</ol>
     <p class="cs-moves-more"><a class="sys-btn sys-btn--secondary sys-btn--sm btn" href="#/cases/levers">All twelve on the hold clock</a></p>`;
 }
 /* The full story (meta.narrative), three sentences to a paragraph. Closed: open, it is most of a laptop screen. */
 function storyHTML(M) {
   const sents = M.narrative.split(/(?<=\.)\s+(?=[A-Z])/); const paras = []; for (let i = 0; i < sents.length; i += 3) paras.push(sents.slice(i, i + 3).join(' '));
-  return `<details class="cs-drawer"><summary><b>Read the full story</b><span>The pattern across all ${M.stats.n} cases, in twelve sentences.</span></summary><div class="sys-prose">${paras.map(p => `<p>${esc(p)}</p>`).join('')}<p class="sys-src">Source: value-creation case set synthesis, Oct 2026. Every claim is tied to a dated, sourced event in the timelines below.</p></div></details>`;
+  return `<details class="cs-drawer"><summary><b>Read the full story</b></summary><div class="sys-prose">${paras.map(p => `<p>${esc(p)}</p>`).join('')}<p class="sys-src" data-src>Source: value-creation case set synthesis, Oct 2026.</p></div></details>`;
 }
-/* Method, the eight caveats and the source count. Closed, last on the timeline screen. */
+/* Method, the eight caveats and the source count: marked for the Method drawer, off the reading path. */
 function methodHTML(M) {
   const st = M.stats, c = st.conf || {}; const n = new Set(M.cases.flatMap(x => x.sources || [])).size;
-  return `<details class="cs-drawer mt-12"><summary><b>Method, caveats and sources</b><span>How the cases were built, and where they are thin.</span></summary><div class="cs-method">
+  return `<div class="cs-method" data-method>
     <div class="sys-prose"><p>${st.nHome} residential home-services and franchisor histories and ${st.nCross} cross-sector analogs (commercial and fire/life-safety services, legal services, lab distribution, agencies and consumer brands) were rebuilt from sponsor and company press releases, SEC filings, UK Companies House accounts, lender filings and trade press. Each case lists dated events, the levers used, before and after KPIs and what BSP can copy.</p>
       <p>Levers and patterns were derived from the ${st.events} dated events. Timing uses months from the first sponsor's entry; year-only dates count as mid-year. Evidence quality: ${c.high ?? '—'} cases high (filings with disclosed figures), ${c.medium ?? '—'} medium (releases and trade press) and ${c.low ?? '—'} low (few primary sources).</p>
       <p>Unknown values stay blank and show as a dash. Figures from press reports, derived ratios and analyst recommendations carry an est. badge. All pages were retrieved ${esc(L.when(M.retrieved)?.label || 'Oct 2026')}.</p>
       <p>Sources: ${n} unique pages across ${M.cases.length} cases. Each case lists its own under Case detail.</p>
       <p class="sys-src"><b>Terms:</b> MOIC: multiple on invested capital. LTM: last twelve months. PIK: interest paid in more debt instead of cash.</p></div>
-    <ul class="sys-card-list cs-caveats">${M.caveats.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div></details>`;
+    <ul class="sys-card-list cs-caveats">${M.caveats.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`;
 }
 
 /* ── inspector ────────────────────────────────────────────────────────────── */
@@ -154,19 +160,18 @@ async function timeline(ctx) {
   const opts = L.SECTOR_ORDER.map(s => { const cs = M.cases.filter(c => c.sector === s); return cs.length ? `<optgroup label="${esc(L.SECTOR[s])}">${cs.map(c => `<option value="${esc(c.id)}">${esc(c.short)}</option>`).join('')}</optgroup>` : ''; }).join('');
   el.innerHTML = `<div class="m-cases">${ui.pageHead({
     title: 'Case timelines',
-    sub: `<b>${M.stats.n} sponsor-built companies, ${M.stats.events} dated moves.</b> Winners bought the first add-on near month ${M.stats.firstAddon?.median ?? 7}, then one every ~${M.stats.cadence?.median ?? 4.6} months. Punctual Pros is at month ${M.stats.pp?.hold_month_on_2026_10_06 ?? 30}.`,
-    chips: `${ctx.fmt.chip('Releases, filings, trade press')}${ctx.fmt.chip('Months from sponsor entry')}`,
+    sub: `<b>${M.stats.n} cases, ${M.stats.events} dated moves;</b> add-ons from month ${M.stats.firstAddon?.median ?? 7}, then every ~${M.stats.cadence?.median ?? 4.6}.`,
   })}${kpis(ctx, M)}
-  <div class="mt-12">${ui.panel({ title: 'The six moves, in order', sub: 'What the highest-value exits did first, and where Punctual Pros stands on each. Select a move for its cases.', body: movesHTML(M) + storyHTML(M), foot: SRC(ui, M) })}</div>
-  <div class="mt-12">${ui.panel({ title: 'Dated events by case', sub: 'Pick a case, compare up to two more, align by months from entry · click a dot for the event', body: `
+  <div class="mt-12">${ui.panel({ title: 'The six moves and Punctual Pros', body: movesHTML(M) + storyHTML(M) })}</div>
+  <div class="mt-12">${ui.panel({ title: 'Dated events by case', body: `
     <div class="sys-filters cs-ctl"><label class="sys-field"><span class="sys-field-label">Case</span><select class="sys-input" id="cs-pick">${opts}</select></label><label class="sys-field"><span class="sys-field-label">Compare</span><select class="sys-input" id="cs-add"><option value="">Add a case…</option>${opts}</select></label><div class="sys-chips cs-cmp" id="cs-cmp"></div>
       <div class="sys-chips cs-seg" role="group" aria-label="Time axis"><button type="button" class="sys-chip" data-mode="aligned">Months from entry</button><button type="button" class="sys-chip" data-mode="calendar">Calendar</button></div>
       <label class="sys-chip cs-check"><input type="checkbox" id="cs-pp" ${TS.showPP ? 'checked' : ''}> Punctual Pros lane</label></div>
-    <div id="cs-legend" class="mt-8"></div><div id="cs-tl" class="mt-12"></div>`, foot: SRC(ui, M) })}</div>
+    <div id="cs-legend" class="mt-8"></div><div id="cs-tl" class="mt-12"></div>` })}</div>
   <div class="grid grid-main mt-12">
-    <div>${ui.panel({ title: 'Event log', sub: 'Chronological across the selected cases · sortable · CSV', body: '<div id="cs-ev"></div>', foot: SRC(ui, M) })}</div>
-    <div>${ui.panel({ title: 'Before and after', sub: 'Disclosed KPI moves for the selected case', body: '<div id="cs-kpi"></div>', foot: SRC(ui, M) })}</div>
-  </div>${methodHTML(M)}</div>`;
+    <div>${ui.panel({ title: 'Event log', body: '<div id="cs-ev"></div>' })}</div>
+    <div>${ui.panel({ title: 'Before and after', body: '<div id="cs-kpi"></div>' })}</div>
+  </div>${methodHTML(M)}${kpiMethod(M)}${SRC(SRC_CASES, M)}</div>`;
   const $ = s => el.querySelector(s);
   let tbl = null;
   const render = () => {
@@ -182,12 +187,12 @@ async function timeline(ctx) {
       { key: 't', label: 'When', num: true, fmt: (v, r) => e2(r.date) },
       { key: 'company', label: 'Case' },
       { key: 'type', label: 'Type', fmt: (v, r) => `<span class="cs-type" style="--c:${(L.FAMILY[r.fam] || L.FAMILY.info).color}"><i></i>${e2(v)}</span>` },
-      { key: 'event', label: 'What happened', wrap: true, fmt: (v, r) => `${e2(clip(v, 150))}${r.metric ? `<div class="dim small sys-num">${e2(r.metric)}</div>` : ''}` },
+      { key: 'event', label: 'What happened', wrap: true, fmt: v => e2(words(v, 10)) },
       { key: 'source', label: 'Source', fmt: v => v ? ext(v) : '—' },
     ];
     if (tbl) tbl.update(rows); else tbl = ui.table($('#cs-ev'), { columns: cols, rows, pageSize: 14, sortKey: 't', sortDir: 1, exportName: 'value_creation_events', onRow: r => openEvent(ctx, M, r.id) });
     const c = M.byId[TS.primary];
-    $('#cs-kpi').innerHTML = `<div class="small strong">${esc(c.name)}</div><div class="small dim mt-4">${esc(c.chain)}</div><div class="mt-12">${L.kpiCardsHTML(c)}</div><p class="sys-note sys-note--co cs-copy mt-12" data-co="pp"><b>What BSP can copy.</b> ${esc(c.copy)}</p><div class="mt-12"><button class="${btn(ui, 'sm')}" type="button" id="cs-open">Case detail</button></div>`;
+    $('#cs-kpi').innerHTML = `<div class="small strong">${esc(c.name)}</div><div class="mt-12">${L.kpiCardsHTML(c)}</div><p class="sys-note sys-note--co cs-copy mt-12" data-co="pp"><b>What BSP can copy.</b> ${esc(words(c.copy, 18))}</p><div class="mt-12"><button class="${btn(ui, 'sm')}" type="button" id="cs-open">Case detail</button></div>`;
     $('#cs-open').onclick = () => openCase(ctx, M, c);
   };
   $('#cs-pick').onchange = ev => { TS.primary = ev.target.value; TS.compare = TS.compare.filter(x => x !== TS.primary); render(); };
@@ -213,28 +218,28 @@ async function levers(ctx) {
   const behind = M.patterns.filter(p => p.tone === 'bad');
   el.innerHTML = `<div class="m-cases">${ui.pageHead({
     title: 'Value-creation levers',
-    sub: `<b>Eighteen levers across ${M.stats.n} cases;</b> the most common is ${esc(L.dash(top.name).split(' (')[0].replace(/^[A-Z](?=[a-z])/, m => m.toLowerCase()))} (${top.cases.length} cases). ${behind.length ? `Punctual Pros trails on ${behind.length} pattern${behind.length === 1 ? '' : 's'}.` : 'Punctual Pros trails on none.'}`,
-    chips: `${ctx.fmt.chip('Dated evidence per case')}${ppChip('Applied to Punctual Pros')}`,
+    sub: `<b>${M.levers.length} levers, ${M.stats.n} cases.</b> ${behind.length ? `Punctual Pros trails on ${behind.length} pattern${behind.length === 1 ? '' : 's'}.` : 'Punctual Pros trails on none.'}`,
   })}${ui.kpis([
     { label: 'Levers', value: String(M.levers.length), sub: `${M.levers.reduce((a, l) => a + l.evidence.length, 0)} evidence rows` },
-    { label: 'Most used', value: String(top.cases.length), sub: clip(L.dash(top.name), 46) },
-    { label: 'Earliest', value: early ? `month ${early.range[0]}` : '—', sub: early ? clip(early.name, 46) : '—' },
-    { label: 'Patterns', value: String(M.patterns.length), sub: `${M.patterns.filter(p => p.tone === 'good').length} done or clear for Punctual Pros`, color: 'var(--sys-good)' },
-    { label: 'Behind', value: String(behind.length), sub: 'patterns where Punctual Pros trails', color: 'var(--sys-bad)' },
+    { label: 'Most used', value: String(top.cases.length), sub: clip(L.leverShort(L.dash(top.name)), 46) },
+    { label: 'Earliest', value: early ? `month ${early.range[0]}` : '—', sub: early ? clip(L.leverShort(early.name), 46) : '—' },
+    { label: 'Patterns', value: String(M.patterns.length), sub: `${M.patterns.filter(p => p.tone === 'good').length} done or clear`, color: 'var(--sys-good)' },
+    { label: 'Behind', value: String(behind.length), sub: 'Punctual Pros trails', color: 'var(--sys-bad)' },
   ])}
-  <div class="mt-12">${ui.panel({ title: 'Lever × case matrix', sub: 'Solid = dated move (more saturated = earlier in the hold) · hollow = used, date not disclosed · click a lever, dot or case', body: '<div id="cs-mx"></div>', foot: SRC(ui, M) })}</div>
-  <div class="mt-12">${ui.panel({ title: 'Levers: evidence, timing and Punctual Pros applicability', sub: 'Sortable · click a row for the evidence and supporting screens · CSV', body: '<div id="cs-lv"></div>', foot: SRC(ui, M) })}</div>
-  <div class="mt-12">${ui.panel({ title: 'Chronological patterns on the hold clock', sub: 'Twelve patterns on a seven-year hold · bar colour = where Punctual Pros stands today · dotted line = Punctual Pros today · select a pattern for its cases', body: '<div id="cs-ck"></div>', foot: SRC(ui, M) + `<span>Timing computed from dated events (first add-on n = ${M.stats.firstAddon?.n ?? '—'}, cadence n = ${M.stats.cadence?.n ?? '—'}, hold n = ${M.stats.holdN ?? '—'}); Punctual Pros status from public filings and releases.</span>` })}</div></div>`;
+  <div class="mt-12">${ui.panel({ title: 'Lever × case matrix', body: '<div id="cs-mx"></div>' })}</div>
+  <div class="mt-12">${ui.panel({ title: 'Lever evidence and timing', body: '<div id="cs-lv"></div>' })}</div>
+  <div class="mt-12">${ui.panel({ title: 'Patterns on the hold clock', body: '<div id="cs-ck"></div>' })}</div>
+  <p class="src" data-method>Timing computed from dated events (first add-on n = ${M.stats.firstAddon?.n ?? '—'}, cadence n = ${M.stats.cadence?.n ?? '—'}, hold n = ${M.stats.holdN ?? '—'}); Punctual Pros status from public filings and releases. Twelve patterns on a seven-year hold.</p>${SRC(SRC_CASES, M)}</div>`;
   const $ = s => el.querySelector(s);
   $('#cs-mx').innerHTML = L.matrixHTML(M, { selected: ctx.params.lever || null });
-  $('#cs-ck').innerHTML = L.clockHTML(M) + '<div class="cs-ck-key"><span><i class="cs-ck-bar--good"></i>Punctual Pros: done or no stress</span><span><i class="cs-ck-bar--warn"></i>Partly done</span><span><i class="cs-ck-bar--bad"></i>Behind the cases</span><span><i></i>Not started, unknown or ongoing</span><span><i class="cs-ck-tick"></i>Median month</span></div>';
+  $('#cs-ck').innerHTML = L.clockHTML(M) + '<div class="cs-ck-key" data-method><span><i class="cs-ck-bar--good"></i>Punctual Pros: done or no stress</span><span><i class="cs-ck-bar--warn"></i>Partly done</span><span><i class="cs-ck-bar--bad"></i>Behind the cases</span><span><i></i>Not started, unknown or ongoing</span><span><i class="cs-ck-tick"></i>Median month</span></div>';
   const rows = M.levers.map(l => ({ id: l.id, name: L.dash(l.name), n: l.cases.length, ev: l.evidence.length, start: l.range ? l.range[0] : null, timing: L.timingText(l, true), kpi: l.kpi, pp: l.pp, links: l.links.map(x => x.label).join('; '), _l: l }));
   ui.table($('#cs-lv'), { rows, pageSize: 20, sortKey: 'n', exportName: 'value_creation_levers', onRow: r => openLever(ctx, M, r._l), columns: [
-    { key: 'name', label: 'Lever', wrap: true, fmt: v => `<b>${e2(v)}</b>` },
+    { key: 'name', label: 'Lever', wrap: true, fmt: v => `<b>${e2(L.leverShort(v))}</b>` },
     { key: 'n', label: 'Cases', num: true }, { key: 'ev', label: 'Evidence', num: true },
     { key: 'start', label: 'Timing', fmt: (v, r) => `<span class="small">${e2(r.timing)}</span>` },
-    { key: 'kpi', label: 'KPI moved', wrap: true, fmt: v => `<span class="small text-2">${e2(clip(v, 80))}</span>` },
-    { key: 'pp', label: 'Punctual Pros applicability', wrap: true, fmt: v => `<span class="small text-2">${e2(clip(v, 150))}</span>` },
+    { key: 'kpi', label: 'KPI moved', wrap: true, fmt: v => `<span class="small text-2">${e2(words(v, 6))}</span>` },
+    { key: 'pp', label: 'Punctual Pros applicability', wrap: true, fmt: v => `<span class="small text-2">${e2(words(v, 8))}</span>` },
     { key: 'links', label: 'Supporting screens', wrap: true, fmt: (v, r) => r._l.links.map(x => `<a class="small" href="${e2(L.hrefFor(x, ''))}" onclick="event.stopPropagation()">${e2(x.label)}</a>`).join('<br>') || '—' },
   ] });
   const onClick = ev => {
@@ -255,25 +260,26 @@ async function sequence(ctx) {
   const exitStep = M.steps.find(s => /exit window/i.test(s.title));
   el.innerHTML = `<div class="m-cases">${ui.pageHead({
     title: 'The Punctual Pros sequence',
-    sub: `<b>Three steps done, ${fwd.length} to go, in the order the winning cases used.</b> Next: ${esc(next12.map(s => /^[A-Z][a-z]/.test(s.title) ? s.title[0].toLowerCase() + s.title.slice(1) : s.title).slice(0, 1).join(''))}. Steps after 3 are recommendations.`,
+    sub: `<b>${M.steps.length - fwd.length} steps done, ${fwd.length} to go.</b> Next: ${esc(words(next12.map(s => /^[A-Z][a-z]/.test(s.title) ? s.title[0].toLowerCase() + s.title.slice(1) : s.title).slice(0, 1).join(''), 7))}.`,
     chips: `${ppChip('Entry: April 2024')}${ctx.fmt.chip('To September 2029')}`,
   })}${ui.kpis([
     { label: 'Hold month today', value: String(M.stats.pp?.hold_month_on_2026_10_06 ?? 30), sub: 'BSP entry Apr 3, 2024', color: 'var(--co-pp)' },
     { label: 'Done', value: String(M.steps.filter(s => s.done).length), sub: 'entry · ServiceTitan · Horvath (month 8)', color: 'var(--sys-good)' },
-    { label: 'Next 12 months', value: String(next12.length), sub: 'recommended steps starting before Oct 2027' },
-    { label: 'Home-services median hold', value: `${M.stats.holdHome?.toFixed(1)} yrs`, sub: `≈ ${L.monthLabel(M.ppLane.entry.t + (M.stats.holdHome || 4))} for Punctual Pros` },
+    { label: 'Next 12 months', value: String(next12.length), sub: 'start before Oct 2027' },
+    { label: 'Home-services median hold', value: `${M.stats.holdHome?.toFixed(1)} yrs`, sub: `≈ ${L.monthLabel(M.ppLane.entry.t + (M.stats.holdHome || 4))}` },
     { label: 'Exit window', value: exitStep ? `${L.mLabel(exitStep.a)}` : '—', sub: exitStep ? `option, to ${L.mLabel(exitStep.b)}` : '' },
   ])}
-  <div class="mt-12">${ui.panel({ title: '36-month plan', sub: 'Bars = recommended window (text = hold months) · dashed = option · click a step for the action, benchmark, precedent cases and supporting screens', body: '<div id="cs-g"></div>', foot: ui.source('Value-creation case set (Punctual Pros sequence), Punctual Pros public filings, OS program evidence, nationwide plan', null, asOf(M.retrieved)) })}</div>
-  <div class="mt-12">${ui.panel({ title: 'Steps', sub: 'Sortable · CSV · click for detail', body: '<div id="cs-st"></div>', foot: SRC(ui, M) })}</div></div>`;
+  <div class="mt-12">${ui.panel({ title: '36-month plan', body: '<div id="cs-g"></div>' })}</div>
+  <div class="mt-12">${ui.panel({ title: 'Steps', body: '<div id="cs-st"></div>' })}</div>
+  ${SRC('Value-creation case set (Punctual Pros sequence), Punctual Pros public filings, OS program evidence, nationwide plan', M)}<span class="src" data-src>Source: ${esc(SRC_CASES)}</span></div>`;
   const $ = s => el.querySelector(s);
   $('#cs-g').innerHTML = L.ganttHTML(M, { root: '', selected: ctx.params.step != null ? Number(ctx.params.step) : null });
-  const rows = M.steps.map(s => ({ id: s.step, step: s.step, title: s.title, start: s.a.t, when: `${L.mLabel(s.a)} – ${L.mLabel(s.b)}`, months: `${s.hold_month_start}–${s.hold_month_end}`, status: s.statusLabel, bench: s.bench, borrows: s.borrows.map(id => M.byId[id].short).join(', '), views: s.refs.map(r => r.label).join('; '), _s: s }));
+  const rows = M.steps.map(s => ({ id: s.step, step: s.step, title: s.title, start: s.a.t, when: L.mLabel(s.a) === L.mLabel(s.b) ? L.mLabel(s.a) : `${L.mLabel(s.a)} – ${L.mLabel(s.b)}`, months: s.hold_month_start === s.hold_month_end ? String(s.hold_month_start) : `${s.hold_month_start}–${s.hold_month_end}`, status: s.statusLabel, bench: s.bench, borrows: s.borrows.map(id => M.byId[id].short).join(', '), views: s.refs.map(r => r.label).join('; '), _s: s }));
   ui.table($('#cs-st'), { rows, pageSize: 20, sortKey: 'step', sortDir: 1, exportName: 'punctual_pros_sequence', onRow: r => openStep(ctx, M, r._s), columns: [
     { key: 'step', label: '#', num: true }, { key: 'title', label: 'Step', wrap: true, fmt: v => `<b>${e2(v)}</b>` },
     { key: 'start', label: 'When', fmt: (v, r) => `<span class="small">${e2(r.when)}</span>` }, { key: 'months', label: 'Hold months', num: true },
     { key: 'status', label: 'Status', fmt: v => stChip(v, v === 'Done' ? 'good' : v === 'Option' ? 'warn' : 'info') },
-    { key: 'bench', label: 'Benchmark', wrap: true, fmt: (v, r) => v ? `<span class="small text-2">${e2(clip(v, 110))}</span>${r._s.done ? '' : EST}` : '—' },
+    { key: 'bench', label: 'Benchmark', wrap: true, fmt: (v, r) => v ? `<span class="small text-2">${e2(words(v, 8))}</span>${r._s.done ? '' : EST}` : '—' },
     { key: 'borrows', label: 'Borrowed from', wrap: true, fmt: v => `<span class="small">${e2(v || '—')}</span>` },
     { key: 'views', label: 'Supporting screens', wrap: true, fmt: (v, r) => r._s.refs.map(x => `<a class="small" href="${e2(L.hrefFor(x, ''))}" onclick="event.stopPropagation()">${e2(x.label)}</a>`).join('<br>') || '—' },
   ] });
@@ -289,20 +295,19 @@ async function entryExit(ctx) {
   const sold = M.cases.filter(c => c.exit), toSponsor = sold.filter(c => c.hold_status !== 'ipo' && !/^Avantor/i.test(c.buyer || '') && /partners|capital|blackstone|kkr|apollo|goldman|carlyle|omers|tpg|bci|lgt|broad sky|bsp\b|harvest|jordan|altas|stone point|new mountain|investcorp|leonard green|baypine|gi /i.test(c.buyer || ''));
   el.innerHTML = `<div class="m-cases">${ui.pageHead({
     title: 'Entry to exit',
-    sub: `<b>${toSponsor.length} of ${sold.length} dated exits went to another sponsor</b> after a median ${M.stats.hold.toFixed(1)}-year hold. Scaled home-services companies sold near ~${L.xTimes(M.stats.exitMult)} against ~6–7x for small deals.`,
-    chips: `${stChip('Press-reported values are estimates', 'warn')}${ctx.fmt.chip('First-sponsor hold')}`,
-  })}${kpis(ctx, M)}
+    sub: `<b>${toSponsor.length} of ${sold.length} exits went to sponsors;</b> ~${L.xTimes(M.stats.exitMult)} versus ~6–7x small.`,
+  })}${kpis(ctx, M, false)}
   <div class="mt-12" id="cs-flt"></div>
-  <div class="mt-12">${ui.panel({ title: 'Entry and exit by case', sub: 'Sortable · click a row for the full case · CSV', body: '<div id="cs-ee"></div>', foot: SRC(ui, M) })}</div>
+  <div class="mt-12">${ui.panel({ title: 'Entry and exit by case', body: '<div id="cs-ee"></div>' })}</div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'The multiple ladder', sub: 'What small deals cost vs what scaled companies sold for (EBITDA multiples)', body: L.ladderHTML(M), foot: ui.source('GF Data via Middle Market Growth and ACG; Champions and Sila press-reported', null, asOf(M.retrieved)) })}
-    ${ui.panel({ title: 'Revenue growth during the hold', sub: 'Log scale · sourced before and after pairs only · several not like-for-like', body: L.growthHTML(M), foot: SRC(ui, M) })}
-  </div></div>`;
+    ${ui.panel({ title: 'EBITDA multiple ladder', body: L.ladderHTML(M) })}
+    ${ui.panel({ title: 'Revenue growth during the hold', body: L.growthHTML(M) })}
+  </div>${kpiMethod(M, false)}<p class="src" data-method>Press-reported values are estimates. Hold runs from the first sponsor's entry. Growth uses a log scale and sourced before and after pairs only; several are not like-for-like.</p>${SRC(SRC_CASES, M)}<span class="src" data-src>Source: GF Data via Middle Market Growth and ACG; Champions and Sila press-reported</span></div>`;
   const $ = s => el.querySelector(s);
   const rowsAll = M.cases.map(c => ({ id: c.id, company: c.short, sector: c.sectorLabel, owners: c.chainShort, entry: c.entry?.t ?? null, exit: c.exit?.t ?? null, hold: c.hold, status: c.statusLabel, buyer: c.buyerShort, ev: c.exit_ev_usd ?? null, mult: c.exit_multiple_ebitda ?? null, growth: c.growth, confidence: c.confidence, _c: c }));
   const t = ui.table($('#cs-ee'), { rows: rowsAll, pageSize: 40, sortKey: 'entry', sortDir: 1, exportName: 'value_creation_entry_exit', onRow: r => openCase(ctx, M, r._c), columns: [
-    { key: 'company', label: 'Company', fmt: (v, r) => `<b>${e2(v)}</b><div class="dim small">${e2(r.sector)}</div>` },
-    { key: 'owners', label: 'Owners', wrap: true, fmt: v => `<span class="small">${e2(v)}</span>` },
+    { key: 'company', label: 'Company', fmt: v => `<b>${e2(v)}</b>` },
+    { key: 'owners', label: 'Owners', wrap: true, fmt: v => `<span class="small">${e2(words(v, 10))}</span>` },
     { key: 'entry', label: 'Entry', num: true, fmt: (v, r) => e2(r._c.entry ? L.mLabel(r._c.entry) : '—') },
     { key: 'exit', label: 'Exit', num: true, fmt: (v, r) => e2(r._c.exit ? L.mLabel(r._c.exit) : '—') },
     { key: 'hold', label: 'Hold (yrs)', num: true, fmt: (v, r) => v == null ? '—' : `${v.toFixed(1)}${r._c.exit ? '' : ' <span class="dim small">so far</span>'}` },

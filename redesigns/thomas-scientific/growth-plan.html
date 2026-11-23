@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Thomas Scientific growth plan · BSP Desk</title>
+<title>Thomas Scientific growth plan · Broad Sky OS</title>
 <meta name="description" content="How Thomas Scientific moves from distributor to lab supply partner: cash first, then growth.">
 <meta name="theme-color" content="#fbfaf7">
 <script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="../../assets/system.css?v=20261123143257">
-<link rel="stylesheet" href="growth-plan.css?v=20261123143257">
+<link rel="stylesheet" href="../../assets/system.css?v=20261123172325">
+<link rel="stylesheet" href="growth-plan.css?v=20261123172325">
 </head>
 <body data-co="ts">
 <main id="main">
@@ -33,8 +33,7 @@
         <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><span id="eyebrow-t">Growth plan · October 2026</span></p>
         <h1 id="hero-h" class="sys-h1">From distributor to <span class="sys-grad-text">lab supply-chain partner.</span></h1>
         <div class="pb-view-sw" role="group" aria-label="Choose a reading view"><span>Reading as</span><button type="button" data-view="dt" aria-pressed="true">Deal team and lenders</button><button type="button" data-view="mgmt" aria-pressed="false">Thomas management</button></div>
-        <p class="sys-lead" id="hero-lede">BSP's first deal. Cash and the December 2027 maturity come first; target-account selling, digital ordering and private label earn the refinancing.</p>
-<p class="sys-src page-terms"><b>Terms:</b> DSO: days customers take to pay. ERP: the accounting and order system. CRM: the customer and sales system. SOFR: the benchmark rate loans are priced over. CAGR: compound annual growth rate.</p>
+        <p class="sys-lead" id="hero-lede">Cash and the December 2027 maturity first; growth earns the refinancing.</p>
         <div class="sys-actions"><a class="sys-btn sys-btn--primary sys-btn--lg" href="#returns">See the financing math</a><a class="sys-btn sys-btn--secondary sys-btn--lg" href="labos.html">Open LabOS →</a></div>
       </div>
       <aside class="sys-card pb-clock" aria-labelledby="clock-h">
@@ -46,13 +45,12 @@
         <div class="pb-clock-mid dt-only">
           <div class="pb-card-h"><h3 class="sys-card-label">Lender mark, % of par</h3><span class="sys-num" id="mark-last">—</span></div>
           <div id="spark" class="pb-spark" role="img" aria-label="Term-loan fair value as a percentage of par, by quarter"></div>
-          <p class="sys-src" id="spark-note">MFIC 10-Q and 10-K schedules of investments.</p>
         </div>
         <div class="pb-clock-bot" id="gap"></div>
       </aside>
     </div>
+    <p class="sys-card-label">Today → month 36</p>
     <div class="sys-kpis" id="kpis" role="list" aria-live="polite"></div>
-    <p class="sys-src" id="kpi-note"><b>Source:</b> outside-in analyst estimates built from SEC filings (lender marks, Form D) and ZoomInfo, Oct 2026: revenue $250–320M, EBITDA $25–35M, low confidence. Today = Oct 2026 midpoint; month 36 = plan. Every figure marked <span class="sys-est">est.</span> needs management validation and is not company guidance.</p>
     <div class="sys-kpis pb-strip" id="hero-strip" role="list" aria-label="Plan at a glance"></div>
   </div>
 </section>
@@ -62,8 +60,7 @@
   <div class="sys-wrap">
     <div class="sys-section-head">
       <p class="sys-kicker">01 · The template</p>
-      <h2 id="tpl-h" class="sys-h2">Smith + Howard went from one office to a TPG exit. Thomas runs a different version of the same play.</h2>
-      <p class="sys-lead">Each Smith + Howard move, dated and sourced, beside what it means for Thomas. Here success is an amend-and-extend by December 2027, not 4x revenue.</p>
+      <h2 id="tpl-h" class="sys-h2">Smith + Howard, then Thomas: a different version of the same play.</h2>
     </div>
     <div class="sys-grid sys-grid--4 pb-vs" id="vs" aria-label="Smith + Howard versus this plan"></div>
     <div class="pb-tpl-grid">
@@ -79,7 +76,6 @@
     <div class="sys-section-head">
       <p class="sys-kicker">02 · Where, in order</p>
       <h2 id="map-h" class="sys-h2">Four phases across 27,503 scored lab and hospital sites.</h2>
-      <p class="sys-lead">Bubbles are scored sites by state; squares are Thomas locations; rings are add-on targets. Pick a phase or press play.</p>
     </div>
     <div class="pb-phase-bar sys-chips" role="tablist" aria-label="Expansion phases" id="phase-bar"></div>
     <div class="pb-map-grid">
@@ -98,8 +94,7 @@
   <div class="sys-wrap">
     <div class="sys-section-head">
       <p class="sys-kicker">03 · Eight levers</p>
-      <h2 id="lev-h" class="sys-h2">Margin comes from mix, coverage and cash, not from a market growing 1.5% a year.</h2>
-      <p class="sys-lead">Each lever has a sourced benchmark and a target. Where Thomas's own baseline is not disclosed the bar shows a hatched gap: those are the first 30 days of diligence.</p>
+      <h2 id="lev-h" class="sys-h2">Margin from mix, coverage and cash, not a 1.5% market.</h2>
     </div>
     <div class="sys-grid sys-grid--4" id="lever-grid"></div>
     <p class="pb-also" id="also"></p>
@@ -112,7 +107,6 @@
     <div class="sys-section-head">
       <p class="sys-kicker">04 · The AI layer</p>
       <h2 id="ag-h" class="sys-h2">Nine agents that sell, key, search, forecast and collect.</h2>
-      <p class="sys-lead">Named vendors, a published result each and weeks to go live. Collections and pricing go first because each day of DSO is worth about $0.8M before the refinancing.</p>
     </div>
     <div class="sys-chips pb-seg" role="tablist" aria-label="Filter agents by who they help" id="ag-seg"></div>
     <div class="pb-ag-grid">
@@ -128,7 +122,6 @@
     <div class="sys-section-head">
       <p class="sys-kicker">05 · Talent</p>
       <h2 id="tal-h" class="sys-h2">Thirty account books, a specialist bench and an onsite corps.</h2>
-      <p class="sys-lead">Target-account selling is a people program first: an inside-sales academy, faster ramps and AI that moves reps from keying orders to selling.</p>
     </div>
     <div class="pb-tal-grid">
       <div class="sys-card pb-books" id="books"></div>
@@ -142,8 +135,7 @@
   <div class="sys-wrap">
     <div class="sys-section-head">
       <p class="sys-kicker">06 · The add-on machine</p>
-      <h2 id="ad-h" class="sys-h2">Two funded tuck-ins in 36 months, none while the refinancing is open, against Calibre for the same targets.</h2>
-      <p class="sys-lead" id="ad-sub">Ranked from the portal's add-on screen, fit out of 100. Revenue figures are modelled estimates.</p>
+      <h2 id="ad-h" class="sys-h2">Two funded tuck-ins in 36 months, none before the refinancing, against Calibre.</h2>
     </div>
     <div class="pb-machine" id="machine"></div>
     <div class="pb-ad-grid">
@@ -161,8 +153,7 @@
   <div class="sys-wrap">
     <div class="sys-section-head">
       <p class="sys-kicker">07 · Financing and returns</p>
-      <h2 id="ret-h" class="sys-h2">Two steps: an amend-and-extend in 2027 sized on ~$33M of EBITDA, then a refinancing or sale near 6x at month 36.</h2>
-      <p class="sys-lead" id="ret-sub">The loan matures on December 14, 2027, month 14 of the plan. The refinancing is sized on the EBITDA Thomas can show by then, not on month 36.<span class="sys-est">est.</span></p>
+      <h2 id="ret-h" class="sys-h2">Amend-and-extend in 2027 on ~$33M EBITDA; refinance or sell near 6x at month 36.</h2>
     </div>
     <div class="sys-grid sys-grid--3 pb-fin-grid dt-only" id="fin-grid"></div>
     <div class="pb-ret-grid">
@@ -222,20 +213,19 @@
   <div class="sys-wrap pb-notes">
     <div class="sys-section-head">
       <p class="sys-kicker">09 · Method</p>
-      <h2 id="rat-h" class="sys-h2">How this page was built, and what sits behind it.</h2>
-      <p class="sys-lead">The design choices, then every source and link the numbers come from.</p>
+      <h2 id="rat-h" class="sys-h2">Method and sources</h2>
     </div>
     <details class="sys-card pb-drawer" id="rat-drawer">
       <summary><span><b>Design rationale</b></span><span class="pb-chev" aria-hidden="true"></span></summary>
       <div class="pb-drawer-body sys-grid sys-grid--2">
-        <div><h4 class="sys-card-title">Credit memo first, growth deck second</h4><p class="sys-card-body">Put the maturity countdown on the first screen. Every lever sits behind liquidity.</p></div>
+        <div><h4 class="sys-card-title">Credit memo first, growth deck second</h4><p class="sys-card-body">Maturity countdown on the first screen; every lever sits behind liquidity.</p></div>
         <div><h4 class="sys-card-title">Report in the units buyers benchmark</h4><p class="sys-card-body">Report digital share and ePro share, the units public distributors disclose.</p></div>
         <div><h4 class="sys-card-title">Lead with the number</h4><p class="sys-card-body">Lead with the KPIs and let a partner stress the assumptions live.</p></div>
         <div><h4 class="sys-card-title">The Smith + Howard exit release</h4><p class="sys-card-body">Show where the analogy holds and where it does not.</p></div>
       </div>
     </details>
     <details class="sys-card pb-drawer" id="srcs">
-      <summary><span><b>Method, sources and caveats</b> · every source and link behind this page</span><span class="pb-chev" aria-hidden="true"></span></summary>
+      <summary><span><b>Method, sources and caveats</b></span><span class="pb-chev" aria-hidden="true"></span></summary>
       <div class="pb-drawer-body" id="src-body"></div>
     </details>
   </div>
@@ -261,10 +251,10 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script type="module">
-import { Frame } from '../../assets/frame.js?v=20261123143257';
-import { Data, Fmt, esc } from '../../assets/core.js?v=20261123143257';
-import { Chat } from '../../assets/chat.js?v=20261123143257';
-import { boot } from './growth-plan.js?v=20261123143257';
+import { Frame } from '../../assets/frame.js?v=20261123172325';
+import { Data, Fmt, esc } from '../../assets/core.js?v=20261123172325';
+import { Chat } from '../../assets/chat.js?v=20261123172325';
+import { boot } from './growth-plan.js?v=20261123172325';
 const frame = Frame.mount({});
 boot({ Data, Fmt, esc, Chat, Frame, frame });
 </script>

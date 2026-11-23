@@ -8,7 +8,7 @@ exits 1 on any failure; exits 0 and prints a one-line summary otherwise.
 
 Usage:  python3 scripts/check_agent_copy.py
 """
-import glob, json, os, re, subprocess, sys
+import glob, json, os, re, shutil, subprocess, sys, tempfile
 from html.parser import HTMLParser
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -37,7 +37,7 @@ NYC = re.compile(r'New York City|\bNYC\b|Manhattan|Brooklyn|Queens')
 PRG_FULL = 'Portfolio Resource Group'
 PRG_DESC = 'Portfolio Resource Group (PRG)'
 # "sandbox" may appear in visible copy only here (SPEC 1.3), plus the page's meta description (SPEC 1.1)
-SANDBOX_OK = ('<b>Sandbox:</b>', 'Sandbox:', 'BSP Desk sandbox', 'Example apps with sandbox records',
+SANDBOX_OK = ('<b>Sandbox:</b>', 'Sandbox:', 'Broad Sky OS sandbox', 'Example apps with sandbox records',
               'Source: sandbox ServiceTitan record', 'A sandbox AI agent for BSP')
 # catalogue fields whose text is visible on the page (SPEC 6.4 rule 5)
 VISIBLE_KEYS = {'label', 'label_a', 'desc', 'sells', 'lines', 'depts', 'chips', 'placeholder', 'read', 'wont', 'numbers_text',
@@ -104,7 +104,7 @@ def common(path, s, page=False):
         m = BANNED_PAGE.search(s)
         if m:
             fail(path, f'banned word "{m.group(0)}"', s)
-    if 'Broad Sky' in s:
+    if 'Broad Sky' in s.replace('Broad Sky OS', ''):   # the product's name is Broad Sky OS (OS spec 1.4); the firm is BSP
         fail(path, '"Broad Sky" (use BSP)', s)
     if 'Tyler' in s:
         fail(path, 'real name "Tyler"', s)
@@ -316,13 +316,22 @@ def check_sandbox():
 
 # ── voice and terms passes (dry runs must report nothing to change) ─────────────────────────────
 def check_passes():
-    files = [HTML, *JS]
+    # The passes read copies in which the product's name, "Broad Sky OS" (OS spec 1.4), is set aside: the voice pass predates
+    # it and would turn it into "BSP OS". Any other "Broad Sky" still counts.
+    tmp = tempfile.mkdtemp(prefix='agent-copy-', dir=os.path.join(ROOT, 'scripts'))
+    files = []
+    for f in [HTML, *JS]:
+        dst = os.path.join(tmp, f)
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        open(dst, 'w', encoding='utf-8').write(open(os.path.join(ROOT, f), encoding='utf-8').read().replace('Broad Sky OS', 'Product OS'))
+        files.append(os.path.relpath(dst, ROOT))
     review = os.path.join(ROOT, 'scripts', '_terms_review.txt')
     saved = open(review, 'rb').read() if os.path.exists(review) else None
     try:
         v = subprocess.run([sys.executable, 'scripts/apply_voice.py', *files], cwd=ROOT, capture_output=True, text=True)
         t = subprocess.run([sys.executable, 'scripts/apply_terms.py', *files], cwd=ROOT, capture_output=True, text=True)
     finally:
+        shutil.rmtree(tmp, ignore_errors=True)
         if saved is None:
             if os.path.exists(review):
                 os.remove(review)

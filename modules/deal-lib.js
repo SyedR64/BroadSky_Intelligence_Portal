@@ -155,14 +155,14 @@ export function football(p, srcs) {
   const e0 = p.rev * p.mg / 100, out = [];
   const evs = []; for (const dw of [-1, 1]) for (const dg of [-0.5, 0.5]) { const d = dcf({ ...p, wacc: p.wacc + dw, tg: p.tg + dg }); if (d.evG != null) evs.push(d.evG); }
   const base = dcf(p);
-  if (evs.length) out.push({ k: 'dcfg', label: 'DCF, long-run growth', sub: `Discount rate ±1 point, growth ±0.5 point`, lo: Math.min(...evs), hi: Math.max(...evs), mid: base.evG });
+  if (evs.length) out.push({ k: 'dcfg', label: 'DCF, long-run growth', sub: 'Rate ±1 point, growth ±0.5 point', lo: Math.min(...evs), hi: Math.max(...evs), mid: base.evG });
   const evm = []; for (const dw of [-1, 1]) for (const dt of [-1, 1]) evm.push(dcf({ ...p, wacc: p.wacc + dw, tm: Math.max(1, p.tm + dt) }).evM);
-  out.push({ k: 'dcfm', label: 'DCF, year-5 sale multiple', sub: 'Discount rate ±1 point, multiple ±1x', lo: Math.min(...evm), hi: Math.max(...evm), mid: base.evM });
+  out.push({ k: 'dcfm', label: 'DCF, year-5 sale multiple', sub: 'Rate ±1 point, multiple ±1x', lo: Math.min(...evm), hi: Math.max(...evm), mid: base.evM });
   if (e0 > 0) {
     out.push({ k: 'gf', label: 'Lower-middle-market deals', sub: 'GF Data: 6.3x (under $25M) to 10.0x ($100M to $250M)', lo: 6.3 * e0, hi: 10.0 * e0, src: srcs?.gf });
     out.push({ k: 'cap', label: 'Typical to premium deals', sub: 'Capstone: 6.8x typical, 9.8x premium (2026)', lo: 6.8 * e0, hi: 9.8 * e0, src: srcs?.cap });
     const a = solveEntry(p, 0.25), b = solveEntry(p, 0.20);
-    if (a != null && b != null) out.push({ k: 'lbo', label: 'What a buyer can pay', sub: 'Price that still earns a 20% to 25% annual return', lo: a * e0, hi: b * e0, mult: [a, b] });
+    if (a != null && b != null) out.push({ k: 'lbo', label: 'What a buyer can pay', sub: 'Earns a 20% to 25% return', lo: a * e0, hi: b * e0, mult: [a, b] });
   }
   return { rows: out, price: e0 * p.em, e0 };
 }
@@ -253,7 +253,7 @@ export function workbook(XLSX, st, info = {}) {
 
   /* Inputs */
   const wi = sheet();
-  put(wi, 0, 0, S_('BSP Desk · Acquisition model'));
+  put(wi, 0, 0, S_('Broad Sky OS · Acquisition model'));
   put(wi, 0, 1, S_(`Scenario: ${st.label}`));
   put(wi, 0, 2, S_(`Prepared by Syed Rahman · ${info.date || ''}. Change the values in column C; every other sheet recalculates.`));
   put(wi, 0, 3, S_('Rows marked est. are estimates from public filings or analyst assumptions, not BSP figures.'));
@@ -430,14 +430,14 @@ export function workbook(XLSX, st, info = {}) {
   XLSX.utils.book_append_sheet(wb, finish(wsrc, [56, 80, 60, 12]), 'Sources');
 
   wb.Workbook = { Names: names };
-  wb.Props = { Title: `BSP Desk acquisition model: ${st.label}`, Author: 'Syed Rahman' };
+  wb.Props = { Title: `Broad Sky OS acquisition model: ${st.label}`, Author: 'Syed Rahman' };
   return wb;
 }
 
 /* CSV fallback: inputs, the year-by-year model and the headline results. */
 export function csv(st) {
   const p = st.vals, R = lbo(p), D = dcf(p), U = rollup(p);
-  const rows = [['BSP Desk acquisition model', st.label], [], ['Input', 'Value', 'Unit', 'Estimate']];
+  const rows = [['Broad Sky OS acquisition model', st.label], [], ['Input', 'Value', 'Unit', 'Estimate']];
   for (const m of st.inputs) rows.push([m.label, p[m.key], m.unit, st.est.has(m.key) ? 'est.' : '']);
   rows.push([], ['Year', ...R.yr.slice(0, R.N + 1)]);
   const L = [['Revenue before add-ons ($M)', 'rev'], ['EBITDA total ($M)', 'ebitda'], ['Add-on spend ($M)', 'buy'], ['Interest ($M)', 'int'], ['Cash to repay debt ($M)', 'cash'], ['Net debt ($M)', 'nd'], ['Equity cash flow ($M)', 'cf']];

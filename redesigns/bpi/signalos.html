@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SignalOS · BSP Desk</title>
+<title>SignalOS · Broad Sky OS</title>
 <meta name="description" content="SignalOS for BPI: narrative monitoring, audience testing, compliance-gated content and productized retainers.">
 <meta name="theme-color" content="#fbfaf7">
 <script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/system.css?v=20261123143257">
-<link rel="stylesheet" href="site.css?v=20261123143257">
+<link rel="stylesheet" href="../../assets/system.css?v=20261123172325">
+<link rel="stylesheet" href="site.css?v=20261123172325">
 </head>
 <body data-co="bpi">
 <main id="main">
@@ -29,18 +29,16 @@
     <div class="sys-wrap">
       <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>SignalOS</b> · for BPI</p>
       <h1 class="sys-h1" id="os-h">See the narrative <span class="sys-grad-text">before it’s news.</span></h1>
-      <p class="sys-lead">SignalOS turns what BPI does best into an always-on retainer product. Clients get earlier warning; BPI gets revenue that does not wait for an election.</p>
-<p class="sys-src page-terms"><b>Terms:</b> BPI: Bully Pulpit International. ARR: annual recurring revenue. PR: public relations.</p>
-      <div class="sys-actions">
+            <div class="sys-actions">
         <a class="sys-btn sys-btn--primary sys-btn--lg" href="#demo">Try the live demo <span aria-hidden="true">↓</span></a>
         <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#math">See the value math</a>
       </div>
       <div class="sys-kpis" role="list">
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Adj. EBITDA margin</span><span class="sys-kpi-value"><span class="from" id="k1-from">21%</span><span id="k1-to">24.3%</span><span class="sys-est">est.</span></span><span class="sys-kpi-sub">Today's midpoint to PPHC, the closest listed peer</span></div>
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Exit multiple credited to SignalOS</span><span class="sys-kpi-value"><span id="k2">+0.5–2.0x</span><span class="sys-est">est.</span></span><span class="sys-kpi-sub">Turns of EV/EBITDA, if subscriptions show up</span></div>
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Recurring SignalOS revenue</span><span class="sys-kpi-value"><span class="from">$0</span>$5M ARR<span class="sys-est">est.</span></span><span class="sys-kpi-sub">By month 36, about 3–4% of revenue</span></div>
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Adj. EBITDA margin</span><span class="sys-kpi-value"><span class="from" id="k1-from">21%</span><span id="k1-to">24.3%</span><span class="sys-est">est.</span></span><span class="sys-kpi-sub">Today to PPHC</span></div>
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Exit multiple credited to SignalOS</span><span class="sys-kpi-value"><span id="k2">+0.5–2.0x</span><span class="sys-est">est.</span></span><span class="sys-kpi-sub">EV/EBITDA turns</span></div>
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Recurring SignalOS revenue, month 36</span><span class="sys-kpi-value"><span class="from">$0</span>$5M ARR<span class="sys-est">est.</span></span><span class="sys-kpi-sub">3–4% of revenue</span></div>
       </div>
-      <p class="sys-src" id="k-src"><b>Source:</b> PPHC FY2025 10-K margin benchmark and BPI public filings (low confidence); multiple credit from the OS program evidence (analyst assumption); recurring revenue from the BPI growth plan (analyst target), Oct 2026.</p>
+      <details class="sys-fold"><summary><b>Sources and terms</b><span>Benchmarks, assumptions, abbreviations</span></summary><p class="sys-src page-terms"><b>Terms:</b> BPI: Bully Pulpit International. ARR: annual recurring revenue. PR: public relations.</p><p class="sys-src" id="k-src"><b>Source:</b> PPHC FY2025 10-K margin benchmark and BPI public filings (low confidence); multiple credit from the OS program evidence (analyst assumption); recurring revenue from the BPI growth plan (analyst target), Oct 2026.</p></details>
     </div>
   </section>
 
@@ -50,14 +48,13 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Why now</p>
         <h2 class="sys-h2" id="why-h">Break the election cycle.</h2>
-        <p class="sys-lead">Political billings spike every four years, and buyers discount earnings they cannot predict. Subscriptions fix that.</p>
-      </div>
+              </div>
       <div class="cyc">
-        <div class="sys-card rv"><span class="sys-card-label">Federal political committee payments to BPI, by cycle (gross billings)</span><div id="cyc-chart"></div><p class="sys-src"><b>Source:</b> FEC Schedule B payments by recipient, compiled in BPI public filings (high confidence). Gross media billings, mostly pass-through, not BPI fee revenue. 2026 is year to date.</p></div>
+        <div class="sys-card rv"><span class="sys-card-label">Federal political committee payments to BPI, by cycle (gross billings)</span><div id="cyc-chart"></div><details class="sys-fold"><summary><b>Source</b><span>FEC billings, gross</span></summary><p class="sys-src"><b>Source:</b> FEC Schedule B payments by recipient, compiled in BPI public filings (high confidence). Gross media billings, mostly pass-through, not BPI fee revenue. 2026 is year to date.</p></details></div>
         <div class="sys-stack">
-          <div class="sys-card evc rv"><div class="v">37x</div><p class="sys-card-title">Peak-to-trough swing in federal political billings</p><p class="sys-card-body">$115.3M in the 2024 cycle against $3.1M in 2022 (derived).</p><div class="ft"><p class="sys-src">BPI public filings · derived</p><span class="bpi-tag bpi-tag--co">High confidence</span></div></div>
-          <div class="sys-card evc rv"><div class="v">−16.5%</div><p class="sys-card-title">Organic decline at Stagwell’s advocacy segment the year after the election</p><p class="sys-card-body">The closest listed read-across for what an off-year does to a campaign-heavy agency.</p><div class="ft"><p class="sys-src">Stagwell FY2025 10-K · BPI growth plan</p><span class="bpi-tag bpi-tag--co">High confidence</span></div></div>
-          <div class="sys-card evc rv"><div class="v" id="ret-share">66%</div><p class="sys-card-title">Of PR firms are mostly retainer-based</p><p class="sys-card-body">BPI’s mix is undisclosed and campaign-heavy; SignalOS is how it joins the majority.</p><div class="ft"><p class="sys-src">Davis+Gilbert 2025 survey (n=181)</p><span class="bpi-tag">Medium confidence</span></div></div>
+          <div class="sys-card evc rv"><div class="v">37x</div><p class="sys-card-title">Peak-to-trough swing in federal political billings</p><details class="sys-fold"><summary><b>Basis</b><span>High confidence</span></summary><p class="sys-card-body">$115.3M in the 2024 cycle against $3.1M in 2022 (derived).</p><div class="ft"><p class="sys-src">BPI public filings · derived</p><span class="bpi-tag bpi-tag--co">High confidence</span></div></details></div>
+          <div class="sys-card evc rv"><div class="v">−16.5%</div><p class="sys-card-title">Organic decline at Stagwell’s advocacy segment the year after the election</p><details class="sys-fold"><summary><b>Basis</b><span>High confidence</span></summary><p class="sys-card-body">The closest listed read-across for what an off-year does to a campaign-heavy agency.</p><div class="ft"><p class="sys-src">Stagwell FY2025 10-K · BPI growth plan</p><span class="bpi-tag bpi-tag--co">High confidence</span></div></details></div>
+          <div class="sys-card evc rv"><div class="v" id="ret-share">66%</div><p class="sys-card-title">Of PR firms are mostly retainer-based</p><details class="sys-fold"><summary><b>Basis</b><span>Medium confidence</span></summary><p class="sys-card-body">BPI’s mix is undisclosed and campaign-heavy; SignalOS is how it joins the majority.</p><div class="ft"><p class="sys-src">Davis+Gilbert 2025 survey (n=181)</p><span class="bpi-tag">Medium confidence</span></div></details></div>
         </div>
       </div>
     </div>
@@ -69,15 +66,14 @@
       <div class="sys-section-head">
         <p class="sys-kicker">What it is</p>
         <h2 class="sys-h2" id="mod-h">Six modules. One subscription.</h2>
-        <p class="sys-lead">Buy the commodity layers. Build what makes BPI different: narrative models, research panels, review rules and client scorecards.</p>
-      </div>
+              </div>
       <div class="sys-grid sys-grid--3">
-        <div class="sys-card rv"><span class="bpi-ic bpi-ic--soft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg></span><p class="sys-card-title">Narrative monitor</p><p class="sys-card-body">News, social, video, podcasts and dockets clustered into narratives, scored for sentiment, velocity and synthetic-media risk. Alerts arrive with a draft holding statement.</p><div class="sys-card-foot"><span class="bpi-tag">Buy Meltwater, Brandwatch, Zignal · build models</span></div></div>
-        <div class="sys-card rv"><span class="bpi-ic bpi-ic--soft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><circle cx="12" cy="16" r="3"/></svg></span><p class="sys-card-title">Audience lab</p><p class="sys-card-body">Synthetic pre-tests against policymaker, investor, voter and employee segments in hours, then live validation with Message House elite panels.</p><div class="sys-card-foot"><span class="bpi-tag bpi-tag--co">Build on Message House</span></div></div>
-        <div class="sys-card rv"><span class="bpi-ic bpi-ic--soft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10l4 4v12H5V4Z"/><path d="m9 13 2 2 4-4"/></svg></span><p class="sys-card-title">Compliance studio</p><p class="sys-card-body">Drafts statements, op-eds and Hill letters in each client’s voice, then routes them through claims, disclosure and legal checkpoints before anything ships.</p><div class="sys-card-foot"><span class="bpi-tag">Buy Jasper or Writer · build rules</span></div></div>
-        <div class="sys-card rv"><span class="bpi-ic bpi-ic--soft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h18L12 4 3 10Zm2 0v8m4-8v8m6-8v8m4-8v8M3 20h18"/></svg></span><p class="sys-card-title">Policy radar</p><p class="sys-card-body">Bills, rulemakings and EU acts tracked per client in Washington, Brussels and Berlin, with impact summaries and outreach variants.</p><div class="sys-card-foot"><span class="bpi-tag">Buy Quorum or FiscalNote</span></div></div>
-        <div class="sys-card rv"><span class="bpi-ic bpi-ic--soft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4m0 16h16M8 16l4-5 3 3 5-7"/></svg></span><p class="sys-card-title">Outcome dashboards</p><p class="sys-card-body">Share of voice, narrative sentiment, policy outcomes and paid-media lift in one scorecard per retainer, so renewals are sold on results.</p><div class="sys-card-foot"><span class="bpi-tag bpi-tag--co">Build (BI layer)</span></div></div>
-        <div class="sys-card rv"><span class="bpi-ic bpi-ic--soft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><p class="sys-card-title">Retainer engine</p><p class="sys-card-body">Compares hours burned with scope every week, flags over-servicing and drafts change orders, protecting margin as the retainer share rises.</p><div class="sys-card-foot"><span class="bpi-tag">Buy PSA · build alerts</span></div></div>
+        <div class="sys-card rv"><span class="bpi-ic bpi-ic--soft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg></span><p class="sys-card-title">Narrative monitor</p><p class="sys-card-body">Always-on listening, clustered into narratives.</p><details class="sys-fold"><summary><b>Detail</b></summary><p class="sys-card-body">News, social, video, podcasts and dockets clustered into narratives, scored for sentiment, velocity and synthetic-media risk. Alerts arrive with a draft holding statement.</p></details><div class="sys-card-foot"><span class="bpi-tag">Buy Meltwater, Brandwatch, Zignal · build models</span></div></div>
+        <div class="sys-card rv"><span class="bpi-ic bpi-ic--soft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><circle cx="12" cy="16" r="3"/></svg></span><p class="sys-card-title">Audience lab</p><p class="sys-card-body">Synthetic pre-tests in hours, then live panels.</p><details class="sys-fold"><summary><b>Detail</b></summary><p class="sys-card-body">Synthetic pre-tests against policymaker, investor, voter and employee segments in hours, then live validation with Message House elite panels.</p></details><div class="sys-card-foot"><span class="bpi-tag bpi-tag--co">Build on Message House</span></div></div>
+        <div class="sys-card rv"><span class="bpi-ic bpi-ic--soft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10l4 4v12H5V4Z"/><path d="m9 13 2 2 4-4"/></svg></span><p class="sys-card-title">Compliance studio</p><p class="sys-card-body">Drafts in client voice through legal checkpoints.</p><details class="sys-fold"><summary><b>Detail</b></summary><p class="sys-card-body">Drafts statements, op-eds and Hill letters in each client’s voice, then routes them through claims, disclosure and legal checkpoints before anything ships.</p></details><div class="sys-card-foot"><span class="bpi-tag">Buy Jasper or Writer · build rules</span></div></div>
+        <div class="sys-card rv"><span class="bpi-ic bpi-ic--soft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h18L12 4 3 10Zm2 0v8m4-8v8m6-8v8m4-8v8M3 20h18"/></svg></span><p class="sys-card-title">Policy radar</p><p class="sys-card-body">Bills and rules tracked in DC, Brussels, Berlin.</p><details class="sys-fold"><summary><b>Detail</b></summary><p class="sys-card-body">Bills, rulemakings and EU acts tracked per client in Washington, Brussels and Berlin, with impact summaries and outreach variants.</p></details><div class="sys-card-foot"><span class="bpi-tag">Buy Quorum or FiscalNote</span></div></div>
+        <div class="sys-card rv"><span class="bpi-ic bpi-ic--soft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4m0 16h16M8 16l4-5 3 3 5-7"/></svg></span><p class="sys-card-title">Outcome dashboards</p><p class="sys-card-body">One scorecard per retainer.</p><details class="sys-fold"><summary><b>Detail</b></summary><p class="sys-card-body">Share of voice, narrative sentiment, policy outcomes and paid-media lift in one scorecard per retainer, so renewals are sold on results.</p></details><div class="sys-card-foot"><span class="bpi-tag bpi-tag--co">Build (BI layer)</span></div></div>
+        <div class="sys-card rv"><span class="bpi-ic bpi-ic--soft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><p class="sys-card-title">Retainer engine</p><p class="sys-card-body">Flags over-servicing; protects margin.</p><details class="sys-fold"><summary><b>Detail</b></summary><p class="sys-card-body">Compares hours burned with scope every week, flags over-servicing and drafts change orders, protecting margin as the retainer share rises.</p></details><div class="sys-card-foot"><span class="bpi-tag">Buy PSA · build alerts</span></div></div>
       </div>
     </div>
   </section>
@@ -88,8 +84,7 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Interactive demo</p>
         <h2 class="sys-h2" id="demo-h">Monitor. Test. Ship safely.</h2>
-        <p class="sys-lead">Three working demos of the core loop. The data is illustrative; the workflow and scoring are real.</p>
-      </div>
+              </div>
       <div class="demo-tabs" role="tablist" aria-label="Demo">
         <button role="tab" id="t-mon" aria-controls="p-mon" aria-selected="true"><span class="n">01</span>Narrative monitor</button>
         <button role="tab" id="t-mt" aria-controls="p-mt" aria-selected="false"><span class="n">02</span>Synthetic-audience test</button>
@@ -131,7 +126,7 @@
           </div>
         </div>
       </div>
-      <p class="sys-src"><b>Source:</b> illustrative demo data<span class="sys-est sys-est--illus">illustrative</span> written for this concept; outlets are described generically.</p>
+      <details class="sys-fold"><summary><b>Source</b><span>Demo data is illustrative</span></summary><p class="sys-src"><b>Source:</b> illustrative demo data<span class="sys-est sys-est--illus">illustrative</span> written for this concept; outlets are described generically.</p></details>
     </div>
   </section>
 
@@ -141,17 +136,16 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Productized retainers</p>
         <h2 class="sys-h2" id="tier-h">Three tiers. Priced like software.</h2>
-        <p class="sys-lead">Packaging turns bespoke hours into products a client renews without a new pitch. Prices are illustrative.</p>
-      </div>
+              </div>
       <div class="sys-grid sys-grid--3 sys-grid--gap-lg">
-        <article class="sys-card sys-card--feature tier rv"><span class="sys-card-label">Tier 1<span class="sys-est sys-est--illus">illustrative</span></span><h3 class="sys-h3">Monitor</h3><div class="price">$12K<small> a month</small></div><p class="sys-card-body">Early warning for one company, three issues and two markets.</p><ul class="sys-card-list"><li>Narrative monitor: 3 issues, US plus 1 market</li><li>Alerts with draft holding statements</li><li>Weekly narrative brief</li><li>Quarterly outcome scorecard</li></ul>
+        <article class="sys-card sys-card--feature tier rv"><span class="sys-card-label">Tier 1<span class="sys-est sys-est--illus">illustrative</span></span><h3 class="sys-h3">Monitor</h3><div class="price">$12K<small> a month</small></div><ul class="sys-card-list"><li>Narrative monitor: 3 issues, US plus 1 market</li><li>Alerts with draft holding statements</li><li>Weekly narrative brief</li><li>Quarterly outcome scorecard</li></ul>
           <div class="sla"><div><b>2 hours</b><span>Alert-to-counsel SLA</span></div><div><b>12 months</b><span>Term</span></div></div></article>
-        <article class="sys-card sys-card--feature tier hot rv" data-co="bpi"><span class="sys-card-label">Tier 2 · most retainers land here<span class="sys-est sys-est--illus">illustrative</span></span><h3 class="sys-h3">Advise</h3><div class="price">$35K<small> a month</small></div><p class="sys-card-body">Monitoring plus testing, drafting and a senior team on call.</p><ul class="sys-card-list"><li>Everything in Monitor, 6 issues, 3 markets</li><li>Audience lab: 4 synthetic studies a quarter</li><li>Compliance studio seats for client comms</li><li>Monthly strategy session with a partner</li></ul>
+        <article class="sys-card sys-card--feature tier hot rv" data-co="bpi"><span class="sys-card-label">Tier 2 · most retainers land here<span class="sys-est sys-est--illus">illustrative</span></span><h3 class="sys-h3">Advise</h3><div class="price">$35K<small> a month</small></div><ul class="sys-card-list"><li>Everything in Monitor, 6 issues, 3 markets</li><li>Audience lab: 4 synthetic studies a quarter</li><li>Compliance studio seats for client comms</li><li>Monthly strategy session with a partner</li></ul>
           <div class="sla"><div><b>30 min</b><span>Crisis SLA</span></div><div><b>12 months</b><span>Term</span></div></div></article>
-        <article class="sys-card sys-card--feature tier rv"><span class="sys-card-label">Tier 3<span class="sys-est sys-est--illus">illustrative</span></span><h3 class="sys-h3">Command</h3><div class="price">$85K+<small> a month</small></div><p class="sys-card-body">A transatlantic war room for the board and the C-suite.</p><ul class="sys-card-list"><li>US, UK and EU coverage, unlimited issues</li><li>Live Message House elite panels</li><li>Policy radar for DC, Brussels and Berlin</li><li>Embedded team and board-level dashboards</li></ul>
+        <article class="sys-card sys-card--feature tier rv"><span class="sys-card-label">Tier 3<span class="sys-est sys-est--illus">illustrative</span></span><h3 class="sys-h3">Command</h3><div class="price">$85K+<small> a month</small></div><ul class="sys-card-list"><li>US, UK and EU coverage, unlimited issues</li><li>Live Message House elite panels</li><li>Policy radar for DC, Brussels and Berlin</li><li>Embedded team and board-level dashboards</li></ul>
           <div class="sla"><div><b>30 min</b><span>Crisis SLA, 24/7</span></div><div><b>24 months</b><span>Term</span></div></div></article>
       </div>
-      <p class="sys-src" id="tier-src"><b>Vendor cost context:</b> Zignal Labs from $49,500 a year (Capterra); Brandwatch about $800–3,000+ a month; Meltwater median buyer about $25K a year; Jasper Pro $59 a seat a month (third-party pricing guides, compiled in the OS program evidence). Licences are shared across the client base, so platform cost per retainer falls as subscriptions grow.</p>
+      <details class="sys-fold"><summary><b>Vendor cost context</b><span>Licence prices behind the tiers</span></summary><p class="sys-src" id="tier-src"><b>Vendor cost context:</b> Zignal Labs from $49,500 a year (Capterra); Brandwatch about $800–3,000+ a month; Meltwater median buyer about $25K a year; Jasper Pro $59 a seat a month (third-party pricing guides, compiled in the OS program evidence). Licences are shared across the client base, so platform cost per retainer falls as subscriptions grow.</p></details>
     </div>
   </section>
 
@@ -161,16 +155,16 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Value math</p>
         <h2 class="sys-h2" id="math-h">$1–2M in. Tens of millions out.</h2>
-        <p class="sys-lead">Two levers: margin and multiple. Move the sliders; every default comes from the evidence file.</p>
-      </div>
+              </div>
       <div class="calc">
         <div class="sys-card inputs rv">
-          <div class="rng"><div class="top"><label for="r-rev">BPI net revenue</label><output id="o-rev">$105M</output></div><input type="range" id="r-rev" min="85" max="125" step="1" value="105"><p class="sys-src"><span>$85M</span><span>est. FY2025, BPI public filings (low confidence)</span><span>$125M</span></p></div>
-          <div class="rng"><div class="top"><label for="r-base">Current adj. EBITDA margin</label><output id="o-base">21%</output></div><input type="range" id="r-base" min="18" max="24" step="0.5" value="21"><p class="sys-src"><span>18%</span><span>est. range, BPI public filings and the PPHC benchmark</span><span>24%</span></p></div>
-          <div class="rng"><div class="top"><label for="r-up">SignalOS margin uplift</label><output id="o-up">+2.0 pts</output></div><input type="range" id="r-up" min="1" max="3" step="0.1" value="2"><p class="sys-src"><span>+1.0</span><span>analyst assumption, EBITDA impact as a share of revenue</span><span>+3.0</span></p></div>
-          <div class="rng"><div class="top"><label for="r-mult">Exit multiple before SignalOS</label><output id="o-mult">10.0x</output></div><input type="range" id="r-mult" min="8.4" max="13" step="0.1" value="10"><p class="sys-src"><span>8.4x PPHC</span><span>sponsor-exit estimate</span><span>13x</span></p></div>
-          <div class="rng"><div class="top"><label for="r-turn">Multiple expansion credited</label><output id="o-turn">+1.25x</output></div><input type="range" id="r-turn" min="0" max="2" step="0.05" value="1.25"><p class="sys-src"><span>0</span><span>analyst assumption, 0.5–2.0 turns</span><span>2.0</span></p></div>
-          <div class="rng"><div class="top"><label for="r-inv">SignalOS investment</label><output id="o-inv">$1.5M</output></div><input type="range" id="r-inv" min="1" max="2" step="0.1" value="1.5"><p class="sys-src"><span>$1.0M</span><span>6–12 months to value</span><span>$2.0M</span></p></div>
+          <div class="rng"><div class="top"><label for="r-rev">BPI net revenue</label><output id="o-rev">$105M</output></div><input type="range" id="r-rev" min="85" max="125" step="1" value="105"><p class="sys-src"><span>$85M</span><span>$125M</span></p></div>
+          <div class="rng"><div class="top"><label for="r-base">Current adj. EBITDA margin</label><output id="o-base">21%</output></div><input type="range" id="r-base" min="18" max="24" step="0.5" value="21"><p class="sys-src"><span>18%</span><span>24%</span></p></div>
+          <div class="rng"><div class="top"><label for="r-up">SignalOS margin uplift</label><output id="o-up">+2.0 pts</output></div><input type="range" id="r-up" min="1" max="3" step="0.1" value="2"><p class="sys-src"><span>+1.0</span><span>+3.0</span></p></div>
+          <div class="rng"><div class="top"><label for="r-mult">Exit multiple before SignalOS</label><output id="o-mult">10.0x</output></div><input type="range" id="r-mult" min="8.4" max="13" step="0.1" value="10"><p class="sys-src"><span>8.4x PPHC</span><span>13x</span></p></div>
+          <div class="rng"><div class="top"><label for="r-turn">Multiple expansion credited</label><output id="o-turn">+1.25x</output></div><input type="range" id="r-turn" min="0" max="2" step="0.05" value="1.25"><p class="sys-src"><span>0</span><span>2.0</span></p></div>
+          <div class="rng"><div class="top"><label for="r-inv">SignalOS investment</label><output id="o-inv">$1.5M</output></div><input type="range" id="r-inv" min="1" max="2" step="0.1" value="1.5"><p class="sys-src"><span>$1.0M</span><span>$2.0M</span></p></div>
+          <details class="sys-fold"><summary><b>Input ranges</b><span>Where each range comes from</span></summary><ul class="sys-card-list"><li><b>BPI net revenue:</b> $85M to $125M, est. FY2025, BPI public filings (low confidence).</li><li><b>Current adj. EBITDA margin:</b> 18% to 24%, est. range from BPI public filings and the PPHC benchmark.</li><li><b>SignalOS margin uplift:</b> +1.0 to +3.0 pts, analyst assumption, EBITDA impact as a share of revenue.</li><li><b>Exit multiple before SignalOS:</b> 8.4x (PPHC) to 13x, sponsor-exit estimate.</li><li><b>Multiple expansion credited:</b> 0 to 2.0 turns, analyst assumption, 0.5–2.0 turns.</li><li><b>SignalOS investment:</b> $1.0M to $2.0M, 6–12 months to value.</li></ul></details>
         </div>
         <div class="out rv" data-sys-theme="dark" data-co="bpi" aria-live="polite">
           <p class="sys-kicker">Equity value created at exit<span class="sys-est">est.</span></p>
@@ -183,12 +177,12 @@
             <div><span><i class="sw-b"></i>Value of multiple expansion on total EBITDA</span><b id="c-vb">$24.2M</b></div>
           </div>
           <div><div class="sub-h" style="margin-bottom:8px">Scenario range from the evidence file</div><div class="cases3" id="c-cases"></div></div>
-          <p class="sys-src"><b>Method:</b> value = uplift × exit multiple + credited turns × (EBITDA today + uplift). Inputs: OS program evidence (BPI return assumptions, labelled est.: an analyst assumption, not a forecast or company guidance; PPHC and sponsor-exit valuation evidence; PPHC margin benchmark) and the BPI public filings estimate table. Low case: $85M, 18%, +1.0 pt, 8.4x, +0.5x. High case: $125M, 24%, +3.0 pts, 13x, +2.0x.</p>
+          <details class="sys-fold"><summary><b>Method</b><span>Formula, inputs, low and high cases</span></summary><p class="sys-src"><b>Method:</b> value = uplift × exit multiple + credited turns × (EBITDA today + uplift). Inputs: OS program evidence (BPI return assumptions, labelled est.: an analyst assumption, not a forecast or company guidance; PPHC and sponsor-exit valuation evidence; PPHC margin benchmark) and the BPI public filings estimate table. Low case: $85M, 18%, +1.0 pt, 8.4x, +0.5x. High case: $125M, 24%, +3.0 pts, 13x, +2.0x.</p></details>
         </div>
       </div>
       <div style="margin-top:var(--sys-sp-7)">
-        <p class="sys-kicker">The evidence behind the numbers</p>
-        <div class="sys-grid sys-grid--3" id="evidence"><p class="sys-src">Loading evidence…</p></div>
+        <details class="sys-fold"><summary><b>The evidence behind the numbers</b><span>Valuation evidence and KPI benchmarks</span></summary>
+        <div class="sys-grid sys-grid--3" id="evidence"><p class="sys-src">Loading evidence…</p></div></details>
       </div>
     </div>
   </section>
@@ -199,9 +193,9 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Build vs buy</p>
         <h2 class="sys-h2" id="stack-h">Rent the pipes. Own the judgment.</h2>
-        <p class="sys-lead">Monitoring and drafting are commodities. BPI’s edge is knowing which narratives matter and what a client can say.</p>
-      </div>
-      <div class="sys-table-wrap rv"><table class="sys-table" id="stack-tbl"><thead><tr><th>Layer</th><th>Vendor or asset</th><th>What it does in SignalOS</th><th>Cost note</th><th>Decision</th></tr></thead><tbody></tbody><caption>Source: OS program evidence (BPI vendor stack, with links to each vendor’s pricing source), Oct 2026. Build rows are this concept’s proposal.</caption></table></div>
+              </div>
+      <div class="sys-table-wrap rv"><table class="sys-table" id="stack-tbl"><thead><tr><th>Layer</th><th>Vendor or asset</th><th>Decision</th></tr></thead><tbody></tbody></table></div>
+      <details class="sys-fold"><summary><b>What each layer does and costs</b><span>Function, cost note, source</span></summary><div class="sys-table-wrap"><table class="sys-table" id="stack-more"><thead><tr><th>Layer</th><th>What it does in SignalOS</th><th>Cost note</th></tr></thead><tbody></tbody></table></div><p class="sys-src">Source: OS program evidence (BPI vendor stack, with links to each vendor’s pricing source), Oct 2026. Build rows are this concept’s proposal.</p></details>
     </div>
   </section>
 
@@ -211,10 +205,9 @@
       <div class="sys-section-head">
         <p class="sys-kicker">12-month roadmap</p>
         <h2 class="sys-h2" id="road-h">Live in two quarters. Reported in four.</h2>
-        <p class="sys-lead">Revenue arrives before the post-midterm dip: pilot with corporate clients, then productize and take it to Europe.</p>
-      </div>
+              </div>
       <div class="gantt rv" id="gantt"></div>
-      <p class="sys-src"><b>Source:</b> 6–12 months to value<span class="sys-est">est.</span> (OS program evidence); phase 1 of the BPI growth plan (Oct 2026 – Sep 2027). Owners are proposed.</p>
+      <details class="sys-fold"><summary><b>Source</b><span>Owners are proposed</span></summary><p class="sys-src"><b>Source:</b> 6–12 months to value<span class="sys-est">est.</span> (OS program evidence); phase 1 of the BPI growth plan (Oct 2026 – Sep 2027). Owners are proposed.</p></details>
     </div>
   </section>
 
@@ -224,8 +217,7 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Risks</p>
         <h2 class="sys-h2" id="risk-h">What could go wrong, and the guardrail.</h2>
-        <p class="sys-lead">Communications firms sell trust. Every SignalOS module keeps a person in the loop.</p>
-      </div>
+              </div>
       <div class="sys-grid sys-grid--3">
         <div class="sys-card risk rv"><span class="lv h">High</span><p class="sys-card-title">Revenue stays tied to the election cycle</p><p class="sys-card-body">Subscriptions sold mostly to campaign clients would churn with the cycle.</p><div class="sys-note sys-note--good"><span><b>Guardrail.</b> Sell first to corporate clients from the Reputation Resilience Index briefings; report recurring share monthly.</span></div></div>
         <div class="sys-card risk rv"><span class="lv h">High</span><p class="sys-card-title">An AI error reaches a client statement</p><p class="sys-card-body">A hallucinated figure in a crisis statement would cost more than the product earns.</p><div class="sys-note sys-note--good"><span><b>Guardrail.</b> Approved fact base, claims and disclosure checks, two human gates, full audit log, no auto-publish.</span></div></div>
@@ -244,13 +236,14 @@
         <p class="sys-kicker">Why a buyer pays for this at exit</p>
         <h2 class="sys-h2" id="exit-h">Earnings a buyer can underwrite.</h2>
       </div>
-      <p class="thesis rv">A BPI whose billings swing 37x between federal cycles is valued like a campaign shop. A BPI with <em>subscription intelligence, visible renewals and transatlantic retainers</em> is valued like the firms its next buyer already knows: PPHC on the floor, FGS and Penta at the top.</p>
+      <p class="thesis rv">Billings that swing 37x between federal cycles are valued like a campaign shop. With <em>subscription intelligence and transatlantic retainers</em>, BPI is valued like PPHC (floor) to FGS and Penta (top).</p>
       <div class="sys-grid sys-grid--4 exit">
-        <div class="sys-kpi rv"><span class="sys-kpi-label">PPHC, the public floor</span><span class="sys-kpi-value">8.4x<span class="sys-est">est.</span></span><span class="sys-kpi-sub">Closest listed peer at its January 2026 IPO</span><p class="sys-src">PPHC 10-K and 424B4 · OS program evidence</p></div>
-        <div class="sys-kpi rv"><span class="sys-kpi-label">Sponsor exit for a scaled BPI</span><span class="sys-kpi-value">10–13x<span class="sys-est">est.</span></span><span class="sys-kpi-sub">SignalOS aims for the top of this range</span><p class="sys-src">Analyst estimate · OS program evidence</p></div>
-        <div class="sys-kpi rv"><span class="sys-kpi-label">KKR’s valuation of FGS Global</span><span class="sys-kpi-value">$1.7B</span><span class="sys-kpi-sub">What scaled, premium communications is worth</span><p class="sys-src">WPP Form 6-K, Aug 2024</p></div>
-        <div class="sys-kpi rv"><span class="sys-kpi-label">Penta revenue from AI and data</span><span class="sys-kpi-value">~½</span><span class="sys-kpi-sub">Of $100M+ revenue, at the August 2025 sale</span><p class="sys-src">O’Dwyer’s citing Axios · BPI growth plan</p></div>
+        <div class="sys-kpi rv"><span class="sys-kpi-label">PPHC, the public floor</span><span class="sys-kpi-value">8.4x<span class="sys-est">est.</span></span><span class="sys-kpi-sub">Closest listed peer, Jan 2026 IPO</span></div>
+        <div class="sys-kpi rv"><span class="sys-kpi-label">Sponsor exit for a scaled BPI</span><span class="sys-kpi-value">10–13x<span class="sys-est">est.</span></span><span class="sys-kpi-sub">SignalOS aims for the top</span></div>
+        <div class="sys-kpi rv"><span class="sys-kpi-label">KKR’s valuation of FGS Global</span><span class="sys-kpi-value">$1.7B</span><span class="sys-kpi-sub">What scaled comms is worth</span></div>
+        <div class="sys-kpi rv"><span class="sys-kpi-label">Penta revenue from AI and data</span><span class="sys-kpi-value">~½</span><span class="sys-kpi-sub">Of $100M+ revenue, Aug 2025 sale</span></div>
       </div>
+      <details class="sys-fold"><summary><b>Sources</b><span>Peer, sponsor and sale benchmarks</span></summary><ul class="sys-card-list"><li><b>PPHC, the public floor:</b> PPHC 10-K and 424B4 · OS program evidence.</li><li><b>Sponsor exit for a scaled BPI:</b> analyst estimate · OS program evidence.</li><li><b>KKR’s valuation of FGS Global:</b> WPP Form 6-K, Aug 2024.</li><li><b>Penta revenue from AI and data:</b> O’Dwyer’s citing Axios · BPI growth plan.</li></ul></details>
     </div>
   </section>
 
@@ -259,7 +252,6 @@
       <div class="sys-cta-in">
         <div class="sys-cta-copy">
           <h2 id="cta-h">Request a SignalOS briefing.</h2>
-          <p>See the monitor on a live issue, then compare SignalOS with the other five OS theses in the portal.</p>
         </div>
         <div class="sys-actions">
           <a class="sys-btn sys-btn--accent sys-btn--lg" href="index.html#contact">Request a briefing</a>
@@ -271,9 +263,9 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261123143257';
+  import { Frame } from '../../assets/frame.js?v=20261123172325';
   Frame.mount({});
 </script>
-<script type="module" src="signalos.js?v=20261123143257"></script>
+<script type="module" src="signalos.js?v=20261123172325"></script>
 </body>
 </html>

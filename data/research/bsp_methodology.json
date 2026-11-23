@@ -1109,7 +1109,7 @@
   {
    "id": "pat-adjacent-then-leap",
    "kind": "pattern",
-   "pattern": "Geographic expansion first fills the region next door, then makes one larger move. Punctual Pros went Central PA to Central NJ. CET went Worcester/Taunton to Norwell MA to Connecticut, and the CEO has ruled out NYC. S+H went Atlanta to TN, VA, Carolinas and AL before going national at exit. BPI went DC to Brussels and Berlin, then London, then LA and Miami.",
+   "pattern": "Geographic expansion first fills the region next door, then makes one larger move. Punctual Pros went Central PA to Central NJ. CET went Worcester/Taunton to Norwell MA to Connecticut, then to Maryland and New Jersey. S+H went Atlanta to TN, VA, Carolinas and AL before going national at exit. BPI went DC to Brussels and Berlin, then London, then LA and Miami.",
    "evidence_deal_ids": [
     "deal-pp-horvath",
     "deal-cet-nuwave",
@@ -1122,7 +1122,7 @@
     "deal-bpi-propper"
    ],
    "strength": "moderate",
-   "implication_for_next_deals": "Score add-ons on distance to the nearest existing node, with a bonus for one new adjacent state per year. Respect stated management boundaries (CET: no NYC).",
+   "implication_for_next_deals": "Score add-ons on distance to the nearest existing node, with a bonus for one new adjacent state per year.",
    "source_urls": [
     "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
     "https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/",
@@ -1496,7 +1496,7 @@
    "kind": "criterion",
    "criterion": "Geographic adjacency, with a regional champion that can go national",
    "weight_pct": 8,
-   "test": "Straight-line miles to the nearest portfolio company node (<=60 mi best). Regional share in the home market; one new adjacent state or metro per year. Respect management-stated boundaries (CET: New England only, no NYC).",
+   "test": "Straight-line miles to the nearest portfolio company node (<=60 mi best). Regional share in the home market; one new adjacent state or metro per year.",
    "scoring_bands": {
     "5": "<=60 mi or fills a named gap",
     "3": "60-150 mi",

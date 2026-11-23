@@ -173,3 +173,5 @@
 /* "Change the assumptions": a jump to the inputs, shown only where the results come first */
 .m-deal .dm-jump{display:none}
 @media (max-width:900px){.m-deal .dm-jump{display:inline-flex}}
+
+.m-deal .dm-fx:not(.dm-fx--on){visibility:hidden}

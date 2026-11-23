@@ -7,7 +7,11 @@
       "sponsor": "BSP (majority investor since Feb 2025; announced 2025-03-19)",
       "add_ons": [
         "NuWave Energy Solutions (Norwell MA; announced 2025-10-07)",
-        "Horton Electrical Services (Canton/Collinsville CT; announced 2026-09-15)"
+        "Horton Electrical Services (Canton/Collinsville CT; announced 2026-09-15)",
+        "Direct Electric Services (Mount Airy MD; reported 2026-10-28/29)",
+        "JDL Electric Company (Halethorpe MD; reported 2026-10-28/29)",
+        "New Horizons Technologies (Sterling MA; reported 2026-10-28/29)",
+        "Vanguard Building Solutions (Cherry Hill NJ; reported 2026-10-28/29)"
       ]
     },
     "generated": "2026-09-24",
@@ -70,10 +74,11 @@
       "'Horton Electrical Services, Inc.' (Maryland; DoD 2015 award) and the Horton party in the Center City Healthcare bankruptcy are different entities from the CT Horton acquired by CET.",
       "The OSHA records for 'Commonwealth Electrical Technologies, Inc.' show a Devens MA mailing address and NAICS 237130. The name matches exactly and the sites are in CET's service area, but entity identity was not independently confirmed.",
       "The relayed user request asks for coverage of the entire BSP portfolio and rivals. This file covers the CET portfolio company (CET, NuWave, Horton) plus CET-relevant rivals and public comps only; other portfolio companies are handled in separate files.",
+      "Company facts updated 2026-11-23: the company is Commonwealth Electrical Technologies, also branded CET Energy Solutions; its site states 400+ professionals; six add-ons, of which Direct Electric Services, JDL Electric, New Horizons Technologies and Vanguard Building Solutions are reported in trade press (28 to 29 October 2026); licensed in about ten states across New England and the Mid-Atlantic (reported). Records and estimates in this file predate those four deals.",
       "Verified 2026-09-24: sampled 25, confirmed 24, removed 0"
     ],
     "item_count": 25,
-    "financial_picture": "1) Pre-deal scale: CET's April 2020 PPP loan ($2.062M, 121 jobs) implies about $9.9M of annual payroll. At the 30–40% labor-to-revenue ratio typical of commercial electrical contractors, 2019 revenue was roughly $25–33M. 2) By October 2025 CET reported about 140 employees (the brief's ~160 'licensed professionals' may count differently). Applying $250–375k revenue per employee, bracketed by IES Holdings' ~$328k, gives 2025 standalone revenue of about $35–55M (midpoint ~$45M). 3) At the 8–12% EBITDA margins seen at Limbach (~10%) and IES (~13%, high end), CET's standalone EBITDA at entry was probably about $3–6M, a true lower-middle-market company. 4) The equity structure supports that scale. The only co-invest was one LP writing $7.5M (Form D, first sale 2025-02-05), from a ~$335M fund where a typical position is $25–50M. Total equity was therefore likely ~$25–45M. 5) Applying the brief's 3.5–5.5x LMM leverage to $3–6M of EBITDA implies $10–33M of senior debt at close. Entry enterprise value was likely ~$35–75M (~9–12x), but none of the debt is visible. 6) No BDC schedule, lender press release, Form D debt vehicle or credit rating names CET, 'CET Acquisition Holdings, LLC' or Horton. EDGAR full-text search found zero hits and 73 downloaded BDC/credit-fund filings were negative. So the facility most likely sits with a bank or a non-SEC-reporting private lender or SBIC. 7) BSP's March 2026 Form ADV marks the CET co-invest vehicle at $8.504M against $7.5M invested (1.13x gross). That modest markup fits the NuWave tuck-in plus organic growth, not a re-rating. 8) NuWave was tiny at acquisition (PPP: 4 jobs in 2020, founded 2019) and adds engineering/design-build capability, not scale; call it $2–10M of revenue (low confidence). 9) Horton is the transformational add-on. Its 2020 PPP ($646k, 42 jobs, ~$3.1M payroll) has grown to 120+ staff, so revenue is plausibly ~$25–40M today. CET says the deal 'nearly doubles' the workforce. 10) Pro forma for both add-ons, the company is roughly 260–290 employees, $65–100M revenue and $6–11M EBITDA (low confidence). Horton was bought by the CET LLC subsidiary with no new BSP Form D, so it was likely funded with incremental or delayed-draw debt plus seller rollover, pushing leverage toward the upper half of the 3.5–5.5x band. 11) Offsetting positives: a clean OSHA history, no material litigation, full PPP forgiveness, and state-funded program work (MassCEC On-Street Charging prime vendor, CT Clean Water Fund wastewater exposure via Horton). Watch items: a likely related-party lease of Horton's Canton facility (97 River Road CBP, LLC) and a possible Duquette-affiliated mechanical firm (A. Duquette & Son) across the street from CET HQ.",
+    "financial_picture": "1) Pre-deal scale: CET's April 2020 PPP loan ($2.062M, 121 jobs) implies about $9.9M of annual payroll. At the 30–40% labor-to-revenue ratio typical of commercial electrical contractors, 2019 revenue was roughly $25–33M. 2) By October 2025 CET reported about 140 employees (the brief's ~160 'licensed professionals' may count differently). Applying $250–375k revenue per employee, bracketed by IES Holdings' ~$328k, gives 2025 standalone revenue of about $35–55M (midpoint ~$45M). 3) At the 8–12% EBITDA margins seen at Limbach (~10%) and IES (~13%, high end), CET's standalone EBITDA at entry was probably about $3–6M, a true lower-middle-market company. 4) The equity structure supports that scale. The only co-invest was one LP writing $7.5M (Form D, first sale 2025-02-05), from a ~$335M fund where a typical position is $25–50M. Total equity was therefore likely ~$25–45M. 5) Applying the brief's 3.5–5.5x LMM leverage to $3–6M of EBITDA implies $10–33M of senior debt at close. Entry enterprise value was likely ~$35–75M (~9–12x), but none of the debt is visible. 6) No BDC schedule, lender press release, Form D debt vehicle or credit rating names CET, 'CET Acquisition Holdings, LLC' or Horton. EDGAR full-text search found zero hits and 73 downloaded BDC/credit-fund filings were negative. So the facility most likely sits with a bank or a non-SEC-reporting private lender or SBIC. 7) BSP's March 2026 Form ADV marks the CET co-invest vehicle at $8.504M against $7.5M invested (1.13x gross). That modest markup fits the NuWave tuck-in plus organic growth, not a re-rating. 8) NuWave was tiny at acquisition (PPP: 4 jobs in 2020, founded 2019) and adds engineering/design-build capability, not scale; call it $2–10M of revenue (low confidence). 9) Horton is the transformational add-on. Its 2020 PPP ($646k, 42 jobs, ~$3.1M payroll) has grown to 120+ staff, so revenue is plausibly ~$25–40M today. CET says the deal 'nearly doubles' the workforce. 10) Pro forma for the first two add-ons (before the October 2026 deals), the company was roughly 260–290 employees, $65–100M revenue and $6–11M EBITDA (low confidence); the company site now states 400+ professionals after four further add-ons reported in October 2026, and these estimates are not restated. Horton was bought by the CET LLC subsidiary with no new BSP Form D, so it was likely funded with incremental or delayed-draw debt plus seller rollover, pushing leverage toward the upper half of the 3.5–5.5x band. 11) Offsetting positives: a clean OSHA history, no material litigation, full PPP forgiveness, and state-funded program work (MassCEC On-Street Charging prime vendor, CT Clean Water Fund wastewater exposure via Horton). Watch items: a likely related-party lease of Horton's Canton facility (97 River Road CBP, LLC) and a possible Duquette-affiliated mechanical firm (A. Duquette & Son) across the street from CET HQ.",
     "estimate_table": [
       {
         "metric": "CET annual payroll, 2019/early 2020",
@@ -89,7 +94,7 @@
       },
       {
         "metric": "CET headcount trajectory",
-        "estimate": "121 (Apr 2020) -> ~140 (Oct 2025) -> ~260–290 pro forma with Horton (Sep 2026)",
+        "estimate": "121 (Apr 2020) -> ~140 (Oct 2025) -> ~260–290 pro forma with Horton (Sep 2026) -> 400+ professionals (company site, Nov 2026; four add-ons reported Oct 2026)",
         "basis": "PPP jobs; CET NuWave release; Horton release ('nearly doubles', 100+ field + 20 managers)",
         "confidence": "high"
       },
@@ -551,7 +556,7 @@
         "financial_terms": "not disclosed",
         "leader_post_close": "Warren A. Horton continues to lead Horton, reporting to CET"
       },
-      "what_it_tells_us": "This is the transformational add-on. At 120+ employees, Horton is close to CET's own size (about 140–160), so pro forma headcount is roughly 260–290. It shifts the mix toward municipal and infrastructure work (CT Clean Water Fund-backed wastewater projects), which is often prevailing-wage and bonded, adding backlog visibility but more public-bid working-capital needs.",
+      "what_it_tells_us": "This is the transformational add-on. At 120+ employees, Horton is close to CET's own size (about 140–160), so pro forma headcount was roughly 260–290 before the four add-ons reported in October 2026 (the company site now states 400+ professionals). It shifts the mix toward municipal and infrastructure work (CT Clean Water Fund-backed wastewater projects), which is often prevailing-wage and bonded, adding backlog visibility but more public-bid working-capital needs.",
       "confidence": "high",
       "source_url": "https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/",
       "retrieved": "2026-09-24"
@@ -651,7 +656,7 @@
           "RI",
           "VT"
         ],
-        "stated_markets": "New England & New York",
+        "stated_markets": "Northeast and Mid-Atlantic (reported, October 2026)",
         "divisions": [
           "Electrical",
           "Energy Services",

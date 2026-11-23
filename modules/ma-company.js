@@ -59,8 +59,8 @@ function thesisParts(b, p, s, fmt, kit) {
 }
 /* BPI and Fair Harbor: built only from what the loan screen already says about them; not a thesis. */
 const NO_THESIS = {
-  bpi: 'No hand-researched list yet. Every candidate comes from SBA loan records. First step: confirm ownership and client mix (public affairs, advocacy, research).',
-  fh: 'No hand-researched list yet. Every candidate comes from SBA loan records, a weak source here: most apparel borrowers are contract sewers and boutiques. First step: confirm each is a branded apparel or swim company.',
+  bpi: 'No hand-researched list yet; SBA loan records only.',
+  fh: 'No hand-researched list yet; SBA loan records only (mostly contract sewers and boutiques).',
 };
 const IDEAL = kit => ({
   cet: ['25–400 employees and $8–120M revenue (rubric scale band)', `Density tuck-in: ${kit.REACH_TXT.cet}; new-hub anchor: CT near Horton`, 'Capabilities that extend CET lines: solar O&M, EV, energy efficiency, W/WW I&C, generators, controls', 'Founder or family owner with a succession need; labour model compatible with CET’s', 'Licensed in several New England states; recurring service/maintenance mix'],
@@ -118,6 +118,8 @@ function buyers(b, p) {
 }
 
 /* ── draw ──────────────────────────────────────────────────────────────────────────────────────────────── */
+const SRC = h => `<span data-src>${h}</span>`;
+const METH = h => `<div class="sys-src" data-method>${h}</div>`;
 const bul = xs => `<ul class="bul">${xs.map(x => `<li>${x}</li>`).join('')}</ul>`;
 /* A closed section: the portal's one disclosure (.ma-how in ma.css), with room for a table inside. */
 const sec = (id, summary, body, foot = '', open = false) => `<details class="ma-how ma-sec"${id ? ` id="${id}"` : ''}${open ? ' open' : ''}><summary>${summary}</summary><div class="ma-sec-body">${body}</div>${foot ? `<div class="ma-how-foot">${foot}</div>` : ''}</details>`;
@@ -128,15 +130,13 @@ function cardsHtml(ctx, b, kit) {
   const S = Object.fromEntries(SKEYS.map(p => [p, thesisStats(b, p, kit)]));
   const best = PKEYS.slice().sort((x, y) => (S[y].t1 + S[y].t2) / (S[y].n || 1) - (S[x].t1 + S[x].t2) / (S[x].n || 1))[0];
   const nHand = handOnly(b.targets).length, nAll = b.targets.length, nCo = SKEYS.filter(p => S[p].n).length;
-  const card = p => { const P = PLAT[p], s = S[p]; if (!s.n) return ''; const th = thesisParts(b, p, s, fmt, kit);
+  const card = p => { const P = PLAT[p], s = S[p]; if (!s.n) return '';
     return `<a class="sys-card sys-card--link ma-co-card" data-co="" style="--co:${P.color}" href="#/ma/pipeline?platform=${p}">
       <div class="ma-deal-hd">${fmt.chip(P.label, P.color)}<span class="ma-deal-fit">${fmt.num(s.n)} targets · ${s.t1} Tier 1</span></div>
       <h3 class="sys-card-title">${esc(P.long)}</h3>
-      <p class="sys-card-body">${esc(th ? cap(th.view[0]) : NO_THESIS[p])}</p>
-      <div class="soft"><span class="ma-co-split">${s.nHand ? `${fmt.num(s.nHand)} hand-researched · ${fmt.num(s.nSba)} from SBA loan records` : `${fmt.num(s.nSba)} from SBA loan records`} · </span><b>Open the ${esc(P.label)} brief →</b></div></a>`; };
+      <div class="soft">${s.nHand ? `${fmt.num(s.nHand)} hand-researched · ${fmt.num(s.nSba)} from SBA loan records` : `${fmt.num(s.nSba)} from SBA loan records`}</div></a>`; };
   return `<section class="ma-co-cards" aria-label="Add-on targets by company">
-    <p class="h-note"><b>${fmt.num(nAll)} add-on targets across ${WORDS[nCo] || nCo} companies: ${fmt.num(nHand)} on the hand-researched list and ${fmt.num(nAll - nHand)} more from the SBA loan screen.</b> ${esc(PLAT[best].label)} has the richest pool (${pctOf(S[best].t1 + S[best].t2, S[best].n)}% Tier 1–2). Punctual Pros faces the hardest competition; CET has the most open field. Pick a company for its thesis, map and ranked picks.</p>
-    <div class="sys-grid ma-co-grid">${SKEYS.map(card).join('')}</div></section>`;
+    ${sec('ma-co-by', 'By company', `<div class="sys-grid ma-co-grid">${SKEYS.map(card).join('')}</div>`)}${METH(`${fmt.num(nAll)} add-on targets across ${WORDS[nCo] || nCo} companies: ${fmt.num(nHand)} hand-researched and ${fmt.num(nAll - nHand)} from the SBA loan screen. ${esc(PLAT[best].label)} has the richest pool (${pctOf(S[best].t1 + S[best].t2, S[best].n)}% Tier 1–2). Punctual Pros faces the hardest competition; CET has the most open field.`)}</section>`;
 }
 
 /* A trade or specialty as the ranked list prints it: no bracketed aside, cut at a word, and HVAC in capitals as the list has it. */
@@ -150,11 +150,11 @@ function rankedHtml(ctx, b, p, s, kit) {
     const place = `${t.hq_city || ''}${t.hq_city ? ', ' : ''}${t._state || r.state || ''}`;
     const bits = [place, t.employees != null ? `${fmt.num(t.employees)} staff` : '', t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)} est.` : '',
       (t.specialties || t.trades || t.offerings || []).slice(0, 2).map(x => specialty(x, kit)).join(', ')].filter(Boolean).join(' · ');
-    return `<tr data-tid="${esc(r.id)}" tabindex="0"><td class="sys-n">${esc(r.rank)}</td><td class="nm"><b>${esc(r.company)}</b>${sold ? ` ${fmt.chip('already sold', 'var(--sys-bad)')}` : ''}<div class="dim small">${esc(bits)}</div>${r.why ? `<div class="small text-2">${esc(clip(r.why, 260))}</div>` : ''}</td><td class="sys-n">${fmt.score(sold ? t.fit_score : r.fit_score ?? t.fit_score)}</td></tr>`; };
+    return `<tr data-tid="${esc(r.id)}" tabindex="0"><td class="sys-n">${esc(r.rank)}</td><td class="nm"><b>${esc(r.company)}</b>${sold ? ` ${fmt.chip('already sold', 'var(--sys-bad)')}` : ''}<div class="dim small">${esc(bits)}</div></td><td class="sys-n">${fmt.score(sold ? t.fit_score : r.fit_score ?? t.fit_score)}</td></tr>`; };
   const P = PLAT[p];
-  const held = s.affil.length ? `<div class="sys-note sys-note--warn note warn ma-co-held"><b>Held out: verify affiliation.</b> ${s.affil.map(t => `<span data-tid="${esc(t.id)}" tabindex="0" role="button"><b>${esc(t.company)}</b> (${esc(t.hq_city || '')}, ${esc(t._state)}; fit ${fmt.num(t.fit_score)}). ${esc(Copy.text(t.brands_or_franchise || ''))}. ${(t.risk_flags || []).map(r => esc(Copy.text(r))).join('. ')}.</span>`).join(' ')} Trades under the portfolio company’s own name: either already part of the ${esc(P.label)} network (owned or related party) or a brand conflict. <b>Do not contact the company until its affiliation is checked.</b> ${esc(P.label)} leadership to confirm status (owned · related party · independent) first.</div>` : '';
+  const held = s.affil.length ? `<div class="sys-note sys-note--warn note warn ma-co-held"><b>Held out: verify affiliation.</b> ${s.affil.map(t => `<span data-tid="${esc(t.id)}" tabindex="0" role="button"><b>${esc(t.company)}</b> (${esc(t.hq_city || '')}, ${esc(t._state)}; fit ${fmt.num(t.fit_score)})</span>`).join(' · ')} <b>Do not contact until affiliation is confirmed.</b></div>` : '';
   const nHeld = rankedRaw(b, p).length - ranked.length;
-  return ctx.ui.panel({ title: `Ranked picks (${ranked.length})`, sub: `The screen authors’ ranked list${nHeld ? `; ${nHeld} held out for an affiliation check and re-numbered` : ''}. Click a name for its profile and deal math.`, accent: true, scroll: true, flush: true, id: 'ma-co-ranked',
+  return ctx.ui.panel({ title: `Ranked picks (${ranked.length})`, sub: nHeld ? `${nHeld} held out for an affiliation check` : '', accent: true, scroll: true, flush: true, id: 'ma-co-ranked',
     body: `<div class="sys-table-wrap"><table class="sys-table mini"><thead><tr><th class="sys-n">#</th><th>Company</th><th class="sys-n">Fit</th></tr></thead><tbody>${ranked.map(row).join('')}</tbody></table></div>${held}` });
 }
 
@@ -175,25 +175,26 @@ function briefHtml(ctx, b, p, kit) {
   const { fmt, esc, ui } = ctx; const { PLAT, titleCase, pctOf, sourceFoot, metaFor, nextActionFor, Copy, ceoFix } = kit;
   const P = PLAT[p], s = thesisStats(b, p, kit), th = thesisParts(b, p, s, fmt, kit), meta = metaFor(b, p);
   const strongest = s.dimAvg[0], weakest = s.dimAvg[s.dimAvg.length - 1];
-  const chips = `${fmt.chip(`median ${fmt.num(s.medEmp)} staff (${s.nHand ? 'hand-researched' : 'loan screen'})`)}${s.medRev != null ? fmt.chip(`median ${fmt.money(s.medRev)} rev. est. (hand-researched)`) : ''}${s.medRevSba != null ? fmt.chip(`loan screen median ${fmt.money(s.medRevSba)} (Census model)`, 'var(--sys-info)') : ''}${fmt.chip(`${pctOf(s.ff, s.n)}% founder/family`, 'var(--sys-good)')}${s.unv ? fmt.chip(`${s.unv} ownership unverified`, 'var(--sys-warn)') : ''}${s.dens + s.hub ? fmt.chip(`${s.dens} density · ${s.hub} new-hub`, 'var(--sys-info)') : ''}${s.affil.length ? fmt.chip(`${s.affil.length} held · verify affiliation`, 'var(--sys-bad)') : ''}${strongest ? fmt.chip(`strongest: ${titleCase(strongest[0])} ${Math.round(strongest[1] * 100)}%`, P.color) : ''}${weakest && weakest !== strongest ? fmt.chip(`weakest: ${titleCase(weakest[0])} ${Math.round(weakest[1] * 100)}%`, 'var(--sys-warn)') : ''}`;
+  const chips = `${fmt.chip(`median ${fmt.num(s.medEmp)} staff`)}${s.medRev != null ? fmt.chip(`median ${fmt.money(s.medRev)} rev. est.`) : ''}${s.medRevSba != null ? fmt.chip(`loan screen median ${fmt.money(s.medRevSba)}`, 'var(--sys-info)') : ''}${fmt.chip(`${pctOf(s.ff, s.n)}% founder/family`, 'var(--sys-good)')}${s.unv ? fmt.chip(`${s.unv} ownership unverified`, 'var(--sys-warn)') : ''}${s.dens + s.hub ? fmt.chip(`${s.dens} density · ${s.hub} new-hub`, 'var(--sys-info)') : ''}${s.affil.length ? fmt.chip(`${s.affil.length} held · verify affiliation`, 'var(--sys-bad)') : ''}${strongest ? fmt.chip(`strongest: ${titleCase(strongest[0])} ${Math.round(strongest[1] * 100)}%`, P.color) : ''}${weakest && weakest !== strongest ? fmt.chip(`weakest: ${titleCase(weakest[0])} ${Math.round(weakest[1] * 100)}%`, 'var(--sys-warn)') : ''}`;
   const facts = handFacts(ctx, b, p, s, kit); const comps = buyers(b, p); const rub = rubricLine(b, p, kit);
   const riskList = th ? [...s.risks.map(([r, c]) => `${esc(Copy.text(r))} <span class="soft">(${c} target${c === 1 ? '' : 's'})</span>`), ...INTEG[p].map(esc)].slice(0, 6) : [];
   // the two lists are open on a laptop and a closed section on a phone, where the brief would otherwise push the list a screen further down
-  const lists = th ? sec('', 'Ideal target profile and integration risks', `<div class="th-two"><div><div class="sys-card-label th-h">Ideal target profile</div>${bul(IDEAL(kit)[p].map(esc))}</div><div><div class="sys-card-label th-h">Integration risks</div>${bul(riskList)}</div></div>`, '', window.matchMedia('(min-width:901px)').matches) : '';
+  const lists = th ? sec('', 'Ideal target profile and integration risks', `<div class="th-two"><div><div class="sys-card-label th-h">Ideal target profile</div>${bul(IDEAL(kit)[p].map(esc))}</div><div><div class="sys-card-label th-h">Integration risks</div>${bul(riskList)}</div></div>`, '', false) : '';
   const brief = ui.panel({ accent: true, title: `${esc(P.long)}: add-on brief`,
-    sub: `${fmt.num(s.n)} targets: ${s.nHand ? `${fmt.num(s.nHand)} on the hand-researched list and ${fmt.num(s.nSba)} from the <a href="#/ma/screen">SBA loan screen</a>` : `all from the <a href="#/ma/screen">SBA loan screen</a>`} · ${s.t1} Tier 1${s.t1Sba && s.nHand ? ` (${s.t1 - s.t1Sba} hand-researched + ${s.t1Sba} from SBA loans)` : ''} · ${s.t2} Tier 2`,
+    sub: `${fmt.num(s.n)} targets: ${s.nHand ? `${fmt.num(s.nHand)} hand-researched, ${fmt.num(s.nSba)} from the <a href="#/ma/screen">SBA loan screen</a>` : `all from the <a href="#/ma/screen">SBA loan screen</a>`} · ${s.t1} Tier 1${s.t1Sba && s.nHand ? ` (${s.t1 - s.t1Sba} + ${s.t1Sba})` : ''} · ${s.t2} Tier 2`,
     actions: `<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm btn xs" data-ma-jump>The list (${fmt.num(s.n)}) ↓</button><a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/${esc(P.module)}/overview">${esc(P.label)} operating picture →</a>`,
     body: `<div style="--cc:${P.color}"><div class="sys-chips stat-row">${chips}</div>
-      ${th ? `<div class="sys-card-label th-h">Thesis <span class="sys-est sys-est--illus analyst">analyst view</span></div><div class="h-note">${esc(th.pool)} Analyst view: ${esc(th.view.join(' '))}</div>`
-        : `${ui.note(esc(NO_THESIS[p]), 'info')}<div class="sys-card-label th-h">Next step</div><div class="h-note">${esc(nextActionFor(p))}</div>`}
-      ${facts.length ? `<div class="sys-card-label th-h">On the hand-researched list (${fmt.num(s.nHand)})</div><div class="sys-chips stat-row">${facts.map(x => fmt.chip(x)).join('')}</div>` : ''}
+      ${th ? sec('', `Thesis <span class="sys-est sys-est--illus analyst">analyst view</span>`, `<div class="h-note">${esc(th.pool)} Analyst view: ${esc(th.view.join(' '))}</div>`)
+        : `<div class="h-note">${esc(NO_THESIS[p])}</div>${sec('', 'Next step', `<div class="h-note">${esc(nextActionFor(p))}</div>`)}`}
+      ${facts.length ? sec('', `On the hand-researched list (${fmt.num(s.nHand)})`, `<div class="sys-chips stat-row">${facts.map(x => fmt.chip(x)).join('')}</div>`) : ''}
       ${lists}
-      ${rub ? `<div class="soft mt-8">${esc(rub)}</div>` : ''}</div>`,
-    foot: sourceFoot(ui, meta, s.nHand ? `${P.label} add-on screen (ZoomInfo + websites)` : 'SBA loan screen') });
+      ${rub ? METH(esc(rub)) : ''}${SRC(sourceFoot(ui, meta, s.nHand ? `${P.label} add-on screen (ZoomInfo + websites)` : 'SBA loan screen'))}</div>`,
+    foot: ''
+  });
   const ranked = rankedHtml(ctx, b, p, s, kit);
   const ring = RING[p];
-  const mapSub = `Colour is fit tier.${s.nHand ? ' Solid dots are hand-researched; smaller, paler dots come from SBA loan records.' : ''}${ring ? ` The ring is ${ring.miles} miles from the Lancaster HQ.` : ''}${p === 'fl' ? ` Markers are Frontline offices. ${s.T.filter(t => t.country === 'United Kingdom').length} UK targets are off the map.` : ''}${p === 'ts' ? ' Thomas Scientific’s demand clusters are on its operating picture.' : ''}`;
-  const map = ui.panel({ title: 'Where the targets are', sub: mapSub, cls: 'ma-co-map', flush: true, body: '<div class="map" id="ma-co-map"></div><div class="sys-chips ma-co-legend" id="ma-co-legend" hidden></div>', foot: ui.source('Add-on target lists (ZoomInfo search, company websites); SBA PPP, 7(a) and 504 loan records', null, meta?.generated) });
+  const mapNote = `Colour is fit tier. ${s.nHand ? 'Solid dots are hand-researched; paler dots come from SBA loan records. ' : ''}${ring ? `The ring is ${ring.miles} miles from the Lancaster HQ. ` : ''}${p === 'fl' ? `Markers are Frontline offices; ${s.T.filter(t => t.country === 'United Kingdom').length} UK targets are off the map.` : ''}`.trim();
+  const map = ui.panel({ title: 'Where the targets are', cls: 'ma-co-map', flush: true, body: `<div class="map" id="ma-co-map"></div><div class="sys-chips ma-co-legend" id="ma-co-legend" hidden></div>${mapNote ? METH(esc(mapNote)) : ''}${SRC(ui.source('Add-on target lists (ZoomInfo search, company websites); SBA PPP, 7(a) and 504 loan records', null, meta?.generated))}` });
   const buyersSec = comps.length ? sec('ma-co-buyers', `Sponsor-backed buyers competing for these targets (${comps.length})`,
     `<div class="sys-table-wrap"><table class="sys-table mini ma-stack"><thead><tr><th>Buyer</th><th>Owner or sponsor</th><th>What it is doing</th><th>Sources</th></tr></thead><tbody>${comps.map(c => `<tr><td class="nm"><b>${esc(c.name)}</b><div class="dim small">${esc(c.hq)}${c.year ? `${c.hq ? ' · ' : ''}${esc(c.year)}` : ''}</div></td><td class="wrap small">${esc(Copy.text(c.owner) || 'not verified')}</td><td class="wrap small text-2">${c.detail.map(d => esc(ceoFix(String(d)).replace(/\bin this run\b/g, 'in this pass'))).join('<br>')}</td><td class="small">${c.sources.map(u => fmt.link(u)).join('<br>')}</td></tr>`).join('')}</tbody></table></div>`,
     'A sponsor-backed buyer bids for the same owners. Approach founder- and family-owned names first.') : '';

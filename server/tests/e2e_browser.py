@@ -270,7 +270,9 @@ def main():
                   and st_fix['text'] and all(t == 'Online' for t in st_fix['text']) and not st_fix['cls'] and 'Deep research' in st_fix['labels'], json.dumps({'before': before.get('llm_state'), 'deep checks': len(deep2), 'after': after.get('llm_state'), 'header': st_fix['text']}))
             hctx.close()
 
-            # 9. Routing. Every suggested prompt on index.html, assistant.html and the portal panel keeps its route (tests/prompt_routes.json).
+            # 9. Routing. Every suggested prompt on assistant.html and the portal panel keeps its route (tests/prompt_routes.json).
+            #    The front page (index.html) now forwards into the portal, so its inline assistant and its sample questions are gone;
+            #    the same questions are the portal panel's own list, which this check already reads.
             snapshot = json.load(open(os.path.join(procs.TESTS_DIR, 'prompt_routes.json'), encoding='utf-8'))
             expected = snapshot['routes']
             prompts = {}
@@ -286,7 +288,6 @@ def main():
                     prompts.setdefault(q, set()).add(where)
                 return pg
 
-            collect(SITE + '/index.html?backend=off', 'index').close()
             collect(SITE + '/assistant.html?backend=off', 'assistant').close()
             pr = collect(SITE + '/app.html?backend=off#/home/overview', 'portal panel', launch=True)
             for q in pr.evaluate("async () => (await import('/assets/chat.js')).PERSONAS.portal.suggestions"):
@@ -294,8 +295,8 @@ def main():
             route_js = """async qs => { const { Chat } = await import('/assets/chat.js'); return qs.map(q => { const on = Chat.route(q, { hosted: true }), off = Chat.route(q, { hosted: false }); return [q, `${on.to}:${on.intent || '-'}`, `${off.to}:${off.intent || '-'}`, on.why]; }); }"""
             got = {q: on for q, on, _, _ in pr.evaluate(route_js, sorted(prompts))}
             moved = [f'{q!r}: {expected.get(q)} -> {r}' for q, r in got.items() if expected.get(q) != r]
-            check(f'all {len(got)} suggested prompts keep their route', len(got) >= 20 and not moved and all(any(w in v for w in ('index', 'assistant', 'portal panel')) or 'portal list' in v for v in prompts.values()),
-                  '; '.join(moved) or ', '.join(f'{w} {sum(w in v for v in prompts.values())}' for w in ('index', 'assistant', 'portal panel', 'portal list')))
+            check(f'all {len(got)} suggested prompts keep their route', len(got) >= 20 and not moved and all(any(w in v for w in ('assistant', 'portal panel')) or 'portal list' in v for v in prompts.values()),
+                  '; '.join(moved) or ', '.join(f'{w} {sum(w in v for v in prompts.values())}' for w in ('assistant', 'portal panel', 'portal list')))
 
             # 9a. Follow-up chips (the buttons under an answer) keep their route too.
             chips = chip_prompts()
@@ -425,12 +426,12 @@ def main():
             a = ask_docked(po, 'Show the storm history for Ocean County')
             check('storm-history chip opens Weather & demand', a['intent'] == 'nav' and 'Opening' in a['text'] and 'Weather' in a['text'], a['text'][:80].replace('\n', ' / '))
             po.close()
-            # 9d-2. The firm profile says six today, seven since launch, and the docked assistant sends that wording.
+            # 9d-2. The firm profile says six companies today and one exit, and the docked assistant sends that wording.
             pf = ctx.new_page()
             goto(pf, SITE + '/app.html?backend=off#/home/firm')
-            pf.wait_for_function("() => /since launch/.test(document.querySelector('#content .sys-lead')?.textContent || '')", timeout=30000)
-            firm = pf.evaluate("async () => { const { Chat } = await import('/assets/chat.js'); return { head: document.querySelector('#content .page-head').innerText, ctx: Chat.viewContext()?.text || '' }; }")
-            check('firm profile: six companies today, seven since launch', '6 companies today, 7 since launch' in firm['head'] and '6 held · 7 since launch · 23 add-ons' in firm['head'] and '7 companies' not in firm['head'] and '7 companies' not in firm['ctx'] and '6 companies today' in firm['ctx'], firm['head'].replace('\n', ' / ')[-170:])
+            pf.wait_for_function("() => /6 companies/.test(document.querySelector('#content')?.innerText || '')", timeout=30000)
+            firm = pf.evaluate("async () => { const { Chat } = await import('/assets/chat.js'); return { head: document.querySelector('#content').innerText.slice(0, 700), ctx: Chat.viewContext()?.text || '' }; }")
+            check('firm profile: six companies today, one exit', '6 companies' in firm['head'] and '6 held · 1 exited' in firm['head'] and '7 companies' not in firm['head'] and '7 companies' not in firm['ctx'] and '6 companies' in firm['ctx'], firm['head'].replace('\n', ' / ')[:200] + ' || ' + firm['ctx'][:200].replace('\n', ' / '))
             pf.close()
             # 9d-3. A page in a folder names itself from the site root, and the link opens that page from anywhere.
             pd = ctx.new_page()
@@ -787,17 +788,18 @@ def main():
                 check(f'phone ({theme}): closing the panel closes the microphone', opened == 1 and pp2.evaluate('() => window.__recs.filter(r => r.active).length') == 0)
                 pc2.close()
 
-            # 10i. Every surface has the control: the landing page (inline), a company concept page (docked) and its persona.
-            ic, ip = voice_page(SITE + '/index.html?backend=off', viewport={'width': 390, 'height': 844})
-            ip.wait_for_selector('.ch-inline .ch-btn.mic', timeout=30000)
-            ip.click('.ch-inline .ch-btn.mic')
+            # 10i. Every surface has the control: the full assistant at phone width (the front page's inline assistant moved here when
+            #      index.html became a forwarding page), a company concept page (docked) and its persona.
+            ic, ip = voice_page(SITE + '/assistant.html?backend=off', viewport={'width': 390, 'height': 844})
+            ip.wait_for_selector('.ch .ch-btn.mic', timeout=30000)
+            ip.click('.ch .ch-btn.mic')
             i1 = vstate(ip)
             ip.evaluate("t => window.__recs.at(-1).hear(t)", 'Which companies are in the portfolio?')
-            ip.click('.ch-inline .ch-btn.mic')
+            ip.click('.ch .ch-btn.mic')
             ip.wait_for_selector('.ch-turn.bot', timeout=15000)
             wait_answer(ip, 60000)
             poll(lambda: spoken(ip), timeout=5)
-            check('landing page: voice works in the inline assistant at phone width, no sideways scroll', i1['pressed'] == 'true' and i1['bar'] and last_rec(ip)['voice'] == 'short' and spoken(ip) and ip.evaluate('() => document.documentElement.scrollWidth <= innerWidth') and not ip._errors, '; '.join(ip._errors)[:160] or i1['text'])
+            check('full assistant: voice works at phone width, no sideways scroll', i1['pressed'] == 'true' and i1['bar'] and last_rec(ip)['voice'] == 'short' and spoken(ip) and ip.evaluate('() => document.documentElement.scrollWidth <= innerWidth') and not ip._errors, '; '.join(ip._errors)[:160] or i1['text'])
             ic.close()
             cc, cp = voice_page(SITE + '/redesigns/cet/index.html?backend=' + urllib.parse.quote(MAIN, safe=':/'))
             cp.wait_for_selector('.ch-floating .ch-launch', timeout=30000)

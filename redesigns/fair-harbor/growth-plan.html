@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fair Harbor growth plan · BSP Desk</title>
+<title>Fair Harbor growth plan · Broad Sky OS</title>
 <meta name="description" content="Concept growth plan for Fair Harbor. Every target is an analyst estimate.">
 <meta name="theme-color" content="#fbfaf7">
 <script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<link rel="stylesheet" href="../../assets/system.css?v=20261123143257">
-<link rel="stylesheet" href="growth-plan.css?v=20261123143257">
+<link rel="stylesheet" href="../../assets/system.css?v=20261123172325">
+<link rel="stylesheet" href="growth-plan.css?v=20261123172325">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
 </head>
 <body data-co="fh">
@@ -29,21 +29,19 @@
   <section class="sys-hero" aria-labelledby="h1">
     <div class="sys-wrap pb-hero-grid">
       <div>
-        <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>Growth plan</b> · October 2026</p>
+        <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>October 2026</b></p>
         <h1 class="sys-h1" id="h1">Fair Harbor: from a summer swim brand to a <span class="sys-grad-text">year-round lifestyle brand.</span></h1>
-        <p class="sys-lead" id="thesis">New categories, more wholesale doors, retention, then international, financed capital-light.</p>
-<p class="sys-src page-terms"><b>Terms:</b> ABL: asset-based loan, secured on inventory. GMV: gross merchandise value. WISMO: &ldquo;where is my order?&rdquo; contacts. IRR: internal rate of return.</p>
         <div class="sys-actions">
           <a class="sys-btn sys-btn--primary sys-btn--lg" href="#map-sec">See the 36-month plan</a>
           <a class="sys-btn sys-btn--secondary sys-btn--lg" href="harboros.html">HarborOS</a>
           <a class="sys-btn sys-btn--ghost sys-btn--lg" href="../../app.html#/fh/overview">Open in portal</a>
         </div>
-        <p class="sys-src">Every financial figure on this page is an analyst assumption<span class="sys-est">est.</span> built from public filings. Fair Harbor has never disclosed revenue, EBITDA or debt.</p>
+        <p class="sys-src">Estimates<span class="sys-est">est.</span> only: Fair Harbor discloses no revenue, EBITDA or debt.</p>
       </div>
       <aside class="sys-card sys-card--feature" aria-labelledby="kpi-h">
-        <p class="sys-card-label pb-board-label" id="kpi-h"><span>Today → month 36</span><span class="sys-est">est.</span></p>
+        <p class="sys-card-label pb-board-label" id="kpi-h"><span>Today → M36</span><span class="sys-est">est.</span></p>
         <div class="sys-kpis pb-kpis" id="kpis" role="list" aria-label="Headline KPIs, today to month 36 (estimates)"><p class="sys-src">Loading roadmap…</p></div>
-        <p class="sys-src" id="kpi-foot">Baseline = midpoints of our public-filings estimates (low confidence).</p>
+        <p class="sys-src" id="kpi-foot"></p>
       </aside>
     </div>
   </section>
@@ -51,11 +49,10 @@
   <section class="sys-section sys-section--alt" id="memo-sec" aria-labelledby="memo-h">
     <div class="sys-wrap">
       <div class="sys-section-head">
-        <p class="sys-kicker">The memo in 60 seconds</p>
+        <p class="sys-kicker">Memo</p>
         <h2 class="sys-h2" id="memo-h">Fix the base, then buy growth with doors, not debt.</h2>
-        <p class="sys-lead">Each line is grounded in filings, comparables and vendor evidence. Estimates say so.</p>
       </div>
-      <div class="sys-card sys-card--feature"><span class="sys-card-label">Memo · 13 points</span><ol class="pb-memo" id="memo"></ol></div>
+      <details class="sys-fold"><summary><b id="memo-n">Memo</b><span>the 60-second read</span></summary><ol class="pb-memo" id="memo"></ol></details>
     </div>
   </section>
 
@@ -63,13 +60,13 @@
     <div class="sys-wrap">
       <div class="sys-section-head">
         <p class="sys-kicker">The template</p>
-        <h2 class="sys-h2" id="tpl-h">Smith + Howard showed what a buyer pays for. Here is the consumer version.</h2>
-        <p class="sys-lead">Smith + Howard grew from one office to 11 with 9 add-ons and ~4x revenue. Fair Harbor’s “offices” are doors and channels.</p>
+        <h2 class="sys-h2" id="tpl-h">Smith + Howard: what a buyer pays for.</h2>
       </div>
       <div class="sys-grid sys-grid--2" id="versus"></div>
-      <p class="sys-src" id="versus-src"></p>
-      <ol class="sys-grid sys-grid--3 pb-list pb-block" id="steps"></ol>
-      <div class="sys-grid sys-grid--3 pb-block" id="analogs"></div>
+      <details class="sys-fold pb-block"><summary><b>Smith + Howard steps and analogs</b><span>what each move means here</span></summary>
+        <ol class="sys-grid sys-grid--3 pb-list pb-block" id="steps"></ol>
+        <div class="sys-grid sys-grid--3 pb-block" id="analogs"></div>
+      </details>
     </div>
   </section>
 
@@ -77,8 +74,7 @@
     <div class="sys-wrap">
       <div class="sys-section-head">
         <p class="sys-kicker">Phased map · 36 months</p>
-        <h2 class="sys-h2" id="map-h">Four phases, each with a place on the map and a number to hit.</h2>
-        <p class="sys-lead">City-level points for places named in the sources. Regions without a public store list are shaded, not pinned.</p>
+        <h2 class="sys-h2" id="map-h">Four phases, each with a number to hit.</h2>
       </div>
       <div class="sys-chips pb-tabs" id="phase-tabs" role="group" aria-label="Choose a phase"></div>
       <div class="sys-card pb-map">
@@ -86,7 +82,6 @@
         <div class="pb-phase" id="phase-panel" aria-live="polite"></div>
       </div>
       <div class="pb-legend" id="legend"></div>
-      <p class="sys-src"><b>Source:</b> Fair Harbor growth plan, Fair Harbor public filings, BSP firm profile and private-equity landscape, Oct 2026. Map tiles © their providers.</p>
     </div>
   </section>
 
@@ -95,35 +90,32 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Eight levers</p>
         <h2 class="sys-h2" id="lev-h">Baseline to target, lever by lever.</h2>
-        <p class="sys-lead">Solid grey is observed; <span class="pb-hatch" aria-hidden="true"></span>hatched grey stands in for an undisclosed figure. Orange levers should go <b>down</b>.</p>
       </div>
       <div class="sys-grid sys-grid--2" id="lever-list"></div>
-      <p class="sys-src" id="lever-more"></p>
+      <details class="sys-fold pb-block"><summary><b>Evidence and other levers</b><span>one line per lever</span></summary><div id="lever-ev"></div></details>
     </div>
   </section>
 
   <section class="sys-section sys-section--alt" id="agents" aria-labelledby="ag-h">
     <div class="sys-wrap">
       <div class="sys-section-head">
-        <p class="sys-kicker">AI-agent catalog · HarborOS</p>
-        <h2 class="sys-h2" id="ag-h">Nine agents, an estimated $0.3–0.7M build. Who does each one help?</h2>
-        <p class="sys-lead">Pick a group to see which agents change its week. Vendor metrics are upper bounds.</p>
+        <p class="sys-kicker">AI agents · HarborOS</p>
+        <h2 class="sys-h2" id="ag-h">Nine agents, an estimated $0.3–0.7M build.</h2>
       </div>
       <div class="sys-chips pb-tabs" id="who-toggle" role="group" aria-label="Filter agents by who they help"></div>
       <div class="sys-grid sys-grid--3" id="agent-list"></div>
-      <p class="sys-src"><b>Source:</b> Fair Harbor growth plan (AI-agent catalog) and OS program evidence, Oct 2026. Vendor metrics are self-reported.</p>
+      <details class="sys-fold pb-block"><summary><b>What each agent does</b><span>jobs, vendors, cost model</span></summary><div id="agent-ev"></div></details>
     </div>
   </section>
 
   <section class="sys-section" id="talent" aria-labelledby="tal-h">
     <div class="sys-wrap">
       <div class="sys-section-head">
-        <p class="sys-kicker">Talent and operating programs</p>
-        <h2 class="sys-h2" id="tal-h">Hold corporate headcount near 70 while revenue grows ~48%.</h2>
-        <p class="sys-lead">Most of the plan is operations and people: 3PL, returns, a planning function, a wholesale lead with commissioned reps, and an AI-first CX pod.</p>
+        <p class="sys-kicker">Talent and programs</p>
+        <h2 class="sys-h2" id="tal-h">Hold headcount near 70 while revenue grows ~48%.</h2>
       </div>
       <div class="sys-grid sys-grid--3" id="talent-list"></div>
-      <p class="sys-src"><b>Source:</b> Fair Harbor growth plan (talent programs), Oct 2026. Headcount targets are analyst assumptions.</p>
+      <details class="sys-fold pb-block"><summary><b>Evidence by program</b><span>3PL, returns, planning, wholesale, CX pod</span></summary><div id="talent-ev"></div></details>
     </div>
   </section>
 
@@ -131,8 +123,7 @@
     <div class="sys-wrap">
       <div class="sys-section-head">
         <p class="sys-kicker">The add-on machine</p>
-        <h2 class="sys-h2" id="add-h">Smith + Howard added firms. Fair Harbor adds doors, schools, programs and markets.</h2>
-        <p class="sys-lead">There is no Fair Harbor acquisition screen yet, so this runs on channel add-ons and one opportunistic watch.</p>
+        <h2 class="sys-h2" id="add-h">Add doors, schools, programs and markets.</h2>
       </div>
       <div class="sys-grid sys-grid--2 pb-machine">
         <div class="sys-card" id="units"></div>
@@ -145,21 +136,20 @@
     <div class="sys-wrap">
       <div class="sys-section-head">
         <p class="sys-kicker">Financing and returns</p>
-        <h2 class="sys-h2" id="fin-h">Stay capital-light, and be honest about exit timing.</h2>
-        <p class="sys-lead">Operating cash and an ABL cover the plan. The calculator measures the exit from BSP’s March 2022 entry and from today.</p>
+        <h2 class="sys-h2" id="fin-h">Stay capital-light and time the exit.</h2>
       </div>
       <div class="sys-grid sys-grid--2">
         <div class="sys-card">
           <p class="sys-card-label">KPI roadmap · Oct 2026 – Oct 2029</p>
           <h3 class="sys-card-title">Revenue and margin, every 12 months<span class="sys-est">est.</span></h3>
           <svg id="roadchart" class="pb-chart" viewBox="0 0 640 240" role="img" aria-label="Revenue and EBITDA margin by month, October 2026 to October 2029"></svg>
-          <p class="sys-src" id="road-src"></p>
         </div>
         <div class="sys-card" id="calc"></div>
       </div>
       <div class="pb-block" id="road-table"></div>
       <div class="sys-card pb-block" id="exit-box"></div>
       <div class="sys-grid sys-grid--3 pb-block" id="instr"></div>
+      <details class="sys-fold pb-block"><summary><b>What each instrument means</b><span>implication per instrument</span></summary><div id="instr-ev"></div></details>
     </div>
   </section>
 
@@ -167,10 +157,10 @@
     <div class="sys-wrap">
       <div class="sys-section-head">
         <p class="sys-kicker">Risks</p>
-        <h2 class="sys-h2" id="risk-h">What could break the plan, and what we do about it.</h2>
-        <p class="sys-lead">Severity is an analyst call. Each risk links to its public evidence.</p>
+        <h2 class="sys-h2" id="risk-h">What could break the plan.</h2>
       </div>
       <div class="sys-grid sys-grid--2" id="risk-list"></div>
+      <details class="sys-fold pb-block"><summary><b>Evidence by risk</b><span>public sources</span></summary><div id="risk-ev"></div></details>
     </div>
   </section>
 
@@ -179,7 +169,6 @@
       <div class="sys-section-head">
         <p class="sys-kicker">PRG asks</p>
         <h2 class="sys-h2" id="ask-h">Six decisions for the next board cycle.</h2>
-        <p class="sys-lead">Operators first: each ask names the owner and the first proof point.</p>
       </div>
       <div class="sys-grid sys-grid--2" id="ask-list"></div>
     </div>
@@ -187,31 +176,29 @@
 
   <section class="sys-section sys-section--alt" id="rationale" aria-labelledby="rat-h">
     <div class="sys-wrap">
-      <div class="sys-section-head">
-        <p class="sys-kicker">Design rationale and sources</p>
-        <h2 class="sys-h2" id="rat-h">Why this page is built like a memo with a map.</h2>
-      </div>
-      <div class="sys-grid sys-grid--2">
-        <article class="sys-card">
-          <p class="sys-card-label">Design principles</p>
-          <h3 class="sys-card-title">What each choice does, and why</h3>
-          <ul class="sys-card-list" id="refs"></ul>
-        </article>
-        <article class="sys-card">
-          <p class="sys-card-label">Outcomes</p>
-          <h3 class="sys-card-title">What it should move</h3>
-          <ul class="sys-card-list">
-            <li><b>Decision speed.</b> Six asks answered in one meeting.</li>
-            <li><b>Legibility at exit.</b> Doors, repeat rate and margin, the numbers a buyer checks first.</li>
-            <li><b>Honesty about data.</b> Every target carries an estimate label and a source.</li>
-          </ul>
-        </article>
-      </div>
-      <div class="sys-card sys-card--flat pb-block">
-        <p class="sys-card-label">Sources</p>
-        <p class="sys-card-body">Fair Harbor filings, BSP firm profile, public comparables, competitor filings and OS program evidence. Targets are analyst assumptions, not company guidance.</p>
+      <h2 class="sys-sr" id="rat-h">Notes and sources</h2>
+      <details class="sys-fold"><summary><b>Design notes</b><span>principles and outcomes</span></summary>
+        <div class="sys-grid sys-grid--2">
+          <article class="sys-card">
+            <p class="sys-card-label">Design principles</p>
+            <ul class="sys-card-list" id="refs"></ul>
+          </article>
+          <article class="sys-card">
+            <p class="sys-card-label">Outcomes</p>
+            <ul class="sys-card-list">
+              <li><b>Decision speed.</b> Six asks answered in one meeting.</li>
+              <li><b>Legibility at exit.</b> Doors, repeat rate and margin, the numbers a buyer checks first.</li>
+              <li><b>Honesty about data.</b> Every target carries an estimate label and a source.</li>
+            </ul>
+          </article>
+        </div>
+      </details>
+      <details class="sys-fold pb-block" id="sources"><summary><b>Sources and method</b><span>terms, sources, assumptions</span></summary>
+        <p class="sys-src page-terms"><b>Terms:</b> ABL: asset-based loan, secured on inventory. GMV: gross merchandise value. WISMO: &ldquo;where is my order?&rdquo; contacts. IRR: internal rate of return.</p>
+        <p class="sys-src">Fair Harbor filings, BSP firm profile, public comparables, competitor filings and OS program evidence. Targets are analyst assumptions, not company guidance. Vendor metrics are self-reported upper bounds. Map tiles &copy; their providers.</p>
+        <div id="src-all"></div>
         <ul class="sys-card-list" id="src-list"></ul>
-      </div>
+      </details>
     </div>
   </section>
 
@@ -220,7 +207,6 @@
       <div class="sys-cta-in">
         <div class="sys-cta-copy">
           <h2 id="cta-h">See the software behind the plan.</h2>
-          <p>HarborOS is the fit, CX, returns, planning and wholesale layer. The concept site shows the customer side. The portal has the filings and comparables.</p>
         </div>
         <div class="sys-actions">
           <a class="sys-btn sys-btn--accent sys-btn--lg" href="harboros.html">HarborOS</a>
@@ -233,9 +219,9 @@
 </main>
 
 <script type="module">
-  import { Frame } from '../../assets/frame.js?v=20261123143257';
+  import { Frame } from '../../assets/frame.js?v=20261123172325';
   Frame.mount({});
 </script>
-<script type="module" src="growth-plan.js?v=20261123143257"></script>
+<script type="module" src="growth-plan.js?v=20261123172325"></script>
 </body>
 </html>

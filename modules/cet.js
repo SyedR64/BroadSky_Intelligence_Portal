@@ -1,11 +1,12 @@
-import * as Copy from './copy.js?v=20261123143257';
+import * as Copy from './copy.js?v=20261123172325';
 /* ═══════════════════════════════════════════════════════════════════════════
-   CET — Commonwealth Electrical Technologies (Worcester + Taunton MA; NuWave, Norwell MA;
-   Horton Electrical Services, CT). New England only.
+   CET — Commonwealth Electrical Technologies, also branded CET Energy Solutions (Worcester, MA; 400+ professionals;
+   six add-ons, four of them reported in October 2026; licensed in about ten states, reported). The data on these screens
+   covers the six New England states only.
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderFilings } from '../assets/components.js?v=20261123143257';
-import { esc as E } from '../assets/core.js?v=20261123143257';
-import { companyLinks } from './company-links.js?v=20261123143257';
+import { esc as E } from '../assets/core.js?v=20261123172325';
+import { companyLinks } from './company-links.js?v=20261123172325';
+import { embedView } from './embed.js?v=20261123172325';
 
 const COLOR = 'var(--co-cet)';
 /* System palette only (UNIFIED.md §6, §8): company accents for categories, status tokens for status. */
@@ -50,7 +51,7 @@ const SRC = {
 };
 
 /* ── helpers ────────────────────────────────────────────────────────────── */
-function ensureCss() { if (!document.getElementById('css-cet')) { const l = document.createElement('link'); l.id = 'css-cet'; l.rel = 'stylesheet'; l.href = 'modules/cet.css?v=20261123143257'; document.head.appendChild(l); } }
+function ensureCss() { if (!document.getElementById('css-cet')) { const l = document.createElement('link'); l.id = 'css-cet'; l.rel = 'stylesheet'; l.href = 'modules/cet.css?v=20261123172325'; document.head.appendChild(l); } }
 const safe = p => Promise.resolve(p).catch(e => { console.warn(e?.message || String(e)); return null; });
 const sum = (a, f) => a.reduce((s, x) => s + (Number(f(x)) || 0), 0);
 const median = a => { const v = a.filter(x => x != null && !isNaN(x)).sort((x, y) => x - y); if (!v.length) return null; const m = v.length >> 1; return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };
@@ -83,10 +84,18 @@ function actionDates(text, gen) {
   while ((m = re.exec(text))) { let d = new Date(y, Number(m[1]) - 1, Number(m[2])); if (ok && d < base - 120 * DAY) d = new Date(y + 1, Number(m[1]) - 1, Number(m[2])); out.push({ tok: m[0], words: d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }), iso: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` }); }
   return out;
 }
+/* the research list's actions, in the fewest words: each deadline already shows as a chip, so the sentence drops it; names and amounts stay */
+const TIGHT = [
+  [/^Bid the fast-turn generator/i, 'Bid four generator jobs as one crew plan: BPS data-system generator and UPS, Campbell Resource Center generator, LRTA 250 kW generator, MassWildlife Roger Reed Hatchery generators and ATS.'],
+  [/^Set up engineer-of-record meetings/i, 'Meet engineers of record on funded CT CWF pump stations: Fairfield (4 PS, ~$26M), South Windsor ($18M), West Haven ($30M), Danbury resiliency (generator, switchgear, SCADA) and Danbury WWTP solar/cogen ($22M).'],
+  [/^Pre-position with the GCs/i, 'Pre-position with GCs on CT mega-plants: Bridgeport West Side Ph.2 $250M, New Haven ESWPAF $82M and East St PS $73M, Derby $60M, Norwalk $73M.'],
+  [/^Build the program pipeline/i, 'Build the program pipeline: submit Massport Logan LED design-build with NuWave, pitch a WWTP microgrid to CT DEEP, register on BidNet, MWRA, COMMBUYS, plan for NRES 2027 and MA SMART 3.0.'],
+];
+const tighten = t => { const b = String(t || '').replace(/^\s*\d+\.\s*/, ''); const hit = TIGHT.find(([re]) => re.test(b)); return hit ? hit[1] : t; };
 function topActions(ctx, list, gen) {
   const { fmt, esc } = ctx;
   // dates in words: the research text's m/d deadlines ("due 10/8") read "due October 8" in the copy and the chips
-  const rows = list.map((t, i) => { const all = actionDates(t, gen), words = new Map(all.map(x => [x.tok, x.words])); const a = String(t || '').replace(/\b(1[0-2]|0?[1-9])\/([12]\d|3[01]|0?[1-9])\b(?!\/)/g, k => words.get(k) || k); const ds = all.map(x => ({ ...x, d: fmt.days(x.iso) })).filter(x => x.d != null); const up = ds.filter(x => x.d >= 0); return { a, ds, lapsed: ds.length > 0 && !up.length, i }; });
+  const rows = list.map((t, i) => { const all = actionDates(t, gen), words = new Map(all.map(x => [x.tok, x.words])); const a = String(tighten(t)).replace(/\b(1[0-2]|0?[1-9])\/([12]\d|3[01]|0?[1-9])\b(?!\/)/g, k => words.get(k) || k); const ds = all.map(x => ({ ...x, d: fmt.days(x.iso) })).filter(x => x.d != null); const up = ds.filter(x => x.d >= 0); return { a, ds, lapsed: ds.length > 0 && !up.length, i }; });
   const open = rows.filter(r => !r.lapsed);   // an action whose dated deadlines have all passed is not shown
   const dl = x => x.d < 0 ? chip(`${x.words} passed`) : x.d === 0 ? chip(`${x.words} due today · go/no-go`, PAL.red) : chip(`${x.words} · ${x.d} days left`, x.d <= 7 ? PAL.red : x.d <= 30 ? PAL.amber : PAL.green);
   const html = `<ol class="sys-card-list cet-acts">${open.map((r, k) => `<li><span class="sys-kbd">${k + 1}</span><div>${bold1(r.a, esc)}${r.ds.length ? `<div class="sys-chips mt-8">${r.ds.map(dl).join('')}</div>` : ''}</div></li>`).join('')}</ol>`;
@@ -217,6 +226,12 @@ function indexEntities(ctx, { opp, wwtp, counties }) {
 /* fit after Leaflet has measured its container (maps.create invalidates at 60ms) */
 const fitLater = (map, b, maxZoom = 10) => { try { map.fitBounds(b, { maxZoom }); } catch { } setTimeout(() => { try { if (map._loaded !== false && map.getContainer().isConnected) { map.invalidateSize(); map.fitBounds(b, { maxZoom }); } } catch { } }, 120); };
 const wrap = html => `<div class="m-cet">${html}</div>`;
+/* a card whose source line (or, with fk 'method', its method text) leaves the page for the Sources or Method drawer */
+const pnl = (ui, o) => ui.panel(o).replace('<div class="sys-src panel-foot">', `<div class="sys-src panel-foot" ${o.fk === 'method' ? 'data-method' : 'data-src'}>`);
+/* the first n words of a text; the rest opens in the side panel */
+const clipW = (s, n) => { const w = String(s ?? '').trim().split(/\s+/); return w.length > n ? `${w.slice(0, n).join(' ')}…` : w.join(' '); };
+/* a closed section on a screen: the shared disclosure bar (app.css) */
+const fold = (title, line, body, cls = '') => `<details class="cet-fold${cls ? ' ' + cls : ''}"><summary><b>${title}</b>${line ? ` <span class="sys-muted">${line}</span>` : ''}</summary><div class="cet-fold-body">${body}</div></details>`;
 
 /* ═══ 1. Overview ═══════════════════════════════════════════════════════════ */
 async function overview(ctx) {
@@ -248,46 +263,51 @@ async function overview(ctx) {
   const slateNow = dueSoon.filter(o => !isUnverified(o) && o._d < 5).sort((a, b) => a._d - b._d || (b.fit_score ?? 0) - (a.fit_score ?? 0));
   const slateUnv = dueSoon.filter(isUnverified).sort((a, b) => a._d - b._d);
   const slate = [...slateGood, ...slateNow, ...slateUnv];
-  const slateRow = (o, i) => `<tr data-i="${i}" tabindex="0"><td class="wrap"><b>${esc(o.title)}</b><div class="sys-muted small">${esc(isUnverified(o) ? 'Owner not verified (BidNet listing locked)' : o.owner_or_agency || '')} · ${esc(o.state || '')}${o.fit_score != null ? ` · fit ${esc(o.fit_score)}` : ''}${o._src === 'legacy' ? ' · earlier bid list' : ''}</div></td><td class="sys-n">${dueChip(o._d)}<div class="sys-muted small mt-8">${fmt.dateShort(o.due_date)}</div></td></tr>`;
+  const slateRow = (o, i) => `<tr data-i="${i}" tabindex="0"><td class="wrap"><b>${esc(o.title)}</b><div class="sys-muted small">${esc(isUnverified(o) ? 'Owner unverified' : o.owner_or_agency || '')}, ${esc(o.state || '')}${o.fit_score != null ? `, fit ${esc(o.fit_score)}` : ''}${o._src === 'legacy' ? ', earlier list' : ''}</div></td><td class="sys-n">${dueChip(o._d)}<div class="sys-muted small mt-8">${fmt.dateShort(o.due_date)}</div></td></tr>`;
   let si = 0; const grp = (label, xs) => xs.length ? `<tbody><tr class="cet-grp"><th colspan="2" scope="colgroup">${label} (${xs.length})</th></tr>${xs.map(o => slateRow(o, si++)).join('')}</tbody>` : '';
   const acts = opp?.meta?.top_10_actions?.length ? topActions(ctx, opp.meta.top_10_actions, opp.meta.generated) : null;
   const county = cnt.length ? countySection(ctx, cnt, opp, wwtp) : null;
 
   el.innerHTML = wrap(ui.pageHead({
     title: 'Commonwealth Electrical Technologies (CET)',
-    sub: opp ? `<b>${fmt.num(openLive.length)} open bids</b> in New England, <b>${fmt.num(dueSoon.length)}</b> due within 60 days. ${wwtp ? `Horton adds <b>${funded.length}</b> funded plant projects worth ${fmt.money(fundedPipe)} (est.) that CET can prime.` : `Only ${fmt.num(openValN)} states a value; the rest need estimator sizing.`}` : 'Electrical, solar, EV and energy-efficiency contractor · Worcester + Taunton MA · NuWave (Norwell MA) · Horton (CT)',
-    chips: `${chip('Licensed across New England', COLOR)}${chip('Held since February 2025', 'var(--sys-brand)')}${chip('Add-ons: NuWave, Horton', PAL.purple)}`,
-    actions: `<a class="${ui.btnCls('secondary', '')}" href="#/cet/opportunities">Opportunity radar →</a><a class="${ui.btnCls('secondary', '')}" href="#/cet/wastewater">Horton cross-sell →</a>`,
+    sub: opp ? `<b>${fmt.num(openLive.length)}</b> open bids, <b>${fmt.num(dueSoon.length)}</b> due in 60 days${wwtp ? `, <b>${funded.length}</b> funded plants` : ''}` : 'Electrical, solar, EV and energy-efficiency contractor · Worcester + Taunton MA · NuWave (Norwell MA) · Horton (CT)',
+    chips: `${chip('Licensed in about ten states (reported)', COLOR)}${chip('Six add-ons, four reported', PAL.purple)}`,
   }) + companyLinks('cet') +
+  (opp?.meta?.generated ? `<i data-asof="${esc(fmt.date(opp.meta.generated))}"></i>` : '') +
+  `<div class="sys-muted small" data-method>Bid, county and wastewater data cover the six New England states only.</div>` +
+  `<div class="sys-muted small" data-method>Four add-ons were reported in trade press on 28 to 29 October 2026; terms undisclosed.</div>` +
   (opp ? '' : ui.note('Research dataset <b>CET opportunity radar</b> is not available yet — pipeline KPIs are partial.', 'warn')) +
   (wwtp ? '' : ui.note('Research dataset <b>CET wastewater-plant targets</b> is not available yet — wastewater KPIs and map layer are omitted.', 'warn')) +
   ui.kpis([
-    { label: 'Open and biddable', value: fmt.num(openLive.length), sub: `${openValN} of ${openLive.length} state a value · ${items.length} tracked`, color: PAL.green },
-    { label: 'Bids due within 60 days', value: fmt.num(dueSoon.length), sub: `${slateGood.length} verified · ${slateNow.length} need go/no-go now`, color: dueSoon.length ? PAL.amber : PAL.muted },
-    { label: 'Capital program universe', value: `${fmt.money(totalVal)} ${Copy.EST}`, sub: `not biddable today · ${fmt.money(planned.v)} planned`, color: PAL.sky },
-    { label: 'Funded WWTP accounts', value: wwtp ? fmt.num(funded.length) : '—', sub: wwtp ? `${fmt.money(fundedPipe)} pipeline (est.) · of ${fmt.num(plants.length)} plants` : 'dataset pending', color: PAL.cyan },
-    { label: 'Tier-1 counties', value: fmt.num(t1.length), sub: `${esc(t1.map(c => `${c.county_name} ${c.state}`).join(', ') || '—')} · ${t2.length} Tier-2${cGap.length ? ` · ${cGap.length} CT unscored` : ''}`, color: PAL.cet },
-    { label: 'Hand-researched add-on targets', value: fmt.num(targets?.items?.length || 0), sub: targets ? `top: ${esc(targets.meta?.ranked_top_10?.[0]?.company || '—')}` : 'dataset pending', color: COLOR },
+    { label: 'Open and biddable', value: fmt.num(openLive.length), sub: `${openValN} of ${openLive.length} valued`, color: PAL.green },
+    { label: 'Bids due within 60 days', value: fmt.num(dueSoon.length), sub: `${slateGood.length} verified, ${slateNow.length} go/no-go`, color: dueSoon.length ? PAL.amber : PAL.muted },
+    { label: 'Capital program universe', value: `${fmt.money(totalVal)} ${Copy.EST}`, sub: `${fmt.money(planned.v)} planned`, color: PAL.sky },
+    { label: 'Funded WWTP accounts', value: wwtp ? fmt.num(funded.length) : '—', sub: wwtp ? `${fmt.money(fundedPipe)} est., ${fmt.num(plants.length)} plants` : 'dataset pending', color: PAL.cyan },
+    { label: 'Tier-1 counties', value: fmt.num(t1.length), sub: `${esc(t1.map(c => `${c.county_name} ${c.state}`).join(', ') || '—')}, ${t2.length} Tier-2`, color: PAL.cet },
+    { label: 'Researched add-on targets', value: fmt.num(targets?.items?.length || 0), sub: targets ? '' : 'dataset pending', color: COLOR },
   ]) +
   `<div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Operating footprint', sub: 'CET nodes, Horton, county fit tiers and funded wastewater plants (Horton cross-sell anchors)', body: `<div class="map tall" id="cet-ov-map"></div>`, flush: true, foot: `${ui.source('CET / BSP press releases', 'https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/', 'Sept 2026')} ${ui.source(SRC.wwtp[0], SRC.wwtp[1], wwtp?.meta?.generated)}` })}
-    ${ui.panel({ title: 'Open actions', sub: acts ? `${acts.open} of the ${acts.total} actions on the ${esc(fmt.dateShort(opp.meta.generated))} research list are still open${acts.live ? `; ${acts.live} due within 7 days` : ''}.` : 'From the opportunity research', body: acts ? (acts.open ? acts.html : ui.empty('Every dated action on the research list has passed. The bid slate shows what is open now.')) : ui.note('Open actions will populate from CET opportunity radar.', 'warn'), scroll: true, accent: true, foot: ui.source(SRC.opp[0], SRC.opp[1], opp?.meta?.generated) })}
+    ${pnl(ui, { title: 'Bid slate, next 60 days', body: slate.length ? `<div class="sys-table-wrap"><table class="sys-table cet-rows" id="cet-due" aria-label="Bid slate, next 60 days">${grp('5+ days left', slateGood)}${grp('Under 5 days: go/no-go', slateNow)}${grp('Owner unverified', slateUnv)}</table></div>` : ui.empty('No open bids due in the next 60 days'), flush: !!slate.length, scroll: true, foot: ui.source('BidNet / owner portals / COMMBUYS', null, opp?.meta?.generated) })}
+    ${pnl(ui, { title: 'Operating footprint', body: `<div class="map tall" id="cet-ov-map"></div>`, flush: true, foot: `${ui.source('CET / BSP press releases', 'https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/', 'Sept 2026')} ${ui.source(SRC.wwtp[0], SRC.wwtp[1], wwtp?.meta?.generated)}` })}
   </div>
-  <div class="grid grid-3 mt-12">
-    ${ui.panel({ title: 'Buy-and-build', sub: 'BSP entry and add-ons', body: `<div id="cet-tl"></div>`, foot: ui.source('BSP / CET press releases', 'https://broadskypartners.com/news/', firm?.meta?.generated) })}
-    ${ui.panel({ title: 'Bid slate · next 60 days', sub: `${dueSoon.length} solicitations · verified owners with 5+ days left first, ranked by fit · click to open on the radar`, body: slate.length ? `<div class="sys-table-wrap"><table class="sys-table cet-rows" id="cet-due"><caption class="sys-sr">Bid slate, next 60 days</caption>${grp('Biddable · 5+ days left · by fit', slateGood)}${grp('Go/no-go now · under 5 days', slateNow)}${grp('Needs owner verification', slateUnv)}</table></div>` : ui.empty('No open bids due in the next 60 days'), flush: !!slate.length, scroll: true, foot: ui.source('BidNet / owner portals / COMMBUYS', null, opp?.meta?.generated) })}
-    ${ui.panel({ title: 'Capital program universe by state', sub: 'Stated value by stage (est.) · only open items can be bid today', body: `<div class="cet-stk">${byState.map(x => `<div class="cet-stk-row"><div class="cet-stk-l"><b>${esc(x.s)}</b> <span class="sys-muted small">${x.nOpen} open / ${x.n}</span></div><div class="cet-stk-bar">${x.seg.filter(g => g.v > 0).map(g => `<i style="width:${(g.v / maxSt * 100).toFixed(2)}%;background:${STAGE_COLOR[g.st]}" title="${esc(g.st)}: ${fmt.money(g.v)}"></i>`).join('')}</div><div class="sys-num small">${fmt.money(x.v)}</div></div>`).join('')}</div>${legend(STK.map(k => { const z = k === 'open' ? { n: items.filter(o => o.stage === 'open').length, v: sum(items.filter(o => o.stage === 'open'), o => o.est_value_usd) } : stageOf(k); return [STAGE_COLOR[k], `${k} ${z.n} · ${fmt.money(z.v)}`]; }))}<p class="sys-muted small">Requested or estimated amounts (est.), not bid values. Planned = capital plans and SRF lists (bid windows typically 12–36 months out); awarded = sub-tier or O&amp;M upside only. ${items.length - valued.length} of ${items.length} items state no value.</p>`, foot: ui.source(SRC.opp[0], SRC.opp[1], opp?.meta?.generated) })}
+  <div class="grid grid-main mt-12">
+    ${pnl(ui, { title: 'Open actions', actions: acts ? chip(`${acts.open} of ${acts.total} open`) : '', body: acts ? (acts.open ? acts.html : ui.empty('All dated actions have passed.')) : ui.note('Open actions will populate from CET opportunity radar.', 'warn'), scroll: true, accent: true, foot: ui.source(SRC.opp[0], SRC.opp[1], opp?.meta?.generated) })}
+    ${pnl(ui, { title: 'Buy-and-build', body: `<div id="cet-tl"></div>`, foot: ui.source('BSP / CET press releases', 'https://broadskypartners.com/news/', firm?.meta?.generated) })}
+  </div>
+  <div class="mt-12">
+    ${pnl(ui, { title: 'Capital program universe by state', body: `<div class="cet-stk">${byState.map(x => `<div class="cet-stk-row"><div class="cet-stk-l"><b>${esc(x.s)}</b> <span class="sys-muted small">${x.nOpen} open / ${x.n}</span></div><div class="cet-stk-bar">${x.seg.filter(g => g.v > 0).map(g => `<i style="width:${(g.v / maxSt * 100).toFixed(2)}%;background:${STAGE_COLOR[g.st]}" title="${esc(g.st)}: ${fmt.money(g.v)}"></i>`).join('')}</div><div class="sys-num small">${fmt.money(x.v)}</div></div>`).join('')}</div>${legend(STK.map(k => { const z = k === 'open' ? { n: items.filter(o => o.stage === 'open').length, v: sum(items.filter(o => o.stage === 'open'), o => o.est_value_usd) } : stageOf(k); return [STAGE_COLOR[k], `${k} ${z.n}, ${fmt.money(z.v)}`]; }))}<div class="sys-muted small" data-method>Requested or estimated amounts (est.), not bid values. Planned = capital plans and SRF lists (bid windows typically 12–36 months out); awarded = sub-tier or O&amp;M upside only. ${items.length - valued.length} of ${items.length} items state no value.</div>`, foot: ui.source(SRC.opp[0], SRC.opp[1], opp?.meta?.generated) })}
   </div>
   ${county ? county.html : ''}`);
 
-  // timeline
+  // timeline: a reported add-on's date and terms sit in the method note; its line keeps what the add-on is
+  const clipN = n => { const t = String(n || '').replace(/^Reported in trade press, 28 to 29 October 2026;?\s*/i, '').replace(/;?\s*terms undisclosed\.?$/i, '').trim(); return t.length > 170 ? t.slice(0, 170) + '…' : t; };
   const ons = cetFirm?.add_ons || [];
   const tl = [
-    { date: 'February 2025', color: 'var(--sys-brand)', html: `<b>BSP becomes majority investor in CET</b><div class="dim small">Worcester HQ + Taunton office · founded 2008 · about 140 staff (October 2025)</div>` },
-    ...ons.map(a => ({ date: fmt.date(a.date), color: /Horton/.test(a.name) ? PAL.cyan : PAL.purple, html: `<b>${esc(a.name)}</b> · ${esc(a.hq || '')}${a.source_url ? ` <a class="dim" href="${esc(a.source_url)}" target="_blank" rel="noopener">↗</a>` : ''}<div class="dim small">${esc(String(a.note || '').slice(0, 170))}${String(a.note || '').length > 170 ? '…' : ''}</div>` })),
-    { date: 'Next', color: COLOR, html: `<b>Add-on #3</b> · hand-researched list of ${fmt.num(targets?.items?.length || 0)} New England targets <a href="#/ma/pipeline?platform=cet">→</a><div class="dim small">Top: ${esc((targets?.meta?.ranked_top_10 || []).slice(0, 3).map(t => t.company).join(' · ') || '—')}</div>` },
+    { date: 'February 2025', color: 'var(--sys-brand)', html: `<b>BSP becomes majority investor in CET</b><div class="dim small">Worcester HQ + Taunton office · founded 2008 · 400+ professionals (company site)</div>` },
+    ...ons.map(a => ({ date: fmt.date(a.date), color: /Horton/.test(a.name) ? PAL.cyan : PAL.purple, html: `<b>${esc(a.name)}</b>, ${esc(a.hq || '')}${a.source_url ? ` <a class="dim" href="${esc(a.source_url)}" target="_blank" rel="noopener">↗</a>` : ''}<div class="dim small">${esc(clipN(a.note))}</div>` })),
+    { date: 'Next', color: COLOR, html: `<b>Add-on #7</b> · hand-researched list of ${fmt.num(targets?.items?.length || 0)} targets <a href="#/ma/pipeline?platform=cet">→</a><div class="dim small">Top: ${esc((targets?.meta?.ranked_top_10 || []).slice(0, 3).map(t => t.company).join(' · ') || '—')}</div>` },
   ];
-  if (!ons.length) tl.splice(1, 0, { date: 'October 7, 2025', color: PAL.purple, html: '<b>NuWave Energy Solutions</b> · Norwell, MA' }, { date: 'September 15, 2026', color: PAL.cyan, html: `<b>Horton Electrical Services</b> · ${esc(horton.town)}` });
+  if (!ons.length) tl.splice(1, 0, { date: 'October 7, 2025', color: PAL.purple, html: '<b>NuWave Energy Solutions</b>, Norwell, MA' }, { date: 'September 15, 2026', color: PAL.cyan, html: `<b>Horton Electrical Services</b>, ${esc(horton.town)}` });
   el.querySelector('#cet-tl').innerHTML = ui.timeline(tl);
   bindRows(el, '#cet-due tr[data-i]', n => { const o = slate[Number(n.dataset.i)]; app.go('cet', 'opportunities', { id: o.id }); });
 
@@ -299,7 +319,6 @@ async function overview(ctx) {
   pts(maps, map, funded, { color: PAL.cyan, radius: r => Math.min(11, 4 + Math.sqrt(r.design_flow_mgd || 1)), cluster: false, opacity: .9, popup: r => `<b>${esc(r.facility_name)}</b><br>${esc(r.town)}, ${esc(r.state)} · ${fmt.num(r.design_flow_mgd, 1)} MGD<br>${esc(r.recent_or_planned_project || '')}<br>${fmt.money(r.pipeline_value_usd)} pipeline<br><a href="#/cet/wastewater?id=${esc(r.id)}">Open account →</a>` });
   addNodes(ctx, map, horton);
   maps.legend(map, [{ color: PAL.cet, label: 'CET / NuWave node' }, { color: PAL.cyan, label: 'Horton + funded WWTP project' }, { color: PAL.green, label: 'Tier-1 county' }, { color: PAL.cet, label: 'Tier-2 county' }, { color: PAL.amber, label: 'Tier-3 county (size = fit)' }, { color: GAP, label: 'CT county: insufficient data' }], 'Footprint');
-  maps.overlay(map, `<b>Licensed in all six New England states</b><div class="sys-chips mt-8">${STATES.map(s => chip(s, COLOR)).join('')}</div><div class="sys-muted small mt-8">Horton: ${esc(horton.town)}</div>`);
   fitLater(map, NE_BOUNDS);
   if (county) openCounty = county.mount(el, map);
   indexEntities(ctx, { opp, wwtp, counties: cnt });
@@ -315,11 +334,13 @@ async function opportunities(ctx) {
   const uniq = f => [...new Set(all.map(f).flat().filter(Boolean))].sort();
   el.innerHTML = `<div class="m-cet split">
     <div class="side">
-      ${ui.pageHead({ title: 'Opportunity radar', sub: `${fmt.num(opp?.items?.length || 0)} sourced opportunities, ${fmt.num((rfps || []).length)} older public bids and ${fmt.num((dev || []).length)} building-permit filings. Bids due within 14 days sit on top; mark each and assign an estimator.`, actions: `<button type="button" class="${ui.btnCls('secondary', 'sm')}" id="op-csv">⇩ Radar CSV</button>` })}
+      ${ui.pageHead({ title: 'Opportunity radar', sub: `${fmt.num(opp?.items?.length || 0)} sourced, ${fmt.num((rfps || []).length)} older bids, ${fmt.num((dev || []).length)} permit filings`, actions: `<button type="button" class="${ui.btnCls('secondary', 'sm')}" id="op-csv">⇩ Radar CSV</button>` })}
+      <div class="sys-muted small" data-method>Covers the six New England states only. Map circles show estimated value on a log scale.</div>
+      ${opp?.meta?.generated ? `<i data-asof="${esc(fmt.date(opp.meta.generated))}"></i>` : ''}
       <div class="sys-row mb-12"><span class="sys-field-label">Sort</span><div id="op-sort"></div></div>
       ${opp ? '' : ui.note('The CET opportunity radar is not available yet, so only the older bid lists are shown.', 'warn')}
       <div id="op-kpis"></div><div id="op-f"></div><div id="op-cards"></div>
-      <p class="sys-src">Sources: ${esc(SRC.opp[0])} · COMMBUYS bid list · Boston/Cambridge permits, USASpending, Census BPS (development feed)${opp?.meta?.generated ? ` · retrieved ${esc(fmt.date(opp.meta.generated))}` : ''}</p>
+      <p class="sys-src" data-src>${esc(SRC.opp[0])} · COMMBUYS bid list · Boston/Cambridge permits, USASpending, Census BPS (development feed)${opp?.meta?.generated ? ` · retrieved ${esc(fmt.date(opp.meta.generated))}` : ''}</p>
     </div>
     <div class="mapside"><div class="map fill" id="op-map"></div></div>
   </div>`;
@@ -328,13 +349,14 @@ async function opportunities(ctx) {
   addNodes(ctx, map, hortonNode(await data.research('cet_filings')));
   maps.legend(map, CAPS.map(c => ({ color: c.color, label: c.label })), 'Primary capability');
   const overlay = maps.overlay(map, '');
-  let layer = null, rows = [], sortBy = ['due', 'fit', 'value'].includes(params.sort) ? params.sort : 'due';
+  let layer = null, rows = [], shown = 30, sortBy = ['due', 'fit', 'value'].includes(params.sort) ? params.sort : 'due';
   const byFit = (a, b) => (b.fit_score ?? -1) - (a.fit_score ?? -1) || (b.est_value_usd || 0) - (a.est_value_usd || 0);
   const soon = o => o._days != null && o._days >= 0 && o._days <= 14;
   const SORTS = { due: (a, b) => (soon(b) - soon(a)) || (soon(a) ? a._days - b._days || (isUnverified(a) - isUnverified(b)) || byFit(a, b) : byFit(a, b)), fit: byFit, value: (a, b) => (b.est_value_usd || 0) - (a.est_value_usd || 0) || byFit(a, b) };
   const rad = o => o.est_value_usd ? Math.min(17, 4 + 2.3 * Math.log10(Math.max(1, o.est_value_usd / 1e5))) : 4;
-  const open = o => { openOpp(ctx, o, { onBid: () => apply(f.state), actions: [{ id: 'op-zoom', label: 'Zoom map', onClick: () => o.lat != null && map.setView([o.lat, o.lon], 11) }] }); const c = el.querySelector(`#op-cards .card[data-id="${CSS.escape(o.id)}"]`); if (c) { el.querySelectorAll('#op-cards .card').forEach(x => x.classList.toggle('selected', x === c)); c.scrollIntoView({ block: 'nearest' }); } };
-  const apply = st => {
+  const open = o => { openOpp(ctx, o, { onBid: () => apply(f.state, true), actions: [{ id: 'op-zoom', label: 'Zoom map', onClick: () => o.lat != null && map.setView([o.lat, o.lon], 11) }] }); const c = el.querySelector(`#op-cards .card[data-id="${CSS.escape(o.id)}"]`); if (c) { el.querySelectorAll('#op-cards .card').forEach(x => x.classList.toggle('selected', x === c)); c.scrollIntoView({ block: 'nearest' }); } };
+  const apply = (st, keep) => {
+    if (!keep) shown = 30;
     const q = (st.q || '').toLowerCase(); const bids = bidRead(); const bs = o => bids[o.id]?.status || '';
     rows = all.filter(o => (!st.bid || (st.bid === 'Untracked' ? !bs(o) : bs(o) === st.bid)) && (!st.hidesub || st.bid || !BID_CLOSED.has(bs(o))) && (!st.state || o.state === st.state) && (!st.type || o.type === st.type) && (!st.cap || (o.capability_match || []).includes(st.cap)) && (!st.stage || o.stage === st.stage) && (!st.src || o._src === st.src)
       && (!st.due || (o._days != null && o._days >= 0 && o._days <= Number(st.due))) && (!st.hide || (!(o._days != null && o._days < 0 && o.stage !== 'awarded') && o.stage !== 'expired' && (o.stage !== 'aggregate' || st.stage === 'aggregate')))
@@ -342,16 +364,17 @@ async function opportunities(ctx) {
       .sort(SORTS[sortBy]);
     f.setCount(`${rows.length} / ${all.length}`);
     const due14 = rows.filter(soon).length, openN = rows.filter(o => o.stage === 'open' && !(o._days != null && o._days < 0)).length, tracked = rows.filter(o => bs(o)).length;
-    el.querySelector('#op-kpis').innerHTML = ui.kpis([{ label: 'In view', value: fmt.num(rows.length), sub: `${tracked} with bid status`, color: COLOR }, { label: 'Open and biddable', value: fmt.num(openN), sub: `stage open, not past due · ${rows.filter(o => o._src === 'legacy' && o.stage === 'open').length} from older bid lists`, color: PAL.green }, { label: 'Due within 14 days', value: fmt.num(due14), sub: `${rows.filter(o => o._days === 0).length} due today`, color: due14 ? PAL.red : PAL.muted }]);
-    const top = rows.slice(0, 120);
-    const cards = top.map(o => { const b = bids[o.id]; let cc = cardChips(ctx, o); if (o._days === 0 && o.stage !== 'expired') cc = chip('due today · go/no-go', PAL.red) + cc; if (b?.status) cc = chip(b.status, BID_COLOR[b.status]) + cc; if (b?.owner) cc += chip(`owner: ${b.owner}`); if (isUnverified(o)) cc += chip('owner unverified', PAL.amber); if (o._src !== 'research') cc += chip(o._src === 'legacy' ? 'older bid list' : 'permit filing'); if (o.stage) cc += chip(o.stage, STAGE_COLOR[o.stage]); return { id: o.id, color: o._cap.color, title: esc(o.title), sub: esc([o.owner_or_agency || o.agency, [o.city || o.city_or_county, o.state].filter(Boolean).join(', ')].filter(Boolean).join(' · ')), chips: cc }; });
+    el.querySelector('#op-kpis').innerHTML = ui.kpis([{ label: 'In view', value: fmt.num(rows.length), sub: `${tracked} with bid status`, color: COLOR }, { label: 'Open and biddable', value: fmt.num(openN), sub: `${rows.filter(o => o._src === 'legacy' && o.stage === 'open').length} from older lists`, color: PAL.green }, { label: 'Due within 14 days', value: fmt.num(due14), sub: `${rows.filter(o => o._days === 0).length} due today`, color: due14 ? PAL.red : PAL.muted }]);
+    const top = rows.slice(0, shown);
+    const cards = top.map(o => { const b = bids[o.id]; let cc = cardChips(ctx, o); if (o._days === 0 && o.stage !== 'expired') cc = chip('due today · go/no-go', PAL.red) + cc; if (b?.status) cc = chip(b.status, BID_COLOR[b.status]) + cc; if (b?.owner) cc += chip(`owner: ${b.owner}`); if (isUnverified(o)) cc += chip('owner unverified', PAL.amber); if (o._src !== 'research') cc += chip(o._src === 'legacy' ? 'older bid list' : 'permit filing'); if (o.stage) cc += chip(o.stage, STAGE_COLOR[o.stage]); return { id: o.id, color: o._cap.color, title: esc(clipW(o.title, 12)), sub: esc([(o.owner_or_agency || o.agency) !== o.source_name ? clipW(o.owner_or_agency || o.agency, 6) : '', [o.city || o.city_or_county, o.state].filter(Boolean).join(', ')].filter(Boolean).join(' · ')), chips: cc }; });
     const box = el.querySelector('#op-cards');
-    box.innerHTML = rows.length ? ui.cards(cards) + (rows.length > top.length ? `<p class="sys-src center">Showing the first ${top.length} of ${fmt.num(rows.length)} (sorted by ${sortBy === 'due' ? 'due within 14 days, then fit' : sortBy}). Refine filters or export CSV for all.</p>` : '') : ui.empty('No opportunities match these filters');
+    box.innerHTML = rows.length ? ui.cards(cards) + (rows.length > top.length ? `<div class="sys-row cet-more"><span class="sys-src">${fmt.num(top.length)} of ${fmt.num(rows.length)}</span><button type="button" class="${ui.btnCls('secondary', 'sm')}" id="op-more">Show 30 more</button></div>` : '') : ui.empty('No opportunities match these filters');
     ui.bindCards(box, top, o => open(o));
+    const more = box.querySelector('#op-more'); if (more) more.onclick = () => { shown += 30; apply(f.state, true); };
     if (layer) layer.remove();
     layer = pts(maps, map, rows, { color: o => o._cap.color, radius: rad, cluster: false, opacity: .8, onClick: open, popup: o => `<b>${esc(o.title)}</b><br>${esc(o.owner_or_agency || '')} · ${esc(o.city || '')}, ${esc(o.state || '')}<br>${o.est_value_usd ? fmt.money(o.est_value_usd) + ' (est.) · ' : ''}fit ${esc(o.fit_score ?? '—')}` });
     const unm = rows.filter(o => o.lat == null).length; const approx = rows.filter(o => /state|region|statewide/.test(o.geo_precision || '')).length;
-    overlay.getContainer().innerHTML = `<b>${fmt.num(rows.length - unm)}</b> mapped · <span class="sys-muted">${fmt.num(unm)} without geocode (list only) · ${fmt.num(approx)} at state or region centroid</span><div class="sys-muted small">Circle size = estimated value (log scale) · click for detail</div>`;
+    overlay.getContainer().innerHTML = `<b>${fmt.num(rows.length - unm)}</b> mapped, <span class="sys-muted">${fmt.num(unm)} list only, ${fmt.num(approx)} approximate</span>`;
   };
   const f = ui.filters(el.querySelector('#op-f'), [
     { key: 'q', label: 'Search title, owner, town, scope…', type: 'search', value: params.q || '' },
@@ -366,9 +389,16 @@ async function opportunities(ctx) {
     { key: 'hidesub', label: 'Hide submitted / lost / won', type: 'toggle', value: true },
   ], apply);
   ui.seg(el.querySelector('#op-sort'), [{ value: 'due', label: 'Due within 14 days first' }, { value: 'fit', label: 'Fit' }, { value: 'value', label: 'Value' }], sortBy, v => { sortBy = v; apply(f.state); });
+  { // the filters sit in a closed section; the search box and the count stay in view
+    const bar = el.querySelector('#op-f .sys-filters'); const body = document.createElement('div'); body.className = 'sys-filters filters cet-fold-body';
+    bar.querySelectorAll(':scope > label.sys-field, :scope > [data-toggle]').forEach(n => body.appendChild(n));
+    const fd = document.createElement('details'); fd.className = 'cet-fold'; fd.innerHTML = '<summary><b>Filters</b></summary>'; fd.appendChild(body);
+    if (params.state || params.cap || params.due || params.stage || params.type) fd.open = true;
+    bar.insertBefore(fd, bar.querySelector('[data-count]'));
+  }
   apply(f.state);
   el.querySelector('#op-csv').onclick = () => { const bids = bidRead(); ui.exportCSV(rows.map(o => ({ ...o, capability: o._cap.label, source_dataset: o._src, next_action: nextAction(o, fmt), days_left: o._days, bid_status: bids[o.id]?.status || '', bid_owner: bids[o.id]?.owner || '', owner_verified: isUnverified(o) ? 'no' : 'yes' })), ['id', 'source_dataset', 'type', 'stage', 'bid_status', 'bid_owner', 'days_left', 'owner_verified', 'title', 'owner_or_agency', 'city', 'county', 'state', 'lat', 'lon', 'posted_date', 'due_date', 'est_value_usd', 'fit_score', 'capability', 'capability_match', 'scope_tags', 'competitors_noted', 'fit_rationale', 'next_action', 'source_name', 'source_url'].map(k => ({ key: k })), 'cet_opportunity_radar'); };
-  if (params.id) { const o = all.find(x => x.id === params.id); if (o) { open(o); if (o.lat != null) setTimeout(() => map.getContainer().isConnected && map.setView([o.lat, o.lon], 10), 200); } }
+  if (params.id) { const o = all.find(x => x.id === params.id); if (o) { const ix = rows.indexOf(o); if (ix >= shown) { shown = ix + 1; apply(f.state, true); } open(o); if (o.lat != null) setTimeout(() => map.getContainer().isConnected && map.setView([o.lat, o.lon], 10), 200); } }
   indexEntities(ctx, { opp, wwtp });
   return () => map.remove();
 }
@@ -404,6 +434,7 @@ function openPlant(ctx, p, map) {
       { label: 'Horton fit', html: `<div class="sys-kpis kpis insp-kpis">${ui.kpi({ label: 'Horton fit', value: esc(p.horton_fit ?? '—'), sub: esc(cl.label), color: cl.color })}${ui.kpi({ label: 'Design flow', value: fmt.num(p.design_flow_mgd, 1), small: 'MGD', sub: esc(p.design_flow_source || 'n/a'), color: PAL.cyan })}</div>` },
       { label: 'Facility', html: ui.kv({ Address: esc([p.street, p.town, p.state].filter(Boolean).join(', ')), County: esc(p.county || ''), Operator: esc(p.operator || ''), 'NPDES permit': `${esc(p.permit_id || '—')} ${p.npdes_permit_status_echo ? chip(p.npdes_permit_status_echo, permitColor(p.npdes_permit_status_echo)) : ''}`, 'Permit expires': p.npdes_permit_expiration ? fmt.date(p.npdes_permit_expiration) : '', 'Funding program': esc(p.funding_program || ''), Stage: esc(p.project_stage || ''), 'Pipeline (all listed)': p.pipeline_value_usd ? `${fmt.moneyFull(p.pipeline_value_usd)} ${Copy.EST}` : null }) },
       { label: `Projects (${(p.projects || []).length})`, html: (p.projects || []).length ? `<ul class="sys-card-list">${p.projects.map(x => `<li><b>${esc(x.title)}</b>${x.value_usd ? ` <span class="sys-num">${fmt.money(x.value_usd)}</span>` : ''}<div class="sys-muted small">${esc(x.stage || '')}${x.funding_program ? ' · ' + esc(x.funding_program) : ''}${x.note ? ' · ' + esc(x.note) : ''}</div>${x.source_url ? `<div class="small">${fmt.link(x.source_url, 'source')}</div>` : ''}</li>`).join('')}</ul>` : '<span class="sys-muted small">No project on the current CT / MA / RI SRF lists</span>' },
+      p._why ? { label: 'Why it ranks', html: `<div class="small text-2">${esc(p._why)}</div>` } : null,
       p.energy_signal ? { label: 'Energy signal', html: `<div class="small text-2">${esc(p.energy_signal)}</div>` } : null,
       { label: 'Cross-sell recommendations', html: (p.cross_sell || []).length ? `<div class="col gap-8">${p.cross_sell.map(k => { const c = CROSS[k] || [k, PAL.muted, '']; return `<div>${chip(c[0], c[1])} <span class="small text-2">${esc(c[2])}</span></div>`; }).join('')}</div>` : '<span class="sys-muted small">—</span>' },
       { label: 'Next action', html: `<div class="small text-2">${esc(plantNext(p))}</div>` },
@@ -425,36 +456,41 @@ async function wastewater(ctx) {
   const solarAdd = withProj.filter(p => (p.cross_sell || []).includes('solar'));
   const genPS = withProj.filter(p => /^ps_/.test(p.project_class) || (p.cross_sell || []).includes('generator'));
   const permitNoProj = permitSig.filter(p => p.project_class === 'none');
+  for (const t of m.priority_top_15 || []) { const pp = P.find(x => x.id === t.id); if (pp) pp._why = t.rationale; }
+  const top15 = (m.priority_top_15 || []).map(t => { const pp = P.find(x => x.id === t.id) || {}; return { ...t, _line: [pp.project_value_usd ? fmt.money(pp.project_value_usd) : '', pp.design_flow_mgd != null ? `${fmt.num(pp.design_flow_mgd, 1)} MGD` : ''].filter(Boolean).join(', ') }; });
+  const gloss = (t, d) => `<abbr title="${esc(d)}">${t}</abbr>`;
   el.innerHTML = wrap(ui.pageHead({
     title: 'Wastewater accounts',
-    sub: `${fmt.num(funded.length)} of ${fmt.num(P.length)} treatment plants have <b>funded</b> projects (${fmt.money(fundedPipe)} pipeline). Horton wins the electrical scope; NuWave and CET then sell efficiency, solar and generators.`,
-    chips: `${Object.entries(m.counts_by_state || {}).map(([k, v]) => chip(`${k} ${v}`, COLOR)).join('')}${chip('Horton fit score')}`,
+    sub: `<b>${fmt.num(funded.length)}</b> of ${fmt.num(P.length)} plants funded, ${fmt.money(fundedPipe)} pipeline`,
+    chips: Object.entries(m.counts_by_state || {}).map(([k, v]) => chip(`${k} ${v}`, COLOR)).join(''),
     actions: `<button type="button" class="${ui.btnCls('secondary', '')}" id="ww-csv">⇩ Account list CSV</button>`,
   }) +
+  (m.generated ? `<i data-asof="${esc(fmt.date(m.generated))}"></i>` : '') +
+  `<div class="sys-muted small" data-method>Plant data covers Connecticut, Massachusetts and Rhode Island only. Fit is the Horton fit score. MGD is million gallons a day. Map: circle size is plant capacity, colour is project type.</div>` +
   ui.kpis([
-    { label: 'Facilities', value: fmt.num(P.length), sub: `${fmt.num(hi.length)} with Horton fit 80+`, color: PAL.cyan },
-    { label: 'Total plant capacity', value: fmt.num(mgd, 0), small: 'MGD', sub: `million gallons a day · ${fmt.num(P.filter(p => p.design_flow_mgd != null).length)} plants`, color: PAL.cet },
-    { label: 'Funded pipeline', value: `${fmt.money(fundedPipe)} ${Copy.EST}`, sub: `${funded.length} plants · ${fmt.money(allPipe)} incl. requested and planning (est.)`, color: PAL.green },
-    { label: 'Plants with listed projects', value: fmt.num(withProj.length), sub: `${fmt.num(P.length - withProj.length)} without — relationship plays`, color: PAL.amber },
-    { label: 'Permit upgrade signal', value: fmt.num(permitSig.length), sub: 'NPDES expired / admin-continued', color: PAL.red },
+    { label: 'Facilities', value: fmt.num(P.length), sub: `${fmt.num(hi.length)} fit 80+`, color: PAL.cyan },
+    { label: 'Total plant capacity', value: `${fmt.num(mgd, 0)}<small>${gloss('MGD', 'million gallons a day')}</small>`, sub: `${fmt.num(P.filter(p => p.design_flow_mgd != null).length)} plants`, color: PAL.cet },
+    { label: 'Funded pipeline', value: `${fmt.money(fundedPipe)} ${Copy.EST}`, sub: `${fmt.money(allPipe)} all stages`, color: PAL.green },
+    { label: 'Plants with listed projects', value: fmt.num(withProj.length), sub: `${fmt.num(P.length - withProj.length)} without`, color: PAL.amber },
+    { label: 'Permit upgrade signal', value: fmt.num(permitSig.length), sub: `${gloss('NPDES', 'the federal permit to discharge treated water')} expired or admin-continued`, color: PAL.red },
   ]) +
   `<div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Account map', sub: 'Circle size = plant capacity (million gallons a day) · colour = project type · click a plant', body: `<div class="map tall" id="ww-map"></div>`, flush: true, foot: ui.source(SRC.wwtp[0], SRC.wwtp[1], m.generated) })}
-    ${ui.panel({ title: 'Priority top 15', sub: 'Ranked by Horton fit, with the research rationale', body: (m.priority_top_15 || []).length ? `<div class="sys-table-wrap"><table class="sys-table cet-rows" id="ww-top"><thead><tr><th class="sys-n">#</th><th>Facility</th><th class="sys-n">Fit</th></tr></thead><tbody>${m.priority_top_15.map(t => `<tr data-id="${esc(t.id)}" tabindex="0"><td class="sys-n">${esc(t.rank)}</td><td><b>${esc(t.facility_name)}</b> <span class="sys-muted small">${esc(t.state)}</span><div class="small text-2">${esc(t.rationale)}</div></td><td class="sys-n">${fmt.score(t.horton_fit)}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('Priority list pending'), flush: !!(m.priority_top_15 || []).length, scroll: true, accent: true, foot: ui.source('CET wastewater-plant targets · top-15 priority list', null, m.generated) })}
+    ${pnl(ui, { title: 'Priority top 15', body: top15.length ? `<div class="sys-table-wrap"><table class="sys-table cet-rows" id="ww-top"><thead><tr><th class="sys-n">#</th><th>Facility</th><th class="sys-n">Fit</th></tr></thead><tbody>${top15.map(t => `<tr data-id="${esc(t.id)}" tabindex="0"><td class="sys-n">${esc(t.rank)}</td><td><b>${esc(t.facility_name)}</b> <span class="sys-muted small">${esc(t.state)}</span><div class="small text-2">${esc(t._line)}</div></td><td class="sys-n">${fmt.score(t.horton_fit)}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('Priority list pending'), flush: !!top15.length, scroll: true, accent: true, foot: ui.source('CET wastewater-plant targets · top-15 priority list', null, m.generated) })}
+    ${pnl(ui, { title: 'Account map', body: `<div class="map tall" id="ww-map"></div>`, flush: true, foot: ui.source(SRC.wwtp[0], SRC.wwtp[1], m.generated) })}
   </div>
   <div class="mt-12" id="ww-f"></div><div id="ww-table"></div>
   <div class="grid grid-3 mt-12">
-    ${ui.panel({ title: 'Pipeline by project class', sub: 'Sum of listed facility pipeline (est.)', body: charts.hbar(Object.entries(CLASS).filter(([k]) => k !== 'none').map(([k, c]) => ({ label: `${c.label} · ${P.filter(p => p.project_class === k).length}`, value: sum(P.filter(p => p.project_class === k), p => p.pipeline_value_usd), color: c.color })), { fmt: v => fmt.money(v), labelW: 170 }), foot: ui.source('State SRF / CWF lists', null, m.generated) })}
-    ${ui.panel({ title: 'Cross-sell demand', sub: 'Plants with a listed project, by recommended add-on', body: charts.hbar(Object.entries(CROSS).map(([k, c]) => ({ label: c[0], value: withProj.filter(p => (p.cross_sell || []).includes(k)).length, color: c[1] })), { fmt: v => fmt.num(v), labelW: 90 }) + `<p class="sys-muted small">Rule-based: solar if 1 MGD or more without large on-site renewables; storage if 10 MGD or more or the plant has renewables or cogeneration; generator for pump stations and resiliency work.</p>`, foot: ui.source('CET wastewater-plant targets: scoring method', null, m.generated) })}
-    ${ui.panel({ title: 'Discharge permit status', sub: 'An expired or administratively extended NPDES permit often means an upgrade is coming', body: charts.donut(['Effective', 'Admin Continued', 'Expired'].map(s => ({ label: s, value: P.filter(p => p.npdes_permit_status_echo === s).length, color: s === 'Expired' ? PAL.red : s === 'Admin Continued' ? PAL.amber : PAL.dim })), { fmt: v => fmt.num(v) }) + `<p class="sys-muted small">ECHO status mostly reflects EPA and state permitting backlog, not plant condition. Treat it as a timing signal only.</p>`, foot: ui.source('EPA ECHO CWA REST', 'https://echo.epa.gov/', m.generated) })}
+    ${pnl(ui, { title: 'Pipeline by project class', body: charts.hbar(Object.entries(CLASS).filter(([k]) => k !== 'none').map(([k, c]) => ({ label: `${c.label} · ${P.filter(p => p.project_class === k).length}`, value: sum(P.filter(p => p.project_class === k), p => p.pipeline_value_usd), color: c.color })), { fmt: v => fmt.money(v), labelW: 170 }), foot: ui.source('State SRF / CWF lists', null, m.generated) })}
+    ${pnl(ui, { title: 'Cross-sell demand', body: charts.hbar(Object.entries(CROSS).map(([k, c]) => ({ label: c[0], value: withProj.filter(p => (p.cross_sell || []).includes(k)).length, color: c[1] })), { fmt: v => fmt.num(v), labelW: 90 }) + `<div class="sys-muted small" data-method>Cross-sell rules: solar if 1 MGD or more without large on-site renewables; storage if 10 MGD or more or the plant has renewables or cogeneration; generator for pump stations and resiliency work.</div>`, foot: ui.source('CET wastewater-plant targets: scoring method', null, m.generated) })}
+    ${pnl(ui, { title: 'Discharge permit status', body: charts.donut(['Effective', 'Admin Continued', 'Expired'].map(s => ({ label: s, value: P.filter(p => p.npdes_permit_status_echo === s).length, color: s === 'Expired' ? PAL.red : s === 'Admin Continued' ? PAL.amber : PAL.dim })), { fmt: v => fmt.num(v) }) + `<div class="sys-muted small" data-method>An expired or admin-continued permit often means an upgrade is coming. ECHO status mostly reflects permitting backlog, not plant condition: read it as timing only.</div>`, foot: ui.source('EPA ECHO CWA REST', 'https://echo.epa.gov/', m.generated) })}
   </div>
-  <div class="mt-12">${ui.panel({ title: 'Action list', sub: 'Horton cross-sell plan', accent: true, body: actionsList([
-    `<b>Prime the funded plants.</b> Book engineer-of-record and GC meetings on the ${funded.length} funded plants (${fmt.money(fundedPipe)}). Start with ${esc(funded.slice().sort((a, b) => (b.horton_fit || 0) - (a.horton_fit || 0)).slice(0, 3).map(p => `${p.facility_name} (${p.state})`).join(', '))}.`,
-    `<b>Solar and efficiency bundle.</b> ${solarAdd.length} plants with active projects qualify for behind-the-meter solar. Pair each with a NuWave aeration/VFD audit, since aeration is the largest energy load.`,
-    `<b>Generator and pump-station book.</b> ${genPS.length} project accounts need generator/ATS or pump-station electrical work. Quote one crew plan and offer 24/7 service agreements for recurring revenue.`,
-    `<b>Permit-renewal watchlist.</b> ${permitNoProj.length} plants have expired or admin-continued permits but no listed project. Open the relationship now, before their upgrade reaches the SRF lists.`,
-    `<b>Fill the MA gap.</b> The MA IUP is itemized here, but ${fmt.num(P.filter(p => p.state === 'MA' && p.project_class === 'none').length)} MA plants have no listed project. Work them out of Worcester/Taunton with service and audit offers.`,
-  ]), foot: `<span class="dim">${esc(Copy.text((m.caveats || []).slice(0, 2).join(' ')))}</span>` })}</div>`);
+  <div class="mt-12">${pnl(ui, { title: 'Action list', accent: true, body: actionsList([
+    `<b>Prime the funded plants.</b> Meet engineers and GCs at the ${funded.length} funded plants (${fmt.money(fundedPipe)}): ${esc(funded.slice().sort((a, b) => (b.horton_fit || 0) - (a.horton_fit || 0)).slice(0, 3).map(p => p.facility_name).join(', '))} first.`,
+    `<b>Bundle solar and efficiency.</b> ${solarAdd.length} plants qualify for solar; pair each with a NuWave aeration and VFD audit.`,
+    `<b>Quote generators and pump stations.</b> ${genPS.length} accounts need generator, ATS or pump-station electrical; add 24/7 service agreements.`,
+    `<b>Watch permits.</b> ${permitNoProj.length} plants have expired or admin-continued permits and no listed project; open the relationship before funding.`,
+    `<b>Fill the MA gap.</b> ${fmt.num(P.filter(p => p.state === 'MA' && p.project_class === 'none').length)} MA plants have no listed project; work them from Worcester and Taunton with service and audit offers.`,
+  ]), fk: 'method', foot: `<span class="dim">${esc(Copy.text((m.caveats || []).slice(0, 2).join(' ')))}</span>` })}</div>`);
 
   const map = maps.create(el.querySelector('#ww-map'), { center: [41.9, -71.8], zoom: 8 });
   let layer = null, rows = P, tbl;
@@ -478,7 +514,7 @@ async function wastewater(ctx) {
     const q = (st.q || '').toLowerCase();
     rows = P.filter(p => (!st.state || p.state === st.state) && (!st.cls || p.project_class === st.cls) && (!st.cs || (p.cross_sell || []).includes(st.cs)) && (!st.permit || p.npdes_permit_status_echo === st.permit) && (!st.proj || p.project_class !== 'none') && (!q || `${p.facility_name} ${p.town} ${p.county} ${p.operator} ${p.recent_or_planned_project}`.toLowerCase().includes(q)));
     f.setCount(`${rows.length} / ${P.length}`);
-    tbl ? tbl.update(rows) : (tbl = ui.table(el.querySelector('#ww-table'), { columns, rows, pageSize: 25, sortKey: 'horton_fit', exportName: 'cet_wwtp_accounts', onRow: p => { openPlant(ctx, p, map); map.setView([p.lat, p.lon], 11); } }));
+    tbl ? tbl.update(rows) : (tbl = ui.table(el.querySelector('#ww-table'), { columns, rows, pageSize: 10, sortKey: 'horton_fit', exportName: 'cet_wwtp_accounts', onRow: p => { openPlant(ctx, p, map); map.setView([p.lat, p.lon], 11); } }));
     draw(rows);
   };
   const f = ui.filters(el.querySelector('#ww-f'), [
@@ -512,7 +548,7 @@ function countySection(ctx, counties, opp, wwtp) {
   const understated = C.filter(c => c._gap && (c._wwPipe > 0 || c._opps > 0)).sort((a, b) => b._wwPipe - a._wwPipe);
   const ctOppVal = sum((opp?.items || []).filter(o => o.state === 'CT'), o => o.est_value_usd); const ctWw = sum(C.filter(c => c.state === 'CT'), c => c._wwPipe);
   const gapStates = [...new Set(gaps.map(c => c.state))].join(', ');
-  const html = `<details class="cet-fold mt-12" id="cet-counties"><summary><b>County fit</b> <span class="sys-muted">${fmt.num(scored.length)} of ${fmt.num(C.length)} New England counties scored · table, method and actions</span></summary><div class="cet-fold-body">
+  const html = `<details class="cet-fold mt-12" id="cet-counties"><summary><b>County fit</b> <span class="sys-muted">${fmt.num(scored.length)} of ${fmt.num(C.length)} counties scored</span></summary><div class="cet-fold-body">
   <p class="sys-card-body">Demand concentrates in eastern MA: ${esc(t1.map(c => c.county_name + ' ' + c.state).join(', '))} is the only Tier-1 county. <b>${gaps.length} ${esc(gapStates)} counties are unscored</b> for lack of data, yet hold an est. <b>${fmt.money(ctOppVal)}</b> of sourced opportunity.</p>
   ${chips(chip(`${t1.length} Tier 1`, PAL.green), chip(`${t2.length} Tier 2`, PAL.sky), chip(`${t3.length} Tier 3`, PAL.amber), chip(`${gaps.length} insufficient data (${gapStates})`))}
   <div class="mt-12">${ui.kpis([
@@ -584,7 +620,9 @@ const USE_HEX = { commercial: PAL.cet, industrial: PAL.purple, mixed: PAL.cyan, 
 const ENTITY_RE = /\b(LLC|L\.L\.C|INC|CORP|CORPORATION|CO|COMPANY|TRUST|TRUSTEE|TR|LP|LLP|LTD|REALTY|PROPERTIES|PROPERTY|HOLDINGS|PARTNERS|ASSOC|ASSOCIATES|BANK|DEVELOPMENT|GROUP|FUND|VENTURES|ENTERPRISES|CITY|TOWN|AUTHORITY|UNIVERSITY|CHURCH)\b/i;
 let _xfer = null;
 /* a dataset caveat written as a drafting note: drop the note-to-self prefix and name the sales, not a screen (worded here, the data stays as it is) */
-const caveatText = c => Copy.text(c).replace(/^User request honored:\s*(\w)/i, (m, a) => a.toUpperCase()).replace(/filter use[_ ]type for the CET commercial\/industrial view/i, 'filter by use for commercial and industrial sales');
+const caveatText = c => Copy.text(c).replace(/^User request honored:\s*(\w)/i, (m, a) => a.toUpperCase()).replace(/filter use[_ ]type for the CET commercial\/industrial view/i, 'filter by use for commercial and industrial sales').replace(/\s*\(LS DATE\/LS PRICE\)/g, '').replace(/buyer = OWNER1 \(/gi, 'buyer = ').replace(/OWNER1/g, 'owner of record')
+/* a list of sources that could not be pulled, without web addresses, dataset codes or service names */
+const plainSources = t => String(t || '').replace(/\s*\((?:[^()]*(?:\.gov|\.com|\.org|Socrata)[^()]*)\)/g, '').replace(/\b[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[\w.-]+)*/gi, '').replace(/\b[a-z0-9]{4}-[a-z0-9]{4}\b/g, '').replace(/\bFeatureServer\b/g, 'parcel service').replace(/(?:,\s*)?e\.g\.\s*/g, '').replace(/ {2,}/g, ' ').replace(/\s+([,;·])/g, '$1');
 const INDIV = 'Individual (name withheld)';
 async function loadTransfers(data) {
   if (_xfer) return _xfer;
@@ -666,23 +704,25 @@ async function transfers(ctx) {
   let seg = params.seg || 'ci', town = null, rollBy = 'n', filtered = [], layer = null, tbl, ttbl;
   el.innerHTML = wrap(ui.pageHead({
     title: 'Property transfers',
-    sub: `A new commercial owner sets a capital plan within 6–12 months. ${fmt.num(ciAll.length)} commercial and industrial (C&I) transfers are on file; the outreach list starts with the <b>${fmt.num(ciEnt)} bought by entities</b>.`,
-    chips: `${chip(`Data through ${latestLbl}`, lagD != null && lagD > 60 ? PAL.amber : PAL.green)}${chip(`${fmt.num(R.length)} recorded transfers`, COLOR)}${chip(`${fmt.num(new Set(R.map(r => r.county + r.state)).size)} counties`)}${chip('MA · CT · RI')}${X.loaded < 2 ? chip('one dataset missing', PAL.red) : ''}`,
+    sub: `<b>${fmt.num(ciAll.length)}</b> commercial and industrial transfers, <b>${fmt.num(ciEnt)}</b> bought by entities`,
+    chips: `${chip(`Data through ${latestLbl}`, lagD != null && lagD > 60 ? PAL.amber : PAL.green)}${chip(`${fmt.num(R.length)} recorded transfers`, COLOR)}${chip(`${fmt.num(new Set(R.map(r => r.county + r.state)).size)} counties`)}${chip('MA, CT, RI')}${X.loaded < 2 ? chip('one dataset missing', PAL.red) : ''}`,
     actions: `<button type="button" class="${ui.btnCls('primary', '')}" id="tx-out">⇩ New-owner outreach list</button>`,
   }) +
+  (X.hct?.meta?.generated || X.hma?.meta?.generated ? `<i data-asof="${esc(fmt.date(X.hct?.meta?.generated || X.hma?.meta?.generated))}"></i>` : '') +
+  `<div class="sys-muted small" data-method>Sales data covers Massachusetts, Connecticut and Rhode Island only. Individual buyers' names are withheld. Map: the most recent 5,000 transfers in the filter, coloured by use, clustered below zoom 9.</div>` +
   `<div class="sys-row mb-12"><div id="tx-seg"></div><span id="tx-town"></span></div>
   <div id="tx-f"></div>
   <div id="tx-kpis"></div>
+  <h3 class="sys-card-title mt-16">Transfers in filter</h3><div id="tx-table"></div>
   <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Transfer map', sub: 'Most recent 5,000 in filter · colour = use type · clusters below zoom 9', body: `<div class="map tall" id="tx-map"></div>`, flush: true, foot: `${ui.source('MassGIS L3 parcels', 'https://services1.arcgis.com/hGdibHYSPO59RG1h/arcgis/rest/services/Massachusetts_Property_Tax_Parcels/FeatureServer/0', X.ma?.meta?.generated?.slice(0, 10))} ${ui.source('CT OPM sales + CT CAMA; RI town parcels', 'https://data.ct.gov/resource/5mzw-sjtu.json', X.ct?.meta?.generated)}` })}
-    ${ui.panel({ title: 'Town rollup · top 25', sub: 'Click a town to focus map and table', actions: `<div id="tx-roll-seg"></div>`, body: `<div id="tx-roll"></div>`, flush: true, scroll: true })}
+    ${pnl(ui, { title: 'Transfer map', body: `<div class="map tall" id="tx-map"></div>`, flush: true, foot: `${ui.source('MassGIS L3 parcels', 'https://services1.arcgis.com/hGdibHYSPO59RG1h/arcgis/rest/services/Massachusetts_Property_Tax_Parcels/FeatureServer/0', X.ma?.meta?.generated?.slice(0, 10))} ${ui.source('CT OPM sales + CT CAMA; RI town parcels', 'https://data.ct.gov/resource/5mzw-sjtu.json', X.ct?.meta?.generated)}` })}
+    ${pnl(ui, { title: 'Town rollup · top 25', actions: `<div id="tx-roll-seg"></div>`, body: `<div id="tx-roll"></div>`, flush: true, scroll: true })}
   </div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Home sales by county', sub: homeFromMeta ? 'Residential sale counts for every county covered for CET, from the dataset metadata' : 'Residential sales over $1K in every county covered for CET (all months in the files)', body: `${homeFromMeta ? `<div class="cet-pad">${ui.note(`Residential rows are not in the published transfer files (compacted for page size), so this table shows the <b>record counts the source pull reported</b>.${homeEst ? ' MA counts are exact per county; CT/RI counties are <b>est.</b>: the CT/RI residential total is allocated by each county&#39;s share of the rows removed from the file (residential + land under $500K).' : ''} Medians and $ volume need the full residential extract.`, 'warn')}</div>` : ''}<div id="tx-home"></div>`, flush: true, foot: ui.source('MassGIS L3 (last sale), CT OPM / CAMA, Cranston RI parcels · CET deed records (MA, CT and RI)', null, X.hct?.meta?.generated || X.hma?.meta?.generated || '2026-09-24') })}
-    ${ui.panel({ title: 'Monthly volume in filter', sub: 'Transfers per month over the months-back window (latest months still being recorded)', body: `<div id="tx-month"></div><p class="sys-muted small">The source windows differ: MA non-residential from September 2024, MA residential from September 2025, CT OPM through September 2025 then CT CAMA (last sale only). Month-to-month steps reflect those windows, not the market.</p>` })}
+    ${pnl(ui, { title: 'Home sales by county', body: `${homeFromMeta ? `<div class="sys-muted small cet-pad" data-method>Residential rows are not in the published transfer files, so the counts are those the source pull reported.${homeEst ? ' MA counts are exact per county; CT and RI counties are <b>est.</b>, allocated by each county&#39;s share of the rows removed from the file (residential and land under $500K).' : ''} Medians and $ volume need the full residential extract.</div>` : ''}<div id="tx-home"></div>`, flush: true, foot: ui.source('MassGIS L3 (last sale), CT OPM / CAMA, Cranston RI parcels · CET deed records (MA, CT and RI)', null, X.hct?.meta?.generated || X.hma?.meta?.generated || '2026-09-24') })}
+    ${pnl(ui, { title: 'Monthly volume in filter', body: `<div id="tx-month"></div><div class="sys-muted small" data-method>The latest months are still being recorded. Source windows differ: MA non-residential from September 2024, MA residential from September 2025, CT OPM through September 2025 then CT CAMA (last sale only). Month-to-month steps reflect those windows, not the market.</div>` })}
   </div>
-  <h3 class="sys-card-title mt-16">Transfers in filter</h3><p class="sys-muted small mb-8">Click a row for the retrofit play · records through ${esc(latestLbl)} · individual names withheld</p><div id="tx-table"></div>
-  <div class="mt-12">${ui.panel({ title: 'Coverage and caveats', sub: 'Per-county source windows, plus what could not be pulled', body: `<div class="sys-table-wrap"><table class="sys-table"><thead><tr><th>County</th><th>Source</th><th class="sys-n">From</th><th class="sys-n">To</th><th class="sys-n">Records</th></tr></thead><tbody>${coverage.map(c => `<tr><td>${esc(c.county)}, ${esc(c.state)}</td><td class="small">${esc(Copy.text(c.source || ''))}</td><td class="sys-n">${c.date_from ? esc(fmt.date(c.date_from)) : '—'}</td><td class="sys-n">${c.date_to ? esc(fmt.date(c.date_to)) : '—'}</td><td class="sys-n">${fmt.num(c.count)}</td></tr>`).join('')}</tbody></table></div><ul class="sys-card-list mt-12">${metas.flatMap(m => (m.caveats || []).slice(0, 3)).map(c => `<li>${esc(caveatText(c))}</li>`).join('')}</ul><p class="sys-muted small mt-8">Not pulled: ${esc(metas.flatMap(m => (m.failed_sources || []).map(f => Copy.text(f.source))).join(' · ') || '—')}</p>` })}</div>`);
+  <div class="mt-12">${fold('Coverage and caveats', 'source windows by county', `<div class="sys-table-wrap"><table class="sys-table"><thead><tr><th>County</th><th>Source</th><th class="sys-n">From</th><th class="sys-n">To</th><th class="sys-n">Records</th></tr></thead><tbody>${coverage.map(c => `<tr><td>${esc(c.county)}, ${esc(c.state)}</td><td class="small">${esc(Copy.text(c.source || ''))}</td><td class="sys-n">${c.date_from ? esc(fmt.date(c.date_from)) : '—'}</td><td class="sys-n">${c.date_to ? esc(fmt.date(c.date_to)) : '—'}</td><td class="sys-n">${fmt.num(c.count)}</td></tr>`).join('')}</tbody></table></div><ul class="sys-card-list mt-12">${metas.flatMap(m => (m.caveats || []).slice(0, 3)).map(c => `<li>${esc(caveatText(c))}</li>`).join('')}</ul><p class="sys-muted small mt-8">Not pulled: ${esc(plainSources(metas.flatMap(m => (m.failed_sources || []).map(f => Copy.text(f.source))).join(' · ')) || '—')}</p>`)}</div>`);
 
   const segOpts = homeFromMeta ? SEGS.filter(x => x.value !== 'res') : SEGS; if (!segOpts.some(x => x.value === seg)) seg = 'ci';
   UI_seg(ctx, el.querySelector('#tx-seg'), segOpts, seg, v => { seg = v; apply(f.state); });
@@ -700,15 +740,15 @@ async function transfers(ctx) {
     { key: 'from', label: 'Window', fmt: (v, r) => `<span class="small">${v ? esc(fmt.date(v)) : '—'} to ${r.to ? esc(fmt.date(r.to)) : '—'}</span>` },
     ...(homeFromMeta ? [{ key: 'basis', label: 'Basis', fmt: v => `<span class="dim small">${esc(v)}</span>` }] : []),
   ];
-  ui.table(el.querySelector('#tx-home'), { columns: homeCols, rows: homeByCounty, pageSize: 12, sortKey: 'n', exportName: 'cet_home_sales_by_county', onRow: r => { if (homeFromMeta) return; const k = `${r.county}|${r.state}`; seg = 'res'; el.querySelectorAll('#tx-seg button').forEach(b => { b.classList.toggle('active', b.dataset.v === 'res'); b.setAttribute('aria-pressed', String(b.dataset.v === 'res')); }); const s = el.querySelector('#tx-f select[data-k="county"]'); if (s) s.value = k; f.state.county = k; apply(f.state); } });
+  ui.table(el.querySelector('#tx-home'), { columns: homeCols, rows: homeByCounty, pageSize: 8, sortKey: 'n', exportName: 'cet_home_sales_by_county', onRow: r => { if (homeFromMeta) return; const k = `${r.county}|${r.state}`; seg = 'res'; el.querySelectorAll('#tx-seg button').forEach(b => { b.classList.toggle('active', b.dataset.v === 'res'); b.setAttribute('aria-pressed', String(b.dataset.v === 'res')); }); const s = el.querySelector('#tx-f select[data-k="county"]'); if (s) s.value = k; f.state.county = k; apply(f.state); } });
 
   const cols = [
     { key: 'sale_date', label: 'Date', num: true, fmt: v => fmt.date(v) },
     { key: 'addr', label: 'Address', fmt: (v, r) => `<b>${esc(titleCase(v || '—'))}</b><div class="dim small">${esc(r.muni || '')}</div>` },
     { key: 'county', label: 'County', fmt: (v, r) => `${esc(v)}, ${esc(r.state)}` },
-    { key: 'use_type', label: 'Use', fmt: (v, r) => `${chip(v, USE_HEX[v])}<div class="dim small ellipsis cet-clip-sm">${esc(r.use_desc || r.use_code_raw || '')}</div>` },
+    { key: 'use_type', label: 'Use', fmt: (v, r) => `${chip(v, USE_HEX[v])}<div class="dim small ellipsis cet-clip-sm">${esc(clipW(r.use_desc || r.use_code_raw || '', 5))}</div>` },
     { key: 'price', label: 'Price', num: true, fmt: v => fmt.money(v) },
-    { key: 'buyer', label: 'Buyer (owner of record)', fmt: (v, r) => `<span class="ellipsis cet-clip">${esc(v || '—')}</span>${r._entity ? ' ' + chip('entity', COLOR) : ''}` },
+    { key: 'buyer', label: 'Buyer (owner of record)', fmt: (v, r) => `<span class="ellipsis cet-clip">${esc(clipW(v || '—', 6))}</span>${r._entity && f.state.buyer !== 'ent' ? ' ' + chip('entity', COLOR) : ''}` },
     { key: 'year_built', label: 'Built', num: true, fmt: v => v ? esc(v) : '—' },
     { key: 'sqft', label: 'Sq ft', num: true, fmt: v => fmt.num(v) },
   ];
@@ -725,15 +765,15 @@ async function transfers(ctx) {
     const towns = groupBy(filtered, r => `${r.muni}|${r.state}`); const topTown = [...towns].sort((a, b) => b[1].length - a[1].length)[0];
     const segLabel = SEGS.find(s => s.value === seg)?.label || 'All';
     el.querySelector('#tx-kpis').innerHTML = ui.kpis([
-      { label: `${segLabel}`, value: fmt.num(filtered.length), sub: hiddenBuyer ? `${fmt.num(hiddenBuyer)} hidden by the Buyer filter` : `${fmt.num(ent)} to entity buyers (${filtered.length ? Math.round(ent / filtered.length * 100) : 0}%)`, color: COLOR },
+      { label: `${segLabel}`, value: fmt.num(filtered.length), sub: hiddenBuyer ? `${fmt.num(hiddenBuyer)} hidden` : `${fmt.num(ent)} to entities (${filtered.length ? Math.round(ent / filtered.length * 100) : 0}%)`, color: COLOR },
       { label: 'Transfer $ volume', value: fmt.money(vol), sub: `median ${fmt.money(median(filtered.map(r => r.price)))}`, color: PAL.green },
-      { label: 'Pre-1990 buildings', value: fmt.num(old), sub: 'older electrical, likely retrofit need', color: PAL.amber },
-      homeFromMeta ? { label: 'Home sales (all CET counties)', value: fmt.num(homeTotal), sub: 'count from dataset metadata', color: PAL.orange } : { label: 'Home sales (same area and window)', value: fmt.num(homes.length), sub: `median ${fmt.money(median(homes.map(r => r.price)))}`, color: PAL.orange },
+      { label: 'Pre-1990 buildings', value: fmt.num(old), color: PAL.amber },
+      homeFromMeta ? { label: 'Home sales', value: fmt.num(homeTotal), color: PAL.orange } : { label: 'Home sales', value: fmt.num(homes.length), sub: `median ${fmt.money(median(homes.map(r => r.price)))}`, color: PAL.orange },
       { label: 'Towns with activity', value: fmt.num(towns.size), sub: topTown ? esc(`top: ${topTown[0].split('|')[0]} (${topTown[1].length})`) : '—', color: PAL.purple },
     ]);
     if (layer) layer.remove();
     layer = pts(maps, map, filtered.slice(0, 5000), { color: r => USE_HEX[r.use_type] || PAL.muted, radius: r => r._seg === 'res' ? 3 : Math.min(9, 3 + Math.log10(Math.max(10, r.price || 10)) - 4), cluster: true, opacity: .8, onClick: r => openTransfer(ctx, r, map), popup: r => `<b>${esc(titleCase(r.addr || ''))}</b><br>${esc(r.muni)}, ${esc(r.state)} · ${esc(r.use_type)}<br>${fmt.date(r.sale_date)} · ${fmt.money(r.price)}<br><span class="sys-muted">${esc(r.buyer || '')}</span>` });
-    tbl ? tbl.update(filtered) : (tbl = ui.table(el.querySelector('#tx-table'), { columns: cols, rows: filtered, pageSize: 25, sortKey: 'sale_date', exportName: 'cet_property_transfers', rowKey: r => r.id, onRow: r => { openTransfer(ctx, r, map); if (r.lat != null) map.setView([r.lat, r.lon], 15); } }));
+    tbl ? tbl.update(filtered) : (tbl = ui.table(el.querySelector('#tx-table'), { columns: cols, rows: filtered, pageSize: 10, sortKey: 'sale_date', exportName: 'cet_property_transfers', rowKey: r => r.id, onRow: r => { openTransfer(ctx, r, map); if (r.lat != null) map.setView([r.lat, r.lon], 15); } }));
     el.querySelector('#tx-town').innerHTML = town ? `<button type="button" class="sys-chip" aria-pressed="true" id="tx-town-x" aria-label="Town: ${esc(town.muni)}, ${esc(town.state)} (clear town filter)">Town: ${esc(town.muni)}, ${esc(town.state)} ✕</button>` : '';
     const tx = el.querySelector('#tx-town-x'); if (tx) tx.onclick = () => { town = null; apply(f.state); map.fitBounds([[41.0, -73.73], [42.75, -70.6]]); };
     renderRoll(); renderMonth();
@@ -747,7 +787,7 @@ async function transfers(ctx) {
       { key: 'med', label: 'Median', num: true, fmt: v => fmt.money(v) },
       { key: 'ent', label: 'Entity', num: true, fmt: v => fmt.num(v) },
     ];
-    ttbl = ui.table(el.querySelector('#tx-roll'), { columns: rc, rows: agg, pageSize: 25, sortKey: rollBy, exportName: 'cet_transfers_by_town', onRow: r => { town = { muni: r.muni, state: r.state }; apply(f.state); const pts = filtered.filter(x => x.lat != null).map(x => [x.lat, x.lon]); maps.fitPoints(map, pts, 13); } });
+    ttbl = ui.table(el.querySelector('#tx-roll'), { columns: rc, rows: agg, pageSize: 10, sortKey: rollBy, exportName: 'cet_transfers_by_town', onRow: r => { town = { muni: r.muni, state: r.state }; apply(f.state); const pts = filtered.filter(x => x.lat != null).map(x => [x.lat, x.lon]); maps.fitPoints(map, pts, 13); } });
   }
   function renderMonth() {
     const now = new Date(); const months = []; const nM = Math.max(3, Math.min(24, Number(f.state.months) || 24)); for (let i = nM - 1; i >= 0; i--) { const d = new Date(now.getFullYear(), now.getMonth() - i, 1); months.push(d.toISOString().slice(0, 7)); }
@@ -775,28 +815,70 @@ async function transfers(ctx) {
 function UI_seg(ctx, el, options, value, onChange) { if (el) ctx.ui.seg(el, options, value, onChange); }
 
 /* ═══ 7. Filings & financials ═══════════════════════════════════════════════ */
+/* identifiers that a reader never needs (loan numbers, filer numbers, registry accounts, dataset codes) leave the copy */
+const scrubId = t => String(t ?? '')
+  .replace(/\s*\((?:CIK|CRD)\s*[\d-]+\)/gi, '').replace(/,?\s*(?:CIK|CRD)\s*\d+/gi, '').replace(/,?\s*SEC 801-\d+/gi, '')
+  .replace(/,?\s*loan\s*#\s*\d+/gi, '').replace(/\s*\(ASST[^)]*\)/g, '').replace(/\s*\((?:data|api)\.[^)]*\)/gi, '')
+  .replace(/,?\s*accounts?\s+\d{5,}(?:\s*\((?:new|legacy)\))?(?:\s+and\s+\d{5,}\s*\((?:new|legacy)\))?/gi, '').replace(/,?\s*inspection\s+\d+\.\d+/gi, '').replace(/\s*\((?:PACER\s+)?docket\s+\d+\)/gi, '')
+  .replace(/\b(PPP loans?|SBA business loan|EIDL advance grant)\s+(?:EIDLGT:)?\d{9,}(?:\s+and\s+\d{9,})?/gi, '$1')
+  .replace(/\s*\(\s*\)/g, '').replace(/\s+([;,])/g, '$1').replace(/;\s*$/, '').replace(/ {2,}/g, ' ').trim();
+const ID_KEY = /account|fund id|inspection numbers|loan number/i;
+const figV = x => x == null ? '—' : typeof x === 'boolean' ? (x ? 'yes' : 'no') : typeof x === 'number' ? x.toLocaleString() : typeof x === 'object' ? (Array.isArray(x) ? x.map(figV).join(', ') : Object.entries(x).map(([k, v]) => `${k} ${figV(v)}`).join('; ')) : scrubId(x);
+const figList = kf => kf && typeof kf === 'object' ? Object.entries(kf).filter(([k]) => !ID_KEY.test(k)) : [];
+const confColor = c => c === 'high' ? PAL.green : c === 'medium' ? PAL.amber : PAL.dim;
+/* gaps that state what the record lacks stay; notes about how the research went (blocked pages, budget) are not copy */
+const GAP_PROCESS = /bot (?:protection|security)|\b403\b|budget|CAPTCHA|not (?:accessed|performed|retrieved|searched|attempted)|taken directly from/i;
 async function filingsView(ctx) {
   ensureCss();
-  const { el, ui, fmt, data } = ctx;
-  const f = await data.research('cet_filings');
-  const est = f?.meta?.estimate_table || [];
-  const pick = re => est.find(e => re.test(e.metric))?.estimate;
+  const { el, ui, fmt, data, esc, inspector } = ctx;
+  const f0 = await data.research('cet_filings');
+  const est0 = f0?.meta?.estimate_table || [];
+  const pick = re => est0.find(e => re.test(e.metric))?.estimate;
   el.innerHTML = wrap(ui.pageHead({
     title: 'Public filings',
-    sub: f ? `Public filings put standalone CET at about <b>${ctx.esc(pick(/standalone revenue/i) || '$35–55M')}</b> revenue and 260–290 staff with the add-ons. No lender is disclosed; all figures are estimates.` : 'Financial picture from public filings',
-    chips: f ? `${chip(`${fmt.num((f.items || []).length)} filings and records`, COLOR)}${chip(`${est.length} estimates`, PAL.amber)}${chip('Estimates · low–medium confidence')}` : '',
+    sub: f0 ? `Standalone revenue <b>${esc(pick(/standalone revenue/i) || '$35–55M')}</b> est., 400+ professionals, no lender disclosed` : 'Financial picture from public filings',
+    chips: f0 ? `${chip(`${fmt.num((f0.items || []).length)} filings and records`, COLOR)}${chip(`${est0.length} estimates`, PAL.amber)}` : '',
   }) + `<div id="cet-fil"></div>`);
-  // normalise object-shaped sources_summary entries ({source, records}) to strings for the shared renderer
-  const fx = f ? { ...f, meta: { ...(f.meta || {}), sources_summary: (f.meta?.sources_summary || []).map(x => typeof x === 'string' ? x : x?.source || JSON.stringify(x)) } } : null;
-  renderFilings(ctx, el.querySelector('#cet-fil'), { data: Copy.filings(fx), color: COLOR, title: 'CET' });
-  // the numbered synthesis reads as a list (same treatment as Punctual Pros)
-  const pr = el.querySelector('#cet-fil .prose');
-  if (pr && f?.meta?.financial_picture) { const parts = String(Copy.text(f.meta.financial_picture)).split(/\s*(?=\b\d{1,2}\)\s)/).map(x => x.replace(/^\d{1,2}\)\s*/, '').trim()).filter(Boolean); if (parts.length > 2) pr.outerHTML = `<ol class="sys-card-list cet-fp">${parts.map(x => `<li>${ctx.esc(x)}</li>`).join('')}</ol>`; }
+  const box = el.querySelector('#cet-fil');
+  if (!f0) { box.innerHTML = ui.note('Public filings for CET are not available yet.', 'warn'); return; }
+  // normalise object-shaped sources_summary entries ({source, records}) to strings
+  const fx = { ...f0, meta: { ...(f0.meta || {}), sources_summary: (f0.meta?.sources_summary || []).map(x => typeof x === 'string' ? x : x?.source || JSON.stringify(x)) } };
+  const D = Copy.filings(fx); const m = D.meta || {}; const items = D.items || []; const est = m.estimate_table || [];
+  const cats = [...new Set(items.map(i => i.category))];
+  const parts = String(m.financial_picture || '').split(/\s*(?=\b\d{1,2}\)\s)/).map(x => x.replace(/^\d{1,2}\)\s*/, '').trim()).filter(Boolean);
+  const gaps = (Array.isArray(m.data_gaps) ? m.data_gaps : []).map(g => g.replace(/^[A-E]\.\s+/, '').split(/(?<=[.)])\s+(?=[A-Z])/).filter(x => !GAP_PROCESS.test(x)).join(' ').replace(/\s+on\s+[a-z]+\.com\b/g, '').replace(/ \(\s*\)/g, '')).filter(Boolean);
+  const srcs = (Array.isArray(m.sources_summary) ? m.sources_summary : []).map(scrubId).filter(Boolean);
+  box.innerHTML = `<div class="sys-muted small" data-method>All figures are estimates from public filings, not audited. Confidence is rated high, medium or low.</div>
+    ${m.generated ? `<i data-asof="${esc(fmt.date(m.generated))}"></i>` : ''}
+    ${srcs.length ? `<div class="sys-src" data-src>${esc(srcs.join(' · '))}</div>` : ''}
+    ${pnl(ui, { title: 'Estimates', flush: true, body: est.length ? `<div class="sys-table-wrap"><table class="sys-table cet-rows" id="cet-est"><thead><tr><th>Metric</th><th>Estimate</th><th>Basis</th><th>Conf.</th></tr></thead><tbody>${est.map((e, i) => `<tr data-i="${i}" tabindex="0"><td class="wrap"><b>${esc(clipW(e.metric, 8))}</b></td><td class="sys-n wrap">${esc(clipW(e.estimate, 10))}</td><td class="wrap small text-2">${esc(clipW(e.basis, 10))}</td><td>${chip(e.confidence, confColor(e.confidence))}</td></tr>`).join('')}</tbody></table></div>` : ui.empty('No estimates'), accent: true })}
+    <h3 class="sys-card-title mt-16">Filings and records</h3>
+    <div id="fil-filters"></div><div id="fil-table"></div>
+    <div class="cet-folds mt-12">
+      ${parts.length > 2 ? fold('Findings', `${parts.length} points behind the estimates`, `<ol class="sys-card-list cet-fp">${parts.map(x => `<li>${esc(x)}</li>`).join('')}</ol>`) : ''}
+      ${gaps.length ? fold('What the record does not show', `${gaps.length} gaps`, `<ul class="sys-card-list">${gaps.map(g => `<li>${esc(g)}</li>`).join('')}</ul>`) : ''}
+    </div>`;
+  const openEst = e => inspector.open({ title: esc(e.metric), sub: `Confidence ${esc(e.confidence || '—')}`, color: COLOR, sections: [{ label: 'Estimate', html: `<div class="small text-2">${esc(e.estimate)}</div>` }, { label: 'Basis', html: `<div class="small text-2">${esc(e.basis)}</div>` }] });
+  bindRows(el, '#cet-est tr[data-i]', n => openEst(est[Number(n.dataset.i)]));
+  const columns = [
+    { key: 'category', label: 'Category', fmt: v => chip(String(v || '').replace(/_/g, ' '), COLOR) },
+    { key: 'entity', label: 'Entity', fmt: v => esc(clipW(v, 7)) },
+    { key: 'title', label: 'Filing / record', fmt: v => `<b>${esc(clipW(v, 10))}</b>` },
+    { key: 'filed_or_dated', label: 'Date', num: true, fmt: v => esc(clipW(String(v || '').split(/[;(]/)[0].trim(), 6)) },
+    { key: 'key_figures', label: 'Key figures', wrap: true, fmt: v => `<span class="num small">${esc(figList(v).slice(0, 2).map(([k, x]) => `${k}: ${figV(x)}`).join(', ') || (typeof v === 'string' ? clipW(v, 10) : ''))}</span>` },
+    { key: 'confidence', label: 'Conf.', fmt: v => chip(v, confColor(v)) },
+    { key: 'source_url', label: 'Source', fmt: v => fmt.link(v) },
+  ];
+  const openF = i => inspector.open({ title: esc(i.title), sub: `${esc(i.entity || '')} · ${esc(scrubId(i.filer_or_source_agency || ''))} · ${esc(i.filed_or_dated || '')}`, color: COLOR, sections: [{ label: 'Key figures', html: ui.kv(Object.fromEntries(figList(i.key_figures).map(([k, v]) => [k, esc(figV(v))]))) }, { label: 'What it tells us', html: `<div class="small text-2">${esc(scrubId(i.what_it_tells_us || ''))}</div>` }, { label: 'Source', html: `${i.source_url ? fmt.link(i.source_url, fmt.host(i.source_url) || 'source') : ''}<div class="dim small mt-8">Confidence ${esc(i.confidence)}${i.retrieved ? ` · retrieved ${esc(i.retrieved)}` : ''}</div>` }], actions: [i.source_url ? { label: 'Open source ↗', href: i.source_url } : null].filter(Boolean) });
+  let tbl;
+  const flt = ui.filters(el.querySelector('#fil-filters'), [{ key: 'q', label: 'Search filings…', type: 'search' }, { key: 'cat', label: 'Category', options: cats }], st => { const q = (st.q || '').toLowerCase(); const rows = items.filter(i => (!st.cat || i.category === st.cat) && (!q || JSON.stringify(i).toLowerCase().includes(q))); flt.setCount(`${rows.length} / ${items.length}`); tbl.update(rows); });
+  flt.setCount(`${items.length} / ${items.length}`);
+  tbl = ui.table(el.querySelector('#fil-table'), { columns, rows: items, pageSize: 10, exportName: 'filings', onRow: openF });
 }
 
 export default {
-  id: 'cet', name: 'CET', tag: 'New England', color: 'var(--c-cet)', group: 'Portfolio',
-  tagline: 'Electrical, solar, EV & energy efficiency across New England — Worcester + Taunton MA, NuWave (Norwell MA), Horton (CT)',
+  id: 'cet', name: 'CET', tag: 'Electrical & energy', color: 'var(--c-cet)', group: 'Portfolio',
+  tagline: 'Commonwealth Electrical Technologies (CET Energy Solutions): electrical, solar, EV and energy efficiency · Worcester, MA · 400+ professionals',
   hq: { lat: 42.2626, lon: -71.8023, label: 'Worcester, MA' },
   views: [
     { id: 'overview', name: 'Operating picture', icon: '◉', render: overview },
@@ -804,9 +886,11 @@ export default {
     { id: 'wastewater', name: 'Wastewater accounts', icon: '◍', render: wastewater },
     { id: 'transfers', name: 'Property transfers', icon: '⇄', render: transfers },
     { id: 'filings', name: 'Public filings', icon: '§', render: filingsView },
+    { id: 'tools', name: 'Tools', render: ctx => embedView(ctx, 'redesigns/cet/gridos.html', { title: 'CET tools' }) },
+    { id: 'plan', name: 'Plan', render: ctx => embedView(ctx, 'redesigns/cet/growth-plan.html', { title: 'CET plan' }) },
   ],
   tour: [
-    { order: 200, hash: '#/cet/overview', caption: '<b>CET:</b> New England only. Horton turns funded wastewater plants into work CET can prime.', narration: 'CET is New England only. Horton turns funded wastewater plants into work CET can prime.', duration: 6500 },
+    { order: 200, hash: '#/cet/overview', caption: '<b>CET:</b> six add-ons, four reported in October 2026. Horton turns funded wastewater plants into work CET can prime.', narration: 'CET has grown to six add-ons, four of them reported in October 2026. Horton turns funded wastewater plants into work CET can prime.', duration: 6500 },
     { order: 210, hash: '#/cet/opportunities', caption: '<b>Opportunity radar:</b> sourced bids, capital plans and older bid lists in one ranked list, colour-coded by capability.', narration: 'The radar ranks every sourced bid, capital plan and award by capability, value and due date.', duration: 7000 },
     { order: 220, hash: '#/cet/wastewater', caption: '<b>Horton cross-sell:</b> 183 treatment plants ranked by fit, funded projects first.', narration: 'Every treatment plant in Connecticut, Massachusetts and Rhode Island, ranked for Horton, funded projects first.', duration: 7500 },
     { order: 230, hash: '#/cet/transfers', caption: '<b>New owner, new capital plan.</b> Commercial and industrial sales become an outreach list.', narration: 'Each commercial sale brings a new owner with a capital plan. That is the outreach list.', duration: 9500 },

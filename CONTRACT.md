@@ -1,4 +1,4 @@
-# BSP Desk — build contract for module authors
+# Broad Sky OS — build contract for module authors
 
 Static site (GitHub Pages, no build step, vanilla ES modules). Everything a module needs lives in `assets/core.js`.
 Read this file fully, then read `assets/core.js` and `assets/app.css` before writing a module.
@@ -29,7 +29,7 @@ export default {
 
 ## 2. Data
 `await ctx.data.load('pp_zips')` → array of row objects (columnar files decode automatically). `await ctx.data.research('ma_targets_pp')` → `{meta, items, …}` or `null` if the file does not exist (ALWAYS handle null: render `ui.note('Research dataset not yet available', 'warn')`).
-Legacy-derived tables in `data/`: cet_ne_counties, cet_ne_development, cet_ne_rfps, cet_nyc_archive_summary, pp_zips, pp_meta (object), pp_sales_90d, fl_lawfirms, ts_sites (27k rows — always filter/aggregate before rendering), ts_parents.
+Legacy-derived tables in `data/`: cet_ne_counties, cet_ne_development, cet_ne_rfps, pp_zips, pp_meta (object), pp_sales_90d, fl_lawfirms, ts_sites (27k rows — always filter/aggregate before rendering), ts_parents.
 Research datasets in `data/research/` (shape `{meta, items}`; see `data/research/README.md` when present): cet_opportunities, cet_wwtp_targets, pp_storm_events, pp_demand_model, ma_targets_cet, ma_targets_pp, ma_targets_fl_ts, pe_landscape, bsp_firm (also `firm`, `timeline`, `bpi_opportunities`, `fh_opportunities` keys), fl_midsize_firms, pp_market, pp_filings, cet_filings, frontline_filings, thomas_filings, bpi_filings, fairharbor_filings, rival_filings, public_comps.
 Property transfers in `data/sales/` (shape `{meta, items}`): pp_sales_pa_a, pp_sales_pa_b, pp_sales_nj, cet_transfers_ma, cet_transfers_ct_ri, cet_home_sales_ma, cet_home_sales_ct_ri, ts_sales_gloucester_nj, bpi_sales_dc, fh_sales_nyc — load with `data.research('sales/pp_sales_nj')`? No: use `data.load('sales/pp_sales_nj')` (path with slash loads exactly `data/sales/pp_sales_nj.json`).
 Every panel that shows data ends with a provenance footer: `foot: ui.source('NOAA Storm Events', url, 'Sept 2026')`.
@@ -58,8 +58,8 @@ Every panel that shows data ends with a provenance footer: `foot: ui.source('NOA
 - Colours: company tokens `--c-bsp --c-cet --c-pp --c-fl --c-ts --c-bpi --c-fh --c-ma --c-pe --c-fin`; semantic `--green --amber --red --accent --purple --cyan`.
 
 ## 5. Facts (do not contradict; see data/research/bsp_firm.json for more)
-- Broad Sky Partners (BSP; call it BSP in copy): NYC LMM PE, CEO/founder Tyler Zachem; six companies today, seven since launch; 23 add-ons; first exit Smith + Howard → TPG (Aug 2026, ~100→800 professionals, 9 add-ons). Portfolio Resource Group (PRG) led by operators.
-- CET (Commonwealth Electrical Technologies): Worcester + Taunton MA; NuWave Energy Solutions (Norwell MA, Oct 2025); Horton Electrical Services (CT, Sept 15 2026, 120+ staff, wastewater/pump stations/solar/civil). Licensed in all 6 New England states. **No NYC expansion** (CEO guidance) — NYC analysis archived.
+- Broad Sky Partners (BSP; call it BSP in copy): New York-based lower-middle-market PE, CEO/founder Tyler Zachem; six companies today, seven since launch; 23 add-ons; first exit Smith + Howard → TPG (Aug 2026, ~100→800 professionals, 9 add-ons). Portfolio Resource Group (PRG) led by operators.
+- CET (Commonwealth Electrical Technologies, also branded CET Energy Solutions): Worcester, MA headquarters; 400+ professionals (its own site). Six add-ons: NuWave Energy Solutions (Norwell MA, 7 Oct 2025) and Horton Electrical Services (CT, 15 Sept 2026, 120+ staff, wastewater/pump stations/solar/civil) confirmed; Direct Electric Services, JDL Electric, New Horizons Technologies and Vanguard Building Solutions reported in trade press on 28 to 29 Oct 2026 (label these four "reported"). Licensed in about ten states across New England and the Mid-Atlantic (reported). The bid, county and wastewater data sets cover the six New England states; that is a statement about the data, not the company. No New York City plan is stated or implied anywhere.
 - Punctual Pros: East Hempfield (Lancaster Co.) PA; One Hour / Benjamin Franklin / Mister Sparky; ~240 zips; Horvath Home Services (Beachwood/Toms River NJ, Dec 2024; Ocean & Monmouth).
 - Frontline Managed Services: St. Louis; 800+ law firms, >50% of AM Law 200; managed IT + revenue cycle.
 - Thomas Scientific: Swedesboro NJ; lab supply distribution; acquired Jan 2022 from Carlyle.

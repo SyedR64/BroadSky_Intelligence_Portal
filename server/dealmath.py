@@ -322,7 +322,7 @@ def run_tool(args):
 
 TOOL = {
     'name': 'deal_model',
-    'description': ("Run BSP Desk's acquisition model (the same maths as the portal's acquisition model and its Excel download): a leveraged buyout "
+    'description': ("Run Broad Sky OS's acquisition model (the same maths as the portal's acquisition model and its Excel download): a leveraged buyout "
                     "with add-ons (price, debt, equity check, exit value, money multiple, IRR and where the gain comes from), a five-year DCF, and the "
                     "price a buyer can pay for a 20% to 25% return. Use it for any question about valuation, purchase price, financing, returns or what a "
                     "company or add-on target is worth. Start from the closest preset and override inputs with the best estimates you found "

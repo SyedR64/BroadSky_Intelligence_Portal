@@ -1,7 +1,7 @@
 /* BPI concept: shared behaviour for index.html and signalos.html (reveal, office clocks, chat).
    The frame (top bar, concept banner, breadcrumb, footer) comes from assets/frame.js. */
-import { Chat } from '../../assets/chat.js?v=20261123143257';
-import { Frame } from '../../assets/frame.js?v=20261123143257';
+import { Chat } from '../../assets/chat.js?v=20261123172325';
+import { Frame } from '../../assets/frame.js?v=20261123172325';
 
 /** Plain-English copy from dataset strings: dataset file paths become their human names,
     internal record ids (bpi-022, ra-bpi, lever-03 …) are dropped. */
@@ -66,5 +66,5 @@ export function mountChat(extraSuggestions) {
 }
 
 export function faqHTML(list = FAQ) {
-  return list.map((f, i) => `<details${i === 0 ? ' open' : ''}><summary>${f.q}</summary><div class="ans">${f.a}</div></details>`).join('');
+  return list.map((f, i) => `<details><summary>${f.q}</summary><div class="ans">${f.a}</div></details>`).join('');
 }

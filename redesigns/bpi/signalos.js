@@ -1,8 +1,8 @@
 /* SignalOS product page: demo tabs, synthetic-audience test, compliance workflow, value math, evidence. */
-import { Data, Fmt } from '../../assets/core.js?v=20261123143257';
-import { chrome, mountChat, plain } from './site.js?v=20261123143257';
-import { mountMonitor, reduceMotion } from './monitor.js?v=20261123143257';
-import { Frame } from '../../assets/frame.js?v=20261123143257';
+import { Data, Fmt } from '../../assets/core.js?v=20261123172325';
+import { chrome, mountChat, plain } from './site.js?v=20261123172325';
+import { mountMonitor, reduceMotion } from './monitor.js?v=20261123172325';
+import { Frame } from '../../assets/frame.js?v=20261123172325';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const $ = (s, r = document) => r.querySelector(s);
@@ -151,7 +151,8 @@ Data.load('research/serviceos_evidence').then(d => {
     ['Compliance rules', 'BPI-built rules engine', 'Fact base per client, claims tracing, regulated-sector disclosures (health, energy, financial), legal routing and audit log.', 'Inside the $1–2M program (est.)', 'build'],
     ['Outcome dashboards', 'BPI-built BI layer', 'Retainer scorecards: share of voice, narrative sentiment, policy outcomes, paid-media lift.', 'Inside the $1–2M program (est.)', 'build'],
   ];
-  $('#stack-tbl tbody').innerHTML = vs.map(v => `<tr><td>${esc(Frame.humanizeText(String(v.category || '')))}</td><td><a href="${esc(v.source_url)}" target="_blank" rel="noopener">${esc(v.vendor)}</a></td><td>${esc(plain(v.what_it_does))}</td><td>${esc(plain(v.pricing_note))}</td><td><span class="bb buy">Buy</span></td></tr>`).join('') + build.map(b => `<tr><td>${esc(b[0])}</td><td>${esc(b[1])}</td><td>${esc(b[2])}</td><td>${esc(b[3])}</td><td><span class="bb build">Build</span></td></tr>`).join('');
+  $('#stack-tbl tbody').innerHTML = vs.map(v => `<tr><td>${esc(Frame.humanizeText(String(v.category || '')))}</td><td><a href="${esc(v.source_url)}" target="_blank" rel="noopener">${esc(v.vendor)}</a></td><td><span class="bb buy">Buy</span></td></tr>`).join('') + build.map(b => `<tr><td>${esc(b[0])}</td><td>${esc(b[1])}</td><td><span class="bb build">Build</span></td></tr>`).join('');
+  $('#stack-more tbody').innerHTML = vs.map(v => `<tr><td>${esc(Frame.humanizeText(String(v.category || '')))}</td><td>${esc(plain(v.what_it_does))}</td><td>${esc(plain(v.pricing_note))}</td></tr>`).join('') + build.map(b => `<tr><td>${esc(b[0])}</td><td>${esc(b[2])}</td><td>${esc(b[3])}</td></tr>`).join('');
 }).catch(() => { $('#evidence').innerHTML = '<p class="sys-src">Evidence file not available; the defaults above come from the OS program evidence.</p>'; });
 
 /* ── roadmap ───────────────────────────────────────────────────────────── */

@@ -1,5 +1,5 @@
 /* Shared, higher-level components used by several modules (targets, filings, opportunities). */
-import { esc } from './core.js?v=20261123143257';
+import { esc } from './core.js?v=20261123172325';
 
 const num = v => (v == null || isNaN(v)) ? null : Number(v);
 const fmtFig = x => x == null ? '—' : typeof x === 'boolean' ? (x ? 'yes' : 'no') : typeof x === 'number' ? x.toLocaleString() : typeof x === 'object' ? (Array.isArray(x) ? x.map(fmtFig).join(', ') : Object.entries(x).map(([k, v]) => `${k} ${fmtFig(v)}`).join('; ')) : String(x);
@@ -30,16 +30,14 @@ export function renderTargets(ctx, el, { items, color, platformLabel, exportName
     { key: 'employees', label: 'Staff', num: true, fmt: (v, r) => r._staffFmt ? r._staffFmt(v) : fmt.num(v) },
     { key: 'revenue_est_usd', label: 'Rev. est.', num: true, fmt: (v, r) => r._revFmt ? r._revFmt(v) : fmt.money(v) },
     { key: 'ownership', label: 'Ownership', fmt: v => v ? fmt.chip(v, v === 'pe' ? 'var(--red)' : v === 'founder' || v === 'family' ? 'var(--green)' : 'var(--muted)') : '—' },
-    { key: 'specialties', label: 'Specialties / trades', fmt: (v, r) => fmt.list(v || r.trades || r.offerings || [], 3) },
     ...extraColumns,
-    { key: 'strategic_rationale', label: 'Why', wrap: true, fmt: v => `<span class="small text-2">${esc(String(v || '').slice(0, 140))}</span>` },
   ];
   function open(t) {
     const fb = t.fit_breakdown || {};
     inspector.open({ title: esc(t.company), sub: `${esc(t.hq_city || '')}${t.hq_city ? ', ' : ''}${esc(t._state)} · ${platformLabel || ''} add-on candidate`, color,
       sections: [
         { label: 'Fit', html: `<div class="sys-kpis kpis insp-kpis">${ui.kpi({ label: 'Fit score', value: esc(t.fit_score ?? '—'), sub: fmt.tier(t._tier), color })}</div>${Object.keys(fb).length ? (() => { const vals = Object.values(fb).map(num).filter(x => x != null); const scale = Math.max(...vals, 0) <= 5 ? 20 : Math.max(...vals, 0) <= 10 ? 10 : 1; return `<div class="mt-8">${ctx.charts.hbar(Object.entries(fb).map(([k, v]) => ({ label: k.replace(/_/g, ' '), value: Math.round((num(v) || 0) * scale) })), { max: 100, fmt: v => v, labelW: 130, color })}</div>`; })() : ''}` },
-        { label: 'Profile', html: ui.kv({ Founded: t.founded_year, Employees: fmt.num(t.employees), 'Revenue (est.)': t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)} <span class="dim small">${esc(t.revenue_source || '')}</span>` : null, Ownership: t.ownership, Brands: t.brands_or_franchise, Specialties: t.specialties || t.trades || t.offerings, 'End markets': t.end_markets || t.customer_segments, Geography: t.geography_served, Reviews: t.review_count ? `${fmt.num(t.review_count)} · ${t.review_rating || ''}★` : null, 'Distance (Lancaster)': t.distance_mi_from_lancaster ? `${t.distance_mi_from_lancaster} mi` : null, 'Distance (Toms River)': t.distance_mi_from_toms_river ? `${t.distance_mi_from_toms_river} mi` : null, Website: t.website ? fmt.link(t.website) : null }) },
+        { label: 'Profile', html: ui.kv({ Founded: t.founded_year, Employees: fmt.num(t.employees), 'Revenue (est.)': t.revenue_est_usd ? `${fmt.money(t.revenue_est_usd)} <span class="dim small">${esc(t.revenue_source || '')}</span>` : null, Ownership: t.ownership, Brands: t._brandsFull || t.brands_or_franchise, Specialties: t.specialties || t.trades || t.offerings, 'End markets': t.end_markets || t.customer_segments, Geography: t.geography_served, Reviews: t.review_count ? `${fmt.num(t.review_count)} · ${t.review_rating || ''}★` : null, 'Distance (Lancaster)': t.distance_mi_from_lancaster ? `${t.distance_mi_from_lancaster} mi` : null, 'Distance (Toms River)': t.distance_mi_from_toms_river ? `${t.distance_mi_from_toms_river} mi` : null, Website: t.website ? fmt.link(t.website) : null }) },
         { label: 'Strategic rationale', html: `<div class="small text-2">${esc(t.strategic_rationale || '')}</div>` },
         t.risk_flags?.length ? { label: 'Risk flags', html: t.risk_flags.map(r => fmt.chip(r, 'var(--amber)')).join(' ') } : null,
         { label: 'Sources', html: `<div class="col gap-4 small">${(t.sources || []).map(s => `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(fmt.host(s) || s)}</a>`).join('') || '—'}</div><div class="dim small mt-8">Retrieved ${esc(t.retrieved || '')}</div>` },
