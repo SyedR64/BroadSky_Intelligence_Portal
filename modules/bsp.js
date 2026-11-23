@@ -52,7 +52,17 @@ function indexOnce(app, b) {
     ...(b.graph?.nodes || []).filter(n => /^p-/.test(n.id)).slice(0, 120).map(n => ({ label: n.name, sub: `${TYPE_LABEL[n.type] || ''} · ${n.title || ''}`, href: `#/bsp/network?node=${encodeURIComponent(n.id)}`, kind: 'Network', color: COLOR })),
   ]);
 }
-const missingNote = (ui, b) => b.missing.length ? ui.note(`Research dataset${b.missing.length > 1 ? 's' : ''} not yet available: ${b.missing.map(Copy.dataset).join(', ')}. This screen shows partial results.`, 'warn') + '<div class="mt-12"></div>' : '';
+/* Shorter text for a table cell (10 words at most; the full text is in the side panel a row opens). */
+const brief = (s, n = 10, clause = true) => {
+  let t = String(s ?? '').replace(/\s*\([^)]*\)/g, '').replace(/\s+([.,;:])/g, '$1').replace(/\s+/g, ' ').trim();
+  if (clause) t = t.split(/;\s|(?<=[a-z0-9'’]\.)\s+(?=[A-Z])/)[0];
+  const w = t.split(' ');
+  return w.length > n ? w.slice(0, n).join(' ').replace(/[,:;]$/, '') + '…' : t.replace(/[.;]$/, '');
+};
+/* Source, method and as-of text: the shell moves these into the Sources and Method drawers */
+const srcMark = (ui, text, asof) => `<p class="sys-src" data-src>${ui.source(text, null, asof)}</p>`;
+const metaMark = (html) => `<p class="sys-src" data-method>${html}</p>`;
+const missingNote = (ui, b) => b.missing.length ? ui.note(`Data not yet available: ${b.missing.map(Copy.dataset).join(', ')}.`, 'warn') + '<div class="mt-12"></div>' : '';
 const pChip = (fmt, p) => p ? coChip(p, PLATFORMS[p].short) : '—';
 
 /* ── Deal inspector ──────────────────────────────────────────────────────── */
@@ -62,7 +72,7 @@ function vehiclesHTML(ctx, d) {
   const list = (v.vehicles || []).map(x => `<li><b>${esc(x.entity)}</b>${x.amount_sold_usd != null ? ` · ${fmt.money(x.amount_sold_usd)} sold` : ''}${x.investors ? ` · ${x.investors} investor${x.investors > 1 ? 's' : ''}` : ''}${x.note ? `<div class="dim small">${esc(words(x.note))}</div>` : ''}</li>`).join('');
   return `<ul class="bsp-ul">${list}</ul>${v.note ? `<div class="dim small mt-4">${esc(words(v.note))}</div>` : ''}`;
 }
-const vehicleShort = d => { const v = d.co_invest_vehicle; if (!v?.vehicles?.length) return null; const t = v.vehicles.reduce((a, x) => a + (x.amount_sold_usd || 0), 0); return `${v.vehicles[0].entity}${v.vehicles.length > 1 ? ` +${v.vehicles.length - 1}` : ''}${t ? ` · $${(t / 1e6).toFixed(1)}M` : ''}`; };
+const vehicleShort = d => { const v = d.co_invest_vehicle; if (!v?.vehicles?.length) return null; const t = v.vehicles.reduce((a, x) => a + (x.amount_sold_usd || 0), 0); return `${v.vehicles[0].entity}${v.vehicles.length > 1 ? ` +${v.vehicles.length - 1}` : ''}${t ? `, $${(t / 1e6).toFixed(1)}M` : ''}`; };
 function openDeal(ctx, b, d) {
   const { ui, esc, inspector, app } = ctx; const P = PLATFORMS[d._p];
   const plat = b.deals.find(x => x.deal_type === 'platform' && x._p === d._p);
@@ -88,34 +98,32 @@ function openDeal(ctx, b, d) {
 const NUM_WORDS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen'];
 function narHTML(ctx, b) {
   const { ui, esc } = ctx; const nar = b.meth?.meta?.methodology_narrative || []; if (!nar.length) return '';
-  return `<details class="bsp-drawer mt-12"><summary><b>Thesis first, essential services, founders stay</b><span>${NUM_WORDS[nar.length] || nar.length} observations, each traceable to a press release or a filing.</span></summary>
-    <ol class="bsp-nar">${nar.map(s => `<li>${esc(s)}</li>`).join('')}</ol>
-    <p class="sys-src">${ui.source(SRC_METH, null, 'Oct 2026')} · Weights and strengths are analyst inference from the public record, not BSP’s internal criteria.</p>
-    <p class="sys-src"><b>Terms:</b> Form ADV: the filing every investment adviser makes with the SEC (Securities and Exchange Commission). PIK: interest paid in more debt instead of cash.</p></details>`;
+  return `<details class="bsp-drawer mt-12"><summary><b>Thesis first, essential services, founders stay</b><span>${NUM_WORDS[nar.length] || nar.length} observations</span></summary>
+    <ol class="bsp-nar">${nar.map(s => `<li>${esc(s)}</li>`).join('')}</ol></details>`;
 }
 /* The next five (highest BSP fit, at most two per company) with the intro path and the draft first call:
    the same text the side panel shows for one row, printed for five. */
 function nextFiveHTML(ctx, b) {
   const { ui, esc, fmt } = ctx; const five = nextFive(b, 5, 2); if (!five.length) return '';
-  return `<details class="bsp-drawer mt-12"><summary><b>Call sheet: the next five</b><span>The highest BSP fit scores, at most two per company, each with an intro path and a draft first-call script.</span></summary>
+  return `<details class="bsp-drawer mt-12"><summary><b>Call sheet: the next five</b></summary>
     <div class="bsp-next">${five.map((r, i) => { const ip = introFor(b, r); const sc = firstCallScript(b, r); return `<article class="sys-card sys-card--flat bsp-nx" ${coAttr(r._p)}>
       <div class="bsp-nx-h"><b>${i + 1}. ${esc(r.company)}</b>${coChip(r._p, r._plat)}<span class="sys-src">${esc([r.hq_city, r.state].filter(Boolean).join(', '))}</span><span class="sys-num">BSP fit ${r._score}</span></div>
       <p class="sys-card-body">${esc(r._explain)}</p>
       <div class="bsp-nx-grid"><div>
         <p class="sys-card-label">Intro path · ${ip?.sourced ? `${esc(ip.confidence)} confidence` : 'default path'}</p>
-        ${ip ? `<div class="bsp-path">${ip.names.filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i>→</i>')}</div><p class="sys-card-body">${esc(ip.path)}</p>` : ''}
+        ${ip ? `<div class="bsp-path">${ip.names.filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i></i>')}</div><p class="sys-card-body">${esc(ip.path)}</p>` : ''}
         <p class="sys-card-label">Profile</p><p class="sys-card-body">${esc(r.ownership ? String(r.ownership).replace(/_/g, ' ') : '—')}${r.founded_year ? ` · founded ${r.founded_year}` : ''}${r.employees != null ? ` · ${fmt.num(r.employees)} employees` : ''}${r.revenue_est_usd ? ` · ${fmt.money(r.revenue_est_usd)}${EST} revenue` : ''}</p>
         ${r.risk_flags?.length ? `<p class="sys-card-label">Risk flags</p><div class="sys-chips">${r.risk_flags.map(x => stChip(x, 'warn')).join('')}</div>` : ''}
       </div><div>
         <p class="sys-card-label">First-call script (draft)</p><ol class="bsp-script">${sc.map(s => `<li><b>${esc(s.k)}.</b> ${esc(s.t)}</li>`).join('')}</ol>
       </div></div>
     </article>`; }).join('')}</div>
-    <p class="sys-src">${ui.source(SRC_POOLS, null, 'Sept 2026')} · Revenue figures are modeled estimates. Scripts are drafts for the Portfolio Resource Group, not outreach that has happened.</p></details>`;
+    </details>`;
 }
 /* How each of the ten criteria is scored: the text the side panel shows for one criterion, printed for all ten. */
 function critHTML(ctx, b) {
   const { esc } = ctx;
-  return `<details class="bsp-drawer mt-12"><summary><b>How each criterion is scored</b><span>The test, the 1 to 5 bands and how the portal checks it.</span></summary>
+  return `<details class="bsp-drawer mt-12"><summary><b>How each criterion is scored</b></summary>
     <div class="bsp-critd">${b.criteria.slice().sort((a, c) => c.weight_pct - a.weight_pct).map(c => `<div><p><b>${esc(c.criterion)}</b> · <span class="sys-num">${c.weight_pct}%</span></p><p>${esc(c.test)}</p><p class="bsp-bands">${Object.entries(c.scoring_bands || {}).sort((x, y) => y[0] - x[0]).map(([k, v]) => `<span><b>${esc(k)}</b>${esc(v)}</span>`).join('')}</p><p class="sys-muted">${esc(TESTS[c.id]?.how || '')}</p></div>`).join('')}</div></details>`;
 }
 
@@ -127,34 +135,41 @@ async function viewDeals(ctx) {
   indexOnce(app, b); const c = b.cadence;
   const named = b.deals.filter(d => d.deal_type === 'add_on');
   const disclosed = named.filter(d => d.seller_type), anchors = b.deals.filter(d => d.deal_type === 'platform'), anchorsUndisclosed = anchors.filter(d => !d.seller_type).length;
-  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Every deal', sub: `${c.platforms} anchor acquisitions in ${n1(monthsBetween(b.deals[0].date, b.deals.filter(d => d.deal_type === 'platform').slice(-1)[0].date) / 12)} years, ${c.pePlatforms} from other sponsors. None of the ${disclosed.length} add-ons with a disclosed seller came from a private-equity seller.`, chips: `${fmt.chip('Releases and SEC filings')}${fmt.chip('Retrieved Oct 6, 2026')}`, actions: `<a class="${ui.btnCls('secondary', '')}" href="#/home/firm">BSP profile</a>` })}
+  const exits = b.deals.filter(d => d.deal_type === 'exit').length;
+  const yrs = n1(monthsBetween(b.deals[0].date, anchors.slice(-1)[0].date) / 12);
+  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Every deal', sub: `${c.platforms} anchors, ${c.addonsStated} add-ons, ${exits} exit; no disclosed add-on seller was a private-equity sponsor.`, actions: `<a class="${ui.btnCls('secondary', '')}" href="#/home/firm">BSP profile</a>` })}
     ${missingNote(ui, b)}
     ${ui.kpis([
-      { label: 'Anchor acquisitions', value: fmt.num(c.platforms), sub: `${c.pePlatforms} from sponsors · ${anchors.length - c.pePlatforms - anchorsUndisclosed} from founders, partners or franchisees${anchorsUndisclosed ? ` · ${anchorsUndisclosed} undisclosed` : ''}` },
-      { label: 'Add-ons', value: `${fmt.num(c.addonsStated)}`, sub: `${c.addonsNamed} identified by name` },
-      { label: 'Add-ons from PE sellers', value: fmt.num(c.peAddons), sub: 'Founder, family, partner or franchisee owners', color: 'var(--sys-good)' },
-      { label: 'Months between anchor deals', value: n1(c.medianGap), sub: 'Median, Jan 2022 to Feb 2025' },
-      { label: 'First exit', value: `${n1(c.exitHold)} mo`, sub: 'Smith + Howard to TPG Growth, Aug 2026' },
+      { label: 'Anchor acquisitions', value: fmt.num(c.platforms), sub: `${c.pePlatforms} sponsor, ${anchors.length - c.pePlatforms - anchorsUndisclosed} owner${anchorsUndisclosed ? `, ${anchorsUndisclosed} undisclosed` : ''}` },
+      { label: 'Add-ons', value: `${fmt.num(c.addonsStated)}`, sub: `${c.addonsNamed} named` },
+      { label: 'Add-ons from PE sellers', value: fmt.num(c.peAddons), sub: `of ${disclosed.length} disclosed`, color: 'var(--sys-good)' },
+      { label: 'Months between anchor deals', value: n1(c.medianGap), sub: `Median over ${yrs} years` },
+      { label: 'First exit', value: `${n1(c.exitHold)} mo`, sub: 'Smith + Howard, Aug 2026' },
     ])}
+    <div class="mt-12"></div>
+    ${ui.panel({ title: 'Deal ledger', body: '<div data-f></div><div class="bsp-ledger" data-t></div>' })}
+    <div class="mt-12"></div>
+    ${ui.panel({ title: 'Deal chronology', body: `<div class="bsp-stripwrap">${stripSVG(b, PCOL)}</div>` })}
     ${narHTML(ctx, b)}
-    <div class="mt-12"></div>
-    ${ui.panel({ title: 'Deal chronology', sub: 'Each mark is a disclosed transaction. Select one to read the rationale, advisers, lenders and co-invest vehicle.', body: `<div class="bsp-stripwrap">${stripSVG(b, PCOL)}</div>`, foot: ui.source(SRC_METH, null, 'Oct 2026') + `<span>Thomas Scientific uses the Jan 2022 announcement; CET uses the Feb 2025 Form D first sale.</span>` })}
-    <div class="mt-12"></div>
-    ${ui.panel({ title: 'Deal ledger', sub: 'Portfolio company, add-on and exit records with seller type, advisers, lenders and co-invest vehicles', body: '<div data-f></div><div class="bsp-ledger" data-t></div>', foot: ui.source(SRC_METH, null, 'Oct 2026') })}
+    ${srcMark(ui, SRC_METH, 'Oct 2026')}
+    <p class="sys-src" data-src>Releases and SEC filings, retrieved Oct 6, 2026.</p>
+    <span data-asof="Oct 6, 2026"></span>
+    ${metaMark(`Seven anchors in ${yrs} years; the median gap runs Jan 2022 to Feb 2025. Thomas Scientific uses the Jan 2022 announcement; CET uses the Feb 2025 Form D first sale. First exit: Smith + Howard to TPG Growth. Weights and strengths are analyst inference from the public record, not BSP’s internal criteria. Form ADV: the filing every investment adviser makes with the SEC (Securities and Exchange Commission). PIK: interest paid in more debt instead of cash.`)}
   </div>`;
   const root = el.querySelector('.m-bsp');
   root.querySelectorAll('.bsp-mk').forEach(g => { const go = () => { const d = b.dealById.get(g.dataset.deal); root.querySelectorAll('.bsp-mk').forEach(x => x.classList.toggle('sel', x === g)); openDeal(ctx, b, d); }; g.addEventListener('click', go); g.addEventListener('keydown', e => { if (e.key === 'Enter') go(); }); });
-  const rows = b.deals.map(d => ({ ...d, _type: DEAL_TYPE[d.deal_type] || d.deal_type, _plat: PLATFORMS[d._p]?.short || d.platform, _seller: sellerLabel(d.seller_type), _buy: words(d.buyer_advisor) || '—', _sell: words(d.seller_advisor) || '—', _lend: words(d.lender_or_capital) || 'Not disclosed', _veh: vehicleShort(d) || '—' }));
+  const rows = b.deals.map(d => ({ ...d, _type: DEAL_TYPE[d.deal_type] || d.deal_type, _plat: PLATFORMS[d._p]?.short || d.platform, _seller: d.seller_type ? sellerLabel(d.seller_type) : '—', _buy: words(d.buyer_advisor) || '—', _sell: words(d.seller_advisor) || '—', _lend: words(d.lender_or_capital) || '—', _veh: vehicleShort(d) || '—' }));
+  const cell = (v, n, cls = '') => `<div class="bsp-cell${cls}" data-no-gloss title="${esc(v)}">${esc(brief(v, n, false))}</div>`;
   const cols = [
     { key: 'date', label: 'Date', fmt: v => `<span class="sys-num">${esc(fmtMonth(v))}</span>` },
-    { key: 'company', label: 'Company', fmt: (v, r) => `<b>${esc(v)}</b>`, wrap: true },
+    { key: 'company', label: 'Company', fmt: v => `<b data-no-gloss title="${esc(v)}">${esc(brief(v, 8, false))}</b>`, wrap: true },
     { key: '_plat', label: 'Portfolio company', fmt: (v, r) => pChip(fmt, r._p) },
     { key: '_type', label: 'Type', fmt: v => esc(v) },
     { key: '_seller', label: 'Seller type', fmt: v => `<div style="min-width:90px">${esc(v)}</div>`, wrap: true },
-    { key: '_buy', label: 'Buy-side advisers', fmt: v => `<div class="bsp-cell">${esc(v)}</div>`, wrap: true },
-    { key: '_sell', label: 'Sell-side advisers', fmt: v => `<div class="bsp-cell">${esc(v)}</div>`, wrap: true },
-    { key: '_lend', label: 'Lenders', fmt: v => `<div class="bsp-cell bsp-cell--wide">${esc(v)}</div>`, wrap: true },
-    { key: '_veh', label: 'Co-invest vehicle', fmt: v => `<div class="bsp-cell bsp-cell--narrow">${esc(v)}</div>`, wrap: true },
+    { key: '_buy', label: 'Buy-side advisers', fmt: v => cell(v, 6), wrap: true },
+    { key: '_sell', label: 'Sell-side advisers', fmt: v => cell(v, 6), wrap: true },
+    { key: '_lend', label: 'Lenders', fmt: v => cell(v, 7, ' bsp-cell--wide'), wrap: true },
+    { key: '_veh', label: 'Co-invest vehicle', fmt: v => cell(v, 6, ' bsp-cell--narrow'), wrap: true },
   ];
   let tbl;
   const f = ui.filters(root.querySelector('[data-f]'), [
@@ -169,6 +184,20 @@ async function viewDeals(ctx) {
 }
 
 /* ═══ View: patterns ═══ */
+const patHead = t => { const m = String(t).match(/^([^:]{4,90}):/); return brief(m && m[1].split(' ').length <= 12 ? m[1] : t, 18); };
+function openPattern(ctx, b, p) {
+  const { esc, fmt } = ctx; const ids = (p.evidence_deal_ids || []);
+  openInsp(ctx, {
+    title: esc(patHead(p.pattern)), color: COLOR, sub: `${esc(STRENGTH[p.strength] || p.strength)} · ${ids.length} deals`,
+    sections: [
+      { label: 'Pattern', html: `<div class="small text-2">${esc(p.pattern)}</div>` },
+      { label: 'For the next deal', html: `<div class="small text-2">${esc(p.implication_for_next_deals || '—')}</div>` },
+      { label: 'Evidence', html: `<div class="sys-chips">${ids.map(id => { const d = b.dealById.get(id); return d ? coChip(d._p, d.company, 'button', ` data-deal="${esc(id)}" data-evb`) : ''; }).join('')}</div>` },
+      { label: 'Sources', html: `<div class="col gap-4 small">${[...new Set((p.source_urls || [p.source_url]).filter(Boolean))].map(u => fmt.link(u, host(u))).join('')}</div>` },
+    ],
+  });
+  document.querySelectorAll('#inspector [data-evb]').forEach(btn => btn.onclick = () => openDeal(ctx, b, b.dealById.get(btn.dataset.deal)));
+}
 async function viewPatterns(ctx) {
   const { el, ui, fmt, esc, charts, app } = ctx; injectCss();
   const b = await bundle(ctx.data);
@@ -176,36 +205,40 @@ async function viewPatterns(ctx) {
   indexOnce(app, b); const c = b.cadence;
   const strong = b.patterns.filter(p => p.strength === 'strong').length;
   const first = PORDER.map(p => c.firstAddon.find(f => f.p === p)).filter(f => f && f.months != null).map(f => ({ label: PLATFORMS[f.p].short, value: Math.round(f.months * 10) / 10 }));
-  const waiting = c.firstAddon.filter(f => f.months == null).map(f => `${PLATFORMS[f.p].short} (${n1(f.sinceMonths)} months, none yet)`);
+  const waiting = c.firstAddon.filter(f => f.months == null).map(f => `${PLATFORMS[f.p].short} ${n1(f.sinceMonths)} mo`);
   const rate = PORDER.map(p => c.rates.find(r => r.p === p)).filter(Boolean).map(r => ({ label: PLATFORMS[r.p].short, value: r.perYear }));
-  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Deal patterns', sub: `${strong} of ${b.patterns.length} patterns are strong. BSP buys a thesis, keeps founder CEOs, adds the first add-on after about ${n1(c.medianFirst)} months and uses a different lender each time.`, chips: fmt.chip('Inferred from deal record') })}
+  const card = (p, i) => `<article class="sys-card sys-card--flat bsp-pat"><div class="bsp-pat-h">${stChip(STRENGTH[p.strength] || p.strength, STR_ST[p.strength])}<span class="sys-src">${(p.evidence_deal_ids || []).length} deals</span></div><p class="sys-card-body bsp-pat-t"><button type="button" class="bsp-link" data-pat="${i}">${esc(patHead(p.pattern))}</button></p><p class="sys-card-body bsp-pat-i"><b>Next:</b> ${esc(brief(p.implication_for_next_deals || '—', 15))}</p></article>`;
+  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Deal patterns', sub: `${strong} of ${b.patterns.length} patterns are strong; first add-on lands near month ${n1(c.medianFirst)}.` })}
     ${missingNote(ui, b)}
     ${ui.kpis([
-      { label: 'Months between anchor deals', value: n1(c.medianGap), sub: `Median; mean ${n1(c.meanGap)} · ${c.gaps.length} intervals` },
-      { label: 'Months to first add-on', value: n1(c.medianFirst), sub: `Median of ${first.length} companies with an add-on` },
-      { label: 'Add-ons per company-year', value: n1(c.portfolioRate), sub: `Portfolio; ${n1(c.activeRate)} median among active buyers` },
-      { label: 'Hold to first exit', value: `${n1(c.exitHold)} mo`, sub: 'Smith + Howard, 9 add-ons, to TPG Growth' },
+      { label: 'Months between anchor deals', value: n1(c.medianGap), sub: `Mean ${n1(c.meanGap)}` },
+      { label: 'Months to first add-on', value: n1(c.medianFirst), sub: `${first.length} companies` },
+      { label: 'Add-ons per company-year', value: n1(c.portfolioRate), sub: `${n1(c.activeRate)} active buyers` },
+      { label: 'Hold to first exit', value: `${n1(c.exitHold)} mo`, sub: 'Smith + Howard' },
     ])}
     <div class="mt-12"></div>
     <div class="grid grid-2">
-      ${ui.panel({ title: 'Months from company to first add-on', sub: waiting.length ? `Still waiting: ${esc(waiting.join(', '))}` : '', body: charts.hbar(first, { fmt: v => `${n1(v)} mo`, labelW: 130, color: COLOR }), foot: ui.source(SRC_METH, null, 'Oct 2026') })}
-      ${ui.panel({ title: 'Add-ons per company-year', sub: 'BSP’s stated add-on counts over years held (Smith + Howard to its Aug 2026 exit)', body: charts.hbar(rate, { fmt: v => n1(v), labelW: 130, color: COLOR }), foot: ui.source(SRC_METH, null, 'Oct 2026') })}
+      ${ui.panel({ title: 'Months from company to first add-on', sub: waiting.length ? `Waiting: ${esc(waiting.join(', '))}` : '', body: charts.hbar(first, { fmt: v => `${n1(v)} mo`, labelW: 130, color: COLOR }) })}
+      ${ui.panel({ title: 'Add-ons per company-year', body: charts.hbar(rate, { fmt: v => n1(v), labelW: 130, color: COLOR }) })}
     </div>
     <div class="mt-12"></div>
-    ${ui.panel({ title: 'Patterns', sub: 'Each card names the pattern, how strongly the deal record supports it, and what it means for the next deal. Select an evidence chip to open the deal.', body: `<div class="sys-grid bsp-pats">${b.patterns.map(p => `<article class="sys-card sys-card--flat bsp-pat"><div class="bsp-pat-h">${stChip(STRENGTH[p.strength] || p.strength, STR_ST[p.strength])}<span class="sys-src">${(p.evidence_deal_ids || []).length} deals</span></div><p class="sys-card-body bsp-pat-t">${esc(p.pattern)}</p><p class="sys-card-body bsp-pat-i"><b>For the next deal:</b> ${esc(p.implication_for_next_deals || '—')}</p><div class="sys-chips bsp-ev">${(p.evidence_deal_ids || []).map(id => { const d = b.dealById.get(id); return d ? coChip(d._p, clip(d.company, 28), 'button', ` data-deal="${esc(id)}" data-evb`) : ''; }).join('')}</div><p class="sys-src bsp-pat-s">${(p.source_urls || [p.source_url]).filter(Boolean).slice(0, 3).map(u => fmt.link(u, host(u))).join(' · ')}</p></article>`).join('')}</div>`, foot: ui.source(SRC_METH, null, 'Oct 2026') + '<span>Strength and weights are analyst inference, not BSP’s internal criteria.</span>' })}
+    ${ui.panel({ title: 'Patterns', body: `<div class="sys-grid bsp-pats">${b.patterns.map(card).join('')}</div>` })}
     <div class="mt-12"></div>
-    ${ui.panel({ title: 'Where the deals come from', sub: 'Advisers, banks, counsel and relationship channels, with the deals each touched', body: '<div data-ch></div>', foot: ui.source(SRC_METH, null, 'Oct 2026') })}
+    ${ui.panel({ title: 'Where the deals come from', body: '<div data-ch></div>' })}
+    ${srcMark(ui, SRC_METH, 'Oct 2026')}
+    <span data-asof="Oct 2026"></span>
+    ${metaMark(`Patterns are inferred from the deal record. Strength and weights are analyst inference, not BSP’s internal criteria. Mean gap between anchor deals ${n1(c.meanGap)} months over ${c.gaps.length} intervals; the first-add-on median covers ${first.length} companies with an add-on; ${n1(c.activeRate)} add-ons per company-year is the median among active buyers; the exit hold is Smith + Howard, ${(c.rates.find(r => r.p === 'sh') || {}).stated ?? 9} add-ons, to TPG Growth. Add-on counts are BSP’s stated counts over years held (Smith + Howard to its Aug 2026 exit).`)}
   </div>`;
   const root = el.querySelector('.m-bsp');
-  root.querySelectorAll('[data-evb]').forEach(btn => btn.onclick = () => openDeal(ctx, b, b.dealById.get(btn.dataset.deal)));
+  root.querySelectorAll('[data-pat]').forEach(btn => btn.onclick = () => openPattern(ctx, b, b.patterns[Number(btn.dataset.pat)]));
   const CT = { buy_side_banker: 'Buy-side bank', sell_side_banker: 'Sell-side banks', exit_banker: 'Exit banks', legal_counsel: 'Counsel', accounting_ma_consultant: 'Accounting M&A adviser', platform_relationship: 'Relationships', proprietary_search: 'Retained search', thematic_research: 'Thematic research', capital_partner: 'Capital partners' };
   const rows = b.channels.map(s => ({ ...s, _type: CT[s.channel_type] || String(s.channel_type).replace(/_/g, ' '), _deals: (s.roles || []).map(r => b.dealById.get(r.deal_id)?.company).filter(Boolean).join(', ') }));
   ui.table(root.querySelector('[data-ch]'), { columns: [
-    { key: 'channel', label: 'Channel', fmt: v => `<b>${esc(v)}</b>`, wrap: true },
+    { key: 'channel', label: 'Channel', fmt: v => `<b data-no-gloss title="${esc(v)}">${esc(brief(v, 8, false))}</b>`, wrap: true },
     { key: '_type', label: 'Type', fmt: v => esc(v) },
     { key: 'deal_count', label: 'Deals', num: true, fmt: v => fmt.num(v) },
-    { key: '_deals', label: 'Deals touched', fmt: v => `<span title="${esc(v)}">${esc(clip(v, 70))}</span>`, wrap: true },
-    { key: 'implication', label: 'What it means', fmt: v => esc(clip(v, 150)), wrap: true },
+    { key: '_deals', label: 'Deals touched', fmt: v => `<span data-no-gloss title="${esc(v)}">${esc(brief(v, 8, false))}</span>`, wrap: true },
+    { key: 'implication', label: 'What it means', fmt: v => `<span data-no-gloss title="${esc(v || '')}">${esc(brief(v || '—', 10))}</span>`, wrap: true },
   ], rows, pageSize: 20, exportName: 'broad_sky_sourcing_channels', sortKey: 'deal_count', onRow: r => openInsp(ctx, { title: esc(r.channel), color: COLOR, sub: esc(r._type), sections: [
     { label: 'Roles', html: `<ul class="bsp-ul">${(r.roles || []).map(x => { const d = b.dealById.get(x.deal_id); return `<li><b>${esc(d?.company || '—')}</b> · ${esc(x.role || '')} · ${esc(fmtMonth(x.date))}</li>`; }).join('')}</ul>` },
     { label: 'Implication', html: `<div class="small text-2">${esc(r.implication || '—')}</div>` },
@@ -226,7 +259,7 @@ function openTarget(ctx, b, r) {
       { label: 'BSP fit', html: `<div class="sys-kpis"><div class="sys-kpi" ${coAttr(r._p)}><div class="sys-kpi-label">Score (inferred rubric)</div><div class="sys-kpi-value">${r._score}</div><div class="sys-kpi-sub">${esc(r._gate)} · built from ${r._tested}% of the rubric weight · full rubric with portfolio company context ${r._full} · company screen fit ${fmt.num(r.fit_score)}</div></div></div><div class="small text-2 mt-8">${esc(r._explain)}</div>` },
       { label: 'Criterion scores (0–100)', html: charts.hbar(bars, { max: 100, fmt: v => `${v}`, labelW: 190, color: PCOL[r._p] }) + `<div class="dim small mt-4">Company-level criteria are context; neutral criteria are held at 3 of 5 until diligence measures them. Neither is in the BSP fit score.</div>` },
       { label: 'What drove each test', html: ui.kv(Object.fromEntries(b.criteria.filter(c => TESTS[c.id]?.tested).map(c => [`${critShort(c.id)}${isTargetTest(c.id) ? '' : ' (portfolio company)'}`, esc(r._why[c.id])]))) },
-      intro ? { label: intro.sourced ? `Intro path · ${intro.confidence} confidence` : 'Intro path · default path', html: `<div class="bsp-path">${intro.names.filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i>→</i>')}</div><div class="small text-2 mt-4">${esc(intro.path)}</div>${intro.sourced ? `<div class="dim small mt-4">${fmt.link(intro.source_url, host(intro.source_url))}</div>` : ''}` } : null,
+      intro ? { label: intro.sourced ? `Intro path · ${intro.confidence} confidence` : 'Intro path · default path', html: `<div class="bsp-path">${intro.names.filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i></i>')}</div><div class="small text-2 mt-4">${esc(intro.path)}</div>${intro.sourced ? `<div class="dim small mt-4">${fmt.link(intro.source_url, host(intro.source_url))}</div>` : ''}` } : null,
       { label: 'First-call script (draft)', html: `<ol class="bsp-script">${script.map(s => `<li><b>${esc(s.k)}.</b> ${esc(s.t)}</li>`).join('')}</ol>` },
       { label: 'Profile', html: ui.kv({ Ownership: esc(r.ownership || '—'), Founded: r.founded_year, Employees: r.employees != null ? fmt.num(r.employees) : null, 'Revenue': r.revenue_est_usd ? `${fmt.money(r.revenue_est_usd)}${EST} <span class="dim small">modeled</span>` : null, Website: r.website ? fmt.link(r.website) : null }) },
       r.risk_flags?.length ? { label: 'Risk flags', html: `<div class="sys-chips">${r.risk_flags.map(x => stChip(x, 'warn')).join('')}</div>` } : null,
@@ -246,26 +279,31 @@ async function viewRubric(ctx) {
   const tested = b.criteria.filter(c => isTargetTest(c.id)).reduce((a, c) => a + c.weight_pct, 0);
   const platW = b.criteria.filter(c => TESTS[c.id]?.tested === 'platform').reduce((a, c) => a + c.weight_pct, 0);
   const pools = PORDER.filter(p => all.some(r => r._p === p));
-  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Acquisition rubric', sub: `<b>${pri} of ${ranked.length} targets clear the 70-point gate</b>, so the score orders the list rather than filters it. BSP closes about one add-on per company-year: work the top 15 first.`, chips: `${stChip('Weights inferred, not disclosed', 'warn')}${fmt.chip(`${ranked.length} targets · ${pools.length} companies`)}`, actions: `<a class="${ui.btnCls('secondary', '')}" href="#/bsp/network">Deal network</a>` })}
+  const chipFor = id => { const t = TESTS[id]?.tested; return t ? stChip(t === 'proxy' ? 'Proxy' : t === 'platform' ? 'Company context' : 'Scored', t === 'platform' ? 'info' : 'good') : stChip('Not scored', ''); };
+  const untestedW = b.criteria.filter(c => !TESTS[c.id]?.tested).reduce((a, c) => a + c.weight_pct, 0);
+  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Acquisition rubric', sub: `Call the top 15 first; the score orders targets, it does not filter them.`, chips: stChip('Weights inferred, not disclosed', 'warn'), actions: `<a class="${ui.btnCls('secondary', '')}" href="#/bsp/network">Deal network</a>` })}
     ${missingNote(ui, b)}
     ${ui.kpis([
-      { label: 'Targets scored', value: fmt.num(ranked.length), sub: `${all.length - ranked.length} held out (affiliation check)` },
-      { label: 'Clear the 70 gate', value: `${fmt.num(pri)} of ${fmt.num(ranked.length)}`, sub: 'Most clear it: the score orders the list', color: 'var(--sys-good)' },
-      { label: 'Watch list (55–69)', value: fmt.num(watch), sub: 'Re-score after a first call', color: 'var(--sys-warn)' },
-      { label: 'Rubric weight tested per target', value: `${tested}%`, sub: `${platW}% at company level · rest in diligence` },
-      ...pools.map(p => ({ label: `Independents · ${PLATFORMS[p].short}`, value: fmt.num(S.indep[p] || 0), sub: 'Fragmentation test (25+ = 5)', color: PCOL[p] })).slice(0, 2),
+      { label: 'Targets scored', value: fmt.num(ranked.length), sub: `${pools.length} companies` },
+      { label: 'Clear the 70 gate', value: `${fmt.num(pri)} of ${fmt.num(ranked.length)}`, color: 'var(--sys-good)' },
+      { label: 'Watch list (55–69)', value: fmt.num(watch), color: 'var(--sys-warn)' },
+      { label: 'Rubric weight tested per target', value: `${tested}%`, sub: `${platW}% company level` },
+      ...pools.map(p => ({ label: `Independents · ${PLATFORMS[p].short}`, value: fmt.num(S.indep[p] || 0), color: PCOL[p] })).slice(0, 2),
     ])}
     <div class="mt-12"></div>
-    <div class="grid grid-side">
-      ${ui.panel({ title: 'The inferred screening criteria', sub: 'Weights sum to 100. Each criterion scores 1–5. BSP fit uses the criteria tested for each target, rescaled to 0–100.', body: `<div class="bsp-crit">${b.criteria.slice().sort((a, c) => c.weight_pct - a.weight_pct).map(c => `<div class="bsp-cr" data-crit="${esc(c.id)}" role="button" tabindex="0" aria-label="${esc(c.criterion)}, weight ${c.weight_pct}%"><div class="bsp-cr-h"><span class="bsp-cr-n">${esc(c.criterion)}</span><span class="sys-num">${c.weight_pct}%</span></div><div class="bsp-cr-bar" aria-hidden="true"><i style="width:${c.weight_pct / 15 * 100}%"></i></div><div class="bsp-cr-t">${TESTS[c.id]?.tested ? stChip(TESTS[c.id].tested === 'proxy' ? 'In score · tested by proxy' : TESTS[c.id].tested === 'platform' ? 'Portfolio company level · context' : 'In score · tested per target', TESTS[c.id].tested === 'platform' ? 'info' : 'good') : stChip('Diligence item · not scored', '')}</div></div>`).join('')}</div>`, foot: ui.source(SRC_METH, null, 'Oct 2026') })}
-      ${ui.panel({ title: 'Top 15 by BSP fit', sub: 'Across all company screens. Select a row for the criterion breakdown, intro path and first-call script.', body: '<div data-top></div>', foot: ui.source(SRC_POOLS, null, 'Sept 2026') })}
+    <div class="grid grid-main">
+      ${ui.panel({ title: 'Top 15 by BSP fit', body: '<div data-top></div>' })}
+      ${ui.panel({ title: 'The inferred screening criteria', body: `<div class="bsp-crit">${b.criteria.slice().sort((a, c) => c.weight_pct - a.weight_pct).map(c => `<div class="bsp-cr" data-crit="${esc(c.id)}" role="button" tabindex="0" aria-label="${esc(c.criterion)}, weight ${c.weight_pct}%" title="${esc(c.criterion)}"><div class="bsp-cr-h"><span class="bsp-cr-n">${esc(brief(c.criterion, 6, false))}</span><span class="sys-num">${c.weight_pct}%</span></div><div class="bsp-cr-bar" aria-hidden="true"><i style="width:${c.weight_pct / 15 * 100}%"></i></div><div class="bsp-cr-t">${chipFor(c.id)}</div></div>`).join('')}</div>` })}
     </div>
     <div class="mt-12"></div>
-    ${ui.note(`<b>How to read the score.</b> The add-on screens were built to find companies that fit each company, so most targets clear the 70 gate; the rubric’s job is ordering. Recurring revenue, tech upside and the bench below the owner are ${b.criteria.filter(c => !TESTS[c.id]?.tested).reduce((a, c) => a + c.weight_pct, 0)}% of the weight and come from the first call, which is why the first-call script asks for them.`, 'info')}
     ${critHTML(ctx, b)}
     ${nextFiveHTML(ctx, b)}
     <div class="mt-12"></div>
-    ${ui.panel({ title: 'Every target, scored', sub: 'Ranked by BSP fit. Switch to the top 15 for the call list; sort any column; export the scored pipeline to CSV.', body: '<div class="mb-12" data-top15></div><div data-f></div><div data-t></div>', foot: ui.source(SRC_POOLS, null, 'Sept 2026') + `<span>Rubric: ${esc(SRC_METH)}</span>` })}
+    ${ui.panel({ title: 'Every target, scored', body: '<div class="mb-12" data-top15></div><div data-f></div><div data-t></div>' })}
+    ${srcMark(ui, SRC_METH, 'Oct 2026')}
+    ${srcMark(ui, SRC_POOLS, 'Sept 2026')}
+    <span data-asof="Oct 2026"></span>
+    ${metaMark(`Weights sum to 100; each criterion scores 1–5. BSP fit uses the criteria tested for each target, rescaled to 0–100. ${all.length - ranked.length} target is held out until its affiliation is checked. Re-score a target after the first call. A count of 25 or more independents scores 5 on fragmentation. Scored: tested per target. Proxy: tested by proxy. Company context: tested at portfolio-company level. Not scored: a diligence item. The add-on screens were built to find companies that fit each company, so most clear the 70 gate and the rubric orders them. Recurring revenue, tech upside and the bench below the owner are ${untestedW}% of the weight and come from the first call. Scripts are drafts for the Portfolio Resource Group, not outreach that has happened. Revenue figures are modeled estimates.`)}
   </div>`;
   const root = el.querySelector('.m-bsp');
   root.querySelectorAll('.bsp-cr').forEach(x => x.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); x.onclick(); } });
@@ -286,7 +324,7 @@ async function viewRubric(ctx) {
     { key: '_gate', label: 'Gate', fmt: v => stChip(v, GATE_ST[v]) },
     { key: 'fit_score', label: 'Screen fit', num: true, fmt: v => fmt.num(v) },
     { key: '_path', label: 'Intro path', fmt: v => v === 'high' || v === 'medium' || v === 'low' ? `${esc(v.charAt(0).toUpperCase() + v.slice(1))} confidence` : esc(v) },
-    { key: '_explain', label: 'Why', fmt: v => `<span title="${esc(v)}">${esc(clip(v, 120))}</span>`, wrap: true },
+    { key: '_brief', label: 'Why', fmt: (v, r) => `<span title="${esc(r._explain)}">${esc(v)}</span>`, wrap: true },
   ];
   ui.table(root.querySelector('[data-top]'), { columns: [cols[0], cols[1], cols[2], cols[4], cols[8]], rows: rowsOf(ranked.slice(0, 15)), pageSize: 15, exportName: 'broad_sky_fit_top15', sortKey: '_score', onRow: r => openTarget(ctx, b, r) });
   const allRows = rowsOf([...ranked, ...all.filter(r => r._affil)]);
@@ -300,7 +338,7 @@ async function viewRubric(ctx) {
   let top15 = params.top === '15' || params.top === '1';
   const draw = (st = f.state) => { const q = (st.q || '').toLowerCase(); let r = allRows.filter(x => (!st.p || x._p === st.p) && (!st.g || x._gate === st.g) && (!q || `${x.company} ${x._loc}`.toLowerCase().includes(q))); if (top15) r = r.filter(x => x._rank && x._rank <= 15); tbl.update(r); f.setCount(top15 ? `${r.length} of the top 15` : `${r.length} targets`); };
   ui.seg(root.querySelector('[data-top15]'), [{ value: 'top', label: 'Top 15' }, { value: 'all', label: `All ${allRows.length}` }], top15 ? 'top' : 'all', v => { top15 = v === 'top'; draw(); });
-  tbl = ui.table(root.querySelector('[data-t]'), { columns: cols, rows: allRows, pageSize: 25, exportName: 'broad_sky_fit_scored_pipeline', sortKey: '_score', onRow: r => openTarget(ctx, b, r) });
+  tbl = ui.table(root.querySelector('[data-t]'), { columns: cols, rows: allRows, pageSize: 15, exportName: 'broad_sky_fit_scored_pipeline', sortKey: '_score', onRow: r => openTarget(ctx, b, r) });
   draw();
   if (params.t) { const r = all.find(x => x.id === params.t); if (r) openTarget(ctx, b, r); }
 }
@@ -328,26 +366,30 @@ async function viewNetwork(ctx) {
   const byG = GROUPS.map(gr => ({ gr, n: g.nodes.filter(n => n._g === gr.id).length }));
   const top = nextFive(b, 8, 3);
   const pathsFor = [...top.map(r => ({ r, ip: introFor(b, r) })), ...g.paths.filter(p => /^next_platform/.test(p.target_ref)).map(p => ({ r: null, ip: { sourced: true, ...p, names: p.path_node_ids.map(id => g.byId.get(id)?.name) } }))];
-  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Deal network', sub: `The firm runs on a Carlyle and MidOcean lineage, private-credit lenders and sell-side banks. For add-ons, go through the company CEO, the franchisor or the selling banker.`, chips: `${stChip('Public roles only', 'warn')}${fmt.chip(`${g.nodes.length} nodes · ${g.edges.length} connections`)}` })}
+  el.innerHTML = `<div class="m-bsp">${ui.pageHead({ title: 'Deal network', sub: `Reach add-ons through the company CEO, the franchisor or the selling banker.`, chips: stChip('Public roles only', 'warn') })}
     ${missingNote(ui, b)}
     ${ui.kpis([
-      { label: 'People and organizations', value: fmt.num(g.nodes.length), sub: `${byG[0].n} BSP team · ${byG[1].n} Executive Board` },
-      { label: 'Sourced connections', value: fmt.num(g.edges.length), sub: 'Each with evidence and a source link' },
-      { label: 'Intro paths', value: fmt.num(g.paths.length), sub: `${g.paths.filter(p => p.confidence === 'high').length} high confidence · ${g.paths.filter(p => /^next_platform/.test(p.target_ref)).length} next-company themes` },
-      { label: 'Advisers, banks and counsel', value: fmt.num(byG[3].n), sub: `${byG[4].n} lenders, LPs and other sponsors` },
+      { label: 'People and organizations', value: fmt.num(g.nodes.length) },
+      { label: 'Sourced connections', value: fmt.num(g.edges.length) },
+      { label: 'Intro paths', value: fmt.num(g.paths.length) },
+      { label: 'Advisers, banks and counsel', value: fmt.num(byG[3].n) },
     ])}
     <div class="mt-12"></div>
     <div class="grid grid-main">
-      ${ui.panel({ title: 'Network map', sub: 'Hover to see a node’s connections; select it for role and sources. Search highlights matches.', body: `<div class="sys-filters mb-12"><input type="search" class="sys-input bsp-search" placeholder="Search people, firms, sectors" aria-label="Search the network"><span class="sys-src bsp-hits" aria-live="polite"></span></div><div class="bsp-graph">${graphSVG(g)}</div>${legendHTML()}`, foot: ui.source(SRC_NET, null, 'Oct 2026') + '<span>Intro paths are hypotheses over public connections, not known relationships.</span>' })}
-      ${ui.panel({ title: 'Intro paths for top targets', sub: 'Top BSP fit targets, then next-company themes. Select a path to trace it on the map.', scroll: true, body: `<div class="bsp-paths">${pathsFor.map((x, i) => `<button type="button" class="bsp-pathc" data-i="${i}" ${x.r ? coAttr(x.r._p) : 'data-co=""'}><div class="bsp-pathc-h"><b>${esc(x.r ? x.r.company : x.ip.target)}</b>${x.r ? `<span class="sys-num">${x.r._score}</span>` : ''}</div><div class="bsp-pathc-m">${x.r ? `${esc(x.r._plat)} · ` : 'Next company · '}${x.ip?.sourced ? `${esc(x.ip.confidence)} confidence · ${x.ip.hops} hops` : 'default path, unsourced'}</div><div class="bsp-path">${(x.ip?.names || []).filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i>→</i>')}</div></button>`).join('')}</div>`, foot: ui.source(SRC_NET, null, 'Oct 2026') })}
+      ${ui.panel({ title: 'Network map', body: `<div class="sys-filters mb-12"><input type="search" class="sys-input bsp-search" placeholder="Search people, firms, sectors" aria-label="Search the network"><span class="sys-src bsp-hits" aria-live="polite"></span></div><div class="bsp-graph">${graphSVG(g)}</div>` })}
+      ${ui.panel({ title: 'Intro paths for top targets', scroll: true, body: `<div class="bsp-paths">${pathsFor.map((x, i) => `<button type="button" class="bsp-pathc" data-i="${i}" ${x.r ? coAttr(x.r._p) : 'data-co=""'}><div class="bsp-pathc-h"><b title="${esc(x.r ? x.r.company : x.ip.target)}">${esc(x.r ? x.r.company : brief(String(x.ip.target).replace(/^Next company:\s*/i, ''), 9, false))}</b>${x.r ? `<span class="sys-num">${x.r._score}</span>` : ''}</div><div class="bsp-pathc-m">${x.r ? `${esc(x.r._plat)}, ` : 'Theme, '}${x.ip?.sourced ? `${esc(x.ip.confidence)} confidence, ${x.ip.hops} hops` : 'unsourced'}</div><div class="bsp-path">${(x.ip?.names || []).filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i></i>')}</div></button>`).join('')}</div>` })}
     </div>
+    ${srcMark(ui, SRC_NET, 'Oct 2026')}
+    <span data-asof="Oct 2026"></span>
+    <div class="m-bsp" data-method>${legendHTML()}</div>
+    ${metaMark(`${byG[0].n} BSP team and ${byG[1].n} Executive Board; ${byG[4].n} lenders, LPs and other sponsors; ${g.paths.filter(p => p.confidence === 'high').length} high-confidence intro paths and ${g.paths.filter(p => /^next_platform/.test(p.target_ref)).length} next-company themes. The firm runs on a Carlyle and MidOcean lineage, private-credit lenders and sell-side banks. Each connection carries evidence and a source link. Intro paths are hypotheses over public connections, not known relationships. The path list shows the top BSP fit targets, then next-company themes.`)}
   </div>`;
   const root = el.querySelector('.m-bsp');
   let ctl = null;
   ctl = bindGraph(root.querySelector('.bsp-graph'), g, { onSelect: n => openNode(ctx, b, n, ctl) });
   const hits = root.querySelector('.bsp-hits'); let t;
   root.querySelector('.bsp-search').oninput = e => { clearTimeout(t); t = setTimeout(() => { const k = ctl.search(e.target.value); hits.textContent = e.target.value ? `${k} match${k === 1 ? '' : 'es'}` : ''; }, 160); };
-  root.querySelectorAll('.bsp-pathc').forEach(btn => btn.onclick = () => { const x = pathsFor[Number(btn.dataset.i)]; root.querySelectorAll('.bsp-pathc').forEach(y => y.classList.toggle('sel', y === btn)); if (x.ip?.path_node_ids) ctl.path(x.ip.path_node_ids); if (x.r) openTarget(ctx, b, x.r); else openInsp(ctx, { title: esc(x.ip.target), color: COLOR, sub: `${esc(x.ip.confidence)} confidence · ${x.ip.hops} hops`, sections: [{ label: 'Path', html: `<div class="bsp-path">${x.ip.names.filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i>→</i>')}</div><div class="small text-2 mt-8">${esc(x.ip.path)}</div>` }, { label: 'Source', html: fmt.link(x.ip.source_url, host(x.ip.source_url)) }] }); });
+  root.querySelectorAll('.bsp-pathc').forEach(btn => btn.onclick = () => { const x = pathsFor[Number(btn.dataset.i)]; root.querySelectorAll('.bsp-pathc').forEach(y => y.classList.toggle('sel', y === btn)); if (x.ip?.path_node_ids) ctl.path(x.ip.path_node_ids); if (x.r) openTarget(ctx, b, x.r); else openInsp(ctx, { title: esc(x.ip.target), color: COLOR, sub: `${esc(x.ip.confidence)} confidence · ${x.ip.hops} hops`, sections: [{ label: 'Path', html: `<div class="bsp-path">${x.ip.names.filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i></i>')}</div><div class="small text-2 mt-8">${esc(x.ip.path)}</div>` }, { label: 'Source', html: fmt.link(x.ip.source_url, host(x.ip.source_url)) }] }); });
   if (params.node && g.byId.has(params.node)) { ctl.select(params.node); openNode(ctx, b, g.byId.get(params.node), ctl); }
   if (params.t) { const i = pathsFor.findIndex(x => x.r?.id === params.t); const r = b.scored.rows.find(x => x.id === params.t); const ip = r ? introFor(b, r) : null; if (ip) ctl.path(ip.path_node_ids); if (i >= 0) root.querySelectorAll('.bsp-pathc')[i]?.classList.add('sel'); }
 }
