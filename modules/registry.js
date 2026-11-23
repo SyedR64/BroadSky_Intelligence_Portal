@@ -75,7 +75,8 @@ export const ALIASES = {
      screen added without a rule is never shown to a company.
    · `own: true` keeps a company level to its own company. A company module (cet, pp, fl, ts, bpi, fh) opens only for
      that company's roles. A screen with `param` opens with that address parameter set to the viewer's company
-     (OWN_PARAM below): ma/pipeline?platform=pp, signals/overview?co=pp, fin/comps?sector=<the company's sector key>,
+     (OWN_PARAM below): ma/pipeline?platform=pp, signals/overview?co=pp, fin/portfolio?co=pp (that company's row only),
+     fin/comps?sector=<the company's sector key>,
      techos/roadmap?co=pp, techos/overview?os=pp. Only parameters that already exist are used.
    · `plus` names roles that open it although their level does not (fl-sales on Frontline's mid-size targets).
    · ONLY lists the roles that open nothing but the keys named (investor relations: the fund and documents).
@@ -125,6 +126,7 @@ export const LEVELS = {
   'pe': { to: FIRM },
   'national': { to: FIRM, plus: ['pp-ceo', 'pp-cfo', 'pp-vp-operations'] },
   'fin': { to: FIRM },
+  'fin/portfolio': { to: LEAD, own: true, param: 'co' },
   'fin/comps': { to: LEAD, own: true, param: 'sector' },
   'techos': { to: FIRM },
   'techos/roadmap': { to: LEAD, own: true, param: 'co' },
@@ -142,12 +144,12 @@ export const ONLY = { 'bsp-investor-relations': ['home', 'fin/portfolio', 'conne
    module, '<co>/plan' one screen of it. An item names a module or one screen; a screen item opens with its own-company
    parameter. An item the role cannot open, or whose screen does not exist yet, is left out. The firm levels use RAIL. */
 export const MENUS = {
-  co_leadership: ['home', '<co>', 'ma/pipeline', 'signals/overview', '<co>/plan', '<co>/tools', 'connect'],
+  co_leadership: ['home', '<co>', 'fin/portfolio', 'ma/pipeline', 'signals/overview', '<co>/plan', '<co>/tools', 'connect'],
   co_office: ['home', '<co>', '<co>/tools', 'connect'],
   co_field: ['home'],
 };
 /* names for the screen items of those menus (a module item reads the module's name) */
-export const MENU_NAMES = { 'ma/pipeline': 'Add-on pipeline', 'signals/overview': 'Local signals', '<co>/plan': 'Plan', '<co>/tools': 'Tools' };
+export const MENU_NAMES = { 'fin/portfolio': 'Fundamentals', 'ma/pipeline': 'Add-on pipeline', 'signals/overview': 'Local signals', '<co>/plan': 'Plan', '<co>/tools': 'Tools' };
 
 /* Flags only: nothing below reorders `modules` or any module's views. */
 RAIL.forEach(([group, ids], g) => ids.forEach((id, i) => { const m = modules.find(x => x.id === id); if (m) { m.group = group; m.railPos = g * 100 + i; } }));

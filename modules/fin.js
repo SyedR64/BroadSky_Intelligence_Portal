@@ -7,7 +7,7 @@ import * as Copy from './copy.js?v=20261123143257';
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const COS = [
-  { id: 'cet', ds: 'cet_filings', name: 'Commonwealth Electrical (CET)', short: 'CET', color: 'var(--co-cet)', ledger: /Commonwealth|\bCET\b/i, sector: 'commercial_electrical_energy' },
+  { id: 'cet', ds: 'cet_filings', name: 'Commonwealth Electrical Technologies (CET)', short: 'CET', color: 'var(--co-cet)', ledger: /Commonwealth|\bCET\b/i, sector: 'commercial_electrical_energy' },
   { id: 'pp', ds: 'pp_filings', name: 'Punctual Pros', short: 'PP', color: 'var(--co-pp)', ledger: /Punctual/i, sector: 'residential_home_services' },
   { id: 'fl', ds: 'frontline_filings', name: 'Frontline Managed Services', short: 'FL', color: 'var(--co-fl)', ledger: /Frontline/i, sector: 'legal_bpo_managed_services' },
   { id: 'ts', ds: 'thomas_filings', name: 'Thomas Scientific', short: 'TS', color: 'var(--co-ts)', ledger: /Thomas/i, sector: 'lab_distribution' },
@@ -340,8 +340,11 @@ export async function loadScoreboard(ctx) { return scoreboard(ctx.fmt, await loa
 
 /* ═══ View 1: Portfolio financial picture: value and exit first, then the filings behind each figure ══════ */
 async function portfolioView(ctx) {
-  const { el, ui, fmt, esc, app, charts } = ctx;
+  const { el, ui, fmt, esc, app, charts, params } = ctx;
   injectCss();
+  // ?co=<company id>: that company's row only (a company's leadership opens it this way, modules/registry.js LEVELS);
+  // sections about the other companies and the firm's own vehicles are left out. An unknown id shows the whole table.
+  const one = COS.find(c => c.id === params?.co) || null;
   el.innerHTML = ui.loading('Loading filings across the portfolio…');
   const D = await loadAll(ctx);
   const { cos, firm, comps, rows } = D;
@@ -357,7 +360,8 @@ async function portfolioView(ctx) {
   const nComps = comps?.items?.length || 0, nSectors = Object.keys(comps?.meta?.sector_benchmarks || {}).length;
 
   // one row per company, shared with the Command Center (scoreboard above): revenue/EBITDA prefer current or pro forma
-  const { rows: board, tpl } = scoreboard(fmt, D);
+  const { rows: allRows, tpl } = scoreboard(fmt, D);
+  const board = one ? allRows.filter(r => r.id === one.id) : allRows;
   const tplHeld = fmt.num(tpl.hold, 1);
   const pfRev = board.filter(r => r.rev_sort).reduce((a, r) => a + r.rev_sort, 0);
   const pfEbitda = board.filter(r => r.ebitda_sort).reduce((a, r) => a + r.ebitda_sort, 0);
@@ -372,6 +376,7 @@ async function portfolioView(ctx) {
   const addOnsAll = board.reduce((a, r) => a + (r.addOns || 0), 0);
   const fhRaise = (capital?.deal_vehicles || []).find(v => /issuer Form D/i.test(v.vehicle));
 
+  if (one) { companyPicture(ctx, D, board[0], tpl); return; }
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Portfolio financial picture',
     sub: urgent.length ? `${esc(urgent.map(r => r.co.short).join(' and '))} need${urgent.length === 1 ? 's' : ''} an exit or refinancing decision in 12–18 months.` : 'No portfolio company is yet in its exit window.',
@@ -467,11 +472,50 @@ async function portfolioView(ctx) {
   app.index(companyRows.slice(0, 200).map(r => ({ label: r.title, sub: `${r._coName} · ${catLabel(r.category)} · ${r.filed_or_dated || ''}`, href: `#/fin/explorer?company=${r._co}&q=${encodeURIComponent(String(r.entity || '').slice(0, 30))}`, kind: 'Filing', color: 'var(--c-fin)' })));
 }
 
+/* fin/portfolio?co=<id>: one company's value and exit row, its hold against the template exit, its marks and its estimates.
+   Nothing about the other companies or the firm's own vehicles; no links into screens a company's leadership does not open. */
+function companyPicture(ctx, D, r, tpl) {
+  const { el, ui, fmt, esc, charts } = ctx;
+  const co = r.co, tplHeld = fmt.num(tpl.hold, 1);
+  const d = r.d, est = toArr(d?.meta?.estimate_table);
+  el.innerHTML = `<div class="m-fin">${ui.pageHead({ title: 'Value and exit', sub: esc(r.action), chips: fmt.chip(r.flag.t, r.flag.c) })}
+  <span data-asof="${esc(d?.meta?.generated || 'Sept 2026')}"></span>
+  <div class="mt-12">${ui.panel({ title: `${esc(co.short)} value and exit (est.)`, body: '<div id="fin-board"></div>' })}</div>
+  <div class="grid grid-2 mt-12">
+    ${ui.panel({ title: 'Hold vs the template exit', body: '<div id="dl-hold"></div>' })}
+    ${ui.panel({ title: 'Lender & sponsor marks', body: '<div id="dl-marks"></div>' })}
+  </div>
+  ${methodP(`Exit window: debt due within 24 months, refinance or sell; held 4 years or more, exit window; 3 years or more, exit prep. The dot is confidence: green high, amber medium, grey low. Estimates, not audited.`)}
+  ${methodP(`Hold: ${esc(tpl.company)}, BSP's one exit, sold at ${tplHeld} yrs with ${fmt.num(tpl.addons)} add-ons.`)}
+  ${d ? methodP(`${esc(co.name)}: ${fmt.num((d.items || []).length)} records · ${fmt.num(est.filter(e => !isSens(e)).length)} operating estimates · generated ${esc(d.meta?.generated || '')}`) : ''}
+  ${d ? (t => t ? srcP(ctx, `${co.short}: ${t}`, null, d.meta?.generated) : '')(srcList(d.meta || {}).slice(0, 2).join(' · ').slice(0, 140)) : ''}
+  ${srcP(ctx, 'BSP firm profile: entry dates and timeline', null, D.firm?.meta?.generated)}
+  </div>`;
+  ui.table(el.querySelector('#fin-board'), {
+    rows: [r], pageSize: 1, exportName: `${co.id}_value_exit`, rowKey: x => x.id, onRow: x => openCompany(ctx, x, true),
+    columns: [
+      { key: 'held_years', label: 'Held', num: true, width: '84px', fmt: v => v == null ? '—' : `${fmt.num(v, 1)} yrs` },
+      { key: 'bsp_equity_est', label: 'BSP equity (est.)', num: true, wrap: true, fmt: (v, x) => x.eq.primary ? `<div class="est-cell" title="${esc(x.eq.label)}">${confDot(x.eq.e ? x.eq.e.confidence : 'high')}${esc(x.eq.primary)}</div>` : '<span class="dim">—</span>' },
+      { key: 'revenue_est', label: 'Revenue', num: true, wrap: true, fmt: (v, x) => estCellK(esc, fmt, x.rev, 'revenue') },
+      { key: 'ebitda_est', label: 'EBITDA', num: true, wrap: true, fmt: (v, x) => estCellK(esc, fmt, x.ebitda, 'ebitda') },
+      { key: 'entry_ev_est', label: 'Entry EV', num: true, wrap: true, fmt: (v, x) => estCellK(esc, fmt, x.ev) },
+      { key: 'senior_debt_est', label: 'Senior debt', num: true, wrap: true, fmt: (v, x) => `${estCellK(esc, fmt, x.debt)}${x.lev ? `<div class="small dim fin-sub">lev. ${esc(shortEst(x.lev.estimate))}</div>` : ''}` },
+      { key: 'maturity', label: 'Maturity', width: '84px', fmt: (v, x) => x.mat ? `<span style="color:${x.mo != null && x.mo < 24 ? 'var(--sys-warn-ink)' : 'var(--sys-ink-2)'}">${esc(x.matLabel)}</span>` : '<span class="dim">n/d</span>' },
+    ],
+  });
+  el.querySelector('#dl-hold').innerHTML = r.held != null ? charts.hbar([{ label: `${co.short} · ${monLabel(r.entry)}`, value: +r.held.toFixed(2), color: co.color }, { label: `${tpl.company} (exited)`, value: +tpl.hold.toFixed(2), color: 'var(--sys-brand)' }], { fmt: v => `${fmt.num(v, 1)} yrs`, labelW: 170 }) : ui.empty('No entry date');
+  const mk = [];
+  if (r.lm) mk.push({ t: `Lender mark ${fmt.num(r.lm.v, 1)}% of par`, s: `${r.lm.item.filer_or_source_agency || r.lm.item.title || ''} · ${r.lm.item.filed_or_dated || ''}`, url: r.lm.item.source_url, c: r.lm.v < 90 ? 'var(--sys-bad-ink)' : 'var(--sys-warn-ink)' });
+  r.sm.forEach(e => mk.push({ t: `${e.metric}: ${e.estimate}`, s: e.basis || '', c: /~0|≤1%|write/i.test(e.estimate) ? 'var(--sys-bad-ink)' : 'var(--sys-good-ink)' }));
+  el.querySelector('#dl-marks').innerHTML = (co.id === 'ts' ? `<div class="sig"><div class="grow"><div class="t"><a href="#/ts/filings?deal=1">Lender filings →</a></div></div></div>` : '') +
+    (mk.length ? mk.map(x => `<div class="sig"><div class="grow"><div class="t" style="color:${x.c}">${esc(x.t)}</div><div class="small dim" data-src>${esc(clip(x.s, 200))}${x.url ? ` · ${fmt.link(x.url, 'Source ↗')}` : ''}</div></div></div>`).join('') : co.id === 'ts' ? '' : ui.empty('None public'));
+}
+
 /* Row panel for a company: the financial picture, the estimate list both tables share (r.estShown), gaps and the next pull.
    Thomas Scientific's lender and sponsor marks are shown in one place, with their filings (#/ts/filings?deal=1), so the paragraphs,
    gaps and pull that state a mark are left out of its panel, as its mark row is left out of the estimate list. */
 const MARK_TEXT = /\bmark(s|ed|ing)?\b|of par|fair value|impair/i;
-function openCompany(ctx, r) {
+function openCompany(ctx, r, own = false) {
   const { esc, fmt, inspector, app, ui } = ctx;
   const co = r.co, d = r.d;
   if (!d) { inspector.open({ title: esc(co.name), sub: 'Filings dataset pending', color: co.color, sections: [{ label: 'Status', html: ui.note(`Public filings for ${esc(co.name || co.short || 'this company')} are not available yet.`, 'warn') }] }); return; }
@@ -490,7 +534,7 @@ function openCompany(ctx, r) {
       { label: 'Next public-record pull', html: `<div class="small text-2">${esc(pull || 'Commission a PitchBook / Capital IQ pull for the deal record.')}</div>` },
       { label: 'Sources', html: `<div class="small dim">${esc(srcList(m).join(' · ') || asText(m.method).slice(0, 400))}</div>` },
     ],
-    actions: [{ id: 'fx', label: 'Open filings', onClick: () => app.go('fin', 'explorer', { company: co.id }) }, { id: 'md', label: `Open ${esc(co.short)}`, onClick: () => app.go(co.id) }],
+    actions: [own ? null : { id: 'fx', label: 'Open filings', onClick: () => app.go('fin', 'explorer', { company: co.id }) }, { id: 'md', label: `Open ${esc(co.short)}`, onClick: () => app.go(co.id) }].filter(Boolean),
   });
 }
 
