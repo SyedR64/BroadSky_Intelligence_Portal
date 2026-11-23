@@ -7,19 +7,17 @@ const V = new URL(import.meta.url).search; // reuse the registry's ?v= stamp for
 const ABOUT = `<aside class="sys-card th-about" id="th-about" hidden aria-labelledby="th-about-h">
   <div class="th-about-head"><h2 class="sys-card-title" id="th-about-h">About the 3D map</h2><button id="th-about-x" class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon" type="button" aria-label="Close"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></button></div>
   <div class="sys-card-body">
-  <p>Six scenes render the portal's own data on the GPU, over vector tiles with 3D terrain. Each scene answers one question a partner would ask:</p>
   <ol>
     <li><b>Portfolio</b>: where the portfolio companies sit and how big each footprint is.</li>
-    <li><b>Where the homes trade</b>: every recorded home sale in the Punctual Pros territory, with the newest 90 days pulsing.</li>
+    <li><b>Where the homes trade</b>: every recorded home sale in the Punctual Pros territory; the newest 90 days pulse.</li>
     <li><b>Nationwide</b>: the phased path from East Hempfield to the Sun Belt, plus screened add-on targets.</li>
     <li><b>New England grid</b>: CET opportunities and the wastewater plants Horton opens up.</li>
-    <li><b>Storm</b>: live National Weather Service alerts over the territory and the hubs that staff to them.</li>
+    <li><b>Storm</b>: live National Weather Service alerts and the hubs that staff to them.</li>
     <li><b>Close</b>: every layer at once.</li>
   </ol>
-  <p>Hover a column, disc or marker for details. Estimates are marked <span class="sys-est">est.</span>; verify public and licensed data before use.</p>
   </div>
-  <p class="sys-src"><b>Keys:</b> <kbd class="sys-kbd">←</kbd> <kbd class="sys-kbd">→</kbd> change scene · <kbd class="sys-kbd">Space</kbd> play or pause</p>
-  <p class="sys-src"><b>Source:</b> Punctual Pros deed records (PA and NJ), CET opportunity radar, CET wastewater-plant targets, National Weather Service alerts (live). Maps: MapLibre GL, deck.gl, OpenFreeMap and OpenMapTiles, AWS Terrain Tiles.</p>
+  <p class="sys-src" data-method>Estimates are marked <span class="sys-est">est.</span>; verify public and licensed data before use.</p>
+  <p class="sys-src" data-src><b>Source:</b> Punctual Pros deed records (PA and NJ), CET opportunity radar, CET wastewater-plant targets, National Weather Service alerts (live). Maps: MapLibre GL, deck.gl, OpenFreeMap and OpenMapTiles, AWS Terrain Tiles.</p>
 </aside>`;
 
 async function play(ctx) {
@@ -29,7 +27,7 @@ async function play(ctx) {
   // engine's per-scene caption stays the visible title (the engine renders it as h2 when the page already has an h1)
   // the stage is a dark band (system.css §2): data-sys-theme="dark" resolves the system tokens to the dark set inside it,
   // so the film reads the same on the light and the dark portal while the rail, bar and inspector follow the page theme
-  el.innerHTML = `<div class="page-head sys-sr"><h1 class="sys-h1">3D map · cinematic map scenes</h1></div><div class="m-theater" data-sys-theme="dark" style="position:relative;height:100%;background:var(--sys-bg)">${ABOUT}</div>`;
+  el.innerHTML = `<div class="page-head sys-sr"><h1 class="sys-h1">3D map</h1></div><div class="m-theater" data-sys-theme="dark" style="position:relative;height:100%;background:var(--sys-bg)">${ABOUT}</div>`;
   const host = el.querySelector('.m-theater');
   let Theater;
   try { ({ Theater } = await import(`../assets/theater.js?v=20261123143257${V}`)); }
@@ -93,6 +91,6 @@ export default {
   ],
   tour: [
     { order: 150, hash: '#/theater/play?scene=S2&autoplay=0', caption: '<b>3D map.</b> Every home sale in the Punctual Pros territory; the newest 90 days pulse.', narration: 'Every home sale in the Punctual Pros territory, in 3D. The last ninety days pulse.', duration: 10000 },
-    { order: 151, hash: '#/theater/play?scene=S4&autoplay=0', caption: '<b>New England grid.</b> CET opportunities rise by value; discs mark wastewater plants Horton opens up. ← → changes scenes.', narration: 'For CET, opportunities rise by estimated value, and the floating discs mark the wastewater plants Horton opens up.', duration: 10000 },
+    { order: 151, hash: '#/theater/play?scene=S4&autoplay=0', caption: '<b>New England grid.</b> CET opportunities rise by value; discs mark wastewater plants Horton opens up.', narration: 'For CET, opportunities rise by estimated value, and the floating discs mark the wastewater plants Horton opens up.', duration: 10000 },
   ],
 };
