@@ -47,7 +47,7 @@ const reportedOf = (firm, id) => (firmItem(firm, id)?.add_ons || []).filter(a =>
 /** "2 add-ons, 4 reported" when some are reported only, else "6 add-ons". */
 const addTxt = (n, rep) => { n = n || 0; const k = n - rep; return rep ? `${k} add-on${k === 1 ? '' : 's'}, ${rep} reported` : `${n} add-on${n === 1 ? '' : 's'}`; };
 /** One add-on in a side-panel timeline: name, headquarters, a "reported" chip where it applies, the source link. */
-const addOnHTML = (a, esc) => `${esc(a.name)}${a.hq ? ` <span class="dim">· ${esc(a.hq)}</span>` : ''}${a.rep ? ` ${stChip('reported', 'info')}` : ''}${a.src ? ` <a class="dim" href="${esc(a.src)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` : ''}`;
+const addOnHTML = (a, esc) => `${esc(a.name)}${a.hq ? ` <span class="dim">· ${esc(String(a.hq).replace(/\s*\(reported\)/i, ''))}</span>` : ''}${a.rep ? ` ${stChip('reported', 'info')}` : ''}${a.src ? ` <a class="dim" href="${esc(a.src)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` : ''}`;
 
 
 /* ── Home by level (OS spec 5). One screen, three homes, chosen by the role in view ("Viewing as", assets/session.js):
@@ -142,7 +142,7 @@ async function firmHome(ctx, role, live) {
   // a row opens the side panel: the full next action, the add-ons under BSP and the estimates behind the figures
   const openRow = r => {
     const adds = addOnsOf(firm, r.id), est = r.estShown || [];
-    inspector.open({ title: esc(r.name), sub: `Held since ${esc(monYr(r.entry))} · ${r.held != null ? r.held.toFixed(1) : '—'} yrs · ${esc(r.flag.t)}`, color: CO_VAR(r.id), sections: [
+    inspector.open({ title: esc(COS.find(c => c.id === r.id)?.name || r.name), sub: `Held since ${esc(monYr(r.entry))} · ${r.held != null ? r.held.toFixed(1) : '—'} yrs · ${esc(r.flag.t)}`, color: CO_VAR(r.id), sections: [
       { label: 'Next action', html: `<div class="small">${esc(r.action)}</div>${r.detail ? `<div class="small dim mt-8">${esc(r.detail)}</div>` : ''}` },
       { label: 'Add-ons under BSP', html: adds.length ? ui.timeline(adds.map(a => ({ date: a.year || 'n/d', color: CO_VAR(r.id), html: addOnHTML(a, esc) }))) : '<div class="small dim">None announced under BSP</div>' },
       est.length ? { label: `Estimates · ${est.length}`, html: `<div class="col gap-8">${est.map(e => `<div><div class="small"><b>${esc(e.metric)}</b>${dot(e.confidence)}</div><div class="small">${esc(e.estimate)}</div>${e.basis ? `<div class="small dim">${esc(e.basis)}</div>` : ''}</div>`).join('')}</div>` } : null,
@@ -219,8 +219,22 @@ async function agentView(ctx) {
   return embedView(ctx, 'agent.html', { title: 'Agent' });
 }
 
+/* Firm profile copy (OS spec 7): research notes in bsp_firm become short dated facts. An event keeps its first clause
+   (bracketed detail, the part after a semicolon and analyst asides go); a biography keeps its first role. */
+const firstClause = t => String(t || '').replace(/\s*\([^()]*\)/g, '').split(/;\s+|(?<=[a-z]{3})\.\s+(?=[A-Z])/)[0].replace(/\s+-\s+.*$/, '').replace(/[\s,:.]+$/, '').trim();
+const shortEvent = t => {
+  const s = cleanEvent(t)
+    .replace(/^The Deal:.*Electrical.*$/i, 'The Deal reports BSP’s electrical services consolidation')       // a headline, not a statement of CET's reach
+    .replace(/^First sale date of (BSP-[\w ]+?, LP) \(([^)]*?) deal vehicle\).*$/i, '$2 deal vehicle $1: first sale')
+    .replace(/^(BSP-[\w-]+(?: [\w-]+)*?) first sale \((\$[\d.]+M) sold.*$/i, '$1 first sale: $2')
+    .replace(/^(Broad Sky Partners, LP files first Form D: \$[\d.]+M sold).*$/i, '$1');
+  return firstClause(s);
+};
+const shortBio = t => firstClause(t);
+
 async function firmView(ctx) {
   const { el, ui, fmt, data, esc, inspector, app } = ctx;
+  injectCss();
   // the next action per company is the sentence the value and exit tables print (fin.js); the profile still draws if that load fails
   const [firm, sb] = await Promise.all([data.research('bsp_firm'), loadScoreboard(ctx).catch(() => null)]);
   if (!el.isConnected) return;
@@ -231,79 +245,89 @@ async function firmView(ctx) {
   const fund = cap?.broad_sky_partners_lp_total_sold_usd || null;
   const spvs = (cap?.deal_vehicles || []).filter(v => /^BSP-/.test(v.vehicle || ''));
   const spvSum = spvs.reduce((s, v) => s + (v.sold_usd || 0), 0);
-  const flSpv = spvs.find(v => v.vehicle === 'BSP-FL LP'), flCo = spvs.find(v => v.vehicle === 'BSP-FL Co-Invest, LLC');
+  const flSpv = spvs.find(v => v.vehicle === 'BSP-FL LP');
   const sh = templateExit(firm);
   const prg = f.prg && typeof f.prg === 'object' ? f.prg : (typeof f.prg === 'string' ? { description: f.prg, members: [] } : null);
-  // History: research notes are rewritten as reader-facing facts (the unverified '$137M Fund I' entry is the Frontline deal vehicle)
+  // add-ons counted from the table itself: the current holdings plus Smith + Howard (BSP's own "23" predates CET's October deals)
+  const held = (firm.items || []).map(p => String(p.id || '').replace(/^bsp-/, ''));
+  const heldAdds = held.reduce((n, id) => n + (firmItem(firm, id)?.add_ons || []).length, 0);
+  const repAdds = held.reduce((n, id) => n + reportedOf(firm, id), 0);
+  const allAdds = heldAdds + (sh?.addons || 0);
+  // History: the unverified '$137M Fund I' research note is the Frontline deal vehicle
   const hist = (Array.isArray(f.history) ? f.history : []).map(h => /^Task brief/i.test(h.event || '')
-    ? { ...h, verified: true, event: `Frontline deal vehicle BSP-FL LP files Form D: ${flSpv ? fmt.money(flSpv.sold_usd) : '$137M'} sold${flCo ? `, plus ${fmt.money(flCo.sold_usd)} through BSP-FL Co-Invest` : ''}. This is deal-level capital, not a fund close; the main fund (Fund I) reports ${fund ? fmt.money(fund) : '$335M'} sold.` }
-    : { ...h, event: cleanEvent(h.event) });
-  const yr = s => String(s || '').slice(0, 4);
+    ? { ...h, verified: true, event: `Frontline deal vehicle BSP-FL LP files Form D: ${flSpv ? fmt.money(flSpv.sold_usd) : '$137M'} sold` }
+    : { ...h, event: shortEvent(h.event) });
+  const src = (text, url, asof) => `<p class="sys-src" data-src>${ui.source(text, url, asof)}</p>`;
+  const tlRow = t => ({ date: t.date, color: tlColor(t.company), html: `${esc(shortEvent(t.event))}${t.source_url ? ` <a class="dim" href="${esc(t.source_url)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` : ''}` });
+  const person = m => `<div class="row"><span class="strong">${esc(m.name)}</span><span class="muted small">${esc(m.title || '')}</span>${m.source_url ? `<a class="dim small" href="${esc(m.source_url)}" target="_blank" rel="noopener" aria-label="Bio">↗</a>` : ''}</div>${m.prior ? `<div class="small dim">${esc(shortBio(m.prior))}</div>` : ''}`;
 
   el.innerHTML = ui.pageHead({
     title: 'Firm profile',
-    sub: `Fund I is ${fund ? fmt.money(fund) : '—'} from ${cap?.investors ?? '—'} investors. ${spvs.length} single-deal vehicles add ${fmt.money(spvSum)} of co-investment, so investors back larger checks. ${fmt.num(stats.current_holdings ?? 6)} companies today, ${fmt.num(stats.platforms)} since launch. ${fmt.num(stats.add_ons)} add-ons, one exit.`,
-    chips: `${fmt.chip(`Relaunched ${f.relaunched ? monYr(f.relaunched) : 'Jun 2021'}`, 'var(--sys-brand)')}${fund ? fmt.chip(`Fund I ${fmt.money(fund)}`) : ''}${spvSum ? fmt.chip(`Deal vehicles ${fmt.money(spvSum)}`) : ''}${fmt.chip(`${stats.current_holdings ?? 6} held · ${stats.platforms} since launch · ${stats.add_ons} add-ons`)}${fmt.chip(`Exit: S+H, Aug 2026`)}`,
-    actions: `<a class="${ui.btnCls('secondary', '')}" href="#/fin/portfolio">Portfolio financial picture</a><a class="${ui.btnCls('secondary', '')}" href="#/home/overview">Exit readiness</a>`,
+    sub: `Fund I: ${fund ? fmt.money(fund) : '—'} from ${cap?.investors ?? '—'} investors. ${fmt.num(stats.current_holdings ?? 6)} companies, ${fmt.num(allAdds)} add-ons, ${fmt.num(stats.exits)} exit.`,
   }) +
+  `${firm.meta?.generated ? `<span data-asof>${esc(fmt.date(firm.meta.generated))}</span>` : ''}` +
   ui.kpis([
     { label: 'Fund I sold (Form D)', value: fund ? fmt.money(fund) : '—', sub: `${cap?.investors ?? '—'} investors · ${cap?.as_of ? esc(monYr(cap.as_of)) : ''}` },
-    { label: 'Deal-vehicle capital', value: spvSum ? fmt.money(spvSum) : '—', sub: `${spvs.length} vehicles · not additive to Fund I` },
+    { label: 'Deal-vehicle capital', value: spvSum ? fmt.money(spvSum) : '—', sub: `${spvs.length} single-deal vehicles` },
     { label: 'Companies', value: fmt.num(stats.platforms), sub: `${fmt.num(stats.current_holdings ?? 6)} held · ${fmt.num(stats.exits)} exited` },
-    { label: 'Add-ons', value: fmt.num(stats.add_ons), sub: sh ? `${sh.addons} at S+H · ${stats.add_ons - sh.addons} in current holdings` : '' },
-    { label: 'Investment team', value: fmt.num((f.team || []).length), sub: `${fmt.num(prg?.members?.length || 0)} in the Portfolio Resource Group` },
+    { label: 'Add-ons', value: fmt.num(allAdds), sub: sh ? `${fmt.num(heldAdds)} held · ${fmt.num(sh.addons)} at S+H` : '' },
+    { label: 'Investment team', value: fmt.num((f.team || []).length), sub: `${fmt.num(prg?.members?.length || 0)} in Resource Group` },
   ]) +
-  `<div class="mt-12">${ui.panel({ title: 'Companies', sub: 'Every BSP portfolio company including the exit · click a row for thesis, add-ons and sources', body: '<div id="pf-tbl"></div>', flush: true, foot: ui.source('BSP firm profile: current holdings and timeline (Smith + Howard)', 'https://broadskypartners.com/', firm.meta?.generated) })}</div>
+  `<p class="sys-src" data-method>Add-ons are counted from the table: ${fmt.num(heldAdds)} under the current holdings (${fmt.num(repAdds)} of them reported in the trade press, not announced) and ${fmt.num(sh?.addons || 0)} at Smith + Howard. BSP stated ${fmt.num(stats.add_ons)} on 6 Aug 2026, before CET's October deals. Deal-vehicle capital is co-investment beside Fund I, not part of it.</p>
+  <div class="mt-12">${ui.panel({ title: 'Companies', body: '<div id="pf-tbl"></div>', flush: true })}${src('BSP firm profile: current holdings and timeline (Smith + Howard)', 'https://broadskypartners.com/', firm.meta?.generated)}</div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'History', sub: 'Founding, Carlyle years, relaunch, fund formation and first exit', scroll: true, body: hist.length ? ui.timeline(hist.map(h => ({ date: h.date, color: h.verified === false ? 'var(--sys-warn)' : 'var(--sys-brand)', html: `${esc(h.event)}${h.verified === false ? ` ${stChip('unverified', 'warn')}` : ''}${h.source_url ? ` <a class="dim" href="${esc(h.source_url)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` : ''}` }))) : ui.note('Firm history pending in BSP firm profile', 'warn'), foot: ui.source('BSP team pages, press releases, SEC EDGAR', 'https://broadskypartners.com/team/', f.retrieved) })}
-    ${ui.panel({ title: 'Team & Portfolio Resource Group', scroll: true, body: `${(f.team || []).length ? `<div class="col gap-8">${f.team.map(t => `<div><div class="row"><span class="strong">${esc(t.name)}</span><span class="muted small">${esc(t.title || '')}</span>${t.source_url ? `<a class="dim small" href="${esc(t.source_url)}" target="_blank" rel="noopener" aria-label="Bio">↗</a>` : ''}</div>${t.prior ? `<div class="small dim">${esc(t.prior)}</div>` : ''}</div>`).join('')}</div>` : ui.note('Team list pending', 'warn')}
-      ${prg ? `<h4 class="sys-card-label mt-16">Portfolio Resource Group</h4><div class="small text-2">${esc(prg.description || '')}</div><div class="col gap-8 mt-8">${(prg.members || []).map(m => `<div><div class="row"><span class="strong">${esc(m.name)}</span><span class="muted small">${esc(m.title || '')}</span>${m.source_url ? `<a class="dim small" href="${esc(m.source_url)}" target="_blank" rel="noopener" aria-label="Bio">↗</a>` : ''}</div>${m.prior ? `<div class="small dim">${esc(m.prior)}</div>` : ''}</div>`).join('')}</div>` : ''}
-      ${(f.executive_board || []).length ? `<h4 class="sys-card-label mt-16">Executive Board · ${f.executive_board.length}</h4><div class="sys-chips mt-8">${f.executive_board.map(b => `<span class="sys-chip" title="${esc(b.prior || '')}">${esc(b.name)}</span>`).join('')}</div>` : ''}`, foot: ui.source('broadskypartners.com/team and /strategy', prg?.source_url || 'https://broadskypartners.com/team/', f.retrieved) })}
+    ${ui.panel({ title: 'History', scroll: true, body: hist.length ? ui.timeline(hist.map(h => ({ date: h.date, color: h.verified === false ? 'var(--sys-warn)' : 'var(--sys-brand)', html: `${esc(h.event)}${h.verified === false ? ` ${stChip('unverified', 'warn')}` : ''}${h.source_url ? ` <a class="dim" href="${esc(h.source_url)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` : ''}` }))) : ui.note('Firm history pending in BSP firm profile', 'warn') })}
+    ${ui.panel({ title: 'Team & Portfolio Resource Group', scroll: true, body: `${(f.team || []).length ? `<div class="col gap-8 hm-people">${f.team.map(t => `<div>${person(t)}</div>`).join('')}</div>` : ui.note('Team list pending', 'warn')}
+      ${prg ? `<h4 class="sys-card-label mt-16">Portfolio Resource Group</h4><div class="small text-2">Operating executives who work with company management on growth plans.</div><div class="col gap-8 mt-8 hm-people">${(prg.members || []).map(m => `<div>${person(m)}</div>`).join('')}</div>` : ''}
+      ${(f.executive_board || []).length ? `<h4 class="sys-card-label mt-16">Executive Board · ${f.executive_board.length}</h4><div class="sys-chips mt-8">${f.executive_board.map(b => `<span class="sys-chip" title="${esc(shortBio(b.prior || ''))}">${esc(b.name)}</span>`).join('')}</div>` : ''}` })}
   </div>
-  <div class="mt-12">${ui.panel({ title: 'BSP timeline', sub: 'Anchor acquisitions, add-ons and exits · newest first', body: '<div id="tl"></div>', scroll: true, foot: ui.source('Press releases & BSP site', 'https://broadskypartners.com/news/', firm.meta?.generated) })}</div>
+  ${src('BSP team pages, press releases, SEC EDGAR', 'https://broadskypartners.com/team/', f.retrieved)}${src('broadskypartners.com/team and /strategy', prg?.source_url || 'https://broadskypartners.com/team/', f.retrieved)}
+  <div class="mt-12">${ui.panel({ title: 'BSP timeline', body: '<div id="tl" class="hm-tl"></div>' })}${src('Press releases & BSP site', 'https://broadskypartners.com/news/', firm.meta?.generated)}</div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Capital raised (SEC Form D)', sub: 'Main fund plus deal-by-deal vehicles · amounts sold per latest filing', body: '<div id="cap-tbl"></div>', flush: true, foot: ui.source('SEC EDGAR Form D', cap?.source_url || 'https://www.sec.gov/', cap?.as_of) })}
-    ${ui.panel({ title: 'Strategy & sources', body: `${f.strategy ? `<div class="small text-2">${esc(f.strategy)}</div>${(f.sectors || []).length ? `<div class="sys-chips mt-8">${f.sectors.map(x => fmt.chip(x)).join('')}</div>` : ''}<h4 class="sys-card-label mt-16">Sources</h4>` : ''}<div class="col gap-4 small">${(f.sources || []).map(s => `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(srcLabel(s))}</a>`).join('') || '—'}</div>` })}
-  </div>`;
+    ${ui.panel({ title: 'Capital raised (SEC Form D)', body: '<div id="cap-tbl"></div>', flush: true })}
+    ${ui.panel({ title: 'Strategy', body: `<div class="small text-2">Sector-focused private equity in essential business and consumer services; buy-and-build.</div>${(f.sectors || []).length ? `<div class="sys-chips mt-8">${f.sectors.map(x => fmt.chip(x)).join('')}</div>` : ''}` })}
+  </div>
+  ${src('SEC EDGAR Form D', cap?.source_url || 'https://www.sec.gov/', cap?.as_of)}
+  ${(f.sources || []).length ? `<div class="sys-src" data-src>${f.sources.map(s => `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(srcLabel(s))}</a>`).join(' · ')}</div>` : ''}`;
 
-  // timeline — bsp_firm.timeline, newest first, coloured by company
+  // timeline: bsp_firm.timeline, newest first, coloured by company; the ten newest show, the rest open under "Older events"
   const tl = (firm.timeline || []).filter(t => t.date).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
-  el.querySelector('#tl').innerHTML = tl.length ? ui.timeline(tl.slice(0, 40).map(t => ({ date: t.date, color: tlColor(t.company), html: `${t.company ? `<b>${esc(t.company)}</b> · ` : ''}${esc(cleanEvent(t.event))}${t.source_url ? ` <a class="dim" href="${esc(t.source_url)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` : ''}` }))) : ui.note('The BSP timeline is not available yet.', 'warn');
+  const SHOW = 10;
+  el.querySelector('#tl').innerHTML = tl.length ? `${ui.timeline(tl.slice(0, SHOW).map(tlRow))}${tl.length > SHOW ? `<details class="sys-fold mt-12"><summary>Older events · ${tl.length - SHOW}</summary>${ui.timeline(tl.slice(SHOW).map(tlRow))}</details>` : ''}` : ui.note('The BSP timeline is not available yet.', 'warn');
 
-  // companies table — current holdings from items[], Smith + Howard from the timeline
-  const rows = (firm.items || []).map(p => { const id = String(p.id || '').replace(/^bsp-/, ''); const co = COS.find(c => c.id === id); return { id, p, company: p.company, sector: p.sector, entry: p.entry_date, hold: Math.round((yrsBetween(p.entry_date) || 0) * 10) / 10, status: p.status || 'held', addons: (p.add_ons || []).length, names: addOnsOf(firm, id).map(a => `${a.name}${a.year ? ` (${a.year})` : ''}`).join('; '), hex: CO_VAR(id) }; });
-  if (sh) rows.push({ id: 'sh', company: sh.company, sector: 'Professional services - Accounting, tax & advisory (Atlanta)', entry: sh.entry, exit: sh.exit, hold: Math.round(sh.hold * 10) / 10, status: 'exited', addons: sh.addons, names: `${sh.named.map(t => cleanEvent(t.event).replace(/^Smith \+ Howard\s+(acquires|merges with|signs agreement to acquire)\s+/i, '').replace(/^(.*?) joins Smith \+ Howard.*$/i, '$1')).join('; ')} (+${Math.max(0, sh.addons - sh.named.length)} unidentified)`, hex: CO_VAR('sh'), sh });
+  // companies table: current holdings from items[], Smith + Howard from the timeline; add-on names open in the side panel
+  const rows = (firm.items || []).map(p => { const id = String(p.id || '').replace(/^bsp-/, ''); const co = COS.find(c => c.id === id); return { id, p, company: co?.name || p.company, entry: p.entry_date, hold: Math.round((yrsBetween(p.entry_date) || 0) * 10) / 10, status: p.status || 'held', addons: (p.add_ons || []).length, rep: reportedOf(firm, id), hex: CO_VAR(id) }; });
+  if (sh) rows.push({ id: 'sh', company: sh.company, entry: sh.entry, exit: sh.exit, hold: Math.round(sh.hold * 10) / 10, status: 'exited', addons: sh.addons, rep: 0, hex: CO_VAR('sh'), sh });
   ui.table(el.querySelector('#pf-tbl'), { rows, pageSize: 10, sortKey: 'entry', sortDir: 1, exportName: 'bsp_companies', onRow: r => openPlatform(r), columns: [
-    { key: 'company', label: 'Company', wrap: true, fmt: (v, r) => `<div class="row strong"><span class="sys-dot" ${coAttr(r.id)} aria-hidden="true"></span>${esc(v)}</div><div class="small dim">${esc(r.sector || '')}</div>` },
+    { key: 'company', label: 'Company', fmt: (v, r) => `<div class="row strong"><span class="sys-dot" ${coAttr(r.id)} aria-hidden="true"></span>${esc(v)}</div>` },
     { key: 'entry', label: 'Entry', num: true, fmt: (v, r) => `${esc(monYr(v))}${r.exit ? `<div class="small dim">exit ${esc(monYr(r.exit))}</div>` : ''}` },
     { key: 'hold', label: 'Hold (yrs)', num: true, fmt: v => v == null ? '—' : v.toFixed(1) },
     { key: 'status', label: 'Status', fmt: v => v === 'exited' ? stChip('Exited', '') : stChip('Held', 'good') },
-    { key: 'addons', label: 'Add-ons', num: true, fmt: v => `<b>${fmt.num(v)}</b>` },
-    { key: 'names', label: 'Add-ons named', wrap: true, fmt: v => `<span class="small text-2">${esc(v || '—')}</span>` },
+    { key: 'addons', label: 'Add-ons', num: true, fmt: (v, r) => r.rep ? `<b>${fmt.num(v - r.rep)}</b> + ${fmt.num(r.rep)} reported` : `<b>${fmt.num(v)}</b>` },
   ] });
   const nextAction = id => sb?.rows.find(x => x.id === id)?.action || '';
   const openPlatform = r => {
     if (r.sh) return inspector.open({ title: 'Smith + Howard', sub: 'Exited Aug 2026 · TPG Growth', color: CO_VAR('sh'), sections: [
       { label: 'Outcome', html: ui.kv({ Entry: esc(monYr(r.entry)), Exit: esc(monYr(r.exit)), Hold: `${r.hold.toFixed(1)} yrs`, 'Add-ons': `${r.addons}`, Result: esc(r.sh.note) }) },
-      { label: 'Timeline', html: ui.timeline(r.sh.named.map(t => ({ date: t.date, color: CO_VAR('sh'), html: `${esc(cleanEvent(t.event))} <a class="dim" href="${esc(t.source_url)}" target="_blank" rel="noopener">↗</a>` }))) },
+      { label: 'Timeline', html: ui.timeline(r.sh.named.map(t => ({ date: t.date, color: CO_VAR('sh'), html: `${esc(shortEvent(t.event))} <a class="dim" href="${esc(t.source_url)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` }))) },
     ], actions: [{ label: 'BSP sale release ↗', href: r.sh.src }] });
     const p = r.p;
-    inspector.open({ title: esc(p.company), sub: `${esc(p.sector || '')}`, color: r.hex, sections: [
-      { label: 'At a glance', html: ui.kv({ HQ: esc([p.hq_city, p.state].filter(Boolean).join(', ')), Entry: esc(monYr(p.entry_date)), Hold: `${r.hold.toFixed(1)} yrs`, Seller: esc(p.entry_source || ''), CEO: esc(p.ceo || ''), Employees: esc(p.employees_est || '') }) },
-      p.thesis ? { label: 'Thesis', html: `<div class="small text-2">${esc(p.thesis)}</div>` } : null,
-      { label: `Add-ons under BSP · ${r.addons}`, html: r.addons ? ui.timeline(addOnsOf(firm, r.id).map(a => ({ date: a.year || 'n/d', color: r.hex, html: `${esc(a.name)}${a.hq ? ` <span class="dim">· ${esc(a.hq)}</span>` : ''}${a.src ? ` <a class="dim" href="${esc(a.src)}" target="_blank" rel="noopener">↗</a>` : ''}` }))) : '<div class="small dim">None announced under BSP</div>' },
+    inspector.open({ title: esc(r.company), sub: `${esc(firstClause(p.sector || ''))}`, color: r.hex, sections: [
+      { label: 'At a glance', html: ui.kv({ HQ: esc([p.hq_city, p.state].filter(Boolean).join(', ')), Entry: esc(monYr(p.entry_date)), Hold: `${r.hold.toFixed(1)} yrs`, Seller: esc(firstClause(p.entry_source || '')), CEO: esc(p.ceo || ''), Employees: esc(firstClause(p.employees_est || '')) }) },
+      p.thesis ? { label: 'Thesis', html: `<div class="small text-2">${esc(firstClause(p.thesis))}</div>` } : null,
+      { label: `Add-ons under BSP · ${r.addons}`, html: r.addons ? ui.timeline(addOnsOf(firm, r.id).map(a => ({ date: a.year || 'n/d', color: r.hex, html: addOnHTML(a, esc) }))) : '<div class="small dim">None announced under BSP</div>' },
       (p.sources || []).length ? { label: 'Sources', html: `<div class="col gap-4 small">${p.sources.slice(0, 6).map(s => `<a href="${esc(s)}" target="_blank" rel="noopener" class="ellipsis">${esc(srcLabel(s))}</a>`).join('')}</div>` } : null,
       nextAction(r.id) ? { label: 'Next action', html: `<div class="small">${esc(nextAction(r.id))}</div>` } : null,
     ].filter(Boolean), actions: [{ label: 'Open company', href: `#/${r.id}` }] });
   };
   // capital table
   const capRows = [...(fund ? [{ id: 'fund', vehicle: 'Broad Sky Partners, LP (Fund I)', company: 'Commingled fund', sold: fund, date: cap.as_of, url: cap.source_url, note: `${cap.investors} investors` }] : []),
-    ...(cap?.deal_vehicles || []).map((v, i) => ({ id: `v${i}`, vehicle: v.vehicle, company: v.company, sold: v.sold_usd, date: v.first_sale || v.filed, url: v.source_url, note: v.note || (v.offering_usd ? `of ${fmt.money(v.offering_usd)} offered` : '') }))];
+    ...(cap?.deal_vehicles || []).map((v, i) => ({ id: `v${i}`, vehicle: v.vehicle, company: v.company, sold: v.sold_usd, date: v.first_sale || v.filed, url: v.source_url, note: v.note ? firstClause(v.note) : (v.offering_usd ? `of ${fmt.money(v.offering_usd)} offered` : '') }))];
   ui.table(el.querySelector('#cap-tbl'), { rows: capRows, pageSize: 10, sortKey: 'sold', exportName: 'bsp_form_d_vehicles', onRow: r => r.url && window.open(r.url, '_blank', 'noopener'), columns: [
-    { key: 'vehicle', label: 'Vehicle', wrap: true, fmt: (v, r) => `<span class="small strong">${esc(v)}</span><div class="small dim">${esc(r.company)}</div>` },
+    { key: 'vehicle', label: 'Vehicle', fmt: (v, r) => `<span class="small strong">${esc(v)}</span><div class="small dim">${esc(r.company)}</div>` },
     { key: 'sold', label: 'Sold', num: true, fmt: v => fmt.money(v) },
     { key: 'date', label: 'First sale / filed', num: true, fmt: v => `<span class="small">${fmt.date(v)}</span>` },
-    { key: 'note', label: 'Note', wrap: true, fmt: v => `<span class="small text-2">${esc(String(v || '').slice(0, 90))}</span>` },
+    { key: 'note', label: 'Note', fmt: v => `<span class="small text-2">${esc(v || '')}</span>` },
   ] });
   app.index((f.team || []).map(t => ({ label: t.name, sub: `BSP · ${t.title || ''}`, href: '#/home/firm', kind: 'Person', color: CO_HEX.bsp })));
 }

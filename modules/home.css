@@ -45,6 +45,14 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
 /* the button into the agent screen */
 .hm-ask{align-self:flex-start}
 
+/* firm profile: older timeline events in the shared closed section */
+.hm-tl>.sys-fold{padding:var(--sys-sp-2) var(--sys-sp-3)}
+.hm-tl>.sys-fold>summary{gap:var(--sys-sp-2);min-height:32px}
+.hm-tl>.sys-fold[open]>summary{margin-bottom:var(--sys-sp-3)}
+
+.hm-people .row{flex-wrap:wrap;row-gap:0}
+.hm-people .strong{white-space:nowrap}
+
 /* the agent screen: the page fills the content area */
 #content.flush .embed-host,.embed-host{padding:0}
 
