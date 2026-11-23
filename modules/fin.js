@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261123143257';
+import * as Copy from './copy.js?v=20261123172325';
 /* ═══════════════════════════════════════════════════════════════════════════
    Filings & financials — portfolio-wide financial and regulatory intelligence.
    BSP's own SEC filings (Form D / ADV), each company's value, debt, marks and public
@@ -113,7 +113,7 @@ const methodP = html => `<p class="sys-src" data-method>${html}</p>`;
 const shortEst = s => String(s || '').replace(/\s*\([^)]*\)/g, '').split(/;\s/)[0].trim();
 
 function injectCss() {
-  if (!document.getElementById('css-fin')) { const l = document.createElement('link'); l.id = 'css-fin'; l.rel = 'stylesheet'; l.href = 'modules/fin.css?v=20261123143257'; document.head.appendChild(l); }
+  if (!document.getElementById('css-fin')) { const l = document.createElement('link'); l.id = 'css-fin'; l.rel = 'stylesheet'; l.href = 'modules/fin.css?v=20261123172325'; document.head.appendChild(l); }
 }
 
 /* ── data layer ─────────────────────────────────────────────────────────── */

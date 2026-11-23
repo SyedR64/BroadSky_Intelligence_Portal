@@ -1,9 +1,9 @@
 /* Home: the first screen for every level (firm, company, role) and the agent inside the shell */
-import { dataset, srcLabel } from './copy.js?v=20261123143257';
-import { loadScoreboard, templateExit } from './fin.js?v=20261123143257';
-import { Session } from '../assets/session.js?v=20261123143257';
-import { embedView } from './embed.js?v=20261123143257';
-import { Counter } from '../assets/counter.js?v=20261123143257';
+import { dataset, srcLabel } from './copy.js?v=20261123172325';
+import { loadScoreboard, templateExit } from './fin.js?v=20261123172325';
+import { Session } from '../assets/session.js?v=20261123172325';
+import { embedView } from './embed.js?v=20261123172325';
+import { Counter } from '../assets/counter.js?v=20261123172325';
 const COS = [
   { id: 'cet', name: 'Commonwealth Electrical Technologies (CET)', short: 'CET', color: 'var(--co-cet)', hex: '#4c8dff', sector: 'Commercial electrical · solar · energy', entry: '2025-02' },
   { id: 'pp', name: 'Punctual Pros', short: 'PP', color: 'var(--co-pp)', hex: '#f08a3c', sector: 'Residential HVAC · plumbing · electrical', entry: '2024-04' },
@@ -55,7 +55,7 @@ const addOnHTML = (a, esc) => `${esc(a.name)}${a.hq ? ` <span class="dim">· ${e
    the firm home for the firm levels, the company home for company leadership (and the fund home for investor relations),
    the role home for office and field. It redraws when the role changes. Sources and method text carry data-src and
    data-method: the shell moves them into its Sources and Method drawers. ── */
-const injectCss = () => { if (!document.getElementById('css-home')) { const l = document.createElement('link'); l.id = 'css-home'; l.rel = 'stylesheet'; l.href = 'modules/home.css?v=20261123143257'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-home')) { const l = document.createElement('link'); l.id = 'css-home'; l.rel = 'stylesheet'; l.href = 'modules/home.css?v=20261123172325'; document.head.appendChild(l); } };
 const APPROVALS_KEY = 'bsp-os-approvals';   // drafts the agent made that wait for the person's OK (assets/agent.js writes it)
 const AGENT = '#/home/agent';                // never with a question in the address (OS spec 9.4)
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];

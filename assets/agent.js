@@ -5,9 +5,9 @@
    The role and the connections live in the Broad Sky OS session (assets/session.js): the role is the one "Viewing as"
    names everywhere, and a tool connected for a company is connected for every role at that company.
    ?embed=1 (inside the shell, #/home/agent): no role list or role card; today's list, the question box and the answers. */
-import { Frame } from './frame.js?v=20261123143257';
-import { Chat, PERSONAS } from './chat.js?v=20261123143257';
-import { Session, CONN_STATES } from './session.js?v=20261123143257';
+import { Frame } from './frame.js?v=20261123172325';
+import { Chat, PERSONAS } from './chat.js?v=20261123172325';
+import { Session, CONN_STATES } from './session.js?v=20261123172325';
 
 const APPROVALS_KEY = 'bsp-os-approvals';   // drafts waiting for the person's OK; the home screen lists them (modules/home.js)
 const ON = CONN_STATES[1];                  // the demonstration state: connected with example records
@@ -469,7 +469,7 @@ function showCurrentRole() {
 /** Say up front when the agent is offline (no backend, or one without the company agent), not only after a question. */
 async function checkBackend() {
   try {
-    const m = await import('./backend.js?v=20261123143257');
+    const m = await import('./backend.js?v=20261123172325');
     const B = m.Backend || m.default;
     const ok = B && await B.discover() && B.health?.workspace;
     if (ok) return;
@@ -500,7 +500,7 @@ export async function boot() {
   if (params.get('apps') === 'all') setConnected(roleApps(), true);
   applyRoleAccent();
   registerPersona(state.role);
-  state.cards = await import('./agent-cards.js?v=20261123143257').catch(e => { console.warn('company agent: card renderers did not load', e); return null; });
+  state.cards = await import('./agent-cards.js?v=20261123172325').catch(e => { console.warn('company agent: card renderers did not load', e); return null; });
 
   state.inst = Chat.mount(document.getElementById('ca-chat'), {
     persona: 'ag-' + state.role.id, mode: 'inline', hostedOnly: true, expand: false, commands: false, engine: false,

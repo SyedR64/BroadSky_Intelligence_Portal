@@ -1,9 +1,9 @@
-import * as Copy from './copy.js?v=20261123143257';
+import * as Copy from './copy.js?v=20261123172325';
 /* Fair Harbor — sustainable beachwear from recycled plastic (BSP investment, Mar 2022).
    Views: overview · opportunities · filings · NYC context (Manhattan home sales, demoted: context only). Shared helpers are duplicated in bpi.js by design (no cross-module imports). */
-import { renderFilings, opportunityCard } from '../assets/components.js?v=20261123143257';
-import { companyLinks } from './company-links.js?v=20261123143257';
-import { embedView } from './embed.js?v=20261123143257';
+import { renderFilings, opportunityCard } from '../assets/components.js?v=20261123172325';
+import { companyLinks } from './company-links.js?v=20261123172325';
+import { embedView } from './embed.js?v=20261123172325';
 
 /* ── module config (the only block that differs from bpi.js) ──────────────── */
 const CFG = {

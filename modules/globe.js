@@ -4,8 +4,8 @@
    Prepared tours come from data/research/globe_tours.json (built from the add-on screens and the firm records).
    The firm levels see the portfolio tours; a company role sees its own company's. The field level is shown the
    globe only for an address step (a job's example address): no tours, no other places. */
-import { Session } from '../assets/session.js?v=20261123143257';
-import { MapCmd } from '../assets/mapcmd.js?v=20261123143257';
+import { Session } from '../assets/session.js?v=20261123172325';
+import { MapCmd } from '../assets/mapcmd.js?v=20261123172325';
 
 const V = new URL(import.meta.url).search;   // the registry's ?v= stamp, reused for the engine and the stylesheet
 
@@ -28,7 +28,7 @@ function toursFor(all, role) {
 
 async function view(ctx) {
   const { el, params, data, esc, app } = ctx;
-  if (!document.getElementById('css-globe')) { const l = document.createElement('link'); l.id = 'css-globe'; l.rel = 'stylesheet'; l.href = `modules/globe.css${V || '?v=20261123143257'}`; document.head.appendChild(l); }
+  if (!document.getElementById('css-globe')) { const l = document.createElement('link'); l.id = 'css-globe'; l.rel = 'stylesheet'; l.href = `modules/globe.css${V || '?v=20261123172325'}`; document.head.appendChild(l); }
   const role = Session.role();
   const field = role.level === 'co_field';
   el.innerHTML = `<div class="gx-screen">
@@ -53,7 +53,7 @@ async function view(ctx) {
   if (!tours.length) $tours.hidden = true;
 
   let Engine;
-  try { Engine = await import(`../assets/godseye.js${V || '?v=20261123143257'}`); }
+  try { Engine = await import(`../assets/godseye.js${V || '?v=20261123172325'}`); }
   catch (e) { console.warn('[globe]', e); host.innerHTML = `<div class="gx-msg">${ctx.ui.note('The globe could not load.', 'warn')}</div>`; return; }
   if (!host.isConnected) return;   // the visitor left while the engine loaded
 
