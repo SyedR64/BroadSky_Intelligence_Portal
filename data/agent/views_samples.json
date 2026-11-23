@@ -1,0 +1,1129 @@
+{
+ "about": "View fixtures for assets/agent-views.js and scripts/check_agent_views.py. Content comes from the repository: company records are the sandbox example data (server/sandbox/*.json, base date 2026-11-17); the CET boards and bars come from data/research (cet_opportunities.json, ma_targets_cet.json). Shape of each kind: top of assets/agent-views.js.",
+ "samples": [
+  {
+   "role": "bsp-managing-partner",
+   "question": "Which companies are off plan this month?",
+   "view": {
+    "kind": "scorecard",
+    "title": "Six companies against plan, October 2026",
+    "lead": "2 of 6 companies are below plan on EBITDA: Frontline and Thomas Scientific. Revenue is on or above plan everywhere.",
+    "data": {
+     "cols": [
+      {
+       "id": "revenue",
+       "label": "Revenue",
+       "unit": "$k"
+      },
+      {
+       "id": "ebitda",
+       "label": "EBITDA",
+       "unit": "$k"
+      },
+      {
+       "id": "margin",
+       "label": "EBITDA margin",
+       "unit": "%"
+      }
+     ],
+     "rows": [
+      {
+       "id": "pp",
+       "label": "Punctual Pros",
+       "co": "pp",
+       "basis": "example"
+      },
+      {
+       "id": "cet",
+       "label": "CET",
+       "co": "cet",
+       "basis": "example"
+      },
+      {
+       "id": "fl",
+       "label": "Frontline",
+       "co": "fl",
+       "basis": "example"
+      },
+      {
+       "id": "ts",
+       "label": "Thomas Scientific",
+       "co": "ts",
+       "basis": "example"
+      },
+      {
+       "id": "bpi",
+       "label": "BPI",
+       "co": "bpi",
+       "basis": "example"
+      },
+      {
+       "id": "fh",
+       "label": "Fair Harbor",
+       "co": "fh",
+       "basis": "example"
+      }
+     ],
+     "cells": [
+      [
+       {
+        "value": 1983,
+        "target": 1987,
+        "status": "good",
+        "trend": [
+         1887,
+         1870,
+         1872,
+         1845,
+         1858,
+         1933,
+         1889,
+         1979,
+         2003,
+         1936,
+         1922,
+         1983
+        ]
+       },
+       {
+        "value": 252,
+        "target": 240,
+        "status": "good",
+        "trend": [
+         233,
+         234,
+         230,
+         228,
+         214,
+         245,
+         220,
+         266,
+         254,
+         219,
+         216,
+         252
+        ]
+       },
+       {
+        "value": 12.7,
+        "target": 12.1,
+        "status": "good",
+        "trend": [
+         12.3,
+         12.5,
+         12.3,
+         12.4,
+         11.5,
+         12.7,
+         11.6,
+         13.4,
+         12.7,
+         11.3,
+         11.2,
+         12.7
+        ]
+       }
+      ],
+      [
+       {
+        "value": 6659,
+        "target": 6614,
+        "status": "good",
+        "trend": [
+         6085,
+         6141,
+         6325,
+         6038,
+         6383,
+         6280,
+         6338,
+         6523,
+         6392,
+         6645,
+         6493,
+         6659
+        ]
+       },
+       {
+        "value": 667,
+        "target": 662,
+        "status": "good",
+        "trend": [
+         584,
+         653,
+         691,
+         651,
+         700,
+         592,
+         579,
+         636,
+         613,
+         693,
+         714,
+         667
+        ]
+       },
+       {
+        "value": 10.0,
+        "target": 10.0,
+        "status": "good",
+        "trend": [
+         9.6,
+         10.6,
+         10.9,
+         10.8,
+         11.0,
+         9.4,
+         9.1,
+         9.8,
+         9.6,
+         10.4,
+         11.0,
+         10.0
+        ]
+       }
+      ],
+      [
+       {
+        "value": 10751,
+        "target": 10748,
+        "status": "good",
+        "trend": [
+         9951,
+         10177,
+         10239,
+         10149,
+         10200,
+         10484,
+         10358,
+         10681,
+         10778,
+         10760,
+         10759,
+         10751
+        ]
+       },
+       {
+        "value": 1584,
+        "target": 1653,
+        "status": "warn",
+        "trend": [
+         1537,
+         1696,
+         1667,
+         1491,
+         1537,
+         1759,
+         1517,
+         1721,
+         1844,
+         1724,
+         1544,
+         1584
+        ]
+       },
+       {
+        "value": 14.7,
+        "target": 15.4,
+        "status": "warn",
+        "trend": [
+         15.4,
+         16.7,
+         16.3,
+         14.7,
+         15.1,
+         16.8,
+         14.6,
+         16.1,
+         17.1,
+         16.0,
+         14.4,
+         14.7
+        ]
+       }
+      ],
+      [
+       {
+        "value": 23992,
+        "target": 23711,
+        "status": "good",
+        "trend": [
+         23537,
+         23961,
+         23053,
+         23148,
+         22959,
+         23502,
+         23948,
+         23297,
+         22987,
+         24145,
+         23755,
+         23992
+        ]
+       },
+       {
+        "value": 2448,
+        "target": 2496,
+        "status": "warn",
+        "trend": [
+         2579,
+         2771,
+         2357,
+         2577,
+         2198,
+         2375,
+         2762,
+         2323,
+         2324,
+         2370,
+         2684,
+         2448
+        ]
+       },
+       {
+        "value": 10.2,
+        "target": 10.5,
+        "status": "warn",
+        "trend": [
+         11.0,
+         11.6,
+         10.2,
+         11.1,
+         9.6,
+         10.1,
+         11.5,
+         10.0,
+         10.1,
+         9.8,
+         11.3,
+         10.2
+        ]
+       }
+      ],
+      [
+       {
+        "value": 8831,
+        "target": 8728,
+        "status": "good",
+        "trend": [
+         8321,
+         8657,
+         8505,
+         8686,
+         8475,
+         8442,
+         8611,
+         8608,
+         8610,
+         8782,
+         8776,
+         8831
+        ]
+       },
+       {
+        "value": 1941,
+        "target": 1828,
+        "status": "good",
+        "trend": [
+         1688,
+         1830,
+         1837,
+         1941,
+         1704,
+         1766,
+         1825,
+         1849,
+         1812,
+         1877,
+         1796,
+         1941
+        ]
+       },
+       {
+        "value": 22.0,
+        "target": 20.9,
+        "status": "good",
+        "trend": [
+         20.3,
+         21.1,
+         21.6,
+         22.3,
+         20.1,
+         20.9,
+         21.2,
+         21.5,
+         21.0,
+         21.4,
+         20.5,
+         22.0
+        ]
+       }
+      ],
+      [
+       {
+        "value": 2284,
+        "target": 2241,
+        "status": "good",
+        "trend": [
+         2159,
+         2114,
+         2184,
+         2196,
+         2236,
+         2203,
+         2157,
+         2219,
+         2160,
+         2190,
+         2220,
+         2284
+        ]
+       },
+       {
+        "value": 169,
+        "target": 135,
+        "status": "good",
+        "trend": [
+         135,
+         89,
+         151,
+         165,
+         167,
+         132,
+         118,
+         162,
+         124,
+         138,
+         131,
+         169
+        ]
+       },
+       {
+        "value": 7.4,
+        "target": 6.0,
+        "status": "good",
+        "trend": [
+         6.3,
+         4.2,
+         6.9,
+         7.5,
+         7.5,
+         6.0,
+         5.5,
+         7.3,
+         5.7,
+         6.3,
+         5.9,
+         7.4
+        ]
+       }
+      ]
+     ],
+     "target_label": "plan"
+    },
+    "basis": "example",
+    "source": "Company records (example data): profit and loss against plan, Nov 2024 to Oct 2026. Modeled figures.",
+    "as_of": "2026-11-17",
+    "draft": {
+     "action": "chat_post",
+     "label": "Draft the post to the partners channel",
+     "body": "Frontline and Thomas Scientific are below EBITDA plan for October. Revenue is on or above plan at all six."
+    }
+   }
+  },
+  {
+   "role": "pp-cfo",
+   "question": "Why did margin miss plan last month?",
+   "view": {
+    "kind": "bridge",
+    "title": "Punctual Pros EBITDA, plan to actual, September 2026",
+    "lead": "EBITDA was $23k under plan. Revenue was $53k short; cost of work came in $32k under plan, which offset part of it.",
+    "data": {
+     "unit": "$k",
+     "start": {
+      "label": "Plan EBITDA",
+      "value": 239
+     },
+     "steps": [
+      {
+       "label": "Revenue",
+       "delta": -53
+      },
+      {
+       "label": "Cost of work",
+       "delta": 32
+      },
+      {
+       "label": "Operating costs",
+       "delta": -2
+      }
+     ],
+     "end": {
+      "label": "Actual EBITDA",
+      "value": 216
+     }
+    },
+    "basis": "example",
+    "source": "Company records (example data): Punctual Pros profit and loss against plan, Sep 2026. Modeled figures.",
+    "as_of": "2026-11-17",
+    "draft": {
+     "action": "chat_post",
+     "label": "Draft the post to the finance channel",
+     "body": "September EBITDA was $216k against a $239k plan. Revenue was $53k short; cost of work was $32k under."
+    }
+   }
+  },
+  {
+   "role": "pp-vp-operations",
+   "question": "Which hub has the most callbacks this quarter?",
+   "view": {
+    "kind": "heatmap",
+    "title": "Callbacks by hub, May to October 2026",
+    "lead": "Lancaster has the most callbacks: 90 in six months. Its target is 11 a month.",
+    "data": {
+     "unit": "jobs",
+     "good": "low",
+     "rows": [
+      {
+       "id": "lancaster",
+       "label": "Lancaster",
+       "basis": "example"
+      },
+      {
+       "id": "york",
+       "label": "York",
+       "basis": "example"
+      },
+      {
+       "id": "harrisburg",
+       "label": "Harrisburg",
+       "basis": "example"
+      },
+      {
+       "id": "toms-river",
+       "label": "Toms River",
+       "basis": "example"
+      }
+     ],
+     "cols": [
+      {
+       "id": "-6",
+       "label": "May"
+      },
+      {
+       "id": "-5",
+       "label": "Jun"
+      },
+      {
+       "id": "-4",
+       "label": "Jul"
+      },
+      {
+       "id": "-3",
+       "label": "Aug"
+      },
+      {
+       "id": "-2",
+       "label": "Sep"
+      },
+      {
+       "id": "-1",
+       "label": "Oct"
+      }
+     ],
+     "cells": [
+      [
+       14,
+       13,
+       14,
+       17,
+       16,
+       16
+      ],
+      [
+       11,
+       12,
+       7,
+       8,
+       12,
+       8
+      ],
+      [
+       11,
+       10,
+       7,
+       10,
+       10,
+       8
+      ],
+      [
+       7,
+       7,
+       7,
+       3,
+       5,
+       7
+      ]
+     ]
+    },
+    "basis": "example",
+    "source": "Company records (example data): callbacks per hub, May to Oct 2026. Modeled figures.",
+    "as_of": "2026-11-17",
+    "draft": {
+     "action": "chat_post",
+     "label": "Draft the post to the hub managers",
+     "body": "Lancaster had the most callbacks over May to October: 90. Review the repeat visits this week."
+    }
+   }
+  },
+  {
+   "role": "cet-estimator",
+   "question": "Which public bids and projects should CET chase first?",
+   "view": {
+    "kind": "pipeline_board",
+    "title": "CET public bids and projects, best fit first",
+    "lead": "Nine of 86 radar items are shown: the three best fits at each stage. Planned wastewater projects carry the largest values.",
+    "data": {
+     "unit": "$M",
+     "amount_label": "est. value",
+     "stages": [
+      {
+       "id": "open",
+       "label": "Open"
+      },
+      {
+       "id": "planned",
+       "label": "Planned"
+      },
+      {
+       "id": "awarded",
+       "label": "Awarded"
+      }
+     ],
+     "cards": [
+      {
+       "ref": "ma-worcester-regional-airport-modernization-149a",
+       "title": "Worcester Airport trade contractor RFQ",
+       "stage": "open",
+       "owner": "Massachusetts Port Authority",
+       "tag": "MA",
+       "basis": "public",
+       "note": "Fit 90 of 100",
+       "due": "Due 8 Oct 2026"
+      },
+      {
+       "ref": "ma-nevi-developers-seeking-evse-installers",
+       "title": "NEVI developers seeking EV charger installers",
+       "stage": "open",
+       "owner": "Global Montello Group Corp / Applegreen",
+       "tag": "MA",
+       "basis": "public",
+       "note": "Fit 88 of 100",
+       "due": "Due 31 Oct 2026"
+      },
+      {
+       "ref": "ma-worcester-union-station-generator",
+       "title": "Generator Replacement - Union Station",
+       "stage": "open",
+       "owner": "Worcester Redevelopment Authority",
+       "tag": "MA",
+       "basis": "public",
+       "note": "Fit 85 of 100",
+       "due": "Due 28 Oct 2026"
+      },
+      {
+       "ref": "ct-danbury-wwtp-electrical-resiliency",
+       "title": "Danbury WWTP Generator Upgrade",
+       "stage": "planned",
+       "owner": "City of Danbury",
+       "tag": "CT",
+       "basis": "public",
+       "note": "Fit 90 of 100",
+       "amount": 3.2
+      },
+      {
+       "ref": "ct-fairfield-pump-stations-wpcf",
+       "title": "Fairfield Pump Station Upgrades",
+       "stage": "planned",
+       "owner": "Town of Fairfield WPCA",
+       "tag": "CT",
+       "basis": "public",
+       "note": "Fit 88 of 100",
+       "amount": 36.1
+      },
+      {
+       "ref": "me-kennebec-std-wwtf-fairfield-ps",
+       "title": "Kennebec treatment plant and pump station",
+       "stage": "planned",
+       "owner": "Kennebec Sanitary Treatment District",
+       "tag": "ME",
+       "basis": "public",
+       "note": "Fit 88 of 100",
+       "amount": 12.6
+      },
+      {
+       "ref": "ct-glastonbury-parker-terrace-ps",
+       "title": "Parker Terrace Wastewater Pumping Station Upgrades",
+       "stage": "awarded",
+       "owner": "Town of Glastonbury",
+       "tag": "CT",
+       "basis": "public",
+       "note": "Fit 88 of 100",
+       "amount": 5.3
+      },
+      {
+       "ref": "ma-westborough-fy26-wwtp-improvements",
+       "title": "Westborough FY26 Wastewater Treatment Plant Improvements",
+       "stage": "awarded",
+       "owner": "Town of Westborough",
+       "tag": "MA",
+       "basis": "public",
+       "note": "Fit 82 of 100"
+      },
+      {
+       "ref": "ma-massdot-nevi-sites",
+       "title": "MassDOT NEVI awarded sites: Applegreen",
+       "stage": "awarded",
+       "owner": "Massachusetts DOT",
+       "tag": "MA",
+       "basis": "public",
+       "note": "Fit 80 of 100"
+      }
+     ]
+    },
+    "basis": "public",
+    "source": "CET New England opportunity radar, 24 Sep 2026: state capital plans, public bid portals, federal awards. Values are estimates.",
+    "as_of": "2026-09-24",
+    "draft": {
+     "action": "calendar_hold",
+     "label": "Draft a hold to review the top bids",
+     "body": "Review the three best-fit open bids and the planned wastewater projects.",
+     "when": "This week"
+    }
+   }
+  },
+  {
+   "role": "bsp-partner",
+   "question": "Where do my live deals stand?",
+   "view": {
+    "kind": "pipeline_board",
+    "title": "Live deals by stage",
+    "lead": "19 live deals. 5 have a next step within a week.",
+    "data": {
+     "unit": "$M",
+     "amount_label": "revenue",
+     "stages": [
+      {
+       "id": "Sourced",
+       "label": "Sourced"
+      },
+      {
+       "id": "Screening",
+       "label": "Screening"
+      },
+      {
+       "id": "IOI",
+       "label": "IOI"
+      },
+      {
+       "id": "LOI",
+       "label": "LOI"
+      },
+      {
+       "id": "Diligence",
+       "label": "Diligence"
+      }
+     ],
+     "cards": [
+      {
+       "ref": "dc-035",
+       "title": "Pondermere Lab Products",
+       "amount": 51.1,
+       "stage": "IOI",
+       "tag": "Thomas Scientific",
+       "due": "in 2 days",
+       "owner": "Partner",
+       "note": "Submit the indication of interest",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-056",
+       "title": "Vellacombe Facility Services",
+       "amount": 103.0,
+       "stage": "Sourced",
+       "tag": "New platform",
+       "due": "in 3 days",
+       "owner": "Partner",
+       "note": "Intro call with the owner",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-018",
+       "title": "Vervainmoor Energy Services",
+       "amount": 33.0,
+       "stage": "Screening",
+       "tag": "CET",
+       "due": "in 4 days",
+       "owner": "Partner",
+       "note": "Review the teaser and first financials",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-034",
+       "title": "Kettlemoor Lab Products",
+       "amount": 55.2,
+       "stage": "IOI",
+       "tag": "Thomas Scientific",
+       "due": "in 6 days",
+       "owner": "Partner",
+       "note": "Submit the indication of interest",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-028",
+       "title": "Emberwick Legal IT",
+       "amount": 18.3,
+       "stage": "Screening",
+       "tag": "Frontline",
+       "due": "in 7 days",
+       "owner": "Partner",
+       "note": "Review the teaser and first financials",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-040",
+       "title": "Islingmoor Scientific Supply",
+       "amount": 30.6,
+       "stage": "LOI",
+       "tag": "Thomas Scientific",
+       "due": "in 8 days",
+       "owner": "Partner",
+       "note": "Settle LOI terms with the seller",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-032",
+       "title": "Quimbleton Legal IT",
+       "amount": 20.3,
+       "stage": "Sourced",
+       "tag": "Frontline",
+       "due": "in 9 days",
+       "owner": "Partner",
+       "note": "Intro call with the owner",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-036",
+       "title": "Dovercombe Lab Products",
+       "amount": 28.2,
+       "stage": "IOI",
+       "tag": "Thomas Scientific",
+       "due": "in 9 days",
+       "owner": "Partner",
+       "note": "Submit the indication of interest",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-012",
+       "title": "Fernwhistle Home Services",
+       "amount": 13.6,
+       "stage": "IOI",
+       "tag": "Punctual Pros",
+       "due": "in 12 days",
+       "owner": "Partner",
+       "note": "Submit the indication of interest",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-022",
+       "title": "Grislemoor Power Systems",
+       "amount": 34.0,
+       "stage": "Sourced",
+       "tag": "CET",
+       "due": "in 13 days",
+       "owner": "Partner",
+       "note": "Intro call with the owner",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-010",
+       "title": "Inglewhit Heating and Air",
+       "amount": 8.9,
+       "stage": "IOI",
+       "tag": "Punctual Pros",
+       "due": "in 14 days",
+       "owner": "Partner",
+       "note": "Submit the indication of interest",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-039",
+       "title": "Birchwhistle Scientific Supply",
+       "amount": 49.0,
+       "stage": "Sourced",
+       "tag": "Thomas Scientific",
+       "due": "in 14 days",
+       "owner": "Partner",
+       "note": "Intro call with the owner",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-023",
+       "title": "Tansymoor Power Systems",
+       "amount": 32.2,
+       "stage": "Sourced",
+       "tag": "CET",
+       "due": "in 15 days",
+       "owner": "Partner",
+       "note": "Intro call with the owner",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-041",
+       "title": "Gorsemere Strategies",
+       "amount": 26.1,
+       "stage": "Screening",
+       "tag": "BPI",
+       "due": "in 16 days",
+       "owner": "Partner",
+       "note": "Review the teaser and first financials",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-045",
+       "title": "Ivorydale Communications",
+       "amount": 17.5,
+       "stage": "Diligence",
+       "tag": "BPI",
+       "due": "in 17 days",
+       "owner": "Partner",
+       "note": "Quality of earnings review and site visits",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-026",
+       "title": "Lamberdine Technology Partners",
+       "amount": 37.9,
+       "stage": "Sourced",
+       "tag": "Frontline",
+       "due": "in 19 days",
+       "owner": "Partner",
+       "note": "Intro call with the owner",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-038",
+       "title": "Cindermoor Lab Products",
+       "amount": 37.8,
+       "stage": "Sourced",
+       "tag": "Thomas Scientific",
+       "due": "in 22 days",
+       "owner": "Partner",
+       "note": "Intro call with the owner",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-025",
+       "title": "Saffrondale Technology Partners",
+       "amount": 10.2,
+       "stage": "Sourced",
+       "tag": "Frontline",
+       "due": "in 25 days",
+       "owner": "Partner",
+       "note": "Intro call with the owner",
+       "basis": "example"
+      },
+      {
+       "ref": "dc-059",
+       "title": "Wrenmoor Testing Labs",
+       "amount": 107.7,
+       "stage": "Sourced",
+       "tag": "New platform",
+       "due": "in 25 days",
+       "owner": "Partner",
+       "note": "Intro call with the owner",
+       "basis": "example"
+      }
+     ]
+    },
+    "basis": "example",
+    "source": "Company records (example data): deal list, stage and next step. Revenue figures are estimates.",
+    "as_of": "2026-11-17",
+    "draft": {
+     "action": "crm_stage",
+     "label": "Draft the move to Diligence",
+     "stage": "Diligence",
+     "body": "Move the first LOI deal to Diligence once terms are settled."
+    }
+   }
+  },
+  {
+   "role": "bsp-associate",
+   "question": "Point out the best add-on targets for CET.",
+   "view": {
+    "kind": "ranked_bars",
+    "title": "Best add-on targets for CET",
+    "lead": "McDonald Electrical Corporation and K.M. Kelly, Inc. lead at 83 of 100. All eight are in Massachusetts or Connecticut.",
+    "data": {
+     "unit": "pts",
+     "max": 100,
+     "value_label": "fit score",
+     "bars": [
+      {
+       "ref": "cet-t01",
+       "label": "McDonald Electrical Corporation",
+       "value": 83,
+       "sub": "Hingham, MA · est. revenue $18M · 96 staff",
+       "basis": "est"
+      },
+      {
+       "ref": "cet-t02",
+       "label": "K.M. Kelly, Inc.",
+       "value": 83,
+       "sub": "Rochdale (Leicester), MA · est. revenue $13M · 67 staff",
+       "basis": "est"
+      },
+      {
+       "ref": "cet-t03",
+       "label": "Energy Electric",
+       "value": 81,
+       "sub": "Foxborough, MA · est. revenue $21M · 150 staff",
+       "basis": "est"
+      },
+      {
+       "ref": "cet-t04",
+       "label": "Coghlin Electrical Contractors, Inc.",
+       "value": 79,
+       "sub": "Worcester, MA · est. revenue $27M · 33 staff",
+       "basis": "est"
+      },
+      {
+       "ref": "cet-t05",
+       "label": "FM Generator, Inc.",
+       "value": 78,
+       "sub": "Canton, MA · est. revenue $11M · 75 staff",
+       "basis": "est"
+      },
+      {
+       "ref": "cet-t06",
+       "label": "Murphy Electric & Industrial Control",
+       "value": 78,
+       "sub": "Pembroke, MA · est. revenue $12M · 55 staff",
+       "basis": "est"
+      },
+      {
+       "ref": "cet-t07",
+       "label": "Elm Electrical, Inc.",
+       "value": 77,
+       "sub": "Westfield, MA · est. revenue $38M · 143 staff",
+       "basis": "est"
+      },
+      {
+       "ref": "cet-t08",
+       "label": "CTEC Solar (C-TEC Solar, LLC)",
+       "value": 75,
+       "sub": "Bloomfield, CT · est. revenue $30M · 70 staff",
+       "basis": "est"
+      }
+     ]
+    },
+    "basis": "est",
+    "source": "CET add-on target screen, 24 Sep 2026: company search estimates checked against each firm's own site and public sources. Fit score out of 100.",
+    "as_of": "2026-09-24",
+    "draft": {
+     "action": "crm_stage",
+     "label": "Draft the move to Screening",
+     "stage": "Screening",
+     "body": "Move McDonald Electrical Corporation to Screening."
+    }
+   }
+  },
+  {
+   "role": "bpi-account-director",
+   "question": "Which retainers are over their hours plan?",
+   "view": {
+    "kind": "ranked_bars",
+    "title": "Retainers over their hours plan",
+    "lead": "7 retainers have used more hours than planned. Kinderly Foundation is furthest over, at 802 of 680 hours.",
+    "data": {
+     "unit": "hours",
+     "plan_label": "plan",
+     "bars": [
+      {
+       "ref": "sf-bpi-acc-001",
+       "label": "Kinderly Foundation",
+       "value": 802,
+       "plan": 680,
+       "sub": "18% over · renews in 50 days",
+       "status": "bad",
+       "basis": "example"
+      },
+      {
+       "ref": "sf-bpi-acc-031",
+       "label": "Copperdine Mobility Group",
+       "value": 457,
+       "plan": 410,
+       "sub": "11% over · renews in 173 days",
+       "status": "warn",
+       "basis": "example"
+      },
+      {
+       "ref": "sf-bpi-acc-028",
+       "label": "Kettlemoor Institute",
+       "value": 632,
+       "plan": 570,
+       "sub": "11% over · renews in 326 days",
+       "status": "warn",
+       "basis": "example"
+      },
+      {
+       "ref": "sf-bpi-acc-006",
+       "label": "Orchardine Foundation",
+       "value": 386,
+       "plan": 350,
+       "sub": "10% over · renews in 240 days",
+       "status": "warn",
+       "basis": "example"
+      },
+      {
+       "ref": "sf-bpi-acc-032",
+       "label": "Amberwick Health Network",
+       "value": 800,
+       "plan": 730,
+       "sub": "10% over · renews in 254 days",
+       "status": "warn",
+       "basis": "example"
+      },
+      {
+       "ref": "sf-bpi-acc-015",
+       "label": "Oxlowe Foundation",
+       "value": 280,
+       "plan": 260,
+       "sub": "8% over · renews in 316 days",
+       "status": "warn",
+       "basis": "example"
+      },
+      {
+       "ref": "sf-bpi-acc-010",
+       "label": "Vellacombe Foundation",
+       "value": 342,
+       "plan": 320,
+       "sub": "7% over · renews in 19 days",
+       "status": "warn",
+       "basis": "example"
+      }
+     ]
+    },
+    "basis": "example",
+    "source": "Company records (example data): retainer hours used and planned, by account.",
+    "as_of": "2026-11-17",
+    "draft": {
+     "action": "chat_post",
+     "label": "Draft the note to the account leads",
+     "body": "Kinderly Foundation is over its hours plan. Agree a scope change before renewal."
+    }
+   }
+  }
+ ]
+}
