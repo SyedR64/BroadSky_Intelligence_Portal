@@ -317,17 +317,19 @@ const KEEP_CASE = /^(?:[A-Z]{2,}|AM|OS|Broad|Punctual|Manhattan|New|Thomas|Front
 export const sentence = s => { const t = String(s || '').replace(/\s*&\s*/g, ' and ').replace(/\s*→\s*/g, ' to ').trim(); return KEEP_CASE.test(t) ? t : t.charAt(0).toLowerCase() + t.slice(1); };
 /** The h1 text for a module view. */
 export const viewTitle = (m, v) => { const t = VIEW_TITLES[`${m.id}/${v.id}`] || sentence(v.name); return plain(t) === plain(m.name) ? m.name : `${m.name} · ${t}`; };
-/** The screen name appears once (copy rule 9). The tab names the screen, so a screen's own first heading that only
-    repeats the current tab (or this screen's name) is kept for screen readers and hidden from view. A heading that says
-    something else, and every heading on a screen with no tab row, stays as written. Runs after every render (app.html);
-    idempotent, safe inside a MutationObserver. */
+/** The screen name appears once (copy rule 9). The tab names the screen and the menu names the section, so a screen's
+    own first heading that only repeats the current tab (or this screen's name), or the menu item that is open, is kept
+    for screen readers and hidden from view. A heading that says something else stays as written. Runs after every
+    render (app.html); idempotent, safe inside a MutationObserver. */
 const plain = s => String(s || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim();
 export function retitle(root, m, v) {
   if (!root || !m || !v) return;
   const h = root.querySelector('.page-head h1, .side-head h1'); // the 3D map's h1 is a per-scene caption, not a page title: left alone
   if (!h) return;
   const tab = document.querySelector('#topbar .view-tabs:not(.view-tabs--one) .view-tab[aria-current]');
+  const item = document.querySelector('#rail .rail-item[aria-current] .ellipsis');
   const said = plain(h.textContent);
-  const same = !!tab && !!said && [tab.firstChild?.textContent, v.name, VIEW_TITLES[`${m.id}/${v.id}`]].some(x => plain(x) === said);
+  const same = !!said && ((!!tab && [tab.firstChild?.textContent, v.name, VIEW_TITLES[`${m.id}/${v.id}`]].some(x => plain(x) === said))
+    || (!!item && plain(item.textContent) === said));
   if (h.classList.contains('sys-sr') !== same) h.classList.toggle('sys-sr', same);
 }
