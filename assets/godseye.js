@@ -6,16 +6,17 @@
    Libraries (pinned; unpkg first, jsdelivr fallback, as assets/theater.js loads them):
      MapLibre GL JS 5.24.0 (globe projection, sky and atmosphere, terrain). Loaded under its own name so the 3D map
        screen's MapLibre 4 keeps working beside it.
-     deck.gl 9.3.11 (only when a Google key is configured): Tile3DLayer with Google Photorealistic 3D Tiles,
-       drawn into the MapLibre globe through MapboxOverlay (interleaved).
-   Imagery and terrain with no key (all free to use with attribution, shown in the map's attribution control):
+   Imagery and terrain (no key; all free to use with attribution, shown in the map's attribution control):
      USGS The National Map, USGSImageryOnly tiles: public domain (US Government); global small-scale imagery,
        US orthoimagery to zoom 16. Credit: "USGS The National Map".
      AWS Terrain Tiles (Terrarium): open data on the Registry of Open Data on AWS, with attribution.
      OpenFreeMap vector tiles (OpenMapTiles schema, OpenStreetMap data, ODbL): place and road names, 3D buildings.
-   With a key ("maps": { "google3dTilesKey": "…" } in assets/runtime.json, empty by default) the photorealistic tiles
-   replace the imagery, terrain and labels (Google's terms do not allow mixing its tiles with other map content), and
-   the Google logo and the data credits of the tiles in view are shown on the map, as Google's policies require.
+   This is the renderer with no key. With a Google key in assets/runtime.json the screen (modules/globe.js) uses the
+   CesiumJS renderer (assets/godseye-cesium.js) instead, through the same command.
+
+   A 'site' step (a real address, assets/mapcmd.js) draws its building outline extruded to its height, the parcel edge
+   as a thin line, and dims the map's own buildings; while the camera is at a site or address step, manual zoom stops
+   at the step's ceiling (its `ceiling`, set by mapcmd.js from the step's precision).
 
    Usage:
      import { mount } from './godseye.js?v=…';
@@ -23,23 +24,24 @@
      g.run({ title, steps, marks }); g.fly(step); g.orbit(); g.tilt(65); g.pause(); g.resume(); g.next(); g.prev(); g.destroy();
    ═══════════════════════════════════════════════════════════════════════════ */
 
-const ML_VER = '5.24.0', DECK_VER = '9.3.11';
+const ML_VER = '5.24.0';
 const LIBS = {
   mlJs: [`https://unpkg.com/maplibre-gl@${ML_VER}/dist/maplibre-gl.js`, `https://cdn.jsdelivr.net/npm/maplibre-gl@${ML_VER}/dist/maplibre-gl.js`],
   mlCss: [`https://unpkg.com/maplibre-gl@${ML_VER}/dist/maplibre-gl.css`, `https://cdn.jsdelivr.net/npm/maplibre-gl@${ML_VER}/dist/maplibre-gl.css`],
-  deckJs: [`https://unpkg.com/deck.gl@${DECK_VER}/dist.min.js`, `https://cdn.jsdelivr.net/npm/deck.gl@${DECK_VER}/dist.min.js`],
 };
 const SAT = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}';
 const DEM = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png';
 const OMT = 'https://tiles.openfreemap.org/planet';
 const GLYPHS = 'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf';
-const G3D = 'https://tile.googleapis.com/v1/3dtiles/root.json';
 const ATTR = {
   sat: 'Imagery <a href="https://www.usgs.gov/programs/national-geospatial-program/national-map" target="_blank" rel="noopener">USGS The National Map</a>',
   dem: 'Terrain <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">AWS Terrain Tiles</a>',
   omt: '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">© OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
 };
 const HOME = { center: [-84, 37.5], zoom: 2.15, pitch: 0, bearing: 0 };
+const FREE_ZOOM = 22;                     // the map's own limit when no site or address step is on screen
+const BLDG_OPACITY = ['interpolate', ['linear'], ['zoom'], 15, 0, 16, .55];
+const SITE_SRC = 'gx-site', SITE_EMPTY = { type: 'FeatureCollection', features: [] };
 
 /* ── small utilities ──────────────────────────────────────────────────────── */
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -80,13 +82,8 @@ async function maplibre5() {
     return m;
   });
 }
-const deckLib = () => (window.deck?.MapboxOverlay && window.deck?.Tile3DLayer) ? Promise.resolve(window.deck) : loadScript(LIBS.deckJs, () => { if (!window.deck?.Tile3DLayer) throw new Error('deck.gl missing'); return window.deck; });
 export function webglOK() {
   try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; }
-}
-/** The Google key from assets/runtime.json ("maps": { "google3dTilesKey": "" }). Empty by default. */
-async function googleKey() {
-  try { const r = await fetch(new URL('./runtime.json', import.meta.url), { cache: 'no-cache' }); if (!r.ok) return ''; const j = await r.json(); const k = j?.maps?.google3dTilesKey; return typeof k === 'string' && /^[\w-]{20,60}$/.test(k.trim()) ? k.trim() : ''; } catch { return ''; }
 }
 
 /* ── the style with no key: imagery, terrain, atmosphere, names and buildings ── */
@@ -124,12 +121,6 @@ function style() {
     ],
   };
 }
-/** With a key: Google's tiles alone (no other imagery, terrain or labels mixed in), on the same globe. */
-function googleStyle() {
-  return { version: 8, projection: { type: 'globe' }, sources: {},
-    sky: { 'sky-color': '#0b1d3a', 'horizon-color': '#6aa7e8', 'fog-color': '#9cc6ef', 'atmosphere-blend': ['interpolate', ['linear'], ['zoom'], 0, 1, 8, .6, 12, 0] },
-    layers: [{ id: 'space', type: 'background', paint: { 'background-color': '#050912' } }] };
-}
 
 /* ── scoped CSS (system tokens; the stage is a dark band, data-sys-theme="dark") ── */
 const CSS = `
@@ -157,8 +148,6 @@ const CSS = `
 .gx-card .gx-fig b{font:600 18px/1.1 var(--sys-mono);letter-spacing:-.03em;color:var(--sys-ink);font-variant-numeric:tabular-nums}
 .gx-card .gx-why{font-size:var(--sys-fs-sm);line-height:1.45;color:var(--sys-ink-2)}
 .gx-card .gx-n{font:600 var(--sys-fs-2xs)/1 var(--sys-mono);color:var(--sys-mute)}
-.gx-g-attr{position:absolute;z-index:3;left:8px;bottom:6px;display:flex;align-items:center;gap:8px;max-width:calc(100% - 140px);font:500 10px/1.3 var(--sys-font);color:#e6edf3;text-shadow:0 1px 2px #000}
-.gx-g-attr .gx-glogo{font:700 15px/1 Arial,Helvetica,sans-serif;letter-spacing:-.2px;color:#fff}
 .gx-fallback{position:absolute;inset:0;overflow:auto;padding:var(--sys-sp-6,24px) var(--sys-gut,16px);background:var(--sys-bg)}
 .gx-fallback ol{margin:var(--sys-sp-3,12px) 0 0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
 .gx-stage .maplibregl-ctrl-attrib{background:rgba(5,9,18,.72)!important;color:#d5dde7;font-size:10px}
@@ -169,6 +158,12 @@ const CSS = `
 .gx-stage .maplibregl-ctrl-group button .maplibregl-ctrl-icon{filter:invert(1)}
 @media (prefers-reduced-motion:reduce){.gx-pin.on .gx-dot::after{animation:none}.gx-card{transition:none}}
 @media (max-width:760px){.gx-card{left:12px;right:12px;width:auto;bottom:30px;padding:12px 14px}.gx-pin .gx-lbl{max-width:150px}}`;
+
+/** A town-level site step right before the address it stages (same place, within a few kilometres). */
+function viaTown(s, next) {
+  return !!(s && next && s.kind === 'site' && s.precision === 'town' && next.kind === 'site' && next.precision !== 'town'
+    && Math.abs(s.lat - next.lat) < .05 && Math.abs(s.lon - next.lon) < .05);
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 class Globe {
@@ -182,13 +177,13 @@ class Globe {
     root.innerHTML = `<div class="gx-map" role="region" aria-label="Globe"></div><div class="sys-card gx-card out" hidden aria-live="polite"></div>`;
     this.el.appendChild(root); this.root = root; this.$map = root.querySelector('.gx-map'); this.$card = root.querySelector('.gx-card');
     if (!webglOK() || this.opts.forceFallback) return this._fallback('nowebgl');
-    let ml, key;
-    try { loadCss(LIBS.mlCss, 'maplibre5-css'); [ml, key] = await Promise.all([maplibre5(), googleKey()]); }
+    let ml;
+    try { loadCss(LIBS.mlCss, 'maplibre5-css'); ml = await maplibre5(); }
     catch (e) { console.warn('[globe]', e); return this._fallback('nolib'); }
     if (this.destroyed) return this;
-    this.ml = ml; this.key = key; this.mode = key ? 'google' : 'open';
+    this.ml = ml; this.mode = 'open';
     try {
-      this.map = new ml.Map({ container: this.$map, style: key ? googleStyle() : style(), ...HOME, maxPitch: 78, attributionControl: false, fadeDuration: 0, renderWorldCopies: false, canvasContextAttributes: { antialias: true, preserveDrawingBuffer: !!this.opts.preserveDrawingBuffer } });
+      this.map = new ml.Map({ container: this.$map, style: style(), ...HOME, maxPitch: 78, attributionControl: false, fadeDuration: 0, renderWorldCopies: false, canvasContextAttributes: { antialias: true, preserveDrawingBuffer: !!this.opts.preserveDrawingBuffer } });
     } catch (e) { console.warn('[globe]', e); return this._fallback('nowebgl'); }
     const map = this.map;
     map.addControl(new ml.AttributionControl({ compact: true }), 'bottom-right');
@@ -202,22 +197,7 @@ class Globe {
     document.addEventListener('visibilitychange', this._onVis);
     await new Promise(res => { let done = false; const ok = () => { if (!done) { done = true; res(); } }; map.once('load', ok); setTimeout(ok, 15000); });
     if (this.destroyed) return this;
-    if (key) this._google(key).catch(e => { console.warn('[globe] 3D tiles', e); });
     return this;
-  }
-
-  /* Google Photorealistic 3D Tiles on the same globe, with the logo and the credits of the tiles in view. */
-  async _google(key) {
-    const deck = await deckLib(); if (this.destroyed) return;
-    const attr = document.createElement('div'); attr.className = 'gx-g-attr'; attr.innerHTML = '<span class="gx-glogo" aria-label="Google">Google</span><span class="gx-credits"></span>';
-    this.root.appendChild(attr); const credits = attr.querySelector('.gx-credits');
-    const layer = new deck.Tile3DLayer({
-      id: 'google-3d', data: G3D, loadOptions: { fetch: { headers: { 'X-GOOG-API-KEY': key } } }, operation: 'terrain+draw',
-      onTilesetLoad: ts => { ts.options.onTraversalComplete = sel => { const set = new Set(); for (const t of sel) { const c = t?.content?.gltf?.asset?.copyright; if (c) c.split(';').map(x => x.trim()).filter(Boolean).forEach(x => set.add(x)); } credits.textContent = [...set].join('; '); return sel; }; },
-      onTileError: e => console.warn('[globe] tile', e?.message || e),
-    });
-    this.overlay = new deck.MapboxOverlay({ interleaved: true, layers: [layer] });
-    this.map.addControl(this.overlay);
   }
 
   _fallback(reason) {
@@ -261,14 +241,14 @@ class Globe {
   stopOrbit() { this.orbiting = false; cancelAnimationFrame(this.orbitRaf); this.orbitRaf = 0; }
   /** Tilt down to an oblique view (or back up). */
   tilt(pitch = 65, duration = 1600) { if (!this.map) return; if (reduced()) this.map.setPitch(pitch); else this.map.easeTo({ pitch, duration }); }
-  home() { this.stop(); this._clearMarks(); this._card(null); if (!this.map) return; reduced() ? this.map.jumpTo(HOME) : this.map.flyTo({ ...HOME, duration: 2400 }); }
+  home() { this.stop(); this._clearMarks(); this._clearSites(); this._ceiling(FREE_ZOOM); this._card(null); if (!this.map) return; reduced() ? this.map.jumpTo(HOME) : this.map.flyTo({ ...HOME, duration: 2400 }); }
 
   /* ── marks and the place card ───────────────────────────────────────────── */
   _clearMarks() { for (const m of this.markers) m.remove(); this.markers = []; }
   _marks(cmd) {
     this._clearMarks(); if (!this.map) return;
     const add = (p, i, cls) => {
-      const el = document.createElement('button'); el.type = 'button'; el.className = `gx-pin ${cls}${p.kind === 'address' ? ' addr' : ''}`;
+      const el = document.createElement('button'); el.type = 'button'; el.className = `gx-pin ${cls}${p.kind === 'address' || p.kind === 'site' ? ' addr' : ''}`;
       if (p.co) el.dataset.co = p.co;
       el.innerHTML = `<span class="gx-dot" aria-hidden="true"></span><span class="gx-lbl">${esc(p.label)}</span>`;
       el.setAttribute('aria-label', p.label);
@@ -277,8 +257,54 @@ class Globe {
       mk._i = i; this.markers.push(mk);
     };
     (cmd.marks || []).forEach(m => add(m, null, 'mark'));
-    (cmd.steps || []).forEach((s, i) => add(s, i, 'stop'));
+    // a town step that only stages its own address gets no pin of its own (the two would sit on one spot)
+    (cmd.steps || []).forEach((s, i, all) => { if (!viaTown(s, all[i + 1])) add(s, i, 'stop'); });
   }
+  /* ── a real address: its outline extruded, the parcel edge, the map's own buildings dimmed ── */
+  _sites(cmd) {
+    const map = this.map; if (!map) return;
+    const feats = [];
+    for (const s of cmd.steps || []) {
+      if (s.kind !== 'site') continue;
+      if (s.parcel) feats.push({ type: 'Feature', properties: { part: 'parcel' }, geometry: { type: 'LineString', coordinates: [...s.parcel, s.parcel[0]] } });
+      if (s.outline) {
+        const ring = [...s.outline, s.outline[0]];
+        feats.push({ type: 'Feature', properties: { part: 'building', h: s.height_m || 8, basis: s.height_basis || 'likely' }, geometry: { type: 'Polygon', coordinates: [ring] } });
+        feats.push({ type: 'Feature', properties: { part: 'edge' }, geometry: { type: 'LineString', coordinates: ring } });
+      }
+    }
+    this.siteFeatures = feats.length;
+    try {
+      if (!map.getSource(SITE_SRC)) {
+        if (!feats.length) return;
+        map.addSource(SITE_SRC, { type: 'geojson', data: SITE_EMPTY });
+        const before = map.getLayer('road-names') ? 'road-names' : undefined;
+        map.addLayer({ id: 'gx-site-parcel', type: 'line', source: SITE_SRC, filter: ['==', ['get', 'part'], 'parcel'],
+          paint: { 'line-color': '#ffd479', 'line-width': ['interpolate', ['linear'], ['zoom'], 15, .8, 19, 2.2], 'line-opacity': .9 } }, before);
+        map.addLayer({ id: 'gx-site-building', type: 'fill-extrusion', source: SITE_SRC, filter: ['==', ['get', 'part'], 'building'],
+          paint: { 'fill-extrusion-color': ['match', ['get', 'basis'], 'public', '#f0874a', '#f6a777'], 'fill-extrusion-height': ['get', 'h'], 'fill-extrusion-base': 0, 'fill-extrusion-opacity': .72 } }, before);
+        map.addLayer({ id: 'gx-site-edge', type: 'line', source: SITE_SRC, filter: ['==', ['get', 'part'], 'edge'],
+          paint: { 'line-color': '#ffffff', 'line-width': ['interpolate', ['linear'], ['zoom'], 15, 1, 19, 2.6] } }, before);
+      }
+      map.getSource(SITE_SRC).setData({ type: 'FeatureCollection', features: feats });
+      if (map.getLayer('buildings')) map.setPaintProperty('buildings', 'fill-extrusion-opacity', feats.some(f => f.properties.part === 'building') ? ['interpolate', ['linear'], ['zoom'], 15, 0, 16, .16] : BLDG_OPACITY);
+    } catch (e) { console.warn('[globe] site', e); }
+  }
+  _clearSites() {
+    const map = this.map; this.siteFeatures = 0; if (!map) return;
+    try { map.getSource(SITE_SRC)?.setData(SITE_EMPTY); if (map.getLayer('buildings')) map.setPaintProperty('buildings', 'fill-extrusion-opacity', BLDG_OPACITY); } catch { }
+  }
+  /** While a site or address step is on screen, manual zoom stops at its ceiling. */
+  _ceiling(z) {
+    const map = this.map; if (!map) return;
+    try {
+      map.setMaxZoom(Math.min(FREE_ZOOM, z ?? FREE_ZOOM));
+      // MapLibre 5.24 on the globe keeps the old limit for the next flight after a bearing change (the orbit); a
+      // jump in place settles the new one
+      map.jumpTo({ zoom: map.getZoom() });
+    } catch { }
+  }
+
   _highlight(i) { for (const m of this.markers) m.getElement().classList.toggle('on', m._i === i); }
   _card(s, i, n) {
     const c = this.$card; if (!c) return;
@@ -296,6 +322,7 @@ class Globe {
     this.stop(); this.cmd = cmd; this.i = -1; this.paused = false;
     if (this.mode === 'fallback') { this._drawFallback(); try { this.opts.onStop?.(0, cmd.steps?.[0]); } catch { } return Promise.resolve(); }
     this._marks(cmd);
+    this._clearSites(); this._sites(cmd);
     if (!cmd.steps?.length) { if (cmd.fit !== false) this._fitMarks(cmd.marks); return Promise.resolve(); }
     return this._loop(++this.token, 0);
   }
@@ -303,10 +330,14 @@ class Globe {
     const steps = this.cmd.steps;
     for (let i = from; i < steps.length; i++) {
       if (tok !== this.token || this.destroyed) return;
+      // with reduced motion there is no flight to stage: the town step before its own address is skipped
+      if (reduced() && viaTown(steps[i], steps[i + 1])) continue;
       this.i = i; this.stopOrbit(); this._highlight(i); this._card(null);
       try { this.opts.onStop?.(i, steps[i]); } catch { }
+      this._ceiling(FREE_ZOOM);
       await this.fly(steps[i]);
       if (tok !== this.token || this.destroyed) return;
+      this._ceiling(steps[i].ceiling);
       this._card(steps[i], i, steps.length);
       if (steps.length === 1) { this.orbit(4); return; }
       this.orbit(4);
@@ -330,6 +361,8 @@ class Globe {
     const m = this.map; const now = performance.now();
     if (now - this.fpsT0 > 900) { this.fps = this.fpsT0 ? Math.round(this.frames * 1000 / (now - this.fpsT0)) : null; this.frames = 0; this.fpsT0 = now; }
     return { mode: this.mode, step: this.i, steps: this.cmd?.steps?.length || 0, paused: this.paused, orbiting: this.orbiting, renderFps: this.fps,
+      maxZoom: m ? m.getMaxZoom() : null, siteFeatures: this.siteFeatures || 0,
+      dimmed: !!(m && m.getLayer('buildings') && JSON.stringify(m.getPaintProperty('buildings', 'fill-extrusion-opacity')) !== JSON.stringify(BLDG_OPACITY)),
       camera: m ? { lon: +m.getCenter().lng.toFixed(4), lat: +m.getCenter().lat.toFixed(4), zoom: +m.getZoom().toFixed(2), pitch: +m.getPitch().toFixed(1), bearing: +m.getBearing().toFixed(1), projection: m.getProjection?.()?.type } : null,
       card: this.$card && !this.$card.hidden ? this.$card.innerText : null };
   }
@@ -337,7 +370,6 @@ class Globe {
     if (this.destroyed) return; this.destroyed = true; this.token++; this.stopOrbit();
     document.removeEventListener('visibilitychange', this._onVis);
     this._clearMarks();
-    try { if (this.overlay) { this.map.removeControl(this.overlay); this.overlay.finalize?.(); } } catch { }
     try { this.map?.style?.on?.('error', () => { }); } catch { }
     try { this.map?.remove(); } catch { }
     this.map = null; this.root?.remove();
