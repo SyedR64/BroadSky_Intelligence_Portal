@@ -108,8 +108,15 @@ export const Session = {
     if (st == null) { if (c[key]) delete c[key][app]; } else if (CONN_STATES.includes(st)) (c[key] ||= {})[app] = st;
     write(CONN_KEY, c); emit('conn');
   },
-  /** App ids connected in the demonstration for an organisation (what the agent request carries). */
-  connectedApps(co) { const c = loadConn()[co || 'firm'] || {}; return Object.keys(c).filter(a => c[a] === 'sandbox' || c[a] === 'live'); },
+  /** App ids connected in the demonstration for an organisation (what the agent request carries).
+      Pass the candidate app ids (a role's apps) and, optionally, { appId: defaultState }. A tool the visitor has not
+      touched takes its default, and a sandbox tool is connected by default: it counts until the visitor disconnects it
+      (a disconnect stores 'available'). Without candidates, only tools the visitor has switched on are returned. */
+  connectedApps(co, apps, defaults = {}) {
+    const c = loadConn()[co || 'firm'] || {}, on = st => st === 'sandbox' || st === 'live';
+    if (!Array.isArray(apps)) return Object.keys(c).filter(a => on(c[a]));
+    return apps.filter(a => on(c[a] || defaults[a] || 'sandbox'));
+  },
 };
 
 // Another page of the site (or the shell around an embedded page) changed the choice: follow it.
