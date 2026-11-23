@@ -8,6 +8,9 @@
      const { Backend } = await import('./backend.js?v=20261123172325');
      if (await Backend.discover()) for await (const t of Backend.chat({ persona, messages, context, question })) out += t;
      const pre = await Backend.precomputed(question);   // works without a backend
+   From the address box and the homes (assets/site-lookup.js, modules/home.js), with no model call:
+     const site = await Backend.siteBrief(text, roleId, connectedApps);   // POST /site-brief, its own 11 s timeout
+     const ans = await Backend.prepared(roleId);                          // GET /prepared, else data/agent/prepared.json
 
    Local testing: ?backend=http://127.0.0.1:8787 (or localStorage 'bsp-backend-endpoint')
    points the page at `wrangler dev`; ?backend=off disables the backend.
@@ -15,6 +18,9 @@
 
 const RUNTIME_URL = new URL('./runtime.json', import.meta.url).href;
 const ANSWERS_URL = new URL('../data/answers/index.json', import.meta.url).href;
+const PREPARED_URL = new URL('../data/agent/prepared.json', import.meta.url).href;   // the static copy of every role's prepared answer
+const SITE_TIMEOUT_MS = 11000;      // the server gives the address lookup 8 s; the page waits a little longer than its other calls
+const PREPARED_WAIT_MS = 3000;      // a prepared answer never waits longer than this for the backend: the static copy is the same answer
 const OVERRIDE_LS = 'bsp-backend-endpoint';
 const HEALTH_TIMEOUT_MS = 6000, JSON_TIMEOUT_MS = 8000, FIRST_BYTE_TIMEOUT_MS = 30000, VERIFY_EVERY_MS = 10 * 60 * 1000;   // a cold start of the backend takes a few seconds
 const MAX_CONTEXT_CHARS = 12000, MAX_QUESTION_CHARS = 2000, MAX_HISTORY = 12;
@@ -129,6 +135,7 @@ export const Backend = {
   _discovery: null,
   _ctrl: null,
   _answers: null,
+  _prepared: null,
 
   /** Finds the Worker: runtime.json → GET /health (2.5 s). Resolves to the endpoint or null. Cached; pass {force:true} to re-check. */
   async discover({ force = false } = {}) {
@@ -330,6 +337,72 @@ export const Backend = {
   /** Backend counts for the data-coverage panel: {threads, messages, feedback, today:{requests,…}, daily_cap}, or null. */
   async stats() {
     try { return await this._json('GET', '/stats'); } catch { return null; }
+  },
+
+  /**
+   * The address lookup: POST /site-brief { text, role, connected? } (the server makes no model call). Resolves the server's
+   * answer { status, text, cards, choices, sources, degraded }. Throws BackendError with a sentence for the visitor:
+   * code 'offline' (no backend), 'no_site' (a backend without the lookup, the Worker), 'timeout', 'network', or the HTTP case.
+   * opts: { signal, pick } (pick: the key of a lot from an earlier 'choose' answer).
+   */
+  async siteBrief(text, role, connected, opts = {}) {
+    const t = String(text ?? '').trim().slice(0, 300);
+    if (!t) throw new BackendError('No address.', { code: 'missing_address' });
+    if (!(await this.discover())) throw new BackendError('The address lookup service cannot be reached.', { code: 'offline' });
+    if (this.health && this.health.site === false) throw new BackendError('Live address lookup needs the full backend.', { code: 'no_site' });
+    const body = { text: t, role: String(role || '').slice(0, 40) };
+    if (Array.isArray(connected)) body.connected = connected.filter(x => typeof x === 'string').slice(0, 16).map(x => x.slice(0, 16));
+    if (opts.pick) body.pick = String(opts.pick).slice(0, 80);
+    let res;
+    try {
+      res = await fetchWithTimeout(this.endpoint + '/site-brief', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }, SITE_TIMEOUT_MS, opts.signal);
+    } catch (e) {
+      if (opts.signal?.aborted) throw new BackendError('Stopped.', { code: 'aborted' });
+      if (e && (e.name === 'TimeoutError' || e.message === 'timeout')) throw new BackendError('The address lookup took too long. Try again.', { code: 'timeout' });
+      throw new BackendError('The address lookup service cannot be reached.', { code: 'network' });
+    }
+    if (res.status === 404 || res.status === 405) throw new BackendError('Live address lookup needs the full backend.', { code: 'no_site', status: res.status });
+    if (!res.ok) {
+      let b = {}; try { b = await res.json(); } catch { /* not JSON */ }
+      const retryAfter = Number(b.retryAfter || res.headers.get('Retry-After')) || 0, o = { code: b.error || 'http_' + res.status, status: res.status, retryAfter };
+      if (res.status === 429) throw new BackendError(`Too many lookups for now. Try again in ${minutes(retryAfter || 60)}.`, o);
+      if (res.status === 403) throw new BackendError('Address lookup is not part of this role.', o);
+      if (res.status === 400 || res.status === 413) throw new BackendError(b.message || 'That address could not be read.', o);
+      throw new BackendError('The address lookup did not answer. Try again shortly.', o);
+    }
+    let out; try { out = await res.json(); } catch { throw new BackendError('The address lookup did not answer. Try again shortly.', { code: 'bad_json' }); }
+    if (!out || typeof out !== 'object') throw new BackendError('The address lookup did not answer. Try again shortly.', { code: 'bad_json' });
+    return out;
+  },
+
+  /**
+   * A role's signature answer, made with no model call: GET /prepared?role=<id> from the backend, or the static copy in
+   * data/agent/prepared.json when the backend is off, slow or has no such route. Resolves
+   * { role, question, text, cards: [picture, draft], draft?, as_of?, origin: 'backend' | 'static' } or null.
+   */
+  async prepared(role) {
+    const id = String(role || '').slice(0, 40); if (!id) return null;
+    const live = (async () => {
+      if (!(await this.discover())) return null;
+      const res = await fetchWithTimeout(this.endpoint + '/prepared?role=' + encodeURIComponent(id), { cache: 'no-store' }, JSON_TIMEOUT_MS);
+      if (!res.ok) return null;
+      const j = await res.json();
+      return j && typeof j === 'object' && (j.text || Array.isArray(j.cards)) ? { ...j, role: j.role || id, question: j.question || j.q || '', cards: Array.isArray(j.cards) ? j.cards : [], origin: 'backend' } : null;
+    })().catch(() => null);
+    const got = await Promise.race([live, wait(PREPARED_WAIT_MS).then(() => null)]);
+    if (got) return got;
+    const all = await this._loadPrepared(), x = all?.roles?.[id];
+    if (!x || typeof x !== 'object') return null;
+    return { role: id, question: x.question || x.q || '', text: x.text || '', cards: Array.isArray(x.cards) ? x.cards : [], draft: x.draft || null, as_of: x.as_of || all.base_date || null, origin: 'static' };
+  },
+
+  /** Loads data/agent/prepared.json once (no backend needed). */
+  async _loadPrepared() {
+    if (!this._prepared) {
+      this._prepared = fetch(PREPARED_URL, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null)).catch(() => null);
+      const p = this._prepared; p.then(v => { if (!v && this._prepared === p) this._prepared = null; });   // let a later call retry
+    }
+    return this._prepared;
   },
 
   /** Loads data/answers/index.json once (no backend needed). */
