@@ -2,7 +2,7 @@
    classes do the rest (UNIFIED.md). Class prefix hm-. */
 .hm{display:flex;flex-direction:column;gap:var(--sys-sp-4);min-width:0}
 .hm-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--sys-sp-1) var(--sys-sp-4)}
-.hm .hm-head .sys-h1{margin:0;font-size:var(--sys-fs-xl)}
+.hm .hm-head .sys-h1{margin:0}
 .hm-head .sys-lead{margin:0;font-size:var(--sys-fs-base);max-width:none}
 .hm-org{flex-basis:100%;margin:0}
 .hm-sec{display:flex;flex-direction:column;gap:var(--sys-sp-3);min-width:0}
@@ -13,13 +13,15 @@
 .hm-card>h2{margin:0}
 .hm-card .sys-card-label{margin:0}
 .hm-src{margin:0}
-.hm-more{display:flex;flex-direction:column;gap:var(--sys-sp-6);margin-top:var(--sys-sp-5);padding-top:var(--sys-sp-5);border-top:1px solid var(--sys-line)}
 
 /* the company table: one line per cell where the width allows */
 .hm-cos .sys-table th,.hm-cos .sys-table td{padding:9px 12px}
 .hm-cos .sys-table td{vertical-align:middle;white-space:nowrap}
-.hm-cos .sys-table td.hm-wrap{white-space:normal;min-width:22ch;max-width:34ch;font-size:var(--sys-fs-xs)}
+.hm-cos .sys-table td.hm-wrap{white-space:normal;min-width:18ch;max-width:34ch;font-size:var(--sys-fs-xs)}
+.hm-cos .sys-table td.hm-st{padding-right:var(--sys-sp-3)}
 .hm-cos tbody tr{cursor:pointer}
+/* narrower laptops: entry value (also in the side panel and Fundamentals) gives way so status keeps its room */
+@media (max-width:1399px){.hm-cos .hm-ev{display:none}}
 .hm-co{display:flex;align-items:center;gap:var(--sys-sp-2);min-width:0}
 .hm-co b{font-weight:600;color:var(--sys-ink)}
 .hm-cell{font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
@@ -31,7 +33,8 @@
 .hm-item{display:grid;grid-template-columns:9ch minmax(0,1fr) auto;align-items:center;gap:var(--sys-sp-3);min-height:40px;padding:var(--sys-sp-1) var(--sys-sp-1);color:var(--sys-ink-2);text-decoration:none;font-size:var(--sys-fs-sm);border-radius:var(--sys-r-sm)}
 a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
 .hm-item b{font-weight:600;color:var(--sys-ink)}
-.hm-time{font-size:var(--sys-fs-xs);color:var(--sys-mute)}
+.hm-time{font-size:var(--sys-fs-xs);color:var(--sys-mute);white-space:nowrap}
+@media (min-width:641px){.hm-field .hm-item{grid-template-columns:17ch minmax(0,1fr) auto}}
 .hm-main{display:flex;flex-wrap:wrap;column-gap:var(--sys-sp-2);min-width:0}
 .hm-main span{color:var(--sys-mute)}
 .hm-list .hm-hide{display:none}
@@ -39,21 +42,8 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
 .hm-empty{margin:0;font-size:var(--sys-fs-sm);color:var(--sys-mute)}
 .hm-show{align-self:flex-start}
 
-/* the agent's question box, as a link into the agent screen */
-.hm-ask{display:flex;align-items:center;gap:var(--sys-sp-3);min-height:52px;padding:var(--sys-sp-2) var(--sys-sp-2) var(--sys-sp-2) var(--sys-sp-4);border:1px solid var(--sys-line-2);border-radius:var(--sys-r-md,12px);background:var(--sys-surface);color:var(--sys-mute);text-decoration:none;font-size:var(--sys-fs-base)}
-.hm-ask:hover{border-color:var(--sys-ink);color:var(--sys-ink-2)}
-.hm-ask>span:first-child{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hm-ask .sys-btn{flex-shrink:0;pointer-events:none}
-
-/* links to the company's screens */
-.hm-links{display:flex;flex-wrap:wrap;gap:var(--sys-sp-2)}
-
-/* below the first screen */
-.hm-map{height:380px;border-radius:var(--sys-r-sm);overflow:hidden}
-.hm-signals{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--sys-sp-2)}
-.hm-signals li{display:flex;align-items:center;gap:var(--sys-sp-3);min-width:0}
-.hm-signals .sys-chip{flex-shrink:0}
-.hm-signals span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
+/* the button into the agent screen */
+.hm-ask{align-self:flex-start}
 
 /* the agent screen: the page fills the content area */
 #content.flush .embed-host,.embed-host{padding:0}
@@ -61,12 +51,11 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
 /* phones: one column, the next job and the question box on the first screen */
 @media (max-width:640px){
   .hm{gap:var(--sys-sp-3)}
-  .hm .hm-head .sys-h1{font-size:var(--sys-fs-lg)}
   .hm-item{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"time chip" "main chip";row-gap:0;padding:var(--sys-sp-2) var(--sys-sp-1)}
   .hm-item .hm-time{grid-area:time}
   .hm-item .hm-main{grid-area:main}
   .hm-item>.sys-chip{grid-area:chip}
-  .hm-signals span{white-space:normal}
+  .hm-ask{align-self:stretch}
   /* the company table becomes one block per company: name and status, then the three figures, then what moves it */
   .hm-cos .sys-table-wrap{overflow:visible}
   .hm-cos .sys-table,.hm-cos tbody{display:block}
@@ -74,7 +63,8 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
   .hm-cos tbody tr{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sys-sp-1) var(--sys-sp-3);padding:var(--sys-sp-3) var(--sys-sp-3)}
   .hm-cos tbody tr+tr{border-top:1px solid var(--sys-line)}
   .hm-cos .sys-table td{display:block;padding:0;border:0;white-space:normal;text-align:left;min-width:0}
-  .hm-cos td:first-child{flex:1 1 60%}
+  .hm-cos td:first-child{flex:1 1 0}
+  .hm-cos td.hm-cell{flex-basis:100%}
   .hm-cos td:last-child{order:-1;flex:0 0 auto;margin-left:auto}
   .hm-cos td:first-child{order:-2}
   .hm-cos td[data-label]::before{content:attr(data-label) " ";color:var(--sys-mute);font-size:var(--sys-fs-xs)}
