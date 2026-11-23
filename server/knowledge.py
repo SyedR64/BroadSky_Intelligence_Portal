@@ -1,5 +1,5 @@
 """
-Knowledge base for the BSP Desk assistant: hybrid search over knowledge/kb.sqlite.
+Knowledge base for the Broad Sky OS assistant: hybrid search over knowledge/kb.sqlite.
 
 scripts/build_corpus.py builds that file from the firm's website, the sources the portal's research cites,
 the portfolio companies' own sites, news coverage and the portal itself. It holds documents, their chunks,

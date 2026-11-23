@@ -33,7 +33,7 @@ COMPANIES = ('pp', 'cet', 'fl', 'ts', 'bpi', 'fh')
 VIEWS = ('pnl', 'kpis', 'headcount', 'payroll', 'debt', 'fund')
 FIELD_CAP, TEXT_CAP = 3500, 6000
 
-BASE_ROLE = ("You are the company agent in BSP Desk's sandbox: one assistant for BSP, a New York private-equity firm, and its six portfolio "
+BASE_ROLE = ("You are the company agent in Broad Sky OS: one assistant for BSP, a New York private-equity firm, and its six portfolio "
              "companies (Punctual Pros, CET, Frontline Managed Services, Thomas Scientific, Bully Pulpit International and Fair Harbor), from "
              "the firm's partners to the companies' frontline teams. Each person picks a role and connects that role's apps. You read only "
              "those apps, within the role's access, plus any public research tools you are given. Nothing you draft is sent anywhere. Voice: a "
@@ -43,7 +43,7 @@ PERSONAS = {f'ws-{co}': {'name': 'Company agent', 'company': None if co == 'bsp'
 
 # Fallback display names; roles.json `app_names` per organisation wins.
 APP_DEFAULTS = {'email': 'Outlook', 'calendar': 'Outlook Calendar', 'chat': 'Teams', 'drive': 'SharePoint', 'dealcloud': 'DealCloud',
-                'salesforce': 'Salesforce', 'marketing': 'HubSpot', 'servicetitan': 'ServiceTitan', 'procore': 'Procore',
+                'salesforce': 'Salesforce', 'marketing': 'CallRail', 'servicetitan': 'ServiceTitan', 'procore': 'Procore',
                 'servicedesk': 'ServiceNow', 'shopify': 'Shopify', 'financials': 'NetSuite', 'adp': 'ADP'}
 STATUS_APP = {'email': 'email', 'calendar': 'the calendar', 'chat': 'team chat', 'drive': 'documents', 'marketing': 'marketing',
               'financials': 'finance'}
@@ -635,7 +635,7 @@ def tool_defs(ws):
             props['company'] = {'type': 'string', 'enum': cos, 'description': 'Ignored for the fund view'}
         props['months'] = {'type': 'integer', 'minimum': 1, 'maximum': 24, 'description': 'Recent closed months, default 3'}
         out.append({'name': 'company_numbers',
-                    'description': ('Monthly results from the connected finance and people apps (sandbox, modeled from BSP Desk\'s public '
+                    'description': ('Monthly results from the connected finance and people apps (sandbox, modeled from Broad Sky OS\'s public '
                                     'estimates): P&L with plan, KPIs, headcount, payroll, debt' + (', and the fund' if 'fund' in views else '') +
                                     '. Money in thousands of dollars.'),
                     'input_schema': {'type': 'object', 'additionalProperties': False, 'required': ['view'], 'properties': props}})
@@ -1431,7 +1431,7 @@ def _basis(co):
         b = load(co).get('basis') if co in ORGS else None
     except Exception:   # noqa: BLE001
         b = None
-    return b or "Modeled from BSP Desk's public estimates for the company (est.)."
+    return b or "Modeled from Broad Sky OS's public estimates for the company (est.)."
 
 
 def _numbers(ws, args, sources):
@@ -1527,7 +1527,7 @@ def _v_pnl(targets, months, team, company, rco):
                          + f", EBITDA {money(r.get('ebitda_k'), True)}"
                          + (f", plan EBITDA {money(r.get('plan_ebitda_k'), True)} ({_vs_plan(r.get('ebitda_k'), r.get('plan_ebitda_k'))})"
                             if isinstance(r.get('plan_ebitda_k'), (int, float)) else '') + ' (est.)')
-    L.append('basis: ' + ('Each company anchored to its run-rate estimate in BSP Desk research (est.).' if company == 'portfolio' else _basis(targets[0])))
+    L.append('basis: ' + ('Each company anchored to its run-rate estimate in Broad Sky OS research (est.).' if company == 'portfolio' else _basis(targets[0])))
     return '\n'.join(L)
 
 
@@ -2431,7 +2431,7 @@ def _public_facts(line, town, state, zip_, sources):
 
 
 def _rules_source(sources):
-    return sources.add('ws:rules', 'Where equipment usually is: trade rules of thumb and Census housing data, 2020–2024', '', 'BSP Desk sandbox',
+    return sources.add('ws:rules', 'Where equipment usually is: trade rules of thumb and Census housing data, 2020–2024', '', 'Broad Sky OS sandbox',
                        _iso(), 'rules')
 
 

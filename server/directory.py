@@ -1,5 +1,5 @@
 """
-One assistant tool for BSP Desk: find_businesses, a search over every business in the six SBA loan segments (about 145,000).
+One assistant tool for Broad Sky OS: find_businesses, a search over every business in the six SBA loan segments (about 145,000).
 
 Data: data/ppp/directory/businesses.sqlite.gz, built by scripts/build_business_directory.py and served by the SITE, not
 bundled with this backend (it would add about 24 MB to every deployment). On first use the backend downloads the small
@@ -54,7 +54,7 @@ SEG_WORDS = {'punctual pros': 'pp', 'punctual': 'pp', 'commonwealth electrical t
              'frontline': 'fl', 'frontline managed services': 'fl', 'thomas scientific': 'ts', 'thomas': 'ts', 'bully pulpit': 'bpi',
              'bully pulpit international': 'bpi', 'fair harbor': 'fh'}
 SEG_TRADE = {'pp': 'residential HVAC, plumbing and electrical contractors near Lancaster PA and Toms River NJ',
-             'cet': 'New England electrical and water and sewer contractors', 'fl': 'IT services firms, nationwide',
+             'cet': 'electrical and water and sewer contractors in the six New England states, the only CET states the directory covers', 'fl': 'IT services firms, nationwide',
              'ts': 'lab, scientific and chemical supply distributors, nationwide', 'bpi': 'public relations and opinion research firms, nationwide',
              'fh': 'apparel makers and clothing wholesalers, nationwide'}
 STATES = {
@@ -875,7 +875,7 @@ def _sources(meta, any_revenue, any_site=False):
                     'date': '', 'kind': 'data'})
     if any_site:
         out.append(dict(SOURCE_SITE))
-    out.append({'title': 'BSP Desk SBA loan screen (researched add-on candidates)', 'url': SCREEN_URL, 'publisher': 'BSP Desk',
+    out.append({'title': 'Broad Sky OS SBA loan screen (researched add-on candidates)', 'url': SCREEN_URL, 'publisher': 'Broad Sky OS',
                 'date': (meta.get('generated') or ''), 'kind': 'page'})
     return out
 

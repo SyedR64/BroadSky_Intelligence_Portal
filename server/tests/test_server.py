@@ -164,7 +164,7 @@ def test_portal_persona_and_context_format(env):
     chat(env['main'], 'Q?', persona='unknown-id', context=[{'title': '<b>Debt</b>', 'text': 'Leverage &amp; terms', 'href': 'javascript:alert(1)'}, {'title': 'Plan', 'text': 'x', 'href': 'app.html#plan'}])
     b = mock_requests(env)[-1]['body']
     s = b['system'][0]['text']
-    assert s.startswith("You are BSP Desk, the in-house analyst on Broad Sky's desk") and 'Say "we" and "our" for BSP' in s
+    assert s.startswith("You are Broad Sky OS, the in-house analyst for Broad Sky") and 'Say "we" and "our" for BSP' in s
     assert 'No "So what" labels' in s and 'never "playbook"' in s and '10. Deal maths:' in s and '11. Strategy and deal questions' in s
     assert b['output_config'] == {'effort': 'high'}   # the portal's research assistant works harder
     assert [t.get('name') for t in b['tools']] == ['search_knowledge', 'read_source', 'deal_model', 'new_homeowners', 'property_brief', 'find_businesses', 'web_search']
@@ -215,7 +215,7 @@ def test_read_source_and_deal_model_tools(env):
 
 
 def test_home_records_tools(env):
-    """BSP Desk can list new homeowners and brief one address; both results reach the model with numbered sources."""
+    """Broad Sky OS can list new homeowners and brief one address; both results reach the model with numbered sources."""
     httpx.delete(env['mock'] + '/_requests')
     status, _, events = chat(env['main'], "Who should we send this month's new-homeowner promotion to in Ocean County? [mock:homes]")
     assert status == 200 and events[-1]['type'] == 'done' and events[-1]['steps'] == 2
@@ -781,7 +781,7 @@ def test_voice_answer_is_plain_speech(env):
     assert all(k not in b for k in ('tools', 'tool_choice', 'thinking', 'cache_control'))   # no tools, default thinking
     system = b['system'][0]
     assert 'cache_control' not in system and 'cache_control' not in json.dumps(b)   # one call, so nothing would read a cache entry back: none is written
-    assert system['text'].startswith("You are BSP Desk, the in-house analyst on Broad Sky's desk")
+    assert system['text'].startswith("You are Broad Sky OS, the in-house analyst for Broad Sky")
     assert 'this answer is spoken aloud' in system['text'] and 'under about 80 words' in system['text'] and 'the knowledge base does not cover it' in system['text']
     assert 'Format for a chat panel' not in system['text'] and 'search_knowledge' not in system['text'] and 'deal_model' not in system['text']
     block = b['messages'][-1]['content'][0]['text']
@@ -861,7 +861,7 @@ def test_voice_keeps_tool_gating_and_limits(env):
         assert status == 200 and len(reqs) == 1 and 'tools' not in reqs[0]['body'] and events[-1]['steps'] == 1
         assert 'new_homeowners' not in reqs[0]['body']['system'][0]['text'] and not any(s['kind'] == 'data' for e in events if e['type'] == 'sources' for s in e['sources'])
     httpx.delete(env['mock'] + '/_requests')
-    chat(env['main'], 'Who runs the firm? [mock:tool]', mode='voice')   # BSP Desk, a question for no tool: none is offered
+    chat(env['main'], 'Who runs the firm? [mock:tool]', mode='voice')   # Broad Sky OS, a question for no tool: none is offered
     assert len(mock_requests(env)) == 1 and 'tools' not in mock_requests(env)[0]['body']
     s, _, b = chat(env['main'], 'x', mode='song')
     assert (s, b['error']) == (400, 'bad_mode')
@@ -1103,7 +1103,7 @@ def test_workspace_technician_tools(env):
     b = mock_requests(env)[0]['body']
     assert [t['name'] for t in b['tools']] == ['site_brief', 'workspace_search', 'open_record', 'draft_action']   # no knowledge base, deal model, homes, directory or web
     assert all(t['eager_input_streaming'] is True for t in b['tools'])
-    assert len(b['system']) == 3 and b['system'][0]['text'].startswith("You are the company agent in BSP Desk's sandbox")
+    assert len(b['system']) == 3 and b['system'][0]['text'].startswith("You are the company agent in Broad Sky OS")
     s = system_text(b)
     assert 'COMPANY AGENT (sandbox)' in s and 'Local date:' in s and 'Never say where pipes' not in s
     assert b['system'][1]['cache_control'] == {'type': 'ephemeral'} and 'cache_control' not in b['system'][2]   # role block cached, state block never
@@ -1256,7 +1256,7 @@ def test_persona_ignored_with_workspace(env):
     assert s == 200 and events[-1]['type'] == 'done'
     b = mock_requests(env)[0]['body']
     assert [t['name'] for t in b['tools']] == ['site_brief', 'workspace_search', 'open_record', 'draft_action']
-    assert not b['system'][0]['text'].startswith('You are BSP Desk')
+    assert not b['system'][0]['text'].startswith('You are Broad Sky OS')
 
 
 def test_health_has_workspace(env):

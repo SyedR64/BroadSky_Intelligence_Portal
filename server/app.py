@@ -1,10 +1,10 @@
 """
-BSP Desk assistant backend (FastAPI + uvicorn), first written as a port of worker/src/index.js.
+Broad Sky OS assistant backend (FastAPI + uvicorn), first written as a port of worker/src/index.js.
 
 Holds the Claude API key server-side. Every question is answered by Claude working as a small research
 agent over the knowledge base in knowledge/kb.sqlite (see knowledge.py and scripts/build_corpus.py): the
 server retrieves the best sources for the question, then Claude can search again, read whole sources and
-run the acquisition model (dealmath.py) before it writes a cited answer. BSP Desk can also look up public home-sales
+run the acquisition model (dealmath.py) before it writes a cited answer. Broad Sky OS can also look up public home-sales
 records for the Punctual Pros territory (property.py: the new-homeowner list and a property brief for one address) and search
 every business in the six SBA loan segments (directory.py: find_businesses, over a database the site serves). Threads and feedback go to SQLite;
 visitors are rate-limited in memory and the whole site is capped per UTC day. Every question and answer is also
@@ -114,13 +114,13 @@ if not log.handlers:
 PORTAL_BRIEF = ('Broad Sky Partners (BSP) is a New York private-equity firm that makes thematic investments in middle-market consumer and '
                 'business-services companies, with a Portfolio Resource Group (PRG) of operators who help its companies grow. Portfolio companies: '
                 'Punctual Pros (residential HVAC, plumbing and electrical services in Central Pennsylvania and the Jersey Shore), Commonwealth '
-                'Electrical Technologies (CET: electrical construction, solar, EV charging and energy efficiency in New England, with add-ons NuWave '
-                'and Horton), Frontline Managed Services (managed IT and revenue-cycle services for law firms), Thomas Scientific (laboratory supply '
+                'Electrical Technologies (CET, also CET Energy Solutions: Worcester, Massachusetts, 400+ professionals; electrical construction, solar, EV charging and energy efficiency; add-ons NuWave '
+                'and Horton confirmed, four more reported; licensed in about ten states, reported; no New York City plan), Frontline Managed Services (managed IT and revenue-cycle services for law firms), Thomas Scientific (laboratory supply '
                 'distribution), Bully Pulpit International (public affairs and communications) and Fair Harbor (apparel). BSP sold Smith + Howard '
                 '(accounting and advisory) to TPG in August 2026.')
 PERSONAS = {
-    'portal': {'name': 'BSP Desk', 'company': None, 'tools': ('search', 'read', 'deal', 'homes', 'directory', 'web'),
-               'role': f'You are BSP Desk, the in-house analyst on Broad Sky\'s desk: part deal associate, part operating partner, working for the investment '
+    'portal': {'name': 'Broad Sky OS', 'company': None, 'tools': ('search', 'read', 'deal', 'homes', 'directory', 'web'),
+               'role': f'You are Broad Sky OS, the in-house analyst for Broad Sky: part deal associate, part operating partner, working for the investment '
                        f'team and the Portfolio Resource Group. You know the firm the way someone in its New York office would: thematic investing in '
                        f'middle-market consumer and business services, backing founder-led companies, and the integrated investor-operator model, where '
                        f'operators work alongside management to grow the business. You cover the firm and its people, the portfolio companies, their markets, '
@@ -134,14 +134,14 @@ PERSONAS = {
                        f'words or fewer; no marketing language.'},
     'pp': {'name': 'Punctual Pros assistant', 'company': 'pp', 'tools': ('search', 'read'),
            'role': 'You are the assistant on a concept website for Punctual Pros, a residential HVAC, plumbing and electrical home-services company. Help homeowners understand services, coverage, memberships, rebates and what to do next. You cannot book appointments, quote firm prices or confirm availability yourself: point people to the booking or contact options on the site. Voice: a friendly, unhurried neighbor who happens to know HVAC; plain words, and always on time.'},
-    'cet': {'name': 'CET project desk', 'company': 'cet', 'tools': ('search', 'read'),
-            'role': 'You are the project desk on a concept website for Commonwealth Electrical Technologies (CET), a New England electrical contractor (electrical construction, solar and storage, EV charging), with Horton (wastewater and pump-station work) and NuWave (energy-efficiency programs). Help owners, GCs and facility managers understand capabilities, states served and incentive programs. Do not commit to pricing, schedules or bids. Voice: a seasoned project manager: precise, practical and calm about schedules and safety.'},
+    'cet': {'name': 'CET assistant', 'company': 'cet', 'tools': ('search', 'read'),
+            'role': 'You are the assistant on a concept website for Commonwealth Electrical Technologies (CET, also branded CET Energy Solutions), an electrical contractor headquartered in Worcester, Massachusetts, with 400+ professionals (electrical construction, solar and storage, EV charging, energy efficiency), growing through add-ons: NuWave Energy Solutions and Horton Electrical Services are confirmed, and four more (Direct Electric Services, JDL Electric, New Horizons Technologies and Vanguard Building Solutions) are reported in trade press. It is licensed in about ten states across New England and the Mid-Atlantic (reported). It has no New York City plan: never say or imply one. Help owners, GCs and facility managers understand capabilities, the markets it serves and incentive programs. Do not commit to pricing, schedules or bids. Voice: a seasoned project manager: precise, practical and calm about schedules and safety.'},
     'fl': {'name': 'Frontline advisor', 'company': 'fl', 'tools': ('search', 'read'),
            'role': 'You are the advisor on a concept website for Frontline Managed Services, which provides managed IT, service desk, cybersecurity and revenue-cycle support to law firms. Help firm leaders scope needs. Do not promise pricing, SLAs or security outcomes beyond what the sources state. Voice: a trusted IT partner who speaks partner-friendly English, never jargon.'},
     'ts': {'name': 'Thomas Scientific concierge', 'company': 'ts', 'tools': ('search', 'read'),
            'role': 'You are the concierge on a concept website for Thomas Scientific, a distributor of laboratory supplies, equipment and services for research, clinical, biopharma and cleanroom labs. Help visitors find categories and services or reach an account representative. Do not quote prices or stock levels. Voice: a knowledgeable lab-supply specialist: exact about specifications, quick to the point.'},
-    'bpi': {'name': 'BPI desk', 'company': 'bpi', 'tools': ('search', 'read'),
-            'role': 'You are the desk assistant on a concept website for Bully Pulpit International (BPI), a public-affairs and communications firm (corporate reputation, campaigns, research, AI-era communications). Help visitors understand services and start a conversation with the team. Voice: a strategist who sounds like the firm: crisp, confident and alert to how a message will land.'},
+    'bpi': {'name': 'BPI assistant', 'company': 'bpi', 'tools': ('search', 'read'),
+            'role': 'You are the assistant on a concept website for Bully Pulpit International (BPI), a public-affairs and communications firm (corporate reputation, campaigns, research, AI-era communications). Help visitors understand services and start a conversation with the team. Voice: a strategist who sounds like the firm: crisp, confident and alert to how a message will land.'},
     'fh': {'name': 'Fair Harbor assistant', 'company': 'fh', 'tools': ('search', 'read'),
            'role': 'You are the assistant on a concept website for Fair Harbor, an apparel brand (boardshorts, swim and lifestyle wear). Help shoppers with products, sizing guidance and sustainability questions. Do not confirm orders, stock or prices. Voice: relaxed and sunny, like a beach-town shop that cares about where its fabric comes from.'},
 }
@@ -830,7 +830,7 @@ COMPANY_RX = {k: re.compile(v, re.I) for k, v in {
     'bpi': r'bully pulpit|\bbpi\b', 'fh': r'fair harbor', 'sh': r'smith\s*(\+|and)\s*howard'}.items()}
 SEARCH_TOOL = {
     'name': 'search_knowledge',
-    'description': ("Search the BSP Desk knowledge base: BSP's own website (team biographies, strategy, investments, news), press releases, "
+    'description': ("Search the Broad Sky OS knowledge base: BSP's own website (team biographies, strategy, investments, news), press releases, "
                     "SEC filings, news coverage, the portfolio companies' own websites, and the portal's research (add-on targets, rival sponsors, "
                     "filings-based estimates of revenue and EBITDA, growth plans, market data and prepared analyses). Keyword and meaning search "
                     "combined. Returns numbered excerpts; cite them as [n]."),
@@ -1703,11 +1703,11 @@ async def run_agent(ctx, q, st):
                         err = link is None
                         if link:
                             p = dealmath.find_preset(args.get('preset')) or {'label': 'Scenario'}
-                            n = sources.add(f'model:{link}', f"Acquisition model: {p['label']}", link, 'BSP Desk acquisition model', today(), 'model')
+                            n = sources.add(f'model:{link}', f"Acquisition model: {p['label']}", link, 'Broad Sky OS acquisition model', today(), 'model')
                             text = f'This run is source [{n}].\n' + text
-                    elif b.name in ('new_homeowners', 'property_brief') and ctx['homes_on']:   # BSP Desk only
+                    elif b.name in ('new_homeowners', 'property_brief') and ctx['homes_on']:   # Broad Sky OS only
                         text, err = await run_in_threadpool(run_homes, b.name, args, sources)
-                    elif b.name == 'find_businesses' and ctx.get('directory_on'):   # BSP Desk only; the first call may download the database
+                    elif b.name == 'find_businesses' and ctx.get('directory_on'):   # Broad Sky OS only; the first call may download the database
                         text, err = await run_in_threadpool(run_directory, args, sources)
                     elif ctx.get('ws') and workspace.owns(b.name):   # WORKSPACE HOOK: sandbox apps, within the role's access
                         if not workspace.allowed(ctx['ws'], b.name):
@@ -1899,7 +1899,7 @@ async def lifespan(_app):
     log.info('business directory: %s', 'loads on first use' if ds['enabled'] else 'off (DIRECTORY_URL=off)')
     if env('FAKE_ANTHROPIC_URL'):
         log.warning('FAKE_ANTHROPIC_URL is set: Claude calls go to %s (testing only)', anthropic_base_url())
-    log.info('BSP Desk backend %s: model %s, Claude key %s, chat log %s, origins %s', VERSION, model_name(), 'set' if api_key() else 'MISSING',
+    log.info('Broad Sky OS backend %s: model %s, Claude key %s, chat log %s, origins %s', VERSION, model_name(), 'set' if api_key() else 'MISSING',
              'on' if chatlog.enabled() else 'off', ', '.join(allowed_origins()))
     try:
         yield
@@ -1910,7 +1910,7 @@ async def lifespan(_app):
         await chatlog.close()
 
 
-app = FastAPI(title='BSP Desk assistant backend', version=VERSION, docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
+app = FastAPI(title='Broad Sky OS assistant backend', version=VERSION, docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
 
 
 @app.api_route('/{rest:path}', methods=['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE', 'HEAD'], include_in_schema=False)
