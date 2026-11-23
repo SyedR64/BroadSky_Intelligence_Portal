@@ -106,12 +106,12 @@ function wire(el) {
 /* What moves each company's value, in ten words or fewer. The full sentence is the next action fin.js prints for both
    value tables; it opens in the side panel. */
 const MOVES = {
-  cet: r => 'Integrate Horton and NuWave; next tuck-in',
-  pp: r => 'Next tuck-in, from undrawn debt',
+  cet: r => 'Integrate Horton and NuWave',
+  pp: r => 'Next tuck-in on the undrawn loan',
   fl: r => 'First add-on under BSP',
-  ts: r => `Refinance or sell before ${r.matLabel || 'Dec 2027'}`,
-  bpi: r => `One reporting line for ${r.addOns ?? 6} add-ons`,
-  fh: r => 'Exit path: sponsor or strategic sale',
+  ts: r => `Refinance or sell by ${r.matLabel || 'Dec 2027'}`,
+  bpi: r => `One reporting line, ${r.addOns ?? 6} add-ons`,
+  fh: r => 'Choose sponsor or strategic sale',
 };
 /** The status chip: the exit-window flag fin.js sets, cut to its first words ("Build", "In exit window", "Refinancing due in 13 mo"). */
 const status = r => String(r.flag?.t || '').replace(/\s*\(.*\)$/, '').replace(/:.*$/, '').replace(/^Refinancing due in/, 'Refinance in');
@@ -130,22 +130,21 @@ async function firmHome(ctx, role, live) {
   const rows = (sb?.rows || []).slice().sort((a, b) => a._k - b._k);
   const tpl = sb?.tpl || templateExit(firm);
   const inWindow = rows.filter(r => r.held != null && r.held >= 4);
-  const today = role.home?.list || [];
-  const lead = `${inWindow.length ? `${inWindow.map(r => r.short).join(' and ')} in the exit window` : 'No company in the exit window'} · ${today.length} on today's list`;
+  const lead = inWindow.length ? `${inWindow.map(r => r.short).join(' and ')} in the exit window` : 'No company in the exit window';
 
   const coRow = r => {
     const rev = dollars(r.rev, 'revenue'), ev = dollars(r.ev);
     return `<tr tabindex="0" data-id="${esc(r.id)}" aria-label="${esc(r.name)}: open the details">
       <td><span class="hm-co" ${coAttr(r.id)}><span class="sys-dot" aria-hidden="true"></span><b>${esc(LONG[r.id] || r.name)}</b></span></td>
       <td class="sys-n hm-cell" data-label="Held">${r.held != null ? `${r.held.toFixed(1)} yrs` : '—'}<span class="hm-sub"> · ${fmt.num(r.addOns || 0)} add-on${r.addOns === 1 ? '' : 's'}</span></td>
-      <td class="sys-n hm-cell" data-label="Revenue">${rev ? `${esc(rev)}<span class="sys-est">est.</span>` : '—'}</td>
-      <td class="sys-n hm-cell" data-label="Entry value">${ev ? `${esc(ev)}<span class="sys-est">est.</span>` : '—'}</td>
+      <td class="sys-n hm-cell" data-label="Revenue, est.">${rev ? esc(rev) : '—'}</td>
+      <td class="sys-n hm-cell hm-ev" data-label="Entry value, est.">${ev ? esc(ev) : '—'}</td>
       <td class="hm-cell hm-wrap">${esc((MOVES[r.id] || (() => ''))(r))}</td>
       <td>${stChip(status(r), r.flag.st)}</td></tr>`;
   };
   el.innerHTML = `<div class="hm hm-firm">${headHTML(esc, 'Portfolio', lead)}
     <section class="hm-sec hm-cos" aria-labelledby="hm-cos-h"><h2 class="sys-sr" id="hm-cos-h">Six companies</h2>${rows.length ? `<div class="sys-table-wrap"><table class="sys-table">
-      <thead><tr><th scope="col">Company</th><th scope="col" class="sys-n">Held</th><th scope="col" class="sys-n">Revenue</th><th scope="col" class="sys-n">Entry value</th><th scope="col">What moves it</th><th scope="col">Status</th></tr></thead>
+      <thead><tr><th scope="col">Company</th><th scope="col" class="sys-n">Held</th><th scope="col" class="sys-n">Revenue <span class="sys-est">est.</span></th><th scope="col" class="sys-n">Entry value <span class="sys-est">est.</span></th><th scope="col">What moves it</th><th scope="col">Status</th></tr></thead>
       <tbody>${rows.map(coRow).join('')}</tbody></table></div>` : ui.note('The company table did not load.', 'warn')}
       <p class="sys-src hm-src" data-src>Company filings estimate tables (SEC Form D and ADV, BDC schedules, PPP loans, franchise disclosures) and the BSP firm profile, as of ${esc(firm?.meta?.generated || 'Sept 2026')}. <a href="#/fin/portfolio">Value and exit table</a></p>
       <p class="sys-src hm-src" data-method>Revenue is the current or pro forma estimate; entry value is the enterprise value at BSP's entry. Status: debt due within 24 months, refinance or sell; held 4 years or more, exit window; 3 or more, exit prep. Smith + Howard sold at ${esc(tpl.hold.toFixed(1))} years.</p>
@@ -305,8 +304,9 @@ async function overview(ctx) {
 }
 
 /* The agent inside the shell: agent.html in its embedded form, following the role in view. */
-function agentView(ctx) {
+async function agentView(ctx) {
   injectCss();
+  await Session.ready();   // the role list must be in before the address is built, or the page opens as the default role
   return embedView(ctx, 'agent.html', { title: 'Agent' });
 }
 

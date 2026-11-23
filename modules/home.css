@@ -79,7 +79,7 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
   .hm-cos td:first-child{order:-2}
   .hm-cos td[data-label]::before{content:attr(data-label) " ";color:var(--sys-mute);font-size:var(--sys-fs-xs)}
   .hm-cos td.hm-wrap{flex-basis:100%;min-width:0}
-  .hm-cos td[data-label="Entry value"]{display:none}
+  .hm-cos td.hm-ev{display:none}
   .hm-cos .hm-cell{font-size:var(--sys-fs-xs)}
 }
 @media (pointer:coarse){.hm-item,.hm-ask{min-height:48px}}
