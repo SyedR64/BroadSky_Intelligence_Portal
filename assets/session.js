@@ -6,7 +6,7 @@
    (server/workspace.py); this file only says which role the visitor chose. */
 
 const ROLE_KEY = 'bsp-agent-role';          // kept from the agent page, so an earlier choice still holds
-const CACHE_KEY = 'bsp-os-role';            // the chosen role object, so role() answers before the catalogue loads
+const CACHE_KEY = 'bsp-os-role';            // the chosen role object, so role() answers before the catalogue loads (written only with a choice)
 const CONN_KEY = 'bsp-os-connections';      // { "<firm|co>": { "<app id>": "<state>" } }
 const OLD_CONN_KEY = 'bsp-agent-connected'; // { "<role id>": { "<app id>": "<time>" } }, read once
 const CATALOG_URL = new URL('../data/agent/catalog.json', import.meta.url);
@@ -35,9 +35,17 @@ export function levelOf(r) {
 }
 const shape = r => ({ ...r, title: r.label || r.title || r.id, co: r.org === 'bsp' ? null : r.org, level: levelOf(r) });
 
-const state = { catalog: null, role: null, conn: null, subs: new Set(), loading: null };
+const state = { catalog: null, role: null, conn: null, subs: new Set(), loading: null, lastHash: (typeof location !== 'undefined' && location.hash) || '' };
 
 function fromAddress() { try { return new URLSearchParams(location.search).get('role'); } catch { return null; } }
+/** Keep ?role= in the address equal to the role in view, where the address carries one (the hash is untouched). */
+function syncAddress(id) {
+  try { const u = new URL(location.href); if (u.searchParams.get('role') === id) return; u.searchParams.set('role', id); history.replaceState(history.state, '', u); } catch { /* keep the address */ }
+}
+/** A page the shell shows in its frame (?embed=1) is handed the shell's role in its address: that is not a choice to keep. */
+const EMBEDDED = (() => { try { return new URLSearchParams(location.search).get('embed') === '1'; } catch { return false; } })();
+/** A visitor's choice (the switch, or ?role= in the address): the only thing that writes a role into storage. */
+function keep(r) { write(ROLE_KEY, r.id); write(CACHE_KEY, r); }
 function byId(id) { return state.catalog ? state.catalog.roles.find(r => r.id === id) : null; }
 function paint() {
   const r = Session.role(), h = document.documentElement;
@@ -67,10 +75,11 @@ export const Session = {
     if (state.catalog) return Promise.resolve(Session);
     return (state.loading ||= fetch(CATALOG_URL, { cache: 'no-cache' }).then(r => r.json()).then(c => {
       state.catalog = c;
-      const want = [fromAddress(), read(ROLE_KEY, null), DEFAULT_ROLE].find(id => typeof id === 'string' && byId(id));
+      const q = fromAddress(), want = [q, read(ROLE_KEY, null), DEFAULT_ROLE].find(id => typeof id === 'string' && byId(id));
       const before = state.role && state.role.id;
       state.role = shape(byId(want) || c.roles[0]);
-      write(CACHE_KEY, state.role);
+      // a role named in the address is a choice and is kept; the default (nothing chosen) is never written
+      if (!EMBEDDED && want === q && read(ROLE_KEY, null) !== q) keep(state.role);
       if (before !== state.role.id) emit('role'); else paint();
       return Session;
     }).catch(e => { console.warn('Session: the role list did not load', e); state.loading = null; return Session; }));
@@ -78,8 +87,9 @@ export const Session = {
   /** The role in view: { id, title, label, org, co, dept, level, style, … }. Never null. */
   role() {
     if (state.role) return state.role;
-    const cached = read(CACHE_KEY, null), q = fromAddress();
-    state.role = shape(cached && cached.id && (!q || q === cached.id) ? cached : FALLBACK);
+    // before the catalogue loads: the cached object, only when it is the role the address or the stored choice names
+    const cached = read(CACHE_KEY, null), want = fromAddress() || read(ROLE_KEY, null);
+    state.role = shape(cached && cached.id && cached.id === want ? cached : FALLBACK);
     return state.role;
   },
   level() { return Session.role().level; },
@@ -94,8 +104,8 @@ export const Session = {
   setRole(id) {
     const r = byId(id); if (!r) return false;
     state.role = shape(r);
-    write(ROLE_KEY, r.id); write(CACHE_KEY, state.role);
-    try { const u = new URL(location.href); u.searchParams.set('role', r.id); history.replaceState(history.state, '', u); } catch { /* keep the address */ }
+    keep(state.role);
+    syncAddress(r.id);
     emit('role');
     return true;
   },
@@ -122,9 +132,24 @@ export const Session = {
 // Another page of the site (or the shell around an embedded page) changed the choice: follow it.
 try {
   addEventListener('storage', e => {
-    if (e.key === ROLE_KEY) { const id = read(ROLE_KEY, null), r = byId(id); if (r && r.id !== Session.role().id) { state.role = shape(r); emit('role'); } }
+    if (e.key === ROLE_KEY) {
+      const id = read(ROLE_KEY, null), r = byId(id);
+      if (r && r.id !== Session.role().id) { state.role = shape(r); if (fromAddress()) syncAddress(r.id); emit('role'); }
+    }
     if (e.key === CONN_KEY) { state.conn = null; emit('conn'); }
   });
+  // Back and Forward between entries whose ?role= differs: the address's role is shown again (before the router reads
+  // the hash, so the screen is judged for that role). Moving between such entries may fire no hashchange: then the
+  // router is told once, after the browser has had its chance to fire one.
+  addEventListener('popstate', () => {
+    const q = fromAddress(), r = q && byId(q);
+    if (r && r.id !== Session.role().id) { state.role = shape(r); if (!EMBEDDED) keep(state.role); emit('role'); return; }
+    let fired = false;
+    const mark = () => { fired = true; };
+    addEventListener('hashchange', mark, { once: true });
+    setTimeout(() => { removeEventListener('hashchange', mark); if (!fired && state.lastHash !== location.hash) dispatchEvent(new HashChangeEvent('hashchange')); state.lastHash = location.hash; }, 0);
+  });
+  addEventListener('hashchange', () => { state.lastHash = location.hash; });
 } catch { /* no window: nothing to follow */ }
 
 paint();
