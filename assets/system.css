@@ -200,7 +200,7 @@ body[data-sys-print="own"]{--accent:var(--sys-brand)}
    five levels as chips, then the roles of the chosen level grouped by organisation.
    At 560px and narrower the panel is a sheet under the top bar.                 */
 .sys-viewas{position:relative;min-width:0;display:flex}
-.sys-viewas-btn{display:inline-flex;align-items:center;gap:8px;min-width:0;max-width:340px;height:40px;padding:0 10px 0 14px;border-radius:var(--sys-r-pill);border:1px solid var(--sys-line-2);background:var(--sys-surface);color:var(--sys-ink);font:500 13.5px/1.15 var(--sys-font);text-align:left;cursor:pointer;transition:border-color var(--sys-t),box-shadow var(--sys-t)}
+.sys-viewas-btn{display:inline-flex;align-items:center;gap:8px;min-width:0;max-width:460px;height:40px;padding:0 10px 0 14px;border-radius:var(--sys-r-pill);border:1px solid var(--sys-line-2);background:var(--sys-surface);color:var(--sys-ink);font:500 13.5px/1.15 var(--sys-font);text-align:left;cursor:pointer;transition:border-color var(--sys-t),box-shadow var(--sys-t)}
 .sys-viewas-btn:hover,.sys-viewas.is-open .sys-viewas-btn{border-color:var(--sys-ink)}
 .sys-viewas-k{flex-shrink:0;font:600 var(--sys-fs-2xs)/1 var(--sys-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sys-mute)}
 .sys-viewas-v{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sys-ink-2)}
@@ -219,7 +219,7 @@ body[data-sys-print="own"]{--accent:var(--sys-brand)}
 .sys-viewas-role{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border-radius:var(--sys-r-pill);border:1px solid var(--sys-line-2);background:var(--sys-surface);color:var(--sys-ink-2);font:500 13.5px/1.2 var(--sys-font);cursor:pointer;transition:border-color var(--sys-t),color var(--sys-t),background var(--sys-t)}
 .sys-viewas-role:hover{border-color:var(--sys-ink);color:var(--sys-ink)}
 .sys-viewas-role[aria-current]{background:var(--sys-ink);border-color:var(--sys-ink);color:var(--sys-on-ink);font-weight:600}
-@media (max-width:1180px){ .sys-viewas-btn{max-width:260px} }
+@media (max-width:1180px){ .sys-viewas-btn{max-width:340px} }
 @media (max-width:960px){ .sys-viewas-k{display:none} }
 @media (max-width:560px){
   .sys-viewas{flex:1 1 auto}
@@ -499,6 +499,21 @@ button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-current]:hover{backgr
   .sys-dialog .sys-actions .sys-btn{flex:1 1 100%}
 }
 
+/* ── 6p · closed section (<details class="sys-fold">) ─────────────────────── */
+/* One disclosure look for every page and the portal: a bar on surface-2 with a
+   7px chevron first, then the title (<b>) and one line (<span>). The portal's
+   older section names share it (assets/app.css adds their spacing only).      */
+.sys-fold{border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2)}
+.sys-fold>summary{display:flex;align-items:center;gap:10px;min-height:44px;padding:8px 14px;cursor:pointer;list-style:none;font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
+.sys-fold>summary::-webkit-details-marker{display:none}
+.sys-fold>summary::before{content:"";flex-shrink:0;width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform var(--sys-t)}
+.sys-fold[open]>summary::before{transform:rotate(45deg)}
+.sys-fold>summary b{flex-shrink:0;font-weight:600;color:var(--sys-ink)}
+.sys-fold>summary span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sys-mute)}
+.sys-fold>summary:hover b{text-decoration:underline;text-underline-offset:3px}
+.sys-fold>summary~*{margin-left:14px;margin-right:14px}
+.sys-fold>summary~:last-child{margin-bottom:14px}
+
 /* ── 7a · layout: portal console (app.html) ───────────────────────────────── */
 /* Frame strip sits above the rail; the console grid takes the remaining height. */
 body[data-sys-layout="app"]{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
@@ -510,10 +525,12 @@ body[data-sys-layout="app"] #app{flex:1 1 0;height:auto;min-height:0;width:100%}
 body[data-sys-layout="app"] .sys-viewas-pop{max-height:calc(100dvh - var(--sys-top-h) - 16px)}
 
 /* ── 7a2 · layout: embedded page (?embed=1, frame.js mountEmbed) ──────────── */
-/* The shell draws the page inside an iframe: no top bar, footer, crumb row or
-   floating Ask button; a page's own sub-nav sticks to the top edge instead.    */
-html[data-embed]{--sys-top-h:0px}
-html[data-embed] body>.sys-top,html[data-embed] body>.sys-crumb,html[data-embed] .sys-footer,html[data-embed] .ch.ch-floating{display:none!important}
+/* The shell draws the page inside an iframe that fills its content area: no
+   top bar, footer, crumb row, concept tag, page sub-bar or floating Ask button.
+   The page scrolls inside the frame (one scroll); links that leave the page
+   open in the top window (frame.js mountEmbed).                                */
+html[data-embed]{--sys-top-h:0px;--sys-subnav-h:0px}
+html[data-embed] body>.sys-top,html[data-embed] body>.sys-crumb,html[data-embed] .sys-subnav,html[data-embed] .sys-concept,html[data-embed] .sys-footer,html[data-embed] .ch.ch-floating{display:none!important}
 
 /* ── 7b · layout: minimal transparent frame (theater.html) ────────────────── */
 .sys-top--minimal{position:fixed;left:0;right:0;top:0;background:transparent;border-bottom:0;-webkit-backdrop-filter:none;backdrop-filter:none;pointer-events:none}
