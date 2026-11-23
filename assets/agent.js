@@ -11,13 +11,14 @@ import { Session, CONN_STATES } from './session.js?v=20261123143257';
 
 const APPROVALS_KEY = 'bsp-os-approvals';   // drafts waiting for the person's OK; the home screen lists them (modules/home.js)
 const ON = CONN_STATES[1];                  // the demonstration state: connected with example records
+const OFF = CONN_STATES[2];                 // disconnected by the visitor: the vendor's connector, not switched on
 const EMBED = (() => { try { return new URLSearchParams(location.search).get('embed') === '1'; } catch { return false; } })();
 const CO_ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 const COMPANY_APPS = { servicetitan: 'pp', procore: 'cet', servicedesk: 'fl', shopify: 'fh' };
 const PHONE_ROWS = 4;
 
-const state = { catalog: null, role: null, syncing: new Set(), job: null, filter: 'all', inst: null, cards: null, quiet: false };
+const state = { catalog: null, defaults: {}, role: null, syncing: new Set(), job: null, filter: 'all', inst: null, cards: null, quiet: false };
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -36,6 +37,18 @@ async function loadCatalog() {
   const c = await r.json();
   if (!c || !Array.isArray(c.roles) || !c.roles.length) throw new Error('catalogue has no roles');
   return c;
+}
+/** What each tool is by default for each organisation ({ firm|co: { appId: state } }), from the Connections data. A missing
+ *  file leaves {}: the session then counts every role app as a connected sandbox tool. */
+async function loadDefaults() {
+  try {
+    const url = new URL('../data/research/connections.json', import.meta.url);
+    url.search = new URL(import.meta.url).search;
+    const r = await fetch(url); if (!r.ok) return {};
+    const d = await r.json(), out = {};
+    for (const g of d.groups || []) { const m = (out[g.co || 'firm'] ||= {}); for (const t of g.tools || []) if (t.id && t.state) m[t.id] = t.state; }
+    return out;
+  } catch { return {}; }
 }
 const orgOf = id => state.catalog.orgs.find(o => o.id === id) || { id, name: id, co: null, sells: '', lines: [], depts: [], portal: 'app.html' };
 const roleById = id => state.catalog.roles.find(r => r.id === id) || null;
@@ -58,13 +71,15 @@ function announce(text) {
   setTimeout(() => { live.textContent = text; }, 60);
 }
 
-/* ── connections: kept by company in the session (Session.conn), so one Outlook serves every role at that company ── */
+/* ── connections: kept by company in the session (Session.connectedApps), the same answer the Connections screen gives.
+   A sandbox tool counts as connected until the visitor disconnects it; a disconnect stores 'available'. ── */
 const coKey = (r = state.role) => (r.org === 'bsp' ? null : r.org);
-const isConnected = (appId, r = state.role) => Session.connectedApps(coKey(r)).includes(appId);
-const connectedApps = () => roleApps().filter(a => isConnected(a));
+const defaultsOf = (r = state.role) => state.defaults[coKey(r) || 'firm'] || {};
+const isConnected = (appId, r = state.role) => Session.connectedApps(coKey(r), [appId], defaultsOf(r)).length > 0;
+const connectedApps = () => Session.connectedApps(coKey(), roleApps(), defaultsOf());
 function setConnected(appIds, on) {
   state.quiet = true;   // one redraw after the change, not one per app
-  try { for (const a of appIds) Session.setConn(coKey(), a, on ? ON : null); } finally { state.quiet = false; }
+  try { for (const a of appIds) Session.setConn(coKey(), a, on ? ON : OFF); } finally { state.quiet = false; }
 }
 
 /* ── drafts waiting for approval: { id, role, co, title, app, status, at }[], newest last ── */
@@ -80,7 +95,7 @@ function trackDraft(ev, status) {
 /** What the agent request carries: which role, the apps connected for its company (Session.connectedApps), and the job. */
 function workspacePayload() {
   if (!state.role) return null;
-  const out = { role: state.role.id, connected: Session.connectedApps(coKey()).filter(a => roleApps().includes(a)) };
+  const out = { role: state.role.id, connected: connectedApps() };
   if (state.job && state.job.address) out.job = { address: String(state.job.address), issue: String(state.job.issue || '') };
   return out;
 }
@@ -171,7 +186,7 @@ function renderRoleHead() {
   // The home card already offers the same Connect button when its app is the key app: one button, not two.
   const connect = !k && key && r.home?.needs !== key ? `<button type="button" class="sys-btn sys-btn--primary sys-btn--sm ca-connect" data-ca="connect" data-app="${esc(key)}">Connect ${esc(appName(key))}</button>` : '';
   el.innerHTML = `<p class="sys-card-label">${esc(o.co ? o.name : 'BSP')} · ${esc(r.dept)}</p>
-    <div class="ca-role-top"><h2 class="sys-card-title" id="ca-role-t">${esc(r.label)}</h2><button type="button" class="sys-btn sys-btn--secondary sys-btn--sm ca-change" data-ca="sheet" aria-haspopup="dialog">Change role</button></div>
+    <div class="ca-role-top"><h2 class="sys-card-title" id="ca-role-t">${esc(r.label)}</h2><button type="button" class="sys-btn sys-btn--secondary sys-btn--sm ca-change" data-ca="sheet" ${state.switchBtn ? 'aria-controls="sys-viewas-pop"' : 'aria-haspopup="dialog"'}>Change role</button></div>
     <p class="sys-card-body ca-sells">${esc(o.sells)}</p>
     <p class="sys-card-body ca-desc">${esc(r.desc)}</p>
     <div class="sys-chips"><span class="sys-chip"><span class="sys-sr">Answer style: </span>${esc(styleLabel(r.style))}</span><a class="sys-chip" href="#apps">${k ? `${k} of ${apps.length} apps` : 'No apps yet'}</a></div>
@@ -334,6 +349,18 @@ function openSheet() {
   $('#ca-sheet-h', el)?.focus();
   $('.ca-role[aria-pressed="true"]', el)?.scrollIntoView({ block: 'center' });
 }
+/** Change role with the top bar present: open its "Viewing as" switch (a keyboard-style open puts focus on the current role). */
+function openSwitch() {
+  const b = state.switchBtn; if (!b || !b.isConnected) { openSheet(); return; }
+  if (b.getAttribute('aria-expanded') !== 'true') { b.focus({ preventScroll: true }); b.click(); }
+}
+/** Inside the shell (?embed=1) a link to another page opens in the top window, never inside the frame. */
+function toTop(e) {
+  const a = e.target.closest?.('a[href]'); if (!a || a.target === '_blank') return;
+  let u; try { u = new URL(a.getAttribute('href'), location.href); } catch { return; }
+  if (u.origin === location.origin && u.pathname === location.pathname && u.search === location.search) return;   // a place on this page
+  a.target = '_top';
+}
 function closeSheet() { const el = $('#ca-role-sheet'); if (el?.open) el.close(); }
 
 /* ── access grid: roles down the side, the apps they read across, one tick per app (and one for company numbers) ── */
@@ -378,7 +405,7 @@ function mountActions() {
 function scrollTurnIntoView(turnEl) {
   if (!turnEl?.getBoundingClientRect) return;
   const css = getComputedStyle(document.documentElement);
-  const topH = parseFloat(css.getPropertyValue('--sys-top-h')) || 56;
+  const topH = EMBED ? 0 : parseFloat(css.getPropertyValue('--sys-top-h')) || 56;
   const subH = $('.sys-subnav')?.getBoundingClientRect().height || 0;
   window.scrollTo({ top: turnEl.getBoundingClientRect().top + scrollY - topH - subH - 8, behavior: reduced() ? 'auto' : 'smooth' });
   syncHint();
@@ -406,7 +433,7 @@ function onClick(e) {
     const inSheet = !!t.closest('#ca-role-sheet'), id = t.dataset.role;
     if (inSheet) { closeSheet(); setRole(id, { focus: () => $('.ca-change')?.focus() }); }
     else setRole(id, { focus: () => $(`.ca-roles [data-ca="role"][data-role="${CSS.escape(id)}"]`)?.focus() });
-  } else if (a === 'sheet') openSheet();
+  } else if (a === 'sheet') { if (state.switchBtn) openSwitch(); else openSheet(); }
   else if (a === 'close-sheet') closeSheet();
   else if (a === 'connect') openConsent([t.dataset.app]);
   else if (a === 'connect-all') openConsent(roleApps().filter(x => !isConnected(x)));
@@ -459,7 +486,7 @@ function failNote(msg) {
 /* ── boot ── */
 export async function boot() {
   const params = new URLSearchParams(location.search);
-  try { state.catalog = await loadCatalog(); }
+  try { [state.catalog, state.defaults] = await Promise.all([loadCatalog(), loadDefaults()]); }
   catch (e) {
     console.warn('company agent: catalogue did not load', e);
     failNote('The role list did not load. Reload the page.');
@@ -469,8 +496,7 @@ export async function boot() {
   }
   if (EMBED) document.documentElement.dataset.embed = '1';
   await Session.ready();
-  state.role = roleById(initialRole());
-  if (Session.role().id !== state.role.id) Session.setRole(state.role.id);
+  state.role = roleById(initialRole());   // read only: a role is stored when the visitor picks one, never by default
   if (params.get('apps') === 'all') setConnected(roleApps(), true);
   applyRoleAccent();
   registerPersona(state.role);
@@ -485,6 +511,10 @@ export async function boot() {
     offlineHTML: '<p>The agent is offline right now. Your apps and the access table still work.</p>',
   });
   Frame.mount({ active: 'agent', crumb: [{ label: 'Home', href: './' }, { label: 'Company agent' }], persona: state.inst.id, chat: state.inst });
+  // The top bar's "Viewing as" switch picks the role: the page drops its own role list, and Change role opens the switch
+  const sw = !EMBED && document.querySelector('[data-sys-viewas] .sys-viewas-btn');
+  if (sw) { state.switchBtn = sw; $('.ca-roles')?.remove(); $('.ca-layout')?.classList.add('ca-layout--switch'); }
+  if (EMBED) document.addEventListener('click', toTop, true);
 
   renderAll();
   state.filter = state.role.org; renderAccess(state.filter);
@@ -509,5 +539,5 @@ export async function boot() {
     setURL(p => p.delete('q'));
     setTimeout(() => ask(q), 400);
   }
-  window.__agent = { state, setRole, catalog: state.catalog };
+  window.__agent = { state, setRole, catalog: state.catalog, workspace: workspacePayload };
 }

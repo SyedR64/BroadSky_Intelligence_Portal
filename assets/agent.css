@@ -34,6 +34,16 @@
   .ca-apps{position:sticky;top:calc(var(--sys-top-h) + var(--sys-subnav-h,48px) + var(--sys-sp-4));max-height:calc(100dvh - var(--sys-top-h) - var(--sys-subnav-h,48px) - var(--sys-sp-6));overflow-y:auto;overscroll-behavior:contain}
   .ca-app-list{grid-template-columns:minmax(0,1fr)}
 }
+/* With the top bar's "Viewing as" switch (agent.js drops the role list): the agent, with the apps beside it on laptops */
+@media (min-width:1024px){
+  .ca-layout--switch{grid-template-columns:minmax(0,1fr) minmax(260px,300px);grid-template-areas:"main apps"}
+  .ca-layout--switch .ca-change{display:inline-flex}
+  .ca-layout--switch .ca-apps{position:sticky;top:calc(var(--sys-top-h) + var(--sys-subnav-h,48px) + var(--sys-sp-4));max-height:calc(100dvh - var(--sys-top-h) - var(--sys-subnav-h,48px) - var(--sys-sp-6));overflow-y:auto;overscroll-behavior:contain}
+  .ca-layout--switch .ca-app-list{grid-template-columns:minmax(0,1fr)}
+}
+@media (min-width:1280px){
+  .ca-layout--switch{grid-template-columns:minmax(0,1fr) minmax(280px,320px)}
+}
 
 /* ── role tree (desktop card and the phone sheet) ── */
 .ca-start{margin-bottom:var(--sys-sp-2)}
