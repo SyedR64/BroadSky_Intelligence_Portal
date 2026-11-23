@@ -513,6 +513,13 @@ button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-current]:hover{backgr
 .sys-fold>summary:hover b{text-decoration:underline;text-underline-offset:3px}
 .sys-fold>summary~*{margin-left:14px;margin-right:14px}
 .sys-fold>summary~:last-child{margin-bottom:14px}
+/* the portal's older section names (built before .sys-fold): the same bar and chevron; each module's CSS sets their
+   spacing (CET and Punctual Pros draw the bar on the summary itself) */
+:is(.ma-how,.bsp-drawer,.cs-drawer,.pe-more){border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2)}
+:is(.ma-how,.cet-fold,.pp-fold,.bsp-drawer,.cs-drawer,.pe-more)>summary{display:flex;align-items:center;cursor:pointer;list-style:none;font-size:var(--sys-fs-sm)}
+:is(.ma-how,.cet-fold,.pp-fold,.bsp-drawer,.cs-drawer,.pe-more)>summary::-webkit-details-marker{display:none}
+:is(.ma-how,.cet-fold,.pp-fold,.bsp-drawer,.cs-drawer,.pe-more)>summary::before{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform var(--sys-t)}
+:is(.ma-how,.cet-fold,.pp-fold,.bsp-drawer,.cs-drawer,.pe-more)[open]>summary::before{transform:rotate(45deg)}
 
 /* ── 7a · layout: portal console (app.html) ───────────────────────────────── */
 /* Frame strip sits above the rail; the console grid takes the remaining height. */
