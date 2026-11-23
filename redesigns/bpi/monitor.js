@@ -180,8 +180,8 @@ export function mountMonitor(root, { initial = 'ai-jobs', interval = 2600 } = {}
     const cw = $('chart').clientWidth || 600; $('chart').innerHTML = chartSVG(data, cw < 460 ? { w: 360, h: 150 } : {});
     $('clusters').innerHTML = sc.clusters.map(c => `<div class="cl"><div class="nm"><span class="tr ${c.tr}">${c.tr === 'up' ? '▲' : c.tr === 'dn' ? '▼' : '■'}</span><span title="${esc(c.n)}">${esc(c.n)}</span>${c.flag ? `<span class="flag">${esc(c.flag)}</span>` : ''}</div>${sbar(c.s)}<div class="pc">${c.share}%</div></div>`).join('');
     const m = sc.move;
-    $('move').innerHTML = `<div><div class="gauge">${gaugeSVG(sc.risk)}<div><span class="sev ${m.sev}">${esc(m.sevL)}</span><div class="sys-src" style="margin-top:6px">${esc(m.window)} · recommended by SignalOS</div></div></div><h4>${esc(m.title)}</h4><ol>${m.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol></div><div><div class="sub-h"><span>Draft holding statement</span><span>AI draft · human approval</span></div><blockquote>${esc(m.draft)}</blockquote><div class="checks">${m.checks.map(([k, t]) => `<span class="${k}">${esc(t)}</span>`).join('')}</div></div>`;
-    root.querySelector('[data-k="client"]').textContent = `Client: ${sc.client} (illustrative)`;
+    $('move').innerHTML = `<div><div class="gauge">${gaugeSVG(sc.risk)}<div><span class="sev ${m.sev}">${esc(m.sevL)}</span><div class="sys-src" style="margin-top:6px">${esc(m.window)}</div></div></div><h4>${esc(m.title)}</h4><ol>${m.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol></div><div><div class="sub-h"><span>Draft holding statement</span><span>AI draft · human approval</span></div><blockquote>${esc(m.draft)}</blockquote><div class="checks">${m.checks.map(([k, t]) => `<span class="${k}">${esc(t)}</span>`).join('')}</div></div>`;
+    root.querySelector('[data-k="client"]').textContent = `Client: ${sc.client}`;
   };
   const setScenario = id => {
     sc = SCENARIOS.find(s => s.id === id) || SCENARIOS[0];

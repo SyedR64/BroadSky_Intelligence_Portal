@@ -151,7 +151,8 @@ Data.load('research/serviceos_evidence').then(d => {
     ['Compliance rules', 'BPI-built rules engine', 'Fact base per client, claims tracing, regulated-sector disclosures (health, energy, financial), legal routing and audit log.', 'Inside the $1–2M program (est.)', 'build'],
     ['Outcome dashboards', 'BPI-built BI layer', 'Retainer scorecards: share of voice, narrative sentiment, policy outcomes, paid-media lift.', 'Inside the $1–2M program (est.)', 'build'],
   ];
-  $('#stack-tbl tbody').innerHTML = vs.map(v => `<tr><td>${esc(Frame.humanizeText(String(v.category || '')))}</td><td><a href="${esc(v.source_url)}" target="_blank" rel="noopener">${esc(v.vendor)}</a></td><td>${esc(plain(v.what_it_does))}</td><td>${esc(plain(v.pricing_note))}</td><td><span class="bb buy">Buy</span></td></tr>`).join('') + build.map(b => `<tr><td>${esc(b[0])}</td><td>${esc(b[1])}</td><td>${esc(b[2])}</td><td>${esc(b[3])}</td><td><span class="bb build">Build</span></td></tr>`).join('');
+  $('#stack-tbl tbody').innerHTML = vs.map(v => `<tr><td>${esc(Frame.humanizeText(String(v.category || '')))}</td><td><a href="${esc(v.source_url)}" target="_blank" rel="noopener">${esc(v.vendor)}</a></td><td><span class="bb buy">Buy</span></td></tr>`).join('') + build.map(b => `<tr><td>${esc(b[0])}</td><td>${esc(b[1])}</td><td><span class="bb build">Build</span></td></tr>`).join('');
+  $('#stack-more tbody').innerHTML = vs.map(v => `<tr><td>${esc(Frame.humanizeText(String(v.category || '')))}</td><td>${esc(plain(v.what_it_does))}</td><td>${esc(plain(v.pricing_note))}</td></tr>`).join('') + build.map(b => `<tr><td>${esc(b[0])}</td><td>${esc(b[2])}</td><td>${esc(b[3])}</td></tr>`).join('');
 }).catch(() => { $('#evidence').innerHTML = '<p class="sys-src">Evidence file not available; the defaults above come from the OS program evidence.</p>'; });
 
 /* ── roadmap ───────────────────────────────────────────────────────────── */
