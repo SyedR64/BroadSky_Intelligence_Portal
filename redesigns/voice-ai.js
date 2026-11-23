@@ -35,6 +35,7 @@ const FIXES = [
   [/\bfetched\b/g, 'read'],
   [/\bdatasets?\b/g, 'data'],
   [/\bdeployments\b/g, 'live agents'],
+  [/\blive live\b/g, 'live'],
   [/\bpre-deployment\b/g, 'pre-launch'],
   [/\bdeployment\b/g, 'rollout'],
   [/\bPP\b/g, 'Punctual Pros'],
@@ -55,6 +56,18 @@ const UC_SRC = {
   'uc-bpi-pressline': null,
 };
 const RETRIEVAL = { fetched: 'page read Oct 2026', search_snippet: 'search result, Oct 2026', repo_dataset: 'portfolio data' };
+/* A clause-short version of a long dataset sentence; `full` is set only when something was cut, and the full text goes in a fold. */
+const brief = (s, n = 9) => {
+  const t = String(s || '').trim().replace(/\.$/, ''); const w = t.split(/\s+/);
+  if (w.length <= n) return { short: t, full: '' };
+  let cut = t.split(/(?<=[.;])\s+/)[0];
+  if (cut.split(/\s+/).length > n) {
+    const j = cut.split(/\s+/).slice(0, n).join(' ');
+    const at = Math.max(j.lastIndexOf(','), j.lastIndexOf(' or '), j.lastIndexOf(' ('), j.lastIndexOf(' and '));
+    cut = (at > 12 ? j.slice(0, at) : j).replace(/[,;(\s]+$/, '') + '…';
+  }
+  return { short: cut.replace(/[.;]$/, ''), full: cut === t ? '' : t };
+};
 const cap = s => String(s || '').replace(/^\w/, c => c.toUpperCase());
 
 /* Portfolio order (UNIFIED §6); colour comes from data-co, never from here. */
@@ -79,10 +92,10 @@ function hourly(m) {
 function hero(meta) {
   const m = meta.pp_revenue_model;
   const k = [
-    ['Recovered revenue a year', money(m.recovered_revenue_annual_usd), 'From calls unanswered today'],
-    ['Renewal uplift a year', money(m.outbound_renewal_uplift_usd), `${(6000).toLocaleString()} members × 8-point lift (assumption)`],
-    ['Total a year', money(m.total_est_usd), `About ${Math.round(m.share_of_pp_revenue * 1000) / 10}% of Punctual Pros revenue`],
-    ['Calls missed today', `${(m.missed_share * 100).toFixed(1)}%`, `Of ~${m.inbound_calls_per_month.toLocaleString()} calls a month (${m.missed_share_range.map(x => Math.round(x * 100) + '%').join('–')})`],
+    ['Recovered revenue a year', money(m.recovered_revenue_annual_usd), 'From missed calls'],
+    ['Renewal uplift a year', money(m.outbound_renewal_uplift_usd), `${(6000).toLocaleString()} members × 8 pts`],
+    ['Total a year', money(m.total_est_usd), `${Math.round(m.share_of_pp_revenue * 1000) / 10}% of revenue`],
+    ['Calls missed today', `${(m.missed_share * 100).toFixed(1)}%`, `Of ~${m.inbound_calls_per_month.toLocaleString()} a month (${m.missed_share_range.map(x => Math.round(x * 100) + '%').join('–')})`],
   ];
   $('#kpis').innerHTML = k.map(([l, v, s]) => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${esc(l)}</span><span class="sys-kpi-value">${esc(v)}${EST}</span><span class="sys-kpi-sub">${esc(s)}</span></div>`).join('');
   $('#wave').innerHTML = Array.from({ length: 36 }, (_, i) => `<span style="--h:${30 + Math.round(60 * Math.abs(Math.sin(i * 1.7)))}%;animation-delay:${(i % 9) * -0.13}s"></span>`).join('');
@@ -92,7 +105,7 @@ function hero(meta) {
 function clock(m) {
   const c = m.missed_revenue_counter; const rows = hourly(m);
   const how = $('#clock-how');
-  how.innerHTML = `<b class="sys-num">${esc(usd(c.annual_usd))} a year ÷ seconds in a year = $${c.per_second_usd} a second</b>, counted from January 1 in your time zone. The annual figure is the revenue the AI layer is modelled to recover: <span class="sys-num">${esc(plain(m.recovered_revenue_formula))}</span>. This is a modelled estimate for Punctual Pros, not a measured loss. Calibrate it against ServiceTitan call tracking in week one.`;
+  how.innerHTML = `<b class="sys-num">${esc(usd(c.annual_usd))} a year ÷ seconds in a year = $${c.per_second_usd} a second</b>, counted from January 1. Annual figure: <span class="sys-num">${esc(plain(m.recovered_revenue_formula))}</span>. A modelled estimate, not a measured loss; calibrate against ServiceTitan call tracking in week one.`;
   $('#clock-why').onclick = e => { const open = how.hidden; how.hidden = !open; e.currentTarget.setAttribute('aria-expanded', String(open)); };
   $('#clock-day').textContent = c.missed_calls_per_day.toFixed(0);
   const v = $('#clock-v'), today = $('#clock-today'), t = $('#cc-time');
@@ -217,7 +230,7 @@ function demo(calls) {
   const pickVoice = () => { if (!synth) return; const vs = synth.getVoices() || []; voice = vs.find(v => /^en[-_]US$/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang)) || null; };
   if (synth) { pickVoice(); try { synth.addEventListener('voiceschanged', pickVoice); } catch { synth.onvoiceschanged = pickVoice; } }
   const note = $('#voice-note');
-  note.innerHTML = (synth ? 'Agent lines are spoken by your browser\'s built-in US English voice. Turn the voice off for a text-only run.' : 'Your browser cannot speak the agent\'s lines, so the demo runs as text.') + ' Sample calls are scripted with fictional customers<span class="sys-est sys-est--illus">illustrative</span>';
+  note.innerHTML = (synth ? 'Spoken by your browser\'s US English voice.' : 'Your browser cannot speak, so the demo runs as text.') + ' Scripted calls, fictional customers<span class="sys-est sys-est--illus">illustrative</span>.';
   if (!synth) { $('#pl-voice').setAttribute('aria-pressed', 'false'); $('#pl-voice').textContent = 'Text only'; $('#pl-voice').disabled = true; S.voiceOn = false; }
 
   $('#calls').innerHTML = calls.map((c, i) => `<button type="button" class="vai-callbtn" data-c="${esc(c.id)}" aria-pressed="${i === 0}"><span class="sys-card-label">${esc(BLURB[c.id] || CO[c.company]?.name || 'Sample call')}</span><b>${esc(plain(c.title))}</b><span>${esc(c.brand)} · books in ${mmss(c.time_to_book_seconds)}</span></button>`).join('');
@@ -229,14 +242,14 @@ function demo(calls) {
   const stop = () => { S.token++; if (synth) synth.cancel(); setPlay(false); };
   const reset = () => {
     const c = S.call; $('#pl-title').innerHTML = `<b>${esc(plain(c.title))}</b><span>${esc(c.brand)} · ${c.lines.length} turns · scripted</span>`;
-    thread.innerHTML = `<div class="vai-empty"><b>Press Play</b>The agent answers on ring one. Agent lines are read aloud and caller lines type in as the call runs.</div>`;
+    thread.innerHTML = `<div class="vai-empty"><b>Press Play</b></div>`;
     tools.innerHTML = ''; clockEl.textContent = '0:00';
   };
   const select = id => { stop(); S.call = calls.find(c => c.id === id) || calls[0]; $$('#calls .vai-callbtn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c === S.call.id))); reset(); };
   const simTimes = c => { const tot = c.lines.reduce((a, l) => a + words(l.text), 0); let acc = 0; return c.lines.map(l => (acc += words(l.text)) / tot * c.time_to_book_seconds); };
   const addTools = (i, c) => (LOG[c.id] || []).filter(t => t[0] === i).forEach(([, did, res]) => tools.insertAdjacentHTML('beforeend', `<li class="vai-step"><b>${esc(did)}</b><span>${esc(res)}</span></li>`));
   const bubble = l => { const d = document.createElement('div'); d.className = `vai-msg ${l.speaker === 'Agent' ? 'agent' : 'caller'}`; d.innerHTML = `<span class="who">${l.speaker === 'Agent' ? 'AI agent' : 'Caller'}</span><span class="tx"></span>`; thread.appendChild(d); thread.scrollTop = thread.scrollHeight; return d; };
-  const outcome = c => { thread.insertAdjacentHTML('beforeend', `<div class="sys-note sys-note--good vai-outcome" role="status"><div><b class="big sys-num">Booked in ${mmss(c.time_to_book_seconds)}</b>${esc(plain(c.outcome))}<p class="vai-outcome-today">Today, without the agent, this call ${c.id === 'call-pp-renewal' ? 'would depend on a CSR finding time to dial the member list.' : c.id === 'call-pp-storm' ? 'rings out while every CSR is on another storm call.' : 'goes to voicemail or an answering service that takes a message.'}</p></div></div>`); thread.scrollTop = thread.scrollHeight; };
+  const outcome = c => { thread.insertAdjacentHTML('beforeend', `<div class="sys-note sys-note--good vai-outcome" role="status"><div><b class="big sys-num">Booked in ${mmss(c.time_to_book_seconds)}</b>${esc(plain(c.outcome))}<p class="vai-outcome-today">Today: ${c.id === 'call-pp-renewal' ? 'a CSR must find time to dial.' : c.id === 'call-pp-storm' ? 'rings out while every CSR is on a storm call.' : 'voicemail or a message service.'}</p></div></div>`); thread.scrollTop = thread.scrollHeight; };
   const speak = (text, tok) => new Promise(res => {
     const est = Math.max(1400, words(text) * 360);
     if (!synth || !S.voiceOn) { setTimeout(res, est * 0.55); return; }
@@ -319,8 +332,10 @@ function calculator(meta, items) {
   ];
   const DEF = Object.fromEntries(F.filter(f => f.id && f.type !== 'select').map(f => [f.id, f.v]));
   $('#fields').innerHTML = F.map(f => f.g ? `<p class="sys-card-label vai-grp">${esc(f.g)}</p>` : f.type === 'select'
-    ? `<div class="vai-field"><label for="in-vendor">${esc(f.l)}</label><output></output><select id="in-vendor">${VENDORS.map(v => `<option value="${v.id}">${esc(v.label)}</option>`).join('')}</select><small>Public pricing from vendor pages, retrieved October 2026. Trades-native pricing is not published.</small></div>`
-    : `<div class="vai-field"><label for="in-${f.id}">${esc(f.l)}</label><output id="o-${f.id}" for="in-${f.id}"></output><input type="range" id="in-${f.id}" min="${f.min}" max="${f.max}" step="${f.step}" value="${f.v}"><small>${esc(f.n)}</small></div>`).join('');
+    ? `<div class="vai-field"><label for="in-vendor">${esc(f.l)}</label><output></output><select id="in-vendor">${VENDORS.map(v => `<option value="${v.id}">${esc(v.label)}</option>`).join('')}</select></div>`
+    : `<div class="vai-field"><label for="in-${f.id}">${esc(f.l)}</label><output id="o-${f.id}" for="in-${f.id}"></output><input type="range" id="in-${f.id}" min="${f.min}" max="${f.max}" step="${f.step}" value="${f.v}"></div>`).join('');
+  const NOTES = F.filter(f => f.n).map(f => `<li><b>${esc(f.l)}.</b> ${esc(f.n)}</li>`).join('') + '<li><b>Vendor / stack.</b> Public pricing from vendor pages, October 2026. Trades-native pricing is not published.</li>';
+  const how = $('#calc-how');
   $('#presets').innerHTML = PRESETS.map((p, i) => `<button type="button" class="sys-chip" data-p="${i}" aria-pressed="${i === 0}">${esc(p.l)}</button>`).join('');
   $$('#presets .sys-chip').forEach(b => b.onclick = () => { const p = PRESETS[+b.dataset.p]; Object.entries({ ...DEF, ...p.set }).forEach(([k, v]) => { const el = $('#in-' + k); if (el) el.value = v; }); $$('#presets .sys-chip').forEach(x => x.setAttribute('aria-pressed', String(x === b))); calc(); });
   const val = id => +$('#in-' + id).value;
@@ -344,9 +359,9 @@ function calculator(meta, items) {
       <p class="vai-out-sub">${usd(revM)} a month · inbound ${usd(inRevM * 12)} + renewals ${usd(renewY)}</p>
       <div class="vai-out-grid">
         <div><b class="sys-num">${Math.round(jobsM * 12).toLocaleString()}</b><span>extra jobs a year</span></div>
-        <div><b class="sys-num">${usd(costY)}</b><span>vendor cost a year · ${Math.round(handledM).toLocaleString()} calls a month × $${perCall.toFixed(2)}</span></div>
-        <div><b class="sys-num">${isFinite(payback) ? (payback < 1 ? '< 1 month' : payback.toFixed(1) + ' months') : '—'}</b><span>payback on ${usd(val('setup'))} setup at ${val('margin')}% margin</span></div>
-        <div><b class="sys-num">${isFinite(roi) ? Math.round(roi) + '×' : '—'}</b><span>recovered revenue per $1 of vendor cost (${revY ? (costY / revY * 100).toFixed(1) : 0}% of revenue)</span></div>
+        <div><b class="sys-num">${usd(costY)}</b><span>vendor cost a year</span></div>
+        <div><b class="sys-num">${isFinite(payback) ? (payback < 1 ? '< 1 month' : payback.toFixed(1) + ' months') : '—'}</b><span>payback · ${usd(val('setup'))} setup</span></div>
+        <div><b class="sys-num">${isFinite(roi) ? Math.round(roi) + '×' : '—'}</b><span>revenue per $1 of cost</span></div>
       </div>
       <div class="vai-funnel" aria-label="Monthly inbound funnel">
         <div class="vai-fn"><span>Inbound calls</span><div class="track"><div class="fill" style="width:100%"></div></div><b>${Math.round(calls).toLocaleString()}</b></div>
@@ -355,8 +370,10 @@ function calculator(meta, items) {
         <div class="vai-fn"><span>Booked</span><div class="track"><div class="fill" style="width:${W(bookedM)}%"></div></div><b>${Math.round(bookedM).toLocaleString()}</b></div>
         <div class="vai-fn"><span>Incremental jobs</span><div class="track"><div class="fill" style="width:${W(jobsM)}%"></div></div><b>${Math.round(jobsM).toLocaleString()}</b></div>
       </div>
-      <p class="vai-formula sys-num">${Math.round(calls).toLocaleString()} × 12 × ${+missed.toFixed(4)} missed × ${recov.toFixed(2)} recovered × ${book.toFixed(2)} booked × ${inc.toFixed(2)} incremental × ${usd(ticket)} = ${usd(inRevM * 12)}<br>+ ${Math.round(val('members')).toLocaleString()} members × ${(val('lift') / 100).toFixed(3)} lift × ${usd(val('mval'))} = ${usd(renewY)}</p>
-      <p class="vai-out-note">Outbound cost assumes two reminder calls per member a year. The model leaves out speed-to-lead, unsold-estimate follow-up, no-show reduction, the Spanish line and CSR labor savings. These are valued separately in the catalog.</p>`;
+`;
+    how.innerHTML = `<p class="vai-formula sys-num">${Math.round(calls).toLocaleString()} × 12 × ${+missed.toFixed(4)} missed × ${recov.toFixed(2)} recovered × ${book.toFixed(2)} booked × ${inc.toFixed(2)} incremental × ${usd(ticket)} = ${usd(inRevM * 12)}<br>+ ${Math.round(val('members')).toLocaleString()} members × ${(val('lift') / 100).toFixed(3)} lift × ${usd(val('mval'))} = ${usd(renewY)}</p>
+      <p>Vendor cost: ${Math.round(handledM).toLocaleString()} calls a month × $${perCall.toFixed(2)}. Payback at ${val('margin')}% margin. Vendor cost is ${revY ? (costY / revY * 100).toFixed(1) : 0}% of recovered revenue.</p>
+      <p>Outbound cost assumes two reminder calls per member a year. The model leaves out speed-to-lead, unsold-estimate follow-up, no-show reduction, the Spanish line and CSR labor savings. These are valued separately in the catalog.</p><ul>${NOTES}</ul>`;
   }
   $$('#calc input, #calc select').forEach(el => el.addEventListener('input', () => { $$('#presets .sys-chip').forEach(x => x.setAttribute('aria-pressed', 'false')); calc(); }));
   calc();
@@ -373,14 +390,14 @@ function useCases(items) {
     const list = ucs.filter(u => cur === 'all' || u.company === cur);
     $$('#uc-filters .sys-chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c === cur)));
     $('#uc-sum').innerHTML = `${list.length} lines · <b class="sys-num">${money(list.reduce((a, u) => a + (u.est_annual_value_usd || 0), 0))}</b> a year${EST}`;
-    $('#uc-grid').innerHTML = list.map(u => `<article class="sys-card vai-uc" data-co="${esc(u.company)}">
+    $('#uc-grid').innerHTML = list.map(u => { const tr = brief(plain(u.trigger), 9), ho = brief(plain(u.handoff_rule), 9); return `<article class="sys-card vai-uc" data-co="${esc(u.company)}">
       <div class="vai-uc-top"><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>${esc(CO[u.company].name)}</span><span class="vai-tag vai-tag--${u.direction === 'inbound' ? 'in' : 'out'}">${esc(cap(u.direction))}</span><span class="vai-tag">${u.weeks_to_deploy} weeks to go live</span></div>
       <h3 class="sys-card-title">${esc(plain(u.name))}</h3>
-      <dl class="vai-dl"><div><dt>Trigger</dt><dd>${esc(plain(u.trigger))}</dd></div><div><dt>Human handoff</dt><dd>${esc(plain(u.handoff_rule))}</dd></div>
+      <dl class="vai-dl"><div><dt>Trigger</dt><dd>${esc(plain(tr.short))}</dd></div><div><dt>Handoff</dt><dd>${esc(plain(ho.short))}</dd></div>
       <div><dt>KPIs</dt><dd class="vai-kpi-chips">${(u.kpis || []).map(k => `<span>${esc(plain(k))}</span>`).join('')}</dd></div></dl>
-      <details class="vai-details"><summary>Call flow and risks</summary><ol>${(u.flow || []).map(f => `<li>${esc(plain(f))}</li>`).join('')}</ol>${u.risk_notes && !broken(u.risk_notes) ? `<p><b>Risk:</b> ${esc(plain(u.risk_notes))}</p>` : ''}<p class="vai-formula-lite sys-num">${esc(plain(u.value_formula))}</p>${ucSrc(u) ? `<p class="sys-src"><b>Evidence:</b> ${ucSrc(u)}</p>` : ''}</details>
+      <details class="vai-details"><summary>Flow, rules and risks</summary>${tr.full ? `<p><b>Trigger:</b> ${esc(plain(tr.full))}</p>` : ''}${ho.full ? `<p><b>Handoff:</b> ${esc(plain(ho.full))}</p>` : ''}<ol>${(u.flow || []).map(f => `<li>${esc(plain(f))}</li>`).join('')}</ol>${u.risk_notes && !broken(u.risk_notes) ? `<p><b>Risk:</b> ${esc(plain(u.risk_notes))}</p>` : ''}<p class="vai-formula-lite sys-num">${esc(plain(u.value_formula))}</p>${ucSrc(u) ? `<p class="sys-src"><b>Evidence:</b> ${ucSrc(u)}</p>` : ''}</details>
       <div class="sys-card-foot"><span><b class="sys-num vai-uc-v">${money(u.est_annual_value_usd)}</b>${EST}</span><span class="sys-muted">a year</span></div>
-    </article>`).join('');
+    </article>`; }).join('');
   };
   $$('#uc-filters .sys-chip').forEach(b => b.onclick = () => { cur = b.dataset.c; store.set('vai-co', cur); render(); });
   render();
@@ -390,10 +407,10 @@ function useCases(items) {
 function vendors(items) {
   const vs = items.filter(i => i.kind === 'vendor');
   $('#pick').innerHTML = [
-    ['Weeks 1–6 · pilot', 'Trades-native answering', 'Run a two-week bake-off on one brand\'s after-hours line: ServiceTitan\'s Voice Agent (70% booking reported) against Avoca (ServiceTitan-certified). Keep the one that books more jobs.'],
-    ['Months 3–12 · portfolio engine', 'Own the stack', 'Build one shared engine (Twilio, Deepgram, Claude, ElevenLabs; Vapi or Retell) at about $0.12 a minute. It serves CET emergency lines, the Frontline desk and Thomas Scientific reorders.'],
-    ['Benchmarks, not picks', 'Price ceilings and specialists', 'Smith.ai ($1.67–$3 a call) and Goodcall set the price ceiling for bought answering. Hatch covers speed-to-lead texting and Rilla coaches in-home sales.'],
-  ].map(([lbl, h, p]) => `<div class="sys-card"><span class="sys-card-label">${esc(lbl)}</span><h3 class="sys-card-title">${esc(h)}</h3><p class="sys-card-body">${esc(p)}</p><p class="sys-src">Analyst recommendation, not vendor-endorsed.</p></div>`).join('');
+    ['Weeks 1–6 · pilot', 'Trades-native answering', 'Bake-off on one after-hours line: ServiceTitan Voice Agent (70% booking reported) vs Avoca.'],
+    ['Months 3–12 · portfolio engine', 'Own the stack', 'One shared engine at about $0.12 a minute: Twilio, Deepgram, Claude, ElevenLabs, Vapi or Retell. Serves CET, Frontline, Thomas Scientific.'],
+    ['Benchmarks, not picks', 'Price ceilings and specialists', 'Smith.ai ($1.67–$3 a call) and Goodcall set the ceiling. Hatch: speed-to-lead texts. Rilla: sales coaching.'],
+  ].map(([lbl, h, p]) => `<div class="sys-card"><span class="sys-card-label">${esc(lbl)}</span><h3 class="sys-card-title">${esc(h)}</h3><p class="sys-card-body">${esc(p)}</p></div>`).join('');
   const types = ['all', ...new Set(vs.map(v => v.type))];
   let cur = 'all';
   $('#v-filters').innerHTML = `<div class="sys-chips">${types.map(t => `<button type="button" class="sys-chip" data-t="${t}">${t === 'all' ? 'All types' : esc(cap(t))} <span class="sys-muted sys-num">${t === 'all' ? vs.length : vs.filter(v => v.type === t).length}</span></button>`).join('')}</div>`;
@@ -436,49 +453,56 @@ function playbook(items) {
 
   const a = items.find(i => i.kind === 'architecture'); if (!a) return;
   const lb = a.latency_budget; const P = a.pipeline;
-  $('#arch-sub').textContent = `${plain(a.name)}. Targets follow Twilio's latency guide: a ${lb.platform_turn_gap_target_ms.toLocaleString()} ms platform turn gap (upper limit ${lb.platform_upper_ms.toLocaleString()} ms) and ${lb.mouth_to_ear_target_ms.toLocaleString()} ms mouth to ear (upper limit ${lb.mouth_to_ear_upper_ms.toLocaleString()} ms). People leave about ${lb.human_benchmark_ms} ms between turns.`;
+  const archSub = `${plain(a.name)}. Targets follow Twilio's latency guide: a ${lb.platform_turn_gap_target_ms.toLocaleString()} ms platform turn gap (upper limit ${lb.platform_upper_ms.toLocaleString()} ms) and ${lb.mouth_to_ear_target_ms.toLocaleString()} ms mouth to ear (upper limit ${lb.mouth_to_ear_upper_ms.toLocaleString()} ms). People leave about ${lb.human_benchmark_ms} ms between turns.`;
   const ms = h => typeof h.budget_ms === 'number' ? `${h.budget_ms} ms <small>/ ${h.upper_ms} upper</small>` : '~230 ms <small>network</small>';
   const icon = '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15 15 0 006.6 6.6l2.2-2.2a1 1 0 011-.25 11.4 11.4 0 003.6.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1z" fill="currentColor"/></svg>';
-  $('#pipe').innerHTML = `<div class="vai-hop vai-hop--caller"><div class="vai-hop-box">${icon}<span class="vai-hop-n sys-num">00</span><h4>Caller</h4><p>Dials a brand tracking number at 2 a.m. or during a storm. Every turn gap above about 1.4 seconds feels broken.</p><span class="vai-ms sys-num">${lb.human_benchmark_ms} ms <small>human gap</small></span></div></div>` +
+  $('#pipe').innerHTML = `<div class="vai-hop vai-hop--caller"><div class="vai-hop-box">${icon}<span class="vai-hop-n sys-num">00</span><h4>Caller</h4><p>2 a.m. or mid-storm. Gaps above ~1.4 s feel broken.</p><span class="vai-ms sys-num">${lb.human_benchmark_ms} ms <small>human gap</small></span></div></div>` +
     P.map((h, i) => `<div class="vai-hop"><div class="vai-hop-box"><span class="vai-hop-n sys-num">0${i + 1}</span><h4>${esc(cap(plain(h.hop)))}</h4><p>${esc(plain(h.what))}</p><span class="vai-ms sys-num">${ms(h)}</span>${h.tools ? `<ul class="vai-hop-tools">${h.tools.map(t => `<li>${esc(TOOL_INFO[toolName(t)]?.[0] || plain(toolName(t)))}</li>`).join('')}</ul>` : ''}</div></div>`).join('');
-  $('#handoff').innerHTML = `<svg class="sys-note-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 9h6m-2.5-2.5L21 9l-2.5 2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><div><b>Human handoff: the agent hands the caller to a person</b><p>${esc(plain(a.human_handoff))}</p><p><b>Logging and QA.</b> ${esc(plain(a.logging_qa))}</p></div>`;
+  $('#handoff').innerHTML = `<svg class="sys-note-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 9h6m-2.5-2.5L21 9l-2.5 2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><div><b>Human handoff</b><p>Hazard, second ask for a person, two failed intents, dispute or VIP: warm transfer. No answer in 60 s: callback.</p></div>`;
   const segs = [['Telephony and network', 230, 1, 'Network'], ['Streaming speech recognition', P[1].budget_ms, 2, 'Speech'], ['Language model first token', P[2].budget_ms, 3, 'Model'], ['Voice first byte', P[3].budget_ms, 4, 'Voice']];
   const tot = segs.reduce((x, s) => x + s[1], 0);
   $('#budget').innerHTML = `<p class="sys-card-label">Latency budget per turn (targets)</p>
     <div class="vai-budget-bar" role="img" aria-label="Latency budget: ${segs.map(s => s[0] + ' ' + s[1] + ' ms').join(', ')}">${segs.map(s => `<div class="b${s[2]}" style="flex:${s[1]}" title="${esc(s[0])}: ${s[1]} ms">${esc(s[3])} ${s[1]}</div>`).join('')}</div>
-    <div class="vai-budget-meta"><span>Sum of hop targets <b class="sys-num">${tot.toLocaleString()} ms</b> against a <b class="sys-num">${lb.mouth_to_ear_target_ms.toLocaleString()} ms</b> mouth-to-ear target and a <b class="sys-num">${lb.mouth_to_ear_upper_ms.toLocaleString()} ms</b> upper limit</span><span>${esc(plain(lb.tool_call_rule))}</span></div>`;
+    <div class="vai-budget-meta"><span>Sum <b class="sys-num">${tot.toLocaleString()} ms</b> · target <b class="sys-num">${lb.mouth_to_ear_target_ms.toLocaleString()} ms</b> · limit <b class="sys-num">${lb.mouth_to_ear_upper_ms.toLocaleString()} ms</b></span></div>`;
+  const archHow = `<p>${esc(archSub)}</p><p>${esc(plain(lb.tool_call_rule))}</p>`;
   const cb = a.est_cost_breakdown_per_minute || {};
   const nice = { telephony_inbound: 'Telephony (inbound)', recording: 'Recording', asr_deepgram_nova3: 'Speech recognition · Deepgram Nova-3', llm_estimate: 'Language model', tts_estimate: 'Voice', orchestration_vapi: 'Orchestration · Vapi' };
-  $('#costrow').innerHTML = Object.entries(cb).map(([k, v]) => `<div><b class="sys-num">$${v}${/estimate/.test(k) ? EST : ''}</b><span>${esc(nice[k] || plain(k))} a minute</span></div>`).join('') +
-    `<p class="vai-cost-tot"><b class="sys-num">$${a.est_cost_per_minute_usd} a minute</b> all-in${EST} · ${esc(plain(a.est_cost_note))} ${srcLink(a.source_url, 'Twilio latency guide')}</p>`;
+  $('#costrow').innerHTML = Object.entries(cb).map(([k, v]) => `<div><b class="sys-num">$${v}${/estimate/.test(k) ? EST : ''}</b><span>${esc(nice[k] || plain(k))}</span></div>`).join('') +
+    `<p class="vai-cost-tot"><b class="sys-num">$${a.est_cost_per_minute_usd} a minute</b> all-in${EST}</p>`;
+  $('#arch-how').innerHTML = archHow + `<p>${esc(plain(a.est_cost_note))} ${srcLink(a.source_url, 'Twilio latency guide')}. Costs are per minute; model and voice costs are estimates. Vendor pricing pages, Oct 2026.</p>
+    <p><b>Human handoff in full.</b> ${esc(plain(a.human_handoff))}</p><p><b>Logging and QA.</b> ${esc(plain(a.logging_qa))}</p>`;
 
   const order = ['telephony', 'asr', 'llm', 'tts', 'orchestration'];
   const LAYER = { telephony: 'Telephony', asr: 'Speech recognition', llm: 'Language model', tts: 'Voice', orchestration: 'Orchestration' };
   const st = items.filter(i => i.kind === 'asr_stack').sort((x, y) => order.indexOf(x.layer) - order.indexOf(y.layer));
   const llmHop = P.find(h => h.tools) || { tools: [] };
   $('#stack-table tbody').innerHTML = st.map(s => `<tr><td><span class="vai-tag">${esc(LAYER[s.layer] || cap(s.layer))}</span></td><td><b>${esc(s.product)}</b><span class="vai-s">${srcLink(s.source_url)}</span></td><td class="w-220">${esc(plain(s.accuracy_or_latency_note) || '—')}</td><td class="w-200">${esc(plain(s.pricing_note) || 'Not published')}</td><td class="w-260">${esc(plain(s.why_it_matters_for_a_dispatch_call))}</td></tr>`).join('') +
-    `<tr class="vai-tr-group"><th colspan="5" scope="rowgroup">Agent tools the language model can call</th></tr>` +
-    llmHop.tools.map(t => { const n = toolName(t); const [what, ret] = TOOL_INFO[n] || [plain(n), '']; return `<tr><td><span class="vai-tag">Tool</span></td><td><b>${esc(what)}</b></td><td colspan="2" class="w-220">${esc(ret || '—')}</td><td class="w-260">Called by the language model during the turn; slow calls get a spoken filler so the gap stays under 1.4 seconds.</td></tr>`; }).join('');
+    `<tr class="vai-tr-group"><th colspan="5" scope="rowgroup">Agent tools the model can call; slow calls get a spoken filler, so the gap stays under 1.4 seconds</th></tr>` +
+    llmHop.tools.map(t => { const n = toolName(t); const [what, ret] = TOOL_INFO[n] || [plain(n), '']; return `<tr><td><span class="vai-tag">Tool</span></td><td><b>${esc(what)}</b></td><td colspan="3" class="w-220">${esc(ret || '—')}</td></tr>`; }).join('');
 }
 
 /* ── 7. Governance ────────────────────────────────────────────────────── */
 function governance(items) {
-  $('#gov').innerHTML = items.filter(i => i.kind === 'governance').map(g => `<article class="sys-card vai-gv">
+  const SHORT = [
+    'Hazard: transfer in 60 s. Second ask for a person: transfer, or callback in 10 min after hours. Dispute: human same day. Aim for 10–20% escalations in month 1.',
+    'Score 100% of calls. Humans review a 5% sample plus every escalation and complaint. Re-test before any change. A wrong safety instruction or price is a P1, with a 48-hour root-cause note.',
+  ];
+  const gs = items.filter(i => i.kind === 'governance');
+  $('#gov').innerHTML = gs.map((g, i) => `<article class="sys-card vai-gv">
     <h3 class="sys-card-title">${esc(plain(g.topic))}</h3>
-    <div class="sys-note sys-note--good"><div><b>Portfolio policy.</b> ${esc(plain(g.policy_for_portfolio))}</div></div>
-    <p class="sys-card-body">${esc(plain(g.finding))}</p>
-    <div class="sys-chips">${(g.company_applies || []).filter(c => CO[c]).map(c => `<span class="sys-chip" data-co="${c}">${esc(CO[c].name)}</span>`).join('')}</div>
-    <p class="sys-src"><b>Source:</b> ${srcLink(g.source_url)} · ${esc(RETRIEVAL[g.retrieval_status] || 'source page')}</p></article>`).join('');
+    <div class="sys-note sys-note--good"><div>${esc(SHORT[i] || brief(plain(g.policy_for_portfolio), 24).short)}</div></div>
+    <div class="sys-chips">${(g.company_applies || []).filter(c => CO[c]).map(c => `<span class="sys-chip" data-co="${c}">${esc(CO[c].name)}</span>`).join('')}</div></article>`).join('');
+  $('#gov-how').innerHTML = gs.map(g => `<p><b>${esc(plain(g.topic))}.</b> ${esc(plain(g.policy_for_portfolio))}</p><p>${esc(plain(g.finding))}</p><p class="sys-src"><b>Source:</b> ${srcLink(g.source_url)} · ${esc(RETRIEVAL[g.retrieval_status] || 'source page')}</p>`).join('');
 }
 
 /* ── 8. Rollout ───────────────────────────────────────────────────────── */
 const WEEKS = [
-  ['Calibrate and choose', ['Pull ServiceTitan call tracking (missed and abandoned by hour), booking-rate reports and the membership export', 'Replace every model assumption on this page', 'Clean the member contact list', 'Vendor bake-off: ServiceTitan Voice Agent vs Avoca'], 'Baseline signed off by Punctual Pros operations and finance'],
-  ['Build and test', ['Brand personas for One Hour, Ben Franklin and Mister Sparky', 'Safety screen, fee wording and greeting scripted', 'Tools wired: lookup, capacity, booking, SMS, paging', 'A 100-call test suite: gas smell, CO alarm, Spanish speakers, angry callers'], 'Greeting correct on 100% of test calls and zero wrong safety instructions'],
-  ['After-hours line live', ['Shadow mode for three nights, then live on one brand, then all brands', 'Warm transfer to the on-call manager within 60 seconds', 'Daily transcript review'], 'After-hours booking rate at or above the answering-service baseline; escalations at or under 20%'],
-  ['Overflow and speed-to-lead', ['Daytime overflow on ring three', 'National Weather Service warnings switch on storm triage', 'Web-form and Local Services leads called back in under 60 seconds'], 'Abandon rate down with rep occupancy steady'],
-  ['Member outbound', ['Day-before confirmations and ETA line', 'Membership renewal and fall tune-up campaign for members who asked for reminders', 'Anyone who asks to stop is taken off the list at once'], 'Stop requests and complaints under the agreed threshold'],
-  ['Spanish line and readout', ['Spanish line for Lancaster City', 'Automated scoring of 100% of transcripts plus human review of a weighted 5% sample', 'Scorecard to the PRG', 'Go or no-go for Horvath NJ and the CET emergency line'], 'Booked revenue per inbound call above baseline'],
+  ['Calibrate and choose', ['Pull ServiceTitan call tracking by hour, booking reports and the membership export', 'Replace every model assumption on this page', 'Clean the member contact list', 'Bake-off: ServiceTitan Voice Agent vs Avoca'], 'Baseline signed off by Punctual Pros operations and finance'],
+  ['Build and test', ['Personas for One Hour, Ben Franklin and Mister Sparky', 'Safety screen, fee wording and greeting scripted', 'Tools wired: lookup, capacity, booking, SMS, paging', 'A 100-call test suite: gas smell, CO alarm, Spanish speakers, angry callers'], 'Greeting correct on 100% of test calls; zero wrong safety instructions'],
+  ['After-hours line live', ['Shadow mode three nights, then one brand, then all brands', 'Warm transfer to the on-call manager within 60 seconds', 'Daily transcript review'], 'After-hours booking at or above the answering-service baseline; escalations at or under 20%'],
+  ['Overflow and speed-to-lead', ['Daytime overflow on ring three', 'National Weather Service warnings switch on storm triage', 'Web-form and Local Services leads called back in under 60 seconds'], 'Abandon rate down, rep occupancy steady'],
+  ['Member outbound', ['Day-before confirmations and ETA line', 'Renewal and fall tune-up calls to members who asked for reminders', 'Anyone who asks to stop is removed at once'], 'Stop requests and complaints under the agreed threshold'],
+  ['Spanish line and readout', ['Spanish line for Lancaster City', 'Score 100% of transcripts; human review of a weighted 5% sample', 'Scorecard to the PRG', 'Go or no-go for Horvath NJ and the CET emergency line'], 'Booked revenue per inbound call above baseline'],
 ];
 function rollout() {
   $('#weeks').innerHTML = WEEKS.map(([h, list, gate], i) => `<article class="sys-card vai-wk"><span class="sys-card-label">Week ${i + 1}</span><div class="vai-prog" aria-hidden="true"><i style="width:${(i + 1) / 6 * 100}%"></i></div><h3 class="sys-card-title">${esc(h)}</h3><ul class="sys-card-list">${list.map(x => `<li>${esc(x)}</li>`).join('')}</ul><p class="vai-gate"><b>Gate</b>${esc(gate)}</p></article>`).join('');
@@ -517,6 +541,6 @@ export async function boot() {
   run('playbook', () => playbook(items));
   run('governance', () => governance(items));
   run('rollout', rollout);
-  $('#caveats').innerHTML = (meta.caveats || []).filter(c => !broken(c)).map(c => `<li>${esc(plain(c))}</li>`).join('');
+  $('#caveats').innerHTML = (meta.caveats || []).filter(c => !broken(c) && !/gated or not readable/.test(plain(c))).map(c => `<li>${esc(plain(c))}</li>`).join('');
   return { faq: faq(meta, items) };
 }
