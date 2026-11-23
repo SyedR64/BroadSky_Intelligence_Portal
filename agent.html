@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Company agent · BSP Desk</title>
+<title>Company agent · Broad Sky OS</title>
 <meta name="description" content="A sandbox AI agent for BSP and its six companies: pick a role, connect its apps and ask, from partner to technician.">
 <meta name="theme-color" content="#fbfaf7">
 <script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
@@ -40,8 +40,7 @@
   <section class="sys-hero" id="top" aria-labelledby="ca-h1">
     <div class="sys-wrap ca-hero">
       <h1 class="sys-h1" id="ca-h1">Company agent</h1>
-      <p class="sys-lead">Pick a role and connect its apps.<span class="ca-lead-more"> The agent answers from those apps and sees only what that role can see.</span></p>
-      <div class="sys-note sys-note--info ca-sandbox"><p><b>Sandbox:</b> fictional people and modeled numbers. No company systems are connected.</p></div>
+      <span class="sys-chip sys-chip--info ca-sandbox">Sandbox: example data</span>
     </div>
   </section>
 
@@ -53,7 +52,7 @@
           <article class="ca-role-head sys-card" aria-labelledby="ca-role-t"></article>
           <section class="ca-home sys-card" aria-labelledby="ca-home-h"></section>
           <div id="ca-chat" class="ca-chat"></div>
-          <p class="ca-hint sys-src"></p>
+          <p class="ca-hint sys-src" aria-live="polite"></p>
         </div>
         <section id="apps" class="ca-apps sys-card" aria-labelledby="ca-apps-h"></section>
       </div>
@@ -63,26 +62,21 @@
   <section class="sys-section sys-section--alt" id="access" aria-labelledby="ca-access-h">
     <div class="sys-wrap">
       <div class="sys-section-head">
-        <p class="sys-kicker">Access</p>
         <h2 class="sys-h2" id="ca-access-h">Who sees what</h2>
-        <p class="sys-lead">Each role reads only its own apps and numbers. Ask for EBITDA as a technician and the agent says it is outside that role's access.</p>
       </div>
       <div class="ca-access"></div>
     </div>
   </section>
 
-  <section class="sys-cta" aria-labelledby="ca-cta-h">
+  <section class="sys-section sys-section--tight ca-about-sec" aria-label="Sources and method">
     <div class="sys-wrap">
-      <div class="sys-cta-in">
-        <div class="sys-cta-copy">
-          <h2 id="ca-cta-h">Where the numbers come from</h2>
-          <p>Modeled figures start from the public estimates in the portal. Open a company there to see each source.</p>
-        </div>
-        <div class="sys-actions">
-          <a class="sys-btn sys-btn--primary sys-btn--lg" href="app.html">Open the portal</a>
-          <a class="sys-btn sys-btn--secondary sys-btn--lg" href="redesigns/ai-agents.html">See the AI agents plan</a>
-        </div>
-      </div>
+      <details class="ca-about" data-method>
+        <summary>Where the numbers come from</summary>
+        <p class="sys-src" data-src>Sandbox: fictional people and modeled numbers. No company systems are connected.</p>
+        <p class="sys-src" data-src>Example apps with sandbox records. Access is read-only; every action is a draft until approved.</p>
+        <p class="sys-src" data-method>Modeled figures start from the public estimates in the portal. Access rules for each role are checked on every question.</p>
+        <div class="sys-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="app.html">Open the portal</a><a class="sys-btn sys-btn--secondary sys-btn--sm" href="redesigns/ai-agents.html">AI agents plan</a></div>
+      </details>
     </div>
   </section>
 </main>

@@ -1,19 +1,23 @@
-/* Company agent page (agent.html): role picker, connected apps, home summary, the inline agent and the access table.
+/* Company agent page (agent.html): role picker, connected apps, home summary, the inline agent and the access grid.
    Everything role-dependent comes from data/agent/catalog.json; the agent itself is the shared chat widget (assets/chat.js),
    which sends { role, connected, job } with each question. The browser only says which role and which apps; access is
-   decided where the answers are made. Spec: SPEC section 1 and 5.2. Copy rules: UNIFIED.md §0 and §7. */
+   decided where the answers are made. Spec: SPEC section 1 and 5.2. Copy rules: UNIFIED.md §0 and §7, OS spec section 7.
+   The role and the connections live in the Broad Sky OS session (assets/session.js): the role is the one "Viewing as"
+   names everywhere, and a tool connected for a company is connected for every role at that company.
+   ?embed=1 (inside the shell, #/home/agent): no role list or role card; today's list, the question box and the answers. */
 import { Frame } from './frame.js?v=20261123143257';
 import { Chat, PERSONAS } from './chat.js?v=20261123143257';
+import { Session, CONN_STATES } from './session.js?v=20261123143257';
 
-const ROLE_KEY = 'bsp-agent-role';
-const CONN_KEY = 'bsp-agent-connected';
-const DEFAULT_ROLE = 'pp-hvac-technician';
+const APPROVALS_KEY = 'bsp-os-approvals';   // drafts waiting for the person's OK; the home screen lists them (modules/home.js)
+const ON = CONN_STATES[1];                  // the demonstration state: connected with example records
+const EMBED = (() => { try { return new URLSearchParams(location.search).get('embed') === '1'; } catch { return false; } })();
 const CO_ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 const COMPANY_APPS = { servicetitan: 'pp', procore: 'cet', servicedesk: 'fl', shopify: 'fh' };
 const PHONE_ROWS = 4;
 
-const state = { catalog: null, role: null, connected: {}, syncing: new Set(), job: null, filter: 'all', inst: null, cards: null };
+const state = { catalog: null, role: null, syncing: new Set(), job: null, filter: 'all', inst: null, cards: null, quiet: false };
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -48,43 +52,43 @@ function fillTokens(text) {
   return String(text ?? '').replace(/\{month:(-?\d+)\}/g, (_, n) => MONTHS[((now.getMonth() + Number(n)) % 12 + 12) % 12]);
 }
 function joinAnd(list) { return list.length < 2 ? (list[0] || '') : `${list.slice(0, -1).join(', ')} and ${list.at(-1)}`; }
-function clockText(iso) {
-  const d = new Date(iso); if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(/\s?AM$/i, ' am').replace(/\s?PM$/i, ' pm');
-}
 function announce(text) {
   const live = $('#ca-live'); if (!live) return;
   live.textContent = '';
   setTimeout(() => { live.textContent = text; }, 60);
 }
 
-/* ── connections: { "<role id>": { "<app id>": "<time connected>" } } ── */
-const connOf = (id = state.role.id) => state.connected[id] || {};
-const isConnected = (appId, id = state.role.id) => Object.prototype.hasOwnProperty.call(connOf(id), appId);
+/* ── connections: kept by company in the session (Session.conn), so one Outlook serves every role at that company ── */
+const coKey = (r = state.role) => (r.org === 'bsp' ? null : r.org);
+const isConnected = (appId, r = state.role) => Session.connectedApps(coKey(r)).includes(appId);
 const connectedApps = () => roleApps().filter(a => isConnected(a));
 function setConnected(appIds, on) {
-  const id = state.role.id, now = new Date().toISOString();
-  const cur = { ...connOf(id) };
-  for (const a of appIds) { if (on) cur[a] = now; else delete cur[a]; }
-  state.connected = { ...state.connected, [id]: cur };
-  writeStore(CONN_KEY, state.connected);
+  state.quiet = true;   // one redraw after the change, not one per app
+  try { for (const a of appIds) Session.setConn(coKey(), a, on ? ON : null); } finally { state.quiet = false; }
 }
 
-/** What the agent request carries: which role, which apps were connected here, and the job being worked on. */
+/* ── drafts waiting for approval: { id, role, co, title, app, status, at }[], newest last ── */
+function trackDraft(ev, status) {
+  if (!ev || ev.kind !== 'action_draft' || !ev.id || !state.role) return;
+  const xs = (a => (Array.isArray(a) ? a : []))(readStore(APPROVALS_KEY, []));
+  const i = xs.findIndex(x => x && x.id === String(ev.id));
+  if (i >= 0) xs[i] = { ...xs[i], status };
+  else xs.push({ id: String(ev.id), role: state.role.id, co: coKey() || 'firm', title: String(ev.title || 'Draft'), app: String(ev.app_name || ''), status, at: new Date().toISOString() });
+  writeStore(APPROVALS_KEY, xs.slice(-50));
+}
+
+/** What the agent request carries: which role, the apps connected for its company (Session.connectedApps), and the job. */
 function workspacePayload() {
   if (!state.role) return null;
-  const out = { role: state.role.id, connected: connectedApps() };
+  const out = { role: state.role.id, connected: Session.connectedApps(coKey()).filter(a => roleApps().includes(a)) };
   if (state.job && state.job.address) out.job = { address: String(state.job.address), issue: String(state.job.issue || '') };
   return out;
 }
 
-/* ── role choice ── */
+/* ── role choice: the session's role (the address, then the last choice, then the default) ── */
 function initialRole() {
-  const q = new URLSearchParams(location.search).get('role');
-  if (q && roleById(q)) return q;
-  const saved = readStore(ROLE_KEY, null);
-  if (typeof saved === 'string' && roleById(saved)) return saved;
-  return roleById(DEFAULT_ROLE) ? DEFAULT_ROLE : state.catalog.roles[0].id;
+  const id = Session.role().id;
+  return roleById(id) ? id : state.catalog.roles[0].id;
 }
 function accentOf(org) {
   const co = orgOf(org).co;
@@ -110,13 +114,12 @@ function setURL(mut) {
 function setRole(id, { focus = null } = {}) {
   const role = roleById(id); if (!role) return false;
   state.role = role; state.job = null;
-  writeStore(ROLE_KEY, id);
+  if (Session.role().id !== id) Session.setRole(id);   // keeps the choice and puts ?role= in the address
   applyRoleAccent();
   registerPersona(role);
   state.inst?.setPersona('ag-' + id, { focus: false });
   renderAll();
   state.filter = role.org; renderAccess(state.filter);
-  setURL(p => p.set('role', id));
   if (typeof focus === 'function') focus(); else if (focus) focus.focus?.();
   const org = orgOf(role.org).name;
   announce(`Now answering as ${role.label_a}${String(role.label_a).includes(org) ? '' : `, ${org}`}.`);
@@ -149,8 +152,7 @@ function treeHTML(sheet, openOrgs) {
       <div class="sys-chips ca-lines">${(o.lines || []).map(l => `<span class="sys-chip sys-chip--soft"${o.co ? ` data-co="${esc(o.co)}"` : ''}>${esc(l)}</span>`).join('')}</div>${groups}</div></details>`;
   };
   const bsp = c.orgs.filter(o => !o.co), cos = c.orgs.filter(o => o.co).sort((a, b) => CO_ORDER.indexOf(a.co) - CO_ORDER.indexOf(b.co));
-  return `${bsp.map(org).join('')}<p class="sys-card-label ca-pc-label">Portfolio companies</p><div class="ca-tree-co">${cos.map(org).join('')}</div>
-    <p class="sys-src">Each role sees only its own apps and records.</p>`;
+  return `${bsp.map(org).join('')}<p class="sys-card-label ca-pc-label">Portfolio companies</p><div class="ca-tree-co">${cos.map(org).join('')}</div>`;
 }
 function renderRoleTree(host, { sheet = false } = {}) {
   if (!host) return;
@@ -202,8 +204,7 @@ function renderHome() {
       <ul class="ca-rows">${h.list.map(rowHTML).join('')}</ul>
       ${h.list.length > PHONE_ROWS ? `<button type="button" class="sys-btn sys-btn--ghost sys-btn--sm ca-show-all" data-ca="show-all">Show all ${h.list.length}</button>` : ''}</div>` : '';
   const kpis = ready && Array.isArray(h.kpis) && h.kpis.length ? `<div class="sys-kpis ca-kpis">${h.kpis.map(kpiHTML).join('')}</div>` : '';
-  el.innerHTML = `<h2 class="sys-h3" id="ca-home-h" tabindex="-1">${esc(h.title || 'Today')}</h2>${lead}${h.list_first ? list + kpis : kpis + list}
-    <p class="sys-src"><b>Source:</b> this role's connected apps. Money figures are modeled from BSP Desk's public estimates.</p>`;
+  el.innerHTML = `<h2 class="sys-h3" id="ca-home-h" tabindex="-1">${esc(h.title || 'Today')}</h2>${lead}${h.list_first ? list + kpis : kpis + list}`;
 }
 
 /* ── connected apps panel ── */
@@ -213,14 +214,13 @@ function tileHTML(app) {
   const on = isConnected(id), syncing = state.syncing.has(id);
   const chip = syncing ? '<span class="sys-chip sys-chip--info ca-syncing"><span class="sys-dot sys-dot--live" aria-hidden="true"></span>Syncing</span>'
     : on ? '<span class="sys-chip sys-chip--good">Connected</span>' : '<span class="sys-chip">Not connected</span>';
-  const when = on ? clockText(connOf()[id]) : '';
   const btn = on ? `<button type="button" class="sys-btn sys-btn--ghost sys-btn--sm" data-ca="disconnect" data-app="${esc(id)}" aria-label="Disconnect ${esc(name)}">Disconnect</button>`
     : `<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm" data-ca="connect" data-app="${esc(id)}" aria-label="Connect ${esc(name)}"${syncing ? ' disabled' : ''}>Connect</button>`;
   return `<article class="ca-app sys-card sys-card--flat" data-app="${esc(id)}"${co ? ` data-co="${co}"` : ''}>
-    <div class="ca-app-top"><span class="ca-mono" aria-hidden="true">${esc(appMono(id))}</span><div class="ca-app-name"><p class="sys-card-label">${esc(info.category || '')}</p><h3 class="sys-card-title">${esc(name)}</h3></div></div>
+    <div class="ca-app-top"><span class="ca-mono" aria-hidden="true">${esc(appMono(id))}</span><div class="ca-app-name"><p class="sys-card-label">${esc(info.category || '')}</p><h3 class="sys-card-title"${info.term && info.term.startsWith(name + ':') ? ` title="${esc(info.term)}"` : ''}>${esc(name)}</h3></div></div>
     <p class="sys-card-body">${esc(info.what || '')}</p>
     <div class="ca-app-status">${chip}</div>
-    <div class="sys-card-foot">${btn}${on ? `<span class="sys-src">${esc(setCounts(app))}.${when ? ` Synced at ${esc(when)}.` : ''}</span>` : ''}</div></article>`;
+    <div class="sys-card-foot">${btn}${on ? `<span class="sys-src">${esc(setCounts(app))}</span>` : ''}</div></article>`;
 }
 function renderApps() {
   const el = $('#apps'); if (!el) return;
@@ -228,20 +228,15 @@ function renderApps() {
   const head = !apps.length ? '' : all
     ? '<button type="button" class="sys-btn sys-btn--ghost sys-btn--sm" data-ca="disconnect-all">Disconnect all</button>'
     : `<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm" data-ca="connect-all"${state.syncing.size ? ' disabled' : ''}>Connect all</button>`;
-  const terms = apps.map(a => ({ name: appName(a.id), term: appInfo(a.id).term })).filter(t => t.term && t.term.startsWith(t.name + ':')).map(t => t.term);
   const unavailable = (r.unavailable || []).filter(Boolean);
-  el.innerHTML = `<div class="ca-apps-head"><div><p class="sys-card-label">Connected apps</p><h2 class="sys-h3" id="ca-apps-h">Plug in this role's apps</h2></div>${head}</div>
-    <p class="sys-card-body">Example apps with sandbox records. Access is read-only, and actions wait for your approval.</p>
+  el.innerHTML = `<div class="ca-apps-head"><div><p class="sys-card-label">Connected apps</p><h2 class="sys-h3" id="ca-apps-h">${esc(orgOf(r.org).name)} apps</h2></div>${head}</div>
     <div class="ca-app-list">${apps.map(tileHTML).join('')}</div>
-    ${unavailable.length ? `<p class="sys-src">Not available to this role: ${esc(unavailable.join(', '))}.</p>` : ''}
-    ${terms.length ? `<p class="sys-src page-terms"><b>Terms:</b> ${esc(terms.join(' '))}</p>` : ''}`;
+    ${unavailable.length ? `<p class="sys-src">Not for this role: ${esc(unavailable.join(', '))}</p>` : ''}`;
 }
 function renderHint() {
   const el = $('.ca-hint'); if (!el) return;
   const names = connectedApps().map(a => appName(a));
-  el.textContent = state.offline ? 'The agent is offline right now. Your apps and the access table still work.' : !names.length
-    ? 'No apps connected yet. Connect them in Connected apps, or ask anyway and the agent says what each would add.'
-    : `Ask about anything in ${names.length > 2 ? `${names.slice(0, 2).join(', ')} and more` : joinAnd(names)}. Answers cite the records they use.`;
+  el.textContent = state.offline ? 'Agent offline' : names.length ? `Reads ${names.length > 2 ? `${names.slice(0, 2).join(', ')} and more` : joinAnd(names)}` : 'No apps connected';
   syncHint();
 }
 function syncHint() {
@@ -253,7 +248,7 @@ function syncHint() {
 const dlg = { el: null, opener: null, fromMain: false, apps: [], phase: 'idle', raf: 0, finish: null };
 function dialogHead(title, apps) {
   const mono = apps.length === 1 ? `<span class="ca-mono" aria-hidden="true">${esc(appMono(apps[0]))}</span>` : '';
-  return `<p class="sys-card-label">BSP Desk sandbox</p>
+  return `<p class="sys-card-label">Broad Sky OS sandbox</p>
     <div class="ca-dlg-title">${mono}<h2 class="sys-h3" id="ca-consent-h" tabindex="-1" autofocus>${esc(title)}</h2></div>`;
 }
 function openConsent(appIds) {
@@ -341,37 +336,30 @@ function openSheet() {
 }
 function closeSheet() { const el = $('#ca-role-sheet'); if (el?.open) el.close(); }
 
-/* ── access table ── */
-function accessCells(r) {
-  const names = roleApps(r).map(a => appName(a, r.org));
-  const list = xs => xs.join(' · ') || 'None';
-  return { apps: list(names), numbers: r.numbers_text || 'None', pub: list([...new Set(r.public || [])]), acts: list(r.actions || []) };
-}
+/* ── access grid: roles down the side, the apps they read across, one tick per app (and one for company numbers) ── */
+const APP_ORDER = ['email', 'calendar', 'chat', 'drive', 'financials', 'adp', 'dealcloud', 'salesforce', 'marketing', 'servicetitan', 'procore', 'servicedesk', 'shopify'];
+const hasNumbers = r => !!r.numbers_text && !/^\s*(–|-|none)?\s*$/i.test(r.numbers_text);
 function renderAccess(filter = state.filter) {
   const host = $('.ca-access'); if (!host || !state.catalog) return;
   state.filter = filter;
   const c = state.catalog, orgs = [c.orgs.find(o => !o.co), ...c.orgs.filter(o => o.co).sort((a, b) => CO_ORDER.indexOf(a.co) - CO_ORDER.indexOf(b.co))].filter(Boolean);
   const roles = c.roles.filter(r => filter === 'all' || r.org === filter);
-  const cur = state.role?.id;
+  const cur = state.role?.id, one = filter !== 'all';
+  const ids = [...new Set(roles.flatMap(r => roleApps(r)))].sort((a, b) => (APP_ORDER.indexOf(a) + 1 || 99) - (APP_ORDER.indexOf(b) + 1 || 99));
+  // one company: its own app names; every company: the kind of app (the brands differ by company)
+  const head = id => one ? appName(id, filter) : (appInfo(id).category || appName(id, 'bsp'));
+  const tick = (on, label) => on ? `<span class="ca-tick" aria-hidden="true">✓</span><span class="sys-sr">${esc(label)}</span>` : '<span class="sys-sr">No</span>';
   const chips = `<div class="sys-chips ca-filter" role="group" aria-label="Filter by company">${[{ id: 'all', name: 'All' }, ...orgs].map(o =>
     `<button type="button" class="sys-chip" data-ca="filter" data-org="${esc(o.id)}" aria-pressed="${o.id === filter}">${esc(o.name)}</button>`).join('')}</div>`;
   const rows = roles.map(r => {
-    const x = accessCells(r), here = r.id === cur;
-    return `<tr${here ? ' aria-current="true" class="ca-row-current"' : ''}><td>${esc(r.label)}</td><td>${esc(orgOf(r.org).name)}</td><td>${esc(x.apps)}</td><td>${esc(x.numbers)}</td><td>${esc(x.pub)}</td><td>${esc(x.acts)}</td></tr>`;
-  }).join('');
-  const cards = roles.map(r => {
-    const x = accessCells(r), here = r.id === cur;
-    return `<dl class="ca-access-row${here ? ' ca-row-current' : ''}"${here ? ' aria-current="true"' : ''}>
-      <div class="ca-ar-role"><dt class="sys-sr">Role</dt><dd><b>${esc(r.label)}</b> · ${esc(orgOf(r.org).name)}</dd></div>
-      <div><dt>Apps</dt><dd>${esc(x.apps)}</dd></div><div><dt>Numbers</dt><dd>${esc(x.numbers)}</dd></div>
-      <div><dt>Public research</dt><dd>${esc(x.pub)}</dd></div><div><dt>Can draft</dt><dd>${esc(x.acts)}</dd></div></dl>`;
+    const here = r.id === cur, mine = roleApps(r);
+    return `<tr${here ? ' aria-current="true" class="ca-row-current"' : ''}><th scope="row">${esc(r.label)}${one ? '' : `<span class="ca-grid-org"> · ${esc(orgOf(r.org).name)}</span>`}</th>${ids.map(id => `<td>${tick(mine.includes(id), 'Yes')}</td>`).join('')}<td title="${esc(hasNumbers(r) ? r.numbers_text : '')}">${tick(hasNumbers(r), 'Yes')}</td></tr>`;
   }).join('');
   host.innerHTML = `${chips}
-    <div class="sys-table-wrap ca-access-table"><table class="sys-table"><caption><b>Source:</b> access rules for each role, checked on every question.</caption>
-      <thead><tr><th scope="col">Role</th><th scope="col">Company</th><th scope="col">Apps</th><th scope="col">Numbers</th><th scope="col">Public research</th><th scope="col">Can draft</th></tr></thead>
+    <div class="sys-table-wrap ca-access-table"><table class="sys-table ca-grid">
+      <thead><tr><th scope="col">Role</th>${ids.map(id => `<th scope="col" title="${esc(appInfo(id).what || '')}">${esc(head(id))}</th>`).join('')}<th scope="col">Numbers</th></tr></thead>
       <tbody>${rows}</tbody></table></div>
-    <div class="ca-access-list">${cards}<p class="sys-src"><b>Source:</b> access rules for each role, checked on every question.</p></div>
-    <p class="ca-try"><button type="button" class="sys-link" data-ca="try">Try it as a technician</button></p>`;
+    <p class="ca-try"><button type="button" class="sys-chip" data-ca="try">Ask a technician for EBITDA</button></p>`;
 }
 
 /* ── chat ── */
@@ -401,10 +389,12 @@ function onSketch(ev) {
   const likely = items.filter(i => i.basis === 'likely').length;
   announce(`Floor sketch ready: ${items.length} items, ${likely} likely.`);
 }
-function onDecision(ev, status) { announce(status === 'approved' ? 'Draft approved. Nothing was sent.' : 'Draft discarded.'); }
+function onDecision(ev, status) { trackDraft(ev, status); announce(status === 'approved' ? 'Draft approved. Nothing was sent.' : 'Draft discarded.'); }
 function renderCard(ev, ctx) {
   const f = state.cards?.renderCard;
-  return typeof f === 'function' ? f(ev, { ...ctx, onDecision, onSketch }) : null;
+  const out = typeof f === 'function' ? f(ev, { ...ctx, onDecision, onSketch }) : null;
+  if (out && ev?.kind === 'action_draft') trackDraft(ev, ev.status === 'approved' || ev.status === 'discarded' ? ev.status : 'draft');
+  return out;
 }
 function ask(q) { if (state.inst && q) state.inst.ask(q); }
 
@@ -477,11 +467,11 @@ export async function boot() {
     Frame.mount({ active: 'agent', crumb: [{ label: 'Home', href: './' }, { label: 'Company agent' }] });
     return;
   }
-  const saved = readStore(CONN_KEY, {});
-  state.connected = saved && typeof saved === 'object' && !Array.isArray(saved) ? saved : {};
+  if (EMBED) document.documentElement.dataset.embed = '1';
+  await Session.ready();
   state.role = roleById(initialRole());
+  if (Session.role().id !== state.role.id) Session.setRole(state.role.id);
   if (params.get('apps') === 'all') setConnected(roleApps(), true);
-  writeStore(ROLE_KEY, state.role.id);
   applyRoleAccent();
   registerPersona(state.role);
   state.cards = await import('./agent-cards.js?v=20261123143257').catch(e => { console.warn('company agent: card renderers did not load', e); return null; });
@@ -498,9 +488,15 @@ export async function boot() {
 
   renderAll();
   state.filter = state.role.org; renderAccess(state.filter);
-  setURL(p => p.set('role', state.role.id));
   showCurrentRole();
-  checkBackend();
+  // nothing goes to the backend until the visitor turns to the agent: the offline check waits for the question box
+  const probe = () => { if (state.probed) return; state.probed = true; checkBackend(); };
+  for (const ev of ['focusin', 'pointerdown']) $('#ca-chat')?.addEventListener(ev, probe, { once: true });
+  // "Viewing as" changed in the shell or another tab, or a tool was connected elsewhere: follow it
+  Session.onChange((r, what) => {
+    if (what === 'role' && r.id !== state.role?.id && roleById(r.id)) setRole(r.id);
+    else if (what === 'conn' && !state.quiet && !state.syncing.size) { renderRoleHead(); renderHome(); renderApps(); renderHint(); }
+  });
 
   document.addEventListener('click', onClick);
   $('#ca-consent')?.addEventListener('close', onConsentClose);

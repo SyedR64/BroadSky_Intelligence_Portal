@@ -15,13 +15,8 @@
   .ca .sys-hero .sys-h1{font-size:var(--sys-fs-2xl)}
   .ca .sys-hero .sys-lead{max-width:none;font-size:var(--sys-fs-base)}
 }
-.ca-sandbox{margin-top:var(--sys-sp-4);max-width:62ch}
-/* Laptops: the title and the sandbox note share one row; the one-line lead runs under both */
-@media (min-width:1024px){
-  .ca-hero{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:var(--sys-sp-6)}
-  .ca-hero>.sys-lead{grid-column:1/-1;grid-row:2}
-  .ca-sandbox{grid-column:2;grid-row:1;justify-self:end;margin-top:0;max-width:none;padding:var(--sys-sp-2) var(--sys-sp-4)}
-}
+.ca-hero{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sys-sp-2) var(--sys-sp-4)}
+.ca-hero .sys-h1{margin:0}
 #agent.sys-section--tight{padding-top:var(--sys-sp-3)}
 
 /* ── three-area layout: roles · main · apps ── */
@@ -159,30 +154,36 @@
 #ca-role-sheet .ca-sheet-body{display:flex;flex-direction:column;gap:var(--sys-sp-2)}
 #ca-role-sheet>h2{position:sticky;top:calc(-1 * var(--sys-sp-5));z-index:1;margin-top:calc(-1 * var(--sys-sp-2));padding-block:var(--sys-sp-2);background:var(--sys-surface)}
 
-/* ── access ── */
-.ca-access{display:flex;flex-direction:column;gap:var(--sys-sp-4)}
-.ca-access .sys-table td{min-width:12ch}
-.ca-access .sys-table td:first-child{min-width:16ch}
-.ca-access .sys-table tr.ca-row-current td{background:var(--sys-surface-2)}
-.ca-access .sys-table tr.ca-row-current td:first-child{box-shadow:inset 3px 0 0 var(--co,var(--sys-brand))}
-.ca-access-list{display:none}
-.ca-access-row{margin:0;padding:var(--sys-sp-3) var(--sys-sp-4);display:flex;flex-direction:column;gap:var(--sys-sp-1);background:var(--sys-surface);border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
-.ca-access-row.ca-row-current{background:var(--sys-surface-2);border-color:var(--sys-line-2)}
-.ca-access-row>div{display:grid;grid-template-columns:minmax(0,9ch) minmax(0,1fr);gap:var(--sys-sp-3)}
-.ca-access-row dt{font:600 var(--sys-fs-2xs)/1.5 var(--sys-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sys-mute)}
-.ca-access-row dd{margin:0;min-width:0;overflow-wrap:anywhere}
-.ca-access-row .ca-ar-role{display:block}
-.ca-access-row .ca-ar-role b{color:var(--sys-ink)}
+/* ── access: a tick grid, roles down the side and apps across ── */
+.ca-access{display:flex;flex-direction:column;gap:var(--sys-sp-4);min-width:0;max-width:100%}
+.ca-access>*{min-width:0;max-width:100%}
+.ca-grid th,.ca-grid td{padding:8px 10px;text-align:center;white-space:nowrap}
+.ca-grid td{position:relative}   /* keeps each tick's screen-reader word inside the scroller */
+.ca-grid thead th{font-size:var(--sys-fs-2xs)}
+.ca-grid tbody th{text-align:left;font:500 var(--sys-fs-sm)/1.35 var(--sys-font);text-transform:none;letter-spacing:0;color:var(--sys-ink);position:sticky;left:0;background:var(--sys-surface);z-index:1}
+.ca-grid thead th:first-child{text-align:left;position:sticky;left:0;z-index:2}
+.ca-grid-org{color:var(--sys-mute);font-weight:400}
+.ca-tick{font-weight:700;color:var(--sys-good-ink)}
+.ca-grid tr.ca-row-current :is(th,td){background:var(--sys-surface-2)}
+.ca-grid tr.ca-row-current th{box-shadow:inset 3px 0 0 var(--co,var(--sys-brand))}
 .ca-try{margin:0}
-.ca-try .sys-link{background:none;border:0;border-bottom:1px solid var(--sys-line-2);border-radius:0;padding:0 0 2px;font:600 var(--sys-fs-base)/1.4 var(--sys-font);cursor:pointer}
-.ca-try .sys-link:hover{border-bottom-color:var(--sys-ink)}
+
+/* ── where the numbers come from: one control at the foot of the page ── */
+.ca-about{border-top:1px solid var(--sys-line);padding-top:var(--sys-sp-3)}
+.ca-about>summary{cursor:pointer;font:600 var(--sys-fs-sm)/1.4 var(--sys-font);color:var(--sys-ink-2);min-height:32px}
+.ca-about[open]>summary{margin-bottom:var(--sys-sp-2)}
+.ca-about .sys-src{margin:0 0 var(--sys-sp-2)}
+
+/* ── inside the shell (?embed=1): the top-bar switch chooses the role, so only today's list, the question box and the answers ── */
+html[data-embed] .ca>.sys-subnav,html[data-embed] .ca>.sys-hero,html[data-embed] .ca-roles,html[data-embed] .ca-role-head,html[data-embed] #apps,
+html[data-embed] #access,html[data-embed] .ca-about-sec,html[data-embed] .ca-kpis{display:none}
+html[data-embed] .ca-layout{grid-template-columns:minmax(0,1fr);grid-template-areas:"main"}
+html[data-embed] #agent.sys-section--tight{padding-top:var(--sys-sp-4)}
 
 /* ── phones ── */
 @media (max-width:560px){
   .ca .sys-hero{padding:var(--sys-sp-4) 0 var(--sys-sp-2)}
   .ca .sys-hero .sys-lead{margin-top:var(--sys-sp-2)}
-  .ca-lead-more{display:none}                     /* the phone lead is one sentence */
-  .ca-sandbox{margin-top:var(--sys-sp-3);padding:var(--sys-sp-2) var(--sys-sp-3)}
   .ca-main{gap:var(--sys-sp-3)}
   /* Field roles: role, the next jobs and the composer on the first screen (the order is set above, for every width);
      on a phone today's jobs scroll sideways as one row of cards. */
@@ -206,9 +207,6 @@
   .ca-chat .ch-inline .ch-chips::-webkit-scrollbar{display:none}
   .ca-chat .ch-inline .ch-chip{flex-shrink:0}
   .ca-chat .ch-inline .ch-thread.open,.ca-chat .ch-inline .ch-thread .ch-msgs{max-height:none;overflow:visible}
-  .ca-access-table{display:none}
-  .ca-access-list{display:flex;flex-direction:column;gap:var(--sys-sp-2)}
-  .ca-access-list>.sys-src{margin-top:var(--sys-sp-1)}
   .ca-app .sys-card-foot .sys-src{text-align:left}
 }
 
@@ -219,7 +217,6 @@
   .ca-chat .ch-chip{min-height:44px}
   .ca-chat .ch-actions :is(button,a){min-width:44px;min-height:44px}
   .ca-chat .ch-ib-b,.ca-chat .ch-ib button,.ca-chat .ch-sources>summary{min-height:44px;min-width:44px}
-  .ca-try .sys-link{display:inline-flex;align-items:center;min-height:44px}
   .ca-org>summary{min-height:44px}
 }
 
