@@ -15,6 +15,8 @@
            Chat.mount(null, { persona: 'pp', mode: 'floating', faq: [...], suggestions: [...] });
    ═══════════════════════════════════════════════════════════════════════════ */
 import { Data, Fmt, Live, esc } from './core.js?v=20261123172325';
+import { Session } from './session.js?v=20261123172325';
+import * as GI from './globe-intents.js?v=20261123172325';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -713,7 +715,33 @@ const PORTFOLIO_RX = new RegExp([
   "\\bwhat (?:is|does) (?:broad sky|bsp)(?: partners)?(?: do| own| invest in)?\\s*[?.!]*$",
   "\\b(?:about|overview of|profile of) (?:broad sky|bsp)(?: partners)?\\s*[?.!]*$",
 ].join('|'), 'i');
+/* Typed commands with no model call (assets/globe-intents.js): the best three targets steer the globe; a street address with a job goes to the address lookup. */
+const GLOBE_MAP_JS = './mapcmd.js?v=20261123172325';
+const framed = () => { try { return window.parent && window.parent !== window; } catch { return true; } };
+/** Send one map command: the shell's bus when this page is the shell, postMessage to the shell when the agent sits in its frame. */
+async function sendMap(widget, detail) {
+  if (widget.mode === 'floating') { try { await import(GLOBE_MAP_JS); } catch (e) { console.debug('map bus unavailable', e?.message || e); } window.dispatchEvent(new CustomEvent('bsp:map', { detail })); }
+  if (framed()) { try { window.parent.postMessage({ type: 'bsp:map', detail }, location.origin); } catch { /* no shell around */ } }
+}
+const roleCo = () => { try { return Session.co() || null; } catch { return null; } };
+async function globeBest3(widget, g) {
+  const tours = (await Data.research('globe_tours'))?.tours || [];
+  const detail = { tour: g.tour };
+  await sendMap(widget, detail);
+  const hash = '#/globe/view?tour=' + g.tour;
+  return { local: true, html: `<p>${esc(GI.bestReply(g, tours))}</p>`, links: [app(hash, 'Open the globe')], followups: [], ...(widget.mode === 'inline' && !widget.opts?.hostedOnly ? { go: APP + hash } : {}) };
+}
+async function siteAddress(widget, g) {
+  const text = g.addr.text, site = window.BSPSite;
+  let found = false;
+  if (site && typeof site.lookup === 'function') { try { const r = site.lookup(text); found = true; if (r && typeof r.catch === 'function') r.catch(e => console.debug('address lookup failed', e?.message || e)); } catch (e) { console.debug('address lookup failed', e?.message || e); } }
+  const hash = GI.addressHash(text);
+  if (!found && widget.mode === 'floating') setTimeout(() => { location.hash = hash; }, 300);
+  return { local: true, html: `<p>${esc(GI.addressReply(g.addr, found))}</p>`, links: found ? [] : [app(hash, 'Open the address lookup')], followups: [], ...(!found && widget.mode === 'inline' && !widget.opts?.hostedOnly ? { go: APP + hash } : {}) };
+}
 const PORTAL_INTENTS = [
+  { id: 'globe_best3', rx: [{ test: s => !!GI.bestTargets(s, null) }], run: () => ({ html: '<p>Opening the globe.</p>', links: [app('#/globe/view?tour=best3', 'Open the globe')], followups: [] }) },
+  { id: 'site_address', rx: [{ test: s => !!GI.siteAddress(s) }], run: () => ({ html: '<p>Opening the address lookup.</p>', links: [], followups: [] }) },
   { id: 'profile', rx: [PROFILE_RX], run: profile },
   { id: 'brief', rx: [BRIEF_RX], run: briefOffline },
   { id: 'homeowners', rx: [HOMEOWNERS_RX], run: homeownersOffline },
@@ -1759,9 +1787,12 @@ class Widget {
     if (rec) { this.history.push({ role: 'assistant', html: rec.html, text: plain(rec.html) }); this.saveTurn(q, rec); this.logAnswer(q, rec); }
     return rec;
   }
+  /** A typed command that needs no model (best three targets, an address with a job), for the portal assistant and the role agent only; null otherwise. */
+  globeIntent(q) { return this.id === 'portal' || this.opts?.hostedOnly ? GI.classify(q, { co: roleCo() }) : null; }
   /** Answers built in the browser go to the chat log; the hosted research agent logs its own on the server. */
   logAnswer(q, rec) {
     if (rec.kind === 'claude' && rec.via === 'hosted') return;
+    if (rec.local) return;   // typed commands (the globe, an address) never leave the browser
     backend().then(B => B?.log?.({ persona: this.id, question: q, read_as: rec.eq || '', kind: rec.kind, intent: rec.intent || '', engine: rec.engine || '', note: rec.note || '',
       answer: logText(rec.html), sources: (rec.sources || []).slice(0, 30).map(s => ({ label: String(s.label || ''), href: s.href || '' })), seconds: rec.meta?.elapsed ?? null })).catch(() => {});
   }
@@ -1773,19 +1804,20 @@ class Widget {
     const st = new Status(turn.querySelector('.ch-status')); const tr = new Tracker(t => st.push(t));
     const prev = ACTIVE; ACTIVE = { progress: t => st.push(t) }; TRACK = tr;
     st.push('Understanding the question');
-    const beP = backend();   // discovery runs alongside the grounded engine; it never blocks an intent answer
+    const gi = this.globeIntent(q);   // a typed command with no model call: nothing goes to the backend, not even discovery or the chat log
+    const beP = gi ? Promise.resolve(null) : backend();   // discovery runs alongside the grounded engine; it never blocks an intent answer
     try {
       const intents = [...(this.extra || []), ...(this.persona.intents || [])];
       // A docked assistant reads the page behind it at ask time; the research assistant gets it with every question.
       const view = this.mode === 'floating' ? viewContext() : null;
       const only = !!this.opts?.hostedOnly;   // company agent: the server gets the raw question (no follow-up rewriting, no intents)
-      const { hit, eq, fu, aboutView, toHosted } = only ? { hit: null, eq: q, fu: null, aboutView: false, toHosted: true } : routeOf(q, intents, this.ctx, !!view);
+      const { hit, eq, fu, aboutView, toHosted } = gi ? { hit: { id: gi.kind === 'best3' ? 'globe_best3' : 'site_address', run: () => (gi.kind === 'best3' ? globeBest3(this, gi) : siteAddress(this, gi)) }, eq: q, fu: null, aboutView: false, toHosted: false } : only ? { hit: null, eq: q, fu: null, aboutView: false, toHosted: true } : routeOf(q, intents, this.ctx, !!view);
       if (fu) this.note(turn, fu);
       st.push(only ? "Reading this role's apps" : aboutView && view ? 'Reading this view' : 'Searching the portfolio data');
       // A spoken question goes to the research assistant first, for one short answer. When it is off or fails, the usual route below
       // answers on screen and a short version is read aloud.
       let warn = '', tried = false;
-      if (voice) {
+      if (voice && !gi) {
         await beP;
         if (ctl.stopped) return this.stopped(turn, st, q);
         if (hosted() && (!only || BE.health?.workspace)) {
@@ -1797,7 +1829,7 @@ class Widget {
           TRACK = tr;
         }
       }
-      if (only) {   // company agent: every answer comes from the hosted agent, which enforces the role's access; no local fallback
+      if (only && !gi) {   // company agent: every answer comes from the hosted agent, which enforces the role's access; no local fallback
         if (!tried) {
           await beP; if (ctl.stopped) return this.stopped(turn, st, q);
           if (hosted() && BE.health?.workspace) {   // a backend without the company agent (no "workspace" in /health) would answer as the portal assistant
@@ -1812,7 +1844,7 @@ class Widget {
       }
       if (hit && LLM.key() && LLM.always()) await beP;   // "always use Claude" applies to the personal key only when no backend is live
       if (toHosted) await beP;
-      const skipIntent = !voice && (!!(LLM.key() && LLM.always() && !hosted()) || (toHosted && hosted()));
+      const skipIntent = !gi && !voice && (!!(LLM.key() && LLM.always() && !hosted()) || (toHosted && hosted()));
       // A question about the view that the research assistant cannot take gets the closest grounded answer, and says so first.
       const viewNote = (tried, own) => `<p class="ch-hint">${tried ? "So I can't read this view for you right now." : "The research assistant is offline, so I can't read this view for you."} ${own ? 'This is what the view itself says.' : 'This is the closest answer from the portfolio data.'}</p>`;
       let res = null;
@@ -1820,7 +1852,7 @@ class Widget {
       if (ctl.stopped) return this.stopped(turn, st, q);
       if (res) {
         TRACK = null;
-        const rec = { kind: 'grounded', q, eq: eq !== q ? eq : undefined, note: fu?.from, html: warn + (aboutView ? viewNote(!!warn, false) : '') + res.html, links: res.links || [], followups: res.followups || [], sources: tr.list(), intent: hit.id, engine: GROUNDED(), ...(res.say ? { say: res.say } : {}) };
+        const rec = { kind: 'grounded', q, eq: eq !== q ? eq : undefined, note: fu?.from, html: warn + (aboutView ? viewNote(!!warn, false) : '') + res.html, links: res.links || [], followups: res.followups || [], sources: tr.list(), intent: hit.id, engine: GROUNDED(), ...(res.say ? { say: res.say } : {}), ...(res.local ? { local: true } : {}) };
         await st.settle();
         if (ctl.stopped) return this.stopped(turn, st, q);
         this.prepare(body, rec); rec.meta = st.finish(rec.sources.length, 'Answered', rec.engine, groundedTip());
