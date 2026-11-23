@@ -27,7 +27,7 @@
 /* phase cards: four across on wide screens, two when the console is narrower, one on phones */
 .m-national .m-national-phases{margin-top:var(--sys-sp-5)}
 @media (min-width:560px) and (max-width:1320px){.m-national .m-national-phases{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.m-national .m-national-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sys-sp-3) var(--sys-sp-3);margin:var(--sys-sp-1) 0 0}
+.m-national .m-national-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(60px,1fr));gap:var(--sys-sp-3) var(--sys-sp-3);margin:var(--sys-sp-1) 0 0}
 .m-national .m-national-stats>div{display:flex;flex-direction:column;gap:2px;min-width:0}
 .m-national .m-national-stats dd{order:-1}
 .m-national .m-national-stats dd{margin:0;font-size:var(--sys-fs-md);font-weight:600;color:var(--sys-ink);white-space:nowrap}

@@ -646,8 +646,8 @@ function methodBlocks(ctx, M, S) {
   <div data-src>${head('Sources and vintages')}<dl class="kv">${srcRows.map(s => `<dt>${s.url && /^https?:/.test(s.url) ? fmt.link(s.url, s.name) : esc(s.name)}</dt><dd>${esc(String(s.fields || '').split(',').map(x => x.trim()).filter(Boolean).map(fieldName).join(', '))}<div class="sys-muted small">${esc(s.vint || '—')} · retrieved ${esc(s.ret || '—')}</div></dd>`).join('')}</dl><p class="sys-src">${ui.source('Source notes carried with each source', null, gen)}</p></div>
   <div data-src><p class="sys-src">${ui.source(`ACS 2019–23 · PEP V2024 · Census building permits 2025 and ${V.p26} · Redfin ${V.sales} · NOAA 1991–2020 normals · CBP 2022 · Authority Brands location pages`, null, 'Oct 2026')}</p><p class="sys-src">${ui.source('National county table: Census, Redfin, NOAA, CBP · OMB metro crosswalk', 'https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2023_Gazetteer/', 'Oct 2026')}</p><p class="sys-src">${ui.source('National county table (ACS 2019–23, Census building permits Jan–Aug 2026) · Punctual Pros nationwide plan', null, 'Oct 2026')}</p><p class="sys-src">${ui.source('Analyst model over the national county table · analyst definitions', null, 'Oct 2026')}</p></div>`;
 }
-/* the method address forwards to the scorer, whose Method drawer holds the same material */
-async function method() { location.replace('#/national/scorer?open=method'); }
+/* the method address opens the scorer with its Method drawer showing: the material lives there now */
+async function method(ctx) { return scorer({ ...ctx, params: { ...ctx.params, open: 'method' } }); }
 
 
 export default {
