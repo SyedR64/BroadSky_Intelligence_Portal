@@ -10,22 +10,143 @@ function esc(v) {
 const num = v => Number(v) || 0;
 const reduced = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
 const PX = 8;   // drawing units per foot
-const RUN_NAMES = { water: 'Water', gas: 'Gas', drain: 'Drain' };
-const KINDS = new Set(['water', 'gas', 'drain']);
-const BASIS_CHIP = { record: ['From company records', 'good'], likely: ['Likely, confirm on site', 'warn'], mixed: ['Records and likely', 'info'] };
+const FT = 3.28084;   // feet per metre
+const RUN_NAMES = { water: 'Water', gas: 'Gas', drain: 'Drain', wire: 'Wire', power: 'Power', duct: 'Duct' };
+const KINDS = new Set(['water', 'gas', 'drain', 'wire', 'power', 'duct']);
+const BASIS_CHIP = { record: ['Company record (example data)', 'good'], public: ['Public record', 'info'], likely: ['Likely, confirm on site', 'warn'], mixed: ['Records and likely', 'info'] };
+const BASIS_KEY = { public: 'Public record', record: 'Company record (example data)', likely: 'Likely, confirm on site' };
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+const VIEW_KINDS = new Set(['scorecard', 'bridge', 'heatmap', 'pipeline_board', 'ranked_bars']);
+const STAMP = (() => { try { return new URL(import.meta.url).search; } catch { return ''; } })();   // the ?v= stamp, passed on to lazy imports
+const ZOOM_CAP = { parcel: 19, typed: 16.5, town: 12.5 };   // how close the globe may come, by how well the point is known
 // Company-specific apps carry their company's accent; shared apps (mail, calendar, chat, CRM) take the page's current company.
 const APP_CO = { servicetitan: 'pp', procore: 'cet', servicedesk: 'fl', shopify: 'fh' };
 
-const isRecord = b => b === 'record';
+/** One basis vocabulary: 'public', 'record' (a company record, example data), 'likely'; older spellings are accepted. */
+export function basisKey(b) {
+  const s = String(b ?? '').trim().toLowerCase();
+  if (s === 'record' || s === 'example' || s.startsWith('company record')) return 'record';
+  if (s === 'public') return 'public';
+  if (s === 'estimate' || s === 'est' || s === 'est.') return 'estimate';
+  if (s === 'mixed') return 'mixed';
+  return 'likely';
+}
+const isRecord = b => basisKey(b) === 'record';
+const isSolid = b => { const k = basisKey(b); return k === 'record' || k === 'public'; };
+const markClass = b => { const k = basisKey(b); return k === 'record' ? 'is-record' : k === 'public' ? 'is-public' : 'is-likely'; };
 const fieldRole = () => { try { return document.querySelector('main.ca')?.dataset.style === 'field'; } catch { return false; } };
 const coOf = (ctx, app) => APP_CO[app] || ctx?.turn?.closest?.('[data-co]')?.dataset.co || '';
+/** "2024-08-03" -> "Aug 2024" (month) or "3 Aug 2024" (day); anything else is shown as given. */
+function fmtDate(s, day = false) {
+  const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?/.exec(String(s ?? ''));
+  if (!m) return String(s ?? '');
+  const mo = MONTHS[Number(m[2]) - 1] || '';
+  return day && m[3] ? `${Number(m[3])} ${mo} ${m[1]}` : `${mo} ${m[1]}`;
+}
+const yearsBetween = (a, b) => { const x = Date.parse(a), y = Date.parse(b); return isFinite(x) && isFinite(y) ? (y - x) / 3.15576e10 : 0; };
 
-/** Dispatches a card event to its renderer; unknown kinds render nothing. */
+/** Dispatches a card event to its renderer; unknown kinds render nothing.
+ *  ctx.live: the card arrived in an answer being given now (a restored thread passes nothing, so a map command waits for a tap). */
 export function renderCard(ev, ctx = {}) {
   if (!ev || typeof ev !== 'object') return null;
   if (ev.kind === 'floor_sketch') return renderSketch(ev, ctx);
   if (ev.kind === 'action_draft') return renderDraft(ev, ctx);
+  if (ev.kind === 'view' && ev.view && typeof ev.view === 'object') return renderViewCard(ev.view, ctx);
+  if (VIEW_KINDS.has(ev.kind)) return renderViewCard(ev, ctx);
+  if (ev.kind === 'map_command') return renderMapCard(ev, ctx);
   return null;
+}
+
+/* ── pictures (scorecard, bridge, heat map, pipeline board, ranked bars): drawn by assets/agent-views.js ── */
+
+/** The view renderer's own basis words: a company record reads "Company record (example data)", an estimate "est.". */
+const viewBasis = b => { if (b == null) return b; const k = basisKey(b); return k === 'record' ? 'example' : k === 'estimate' ? 'est' : k === 'public' ? 'public' : b; };
+function fixBasis(o) {
+  if (Array.isArray(o)) return o.map(fixBasis);
+  if (!o || typeof o !== 'object') return o;
+  const out = {};
+  for (const [k, v] of Object.entries(o)) out[k] = k === 'basis' ? viewBasis(v) : fixBasis(v);
+  return out;
+}
+/** A server picture card (source_line, the long basis words) as the view object renderView draws. */
+export function viewOf(v) {
+  return {
+    kind: String(v.kind || ''), title: v.title, lead: v.lead, data: fixBasis(v.data), basis: viewBasis(v.basis),
+    source: String(v.source ?? v.source_line ?? '').replace(/^\s*source:\s*/i, ''), as_of: v.as_of,
+    draft: v.draft && typeof v.draft === 'object' ? v.draft : null,
+  };
+}
+function renderViewCard(v, ctx = {}) {
+  const box = document.createElement('div');
+  box.className = 'ca-view'; box.dataset.viewKind = String(v.kind || '');
+  const view = viewOf(v);
+  box.ready = import(new URL('./agent-views.js' + STAMP, import.meta.url).href)
+    .then(m => { box._view = m.renderView(box, view); return box._view?.ready; })
+    .catch(e => { console.warn('agent cards: the picture did not load', e); box.innerHTML = '<p class="sys-src">The picture did not load.</p>'; });
+  return box;
+}
+
+/* ── the globe: "Show on map" ── */
+
+const inFrame = () => { try { return window.parent && window.parent !== window; } catch { return false; } };
+/** Sends a map command through the shell: MapCmd on the page that has it, else to the shell from inside its frame. Returns how
+ *  it went ('shell', 'parent') or null when neither is there (the control is then a link to the globe). */
+export function runMap(cmd) {
+  if (!cmd || typeof cmd !== 'object') return null;
+  try {
+    if (!inFrame() && window.MapCmd && typeof window.MapCmd.run === 'function') { window.MapCmd.run(cmd); return 'shell'; }
+    if (inFrame()) { window.parent.postMessage({ type: 'bsp:map', cmd, detail: cmd }, location.origin); return 'parent'; }
+  } catch (e) { console.warn('agent cards: map command not sent', e); }
+  return null;
+}
+const canSendMap = () => inFrame() || !!(typeof window !== 'undefined' && window.MapCmd && typeof window.MapCmd.run === 'function');
+/** The globe screen's own address for a command: a prepared tour, or the last step's place. */
+export function globeHref(cmd) {
+  if (cmd?.tour) return `app.html#/globe/view?tour=${encodeURIComponent(cmd.tour)}`;
+  const s = (Array.isArray(cmd?.steps) ? cmd.steps : []).filter(x => x && isFinite(Number(x.lat)) && isFinite(Number(x.lon))).at(-1);
+  if (!s) return 'app.html#/globe/view';
+  const p = new URLSearchParams({ lat: String(s.lat), lon: String(s.lon), label: String(s.label || '') });
+  if (isFinite(Number(s.zoom))) p.set('zoom', String(s.zoom));
+  return `app.html#/globe/view?${p}`;
+}
+function mapControlHTML(cmd) {
+  return canSendMap()
+    ? '<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm ca-map-btn" data-ca="map">Show on map</button>'
+    : `<a class="sys-btn sys-btn--secondary sys-btn--sm ca-map-btn" data-ca="map-link" href="${esc(globeHref(cmd))}">Show on map</a>`;
+}
+/** A floor sketch's own command when the answer sent none: fly to the place, as close as its precision allows. */
+function siteCmd(ev) {
+  const p = ev.place && typeof ev.place === 'object' ? ev.place : null;
+  const lat = Number(p?.lat), lon = Number(p?.lon);
+  if (!p || !isFinite(lat) || !isFinite(lon)) return null;
+  const prec = ZOOM_CAP[p.precision] ? p.precision : 'typed';
+  const b = ev.building || {}, bearing = Number(b.front?.bearing_deg);
+  const step = { kind: 'site', lat, lon, label: String(ev.address || p.label || '').split(',').slice(0, 2).join(',').trim(), precision: prec,
+    zoom: Math.min(ZOOM_CAP[prec], prec === 'parcel' ? 18.5 : ZOOM_CAP[prec]), pitch: prec === 'parcel' ? 60 : 0, bearing: isFinite(bearing) ? bearing : 0, hold_ms: 8000 };
+  const o = b.frame?.origin, ring = b.footprint?.ring_m;
+  if (prec !== 'town' && o && isFinite(Number(o.lat)) && isFinite(Number(o.lon)) && Array.isArray(ring) && ring.length >= 3) {
+    const k = 111320 * Math.cos(Number(o.lat) * Math.PI / 180);
+    step.outline = ring.slice(0, 48).filter(q => Array.isArray(q)).map(([x, y]) => [Math.round((Number(o.lon) + num(x) / k) * 1e7) / 1e7, Math.round((Number(o.lat) + num(y) / 110574) * 1e7) / 1e7]);
+    const h = Number(b.height?.ridge_m);
+    if (isFinite(h)) { step.height_m = h; step.height_basis = basisKey(b.height?.basis) === 'public' ? 'public' : 'likely'; }
+  }
+  return { title: step.label, source: 'site', steps: [step] };
+}
+/** A map command card. On an answer given now it runs once; a restored thread only shows the control. When the turn already
+ *  holds a floor sketch, the sketch's own "Show on map" takes the command and no second control is drawn. */
+function renderMapCard(ev, ctx = {}) {
+  const cmd = ev.cmd && typeof ev.cmd === 'object' ? ev.cmd : null;
+  if (!cmd) return null;
+  if (ctx.live) runMap(cmd);
+  const sk = [...(ctx.turn?.querySelectorAll?.('article.ca-sketch') || [])].find(a => typeof a._setMap === 'function');
+  if (sk) { sk._setMap(cmd); return null; }
+  const a = document.createElement('article');
+  a.className = 'ca-map sys-card';
+  a._cmd = cmd;
+  const title = ev.title || cmd.title || 'On the globe';
+  a.innerHTML = `<div class="sys-card-label">Globe</div><h3 class="sys-card-title">${esc(title)}</h3><div class="sys-card-foot ca-map-foot">${mapControlHTML(cmd)}</div>`;
+  a.addEventListener('click', e => { const b = e.target.closest?.('[data-ca="map"]'); if (b && a.contains(b)) runMap(a._cmd); });
+  return a;
 }
 
 /* ── floor sketch ─────────────────────────────────────────────────────────── */
@@ -63,10 +184,46 @@ function outsidePoint(m, W, H, front) {
   return [at * W, H + d];
 }
 function markerSVG(m, x, y, focus) {
-  const rec = isRecord(m.basis), f = isFocus(m, focus);
-  return `<g class="ca-fs-m ${rec ? 'is-record' : 'is-likely'}${f ? ' is-focus' : ''}" data-k="${esc(m.key)}">`
+  const solid = isSolid(m.basis), f = isFocus(m, focus);
+  return `<g class="ca-fs-m ${markClass(m.basis)}${f ? ' is-focus' : ''}" data-k="${esc(m.key)}">`
     + (f ? `<circle class="ca-fs-ring" cx="${x}" cy="${y}" r="27"/>` : `<circle class="ca-fs-halo" cx="${x}" cy="${y}" r="27"/>`)
-    + `<circle cx="${x}" cy="${y}" r="20"${rec ? '' : ' stroke-dasharray="5 4"'}/><text x="${x}" y="${y}">${esc(String(m.short || '?').slice(0, 2))}</text></g>`;
+    + `<circle cx="${x}" cy="${y}" r="20"${solid ? '' : ' stroke-dasharray="5 4"'}/><text x="${x}" y="${y}">${esc(String(m.short || '?').slice(0, 2))}</text></g>`;
+}
+
+/** The real building outline (building.footprint.ring_m, metres east and north) in the plan's drawing units, centred on the
+ *  plan rectangle. The plan rectangle is the outline's minimum-area rectangle, so the axes come from the ring itself: the
+ *  plan's long side follows the rectangle's long side when the plan is wider than deep, and down the page points to the
+ *  street (building.front.bearing_deg; south when no bearing is given; away from it when the front is drawn at the top). The
+ *  map is turned, never mirrored. rot_deg is not read: the lanes that write it do not yet agree on its meaning.
+ *  Null for a town-level place or no ring. */
+export function outlinePoints(ev, W, H) {
+  const b = ev?.building, fp = b?.footprint;
+  if (!fp || ev?.place?.precision === 'town' || !Array.isArray(fp.ring_m)) return null;
+  let ring = fp.ring_m.filter(p => Array.isArray(p) && isFinite(Number(p[0])) && isFinite(Number(p[1]))).map(p => [Number(p[0]), Number(p[1])]);
+  if (ring.length > 3 && ring[0][0] === ring.at(-1)[0] && ring[0][1] === ring.at(-1)[1]) ring = ring.slice(0, -1);
+  if (ring.length < 3) return null;
+  // minimum-area rectangle: try each edge's direction
+  let best = null;
+  for (let i = 0; i < ring.length; i++) {
+    const [x0, y0] = ring[i], [x1, y1] = ring[(i + 1) % ring.length], L = Math.hypot(x1 - x0, y1 - y0);
+    if (L < 1e-6) continue;
+    const u = [(x1 - x0) / L, (y1 - y0) / L], v = [-u[1], u[0]];
+    const pu = ring.map(p => p[0] * u[0] + p[1] * u[1]), pv = ring.map(p => p[0] * v[0] + p[1] * v[1]);
+    const eu = Math.max(...pu) - Math.min(...pu), ev2 = Math.max(...pv) - Math.min(...pv);
+    if (!best || eu * ev2 < best.area - 1e-9) best = { area: eu * ev2, u, v, eu, ev: ev2 };
+  }
+  if (!best) return null;
+  // the axis that runs across the page: the longer side when the plan is wider than deep
+  const across = (W >= H) === (best.eu >= best.ev) ? best.u : best.v;
+  let down = [across[1], -across[0]];   // a quarter turn clockwise on the map: (east, north) -> (east, south) keeps the turn proper
+  const fb = Number(b.front?.bearing_deg), street = isFinite(fb) ? [Math.sin(fb * Math.PI / 180), Math.cos(fb * Math.PI / 180)] : [0, -1];
+  const toStreet = down[0] * street[0] + down[1] * street[1];
+  if ((ev.front === 'top') === (toStreet > 0)) down = [-down[0], -down[1]];
+  const ax = [-down[1], down[0]];   // across, fixed so the map is turned and not mirrored
+  const pts = ring.map(([e, n]) => [e * ax[0] + n * ax[1], e * down[0] + n * down[1]]);
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+  const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+  return pts.map(([x, y]) => [Math.round((W / 2 + (x - cx) * FT * PX) * 10) / 10, Math.round((H / 2 + (y - cy) * FT * PX) * 10) / 10]);
 }
 
 /** How far a marker's drawing reaches from its centre: a focus ring (radius 27, 3-unit stroke) or the plain circle (radius 20). */
@@ -170,11 +327,17 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   const inside = opts.markers ? opts.markers.filter(m => !m.outside) : (Array.isArray(f.items) ? f.items : []).map((it, i) => ({ ...it, key: `i${i}` }));
   const outs = opts.markers ? opts.markers.filter(m => m.outside) : (Array.isArray(outside) ? outside : []).map((it, i) => ({ ...it, key: `o${i}`, outside: true }));
   const name = String(f.name || 'Floor');
-  const say = [...inside, ...outs].map(m => `${m.label || ''}${m.note ? `, ${m.note}` : ''} (${isRecord(m.basis) ? 'from records' : 'likely'})`);
-  const label = `${name} sketch: ${say.length ? say.join('; ') : 'no equipment recorded on this floor'}`;
+  const said = b => ({ record: 'company record', public: 'public record' }[basisKey(b)] || 'likely');
+  const say = [...inside, ...outs].map(m => `${m.label || ''}${m.note ? `, ${m.note}` : ''} (${said(m.basis)})`);
+  const ring = Array.isArray(opts.outline) && opts.outline.length >= 3 ? opts.outline : null;
+  const label = `${name} sketch${ring ? ', drawn over the building outline from public record, layout likely' : ''}: ${say.length ? say.join('; ') : 'no equipment recorded on this floor'}`;
   const boxes = [];   // label boxes run labels keep clear of
   let roomText = '';   // room names go over the pipe runs (with a halo), so a line never hides them
-  let s = `<svg class="ca-fs" viewBox="-64 -64 ${W + 128} ${H + 144}" role="img" aria-label="${esc(label)}" focusable="false"><title>${esc(label)}</title>`;
+  // The drawing reaches 64 past the plan on each side (80 below, for the street label), and further when the outline does.
+  const rx = ring ? ring.map(p => p[0]) : [0], ry = ring ? ring.map(p => p[1]) : [0];
+  const x0 = Math.min(0, ...rx) - 64, y0 = Math.min(0, ...ry) - 64, x1 = Math.max(W, ...rx) + 64, y1 = Math.max(H, ...ry) + 80;
+  let s = `<svg class="ca-fs${ring ? ' has-outline' : ''}" viewBox="${x0} ${y0} ${x1 - x0} ${y1 - y0}" role="img" aria-label="${esc(label)}" focusable="false"><title>${esc(label)}</title>`;
+  if (ring) s += `<polygon class="ca-fs-outline" points="${ring.map(p => p.join(',')).join(' ')}"/>`;
   s += `<rect class="ca-fs-wall" x="0" y="0" width="${W}" height="${H}" rx="4"/>`;
   // Marker positions: outside markers sit off the walls; inside markers closer than one marker apart are eased apart so each stays readable.
   const all = [...inside.map(m => ({ m, x: num(m.x) * PX, y: num(m.y) * PX, fixed: false, ring: isFocus(m, focus) })), ...outs.map(m => { const [x, y] = outsidePoint(m, W, H, front); return { m, x, y, fixed: true, ring: isFocus(m, focus) }; })];
@@ -191,11 +354,12 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   // Street side: a small arrow from the wall and the label 34 units out (further out when a marker sits on that side). The arrow
   // stops 18 above the baseline, clear of the capitals at the phone text size.
   const busy = outs.some(m => { const [, oy] = outsidePoint(m, W, H, front); return front === 'bottom' ? oy > H : oy < 0; });
+  const street = opts.frontBasis === 'assumed' ? 'Street side, assumed' : 'Street side';
   if (front === 'bottom') {
     const ly = busy ? H + 74 : H + 34;
-    s += `<path class="ca-fs-arrow" d="M${W / 2} ${H + 4}V${ly - 18}M${W / 2 - 5} ${ly - 23}L${W / 2} ${ly - 18}L${W / 2 + 5} ${ly - 23}"/><text class="ca-fs-street" x="${W / 2}" y="${ly}">Street side</text>`;
+    s += `<path class="ca-fs-arrow" d="M${W / 2} ${H + 4}V${ly - 18}M${W / 2 - 5} ${ly - 23}L${W / 2} ${ly - 18}L${W / 2 + 5} ${ly - 23}"/><text class="ca-fs-street" x="${W / 2}" y="${ly}">${street}</text>`;
   } else {
-    s += `<text class="ca-fs-street" x="${W / 2}" y="-30">Street side</text>`;
+    s += `<text class="ca-fs-street" x="${W / 2}" y="-30">${street}</text>`;
   }
   // Pipe runs under the markers: solid from records, dashed when likely. The link from a gas line to its meter is drawn on its own,
   // dashed unless both the line and the meter are records.
@@ -203,9 +367,9 @@ export function sketchSVG(floor, outside = [], opts = {}) {
     if (!r || typeof r !== 'object' || !Array.isArray(r.points)) continue;
     const k = KINDS.has(r.kind) ? r.kind : 'water';
     const pts = r.points.filter(p => Array.isArray(p)).map(p => [num(p[0]) * PX, num(p[1]) * PX]); if (pts.length < 2) continue;
-    s += `<polyline class="ca-fs-run ${isRecord(r.basis) ? 'is-record' : 'is-likely'} k-${k}" points="${pts.map(p => p.join(',')).join(' ')}"/>`;
+    s += `<polyline class="ca-fs-run ${isSolid(r.basis) ? 'is-record' : 'is-likely'} k-${k}" points="${pts.map(p => p.join(',')).join(' ')}"/>`;
     const link = toMeter(pts, k, all, W, H);
-    if (link) { const meter = all.find(p => p.fixed && String(p.m.kind) === 'gas_meter'); s += `<polyline class="ca-fs-run ca-fs-link ${isRecord(r.basis) && isRecord(meter?.m.basis) ? 'is-record' : 'is-likely'} k-${k}" points="${link.map(p => p.join(',')).join(' ')}"/>`; }
+    if (link) { const meter = all.find(p => p.fixed && String(p.m.kind) === 'gas_meter'); s += `<polyline class="ca-fs-run ca-fs-link ${isSolid(r.basis) && isSolid(meter?.m.basis) ? 'is-record' : 'is-likely'} k-${k}" points="${link.map(p => p.join(',')).join(' ')}"/>`; }
     const txt = r.label || RUN_NAMES[k], at = runLabelAt(pts, all, txt, boxes), hw = Math.max(16, String(txt).length * 5.4);
     boxes.push({ x0: at[0] - hw, y0: at[1] - 26, x1: at[0] + hw, y1: at[1] - 4 });
     s += `<text class="ca-fs-run-t" x="${at[0]}" y="${at[1] - 6}">${esc(txt)}</text>`;
@@ -232,17 +396,86 @@ function houseText(ev) {
 
 const swatch = (cls, dashed) => `<svg class="ca-sw" viewBox="0 0 22 22" width="18" height="18" aria-hidden="true" focusable="false"><circle class="${cls}" cx="11" cy="11" r="8"${dashed ? ' stroke-dasharray="3 2.5"' : ''}/></svg>`;
 // Line swatches match the runs: the kind shows in the line weight (and the label on the run), likely lines are dashed.
-const lineSw = (kind, dashed) => `<svg class="ca-sw" viewBox="0 0 26 10" width="24" height="10" aria-hidden="true" focusable="false"><line class="ca-sw-line k-${kind}" x1="3" y1="5" x2="23" y2="5"${dashed ? ' stroke-dasharray="4 3"' : ''}/></svg>`;
+const lineSw = (kind, dashed) => `<svg class="ca-sw" viewBox="0 0 26 10" width="24" height="10" aria-hidden="true" focusable="false"><line class="ca-sw-line k-${esc(kind)}" x1="3" y1="5" x2="23" y2="5"${dashed ? ' stroke-dasharray="4 3"' : ''}/></svg>`;
 
 function equipRow(m, focus, floors) {
-  const rec = isRecord(m.basis), f = isFocus(m, focus), fl = floors[m.fi];
+  const solid = isSolid(m.basis), f = isFocus(m, focus), fl = floors[m.fi];
   const where = [m.note, m.outside ? (/^outside\b/i.test(String(m.note || '')) ? '' : 'Outside') : floors.length > 1 && fl?.name ? fl.name : ''].filter(Boolean).map(String);   // an outside marker is not on a floor
   return `<li><button type="button" class="ca-eq" data-ca="equip" data-k="${esc(m.key)}" data-floor="${m.fi}">`
-    + `<span class="ca-eq-m ${rec ? 'is-record' : 'is-likely'}" aria-hidden="true">${esc(String(m.short || '?').slice(0, 2))}</span>`
-    + `<span class="ca-eq-t"><span class="ca-eq-h"><b>${esc(m.label || 'Item')}</b>${f ? '<span class="sys-chip sys-chip--soft">Start here</span>' : ''}${rec ? '' : '<span class="sys-chip sys-chip--warn">Likely</span>'}</span>`
+    + `<span class="ca-eq-m ${markClass(m.basis)}" aria-hidden="true">${esc(String(m.short || '?').slice(0, 2))}</span>`
+    + `<span class="ca-eq-t"><span class="ca-eq-h"><b>${esc(m.label || 'Item')}</b>${f ? '<span class="sys-chip sys-chip--soft">Start here</span>' : ''}${solid ? '' : '<span class="sys-chip sys-chip--warn">Likely</span>'}</span>`
     + (where.length ? `<span class="ca-eq-n">${esc(where.join(' · '))}</span>` : '')
     + (m.detail ? `<span class="ca-eq-d">${esc(m.detail)}</span>` : '')
     + `</span></button></li>`;
+}
+
+const PRECISION = { parcel: 'Parcel match', typed: 'Address point, parcel not matched', town: 'Town only' };
+/** The place chip (the typed address and how well it was found) and the outline's date, with a chip when the imagery is old. */
+function placeHTML(ev, fp) {
+  const p = ev.place && typeof ev.place === 'object' ? ev.place : null;
+  if (!p && !fp) return '';
+  const typed = String(ev.address || p?.label || '');
+  const how = PRECISION[p?.precision] || '';
+  const town = p?.precision === 'town' && p.label && p.label !== typed ? `: ${p.label}` : '';
+  const chips = [];
+  if (typed || how) chips.push(`<span class="sys-chip sys-chip--soft ca-fs-place" data-precision="${esc(p?.precision || '')}"><span class="sys-sr">Place: ${esc(typed)}. </span>${esc(how || typed)}${esc(town)}</span>`);
+  const asOf = fp?.as_of;
+  if (asOf && yearsBetween(asOf, ev.as_of || new Date().toISOString()) > 5) chips.push('<span class="sys-chip sys-chip--warn ca-fs-old">Outline may be out of date</span>');
+  const dated = asOf ? `<p class="sys-src ca-fs-outline-t">Outline from imagery dated ${esc(fmtDate(asOf))}</p>` : '';
+  return (chips.length ? `<div class="sys-chips ca-fs-placebar">${chips.join('')}</div>` : '') + dated;
+}
+/** The key: only the kinds of basis the card holds (public record, company record, likely), then the line kinds drawn. */
+function legendHTML(ev, markers, floors, outline) {
+  const held = new Set();
+  for (const m of markers) held.add(basisKey(m.basis));
+  const runs = floors.flatMap(f => (Array.isArray(f.runs) ? f.runs : []).filter(r => r && Array.isArray(r.points) && r.points.length >= 2));
+  for (const r of runs) held.add(basisKey(r.basis));
+  if (outline) { held.add('public'); held.add('likely'); }   // the outline is a public record; the layout over it is likely
+  if (!held.size) held.add('likely');
+  const kinds = [...new Set(runs.map(r => (KINDS.has(r.kind) ? r.kind : 'water')))];
+  const solidRun = runs.some(r => isSolid(r.basis)), likelyRun = runs.some(r => !isSolid(r.basis));
+  const out = [];
+  if (held.has('public')) out.push(`<span data-basis="public">${outline ? lineSw('outline') : swatch('ca-sw-pub')}${BASIS_KEY.public}</span>`);
+  if (held.has('record')) out.push(`<span data-basis="record">${swatch('ca-sw-rec')}${BASIS_KEY.record}</span>`);
+  if (held.has('likely') || held.has('mixed') || held.has('estimate')) out.push(`<span data-basis="likely">${swatch('ca-sw-lik', true)}${BASIS_KEY.likely}</span>`);
+  for (const k of (kinds.length ? kinds : ['water', 'gas', 'drain'])) out.push(`<span>${lineSw(k, !solidRun && likelyRun)}${RUN_NAMES[k]}</span>`);
+  if (solidRun && likelyRun) out.push(`<span>${lineSw('water', true)}Likely line</span>`);
+  return `<p class="ca-legend" aria-label="Key">${out.join('')}</p>`;
+}
+/** Each public fact with its source and date, permits, and the numbered sources: in a closed section under the plan. */
+function factsHTML(ev) {
+  const facts = (Array.isArray(ev.facts) ? ev.facts : []).filter(f => f && typeof f === 'object' && f.v != null && f.v !== '');
+  const permits = (Array.isArray(ev.permits) ? ev.permits : []).filter(p => p && typeof p === 'object');
+  const srcs = (Array.isArray(ev.sources) ? ev.sources : []).filter(s => s && typeof s === 'object');
+  if (!facts.length && !permits.length) return '';
+  const srcOf = n => srcs.find(s => String(s.n) === String(n));
+  const val = v => (typeof v === 'number' ? v.toLocaleString('en-US') : String(v));
+  const where = (src, title, date) => [title || srcOf(src)?.title || '', date ? fmtDate(date, true) : ''].filter(Boolean).join(' · ');
+  const rows = facts.map(f => `<div data-basis="${esc(basisKey(f.basis))}"><dt>${esc(f.label || f.k)}</dt><dd><span class="ca-fact-v">${esc(val(f.v))}</span>${basisKey(f.basis) === 'likely' ? ' <span class="sys-chip sys-chip--warn">Likely</span>' : ''}<span class="ca-fact-src">${esc(where(f.src, f.source, f.as_of))}</span></dd></div>`);
+  if (permits.length) {
+    const p = permits[0];
+    rows.push(`<div data-basis="public"><dt>Permits on record</dt><dd><span class="ca-fact-v">${permits.length}, latest ${esc(String(p.type || 'permit').toLowerCase())} ${esc(fmtDate(p.date, true))}</span><span class="ca-fact-src">${esc(where(p.src, '', ''))}</span></dd></div>`);
+  }
+  const links = srcs.filter(s => s.title).map(s => `<li>${s.url && /^https:\/\//.test(String(s.url)) ? `<a class="sys-link" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title)}${s.publisher ? ` · ${esc(s.publisher)}` : ''}${s.date ? ` · ${esc(fmtDate(s.date, true))}` : ''}</li>`).join('');
+  return `<details class="ca-facts"><summary>Facts and sources</summary><dl class="ca-fields ca-fact-list">${rows.join('')}</dl>${links ? `<ol class="ca-fact-srcs">${links}</ol>` : ''}</details>`;
+}
+/** The 3D control: opens assets/house3d.js under the plan (loaded on first use, with this file's ?v= stamp); a second press, or
+ *  the view's own Close, removes it and frees what it drew. */
+function toggle3D(a, ev, btn) {
+  const host = a.querySelector('.ca-3d'); if (!host) return;
+  const close = () => {
+    try { a._h3?.destroy?.(); } catch (e) { console.warn('3D view did not close cleanly', e); }
+    a._h3 = null; host.replaceChildren(); host.hidden = true; btn.setAttribute('aria-expanded', 'false');
+  };
+  if (btn.getAttribute('aria-expanded') === 'true') { close(); btn.focus({ preventScroll: true }); return; }
+  btn.setAttribute('aria-expanded', 'true'); host.hidden = false;
+  host.innerHTML = '<p class="sys-src ca-3d-wait">Loading the 3D view</p>';
+  import(new URL('./house3d.js' + STAMP, import.meta.url).href).then(H => {
+    if (btn.getAttribute('aria-expanded') !== 'true') return;   // closed while it loaded
+    host.replaceChildren();
+    if (!H.supports3D()) { host.innerHTML = '<p class="sys-src">The 3D view needs WebGL, which this browser does not offer.</p>'; return; }
+    a._h3 = H.renderHouse3D(host, ev, { onClose: () => { close(); btn.focus({ preventScroll: true }); } });
+  }).catch(e => { console.warn('3D view did not load', e); host.innerHTML = '<p class="sys-src">The 3D view did not load.</p>'; });
 }
 
 /** The floor sketch card; a repeat of a sketch already shown in an earlier turn renders as one "Floor sketch above" line. */
@@ -264,24 +497,38 @@ export function renderSketch(ev, ctx = {}) {
   const { floors, markers } = markersOf(ev);
   const focus = (Array.isArray(ev.focus) ? ev.focus : []).map(String);
   const cur = floors.length ? defaultFloor(ev, floors, markers) : 0;
-  const basis = BASIS_CHIP[ev.basis] || BASIS_CHIP.likely;
+  const basis = BASIS_CHIP[basisKey(ev.basis)] || BASIS_CHIP.likely;
   const fRank = m => { const i = focus.indexOf(String(m.kind)); return i < 0 ? focus.length : i; };
   const list = [
     ...markers.filter(m => isFocus(m, focus)).sort((a, b) => fRank(a) - fRank(b)),
     ...markers.filter(m => !isFocus(m, focus) && m.fi === cur),
     ...markers.filter(m => !isFocus(m, focus) && m.fi !== cur),
   ];
+  const live = !!(ev.place || ev.building) || ev.example === false;
+  const example = !live && (ev.example === true || ['record', 'mixed'].includes(basisKey(ev.basis)));   // a company record card only
+  const fp = ev.building?.footprint || null;
+  const frontBasis = ev.front_basis || ev.building?.front?.basis || '';
+  const outlines = floors.map(f => outlinePoints(ev, Math.max(1, num(f.w)) * PX, Math.max(1, num(f.h)) * PX));
   const a = document.createElement('article');
   a.className = 'ca-sketch sys-card'; a.dataset.co = 'pp';
-  a.innerHTML = `<div class="sys-card-label">Floor sketch <span class="sys-chip sys-chip--${basis[1]}">${basis[0]}</span></div>`
-    + `<h3 class="sys-card-title ca-fs-title" tabindex="-1">${esc(ev.address || ev.title || 'Floor sketch')}</h3>`
+  if (live) a.dataset.live = '1';
+  a._cmd = (ev.map_command && typeof ev.map_command === 'object' ? ev.map_command.cmd || ev.map_command : null) || siteCmd(ev);
+  a.innerHTML = `<div class="sys-card-label">Floor sketch <span class="sys-chip sys-chip--${basis[1]}">${basis[0]}</span>${example ? ' <span class="sys-chip sys-chip--soft ca-fs-ex">Example address</span>' : ''}</div>`
+    + `<h3 class="sys-card-title ca-fs-title" tabindex="-1">${esc(ev.address || ev.place?.label || ev.title || 'Floor sketch')}</h3>`
+    + placeHTML(ev, fp)
     + (houseText(ev) ? `<p class="ca-house sys-card-body">${esc(houseText(ev))}</p>` : '')
     + (ev.area?.label ? `<p class="sys-src ca-fs-area">${esc(ev.area.label)}</p>` : '')
     + (floors.length ? `<div class="sys-chips ca-fs-floors" role="group" aria-label="Floor">${floors.map((f, i) => `<button type="button" class="sys-chip" data-ca="floor" data-floor="${i}" aria-pressed="${i === cur}">${esc(f.name || `Floor ${i + 1}`)}</button>`).join('')}</div>` : '')
-    + floors.map((f, i) => `<div class="ca-fs-svg" data-floor="${i}"${i === cur ? '' : ' hidden'}>${sketchSVG(f, [], { focus, front: ev.front, markers: markers.filter(m => m.fi === i) })}</div>`).join('')
-    + `<p class="ca-legend"><span>${swatch('ca-sw-rec')}From company records</span><span>${swatch('ca-sw-lik', true)}Likely, confirm on site</span><span>${lineSw('water')}Water</span><span>${lineSw('gas')}Gas</span><span>${lineSw('drain')}Drain</span><span>${lineSw('water', true)}Likely line</span></p>`
+    + floors.map((f, i) => `<div class="ca-fs-svg" data-floor="${i}"${i === cur ? '' : ' hidden'}>${sketchSVG(f, [], { focus, front: ev.front, markers: markers.filter(m => m.fi === i), outline: outlines[i], frontBasis })}</div>`).join('')
+    + legendHTML(ev, markers, floors, outlines.some(Boolean))
     + (list.length ? `<ul class="ca-equip">${list.map(m => equipRow(m, focus, floors)).join('')}</ul>` : '')
+    + factsHTML(ev)
+    + (floors.length || a._cmd ? `<div class="sys-actions ca-fs-acts">${floors.length ? '<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm ca-3d-btn" data-ca="3d" aria-expanded="false">3D</button>' : ''}<span class="ca-fs-mapslot">${a._cmd ? mapControlHTML(a._cmd) : ''}</span></div><div class="ca-3d" hidden></div>` : '')
     + (ev.source_line ? `<p class="sys-src">${esc(ev.source_line)}</p>` : '');
+  /** A map command that came as its own card in the same answer: this card's "Show on map" sends it. */
+  a._setMap = cmd => { if (!cmd || typeof cmd !== 'object') return; a._cmd = cmd; const slot = a.querySelector('.ca-fs-mapslot'); if (slot) slot.innerHTML = mapControlHTML(cmd); };
+  for (const m of [...(ctx.turn?.querySelectorAll?.('article.ca-map') || [])]) { if (m._cmd) a._cmd = m._cmd; m.remove(); }   // one control per answer
+  if (a._cmd) { const slot = a.querySelector('.ca-fs-mapslot'); if (slot) slot.innerHTML = mapControlHTML(a._cmd); }
   const show = i => {
     a.querySelectorAll('.ca-fs-svg').forEach(d => { d.hidden = Number(d.dataset.floor) !== i; });
     a.querySelectorAll('[data-ca="floor"]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.floor) === i)));
@@ -289,6 +536,8 @@ export function renderSketch(ev, ctx = {}) {
   a.addEventListener('click', e => {
     const b = e.target.closest?.('[data-ca]'); if (!b || !a.contains(b)) return;
     if (b.dataset.ca === 'floor') { show(Number(b.dataset.floor)); return; }
+    if (b.dataset.ca === 'map') { runMap(a._cmd); return; }
+    if (b.dataset.ca === '3d') { toggle3D(a, ev, b); return; }
     if (b.dataset.ca === 'equip') {
       const i = Number(b.dataset.floor); show(i);
       const box = a.querySelector(`.ca-fs-svg[data-floor="${i}"]`);
