@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the knowledge base behind the BSP Desk assistant.
+"""Build the knowledge base behind the Broad Sky OS assistant.
 
   python3 scripts/build_corpus.py                       # collect every source, then index
   python3 scripts/build_corpus.py --only firm,news      # re-collect some sources; the rest come from corpus.jsonl
@@ -660,7 +660,7 @@ def src_research():
         for extra in [k for k in (d.keys() if isinstance(d, dict) else []) if k not in ('meta', 'items')]:
             body += f'\n\n{humanize_key(extra)}:\n' + flatten(d[extra])
         body = scrub_paths(body)
-        out.append(doc('portal', 'research', head, lab['href'], body, publisher='BSP Desk research', date=gen, key=f'research-{key}-meta'))
+        out.append(doc('portal', 'research', head, lab['href'], body, publisher='Broad Sky OS research', date=gen, key=f'research-{key}-meta'))
         items = d.get('items', []) if isinstance(d, dict) else []
         if key == 'pp_storm_events':   # 1,500+ NOAA rows: keep the summary above only
             continue
@@ -671,7 +671,7 @@ def src_research():
                 code = it.get('naics') or it.get('id') or ''
                 name = re.sub(r'\s*\(2017 codes[^)]*\)', '', it.get('industry') or '').strip()
                 out.append(doc('portal', 'research', f"Revenue benchmark: {name} (NAICS {code}" + (f"; {BENCH_ALIAS[code]}" if code in BENCH_ALIAS else '') + ')',
-                               lab['href'], benchmark_text(it), publisher='BSP Desk research', date=gen, key=f'research-{key}-{code}', companies=[]))
+                               lab['href'], benchmark_text(it), publisher='Broad Sky OS research', date=gen, key=f'research-{key}-{code}', companies=[]))
             continue
         batch, n = [], 0
         for it in items:
@@ -685,17 +685,17 @@ def src_research():
                     it['revenue_estimate'] = re.sub(r';\s*(headcount|payroll)[a-z ]*methods?', '', note) + '; modelled, not reported by the company'
             text = scrub_paths(flatten(it))
             if t and len(text) > 250:
-                out.append(doc('portal', 'research', f"{lab['name']}: {strip_tags(t)[:160]}", lab['href'], text, publisher='BSP Desk research', date=gen,
+                out.append(doc('portal', 'research', f"{lab['name']}: {strip_tags(t)[:160]}", lab['href'], text, publisher='Broad Sky OS research', date=gen,
                                key=f'research-{key}-{n}'))
             else:
                 batch.append(text)
             n += 1
             if len(batch) >= 12:
-                out.append(doc('portal', 'research', f"{lab['name']}: records", lab['href'], '\n\n'.join(batch), publisher='BSP Desk research', date=gen,
+                out.append(doc('portal', 'research', f"{lab['name']}: records", lab['href'], '\n\n'.join(batch), publisher='Broad Sky OS research', date=gen,
                                key=f'research-{key}-b{n}'))
                 batch = []
         if batch:
-            out.append(doc('portal', 'research', f"{lab['name']}: records", lab['href'], '\n\n'.join(batch), publisher='BSP Desk research', date=gen, key=f'research-{key}-b{n}'))
+            out.append(doc('portal', 'research', f"{lab['name']}: records", lab['href'], '\n\n'.join(batch), publisher='Broad Sky OS research', date=gen, key=f'research-{key}-b{n}'))
     return out
 
 
@@ -710,7 +710,7 @@ def src_answers():
             continue
         srcs = '; '.join(s.get('name', '') for s in a.get('sources', []) if isinstance(s, dict))
         text = (a.get('markdown') or strip_tags(a.get('html'))) + (f'\n\nSources used: {srcs}' if srcs else '')
-        out.append(doc('portal', 'answer', f"Prepared answer: {a['question']}", SITE + 'assistant.html', text, publisher='BSP Desk prepared answer',
+        out.append(doc('portal', 'answer', f"Prepared answer: {a['question']}", SITE + 'assistant.html', text, publisher='Broad Sky OS prepared answer',
                        date=a.get('generated_at'), key='answer-' + f[:-5]))
     return out
 
@@ -758,7 +758,7 @@ def src_homes():
     where = ' and '.join(f"{count(len(by_state[st]))} {state_name.get(st, st)} counties ({listed([n for n, _ in by_state[st]])})" for st in sorted(by_state))
     frozen = re.search(r'(\w+) County is a frozen snapshot taken (\d{4}-\d{2}-\d{2})', notes)
     parts = [
-        'What BSP Desk knows about home sales: the home-sales data the portal holds for the territory of Punctual Pros, a Broad Sky Partners (BSP) company.',
+        'What Broad Sky OS knows about home sales: the home-sales data the portal holds for the territory of Punctual Pros, a Broad Sky Partners (BSP) company.',
         f'Coverage. The home-sales records hold public recorded sales for {where}. Each record is one recorded sale: the address, town, ZIP code, '
         'sale date and price, and the year built, size and bedrooms where the county publishes them.',
         "Sources. All public. New Jersey comes from the Division of Taxation's statewide sales file. Pennsylvania comes from each county's open parcel or assessment data.",
@@ -793,7 +793,7 @@ def src_homes():
         'Limits. Every list and brief states the date the sales reach and the date the records were pulled. A purchase after that date is not in the records yet.',
     ]
     return [doc('portal', 'research', 'Punctual Pros home sales data: what the records cover', SITE + 'app.html#/pp/movers', '\n\n'.join(parts),
-                publisher='BSP Desk research', date=pulled, key='homes-coverage', companies=['pp'])]
+                publisher='Broad Sky OS research', date=pulled, key='homes-coverage', companies=['pp'])]
 
 
 def signal_companies():
@@ -813,7 +813,7 @@ def merged_views(page, base, js):
     add-on target screens and company theses). A plain render of those screens opens on the default state, so none of
     this would be read. `js` is src_rendered()'s reader; a block that fails logs one line and adds no document."""
     out = []
-    stamp = lambda target: dict(publisher='BSP Desk', date=dt.date.today().isoformat(), key='page-' + hashlib.sha1(target.encode()).hexdigest()[:10])
+    stamp = lambda target: dict(publisher='Broad Sky OS', date=dt.date.today().isoformat(), key='page-' + hashlib.sha1(target.encode()).hexdigest()[:10])
     # every sized lever across all six companies (the overview's "All six" choice; it replaced the Sales levers screen)
     target = 'app.html#/signals/overview?co=all'
     try:
@@ -985,7 +985,7 @@ def src_rendered():
                 m, v = target.split('#/')[1].split('/')[:2]
                 title = f'Portal: {title}' if not title.lower().startswith('portal') else title
             out.append(doc('portal', 'portal-view' if '#/' in target else 'site-page', title, SITE + target.replace('index.html', ''), text,
-                           publisher='BSP Desk', date=dt.date.today().isoformat(), key='page-' + hashlib.sha1(target.encode()).hexdigest()[:10]))
+                           publisher='Broad Sky OS', date=dt.date.today().isoformat(), key='page-' + hashlib.sha1(target.encode()).hexdigest()[:10]))
         for co, name in signal_companies():   # the forces table for each company, one at a time (the view opens on the first one; All six follows below)
             target = f'app.html#/signals/overview?co={co}'
             try:
@@ -1018,7 +1018,7 @@ def src_rendered():
                 blocks.append(' '.join(parts))
             text = f'What moves sales at {name}: the market, cost, labor, calendar and weather forces, why each matters, today\'s reading and the move.\n\n' \
                    + norm_ws(r['lead']) + '\n\n' + '\n\n'.join(blocks)
-            out.append(doc('portal', 'portal-view', f'Portal: Local signals · what moves sales at {name}', SITE + target, text, publisher='BSP Desk',
+            out.append(doc('portal', 'portal-view', f'Portal: Local signals · what moves sales at {name}', SITE + target, text, publisher='Broad Sky OS',
                            date=dt.date.today().isoformat(), key='page-' + hashlib.sha1(target.encode()).hexdigest()[:10]))
         out += merged_views(page, base, js)   # All six, the Private equity county section, the pipeline per company and its county section
         browser.close()
