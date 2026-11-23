@@ -898,7 +898,7 @@ ORG_NAME = {'bsp': 'BSP', 'pp': 'Punctual Pros', 'cet': 'CET', 'fl': 'Frontline'
 # What each sells and its lines: the site's existing persona strings (assets/chat.js 835-840), spec 1.4.
 SELLS = {'bsp': 'Private-equity firm that buys and grows six companies.',
          'pp': 'Heating, cooling, plumbing and electrical service for homes in central PA and the Jersey Shore.',
-         'cet': 'Electrical construction and service across New England.',
+         'cet': 'Electrical construction, solar and energy services.',
          'fl': 'Managed IT and billing support for law firms.',
          'ts': 'Lab supplies, equipment and services for research and clinical labs.',
          'bpi': 'Public affairs, reputation and campaign work.',
@@ -951,9 +951,9 @@ def app_name(org, app):
     used (Fair Harbor: NetSuite, Shopify; Frontline: ServiceNow; Punctual Pros: ServiceTitan, through its franchisor). Elsewhere
     the name is a product standard in that industry (Chronograph for a firm's portfolio reporting, Viewpoint Vista for an
     electrical contractor's job-cost accounting, CallRail for home-service call and campaign tracking). App ids never change."""
-    n = {'email': ('Gmail', 'GM') if org == 'fh' else ('Outlook', 'OL'),
+    n = {'email': ('Gmail', 'GM') if org in ('bpi', 'fh') else ('Outlook', 'OL'),
          'calendar': ('Google Calendar', 'GC') if org in ('fh', 'bpi') else ('Outlook Calendar', 'OC'),
-         'chat': ('Slack', 'SL') if org in ('bsp', 'bpi', 'fh') else ('Teams', 'TM'),
+         'chat': ('Slack', 'SL') if org in ('bsp', 'bpi', 'fh') else ('Microsoft Teams', 'TM'),
          'drive': ('Google Drive', 'GD') if org in ('bpi', 'fh') else ('SharePoint', 'SP'),
          'dealcloud': ('DealCloud', 'DC'), 'salesforce': ('Salesforce', 'SF'),
          'marketing': ('Klaviyo', 'KL') if org == 'fh' else ('CallRail', 'CR'),
@@ -2923,7 +2923,7 @@ CAL = {
             ('Annual meeting planning', 'Video call', ['*Event planner'], 'Venue and agenda.'),
             ('Capital call planning', 'New York office', ['Managing partner'], 'Amount and timing.'),
             ('Investor data requests', 'Video call', ['*Investor contact'], 'Quarterly template.')],
-    'leader': [('Weekly leadership meeting', '{office}', ['CEO', 'CFO', 'VP operations'], 'KPIs and the top risks.'),
+    'leader': [('Leadership meeting', '{office}', ['CEO', 'CFO', 'VP operations'], 'Weekly: KPIs and the top risks.'),
                ('KPI review', '{office}', ['VP operations'], 'Trend and drivers.'),
                ('Check-in with BSP', 'Video call', ['BSP operating partner'], 'KPIs first.'),
                ('Pipeline review', '{office}', ['CEO'], 'Top deals by stage.'),
@@ -3735,7 +3735,7 @@ def home_for(role, pool, st, org_files):
                      tile('Unpaid over 60 days', sum(1 for x in inv if x['status'] != 'Paid' and x['days_out'] > 60), 'Count', 'financials'),
                      tile('Rejection rate', '%d%%' % round(rate), 'Last 30 days', 'financials')]
         h['list'] = [{'time': 'today' if x['rejected_d'] == 0 else ('yesterday' if x['rejected_d'] == -1 else '%d days ago' % -x['rejected_d']),
-                      'title': '%s · %s' % (x['number'], money(x['amount'])), 'where': x['client'],
+                      'title': '%s · %s' % (x['client'], money(x['amount'])), 'where': x['reason'],
                       'prompt': 'Why was %s rejected, and how do I fix it?' % x['number']} for x in rej]
     elif rid == 'ts-inside-sales':
         o = vis(pool, role, 'salesforce', 'opps')
@@ -3759,7 +3759,7 @@ def home_for(role, pool, st, org_files):
                   'lead': '%d orders ship today. %d items are below reorder point.' % (n, k)})
         h['kpis'] = [tile('Orders shipping today', n, 'Swedesboro', 'financials'), tile('Below reorder point', k, 'Items', 'financials'),
                      tile('Late orders', len(late), 'Past ship date', 'financials')]
-        h['list'] = [{'time': '%d days late' % -x['ship_d'] if x['ship_d'] < -1 else '1 day late', 'title': x['number'], 'where': x['account'],
+        h['list'] = [{'time': '%d days late' % -x['ship_d'] if x['ship_d'] < -1 else '1 day late', 'title': x['account'], 'where': x['dc'],
                       'prompt': "What's holding order %s?" % x['number']} for x in late]
     elif rid == 'bpi-account-director':
         acc = vis(pool, role, 'salesforce', 'accounts')
