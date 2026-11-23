@@ -765,7 +765,7 @@ const STATIC_DOCS = [
   { t: 'Frontline AM Law 200 targets', s: 'law firms scored for managed IT, cyber urgency, AI signal, revenue cycle', h: '#/fl/amlaw' },
   { t: 'Frontline mid-size firm targets', s: 'mid-size law firms with cyber incidents, mergers, CIO hires', h: '#/fl/midsize' },
   { t: 'Thomas Scientific parent accounts', s: '500 parent accounts, diagnostics labs, hospitals, pathology, commercial priority', h: '#/ts/accounts' },
-  { t: 'Acquisition engine', s: 'add-on pipeline across portfolio companies, company theses, rival companies, white space', h: '#/ma/overview' },
+  { t: 'Acquisition engine', s: 'add-on pipeline across portfolio companies with each company\'s thesis, rival companies, white space', h: '#/ma/overview' },
   { t: 'Private equity · sponsor landscape', s: 'competing sponsors, fund history, deals 2025-2026, sector grid, comparable companies', h: '#/pe/landscape' },
   { t: 'Sponsor precedents', s: 'how sponsors built and sold home-services companies: operator team at entry, first add-on timing, tuck-in cadence, one system, memberships, exits and buyers, entry to exit timeline, sponsor case studies in home services and adjacent sectors: Apex, Wrench, Champions, Sila, Smith + Howard, what they did before selling', h: '#/cases/timeline' },
   { t: 'How BSP buys', s: 'deal patterns, screening rubric with weights, sourcing network of bankers and advisers, seller types, first add-on timing, every disclosed BSP deal', h: '#/bsp/deals' },
@@ -773,7 +773,7 @@ const STATIC_DOCS = [
   { t: 'How BSP buys · rubric', s: 'scoring methods, deal rubric, criteria weights, first-call script, intro paths', h: '#/bsp/rubric' },
   { t: 'Fundamentals', s: 'value and exit, Form D, Form ADV, BDC loan schedules, PPP, FDD Item 19, public comps', h: '#/fin/portfolio' },
   { t: 'Tech enablement program', s: 'ServiceOS GridOS FirmOS LabOS SignalOS HarborOS theses, valuation impact, roadmaps', h: '#/techos/overview' },
-  { t: 'Narrated tour', s: 'narrated tour, executive video', h: '#/briefing/play' },
+  { t: 'Narrated tour', s: 'narrated tour, chapters and script', h: '#/briefing/play' },
   { t: '3D map', s: 'WebGL fly-through: home-sales hexagons, nationwide expansion arcs, New England opportunity columns, live storm polygons', h: '#/theater/play' },
 ];
 let _index = null;
