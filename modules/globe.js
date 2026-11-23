@@ -1,13 +1,41 @@
-/* Globe: the god's eye view. A full-bleed 3D globe (engine: assets/godseye.js) that any part of the product steers
-   through the map command bus (assets/mapcmd.js): a 'bsp:map' event, MapCmd.run(cmd), or the address
-   (#/globe/view?tour=<id>, #/globe/view?lat=…&lon=…&label=…[&kind=address]).
+/* Globe: a full-bleed 3D globe that any part of the product steers through the map command bus (assets/mapcmd.js):
+   a 'bsp:map' event, MapCmd.run(cmd), a { type: 'bsp:map', cmd } message from an embedded page, or the address
+   (#/globe/view?tour=<id>, #/globe/view?lat=…&lon=…&label=…[&kind=site&precision=typed]).
+   Two renderers sit behind the one command. assets/runtime.json "maps.google3dTilesKey" set: the CesiumJS
+   photorealistic renderer (assets/godseye-cesium.js); empty or absent (the default): the MapLibre globe
+   (assets/godseye.js). Neither the file nor any tile is fetched before the visitor opens this screen.
    Prepared tours come from data/research/globe_tours.json (built from the add-on screens and the firm records).
    The firm levels see the portfolio tours; a company role sees its own company's. The field level is shown the
-   globe only for an address step (a job's example address): no tours, no other places. */
+   globe only for an address: a typed address ('site' steps) or a job's example address; no tours, no other places. */
 import { Session } from '../assets/session.js?v=20261123172325';
 import { MapCmd } from '../assets/mapcmd.js?v=20261123172325';
 
 const V = new URL(import.meta.url).search;   // the registry's ?v= stamp, reused for the engine and the stylesheet
+
+/** The Google key in assets/runtime.json (maps.google3dTilesKey), or ''. Read when the screen opens, never before. */
+export async function mapsKey() {
+  try {
+    const r = await fetch(`assets/runtime.json${V || ''}`, { cache: 'no-cache' });
+    if (!r.ok) return '';
+    const k = (await r.json())?.maps?.google3dTilesKey;
+    return typeof k === 'string' && /^[\w-]{20,60}$/.test(k.trim()) ? k.trim() : '';
+  } catch { return ''; }
+}
+
+/** The CesiumJS renderer behind the same small interface as assets/godseye.js mount(). */
+async function mountCesium(host, key, opts) {
+  const CX = await import(`../assets/godseye-cesium.js${V || '?v=20261123172325'}`);
+  const api = CX.createGlobe(host, { maps: { google3dTilesKey: key }, controls: false, onStop: opts.onStop, onEnd: opts.onEnd });
+  const r = await api.ready;
+  return {
+    renderer: 'cesium', api,
+    get mode() { return r.ok ? 'cesium' : 'fallback'; },
+    run: cmd => api.run(cmd), goTo: i => api.goTo(i), next: () => api.next(), prev: () => api.prev(),
+    pause: () => api.pause(), resume: () => api.resume(), home: () => api.home(),
+    state: () => { const st = api.state(); return { ...st, look: st.mode, renderer: 'cesium', mode: r.ok ? 'cesium' : 'fallback' }; },
+    destroy: () => api.destroy(),
+  };
+}
 
 /** The tours a role may run: firm levels get the firm's; a company role gets its own company's. */
 function toursFor(all, role) {
@@ -52,19 +80,26 @@ async function view(ctx) {
   $tours.innerHTML = tours.map(t => `<button type="button" class="sys-chip" data-tour="${esc(t.id)}" aria-pressed="false">${esc(t.title)}</button>`).join('');
   if (!tours.length) $tours.hidden = true;
 
-  let Engine;
-  try { Engine = await import(`../assets/godseye.js${V || '?v=20261123172325'}`); }
-  catch (e) { console.warn('[globe]', e); host.innerHTML = `<div class="gx-msg">${ctx.ui.note('The globe could not load.', 'warn')}</div>`; return; }
-  if (!host.isConnected) return;   // the visitor left while the engine loaded
-
-  const g = await Engine.mount(host, {
+  const key = params.fallback === '1' ? '' : await mapsKey();
+  if (!host.isConnected) return;   // the visitor left while the key was read
+  const screen = el.querySelector('.gx-screen');
+  screen.dataset.renderer = key ? 'cesium' : 'open';
+  const engineOpts = {
     preserveDrawingBuffer: params.capture === '1',
     forceFallback: params.fallback === '1',
     onStop: i => { [...$stops.children].forEach((li, k) => li.classList.toggle('on', k === i)); },
     onEnd: () => {},
-  });
+  };
+  let g;
+  try { g = key ? await mountCesium(host, key, engineOpts) : await (await import(`../assets/godseye.js${V || '?v=20261123172325'}`)).mount(host, engineOpts); }
+  catch (e) { console.warn('[globe]', e); host.innerHTML = `<div class="gx-msg">${ctx.ui.note('The globe could not load.', 'warn')}</div>`; return; }
   if (!host.isConnected) { g.destroy(); return; }
+  if (!g.renderer) g.renderer = 'open';
   window.BSPGlobe = g;
+  // phones: the renderer's own controls sit below the panel band
+  const $panel = el.querySelector('.gx-panel');
+  const ro = 'ResizeObserver' in window ? new ResizeObserver(() => screen.style.setProperty('--gx-panel-h', `${Math.ceil($panel.getBoundingClientRect().bottom - screen.getBoundingClientRect().top)}px`)) : null;
+  ro?.observe($panel);
 
   let current = null;
   const setSrc = text => {
@@ -96,7 +131,7 @@ async function view(ctx) {
       return true;
     }
     let c = cmd;
-    if (field) { const steps = (c.steps || []).filter(s => s.kind === 'address'); if (!steps.length) return false; c = { ...c, steps, marks: [] }; }
+    if (field) { const steps = (c.steps || []).filter(s => s.kind === 'address' || s.kind === 'site'); if (!steps.length) return false; c = { ...c, steps, marks: [] }; }
     show(c);
     return true;
   };
@@ -134,6 +169,7 @@ async function view(ctx) {
   return () => {
     window.__bspGlobeOpen = false;
     window.removeEventListener(MapCmd.EVENT, onCmd);
+    ro?.disconnect();
     src?.remove();
     if (window.BSPGlobe === g) window.BSPGlobe = null;
     try { g.destroy(); } catch { }
