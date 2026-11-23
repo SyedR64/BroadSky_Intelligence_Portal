@@ -426,6 +426,52 @@ def main():
             a = ask_docked(po, 'Show the storm history for Ocean County')
             check('storm-history chip opens Weather & demand', a['intent'] == 'nav' and 'Opening' in a['text'] and 'Weather' in a['text'], a['text'][:80].replace('\n', ' / '))
             po.close()
+            # 9e. Typed commands with no model call (assets/globe-intents.js): the best three targets steer the globe; a street address with a job
+            # is parsed and handed to the address lookup. Nothing goes to the backend, though one is live.
+            OWNER_ADDR = 'going to 418 Wexcombe Ln, Lititz for a sink repair, give me the floor plans, view'
+            def open_globe_page(role=None, stub=False):
+                pg = (browser.new_context() if role else ctx).new_page()   # a role named in the address is kept in storage: it gets a context of its own
+                posts = []
+                pg.on('request', lambda r: posts.append(f'{r.method} {r.url}') if r.url.startswith(MAIN) and (r.method != 'GET' or '/health' not in r.url) else None)
+                if stub:
+                    pg.add_init_script("window.BSPSite = { lookup: t => { window.__lookups = (window.__lookups || []).concat([t]); return Promise.resolve(); } };")
+                pg.add_init_script("window.__maps = []; addEventListener('bsp:map', e => window.__maps.push(JSON.parse(JSON.stringify(e.detail))));")
+                goto(pg, f'{SITE}/app.html?backend={urllib.parse.quote(MAIN, safe=":/")}' + (f'&role={role}' if role else '') + '#/home/overview')
+                pg.wait_for_selector('.ch-floating .ch-launch', timeout=30000)
+                return pg, posts
+            wc = lambda t: len([w for w in t.split() if w])
+            pg1, posts1 = open_globe_page()
+            a = ask_docked(pg1, 'Point out the best 3 acquisition targets')
+            poll(lambda: pg1.evaluate('() => window.__maps.length'), timeout=10)
+            maps = pg1.evaluate('() => window.__maps')
+            check('typed "best 3 acquisition targets": answered in 30 words or fewer, with the globe command and no model call', a['kind'] == 'grounded' and a['intent'] == 'globe_best3' and wc(a['text'].split('\n')[0]) <= 30
+                  and len(maps) == 1 and maps[0].get('tour') == 'best3' and 'Midland' in a['text'] and not posts1, f"{a['intent']}: {a['text'][:120]!r} maps={maps} backend={posts1}")
+            check('the globe screen opens itself', poll(lambda: pg1.evaluate('() => location.hash').startswith('#/globe/view'), timeout=10), pg1.evaluate('() => location.hash'))
+            ids = pg1.evaluate("""async () => { const G = (await import('/assets/globe-intents.js')).default; const f = (q, co) => (G.classify(q, { co }) || {}).tour || null;
+                return { three: f('best three add-on targets'), top: f('show me the top targets'), pp: f('top 3 targets for Punctual Pros'), where: f('where are the best acquisitions'), cet_role: f('show me the top targets', 'cet'), named_wins: f('top 3 targets for Frontline', 'cet'),
+                         ten: f('top 10 targets'), state: f('Show the top add-on targets for CET in Connecticut'), how: f('How does BSP pick the best add-on targets?'), past: f('best acquisitions BSP has made') }; }""")
+            check('close wordings pick the right tour; other questions are left alone', ids == {'three': 'best3', 'top': 'best3', 'pp': 'best3-pp', 'where': 'best3', 'cet_role': 'best3-cet', 'named_wins': 'best3-fl', 'ten': None, 'state': None, 'how': None, 'past': None}, json.dumps(ids))
+            pg1.close()
+            pg2, posts2 = open_globe_page(role='cet-ceo')
+            a = ask_docked(pg2, 'show me the top targets')
+            poll(lambda: pg2.evaluate('() => window.__maps.length'), timeout=10)
+            maps = pg2.evaluate('() => window.__maps')
+            check('a company role in view gets its own tour', a['intent'] == 'globe_best3' and len(maps) == 1 and maps[0].get('tour') == 'best3-cet' and not posts2, f"maps={maps} {a['text'][:80]!r}")
+            pg2.context.close()
+            pg3, posts3 = open_globe_page()
+            a = ask_docked(pg3, OWNER_ADDR)
+            want = '#/home/overview?address=' + urllib.parse.quote(OWNER_ADDR, safe="-_.!~*'()")
+            poll(lambda: pg3.evaluate('() => location.hash') == want, timeout=10)
+            got_hash = pg3.evaluate('() => location.hash')
+            parsed = pg3.evaluate("async t => { const G = (await import('/assets/globe-intents.js')).default; const p = G.parseAddress(t); return p && { street: p.street, town: p.town, job: p.job }; }", OWNER_ADDR)
+            check('typed street address with a job: parsed into street, town and job', parsed == {'street': '418 Wexcombe Ln', 'town': 'Lititz', 'job': 'sink repair'}, json.dumps(parsed))
+            check('until the lookup exists: one short line and the address goes to the home screen, no model call', a['intent'] == 'site_address' and 'address lookup' in a['text'] and wc(a['text'].split('\n')[0]) <= 30 and got_hash == want and not posts3, f"{a['text'][:100]!r} hash={got_hash[:60]} backend={posts3}")
+            pg3.close()
+            pg4, posts4 = open_globe_page(stub=True)
+            a = ask_docked(pg4, OWNER_ADDR)
+            lk = poll(lambda: pg4.evaluate('() => window.__lookups || null'), timeout=5)
+            check('when BSPSite.lookup exists it gets the typed text, word for word', lk == [OWNER_ADDR] and a['intent'] == 'site_address' and 'Looking up' in a['text'] and not posts4 and 'address=' not in pg4.evaluate('() => location.hash'), f"{lk} {a['text'][:80]!r}")
+            pg4.close()
             # 9d-2. The firm profile says six companies today and one exit, and the docked assistant sends that wording.
             pf = ctx.new_page()
             goto(pf, SITE + '/app.html?backend=off#/home/firm')
