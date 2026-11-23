@@ -1332,3 +1332,106 @@ def test_founder_owned_is_not_a_leadership_question():
     assert app.retrieval_query('portal', 'founder-led HVAC companies') == 'founder-led HVAC companies'
     assert 'CEO chief executive' in app.retrieval_query('portal', 'Who are the founders of the firm?')
     assert [u for rx, u in app.PINNED if rx.search('Who founded BSP?')]
+
+
+# ---------------------------------------------------------------- wave 3: sink calls, room rules, flagship houses, signatures
+
+OWNER_SINK = 'going to 418 Wexcombe Ln, Lititz for a sink repair, give me the floor plans, view'
+
+
+def test_sink_and_faucet_calls_focus_the_fixture_shutoffs(real):
+    """'sink repair', 'kitchen sink leaking' and 'faucet dripping' (and the owner's own sentence) resolve to the new issues, whose focus
+    starts with the sink's own shutoffs; drain words and a burst pipe keep their old issues."""
+    for text, want in ((OWNER_SINK, 'sink_leak'), ('sink repair', 'sink_leak'), ('kitchen sink leaking', 'sink_leak'),
+                       ('faucet dripping', 'faucet'), ("sink won't drain", 'drain_clog'), ('clogged kitchen sink', 'drain_clog'),
+                       ('the pipe under the sink burst', 'frozen_pipe')):
+        i = workspace._pick_issue(text)
+        assert i['id'] == want, (text, i['id'])
+        if want in ('sink_leak', 'faucet'):
+            assert i['focus'][0] == 'fixture_shutoffs' and 'main_water' in i['focus'] and i['trades'] == ['plumbing'] and i['safety'] == ['water']
+    codes = {p['code'] for p in workspace.load('pp_servicetitan')['pricebook']}
+    for i in workspace.load('issues')['issues']:
+        assert set(i['offers']) <= codes, i['id']
+
+
+def _inside(box, pt):
+    return box['x'] <= pt[0] <= box['x'] + box['w'] and box['y'] <= pt[1] <= box['y'] + box['h']
+
+
+def test_room_and_wet_wall_rules_are_likely_and_hold_the_spots(real):
+    """likely_rules rooms and wet_wall: labelled likely with low confidence; every layout's first-floor kitchen holds the kitchen and
+    sink spots and its bath holds the bath spot; every select row names a layout; every wet wall names rooms on its floor."""
+    rules = workspace.load('likely_rules')
+    spots = rules['spots']
+    assert {'riser', 'kitchen-sink', 'entry-left', 'entry-right'} <= set(spots)
+    rooms, wet = rules['rooms'], rules['wet_wall']
+    assert rooms['basis'] == wet['basis'] == 'likely' and rooms['confidence'] == wet['confidence'] == 'low'
+    assert 'confirm on site' in rooms['note'] and 'clear' not in rooms['note'].lower()
+    for lid, lay in rooms['layouts'].items():
+        first = lay['floors']['first']
+        kit = [b for b in first if b['name'] == 'Kitchen']
+        bath = [b for b in first if 'bath' in b['name'].lower()]
+        assert len(kit) == 1 and _inside(kit[0], spots['kitchen']) and _inside(kit[0], spots['kitchen-sink']), lid
+        assert len(bath) == 1 and _inside(bath[0], spots['bath']), lid
+        assert wet['by_layout'][lid], lid
+        for w in wet['by_layout'][lid]:
+            assert set(w['rooms']) <= {b['name'] for b in lay['floors'][w['floor']]}, (lid, w)
+    assert all(r['layout'] in rooms['layouts'] for r in rooms['select']) and rooms['select'][-1] == {'layout': 'ranch'}
+    assert all(r['kind'] == 'power' and r['needs'] == ['panel'] and all(v in spots for v in r['via']) for r in rules['power_runs'].values())
+    assert rules['heights']['basis'] == 'likely' and rules['heights']['unit'] == 'in'
+
+
+def test_flagship_houses_rooms_and_wires(real):
+    """pp_houses.json: only the two flagship customers. Rooms are records from a prior visit sketch; every wire run is a record that
+    reaches the recorded panel; the first-floor riser lines stay likely; 418 Wexcombe Ln has no wiring on record by the kitchen."""
+    houses = workspace.load('pp_houses')['houses']
+    assert sorted(houses) == ['st-cus-0001', 'st-cus-0002']
+    st = workspace.load('pp_servicetitan')
+    for cid, h in houses.items():
+        cust = next(c for c in st['customers'] if c['id'] == cid)
+        panel = next(e for e in st['equipment'] if e['customer'] == cid and e['kind'] == 'panel')
+        assert h['for'] == cust['for'] and h['team'] == cust['team'] and h['address'].startswith(cust['address']['line'])
+        assert {r['floor'] for r in h['rooms']} == {'first', 'second'} and all(r['basis'] == 'record' for r in h['rooms'])
+        assert all(r['src'] == 'Prior visit sketch' for r in h['rooms'])
+        kit = next(r for r in h['rooms'] if r['floor'] == 'first' and r['name'] == 'Kitchen')
+        assert _inside(kit, workspace.load('likely_rules')['spots']['kitchen-sink'])
+        for run in h['runs']:
+            if run['kind'] == 'power':
+                assert run['basis'] == 'record' and panel['spot'] in run['via'] and run['floor'] == panel['floor']
+            if run['floor'] == 'first':
+                assert run['basis'] == 'likely' and run['rise'] == {'from': 'basement', 'to': 'first', 'at': 'riser'}
+        assert all(w['basis'] == 'likely' for w in h['wet_wall'])
+    assert [r['label'] for r in houses['st-cus-0001']['runs'] if r['kind'] == 'power'] == ['Service line']
+    assert houses['st-cus-0002']['split_level'] is True and houses['st-cus-0001']['split_level'] is False
+
+
+SIG_VIEWS = {'floor_plan', 'house_model', 'globe_tour', 'scorecard', 'bridge', 'heatmap', 'pipeline_board', 'ranked_bars'}
+
+
+def test_every_role_has_one_signature(real):
+    """Catalogue and roles.json: each of the 44 roles has one signature {question, view, source, draft, data}: a question of 12 words
+    at most, one of the eight pictures, live or records, a draft from the role's own actions, and data it can read or a site file."""
+    if not os.path.exists(CATALOG):
+        pytest.skip('data/agent/catalog.json has not been generated yet')
+    cat = json.load(open(CATALOG, encoding='utf-8'))
+    assert len(cat['roles']) == 44
+    for c in cat['roles']:
+        s = c['signature']
+        R = workspace.role(c['id'])
+        assert R['signature'] == s, c['id']
+        assert {'question', 'view', 'source', 'draft', 'data'} <= set(s) and len(s['question'].split()) <= 12, c['id']
+        assert s['view'] in SIG_VIEWS and s['source'] in ('live', 'records'), c['id']
+        assert s['draft']['action'] in R['actions'] and len(s['draft']['title'].split()) <= 15, c['id']
+        for ref in s['data']:
+            if s['source'] == 'live':
+                assert ref.startswith('data/') and os.path.exists(os.path.join(ROOT, ref.split('#')[0])), (c['id'], ref)
+            else:
+                app, set_ = ref.split('.')
+                assert set_ in R['apps'].get(app, {}), (c['id'], ref)
+    by = {c['id']: c['signature'] for c in cat['roles']}
+    assert by['bsp-managing-partner'] == {'question': 'Point out the best 3 acquisition targets.', 'view': 'globe_tour', 'source': 'live',
+                                          'draft': {'action': 'chat_post', 'title': 'Post the three targets to the partners channel'},
+                                          'data': ['data/research/globe_tours.json#best3']}
+    assert (by['pp-plumber']['view'], by['pp-plumber']['address']) == ('floor_plan', '27 Brindlemoor Ct, Red Lion, PA 17356')
+    assert (by['pp-hvac-technician']['view'], by['pp-hvac-technician']['address']) == ('house_model', FLAGSHIP)
+    assert by['pp-dispatcher']['view'] == 'floor_plan' and by['pp-dispatcher']['draft']['action'] == 'book_job'
