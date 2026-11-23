@@ -1,0 +1,699 @@
+{
+ "generated": "2026-11-23",
+ "note": "Built by a script from ma_targets_*, ma_ppp_screen, bsp_firm and cet_opportunities.",
+ "tours": [
+  {
+   "id": "best3",
+   "title": "Best 3 add-on targets",
+   "for": {
+    "firm": true
+   },
+   "steps": [
+    {
+     "lat": 41.1839,
+     "lon": -96.0314,
+     "label": "Midland Scientific, Inc.",
+     "sub": "Thomas Scientific add-on · La Vista, NE",
+     "figures": [
+      [
+       "Fit",
+       "92"
+      ],
+      [
+       "Revenue",
+       "$147M",
+       "est"
+      ],
+      [
+       "Staff",
+       "199"
+      ]
+     ],
+     "reason": "Largest independent regional distributor found; fills the Plains and Midwest gap.",
+     "href": "#/ma/pipeline?platform=ts&id=ts-01",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": true
+    },
+    {
+     "lat": 34.0522,
+     "lon": -118.2437,
+     "label": "Innovative Computing Systems, Inc.",
+     "sub": "Frontline add-on · Los Angeles, CA",
+     "figures": [
+      [
+       "Fit",
+       "91"
+      ],
+      [
+       "Revenue",
+       "$12.6M",
+       "est"
+      ],
+      [
+       "Staff",
+       "60"
+      ]
+     ],
+     "reason": "Law-firm-only IT provider since 1989 with California and Texas offices.",
+     "href": "#/ma/pipeline?platform=fl&id=fl-01",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": true
+    },
+    {
+     "lat": 40.1001,
+     "lon": -76.3541,
+     "label": "Lancaster Plumbing, Heating, Cooling & Electrical",
+     "sub": "Punctual Pros add-on · East Petersburg, PA",
+     "figures": [
+      [
+       "Fit",
+       "84"
+      ],
+      [
+       "Revenue",
+       "$7.0M",
+       "est"
+      ],
+      [
+       "Staff",
+       "27"
+      ]
+     ],
+     "reason": "Four-trade home-services brand five miles from the Lancaster headquarters.",
+     "href": "#/ma/pipeline?platform=pp&id=pp-t11",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": true
+    }
+   ],
+   "source": "Hand-researched add-on screens · each company ranked by its own rubric · revenue est."
+  },
+  {
+   "id": "best3-cet",
+   "title": "Best 3 add-on targets",
+   "for": {
+    "co": "cet"
+   },
+   "co": "cet",
+   "steps": [
+    {
+     "lat": 42.2418,
+     "lon": -70.8898,
+     "label": "McDonald Electrical Corporation",
+     "sub": "CET add-on · Hingham, MA",
+     "figures": [
+      [
+       "Fit",
+       "83"
+      ],
+      [
+       "Revenue",
+       "$18.4M",
+       "est"
+      ],
+      [
+       "Staff",
+       "96"
+      ]
+     ],
+     "reason": "Medium-voltage, fire alarm and controls; union arm bridging MA and CT.",
+     "href": "#/ma/pipeline?platform=cet&id=cet-t01",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": true
+    },
+    {
+     "lat": 42.1987,
+     "lon": -71.9048,
+     "label": "K.M. Kelly, Inc.",
+     "sub": "CET add-on · Rochdale (Leicester), MA",
+     "figures": [
+      [
+       "Fit",
+       "83"
+      ],
+      [
+       "Revenue",
+       "$12.9M",
+       "est"
+      ],
+      [
+       "Staff",
+       "67"
+      ]
+     ],
+     "reason": "Substation and process-control depth, seven miles from Worcester.",
+     "href": "#/ma/pipeline?platform=cet&id=cet-t02",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": true
+    },
+    {
+     "lat": 42.0654,
+     "lon": -71.2478,
+     "label": "Energy Electric",
+     "sub": "CET add-on · Foxborough, MA",
+     "figures": [
+      [
+       "Fit",
+       "81"
+      ],
+      [
+       "Revenue",
+       "$20.9M",
+       "est"
+      ],
+      [
+       "Staff",
+       "150"
+      ]
+     ],
+     "reason": "150+ electricians with RI, NH and ME licenses, near Taunton.",
+     "href": "#/ma/pipeline?platform=cet&id=cet-t03",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": true
+    }
+   ],
+   "source": "CET add-on screen, hand-researched · fit by company rubric · revenue est."
+  },
+  {
+   "id": "best3-pp",
+   "title": "Best 3 add-on targets",
+   "for": {
+    "co": "pp"
+   },
+   "co": "pp",
+   "steps": [
+    {
+     "lat": 40.1001,
+     "lon": -76.3541,
+     "label": "Lancaster Plumbing, Heating, Cooling & Electrical",
+     "sub": "Punctual Pros add-on · East Petersburg, PA",
+     "figures": [
+      [
+       "Fit",
+       "84"
+      ],
+      [
+       "Revenue",
+       "$7.0M",
+       "est"
+      ],
+      [
+       "Staff",
+       "27"
+      ]
+     ],
+     "reason": "Four-trade home-services brand five miles from the Lancaster headquarters.",
+     "href": "#/ma/pipeline?platform=pp&id=pp-t11",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": true
+    },
+    {
+     "lat": 39.9607,
+     "lon": -75.6055,
+     "label": "Benjamin Franklin Plumbing / One Hour Heating & Air…",
+     "sub": "Punctual Pros add-on · West Chester, PA",
+     "figures": [
+      [
+       "Fit",
+       "82"
+      ],
+      [
+       "Revenue",
+       "Not stated"
+      ]
+     ],
+     "reason": "Closest tri-brand Authority territory to Lancaster not yet owned.",
+     "href": "#/ma/pipeline?platform=pp&id=pp-t01",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": false
+    },
+    {
+     "lat": 40.4262,
+     "lon": -74.0868,
+     "label": "C&C Air Conditioning, Heating, Plumbing & Electric",
+     "sub": "Punctual Pros add-on · Belford, NJ",
+     "figures": [
+      [
+       "Fit",
+       "82"
+      ],
+      [
+       "Revenue",
+       "$14.5M",
+       "est"
+      ],
+      [
+       "Staff",
+       "65"
+      ]
+     ],
+     "reason": "Strongest Jersey Shore independent: three trades, 2,000+ reviews at 4.9.",
+     "href": "#/ma/pipeline?platform=pp&id=pp-t48",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": true
+    }
+   ],
+   "source": "Punctual Pros add-on screen, hand-researched · fit by company rubric · revenue est."
+  },
+  {
+   "id": "best3-fl",
+   "title": "Best 3 add-on targets",
+   "for": {
+    "co": "fl"
+   },
+   "co": "fl",
+   "steps": [
+    {
+     "lat": 34.0522,
+     "lon": -118.2437,
+     "label": "Innovative Computing Systems, Inc.",
+     "sub": "Frontline add-on · Los Angeles, CA",
+     "figures": [
+      [
+       "Fit",
+       "91"
+      ],
+      [
+       "Revenue",
+       "$12.6M",
+       "est"
+      ],
+      [
+       "Staff",
+       "60"
+      ]
+     ],
+     "reason": "Law-firm-only IT provider since 1989 with California and Texas offices.",
+     "href": "#/ma/pipeline?platform=fl&id=fl-01",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": true
+    },
+    {
+     "lat": 32.9628,
+     "lon": -117.0359,
+     "label": "Helm360",
+     "sub": "Frontline add-on · Poway, CA",
+     "figures": [
+      [
+       "Fit",
+       "91"
+      ],
+      [
+       "Revenue",
+       "$117M",
+       "est"
+      ],
+      [
+       "Staff",
+       "299"
+      ]
+     ],
+     "reason": "Practice-management application services; 160+ Elite 3E implementations.",
+     "href": "#/ma/pipeline?platform=fl&id=fl-03",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": true
+    },
+    {
+     "lat": 52.6336,
+     "lon": -1.691,
+     "label": "Quiss Technology PLC",
+     "sub": "Frontline add-on · Tamworth, England",
+     "figures": [
+      [
+       "Fit",
+       "86"
+      ],
+      [
+       "Revenue",
+       "$18.8M",
+       "est"
+      ],
+      [
+       "Staff",
+       "89"
+      ]
+     ],
+     "reason": "UK law-firm IT provider; builds presence beyond the London office.",
+     "href": "#/ma/pipeline?platform=fl&id=fl-09",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": true
+    }
+   ],
+   "source": "Frontline add-on screen, hand-researched · fit by company rubric · revenue est."
+  },
+  {
+   "id": "best3-ts",
+   "title": "Best 3 add-on targets",
+   "for": {
+    "co": "ts"
+   },
+   "co": "ts",
+   "steps": [
+    {
+     "lat": 41.1839,
+     "lon": -96.0314,
+     "label": "Midland Scientific, Inc.",
+     "sub": "Thomas Scientific add-on · La Vista, NE",
+     "figures": [
+      [
+       "Fit",
+       "92"
+      ],
+      [
+       "Revenue",
+       "$147M",
+       "est"
+      ],
+      [
+       "Staff",
+       "199"
+      ]
+     ],
+     "reason": "Largest independent regional distributor found; fills the Plains and Midwest gap.",
+     "href": "#/ma/pipeline?platform=ts&id=ts-01",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": true
+    },
+    {
+     "lat": 30.2672,
+     "lon": -97.7431,
+     "label": "Capitol Scientific",
+     "sub": "Thomas Scientific add-on · Austin, TX",
+     "figures": [
+      [
+       "Fit",
+       "91"
+      ],
+      [
+       "Revenue",
+       "$64.4M",
+       "est"
+      ],
+      [
+       "Staff",
+       "87"
+      ]
+     ],
+     "reason": "Texas distributor with semiconductor and cleanroom lines; 300+ manufacturers.",
+     "href": "#/ma/pipeline?platform=ts&id=ts-02",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": true
+    },
+    {
+     "lat": 38.5131,
+     "lon": -90.436,
+     "label": "MIDSCI",
+     "sub": "Thomas Scientific add-on · Fenton, MO",
+     "figures": [
+      [
+       "Fit",
+       "91"
+      ],
+      [
+       "Revenue",
+       "$16.0M",
+       "est"
+      ],
+      [
+       "Staff",
+       "48"
+      ]
+     ],
+     "reason": "Family-owned St. Louis distributor with its own brand and warehouse.",
+     "href": "#/ma/pipeline?platform=ts&id=ts-03",
+     "link": "Open in pipeline",
+     "zoom": 13.2,
+     "pitch": 58,
+     "hold_ms": 6500,
+     "est": true
+    }
+   ],
+   "source": "Thomas Scientific add-on screen, hand-researched · fit by company rubric · revenue est."
+  },
+  {
+   "id": "companies",
+   "title": "The six companies",
+   "for": {
+    "firm": true,
+    "own_stop": true
+   },
+   "steps": [
+    {
+     "lat": 42.2626,
+     "lon": -71.8023,
+     "label": "CET",
+     "sub": "Headquarters · Worcester, MA",
+     "co": "cet",
+     "figures": [
+      [
+       "Since",
+       "Feb 2025"
+      ],
+      [
+       "Staff",
+       "400+"
+      ]
+     ],
+     "href": "#/cet/overview",
+     "link": "Open company",
+     "zoom": 12.6,
+     "pitch": 55,
+     "hold_ms": 5000
+    },
+    {
+     "lat": 40.079,
+     "lon": -76.388,
+     "label": "Punctual Pros",
+     "sub": "Headquarters · East Hempfield, PA",
+     "co": "pp",
+     "figures": [
+      [
+       "Since",
+       "Apr 2024"
+      ],
+      [
+       "ZIP codes",
+       "240"
+      ]
+     ],
+     "href": "#/pp/overview",
+     "link": "Open company",
+     "zoom": 12.6,
+     "pitch": 55,
+     "hold_ms": 5000
+    },
+    {
+     "lat": 38.627,
+     "lon": -90.1994,
+     "label": "Frontline Managed Services",
+     "sub": "Headquarters · St. Louis, MO",
+     "co": "fl",
+     "figures": [
+      [
+       "Since",
+       "Dec 2024"
+      ],
+      [
+       "Staff",
+       "~1,100"
+      ]
+     ],
+     "href": "#/fl/overview",
+     "link": "Open company",
+     "zoom": 12.6,
+     "pitch": 55,
+     "hold_ms": 5000
+    },
+    {
+     "lat": 39.7476,
+     "lon": -75.3102,
+     "label": "Thomas Scientific",
+     "sub": "Headquarters · Swedesboro, NJ",
+     "co": "ts",
+     "figures": [
+      [
+       "Since",
+       "Jan 2022"
+      ],
+      [
+       "Add-ons",
+       "4"
+      ]
+     ],
+     "href": "#/ts/overview",
+     "link": "Open company",
+     "zoom": 12.6,
+     "pitch": 55,
+     "hold_ms": 5000
+    },
+    {
+     "lat": 38.9001,
+     "lon": -77.031,
+     "label": "BPI",
+     "sub": "Headquarters · Washington, DC",
+     "co": "bpi",
+     "figures": [
+      [
+       "Since",
+       "Apr 2023"
+      ],
+      [
+       "Add-ons",
+       "6"
+      ]
+     ],
+     "href": "#/bpi/overview",
+     "link": "Open company",
+     "zoom": 12.6,
+     "pitch": 55,
+     "hold_ms": 5000
+    },
+    {
+     "lat": 40.9276,
+     "lon": -73.7521,
+     "label": "Fair Harbor",
+     "sub": "Headquarters · Larchmont, NY",
+     "co": "fh",
+     "figures": [
+      [
+       "Since",
+       "Mar 2022"
+      ],
+      [
+       "Products",
+       "372"
+      ]
+     ],
+     "href": "#/fh/overview",
+     "link": "Open company",
+     "zoom": 12.6,
+     "pitch": 55,
+     "hold_ms": 5000
+    }
+   ],
+   "source": "Firm records and company releases · staff counts as reported"
+  },
+  {
+   "id": "cet-opps",
+   "title": "Top 3 CET opportunities",
+   "for": {
+    "firm": true,
+    "co": "cet"
+   },
+   "co": "cet",
+   "steps": [
+    {
+     "lat": 41.3948,
+     "lon": -73.454,
+     "label": "City of Danbury",
+     "sub": "Danbury, CT",
+     "figures": [
+      [
+       "Value",
+       "$3.2M",
+       "est"
+      ],
+      [
+       "Fit",
+       "90"
+      ]
+     ],
+     "href": "#/cet/opportunities",
+     "link": "Open opportunities",
+     "zoom": 13,
+     "pitch": 55,
+     "hold_ms": 5500,
+     "est": true
+    },
+    {
+     "lat": 41.1412,
+     "lon": -73.2637,
+     "label": "Town of Fairfield WPCA",
+     "sub": "Fairfield, CT",
+     "figures": [
+      [
+       "Value",
+       "$36.1M",
+       "est"
+      ],
+      [
+       "Fit",
+       "88"
+      ]
+     ],
+     "href": "#/cet/opportunities",
+     "link": "Open opportunities",
+     "zoom": 13,
+     "pitch": 55,
+     "hold_ms": 5500,
+     "est": true
+    },
+    {
+     "lat": 44.552,
+     "lon": -69.6317,
+     "label": "Kennebec Sanitary Treatment District",
+     "sub": "Waterville, ME",
+     "figures": [
+      [
+       "Value",
+       "$12.6M",
+       "est"
+      ],
+      [
+       "Fit",
+       "88"
+      ]
+     ],
+     "href": "#/cet/opportunities",
+     "link": "Open opportunities",
+     "zoom": 13,
+     "pitch": 55,
+     "hold_ms": 5500,
+     "est": true
+    }
+   ],
+   "source": "CET opportunity list · public notices and capital plans · value est."
+  }
+ ]
+}
