@@ -1,0 +1,1391 @@
+{
+ "name": "pa_lancaster_outline_only",
+ "typed": "50 N Duke St, Lancaster, PA 17602",
+ "issue": "sink repair",
+ "what": "Lancaster County Courthouse (public building)",
+ "status": "found",
+ "recorded": "2026-11-23",
+ "calls": [
+  {
+   "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+   "params": {
+    "address": "50 N Duke St, Lancaster, PA 17602",
+    "benchmark": "Public_AR_Current",
+    "format": "json"
+   },
+   "response": {
+    "result": {
+     "input": {
+      "address": {
+       "address": "50 N Duke St, Lancaster, PA 17602"
+      },
+      "benchmark": {
+       "isDefault": true,
+       "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+       "id": "4",
+       "benchmarkName": "Public_AR_Current"
+      }
+     },
+     "addressMatches": [
+      {
+       "tigerLine": {
+        "side": "L",
+        "tigerLineId": "179662768"
+       },
+       "coordinates": {
+        "x": -76.303930925045,
+        "y": 40.039358514951
+       },
+       "addressComponents": {
+        "zip": "17602",
+        "streetName": "DUKE",
+        "preType": "",
+        "city": "LANCASTER",
+        "preDirection": "N",
+        "suffixDirection": "",
+        "fromAddress": "2",
+        "state": "PA",
+        "suffixType": "ST",
+        "toAddress": "98",
+        "suffixQualifier": "",
+        "preQualifier": ""
+       },
+       "matchedAddress": "50 N DUKE ST, LANCASTER, PA, 17602"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "url": "https://services1.arcgis.com/I6XnrlnguPDoEObn/arcgis/rest/services/Parcels_HUBnew/FeatureServer/0/query",
+   "params": {
+    "where": "ADDRESS LIKE '50 N DUKE%'",
+    "outFields": "PIN,DISTRICT,LANDUSECD,DEED_ACRES,ADDRESS,BLDGASSESS,TAX_EXEMPT",
+    "returnGeometry": "true",
+    "outSR": 4326,
+    "geometryPrecision": 7,
+    "resultRecordCount": 12,
+    "f": "json"
+   },
+   "response": {
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+     "name": "OBJECTID",
+     "isSystemMaintained": true
+    },
+    "globalIdFieldName": "GlobalID",
+    "geometryProperties": {
+     "shapeAreaFieldName": "Shape__Area",
+     "shapeLengthFieldName": "Shape__Length",
+     "units": "esriFeet"
+    },
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+     "wkid": 4326,
+     "latestWkid": 4326
+    },
+    "features": [
+     {
+      "attributes": {
+       "PIN": "332-2373309-260487-0-0000",
+       "DISTRICT": "332",
+       "LANDUSECD": "654",
+       "DEED_ACRES": 0.78,
+       "ADDRESS": "50 N DUKE ST",
+       "BLDGASSESS": 22025000,
+       "TAX_EXEMPT": "Y"
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -76.3040232,
+          40.0396742
+         ],
+         [
+          -76.3038854,
+          40.0390007
+         ],
+         [
+          -76.3043518,
+          40.0389489
+         ],
+         [
+          -76.3043873,
+          40.039148
+         ],
+         [
+          -76.3044449,
+          40.0393881
+         ],
+         [
+          -76.3044523,
+          40.0394235
+         ],
+         [
+          -76.3044589,
+          40.0394228
+         ],
+         [
+          -76.3045009,
+          40.0396241
+         ],
+         [
+          -76.3040232,
+          40.0396742
+         ]
+        ]
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0/query",
+   "params": {
+    "outFields": "BUILD_ID,OCC_CLS,PRIM_OCC,OUTBLDG,HEIGHT,SQMETERS,SOURCE,IMAGE_DATE,PROD_DATE,VAL_METHOD,LONGITUDE,LATITUDE",
+    "returnGeometry": "true",
+    "outSR": 4326,
+    "geometryPrecision": 7,
+    "f": "json",
+    "spatialRel": "esriSpatialRelIntersects",
+    "inSR": 4326,
+    "geometry": "{\"rings\":[[[-76.3040232,40.0396742],[-76.3038854,40.0390007],[-76.3043518,40.0389489],[-76.3043873,40.039148],[-76.3044449,40.0393881],[-76.3044523,40.0394235],[-76.3044589,40.0394228],[-76.3045009,40.0396241],[-76.3040232,40.0396742]]],\"spatialReference\":{\"wkid\":4326}}",
+    "geometryType": "esriGeometryPolygon"
+   },
+   "response": {
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+     "name": "OBJECTID",
+     "isSystemMaintained": true
+    },
+    "globalIdFieldName": "GlobalID",
+    "geometryProperties": {
+     "shapeAreaFieldName": "Shape__Area",
+     "shapeLengthFieldName": "Shape__Length",
+     "units": "esriMeters"
+    },
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+     "wkid": 4326,
+     "latestWkid": 4326
+    },
+    "features": [
+     {
+      "attributes": {
+       "BUILD_ID": 7225753,
+       "OCC_CLS": "Government",
+       "PRIM_OCC": "General Services",
+       "OUTBLDG": null,
+       "HEIGHT": 22.9,
+       "SQMETERS": 4523.148,
+       "SOURCE": "NGA",
+       "IMAGE_DATE": 1282003200000,
+       "PROD_DATE": 1282003200000,
+       "VAL_METHOD": "Unverified",
+       "LONGITUDE": -76.3040940909295,
+       "LATITUDE": 40.0390298438026
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -76.3040681,
+          40.039682
+         ],
+         [
+          -76.3040613,
+          40.0396482
+         ],
+         [
+          -76.3040278,
+          40.0396522
+         ],
+         [
+          -76.3039073,
+          40.0390497
+         ],
+         [
+          -76.303981,
+          40.039041
+         ],
+         [
+          -76.3039743,
+          40.0390074
+         ],
+         [
+          -76.3039372,
+          40.0390118
+         ],
+         [
+          -76.3039223,
+          40.0389372
+         ],
+         [
+          -76.3038786,
+          40.0389424
+         ],
+         [
+          -76.3038615,
+          40.0388571
+         ],
+         [
+          -76.3038516,
+          40.0388076
+         ],
+         [
+          -76.3038954,
+          40.0388025
+         ],
+         [
+          -76.3038745,
+          40.038698
+         ],
+         [
+          -76.3038267,
+          40.0384591
+         ],
+         [
+          -76.3037926,
+          40.0384632
+         ],
+         [
+          -76.3037864,
+          40.0384322
+         ],
+         [
+          -76.303755,
+          40.0382755
+         ],
+         [
+          -76.3038721,
+          40.0382616
+         ],
+         [
+          -76.303896,
+          40.0383811
+         ],
+         [
+          -76.3039847,
+          40.0383692
+         ],
+         [
+          -76.3039603,
+          40.0382472
+         ],
+         [
+          -76.3040774,
+          40.0382334
+         ],
+         [
+          -76.3041062,
+          40.0383776
+         ],
+         [
+          -76.3041149,
+          40.0384211
+         ],
+         [
+          -76.3040808,
+          40.0384251
+         ],
+         [
+          -76.3041293,
+          40.0386679
+         ],
+         [
+          -76.3041502,
+          40.0387723
+         ],
+         [
+          -76.304189,
+          40.0387678
+         ],
+         [
+          -76.304216,
+          40.0389026
+         ],
+         [
+          -76.3041772,
+          40.0389071
+         ],
+         [
+          -76.3041921,
+          40.0389817
+         ],
+         [
+          -76.3041686,
+          40.0389844
+         ],
+         [
+          -76.3041753,
+          40.039018
+         ],
+         [
+          -76.3043038,
+          40.0390028
+         ],
+         [
+          -76.3043383,
+          40.0391755
+         ],
+         [
+          -76.3043933,
+          40.039169
+         ],
+         [
+          -76.3044078,
+          40.0392413
+         ],
+         [
+          -76.304384,
+          40.0392442
+         ],
+         [
+          -76.304406,
+          40.039354
+         ],
+         [
+          -76.3043747,
+          40.0393577
+         ],
+         [
+          -76.3044243,
+          40.0396054
+         ],
+         [
+          -76.3043907,
+          40.0396093
+         ],
+         [
+          -76.3043974,
+          40.0396431
+         ],
+         [
+          -76.3040681,
+          40.039682
+         ]
+        ]
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "url": "https://epqs.nationalmap.gov/v1/json",
+   "params": {
+    "x": "-76.3043131",
+    "y": "40.0393288",
+    "units": "Meters",
+    "wkid": 4326
+   },
+   "response": {
+    "location": {
+     "x": -76.3043131,
+     "y": 40.0393288,
+     "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+     }
+    },
+    "locationId": 0,
+    "value": "112.415992737",
+    "rasterId": 132669,
+    "resolution": 1
+   }
+  }
+ ],
+ "adapters": {
+  "geocode": {
+   "ok": true,
+   "src": "census",
+   "status": "found",
+   "matches": [
+    {
+     "label": "50 N DUKE ST, LANCASTER, PA, 17602",
+     "lat": 40.0393585,
+     "lon": -76.3039309,
+     "precision": "typed",
+     "geocoder": "census",
+     "basis": "public",
+     "src": "census",
+     "as_of": "2026-11-23",
+     "date_kind": "retrieved",
+     "parts": {
+      "street": "2 N DUKE ST",
+      "city": "LANCASTER",
+      "state": "PA",
+      "zip": "17602"
+     }
+    }
+   ]
+  },
+  "parcels": {
+   "ok": true,
+   "src": "pa_lancaster",
+   "parcels": [
+    {
+     "src": "pa_lancaster",
+     "id": {
+      "county_pin": "332-2373309-260487-0-0000"
+     },
+     "addr": "50 N DUKE ST",
+     "key": "50 N DUKE ST",
+     "label": "50 N Duke St, Lancaster County",
+     "muni": null,
+     "county": "Lancaster",
+     "state": "PA",
+     "ring_ll": [
+      [
+       -76.3040232,
+       40.0396742
+      ],
+      [
+       -76.3038854,
+       40.0390007
+      ],
+      [
+       -76.3043518,
+       40.0389489
+      ],
+      [
+       -76.3043873,
+       40.039148
+      ],
+      [
+       -76.3044449,
+       40.0393881
+      ],
+      [
+       -76.3044523,
+       40.0394235
+      ],
+      [
+       -76.3044589,
+       40.0394228
+      ],
+      [
+       -76.3045009,
+       40.0396241
+      ],
+      [
+       -76.3040232,
+       40.0396742
+      ]
+     ],
+     "centroid": [
+      -76.3043131,
+      40.0393288
+     ],
+     "as_of": "2026-11-23",
+     "date_kind": "retrieved",
+     "facts": [
+      {
+       "k": "land_use",
+       "label": "Land use code",
+       "v": "654",
+       "basis": "public",
+       "src": "pa_lancaster",
+       "source": "Lancaster County parcels (Parcels_HUBnew)",
+       "as_of": "2026-11-23",
+       "date_kind": "retrieved",
+       "n": 1
+      },
+      {
+       "k": "lot_acres",
+       "label": "Lot (acres)",
+       "v": 0.78,
+       "basis": "public",
+       "src": "pa_lancaster",
+       "source": "Lancaster County parcels (Parcels_HUBnew)",
+       "as_of": "2026-11-23",
+       "date_kind": "retrieved",
+       "n": 1
+      },
+      {
+       "k": "tax_exempt",
+       "label": "Tax exempt",
+       "v": "yes",
+       "basis": "public",
+       "src": "pa_lancaster",
+       "source": "Lancaster County parcels (Parcels_HUBnew)",
+       "as_of": "2026-11-23",
+       "date_kind": "retrieved",
+       "n": 1
+      }
+     ],
+     "building_facts": false,
+     "match": "exact",
+     "distance_m": 32.7
+    }
+   ]
+  },
+  "footprints": {
+   "ok": true,
+   "src": "structures",
+   "query": "parcel",
+   "buildings": [
+    {
+     "src": "structures",
+     "build_id": 7225753,
+     "ring_ll": [
+      [
+       -76.3040681,
+       40.039682
+      ],
+      [
+       -76.3040613,
+       40.0396482
+      ],
+      [
+       -76.3040278,
+       40.0396522
+      ],
+      [
+       -76.3039073,
+       40.0390497
+      ],
+      [
+       -76.303981,
+       40.039041
+      ],
+      [
+       -76.3039743,
+       40.0390074
+      ],
+      [
+       -76.3039372,
+       40.0390118
+      ],
+      [
+       -76.3039223,
+       40.0389372
+      ],
+      [
+       -76.3038786,
+       40.0389424
+      ],
+      [
+       -76.3038615,
+       40.0388571
+      ],
+      [
+       -76.3038516,
+       40.0388076
+      ],
+      [
+       -76.3038954,
+       40.0388025
+      ],
+      [
+       -76.3038745,
+       40.038698
+      ],
+      [
+       -76.3038267,
+       40.0384591
+      ],
+      [
+       -76.3037926,
+       40.0384632
+      ],
+      [
+       -76.3037864,
+       40.0384322
+      ],
+      [
+       -76.303755,
+       40.0382755
+      ],
+      [
+       -76.3038721,
+       40.0382616
+      ],
+      [
+       -76.303896,
+       40.0383811
+      ],
+      [
+       -76.3039847,
+       40.0383692
+      ],
+      [
+       -76.3039603,
+       40.0382472
+      ],
+      [
+       -76.3040774,
+       40.0382334
+      ],
+      [
+       -76.3041062,
+       40.0383776
+      ],
+      [
+       -76.3041149,
+       40.0384211
+      ],
+      [
+       -76.3040808,
+       40.0384251
+      ],
+      [
+       -76.3041293,
+       40.0386679
+      ],
+      [
+       -76.3041502,
+       40.0387723
+      ],
+      [
+       -76.304189,
+       40.0387678
+      ],
+      [
+       -76.304216,
+       40.0389026
+      ],
+      [
+       -76.3041772,
+       40.0389071
+      ],
+      [
+       -76.3041921,
+       40.0389817
+      ],
+      [
+       -76.3041686,
+       40.0389844
+      ],
+      [
+       -76.3041753,
+       40.039018
+      ],
+      [
+       -76.3043038,
+       40.0390028
+      ],
+      [
+       -76.3043383,
+       40.0391755
+      ],
+      [
+       -76.3043933,
+       40.039169
+      ],
+      [
+       -76.3044078,
+       40.0392413
+      ],
+      [
+       -76.304384,
+       40.0392442
+      ],
+      [
+       -76.304406,
+       40.039354
+      ],
+      [
+       -76.3043747,
+       40.0393577
+      ],
+      [
+       -76.3044243,
+       40.0396054
+      ],
+      [
+       -76.3043907,
+       40.0396093
+      ],
+      [
+       -76.3043974,
+       40.0396431
+      ],
+      [
+       -76.3040681,
+       40.039682
+      ]
+     ],
+     "centroid": [
+      -76.3040941,
+      40.0390298
+     ],
+     "area_m2": 4523.1,
+     "height_m": 22.9,
+     "height_checked": false,
+     "occupancy": "Government",
+     "use": "General Services",
+     "outbuilding": false,
+     "imagery_source": "NGA",
+     "method": "Unverified",
+     "basis": "public",
+     "as_of": "2010-08-17",
+     "date_kind": "imagery",
+     "produced": "2010-08-17"
+    }
+   ]
+  },
+  "elevation": {
+   "ok": true,
+   "src": "usgs_epqs",
+   "fact": {
+    "k": "ground_elevation_m",
+    "label": "Ground elevation (m)",
+    "v": 112.4,
+    "basis": "public",
+    "src": "usgs_epqs",
+    "source": "Elevation Point Query Service (3DEP)",
+    "as_of": "2026-11-23",
+    "date_kind": "retrieved",
+    "n": 2
+   }
+  }
+ },
+ "card": {
+  "type": "card",
+  "kind": "floor_sketch",
+  "id": "fs-2b83981d",
+  "title": "Floor sketch",
+  "address": "50 N Duke St, Lancaster, PA 17602",
+  "issue": "Not sure (generic checks)",
+  "basis": "likely",
+  "area": {
+   "status": "in",
+   "label": "Inside the Punctual Pros service area (Lancaster County, Lancaster hub)"
+  },
+  "house": {
+   "text": "One story over a full basement. (likely) Built 1978. (likely) Electric heat. (likely)",
+   "year": 1978,
+   "year_basis": "likely",
+   "stories": 1,
+   "foundation": "basement",
+   "basement": "full",
+   "fuel": "electric",
+   "fuel_basis": "likely"
+  },
+  "focus": [
+   "main_water",
+   "panel"
+  ],
+  "floors": [
+   {
+    "id": "basement",
+    "name": "Basement",
+    "w": 523,
+    "h": 129,
+    "rooms": [
+     {
+      "x": 0,
+      "y": 0,
+      "w": 523,
+      "h": 129,
+      "label": "Unfinished basement"
+     }
+    ],
+    "items": [
+     {
+      "kind": "main_water",
+      "label": "Main water shutoff",
+      "short": "W",
+      "basis": "likely",
+      "focus": true,
+      "note": "Front wall where the line comes in from the street, near the water meter",
+      "detail": null,
+      "x": 77.9,
+      "y": 118.8
+     },
+     {
+      "kind": "panel",
+      "label": "Electrical panel",
+      "short": "P",
+      "basis": "likely",
+      "focus": true,
+      "note": "On a side or front wall, near where the power line enters",
+      "detail": null,
+      "x": 31.0,
+      "y": 64.5
+     },
+     {
+      "kind": "water_heater",
+      "label": "Water heater",
+      "short": "WH",
+      "basis": "likely",
+      "focus": false,
+      "note": "Utility corner, near the floor drain",
+      "detail": null,
+      "x": 444.0,
+      "y": 19.5
+     },
+     {
+      "kind": "air_handler",
+      "label": "Air handler",
+      "short": "AH",
+      "basis": "likely",
+      "focus": false,
+      "note": "Center of the basement, where the ducts meet",
+      "detail": null,
+      "x": 261.5,
+      "y": 64.5
+     },
+     {
+      "kind": "sewer_cleanout",
+      "label": "Sewer cleanout",
+      "short": "C",
+      "basis": "likely",
+      "focus": false,
+      "note": "Front wall where the drain leaves for the street",
+      "detail": null,
+      "x": 261.5,
+      "y": 118.8
+     }
+    ],
+    "runs": [
+     {
+      "kind": "water",
+      "label": "Water",
+      "points": [
+       [
+        77.9,
+        118.8
+       ],
+       [
+        444.0,
+        19.5
+       ]
+      ],
+      "basis": "likely"
+     },
+     {
+      "kind": "drain",
+      "label": "Drain",
+      "points": [
+       [
+        261.5,
+        10.2
+       ],
+       [
+        261.5,
+        118.8
+       ]
+      ],
+      "basis": "likely"
+     }
+    ]
+   }
+  ],
+  "outside": [
+   {
+    "kind": "heat_pump",
+    "label": "Heat pump",
+    "short": "HP",
+    "floor": "basement",
+    "side": "right",
+    "at": 0.35,
+    "basis": "likely",
+    "focus": false,
+    "note": "Outside on a pad along a side wall"
+   }
+  ],
+  "front": "bottom",
+  "source_line": "Public record and likely layout. No company record for this address.",
+  "sources": [
+   {
+    "n": 1,
+    "title": "Lancaster County parcels (Parcels_HUBnew)",
+    "publisher": "Lancaster County, Pennsylvania",
+    "url": "https://services1.arcgis.com/I6XnrlnguPDoEObn/arcgis/rest/services/Parcels_HUBnew/FeatureServer/0",
+    "date": "2026-11-23"
+   },
+   {
+    "n": 2,
+    "title": "Elevation Point Query Service (3DEP)",
+    "publisher": "U.S. Geological Survey",
+    "url": "https://epqs.nationalmap.gov/v1/docs",
+    "date": "2026-11-23"
+   },
+   {
+    "n": 3,
+    "title": "USA Structures (building outlines)",
+    "publisher": "FEMA Geospatial Response Office; Oak Ridge National Laboratory",
+    "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0",
+    "date": "2010-08-17"
+   }
+  ],
+  "place": {
+   "label": "50 N Duke St, Lancaster, PA 17602",
+   "lat": 40.0390298,
+   "lon": -76.3040941,
+   "precision": "parcel",
+   "geocoder": "parcel centroid",
+   "basis": "public",
+   "src": 1
+  },
+  "building": {
+   "frame": {
+    "origin": {
+     "lon": -76.3040941,
+     "lat": 40.0390298
+    },
+    "units": "m",
+    "x": "east",
+    "y": "north"
+   },
+   "footprint": {
+    "ring_m": [
+     [
+      2.22,
+      72.6
+     ],
+     [
+      2.8,
+      68.84
+     ],
+     [
+      5.65,
+      69.29
+     ],
+     [
+      15.92,
+      2.22
+     ],
+     [
+      9.64,
+      1.25
+     ],
+     [
+      10.21,
+      -2.49
+     ],
+     [
+      13.37,
+      -2.0
+     ],
+     [
+      14.64,
+      -10.31
+     ],
+     [
+      18.37,
+      -9.73
+     ],
+     [
+      20.67,
+      -24.74
+     ],
+     [
+      16.93,
+      -25.3
+     ],
+     [
+      22.79,
+      -63.53
+     ],
+     [
+      25.7,
+      -63.07
+     ],
+     [
+      28.9,
+      -83.97
+     ],
+     [
+      18.92,
+      -85.52
+     ],
+     [
+      16.88,
+      -72.21
+     ],
+     [
+      9.32,
+      -73.54
+     ],
+     [
+      11.4,
+      -87.12
+     ],
+     [
+      1.42,
+      -88.66
+     ],
+     [
+      -1.77,
+      -67.76
+     ],
+     [
+      1.13,
+      -67.32
+     ],
+     [
+      -4.78,
+      -28.66
+     ],
+     [
+      -8.09,
+      -29.17
+     ],
+     [
+      -10.39,
+      -14.16
+     ],
+     [
+      -7.08,
+      -13.66
+     ],
+     [
+      -8.35,
+      -5.35
+     ],
+     [
+      -6.35,
+      -5.05
+     ],
+     [
+      -6.92,
+      -1.31
+     ],
+     [
+      -17.87,
+      -3.01
+     ],
+     [
+      -20.81,
+      16.22
+     ],
+     [
+      -25.5,
+      15.5
+     ],
+     [
+      -26.74,
+      23.54
+     ],
+     [
+      -24.71,
+      23.87
+     ],
+     [
+      -26.58,
+      36.09
+     ],
+     [
+      -23.91,
+      36.5
+     ],
+     [
+      -28.14,
+      64.08
+     ],
+     [
+      -25.28,
+      64.51
+     ],
+     [
+      -25.85,
+      68.27
+     ],
+     [
+      2.22,
+      72.6
+     ]
+    ],
+    "area_m2": 4528.6,
+    "w_ft": 523,
+    "d_ft": 129,
+    "rot_deg": 99.1,
+    "basis": "public",
+    "src": 3,
+    "as_of": "2010-08-17",
+    "method": "outline from imagery",
+    "outbuildings": []
+   },
+   "height": {
+    "eave_m": 2.7,
+    "ridge_m": 5.3,
+    "from": "storeys",
+    "basis": "likely",
+    "src": 3
+   },
+   "storeys": {
+    "n": 1,
+    "basis": "likely"
+   },
+   "parcel": {
+    "ring_m": [
+     [
+      6.04,
+      71.73
+     ],
+     [
+      17.79,
+      -3.24
+     ],
+     [
+      -21.96,
+      -9.01
+     ],
+     [
+      -24.99,
+      13.16
+     ],
+     [
+      -30.53,
+      43.83
+     ],
+     [
+      -31.09,
+      43.75
+     ],
+     [
+      -34.67,
+      66.16
+     ],
+     [
+      6.04,
+      71.73
+     ]
+    ],
+    "area_m2": 3067.2,
+    "basis": "public",
+    "src": 1
+   },
+   "front": {
+    "bearing_deg": 21,
+    "basis": "public",
+    "from": "geocoded street point"
+   }
+  },
+  "front_basis": "public",
+  "facts": [
+   {
+    "k": "land_use",
+    "label": "Land use code",
+    "v": "654",
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-11-23"
+   },
+   {
+    "k": "lot_acres",
+    "label": "Lot (acres)",
+    "v": 0.78,
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-11-23"
+   },
+   {
+    "k": "tax_exempt",
+    "label": "Tax exempt",
+    "v": "yes",
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-11-23"
+   },
+   {
+    "k": "ground_elevation_m",
+    "label": "Ground elevation (m)",
+    "v": 112.4,
+    "basis": "public",
+    "src": 2,
+    "as_of": "2026-11-23"
+   }
+  ]
+ },
+ "map_command": {
+  "type": "card",
+  "kind": "map_command",
+  "id": "mc-pa_lancaster_outline_only",
+  "cmd": {
+   "title": "50 N Duke St, Lancaster, PA 17602",
+   "source": "site",
+   "steps": [
+    {
+     "kind": "site",
+     "lat": 40.0146,
+     "lon": -76.2464,
+     "label": "Lancaster, PA",
+     "sub": "Town",
+     "precision": "town",
+     "zoom": 12.5,
+     "pitch": 0,
+     "bearing": 0,
+     "hold_ms": 4000
+    },
+    {
+     "kind": "site",
+     "lat": 40.03903,
+     "lon": -76.304094,
+     "label": "50 N Duke St, Lancaster",
+     "sub": "Parcel match · outline from imagery dated Aug 2010",
+     "precision": "parcel",
+     "zoom": 18.5,
+     "pitch": 60,
+     "bearing": 21,
+     "hold_ms": 8000,
+     "outline": [
+      [
+       -76.3040681,
+       40.039682
+      ],
+      [
+       -76.3040612,
+       40.0396482
+      ],
+      [
+       -76.3040278,
+       40.0396522
+      ],
+      [
+       -76.3039073,
+       40.0390497
+      ],
+      [
+       -76.303981,
+       40.039041
+      ],
+      [
+       -76.3039743,
+       40.0390074
+      ],
+      [
+       -76.3039372,
+       40.0390118
+      ],
+      [
+       -76.3039223,
+       40.0389372
+      ],
+      [
+       -76.3038786,
+       40.0389424
+      ],
+      [
+       -76.3038516,
+       40.0388076
+      ],
+      [
+       -76.3038955,
+       40.0388025
+      ],
+      [
+       -76.3038267,
+       40.0384591
+      ],
+      [
+       -76.3037926,
+       40.0384632
+      ],
+      [
+       -76.303755,
+       40.0382755
+      ],
+      [
+       -76.3038721,
+       40.0382616
+      ],
+      [
+       -76.303896,
+       40.0383811
+      ],
+      [
+       -76.3039847,
+       40.0383692
+      ],
+      [
+       -76.3039603,
+       40.0382472
+      ],
+      [
+       -76.3040774,
+       40.0382334
+      ],
+      [
+       -76.3041149,
+       40.0384211
+      ],
+      [
+       -76.3040808,
+       40.0384251
+      ],
+      [
+       -76.3041502,
+       40.0387723
+      ],
+      [
+       -76.304189,
+       40.0387678
+      ],
+      [
+       -76.304216,
+       40.0389026
+      ],
+      [
+       -76.3041772,
+       40.0389071
+      ],
+      [
+       -76.3041921,
+       40.0389817
+      ],
+      [
+       -76.3041686,
+       40.0389844
+      ],
+      [
+       -76.3041753,
+       40.039018
+      ],
+      [
+       -76.3043038,
+       40.0390028
+      ],
+      [
+       -76.3043383,
+       40.0391755
+      ],
+      [
+       -76.3043933,
+       40.039169
+      ],
+      [
+       -76.3044078,
+       40.0392413
+      ],
+      [
+       -76.304384,
+       40.0392442
+      ],
+      [
+       -76.304406,
+       40.039354
+      ],
+      [
+       -76.3043746,
+       40.0393577
+      ],
+      [
+       -76.3044243,
+       40.0396054
+      ],
+      [
+       -76.3043907,
+       40.0396093
+      ],
+      [
+       -76.3043974,
+       40.0396431
+      ],
+      [
+       -76.3040681,
+       40.039682
+      ]
+     ],
+     "height_m": 5.3,
+     "height_basis": "likely"
+    }
+   ]
+  }
+ }
+}

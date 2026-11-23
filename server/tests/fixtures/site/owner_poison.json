@@ -1,0 +1,2624 @@
+{
+ "note": "Synthetic poison for the privacy tests: the recorded responses of nj_full, pa_york_full, pa_franklin_full and pa_lancaster_outline_only with owner, mailing, previous-owner and sale-price keys added to every attribute dict. The strings ZZTEST NAME and ZZTEST STREET must never reach any adapter output, card or map command.",
+ "poison": {
+  "Parcels_Composite_NJ_WM": {
+   "OWNER_NAME": "ZZTEST NAME",
+   "ST_ADDRESS": "ZZTEST STREET",
+   "CITY_STATE": "ZZTEST CITY",
+   "ZIP_CODE": "00000",
+   "SALE_PRICE": 999999
+  },
+  "OPEN_DATA/Parcels": {
+   "OWNER_FULL": "ZZTEST NAME",
+   "OWN_NAME1": "ZZTEST NAME",
+   "MAIL_ADDR1": "ZZTEST STREET",
+   "PREV_OWNER": "ZZTEST NAME",
+   "PRICE": 999999
+  },
+  "FC_TaxRecords": {
+   "FULL_OWNER": "ZZTEST NAME",
+   "OWNER_FNAME1": "ZZTEST NAME",
+   "OWNER_ADDRESS_1": "ZZTEST STREET",
+   "PREVIOUS_OWNER_1": "ZZTEST NAME"
+  },
+  "Parcels_HUBnew": {
+   "OWNER_NAME": "ZZTEST NAME",
+   "OWNERADD1": "ZZTEST STREET",
+   "OWNER_ZIP": "00000",
+   "SALE_PRICE": 999999
+  },
+  "USA_Structures_View": {
+   "PROP_ADDR": "ZZTEST STREET",
+   "OWNER_NAME": "ZZTEST NAME"
+  }
+ },
+ "fixtures": {
+  "nj_full": [
+   {
+    "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+    "params": {
+     "address": "33 Washington St, Toms River, NJ 08753",
+     "benchmark": "Public_AR_Current",
+     "format": "json"
+    },
+    "response": {
+     "result": {
+      "input": {
+       "address": {
+        "address": "33 Washington St, Toms River, NJ 08753"
+       },
+       "benchmark": {
+        "isDefault": true,
+        "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+        "id": "4",
+        "benchmarkName": "Public_AR_Current"
+       }
+      },
+      "addressMatches": [
+       {
+        "tigerLine": {
+         "side": "R",
+         "tigerLineId": "203726988"
+        },
+        "coordinates": {
+         "x": -74.19582959559,
+         "y": 39.952845792204
+        },
+        "addressComponents": {
+         "zip": "08753",
+         "streetName": "WASHINGTON",
+         "preType": "",
+         "city": "TOMS RIVER",
+         "preDirection": "",
+         "suffixDirection": "",
+         "fromAddress": "33",
+         "state": "NJ",
+         "suffixType": "ST",
+         "toAddress": "111",
+         "suffixQualifier": "",
+         "preQualifier": ""
+        },
+        "matchedAddress": "33 WASHINGTON ST, TOMS RIVER, NJ, 08753",
+        "ownerName": "ZZTEST NAME"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "url": "https://services2.arcgis.com/XVOqAjTOJ5P6ngMu/arcgis/rest/services/Parcels_Composite_NJ_WM/FeatureServer/0/query",
+    "params": {
+     "where": "COUNTY='OCEAN' AND MUN_NAME LIKE 'TOMS RIVER%' AND PROP_LOC LIKE '33 WASHINGTON%'",
+     "outFields": "PAMS_PIN,PCL_MUN,PCLBLOCK,PCLLOT,PCLQCODE,PROP_CLASS,COUNTY,MUN_NAME,PROP_LOC,ZIP5,IMPRVT_VAL,BLDG_DESC,LAND_DESC,CALC_ACRE,BLDG_CLASS,YR_CONSTR,DWELL,FAC_NAME,PCL_PBDATE",
+     "returnGeometry": "true",
+     "outSR": 4326,
+     "geometryPrecision": 7,
+     "resultRecordCount": 12,
+     "f": "json"
+    },
+    "response": {
+     "objectIdFieldName": "OBJECTID",
+     "uniqueIdField": {
+      "name": "OBJECTID",
+      "isSystemMaintained": true
+     },
+     "globalIdFieldName": "",
+     "geometryProperties": {
+      "shapeAreaFieldName": "Shape__Area",
+      "shapeLengthFieldName": "Shape__Length",
+      "units": "esriMeters"
+     },
+     "geometryType": "esriGeometryPolygon",
+     "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+     },
+     "features": [
+      {
+       "attributes": {
+        "PAMS_PIN": "1508_663_1",
+        "PCL_MUN": "1508",
+        "PCLBLOCK": "663",
+        "PCLLOT": "1",
+        "PCLQCODE": "",
+        "PROP_CLASS": "15C",
+        "COUNTY": "OCEAN",
+        "MUN_NAME": "TOMS RIVER TWP",
+        "PROP_LOC": "33 WASHINGTON STREET",
+        "ZIP5": "08754",
+        "IMPRVT_VAL": 5124000,
+        "BLDG_DESC": "2SB       15226",
+        "LAND_DESC": "3.462AC",
+        "CALC_ACRE": 3.462,
+        "BLDG_CLASS": "10",
+        "YR_CONSTR": 0,
+        "DWELL": 1,
+        "FAC_NAME": "TOWN HALL",
+        "PCL_PBDATE": 1780549200000,
+        "OWNER_NAME": "ZZTEST NAME",
+        "ST_ADDRESS": "ZZTEST STREET",
+        "CITY_STATE": "ZZTEST CITY",
+        "ZIP_CODE": "00000",
+        "SALE_PRICE": 999999
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -74.196263,
+           39.9521971
+          ],
+          [
+           -74.1963572,
+           39.9519686
+          ],
+          [
+           -74.1964252,
+           39.9519852
+          ],
+          [
+           -74.1966586,
+           39.9514186
+          ],
+          [
+           -74.1967674,
+           39.9513803
+          ],
+          [
+           -74.1975793,
+           39.9516491
+          ],
+          [
+           -74.1976019,
+           39.9516862
+          ],
+          [
+           -74.1975454,
+           39.9518324
+          ],
+          [
+           -74.1974879,
+           39.9518441
+          ],
+          [
+           -74.197227,
+           39.9517843
+          ],
+          [
+           -74.1971553,
+           39.9519694
+          ],
+          [
+           -74.1969827,
+           39.9519298
+          ],
+          [
+           -74.1969399,
+           39.9520403
+          ],
+          [
+           -74.1971125,
+           39.9520799
+          ],
+          [
+           -74.1971207,
+           39.9520586
+          ],
+          [
+           -74.1974301,
+           39.9521296
+          ],
+          [
+           -74.1970679,
+           39.9530648
+          ],
+          [
+           -74.1964161,
+           39.9529184
+          ],
+          [
+           -74.1965254,
+           39.9526301
+          ],
+          [
+           -74.1962036,
+           39.9525578
+          ],
+          [
+           -74.196344,
+           39.9522169
+          ],
+          [
+           -74.196263,
+           39.9521971
+          ]
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   {
+    "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0/query",
+    "params": {
+     "outFields": "BUILD_ID,OCC_CLS,PRIM_OCC,OUTBLDG,HEIGHT,SQMETERS,SOURCE,IMAGE_DATE,PROD_DATE,VAL_METHOD,LONGITUDE,LATITUDE",
+     "returnGeometry": "true",
+     "outSR": 4326,
+     "geometryPrecision": 7,
+     "f": "json",
+     "spatialRel": "esriSpatialRelIntersects",
+     "inSR": 4326,
+     "geometry": "{\"rings\":[[[-74.196263,39.9521971],[-74.1963572,39.9519686],[-74.1964252,39.9519852],[-74.1966586,39.9514186],[-74.1967674,39.9513803],[-74.1975793,39.9516491],[-74.1976019,39.9516862],[-74.1975454,39.9518324],[-74.1974879,39.9518441],[-74.197227,39.9517843],[-74.1971553,39.9519694],[-74.1969827,39.9519298],[-74.1969399,39.9520403],[-74.1971125,39.9520799],[-74.1971207,39.9520586],[-74.1974301,39.9521296],[-74.1970679,39.9530648],[-74.1964161,39.9529184],[-74.1965254,39.9526301],[-74.1962036,39.9525578],[-74.196344,39.9522169],[-74.196263,39.9521971]]],\"spatialReference\":{\"wkid\":4326}}",
+     "geometryType": "esriGeometryPolygon"
+    },
+    "response": {
+     "objectIdFieldName": "OBJECTID",
+     "uniqueIdField": {
+      "name": "OBJECTID",
+      "isSystemMaintained": true
+     },
+     "globalIdFieldName": "GlobalID",
+     "geometryProperties": {
+      "shapeAreaFieldName": "Shape__Area",
+      "shapeLengthFieldName": "Shape__Length",
+      "units": "esriMeters"
+     },
+     "geometryType": "esriGeometryPolygon",
+     "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+     },
+     "features": [
+      {
+       "attributes": {
+        "BUILD_ID": 9520271,
+        "OCC_CLS": "Government",
+        "PRIM_OCC": "General Services",
+        "OUTBLDG": null,
+        "HEIGHT": null,
+        "SQMETERS": 3447.562,
+        "SOURCE": "ORNL",
+        "IMAGE_DATE": 1722643200000,
+        "PROD_DATE": 1750118400000,
+        "VAL_METHOD": "Spatial Intersect",
+        "LONGITUDE": -74.19670272678587,
+        "LATITUDE": 39.95177906082682,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -74.196816,
+           39.9521175
+          ],
+          [
+           -74.1968409,
+           39.9521241
+          ],
+          [
+           -74.1968126,
+           39.952188
+          ],
+          [
+           -74.196314,
+           39.9520574
+          ],
+          [
+           -74.1966167,
+           39.951373
+          ],
+          [
+           -74.1970904,
+           39.9514971
+          ],
+          [
+           -74.196816,
+           39.9521175
+          ]
+         ]
+        ]
+       }
+      },
+      {
+       "attributes": {
+        "BUILD_ID": 9520410,
+        "OCC_CLS": "Government",
+        "PRIM_OCC": "General Services",
+        "OUTBLDG": null,
+        "HEIGHT": null,
+        "SQMETERS": 2092.638,
+        "SOURCE": "ORNL",
+        "IMAGE_DATE": 1722643200000,
+        "PROD_DATE": 1750118400000,
+        "VAL_METHOD": "Spatial Intersect",
+        "LONGITUDE": -74.19672763615479,
+        "LATITUDE": 39.95256889922565,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -74.196435,
+           39.9522506
+          ],
+          [
+           -74.1966179,
+           39.9522985
+          ],
+          [
+           -74.1966094,
+           39.9523176
+          ],
+          [
+           -74.1970915,
+           39.9524439
+          ],
+          [
+           -74.1970349,
+           39.9525719
+          ],
+          [
+           -74.1969684,
+           39.9525544
+          ],
+          [
+           -74.1967732,
+           39.9529958
+          ],
+          [
+           -74.1966319,
+           39.9529588
+          ],
+          [
+           -74.1965771,
+           39.9528731
+          ],
+          [
+           -74.1966718,
+           39.9528372
+          ],
+          [
+           -74.1966306,
+           39.9527729
+          ],
+          [
+           -74.1967353,
+           39.9525362
+          ],
+          [
+           -74.1966854,
+           39.9525231
+          ],
+          [
+           -74.1966798,
+           39.9525359
+          ],
+          [
+           -74.1963473,
+           39.9524488
+          ],
+          [
+           -74.196435,
+           39.9522506
+          ]
+         ]
+        ]
+       }
+      },
+      {
+       "attributes": {
+        "BUILD_ID": 9520278,
+        "OCC_CLS": "Government",
+        "PRIM_OCC": "General Services",
+        "OUTBLDG": null,
+        "HEIGHT": null,
+        "SQMETERS": 90.00056,
+        "SOURCE": "ORNL",
+        "IMAGE_DATE": 1722643200000,
+        "PROD_DATE": 1750118400000,
+        "VAL_METHOD": "Spatial Intersect",
+        "LONGITUDE": -74.19707319510671,
+        "LATITUDE": 39.95213475378459,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -74.1970538,
+           39.9520728
+          ],
+          [
+           -74.1971371,
+           39.9520942
+          ],
+          [
+           -74.1970926,
+           39.9521967
+          ],
+          [
+           -74.1970093,
+           39.9521753
+          ],
+          [
+           -74.1970538,
+           39.9520728
+          ]
+         ]
+        ]
+       }
+      },
+      {
+       "attributes": {
+        "BUILD_ID": 9519470,
+        "OCC_CLS": "Commercial",
+        "PRIM_OCC": "Retail Trade",
+        "OUTBLDG": null,
+        "HEIGHT": null,
+        "SQMETERS": 607.5009,
+        "SOURCE": "ORNL",
+        "IMAGE_DATE": 1722643200000,
+        "PROD_DATE": 1750118400000,
+        "VAL_METHOD": "Spatial Intersect",
+        "LONGITUDE": -74.19728514506433,
+        "LATITUDE": 39.95195268669851,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -74.1971574,
+           39.9518176
+          ],
+          [
+           -74.1974569,
+           39.9518953
+          ],
+          [
+           -74.1974344,
+           39.9519465
+          ],
+          [
+           -74.1974677,
+           39.9519551
+          ],
+          [
+           -74.1974089,
+           39.9520896
+          ],
+          [
+           -74.1971426,
+           39.9520205
+          ],
+          [
+           -74.1971594,
+           39.9519821
+          ],
+          [
+           -74.1970929,
+           39.9519649
+          ],
+          [
+           -74.1971574,
+           39.9518176
+          ]
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   {
+    "url": "https://data.nj.gov/resource/w9se-dmra.json",
+    "params": {
+     "$where": "treasurycode='1508' AND block in('663','00663') AND lot in('1','00001')",
+     "$select": "permitdate,certdate,status,permittypedesc,update,buildfee,plumbfee,electfee,firefee,otherfee,constcost,usegroup,processdate",
+     "$order": "permitdate DESC",
+     "$limit": 60
+    },
+    "response": [
+     {
+      "permitdate": "2022-11-02T00:00:00.000",
+      "status": "P",
+      "permittypedesc": "Alteration",
+      "buildfee": "0",
+      "plumbfee": "0",
+      "electfee": "0",
+      "firefee": "0",
+      "otherfee": "0",
+      "constcost": "1005",
+      "usegroup": "R-5",
+      "processdate": "2022-12-07T00:00:00.000"
+     },
+     {
+      "permitdate": "2022-03-16T00:00:00.000",
+      "status": "P",
+      "permittypedesc": "Alteration",
+      "update": "X",
+      "buildfee": "0",
+      "plumbfee": "0",
+      "electfee": "0",
+      "firefee": "0",
+      "otherfee": "0",
+      "constcost": "5000",
+      "usegroup": "R-5",
+      "processdate": "2022-04-07T00:00:00.000"
+     },
+     {
+      "permitdate": "2022-03-01T00:00:00.000",
+      "certdate": "2022-04-28T00:00:00.000",
+      "status": "C",
+      "permittypedesc": "Alteration",
+      "buildfee": "0",
+      "plumbfee": "0",
+      "electfee": "0",
+      "firefee": "0",
+      "otherfee": "0",
+      "constcost": "2568",
+      "usegroup": "R-5",
+      "processdate": "2022-05-09T00:00:00.000"
+     },
+     {
+      "permitdate": "2021-08-19T00:00:00.000",
+      "status": "P",
+      "permittypedesc": "Alteration",
+      "update": "X",
+      "buildfee": "0",
+      "plumbfee": "0",
+      "electfee": "0",
+      "firefee": "0",
+      "otherfee": "0",
+      "constcost": "53000",
+      "usegroup": "R-5",
+      "processdate": "2021-09-07T00:00:00.000"
+     },
+     {
+      "permitdate": "2021-08-11T00:00:00.000",
+      "certdate": "2022-05-02T00:00:00.000",
+      "status": "C",
+      "permittypedesc": "Alteration",
+      "buildfee": "0",
+      "plumbfee": "0",
+      "electfee": "0",
+      "firefee": "0",
+      "otherfee": "0",
+      "constcost": "1446002",
+      "usegroup": "R-5",
+      "processdate": "2022-05-09T00:00:00.000"
+     }
+    ]
+   },
+   {
+    "url": "https://epqs.nationalmap.gov/v1/json",
+    "params": {
+     "x": "-74.1969148",
+     "y": "39.9520639",
+     "units": "Meters",
+     "wkid": 4326
+    },
+    "response": {
+     "location": {
+      "x": -74.1969148,
+      "y": 39.9520639,
+      "spatialReference": {
+       "wkid": 4326,
+       "latestWkid": 4326
+      }
+     },
+     "locationId": 0,
+     "value": "7.860585213",
+     "rasterId": 86804,
+     "resolution": 1
+    }
+   }
+  ],
+  "pa_york_full": [
+   {
+    "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+    "params": {
+     "address": "45 N George St, York, PA 17401",
+     "benchmark": "Public_AR_Current",
+     "format": "json"
+    },
+    "response": {
+     "result": {
+      "input": {
+       "address": {
+        "address": "45 N George St, York, PA 17401"
+       },
+       "benchmark": {
+        "isDefault": true,
+        "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+        "id": "4",
+        "benchmarkName": "Public_AR_Current"
+       }
+      },
+      "addressMatches": [
+       {
+        "tigerLine": {
+         "side": "R",
+         "tigerLineId": "88730717"
+        },
+        "coordinates": {
+         "x": -76.728146800555,
+         "y": 39.963389182463
+        },
+        "addressComponents": {
+         "zip": "17401",
+         "streetName": "GEORGE",
+         "preType": "",
+         "city": "YORK",
+         "preDirection": "N",
+         "suffixDirection": "",
+         "fromAddress": "27",
+         "state": "PA",
+         "suffixType": "ST",
+         "toAddress": "99",
+         "suffixQualifier": "",
+         "preQualifier": ""
+        },
+        "matchedAddress": "45 N GEORGE ST, YORK, PA, 17401",
+        "ownerName": "ZZTEST NAME"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "url": "https://arcweb1.ycpc.org/server/rest/services/OPEN_DATA/Parcels/FeatureServer/0/query",
+    "params": {
+     "where": "PROPADR LIKE '45 N GEORGE%'",
+     "outFields": "PIDN,PROPADR,CLASS,LUC,ACRES,STYLE,NUM_STORIE,RES_LIVING_AREA,YRBLT,HEATSYS,FUEL,UTILITY,APRBLDG,COMM_STRUC,COMM_YEAR_BUILT,COMM_BUILDING_SQ_FT",
+     "returnGeometry": "true",
+     "outSR": 4326,
+     "geometryPrecision": 7,
+     "resultRecordCount": 12,
+     "f": "json"
+    },
+    "response": {
+     "objectIdFieldName": "OBJECTID",
+     "globalIdFieldName": "GlobalID",
+     "geometryType": "esriGeometryPolygon",
+     "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+     },
+     "features": [
+      {
+       "attributes": {
+        "PIDN": "0202101001500",
+        "PROPADR": "45 N GEORGE ST",
+        "CLASS": "E",
+        "LUC": "663",
+        "ACRES": 1.36,
+        "STYLE": null,
+        "NUM_STORIE": null,
+        "RES_LIVING_AREA": null,
+        "YRBLT": null,
+        "HEATSYS": null,
+        "FUEL": null,
+        "UTILITY": "All Public",
+        "APRBLDG": 0.0,
+        "COMM_STRUC": "354",
+        "COMM_YEAR_BUILT": 2005,
+        "COMM_BUILDING_SQ_FT": 120389,
+        "OWNER_FULL": "ZZTEST NAME",
+        "OWN_NAME1": "ZZTEST NAME",
+        "MAIL_ADDR1": "ZZTEST STREET",
+        "PREV_OWNER": "ZZTEST NAME",
+        "PRICE": 999999
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -76.7283064,
+           39.9638626
+          ],
+          [
+           -76.7280527,
+           39.9639323
+          ],
+          [
+           -76.727713,
+           39.9640343
+          ],
+          [
+           -76.7274643,
+           39.9641147
+          ],
+          [
+           -76.7272944,
+           39.9637935
+          ],
+          [
+           -76.7272562,
+           39.9637197
+          ],
+          [
+           -76.7272181,
+           39.9636485
+          ],
+          [
+           -76.7271799,
+           39.9635747
+          ],
+          [
+           -76.7271409,
+           39.9635009
+          ],
+          [
+           -76.7280334,
+           39.9632258
+          ],
+          [
+           -76.7281261,
+           39.9634
+          ],
+          [
+           -76.7282998,
+           39.9637299
+          ],
+          [
+           -76.7283501,
+           39.9638335
+          ],
+          [
+           -76.7283358,
+           39.9638496
+          ],
+          [
+           -76.7283064,
+           39.9638626
+          ]
+         ]
+        ],
+        "ids": [
+         [
+          374361,
+          374362,
+          374363,
+          374364,
+          374351,
+          374352,
+          374353,
+          374354,
+          374355,
+          374356,
+          374357,
+          374358,
+          374359,
+          374360,
+          374361
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   {
+    "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0/query",
+    "params": {
+     "outFields": "BUILD_ID,OCC_CLS,PRIM_OCC,OUTBLDG,HEIGHT,SQMETERS,SOURCE,IMAGE_DATE,PROD_DATE,VAL_METHOD,LONGITUDE,LATITUDE",
+     "returnGeometry": "true",
+     "outSR": 4326,
+     "geometryPrecision": 7,
+     "f": "json",
+     "spatialRel": "esriSpatialRelIntersects",
+     "inSR": 4326,
+     "geometry": "{\"rings\":[[[-76.7283064,39.9638626],[-76.7280527,39.9639323],[-76.727713,39.9640343],[-76.7274643,39.9641147],[-76.7272944,39.9637935],[-76.7272562,39.9637197],[-76.7272181,39.9636485],[-76.7271799,39.9635747],[-76.7271409,39.9635009],[-76.7280334,39.9632258],[-76.7281261,39.9634],[-76.7282998,39.9637299],[-76.7283501,39.9638335],[-76.7283358,39.9638496],[-76.7283064,39.9638626]]],\"spatialReference\":{\"wkid\":4326}}",
+     "geometryType": "esriGeometryPolygon"
+    },
+    "response": {
+     "objectIdFieldName": "OBJECTID",
+     "uniqueIdField": {
+      "name": "OBJECTID",
+      "isSystemMaintained": true
+     },
+     "globalIdFieldName": "GlobalID",
+     "geometryProperties": {
+      "shapeAreaFieldName": "Shape__Area",
+      "shapeLengthFieldName": "Shape__Length",
+      "units": "esriMeters"
+     },
+     "geometryType": "esriGeometryPolygon",
+     "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+     },
+     "features": [
+      {
+       "attributes": {
+        "BUILD_ID": 50323399,
+        "OCC_CLS": "Government",
+        "PRIM_OCC": "General Services",
+        "OUTBLDG": null,
+        "HEIGHT": null,
+        "SQMETERS": 15194.67,
+        "SOURCE": "ORNL",
+        "IMAGE_DATE": 1679788800000,
+        "PROD_DATE": 1754352000000,
+        "VAL_METHOD": "Spatial Intersect",
+        "LONGITUDE": -76.72745510690616,
+        "LATITUDE": 39.96342567588298,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -76.7272967,
+           39.963383
+          ],
+          [
+           -76.7272323,
+           39.9634005
+          ],
+          [
+           -76.7272406,
+           39.9634185
+          ],
+          [
+           -76.7270532,
+           39.9634692
+          ],
+          [
+           -76.7269357,
+           39.9632124
+          ],
+          [
+           -76.7269181,
+           39.9632171
+          ],
+          [
+           -76.7267862,
+           39.9629288
+          ],
+          [
+           -76.7267466,
+           39.9629142
+          ],
+          [
+           -76.7268149,
+           39.9628045
+          ],
+          [
+           -76.727178,
+           39.9627062
+          ],
+          [
+           -76.7271698,
+           39.9626882
+          ],
+          [
+           -76.7274684,
+           39.9626073
+          ],
+          [
+           -76.7275488,
+           39.962783
+          ],
+          [
+           -76.7276542,
+           39.9627545
+          ],
+          [
+           -76.727648,
+           39.9627409
+          ],
+          [
+           -76.7278237,
+           39.9626934
+          ],
+          [
+           -76.7279906,
+           39.9630583
+          ],
+          [
+           -76.7279672,
+           39.9630647
+          ],
+          [
+           -76.7279857,
+           39.9631052
+          ],
+          [
+           -76.7280267,
+           39.9630941
+          ],
+          [
+           -76.7281813,
+           39.9634321
+          ],
+          [
+           -76.7282106,
+           39.9634241
+          ],
+          [
+           -76.7283157,
+           39.963654
+          ],
+          [
+           -76.7282864,
+           39.9636619
+          ],
+          [
+           -76.7283318,
+           39.963761
+          ],
+          [
+           -76.7282615,
+           39.96378
+          ],
+          [
+           -76.728278,
+           39.9638161
+          ],
+          [
+           -76.727833,
+           39.9639366
+          ],
+          [
+           -76.7277221,
+           39.9638958
+          ],
+          [
+           -76.7276576,
+           39.9639993
+          ],
+          [
+           -76.727441,
+           39.964058
+          ],
+          [
+           -76.7273812,
+           39.9639273
+          ],
+          [
+           -76.7273337,
+           39.9639098
+          ],
+          [
+           -76.7272919,
+           39.9639768
+          ],
+          [
+           -76.7273553,
+           39.9640002
+          ],
+          [
+           -76.7273986,
+           39.9640948
+          ],
+          [
+           -76.727217,
+           39.964144
+          ],
+          [
+           -76.7272108,
+           39.9641304
+          ],
+          [
+           -76.7269473,
+           39.9642018
+          ],
+          [
+           -76.7269618,
+           39.9642334
+          ],
+          [
+           -76.7265519,
+           39.9643444
+          ],
+          [
+           -76.7265003,
+           39.9642317
+          ],
+          [
+           -76.726676,
+           39.9641842
+          ],
+          [
+           -76.7266801,
+           39.9641932
+          ],
+          [
+           -76.7268851,
+           39.9641377
+          ],
+          [
+           -76.7268974,
+           39.9641647
+          ],
+          [
+           -76.726956,
+           39.9641488
+          ],
+          [
+           -76.7269333,
+           39.9640993
+          ],
+          [
+           -76.7269626,
+           39.9640913
+          ],
+          [
+           -76.726942,
+           39.9640463
+          ],
+          [
+           -76.726901,
+           39.9640574
+          ],
+          [
+           -76.7268392,
+           39.9639222
+          ],
+          [
+           -76.7268685,
+           39.9639143
+          ],
+          [
+           -76.7268314,
+           39.9638332
+          ],
+          [
+           -76.7267962,
+           39.9638427
+          ],
+          [
+           -76.7267694,
+           39.9637841
+          ],
+          [
+           -76.726746,
+           39.9637904
+          ],
+          [
+           -76.7267254,
+           39.9637454
+          ],
+          [
+           -76.7266961,
+           39.9637533
+          ],
+          [
+           -76.7266652,
+           39.9636857
+          ],
+          [
+           -76.7267823,
+           39.963654
+          ],
+          [
+           -76.726772,
+           39.9636315
+          ],
+          [
+           -76.7268774,
+           39.9636029
+          ],
+          [
+           -76.7268671,
+           39.9635804
+          ],
+          [
+           -76.7270486,
+           39.9635312
+          ],
+          [
+           -76.7270672,
+           39.9635718
+          ],
+          [
+           -76.7270789,
+           39.9635686
+          ],
+          [
+           -76.7271407,
+           39.9637038
+          ],
+          [
+           -76.7271115,
+           39.9637117
+          ],
+          [
+           -76.7271465,
+           39.9637883
+          ],
+          [
+           -76.7272753,
+           39.9637534
+          ],
+          [
+           -76.7271784,
+           39.9635417
+          ],
+          [
+           -76.727237,
+           39.9635258
+          ],
+          [
+           -76.7272143,
+           39.9634762
+          ],
+          [
+           -76.7273197,
+           39.9634477
+          ],
+          [
+           -76.7273136,
+           39.9634342
+          ],
+          [
+           -76.7275302,
+           39.9633755
+          ],
+          [
+           -76.7275075,
+           39.9633259
+          ],
+          [
+           -76.727449,
+           39.9633418
+          ],
+          [
+           -76.7273461,
+           39.9633038
+          ],
+          [
+           -76.7272967,
+           39.963383
+          ]
+         ],
+         [
+          [
+           -76.7273238,
+           39.9638163
+          ],
+          [
+           -76.7273011,
+           39.9637667
+          ],
+          [
+           -76.7272836,
+           39.9637715
+          ],
+          [
+           -76.7273062,
+           39.963821
+          ],
+          [
+           -76.7273238,
+           39.9638163
+          ]
+         ],
+         [
+          [
+           -76.72732,
+           39.9638224
+          ],
+          [
+           -76.7273365,
+           39.9638584
+          ],
+          [
+           -76.7273541,
+           39.9638536
+          ],
+          [
+           -76.7273376,
+           39.9638176
+          ],
+          [
+           -76.72732,
+           39.9638224
+          ]
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   {
+    "url": "https://epqs.nationalmap.gov/v1/json",
+    "params": {
+     "x": "-76.7277694",
+     "y": "39.9637300",
+     "units": "Meters",
+     "wkid": 4326
+    },
+    "response": {
+     "location": {
+      "x": -76.7277694,
+      "y": 39.96373,
+      "spatialReference": {
+       "wkid": 4326,
+       "latestWkid": 4326
+      }
+     },
+     "locationId": 0,
+     "value": "118.400001526",
+     "rasterId": 22829,
+     "resolution": 1
+    }
+   }
+  ],
+  "pa_franklin_full": [
+   {
+    "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+    "params": {
+     "address": "157 Lincoln Way E, Chambersburg, PA 17201",
+     "benchmark": "Public_AR_Current",
+     "format": "json"
+    },
+    "response": {
+     "result": {
+      "input": {
+       "address": {
+        "address": "157 Lincoln Way E, Chambersburg, PA 17201"
+       },
+       "benchmark": {
+        "isDefault": true,
+        "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+        "id": "4",
+        "benchmarkName": "Public_AR_Current"
+       }
+      },
+      "addressMatches": [
+       {
+        "tigerLine": {
+         "side": "R",
+         "tigerLineId": "60095128"
+        },
+        "coordinates": {
+         "x": -77.659634419248,
+         "y": 39.937339309803
+        },
+        "addressComponents": {
+         "zip": "17201",
+         "streetName": "LINCOLN",
+         "preType": "",
+         "city": "CHAMBERSBURG",
+         "preDirection": "",
+         "suffixDirection": "E",
+         "fromAddress": "199",
+         "state": "PA",
+         "suffixType": "WAY",
+         "toAddress": "101",
+         "suffixQualifier": "",
+         "preQualifier": ""
+        },
+        "matchedAddress": "157 LINCOLN WAY E, CHAMBERSBURG, PA, 17201",
+        "ownerName": "ZZTEST NAME"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "url": "https://fcgis.franklincountypa.gov/fcgishosting/rest/services/TaxRecords/FC_TaxRecords/MapServer/0/query",
+    "params": {
+     "where": "FULL_SITUS_ADDR LIKE '157 LINCOLN%'",
+     "outFields": "CONTROL_NUMBER,FULL_SITUS_ADDR,REM_PRCL_LOCN_CITY,REM_PRCL_LOCN_ZIP,LAND_USE_CODE,LAND_USE_DESC,YEAR_BUILT,CNS_AREA_LIVING,CNS_STORIES,CNS_STYLE_DESC,CNS_BASEMENT,HEAT_SOURCE,HEAT_DISTRIBUTION,ATTACHED_GARAGE,ATTACHED_GARAGE_AREA_SQFT,TOTAL_NUMBER_OF_BEDROOMS,PRC_TTL_ASSESS_BLDG,TOTAL_DEEDED_ACRES,COMM_OUTBLDG_1_USE,COMM_OUTBLDG_1_SQ_FT,COMM_OUTBLDG_1_STORIES",
+     "returnGeometry": "true",
+     "outSR": 4326,
+     "geometryPrecision": 7,
+     "resultRecordCount": 12,
+     "f": "json"
+    },
+    "response": {
+     "displayFieldName": "Name",
+     "fieldAliases": {
+      "CONTROL_NUMBER": "CONTROL NUMBER",
+      "FULL_SITUS_ADDR": "FULL_SITUS_ADDR",
+      "REM_PRCL_LOCN_CITY": "SITUS POSTAL CITY",
+      "REM_PRCL_LOCN_ZIP": "SITUS ZIP",
+      "LAND_USE_CODE": "LAND USE CODE",
+      "LAND_USE_DESC": "LAND USE DESCRIPTION",
+      "YEAR_BUILT": "DWELLING BUILT",
+      "CNS_AREA_LIVING": "DWELLING AREA",
+      "CNS_STORIES": "DWELLING STORIES",
+      "CNS_STYLE_DESC": "DWELLING STYLE",
+      "CNS_BASEMENT": "BASEMENT PRCT",
+      "HEAT_SOURCE": "HEAT SOURCE",
+      "HEAT_DISTRIBUTION": "HEATING DISTRIBUTION",
+      "ATTACHED_GARAGE": "ATTACHED GARAGE",
+      "ATTACHED_GARAGE_AREA_SQFT": "ATTACHED GARAGE SQ FT",
+      "TOTAL_NUMBER_OF_BEDROOMS": "TOTAL BEDS",
+      "PRC_TTL_ASSESS_BLDG": "BLDG ASSESSMENT",
+      "TOTAL_DEEDED_ACRES": "DEEDED ACRES",
+      "COMM_OUTBLDG_1_USE": "COMMERCIAL OUTBUILDING 1 USE",
+      "COMM_OUTBLDG_1_SQ_FT": "COMMERCIAL OUTBUILDING 1 SQ FT",
+      "COMM_OUTBLDG_1_STORIES": "COMMERCIAL OUTBUILDING 1 STORIES"
+     },
+     "geometryType": "esriGeometryPolygon",
+     "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+     },
+     "features": [
+      {
+       "attributes": {
+        "CONTROL_NUMBER": "00006546",
+        "FULL_SITUS_ADDR": "157 LINCOLN WAY EAST  CHAMBERSBURG PA 17201",
+        "REM_PRCL_LOCN_CITY": "CHAMBERSBURG",
+        "REM_PRCL_LOCN_ZIP": "17201",
+        "LAND_USE_CODE": 604,
+        "LAND_USE_DESC": "OTHER MISCELLANEOUS, EXEMPT",
+        "YEAR_BUILT": null,
+        "CNS_AREA_LIVING": null,
+        "CNS_STORIES": null,
+        "CNS_STYLE_DESC": null,
+        "CNS_BASEMENT": null,
+        "HEAT_SOURCE": null,
+        "HEAT_DISTRIBUTION": null,
+        "ATTACHED_GARAGE": "YES",
+        "ATTACHED_GARAGE_AREA_SQFT": null,
+        "TOTAL_NUMBER_OF_BEDROOMS": null,
+        "PRC_TTL_ASSESS_BLDG": 0,
+        "TOTAL_DEEDED_ACRES": 0,
+        "COMM_OUTBLDG_1_USE": "Other",
+        "COMM_OUTBLDG_1_SQ_FT": 46528,
+        "COMM_OUTBLDG_1_STORIES": "4",
+        "FULL_OWNER": "ZZTEST NAME",
+        "OWNER_FNAME1": "ZZTEST NAME",
+        "OWNER_ADDRESS_1": "ZZTEST STREET",
+        "PREVIOUS_OWNER_1": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -77.66101,
+           39.9382871
+          ],
+          [
+           -77.6610059,
+           39.9383028
+          ],
+          [
+           -77.6609987,
+           39.9383359
+          ],
+          [
+           -77.6609846,
+           39.9384009
+          ],
+          [
+           -77.660974,
+           39.9384496
+          ],
+          [
+           -77.6609682,
+           39.9384761
+          ],
+          [
+           -77.6609493,
+           39.9385627
+          ],
+          [
+           -77.6600467,
+           39.9384437
+          ],
+          [
+           -77.6600186,
+           39.93844
+          ],
+          [
+           -77.6600375,
+           39.9383527
+          ],
+          [
+           -77.6600277,
+           39.9383512
+          ],
+          [
+           -77.6600625,
+           39.9381691
+          ],
+          [
+           -77.6593707,
+           39.9380774
+          ],
+          [
+           -77.6593776,
+           39.9380477
+          ],
+          [
+           -77.6594105,
+           39.9379017
+          ],
+          [
+           -77.659396,
+           39.9379018
+          ],
+          [
+           -77.6593635,
+           39.9380458
+          ],
+          [
+           -77.6591526,
+           39.9380181
+          ],
+          [
+           -77.6591839,
+           39.9378736
+          ],
+          [
+           -77.659207,
+           39.9377668
+          ],
+          [
+           -77.6592643,
+           39.9375024
+          ],
+          [
+           -77.6593832,
+           39.9375183
+          ],
+          [
+           -77.6593265,
+           39.9377825
+          ],
+          [
+           -77.6594202,
+           39.9377948
+          ],
+          [
+           -77.6594342,
+           39.9377967
+          ],
+          [
+           -77.659488,
+           39.9375582
+          ],
+          [
+           -77.659535,
+           39.9373498
+          ],
+          [
+           -77.659647,
+           39.9373649
+          ],
+          [
+           -77.6597589,
+           39.93738
+          ],
+          [
+           -77.6599828,
+           39.9374103
+          ],
+          [
+           -77.6602067,
+           39.9374405
+          ],
+          [
+           -77.6602629,
+           39.9374481
+          ],
+          [
+           -77.6608354,
+           39.9375254
+          ],
+          [
+           -77.6609953,
+           39.937545
+          ],
+          [
+           -77.6611124,
+           39.9376708
+          ],
+          [
+           -77.6610987,
+           39.9377349
+          ],
+          [
+           -77.6610645,
+           39.9378919
+          ],
+          [
+           -77.6610615,
+           39.9379082
+          ],
+          [
+           -77.661091,
+           39.9379121
+          ],
+          [
+           -77.6610721,
+           39.9379986
+          ],
+          [
+           -77.6610533,
+           39.9380852
+          ],
+          [
+           -77.6610167,
+           39.9382531
+          ],
+          [
+           -77.66101,
+           39.9382871
+          ]
+         ]
+        ],
+        "ids": [
+         [
+          1039238,
+          213687,
+          213686,
+          213817,
+          213816,
+          213833,
+          213929,
+          213928,
+          214510,
+          214509,
+          1038842,
+          1039239,
+          1038837,
+          213295,
+          1039240,
+          213102,
+          213269,
+          213270,
+          213103,
+          212923,
+          212538,
+          212541,
+          212924,
+          212949,
+          212950,
+          1039241,
+          212951,
+          213296,
+          213312,
+          213372,
+          213375,
+          212999,
+          213005,
+          1038845,
+          1038846,
+          1038847,
+          1038848,
+          1039237,
+          213233,
+          213235,
+          213318,
+          213588,
+          1039238
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   {
+    "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0/query",
+    "params": {
+     "outFields": "BUILD_ID,OCC_CLS,PRIM_OCC,OUTBLDG,HEIGHT,SQMETERS,SOURCE,IMAGE_DATE,PROD_DATE,VAL_METHOD,LONGITUDE,LATITUDE",
+     "returnGeometry": "true",
+     "outSR": 4326,
+     "geometryPrecision": 7,
+     "f": "json",
+     "spatialRel": "esriSpatialRelIntersects",
+     "inSR": 4326,
+     "geometry": "-77.6611124,39.9373498,-77.6591526,39.9385627",
+     "geometryType": "esriGeometryEnvelope"
+    },
+    "response": {
+     "objectIdFieldName": "OBJECTID",
+     "uniqueIdField": {
+      "name": "OBJECTID",
+      "isSystemMaintained": true
+     },
+     "globalIdFieldName": "GlobalID",
+     "geometryProperties": {
+      "shapeAreaFieldName": "Shape__Area",
+      "shapeLengthFieldName": "Shape__Length",
+      "units": "esriMeters"
+     },
+     "geometryType": "esriGeometryPolygon",
+     "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+     },
+     "features": [
+      {
+       "attributes": {
+        "BUILD_ID": 2921841,
+        "OCC_CLS": "Unclassified",
+        "PRIM_OCC": "Unclassified",
+        "OUTBLDG": null,
+        "HEIGHT": null,
+        "SQMETERS": 331.3348,
+        "SOURCE": "ORNL",
+        "IMAGE_DATE": 1525824000000,
+        "PROD_DATE": 1589846400000,
+        "VAL_METHOD": "Automated",
+        "LONGITUDE": -77.6608697629167,
+        "LATITUDE": 39.9381706947322,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -77.6607789,
+           39.9380751
+          ],
+          [
+           -77.6609663,
+           39.9380877
+          ],
+          [
+           -77.6609463,
+           39.9382653
+          ],
+          [
+           -77.6607588,
+           39.9382527
+          ],
+          [
+           -77.6607789,
+           39.9380751
+          ]
+         ]
+        ]
+       }
+      },
+      {
+       "attributes": {
+        "BUILD_ID": 2921950,
+        "OCC_CLS": "Unclassified",
+        "PRIM_OCC": "Unclassified",
+        "OUTBLDG": null,
+        "HEIGHT": null,
+        "SQMETERS": 466.4709,
+        "SOURCE": "ORNL",
+        "IMAGE_DATE": 1525824000000,
+        "PROD_DATE": 1589846400000,
+        "VAL_METHOD": "Automated",
+        "LONGITUDE": -77.6607454850545,
+        "LATITUDE": 39.938514968157,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -77.6605306,
+           39.9385239
+          ],
+          [
+           -77.6605595,
+           39.9384491
+          ],
+          [
+           -77.6604902,
+           39.9384332
+          ],
+          [
+           -77.6605025,
+           39.9384012
+          ],
+          [
+           -77.661002,
+           39.9385156
+          ],
+          [
+           -77.6609607,
+           39.9386224
+          ],
+          [
+           -77.6605306,
+           39.9385239
+          ]
+         ]
+        ]
+       }
+      },
+      {
+       "attributes": {
+        "BUILD_ID": 2921763,
+        "OCC_CLS": "Unclassified",
+        "PRIM_OCC": "Unclassified",
+        "OUTBLDG": null,
+        "HEIGHT": null,
+        "SQMETERS": 933.4603,
+        "SOURCE": "ORNL",
+        "IMAGE_DATE": 1525824000000,
+        "PROD_DATE": 1589846400000,
+        "VAL_METHOD": "Automated",
+        "LONGITUDE": -77.6608297243789,
+        "LATITUDE": 39.9378553456673,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -77.6610637,
+           39.9377665
+          ],
+          [
+           -77.6610282,
+           39.9379764
+          ],
+          [
+           -77.6609564,
+           39.9379692
+          ],
+          [
+           -77.6609508,
+           39.9380023
+          ],
+          [
+           -77.6610082,
+           39.9380081
+          ],
+          [
+           -77.6610063,
+           39.9380192
+          ],
+          [
+           -77.6607767,
+           39.9379961
+          ],
+          [
+           -77.6607898,
+           39.9379188
+          ],
+          [
+           -77.6605601,
+           39.9378957
+          ],
+          [
+           -77.6605901,
+           39.9377189
+          ],
+          [
+           -77.6610637,
+           39.9377665
+          ]
+         ]
+        ]
+       }
+      },
+      {
+       "attributes": {
+        "BUILD_ID": 6005656,
+        "OCC_CLS": "Commercial",
+        "PRIM_OCC": "Retail Trade",
+        "OUTBLDG": null,
+        "HEIGHT": null,
+        "SQMETERS": 4089.742,
+        "SOURCE": "ORNL",
+        "IMAGE_DATE": 1525824000000,
+        "PROD_DATE": 1591660800000,
+        "VAL_METHOD": "Automated",
+        "LONGITUDE": -77.6594173650674,
+        "LATITUDE": 39.938549354031,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -77.6595293,
+           39.9384324
+          ],
+          [
+           -77.6599048,
+           39.9384522
+          ],
+          [
+           -77.6598692,
+           39.9388524
+          ],
+          [
+           -77.6596093,
+           39.9388387
+          ],
+          [
+           -77.6596112,
+           39.9388164
+          ],
+          [
+           -77.6594668,
+           39.9388088
+          ],
+          [
+           -77.6594619,
+           39.9388644
+          ],
+          [
+           -77.6590575,
+           39.9388431
+          ],
+          [
+           -77.6591228,
+           39.9381094
+          ],
+          [
+           -77.6594405,
+           39.9381262
+          ],
+          [
+           -77.6594138,
+           39.9384263
+          ],
+          [
+           -77.6594716,
+           39.9384294
+          ],
+          [
+           -77.6594646,
+           39.9385072
+          ],
+          [
+           -77.6595224,
+           39.9385102
+          ],
+          [
+           -77.6595293,
+           39.9384324
+          ]
+         ]
+        ]
+       }
+      },
+      {
+       "attributes": {
+        "BUILD_ID": 2921581,
+        "OCC_CLS": "Commercial",
+        "PRIM_OCC": "Professional/Technical Services",
+        "OUTBLDG": null,
+        "HEIGHT": null,
+        "SQMETERS": 2925.556,
+        "SOURCE": "ORNL",
+        "IMAGE_DATE": 1525824000000,
+        "PROD_DATE": 1589846400000,
+        "VAL_METHOD": "Automated",
+        "LONGITUDE": -77.6609758130911,
+        "LATITUDE": 39.9370744190731,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -77.6609429,
+           39.9368184
+          ],
+          [
+           -77.660979,
+           39.9366877
+          ],
+          [
+           -77.6613613,
+           39.9367502
+          ],
+          [
+           -77.661262,
+           39.9371099
+          ],
+          [
+           -77.6611912,
+           39.9370983
+          ],
+          [
+           -77.66114,
+           39.9372836
+          ],
+          [
+           -77.6610268,
+           39.937265
+          ],
+          [
+           -77.6609816,
+           39.9374285
+          ],
+          [
+           -77.6605569,
+           39.937359
+          ],
+          [
+           -77.6606562,
+           39.9369993
+          ],
+          [
+           -77.6609394,
+           39.9370457
+          ],
+          [
+           -77.6609935,
+           39.9368495
+          ],
+          [
+           -77.6610643,
+           39.9368611
+          ],
+          [
+           -77.6610703,
+           39.9368393
+          ],
+          [
+           -77.6609429,
+           39.9368184
+          ]
+         ]
+        ]
+       }
+      },
+      {
+       "attributes": {
+        "BUILD_ID": 2921622,
+        "OCC_CLS": "Commercial",
+        "PRIM_OCC": "Professional/Technical Services",
+        "OUTBLDG": null,
+        "HEIGHT": null,
+        "SQMETERS": 430.1985,
+        "SOURCE": "ORNL",
+        "IMAGE_DATE": 1525824000000,
+        "PROD_DATE": 1589846400000,
+        "VAL_METHOD": "Automated",
+        "LONGITUDE": -77.6593925779898,
+        "LATITUDE": 39.9374648156991,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -77.6595291,
+           39.9373952
+          ],
+          [
+           -77.6594801,
+           39.9375808
+          ],
+          [
+           -77.6592532,
+           39.9375454
+          ],
+          [
+           -77.6593021,
+           39.9373597
+          ],
+          [
+           -77.6595291,
+           39.9373952
+          ]
+         ]
+        ]
+       }
+      },
+      {
+       "attributes": {
+        "BUILD_ID": 2921776,
+        "OCC_CLS": "Commercial",
+        "PRIM_OCC": "Retail Trade",
+        "OUTBLDG": null,
+        "HEIGHT": null,
+        "SQMETERS": 121.5996,
+        "SOURCE": "ORNL",
+        "IMAGE_DATE": 1525824000000,
+        "PROD_DATE": 1589846400000,
+        "VAL_METHOD": "Automated",
+        "LONGITUDE": -77.6592232631717,
+        "LATITUDE": 39.9380134076759,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -77.6592888,
+           39.9380639
+          ],
+          [
+           -77.6591449,
+           39.9380515
+          ],
+          [
+           -77.6591578,
+           39.9379629
+          ],
+          [
+           -77.6593016,
+           39.9379753
+          ],
+          [
+           -77.6592888,
+           39.9380639
+          ]
+         ]
+        ]
+       }
+      },
+      {
+       "attributes": {
+        "BUILD_ID": 2921727,
+        "OCC_CLS": "Commercial",
+        "PRIM_OCC": "Retail Trade",
+        "OUTBLDG": null,
+        "HEIGHT": null,
+        "SQMETERS": 211.2682,
+        "SOURCE": "ORNL",
+        "IMAGE_DATE": 1525824000000,
+        "PROD_DATE": 1589846400000,
+        "VAL_METHOD": "Automated",
+        "LONGITUDE": -77.6592968166835,
+        "LATITUDE": 39.9378674812528,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -77.6594089,
+           39.9378257
+          ],
+          [
+           -77.6593845,
+           39.9379356
+          ],
+          [
+           -77.6591847,
+           39.9379092
+          ],
+          [
+           -77.6592092,
+           39.9377994
+          ],
+          [
+           -77.6594089,
+           39.9378257
+          ]
+         ]
+        ]
+       }
+      },
+      {
+       "attributes": {
+        "BUILD_ID": 2921676,
+        "OCC_CLS": "Government",
+        "PRIM_OCC": "General Services",
+        "OUTBLDG": null,
+        "HEIGHT": null,
+        "SQMETERS": 2411.313,
+        "SOURCE": "ORNL",
+        "IMAGE_DATE": 1525824000000,
+        "PROD_DATE": 1589846400000,
+        "VAL_METHOD": "Automated",
+        "LONGITUDE": -77.6602002971288,
+        "LATITUDE": 39.9375926244902,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -77.6604089,
+           39.9375083
+          ],
+          [
+           -77.6604237,
+           39.9374652
+          ],
+          [
+           -77.6608435,
+           39.9375507
+          ],
+          [
+           -77.6607732,
+           39.9377554
+          ],
+          [
+           -77.6601295,
+           39.9376243
+          ],
+          [
+           -77.6601517,
+           39.9375597
+          ],
+          [
+           -77.6601377,
+           39.9375568
+          ],
+          [
+           -77.6600637,
+           39.9377723
+          ],
+          [
+           -77.6596439,
+           39.9376868
+          ],
+          [
+           -77.6597327,
+           39.9374283
+          ],
+          [
+           -77.6598447,
+           39.9374511
+          ],
+          [
+           -77.6598632,
+           39.9373972
+          ],
+          [
+           -77.660157,
+           39.937457
+          ],
+          [
+           -77.6601348,
+           39.9375217
+          ],
+          [
+           -77.6602468,
+           39.9375445
+          ],
+          [
+           -77.660269,
+           39.9374798
+          ],
+          [
+           -77.6604089,
+           39.9375083
+          ]
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   {
+    "url": "https://epqs.nationalmap.gov/v1/json",
+    "params": {
+     "x": "-77.6601823",
+     "y": "39.9379304",
+     "units": "Meters",
+     "wkid": 4326
+    },
+    "response": {
+     "location": {
+      "x": -77.6601823,
+      "y": 39.9379304,
+      "spatialReference": {
+       "wkid": 4326,
+       "latestWkid": 4326
+      }
+     },
+     "locationId": 0,
+     "value": "188.324111938",
+     "rasterId": 70719,
+     "resolution": 1
+    }
+   }
+  ],
+  "pa_lancaster_outline_only": [
+   {
+    "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+    "params": {
+     "address": "50 N Duke St, Lancaster, PA 17602",
+     "benchmark": "Public_AR_Current",
+     "format": "json"
+    },
+    "response": {
+     "result": {
+      "input": {
+       "address": {
+        "address": "50 N Duke St, Lancaster, PA 17602"
+       },
+       "benchmark": {
+        "isDefault": true,
+        "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+        "id": "4",
+        "benchmarkName": "Public_AR_Current"
+       }
+      },
+      "addressMatches": [
+       {
+        "tigerLine": {
+         "side": "L",
+         "tigerLineId": "179662768"
+        },
+        "coordinates": {
+         "x": -76.303930925045,
+         "y": 40.039358514951
+        },
+        "addressComponents": {
+         "zip": "17602",
+         "streetName": "DUKE",
+         "preType": "",
+         "city": "LANCASTER",
+         "preDirection": "N",
+         "suffixDirection": "",
+         "fromAddress": "2",
+         "state": "PA",
+         "suffixType": "ST",
+         "toAddress": "98",
+         "suffixQualifier": "",
+         "preQualifier": ""
+        },
+        "matchedAddress": "50 N DUKE ST, LANCASTER, PA, 17602",
+        "ownerName": "ZZTEST NAME"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "url": "https://services1.arcgis.com/I6XnrlnguPDoEObn/arcgis/rest/services/Parcels_HUBnew/FeatureServer/0/query",
+    "params": {
+     "where": "ADDRESS LIKE '50 N DUKE%'",
+     "outFields": "PIN,DISTRICT,LANDUSECD,DEED_ACRES,ADDRESS,BLDGASSESS,TAX_EXEMPT",
+     "returnGeometry": "true",
+     "outSR": 4326,
+     "geometryPrecision": 7,
+     "resultRecordCount": 12,
+     "f": "json"
+    },
+    "response": {
+     "objectIdFieldName": "OBJECTID",
+     "uniqueIdField": {
+      "name": "OBJECTID",
+      "isSystemMaintained": true
+     },
+     "globalIdFieldName": "GlobalID",
+     "geometryProperties": {
+      "shapeAreaFieldName": "Shape__Area",
+      "shapeLengthFieldName": "Shape__Length",
+      "units": "esriFeet"
+     },
+     "geometryType": "esriGeometryPolygon",
+     "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+     },
+     "features": [
+      {
+       "attributes": {
+        "PIN": "332-2373309-260487-0-0000",
+        "DISTRICT": "332",
+        "LANDUSECD": "654",
+        "DEED_ACRES": 0.78,
+        "ADDRESS": "50 N DUKE ST",
+        "BLDGASSESS": 22025000,
+        "TAX_EXEMPT": "Y",
+        "OWNER_NAME": "ZZTEST NAME",
+        "OWNERADD1": "ZZTEST STREET",
+        "OWNER_ZIP": "00000",
+        "SALE_PRICE": 999999
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -76.3040232,
+           40.0396742
+          ],
+          [
+           -76.3038854,
+           40.0390007
+          ],
+          [
+           -76.3043518,
+           40.0389489
+          ],
+          [
+           -76.3043873,
+           40.039148
+          ],
+          [
+           -76.3044449,
+           40.0393881
+          ],
+          [
+           -76.3044523,
+           40.0394235
+          ],
+          [
+           -76.3044589,
+           40.0394228
+          ],
+          [
+           -76.3045009,
+           40.0396241
+          ],
+          [
+           -76.3040232,
+           40.0396742
+          ]
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   {
+    "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0/query",
+    "params": {
+     "outFields": "BUILD_ID,OCC_CLS,PRIM_OCC,OUTBLDG,HEIGHT,SQMETERS,SOURCE,IMAGE_DATE,PROD_DATE,VAL_METHOD,LONGITUDE,LATITUDE",
+     "returnGeometry": "true",
+     "outSR": 4326,
+     "geometryPrecision": 7,
+     "f": "json",
+     "spatialRel": "esriSpatialRelIntersects",
+     "inSR": 4326,
+     "geometry": "{\"rings\":[[[-76.3040232,40.0396742],[-76.3038854,40.0390007],[-76.3043518,40.0389489],[-76.3043873,40.039148],[-76.3044449,40.0393881],[-76.3044523,40.0394235],[-76.3044589,40.0394228],[-76.3045009,40.0396241],[-76.3040232,40.0396742]]],\"spatialReference\":{\"wkid\":4326}}",
+     "geometryType": "esriGeometryPolygon"
+    },
+    "response": {
+     "objectIdFieldName": "OBJECTID",
+     "uniqueIdField": {
+      "name": "OBJECTID",
+      "isSystemMaintained": true
+     },
+     "globalIdFieldName": "GlobalID",
+     "geometryProperties": {
+      "shapeAreaFieldName": "Shape__Area",
+      "shapeLengthFieldName": "Shape__Length",
+      "units": "esriMeters"
+     },
+     "geometryType": "esriGeometryPolygon",
+     "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+     },
+     "features": [
+      {
+       "attributes": {
+        "BUILD_ID": 7225753,
+        "OCC_CLS": "Government",
+        "PRIM_OCC": "General Services",
+        "OUTBLDG": null,
+        "HEIGHT": 22.9,
+        "SQMETERS": 4523.148,
+        "SOURCE": "NGA",
+        "IMAGE_DATE": 1282003200000,
+        "PROD_DATE": 1282003200000,
+        "VAL_METHOD": "Unverified",
+        "LONGITUDE": -76.3040940909295,
+        "LATITUDE": 40.0390298438026,
+        "PROP_ADDR": "ZZTEST STREET",
+        "OWNER_NAME": "ZZTEST NAME"
+       },
+       "geometry": {
+        "rings": [
+         [
+          [
+           -76.3040681,
+           40.039682
+          ],
+          [
+           -76.3040613,
+           40.0396482
+          ],
+          [
+           -76.3040278,
+           40.0396522
+          ],
+          [
+           -76.3039073,
+           40.0390497
+          ],
+          [
+           -76.303981,
+           40.039041
+          ],
+          [
+           -76.3039743,
+           40.0390074
+          ],
+          [
+           -76.3039372,
+           40.0390118
+          ],
+          [
+           -76.3039223,
+           40.0389372
+          ],
+          [
+           -76.3038786,
+           40.0389424
+          ],
+          [
+           -76.3038615,
+           40.0388571
+          ],
+          [
+           -76.3038516,
+           40.0388076
+          ],
+          [
+           -76.3038954,
+           40.0388025
+          ],
+          [
+           -76.3038745,
+           40.038698
+          ],
+          [
+           -76.3038267,
+           40.0384591
+          ],
+          [
+           -76.3037926,
+           40.0384632
+          ],
+          [
+           -76.3037864,
+           40.0384322
+          ],
+          [
+           -76.303755,
+           40.0382755
+          ],
+          [
+           -76.3038721,
+           40.0382616
+          ],
+          [
+           -76.303896,
+           40.0383811
+          ],
+          [
+           -76.3039847,
+           40.0383692
+          ],
+          [
+           -76.3039603,
+           40.0382472
+          ],
+          [
+           -76.3040774,
+           40.0382334
+          ],
+          [
+           -76.3041062,
+           40.0383776
+          ],
+          [
+           -76.3041149,
+           40.0384211
+          ],
+          [
+           -76.3040808,
+           40.0384251
+          ],
+          [
+           -76.3041293,
+           40.0386679
+          ],
+          [
+           -76.3041502,
+           40.0387723
+          ],
+          [
+           -76.304189,
+           40.0387678
+          ],
+          [
+           -76.304216,
+           40.0389026
+          ],
+          [
+           -76.3041772,
+           40.0389071
+          ],
+          [
+           -76.3041921,
+           40.0389817
+          ],
+          [
+           -76.3041686,
+           40.0389844
+          ],
+          [
+           -76.3041753,
+           40.039018
+          ],
+          [
+           -76.3043038,
+           40.0390028
+          ],
+          [
+           -76.3043383,
+           40.0391755
+          ],
+          [
+           -76.3043933,
+           40.039169
+          ],
+          [
+           -76.3044078,
+           40.0392413
+          ],
+          [
+           -76.304384,
+           40.0392442
+          ],
+          [
+           -76.304406,
+           40.039354
+          ],
+          [
+           -76.3043747,
+           40.0393577
+          ],
+          [
+           -76.3044243,
+           40.0396054
+          ],
+          [
+           -76.3043907,
+           40.0396093
+          ],
+          [
+           -76.3043974,
+           40.0396431
+          ],
+          [
+           -76.3040681,
+           40.039682
+          ]
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   {
+    "url": "https://epqs.nationalmap.gov/v1/json",
+    "params": {
+     "x": "-76.3043131",
+     "y": "40.0393288",
+     "units": "Meters",
+     "wkid": 4326
+    },
+    "response": {
+     "location": {
+      "x": -76.3043131,
+      "y": 40.0393288,
+      "spatialReference": {
+       "wkid": 4326,
+       "latestWkid": 4326
+      }
+     },
+     "locationId": 0,
+     "value": "112.415992737",
+     "rasterId": 132669,
+     "resolution": 1
+    }
+   }
+  ]
+ }
+}

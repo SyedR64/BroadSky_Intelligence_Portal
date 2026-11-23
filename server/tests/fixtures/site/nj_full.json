@@ -1,0 +1,1781 @@
+{
+ "name": "nj_full",
+ "typed": "33 Washington St, Toms River, NJ 08753",
+ "issue": "sink repair",
+ "what": "Toms River Town Hall (public building)",
+ "status": "found",
+ "recorded": "2026-11-23",
+ "calls": [
+  {
+   "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+   "params": {
+    "address": "33 Washington St, Toms River, NJ 08753",
+    "benchmark": "Public_AR_Current",
+    "format": "json"
+   },
+   "response": {
+    "result": {
+     "input": {
+      "address": {
+       "address": "33 Washington St, Toms River, NJ 08753"
+      },
+      "benchmark": {
+       "isDefault": true,
+       "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+       "id": "4",
+       "benchmarkName": "Public_AR_Current"
+      }
+     },
+     "addressMatches": [
+      {
+       "tigerLine": {
+        "side": "R",
+        "tigerLineId": "203726988"
+       },
+       "coordinates": {
+        "x": -74.19582959559,
+        "y": 39.952845792204
+       },
+       "addressComponents": {
+        "zip": "08753",
+        "streetName": "WASHINGTON",
+        "preType": "",
+        "city": "TOMS RIVER",
+        "preDirection": "",
+        "suffixDirection": "",
+        "fromAddress": "33",
+        "state": "NJ",
+        "suffixType": "ST",
+        "toAddress": "111",
+        "suffixQualifier": "",
+        "preQualifier": ""
+       },
+       "matchedAddress": "33 WASHINGTON ST, TOMS RIVER, NJ, 08753"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "url": "https://services2.arcgis.com/XVOqAjTOJ5P6ngMu/arcgis/rest/services/Parcels_Composite_NJ_WM/FeatureServer/0/query",
+   "params": {
+    "where": "COUNTY='OCEAN' AND MUN_NAME LIKE 'TOMS RIVER%' AND PROP_LOC LIKE '33 WASHINGTON%'",
+    "outFields": "PAMS_PIN,PCL_MUN,PCLBLOCK,PCLLOT,PCLQCODE,PROP_CLASS,COUNTY,MUN_NAME,PROP_LOC,ZIP5,IMPRVT_VAL,BLDG_DESC,LAND_DESC,CALC_ACRE,BLDG_CLASS,YR_CONSTR,DWELL,FAC_NAME,PCL_PBDATE",
+    "returnGeometry": "true",
+    "outSR": 4326,
+    "geometryPrecision": 7,
+    "resultRecordCount": 12,
+    "f": "json"
+   },
+   "response": {
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+     "name": "OBJECTID",
+     "isSystemMaintained": true
+    },
+    "globalIdFieldName": "",
+    "geometryProperties": {
+     "shapeAreaFieldName": "Shape__Area",
+     "shapeLengthFieldName": "Shape__Length",
+     "units": "esriMeters"
+    },
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+     "wkid": 4326,
+     "latestWkid": 4326
+    },
+    "features": [
+     {
+      "attributes": {
+       "PAMS_PIN": "1508_663_1",
+       "PCL_MUN": "1508",
+       "PCLBLOCK": "663",
+       "PCLLOT": "1",
+       "PCLQCODE": "",
+       "PROP_CLASS": "15C",
+       "COUNTY": "OCEAN",
+       "MUN_NAME": "TOMS RIVER TWP",
+       "PROP_LOC": "33 WASHINGTON STREET",
+       "ZIP5": "08754",
+       "IMPRVT_VAL": 5124000,
+       "BLDG_DESC": "2SB       15226",
+       "LAND_DESC": "3.462AC",
+       "CALC_ACRE": 3.462,
+       "BLDG_CLASS": "10",
+       "YR_CONSTR": 0,
+       "DWELL": 1,
+       "FAC_NAME": "TOWN HALL",
+       "PCL_PBDATE": 1780549200000
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -74.196263,
+          39.9521971
+         ],
+         [
+          -74.1963572,
+          39.9519686
+         ],
+         [
+          -74.1964252,
+          39.9519852
+         ],
+         [
+          -74.1966586,
+          39.9514186
+         ],
+         [
+          -74.1967674,
+          39.9513803
+         ],
+         [
+          -74.1975793,
+          39.9516491
+         ],
+         [
+          -74.1976019,
+          39.9516862
+         ],
+         [
+          -74.1975454,
+          39.9518324
+         ],
+         [
+          -74.1974879,
+          39.9518441
+         ],
+         [
+          -74.197227,
+          39.9517843
+         ],
+         [
+          -74.1971553,
+          39.9519694
+         ],
+         [
+          -74.1969827,
+          39.9519298
+         ],
+         [
+          -74.1969399,
+          39.9520403
+         ],
+         [
+          -74.1971125,
+          39.9520799
+         ],
+         [
+          -74.1971207,
+          39.9520586
+         ],
+         [
+          -74.1974301,
+          39.9521296
+         ],
+         [
+          -74.1970679,
+          39.9530648
+         ],
+         [
+          -74.1964161,
+          39.9529184
+         ],
+         [
+          -74.1965254,
+          39.9526301
+         ],
+         [
+          -74.1962036,
+          39.9525578
+         ],
+         [
+          -74.196344,
+          39.9522169
+         ],
+         [
+          -74.196263,
+          39.9521971
+         ]
+        ]
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0/query",
+   "params": {
+    "outFields": "BUILD_ID,OCC_CLS,PRIM_OCC,OUTBLDG,HEIGHT,SQMETERS,SOURCE,IMAGE_DATE,PROD_DATE,VAL_METHOD,LONGITUDE,LATITUDE",
+    "returnGeometry": "true",
+    "outSR": 4326,
+    "geometryPrecision": 7,
+    "f": "json",
+    "spatialRel": "esriSpatialRelIntersects",
+    "inSR": 4326,
+    "geometry": "{\"rings\":[[[-74.196263,39.9521971],[-74.1963572,39.9519686],[-74.1964252,39.9519852],[-74.1966586,39.9514186],[-74.1967674,39.9513803],[-74.1975793,39.9516491],[-74.1976019,39.9516862],[-74.1975454,39.9518324],[-74.1974879,39.9518441],[-74.197227,39.9517843],[-74.1971553,39.9519694],[-74.1969827,39.9519298],[-74.1969399,39.9520403],[-74.1971125,39.9520799],[-74.1971207,39.9520586],[-74.1974301,39.9521296],[-74.1970679,39.9530648],[-74.1964161,39.9529184],[-74.1965254,39.9526301],[-74.1962036,39.9525578],[-74.196344,39.9522169],[-74.196263,39.9521971]]],\"spatialReference\":{\"wkid\":4326}}",
+    "geometryType": "esriGeometryPolygon"
+   },
+   "response": {
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+     "name": "OBJECTID",
+     "isSystemMaintained": true
+    },
+    "globalIdFieldName": "GlobalID",
+    "geometryProperties": {
+     "shapeAreaFieldName": "Shape__Area",
+     "shapeLengthFieldName": "Shape__Length",
+     "units": "esriMeters"
+    },
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+     "wkid": 4326,
+     "latestWkid": 4326
+    },
+    "features": [
+     {
+      "attributes": {
+       "BUILD_ID": 9520271,
+       "OCC_CLS": "Government",
+       "PRIM_OCC": "General Services",
+       "OUTBLDG": null,
+       "HEIGHT": null,
+       "SQMETERS": 3447.562,
+       "SOURCE": "ORNL",
+       "IMAGE_DATE": 1722643200000,
+       "PROD_DATE": 1750118400000,
+       "VAL_METHOD": "Spatial Intersect",
+       "LONGITUDE": -74.19670272678587,
+       "LATITUDE": 39.95177906082682
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -74.196816,
+          39.9521175
+         ],
+         [
+          -74.1968409,
+          39.9521241
+         ],
+         [
+          -74.1968126,
+          39.952188
+         ],
+         [
+          -74.196314,
+          39.9520574
+         ],
+         [
+          -74.1966167,
+          39.951373
+         ],
+         [
+          -74.1970904,
+          39.9514971
+         ],
+         [
+          -74.196816,
+          39.9521175
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "BUILD_ID": 9520410,
+       "OCC_CLS": "Government",
+       "PRIM_OCC": "General Services",
+       "OUTBLDG": null,
+       "HEIGHT": null,
+       "SQMETERS": 2092.638,
+       "SOURCE": "ORNL",
+       "IMAGE_DATE": 1722643200000,
+       "PROD_DATE": 1750118400000,
+       "VAL_METHOD": "Spatial Intersect",
+       "LONGITUDE": -74.19672763615479,
+       "LATITUDE": 39.95256889922565
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -74.196435,
+          39.9522506
+         ],
+         [
+          -74.1966179,
+          39.9522985
+         ],
+         [
+          -74.1966094,
+          39.9523176
+         ],
+         [
+          -74.1970915,
+          39.9524439
+         ],
+         [
+          -74.1970349,
+          39.9525719
+         ],
+         [
+          -74.1969684,
+          39.9525544
+         ],
+         [
+          -74.1967732,
+          39.9529958
+         ],
+         [
+          -74.1966319,
+          39.9529588
+         ],
+         [
+          -74.1965771,
+          39.9528731
+         ],
+         [
+          -74.1966718,
+          39.9528372
+         ],
+         [
+          -74.1966306,
+          39.9527729
+         ],
+         [
+          -74.1967353,
+          39.9525362
+         ],
+         [
+          -74.1966854,
+          39.9525231
+         ],
+         [
+          -74.1966798,
+          39.9525359
+         ],
+         [
+          -74.1963473,
+          39.9524488
+         ],
+         [
+          -74.196435,
+          39.9522506
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "BUILD_ID": 9520278,
+       "OCC_CLS": "Government",
+       "PRIM_OCC": "General Services",
+       "OUTBLDG": null,
+       "HEIGHT": null,
+       "SQMETERS": 90.00056,
+       "SOURCE": "ORNL",
+       "IMAGE_DATE": 1722643200000,
+       "PROD_DATE": 1750118400000,
+       "VAL_METHOD": "Spatial Intersect",
+       "LONGITUDE": -74.19707319510671,
+       "LATITUDE": 39.95213475378459
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -74.1970538,
+          39.9520728
+         ],
+         [
+          -74.1971371,
+          39.9520942
+         ],
+         [
+          -74.1970926,
+          39.9521967
+         ],
+         [
+          -74.1970093,
+          39.9521753
+         ],
+         [
+          -74.1970538,
+          39.9520728
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "BUILD_ID": 9519470,
+       "OCC_CLS": "Commercial",
+       "PRIM_OCC": "Retail Trade",
+       "OUTBLDG": null,
+       "HEIGHT": null,
+       "SQMETERS": 607.5009,
+       "SOURCE": "ORNL",
+       "IMAGE_DATE": 1722643200000,
+       "PROD_DATE": 1750118400000,
+       "VAL_METHOD": "Spatial Intersect",
+       "LONGITUDE": -74.19728514506433,
+       "LATITUDE": 39.95195268669851
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -74.1971574,
+          39.9518176
+         ],
+         [
+          -74.1974569,
+          39.9518953
+         ],
+         [
+          -74.1974344,
+          39.9519465
+         ],
+         [
+          -74.1974677,
+          39.9519551
+         ],
+         [
+          -74.1974089,
+          39.9520896
+         ],
+         [
+          -74.1971426,
+          39.9520205
+         ],
+         [
+          -74.1971594,
+          39.9519821
+         ],
+         [
+          -74.1970929,
+          39.9519649
+         ],
+         [
+          -74.1971574,
+          39.9518176
+         ]
+        ]
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "url": "https://data.nj.gov/resource/w9se-dmra.json",
+   "params": {
+    "$where": "treasurycode='1508' AND block in('663','00663') AND lot in('1','00001')",
+    "$select": "permitdate,certdate,status,permittypedesc,update,buildfee,plumbfee,electfee,firefee,otherfee,constcost,usegroup,processdate",
+    "$order": "permitdate DESC",
+    "$limit": 60
+   },
+   "response": [
+    {
+     "permitdate": "2022-11-02T00:00:00.000",
+     "status": "P",
+     "permittypedesc": "Alteration",
+     "buildfee": "0",
+     "plumbfee": "0",
+     "electfee": "0",
+     "firefee": "0",
+     "otherfee": "0",
+     "constcost": "1005",
+     "usegroup": "R-5",
+     "processdate": "2022-12-07T00:00:00.000"
+    },
+    {
+     "permitdate": "2022-03-16T00:00:00.000",
+     "status": "P",
+     "permittypedesc": "Alteration",
+     "update": "X",
+     "buildfee": "0",
+     "plumbfee": "0",
+     "electfee": "0",
+     "firefee": "0",
+     "otherfee": "0",
+     "constcost": "5000",
+     "usegroup": "R-5",
+     "processdate": "2022-04-07T00:00:00.000"
+    },
+    {
+     "permitdate": "2022-03-01T00:00:00.000",
+     "certdate": "2022-04-28T00:00:00.000",
+     "status": "C",
+     "permittypedesc": "Alteration",
+     "buildfee": "0",
+     "plumbfee": "0",
+     "electfee": "0",
+     "firefee": "0",
+     "otherfee": "0",
+     "constcost": "2568",
+     "usegroup": "R-5",
+     "processdate": "2022-05-09T00:00:00.000"
+    },
+    {
+     "permitdate": "2021-08-19T00:00:00.000",
+     "status": "P",
+     "permittypedesc": "Alteration",
+     "update": "X",
+     "buildfee": "0",
+     "plumbfee": "0",
+     "electfee": "0",
+     "firefee": "0",
+     "otherfee": "0",
+     "constcost": "53000",
+     "usegroup": "R-5",
+     "processdate": "2021-09-07T00:00:00.000"
+    },
+    {
+     "permitdate": "2021-08-11T00:00:00.000",
+     "certdate": "2022-05-02T00:00:00.000",
+     "status": "C",
+     "permittypedesc": "Alteration",
+     "buildfee": "0",
+     "plumbfee": "0",
+     "electfee": "0",
+     "firefee": "0",
+     "otherfee": "0",
+     "constcost": "1446002",
+     "usegroup": "R-5",
+     "processdate": "2022-05-09T00:00:00.000"
+    }
+   ]
+  },
+  {
+   "url": "https://epqs.nationalmap.gov/v1/json",
+   "params": {
+    "x": "-74.1969148",
+    "y": "39.9520639",
+    "units": "Meters",
+    "wkid": 4326
+   },
+   "response": {
+    "location": {
+     "x": -74.1969148,
+     "y": 39.9520639,
+     "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+     }
+    },
+    "locationId": 0,
+    "value": "7.860585213",
+    "rasterId": 86804,
+    "resolution": 1
+   }
+  }
+ ],
+ "adapters": {
+  "geocode": {
+   "ok": true,
+   "src": "census",
+   "status": "found",
+   "matches": [
+    {
+     "label": "33 WASHINGTON ST, TOMS RIVER, NJ, 08753",
+     "lat": 39.9528458,
+     "lon": -74.1958296,
+     "precision": "typed",
+     "geocoder": "census",
+     "basis": "public",
+     "src": "census",
+     "as_of": "2026-11-23",
+     "date_kind": "retrieved",
+     "parts": {
+      "street": "33 WASHINGTON ST",
+      "city": "TOMS RIVER",
+      "state": "NJ",
+      "zip": "08753"
+     }
+    }
+   ]
+  },
+  "parcels": {
+   "ok": true,
+   "src": "nj_parcels",
+   "parcels": [
+    {
+     "src": "nj_parcels",
+     "id": {
+      "pams_pin": "1508_663_1",
+      "muni_code": "1508",
+      "block": "663",
+      "lot": "1",
+      "qual": null
+     },
+     "addr": "33 WASHINGTON STREET",
+     "key": "33 WASHINGTON ST",
+     "label": "33 Washington Street, Toms River Twp",
+     "muni": "TOMS RIVER TWP",
+     "county": "Ocean",
+     "state": "NJ",
+     "zip": "08754",
+     "ring_ll": [
+      [
+       -74.196263,
+       39.9521971
+      ],
+      [
+       -74.1963572,
+       39.9519686
+      ],
+      [
+       -74.1964252,
+       39.9519852
+      ],
+      [
+       -74.1966586,
+       39.9514186
+      ],
+      [
+       -74.1967674,
+       39.9513803
+      ],
+      [
+       -74.1975793,
+       39.9516491
+      ],
+      [
+       -74.1976019,
+       39.9516862
+      ],
+      [
+       -74.1975454,
+       39.9518324
+      ],
+      [
+       -74.1974879,
+       39.9518441
+      ],
+      [
+       -74.197227,
+       39.9517843
+      ],
+      [
+       -74.1971553,
+       39.9519694
+      ],
+      [
+       -74.1969827,
+       39.9519298
+      ],
+      [
+       -74.1969399,
+       39.9520403
+      ],
+      [
+       -74.1971125,
+       39.9520799
+      ],
+      [
+       -74.1971207,
+       39.9520586
+      ],
+      [
+       -74.1974301,
+       39.9521296
+      ],
+      [
+       -74.1970679,
+       39.9530648
+      ],
+      [
+       -74.1964161,
+       39.9529184
+      ],
+      [
+       -74.1965254,
+       39.9526301
+      ],
+      [
+       -74.1962036,
+       39.9525578
+      ],
+      [
+       -74.196344,
+       39.9522169
+      ],
+      [
+       -74.196263,
+       39.9521971
+      ]
+     ],
+     "centroid": [
+      -74.1969148,
+      39.9520639
+     ],
+     "as_of": "2026-06-04",
+     "date_kind": "published",
+     "facts": [
+      {
+       "k": "property_class",
+       "label": "Property class",
+       "v": "15C (public property)",
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-06-04",
+       "date_kind": "published",
+       "n": 1
+      },
+      {
+       "k": "building_desc",
+       "label": "Assessor building description",
+       "v": "2SB 15226",
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-06-04",
+       "date_kind": "published",
+       "n": 1
+      },
+      {
+       "k": "stories",
+       "label": "Storeys",
+       "v": 2,
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-06-04",
+       "date_kind": "published",
+       "note": "read from the assessor building description",
+       "n": 1
+      },
+      {
+       "k": "material",
+       "label": "Walls",
+       "v": "brick",
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-06-04",
+       "date_kind": "published",
+       "note": "read from the assessor building description",
+       "n": 1
+      },
+      {
+       "k": "floor_area_sqft",
+       "label": "Building area (sq ft)",
+       "v": 15226,
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-06-04",
+       "date_kind": "published",
+       "note": "read from the assessor building description",
+       "n": 1
+      },
+      {
+       "k": "assessed_improvements",
+       "label": "Assessed value of improvements ($)",
+       "v": 5124000,
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-06-04",
+       "date_kind": "published",
+       "n": 1
+      },
+      {
+       "k": "lot_acres",
+       "label": "Lot (acres)",
+       "v": 3.462,
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-06-04",
+       "date_kind": "published",
+       "n": 1
+      },
+      {
+       "k": "facility",
+       "label": "Facility",
+       "v": "TOWN HALL",
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-06-04",
+       "date_kind": "published",
+       "n": 1
+      }
+     ],
+     "match": "exact",
+     "distance_m": 127.1
+    }
+   ]
+  },
+  "footprints": {
+   "ok": true,
+   "src": "structures",
+   "query": "parcel",
+   "buildings": [
+    {
+     "src": "structures",
+     "build_id": 9520271,
+     "ring_ll": [
+      [
+       -74.196816,
+       39.9521175
+      ],
+      [
+       -74.1968409,
+       39.9521241
+      ],
+      [
+       -74.1968126,
+       39.952188
+      ],
+      [
+       -74.196314,
+       39.9520574
+      ],
+      [
+       -74.1966167,
+       39.951373
+      ],
+      [
+       -74.1970904,
+       39.9514971
+      ],
+      [
+       -74.196816,
+       39.9521175
+      ]
+     ],
+     "centroid": [
+      -74.1967027,
+      39.9517791
+     ],
+     "area_m2": 3447.6,
+     "height_m": null,
+     "height_checked": false,
+     "occupancy": "Government",
+     "use": "General Services",
+     "outbuilding": false,
+     "imagery_source": "ORNL",
+     "method": "Spatial Intersect",
+     "basis": "public",
+     "as_of": "2024-08-03",
+     "date_kind": "imagery",
+     "produced": "2025-06-17"
+    },
+    {
+     "src": "structures",
+     "build_id": 9520410,
+     "ring_ll": [
+      [
+       -74.196435,
+       39.9522506
+      ],
+      [
+       -74.1966179,
+       39.9522985
+      ],
+      [
+       -74.1966094,
+       39.9523176
+      ],
+      [
+       -74.1970915,
+       39.9524439
+      ],
+      [
+       -74.1970349,
+       39.9525719
+      ],
+      [
+       -74.1969684,
+       39.9525544
+      ],
+      [
+       -74.1967732,
+       39.9529958
+      ],
+      [
+       -74.1966319,
+       39.9529588
+      ],
+      [
+       -74.1965771,
+       39.9528731
+      ],
+      [
+       -74.1966718,
+       39.9528372
+      ],
+      [
+       -74.1966306,
+       39.9527729
+      ],
+      [
+       -74.1967353,
+       39.9525362
+      ],
+      [
+       -74.1966854,
+       39.9525231
+      ],
+      [
+       -74.1966798,
+       39.9525359
+      ],
+      [
+       -74.1963473,
+       39.9524488
+      ],
+      [
+       -74.196435,
+       39.9522506
+      ]
+     ],
+     "centroid": [
+      -74.1967276,
+      39.9525689
+     ],
+     "area_m2": 2092.6,
+     "height_m": null,
+     "height_checked": false,
+     "occupancy": "Government",
+     "use": "General Services",
+     "outbuilding": false,
+     "imagery_source": "ORNL",
+     "method": "Spatial Intersect",
+     "basis": "public",
+     "as_of": "2024-08-03",
+     "date_kind": "imagery",
+     "produced": "2025-06-17"
+    },
+    {
+     "src": "structures",
+     "build_id": 9520278,
+     "ring_ll": [
+      [
+       -74.1970538,
+       39.9520728
+      ],
+      [
+       -74.1971371,
+       39.9520942
+      ],
+      [
+       -74.1970926,
+       39.9521967
+      ],
+      [
+       -74.1970093,
+       39.9521753
+      ],
+      [
+       -74.1970538,
+       39.9520728
+      ]
+     ],
+     "centroid": [
+      -74.1970732,
+      39.9521348
+     ],
+     "area_m2": 90.0,
+     "height_m": null,
+     "height_checked": false,
+     "occupancy": "Government",
+     "use": "General Services",
+     "outbuilding": false,
+     "imagery_source": "ORNL",
+     "method": "Spatial Intersect",
+     "basis": "public",
+     "as_of": "2024-08-03",
+     "date_kind": "imagery",
+     "produced": "2025-06-17"
+    },
+    {
+     "src": "structures",
+     "build_id": 9519470,
+     "ring_ll": [
+      [
+       -74.1971574,
+       39.9518176
+      ],
+      [
+       -74.1974569,
+       39.9518953
+      ],
+      [
+       -74.1974344,
+       39.9519465
+      ],
+      [
+       -74.1974677,
+       39.9519551
+      ],
+      [
+       -74.1974089,
+       39.9520896
+      ],
+      [
+       -74.1971426,
+       39.9520205
+      ],
+      [
+       -74.1971594,
+       39.9519821
+      ],
+      [
+       -74.1970929,
+       39.9519649
+      ],
+      [
+       -74.1971574,
+       39.9518176
+      ]
+     ],
+     "centroid": [
+      -74.1972851,
+      39.9519527
+     ],
+     "area_m2": 607.5,
+     "height_m": null,
+     "height_checked": false,
+     "occupancy": "Commercial",
+     "use": "Retail Trade",
+     "outbuilding": false,
+     "imagery_source": "ORNL",
+     "method": "Spatial Intersect",
+     "basis": "public",
+     "as_of": "2024-08-03",
+     "date_kind": "imagery",
+     "produced": "2025-06-17"
+    }
+   ]
+  },
+  "permits": {
+   "ok": true,
+   "src": "nj_permits",
+   "permits": [
+    {
+     "date": "2022-11-02",
+     "type": "Alteration",
+     "trades": [],
+     "cost": 1005.0,
+     "cert": null,
+     "status": "P",
+     "basis": "public",
+     "src": "nj_permits"
+    },
+    {
+     "date": "2022-03-16",
+     "type": "Alteration",
+     "trades": [],
+     "cost": 5000.0,
+     "cert": null,
+     "status": "P",
+     "basis": "public",
+     "src": "nj_permits"
+    },
+    {
+     "date": "2022-03-01",
+     "type": "Alteration",
+     "trades": [],
+     "cost": 2568.0,
+     "cert": "2022-04-28",
+     "status": "C",
+     "basis": "public",
+     "src": "nj_permits"
+    },
+    {
+     "date": "2021-08-19",
+     "type": "Alteration",
+     "trades": [],
+     "cost": 53000.0,
+     "cert": null,
+     "status": "P",
+     "basis": "public",
+     "src": "nj_permits"
+    },
+    {
+     "date": "2021-08-11",
+     "type": "Alteration",
+     "trades": [],
+     "cost": 1446002.0,
+     "cert": "2022-05-02",
+     "status": "C",
+     "basis": "public",
+     "src": "nj_permits"
+    }
+   ],
+   "as_of": "2026-11-23",
+   "date_kind": "retrieved"
+  },
+  "elevation": {
+   "ok": true,
+   "src": "usgs_epqs",
+   "fact": {
+    "k": "ground_elevation_m",
+    "label": "Ground elevation (m)",
+    "v": 7.9,
+    "basis": "public",
+    "src": "usgs_epqs",
+    "source": "Elevation Point Query Service (3DEP)",
+    "as_of": "2026-11-23",
+    "date_kind": "retrieved",
+    "n": 2
+   }
+  }
+ },
+ "card": {
+  "type": "card",
+  "kind": "floor_sketch",
+  "id": "fs-60141953",
+  "title": "Floor sketch",
+  "address": "33 Washington St, Toms River, NJ 08753",
+  "issue": "Not sure (generic checks)",
+  "basis": "likely",
+  "area": {
+   "status": "in",
+   "label": "Inside the Punctual Pros service area (Ocean County, Toms River hub)"
+  },
+  "house": {
+   "text": "Two stories on a slab. (likely) Built 1981. (likely) Gas heat. (likely)",
+   "year": 1981,
+   "year_basis": "likely",
+   "stories": 2,
+   "foundation": "slab",
+   "basement": "none",
+   "fuel": "gas",
+   "fuel_basis": "likely"
+  },
+  "focus": [
+   "main_water",
+   "panel"
+  ],
+  "floors": [
+   {
+    "id": "first",
+    "name": "First floor",
+    "w": 264,
+    "h": 148,
+    "rooms": [],
+    "items": [
+     {
+      "kind": "main_water",
+      "label": "Main water shutoff",
+      "short": "W",
+      "basis": "likely",
+      "focus": true,
+      "note": "Utility closet by the water heater, or the garage wall facing the street",
+      "detail": null,
+      "x": 224.5,
+      "y": 22.3
+     },
+     {
+      "kind": "panel",
+      "label": "Electrical panel",
+      "short": "P",
+      "basis": "likely",
+      "focus": true,
+      "note": "Garage wall",
+      "detail": null,
+      "x": 232.4,
+      "y": 110.9
+     },
+     {
+      "kind": "water_heater",
+      "label": "Water heater",
+      "short": "WH",
+      "basis": "likely",
+      "focus": false,
+      "note": "Garage or utility closet",
+      "detail": null,
+      "x": 237.4,
+      "y": 110.9
+     },
+     {
+      "kind": "furnace",
+      "label": "Furnace",
+      "short": "F",
+      "basis": "likely",
+      "focus": false,
+      "note": "Utility closet",
+      "detail": null,
+      "x": 229.5,
+      "y": 22.3
+     },
+     {
+      "kind": "gas_shutoff",
+      "label": "Gas shutoff",
+      "short": "GS",
+      "basis": "likely",
+      "focus": false,
+      "note": "On the gas pipe at the furnace, boiler or water heater",
+      "detail": null,
+      "x": 234.4,
+      "y": 22.3
+     }
+    ],
+    "runs": [
+     {
+      "kind": "water",
+      "label": "Water",
+      "points": [
+       [
+        39.7,
+        136.1
+       ],
+       [
+        224.5,
+        22.3
+       ]
+      ],
+      "basis": "likely"
+     },
+     {
+      "kind": "gas",
+      "label": "Gas",
+      "points": [
+       [
+        248.2,
+        74.0
+       ],
+       [
+        224.5,
+        22.3
+       ]
+      ],
+      "basis": "likely"
+     },
+     {
+      "kind": "drain",
+      "label": "Drain",
+      "points": [
+       [
+        197.9,
+        44.4
+       ],
+       [
+        132.0,
+        136.1
+       ]
+      ],
+      "basis": "likely"
+     }
+    ]
+   }
+  ],
+  "outside": [
+   {
+    "kind": "gas_meter",
+    "label": "Gas meter",
+    "short": "G",
+    "floor": "first",
+    "side": "right",
+    "at": 0.35,
+    "basis": "likely",
+    "focus": false,
+    "note": "Outside on a side wall"
+   },
+   {
+    "kind": "sewer_cleanout",
+    "label": "Sewer cleanout",
+    "short": "C",
+    "floor": "first",
+    "side": "front",
+    "at": 0.25,
+    "basis": "likely",
+    "focus": false,
+    "note": "Outside near the front of the house, a capped pipe"
+   }
+  ],
+  "front": "bottom",
+  "source_line": "Public record and likely layout. No company record for this address.",
+  "sources": [
+   {
+    "n": 1,
+    "title": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+    "publisher": "NJ Office of GIS (NJOGIS)",
+    "url": "https://services2.arcgis.com/XVOqAjTOJ5P6ngMu/arcgis/rest/services/Parcels_Composite_NJ_WM/FeatureServer/0",
+    "date": "2026-06-04"
+   },
+   {
+    "n": 2,
+    "title": "Elevation Point Query Service (3DEP)",
+    "publisher": "U.S. Geological Survey",
+    "url": "https://epqs.nationalmap.gov/v1/docs",
+    "date": "2026-11-23"
+   },
+   {
+    "n": 3,
+    "title": "USA Structures (building outlines)",
+    "publisher": "FEMA Geospatial Response Office; Oak Ridge National Laboratory",
+    "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0",
+    "date": "2024-08-03"
+   },
+   {
+    "n": 4,
+    "title": "NJ Construction Permit Data",
+    "publisher": "NJ Department of Community Affairs",
+    "url": "https://data.nj.gov/Reference-Data/NJ-Construction-Permit-Data/w9se-dmra",
+    "date": ""
+   }
+  ],
+  "place": {
+   "label": "33 Washington St, Toms River, NJ 08753",
+   "lat": 39.9517791,
+   "lon": -74.1967027,
+   "precision": "parcel",
+   "geocoder": "parcel centroid",
+   "basis": "public",
+   "src": 1
+  },
+  "building": {
+   "frame": {
+    "origin": {
+     "lon": -74.1967027,
+     "lat": 39.9517791
+    },
+    "units": "m",
+    "x": "east",
+    "y": "north"
+   },
+   "footprint": {
+    "ring_m": [
+     [
+      -9.67,
+      37.67
+     ],
+     [
+      -11.79,
+      38.41
+     ],
+     [
+      -9.38,
+      45.52
+     ],
+     [
+      33.17,
+      30.98
+     ],
+     [
+      7.34,
+      -45.21
+     ],
+     [
+      -33.08,
+      -31.39
+     ],
+     [
+      -9.67,
+      37.67
+     ]
+    ],
+    "area_m2": 3453.4,
+    "w_ft": 264,
+    "d_ft": 148,
+    "rot_deg": 71.3,
+    "basis": "public",
+    "src": 3,
+    "as_of": "2024-08-03",
+    "method": "outline from imagery",
+    "outbuildings": [
+     {
+      "ring_m": [
+       [
+        22.84,
+        52.49
+       ],
+       [
+        7.24,
+        57.82
+       ],
+       [
+        7.96,
+        59.95
+       ],
+       [
+        -33.18,
+        74.01
+       ],
+       [
+        -28.35,
+        88.25
+       ],
+       [
+        -22.67,
+        86.31
+       ],
+       [
+        -6.02,
+        135.44
+       ],
+       [
+        6.04,
+        131.32
+       ],
+       [
+        10.72,
+        121.78
+       ],
+       [
+        2.64,
+        117.79
+       ],
+       [
+        6.15,
+        110.63
+       ],
+       [
+        -2.78,
+        84.28
+       ],
+       [
+        1.48,
+        82.82
+       ],
+       [
+        1.95,
+        84.25
+       ],
+       [
+        30.33,
+        74.55
+       ],
+       [
+        22.84,
+        52.49
+       ]
+      ],
+      "basis": "public"
+     },
+     {
+      "ring_m": [
+       [
+        -29.96,
+        32.69
+       ],
+       [
+        -37.07,
+        35.08
+       ],
+       [
+        -33.27,
+        46.49
+       ],
+       [
+        -26.16,
+        44.1
+       ],
+       [
+        -29.96,
+        32.69
+       ]
+      ],
+      "basis": "public"
+     }
+    ]
+   },
+   "height": {
+    "eave_m": 5.4,
+    "ridge_m": 8.0,
+    "from": "storeys",
+    "basis": "likely",
+    "src": 3
+   },
+   "storeys": {
+    "n": 2,
+    "basis": "public",
+    "src": 1
+   },
+   "parcel": {
+    "ring_m": [
+     [
+      37.52,
+      46.53
+     ],
+     [
+      29.48,
+      21.1
+     ],
+     [
+      23.68,
+      22.94
+     ],
+     [
+      3.76,
+      -40.13
+     ],
+     [
+      -5.52,
+      -44.39
+     ],
+     [
+      -74.81,
+      -14.47
+     ],
+     [
+      -76.73,
+      -10.34
+     ],
+     [
+      -71.91,
+      5.93
+     ],
+     [
+      -67.01,
+      7.24
+     ],
+     [
+      -44.74,
+      0.58
+     ],
+     [
+      -38.62,
+      21.18
+     ],
+     [
+      -23.89,
+      16.78
+     ],
+     [
+      -20.24,
+      29.08
+     ],
+     [
+      -34.97,
+      33.49
+     ],
+     [
+      -35.67,
+      31.11
+     ],
+     [
+      -62.07,
+      39.02
+     ],
+     [
+      -31.16,
+      143.12
+     ],
+     [
+      24.46,
+      126.83
+     ],
+     [
+      15.13,
+      94.73
+     ],
+     [
+      42.59,
+      86.68
+     ],
+     [
+      30.61,
+      48.74
+     ],
+     [
+      37.52,
+      46.53
+     ]
+    ],
+    "area_m2": 12653.7,
+    "basis": "public",
+    "src": 1
+   },
+   "front": {
+    "bearing_deg": 32,
+    "basis": "public",
+    "from": "geocoded street point"
+   }
+  },
+  "front_basis": "public",
+  "facts": [
+   {
+    "k": "property_class",
+    "label": "Property class",
+    "v": "15C (public property)",
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-06-04"
+   },
+   {
+    "k": "building_desc",
+    "label": "Assessor building description",
+    "v": "2SB 15226",
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-06-04"
+   },
+   {
+    "k": "stories",
+    "label": "Storeys",
+    "v": 2,
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-06-04"
+   },
+   {
+    "k": "material",
+    "label": "Walls",
+    "v": "brick",
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-06-04"
+   },
+   {
+    "k": "floor_area_sqft",
+    "label": "Building area (sq ft)",
+    "v": 15226,
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-06-04"
+   },
+   {
+    "k": "assessed_improvements",
+    "label": "Assessed value of improvements ($)",
+    "v": 5124000,
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-06-04"
+   },
+   {
+    "k": "lot_acres",
+    "label": "Lot (acres)",
+    "v": 3.462,
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-06-04"
+   },
+   {
+    "k": "facility",
+    "label": "Facility",
+    "v": "TOWN HALL",
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-06-04"
+   },
+   {
+    "k": "ground_elevation_m",
+    "label": "Ground elevation (m)",
+    "v": 7.9,
+    "basis": "public",
+    "src": 2,
+    "as_of": "2026-11-23"
+   }
+  ],
+  "permits": [
+   {
+    "date": "2022-11-02",
+    "type": "Alteration",
+    "trades": [],
+    "basis": "public",
+    "src": 4
+   },
+   {
+    "date": "2022-03-16",
+    "type": "Alteration",
+    "trades": [],
+    "basis": "public",
+    "src": 4
+   },
+   {
+    "date": "2022-03-01",
+    "type": "Alteration",
+    "trades": [],
+    "basis": "public",
+    "src": 4
+   },
+   {
+    "date": "2021-08-19",
+    "type": "Alteration",
+    "trades": [],
+    "basis": "public",
+    "src": 4
+   },
+   {
+    "date": "2021-08-11",
+    "type": "Alteration",
+    "trades": [],
+    "basis": "public",
+    "src": 4
+   }
+  ]
+ },
+ "map_command": {
+  "type": "card",
+  "kind": "map_command",
+  "id": "mc-nj_full",
+  "cmd": {
+   "title": "33 Washington St, Toms River, NJ 08753",
+   "source": "site",
+   "steps": [
+    {
+     "kind": "site",
+     "lat": 39.979,
+     "lon": -74.1604,
+     "label": "Toms River, NJ",
+     "sub": "Town",
+     "precision": "town",
+     "zoom": 12.5,
+     "pitch": 0,
+     "bearing": 0,
+     "hold_ms": 4000
+    },
+    {
+     "kind": "site",
+     "lat": 39.951779,
+     "lon": -74.196703,
+     "label": "33 Washington St, Toms River",
+     "sub": "Parcel match · outline from imagery dated Aug 2024",
+     "precision": "parcel",
+     "zoom": 18.5,
+     "pitch": 60,
+     "bearing": 32,
+     "hold_ms": 8000,
+     "outline": [
+      [
+       -74.196816,
+       39.9521175
+      ],
+      [
+       -74.1968409,
+       39.9521241
+      ],
+      [
+       -74.1968126,
+       39.952188
+      ],
+      [
+       -74.196314,
+       39.9520574
+      ],
+      [
+       -74.1966167,
+       39.951373
+      ],
+      [
+       -74.1970903,
+       39.9514971
+      ],
+      [
+       -74.196816,
+       39.9521175
+      ]
+     ],
+     "height_m": 8.0,
+     "height_basis": "likely"
+    }
+   ]
+  }
+ }
+}

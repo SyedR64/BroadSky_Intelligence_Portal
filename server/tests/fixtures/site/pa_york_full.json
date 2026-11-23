@@ -1,0 +1,1872 @@
+{
+ "name": "pa_york_full",
+ "typed": "45 N George St, York, PA 17401",
+ "issue": "sink repair",
+ "what": "York County Judicial Center (public building)",
+ "status": "found",
+ "recorded": "2026-11-23",
+ "calls": [
+  {
+   "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+   "params": {
+    "address": "45 N George St, York, PA 17401",
+    "benchmark": "Public_AR_Current",
+    "format": "json"
+   },
+   "response": {
+    "result": {
+     "input": {
+      "address": {
+       "address": "45 N George St, York, PA 17401"
+      },
+      "benchmark": {
+       "isDefault": true,
+       "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+       "id": "4",
+       "benchmarkName": "Public_AR_Current"
+      }
+     },
+     "addressMatches": [
+      {
+       "tigerLine": {
+        "side": "R",
+        "tigerLineId": "88730717"
+       },
+       "coordinates": {
+        "x": -76.728146800555,
+        "y": 39.963389182463
+       },
+       "addressComponents": {
+        "zip": "17401",
+        "streetName": "GEORGE",
+        "preType": "",
+        "city": "YORK",
+        "preDirection": "N",
+        "suffixDirection": "",
+        "fromAddress": "27",
+        "state": "PA",
+        "suffixType": "ST",
+        "toAddress": "99",
+        "suffixQualifier": "",
+        "preQualifier": ""
+       },
+       "matchedAddress": "45 N GEORGE ST, YORK, PA, 17401"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "url": "https://arcweb1.ycpc.org/server/rest/services/OPEN_DATA/Parcels/FeatureServer/0/query",
+   "params": {
+    "where": "PROPADR LIKE '45 N GEORGE%'",
+    "outFields": "PIDN,PROPADR,CLASS,LUC,ACRES,STYLE,NUM_STORIE,RES_LIVING_AREA,YRBLT,HEATSYS,FUEL,UTILITY,APRBLDG,COMM_STRUC,COMM_YEAR_BUILT,COMM_BUILDING_SQ_FT",
+    "returnGeometry": "true",
+    "outSR": 4326,
+    "geometryPrecision": 7,
+    "resultRecordCount": 12,
+    "f": "json"
+   },
+   "response": {
+    "objectIdFieldName": "OBJECTID",
+    "globalIdFieldName": "GlobalID",
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+     "wkid": 4326,
+     "latestWkid": 4326
+    },
+    "features": [
+     {
+      "attributes": {
+       "PIDN": "0202101001500",
+       "PROPADR": "45 N GEORGE ST",
+       "CLASS": "E",
+       "LUC": "663",
+       "ACRES": 1.36,
+       "STYLE": null,
+       "NUM_STORIE": null,
+       "RES_LIVING_AREA": null,
+       "YRBLT": null,
+       "HEATSYS": null,
+       "FUEL": null,
+       "UTILITY": "All Public",
+       "APRBLDG": 0.0,
+       "COMM_STRUC": "354",
+       "COMM_YEAR_BUILT": 2005,
+       "COMM_BUILDING_SQ_FT": 120389
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -76.7283064,
+          39.9638626
+         ],
+         [
+          -76.7280527,
+          39.9639323
+         ],
+         [
+          -76.727713,
+          39.9640343
+         ],
+         [
+          -76.7274643,
+          39.9641147
+         ],
+         [
+          -76.7272944,
+          39.9637935
+         ],
+         [
+          -76.7272562,
+          39.9637197
+         ],
+         [
+          -76.7272181,
+          39.9636485
+         ],
+         [
+          -76.7271799,
+          39.9635747
+         ],
+         [
+          -76.7271409,
+          39.9635009
+         ],
+         [
+          -76.7280334,
+          39.9632258
+         ],
+         [
+          -76.7281261,
+          39.9634
+         ],
+         [
+          -76.7282998,
+          39.9637299
+         ],
+         [
+          -76.7283501,
+          39.9638335
+         ],
+         [
+          -76.7283358,
+          39.9638496
+         ],
+         [
+          -76.7283064,
+          39.9638626
+         ]
+        ]
+       ],
+       "ids": [
+        [
+         374361,
+         374362,
+         374363,
+         374364,
+         374351,
+         374352,
+         374353,
+         374354,
+         374355,
+         374356,
+         374357,
+         374358,
+         374359,
+         374360,
+         374361
+        ]
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0/query",
+   "params": {
+    "outFields": "BUILD_ID,OCC_CLS,PRIM_OCC,OUTBLDG,HEIGHT,SQMETERS,SOURCE,IMAGE_DATE,PROD_DATE,VAL_METHOD,LONGITUDE,LATITUDE",
+    "returnGeometry": "true",
+    "outSR": 4326,
+    "geometryPrecision": 7,
+    "f": "json",
+    "spatialRel": "esriSpatialRelIntersects",
+    "inSR": 4326,
+    "geometry": "{\"rings\":[[[-76.7283064,39.9638626],[-76.7280527,39.9639323],[-76.727713,39.9640343],[-76.7274643,39.9641147],[-76.7272944,39.9637935],[-76.7272562,39.9637197],[-76.7272181,39.9636485],[-76.7271799,39.9635747],[-76.7271409,39.9635009],[-76.7280334,39.9632258],[-76.7281261,39.9634],[-76.7282998,39.9637299],[-76.7283501,39.9638335],[-76.7283358,39.9638496],[-76.7283064,39.9638626]]],\"spatialReference\":{\"wkid\":4326}}",
+    "geometryType": "esriGeometryPolygon"
+   },
+   "response": {
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+     "name": "OBJECTID",
+     "isSystemMaintained": true
+    },
+    "globalIdFieldName": "GlobalID",
+    "geometryProperties": {
+     "shapeAreaFieldName": "Shape__Area",
+     "shapeLengthFieldName": "Shape__Length",
+     "units": "esriMeters"
+    },
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+     "wkid": 4326,
+     "latestWkid": 4326
+    },
+    "features": [
+     {
+      "attributes": {
+       "BUILD_ID": 50323399,
+       "OCC_CLS": "Government",
+       "PRIM_OCC": "General Services",
+       "OUTBLDG": null,
+       "HEIGHT": null,
+       "SQMETERS": 15194.67,
+       "SOURCE": "ORNL",
+       "IMAGE_DATE": 1679788800000,
+       "PROD_DATE": 1754352000000,
+       "VAL_METHOD": "Spatial Intersect",
+       "LONGITUDE": -76.72745510690616,
+       "LATITUDE": 39.96342567588298
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -76.7272967,
+          39.963383
+         ],
+         [
+          -76.7272323,
+          39.9634005
+         ],
+         [
+          -76.7272406,
+          39.9634185
+         ],
+         [
+          -76.7270532,
+          39.9634692
+         ],
+         [
+          -76.7269357,
+          39.9632124
+         ],
+         [
+          -76.7269181,
+          39.9632171
+         ],
+         [
+          -76.7267862,
+          39.9629288
+         ],
+         [
+          -76.7267466,
+          39.9629142
+         ],
+         [
+          -76.7268149,
+          39.9628045
+         ],
+         [
+          -76.727178,
+          39.9627062
+         ],
+         [
+          -76.7271698,
+          39.9626882
+         ],
+         [
+          -76.7274684,
+          39.9626073
+         ],
+         [
+          -76.7275488,
+          39.962783
+         ],
+         [
+          -76.7276542,
+          39.9627545
+         ],
+         [
+          -76.727648,
+          39.9627409
+         ],
+         [
+          -76.7278237,
+          39.9626934
+         ],
+         [
+          -76.7279906,
+          39.9630583
+         ],
+         [
+          -76.7279672,
+          39.9630647
+         ],
+         [
+          -76.7279857,
+          39.9631052
+         ],
+         [
+          -76.7280267,
+          39.9630941
+         ],
+         [
+          -76.7281813,
+          39.9634321
+         ],
+         [
+          -76.7282106,
+          39.9634241
+         ],
+         [
+          -76.7283157,
+          39.963654
+         ],
+         [
+          -76.7282864,
+          39.9636619
+         ],
+         [
+          -76.7283318,
+          39.963761
+         ],
+         [
+          -76.7282615,
+          39.96378
+         ],
+         [
+          -76.728278,
+          39.9638161
+         ],
+         [
+          -76.727833,
+          39.9639366
+         ],
+         [
+          -76.7277221,
+          39.9638958
+         ],
+         [
+          -76.7276576,
+          39.9639993
+         ],
+         [
+          -76.727441,
+          39.964058
+         ],
+         [
+          -76.7273812,
+          39.9639273
+         ],
+         [
+          -76.7273337,
+          39.9639098
+         ],
+         [
+          -76.7272919,
+          39.9639768
+         ],
+         [
+          -76.7273553,
+          39.9640002
+         ],
+         [
+          -76.7273986,
+          39.9640948
+         ],
+         [
+          -76.727217,
+          39.964144
+         ],
+         [
+          -76.7272108,
+          39.9641304
+         ],
+         [
+          -76.7269473,
+          39.9642018
+         ],
+         [
+          -76.7269618,
+          39.9642334
+         ],
+         [
+          -76.7265519,
+          39.9643444
+         ],
+         [
+          -76.7265003,
+          39.9642317
+         ],
+         [
+          -76.726676,
+          39.9641842
+         ],
+         [
+          -76.7266801,
+          39.9641932
+         ],
+         [
+          -76.7268851,
+          39.9641377
+         ],
+         [
+          -76.7268974,
+          39.9641647
+         ],
+         [
+          -76.726956,
+          39.9641488
+         ],
+         [
+          -76.7269333,
+          39.9640993
+         ],
+         [
+          -76.7269626,
+          39.9640913
+         ],
+         [
+          -76.726942,
+          39.9640463
+         ],
+         [
+          -76.726901,
+          39.9640574
+         ],
+         [
+          -76.7268392,
+          39.9639222
+         ],
+         [
+          -76.7268685,
+          39.9639143
+         ],
+         [
+          -76.7268314,
+          39.9638332
+         ],
+         [
+          -76.7267962,
+          39.9638427
+         ],
+         [
+          -76.7267694,
+          39.9637841
+         ],
+         [
+          -76.726746,
+          39.9637904
+         ],
+         [
+          -76.7267254,
+          39.9637454
+         ],
+         [
+          -76.7266961,
+          39.9637533
+         ],
+         [
+          -76.7266652,
+          39.9636857
+         ],
+         [
+          -76.7267823,
+          39.963654
+         ],
+         [
+          -76.726772,
+          39.9636315
+         ],
+         [
+          -76.7268774,
+          39.9636029
+         ],
+         [
+          -76.7268671,
+          39.9635804
+         ],
+         [
+          -76.7270486,
+          39.9635312
+         ],
+         [
+          -76.7270672,
+          39.9635718
+         ],
+         [
+          -76.7270789,
+          39.9635686
+         ],
+         [
+          -76.7271407,
+          39.9637038
+         ],
+         [
+          -76.7271115,
+          39.9637117
+         ],
+         [
+          -76.7271465,
+          39.9637883
+         ],
+         [
+          -76.7272753,
+          39.9637534
+         ],
+         [
+          -76.7271784,
+          39.9635417
+         ],
+         [
+          -76.727237,
+          39.9635258
+         ],
+         [
+          -76.7272143,
+          39.9634762
+         ],
+         [
+          -76.7273197,
+          39.9634477
+         ],
+         [
+          -76.7273136,
+          39.9634342
+         ],
+         [
+          -76.7275302,
+          39.9633755
+         ],
+         [
+          -76.7275075,
+          39.9633259
+         ],
+         [
+          -76.727449,
+          39.9633418
+         ],
+         [
+          -76.7273461,
+          39.9633038
+         ],
+         [
+          -76.7272967,
+          39.963383
+         ]
+        ],
+        [
+         [
+          -76.7273238,
+          39.9638163
+         ],
+         [
+          -76.7273011,
+          39.9637667
+         ],
+         [
+          -76.7272836,
+          39.9637715
+         ],
+         [
+          -76.7273062,
+          39.963821
+         ],
+         [
+          -76.7273238,
+          39.9638163
+         ]
+        ],
+        [
+         [
+          -76.72732,
+          39.9638224
+         ],
+         [
+          -76.7273365,
+          39.9638584
+         ],
+         [
+          -76.7273541,
+          39.9638536
+         ],
+         [
+          -76.7273376,
+          39.9638176
+         ],
+         [
+          -76.72732,
+          39.9638224
+         ]
+        ]
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "url": "https://epqs.nationalmap.gov/v1/json",
+   "params": {
+    "x": "-76.7277694",
+    "y": "39.9637300",
+    "units": "Meters",
+    "wkid": 4326
+   },
+   "response": {
+    "location": {
+     "x": -76.7277694,
+     "y": 39.96373,
+     "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+     }
+    },
+    "locationId": 0,
+    "value": "118.400001526",
+    "rasterId": 22829,
+    "resolution": 1
+   }
+  }
+ ],
+ "adapters": {
+  "geocode": {
+   "ok": true,
+   "src": "census",
+   "status": "found",
+   "matches": [
+    {
+     "label": "45 N GEORGE ST, YORK, PA, 17401",
+     "lat": 39.9633892,
+     "lon": -76.7281468,
+     "precision": "typed",
+     "geocoder": "census",
+     "basis": "public",
+     "src": "census",
+     "as_of": "2026-11-23",
+     "date_kind": "retrieved",
+     "parts": {
+      "street": "27 N GEORGE ST",
+      "city": "YORK",
+      "state": "PA",
+      "zip": "17401"
+     }
+    }
+   ]
+  },
+  "parcels": {
+   "ok": true,
+   "src": "pa_york",
+   "parcels": [
+    {
+     "src": "pa_york",
+     "id": {
+      "county_pin": "0202101001500"
+     },
+     "addr": "45 N GEORGE ST",
+     "key": "45 N GEORGE ST",
+     "label": "45 N George St, York County",
+     "muni": null,
+     "county": "York",
+     "state": "PA",
+     "ring_ll": [
+      [
+       -76.7283064,
+       39.9638626
+      ],
+      [
+       -76.7280527,
+       39.9639323
+      ],
+      [
+       -76.727713,
+       39.9640343
+      ],
+      [
+       -76.7274643,
+       39.9641147
+      ],
+      [
+       -76.7272944,
+       39.9637935
+      ],
+      [
+       -76.7272562,
+       39.9637197
+      ],
+      [
+       -76.7272181,
+       39.9636485
+      ],
+      [
+       -76.7271799,
+       39.9635747
+      ],
+      [
+       -76.7271409,
+       39.9635009
+      ],
+      [
+       -76.7280334,
+       39.9632258
+      ],
+      [
+       -76.7281261,
+       39.9634
+      ],
+      [
+       -76.7282998,
+       39.9637299
+      ],
+      [
+       -76.7283501,
+       39.9638335
+      ],
+      [
+       -76.7283358,
+       39.9638496
+      ],
+      [
+       -76.7283064,
+       39.9638626
+      ]
+     ],
+     "centroid": [
+      -76.7277694,
+      39.96373
+     ],
+     "as_of": "2026-11-23",
+     "date_kind": "retrieved",
+     "facts": [
+      {
+       "k": "year_built",
+       "label": "Year built",
+       "v": 2005,
+       "basis": "public",
+       "src": "pa_york",
+       "source": "York County parcels and assessment (OPEN_DATA Parcels)",
+       "as_of": "2026-11-23",
+       "date_kind": "retrieved",
+       "note": "commercial building record",
+       "n": 1
+      },
+      {
+       "k": "floor_area_sqft",
+       "label": "Building area (sq ft)",
+       "v": 120389,
+       "basis": "public",
+       "src": "pa_york",
+       "source": "York County parcels and assessment (OPEN_DATA Parcels)",
+       "as_of": "2026-11-23",
+       "date_kind": "retrieved",
+       "note": "commercial building record",
+       "n": 1
+      },
+      {
+       "k": "land_use",
+       "label": "Land use code",
+       "v": "E / 663",
+       "basis": "public",
+       "src": "pa_york",
+       "source": "York County parcels and assessment (OPEN_DATA Parcels)",
+       "as_of": "2026-11-23",
+       "date_kind": "retrieved",
+       "n": 1
+      },
+      {
+       "k": "utilities",
+       "label": "Utilities",
+       "v": "All Public",
+       "basis": "public",
+       "src": "pa_york",
+       "source": "York County parcels and assessment (OPEN_DATA Parcels)",
+       "as_of": "2026-11-23",
+       "date_kind": "retrieved",
+       "n": 1
+      }
+     ],
+     "building_facts": true,
+     "codes": {
+      "COMM_STRUC": "354"
+     },
+     "match": "exact",
+     "distance_m": 49.8
+    }
+   ]
+  },
+  "footprints": {
+   "ok": true,
+   "src": "structures",
+   "query": "parcel",
+   "buildings": [
+    {
+     "src": "structures",
+     "build_id": 50323399,
+     "ring_ll": [
+      [
+       -76.7272967,
+       39.963383
+      ],
+      [
+       -76.7272323,
+       39.9634005
+      ],
+      [
+       -76.7272406,
+       39.9634185
+      ],
+      [
+       -76.7270532,
+       39.9634692
+      ],
+      [
+       -76.7269357,
+       39.9632124
+      ],
+      [
+       -76.7269181,
+       39.9632171
+      ],
+      [
+       -76.7267862,
+       39.9629288
+      ],
+      [
+       -76.7267466,
+       39.9629142
+      ],
+      [
+       -76.7268149,
+       39.9628045
+      ],
+      [
+       -76.727178,
+       39.9627062
+      ],
+      [
+       -76.7271698,
+       39.9626882
+      ],
+      [
+       -76.7274684,
+       39.9626073
+      ],
+      [
+       -76.7275488,
+       39.962783
+      ],
+      [
+       -76.7276542,
+       39.9627545
+      ],
+      [
+       -76.727648,
+       39.9627409
+      ],
+      [
+       -76.7278237,
+       39.9626934
+      ],
+      [
+       -76.7279906,
+       39.9630583
+      ],
+      [
+       -76.7279672,
+       39.9630647
+      ],
+      [
+       -76.7279857,
+       39.9631052
+      ],
+      [
+       -76.7280267,
+       39.9630941
+      ],
+      [
+       -76.7281813,
+       39.9634321
+      ],
+      [
+       -76.7282106,
+       39.9634241
+      ],
+      [
+       -76.7283157,
+       39.963654
+      ],
+      [
+       -76.7282864,
+       39.9636619
+      ],
+      [
+       -76.7283318,
+       39.963761
+      ],
+      [
+       -76.7282615,
+       39.96378
+      ],
+      [
+       -76.728278,
+       39.9638161
+      ],
+      [
+       -76.727833,
+       39.9639366
+      ],
+      [
+       -76.7277221,
+       39.9638958
+      ],
+      [
+       -76.7276576,
+       39.9639993
+      ],
+      [
+       -76.727441,
+       39.964058
+      ],
+      [
+       -76.7273812,
+       39.9639273
+      ],
+      [
+       -76.7273337,
+       39.9639098
+      ],
+      [
+       -76.7272919,
+       39.9639768
+      ],
+      [
+       -76.7273553,
+       39.9640002
+      ],
+      [
+       -76.7273986,
+       39.9640948
+      ],
+      [
+       -76.727217,
+       39.964144
+      ],
+      [
+       -76.7272108,
+       39.9641304
+      ],
+      [
+       -76.7269473,
+       39.9642018
+      ],
+      [
+       -76.7269618,
+       39.9642334
+      ],
+      [
+       -76.7265519,
+       39.9643444
+      ],
+      [
+       -76.7265003,
+       39.9642317
+      ],
+      [
+       -76.726676,
+       39.9641842
+      ],
+      [
+       -76.7266801,
+       39.9641932
+      ],
+      [
+       -76.7268851,
+       39.9641377
+      ],
+      [
+       -76.7268974,
+       39.9641647
+      ],
+      [
+       -76.726956,
+       39.9641488
+      ],
+      [
+       -76.7269333,
+       39.9640993
+      ],
+      [
+       -76.7269626,
+       39.9640913
+      ],
+      [
+       -76.726942,
+       39.9640463
+      ],
+      [
+       -76.726901,
+       39.9640574
+      ],
+      [
+       -76.7268392,
+       39.9639222
+      ],
+      [
+       -76.7268685,
+       39.9639143
+      ],
+      [
+       -76.7268314,
+       39.9638332
+      ],
+      [
+       -76.7267962,
+       39.9638427
+      ],
+      [
+       -76.7267694,
+       39.9637841
+      ],
+      [
+       -76.726746,
+       39.9637904
+      ],
+      [
+       -76.7267254,
+       39.9637454
+      ],
+      [
+       -76.7266961,
+       39.9637533
+      ],
+      [
+       -76.7266652,
+       39.9636857
+      ],
+      [
+       -76.7267823,
+       39.963654
+      ],
+      [
+       -76.726772,
+       39.9636315
+      ],
+      [
+       -76.7268774,
+       39.9636029
+      ],
+      [
+       -76.7268671,
+       39.9635804
+      ],
+      [
+       -76.7270486,
+       39.9635312
+      ],
+      [
+       -76.7270672,
+       39.9635718
+      ],
+      [
+       -76.7270789,
+       39.9635686
+      ],
+      [
+       -76.7271407,
+       39.9637038
+      ],
+      [
+       -76.7271115,
+       39.9637117
+      ],
+      [
+       -76.7271465,
+       39.9637883
+      ],
+      [
+       -76.7272753,
+       39.9637534
+      ],
+      [
+       -76.7271784,
+       39.9635417
+      ],
+      [
+       -76.727237,
+       39.9635258
+      ],
+      [
+       -76.7272143,
+       39.9634762
+      ],
+      [
+       -76.7273197,
+       39.9634477
+      ],
+      [
+       -76.7273136,
+       39.9634342
+      ],
+      [
+       -76.7275302,
+       39.9633755
+      ],
+      [
+       -76.7275075,
+       39.9633259
+      ],
+      [
+       -76.727449,
+       39.9633418
+      ],
+      [
+       -76.7273461,
+       39.9633038
+      ],
+      [
+       -76.7272967,
+       39.963383
+      ]
+     ],
+     "centroid": [
+      -76.7274551,
+      39.9634257
+     ],
+     "area_m2": 15194.7,
+     "height_m": null,
+     "height_checked": false,
+     "occupancy": "Government",
+     "use": "General Services",
+     "outbuilding": false,
+     "imagery_source": "ORNL",
+     "method": "Spatial Intersect",
+     "basis": "public",
+     "as_of": "2023-03-26",
+     "date_kind": "imagery",
+     "produced": "2025-08-05"
+    }
+   ]
+  },
+  "elevation": {
+   "ok": true,
+   "src": "usgs_epqs",
+   "fact": {
+    "k": "ground_elevation_m",
+    "label": "Ground elevation (m)",
+    "v": 118.4,
+    "basis": "public",
+    "src": "usgs_epqs",
+    "source": "Elevation Point Query Service (3DEP)",
+    "as_of": "2026-11-23",
+    "date_kind": "retrieved",
+    "n": 2
+   }
+  }
+ },
+ "card": {
+  "type": "card",
+  "kind": "floor_sketch",
+  "id": "fs-f24addcc",
+  "title": "Floor sketch",
+  "address": "45 N George St, York, PA 17401",
+  "issue": "Not sure (generic checks)",
+  "basis": "likely",
+  "area": {
+   "status": "in",
+   "label": "Inside the Punctual Pros service area (York County, York hub)"
+  },
+  "house": {
+   "text": "Two stories over a full basement. (likely) Built 2005. Gas heat. (likely)",
+   "year": 2005,
+   "year_basis": "public",
+   "stories": 2,
+   "foundation": "basement",
+   "basement": "full",
+   "fuel": "gas",
+   "fuel_basis": "likely"
+  },
+  "focus": [
+   "main_water",
+   "panel"
+  ],
+  "floors": [
+   {
+    "id": "basement",
+    "name": "Basement",
+    "w": 552,
+    "h": 498,
+    "rooms": [
+     {
+      "x": 0,
+      "y": 0,
+      "w": 552,
+      "h": 498,
+      "label": "Unfinished basement"
+     }
+    ],
+    "items": [
+     {
+      "kind": "main_water",
+      "label": "Main water shutoff",
+      "short": "W",
+      "basis": "likely",
+      "focus": true,
+      "note": "Front wall where the line comes in from the street, near the water meter",
+      "detail": null,
+      "x": 82.8,
+      "y": 458.1
+     },
+     {
+      "kind": "panel",
+      "label": "Electrical panel",
+      "short": "P",
+      "basis": "likely",
+      "focus": true,
+      "note": "On a side or front wall, near where the power line enters",
+      "detail": null,
+      "x": 33.1,
+      "y": 249.0
+     },
+     {
+      "kind": "water_heater",
+      "label": "Water heater",
+      "short": "WH",
+      "basis": "likely",
+      "focus": false,
+      "note": "Utility corner, near the floor drain",
+      "detail": null,
+      "x": 469.2,
+      "y": 74.6
+     },
+     {
+      "kind": "furnace",
+      "label": "Furnace",
+      "short": "F",
+      "basis": "likely",
+      "focus": false,
+      "note": "Center of the basement, near the chimney or flue",
+      "detail": null,
+      "x": 276.0,
+      "y": 249.0
+     },
+     {
+      "kind": "gas_shutoff",
+      "label": "Gas shutoff",
+      "short": "GS",
+      "basis": "likely",
+      "focus": false,
+      "note": "On the gas pipe beside the furnace or boiler, a lever valve",
+      "detail": null,
+      "x": 279.7,
+      "y": 249.0
+     },
+     {
+      "kind": "sewer_cleanout",
+      "label": "Sewer cleanout",
+      "short": "C",
+      "basis": "likely",
+      "focus": false,
+      "note": "Front wall where the drain leaves for the street",
+      "detail": null,
+      "x": 276.0,
+      "y": 458.1
+     }
+    ],
+    "runs": [
+     {
+      "kind": "water",
+      "label": "Water",
+      "points": [
+       [
+        82.8,
+        458.1
+       ],
+       [
+        469.2,
+        74.6
+       ]
+      ],
+      "basis": "likely"
+     },
+     {
+      "kind": "gas",
+      "label": "Gas",
+      "points": [
+       [
+        518.9,
+        249.0
+       ],
+       [
+        276.0,
+        249.0
+       ]
+      ],
+      "basis": "likely"
+     },
+     {
+      "kind": "drain",
+      "label": "Drain",
+      "points": [
+       [
+        276.0,
+        39.9
+       ],
+       [
+        276.0,
+        458.1
+       ]
+      ],
+      "basis": "likely"
+     }
+    ]
+   }
+  ],
+  "outside": [
+   {
+    "kind": "gas_meter",
+    "label": "Gas meter",
+    "short": "G",
+    "floor": "basement",
+    "side": "right",
+    "at": 0.35,
+    "basis": "likely",
+    "focus": false,
+    "note": "Outside on a side wall, near where the gas line enters"
+   }
+  ],
+  "front": "bottom",
+  "source_line": "Public record and likely layout. No company record for this address.",
+  "sources": [
+   {
+    "n": 1,
+    "title": "York County parcels and assessment (OPEN_DATA Parcels)",
+    "publisher": "York County Planning Commission",
+    "url": "https://arcweb1.ycpc.org/server/rest/services/OPEN_DATA/Parcels/FeatureServer/0",
+    "date": "2026-11-23"
+   },
+   {
+    "n": 2,
+    "title": "Elevation Point Query Service (3DEP)",
+    "publisher": "U.S. Geological Survey",
+    "url": "https://epqs.nationalmap.gov/v1/docs",
+    "date": "2026-11-23"
+   },
+   {
+    "n": 3,
+    "title": "USA Structures (building outlines)",
+    "publisher": "FEMA Geospatial Response Office; Oak Ridge National Laboratory",
+    "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0",
+    "date": "2023-03-26"
+   }
+  ],
+  "place": {
+   "label": "45 N George St, York, PA 17401",
+   "lat": 39.9634257,
+   "lon": -76.7274551,
+   "precision": "parcel",
+   "geocoder": "parcel centroid",
+   "basis": "public",
+   "src": 1
+  },
+  "building": {
+   "frame": {
+    "origin": {
+     "lon": -76.7274551,
+     "lat": 39.9634257
+    },
+    "units": "m",
+    "x": "east",
+    "y": "north"
+   },
+   "footprint": {
+    "ring_m": [
+     [
+      13.51,
+      -4.75
+     ],
+     [
+      18.3,
+      -0.8
+     ],
+     [
+      44.32,
+      -23.74
+     ],
+     [
+      57.07,
+      -55.31
+     ],
+     [
+      54.62,
+      -69.15
+     ],
+     [
+      24.34,
+      -82.1
+     ],
+     [
+      -7.99,
+      -71.55
+     ],
+     [
+      -16.46,
+      -76.23
+     ],
+     [
+      -45.69,
+      -40.9
+     ],
+     [
+      -45.27,
+      -35.68
+     ],
+     [
+      -61.96,
+      0.71
+     ],
+     [
+      -73.43,
+      25.41
+     ],
+     [
+      -74.8,
+      37.33
+     ],
+     [
+      -70.21,
+      43.46
+     ],
+     [
+      -22.78,
+      52.33
+     ],
+     [
+      1.2,
+      70.39
+     ],
+     [
+      10.36,
+      53.89
+     ],
+     [
+      8.52,
+      63.95
+     ],
+     [
+      20.32,
+      79.96
+     ],
+     [
+      43.33,
+      86.4
+     ],
+     [
+      77.06,
+      102.27
+     ],
+     [
+      66.47,
+      84.44
+     ],
+     [
+      48.63,
+      79.26
+     ],
+     [
+      42.58,
+      80.5
+     ],
+     [
+      42.02,
+      74.09
+     ],
+     [
+      47.28,
+      70.32
+     ],
+     [
+      50.05,
+      54.39
+     ],
+     [
+      56.22,
+      46.42
+     ],
+     [
+      60.5,
+      40.6
+     ],
+     [
+      64.76,
+      36.47
+     ],
+     [
+      57.4,
+      25.41
+     ],
+     [
+      49.29,
+      19.73
+     ],
+     [
+      34.68,
+      11.74
+     ],
+     [
+      32.1,
+      15.91
+     ],
+     [
+      29.32,
+      31.84
+     ],
+     [
+      15.34,
+      36.48
+     ],
+     [
+      18.61,
+      11.14
+     ],
+     [
+      11.55,
+      2.45
+     ],
+     [
+      -6.41,
+      -5.59
+     ],
+     [
+      0.52,
+      -9.34
+     ],
+     [
+      13.51,
+      -4.75
+     ]
+    ],
+    "area_m2": 13777.6,
+    "w_ft": 552,
+    "d_ft": 498,
+    "rot_deg": 22.0,
+    "basis": "public",
+    "src": 3,
+    "as_of": "2023-03-26",
+    "method": "outline from imagery",
+    "outbuildings": []
+   },
+   "height": {
+    "eave_m": 5.4,
+    "ridge_m": 8.0,
+    "from": "storeys",
+    "basis": "likely",
+    "src": 3
+   },
+   "storeys": {
+    "n": 2,
+    "basis": "likely"
+   },
+   "parcel": {
+    "ring_m": [
+     [
+      -72.63,
+      48.64
+     ],
+     [
+      -50.99,
+      56.39
+     ],
+     [
+      -22.0,
+      67.75
+     ],
+     [
+      -0.78,
+      76.7
+     ],
+     [
+      26.81,
+      8.37
+     ],
+     [
+      -49.34,
+      -22.25
+     ],
+     [
+      -72.07,
+      33.86
+     ],
+     [
+      -76.36,
+      45.4
+     ],
+     [
+      -75.14,
+      47.19
+     ],
+     [
+      -72.63,
+      48.64
+     ]
+    ],
+    "area_m2": 6045.3,
+    "basis": "public",
+    "src": 1
+   },
+   "front": {
+    "bearing_deg": 266,
+    "basis": "public",
+    "from": "geocoded street point"
+   }
+  },
+  "front_basis": "public",
+  "facts": [
+   {
+    "k": "year_built",
+    "label": "Year built",
+    "v": 2005,
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-11-23"
+   },
+   {
+    "k": "floor_area_sqft",
+    "label": "Building area (sq ft)",
+    "v": 120389,
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-11-23"
+   },
+   {
+    "k": "land_use",
+    "label": "Land use code",
+    "v": "E / 663",
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-11-23"
+   },
+   {
+    "k": "utilities",
+    "label": "Utilities",
+    "v": "All Public",
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-11-23"
+   },
+   {
+    "k": "ground_elevation_m",
+    "label": "Ground elevation (m)",
+    "v": 118.4,
+    "basis": "public",
+    "src": 2,
+    "as_of": "2026-11-23"
+   }
+  ]
+ },
+ "map_command": {
+  "type": "card",
+  "kind": "map_command",
+  "id": "mc-pa_york_full",
+  "cmd": {
+   "title": "45 N George St, York, PA 17401",
+   "source": "site",
+   "steps": [
+    {
+     "kind": "site",
+     "lat": 39.9595,
+     "lon": -76.7335,
+     "label": "York, PA",
+     "sub": "Town",
+     "precision": "town",
+     "zoom": 12.5,
+     "pitch": 0,
+     "bearing": 0,
+     "hold_ms": 4000
+    },
+    {
+     "kind": "site",
+     "lat": 39.963426,
+     "lon": -76.727455,
+     "label": "45 N George St, York",
+     "sub": "Parcel match · outline from imagery dated Mar 2023",
+     "precision": "parcel",
+     "zoom": 18.5,
+     "pitch": 60,
+     "bearing": 266,
+     "hold_ms": 8000,
+     "outline": [
+      [
+       -76.7272968,
+       39.963383
+      ],
+      [
+       -76.7272406,
+       39.9634185
+      ],
+      [
+       -76.7269357,
+       39.9632124
+      ],
+      [
+       -76.7267862,
+       39.9629288
+      ],
+      [
+       -76.7268149,
+       39.9628045
+      ],
+      [
+       -76.7271698,
+       39.9626882
+      ],
+      [
+       -76.7275487,
+       39.962783
+      ],
+      [
+       -76.727648,
+       39.9627409
+      ],
+      [
+       -76.7279906,
+       39.9630583
+      ],
+      [
+       -76.7279857,
+       39.9631052
+      ],
+      [
+       -76.7281813,
+       39.9634321
+      ],
+      [
+       -76.7283157,
+       39.963654
+      ],
+      [
+       -76.7283318,
+       39.963761
+      ],
+      [
+       -76.728278,
+       39.9638161
+      ],
+      [
+       -76.7277221,
+       39.9638958
+      ],
+      [
+       -76.727441,
+       39.964058
+      ],
+      [
+       -76.7273337,
+       39.9639098
+      ],
+      [
+       -76.7273552,
+       39.9640002
+      ],
+      [
+       -76.7272169,
+       39.964144
+      ],
+      [
+       -76.7269473,
+       39.9642018
+      ],
+      [
+       -76.7265519,
+       39.9643444
+      ],
+      [
+       -76.726676,
+       39.9641842
+      ],
+      [
+       -76.7268851,
+       39.9641377
+      ],
+      [
+       -76.726956,
+       39.9641488
+      ],
+      [
+       -76.7269626,
+       39.9640913
+      ],
+      [
+       -76.726901,
+       39.9640574
+      ],
+      [
+       -76.7268685,
+       39.9639143
+      ],
+      [
+       -76.7267962,
+       39.9638427
+      ],
+      [
+       -76.726746,
+       39.9637904
+      ],
+      [
+       -76.7266961,
+       39.9637533
+      ],
+      [
+       -76.7267824,
+       39.963654
+      ],
+      [
+       -76.7268774,
+       39.9636029
+      ],
+      [
+       -76.7270486,
+       39.9635312
+      ],
+      [
+       -76.7270789,
+       39.9635686
+      ],
+      [
+       -76.7271115,
+       39.9637117
+      ],
+      [
+       -76.7272753,
+       39.9637534
+      ],
+      [
+       -76.727237,
+       39.9635258
+      ],
+      [
+       -76.7273197,
+       39.9634477
+      ],
+      [
+       -76.7275302,
+       39.9633755
+      ],
+      [
+       -76.727449,
+       39.9633418
+      ],
+      [
+       -76.7272968,
+       39.963383
+      ]
+     ],
+     "height_m": 8.0,
+     "height_basis": "likely"
+    }
+   ]
+  }
+ }
+}
