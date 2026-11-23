@@ -751,10 +751,10 @@ export const App = {
     if (refocus) $(`.rail-item[data-k="${CSS.escape(App._railKey)}"]`, nav)?.focus({ preventScroll: true });
     // a short window: keep the current item in view
     const cur = $('.rail-item.active', nav); if (cur && nav.scrollHeight > nav.clientHeight + 4) { const a = cur.getBoundingClientRect(), b = nav.getBoundingClientRect(); if (a.top < b.top || a.bottom > b.bottom) nav.scrollTop += a.top - b.top - (b.height - a.height) / 2; }
-    // the menu foot's "All views" (every page and screen) is for the firm levels only
+    // the menu foot's "All pages" (every page and screen) is for the firm levels only
     const all = $('#rail .rail-foot a[href]'); if (all) all.hidden = !!role.co;
     // phone: the same menu as one native picker (app.css shows it at 900px and narrower). Headed groups are optgroups,
-    // the open module off the menu is one more option, and the firm's "All views" comes last.
+    // the open module off the menu is one more option, and the firm's "All pages" comes last.
     const pick = $('#rail-pick'); if (!pick) return;
     const opt = i => `<option value="${esc(i.key)}" data-hash="${esc(i.href)}"${i === act ? ' selected' : ''}>${esc(i.label)}</option>`;
     pick.innerHTML = groups.map(g => head(g) ? `<optgroup label="${esc(g.name)}">${g.items.map(opt).join('')}</optgroup>` : g.items.map(opt).join('')).join('')

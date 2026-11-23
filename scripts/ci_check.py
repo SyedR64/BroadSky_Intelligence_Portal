@@ -502,7 +502,7 @@ async def check_levels(browser, base, settle):
             if missing or extra:
                 col.errors.append({'kind': 'menu', 'text': f'menu {keys}: missing {missing}, not expected {extra}'})
             if await page.evaluate("() => !!document.querySelector('#rail .rail-foot a[href]:not([hidden])')") != (level in ('firm_leadership', 'firm_team')):
-                col.errors.append({'kind': 'menu', 'text': '"All views" must show for the firm levels only'})
+                col.errors.append({'kind': 'menu', 'text': '"All pages" must show for the firm levels only'})
             # a screen this level does not have: the first registered one it cannot open
             hidden = await page.evaluate("() => { for (const m of BSP.App.modules) for (const v of m.views) if (!BSP.App.can(m.id, v.id)) return `#/${m.id}/${v.id}`; return null; }")
             if level == 'firm_leadership' and hidden:

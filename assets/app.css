@@ -84,7 +84,7 @@ body[data-sys-layout="app"]>.sys-top{background:var(--sys-top-bg)}   /* the same
 .rail-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
 .rail-item[aria-current]{background:var(--co-soft);color:var(--co-ink);font-weight:600}
 .rail-item .sys-dot{box-shadow:0 0 0 3px var(--co-soft)}
-/* menu foot, one line in the .sys-src face: the "All views" link (firm levels only), then the author and month. The link
+/* menu foot, one line in the .sys-src face: the "All pages" link (firm levels only), then the author and month. The link
    is a 32px-tall target; the line wraps only if the type falls back to a wider face */
 .rail-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 var(--sys-sp-3);margin-top:0;padding:var(--sys-sp-1) var(--sys-sp-5);border-top:1px solid var(--sys-line);font-size:11px}
 .rail-foot a{display:inline-flex;align-items:center;min-height:32px;flex-shrink:0;font-weight:600;color:var(--sys-ink-2)}
