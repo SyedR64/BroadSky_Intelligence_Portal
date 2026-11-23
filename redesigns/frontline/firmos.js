@@ -24,7 +24,7 @@ function heroKpis() {
   if (k.some(x => !x)) return; // keep static fallback
   const fmt = (x, v) => x.unit.startsWith('%') ? v + '%' : String(v);
   const lab = { 'kb-fl-3': 'Net first-level resolution', 'kb-fl-1': 'eBilling invoice rejection rate', 'kb-fl-2': 'Days from invoice to payment' };
-  const sub = { 'kb-fl-3': 'MetricNet benchmark → analyst target', 'kb-fl-1': 'Elite research, 2025 → 2024 level', 'kb-fl-2': 'Elite eBillingHub customers, pre-2025 → 2025' };
+  const sub = { 'kb-fl-3': 'MetricNet → analyst target', 'kb-fl-1': 'Elite research, 2025 → 2024 level', 'kb-fl-2': 'Elite eBillingHub, pre-2025 → 2025' };
   box.innerHTML = k.map(x => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${lab[x.id]}</span><span class="sys-kpi-value hk-val"><s>${fmt(x, x.baseline)}</s><span class="ar">→</span>${fmt(x, x.target)}<span class="sys-est">est.</span></span><span class="sys-kpi-sub">${sub[x.id]} · ${srcLink(x.id, 'source')}</span></div>`).join('');
 }
 
@@ -299,9 +299,9 @@ function roadmap() {
 }
 function risks() {
   const el = $('#risk-list'); if (!el) return;
-  const R = [['HIGH', 'bad', 'AI near privileged material', 'Tier-0 could touch matter names or document metadata.', 'Firm-scoped retrieval over runbooks only, no training on client data, full audit log, and opt-in per client guideline.'], ['HIGH', 'bad', 'Client limits on offshore and AI handling', 'Some outside counsel guidelines restrict where data is touched and by what.', 'Per-client routing rules that pin work to approved hubs and switch AI off by client. The trust center lists hubs and subprocessors.'], ['MED', 'warn', 'Benchmarks are dated or vendor-sourced', 'MetricNet data is from 2011, and the vendor case studies are self-reported.', 'Baseline Frontline\'s own ticket and billing data in month one, then re-cut the value math before committing the second half of the budget.'], ['MED', 'warn', 'Savings competed away in pricing', 'Clients may ask for automation gains back at renewal.', 'Keep about 60% as margin, and sell the posture score and portal as a paid tier rather than giving them away.'], ['MED', 'warn', 'Roll-up integration debt', 'Intelliteach, Hilltop, LOGICFORCE, Glasser, InvoicePrep and KL Software each brought their own systems.', 'Build the data layer first and standardize on one PSA before scaling Tier-0.'], ['LOW', 'ok', 'Attorney adoption', 'Partners may bypass self-serve and call the desk directly.', 'Keep a white-glove line one tap away, and measure attorney CSAT next to deflection.']];
+  const R = [['HIGH', 'bad', 'AI near privileged material', '', 'Runbook-only retrieval, no client-data training, full audit log, opt-in per guideline.'], ['HIGH', 'bad', 'Client limits on offshore and AI handling', '', 'Per-client rules pin work to approved hubs and switch AI off; the trust center lists hubs and subprocessors.'], ['MED', 'warn', 'Benchmarks are dated or vendor-sourced', 'MetricNet data is from 2011; case studies are self-reported.', 'Baseline Frontline\'s own ticket and billing data in month one, then re-cut the value math.'], ['MED', 'warn', 'Savings competed away in pricing', '', 'Keep about 60% as margin; sell the posture score and portal as a paid tier.'], ['MED', 'warn', 'Roll-up integration debt', 'Intelliteach, Hilltop, LOGICFORCE, Glasser, InvoicePrep and KL Software each brought their own systems.', 'Build the data layer first; standardize on one PSA before scaling Tier-0.'], ['LOW', 'ok', 'Attorney adoption', '', 'Keep a white-glove line one tap away; track attorney CSAT beside deflection.']];
   const LV = { HIGH: 'High', MED: 'Medium', LOW: 'Low' };
-  el.innerHTML = R.map(r => `<div class="risk"><span class="lv sys-chip fl-st fl-st--${r[1]}">${LV[r[0]] || r[0]}</span><div><h4>${r[2]}</h4><p>${r[3]}</p><p class="ctrl"><b>Control:</b> ${r[4]}</p></div></div>`).join('');
+  el.innerHTML = R.map(r => `<div class="risk"><span class="lv sys-chip fl-st fl-st--${r[1]}">${LV[r[0]] || r[0]}</span><div><h4>${r[2]}</h4>${r[3] ? `<p>${r[3]}</p>` : ''}<p class="ctrl"><b>Control:</b> ${r[4]}</p></div></div>`).join('');
 }
 
 export async function firmos({ Data, esc: e }) {
