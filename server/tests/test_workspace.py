@@ -927,7 +927,7 @@ def test_prompt_size_bounds(sb):
         b = workspace.system_blocks(ws)
         assert len(b) == 2 and b[0].get('cache_control') and 'cache_control' not in b[1]
         n = len(b[0]['text']) + len(b[1]['text']) + len(json.dumps(workspace.tool_defs(ws)))
-        assert n <= 9000, (rid, n)
+        assert n <= 9200, (rid, n)   # the longest role (a company CEO) sits near 9,000 with the product's longer name
         assert len(b[1]['text']) <= 1500, rid
         assert b[1]['text'].startswith('Local date: Tue Nov 17, 2026 (Eastern).')
         assert ('W6.' in b[0]['text']) == ('site_brief' in workspace.role(rid)['tools'])

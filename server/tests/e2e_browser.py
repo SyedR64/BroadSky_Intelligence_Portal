@@ -426,12 +426,12 @@ def main():
             a = ask_docked(po, 'Show the storm history for Ocean County')
             check('storm-history chip opens Weather & demand', a['intent'] == 'nav' and 'Opening' in a['text'] and 'Weather' in a['text'], a['text'][:80].replace('\n', ' / '))
             po.close()
-            # 9d-2. The firm profile says six today, seven since launch, and the docked assistant sends that wording.
+            # 9d-2. The firm profile says six companies today and one exit, and the docked assistant sends that wording.
             pf = ctx.new_page()
             goto(pf, SITE + '/app.html?backend=off#/home/firm')
-            pf.wait_for_function("() => /since launch/.test(document.querySelector('#content .sys-lead')?.textContent || '')", timeout=30000)
-            firm = pf.evaluate("async () => { const { Chat } = await import('/assets/chat.js'); return { head: document.querySelector('#content .page-head').innerText, ctx: Chat.viewContext()?.text || '' }; }")
-            check('firm profile: six companies today, seven since launch', '6 companies today, 7 since launch' in firm['head'] and '6 held · 7 since launch · 23 add-ons' in firm['head'] and '7 companies' not in firm['head'] and '7 companies' not in firm['ctx'] and '6 companies today' in firm['ctx'], firm['head'].replace('\n', ' / ')[-170:])
+            pf.wait_for_function("() => /6 companies/.test(document.querySelector('#content')?.innerText || '')", timeout=30000)
+            firm = pf.evaluate("async () => { const { Chat } = await import('/assets/chat.js'); return { head: document.querySelector('#content').innerText.slice(0, 700), ctx: Chat.viewContext()?.text || '' }; }")
+            check('firm profile: six companies today, one exit', '6 companies' in firm['head'] and '6 held · 1 exited' in firm['head'] and '7 companies' not in firm['head'] and '7 companies' not in firm['ctx'] and '6 companies' in firm['ctx'], firm['head'].replace('\n', ' / ')[:200] + ' || ' + firm['ctx'][:200].replace('\n', ' / '))
             pf.close()
             # 9d-3. A page in a folder names itself from the site root, and the link opens that page from anywhere.
             pd = ctx.new_page()
