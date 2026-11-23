@@ -448,7 +448,7 @@ async def check_routes(ctx, base, routes, settle, aliases=None):
                 "([m, v]) => window.BSP.App.current && window.BSP.App.current.id === m && window.BSP.App.view && window.BSP.App.view.id === v && !document.querySelector('#content > .loading')",
                 arg=[mid, vid], timeout=30000)
             await page.wait_for_timeout(settle)
-            failed = await page.evaluate("() => { const e = document.querySelector('#content .empty'); return e && /failed to render/i.test(e.textContent) ? e.textContent.trim() : null; }")
+            failed = await page.evaluate("() => { const e = document.querySelector('#content .empty'); return e && /This (?:screen|view) failed to (?:load|render)/i.test(e.textContent) ? e.textContent.trim() : null; }")   # the shell's own failure text (assets/core.js App.route)
             if failed: col.errors.append({'kind': 'render', 'text': failed[:300]})
         except Exception as e:
             col.errors.append({'kind': 'navigation', 'text': str(e)[:300]})

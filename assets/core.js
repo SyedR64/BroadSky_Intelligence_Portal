@@ -266,7 +266,12 @@ export const Maps = {
     if (!window.L) throw new Error('Leaflet not loaded');
     const map = L.map(el, { center, zoom, minZoom, maxZoom: Math.min(maxZoom, 16), zoomControl: true, preferCanvas: true, attributionControl: true });
     Maps._tile(map, Theme.get()); Maps._live.add(map);
-    map._renderer = L.canvas({ padding: 0.5 });
+    const canvas = map._renderer = L.canvas({ padding: 0.5 });
+    // Leaflet can leave one canvas redraw queued when a map is removed (a redraw run directly forgets the one already
+    // queued, so removal cancels only the newer one). The queued one then runs with no canvas left and throws. Views
+    // remove their map when the visitor moves on, so a redraw with no canvas does nothing.
+    const redraw = canvas._redraw;
+    canvas._redraw = function () { if (this._ctx) return redraw.call(this); this._redrawRequest = null; };
     // re-measure once the container has its size; a visitor who has already left the screen removed the map (no pane left to measure)
     const fit = () => { if (map._mapPane) map.invalidateSize(); };
     setTimeout(fit, 60); setTimeout(fit, 240);
@@ -531,15 +536,16 @@ export const Tour = {
 };
 
 /* ── App shell / router ───────────────────────────────────────────────────── */
-const searchIndex = [];
+const searchIndex = [], SCREEN = 'Screen';   // the search box's tag for a screen
 export const App = {
   modules: [], aliases: {}, current: null, view: null, params: {}, state: {}, _unmount: null, _warned: new Set(),
   /** The forwarding table for merged screens ('module/view' → 'module/view?params', modules/registry.js ALIASES).
       app.html hands it over, so this file never imports the registry (that would be an import cycle). */
   alias(table) { App.aliases = { ...(table || {}) }; },
-  register(m) { App.modules.push(m); if (Array.isArray(m.tour) && m.tour.length) Tour.register(m.tour); (m.views || []).forEach(v => searchIndex.push({ label: `${m.name} · ${v.name}`, kind: 'View', href: `#/${m.id}/${v.id}`, color: m.color })); },
-  /** Modules call this to make entities searchable in ⌘K: items [{label, sub, href, kind}] */
-  index(items) { for (const i of items) if (!searchIndex.some(x => x.href === i.href && x.label === i.label)) searchIndex.push(i); },
+  register(m) { App.modules.push(m); if (Array.isArray(m.tour) && m.tour.length) Tour.register(m.tour); (m.views || []).forEach(v => searchIndex.push({ label: `${m.name} · ${v.name}`, kind: SCREEN, href: `#/${m.id}/${v.id}`, color: m.color })); },
+  /** Modules call this to make entities searchable in ⌘K: items [{label, sub, href, kind}]. A module that tags an entry
+      'View' means a screen; the search box shows one word for it. */
+  index(items) { for (const i of items) if (!searchIndex.some(x => x.href === i.href && x.label === i.label)) searchIndex.push(i.kind === 'View' ? { ...i, kind: SCREEN } : i); },
   parse(hash = location.hash) { const h = String(hash).replace(/^#\/?/, ''); const [path, q] = h.split('?'); const [mod, view] = path.split('/'); const params = Object.fromEntries(new URLSearchParams(q || '')); return { mod: mod || App.modules[0]?.id, view, params }; },
   /** One resolver for every way into a screen: the address bar (route), App.go and the tour.
       Returns { m, v, params, hash, forwarded, miss }. A live address always wins. The forwarding table is read ONLY ON A
@@ -562,14 +568,10 @@ export const App = {
   },
   go(mod, view, params) { const q = params ? '?' + new URLSearchParams(params).toString() : ''; location.hash = App.resolve(`#/${mod}/${view || ''}${q}`).hash; },
   async route() {
-    // an in-page anchor (the frame's "Skip to content" link jumps to #main) is not a screen: keep the open one and its address
-    const raw = location.hash.slice(1);
-    if (App.current && raw && !raw.includes('/') && !App.modules.some(x => x.id === raw) && document.getElementById(raw)) { history.replaceState(history.state, '', App._hash || location.pathname + location.search); return; }
     const r = App.resolve(); const { m, v, params } = r; if (!m) return;
     // a merged screen's old address: show the new one in its place (replace, not push, so Back returns to where the visitor was)
     if (r.forwarded) history.replaceState(history.state, '', r.hash);
     else if (r.miss && !App._warned.has(r.miss)) { App._warned.add(r.miss); console.warn(`BSP Desk: no screen at #/${r.miss}; showing #/${m.id}/${v.id} instead.`); }
-    App._hash = location.hash;
     if (App._unmount) { try { App._unmount(); } catch { } App._unmount = null; }
     App.current = m; App.view = v; App.params = params; Inspector.close(); clearSnapshotNote();
     document.documentElement.style.setProperty('--mc', m.color);
@@ -579,17 +581,19 @@ export const App = {
     const content = $('#content'); content.className = v.flush ? 'flush' : ''; content.scrollTop = 0; content.innerHTML = UI.loading(`Loading ${m.name} · ${v.name}`);
     const ctx = { el: content, module: m, view: v, params, data: Data, ui: UI, maps: Maps, charts: Charts, fmt: Fmt, live: Live, inspector: Inspector, app: App, esc, $, $$ };
     try { const un = await v.render(ctx); if (typeof un === 'function') App._unmount = un; }
-    catch (e) { console.error(e); content.innerHTML = `<div class="empty">This view failed to render.<br><span class="mono small">${esc(e.message)}</span></div>`; }
+    catch (e) { console.error(e); content.innerHTML = `<div class="empty">This screen failed to load.<br><span class="mono small">${esc(e.message)}</span></div>`; }
     document.title = `${m.name} · ${v.name} — BSP Desk`;
   },
   renderRail() {
     const nav = $('#rail .rail-nav'); if (!nav) return;
     // drawn from the flags modules/registry.js sets, on a filtered and sorted COPY (App.modules keeps its order): a module
-    // off the menu shows only while it is open, and items follow railPos
+    // off the menu shows only while it is open, and items follow railPos. The open one is a 15th item, so it gets a rule
+    // above it and no heading of its own (a fourth heading does not fit a laptop screen; app.css .rail-group--open)
     const shown = App.modules.filter(m => m.rail !== false || m === App.current).sort((a, b) => (a.railPos ?? 1e9) - (b.railPos ?? 1e9));
-    const groups = [...new Set(shown.map(m => m.group || 'Portfolio'))];
+    const groups = [...new Set(shown.map(m => m.group || 'Portfolio'))].map(g => { const ms = shown.filter(m => (m.group || 'Portfolio') === g); return { name: g, ms, off: ms.every(m => m.rail === false) }; });
     const refocus = App._railKey && nav.contains(document.activeElement);   // keyboard user on the rail: keep focus there after the re-render
-    nav.innerHTML = groups.map(g => `<div class="rail-group"><div class="sys-card-label rail-section">${esc(g)}</div>${shown.filter(m => (m.group || 'Portfolio') === g).map(m => `<a class="rail-item${m === App.current ? ' active' : ''}" href="#/${esc(m.id)}/" data-co="" style="--co:${m.color};--mc:${m.color}" data-mod="${m.id}"${m === App.current ? ' aria-current="page"' : ''}><span class="sys-dot" aria-hidden="true"></span><span class="ellipsis">${esc(m.name)}</span></a>`).join('')}</div>`).join('');
+    const item = m => `<a class="rail-item${m === App.current ? ' active' : ''}" href="#/${esc(m.id)}/" data-co="" style="--co:${m.color};--mc:${m.color}" data-mod="${m.id}"${m === App.current ? ' aria-current="page"' : ''}><span class="sys-dot" aria-hidden="true"></span><span class="ellipsis">${esc(m.name)}</span></a>`;
+    nav.innerHTML = groups.map(g => `<div class="rail-group${g.off ? ' rail-group--open' : ''}">${g.off ? '' : `<div class="sys-card-label rail-section">${esc(g.name)}</div>`}${g.ms.map(item).join('')}</div>`).join('');
     $$('.rail-item', nav).forEach(el => { el.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); App.go(el.dataset.mod); }; el.onkeydown = e => { if (e.key === ' ') { e.preventDefault(); App.go(el.dataset.mod); } }; });
     if (refocus) $(`.rail-item[data-mod="${CSS.escape(App._railKey)}"]`, nav)?.focus({ preventScroll: true });
     // a short window: keep the current item in view
@@ -599,7 +603,7 @@ export const App = {
     const pick = $('#rail-pick'); if (!pick) return;
     const opt = m => `<option value="${esc(m.id)}"${m === App.current ? ' selected' : ''}>${esc(m.name)}</option>`;
     const all = $('#rail .rail-foot a[href]');
-    pick.innerHTML = groups.map(g => { const ms = shown.filter(m => (m.group || 'Portfolio') === g); return ms.every(m => m.rail === false) ? ms.map(opt).join('') : `<optgroup label="${esc(g)}">${ms.map(opt).join('')}</optgroup>`; }).join('')
+    pick.innerHTML = groups.map(g => g.off ? g.ms.map(opt).join('') : `<optgroup label="${esc(g.name)}">${g.ms.map(opt).join('')}</optgroup>`).join('')
       + (all ? `<option value="" data-href="${esc(all.getAttribute('href'))}">${esc(all.textContent.trim())}</option>` : '');
     if (App.current) pick.value = App.current.id;
   },
@@ -616,9 +620,9 @@ export const App = {
   },
   palette() {
     let el = $('#palette'); if (el) return el.remove();
-    el = document.createElement('div'); el.id = 'palette'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Search the portal'); el.innerHTML = `<div class="sys-card pal"><div class="pal-in">${ICON.search}<input class="pal-input" placeholder="Search views, companies, targets, opportunities…" aria-label="Search views, companies, targets and opportunities" autofocus><span class="sys-kbd">Esc</span></div><div class="pal-list" role="listbox"></div></div>`; document.body.appendChild(el);
+    el = document.createElement('div'); el.id = 'palette'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Search the portal'); el.innerHTML = `<div class="sys-card pal"><div class="pal-in">${ICON.search}<input class="pal-input" placeholder="Search screens, companies, targets, opportunities…" aria-label="Search screens, companies, targets and opportunities" autofocus><span class="sys-kbd">Esc</span></div><div class="pal-list" role="listbox"></div></div>`; document.body.appendChild(el);
     const inp = $('input', el), list = $('.pal-list', el); let items = [], active = 0;
-    const draw = () => { const q = inp.value.trim().toLowerCase(); items = (q ? searchIndex.filter(i => (i.label + ' ' + (i.sub || '')).toLowerCase().includes(q)) : searchIndex.filter(i => i.kind === 'View')).slice(0, 40); active = 0; list.innerHTML = items.map((i, k) => `<div class="pal-item ${k === 0 ? 'active' : ''}" role="option" aria-selected="${k === 0}" data-h="${esc(i.href)}"><span class="sys-card-label k"><span class="sys-dot" style="--co:${i.color || 'var(--sys-mute-2)'}" aria-hidden="true"></span>${esc(i.kind || '')}</span><span class="ellipsis">${esc(i.label)}</span>${i.sub ? `<span class="s ellipsis">${esc(i.sub)}</span>` : ''}</div>`).join('') || `<div class="empty">No matches</div>`; $$('.pal-item', list).forEach(x => x.onclick = () => { location.hash = x.dataset.h; el.remove(); }); };
+    const draw = () => { const q = inp.value.trim().toLowerCase(); items = (q ? searchIndex.filter(i => (i.label + ' ' + (i.sub || '')).toLowerCase().includes(q)) : searchIndex.filter(i => i.kind === SCREEN)).slice(0, 40); active = 0; list.innerHTML = items.map((i, k) => `<div class="pal-item ${k === 0 ? 'active' : ''}" role="option" aria-selected="${k === 0}" data-h="${esc(i.href)}"><span class="sys-card-label k"><span class="sys-dot" style="--co:${i.color || 'var(--sys-mute-2)'}" aria-hidden="true"></span>${esc(i.kind || '')}</span><span class="ellipsis">${esc(i.label)}</span>${i.sub ? `<span class="s ellipsis">${esc(i.sub)}</span>` : ''}</div>`).join('') || `<div class="empty">No matches</div>`; $$('.pal-item', list).forEach(x => x.onclick = () => { location.hash = x.dataset.h; el.remove(); }); };
     inp.oninput = draw; draw(); inp.focus();
     inp.onkeydown = e => { if (e.key === 'Escape') el.remove(); if (e.key === 'ArrowDown') { active = Math.min(items.length - 1, active + 1); } if (e.key === 'ArrowUp') { active = Math.max(0, active - 1); } if (e.key === 'Enter' && items[active]) { location.hash = items[active].href; el.remove(); } $$('.pal-item', list).forEach((x, k) => { x.classList.toggle('active', k === active); x.setAttribute('aria-selected', String(k === active)); if (k === active) x.scrollIntoView({ block: 'nearest' }); }); };
     el.onclick = e => { if (e.target === el) el.remove(); };
@@ -629,9 +633,24 @@ export const App = {
     // keep keyboard focus on the chosen rail item when the rail re-renders after a route change
     $('#rail .rail-nav')?.addEventListener('focusin', e => { const it = e.target.closest('.rail-item'); App._railKey = it ? it.dataset.mod : null; });
     $('#search-btn').onclick = App.palette;
-    // phone menu: one native picker (renderRail fills it); the option carrying a link leaves the portal, the rest open a module
+    // phone menu: one native picker (renderRail fills it); the option carrying a link leaves the portal, the rest open a
+    // module. A choice made by touch, by mouse or in the open list opens at once. An arrow key or a typed letter on the
+    // closed picker changes it one item at a time (Windows, Linux): that is a walk through the list, so it waits for
+    // Enter, and Esc or leaving the picker puts it back. Walking never opens every item on the way or leaves the portal.
     const pick = $('#rail-pick');
-    if (pick) pick.onchange = () => { const to = pick.selectedOptions[0]?.dataset.href; if (!to) return App.go(pick.value); pick.value = App.current?.id || ''; location.href = to; };
+    if (pick) {
+      let walking = 0, pending = false;
+      const here = () => { pending = false; pick.value = App.current?.id || ''; };
+      const open = () => { pending = false; const to = pick.selectedOptions[0]?.dataset.href; if (to) { here(); location.href = to; } else if (pick.value && pick.value !== App.current?.id) App.go(pick.value); };
+      pick.onchange = () => { if (walking) pending = true; else open(); };   // a change inside a keystroke is a walk
+      pick.onkeydown = e => {
+        clearTimeout(walking); walking = 0;
+        if (e.key === 'Enter') { if (pending) { e.preventDefault(); open(); } }
+        else if (e.key === 'Escape') here();
+        else if (e.key !== 'Tab') walking = setTimeout(() => { walking = 0; }, 80);
+      };
+      pick.onblur = () => { if (pending) here(); };
+    }
     // theme: one preference shared with every page (Theme above); its button is the frame's, in the top bar
     Theme.apply(Theme.get());
     Theme.watch(t => Maps.retheme(t));

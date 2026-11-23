@@ -76,16 +76,18 @@ body[data-sys-layout="app"]>.sys-top{background:var(--sys-top-bg)}   /* the same
 #rail{display:flex;flex-direction:column;min-height:0;background:var(--sys-bg);border-right:1px solid var(--sys-line)}
 .rail-nav{flex:1;overflow-y:auto;padding:var(--sys-sp-3) var(--sys-sp-3) var(--sys-sp-4)}
 .rail-group+.rail-group{margin-top:var(--sys-sp-4)}
+/* a module that is off the menu, while it is open: a 15th item under a rule, with no heading of its own */
+.rail-group+.rail-group--open{margin-top:var(--sys-sp-2);padding-top:var(--sys-sp-2);border-top:1px solid var(--sys-line)}
 .rail-section{padding:var(--sys-sp-2) var(--sys-sp-3) var(--sys-sp-2)}
 .rail-item{display:flex;align-items:center;gap:10px;min-height:36px;padding:0 var(--sys-sp-3);border-radius:var(--sys-r-pill);font:500 14px/1.2 var(--sys-font);letter-spacing:-.005em;color:var(--sys-ink-2);text-decoration:none;white-space:nowrap;transition:background var(--sys-t),color var(--sys-t)}
 :where(#app) a.rail-item{color:var(--sys-ink-2);text-decoration:none}
 .rail-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
 .rail-item[aria-current]{background:var(--co-soft);color:var(--co-ink);font-weight:600}
 .rail-item .sys-dot{box-shadow:0 0 0 3px var(--co-soft)}
-/* menu foot: the "All views" link, then the prepared-by line. The two cannot share one line at the rail's width, so each
-   gets its own; the sans face keeps the prepared-by line from wrapping, so the foot is two lines tall, as it was before */
-.rail-foot{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px var(--sys-sp-3);margin-top:0;padding:var(--sys-sp-3) var(--sys-sp-5) var(--sys-sp-4);border-top:1px solid var(--sys-line);font-family:var(--sys-font);font-size:11px}
-.rail-foot a{flex-shrink:0;font-weight:600;color:var(--sys-ink-2)}
+/* menu foot, one line in the .sys-src face: the "All views" link, then the author and month. The link is a 32px-tall
+   target; the line wraps only if the type falls back to a wider face */
+.rail-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 var(--sys-sp-3);margin-top:0;padding:var(--sys-sp-1) var(--sys-sp-5);border-top:1px solid var(--sys-line);font-size:11px}
+.rail-foot a{display:inline-flex;align-items:center;min-height:32px;flex-shrink:0;font-weight:600;color:var(--sys-ink-2)}
 .rail-foot span{white-space:nowrap}
 /* phone menu: one native picker in place of the list (shown at 900px and narrower, §9) */
 .rail-pick{display:none}
@@ -306,6 +308,10 @@ kbd.k{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-ra
 @media print{#rail,#topbar,#inspector,#tour,.filters .sys-btn{display:none!important}#app{display:block}#content{overflow:visible;height:auto}}
 
 /* ── 9 · responsive ──────────────────────────────────────────────────────── */
+/* short windows: the menu tightens so every item, and a 15th while a module off the menu is open, shows without scrolling
+   (820px covers a 1280x800 laptop; 780px covers 768px- and 720px-tall screens) */
+@media (max-height:820px){.rail-nav{padding-bottom:var(--sys-sp-3)}.rail-group+.rail-group{margin-top:var(--sys-sp-3)}.rail-group+.rail-group--open{margin-top:var(--sys-sp-2)}}
+@media (max-height:780px){.rail-nav{padding-top:var(--sys-sp-2);padding-bottom:var(--sys-sp-2)}.rail-group+.rail-group{margin-top:var(--sys-sp-2)}.rail-section{padding-top:var(--sys-sp-1);padding-bottom:var(--sys-sp-1)}.rail-item{min-height:34px}.rail-group+.rail-group--open{margin-top:var(--sys-sp-1);padding-top:var(--sys-sp-1)}}
 @media (max-width:1280px){.search-btn{width:36px;min-width:36px;padding:0;justify-content:center}.search-btn .search-label,.search-btn .sys-kbd{display:none}}
 /* tablet and phone: the rail becomes one native picker, the view bar is one row of tabs, the inspector slides over */
 @media (max-width:900px){

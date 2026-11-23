@@ -25,15 +25,18 @@
   /* the floating "Ask" launcher sits over the bottom-right corner of the console; keep the last table row
      scrollable clear of it (--launch-clear is measured from the launcher once it mounts; 88px until then) */
   #content:not(.flush){padding-bottom:var(--launch-clear,88px)}
+  /* the side panel ends above the launcher too, so its row of buttons is never under it (at 900px and narrower the
+     panel covers the screen and the launcher is a small icon beside the buttons) */
+  @media (min-width:901px){#inspector.open{margin-bottom:var(--launch-clear,88px)}}
 </style>
 </head>
 <body>
 <div id="app">
-  <aside id="rail" aria-label="Portal menu">
+  <aside id="rail" aria-label="Portal">
     <!-- phone (900px and narrower): the menu is this one native picker; assets/core.js renderRail fills it -->
     <div class="rail-pick"><label class="sys-sr" for="rail-pick">Portal menu</label><select id="rail-pick"></select></div>
     <nav class="rail-nav" aria-label="Sections"></nav>
-    <div class="sys-src rail-foot"><a href="sitemap.html#g-portal">All views</a><span>Prepared by Syed Rahman · November 2026</span></div>
+    <div class="sys-src rail-foot"><a href="sitemap.html#g-portal">All views</a><span title="Prepared by Syed Rahman, November 2026">Syed Rahman · Nov 2026</span></div>
   </aside>
   <main id="main">
     <header id="topbar">
@@ -77,15 +80,18 @@
   App.start();
 
   // 4 · grounded assistant: the frame's Ask button and ⌘J open the same widget
-  const launchClear = () => {
+  const launchClear = (tries = 0) => {
     const l = document.querySelector('.ch.ch-floating .ch-launch'); if (!l) return;
+    // measure the launcher only once its own stylesheet has landed: until then it is a plain button in the page flow,
+    // and the number comes out too small (the side panel's buttons then sat under it)
+    if (getComputedStyle(l).position !== 'fixed') { if (tries < 40) setTimeout(() => launchClear(tries + 1), 150); return; }
     const r = l.getBoundingClientRect(); if (!r.height) return;
     document.documentElement.style.setProperty('--launch-clear', `${Math.max(48, Math.ceil(innerHeight - r.top + 12))}px`);
   };
   import('./assets/chat.js?v=20261117223642').then(({ Chat }) => {
     frame.setChat(Chat.mount(null, { persona: 'portal', mode: 'floating', theme: 'auto' }));
-    requestAnimationFrame(launchClear);
-    addEventListener('resize', () => requestAnimationFrame(launchClear));
+    requestAnimationFrame(() => launchClear());
+    addEventListener('resize', () => requestAnimationFrame(() => launchClear()));
   });
 </script>
 </body>

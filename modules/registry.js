@@ -31,6 +31,8 @@ for (const m of modules) if (NAMES[m.id]) m.name = NAMES[m.id];
    shows in the menu only while it is open. scripts/make_sitemap.py reads RAIL by regex: keep it one statement of
    ['Group name', ['id', …]] pairs. */
 const RAIL = [['Portfolio', ['home', 'cet', 'pp', 'fl', 'ts', 'bpi', 'fh']], ['Deals', ['ma', 'deal', 'pe', 'bsp']], ['Value creation', ['signals', 'fin', 'techos']]];
+/* The modules off the menu. In the portal the open one is drawn as a 15th item under a rule, with no heading (a fourth
+   heading does not fit a laptop screen); this name is the heading they share on the "All pages" page (make_sitemap.py). */
 const OFF_MENU_GROUP = 'More';
 /* Screens with no tab. The address still loads and stays in search, the sitemap, the tour and the checker; the tab
    shows only while that screen is open. */

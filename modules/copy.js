@@ -62,9 +62,11 @@ export const credit = s => typeof s !== 'string' ? s : s
   .replace(/\bsub-(\d{2}) marks\b/g, 'lender marks below $1% of face value');
 
 /** Drafting notes that came through in dataset prose ("… holding (per brief).", "control, per brief") are not for a
-    visitor. Stripped where text is drawn; the datasets stay as they are. */
-const RX_BRIEF = /\s*\(per brief\)|,\s*per brief\b/gi;
-export const noBrief = s => typeof s === 'string' && /per brief/i.test(s) ? s.replace(RX_BRIEF, '') : s;
+    visitor. Stripped where text is drawn; the datasets stay as they are. A screen that shortens the text before it is
+    drawn can cut the note in half ("… holding (per…"): that stub goes too, and the ellipsis stays. */
+const RX_BRIEF = /\s*\(per brief\)|,\s*per brief\b|\s*\(per(?:\s(?:b(?:r(?:i(?:ef?)?)?)?)?)?\s*(?=\u2026)|,\s*per\sb(?:r(?:i(?:ef?)?)?)?\s*(?=\u2026)/gi;
+const RX_BRIEF_ANY = /per brief|per[ brief]{0,6}\u2026/i;
+export const noBrief = s => typeof s === 'string' && RX_BRIEF_ANY.test(s) ? s.replace(RX_BRIEF, '') : s;
 
 /** Clean a free-text string (source summaries, notes) of ids, file names, paths and null artefacts. */
 export function text(s) {
@@ -133,7 +135,7 @@ export function enhance(root) {
     // loan shorthand from lender filings ("S+425", "marked at par") reads as words
     if (v && (v.indexOf('S+') >= 0 || v.indexOf('at par') >= 0 || v.indexOf(' marks') >= 0) && !t.parentElement?.closest(SKIP)) { const c = credit(v); if (c !== v) v = t.nodeValue = c; }
     // drafting notes from the datasets ("(per brief)", ", per brief") never reach the page
-    if (v && v.indexOf('er brief') >= 0 && !t.parentElement?.closest(SKIP)) { const c = noBrief(v); if (c !== v) v = t.nodeValue = c; }
+    if (v && (v.indexOf('er brief') >= 0 || (v.indexOf('\u2026') > 0 && v.indexOf('per') >= 0)) && !t.parentElement?.closest(SKIP)) { const c = noBrief(v); if (c !== v) v = t.nodeValue = c; }
     if (!v || v.indexOf('st.') < 0 || !RX_EST.test(v)) continue;
     const p = t.parentElement;
     if (!p || p.closest(SKIP)) continue;

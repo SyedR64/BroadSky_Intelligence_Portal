@@ -8,7 +8,8 @@ in step with the site. Re-run after adding a page or a portal view:
     python3 scripts/make_sitemap.py
 
 The portal section follows the portal's own menu (the RAIL groups in modules/registry.js), then lists the
-modules that are off the menu. Every screen is listed, with or without a tab. A forwarding page (one that
+modules that are off the menu. Every screen is listed there, once, with or without a tab; a company's own section
+carries one row that opens its first screen. A forwarding page (one that
 carries <meta name="bsp-forward">, scripts/ci_check.py forward_target) is not a page of its own and is left out.
 
 Writes ./sitemap.html using the unified system (assets/system.css + assets/frame.js).
@@ -37,11 +38,12 @@ CO = [  # portfolio order is fixed: PP, CET, Frontline, Thomas Scientific, BPI, 
 OS = {'pp': 'ServiceOS', 'cet': 'GridOS', 'fl': 'FirmOS', 'ts': 'LabOS', 'bpi': 'SignalOS', 'fh': 'HarborOS'}
 
 # Hand-written names and one-line blurbs for known pages (plain English, no identifiers).
+PAGE_NAME = 'All pages'   # this page's one name: its title, its bar, its crumb, the Start list and the site footer
 KNOWN = {
     'index.html': ('Home', 'The front page: what the site is and where to start.'),
     'app.html': ('Portal', 'The six companies and the deal tools. Every screen is listed below.'),
     'theater.html': ('3D map', 'A 3D fly-through of home sales, bids, add-on targets and live weather alerts.'),
-    'sitemap.html': ('All pages', 'This page.'),
+    'sitemap.html': (PAGE_NAME, 'This page.'),
     'redesigns/index.html': ('Concepts', 'Six concept websites and the OS program.'),
     'redesigns/voice-ai.html': ('24/7 Voice AI', 'What missed calls cost, the vendors and a sample call.'),
     'redesigns/ai-agents.html': ('AI agents plan', '45 agents across six companies, with rollout and value.'),
@@ -180,7 +182,8 @@ def main():
             lis.append(item(base if fn == 'index.html' else p, nm, bl))
         if co in mod_by_id:
             mid, mname, views = mod_by_id[co]
-            lis.append(item(f'app.html#/{mid}/{views[0][0]}' if views else 'app.html', 'In the portal', f'{len(views)} screens.', routes_html(mid, views)))
+            # one row here; the screens themselves are listed once, in the portal section (they were on the page twice)
+            lis.append(item(f'app.html#/{mid}/{views[0][0]}' if views else 'app.html', 'In the portal', f'{len(views)} screen{"s" if len(views) != 1 else ""}, listed in the portal section below.'))
         groups.append((co, name, what, co, lis))
 
     # 3. portfolio-wide programs and pages
@@ -207,7 +210,8 @@ def main():
     if off:
         blocks.append((more if rail else 'Portal', off))
     n_off = len(off) if rail else 0
-    lead = 'In the order of the portal’s menu' + (f'. The ones under “{more}” open from other screens' if n_off else '')
+    count = {1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six'}.get(n_off, str(n_off))
+    lead = 'Listed in the order of the portal’s menu' + ('' if not n_off else f'. The one under “{more}” opens from a button on another screen' if n_off == 1 else f'. The {count} under “{more}” open from buttons on other screens')
     groups.append(('portal', 'Every screen in the portal', lead, None, blocks))
 
     # 5. briefing (the 3D map is listed here for as long as it is a page of its own)
@@ -263,7 +267,7 @@ def main():
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sitemap · BSP Desk</title>
+<title>{PAGE_NAME} · BSP Desk</title>
 <meta name="description" content="Every page and portal screen, grouped by company.">
 <meta name="theme-color" content="#fbfaf7">
 {THEME_JS}
@@ -273,12 +277,12 @@ def main():
 <link rel="canonical" href="https://broadsky-agent.vercel.app/sitemap.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BSP Desk">
-<meta property="og:title" content="Sitemap · BSP Desk">
+<meta property="og:title" content="{PAGE_NAME} · BSP Desk">
 <meta property="og:description" content="Every page and portal screen, grouped by company.">
 <meta property="og:url" content="https://broadsky-agent.vercel.app/sitemap.html">
 <meta property="og:image" content="https://broadsky-agent.vercel.app/assets/img/portal_home_overview.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Sitemap · BSP Desk">
+<meta name="twitter:title" content="{PAGE_NAME} · BSP Desk">
 <meta name="twitter:description" content="Every page and portal screen, grouped by company.">
 <meta name="twitter:image" content="https://broadsky-agent.vercel.app/assets/img/portal_home_overview.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -286,13 +290,18 @@ def main():
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/system.css?v={VER}">
 <link rel="stylesheet" href="assets/sitemap.css?v={VER}">
+<style>
+  /* A section opened by its link sits just under the page's bars, and is the one the bar marks as current. system.css
+     already pads every jump by the bars' height; the equal margin in sitemap.css doubled the gap, so it is replaced here. */
+  .lp-map-group{{scroll-margin-top:-2px}}
+</style>
 </head>
 <body data-page="sitemap">
 <!-- Generated by scripts/make_sitemap.py; edit the script, not this file. -->
 <main id="main">
   <nav class="sys-subnav" aria-label="On this page">
     <div class="sys-subnav-in">
-      <a class="sys-subnav-title" href="#top">Sitemap</a>
+      <a class="sys-subnav-title" href="#top">{PAGE_NAME}</a>
       <div class="sys-subnav-links">{sub}</div>
     </div>
   </nav>
@@ -328,7 +337,19 @@ def main():
 
 <script type="module">
   import {{ Frame }} from './assets/frame.js?v={VER}';
-  Frame.mount({{ crumb: [{{ label: 'Home', href: './' }}, {{ label: 'Sitemap' }}] }});
+  Frame.mount({{ crumb: [{{ label: 'Home', href: './' }}, {{ label: '{PAGE_NAME}' }}] }});
+  // A link straight to a section (the portal's "All views" opens #g-portal): hold that section under the page's bars
+  // while the page settles. The browser's own jump starts before the bars and the type are in place and stops short.
+  // The first scroll, tap or key hands the page back to the visitor.
+  const sec = location.hash.length > 1 && document.getElementById(location.hash.slice(1));
+  if (sec && 'ResizeObserver' in window) {{
+    const land = () => sec.scrollIntoView({{ block: 'start', behavior: 'instant' }});
+    const watch = new ResizeObserver(land), keys = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
+    const stop = () => {{ watch.disconnect(); for (const k of keys) removeEventListener(k, stop); }};
+    for (const k of keys) addEventListener(k, stop, {{ passive: true }});
+    addEventListener('load', () => setTimeout(stop, 1500), {{ once: true }});
+    watch.observe(document.body); land();
+  }}
 </script>
 </body>
 </html>
