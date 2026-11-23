@@ -117,7 +117,14 @@ def page_checks(browser, site, catalog):
     check('role head shows HVAC technician', 'HVAC technician' in head)
     check('role head shows "Punctual Pros · Field service"', 'Punctual Pros · Field service' in head, ' '.join(head.split())[:80])
     # R1: a sandbox tool counts as connected until the visitor disconnects it (the Connections screen gives the same answer)
-    check('fresh visit stores no role (R2)', page.evaluate("localStorage.getItem('bsp-agent-role')") is None)
+    # R2: a role named in the address is an explicit choice and is stored; a role nobody chose never is
+    check('a role named in the address is stored (R2)', TECH in (page.evaluate("localStorage.getItem('bsp-agent-role')") or ''))
+    ctx0, page0 = new_page(browser, 1440, 900)
+    page0.goto(f'{site}/agent.html?backend=off')
+    wait_ready(page0)
+    page0.wait_for_timeout(400)
+    check('fresh visit with no role in the address stores no role (R2)', page0.evaluate("localStorage.getItem('bsp-agent-role')") is None)
+    ctx0.close()
     check('fresh visit: no page role list beside the Viewing as switch',
           page.locator('.ca-roles').count() == 0 and page.locator('[data-sys-viewas] .sys-viewas-btn').count() == 1)
     lead0 = page.inner_text('.ca-home')
