@@ -81,8 +81,9 @@ export const ALIASES = {
    · ONLY lists the roles that open nothing but the keys named (investor relations: the fund and documents).
    · Opening anything else sends the visitor to the role's home with one line, "Not in this view." (assets/core.js).
      The forwarding table (ALIASES) is followed first, so old addresses keep working for the firm levels.
-   · `<co>/tools` and `<co>/plan` (each company's software page and growth plan, built in their own lane) are listed
-     below the table for all six companies. A screen that does not exist yet is simply not drawn. */
+   · `<co>/tools` and `<co>/plan` (each company's software page and growth plan) are listed below the table for all six
+     companies: Tools opens for the office level up, Plan for company leadership up (OS_SPEC 3: the office menu has no
+     Plan). A screen that does not exist yet is simply not drawn. */
 const FIRM = ['firm_leadership', 'firm_team'], LEAD = [...FIRM, 'co_leadership'], OFFICE = [...LEAD, 'co_office'], ALL = [...OFFICE, 'co_field'];
 export const COMPANIES = ['cet', 'pp', 'fl', 'ts', 'bpi', 'fh'];
 export const SECTORS = { cet: 'commercial_electrical_energy', pp: 'residential_home_services', fl: 'legal_bpo_managed_services', ts: 'lab_distribution', bpi: 'communications_agencies', fh: 'apparel_dtc' };
@@ -132,7 +133,7 @@ export const LEVELS = {
   'briefing': { to: OFFICE },
   'connect': { to: OFFICE },
 };
-for (const co of COMPANIES) { LEVELS[`${co}/tools`] = { to: OFFICE, own: true }; LEVELS[`${co}/plan`] = { to: OFFICE, own: true }; }
+for (const co of COMPANIES) { LEVELS[`${co}/tools`] = { to: OFFICE, own: true }; LEVELS[`${co}/plan`] = { to: LEAD, own: true }; }
 /* the value an own-company parameter takes for a company (see `param` above) */
 export const OWN_PARAM = { platform: co => co, co: co => co, os: co => co, sector: co => SECTORS[co] };
 /* roles that open only these keys, whatever their level says */
