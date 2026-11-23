@@ -1,7 +1,8 @@
 import * as Copy from './copy.js?v=20261123143257';
 /* ═══════════════════════════════════════════════════════════════════════════
-   CET — Commonwealth Electrical Technologies (Worcester + Taunton MA; NuWave, Norwell MA;
-   Horton Electrical Services, CT). New England only.
+   CET — Commonwealth Electrical Technologies, also branded CET Energy Solutions (Worcester, MA; 400+ professionals;
+   six add-ons, four of them reported in October 2026; licensed in about ten states, reported). The data on these screens
+   covers the six New England states only.
    ═══════════════════════════════════════════════════════════════════════════ */
 import { renderFilings } from '../assets/components.js?v=20261123143257';
 import { esc as E } from '../assets/core.js?v=20261123143257';
@@ -256,9 +257,10 @@ async function overview(ctx) {
 
   el.innerHTML = wrap(ui.pageHead({
     title: 'Commonwealth Electrical Technologies (CET)',
-    sub: opp ? `<b>${fmt.num(openLive.length)} open bids</b> in New England, <b>${fmt.num(dueSoon.length)}</b> due within 60 days. ${wwtp ? `Horton adds <b>${funded.length}</b> funded plant projects worth ${fmt.money(fundedPipe)} (est.) that CET can prime.` : `Only ${fmt.num(openValN)} states a value; the rest need estimator sizing.`}` : 'Electrical, solar, EV and energy-efficiency contractor · Worcester + Taunton MA · NuWave (Norwell MA) · Horton (CT)',
-    chips: `${chip('Licensed across New England', COLOR)}${chip('Held since February 2025', 'var(--sys-brand)')}${chip('Add-ons: NuWave, Horton', PAL.purple)}`,
+    sub: opp ? `<b>${fmt.num(openLive.length)} open bids</b>, <b>${fmt.num(dueSoon.length)}</b> due within 60 days. ${wwtp ? `Horton adds <b>${funded.length}</b> funded plant projects worth ${fmt.money(fundedPipe)} (est.) that CET can prime.` : `Only ${fmt.num(openValN)} states a value; the rest need estimator sizing.`}` : 'Electrical, solar, EV and energy-efficiency contractor · Worcester + Taunton MA · NuWave (Norwell MA) · Horton (CT)',
+    chips: `${chip('Licensed in about ten states (reported)', COLOR)}${chip('Held since February 2025', 'var(--sys-brand)')}${chip('Six add-ons · four reported', PAL.purple)}`,
   }) + companyLinks('cet') +
+  `<div class="sys-muted small mb-12" data-method>Bid, county and wastewater data cover the six New England states only.</div>` +
   (opp ? '' : ui.note('Research dataset <b>CET opportunity radar</b> is not available yet — pipeline KPIs are partial.', 'warn')) +
   (wwtp ? '' : ui.note('Research dataset <b>CET wastewater-plant targets</b> is not available yet — wastewater KPIs and map layer are omitted.', 'warn')) +
   ui.kpis([
@@ -283,9 +285,9 @@ async function overview(ctx) {
   // timeline
   const ons = cetFirm?.add_ons || [];
   const tl = [
-    { date: 'February 2025', color: 'var(--sys-brand)', html: `<b>BSP becomes majority investor in CET</b><div class="dim small">Worcester HQ + Taunton office · founded 2008 · about 140 staff (October 2025)</div>` },
-    ...ons.map(a => ({ date: fmt.date(a.date), color: /Horton/.test(a.name) ? PAL.cyan : PAL.purple, html: `<b>${esc(a.name)}</b> · ${esc(a.hq || '')}${a.source_url ? ` <a class="dim" href="${esc(a.source_url)}" target="_blank" rel="noopener">↗</a>` : ''}<div class="dim small">${esc(String(a.note || '').slice(0, 170))}${String(a.note || '').length > 170 ? '…' : ''}</div>` })),
-    { date: 'Next', color: COLOR, html: `<b>Add-on #3</b> · hand-researched list of ${fmt.num(targets?.items?.length || 0)} New England targets <a href="#/ma/pipeline?platform=cet">→</a><div class="dim small">Top: ${esc((targets?.meta?.ranked_top_10 || []).slice(0, 3).map(t => t.company).join(' · ') || '—')}</div>` },
+    { date: 'February 2025', color: 'var(--sys-brand)', html: `<b>BSP becomes majority investor in CET</b><div class="dim small">Worcester HQ + Taunton office · founded 2008 · 400+ professionals (company site)</div>` },
+    ...ons.map(a => ({ date: fmt.date(a.date), color: /Horton/.test(a.name) ? PAL.cyan : PAL.purple, html: `<b>${esc(a.name)}</b>${a.status === 'reported' ? ' <span class="sys-chip">reported</span>' : ''} · ${esc(a.hq || '')}${a.source_url ? ` <a class="dim" href="${esc(a.source_url)}" target="_blank" rel="noopener">↗</a>` : ''}<div class="dim small">${esc(String(a.note || '').slice(0, 170))}${String(a.note || '').length > 170 ? '…' : ''}</div>` })),
+    { date: 'Next', color: COLOR, html: `<b>Add-on #7</b> · hand-researched list of ${fmt.num(targets?.items?.length || 0)} targets <a href="#/ma/pipeline?platform=cet">→</a><div class="dim small">Top: ${esc((targets?.meta?.ranked_top_10 || []).slice(0, 3).map(t => t.company).join(' · ') || '—')}</div>` },
   ];
   if (!ons.length) tl.splice(1, 0, { date: 'October 7, 2025', color: PAL.purple, html: '<b>NuWave Energy Solutions</b> · Norwell, MA' }, { date: 'September 15, 2026', color: PAL.cyan, html: `<b>Horton Electrical Services</b> · ${esc(horton.town)}` });
   el.querySelector('#cet-tl').innerHTML = ui.timeline(tl);
@@ -299,7 +301,7 @@ async function overview(ctx) {
   pts(maps, map, funded, { color: PAL.cyan, radius: r => Math.min(11, 4 + Math.sqrt(r.design_flow_mgd || 1)), cluster: false, opacity: .9, popup: r => `<b>${esc(r.facility_name)}</b><br>${esc(r.town)}, ${esc(r.state)} · ${fmt.num(r.design_flow_mgd, 1)} MGD<br>${esc(r.recent_or_planned_project || '')}<br>${fmt.money(r.pipeline_value_usd)} pipeline<br><a href="#/cet/wastewater?id=${esc(r.id)}">Open account →</a>` });
   addNodes(ctx, map, horton);
   maps.legend(map, [{ color: PAL.cet, label: 'CET / NuWave node' }, { color: PAL.cyan, label: 'Horton + funded WWTP project' }, { color: PAL.green, label: 'Tier-1 county' }, { color: PAL.cet, label: 'Tier-2 county' }, { color: PAL.amber, label: 'Tier-3 county (size = fit)' }, { color: GAP, label: 'CT county: insufficient data' }], 'Footprint');
-  maps.overlay(map, `<b>Licensed in all six New England states</b><div class="sys-chips mt-8">${STATES.map(s => chip(s, COLOR)).join('')}</div><div class="sys-muted small mt-8">Horton: ${esc(horton.town)}</div>`);
+  maps.overlay(map, `<b>Licensed in about ten states (reported)</b><div class="sys-muted small mt-8">Map: the six New England states</div><div class="sys-chips mt-8">${STATES.map(s => chip(s, COLOR)).join('')}</div><div class="sys-muted small mt-8">Horton: ${esc(horton.town)}</div>`);
   fitLater(map, NE_BOUNDS);
   if (county) openCounty = county.mount(el, map);
   indexEntities(ctx, { opp, wwtp, counties: cnt });
@@ -316,6 +318,7 @@ async function opportunities(ctx) {
   el.innerHTML = `<div class="m-cet split">
     <div class="side">
       ${ui.pageHead({ title: 'Opportunity radar', sub: `${fmt.num(opp?.items?.length || 0)} sourced opportunities, ${fmt.num((rfps || []).length)} older public bids and ${fmt.num((dev || []).length)} building-permit filings. Bids due within 14 days sit on top; mark each and assign an estimator.`, actions: `<button type="button" class="${ui.btnCls('secondary', 'sm')}" id="op-csv">⇩ Radar CSV</button>` })}
+      <div class="sys-muted small mb-12" data-method>Covers the six New England states only.</div>
       <div class="sys-row mb-12"><span class="sys-field-label">Sort</span><div id="op-sort"></div></div>
       ${opp ? '' : ui.note('The CET opportunity radar is not available yet, so only the older bid lists are shown.', 'warn')}
       <div id="op-kpis"></div><div id="op-f"></div><div id="op-cards"></div>
@@ -431,6 +434,7 @@ async function wastewater(ctx) {
     chips: `${Object.entries(m.counts_by_state || {}).map(([k, v]) => chip(`${k} ${v}`, COLOR)).join('')}${chip('Horton fit score')}`,
     actions: `<button type="button" class="${ui.btnCls('secondary', '')}" id="ww-csv">⇩ Account list CSV</button>`,
   }) +
+  `<div class="sys-muted small mb-12" data-method>Plant data covers Connecticut, Massachusetts and Rhode Island only.</div>` +
   ui.kpis([
     { label: 'Facilities', value: fmt.num(P.length), sub: `${fmt.num(hi.length)} with Horton fit 80+`, color: PAL.cyan },
     { label: 'Total plant capacity', value: fmt.num(mgd, 0), small: 'MGD', sub: `million gallons a day · ${fmt.num(P.filter(p => p.design_flow_mgd != null).length)} plants`, color: PAL.cet },
@@ -670,6 +674,7 @@ async function transfers(ctx) {
     chips: `${chip(`Data through ${latestLbl}`, lagD != null && lagD > 60 ? PAL.amber : PAL.green)}${chip(`${fmt.num(R.length)} recorded transfers`, COLOR)}${chip(`${fmt.num(new Set(R.map(r => r.county + r.state)).size)} counties`)}${chip('MA · CT · RI')}${X.loaded < 2 ? chip('one dataset missing', PAL.red) : ''}`,
     actions: `<button type="button" class="${ui.btnCls('primary', '')}" id="tx-out">⇩ New-owner outreach list</button>`,
   }) +
+  `<div class="sys-muted small mb-12" data-method>Sales data covers Massachusetts, Connecticut and Rhode Island only.</div>` +
   `<div class="sys-row mb-12"><div id="tx-seg"></div><span id="tx-town"></span></div>
   <div id="tx-f"></div>
   <div id="tx-kpis"></div>
@@ -783,7 +788,7 @@ async function filingsView(ctx) {
   const pick = re => est.find(e => re.test(e.metric))?.estimate;
   el.innerHTML = wrap(ui.pageHead({
     title: 'Public filings',
-    sub: f ? `Public filings put standalone CET at about <b>${ctx.esc(pick(/standalone revenue/i) || '$35–55M')}</b> revenue and 260–290 staff with the add-ons. No lender is disclosed; all figures are estimates.` : 'Financial picture from public filings',
+    sub: f ? `Public filings put standalone CET at about <b>${ctx.esc(pick(/standalone revenue/i) || '$35–55M')}</b> revenue; the company site states 400+ professionals. No lender is disclosed; all figures are estimates.` : 'Financial picture from public filings',
     chips: f ? `${chip(`${fmt.num((f.items || []).length)} filings and records`, COLOR)}${chip(`${est.length} estimates`, PAL.amber)}${chip('Estimates · low–medium confidence')}` : '',
   }) + `<div id="cet-fil"></div>`);
   // normalise object-shaped sources_summary entries ({source, records}) to strings for the shared renderer
@@ -795,8 +800,8 @@ async function filingsView(ctx) {
 }
 
 export default {
-  id: 'cet', name: 'CET', tag: 'New England', color: 'var(--c-cet)', group: 'Portfolio',
-  tagline: 'Electrical, solar, EV & energy efficiency across New England — Worcester + Taunton MA, NuWave (Norwell MA), Horton (CT)',
+  id: 'cet', name: 'CET', tag: 'Electrical & energy', color: 'var(--c-cet)', group: 'Portfolio',
+  tagline: 'Commonwealth Electrical Technologies (CET Energy Solutions): electrical, solar, EV and energy efficiency · Worcester, MA · 400+ professionals',
   hq: { lat: 42.2626, lon: -71.8023, label: 'Worcester, MA' },
   views: [
     { id: 'overview', name: 'Operating picture', icon: '◉', render: overview },
@@ -808,7 +813,7 @@ export default {
     { id: 'plan', name: 'Plan', render: ctx => embedView(ctx, 'redesigns/cet/growth-plan.html', { title: 'CET plan' }) },
   ],
   tour: [
-    { order: 200, hash: '#/cet/overview', caption: '<b>CET:</b> New England only. Horton turns funded wastewater plants into work CET can prime.', narration: 'CET is New England only. Horton turns funded wastewater plants into work CET can prime.', duration: 6500 },
+    { order: 200, hash: '#/cet/overview', caption: '<b>CET:</b> six add-ons, four reported in October 2026. Horton turns funded wastewater plants into work CET can prime.', narration: 'CET has grown to six add-ons, four of them reported in October 2026. Horton turns funded wastewater plants into work CET can prime.', duration: 6500 },
     { order: 210, hash: '#/cet/opportunities', caption: '<b>Opportunity radar:</b> sourced bids, capital plans and older bid lists in one ranked list, colour-coded by capability.', narration: 'The radar ranks every sourced bid, capital plan and award by capability, value and due date.', duration: 7000 },
     { order: 220, hash: '#/cet/wastewater', caption: '<b>Horton cross-sell:</b> 183 treatment plants ranked by fit, funded projects first.', narration: 'Every treatment plant in Connecticut, Massachusetts and Rhode Island, ranked for Horton, funded projects first.', duration: 7500 },
     { order: 230, hash: '#/cet/transfers', caption: '<b>New owner, new capital plan.</b> Commercial and industrial sales become an outreach list.', narration: 'Each commercial sale brings a new owner with a capital plan. That is the outreach list.', duration: 9500 },

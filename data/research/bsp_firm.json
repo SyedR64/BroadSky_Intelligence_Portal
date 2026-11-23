@@ -59,10 +59,10 @@
       "entry_date": "2025-02",
       "entry_source": "Founder/management-owned (BSP became majority investor; seller not disclosed)",
       "ceo": "John Duquette Jr.",
-      "employees_est": "~140 (Oct 2025 release) / 170 (WBJ Oct 2025); Horton adds 120+ (100+ field staff, 20 managers), nearly doubling workforce (Sep 2026)",
+      "employees_est": "400+ professionals (company site, Nov 2026); earlier ~140 (Oct 2025 release) / 170 (WBJ Oct 2025); Horton added 120+ (Sep 2026)",
       "revenue_est_usd": null,
-      "description": "Electrical and energy infrastructure services company (founded 2008) serving commercial, industrial, institutional, utility and renewables customers across New England: electrical construction, solar installation/O&M, EV charging (incl. on-street chargers in Holyoke), energy efficiency; licensed in all six New England states.",
-      "thesis": "BSP portfolio company to consolidate New England electrical services (The Deal, Oct 14 2025); CET positioned for grid-resilient, energy-optimized facilities demand. CEO guidance: no NYC expansion; growth within New England footprint.",
+      "description": "Electrical and energy infrastructure services company (founded 2008) serving commercial, industrial, institutional, utility and renewables customers: electrical construction, solar installation/O&M, EV charging (incl. on-street chargers in Holyoke), energy efficiency. Branded CET Energy Solutions since October 2026; licensed in about ten states across New England and the Mid-Atlantic (reported).",
+      "thesis": "BSP portfolio company built to consolidate electrical and energy services (The Deal, Oct 14 2025); CET positioned for grid-resilient, energy-optimized facilities demand. Six add-ons to date, four reported in October 2026.",
       "add_ons": [
         {
           "name": "NuWave Energy Solutions",
@@ -78,11 +78,44 @@
           "note": "Third-generation electrical/civil contractor founded 1976 by Arthur Horton; led by Warren A. Horton; wastewater-treatment and pump-station electrical, solar install/O&M, generators, civil site work, 24/7 emergency; 100+ field staff + 20 managers; nearly doubles CET workforce.",
           "source_url": "https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/",
           "source_url_2": "https://www.prnewswire.com/news-releases/commonwealth-electrical-technologies-acquires-horton-electrical-services-expanding-northeast-footprint-and-specialized-infrastructure-capabilities-302878499.html"
+        },
+        {
+          "name": "Direct Electric Services",
+          "date": "2026-10-29",
+          "hq": "Mount Airy, MD (reported)",
+          "status": "reported",
+          "note": "Reported in trade press, 28 to 29 October 2026; founded 2003; terms undisclosed.",
+          "source_url": "https://www.constructionowners.com/news/cet-energy-solutions-expands-electrical-and-energy-services-with-four-acquisitions"
+        },
+        {
+          "name": "JDL Electric Company",
+          "date": "2026-10-29",
+          "hq": "Halethorpe, MD (reported)",
+          "status": "reported",
+          "note": "Reported in trade press, 28 to 29 October 2026; founded 1993; terms undisclosed.",
+          "source_url": "https://www.constructionowners.com/news/cet-energy-solutions-expands-electrical-and-energy-services-with-four-acquisitions"
+        },
+        {
+          "name": "New Horizons Technologies",
+          "date": "2026-10-29",
+          "hq": "Sterling, MA (reported)",
+          "status": "reported",
+          "note": "Reported in trade press, 28 to 29 October 2026; will operate as Commonwealth Electrical Technologies; terms undisclosed.",
+          "source_url": "https://www.constructionowners.com/news/cet-energy-solutions-expands-electrical-and-energy-services-with-four-acquisitions"
+        },
+        {
+          "name": "Vanguard Building Solutions",
+          "date": "2026-10-29",
+          "hq": "Cherry Hill, NJ (reported)",
+          "status": "reported",
+          "note": "Reported in trade press, 28 to 29 October 2026; founded 2013; terms undisclosed.",
+          "source_url": "https://www.constructionowners.com/news/vanguard-building-solutions-acquired-by-cet-energy-solutions"
         }
       ],
       "key_metrics": {
         "founded": 2008,
         "employees_oct_2025": "~140 (company) / 170 (WBJ)",
+        "employees_nov_2026": "400+ professionals (company site)",
         "bsp_co_invest_vehicle_usd": 7500000,
         "clients_named": [
           "Tree House Brewing (Charlton, MA)",
