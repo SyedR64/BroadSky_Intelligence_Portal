@@ -30,6 +30,10 @@ const LAYER = { nppes_only: 'NPPES registry only', clia_only: 'CLIA certificate 
 const STATES50 = new Set('AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY'.split(' '));
 const SRC = { sites: ['NPPES · CMS Provider Utilization 2023 · CLIA · Hospital Compare · PECOS', 'https://npiregistry.cms.hhs.gov/', 'September 2026'] };
 const srcSites = ui => ui.source(...SRC.sites);
+/* Source and method text sit in marked blocks: the shell moves them to the Sources and Method drawers. */
+const srcMark = (...lines) => lines.filter(Boolean).map(l => `<div data-src class="sys-src">${l}</div>`).join('');
+const methodMark = html => `<div data-method class="small text-2">${html}</div>`;
+const fold = (title, line, html) => `<details class="sys-fold"><summary><b>${title}</b><span>${line}</span></summary><div class="m-pad">${html}</div></details>`;
 const CMS_URL = 'https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners';
 const PROXY = 'a guide to test volume, not supply spend';
 
@@ -69,6 +73,17 @@ const PLAYS = {
   'Hospital-embedded laboratory': { motion: 'IDN / GPO contract', play: 'Enter through the health system GPO/IDN contract; standardize lab consumables across system sites with the lab director as sponsor.', owner: 'IDN / GPO team' },
   'Tissue and histology-forward pathology': { motion: 'Histology bundle · equipment service', play: 'Microtome/stainer consumables plus equipment service; microscopy via the NCI (Leica dealer) heritage.', owner: 'Clinical specialist' },
 };
+const SHORT = {
+  'Independent clinical laboratory': 'Win the consumables basket with auto-replenishment; upsell private label.',
+  'Regional multi-site laboratory': 'Network supply agreement, site standing orders, VMI at the hub lab.',
+  'National or mega-system laboratory network': 'Qualified secondary source for backorders and specialty items; skip commodity price.',
+  'Academic medical center laboratory': 'Join the university e-procurement catalog; bundle research-core and cleanroom lines.',
+  'Pathology and specialty testing': 'Histology and cytology bundle sold by a technical rep.',
+  'Oncology or advanced testing focus': 'Molecular consumables and cold-chain supplies; sell on assurance of supply.',
+  'Hospital-embedded laboratory': 'Enter through the health-system GPO contract; standardize across sites.',
+  'Tissue and histology-forward pathology': 'Microtome and stainer consumables plus equipment service.',
+};
+const shortPlay = a => SHORT[a] || 'Qualify buying centre and current distributor first.';
 const playFor = a => PLAYS[a] || { motion: 'Qualify', play: 'Qualify buying centre and current distributor before assigning a motion.', owner: 'Inside sales' };
 
 function injectCss() { if (!document.getElementById('css-ts')) { const l = document.createElement('link'); l.id = 'css-ts'; l.rel = 'stylesheet'; l.href = 'modules/ts.css?v=20261123143257'; document.head.appendChild(l); } }
@@ -243,40 +258,47 @@ async function overview(ctx) {
   const B = A.bridge; const pShareCms = A.pursueCms / (A.totalCms || 1);
   const stTop = sortedEntries(A.byState); const top3 = stTop.slice(0, 3); const top3Share = top3.reduce((s, x) => s + x[1], 0) / A.rows.length;
   const plan = accounts.filter(p => p.in_top500_plan && p.coverage_priority === 'Pursue').length;
-  const sub = `${fmt.num(A.pursueParents)} top-priority (Pursue) accounts bill ${fmt.money(A.pursueCms)}, ${fmt.num(pShareCms * 100, 0)}% of 2023 Medicare lab spend: a named-account list.${mat ? ` The loan matures ${esc(mat)}, so target-account revenue matters most.` : ''}`;
-  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Thomas Scientific', sub, chips: `${fmt.chip('Lab supply, since 1900', C)}${fmt.chip('Held since January 2022')}${fmt.chip('HQ Swedesboro, NJ')}` })}${companyLinks('ts')}
+  const sub = `${fmt.num(A.pursueParents)} Pursue accounts bill ${fmt.money(A.pursueCms)}, ${fmt.num(pShareCms * 100, 0)}% of 2023 Medicare lab spend.`;
+  const topFit = ranked[0] && targets.find(t => t.id === ranked[0].id);
+  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Thomas Scientific', sub, chips: `${fmt.chip('Founded 1900', C)}${fmt.chip('Held since January 2022')}${fmt.chip('HQ Swedesboro, NJ')}${mat ? fmt.chip(`Loan matures ${esc(mat)}`, 'var(--sys-warn)') : ''}` })}${companyLinks('ts')}
   ${ui.kpis([
-    { label: 'Pursue accounts', value: fmt.num(A.pursueParents), sub: `${fmt.num(A.pursue.length)} Pursue sites · named-account list`, color: 'var(--sys-good)' },
-    { label: 'Pursue Medicare 2023', value: fmt.money(A.pursueCms), sub: `${fmt.num(pShareCms * 100, 0)}% of universe · ${PROXY}`, color: 'var(--sys-info)' },
-    { label: 'Enterprise / GPO accounts', value: fmt.num(A.ent.parents), sub: `${fmt.num(A.ent.sites)} sites · ${fmt.money(A.ent.cms)} · corporate contract`, color: 'var(--co-fl)' },
-    { label: 'Sites scored', value: fmt.num(A.rows.length), sub: `${fmt.num(A.byLabel.get('Nurture') || 0)} Nurture · ${fmt.num(A.byLabel.get('Excluded') || 0)} non-lab excluded`, color: C },
-    { label: 'States covered', value: fmt.num(A.states.size), sub: `${A.n50} states + ${A.other.map(esc).join(', ')}`, color: 'var(--co-fh)' },
-    { label: 'Hand-researched add-on targets', value: ma ? fmt.num(targets.length) : '—', sub: ma ? `${ranked.length} ranked · top fit ${esc(ranked[0]?.fit_score ?? '—')} (${esc(String(ranked[0]?.company || '').split(/[,(]/)[0])})` : 'research pending', color: 'var(--sys-warn)' },
+    { label: 'Pursue accounts', value: fmt.num(A.pursueParents), sub: `${fmt.num(A.pursue.length)} Pursue sites`, color: 'var(--sys-good)' },
+    { label: 'Pursue Medicare 2023', value: fmt.money(A.pursueCms), color: 'var(--sys-info)' },
+    { label: 'Enterprise / GPO accounts', value: fmt.num(A.ent.parents), sub: `${fmt.num(A.ent.sites)} sites · ${fmt.money(A.ent.cms)}`, color: 'var(--co-fl)' },
+    { label: 'Sites scored', value: fmt.num(A.rows.length), color: C },
+    { label: 'States covered', value: fmt.num(A.states.size), color: 'var(--co-fh)' },
+    { label: 'Add-on targets', value: ma ? fmt.num(targets.length) : '—', sub: ma ? `${ranked.length} ranked` : '', color: 'var(--sys-warn)' },
   ])}
   <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Where the scored sites are', sub: 'All 27.5K sites clustered (grey) · Pursue sites (green) · add-on targets (amber) · Thomas Scientific HQ', body: `<div class="map tall" id="ts-ov-map"></div>`, flush: true, foot: `${srcSites(ui)} · sites placed at their ZIP-code centre (${fmt.num(A.rows.filter(r => r.lat == null).length)} unmapped)` })}
+    ${ui.panel({ title: 'Where the scored sites are', body: `<div class="map tall" id="ts-ov-map"></div>`, flush: true })}
     <div class="col gap-12">
-      ${ui.panel({ title: 'Coverage priority', sub: 'The priority label for each site, after two corrections; every Thomas screen uses it', body: `${charts.hbar(LABELS.map(l => ({ label: l, value: A.byLabel.get(l) || 0, color: LBL_VAR[l] })), { fmt: v => fmt.num(v), labelW: 80 })}
+      ${ui.panel({ title: 'Coverage priority', body: `${charts.hbar(LABELS.map(l => ({ label: l, value: A.byLabel.get(l) || 0, color: LBL_VAR[l] })), { fmt: v => fmt.num(v), labelW: 80 })}
         <h4 class="sys-card-label mt-16 mb-8">Bridge: model Pursue → named-account Pursue</h4>
         <div class="sys-table-wrap"><table class="sys-table m-bridge"><thead><tr><th></th><th class="sys-n">Sites</th><th class="sys-n">Medicare 2023</th></tr></thead><tbody>
           <tr><td>Model Pursue label <span class="dim">(${fmt.num(B.v3cParents.size)} parents)</span></td><td class="sys-n">${fmt.num(B.v3c)}</td><td class="sys-n">${fmt.money(B.v3cCms)}</td></tr>
-          <tr><td>− Non-lab buyers (IDTF, imaging, cardiac monitoring)</td><td class="sys-n">−${fmt.num(B.excl)}</td><td class="sys-n">−${fmt.money(B.exclCms)}</td></tr>
-          <tr><td>− National-contract parents → Enterprise / GPO</td><td class="sys-n">−${fmt.num(B.ent)}</td><td class="sys-n">−${fmt.money(B.entCms)}</td></tr>
+          <tr><td>− Non-lab buyers</td><td class="sys-n">−${fmt.num(B.excl)}</td><td class="sys-n">−${fmt.money(B.exclCms)}</td></tr>
+          <tr><td>− National contracts → Enterprise / GPO</td><td class="sys-n">−${fmt.num(B.ent)}</td><td class="sys-n">−${fmt.money(B.entCms)}</td></tr>
           <tr class="tot"><td>Named-account Pursue <span class="dim">(${fmt.num(A.pursueParents)} parents)</span></td><td class="sys-n">${fmt.num(A.pursue.length)}</td><td class="sys-n">${fmt.money(A.pursueCms)}</td></tr>
-        </tbody></table></div>
-        <div class="dim small mt-8">The old fit tier is retired: it put ${fmt.num(A.rows.filter(r => r.tier === 1).length)} of ${fmt.num(A.rows.length)} sites in Tier 1, so it did not prioritize. ${fmt.num(plan)} of the ${fmt.num(A.pursueParents)} Pursue accounts are in the legacy top-500 account plan (shown as a subset on Accounts). ${esc(PLAN_RULE)}</div>`, foot: srcSites(ui) })}
-      ${ui.panel({ title: 'Sites by vertical', sub: 'Share of scored sites', body: charts.donut(sortedEntries(A.byVert).map(([k, v]) => ({ label: k, value: v, color: VERT_HEX[k] })), { size: 118, thick: 16, fmt: v => fmt.compact(v) }), foot: srcSites(ui) })}
+        </tbody></table></div>` })}
+      ${ui.panel({ title: 'Sites by vertical', body: charts.donut(sortedEntries(A.byVert).map(([k, v]) => ({ label: k, value: v, color: VERT_HEX[k] })), { size: 118, thick: 16, fmt: v => fmt.compact(v) }) })}
     </div>
   </div>
   <div class="grid grid-3 mt-12">
-    ${ui.panel({ title: 'Top 15 states by scored sites', sub: `${top3.map(x => esc(x[0])).join(', ')} hold ${fmt.num(top3Share * 100, 0)}% of sites`, body: charts.hbar(stTop.slice(0, 15).map(([s, n]) => ({ label: s, value: n, color: s === 'NJ' || s === 'PA' ? HEX : undefined })), { fmt: v => fmt.num(v), labelW: 34, color: 'var(--sys-info)' }), foot: srcSites(ui) })}
-    ${ui.panel({ title: '2023 Medicare-allowed spend by archetype', sub: `Where lab test volume sits (Medicare payments across all sites; ${PROXY})`, body: charts.hbar(sortedEntries(A.cmsByArch).filter(x => x[1] > 0).map(([k, v]) => ({ label: k, value: v, color: HEX })), { fmt: v => fmt.money(v), labelW: 190 }) + `<div class="dim small mt-8">Top-10 parents (Labcorp, Quest, Exact Sciences…) = ${fmt.num(topShare(A) * 100, 0)}% of the total. National networks are an Enterprise / GPO secondary-source play, not a branch-by-branch share play.</div>`, foot: ui.source('CMS Medicare utilization 2023 (allowed amounts)', CMS_URL, '2023') })}
-    ${ui.panel({ title: 'Priority × vertical', sub: 'Sites by coverage priority: Pursue is almost entirely diagnostics labs', body: heat([...A.byVert.keys()].sort((a, b) => A.byVert.get(b) - A.byVert.get(a)), ['Pursue', 'Ent.', 'Nurture', 'Watch', 'Excl.'], [...A.byVert.keys()].sort((a, b) => A.byVert.get(b) - A.byVert.get(a)).map(v => LABELS.map(l => A.vxl.get(`${v}|${l}`) || null)), { fmt: v => fmt.num(v), max: 3000 }) + `<div class="dim small mt-8">Ent. = Enterprise / GPO · Excl. = non-lab buyer, excluded</div><h4 class="sys-card-label mt-16 mb-8">Evidence behind each site</h4>${charts.hbar(sortedEntries(A.byLayer).map(([k, v]) => ({ label: LAYER[k] || k, value: v, color: k === 'nppes_only' ? 'var(--sys-mute-2)' : HEX })), { fmt: v => fmt.num(v), labelW: 150 })}`, foot: srcSites(ui) })}
+    ${ui.panel({ title: 'Top 15 states by scored sites', sub: `${top3.map(x => esc(x[0])).join(', ')}: ${fmt.num(top3Share * 100, 0)}% of sites`, body: charts.hbar(stTop.slice(0, 15).map(([s, n]) => ({ label: s, value: n, color: s === 'NJ' || s === 'PA' ? HEX : undefined })), { fmt: v => fmt.num(v), labelW: 34, color: 'var(--sys-info)' }) })}
+    ${ui.panel({ title: '2023 Medicare-allowed spend by archetype', body: charts.hbar(sortedEntries(A.cmsByArch).filter(x => x[1] > 0).map(([k, v]) => ({ label: k, value: v, color: HEX })), { fmt: v => fmt.money(v), labelW: 190 }) + `<div class="dim small mt-8">Top 10 parents: ${fmt.num(topShare(A) * 100, 0)}% of the total</div>` })}
+    ${ui.panel({ title: 'Priority × vertical', body: heat([...A.byVert.keys()].sort((a, b) => A.byVert.get(b) - A.byVert.get(a)), ['Pursue', 'Ent.', 'Nurture', 'Watch', 'Excl.'], [...A.byVert.keys()].sort((a, b) => A.byVert.get(b) - A.byVert.get(a)).map(v => LABELS.map(l => A.vxl.get(`${v}|${l}`) || null)), { fmt: v => fmt.num(v), max: 3000 }) + `<h4 class="sys-card-label mt-16 mb-8">Evidence behind each site</h4>${charts.hbar(sortedEntries(A.byLayer).map(([k, v]) => ({ label: LAYER[k] || k, value: v, color: k === 'nppes_only' ? 'var(--sys-mute-2)' : HEX })), { fmt: v => fmt.num(v), labelW: 150 })}` })}
   </div>
   <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Growth levers · selling to target accounts', sub: 'What the commercial team should do with this map, in order', accent: true, body: actList(esc, levers(ctx, A, targets, ranked)) })}
-    ${ui.panel({ title: 'Share-of-wallet plan', sub: 'From target list to measured revenue: Pursue accounts by archetype', body: walletPlan(ctx, A, mat), foot: `${srcSites(ui)} · plays: BSP commercial framework` })}
-  </div></div>`;
+    ${ui.panel({ title: 'Growth levers', accent: true, body: actList(esc, levers(ctx, A, targets, ranked)) })}
+    ${ui.panel({ title: 'Share-of-wallet plan', body: walletPlan(ctx, A) })}
+  </div>
+  ${srcMark(srcSites(ui), ui.source('CMS Medicare utilization 2023 (allowed amounts)', CMS_URL, '2023'))}
+  ${methodMark(`Sites sit at their ZIP-code centre (${fmt.num(A.rows.filter(r => r.lat == null).length)} unmapped). The priority label is the commercial label after two corrections: non-lab buyers excluded and national-contract parents moved to Enterprise / GPO. Medicare allowed is billed test volume, ${PROXY}.`)}
+  ${methodMark(`The old fit tier is retired: it put ${fmt.num(A.rows.filter(r => r.tier === 1).length)} of ${fmt.num(A.rows.length)} sites in Tier 1, so it did not prioritize. ${fmt.num(plan)} of the ${fmt.num(A.pursueParents)} Pursue accounts are in the legacy top-500 account plan (shown as a subset on Accounts). ${esc(PLAN_RULE)}`)}
+  ${methodMark(`Top-10 parents (Labcorp, Quest, Exact Sciences…) are ${fmt.num(topShare(A) * 100, 0)}% of the total. National networks are an Enterprise / GPO secondary-source play, not a branch-by-branch share play. Enterprise / GPO covers Quest, Labcorp and Sonic subsidiaries, national specialty labs (Myriad, Veracyte, Exact Sciences) and IDNs, which buy on corporate contracts. Non-lab buyers are IDTF, imaging and cardiac monitoring; national-contract parents are moved to Enterprise / GPO. Ent. = Enterprise / GPO; Excl. = non-lab buyer, excluded. Covers ${A.n50} states plus ${A.other.map(esc).join(', ')}.`)}
+  ${topFit ? methodMark(`Top add-on candidate: ${esc(topFit.company)} (fit ${esc(topFit.fit_score)}, ${esc(topFit.hq_city || '')} ${esc(topFit.state || '')}). ${esc(topFit.strategic_rationale || '')} Targets are hand-researched.`) : ''}
+  ${methodMark(`Plays follow BSP's commercial framework. Facility maturity ${esc(mat || 'n/a')}: revenue from target accounts is what matters.`)}
+  <span data-asof="${SRC.sites[2]}"></span></div>`;
 
   const map = maps.create(el.querySelector('#ts-ov-map'), { center: [38.6, -95.5], zoom: 4 });
   maps.points(map, A.rows, { color: () => tok('var(--sys-mute-2)'), radius: 3, cluster: true, clusterZoom: 7, gridDeg: 0.9, opacity: .55, weight: 0, popup: r => sitePopup(ctx, r), onClick: r => openSite(ctx, r) });
@@ -286,26 +308,26 @@ async function overview(ctx) {
   maps.legend(map, [{ color: 'var(--sys-mute-2)', label: 'Scored sites (clustered)' }, { color: HEX, label: `Pursue sites (${fmt.num(A.pursue.length)})` }, { color: 'var(--sys-warn)', label: 'Add-on targets' }], 'Layers');
   return () => map.remove();
 }
-function walletPlan(ctx, A, mat) {
+function walletPlan(ctx, A) {
   const { fmt, esc } = ctx; const rows = sortedEntries(A.pursueCmsByArch);
   const tbl = `<div class="sys-table-wrap"><table class="sys-table m-bridge"><thead><tr><th>Archetype · motion</th><th class="sys-n">Parents</th><th class="sys-n">Sites</th><th class="sys-n">Medicare 2023</th></tr></thead><tbody>${rows.map(([a, v]) => `<tr><td><a href="#/ts/accounts?arch=${encodeURIComponent(a)}&label=Pursue"><b>${esc(a)}</b></a><div class="dim small">${esc(playFor(a).motion)}</div></td><td class="sys-n">${fmt.num(A.pursueParByArch.get(a)?.size || 0)}</td><td class="sys-n">${fmt.num(A.pursueByArch.get(a) || 0)}</td><td class="sys-n">${fmt.money(v)}</td></tr>`).join('')}<tr class="tot"><td>Pursue total</td><td class="sys-n">${fmt.num(A.pursueParents)}</td><td class="sys-n">${fmt.num(A.pursue.length)}</td><td class="sys-n">${fmt.money(A.pursueCms)}</td></tr></tbody></table></div>`;
   return `${tbl}<div class="mt-16">${actList(esc, [
-    { h: 'Tag every Pursue account: customer, lapsed or new logo', d: `Match the ${fmt.num(A.pursueParents)} parents to Thomas ERP bill-to and ship-to records and record a trailing-12-month revenue band. The account CSV carries blank customer-status and revenue-band columns for this.`, href: '#/ts/accounts', go: 'Accounts' },
-    { h: 'Set a share-of-wallet baseline per archetype', d: 'Customers: wallet from test volume (Medicare is the proxy) and a target share. New logos: a first-order target and a standing-order conversion goal.' },
-    { h: 'Run it in the monthly operating review', d: 'Track Pursue-account revenue, new logos won, private-label mix and fill rate, by owner.' },
-  ])}</div>${mat ? `<div class="small text-2 mt-8">Facility maturity ${esc(mat)}: revenue from target accounts is what matters.</div>` : ''}`;
+    { h: 'Tag every Pursue account: customer, lapsed or new logo', d: `Match ${fmt.num(A.pursueParents)} parents to Thomas ERP bill-to and ship-to; record a trailing-12-month revenue band.`, href: '#/ts/accounts', go: 'Accounts' },
+    { h: 'Set a share-of-wallet baseline per archetype', d: 'Customers: target share of test-volume wallet. New logos: first-order and standing-order goals.' },
+    { h: 'Run it in the monthly operating review', d: 'Track Pursue revenue, new logos, private-label mix and fill rate by owner.' },
+  ])}</div>`;
 }
 function topShare(A) { const m = new Map(); A.rows.forEach(r => m.set(r.parent, (m.get(r.parent) || 0) + r._cms)); return sortedEntries(m).slice(0, 10).reduce((s, x) => s + x[1], 0) / (A.totalCms || 1); }
 function levers(ctx, A, targets, ranked) {
   const { fmt, esc } = ctx; const pa = a => A.pursueByArch.get(a) || 0; const sa = a => A.sitesByArch.get(a) || 0;
   const top = ranked[0] ? targets.find(t => t.id === ranked[0].id) : null;
   return [
-    { h: `Named-account coverage on ${fmt.num(A.pursueParents)} Pursue accounts (${fmt.num(A.pursue.length)} sites)`, d: `They bill ${fmt.money(A.pursueCms)} of 2023 Medicare (${PROXY}). Assign an owner per account, tag each as customer or new logo from Thomas ERP, start with the top 50 by Medicare and track share-of-wallet monthly.`, href: '#/ts/accounts?label=Pursue', go: 'Accounts' },
-    { h: `Independent clinical labs: ${fmt.num(sa('Independent clinical laboratory'))} sites, ${fmt.num(pa('Independent clinical laboratory'))} Pursue`, d: 'The long tail is where the margin is. Use inside sales and e-commerce standing orders, and lead with private label on consumables.', href: `#/ts/sites?arch=${encodeURIComponent('Independent clinical laboratory')}&label=Pursue`, go: 'Sites' },
-    { h: `Regional multi-site labs: ${fmt.num(sa('Regional multi-site laboratory'))} sites, ${fmt.num(pa('Regional multi-site laboratory'))} Pursue`, d: 'Sign a network supply agreement and put VMI or consignment at the hub lab. One contract covers many ship-to sites.', href: `#/ts/sites?arch=${encodeURIComponent('Regional multi-site laboratory')}&label=Pursue`, go: 'Sites' },
-    { h: `Nurture ${fmt.num(A.byLabel.get('Nurture') || 0)} sites without field time`, d: 'Run a marketing-automation nurture (samples and price sheets), then re-score on the CMS 2024 utilization release and move risers to Pursue.', href: '#/ts/sites?label=Nurture', go: 'Sites' },
-    { h: `Enterprise / GPO: ${fmt.num(A.ent.parents)} national-contract accounts (${fmt.num(A.ent.sites)} sites)`, d: 'Quest, Labcorp and Sonic subsidiaries, national specialty labs (Myriad, Veracyte, Exact…) and IDNs buy on corporate contracts. Strategic accounts sells Thomas as the qualified secondary source for backorders and specialty/cleanroom items, not branch by branch.', href: '#/ts/accounts?label=Enterprise', go: 'Accounts' },
-    { h: 'Close geographic white space by add-on', d: top ? `${esc(top.company)} (fit ${esc(top.fit_score)}, ${esc(top.hq_city || '')} ${esc(top.state || '')}) is the top-ranked candidate. ${esc(String(top.strategic_rationale || '').slice(0, 200))}${String(top.strategic_rationale || '').length > 200 ? '…' : ''}` : 'Match target HQs to site density to find the regions where an add-on gives the most local coverage.', href: '#/ma/pipeline?platform=ts', go: 'Targets' },
+    { h: `Named-account coverage on ${fmt.num(A.pursueParents)} Pursue accounts (${fmt.num(A.pursue.length)} sites)`, d: 'Assign an owner per account; tag customer or new logo from Thomas ERP; start with the top 50 by Medicare.', href: '#/ts/accounts?label=Pursue', go: 'Accounts' },
+    { h: `Independent clinical labs: ${fmt.num(sa('Independent clinical laboratory'))} sites, ${fmt.num(pa('Independent clinical laboratory'))} Pursue`, d: 'Use inside sales and e-commerce standing orders; lead with private label on consumables.', href: `#/ts/sites?arch=${encodeURIComponent('Independent clinical laboratory')}&label=Pursue`, go: 'Sites' },
+    { h: `Regional multi-site labs: ${fmt.num(sa('Regional multi-site laboratory'))} sites, ${fmt.num(pa('Regional multi-site laboratory'))} Pursue`, d: 'Sign a network supply agreement; put VMI or consignment at the hub lab.', href: `#/ts/sites?arch=${encodeURIComponent('Regional multi-site laboratory')}&label=Pursue`, go: 'Sites' },
+    { h: `Nurture ${fmt.num(A.byLabel.get('Nurture') || 0)} sites without field time`, d: 'Nurture with samples and price sheets; re-score on CMS 2024 data and promote risers.', href: '#/ts/sites?label=Nurture', go: 'Sites' },
+    { h: `Enterprise / GPO: ${fmt.num(A.ent.parents)} national-contract accounts (${fmt.num(A.ent.sites)} sites)`, d: 'Sell Thomas to strategic accounts as the qualified secondary source for backorders and specialty items.', href: '#/ts/accounts?label=Enterprise', go: 'Accounts' },
+    { h: 'Close geographic white space by add-on', d: top ? `Top candidate: ${esc(top.company)} (fit ${esc(top.fit_score)}, ${esc(top.hq_city || '')} ${esc(top.state || '')}).` : 'Match target HQs to site density to find the regions where an add-on adds local coverage.', href: '#/ma/pipeline?platform=ts', go: 'Targets' },
   ];
 }
 
@@ -318,15 +340,19 @@ async function accounts(ctx) {
   const verts = [...new Set(P.map(p => p.vert).filter(Boolean))].sort(); const sts = [...new Set(P.flatMap(p => p.states))].sort();
   const archs = [...new Set(P.map(p => p._arch))].sort(); const ults = [...new Set(P.map(p => p.ultimate_parent).filter(Boolean))].sort();
   const plan = pursueP.filter(p => p.in_top500_plan).length;
-  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Accounts', sub: `The top 50 of ${fmt.num(pursueP.length)} Pursue accounts hold ${fmt.num(top50 * 100, 0)}% of the value. Work them by score within each archetype, and tag existing customers from Thomas's own records first.`, chips: `${fmt.chip(`${fmt.num(pursueP.length)} Pursue`, 'var(--sys-good)')}${fmt.chip(`${fmt.num(P.length - pursueP.length)} Enterprise / GPO`, 'var(--co-fl)')}${fmt.chip(`${fmt.num(plan)} in top-500 plan`, 'var(--sys-info)')}` })}
+  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Accounts', sub: `Top 50 of ${fmt.num(pursueP.length)} Pursue accounts hold ${fmt.num(top50 * 100, 0)}% of value.`, chips: fmt.chip(`${fmt.num(plan)} in top-500 plan`, 'var(--sys-info)') })}
     <div id="ac-f"></div><div id="ac-k" class="mt-8"></div>
+    <div class="mt-12">${ui.panel({ title: 'Account list', body: '<div id="ac-t"></div>', flush: true })}</div>
     <div class="grid grid-3 mt-12">
-      ${ui.panel({ title: 'Accounts by dominant archetype', sub: 'Filtered set · drives the recommended play', body: '<div id="ac-arch"></div>', foot: srcSites(ui) })}
-      ${ui.panel({ title: 'Footprint: sites per account', sub: 'Filtered set · multi-site accounts justify a network agreement', body: '<div id="ac-size"></div>', foot: srcSites(ui) })}
-      ${ui.panel({ title: 'Top 10 by 2023 Medicare allowed', sub: `Filtered set · all of the account’s sites · ${PROXY}`, body: '<div id="ac-top"></div>', foot: ui.source('CMS Medicare utilization 2023', CMS_URL, '2023') })}
+      ${ui.panel({ title: 'Accounts by dominant archetype', body: '<div id="ac-arch"></div>' })}
+      ${ui.panel({ title: 'Footprint: sites per account', body: '<div id="ac-size"></div>' })}
+      ${ui.panel({ title: 'Top 10 by 2023 Medicare allowed', body: '<div id="ac-top"></div>' })}
     </div>
-    <div class="mt-12">${ui.panel({ title: 'Account list', sub: 'Click an account for sites, evidence and the recommended play · sortable · CSV includes blank customer-status and revenue-band columns to fill from Thomas ERP', body: '<div id="ac-t"></div>', flush: true, foot: `${srcSites(ui)} · accounts rolled up from the site file · national-network ownership mapped manually` })}</div>
-    <div class="mt-12">${ui.panel({ title: 'Account plays by archetype', sub: 'Selling motion per buying centre — apply to the filtered list', accent: true, body: '<div id="ac-plays"></div>' })}</div></div>`;
+    <div class="mt-12">${ui.panel({ title: 'Account plays by archetype', accent: true, body: '<div id="ac-plays"></div>' })}</div>
+    ${fold('Plays in full', 'owner and detail per archetype', actList(esc, [...Object.entries(PLAYS).map(([a, pl]) => ({ h: `${esc(a)} · ${esc(pl.motion)}`, d: `${esc(pl.play)} <span class="dim">Owner: ${esc(pl.owner)}.</span>` }))]))}
+    ${srcMark(srcSites(ui), ui.source('CMS Medicare utilization 2023', CMS_URL, '2023'))}
+    ${methodMark(`Accounts are rolled up from the site file; national-network ownership is mapped manually. Medicare allowed is billed test volume, ${PROXY}. The account CSV carries blank customer-status and revenue-band columns to fill from Thomas ERP. Multi-state accounts are network-agreement candidates.`)}
+    <span data-asof="${SRC.sites[2]}"></span></div>`;
   const columns = [
     { key: 'parent', label: 'Account', fmt: (v, r) => `<b>${nm(ctx, v)}</b><div class="dim small">${r.ultimate_parent && r.ultimate_parent.toLowerCase() !== String(v).toLowerCase() ? `${esc(r.ultimate_parent)} · ` : ''}${esc(r._arch)}${r.in_top500_plan ? ` · top-500 plan${r.plan_tier ? `, ${esc(r.plan_tier)} tier` : ''}` : ''}</div>` },
     { key: 'coverage_priority', label: 'Coverage', fmt: v => labelChip(fmt, v), sort: (a, b) => LORD[b.coverage_priority] - LORD[a.coverage_priority] },
@@ -338,7 +364,7 @@ async function accounts(ctx) {
     { key: 'cms_sites', label: 'Billing', num: true, fmt: v => fmt.num(v) },
     { key: 'hosp_sites', label: 'Hosp.', num: true, fmt: v => fmt.num(v) },
     { key: 'medicare_2023_allowed', label: 'Medicare 2023', num: true, fmt: v => fmt.money(v) },
-    { key: 'ts_customer_status', label: 'Thomas customer?', fmt: () => '<span class="dim small">CRM match pending</span>' },
+    { key: 'ts_customer_status', label: 'Thomas customer?', fmt: () => '<span class="dim small">—</span>' },
   ];
   const exportCols = ['parent', 'ultimate_parent', 'coverage_priority', 'coverage_note', 'vert', '_arch', 'sites', 'pursue_sites', 'states', 'commercial_score_v3c', 'commercial_tier_v3c', 'cms_sites', 'clia_sites', 'hosp_sites', 'medicare_2023_allowed', 'medicare_2023_pursue_sites', 'max_cms_allowed', 'in_top500_plan', 'legacy_fit_deprecated', 'ts_customer_status', 'ts_revenue_band'].map(key => ({ key }));
   let tbl;
@@ -359,12 +385,12 @@ async function accounts(ctx) {
     const sites = rows.reduce((s, p) => s + p.sites, 0), cms = rows.reduce((s, p) => s + p.medicare_2023_allowed, 0), pcms = rows.reduce((s, p) => s + p.medicare_2023_pursue_sites, 0);
     const nP = rows.filter(p => p.coverage_priority === 'Pursue').length;
     el.querySelector('#ac-k').innerHTML = ui.kpis([
-      { label: 'Accounts', value: fmt.num(rows.length), sub: `${fmt.num(nP)} Pursue · ${fmt.num(rows.length - nP)} Enterprise`, color: C },
-      { label: 'Sites', value: fmt.num(sites), sub: `${fmt.num(rows.reduce((s, p) => s + p.pursue_sites, 0))} Pursue sites`, color: 'var(--sys-info)' },
-      { label: 'Multi-state', value: fmt.num(rows.filter(p => p._nstates > 1).length), sub: 'network-agreement candidates', color: 'var(--co-fh)' },
-      { label: 'Medicare 2023 allowed', value: fmt.money(cms), sub: `all sites · Pursue ${fmt.money(pcms)}`, color: 'var(--sys-info)' },
-      { label: 'Avg commercial score', value: rows.length ? fmt.num(rows.reduce((s, p) => s + (p.commercial_score_v3c || 0), 0) / rows.length, 1) : '—', sub: 'best site, 0–100', color: 'var(--sys-good)' },
-      { label: 'Thomas customers', value: '—', sub: 'CRM match pending · not public', color: 'var(--sys-mute-2)' },
+      { label: 'Accounts', value: fmt.num(rows.length), sub: `${fmt.num(nP)} Pursue, ${fmt.num(rows.length - nP)} Enterprise`, color: C },
+      { label: 'Sites', value: fmt.num(sites), sub: `${fmt.num(rows.reduce((s, p) => s + p.pursue_sites, 0))} Pursue`, color: 'var(--sys-info)' },
+      { label: 'Multi-state', value: fmt.num(rows.filter(p => p._nstates > 1).length), color: 'var(--co-fh)' },
+      { label: 'Medicare 2023 allowed', value: fmt.money(cms), sub: `Pursue ${fmt.money(pcms)}`, color: 'var(--sys-info)' },
+      { label: 'Avg commercial score', value: rows.length ? fmt.num(rows.reduce((s, p) => s + (p.commercial_score_v3c || 0), 0) / rows.length, 1) : '—', sub: '0–100', color: 'var(--sys-good)' },
+      { label: 'Thomas customers', value: '—', sub: 'CRM match pending', color: 'var(--sys-mute-2)' },
     ]);
     const am = new Map(); rows.forEach(p => am.set(p._arch, (am.get(p._arch) || 0) + 1));
     el.querySelector('#ac-arch').innerHTML = rows.length ? charts.hbar(sortedEntries(am).map(([k, v]) => ({ label: k, value: v, color: HEX })), { fmt: v => fmt.num(v), labelW: 190 }) : ui.empty('No accounts match');
@@ -372,8 +398,8 @@ async function accounts(ctx) {
     el.querySelector('#ac-size').innerHTML = rows.length ? charts.hbar(buckets.map(([l, fn]) => ({ label: l === '1 site' ? '1 site' : `${l} sites`, value: rows.filter(fn).length })), { color: 'var(--sys-info)', fmt: v => fmt.num(v), labelW: 70 }) + `<div class="dim small mt-8">${fmt.num(rows.filter(p => p.sites > 1).length)} multi-site accounts hold ${fmt.num(rows.filter(p => p.sites > 1).reduce((s, p) => s + p.sites, 0))} of ${fmt.num(sites)} sites.</div>` : ui.empty('No accounts match');
     el.querySelector('#ac-top').innerHTML = rows.length ? charts.hbar(rows.slice().sort((a, b) => b.medicare_2023_allowed - a.medicare_2023_allowed).slice(0, 10).map(p => ({ label: fmt.title(p.parent), value: p.medicare_2023_allowed, color: LBL_VAR[p.coverage_priority] })), { fmt: v => fmt.money(v), labelW: 170 }) : ui.empty('No accounts match');
     const pm = new Map(); rows.filter(p => p.coverage_priority === 'Pursue').forEach(p => pm.set(p._arch, (pm.get(p._arch) || 0) + 1));
-    el.querySelector('#ac-plays').innerHTML = actList(esc, sortedEntries(pm).map(([a, n]) => { const pl = playFor(a); return { h: `${esc(a)} — ${fmt.num(n)} Pursue accounts · ${esc(pl.motion)}`, d: `${esc(pl.play)} <span class="dim">Owner: ${esc(pl.owner)}.</span>`, href: `#/ts/accounts?arch=${encodeURIComponent(a)}&label=Pursue`, go: 'Filter' }; }).concat(rows.some(p => p.coverage_priority === 'Enterprise') ? [{ h: `Enterprise / GPO — ${fmt.num(rows.filter(p => p.coverage_priority === 'Enterprise').length)} national-contract accounts · corporate contract`, d: `${esc(PLAYS['National or mega-system laboratory network'].play)} <span class="dim">Owner: Strategic accounts.</span>`, href: '#/ts/accounts?label=Enterprise', go: 'Filter' }] : []));
-    if (tbl) tbl.update(rows); else { tbl = ui.table(el.querySelector('#ac-t'), { columns, rows, pageSize: 25, sortKey: 'commercial_score_v3c', rowKey: r => r.parent, onRow: r => openParent(ctx, r, A) }); }
+    el.querySelector('#ac-plays').innerHTML = actList(esc, sortedEntries(pm).map(([a, n]) => { const pl = playFor(a); return { h: `${esc(a)} — ${fmt.num(n)} Pursue accounts · ${esc(pl.motion)}`, d: esc(shortPlay(a)), href: `#/ts/accounts?arch=${encodeURIComponent(a)}&label=Pursue`, go: 'Filter' }; }).concat(rows.some(p => p.coverage_priority === 'Enterprise') ? [{ h: `Enterprise / GPO — ${fmt.num(rows.filter(p => p.coverage_priority === 'Enterprise').length)} national-contract accounts · corporate contract`, d: esc(shortPlay('National or mega-system laboratory network')), href: '#/ts/accounts?label=Enterprise', go: 'Filter' }] : []));
+    if (tbl) tbl.update(rows); else { tbl = ui.table(el.querySelector('#ac-t'), { columns, rows, pageSize: 15, sortKey: 'commercial_score_v3c', rowKey: r => r.parent, onRow: r => openParent(ctx, r, A) }); }
     return rows;
   }
   const first = apply(f.state);
@@ -388,16 +414,19 @@ async function sites(ctx) {
   const core = await loadCore(ctx); if (!core) return; const { A } = core;
   const parent = params.parent || '';
   const sts = sortedEntries(A.byState).map(x => x[0]).sort(); const verts = sortedEntries(A.byVert).map(x => x[0]); const archs = sortedEntries(A.sitesByArch).map(x => x[0]);
-  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Site explorer', sub: `Filter ${fmt.num(A.rows.length)} scored sites to a call list, starting with the ${fmt.num(A.pursue.length)} Pursue sites. Green clusters hold at least one.`, chips: parent ? `<button type="button" class="sys-chip sys-chip--soft" data-co="ts" id="st-clear" title="Clear parent filter" aria-label="Clear parent filter">Parent: ${nm(ctx, parent)} ✕</button>` : '' })}
+  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: 'Site explorer', sub: `${fmt.num(A.rows.length)} scored sites; ${fmt.num(A.pursue.length)} are Pursue.`, chips: parent ? `<button type="button" class="sys-chip sys-chip--soft" data-co="ts" id="st-clear" title="Clear parent filter" aria-label="Clear parent filter">Parent: ${nm(ctx, parent)} ✕</button>` : '' })}
     <div id="st-f"></div><div id="st-k" class="mt-8"></div>
+    <div class="mt-12">${ui.panel({ title: 'Sites', body: '<div id="st-t"></div>', flush: true })}</div>
     <div class="grid grid-main mt-12">
-      ${ui.panel({ title: 'Map', sub: 'Each site sits at its ZIP-code centre · click a point for details', body: '<div class="map tall" id="st-map"></div>', flush: true, foot: srcSites(ui) })}
+      ${ui.panel({ title: 'Map', body: '<div class="map tall" id="st-map"></div>', flush: true })}
       <div class="col gap-12">
-        ${ui.panel({ title: 'Filtered mix', sub: 'Top states · archetypes · priority', body: '<div id="st-mix"></div>', foot: srcSites(ui) })}
+        ${ui.panel({ title: 'Filtered mix', body: '<div id="st-mix"></div>' })}
       </div>
     </div>
-    <div class="mt-12">${ui.panel({ title: 'Sites', sub: '50 per page · sortable · CSV exports the full filtered set', body: '<div id="st-t"></div>', flush: true, foot: srcSites(ui) })}</div>
-    <div class="mt-12">${ui.panel({ title: 'Next actions for this list', accent: true, body: '<div id="st-act"></div>' })}</div></div>`;
+    <div class="mt-12">${ui.panel({ title: 'Next actions for this list', accent: true, body: '<div id="st-act"></div>' })}</div>
+    ${srcMark(srcSites(ui))}
+    ${methodMark(`Each site sits at its ZIP-code centre. Hospital-linked sites match CMS Hospital Compare. Medicare allowed is billed test volume, ${PROXY}. The CSV exports the full filtered set with every field.`)}
+    <span data-asof="${SRC.sites[2]}"></span></div>`;
   el.querySelector('#st-clear')?.addEventListener('click', () => app.go('ts', 'sites', {}));
   const map = maps.create(el.querySelector('#st-map'), { center: [38.6, -95.5], zoom: 4 }); maps.marker(map, HQ.lat, HQ.lon, { color: tok(HEX), label: 'Thomas HQ' });
   maps.legend(map, LABELS.map(l => ({ color: LBL_VAR[l], label: l })), 'Coverage priority');
@@ -426,12 +455,12 @@ async function sites(ctx) {
     f.setCount(`${fmt.num(rows.length)} / ${fmt.num(A.rows.length)}`);
     const cms = rows.reduce((s, r) => s + r._cms, 0), par = new Set(rows.map(r => r.parent)).size, pur = rows.filter(r => r._label === 'Pursue').length;
     el.querySelector('#st-k').innerHTML = ui.kpis([
-      { label: 'Sites', value: fmt.num(rows.length), sub: `${fmt.num(rows.filter(r => r._label === 'Enterprise').length)} Enterprise · ${fmt.num(rows.filter(r => r._label === 'Excluded').length)} excluded`, color: C },
-      { label: 'Parents', value: fmt.num(par), sub: 'distinct organizations', color: 'var(--sys-info)' },
-      { label: 'Pursue sites', value: fmt.num(pur), sub: `${fmt.num(rows.filter(r => r._label === 'Nurture').length)} Nurture`, color: 'var(--sys-good)' },
-      { label: 'Medicare 2023 allowed', value: fmt.money(cms), sub: `${fmt.num(rows.filter(r => r._cms > 0).length)} sites billing · ${PROXY}`, color: 'var(--sys-info)' },
-      { label: 'Hospital-linked', value: fmt.num(rows.filter(r => r.hosp_name).length), sub: 'CMS Hospital Compare match', color: 'var(--sys-warn)' },
-      { label: 'Median commercial score', value: rows.length ? fmt.num(median(rows.map(r => r.commercial_score_v3c))) : '—', sub: '0–100', color: 'var(--co-fh)' },
+      { label: 'Sites', value: fmt.num(rows.length), color: C },
+      { label: 'Parents', value: fmt.num(par), color: 'var(--sys-info)' },
+      { label: 'Pursue sites', value: fmt.num(pur), color: 'var(--sys-good)' },
+      { label: 'Medicare 2023 allowed', value: fmt.money(cms), sub: `${fmt.num(rows.filter(r => r._cms > 0).length)} billing`, color: 'var(--sys-info)' },
+      { label: 'Hospital-linked', value: fmt.num(rows.filter(r => r.hosp_name).length), color: 'var(--sys-warn)' },
+      { label: 'Median commercial score', value: rows.length ? fmt.num(median(rows.map(r => r.commercial_score_v3c))) : '—', color: 'var(--co-fh)' },
     ]);
     const sm = new Map(), am = new Map(); rows.forEach(r => { sm.set(r.state, (sm.get(r.state) || 0) + 1); am.set(r._arch, (am.get(r._arch) || 0) + 1); });
     el.querySelector('#st-mix').innerHTML = rows.length ? `<h4 class="sys-card-label mb-8">Top states</h4>${charts.hbar(sortedEntries(sm).slice(0, 8).map(([k, v]) => ({ label: k, value: v })), { fmt: v => fmt.num(v), labelW: 34, color: 'var(--sys-info)' })}<h4 class="sys-card-label mt-16 mb-8">Archetype</h4>${charts.hbar(sortedEntries(am).slice(0, 6).map(([k, v]) => ({ label: k, value: v, color: HEX })), { fmt: v => fmt.num(v), labelW: 170 })}<h4 class="sys-card-label mt-16 mb-8">Coverage priority</h4>${charts.hbar(LABELS.map(l => ({ label: l, value: rows.filter(r => r._label === l).length, color: LBL_VAR[l] })), { fmt: v => fmt.num(v), labelW: 80 })}` : ui.empty('No sites match these filters');
@@ -439,12 +468,12 @@ async function sites(ctx) {
     const pts = rows.slice().sort((a, b) => LORD[a._label] - LORD[b._label]);
     layer = maps.points(map, pts, { color: r => tok(LBL_VAR[r._label] || LBL_VAR.Watch), radius: r => r._label === 'Pursue' ? 5 : 3.5, cluster: true, clusterZoom: 8, gridDeg: pts.length > 5000 ? 0.9 : undefined, opacity: .85, weight: .5, popup: r => sitePopup(ctx, r), onClick: r => openSite(ctx, r) });
     if (rows.length && rows.length < A.rows.length) layer.fit(); else map.setView([38.6, -95.5], 4);
-    tbl ? tbl.update(rows) : (tbl = ui.table(el.querySelector('#st-t'), { columns, rows, pageSize: 50, sortKey: 'commercial_score_v3c', rowKey: r => r.rank, onRow: r => openSite(ctx, r) }));
+    tbl ? tbl.update(rows) : (tbl = ui.table(el.querySelector('#st-t'), { columns, rows, pageSize: 20, sortKey: 'commercial_score_v3c', rowKey: r => r.rank, onRow: r => openSite(ctx, r) }));
     const pl = rows.length ? playFor(sortedEntries(am)[0][0]) : null; const withPhone = rows.filter(r => r.phone).length;
     el.querySelector('#st-act').innerHTML = rows.length ? actList(esc, [
-      { h: `Export the call list (${fmt.num(rows.length)} sites, ${fmt.num(withPhone)} with phone)`, d: 'Use the CSV button below the table. Load it into the CRM as a campaign, dedupe against current customers from Thomas ERP ship-to data, and assign by territory.' },
-      { h: `Work Pursue first (${fmt.num(pur)}), then Nurture; route Enterprise to strategic accounts`, d: `Dominant archetype in this set: ${esc(sortedEntries(am)[0][0])}. Recommended motion: ${esc(pl.motion)}. ${esc(pl.play)}` },
-      { h: 'Verify before outreach', d: 'Locations are ZIP centroids and NPPES addresses can be stale. Confirm the lab-manager contact and CLIA certificate status (QCOR) before a field visit.' },
+      { h: `Export the call list (${fmt.num(rows.length)} sites, ${fmt.num(withPhone)} with phone)`, d: 'Load as a CRM campaign; dedupe against ERP ship-to data; assign by territory.' },
+      { h: `Work Pursue first (${fmt.num(pur)}), then Nurture; route Enterprise to strategic accounts`, d: `Dominant archetype: ${esc(sortedEntries(am)[0][0])}. Motion: ${esc(pl.motion)}. ${esc(shortPlay(sortedEntries(am)[0][0]))}` },
+      { h: 'Verify before outreach', d: 'Confirm the lab-manager contact and CLIA status (QCOR) before a visit; NPPES addresses can be stale.' },
     ]) : ui.empty('No sites match');
   }
   apply(f.state);
@@ -471,38 +500,40 @@ async function filings(ctx) {
   const toggle = deal ? '<a class="sys-btn sys-btn--secondary" href="#/ts/filings">← Public filings</a>' : '<a class="sys-btn sys-btn--secondary" href="#/ts/filings?deal=1" title="What lenders’ and funds’ public filings show, each with its filing and date">Lender filings</a>';
   const fedNow = String(fed?.estimate || '').replace(/\s*\(.*$/, '');
   const sub = deal
-    ? (cr?.last ? `What lenders' public filings show: MFIC's 10-Q carries the loan at ${fmt.num(cr.last[1].pct, 1)}% of par as of ${esc(fmt.date(dfix(cr.last[0])))}, and the loan matures ${esc(fmt.date(dfix(cr.maturity)))}. The refinancing plan comes first.` : 'What lenders\' public filings show for Thomas Scientific.')
-    : `Thomas is a ${esc(rev?.estimate || 'n/a')} (est.) distributor whose COVID federal revenue has normalized. Peers grew ${pctTxt(fmt, labB?.median_revenue_growth_latest_pct)} last year, so growth must come from share of wallet.`;
-  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: deal ? 'What lenders\' public filings show' : 'Public filings', sub, actions: fil ? toggle : '', chips: deal ? `${fmt.chip('SEC EDGAR · BDC schedules', C)}${fmt.chip('Form D')}${fmt.chip('Estimates are labelled est.', 'var(--sys-warn)')}` : `${fmt.chip('USASpending', C)}${fmt.chip('SEC XBRL peers')}${fmt.chip('Company releases')}${fmt.chip('Estimates are labelled est.', 'var(--sys-warn)')}` })}
-  ${deal ? '<div class="mb-12">' + ui.note('<b>Public filings only.</b> Each number here comes from a lender’s or fund’s SEC filing (BDC 10-Q and 10-K schedules, N-PORT, Form D), with the filing and date shown. Lenders value loans for their own books; these are not company figures.', 'info') + '</div>' : ''}
+    ? (cr?.last ? `MFIC marks the loan at ${fmt.num(cr.last[1].pct, 1)}% of par (${esc(fmt.date(dfix(cr.last[0])))}); it matures ${esc(fmt.date(dfix(cr.maturity)))}.` : 'Lender filings on Thomas Scientific.')
+    : `Revenue est. ${esc(rev?.estimate || 'n/a')}; peers grew ${pctTxt(fmt, labB?.median_revenue_growth_latest_pct)} last year.`;
+  el.innerHTML = `<div class="m-ts">${ui.pageHead({ title: deal ? 'What lenders\' public filings show' : 'Public filings', sub, actions: fil ? toggle : '', chips: deal ? fmt.chip('Lenders’ filings, not company figures', 'var(--sys-warn)') : '' })}
   ${!cr ? ui.note('Thomas Scientific filings dataset not yet available (Thomas Scientific public filings).', 'warn') : deal ? ui.kpis([
-    { label: 'Sponsor equity raised', value: fmt.money(cr.formD?.v), sub: `Form D · BSP-TS, LP`, color: 'var(--sys-brand)' },
+    { label: 'Sponsor equity raised', value: fmt.money(cr.formD?.v), sub: 'BSP-TS, LP', color: 'var(--sys-brand)' },
     { label: 'Loan value in MFIC’s 10-Q', value: `${fmt.num(cr.last?.[1].pct, 1)}%`, sub: `of par · ${esc(fmt.date(dfix(cr.last?.[0] || '')))}`, color: 'var(--sys-info)' },
-    { label: 'Maturity', value: esc(fmt.date(dfix(cr.maturity))), sub: matDays != null ? `${fmt.num(matDays)} days · refinancing window` : '', color: matDays != null && matDays < 540 ? 'var(--sys-warn)' : 'var(--sys-info)' },
-    { label: 'Revenue (est.)', value: esc(rev?.estimate || '—'), sub: `${esc(rev?.confidence || '')} confidence · CY2025/26`, color: C },
-    { label: 'EBITDA (est.)', value: esc(ebitda?.estimate || '—'), sub: `${esc(ebitda?.confidence || '')} confidence · ${esc(lev?.estimate || '')} leverage`, color: 'var(--sys-warn)' },
-    { label: 'Federal run-rate', value: esc(fedNow || '—'), sub: 'vs $84–91M/yr in FY20–21 (COVID)', color: 'var(--sys-info)' },
+    { label: 'Maturity', value: esc(fmt.date(dfix(cr.maturity))), sub: matDays != null ? `${fmt.num(matDays)} days` : '', color: matDays != null && matDays < 540 ? 'var(--sys-warn)' : 'var(--sys-info)' },
+    { label: 'Revenue est.', value: esc(rev?.estimate || '—'), sub: `${esc(rev?.confidence || '')} confidence`, color: C },
+    { label: 'EBITDA est.', value: esc(ebitda?.estimate || '—'), sub: `${esc(ebitda?.confidence || '')} · ${esc(lev?.estimate || '')} leverage`, color: 'var(--sys-warn)' },
+    { label: 'Federal run-rate', value: esc(fedNow || '—'), sub: 'COVID peak $84–91M/yr', color: 'var(--sys-info)' },
   ]) : ui.kpis([
-    { label: 'Revenue (est.)', value: esc(rev?.estimate || '—'), sub: `${esc(rev?.confidence || '')} confidence · ZoomInfo-modeled · CY2025/26`, color: C },
-    { label: 'Employees (est.)', value: esc(String(emp?.estimate || '—').replace(/\s*\(.*$/, '')), sub: 'ZoomInfo + add-on releases', color: 'var(--sys-info)' },
-    { label: 'Federal run-rate', value: esc(fedNow || '—'), sub: 'vs $84–91M/yr in FY20–21 (COVID)', color: 'var(--sys-info)' },
-    { label: 'Add-ons under BSP', value: fmt.num(nAdd), sub: 'NCI 2022 · Quintana, Day, Arrowhead 2023', color: 'var(--sys-warn)' },
-    { label: 'Distribution centres', value: fmt.num(dcs), sub: 'per latest add-on release', color: 'var(--co-fh)' },
-    { label: 'Peer median growth', value: pctTxt(fmt, labB?.median_revenue_growth_latest_pct), sub: `listed lab distributors · op. margin ${pctTxt(fmt, labB?.median_operating_margin_latest_pct)}`, color: 'var(--sys-good)' },
+    { label: 'Revenue est.', value: esc(rev?.estimate || '—'), sub: `${esc(rev?.confidence || '')} confidence`, color: C },
+    { label: 'Employees est.', value: esc(String(emp?.estimate || '—').replace(/\s*\(.*$/, '')), color: 'var(--sys-info)' },
+    { label: 'Federal run-rate', value: esc(fedNow || '—'), sub: 'COVID peak $84–91M/yr', color: 'var(--sys-info)' },
+    { label: 'Add-ons under BSP', value: fmt.num(nAdd), sub: 'NCI, Quintana, Day, Arrowhead', color: 'var(--sys-warn)' },
+    { label: 'Distribution centres', value: fmt.num(dcs), color: 'var(--co-fh)' },
+    { label: 'Peer median growth', value: pctTxt(fmt, labB?.median_revenue_growth_latest_pct), sub: `op. margin ${pctTxt(fmt, labB?.median_operating_margin_latest_pct)}`, color: 'var(--sys-good)' },
   ])}
   ${cr && deal ? `<div class="grid grid-3 mt-12">
-    ${ui.panel({ title: 'Term loan in lenders’ filings', sub: '100 − fair value as % of par, from Apollo BDC 10-Q and 10-K schedules, by quarter', body: loanChart(ctx, cr), foot: ui.source('MFIC & MAIPL 10-Q/10-K via SEC EDGAR', 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001278752', fil.meta?.generated) })}
-    ${ui.panel({ title: 'Co-invest stake in a fund’s filings', sub: 'N-PORT fair value of a ~$5M LP stake in BSP-TS Co-Invest I, by quarter', body: cr.equity.length ? charts.line([{ name: 'Fair value', color: 'var(--sys-info)', points: cr.equity.map(p => [qtr(p.date), p.v]) }], { h: 170, fmt: v => fmt.money(v), area: true }) + `<div class="small text-2 mt-8">From ${fmt.money(cr.equity[0].v)} (${esc(fmt.date(dfix(cr.equity[0].date)))}) to ${fmt.money(cr.equity[cr.equity.length - 1].v)} (${esc(fmt.date(dfix(cr.equity[cr.equity.length - 1].date)))}): the fund’s latest filing carries the stake near zero.</div>` : ui.empty('No equity marks in dataset'), foot: ui.source('Barings / Cascade N-PORT via SEC EDGAR', 'https://www.sec.gov/edgar/search/', fil.meta?.generated) })}
+    ${ui.panel({ title: 'Term loan in lenders’ filings', body: loanChart(ctx, cr) })}
+    ${ui.panel({ title: 'Co-invest stake in a fund’s filings', body: cr.equity.length ? charts.line([{ name: 'Fair value', color: 'var(--sys-info)', points: cr.equity.map(p => [qtr(p.date), p.v]) }], { h: 170, fmt: v => fmt.money(v), area: true }) + `<div class="small text-2 mt-8">From ${fmt.money(cr.equity[0].v)} (${esc(fmt.date(dfix(cr.equity[0].date)))}) to ${fmt.money(cr.equity[cr.equity.length - 1].v)} (${esc(fmt.date(dfix(cr.equity[cr.equity.length - 1].date)))}): the stake is near zero.</div>` : ui.empty('No equity marks in dataset') })}
     ${fedPanel(ctx, cr, fil)}
   </div>` : cr ? `<div class="grid grid-2 mt-12">
     ${fedPanel(ctx, cr, fil)}
-    ${ui.panel({ title: 'Closest listed peer: Avantor (VWR) revenue', sub: avtr ? `Revenue ${esc(avtr.revenue_change_2022_2025)} from 2022 to 2025 · the market is not carrying growth` : 'SEC XBRL', body: avtr ? charts.bar(Object.entries(avtr.revenue_usd_m).map(([y, v]) => ({ label: y, value: Number(v) * 1e6 })), { h: 170, color: 'var(--sys-info)', fmt: v => `$${fmt.num(v / 1e9, 1)}B` }) : ui.empty('No peer series'), foot: ui.source('SEC XBRL company facts (Avantor 10-K)', 'https://www.sec.gov/edgar/search/', fil.meta?.generated) })}
+    ${ui.panel({ title: 'Closest listed peer: Avantor (VWR) revenue', sub: avtr ? `${esc(avtr.revenue_change_2022_2025)}, 2022 to 2025` : '', body: avtr ? charts.bar(Object.entries(avtr.revenue_usd_m).map(([y, v]) => ({ label: y, value: Number(v) * 1e6 })), { h: 170, color: 'var(--sys-info)', fmt: v => `$${fmt.num(v / 1e9, 1)}B` }) : ui.empty('No peer series') })}
   </div>` : ''}
   <div class="mt-12">
-    ${ui.panel({ title: 'Public comps — lab & healthcare distribution', sub: 'Latest FY · growth, operating margin, revenue per employee · click a row for the multi-year series', body: '<div id="fc-t"></div>', flush: true, foot: comps ? ui.source('SEC XBRL company facts (10-K)', 'https://www.sec.gov/edgar/sec-api-documentation', comps.meta?.generated) : '' })}
+    ${ui.panel({ title: 'Public comps: lab & healthcare distribution', body: '<div id="fc-t"></div>', flush: true })}
   </div>
-  <div class="mt-12">${ui.panel({ title: 'What the comps imply for Thomas', sub: 'Sector medians vs. Thomas estimates', accent: true, body: '<div id="fc-imp"></div>' })}</div>
-  <div class="mt-12" id="fc-fil"></div></div>`;
+  <div class="mt-12">${ui.panel({ title: 'What the comps imply for Thomas', accent: true, body: '<div id="fc-imp"></div>' })}</div>
+  <div class="mt-12" id="fc-fil"></div>
+  ${cr ? srcMark(ui.source('USASpending.gov (UEI CN1DHDM1HDZ5)', 'https://www.usaspending.gov/', fil.meta?.generated), ui.source('SEC XBRL company facts (Avantor 10-K and listed peers)', 'https://www.sec.gov/edgar/search/', fil.meta?.generated), deal ? ui.source('MFIC & MAIPL 10-Q/10-K via SEC EDGAR', 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001278752', fil.meta?.generated) : '', deal ? ui.source('Barings / Cascade N-PORT via SEC EDGAR', 'https://www.sec.gov/edgar/search/', fil.meta?.generated) : '') : ''}
+  ${methodMark(`est. marks an outside-in estimate. Revenue is ZoomInfo-modeled for CY2025/26; employees come from ZoomInfo and add-on releases; distribution centres from the latest add-on release. Peer median covers listed lab distributors.${deal ? ' The term-loan chart shows 100 minus fair value as a percent of par, from Apollo BDC 10-Q and 10-K schedules by quarter; the co-invest chart shows N-PORT fair value of a ~$5M LP stake in BSP-TS Co-Invest I. Each figure comes from a lender’s or fund’s SEC filing (BDC schedules, N-PORT, Form D), with the filing and date shown. Lenders value loans for their own books.' : ''} Revenue has moved ${esc(avtr?.revenue_change_2022_2025 || 'n/a')} at the closest peer since 2022: the market is not carrying growth. Comp rows open a multi-year series.`)}
+  ${fil?.meta?.generated ? `<span data-asof="${esc(fil.meta.generated)}"></span>` : ''}</div>`;
 
   // comps
   const labs = (comps?.items || []).filter(i => i.sector_tag === 'lab_distribution' || (i.secondary_sector_tags || []).includes('lab_distribution'));
@@ -518,7 +549,7 @@ async function filings(ctx) {
     const mx = Math.max(10, ...rows.flatMap(r => [r.revenue_growth_latest_pct, r.operating_margin_latest_pct, r.ebitda_margin_latest_pct].map(v => Math.abs(v || 0))));
     const dv = (v, good = 0) => v == null ? '<span class="dim">—</span>' : `<span class="dv"><i class="${v >= good ? 'pos' : 'neg'}" style="${v >= 0 ? `left:50%;width:${(v / mx) * 50}%` : `left:${50 - (Math.abs(v) / mx) * 50}%;width:${(Math.abs(v) / mx) * 50}%`}"></i></span>${pctTxt(fmt, v)}`;
     const cols = [
-      { key: 'ticker', label: 'Company', fmt: (v, r) => `${fmt.chip(r._est ? 'Thomas' : v, r._est ? C : 'var(--sys-info)')} <b>${esc(fmt.title(r.company))}</b>${r.status_note ? `<div class="dim small" title="${esc(r.status_note)}">${esc(String(r.status_note).slice(0, 64))}…</div>` : ''}` },
+      { key: 'ticker', label: 'Company', fmt: (v, r) => `${fmt.chip(r._est ? 'Thomas' : v, r._est ? C : 'var(--sys-info)')} <b>${esc(fmt.title(r.company))}</b>${r.status_note ? `<div class="dim small" title="${esc(r.status_note)}">${esc(String(r.status_note).slice(0, 48))}…</div>` : ''}` },
       { key: 'latest_fy', label: 'FY', num: true },
       { key: '_rev', label: 'Revenue', num: true, fmt: (v, r) => `${fmt.money(v)}${r._est ? Copy.EST : ''}` },
       { key: 'revenue_growth_latest_pct', label: 'Growth', num: true, fmt: v => dv(v) },
@@ -529,9 +560,9 @@ async function filings(ctx) {
     ];
     ui.table(el.querySelector('#fc-t'), { columns: cols, rows, pageSize: 10, sortKey: 'revenue_per_employee_usd', exportName: 'ts_lab_distribution_comps', rowKey: r => r.ticker, onRow: r => r._est ? null : openComp(ctx, r) });
     const acts = deal
-      ? [{ h: 'Grow gross margin, not volume', d: 'Peer end-markets are growing only ~2% a year. Private-label mix and account penetration (see Accounts) are the levers that move EBITDA.', href: '#/ts/accounts', go: 'Accounts' }, { h: 'Get the real P&L', d: 'Every Thomas figure here is inferred from lender marks. Request monthly gross profit by customer archetype from management to replace the estimates.' }, { h: 'Watch the next marks', d: 'The MFIC 10-Q for the quarter ending September 30, 2026 (due early November 2026) will show whether the loan mark falls below 88% of par or goes on non-accrual. Set a PRG review for that week.' }]
-      : [{ h: 'Grow gross margin, not volume', d: 'Peer end-markets are growing only ~2% a year. Private-label mix and account penetration (see Accounts) are the levers that move EBITDA.', href: '#/ts/accounts', go: 'Accounts' }, { h: 'Replace estimates with management figures', d: 'Revenue and headcount here are outside-in estimates. Monthly gross profit by customer archetype and by Pursue account would make this page decision-grade.' }, { h: 'Benchmark revenue per employee', d: 'Peers run at the median shown here. Track Thomas revenue per employee quarterly as the add-ons integrate.' }];
-    el.querySelector('#fc-imp').innerHTML = labB ? `<div class="grid grid-2"><div><div class="m-kpi2">${ui.kpis([{ label: 'Median growth', value: pctTxt(fmt, labB.median_revenue_growth_latest_pct), sub: `3-year CAGR ${pctTxt(fmt, labB.median_revenue_cagr_2023_latest_pct)}`, color: 'var(--sys-info)' }, { label: 'Median op. margin', value: pctTxt(fmt, labB.median_operating_margin_latest_pct), sub: `multi-year avg ${pctTxt(fmt, labB.median_operating_margin_multiyear_avg_pct)}`, color: 'var(--sys-info)' }, { label: 'Median EBITDA margin', value: pctTxt(fmt, labB.median_ebitda_margin_latest_pct), sub: tsMargin ? `Thomas est. ${fmt.num(tsMargin[0], 0)}–${fmt.num(tsMargin[1], 0)}%` : 'listed peers, latest FY', color: C }, { label: 'Median rev / employee', value: fmt.money(labB.median_revenue_per_employee_usd), sub: zi ? `Thomas est. ${fmt.money(zi.revenue_per_employee_usd)} (${zi._derived ? 'mid-revenue ÷ ~headcount' : 'ZoomInfo, modeled'})` : '', color: C }])}</div>${deal ? `<div class="prose small mt-12">${esc(labB.what_this_implies_for_bsp || '')}</div>` : ''}</div><div>${actList(esc, acts)}</div></div>` : ui.note('Sector benchmark not in dataset.', 'warn');
+      ? [{ h: 'Grow gross margin, not volume', d: 'Peer end-markets grow ~2% a year; private-label mix and account penetration move EBITDA.', href: '#/ts/accounts', go: 'Accounts' }, { h: 'Get the real P&L', d: 'Request monthly gross profit by customer archetype to replace lender-mark estimates.' }, { h: 'Watch the next marks', d: 'Check the MFIC 10-Q for the quarter ending September 30, 2026, due early November: below 88% of par or non-accrual.' }]
+      : [{ h: 'Grow gross margin, not volume', d: 'Peer end-markets grow ~2% a year; private-label mix and account penetration move EBITDA.', href: '#/ts/accounts', go: 'Accounts' }, { h: 'Replace estimates with management figures', d: 'Get monthly gross profit by archetype and by Pursue account.' }, { h: 'Benchmark revenue per employee', d: 'Track it quarterly as the add-ons integrate.' }];
+    el.querySelector('#fc-imp').innerHTML = labB ? `<div class="grid grid-2"><div><div class="m-kpi2">${ui.kpis([{ label: 'Median growth', value: pctTxt(fmt, labB.median_revenue_growth_latest_pct), sub: `3-year CAGR ${pctTxt(fmt, labB.median_revenue_cagr_2023_latest_pct)}`, color: 'var(--sys-info)' }, { label: 'Median op. margin', value: pctTxt(fmt, labB.median_operating_margin_latest_pct), sub: `multi-year avg ${pctTxt(fmt, labB.median_operating_margin_multiyear_avg_pct)}`, color: 'var(--sys-info)' }, { label: 'Median EBITDA margin', value: pctTxt(fmt, labB.median_ebitda_margin_latest_pct), sub: tsMargin ? `Thomas est. ${fmt.num(tsMargin[0], 0)}–${fmt.num(tsMargin[1], 0)}%` : '', color: C }, { label: 'Median rev / employee', value: fmt.money(labB.median_revenue_per_employee_usd), sub: zi ? `Thomas est. ${fmt.money(zi.revenue_per_employee_usd)}` : '', color: C }])}</div>${deal ? `<div class="prose small mt-12">${esc(labB.what_this_implies_for_bsp || '')}</div>` : ''}</div><div>${actList(esc, acts)}</div></div>` : ui.note('Sector benchmark not in dataset.', 'warn');
   }
   // filings table + financial picture (shared component)
   // renderFilings expects meta.sources_summary as an array; thomas_filings ships a string → normalize a shallow copy.
@@ -548,11 +579,55 @@ async function filings(ctx) {
       data_gaps: (m.data_gaps || []).filter(g => !/facility|lender|rating|debt|UCC|Capital Constellation|BDC|Form D/i.test(g)),
       next_pulls: (m.next_pulls || []).filter(g => !/MFIC|MAIPL|N-PORT|UCC|Form D|recapitali/i.test(g)) } };
   }
-  renderFilings(ctx, el.querySelector('#fc-fil'), { data: Copy.filings(filN), color: C, title: 'Thomas Scientific' });
+  const host = el.querySelector('#fc-fil');
+  renderFilings(ctx, host, { data: slimLedger(Copy.filings(filN)), color: C, title: 'Thomas Scientific' });
+  tidyFilings(host, esc);
+}
+/* Ledger rows read in one line per cell: the long title, date and figures move to the row's side panel (its "what it tells us" text). */
+const wordsOf = t => String(t ?? '').trim().split(/\s+/).filter(Boolean);
+const clipTo = (t, n) => { const w = wordsOf(t); return w.length > n ? `${w.slice(0, n).join(' ')}…` : String(t ?? ''); };
+function slimLedger(d) {
+  for (const it of d?.items || []) {
+    const moved = [];
+    const t0 = String(it.title || ''); let t1 = t0.replace(/\s*\([^)]*\)/g, '');
+    if (wordsOf(t1).length > 10) t1 = clipTo(t1, 9);
+    if (t1 !== t0) { moved.push(`Record: ${t0}.`); it.title = t1; }
+    const d0 = String(it.filed_or_dated || ''), d1 = d0.replace(/\s*\(.*$/, '');
+    if (d1 && d1 !== d0) { moved.push(`Dated ${d0}.`); it.filed_or_dated = d1; }
+    const kf = it.key_figures;
+    if (kf && typeof kf === 'object' && !Array.isArray(kf)) {
+      const ent = Object.entries(kf).map(([k, v]) => [k, typeof v === 'object' && v ? JSON.stringify(v) : String(v ?? '')]);
+      const keep = []; let n = 0;
+      for (const [k, v] of ent) { const w = wordsOf(`${k}: ${v}`).length; if (keep.length && n + w > 8) break; keep.push([k, clipTo(v, Math.max(2, 8 - wordsOf(k).length))]); n += w; if (n >= 8) break; }
+      if (keep.length < ent.length || keep.some(([k, v], i) => v !== ent[i][1])) { moved.push(`Key figures: ${ent.map(([k, v]) => `${k} ${v}`).join('; ')}.`); it.key_figures = Object.fromEntries(keep); }
+    }
+    if (moved.length) it.what_it_tells_us = `${moved.join(' ')} ${it.what_it_tells_us || ''}`.trim();
+  }
+  return d;
+}
+/* Shared filings blocks: the narrative moves to Method, its source line to Sources, the two lists fold closed. */
+function tidyFilings(host, esc) {
+  if (!host) return;
+  const title = p => p.querySelector('.sys-card-title')?.textContent.trim();
+  const panels = [...host.querySelectorAll('section.panel')];
+  for (const t of ['What the public record does not show', 'Where to look next']) {
+    const pn = panels.find(p => title(p) === t); if (!pn) continue;
+    const line = pn.querySelector('.sub')?.textContent.trim() || `${pn.querySelectorAll('li').length} items`;
+    const d = document.createElement('details'); d.className = 'sys-fold';
+    d.innerHTML = `<summary><b>${esc(t)}</b><span>${esc(line)}</span></summary>`;
+    const body = document.createElement('div'); body.className = 'm-pad'; body.append(...pn.querySelector('.panel-body').childNodes); d.appendChild(body); pn.replaceWith(d);
+  }
+  const pic = panels.find(p => title(p) === 'Financial picture');
+  if (pic) {
+    const foot = pic.querySelector('.panel-foot'); const t = foot?.textContent.trim(); foot?.remove();
+    if (t) host.insertAdjacentHTML('beforeend', `<div data-src class="sys-src">${esc(t)}</div>`);
+    pic.querySelector('.sub')?.remove(); pic.setAttribute('data-method', '');
+  }
+  host.querySelectorAll('.panel-title .sub').forEach(n => n.remove());
 }
 function fedPanel(ctx, cr, fil) {
   const { ui, charts, fmt } = ctx;
-  return ui.panel({ title: 'Federal prime obligations by fiscal year', sub: 'COVID swab & transport-media contracts in FY2020–21, then back to the core run-rate', body: cr.federal.length ? charts.bar(cr.federal, { h: 170, color: 'var(--sys-info)', fmt: v => `$${fmt.num(v / 1e6, 0)}M`, highlight: d => /2020|2021/.test(d.label) }) : ui.empty('No federal series'), foot: ui.source('USASpending.gov (UEI CN1DHDM1HDZ5)', 'https://www.usaspending.gov/', fil.meta?.generated) });
+  return ui.panel({ title: 'Federal prime obligations by fiscal year', body: cr.federal.length ? charts.bar(cr.federal, { h: 170, color: 'var(--sys-info)', fmt: v => `$${fmt.num(v / 1e6, 0)}M`, highlight: d => /2020|2021/.test(d.label) }) : ui.empty('No federal series') });
 }
 function loanChart(ctx, cr) {
   const { charts, fmt, esc } = ctx; const dates = [...new Set([...cr.mfic.map(x => x[0]), ...cr.maipl.map(x => x[0])])].sort();
