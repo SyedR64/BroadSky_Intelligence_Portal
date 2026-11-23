@@ -947,22 +947,26 @@ RECORD_SETS = {'docs', 'deals', 'accounts', 'opps', 'services', 'campaigns', 'jo
 
 
 def app_name(org, app):
-    """Example vendor choices, spec 2.1 (ServiceNow and Klaviyo follow BSP Desk's research files)."""
+    """Example vendor per organisation, the OS build spec section 6. Where a research file names the company's own system it is
+    used (Fair Harbor: NetSuite, Shopify; Frontline: ServiceNow; Punctual Pros: ServiceTitan, through its franchisor). Elsewhere
+    the name is a product standard in that industry (Chronograph for a firm's portfolio reporting, Viewpoint Vista for an
+    electrical contractor's job-cost accounting, CallRail for home-service call and campaign tracking). App ids never change."""
     n = {'email': ('Gmail', 'GM') if org == 'fh' else ('Outlook', 'OL'),
          'calendar': ('Google Calendar', 'GC') if org in ('fh', 'bpi') else ('Outlook Calendar', 'OC'),
          'chat': ('Slack', 'SL') if org in ('bsp', 'bpi', 'fh') else ('Teams', 'TM'),
          'drive': ('Google Drive', 'GD') if org in ('bpi', 'fh') else ('SharePoint', 'SP'),
          'dealcloud': ('DealCloud', 'DC'), 'salesforce': ('Salesforce', 'SF'),
-         'marketing': ('Klaviyo', 'KL') if org == 'fh' else ('HubSpot', 'HS'),
+         'marketing': ('Klaviyo', 'KL') if org == 'fh' else ('CallRail', 'CR'),
          'servicetitan': ('ServiceTitan', 'ST'), 'procore': ('Procore', 'PC'), 'servicedesk': ('ServiceNow', 'SN'),
-         'shopify': ('Shopify', 'SH'), 'financials': ('QuickBooks', 'QB') if org in ('pp', 'fh') else ('NetSuite', 'NS'),
+         'shopify': ('Shopify', 'SH'),
+         'financials': {'bsp': ('Chronograph', 'CG'), 'pp': ('QuickBooks', 'QB'), 'cet': ('Viewpoint Vista', 'VV')}.get(org, ('NetSuite', 'NS')),
          'adp': ('ADP', 'ADP')}[app]
     return {'name': n[0], 'mono': n[1]}
 
 
 TERMS = {'ServiceTitan': 'ServiceTitan: field-service software for jobs, technicians and pricing.',
          'DealCloud': 'DealCloud: deal-tracking software.', 'Procore': 'Procore: construction project software.',
-         'ServiceNow': "ServiceNow: service-desk software; Frontline's HELIX desk runs on it.", 'Klaviyo': 'Klaviyo: email and text marketing.'}
+         'ServiceNow': "ServiceNow: service-desk software; Frontline's legal IT operations run on it.", 'Klaviyo': 'Klaviyo: email and text marketing.'}
 
 # The chat rule is a hard limit for the brief and field styles: it overrides the general length and format guide.
 STYLES = {
@@ -1047,6 +1051,15 @@ def at_of(co):
     return {'pp': 'Punctual Pros', 'cet': 'CET', 'fl': 'Frontline', 'ts': 'Thomas Scientific', 'bpi': 'BPI', 'fh': 'Fair Harbor'}[co]
 
 
+def level_of(org, dept, style):
+    """The OS level of a role (the OS build spec section 3; assets/session.js levelOf is the same rule)."""
+    if org == 'bsp':
+        return 'firm_leadership' if dept == 'Partners' else 'firm_team'
+    if dept == 'Leadership':
+        return 'co_leadership'
+    return 'co_field' if style == 'field' else 'co_office'
+
+
 def mk_role(rid, org, dept, label, label_a, style, team, apps, numbers, numbers_text, public, site, actions, denied, desc, chips,
             placeholder, key_app, action_chips=()):
     tools = (['site_brief'] if site else []) + ['workspace_search', 'open_record'] + (['company_numbers'] if numbers else []) + \
@@ -1055,7 +1068,8 @@ def mk_role(rid, org, dept, label, label_a, style, team, apps, numbers, numbers_
     views = sorted({v for vs in numbers.values() for v in vs}, key=VIEWS.index)
     by_co = {c: sorted(vs, key=VIEWS.index) for c, vs in numbers.items() if c != '_fund'}
     action_apps = {a: ('dealcloud' if (a == 'crm_stage' and org == 'bsp') else ACTIONS[a][1]) for a in actions}
-    return {'id': rid, 'label': label, 'label_a': label_a, 'company': org, 'dept': dept, 'style': style, 'team': team,
+    return {'id': rid, 'label': label, 'label_a': label_a, 'company': org, 'dept': dept, 'style': style,
+            'level': level_of(org, dept, style), 'team': team,
             'key_app': key_app, 'desc': desc, 'chips': chips, 'placeholder': placeholder, 'action_chips': list(action_chips),
             'apps': {a: dict(sorted(s.items())) for a, s in apps.items()},
             'numbers': {'companies': comps, 'views': views, 'by_company': by_co}, 'numbers_text': numbers_text,
@@ -3825,6 +3839,7 @@ def build_catalog(roles, pool, st, org_files):
             if PUBLIC[p] not in pub:
                 pub.append(PUBLIC[p])
         cat_roles.append({'id': r['id'], 'org': org, 'dept': r['dept'], 'label': r['label'], 'label_a': r['label_a'], 'style': r['style'],
+                          'level': r['level'],
                           'key_app': r['key_app'], 'desc': r['desc'], 'placeholder': r['placeholder'], 'chips': r['chips'],
                           'action_chips': r['action_chips'], 'apps': apps, 'unavailable': unavailable, 'numbers_text': r['numbers_text'],
                           'public': pub, 'actions': [ACTIONS[a][0] for a in r['actions']], 'home': home_for(r, pool, st, org_files)})
@@ -3863,7 +3878,7 @@ def build_roles_json(roles):
         apps_used.setdefault(r['company'], set()).update(r['apps'])
     out = {}
     for r in roles:
-        x = {k: r[k] for k in ('label', 'label_a', 'company', 'dept', 'order', 'style', 'team', 'key_app', 'desc', 'apps', 'numbers', 'numbers_text',
+        x = {k: r[k] for k in ('label', 'label_a', 'company', 'dept', 'order', 'style', 'level', 'team', 'key_app', 'desc', 'apps', 'numbers', 'numbers_text',
                                'public', 'tools', 'actions', 'action_apps', 'denied_hint')}
         x['team_name'] = TEAM_NAME[r['team']] if r['id'] in team_roles else None
         out[r['id']] = x

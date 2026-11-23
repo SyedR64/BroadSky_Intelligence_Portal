@@ -260,6 +260,40 @@ def test_catalog_equals_roles(real):
         assert c['public'] == pub, c['id']
 
 
+def level_rule(org, dept, style):
+    """The OS build spec, section 3 (audit rule 1.3); assets/session.js levelOf is the same rule."""
+    if org == 'bsp':
+        return 'firm_leadership' if dept == 'Partners' else 'firm_team'
+    if dept == 'Leadership':
+        return 'co_leadership'
+    return 'co_field' if style == 'field' else 'co_office'
+
+
+def test_role_level_follows_rule(real):
+    """Every role stores its level; the stored level equals the rule, in the server table and in the browser catalogue."""
+    table = workspace.roles()
+    for rid, R in table.items():
+        assert R.get('level') == level_rule(R['company'], R['dept'], R['style']), rid
+    counts = {}
+    for R in table.values():
+        counts[R['level']] = counts.get(R['level'], 0) + 1
+    assert counts == {'firm_leadership': 2, 'firm_team': 5, 'co_leadership': 18, 'co_office': 15, 'co_field': 4}
+    if os.path.exists(CATALOG):
+        cat = json.load(open(CATALOG, encoding='utf-8'))
+        for c in cat['roles']:
+            assert c.get('level') == level_rule(c['org'], c['dept'], c['style']) == table[c['id']]['level'], c['id']
+
+
+def test_session_level_rule_matches():
+    """assets/session.js derives a level the same way when a role carries none: same four tests, same order."""
+    src = open(os.path.join(ROOT, 'assets', 'session.js'), encoding='utf-8').read()
+    body = src[src.index('export function levelOf'):]
+    body = body[:body.index('\n}\n')]
+    for needle in ("r.org === 'bsp'", "r.dept === 'Partners' ? 'firm_leadership' : 'firm_team'", "r.dept === 'Leadership'",
+                   "r.style === 'field' ? 'co_field' : 'co_office'"):
+        assert needle in body, needle
+
+
 def test_tool_defs_follow_matrix(sb):
     for rid, R in workspace.roles().items():
         defs = workspace.tool_defs(ws_for(rid))
