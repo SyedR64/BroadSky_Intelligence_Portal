@@ -4,6 +4,8 @@ import { loadScoreboard, templateExit } from './fin.js?v=20261123172325';
 import { Session } from '../assets/session.js?v=20261123172325';
 import { embedView } from './embed.js?v=20261123172325';
 import { Counter } from '../assets/counter.js?v=20261123172325';
+import { Backend } from '../assets/backend.js?v=20261123172325';
+import { BSPSite } from '../assets/site-lookup.js?v=20261123172325';
 const COS = [
   { id: 'cet', name: 'Commonwealth Electrical Technologies (CET)', short: 'CET', color: 'var(--co-cet)', hex: '#4c8dff', sector: 'Commercial electrical · solar · energy', entry: '2025-02' },
   { id: 'pp', name: 'Punctual Pros', short: 'PP', color: 'var(--co-pp)', hex: '#f08a3c', sector: 'Residential HVAC · plumbing · electrical', entry: '2024-04' },
@@ -89,6 +91,49 @@ function wire(el) {
   el.querySelectorAll('[data-hm="all"]').forEach(b => { b.onclick = () => { b.previousElementSibling?.classList.add('is-all'); b.hidden = true; }; });
 }
 
+/* ── First on every home (wave 3 rulings 1 and 8): the role's signature question as one button, answered in place from the
+   prepared answer (no model call; the static copy when the backend is off), and on the homes of the firm levels and of the
+   Punctual Pros office and field roles one "Address" box (assets/site-lookup.js). #/home/overview?address=<text> (the Ask
+   panel hands a typed address over this way) runs the lookup at once. ── */
+const BOX_LEVELS = new Set(['firm_leadership', 'firm_team']);
+const hasBox = r => BOX_LEVELS.has(r.level) || (r.co === 'pp' && (r.level === 'co_field' || r.level === 'co_office'));
+const sigOf = r => (r.signature && r.signature.question ? r.signature : null);
+/** A globe tour the signature names (data/research/globe_tours.json#best3), as a map command. */
+const tourOf = s => { for (const d of (s && Array.isArray(s.data) ? s.data : [])) { const m = /globe_tours\.json#([a-z0-9-]{1,40})$/.exec(String(d)); if (m) return { tour: m[1] }; } return null; };
+let firstAddr = '';      // the address handed over in the hash, run once
+let firstUndo = null;    // removes the address box of the home on screen
+const firstHTML = (role, esc) => {
+  const s = sigOf(role), box = hasBox(role) || !!firstAddr;
+  if (!s && !box) return '';
+  return `<div class="hm-first${box ? ' hm-first--box' : ''}">${s ? `<button type="button" class="sys-btn sys-btn--primary hm-sig" data-hm="sig" aria-expanded="false" aria-controls="hm-out">${esc(s.question)}</button>` : ''}${box ? '<div class="hm-site" data-hm-site></div>' : ''}</div><div class="hm-out" id="hm-out"></div>`;
+};
+async function showPrepared(btn, out, role, esc) {
+  if (btn.getAttribute('aria-expanded') === 'true') { out.replaceChildren(); delete out.dataset.shows; btn.setAttribute('aria-expanded', 'false'); return; }
+  btn.setAttribute('aria-expanded', 'true'); out.dataset.shows = 'sig';
+  const my = (out._sig = (out._sig || 0) + 1);
+  out.innerHTML = '<p class="sl-line sl-progress" role="status">Opening the answer…</p>';
+  const ans = await Backend.prepared(role.id).catch(() => null);
+  if (out._sig !== my || out.dataset.shows !== 'sig' || !out.isConnected) return;
+  if (!ans) { out.innerHTML = '<p class="sl-line" role="status">The prepared answer did not load.</p>'; return; }
+  const a = document.createElement('div'); a.className = 'sl-ans hm-sig-ans';
+  if (ans.text) a.innerHTML = `<p class="sl-text">${esc(ans.text)}</p>`;
+  const cards = document.createElement('div'); cards.className = 'sl-cards'; a.appendChild(cards);
+  const cmd = BSPSite.renderCards(cards, ans.cards, { said: ans.text }) || tourOf(sigOf(role));
+  if (cmd) { const b = document.createElement('button'); b.type = 'button'; b.className = 'sys-btn sys-btn--ghost sys-btn--sm sl-map'; b.dataset.sl = 'map'; b.textContent = 'Show on the globe'; b.onclick = () => BSPSite.openMap(cmd); a.appendChild(b); }
+  out.replaceChildren(a);
+}
+function wireFirst(ctx, role) {
+  const { el, esc } = ctx, out = el.querySelector('#hm-out');
+  if (!out) return;
+  const btn = el.querySelector('[data-hm="sig"]'), slot = el.querySelector('[data-hm-site]');
+  const box = slot ? BSPSite.mount(slot, { out, role: role.id }) : null;
+  if (btn) btn.onclick = () => showPrepared(btn, out, role, esc);
+  // a lookup takes the answer area: the signature button closes
+  box?.el.addEventListener('submit', () => { out._sig = (out._sig || 0) + 1; out.dataset.shows = 'site'; btn?.setAttribute('aria-expanded', 'false'); });
+  firstUndo = () => box?.destroy();
+  if (box && firstAddr) { const t = firstAddr; firstAddr = ''; out.dataset.shows = 'site'; box.lookup(t); }
+}
+
 /* What moves each company's value, in ten words or fewer. The full sentence is the next action fin.js prints for both
    value tables; it opens in the side panel. */
 const MOVES = {
@@ -129,7 +174,7 @@ async function firmHome(ctx, role, live) {
       <td class="hm-cell hm-wrap">${esc((MOVES[r.id] || (() => ''))(r))}</td>
       <td class="hm-st">${stChip(status(r), r.flag.st)}</td></tr>`;
   };
-  el.innerHTML = `<div class="hm hm-firm">${headHTML(esc, 'Six companies', lead, '', 'hm-cos-h')}
+  el.innerHTML = `<div class="hm hm-firm">${headHTML(esc, 'Six companies', lead, '', 'hm-cos-h')}${firstHTML(role, esc)}
     <section class="hm-sec hm-cos" aria-labelledby="hm-cos-h">${rows.length ? `<div class="sys-table-wrap"><table class="sys-table">
       <thead><tr><th scope="col">Company</th><th scope="col" class="sys-n">Held</th><th scope="col" class="sys-n">Revenue <span class="sys-est">est.</span></th><th scope="col" class="sys-n hm-ev">Entry value <span class="sys-est">est.</span></th><th scope="col">What moves it</th><th scope="col">Status</th></tr></thead>
       <tbody>${rows.map(coRow).join('')}</tbody></table></div>` : ui.note('The company table did not load.', 'warn')}
@@ -140,7 +185,7 @@ async function firmHome(ctx, role, live) {
     <div class="hm-pair">${todayHTML(role, esc)}${waitingHTML(role, esc)}</div>
     <section class="hm-sec hm-figs" aria-labelledby="hm-figs-h"><h2 class="sys-card-title" id="hm-figs-h">Figures</h2>
       ${ui.kpis([{ label: 'Strategy and operations', value: '<span class="hm-run sys-num" aria-live="off">—</span>', sub: 'Open value today, est.' }])}</section></div>`;
-  wire(el);
+  wire(el); wireFirst(ctx, role);
 
   // a row opens the side panel: the full next action, the add-ons under BSP and the estimates behind the figures
   const openRow = r => {
@@ -178,12 +223,12 @@ async function companyHome(ctx, role, live) {
   const row = sb?.rows?.find(r => r.id === co);
   const tiles = (role.home?.kpis || []).slice(0, 3).map(t => kpi(esc, t));
   if (row) { const rep = reportedOf(firm, co); tiles.push({ label: 'Held by BSP', value: row.held != null ? `${row.held.toFixed(1)} yrs` : '—', sub: esc(rep ? addTxt(row.addOns, rep) : `${addTxt(row.addOns, 0)} · ${status(row)}`) }); }
-  el.innerHTML = `<div class="hm hm-co-home"${co ? ` data-co="${esc(co)}"` : ''}>${headHTML(esc, co ? (org?.name || LONG[co] || co) : 'Fund', fill(role.home?.lead), `${role.title}${co ? '' : ' · BSP'}`)}
+  el.innerHTML = `<div class="hm hm-co-home"${co ? ` data-co="${esc(co)}"` : ''}>${headHTML(esc, co ? (org?.name || LONG[co] || co) : 'Fund', fill(role.home?.lead), `${role.title}${co ? '' : ' · BSP'}`)}${firstHTML(role, esc)}
     ${tiles.length ? ui.kpis(tiles) : ''}
     <div class="hm-pair">${todayHTML(role, esc)}${waitingHTML(role, esc)}</div>
     <p class="sys-src hm-src" data-method>Figures marked est. are sandbox examples modeled from the public estimates; hold and add-ons are from public filings. Reported add-ons were named in the trade press, not announced by the company.</p>
   </div>`;
-  wire(el);
+  wire(el); wireFirst(ctx, role);
 }
 
 /* Office and field: today's items first, then the agent's question box (a link into the agent screen), then the role's figures. */
@@ -192,22 +237,25 @@ async function roleHome(ctx, role) {
   const org = (Session.orgs() || []).find(o => o.id === role.org);
   const field = role.level === 'co_field';
   const tiles = (role.home?.kpis || []).map(t => kpi(esc, t));
-  el.innerHTML = `<div class="hm hm-role${field ? ' hm-field' : ''}"${role.co ? ` data-co="${esc(role.co)}"` : ''}>${headHTML(esc, role.title, fill(role.home?.lead), org ? `${org.name} · ${role.dept}` : role.dept)}
+  el.innerHTML = `<div class="hm hm-role${field ? ' hm-field' : ''}"${role.co ? ` data-co="${esc(role.co)}"` : ''}>${headHTML(esc, role.title, fill(role.home?.lead), org ? `${org.name} · ${role.dept}` : role.dept)}${firstHTML(role, esc)}
     ${todayHTML(role, esc, field ? 4 : 6)}
     ${askHTML()}
     ${tiles.length ? ui.kpis(tiles) : ''}
     <p class="sys-src hm-src" data-method>Sandbox records: fictional people and modeled numbers.</p>
   </div>`;
-  wire(el);
+  wire(el); wireFirst(ctx, role);
 }
 
 async function overview(ctx) {
   injectCss();
   await Session.ready();
   let alive = true, gen = 0, undo = null;
+  firstAddr = String(ctx.params?.address || '').trim().slice(0, 300);
+  const dropFirst = () => { if (firstUndo) { try { firstUndo(); } catch { /* gone */ } firstUndo = null; } };
   const draw = async () => {
     const my = ++gen, live = () => alive && my === gen && ctx.el.isConnected;
     if (undo) { try { undo(); } catch { /* already gone */ } undo = null; }
+    dropFirst();
     ctx.inspector.close();
     const role = Session.role(), kind = homeKind(role);
     ctx.el.dataset.home = kind;
@@ -219,7 +267,7 @@ async function overview(ctx) {
   const onStore = e => { if (alive && e.key === APPROVALS_KEY) { const w = ctx.el.querySelector('#hm-wait'); if (w) w.outerHTML = waitingHTML(Session.role(), ctx.esc); } };
   addEventListener('storage', onStore);
   await draw();
-  return () => { alive = false; stop(); removeEventListener('storage', onStore); delete ctx.el.dataset.home; if (undo) { try { undo(); } catch { /* gone */ } } };
+  return () => { alive = false; stop(); removeEventListener('storage', onStore); delete ctx.el.dataset.home; dropFirst(); firstAddr = ''; if (undo) { try { undo(); } catch { /* gone */ } } };
 }
 
 /* The agent inside the shell: agent.html in its embedded form, following the role in view. */
