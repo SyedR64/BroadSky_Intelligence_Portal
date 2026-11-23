@@ -8,7 +8,7 @@ This is the hosted part of the Broad Sky OS assistant: a small Python web servic
 2. **Research.** Claude can call three tools before it answers, up to five model steps in all:
    - `search_knowledge`: search again with other words, a name or a company;
    - `read_source`: read a whole source when an excerpt is cut off;
-   - `deal_model`: run the acquisition model (`dealmath.py`, a line-for-line port of `modules/deal-lib.js`, so the numbers match the portal and its Excel download) for price, financing, returns, a DCF and what a buyer can pay, and return a link that opens the same scenario in the portal.
+   - `deal_model`: run the acquisition model (`dealmath.py`, a line-for-line port of `modules/deal-lib.js`, so the numbers match Broad Sky OS and its Excel download) for price, financing, returns, a DCF and what a buyer can pay, and return a link that opens the same scenario in the portal.
 
    For Broad Sky OS only, Claude also has Anthropic's web search for public facts the knowledge base does not hold, and two home-records tools for the Punctual Pros territory (see [Home-sales records](#home-sales-records)):
    - `new_homeowners`: recent home buyers by county, town or ZIP code, ranked for the new-homeowner promotion;
@@ -24,11 +24,11 @@ The last step always answers, and the whole answer is capped at `UPSTREAM_TOTAL_
 `scripts/build_corpus.py` builds it, and the monthly **Refresh assistant knowledge** workflow rebuilds it and commits the result. A commit to `server/` redeploys the service. The sources are:
 
 - BSP's own website, read through its public WordPress data: team biographies, strategy, investments and news.
-- Every web page the portal's research cites: press releases, SEC Form D filings, company pages and trade press.
+- Every web page the research in Broad Sky OS cites: press releases, SEC Form D filings, company pages and trade press.
 - The portfolio companies' own sites.
 - News coverage from Bing News and Google News.
 - A few Wikipedia articles.
-- The portal itself: every page and view as a visitor sees it, the research files and the prepared answers. Local signals shows one company's forces at a time, so each company's table is read as its own document (this is where Fair Harbor's weather and season forces come from).
+- Broad Sky OS itself: every page and screen as a visitor sees it, the research files and the prepared answers. Local signals shows one company's forces at a time, so each company's table is read as its own document (this is where Fair Harbor's weather and season forces come from).
 - A short note on what the home-sales records cover: the counties, the date sales reach and the newest full month for each, the two home-records tools and the no-names rule. The build reads it from the `meta` table of `knowledge/homes.sqlite`, so it carries dates and no row counts. Rebuild the portal source after a sales refresh to move the dates.
 
 Each document is cut into passages of about 1,100 characters. Each passage is indexed two ways in one SQLite file:

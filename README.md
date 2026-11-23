@@ -47,7 +47,7 @@ Twelve copy rules bind every screen and page; the full list is in `UNIFIED.md` �
 
 - **Stack:** vanilla ES modules, no build step, static hosting (`.nojekyll`). Leaflet for maps, inline SVG charts, MapLibre + deck.gl for the 3D map.
 - **Shared runtime:** `assets/session.js` (role and connections), `assets/frame.js` (top bar, switch, footer, theme, embed form), `assets/core.js` (data loaders, formatting, UI kit, maps, charts, live feeds, tour, Sources and Method drawers, app shell), `assets/chat.js` (the assistant), `assets/components.js` (targets, filings and opportunity cards), `modules/registry.js` (module order, menus, `LEVELS`, forwarding table).
-- **Contracts:** `UNIFIED.md` (design system and voice), `CONTRACT.md` (portal modules), `CONTRACT_SITES.md` (concept sites and software pages).
+- **Contracts:** `UNIFIED.md` (design system and voice), `CONTRACT.md` (screens), `CONTRACT_SITES.md` (concept sites and software pages).
 - **Rules that keep it working:** never rename a module id, screen id or URL parameter in use; new imports between site files carry the same `?v=` stamp as their neighbours; a link to the agent never carries `q=`.
 
 ## Site map
@@ -103,7 +103,7 @@ The assistant is "Broad Sky OS"; its floating button reads "Ask". One widget ser
 
 1. **Grounded intents (no key, no backend).** Regex-matched intents run against the datasets directly: zip coverage (`Do you serve 17601?`), live NWS storms and the demand model, CET bids due and programs, Horton wastewater targets, add-on targets, PE competitors, filings estimates, new-mover counts, the software theses, the Punctual Pros nationwide plan, voice AI, AI agents, sample ads and navigation. Answers carry numbers, sources and a link to the right screen.
 2. **Retrieval fallback.** If no intent matches, the question is scored against an index built from the screen catalogue, the `meta` summaries of the research files and the page's own FAQ entries; the best matches are returned with links.
-3. **Hosted Claude with a knowledge base.** Open questions go to the assistant backend (`server/`, live on Vercel). Claude works there as a research agent over a knowledge base built by `scripts/build_corpus.py`: BSP's own website, every page the research cites, the portfolio companies' sites, news coverage and the portal's own pages and research. The knowledge base is one SQLite file with a keyword index and a meaning index. Claude can search it again, read whole sources and run the acquisition model before it writes a cited answer; it can also search the web. The answer streams with numbered sources and live progress lines. Details: `server/README.md`.
+3. **Hosted Claude with a knowledge base.** Open questions go to the assistant backend (`server/`, live on Vercel). Claude works there as a research agent over a knowledge base built by `scripts/build_corpus.py`: BSP's own website, every page the research cites, the portfolio companies' sites, news coverage and Broad Sky OS's own pages and research. The knowledge base is one SQLite file with a keyword index and a meaning index. Claude can search it again, read whole sources and run the acquisition model before it writes a cited answer; it can also search the web. The answer streams with numbered sources and live progress lines. Details: `server/README.md`.
 4. **Developer key (only with `?dev=1`).** Without a hosted backend, the settings dialog accepts an Anthropic API key kept only in this browser's `localStorage` and sent only to `api.anthropic.com`.
 
 Sites extend a persona through `Chat.mount(null, { persona, mode: 'floating', faq, suggestions })`; `scripts/chat_test.html?q=…&p=…` mounts the inline widget and auto-asks a question for testing.
@@ -132,7 +132,7 @@ Frontline (St. Louis, MO) has no home-sales file. Missouri does not disclose sal
 
 | Dataset | Source |
 |---|---|
-| `cet_ne_counties`, `cet_ne_development`, `cet_ne_rfps`, `cet_nyc_archive_summary` | Earlier CET tool: Census CBP/ACS/BPS, municipal development logs, USASpending, COMMBUYS / CTsource (compiled Apr–May 2026) |
+| `cet_ne_counties`, `cet_ne_development`, `cet_ne_rfps` | Earlier CET tool: Census CBP/ACS/BPS, municipal development logs, USASpending, COMMBUYS / CTsource (compiled Apr–May 2026) |
 | `pp_zips`, `pp_meta`, `pp_sales_90d` | Earlier Punctual Pros tool: ACS 5-yr, county recorder deed transfers (Jan–Apr 2026) |
 | `fl_lawfirms` | AM Law 200 (2025) public rankings + analyst scoring |
 | `ts_sites`, `ts_parents` | NPPES NPI, CMS provider utilization 2023, CLIA, Hospital Compare, PECOS |
