@@ -2,16 +2,22 @@
    renderHouse3D(container, card, opts) draws it with three.js (loaded from unpkg, jsdelivr fallback, only when the view opens);
    houseGLB(card) returns the same model as a binary glTF file. Nothing here makes a network call besides loading the library.
 
-   What the card holds and how it is drawn:
-   - floors[].w / h (feet) give the footprint; house.stories and house.foundation give the storeys and the basement. The server
-     derives the footprint from the floor area, so the shell (walls, floors, rooms, roof) is always drawn as likely: translucent,
-     with dashed edges.
-   - floors[].rooms are the rooms as the sketch lays them out (today: the basement and an attached garage).
-   - floors[].items and outside[] are equipment; floors[].runs are water, gas and drain lines. Each keeps its own basis:
-     "record" is drawn solid, anything else is likely (translucent, dashed outline or dashed line, label ends in "likely").
-   - Heights are a drawing convention (the card has none): lines on a basement floor run under its ceiling, drains near the
-     floor; on a slab or crawlspace house they run just under the first floor.
-   Every item and run becomes one named object whose userData (and glTF extras) carry role, kind, layer, basis and floor. */
+   Two kinds of card:
+   - A live card (a real typed address) carries `building` (design_live_address.md section 3): the footprint ring in local
+     metres east and north of `building.frame.origin`, its oriented rectangle (`rot_deg`: the plan's +x axis points to compass
+     bearing rot_deg + 90 and the plan's +y, towards the front when `front` is "bottom", to rot_deg + 180), the height, the storeys,
+     the parcel ring and the outbuildings. The outline is public; the height and everything inside are likely unless the card
+     says otherwise. The ring is extruded storey by storey, the parcel edge is drawn on the ground, and the rooms, inside walls,
+     items and runs (laid out in the plan rectangle, floors[].w by .h feet) are fitted inside the real outline.
+   - A card with no `building` (or whose place is known only to the town) draws as before: the footprint is a rectangle worked out
+     from the floor area, so the shell is likely.
+   Every element is marked by its basis: "public" (a named public record) solid in one tone, "record" (a company system) solid in
+   another, anything else likely (translucent, dashed edges or dashed line, label ends in "likely"). "Example address" is written
+   only on a card built from company example data (isExampleCard).
+   - floors[].rooms are the rooms as the sketch lays them out; floors[].items and outside[] are equipment; floors[].runs are water,
+     gas, drain, wire and duct lines. Heights are a drawing convention (the card has none for these).
+   Every item and run becomes one named object whose userData (and glTF extras) carry role, kind, layer, basis and floor; the file
+   also carries the footprint, the parcel, the height and the storeys with their basis, in east, up, south metres. */
 
 const THREE_URLS = [
   'https://unpkg.com/three@0.169.0/build/three.module.js',
@@ -47,7 +53,10 @@ const VIEWS = { outside: [0.62, 1.08, 0.95], cutaway: [0.38, 0.86, 0.88], top: [
 const COLOR_VARS = {
   water: '--sys-info', drain: '--sys-ink-2', gas: '--sys-warn', elec: '--sys-bad', hvac: '--sys-good', walls: '--sys-mute',
   shell: '--sys-mute-2', room: '--sys-line-2', other: '--sys-ink', bg: '--sys-surface-2', pick: '--sys-ink',
+  pub: '--sys-ink', rec: '--sys-violet',
 };
+const BASIS_WORD = { public: 'Public record', record: 'Company record', likely: 'Likely' };
+const EXAMPLE_LINE = 'Company record (example data)';
 
 let threeP = null;
 /** three.js as an ES module: unpkg first, jsdelivr if that fails. Loaded once. */
@@ -70,21 +79,189 @@ export function supports3D() {
   } catch { return false; }
 }
 
-const num = v => (Number.isFinite(Number(v)) ? Number(v) : 0);
-const isRec = b => b === 'record';
+const num = v => (v !== null && v !== '' && Number.isFinite(Number(v)) ? Number(v) : 0);
+/** The three basis words: "record" (company system), "public" (named public record), "likely" (anything else). */
+export const basisOf = b => (b === 'record' || b === 'public' ? b : 'likely');
+const isSolid = b => basisOf(b) !== 'likely';
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const reduced = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
 
 /* ── the plan: the card read into levels, items, runs, walls (pure data, feet and metres) ───────────────────────────────── */
 
+/** True only for a card built from company example data (the sandbox): the card says so (`example: true`), or, on a card with
+    no live building, its basis is a record and its source line names the sandbox or example data. A live card is never one. */
+export function isExampleCard(card) {
+  const c = card && typeof card === 'object' ? card : {};
+  if (c.example === true) return true;
+  if (c.example === false || (c.building && typeof c.building === 'object') || (c.place && typeof c.place === 'object')) return false;
+  return (c.basis === 'record' || c.basis === 'mixed') && /sandbox|fictional|example data/i.test(String(c.source_line || ''));
+}
+
+/* ── plane geometry in plan feet (x to the right, y towards the front) ───────────────────────────────────────────────────── */
+
+function cleanRing(r) {
+  const pts = (Array.isArray(r) ? r : []).filter(p => Array.isArray(p) && p.length >= 2 && Number.isFinite(Number(p[0])) && Number.isFinite(Number(p[1])))
+    .map(p => [Number(p[0]), Number(p[1])]);
+  if (pts.length > 1) { const a = pts[0], b = pts[pts.length - 1]; if (Math.abs(a[0] - b[0]) < 1e-9 && Math.abs(a[1] - b[1]) < 1e-9) pts.pop(); }
+  return pts.length >= 3 ? pts : [];
+}
+function polyArea(r) { let s = 0; for (let i = 0; i < r.length; i++) { const a = r[i], b = r[(i + 1) % r.length]; s += a[0] * b[1] - b[0] * a[1]; } return s / 2; }
+/** Point in polygon (even-odd). */
+export function inRing(p, r) {
+  let inside = false;
+  for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+    const a = r[i], b = r[j];
+    if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < ((b[0] - a[0]) * (p[1] - a[1])) / (b[1] - a[1]) + a[0]) inside = !inside;
+  }
+  return inside;
+}
+function nearestOnRing(p, r) {
+  let best = null;
+  for (let i = 0; i < r.length; i++) {
+    const a = r[i], b = r[(i + 1) % r.length], dx = b[0] - a[0], dy = b[1] - a[1], L = dx * dx + dy * dy;
+    const t = L ? Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / L)) : 0;
+    const q = [a[0] + t * dx, a[1] + t * dy], d = Math.hypot(p[0] - q[0], p[1] - q[1]);
+    if (!best || d < best.d) best = { q, d, i };
+  }
+  return best;
+}
+/** A point moved inside the ring when it falls outside: to the nearest edge, then `inset` feet in. */
+function snapInside(p, r, inset = 1.5) {
+  if (inRing(p, r)) return null;
+  const { q } = nearestOnRing(p, r);
+  for (const k of [inset, inset / 2, 0.25]) {
+    const cands = [];
+    for (let a = 0; a < 16; a++) { const t = (a / 16) * Math.PI * 2; cands.push([q[0] + Math.cos(t) * k, q[1] + Math.sin(t) * k]); }
+    const ins = cands.filter(c => inRing(c, r)).sort((u, v) => nearestOnRing(v, r).d - nearestOnRing(u, r).d);
+    if (ins.length) return ins[0].map(v => Math.round(v * 10) / 10);
+  }
+  return q;
+}
+/** Sutherland-Hodgman: the ring cut to an axis-aligned rectangle [x0, y0, x1, y1]. */
+function clipToRect(poly, [x0, y0, x1, y1]) {
+  let out = poly;
+  const edges = [[p => p[0] >= x0, (a, b) => [x0, a[1] + (b[1] - a[1]) * (x0 - a[0]) / (b[0] - a[0])]],
+    [p => p[0] <= x1, (a, b) => [x1, a[1] + (b[1] - a[1]) * (x1 - a[0]) / (b[0] - a[0])]],
+    [p => p[1] >= y0, (a, b) => [a[0] + (b[0] - a[0]) * (y0 - a[1]) / (b[1] - a[1]), y0]],
+    [p => p[1] <= y1, (a, b) => [a[0] + (b[0] - a[0]) * (y1 - a[1]) / (b[1] - a[1]), y1]]];
+  for (const [inside, cut] of edges) {
+    const src = out; out = [];
+    for (let i = 0; i < src.length; i++) {
+      const a = src[(i + src.length - 1) % src.length], b = src[i];
+      if (inside(b)) { if (!inside(a)) out.push(cut(a, b)); out.push(b); } else if (inside(a)) out.push(cut(a, b));
+    }
+    if (!out.length) break;
+  }
+  return out;
+}
+/** The parts of segment a-b that lie inside the ring and away from its edge (an inside wall never doubles an outside one). */
+function clipSegment(a, b, r) {
+  const ts = [0, 1];
+  for (let i = 0; i < r.length; i++) {
+    const p = r[i], q = r[(i + 1) % r.length];
+    const d = (b[0] - a[0]) * (q[1] - p[1]) - (b[1] - a[1]) * (q[0] - p[0]);
+    if (Math.abs(d) < 1e-12) continue;
+    const t = ((p[0] - a[0]) * (q[1] - p[1]) - (p[1] - a[1]) * (q[0] - p[0])) / d;
+    const u = ((p[0] - a[0]) * (b[1] - a[1]) - (p[1] - a[1]) * (b[0] - a[0])) / d;
+    if (t > 0 && t < 1 && u >= 0 && u <= 1) ts.push(t);
+  }
+  ts.sort((x, y) => x - y);
+  const at = t => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+  const out = [];
+  for (let i = 0; i < ts.length - 1; i++) {
+    if (ts[i + 1] - ts[i] < 1e-6) continue;
+    const m = at((ts[i] + ts[i + 1]) / 2);
+    if (inRing(m, r) && nearestOnRing(m, r).d > 0.6) out.push([at(ts[i]), at(ts[i + 1])]);
+  }
+  return out;
+}
+function hull(pts) {
+  const p = pts.map(x => x.slice()).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  if (p.length < 3) return p;
+  const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lo = [], up = [];
+  for (const q of p) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+  for (const q of p.slice().reverse()) { while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+  return lo.slice(0, -1).concat(up.slice(0, -1));
+}
+const axes = rDeg => { const r = (rDeg * Math.PI) / 180; return { ex: [Math.cos(r), -Math.sin(r)], ey: [-Math.sin(r), -Math.cos(r)] }; };
+const angDiff = (a, b) => Math.abs((((a - b) % 360) + 540) % 360 - 180);
+/** The plan rectangle in the footprint frame: its rotation, centre and size (metres) for a ring in local metres. */
+export function orientRect(ringM, rotDeg, frontBearing) {
+  const fit = r => {
+    const { ex, ey } = axes(r);
+    let u0 = Infinity, u1 = -Infinity, v0 = Infinity, v1 = -Infinity;
+    for (const p of ringM) { const u = p[0] * ex[0] + p[1] * ex[1], v = p[0] * ey[0] + p[1] * ey[1]; u0 = Math.min(u0, u); u1 = Math.max(u1, u); v0 = Math.min(v0, v); v1 = Math.max(v1, v); }
+    const cu = (u0 + u1) / 2, cv = (v0 + v1) / 2;
+    return { r, ex, ey, U: u1 - u0, V: v1 - v0, c: [cu * ex[0] + cv * ey[0], cu * ex[1] + cv * ey[1]] };
+  };
+  if (Number.isFinite(rotDeg)) return fit(rotDeg);
+  const h = hull(ringM);
+  let best = null;
+  for (let i = 0; i < h.length; i++) {
+    const a = h[i], b = h[(i + 1) % h.length];
+    const phi = (Math.atan2(b[1] - a[1], b[0] - a[0]) * 180) / Math.PI;   // edge direction, degrees anticlockwise from east
+    for (let k = 0; k < 4; k++) {
+      const f = fit(-phi + 90 * k);
+      const area = f.U * f.V, fb = f.r + 180;
+      const score = Number.isFinite(frontBearing) ? angDiff(fb, frontBearing) : (f.U + 1e-6 >= f.V ? 0 : 1000) + angDiff(fb, 180);
+      if (!best || area < best.area * 0.999 || (area <= best.area * 1.001 && score < best.score)) best = { ...f, area, score };
+    }
+  }
+  return best || fit(0);
+}
+
+/** The live building read from the card in plan feet: null when the card has none (or the place is known only to the town). */
+function siteOf(c, w, h, flipped) {
+  const b = c.building;
+  if (!b || typeof b !== 'object' || (c.place && c.place.precision === 'town')) return null;
+  const fp = b.footprint && typeof b.footprint === 'object' ? b.footprint : {};
+  const ringM = cleanRing(fp.ring_m);
+  if (ringM.length < 3 || Math.abs(polyArea(ringM)) < 4) return null;
+  const rot = fp.rot_deg === undefined || fp.rot_deg === null || fp.rot_deg === '' || !Number.isFinite(Number(fp.rot_deg)) ? NaN : Number(fp.rot_deg) + (flipped ? 180 : 0);
+  const fb = b.front && Number.isFinite(Number(b.front.bearing_deg)) && b.front.bearing_deg !== null ? Number(b.front.bearing_deg) : NaN;
+  const R = orientRect(ringM, rot, fb);
+  const kx = R.U / w, kz = R.V / h;
+  const toPlan = p => { const d = [p[0] - R.c[0], p[1] - R.c[1]]; return [(d[0] * R.ex[0] + d[1] * R.ex[1]) / kx + w / 2, (d[0] * R.ey[0] + d[1] * R.ey[1]) / kz + h / 2]; };
+  const ring = ringM.map(toPlan);
+  const pc = b.parcel && typeof b.parcel === 'object' ? b.parcel : null;
+  const parcelM = pc ? cleanRing(pc.ring_m) : [];
+  const outb = (Array.isArray(fp.outbuildings) ? fp.outbuildings : []).map(o => cleanRing(o && o.ring_m)).filter(r => r.length >= 3);
+  const hgt = b.height && typeof b.height === 'object' ? b.height : {};
+  const st = b.storeys && typeof b.storeys === 'object' ? b.storeys : {};
+  return {
+    ringM, ring, kx, kz, rot: R.r, centre: R.c, U: R.U, V: R.V,
+    basis: basisOf(fp.basis || 'public'), asOf: String(fp.as_of || ''), method: String(fp.method || ''), area: Math.abs(polyArea(ringM)),
+    parcelM, parcel: parcelM.map(toPlan), parcelBasis: basisOf(pc && pc.basis || 'public'),
+    outbuildings: outb.map(r => ({ ringM: r, ring: r.map(toPlan) })),
+    eave: num(hgt.eave_m), ridge: num(hgt.ridge_m), heightBasis: basisOf(hgt.basis), storeys: num(st.n), storeysBasis: basisOf(st.basis),
+    frontBasis: basisOf(b.front && b.front.basis), precision: String(c.place && c.place.precision || ''),
+    origin: b.frame && b.frame.origin && typeof b.frame.origin === 'object' ? { lon: num(b.frame.origin.lon), lat: num(b.frame.origin.lat) } : null,
+  };
+}
+
 /** The card as levels (bottom to top) with their contents; used by the scene, the file and "Behind this wall". */
 export function planOf(card) {
   const c = card && typeof card === 'object' ? card : {};
   const house = c.house && typeof c.house === 'object' ? c.house : {};
-  const floors = (Array.isArray(c.floors) ? c.floors : []).filter(f => f && typeof f === 'object');
+  let floors = (Array.isArray(c.floors) ? c.floors : []).filter(f => f && typeof f === 'object');
   const f0 = floors[0] || {};
   const w = Math.max(10, num(f0.w) || 40), h = Math.max(10, num(f0.h) || 30);
-  const stories = Math.max(1, num(house.stories) || 1);
+  let front = c.front === 'top' ? 'top' : 'bottom';
+  // a live building with the front at the top is turned half round, so the street side is always +y (the rotation follows)
+  const live = !!(c.building && typeof c.building === 'object');
+  const flipped = live && front === 'top';
+  if (flipped) {
+    const P = p => (Array.isArray(p) ? [w - num(p[0]), h - num(p[1])] : p);
+    floors = floors.map(f => ({ ...f,
+      rooms: (Array.isArray(f.rooms) ? f.rooms : []).map(r => (r && typeof r === 'object' ? { ...r, x: w - num(r.x) - num(r.w), y: h - num(r.y) - num(r.h) } : r)),
+      items: (Array.isArray(f.items) ? f.items : []).map(i => (i && typeof i === 'object' ? { ...i, x: w - num(i.x), y: h - num(i.y) } : i)),
+      runs: (Array.isArray(f.runs) ? f.runs : []).map(r => (r && typeof r === 'object' && Array.isArray(r.points) ? { ...r, points: r.points.map(P) } : r)) }));
+    front = 'bottom';
+  }
+  const site = siteOf(c, w, h, flipped);
+  const stories = Math.max(1, (site && site.storeys) || num(house.stories) || 1);
+  const storeyH = site && site.eave ? Math.min(3.6, Math.max(2.4, site.eave / stories)) : STOREY;
   const hasBase = house.foundation === 'basement' && house.basement !== 'none' || floors.some(f => f.id === 'basement');
   const levels = [];
   if (hasBase) levels.push({ id: 'basement', name: 'Basement', base: -BASE_H, height: BASE_H, below: true });
@@ -92,26 +269,38 @@ export function planOf(card) {
   const n = Math.min(3, Math.ceil(stories));
   for (let i = 0; i < n; i++) {
     const half = i === n - 1 && stories % 1 !== 0;
-    levels.push({ id: ids[i], name: names[i], base: i * STOREY, height: half ? HALF : STOREY, half });
+    levels.push({ id: ids[i], name: names[i], base: i * storeyH, height: half ? HALF : storeyH, half });
   }
   for (const f of floors) {
-    if (!levels.some(l => l.id === f.id)) levels.push({ id: String(f.id), name: String(f.name || f.id), base: levels.length * STOREY, height: STOREY });
+    if (!levels.some(l => l.id === f.id)) levels.push({ id: String(f.id), name: String(f.name || f.id), base: levels.length * storeyH, height: storeyH });
   }
   levels.sort((a, b) => a.base - b.base);
+  let snapped = 0;
+  const fit = p => { if (!site) return p; const s = snapInside(p, site.ring); if (s) { snapped++; return s; } return p; };
   for (const l of levels) {
     const f = floors.find(x => x.id === l.id);
     l.inCard = !!f;
     if (f && f.name) l.name = String(f.name);
     l.rooms = (f && Array.isArray(f.rooms) ? f.rooms : []).filter(r => r && typeof r === 'object').map(r => ({
-      x: num(r.x), y: num(r.y), w: num(r.w), h: num(r.h), label: String(r.label || 'Room'),
+      x: num(r.x), y: num(r.y), w: num(r.w), h: num(r.h), label: String(r.label || 'Room'), basis: basisOf(r.basis),
     }));
-    l.items = (f && Array.isArray(f.items) ? f.items : []).filter(i => i && typeof i === 'object').map((it, i) => ({ ...it, key: `${l.id}-i${i}` }));
+    if (site) {
+      for (const r of l.rooms) {
+        r.poly = clipToRect(site.ring, [r.x, r.y, r.x + r.w, r.y + r.h]);
+        if (r.poly.length < 3 || Math.abs(polyArea(r.poly)) < 4) r.poly = null;
+      }
+      l.rooms = l.rooms.filter(r => r.poly);
+    }
+    l.items = (f && Array.isArray(f.items) ? f.items : []).filter(i => i && typeof i === 'object').map((it, i) => {
+      const o = { ...it, key: `${l.id}-i${i}` };
+      if (site) { const p = fit([num(it.x), num(it.y)]); if (p[0] !== num(it.x) || p[1] !== num(it.y)) { o.x = p[0]; o.y = p[1]; o.snapped = true; } }
+      return o;
+    });
     l.runs = (f && Array.isArray(f.runs) ? f.runs : []).filter(r => r && typeof r === 'object' && Array.isArray(r.points))
-      .map((r, i) => ({ ...r, key: `${l.id}-r${i}`, points: r.points.filter(p => Array.isArray(p)).map(p => [num(p[0]), num(p[1])]) }))
+      .map((r, i) => ({ ...r, key: `${l.id}-r${i}`, points: r.points.filter(p => Array.isArray(p)).map(p => fit([num(p[0]), num(p[1])])) }))
       .filter(r => r.points.length >= 2);
   }
   const outside = (Array.isArray(c.outside) ? c.outside : []).filter(o => o && typeof o === 'object').map((o, i) => ({ ...o, key: `out-${i}` }));
-  const front = c.front === 'top' ? 'top' : 'bottom';
   const focusLevel = (() => {
     const focus = (Array.isArray(c.focus) ? c.focus : []).map(String);
     for (const k of focus) { const l = levels.find(x => x.items.some(i => String(i.kind) === k)); if (l) return l.id; }
@@ -119,13 +308,34 @@ export function planOf(card) {
     for (const l of levels) { const k = l.items.length + l.runs.length; if (k > nmax) { nmax = k; best = l.id; } }
     return best;
   })();
-  return { address: String(c.address || ''), w, h, levels, outside, front, focusLevel, focus: (Array.isArray(c.focus) ? c.focus : []).map(String),
-    wires: levels.some(l => l.runs.some(r => RUN_LAYER[r.kind] === 'elec')) };
+  const address = String(c.address || (c.place && c.place.label) || '');
+  return { address, w, h, levels, outside, front, focusLevel, focus: (Array.isArray(c.focus) ? c.focus : []).map(String),
+    wires: levels.some(l => l.runs.some(r => RUN_LAYER[r.kind] === 'elec')), site, storeyH, snapped, example: isExampleCard(c),
+    shellBasis: site && site.heightBasis !== 'likely' && site.storeysBasis !== 'likely' ? site.heightBasis : 'likely' };
 }
 
-/** Exterior walls of a level as segments in feet: front is the street side. */
+/** Exterior walls of a level as segments in feet: front is the street side. A live card's walls follow its outline. */
 function exteriorWalls(plan) {
-  const { w, h, front } = plan;
+  const { w, h, front, site } = plan;
+  if (site) {
+    const r = site.ring, segs = [];
+    for (let i = 0; i < r.length; i++) {
+      const a = r[i], b = r[(i + 1) % r.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      if (L < 0.5) continue;
+      let n = [(b[1] - a[1]) / L, -(b[0] - a[0]) / L];
+      const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+      if (inRing([m[0] + n[0] * 0.3, m[1] + n[1] * 0.3], r)) n = [-n[0], -n[1]];
+      const side = Math.abs(n[1]) >= Math.abs(n[0]) ? (n[1] > 0 ? 'front' : 'rear') : (n[0] > 0 ? 'right' : 'left');
+      segs.push({ a, b, side, L, i });
+    }
+    const out = [];
+    for (const side of ['front', 'rear', 'left', 'right']) {
+      const S = side[0].toUpperCase() + side.slice(1);
+      segs.filter(s => s.side === side).sort((x, y) => y.L - x.L)
+        .forEach((s, k) => out.push({ id: `${side}${k ? k + 1 : ''}`, name: k ? `${S} wall ${k + 1}` : `${S} wall`, a: s.a, b: s.b, side }));
+    }
+    return out;
+  }
   const fy = front === 'top' ? 0 : h, ry = front === 'top' ? h : 0;
   return [
     { id: 'front', name: 'Front wall', a: [0, fy], b: [w, fy], side: 'front' },
@@ -134,7 +344,7 @@ function exteriorWalls(plan) {
     { id: 'right', name: 'Right wall', a: [w, 0], b: [w, h], side: 'right' },
   ];
 }
-/** Room walls that are not on the outside of the house. */
+/** Room walls that are not on the outside of the house (on a live card, the parts inside the real outline). */
 function roomWalls(plan, level) {
   const out = [];
   const onEdge = (a, b) => (a[0] === b[0] && (a[0] <= 0 || a[0] >= plan.w)) || (a[1] === b[1] && (a[1] <= 0 || a[1] >= plan.h));
@@ -143,10 +353,17 @@ function roomWalls(plan, level) {
     const c = [[r.x, r.y], [r.x + r.w, r.y], [r.x + r.w, r.y + r.h], [r.x, r.y + r.h]];
     for (let i = 0; i < 4; i++) {
       const a = c[i], b = c[(i + 1) % 4];
-      if (!onEdge(a, b)) out.push({ id: `room${ri}-${i}`, name: `${r.label} wall`, a, b, side: null });
+      if (onEdge(a, b)) continue;
+      if (!plan.site) { out.push({ id: `room${ri}-${i}`, name: `${r.label} wall`, a, b, side: null, basis: r.basis }); continue; }
+      clipSegment(a, b, plan.site.ring).forEach((s, k) => out.push({ id: `room${ri}-${i}${k ? `-${k}` : ''}`, name: `${r.label} wall`, a: s[0], b: s[1], side: null, basis: r.basis }));
     }
   });
-  return out;
+  // two rooms side by side share a wall: draw it once
+  const seen = new Set();
+  return out.filter(wl => {
+    const k = [wl.a, wl.b].map(p => p.map(v => Math.round(v * 2) / 2).join(',')).sort().join('|');
+    if (seen.has(k)) return false; seen.add(k); return true;
+  });
 }
 
 function segDist(p, a, b) {
@@ -190,7 +407,7 @@ export function behindWall(plan, levelId, wall) {
 
 function mergeGeoms(T, geoms) {
   let nv = 0, ni = 0;
-  const parts = geoms.map(g => { const ng = g.index ? g : g.toNonIndexed(); return ng; });
+  const parts = geoms;
   for (const g of parts) { nv += g.attributes.position.count; ni += g.index ? g.index.count : g.attributes.position.count; }
   const pos = new Float32Array(nv * 3), nor = new Float32Array(nv * 3), idx = new Uint32Array(ni);
   let ov = 0, oi = 0;
@@ -254,26 +471,52 @@ function roofGeom(T, W, D, H) {
 
 /* ── the model ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
+/** A flat polygon (model metres, [x, z] pairs) lifted to a prism from y0 to y0 + d. */
+function prismGeom(T, pts, y0, d) {
+  const sh = new T.Shape(pts.map(p => new T.Vector2(p[0], -p[1])));
+  const g = new T.ExtrudeGeometry(sh, { depth: d, bevelEnabled: false });
+  g.rotateX(-Math.PI / 2); g.translate(0, y0, 0);
+  return g;
+}
+/** A roof for an outline that is not a rectangle: the eaves follow the outline and rise to a smaller copy of it at the ridge. */
+function tentRoofGeom(T, pts, H) {
+  const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length, cz = pts.reduce((s, p) => s + p[1], 0) / pts.length;
+  const inner = pts.map(p => [cx + (p[0] - cx) * 0.35, cz + (p[1] - cz) * 0.35]);
+  const pos = [];
+  for (let i = 0; i < pts.length; i++) {
+    const j = (i + 1) % pts.length, a = [...pts[i]], b = [...pts[j]], ai = inner[i], bi = inner[j];
+    pos.push(a[0], 0, a[1], b[0], 0, b[1], bi[0], H, bi[1], a[0], 0, a[1], bi[0], H, bi[1], ai[0], H, ai[1]);
+  }
+  const side = new T.BufferGeometry(); side.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); side.computeVertexNormals();
+  const cap = new T.ShapeGeometry(new T.Shape(inner.map(p => new T.Vector2(p[0], -p[1])))); cap.rotateX(-Math.PI / 2); cap.translate(0, H, 0);
+  return mergeGeoms(T, [side, cap]);
+}
+
 /** Builds the model as a three.js Group (metres, Y up, the street side towards +Z). Every object carries userData. */
 function buildModel(T, card) {
   const plan = planOf(card);
-  const W = plan.w * FT, D = plan.h * FT;
+  const site = plan.site;
+  const kx = site ? site.kx : FT, kz = site ? site.kz : FT;
+  const W = plan.w * kx, D = plan.h * kz;
   const flip = plan.front === 'top' ? -1 : 1;
-  const X = x => (num(x) - plan.w / 2) * FT, Z = y => flip * (num(y) - plan.h / 2) * FT;
+  const X = x => (num(x) - plan.w / 2) * kx, Z = y => flip * (num(y) - plan.h / 2) * kz;
+  const M = p => [X(p[0]), Z(p[1])];
   const root = new T.Group(); root.name = 'House';
-  root.userData = { role: 'house', address: plan.address };
+  root.userData = { role: 'house', address: plan.address, example: plan.example };
   const mats = [];
   const mat = (colorKey, basis, kind = 'solid') => {
-    const likely = !isRec(basis);
+    const likely = !isSolid(basis);
     const m = new T.MeshLambertMaterial({ color: 0x888888, transparent: likely || kind === 'shell', opacity: kind === 'shell' ? 0.22 : likely ? 0.5 : 1,
       depthWrite: !(likely || kind === 'shell'), side: kind === 'shell' ? T.DoubleSide : T.FrontSide });
-    m.name = `${colorKey}${likely ? ' likely' : ' record'}`;
+    m.name = `${colorKey} ${basisOf(basis)}`;
     m.userData = { colorKey, base: m.opacity };
     mats.push(m); return m;
   };
+  // edges: a solid line in the tone of its basis (public or company record), dashed in the object's colour when likely
   const edgeMat = (colorKey, basis) => {
-    const m = isRec(basis) ? new T.LineBasicMaterial({ color: 0x888888 }) : new T.LineDashedMaterial({ color: 0x888888, dashSize: 0.12, gapSize: 0.08 });
-    m.userData = { colorKey }; mats.push(m); return m;
+    const b = basisOf(basis);
+    const m = b !== 'likely' ? new T.LineBasicMaterial({ color: 0x888888 }) : new T.LineDashedMaterial({ color: 0x888888, dashSize: 0.12, gapSize: 0.08 });
+    m.userData = { colorKey: b === 'record' ? 'rec' : b === 'public' ? 'pub' : colorKey }; mats.push(m); return m;
   };
   const addEdges = (mesh, colorKey, basis) => {
     const e = new T.LineSegments(new T.EdgesGeometry(mesh.geometry, 20), edgeMat(colorKey, basis));
@@ -282,35 +525,45 @@ function buildModel(T, card) {
   const group = (parent, name, data = {}) => { const g = new T.Group(); g.name = name; g.userData = data; parent.add(g); return g; };
   const sysGroups = (parent, lvl) => Object.fromEntries(LAYERS.filter(([k]) => k !== 'walls').map(([k, n]) => [k, group(parent, n, { role: 'group', layer: k, level: lvl })]));
 
-  const items = [], runs = [], walls = [];
+  const items = [], runs = [], walls = [], shell = [];
   const top = plan.levels.reduce((m, l) => Math.max(m, l.base + l.height), 0);
+  const shellBasis = plan.shellBasis;
+  const ringM = site ? site.ring.map(M) : null;
 
   for (const l of plan.levels) {
     const g = group(root, l.name, { role: 'level', level: l.id });
-    // floor slab and walls: the shell is always likely (the footprint is worked out from the floor area)
-    const slab = new T.Mesh(new T.BoxGeometry(W, 0.06, D), mat('shell', 'likely', 'shell'));
-    slab.position.set(0, l.base - 0.03, 0); slab.name = `${l.name} floor`;
-    slab.userData = { role: 'slab', layer: 'structure', level: l.id, basis: 'likely' };
-    g.add(slab);
+    // the floor: on a live card the real outline; otherwise a rectangle worked out from the floor area (likely)
+    const slab = new T.Mesh(site ? prismGeom(T, ringM, l.base - 0.06, 0.06) : new T.BoxGeometry(W, 0.06, D), mat('shell', 'likely', 'shell'));
+    if (!site) slab.position.set(0, l.base - 0.03, 0);
+    slab.name = `${l.name} floor`;
+    slab.userData = { role: 'slab', layer: 'structure', level: l.id, basis: site && !l.below ? shellBasis : 'likely' };
+    g.add(slab); shell.push(slab);
     const wg = group(g, 'Walls', { role: 'group', layer: 'walls', level: l.id });
-    for (const wall of [...exteriorWalls(plan), ...roomWalls(plan, l)]) {
+    const outer = exteriorWalls(plan);
+    for (const wall of [...outer, ...roomWalls(plan, l)]) {
       const ax = X(wall.a[0]), az = Z(wall.a[1]), bx = X(wall.b[0]), bz = Z(wall.b[1]);
       const len = Math.hypot(bx - ax, bz - az); if (len < 0.05) continue;
+      // an outside wall stands on the public outline; its height (and a basement's) is likely unless the card says otherwise
+      const basis = wall.side ? (site && !l.below ? shellBasis : 'likely') : basisOf(wall.basis);
       const m = new T.Mesh(new T.BoxGeometry(len, l.height, WALL_T), mat('walls', 'likely', 'shell'));
       m.position.set((ax + bx) / 2, l.base + l.height / 2, (az + bz) / 2);
       m.rotation.y = -Math.atan2(bz - az, bx - ax);
       m.name = wall.name;
-      m.userData = { role: 'wall', layer: 'walls', level: l.id, basis: 'likely', wall: { ...wall }, side: wall.side, pick: true, label: wall.name };
-      addEdges(m, 'walls', 'likely');
-      wg.add(m); walls.push(m);
+      m.userData = { role: 'wall', layer: 'walls', level: l.id, basis, wall: { ...wall }, side: wall.side, pick: true, label: wall.name, inside: !wall.side };
+      addEdges(m, 'walls', basis);
+      wg.add(m); walls.push(m); shell.push(m);
     }
     if (l.rooms.length) {
       const rg = group(g, 'Rooms', { role: 'group', layer: 'structure', level: l.id });
       for (const r of l.rooms) {
-        const m = new T.Mesh(new T.BoxGeometry(Math.max(0.1, r.w * FT - 0.1), 0.02, Math.max(0.1, r.h * FT - 0.1)), mat('room', 'likely', 'shell'));
-        m.position.set(X(r.x + r.w / 2), l.base + 0.01, Z(r.y + r.h / 2));
-        m.name = r.label; m.userData = { role: 'room', layer: 'structure', level: l.id, basis: 'likely', label: r.label };
-        rg.add(m);
+        let m;
+        if (r.poly) m = new T.Mesh(prismGeom(T, r.poly.map(M), l.base + 0.005, 0.02), mat('room', r.basis, 'shell'));
+        else {
+          m = new T.Mesh(new T.BoxGeometry(Math.max(0.1, r.w * kx - 0.1), 0.02, Math.max(0.1, r.h * kz - 0.1)), mat('room', 'likely', 'shell'));
+          m.position.set(X(r.x + r.w / 2), l.base + 0.01, Z(r.y + r.h / 2));
+        }
+        m.name = r.label; m.userData = { role: 'room', layer: 'structure', level: l.id, basis: site ? r.basis : 'likely', label: r.label };
+        rg.add(m); shell.push(m);
       }
     }
     const sg = sysGroups(g, l.id);
@@ -326,15 +579,19 @@ function buildModel(T, card) {
     for (const r of l.runs) {
       const layer = RUN_LAYER[r.kind] || 'water';
       const ceil = l.base + l.height - 0.25;
-      const y = l.below ? (r.kind === 'drain' ? l.base + 0.15 : ceil) : (r.kind === 'drain' ? l.base - 0.35 : l.base - 0.18);
+      // drawing heights: drains low, wires in the joists of a basement and at outlet height in a wall above, ducts at the ceiling
+      const y = r.kind === 'duct' ? ceil - 0.05
+        : (r.kind === 'wire' || r.kind === 'electric') ? (l.below ? ceil + 0.1 : l.base + 0.4)
+          : l.below ? (r.kind === 'drain' ? l.base + 0.15 : ceil) : (r.kind === 'drain' ? l.base - 0.35 : l.base - 0.18);
       const pts = r.points.map(p => new T.Vector3(X(p[0]), y, Z(p[1])));
       if (r.kind === 'drain' && pts.length >= 2) pts[pts.length - 1].y -= 0.1;   // a drain falls towards its exit
-      const geo = lineGeom(T, pts, RUN_R[r.kind] || 0.03, !isRec(r.basis));
+      const geo = lineGeom(T, pts, RUN_R[r.kind] || 0.03, !isSolid(r.basis));
       if (!geo) continue;
-      const m = new T.Mesh(geo, mat(layer, r.basis));
+      const b = basisOf(r.basis);
+      const m = new T.Mesh(geo, mat(layer, b));
       const label = RUN_NAME[r.kind] || 'Line';
-      m.name = `${label}${isRec(r.basis) ? '' : ' (likely)'}`;
-      m.userData = { role: 'run', kind: String(r.kind || ''), layer, level: l.id, basis: isRec(r.basis) ? 'record' : 'likely', likely: !isRec(r.basis),
+      m.name = `${label}${b === 'likely' ? ' (likely)' : ''}`;
+      m.userData = { role: 'run', kind: String(r.kind || ''), layer, level: l.id, basis: b, likely: b === 'likely',
         label, key: r.key, pick: true, anchor: pts[Math.floor((pts.length - 1) / 2)].clone().lerp(pts[Math.ceil((pts.length - 1) / 2)], 0.5).toArray() };
       sg[layer].add(m); runs.push(m);
     }
@@ -343,10 +600,7 @@ function buildModel(T, card) {
     const og = group(root, 'Outside', { role: 'level', level: 'outside' });
     const sg = sysGroups(og, 'outside');
     for (const o of plan.outside) {
-      const at = Math.min(1, Math.max(0, num(o.at) || 0.5)), d = 3;
-      const side = String(o.side || 'right');
-      const p = side === 'left' ? [-d, at * plan.h] : side === 'right' ? [plan.w + d, at * plan.h]
-        : side === 'rear' ? [at * plan.w, plan.front === 'top' ? plan.h + d : -d] : [at * plan.w, plan.front === 'top' ? -d : plan.h + d];
+      const p = outsidePoint(plan, o);
       const m = itemMesh(T, o, mat, addEdges);
       const s = SHAPE[o.kind] || ['box', 0.4, 0.4, 0.4, 0];
       placeItem(m, s, X(p[0]), s[4], Z(p[1]));
@@ -354,22 +608,65 @@ function buildModel(T, card) {
       (sg[KIND_LAYER[o.kind]] || sg.hvac).add(m); items.push(m);
     }
   }
-  // a plain gable roof on the top storey: its shape is not in the card, so it is likely
-  const ridge = Math.min(W, D) * 0.32;
-  const roof = new T.Mesh(roofGeom(T, W + 0.3, D + 0.3, ridge), mat('shell', 'likely', 'shell'));
+  // the roof: its shape is in no record, so it is likely. A gable over the plan rectangle, or a hip that follows an odd outline.
+  const ridge = site && site.ridge > (site.eave || top) ? Math.min(6, site.ridge - (site.eave || top)) : Math.min(W, D) * 0.32;
+  const rectLike = !site || site.area / Math.max(1, site.U * site.V) >= 0.97;
+  const roof = new T.Mesh(rectLike ? roofGeom(T, W + 0.3, D + 0.3, ridge) : tentRoofGeom(T, ringM, ridge), mat('shell', 'likely', 'shell'));
   roof.position.y = top; roof.name = 'Roof';
   roof.userData = { role: 'roof', layer: 'walls', level: 'roof', basis: 'likely' };
   addEdges(roof, 'shell', 'likely');
-  root.add(roof);
-  return { root, plan, items, runs, walls, roof, mats, size: { W, D, top, bottom: plan.levels[0]?.base || 0 } };
+  root.add(roof); shell.push(roof);
+  let outline = null, parcel = null;
+  if (site) {
+    // the outline on the ground (public), the parcel edge, and any outbuildings (their outline is public, their height likely)
+    const sgp = group(root, 'Site', { role: 'group', layer: 'site', level: 'site' });
+    const loop = (ring, y) => { const p = ring.map(q => new T.Vector3(q[0], y, q[1])); p.push(p[0].clone()); return p; };
+    outline = new T.Mesh(lineGeom(T, loop(ringM, 0.03), 0.05, false), mat('pub', site.basis));
+    outline.name = 'Building outline';
+    outline.userData = { role: 'outline', layer: 'site', level: 'site', basis: site.basis, label: 'Building outline', key: 'outline', pick: true,
+      as_of: site.asOf, anchor: [ringM[0][0], 0.1, ringM[0][1]] };
+    sgp.add(outline); shell.push(outline);
+    if (site.parcel.length >= 3) {
+      parcel = new T.Mesh(lineGeom(T, loop(site.parcel.map(M), 0.015), 0.03, !isSolid(site.parcelBasis)), mat('pub', site.parcelBasis));
+      parcel.name = 'Parcel edge';
+      parcel.userData = { role: 'parcel', layer: 'site', level: 'site', basis: site.parcelBasis, label: 'Parcel edge', key: 'parcel', pick: true };
+      sgp.add(parcel); shell.push(parcel);
+    }
+    site.outbuildings.forEach((ob, i) => {
+      const m = new T.Mesh(prismGeom(T, ob.ring.map(M), 0, 2.4), mat('shell', 'likely', 'shell'));
+      m.name = `Outbuilding${site.outbuildings.length > 1 ? ` ${i + 1}` : ''}`;
+      m.userData = { role: 'outbuilding', layer: 'site', level: 'site', basis: 'likely', outline_basis: 'public', label: 'Outbuilding' };
+      addEdges(m, 'shell', 'likely');
+      sgp.add(m); shell.push(m);
+    });
+  }
+  return { root, plan, items, runs, walls, roof, shell, outline, parcel, mats, size: { W, D, top, bottom: plan.levels[0]?.base || 0 } };
+}
+
+/** Where an outside item stands (plan feet): 3 feet out from its side of the house, against the real outline when there is one. */
+function outsidePoint(plan, o) {
+  const at = Math.min(1, Math.max(0, num(o.at) || 0.5)), d = 3;
+  const side = String(o.side || 'right');
+  if (!plan.site) {
+    return side === 'left' ? [-d, at * plan.h] : side === 'right' ? [plan.w + d, at * plan.h]
+      : side === 'rear' ? [at * plan.w, plan.front === 'top' ? plan.h + d : -d] : [at * plan.w, plan.front === 'top' ? -d : plan.h + d];
+  }
+  const N = side === 'left' ? [-1, 0] : side === 'rear' ? [0, -1] : side === 'front' ? [0, 1] : [1, 0];
+  const P = side === 'left' ? [0, at * plan.h] : side === 'rear' ? [at * plan.w, 0] : side === 'front' ? [at * plan.w, plan.h] : [plan.w, at * plan.h];
+  const depth = N[0] ? plan.w : plan.h;
+  for (let t = 0; t <= depth; t += 0.5) {
+    const q = [P[0] - N[0] * t, P[1] - N[1] * t];
+    if (inRing(q, plan.site.ring)) return [q[0] + N[0] * d, q[1] + N[1] * d];
+  }
+  return [P[0] + N[0] * d, P[1] + N[1] * d];
 }
 
 function itemMesh(T, it, mat, addEdges) {
   const s = SHAPE[it.kind] || ['box', 0.4, 0.4, 0.4, 0];
   const g = s[0] === 'cyl' ? new T.CylinderGeometry(s[1], s[1], s[2], 18) : s[0] === 'ball' ? new T.SphereGeometry(s[1], 14, 10) : new T.BoxGeometry(s[1], s[2], s[3]);
   const layer = KIND_LAYER[it.kind] || 'other';
-  const m = new T.Mesh(g, mat(layer, it.basis));
-  if (!isRec(it.basis)) addEdges(m, layer, it.basis);
+  const m = new T.Mesh(g, mat(layer, basisOf(it.basis)));
+  addEdges(m, layer, basisOf(it.basis));
   return m;
 }
 function placeItem(m, s, x, y0, z) {
@@ -377,22 +674,43 @@ function placeItem(m, s, x, y0, z) {
   m.position.set(x, y0 + h / 2 + (s[0] === 'ball' ? s[1] : 0), z);
 }
 function tagItem(m, it, level, outside) {
-  const likely = !isRec(it.basis);
+  const b = basisOf(it.basis), likely = b === 'likely';
   const label = String(it.label || 'Item');
   m.name = `${label}${likely ? ' (likely)' : ''}`;
-  m.userData = { role: 'item', kind: String(it.kind || ''), layer: KIND_LAYER[it.kind] || 'other', level, outside, basis: likely ? 'likely' : 'record', likely,
-    label, note: String(it.note || ''), detail: it.detail ? String(it.detail) : '', focus: it.focus === true, key: it.key, pick: true };
+  m.userData = { role: 'item', kind: String(it.kind || ''), layer: KIND_LAYER[it.kind] || 'other', level, outside, basis: b, likely,
+    label, note: String(it.note || ''), detail: it.detail ? String(it.detail) : '', focus: it.focus === true, key: it.key, pick: true, snapped: !!it.snapped };
 }
 
 /* ── the file ─────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
-/** The model as a binary glTF 2.0 file (metres, Y up). Named nodes per level, room and system; extras carry role and basis. */
+/** The model as a binary glTF 2.0 file (metres, Y up). Named nodes per level, room and system; extras carry role and basis.
+    A live card's file is placed in the footprint frame: x east, y up, z south, in metres from `building.frame.origin`, under a
+    node "Site" whose extras hold the footprint ring, the parcel ring, the height and the storeys, each with its basis. */
 export async function houseGLB(card) {
   const T = await loadThree();
   const model = buildModel(T, card);
-  model.root.updateMatrixWorld(true);
-  const blob = writeGLB(T, model.root, model.mats);
-  model.root.traverse(o => { o.geometry?.dispose?.(); });
+  let top = model.root;
+  const site = model.plan.site;
+  if (site) {
+    top = new T.Group(); top.name = 'Site';
+    const b = card.building || {};
+    top.userData = { role: 'site', address: model.plan.address, example: false,
+      frame: { origin: site.origin, units: 'm', x: 'east', y: 'up', z: 'south' },
+      footprint: { ring_m: site.ringM, area_m2: Math.round(site.area * 10) / 10, basis: site.basis, as_of: site.asOf || undefined, method: site.method || undefined,
+        plan_rot_deg: Math.round(site.rot * 100) / 100, outbuildings: site.outbuildings.map(o => ({ ring_m: o.ringM, basis: 'public' })) },
+      ...(site.parcelM.length >= 3 ? { parcel: { ring_m: site.parcelM, basis: site.parcelBasis } } : {}),
+      height: { eave_m: site.eave || undefined, ridge_m: site.ridge || undefined, basis: site.heightBasis, from: (b.height && b.height.from) || undefined },
+      storeys: { n: model.plan.levels.filter(l => !l.below).length, basis: site.storeysBasis },
+      front: { bearing_deg: b.front && Number.isFinite(Number(b.front.bearing_deg)) ? Number(b.front.bearing_deg) : undefined, basis: site.frontBasis },
+      ...(card.place && card.place.precision ? { place: { precision: String(card.place.precision) } } : {}) };
+    top.add(model.root);
+    // model x runs along the plan's width and z towards the front; turn and move it so x is east and z is south
+    model.root.rotation.y = (site.rot * Math.PI) / 180 * -1;
+    model.root.position.set(site.centre[0], 0, -site.centre[1]);
+  }
+  top.updateMatrixWorld(true);
+  const blob = writeGLB(T, top, model.mats);
+  top.traverse(o => { o.geometry?.dispose?.(); });
   model.mats.forEach(m => m.dispose());
   return blob;
 }
@@ -441,8 +759,10 @@ function writeGLB(T, root, mats) {
   };
   const extras = u => {
     const e = {};
-    for (const k of ['role', 'kind', 'layer', 'level', 'basis', 'label', 'note', 'detail', 'address']) if (u && u[k] !== undefined && u[k] !== '') e[k] = u[k];
-    if (u && u.role === 'item') e.outside = !!u.outside;
+    for (const k of ['role', 'kind', 'layer', 'level', 'basis', 'label', 'note', 'detail', 'address', 'as_of', 'outline_basis']) if (u && u[k] !== undefined && u[k] !== '') e[k] = u[k];
+    for (const k of ['frame', 'footprint', 'parcel', 'height', 'storeys', 'front', 'place']) if (u && u[k] && typeof u[k] === 'object') e[k] = JSON.parse(JSON.stringify(u[k]));
+    if (u && (u.role === 'house' || u.role === 'site')) e.example = !!u.example;
+    if (u && u.role === 'item') { e.outside = !!u.outside; if (u.snapped) e.snapped = true; }
     return e;
   };
   const node = o => {
@@ -522,10 +842,19 @@ export function renderHouse3D(container, card, opts = {}) {
   el.className = 'h3 sys-card'; el.dataset.co = 'pp';
   el.setAttribute('aria-label', '3D house');
   const levelChips = plan.levels.map((l, i) => chip(`data-h3="floor" data-floor="${i}"`, l.name, false)).join('');
-  el.innerHTML = `<div class="h3-head"><h3 class="sys-card-title h3-addr">${esc(plan.address || 'House')} <span class="h3-ex">· Example address</span></h3>`
+  // the key names only the kinds of basis this card holds; the address line is the typed address, marked only for example data
+  const held = new Set(['likely']);
+  if (plan.site) held.add(plan.site.basis);
+  for (const l of plan.levels) for (const x of [...l.items, ...l.runs]) held.add(basisOf(x.basis));
+  for (const o of plan.outside) held.add(basisOf(o.basis));
+  if (plan.site) for (const b of [plan.shellBasis, plan.site.parcelBasis]) held.add(b);
+  const key = (held.has('public') ? '<span class="h3-key-i"><span class="h3-key-solid h3-key-pub"></span>Public record</span> ' : '')
+    + (held.has('record') ? '<span class="h3-key-i"><span class="h3-key-solid h3-key-rec"></span>Company record</span> ' : '')
+    + '<span class="h3-key-i"><span class="h3-key-dash"></span>Likely</span>';
+  el.innerHTML = `<div class="h3-head"><h3 class="sys-card-title h3-addr">${esc(plan.address || 'House')}${plan.example ? ' <span class="h3-ex">· Example address</span>' : ''}</h3>`
     + (opts.onClose ? `<button type="button" class="sys-btn sys-btn--ghost sys-btn--sm h3-close" data-h3="close">Close</button>` : '') + `</div>`
     + `<div class="h3-stage"><canvas class="h3-canvas" role="img" aria-label="3D house model"></canvas><div class="h3-labels" aria-hidden="true"></div>`
-    + `<p class="h3-key"><span class="h3-key-solid"></span>From records <span class="h3-key-dash"></span>Likely</p>`
+    + `<p class="h3-key">${key}</p>`
     + `<div class="h3-info" aria-live="polite" hidden></div></div>`
     + `<div class="h3-bar">`
     + `<div class="sys-chips h3-row" role="group" aria-label="View">${chip('data-h3="view" data-v="outside"', 'Outside', true)}${chip('data-h3="view" data-v="cutaway"', 'Cutaway', false)}${chip('data-h3="view" data-v="top"', 'Top', false)}</div>`
@@ -584,7 +913,7 @@ export function renderHouse3D(container, card, opts = {}) {
     const all = [...model.items, ...model.runs].sort((a, b) => Number(b.userData.focus) - Number(a.userData.focus));
     labelNodes = all.map(o => {
       const d = document.createElement('span');
-      d.className = `h3-label${o.userData.likely ? ' is-likely' : ''}`;
+      d.className = `h3-label is-${basisOf(o.userData.basis)}`;
       d.textContent = o.userData.likely ? `${o.userData.label}, likely` : o.userData.label;
       labelsEl.appendChild(d);
       return { o, d };
@@ -613,7 +942,7 @@ export function renderHouse3D(container, card, opts = {}) {
   /* visibility */
   function levelShown(levelId) {
     const sel = effectiveFloor();
-    if (sel === 'all' || levelId === 'outside') return true;
+    if (sel === 'all' || levelId === 'outside' || levelId === 'site') return true;
     if (state.view === 'top') return levelId === sel;
     const lv = plan.levels.find(l => l.id === levelId), s = plan.levels.find(l => l.id === sel);
     return !!lv && !!s && lv.base <= s.base;     // the chosen floor and what is under it
@@ -639,7 +968,7 @@ export function renderHouse3D(container, card, opts = {}) {
         const base = o.material.userData.base;
         let op = base;
         if (u.role === 'wall') op = state.view === 'outside' && sel === 'all' ? 0.3 : state.view === 'top' ? 0.12 : 0.2;
-        if (sel !== 'all' && u.level !== sel && u.level !== 'outside') op *= 0.5;
+        if (sel !== 'all' && u.level !== sel && u.level !== 'outside' && u.level !== 'site') op *= 0.5;
         if (state.wallMode && u.role === 'wall') op = Math.max(op, 0.3);
         o.material.opacity = op;
       }
@@ -745,7 +1074,7 @@ export function renderHouse3D(container, card, opts = {}) {
     if (!model) return;
     const r = canvas.getBoundingClientRect();
     const rc = ray(); rc.setFromCamera(new T.Vector2(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1), camera);
-    const pool = (state.wallMode ? model.walls : [...model.items, ...model.runs]).filter(o => o.visible && isShown(o));
+    const pool = (state.wallMode ? model.walls : [...model.items, ...model.runs, ...[model.outline, model.parcel].filter(Boolean)]).filter(o => o.visible && isShown(o));
     const hit = rc.intersectObjects(pool, false)[0];
     select(hit ? hit.object : null);
   }
@@ -760,12 +1089,32 @@ export function renderHouse3D(container, card, opts = {}) {
     state.picked = o;
     if (!o) { info.hidden = true; info.innerHTML = ''; apply(); return; }
     highlight(o, true);
-    info.innerHTML = o.userData.role === 'wall' ? wallCard(o) : itemCard(o);
+    info.innerHTML = o.userData.role === 'wall' ? wallCard(o) : o.userData.role === 'outline' || o.userData.role === 'parcel' ? siteCard(o) : itemCard(o);
     info.hidden = false;
     info.querySelector('[data-h3="dismiss"]')?.addEventListener('click', () => select(null));
     draw();
   }
-  const basisChip = b => (isRec(b) ? '<span class="sys-chip sys-chip--good">From records</span>' : '<span class="sys-chip sys-chip--warn">Likely</span>');
+  // one chip per basis; a company record on an example card says so
+  const basisChip = b => {
+    const k = basisOf(b);
+    const text = k === 'record' && plan.example ? EXAMPLE_LINE : BASIS_WORD[k];
+    return `<span class="sys-chip ${k === 'record' ? 'sys-chip--good' : k === 'public' ? 'sys-chip--info' : 'sys-chip--warn'}">${esc(text)}</span>`;
+  };
+  const month = d => { const m = /^(\d{4})-(\d{2})/.exec(String(d || '')); return m ? `${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][Number(m[2]) - 1] || ''} ${m[1]}`.trim() : ''; };
+  function siteCard(o) {
+    const u = o.userData, S = plan.site;
+    const lines = [];
+    if (u.role === 'outline') {
+      if (S.asOf && month(S.asOf)) lines.push(`Outline from imagery dated ${month(S.asOf)}`);
+      const asOf = Date.parse(String(card.as_of || '')) || Date.now(), then = Date.parse(S.asOf);
+      if (then && asOf - then > 5 * 365.25 * 864e5) lines.push('Outline may be out of date');
+      if (S.precision === 'typed') lines.push('Nearest outline to the point; parcel not matched');
+      const n = plan.levels.filter(l => !l.below).length;
+      lines.push(`${n} ${n === 1 ? 'storey' : 'storeys'}: ${BASIS_WORD[S.storeysBasis].toLowerCase()} · Height: ${BASIS_WORD[S.heightBasis].toLowerCase()}`);
+    }
+    return `<div class="h3-info-h"><b>${esc(u.label)}</b>${basisChip(u.basis)}<button type="button" class="sys-btn sys-btn--ghost sys-btn--sm" data-h3="dismiss" aria-label="Close">×</button></div>`
+      + lines.map(t => `<p class="h3-info-l">${esc(t)}</p>`).join('');
+  }
   function floorName(id) { return id === 'outside' ? 'Outside' : plan.levels.find(l => l.id === id)?.name || ''; }
   function itemCard(o) {
     const u = o.userData;
@@ -778,7 +1127,7 @@ export function renderHouse3D(container, card, opts = {}) {
     const u = o.userData;
     const list = behindWall(plan, u.level, u.wall);
     const rows = list.length ? list.map(x => `<li><span>${esc(x.label)}${x.what === 'outside' ? ' (outside)' : ''}</span>${basisChip(x.basis)}</li>`).join('')
-      : '<li><span>No lines or equipment known here</span></li>';
+      : '<li><span>None drawn near this wall. Confirm on site</span></li>';
     const wires = plan.wires ? '' : '<li><span>Wire runs: not in records</span></li>';
     return `<div class="h3-info-h"><b>${esc(u.label)}, ${esc(floorName(u.level))}</b><button type="button" class="sys-btn sys-btn--ghost sys-btn--sm" data-h3="dismiss" aria-label="Close">×</button></div>`
       + `<ul class="h3-info-list">${rows}${wires}</ul>`;
@@ -824,9 +1173,17 @@ export function renderHouse3D(container, card, opts = {}) {
     const row = o => ({ name: o.name, role: o.userData.role, kind: o.userData.kind, layer: o.userData.layer, level: o.userData.level, basis: o.userData.basis,
       likely: !!o.userData.likely, visible: o.visible && isShown(o), dashedEdges: o.children.some(c => c.material?.isLineDashedMaterial),
       transparent: !!o.material.transparent });
-    return { items: model.items.map(row), runs: model.runs.map(row), walls: model.walls.map(row), roofVisible: model.roof.visible,
+    const at = o => [Math.round(o.position.x * 1000) / 1000, Math.round(o.position.z * 1000) / 1000];
+    const S = plan.site;
+    const toM = p => [(p[0] - plan.w / 2) * S.kx, (p[1] - plan.h / 2) * S.kz];
+    return { items: model.items.map(o => ({ ...row(o), at: at(o), snapped: !!o.userData.snapped })), runs: model.runs.map(row),
+      walls: model.walls.map(o => ({ ...row(o), inside: !!o.userData.inside, a: S ? toM(o.userData.wall.a) : null, b: S ? toM(o.userData.wall.b) : null })),
+      roofVisible: model.roof.visible,
+      shell: model.shell.map(row), address: plan.address, example: plan.example,
+      site: S ? { ring: S.ring.map(toM), parcel: S.parcel.map(toM), basis: S.basis, heightBasis: S.heightBasis, storeysBasis: S.storeysBasis,
+        shellBasis: plan.shellBasis, rot: S.rot, snapped: plan.snapped, storeyH: plan.storeyH, area: S.area } : null,
       view: state.view, floor: state.floor, layers: { ...state.layers }, levels: plan.levels.map(l => l.id),
-      behind: model.walls.map(w => ({ name: w.name, level: w.userData.level, list: behindWall(plan, w.userData.level, w.userData.wall) })) };
+      behind: model.walls.map((w, i) => ({ i, name: w.name, level: w.userData.level, list: behindWall(plan, w.userData.level, w.userData.wall) })) };
   }
   function destroy() {
     state.dead = true; ro.disconnect(); themeObs.disconnect(); try { mq?.removeEventListener('change', applyTheme); } catch { /* */ }
@@ -835,6 +1192,8 @@ export function renderHouse3D(container, card, opts = {}) {
     renderer?.dispose(); el.remove();
   }
   api.pickAt = (x, y) => pick(x, y);
-  api.select = key => select([...(model?.items || []), ...(model?.runs || []), ...(model?.walls || [])].find(o => o.userData.key === key || o.name === key) || null);
+  api.selectWall = i => select(model?.walls[i] || null);
+  api.select = key => select([...(model?.items || []), ...(model?.runs || []), ...(model?.walls || []), model?.outline, model?.parcel].filter(Boolean)
+    .find(o => o.userData.key === key || o.name === key) || null);
   return api;
 }
